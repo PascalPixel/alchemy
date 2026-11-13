@@ -155,16 +155,16 @@ void Func_02001c9c(void);
 void Func_0200042c(void);
 void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004d00(void);
-void Func_02004d9c(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const u8 *script);
 void Import_ActorDestroy();
 void DisplayBlend_DisableRunScript(void);
 void DisplayBlend_EnableRunScript(void);
 void Actor_SetSpritePriorityDirect();
 void Event_Start(void);
-void Func_02004e64(void);
-void Func_02004f54(void);
-void Func_02004f5c();
+void Event_End(void);
+void FieldCamera_WaitForArrival(void);
+void FieldCamera_MoveToActorById();
 void Event_SetDestination();
 void Func_02004fc4();
 void Func_02004fec();
@@ -306,7 +306,7 @@ s32 Scene_Initialize(void) {
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
         C4(Camera_MoveWithinMapBounds, 0x1e80000, none, 0x1800000, 1);
-        Func_02004f54();
+        FieldCamera_WaitForArrival();
         C3(Func_080d47b4, 10, 264, 0);
         C1(Event_Wait, 40);
         C1(Event_SetMessageId, (s32)MsgFieldAtLastTheSerpentHas);
@@ -381,7 +381,7 @@ s32 Scene_Initialize(void) {
         object = FieldActor_Create(285, 0x1e80000, -0x100000, 0x1590000);
         C2(Actor_SetSingleChildFlags, object, 0);
         C2(Actor_StartScript, object, gData_0200539c);
-        C2(Func_02004d9c, object, 1);
+        C2(Actor_SelectAnimation, object, 1);
         C2(Animation_ApplyChildValues, object, 6);
         C3(Actor_Jump, 10, 2, 0);
         C1(Event_Wait, 5);
@@ -416,7 +416,7 @@ s32 Scene_Initialize(void) {
             dz = 8;
           shards[i] = (struct Actor *)Import_ActorCreate(
               403, 0x1c80000 + (dx << 16), -0x200000, 0x1660000 + (dz << 16));
-          C2(Func_02004d9c, shards[i], 2);
+          C2(Actor_SelectAnimation, shards[i], 2);
           C2(Actor_SetSingleChildFlags, shards[i], 0);
           C2(Actor_StartScript, shards[i], gData_0200539c);
         }
@@ -427,8 +427,8 @@ s32 Scene_Initialize(void) {
         C3(Map_SetScreenShake, -1, -1, 0xe666);
         Actor_SetModeById(10, 5);
         C1(Event_Wait, 30);
-        C2(Func_02004f5c, 10, 1);
-        Func_02004f54();
+        C2(FieldCamera_MoveToActorById, 10, 1);
+        FieldCamera_WaitForArrival();
         movement = (s32)gData_02005e28;
         C2(Actor_SetMovementTypeById, 10, movement);
         C1(Actor_RefreshSelectorById, 10);
@@ -437,10 +437,10 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 20);
         C2(Event_ShowMessageAndWait, 0x600a, 0);
         C2(Camera_FollowActor, gMainRoutineWork.currentOwner, 1);
-        Func_02004f54();
+        FieldCamera_WaitForArrival();
         C2(Actor_SetSpritePriority, 10, 3);
         C6(Map_CopyCellAttributeRect, 30, 19, 1, 1, 27, 19);
-        Func_02004e64();
+        Event_End();
         goto end;
       } else {
         if (Test(0x109))
@@ -494,8 +494,8 @@ s32 Scene_Initialize(void) {
       C3(Actor_ArmCallback, *owner, 0x4000, 0);
       C3(Actor_ArmCallback, 11, 0x4000, 0);
       C1(Event_Wait, 30);
-      C2(Func_02004f5c, 10, 1);
-      Func_02004f54();
+      C2(FieldCamera_MoveToActorById, 10, 1);
+      FieldCamera_WaitForArrival();
       C2(Actor_StartRepeatedMotion, 10, 2);
       C2(Camera_FollowActor, 10, 1);
       C3(Actor_ResetAndSetPositionInMode2, 10, 488, 376);
@@ -637,7 +637,7 @@ s32 Scene_Initialize(void) {
         C1(wait, 1);
       }
       DisplayBlend_DisableRunScript();
-      Func_02004e64();
+      Event_End();
     } else if (*entrance == 11) {
       Event_Start();
       C1(Event_ResolvePendingActions, 0);
@@ -673,7 +673,7 @@ s32 Scene_Initialize(void) {
       Event_WaitTransitionFrames();
       C2(Event_SetDestination, (s16)room->savedScene, (s16)room->savedEntrance);
       C2(Func_02005004, room->scene, *entrance);
-      Func_02004e64();
+      Event_End();
     }
   } else if (work->scene == (s32)&SceneId_Ov681Room2) {
     s32 mask = 32;
@@ -761,7 +761,7 @@ s32 Scene_Initialize(void) {
       if (other != NULL) {
         C2(Actor_SetSingleChildFlags, other, 0);
         C2(Actor_StartScript, other, gData_020053d8);
-        C2(Func_02004d9c, other, 1);
+        C2(Actor_SelectAnimation, other, 1);
         C2(Animation_ApplyChildValues, other, 14);
         ((u8 *)other->sprite)[9] |= 12;
         other->scaleX = 0x13333;
@@ -870,16 +870,16 @@ void Func_02002ac8();
 void Func_02001c9c(void);
 void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004d00(void);
-void Func_02004d9c(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const u8 *script);
 void Import_ActorDestroy();
 void DisplayBlend_DisableRunScript(void);
 void DisplayBlend_EnableRunScript(void);
 void Actor_SetSpritePriorityDirect();
 void Event_Start(void);
-void Func_02004e64(void);
-void Func_02004f54(void);
-void Func_02004f5c();
+void Event_End(void);
+void FieldCamera_WaitForArrival(void);
+void FieldCamera_MoveToActorById();
 void Event_SetDestination();
 void Func_02004fc4();
 void Func_02004fec();
@@ -1018,7 +1018,7 @@ s32 Scene_Initialize(void) {
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
         C4(Camera_MoveWithinMapBounds, 0x1e80000, none, 0x1800000, 1);
-        Func_02004f54();
+        FieldCamera_WaitForArrival();
         C3(Func_080d47b4, 10, 264, 0);
         C1(Event_Wait, 40);
         C1(Event_SetMessageId, (s32)MsgFieldAtLastTheSerpentHas);
@@ -1093,7 +1093,7 @@ s32 Scene_Initialize(void) {
         object = FieldActor_Create(285, 0x1e80000, -0x100000, 0x1590000);
         C2(Actor_SetSingleChildFlags, object, 0);
         C2(Actor_StartScript, object, gData_0200539c);
-        C2(Func_02004d9c, object, 1);
+        C2(Actor_SelectAnimation, object, 1);
         C2(Animation_ApplyChildValues, object, 6);
         C3(Actor_Jump, 10, 2, 0);
         C1(Event_Wait, 5);
@@ -1128,7 +1128,7 @@ s32 Scene_Initialize(void) {
             dz = 8;
           shards[i] = (struct Actor *)Import_ActorCreate(
               403, 0x1c80000 + (dx << 16), -0x200000, 0x1660000 + (dz << 16));
-          C2(Func_02004d9c, shards[i], 2);
+          C2(Actor_SelectAnimation, shards[i], 2);
           C2(Actor_SetSingleChildFlags, shards[i], 0);
           C2(Actor_StartScript, shards[i], gData_0200539c);
         }
@@ -1139,8 +1139,8 @@ s32 Scene_Initialize(void) {
         C3(Map_SetScreenShake, -1, -1, 0xe666);
         Actor_SetModeById(10, 5);
         C1(Event_Wait, 30);
-        C2(Func_02004f5c, 10, 1);
-        Func_02004f54();
+        C2(FieldCamera_MoveToActorById, 10, 1);
+        FieldCamera_WaitForArrival();
         movement = (s32)gData_02005e28;
         C2(Actor_SetMovementTypeById, 10, movement);
         C1(Actor_RefreshSelectorById, 10);
@@ -1149,10 +1149,10 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 20);
         C2(Event_ShowMessageAndWait, 0x600a, 0);
         C2(Camera_FollowActor, gMainRoutineWork.currentOwner, 1);
-        Func_02004f54();
+        FieldCamera_WaitForArrival();
         C2(Actor_SetSpritePriority, 10, 3);
         C6(Map_CopyCellAttributeRect, 30, 19, 1, 1, 27, 19);
-        Func_02004e64();
+        Event_End();
         goto end;
       } else {
         if (Test(0x109))
@@ -1206,8 +1206,8 @@ s32 Scene_Initialize(void) {
       C3(Actor_ArmCallback, *owner, 0x4000, 0);
       C3(Actor_ArmCallback, 11, 0x4000, 0);
       C1(Event_Wait, 30);
-      C2(Func_02004f5c, 10, 1);
-      Func_02004f54();
+      C2(FieldCamera_MoveToActorById, 10, 1);
+      FieldCamera_WaitForArrival();
       C2(Actor_StartRepeatedMotion, 10, 2);
       C2(Camera_FollowActor, 10, 1);
       C3(Actor_ResetAndSetPositionInMode2, 10, 488, 376);
@@ -1349,7 +1349,7 @@ s32 Scene_Initialize(void) {
         C1(wait, 1);
       }
       DisplayBlend_DisableRunScript();
-      Func_02004e64();
+      Event_End();
     } else if (*entrance == 11) {
       Event_Start();
       C1(Event_ResolvePendingActions, 0);
@@ -1368,7 +1368,7 @@ s32 Scene_Initialize(void) {
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
       C2(Event_SetDestination, (s16)room->savedScene, (s16)room->savedEntrance);
-      Func_02004e64();
+      Event_End();
     } else if (*entrance == 12) {
       Event_Start();
       C1(Event_ResolvePendingActions, 0);
@@ -1386,7 +1386,7 @@ s32 Scene_Initialize(void) {
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
       C2(Event_SetDestination, (s16)room->savedScene, (s16)room->savedEntrance);
-      Func_02004e64();
+      Event_End();
     }
   } else if (work->scene == (s32)&SceneId_Ov681Room2) {
     s32 mask = 32;
@@ -1474,7 +1474,7 @@ s32 Scene_Initialize(void) {
       if (other != NULL) {
         C2(Actor_SetSingleChildFlags, other, 0);
         C2(Actor_StartScript, other, gData_020053d8);
-        C2(Func_02004d9c, other, 1);
+        C2(Actor_SelectAnimation, other, 1);
         C2(Animation_ApplyChildValues, other, 14);
         ((u8 *)other->sprite)[9] |= 12;
         other->scaleX = 0x13333;
@@ -1586,7 +1586,7 @@ s32 Scene_PrepareMap(void) {
         u32 angle = Func_02004904();
 
         climber->collisionFlags = 0;
-        Func_02004d9c(climber, ((angle & 0xc000) >> 14) + 2);
+        Actor_SelectAnimation(climber, ((angle & 0xc000) >> 14) + 2);
         climber->update = (angle & 0x4000) != 0 ? Func_02000aac : Func_02000a60;
         climber->collisionFlags = 1;
         GameFlag_SetBit(0x200);
@@ -2075,7 +2075,7 @@ burst:
   Event_PlaySound(217);
   MapGrid_SetShake(0x20000, 0x20000, 0xe666);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 257);
-  Func_02004d9c(leader, 40);
+  Actor_SelectAnimation(leader, 40);
   FieldEvent_Wait(40);
   Event_PlaySound(204);
   leader->motionFlags = 3;
@@ -2089,19 +2089,19 @@ burst:
   work = &gMainRoutineWork;
   leader->gravity = gravity;
   Actor_SetAttachedEffect(work->currentOwner, 0);
-  Func_02004d9c(leader, 38);
+  Actor_SelectAnimation(leader, 38);
   MapGrid_SetShake(0x10000, 0x40000, 0x10000);
   System_Wait(10);
   MapGrid_SetShake(-1, -1, 0xe666);
   System_Wait(20);
   FieldCamera_MoveTo(leader->x, leader->y, leader->z, 1);
-  Func_02004f54();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetSingleChildFlags(leader, 1);
-  Func_02004d9c(leader, 1);
+  Actor_SelectAnimation(leader, 1);
   leader->velocityY = 0x40000;
   System_Wait(20);
   work->renderMode = 0;
-  Func_02004e64();
+  Event_End();
   Event_SetFlag(flag);
 }

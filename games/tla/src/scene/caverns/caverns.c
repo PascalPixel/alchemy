@@ -407,15 +407,15 @@ void Func_02000bf8(s32 unused, s32 id) {
 s32 Func_02000c38(struct Actor *object, s16 *position) {
   u8 *flags = &object->motionFlags;
   s32 saved = *flags;
-  s32 blocked = Func_020010b4(object, position);
+  s32 blocked = MapGrid_CheckCollision(object, position);
 
   if (blocked == 0) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Func_02001074(object, 6);
+    Actor_SelectAnimation(object, 6);
     wait(6);
     Sound_Play(152);
-    Func_02001074(object, 7);
+    Actor_SelectAnimation(object, 7);
     object->speedLimit = 0x30000;
     object->acceleration = 0x20000;
     object->velocityY = 0x40000;
@@ -429,7 +429,7 @@ s32 Func_02000c38(struct Actor *object, s16 *position) {
 
       Actor_SetPositionAndCommit(owner, x, z);
     }
-    Func_02001074(object, 6);
+    Actor_SelectAnimation(object, 6);
     Actor_SetSingleChildFlags(object, 1);
     *flags = saved;
     Event_End();

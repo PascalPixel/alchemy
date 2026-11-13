@@ -22,9 +22,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_020013f0
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_020013f0:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SetMode
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -162,9 +162,9 @@ Camera_FollowActor:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02001508
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02001508:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -284,17 +284,17 @@ Func_080dbdd4:
 	.thumb_func
 Func_020015d8:
 	overlay_veneer Func_080c8878
-	.global Func_020015e0
+	.global BattleEffect_FillOverlayTiles
 	.thumb_func
-Func_020015e0:
+BattleEffect_FillOverlayTiles:
 	overlay_veneer Func_080c88a0
 	.global Func_020015e8
 	.thumb_func
 Func_020015e8:
 	overlay_veneer Func_080c88a8
-	.global Func_020015f0
+	.global BattleEffect_DrawSpriteAtWorldPosition
 	.thumb_func
-Func_020015f0:
+BattleEffect_DrawSpriteAtWorldPosition:
 	overlay_veneer Func_080c88b0
 	.global Actor_ApplyRandomChildValues
 	.thumb_func

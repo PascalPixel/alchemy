@@ -49,16 +49,21 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 #include "main_routine_work.h"
 #include "call.h"
 
-DEFINE_JUPITER_LIGHTHOUSE_OPEN_DOOR(JupiterLighthouse_OpenDoor, 76, 42, 4, 76, 35, 81, 42, 12, 41, 12, 35)
+DEFINE_JUPITER_LIGHTHOUSE_OPEN_DOOR(JupiterLighthouse_OpenDoor, 76, 42, 4, 76,
+                                    35, 81, 42, 12, 41, 12, 35)
 
-DEFINE_JUPITER_LIGHTHOUSE_CLOSE_DOOR(JupiterLighthouse_CloseDoor, 76, 42, 4, 76, 35, 71, 12, 36, 12, 35)
+DEFINE_JUPITER_LIGHTHOUSE_CLOSE_DOOR(JupiterLighthouse_CloseDoor, 76, 42, 4, 76,
+                                     35, 71, 12, 36, 12, 35)
 
-DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(JupiterLighthouse_CheckBlockOnCell, 16, 0xa1b, 8, 37,
+DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(
+    JupiterLighthouse_CheckBlockOnCell, 16, 0xa1b, 8, 37,
     JupiterLighthouse_OpenDoor)
 
 DEFINE_SCENE_RUN_ONCE(Scene_RunOnce, 514, JupiterLighthouse_OpenDoor)
 
-DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 514, JupiterLighthouse_CloseDoor, JupiterLighthouse_CheckBlockOnCell)
+DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 514,
+                                 JupiterLighthouse_CloseDoor,
+                                 JupiterLighthouse_CheckBlockOnCell)
 
 void Func_02000184(void) {
   System_Wait(10);
@@ -316,8 +321,8 @@ void Func_02000778(s32 unused, s32 id) {
 // and sound calls go through the call layer, each as the native has it.
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02002bd4(void);
-void Func_02002ad4(struct Actor *object, s32 mode);
+void FieldCamera_WaitForArrival(void);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Func_02002c4c(s32 x, s32 z, s32 a, s32 b);
 
 void Func_020007a4(s32 unused, s32 id) {
@@ -366,15 +371,15 @@ void Func_020007a4(s32 unused, s32 id) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldCamera_MoveTo(166 << 18, -1, PIXELS(136), 1);
-    Func_02002bd4();
+    FieldCamera_WaitForArrival();
     Event_Wait(20);
     Event_PlaySound(151);
-    Func_02002ad4(object, 3);
+    Actor_SelectAnimation(object, 3);
     object->priorityFlags &= ~2;
     MapGrid_SetCellBehavior(object->x, object->z, object->terrainId, 255);
     Event_Wait(30);
     FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-    Func_02002bd4();
+    FieldCamera_WaitForArrival();
     Event_End();
     return;
   }
@@ -392,7 +397,7 @@ void Func_020007a4(s32 unused, s32 id) {
     Event_ClearFlag(2583);
     Event_Wait(20);
     Event_PlaySound(151);
-    Func_02002ad4(object, 3);
+    Actor_SelectAnimation(object, 3);
     object->priorityFlags &= ~2;
     MapGrid_SetCellBehavior(object->x, object->z, object->terrainId, 255);
   } else {
@@ -432,7 +437,7 @@ void Func_02000a74(void) {
       0)
     return;
   FieldCamera_MoveTo(148 << 18, -1, PIXELS(248), 1);
-  Func_02002bd4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   if (Event_GetFlag(2576))
     Func_020009f8(18, 35, 15, -16, 0);
@@ -478,7 +483,7 @@ void Func_02000a74(void) {
   object->motionFlags = 0;
   FieldEvent_Wait(30);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02002bd4();
+  FieldCamera_WaitForArrival();
 }
 
 void Func_02000c7c(void) {
@@ -685,15 +690,17 @@ static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 extern u32 gData_020035bc[];
 
 DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_02003594,
-    gData_020035bc)
+                          gData_020035bc)
 
 extern u16 gLighthousePalette13[];
 extern u16 gLighthouseUnlitColors[];
 
 void Func_02002c44();
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02003594, gData_020035bc,
-    gLighthousePalette13, PaletteCycle_Step, gLighthouseUnlitColors)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
+                                        gData_02003594, gData_020035bc,
+                                        gLighthousePalette13, PaletteCycle_Step,
+                                        gLighthouseUnlitColors)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02002b54, Func_02002c44)
 
@@ -718,4 +725,4 @@ s32 Math_Cosine(s32 angle);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_02002c34, Position_FlatDistance,
-    gWhirlwindEndScript, gWhirlwindRiding)
+                        gWhirlwindEndScript, gWhirlwindRiding)

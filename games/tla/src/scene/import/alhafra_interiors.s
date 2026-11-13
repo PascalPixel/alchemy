@@ -136,13 +136,13 @@ Camera_FollowActor:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02000b7c
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02000b7c:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
-	.global Func_02000b84
+	.global FieldCamera_MoveToActorById
 	.thumb_func
-Func_02000b84:
+FieldCamera_MoveToActorById:
 	overlay_veneer Func_080c8248
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -160,29 +160,29 @@ Actor_WatchAndSetScript:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_02000bac
+	.global BattleEffect_FillOverlayTiles
 	.thumb_func
-Func_02000bac:
+BattleEffect_FillOverlayTiles:
 	overlay_veneer Func_080c88a0
 	.global Func_02000bb4
 	.thumb_func
 Func_02000bb4:
 	overlay_veneer Func_080c88a8
-	.global Func_02000bbc
+	.global BattleEffect_DrawSpriteAtWorldPosition
 	.thumb_func
-Func_02000bbc:
+BattleEffect_DrawSpriteAtWorldPosition:
 	overlay_veneer Func_080c88b0
-	.global Func_02000bc4
+	.global Shop_Run
 	.thumb_func
-Func_02000bc4:
+Shop_Run:
 	overlay_veneer Func_08108008
-	.global Func_02000bcc
+	.global Sanctum_Run
 	.thumb_func
-Func_02000bcc:
+Sanctum_Run:
 	overlay_veneer Func_08108010
-	.global Func_02000bd4
+	.global Inn_CheckIn
 	.thumb_func
-Func_02000bd4:
+Inn_CheckIn:
 	overlay_veneer Func_08108018
 	.global Sound_Play
 	.thumb_func

@@ -92,7 +92,8 @@ void Func_02000098(void) {
 
   Dma_Set(Data_02000874, (void *)0x050003c0, 0x80000010, REG_DMA3);
   sprite = &gData_02000a00;
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GreenPanel), buffer);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GreenPanel),
+                        buffer);
   slot = &Data_020008f0;
   value = Resource_FindFreeEntry();
   *slot = value;
@@ -111,8 +112,7 @@ void Func_02000098(void) {
   FieldTask_AddFrame(Func_0200005c, priority);
 }
 
-struct EpilogueWindow *Message_OpenWindow(s32 id, s32 x, s32 y,
-                                                s32 resource);
+struct EpilogueWindow *Message_OpenWindow(s32 id, s32 x, s32 y, s32 resource);
 
 /// Opens the epilogue's message window at x and y and, unless bit 15 of the
 /// message is set, a name window at left and line that Func_0200005c follows;
@@ -127,13 +127,13 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 frames,
   name = 0;
   wide = 0x8000 & message;
   message &= 0x7fff;
-  window = Message_OpenWindow(
-      gData_02000a28, x, y, (BattleEffect_GetResourceId(message) << 16) | 4);
+  window = Message_OpenWindow(gData_02000a28, x, y,
+                              (BattleEffect_GetResourceId(message) << 16) | 4);
   if (!wide) {
     /* FAKEMATCH(temporary): the name window held in a temporary until after
-     * the stores; as name = Func_02000804(...), 2 of 100 instructions differ
-     * in tla-en. */
-    struct EpilogueWindow *opened = Func_02000804(message, 0, left, line);
+     * the stores; as name = Portrait_OpenWindow(...), 2 of 100 instructions
+     * differ in tla-en. */
+    struct EpilogueWindow *opened = Portrait_OpenWindow(message, 0, left, line);
 
     gData_02000a34 = 1;
     gData_02000a38 = left << 3;
@@ -220,7 +220,7 @@ void Func_02000244(s32 message, s32 position, s32 frames) {
   Func_02000158(message, x, y, left, line, frames, mode);
 }
 
-s32 Func_02000854();
+s32 SceneState_SetScrollTarget();
 s32 Func_0200085c();
 s32 WindowSystem_InitField();
 extern char ResourceId_EndingCliffDayPicture,
@@ -296,7 +296,7 @@ s32 Scene_Initialize(void) {
   Call3((void (*)())Func_02000244, 5, 2, 40);
 #endif
   Func_02000244(5, 2, 40);
-  Func_02000854(120);
+  SceneState_SetScrollTarget(120);
   System_Wait(1);
   Func_0200085c();
   FieldEvent_Wait(30);
@@ -352,7 +352,7 @@ s32 Scene_Initialize(void) {
   Call3((void (*)())Func_02000244, 56, 2, 30);
   Call3((void (*)())Func_02000244, 1, 2, 40);
   Func_02000244(56, 2, 40);
-  Func_02000854(200);
+  SceneState_SetScrollTarget(200);
   System_Wait(1);
   Func_0200085c();
   FieldEvent_Wait(30);
@@ -379,7 +379,7 @@ L_02008692:
   Call3((void (*)())Func_0200084c, (s32)&ResourceId_EndingReunionPicture,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(120);
-  Func_02000854(120);
+  SceneState_SetScrollTarget(120);
   System_Wait(1);
   Func_0200085c();
   FieldEvent_Wait(180);

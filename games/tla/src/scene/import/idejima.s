@@ -58,9 +58,9 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 FieldMessage_Show:
 	overlay_veneer FieldMessage_ShowFar
-	.global Func_020031a8
+	.global Party_RestoreHpPp
 	.thumb_func
-Func_020031a8:
+Party_RestoreHpPp:
 	overlay_veneer Func_080ad208
 	.global Event_Wait
 	.thumb_func
@@ -214,9 +214,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_020032e0
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_020032e0:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Import_EventSetExitRequest
 	.thumb_func

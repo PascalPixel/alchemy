@@ -70,9 +70,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_02003b28
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02003b28:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SetMode
 	.global Actor_SetAnimationSpeed
 	.thumb_func
@@ -106,9 +106,9 @@ Script_WaitForEventTimeout:
 	.thumb_func
 Map_CopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
-	.global Func_02003b70
+	.global Map_ClearLayerEntryFlag
 	.thumb_func
-Func_02003b70:
+Map_ClearLayerEntryFlag:
 	overlay_veneer Func_08020198
 	.global Map_GetTerrainHeight
 	.thumb_func
@@ -202,13 +202,13 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02003c30
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02003c30:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
-	.global Func_02003c38
+	.global FieldCamera_MoveToActorById
 	.thumb_func
-Func_02003c38:
+FieldCamera_MoveToActorById:
 	overlay_veneer Func_080c8248
 	.global Func_080d4568
 	.thumb_func
@@ -250,9 +250,9 @@ Func_02003c80:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02003c90
+	.global Sprite_ShareVramCacheEntry
 	.thumb_func
-Func_02003c90:
+Sprite_ShareVramCacheEntry:
 	overlay_veneer Func_080c8518
 	.global Event_NoOp
 	.thumb_func

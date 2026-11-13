@@ -15,12 +15,12 @@ extern u32 gData_02001618[];
 
 s32 Func_02000128();
 
-s32 Func_02001478(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 Func_020014d8(void);
 struct Actor *Func_02001530(s32 *position, s32 flags);
 
 void Func_02000c4c(s32 a, s32 b);
 
-u32 Func_020014f0(struct FieldSprite *sprite, u32 frame);
+u32 Sprite_ShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
 
 #endif

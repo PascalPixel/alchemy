@@ -186,17 +186,17 @@ BattleEffect_WaitForArcGroups:
 	.thumb_func
 BattleEffect_SetObjectUpdateMode:
 	overlay_veneer BattleEffect_SetObjectUpdateModeFar
-	.global Func_02002304
+	.global Shop_Run
 	.thumb_func
-Func_02002304:
+Shop_Run:
 	overlay_veneer Func_08108008
-	.global Func_0200230c
+	.global Sanctum_Run
 	.thumb_func
-Func_0200230c:
+Sanctum_Run:
 	overlay_veneer Func_08108010
-	.global Func_02002314
+	.global Inn_CheckIn
 	.thumb_func
-Func_02002314:
+Inn_CheckIn:
 	overlay_veneer Func_08108018
 	.global Sound_Play
 	.thumb_func

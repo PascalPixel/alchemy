@@ -19,7 +19,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode);
 extern s16 gLightSpriteTile;
 extern struct Actor *gData_02002660[];
 
-s32 Func_02001c80(struct Actor *actor);
+s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);
 
 void Leader_CenterInCell(void);

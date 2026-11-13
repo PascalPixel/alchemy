@@ -11,11 +11,11 @@
 #include "event_inline.h"
 #include "field/field.h"
 
-void Func_0200114c(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
 struct GabombaCatacombsVec;
-s32 Func_02001174(struct Actor *object,
-                  struct GabombaCatacombsVec *position);
+s32 MapGrid_CheckCollision(struct Actor *object,
+                           struct GabombaCatacombsVec *position);
 void Event_End(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Func_02001234(s32 a);
@@ -69,9 +69,9 @@ struct GabombaCatacombsParty {
 
 #define LEADER_HOP()                                                           \
   do {                                                                         \
-    Event_Start();                                                           \
+    Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);                       \
+    FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);             \
   } while (0)
 
 void Func_02000038(void) { Func_080d2b4c(8, 10); }
@@ -118,7 +118,8 @@ void Func_020001d4(void) { Import_EventSetExitRequest(5); }
 
 /// 6 copies: gabomba_catacombs, gabomba_catacombs, gabomba_catacombs,
 /// gabomba_catacombs, gabomba_catacombs, gabomba_catacombs.
-#define DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(name, n1, n2, n3, n4, n5, n6, n7, n8, n9) \
+#define DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(name, n1, n2, n3, n4, n5, \
+                                                     n6, n7, n8, n9)           \
   void name(void) {                                                            \
     struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);       \
                                                                                \
@@ -134,9 +135,11 @@ void Func_020001d4(void) { Import_EventSetExitRequest(5); }
     }                                                                          \
   }
 
-DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_020001e0, 7, 22, 3, 58, 8, 136, 376, 8, 23)
+DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_020001e0, 7, 22, 3, 58, 8,
+                                             136, 376, 8, 23)
 
-DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_02000260, 5, 13, 5, 52, 9, 136, 248, 8, 15)
+DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_02000260, 5, 13, 5, 52, 9,
+                                             136, 248, 8, 15)
 
 void Func_020002e0(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -154,13 +157,17 @@ void Func_020002e0(void) {
   }
 }
 
-DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_02000364, 5, 13, 5, 52, 11, 136, 280, 8, 17)
+DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_02000364, 5, 13, 5, 52, 11,
+                                             136, 280, 8, 17)
 
-DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_020003e4, 5, 13, 5, 52, 12, 104, 280, 6, 17)
+DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_020003e4, 5, 13, 5, 52, 12,
+                                             104, 280, 6, 17)
 
-DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_02000464, 5, 13, 5, 52, 13, 88, 264, 5, 16)
+DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_02000464, 5, 13, 5, 52, 13,
+                                             88, 264, 5, 16)
 
-DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_020004e4, 5, 13, 5, 52, 14, 104, 248, 6, 15)
+DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_020004e4, 5, 13, 5, 52, 14,
+                                             104, 248, 6, 15)
 
 void Func_02000564(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -239,19 +246,19 @@ void Func_020008a0(struct Actor *object, s32 dz) {
   position.x = object->x;
   position.y = object->y;
   position.z = object->z + dz;
-  Func_02001174(object, &position);
+  MapGrid_CheckCollision(object, &position);
   position.x = object->x;
   position.y = object->y;
   position.z = object->z + 0x80000;
-  if (Func_02001174(object, &position) <= 0) {
+  if (MapGrid_CheckCollision(object, &position) <= 0) {
     position.x = object->x + 0x5b333;
     position.y = object->y;
     position.z = object->z + 0x5b333;
-    if (Func_02001174(object, &position) <= 0) {
+    if (MapGrid_CheckCollision(object, &position) <= 0) {
       position.x = object->x - 0x5b333;
       position.y = object->y;
       position.z = object->z + 0x5b333;
-      if (Func_02001174(object, &position) <= 0) {
+      if (MapGrid_CheckCollision(object, &position) <= 0) {
         follower->z += dz;
         object->z += dz;
       }
@@ -268,7 +275,7 @@ void Func_0200094c(void) {
         14, leader->x, leader->y + 0x60000, leader->z));
     if (steam) {
       Actor_SetSingleChildFlags(steam, 0);
-      Func_0200114c(steam, 1);
+      Actor_SelectAnimation(steam, 1);
       Actor_StartScript(steam, gData_0200128c);
     }
     Sound_Play(0x26f);
@@ -289,7 +296,7 @@ s32 Func_020009bc(struct Actor *object) {
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Actor_MoveToObject(s32 actor, s32 target);
-void Func_02001214(s32 actor, s32 a);
+void FieldCamera_MoveToActorById(s32 actor, s32 a);
 
 #define TALK()                                                                 \
   FieldMessage_ShowCentered((s16)((union EventLine *)work)->line++, 0, -3)
@@ -393,7 +400,7 @@ void Func_020009d4(void) {
   Party_PlaySavedMusic();
   PaletteFade_ApplyTarget(speed, 0);
   BattleEffect_StartBufferInterpolation(60);
-  Func_02001214(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_MoveToActorById(gMainRoutineWork.currentOwner, 1);
   Event_Wait(60);
   Event_End();
 }
@@ -609,8 +616,10 @@ struct Trigger gData_02001594[] = {
 struct Trigger gData_020015c4[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_0200066c)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_0200069c)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
+     CONDITION_ALWAYS, EVENT(Func_0200066c)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
+     CONDITION_ALWAYS, EVENT(Func_0200069c)},
     {0x50008905, 40, CONDITION_ALWAYS, EVENT(Func_02000060)},
     {0x50008905, 41, CONDITION_ALWAYS, EVENT(Func_02000080)},
     {0x50008905, 42, CONDITION_ALWAYS, EVENT(Func_020001e0)},

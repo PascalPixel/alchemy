@@ -66,9 +66,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_02003fdc
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02003fdc:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SetMode
 	.global Actor_StartScript
 	.thumb_func
@@ -338,9 +338,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_020041fc
+	.global BattleEffect_StartEffectObject22
 	.thumb_func
-Func_020041fc:
+BattleEffect_StartEffectObject22:
 	overlay_veneer Func_080c83e0
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -382,13 +382,13 @@ Func_02004244:
 	.thumb_func
 Func_0200424c:
 	overlay_veneer Func_080c87c8
-	.global Func_02004254
+	.global BattleEffect_GetObjectPriority
 	.thumb_func
-Func_02004254:
+BattleEffect_GetObjectPriority:
 	overlay_veneer Func_080c87e8
-	.global Func_0200425c
+	.global BattleEffect_GetObjectDepth
 	.thumb_func
-Func_0200425c:
+BattleEffect_GetObjectDepth:
 	overlay_veneer Func_080c87f0
 	.global BattleEffect_StartArcEffect
 	.thumb_func
@@ -414,17 +414,17 @@ Func_02004284:
 	.thumb_func
 Func_0200428c:
 	overlay_veneer Func_080c88e8
-	.global Func_02004294
+	.global Shop_Run
 	.thumb_func
-Func_02004294:
+Shop_Run:
 	overlay_veneer Func_08108008
-	.global Func_0200429c
+	.global Sanctum_Run
 	.thumb_func
-Func_0200429c:
+Sanctum_Run:
 	overlay_veneer Func_08108010
-	.global Func_020042a4
+	.global Inn_CheckIn
 	.thumb_func
-Func_020042a4:
+Inn_CheckIn:
 	overlay_veneer Func_08108018
 	.global Sound_WaitForJingle
 	.thumb_func

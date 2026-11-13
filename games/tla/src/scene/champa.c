@@ -80,7 +80,7 @@ void Func_02000080(const void *warp, s32 door, s32 mode) {
   Event_End();
 }
 
-void Func_020029f4(s32 a);
+void Map_ClearLayerEntryFlag(s32 a);
 
 void Func_020000fc(s32 door) {
   s32 *table = gData_020031fc;
@@ -89,7 +89,7 @@ void Func_020000fc(s32 door) {
     *(void **)((u8 *)Actor_Get(gMainRoutineWork.currentOwner) + 108) =
         Func_0200006c;
   if (door == 7) {
-    Func_020029f4(8);
+    Map_ClearLayerEntryFlag(8);
     Func_02000080(table, 7, 1);
   } else {
     Func_02000080(table + 2, door, 0);
@@ -125,7 +125,7 @@ void Func_02000188(void) {
   FieldActor_Jump(32, 6, 20);
   FieldEvent_ShowMessageThenWait(0x20, 0, 5);
   FieldCamera_MoveTo(PIXELS(176), -1, PIXELS(256), 1);
-  Func_02002b3c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   FieldActor_StartRepeatedMotion(32, 3);
   Actor_SetAttachedEffect(0x20, 0x102);
@@ -164,7 +164,7 @@ void Func_02000188(void) {
   Actor_WalkByAndWait(34, 0, 32);
   Actor_FaceDirectionAndWait(34, 0x3000);
   FieldCamera_MoveTo(PIXELS(208), -1, PIXELS(296), 1);
-  Func_02002b3c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(15);
   FieldActor_Jump(34, 6, 15);
   FieldActor_Jump(34, 6, 23);
@@ -329,7 +329,7 @@ void Func_02000638(void) {
       Actor_FaceDirection(4, FACING_SOUTH, 0);
       FieldEvent_Wait(10);
       FieldCamera_FollowActor(29, 1);
-      Func_02002b3c();
+      FieldCamera_WaitForArrival();
       FieldEvent_Wait(40);
       Actor_WalkToAndWait(29, 314, 624);
       Actor_ShowEmote(0x1d, 0x101, 0x1e);
@@ -517,7 +517,7 @@ s32 Scene_Initialize(void) {
 
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x100;
   Task_AddFrame((s32)Func_02000a80, 0xc80);
-  Func_020029fc(8);
+  Map_SetLayerEntryFlag(8);
   Actor_SetSingleChildFlags(((s32)Actor_Get(10)), 0);
   Actor_SetSingleChildFlags(((s32)Actor_Get(11)), 0);
   FieldActor_SetSpritePriority(13, 3);
@@ -527,7 +527,7 @@ s32 Scene_Initialize(void) {
   FIELD_AT(t8, s32, 28) = 0x8000;
   Func_02002ba4();
   Func_02002bac(0, 8, 9);
-  Func_020029fc(3);
+  Map_SetLayerEntryFlag(3);
   t12 = Event_GetFlag(0x97f);
   if (t12 != 0) {
     FieldActor_SetSpritePriority(20, 2);
@@ -572,7 +572,7 @@ void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
   object = FieldActor_Create(0x1e8, x, y, z);
   if (object != 0) {
     sprite = object->sprite;
-    Func_020029dc(object, 1);
+    Actor_SelectAnimation(object, 1);
     Actor_StartScript(object, gData_02003620);
     object->motionFlags = 0;
     ((struct {
@@ -609,7 +609,7 @@ void Func_02000c90(s32 firstId, s32 secondId) {
 }
 
 void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);
-void Func_02002a2c(s32 object, s32 a, s32 b, s32 c);
+void Portrait_OpenWindow(s32 object, s32 a, s32 b, s32 c);
 
 void Func_02000d4c(s32 firstId, s32 firstX, s32 firstY, s32 firstA, s32 firstB,
                    s32 secondId, volatile s32 secondX, s32 secondY, s32 secondA,
@@ -622,7 +622,7 @@ void Func_02000d4c(s32 firstId, s32 firstX, s32 firstY, s32 firstA, s32 firstB,
 
   Message_OpenWindow(work->message++, firstX, firstY,
                      BattleEffect_GetResourceId(first) << 16);
-  Func_02002a2c(first, 0, firstA, firstB);
+  Portrait_OpenWindow(first, 0, firstA, firstB);
   if (frames != 0) {
     while (!Message_AllTyped())
       System_Wait(frames);
@@ -632,7 +632,7 @@ void Func_02000d4c(s32 firstId, s32 firstX, s32 firstY, s32 firstA, s32 firstB,
    * secondX, 4 of 79 instructions differ in tla-en. */
   Message_OpenWindow((*(volatile s16 *)&work->message)++, secondX, secondY,
                      BattleEffect_GetResourceId(second) << 16);
-  Func_02002a2c(second, 0, secondA, secondB);
+  Portrait_OpenWindow(second, 0, secondA, secondB);
   while (!Message_AllTyped())
     System_Wait(1);
   System_Wait(1);
@@ -688,7 +688,7 @@ void Func_02000e30(void) {
   Actor_ShowEmote(4, 0x101, 0x14);
   Actor_WalkToAndWait(4, 312, 616);
   FieldCamera_MoveTo(0x1380000, -1, 0x2580000, 1);
-  Func_02002b3c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(5);
   Event_PlaySound(0x27);
   Actor_WalkToAndWait(25, 304, 576);
@@ -1148,7 +1148,7 @@ void Func_02000e30(void) {
   Actor_ShowEmote(0x19, 0x100, 0x28);
   Actor_FaceDirectionAndWait(25, 0xb000);
   FieldCamera_MoveTo(0x1300000, -1, 0x2880000, 1);
-  Func_02002b3c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Event_ShowMessage(0x2019, 0);
   Actor_RunRepeatedMotion(28, 2);
@@ -1230,7 +1230,7 @@ void Func_02000e30(void) {
   Actor_SetPosition(25, 0, 0);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(0x1300000, -1, 0x2700000, 1);
-  Func_02002b3c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Event_PlaySound(3);
   Actor_ShowEmote(5, 0x107, 0x1e);

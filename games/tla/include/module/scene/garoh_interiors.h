@@ -8,7 +8,7 @@
 
 void Func_02000710(void);
 
-void Func_020007dc(s32 value);
+void Map_SetShownLayers(s32 value);
 
 void Func_0200087c(s32 value);
 

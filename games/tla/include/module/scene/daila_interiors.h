@@ -14,7 +14,7 @@ extern s32 gData_02001924[];
 extern s32 gData_02001990[];
 extern s32 gData_02001c18[];
 
-void Func_02000de4(s32 actor);
+void Sanctum_Run(s32 actor);
 
 extern const u8 gData_02000e04[];
 

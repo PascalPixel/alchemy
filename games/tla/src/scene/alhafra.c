@@ -74,9 +74,9 @@ void Func_0200010c(s32 index) {
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_02001d44();
+s32 Shop_Run();
 
-void Func_02000124(s32 a0) { Func_02001d44(7, a0); }
+void Func_02000124(s32 a0) { Shop_Run(7, a0); }
 #undef FIELD_AT
 
 #define FIELD_AT(base, type, off)                                              \
@@ -86,7 +86,7 @@ void Func_02000124(s32 a0) { Func_02001d44(7, a0); }
    } *)(base))                                                                 \
        ->v)
 
-void Func_02000130(s32 a0) { Func_02001d44(8, a0); }
+void Func_02000130(s32 a0) { Shop_Run(8, a0); }
 #undef FIELD_AT
 
 void Func_0200013c(s32 actor) {
@@ -186,7 +186,11 @@ void Func_02000260(void) { FieldActor_SetSpritePriority(25, 3); }
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(alhafra): routine Func_02001d2c as s32 Func_02001d2c(); module/scene/scene.h has s32 Func_02001d2c(s32 x, s32 z, s32 layer); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/alhafra.c:194: too few arguments to function `Func_02001d2c'. */
+/* VIEW(alhafra): routine Func_02001d2c as s32 Func_02001d2c();
+ * module/scene/scene.h has s32 Func_02001d2c(s32 x, s32 z, s32 layer); tried as
+ * the rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/alhafra.c:194: too few arguments to function
+ * `Func_02001d2c'. */
 extern s32 Func_02001d2c__alhafra() __asm__("Func_02001d2c");
 extern u8 gData_02001d54[];
 
@@ -227,7 +231,6 @@ void Func_02000288(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
 
 void Func_020002f8(void) {
   GameFlag_SetBit(0x8b5);
@@ -288,8 +291,12 @@ void Func_02000398(s32 id) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(alhafra): routine Func_02001ccc as void Func_02001ccc(void); module/scene/scene.h has void Func_02001ccc(s32 actor, s32 value); tried as the rest of the object declares it, Func_0200047c moves: 3 of 189 instructions, Func_02000aa0 moves: 11 of 1456 instructions in tla-ja. */
-extern void Func_02001ccc__alhafra(void) __asm__("Func_02001ccc");
+/* VIEW(alhafra): routine FieldCamera_WaitForArrival as void
+ * FieldCamera_WaitForArrival(void); module/scene/scene.h has void
+ * FieldCamera_WaitForArrival(s32 actor, s32 value); tried as the rest of the
+ * object declares it, Func_0200047c moves: 3 of 189 instructions, Func_02000aa0
+ * moves: 11 of 1456 instructions in tla-ja. */
+extern void Func_02001ccc__alhafra(void) __asm__("FieldCamera_WaitForArrival");
 
 void Func_0200047c(void) {
   GameFlag_SetBit(0x8b7);
@@ -308,7 +315,7 @@ void Func_0200047c(void) {
   Actor_SetModeById(29, 5);
   Sound_Play(0x59);
   FIELD_AT(&gMainRoutineWork, s32, 532) = 0x1d;
-  Func_02001cec(0, 3);
+  BattleEffect_StartEffectObject22(0, 3);
   FIELD_AT(&gMainRoutineWork, s32, 532) = 4;
   Event_Wait(50);
   FieldActor_Jump(28, 6, 15);
@@ -431,7 +438,6 @@ const u8 *Scene_GetEvents(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
 
 s32 Scene_Initialize(void) {
   s32 t1, t2, t3, t4, t9, t10, t11, t23, t24, t25, t37, t39, t41, t44, t50, t51,

@@ -313,7 +313,7 @@ void Func_02000b58(struct Actor *object) {
   object->update = 0;
 }
 
-void Func_02002948(s32 layer);
+void Map_SetLayerEntryFlag(s32 layer);
 
 /// Toggles flag 0xa68 and with it which of two layer pairs is shown: four
 /// rounds of a random colour value, then one pair's blend scripts and layer
@@ -345,20 +345,20 @@ void Func_02000b68(s32 unused, s32 id) {
     GameFlag_SetBit(0xa68);
     Func_02002958_(64, 64, 1, 2, 51, 82);
     Func_02002958_(66, 64, 1, 2, 115, 18);
-    Func_02002948(5);
-    Func_02002948(6);
-    Func_02002940(7);
-    Func_02002940(8);
+    Map_SetLayerEntryFlag(5);
+    Map_SetLayerEntryFlag(6);
+    Map_ClearLayerEntryFlag(7);
+    Map_ClearLayerEntryFlag(8);
     object->update = (void (*)(void))Func_02000b58;
     Func_020025a8(26);
   } else {
     GameFlag_ClearBit(0xa68);
     Func_02002958_(65, 64, 1, 2, 51, 82);
     Func_02002958_(67, 64, 1, 2, 115, 18);
-    Func_02002948(7);
-    Func_02002948(8);
-    Func_02002940(5);
-    Func_02002940(6);
+    Map_SetLayerEntryFlag(7);
+    Map_SetLayerEntryFlag(8);
+    Map_ClearLayerEntryFlag(5);
+    Map_ClearLayerEntryFlag(6);
     object->update = (void (*)(void))Func_02000b58;
     Func_020025a8(0);
   }
@@ -415,14 +415,14 @@ void Func_02000d64(struct Actor *object, s32 limit) {
 #include "ram_buffer.h"
 #include "frame.h"
 
-/* VIEW(aqua_rock): routine Func_02002970 as s32 Func_02002970(struct Actor
- * *object, struct Vector3 *position); module/scene/lemurian_ship.h has void
- * Func_02002970(void); tried as the definition's void Func_02002970(void),
- * which the object already declares, Func_02001e00 moves: 4 of 151 instructions
- * in tla-ja. */
-extern s32
-Func_02002970__aqua_rock(struct Actor *object,
-                         struct Vector3 *position) __asm__("Func_02002970");
+/* VIEW(aqua_rock): routine MapGrid_CheckCollision as s32
+ * MapGrid_CheckCollision(struct Actor *object, struct Vector3 *position);
+ * module/scene/lemurian_ship.h has void MapGrid_CheckCollision(void); tried as
+ * the definition's void MapGrid_CheckCollision(void), which the object already
+ * declares, Func_02001e00 moves: 4 of 151 instructions in tla-ja. */
+extern s32 Func_02002970__aqua_rock(
+    struct Actor *object,
+    struct Vector3 *position) __asm__("MapGrid_CheckCollision");
 
 void Func_02000d80(void) {
   struct Actor *leader, *carried;
@@ -636,7 +636,7 @@ void Func_02001224(s32 unused, s32 id) {
   Event_Wait(15);
   Camera_SetSpeedParameters(0x10000, 0x2000);
   Camera_MoveWithinMapBounds(PIXELS(248), -PIXELS(32), PIXELS(760), 1);
-  Func_02002a10();
+  FieldCamera_WaitForArrival();
   Actor_SetHorizontalPositionWithTerrain(15, PIXELS(264), PIXELS(792));
   Actor_SetSingleChildFlags(Actor_GetById(15), 0);
   Actor_GetById(15)->collisionFlags = 0;
@@ -838,7 +838,7 @@ settle:
 
 #include "call.h"
 
-void Func_02002948(s32 a);
+void Map_SetLayerEntryFlag(s32 a);
 
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -895,10 +895,10 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Test(0xa68)) {
       Func_020025a8(26);
       Func_02002834(26);
-      Func_02002948(5);
-      Func_02002948(6);
-      Func_02002940(7);
-      Func_02002940(8);
+      Map_SetLayerEntryFlag(5);
+      Map_SetLayerEntryFlag(6);
+      Map_ClearLayerEntryFlag(7);
+      Map_ClearLayerEntryFlag(8);
       Actor_GetById(26)->update = Func_02000b58;
     }
     Actor_SetSpritePriority(26, 1);
@@ -955,10 +955,10 @@ s32 Scene_Initialize(void) {
         Func_020025a8(14);
         Func_02002834(14);
       } else {
-        Func_02002948(7);
-        Func_02002948(8);
-        Func_02002940(5);
-        Func_02002940(6);
+        Map_SetLayerEntryFlag(7);
+        Map_SetLayerEntryFlag(8);
+        Map_ClearLayerEntryFlag(5);
+        Map_ClearLayerEntryFlag(6);
       }
       Actor_SetSingleChildFlags(Actor_GetById(14), 0);
     } else {

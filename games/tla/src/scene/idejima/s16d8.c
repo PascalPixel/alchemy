@@ -548,7 +548,7 @@ void Func_02002304(void) {
   do
     System_Wait(1);
   while (leader->timer == 0);
-  Func_020032e0();
+  FieldCamera_WaitForArrival();
   Actor_ShowEmote(5, 0x100, 20);
   Event_ShowMessage(0x1005, 0);
   Event_ShowMessage(0x1006, 0);
@@ -687,7 +687,7 @@ s32 Scene_Initialize(void) {
   switch (entrance) {
   case 2:
     if (Event_GetFlag(0x109) == 0)
-      Func_020031a8(1);
+      Party_RestoreHpPp(1);
   case 4: {
     struct MainRoutineWork *party = &gMainRoutineWork;
 

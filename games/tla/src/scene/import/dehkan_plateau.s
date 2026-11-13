@@ -110,9 +110,9 @@ Map_SetScreenShake:
 	.thumb_func
 Map_WaitForShakeToSettle:
 	overlay_veneer Func_08020230
-	.global Func_02003c10
+	.global MapGrid_GetTerrainKind
 	.thumb_func
-Func_02003c10:
+MapGrid_GetTerrainKind:
 	overlay_veneer Func_080202f0
 	.global Icon_DrawItem
 	.thumb_func
@@ -222,9 +222,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02003cf0
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02003cf0:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Func_080d4568
 	.thumb_func
@@ -238,9 +238,9 @@ Import_EventSetExitRequest:
 	.thumb_func
 Func_080d2b4c:
 	overlay_veneer Func_080c8288
-	.global Func_02003d10
+	.global Field_FindNearbyTalkTarget
 	.thumb_func
-Func_02003d10:
+Field_FindNearbyTalkTarget:
 	overlay_veneer Func_080c82c0
 	.global BattleEffect_FindNearestObject
 	.thumb_func
@@ -262,9 +262,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02003d40
+	.global BattleEffect_RunActorRiseAndDescent
 	.thumb_func
-Func_02003d40:
+BattleEffect_RunActorRiseAndDescent:
 	overlay_veneer Func_080c83d8
 	.global Field_DispatchTypeHandler
 	.thumb_func
@@ -294,9 +294,9 @@ EventObject_Initialize:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02003d80
+	.global Sprite_ShareVramCacheEntry
 	.thumb_func
-Func_02003d80:
+Sprite_ShareVramCacheEntry:
 	overlay_veneer Func_080c8518
 	.global Actor_WatchAndSetScript
 	.thumb_func

@@ -17,7 +17,7 @@ extern s16 gLightSpriteTile;
 extern struct LightOam Data_0200246c[];
 extern s16 gLightSpritesLarge;
 
-s32 Func_02001bd4(struct Actor *actor);
+s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
 void Leader_CenterInCell(void);
 

@@ -164,7 +164,7 @@ void Func_020003e4(void) {
     FieldCamera_MoveTo(-1, -1, -1, 0);
     Camera_SetSpeedParameters(0x26666, 0x4ccc);
     FieldCamera_MoveTo(PIXELS(520), -1, PIXELS(372), 1);
-    Func_020010e0();
+    FieldCamera_WaitForArrival();
     Actor_ShowEmote(23, 264, 0);
     Actor_FaceDirection(23, 0x3000, 20);
     Event_SetMessageId((s32)MsgIVeBeenWaiting);
@@ -174,14 +174,14 @@ void Func_020003e4(void) {
     Func_080d4568()->motionFlags = 0;
     FieldCamera_SetSpeed(0x4cccc, 0x9999);
     FieldCamera_MoveTo(PIXELS(440), PIXELS(32), PIXELS(368), 1);
-    Func_020010e0();
+    FieldCamera_WaitForArrival();
     Event_Wait(40);
     FieldCamera_MoveTo(PIXELS(432), PIXELS(32), PIXELS(232), 1);
-    Func_020010e0();
+    FieldCamera_WaitForArrival();
     Event_Wait(40);
     Camera_SetSpeedParameters(0x4cccc, 0x9999);
     Camera_MoveWithinMapBounds(PIXELS(520), PIXELS(32), PIXELS(372), 1);
-    Func_020010e0();
+    FieldCamera_WaitForArrival();
     Event_Wait(20);
     Actor_FaceDirectionAndWait(23, 0x3000);
     Motion_SetModeAndWaitAnimation(23, 3);
@@ -262,7 +262,8 @@ void Func_02000640(void) {
   }
 }
 
-void Func_02001120(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY, s32 layer);
+void Func_02001120(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
+                   s32 destY, s32 layer);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

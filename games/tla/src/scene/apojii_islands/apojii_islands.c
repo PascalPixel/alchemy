@@ -217,7 +217,7 @@ void Func_020007a4(s32 unused, s32 id) {
   Sound_Play(21);
   Func_02001ad8();
   Func_02001ba0(17);
-  Func_02001dec(170);
+  Scene_QueueMusic(170);
   i = 3;
   /* FAKEMATCH(wrapper): both flashes forwarded through ApojiiIslands_Flash,
    * which keeps each call's own constants; as direct calls, 10 of 188
@@ -258,9 +258,9 @@ blend:
    * 188 instructions differ in tla-en. */
   ApojiiIslands_CamMove(PIXELS(360), -1, PIXELS(328), 1);
   Func_080d47b4(16, 256, 20);
-  Func_02001d8c();
+  FieldCamera_WaitForArrival();
   ApojiiIslands_CamMove(PIXELS(440), -1, PIXELS(376), 1);
-  Func_02001d8c();
+  FieldCamera_WaitForArrival();
   ApojiiIslands_CamMove(PIXELS(472), -1, PIXELS(408), 1);
   Import_EventSetExitRequest(77);
 }
@@ -402,7 +402,7 @@ const u8 *Scene_GetEvents(void) {
 void Func_02000de0(s32 actor) {
   if ((u16)((Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
-    Func_02001e24(8, actor);
+    Inn_CheckIn(8, actor);
     return;
   }
   Event_Start();
@@ -435,7 +435,7 @@ void Func_02000e40(s32 actor) {
 void Func_02000e98(s32 actor) {
   if ((u16)((Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
-    Func_02001e1c(23, actor);
+    Shop_Run(23, actor);
     return;
   }
   Event_Start();
@@ -501,7 +501,7 @@ void Func_02001054(void) {
   Task_AddFrame(Func_020003e8, TASK_PASS_VBLANK);
   Func_02001dfc();
   Func_02001e04(0, 0x200, 8, 9);
-  Func_02001dec(170);
+  Scene_QueueMusic(170);
   Scroll_StartHBlank();
   if (gMainRoutineWork.entrance == 3)
     Leader_RiseFromWater();
@@ -560,36 +560,36 @@ void Func_020011a8(void) {
     position[0] = leader->x;
     position[1] = leader->y;
     position[2] = leader->z + 0x20000;
-    result = Func_02001c9c(leader, position);
+    result = MapGrid_CheckCollision(leader, position);
     if ((gFrameCount & 4) == 0)
       Func_020010d8(leader);
     if (result < 0) {
       Actor_SetAttachedEffect(owner, 0x102);
       FieldActor_SetMoveTarget(leader, leader->x, leader->y,
                                leader->z + 0x80000);
-      Func_02001c6c(leader, 49);
+      Actor_SelectAnimation(leader, 49);
       Actor_WaitForMove(leader);
       do {
         System_Wait(1);
       } while (leader->y != leader->terrainHeight);
       Func_020010d8(leader);
-      Func_02001c6c(leader, 49);
+      Actor_SelectAnimation(leader, 49);
       System_Wait(3);
     } else {
       position[0] = leader->x;
       position[1] = leader->y;
       position[2] = leader->z + 0x80000;
-      result = Func_02001c9c(leader, position);
+      result = MapGrid_CheckCollision(leader, position);
       if (result <= 0) {
         position[0] = leader->x + 0x5b333;
         position[1] = leader->y;
         position[2] = leader->z + 0x5b333;
-        result = Func_02001c9c(leader, position);
+        result = MapGrid_CheckCollision(leader, position);
         if (result <= 0) {
           position[0] = leader->x - 0x5b333;
           position[1] = leader->y;
           position[2] = leader->z + 0x5b333;
-          result = Func_02001c9c(leader, position);
+          result = MapGrid_CheckCollision(leader, position);
           if (result <= 0) {
             anchor->z += 0x20000;
             leader->z += 0x20000;
@@ -601,9 +601,9 @@ void Func_020011a8(void) {
   }
 }
 
-DEFINE_ACTOR_SHOW_PARTS(Actor_ShowParts, Func_02001c6c)
+DEFINE_ACTOR_SHOW_PARTS(Actor_ShowParts, Actor_SelectAnimation)
 
-DEFINE_LEADER_SPIN_AWAY(Leader_SpinAway, Func_02001c6c, Func_020010d8)
+DEFINE_LEADER_SPIN_AWAY(Leader_SpinAway, Actor_SelectAnimation, Func_020010d8)
 
 /// Every other frame, emits particle 7 (5 on every other such frame) from the
 /// object, 26 pixels up, swaying with the frame count and drifting by a random

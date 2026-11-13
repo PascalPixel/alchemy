@@ -27,7 +27,7 @@ extern struct Trigger gData_020014b8[];
 extern struct Trigger gData_02001554[];
 extern u32 gData_020015c0[];
 
-void Func_02000e24(struct Actor *object, s32 a);
+void Actor_SelectAnimation(struct Actor *object, s32 a);
 
 extern s32 gData_020015c4[];
 

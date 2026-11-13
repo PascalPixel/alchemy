@@ -15,13 +15,26 @@
 #include "module/game/game.h"
 #include "module/scene/contigo.h"
 #include "module/system/system.h"
-/* VIEW(contigo): routine Func_02003e54 as void Func_02003e54(struct ContigoObject *object, const void *effect); the definition has void Func_02003e54(struct Actor *object, struct SparkleWork *work); tried as the definition's void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2224: conflicting types for `Func_02003e54'. */
+/* VIEW(contigo): routine Func_02003e54 as void Func_02003e54(struct
+ * ContigoObject *object, const void *effect); the definition has void
+ * Func_02003e54(struct Actor *object, struct SparkleWork *work); tried as the
+ * definition's void Func_02003e54(struct Actor *object, struct
+ * SparkleWork__s3e54 *work), which the object already declares, it does not
+ * compile in tla-ja: games/tla/src/scene/contigo.c:2224: conflicting types for
+ * `Func_02003e54'. */
 struct ContigoObject;
-extern void Func_02003e54__contigo(struct ContigoObject *object, const void *effect) __asm__("Func_02003e54");
+extern void Func_02003e54__contigo(struct ContigoObject *object,
+                                   const void *effect) __asm__("Func_02003e54");
 #define Func_02003e54 Func_02003e54__contigo
-/* VIEW(contigo): routine Func_02003f54 as void Func_02003f54(struct ContigoObject *object); the definition has void Func_02003f54(struct ContigoObject__s3e54 *object); tried as the definition's void Func_02003f54(struct ContigoObject__s3e54 *object), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2258: conflicting types for `Func_02003f54'. */
+/* VIEW(contigo): routine Func_02003f54 as void Func_02003f54(struct
+ * ContigoObject *object); the definition has void Func_02003f54(struct
+ * ContigoObject__s3e54 *object); tried as the definition's void
+ * Func_02003f54(struct ContigoObject__s3e54 *object), which the object already
+ * declares, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2258:
+ * conflicting types for `Func_02003f54'. */
 struct ContigoObject;
-extern void Func_02003f54__contigo(struct ContigoObject *object) __asm__("Func_02003f54");
+extern void
+Func_02003f54__contigo(struct ContigoObject *object) __asm__("Func_02003f54");
 #define Func_02003f54 Func_02003f54__contigo
 #include "../contigo.h"
 #undef Func_02003f54
@@ -45,8 +58,7 @@ extern void Func_02003f54__contigo(struct ContigoObject *object) __asm__("Func_0
 #include "event_work.h"
 #include "version.h"
 
-
-void Func_02003fdc(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 
 void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -65,7 +77,7 @@ void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_02003fdc(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_0200474c[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
@@ -107,7 +119,7 @@ void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_02003fdc(effect, 1);
+    Actor_SelectAnimation(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
@@ -132,7 +144,7 @@ DEFINE_ACTOR_IS_FACING_NEAR(Actor_IsFacingNear, Position_Distance)
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 value);
-s32 Func_02004254(struct Actor *object);
+s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
 s32 Func_020006d0(struct Actor *self) {
   u8 *event = Ram_HeapSlots->eventWork;
@@ -141,7 +153,9 @@ s32 Func_020006d0(struct Actor *self) {
   s8 *effect;
   struct Actor *other;
 
-  Actor_SetSpritePriorityDirect(self, Func_02004254(Actor_GetById(gMainRoutineWork.currentOwner)));
+  Actor_SetSpritePriorityDirect(
+      self, BattleEffect_GetObjectPriority(
+                Actor_GetById(gMainRoutineWork.currentOwner)));
   mode = 0x3ff & *(u16 *)(event + 0x166);
   state = &self->movementState;
   if (mode == 141) {
@@ -160,15 +174,16 @@ s32 Func_020006d0(struct Actor *self) {
     other = Actor_GetById(14);
   if (Actor_IsFacingNear(self, other, 18) != 0)
     goto near;
-  if (Actor_IsFacingNear(self, Actor_GetById(gMainRoutineWork.currentOwner), 26) != 0)
+  if (Actor_IsFacingNear(self, Actor_GetById(gMainRoutineWork.currentOwner),
+                         26) != 0)
     goto near;
 far:
   *state = 0;
-  Func_02003fdc(self, 2);
+  Actor_SelectAnimation(self, 2);
   return 0;
 near:
   *state = 1;
-  Func_02003fdc(self, 1);
+  Actor_SelectAnimation(self, 1);
   return 0;
 }
 
@@ -183,7 +198,11 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(contigo): variable gData_02004c70 as extern u8 gData_02004c70[]; the definition has u32 gData_02004c70[] = { 0xffff, 0, 0, 0, 0, 0, }; tried as the definition's extern s32 gData_02004c70[], it does not compile in tla-ja: games/tla/src/scene/contigo.c:2509: conflicting types for `gData_02004c70'. */
+/* VIEW(contigo): variable gData_02004c70 as extern u8 gData_02004c70[]; the
+ * definition has u32 gData_02004c70[] = { 0xffff, 0, 0, 0, 0, 0, }; tried as
+ * the definition's extern s32 gData_02004c70[], it does not compile in tla-ja:
+ * games/tla/src/scene/contigo.c:2509: conflicting types for `gData_02004c70'.
+ */
 extern u8 gData_02004c70__contigo[] __asm__("gData_02004c70");
 
 u8 *Scene_GetPlacements(void) {
@@ -311,8 +330,7 @@ void Func_020009d0(struct OrbitEffect *effect) {
 
 void Func_02000a80(void) {
   if ((gFrameCount & 7) == 0) {
-    struct Actor *object =
-        Actor_Spawn(308, 0x02c20000, 0xcccc, 0x740000);
+    struct Actor *object = Actor_Spawn(308, 0x02c20000, 0xcccc, 0x740000);
 
     if (object != NULL) {
       Actor_SetSingleChildFlags(object, 0);
@@ -337,7 +355,6 @@ struct ContigoGlow {
   u8 motionFlags;
 };
 
-
 /// The glow that grows over actor 17 and sinks away again, then the scene goes
 /// on.
 void Func_02000af4(void) {
@@ -357,11 +374,12 @@ void Func_02000af4(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x204084, 1);
   BattleEffect_StartBufferInterpolation(16);
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(((struct ContigoObject *)Actor_GetById(17)), 2);
+  BattleEffect_SetObjectUpdateMode(((struct ContigoObject *)Actor_GetById(17)),
+                                   2);
   effect = ((struct ContigoGlow *)Import_ActorCreate(280, x, 0, z));
   if (effect != 0) {
     Actor_SetSingleChildFlags(effect, 0);
-    Func_02003fdc(effect, 2);
+    Actor_SelectAnimation(effect, 2);
     effect->motionFlags = 0;
     effect->scaleX = 0x1999;
     effect->scaleY = 0x1999;
@@ -389,7 +407,8 @@ void Func_02000af4(void) {
       goto shrink;
     Import_ActorDestroy(effect);
   }
-  BattleEffect_SetObjectUpdateMode(((struct ContigoObject *)Actor_GetById(17)), 0);
+  BattleEffect_SetObjectUpdateMode(((struct ContigoObject *)Actor_GetById(17)),
+                                   0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
@@ -413,15 +432,15 @@ void Func_02000af4(void) {
   Event_End();
 }
 
-void Func_02004294(s32 a, s32 b);
-void Func_0200429c(s32 a);
-void Func_020042a4(s32 a, s32 b);
+void Shop_Run(s32 a, s32 b);
+void Sanctum_Run(s32 a);
+void Inn_CheckIn(s32 a, s32 b);
 
 DEFINE_LEADER_IS_FACING_NORTH(Leader_IsFacingNorth)
 
 void Func_02000cf4(void) {
   if (Leader_IsFacingNorth()) {
-    Func_02004294(28, 13);
+    Shop_Run(28, 13);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -436,7 +455,7 @@ void Func_02000cf4(void) {
 
 void Func_02000d44(void) {
   if (Leader_IsFacingNorth()) {
-    Func_02004294(26, 18);
+    Shop_Run(26, 18);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -451,7 +470,7 @@ void Func_02000d44(void) {
 
 void Func_02000d94(void) {
   if (Leader_IsFacingNorth()) {
-    Func_02004294(27, 19);
+    Shop_Run(27, 19);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -466,7 +485,7 @@ void Func_02000d94(void) {
 
 void Func_02000de4(void) {
   if (Leader_IsFacingNorth()) {
-    Func_020042a4(12, 20);
+    Inn_CheckIn(12, 20);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -483,7 +502,7 @@ void Func_02000de4(void) {
 
 void Func_02000e50(void) {
   if (Leader_IsFacingNorth()) {
-    Func_0200429c(28);
+    Sanctum_Run(28);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -584,8 +603,9 @@ void Func_0200102c(void) {
   FieldMessage_Show(msg + 1, 1);
   FieldMessage_Show(msg + 2, 1);
   FieldMessage_Show(msg + 3, 1);
-#if (LANGUAGE != LANGUAGE_SPANISH) /* The Spanish edition ends after four messages.  \
-                              */
+#if (LANGUAGE !=                                                               \
+     LANGUAGE_SPANISH) /* The Spanish edition ends after four messages.        \
+                        */
   FieldMessage_Show(msg + 4, 1);
 #endif
   Event_End();
@@ -678,7 +698,7 @@ void Func_0200428c(void);
 void Func_02001250(void) {
   Contigo_StartSlowPaletteCycle();
   Func_0200428c();
-  
+
   gMainRoutineWork.unk2c2 = 2;
   Event_SetDestination((s32)&SceneId_Ov6B0Room1, 99);
   Event_Wait(40);
@@ -691,8 +711,8 @@ void Func_020012a4(void) { Contigo_Tiles(4, 43, 2, 1, 2, 43, 0); }
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void
-Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
+static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
+                                                           s32 dz) {
   Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
 
@@ -712,7 +732,7 @@ void Func_020012c4(void) {
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
       Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 0,
-                                                 -16);
+                                          -16);
       leader->velocityY = 0x60000;
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
@@ -879,12 +899,19 @@ void Func_020017f4(void) {
   Actor_SetModeById(33, 0);
 }
 
-/* VIEW(contigo): routine MessageArgument_Push as void MessageArgument_Push(s32 value, s32 digits); module/window/window.h has void MessageArgument_Push(u32 value, u32 kind); tried as the definition's void MessageArgument_Push(u32 value, u32 kind), which the object already declares, Func_02001938 moves: 2 of 105 instructions, Func_02001abc moves: 2 of 72 instructions, Func_02003a8c moves: 5 of 220 instructions in tla-ja. */
-extern void MessageArgument_Push__contigo(s32 value, s32 digits) __asm__("MessageArgument_Push");
+/* VIEW(contigo): routine MessageArgument_Push as void MessageArgument_Push(s32
+ * value, s32 digits); module/window/window.h has void MessageArgument_Push(u32
+ * value, u32 kind); tried as the definition's void MessageArgument_Push(u32
+ * value, u32 kind), which the object already declares, Func_02001938 moves: 2
+ * of 105 instructions, Func_02001abc moves: 2 of 72 instructions, Func_02003a8c
+ * moves: 5 of 220 instructions in tla-ja. */
+extern void
+MessageArgument_Push__contigo(s32 value,
+                              s32 digits) __asm__("MessageArgument_Push");
 void Field_SetDestination(s32 scene, s32 entrance);
 
-/// The lucky wheels attendant: checks the game tickets and free item slots, then
-/// sends the player in.
+/// The lucky wheels attendant: checks the game tickets and free item slots,
+/// then sends the player in.
 void Func_02001938(s32 spoken) {
   s32 tickets = PartyInventory_CountItem(228);
   s32 room;
@@ -902,7 +929,8 @@ void Func_02001938(s32 spoken) {
     Event_SetMessageId(message + 2);
     MessageArgument_Push__contigo(tickets, 5);
     FieldMessage_ShowAtActor(18, 0);
-    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+        1) {
       Event_ShowMessageAndWait(18, 0);
       return;
     }
@@ -914,8 +942,8 @@ void Func_02001938(s32 spoken) {
       Event_SetMessageId(message + 5);
       FieldMessage_ShowAtActor(18, 0);
     }
-    if (room <= 6 &&
-        Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
+    if (room <= 6 && Event_AskYesNoWithActorAnimation(
+                         gMainRoutineWork.currentOwner, 0) == 1) {
       Event_SetMessageId((s32)MsgContigo12);
       Event_ShowMessageAndWait(18, 0);
       return;
@@ -1064,8 +1092,7 @@ void Func_02001c5c(s32 a, s32 b, s32 c, s32 d) {
   }
   Event_Wait(20);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
-  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
-                                          gData_0200466c);
+  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_0200466c);
   wait(12);
   Sound_Play(123);
   Event_FinishScreenTransition();
@@ -1087,15 +1114,40 @@ void Func_02001d38(void) {
   Import_EventSetExitRequest(24);
 }
 
-/* VIEW(contigo): variable gData_020048a0 as extern const u8 gData_020048a0[]; the definition has u32 gData_020048a0[] = { 39, 2, 4, 0xa40000, 0, 0x1680000, 1, 39, 1, 0, 10, 22, 3, 0xa000, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's extern u32 gData_020048a0[], it does not compile in tla-ja: games/tla/src/scene/contigo.c:1171: `gData_020048a0__contigo' undeclared (first use in this function). */
+/* VIEW(contigo): variable gData_020048a0 as extern const u8 gData_020048a0[];
+ * the definition has u32 gData_020048a0[] = { 39, 2, 4, 0xa40000, 0, 0x1680000,
+ * 1, 39, 1, 0, 10, 22, 3, 0xa000, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as
+ * the definition's extern u32 gData_020048a0[], it does not compile in tla-ja:
+ * games/tla/src/scene/contigo.c:1171: `gData_020048a0__contigo' undeclared
+ * (first use in this function). */
 extern const u8 gData_020048a0__contigo[] __asm__("gData_020048a0");
-/* VIEW(contigo): variable gData_020048f8 as extern const u8 gData_020048f8[]; the definition has u32 gData_020048f8[] = { 39, 2, 4, 0xbe0000, 0, 0x1600000, 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's extern u32 gData_020048f8[], it does not compile in tla-ja: games/tla/src/scene/contigo.c:1174: `gData_020048f8__contigo' undeclared (first use in this function). */
+/* VIEW(contigo): variable gData_020048f8 as extern const u8 gData_020048f8[];
+ * the definition has u32 gData_020048f8[] = { 39, 2, 4, 0xbe0000, 0, 0x1600000,
+ * 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's
+ * extern u32 gData_020048f8[], it does not compile in tla-ja:
+ * games/tla/src/scene/contigo.c:1174: `gData_020048f8__contigo' undeclared
+ * (first use in this function). */
 extern const u8 gData_020048f8__contigo[] __asm__("gData_020048f8");
-/* VIEW(contigo): variable gData_0200493c as extern const u8 gData_0200493c[]; the definition has u32 gData_0200493c[] = { 39, 2, 4, 0xbe0000, 0, 0x1860000, 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's extern u32 gData_0200493c[], it does not compile in tla-ja: games/tla/src/scene/contigo.c:1173: `gData_0200493c__contigo' undeclared (first use in this function). */
+/* VIEW(contigo): variable gData_0200493c as extern const u8 gData_0200493c[];
+ * the definition has u32 gData_0200493c[] = { 39, 2, 4, 0xbe0000, 0, 0x1860000,
+ * 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's
+ * extern u32 gData_0200493c[], it does not compile in tla-ja:
+ * games/tla/src/scene/contigo.c:1173: `gData_0200493c__contigo' undeclared
+ * (first use in this function). */
 extern const u8 gData_0200493c__contigo[] __asm__("gData_0200493c");
-/* VIEW(contigo): variable gData_02004980 as extern const u8 gData_02004980[]; the definition has u32 gData_02004980[] = { 39, 2, 4, 0xb60000, 0, 0x1700000, 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's extern u32 gData_02004980[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/contigo.c:1171: `gData_02004980__contigo' undeclared (first use in this function). */
+/* VIEW(contigo): variable gData_02004980 as extern const u8 gData_02004980[];
+ * the definition has u32 gData_02004980[] = { 39, 2, 4, 0xb60000, 0, 0x1700000,
+ * 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's
+ * extern u32 gData_02004980[], which the object already declares, it does not
+ * compile in tla-ja: games/tla/src/scene/contigo.c:1171:
+ * `gData_02004980__contigo' undeclared (first use in this function). */
 extern const u8 gData_02004980__contigo[] __asm__("gData_02004980");
-/* VIEW(contigo): variable gData_020049c4 as extern const u8 gData_020049c4[]; the definition has u32 gData_020049c4[] = { 39, 2, 4, 0xa00000, 0, 0x17e0000, 1, 39, 1, 0, 1, 3, 0, 1, 17, 39, 2, 0, 10, 13, 0xffff, 0, }; tried as the definition's extern u32 gData_020049c4[], it does not compile in tla-ja: games/tla/src/scene/contigo.c:1576: `gData_020049c4__contigo' undeclared (first use in this function). */
+/* VIEW(contigo): variable gData_020049c4 as extern const u8 gData_020049c4[];
+ * the definition has u32 gData_020049c4[] = { 39, 2, 4, 0xa00000, 0, 0x17e0000,
+ * 1, 39, 1, 0, 1, 3, 0, 1, 17, 39, 2, 0, 10, 13, 0xffff, 0, }; tried as the
+ * definition's extern u32 gData_020049c4[], it does not compile in tla-ja:
+ * games/tla/src/scene/contigo.c:1576: `gData_020049c4__contigo' undeclared
+ * (first use in this function). */
 extern const u8 gData_020049c4__contigo[] __asm__("gData_020049c4");
 extern const u8 gData_02006030[];
 
@@ -1691,7 +1743,8 @@ void Func_02002e18(void) {
     FieldMessage_ShowAtActor(9, 0);
     Contigo_Jump(2, 257, 0);
     Actor_FaceDirection(2, FACING_NORTHWEST, 0);
-    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+        0) {
       Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
       Actor_SetModeById(2, 3);
       Event_ShowMessageAndWait(0x1002, 0);
@@ -1707,7 +1760,8 @@ void Func_02002e18(void) {
     FieldMessage_ShowAtActor(9, 0);
     Contigo_Jump(0, 257, 0);
     Actor_FaceDirection(0, FACING_NORTHWEST, 0);
-    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+        0) {
       Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
       Actor_SetModeById(0, 3);
       Event_ShowMessageAndWait(0x1000, 0);
@@ -1792,7 +1846,6 @@ void Func_020036f0(void) {
   }
 }
 
-
 void Palette_SetColors(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
 void Map_CenterOnFollowedPoint(void);
 
@@ -1849,7 +1902,8 @@ void Func_02003720(void) {
     Map_CenterOnFollowedPoint();
     wait(1);
   }
-  Palette_SetColors(gData_0200469c, gData_020046ac, gData_020046d8, gData_02004704);
+  Palette_SetColors(gData_0200469c, gData_020046ac, gData_020046d8,
+                    gData_02004704);
 }
 
 void Func_02003880(void) {
@@ -1942,7 +1996,7 @@ struct ContigoPrizes {
   s8 list[8];
 };
 
-void Func_020041fc(s32 item, s32 count);
+void BattleEffect_StartEffectObject22(s32 item, s32 count);
 
 void Func_02003a8c(void) {
   s32 diff;
@@ -2036,7 +2090,7 @@ void Func_02003a8c(void) {
         item = Func_02001a60(*prize);
         MessageArgument_Push__contigo(item, 2);
         Event_ShowMessageAndWait(18, 0);
-        Func_020041fc(item, 3);
+        BattleEffect_StartEffectObject22(item, 3);
         PartyInventory_GiveItem(item, 0);
         Actor_FaceDirectionAndWait(0, FACING_NORTH);
         prize++;
@@ -2081,7 +2135,7 @@ struct CounterBits {
 
 void Animation_ApplyChildValues(struct Actor *, u32);
 void Func_0200424c(struct SparkleSprite *sprite);
-s32 Func_0200425c(struct Actor *object);
+s32 BattleEffect_GetObjectDepth(struct Actor *object);
 
 /// The sparkle's update: raises two pairs of sprites over the object, each pair
 /// starting when its counter is cleared, until both counters pass 31.
@@ -2128,9 +2182,9 @@ void Func_02003cd8(struct Actor *object) {
           sprite->unk14 = sine;
           sprite->unk18 = sine;
           if (j == 0) {
-            sprite->unk1e = Func_0200425c(object) - 1;
+            sprite->unk1e = BattleEffect_GetObjectDepth(object) - 1;
           } else {
-            sprite->unk1e = Func_0200425c(object) + 1;
+            sprite->unk1e = BattleEffect_GetObjectDepth(object) + 1;
             sprite->unk10 -= 0x10000;
             sprite->unk18 = -sprite->unk18;
           }
@@ -2160,7 +2214,10 @@ struct ResourceTableEntry {
   u16 offset; ///< in bytes; its tile is offset / 32
 };
 
-/* VIEW(s3e54): tag struct SparkleSprite as struct SparkleSprite__s3e54; contigo.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2237: structure has no member named `blend'. */
+/* VIEW(s3e54): tag struct SparkleSprite as struct SparkleSprite__s3e54;
+ * contigo.c has another definition; tried with the definition the rest of the
+ * object has, it does not compile in tla-ja:
+ * games/tla/src/scene/contigo.c:2237: structure has no member named `blend'. */
 struct SparkleSprite__s3e54 {
   u8 unk00[5];
   u8 unk05_0 : 5;
@@ -2173,7 +2230,10 @@ struct SparkleSprite__s3e54 {
   u8 unk0a[0x1e];
 };
 
-/* VIEW(s3e54): tag struct SparkleWork as struct SparkleWork__s3e54; contigo.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2229: incompatible types in assignment. */
+/* VIEW(s3e54): tag struct SparkleWork as struct SparkleWork__s3e54; contigo.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja: games/tla/src/scene/contigo.c:2229:
+ * incompatible types in assignment. */
 struct SparkleWork__s3e54 {
   struct SparkleSprite__s3e54 sprites[4];
   u16 unka0;
@@ -2183,10 +2243,9 @@ struct SparkleWork__s3e54 {
   struct Actor *object;
 };
 
-
 void Func_02004244(struct SparkleSprite__s3e54 *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
-s32 Func_02004254(struct Actor *object);
+s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
 /// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
 /// hands the object to its update, Func_02003cd8.
@@ -2212,13 +2271,16 @@ void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work) {
       Func_02004244(sprite, 16, 16, 0x80004000, tile);
       sprite->blend = 0;
       sprite->palette = 0;
-      sprite->priority = Func_02004254(object);
+      sprite->priority = BattleEffect_GetObjectPriority(object);
       sprite++;
     }
   }
 }
 
-/* VIEW(s3e54): tag struct ContigoObject as struct ContigoObject__s3e54; contigo.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2258: structure has no member named `unk62'. */
+/* VIEW(s3e54): tag struct ContigoObject as struct ContigoObject__s3e54;
+ * contigo.c has another definition; tried with the definition the rest of the
+ * object has, it does not compile in tla-ja:
+ * games/tla/src/scene/contigo.c:2258: structure has no member named `unk62'. */
 struct ContigoObject__s3e54 {
   u8 unk00[0x62];
   u8 unk62;

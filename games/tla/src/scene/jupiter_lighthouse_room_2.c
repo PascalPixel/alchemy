@@ -56,15 +56,14 @@ void Func_02000054(void) {
 }
 
 void Func_020000b4(void) {
-  Func_0200231c((s32)gData_02002b60, gData_02002b88[0], gData_02002b88[1],
-                gData_02002b88[2]);
+  BattleEffect_DrawSpriteAtWorldPosition((s32)gData_02002b60, gData_02002b88[0],
+                                         gData_02002b88[1], gData_02002b88[2]);
 }
 
 #include "actor.h"
 #include "field_sprite.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-
 
 void Func_020000d0(s32 kind) {
   s32 owner = gMainRoutineWork.currentOwner;
@@ -98,7 +97,7 @@ void Func_020000d0(s32 kind) {
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
   effect = Actor_Spawn(280, leader->x, leader->y, leader->z);
-  Func_020021b4(effect, 2);
+  Actor_SelectAnimation(effect, 2);
   effect->scaleX = 0x18000;
   effect->scaleY = 0x10000;
   ((struct FieldSprite *)effect->sprite)->priority = 1;
@@ -110,7 +109,7 @@ void Func_020000d0(s32 kind) {
     effect->z = leader->z;
     System_Wait(1);
   }
-  Func_020021b4(effect, 6);
+  Actor_SelectAnimation(effect, 6);
   i = 14;
   do {
     leader->facing += 0x2000;
@@ -155,7 +154,7 @@ void Func_02000230(s32 kind) {
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
   effect = Actor_Spawn(280, leader->x, leader->y, leader->z);
-  Func_020021b4(effect, 2);
+  Actor_SelectAnimation(effect, 2);
   effect->scaleX = 0x18000;
   effect->scaleY = 0x10000;
   ((struct FieldSprite *)effect->sprite)->priority = 1;
@@ -183,7 +182,7 @@ void Func_02000230(s32 kind) {
   }
   effect->scaleX = 0x18000;
   effect->scaleY = 0x10000;
-  Func_020021b4(effect, 6);
+  Actor_SelectAnimation(effect, 6);
   leader->scaleX = 0x6000;
   leader->scaleY = 0x6000;
   i = 19;
@@ -364,7 +363,7 @@ void Func_02000720(struct Actor *object) {
                (height * 3 << 16) + 0x80000, 170 << 18);
   // Read signed, as the phase is above; the field is declared unsigned.
   if ((s16)object->unk66 == 0)
-    Func_020021b4(object, 7);
+    Actor_SelectAnimation(object, 7);
   if (object->y > 170 << 17)
     object->unk66 = 0xffff;
   if (Math_Sin(angle) < 0)
@@ -406,7 +405,7 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(14, 3);
   Io_Write16(0x3f06, &REG_BLDCNT);
   Io_Write16(0x1000, &REG_BLDALPHA);
-  Func_02002314(0);
+  BattleEffect_FillOverlayTiles(0);
   Call4((void (*)())Func_02002324, (s32)gData_02002b60, 0, 0, 0x80000000);
   Func_02000054();
   Func_020007d0();
@@ -456,20 +455,26 @@ extern s32 gPaletteCycleFrame;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
-DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gPaletteCycleFrame, gData_02002b38,
-    gData_02002b98, 0x05000184)
+DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gPaletteCycleFrame,
+                             gData_02002b38, gData_02002b98, 0x05000184)
 
 extern u16 gLighthousePalette13[];
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02002b38, gData_02002b98,
-    gLighthousePalette13, PaletteCycle_StepAt, gData_02002bbc)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
+                                        gData_02002b38, gData_02002b98,
+                                        gLighthousePalette13,
+                                        PaletteCycle_StepAt, gData_02002bbc)
 
 void Func_0200223c();
-/* VIEW(jupiter_lighthouse_room_2): routine Func_0200230c as void Func_0200230c(); module/scene/scene.h has void Func_0200230c(s32 actor); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_2.c:525: too many arguments to function `Func_0200230c'. */
+/* VIEW(jupiter_lighthouse_room_2): routine Func_0200230c as void
+ * Func_0200230c(); module/scene/scene.h has void Func_0200230c(s32 actor);
+ * tried as the rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_2.c:525: too many arguments to
+ * function `Func_0200230c'. */
 extern void Func_0200230c__jupiter_lighthouse_room_2() __asm__("Func_0200230c");
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_0200223c,
-    Func_0200230c__jupiter_lighthouse_room_2)
+                             Func_0200230c__jupiter_lighthouse_room_2)
 
 #include "frame.h"
 

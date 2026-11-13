@@ -390,7 +390,7 @@ void Func_02000670(void) {
       object->scaleX = 0x8000;
       object->scaleY = 0x1999;
       object->priorityFlags = phase;
-      Func_02000e24(object, 2);
+      Actor_SelectAnimation(object, 2);
       FieldActor_SetMoveTarget(object, object->x - PIXELS(32), object->y,
                                object->z);
       Actor_StartScript(object, gData_020015c4);
@@ -406,7 +406,7 @@ void Func_02000670(void) {
 #endif
 
 s32 Func_02000f14();
-void Func_02000ed4();
+void FieldCamera_MoveToActorById();
 
 s32 Scene_Initialize(void) {
   struct Actor *actor;
@@ -461,7 +461,7 @@ s32 Scene_Initialize(void) {
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
         FieldActor_StartRepeatedMotion(20, 3);
-        Func_02000ed4(20, 1);
+        FieldCamera_MoveToActorById(20, 1);
         FieldEvent_Wait(30);
         FieldEvent_SetMessageId((s32)MsgIMNot);
         Event_ShowMessage(20, 0);
@@ -549,7 +549,7 @@ void Func_02000b2c(s32 id, s32 x, s32 y, s32 z) {
   Actor_SetSingleChildFlags(object, 0);
 }
 
-void Func_02000ecc(void);
+void FieldCamera_WaitForArrival(void);
 
 void Func_02000bc0(s32 id, s32 flag) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -595,7 +595,7 @@ dust:
   Event_PlaySound(217);
   MapGrid_SetShake(0x20000, 0x20000, 0xe666);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
-  Func_02000e24(leader, 40);
+  Actor_SelectAnimation(leader, 40);
   FieldEvent_Wait(40);
   Event_PlaySound(204);
   leader->motionFlags = 3;
@@ -613,16 +613,16 @@ fall:
   Event_PlaySound(188);
   leader->gravity = gravity;
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0);
-  Func_02000e24(leader, 38);
+  Actor_SelectAnimation(leader, 38);
   MapGrid_SetShake(0x10000, 0x40000, 0x10000);
   System_Wait(10);
   MapGrid_SetShake(-1, -1, 0xe666);
   System_Wait(20);
   FieldCamera_MoveTo(leader->x, leader->y, leader->z, 1);
-  Func_02000ecc();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetSingleChildFlags(leader, 1);
-  Func_02000e24(leader, 1);
+  Actor_SelectAnimation(leader, 1);
   leader->velocityY = 0x40000;
   System_Wait(20);
   gMainRoutineWork.renderMode = 0;

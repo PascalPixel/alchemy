@@ -27,7 +27,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-void Func_02000178(s32 a, s32 b);
+void Shop_Run(s32 a, s32 b);
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov683 &&
@@ -36,9 +36,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return (const struct ActorPlacement *)gData_02000228;
 }
 
-void Func_0200008c(s32 value) { Func_02000178(25, value); }
+void Func_0200008c(s32 value) { Shop_Run(25, value); }
 
-void Func_02000098(s32 value) { Func_02000180(10, value); }
+void Func_02000098(s32 value) { Inn_CheckIn(10, value); }
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov683 &&

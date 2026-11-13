@@ -24,20 +24,20 @@ void Import_TaskSuspendAll(void *callback);
 void Import_TaskResumeAll(void *callback);
 void Irq_SetHandler(s32 a, s32 b, void *callback);
 void Import_ResourceDecodeByteLzInRam(const void *source, void *destination);
-void Func_02001c6c(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *data);
-s32 Func_02001c9c(struct Actor *object, s32 *position);
+s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
-void Func_02001d8c(void);
+void FieldCamera_WaitForArrival(void);
 void Func_02001d9c(void);
 void ObjectTable_Snapshot(void);
-void Func_02001dec(s32 a);
+void Scene_QueueMusic(s32 a);
 void Event_NoOp(void);
 void Func_02001dfc(void);
 void Func_02001e04(s32 a, s32 b, s32 c, s32 d);
 void Func_02001e0c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
-void Func_02001e1c(s32 a, s32 b);
-void Func_02001e24(s32 a, s32 b);
+void Shop_Run(s32 a, s32 b);
+void Inn_CheckIn(s32 a, s32 b);
 
 void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
                    s32 *params);
@@ -88,13 +88,12 @@ extern const u8 gField_Tiles679[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x,
-                                                             s32 y, s32 z) {
+static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
+                                                    s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
 
-static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column,
-                                                    s32 offset) {
+static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
   Actor_CenterOnColumn(id, column, offset);
 }
 

@@ -78,9 +78,9 @@ GameFlag_GetByte:
 	.thumb_func
 GameFlag_SetByte:
 	overlay_veneer GameFlag_SetByteFar
-	.global Func_02002ad4
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02002ad4:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SetMode
 	.global Actor_SetAnimationSpeed
 	.thumb_func
@@ -206,9 +206,9 @@ Camera_FollowActor:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02002bd4
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02002bd4:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Func_080d4568
 	.thumb_func
@@ -250,9 +250,9 @@ Func_02002c1c:
 	.thumb_func
 Func_02002c24:
 	overlay_veneer Func_080c8748
-	.global Func_02002c2c
+	.global BattleEffect_GetObjectPriority
 	.thumb_func
-Func_02002c2c:
+BattleEffect_GetObjectPriority:
 	overlay_veneer Func_080c87e8
 	.global Func_02002c34
 	.thumb_func

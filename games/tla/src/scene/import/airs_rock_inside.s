@@ -262,21 +262,21 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02005ee4
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02005ee4:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
-	.global Func_02005eec
+	.global FieldCamera_MoveToActorById
 	.thumb_func
-Func_02005eec:
+FieldCamera_MoveToActorById:
 	overlay_veneer Func_080c8248
 	.global Func_02005ef4
 	.thumb_func
 Func_02005ef4:
 	overlay_veneer Func_080c8258
-	.global Func_02005efc
+	.global Event_SetExitRequest
 	.thumb_func
-Func_02005efc:
+Event_SetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func

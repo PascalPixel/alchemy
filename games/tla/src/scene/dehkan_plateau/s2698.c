@@ -65,7 +65,7 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
         285, (i << 17) + leader->x - Q16_ONE * 8, y - Q16_ONE * 2, leader->z));
     if (object != NULL) {
       effect = (struct EffectView *)object;
-      frame = Func_02003d80(effect->sprite, frame);
+      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       object->motionFlags = 0;
       object->collisionFlags = 0;
       Actor_SetSingleChildFlags(object, 0);
@@ -97,7 +97,7 @@ void Func_020027e0(void) {
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 25);
   Func_080d4568()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(616), -1, PIXELS(280), 1);
-  Func_02003cf0();
+  FieldCamera_WaitForArrival();
   Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
   // A direct call: as Call3 the actor id is loaded before the 0x100's shift.
   Func_080d47b4(25, 0x100, 40);
@@ -229,13 +229,15 @@ extern const struct CellRecord gData_02004066[];
 
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
-/* VIEW(s2698): routine Func_02003d40 as void Func_02003d40(struct Actor
- * *object, s32 mode); module/scene/airs_rock_inside.h has void
- * Func_02003d40(void); tried as the definition's void Func_02003d40(void),
- * which the object already declares, Func_02002f9c moves: 1 of 34 instructions
- * in tla-ja. */
-extern void Func_02003d40__s2698(struct Actor *object,
-                                 s32 mode) __asm__("Func_02003d40");
+/* VIEW(s2698): routine BattleEffect_RunActorRiseAndDescent as void
+ * BattleEffect_RunActorRiseAndDescent(struct Actor *object, s32 mode);
+ * module/scene/airs_rock_inside.h has void
+ * BattleEffect_RunActorRiseAndDescent(void); tried as the definition's void
+ * BattleEffect_RunActorRiseAndDescent(void), which the object already declares,
+ * Func_02002f9c moves: 1 of 34 instructions in tla-ja. */
+extern void
+Func_02003d40__s2698(struct Actor *object,
+                     s32 mode) __asm__("BattleEffect_RunActorRiseAndDescent");
 s32 PartyInventory_GiveItem(s32 item, s32 unused);
 
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
@@ -339,7 +341,7 @@ void Func_02002dd4(void) {
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
   Func_080d4568()->motionFlags = 0;
   Camera_MoveWithinMapBounds(PIXELS(760), PIXELS(32), PIXELS(204), 1);
-  Func_02003cf0();
+  FieldCamera_WaitForArrival();
   Actor_SetAngleToward(16, gMainRoutineWork.currentOwner, 0);
   // Called for its value, which is unused: as Call3 the actor id is loaded
   // before the 0x100's shift.

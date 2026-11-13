@@ -58,14 +58,21 @@ L_0200809c:
 #undef FIELD_AT
 
 // ---- games/tla/src/scene/izumo_ruins/s00a4.c ----
-// The overlay code of scene/izumo_ruins between two shared objects, in ROM order.
+// The overlay code of scene/izumo_ruins between two shared objects, in ROM
+// order.
 
 #include "izumo_ruins.h"
 #include "map.h"
 #include "../shared/trial_road.h"
 
-/* VIEW(s00a4): routine Func_02000128 as void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer); s0038 has s32 Func_02000128(); tried as the definition's void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/izumo_ruins/s0038.c:102: conflicting types for `Func_02000128'. */
-extern void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer) __asm__("Func_02000128");
+/* VIEW(s00a4): routine Func_02000128 as void Func_02000128(s32 id, u32 kind,
+ * s32 flag, s32 layer); s0038 has s32 Func_02000128(); tried as the
+ * definition's void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer), which
+ * the object already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/izumo_ruins/s0038.c:102: conflicting types for
+ * `Func_02000128'. */
+extern void Actor_SetCellOpen(s32 id, u32 kind, s32 flag,
+                              s32 layer) __asm__("Func_02000128");
 
 // Finds the current target's table row and shrinks it.
 void Func_020000a4(u16 *list, s32 mode, s32 count) {
@@ -102,7 +109,8 @@ top:
     goto top;
 }
 
-DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Func_02001508, Func_02001428)
+DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Func_02001508,
+                           Actor_SelectAnimation)
 
 s32 Func_02001528(s32 layer, s32 shape, s32 height);
 
@@ -129,14 +137,14 @@ void Func_020001d0(u16 *list) {
 
       cell = cells + index;
       slot = shapes + index;
-      shape = Func_02001478(object->terrainId, object->x, object->z);
+      shape = MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
       ground = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
 
       Func_020014c0(id);
       cell->attributeB = 128;
       *slot = Func_02001528(object->terrainId, shape, (ground >> 19) + 4);
       if (Event_GetFlag(flag))
-        Func_02001428(object, 0);
+        Actor_SelectAnimation(object, 0);
     }
     list += 2;
   }
@@ -179,7 +187,7 @@ body:
         Sound_Play(125);
         Actor_SetPartAttribute(Actor_GetById(id), 7);
         wait(2);
-        Func_02001428(pillar, 0);
+        Actor_SelectAnimation(pillar, 0);
         Actor_SetPartAttribute(Actor_GetById(id), 0);
         wait(2);
         Actor_SetPartAttribute(Actor_GetById(id), 7);
@@ -195,7 +203,7 @@ body:
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_02000974(0);
         wait(8);
-        Func_02001428(pillar, 2);
+        Actor_SelectAnimation(pillar, 2);
         Func_02000c4c(-2, pillar->terrainId);
         Func_02000974(1);
         wait(16);
@@ -239,7 +247,7 @@ void Func_0200048c(const void *data, s32 id) {
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_02000974(0);
         System_Wait(8);
-        Func_02001428(object, 2);
+        Actor_SelectAnimation(object, 2);
         Actor_SetCellShapeAt(-4, OBJECT_BYTE(object, 34), id);
         Func_02000974(1);
         System_Wait(16);
@@ -301,7 +309,7 @@ void Func_02000584(u16 *list) {
       u8 *shape = shapes + index;
       s32 kind, ground;
 
-      kind = Func_02001478(actor->terrainId, actor->x, actor->z);
+      kind = MapGrid_GetTerrainKind(actor->terrainId, actor->x, actor->z);
       ground = Map_GetTerrainHeight(actor->terrainId, actor->x, actor->z);
 
       Func_020014c0(id);
@@ -352,13 +360,13 @@ body:
 
       Event_Start();
       if (!GameFlag_Test(flag)) {
-        Func_02001428(helper, 1);
+        Actor_SelectAnimation(helper, 1);
         Func_020006ec(helper, pillar);
         wait(1);
         Sound_Play(125);
         Actor_SetPartAttribute(Actor_GetById(8), 7);
         wait(2);
-        Func_02001428(helper, 0);
+        Actor_SelectAnimation(helper, 0);
         ObjectVisual_CopyAttributes(id, 9);
         Actor_SetPartAttribute(Actor_GetById(8), 0);
         wait(2);
@@ -372,7 +380,7 @@ body:
       } else if (!GameFlag_Test(flag + 1)) {
         u8 *flags;
 
-        Func_02001428(helper, 0);
+        Actor_SelectAnimation(helper, 0);
         Func_020006ec(helper, pillar);
         wait(1);
         flags = &leader->motionFlags;
@@ -381,7 +389,7 @@ body:
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_02000974(0);
         wait(8);
-        Func_02001428(helper, 2);
+        Actor_SelectAnimation(helper, 2);
         Func_02000c4c(-2, pillar->terrainId);
         Func_02000974(1);
         wait(16);

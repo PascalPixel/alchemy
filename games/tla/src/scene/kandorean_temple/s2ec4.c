@@ -284,7 +284,7 @@ void Func_02003584(void) {
                                                                                \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    Func_02005388(162);                                                        \
+    Scene_QueueMusic(162);                                                     \
     FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
     wait(1);                                                                   \
     leader->motionFlags = 0;                                                   \
@@ -389,7 +389,7 @@ void Func_02003a5c(void) {
   struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->mapWork;
 
   gData_02006294 = 0;
-  Func_02005388(170);
+  Scene_QueueMusic(170);
   map->mode = 1;
   Func_02005338(0);
 }
@@ -560,12 +560,12 @@ void Func_02003e8c(void) {
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 400, 752);
   Camera_SetSpeedParameters(0x4cccc, 0x9999);
   Camera_MoveWithinMapBounds(0x1b40000, 0x480000, 0x2980000, 1);
-  Func_020052e8();
+  FieldCamera_WaitForArrival();
   Actor_Jump(12, 4, 0);
   Event_SetMessageId((s32)&MsgKandoreanTemple04);
   Event_ShowMessageAndWait(12, 0);
   Camera_MoveWithinMapBounds(0x1c80000, 0, 0x2b00000, 1);
-  Func_020052e8();
+  FieldCamera_WaitForArrival();
   Motion_SetVarCbAndRefresh(13, 2);
   Sound_Play(131);
   Actor_ConfigureSpriteColor(13, 0x100);
@@ -598,7 +598,7 @@ rise13:
   Event_Wait(60);
   Event_ShowMessageAndWait(13, 0);
   FieldCamera_MoveTo(0x1b40000, 0x480000, 0x2980000, 1);
-  Func_020052e8();
+  FieldCamera_WaitForArrival();
   Actor_SetSpeed(12, 0xcccc, 0x6666);
   Actor_WalkToAndWait(12, 476, 664);
   Actor_FaceDirection(12, 0x3000, 0);
@@ -609,7 +609,7 @@ rise13:
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
   Camera_SetSpeedParameters(0x13333, 0x2666);
   Camera_MoveWithinMapBounds(0x16c0000, 0x480000, 0x2980000, 1);
-  Func_020052e8();
+  FieldCamera_WaitForArrival();
   Actor_SetHorizontalPositionWithTerrain(12, 0x1480000, 0x2880000);
   wait(1);
   Actor_WalkToAndWait(12, 326, 664);
@@ -618,7 +618,7 @@ rise13:
   Event_ShowMessageAndWait(0x200c, 0);
   Camera_SetSpeedParameters(0x4cccc, 0x9999);
   Camera_MoveWithinMapBounds(0x1560000, 0, 0x2b00000, 1);
-  Func_020052e8();
+  FieldCamera_WaitForArrival();
   Motion_SetVarCbAndRefresh(14, 2);
   Sound_Play(131);
   Actor_ConfigureSpriteColor(14, 0x100);
@@ -648,12 +648,12 @@ rise14:
   Event_Wait(60);
   Event_ShowMessageAndWait(14, 0);
   Camera_MoveWithinMapBounds(0x16c0000, 0x480000, 0x2980000, 1);
-  Func_020052e8();
+  FieldCamera_WaitForArrival();
   Event_ShowMessageAndWait(0x200c, 0);
   Actor_FaceDirection(12, 0x3000, 10);
   Event_ShowMessageAndWait(12, 0);
   Camera_MoveWithinMapBounds(0x1900000, 0, 0x2b00000, 1);
-  Func_020052e8();
+  FieldCamera_WaitForArrival();
   Motion_SetVarCbAndRefresh(15, 2);
   Sound_Play(131);
   Actor_ConfigureSpriteColor(15, 0x100);
@@ -695,7 +695,7 @@ fall15:
   Actor_FaceDirection(15, 0xb000, 20);
   Event_ShowMessageAndWait(0x400f, 0);
   Camera_MoveWithinMapBounds(0x16c0000, 0x480000, 0x2980000, 1);
-  Func_020052e8();
+  FieldCamera_WaitForArrival();
   Func_080d47b4(12, 0x102, 20);
   Event_ShowMessage(0x800c, 0);
   Event_ShowMessageAndWait(15, 0);
@@ -727,7 +727,7 @@ fall15:
   Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
   Camera_MoveWithinMapBounds(0x1900000, 0, 0x2f00000, 1);
-  Func_020052e8();
+  FieldCamera_WaitForArrival();
   Task_Add(Func_02001c8c, 0x480);
   Event_End();
   GameFlag_SetBit(0x848);
@@ -807,7 +807,7 @@ void Func_020046d8(void) {
   Actor_FaceDirection(12, FACING_SOUTHEAST + FACING_STEP, 0);
   Camera_SetSpeedParameters(0x4cccc, 0x9999);
   Camera_MoveWithinMapBounds(PIXELS(456), PIXELS(40), PIXELS(664), 1);
-  Func_020052e8();
+  FieldCamera_WaitForArrival();
   Event_Wait(40);
   Event_SetMessageId((s32)&MsgKandoreanTemple06);
   Event_ShowMessageAndWait(0x800c, 0);

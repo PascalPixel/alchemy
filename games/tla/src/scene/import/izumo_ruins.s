@@ -30,9 +30,9 @@ GameFlag_Test:
 	.thumb_func
 GameFlag_SetBit:
 	overlay_veneer GameFlag_SetBitFar
-	.global Func_02001428
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02001428:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SetMode
 	.global Actor_StartScript
 	.thumb_func
@@ -70,9 +70,9 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 Map_SetScreenShake:
 	overlay_veneer Map_SetScreenShakeFar
-	.global Func_02001478
+	.global MapGrid_GetTerrainKind
 	.thumb_func
-Func_02001478:
+MapGrid_GetTerrainKind:
 	overlay_veneer Func_080202f0
 	.global Func_02001480
 	.thumb_func
@@ -130,9 +130,9 @@ Func_020014e0:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_020014f0
+	.global Sprite_ShareVramCacheEntry
 	.thumb_func
-Func_020014f0:
+Sprite_ShareVramCacheEntry:
 	overlay_veneer Func_080c8518
 	.global Func_020014f8
 	.thumb_func

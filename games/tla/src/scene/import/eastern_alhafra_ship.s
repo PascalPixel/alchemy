@@ -14,9 +14,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_02003100
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02003100:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SetMode
 	.global Actor_StartScript
 	.thumb_func
@@ -154,9 +154,9 @@ Camera_FollowActor:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02003218
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02003218:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
@@ -194,9 +194,9 @@ Actor_CommitPositionAndActivate:
 	.thumb_func
 Func_080d3928:
 	overlay_veneer Func_080c87a8
-	.global Func_02003268
+	.global Field_StartColorTransition
 	.thumb_func
-Func_02003268:
+Field_StartColorTransition:
 	overlay_veneer Func_080c87f8
 	.global Field_StartPaletteTransition
 	.thumb_func

@@ -71,8 +71,14 @@ void Func_02001650(s32 count) {
 #include "actor.h"
 #include "main_routine_work.h"
 
-/* VIEW(s1650): routine Func_020029f0 as s32 Func_020029f0(struct Actor *object); module/scene/scene.h has void Func_020029f0(struct FieldEffect *effect, s32 mode); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5/s1650.c:98: too few arguments to function `Func_020029f0'. */
-extern s32 Func_020029f0__s1650(struct Actor *object) __asm__("Func_020029f0");
+/* VIEW(s1650): routine BattleEffect_GetObjectPriority as s32
+ * BattleEffect_GetObjectPriority(struct Actor *object); module/scene/scene.h
+ * has void BattleEffect_GetObjectPriority(struct FieldEffect *effect, s32
+ * mode); tried as the rest of the object declares it, it does not compile in
+ * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5/s1650.c:98: too few
+ * arguments to function `BattleEffect_GetObjectPriority'. */
+extern s32 Func_020029f0__s1650(struct Actor *object) __asm__(
+    "BattleEffect_GetObjectPriority");
 
 void Func_02001718(const s32 *from, const s32 *to) {
   struct SparkWork *work = HeapSlot_AllocFar(220, sizeof(struct SparkWork));
@@ -89,7 +95,8 @@ void Func_02001718(const s32 *from, const s32 *to) {
   work->to[0] = to[0];
   work->to[1] = to[1];
   work->to[2] = to[2];
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs), work);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs),
+                        work);
   entry = Resource_FindFreeEntry();
   tile = Vram_Load(entry, 0x400, work);
   work->tile = tile;
@@ -107,7 +114,7 @@ void Func_02001718(const s32 *from, const s32 *to) {
        u16 v;
        s32 w;
      } *)&sprite->depth)
-        ->v = Func_020029f8(leader) - 1;
+        ->v = BattleEffect_GetObjectDepth(leader) - 1;
     spark->age = -1;
   }
   {
@@ -135,25 +142,33 @@ extern struct LightOam gData_02003488[];
 
 void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);
 
-/// Queues the lit actors' sprites: for each listed actor with a position, projects it
-/// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
-/// 64 one when the big switch is set, at its animation picture and depth.
+/// Queues the lit actors' sprites: for each listed actor with a position,
+/// projects it from the map's view, skips it off screen, and writes a 16 by 16
+/// sprite, or a 32 by 64 one when the big switch is set, at its animation
+/// picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gData_02003488,
-    gLightSpriteCount, gData_02003448, gLightSpritesLarge, gLightSpritePriority,
-    Func_020029f0__s1650, Import_OamAddSpriteAtDepth)
+                          gLightSpriteCount, gData_02003448, gLightSpritesLarge,
+                          gLightSpritePriority, Func_020029f0__s1650,
+                          Import_OamAddSpriteAtDepth)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02003448, gLightSpriteTile,
-    LightSprites_Draw, gLightSpriteCount, gLightSpritesLarge, gLightSpritePriority)
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02003448,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge,
+                            gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_02003448, gLightSpriteTile,
-    LightSprites_Draw, gLightSpriteCount, gLightSpritesLarge, gLightSpritePriority)
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_02003448,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge,
+                            gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_02003448, gLightSpriteTile,
-    LightSprites_Draw, gLightSpriteCount, gLightSpritesLarge, gLightSpritePriority)
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_02003448,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge,
+                            gLightSpritePriority)
 
 DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount, gData_02003448)
 

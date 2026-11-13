@@ -70,9 +70,9 @@ GameFlag_SetByte:
 	.thumb_func
 ResourceMetadata_Register:
 	overlay_veneer ResourceMetadata_RegisterFar
-	.global Func_02004d9c
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02004d9c:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SetMode
 	.global Actor_SetAnimationSpeed
 	.thumb_func
@@ -170,9 +170,9 @@ Event_Wait:
 	.thumb_func
 Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02004e64
+	.global Event_End
 	.thumb_func
-Func_02004e64:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Party_LearnAbility
 	.thumb_func
@@ -290,13 +290,13 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02004f54
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02004f54:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
-	.global Func_02004f5c
+	.global FieldCamera_MoveToActorById
 	.thumb_func
-Func_02004f5c:
+FieldCamera_MoveToActorById:
 	overlay_veneer Func_080c8248
 	.global Event_SetDestination
 	.thumb_func

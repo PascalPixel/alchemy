@@ -22,8 +22,6 @@ extern s16 gLightSpriteCount;
 extern struct Actor *gData_020023f4[];
 extern struct LightOam Data_02002434[];
 
-void Func_02001bec(struct FieldEffect *effect, s32 mode);
-
 void Func_020015cc(void);
 
 void Func_02000074(void);

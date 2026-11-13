@@ -23,8 +23,8 @@ void Func_02000668(struct Actor *object, s32 a);
 extern u8 MsgKandoreanTemple11[];
 
 void Actor_StartScript(struct Actor *object, const void *data);
-void Func_02005130(struct Actor *object, s32 a);
-s32 Func_02005180(struct Actor *object, s32 *position);
+void Actor_SelectAnimation(struct Actor *object, s32 a);
+s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 void Animation_ApplyChildArgument(void *sprite, s32 a);
 void Func_020006b0(struct Actor *object);
 void Func_02000778(struct Actor *object, s32 dz);
@@ -49,7 +49,7 @@ s32 Func_020053b0(void);
 void Func_020053c0(const void *data);
 void Func_020053c8(void);
 void Func_020053d0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
-void Func_020052e8(void);
+void FieldCamera_WaitForArrival(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Func_02005338(s32 a);
 void Func_0200290c(void);
@@ -74,7 +74,7 @@ extern char SceneId_Ov653Room7;
 extern char SceneId_Ov653Room8;
 extern char SceneId_Ov653Room9;
 void Func_02000cf8(s32 id, s32 dy, s32 scale);
-void Func_02005388(s32 a);
+void Scene_QueueMusic(s32 a);
 void Func_02005390(void);
 void Func_020053a8(s32 a, s32 b, s32 c, s32 d);
 void Actor_MoveToObject(s32 id, s32 target);
@@ -104,19 +104,17 @@ extern s16 gData_020054e0[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void
-Actor_SetSingleChildFlags_(struct Actor *object, s32 flags) {
+static __inline__ void Actor_SetSingleChildFlags_(struct Actor *object,
+                                                  s32 flags) {
   Actor_SetSingleChildFlags(object, flags);
 }
 
-static __inline__ struct Actor *Func_02005140_(s32 type, s32 x, s32 y,
-                                                       s32 z) {
+static __inline__ struct Actor *Func_02005140_(s32 type, s32 x, s32 y, s32 z) {
   return ((struct Actor *)Import_ActorCreate(type, x, y, z));
 }
 
-static __inline__ void
-Actor_SetPositionAndResetMotion_(struct Actor *object, s32 x, s32 y,
-                                  s32 z) {
+static __inline__ void Actor_SetPositionAndResetMotion_(struct Actor *object,
+                                                        s32 x, s32 y, s32 z) {
   Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 

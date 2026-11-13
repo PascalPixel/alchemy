@@ -213,7 +213,7 @@ void Func_0200040c(void) {
   result0 = Leader_IsFacingNorth();
   if (result0 == 0)
     goto L_0200841e;
-  Func_02003ff4(21);
+  Sanctum_Run(21);
   goto L_0200843a;
 L_0200841e:
   Event_Start();

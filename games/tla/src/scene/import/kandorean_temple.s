@@ -62,9 +62,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Animation_ApplyChildArgument:
 	overlay_veneer Animation_ApplyChildArgumentFar
-	.global Func_02005130
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02005130:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SetMode
 	.global Actor_StartScript
 	.thumb_func
@@ -102,9 +102,9 @@ Map_CopyCellPictureIndicesRect:
 	.thumb_func
 Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Func_02005180
+	.global MapGrid_CheckCollision
 	.thumb_func
-Func_02005180:
+MapGrid_CheckCollision:
 	overlay_veneer Func_08020210
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -282,9 +282,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_020052e8
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_020052e8:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Func_080d4568
 	.thumb_func
@@ -318,9 +318,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02005330
+	.global BattleEffect_RunActorRiseAndDescent
 	.thumb_func
-Func_02005330:
+BattleEffect_RunActorRiseAndDescent:
 	overlay_veneer Func_080c83d8
 	.global Func_02005338
 	.thumb_func
@@ -362,9 +362,9 @@ Actor_LaunchFromLeader:
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global Func_02005388
+	.global Scene_QueueMusic
 	.thumb_func
-Func_02005388:
+Scene_QueueMusic:
 	overlay_veneer Func_080c8688
 	.global Func_02005390
 	.thumb_func

@@ -369,7 +369,7 @@ void Func_02000838(void) {
   Actor_WalkByAndWait(4, 0, -16);
   Event_Wait(10);
   Camera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(536), 1);
-  Func_020019e4();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_SetSpeed(9, 0xcccc, 0x6666);
   Actor_CommitPositionAndActivate(9, 24, 0);
@@ -597,7 +597,7 @@ void Func_02000838(void) {
   Actor_FaceDirection(10, 0x5000, 0);
   Event_Wait(30);
   Camera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(512), 1);
-  Func_020019e4();
+  FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_ShowEmote(9, 0x109, 30);
   Event_ShowMessageThenWait(9, 0, 10);
@@ -731,7 +731,7 @@ void Func_02000838(void) {
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Event_Wait(30);
   Camera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(536), 1);
-  Func_020019e4();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_WalkByAndWait(11, 0, -10);
   Actor_ArmCallback(11, FACING_WEST, 0);
@@ -838,7 +838,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_020000c4)},
     {0x602, 22, CONDITION_ALWAYS, EVENT(Func_02000830)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_02000038)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x961, (u32)(Func_020000d4)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8,
+     0x961, (u32)(Func_020000d4)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x961, EVENT(Func_020000d8)},
     {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000110)},
     {0x50008905, 31, CONDITION_ALWAYS, EVENT(Func_020003bc)},
@@ -846,7 +847,8 @@ struct Trigger gSceneEvents[] = {
     {0x50008905, 33, CONDITION_ALWAYS, EVENT(Func_020003fc)},
     {0x50008905, 34, CONDITION_ALWAYS, EVENT(Func_0200041c)},
     {0x50008905, 35, CONDITION_ALWAYS, EVENT(Func_0200043c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_TREMOR, PSYNERGY_PHASE_BEFORE_CAST), 13, 0x196e, EVENT(Func_0200045c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_TREMOR, PSYNERGY_PHASE_BEFORE_CAST), 13,
+     0x196e, EVENT(Func_0200045c)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 13, 0x196e, EVENT(Func_02000468)},
     {TRIGGERS_END},
 };

@@ -14,7 +14,7 @@ extern struct Trigger gData_02002f78[];
 extern struct Trigger gData_02003164[];
 extern struct Trigger gData_0200323c[];
 
-void Func_02002314(s32 slot, s32 actor);
+void Inn_CheckIn(s32 slot, s32 actor);
 
 void Func_0200061c(s32 mode);
 

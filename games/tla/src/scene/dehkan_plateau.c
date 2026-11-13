@@ -142,7 +142,8 @@ void Func_020001d0(const void *data) {
         s32 index = Func_02003db0(object);
         struct MapCell *cell = &cells[index];
         u8 *shapeCell = &shapes[index];
-        s32 shape = Func_02003c10(object->terrainId, object->x, object->z);
+        s32 shape =
+            MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
         s32 terrainHeight =
             Map_GetTerrainHeight(object->terrainId, object->x, object->z);
 
@@ -177,71 +178,71 @@ void Func_020002f8(u16 *list) {
   position[2] = leader->z;
   target = Func_02003dd8(position, 0);
   if (target != NULL) {
-  goto test;
-next:
-  {
-    s32 id = list[0];
-    s32 flag;
+    goto test;
+  next:
+    {
+      s32 id = list[0];
+      s32 flag;
 
-    if (Actor_GetById(id) != target) {
-      list += 2;
-      goto test;
-    }
-    flag = list[1];
-    Event_Start();
-    if (GameFlag_Test(flag) == 0) {
-      Sound_Play(125);
-      Actor_SetPartAttribute(Actor_GetById(id), 7);
-      wait(2);
-      Func_02003ba0(target, 0);
-      Actor_SetPartAttribute(Actor_GetById(id), 0);
-      wait(2);
-      Actor_SetPartAttribute(Actor_GetById(id), 7);
-      wait(4);
-      Actor_SetPartAttribute(Actor_GetById(id), 0);
-      Func_02000974(0);
-      GameFlag_SetBit(flag);
-    } else {
-      s32 done = flag + 1;
-      s32 result = GameFlag_Test(done);
-
-      if (result == 0) {
-        leader->motionFlags = result;
-        Sound_Play(185);
-        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
-        Func_02000974(0);
-        wait(8);
-        Func_02003ba0(target, 2);
-        Func_02000c4c(-2, target->terrainId);
-        Func_02000974(1);
-        wait(16);
-        Func_02000c4c(-2, target->terrainId);
-        wait(4);
-        MapGrid_SetShake(-1, -1, 0xe666);
-        wait(8);
-        leader->motionFlags = 3;
-        wait(5);
-        Actor_SetPositionAndResetMotion(target, 0, 0, 0);
-        wait(2);
-        Sound_Play(188);
-        Func_02000aa8();
-        wait(20);
-        GameFlag_SetBit(done);
+      if (Actor_GetById(id) != target) {
+        list += 2;
+        goto test;
       }
+      flag = list[1];
+      Event_Start();
+      if (GameFlag_Test(flag) == 0) {
+        Sound_Play(125);
+        Actor_SetPartAttribute(Actor_GetById(id), 7);
+        wait(2);
+        Func_02003ba0(target, 0);
+        Actor_SetPartAttribute(Actor_GetById(id), 0);
+        wait(2);
+        Actor_SetPartAttribute(Actor_GetById(id), 7);
+        wait(4);
+        Actor_SetPartAttribute(Actor_GetById(id), 0);
+        Func_02000974(0);
+        GameFlag_SetBit(flag);
+      } else {
+        s32 done = flag + 1;
+        s32 result = GameFlag_Test(done);
+
+        if (result == 0) {
+          leader->motionFlags = result;
+          Sound_Play(185);
+          MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+          Func_02000974(0);
+          wait(8);
+          Func_02003ba0(target, 2);
+          Func_02000c4c(-2, target->terrainId);
+          Func_02000974(1);
+          wait(16);
+          Func_02000c4c(-2, target->terrainId);
+          wait(4);
+          MapGrid_SetShake(-1, -1, 0xe666);
+          wait(8);
+          leader->motionFlags = 3;
+          wait(5);
+          Actor_SetPositionAndResetMotion(target, 0, 0, 0);
+          wait(2);
+          Sound_Play(188);
+          Func_02000aa8();
+          wait(20);
+          GameFlag_SetBit(done);
+        }
+      }
+      Event_End();
+      return;
     }
-    Event_End();
-    return;
-  }
-test:
-  if (*list != 0xffff)
-    goto next;
+  test:
+    if (*list != 0xffff)
+      goto next;
   }
 }
 
 /// Runs the event of the listed object `id` once: the list holds (object id,
 /// flag) pairs ended by 0xffff, and unless the flag after the entry's own is
-/// set, cues 185 and 188 play around Actor_SetCellShape and both flags are set. The
-/// twin of overlay 67f's Func_0200048c.
+/// set, cues 185 and 188 play around Actor_SetCellShape and both flags are set.
+/// The twin of overlay 67f's Func_0200048c.
 void Func_0200048c(u16 *list, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 flag;
@@ -299,7 +300,6 @@ void Func_02001804(void);
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-
 void Func_0200056c(s32 id) {
   Actor_GetById(id)->unk5c[0] = 3;
   Func_02003cc0(id);
@@ -350,7 +350,7 @@ void Func_02000584(u16 *list) {
 
       cell = cells + index;
       slot = shapes + index;
-      shape = Func_02003c10(*terrain, actor->x, actor->z);
+      shape = MapGrid_GetTerrainKind(*terrain, actor->x, actor->z);
       ground = Map_GetTerrainHeight(*terrain, actor->x, actor->z);
 
       Func_02003cc0(id);
@@ -386,73 +386,73 @@ void Func_02000708(u16 *list) {
   position[2] = leader->z;
   target = Func_02003dd8(position, 0);
   if (target != NULL) {
-  goto test;
-next:
-  {
-    s32 id = list[0];
-    s32 flag;
+    goto test;
+  next:
+    {
+      s32 id = list[0];
+      s32 flag;
 
-    if (Actor_GetById(id) != target) {
-      list += 2;
-      goto test;
-    }
-    flag = list[1];
-    Event_Start();
-    if (GameFlag_Test(flag) == 0) {
-      Func_02003ba0(helper, 1);
-      Func_020006ec(helper, target);
-      wait(1);
-      Sound_Play(125);
-      Actor_SetPartAttribute(Actor_GetById(8), 7);
-      wait(2);
-      Func_02003ba0(helper, 0);
-      ObjectVisual_CopyAttributes(id, 9);
-      Actor_SetPartAttribute(Actor_GetById(8), 0);
-      wait(2);
-      Actor_SetPartAttribute(Actor_GetById(8), 7);
-      wait(4);
-      Actor_SetPartAttribute(Actor_GetById(8), 0);
-      Func_02000974(0);
-      Func_020006ec(target, helper);
-      wait(1);
-      GameFlag_SetBit(flag);
-    } else {
-      s32 done = flag + 1;
-      s32 result = GameFlag_Test(done);
-
-      if (result == 0) {
-        Func_02003ba0(helper, 0);
+      if (Actor_GetById(id) != target) {
+        list += 2;
+        goto test;
+      }
+      flag = list[1];
+      Event_Start();
+      if (GameFlag_Test(flag) == 0) {
+        Func_02003ba0(helper, 1);
         Func_020006ec(helper, target);
         wait(1);
-        leader->motionFlags = result;
-        Sound_Play(185);
-        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
-        Func_02000974(0);
-        wait(8);
-        Func_02003ba0(helper, 2);
-        Func_02000c4c(-2, target->terrainId);
-        Func_02000974(1);
-        wait(16);
-        Func_02000c4c(-2, target->terrainId);
-        wait(4);
-        MapGrid_SetShake(-1, -1, 0xe666);
-        wait(8);
-        leader->motionFlags = 3;
-        wait(5);
-        Actor_SetPositionAndResetMotion(helper, 0, 0, 0);
+        Sound_Play(125);
+        Actor_SetPartAttribute(Actor_GetById(8), 7);
         wait(2);
-        Sound_Play(188);
-        Func_02000aa8();
-        wait(20);
-        GameFlag_SetBit(done);
+        Func_02003ba0(helper, 0);
+        ObjectVisual_CopyAttributes(id, 9);
+        Actor_SetPartAttribute(Actor_GetById(8), 0);
+        wait(2);
+        Actor_SetPartAttribute(Actor_GetById(8), 7);
+        wait(4);
+        Actor_SetPartAttribute(Actor_GetById(8), 0);
+        Func_02000974(0);
+        Func_020006ec(target, helper);
+        wait(1);
+        GameFlag_SetBit(flag);
+      } else {
+        s32 done = flag + 1;
+        s32 result = GameFlag_Test(done);
+
+        if (result == 0) {
+          Func_02003ba0(helper, 0);
+          Func_020006ec(helper, target);
+          wait(1);
+          leader->motionFlags = result;
+          Sound_Play(185);
+          MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+          Func_02000974(0);
+          wait(8);
+          Func_02003ba0(helper, 2);
+          Func_02000c4c(-2, target->terrainId);
+          Func_02000974(1);
+          wait(16);
+          Func_02000c4c(-2, target->terrainId);
+          wait(4);
+          MapGrid_SetShake(-1, -1, 0xe666);
+          wait(8);
+          leader->motionFlags = 3;
+          wait(5);
+          Actor_SetPositionAndResetMotion(helper, 0, 0, 0);
+          wait(2);
+          Sound_Play(188);
+          Func_02000aa8();
+          wait(20);
+          GameFlag_SetBit(done);
+        }
       }
+      Event_End();
+      return;
     }
-    Event_End();
-    return;
-  }
-test:
-  if (*list != 0xffff)
-    goto next;
+  test:
+    if (*list != 0xffff)
+      goto next;
   }
 }
 

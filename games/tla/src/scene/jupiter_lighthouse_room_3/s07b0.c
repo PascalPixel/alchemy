@@ -28,20 +28,22 @@ s32 Func_02002450(s32 x, s32 z, s32 layer);
 s32 Position_FlatDistance(s32 *from, s32 *to);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02002450, Position_FlatDistance,
-    gWhirlwindEndScript, gWhirlwindRiding)
+DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02002450,
+                              Position_FlatDistance, gWhirlwindEndScript,
+                              gWhirlwindRiding)
 
-void Func_020022e0(struct GustObject *object, s32 mode);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 
 void Func_02001788(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Func_020022e0, Whirlwind_UpdateLower, Func_02001788)
+DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation,
+                       Whirlwind_UpdateLower, Func_02001788)
 
 DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, Func_02001788)
 
-DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(JupiterLighthouse_PlaceRaisedActors)
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
+    JupiterLighthouse_PlaceRaisedActors)
 
 extern const s8 gPushFootprints[][4];
 

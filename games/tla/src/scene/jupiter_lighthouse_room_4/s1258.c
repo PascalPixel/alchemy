@@ -14,7 +14,7 @@
 
 extern const s32 *gData_0200270c[];
 
-void Func_02001da8(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 
@@ -36,7 +36,7 @@ void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_02001da8(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_0200270c[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
@@ -78,7 +78,7 @@ void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_02001da8(effect, 1);
+    Actor_SelectAnimation(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)

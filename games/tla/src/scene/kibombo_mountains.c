@@ -141,7 +141,10 @@ void Func_020001a0(s32 unused, s32 id) {
         FieldEvent_Wait(60);
         Actor_SetAnimationAndWait(9, 4);
         FieldEvent_Wait(20);
-        { void *from = &saved; Iwram_CopyWordsEntry(other, from, 128); }
+        {
+          void *from = &saved;
+          Iwram_CopyWordsEntry(other, from, 128);
+        }
         MapGrid_CopyCellAttributes(53, 35, 1, 1, 53, 36);
         Event_SetFlag(0x224);
       }
@@ -349,7 +352,6 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-
 void Func_02000960(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -357,7 +359,7 @@ void Func_02000960(void) {
   Actor_SetPosition(27, PIXELS(312), PIXELS(304));
   Event_ShowMessage(27, 0);
   FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(392), 1);
-  Func_02001134();
+  FieldCamera_WaitForArrival();
   Actor_ResetTargetsAndVelocity(11);
   Actor_FaceActor(11, 27, 0);
   Actor_WalkToAndWait(27, 264, 312);
@@ -395,7 +397,7 @@ void Func_02000960(void) {
 void Func_02000ad4(s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Func_0200103c(object, 1);
+  Actor_SelectAnimation(object, 1);
   object->acceleration = 0x4000;
   object->speedLimit = 0x8000;
 }

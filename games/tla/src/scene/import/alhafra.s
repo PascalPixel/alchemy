@@ -142,9 +142,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02001ccc
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02001ccc:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Import_EventSetExitRequest
 	.thumb_func
@@ -158,9 +158,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02001cec
+	.global BattleEffect_StartEffectObject22
 	.thumb_func
-Func_02001cec:
+BattleEffect_StartEffectObject22:
 	overlay_veneer Func_080c83e0
 	.global ObjectEvent_PlaceOnGround
 	.thumb_func
@@ -202,9 +202,9 @@ Party_GetLeaderActor:
 	.thumb_func
 Func_02001d3c:
 	overlay_veneer Func_080c8878
-	.global Func_02001d44
+	.global Shop_Run
 	.thumb_func
-Func_02001d44:
+Shop_Run:
 	overlay_veneer Func_08108008
 	.global Sound_Play
 	.thumb_func

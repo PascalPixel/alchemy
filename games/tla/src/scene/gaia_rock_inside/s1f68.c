@@ -60,7 +60,7 @@ void Func_02001fd8(void) {
 
 #include "system.h"
 #include "text/msg_ids.h"
-void Func_02004e64(void);
+void Event_End(void);
 void Actor_MoveToObject(s32 id, s32 target);
 
 void Func_02002020(void) {
@@ -163,7 +163,7 @@ L_0200a22e:
   FIELD_AT(v_r10, s32, 40) = 0x60000;
   FieldActor_WaitForMoveById(13);
   Actor_SetPosition(13, 0, 0);
-  Func_02004e64();
+  Event_End();
 }
 
 #include "actor.h"
@@ -241,7 +241,7 @@ void Func_0200225c(void) {
       Import_EventSetExitRequest(20);
     } else {
       GameFlag_SetBit(0x9bd);
-      Func_02004e64();
+      Event_End();
     }
   } else {
     for (i = 119; i >= 0; i--) {
@@ -258,7 +258,7 @@ void Func_0200225c(void) {
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(12);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
-    Func_02004e64();
+    Event_End();
   }
 }
 
@@ -329,7 +329,7 @@ void Func_020024b8(void) {
       Import_EventSetExitRequest(20);
     } else {
       GameFlag_SetBit(0x9be);
-      Func_02004e64();
+      Event_End();
     }
   } else {
     for (i = 119; i >= 0; i--) {
@@ -346,7 +346,7 @@ void Func_020024b8(void) {
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(12);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
-    Func_02004e64();
+    Event_End();
   }
 }
 
@@ -417,7 +417,7 @@ void Func_02002718(void) {
       Import_EventSetExitRequest(20);
     } else {
       GameFlag_SetBit(0x9bc);
-      Func_02004e64();
+      Event_End();
     }
   } else {
     for (i = 119; i >= 0; i--) {
@@ -434,7 +434,7 @@ void Func_02002718(void) {
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(14);
     Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
-    Func_02004e64();
+    Event_End();
   }
 }
 
@@ -508,9 +508,12 @@ const u8 *Scene_GetEvents(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(s2ac8): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s1f68.c:527: too few arguments to function `Actor_GetById'. */
+/* VIEW(s2ac8): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
+ * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
+ * *Actor_GetById(u32 objectId), which the object already declares, it does not
+ * compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s1f68.c:527: too few
+ * arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s2ac8() __asm__("Actor_GetById");
-s32 Func_02004d9c();
 
 void Func_02002ac8(s32 a0, s32 a1) {
   s32 t2;
@@ -522,8 +525,8 @@ void Func_02002ac8(s32 a0, s32 a1) {
     t2 = ResourceMetadata_Register(FIELD_AT(t0, s32, 80), 0x185);
     FIELD_AT(t2, u8, 5) = 0;
     FIELD_AT(t2, u8, 6) = 0;
-    Func_02004d9c(t0, 0);
-    Func_02004d9c(t0, 4);
+    Actor_SelectAnimation(t0, 0);
+    Actor_SelectAnimation(t0, 4);
   }
 }
 #undef FIELD_AT
@@ -551,7 +554,11 @@ void Func_02002b04(u32 id, s8 mode) {
        ->v)
 
 #include "call.h"
-/* VIEW(s2b58): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s1f68.c:569: too few arguments to function `Actor_GetById'. */
+/* VIEW(s2b58): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
+ * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
+ * *Actor_GetById(u32 objectId), which the object already declares, it does not
+ * compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s1f68.c:569: too few
+ * arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s2b58() __asm__("Actor_GetById");
 void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 

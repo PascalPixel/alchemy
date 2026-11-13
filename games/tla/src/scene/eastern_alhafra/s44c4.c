@@ -65,15 +65,14 @@ void Func_020044c4(struct PushTarget target) {
     s32 deltaX = (target.x - from[0]) >> 17;
     s32 deltaZ = (target.z - from[2]) >> 17;
 
-    Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, deltaX,
-                                       deltaZ);
+    Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, deltaX, deltaZ);
   }
   Actor_Get(gMainRoutineWork.currentOwner)->update = Actor_StopAtPushTarget;
   System_Wait(4);
   if ((u32)(direction - 6) <= 7)
-    Func_02004a0c(object, 3);
+    Actor_SelectAnimation(object, 3);
   else
-    Func_02004a0c(object, 2);
+    Actor_SelectAnimation(object, 2);
   Event_PlaySound(239);
   Actor_SetSpeed(target.id, 0x8000, 0x1999);
   FieldActor_SetMoveTarget(object, target.x, target.y, target.z);
@@ -81,8 +80,8 @@ void Func_020044c4(struct PushTarget target) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
-                                     (gPushDirectionSteps[direction] << 16) >> 31,
-                                     (gPushDirectionSteps[direction] << 16) >> 17);
+                             (gPushDirectionSteps[direction] << 16) >> 31,
+                             (gPushDirectionSteps[direction] << 16) >> 17);
   if (target.callback != 0)
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -94,7 +93,7 @@ void Func_020044c4(struct PushTarget target) {
   Event_PlaySound(298);
   Event_PlaySound(213);
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
-  Func_02004a0c(object, 1);
+  Actor_SelectAnimation(object, 1);
   target.x = target.x + (gPushFootprints[footprint * 4] << 16);
   target.z = target.z + (gPushFootprints[footprint * 4 + 1] << 16);
   target.x >>= 20;
@@ -114,9 +113,8 @@ void Func_020044c4(struct PushTarget target) {
   Event_NoOp();
 }
 
-
-DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Func_02004c3c, gPushKinds,
-    Func_02004a64)
+DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Func_02004c3c,
+                                 gPushKinds, Func_02004a64)
 
 void Func_020047fc(const u16 *list) {
   const u16 *spec;
@@ -153,4 +151,5 @@ DEFINE_STATUE_SINK(Statue_Sink, Actor_SetCellOpen)
 
 #include "field_event.h"
 
-DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Func_02004c34, Func_02004a0c)
+DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Func_02004c34,
+                           Actor_SelectAnimation)

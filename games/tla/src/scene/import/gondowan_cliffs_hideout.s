@@ -58,9 +58,9 @@ Camera_FollowActor:
 	.thumb_func
 Camera_SetSpeedParameters:
 	overlay_veneer Camera_SetSpeedParametersFar
-	.global Func_0200020c
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_0200020c:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Event_ResolvePendingActions
 	.thumb_func

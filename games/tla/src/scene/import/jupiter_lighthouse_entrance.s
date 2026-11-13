@@ -218,9 +218,9 @@ Camera_WorldToScreen:
 	.thumb_func
 Func_02001b1c:
 	overlay_veneer Func_080c8760
-	.global Func_02001b24
+	.global BattleEffect_GetObjectPriority
 	.thumb_func
-Func_02001b24:
+BattleEffect_GetObjectPriority:
 	overlay_veneer Func_080c87e8
 	.global Func_02001b2c
 	.thumb_func

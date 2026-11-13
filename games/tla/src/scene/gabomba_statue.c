@@ -18,15 +18,23 @@
 #include "scene_ids.h"
 #include "system.h"
 
-/* VIEW(gabomba_statue): routine Func_02005624 as void Func_02005624(struct FieldEffect *effect, s32 mode); module/scene/scene.h has void Func_02005624(struct Actor *object, s32 mode); tried as the rest of the object declares it, Func_020006ac moves: 3 of 62 instructions, Func_02001a8c moves: 1 of 19 instructions, Func_020020b0 moves: 1 of 26 instructions, 1 more in tla-ja. */
-extern void Func_02005624__gabomba_statue(struct FieldEffect *effect, s32 mode) __asm__("Func_02005624");
+/* VIEW(gabomba_statue): routine Actor_SelectAnimation as void
+ * Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
+ * module/scene/scene.h has void Actor_SelectAnimation(struct Actor *object, s32
+ * mode); tried as the rest of the object declares it, Func_020006ac moves: 3 of
+ * 62 instructions, Func_02001a8c moves: 1 of 19 instructions, Func_020020b0
+ * moves: 1 of 26 instructions, 1 more in tla-ja. */
+extern void
+Func_02005624__gabomba_statue(struct FieldEffect *effect,
+                              s32 mode) __asm__("Actor_SelectAnimation");
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gData_02005ae4[];
 
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
-  struct FieldEffect *party = ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner));
+  struct FieldEffect *party =
+      ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner));
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -185,7 +193,11 @@ s32 Func_02000364(struct Actor *actor) {
 
 #include "macros.h"
 
-/* VIEW(gabomba_statue): tag struct Orbiter as struct Orbiter__gabomba_statue; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:194: structure has no member named `phase'. */
+/* VIEW(gabomba_statue): tag struct Orbiter as struct Orbiter__gabomba_statue;
+ * module/scene/scene.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:194: structure has no member named
+ * `phase'. */
 struct Orbiter__gabomba_statue {
   u8 unk00[6];
   u16 facing;
@@ -313,11 +325,16 @@ const u8 *Scene_GetPlacements(void) {
 #undef OBJECT_BYTE
 
 // ---- games/tla/src/scene/gabomba_statue/find_near.c ----
-// Scene code of overlay 0x671, in ROM order, from find_near's offset up to the next object the overlay links.
+// Scene code of overlay 0x671, in ROM order, from find_near's offset up to the
+// next object the overlay links.
 
 #include "field.h"
 
-/* VIEW(find_near): tag struct Orbiter as struct Orbiter__find_near; gabomba_statue.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:351: structure has no member named `phase'. */
+/* VIEW(find_near): tag struct Orbiter as struct Orbiter__find_near;
+ * gabomba_statue.c has another definition; tried with the definition the rest
+ * of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:351: structure has no member named
+ * `phase'. */
 struct Orbiter__find_near {
   u8 unk00[6];
   u16 facing;
@@ -353,7 +370,8 @@ extern const u8 gData_02006a90[];
   ((a) - (b) >= 0 ? (a) - (b) <= (limit) : (b) - (a) <= (limit))
 
 void Func_02000550(void) {
-  struct Orbiter__find_near *actor = ((struct Orbiter__find_near *)Actor_Get(9));
+  struct Orbiter__find_near *actor =
+      ((struct Orbiter__find_near *)Actor_Get(9));
   u16 zero = 0;
   s32 direction;
   s32 i;
@@ -375,11 +393,13 @@ void Func_02000550(void) {
   }
 }
 
-struct Orbiter__find_near *Func_020005b4(struct Orbiter__find_near *origin, s32 id) {
+struct Orbiter__find_near *Func_020005b4(struct Orbiter__find_near *origin,
+                                         s32 id) {
   s32 i;
 
   for (i = 8; i < 64; i++) {
-    struct Orbiter__find_near *object = ((struct Orbiter__find_near *)Actor_Get(i));
+    struct Orbiter__find_near *object =
+        ((struct Orbiter__find_near *)Actor_Get(i));
 
     if (object != NULL && object->kind == 1 && object->animation[10] != NULL &&
         *(s16 *)object->animation[10] == id) {
@@ -393,7 +413,8 @@ struct Orbiter__find_near *Func_020005b4(struct Orbiter__find_near *origin, s32 
 
 /// As Func_020005b4, but around the point 16 pixels ahead of origin in its
 /// facing.
-struct Orbiter__find_near *Func_02000624(struct Orbiter__find_near *origin, s32 id) {
+struct Orbiter__find_near *Func_02000624(struct Orbiter__find_near *origin,
+                                         s32 id) {
   s32 facing;
   s32 position[3];
   s32 i;
@@ -405,7 +426,8 @@ struct Orbiter__find_near *Func_02000624(struct Orbiter__find_near *origin, s32 
   facing = origin->facing;
   FieldVector_AddPolarOffset(0x100000, facing, position);
   for (i = 8; i < 64; i++) {
-    struct Orbiter__find_near *object = ((struct Orbiter__find_near *)Actor_Get(i));
+    struct Orbiter__find_near *object =
+        ((struct Orbiter__find_near *)Actor_Get(i));
 
     if (object != NULL && object->kind == 1 && object->animation[10] != NULL &&
         *(s16 *)object->animation[10] == id) {
@@ -490,7 +512,7 @@ void Func_02000784(void) {
     test.x = x + actor->velocityX;
     test.y = table->y;
     test.z = z + actor->velocityZ;
-    if (Func_02005684(actor, &test) == 0) {
+    if (MapGrid_CheckCollision(actor, &test) == 0) {
       s32 s, c, angle;
       angle = 0x1555 - turn;
       s = Math_Sin(angle);
@@ -499,7 +521,7 @@ void Func_02000784(void) {
       tz = table->z - Iwram_MulQ16(s, dx) + Iwram_MulQ16(c, dz);
       test.x = tx + actor->velocityX;
       test.z = tz + actor->velocityZ;
-      if (Func_02005684(actor, &test) == 0) {
+      if (MapGrid_CheckCollision(actor, &test) == 0) {
         s32 s, c, angle;
         angle = back - 0x1555;
         s = Math_Sin(angle);
@@ -508,7 +530,7 @@ void Func_02000784(void) {
         tz = table->z - Iwram_MulQ16(s, dx) + Iwram_MulQ16(c, dz);
         test.x = tx + actor->velocityX;
         test.z = tz + actor->velocityZ;
-        if (Func_02005684(actor, &test) == 0) {
+        if (MapGrid_CheckCollision(actor, &test) == 0) {
           actor->x = x;
           actor->z = z;
         }
@@ -560,12 +582,11 @@ void Func_02000978(void) {
   }
 }
 
-
 void Func_02000a20(struct Actor *object) {
   u32 i;
   struct MainRoutineWork *party;
 
-  Func_020056b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
@@ -704,7 +725,7 @@ void Func_02000c8c(void) {
 }
 
 void Func_02000cf0(struct Actor *object) {
-  Func_020056b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x10000, 0x2000);
   Actor_SetPosition(39, 164 << 17, 148 << 17);
@@ -797,7 +818,7 @@ void Func_02000fc0(void) {
   s32 result;
 
   Event_SetFlag(0x205);
-  Func_020056b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(78);
   Func_0200533c();
@@ -805,7 +826,7 @@ void Func_02000fc0(void) {
   FieldEvent_SetMessageId(MsgGabombaAcceptOffering);
   Event_ShowMessage(24, 0);
   FieldCamera_MoveTo(PIXELS(392), -1, PIXELS(256), 1);
-  Func_020057b4();
+  FieldCamera_WaitForArrival();
   Event_PlaySound(220);
   System_Wait(1);
   PaletteFade_ApplySource(0x10000, 0);
@@ -885,7 +906,7 @@ void Func_020011bc(s32 x, s32 z) {
   struct GabombaStatueChamberObject *object =
       Actor_Get(gMainRoutineWork.currentOwner);
 
-  Func_020056b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->motionFlags = 0;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
@@ -921,10 +942,12 @@ void Func_020011bc(s32 x, s32 z) {
     Func_020011bc(n6, n7);                                                     \
   }
 
-DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(Func_02001284, 11, 18, 20, 19, 12, 312, 180)
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(Func_02001284, 11, 18, 20, 19, 12, 312,
+                                     180)
 
 /// 2 copies: gabomba_statue, gabomba_statue.
-#define DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(name, n1, n2, n3, n4, n5, n6, n7, n8) \
+#define DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(name, n1, n2, n3, n4, n5,    \
+                                                  n6, n7, n8)                  \
   void name(void) {                                                            \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
     s32 x = leader->x >> 20;                                                   \
@@ -944,7 +967,8 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(Func_02001284, 11, 18, 20, 19, 12, 312, 180
     Func_020011bc(n7, n8);                                                     \
   }
 
-DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(Func_020012ec, 29, 11, 13, 12, 28, 30, 472, 196)
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(Func_020012ec, 29, 11, 13, 12, 28, 30,
+                                          472, 196)
 
 void Func_02001364(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1011,9 +1035,15 @@ void Func_02001564(void) {
   Func_020011bc(680, 146);
 }
 
-DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(Func_020015b8, 27, 17, 19, 18, 26, 28, 440, 288)
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(Func_020015b8, 27, 17, 19, 18, 26, 28,
+                                          440, 288)
 
-/* VIEW(gabomba_statue): tag struct EventWork154 as struct EventWork154__gabomba_statue; module/scene/scene.h has another definition; tried with the definition the rest of the object has, its members read exit as returnEntrance, it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:905: structure has no member named `returnEntrance'. */
+/* VIEW(gabomba_statue): tag struct EventWork154 as struct
+ * EventWork154__gabomba_statue; module/scene/scene.h has another definition;
+ * tried with the definition the rest of the object has, its members read exit
+ * as returnEntrance, it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:905: structure has no member named
+ * `returnEntrance'. */
 struct EventWork154__gabomba_statue {
   u8 unk000[0x154];
   s16 exit;
@@ -1033,7 +1063,7 @@ void Func_02001630(void) {
     return;
   work = Ram_HeapSlots->eventWork;
   leader = Actor_Get(gMainRoutineWork.currentOwner);
-  Func_020056b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   leader->motionFlags = 0;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
@@ -1055,7 +1085,7 @@ void Func_02001630(void) {
 /// gabomba_statue.
 #define DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(name, n1, n2)                     \
   void name(struct Actor *actor) {                                             \
-    Func_020056b4();                                                           \
+    Event_Start();                                                             \
     FieldEvent_ResolvePendingActions(0);                                       \
     Event_PlaySound(581);                                                      \
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);           \
@@ -1069,7 +1099,7 @@ void Func_0200176c(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   s32 speed;
 
-  Func_020056b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(581);
   actor->motionFlags = 0;
@@ -1138,12 +1168,12 @@ void Func_02001990(s32 a, s32 b) {
 void Func_020019d0(void) {
   struct Actor *actor = Actor_Get(26);
 
-  Func_020056b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(0x9999, 0x1333);
   FieldCamera_MoveTo(180 << 17, 0, 248 << 17, 1);
-  Func_020057b4();
+  FieldCamera_WaitForArrival();
   Event_PlaySound(586);
   Func_020020f0(0);
   FieldEvent_Wait(40);
@@ -1170,7 +1200,7 @@ void Func_02001a6c(s32 value) {
 void Func_02001a8c(void) {
   struct Actor *object = Actor_Get(15);
 
-  Func_020056b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(20);
   Event_PlaySound(214);
@@ -1438,13 +1468,20 @@ void Func_020020f0(s32 direction) {
 
 extern const u8 gData_0200e88c[];
 
-/* VIEW(find_near): routine Actor_StartScript as void Actor_StartScript(struct Orbiter__find_near *object, const u8 *script); gabomba_statue has extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script); not tried: Actor_StartScript's bound declaration was not found. */
-extern void Func_02005634__find_near(struct Orbiter__find_near *object, const u8 *script) __asm__("Actor_StartScript");
+/* VIEW(find_near): routine Actor_StartScript as void Actor_StartScript(struct
+ * Orbiter__find_near *object, const u8 *script); gabomba_statue has extern void
+ * Actor_StartScript(struct FieldEffect *effect, const s32 *script); not tried:
+ * Actor_StartScript's bound declaration was not found. */
+extern void
+Func_02005634__find_near(struct Orbiter__find_near *object,
+                         const u8 *script) __asm__("Actor_StartScript");
 void Animation_ApplyChildValues(struct Orbiter__find_near *object, s32 value);
 
 void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
-  struct Orbiter__find_near *object = ((struct Orbiter__find_near *)Actor_Get(slot));
-  struct Orbiter__find_near *target = ((struct Orbiter__find_near *)Actor_Get(targetId));
+  struct Orbiter__find_near *object =
+      ((struct Orbiter__find_near *)Actor_Get(slot));
+  struct Orbiter__find_near *target =
+      ((struct Orbiter__find_near *)Actor_Get(targetId));
 
   Func_02005624__gabomba_statue(object, 0);
   Func_02005634__find_near(object, gData_0200e88c);

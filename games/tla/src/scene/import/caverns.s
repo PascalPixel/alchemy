@@ -38,9 +38,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_02001074
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02001074:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SetMode
 	.global Actor_StartScript
 	.thumb_func
@@ -70,9 +70,9 @@ GetMapCellCollision:
 	.thumb_func
 Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Func_020010b4
+	.global MapGrid_CheckCollision
 	.thumb_func
-Func_020010b4:
+MapGrid_CheckCollision:
 	overlay_veneer Func_08020210
 	.global Actor_SetSingleChildFlags
 	.thumb_func

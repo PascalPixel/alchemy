@@ -308,9 +308,9 @@ Func_02003fe4:
 Func_02003fec:
 	overlay_veneer Func_080c8760
 	.endif
-	.global Func_02003ff4
+	.global Sanctum_Run
 	.thumb_func
-Func_02003ff4:
+Sanctum_Run:
 	overlay_veneer Func_08108010
 	.global Sound_Play
 	.thumb_func

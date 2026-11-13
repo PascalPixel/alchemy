@@ -16,7 +16,7 @@ void LightSprites_InitB(void);
 
 void Func_020015a0(s32 id, s32 value);
 
-void Func_02002314(s32 a);
+void BattleEffect_FillOverlayTiles(s32 a);
 
 void JupiterLighthouse_LoadPalettes(s32 mode);
 
@@ -32,7 +32,7 @@ extern struct Actor *gData_02002bdc[];
 extern struct LightOam Data_02002c1c[];
 extern s16 gLightSpritePriority;
 
-s32 Func_020022f4(struct Actor *actor);
+s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
 void Leader_CenterInCell(void);
 

@@ -94,7 +94,7 @@ void Func_0200013c(s32 id) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgGooGooGa);
   Event_ShowMessageAndWait(11, 0);
-  Func_02003268(8, 0x1210);
+  Field_StartColorTransition(8, 0x1210);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode((s32)Actor_GetById(id), 2);
   Sound_Play(201);
@@ -185,10 +185,16 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/* VIEW(eastern_alhafra_ship): variable gData_02003720 as extern const u8 gData_02003720[]; the definition has u32 gData_02003720[] = { 38, }; tried as the definition's extern u32 gData_02003720[], it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra_ship.c:199: `gData_02003720__eastern_alhafra_ship' undeclared (first use in this function). */
-extern const u8 gData_02003720__eastern_alhafra_ship[] __asm__("gData_02003720");
+/* VIEW(eastern_alhafra_ship): variable gData_02003720 as extern const u8
+ * gData_02003720[]; the definition has u32 gData_02003720[] = { 38, }; tried as
+ * the definition's extern u32 gData_02003720[], it does not compile in tla-ja:
+ * games/tla/src/scene/eastern_alhafra_ship.c:199:
+ * `gData_02003720__eastern_alhafra_ship' undeclared (first use in this
+ * function). */
+extern const u8
+    gData_02003720__eastern_alhafra_ship[] __asm__("gData_02003720");
 
-void Func_02003100(struct Actor020003e8 *object, s32 mode);
+void Actor_SelectAnimation(struct Actor020003e8 *object, s32 mode);
 void Actor_StartScript(struct Actor020003e8 *object, const void *script);
 
 void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
@@ -198,7 +204,7 @@ void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
   object = ((struct Actor020003e8 *)Import_ActorCreate(0x1e8, x, y, z));
   if (object != 0) {
     sprite = object->sprite;
-    Func_02003100(object, 1);
+    Actor_SelectAnimation(object, 1);
     Actor_StartScript(object, gData_02003720__eastern_alhafra_ship);
     object->motionFlags = 0;
     /* FAKEMATCH(barrier): an empty asm, so the fifth argument is read from the
@@ -212,10 +218,17 @@ void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
 }
 
 // ---- games/tla/src/scene/eastern_alhafra_ship/s0438.c ----
-// Scene code of overlay 0x669, in ROM order, from s0438's offset up to the next object the overlay links, and the overlay's data.
+// Scene code of overlay 0x669, in ROM order, from s0438's offset up to the next
+// object the overlay links, and the overlay's data.
 
-/* VIEW(s0438): routine Func_020003e8 as s32 Func_020003e8(s32 x, s32 y, s32 z, s32 rotation, s32 timer); the definition has void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth); tried as the definition's void Func_020003e8(u16 *ids), it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra_ship.c:215: conflicting types for `Func_020003e8'. */
-extern s32 Func_020003e8__s0438(s32 x, s32 y, s32 z, s32 rotation, s32 timer) __asm__("Func_020003e8");
+/* VIEW(s0438): routine Func_020003e8 as s32 Func_020003e8(s32 x, s32 y, s32 z,
+ * s32 rotation, s32 timer); the definition has void Func_020003e8(s32 x, s32 y,
+ * s32 z, s16 value, s32 fifth); tried as the definition's void
+ * Func_020003e8(u16 *ids), it does not compile in tla-ja:
+ * games/tla/src/scene/eastern_alhafra_ship.c:215: conflicting types for
+ * `Func_020003e8'. */
+extern s32 Func_020003e8__s0438(s32 x, s32 y, s32 z, s32 rotation,
+                                s32 timer) __asm__("Func_020003e8");
 
 DEFINE_ACTOR_EMIT_NOTES(Actor_EmitNotes, Func_020003e8__s0438)
 
@@ -258,7 +271,7 @@ void Func_020004f4(void) {
   Actor_ArmCallback(4, FACING_SOUTHWEST, 0);
   Event_Wait(20);
   FieldCamera_MoveTo(PIXELS(376), -1, PIXELS(416), 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(10);
@@ -355,7 +368,7 @@ void Func_020004f4(void) {
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_FaceDirection(6, FACING_SOUTH, 0);
   Camera_MoveWithinMapBounds(PIXELS(448), -1, PIXELS(416), 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_Jump(9, 6, 15);
   Actor_Jump(9, 6, 23);
@@ -569,13 +582,13 @@ L_0200903c:
   Actor_ShowEmote(6, 0x100, 0);
   Actor_ShowEmote(4, 0x100, 30);
   Camera_FollowActor(10, 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Actor_WalkToAndWait(10, 456, 504);
   Actor_CommitPositionAndActivate(10, 16, 0);
   Actor_SetPositionAndReset(10, 472, 424);
   Event_Wait(10);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(408), 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Event_Wait(10);
   Event_ShowMessageThenWait(10, 0, 10);
   Actor_FaceDirection(25, 0x3000, 0);
@@ -628,8 +641,7 @@ L_0200903c:
   Motion_SetVarCbAndRefresh(25, 2);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(0x1019, 0, 10);
-  result7 =
-      (struct Actor *)Actor_ShowEmote(8, 0x107, 0);
+  result7 = (struct Actor *)Actor_ShowEmote(8, 0x107, 0);
   result7->update = 0;
   Actor_SetPositionAndResetMotion(result7, (result7->x + 0x160000),
                                   (result7->y + 0x80000), result7->z);
@@ -675,8 +687,7 @@ L_0200903c:
   FieldEvent_ShowMessageThenWait(0x1008, 0, 20);
   Actor_OffsetPositionAndReset(16, 0, 8);
   Event_ShowMessageThenWait(17, 0, 10);
-  result8 =
-      (struct Actor *)Actor_ShowEmote(8, 0x100, 0);
+  result8 = (struct Actor *)Actor_ShowEmote(8, 0x100, 0);
   result8->update = 0;
   Actor_SetPositionAndResetMotion(result8, (result8->x + 0x160000),
                                   (result8->y + 0x80000), result8->z);
@@ -691,7 +702,7 @@ L_0200903c:
   Actor_FaceDirection(25, FACING_NORTH, 0);
   Event_Wait(20);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(304), 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Event_Wait(30);
   Actor_FaceDirection(16, FACING_NORTHWEST, 0);
   Event_Wait(20);
@@ -763,7 +774,7 @@ L_0200903c:
   Actor_FaceDirection(19, FACING_SOUTH, 0);
   Event_Wait(20);
   Camera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(344), 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Event_Wait(30);
   Motion_SetVarCbAndRefresh(25, 2);
   Event_Wait(10);
@@ -859,11 +870,10 @@ L_0200903c:
   Actor_ShowEmote(17, 0x107, 30);
   Event_ShowMessageThenWait(17, 0, 10);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(432), 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_ShowEmote(10, 0x102, 0);
-  result9 =
-      (struct Actor *)Actor_ShowEmote(8, 0x105, 0);
+  result9 = (struct Actor *)Actor_ShowEmote(8, 0x105, 0);
   {
     s32 x = result9->x;
     s32 y = result9->y;
@@ -873,7 +883,7 @@ L_0200903c:
   }
   Event_Wait(50);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(344), 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(16, 2);
   Event_Wait(10);
@@ -884,7 +894,7 @@ L_0200903c:
   Actor_Jump(18, 6, 23);
   FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(424), 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(10);
@@ -896,7 +906,8 @@ L_0200903c:
   Event_Wait(30);
   FieldEvent_ShowMessageThenWait(0x1008, 0, 10);
   object10 = Actor_GetById(8);
-  Actor_SetPosition(8, ((*(s16 *)((u8 *)object10 + 10) << 16) + 0x140000), ((*(s16 *)((u8 *)object10 + 18) << 16) + 0x80000));
+  Actor_SetPosition(8, ((*(s16 *)((u8 *)object10 + 10) << 16) + 0x140000),
+                    ((*(s16 *)((u8 *)object10 + 18) << 16) + 0x80000));
   Func_080d3928(8, 0);
   object11 = Actor_GetById(8);
   Actor_SetSingleChildFlags((s32)object11, 1);
@@ -933,7 +944,7 @@ L_0200903c:
   Motion_SetModeAndWaitAnimation(9, 4);
   Event_Wait(10);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(368), 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(17, 2);
   Event_Wait(10);
@@ -944,7 +955,7 @@ L_0200903c:
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(400), 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Func_080d47b4(8, 0x105, 40);
   Motion_SetVarCbAndRefresh(10, 2);
@@ -997,7 +1008,7 @@ L_0200903c:
   Actor_OffsetPositionAndReset(24, 16, 0);
   Actor_WalkByAndWait(8, 0, -16);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(384), 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_FaceDirection(9, FACING_NORTH, 0);
   Actor_FaceDirection(23, FACING_NORTH, 0);
@@ -1025,7 +1036,7 @@ L_0200903c:
   Actor_OffsetPositionAndReset(24, 16, 0);
   Actor_WalkByAndWait(8, 0, -16);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(336), 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Actor_FaceDirection(25, FACING_NORTH, 0);
   Actor_FaceDirection(6, FACING_NORTH, 0);
   Actor_FaceDirection(5, FACING_NORTH, 0);
@@ -1055,13 +1066,13 @@ L_0200903c:
   Actor_FaceDirection(8, 0x5000, 0);
   Event_Wait(20);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(416), 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_StartRepeatedMotion(10, 3);
   Actor_SetAttachedEffect(10, 0x102);
   Event_Wait(50);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(336), 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_ArmCallback(8, 0xb000, 0);
   Event_Wait(30);
@@ -1110,7 +1121,7 @@ L_0200903c:
   Actor_ArmCallback(8, FACING_WEST, 0);
   Event_Wait(20);
   Camera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(296), 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(19, 2);
   Event_Wait(10);
@@ -1197,7 +1208,7 @@ L_0200903c:
   Event_Wait(20);
   Event_ShowMessageThenWait(16, 0, 10);
   Camera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(320), 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(25, 2);
   Event_Wait(10);
@@ -1341,7 +1352,7 @@ L_0200abc0:
   Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
   Event_Wait(20);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(400), 1);
-  Func_02003218();
+  FieldCamera_WaitForArrival();
   Event_Wait(30);
   Actor_ShowEmote(10, 0x106, 30);
   Event_ShowMessageThenWait(10, 0, 10);
@@ -1553,11 +1564,15 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 20, 0x8aa, EVENT(Func_020004f4)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_0200013c)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgEoleoAndI)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgIMGonna)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgIfEoleoGets)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgIMGonna)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgIfEoleoGets)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000128)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT(Func_02000058)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13,
+     CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS,
+     EVENT(Func_02000058)},
     {8, 30, CONDITION_ALWAYS, EVENT(Func_02000054)},
     {9, 30, CONDITION_ALWAYS, EVENT(Func_02000058)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 14, 0x901, EVENT(Func_0200008c)},

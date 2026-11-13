@@ -18,7 +18,8 @@
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Whirlwind_UpdateLower(struct GustObject *object);
 
-DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Func_02001bec, Whirlwind_UpdateLower, Func_02001094)
+DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation,
+                       Whirlwind_UpdateLower, Func_02001094)
 
 #include "frame.h"
 #include "field_coordinate.h"
@@ -48,7 +49,8 @@ s32 Func_02000a64(struct Actor *object) {
 
 void Animation_ApplyChildValues(struct PositionedActor *object, s32 value);
 
-DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(JupiterLighthouse_PlaceRaisedActors)
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
+    JupiterLighthouse_PlaceRaisedActors)
 
 // Queues the lit actors' sprites: for each listed actor with a position,
 // projects it from the map's view, skips it off screen, and writes a 16 by 16
@@ -58,7 +60,12 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(JupiterLighthouse_PlaceRaisedActor
 #include "map.h"
 #include "vram_tab.h"
 
-/* VIEW(s098c): variable gData_020024f4 as s16 gData_020024f4; module/scene/clear.h has u16 gData_020024f4[]; tried as the definition's extern u16 gData_020024f4[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_basement/s098c.c:225: `gData_020024f4' has an incomplete type. */
+/* VIEW(s098c): variable gData_020024f4 as s16 gData_020024f4;
+ * module/scene/clear.h has u16 gData_020024f4[]; tried as the definition's
+ * extern u16 gData_020024f4[], which the object already declares, it does not
+ * compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_basement/s098c.c:225: `gData_020024f4'
+ * has an incomplete type. */
 extern s16 gData_020024f4__s098c __asm__("gData_020024f4");
 
 void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);
@@ -104,7 +111,7 @@ void LightSprites_Draw(void) {
         *word++ = oy | (ox << 16) | 0x40002000;
         *word = (tile + frame * 8) | 0x800;
         if (gData_020024f6 == -1)
-          oam->priority = Func_02001d24(actor);
+          oam->priority = BattleEffect_GetObjectPriority(actor);
         else
           oam->priority = gData_020024f6;
         Import_OamAddSpriteAtDepth(oam, depth);
@@ -125,7 +132,7 @@ void LightSprites_Draw(void) {
         *word++ = oy | (ox << 16) | 0xc000a000;
         *word = (tile + frame * 8) | 0x800;
         if (gData_020024f6 == -1)
-          oam->priority = Func_02001d24(actor);
+          oam->priority = BattleEffect_GetObjectPriority(actor);
         else
           oam->priority = gData_020024f6;
         Import_OamAddSpriteAtDepth(oam, depth);
@@ -139,14 +146,20 @@ void LightSprites_Draw(void) {
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_020023f4, gLightSpriteTile,
-    LightSprites_Draw, gLightSpriteCount, gData_020024f4__s098c, gData_020024f6)
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_020023f4,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gData_020024f4__s098c,
+                            gData_020024f6)
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_020023f4, gLightSpriteTile,
-    LightSprites_Draw, gLightSpriteCount, gData_020024f4__s098c, gData_020024f6)
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_020023f4,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gData_020024f4__s098c,
+                            gData_020024f6)
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_020023f4, gLightSpriteTile,
-    LightSprites_Draw, gLightSpriteCount, gData_020024f4__s098c, gData_020024f6)
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_020023f4,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gData_020024f4__s098c,
+                            gData_020024f6)
 
 DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount, gData_020023f4)
 

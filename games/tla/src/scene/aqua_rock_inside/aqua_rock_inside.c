@@ -463,14 +463,19 @@ void Func_02000ca8(void) {
 }
 
 // ---- games/tla/src/scene/aqua_rock_inside/s0cc8.c ----
-// Scene code of overlay 0x67c, in ROM order, from s0cc8's offset up to the next object the overlay links.
+// Scene code of overlay 0x67c, in ROM order, from s0cc8's offset up to the next
+// object the overlay links.
 
 #include "actor.h"
 #include "system/vector3.h"
 #include "event_inline.h"
 #include "io_write_queue.h"
 
-/* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before it has another declaration; tried as the definition's void Func_02000ca8(void), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/aqua_rock_inside.c:503: too many arguments to function `Func_02000ca8'. */
+/* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before
+ * it has another declaration; tried as the definition's void
+ * Func_02000ca8(void), which the object already declares, it does not compile
+ * in tla-ja: games/tla/src/scene/aqua_rock_inside.c:503: too many arguments to
+ * function `Func_02000ca8'. */
 extern void Func_02000ca8__s0cc8() __asm__("Func_02000ca8");
 
 void Func_02000cc8(s32 trigger) {
@@ -528,7 +533,7 @@ test:
   target.x = object->x;
   target.y = object->y;
   target.z = object->z + 0x80000;
-  result = Func_02003d2c(object, &target);
+  result = MapGrid_CheckCollision(object, &target);
   if (result <= 0)
     goto step;
 }
@@ -795,7 +800,8 @@ void Func_02001364(struct Actor *object) {
 }
 
 // ---- games/tla/src/scene/aqua_rock_inside/s13bc.c ----
-// Scene code of overlay 0x67c, in ROM order, from s13bc's offset up to the next object the overlay links.
+// Scene code of overlay 0x67c, in ROM order, from s13bc's offset up to the next
+// object the overlay links.
 
 #include "frame.h"
 
@@ -1682,7 +1688,7 @@ void Func_02002ca4(void) {
   position[0] = actor->x;
   position[1] = actor->y;
   position[2] = actor->z + 0x20000;
-  hit = Func_02003d2c(actor, position);
+  hit = MapGrid_CheckCollision(actor, position);
   if ((gFrameCount & 4) == 0)
     Func_02002bd4(actor);
   if (hit < 0) {
@@ -1701,19 +1707,19 @@ void Func_02002ca4(void) {
   position[0] = actor->x;
   position[1] = actor->y;
   position[2] = actor->z + 0x80000;
-  hit = Func_02003d2c(actor, position);
+  hit = MapGrid_CheckCollision(actor, position);
   if (hit > 0)
     return;
   position[0] = actor->x + 0x5b333;
   position[1] = actor->y;
   position[2] = actor->z + 0x5b333;
-  hit = Func_02003d2c(actor, position);
+  hit = MapGrid_CheckCollision(actor, position);
   if (hit > 0)
     return;
   position[0] = actor->x - 0x5b333;
   position[1] = actor->y;
   position[2] = actor->z + 0x5b333;
-  hit = Func_02003d2c(actor, position);
+  hit = MapGrid_CheckCollision(actor, position);
   if (hit > 0)
     return;
   center->z += 0x20000;

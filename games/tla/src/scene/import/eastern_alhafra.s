@@ -62,9 +62,9 @@ GameFlag_Test:
 	.thumb_func
 GameFlag_SetBit:
 	overlay_veneer GameFlag_SetBitFar
-	.global Func_02004a0c
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02004a0c:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SetMode
 	.global Actor_StartScript
 	.thumb_func
@@ -258,9 +258,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02004b94
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02004b94:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Func_080d452c
 	.thumb_func
@@ -274,9 +274,9 @@ Event_SetDestination:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02004bb4
+	.global Field_FindNearbyTalkTarget
 	.thumb_func
-Func_02004bb4:
+Field_FindNearbyTalkTarget:
 	overlay_veneer Func_080c82c0
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
@@ -366,9 +366,9 @@ Func_02004c5c:
 	.thumb_func
 Func_02004c64:
 	overlay_veneer Func_080c87c0
-	.global Func_02004c6c
+	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func
-Func_02004c6c:
+EffectSprite_DrawAtWorldPosition:
 	overlay_veneer Func_080c87d0
 	.global BattleEffect_StepVector3
 	.thumb_func

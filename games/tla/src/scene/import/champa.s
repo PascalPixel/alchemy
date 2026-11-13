@@ -22,9 +22,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_020029dc
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_020029dc:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SetMode
 	.global Actor_StartScript
 	.thumb_func
@@ -34,13 +34,13 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_020029f4
+	.global Map_ClearLayerEntryFlag
 	.thumb_func
-Func_020029f4:
+Map_ClearLayerEntryFlag:
 	overlay_veneer Func_08020198
-	.global Func_020029fc
+	.global Map_SetLayerEntryFlag
 	.thumb_func
-Func_020029fc:
+Map_SetLayerEntryFlag:
 	overlay_veneer Func_080201a0
 	.global Map_CopyCellAttributeRect
 	.thumb_func
@@ -62,9 +62,9 @@ Message_OpenWindow:
 	.thumb_func
 Message_AllTyped:
 	overlay_veneer Message_AllTypedFar
-	.global Func_02002a2c
+	.global Portrait_OpenWindow
 	.thumb_func
-Func_02002a2c:
+Portrait_OpenWindow:
 	overlay_veneer Func_080380f8
 	.global Window_CloseMatchingId
 	.thumb_func
@@ -198,9 +198,9 @@ Camera_FollowActor:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02002b3c
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02002b3c:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Import_EventSetExitRequest
 	.thumb_func

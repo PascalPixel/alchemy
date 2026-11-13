@@ -33,7 +33,7 @@ void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_02001bec(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_020023a0[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
@@ -75,7 +75,7 @@ void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_02001bec(effect, 1);
+    Actor_SelectAnimation(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
@@ -96,7 +96,8 @@ void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "iwram_call.h"
 #include "cell_target.h"
 
-DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gTeleporters, Func_0200125c)
+DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gTeleporters,
+                              Func_0200125c)
 
 #include "scene_ids.h"
 #include "frame.h"

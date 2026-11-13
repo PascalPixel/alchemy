@@ -36,7 +36,7 @@ void Func_020015a0(void);
 
 void Func_02002fd4(void);
 
-void Func_020031a8(s32 a);
+void Party_RestoreHpPp(s32 a);
 
 void Func_020000f0(void);
 

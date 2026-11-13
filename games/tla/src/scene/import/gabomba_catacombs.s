@@ -10,9 +10,9 @@ GameFlag_Test:
 	.thumb_func
 GameFlag_SetBit:
 	overlay_veneer GameFlag_SetBitFar
-	.global Func_0200114c
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_0200114c:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SetMode
 	.global Actor_StartScript
 	.thumb_func
@@ -30,9 +30,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 Func_0802b450:
 	overlay_veneer Func_080201f0
-	.global Func_02001174
+	.global MapGrid_CheckCollision
 	.thumb_func
-Func_02001174:
+MapGrid_CheckCollision:
 	overlay_veneer Func_08020210
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -110,9 +110,9 @@ FieldEffect_SetAttached:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02001214
+	.global FieldCamera_MoveToActorById
 	.thumb_func
-Func_02001214:
+FieldCamera_MoveToActorById:
 	overlay_veneer Func_080c8248
 	.global Import_EventSetExitRequest
 	.thumb_func

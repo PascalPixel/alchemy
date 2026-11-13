@@ -76,7 +76,7 @@ void PaletteCycle_Fade(void);
 
 void Func_020034a8(void);
 void Func_02003380(s32 x, s32 z, s32 a, s32 b);
-void Func_02003430(void);
+void FieldCamera_WaitForArrival(void);
 s32 Func_02003498();
 
 extern char SceneId_Ov6B0Room2;
@@ -84,7 +84,7 @@ extern char SceneId_Ov6B0Room3;
 extern char SceneId_Ov6B0Room4;
 
 void Func_020034a0(void);
-void Func_02003438(s32 id, s32 a);
+void FieldCamera_MoveToActorById(s32 id, s32 a);
 
 void Func_02000158(void);
 

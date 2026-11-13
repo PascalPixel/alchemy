@@ -18,9 +18,9 @@ GameFlag_Test:
 	.thumb_func
 GameFlag_SetBit:
 	overlay_veneer GameFlag_SetBitFar
-	.global Func_0200103c
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_0200103c:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SetMode
 	.global Actor_StartScript
 	.thumb_func
@@ -142,9 +142,9 @@ FieldEffect_SetAttached:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02001134
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02001134:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Event_SetDestination
 	.thumb_func

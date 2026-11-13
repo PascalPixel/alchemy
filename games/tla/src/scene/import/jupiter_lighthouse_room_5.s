@@ -170,9 +170,9 @@ FieldMessage_Show:
 	.thumb_func
 Func_0803ce64:
 	overlay_veneer Func_08038210
-	.global Func_020028a0
+	.global Party_RestoreHpPp
 	.thumb_func
-Func_020028a0:
+Party_RestoreHpPp:
 	overlay_veneer Func_080ad208
 	.global Event_Wait
 	.thumb_func
@@ -338,13 +338,13 @@ Func_020029e0:
 	.thumb_func
 Func_020029e8:
 	overlay_veneer Func_080c87c8
-	.global Func_020029f0
+	.global BattleEffect_GetObjectPriority
 	.thumb_func
-Func_020029f0:
+BattleEffect_GetObjectPriority:
 	overlay_veneer Func_080c87e8
-	.global Func_020029f8
+	.global BattleEffect_GetObjectDepth
 	.thumb_func
-Func_020029f8:
+BattleEffect_GetObjectDepth:
 	overlay_veneer Func_080c87f0
 	.global BattleEffect_StartArcEffect
 	.thumb_func

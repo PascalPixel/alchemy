@@ -122,9 +122,9 @@ Map_CopyCellsRect:
 	.thumb_func
 Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Func_020021b8
+	.global MapGrid_CheckCollision
 	.thumb_func
-Func_020021b8:
+MapGrid_CheckCollision:
 	overlay_veneer Func_08020210
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -246,9 +246,9 @@ Event_NoOp:
 	.thumb_func
 Func_020022a8:
 	overlay_veneer Func_080c8738
-	.global Func_020022b0
+	.global BattleEffect_GetObjectPriority
 	.thumb_func
-Func_020022b0:
+BattleEffect_GetObjectPriority:
 	overlay_veneer Func_080c87e8
 	.global Func_020022b8
 	.thumb_func

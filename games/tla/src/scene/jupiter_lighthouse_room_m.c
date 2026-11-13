@@ -223,7 +223,7 @@ void Func_020003b8(s32 unused, s32 id) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Camera_MoveWithinMapBounds_(254 << 18, -1, 232 << 16, 1);
-    Func_020048f4();
+    FieldCamera_WaitForArrival();
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
     x = leader->x >> 20;
     if (x == 64) {
@@ -263,14 +263,14 @@ void Func_020003b8(s32 unused, s32 id) {
     FieldEvent_Wait(60);
     FieldCamera_SetSpeed(0x30000, 0x6000);
     Camera_MoveWithinMapBounds_(131 << 19, 0, 174 << 16, 1);
-    Func_020048f4();
+    FieldCamera_WaitForArrival();
     FieldEvent_Wait(10);
     object->update = 0;
     Event_PlaySound(80);
     Sound_WaitForJingle();
     FieldEvent_Wait(10);
     Camera_MoveWithinMapBounds_(246 << 18, -0x400000, 248 << 16, 1);
-    Func_020048f4();
+    FieldCamera_WaitForArrival();
     FieldEvent_Wait(10);
     Func_02002efc(1);
     Event_End();
@@ -297,7 +297,7 @@ void Func_0200060c(void) {
   /* FAKEMATCH(wrapper): forwarded through Camera_MoveWithinMapBounds_ above;
    * as plain calls, 63 of 292 instructions differ in tla-en. */
   Camera_MoveWithinMapBounds_(194 << 18, -1, PIXELS(208), 1);
-  Func_020048f4();
+  FieldCamera_WaitForArrival();
   Event_Wait(6);
   Sound_Play(217);
   MapGrid_CopyCellsLayered(49, 103, 4, 3, 49, 76);
@@ -321,7 +321,7 @@ void Func_0200060c(void) {
   if ((u32)(spot - 2) <= 1) {
     FieldCamera_SetSpeed(0x40000, 0x8000);
     FieldCamera_FollowActor(23, 1);
-    Func_020048f4();
+    FieldCamera_WaitForArrival();
     Sound_Play(310);
     object->gravity = 0x8000;
     object->motionFlags = 2;
@@ -359,7 +359,7 @@ void Func_0200060c(void) {
     FieldActor_SetSpritePriority(23, 1);
     FieldCamera_SetSpeed(0x40000, 0x8000);
     FieldCamera_FollowActor(23, 1);
-    Func_020048f4();
+    FieldCamera_WaitForArrival();
     Sound_Play(310);
     object->gravity = 0x8000;
     object->motionFlags = 2;
@@ -376,7 +376,7 @@ void Func_0200060c(void) {
   }
   Event_Wait(20);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_020048f4();
+  FieldCamera_WaitForArrival();
   Event_End();
 }
 
@@ -388,7 +388,7 @@ void Func_020008c8(void) {
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(125);
   FieldCamera_MoveTo(PIXELS(776), -1, PIXELS(208), 1);
-  Func_020048f4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(6);
   MapGrid_CopyCellsLayered(49, 103, 4, 3, 49, 76);
   FieldEvent_Wait(6);
@@ -396,7 +396,7 @@ void Func_020008c8(void) {
   MapGrid_CopyCellsLayered(49, 100, 4, 3, 49, 76);
   FieldEvent_Wait(20);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_020048f4();
+  FieldCamera_WaitForArrival();
   Event_End();
 }
 
@@ -633,10 +633,10 @@ void Func_02000cac(s32 arg) {
   FieldCamera_SetSpeed(0x8000, 0x1000);
   if (arg != 0) {
     FieldCamera_MoveTo(PIXELS(677), PIXELS(-64), PIXELS(287), 1);
-    Func_020048f4();
+    FieldCamera_WaitForArrival();
   } else {
     FieldCamera_MoveTo(PIXELS(950), PIXELS(-64), PIXELS(287), 1);
-    Func_020048f4();
+    FieldCamera_WaitForArrival();
   }
   FieldActor_RefreshSelectorById(4);
   FieldActor_RefreshSelectorById(7);
@@ -648,7 +648,7 @@ void Func_02000cac(s32 arg) {
   Actor_SetPositionAndFacing(2, PIXELS(741), PIXELS(232), angle);
   FieldCamera_SetSpeed(0x40000, 0x8000);
   FieldCamera_MoveTo(PIXELS(800), 0, PIXELS(270), 1);
-  Func_020048f4();
+  FieldCamera_WaitForArrival();
   Event_PlaySound(39);
   FieldEvent_Wait(50);
   Actor_RunRepeatedMotion(0, 2);
@@ -837,10 +837,10 @@ void Func_02000cac(s32 arg) {
   Actor_FaceDirectionAndWait(0, angle);
   Actor_SetAnimation(0, 38);
   FieldCamera_MoveTo(PIXELS(784), 0, PIXELS(274), 1);
-  Func_020048f4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(60);
   FieldCamera_MoveTo(PIXELS(720), 0, PIXELS(210), 1);
-  Func_020048f4();
+  FieldCamera_WaitForArrival();
   Actor_SetAnimation(0, 1);
   Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
   FieldEvent_Wait(10);
@@ -1082,7 +1082,7 @@ void Func_02001c7c(void) {
   FieldEvent_ShowMessageThenWait(2, 0, 5);
   (struct Actor *)Actor_ShowEmote(4, 0x100, 30);
   FieldCamera_MoveTo(PIXELS(705), 0, PIXELS(177), 1);
-  Func_020048f4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
   Actor_SetSingleChildFlags(Actor_Get(2), 0);
   Actor_SetAnimation(2, 32);
@@ -1264,7 +1264,7 @@ void Func_02001ed0(void) {
   Actor_SetScript(6, (s32)gData_02004ae8);
   Actor_SetScript(5, (s32)gData_02004b1c);
   FieldCamera_FollowActor(4, 1);
-  Func_020048f4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(0x14);
   Walk(0x1a, 0x107, 0x1e);
   FieldEvent_ShowMessageThenWait(0x1a, 0, 5);

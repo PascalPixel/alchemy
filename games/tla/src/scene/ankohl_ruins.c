@@ -537,7 +537,7 @@ void Func_020010f4(void) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z + 0x80000;
-  if (Func_02002e0c(leader, position) < 0)
+  if (MapGrid_CheckCollision(leader, position) < 0)
     work->unk154 = 66;
   leader->z += 0x8000;
   companion->z += 0x8000;
@@ -1065,11 +1065,11 @@ void Func_020020fc(void) {
       AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
       FieldEvent_Wait(10);
       FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(392), 1);
-      Func_02002eb4();
+      FieldCamera_WaitForArrival();
       Task_AddFrame(Func_02001f7c, TASK_PASS_VBLANK);
       FieldEvent_Wait(40);
       FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-      Func_02002eb4();
+      FieldCamera_WaitForArrival();
       MapGrid_CopyCellAttributes(13, 30, 3, 2, 13, z);
       AnkohlRuins_Call2dfc(14, 87, 1, 1, 14, 88);
       Event_SetFlag(381);

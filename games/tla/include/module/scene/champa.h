@@ -17,7 +17,7 @@ extern s32 gData_0200320c[];
 
 extern s32 gData_0200b410[];
 
-void Func_020029dc(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 extern s16 gData_020031e4[];
 extern s16 gData_020031e6[];

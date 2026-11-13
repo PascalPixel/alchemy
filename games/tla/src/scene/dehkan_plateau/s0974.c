@@ -40,7 +40,7 @@ void Func_02000974(s32 spread) {
           285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
     }
     if (effect != 0) {
-      frame = Func_02003d80(effect->sprite, frame);
+      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
@@ -87,7 +87,7 @@ void Func_02000aa8(void) {
 
       if (object == NULL)
         goto skip;
-      frame = Func_02003d80(effect->sprite, frame);
+      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       object->motionFlags = 0;
       object->collisionFlags = 0;
       Actor_SetSingleChildFlags(object, 0);

@@ -124,9 +124,9 @@ Message_CloseFinishedWindows:
 	.thumb_func
 FileList_SelectAction:
 	overlay_veneer FileList_SelectActionFar
-	.global Func_020022b0
+	.global IconMenu_ChooseSendOption
 	.thumb_func
-Func_020022b0:
+IconMenu_ChooseSendOption:
 	overlay_veneer Func_080381f8
 	.global Func_0803ce64
 	.thumb_func
@@ -144,17 +144,17 @@ Window_SetTilemapEntry:
 	.thumb_func
 Func_020022d0:
 	overlay_veneer Func_080382c0
-	.global Func_020022d8
+	.global Save_ChooseAndLoadFile
 	.thumb_func
-Func_020022d8:
+Save_ChooseAndLoadFile:
 	overlay_veneer Func_080382c8
-	.global Func_020022e0
+	.global Save_CopyFile
 	.thumb_func
-Func_020022e0:
+Save_CopyFile:
 	overlay_veneer Func_080382d0
-	.global Func_020022e8
+	.global Save_EraseSelectedFile
 	.thumb_func
-Func_020022e8:
+Save_EraseSelectedFile:
 	overlay_veneer Func_080382d8
 	.global Func_020022f0
 	.thumb_func
@@ -238,9 +238,9 @@ Unit_UpdateClass:
 	.thumb_func
 BuildStamp_GetTime:
 	overlay_veneer BuildStamp_GetTimeFar
-	.global Func_02002390
+	.global InventorySnapshot_Restore
 	.thumb_func
-Func_02002390:
+InventorySnapshot_Restore:
 	overlay_veneer Func_080ad2e0
 	.global Func_02002398
 	.thumb_func
@@ -282,21 +282,21 @@ Func_080d295c:
 	.thumb_func
 Func_020023e0:
 	overlay_veneer Func_080c8940
-	.global Func_020023e8
+	.global StatusScreen_Run
 	.thumb_func
-Func_020023e8:
+StatusScreen_Run:
 	overlay_veneer Func_080f8010
-	.global Func_020023f0
+	.global MenuCursor_Advance
 	.thumb_func
-Func_020023f0:
+MenuCursor_Advance:
 	overlay_veneer Func_08108030
-	.global Func_020023f8
+	.global MenuCursor_Set
 	.thumb_func
-Func_020023f8:
+MenuCursor_Set:
 	overlay_veneer Func_08108040
-	.global Func_02002400
+	.global MenuCursor_SetPositionImmediate
 	.thumb_func
-Func_02002400:
+MenuCursor_SetPositionImmediate:
 	overlay_veneer Func_08108048
 	.global Sound_Play
 	.thumb_func

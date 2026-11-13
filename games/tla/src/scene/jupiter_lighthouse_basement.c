@@ -104,9 +104,9 @@ void Func_0200015c(struct Actor *object) {
   }
   object->unk66 = object->timer;
   if (object->timer == 212)
-    Func_02001bec(object, 9);
+    Actor_SelectAnimation(object, 9);
   else
-    Func_02001bec(object, 10);
+    Actor_SelectAnimation(object, 10);
 }
 
 struct EventWork1ac {
@@ -225,11 +225,13 @@ extern s32 gPaletteCycleFrame;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
-DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gPaletteCycleFrame, gData_02002388,
-    gData_020023b0, 0x05000184)
+DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gPaletteCycleFrame,
+                             gData_02002388, gData_020023b0, 0x05000184)
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02002388, gData_020023b0,
-    gData_020023d0, PaletteCycle_StepAt, gData_020023d4)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
+                                        gData_02002388, gData_020023b0,
+                                        gData_020023d0, PaletteCycle_StepAt,
+                                        gData_020023d4)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001c74, Func_02001d34)
 
@@ -245,5 +247,6 @@ extern const s32 gWhirlwindEndScript[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02001d2c, Position_FlatDistance,
-    gWhirlwindEndScript, Data_020023ac)
+DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02001d2c,
+                              Position_FlatDistance, gWhirlwindEndScript,
+                              Data_020023ac)

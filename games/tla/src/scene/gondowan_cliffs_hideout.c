@@ -27,7 +27,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "actor.h"
 #include "event_inline.h"
 
-void Func_0200020c(void);
+void FieldCamera_WaitForArrival(void);
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (GameFlag_Test(2219))
@@ -46,7 +46,7 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
     Event_SetMessageId((s32)MsgKibomboWarriorsFound);
     Camera_SetSpeedParameters(0x10000, 0x2000);
     Camera_FollowActor(8, 1);
-    Func_0200020c();
+    FieldCamera_WaitForArrival();
     Actor_SetAngleToward(ACTOR_WARRIOR_FROM_KIBOMBO, ACTOR_FELIX, 2);
     {
       s32 half = 129;
@@ -135,15 +135,21 @@ struct ActorPlacement gPlacementsWithoutWarriors[] = {
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_STEP, 10, 2447, EVENT(GondowanCliffsHideout_WarriorsAreFound)},
-    {TRIGGER_TALK, ACTOR_WARRIOR_FROM_KIBOMBO, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorIntroducesHimself)},
+    {TRIGGER_TALK, ACTOR_WARRIOR_FROM_KIBOMBO, CONDITION_ALWAYS,
+     MSGNO(MsgKibomboWarriorIntroducesHimself)},
     {TRIGGER_TALK, ACTOR_WARRIOR_BLAMING_THE_COLLISION, CONDITION_ALWAYS,
      MSGNO(MsgKibomboWarriorsBlameContinentsCollision)},
-    {TRIGGER_TALK, ACTOR_WARRIOR_CLAIMING_TO_CAMP, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsClaimCamping)},
-    {TRIGGER_TALK, ACTOR_WARRIOR_AWAITING_FRIENDS, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsFriendsComing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_FROM_KIBOMBO, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsRegretMadraRaid)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_BLAMING_THE_COLLISION, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsLostFood)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_CLAIMING_TO_CAMP, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsThreatenTown)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_AWAITING_FRIENDS, CONDITION_ALWAYS,
-     MSGNO(MsgKibomboWarriorsWonderAboutPrisoners)},
+    {TRIGGER_TALK, ACTOR_WARRIOR_CLAIMING_TO_CAMP, CONDITION_ALWAYS,
+     MSGNO(MsgKibomboWarriorsClaimCamping)},
+    {TRIGGER_TALK, ACTOR_WARRIOR_AWAITING_FRIENDS, CONDITION_ALWAYS,
+     MSGNO(MsgKibomboWarriorsFriendsComing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_FROM_KIBOMBO,
+     CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsRegretMadraRaid)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_BLAMING_THE_COLLISION,
+     CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsLostFood)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_CLAIMING_TO_CAMP,
+     CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsThreatenTown)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_AWAITING_FRIENDS,
+     CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsWonderAboutPrisoners)},
     {TRIGGERS_END},
 };

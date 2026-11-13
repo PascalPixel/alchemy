@@ -138,13 +138,13 @@ void Func_02002aa8(s32 x, s32 z) {
   options.targetScaleY = 0x8000;
   i = 0;
 burst:
-    spawn.x = x + ((Random16Far() & 63) << 16) - 0x200000;
-    spawn.y = (Random16Far() & 15) << 12;
-    spawn.z = z + ((Random16Far() & 7) << 16) - 0x100000;
-    Func_020002f4(spawn.x, 0, spawn.z, 0, spawn.y, 0,
-                  EFFECT_SCALE_TO_TARGET | EFFECT_USE_START_SCALE |
-                      EFFECT_USE_PRIORITY | 1,
-                  &options);
+  spawn.x = x + ((Random16Far() & 63) << 16) - 0x200000;
+  spawn.y = (Random16Far() & 15) << 12;
+  spawn.z = z + ((Random16Far() & 7) << 16) - 0x100000;
+  Func_020002f4(spawn.x, 0, spawn.z, 0, spawn.y, 0,
+                EFFECT_SCALE_TO_TARGET | EFFECT_USE_START_SCALE |
+                    EFFECT_USE_PRIORITY | 1,
+                &options);
   i++;
   if (i != 8)
     goto burst;
@@ -237,7 +237,8 @@ s32 BattleEffect_StartBufferInterpolation(s32 frames);
 s32 Camera_FollowActor(s32 id, s32 a);
 void Camera_SetSpeedParameters(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Map_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height, s32 a, s32 b);
+void Map_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height, s32 a,
+                                    s32 b);
 void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Actor_ConfigureSpriteColor(s32 actor, s32 a);
 void Func_02001084(struct Actor *object, s32 a, s32 b);
@@ -263,12 +264,13 @@ void Func_02002cf0(void) {
     REG_BG0CNT = control;
   } while (0);
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
-                buffer);
+                        buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
+                        buffer);
   i = 0;
   cell = buffer;
 mask:
@@ -323,11 +325,11 @@ row:
   Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x10003, 0);
   BattleEffect_StartBufferInterpolation(60);
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02005ee4();
+  FieldCamera_WaitForArrival();
   Call2((void (*)())Camera_SetSpeedParameters, 0x10000, 0x2000);
   Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(312), -1, PIXELS(680),
         1);
-  Func_02005ee4();
+  FieldCamera_WaitForArrival();
   Actor_GetById(11)->update = 0;
   Actor_SetPartAttribute(Actor_GetById(11), 6);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -362,8 +364,8 @@ fade:
   Func_02002aa8(0x1380000, 0x2d00000);
   Call6((void (*)())Map_CopyCellPictureIndicesRect, 64, 78, 18, 105, 3, 5);
   Camera_SetSpeedParameters(0x18000, 0x3000);
-  Func_02005eec(10, 1);
-  Func_02005ee4();
+  FieldCamera_MoveToActorById(10, 1);
+  FieldCamera_WaitForArrival();
   Sound_Play(146);
   Call2((void (*)())Actor_ConfigureSpriteColor, 10, 0x100);
   Func_02002b58(Actor_GetById(10)->x, Actor_GetById(10)->z);
@@ -418,7 +420,7 @@ void Func_02003170(void) {
   Sound_Play(123);
   Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, 312, 792);
   FieldEvent_Wait(5);
-  Func_02005efc(15);
+  Event_SetExitRequest(15);
   Event_End();
 }
 
@@ -576,12 +578,13 @@ void Func_02003654(void) {
     REG_BG0CNT = control;
   } while (0);
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
-                buffer);
+                        buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
+                        buffer);
   i = 0;
   cell = buffer;
 mask:
@@ -636,11 +639,11 @@ row:
   Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x10003, 0);
   BattleEffect_StartBufferInterpolation(60);
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02005ee4();
+  FieldCamera_WaitForArrival();
   Call2((void (*)())Camera_SetSpeedParameters, 0x10000, 0x2000);
   Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(216), -1, PIXELS(224),
         1);
-  Func_02005ee4();
+  FieldCamera_WaitForArrival();
   Actor_GetById(10)->update = 0;
   Actor_SetPartAttribute(Actor_GetById(10), 6);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -675,8 +678,8 @@ fade:
   Func_02002aa8(0xd80000, 0x12d0000);
   Call6((void (*)())Map_CopyCellPictureIndicesRect, 68, 84, 12, 77, 3, 6);
   Camera_SetSpeedParameters(0x18000, 0x3000);
-  Func_02005eec(8, 1);
-  Func_02005ee4();
+  FieldCamera_MoveToActorById(8, 1);
+  FieldCamera_WaitForArrival();
   Sound_Play(146);
   Call2((void (*)())Actor_ConfigureSpriteColor, 8, 0x100);
   Func_02002b58(Actor_GetById(8)->x, Actor_GetById(8)->z + 0x200000);
@@ -704,7 +707,7 @@ void Func_02003ac4(void) {
   Event_ResolvePendingActions(0);
   OverlayObject_PrepareObject(0xd80000, -0x200000, 0x2200000, 286);
   Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, 0);
-  Func_02005efc(3);
+  Event_SetExitRequest(3);
   Event_End();
 }
 
@@ -763,7 +766,8 @@ fadeOut:
     goto fadeOut;
   cellX = x >> 4;
   cellY = (y >> 4) - 1;
-  Call6((void (*)())Map_CopyCellPictureIndicesRect, 65, 1, cellX + 64, cellY, 1, 2);
+  Call6((void (*)())Map_CopyCellPictureIndicesRect, 65, 1, cellX + 64, cellY, 1,
+        2);
   Func_0200062c(0, cellX, cellY, 0xff00);
   Import_ActorDestroy(marker);
   Event_End();
@@ -1409,7 +1413,8 @@ void Func_02004cc8(void) {
   lift->motionFlags = 0;
   lift->speedLimit = 0x16666;
   lift->acceleration = 0x16666;
-  Import_ActorSetTargetPosition(leader, leader->x, leader->y + 0x500000, leader->z);
+  Import_ActorSetTargetPosition(leader, leader->x, leader->y + 0x500000,
+                                leader->z);
   Import_ActorSetTargetPosition(lift, lift->x, lift->y + 0x480000, lift->z);
   Sound_Play(137);
   Event_StartScreenTransition();
@@ -1433,7 +1438,8 @@ void Func_02004cc8(void) {
   leader->velocityY = 0x40000;
   leader->motionFlags = 2;
   leader->priorityFlags = 1;
-  Import_ActorSetTargetPosition(leader, leader->x, leader->y, leader->z - 0x100000);
+  Import_ActorSetTargetPosition(leader, leader->x, leader->y,
+                                leader->z - 0x100000);
   OverlayObject_WaitUntilIdle(leader);
   Import_ActorCommitPosition(leader);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);

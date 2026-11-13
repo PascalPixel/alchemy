@@ -19,7 +19,11 @@ struct Work {
   u16 room;
 };
 
-/* VIEW(s0ac8): tag struct Vector3 as struct Vector3__s0ac8; vector3.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum/s0ac8.c:47: storage size of `from' isn't known. */
+/* VIEW(s0ac8): tag struct Vector3 as struct Vector3__s0ac8; vector3.h has
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/anemos_inner_sanctum/s0ac8.c:47: storage size of `from'
+ * isn't known. */
 struct Vector3__s0ac8 {
   s32 x;
   s32 y;
@@ -209,7 +213,7 @@ void Func_02000ac8(void) {
     FieldEvent_Wait(60);
     FieldCamera_SetSpeed(0x40000, 0x8000);
     FieldCamera_MoveTo(0x2180000, -1, 0x780000, 1);
-    Func_02003430();
+    FieldCamera_WaitForArrival();
     Event_PlaySound(220);
     {
       s32 a = targetX << 16;
@@ -246,7 +250,7 @@ void Func_02000ac8(void) {
   Import_ActorDestroy(actor);
   Event_SetFlag(0x200);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02003430();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(60);
   Event_End();
 }
@@ -358,7 +362,7 @@ void Func_02001160(void) {
 
 extern const s32 gData_02003574[];
 
-void Func_020032e0(struct Actor *, s32);
+void Actor_SelectAnimation(struct Actor *, s32);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 /// An event handler from the sanctum's event table (in s2f48.c):
@@ -380,14 +384,14 @@ void Func_02001398(void) {
     MapGrid_CopyCellsTo(54, 87, leader->x >> 20, (leader->z >> 20) + 64, 1, 1);
   Event_PlaySound(106);
   object = FieldActor_Create(0x15d, ((leader->x >> 20) << 20) + 0x80000, 0,
-                  ((leader->z >> 20) << 20) + 0x80000);
+                             ((leader->z >> 20) << 20) + 0x80000);
   object->priorityFlags |= 2;
   object->motionFlags = 0;
   Actor_SetSpriteColor(object, 4);
   object->scaleY = 0x16000;
   object->scaleX = 0x16000;
   Scene_SetActorSpritePriority(object, 2);
-  Func_020032e0(object, 3);
+  Actor_SelectAnimation(object, 3);
   Actor_SetSingleChildFlags(object, 0);
   Actor_StartScript(object, gData_02003574);
   Event_SetFlag(work->exit + 0x1ce);
@@ -402,8 +406,8 @@ void Func_02001398(void) {
     id = 9;
     if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4)
       id = 8;
-    Func_02003438(id, 1);
-    Func_02003430();
+    FieldCamera_MoveToActorById(id, 1);
+    FieldCamera_WaitForArrival();
     FieldEvent_Wait(10);
     Event_PlaySound(0x246);
     Actor_SetAnimation(id, 2);
@@ -515,7 +519,7 @@ s32 Teleporters_Step();
   void name(void) {                                                            \
     s32 t0;                                                                    \
                                                                                \
-    t0 = Teleporters_Step();                                                      \
+    t0 = Teleporters_Step();                                                   \
     if (t0 != 0) {                                                             \
       FieldEvent_SetExitRequest(n1);                                           \
     }                                                                          \
@@ -558,7 +562,7 @@ void Func_020017b4(struct Actor *self) {
     dust->motionFlags = 0;
     Actor_SetSpriteColor(dust, ((u8 *)self)[0x62]);
     Scene_SetActorSpritePriority(dust, 2);
-    Func_020032e0(dust, 1);
+    Actor_SelectAnimation(dust, 1);
     Actor_SetSingleChildFlags(dust, 0);
     Actor_StartScript(dust, gData_02003594);
     self->unk4c = leader->x;
@@ -579,12 +583,10 @@ void Func_020017b4(struct Actor *self) {
     kind = MapGrid_GetCellBehaviorAt(self->terrainId, x, next[1]);
   }
   if (kind == 52) {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a =
-        201;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 201;
     self->update = 0;
   } else if (kind == 51) {
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a =
-        200;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 200;
     self->update = 0;
   }
 }

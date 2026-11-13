@@ -45,12 +45,11 @@ void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Map_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
-void Func_02000d60(const u8 *message);
 void Event_ShowMessageAndWait(s32 id, s32 flags);
 void Func_02000d88(s32 id, s32 a, s32 b);
-void Func_02000d90(s32 id, s32 a);
-void Func_02000da0(void);
-void Func_02000da8(s32 id, s32 value);
+void FieldEffect_SetAttached(s32 id, s32 a);
+void FieldCamera_WaitForArrival(void);
+void FieldCamera_MoveToActorById(s32 id, s32 value);
 void Func_02000db0(s32 value);
 void Event_ResolvePendingActions(s32 value);
 void Func_02000de0(const s16 *data);
@@ -89,8 +88,8 @@ void Func_02000048(void) {
   /* FAKEMATCH(wrapper): the flag commands go through flag_call.h's inlines,
    * which build each flag id again, and the block copies through call.h's
    * Call6; as direct calls to GameFlag_Test, GameFlag_SetBit,
-   * GameFlag_ClearBit and Map_CopyCellAttributeRect, 27 of 135 instructions differ in
-   * tla-en. */
+   * GameFlag_ClearBit and Map_CopyCellAttributeRect, 27 of 135 instructions
+   * differ in tla-en. */
   Func_02000df0();
   Sound_Play(132);
   if (x == 20 && z == 9) {
@@ -102,14 +101,14 @@ void Func_02000048(void) {
       Event_Start();
       Event_ResolvePendingActions(0);
       Camera_FollowActor(22, 1);
-      Func_02000da0();
+      FieldCamera_WaitForArrival();
       Func_02000d88(22, 257, 0);
       FieldEvent_Wait(60);
       Actor_ArmCallback(22, FACING_WEST, 0);
       FieldEvent_Wait(60);
       Func_02000d88(22, 256, 0);
       FieldEvent_Wait(60);
-      Func_02000d60(MsgTheMisalignedStone);
+      Event_SetMessageId(MsgTheMisalignedStone);
       Event_ShowMessageAndWait(22, 0);
       FieldEvent_Wait(30);
       Func_02000d88(22, 262, 0);
@@ -150,11 +149,12 @@ void Func_020001ec(void) {
 
   Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Test(3999)) {
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 64, PIXELS(456), PIXELS(584));
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 64, PIXELS(456),
+          PIXELS(584));
     if (object->x >> 20 == 28 && object->z >> 20 == 36) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      Func_02000d90(gMainRoutineWork.currentOwner, 258);
+      FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 258);
       Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, -16, 0);
       object->velocityY = 0x60000;
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -168,11 +168,12 @@ void Func_0200027c(void) {
 
   Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Test(4000)) {
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 65, PIXELS(472), PIXELS(552));
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 65, PIXELS(472),
+          PIXELS(552));
     if (object->x >> 20 == 29 && object->z >> 20 == 34) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      Func_02000d90(gMainRoutineWork.currentOwner, 258);
+      FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 258);
       Call3((void (*)())Actor_OffsetPositionAndResetMotion,
             gMainRoutineWork.currentOwner, 0, -16);
       object->velocityY = 0x60000;
@@ -199,11 +200,12 @@ void Func_0200036c(void) {
 
   Call7((void (*)())Func_02000df8, 42, 0, 6, 2, 9, 18, 0);
   if (!GameFlag_Test(4001)) {
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 66, PIXELS(168), PIXELS(328));
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 66, PIXELS(168),
+          PIXELS(328));
     if (object->x >> 20 == 10 && object->z >> 20 == 20) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      Func_02000d90(gMainRoutineWork.currentOwner, 258);
+      FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 258);
       Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
       object->velocityY = 0x60000;
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -256,19 +258,19 @@ void Func_020004bc(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Test_(0x924)) {
-    Func_02000d60(MsgCanYouImagine);
+    Event_SetMessageId(MsgCanYouImagine);
     Event_ShowMessageAndWait(actor, 0);
   } else {
     const u8 *message = MsgSeeThisRing;
 
-    Func_02000d60(message);
+    Event_SetMessageId(message);
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       FieldEvent_Wait(10);
-      Func_02000d60(message + 1);
+      Event_SetMessageId(message + 1);
     } else {
       FieldEvent_Wait(20);
-      Func_02000d60(message + 2);
+      Event_SetMessageId(message + 2);
     }
     Event_ShowMessageAndWait(actor, 0);
   }
@@ -279,19 +281,19 @@ void Func_02000538(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Test_(0x924)) {
-    Func_02000d60(MsgButItS);
+    Event_SetMessageId(MsgButItS);
     Event_ShowMessageAndWait(actor, 0);
   } else {
     const u8 *message = MsgSeeThisRingOf;
 
-    Func_02000d60(message);
+    Event_SetMessageId(message);
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       FieldEvent_Wait(10);
-      Func_02000d60(message + 1);
+      Event_SetMessageId(message + 1);
     } else {
       FieldEvent_Wait(20);
-      Func_02000d60(message + 2);
+      Event_SetMessageId(message + 2);
     }
     Event_ShowMessageAndWait(actor, 0);
   }
@@ -304,14 +306,14 @@ void Func_020005b4(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
   message = MsgLadyUzumeAnd;
-  Func_02000d60(message);
+  Event_SetMessageId(message);
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     FieldEvent_Wait(10);
-    Func_02000d60(message + 1);
+    Event_SetMessageId(message + 1);
   } else {
     FieldEvent_Wait(20);
-    Func_02000d60(message + 2);
+    Event_SetMessageId(message + 2);
   }
   Event_ShowMessageAndWait(actor, 0);
   Event_End();
@@ -367,13 +369,14 @@ void Func_020006a4(void) {
   GameFlag_SetBit(0x929);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Func_02000d60(MsgWait2);
+  Event_SetMessageId(MsgWait2);
   Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, 200, 264);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Event_ShowMessageAndWait(32, 0);
   FieldEvent_Wait(15);
   Value3((s32 (*)())Func_02000d88, gMainRoutineWork.currentOwner, 256, 30);
-  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, PIXELS(200), PIXELS(216));
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, PIXELS(200),
+        PIXELS(216));
   Actor_ResetAndSetPositionInMode2(32, 200, 248);
   Actor_WaitForMoveById(32);
   FieldEvent_Wait(30);
@@ -394,7 +397,7 @@ void Func_020006a4(void) {
     Call3((void (*)())Actor_SetSpeedParameters, 32, 0x6666, 0x3333);
     Actor_ResetAndSetPositionInMode2(32, 200, 216);
     Actor_WaitForMoveById(32);
-    Func_02000da8(32, 1);
+    FieldCamera_MoveToActorById(32, 1);
     FieldEvent_Wait(60);
     Call3((void (*)())Actor_ArmCallback, 32, FACING_SOUTH, 0);
     Func_02000d88(32, 265, 30);
@@ -409,7 +412,7 @@ void Func_020006a4(void) {
 }
 
 void Func_02000814(void) {
-  Func_02000d60(MsgThisTokenIsn);
+  Event_SetMessageId(MsgThisTokenIsn);
   Func_02000d88(32, 264, 30);
   Event_ShowMessageAndWait(32, 0);
   Actor_ArmCallback(32, FACING_SOUTHEAST, 0);
@@ -454,7 +457,7 @@ void Func_02000954(void) {
     Event_ResolvePendingActions(0);
     Func_02000d88(32, 256, 60);
     message = MsgWouldYouBe;
-    Func_02000d60(message);
+    Event_SetMessageId(message);
     /* FAKEMATCH(signature): FieldMessage_ShowAtActor called as returning a
      * value, so the flags load before the actor as the native schedules it;
      * as FieldMessage_ShowAtActor(32, 0) through the header's void prototype,
@@ -464,7 +467,7 @@ void Func_02000954(void) {
         0) {
       Func_02000814();
     } else {
-      Func_02000d60(message - 1);
+      Event_SetMessageId(message - 1);
       Event_ShowMessageAndWait(32, 0);
     }
     Event_End();
@@ -493,7 +496,8 @@ s32 Scene_Initialize(void) {
       Func_020006a4();
     }
     if (GameFlag_Test(0x929) && !GameFlag_Test(0x92a)) {
-      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, PIXELS(200), PIXELS(216));
+      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, PIXELS(200),
+            PIXELS(216));
       Actor_SetSpritePriority(32, 3);
       Actor_GetById(32)->motionFlags |= 2;
       GameFlag_SetBit(0x302);
@@ -516,7 +520,8 @@ void Func_02000b08(void) {
     Map_CopyCellPictureIndicesRect(36, 12, 22, 8, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 36, 12, 3, 3, 22, 8);
     if (x == 23 && z == 9)
-      Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, PIXELS(376), PIXELS(136));
+      Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
+                                             PIXELS(376), PIXELS(136));
   } else {
     Map_CopyCellPictureIndicesRect(36, 8, 22, 8, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 36, 8, 3, 3, 22, 8);
@@ -684,21 +689,34 @@ struct Trigger gData_020018b4[] = {
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_020004bc)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgYeahSusaCame)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgEvenIfSusa)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTheGreatSerpent)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgIMNotGoing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgIMSureThat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgWhatIfLosing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgLadyUzumeLoves)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgSacrificesAsGreat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgKushinadaSAlways)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgWhyWonT)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgWhyDoesLady)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgYouKnowI)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgLadyUzumeSays)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgTheGreatSerpent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgIMNotGoing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgIMSureThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgWhatIfLosing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     MSGNO(MsgLadyUzumeLoves)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgSacrificesAsGreat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     MSGNO(MsgKushinadaSAlways)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+     MSGNO(MsgWhyWonT)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
+     MSGNO(MsgWhyDoesLady)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
+     MSGNO(MsgYouKnowI)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
+     MSGNO(MsgLadyUzumeSays)},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02000038)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000048)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, CONDITION_ALWAYS, EVENT(Func_02000038)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT(Func_02000048)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12,
+     CONDITION_ALWAYS, EVENT(Func_02000038)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS,
+     EVENT(Func_02000048)},
     {0x50008905, 21, CONDITION_ALWAYS, EVENT(Func_020001cc)},
     {0x50008905, 22, CONDITION_ALWAYS, EVENT(Func_020001ec)},
     {0x50008905, 23, CONDITION_ALWAYS, EVENT(Func_0200027c)},
@@ -708,8 +726,10 @@ struct Trigger gData_020018b4[] = {
     {0x50008905, 27, CONDITION_ALWAYS, EVENT(Func_0200036c)},
     {0x50008905, 28, CONDITION_ALWAYS, EVENT(Func_020003f8)},
     {0x50008905, 29, CONDITION_ALWAYS, EVENT(Func_02000418)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_02000b08)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02000ba4)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
+     CONDITION_ALWAYS, EVENT(Func_02000b08)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
+     CONDITION_ALWAYS, EVENT(Func_02000ba4)},
     {TRIGGERS_END},
 };
 

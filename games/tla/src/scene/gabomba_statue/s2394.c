@@ -31,7 +31,7 @@ void Func_02002394(void) {
   u32 i;
   struct EffectOptions options;
 
-  Func_020056b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Map_CenterOnFollowedPoint();
@@ -101,7 +101,7 @@ static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b) {
 }
 
 void Func_0200253c(void) {
-  Func_020056b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   FieldCamera_GetActor()->motionFlags = 0;
@@ -136,7 +136,7 @@ void Func_0200253c(void) {
   Event_ShowMessage(23, 0);
   FieldCamera_SetSpeed(0x4cccc, 0x9999);
   FieldCamera_MoveTo(PIXELS(434), -1, PIXELS(168), 1);
-  Func_020057b4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(5, FACING_NORTHWEST, 0);
@@ -165,7 +165,7 @@ void Func_0200253c(void) {
 void Func_020027cc(void) {
   s32 speed;
 
-  Func_020056b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Event_PlaySound(78);
@@ -242,7 +242,7 @@ void Func_02002a64(void) {
   s32 north;
   s32 cue = 0x6007;
 
-  Func_020056b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   {
@@ -270,7 +270,7 @@ void Func_02002a64(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(196 << 17, -1, 146 << 17, 1);
-  Func_020057b4();
+  FieldCamera_WaitForArrival();
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
   Actor_FaceDirection(5, 0x8000, 0);
   Actor_FaceDirection(7, 0, 0);
@@ -344,14 +344,14 @@ void Func_02002a64(void) {
   Event_ShowMessage(23, 0);
   FieldCamera_SetSpeed(0x4cccc, 0x9999);
   FieldCamera_MoveTo(196 << 17, -1, 176 << 16, 1);
-  Func_020057b4();
+  FieldCamera_WaitForArrival();
   Event_ShowMessage(23, 0);
   Event_ShowMessage(6, 0);
   Event_ShowMessage(23, 0);
   Event_ShowMessage(7, 0);
   Event_ShowMessage(0x2005, 0);
   FieldCamera_MoveTo(196 << 17, -1, 146 << 17, 1);
-  Func_020057b4();
+  FieldCamera_WaitForArrival();
   Actor_SetAnimation(23, 3);
   Event_ShowMessage(23, 0);
   Actor_FaceDirectionAndWait(23, 0x8000);
@@ -380,7 +380,7 @@ void Func_02002f70(void) {
   s32 south;
   s32 facing;
 
-  Func_020056b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_020048a4(19, 11, gData_02005d8c[index], 16);
@@ -423,7 +423,7 @@ void Func_02002f70(void) {
   Event_ShowMessage(5, 0);
   Actor_FaceDirection(5, FACING_NORTHWEST, 0);
   FieldCamera_MoveTo(PIXELS(414), -1, PIXELS(272), 1);
-  Func_020057b4();
+  FieldCamera_WaitForArrival();
   Event_ShowMessage(5, 0);
   Func_02004f40(&x, &z);
   x = (x << 20) + (156 << 17);
@@ -431,16 +431,16 @@ void Func_02002f70(void) {
   spark = (FieldActor_Create(434, x, 0, z));
   spark->motionFlags |= 4;
   Actor_SetSingleChildFlags(spark, 0);
-  Func_02005624(spark, 1);
+  Actor_SelectAnimation(spark, 1);
   System_Wait(1);
   actor = Actor_Get(5);
   actor->facing = ArcTan2(spark->z - actor->z, spark->x - actor->x);
   FieldCamera_MoveTo(spark->x, -1, spark->z, 1);
-  Func_020057b4();
+  FieldCamera_WaitForArrival();
   Event_ShowMessage(5, 0);
   Import_ActorDestroy(spark);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(304), 1);
-  Func_020057b4();
+  FieldCamera_WaitForArrival();
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
   Event_ShowMessage(5, 0);
   Actor_SetAttachedEffect(24, 258);
@@ -455,7 +455,7 @@ void Func_02002f70(void) {
   Event_ShowMessage(23, 0);
   Actor_FaceDirection(24, FACING_NORTH + FACING_STEP, 0);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(264), 1);
-  Func_020057b4();
+  FieldCamera_WaitForArrival();
   FieldActor_Jump(24, 4, 10);
   Event_ShowMessage(0x4018, 0);
   Actor_SetAnimationAndWait(7, 4);
@@ -644,7 +644,7 @@ L_0200b6f2:
   Actor_SetPosition(13, 0, 0);
   Actor_SetPosition(14, 0, 0);
   Func_020053ac();
-  Func_020056b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(FIELD_AT(v_r5, s32, 8), -1, FIELD_AT(v_r5, s32, 16), 0);
   Map_CenterOnFollowedPoint();
@@ -686,7 +686,7 @@ L_0200b7e4:
   t53 = Event_GetFlag(0x8fc);
   if (t53 == 0)
     goto L_0200b856;
-  Func_020056b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x201;
   Event_StartScreenTransition();
@@ -1320,7 +1320,7 @@ void Func_020043a4(s32 value, s32 row) {
     object->scaleY += -0x1f00;
   if (value == 1) {
     Func_02004288(gSceneState.firstId, 1);
-    Func_02005624(object, 6);
+    Actor_SelectAnimation(object, 6);
     object->scaleY = 0x10000;
   }
 }
@@ -1388,7 +1388,7 @@ void Func_02004530(void) {
                              state->originZ - 2);
     if (state->statuesReady != 0) {
       Event_PlaySound(248);
-      Func_020056b4();
+      Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Func_020044b4(3);
       i = 19;
@@ -1425,7 +1425,7 @@ void Func_02004620(void) {
                              state->originZ - 2);
     if (state->statuesReady != 0) {
       Event_PlaySound(248);
-      Func_020056b4();
+      Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Func_020044b4(2);
       i = 19;
@@ -1730,7 +1730,7 @@ s32 Func_02004d48(s32 first, s32 check) {
    * called without the actor it reads from r0; as
    * Import_ActorResetMotion(actor), 73 of 230 instructions differ in tla-en. */
   Import_ActorResetMotion();
-  Func_02005624(actor, 2);
+  Actor_SelectAnimation(actor, 2);
   id = second;
   actor = ((struct Unk02004d48 *)Actor_Get(id++));
   actor->unk64 = 2;
@@ -1739,7 +1739,7 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk63 = 1;
   actor->unk4c = 0;
   Import_ActorResetMotion(actor);
-  Func_02005624(actor, 2);
+  Actor_SelectAnimation(actor, 2);
   actor = ((struct Unk02004d48 *)Actor_Get(id++));
   actor->unk64 = 8;
   actor->unk66 = 7;
@@ -1747,7 +1747,7 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk63 = 1;
   actor->unk4c = 0;
   Import_ActorResetMotion(actor);
-  Func_02005624(actor, 2);
+  Actor_SelectAnimation(actor, 2);
   actor = ((struct Unk02004d48 *)Actor_Get(id));
   actor->unk64 = 10;
   actor->unk66 = 7;
@@ -1755,7 +1755,7 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk63 = 1;
   actor->unk4c = 0;
   Import_ActorResetMotion(actor);
-  Func_02005624(actor, 2);
+  Actor_SelectAnimation(actor, 2);
   for (tries = 0; tries <= 127; tries++) {
     done = 1;
     for (frame = 0; frame <= 15; frame++) {
@@ -2062,26 +2062,26 @@ void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
     object->priorityFlags = bits;
     switch (mode) {
     case 0:
-      Func_02005624(object, 2);
+      Actor_SelectAnimation(object, 2);
       break;
     case 1:
-      Func_02005624(object, 4);
+      Actor_SelectAnimation(object, 4);
       break;
     case 2:
-      Func_02005624(object, 6);
+      Actor_SelectAnimation(object, 6);
       break;
     }
   } else {
     cell->collisionCode = 255;
     switch (mode) {
     case 0:
-      Func_02005624(object, 1);
+      Actor_SelectAnimation(object, 1);
       break;
     case 1:
-      Func_02005624(object, 3);
+      Actor_SelectAnimation(object, 3);
       break;
     case 2:
-      Func_02005624(object, 5);
+      Actor_SelectAnimation(object, 5);
       break;
     }
   }

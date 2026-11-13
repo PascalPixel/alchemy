@@ -82,9 +82,9 @@ Actor_StartRepeatedMotion:
 	.thumb_func
 Actor_SetAngleToward:
 	overlay_veneer Actor_SetAngleTowardFar
-	.global Func_02000d60
+	.global Event_SetMessageId
 	.thumb_func
-Func_02000d60:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
@@ -106,21 +106,21 @@ Actor_SetSpritePriority:
 	.thumb_func
 Func_02000d88:
 	overlay_veneer Func_080c8210
-	.global Func_02000d90
+	.global FieldEffect_SetAttached
 	.thumb_func
-Func_02000d90:
+FieldEffect_SetAttached:
 	overlay_veneer Func_080c8218
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
 	overlay_veneer Camera_FollowActorFar
-	.global Func_02000da0
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02000da0:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
-	.global Func_02000da8
+	.global FieldCamera_MoveToActorById
 	.thumb_func
-Func_02000da8:
+FieldCamera_MoveToActorById:
 	overlay_veneer Func_080c8248
 	.global Func_02000db0
 	.thumb_func

@@ -73,12 +73,13 @@ struct AlhafranCaveSwitch {
 };
 
 void Actor_ApplyRandomChildValues(void);
-void Func_020013f0(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Func_02001420(s32 x, s32 z, s32 a, s32 b);
 void Func_02001580(const void *data);
 s32 Func_02001588(void);
 void Func_020015d8(void);
-void Func_020015f0(const void *data, s32 x, s32 y, s32 z);
+void BattleEffect_DrawSpriteAtWorldPosition(const void *data, s32 x, s32 y,
+                                            s32 z);
 
 void Func_020002f8(void);
 void Func_0200051c(void);
@@ -135,7 +136,8 @@ void Func_0200009c(void) {}
 void Func_020000a0(s32 id) {
   FieldEvent_SetMessageId((s32)&MsgOhStoppedBy);
   Event_OpenMessage(id, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+      0) {
     FieldEvent_Wait(10);
     FieldEvent_SetMessageId((s32)(&MsgOhStoppedBy + 1));
   } else {
@@ -195,7 +197,8 @@ void Func_02000220(void) {
 s32 Func_02000258(void) {
   struct Actor *object = Actor_Get(8);
 
-  Func_020015f0(gData_02001be0, object->x, object->y + 0x1c0000, object->z);
+  BattleEffect_DrawSpriteAtWorldPosition(gData_02001be0, object->x,
+                                         object->y + 0x1c0000, object->z);
   return 0;
 }
 
@@ -308,8 +311,8 @@ void Func_020015e8(const void *data, s32 a, s32 b, s32 c);
 /// at entrance 9 until flag 0x109 is set.
 void Func_0200051c(void) {
   /* FAKEMATCH(temporary): the data address held in a local, so it loads before
-   * Func_020015e0 and is kept across it, as the ROM does; as loaded at its
-   * call, 31 of 257 instructions differ in tla-en. */
+   * BattleEffect_FillOverlayTiles and is kept across it, as the ROM does; as
+   * loaded at its call, 31 of 257 instructions differ in tla-en. */
   const void *data;
   struct AlhafranCaveEventWork *work;
 
@@ -317,7 +320,7 @@ void Func_0200051c(void) {
   Actor_Get(8)->priorityFlags |= 32;
   Func_02001520(0);
   data = gData_02001be0;
-  Func_020015e0(0);
+  BattleEffect_FillOverlayTiles(0);
   Call4((void (*)())Func_020015e8, (s32)data, 8, 15, 0x40000000);
   FieldTask_AddFrame(Func_02000258, 0x480);
   if ((u16)(gMainRoutineWork.entrance - 8) <= 1) {
@@ -402,7 +405,7 @@ void Func_02000814(void) {}
 
 extern u8 MsgYouHereTo[];
 
-void Func_02001508(void);
+void FieldCamera_WaitForArrival(void);
 void Func_02001228(void);
 
 void Func_02000818(void) {
@@ -431,7 +434,7 @@ void Func_02000818(void) {
   Actor_WalkToAndWait(4, 0x320, 0x120);
   Actor_FaceDirection(4, 0x8000, 0);
   FieldCamera_MoveTo(0x2e80000, -1, 0x1080000, 1);
-  Func_02001508();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(18, 3);
   FieldEvent_Wait(20);
@@ -455,14 +458,14 @@ void Func_02000818(void) {
   FieldEvent_Wait(30);
   (void *)Actor_ShowEmote(22, 0x107, 50);
   FieldCamera_MoveTo(0x2e80000, -1, 0x1380000, 1);
-  Func_02001508();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetAnimation(21, 3);
   FieldActor_StartRepeatedMotion(24, 3);
   Actor_SetAttachedEffect(24, 0x102);
   FieldEvent_Wait(40);
   FieldCamera_FollowActor(24, 1);
-  Func_02001508();
+  FieldCamera_WaitForArrival();
   Actor_SetSpeed(24, 0x18000, 0xc000);
   Actor_SetScript(24, gData_02001610);
   FieldEvent_Wait(20);
@@ -472,7 +475,7 @@ void Func_02000818(void) {
   FieldActor_RefreshSelectorById(24);
   Actor_FaceDirection(22, 0, 0);
   FieldCamera_MoveTo(0x2e80000, -1, 0x1100000, 1);
-  Func_02001508();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_ShowEmote(24, 0x102, 30);
   FieldEvent_ShowMessageThenWait(24, 0, 10);
@@ -498,7 +501,7 @@ void Func_02000818(void) {
   FieldVector_AddPolarOffset(0x100000, 0xc000, position);
   FieldActor_SetMoveTarget(effect, position[0], position[1], position[2]);
   BattleEffect_SnapScaleToFull(effect);
-  Func_020013f0(effect, 4);
+  Actor_SelectAnimation(effect, 4);
   actor15->update = Func_02001228;
   Actor_FaceDirection(4, 0x6000, 0);
   FieldEvent_Wait(20);
@@ -512,13 +515,13 @@ void Func_02000818(void) {
   Actor_FaceDirection(20, 0x3000, 0);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(0x3280000, -1, 0x1200000, 1);
-  Func_02001508();
+  FieldCamera_WaitForArrival();
   FieldActor_StartRepeatedMotion(4, 3);
   Actor_SetAttachedEffect(4, 0x102);
   FieldEvent_Wait(50);
   Actor_ShowEmote(20, 0x102, 60);
   FieldCamera_MoveTo(0x2e80000, -1, 0x1100000, 1);
-  Func_02001508();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(20, -16, 0);
   FieldEvent_Wait(20);
@@ -771,26 +774,26 @@ void Func_02001320(s32 id, u32 kind, s32 flag, s32 layer) {
     object->priorityFlags |= 2;
     switch (kind) {
     case 0:
-      Func_020013f0(object, 2);
+      Actor_SelectAnimation(object, 2);
       break;
     case 1:
-      Func_020013f0(object, 4);
+      Actor_SelectAnimation(object, 4);
       break;
     case 2:
-      Func_020013f0(object, 6);
+      Actor_SelectAnimation(object, 6);
       break;
     }
   } else {
     cell->state = 255;
     switch (kind) {
     case 0:
-      Func_020013f0(object, 1);
+      Actor_SelectAnimation(object, 1);
       break;
     case 1:
-      Func_020013f0(object, 3);
+      Actor_SelectAnimation(object, 3);
       break;
     case 2:
-      Func_020013f0(object, 5);
+      Actor_SelectAnimation(object, 5);
       break;
     }
   }

@@ -23,30 +23,35 @@ extern u16 *gPaletteCycleSlots;
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
 DEFINE_PALETTE_SET_COLORS(Palette_SetColors, gData_02001a24, gPaletteColors,
-    Data_02001a2c, gPaletteCycleSlots, Func_02000328)
+                          Data_02001a2c, gPaletteCycleSlots, Func_02000328)
 
 #include "task.h"
 
 extern u16 gPaletteCycleTimer;
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(IsletCave_StartSlowPaletteCycle, gData_02001a34, gData_02001a30,
-    List_CountEntries, gData_02001a24, gData_02001a20, 15, gPaletteCycleTimer, 16,
-    gData_02001a14, PaletteCycle_Fade)
+DEFINE_PALETTE_CYCLE_START_VBLANK(IsletCave_StartSlowPaletteCycle,
+                                  gData_02001a34, gData_02001a30,
+                                  List_CountEntries, gData_02001a24,
+                                  gData_02001a20, 15, gPaletteCycleTimer, 16,
+                                  gData_02001a14, PaletteCycle_Fade)
 
 void IsletCave_StopPaletteCycle(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
   Task_RemoveFar(PaletteCycle_Fade);
 }
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(IsletCave_StartFastPaletteCycle, gData_02001a34, gData_02001a30,
-    List_CountEntries, gData_02001a24, gData_02001a20, 2, gPaletteCycleTimer, 2,
-    gData_02001a14, PaletteCycle_Fade)
+DEFINE_PALETTE_CYCLE_START_VBLANK(IsletCave_StartFastPaletteCycle,
+                                  gData_02001a34, gData_02001a30,
+                                  List_CountEntries, gData_02001a24,
+                                  gData_02001a20, 2, gPaletteCycleTimer, 2,
+                                  gData_02001a14, PaletteCycle_Fade)
 
 DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
 
 DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer, gData_02001a20,
-    Data_02001a2c, gData_02001a30, gPaletteCycleSlots, gData_02001a34,
-    gData_02001a24, gData_02001a14, gPaletteColors)
+                          Data_02001a2c, gData_02001a30, gPaletteCycleSlots,
+                          gData_02001a34, gData_02001a24, gData_02001a14,
+                          gPaletteColors)
 
 #include "actor.h"
 
@@ -173,7 +178,7 @@ void Func_020004ac(void) {
 /// 2 copies: islet_cave, islet_cave.
 #define DEFINE_ISLET_CAVE_ARRIVE_AT(name, n1, n2)                              \
   void name(void) {                                                            \
-    IsletCave_StartSlowPaletteCycle();                                                           \
+    IsletCave_StartSlowPaletteCycle();                                         \
     Func_02001334();                                                           \
                                                                                \
     gMainRoutineWork.unk2c2 = 1;                                               \
@@ -283,7 +288,7 @@ s32 Scene_Initialize(void) {
   if (scene == (s32)&SceneId_Ov675Room1) {
     Func_020008c8();
     Palette_SetColors(gData_0200134c, gData_0200135c, gData_02001388,
-                  gData_020013b4);
+                      gData_020013b4);
   } else if (scene == (s32)&SceneId_Ov675Room3) {
     Actor_SetSingleChildFlags(Actor_GetById(9), 0);
     if (gMainRoutineWork.entrance == 2) {
@@ -403,7 +408,11 @@ void Func_020009ec(void) {
   return;
 }
 
-/* VIEW(islet_cave): tag struct FieldActor as struct FieldActor__islet_cave; field_event.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/islet_cave.c:519: dereferencing pointer to incomplete type. */
+/* VIEW(islet_cave): tag struct FieldActor as struct FieldActor__islet_cave;
+ * field_event.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/islet_cave.c:519: dereferencing pointer to incomplete
+ * type. */
 struct FieldActor__islet_cave {
   u8 unk00[8];
   s32 x;
@@ -414,7 +423,7 @@ struct FieldActor__islet_cave {
   s32 acceleration;
 };
 
-void Func_02001214(struct FieldActor__islet_cave *actor, s32 mode);
+void Actor_SelectAnimation(struct FieldActor__islet_cave *actor, s32 mode);
 
 void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   struct FieldActor__islet_cave *leader;
@@ -422,7 +431,8 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   s32 x;
   s32 z;
 
-  leader = ((struct FieldActor__islet_cave *)Actor_GetById(gMainRoutineWork.currentOwner));
+  leader = ((struct FieldActor__islet_cave *)Actor_GetById(
+      gMainRoutineWork.currentOwner));
   actor = ((struct FieldActor__islet_cave *)Actor_GetById(actorId));
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -431,20 +441,20 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   leader->speed = 0x10000;
   leader->acceleration = 0x8000;
   Actor_SetMoveTarget(leader, x, leader->y, z);
-  Func_02001214(leader, 27);
+  Actor_SelectAnimation(leader, 27);
   x = ((actor->x + (dx << 16)) & 0xfff00000) + 0x80000;
   z = ((actor->z + (dz << 16)) & 0xfff00000) + 0x80000;
   actor->speed = 0x10000;
   actor->acceleration = 0x8000;
   Actor_SetMoveTarget(actor, x, actor->y, z);
   if (dx < 0 || dz < 0) {
-    Func_02001214(actor, 4);
+    Actor_SelectAnimation(actor, 4);
   } else {
-    Func_02001214(actor, 3);
+    Actor_SelectAnimation(actor, 3);
   }
   Sound_Play(226);
   Script_WaitForEventTimeout(leader);
-  Func_02001214(actor, 2);
+  Actor_SelectAnimation(actor, 2);
   Sound_Play(298);
   Event_End();
 }
@@ -466,7 +476,8 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
     flagCall(flag);                                                            \
   }
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000aec, 8, 32, GameFlag_ClearBit, 0x280)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000aec, 8, 32, GameFlag_ClearBit,
+                                  0x280)
 
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000b4c, 8, -32, GameFlag_SetBit, 0x280)
 
@@ -516,19 +527,25 @@ void Func_02000c1c(void) {
 
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000c8c, 10, 80, GameFlag_SetBit, 0x282)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000cf0, 10, -80, GameFlag_ClearBit, 0x282)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000cf0, 10, -80, GameFlag_ClearBit,
+                                  0x282)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000d54, 11, 80, GameFlag_ClearBit, 0x283)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000d54, 11, 80, GameFlag_ClearBit,
+                                  0x283)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000db8, 11, -80, GameFlag_ClearBit, 0x283)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000db8, 11, -80, GameFlag_ClearBit,
+                                  0x283)
 
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000e1c, 12, 80, GameFlag_SetBit, 0x284)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000e7c, 12, -80, GameFlag_ClearBit, 0x284)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000e7c, 12, -80, GameFlag_ClearBit,
+                                  0x284)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000ee0, 13, 80, GameFlag_ClearBit, 0x285)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000ee0, 13, 80, GameFlag_ClearBit,
+                                  0x285)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000f44, 13, -80, GameFlag_SetBit, 0x285)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000f44, 13, -80, GameFlag_SetBit,
+                                  0x285)
 
 void Func_02000fa8(void) {
   struct Actor *object0;
@@ -596,8 +613,14 @@ void Func_02001034(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(islet_cave): routine Field_RequestBattleFromEncounterTable as s32 Field_RequestBattleFromEncounterTable(); module/field/event_commands.h has void Field_RequestBattleFromEncounterTable(s32 row, s32 column); tried as the definition's void Field_RequestBattleFromEncounterTable(s32 row, s32 column), which the object already declares, Func_020010ac moves: 1 of 64 instructions in tla-ja. */
-extern s32 Field_RequestBattleFromEncounterTable__islet_cave() __asm__("Field_RequestBattleFromEncounterTable");
+/* VIEW(islet_cave): routine Field_RequestBattleFromEncounterTable as s32
+ * Field_RequestBattleFromEncounterTable(); module/field/event_commands.h has
+ * void Field_RequestBattleFromEncounterTable(s32 row, s32 column); tried as the
+ * definition's void Field_RequestBattleFromEncounterTable(s32 row, s32 column),
+ * which the object already declares, Func_020010ac moves: 1 of 64 instructions
+ * in tla-ja. */
+extern s32 Field_RequestBattleFromEncounterTable__islet_cave() __asm__(
+    "Field_RequestBattleFromEncounterTable");
 
 void Func_020010ac(void) {
   s32 t12, cue;
@@ -624,8 +647,8 @@ void Func_020010ac(void) {
   FIELD_AT(&gMainRoutineWork, u8, 587) = 2;
   cue = 0x67;
   /* FAKEMATCH(barrier): the asm on the first argument loads it before the
-   * second, as the native does; as Field_RequestBattleFromEncounterTable(0x67, 2), 2 of 64
-   * instructions differ in tla-en. */
+   * second, as the native does; as Field_RequestBattleFromEncounterTable(0x67,
+   * 2), 2 of 64 instructions differ in tla-en. */
   __asm__ volatile("" : "+r"(cue));
   Field_RequestBattleFromEncounterTable__islet_cave(cue, 2);
   Event_End();

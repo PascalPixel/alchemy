@@ -1,5 +1,6 @@
 /// @file
-/// The overlay code of scene/izumo_ruins between two shared objects, in ROM order.
+/// The overlay code of scene/izumo_ruins between two shared objects, in ROM
+/// order.
 
 #include "../shared/map_cells.h"
 #include "types.h"
@@ -39,11 +40,11 @@ void Func_02000974(s32 spread) {
           285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
     }
     if (effect != 0) {
-      frame = Func_020014f0(effect->sprite, frame);
+      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags((struct Actor *)effect, 0);
-      Func_02001428((struct Actor *)effect, 2);
+      Actor_SelectAnimation((struct Actor *)effect, 2);
       Actor_StartScript(effect, gData_02001540);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
@@ -78,13 +79,13 @@ void Func_02000aa8(void) {
   i = 0;
   do {
     effect = (struct FieldEffect *)FieldActor_Create(285, leader->x, leader->y,
-                                                      leader->z);
+                                                     leader->z);
     if (effect != 0) {
-      frame = Func_020014f0(effect->sprite, frame);
+      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags((struct Actor *)effect, 0);
-      Func_02001428((struct Actor *)effect, 2);
+      Actor_SelectAnimation((struct Actor *)effect, 2);
       Actor_StartScript(effect, gData_02001570);
       effect->velocity.x = Math_Cosine(i << 12);
       effect->velocity.y = 0;
@@ -105,7 +106,8 @@ void Func_02000aa8(void) {
 
 s32 Func_02001528(s32 terrainId, s32 value, s32 height);
 
-DEFINE_ACTOR_SET_CELL_SHAPE_AT(Actor_SetCellShapeAt, Func_02001478, Func_02001528)
+DEFINE_ACTOR_SET_CELL_SHAPE_AT(Actor_SetCellShapeAt, MapGrid_GetTerrainKind,
+                               Func_02001528)
 
 void Func_02000c4c(s32 a, s32 b) {
   Actor_SetCellShapeAt(a, b, gMainRoutineWork.currentOwner);

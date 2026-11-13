@@ -22,9 +22,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Import_ActorResetMotion:
 	overlay_veneer Actor_ResetMotion
-	.global Func_02000ca4
+	.global Map_SetLayerEntryFlag
 	.thumb_func
-Func_02000ca4:
+Map_SetLayerEntryFlag:
 	overlay_veneer Func_080201a0
 	.global Map_CopyCellsRect
 	.thumb_func
@@ -150,9 +150,9 @@ Func_02000d94:
 	.thumb_func
 Func_02000d9c:
 	overlay_veneer Func_080c82e0
-	.global Func_02000da4
+	.global BattleEffect_RunActorRiseAndDescent
 	.thumb_func
-Func_02000da4:
+BattleEffect_RunActorRiseAndDescent:
 	overlay_veneer Func_080c83d8
 	.global Func_02000dac
 	.thumb_func
@@ -178,21 +178,21 @@ Func_02000dcc:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_02000ddc
+	.global Shop_Run
 	.thumb_func
-Func_02000ddc:
+Shop_Run:
 	overlay_veneer Func_08108008
-	.global Func_02000de4
+	.global Sanctum_Run
 	.thumb_func
-Func_02000de4:
+Sanctum_Run:
 	overlay_veneer Func_08108010
-	.global Func_02000dec
+	.global Inn_CheckIn
 	.thumb_func
-Func_02000dec:
+Inn_CheckIn:
 	overlay_veneer Func_08108018
-	.global Func_02000df4
+	.global ItemPicker_RunToDrop
 	.thumb_func
-Func_02000df4:
+ItemPicker_RunToDrop:
 	overlay_veneer Func_08108068
 	.global Sound_Play
 	.thumb_func

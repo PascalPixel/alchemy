@@ -60,6 +60,6 @@ static inline void AnkohlRuins_Call2dfc(s32 a, s32 b, s32 c, s32 d, s32 e,
 }
 
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
-void Func_02002eb4(void);
+void FieldCamera_WaitForArrival(void);
 
 #endif

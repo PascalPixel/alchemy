@@ -36,8 +36,8 @@ static inline s32 Func_02002338_(struct Actor *object, s32 *position) {
 /// at a time in the leader's direction, until a cell of it is blocked
 /// (Func_02002338 returns 2). Leaves the object's resting place in target and
 /// returns 1, or 0 when nothing is pushed or it cannot move at all.
-DEFINE_PUSH_TARGET_FIND_SLIDE(Func_02000dcc, PushTarget_FindAhead, gPushFootprints,
-    gData_0200249c, Func_02002338_)
+DEFINE_PUSH_TARGET_FIND_SLIDE(Func_02000dcc, PushTarget_FindAhead,
+                              gPushFootprints, gData_0200249c, Func_02002338_)
 
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
@@ -47,10 +47,10 @@ DEFINE_PUSH_TARGET_FIND_SLIDE(Func_02000dcc, PushTarget_FindAhead, gPushFootprin
 /// cell one step ahead of the leader, when the leader is not in line with its
 /// near edge. Returns the object, with its id and the footprint's index.
 DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds, gData_0200249c,
-    gPushFootprints)
+                              gPushFootprints)
 
-void Func_020022e0(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Func_02001300(void);
 
 DEFINE_PUSH_TARGET_PUSH_FILL(Func_02001050, gPushFootprints, Func_02001300,
-    Func_020022e0, gData_0200249c)
+                             Actor_SelectAnimation, gData_0200249c)

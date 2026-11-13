@@ -218,9 +218,9 @@ Event_ResolvePendingActions:
 	.thumb_func
 Camera_WorldToScreen:
 	overlay_veneer Camera_WorldToScreenFar
-	.global Func_02001bd4
+	.global BattleEffect_GetObjectPriority
 	.thumb_func
-Func_02001bd4:
+BattleEffect_GetObjectPriority:
 	overlay_veneer Func_080c87e8
 	.global Func_02001bdc
 	.thumb_func

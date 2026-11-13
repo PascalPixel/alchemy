@@ -205,8 +205,7 @@ void *Scene_GetEvents(void) {
 void Func_0200063c(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Func_02000668(leader, 0);
 }
 
@@ -228,8 +227,7 @@ void Func_02000668(struct Actor *object, s32 step) {
 }
 
 void Func_020006b0(struct Actor *object) {
-  struct Actor *steam =
-      Func_02005140_(0x10d, object->x, object->y, object->z);
+  struct Actor *steam = Func_02005140_(0x10d, object->x, object->y, object->z);
   struct FieldSprite *sprite;
 
   if (steam) {
@@ -252,17 +250,23 @@ void Func_02000710(void) {
   struct Actor *steam;
 
   if ((gFrameCount & 7) == 0) {
-    steam = ((struct Actor *)Import_ActorCreate(14, leader->x, leader->y + 0x60000, leader->z));
+    steam = ((struct Actor *)Import_ActorCreate(
+        14, leader->x, leader->y + 0x60000, leader->z));
     if (steam) {
       Actor_SetSingleChildFlags(steam, 0);
-      Func_02005130(steam, 1);
+      Actor_SelectAnimation(steam, 1);
       Actor_StartScript(steam, gData_020054f0);
     }
   }
   Func_02000778(leader, 0xd999);
 }
 
-/* VIEW(kandorean_temple): tag struct EventWork1cc as struct EventWork1cc__kandorean_temple; module/tla.h has another definition; tried with the definition the rest of the object has, its members read focus as object, it does not compile in tla-ja: games/tla/src/scene/kandorean_temple.c:268: dereferencing pointer to incomplete type. */
+/* VIEW(kandorean_temple): tag struct EventWork1cc as struct
+ * EventWork1cc__kandorean_temple; module/tla.h has another definition; tried
+ * with the definition the rest of the object has, its members read focus as
+ * object, it does not compile in tla-ja:
+ * games/tla/src/scene/kandorean_temple.c:268: dereferencing pointer to
+ * incomplete type. */
 struct EventWork1cc__kandorean_temple {
   u8 unk000[0x1cc];
   struct Actor *focus;
@@ -270,27 +274,28 @@ struct EventWork1cc__kandorean_temple {
 
 void Func_02000778(struct Actor *object, s32 dz) {
   struct Actor *focus =
-      ((struct EventWork1cc__kandorean_temple *)Ram_HeapSlots->eventWork)->focus;
+      ((struct EventWork1cc__kandorean_temple *)Ram_HeapSlots->eventWork)
+          ->focus;
   s32 position[3];
 
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z + dz;
-  Func_02005180(object, position);
+  MapGrid_CheckCollision(object, position);
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z + 0x80000;
-  if (Func_02005180(object, position) > 0)
+  if (MapGrid_CheckCollision(object, position) > 0)
     return;
   position[0] = object->x + 0x5b333;
   position[1] = object->y;
   position[2] = object->z + 0x5b333;
-  if (Func_02005180(object, position) > 0)
+  if (MapGrid_CheckCollision(object, position) > 0)
     return;
   position[0] = object->x - 0x5b333;
   position[1] = object->y;
   position[2] = object->z + 0x5b333;
-  if (Func_02005180(object, position) > 0)
+  if (MapGrid_CheckCollision(object, position) > 0)
     return;
   focus->z += dz;
   object->z += dz;
@@ -350,7 +355,7 @@ void Func_02000930(struct Actor *object, s32 priority) {
   sprite = object->sprite;
   sprite->priority = priority;
   Actor_SetSingleChildFlags(object, 0);
-  Func_02005130(object, 2);
+  Actor_SelectAnimation(object, 2);
   Actor_StartScript(object, gData_02005494);
   Actor_SetPartAttribute(object, 9);
   object->timer = 0;
@@ -429,8 +434,8 @@ void Func_02000a0c(struct Actor *object) {
 }
 
 void Func_02000adc(void) {
-  struct Actor *object =
-      ((struct Actor *)Import_ActorCreate(0x11d, 0x2b80000, 0x1c0000, 0x9c0000));
+  struct Actor *object = ((struct Actor *)Import_ActorCreate(
+      0x11d, 0x2b80000, 0x1c0000, 0x9c0000));
 
   if (object) {
     s32 timer;
@@ -487,11 +492,11 @@ void Func_02000bcc(void) {
     }                                                                          \
   }
 
-DEFINE_KANDOREAN_TEMPLE_SPAWN_EVERY(Func_02000bf4, gData_02006298, 9, 0x1280000, 0xb00000,
-    0x20000)
+DEFINE_KANDOREAN_TEMPLE_SPAWN_EVERY(Func_02000bf4, gData_02006298, 9, 0x1280000,
+                                    0xb00000, 0x20000)
 
-DEFINE_KANDOREAN_TEMPLE_SPAWN_EVERY(Func_02000c34, gData_0200629c, 5, 0x1580000, 0xa00000,
-    0x40000)
+DEFINE_KANDOREAN_TEMPLE_SPAWN_EVERY(Func_02000c34, gData_0200629c, 5, 0x1580000,
+                                    0xa00000, 0x40000)
 
 void Func_02000c74(void) {
   if (gFrameCount % 5 == 0)
@@ -873,10 +878,11 @@ void Func_02001634(void) {
   s32 *timer = &gData_020062a0;
 
   if (*timer == 300) {
-    Func_02005388(162);
-    FieldActor_SetPositionAndResetMotion(Actor_GetById(13), PIXELS(440), PIXELS(-20), PIXELS(204));
-    Actor_SetPositionAndResetMotion(Actor_GetById(15), PIXELS(440),
-                                    PIXELS(-20), PIXELS(200));
+    Scene_QueueMusic(162);
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(13), PIXELS(440),
+                                         PIXELS(-20), PIXELS(204));
+    Actor_SetPositionAndResetMotion(Actor_GetById(15), PIXELS(440), PIXELS(-20),
+                                    PIXELS(200));
     Actor_SetSpritePriority(13, 3);
     Actor_SetSpritePriority(15, 3);
     base->priorityFlags |= 2;
@@ -922,7 +928,7 @@ void Func_02001634(void) {
        * *timer = 0, 6 of 193 instructions differ in tla-en. */
       s32 **timerRef = &timer;
 
-      Func_02005388(245);
+      Scene_QueueMusic(245);
       Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
       **timerRef = 0;
@@ -937,10 +943,11 @@ void Func_02001804(void) {
   s32 *timer = &gData_020062a4;
 
   if (*timer == 300) {
-    Func_02005388(162);
-    FieldActor_SetPositionAndResetMotion(Actor_GetById(14), PIXELS(600), PIXELS(-20), PIXELS(236));
-    Actor_SetPositionAndResetMotion(Actor_GetById(16), PIXELS(600),
-                                    PIXELS(-20), PIXELS(232));
+    Scene_QueueMusic(162);
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(14), PIXELS(600),
+                                         PIXELS(-20), PIXELS(236));
+    Actor_SetPositionAndResetMotion(Actor_GetById(16), PIXELS(600), PIXELS(-20),
+                                    PIXELS(232));
     Actor_SetSpritePriority(14, 3);
     Actor_SetSpritePriority(16, 3);
     base->priorityFlags |= 2;
@@ -986,7 +993,7 @@ void Func_02001804(void) {
        * *timer = 0, 6 of 193 instructions differ in tla-en. */
       s32 **timerRef = &timer;
 
-      Func_02005388(245);
+      Scene_QueueMusic(245);
       Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
       **timerRef = 0;
@@ -1027,11 +1034,11 @@ void Func_020019d4(void) {
     Func_02000778(leader, 0x39999);
   if (Event_GetFlag(0x20e)) {
     if (!Event_GetFlag(0x20c) && !Event_GetFlag(0x20d)) {
-      Func_02005388(-1);
+      Scene_QueueMusic(-1);
       Event_ClearFlag(0x20e);
     }
   } else if (Event_GetFlag(0x20c) || Event_GetFlag(0x20d)) {
-    Func_02005388(162);
+    Scene_QueueMusic(162);
     Event_SetFlag(0x20e);
   }
 }
@@ -1052,8 +1059,7 @@ void Func_02001b50(void) {
     return;
   if (cellX == 27 && cellZ == 12) {
     struct Actor *lift = Actor_GetById(13);
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                       0);
+    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
     Actor_SetModeById(13, 4);
     leader->motionFlags = riding;
     leader->y = lift->y;
@@ -1062,8 +1068,7 @@ void Func_02001b50(void) {
   }
   if (cellX == 37 && cellZ == 14) {
     struct Actor *lift = Actor_GetById(14);
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                       0);
+    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
     Actor_SetModeById(14, 4);
     leader->motionFlags = 0;
     leader->y = lift->y;
@@ -1076,15 +1081,18 @@ void Func_02001b50(void) {
   }
   Actor_SetModeById(13, 0);
   Actor_SetModeById(14, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     1);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   leader->motionFlags = 3;
   GameFlag_ClearBit(0x208);
   GameFlag_ClearBit(0x209);
   GameFlag_ClearBit(0x17d);
 }
 
-/* VIEW(kandorean_temple): tag struct MapCell as struct MapCell__kandorean_temple; map.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/kandorean_temple.c:1106: arithmetic on pointer to an incomplete type. */
+/* VIEW(kandorean_temple): tag struct MapCell as struct
+ * MapCell__kandorean_temple; map.h has another definition; tried with the
+ * definition the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/kandorean_temple.c:1106: arithmetic on pointer to an
+ * incomplete type. */
 struct MapCell__kandorean_temple {
   u8 unk0[2];
   u8 unk2;
@@ -1410,7 +1418,7 @@ void Func_020023e8(void) {
   Event_ShowMessage(0x800c, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, (u16)angle, 10);
   if (gData_020062ac != 0)
-    Func_02005330(gData_020062ac, 3);
+    BattleEffect_RunActorRiseAndDescent(gData_020062ac, 3);
   Party_GiveItem(198, 0);
   if (gData_020062ac != 0)
     Import_ActorDestroy(gData_020062ac);
@@ -1467,7 +1475,7 @@ void Func_020026cc(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Camera_MoveWithinMapBounds(PIXELS(328), -1, PIXELS(174), 1);
-  Func_020052e8();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 328, 174);
@@ -1534,7 +1542,6 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-
 void Func_0200290c(void) {
   Func_02005398();
   Func_020053a0(0, 8, 9);
@@ -1546,7 +1553,7 @@ void Func_0200290c(void) {
   Func_020053b8(gData_020054dc);
   REG_BLDALPHA = 0xc08;
   REG_BLDCNT = 0x3f10;
-  Func_02005388(245);
+  Scene_QueueMusic(245);
   Task_Add(Func_02000c74, TASK_PASS_VBLANK);
   Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(14, 0, 0);

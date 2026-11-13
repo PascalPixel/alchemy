@@ -58,9 +58,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_02000c5c
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02000c5c:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SetMode
 	.global Actor_StartScript
 	.thumb_func
@@ -146,9 +146,9 @@ Actor_ArmCallback:
 	.thumb_func
 Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
-	.global Func_02000d0c
+	.global Field_FindNearbyTalkTarget
 	.thumb_func
-Func_02000d0c:
+Field_FindNearbyTalkTarget:
 	overlay_veneer Func_080c82c0
 	.global Func_02000d14
 	.thumb_func
@@ -186,9 +186,9 @@ Func_02000d4c:
 	.thumb_func
 Func_02000d54:
 	overlay_veneer Func_080c8748
-	.global Func_02000d5c
+	.global BattleEffect_GetObjectPriority
 	.thumb_func
-Func_02000d5c:
+BattleEffect_GetObjectPriority:
 	overlay_veneer Func_080c87e8
 	.global Sound_Play
 	.thumb_func

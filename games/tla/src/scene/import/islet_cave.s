@@ -30,9 +30,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_02001214
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02001214:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SetMode
 	.global Actor_SetMoveTarget
 	.thumb_func

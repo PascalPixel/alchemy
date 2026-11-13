@@ -58,8 +58,12 @@ void Func_0200036c(void) {
 
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-/* VIEW(gaia_rock_inside): routine Func_02004e64 as s32 Func_02004e64(void); module/scene/scene.h has void Func_02004e64(void); tried as the rest of the object declares it, it does not compile in tla-en: games/tla/src/scene/gaia_rock_inside.c:132: void value not ignored as it ought to be. */
-extern s32 Func_02004e64__gaia_rock_inside(void) __asm__("Func_02004e64");
+/* VIEW(gaia_rock_inside): routine Event_End as s32 Event_End(void);
+ * module/scene/scene.h has void Event_End(void); tried as the rest of the
+ * object declares it, it does not compile in tla-en:
+ * games/tla/src/scene/gaia_rock_inside.c:132: void value not ignored as it
+ * ought to be. */
+extern s32 Func_02004e64__gaia_rock_inside(void) __asm__("Event_End");
 
 // The Japanese edition has no form of this function here.
 #if TLA_PATCH_1
@@ -142,13 +146,13 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_02004d9c();
+s32 Actor_SelectAnimation();
 
 s32 Func_020005dc(void) {
   s32 t0;
 
   t0 = ((s32)Actor_Get(9));
-  Func_02004d9c(t0, 3);
+  Actor_SelectAnimation(t0, 3);
   Actor_SetAnimationSpeed(t0, 0);
   return 0;
 }
@@ -200,8 +204,8 @@ s32 Func_02000678(void) {
   struct Actor *object;
   struct FieldSprite *sprite;
 
-  object = (FieldActor_Create(14, source->x + 0x80000,
-                                               source->y - 0x20000, source->z));
+  object = (FieldActor_Create(14, source->x + 0x80000, source->y - 0x20000,
+                              source->z));
   object->motionFlags = 0;
   Actor_SetSingleChildFlags(object, 0);
   Actor_StartScript(object, gData_020050d0);

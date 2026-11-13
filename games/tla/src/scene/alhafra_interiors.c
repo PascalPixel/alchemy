@@ -50,13 +50,13 @@ struct AlhafraInteriorsEventWork {
 
 void Event_Start(void);
 void Event_End(void);
-void Func_02000bc4(s32 shop, s32 keeper);
-void Func_02000bcc(s32 keeper);
-void Func_02000bd4(s32 shop, s32 keeper);
+void Shop_Run(s32 shop, s32 keeper);
+void Sanctum_Run(s32 keeper);
+void Inn_CheckIn(s32 shop, s32 keeper);
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_02000b7c(void);
+void FieldCamera_WaitForArrival(void);
 
 void Event_StartScreenTransition(void);
 
@@ -85,17 +85,17 @@ u8 *Scene_GetPlacements(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02000b84(s32 a, s32 b);
+void FieldCamera_MoveToActorById(s32 a, s32 b);
 
 void Func_02000084(void) {
   Event_SetFlag(0x8b2);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors31);
-  Func_02000b84(0x1f, 1);
+  FieldCamera_MoveToActorById(0x1f, 1);
   Actor_WalkToAndWait(4, 452, 335);
   Actor_FaceDirection(4, 0x8000, 0);
-  Func_02000b7c();
+  FieldCamera_WaitForArrival();
   Actor_FaceDirection(31, 0x2000, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(0x801f, 0, 0xa);
@@ -118,7 +118,7 @@ void Func_02000084(void) {
   Actor_FaceDirection(31, 0xc000, 0);
   FieldEvent_Wait(20);
   FieldCamera_FollowActor(FIELD_AT(&gMainRoutineWork, s32, 532), 1);
-  Func_02000b7c();
+  FieldCamera_WaitForArrival();
   Event_End();
 }
 
@@ -126,7 +126,7 @@ void Func_020001ac(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02000bc4(9, actor);
+    Shop_Run(9, actor);
   } else {
     Event_SetMessageId((s32)MsgAlhafraInteriors14);
     Event_ShowMessageAndWait(actor, 0);
@@ -137,7 +137,7 @@ void Func_020001fc(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02000bd4(2, actor);
+    Inn_CheckIn(2, actor);
   } else {
     Event_SetMessageId((s32)MsgAlhafraInteriors16);
     Event_ShowMessageAndWait(actor, 0);
@@ -148,7 +148,7 @@ void Func_0200024c(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02000bcc(actor);
+    Sanctum_Run(actor);
   } else {
     Event_SetMessageId((s32)MsgAlhafraInteriors49);
     Event_ShowMessageAndWait(actor, 0);
@@ -235,7 +235,8 @@ void Func_020004f4(s32 actor) {
 
   FieldEvent_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+      0) {
     FieldEvent_Wait(10);
     FieldEvent_SetMessageId(msg + 1);
   } else {
@@ -253,17 +254,19 @@ u8 *Scene_GetEvents(void) {
   return gData_020013dc;
 }
 
-s32 Func_02000bbc();
+s32 BattleEffect_DrawSpriteAtWorldPosition();
 
 s32 Func_02000578(s32 a0) {
-  Func_02000bbc((s32)gData_02001c90, FIELD_AT(a0, s32, 8),
-                (FIELD_AT(a0, s32, 12) + 0xc0000), FIELD_AT(a0, s32, 16));
+  BattleEffect_DrawSpriteAtWorldPosition(
+      (s32)gData_02001c90, FIELD_AT(a0, s32, 8),
+      (FIELD_AT(a0, s32, 12) + 0xc0000), FIELD_AT(a0, s32, 16));
   return 0;
 }
 
 s32 Func_02000598(s32 a0) {
-  Func_02000bbc((s32)gData_02001c60, FIELD_AT(a0, s32, 8),
-                (FIELD_AT(a0, s32, 12) + 0x80000), FIELD_AT(a0, s32, 16));
+  BattleEffect_DrawSpriteAtWorldPosition(
+      (s32)gData_02001c60, FIELD_AT(a0, s32, 8),
+      (FIELD_AT(a0, s32, 12) + 0x80000), FIELD_AT(a0, s32, 16));
   return 0;
 }
 
@@ -275,7 +278,7 @@ s32 Func_02000598(s32 a0) {
 // The Japanese edition sets no flag 0x200 by the leader's position and places
 // no actors 31 and 32.
 #if TLA_PATCH_1
-void Func_02000bac(s32 mode);
+void BattleEffect_FillOverlayTiles(s32 mode);
 void Func_02000bb4();
 
 s32 Scene_Initialize(void) {
@@ -286,7 +289,7 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(31, 3);
   FieldActor_SetSpritePriority(14, 3);
   FieldActor_SetSpritePriority(15, 3);
-  Func_02000bac(0);
+  BattleEffect_FillOverlayTiles(0);
   Call4(Func_02000bb4, (s32)gData_02001c90, 8, 15, 0x40000000);
   Call4(Func_02000bb4, (s32)gData_02001c60, 8, 15, 0x40000000);
   *(s32 *)(gData_02001c60 + 24) = 0x18000;
@@ -316,7 +319,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 #else
-void Func_02000bac(s32 mode);
+void BattleEffect_FillOverlayTiles(s32 mode);
 void Func_02000bb4();
 
 s32 Scene_Initialize(void) {
@@ -327,7 +330,7 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(31, 3);
   FieldActor_SetSpritePriority(14, 3);
   FieldActor_SetSpritePriority(15, 3);
-  Func_02000bac(0);
+  BattleEffect_FillOverlayTiles(0);
   Call4(Func_02000bb4, (s32)gData_02001c90, 8, 15, 0x40000000);
   Call4(Func_02000bb4, (s32)gData_02001c60, 8, 15, 0x40000000);
   *(s32 *)(gData_02001c60 + 24) = 0x18000;
@@ -375,7 +378,7 @@ void Func_02000738(void) {
       Actor_WalkToAndWait(4, 504, 328);
       Actor_FaceDirectionAndWait(4, FACING_WEST);
       FieldCamera_MoveTo(PIXELS(408), -1, PIXELS(328), 1);
-      Func_02000b7c();
+      FieldCamera_WaitForArrival();
       FieldEvent_Wait(10);
       Actor_RunRepeatedMotion(31, 2);
       FieldEvent_Wait(5);

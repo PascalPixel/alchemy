@@ -10,11 +10,11 @@ GameFlag_Test:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_02000178
+	.global Shop_Run
 	.thumb_func
-Func_02000178:
+Shop_Run:
 	overlay_veneer Func_08108008
-	.global Func_02000180
+	.global Inn_CheckIn
 	.thumb_func
-Func_02000180:
+Inn_CheckIn:
 	overlay_veneer Func_08108018

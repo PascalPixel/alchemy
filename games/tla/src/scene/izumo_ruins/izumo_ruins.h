@@ -59,7 +59,7 @@ void Actor_SetCellShapeAt(s32 a, s32 b, s32 owner);
 s32 Func_02000eac(u32 layer, s32 x, s32 y);
 s32 Func_02000ee8(u32 layer, s32 x, s32 y, s32 value);
 void Func_02000f30(struct Actor *object);
-void Func_02001428(struct Actor *object, s32 value);
+void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Event_End(void);
 void Func_020014c0(s32 id);
 void Func_02001500(const void *data);

@@ -82,9 +82,9 @@ Animation_ApplyChildArgument:
 	.thumb_func
 ResourceMetadata_Register:
 	overlay_veneer ResourceMetadata_RegisterFar
-	.global Func_02001c6c
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02001c6c:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SetMode
 	.global Actor_StartScript
 	.thumb_func
@@ -106,9 +106,9 @@ Script_WaitForEventTimeout:
 	.thumb_func
 Map_GetTerrainHeight:
 	overlay_veneer MapGrid_GetTerrainHeightFar
-	.global Func_02001c9c
+	.global MapGrid_CheckCollision
 	.thumb_func
-Func_02001c9c:
+MapGrid_CheckCollision:
 	overlay_veneer Func_08020210
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -226,9 +226,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02001d8c
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02001d8c:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Import_EventSetExitRequest
 	.thumb_func
@@ -274,9 +274,9 @@ Actor_CommitPositionAndActivate:
 	.thumb_func
 ObjectTable_Snapshot:
 	overlay_veneer ObjectTable_SnapshotFar
-	.global Func_02001dec
+	.global Scene_QueueMusic
 	.thumb_func
-Func_02001dec:
+Scene_QueueMusic:
 	overlay_veneer Func_080c8688
 	.global Event_NoOp
 	.thumb_func
@@ -298,13 +298,13 @@ Func_02001e0c:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_02001e1c
+	.global Shop_Run
 	.thumb_func
-Func_02001e1c:
+Shop_Run:
 	overlay_veneer Func_08108008
-	.global Func_02001e24
+	.global Inn_CheckIn
 	.thumb_func
-Func_02001e24:
+Inn_CheckIn:
 	overlay_veneer Func_08108018
 	.global Sound_Play
 	.thumb_func

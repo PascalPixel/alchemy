@@ -356,17 +356,20 @@ loop:
       Func_02001804();                                                         \
   }
 
-DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_02001820, gData_02004066, 13, gData_02003fd2)
+DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_02001820, gData_02004066, 13,
+                                    gData_02003fd2)
 
 extern const u16 gData_02003fda[];
 extern const struct CellRecord gData_0200410e[];
 
-DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_020018a8, gData_0200410e, 7, gData_02003fda)
+DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_020018a8, gData_0200410e, 7,
+                                    gData_02003fda)
 
 extern const u16 gData_02003fe2[];
 extern const struct CellRecord gData_0200416e[];
 
-DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_02001930, gData_0200416e, 5, gData_02003fe2)
+DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_02001930, gData_0200416e, 5,
+                                    gData_02003fe2)
 
 void Func_020019b8(void) {
   u16 *record = gData_020041b6;
@@ -637,8 +640,9 @@ void Func_0200200c(struct Actor *object) {
 void Func_02000d78(const void *data);
 extern const u8 gData_02003fc8[];
 
-DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Func_02003de0, Func_02003d10, Func_02000d78,
-    gData_02003fc8, Func_02003de8, Func_0200200c)
+DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Func_02003de0,
+                         Field_FindNearbyTalkTarget, Func_02000d78,
+                         gData_02003fc8, Func_02003de8, Func_0200200c)
 
 void Func_02002114(void) { Func_02000d78(gData_02003fc8); }
 
@@ -685,7 +689,8 @@ void Func_020021b4(void) {
 #undef SCENE
 
 // ---- games/tla/src/scene/dehkan_plateau/events_g.c ----
-// Scene code of overlay 0x655, in ROM order, from events_g's offset up to the next object the overlay links.
+// Scene code of overlay 0x655, in ROM order, from events_g's offset up to the
+// next object the overlay links.
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -703,21 +708,34 @@ void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
 void Func_02002180(void);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
-void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
-                   s32 height);
+void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
+                                    s32 width, s32 height);
 void Func_02001804(void);
 
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-/* VIEW(events_g): routine Actor_SetHorizontalPositionAndAngleWithTerrain as void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16 angle); event.h has void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z, s32 angle); tried as the definition's void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x, s32 z, s16 angle), it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:832: conflicting types for `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
-extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(u32 id, s32 x, s32 z, s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
+/* VIEW(events_g): routine Actor_SetHorizontalPositionAndAngleWithTerrain as
+ * void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16
+ * angle); event.h has void Actor_SetHorizontalPositionAndAngleWithTerrain(s32
+ * actorId, s32 x, s32 z, s32 angle); tried as the definition's void
+ * Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x, s32 z,
+ * s16 angle), it does not compile in tla-ja:
+ * games/tla/src/scene/dehkan_plateau.c:832: conflicting types for
+ * `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
+extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(
+    u32 id, s32 x, s32 z,
+    s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Actor_Jump(s32 id, s32 a, s32 b);
 void Actor_WatchAndSetScript(s32 id, s32 target);
-/* VIEW(events_g): routine Task_Add as void Task_Add(void(*func) (void), s32 priority); task.h has s32 Task_Add(TaskFunc func, s32 order); tried as the definition's s32 Task_Add(TaskFunc func, s32 order), which the object already declares, Func_02002604 moves: 1 of 20 instructions in tla-ja. */
-extern void Task_Add__events_g(void (*func)(void), s32 priority) __asm__("Task_Add");
+/* VIEW(events_g): routine Task_Add as void Task_Add(void(*func) (void), s32
+ * priority); task.h has s32 Task_Add(TaskFunc func, s32 order); tried as the
+ * definition's s32 Task_Add(TaskFunc func, s32 order), which the object already
+ * declares, Func_02002604 moves: 1 of 20 instructions in tla-ja. */
+extern void Task_Add__events_g(void (*func)(void),
+                               s32 priority) __asm__("Task_Add");
 void Task_RemoveFar(void (*func)(void));
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -739,7 +757,7 @@ void Func_020021e8(void) {
   Event_ResolvePendingActions(0);
   Func_080d4568()->motionFlags = 0;
   Camera_MoveWithinMapBounds(658 << 16, -1, 164 << 16, 1);
-  Func_02003cf0();
+  FieldCamera_WaitForArrival();
   Actor_SetAngleToward(24, gMainRoutineWork.currentOwner, 0);
   Func_080d47b4(24, 0x100, 40);
   Actor_SetSpeed(24, 0x19999, 0xcccc);
@@ -764,7 +782,7 @@ void Func_020022e0(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Camera_MoveWithinMapBounds(245 << 18, -1, 168 << 16, 1);
-  Func_02003cf0();
+  FieldCamera_WaitForArrival();
   Actor_SetAngleToward(24, gMainRoutineWork.currentOwner, 0);
   Func_080d47b4(24, 0x100, 40);
   Actor_GetById(24)->motionFlags = 0;
@@ -783,7 +801,7 @@ void Func_02002390(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Camera_MoveWithinMapBounds(144 << 16, -1, 214 << 15, 1);
-  Func_02003cf0();
+  FieldCamera_WaitForArrival();
   Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
   Func_080d47b4(25, 0x100, 40);
   Actor_SetSpeed(25, 0x19999, 0xcccc);
@@ -806,7 +824,7 @@ void Func_02002458(void) {
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 25);
   Func_080d4568()->motionFlags = 0;
   Camera_SetBounds(212 << 17, -1, 208 << 15, 1);
-  Func_02003cf0();
+  FieldCamera_WaitForArrival();
   Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
   Func_080d47b4(25, 0x100, 20);
   Camera_MoveWithinMapBounds(212 << 17, -1, 152 << 16, 1);

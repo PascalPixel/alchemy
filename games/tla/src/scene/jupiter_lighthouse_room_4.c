@@ -41,7 +41,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-
 static inline void SetCollisionCode(s32 x, s32 z, s32 layer, s32 value) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
    * scene layer, so each call keeps its own constants; as a direct call, 12
@@ -119,7 +118,6 @@ void Func_0200021c(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-
 /// A particle's step, Jupiter Lighthouse room 2's Func_02000720 with other
 /// numbers: it circles at its angle (action) around x 232 and rises with its
 /// phase (unk66) from 120 pixels down, taking mode 7 at phase 1 and mode 2 at
@@ -134,9 +132,9 @@ void Func_02000244(struct Actor *object) {
                    (232 << 16),
                (height * 3 << 16) - (120 << 16), 130 << 18);
   if ((s16)object->unk66 == 1)
-    Func_02001da8(object, 7);
+    Actor_SelectAnimation(object, 7);
   if ((s16)object->unk66 == 38)
-    Func_02001da8(object, 2);
+    Actor_SelectAnimation(object, 2);
   if (object->y > 0)
     object->unk66 = 0xffff;
   if (Math_Sin(angle) < 0)
@@ -259,10 +257,12 @@ extern s32 gPaletteCycleFrame;
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
 DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_020026f4,
-    gData_0200271c)
+                          gData_0200271c)
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_020026f4, gData_0200271c,
-    gData_0200273c, PaletteCycle_Step, gData_02002740)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
+                                        gData_020026f4, gData_0200271c,
+                                        gData_0200273c, PaletteCycle_Step,
+                                        gData_02002740)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001e28, Func_02001ef8)
 
@@ -279,4 +279,4 @@ s32 Func_02001ee8(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_02001ee8, Position_FlatDistance,
-    gWhirlwindEndScript, gData_02002718)
+                        gWhirlwindEndScript, gData_02002718)

@@ -31,7 +31,7 @@ void Event_Start(void);
 void Event_End(void);
 void Actor_MoveToObject(s32 id, s32 a);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-s32 Func_02000d0c(s32 id);
+s32 Field_FindNearbyTalkTarget(s32 id);
 void Func_02000d14(void);
 void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
 void BattleEffect_ApplyColorToSourceBuffer(s32 a, s32 b);

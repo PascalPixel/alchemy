@@ -44,7 +44,7 @@ struct Spark {
 
 extern const u8 gData_02005264[], gData_02005218[], gData_02005234[],
     gData_02005288[], gData_02005244[], gData_020052ac[], gData_020052dc[];
-void Func_02004d9c(void *object, s32 mode);
+void Actor_SelectAnimation(void *object, s32 mode);
 void Actor_StartScript(void *object, const u8 *script);
 void Actor_EmitBubbles(void);
 
@@ -88,7 +88,7 @@ first:
     spark->motionFlags = 0;
     Actor_SetPartAttribute(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
-    Func_02004d9c(spark, 7);
+    Actor_SelectAnimation(spark, 7);
     Actor_SetSingleChildFlags(spark, 0);
     Animation_SetStateFlags(spark, 1);
     Actor_StartScript(spark, gData_02005218);
@@ -120,7 +120,7 @@ second:
     spark->unk62 = (16 - i) * 8 + 15;
     Actor_SetPartAttribute(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
-    Func_02004d9c(spark, 7);
+    Actor_SelectAnimation(spark, 7);
     Actor_SetSingleChildFlags(spark, 0);
     Animation_SetStateFlags(spark, 1);
     FieldVector_AddPolarOffset(spark->unk4c, *angle, &spark->x);
@@ -159,7 +159,7 @@ third:
     spark->motionFlags = 0;
     spark->priorityFlags = 1;
     Actor_SetPartAttribute(spark, 2);
-    Func_02004d9c(spark, 7);
+    Actor_SelectAnimation(spark, 7);
     Actor_SetSingleChildFlags(spark, 0);
     Animation_SetStateFlags(spark, 1);
     Actor_StartScript(spark, gData_02005244);
@@ -191,16 +191,19 @@ third:
 void Actor_MoveToObject(s32 id, s32 target);
 void DisplayBlend_EnableRunScript(void);
 void DisplayBlend_DisableRunScript(void);
-/* VIEW(s15d0): routine Func_02004e64 as s32 Func_02004e64(void); module/scene/scene.h has void Func_02004e64(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s15d0.c:277: void value not ignored as it ought to be. */
-extern s32 Func_02004e64__s15d0(void) __asm__("Func_02004e64");
+/* VIEW(s15d0): routine Event_End as s32 Event_End(void); module/scene/scene.h
+ * has void Event_End(void); tried as the rest of the object declares it, it
+ * does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s15d0.c:277:
+ * void value not ignored as it ought to be. */
+extern s32 Func_02004e64__s15d0(void) __asm__("Event_End");
 
 /// The party meets person 11 on the ledge: they talk, the ground shakes, the
 /// screen blends out and back while the ledge changes, the party gains the item
 /// and person 11 joins the leader (flag 0x9ba).
 s32 Func_020019cc(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  /* FAKEMATCH(volatile): the blend level rereads through its slot; as a plain local,
-   * 112 of 250 instructions differ in tla-en. */
+  /* FAKEMATCH(volatile): the blend level rereads through its slot; as a plain
+   * local, 112 of 250 instructions differ in tla-en. */
   volatile u16 level;
   s32 message;
 

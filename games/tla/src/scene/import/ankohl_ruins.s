@@ -70,9 +70,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Task_Find:
 	overlay_veneer Task_FindFar
-	.global Func_02002dd4
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02002dd4:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SetMode
 	.global Actor_StartScript
 	.thumb_func
@@ -98,9 +98,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 Func_0802b450:
 	overlay_veneer Func_080201f0
-	.global Func_02002e0c
+	.global MapGrid_CheckCollision
 	.thumb_func
-Func_02002e0c:
+MapGrid_CheckCollision:
 	overlay_veneer Func_08020210
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -184,9 +184,9 @@ Camera_FollowActor:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02002eb4
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02002eb4:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Import_EventSetExitRequest
 	.thumb_func

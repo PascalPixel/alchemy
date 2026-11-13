@@ -19,10 +19,14 @@
 #include "text/msg_ids.h"
 #include "module/field/field_effect.h"
 
-void Func_02004d9c(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-/* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s07f4.c:43: structure has no member named `layer'. */
+/* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4;
+ * module/scene/scene.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/gaia_rock_inside/s07f4.c:43: structure has no member
+ * named `layer'. */
 struct DustSprite__s07f4 {
   u8 unk00[9];
   u8 unused09 : 2;
@@ -44,7 +48,7 @@ s32 Func_020007f4(void) {
         dust->motionFlags = 0;
         dust->collisionFlags = 0;
         Actor_SetSingleChildFlags(dust, 0);
-        Func_02004d9c(dust, 1);
+        Actor_SelectAnimation(dust, 1);
         Actor_StartScript(dust, gData_020050f4);
         ((struct DustSprite__s07f4 *)dust->sprite)->layer = 1;
         dust->bounce = Math_Cosine(((Random16Far() << 3) >> 16) << 14) >> 1;
@@ -177,7 +181,7 @@ void Func_02000af8(s32 unused, u32 id) {
   direction = Func_02004904();
   state = (s32 *)(gData_020023c4 + 0x288);
   object->collisionFlags = 0;
-  Func_02004d9c(object, ((direction & 0xc000) >> 14) + 2);
+  Actor_SelectAnimation(object, ((direction & 0xc000) >> 14) + 2);
   if (direction & 0x4000)
     object->update = (void (*)(void))Func_02000aac;
   else
@@ -212,7 +216,7 @@ void Func_02000b6c(void) {
       FieldEvent_SetExitRequest(20);
     } else {
       Event_SetFlag(0x9bf);
-      Func_02004e64();
+      Event_End();
     }
   }
 }
@@ -323,7 +327,7 @@ void Func_02000edc(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgGaiaRockInside05);
   Event_ShowMessage(0xa, 0);
-  Func_02004e64();
+  Event_End();
 }
 
 extern struct Actor gData_0200646c;
@@ -384,12 +388,17 @@ void Func_02000fac(void) {
 #undef FIELD_AT
 
 // ---- games/tla/src/scene/gaia_rock_inside/s1048.c ----
-// Scene code of overlay 0x681, in ROM order, from s1048's offset up to the next object the overlay links.
+// Scene code of overlay 0x681, in ROM order, from s1048's offset up to the next
+// object the overlay links.
 
 #include "text/msg_ids.h"
 
 extern s32 gData_0200559c[];
-/* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4 has extern struct Actor gData_0200646c; tried as the definition's extern struct ActorPlacement gData_0200646c[], it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s07f4.c:392: conflicting types for `gData_0200646c'. */
+/* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4
+ * has extern struct Actor gData_0200646c; tried as the definition's extern
+ * struct ActorPlacement gData_0200646c[], it does not compile in tla-ja:
+ * games/tla/src/scene/gaia_rock_inside/s07f4.c:392: conflicting types for
+ * `gData_0200646c'. */
 extern s32 gData_0200646c__s1048[] __asm__("gData_0200646c");
 
 /// Object 10 turns to the leader, talks and walks to its place while the camera
@@ -421,10 +430,10 @@ void Func_02001048(void) {
   Actor_FaceDirection(10, FACING_NORTH + FACING_STEP, 0);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(PIXELS(488), -1, PIXELS(392), 1);
-  Func_02004f54();
+  FieldCamera_WaitForArrival();
   Event_ShowMessage(10, 0);
   FieldCamera_FollowActor(10, 1);
-  Func_02004f54();
+  FieldCamera_WaitForArrival();
   Actor_FaceDirection(10, FACING_EAST + FACING_STEP, 0);
   FieldEvent_Wait(10);
   Event_ShowMessage(10, 0);
@@ -436,7 +445,7 @@ void Func_02001048(void) {
     gData_0200646c__s1048[4] = gData_020064f0 = gData_0200646c__s1048[16];
   }
   Func_02000fac();
-  Func_02004e64();
+  Event_End();
 }
 
 /// Talking to object 10 while its byte at 0x60 is at most 2: once flag 0x9ac is
@@ -466,11 +475,12 @@ void Func_020011c8(void) {
     FieldEvent_Wait(10);
     Func_02000fac();
   }
-  Func_02004e64();
+  Event_End();
 }
 
 // ---- games/tla/src/scene/gaia_rock_inside/s12ac.c ----
-// Scene code of overlay 0x681, in ROM order, from s12ac's offset up to the next object the overlay links.
+// Scene code of overlay 0x681, in ROM order, from s12ac's offset up to the next
+// object the overlay links.
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -499,10 +509,12 @@ void Func_020012ac(void) {
     Event_ShowMessage(0xa, 0);
     Func_02000fac();
   }
-  Func_02004e64();
+  Event_End();
 }
 
-/* VIEW(s12ac): routine Actor_StartScript as s32 Actor_StartScript(); s07f4 has void Actor_StartScript(struct Actor *object, const s32 *script); not tried: Actor_StartScript's bound declaration was not found. */
+/* VIEW(s12ac): routine Actor_StartScript as s32 Actor_StartScript(); s07f4 has
+ * void Actor_StartScript(struct Actor *object, const s32 *script); not tried:
+ * Actor_StartScript's bound declaration was not found. */
 extern s32 Func_02004dac__s12ac() __asm__("Actor_StartScript");
 extern u8 gData_02005208[];
 
@@ -516,7 +528,7 @@ void Func_02001314(s32 a0) {
   FIELD_AT((t0 + 0x55), u8, 0) = 0;
   Actor_SetSpriteColor(t0, 2);
   Scene_SetActorSpritePriority(t0, 1);
-  Func_02004d9c(t0, 1);
+  Actor_SelectAnimation(t0, 1);
   Actor_SetSingleChildFlags(t0, 0);
   Animation_SetStateFlags(t0, 1);
   Func_02004dac__s12ac(t0, (s32)gData_02005208);
@@ -524,7 +536,8 @@ void Func_02001314(s32 a0) {
 #undef FIELD_AT
 
 // ---- games/tla/src/scene/gaia_rock_inside/s136c.c ----
-// Scene code of overlay 0x681, in ROM order, from s136c's offset up to the next object the overlay links.
+// Scene code of overlay 0x681, in ROM order, from s136c's offset up to the next
+// object the overlay links.
 
 #include "frame.h"
 #include "system/field_effect.h"

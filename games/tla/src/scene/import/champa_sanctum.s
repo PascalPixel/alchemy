@@ -10,7 +10,7 @@ Actor_GetById:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_020000b8
+	.global Sanctum_Run
 	.thumb_func
-Func_020000b8:
+Sanctum_Run:
 	overlay_veneer Func_08108010

@@ -118,13 +118,22 @@ extern u8 gData_02005290[];
 void Func_0200112c(void);
 s32 Func_02004240(struct DoorPlan *);
 void Func_020044c4(struct DoorPlan);
-/* VIEW(eastern_alhafra): routine Func_02004a0c as s32 Func_02004a0c(); module/scene/scene.h has void Func_02004a0c(struct Actor *object, s32 mode); tried as the rest of the object declares it, Func_02001b9c moves: 1 of 35 instructions in tla-ja. */
-extern s32 Func_02004a0c__eastern_alhafra() __asm__("Func_02004a0c");
+/* VIEW(eastern_alhafra): routine Actor_SelectAnimation as s32
+ * Actor_SelectAnimation(); module/scene/scene.h has void
+ * Actor_SelectAnimation(struct Actor *object, s32 mode); tried as the rest of
+ * the object declares it, Func_02001b9c moves: 1 of 35 instructions in tla-ja.
+ */
+extern s32 Func_02004a0c__eastern_alhafra() __asm__("Actor_SelectAnimation");
 s32 Party_FindOwnerWithAction();
 void Event_Start();
 void Event_End();
-/* VIEW(eastern_alhafra): routine Func_02004bb4 as s32 Func_02004bb4(); module/scene/airs_rock_inside.h has void Func_02004bb4(void); tried as the definition's void Func_02004bb4(void), which the object already declares, Func_020006ec moves: 1 of 25 instructions in tla-ja. */
-extern s32 Func_02004bb4__eastern_alhafra() __asm__("Func_02004bb4");
+/* VIEW(eastern_alhafra): routine Field_FindNearbyTalkTarget as s32
+ * Field_FindNearbyTalkTarget(); module/scene/airs_rock_inside.h has void
+ * Field_FindNearbyTalkTarget(void); tried as the definition's void
+ * Field_FindNearbyTalkTarget(void), which the object already declares,
+ * Func_020006ec moves: 1 of 25 instructions in tla-ja. */
+extern s32
+Func_02004bb4__eastern_alhafra() __asm__("Field_FindNearbyTalkTarget");
 
 void Func_02000200(s32 mode, s32 id) {
   struct Actor *object;
@@ -238,12 +247,17 @@ void Func_0200042c(s32 mode, s32 id) {
 }
 
 // ---- games/tla/src/scene/eastern_alhafra/s0514.c ----
-// Scene code of overlay 0x668, in ROM order, from s0514's offset up to the next object the overlay links.
+// Scene code of overlay 0x668, in ROM order, from s0514's offset up to the next
+// object the overlay links.
 
 #include "field/field.h"
 
 void Func_0200112c(void);
-/* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct Unk_02004240); eastern_alhafra has void Func_020044c4(struct DoorPlan); tried as the definition's void Func_020044c4(struct PushTarget target), it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:245: conflicting types for `Func_020044c4'. */
+/* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct
+ * Unk_02004240); eastern_alhafra has void Func_020044c4(struct DoorPlan); tried
+ * as the definition's void Func_020044c4(struct PushTarget target), it does not
+ * compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:245: conflicting
+ * types for `Func_020044c4'. */
 extern void Func_020044c4__s0514(struct Unk_02004240) __asm__("Func_020044c4");
 void Statue_Sink(void *, s32, s32);
 s32 Func_02004a7c();
@@ -302,7 +316,6 @@ void Func_02000514(void) {
   if (actor16 != NULL && Event_GetFlag(0x8a4) == 0)
     Func_080dbdd4(actor16->x, actor16->z, 2, 0);
 }
-
 
 void Func_02000394(s32, s32);
 void Func_0200042c(s32, s32);
@@ -488,10 +501,18 @@ void Func_02000af8(void) {
 #define OBJECT(id) (Actor_Get((id)))
 
 void Func_020040ec();
-/* VIEW(eastern_alhafra): routine Func_02004c2c as void Func_02004c2c(); module/scene/mars_lighthouse_aerie.h has void Func_02004c2c(void); tried as the definition's void Func_02004c2c(void), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:573: too many arguments to function `Func_02004c2c'. */
+/* VIEW(eastern_alhafra): routine Func_02004c2c as void Func_02004c2c();
+ * module/scene/mars_lighthouse_aerie.h has void Func_02004c2c(void); tried as
+ * the definition's void Func_02004c2c(void), which the object already declares,
+ * it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:573: too
+ * many arguments to function `Func_02004c2c'. */
 extern void Func_02004c2c__eastern_alhafra() __asm__("Func_02004c2c");
 void Func_020047fc();
-/* VIEW(eastern_alhafra): routine Func_02004c94 as void Func_02004c94(); module/scene/mars_lighthouse_aerie.h has void Func_02004c94(void); tried as the definition's void Func_02004c94(void), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:595: too many arguments to function `Func_02004c94'. */
+/* VIEW(eastern_alhafra): routine Func_02004c94 as void Func_02004c94();
+ * module/scene/mars_lighthouse_aerie.h has void Func_02004c94(void); tried as
+ * the definition's void Func_02004c94(void), which the object already declares,
+ * it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:595: too
+ * many arguments to function `Func_02004c94'. */
 extern void Func_02004c94__eastern_alhafra() __asm__("Func_02004c94");
 
 s32 Scene_Initialize(void) {
@@ -502,8 +523,7 @@ s32 Scene_Initialize(void) {
   Func_02000af8();
   OBJECT(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   if (Event_GetFlag(0x8a7) != 0) {
-    if (Event_GetFlag(0x905) != 0 &&
-        Event_GetFlag(0x90f) == 0) {
+    if (Event_GetFlag(0x905) != 0 && Event_GetFlag(0x90f) == 0) {
       Actor_SetPosition(30, PIXELS(184), PIXELS(616));
       Actor_SetPosition(31, PIXELS(136), PIXELS(600));
       Actor_SetPosition(28, PIXELS(168), PIXELS(584));
@@ -717,13 +737,13 @@ void Func_0200112c(void) {
   Actor_FaceDirection(4, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   FieldCamera_MoveToActor(22, 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(22, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   FieldCamera_MoveToActor(23, 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   FieldActor_Jump(23, 6, 15);
   FieldActor_Jump(23, 6, 23);
@@ -733,18 +753,18 @@ void Func_0200112c(void) {
   Actor_FaceDirection(25, 0x5000, 0);
   FieldEvent_Wait(20);
   FieldCamera_MoveToActor(11, 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(23, 0, 10);
   FieldCamera_MoveToActor(24, 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(24, 4);
   FieldEvent_ShowMessageThenWait(24, 0, 10);
   Actor_FaceDirection(24, FACING_NORTHEAST, 0);
   FieldEvent_Wait(20);
   FieldCamera_MoveToActor(25, 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_FaceDirection(25, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
@@ -755,16 +775,16 @@ void Func_0200112c(void) {
   Actor_FaceDirection(23, 0xd000, 0);
   FieldEvent_Wait(20);
   FieldCamera_MoveToActor(14, 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   FieldCamera_MoveToActor(22, 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_ShowEmote(22, 0x107, 40);
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   FieldCamera_MoveTo(PIXELS(488), 0, PIXELS(416), 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_ShowEmote(23, 0x102, 50);
   Actor_FaceDirection(23, FACING_EAST, 0);
@@ -778,7 +798,7 @@ void Func_0200112c(void) {
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   FieldCamera_MoveTo(PIXELS(392), PIXELS(16), PIXELS(416), 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(24, 4);
   FieldEvent_ShowMessageThenWait(24, 0, 10);
@@ -803,14 +823,15 @@ void Func_0200112c(void) {
   Actor_FaceDirection(25, FACING_NORTHEAST, 0);
   FieldEvent_Wait(20);
   FieldCamera_MoveToActor(gMainRoutineWork.currentOwner, 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetSpeed(5, 0x13333, 0x9999);
   Actor_SetAnimation(5, 2);
   object0 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object0 == 0)
     goto L_020094c6;
-  Actor_SetDestination(5, *(s16 *)((u8 *)object0 + 10), *(s16 *)((u8 *)object0 + 18));
+  Actor_SetDestination(5, *(s16 *)((u8 *)object0 + 10),
+                       *(s16 *)((u8 *)object0 + 18));
 L_020094c6:
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
@@ -819,7 +840,8 @@ L_020094c6:
   object1 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object1 == 0)
     goto L_02009504;
-  Actor_SetDestination(6, *(s16 *)((u8 *)object1 + 10), *(s16 *)((u8 *)object1 + 18));
+  Actor_SetDestination(6, *(s16 *)((u8 *)object1 + 10),
+                       *(s16 *)((u8 *)object1 + 18));
 L_02009504:
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
@@ -828,12 +850,13 @@ L_02009504:
   object2 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object2 == 0)
     goto L_02009550;
-  Actor_SetDestination(26, *(s16 *)((u8 *)object2 + 10), *(s16 *)((u8 *)object2 + 18));
+  Actor_SetDestination(26, *(s16 *)((u8 *)object2 + 10),
+                       *(s16 *)((u8 *)object2 + 18));
 L_02009550:
   FieldActor_WaitForMoveById(26);
   Actor_SetPosition(26, 0, 0);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   Event_End();
   return;
 }
@@ -902,7 +925,7 @@ L_02009604:
   if (object4 == 0)
     goto L_02009706;
   Actor_SetDestination(7, *(s16 *)((u8 *)object4 + 10),
-                            *(s16 *)((u8 *)object4 + 18));
+                       *(s16 *)((u8 *)object4 + 18));
 L_02009706:
   FieldActor_WaitForMoveById(7);
   Actor_SetPosition(7, 0, 0);
@@ -913,7 +936,7 @@ L_02009716:
   if (object5 == 0)
     goto L_0200974c;
   Actor_SetDestination(5, *(s16 *)((u8 *)object5 + 10),
-                            *(s16 *)((u8 *)object5 + 18));
+                       *(s16 *)((u8 *)object5 + 18));
 L_0200974c:
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
@@ -923,7 +946,7 @@ L_0200974c:
   if (object6 == 0)
     goto L_0200978a;
   Actor_SetDestination(6, *(s16 *)((u8 *)object6 + 10),
-                            *(s16 *)((u8 *)object6 + 18));
+                       *(s16 *)((u8 *)object6 + 18));
 L_0200978a:
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
@@ -933,7 +956,7 @@ L_0200978a:
   if (object7 == 0)
     goto L_020097c8;
   Actor_SetDestination(26, *(s16 *)((u8 *)object7 + 10),
-                            *(s16 *)((u8 *)object7 + 18));
+                       *(s16 *)((u8 *)object7 + 18));
 L_020097c8:
   FieldActor_WaitForMoveById(26);
   Actor_SetPosition(26, 0, 0);
@@ -1040,7 +1063,7 @@ L_02009a2e:
   if (object4 == 0)
     goto L_02009ab2;
   Actor_SetDestination(7, *(s16 *)((u8 *)object4 + 10),
-                            *(s16 *)((u8 *)object4 + 18));
+                       *(s16 *)((u8 *)object4 + 18));
 L_02009ab2:
   FieldActor_WaitForMoveById(7);
   Actor_SetPosition(7, 0, 0);
@@ -1051,7 +1074,7 @@ L_02009ac2:
   if (object5 == 0)
     goto L_02009af8;
   Actor_SetDestination(5, *(s16 *)((u8 *)object5 + 10),
-                            *(s16 *)((u8 *)object5 + 18));
+                       *(s16 *)((u8 *)object5 + 18));
 L_02009af8:
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
@@ -1061,7 +1084,7 @@ L_02009af8:
   if (object6 == 0)
     goto L_02009b36;
   Actor_SetDestination(6, *(s16 *)((u8 *)object6 + 10),
-                            *(s16 *)((u8 *)object6 + 18));
+                       *(s16 *)((u8 *)object6 + 18));
 L_02009b36:
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
@@ -1071,7 +1094,7 @@ L_02009b36:
   if (object7 == 0)
     goto L_02009b74;
   Actor_SetDestination(26, *(s16 *)((u8 *)object7 + 10),
-                            *(s16 *)((u8 *)object7 + 18));
+                       *(s16 *)((u8 *)object7 + 18));
 L_02009b74:
   FieldActor_WaitForMoveById(26);
   Actor_SetPosition(26, 0, 0);
@@ -1114,28 +1137,34 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 #undef FIELD_AT
 
 // ---- games/tla/src/scene/eastern_alhafra/s1bf4.c ----
-// Scene code of overlay 0x668, in ROM order, from s1bf4's offset up to the next object the overlay links.
+// Scene code of overlay 0x668, in ROM order, from s1bf4's offset up to the next
+// object the overlay links.
 
-/* VIEW(s1bf4): routine Func_02001b9c as s32 Func_02001b9c(s32 x, s32 y, s32 z, s32 rotation, s32 timer); the definition has void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer); tried as the definition's void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer), which the object already declares, Func_02001bf4 moves: 2 of 79 instructions in tla-ja. */
-extern s32 Func_02001b9c__s1bf4(s32 x, s32 y, s32 z, s32 rotation, s32 timer) __asm__("Func_02001b9c");
+/* VIEW(s1bf4): routine Func_02001b9c as s32 Func_02001b9c(s32 x, s32 y, s32 z,
+ * s32 rotation, s32 timer); the definition has void Func_02001b9c(s32 x, s32 y,
+ * s32 z, s16 value, s32 timer); tried as the definition's void
+ * Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer), which the object
+ * already declares, Func_02001bf4 moves: 2 of 79 instructions in tla-ja. */
+extern s32 Func_02001b9c__s1bf4(s32 x, s32 y, s32 z, s32 rotation,
+                                s32 timer) __asm__("Func_02001b9c");
 
 void Func_02001bf4(s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Func_02001b9c__s1bf4(object->x + 0x80000, object->y + 0x1c0000, object->z, 0x1000,
-                15);
+  Func_02001b9c__s1bf4(object->x + 0x80000, object->y + 0x1c0000, object->z,
+                       0x1000, 15);
   Event_PlaySound(151);
   FieldEvent_Wait(15);
-  Func_02001b9c__s1bf4(object->x - 0x80000, object->y + 0x1c0000, object->z, 0xf000,
-                15);
+  Func_02001b9c__s1bf4(object->x - 0x80000, object->y + 0x1c0000, object->z,
+                       0xf000, 15);
   Event_PlaySound(151);
   FieldEvent_Wait(15);
-  Func_02001b9c__s1bf4(object->x + 0x80000, object->y + 0x1c0000, object->z, 0x1000,
-                15);
+  Func_02001b9c__s1bf4(object->x + 0x80000, object->y + 0x1c0000, object->z,
+                       0x1000, 15);
   Event_PlaySound(151);
   FieldEvent_Wait(15);
-  Func_02001b9c__s1bf4(object->x - 0x80000, object->y + 0x1c0000, object->z, 0xf000,
-                15);
+  Func_02001b9c__s1bf4(object->x - 0x80000, object->y + 0x1c0000, object->z,
+                       0xf000, 15);
   Event_PlaySound(151);
   FieldEvent_Wait(15);
 }
@@ -1177,7 +1206,7 @@ void Func_02001cb0(void) {
 
     FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(632), mode);
   }
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(28, 3);
   Actor_SetAttachedEffect(0x1c, 0x102);
@@ -1212,7 +1241,7 @@ void Func_02001cb0(void) {
   FieldEvent_ShowMessageThenWait(0x18, 0, 0xa);
   FieldEvent_ShowMessageThenWait(0x17, 0, 0xa);
   FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(392), 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(23, -16, 0);
   FieldEvent_Wait(20);
@@ -1257,7 +1286,7 @@ void Func_02001cb0(void) {
   Actor_SetPosition(24, 0, 0);
   Actor_SetPosition(23, 0, 0);
   FieldCamera_FollowActor(4, 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   Event_End();
 }
 
@@ -1295,7 +1324,7 @@ void Func_02002048(void) {
   FieldActor_WaitForMoveById(29);
   Actor_FaceDirection(28, FACING_EAST, 0);
   Actor_FaceDirection(29, FACING_EAST, 0);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Func_02004b6c_(0x1c, 0x107, 0);
   Func_02004b6c_(0x1c, 0x107, 0x28);
@@ -1342,22 +1371,22 @@ void Func_02002048(void) {
   FieldEvent_Wait(40);
   FieldCamera_SetSpeed(0x60000, 0xc000);
   FieldCamera_MoveTo(PIXELS(384), -1, PIXELS(480), 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
   FieldCamera_SetSpeed(0x60000, 0xc000);
   FieldCamera_MoveTo(PIXELS(480), -1, PIXELS(344), 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
   FieldCamera_SetSpeed(0x60000, 0xc000);
   FieldCamera_MoveTo(PIXELS(488), -1, PIXELS(456), 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
   FieldCamera_SetSpeed(0x60000, 0xc000);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(616), 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Func_02004b6c_(0x19, 0x102, 0x1e);
   Actor_FaceDirection(25, FACING_NORTH, 0);
@@ -1400,7 +1429,7 @@ void Func_02002048(void) {
   Actor_FaceDirection(27, 0xb000, 0);
   FieldEvent_Wait(20);
   FieldCamera_MoveTo(PIXELS(144), -1, PIXELS(544), 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
   Func_02004b6c_(4, 0x102, 0x1e);
@@ -1525,9 +1554,9 @@ void Func_02002048(void) {
   Event_End();
 }
 
-/// Only once flag 0x8a7 is set: the scene that opens with MsgBriggs2, which sets
-/// flags 0x90f and 0x97f and ends by sending the party to SceneId_Ov668Room1,
-/// entrance 99.
+/// Only once flag 0x8a7 is set: the scene that opens with MsgBriggs2, which
+/// sets flags 0x90f and 0x97f and ends by sending the party to
+/// SceneId_Ov668Room1, entrance 99.
 void Func_02002a08(void) {
   struct MapWork *map;
   s32 i;
@@ -1548,7 +1577,7 @@ void Func_02002a08(void) {
   FieldEvent_Wait(20);
   Func_02004b6c_(0x1a, 0x100, 0x1e);
   FieldCamera_MoveTo(PIXELS(176), -1, PIXELS(392), 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(25, 2);
   FieldEvent_Wait(10);
@@ -1577,7 +1606,7 @@ void Func_02002a08(void) {
         ((struct EventWork *)Ram_HeapSlots->eventWork)->viewCenter;
 
     FieldActor_SetPositionAndResetMotion(center, center->x, center->y,
-                                    center->z);
+                                         center->z);
   }
   FieldEvent_Wait(50);
   FieldActor_SetSpritePriority(22, 1);
@@ -1595,7 +1624,7 @@ void Func_02002a08(void) {
   FieldEvent_Wait(30);
   FieldCamera_SetSpeed(0x20000, 0x4000);
   FieldCamera_MoveTo(PIXELS(808), -1, PIXELS(848), 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldActor_Jump(22, 6, 15);
   FieldActor_Jump(22, 6, 23);
@@ -1787,7 +1816,7 @@ void Func_02003274(void) {
         ((struct EventWork *)Ram_HeapSlots->eventWork)->viewCenter;
 
     FieldActor_SetPositionAndResetMotion(center, center->x, center->y,
-                                    center->z);
+                                         center->z);
   }
   FieldEvent_Wait(30);
   PaletteFade_ApplyTarget(0x10000, 0);
@@ -1796,7 +1825,7 @@ void Func_02003274(void) {
   FieldEvent_Wait(15);
   FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
   FieldCamera_MoveTo(PIXELS(152), -1, PIXELS(392), 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Func_02004b6c_(0x19, 0x103, 0x1e);
   FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
@@ -2037,7 +2066,7 @@ void Func_02003274(void) {
   FieldActor_RefreshSelectorById(30);
   FieldEvent_Wait(20);
   FieldCamera_FollowActor(4, 1);
-  Func_02004b94();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   Func_02004b6c_(0x1a, 0x105, 0x32);
   Actor_ArmCallback(26, FACING_EAST, 0);
@@ -2096,8 +2125,8 @@ void Func_02003274(void) {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_PARTICLES_UPDATE_FALLING(Particles_UpdateFalling, Func_02004c6c)
-
+DEFINE_PARTICLES_UPDATE_FALLING(Particles_UpdateFalling,
+                                EffectSprite_DrawAtWorldPosition)
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.

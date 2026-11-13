@@ -114,13 +114,13 @@ Actor_SetMoveTarget:
 	.thumb_func
 Script_WaitForEventTimeout:
 	overlay_veneer Actor_CommitPosition
-	.global Func_02002940
+	.global Map_ClearLayerEntryFlag
 	.thumb_func
-Func_02002940:
+Map_ClearLayerEntryFlag:
 	overlay_veneer Func_08020198
-	.global Func_02002948
+	.global Map_SetLayerEntryFlag
 	.thumb_func
-Func_02002948:
+Map_SetLayerEntryFlag:
 	overlay_veneer Func_080201a0
 	.global Map_GetTerrainHeight
 	.thumb_func
@@ -138,9 +138,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 Func_0802b450:
 	overlay_veneer Func_080201f0
-	.global Func_02002970
+	.global MapGrid_CheckCollision
 	.thumb_func
-Func_02002970:
+MapGrid_CheckCollision:
 	overlay_veneer Func_08020210
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -218,9 +218,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02002a10
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02002a10:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Import_EventSetExitRequest
 	.thumb_func

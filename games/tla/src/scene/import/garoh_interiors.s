@@ -22,17 +22,17 @@ Map_CenterOnFollowedPoint:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Func_020007cc
+	.global Graphics_EnableObjLayerAndCallbacks
 	.thumb_func
-Func_020007cc:
+Graphics_EnableObjLayerAndCallbacks:
 	overlay_veneer Func_08020240
-	.global Func_020007d4
+	.global ActorSystem_ResumeProjectionAndHideLayers
 	.thumb_func
-Func_020007d4:
+ActorSystem_ResumeProjectionAndHideLayers:
 	overlay_veneer Func_08020248
-	.global Func_020007dc
+	.global Map_SetShownLayers
 	.thumb_func
-Func_020007dc:
+Map_SetShownLayers:
 	overlay_veneer Func_080202a0
 	.global Func_0803ce64
 	.thumb_func
@@ -126,17 +126,17 @@ Party_GetLeaderActor:
 	.thumb_func
 Func_080d3928:
 	overlay_veneer Func_080c87a8
-	.global Func_0200089c
+	.global Shop_Run
 	.thumb_func
-Func_0200089c:
+Shop_Run:
 	overlay_veneer Func_08108008
-	.global Func_020008a4
+	.global Sanctum_Run
 	.thumb_func
-Func_020008a4:
+Sanctum_Run:
 	overlay_veneer Func_08108010
-	.global Func_020008ac
+	.global Inn_CheckIn
 	.thumb_func
-Func_020008ac:
+Inn_CheckIn:
 	overlay_veneer Func_08108018
 	.global Sound_Play
 	.thumb_func

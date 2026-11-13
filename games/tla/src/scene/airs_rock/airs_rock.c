@@ -99,14 +99,14 @@ void Func_02000548(void) {
   Event_End();
 }
 
-s32 Func_02003b70();
+s32 Map_ClearLayerEntryFlag();
 
 void Func_02000568(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(0x9e);
   MapGrid_CopyCellsTo(64, 64, 83, 35, 1, 2);
-  Func_02003b70(0);
+  Map_ClearLayerEntryFlag(0);
   FieldEvent_Wait(45);
   Actor_SetSpeed(FIELD_AT(&gMainRoutineWork, s32, 532), 0x8000, 0x4000);
   Actor_WalkTo(FIELD_AT(&gMainRoutineWork, s32, 532), 312, 680);
@@ -176,7 +176,7 @@ void Func_020006d4(void) {
   Event_End();
 }
 
-void Func_02003b28(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 /// The leader jumps up 12 pixels (cue 390, mode 6 then 1), climbs 28 pixels
 /// over 14 frames with cue 217 while turned to angle 0x5000, then lands 16
@@ -187,9 +187,9 @@ void Func_02000700(void) {
   u32 i;
 
   Event_PlaySound(390);
-  Func_02003b28(leader, 6);
+  Actor_SelectAnimation(leader, 6);
   System_Wait(10);
-  Func_02003b28(leader, 1);
+  Actor_SelectAnimation(leader, 1);
   Actor_SetSingleChildFlags(leader, 0);
   leader->motionFlags |= 2;
   leader->velocityY = 0x40000;
@@ -314,7 +314,7 @@ void Func_0200095c(void) {
   Event_ResolvePendingActions(0);
   Sound_Play(207);
   gust = FieldActor_Create(280, leader->x, leader->y, leader->z);
-  Func_02003b28(gust, 2);
+  Actor_SelectAnimation(gust, 2);
   Actor_SetSingleChildFlags(gust, 0);
   gust->scaleX = 0x1b333;
   gust->scaleY = 0x3333;
@@ -341,7 +341,7 @@ void Func_0200095c(void) {
       spark->gravity = 0xcccc;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
-      Func_02003b28(spark, 7);
+      Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02003d1c);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetPartAttribute(spark, 2);
@@ -473,8 +473,8 @@ void Func_0200095c(void) {
   }
   Import_ActorDestroy(gust);
   Event_Wait(30);
-  Func_02003c38(gMainRoutineWork.currentOwner, 1);
-  Func_02003c30();
+  FieldCamera_MoveToActorById(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_WaitForArrival();
   Event_End();
 }
 
@@ -585,7 +585,7 @@ row:
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
-      Func_02003b28(spark, 7);
+      Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02003d1c);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
@@ -594,10 +594,10 @@ row:
     FieldEvent_Wait(1);
   }
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02003c30();
+  FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(0x10000, 0x2000);
   FieldCamera_MoveTo(0x14a0000, -1, 0x490000, 1);
-  Func_02003c30();
+  FieldCamera_WaitForArrival();
   Task_AddFrame(Func_02000ef4, 0xc80);
   Event_PlaySound(163);
   REG_BLDALPHA = 0xf00;
@@ -689,7 +689,7 @@ fade:
     }
     FieldCamera_FollowActor(*ownerId, 1);
   }
-  Func_02003c30();
+  FieldCamera_WaitForArrival();
   Event_SetFlag(0x858);
   Event_End();
 }
@@ -787,10 +787,10 @@ void Func_02001560(void) {
         Map_GetTerrainHeight(((u8 *)rider)[98], ride->x + dx, ride->z + dz);
     leader->y = height;
     leader->terrainHeight = height;
-    Func_02003b28(leader, 6);
+    Actor_SelectAnimation(leader, 6);
     wait(6);
     Sound_Play(152);
-    Func_02003b28(leader, 7);
+    Actor_SelectAnimation(leader, 7);
     leader->speedLimit = 0x20000;
     leader->acceleration = 0x8000;
     leader->velocityY = 0x40000;
@@ -826,7 +826,7 @@ void Func_02001560(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Event_ClearFlag(0x250);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02003c30();
+  FieldCamera_WaitForArrival();
   wait(10);
   Event_End();
 }
@@ -949,7 +949,7 @@ void Func_02001b54(struct Actor *object) {
                                       Math_Sin(object->facing));
     }
     shot = FieldActor_Create(280, position.x, object->y, position.z);
-    Func_02003b28(shot, 2);
+    Actor_SelectAnimation(shot, 2);
     Actor_SetSingleChildFlags(shot, 0);
     ((struct FieldSprite *)shot->sprite)->priority = 1;
     shot->motionFlags = 0;
@@ -1023,7 +1023,6 @@ void Func_02001da8(void) {
   Event_End();
 }
 
-void Func_02003c90(void *sprite, void *source);
 extern u8 gData_02003dfc[];
 
 void Func_02001dc4(s32 x, s32 z) {
@@ -1054,11 +1053,11 @@ void Func_02001dc4(s32 x, s32 z) {
     rock = first;
     if (i != 0) {
       rock = FieldActor_Create(255, x, 0, z);
-      Func_02003c90(rock->sprite, first->sprite);
+      Sprite_ShareVramCacheEntry(rock->sprite, first->sprite);
     }
     Actor_SetSingleChildFlags(rock, 0);
     Actor_StartScript(rock, gData_02003dfc);
-    Func_02003b28(rock, 2);
+    Actor_SelectAnimation(rock, 2);
     rock->velocityY = ((Random16Far() & 3) << 16) + 0x40000;
     rock->gravity = 0x3333;
     rock->bounce = 0x6666;
@@ -1151,7 +1150,7 @@ row:
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
-      Func_02003b28(spark, 7);
+      Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02003d1c);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
@@ -1163,10 +1162,10 @@ row:
   PaletteFade_ApplyTarget(0x10003, 0);
   PaletteFade_Interpolate(60);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02003c30();
+  FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(0x10000, 0x2000);
   FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(216), 1);
-  Func_02003c30();
+  FieldCamera_WaitForArrival();
   Actor_Get(14)->update = 0;
   Actor_SetSpriteColor(Actor_Get(14), 6);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -1380,7 +1379,7 @@ void Func_020026b8(void) {
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
-      Func_02003b28(spark, 7);
+      Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02003d1c);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
@@ -1389,10 +1388,10 @@ void Func_020026b8(void) {
     FieldEvent_Wait(1);
   }
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02003c30();
+  FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(0x10000, 0x2000);
   FieldCamera_MoveTo(0x980000, -1, 0x900000, 1);
-  Func_02003c30();
+  FieldCamera_WaitForArrival();
   FieldTask_Remove(Func_020024b0);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 0;
@@ -1456,7 +1455,7 @@ void Func_020026b8(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   Actor_Get(12)->priorityFlags |= 1;
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02003c30();
+  FieldCamera_WaitForArrival();
   Event_SetFlag(0x87a);
   Event_End();
 }

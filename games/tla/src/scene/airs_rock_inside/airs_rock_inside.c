@@ -296,7 +296,7 @@ void Func_02000988(void) {
   Sound_Play(0x120);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1 &&
       leader->x >> 19 == 39) {
-    Func_02005efc(16);
+    Event_SetExitRequest(16);
     Event_End();
     return;
   }
@@ -374,7 +374,8 @@ void Func_02000988(void) {
     *motion = 2;
     *priority = 1;
     leader->terrainId = ((u8 *)rider)[98];
-    Import_ActorSetTargetPosition(leader, leader->x + dx, leader->y, leader->z + dz);
+    Import_ActorSetTargetPosition(leader, leader->x + dx, leader->y,
+                                  leader->z + dz);
     OverlayObject_WaitUntilIdle(leader);
     Import_ActorCommitPosition(leader);
     Actor_SetSingleChildFlags(leader, 1);
@@ -395,14 +396,15 @@ void Func_02000988(void) {
     dust->acceleration = 0x10000;
     dust->motionFlags = noFlags;
     Import_ActorSetTargetPosition(dust, leader->x,
-                  Map_GetTerrainHeight(0, leader->x, leader->z), leader->z);
+                                  Map_GetTerrainHeight(0, leader->x, leader->z),
+                                  leader->z);
     OverlayObject_WaitUntilIdle(leader);
     Import_ActorCommitPosition(dust);
     break;
   }
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02005ee4();
+  FieldCamera_WaitForArrival();
   GameFlag_ClearBit(0x250);
   wait(10);
   Event_End();
@@ -867,7 +869,7 @@ void Map_SetScreenShake(s32 a, s32 b, s32 c);
 
 /// One shake of the walls (cue 157).
 #define SHAKE()                                                                \
-  (Sound_Play(157), Call3(Map_SetScreenShake, 0x50000, 0x50000, 0x10000),        \
+  (Sound_Play(157), Call3(Map_SetScreenShake, 0x50000, 0x50000, 0x10000),      \
    Call3(Map_SetScreenShake, -1, -1, 0xe666))
 
 void Func_02001828(void) {
@@ -902,7 +904,7 @@ void Func_02001828(void) {
       ((struct FieldSprite *)((struct Actor *)*(long *)&effect->target)->sprite)
           ->priority;
   Import_ActorSetTargetPosition(gust, TARGET(effect)->x, TARGET(effect)->y,
-                TARGET(effect)->z + 0xffff0000);
+                                TARGET(effect)->z + 0xffff0000);
   gust->terrainHeight = Map_GetTerrainHeight(0, gust->x, gust->z);
   while (gust->scaleY <= 0x14ccb) {
     gust->scaleY += 0x1999;
@@ -1054,8 +1056,8 @@ void Func_02001828(void) {
     cell.z = (gust->z >> 16) + dir.z * 48;
     gust->speedLimit = 0x8000;
     gust->acceleration = 0x8000;
-    Call4((void (*)())Import_ActorSetTargetPosition, (s32)(gust), (s32)(cell.x << 16),
-          (s32)(gust->y), (s32)(cell.z << 16));
+    Call4((void (*)())Import_ActorSetTargetPosition, (s32)(gust),
+          (s32)(cell.x << 16), (s32)(gust->y), (s32)(cell.z << 16));
     hit -= 30;
     i = 0;
     while (Func_02005dec(gust) == 0) {
@@ -1204,8 +1206,8 @@ shrink:
     }
   }
   FieldEvent_Wait(30);
-  Func_02005eec(gMainRoutineWork.currentOwner, 1);
-  Func_02005ee4();
+  FieldCamera_MoveToActorById(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_WaitForArrival();
   Event_End();
 }
 

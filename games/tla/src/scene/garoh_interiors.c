@@ -38,12 +38,12 @@ extern struct Trigger gData_02000fe8[];
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Map_CenterOnFollowedPoint(void);
-void Func_020007cc(void);
-void Func_020007d4(void);
+void Graphics_EnableObjLayerAndCallbacks(void);
+void ActorSystem_ResumeProjectionAndHideLayers(void);
 void Event_End(void);
-void Func_0200089c(s32 slot, s32 actor);
-void Func_020008a4(s32 id);
-void Func_020008ac(s32 slot, s32 actor);
+void Shop_Run(s32 slot, s32 actor);
+void Sanctum_Run(s32 id);
+void Inn_CheckIn(s32 slot, s32 actor);
 #include "event_inline.h"
 #include "module/scene/garoh_interiors.h"
 
@@ -71,7 +71,7 @@ void Func_0200009c(s32 actor) {
   u16 facing = (leader->facing + 0x2000) & ~0x3fff;
 
   if (facing == 0xc000 && GameFlag_Test(0x91b)) {
-    Func_0200089c(10, actor);
+    Shop_Run(10, actor);
   } else {
     if (GameFlag_Test(0x91b))
       Event_SetMessageId((s32)MsgGarohInteriors52);
@@ -87,7 +87,7 @@ void Func_02000114(s32 actor) {
   u16 facing = (leader->facing + 0x2000) & ~0x3fff;
 
   if (facing == 0xc000 && GameFlag_Test(0x91b)) {
-    Func_0200089c(11, actor);
+    Shop_Run(11, actor);
   } else {
     if (GameFlag_Test(0x91b))
       Event_SetMessageId((s32)MsgGarohInteriors54);
@@ -103,7 +103,7 @@ void Func_0200018c(s32 actor) {
   u16 facing = (leader->facing + 0x2000) & ~0x3fff;
 
   if (facing == 0xc000) {
-    Func_0200089c(12, actor);
+    Shop_Run(12, actor);
   } else if (GameFlag_Test(0x91b)) {
     Event_SetMessageId((s32)MsgGarohInteriors56);
     Event_ShowMessageAndWait(actor, 0);
@@ -129,7 +129,7 @@ void Func_02000230(s32 actor) {
   u16 facing = (leader->facing + 0x2000) & ~0x3fff;
 
   if (facing == 0xc000) {
-    Func_020008ac(3, actor);
+    Inn_CheckIn(3, actor);
   } else {
     if (GameFlag_Test(0x91b))
       Event_SetMessageId((s32)MsgGarohInteriors58);
@@ -146,7 +146,7 @@ void Func_02000298(void) {
            ~0x3fff;
   Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
   if ((u16)facing == 0xc000) {
-    Func_020008a4(8);
+    Sanctum_Run(8);
   } else {
     if (GameFlag_Test(0x91b))
       Event_SetMessageId((s32)MsgGarohInteriors66);
@@ -168,7 +168,8 @@ void Func_02000318(s32 actor) {
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Event_SetMessageId(message + 2);
     FieldMessage_ShowAtActor(actor, 0);
-    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+        0) {
       Event_ShowMessageAndWait(actor, 0);
     } else {
       ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
@@ -323,7 +324,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Test(0x91b))
     GameFlag_ClearBit(0x310);
   if (GameFlag_Test(0x310))
-    Func_020007dc(0xa00);
+    Map_SetShownLayers(0xa00);
   return 0;
 }
 
@@ -334,11 +335,11 @@ void Func_02000710(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_Wait(30);
-  Func_020007cc();
+  Graphics_EnableObjLayerAndCallbacks();
   Sound_Play(86);
   Func_0803ce64((s32)MsgGarohInteriors33, 0, 0);
   Event_Wait(20);
-  Func_020007d4();
+  ActorSystem_ResumeProjectionAndHideLayers();
   Map_CenterOnFollowedPoint();
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -430,25 +431,36 @@ struct Trigger gData_02000b80[] = {
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000318)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors02)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors03)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors04)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors05)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors06)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors04)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors05)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors06)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors13)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors14)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors15)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors16)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors15)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors16)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors18)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors18)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_02000114)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors20)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors20)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000230)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors24)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors27)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors28)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors27)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors28)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_0200039c)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_020003dc)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, EVENT(Func_0200041c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, EVENT(Func_0200045c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     EVENT(Func_0200041c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     EVENT(Func_0200045c)},
     {0x173, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors68))},
     {0x173, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors69))},
     {0x173, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors71))},
@@ -467,11 +479,15 @@ struct Trigger gData_02000d18[] = {
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors07)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors08)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors09)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors10)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors11)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors12)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors10)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors11)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors12)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_0200018c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors22)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors22)},
     {0x173, 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors70))},
     {TRIGGERS_END},
 };
@@ -479,11 +495,15 @@ struct Trigger gData_02000d18[] = {
 struct Trigger gData_02000de4[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000298)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x91b, MSGNO(MsgGarohInteriors32)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors67)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x91b,
+     MSGNO(MsgGarohInteriors32)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors67)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000298)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x91b, MSGNO(MsgGarohInteriors32)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors67)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x91b,
+     MSGNO(MsgGarohInteriors32)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors67)},
     {TRIGGERS_END},
 };
 
@@ -498,26 +518,37 @@ struct Trigger gData_02000e44[] = {
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors35)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors36)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors37)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors38)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors39)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors40)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors38)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors39)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors40)},
     {TRIGGER_TALK, 11, 0x91a, EVENT(Func_0200049c)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors48)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors49)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors50)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors51)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors50)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors51)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors53)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors53)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_02000114)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors55)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors55)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000230)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors59)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors62)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors63)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors62)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors63)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_0200039c)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_020003dc)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(Func_0200041c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT(Func_0200045c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     EVENT(Func_0200041c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     EVENT(Func_0200045c)},
     {0x173, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors68))},
     {0x173, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors69))},
     {0x173, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors71))},
@@ -536,11 +567,15 @@ struct Trigger gData_02000fe8[] = {
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors41)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors42)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors43)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors44)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors45)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors46)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors44)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors45)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors46)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_0200018c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors57)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriors57)},
     {0x173, 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors70))},
     {TRIGGERS_END},
 };

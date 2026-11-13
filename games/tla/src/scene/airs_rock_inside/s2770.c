@@ -899,15 +899,15 @@ s32 Func_02003f94(struct Orbit *object) {
   return 1;
 }
 
-DEFINE_ACTOR_AIM_AT_WATCHED(Func_02004038)
+DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
 
-DEFINE_ACTOR_STEP_TO_WATCHED(Func_02004084)
+DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched)
 
 void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 
-DEFINE_ACTOR_EMIT_BUBBLES(Func_020040b0, Func_020002f4)
+DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, Func_020002f4)
 
 extern const u8 gData_020060e0[], gData_02006094[], gData_020060b0[],
     gData_02006104[], gData_020060c0[], gData_02006128[], gData_02006158[];
@@ -1054,7 +1054,7 @@ third:
   BattleEffect_StartBufferInterpolation(80);
   Actor_SetMovementTypeById(idA, gData_02006128);
   Actor_SetMovementTypeById(idB, gData_02006158);
-  b->update = Func_020040b0;
+  b->update = Actor_EmitBubbles;
   wait(120);
   b->update = 0;
   Sound_Play(390);

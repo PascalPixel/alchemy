@@ -24,13 +24,14 @@ extern s16 gData_02006b72;
 s32 Func_020059bc(struct Actor *actor);
 extern void Func_02005754(struct FieldEffect *effect, s32 mode);
 
-/// The cells Func_02005534 watches, and the cell it copies over the one the
+/// The cells Teleporters_Step watches, and the cell it copies over the one the
 /// leader steps on.
 extern struct CellTarget Data_02006b74;
 
 void Func_0200581c(void);
 
-void Func_02005194(struct CellTarget *table, struct CellTargetEntry *entry);
+void Teleporter_Uncover(struct CellTarget *table,
+                        struct CellTargetEntry *entry);
 
 /// The halves of a 16.16 coordinate. Read through an s16 pointer instead, the
 /// high half's offset folds into the coordinate's (differ 11).

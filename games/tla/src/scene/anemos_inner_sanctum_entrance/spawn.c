@@ -4,4 +4,4 @@
 
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 
-DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Func_020000d0, 0x22)
+DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)

@@ -95,11 +95,11 @@ void Func_02003fe4(void);
 s32 Func_02003e2c(struct Actor *object, struct Vector3 *position);
 struct Actor *Func_02003fdc(struct Vector3 *position, s32 mode);
 s32 Func_020037d8(struct PushTarget *target);
-void Func_02003a5c(struct PushTarget target);
+void PushTarget_Push(struct PushTarget target);
 
 void Func_02001f58(void);
 void Func_02001278(struct Actor *object);
-void Func_02000df8(struct Actor *object);
+void Actor_EmitSmoke(struct Actor *object);
 void Func_020034d8(void);
 void Actor_MoveToObject(s32 actor, s32 target);
 void Func_02003fb4(void);

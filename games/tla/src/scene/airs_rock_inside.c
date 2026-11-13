@@ -27,7 +27,7 @@ next:
 
     object->collisionFlags &= ~1;
     Actor_SetSingleChildFlags(object, 0);
-    Func_02000128(id, (u16)kind, (u16)flag, BYTE_AT(object, 34));
+    Actor_SetCellOpen(id, (u16)kind, (u16)flag, BYTE_AT(object, 34));
     entry += 3;
   }
   if ((u16)entry[0] != 0xffff)
@@ -57,7 +57,7 @@ void Func_020000a4(u16 *list, s32 mode, s32 count) {
         object->scaleY -= 0x1f00;
       if (mode == 1) {
         GameFlag_SetBit(flag);
-        Func_02000128(id, a, flag, object->terrainId);
+        Actor_SetCellOpen(id, a, flag, object->terrainId);
         object->scaleY = 0x10000;
       }
       break;
@@ -70,10 +70,10 @@ void Func_020000a4(u16 *list, s32 mode, s32 count) {
 
 #include "map.h"
 
-DEFINE_ACTOR_SET_CELL_OPEN(Func_02000128, Func_02005f64, Func_02005d5c)
+DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Func_02005f64, Func_02005d5c)
 
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
 
-DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Func_02000268, 0x22)
+DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)

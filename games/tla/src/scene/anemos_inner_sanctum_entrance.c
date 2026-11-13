@@ -313,7 +313,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 #include "frame.h"
 
 extern struct LightOam gData_02001d20[];
-/* VIEW(s0588): variable gData_02001de2 as extern s16 gData_02001de2; hide has extern u16 gData_02001de2; tried as the rest of the object declares it, Func_02000858 moves: 149 of 260 instructions, Func_02000a98 moves: 0 of 36 instructions, Func_02000b18 moves: 0 of 39 instructions in tla-ja. */
+/* VIEW(s0588): variable gData_02001de2 as extern s16 gData_02001de2; hide has extern u16 gData_02001de2; tried as the rest of the object declares it, Func_02000858 moves: 149 of 260 instructions, LightSprites_InitA moves: 0 of 36 instructions, Func_02000b18 moves: 0 of 39 instructions in tla-ja. */
 extern s16 gData_02001de2__s0588 __asm__("gData_02001de2");
 /* VIEW(s0588): variable gData_02001de4 as extern s16 gData_02001de4; hide has extern u16 gData_02001de4; tried as the rest of the object declares it, Func_02000858 moves: 2 of 260 instructions in tla-ja. */
 extern s16 gData_02001de4__s0588 __asm__("gData_02001de4");
@@ -396,7 +396,7 @@ void Func_02000858(void) {
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(Func_02000a98, gData_02001ce0, gData_02001cdc,
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02001ce0, gData_02001cdc,
     Func_02000858, gData_02001cde, gData_02001de0, gData_02001de2__s0588)
 
 void Func_02000b18(void) {

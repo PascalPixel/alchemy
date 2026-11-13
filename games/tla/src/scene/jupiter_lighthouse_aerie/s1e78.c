@@ -94,16 +94,16 @@ void Func_02001e78(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "iwram_call.h"
 #include "cell_target.h"
 
-DEFINE_TELEPORTERS_FIND(Func_0200216c, gData_02003488, Func_02002040)
+DEFINE_TELEPORTERS_FIND(Teleporters_Find, gData_02003488, Func_02002040)
 
 #include "../shared/jupiter_lighthouse_aerie.h"
 #include "scene_tables.h"
 
-DEFINE_LEADER_CENTER_IN_CELL(Func_020023b0)
+DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 #include "../shared/cell_with_bit.h"
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below
 /// the table's source cell over the leader's, keeping the source column's and
-/// row's 64 bit; Func_020027d8 calls it the first time the leader steps on
+/// row's 64 bit; Teleporters_Step calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_TELEPORTER_UNCOVER(Func_02002438, Func_020023b0)
+DEFINE_TELEPORTER_UNCOVER(Teleporter_Uncover, Leader_CenterInCell)

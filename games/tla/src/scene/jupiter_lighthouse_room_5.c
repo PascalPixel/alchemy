@@ -48,7 +48,7 @@ extern u8 gData_02002fb8[];
 
 void Func_02000054(void) { Func_020029d0(gData_02002fb8); }
 
-void Func_02000e04(s32 id);
+void Actor_RaiseFromCell(s32 id);
 
 void Func_02000064(s32 unused, s32 id) {
   struct Actor *object;
@@ -63,7 +63,7 @@ void Func_02000064(s32 unused, s32 id) {
       object->y += 0x20000;
       System_Wait(1);
     }
-    Func_02000e04(id);
+    Actor_RaiseFromCell(id);
     Event_SetFlag(0xa09);
   } else {
     Func_020029d8();
@@ -73,7 +73,7 @@ void Func_02000064(s32 unused, s32 id) {
 u32 __umodsi3();
 void Animation_ApplyChildValues();
 
-DEFINE_ACTOR_CYCLE_PICTURES(Func_020000c8)
+DEFINE_ACTOR_CYCLE_PICTURES(Actor_CyclePictures)
 
 void Func_02000120(struct Actor *object) {
   u32 frameCount = gFrameCount;
@@ -117,7 +117,7 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
 
 /// Every third frame, or every frame once flag 0x201 is set, starts a particle
 /// circling actor 23 at a random height above it.
-DEFINE_ORBS_SPAWN_RISING(Func_020001a4, 0x201, gData_02003214, Func_02000148, 1)
+DEFINE_ORBS_SPAWN_RISING(Orbs_SpawnRising, 0x201, gData_02003214, Func_02000148, 1)
 
 extern s32 gData_02003274;
 extern s32 gData_02003278;
@@ -154,9 +154,9 @@ static __inline__ void Bring(s32 id) {
 /// (Func_02001718) and a pulse callback (Func_02000294) that quickens over 20
 /// steps, sounds 390 and 144 with the screen shaking, objects 23 and 24 brought
 /// in on their action scripts, flashes, the room's cells copied open
-/// (Func_0802b450) and Func_02000d80(2); then the callbacks stop, objects 13 to
+/// (Func_0802b450) and JupiterLighthouse_LoadPalettes(2); then the callbacks stop, objects 13 to
 /// 16 rise 2 pixels a frame for 16 frames, take their next state
-/// (Func_02000e04) and sound 80 plays.
+/// (Actor_RaiseFromCell) and sound 80 plays.
 void Func_020002b8(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *a = Actor_GetById(13);
@@ -180,7 +180,7 @@ void Func_020002b8(void) {
   FieldEvent_Wait(50);
   Event_PlaySound(178);
   leader->timer = 0;
-  leader->update = Func_020000c8;
+  leader->update = Actor_CyclePictures;
   FieldEvent_Wait(30);
   from[0] = leader->x;
   from[1] = leader->y + 0x140000;
@@ -208,7 +208,7 @@ void Func_020002b8(void) {
   FieldEvent_Wait(40);
   Bring(23);
   Bring(24);
-  Task_AddFrame(Func_020001a4, 0x480);
+  Task_AddFrame(Orbs_SpawnRising, 0x480);
   Event_PlaySound(144);
   MapGrid_SetShake(0x60000, 0x60000, 0x10000);
   PaletteFade_ApplySource(0x10000, 0);
@@ -223,7 +223,7 @@ void Func_020002b8(void) {
   System_Wait(30);
   MapGrid_CopyCellsLayered(58, 99, 3, 3, 41, 99);
   MapGrid_CopyCellsLayered(123, 32, 1, 5, 106, 32);
-  Func_02000d80(2);
+  JupiterLighthouse_LoadPalettes(2);
   Event_PlaySound(144);
   System_Wait(30);
   leader->timer = 3;
@@ -261,10 +261,10 @@ void Func_020002b8(void) {
     d->y += PIXELS(2);
     System_Wait(1);
   }
-  Func_02000e04(13);
-  Func_02000e04(14);
-  Func_02000e04(15);
-  Func_02000e04(16);
+  Actor_RaiseFromCell(13);
+  Actor_RaiseFromCell(14);
+  Actor_RaiseFromCell(15);
+  Actor_RaiseFromCell(16);
   Event_PlaySound(80);
   Sound_WaitForJingle();
 }
@@ -479,7 +479,7 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(0xa00)) {
     MapGrid_CopyCellsLayered(58, 99, 3, 3, 41, 99);
     MapGrid_CopyCellsLayered(123, 32, 1, 5, 106, 32);
-    Task_AddFrame(Func_020001a4, TASK_PASS_VBLANK);
+    Task_AddFrame(Orbs_SpawnRising, TASK_PASS_VBLANK);
   }
   return 0;
 }
@@ -488,21 +488,21 @@ s32 Scene_Initialize(void) {
 /// and the actors flags 0xa00 and 0xa09 bring in.
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
-  Func_02000d80(0);
+  JupiterLighthouse_LoadPalettes(0);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x40;
   if (Event_GetFlag(0xa00))
     MapGrid_SetCellBehavior(0xd00000, 0x2a00000, 2, 236);
   if (Event_GetFlag(0xa00)) {
-    Func_02000e04(10);
-    Func_02000e04(12);
-    Func_02000e04(13);
-    Func_02000e04(14);
-    Func_02000e04(15);
-    Func_02000e04(16);
+    Actor_RaiseFromCell(10);
+    Actor_RaiseFromCell(12);
+    Actor_RaiseFromCell(13);
+    Actor_RaiseFromCell(14);
+    Actor_RaiseFromCell(15);
+    Actor_RaiseFromCell(16);
   }
   if (Event_GetFlag(0xa09)) {
     Actor_SetPosition(11, PIXELS(216), PIXELS(552));
-    Func_02000e04(11);
+    Actor_RaiseFromCell(11);
   }
   return 0;
 }
@@ -528,22 +528,22 @@ extern s32 gData_020033d8;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_020033d8 = value; }
 
-DEFINE_PALETTE_CYCLE_STEP(Func_02000cc4, gData_020033d8, gData_020033dc,
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gData_020033d8, gData_020033dc,
     gData_02003404)
 
 void Func_02002888();
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_02000d80, gData_020033dc, gData_02003404,
-    gData_02003424, Func_02000cc4, gData_02003428)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_020033dc, gData_02003404,
+    gData_02003424, PaletteCycle_Step, gData_02003428)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Func_02000e04, Func_02002888, Func_02002a30)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02002888, Func_02002a30)
 
 #include "field_sprite.h"
 #include "event_work.h"
 
-DEFINE_WHIRLWIND_CARRY_LEADER(Func_02000e58)
+DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
-DEFINE_POSITION_FLAT_DISTANCE(Func_02001044)
+DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 extern const s32 gData_020033e0[];
 extern s32 gData_02003400;
@@ -591,7 +591,7 @@ void Func_02001070(struct Actor *self) {
         if (distance < 0)
           distance = self->y - leader->y;
         near = 0;
-        if (Func_02001044(&leader->x, &self->x) <= 12 && distance < 0xc0000)
+        if (Position_FlatDistance(&leader->x, &self->x) <= 12 && distance < 0xc0000)
           near = 1;
         if (near && !Event_GetFlag(260)) {
           leader->facing = self->facing;
@@ -691,7 +691,7 @@ done:
   return 0;
 }
 
-DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(Func_020013a8)
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(JupiterLighthouse_PlaceRaisedActors)
 
 struct Spark {
   u8 unk00[0x0c];

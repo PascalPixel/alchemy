@@ -116,7 +116,7 @@ struct EventWork1ac {
 
 void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);
-void Func_020004dc(s32 mode);
+void JupiterLighthouse_LoadPalettes(s32 mode);
 
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
@@ -189,7 +189,7 @@ void Func_02000298(void) {
 s32 Scene_Initialize(void) {
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room1) {
-    Func_020004dc(1);
+    JupiterLighthouse_LoadPalettes(1);
     if (!Event_GetFlag(0x109) && gMainRoutineWork.entrance == 4)
       Func_02001d3c(gMainRoutineWork.currentOwner);
     if (!Event_GetFlag(0x109) && gMainRoutineWork.entrance == 6)
@@ -225,25 +225,25 @@ extern s32 gData_02002384;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_02002384 = value; }
 
-DEFINE_PALETTE_CYCLE_STEP_AT(Func_02000420, gData_02002384, gData_02002388,
+DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gData_02002384, gData_02002388,
     gData_020023b0, 0x05000184)
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_020004dc, gData_02002388, gData_020023b0,
-    gData_020023d0, Func_02000420, gData_020023d4)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02002388, gData_020023b0,
+    gData_020023d0, PaletteCycle_StepAt, gData_020023d4)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Func_02000560, Func_02001c74, Func_02001d34)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001c74, Func_02001d34)
 
 #include "event_work.h"
 
-DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Func_020005b4)
+DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
 #include "irq.h"
 
-DEFINE_POSITION_FLAT_DISTANCE(Func_020007a0)
+DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 extern const s32 gData_0200238c[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE_LOWER(Func_020007cc, Func_02001d2c, Func_020007a0,
+DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02001d2c, Position_FlatDistance,
     gData_0200238c, Data_020023ac)

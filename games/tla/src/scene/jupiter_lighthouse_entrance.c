@@ -119,20 +119,20 @@ extern s32 gData_02002194;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_02002194 = value; }
 
-DEFINE_PALETTE_CYCLE_STEP_AT(Func_02000238, gData_02002194, gData_02002198,
+DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gData_02002194, gData_02002198,
     gData_020021c0, 0x05000184)
 
 #include "field_event.h"
 
 void Func_02001a6c();
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_020002f4, gData_02002198, gData_020021c0,
-    gData_020021e0, Func_02000238, gData_020021e4)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02002198, gData_020021c0,
+    gData_020021e0, PaletteCycle_StepAt, gData_020021e4)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Func_02000378, Func_02001a6c, Func_02001b34)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001a6c, Func_02001b34)
 
 #include "actor.h"
 #include "frame.h"
 #include "event_work.h"
 
-DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Func_020003cc)
+DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)

@@ -6,7 +6,7 @@
 #include "module/scene/kibombo_mountains.h"
 
 void Func_02000038(void);
-void Func_02000058(void);
+void Actor_Bob(void);
 void Func_020000ec(void);
 void Func_02000124(void);
 void Func_02000190(void);
@@ -83,7 +83,7 @@ u32 gData_020012ac[] = {
 DEFINE_G_DATA_02001334(gData_02001334, 856, 584, 792)
 
 s32 gData_02001404[] = {
-    SC_CALL(Func_02000058),
+    SC_CALL(Actor_Bob),
     SC_END,
 };
 

@@ -46,7 +46,7 @@ extern const u8 gData_02005264[], gData_02005218[], gData_02005234[],
     gData_02005288[], gData_02005244[], gData_020052ac[], gData_020052dc[];
 void Func_02004d9c(void *object, s32 mode);
 void Actor_StartScript(void *object, const u8 *script);
-void Func_02001548(void);
+void Actor_EmitBubbles(void);
 
 void Func_020015d0(s32 idA, s32 idB) {
   struct Actor *a = Actor_GetById(idA);
@@ -180,7 +180,7 @@ third:
   BattleEffect_StartBufferInterpolation(80);
   Actor_SetMovementTypeById(idA, gData_020052ac);
   Actor_SetMovementTypeById(idB, gData_020052dc);
-  b->update = Func_02001548;
+  b->update = Actor_EmitBubbles;
   wait(120);
   b->update = 0;
   Sound_Play(390);

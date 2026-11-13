@@ -24,7 +24,7 @@
 #include "resource.h"
 #include "text/msg_ids.h"
 
-DEFINE_BLOCKS_MARK_CELLS(Func_020003e8, Func_02000348)
+DEFINE_BLOCKS_MARK_CELLS(Blocks_MarkCells, Func_02000348)
 
 void Func_02000468(struct Unk_02000468 *unk) {
   struct MapWork *map;
@@ -822,9 +822,9 @@ void Func_02001560(void) {
   Event_End();
 }
 
-DEFINE_POSITION_FLAT_DISTANCE(Func_020018ac)
+DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-DEFINE_POSITION_DISTANCE_ABOVE(Func_020018d8)
+DEFINE_POSITION_DISTANCE_ABOVE(Position_DistanceAbove)
 
 #include "field/event_work.h"
 
@@ -866,11 +866,11 @@ void Func_02001908(struct Actor *shot) {
     leaderPosition = &leader->x;
     shotPosition = &shot->x;
     if (gMainRoutineWork.renderMode == 2) {
-      if (Func_020018d8(leaderPosition, shotPosition) <= 16 &&
+      if (Position_DistanceAbove(leaderPosition, shotPosition) <= 16 &&
           leader->z >> 20 == shot->z >> 20)
         i = 1;
     } else {
-      if (Func_020018ac(leaderPosition, shotPosition) <= 8 &&
+      if (Position_FlatDistance(leaderPosition, shotPosition) <= 8 &&
           leader->y >> 20 == shot->y >> 20)
         i = 1;
     }
@@ -894,7 +894,7 @@ void Func_02001908(struct Actor *shot) {
       if (launcher->x >> 20 != other->x >> 20 ||
           launcher->y >> 20 != other->y >> 20 ||
           launcher->z >> 20 != other->z >> 20) {
-        if (Func_020018ac(&other->x, &shot->x) <= 8 &&
+        if (Position_FlatDistance(&other->x, &shot->x) <= 8 &&
             other->y >> 20 == shot->y >> 20)
           goto end;
       }
@@ -977,7 +977,7 @@ void Func_02001cc8(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Func_02003cc0__airs_rock();
-  Func_020003e8(((u8 *)gData_02003d94));
+  Blocks_MarkCells(((u8 *)gData_02003d94));
   if (Map_GetTerrainHeight(2, object->x, object->z) != object->y) {
     object->terrainId = 2;
     object->motionFlags = 3;
@@ -1477,7 +1477,7 @@ void Func_02002b88(void) {
   }
 }
 
-DEFINE_LEADER_LIFT(Func_02002c24)
+DEFINE_LEADER_LIFT(Leader_Lift)
 
 #define LEADER() Actor_GetById(gMainRoutineWork.currentOwner)
 #define BEAM ((s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178))
@@ -1507,7 +1507,7 @@ s32 Scene_Initialize(void) {
     case 2:
     case 3:
     case 4:
-      Func_02002c24(0x580000);
+      Leader_Lift(0x580000);
     }
     if (GameFlag_Test(0x850)) {
       MapGrid_CopyCellsTo(0x40, 0, 113, 11, 3, 3);
@@ -1561,13 +1561,13 @@ s32 Scene_Initialize(void) {
     case 3:
       if (!GameFlag_Test(265))
         LEADER()->z += 0x100000;
-      Func_02002c24(0xffb80000);
+      Leader_Lift(0xffb80000);
       goto swaying;
     case 1:
     case 2:
       if (!GameFlag_Test(265))
         LEADER()->z += 0x100000;
-      Func_02002c24(0xffd80000);
+      Leader_Lift(0xffd80000);
       goto swaying;
     case 5:
       if (!GameFlag_Test(265)) {
@@ -1575,7 +1575,7 @@ s32 Scene_Initialize(void) {
         LEADER()->y += 0x100000;
       }
     case 6:
-      Func_02002c24(0x380000);
+      Leader_Lift(0x380000);
     case 4:
     swaying:
       SWAY(8, 60);
@@ -1591,7 +1591,7 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Test(0x862))
         Actor_SetPosition(0x10, 0x2780000, 0x3180000);
       Func_02003cb0(gData_02003d94);
-      Func_020003e8(gData_02003d94);
+      Blocks_MarkCells(gData_02003d94);
       Func_02003ca0(gData_02003e4c);
       break;
     case 11:
@@ -1602,12 +1602,12 @@ s32 Scene_Initialize(void) {
     case 10:
       if (!GameFlag_Test(265))
         LEADER()->z += 0x100000;
-      Func_02002c24(0xffc80000);
+      Leader_Lift(0xffc80000);
     case 12:
       if (GameFlag_Test(0x887))
         Actor_SetPosition(22, 0x3180000, 0x1280000);
       Func_02003cb0(gData_02003d94);
-      Func_020003e8(gData_02003d94);
+      Blocks_MarkCells(gData_02003d94);
       HANG(17, 0x100000, 60);
       HANG(19, 0x500000, 90);
       HANG(18, 0xffd00000, 100);
@@ -1669,7 +1669,7 @@ s32 Scene_Initialize(void) {
       if (!GameFlag_Test(265))
         LEADER()->y += 0x180000;
     case 7:
-      Func_02002c24(0x480000);
+      Leader_Lift(0x480000);
     case 4:
     case 5:
       Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
@@ -1678,13 +1678,13 @@ s32 Scene_Initialize(void) {
     case 9:
       if (!GameFlag_Test(265))
         LEADER()->z += 0x100000;
-      Func_02002c24(0xffe80000);
+      Leader_Lift(0xffe80000);
       goto beam;
     case 10:
       if (!GameFlag_Test(265))
         LEADER()->x += 0x300000;
     case 11:
-      Func_02002c24(0x900000);
+      Leader_Lift(0x900000);
     beam:
       REG_BG1CNT &= ~3;
       REG_BG1CNT |= 1;
@@ -1729,7 +1729,7 @@ s32 Scene_Initialize(void) {
     case 13:
       if (!GameFlag_Test(265))
         LEADER()->z += 0x100000;
-      Func_02002c24(0xffd00000);
+      Leader_Lift(0xffd00000);
     case 14:
       beam = (s32 *)Ram_HeapSlots->mapWork;
       beam = (s32 *)((u8 *)beam + 0x178);

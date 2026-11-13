@@ -23,10 +23,10 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   Map_SetScreenShake(a, b, c);
 }
 
-DEFINE_TELEPORTER_DROP_IN(Func_02002640, Func_02001e78)
+DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, Func_02001e78)
 
-DEFINE_TELEPORTERS_STEP(Func_020027d8, gData_02003488, Func_02002438,
-    Func_020024a8)
+DEFINE_TELEPORTERS_STEP(Teleporters_Step, gData_02003488, Teleporter_Uncover,
+    Teleporter_Sink)
 
 void Func_02002888(s32 dx, s32 dz, s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -47,7 +47,7 @@ void Func_02002888(s32 dx, s32 dz, s32 value) {
     shadow->x = object->x;
     shadow->z = object->z;
     Map_CenterOnFollowedPoint();
-    Func_02002640();
+    Teleporter_DropIn();
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = value;
   }
 }

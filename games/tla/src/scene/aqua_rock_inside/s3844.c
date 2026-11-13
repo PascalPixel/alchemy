@@ -15,7 +15,7 @@
 #define VENT_BOUNCE Func_0200389c
 #include "../../field/object/vent_bounce.c"
 
-DEFINE_ACTOR_START_SCRIPTED(Func_02003994, Func_02003cc4, gData_020044c8)
+DEFINE_ACTOR_START_SCRIPTED(Actor_StartScripted, Func_02003cc4, gData_020044c8)
 
 void Func_020039f0(s32 *position, s32 base) {
   struct Actor *object = Import_ActorCreate_(0x11d, position[0], position[1],
@@ -33,13 +33,13 @@ void Func_020039f0(s32 *position, s32 base) {
      * tla-en. */
     angle = (u16)Random16Far() - 0x8000;
     object->timer = angle;
-    Func_02003994(object, 3);
+    Actor_StartScripted(object, 3);
     object->update = (void (*)(void))Func_0200389c;
     Animation_SetStateFlags(object, 1);
   }
 }
 
-DEFINE_VENTS_UPDATE(Func_02003a70, Func_020039f0)
+DEFINE_VENTS_UPDATE(Vents_Update, Func_020039f0)
 
 void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
   struct WaterWork *work = (struct WaterWork *)(gData_020023c4 + 0x188);
@@ -94,7 +94,7 @@ void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
       REG_BLDCNT = cnt;
     }
   }
-  Task_AddFrame(Func_02003a70, 0x480);
+  Task_AddFrame(Vents_Update, 0x480);
 }
 
 s32 Func_02003ba4(s32 index) {
@@ -111,7 +111,7 @@ s32 Func_02003bb8(s32 index, s32 value) {
 
 s32 Func_02003bcc(void) { return VENT_WORK->counter; }
 
-DEFINE_VENTS_ADVANCE_COUNTER(Func_02003bd8)
+DEFINE_VENTS_ADVANCE_COUNTER(Vents_AdvanceCounter)
 
 void Func_02003c00(s32 index, s32 value) {
   u8 *base = (u8 *)VENT_WORK;
@@ -119,14 +119,14 @@ void Func_02003c00(s32 index, s32 value) {
   ((struct VentRow *)(base + index * 20))->value = value;
 }
 
-DEFINE_VENTS_SET_ID(Func_02003c14)
+DEFINE_VENTS_SET_ID(Vents_SetId)
 
 #include "scene_tables.h"
 
-void Func_020013bc(void);
-void Func_0200147c(void);
-void Func_02001520(void);
-void Func_0200156c(void);
+void Orbiter_Spiral(void);
+void Orbit_Update(void);
+void Actor_AimAtWatched(void);
+void Actor_StepToWatched(void);
 
 // clang-format off
 u32 gData_02003f04[] = {
@@ -161,10 +161,10 @@ u32 gData_02003fe8[] = {
     17,
 };
 
-DEFINE_G_DATA_02003584(gData_02004004, Func_020013bc, 38, 17)
+DEFINE_G_DATA_02003584(gData_02004004, Orbiter_Spiral, 38, 17)
 
-DEFINE_G_DATA_02004014(gData_02004014, Func_0200147c, Func_02001520,
-    Func_0200156c)
+DEFINE_G_DATA_02004014(gData_02004014, Orbit_Update, Actor_AimAtWatched,
+    Actor_StepToWatched)
 
 u32 gData_02004034[] = {
     5, 0, 0x180000, 0, 1, 22,

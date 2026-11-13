@@ -6,6 +6,6 @@
 #include "main_routine_work.h"
 #include "actor.h"
 
-void Func_020040b4(void);
+void Leader_CenterInCell(void);
 
 #endif

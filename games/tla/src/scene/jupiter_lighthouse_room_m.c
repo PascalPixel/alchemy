@@ -56,11 +56,11 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 extern s32 gData_02005a3c;
 
-void Func_02003474();
+void Whirlwind_SpawnUpper();
 
 void Func_02000060(void) {
   if (gData_02005a3c == 0) {
-    Func_02003474(Actor_Get(24));
+    Whirlwind_SpawnUpper(Actor_Get(24));
     gData_02005a3c = 1;
   }
 }
@@ -75,7 +75,7 @@ void Func_02000080(void) {
       party->renderMode = 12;
       WORD_AT(object, 48) = 0;
       WORD_AT(object, 52) = 0;
-      Func_02003474(Actor_Get(25));
+      Whirlwind_SpawnUpper(Actor_Get(25));
       gData_02005a3c = 1;
     }
   }
@@ -84,7 +84,7 @@ void Func_02000080(void) {
 /* VIEW(jupiter_lighthouse_room_m): variable gBgScroll as s16 gBgScroll[]; bg_scroll.h has struct BgScroll gBgScroll[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_m.c:134: incompatible types in assignment. */
 extern s16 gBgScroll__jupiter_lighthouse_room_m[] __asm__("gBgScroll");
 
-void Func_0200354c(void);
+void Actor_EmitRisingSparks(void);
 
 void Func_020000c4(void) {
 
@@ -136,7 +136,7 @@ void Func_020000c4(void) {
   FieldActor_Jump(4, 6, 0);
   Actor_Get(4)->actionFlags &= ~1;
   Actor_WalkBy(4, -16, 0);
-  Actor_Get(20)->update = Func_0200354c;
+  Actor_Get(20)->update = Actor_EmitRisingSparks;
   for (i = 0; i != 32; i++) {
     REG_BLDALPHA = (16 - (i >> 1)) | 0x1000;
     System_Wait(1);
@@ -1619,17 +1619,17 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-void Func_02003a38();
-void Func_02003ac0();
+void LightSprites_InitC();
+void LightSprites_Add();
 
 /// The scene's map preparation.
 s32 Scene_PrepareMap(void) {
   struct Actor *object;
 
   Scene_SetArrivalFlags(0);
-  Func_02002fc4(1);
-  Func_02003a38();
-  Func_02003ac0(20, 0);
+  JupiterLighthouse_LoadPalettes(1);
+  LightSprites_InitC();
+  LightSprites_Add(20, 0);
   object = Actor_Get(20);
   if (Event_GetFlag(0xa0c)) {
     Actor_SetPosition(20, PIXELS(1016), PIXELS(248));
@@ -1664,22 +1664,22 @@ extern s32 gData_02005a14;
 static inline void Counter_Set(s32 value) { gData_02005a14 = value; }
 extern u16 gData_02005a40[];
 
-DEFINE_PALETTE_CYCLE_STEP(Func_02002f08, gData_02005a14, gData_02005a18,
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gData_02005a14, gData_02005a18,
     gData_02005a40)
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_02002fc4, gData_02005a18, gData_02005a40,
-    gData_02005a60, Func_02002f08, gData_02005a64)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02005a18, gData_02005a40,
+    gData_02005a60, PaletteCycle_Step, gData_02005a64)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Func_02003048, Func_02004774__jupiter_lighthouse_room_m,
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02004774__jupiter_lighthouse_room_m,
     Func_020049b4)
 
-DEFINE_WHIRLWIND_CARRY_LEADER(Func_0200309c)
+DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
-DEFINE_POSITION_FLAT_DISTANCE(Func_02003288)
+DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 extern const s32 gData_02005a1c[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE(Func_020032b4, Func_020049a4, Func_02003288,
+DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_020049a4, Position_FlatDistance,
     gData_02005a1c, gData_02005a3c)

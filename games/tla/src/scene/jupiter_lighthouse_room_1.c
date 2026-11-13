@@ -61,15 +61,16 @@ void Func_020000ec(void) {
   MapGrid_CopyCellAttributes(23, 22, 2, 1, 15, 39);
 }
 
-DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(Func_02000178, 10, 0xa01, 17, 33)
+DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(JupiterLighthouse_CheckBlockOnCell, 10, 0xa01, 17, 33,
+    Func_02000060)
 
-DEFINE_SCENE_RUN_ONCE(Func_020001b4, 0x200, Func_02000060)
+DEFINE_SCENE_RUN_ONCE(Scene_RunOnce, 0x200, Func_02000060)
 
-DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Func_020001d4, 0x200, Func_020000ec, Func_02000178)
+DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 0x200, Func_020000ec, JupiterLighthouse_CheckBlockOnCell)
 
 void Func_020001f4(void) {
   System_Wait(10);
-  Func_02000178();
+  JupiterLighthouse_CheckBlockOnCell();
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
@@ -108,21 +109,21 @@ extern s32 gData_0200222c;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_0200222c = value; }
 
-DEFINE_PALETTE_CYCLE_STEP_AT(Func_020002c8, gData_0200222c, gData_02002230,
+DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gData_0200222c, gData_02002230,
     gData_02002258, 0x05000184)
 
 void Func_02001b14();
 void Func_02001bc4();
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_02000384, gData_02002230, gData_02002258,
-    gData_02002278, Func_020002c8, gData_0200227c)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02002230, gData_02002258,
+    gData_02002278, PaletteCycle_StepAt, gData_0200227c)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Func_02000408, Func_02001b14, Func_02001bc4)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001b14, Func_02001bc4)
 
 #include "actor.h"
 #include "frame.h"
 #include "event_work.h"
 
-DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Func_0200045c)
+DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
-DEFINE_POSITION_FLAT_DISTANCE(Func_02000648)
+DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)

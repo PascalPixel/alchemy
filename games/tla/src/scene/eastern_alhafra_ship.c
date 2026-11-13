@@ -217,7 +217,7 @@ void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
 /* VIEW(s0438): routine Func_020003e8 as s32 Func_020003e8(s32 x, s32 y, s32 z, s32 rotation, s32 timer); the definition has void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth); tried as the definition's void Func_020003e8(u16 *ids), it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra_ship.c:215: conflicting types for `Func_020003e8'. */
 extern s32 Func_020003e8__s0438(s32 x, s32 y, s32 z, s32 rotation, s32 timer) __asm__("Func_020003e8");
 
-DEFINE_ACTOR_EMIT_NOTES(Func_02000438, Func_020003e8__s0438)
+DEFINE_ACTOR_EMIT_NOTES(Actor_EmitNotes, Func_020003e8__s0438)
 
 extern u32 gData_020033c8[];
 void Event_Start();
@@ -311,7 +311,7 @@ void Func_020004f4(void) {
   Event_Wait(40);
   Actor_ArmCallback(9, 0x3000, 0);
   Event_Wait(30);
-  Func_02000438(9);
+  Actor_EmitNotes(9);
   Sound_Play(151);
   Actor_ShowEmote(9, 0x101, 40);
   Actor_ArmCallback(9, 0xd000, 0);
@@ -1321,7 +1321,7 @@ L_0200ab7a:
 L_0200abc0:
   Actor_ShowEmote(17, 0x109, 30);
   Event_ShowMessageThenWait(17, 0, 10);
-  Func_02000438(17);
+  Actor_EmitNotes(17);
   Actor_ShowEmote(17, 0x106, 40);
   Event_ShowMessageThenWait(17, 0, 10);
   Motion_SetModeAndWaitAnimation(17, 3);

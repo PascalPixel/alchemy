@@ -40,7 +40,7 @@ extern u32 gData_02004b1c[];
 extern u32 gData_020059a4[];
 extern u32 gData_02005a00[];
 
-void Func_02002fc4(s32 mode);
+void JupiterLighthouse_LoadPalettes(s32 mode);
 
 void Func_02000060(void);
 
@@ -50,7 +50,7 @@ void Func_0200060c(void);
 
 void Func_020008c8(void);
 
-void Func_0200309c(void);
+void Whirlwind_CarryLeader(void);
 
 extern u32 gData_02004fc4[];
 extern u32 gData_02005000[];
@@ -66,8 +66,9 @@ void Func_020046f4(struct FieldEffect *effect, s32 mode);
 
 extern struct CellTarget Data_02005b88;
 
-void Func_0200413c(struct CellTarget *table, struct CellTargetEntry *entry);
+void Teleporter_Uncover(struct CellTarget *table,
+                        struct CellTargetEntry *entry);
 
-void Func_020041ac(struct CellTarget *table, struct CellTargetEntry *entry);
+void Teleporter_Sink(struct CellTarget *table, struct CellTargetEntry *entry);
 
 #endif

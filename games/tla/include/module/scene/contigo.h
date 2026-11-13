@@ -41,7 +41,7 @@ void Func_0200090c(void);
 void Func_0200092c(void);
 
 void Func_0200094c(void);
-void Func_0200098c(void);
+void Scene_ShowEntranceLocked(void);
 void Func_020009ac(void);
 void Func_02000af4(void);
 void Func_02000d44(void);

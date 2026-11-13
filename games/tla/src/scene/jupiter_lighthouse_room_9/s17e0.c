@@ -19,14 +19,14 @@
 void Func_02001018(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_TELEPORTER_DROP_IN(Func_020017e0, Func_02001018)
+DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, Func_02001018)
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Func_02001648(struct CellTarget *work, struct CellTargetEntry *entry);
+void Teleporter_Sink(struct CellTarget *work, struct CellTargetEntry *entry);
 
-DEFINE_TELEPORTERS_STEP(Func_02001978, Data_02002764, Func_020015d8, Func_02001648)
+DEFINE_TELEPORTERS_STEP(Teleporters_Step, Data_02002764, Teleporter_Uncover, Teleporter_Sink)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_02001a28, Data_02002764, Func_020017e0)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, Data_02002764, Teleporter_DropIn)
 
 #include "scene_tables.h"
 #include "objcmd.h"
@@ -115,7 +115,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 51, CONDITION_ALWAYS, EVENT(Func_020000e8)},
     {TRIGGER_STEP, 52, CONDITION_ALWAYS, EVENT(Func_020000e8)},
     {TRIGGER_STEP, 53, CONDITION_ALWAYS, EVENT(Func_020000e8)},
-    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Func_02000538)},
+    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Whirlwind_CarryLeader)},
     {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(Func_0200018c)},
     {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(Func_02000228)},
     {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(Func_0200018c)},

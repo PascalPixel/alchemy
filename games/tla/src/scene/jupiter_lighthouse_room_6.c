@@ -35,25 +35,25 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 extern s32 gData_020023c0;
-s32 Func_020018bc(s32 value);
-void Func_02000108(void);
-void Func_020003a4(s32 value);
+s32 Teleporters_Step(s32 value);
+void JupiterLighthouse_CloseDoor(void);
+void JupiterLighthouse_LoadPalettes(s32 value);
 
 void Func_02000054(s32 value) {
-  if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 && Func_020018bc(value))
+  if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 && Teleporters_Step(value))
     FieldEvent_SetExitRequest(13);
 }
 
 void Func_02000084(s32 value) {
-  if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 && Func_020018bc(value))
+  if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 && Teleporters_Step(value))
     FieldEvent_SetExitRequest(14);
 }
 
 #include "jupiter_lighthouse_room_6.h"
 
-DEFINE_JUPITER_LIGHTHOUSE_OPEN_DOOR(Func_020000b4, 84, 36, 2, 78, 40, 84, 39, 20, 38, 14, 42)
+DEFINE_JUPITER_LIGHTHOUSE_OPEN_DOOR(JupiterLighthouse_OpenDoor, 84, 36, 2, 78, 40, 84, 39, 20, 38, 14, 42)
 
-DEFINE_JUPITER_LIGHTHOUSE_CLOSE_DOOR(Func_02000108, 84, 36, 2, 78, 40, 84, 20, 44, 14, 42)
+DEFINE_JUPITER_LIGHTHOUSE_CLOSE_DOOR(JupiterLighthouse_CloseDoor, 84, 36, 2, 78, 40, 84, 20, 44, 14, 42)
 
 void Func_02000154(void) {
   struct JupiterLighthouseRoom6Object *object =
@@ -61,13 +61,13 @@ void Func_02000154(void) {
 
   if (!Event_GetFlag(0xa19) && object->x >> 20 == 4 && object->z >> 20 == 37) {
     Event_SetFlag(0xa19);
-    Func_020000b4(1);
+    JupiterLighthouse_OpenDoor(1);
   }
 }
 
-DEFINE_SCENE_RUN_ONCE(Func_02000190, 512, Func_020000b4)
+DEFINE_SCENE_RUN_ONCE(Scene_RunOnce, 512, JupiterLighthouse_OpenDoor)
 
-DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Func_020001b0, 512, Func_02000108, Func_02000154)
+DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 512, JupiterLighthouse_CloseDoor, Func_02000154)
 
 void Func_020001d0(void) {
   System_Wait(10);
@@ -89,7 +89,7 @@ extern s32 gData_020023bc;
 static inline void Counter_Set(s32 value) { gData_020023bc = value; }
 
 s32 __modsi3();
-void Func_02001250(s32 a, s32 b, s32 c, s32 d, s32 e);
+void Teleporters_Find(s32 a, s32 b, s32 c, s32 d, s32 e);
 
 s32 Scene_Initialize(void) {
   struct JupiterLighthouseRoom6EventWork *work = Ram_HeapSlots->eventWork;
@@ -97,22 +97,22 @@ s32 Scene_Initialize(void) {
   work->screenEffect = 0x204;
   if (Event_GetFlag(0xa19)) {
     Actor_SetPosition(12, PIXELS(72), PIXELS(600));
-    Func_020000b4(0);
+    JupiterLighthouse_OpenDoor(0);
   }
   if (Event_GetFlag(0x200))
-    Func_020000b4(0);
+    JupiterLighthouse_OpenDoor(0);
   if ((u16)(gMainRoutineWork.entrance - 5) <= 1) {
-    Func_02001250(33, 0x280, 0x380, 20, 31);
+    Teleporters_Find(33, 0x280, 0x380, 20, 31);
   } else {
-    Func_02001250(43, 0x280, 0x380, 21, 31);
-    Func_0200196c(21, -3, 0x204);
+    Teleporters_Find(43, 0x280, 0x380, 21, 31);
+    Teleporter_PlaceArrival(21, -3, 0x204);
   }
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
-  Func_020003a4(0);
+  JupiterLighthouse_LoadPalettes(0);
   if (!Event_GetFlag(265))
     Event_ClearFlag(0xa19);
   return 0;
@@ -126,11 +126,11 @@ s32 Scene_PrepareMap(void) {
 
 void Func_020002dc(s32 value) { gData_020023c0 = value; }
 
-DEFINE_PALETTE_CYCLE_STEP(Func_020002e8, gData_020023bc, gData_020023c0,
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gData_020023bc, gData_020023c0,
     gData_020023e8)
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_020003a4, gData_020023c0, gData_020023e8,
-    gData_02002408, Func_020002e8, gData_0200240c)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_020023c0, gData_020023e8,
+    gData_02002408, PaletteCycle_Step, gData_0200240c)
 
 void Func_02000428(s32 id) {
   struct JupiterLighthouseRoom6Object *object;
@@ -151,13 +151,13 @@ void Func_02000428(s32 id) {
 #include "field_sprite.h"
 #include "event_work.h"
 
-DEFINE_WHIRLWIND_CARRY_LEADER(Func_0200047c)
+DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
-DEFINE_POSITION_FLAT_DISTANCE(Func_02000668)
+DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 extern const s32 gData_0200a3c4[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE(Func_02000694, Func_02001bdc, Func_02000668,
+DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_02001bdc, Position_FlatDistance,
     gData_0200a3c4, Data_020023e4)

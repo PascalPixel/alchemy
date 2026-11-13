@@ -25,9 +25,9 @@ extern const u8 gData_020031c4[];
 extern s32 gData_02003594;
 extern s16 gData_020035fe;
 extern u16 gData_02003702;
-void Func_02000060(s32 value);
-void Func_020000b4(void);
-void Func_02000100(void);
+void JupiterLighthouse_OpenDoor(s32 value);
+void JupiterLighthouse_CloseDoor(void);
+void JupiterLighthouse_CheckBlockOnCell(void);
 void Func_02002b54(s32 x, s32 z, s32 a, s32 b);
 void Func_02002c54(s32 x, s32 z, s32 a, s32 b);
 void Func_02001a48(const u8 *data, s32 a, s32 b);
@@ -49,19 +49,20 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 #include "main_routine_work.h"
 #include "call.h"
 
-DEFINE_JUPITER_LIGHTHOUSE_OPEN_DOOR(Func_02000060, 76, 42, 4, 76, 35, 81, 42, 12, 41, 12, 35)
+DEFINE_JUPITER_LIGHTHOUSE_OPEN_DOOR(JupiterLighthouse_OpenDoor, 76, 42, 4, 76, 35, 81, 42, 12, 41, 12, 35)
 
-DEFINE_JUPITER_LIGHTHOUSE_CLOSE_DOOR(Func_020000b4, 76, 42, 4, 76, 35, 71, 12, 36, 12, 35)
+DEFINE_JUPITER_LIGHTHOUSE_CLOSE_DOOR(JupiterLighthouse_CloseDoor, 76, 42, 4, 76, 35, 71, 12, 36, 12, 35)
 
-DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(Func_02000100, 16, 0xa1b, 8, 37)
+DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(JupiterLighthouse_CheckBlockOnCell, 16, 0xa1b, 8, 37,
+    JupiterLighthouse_OpenDoor)
 
-DEFINE_SCENE_RUN_ONCE(Func_0200013c, 514, Func_02000060)
+DEFINE_SCENE_RUN_ONCE(Scene_RunOnce, 514, JupiterLighthouse_OpenDoor)
 
-DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Func_02000160, 514, Func_020000b4, Func_02000100)
+DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 514, JupiterLighthouse_CloseDoor, JupiterLighthouse_CheckBlockOnCell)
 
 void Func_02000184(void) {
   System_Wait(10);
-  Func_02000100();
+  JupiterLighthouse_CheckBlockOnCell();
 }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -543,9 +544,9 @@ void Func_02000e20(void) { Func_02002bec(); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Func_020019dc();
-void Func_02001db0();
-void Func_02001eb8();
+void Actors_SetCellsOpen();
+void LightSprites_InitB();
+void LightSprites_AddCounted();
 void Func_02001ee8();
 
 s32 Scene_Initialize(void) {
@@ -562,23 +563,23 @@ L_02008e6e:
   FIELD_AT(t2, s32, 24) = 0xc000;
   t3 = ((s32)Actor_Get(8));
   FIELD_AT(t3, s32, 28) = 0xc000;
-  Func_020019dc((s32)&gData_020031c4);
+  Actors_SetCellsOpen((s32)&gData_020031c4);
   t5 = Event_GetFlag(0xa1b);
   if (t5 == 0)
     goto L_02008eaa;
   Actor_SetPosition(16, PIXELS(136), PIXELS(600));
-  Func_02000060(0);
+  JupiterLighthouse_OpenDoor(0);
 L_02008eaa:
   t8 = Event_GetFlag(0x202);
   if (t8 == 0)
     goto L_02008ebe;
-  Func_02000060(0);
+  JupiterLighthouse_OpenDoor(0);
 L_02008ebe:
-  Func_02001db0();
+  LightSprites_InitB();
   Func_02001ee8(2);
-  Func_02001eb8(18, 2);
-  Func_02001eb8(19, 1);
-  Func_02001eb8(20, 0);
+  LightSprites_AddCounted(18, 2);
+  LightSprites_AddCounted(19, 1);
+  LightSprites_AddCounted(20, 0);
   t15 = Event_GetFlag(0xa10);
   if (t15 != 0)
     goto L_02008f08;
@@ -621,7 +622,7 @@ L_02008f46:
   return 0;
 }
 
-void Func_02001224(s32 mode);
+void JupiterLighthouse_LoadPalettes(s32 mode);
 s32 Func_02002b5c(s32 x, s32 z, s32 layer);
 
 s32 Scene_PrepareMap(void) {
@@ -629,7 +630,7 @@ s32 Scene_PrepareMap(void) {
   s32 value;
 
   Scene_SetArrivalFlags(0);
-  Func_02001224(1);
+  JupiterLighthouse_LoadPalettes(1);
   if (gMainRoutineWork.entrance == 12) {
     Actor_SetPosition(10, PIXELS(168), PIXELS(264));
     Actor_SetPosition(11, PIXELS(200), PIXELS(264));
@@ -683,7 +684,7 @@ extern s32 gData_02003590;
 static inline void Counter_Set(s32 value) { gData_02003590 = value; }
 extern u32 gData_020035bc[];
 
-DEFINE_PALETTE_CYCLE_STEP(Func_02001168, gData_02003590, gData_02003594,
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gData_02003590, gData_02003594,
     gData_020035bc)
 
 extern u16 gData_020035dc[];
@@ -691,10 +692,10 @@ extern u16 gData_020035e0[];
 
 void Func_02002c44();
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_02001224, gData_02003594, gData_020035bc,
-    gData_020035dc, Func_02001168, gData_020035e0)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02003594, gData_020035bc,
+    gData_020035dc, PaletteCycle_Step, gData_020035e0)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Func_020012a8, Func_02002b54, Func_02002c44)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02002b54, Func_02002c44)
 
 #include "frame.h"
 #include "field_sprite.h"
@@ -705,9 +706,9 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
-DEFINE_WHIRLWIND_CARRY_LEADER(Func_020012fc)
+DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
-DEFINE_POSITION_FLAT_DISTANCE(Func_020014e8)
+DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 extern const s32 gData_02003598[];
 extern s32 Data_020035b8;
@@ -716,5 +717,5 @@ s32 Func_02002c34(s32 x, s32 z, s32 layer);
 s32 Math_Cosine(s32 angle);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE(Func_02001514, Func_02002c34, Func_020014e8,
+DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_02002c34, Position_FlatDistance,
     gData_02003598, Data_020035b8)

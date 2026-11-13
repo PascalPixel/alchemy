@@ -22,7 +22,7 @@ extern u16 *gData_02001a18;
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-DEFINE_PALETTE_SET_COLORS(Func_02000038, gData_02001a24, gData_02001a28,
+DEFINE_PALETTE_SET_COLORS(Palette_SetColors, gData_02001a24, gData_02001a28,
     Data_02001a2c, gData_02001a18, Func_02000328)
 
 #include "task.h"
@@ -30,7 +30,7 @@ DEFINE_PALETTE_SET_COLORS(Func_02000038, gData_02001a24, gData_02001a28,
 extern u16 gData_02001a1c;
 
 DEFINE_PALETTE_CYCLE_START_VBLANK(Func_020000f4, gData_02001a34, gData_02001a30,
-    Func_020001d4, gData_02001a24, gData_02001a20, 15, gData_02001a1c, 16,
+    List_CountEntries, gData_02001a24, gData_02001a20, 15, gData_02001a1c, 16,
     gData_02001a14, Func_020001f8)
 
 void Func_02000158(void) {
@@ -39,10 +39,10 @@ void Func_02000158(void) {
 }
 
 DEFINE_PALETTE_CYCLE_START_VBLANK(Func_02000178, gData_02001a34, gData_02001a30,
-    Func_020001d4, gData_02001a24, gData_02001a20, 2, gData_02001a1c, 2,
+    List_CountEntries, gData_02001a24, gData_02001a20, 2, gData_02001a1c, 2,
     gData_02001a14, Func_020001f8)
 
-DEFINE_LIST_COUNT_ENTRIES(Func_020001d4)
+DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
 
 void Func_020001f8(void) {
   s32 step;
@@ -318,7 +318,7 @@ s32 Scene_Initialize(void) {
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov675Room1) {
     Func_020008c8();
-    Func_02000038(gData_0200134c, gData_0200135c, gData_02001388,
+    Palette_SetColors(gData_0200134c, gData_0200135c, gData_02001388,
                   gData_020013b4);
   } else if (scene == (s32)&SceneId_Ov675Room3) {
     Actor_SetSingleChildFlags(Actor_GetById(9), 0);

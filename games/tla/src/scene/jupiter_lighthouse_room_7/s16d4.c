@@ -25,17 +25,17 @@
 
 void Func_02002ad4(struct GustObject *object, s32 mode);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
-void Func_02001514(struct GustObject *object);
+void Whirlwind_Update(struct GustObject *object);
 void Func_02001f74(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_WHIRLWIND_SPAWN(Func_020016d4, Func_02002ad4, Func_02001514, Func_02001f74)
+DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Func_02002ad4, Whirlwind_Update, Func_02001f74)
 
-DEFINE_ACTOR_EMIT_RISING_SPARKS(Func_020017ac, Func_02001f74)
+DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, Func_02001f74)
 
-DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(Func_0200184c)
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(JupiterLighthouse_PlaceRaisedActors)
 
-DEFINE_ACTORS_SET_CELLS_OPEN(Func_020019dc, Func_02001acc)
+DEFINE_ACTORS_SET_CELLS_OPEN(Actors_SetCellsOpen, Actor_SetCellOpen)
 
 // Finds the current target's table row and shrinks it.
 void Func_02001a48(u16 *list, s32 mode, s32 count) {
@@ -63,7 +63,7 @@ top:
         object->scaleY -= 0x1f00;
       if (mode == 1) {
         Event_SetFlag(flag);
-        Func_02001acc(id, a, flag, object->terrainId);
+        Actor_SetCellOpen(id, a, flag, object->terrainId);
         object->scaleY = 0x10000;
       }
       return;
@@ -74,7 +74,7 @@ top:
     goto top;
 }
 
-DEFINE_ACTOR_SET_CELL_OPEN(Func_02001acc, Func_02002c1c, Func_02002ad4)
+DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Func_02002c1c, Func_02002ad4)
 
 extern u32 gData_02003600[];
 extern s16 gData_02003702;
@@ -84,7 +84,7 @@ s32 Func_02002c2c(struct Actor *actor);
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
 /// 64 one when the big switch is set, at its animation picture and depth.
-DEFINE_LIGHT_SPRITES_DRAW(Func_02001b74, gData_020035fc, Data_02003640,
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gData_020035fc, Data_02003640,
     gData_020035fe, gData_02003600, gData_02003700, gData_02003702,
     Func_02002c2c, Func_02002aa4)
 
@@ -92,19 +92,19 @@ DEFINE_LIGHT_SPRITES_DRAW(Func_02001b74, gData_020035fc, Data_02003640,
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(Func_02001d30, gData_02003600, gData_020035fc,
-    Func_02001b74, gData_020035fe, gData_02003700, gData_02003702)
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02003600, gData_020035fc,
+    LightSprites_Draw, gData_020035fe, gData_02003700, gData_02003702)
 
-DEFINE_LIGHT_SPRITES_INIT_B(Func_02001db0, gData_02003600, gData_020035fc,
-    Func_02001b74, gData_020035fe, gData_02003700, gData_02003702)
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_02003600, gData_020035fc,
+    LightSprites_Draw, gData_020035fe, gData_02003700, gData_02003702)
 
-DEFINE_LIGHT_SPRITES_INIT_C(Func_02001e30, gData_02003600, gData_020035fc,
-    Func_02001b74, gData_020035fe, gData_02003700, gData_02003702)
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_02003600, gData_020035fc,
+    LightSprites_Draw, gData_020035fe, gData_02003700, gData_02003702)
 
 extern const u8 gData_020031c4[];
 extern s32 gData_02003594;
 
-DEFINE_LIGHT_SPRITES_ADD_COUNTED(Func_02001eb8, gData_02003600, gData_020035fe)
+DEFINE_LIGHT_SPRITES_ADD_COUNTED(LightSprites_AddCounted, gData_02003600, gData_020035fe)
 
 void Func_02001ee8(u16 value) { gData_02003702 = value; }
 

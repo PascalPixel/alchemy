@@ -5,7 +5,7 @@
 #include "module/scene/jupiter_lighthouse_room_7.h"
 
 void Func_02000038(void);
-void Func_0200013c(void);
+void Scene_RunOnce(void);
 void Func_02000778(void);
 void Func_020007a4(void);
 void Func_020009e4(void);
@@ -61,8 +61,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {514, 30, 0x1a1a, EVENT(Func_02000e20)},
-    {TRIGGER_STEP, 20, 0xa1b, EVENT(Func_0200013c)},
-    {TRIGGER_STEP, 21, 0xa1b, EVENT(Func_02000160)},
+    {TRIGGER_STEP, 20, 0xa1b, EVENT(Scene_RunOnce)},
+    {TRIGGER_STEP, 21, 0xa1b, EVENT(Scene_RunIfFlagCleared)},
     {0x8602, 40, CONDITION_ALWAYS, EVENT(Func_02000cec)},
     {0xc602, 41, CONDITION_ALWAYS, EVENT(Func_02000cec)},
     {0x602, 42, CONDITION_ALWAYS, EVENT(Func_02000cec)},

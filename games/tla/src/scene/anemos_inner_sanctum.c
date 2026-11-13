@@ -53,8 +53,8 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
 }
 
 DEFINE_PALETTE_CYCLE_START(Func_020000f4, gData_02004454, gData_02004450,
-    Func_020001d4, gData_02004444, gData_02004440, 15, gData_0200443c, 16,
-    gData_02004434, Func_020001f8)
+    List_CountEntries, gData_02004444, gData_02004440, 15, gData_0200443c, 16,
+    gData_02004434, PaletteCycle_Fade)
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -65,16 +65,16 @@ DEFINE_PALETTE_CYCLE_START(Func_020000f4, gData_02004454, gData_02004450,
 
 void Func_02000158(void) {
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x100;
-  FieldTask_Remove((s32)Func_020001f8);
+  FieldTask_Remove((s32)PaletteCycle_Fade);
 }
 
 DEFINE_PALETTE_CYCLE_START(Func_02000178, gData_02004454, gData_02004450,
-    Func_020001d4, gData_02004444, gData_02004440, 2, gData_0200443c, 2,
-    gData_02004434, Func_020001f8)
+    List_CountEntries, gData_02004444, gData_02004440, 2, gData_0200443c, 2,
+    gData_02004434, PaletteCycle_Fade)
 
-DEFINE_LIST_COUNT_ENTRIES(Func_020001d4)
+DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
 
-DEFINE_PALETTE_CYCLE_FADE(Func_020001f8, gData_0200443c, gData_02004440,
+DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gData_0200443c, gData_02004440,
     Data_0200444c, gData_02004450, Data_02004438, gData_02004454,
     gData_02004444, gData_02004434, Data_02004448)
 

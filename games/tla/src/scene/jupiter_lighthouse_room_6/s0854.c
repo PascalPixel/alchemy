@@ -24,18 +24,18 @@
 #include "module/scene/jupiter_lighthouse_room_6.h"
 #include "module/scene/scene.h"
 
-void Func_02000694(struct GustObject *object);
+void Whirlwind_Update(struct GustObject *object);
 void Func_02000f5c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_WHIRLWIND_SPAWN(Func_02000854, Func_02001ab4, Func_02000694, Func_02000f5c)
+DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Func_02001ab4, Whirlwind_Update, Func_02000f5c)
 
-DEFINE_ACTOR_EMIT_RISING_SPARKS(Func_0200092c, Func_02000f5c)
+DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, Func_02000f5c)
 
-DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(Func_020009cc)
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(JupiterLighthouse_PlaceRaisedActors)
 
 extern struct Actor *gData_0200242c[];
-/* VIEW(s0854): variable gData_0200252e as s16 gData_0200252e; module/scene/scene.h has u16 gData_0200252e; tried as the rest of the object declares it, Func_02000b5c moves: 99 of 200 instructions, Func_02000d18 moves: 0 of 36 instructions, Func_02000d98 moves: 0 of 36 instructions, 1 more in tla-ja. */
+/* VIEW(s0854): variable gData_0200252e as s16 gData_0200252e; module/scene/scene.h has u16 gData_0200252e; tried as the rest of the object declares it, LightSprites_Draw moves: 99 of 200 instructions, LightSprites_InitA moves: 0 of 36 instructions, LightSprites_InitB moves: 0 of 36 instructions, 1 more in tla-ja. */
 extern s16 gData_0200252e__s0854 __asm__("gData_0200252e");
 
 void Func_02001a84(struct LightOam *oam, s32 depth);
@@ -43,7 +43,7 @@ void Func_02001a84(struct LightOam *oam, s32 depth);
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
 /// 64 one when the big switch is set, at its animation picture and depth.
-DEFINE_LIGHT_SPRITES_DRAW(Func_02000b5c, gData_02002428, Data_0200246c,
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gData_02002428, Data_0200246c,
     gData_0200242a, gData_0200242c, gData_0200252c, gData_0200252e__s0854,
     Func_02001bd4, Func_02001a84)
 
@@ -51,22 +51,22 @@ DEFINE_LIGHT_SPRITES_DRAW(Func_02000b5c, gData_02002428, Data_0200246c,
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(Func_02000d18, gData_0200242c, gData_02002428,
-    Func_02000b5c, gData_0200242a, gData_0200252c, gData_0200252e__s0854)
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_0200242c, gData_02002428,
+    LightSprites_Draw, gData_0200242a, gData_0200252c, gData_0200252e__s0854)
 
-DEFINE_LIGHT_SPRITES_INIT_B(Func_02000d98, gData_0200242c, gData_02002428,
-    Func_02000b5c, gData_0200242a, gData_0200252c, gData_0200252e__s0854)
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_0200242c, gData_02002428,
+    LightSprites_Draw, gData_0200242a, gData_0200252c, gData_0200252e__s0854)
 
-DEFINE_LIGHT_SPRITES_INIT_C(Func_02000e18, gData_0200242c, gData_02002428,
-    Func_02000b5c, gData_0200242a, gData_0200252c, gData_0200252e__s0854)
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_0200242c, gData_02002428,
+    LightSprites_Draw, gData_0200242a, gData_0200252c, gData_0200252e__s0854)
 
 extern s32 gData_020023c0;
 
-s32 Func_020018bc(s32 value);
-void Func_02000108(void);
-void Func_020003a4(s32 value);
+s32 Teleporters_Step(s32 value);
+void JupiterLighthouse_CloseDoor(void);
+void JupiterLighthouse_LoadPalettes(s32 value);
 
-DEFINE_LIGHT_SPRITES_ADD_COUNTED(Func_02000ea0, gData_0200242c, gData_0200242a)
+DEFINE_LIGHT_SPRITES_ADD_COUNTED(LightSprites_AddCounted, gData_0200242c, gData_0200242a)
 
 void Func_02000ed0(u16 value) { gData_0200252e__s0854 = value; }
 

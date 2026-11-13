@@ -63,13 +63,13 @@ s32 Scene_Initialize(void) {
   *effect = value;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov683 &&
       (u16)(gMainRoutineWork.entrance - 8) <= 1)
-    Func_0200014c();
+    Scene_FadeInAndClearFlag();
   return 0;
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-DEFINE_SCENE_FADE_IN_AND_CLEAR_FLAG(Func_0200014c)
+DEFINE_SCENE_FADE_IN_AND_CLEAR_FLAG(Scene_FadeInAndClearFlag)
 
 #include "text/msg_ids.h"
 

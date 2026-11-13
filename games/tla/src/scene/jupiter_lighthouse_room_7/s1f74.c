@@ -85,7 +85,7 @@ void Func_02001f74(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-// The cells Func_020028d4 watches, and the cell it copies over the one the
+// The cells Teleporters_Step watches, and the cell it copies over the one the
 // leader steps on.
 #define CELL_TABLE gData_02003704
 #define CELL_SPRITE_DRAW Func_0200213c
@@ -98,13 +98,13 @@ void Func_02001f74(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "scene_tables.h"
 #include "cell_target.h"
 
-DEFINE_TELEPORTERS_FIND(Func_02002268, gData_02003704, Func_0200213c)
+DEFINE_TELEPORTERS_FIND(Teleporters_Find, gData_02003704, Func_0200213c)
 
-DEFINE_LEADER_CENTER_IN_CELL(Func_020024ac)
+DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 #include "../shared/cell_with_bit.h"
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below
 /// the table's source cell over the leader's, keeping the source column's and
-/// row's 64 bit; Func_020028d4 calls it the first time the leader steps on
+/// row's 64 bit; Teleporters_Step calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_TELEPORTER_UNCOVER(Func_02002534, Func_020024ac)
+DEFINE_TELEPORTER_UNCOVER(Teleporter_Uncover, Leader_CenterInCell)

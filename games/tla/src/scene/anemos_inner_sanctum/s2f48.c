@@ -92,9 +92,9 @@ loop:
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02002db0(struct CellTarget *work, struct CellTargetEntry *entry);
 
-DEFINE_TELEPORTERS_STEP(Func_020030e0, Data_02004458, Func_02002d40, Func_02002db0)
+DEFINE_TELEPORTERS_STEP(Teleporters_Step, Data_02004458, Teleporter_Uncover, Func_02002db0)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_02003190, Data_02004458, Func_02002f48)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, Data_02004458, Func_02002f48)
 
 #include "scene_tables.h"
 
@@ -619,7 +619,7 @@ s32 gData_02003fac[] = {
     (s32)Func_02001614,
     0x40008b85,
     -0x10000,
-    (s32)Func_02001644,
+    (s32)Leader_SetLayerByte,
     2,
     0x2000032,
     (s32)Func_02001660,
@@ -742,7 +742,7 @@ s32 gData_02004150[] = {
     (s32)Func_02001614,
     0x40008b85,
     -0x10000,
-    (s32)Func_02001644,
+    (s32)Leader_SetLayerByte,
     8,
     -0x10000,
     (s32)Func_0200109c,

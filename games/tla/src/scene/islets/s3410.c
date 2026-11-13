@@ -353,5 +353,5 @@ void Func_02003d0c(void);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-DEFINE_PUSH_TARGET_PUSH(Func_02003a5c, gData_0200407c, Func_02003790,
+DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gData_0200407c, Func_02003790,
     Func_02003d0c, Func_02003de4, gData_02004094)

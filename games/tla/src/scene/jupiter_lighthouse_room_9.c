@@ -35,8 +35,8 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-s32 Func_02001978();
-struct Actor *Func_02000910();
+s32 Teleporters_Step();
+struct Actor *Whirlwind_SpawnUpper();
 
 void Func_02000054(void) {
   if (gMainRoutineWork.renderMode == 10)
@@ -59,7 +59,7 @@ void Func_02000090(s32 id) {
       object->y = 0;
       object->facing = 0;
     }
-    Func_02000910(object);
+    Whirlwind_SpawnUpper(object);
     gData_02002618 = 1;
   }
 }
@@ -88,7 +88,7 @@ void Func_020000e8(s32 id) {
       object->y = PIXELS(32);
       object->facing = 0;
     }
-    motion = Func_02000910(object);
+    motion = Whirlwind_SpawnUpper(object);
     if (motion != NULL)
       motion->speedLimit = 0x10000;
     gData_02002618 = 1;
@@ -97,7 +97,7 @@ void Func_020000e8(s32 id) {
 
 void Func_0200018c(s32 arg) {
   if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 &&
-      Func_02001978(arg) != 0)
+      Teleporters_Step(arg) != 0)
     FieldEvent_SetExitRequest(13);
 }
 
@@ -114,7 +114,7 @@ void Func_020001bc(s32 arg) {
       FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
     if (x == 8 && z == 39)
       FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
-    if (Func_02001978(arg) != 0)
+    if (Teleporters_Step(arg) != 0)
       FieldEvent_SetExitRequest(14);
   }
 }
@@ -147,10 +147,10 @@ void Func_02000228(s32 arg) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Func_0200130c(s32 kind, s32 x, s32 z, s32 a, s32 b);
+void Teleporters_Find(s32 kind, s32 x, s32 z, s32 a, s32 b);
 
 /// The scene's set-up: screen effect 0x204, actor 64's action variant 3 and
-/// actor 8 held still, then Func_0200130c and Func_02001a28 by the entrance.
+/// actor 8 held still, then Teleporters_Find and Teleporter_PlaceArrival by the entrance.
 s32 Scene_Initialize(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
@@ -159,22 +159,22 @@ s32 Scene_Initialize(void) {
   gData_02002618 = 0;
   Actor_Get(8)->motionFlags = 0;
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
-    Func_0200130c(33, 0x280, 0x380, 48, 1);
-    Func_02001a28(0, 0, 0x204);
+    Teleporters_Find(33, 0x280, 0x380, 48, 1);
+    Teleporter_PlaceArrival(0, 0, 0x204);
   } else if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5 ||
              gMainRoutineWork.entrance == 13) {
-    Func_0200130c(43, 0x280, 0x380, 49, 1);
-    Func_02001a28(-21, 32, 0x204);
+    Teleporters_Find(43, 0x280, 0x380, 49, 1);
+    Teleporter_PlaceArrival(-21, 32, 0x204);
   } else {
-    Func_0200130c(43, 0x280, 0x380, 0, 0);
-    Func_02001a28(-2, -27, 0x204);
+    Teleporters_Find(43, 0x280, 0x380, 0, 0);
+    Teleporter_PlaceArrival(-2, -27, 0x204);
   }
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
-  Func_02000460(0);
+  JupiterLighthouse_LoadPalettes(0);
   return 0;
 }
 
@@ -195,25 +195,25 @@ extern s32 gData_020025f0;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_020025f0 = value; }
 
-DEFINE_PALETTE_CYCLE_STEP(Func_020003a4, gData_020025f0, gData_020025f4,
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gData_020025f0, gData_020025f4,
     gData_0200261c)
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_02000460, gData_020025f4, gData_0200261c,
-    gData_0200263c, Func_020003a4, gData_02002640)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_020025f4, gData_0200261c,
+    gData_0200263c, PaletteCycle_Step, gData_02002640)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Func_020004e4, Func_02001bd8, Func_02001c98)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001bd8, Func_02001c98)
 
 #include "frame.h"
 #include "field_sprite.h"
 
-DEFINE_WHIRLWIND_CARRY_LEADER(Func_02000538)
+DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
-DEFINE_POSITION_FLAT_DISTANCE(Func_02000724)
+DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 extern const s32 gData_020025f8[];
 
 s32 Func_02001c88(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE(Func_02000750, Func_02001c88, Func_02000724,
+DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_02001c88, Position_FlatDistance,
     gData_020025f8, gData_02002618)

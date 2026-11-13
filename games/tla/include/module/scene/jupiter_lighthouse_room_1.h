@@ -23,11 +23,11 @@ extern s16 gData_0200239e;
 
 void Func_02001a64(struct LightOam *oam, s32 depth);
 
-void Func_02001474(void);
+void Leader_CenterInCell(void);
 
-void Func_020001b4(void);
+void Scene_RunOnce(void);
 
-void Func_020001d4(void);
+void Scene_RunIfFlagCleared(void);
 
 extern u32 gData_02002050[];
 extern u32 gData_0200208c[];

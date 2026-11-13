@@ -635,7 +635,7 @@ void Func_02001224(s32 unused, s32 id) {
   Actor_SetSingleChildFlags(Actor_GetById(15), 0);
   Actor_GetById(15)->collisionFlags = 0;
   Actor_GetById(15)->priorityFlags |= 2;
-  Actor_GetById(15)->update = (void (*)(void))Func_02001d98;
+  Actor_GetById(15)->update = (void (*)(void))Actor_EmitWaterDrop;
   Event_Wait(30);
   for (i = 5; i >= 0; i--) {
     Sound_Play(623);
@@ -965,7 +965,7 @@ s32 Scene_Initialize(void) {
         Actor_SetSingleChildFlags(Actor_GetById(15), 0);
         Actor_GetById(15)->collisionFlags = 0;
         Actor_GetById(15)->priorityFlags |= 2;
-        Actor_GetById(15)->update = Func_02001d98;
+        Actor_GetById(15)->update = Actor_EmitWaterDrop;
         Map_CopyCellAttributeRect(15, 48, 1, 1, 16, 48);
         Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
         Func_0802b450(0x40, 68, 5, 13, 14, 94);
@@ -1005,7 +1005,7 @@ void Func_02001d30(struct Actor *object) {
 }
 
 // ---- games/tla/src/scene/aqua_rock/events_g.c ----
-DEFINE_ACTOR_EMIT_WATER_DROP(Func_02001d98, gData_02002c50)
+DEFINE_ACTOR_EMIT_WATER_DROP(Actor_EmitWaterDrop, gData_02002c50)
 
 #include "scene_ids.h"
 
@@ -1115,7 +1115,7 @@ void Func_02001f90(s32 arg0) {
 /// Every other frame, emits particle 7 (5 on every other such frame) from the
 /// object, 26 pixels up, swaying with the frame count and drifting by a random
 /// amount.
-DEFINE_ACTOR_EMIT_MIST(Func_02002030)
+DEFINE_ACTOR_EMIT_MIST(Actor_EmitMist)
 
 void Func_020020bc(s32 entrance) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1124,7 +1124,7 @@ void Func_020020bc(s32 entrance) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(228);
-  leader->update = (void (*)(void))Func_02002030;
+  leader->update = (void (*)(void))Actor_EmitMist;
   leader->motionFlags = 0;
   leader->speedLimit = 0x3333;
   Actor_SetModeById(*owner, 2);
@@ -1157,7 +1157,7 @@ void Func_02002158(void) {
     Actor_SetSingleChildFlags(Actor_GetById(*owner), 0);
     Event_StartScreenTransition();
     Sound_Play(228);
-    leader->update = (void (*)(void))Func_02002030;
+    leader->update = (void (*)(void))Actor_EmitMist;
     Actor_SetSpeedParameters(*owner, 0x6666, 0x3333);
     Actor_CommitPositionAndActivate(*owner, 0, 8);
     Actor_SetPartAttribute(Actor_GetById(*owner), 0);
@@ -1346,10 +1346,10 @@ void Func_020025a8(s32 id) {
 #include "io_reg.h"
 #include "resource.h"
 
-DEFINE_GROUND_PARTICLES_DRAW(Func_020025d4, gData_02002cd4)
+DEFINE_GROUND_PARTICLES_DRAW(GroundParticles_Draw, gData_02002cd4)
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
-/// decoded into VRAM, and Func_020025d4 scheduled at priority 0x480 to move
+/// decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to move
 /// them; the overlay's copy of FieldEffect_InitializeSparkles.
 void Func_0200276c(void) {
   struct DustWork *work = HeapSlot_AllocEwram(116, sizeof(struct DustWork));
@@ -1389,7 +1389,7 @@ loop:
   p++;
   if (i < 64)
     goto loop;
-  Task_Add(Func_020025d4, TASK_PASS_VBLANK);
+  Task_Add(GroundParticles_Draw, TASK_PASS_VBLANK);
 }
 
 void Func_02002834(s32 id) {

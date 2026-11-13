@@ -10,21 +10,21 @@
 
 void Func_020021d4(struct Actor *object);
 
-void Func_02000b28(s32 id);
+void Actor_RaiseFromCell(s32 id);
 
-void Func_02001498(void);
+void LightSprites_InitB(void);
 
 void Func_020015a0(s32 id, s32 value);
 
 void Func_02002314(s32 a);
 
-void Func_02000aa4(s32 mode);
+void JupiterLighthouse_LoadPalettes(s32 mode);
 
 extern s32 Data_02002b94;
 
 s32 Func_020022fc(s32 x, s32 z, s32 layer);
 
-s32 Func_02000d68(s32 *a, s32 *b);
+s32 Position_FlatDistance(s32 *a, s32 *b);
 
 extern s16 gData_02002bd8;
 extern s16 gData_02002bda;
@@ -34,7 +34,7 @@ extern s16 gData_02002cde;
 
 s32 Func_020022f4(struct Actor *actor);
 
-void Func_02001b94(void);
+void Leader_CenterInCell(void);
 
 extern struct CellTarget gData_02002ce0;
 

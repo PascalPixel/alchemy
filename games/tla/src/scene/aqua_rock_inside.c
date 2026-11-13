@@ -8,4 +8,4 @@
 
 #include "aqua_rock_inside.h"
 
-DEFINE_SCENE_CREATE_ACTOR(Func_020000d0)
+DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)

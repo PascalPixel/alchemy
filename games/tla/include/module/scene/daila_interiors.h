@@ -21,7 +21,7 @@ extern const u8 gData_02000e04[];
 void Func_02000dcc(const u8 *script);
 
 s32 Func_02000878(s32 item, s32 mode);
-void Func_02000c58(void);
+void Scene_FadeInAndClearFlag(void);
 
 void Func_02000dac(s32 mode);
 
@@ -30,7 +30,7 @@ void Func_02000554(s32 a0);
 void Func_02000614(void);
 void Func_020006c4(void);
 
-void Func_02000704(void);
+void Scene_RaiseHeldActor(void);
 
 void Func_02000730(void);
 

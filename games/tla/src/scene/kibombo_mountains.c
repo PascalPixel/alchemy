@@ -36,7 +36,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "field_event.h"
 
-DEFINE_ACTOR_BOB(Func_02000058)
+DEFINE_ACTOR_BOB(Actor_Bob)
 
 #include "scene_ids.h"
 
@@ -62,7 +62,7 @@ void Func_02000124(void) {
   Event_SetFlag(0x222);
 }
 
-DEFINE_ACTOR_WAIT_TO_LAND(Func_0200015c)
+DEFINE_ACTOR_WAIT_TO_LAND(Actor_WaitToLand)
 
 void Func_02000190(s32 unused, s32 id) {
   if (id == 15)
@@ -89,7 +89,7 @@ void Func_020001a0(s32 unused, s32 id) {
 
     if (!Event_GetFlag(0x223) && (x = block->x >> 20) == 47 &&
         (z = block->z >> 20) == 28) {
-      Func_0200015c(14);
+      Actor_WaitToLand(14);
       MapGrid_CopyCellAttributes(49, 28, 1, 1, x, z);
       Event_SetFlag(0x223);
       Actor_SetSpritePriority(14, 2);
@@ -117,7 +117,7 @@ void Func_020001a0(s32 unused, s32 id) {
     if (!Event_GetFlag(0x224) && block->x >> 20 == 53 && block->z >> 20 == 36) {
       s32 dx;
 
-      Func_0200015c(15);
+      Actor_WaitToLand(15);
       Actor_SetSpritePriority(15, 2);
       other = Actor_GetById(9);
       dx = block->x - other->x;
@@ -200,7 +200,7 @@ void Func_0200051c(s32 unused, s32 cell) {
       s32 x = object->x >> 20;
 
       if (x == 4) {
-        Func_0200015c(20);
+        Actor_WaitToLand(20);
         MapGrid_CopyCellAttributes(3, 28, 1, 1, x, 28);
         Event_SetFlag(0x8e7);
       }
@@ -216,7 +216,7 @@ void Func_0200051c(s32 unused, s32 cell) {
         s32 z = object->z >> 20;
 
         if (z == 30) {
-          Func_0200015c(13);
+          Actor_WaitToLand(13);
           MapGrid_CopyCellAttributes(32, 30, 1, 2, x, z);
           Event_SetFlag(0x8e8);
         }

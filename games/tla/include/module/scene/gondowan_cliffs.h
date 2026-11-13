@@ -54,4 +54,6 @@ void Func_020012f4(void);
 
 void Func_02000fcc(s32 a, s32 b);
 
+void Func_020012fc(void);
+
 #endif

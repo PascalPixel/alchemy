@@ -65,7 +65,7 @@ L_0200809c:
 #include "../shared/trial_road.h"
 
 /* VIEW(s00a4): routine Func_02000128 as void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer); s0038 has s32 Func_02000128(); tried as the definition's void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/izumo_ruins/s0038.c:102: conflicting types for `Func_02000128'. */
-extern void Func_02000128__s00a4(s32 id, u32 kind, s32 flag, s32 layer) __asm__("Func_02000128");
+extern void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer) __asm__("Func_02000128");
 
 // Finds the current target's table row and shrinks it.
 void Func_020000a4(u16 *list, s32 mode, s32 count) {
@@ -91,7 +91,7 @@ top:
         object->scaleY -= 0x1f00;
       if (mode == 1) {
         Event_SetFlag(flag);
-        Func_02000128__s00a4(id, a, flag, object->terrainId);
+        Actor_SetCellOpen(id, a, flag, object->terrainId);
         object->scaleY = 0x10000;
       }
       return;
@@ -102,7 +102,7 @@ top:
     goto top;
 }
 
-DEFINE_ACTOR_SET_CELL_OPEN(Func_02000128__s00a4, Func_02001508, Func_02001428)
+DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Func_02001508, Func_02001428)
 
 s32 Func_02001528(s32 layer, s32 shape, s32 height);
 
@@ -240,7 +240,7 @@ void Func_0200048c(const void *data, s32 id) {
         Func_02000974(0);
         System_Wait(8);
         Func_02001428(object, 2);
-        Func_02000bc0(-4, OBJECT_BYTE(object, 34), id);
+        Actor_SetCellShapeAt(-4, OBJECT_BYTE(object, 34), id);
         Func_02000974(1);
         System_Wait(16);
         MapGrid_SetShake(-1, -1, 0xe666);

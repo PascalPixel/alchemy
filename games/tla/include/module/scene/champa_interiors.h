@@ -12,6 +12,6 @@ extern s32 gData_020003d8[];
 extern s32 gData_020005ac[];
 extern s32 gData_02000780[];
 
-void Func_0200014c(void);
+void Scene_FadeInAndClearFlag(void);
 
 #endif

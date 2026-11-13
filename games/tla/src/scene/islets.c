@@ -50,7 +50,7 @@ void Func_020000d8(void) {
   struct Actor *object = Actor_Get(10);
 
   if (Func_020037d8(&target)) {
-    Func_02003a5c(target);
+    PushTarget_Push(target);
     System_Wait(5);
     object->gravity = 0x8000;
     Actor_SetAnimation(10, 3);
@@ -206,12 +206,12 @@ L_020083cc:
   return;
 }
 
-DEFINE_LEADER_IS_FACING_NORTH(Func_020003dc)
+DEFINE_LEADER_IS_FACING_NORTH(Leader_IsFacingNorth)
 
 void Func_0200040c(void) {
   s32 result0;
 
-  result0 = Func_020003dc();
+  result0 = Leader_IsFacingNorth();
   if (result0 == 0)
     goto L_0200841e;
   Func_02003ff4(21);
@@ -539,7 +539,7 @@ struct Actor *Func_02000da0(struct Actor *object, s32 value) {
   return spawned;
 }
 
-DEFINE_ACTOR_EMIT_SMOKE(Func_02000df8, 3, Func_02003de4, gData_020044f0)
+DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Func_02003de4, gData_020044f0)
 
 #include "call.h"
 
@@ -563,7 +563,7 @@ void Func_02000e38(void) {
     gift = 0;
     right = 0;
     Actor_FaceActor(11, gMainRoutineWork.currentOwner, 0);
-    trader->update = Func_02000df8;
+    trader->update = Actor_EmitSmoke;
     FieldActor_Jump(11, 4, 10);
     trader->update = 0;
     Event_SetMessageId(MsgSniffSniffI);
@@ -577,7 +577,7 @@ void Func_02000e38(void) {
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 296, 856);
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x8000);
       item = (struct Actor *)Value2((s32 (*)())Func_02000da0, (s32)leader, 454);
-      trader->update = Func_02000df8;
+      trader->update = Actor_EmitSmoke;
       Actor_RunScriptAndWait(11, gData_020043f8);
       trader->update = 0;
     } else {
@@ -585,7 +585,7 @@ void Func_02000e38(void) {
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 856);
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
       item = (struct Actor *)Value2((s32 (*)())Func_02000da0, (s32)leader, 454);
-      trader->update = Func_02000df8;
+      trader->update = Actor_EmitSmoke;
       Actor_RunScriptAndWait(11, gData_02004300);
       trader->update = 0;
     }
@@ -595,7 +595,7 @@ void Func_02000e38(void) {
       void (*hook2)(void);
       item->collisionFlags = 9;
       FieldActor_SetPositionAndResetMotion(item, 0x680000, 0, 0x3480000);
-      hook2 = Func_02000df8;
+      hook2 = Actor_EmitSmoke;
       if (right) {
         leader->update = hook2;
         Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 296, 840);
@@ -685,7 +685,7 @@ void Func_0200129c(struct Actor *gift) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_02003fbc();
   Actor_ShowEmote(9, 264, 20);
-  guide->update = Func_02000df8;
+  guide->update = Actor_EmitSmoke;
   Actor_RunScriptAndWait(9, &script);
   guide->update = 0;
   FieldEvent_SetMessageId(MsgAtLongLast);
@@ -693,13 +693,13 @@ void Func_0200129c(struct Actor *gift) {
   Event_ShowMessage(9, 0);
   Actor_FaceDirectionAndWait(9, 0x5000);
   Actor_SetSpeed(9, 0x19999, 0xcccc);
-  guide->update = Func_02000df8;
+  guide->update = Actor_EmitSmoke;
   Actor_WalkToAndWait(9, 296, 452);
   guide->update = 0;
   Actor_FaceDirection(9, 0x5000, 0);
   gift->speedLimit = 0x19999;
   gift->acceleration = 0xcccc;
-  gift->update = Func_02000df8;
+  gift->update = Actor_EmitSmoke;
   Func_02003de4(gift, 2);
   FieldActor_SetMoveTarget(gift, 0x1160000, 0, 0x1c40000);
   Actor_WaitForMove(gift);
@@ -710,7 +710,7 @@ void Func_0200129c(struct Actor *gift) {
   ((u8 *)HeapSlot_AllocEwram(88, 664))[661] = 99;
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
-  leader->update = Func_02000df8;
+  leader->update = Actor_EmitSmoke;
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 312, 446);
   leader->update = 0;
   FieldActor_Jump(gMainRoutineWork.currentOwner, 6, 0);
@@ -723,12 +723,12 @@ void Func_0200129c(struct Actor *gift) {
   Actor_SetSpeed(9, 0xcccc, 0x6666);
   gift->speedLimit = 0xcccc;
   gift->acceleration = 0x6666;
-  guide->update = Func_02000df8;
+  guide->update = Actor_EmitSmoke;
   Actor_SetDestination(9, 288, 538);
   FieldEvent_Wait(20);
   Func_02003fc4();
   Func_020034ec();
-  gift->update = Func_02000df8;
+  gift->update = Actor_EmitSmoke;
   Func_02003de4(gift, 2);
   FieldActor_SetMoveTarget(gift, 0x1200000, 0, 0x21a0000);
   FieldEvent_Wait(20);
@@ -776,9 +776,9 @@ void Func_020014e0(void) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (GameFlag_Test(513) != 0) {
       Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-      /* FAKEMATCH(temporary): the form kept; as leader->update = Func_02000df8,
+      /* FAKEMATCH(temporary): the form kept; as leader->update = Actor_EmitSmoke,
        * 94 of 569 instructions differ in tla-en. */
-      a = (struct Actor *)Func_02000df8;
+      a = (struct Actor *)Actor_EmitSmoke;
       leader->update = (void (*)(void))a;
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 318, 424);
       leader->update = 0;
@@ -810,14 +810,14 @@ void Func_020014e0(void) {
       Event_ShowMessage(9, 0);
       Func_080d47b4(gMainRoutineWork.currentOwner, 262, 20);
       Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-      leader->update = Func_02000df8;
+      leader->update = Actor_EmitSmoke;
       // Default: a is set for real when object 163 is made.
       a = 0;
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 318, 424);
       leader->update = 0;
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x8000);
       Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
-      leader->update = Func_02000df8;
+      leader->update = Actor_EmitSmoke;
       STEP(gMainRoutineWork.currentOwner, 302, 424);
       SPAWN(a, b, 0)
       STEP(gMainRoutineWork.currentOwner, 318, 424);
@@ -826,7 +826,7 @@ void Func_020014e0(void) {
       Func_080d47b4(9, 256, 20);
       Actor_FaceDirectionAndWait(9, 0xb000);
       other = Actor_GetById(9);
-      other->update = Func_02000df8;
+      other->update = Actor_EmitSmoke;
       FieldActor_Jump(9, 4, 20);
       other->update = 0;
       Event_ShowMessage(9, 0);
@@ -842,7 +842,7 @@ void Func_020014e0(void) {
         Event_ShowMessage(9, 0);
         Actor_FaceDirection(9, 0x5000, 0);
         Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x8000);
-        leader->update = Func_02000df8;
+        leader->update = Actor_EmitSmoke;
         Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 302, 424);
         leader->update = 0;
         if (a != 0)
@@ -875,12 +875,12 @@ void Func_020014e0(void) {
       Func_02003fc4();
       Actor_SetSpeed(9, 0xcccc, 0x6666);
       Actor_SetSpeed(10, 0xcccc, 0x6666);
-      Actor_GetById(9)->update = Func_02000df8;
+      Actor_GetById(9)->update = Actor_EmitSmoke;
       Actor_SetDestination(9, 288, 538);
       FieldEvent_Wait(40);
       Func_02003fc4();
       Func_020034ec();
-      Actor_GetById(10)->update = Func_02000df8;
+      Actor_GetById(10)->update = Actor_EmitSmoke;
       Actor_WalkTo(10, 288, 538);
       FieldEvent_Wait(20);
       *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = STORED_AT_1AC;
@@ -937,7 +937,7 @@ void Func_02001a68(void) {
     Func_02003fc4();
     Actor_SetSpeed(9, 0x19999, 0xcccc);
     Actor_SetSpeed(10, 0x19999, 0xcccc);
-    update = (void (*)(void))Func_02000df8;
+    update = (void (*)(void))Actor_EmitSmoke;
     done = (u8 *)object + 99;
     *done = 0;
     object->update = update;
@@ -1463,8 +1463,8 @@ void Func_02002830(void) {
   Event_WaitTransitionFrames();
   Actor_SetSpeed(9, 0x9999, 0x4ccc);
   Actor_SetSpeed(10, 0x9999, 0x4ccc);
-  Actor_Get(10)->update = (void (*)(void))Func_02000df8;
-  object->update = (void (*)(void))Func_02000df8;
+  Actor_Get(10)->update = (void (*)(void))Actor_EmitSmoke;
+  object->update = (void (*)(void))Actor_EmitSmoke;
   Actor_WalkTo(10, 280, 468);
   Actor_MoveToAndWait(9, 296, 452);
   Actor_SetAnimation(10, 1);
@@ -1496,7 +1496,7 @@ extern const u8 gData_02004554[];
 
 /// The Islets' arrival by entrance 4: actor 9 joins the leader and actor 10
 /// is placed, the screen fades in, both run their action scripts
-/// (Func_02000df8 updates) until actor 9's byte 0x63 is set, then actor 9
+/// (Actor_EmitSmoke updates) until actor 9's byte 0x63 is set, then actor 9
 /// speaks (MsgWellHereWe) and the leader is launched up to (152, 742) and
 /// turned; ends with Func_020034d8. The Japanese edition does not set the
 /// event work's transition word 0x1ac.
@@ -1521,8 +1521,8 @@ void Func_020029c4(void) {
   Event_WaitTransitionFrames();
   Actor_SetSpeed(9, 0xcccc, 0x6666);
   Actor_SetSpeed(10, 0xcccc, 0x6666);
-  OBJECT(10)->update = Func_02000df8;
-  guide->update = Func_02000df8;
+  OBJECT(10)->update = Actor_EmitSmoke;
+  guide->update = Actor_EmitSmoke;
   done = (u8 *)guide + 0x63;
   *done = 0;
   Actor_StartScript((s32)guide, gData_02004508);

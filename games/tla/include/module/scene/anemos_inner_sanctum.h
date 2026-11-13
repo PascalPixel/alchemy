@@ -70,9 +70,9 @@ extern u16 gData_02004440;
 extern u16 gData_02004450;
 extern u16 gData_02004454;
 
-s32 Func_020001d4(u16 *list);
+s32 List_CountEntries(u16 *list);
 
-void Func_020001f8(void);
+void PaletteCycle_Fade(void);
 
 void Func_020034a8(void);
 void Func_02003380(s32 x, s32 z, s32 a, s32 b);
@@ -100,7 +100,8 @@ void Func_02002cb8(void);
 
 extern struct CellTarget Data_02004458;
 
-void Func_02002d40(struct CellTarget *table, struct CellTargetEntry *entry);
+void Teleporter_Uncover(struct CellTarget *table,
+                        struct CellTargetEntry *entry);
 
 void Func_02000ac8(void);
 void Func_02001090(void);
@@ -109,7 +110,7 @@ void Func_02001160(void);
 void Func_02001398(void);
 void Func_02001518(void);
 void Func_02001614(void);
-void Func_02001644(void);
+void Leader_SetLayerByte(void);
 void Func_02001660(void);
 void Func_020016fc(void);
 void Func_0200178c(void);

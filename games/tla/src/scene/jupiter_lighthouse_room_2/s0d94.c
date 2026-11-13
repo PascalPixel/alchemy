@@ -30,7 +30,7 @@ extern const s32 gData_02002b3c[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE_LOWER(Func_02000d94, Func_020022fc, Func_02000d68,
+DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_020022fc, Position_FlatDistance,
     gData_02002b3c, Data_02002b94)
 
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
@@ -38,11 +38,11 @@ void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_0200165c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_WHIRLWIND_SPAWN(Func_02000f54, Func_020021b4, Func_02000d94, Func_0200165c)
+DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Func_020021b4, Whirlwind_UpdateLower, Func_0200165c)
 
-DEFINE_ACTOR_EMIT_RISING_SPARKS(Func_0200102c, Func_0200165c)
+DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, Func_0200165c)
 
-DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(Func_020010cc)
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(JupiterLighthouse_PlaceRaisedActors)
 
 extern s16 gData_02002cdc;
 
@@ -52,7 +52,7 @@ void Func_0200218c(struct LightOam *oam, s32 depth);
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
 /// picture and depth.
-DEFINE_LIGHT_SPRITES_DRAW(Func_0200125c, gData_02002bd8, Data_02002c1c,
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gData_02002bd8, Data_02002c1c,
     gData_02002bda, gData_02002bdc, gData_02002cdc, gData_02002cde,
     Func_020022f4, Func_0200218c)
 
@@ -60,14 +60,14 @@ DEFINE_LIGHT_SPRITES_DRAW(Func_0200125c, gData_02002bd8, Data_02002c1c,
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(Func_02001418, gData_02002bdc, gData_02002bd8,
-    Func_0200125c, gData_02002bda, gData_02002cdc, gData_02002cde)
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02002bdc, gData_02002bd8,
+    LightSprites_Draw, gData_02002bda, gData_02002cdc, gData_02002cde)
 
-DEFINE_LIGHT_SPRITES_INIT_B(Func_02001498, gData_02002bdc, gData_02002bd8,
-    Func_0200125c, gData_02002bda, gData_02002cdc, gData_02002cde)
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_02002bdc, gData_02002bd8,
+    LightSprites_Draw, gData_02002bda, gData_02002cdc, gData_02002cde)
 
-DEFINE_LIGHT_SPRITES_INIT_C(Func_02001518, gData_02002bdc, gData_02002bd8,
-    Func_0200125c, gData_02002bda, gData_02002cdc, gData_02002cde)
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_02002bdc, gData_02002bd8,
+    LightSprites_Draw, gData_02002bda, gData_02002cdc, gData_02002cde)
 
 void Func_020015a0(s32 id, s32 value) {
   struct Actor *object = Actor_Get(id);

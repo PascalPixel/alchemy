@@ -466,7 +466,7 @@ void Func_02001614(void) {
   }
 }
 
-DEFINE_LEADER_SET_LAYER_BYTE(Func_02001644, 0)
+DEFINE_LEADER_SET_LAYER_BYTE(Leader_SetLayerByte, 0)
 
 void Func_02001660(void) {
   Event_Start();
@@ -508,14 +508,14 @@ void Func_020016fc(void) {
   Event_End();
 }
 
-s32 Func_020030e0();
+s32 Teleporters_Step();
 
 /// 2 copies: anemos_inner_sanctum/s0ac8, anemos_inner_sanctum/s0ac8.
 #define DEFINE_FUNC_0200178C(name, n1)                                         \
   void name(void) {                                                            \
     s32 t0;                                                                    \
                                                                                \
-    t0 = Func_020030e0();                                                      \
+    t0 = Teleporters_Step();                                                      \
     if (t0 != 0) {                                                             \
       FieldEvent_SetExitRequest(n1);                                           \
     }                                                                          \

@@ -8,7 +8,7 @@
 
 void Func_02000328(void);
 
-s32 Func_020001d4(u16 *list);
+s32 List_CountEntries(u16 *list);
 
 void Func_020001f8(void);
 

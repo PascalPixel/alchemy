@@ -19,15 +19,15 @@
 void Func_02001600(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_TELEPORTER_DROP_IN(Func_02001dc8, Func_02001600)
+DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, Func_02001600)
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Func_02001c30(struct CellTarget *work, struct CellTargetEntry *entry);
+void Teleporter_Sink(struct CellTarget *work, struct CellTargetEntry *entry);
 
-DEFINE_TELEPORTERS_STEP(Func_02001f60, gData_02002bf8, Func_02001bc0,
-    Func_02001c30)
+DEFINE_TELEPORTERS_STEP(Teleporters_Step, gData_02002bf8, Teleporter_Uncover,
+    Teleporter_Sink)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_02002010, gData_02002bf8, Func_02001dc8)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gData_02002bf8, Teleporter_DropIn)
 
 #include "scene_tables.h"
 

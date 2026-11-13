@@ -162,7 +162,7 @@ void Func_02000770(struct Actor *object) {
   object->update = 0;
 }
 
-DEFINE_ACTOR_FLICKER_CHILD(Func_02000780, 7)
+DEFINE_ACTOR_FLICKER_CHILD(Actor_FlickerChild, 7)
 
 // ---- games/tla/src/scene/apojii_islands/s07a4.c ----
 #include "scene_tables.h"
@@ -182,7 +182,7 @@ static inline void ApojiiIslands_CamMove(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
-/// An Apojii Islands scene inside an event: the actor takes Func_02000780 as
+/// An Apojii Islands scene inside an event: the actor takes Actor_FlickerChild as
 /// its update, cues 78 and 21 play, a sparkle setup (Func_02001ad8) runs and
 /// four flashes of random strength follow; then the screen blends in over six
 /// steps while the palette cycle gives way to Func_020006bc and the cell
@@ -194,7 +194,7 @@ void Func_020007a4(s32 unused, s32 id) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  actor->update = Func_02000780;
+  actor->update = Actor_FlickerChild;
   Sound_Play(78);
   wait(30);
   Sound_Play(21);
@@ -439,10 +439,10 @@ void Func_02000ef8(void) {
   }
 }
 
-DEFINE_LAYER_TRACK_SCROLL(Func_02000f58, gData_02002a98, gData_02002a9c,
+DEFINE_LAYER_TRACK_SCROLL(Layer_TrackScroll, gData_02002a98, gData_02002a9c,
     gData_02002a9e)
 
-DEFINE_SCROLL_START_HBLANK(Func_02000f98, Func_02000ef8, Func_02000f58)
+DEFINE_SCROLL_START_HBLANK(Scroll_StartHBlank, Func_02000ef8, Layer_TrackScroll)
 
 /// The overlay's entry: sets the map mode and screen effect 0x202, then starts
 /// each room's own setup.
@@ -477,13 +477,13 @@ void Func_02001054(void) {
   Func_02001dfc();
   Func_02001e04(0, 0x200, 8, 9);
   Func_02001dec(170);
-  Func_02000f98();
+  Scroll_StartHBlank();
   if (gMainRoutineWork.entrance == 3)
-    Func_02001500();
+    Leader_RiseFromWater();
   if (gMainRoutineWork.entrance == 4)
-    Func_02001500();
+    Leader_RiseFromWater();
   if (gMainRoutineWork.entrance == 5)
-    Func_02001500();
+    Leader_RiseFromWater();
 }
 
 void Func_020010b4(void) {
@@ -519,7 +519,7 @@ void Func_020010d8(struct Actor *object) {
 // ---- games/tla/src/scene/apojii_islands/events_h.c ----
 // Scene code of overlay 0x679, in ROM order, from events_h's offset up to the next object the overlay links.
 
-DEFINE_ACTOR_EMIT_WATER_DROP(Func_02001140, gData_02001ef4)
+DEFINE_ACTOR_EMIT_WATER_DROP(Actor_EmitWaterDrop, gData_02001ef4)
 
 void Func_020011a8(void) {
   struct EventWork1cc *work = Ram_HeapSlots->eventWork;
@@ -574,18 +574,18 @@ void Func_020011a8(void) {
   }
 }
 
-DEFINE_ACTOR_SHOW_PARTS(Func_02001308, Func_02001c6c)
+DEFINE_ACTOR_SHOW_PARTS(Actor_ShowParts, Func_02001c6c)
 
-DEFINE_LEADER_SPIN_AWAY(Func_02001338, Func_02001c6c, Func_020010d8)
+DEFINE_LEADER_SPIN_AWAY(Leader_SpinAway, Func_02001c6c, Func_020010d8)
 
 /// Every other frame, emits particle 7 (5 on every other such frame) from the
 /// object, 26 pixels up, swaying with the frame count and drifting by a random
 /// amount.
-DEFINE_ACTOR_EMIT_MIST(Func_020013d8)
+DEFINE_ACTOR_EMIT_MIST(Actor_EmitMist)
 
-DEFINE_LEADER_SINK_AWAY(Func_02001464, Func_020013d8)
+DEFINE_LEADER_SINK_AWAY(Leader_SinkAway, Actor_EmitMist)
 
-DEFINE_LEADER_RISE_FROM_WATER(Func_02001500, Func_020013d8)
+DEFINE_LEADER_RISE_FROM_WATER(Leader_RiseFromWater, Actor_EmitMist)
 
 #include "graphics/vram_tab.h"
 #include "system/dma.h"
@@ -736,10 +736,10 @@ void Func_020017f8(u32 base, s32 a, s32 b) {
 
 extern s16 gData_02001f18[];
 
-DEFINE_GROUND_PARTICLES_DRAW(Func_02001940, gData_02001f18)
+DEFINE_GROUND_PARTICLES_DRAW(GroundParticles_Draw, gData_02001f18)
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
-/// decoded into VRAM, and Func_02001940 scheduled at priority 0x480 to move
+/// decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to move
 /// them; the overlay's copy of FieldEffect_InitializeSparkles.
 void Func_02001ad8(void) {
   struct DustWork *work = HeapSlot_AllocEwram(116, sizeof(struct DustWork));
@@ -779,7 +779,7 @@ loop:
   p++;
   if (i < 64)
     goto loop;
-  Task_AddFrame(Func_02001940, TASK_PASS_VBLANK);
+  Task_AddFrame(GroundParticles_Draw, TASK_PASS_VBLANK);
 }
 
 void Func_02001ba0(s32 id) {
@@ -1283,13 +1283,13 @@ s32 gData_0200280c[] = {
     2,
     2,
     (s32)0xffff0003,
-    (s32)Func_02001464,
+    (s32)Leader_SinkAway,
     2,
     (s32)0xffff0004,
-    (s32)Func_02001464,
+    (s32)Leader_SinkAway,
     2,
     (s32)0xffff0005,
-    (s32)Func_02001464,
+    (s32)Leader_SinkAway,
     0x4602,
     (s32)0xffff0028,
     (s32)Func_02000d74,

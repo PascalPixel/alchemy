@@ -25,7 +25,7 @@ extern u8 gData_02004d0c[];
 extern u8 gData_02004dbc[];
 extern u8 gData_02004fe4[];
 
-void Func_02004868(void *, s32, s32);
+void Statue_Sink(void *, s32, s32);
 s32 Func_02004a7c();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -48,9 +48,9 @@ void Func_0200006c(s32 mode, s32 id) {
     Func_02000fa4();
   }
   if (mode == 2)
-    Func_02003f48(0x1f20000, 0x100000, 0x19c0000, 2);
+    Rocks_Spawn(0x1f20000, 0x100000, 0x19c0000, 2);
   if (mode == 3)
-    Func_02003f48(0x1f20000, 0x100000, 0x19c0000, 30);
+    Rocks_Spawn(0x1f20000, 0x100000, 0x19c0000, 30);
   if (id == 0x3e7)
     Func_020040c0();
 }
@@ -60,7 +60,7 @@ void Func_020000c8(s32 mode, s32 arg) {
   struct Actor *b;
   s32 i;
 
-  Func_02004868(gData_02004d0c, mode, arg);
+  Statue_Sink(gData_02004d0c, mode, arg);
   if (mode == 1) {
     a = Actor_Get(19);
     b = Actor_Get(21);
@@ -245,7 +245,7 @@ void Func_0200042c(s32 mode, s32 id) {
 void Func_0200112c(void);
 /* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct Unk_02004240); eastern_alhafra has void Func_020044c4(struct DoorPlan); tried as the definition's void Func_020044c4(struct PushTarget target), it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:245: conflicting types for `Func_020044c4'. */
 extern void Func_020044c4__s0514(struct Unk_02004240) __asm__("Func_020044c4");
-void Func_02004868(void *, s32, s32);
+void Statue_Sink(void *, s32, s32);
 s32 Func_02004a7c();
 s32 Party_FindOwnerWithAction();
 void Event_Start();
@@ -2096,7 +2096,7 @@ void Func_02003274(void) {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_PARTICLES_UPDATE_FALLING(Func_02003ec4, Func_02004c6c)
+DEFINE_PARTICLES_UPDATE_FALLING(Particles_UpdateFalling, Func_02004c6c)
 
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
@@ -2112,4 +2112,4 @@ struct RockWork {
 
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
-DEFINE_ROCKS_SPAWN(Func_02003f48)
+DEFINE_ROCKS_SPAWN(Rocks_Spawn)

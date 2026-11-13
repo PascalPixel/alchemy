@@ -68,7 +68,7 @@ void Func_020044c4(struct PushTarget target) {
     Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, deltaX,
                                        deltaZ);
   }
-  Actor_Get(gMainRoutineWork.currentOwner)->update = Func_02004774;
+  Actor_Get(gMainRoutineWork.currentOwner)->update = Actor_StopAtPushTarget;
   System_Wait(4);
   if ((u32)(direction - 6) <= 7)
     Func_02004a0c(object, 3);
@@ -115,7 +115,7 @@ void Func_020044c4(struct PushTarget target) {
 }
 
 
-DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Func_02004774, Func_02004c3c, gData_02004ca4,
+DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Func_02004c3c, gData_02004ca4,
     Func_02004a64)
 
 void Func_020047fc(const u16 *list) {
@@ -139,7 +139,7 @@ next:
   flag = spec[2];
   object->collisionFlags &= 0xfe;
   Actor_SetSingleChildFlags(object, 0);
-  Func_020048ec(id, (u16)mode, (u16)flag, object->terrainId);
+  Actor_SetCellOpen(id, (u16)mode, (u16)flag, object->terrainId);
   limit = 0xff;
   spec += 3;
   first = spec[0];
@@ -149,8 +149,8 @@ next:
 }
 
 // Finds the current target's table row and shrinks it.
-DEFINE_STATUE_SINK(Func_02004868, Func_020048ec)
+DEFINE_STATUE_SINK(Statue_Sink, Actor_SetCellOpen)
 
 #include "field_event.h"
 
-DEFINE_ACTOR_SET_CELL_OPEN(Func_020048ec, Func_02004c34, Func_02004a0c)
+DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Func_02004c34, Func_02004a0c)

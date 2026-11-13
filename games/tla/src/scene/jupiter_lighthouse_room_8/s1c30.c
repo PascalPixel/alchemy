@@ -12,7 +12,7 @@
 #include "event_work.h"
 #include "module/scene/jupiter_lighthouse_room_8.h"
 
-/* VIEW(s1c30): tag struct CellTarget as struct CellTarget__s1c30; cell_target.h has another definition; tried with the definition the rest of the object has, Func_02001c30 moves: 2 of 131 instructions in tla-ja. */
+/* VIEW(s1c30): tag struct CellTarget as struct CellTarget__s1c30; cell_target.h has another definition; tried with the definition the rest of the object has, Teleporter_Sink moves: 2 of 131 instructions in tla-ja. */
 struct CellTarget__s1c30 {
   s16 firstFlag;
   s16 flagByte;
@@ -27,4 +27,4 @@ struct CellTarget__s1c30 {
 
 #include "io_write.h"
 
-DEFINE_TELEPORTER_SINK(Func_02001c30, CellTarget__s1c30, Func_02001b38)
+DEFINE_TELEPORTER_SINK(Teleporter_Sink, CellTarget__s1c30, Leader_CenterInCell)

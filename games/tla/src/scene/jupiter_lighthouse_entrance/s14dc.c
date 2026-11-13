@@ -33,7 +33,7 @@ void Func_020014dc(struct CellTarget__s14dc *table, struct CellTargetEntry *entr
   s32 x = (leader->x >> 20) | (s16)(table->x & 64);
   s32 z = (leader->z >> 20) | (s16)(table->z & 64);
 
-  Func_020013e4();
+  Leader_CenterInCell();
   Event_PlaySound(229);
   MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
   FieldEvent_Wait(12);

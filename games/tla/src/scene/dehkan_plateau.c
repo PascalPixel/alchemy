@@ -240,7 +240,7 @@ test:
 
 /// Runs the event of the listed object `id` once: the list holds (object id,
 /// flag) pairs ended by 0xffff, and unless the flag after the entry's own is
-/// set, cues 185 and 188 play around Func_02000bc0 and both flags are set. The
+/// set, cues 185 and 188 play around Actor_SetCellShape and both flags are set. The
 /// twin of overlay 67f's Func_0200048c.
 void Func_0200048c(u16 *list, s32 id) {
   struct Actor *object = Actor_GetById(id);
@@ -261,7 +261,7 @@ loop:
     Func_02000974(0);
     wait(8);
     Func_02003ba0(object, 2);
-    Func_02000bc0(-4, object->terrainId, id);
+    Actor_SetCellShape(-4, object->terrainId, id);
     Func_02000974(1);
     wait(16);
     MapGrid_SetShake(-1, -1, 0xe666);

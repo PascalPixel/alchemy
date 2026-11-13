@@ -16,8 +16,8 @@ void Func_02001dec(s32 value);
 void Func_0200105c(struct Actor *object);
 
 void Func_020017a8(s32 a, s32 b, s32 side);
-void Func_02001cb4(void);
-void Func_02001dbc(s32 id, s32 value);
+void LightSprites_InitB(void);
+void LightSprites_Add(s32 id, s32 value);
 
 void Func_02002b58();
 
@@ -43,5 +43,20 @@ void Func_020029c0(struct LightOam *oam, s32 depth);
 
 extern u32 gData_02003020[];
 extern u32 gData_0200305c[];
+
+struct CellTarget;
+struct CellTargetEntry;
+
+void JupiterLighthouse_LoadPalettesZero(s32 mode);
+
+void JupiterLighthouse_PlaceRaisedActors(void);
+
+void Leader_CenterInCell(void);
+
+void Teleporter_Uncover(struct CellTarget *work, struct CellTargetEntry *entry);
+
+void Teleporter_Sink(struct CellTarget *work, struct CellTargetEntry *entry);
+
+void Teleporter_DropIn(void);
 
 #endif

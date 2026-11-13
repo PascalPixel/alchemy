@@ -49,7 +49,7 @@ void Func_020026c0(void);
 
 s32 Func_02005f64(struct Actor *object);
 
-void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer);
+void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 void Func_02002aa8(s32 x, s32 z);
 void Func_02002b58(s32 x, s32 z);

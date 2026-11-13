@@ -223,7 +223,7 @@ s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 513;
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-  Func_02000858(0);
+  JupiterLighthouse_LoadPalettesZero(0);
   Func_02002b28(15, 1);
   Func_02002b28(16, 1);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
@@ -233,7 +233,7 @@ s32 Scene_Initialize(void) {
   Actor_Get(20)->priorityFlags |= 128;
   Actor_Get(21)->priorityFlags |= 128;
   Actor_Get(22)->priorityFlags |= 128;
-  Func_02000e80();
+  JupiterLighthouse_PlaceRaisedActors();
   return 0;
 }
 
@@ -243,7 +243,7 @@ s32 Scene_PrepareMap(void) {
   struct Actor *object;
 
   Scene_SetArrivalFlags(0);
-  Func_02001cb4();
+  LightSprites_InitB();
   if (Event_GetFlag(0xa0a)) {
     Actor_SetPosition(13, 0, 0);
     MapGrid_CopyCellsLayered(66, 39, 1, 1, 70, 10);
@@ -251,7 +251,7 @@ s32 Scene_PrepareMap(void) {
     MapGrid_CopyCellAttributes(5, 12, 1, 1, 6, 12);
     MapGrid_CopyCellsLayered(70, 39, 1, 1, 71, 10);
   } else {
-    Func_02001dbc(13, 3);
+    LightSprites_Add(13, 3);
     Actor_Get(13)->priorityFlags |= 32;
   }
   object = Actor_Get(13);
@@ -268,7 +268,7 @@ s32 Scene_PrepareMap(void) {
     MapGrid_CopyCellAttributes(58, 12, 1, 1, 57, 12);
     MapGrid_CopyCellsLayered(72, 39, 1, 1, 120, 10);
   } else {
-    Func_02001dbc(14, 5);
+    LightSprites_Add(14, 5);
     Actor_Get(14)->priorityFlags |= 32;
   }
   object = Actor_Get(14);
@@ -332,10 +332,10 @@ next:
   gData_02003314++;
 }
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(Func_02000858, gData_02003318, gData_02003340,
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(JupiterLighthouse_LoadPalettesZero, gData_02003318, gData_02003340,
     gData_02003360, gData_02003314, Func_0200079c, gData_02003364)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Func_020008dc, Func_02002a78, Func_02002b58)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02002a78, Func_02002b58)
 
 #include "frame.h"
 #include "field_sprite.h"
@@ -405,7 +405,7 @@ void Func_02000930(void) {
   Event_End();
 }
 
-DEFINE_POSITION_FLAT_DISTANCE(Func_02000b1c)
+DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 extern const s32 gData_0200331c[];
 extern s32 gData_0200333c;
@@ -452,7 +452,7 @@ void Func_02000b48(struct Actor *self) {
         if (distance < 0)
           distance = self->y - leader->y;
         near = 0;
-        if (Func_02000b1c(&leader->x, &self->x) <= 12 && distance < 0xc0000)
+        if (Position_FlatDistance(&leader->x, &self->x) <= 12 && distance < 0xc0000)
           near = 1;
         if (near && !Event_GetFlag(260)) {
           leader->facing = self->facing;
@@ -498,7 +498,7 @@ stop:
 #include "call.h"
 #include "field_effect.h"
 
-DEFINE_WHIRLWIND_SPAWN(Func_02000d08, Func_020029f0, Func_02000b48, Func_02001e78)
+DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Func_020029f0, Func_02000b48, Func_02001e78)
 
 #include "field_coordinate.h"
 
@@ -523,7 +523,7 @@ s32 Func_02000de0(struct Actor *object) {
   return 0;
 }
 
-DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(Func_02000e80)
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(JupiterLighthouse_PlaceRaisedActors)
 
 void Func_02001010(struct Actor *object) {
   u8 *fill = &gDecodeFillByte;

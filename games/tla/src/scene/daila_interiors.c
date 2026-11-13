@@ -361,7 +361,7 @@ void Func_020006c4(void) {
   Import_EventEnd();
 }
 
-DEFINE_SCENE_RAISE_HELD_ACTOR(Func_02000704, Func_02000dcc, gData_02000e04)
+DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, Func_02000dcc, gData_02000e04)
 
 // ---- games/tla/src/scene/daila_interiors/item.c ----
 // Scene code of overlay 0x652, in ROM order, from item's offset up to the next object the overlay links.
@@ -548,7 +548,7 @@ s32 DailaInteriors_Start(void) {
   *effect = value;
   if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors1) {
     if (gMainRoutineWork.entrance == 7) {
-      Func_02000c58();
+      Scene_FadeInAndClearFlag();
     } else {
       if (GameFlag_Test(0x873)) {
         Actor_SetModeById(24, 5);
@@ -602,7 +602,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-DEFINE_SCENE_FADE_IN_AND_CLEAR_FLAG(Func_02000c58)
+DEFINE_SCENE_FADE_IN_AND_CLEAR_FLAG(Scene_FadeInAndClearFlag)
 
 void Func_02000c74(void) { Func_02000d9c(); }
 
@@ -1348,13 +1348,13 @@ s32 gData_02001c18[] = {
     MSGNO(MsgDailaInteriorsBoringVillage),
     0x1815,
     0x220000a,
-    (s32)Func_02000704,
+    (s32)Scene_RaiseHeldActor,
     0x1815,
     0x221000b,
-    (s32)Func_02000704,
+    (s32)Scene_RaiseHeldActor,
     0x1815,
     0x222000c,
-    (s32)Func_02000704,
+    (s32)Scene_RaiseHeldActor,
     3,
     0xa200028,
     (s32)Func_02000730,

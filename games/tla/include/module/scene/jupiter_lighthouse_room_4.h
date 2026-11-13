@@ -11,7 +11,7 @@
 struct CellTarget;
 struct CellTargetEntry;
 
-void Func_02000724(s32 id);
+void Actor_RaiseFromCell(s32 id);
 
 extern s16 gData_0200275c;
 extern s16 gData_0200275e;
@@ -23,7 +23,8 @@ void Func_02001790(void);
 
 extern struct CellTarget gData_02002864;
 
-void Func_02001818(struct CellTarget *table, struct CellTargetEntry *entry);
+void Teleporter_Uncover(struct CellTarget *table,
+                        struct CellTargetEntry *entry);
 
 void Func_020000c0(void);
 
@@ -35,6 +36,6 @@ void Func_0200021c(void);
 
 extern u32 gData_020023fc[];
 
-void Func_02001014(void);
+void LightSprites_InitA(void);
 
 #endif

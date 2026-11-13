@@ -93,7 +93,7 @@ void Func_020003f8(s32 unk0, s32 id) {
 
 #include "scene_tables.h"
 
-DEFINE_PILLAR_SET_MOVED(Func_02000584, 12, 79, 28, 81, 0x201)
+DEFINE_PILLAR_SET_MOVED(Pillar_SetMoved, 12, 79, 28, 81, 0x201)
 
 void Func_020005bc(void) {
   struct Actor *object = Actor_Get(13);

@@ -29,4 +29,4 @@ struct CellTarget__s158c {
 
 #include "io_write.h"
 
-DEFINE_TELEPORTER_SINK(Func_0200158c, CellTarget__s158c, Func_02001494)
+DEFINE_TELEPORTER_SINK(Teleporter_Sink, CellTarget__s158c, Leader_CenterInCell)

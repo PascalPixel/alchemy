@@ -4,10 +4,10 @@
 #include "objcmd.h"
 #include "module/scene/gondowan_cliffs.h"
 
-void Func_02000038(void);
+void TileSprite_Reset(void);
 void Func_02000058(void);
 void Func_020003f8(void);
-void Func_02000584(void);
+void Pillar_SetMoved(void);
 void Func_02000610(void);
 void Func_02000660(void);
 void Func_020006f4(void);
@@ -17,7 +17,7 @@ extern u8 gData_02001360[];
 extern u8 gData_0200139c[];
 
 s32 gData_0200168c[] = {
-    SC_CALL(Func_02000038),
+    SC_CALL(TileSprite_Reset),
     SC_END,
 };
 
@@ -105,7 +105,7 @@ struct Trigger gData_020019f0[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgILongTo)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(Func_02000058)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 10, 0x200, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, 0x201, EVENT(Func_02000584)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, 0x201, EVENT(Pillar_SetMoved)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x202, EVENT(Func_020005bc)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 14, CONDITION_ALWAYS, EVENT(Func_02000600)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x884, EVENT(Func_020003f8)},

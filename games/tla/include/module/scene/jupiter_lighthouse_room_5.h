@@ -23,7 +23,7 @@ extern u32 gData_02003214[];
 
 void Func_02001718(const s32 *from, const s32 *to);
 
-void Func_02000d80(s32 value);
+void JupiterLighthouse_LoadPalettes(s32 value);
 
 void Func_02001538(void);
 
@@ -38,11 +38,12 @@ extern struct Actor *gData_02003448[];
 extern s16 gData_02003548;
 extern s16 gData_0200354a;
 
-void Func_020021c0(void);
+void Leader_CenterInCell(void);
 
 extern struct CellTarget Data_0200354c;
 
-void Func_02002248(struct CellTarget *table, struct CellTargetEntry *entry);
+void Teleporter_Uncover(struct CellTarget *table,
+                        struct CellTargetEntry *entry);
 
 void Func_020006ac(void);
 

@@ -13,7 +13,7 @@ void Func_020025a8(s32 id);
 void Func_02001e00(void);
 void Func_02001d30(struct Actor *object);
 void Func_02001f60(s32 id);
-void Func_02001d98(struct Actor *object);
+void Actor_EmitWaterDrop(struct Actor *object);
 
 void Func_02002a58(s32 a);
 

@@ -26,18 +26,18 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   Map_SetScreenShake(a, b, c);
 }
 
-DEFINE_TELEPORTER_DROP_IN_LOWER(Func_02001704, Func_02000f3c)
+DEFINE_TELEPORTER_DROP_IN_LOWER(Teleporter_DropInLower, Func_02000f3c)
 
 extern struct CellTarget gData_020023a0;
-void Func_020014fc();
-void Func_0200156c();
+void Teleporter_Uncover();
+void Teleporter_Sink();
 
-DEFINE_TELEPORTERS_STEP(Func_0200189c, gData_020023a0, Func_020014fc,
-    Func_0200156c)
+DEFINE_TELEPORTERS_STEP(Teleporters_Step, gData_020023a0, Teleporter_Uncover,
+    Teleporter_Sink)
 
 #include "cell_target.h"
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_0200194c, gData_020023a0, Func_02001704)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gData_020023a0, Teleporter_DropInLower)
 
 #include "scene_tables.h"
 #include "objcmd.h"
@@ -81,8 +81,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, 20, 0xa01, EVENT(Func_020001b4)},
-    {TRIGGER_STEP, 21, 0xa01, EVENT(Func_020001d4)},
+    {TRIGGER_STEP, 20, 0xa01, EVENT(Scene_RunOnce)},
+    {TRIGGER_STEP, 21, 0xa01, EVENT(Scene_RunIfFlagCleared)},
     {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000054)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa01, EVENT(Func_020001f4)},
     {TRIGGERS_END},

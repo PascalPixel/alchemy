@@ -202,10 +202,10 @@ void Func_020002c4(void) {
   Event_End();
 }
 
-DEFINE_LEADER_IS_FACING_NORTH(Func_020002e8)
+DEFINE_LEADER_IS_FACING_NORTH(Leader_IsFacingNorth)
 
 void Func_02000318(void) {
-  if (Func_020002e8()) {
+  if (Leader_IsFacingNorth()) {
     Func_02005c84(17, 20);
   } else {
     Event_Start();
@@ -217,7 +217,7 @@ void Func_02000318(void) {
 }
 
 void Func_02000350(void) {
-  if (Func_020002e8()) {
+  if (Leader_IsFacingNorth()) {
     Func_02005c84(18, 21);
   } else {
     Event_Start();
@@ -229,7 +229,7 @@ void Func_02000350(void) {
 }
 
 void Func_02000388(void) {
-  if (Func_020002e8()) {
+  if (Leader_IsFacingNorth()) {
     Func_02005c84(19, 22);
   } else {
     Event_Start();
@@ -241,7 +241,7 @@ void Func_02000388(void) {
 }
 
 void Func_020003c0(void) {
-  if (Func_020002e8()) {
+  if (Leader_IsFacingNorth()) {
     Func_02005c94(6, 23);
   } else {
     Event_Start();
@@ -253,7 +253,7 @@ void Func_020003c0(void) {
 }
 
 void Func_020003f8(void) {
-  if (Func_020002e8()) {
+  if (Leader_IsFacingNorth()) {
     Func_02005c8c(25);
   } else {
     Event_Start();

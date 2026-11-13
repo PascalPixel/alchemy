@@ -29,7 +29,7 @@ struct PushState {
 };
 
 void Func_02000fa4(void);
-void Func_02003f48(s32, s32, s32, s32);
+void Rocks_Spawn(s32, s32, s32, s32);
 
 void Func_02004004(void);
 void Func_020040c0(void);
@@ -62,19 +62,19 @@ void Func_020049d4(void *entry, void *destination);
 void Func_02004c64(struct RockSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 
-void Func_02003ec4(void);
+void Particles_UpdateFalling(void);
 
 extern u16 gData_02004ca4[];
 
-struct Actor *Func_020043a8(s32 *direction, s32 *number, s32 *kind);
+struct Actor *PushTarget_FindAhead(s32 *direction, s32 *number, s32 *kind);
 
 s32 Func_02004a64(struct Actor *actor, struct Vector3 *cell);
 
-void Func_02004774(struct Actor *object);
+void Actor_StopAtPushTarget(struct Actor *object);
 
 struct Actor *Func_02004c3c(s32 *position, s32 mode);
 
-void Func_020048ec(s32 id, u32 kind, s32 flag, s32 layer);
+void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 s32 Func_02004c34(struct Actor *object);
 

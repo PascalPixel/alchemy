@@ -26,7 +26,7 @@ struct CellTarget__s24a8 {
   s16 tile;
 };
 
-void Func_020023b0(void);
+void Leader_CenterInCell(void);
 #include "io_write.h"
 
-DEFINE_TELEPORTER_SINK(Func_020024a8, CellTarget__s24a8, Func_020023b0)
+DEFINE_TELEPORTER_SINK(Teleporter_Sink, CellTarget__s24a8, Leader_CenterInCell)

@@ -125,9 +125,9 @@ void Func_02000608(void) {
   GameFlag_SetBit(2534);
 }
 
-DEFINE_POSITION_DISTANCE(Func_02000620)
+DEFINE_POSITION_DISTANCE(Position_Distance)
 
-DEFINE_ACTOR_IS_FACING_NEAR(Func_02000658, Func_02000620)
+DEFINE_ACTOR_IS_FACING_NEAR(Actor_IsFacingNear, Position_Distance)
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -152,15 +152,15 @@ s32 Func_020006d0(struct Actor *self) {
   if (BYTE_AT(self, 99) == 1)
     goto near;
   other = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (Func_02000620(&self->x, &other->x) <= 11)
+  if (Position_Distance(&self->x, &other->x) <= 11)
     goto far;
   if (BYTE_AT(self, 98) == 1)
     other = Actor_GetById(15);
   else
     other = Actor_GetById(14);
-  if (Func_02000658(self, other, 18) != 0)
+  if (Actor_IsFacingNear(self, other, 18) != 0)
     goto near;
-  if (Func_02000658(self, Actor_GetById(gMainRoutineWork.currentOwner), 26) != 0)
+  if (Actor_IsFacingNear(self, Actor_GetById(gMainRoutineWork.currentOwner), 26) != 0)
     goto near;
 far:
   *state = 0;
@@ -263,7 +263,7 @@ void Func_0200096c(void) {
   Event_End();
 }
 
-DEFINE_SCENE_SHOW_ENTRANCE_LOCKED(Func_0200098c)
+DEFINE_SCENE_SHOW_ENTRANCE_LOCKED(Scene_ShowEntranceLocked)
 
 void Func_020009ac(void) {
   Event_Start();
@@ -417,10 +417,10 @@ void Func_02004294(s32 a, s32 b);
 void Func_0200429c(s32 a);
 void Func_020042a4(s32 a, s32 b);
 
-DEFINE_LEADER_IS_FACING_NORTH(Func_02000cc4)
+DEFINE_LEADER_IS_FACING_NORTH(Leader_IsFacingNorth)
 
 void Func_02000cf4(void) {
-  if (Func_02000cc4()) {
+  if (Leader_IsFacingNorth()) {
     Func_02004294(28, 13);
   } else {
     Event_Start();
@@ -435,7 +435,7 @@ void Func_02000cf4(void) {
 }
 
 void Func_02000d44(void) {
-  if (Func_02000cc4()) {
+  if (Leader_IsFacingNorth()) {
     Func_02004294(26, 18);
   } else {
     Event_Start();
@@ -450,7 +450,7 @@ void Func_02000d44(void) {
 }
 
 void Func_02000d94(void) {
-  if (Func_02000cc4()) {
+  if (Leader_IsFacingNorth()) {
     Func_02004294(27, 19);
   } else {
     Event_Start();
@@ -465,7 +465,7 @@ void Func_02000d94(void) {
 }
 
 void Func_02000de4(void) {
-  if (Func_02000cc4()) {
+  if (Leader_IsFacingNorth()) {
     Func_020042a4(12, 20);
   } else {
     Event_Start();
@@ -482,7 +482,7 @@ void Func_02000de4(void) {
 }
 
 void Func_02000e50(void) {
-  if (Func_02000cc4()) {
+  if (Leader_IsFacingNorth()) {
     Func_0200429c(28);
   } else {
     Event_Start();
@@ -1793,7 +1793,7 @@ void Func_020036f0(void) {
 }
 
 
-void Func_02000038(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
+void Palette_SetColors(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
 void Map_CenterOnFollowedPoint(void);
 
 /// Schedules Func_020036f0 and gives objects 14 and 15 their flag bytes and
@@ -1801,7 +1801,7 @@ void Map_CenterOnFollowedPoint(void);
 /// 0xa21 is set and 0x9b2 clear), places or hides object 17 by flags 0x9e7 and
 /// 0x9e6, sets flag 0x200 on entrances 1 to 4 unless flag 0x109 is set, and
 /// while flag 0x200 is set has the camera follow the leader; it ends with
-/// Func_02000038.
+/// Palette_SetColors.
 void Func_02003720(void) {
   struct Actor *object = Actor_GetById(14);
   s32 zero;
@@ -1849,7 +1849,7 @@ void Func_02003720(void) {
     Map_CenterOnFollowedPoint();
     wait(1);
   }
-  Func_02000038(gData_0200469c, gData_020046ac, gData_020046d8, gData_02004704);
+  Palette_SetColors(gData_0200469c, gData_020046ac, gData_020046d8, gData_02004704);
 }
 
 void Func_02003880(void) {
@@ -2986,7 +2986,7 @@ s32 gData_020054ec[] = {
     (s32)Func_0200096c,
     0xc403,
     (s32)0xffff0013,
-    (s32)Func_0200098c,
+    (s32)Scene_ShowEntranceLocked,
     -1,
     0,
     0,

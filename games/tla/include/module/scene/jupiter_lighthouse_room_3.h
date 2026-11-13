@@ -20,7 +20,7 @@ extern u32 gData_020029c8[];
 
 extern s32 gData_02002ce8;
 
-struct Actor *Func_02000f34(s32 *direction, s32 *slot, s32 *kind);
+struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 
 s32 Func_02002338(struct Actor *object, s32 *position);
 
@@ -36,10 +36,12 @@ extern s16 gData_02002e32;
 
 s32 Func_02002448(struct Actor *actor);
 
-/// The cells Func_020020e8 watches, and the cell it copies over the one the
+/// The cells Teleporters_Step watches, and the cell it copies over the one the
 /// leader steps on.
 extern struct CellTarget gData_02002e34;
 
 void Func_02001950(void);
+
+void PaletteCycle_StepAt(void);
 
 #endif

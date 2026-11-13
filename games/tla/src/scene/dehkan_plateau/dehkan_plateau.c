@@ -174,21 +174,21 @@ void Func_02001444(void) {
     Func_02002180();
 }
 
-void Func_02001514(s32 show, s32 first, u32 count);
+void Actors_SetHidden(s32 show, s32 first, u32 count);
 
 void Func_02001474(s32 show) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov655Room1)
-    Func_02001514(show, 13, 14);
+    Actors_SetHidden(show, 13, 14);
   else if (scene == (s32)&SceneId_Ov655Room2)
-    Func_02001514(show, 25, 13);
+    Actors_SetHidden(show, 25, 13);
   else if (scene == (s32)&SceneId_Ov655Room3)
-    Func_02001514(show, 26, 10);
+    Actors_SetHidden(show, 26, 10);
   else if (scene == (s32)&SceneId_Ov655Room4)
-    Func_02001514(show, 8, 3);
+    Actors_SetHidden(show, 8, 3);
   else if (scene == (s32)&SceneId_Ov655Room6)
-    Func_02001514(show, 10, 6);
+    Actors_SetHidden(show, 10, 6);
 }
 
 void Func_020014ec(void) {
@@ -201,7 +201,7 @@ void Func_02001500(void) {
   GameFlag_ClearBit(0x200);
 }
 
-DEFINE_ACTORS_SET_HIDDEN(Func_02001514)
+DEFINE_ACTORS_SET_HIDDEN(Actors_SetHidden)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -216,7 +216,7 @@ void Func_02001590(s32 a, s32 b) { Func_020000a4(gData_02003fb0, a, b); }
 
 void Func_020015a4(s32 a, s32 b) { Func_020000a4(gData_02003fb8, a, b); }
 
-DEFINE_ACTOR_DROP_AND_WAIT(Func_020015b8)
+DEFINE_ACTOR_DROP_AND_WAIT(Actor_DropAndWait)
 
 void Func_020015e0(void) {
   struct Actor *object = Actor_GetById(12);
@@ -226,7 +226,7 @@ void Func_020015e0(void) {
   if (x == 56 && (object->z >> 20) == 32) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Func_020015b8(object);
+    Actor_DropAndWait(object);
     Map_CopyCellAttributeRect(54, 32, 2, 1, x, 64);
     GameFlag_SetBit(0x301);
     Event_End();
@@ -245,7 +245,7 @@ void Func_02001640(void) {
     Event_ResolvePendingActions(0);
     Map_CopyCellAttributeRect(51, 7, 1, 1, x, 7);
     wait(1);
-    Func_020015b8(object);
+    Actor_DropAndWait(object);
     Map_CopyCellAttributeRect(50, 7, 1, 1, x, 7);
     GameFlag_SetBit(0x840);
     Event_End();
@@ -264,7 +264,7 @@ void Func_020016b0(void) {
     Event_ResolvePendingActions(0);
     Map_CopyCellAttributeRect(47, 12, 1, 1, x, 13);
     wait(1);
-    Func_020015b8(object);
+    Actor_DropAndWait(object);
     Map_CopyCellAttributeRect(50, 16, 1, 1, x, 13);
     Actor_SetSpritePriority(19, 2);
     Event_End();
@@ -582,7 +582,7 @@ void Func_02001ee8(void) {
   }
 }
 
-DEFINE_ACTOR_HIDE(Func_02001f38, Func_02003cc0)
+DEFINE_ACTOR_HIDE(Actor_Hide, Func_02003cc0)
 
 void Func_02001f68(void) {
   if (GameFlag_Test(0x109) != 0) {
@@ -593,30 +593,30 @@ void Func_02001f68(void) {
   }
 }
 
-DEFINE_ACTORS_FOR_RANGE(Func_02001f94, 13, Func_02001f38, 13, Func_02001f68)
+DEFINE_ACTORS_FOR_RANGE(Func_02001f94, 13, Actor_Hide, 13, Func_02001f68)
 
-DEFINE_ACTORS_FOR_RANGE(Func_02001fac, 12, Func_02001f38, 25, Func_02001f68)
+DEFINE_ACTORS_FOR_RANGE(Func_02001fac, 12, Actor_Hide, 25, Func_02001f68)
 
-DEFINE_ACTORS_FOR_RANGE(Func_02001fc4, 9, Func_02001f38, 26, Func_02001f68)
+DEFINE_ACTORS_FOR_RANGE(Func_02001fc4, 9, Actor_Hide, 26, Func_02001f68)
 
-DEFINE_ACTORS_FOR_RANGE(Func_02001fdc, 2, Func_02001f38, 8, Func_02001f68)
+DEFINE_ACTORS_FOR_RANGE(Func_02001fdc, 2, Actor_Hide, 8, Func_02001f68)
 
-DEFINE_ACTORS_FOR_RANGE(Func_02001ff4, 5, Func_02001f38, 10, Func_02001f68)
+DEFINE_ACTORS_FOR_RANGE(Func_02001ff4, 5, Actor_Hide, 10, Func_02001f68)
 
-void Func_02000e9c(struct Actor *object);
+void HeldActor_RaiseCell(struct Actor *object);
 
 void Func_0200200c(struct Actor *object) {
   s32 x;
   u8 *cell;
 
-  Func_02000e9c(object);
+  HeldActor_RaiseCell(object);
   x = object->x >> 20;
   if (x == 12) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Map_CopyCellAttributeRect(0, 32, 1, 1, x, 11);
     wait(1);
-    Func_020015b8(object);
+    Actor_DropAndWait(object);
     Map_CopyCellAttributeRect(1, 32, 1, 1, x, 11);
     Event_End();
   } else if (x == 18) {
@@ -637,7 +637,7 @@ void Func_0200200c(struct Actor *object) {
 void Func_02000d78(const void *data);
 extern const u8 gData_02003fc8[];
 
-DEFINE_SCENE_RUN_IF_HELD(Func_020020dc, Func_02003de0, Func_02003d10, Func_02000d78,
+DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Func_02003de0, Func_02003d10, Func_02000d78,
     gData_02003fc8, Func_02003de8, Func_0200200c)
 
 void Func_02002114(void) { Func_02000d78(gData_02003fc8); }

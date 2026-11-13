@@ -19,25 +19,25 @@
 void Func_02000f5c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_TELEPORTER_DROP_IN(Func_02001724, Func_02000f5c)
+DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, Func_02000f5c)
 
 extern struct CellTarget gData_02002530;
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Func_0200151c(struct CellTarget *work, struct CellTargetEntry *entry);
-void Func_0200158c(struct CellTarget *work, struct CellTargetEntry *entry);
+void Teleporter_Uncover(struct CellTarget *work, struct CellTargetEntry *entry);
+void Teleporter_Sink(struct CellTarget *work, struct CellTargetEntry *entry);
 
-DEFINE_TELEPORTERS_STEP(Func_020018bc, gData_02002530, Func_0200151c,
-    Func_0200158c)
+DEFINE_TELEPORTERS_STEP(Teleporters_Step, gData_02002530, Teleporter_Uncover,
+    Teleporter_Sink)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_0200196c, gData_02002530, Func_02001724)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gData_02002530, Teleporter_DropIn)
 
 #include "scene_tables.h"
 #include "objcmd.h"
 
 void Func_02000054(void);
 void Func_02000084(void);
-void Func_02000190(void);
+void Scene_RunOnce(void);
 
 // clang-format off
 DEFINE_G_DATA_020012A4(gData_02002068, 22)
@@ -101,8 +101,8 @@ struct Trigger gSceneEvents[] = {
     {49, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_STEP, 20, 0xa19, EVENT(Func_02000190)},
-    {TRIGGER_STEP, 21, 0xa19, EVENT(Func_020001b0)},
+    {TRIGGER_STEP, 20, 0xa19, EVENT(Scene_RunOnce)},
+    {TRIGGER_STEP, 21, 0xa19, EVENT(Scene_RunIfFlagCleared)},
     {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(Func_02000054)},
     {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(Func_02000054)},
     {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(Func_02000054)},

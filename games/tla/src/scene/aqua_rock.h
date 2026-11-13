@@ -80,7 +80,7 @@ void Import_EventSetExitRequest(s32 a);
 void Event_ResolvePendingActions(s32 a);
 void Event_NoOp(void);
 void Sound_Play(s32 cue);
-s32 Func_02002030(struct Actor *object);
+s32 Actor_EmitMist(struct Actor *object);
 
 void Func_02000468(struct Actor *object);
 void Func_020004e4(struct Actor *object);

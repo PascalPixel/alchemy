@@ -535,7 +535,7 @@ void Func_02001314(s32 a0) {
 // takes a second, shrinking step. Returns 1 while it runs. The same code as
 // overlay 67C's Func_020013bc. The first push goes through Call3 (directly, its
 // offset pointer is set after the angle's load).
-DEFINE_ORBITER_SPIRAL(Func_0200136c, Func_02001314)
+DEFINE_ORBITER_SPIRAL(Orbiter_Spiral, Func_02001314)
 
 // Moves around in a circle.
 s32 Func_0200142c(struct GaiaRockInsideOrbit *object) {
@@ -559,13 +559,13 @@ s32 Func_0200142c(struct GaiaRockInsideOrbit *object) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-DEFINE_ACTOR_AIM_AT_WATCHED(Func_020014d0)
+DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
 
-DEFINE_ACTOR_STEP_TO_WATCHED(Func_0200151c)
+DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched)
 
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 
-DEFINE_ACTOR_EMIT_BUBBLES(Func_02001548, Func_0200015c)
+DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, Func_0200015c)
 #undef BYTE_AT

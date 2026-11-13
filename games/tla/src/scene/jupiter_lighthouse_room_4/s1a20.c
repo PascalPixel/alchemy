@@ -19,10 +19,10 @@
 void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_TELEPORTER_DROP_IN(Func_02001a20, Func_02001258)
+DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, Func_02001258)
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Func_02001888(struct CellTarget *puzzle, struct CellTargetEntry *tile);
+void Teleporter_Sink(struct CellTarget *puzzle, struct CellTargetEntry *tile);
 
 s32 Func_02001bb8(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -35,7 +35,7 @@ s32 Func_02001bb8(void) {
   for (i = 0; i < puzzle->count; i++, tile++) {
     if (tile->x == x && tile->z == z) {
       if (!Event_GetFlag(tile->flag)) {
-        Func_02001818(puzzle, tile);
+        Teleporter_Uncover(puzzle, tile);
         Event_SetFlag(tile->flag);
         puzzle->current = i;
         break;
@@ -43,7 +43,7 @@ s32 Func_02001bb8(void) {
       if (i == puzzle->current)
         break;
       puzzle->current = i;
-      Func_02001888(puzzle, tile);
+      Teleporter_Sink(puzzle, tile);
       GameFlag_SetByte(puzzle->flagByte, x);
       GameFlag_SetByte(puzzle->flagByte + 8, z);
       return 1;
@@ -70,7 +70,7 @@ void Func_02001c68(s32 dx, s32 dz, s32 value) {
     shadow->x = object->x;
     shadow->z = object->z;
     Map_CenterOnFollowedPoint();
-    Func_02001a20();
+    Teleporter_DropIn();
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = value;
   }
 }

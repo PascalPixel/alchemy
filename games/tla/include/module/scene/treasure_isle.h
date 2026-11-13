@@ -64,4 +64,6 @@ extern u32 gData_020014e0[];
 
 void Func_020005ac(void);
 
+void Func_02001014(void);
+
 #endif

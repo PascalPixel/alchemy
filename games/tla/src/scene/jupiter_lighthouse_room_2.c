@@ -335,7 +335,7 @@ void Func_02000680(s32 unused, s32 id) {
       object->y += 0x20000;
       System_Wait(1);
     }
-    Func_02000b28(id);
+    Actor_RaiseFromCell(id);
     Event_SetFlag(0xa03);
   }
 }
@@ -417,28 +417,28 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellsLayered(92, 39, 2, 3, 84, 39);
     MapGrid_SetCellBehavior(168 << 17, 164 << 18, 2, 236);
   } else {
-    Func_02001498();
+    LightSprites_InitB();
     Func_020015a0(17, 0);
   }
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 6 ||
       gMainRoutineWork.entrance == 7)
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
   if (Event_GetFlag(0xa00)) {
-    Func_02000b28(8);
-    Func_02000b28(9);
-    Func_02000b28(10);
-    Func_02000b28(11);
+    Actor_RaiseFromCell(8);
+    Actor_RaiseFromCell(9);
+    Actor_RaiseFromCell(10);
+    Actor_RaiseFromCell(11);
   }
   if (Event_GetFlag(0xa03)) {
     Actor_SetPosition(12, 148 << 17, 208 << 15);
-    Func_02000b28(12);
+    Actor_RaiseFromCell(12);
   }
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
-  Func_02000aa4(0);
+  JupiterLighthouse_LoadPalettes(0);
   return 0;
 }
 
@@ -456,23 +456,23 @@ extern s32 gData_02002b34;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_02002b34 = value; }
 
-DEFINE_PALETTE_CYCLE_STEP_AT(Func_020009e8, gData_02002b34, gData_02002b38,
+DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gData_02002b34, gData_02002b38,
     gData_02002b98, 0x05000184)
 
 extern u16 gData_02002bb8[];
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_02000aa4, gData_02002b38, gData_02002b98,
-    gData_02002bb8, Func_020009e8, gData_02002bbc)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02002b38, gData_02002b98,
+    gData_02002bb8, PaletteCycle_StepAt, gData_02002bbc)
 
 void Func_0200223c();
 /* VIEW(jupiter_lighthouse_room_2): routine Func_0200230c as void Func_0200230c(); module/scene/scene.h has void Func_0200230c(s32 actor); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_2.c:525: too many arguments to function `Func_0200230c'. */
 extern void Func_0200230c__jupiter_lighthouse_room_2() __asm__("Func_0200230c");
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Func_02000b28, Func_0200223c,
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_0200223c,
     Func_0200230c__jupiter_lighthouse_room_2)
 
 #include "frame.h"
 
-DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Func_02000b7c)
+DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
-DEFINE_POSITION_FLAT_DISTANCE(Func_02000d68)
+DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)

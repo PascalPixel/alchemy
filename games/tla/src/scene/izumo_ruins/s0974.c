@@ -105,10 +105,10 @@ void Func_02000aa8(void) {
 
 s32 Func_02001528(s32 terrainId, s32 value, s32 height);
 
-DEFINE_ACTOR_SET_CELL_SHAPE_AT(Func_02000bc0, Func_02001478, Func_02001528)
+DEFINE_ACTOR_SET_CELL_SHAPE_AT(Actor_SetCellShapeAt, Func_02001478, Func_02001528)
 
 void Func_02000c4c(s32 a, s32 b) {
-  Func_02000bc0(a, b, gMainRoutineWork.currentOwner);
+  Actor_SetCellShapeAt(a, b, gMainRoutineWork.currentOwner);
 }
 
 #include "../../field/object/set_sprite_priority.c"

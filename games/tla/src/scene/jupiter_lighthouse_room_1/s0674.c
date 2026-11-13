@@ -29,10 +29,10 @@
 
 extern const s32 gData_02002234[];
 
-s32 Func_02000648(s32 *from, s32 *to);
+s32 Position_FlatDistance(s32 *from, s32 *to);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE_LOWER(Func_02000674, Func_02001bbc, Func_02000648,
+DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02001bbc, Position_FlatDistance,
     gData_02002234, Data_02002254)
 
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
@@ -40,20 +40,20 @@ void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_02000f3c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_WHIRLWIND_SPAWN(Func_02000834, Func_02001a94, Func_02000674, Func_02000f3c)
+DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Func_02001a94, Whirlwind_UpdateLower, Func_02000f3c)
 
-DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Func_0200090c, Func_02000f3c)
+DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, Func_02000f3c)
 
 void Animation_ApplyChildValues(struct PositionedActor *object, s32 value);
 
-DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(Func_020009ac)
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(JupiterLighthouse_PlaceRaisedActors)
 
 extern struct LightOam gData_020022dc[];
 
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
 /// 64 one when the big switch is set, at its animation picture and depth.
-DEFINE_LIGHT_SPRITES_DRAW(Func_02000b3c, gData_02002298, gData_020022dc,
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gData_02002298, gData_020022dc,
     gData_0200229a, gData_0200229c, gData_0200239c, gData_0200239e,
     Func_02001bb4, Func_02001a64)
 
@@ -61,16 +61,16 @@ DEFINE_LIGHT_SPRITES_DRAW(Func_02000b3c, gData_02002298, gData_020022dc,
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(Func_02000cf8, gData_0200229c, gData_02002298,
-    Func_02000b3c, gData_0200229a, gData_0200239c, gData_0200239e)
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_0200229c, gData_02002298,
+    LightSprites_Draw, gData_0200229a, gData_0200239c, gData_0200239e)
 
-DEFINE_LIGHT_SPRITES_INIT_B(Func_02000d78, gData_0200229c, gData_02002298,
-    Func_02000b3c, gData_0200229a, gData_0200239c, gData_0200239e)
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_0200229c, gData_02002298,
+    LightSprites_Draw, gData_0200229a, gData_0200239c, gData_0200239e)
 
-DEFINE_LIGHT_SPRITES_INIT_C(Func_02000df8, gData_0200229c, gData_02002298,
-    Func_02000b3c, gData_0200229a, gData_0200239c, gData_0200239e)
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_0200229c, gData_02002298,
+    LightSprites_Draw, gData_0200229a, gData_0200239c, gData_0200239e)
 
-DEFINE_LIGHT_SPRITES_ADD(Func_02000e80, gData_0200229a, gData_0200229c)
+DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gData_0200229a, gData_0200229c)
 
 void Func_02000eb0(s32 value) { gData_0200239e = value; }
 

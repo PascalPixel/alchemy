@@ -11,15 +11,15 @@ struct CellTarget;
 struct CellTargetEntry;
 struct LightOam;
 
-void Func_020012fc(void);
+void Whirlwind_CarryLeader(void);
 
-void Func_02000060(s32 value);
+void JupiterLighthouse_OpenDoor(s32 value);
 
-void Func_020000b4(void);
+void JupiterLighthouse_CloseDoor(void);
 
-void Func_02000100(void);
+void JupiterLighthouse_CheckBlockOnCell(void);
 
-void Func_02000160(void);
+void Scene_RunIfFlagCleared(void);
 
 void Func_02000184(void);
 
@@ -34,7 +34,7 @@ extern u32 gData_02003110[];
 extern u32 gData_0200314c[];
 extern u32 gData_02003188[];
 
-void Func_02001acc(s32 id, u32 mode, s32 flag, s32 layer);
+void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
 
 s32 Func_02002c1c(struct Actor *object);
 
@@ -44,8 +44,9 @@ extern s16 gData_02003700;
 
 void Func_02002aa4(struct LightOam *oam, s32 depth);
 
-void Func_02002534(struct CellTarget *table, struct CellTargetEntry *entry);
+void Teleporter_Uncover(struct CellTarget *table,
+                        struct CellTargetEntry *entry);
 
-void Func_020025a4(struct CellTarget *table, struct CellTargetEntry *entry);
+void Teleporter_Sink(struct CellTarget *table, struct CellTargetEntry *entry);
 
 #endif

@@ -556,7 +556,7 @@ extern const u8 gData_02003fc4[];
 extern const u8 gData_02003fc8[];
 extern s32 gData_02005678;
 
-void Func_02000c64(const void *data);
+void Pillars_Raise(const void *data);
 void Func_02001ee8(void);
 /* VIEW(s3284): routine Func_02003db0 as s32 Func_02003db0(void); s2c14 has s32 Func_02003db0(struct Actor *object); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:617: too few arguments to function `Func_02003db0'. */
 extern s32 Func_02003db0__s3284(void) __asm__("Func_02003db0");
@@ -603,7 +603,7 @@ void Func_02003284(void) {
   Actor_GetById(15)->priorityFlags &= ~1;
   Actor_GetById(16)->priorityFlags &= ~1;
   Actor_GetById(17)->priorityFlags &= ~1;
-  Func_02000c64(gData_02003fc8);
+  Pillars_Raise(gData_02003fc8);
   value = Actor_GetById(17)->x;
   zero = 0;
   if ((value >> 20) == 54) {

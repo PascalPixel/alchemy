@@ -10,4 +10,4 @@
 #include "actor.h"
 #include "event_inline.h"
 
-DEFINE_SCENE_CREATE_ACTOR(Func_020000d0)
+DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)

@@ -338,14 +338,14 @@
 /// Sets flag `n2` and opens the way once actor `n1` stands on cell (`n3`,
 /// `n4`).
 /// 2 copies: jupiter_lighthouse_room_1, jupiter_lighthouse_room_7.
-#define DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(name, n1, n2, n3, n4)    \
+#define DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(name, n1, n2, n3, n4, call1) \
   void name(void) {                                                            \
     struct Actor *object = Actor_Get(n1);                                      \
                                                                                \
     if (!Event_GetFlag(n2) && object->x >> 20 == n3 &&                         \
         object->z >> 20 == n4) {                                               \
       Event_SetFlag(n2);                                                       \
-      Func_02000060(1);                                                        \
+      call1(1);                                                                \
     }                                                                          \
   }
 

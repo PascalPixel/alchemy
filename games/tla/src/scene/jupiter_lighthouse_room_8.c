@@ -36,19 +36,19 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-s32 Func_02000c44(struct Probe *probe);
-void Func_02000ec8(struct Probe probe);
+s32 PushTarget_FindSlide(struct Probe *probe);
+void PushTarget_PushFill(struct Probe probe);
 
 void Func_02000054(void) {
-  if (Func_02001f60())
+  if (Teleporters_Step())
     FieldEvent_SetExitRequest(13);
 }
 
 void Func_02000068(void) {
   struct Probe probe;
 
-  if (Func_02000c44(&probe))
-    Func_02000ec8(probe);
+  if (PushTarget_FindSlide(&probe))
+    PushTarget_PushFill(probe);
 }
 
 void Func_02000090(void) {}
@@ -96,7 +96,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 
 void Func_02000af0(s32 id);
-void Func_020018f4(s32 a, s32 b, s32 c, s32 d, s32 e);
+void Teleporters_Find(s32 a, s32 b, s32 c, s32 d, s32 e);
 
 s32 Scene_Initialize(void) {
   ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
@@ -115,11 +115,11 @@ s32 Scene_Initialize(void) {
   Func_02000af0(13);
   Func_02000af0(14);
   Func_02000af0(15);
-  Func_020018f4(33, 0x280, 0x380, 0, 1);
+  Teleporters_Find(33, 0x280, 0x380, 0, 1);
   if (gMainRoutineWork.entrance == 13)
-    Func_02002010(19, 0, 0x204);
+    Teleporter_PlaceArrival(19, 0, 0x204);
   else if (gMainRoutineWork.entrance == 14)
-    Func_02002010(-20, -22, 0x204);
+    Teleporter_PlaceArrival(-20, -22, 0x204);
   return 0;
 }
 
@@ -156,28 +156,28 @@ extern s32 gData_02002a84;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_02002a84 = value; }
 
-DEFINE_PALETTE_CYCLE_STEP(Func_0200027c, gData_02002a84, gData_02002a88,
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gData_02002a84, gData_02002a88,
     gData_02002ab0)
 
 extern u16 gData_02002ad0[];
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_02000338, gData_02002a88, gData_02002ab0,
-    gData_02002ad0, Func_0200027c, gData_02002ad4)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02002a88, gData_02002ab0,
+    gData_02002ad0, PaletteCycle_Step, gData_02002ad4)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Func_020003bc, Func_020021e0, Func_020022c0)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_020021e0, Func_020022c0)
 
 #include "frame.h"
 #include "field_sprite.h"
 #include "event_work.h"
 
-DEFINE_WHIRLWIND_CARRY_LEADER(Func_02000410)
+DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
-DEFINE_POSITION_FLAT_DISTANCE(Func_020005fc)
+DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 extern const s32 gData_02002a8c[];
 
 s32 Func_020022b8(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE(Func_02000628, Func_020022b8, Func_020005fc,
+DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_020022b8, Position_FlatDistance,
     gData_02002a8c, Data_02002aac)

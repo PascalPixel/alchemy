@@ -2037,7 +2037,7 @@ void Func_020053bc(const u16 *entry) {
 }
 
 // Finds the current target's table row and shrinks it.
-DEFINE_STATUE_SINK(Func_02005428, Func_020054ac)
+DEFINE_STATUE_SINK(Statue_Sink, Func_020054ac)
 
 void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
   struct Actor *object = Actor_Get(id);

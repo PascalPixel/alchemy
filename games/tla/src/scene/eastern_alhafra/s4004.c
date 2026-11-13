@@ -56,7 +56,7 @@ void Func_02004004(void) {
 
     work->next = zero;
   }
-  StartTask(Func_02003ec4, 0x480);
+  StartTask(Particles_UpdateFalling, 0x480);
 }
 
 #include "ram_buffer.h"
@@ -66,7 +66,7 @@ void Func_02004004(void) {
 void Func_020040c0(void) {
   struct EasternAlhafraSparkWork *work = Ram_HeapSlots->menuRuntime;
 
-  FieldTask_Remove(Func_02003ec4);
+  FieldTask_Remove(Particles_UpdateFalling);
   Resource_ResetEntry(work->resource);
   HeapSlot_Release(220);
 }
@@ -142,7 +142,7 @@ static __inline__ s32 CallFunc_02004a64(struct Actor *actor,
 }
 
 /// Measures a push: finds the pushable actor ahead of the leader
-/// (Func_020043a8, recording its number and kind in the push state), then
+/// (PushTarget_FindAhead, recording its number and kind in the push state), then
 /// steps the actor's box one cell at a time along the leader's direction
 /// until a cell of it is blocked (Func_02004a64 returns 2); with at least one
 /// free step it records the end position in the push state and returns 1,
@@ -154,7 +154,7 @@ s32 Func_02004240(struct PushState *push) {
   s32 direction, kind, width, height, dx, dz, steps, i, j, offset;
   u8 *layer;
 
-  actor = Func_020043a8(&direction, &push->number, &push->kind);
+  actor = PushTarget_FindAhead(&direction, &push->number, &push->kind);
   if (actor != 0) {
     kind = push->kind;
     width = (Abs(gData_02004cb0[kind][0]) + Abs(gData_02004cb0[kind][2])) >> 4;
@@ -208,5 +208,5 @@ s32 Func_02004240(struct PushState *push) {
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
 
-DEFINE_PUSH_TARGET_FIND_AHEAD(Func_020043a8, gData_02004ca4, gData_02004cc8,
+DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gData_02004ca4, gData_02004cc8,
     gData_02004cb0)

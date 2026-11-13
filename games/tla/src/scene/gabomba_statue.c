@@ -1104,7 +1104,7 @@ void Func_020018ec(s32 show) {
 }
 
 extern const u8 gData_02005d7c[];
-void Func_02005428(const u8 *data, s32 a, s32 b);
+void Statue_Sink(const u8 *data, s32 a, s32 b);
 
 void Func_02001928(void) {
   Func_020018ec(1);
@@ -1130,7 +1130,7 @@ void Func_02001950(s32 show, s32 first, u32 count) {
 }
 
 void Func_02001990(s32 a, s32 b) {
-  Func_02005428(gData_02005d7c, a, b);
+  Statue_Sink(gData_02005d7c, a, b);
   if (Event_GetFlag(0x8ce) && Event_GetFlag(0x8cf))
     ((struct GateEventWork *)Ram_HeapSlots->eventWork)->gateTimer = 200;
 }

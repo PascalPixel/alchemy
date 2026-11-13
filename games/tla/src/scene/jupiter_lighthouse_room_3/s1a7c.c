@@ -18,15 +18,15 @@
 #include "module/scene/jupiter_lighthouse_room_3.h"
 #include "module/scene/scene.h"
 
-DEFINE_TELEPORTERS_FIND_LOWER(Func_02001a7c, gData_02002e34, Func_02001950)
+DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gData_02002e34, Func_02001950)
 
-DEFINE_LEADER_CENTER_IN_CELL(Func_02001cc0)
+DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 #include "../shared/cell_with_bit.h"
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below
 /// the table's source cell over the leader's, keeping the source column's and
-/// row's 64 bit; Func_020020e8 calls it the first time the leader steps on
+/// row's 64 bit; Teleporters_Step calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_TELEPORTER_UNCOVER(Func_02001d48, Func_02001cc0)
+DEFINE_TELEPORTER_UNCOVER(Teleporter_Uncover, Leader_CenterInCell)
 
-DEFINE_TELEPORTER_SINK_EVENT(Func_02001db8, Func_02001cc0)
+DEFINE_TELEPORTER_SINK_EVENT(Teleporter_SinkEvent, Leader_CenterInCell)

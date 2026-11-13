@@ -159,20 +159,20 @@ void Func_020003c4(void) { Func_02002400(); }
 
 void Func_020003f8(s32 value) { gData_02002cc4 = value; }
 
-DEFINE_PALETTE_CYCLE_STEP_AT(Func_02000404, gData_02002cc0, gData_02002cc4,
+DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gData_02002cc0, gData_02002cc4,
     gData_02002cec, 0x05000184)
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(Func_020004c0, gData_02002cc4, gData_02002cec,
-    gData_02002d0c, gData_02002cc0, Func_02000404, gData_02002d10)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(JupiterLighthouse_LoadPalettesZero, gData_02002cc4, gData_02002cec,
+    gData_02002d0c, gData_02002cc0, PaletteCycle_StepAt, gData_02002d10)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Func_02000544, Func_02002368, Func_02002460)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02002368, Func_02002460)
 
 #include "actor.h"
 #include "main_routine_work.h"
 #include "frame.h"
 #include "event_work.h"
 
-DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Func_02000598)
+DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
 s32 Func_02000784(s32 *a, s32 *b) {
   s32 dx = (a[0] - b[0]) >> 16;

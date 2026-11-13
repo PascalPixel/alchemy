@@ -23,7 +23,7 @@ extern s16 gData_02002306;
 
 void Func_020019fc(struct FieldEffect *effect, s32 mode);
 
-void Func_020013e4(void);
+void Leader_CenterInCell(void);
 
 extern struct CellTarget gData_02002308;
 

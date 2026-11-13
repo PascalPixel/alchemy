@@ -84,10 +84,10 @@ extern struct CellTarget gData_02003704;
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
-DEFINE_TELEPORTERS_STEP(Func_020028d4, gData_02003704, Func_02002534,
-    Func_020025a4)
+DEFINE_TELEPORTERS_STEP(Teleporters_Step, gData_02003704, Teleporter_Uncover,
+    Teleporter_Sink)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_02002984, gData_02003704, Func_0200273c)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gData_02003704, Func_0200273c)
 
 #include "scene_tables.h"
 

@@ -55,7 +55,7 @@ void Func_02000054(void) {
   SetCollisionCode(0x1300000, 0xa00000, 0, 254);
   Actor_SetPosition(14, PIXELS(504), PIXELS(168));
   if (Event_GetFlag(0xa00)) {
-    Func_02000724(14);
+    Actor_RaiseFromCell(14);
     ((u8)MapGrid_SetCellBehavior(0x1f00000, 0xa00000, 0, 254));
   }
 }
@@ -80,7 +80,7 @@ void Func_02000114(s32 unused, s32 id) {
       object->y += 0x20000;
       System_Wait(1);
     }
-    Func_02000724(id);
+    Actor_RaiseFromCell(id);
     Event_SetFlag(0xa06);
   }
 }
@@ -216,29 +216,29 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-void Func_020006a0(s32 value);
+void JupiterLighthouse_LoadPalettes(s32 value);
 
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
-  Func_020006a0(0);
+  JupiterLighthouse_LoadPalettes(0);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x40;
   if (Event_GetFlag(0xa00)) {
-    Func_02000724(8);
-    Func_02000724(9);
-    Func_02000724(10);
-    Func_02000724(11);
-    Func_02000724(12);
-    Func_02000724(13);
-    Func_02000724(16);
-    Func_02000724(17);
-    Func_02000724(18);
-    Func_02000724(19);
+    Actor_RaiseFromCell(8);
+    Actor_RaiseFromCell(9);
+    Actor_RaiseFromCell(10);
+    Actor_RaiseFromCell(11);
+    Actor_RaiseFromCell(12);
+    Actor_RaiseFromCell(13);
+    Actor_RaiseFromCell(16);
+    Actor_RaiseFromCell(17);
+    Actor_RaiseFromCell(18);
+    Actor_RaiseFromCell(19);
     Actor_Get(19)->gravity = 0x30000;
   }
   Actor_SetSingleChildFlags(Actor_Get(19), 0);
   if (Event_GetFlag(0xa06)) {
     Actor_SetPosition(15, PIXELS(168), PIXELS(520));
-    Func_02000724(15);
+    Actor_RaiseFromCell(15);
   }
   return 0;
 }
@@ -258,25 +258,25 @@ extern s32 gData_020026f0;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_020026f0 = value; }
 
-DEFINE_PALETTE_CYCLE_STEP(Func_020005e4, gData_020026f0, gData_020026f4,
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gData_020026f0, gData_020026f4,
     gData_0200271c)
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_020006a0, gData_020026f4, gData_0200271c,
-    gData_0200273c, Func_020005e4, gData_02002740)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_020026f4, gData_0200271c,
+    gData_0200273c, PaletteCycle_Step, gData_02002740)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Func_02000724, Func_02001e28, Func_02001ef8)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001e28, Func_02001ef8)
 
 #include "frame.h"
 #include "event_work.h"
 
-DEFINE_WHIRLWIND_CARRY_LEADER(Func_02000778)
+DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
-DEFINE_POSITION_FLAT_DISTANCE(Func_02000964)
+DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 extern const s32 gData_020026f8[];
 
 s32 Func_02001ee8(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE(Func_02000990, Func_02001ee8, Func_02000964,
+DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_02001ee8, Position_FlatDistance,
     gData_020026f8, gData_02002718)

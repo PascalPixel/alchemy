@@ -18,13 +18,13 @@ struct IsletsVector {
   s32 z;
 };
 
-s32 Func_02001f60(void);
+s32 Teleporters_Step(void);
 
 void Func_020022c0(s32 x, s32 z, s32 a, s32 b);
 
 void Func_02002248(s32 id);
 
-void Func_02002010(s32 x, s32 z, s32 effect);
+void Teleporter_PlaceArrival(s32 x, s32 z, s32 effect);
 
 void Func_02000068(void);
 
@@ -32,7 +32,7 @@ extern u32 gData_020027a8[];
 extern u32 gData_020027e4[];
 extern u32 gData_02002820[];
 
-struct Actor *Func_02000dac(s32 *direction, s32 *slot, s32 *kind);
+struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 
 extern u16 gData_020022d0[];
 
@@ -42,11 +42,12 @@ extern s16 gData_02002bf6;
 
 void Func_02002160(struct FieldEffect *effect, s32 mode);
 
-void Func_02001b38(void);
+void Leader_CenterInCell(void);
 
 extern struct CellTarget gData_02002bf8;
 
-void Func_02001bc0(struct CellTarget *table, struct CellTargetEntry *entry);
+void Teleporter_Uncover(struct CellTarget *table,
+                        struct CellTargetEntry *entry);
 
 extern u16 gData_020022d0[];
 

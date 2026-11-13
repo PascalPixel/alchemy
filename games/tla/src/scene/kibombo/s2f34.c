@@ -144,9 +144,9 @@ void Func_02003184(void) {
 
 #include "scene_tables.h"
 
-DEFINE_ACTOR_HIDE(Func_020031f0, Func_02005b8c)
+DEFINE_ACTOR_HIDE(Actor_Hide, Func_02005b8c)
 
-DEFINE_SCENE_RUN_UNLESS_FLAG(Func_02003220, 0x200, Func_0200057c)
+DEFINE_SCENE_RUN_UNLESS_FLAG(Scene_RunUnlessFlag, 0x200, Func_0200057c)
 
 void Func_0200324c(void) {
   u32 i;
@@ -156,13 +156,13 @@ void Func_0200324c(void) {
     s32 id = i + 15;
     struct KibomboObject *object = Actor_GetById(id);
 
-    Func_020031f0(id);
+    Actor_Hide(id);
     zero = 0;
     object->motionFlags = zero;
   }
   Actor_GetById(15)->y = PIXELS(32);
   Actor_GetById(16)->y = zero;
-  Func_02003220();
+  Scene_RunUnlessFlag();
 }
 
 void Func_02003288(void) {
@@ -172,10 +172,10 @@ void Func_02003288(void) {
     s32 id = i + 26;
     struct KibomboObject *object = Actor_GetById(id);
 
-    Func_020031f0(id);
+    Actor_Hide(id);
     object->motionFlags = 0;
   }
-  Func_02003220();
+  Scene_RunUnlessFlag();
 }
 
 /// 2 copies: kibombo/s2f34, kibombo/s2f34.
@@ -1458,7 +1458,7 @@ void Func_0200516c(void) {
   actor = Actor_GetById(29);
   actor->motionFlags = 0;
   actor->y = 0;
-  Func_020031f0(29);
+  Actor_Hide(29);
   Actor_SetSpritePriority(30, 3);
   if (GameFlag_Test(0x8fd)) {
     Actor_SetHorizontalPositionWithTerrain(26, 0, 0);

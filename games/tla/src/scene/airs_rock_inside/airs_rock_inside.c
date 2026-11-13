@@ -408,9 +408,9 @@ void Func_02000988(void) {
   Event_End();
 }
 
-DEFINE_POSITION_FLAT_DISTANCE(Func_02000cec)
+DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-DEFINE_POSITION_DISTANCE_ABOVE(Func_02000d18)
+DEFINE_POSITION_DISTANCE_ABOVE(Position_DistanceAbove)
 
 // Func_020010b4's twin for another shot: it also stops while the render mode
 // is 5, and on a cell of kind 212 it ends with one of two end scripts by its
@@ -464,11 +464,11 @@ void Func_02000d48(struct Actor *shot) {
     leaderPosition = &leader->x;
     shotPosition = &shot->x;
     if (gMainRoutineWork.renderMode == 2) {
-      if (Func_02000d18(leaderPosition, shotPosition) <= 16 &&
+      if (Position_DistanceAbove(leaderPosition, shotPosition) <= 16 &&
           leader->z >> 20 == shot->z >> 20)
         near = 1;
     } else {
-      if (Func_02000cec(leaderPosition, shotPosition) <= 8 &&
+      if (Position_FlatDistance(leaderPosition, shotPosition) <= 8 &&
           leader->y >> 20 == shot->y >> 20)
         near = 1;
     }
@@ -594,11 +594,11 @@ void Func_020010b4(struct Actor *shot) {
     leaderPosition = &leader->x;
     shotPosition = &shot->x;
     if (gMainRoutineWork.renderMode == 2) {
-      if (Func_02000d18(leaderPosition, shotPosition) <= 16 &&
+      if (Position_DistanceAbove(leaderPosition, shotPosition) <= 16 &&
           leader->z >> 20 == shot->z >> 20)
         near = 1;
     } else {
-      if (Func_02000cec(leaderPosition, shotPosition) <= 8 &&
+      if (Position_FlatDistance(leaderPosition, shotPosition) <= 8 &&
           leader->y >> 20 == shot->y >> 20)
         near = 1;
     }
@@ -719,7 +719,7 @@ void Func_02001458(struct Actor *object) {
     }
     return;
   }
-  if (Func_02000cec(&leader->x, pos = &object->x) <= 8 &&
+  if (Position_FlatDistance(&leader->x, pos = &object->x) <= 8 &&
       ((s16 *)&leader->y)[1] == ((s16 *)&object->y)[1]) {
     {
       s16 *counter = (s16 *)(work + 0x16a);
@@ -736,7 +736,7 @@ void Func_02001458(struct Actor *object) {
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room3) {
     other = Actor_GetById(8);
-    if (Func_02000cec(&other->x, pos) <= 8) {
+    if (Position_FlatDistance(&other->x, pos) <= 8) {
       object->speedLimit = -object->speedLimit >> 1;
       object->unk4c = 0;
       object->z = other->z - 0x80000;
@@ -745,7 +745,7 @@ void Func_02001458(struct Actor *object) {
     for (i = 0; i != 3; i++) {
       struct Actor *other2 = Actor_GetById(i + 12);
 #define other other2
-      if (Func_02000cec(&other->x, pos) <= 8) {
+      if (Position_FlatDistance(&other->x, pos) <= 8) {
         object->speedLimit = -object->speedLimit >> 1;
         object->unk4c = 0;
         object->z = other->z - 0x80000;

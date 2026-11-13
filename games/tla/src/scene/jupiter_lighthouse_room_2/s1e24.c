@@ -26,17 +26,17 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   Map_SetScreenShake(a, b, c);
 }
 
-DEFINE_TELEPORTER_DROP_IN(Func_02001e24, Func_0200165c)
+DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, Func_0200165c)
 
-void Func_02001c1c();
-void Func_02001c8c();
+void Teleporter_Uncover();
+void Teleporter_Sink();
 
-DEFINE_TELEPORTERS_STEP(Func_02001fbc, gData_02002ce0, Func_02001c1c,
-    Func_02001c8c)
+DEFINE_TELEPORTERS_STEP(Teleporters_Step, gData_02002ce0, Teleporter_Uncover,
+    Teleporter_Sink)
 
 #include "cell_target.h"
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_0200206c, gData_02002ce0, Func_02001e24)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gData_02002ce0, Teleporter_DropIn)
 
 #include "scene_tables.h"
 #include "objcmd.h"

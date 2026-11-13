@@ -18,7 +18,7 @@ void Func_0200101c(void);
 void Func_02001138(void);
 void Func_020011d4(void);
 void Func_02001a1c(void);
-void Func_02002f60(void);
+void Leader_SinkAway(void);
 
 extern u8 Data_020005f4[];
 extern u8 gData_02003f04[];
@@ -375,7 +375,7 @@ s32 gData_02004e48[] = {
     6,
     0xc402,
     (s32)0xffff0007,
-    (s32)Func_02002f60,
+    (s32)Leader_SinkAway,
     1,
     (s32)0xffff0008,
     8,

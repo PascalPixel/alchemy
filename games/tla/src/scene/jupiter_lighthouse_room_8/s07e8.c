@@ -19,15 +19,15 @@
 #include "module/scene/jupiter_lighthouse_room_8.h"
 
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
-void Func_02000628(struct GustObject *object);
+void Whirlwind_Update(struct GustObject *object);
 void Func_02001600(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_WHIRLWIND_SPAWN(Func_020007e8, Func_02002160, Func_02000628, Func_02001600)
+DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Func_02002160, Whirlwind_Update, Func_02001600)
 
-DEFINE_ACTOR_EMIT_RISING_SPARKS(Func_020008c0, Func_02001600)
+DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, Func_02001600)
 
-DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(Func_02000960)
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(JupiterLighthouse_PlaceRaisedActors)
 
 extern const s8 gData_020022dc[][4];
 

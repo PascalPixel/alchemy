@@ -359,8 +359,8 @@ s32 Scene_PrepareMap(void) {
 void Func_02000610(void);
 void Func_02003ed4(void);
 void Func_02003f94(void);
-void Func_02004038(void);
-void Func_02004084(void);
+void Actor_AimAtWatched(void);
+void Actor_StepToWatched(void);
 
 extern u32 gData_02005f9c[];
 extern u32 gData_02006014[];
@@ -423,8 +423,8 @@ u32 gData_02006094[] = {
 
 DEFINE_G_DATA_02003584(gData_020060b0, Func_02003ed4, 38, 17)
 
-DEFINE_G_DATA_02004014(gData_020060c0, Func_02003f94, Func_02004038,
-    Func_02004084)
+DEFINE_G_DATA_02004014(gData_020060c0, Func_02003f94, Actor_AimAtWatched,
+    Actor_StepToWatched)
 
 u32 gData_020060e0[] = {
     5, 0, 0x180000, 0, 1, 22,

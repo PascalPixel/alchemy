@@ -78,11 +78,11 @@ void Func_0200539c(void) {
 }
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Func_02005204(struct CellTarget *work, struct CellTargetEntry *entry);
+void Teleporter_SinkEvent(struct CellTarget *work, struct CellTargetEntry *entry);
 
-DEFINE_TELEPORTERS_STEP(Func_02005534, Data_02006b74, Func_02005194, Func_02005204)
+DEFINE_TELEPORTERS_STEP(Teleporters_Step, Data_02006b74, Teleporter_Uncover, Teleporter_SinkEvent)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_020055e4, Data_02006b74, Func_0200539c)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, Data_02006b74, Func_0200539c)
 
 #include "scene_tables.h"
 

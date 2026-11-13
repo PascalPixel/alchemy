@@ -8,4 +8,4 @@
 
 #include "caverns.h"
 
-DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Func_020000d0, 0x22)
+DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)

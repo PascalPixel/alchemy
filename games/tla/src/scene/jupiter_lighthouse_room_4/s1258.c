@@ -103,7 +103,7 @@ void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "scene_tables.h"
 #include "cell_target.h"
 
-DEFINE_TELEPORTERS_FIND(Func_0200154c, gData_02002864, Func_02001420)
+DEFINE_TELEPORTERS_FIND(Teleporters_Find, gData_02002864, Func_02001420)
 
 void Func_02001790(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -128,4 +128,4 @@ void Func_02001790(void) {
 /// the table's source cell over the leader's, keeping the source column's and
 /// row's 64 bit; Func_02001bb8 calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_TELEPORTER_UNCOVER(Func_02001818, Func_02001790)
+DEFINE_TELEPORTER_UNCOVER(Teleporter_Uncover, Func_02001790)

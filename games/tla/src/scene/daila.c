@@ -381,7 +381,7 @@ DEFINE_FUNC_02000924(Func_02000a5c, 16, 23, 17, 31, 0x215)
 
 void Actor_SetWideSprite(s32 actor, s32 flag);
 
-DEFINE_SCENE_RAISE_HELD_ACTOR(Func_02000a9c, Func_02000d58, gData_02000d80)
+DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, Func_02000d58, gData_02000d80)
 
 s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
@@ -987,22 +987,22 @@ s32 gData_02001664[] = {
     (s32)Func_02000a5c,
     0x1815,
     0x2160016,
-    (s32)Func_02000a9c,
+    (s32)Scene_RaiseHeldActor,
     0x1815,
     0x2170017,
-    (s32)Func_02000a9c,
+    (s32)Scene_RaiseHeldActor,
     0x1815,
     0x2180018,
-    (s32)Func_02000a9c,
+    (s32)Scene_RaiseHeldActor,
     0x1815,
     0x2190019,
-    (s32)Func_02000a9c,
+    (s32)Scene_RaiseHeldActor,
     0x1815,
     0x21a001a,
-    (s32)Func_02000a9c,
+    (s32)Scene_RaiseHeldActor,
     0x1815,
     0x21b001d,
-    (s32)Func_02000a9c,
+    (s32)Scene_RaiseHeldActor,
     0x50008805,
     0x3000064,
     (s32)Func_02000118,

@@ -28,7 +28,7 @@ void Func_0200349c(u32 index, s32 height);
 
 void Func_0200061c(struct Actor *object);
 
-void Func_02002ffc(void);
+void Leader_RiseFromWater(void);
 void Func_0200107c(s32 a, s32 b);
 void Func_02003278(void);
 void Func_020032d4(u32 first, s32 level, s32 baseLevel);

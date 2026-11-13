@@ -37,10 +37,10 @@ void Func_02000900(void);
 void Func_02000af8(void);
 void Func_02000b6c(void);
 void Func_02000cd8(void);
-void Func_0200136c(void);
+void Orbiter_Spiral(void);
 void Func_0200142c(void);
-void Func_020014d0(void);
-void Func_0200151c(void);
+void Actor_AimAtWatched(void);
+void Actor_StepToWatched(void);
 void Func_020019cc(void);
 void Func_02002974(void);
 void Func_0200485c(void);
@@ -89,13 +89,13 @@ u32 gData_02005208[] = {
 DEFINE_G_DATA_02005218(gData_02005218)
 
 s32 gData_02005234[] = {
-    SC_CALL(Func_0200136c),
+    SC_CALL(Orbiter_Spiral),
     SC_FREE,
     SC_END,
 };
 
-DEFINE_G_DATA_02005244(gData_02005244, Func_0200142c, Func_020014d0,
-    Func_0200151c)
+DEFINE_G_DATA_02005244(gData_02005244, Func_0200142c, Actor_AimAtWatched,
+    Actor_StepToWatched)
 
 DEFINE_G_DATA_02005264(gData_02005264, 24)
 

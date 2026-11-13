@@ -66,6 +66,6 @@ void Field_DispatchTypeHandler(s32 type);
 
 // ---- this overlay
 
-void Func_020000b4(s32 mode);
+void JupiterLighthouse_OpenDoor(s32 mode);
 
 #endif

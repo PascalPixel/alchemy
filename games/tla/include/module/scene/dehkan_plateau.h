@@ -25,7 +25,7 @@ void Func_020000a4(const void *data, s32 mode, s32 timer);
 
 void Func_02001474(s32 show);
 
-void Func_020015b8(struct Actor *object);
+void Actor_DropAndWait(struct Actor *object);
 void Func_0200172c(void);
 
 void Func_02003bb8(struct Actor *object);
@@ -78,7 +78,7 @@ void Func_020017a0(void);
 void Func_020017f4(void);
 
 void Func_02001a30(void);
-void Func_020020dc(void);
+void Scene_RunIfHeld(void);
 void Func_02002114(void);
 void Func_02002124(void);
 void Func_020021e8(void);
@@ -95,7 +95,7 @@ extern u32 gData_02003e9c[];
 
 void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer);
 
-void Func_02000bc0(s32 level, s32 layer, s32 owner);
+void Actor_SetCellShape(s32 level, s32 layer, s32 owner);
 
 struct Actor *Func_02003df0(void);
 
@@ -119,7 +119,7 @@ void Func_020000a4(const void *data, s32 mode, s32 timer);
 
 void Func_02001474(s32 show);
 
-void Func_020015b8(struct Actor *object);
+void Actor_DropAndWait(struct Actor *object);
 
 void Func_02003bb8(struct Actor *object);
 

@@ -96,7 +96,7 @@ void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "iwram_call.h"
 #include "cell_target.h"
 
-DEFINE_TELEPORTERS_FIND_LOWER(Func_02001388, gData_020024f8, Func_0200125c)
+DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gData_020024f8, Func_0200125c)
 
 #include "scene_ids.h"
 #include "frame.h"
@@ -111,7 +111,7 @@ struct EventWork1ac {
 void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);
 void Func_0200015c(struct Actor *object);
-void Func_020004dc(s32 mode);
+void JupiterLighthouse_LoadPalettes(s32 mode);
 
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
@@ -136,6 +136,6 @@ void Func_020015cc(void) {
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below
 /// the table's source cell over the leader's, keeping the source column's and
-/// row's 64 bit; Func_020019f4 calls it the first time the leader steps on
+/// row's 64 bit; Teleporters_Step calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_TELEPORTER_UNCOVER(Func_02001654, Func_020015cc)
+DEFINE_TELEPORTER_UNCOVER(Teleporter_Uncover, Func_020015cc)

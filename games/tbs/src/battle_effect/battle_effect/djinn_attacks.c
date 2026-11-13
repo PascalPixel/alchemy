@@ -12,33 +12,12 @@
 /// Called twice by BattleEffect_RunMercury, to lay the blue flame sheet's two
 /// pictures on their side. Writes only dst.
 void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
-  s32 y;
   s32 x;
-  s32 column;
-  s32 offset;
-  u8 *to;
-  const u8 *from;
+  s32 y;
 
-  y = 0;
-  if (h != 0) {
-    offset = 0;
-    column = h;
-    do {
-      x = 0;
-      if (w != 0) {
-        to = (u8 *)(column + (u32)dst - 1);
-        from = (const u8 *)(offset + (u32)src);
-        do {
-          x++;
-          *to = *from;
-          from++;
-          to += h;
-        } while (x != w);
-      }
-      y++;
-      offset += w;
-      column--;
-    } while (y != h);
+  for (y = 0; y != h; y++) {
+    for (x = 0; x != w; x++)
+      dst[x * h + (h - 1 - y)] = src[y * w + x];
   }
 }
 

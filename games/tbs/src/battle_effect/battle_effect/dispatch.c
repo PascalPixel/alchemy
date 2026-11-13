@@ -10,15 +10,10 @@
 /// Called only by BattleEffect_RunAnnihilation (annihilation.c), with 10000,
 /// before it releases the blitter it has just drawn with.
 void BattleEffect_CallDoNothing(s32 count) {
-  s32 callIndex;
+  s32 i;
 
-  callIndex = 0;
-  if (count != 0) {
-    do {
-      callIndex += 1;
-      BattleEffect_DoNothing();
-    } while (callIndex != count);
-  }
+  for (i = 0; i != count; i++)
+    BattleEffect_DoNothing();
 }
 
 // Two of the battle's three entry points, BattleEffect_RunSummon and
@@ -271,35 +266,26 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
   groupIndex = 0;
 
   while ((group = GetMotionRecordFar(slot->actor, groupIndex)) != NULL) {
-    // The timer's low byte, read through memory as the original does.
     if (timerSlot != TINT_KEEP) {
-      work->actorTimers[timerSlot] = ((u8 *)&timerFrames)[0];
+      work->actorTimers[timerSlot] = timerFrames;
     }
     if (slot->fading == 0) {
       if (palette != TINT_KEEP) {
         s32 partIndex;
 
-        partIndex = 0;
-        if (group->count != 0) {
-          struct SpriteAnimation **parts;
+        for (partIndex = 0; partIndex != group->count; partIndex++) {
+          // Every part but the unit's shadowEntry and animationEntry.
+          struct SpriteAnimation *part = group->entries[partIndex];
 
-          parts = group->entries;
-          do {
-            struct SpriteAnimation *part;
-
-            // Every part but the unit's shadowEntry and animationEntry.
-            part = *parts++;
-            if (part != NULL &&
-                part != (struct SpriteAnimation *)slot->shadowEntry &&
-                part != (struct SpriteAnimation *)slot->animationEntry) {
-              if (palette == SPRITE_COLOR_NORMAL)
-                part->colorMode = BattleObject_GetPaletteFar(unitId);
-              else
-                part->colorMode = palette;
-              part->picture = 0xff;
-            }
-            partIndex++;
-          } while (partIndex != group->count);
+          if (part != NULL &&
+              part != (struct SpriteAnimation *)slot->shadowEntry &&
+              part != (struct SpriteAnimation *)slot->animationEntry) {
+            if (palette == SPRITE_COLOR_NORMAL)
+              part->colorMode = BattleObject_GetPaletteFar(unitId);
+            else
+              part->colorMode = palette;
+            part->picture = 0xff;
+          }
         }
       }
       if (animation != TINT_KEEP)

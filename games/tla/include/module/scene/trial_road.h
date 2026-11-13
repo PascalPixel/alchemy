@@ -124,7 +124,7 @@ struct TrialRoadControl {
   s16 field0a;
 };
 
-s32 Func_02002cfc(void);
+s32 TrialRoad_IsMirrored(void);
 
 void Func_02000418(void);
 
@@ -208,8 +208,8 @@ s32 Func_02005870(s32 owner, s32 slot);
 
 extern s16 gData_02007734[];
 
-void Func_02002dec(void);
-void Func_0200322c(void);
+void TrialRoad_ReachPeakFirst(void);
+void TrialRoad_ReachPeakSecond(void);
 
 void Func_02000924(s32 id);
 
@@ -228,10 +228,10 @@ extern u16 gData_02007e28[];
 
 void Func_02001f08(void);
 void Func_02001754();
-void Func_02002db4(void);
-void Func_020034b4(void);
-void Func_020037c8(void);
-void Func_02003900(void);
+void TrialRoad_PlaceMoapaAtPeak(void);
+void TrialRoad_BeatMoapa(void);
+void TrialRoad_LoseToMoapa(void);
+void TrialRoad_ShowTraps(void);
 
 void Func_02001dd0(void);
 
@@ -240,7 +240,7 @@ void Func_02001eb0(void);
 extern u32 gData_02005b84[];
 s32 Func_020056e8(void);
 void Func_020056c4(s32 a);
-void Func_02002c30(u32 seed);
+void TrialRoad_DealStageOrder(u32 seed);
 
 void Func_02005828(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 

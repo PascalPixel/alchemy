@@ -69,7 +69,7 @@ s32 Func_020000fc(s32 fallback) {
 
 #include "event_inline.h"
 
-s32 Func_02000330(s32 value);
+s32 TrialRoad_OfferToGiveUp(s32 value);
 
 void Func_02000138(s32 direction) {
   struct TrialRoadState *state = gTrialRoadState;
@@ -78,7 +78,7 @@ void Func_02000138(s32 direction) {
   if ((u32)(direction - 1) <= 1) {
     if (state->field16[0] <= 0) {
       if (Event_GetFlag(2559)) {
-        if (Func_02000330(0) == 0)
+        if (TrialRoad_OfferToGiveUp(0) == 0)
           Actor_WalkByAndWait(gMainRoutineWork.currentOwner, 0, -16);
         return;
       }

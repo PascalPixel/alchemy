@@ -61,9 +61,9 @@ void Func_020017e0(void) {
   count += Event_GetFlag(0x383);
   count += Event_GetFlag(0x384);
   if (Event_GetFlag(0x385))
-    Func_02002dec();
+    TrialRoad_ReachPeakFirst();
   else
-    Func_0200322c();
+    TrialRoad_ReachPeakSecond();
   party = &gMainRoutineWork;
   party->battleRule24b = 2;
   do {
@@ -406,7 +406,9 @@ void Func_02001fc4(s32 mode) {
 
 void Func_02002db0(void);
 
-void Func_0200200c(void) {
+/// The mountain's peak: after the battle, the victory or the defeat; on
+/// arrival, Moapa and his knights wait.
+void TrialRoad_SetUpPeak(void) {
   s32 t7, t8, t10, t13, t16, p3;
 
   if (FIELD_AT(&gMainRoutineWork, s16, 482) != 4) {
@@ -414,14 +416,14 @@ void Func_0200200c(void) {
     goto L_0200a02e;
   }
   Func_02005868();
-  Func_020034b4();
+  TrialRoad_BeatMoapa();
   Import_EventSetExitRequest(4);
   goto L_0200a07c;
 L_0200a02e:
   if (p3 != 5)
     goto L_0200a042;
   Func_02005868();
-  Func_020037c8();
+  TrialRoad_LoseToMoapa();
   Import_EventSetExitRequest(5);
   goto L_0200a07c;
 L_0200a042:
@@ -439,7 +441,7 @@ L_0200a064:
   Func_02002db0();
   goto L_0200a07c;
 L_0200a078:
-  Func_02002db4();
+  TrialRoad_PlaceMoapaAtPeak();
 L_0200a07c:
   t13 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
   FIELD_AT(t13, u8, 35) = (64 | FIELD_AT(t13, u8, 35));
@@ -468,7 +470,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
       gData_02005b64__s1fc4[pattern & 7]();
     } else if (entrance == 55) {
-      Func_02003900();
+      TrialRoad_ShowTraps();
     }
   }
   if (scene == (s32)&SceneId_Ov697Room3)
@@ -477,7 +479,7 @@ s32 Scene_Initialize(void) {
     Func_02001eb0();
   if (scene == (s32)&SceneId_Ov697Room2) {
     Event_SetFlag(324);
-    Func_0200200c();
+    TrialRoad_SetUpPeak();
   }
   return 0;
 }
@@ -642,7 +644,7 @@ s32 Scene_PrepareMap(void) {
         value = 0;
         for (n = 0; n <= 13; n++)
           value += unit[n];
-        Func_02002c30(value);
+        TrialRoad_DealStageOrder(value);
         GameFlag_SetBit(896);
       }
       state->mirrored = (entrance - 1) & 1;
@@ -662,7 +664,7 @@ s32 Scene_PrepareMap(void) {
         value = 0;
         for (n = 0; n <= 13; n++)
           value += unit[n];
-        Func_02002c30(value);
+        TrialRoad_DealStageOrder(value);
         GameFlag_SetBit(896);
       }
       {
@@ -694,7 +696,7 @@ s32 Scene_PrepareMap(void) {
       value = 0;
       for (n = 0; n <= 13; n++)
         value += unit[n];
-      Func_02002c30(value);
+      TrialRoad_DealStageOrder(value);
       state->mirrored = 0;
       state->field16[0] = 0;
       state->field16[1] = 0;
@@ -857,7 +859,7 @@ extern const s8 gData_02005be0__s1fc4[4] __asm__("gData_02005be0");
 /// eight slots at the start of the stage state, again until both the even and
 /// the odd slots hold at least one of the four values in gData_02005be0; the
 /// random state is restored after.
-void Func_02002c30(u32 seed) {
+void TrialRoad_DealStageOrder(u32 seed) {
   s16 *order = (s16 *)gTrialRoadState;
   u32 saved = gRandomState;
   s32 counts[2];
@@ -896,48 +898,54 @@ s32 Func_02002ce8(s32 side) {
   return state->field16[side & 1];
 }
 
-s32 Func_02002cfc(void) { return gTrialRoadState->mirrored; }
+s32 TrialRoad_IsMirrored(void) { return gTrialRoadState->mirrored; }
 
-s32 Func_02002d08(s32 x) {
-  if (Func_02002cfc())
+/// A pixel x on the mirrored road, the right path's, when the leader took it.
+s32 TrialRoad_MirrorX(s32 x) {
+  if (TrialRoad_IsMirrored())
     return 512 - x;
   return x;
 }
 
-s32 Func_02002d20(s32 x) {
-  if (Func_02002cfc())
+/// A cell x, in pixels, on the mirrored road when the leader took it.
+s32 TrialRoad_MirrorCellX(s32 x) {
+  if (TrialRoad_IsMirrored())
     return (64 - x) << 3;
   return x << 3;
 }
 
-s32 Func_02002d38(s32 x) {
-  if (Func_02002cfc())
+s32 TrialRoad_MirrorOffset(s32 x) {
+  if (TrialRoad_IsMirrored())
     return -x << 3;
   return x << 3;
 }
 
-s32 Func_02002d50(s32 angle) {
-  if (Func_02002cfc())
+s32 TrialRoad_MirrorAngle(s32 angle) {
+  if (TrialRoad_IsMirrored())
     return (0x8000 - angle) & 0xffff;
   return angle & 0xffff;
 }
 
-void Func_02002d78(s32 id, s32 x, s32 z, s32 angle) {
+/// Places an actor at a pixel position and facing, mirrored when the leader
+/// took the right path.
+void TrialRoad_PlaceActor(s32 id, s32 x, s32 z, s32 angle) {
   Actor_SetPositionAndFacing(
-      id, Func_02002d08(x) << 16, z << 16, (u16)Func_02002d50(angle));
+      id, TrialRoad_MirrorX(x) << 16, z << 16, (u16)TrialRoad_MirrorAngle(angle));
 }
 
 void Func_02002db0(void) {}
 
-void Func_02002db4(void) {
-  Func_02002d78(8, 288, 264, 0x8000);
-  Func_02002d78(13, 296, 248, 0x8000);
-  Func_02002d78(14, 296, 280, 0x8000);
+void TrialRoad_PlaceMoapaAtPeak(void) {
+  TrialRoad_PlaceActor(8, 288, 264, 0x8000);
+  TrialRoad_PlaceActor(13, 296, 248, 0x8000);
+  TrialRoad_PlaceActor(14, 296, 280, 0x8000);
 }
 
 void Actor_MoveToObject(s32 actor, s32 value);
 
-void Func_02002dec(void) {
+/// ★ Named from the game: "You were quite swift! You may prove a challenge
+/// yet!" (MsgTrialRoadSwiftChallenge)
+void TrialRoad_ReachPeakFirst(void) {
   struct Actor *object;
 
   Event_Start();
@@ -951,23 +959,23 @@ void Func_02002dec(void) {
   Actor_SetSpeed(5, 0x10000, 0x8000);
   Actor_SetSpeed(6, 0x10000, 0x8000);
   Actor_SetSpeed(7, 0x10000, 0x8000);
-  Actor_WalkTo(4, Func_02002d20(28), 272);
-  Actor_WalkTo(7, Func_02002d20(28), 256);
-  Actor_WalkTo(5, Func_02002d20(27), 248);
-  Actor_WalkTo(6, Func_02002d20(27), 280);
+  Actor_WalkTo(4, TrialRoad_MirrorCellX(28), 272);
+  Actor_WalkTo(7, TrialRoad_MirrorCellX(28), 256);
+  Actor_WalkTo(5, TrialRoad_MirrorCellX(27), 248);
+  Actor_WalkTo(6, TrialRoad_MirrorCellX(27), 280);
   Actor_WaitForMoveById(4);
-  Actor_FaceDirection(4, Func_02002d50(0), 0);
+  Actor_FaceDirection(4, TrialRoad_MirrorAngle(0), 0);
   Actor_WaitForMoveById(7);
-  Actor_FaceDirection(7, Func_02002d50(0), 0);
+  Actor_FaceDirection(7, TrialRoad_MirrorAngle(0), 0);
   Actor_WaitForMoveById(5);
-  Actor_FaceDirection(5, Func_02002d50(0), 0);
+  Actor_FaceDirection(5, TrialRoad_MirrorAngle(0), 0);
   Actor_WaitForMoveById(6);
-  Actor_FaceDirection(6, Func_02002d50(0), 0);
+  Actor_FaceDirection(6, TrialRoad_MirrorAngle(0), 0);
   Func_02005980();
   wait(20);
   Event_PlaySound(138);
   wait(20);
-  Func_02002d78(8, 344, 296, 0xc000);
+  TrialRoad_PlaceActor(8, 344, 296, 0xc000);
   object = Actor_GetById(8);
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
@@ -986,7 +994,7 @@ void Func_02002dec(void) {
   wait(12);
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
-  FieldActor_SetMoveTarget(object, Func_02002d20(41) << 16, object->y,
+  FieldActor_SetMoveTarget(object, TrialRoad_MirrorCellX(41) << 16, object->y,
                            264 << 16);
   Actor_WaitForMove(object);
   wait(6);
@@ -994,7 +1002,7 @@ void Func_02002dec(void) {
   object->velocityY = 0x60000;
   object->speedLimit = 0x30000;
   object->acceleration = 0x20000;
-  Actor_SetMoveTarget(object, Func_02002d20(37) << 16, object->y, 264 << 16);
+  Actor_SetMoveTarget(object, TrialRoad_MirrorCellX(37) << 16, object->y, 264 << 16);
   Actor_WaitForMove(object);
   wait(6);
   Actor_MoveToObject(13, 8);
@@ -1002,15 +1010,15 @@ void Func_02002dec(void) {
   Actor_SetSpeed(8, 0x10000, 0x8000);
   Actor_SetSpeed(13, 0x10000, 0x8000);
   Actor_SetSpeed(14, 0x10000, 0x8000);
-  Actor_WalkTo(8, Func_02002d20(36), 264);
-  Actor_WalkTo(13, Func_02002d20(37), 248);
-  Actor_WalkTo(14, Func_02002d20(37), 280);
+  Actor_WalkTo(8, TrialRoad_MirrorCellX(36), 264);
+  Actor_WalkTo(13, TrialRoad_MirrorCellX(37), 248);
+  Actor_WalkTo(14, TrialRoad_MirrorCellX(37), 280);
   Actor_WaitForMoveById(8);
-  Actor_FaceDirection(8, Func_02002d50(0x8000), 0);
+  Actor_FaceDirection(8, TrialRoad_MirrorAngle(0x8000), 0);
   Actor_WaitForMoveById(13);
-  Actor_FaceDirection(13, Func_02002d50(0x8000), 0);
+  Actor_FaceDirection(13, TrialRoad_MirrorAngle(0x8000), 0);
   Actor_WaitForMoveById(14);
-  Actor_FaceDirection(14, Func_02002d50(0x8000), 0);
+  Actor_FaceDirection(14, TrialRoad_MirrorAngle(0x8000), 0);
   Event_SetMessageId((s32)MsgTrialRoadSwiftChallenge);
   FieldActor_ShowEmote(8, 256, 10);
   Event_ShowMessage(8, 0);
@@ -1030,21 +1038,23 @@ void Func_02002dec(void) {
   Actor_SetSpeed(8, 0x20000, 0x10000);
   Actor_SetSpeed(13, 0x1e666, 0xf333);
   Actor_SetSpeed(14, 0x1b333, 0xd999);
-  Actor_WalkBy(4, Func_02002d38(3), 0);
-  Actor_WalkBy(8, Func_02002d38(-3), 0);
+  Actor_WalkBy(4, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(8, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
-  Actor_WalkBy(5, Func_02002d38(3), 0);
-  Actor_WalkBy(13, Func_02002d38(-3), 0);
+  Actor_WalkBy(5, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(13, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
-  Actor_WalkBy(7, Func_02002d38(3), 0);
-  Actor_WalkBy(14, Func_02002d38(-3), 0);
+  Actor_WalkBy(7, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(14, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
-  Actor_WalkBy(6, Func_02002d38(3), 0);
+  Actor_WalkBy(6, TrialRoad_MirrorOffset(3), 0);
   wait(1);
   Event_Wait(6);
 }
 
-void Func_0200322c(void) {
+/// ★ Named from the game: "You may have been slow, but you made it through
+/// Trial Road to the mountain's peak!" (MsgTrialRoadSlowArrival)
+void TrialRoad_ReachPeakSecond(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x20000, 0x4000);
@@ -1056,18 +1066,18 @@ void Func_0200322c(void) {
   Actor_SetSpeed(5, 0x10000, 0x8000);
   Actor_SetSpeed(6, 0x10000, 0x8000);
   Actor_SetSpeed(7, 0x10000, 0x8000);
-  Actor_WalkTo(4, Func_02002d20(28), 272);
-  Actor_WalkTo(7, Func_02002d20(28), 256);
-  Actor_WalkTo(5, Func_02002d20(27), 248);
-  Actor_WalkTo(6, Func_02002d20(27), 280);
+  Actor_WalkTo(4, TrialRoad_MirrorCellX(28), 272);
+  Actor_WalkTo(7, TrialRoad_MirrorCellX(28), 256);
+  Actor_WalkTo(5, TrialRoad_MirrorCellX(27), 248);
+  Actor_WalkTo(6, TrialRoad_MirrorCellX(27), 280);
   Actor_WaitForMoveById(4);
-  Actor_FaceDirection(4, Func_02002d50(0), 0);
+  Actor_FaceDirection(4, TrialRoad_MirrorAngle(0), 0);
   Actor_WaitForMoveById(7);
-  Actor_FaceDirection(7, Func_02002d50(0), 0);
+  Actor_FaceDirection(7, TrialRoad_MirrorAngle(0), 0);
   Actor_WaitForMoveById(5);
-  Actor_FaceDirection(5, Func_02002d50(0), 0);
+  Actor_FaceDirection(5, TrialRoad_MirrorAngle(0), 0);
   Actor_WaitForMoveById(6);
-  Actor_FaceDirection(6, Func_02002d50(0), 0);
+  Actor_FaceDirection(6, TrialRoad_MirrorAngle(0), 0);
   Func_02005980();
   Event_SetMessageId((s32)MsgTrialRoadSlowArrival);
   FieldActor_ShowEmote(8, 256, 10);
@@ -1088,34 +1098,36 @@ void Func_0200322c(void) {
   Actor_SetSpeed(8, 0x20000, 0x10000);
   Actor_SetSpeed(13, 0x1e666, 0xf333);
   Actor_SetSpeed(14, 0x1b333, 0xd999);
-  Actor_WalkBy(4, Func_02002d38(3), 0);
-  Actor_WalkBy(8, Func_02002d38(-3), 0);
+  Actor_WalkBy(4, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(8, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
-  Actor_WalkBy(5, Func_02002d38(3), 0);
-  Actor_WalkBy(13, Func_02002d38(-3), 0);
+  Actor_WalkBy(5, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(13, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
-  Actor_WalkBy(7, Func_02002d38(3), 0);
-  Actor_WalkBy(14, Func_02002d38(-3), 0);
+  Actor_WalkBy(7, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(14, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
-  Actor_WalkBy(6, Func_02002d38(3), 0);
+  Actor_WalkBy(6, TrialRoad_MirrorOffset(3), 0);
   wait(1);
   Event_Wait(6);
 }
 
 void PartyInventory_Discard(s32 cue);
 
-void Func_020034b4(void) {
+/// ★ Named from the game: "All right, all right. You've proven your strength,
+/// and you are heroes indeed." (MsgTrialRoadHeroesProven)
+void TrialRoad_BeatMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Func_02002d78(4, 248, 272, 0);
-  Func_02002d78(7, 224, 248, 0);
-  Func_02002d78(5, 232, 264, 0);
-  Func_02002d78(6, 224, 280, 0);
-  Func_02002d78(9, 248, 256, 0);
-  Func_02002d78(8, 272, 264, 0x4000);
-  Func_02002d78(13, 288, 248, 0x4000);
-  Func_02002d78(14, 288, 280, 0x4000);
+  TrialRoad_PlaceActor(4, 248, 272, 0);
+  TrialRoad_PlaceActor(7, 224, 248, 0);
+  TrialRoad_PlaceActor(5, 232, 264, 0);
+  TrialRoad_PlaceActor(6, 224, 280, 0);
+  TrialRoad_PlaceActor(9, 248, 256, 0);
+  TrialRoad_PlaceActor(8, 272, 264, 0x4000);
+  TrialRoad_PlaceActor(13, 288, 248, 0x4000);
+  TrialRoad_PlaceActor(14, 288, 280, 0x4000);
   Actor_SetAnimation(8, 6);
   Actor_SetAnimation(13, 6);
   Actor_SetAnimation(14, 6);
@@ -1137,18 +1149,18 @@ void Func_020034b4(void) {
   Event_Wait(5);
   Actor_SetAnimation(8, 1);
   Event_Wait(15);
-  Actor_FaceDirection(8, Func_02002d50(0x8000), 0);
+  Actor_FaceDirection(8, TrialRoad_MirrorAngle(0x8000), 0);
   Actor_SetAnimation(13, 1);
   Event_Wait(10);
-  Actor_FaceDirection(13, Func_02002d50(0x8000), 0);
+  Actor_FaceDirection(13, TrialRoad_MirrorAngle(0x8000), 0);
   Actor_SetAnimation(14, 1);
   Event_Wait(5);
-  Actor_FaceDirection(14, Func_02002d50(0x8000), 0);
+  Actor_FaceDirection(14, TrialRoad_MirrorAngle(0x8000), 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(8, 3);
   Event_ShowMessage(8, 0);
   Actor_SetSpeed(8, 0x10000, 0x8000);
-  Actor_WalkTo(8, Func_02002d20(32), 264);
+  Actor_WalkTo(8, TrialRoad_MirrorCellX(32), 264);
   Actor_FaceEachOther(9, 7, 0);
   Actor_FaceEachOther(5, 6, 0);
   Actor_WaitForMoveById(8);
@@ -1161,7 +1173,7 @@ void Func_020034b4(void) {
   Party_GiveItem(215, 0);
   Actor_FaceActor(4, 8, 0);
   OBJECT_BYTE(Actor_GetById(8), 0x5a) &= ~1;
-  Actor_WalkToAndWait(8, Func_02002d20(35), 264);
+  Actor_WalkToAndWait(8, TrialRoad_MirrorCellX(35), 264);
   Event_Wait(1);
   /* FAKEMATCH(signature): the byte typed as a whole-byte bit-field, as in
    * overlay 685; as a plain byte, which stores in the order of a store that
@@ -1170,7 +1182,7 @@ void Func_020034b4(void) {
   Event_Wait(20);
   FieldActor_ShowEmote(8, 261, 10);
   Event_ShowMessage(8, 0);
-  Actor_FaceDirectionAndWait(8, Func_02002d50(0));
+  Actor_FaceDirectionAndWait(8, TrialRoad_MirrorAngle(0));
   Actor_FaceActor(13, 8, 0);
   Actor_FaceActor(14, 8, 0);
   Actor_SetAnimationAndWait(8, 3);
@@ -1192,17 +1204,19 @@ void Func_020034b4(void) {
   wait(30);
 }
 
-void Func_020037c8(void) {
+/// ★ Named from the game: "You've lost. Now leave Shaman village."
+/// (MsgTrialRoadLeaveVillage)
+void TrialRoad_LoseToMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Func_02002d78(8, 264, 264, 0x8000);
-  Func_02002d78(13, 280, 248, 0x8000);
-  Func_02002d78(14, 280, 280, 0x8000);
-  Func_02002d78(4, 240, 276, 0);
-  Func_02002d78(7, 216, 254, 0);
-  Func_02002d78(5, 232, 244, 0);
-  Func_02002d78(6, 224, 296, 0);
+  TrialRoad_PlaceActor(8, 264, 264, 0x8000);
+  TrialRoad_PlaceActor(13, 280, 248, 0x8000);
+  TrialRoad_PlaceActor(14, 280, 280, 0x8000);
+  TrialRoad_PlaceActor(4, 240, 276, 0);
+  TrialRoad_PlaceActor(7, 216, 254, 0);
+  TrialRoad_PlaceActor(5, 232, 244, 0);
+  TrialRoad_PlaceActor(6, 224, 296, 0);
   Actor_SetAnimation(4, 38);
   Actor_SetAnimation(5, 19);
   Actor_SetAnimation(6, 19);
@@ -1232,7 +1246,9 @@ void Func_020037c8(void) {
 /* VIEW(s1fc4): variable gData_02005dc8 as extern const u8 gData_02005dc8[]; the definition has u32 gData_02005dc8[] = { 22, 15, 0x18000, 22, 16, 0x10000, 39, 5, 4, 0xd80000, 0, 0xa80000, 1, 4, 0xe80000, 0, 0x980000, 1, 4, 0xe80000, 0, ...; tried as the definition's extern s16 gData_02005dc8[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:1370: `gData_02005dc8' undeclared (first use in this function). */
 extern const u8 gData_02005dc8__s1fc4[] __asm__("gData_02005dc8");
 
-void Func_02003900(void) {
+/// ★ Named from the game: "The room is filled with traps and snares. Use the
+/// power of Contigo to avoid them." (MsgTrialRoadTrapInstructions)
+void TrialRoad_ShowTraps(void) {
   s32 i;
 
   Event_Start();

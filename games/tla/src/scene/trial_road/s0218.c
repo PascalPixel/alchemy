@@ -27,7 +27,9 @@ DEFINE_FUNC_02000218(Func_020002a4, 28, 62, 1, 4, 38, 0)
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_02000330(void) {
+/// A step at a stage's foot asks; giving up takes the party back to the start.
+/// ★ Named from the game: "Do you want to give up?" (MsgTrialRoadGiveUpPrompt)
+s32 TrialRoad_OfferToGiveUp(void) {
   s32 t1, t2, t9, v_r5, v_r6;
 
   t1 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
@@ -68,7 +70,10 @@ L_02008400:
 
 void Func_02000418(void) { GameFlag_ClearBit(0x281); }
 
-void Func_02000428(void) {
+/// The leader reaches the door at a stage's end: the blue chests open (flags
+/// 645 and 646), the second only when the rival arrived first and twice the
+/// weight is due.
+void TrialRoad_OpenChests(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct TrialRoadState *state = gTrialRoadState;
   s32 found;
@@ -108,7 +113,7 @@ void Func_02000428(void) {
 /// others 646, and once both are clear it calls Func_02000218 with the stage
 /// state's mirrored and field16[0], plays sound 138 and sets flag 642. Then the
 /// item leaves the owner's slot.
-void Func_020004f4(s32 item, s32 owner, s32 slot) {
+void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   s32 kind = Func_020059b8(Party_GetLeaderActor());
   struct TrialRoadState *state = gTrialRoadState;
 
@@ -138,7 +143,9 @@ struct EventWork15a__s0218 {
   u16 value;
 };
 
-void Func_020005b4(s32 id) {
+/// ★ Named from the game: "Place this item in the chest?"
+/// (MsgTrialRoadPlaceItemPrompt)
+void TrialRoad_ExamineChest(s32 id) {
   s32 flag;
 
   if (id == 9 || id == 11)

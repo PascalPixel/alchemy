@@ -213,7 +213,7 @@ void Naribwe_EnterDoor(void) {
   }
   work += 0x154;
   index = *(s16 *)work;
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   index -= 4;
   MapGrid_AnimateCells(gNaribwe_Doors[index].script, gNaribwe_Doors[index].x,
                        gNaribwe_Doors[index].z);

@@ -59,7 +59,7 @@ void LemuriaEntrance_LeaveByExit3(s32 arg) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   party->ownerOverride = 0;
   Event_ClearFlag(0x960);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   party->currentOwner = 8;
   ((struct EventWorkRoute *)Ram_HeapSlots->eventWork)->route = 0x209;
   Event_FinishScreenTransition();
@@ -72,7 +72,7 @@ void LemuriaEntrance_LeaveByExit5(s32 arg) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   party->ownerOverride = 0;
   Event_SetFlag(0x960);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   party->currentOwner = 8;
   ((struct EventWorkRoute *)Ram_HeapSlots->eventWork)->route = 0x209;
   Event_FinishScreenTransition();

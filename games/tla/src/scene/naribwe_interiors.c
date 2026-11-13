@@ -269,7 +269,7 @@ read:
   PaletteFade_ApplyTarget(0x40250d, 1);
   PaletteFade_Interpolate(30);
   FieldEvent_Wait(120);
-  Event_PlaySound(11);
+  Event_PlaySound(MUS_011);
   Actor_SetAnimation(10, 5);
   Actor_WaitForAnimationChange(10);
   DANCE_TO(664);
@@ -285,11 +285,11 @@ read:
   FieldActor_Jump(10, 4, 30);
   Actor_SetAnimation(10, 5);
   Actor_SetAnimation(10, 0);
-  Event_PlaySound(11);
+  Event_PlaySound(MUS_011);
   PaletteFade_ApplyTarget(0x10000, 1);
   PaletteFade_Interpolate(30);
   Actor_SetPosition(20, 0x2a00000, 0x680000);
-  Event_PlaySound(0x90);
+  Event_PlaySound(SE_CLATTER);
   Actor_SetAnimation(20, 2);
   Actor_WaitForAnimationChange(20);
   Actor_SetPosition(20, 0, 0);
@@ -302,7 +302,7 @@ read:
   FieldEvent_Wait(30);
   Actor_ShowEmote(gMainRoutineWork.currentOwner, 258, 0);
   FieldEvent_Wait(60);
-  Event_PlaySound(10);
+  Event_PlaySound(MUS_010);
   Actor_ShowEmote(10, 0x100, 60);
   Event_ShowMessage(10, 0);
   unitData = Unit_Get(unit);

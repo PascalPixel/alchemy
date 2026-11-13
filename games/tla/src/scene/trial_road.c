@@ -115,19 +115,19 @@ void TrialRoad_TakeStairs(s32 direction) {
       state->stage[0]--;
       Import_EventSetExitRequest(direction);
     }
-    Event_PlaySound(123);
+    Event_PlaySound(SE_MAP_EXIT);
   }
   if ((u32)(direction - 3) <= 1) {
     state->stage[0]++;
     if (state->stage[0] > 3) {
       if (Event_GetFlag(2559) && TrialRoad_RivalIsAhead(0) == 0)
         Event_SetFlag(901);
-      Event_PlaySound(128);
+      Event_PlaySound(SE_STAIRS_UP);
       Exit_StartStairsUp();
       Import_EventSetExitRequest(direction + 4);
     } else {
       Import_EventSetExitRequest(direction);
-      Event_PlaySound(123);
+      Event_PlaySound(SE_MAP_EXIT);
     }
     if (state->stage[0] > state->leaderBest)
       state->leaderBest = state->stage[0];
@@ -445,7 +445,7 @@ s32 TrialRoad_OfferToGiveUp(void) {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner,
                         ((leader->x >> 20) << 4) + 8,
                         ((leader->z >> 20) << 4) + 8);
-    Event_PlaySound(229);
+    Event_PlaySound(SE_SPLASH);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
     message = (s32)&MsgTrialRoadGiveUpPrompt;
     FieldMessage_Show(message, 13);
@@ -488,7 +488,7 @@ void TrialRoad_OpenChests(void) {
   found = TrialRoad_RivalIsAhead(0);
   if (found != 0)
     Event_SetFlag(state->stage[0] + 897);
-  Event_PlaySound(124);
+  Event_PlaySound(SE_CHEST_OPEN);
   if (state->mirrored == 0) {
     Actor_SetAnimation(9, 6);
     Event_SetFlag(645);
@@ -523,7 +523,7 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   MessageArgument_Push(owner, 1);
   MessageArgument_Push(item, 2);
   FieldMessage_Show((s32)&MsgTrialRoadStoredItem, 1);
-  Event_PlaySound(125);
+  Event_PlaySound(SE_CHEST_CLOSE);
   Actor_SetAnimationAndWait(kind, 5);
   if (kind == 9 || kind == 11)
     Event_ClearFlag(645);
@@ -531,7 +531,7 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
     Event_ClearFlag(646);
   if (!Event_GetFlag(645) && !Event_GetFlag(646)) {
     TrialRoad_OpenLeaderDoor(state->mirrored, state->stage[0]);
-    Event_PlaySound(138);
+    Event_PlaySound(SE_ITEM_BREAK);
     Event_SetFlag(642);
   }
   Inventory_ClearSlot(owner, slot);
@@ -891,7 +891,7 @@ grow:
     goto grow;
   object->scaleY = 0x10000;
   TrialRoad_LowerPillar(id);
-  Event_PlaySound(138);
+  Event_PlaySound(SE_ITEM_BREAK);
   if (side != 0)
     Event_SetFlag(flag);
   else
@@ -1052,7 +1052,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   Event_Wait(6);
   object->speedLimit = 0x8000;
   object->acceleration = 0x3333;
-  Sound_Play(239);
+  Sound_Play(SE_HEAVY_MOVE);
   if (dx < 0 || dz < 0)
     mode = 3;
   Actor_SelectAnimation(object, mode);
@@ -1068,8 +1068,8 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   Actor_WaitForMove(object);
   if (toX <= 17) {
     Actor_SelectAnimation(object, 1);
-    Sound_Play(298);
-    Sound_Play(213);
+    Sound_Play(SE_298);
+    Sound_Play(SE_HEAVY_STOP);
   } else {
     Actor_SelectAnimation(object, 3);
     Actor_SetMoveTarget(object, 312 << 16, 0, z);
@@ -1084,8 +1084,8 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
 
       *flags = value;
     }
-    Sound_Play(298);
-    Sound_Play(240);
+    Sound_Play(SE_298);
+    Sound_Play(SE_LOG_FALL);
     GameFlag_Set(id + 579);
   }
   Event_Wait(15);
@@ -1321,7 +1321,7 @@ void TrialRoad_OpenSummitGate(s32 sound) {
       MapGrid_CopyCellAttributes(81, 18, 1, 1, 82, 18);
     }
     if (sound)
-      Event_PlaySound(138);
+      Event_PlaySound(SE_ITEM_BREAK);
   }
   Event_SetFlag(0x283);
 }
@@ -1620,8 +1620,8 @@ void TrialRoad_GaspFlees(void) {
                         (248 - dz) << 16);
   if (far > 15)
     return;
-  Event_PlaySound(146);
-  Event_PlaySound(122);
+  Event_PlaySound(SE_ENEMY_CRY);
+  Event_PlaySound(SE_122);
   partner->speedLimit = 0x20000;
   partner->acceleration = 0x20000;
   partner->motionFlags = 2;
@@ -1845,7 +1845,7 @@ void TrialRoad_UpdateRival(void) {
     switch (state->rivalTimer) {
     case 1:
     case 601:
-      Sound_Play(124);
+      Sound_Play(SE_CHEST_OPEN);
       if (state->mirrored != 0) {
         Actor_SetModeById(9, 6);
         if (state->rivalTimer > 600)
@@ -1857,7 +1857,7 @@ void TrialRoad_UpdateRival(void) {
       }
       break;
     case 655:
-      Sound_Play(125);
+      Sound_Play(SE_CHEST_CLOSE);
       if (state->mirrored != 0)
         Actor_SetModeById(10, 5);
       else
@@ -1869,7 +1869,7 @@ void TrialRoad_UpdateRival(void) {
       break;
     case 50:
     case 710:
-      Sound_Play(125);
+      Sound_Play(SE_CHEST_CLOSE);
       if (state->mirrored != 0)
         Actor_SetModeById(9, 5);
       else
@@ -1878,7 +1878,7 @@ void TrialRoad_UpdateRival(void) {
     case 70:
     case 730:
       TrialRoad_OpenRivalDoor(state->mirrored, state->stage[1]);
-      Sound_Play(138);
+      Sound_Play(SE_ITEM_BREAK);
       break;
     }
   }
@@ -2256,7 +2256,7 @@ void TrialRoad_ReachPeakFirst(void) {
   Actor_FaceDirection(6, TrialRoad_MirrorAngle(0), 0);
   FieldCamera_WaitForArrival();
   wait(20);
-  Event_PlaySound(138);
+  Event_PlaySound(SE_ITEM_BREAK);
   wait(20);
   TrialRoad_PlaceActor(8, 344, 296, 0xc000);
   object = Actor_GetById(8);
@@ -2281,7 +2281,7 @@ void TrialRoad_ReachPeakFirst(void) {
                            264 << 16);
   FieldActor_WaitForMove(object);
   wait(6);
-  Event_PlaySound(152);
+  Event_PlaySound(SE_JUMP);
   object->velocityY = 0x60000;
   object->speedLimit = 0x30000;
   object->acceleration = 0x20000;
@@ -2578,7 +2578,7 @@ void TrialRoad_ShowTraps(void) {
   Actor_SetModeById(13, 5);
   Actor_SetDestinationOffset(13, 0, -40);
   Actor_WaitForMoveById(13);
-  Sound_Play(103);
+  Sound_Play(SE_CURSE);
   MapGrid_SetShake(0x20000, 0x40000, 0x10000);
   Actor_GetById(13)->velocityY = 0x40000;
   MapGrid_SetShake(-1, -1, 0xe666);
@@ -2597,23 +2597,23 @@ void TrialRoad_ShowTraps(void) {
   Actor_SetSpeed(13, 0x10000, 0x8000);
   Actor_WalkByAndWait(13, -16, -16);
   Actor_FaceDirection(13, FACING_WEST, 0);
-  Sound_Play(124);
+  Sound_Play(SE_CHEST_OPEN);
   Actor_SetModeById(9, 6);
   Event_Wait(30);
   Event_ShowMessageAndWait(8, 0);
   Actor_WalkToAndWaitById(13, 200, 168);
   Actor_FaceDirection(13, FACING_NORTH, 0);
   Event_Wait(40);
-  Sound_Play(125);
+  Sound_Play(SE_CHEST_CLOSE);
   Actor_SetModeById(9, 5);
   Event_Wait(20);
-  Sound_Play(138);
+  Sound_Play(SE_ITEM_BREAK);
   MapGrid_CopyCellsLayered(127, 3, 1, 2, 48, 3);
   Map_CopyCellAttributeRect(0, 127, 1, 1, 14, 8);
   Event_Wait(20);
   Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightLeavesScript);
   Actor_RefreshSelectorById(13);
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Event_ShowMessageAndWait(8, 0);
   Actor_SetMovementTypeById(14, gTrialRoad_RightKnightToChestsScript);
   FieldCamera_MoveTo(328 << 16, -1, 120 << 16, 1);
@@ -2626,23 +2626,23 @@ void TrialRoad_ShowTraps(void) {
   Actor_SetSpeed(14, 0x10000, 0x8000);
   Actor_WalkByAndWait(14, 16, -16);
   Actor_ArmCallback(14, 0, 0);
-  Sound_Play(124);
+  Sound_Play(SE_CHEST_OPEN);
   Actor_SetModeById(11, 6);
   Actor_SetModeById(12, 6);
   Event_Wait(30);
   Actor_WalkToAndWait(14, 350, 168);
   Actor_FaceDirection(14, FACING_NORTH, 0);
   Event_Wait(40);
-  Sound_Play(125);
+  Sound_Play(SE_CHEST_CLOSE);
   Actor_SetModeById(11, 5);
   Event_Wait(40);
   Actor_WalkToAndWait(14, 364, 168);
   Actor_ArmCallback(14, FACING_NORTH, 0);
   Event_Wait(40);
-  Sound_Play(125);
+  Sound_Play(SE_CHEST_CLOSE);
   Actor_SetModeById(12, 5);
   Event_Wait(20);
-  Sound_Play(138);
+  Sound_Play(SE_ITEM_BREAK);
   MapGrid_CopyCellsLayered(127, 3, 1, 2, 53, 3);
   Map_CopyCellAttributeRect(0, 127, 1, 1, 19, 8);
   Event_Wait(30);
@@ -2696,11 +2696,11 @@ void TrialRoad_UpdateFountains(void) {
     if (actor->x == 0 && actor->z == 0)
       continue;
     if (mover->phase == mover->riseAt) {
-      Sound_Play(206);
+      Sound_Play(SE_CURSE_FALL);
       mover->speed = 4;
     }
     if (mover->phase == mover->fallAt) {
-      Sound_Play(395);
+      Sound_Play(SOUND_FADE_OUT_SE5);
       mover->speed = -8;
     }
     if (mover->speed != 0) {
@@ -2951,7 +2951,7 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
       flag = entry->flag;
       Event_Start();
       if (!Event_GetFlag(flag + 1)) {
-        Event_PlaySound(185);
+        Event_PlaySound(SE_PUSH);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         TrialRoad_SpawnRubble(0);
         wait(8);
@@ -2963,7 +2963,7 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
         wait(8);
         Actor_SetPositionAndResetMotion(object, 0, 0, 0);
         wait(2);
-        Event_PlaySound(188);
+        Event_PlaySound(SE_THUMP);
         TrialRoad_SpawnDustRing();
         wait(20);
         Event_SetFlag(flag);
@@ -3026,7 +3026,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
       Actor_SelectAnimation(partner, 1);
       TrialRoad_TakePlaceOf(partner, trap);
       wait(1);
-      Sound_Play(125);
+      Sound_Play(SE_CHEST_CLOSE);
       Actor_SetSpriteColor(Actor_GetById(8), 7);
       wait(2);
       Actor_SelectAnimation(partner, 0);
@@ -3048,7 +3048,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
         motion = &leader->motionFlags;
         wait(1);
         *motion = 0;
-        Sound_Play(185);
+        Sound_Play(SE_PUSH);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         TrialRoad_SpawnRubble(0);
         wait(8);
@@ -3064,7 +3064,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
         wait(5);
         Actor_SetPositionAndResetMotion(partner, 0, 0, 0);
         wait(2);
-        Sound_Play(188);
+        Sound_Play(SE_THUMP);
         TrialRoad_SpawnDustRing();
         wait(20);
         GameFlag_Set(second);

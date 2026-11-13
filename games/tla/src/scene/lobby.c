@@ -991,7 +991,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
   all = 0;
   if ((gInput.held & 0x248) == 0x248)
     all = 1;
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   for (;;) {
     window = Window_Create(12, 8, 6, 3, 2);
     shown = -1;
@@ -1031,9 +1031,9 @@ void LinkLobby_TakeSongRequest(s32 actor) {
       break;
     Event_PlaySound(gLinkLobby_RequestableSounds[song]);
   }
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   wait(120);
-  Event_PlaySound(0x2c5);
+  Event_PlaySound(MUS_709);
   /* FAKEMATCH(dead): the statement in a once-only block, whose end holds
    * the order around it; as the plain statement, 2 of 153 instructions differ
    * in tla-en. */

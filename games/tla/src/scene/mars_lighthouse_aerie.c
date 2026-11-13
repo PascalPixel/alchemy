@@ -431,7 +431,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetSpritePriority(19, 1);
   FieldActor_SetSpritePriority(2, 1);
   FieldActor_SetSpritePriority(3, 1);
-  Event_PlaySound(0);
+  Event_PlaySound(MUS_000);
   FieldEvent_SetMessageId((s32)MsgBetrayersYouHave);
   Event_ShowMessage(18, 0);
   t16 = gMainRoutineWork.currentOwner;
@@ -541,7 +541,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetSpeed(t112, 0xcccc, 0x6666);
   t114 = gMainRoutineWork.currentOwner;
   Actor_WalkToAndWait(t114, 0x1f8, 0x124);
-  Event_PlaySound(162);
+  Event_PlaySound(SE_162);
   FieldEvent_Wait(20);
   t118 = gMainRoutineWork.currentOwner;
   Actor_RunRepeatedMotion(t118, 2);
@@ -559,7 +559,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_MoveToAndWait(t127, 0x1f8, 0x134);
   t129 = gMainRoutineWork.currentOwner;
   Actor_RunRepeatedMotion(t129, 3);
-  Event_PlaySound(0x186);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   t132 = gMainRoutineWork.currentOwner;
   Actor_SetAttachedEffect(t132, 0x102);
   t134 = gMainRoutineWork.currentOwner;
@@ -591,7 +591,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirectionAndWait(1, 0x4000);
   Actor_SetAnimation(0, 4);
   FieldActor_SetAnimationAndWait(1, 4);
-  Event_PlaySound(36);
+  Event_PlaySound(MUS_036);
   Event_ShowMessage(18, 0);
   Actor_FaceDirection(0, 0xc000, 0);
   Actor_FaceDirectionAndWait(1, 0xc000);
@@ -768,7 +768,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(t334, 0x8000, 20);
   FieldActor_SetAnimation(18, 6);
   FieldEvent_Wait(20);
-  Event_PlaySound(142);
+  Event_PlaySound(SE_SWIRL);
   PaletteFade_ApplyTarget(0x10005, 0);
   PaletteFade_Interpolate(40);
   FieldEvent_Wait(40);
@@ -924,7 +924,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetSpeed(t482, 0x6666, 0x3333);
   t484 = work->currentOwner;
   Actor_WalkToAndWait(t484, 0x1f8, 0x134);
-  Event_PlaySound(201);
+  Event_PlaySound(SE_ASCEND);
   FieldActor_SetAnimation(18, 14);
   FieldEvent_Wait(10);
   Actor_SetSpriteColorById(18, 0x100);
@@ -967,7 +967,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   t523 = work->currentOwner;
   Actor_FaceDirection(t523, 0x8000, 40);
   Event_ShowMessage(7, 0);
-  Event_PlaySound(0x23c);
+  Event_PlaySound(SE_572);
   Actor_SetSpriteColorById(18, 0);
   t528 = Actor_Get(18);
   FieldActor_SetSpriteColor(t528, 7);
@@ -994,7 +994,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetAnimation(5, 3);
   Actor_SetAnimation(2, 3);
   FieldActor_SetAnimationAndWait(3, 3);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   FIELD_AT(actor, s32, 108) = (s32)Func_02000068;
   Actor_SetScript(18, (s32)gData_02005c70);
   PaletteFade_ApplyTarget(0x10001, 1);
@@ -1027,13 +1027,13 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_Interpolate(20);
   dispcnt = (u16 *)0x4000000;
-  Event_PlaySound(39);
+  Event_PlaySound(MUS_039);
   Actor_RunScriptAndWait(17, (s32)gData_02005cac);
   *dispcnt = *dispcnt & 0xf9ff;
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(40);
   Actor_SetSpeed(17, 0x33333, 0x3333);
-  Event_PlaySound(138);
+  Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
@@ -1042,7 +1042,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(10);
   FieldActor_WaitForMoveById(17);
-  Event_PlaySound(138);
+  Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
@@ -1051,7 +1051,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(10);
   FieldActor_WaitForMoveById(17);
-  Event_PlaySound(138);
+  Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
@@ -1061,7 +1061,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_Interpolate(10);
   FieldActor_WaitForMoveById(17);
   Actor_SetSpeed(17, 0x66666, 0x33333);
-  Event_PlaySound(138);
+  Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
@@ -1070,7 +1070,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(10);
   FieldActor_WaitForMoveById(17);
-  Event_PlaySound(138);
+  Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
@@ -1090,7 +1090,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_Interpolate(10);
   System_Wait(20);
-  Event_PlaySound(138);
+  Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
@@ -1101,14 +1101,14 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FIELD_AT(actor, s32, 72) = 0x4000;
   *unk85 = 3;
   FieldEvent_Wait(30);
-  Event_PlaySound(208);
+  Event_PlaySound(SE_BANE_ESCAPE);
   MapGrid_SetShake(0x20000, 0x40000, 0x10000);
   FieldEvent_Wait(10);
   MapGrid_SetShake(-1, -1, 0xe666);
   FieldMapGrid_WaitForShakeToSettle();
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(17, 1);
-  Event_PlaySound(148);
+  Event_PlaySound(SE_BOSS_ROAR);
   FieldEvent_Wait(80);
   Event_ShowMessage(6, 0);
   Actor_ShowEmote(7, 0x103, 0);
@@ -1227,7 +1227,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FIELD_AT(t34, s32, 436) = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySound(0x186);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_Interpolate(16);
@@ -1242,15 +1242,15 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FIELD_AT(t1, s32, 108) = (s32)Func_02001ee4;
   FIELD_AT(t2, s32, 108) = (s32)Func_02001ee4;
   FIELD_AT((spill), s32, 108) = (s32)Func_02001ee4;
-  Event_PlaySound(0x253);
+  Event_PlaySound(SE_595);
   System_Wait(10);
-  Event_PlaySound(0x253);
+  Event_PlaySound(SE_595);
   System_Wait(10);
-  Event_PlaySound(0x253);
+  Event_PlaySound(SE_595);
   System_Wait(10);
-  Event_PlaySound(0x253);
+  Event_PlaySound(SE_595);
   System_Wait(10);
-  Event_PlaySound(0x253);
+  Event_PlaySound(SE_595);
   System_Wait(40);
   *(s32 *)&gData_02006b6c = 3;
   System_Wait(30);
@@ -1268,7 +1268,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FIELD_AT(t2, s32, 108) = 0;
   FIELD_AT((spill), s32, 108) = 0;
   System_Wait(1);
-  Event_PlaySound(103);
+  Event_PlaySound(SE_CURSE);
   FieldActor_SetSpriteColor((Actor_Get(30)), 9);
   FieldActor_SetSpriteColor((Actor_Get(31)), 9);
   FieldActor_SetSpriteColor((Actor_Get(32)), 9);
@@ -1308,7 +1308,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FieldCamera_WaitForArrival();
   Actor_ShowEmote(19, 0x109, 20);
   Event_ShowMessage(19, 0);
-  Event_PlaySound(8);
+  Event_PlaySound(MUS_008);
   Actor_SetAttachedEffect(24, 0x102);
   FieldEvent_Wait(20);
   Event_ShowMessage(24, 0);
@@ -1463,7 +1463,7 @@ L_0200a47a:
   FieldEvent_Wait(40);
   Actor_SetAnimationAndWait(19, 4);
   Event_ShowMessage(19, 0);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(120);
   System_Wait(120);
@@ -1539,7 +1539,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_SetAnimation(5, 0x16);
   Event_ShowMessage(5, 0);
   FieldActor_ShowEmote(0x13, 0x109, 0);
-  Event_PlaySound(0x4e);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldCamera_SetSpeed(0x3333, 0x666);
   FieldCamera_MoveTo(PIXELS(512), -1, PIXELS(320), 1);
   FieldCamera_WaitForArrival();
@@ -1658,7 +1658,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   Event_SetFlag(0xa3d);
-  Event_PlaySound(0x1c);
+  Event_PlaySound(MUS_028);
   Actor_SetSpeed(0, 0xcccc, 0x6666);
   Actor_WalkToAndWait(0, 540, 286);
   Actor_FaceDirectionAndWait(0, FACING_SOUTHEAST);
@@ -1758,7 +1758,7 @@ void Func_02003370(void) {
 
   switch (Data_02006ccc) {
   case 0:
-    Event_PlaySound(220);
+    Event_PlaySound(SE_SHIMMER);
     MapGrid_SetShake(0x60000, 0x60000, 0x10000);
     PaletteFade_ApplyTarget(0x2063ff, 1);
     PaletteFade_Interpolate(8);
@@ -1787,7 +1787,7 @@ void Func_02003370(void) {
       Data_02006ccc++;
     } else {
       if ((gFrameCount & 7) == 0)
-        Event_PlaySound(246);
+        Event_PlaySound(SE_GLITTER);
       spawn = 1;
       anchor->y += 0x24000;
     }
@@ -1799,7 +1799,7 @@ void Func_02003370(void) {
       FieldTask_Remove(Func_02003370);
     } else {
       if ((gFrameCount & 7) == 0)
-        Event_PlaySound(246);
+        Event_PlaySound(SE_GLITTER);
       anchor->y += 0x24000;
       spawn = 1;
     }
@@ -1959,7 +1959,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   FieldActor_SetSpritePriority(25, 2);
   FieldActor_SetSpritePriority(26, 2);
   FieldActor_SetSpritePriority(27, 2);
-  Event_PlaySound(141);
+  Event_PlaySound(SE_RUMBLE);
   MapGrid_SetShake(0x10000, 0x10000, 0x10000);
   FieldActor_SetSpriteColor(((s32)Actor_Get(23)), 7);
   beam = (s32)Actor_Get(23);
@@ -1984,7 +1984,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   Actor_FaceDirection(1, 0xa000, 80);
   Actor_SetScript(23, gData_020060b4);
   Actor_SetScript(24, gData_020060b4);
-  Event_PlaySound(145);
+  Event_PlaySound(SE_CRASH);
   MapGrid_SetShake(0x60000, 0x60000, 0x10000);
   PaletteFade_ApplyTarget(0x4063ff, 0);
   PaletteFade_Interpolate(16);
@@ -1992,7 +1992,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(24);
   System_Wait(60);
-  Event_PlaySound(141);
+  Event_PlaySound(SE_RUMBLE);
   Event_SetFlag(0x200);
   A(((s32)Actor_Get(23)))->y = 0xffc80000;
   A(((s32)Actor_Get(24)))->y = 0xffe80000;
@@ -2054,13 +2054,13 @@ void MarsLighthouseAerie_LightBeacon(void) {
   PaletteFade_Interpolate(120);
   System_Wait(120);
   MapGrid_SetShake(0x10000, 0x10000, 0x10000);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   A(((s32)Actor_Get(23)))->scaleY = 0x51e;
   Actor_SetScript(24, gData_02006120);
   Actor_SetScript(25, gData_02006120);
   Actor_SetScript(26, gData_02006120);
   Actor_RunScriptAndWait(27, gData_02006120);
-  Event_PlaySound(0x186);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   FieldActor_SetSpriteColor(((s32)Actor_Get(23)), 15);
   FieldEvent_Wait(20);
   Actor_RunScriptAndWait(23, gData_02006150);
@@ -2077,7 +2077,7 @@ L_0200bcea:
   System_Wait(1);
   if ((u32)(*(s32 *)(s32)&Data_02006ccc) <= (u32)100)
     goto L_0200bcea;
-  Event_PlaySound(72);
+  Event_PlaySound(MUS_072);
   FieldEvent_Wait(120);
   Actor_ShowEmote(3, 0x109, 40);
   FieldEvent_SetMessageId((s32)MsgTheBeaconIs);
@@ -2153,7 +2153,7 @@ L_0200bcea:
   later->stepRead = later->stepRead + 1;
   FieldActor_ShowEmote(3, 0x100, 20);
   FieldEvent_ShowMessageThenWait(3, 0, 20);
-  Event_PlaySound(201);
+  Event_PlaySound(SE_ASCEND);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(20);
   System_Wait(20);
@@ -2363,8 +2363,8 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_WaitForAnimationChange(t160);
   PaletteFade_ApplyTarget(0x10004, 1);
   PaletteFade_Interpolate(40);
-  Event_PlaySound(78);
-  Event_PlaySound(141);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
+  Event_PlaySound(SE_RUMBLE);
   MapGrid_SetShake(0x10000, 0x10000, 0x10000);
   FieldEvent_Wait(20);
   t168 = *(s32 *)owner;
@@ -2382,7 +2382,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   FieldCamera_MoveTo(0x2000000, -1, 0x1200000, 1);
   FieldCamera_WaitForArrival();
   FieldTask_Remove((s32)Func_020004a4);
-  Event_PlaySound(140);
+  Event_PlaySound(SE_SPIN);
   t184 = Actor_Get(8);
   FieldActor_SetSpriteColor(t184, 12);
   t186 = Actor_Get(9);
@@ -2431,7 +2431,7 @@ L_0200c66c:
   i = (i + 1);
   if ((u32)i <= (u32)39)
     goto L_0200c66c;
-  Event_PlaySound(63);
+  Event_PlaySound(MUS_063);
   Actor_SetScript(23, (s32)gMarsLighthouseAerie_WatchGoldenSunRiseScript);
   FieldEvent_Wait(80);
   FieldActor_Jump(1, 4, 10);
@@ -2494,7 +2494,7 @@ L_0200c66c:
   FieldActor_SetSpritePriority(9, 1);
   t274 = Actor_Get(9);
   ((struct Actor *)t274)->priorityFlags &= 253;
-  Event_PlaySound(140);
+  Event_PlaySound(SE_SPIN);
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   PaletteFade_ApplyTarget(0x203210, 0);
   PaletteFade_Interpolate(40);
@@ -2542,10 +2542,10 @@ L_0200c66c:
   FieldActor_Jump(19, 2, 10);
   FieldActor_Jump(19, 4, 10);
   Event_ShowMessage(19, 0);
-  Event_PlaySound(0x12a);
-  Event_PlaySound(78);
+  Event_PlaySound(SE_298);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   System_Wait(1);
-  Event_PlaySound(140);
+  Event_PlaySound(SE_SPIN);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(20);
   System_Wait(240);
@@ -2815,7 +2815,7 @@ void Func_02005268(struct Actor *object) {
         object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
   if (((u8 *)object)[98] == 0) {
     if ((*count & 15) == 0) {
-      Event_PlaySound(0x256);
+      Event_PlaySound(SE_598);
       work->unka0[work->unka6] = 0;
       work->unka6 ^= 1;
     }

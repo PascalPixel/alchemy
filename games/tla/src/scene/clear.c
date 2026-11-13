@@ -227,7 +227,7 @@ void Func_020001f4(void) {
         gData_020024fe = 1;
         if (gData_02002410[gData_020024fa] == 0) {
           gData_020024f6 = 1;
-          Event_PlaySound(110);
+          Event_PlaySound(SE_CHIME);
         }
       } else {
         gData_020024fa = 0;
@@ -252,7 +252,7 @@ void Func_020001f4(void) {
         gData_02002500 = 1;
         if (gData_02002418[gData_020024fc] == 0) {
           gData_020024f8 = 1;
-          Event_PlaySound(110);
+          Event_PlaySound(SE_CHIME);
         }
       } else {
         gData_020024fc = 0;
@@ -365,7 +365,7 @@ s32 Scene_Initialize(void) {
     }
     Event_Wait(60);
     Event_FinishScreenTransition();
-    Sound_Play(78);
+    Sound_Play(SOUND_FADE_OUT_BGM);
     Event_Wait(300);
     Event_SetDestination((s32)&SceneId_Title, 1);
     return 0;
@@ -620,7 +620,7 @@ again:
 finish:
   ((struct EventWork *)Ram_HeapSlots->eventWork)->countdown = 999;
   Event_Wait(30);
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(60);
@@ -771,7 +771,7 @@ scan:
 poll:
   if (!(gInput.pressed & 2))
     goto scan;
-  Event_PlaySound(113);
+  Event_PlaySound(SE_MENU_CANCEL);
   goto close;
 receive:
   System_Wait(10);
@@ -1019,7 +1019,7 @@ s32 Func_02000e44(void) {
   mode = IconMenu_ChooseSendOption(1);
   if (mode == -1)
     return -1;
-  Sound_Play(71);
+  Sound_Play(MUS_071);
   cursor = 0;
   column = 0;
   row = 0;
@@ -1086,7 +1086,7 @@ s32 Func_02000e44(void) {
     Func_02000db4(window, drawColumn, drawRow, drawMode, height, 15);
     if (state == 0) {
       if (gInput.repeat & 16) {
-        Sound_Play(111);
+        Sound_Play(SE_MENU_CURSOR_MOVE);
         {
           s32 next = column + 1;
 
@@ -1097,20 +1097,20 @@ s32 Func_02000e44(void) {
         }
       }
       if (gInput.repeat & 32) {
-        Sound_Play(111);
+        Sound_Play(SE_MENU_CURSOR_MOVE);
         if (row == 2)
           column = (column + SIDE_COLUMN - 1) % SIDE_COLUMN;
         else
           column = (column + SIDE_COLUMN) % (SIDE_COLUMN + 1);
       }
       if (gInput.repeat & 128) {
-        Sound_Play(111);
+        Sound_Play(SE_MENU_CURSOR_MOVE);
         row = (row + 1) % 4;
         if (column == SIDE_COLUMN && row == 2)
           row = 3;
       }
       if (gInput.repeat & 64) {
-        Sound_Play(111);
+        Sound_Play(SE_MENU_CURSOR_MOVE);
         row = (row + 3) % 4;
         if (column != SIDE_COLUMN)
           goto not_side;
@@ -1199,7 +1199,7 @@ s32 Func_02000e44(void) {
           s32 code = gData_0200265e[column + row * SIDE_COLUMN];
 
           if (code <= 63) {
-            Sound_Play(112);
+            Sound_Play(SE_MENU_CONFIRM);
             Data_0200274a[cursor] = code;
             // The native calls the remainder and reads nothing back.
             __modsi3(cursor, 10);
@@ -1231,12 +1231,12 @@ s32 Func_02000e44(void) {
           if (DECODED_PASSWORD[size2] == (u16)crc >> 8 &&
               DECODED_PASSWORD[action - 1] == (u16)crc % 256) {
             Text_DrawMessageAsTiles(MSGNO(MsgFieldPasswordAccepted), box, 0, 0);
-            Sound_Play(112);
+            Sound_Play(SE_MENU_CONFIRM);
           wait_accepted:
             System_Wait(1);
             if (!(gInput.pressed & 1))
               goto wait_accepted;
-            Sound_Play(112);
+            Sound_Play(SE_MENU_CONFIRM);
             MainRoutineWork_InitializeDefaults();
             party = &gMainRoutineWork;
             party->currentOwner = 0;
@@ -1253,14 +1253,14 @@ s32 Func_02000e44(void) {
             Window_Close(grid, 2);
             Window_Close(window, 2);
             WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
-            Sound_Play(74);
+            Sound_Play(MUS_074);
             System_Wait(6);
             NameEntry_EditMemberName(0);
             StatusScreen_Run();
             Iwram_CopyWords(Data_02012f94 + 0xac, gGameFlagBytes, 0xf40);
             return 0;
           }
-          Sound_Play(113);
+          Sound_Play(SE_MENU_CANCEL);
           Text_DrawMessageAsTiles(MSGNO(MsgFieldInvalidPassword), box, 0, 0);
         wait_rejected:
           System_Wait(1);
@@ -1271,23 +1271,23 @@ s32 Func_02000e44(void) {
           DRAW_TITLE(window)
         } else if (gInput.repeat & 512 || action == 2) {
           if (cursor > 0) {
-            Sound_Play(111);
+            Sound_Play(SE_MENU_CURSOR_MOVE);
             cursor--;
           }
         } else if (gInput.repeat & 256 || action == 1) {
           if (cursor < length - 1) {
-            Sound_Play(111);
+            Sound_Play(SE_MENU_CURSOR_MOVE);
             cursor++;
           }
         } else if (gInput.pressed & 2) {
           if (cursor > 0) {
-            Sound_Play(111);
+            Sound_Play(SE_MENU_CURSOR_MOVE);
             cursor--;
           } else {
-            Sound_Play(113);
+            Sound_Play(SE_MENU_CANCEL);
             Window_Close(grid, 2);
             Window_Close(window, 2);
-            Sound_Play(74);
+            Sound_Play(MUS_074);
             return -1;
           }
         }

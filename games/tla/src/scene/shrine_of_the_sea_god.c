@@ -11,6 +11,7 @@
 #include "../field/field_effect/spawn.c"
 
 #include "types.h"
+#include "sounds.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 
@@ -459,7 +460,7 @@ void ShrineOfTheSeaGod_UseSeaGodsTear(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   FieldCamera_MoveWithinMapBounds(248 << 16, -1, 168 << 16, 1);
   FieldCamera_WaitForArrival();
-  Sound_Play(244);
+  Sound_Play(SE_SANDSTORM);
   Io_Write16(BLEND_ALPHA(1, 16), &REG_BLDALPHA);
   wait(10);
   Io_Write16(BLEND_ALPHA(2, 16), &REG_BLDALPHA);
@@ -612,7 +613,7 @@ void Func_02000994(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
-  Sound_Play(245);
+  Sound_Play(SE_245);
   i = 0;
   do {
     i++;
@@ -648,7 +649,7 @@ void Func_02000994(void) {
   Call3((void (*)())MapGrid_SetScreenShake, 0, 0x10000, 0x10000);
   Io_Write16(0x1004, &REG_BLDALPHA);
   wait(10);
-  Sound_Play(390);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
   Io_Write16(0x1003, &REG_BLDALPHA);
   wait(10);
@@ -690,7 +691,7 @@ void Func_02000ce8(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(244);
+  Sound_Play(SE_SANDSTORM);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
   FieldCamera_MoveWithinMapBounds(172 << 17, -1, 248 << 16, 0);
   ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
@@ -724,8 +725,8 @@ loop:
   wait(frames);
   if (i <= 99)
     goto loop;
-  Sound_Play(288);
-  Sound_Play(390);
+  Sound_Play(SE_288);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetScreenShake(0, 0, 0);
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 521;
@@ -755,7 +756,7 @@ void Func_02000e38(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   object->motionFlags = 0;
-  Sound_Play(245);
+  Sound_Play(SE_245);
   Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
   // A goto loop: the bytes reload the step on every pass, and a for loop
   // hoists it (differ 30).
@@ -825,7 +826,7 @@ void Func_02001010(struct ShrineOfTheSeaGodObject *object) {
   do {
     wait(1);
   } while (object->speed != 0);
-  Sound_Play(188);
+  Sound_Play(SE_THUMP);
   wait(10);
   object->motionFlags = 0;
 }
@@ -992,7 +993,7 @@ void Func_02001340(struct ShrineOfTheSeaGodObject *object,
   u32 i;
 
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 258);
-  Sound_Play(210);
+  Sound_Play(SE_HIDDEN_PASSAGE_OPEN);
   object->motionFlags = 0;
   for (n = 0; n <= 1; n++) {
     other->y -= 0x10000;
@@ -1060,7 +1061,7 @@ void Func_02001474(void) {
   do
     wait(1);
   while (*(s32 *)((u8 *)leader + 40) != 0);
-  Sound_Play(227);
+  Sound_Play(SE_TOPPLE);
   Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x20000, 0x10000);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
@@ -1107,7 +1108,7 @@ void Func_02001658(struct ShrineOfTheSeaGodObject *object, s32 base) {
   do {
     wait(1);
   } while (object->speed != 0);
-  Sound_Play(240);
+  Sound_Play(SE_LOG_FALL);
   Actor_SetSpritePriority(base + 21, 3);
   Actor_SetSpritePriority(base + 22, 3);
   Actor_SetPositionAndResetMotion(Actor_GetById(base + 21), object->x, 0,
@@ -1153,7 +1154,7 @@ void Func_020016d8(void) {
   ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 321, 400);
   ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 321, 480);
   Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 321, 536);
-  Sound_Play(161);
+  Sound_Play(SE_RATTLE);
   Actor_SetSpritePriority(9, 2);
   Actor_GetById(9)->priorityFlags |= 2;
   Actor_SetSpritePriority(11, 2);
@@ -1188,7 +1189,7 @@ void Func_020018bc(void) {
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x9999, 0x1999);
   Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 406, 360);
   Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 400, 392);
-  Sound_Play(161);
+  Sound_Play(SE_RATTLE);
   Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
   Task_Remove(Func_020018ac);
@@ -1647,7 +1648,7 @@ DEFINE_FUNC_020027F8(Func_020027f8, 392, 216, 1)
     } else {                                                                   \
       Event_Wait(5);                                                           \
       FieldCamera_MoveWithinMapBounds(n4 << 16, 16 << 16, 216 << 16, 1);       \
-      Sound_Play(153);                                                         \
+      Sound_Play(SE_HIGH_JUMP);                                                \
       Actor_SetSpriteFlags(Actor_GetById(14), 0);                              \
       ShrineOfTheSeaGod_ObjSpeed(14, 0x4cccc, 0x26666);                        \
       block->speed = 0x80000;                                                  \
@@ -1703,7 +1704,7 @@ DEFINE_FUNC_020027F8(Func_02002b18, 392, 296, 0)
       GameFlag_Set(0x206);                                                     \
     } else {                                                                   \
       FieldCamera_MoveWithinMapBounds(n3 << 16, 16 << 16, 216 << 16, 1);       \
-      Sound_Play(153);                                                         \
+      Sound_Play(SE_HIGH_JUMP);                                                \
       Actor_SetSpriteFlags(Actor_GetById(14), 0);                              \
       ShrineOfTheSeaGod_ObjSpeed(14, 0x4cccc, 0x26666);                        \
       block->speed = 0x80000;                                                  \

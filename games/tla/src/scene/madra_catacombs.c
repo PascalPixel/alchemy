@@ -279,7 +279,7 @@ void MadraCatacombs_UnlockWithRuinKey(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_PlaySound(183);
+  Event_PlaySound(SE_STONE_RUMBLE);
   for (i = 0; i < 120; i++) {
     left->x += -0x1999;
     /* FAKEMATCH(signature): read and written as long, another alias set than
@@ -293,25 +293,25 @@ void MadraCatacombs_UnlockWithRuinKey(void) {
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(0x6666, 0xccc);
   FieldCamera_MoveTo(PIXELS(160), -1, PIXELS(186), 1);
-  Event_PlaySound(168);
+  Event_PlaySound(SE_168);
   Actor_SetPosition(14, PIXELS(136), PIXELS(258));
   Actor_SetPosition(19, PIXELS(184), PIXELS(258));
   Actor_SetScript(14, gMadraCatacombs_FlameFlaresUp);
   Actor_SetScript(19, gMadraCatacombs_FlameFlaresUp);
   Event_Wait(40);
-  Event_PlaySound(168);
+  Event_PlaySound(SE_168);
   Actor_SetPosition(13, PIXELS(120), PIXELS(226));
   Actor_SetPosition(18, PIXELS(200), PIXELS(226));
   Actor_SetScript(13, gMadraCatacombs_FlameFlaresUp);
   Actor_SetScript(18, gMadraCatacombs_FlameFlaresUp);
   Event_Wait(40);
-  Event_PlaySound(168);
+  Event_PlaySound(SE_168);
   Actor_SetPosition(12, PIXELS(120), PIXELS(194));
   Actor_SetPosition(17, PIXELS(200), PIXELS(194));
   Actor_SetScript(12, gMadraCatacombs_FlameFlaresUp);
   Actor_SetScript(17, gMadraCatacombs_FlameFlaresUp);
   Event_Wait(60);
-  Event_PlaySound(229);
+  Event_PlaySound(SE_SPLASH);
   Actor_SetPosition(11, PIXELS(136), PIXELS(162));
   Actor_SetPosition(16, PIXELS(184), PIXELS(162));
   Actor_SetPosition(10, PIXELS(136), PIXELS(138));
@@ -362,10 +362,10 @@ void MadraCatacombs_HearEyesOfTruth(void) {
   if (Event_GetFlag(0x203) != 0 && Event_GetFlag(0x8cb) == 0) {
     Event_Start();
     Event_ResolvePendingActions(1);
-    Event_PlaySound(161);
+    Event_PlaySound(SE_RATTLE);
     MapGrid_CopyCellsTo(72, 63, 36, 38, 1, 2);
     Event_Wait(40);
-    Event_PlaySound(188);
+    Event_PlaySound(SE_THUMP);
     MapGrid_CopyCellsTo(71, 66, 97, 39, 2, 2);
     wait(2);
     MapGrid_CopyCellsTo(73, 66, 97, 39, 2, 2);
@@ -395,7 +395,7 @@ void MadraCatacombs_ShakeBookshelf(void) {
     if (x < (186 << 16)) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      Event_PlaySound(204);
+      Event_PlaySound(SE_DUST_PUFF);
       object->motionFlags = 3;
       wait(10);
       Actor_SetPosition(64, 0, 0);
@@ -475,7 +475,7 @@ void MadraCatacombs_RockChestWithBookshelf(void) {
 
   animation->frame = ((struct AnimationRecord18 *)lever->sprite)->frame;
   if (Event_GetFlag(0x204) != 0 && animation->frame == 0) {
-    Event_PlaySound(0x217);
+    Event_PlaySound(SE_535);
     rock->x += PIXELS(-2);
     rock->velocityY = PIXELS(2);
     Event_ClearFlag(0x204);
@@ -505,7 +505,7 @@ void MadraCatacombs_EnterDoorway(void) {
   object->facing = FACING_NORTH;
   Actor_SetScript(party->currentOwner, gMadraCatacombs_WalkIntoDoorway);
   wait(12);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(work->returnEntrance);
@@ -520,9 +520,9 @@ void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 mode,
   Event_Start();
   Event_ResolvePendingActions(0);
   if (mode == 2)
-    Event_PlaySound(188);
+    Event_PlaySound(SE_THUMP);
   else
-    Event_PlaySound(158);
+    Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(a, b, c, d, mode, f);
   Event_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
@@ -537,7 +537,7 @@ void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 mode,
   Actor_SetScript(gMainRoutineWork.currentOwner,
                   gMadraCatacombs_WalkIntoDoorway);
   wait(12);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(work->returnEntrance);

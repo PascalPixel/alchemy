@@ -121,8 +121,8 @@ void Func_02000184(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(26);
-  Sound_Play(212);
+  Sound_Play(MUS_026);
+  Sound_Play(SE_POWER_UP);
   Actor_SetModeById(8, 3);
   PaletteFade_ApplySource(0x10000, 2);
   PaletteFade_ApplyTarget(0x10000, 2);
@@ -130,7 +130,7 @@ void Func_02000184(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x403108, 1);
   PaletteFade_StartInterpolation(40);
   wait(40);
-  Sound_Play(197);
+  Sound_Play(SE_197);
   wait(1);
   if (gData_02002058 != 0) {
     i = 0;
@@ -178,7 +178,7 @@ void Func_02000184(void) {
   wait(1);
   Actor_MoveToObject(14, 10);
   Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
-  Sound_Play(110);
+  Sound_Play(SE_CHIME);
   Actor_SetModeById(14, 5);
   Event_Wait(60);
   Event_Wait(20);
@@ -186,7 +186,7 @@ void Func_02000184(void) {
   Actor_SetModeById(8, 1);
   Event_Wait(40);
   Actor_SetModeById(8, 3);
-  Sound_Play(110);
+  Sound_Play(SE_CHIME);
   Actor_SetModeById(14, 6);
   Event_Wait(60);
   Actor_SetModeById(14, 1);
@@ -280,8 +280,8 @@ void Func_02000184(void) {
   Actor_SetModeById(9, 4);
   Event_ShowMessageAndWait(9, 0);
   Func_02000100();
-  Sound_Play(0);
-  Sound_Play(220);
+  Sound_Play(MUS_000);
+  Sound_Play(SE_SHIMMER);
   Actor_SetModeById(8, 3);
   Actor_SetSpriteColor(((s32)Actor_GetById(13)), 7);
   Actor_SetPosition(13, 0x1a80000, 0x680000);
@@ -301,9 +301,9 @@ void Func_02000184(void) {
   wait(20);
   gData_02002058->motionFlags = 3;
   Event_Wait(10);
-  Sound_Play(309);
+  Sound_Play(SE_STAR_BOUNCE);
   Event_Wait(40);
-  Sound_Play(25);
+  Sound_Play(MUS_025);
   Event_Wait(40);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x2000, 0);
   Actor_FaceDirectionAndWait(9, 0xb000);
@@ -404,7 +404,7 @@ void Func_02000a98(s32 x, s32 z) {
   Actor_SetMoveTarget(object, x << 16, PIXELS(-12), z << 16);
   Actor_WaitForMove(object);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(work->exit);
@@ -463,7 +463,7 @@ void Func_02000be8(void) {
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 328, 184);
   Event_Wait(20);
-  Sound_Play(308);
+  Sound_Play(SE_MATERIALIZE);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   for (; i != 0; i--) {
     if (i >= 33 && i < 96) {
@@ -478,9 +478,9 @@ void Func_02000be8(void) {
     wait(1);
   }
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-  Sound_Play(298);
+  Sound_Play(SE_298);
   wait(1);
-  Sound_Play(125);
+  Sound_Play(SE_CHEST_CLOSE);
   Event_Wait(20);
   GameFlag_Set(0x206);
   Event_End();
@@ -499,7 +499,7 @@ void Func_02000d3c(void) {
   Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 0, -8);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0x4000);
-  Sound_Play(308);
+  Sound_Play(SE_MATERIALIZE);
   step = 1;
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   for (i = 0; i <= 351; i++) {
@@ -515,9 +515,9 @@ void Func_02000d3c(void) {
     wait(1);
   }
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-  Sound_Play(298);
+  Sound_Play(SE_298);
   wait(1);
-  Sound_Play(125);
+  Sound_Play(SE_CHEST_CLOSE);
   Event_Wait(20);
   Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 1;
   GameFlag_Set(0x206);
@@ -669,7 +669,7 @@ void Func_020010d4(void) {
   Event_ShowMessageAndWait(5, 0);
   FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), PIXELS(392), 0,
                                        PIXELS(340));
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   BattleEffect_ApplyColorToTargetBuffer(0x10002, 0);
   PaletteFade_StartInterpolation(40);
   wait(40);
@@ -727,7 +727,7 @@ void Func_020010d4(void) {
   Actor_FaceDirectionAndWait(11, FACING_SOUTHEAST + FACING_STEP);
   Event_ShowMessageAndWait(0x400b, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
-  Sound_Play(0);
+  Sound_Play(MUS_000);
   {
     s32 turn = 0xd000;
     Actor_SetHorizontalPositionAndAngleWithTerrain(12, PIXELS(400), PIXELS(320),
@@ -849,10 +849,10 @@ void Func_02001710(void) {
   Actor_FaceDirection(6, facing, 0);
   Actor_SetSpeed(12, 0xcccc, 0x6666);
   Actor_WalkToAndWait(12, 0x188, 168);
-  Event_PlaySound(210);
+  Event_PlaySound(SE_HIDDEN_PASSAGE_OPEN);
   Func_02000f00();
   FieldEvent_Wait(40);
-  Event_PlaySound(185);
+  Event_PlaySound(SE_PUSH);
   {
     struct Actor *guard = Actor_GetById(8);
 

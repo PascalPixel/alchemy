@@ -385,7 +385,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_Jump(4, 6, 23);
   Event_Wait(15);
   Actor_ShowEmoteById(9, 265, 70);
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   BattleEffect_ApplyColorToSourceBuffer(0x10002, 0);
   BattleEffect_ApplyColorToTargetBuffer(0, 0);
   PaletteFade_StartInterpolation(60);
@@ -410,7 +410,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_FaceDirection(8, FACING_NORTHWEST, 0);
   Event_Wait(10);
   Event_ShowMessageThenWait(8, 0, 20);
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Actor_SetPosition(11, PIXELS(344), PIXELS(176));
   Actor_WalkByAndWait(11, 0, -16);
   Event_ShowMessageThenWait(11, 0, 10);
@@ -434,7 +434,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_Wait(20);
   Actor_ShowEmote(11, 259, 30);
   Event_ShowMessageThenWait(11, 0, 10);
-  Sound_Play(49);
+  Sound_Play(MUS_049);
   Actor_ShowEmoteById(13, 0x100, 0);
   Actor_ShowEmoteById(4, 0x100, 0);
   Actor_ShowEmoteById(7, 0x100, 0);
@@ -573,7 +573,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_ArmCallback(9, 0xd000, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(9, 0, 10);
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Actor_ArmCallback(8, 0x5000, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(8, 3);

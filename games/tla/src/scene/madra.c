@@ -105,7 +105,7 @@ next:
     goto next;
   trigger = &work->value154;
   index = *trigger - 1;
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   {
     s32 x = gMadra_Doors[index].x;
     s32 y = gMadra_Doors[index].y;
@@ -323,7 +323,7 @@ static inline void Madra_PlaceFacing(s32 actorId, s32 x, s32 z, u16 facing) {
 /// down into the catacombs.
 void Madra_WorkerBlocksHole(void) {
   if (Event_GetFlag(0x910)) {
-    Event_PlaySound(123);
+    Event_PlaySound(SE_MAP_EXIT);
     Import_EventSetExitRequest(16);
   } else if (!Event_GetFlag(0x280)) {
     Event_Start();
@@ -1141,7 +1141,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   Event_ShowMessageAndWait(32, 0);
   Event_ShowMessageAndWait(33, 0);
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   FieldActor_ShowEmote(4, 0x101, 0);
   FieldActor_ShowEmote(5, 0x101, 0);
   FieldActor_ShowEmote(7, 0x101, 0);
@@ -1155,7 +1155,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   FieldCamera_FollowActor(33, 1);
   Event_Wait(60);
-  Sound_Play(36);
+  Sound_Play(MUS_036);
   FieldActor_ShowEmote(33, 0x107, 30);
   Event_ShowMessageAndWait(33, 0);
   Actor_FaceDirection(33, FACING_WEST, 0);
@@ -1334,7 +1334,7 @@ void Madra_MeetKarst(void) {
   Actor_ArmCallback(33, FACING_EAST, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_WalkByAndWaitById(33, 24, 24);
   Actor_WalkByAndWaitById(33, 132, 0);
@@ -1514,7 +1514,7 @@ void Madra_ClimbDownLadder(void) {
   Actor_WaitForMoveById(4);
   Actor_SetAnimation(4, 10);
   Event_Wait(10);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(next);
   Event_End();
 }

@@ -224,7 +224,7 @@ loop:
   if ((u32)i <= 63)
     goto loop;
   index = *(s16 *)(work + 0x154);
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   index--;
   MapGrid_AnimateCells(gData_02005de0[index].steps, gData_02005de0[index].x,
                        gData_02005de0[index].y);
@@ -431,7 +431,7 @@ extern s32 gData_0200632c;
 void Func_02000960(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Flag_Set(0x121);
@@ -472,7 +472,7 @@ void Func_02000a68(void) {
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED) && Flag_IsSet(FLAG_GAROH_NIGHT)) {
     gData_0200632c++;
     if ((gData_0200632c & 0x3ff) == 0)
-      Event_PlaySound(0x20d);
+      Event_PlaySound(SE_525);
   }
 }
 
@@ -617,7 +617,7 @@ void Func_02000e78(s32 id, struct Actor *object) {
     object->y -= PIXELS(2);
     FieldEvent_Wait(1);
   }
-  Event_PlaySound(136);
+  Event_PlaySound(SE_WHOOSH);
   Func_020012a8(saved);
 }
 
@@ -880,11 +880,11 @@ void Func_020013b0(s32 id) {
 
   Func_02001360__push(object->x + 0x80000, object->y + 0x1c0000, object->z,
                       0x1000, 20);
-  Event_PlaySound(151);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
   Func_02001360__push(object->x - 0x80000, object->y + 0x1c0000, object->z,
                       0xf000, 20);
-  Event_PlaySound(151);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
 }
 

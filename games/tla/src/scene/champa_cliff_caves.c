@@ -189,7 +189,7 @@ void ChampaCliffCaves_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(158);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(warp->scene, warp->x, warp->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
@@ -236,7 +236,7 @@ void Func_02000208(void) {
   warp = &gData_02003d10;
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 168, 424);
   Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_EAST);
-  Sound_Play(158);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(warp->scene, warp->x, warp->z);
   Actor_GetById(8)->motionFlags = 0;
   Actor_SetPosition(8, 184 << 16, 204 << 17);
@@ -259,7 +259,7 @@ void Func_02000208(void) {
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
   warp = &gData_02003d18;
   MapGrid_PlayMapEdit(warp->scene, warp->x, warp->z);
-  Sound_Play(158);
+  Sound_Play(SE_DOOR_OPEN);
 }
 
 void Func_02000304(s32 actor) {
@@ -604,14 +604,14 @@ void Func_02000a34(s32 value) {
     Actor_SetSpritePriority(10, 1);
     Call3((void (*)())Actor_SetSpeedParameters, 10, 0x10000, 0x8000);
     Actor_SetDestinationOffsetById(10, 0, 40);
-    Sound_Play(0x136);
+    Sound_Play(SE_310);
     Event_Wait(34);
     landing[0] = thrown->x;
     landing[1] = thrown->y;
     landing[2] = thrown->z;
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
     Event_Wait(20);
-    Sound_Play(134);
+    Sound_Play(SE_HEAVY_IMPACT);
     Func_02000734(bright, dim, 12);
     Func_02000734(dim, bright, 48);
     Event_Wait(10);
@@ -627,11 +627,11 @@ void Func_02000a34(s32 value) {
   Event_Wait(20);
   Actor_SetModeById(8, 7);
   Event_Wait(60);
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Value3((s32 (*)())Actor_ShowEmoteById, 8, 0x101, 60);
   Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
   Event_Wait(20);
-  Sound_Play(220);
+  Sound_Play(SE_SHIMMER);
   Func_02000734(bright, dim, 48);
   Actor_StartRepeatedMotion(gMainRoutineWork.currentOwner, 3);
   Call2((void (*)())FieldEffect_SetAttached, gMainRoutineWork.currentOwner,
@@ -643,7 +643,7 @@ void Func_02000a34(s32 value) {
   Func_02003164(glow);
   Actor_SetModeById(8, 1);
   Actor_Jump(4, 6, 0);
-  Sound_Play(194);
+  Sound_Play(SE_194);
   Actor_GetById(4)->actionFlags &= ~1;
   Call3((void (*)())Actor_WalkByAndWaitById, 4, -12, -12);
   Event_Wait(1);
@@ -655,11 +655,11 @@ void Func_02000a34(s32 value) {
   Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
   Call3((void (*)())MapGrid_SetScreenShake, 0x40000, 0x40000, 0x10000);
   Func_0200320c(glow);
-  Sound_Play(194);
+  Sound_Play(SE_194);
   Event_Wait(10);
   Actor_Jump(8, 6, 15);
   Actor_Jump(8, 6, 23);
-  Sound_Play(194);
+  Sound_Play(SE_194);
   Event_Wait(10);
   Event_ShowMessageThenWait(0x2008, 0, 5);
   Call2((void (*)())Actor_ShowItemIconById, 10, 0x146);
@@ -808,7 +808,7 @@ void Func_0200115c(void) {
     Func_02003534_(gMainRoutineWork.currentOwner, 0);
     Event_SetMessageId((s32)MsgBackForMore);
     FieldEvent_ShowMessageThenWait(11, 0, 5);
-    Sound_Play(36);
+    Sound_Play(MUS_036);
     FieldCamera_MoveWithinMapBounds(664 << 16, -1, 0x1000000, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(5);
@@ -820,7 +820,7 @@ void Func_0200115c(void) {
     Flag_Set(0x974);
     Event_SetMessageId((s32)MsgHoldItRight);
     FieldEvent_ShowMessageThenWait(11, 0, 5);
-    Sound_Play(36);
+    Sound_Play(MUS_036);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
     FieldCamera_MoveWithinMapBounds(664 << 16, -1, 0x1000000, 1);
     FieldCamera_WaitForArrival();
@@ -912,7 +912,7 @@ void Func_0200115c(void) {
     FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
     FieldActor_ShowEmote(8, 263, 30);
     FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
-    Sound_Play(78);
+    Sound_Play(SOUND_FADE_OUT_BGM);
     Func_0200343c_(656 << 16, 208 << 16, 0, -4);
     Func_0200343c_(656 << 16, 224 << 16, 0, -4);
     Func_0200343c_(656 << 16, 240 << 16, 0, -4);
@@ -921,7 +921,7 @@ void Func_0200115c(void) {
     object->motionFlags = 2;
     object->terrainHeight = 0xfc190000;
     Actor_Jump(12, 10, 0);
-    Sound_Play(146);
+    Sound_Play(SE_ENEMY_CRY);
     Actor_SetSpritePriority(12, 1);
     Actor_SetSpeed(12, 0x30000, 0x18000);
     Actor_WalkToById(12, 644, 248);
@@ -930,7 +930,7 @@ void Func_0200115c(void) {
     Event_Wait(50);
     MapGrid_SetShake(0x20000, 0x20000, 0x10000);
     Event_Wait(70);
-    Sound_Play(148);
+    Sound_Play(SE_BOSS_ROAR);
     Event_Wait(25);
     colour = (const u16 *)0x050000e4;
     current[0] = *colour++;
@@ -946,12 +946,12 @@ void Func_0200115c(void) {
     target[4] = *colour++;
     Func_02000734(current, target, 48);
     Event_Wait(20);
-    Sound_Play(194);
+    Sound_Play(SE_194);
     position.x = 0x02960000;
     position.y = 0;
     position.z = 0xee0000;
     Func_02002f58(&position);
-    Sound_Play(147);
+    Sound_Play(SE_BEAST_CRY);
     Actor_SetPosition(13, 664 << 16, 248 << 16);
     WORD_AT(object, 72) = 0x10000;
     object->motionFlags = 2;
@@ -961,7 +961,7 @@ void Func_0200115c(void) {
     WORD_AT(object, 108) = (s32)Func_02001138;
     WORD_AT(object, 28) = 0x4000;
     Actor_Jump(13, 11, 0);
-    Sound_Play(147);
+    Sound_Play(SE_BEAST_CRY);
     Actor_SetSpeed(13, 0x33333, 0x19999);
     Actor_WalkToAndWait(13, 584, 248);
     Party_SetFields1f2And1f4((s32)&SceneId_Ov685Room4, 98);
@@ -1567,7 +1567,7 @@ void Func_020029f8(s32 id, s32 mode) {
     sprite->scaleY = 0x20000;
     sprite->z = z + 0xa0000;
   }
-  Sound_Play(145);
+  Sound_Play(SE_CRASH);
   for (i = 0; i <= 71; i++) {
     sprite = &work->sprite;
     switch (i) {
@@ -1931,7 +1931,7 @@ void Func_02003164(const struct Vec3 *origin) {
 
     Task_Add(Func_02002de4, priority);
   }
-  Sound_Play(139);
+  Sound_Play(SE_139);
   state = 0;
   do {
     if (state == 0) {
@@ -1956,7 +1956,7 @@ void Func_0200320c(void) {
 
     Task_Add(Func_02002de4, priority);
   }
-  Sound_Play(144);
+  Sound_Play(SE_CLATTER);
   state = 0;
   do {
     switch (state) {

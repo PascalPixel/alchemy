@@ -207,7 +207,7 @@ void Func_02001650();
 
 void Func_02000294(void) {
   if (gData_02003278 != 0)
-    Event_PlaySound(201);
+    Event_PlaySound(SE_ASCEND);
   Func_02001650(gData_02003274);
 }
 
@@ -256,10 +256,10 @@ void Func_020002b8(void) {
   FieldEvent_Wait(30);
   leader->update = Func_02000120;
   FieldEvent_Wait(30);
-  Event_PlaySound(220);
+  Event_PlaySound(SE_SHIMMER);
   Actor_SetAnimationSpeed(leader, 64);
   FieldEvent_Wait(50);
-  Event_PlaySound(178);
+  Event_PlaySound(SE_178);
   leader->timer = 0;
   leader->update = Actor_CyclePictures;
   FieldEvent_Wait(30);
@@ -279,7 +279,7 @@ void Func_020002b8(void) {
     gData_02003274 = 1;
     System_Wait(1);
   }
-  Event_PlaySound(390);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(0x10000, 0x10000, 0x10000);
   gData_02003274 = 1;
   FieldEvent_Wait(90);
@@ -290,22 +290,22 @@ void Func_020002b8(void) {
   Bring(23);
   Bring(24);
   Task_AddFrame(Orbs_SpawnRising, 0x480);
-  Event_PlaySound(144);
+  Event_PlaySound(SE_CLATTER);
   MapGrid_SetShake(0x60000, 0x60000, 0x10000);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x4063ff, 0);
   PaletteFade_Interpolate(60);
   System_Wait(60);
-  Event_PlaySound(144);
+  Event_PlaySound(SE_CLATTER);
   System_Wait(30);
-  Event_PlaySound(144);
+  Event_PlaySound(SE_CLATTER);
   System_Wait(30);
-  Event_PlaySound(144);
+  Event_PlaySound(SE_CLATTER);
   System_Wait(30);
   MapGrid_CopyCellsLayered(58, 99, 3, 3, 41, 99);
   MapGrid_CopyCellsLayered(123, 32, 1, 5, 106, 32);
   JupiterLighthouse_LoadPalettes(2);
-  Event_PlaySound(144);
+  Event_PlaySound(SE_CLATTER);
   System_Wait(30);
   leader->timer = 3;
   System_Wait(1);
@@ -346,7 +346,7 @@ void Func_020002b8(void) {
   Actor_RaiseFromCell(14);
   Actor_RaiseFromCell(15);
   Actor_RaiseFromCell(16);
-  Event_PlaySound(80);
+  Event_PlaySound(MUS_080);
   Sound_WaitForJingle();
 }
 
@@ -402,7 +402,7 @@ void Func_02000734(void) {
   u32 scaled;
 
   actor = ((struct SparkActor *)Actor_Get(22));
-  Event_PlaySound(190);
+  Event_PlaySound(SE_WARP);
   Actor_SetSpriteFlags(((struct SparkActor *)Actor_Get(22)), 0);
   p = &params;
   p->count = 1;
@@ -438,9 +438,9 @@ void Func_02000810(s32 actor, s32 target) {
 
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(Actor_Get(actor), 2);
-  Event_PlaySound(201);
+  Event_PlaySound(SE_ASCEND);
   System_Wait(50);
-  Event_PlaySound(82);
+  Event_PlaySound(MUS_082);
   for (i = 0; i < 120; i++) {
     {
       struct Actor *object = Actor_Get(target);
@@ -643,7 +643,7 @@ void Func_02001070(struct Actor *self) {
   }
   Actor_SetAnimationSpeed(self, 16);
   if ((++*(u16 *)&self->timer & 31) == 31)
-    Event_PlaySound(231);
+    Event_PlaySound(SE_WATER_LEVEL);
   {
     s8 *to = self->sprite;
     s8 *from = leader->sprite;
@@ -704,7 +704,7 @@ stop:
     *((u8 *)self + 0x63) = zero;
     self->update = zero;
     Actor_StartScript(self, gData_020033e0);
-    Event_PlaySound(228);
+    Event_PlaySound(SE_SPARKLING_PASSAGE);
     gData_02003400 = zero;
   }
 }
@@ -714,7 +714,7 @@ struct GustObject *Func_02001230(struct GustObject *source) {
   struct EffectOptions options;
   struct GustObject *object;
 
-  Event_PlaySound(222);
+  Event_PlaySound(SE_222);
   position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
                                   Trig_Cos(source->angle));
   position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,

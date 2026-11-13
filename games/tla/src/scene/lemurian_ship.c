@@ -191,7 +191,7 @@ next2:
   offset += 12;
   if (i < 10)
     goto next2;
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   MapGrid_CopyCellsTo(0, 0, gData_02003904[found].x, gData_02003904[found].z, 1,
                       2);
@@ -242,7 +242,7 @@ next2:
     goto next2;
   if (found < 2 && Event_GetFlag(0x93f) && Event_GetFlag(0x9e4) == 0)
     found += 4;
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   MapGrid_CopyCellsTo(0, 0, gData_0200397c[found].x, gData_0200397c[found].z, 1,
                       2);
@@ -277,7 +277,7 @@ void Func_02000438(void) {
     leader->facing = 0xc000;
     Actor_SetScript(party->currentOwner, gData_02002de8);
     wait(12);
-    Event_PlaySound(123);
+    Event_PlaySound(SE_MAP_EXIT);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Import_EventSetExitRequest(work->exit);
@@ -345,7 +345,7 @@ void LemurianShip_ExamineEngine(void) {
   Event_ResolvePendingActions(0);
   if (Event_GetFlag(0x983)) {
     if (Event_GetFlag(0x207)) {
-      Event_PlaySound(232);
+      Event_PlaySound(SE_CRUNCH);
       FieldActor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(15)),
                                            PIXELS(824), PIXELS(-32),
                                            PIXELS(72));
@@ -355,9 +355,9 @@ void LemurianShip_ExamineEngine(void) {
       MapGrid_CopyCellAttributes(50, 1, 3, 1, 50, 4);
       Event_ClearFlag(0x207);
     } else if (Event_GetFlag(0x212)) {
-      Event_PlaySound(117);
+      Event_PlaySound(SE_ITEM_REMOVE);
     } else {
-      Event_PlaySound(232);
+      Event_PlaySound(SE_CRUNCH);
       Actor_SetPosition(15, 0, 0);
       MapGrid_CopyCellsTo(68, 68, 50, 64, 3, 3);
       MapGrid_CopyCellAttributes(102, 16, 3, 2, 110, 4);
@@ -396,7 +396,7 @@ void Func_02000798(void) {
       wait(1);
       moving = object->velocityY;
     } while (moving != 0);
-    Event_PlaySound(188);
+    Event_PlaySound(SE_THUMP);
     wait(10);
     *flags = moving;
     Event_SetFlag(0x200);
@@ -431,7 +431,7 @@ void Func_02000870(void) {
     opened = Event_GetFlag(0x932);
     state = &leader->terrainId;
     if (opened) {
-      Event_PlaySound(243);
+      Event_PlaySound(SE_243);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
       MapGrid_SetShake(0, 0x20000, 0x10000);
       Event_Wait(20);
@@ -443,7 +443,7 @@ void Func_02000870(void) {
       Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
       Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 840, 88);
       Event_Wait(20);
-      Event_PlaySound(232);
+      Event_PlaySound(SE_CRUNCH);
       MapGrid_CopyCellsTo(72, 68, 50, 64, 3, 3);
       Event_Wait(20);
       *state = 1;
@@ -463,7 +463,7 @@ void Func_02000870(void) {
         value |= *bits;
         *bits = value;
       }
-      Event_PlaySound(243);
+      Event_PlaySound(SE_243);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
       MapGrid_SetShake(0, 0x20000, 0x10000);
       Event_Wait(20);
@@ -488,7 +488,7 @@ void Func_02000870(void) {
       Actor_MoveToAndWait(9, 856, 88);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
       Event_Wait(20);
-      Event_PlaySound(232);
+      Event_PlaySound(SE_CRUNCH);
       MapGrid_CopyCellsTo(72, 68, 50, 64, 3, 3);
       Event_Wait(20);
       Actor_Stop(gMainRoutineWork.currentOwner);
@@ -510,7 +510,7 @@ void Func_02000af4(void) {
     Event_ResolvePendingActions(0);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 812, 72);
-    Event_PlaySound(243);
+    Event_PlaySound(SE_243);
     Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
     MapGrid_SetShake(0, 0x20000, 0x10000);
     Event_Wait(20);
@@ -522,7 +522,7 @@ void Func_02000af4(void) {
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x33333, 0x19999);
     Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 812, 88);
     Event_Wait(20);
-    Event_PlaySound(232);
+    Event_PlaySound(SE_CRUNCH);
     MapGrid_CopyCellsTo(72, 68, 50, 64, 3, 3);
     Event_Wait(20);
     leader->terrainId = 1;
@@ -560,14 +560,14 @@ void Func_02000d10(s32 id) {
 void Func_02000d44(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_PlaySound(0);
+  Event_PlaySound(MUS_000);
   Actor_StartRepeatedMotion(9, 2);
   Actor_StartRepeatedMotion(10, 2);
   Actor_StartRepeatedMotion(11, 2);
   Actor_StartRepeatedMotion(12, 2);
   Actor_RunRepeatedMotion(13, 2);
   Event_Wait(20);
-  Event_PlaySound(147);
+  Event_PlaySound(SE_BEAST_CRY);
   Func_02000d10(9);
   Func_02000d10(10);
   Func_02000d10(11);
@@ -580,7 +580,7 @@ void Func_02000d44(void) {
   Actor_SetPosition(12, 0, 0);
   Actor_SetPosition(13, 0, 0);
   Event_Wait(20);
-  Event_PlaySound(52);
+  Event_PlaySound(MUS_052);
   Actor_RunScriptAndWait(8, gData_02002e9c);
 
   gMainRoutineWork.battleRule24b = 2;
@@ -611,7 +611,7 @@ void Func_02000e2c(void) {
         Event_Start();
         Event_ResolvePendingActions(0);
         Event_Wait(20);
-        Event_PlaySound(183);
+        Event_PlaySound(SE_STONE_RUMBLE);
         MapGrid_CopyCellsTo(35, 68, 35, 69, 1, 1);
         MapGrid_CopyCellAttributes(35, 0, 1, 1, column, row);
         object->motionFlags = done;
@@ -646,7 +646,7 @@ void Func_02000e2c(void) {
         Event_Start();
         Event_ResolvePendingActions(0);
         Event_Wait(20);
-        Event_PlaySound(183);
+        Event_PlaySound(SE_STONE_RUMBLE);
         MapGrid_CopyCellsTo(29, 68, 29, 69, 1, 1);
         MapGrid_CopyCellAttributes(35, 0, 1, 1, column, row);
         object->motionFlags = done;
@@ -673,7 +673,7 @@ void Func_02000e2c(void) {
   if (Event_GetFlag(0x202) && Event_GetFlag(0x203)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Event_PlaySound(188);
+    Event_PlaySound(SE_THUMP);
     MapGrid_CopyCellsTo(4, 124, 31, 64, 3, 2);
     Event_Wait(20);
     Event_SetFlag(0x982);
@@ -690,7 +690,7 @@ void Func_020010cc(void) {
 
 #define DEFINE_FUNC_020010D8(name, n1, n2)                                     \
   void name(void) {                                                            \
-    Sound_Play(106);                                                           \
+    Sound_Play(SE_DRIP);                                                       \
     Actor_SetModeById(n1, 2);                                                  \
     GameFlag_Set(n2);                                                          \
     Func_02000e2c();                                                           \
@@ -720,7 +720,7 @@ void Func_02001128(void) {
     GameFlag_Clear(n2);                                                        \
     GameFlag_Clear(n3);                                                        \
     Event_Wait(20);                                                            \
-    Sound_Play(186);                                                           \
+    Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);                                       \
     for (i = 0; i <= 63; i++) {                                                \
       object->y += 0x4000;                                                     \
       wait(1);                                                                 \
@@ -728,7 +728,7 @@ void Func_02001128(void) {
     Actor_SetSpritePriority(n1, 2);                                            \
     MapGrid_CopyCellPictureIndicesRect(4, 123, n4, 69, 1, 1);                  \
     MapGrid_CopyCellAttributes(36, 0, 1, 1, n4, 9);                            \
-    Sound_Play(188);                                                           \
+    Sound_Play(SE_THUMP);                                                      \
     MapGrid_CopyCellsTo(7, 124, 31, 64, 3, 2);                                 \
     GameFlag_Clear(0x982);                                                     \
     Event_Wait(20);                                                            \
@@ -893,7 +893,7 @@ void LemurianShip_FindMonstersAboard(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemurianShip01);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
@@ -923,13 +923,13 @@ void LemurianShip_FindMonstersAboard(void) {
   Actor_WalkToAndWait(7, 808, 148);
   Actor_RunRepeatedMotion(7, 2);
   Actor_SetSpritePriority(7, 1);
-  Event_PlaySound(220);
+  Event_PlaySound(SE_SHIMMER);
   Task_Add(Func_020015c8, 0x480);
   Event_Wait(60);
-  Event_PlaySound(390);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_Wait(20);
   Task_Remove(Func_020015c8);
-  Event_PlaySound(251);
+  Event_PlaySound(SE_251);
   Field_SetCameraBounds(0x2b00000, 0, 0x3a00000, 0x2200000);
   FieldCamera_MoveTo(PIXELS(808), -1, PIXELS(448), 0);
   Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(808), PIXELS(480));
@@ -939,7 +939,7 @@ void LemurianShip_FindMonstersAboard(void) {
   Actor_SetPosition(8, PIXELS(792), PIXELS(488));
   Map_CenterOnFollowedPoint();
   Event_Wait(20);
-  Event_PlaySound(246);
+  Event_PlaySound(SE_GLITTER);
   Event_Wait(80);
   ((struct LemurianShipEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       513;
@@ -977,7 +977,7 @@ void Func_02001944(s32 actor, s32 id) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  Event_PlaySound(103);
+  Event_PlaySound(SE_CURSE);
   Actor_SetScript(actor, gData_02002e30);
   Actor_RunScriptAndWait(id, gData_02002e6c);
   Event_Wait(20);
@@ -1026,7 +1026,7 @@ void Func_02001a04(void) {
 void Func_02001a9c(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_PlaySound(164);
+  Event_PlaySound(SE_SCATTER);
   Event_Wait(120);
   Event_End();
 }

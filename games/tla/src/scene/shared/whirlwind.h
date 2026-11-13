@@ -63,7 +63,7 @@
           break;                                                               \
       } while (actor->y > actor->terrainHeight + 0x100000);                    \
     }                                                                          \
-    Event_PlaySound(127);                                                      \
+    Event_PlaySound(SE_LANDING_THUD);                                          \
     i = 0;                                                                     \
     if (actor->velocityY != 0) {                                               \
       do {                                                                     \
@@ -129,7 +129,7 @@
       i++;                                                                     \
       System_Wait(1);                                                          \
     }                                                                          \
-    Event_PlaySound(127);                                                      \
+    Event_PlaySound(SE_LANDING_THUD);                                          \
     i = 0;                                                                     \
     while (i <= 59 && actor->velocityY != 0) {                                 \
       i++;                                                                     \
@@ -150,7 +150,7 @@
     struct EffectOptions options;                                              \
     struct GustObject *object;                                                 \
                                                                                \
-    Event_PlaySound(222);                                                      \
+    Event_PlaySound(SE_222);                                                   \
     position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,          \
                                     Trig_Cos(source->angle));                  \
     position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,          \
@@ -181,7 +181,7 @@
     struct EffectOptions options;                                              \
     struct GustObject *object;                                                 \
                                                                                \
-    Event_PlaySound(222);                                                      \
+    Event_PlaySound(SE_222);                                                   \
     position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,          \
                                     Trig_Cos(source->angle));                  \
     position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));   \
@@ -221,7 +221,7 @@
     }                                                                          \
     Actor_SetAnimationSpeed(self, 16);                                         \
     if ((++*(u16 *)&self->timer & 31) == 31)                                   \
-      Event_PlaySound(231);                                                    \
+      Event_PlaySound(SE_WATER_LEVEL);                                         \
     {                                                                          \
       s8 *to = self->sprite;                                                   \
       s8 *from = leader->sprite;                                               \
@@ -281,7 +281,7 @@
       *((u8 *)self + 0x63) = zero;                                             \
       self->update = zero;                                                     \
       Actor_StartScript(self, data1);                                          \
-      Event_PlaySound(228);                                                    \
+      Event_PlaySound(SE_SPARKLING_PASSAGE);                                   \
       data2 = zero;                                                            \
     }                                                                          \
   }
@@ -302,7 +302,7 @@
     }                                                                          \
     Actor_SetAnimationSpeed(self, 16);                                         \
     if ((++*(u16 *)&self->timer & 31) == 31)                                   \
-      Event_PlaySound(231);                                                    \
+      Event_PlaySound(SE_WATER_LEVEL);                                         \
     ((struct FieldSprite *)self->sprite)->priority =                           \
         ((struct FieldSprite *)leader->sprite)->priority;                      \
     if (call1(self->x, self->z, 2) != 255) {                                   \
@@ -356,7 +356,7 @@
       self->update = (void *)zero;                                             \
     }                                                                          \
     Actor_StartScript(self, data1);                                            \
-    Event_PlaySound(228);                                                      \
+    Event_PlaySound(SE_SPARKLING_PASSAGE);                                     \
     data2 = 0;                                                                 \
   }
 

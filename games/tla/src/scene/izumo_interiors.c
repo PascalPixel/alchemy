@@ -1039,7 +1039,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   BattleEffect_StartArcEffect();
   t21 = ((s32)Actor_GetById(15));
   BattleEffect_SetObjectUpdateMode(t21, 2);
-  Sound_Play(201);
+  Sound_Play(SE_ASCEND);
   Event_Wait(60);
   Actor_SetPosition(24, PIXELS(144), PIXELS(520));
   Actor_Jump(24, 6, 0);
@@ -1095,7 +1095,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
       !GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
       gMainRoutineWork.entrance == 7) {
-    Event_PlaySound(7);
+    Event_PlaySound(MUS_007);
     Actor_SetPosition(22, 0x900000, 0x2380000);
     Actor_SetPosition(21, 0, 0);
     Actor_SetPosition(16, 0, 0);
@@ -1106,7 +1106,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
       GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
       gMainRoutineWork.entrance == 7 && GameFlag_Get(0x350)) {
-    Event_PlaySound(7);
+    Event_PlaySound(MUS_007);
     Actor_SetPosition(16, 0, 0);
     Actor_SetPosition(17, 0, 0);
     Actor_SetPosition(18, 0, 0);

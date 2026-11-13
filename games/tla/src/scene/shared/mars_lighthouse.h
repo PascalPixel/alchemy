@@ -202,7 +202,7 @@
       Actor_SetSpritePriorityDirect(object, 1);                                \
     } else if (frame <= 30) {                                                  \
       if (frame == 30) {                                                       \
-        Event_PlaySound(136);                                                  \
+        Event_PlaySound(SE_WHOOSH);                                            \
         call1(object->watchedObject, 2);                                       \
       }                                                                        \
     } else if (frame <= 60) {                                                  \
@@ -215,7 +215,7 @@
       }                                                                        \
     } else {                                                                   \
       call1(object->watchedObject, 1);                                         \
-      Event_PlaySound(184);                                                    \
+      Event_PlaySound(SE_184);                                                 \
       object->y = Map_GetTerrainHeight(0, object->x, object->z);               \
       object->watchedObject = 0;                                               \
       return 0;                                                                \
@@ -230,7 +230,7 @@
     s32 frame = object->timer;                                                 \
                                                                                \
     if (frame == 0) {                                                          \
-      Event_PlaySound(136);                                                    \
+      Event_PlaySound(SE_WHOOSH);                                              \
       call1(object->watchedObject, 2);                                         \
       object->y = Map_GetTerrainHeight(0, object->x, object->z) + 0x100000;    \
       object->scaleX = frame;                                                  \
@@ -248,7 +248,7 @@
       }                                                                        \
     } else {                                                                   \
       call1(object->watchedObject, 1);                                         \
-      Event_PlaySound(184);                                                    \
+      Event_PlaySound(SE_184);                                                 \
       object->y = Map_GetTerrainHeight(0, object->x, object->z);               \
       object->watchedObject = 0;                                               \
       return 0;                                                                \
@@ -349,7 +349,7 @@
     } while (0);                                                               \
     actor->timer = 0;                                                          \
     actor->watchedObject = self->watchedObject;                                \
-    Event_PlaySound(104);                                                      \
+    Event_PlaySound(SE_104);                                                   \
   }
 
 /// A drifting object's update, stopping against the leader.
@@ -1061,7 +1061,7 @@
         actor->targetX = 0x80000000;                                           \
         actor->acceleration = 0x4000;                                          \
         actor->timer = 1;                                                      \
-        Event_PlaySound(145);                                                  \
+        Event_PlaySound(SE_CRASH);                                             \
         /* FAKEMATCH(wrapper): forwarded, so each argument builds its own      \
          * 0x50000; as a direct call, 6 of 362 instructions differ in tla-en.  \
          */                                                                    \
@@ -1095,7 +1095,7 @@
             cell->collisionCode = 0;                                           \
             MapGrid_CopyCellsLayered(64, 64, 1, 1, xA, zA);                    \
             MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);                    \
-            Event_PlaySound(0x23d);                                            \
+            Event_PlaySound(SE_573);                                           \
             call2((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,          \
                   actor->facing);                                              \
           }                                                                    \
@@ -1104,7 +1104,7 @@
             cell->collisionCode = 0;                                           \
             MapGrid_CopyCellsLayered(64, 64, 1, 2, xB, zB);                    \
             MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);                    \
-            Event_PlaySound(0x23c);                                            \
+            Event_PlaySound(SE_572);                                           \
             call2((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,          \
                   actor->facing);                                              \
           }                                                                    \

@@ -180,7 +180,7 @@ s32 Map_ClearLayerEntryFlag();
 void Func_02000568(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(0x9e);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(64, 64, 83, 35, 1, 2);
   Map_ClearLayerEntryFlag(0);
   FieldEvent_Wait(45);
@@ -190,7 +190,7 @@ void Func_02000568(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Event_PlaySound(0x7b);
+  Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_SetExitRequest(4);
   Event_End();
 }
@@ -258,7 +258,7 @@ void Func_02000700(void) {
   s32 z = leader->z;
   u32 i;
 
-  Event_PlaySound(390);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Actor_SelectAnimation(leader, 6);
   System_Wait(10);
   Actor_SelectAnimation(leader, 1);
@@ -267,7 +267,7 @@ void Func_02000700(void) {
   leader->velocityY = 0x40000;
   FieldActor_SetMoveTarget(leader, leader->x, leader->y, z + 0xc0000);
   System_Wait(6);
-  Event_PlaySound(217);
+  Event_PlaySound(SE_FLOOR_SWITCH);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x5000, 0);
   leader->motionFlags = 0;
   for (i = 0; i < 14; i++) {
@@ -280,7 +280,7 @@ void Func_02000700(void) {
   FieldActor_SetMoveTarget(leader, leader->x, leader->y, z + 0x100000);
   FieldActor_WaitForMove(leader);
   Actor_SetSpriteFlags(leader, 1);
-  Event_PlaySound(390);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_NoOp();
 }
 
@@ -370,7 +370,7 @@ void Func_0200095c(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(207);
+  Sound_Play(SE_RUSH);
   gust = FieldActor_Create(280, leader->x, leader->y, leader->z);
   Actor_SelectAnimation(gust, 2);
   Actor_SetSpriteFlags(gust, 0);
@@ -416,7 +416,7 @@ void Func_0200095c(void) {
     Event_Wait(1);
   }
   Actor_SetSpriteColor(effect->target, 0);
-  Sound_Play(136);
+  Sound_Play(SE_WHOOSH);
   cell.x = effect->target->x >> 20;
   cell.z = effect->target->z >> 20;
   angle = (leader->facing + 0x2000) & 0xc000;
@@ -458,14 +458,14 @@ void Func_0200095c(void) {
     Event_Wait(1);
   }
   if (hit == 255) {
-    Sound_Play(136);
+    Sound_Play(SE_WHOOSH);
   } else {
     cell.x = ((s16 *)&gust->x)[1] + delta.x * 48;
     cell.z = ((s16 *)&gust->z)[1] + delta.z * 48;
     gust->speedLimit = 0x8000;
     gust->acceleration = 0x8000;
     Actor_SetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
-    Sound_Play(235);
+    Sound_Play(SE_235);
     hit -= 30;
     while (Actor_HasArrived(gust) == 0) {
       if ((gFrameCount & 1) == 0) {
@@ -514,7 +514,7 @@ void Func_0200095c(void) {
                           cell.z, 1, 1);
       Map_CenterOnFollowedPoint();
     }
-    Sound_Play(298);
+    Sound_Play(SE_298);
     Event_SetFlag(flag + 0x850);
   }
   gust->acceleration = 0;
@@ -619,7 +619,7 @@ row:
   if (i != 18)
     goto row;
   Heap_Release(buffer);
-  Event_PlaySound(246);
+  Event_PlaySound(SE_GLITTER);
   ((u8 *)Actor_Get(8))[98] = 9;
   ((u8 *)Actor_Get(8))[99] = 1;
   Actor_Get(8)->update = Func_0200092c;
@@ -653,7 +653,7 @@ row:
   FieldCamera_MoveTo(0x14a0000, -1, 0x490000, 1);
   FieldCamera_WaitForArrival();
   Task_AddFrame(Func_02000ef4, 0xc80);
-  Event_PlaySound(163);
+  Event_PlaySound(SE_163);
   REG_BLDALPHA = 0xf00;
   REG_BLDCNT = 0x3f41;
   REG_DISPCNT |= 0x100;
@@ -703,7 +703,7 @@ glow:
   REG_BLDCNT = 0x3f41;
   REG_BLDALPHA = 15;
   MapGrid_SetShake(-1, -1, 0xe666);
-  Event_PlaySound(390);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   ((u8 *)Actor_Get(8))[98] = 6;
   i = 0;
 fade:
@@ -764,7 +764,7 @@ void Func_02001560(void) {
   *motion = 4;
   Actor_SetSpriteFlags(leader, 0);
   GameFlag_Set(0x250);
-  Sound_Play(137);
+  Sound_Play(SE_137);
   riding = (u8 *)ride + 99;
   rise = 0;
   while (*riding != 0) {
@@ -777,7 +777,7 @@ void Func_02001560(void) {
     leader->priorityFlags ^= 2 << (gFrameCount & 1);
     wait(1);
   }
-  Sound_Play(0x120);
+  Sound_Play(SE_288);
   facing = ride->facing;
   if (facing == 0xc000) {
     rider = ride->watchedObject;
@@ -841,7 +841,7 @@ void Func_02001560(void) {
     leader->terrainHeight = height;
     Actor_SelectAnimation(leader, 6);
     wait(6);
-    Sound_Play(152);
+    Sound_Play(SE_JUMP);
     Actor_SelectAnimation(leader, 7);
     leader->speedLimit = 0x20000;
     leader->acceleration = 0x8000;
@@ -1043,7 +1043,7 @@ void Func_02001cc8(void) {
     object->motionFlags = 3;
     OverlayObject_WaitUntilIdle(object);
     OverlayObject_WaitUntilIdle(object);
-    Event_PlaySound(188);
+    Event_PlaySound(SE_THUMP);
     object->motionFlags = 0;
     object->terrainId = 0;
   }
@@ -1173,7 +1173,7 @@ row:
   if (i != 16)
     goto row;
   Heap_Release(buffer);
-  Event_PlaySound(246);
+  Event_PlaySound(SE_GLITTER);
   ((u8 *)Actor_Get(14))[98] = 9;
   ((u8 *)Actor_Get(14))[99] = 1;
   Actor_Get(14)->update = Func_0200092c;
@@ -1220,7 +1220,7 @@ row:
   gBgScroll[0].x = 0xff88;
   gBgScroll[0].y = 0x10;
   System_Wait(30);
-  Event_PlaySound(138);
+  Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplySource(0x10003, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
@@ -1243,7 +1243,7 @@ fade1:
   gBgScroll[0].x = 0xffac;
   gBgScroll[0].y = 0;
   System_Wait(1);
-  Event_PlaySound(138);
+  Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplySource(0x10003, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
@@ -1262,7 +1262,7 @@ fade2:
   i++;
   if (i != 32)
     goto fade2;
-  Event_PlaySound(145);
+  Event_PlaySound(SE_CRASH);
   PaletteFade_ApplySource(0x10003, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
@@ -1402,7 +1402,7 @@ void Func_020026b8(void) {
     cell += 16;
   }
   Heap_Release(buffer);
-  Event_PlaySound(246);
+  Event_PlaySound(SE_GLITTER);
   ((u8 *)Actor_Get(12))[98] = 9;
   ((u8 *)Actor_Get(12))[99] = 1;
   Actor_Get(12)->update = Func_0200092c;
@@ -1448,7 +1448,7 @@ void Func_020026b8(void) {
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(8);
   Task_AddFrame(Func_0200257c, 0xc80);
-  Event_PlaySound(163);
+  Event_PlaySound(SE_163);
   REG_DISPCNT |= 0x100;
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   z = 0xffff8000;
@@ -1469,7 +1469,7 @@ void Func_020026b8(void) {
   }
   REG_DISPCNT &= ~0x200;
   System_Wait(30);
-  Event_PlaySound(390);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   REG_BLDALPHA = 0x10;
   REG_BLDCNT = 0x3f41;
   MapGrid_SetShake(-1, -1, 0xe666);

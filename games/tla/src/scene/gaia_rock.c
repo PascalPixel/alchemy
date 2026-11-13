@@ -625,13 +625,13 @@ dust:
   }
   if (--i >= 0)
     goto dust;
-  Event_PlaySound(0x24e);
-  Event_PlaySound(217);
+  Event_PlaySound(SE_590);
+  Event_PlaySound(SE_FLOOR_SWITCH);
   MapGrid_SetShake(0x20000, 0x20000, 0xe666);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SelectAnimation(leader, 40);
   FieldEvent_Wait(40);
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   leader->motionFlags = 3;
   id = 0;
   leader->gravity = 0x547a;
@@ -644,7 +644,7 @@ fall:
     if (leader->y > leader->terrainHeight)
       goto next;
   }
-  Event_PlaySound(188);
+  Event_PlaySound(SE_THUMP);
   leader->gravity = gravity;
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0);
   Actor_SelectAnimation(leader, 38);

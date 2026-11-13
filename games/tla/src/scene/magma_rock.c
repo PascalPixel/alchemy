@@ -1158,7 +1158,7 @@ void MagmaRock_SlideDown(void) {
     Actor_Get(party->currentOwner)->motionFlags = 0;
     Actor_WalkTo(party->currentOwner, 264, 440);
     FieldEvent_Wait(5);
-    Event_PlaySound(123);
+    Event_PlaySound(SE_MAP_EXIT);
     FieldEvent_SetExitRequest(2);
     Func_02003af4();
   }
@@ -1202,7 +1202,7 @@ void MagmaRock_AmplifyBurst(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetFlag(0x260);
-  Event_PlaySound(133);
+  Event_PlaySound(SE_IMPACT);
   FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 6);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 10);
   Actor_SetActionById(gMainRoutineWork.currentOwner, 32);
@@ -1248,7 +1248,7 @@ second:
     if (i != 0)
       goto second;
   }
-  Event_PlaySound(188);
+  Event_PlaySound(SE_THUMP);
   Actor_SetSpriteFlags(leader, 1);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
   MapGrid_SetShake(0x50000, 0x80000, 0x10000);
@@ -1512,7 +1512,7 @@ void MagmaRock_LaunchLeader(void) {
   ((struct MagmaRockEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   leader->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
@@ -1533,7 +1533,7 @@ loop:
   i++;
   if (i <= 16)
     goto loop;
-  Event_PlaySound(188);
+  Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
@@ -1921,7 +1921,7 @@ body:
 
       Event_Start();
       if (!Event_GetFlag(flag)) {
-        Event_PlaySound(125);
+        Event_PlaySound(SE_CHEST_CLOSE);
         FieldActor_SetSpriteColor(Actor_GetById(id), 7);
         wait(2);
         Actor_SelectAnimation(target, 0);
@@ -1934,7 +1934,7 @@ body:
         Event_SetFlag(flag);
       } else if (!Event_GetFlag(flag + 1)) {
         leader->motionFlags = 0;
-        Event_PlaySound(185);
+        Event_PlaySound(SE_PUSH);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         MagmaRock_SpawnRubble(0);
         wait(8);
@@ -1950,7 +1950,7 @@ body:
         wait(5);
         Actor_SetPositionAndResetMotion(target, 0, 0, 0);
         wait(2);
-        Event_PlaySound(188);
+        Event_PlaySound(SE_THUMP);
         MagmaRock_SpawnDustRing();
         wait(20);
         Event_SetFlag(flag + 1);
@@ -1981,7 +1981,7 @@ body:
   Event_Start();
   nextFlag = flag + 1;
   if (Event_GetFlag(nextFlag) == 0) {
-    Event_PlaySound(185);
+    Event_PlaySound(SE_PUSH);
     MapGrid_SetShake(0x10000, 0x40000, 0x10000);
     MagmaRock_SpawnRubble(0);
     System_Wait(8);
@@ -1993,7 +1993,7 @@ body:
     System_Wait(8);
     FieldActor_SetPositionAndResetMotion(target, 0, 0, 0);
     System_Wait(2);
-    Event_PlaySound(188);
+    Event_PlaySound(SE_THUMP);
     MagmaRock_SpawnDustRing();
     System_Wait(20);
     Event_SetFlag(flag);
@@ -2066,7 +2066,7 @@ body:
         Actor_SelectAnimation(actor8, 1);
         MagmaRock_TakePlaceOf(actor8, target);
         wait(1);
-        Event_PlaySound(125);
+        Event_PlaySound(SE_CHEST_CLOSE);
         FieldActor_SetSpriteColor(Actor_GetById(8), 7);
         wait(2);
         Actor_SelectAnimation(actor8, 0);
@@ -2088,7 +2088,7 @@ body:
         wait(1);
         flags = &leader->motionFlags;
         *flags = 0;
-        Event_PlaySound(185);
+        Event_PlaySound(SE_PUSH);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         MagmaRock_SpawnRubble(0);
         wait(8);
@@ -2104,7 +2104,7 @@ body:
         wait(5);
         Actor_SetPositionAndResetMotion(actor8, 0, 0, 0);
         wait(2);
-        Event_PlaySound(188);
+        Event_PlaySound(SE_THUMP);
         MagmaRock_SpawnDustRing();
         wait(20);
         Event_SetFlag(flag + 1);

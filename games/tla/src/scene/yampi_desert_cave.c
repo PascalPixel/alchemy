@@ -356,7 +356,7 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
       YampiDesertCave_StopLeaderAtLog;
   wait(4);
   Actor_SelectAnimation(object, 2);
-  Event_PlaySound(239);
+  Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeed(rect.word[4], 0x8000, 0x1999);
   Actor_SetMoveTarget(object, rect.word[0], rect.word[1], rect.word[2]);
   /* FAKEMATCH(dead): a loop of one pass with an untaken two-test branch, so the
@@ -380,8 +380,8 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   FieldActor_WaitForMove(object);
-  Event_PlaySound(298);
-  Event_PlaySound(213);
+  Event_PlaySound(SE_298);
+  Event_PlaySound(SE_HEAVY_STOP);
   Actor_SetPositionAndResetMotion(object, rect.word[0], object->y,
                                   rect.word[2]);
   Actor_SelectAnimation(object, 1);

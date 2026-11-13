@@ -25,7 +25,7 @@ void DriftScene_SpawnObject(x, y, z, value)
   object = Import_ActorCreate(0x1e8, x, y, z);
   if (object != 0) {
     sprite = object->sprite;
-    Sound_Play(0x97);
+    Sound_Play(SE_LIGHT_APPEAR);
     Import_ActorSetMode(object, 1);
     Import_ActorStartScript(object, gDriftScene_SpawnScript);
     object->motionFlags = 0;

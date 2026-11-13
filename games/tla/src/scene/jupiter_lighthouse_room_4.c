@@ -179,14 +179,14 @@ void JupiterLighthouse_OpenBlueDoor(void) {
 
 void JupiterLighthouse_UseRedKey(s32 item) {
   Event_SetFlag(FLAG_RED_DOOR_OPENED);
-  Event_PlaySound(134);
+  Event_PlaySound(SE_HEAVY_IMPACT);
   JupiterLighthouse_OpenRedDoor();
   PartyInventory_Remove(item);
 }
 
 void JupiterLighthouse_UseBlueKey(s32 item) {
   Event_SetFlag(FLAG_BLUE_DOOR_OPENED);
-  Event_PlaySound(134);
+  Event_PlaySound(SE_HEAVY_IMPACT);
   JupiterLighthouse_OpenBlueDoor();
   PartyInventory_Remove(item);
 }

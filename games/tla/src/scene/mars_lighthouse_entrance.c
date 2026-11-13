@@ -344,7 +344,7 @@ void MarsLighthouseEntrance_GrindIce(void) {
   s32 x;
   s32 count;
 
-  Event_PlaySound(0x23c);
+  Event_PlaySound(SE_572);
   x = 32;
   count = 6;
   // A goto loop, which GCC does not treat as a loop, so the stack arguments
@@ -409,7 +409,7 @@ DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000648, Func_020046b4, Teleport_PlaySparks,
 /// flying (flag 0xa3f).
 void MarsLighthouseEntrance_BurstIceSheet(s32 state, s32 frame) {
   if (state == 1) {
-    Event_PlaySound(0x23e);
+    Event_PlaySound(SE_574);
     PaletteFade_ApplyTarget(0x10000, 0);
     PaletteFade_Interpolate(60);
     Func_02004c30_(47, 94, 10, 6, 47, 100);
@@ -456,7 +456,7 @@ void Func_02000808(void) {
   struct Actor *object = Actor_Get(20);
 
   if (!Flag_IsSet(0xa47)) {
-    Event_PlaySound(0x23d);
+    Event_PlaySound(SE_573);
     Flag_Set(0x231);
     object->x = S16_AT(object, 100) << 16;
     object->z = S16_AT(object, 102) << 16;
@@ -468,7 +468,7 @@ void Func_02000808(void) {
 #define DEFINE_FUNC_0200085C(name, n1, n2, n3, n4, n5, n6, n7, n8, n9)         \
   void name(s32 state, s32 frame) {                                            \
     if (state == 1) {                                                          \
-      Event_PlaySound(0x23e);                                                  \
+      Event_PlaySound(SE_574);                                                 \
       PaletteFade_ApplyTarget(0x10000, 0);                                     \
       PaletteFade_Interpolate(60);                                             \
       MapGrid_CopyCellsLayered(n1, n2, 8, n3, n1, n4);                         \
@@ -560,7 +560,7 @@ void Func_02000a24(void) {
   struct Actor *object = Actor_Get(12);
 
   if (!Flag_IsSet(0xa4d)) {
-    Event_PlaySound(0x23d);
+    Event_PlaySound(SE_573);
     Flag_Set(0x232);
     object->x = S16_AT(object, 100) << 16;
     object->z = S16_AT(object, 102) << 16;
@@ -728,7 +728,7 @@ void Func_02000e3c(s32 arg) {
   i = 0;
 next:
   if (i == 5)
-    Event_PlaySound(204);
+    Event_PlaySound(SE_DUST_PUFF);
   actor->scaleX -= 0x400;
   actor->scaleY -= 0x300;
   actor->y -= 0x9999;
@@ -765,7 +765,7 @@ void Func_02002c2c__mars_lighthouse_entrance(void) __asm__("Func_02002c2c");
 #define Func_02002c2c Func_02002c2c__mars_lighthouse_entrance
 
 void Func_02000fa4(void) {
-  Event_PlaySound(0x248);
+  Event_PlaySound(SE_584);
   Flag_Set(0x17d);
   Actor_SetScript(11, gData_0200503c);
   Func_0200246c(0, 3);
@@ -812,7 +812,7 @@ void Func_02000fe0(const struct MapCell *cell) {
   i = 0;
 next:
   if (i == 5)
-    Event_PlaySound(204);
+    Event_PlaySound(SE_DUST_PUFF);
   leader->scaleX -= 0x400;
   leader->scaleY -= 0x300;
   leader->y -= 0x9999;
@@ -1034,7 +1034,7 @@ s32 Scene_Initialize(void) {
       Event_WaitTransitionFrames();
       object = Actor_Get(18);
       Actor_SetPosition(18, object->timer << 16, object->unk66 << 16);
-      Event_PlaySound(0x23d);
+      Event_PlaySound(SE_573);
       i = 2;
       do {
         Call1((void (*)())Func_02000414, 18);
@@ -1759,7 +1759,7 @@ DEFINE_ACTOR_ATTACH(Actor_Attach, Actor_SelectAnimation, Func_02002c2c)
 /// from self, 12 pixels up, along self's angle (unk66), faces it that way,
 /// gives it Actor_RollAndCrumble as its update hook and its speed, clears its
 /// scale and action, has it watch what self watches, and calls
-/// Event_PlaySound(104). The twin of overlay 6ac's Func_02002e6c.
+/// Event_PlaySound(SE_104). The twin of overlay 6ac's Func_02002e6c.
 DEFINE_ACTOR_LAUNCH_AHEAD(Actor_LaunchAhead, Actor_RollAndCrumble)
 
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
@@ -1997,7 +1997,7 @@ void Func_02004160(struct PushEvent *event) {
   z = object->z >> 20;
   z |= (s16)(event->z & mask);
   Leader_CenterInCell();
-  Event_PlaySound(229);
+  Event_PlaySound(SE_SPLASH);
   MapGrid_CopyCells(event->x, event->z + 2, 1, 1, x, z);
   FieldEvent_Wait(12);
   {
@@ -2020,7 +2020,7 @@ void Func_02004160(struct PushEvent *event) {
   FieldEvent_Wait(16);
   for (x = 0; x < 40; x++) {
     if (x == 5)
-      Event_PlaySound(204);
+      Event_PlaySound(SE_DUST_PUFF);
     object->scaleX -= 0x400;
     object->scaleY -= 0x300;
     object->y -= 0x9999;
@@ -2061,7 +2061,7 @@ void Func_020042f8(void) {
   SCENE_WORK->unk1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   leader->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
@@ -2084,7 +2084,7 @@ next:
   }
   if (++i <= 16)
     goto next;
-  Event_PlaySound(188);
+  Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);

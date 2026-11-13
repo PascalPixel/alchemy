@@ -527,7 +527,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Call2((void (*)())Field_StartColorTransition, 8, 0x1210);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 2);
-  Event_PlaySound(201);
+  Event_PlaySound(SE_ASCEND);
   FieldEvent_Wait(40);
   effect = FieldEffect_SpawnMoveHand(actor21);
   position[0] = actor15->x;
@@ -610,7 +610,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Field_StartColorTransition(8, 0x1210);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 2);
-  Event_PlaySound(201);
+  Event_PlaySound(SE_ASCEND);
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 0);

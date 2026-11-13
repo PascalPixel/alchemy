@@ -139,7 +139,7 @@ static __inline__ void Actor_Start(s32 id, s32 a, s32 b) {
 void Func_02000384(void) {
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   Actor_Start(gMainRoutineWork.currentOwner, 6, 0x1000);
-  Event_PlaySound(0x136);
+  Event_PlaySound(SE_310);
   Event_SetFlag(0x122);
   FieldEvent_SetExitRequest(13);
 }
@@ -181,7 +181,7 @@ void Func_02000418(void) {
   ((struct LandingEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   leader->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
@@ -202,7 +202,7 @@ loop:
   i++;
   if (i <= 16)
     goto loop;
-  Event_PlaySound(188);
+  Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
@@ -365,7 +365,7 @@ void Func_02000a68(s32 unused, s32 objectId) {
   if (object->z >> 20 == 31) {
     object->motionFlags = 3;
     Actor_SetSpritePriorityDirect(object, 3);
-    Event_PlaySound(204);
+    Event_PlaySound(SE_DUST_PUFF);
     while (frames != 0) {
       System_Wait(1);
       if (object->velocityY == 0)
@@ -490,12 +490,12 @@ void Func_02000c24(s32 unused, s32 id) {
   MapGrid_SetShake(0x20000, 0x20000, 0x10000);
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(770), 1);
   FieldEvent_Wait(15);
-  Event_PlaySound(202);
+  Event_PlaySound(SE_FLAME_FLARE);
   toColumn = 12;
   highRow = 111;
   MapGrid_CopyCellsLayered(12, 91, 3, 1, toColumn, highRow);
   FieldEvent_Wait(60);
-  Event_PlaySound(0x23f);
+  Event_PlaySound(SE_575);
   lowRow = 47;
   MapGrid_CopyCells(16, 27, 3, 2, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 2, toColumn, highRow);
@@ -536,12 +536,12 @@ void Func_02000e60(s32 unused, s32 id) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(15);
-  Event_PlaySound(202);
+  Event_PlaySound(SE_FLAME_FLARE);
   AnkohlRuins_Call2df4(29, 70, 3, 1, 12, 71);
   AnkohlRuins_CamBounds(PIXELS(216), -1, PIXELS(120), 1);
   AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
   FieldEvent_Wait(60);
-  Event_PlaySound(0x23f);
+  Event_PlaySound(SE_575);
   MapGrid_CopyCells(35, 6, 7, 2, 10, 7);
   MapGrid_CopyCells(35, 70, 7, 2, 10, 71);
   Func_02000b78(6, 10, 200, -40, 124, 3);
@@ -580,10 +580,10 @@ void Func_0200104c(s32 unused, s32 id) {
     FieldEvent_Wait(1);
     Actor_SetAnimation(9, 3);
     Actor_SetPosition(10, 0, 0);
-    Event_PlaySound(188);
+    Event_PlaySound(SE_THUMP);
     FieldEvent_Wait(45);
     Actor_SetAnimation(9, 4);
-    Event_PlaySound(564);
+    Event_PlaySound(SE_564);
     Event_SetFlag(0x9dd);
   }
 }
@@ -645,7 +645,7 @@ void Func_020011c0(void) {
   Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 256, 0);
   FieldEvent_Wait(10);
   AnkohlRuins_CamBounds(-1, -1, -1, 0);
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   Func_02000b30(gMainRoutineWork.currentOwner, 188);
   object->actionFlags = 1;
   Event_End();
@@ -863,7 +863,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
   leader->motionFlags = 0;
   AnkohlRuins_Call2e24(0x40000, 0x40000, 0x10000);
   FieldEvent_Wait(30);
-  Event_PlaySound(0x22c);
+  Event_PlaySound(SE_556);
   AnkohlRuins_Call2df4(22, 66, 3, 1, 7, 66);
   AnkohlRuins_Call2df4(22, 1, 3, 5, 7, 1);
   for (i = 0; i <= 15; i++) {
@@ -945,7 +945,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
   leader->motionFlags = 0;
   AnkohlRuins_Call2e24(0x50000, 0x50000, 0x10000);
   FieldEvent_Wait(30);
-  Event_PlaySound(0x22c);
+  Event_PlaySound(SE_556);
   AnkohlRuins_Call2df4(22, 66, 3, 1, 7, 84);
   AnkohlRuins_Call2df4(22, 1, 3, 5, 7, 19);
   for (i = 0; i <= 15; i++) {
@@ -1014,9 +1014,9 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
 
   if (done == 0) {
     FieldEvent_ResolvePendingActions(0);
-    Event_PlaySound(584);
+    Event_PlaySound(SE_584);
     FieldEvent_Wait(15);
-    Event_PlaySound(202);
+    Event_PlaySound(SE_FLAME_FLARE);
     MapGrid_CopyCells(18, 66, 3, 1, 7, 66);
     AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
     FieldEvent_Wait(15);
@@ -1035,12 +1035,12 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
   void name(void) {                                                            \
     if (AnkohlRuins_FlagCheck(n1) == 0) {                                      \
       Event_SetFlag(n1);                                                       \
-      Event_PlaySound(584);                                                    \
+      Event_PlaySound(SE_584);                                                 \
       Event_Start();                                                           \
       FieldEvent_ResolvePendingActions(0);                                     \
       MapGrid_CopyCells(26, 70, 1, 3, n2, n3);                                 \
       FieldEvent_Wait(20);                                                     \
-      Event_PlaySound(181);                                                    \
+      Event_PlaySound(SE_BOOM);                                                \
       MapGrid_CopyCells(26, 67, 1, 3, n2, n3);                                 \
       MapGrid_CopyCellAttributes(n4, n5, 1, 1, n2, n5);                        \
       Event_End();                                                             \
@@ -1054,9 +1054,9 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
 
   if (done == 0) {
     FieldEvent_ResolvePendingActions(0);
-    Event_PlaySound(584);
+    Event_PlaySound(SE_584);
     FieldEvent_Wait(15);
-    Event_PlaySound(202);
+    Event_PlaySound(SE_FLAME_FLARE);
     AnkohlRuins_Call2df4(18, 66, 3, 1, 7, 84);
     AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
     FieldEvent_Wait(15);
@@ -1123,7 +1123,7 @@ void Func_02001f7c(void) {
     Event_SetFlag(0x201);
     Event_ClearFlag(0x17d);
     Event_ClearFlag(0x161);
-    Event_PlaySound(208);
+    Event_PlaySound(SE_BANE_ESCAPE);
   }
 }
 
@@ -1136,7 +1136,7 @@ void Func_020020fc(void) {
     if (found == -1) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      Event_PlaySound(207);
+      Event_PlaySound(SE_RUSH);
       AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
       FieldEvent_Wait(10);
       FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(392), 1);
@@ -1192,7 +1192,7 @@ void Func_02002260(void) {
 
   if (object->x >> 20 == 26 && object->z >> 20 == 35) {
     Event_SetFlag(0x9db);
-    Event_PlaySound(204);
+    Event_PlaySound(SE_DUST_PUFF);
     Func_02000b30(9, 0);
     Actor_SetPosition(9, 0, 0);
     ObjectTable_Snapshot();
@@ -1369,7 +1369,7 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCells(35, 6, 7, 16, width, 7);
       MapGrid_CopyCells(35, 70, 7, 16, width, 71);
       if (work->entrance == 6 || work->entrance == 17 || work->entrance == 15)
-        Event_PlaySound(0x23f);
+        Event_PlaySound(SE_575);
     }
   } else if (scene == (s32)&SceneId_Ov686Room3) {
     if (GameFlag_Get(0x9c7)) {
@@ -1426,7 +1426,7 @@ s32 Scene_Initialize(s32 a0) {
       s32 width;
 
       if ((u16)(gMainRoutineWork.entrance - 13) <= 4)
-        Event_PlaySound(0x23f);
+        Event_PlaySound(SE_575);
       width = 12;
       MapGrid_CopyCells(16, 27, 3, 13, width, 47);
       MapGrid_CopyCells(16, 91, 3, 13, width, 111);
@@ -1461,7 +1461,7 @@ s32 Scene_Initialize(s32 a0) {
           if (object->velocityY > -1)
             break;
         }
-        Event_PlaySound(188);
+        Event_PlaySound(SE_THUMP);
         FieldEvent_Wait(60);
         Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
         FieldEvent_SetExitRequest(20);
@@ -1477,7 +1477,7 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
     }
     if (work->entrance == 1 || work->entrance == 12) {
-      Event_PlaySound(0x23f);
+      Event_PlaySound(SE_575);
     task:
       Task_AddFrame(Func_020010f4, 0x480);
     }
@@ -1641,7 +1641,7 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCells(35, 6, 7, 16, width, 7);
       MapGrid_CopyCells(35, 70, 7, 16, width, 71);
       if (work->entrance == 6 || work->entrance == 17 || work->entrance == 15)
-        Event_PlaySound(0x23f);
+        Event_PlaySound(SE_575);
     }
   } else if (scene == (s32)&SceneId_Ov686Room3) {
     if (GameFlag_Get(0x9c7)) {
@@ -1698,7 +1698,7 @@ s32 Scene_Initialize(s32 a0) {
       s32 width;
 
       if ((u16)(gMainRoutineWork.entrance - 13) <= 3)
-        Event_PlaySound(0x23f);
+        Event_PlaySound(SE_575);
       width = 12;
       MapGrid_CopyCells(16, 27, 3, 13, width, 47);
       MapGrid_CopyCells(16, 91, 3, 13, width, 111);
@@ -1726,7 +1726,7 @@ s32 Scene_Initialize(s32 a0) {
           if (object->velocityY > -1)
             break;
         }
-        Event_PlaySound(188);
+        Event_PlaySound(SE_THUMP);
         FieldEvent_Wait(60);
         Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
         FieldEvent_SetExitRequest(20);
@@ -1742,7 +1742,7 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
     }
     if (work->entrance == 1 || work->entrance == 12) {
-      Event_PlaySound(0x23f);
+      Event_PlaySound(SE_575);
     task:
       Task_AddFrame(Func_020010f4, 0x480);
     }

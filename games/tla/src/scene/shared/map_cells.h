@@ -74,7 +74,7 @@
       flag = table[1];                                                         \
       Event_Start();                                                           \
       if (!GameFlag_Get(flag)) {                                               \
-        Sound_Play(125);                                                       \
+        Sound_Play(SE_CHEST_CLOSE);                                            \
         Actor_SetSpriteColor(Actor_GetById(id), 7);                            \
         wait(2);                                                               \
         call3(trap, 0);                                                        \
@@ -89,7 +89,7 @@
         second = flag + 1;                                                     \
         if (!GameFlag_Get(second)) {                                           \
           leader->motionFlags = 0;                                             \
-          Sound_Play(185);                                                     \
+          Sound_Play(SE_PUSH);                                                 \
           MapGrid_SetShake(0x10000, 0x40000, 0x10000);                         \
           call4(0);                                                            \
           wait(8);                                                             \
@@ -105,7 +105,7 @@
           wait(5);                                                             \
           Actor_SetPositionAndResetMotion(trap, 0, 0, 0);                      \
           wait(2);                                                             \
-          Sound_Play(188);                                                     \
+          Sound_Play(SE_THUMP);                                                \
           call6();                                                             \
           wait(20);                                                            \
           GameFlag_Set(second);                                                \

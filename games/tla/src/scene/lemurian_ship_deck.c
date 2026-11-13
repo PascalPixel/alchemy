@@ -80,14 +80,14 @@ void LemurianShipDeck_EnterCabin(void) {
     if (i <= 63)
       goto loop;
     if (!Event_GetFlag(0x201)) {
-      Event_PlaySound(158);
+      Event_PlaySound(SE_DOOR_OPEN);
       MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
     }
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
     Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
     FieldEvent_Wait(8);
-    Event_PlaySound(123);
+    Event_PlaySound(SE_MAP_EXIT);
     FieldEvent_SetExitRequest(*(s16 *)(work + 0x154));
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
@@ -777,10 +777,10 @@ void LemurianShipDeck_ReturnToShip(void) {
   Actor_SetSpeed(7, 0xcccc, 0x6666);
   Actor_WalkToAndWait(7, 360, 424);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
-  Event_PlaySound(182);
+  Event_PlaySound(SE_GEM_SET);
   handle = LemurianShipDeck_CreateBlackCrystal();
   FieldEvent_Wait(20);
-  Event_PlaySound(220);
+  Event_PlaySound(SE_SHIMMER);
   func = LemurianShipDeck_EmitSparkle;
   Task_Add(func, TASK_PASS_VBLANK);
   PaletteFade_ApplyTarget(0x10003, 1);

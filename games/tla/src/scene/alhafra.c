@@ -96,7 +96,7 @@ void Alhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
                               s32 unused) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(158);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(step->script, step->x, step->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
@@ -272,7 +272,7 @@ void Alhafra_FindGoldCoins(void) {
   Actor_FaceDirection(31, 0x6000, 0);
   Actor_FaceDirection(30, 0x6000, 0);
   Actor_SetModeById(29, 5);
-  Sound_Play(0x59);
+  Sound_Play(MUS_089);
   gMainRoutineWork.currentOwner = 0x1d;
   ItemDisplay_ShowItem(0, 3);
   gMainRoutineWork.currentOwner = 4;

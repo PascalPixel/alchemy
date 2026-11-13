@@ -257,7 +257,7 @@ void Func_020000d8(void) {
     Actor_SetAnimation(10, 3);
     Actor_SetDestinationOffset(10, 0, 8);
     FieldEvent_Wait(22);
-    Event_PlaySound(240);
+    Event_PlaySound(SE_LOG_FALL);
     Actor_SetAnimation(10, 8);
     object->priorityFlags |= 2;
     object->motionFlags = 0;
@@ -1278,7 +1278,7 @@ void Func_02001db0(void) {
 
 void Func_02001f58(void) {
   if ((gFrameCount & 15) == 0)
-    Event_PlaySound(118);
+    Event_PlaySound(SE_FOOTSTEP);
 }
 
 void Func_02001f74(void) {
@@ -1414,7 +1414,7 @@ void Func_020021d0(void) {
     }
     first->motionFlags = 3;
     System_Wait(10);
-    Event_PlaySound(161);
+    Event_PlaySound(SE_RATTLE);
     System_Wait(10);
     first->motionFlags = 0;
     Event_SetFlag(0x210);
@@ -1438,7 +1438,7 @@ void Func_020021d0(void) {
     }
     second->motionFlags = 3;
     System_Wait(10);
-    Event_PlaySound(161);
+    Event_PlaySound(SE_RATTLE);
     System_Wait(10);
     second->motionFlags = 0;
     Event_SetFlag(0x211);
@@ -1574,14 +1574,14 @@ void Func_0200267c(void) {
   object->facing = FACING_NORTH;
   exit = &work->exit;
   index = *exit;
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   index--;
   MapGrid_AnimateCells(gData_020046bc[index].value,
                        gData_020046bc[index].pair.first,
                        gData_020046bc[index].pair.second);
   Actor_SetScript(party->currentOwner, gData_02004028);
   System_Wait(12);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(*exit);
@@ -1593,7 +1593,7 @@ void Func_0200274c(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Func_020034ec();
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(work->exit);
@@ -1617,7 +1617,7 @@ void Func_02002780(void) {
   object->facing = FACING_NORTH;
   Actor_SetScript(party->currentOwner, gData_02004028);
   System_Wait(12);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(work->exit);
@@ -2280,7 +2280,7 @@ void Func_02003620(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(0x226);
+  Event_PlaySound(SE_550);
   v5 = &gMainRoutineWork;
   v5 = (v5 + 0x214);
   object0 = Actor_Get(*(s32 *)((u8 *)v5 + 0));

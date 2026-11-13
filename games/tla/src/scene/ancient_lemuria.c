@@ -51,7 +51,7 @@ void AncientLemuria_ShakeTheStatue(struct Actor *object) {
 
   sprite->rotation = Iwram_MulQ16(Trig_Sin(time << 12), 0x100);
   if ((time & 15) == 0)
-    Sound_Play(155);
+    Sound_Play(SE_SWITCH);
 }
 
 void AncientLemuria_StillTheStatue(s32 id) {
@@ -234,7 +234,7 @@ void AncientLemuria_HeadForTheDock(void) {
   struct Actor *object;
 
   if (!GameFlag_Get(0x961) || GameFlag_Get(0x96a)) {
-    Sound_Play(123);
+    Sound_Play(SE_MAP_EXIT);
     Import_EventSetExitRequest(2);
   } else {
     Event_Start();

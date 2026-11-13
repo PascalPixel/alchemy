@@ -515,7 +515,7 @@ DEFINE_FUNC_02000444(Func_02000480, 18, 82, 0xa45)
 DEFINE_FUNC_02000444(Func_020004bc, 14, 78, 0xa46)
 
 void Func_020004f8(void) {
-  Event_PlaySound(0x248);
+  Event_PlaySound(SE_584);
   Ride_SetEntry(0, 3);
   Event_SetFlag(0x220);
 }
@@ -526,7 +526,7 @@ void Func_02000514(void) {
   Actor_SetPosition(10, 0, 0);
   Actor_SetPosition(9, S16_AT(object, 100) << 16, S16_AT(object, 102) << 16);
   Event_SetFlag(0xa42);
-  Event_PlaySound(136);
+  Event_PlaySound(SE_WHOOSH);
 }
 
 void Func_02000554(void) { Func_02001448(); }
@@ -643,12 +643,12 @@ void Func_020007f0(s32 unused, s32 id) {
       for (frames = 0; frames < 30 && object->y > object->terrainHeight;
            frames++)
         System_Wait(1);
-      Event_PlaySound(133);
+      Event_PlaySound(SE_IMPACT);
     }
     MapGrid_CopyCellsLayered(71, 24, 7, 1, 71, 5);
     MapGrid_CopyCellAttributes(7, 24, 7, 1, 7, 7);
     MapGrid_CopyCellAttributes(7, 88, 7, 1, 7, 71);
-    Event_PlaySound(167);
+    Event_PlaySound(SE_MAP_TRANSITION);
     Actor_SetPosition(id, 0, 0);
     Flag_Set(0x358);
   }
@@ -682,7 +682,7 @@ void Func_02000944(void) {
   frame = 0;
 step:
   if (frame == 5)
-    Event_PlaySound(204);
+    Event_PlaySound(SE_DUST_PUFF);
   object->motionFlags = 0;
   object->scaleX += (-0x400);
   object->scaleY += -0x300;
@@ -969,7 +969,7 @@ s32 Scene_Initialize(void) {
       Event_Wait(30);
       Actor_SetPosition(18, 0, 0);
       Actor_SetPosition(17, 0x1080000, 0x2080000);
-      Event_PlaySound(136);
+      Event_PlaySound(SE_WHOOSH);
       Event_Wait(60);
       Flag_Set(0x109);
       return ((s32 (*)())Import_EventSetExitRequest)(3);
@@ -1191,7 +1191,7 @@ void Func_0200167c(void) {
     if (i <= 59 && actor->y > actor->terrainHeight + 0x100000)
       goto fall;
   }
-  Event_PlaySound(127);
+  Event_PlaySound(SE_LANDING_THUD);
   i = 0;
   if (actor->velocityY != 0) {
   settle:
@@ -1226,7 +1226,7 @@ struct GustObject *Func_02001a54(struct GustObject *source) {
   struct EffectOptions options;
   struct GustObject *object;
 
-  Event_PlaySound(222);
+  Event_PlaySound(SE_222);
   position.x = source->x + MulQ16(0x80000, Trig_Cos(source->angle));
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
   object = (struct GustObject *)FieldActor_Create(280, position.x, source->y,
@@ -2061,7 +2061,7 @@ void Actor_RollAndCrumble(struct Actor *actor);
 /// from self, 12 pixels up, along self's angle (unk66), faces it that way,
 /// gives it Actor_RollAndCrumble as its update hook and its speed, clears its
 /// scale and action, has it watch what self watches, and calls
-/// Event_PlaySound(104). The twin of overlay 6ac's Func_02002e6c.
+/// Event_PlaySound(SE_104). The twin of overlay 6ac's Func_02002e6c.
 void Func_02003304(struct Actor *self) {
   struct Actor *actor = Actor_Get(((u8 *)self)[0x62]);
   s32 angle = (s16)self->unk66;
@@ -2091,7 +2091,7 @@ void Func_02003304(struct Actor *self) {
   } while (0);
   actor->timer = 0;
   actor->watchedObject = self->watchedObject;
-  Event_PlaySound(104);
+  Event_PlaySound(SE_104);
 }
 
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);

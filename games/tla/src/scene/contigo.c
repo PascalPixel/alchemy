@@ -1012,7 +1012,7 @@ void Func_020015ac(void) {
   Actor_SetHorizontalPositionWithTerrain(17, 0x380000, 0x2ba0000);
   wait(1);
   options.priority = 2;
-  Sound_Play(188);
+  Sound_Play(SE_THUMP);
   MapGrid_SetShake(0x10000, 0x20000, 0x10000);
   for (i = 0; i <= 16; i++) {
     angle = i << 12;
@@ -1277,7 +1277,7 @@ void Func_02001c44(s32 id) {
 void Func_02001c5c(s32 a, s32 b, s32 c, s32 d) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(188);
+  Sound_Play(SE_THUMP);
   {
     s32 width = 1;
     s32 height = 2;
@@ -1289,7 +1289,7 @@ void Func_02001c5c(s32 a, s32 b, s32 c, s32 d) {
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_0200466c);
   wait(12);
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
@@ -1329,7 +1329,7 @@ void Func_02001d50(void) {
   object = ((struct ContigoObject *)Actor_GetById(8));
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_WatchAndSetScript(0, gMainRoutineWork.currentOwner);
@@ -1360,7 +1360,7 @@ void Func_02001d50(void) {
   Actor_Stop(2);
   Actor_Stop(8);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Sound_Play(43);
+  Sound_Play(MUS_043);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(0, 3);
   Event_SetMessageId((s32)MsgGladYouKeptYourPromise);
@@ -1542,7 +1542,7 @@ void Func_02001d50(void) {
   Actor_FaceDirection(1, FACING_NORTHEAST, 0);
   Contigo_Jump(0, 261, 0);
   Contigo_Jump(1, 261, 20);
-  Sound_Play(0);
+  Sound_Play(MUS_000);
   Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 15);
   angle = 0xb000;
   Actor_SetHorizontalPositionAndAngleWithTerrain(8, PIXELS(160), PIXELS(466),
@@ -1575,7 +1575,7 @@ void Func_02001d50(void) {
   Actor_Stop(1);
   Actor_Stop(3);
   Actor_Stop(2);
-  Sound_Play(705);
+  Sound_Play(MUS_705);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_ShowMessageAndWait(8, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
@@ -1693,7 +1693,7 @@ void Func_02001d50(void) {
   Event_ShowMessageAndWait(8, 0);
   Actor_SetModeById(8, 3);
   Event_ShowMessageAndWait(8, 0);
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   FieldCamera_MoveTo(PIXELS(180), -1, PIXELS(410), 1);
   Actor_WalkToAndWait(8, 160, 466);
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
@@ -2189,11 +2189,11 @@ void Contigo_InitializeRoom3(void) {
     Event_WaitTransitionFrames();
     if (diff > 0) {
       if (diff > 19999)
-        Sound_Play(93);
+        Sound_Play(MUS_093);
       else if (diff > 4999)
-        Sound_Play(92);
+        Sound_Play(MUS_092);
       else
-        Sound_Play(91);
+        Sound_Play(MUS_091);
       Event_Wait(20);
       Event_SetMessageId(MSG_COINS_WON);
       MessageArgument_Push(diff, 5);
@@ -2213,11 +2213,11 @@ void Contigo_InitializeRoom3(void) {
     Event_WaitTransitionFrames();
     if (diff > 0) {
       if (diff > 19999)
-        Sound_Play(93);
+        Sound_Play(MUS_093);
       else if (diff > 4999)
-        Sound_Play(92);
+        Sound_Play(MUS_092);
       else
-        Sound_Play(91);
+        Sound_Play(MUS_091);
       Event_Wait(20);
       Event_SetMessageId(MSG_COINS_WON);
       MessageArgument_Push(diff, 5);
@@ -2314,7 +2314,7 @@ void Func_02003cd8(struct Actor *object) {
         object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
   if (((u8 *)object)[98] == 0) {
     if ((*count & 15) == 0) {
-      Sound_Play(0x256);
+      Sound_Play(SE_598);
       work->unka0[work->unka6] = 0;
       work->unka6 ^= 1;
     }

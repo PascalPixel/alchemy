@@ -574,7 +574,7 @@ visited:
   Actor_ShowEmote(10, 0x108, 50);
   Actor_SetAnimation(10, 3);
   FieldEvent_Wait(10);
-  Event_PlaySound(0x26b);
+  Event_PlaySound(SE_619);
   FieldEvent_Wait(60);
   FieldActor_StartRepeatedMotion(11, 3);
   Actor_SetAttachedEffect(11, 0x102);
@@ -904,7 +904,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_FaceDirection(18, FACING_SOUTH + FACING_STEP, 0);
   Event_Wait(30);
   Actor_EmitNotes(18);
-  Event_PlaySound(151);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   Actor_ShowEmote(18, 0x101, 50);
   Actor_FaceDirection(18, FACING_NORTHWEST + FACING_STEP, 0);
   Event_Wait(25);
@@ -1171,7 +1171,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_WalkByAndWait(18, 0, 20);
   MapGrid_SetShake(0x10000, 0x10000, 0x10000);
   Actor_SetSpeed(18, 0x1e666, 0xf333);
-  Event_PlaySound(133);
+  Event_PlaySound(SE_IMPACT);
   Actor_Jump(18, 2, 0);
   Actor_GetById(18)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(18, 0, -12);
@@ -1198,7 +1198,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_SetSpeed(18, 0x23333, 0x11999);
   Actor_WalkByAndWait(18, 0, 32);
   target = Actor_GetById(18);
-  Event_PlaySound(134);
+  Event_PlaySound(SE_HEAVY_IMPACT);
   MapGrid_SetShake(0x40000, 0x40000, 0x10000);
   Actor_GetById(18)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(18, 0, -16);

@@ -98,7 +98,7 @@ void Champa_OpenDoorAndEnter(const void *warp, s32 door, s32 mode) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
@@ -585,17 +585,17 @@ void Champa_JennaAndShebaGlare(s32 firstId, s32 secondId) {
 
   y = first->y;
   Champa_SpawnGlareSpark(first->x, y + rise, first->z, 0x1000, 15);
-  Event_PlaySound(151);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   y = second->y;
   Champa_SpawnGlareSpark(second->x, y + rise, second->z, 0xf000, 15);
-  Event_PlaySound(151);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   Champa_SpawnGlareSpark(first->x, first->y + rise, first->z, 0x1000, 15);
-  Event_PlaySound(151);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   Champa_SpawnGlareSpark(second->x, second->y + rise, second->z, 0xf000, 15);
-  Event_PlaySound(151);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
 }
 
@@ -663,14 +663,14 @@ void Champa_CatchUpWithBriggs(void) {
   Actor_SetPosition(25, 0x1380000, 0x2080000);
   Actor_SetPosition(26, 0x1c80000, 0x2680000);
   Actor_SetPosition(27, 0xa80000, 0x2680000);
-  Event_PlaySound(0x4e);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_ShowMessage(0x19, 0);
   Actor_ShowEmote(4, 0x101, 0x14);
   Actor_WalkToAndWait(4, 312, 616);
   FieldCamera_MoveTo(0x1380000, -1, 0x2580000, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(5);
-  Event_PlaySound(0x27);
+  Event_PlaySound(MUS_039);
   Actor_WalkToAndWait(25, 304, 576);
   FieldEvent_Wait(5);
   FieldActor_LaunchFromLeader(7, -16, 0, 0xc000);
@@ -1199,14 +1199,14 @@ void Champa_CatchUpWithBriggs(void) {
   Actor_FaceDirectionAndWait(25, 0x5000);
   FieldEvent_Wait(10);
   Event_ShowMessage(0x2019, 0);
-  Event_PlaySound(0x4e);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Actor_WalkByAndWait(25, 0, 80);
   Actor_SetPosition(25, 0, 0);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(0x1300000, -1, 0x2700000, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  Event_PlaySound(3);
+  Event_PlaySound(MUS_003);
   Actor_ShowEmote(5, 0x107, 0x1e);
   Event_ShowMessage(0x2005, 0);
   Actor_ShowEmote(6, 0x103, 0x1e);

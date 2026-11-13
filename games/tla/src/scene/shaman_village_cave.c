@@ -595,7 +595,7 @@ next:
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
   FieldEvent_Wait(5);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_SetExitRequest(work->value154);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

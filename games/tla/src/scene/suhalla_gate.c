@@ -155,13 +155,13 @@ void SuhallaGate_EnterHouse(void) {
   s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
 
   Actor_GetById(0)->motionFlags = 0;
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(66, 36, 71, 8, 2, 2);
   wait(4);
   MapGrid_CopyCellsTo(68, 36, 71, 8, 2, 2);
   wait(4);
   Actor_CenterAndWalk(0, 3, -16);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(value);
 }
 
@@ -170,7 +170,7 @@ void SuhallaGate_LeaveForIdejima(void) {
   s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
 
   gMainRoutineWork.currentOwner = 4;
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(value);
 }
 

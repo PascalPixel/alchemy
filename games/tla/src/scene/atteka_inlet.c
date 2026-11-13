@@ -469,7 +469,7 @@ void AttekaInlet_OpenDoorAndEnter(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(158);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);

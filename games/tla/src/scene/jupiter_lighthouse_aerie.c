@@ -136,7 +136,7 @@ void Func_02000054(s32 mode) {
 
   FieldActor_SetPositionAndResetMotion(rider, rider->x, rider->y, rider->z);
   if (mode == 0 || mode == 2) {
-    Event_PlaySound(556);
+    Event_PlaySound(SE_556);
     for (i = 0; i <= 63; i++) {
       left->y += 0x1999;
       rider->y += 0x7ae;
@@ -146,7 +146,7 @@ void Func_02000054(s32 mode) {
       System_Wait(1);
     }
   } else {
-    Event_PlaySound(556);
+    Event_PlaySound(SE_556);
     for (i = 0; i <= 63; i++) {
       right->y += 0x1999;
       rider->y += 0x7ae;
@@ -160,16 +160,16 @@ void Func_02000054(s32 mode) {
   FieldEvent_Wait(30);
   Func_0200105c(left);
   Func_0200105c(right);
-  Event_PlaySound(522);
+  Event_PlaySound(SE_522);
   for (i = 255; i >= 0; i--) {
     Actor_Get(9)->y += 0x1999;
     Actor_Get(10)->y += 0x1999;
     rider->y += 0x1999;
     System_Wait(1);
   }
-  Event_PlaySound(390);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   FieldEvent_Wait(40);
-  Event_PlaySound(80);
+  Event_PlaySound(MUS_080);
   FieldEvent_Wait(10);
   Sound_WaitForJingle();
   left->motionFlags = 4;
@@ -261,12 +261,12 @@ void Func_0200032c(s32 unused, s32 id) {
       object->motionFlags = 0;
       FieldActor_Stop(gMainRoutineWork.currentOwner);
       Actor_SetPosition(id, 0, 0);
-      Event_PlaySound(134);
+      Event_PlaySound(SE_HEAVY_IMPACT);
       MapGrid_CopyCellsLayered(66, 39, 1, 1, 70, 10);
       MapGrid_CopyCellsLayered(5, 75, 1, 1, 6, 75);
       MapGrid_CopyCellAttributes(5, 12, 1, 1, 6, 12);
       FieldEvent_Wait(30);
-      Event_PlaySound(167);
+      Event_PlaySound(SE_MAP_TRANSITION);
       MapGrid_CopyCellsLayered(70, 39, 1, 1, 71, 10);
       FieldEvent_Wait(20);
       Func_020001b4();
@@ -291,12 +291,12 @@ void Func_0200032c(s32 unused, s32 id) {
       object->motionFlags = 0;
       FieldActor_Stop(gMainRoutineWork.currentOwner);
       Actor_SetPosition(id, 0, 0);
-      Event_PlaySound(134);
+      Event_PlaySound(SE_HEAVY_IMPACT);
       MapGrid_CopyCellsLayered(68, 39, 1, 1, 121, 10);
       MapGrid_CopyCellsLayered(58, 75, 1, 1, 57, 75);
       MapGrid_CopyCellAttributes(58, 12, 1, 1, 57, 12);
       FieldEvent_Wait(30);
-      Event_PlaySound(167);
+      Event_PlaySound(SE_MAP_TRANSITION);
       MapGrid_CopyCellsLayered(72, 39, 1, 1, 120, 10);
       FieldEvent_Wait(20);
       Func_02000264();
@@ -477,7 +477,7 @@ void Func_02000930(void) {
     i++;
     System_Wait(1);
   }
-  Event_PlaySound(127);
+  Event_PlaySound(SE_LANDING_THUD);
   i = 0;
   while (i <= 59 && actor->velocityY != 0) {
     i++;
@@ -513,7 +513,7 @@ void Whirlwind_Update(struct Actor *self) {
   }
   Actor_SetAnimationSpeed(self, 16);
   if ((++*(u16 *)&self->timer & 31) == 31)
-    Event_PlaySound(231);
+    Event_PlaySound(SE_WATER_LEVEL);
   {
     s8 *to = self->sprite;
     s8 *from = leader->sprite;
@@ -574,7 +574,7 @@ stop:
     *((u8 *)self + 0x63) = zero;
     self->update = zero;
     Actor_StartScript(self, gData_0200331c);
-    Event_PlaySound(228);
+    Event_PlaySound(SE_SPARKLING_PASSAGE);
     gData_0200333c = zero;
   }
 }
@@ -735,7 +735,7 @@ void Func_02001080(void) {
     break;
   case 3:
     if (t == 0)
-      Sound_Play(131);
+      Sound_Play(SE_PSYNERGY_SPARKLE);
     work->carried[0] = ((work->from[0] >> 2) +
                         ((work->to[0] >> 2) - (work->from[0] >> 2)) * t / 96)
                        << 2;
@@ -757,7 +757,7 @@ void Func_02001080(void) {
     break;
   case 4:
     if (work->frame == 0) {
-      Sound_Play(220);
+      Sound_Play(SE_SHIMMER);
       Func_0200105c(work->second);
     }
     large = &work->large;
@@ -934,7 +934,7 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   Actor_StartIdle(carrier);
   FieldActor_SetMoveTarget(carrier, work->start[0], work->start[1],
                            work->start[2]);
-  Event_PlaySound(142);
+  Event_PlaySound(SE_SWIRL);
   Func_0200105c(work->first);
   FieldEvent_Wait(40);
   work->side = side;

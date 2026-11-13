@@ -265,7 +265,7 @@ body:
 
       Event_Start();
       if (!GameFlag_Get(flag)) {
-        Sound_Play(125);
+        Sound_Play(SE_CHEST_CLOSE);
         Actor_SetSpriteColor(Actor_GetById(id), 7);
         wait(2);
         Actor_SelectAnimation(pillar, 0);
@@ -280,7 +280,7 @@ body:
         u8 *flags = &leader->motionFlags;
 
         *flags = 0;
-        Sound_Play(185);
+        Sound_Play(SE_PUSH);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Rubble_Spray(0);
         wait(8);
@@ -296,7 +296,7 @@ body:
         wait(5);
         Actor_SetPositionAndResetMotion(pillar, 0, 0, 0);
         wait(2);
-        Sound_Play(188);
+        Sound_Play(SE_THUMP);
         Rubble_Burst();
         wait(20);
         GameFlag_Set(flag + 1);
@@ -324,7 +324,7 @@ void CrumblingPillar_Collapse(const void *data, s32 id) {
       flag = entry->flag;
       Event_Start();
       if (!Event_GetFlag(flag + 1)) {
-        Event_PlaySound(185);
+        Event_PlaySound(SE_PUSH);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Rubble_Spray(0);
         System_Wait(8);
@@ -336,7 +336,7 @@ void CrumblingPillar_Collapse(const void *data, s32 id) {
         System_Wait(8);
         FieldActor_SetPositionAndResetMotion(object, 0, 0, 0);
         System_Wait(2);
-        Event_PlaySound(188);
+        Event_PlaySound(SE_THUMP);
         Rubble_Burst();
         System_Wait(20);
         Event_SetFlag(flag);
@@ -445,7 +445,7 @@ body:
         Actor_SelectAnimation(helper, 1);
         Actor_TakePlaceOf(helper, pillar);
         wait(1);
-        Sound_Play(125);
+        Sound_Play(SE_CHEST_CLOSE);
         Actor_SetSpriteColor(Actor_GetById(8), 7);
         wait(2);
         Actor_SelectAnimation(helper, 0);
@@ -467,7 +467,7 @@ body:
         wait(1);
         flags = &leader->motionFlags;
         *flags = 0;
-        Sound_Play(185);
+        Sound_Play(SE_PUSH);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Rubble_Spray(0);
         wait(8);
@@ -483,7 +483,7 @@ body:
         wait(5);
         Actor_SetPositionAndResetMotion(helper, 0, 0, 0);
         wait(2);
-        Sound_Play(188);
+        Sound_Play(SE_THUMP);
         Rubble_Burst();
         wait(20);
         GameFlag_Set(flag + 1);

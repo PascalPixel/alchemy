@@ -374,7 +374,7 @@ void Func_020007a4(s32 unused, s32 id) {
           break;
       } while (object->y > object->terrainHeight || object->velocityY != 0);
     }
-    Event_PlaySound(188);
+    Event_PlaySound(SE_THUMP);
     object->motionFlags = 0;
   }
   if ((u32)(id - 18) <= 1) {
@@ -385,13 +385,13 @@ void Func_020007a4(s32 unused, s32 id) {
     Event_Wait(30);
     Func_020002f0();
     if (spot == 0)
-      Event_PlaySound(167);
+      Event_PlaySound(SE_MAP_TRANSITION);
     if (spot == 1)
-      Event_PlaySound(167);
+      Event_PlaySound(SE_MAP_TRANSITION);
     if (spot == 3 && Event_GetFlag(2576))
-      Event_PlaySound(167);
+      Event_PlaySound(SE_MAP_TRANSITION);
     if (spot == 4 && Event_GetFlag(2577))
-      Event_PlaySound(167);
+      Event_PlaySound(SE_MAP_TRANSITION);
     Actor_Stop(gMainRoutineWork.currentOwner);
     Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
     if (Func_02000290() != 2 || !Event_GetFlag(2582))
@@ -404,7 +404,7 @@ void Func_020007a4(s32 unused, s32 id) {
     FieldCamera_MoveTo(166 << 18, -1, PIXELS(136), 1);
     FieldCamera_WaitForArrival();
     Event_Wait(20);
-    Event_PlaySound(151);
+    Event_PlaySound(SE_LIGHT_APPEAR);
     Actor_SelectAnimation(object, 3);
     object->priorityFlags &= ~2;
     FieldMapGrid_SetCellBehavior(object->x, object->z, object->terrainId, 255);
@@ -420,14 +420,14 @@ void Func_020007a4(s32 unused, s32 id) {
     Event_SetFlag(2586);
     Actor_SetSpriteFlags(Actor_GetById(20), 0);
     Event_Wait(30);
-    Event_PlaySound(167);
+    Event_PlaySound(SE_MAP_TRANSITION);
     Func_020005e8(1);
     if (!Event_GetFlag(2583))
       return;
     object = Actor_GetById(9);
     Event_ClearFlag(2583);
     Event_Wait(20);
-    Event_PlaySound(151);
+    Event_PlaySound(SE_LIGHT_APPEAR);
     Actor_SelectAnimation(object, 3);
     object->priorityFlags &= ~2;
     FieldMapGrid_SetCellBehavior(object->x, object->z, object->terrainId, 255);
@@ -451,7 +451,7 @@ void Func_020009f8(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
   object->velocityY = PIXELS(8);
   Actor_SetSpeed(id, 0x19999, 0xcccc);
   Actor_SetDestinationOffset(id, dx, dz);
-  Event_PlaySound(222);
+  Event_PlaySound(SE_222);
 }
 
 /// Drops objects 18 and 19 once any of flags 2576 to 2581 is set: the camera
@@ -1050,7 +1050,7 @@ void CrackedTile_DropIn(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   actor->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
@@ -1080,7 +1080,7 @@ loop:
   i++;
   if (i <= 16)
     goto loop;
-  Event_PlaySound(188);
+  Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);

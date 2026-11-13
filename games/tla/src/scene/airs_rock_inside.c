@@ -6,6 +6,7 @@
 /// restores the party's PP (AirsRockInside_CheckPsynergyStone).
 
 #include "shared/map_cells.h"
+#include "sounds.h"
 #include "shared/actors.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -584,7 +585,7 @@ void Func_02000988(void) {
   *motion = 4;
   Actor_SetSpriteFlags(leader, 0);
   GameFlag_Set(0x250);
-  Sound_Play(137);
+  Sound_Play(SE_137);
   riding = (u8 *)ride + 99;
   rise = 0;
   while (*riding != 0) {
@@ -597,7 +598,7 @@ void Func_02000988(void) {
     leader->priorityFlags ^= 2 << (gFrameCount & 1);
     wait(1);
   }
-  Sound_Play(0x120);
+  Sound_Play(SE_288);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1 &&
       leader->x >> 19 == 39) {
     Event_SetExitRequest(16);
@@ -670,7 +671,7 @@ void Func_02000988(void) {
     leader->terrainHeight = height;
     Actor_SelectAnimation(leader, 6);
     wait(6);
-    Sound_Play(152);
+    Sound_Play(SE_JUMP);
     Actor_SelectAnimation(leader, 7);
     leader->speedLimit = 0x20000;
     leader->acceleration = 0x8000;
@@ -1165,7 +1166,8 @@ void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 
 // One shake of the walls (cue 157).
 #define SHAKE()                                                                \
-  (Sound_Play(157), Call3(MapGrid_SetScreenShake, 0x50000, 0x50000, 0x10000),  \
+  (Sound_Play(SE_GATE_MOVE),                                                   \
+   Call3(MapGrid_SetScreenShake, 0x50000, 0x50000, 0x10000),                   \
    Call3(MapGrid_SetScreenShake, -1, -1, 0xe666))
 
 void Func_02001828(void) {
@@ -1185,7 +1187,7 @@ void Func_02001828(void) {
    * instructions differ in tla-en. */
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(207);
+  Sound_Play(SE_RUSH);
   gust =
       (struct Actor *)Import_ActorCreate(280, leader->x, leader->y, leader->z);
   Actor_SelectAnimation(gust, 2);
@@ -1235,7 +1237,7 @@ void Func_02001828(void) {
     FieldEvent_Wait(1);
   }
   Actor_SetSpriteColor(TARGET(effect), 0);
-  Sound_Play(136);
+  Sound_Play(SE_WHOOSH);
   cell.x = TARGET(effect)->x >> 20;
   cell.z = TARGET(effect)->z >> 20;
   if (leader->x >> 20 < cell.x) {
@@ -1346,7 +1348,7 @@ void Func_02001828(void) {
     }
   }
   if (hit == 255) {
-    Sound_Play(136);
+    Sound_Play(SE_WHOOSH);
   } else {
     cell.x = (gust->x >> 16) + dir.x * 48;
     cell.z = (gust->z >> 16) + dir.z * 48;
@@ -1360,7 +1362,7 @@ void Func_02001828(void) {
       if (hit > 4)
         goto shrink;
       if (i == 0) {
-        Sound_Play(235);
+        Sound_Play(SE_235);
         i = 1;
       }
       if ((gFrameCount & 1) == 0) {
@@ -1410,7 +1412,7 @@ void Func_02001828(void) {
       }
       FieldEvent_Wait(1);
     }
-    Sound_Play(298);
+    Sound_Play(SE_298);
   }
 shrink:
   gust->acceleration = 0;
@@ -1490,7 +1492,7 @@ shrink:
         wait(20);
       } else {
         Call6(MapGrid_CopyCellPictureIndicesRect, 79, 0x40, 0x20, 79, 5, 7);
-        Sound_Play(157);
+        Sound_Play(SE_GATE_MOVE);
         FieldEvent_Wait(30);
         SHAKE();
         Call6(MapGrid_CopyCellPictureIndicesRect, 0x40, 0x40, 0x20, 79, 5, 7);
@@ -1819,7 +1821,7 @@ row:
   if (i != 16)
     goto row;
   Heap_Release(buffer);
-  Sound_Play(246);
+  Sound_Play(SE_GLITTER);
   ((u8 *)Actor_GetById(11))[98] = 9;
   ((u8 *)Actor_GetById(11))[99] = 1;
   Actor_GetById(11)->update = Func_02002cc0;
@@ -1867,7 +1869,7 @@ row:
   gBgScroll[0].x = 0xff98;
   gBgScroll[0].y = 42;
   wait(30);
-  Sound_Play(138);
+  Sound_Play(SE_ITEM_BREAK);
   Call2((void (*)())BattleEffect_ApplyColorToSourceBuffer, 0x10003, 0);
   Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
   PaletteFade_StartInterpolation(1);
@@ -1890,13 +1892,13 @@ fade:
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   PaletteFade_StartInterpolation(60);
   wait(30);
-  Sound_Play(148);
+  Sound_Play(SE_BOSS_ROAR);
   Func_02002aa8(0x1380000, 0x2d00000);
   Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, 64, 78, 18, 105, 3, 5);
   Camera_SetSpeedParameters(0x18000, 0x3000);
   FieldCamera_MoveToActorById(10, 1);
   FieldCamera_WaitForArrival();
-  Sound_Play(146);
+  Sound_Play(SE_ENEMY_CRY);
   Call2((void (*)())Actor_ConfigureSpriteColor, 10, 0x100);
   Func_02002b58(Actor_GetById(10)->x, Actor_GetById(10)->z);
   Actor_ConfigureSpriteColor(10, 0);
@@ -1933,7 +1935,7 @@ void Func_02003170(void) {
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(188);
+  Sound_Play(SE_THUMP);
   width = 1;
   height = 2;
   MapGrid_CopyCellPictureIndicesRect(65, 76, 19, 92, width, height);
@@ -1947,7 +1949,7 @@ void Func_02003170(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Actor_GetById(gMainRoutineWork.currentOwner)->speedLimit =
       Actor_GetById(gMainRoutineWork.currentOwner)->acceleration = 0x8000;
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Actor_WalkToById(gMainRoutineWork.currentOwner, 312, 792);
   FieldEvent_Wait(5);
   Event_SetExitRequest(15);
@@ -2007,7 +2009,7 @@ void Func_0200332c(void) {
     pushed->terrainId = 2;
     pushed->motionFlags = 3;
     OverlayObject_WaitUntilIdle(pushed);
-    Sound_Play(188);
+    Sound_Play(SE_THUMP);
     OverlayObject_WaitUntilIdle(pushed);
     pushed->motionFlags = 0;
     pushed->terrainId = 0;
@@ -2129,7 +2131,7 @@ row:
   if (i != 16)
     goto row;
   Heap_Release(buffer);
-  Sound_Play(246);
+  Sound_Play(SE_GLITTER);
   ((u8 *)Actor_GetById(10))[98] = 9;
   ((u8 *)Actor_GetById(10))[99] = 1;
   Actor_GetById(10)->update = Func_02002cc0;
@@ -2177,7 +2179,7 @@ row:
   gBgScroll[0].x = 0xff98;
   gBgScroll[0].y = 42;
   wait(30);
-  Sound_Play(138);
+  Sound_Play(SE_ITEM_BREAK);
   Call2((void (*)())BattleEffect_ApplyColorToSourceBuffer, 0x10003, 0);
   Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
   PaletteFade_StartInterpolation(1);
@@ -2200,13 +2202,13 @@ fade:
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   PaletteFade_StartInterpolation(60);
   wait(30);
-  Sound_Play(148);
+  Sound_Play(SE_BOSS_ROAR);
   Func_02002aa8(0xd80000, 0x12d0000);
   Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, 68, 84, 12, 77, 3, 6);
   Camera_SetSpeedParameters(0x18000, 0x3000);
   FieldCamera_MoveToActorById(8, 1);
   FieldCamera_WaitForArrival();
-  Sound_Play(146);
+  Sound_Play(SE_ENEMY_CRY);
   Call2((void (*)())Actor_ConfigureSpriteColor, 8, 0x100);
   Func_02002b58(Actor_GetById(8)->x, Actor_GetById(8)->z + 0x200000);
   Actor_ConfigureSpriteColor(8, 0);
@@ -2250,7 +2252,7 @@ void Func_02003b08(void) {
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(186);
+  Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
   BYTE_AT(Actor_GetById(gMainRoutineWork.currentOwner), 90) &= ~1;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
   Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 376, 668);
@@ -2275,7 +2277,7 @@ void Func_02003b7c(s32 x, s32 y) {
   Event_ResolvePendingActions(0);
   REG_WINOUT = 0x3f1f;
   REG_DISPCNT |= 0x8000;
-  Sound_Play(106);
+  Sound_Play(SE_DRIP);
   i = 0;
 fadeIn:
   REG_BLDALPHA = (i << 9) | 16;
@@ -2455,13 +2457,13 @@ void Func_02004138(s32 idA, s32 idB) {
   // Unused: gives the stack frame its 12 bytes.
   s32 unused[3];
 
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(30);
   Camera_SetSpeedParameters(0x8000, 0x1000);
   FieldCamera_MoveWithinMapBounds(((s16 *)&a->x)[1] << 16,
                                   ((s16 *)&a->y)[1] << 16,
                                   ((s16 *)&a->z)[1] << 16, 1);
-  Sound_Play(141);
+  Sound_Play(SE_RUMBLE);
   Call3(MapGrid_SetScreenShake, 0x20000, 0x20000, 0x10000);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
@@ -2470,7 +2472,7 @@ void Func_02004138(s32 idA, s32 idB) {
   a->acceleration = 0x3333;
   a->speedLimit = 0x3333;
   Actor_SetMovementTypeById(idA, gData_020060e0);
-  Sound_Play(194);
+  Sound_Play(SE_194);
   FieldEvent_Wait(45);
   Actor_ConfigureSpriteColor(idA, 0x100);
   REG_BLDALPHA = 0x1008;
@@ -2479,7 +2481,7 @@ void Func_02004138(s32 idA, s32 idB) {
 first:
   {
     struct Actor *spark = Import_ActorCreate(0x2a0, a->x, a->y, a->z);
-    Sound_Play(246);
+    Sound_Play(SE_GLITTER);
     spark->x += ((Random16() & 31) - 16) << 16;
     spark->y += ((Random16() & 15) - 8) << 16;
     spark->speedLimit = 0x80000;
@@ -2517,7 +2519,7 @@ second:
   {
     struct Actor *spark = (struct Actor *)Value4((s32 (*)())Import_ActorCreate,
                                                  0x2a0, b->x, b->y, b->z);
-    Sound_Play(195);
+    Sound_Play(SE_195);
     angle = &spark->timer;
     *angle = (Random16() & 0x7fff) + 0x8000;
     spark->unk66 = ((i & 1) * 2 - 1) << ((Random16() & 3) + 9);
@@ -2548,7 +2550,7 @@ second:
   i++;
   if (i != 16)
     goto second;
-  Sound_Play(220);
+  Sound_Play(SE_SHIMMER);
   wait(16);
   i = 2;
 third:
@@ -2575,7 +2577,7 @@ third:
   i += 2;
   if (i != 32)
     goto third;
-  Sound_Play(220);
+  Sound_Play(SE_SHIMMER);
   wait(50);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
   PaletteFade_StartInterpolation(8);
@@ -2583,7 +2585,7 @@ third:
   MapGrid_SetScreenShake(0, 0, 0);
   Actor_ConfigureSpriteColor(idA, 0);
   Actor_ConfigureSpriteColor(idB, 0);
-  Sound_Play(574);
+  Sound_Play(SE_574);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(idA, gData_02006128);
@@ -2591,7 +2593,7 @@ third:
   b->update = Actor_EmitBubbles;
   wait(120);
   b->update = 0;
-  Sound_Play(390);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Scene_PlayMusic();
   wait(1);
 }
@@ -2839,7 +2841,7 @@ void Func_02004ab8(void) {
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(186);
+  Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= ~1;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
   switch (*warp) {
@@ -2885,7 +2887,7 @@ void AirsRockInside_CheckPsynergyStone(void) {
   Event_ResolvePendingActions(0);
   message = MsgCheckedThePsynergy;
   FieldMessage_Show(message, 1);
-  Sound_Play(126);
+  Sound_Play(SE_RECOVERY);
   Party_AddPp(999, 0);
   FieldEvent_Wait(10);
   GameFlag_Clear(322);
@@ -2946,14 +2948,14 @@ void Func_02004cc8(void) {
   lift->acceleration = 0x16666;
   Actor_SetMoveTarget(leader, leader->x, leader->y + 0x500000, leader->z);
   Actor_SetMoveTarget(lift, lift->x, lift->y + 0x480000, lift->z);
-  Sound_Play(137);
+  Sound_Play(SE_137);
   Event_StartScreenTransition();
   while (!Actor_HasArrived(leader)) {
     leader->facing = (u8)gFrameCount << 12;
     leader->priorityFlags ^= 2 << (gFrameCount & 1);
     wait(1);
   }
-  Sound_Play(288);
+  Sound_Play(SE_288);
   FieldEvent_Wait(10);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
   height = Map_GetTerrainHeight(0, lift->x, lift->z - 0x100000);
@@ -2961,7 +2963,7 @@ void Func_02004cc8(void) {
   leader->terrainHeight = height;
   Actor_SelectAnimation(leader, 6);
   wait(6);
-  Sound_Play(152);
+  Sound_Play(SE_JUMP);
   Actor_SelectAnimation(leader, 7);
   leader->speedLimit = 0x20000;
   leader->acceleration = 0x8000;
@@ -3100,7 +3102,7 @@ void Func_0200505c(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Sound_Play(204);
+  Sound_Play(SE_DUST_PUFF);
   leader->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
@@ -3124,7 +3126,7 @@ void Func_0200505c(void) {
         EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
         &options);
   }
-  Sound_Play(188);
+  Sound_Play(SE_THUMP);
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 257);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   Call3((void (*)())MapGrid_SetScreenShake, 0x50000, 0x50000, 0x10000);
@@ -3227,7 +3229,7 @@ s32 Scene_Initialize(void) {
       Func_02004cc8();
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room3) {
     Func_02002770();
-    Scene_QueueMusic(245);
+    Scene_QueueMusic(SE_245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
     Task_Add(Func_02001690, 0x480);
@@ -3360,7 +3362,7 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellAttributeRect, 38, 35, 1, 1, 38, 37);
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room8) {
-    Scene_QueueMusic(245);
+    Scene_QueueMusic(SE_245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
     Task_Add(Func_02001690, 0x480);

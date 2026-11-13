@@ -109,7 +109,7 @@ void VenusLighthouseEntrance_BlastActorWithPsynergy(void *object) {
 void VenusLighthouseEntrance_TrailDust(struct Actor *object) {
   VenusLighthouseEntrance_EmitDust(object, object->x, object->y, object->z);
   if (++object->timer % 8 == 0)
-    Event_PlaySound(125);
+    Event_PlaySound(SE_CHEST_CLOSE);
 }
 
 /// Talked to, a soldier runs 96 pixels out and back trailing dust.
@@ -262,7 +262,7 @@ void VenusLighthouseEntrance_BirdsLand(void) {
   Event_WaitTransitionFrames();
   t9 = ((s32)Actor_Get(10));
   Actor_SetAnimation(10, 4);
-  Event_PlaySound(165);
+  Event_PlaySound(SE_165);
   FieldActor_SetMoveTarget(t9, PIXELS(352), PIXELS(8), PIXELS(176));
   Actor_StartScript(t9, (s32)gVenusLighthouseEntrance_BirdLands);
   FieldEvent_Wait(25);
@@ -272,7 +272,7 @@ void VenusLighthouseEntrance_BirdsLand(void) {
   FieldActor_SetMoveTarget(t16, PIXELS(416), PIXELS(8), PIXELS(152));
   Actor_StartScript(t16, (s32)gVenusLighthouseEntrance_BirdLands);
   FieldEvent_Wait(60);
-  Event_PlaySound(165);
+  Event_PlaySound(SE_165);
   FieldActor_WaitForMoveById(10);
   FieldActor_WaitForMoveById(11);
   FieldCamera_WaitForArrival();
@@ -288,7 +288,7 @@ void VenusLighthouseEntrance_BirdsFlyOff(void) {
   Event_SetFlag(0x892);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(165);
+  Event_PlaySound(SE_165);
   Actor_SetAnimation(10, 3);
   FieldActor_SetAnimation(11, 3);
   FieldEvent_Wait(21);
@@ -585,11 +585,11 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   BattleEffect_StartArcEffect();
   record = ((u8 *)Actor_GetById(9));
   BattleEffect_SetObjectUpdateMode((s32)record, 2);
-  Event_PlaySound(178);
+  Event_PlaySound(SE_178);
   FieldEvent_Wait(20);
   Field_StartColorTransition(8, 0x4084);
   FieldEvent_Wait(60);
-  Event_PlaySound(0x186);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   FieldActor_SetSpritePriority(12, 0);
   VenusLighthouseEntrance_BlastActorSkyward(12);
   Actor_ShowEmote(17, 0x100, 0);
@@ -729,7 +729,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   Actor_SetDestinationOffset(17, -20, 20);
   FieldActor_WaitForMoveById(17);
   Actor_SetAnimation(17, 1);
-  Event_PlaySound(133);
+  Event_PlaySound(SE_IMPACT);
   *(s32 *)(rec + 8) += 0x80000;
   ((struct SparkRecord *)rec)->update = v5;
   *(s32 *)(rec + 16) += -0x80000;
@@ -768,13 +768,13 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   }
   FieldActor_Jump(17, 6, 40);
   Actor_SetAnimation(17, 11);
-  Event_PlaySound(135);
+  Event_PlaySound(SE_CLICK);
   FieldEvent_Wait(14);
-  Event_PlaySound(135);
+  Event_PlaySound(SE_CLICK);
   FieldEvent_Wait(14);
-  Event_PlaySound(135);
+  Event_PlaySound(SE_CLICK);
   FieldEvent_Wait(14);
-  Event_PlaySound(135);
+  Event_PlaySound(SE_CLICK);
   FieldEvent_Wait(14);
   FieldEvent_Wait(20);
   ((struct SparkRecord *)rec)->delay = v5;
@@ -1213,7 +1213,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
       object->motionFlags = 3;
       object->velocityY = 0x180000;
       work->follow = 0;
-      Sound_Play(134);
+      Sound_Play(SE_HEAVY_IMPACT);
     }
     work->height += 8;
     if (work->height > 79) {
@@ -1258,7 +1258,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     } while (0);
     timer = &work->timer;
     if (work->timer == 10)
-      Sound_Play(310);
+      Sound_Play(SE_310);
     if (*timer == 90) {
       work->stage++;
       work->timer = -1;
@@ -1269,7 +1269,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     s16 *timer = &work->timer;
 
     if (work->timer == 0) {
-      Sound_Play(144);
+      Sound_Play(SE_CLATTER);
       MapGrid_SetShake(0x30000, 0x30000, 0x10000);
     }
     if (*timer == 30) {
@@ -1367,7 +1367,7 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   work->timer = 0;
   work->height = 0;
   work->follow = 1;
-  Event_PlaySound(221);
+  Event_PlaySound(SE_RISE_WITH_SPARKS);
   Task_AddFrame(VenusLighthouseEntrance_UpdateBlastColumn, 0x480);
   if (work->stage != 999) {
   wait:

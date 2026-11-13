@@ -359,7 +359,7 @@ void Func_0200087c(void) {
       sum = kind + 2;
       spawned = OverlayObject_PrepareObject(object->x, 0,
                                             object->z + (sum << 20), 312);
-      Sound_Play(204);
+      Sound_Play(SE_DUST_PUFF);
       OverlayObject_WaitUntilIdle(object);
       OverlayObject_WaitUntilIdle(object);
       object->x = object->y = object->z = 0;
@@ -369,7 +369,7 @@ void Func_0200087c(void) {
     } else {
       OverlayObject_WaitUntilIdle(object);
       OverlayObject_WaitUntilIdle(object);
-      Sound_Play(188);
+      Sound_Play(SE_THUMP);
       options.palette = 7;
       options.priority = 2;
       options.update = (void (*)(union FieldObject *))Func_020007ec;
@@ -486,7 +486,7 @@ s32 Func_02000c38(struct Actor *object, s16 *position) {
     Event_ResolvePendingActions(0);
     Actor_SelectAnimation(object, 6);
     wait(6);
-    Sound_Play(152);
+    Sound_Play(SE_JUMP);
     Actor_SelectAnimation(object, 7);
     object->speedLimit = 0x30000;
     object->acceleration = 0x20000;
@@ -557,7 +557,7 @@ void Func_02000d68(void) {
   Actor_SetDestinationOffsetById(4, 0, 16);
   Actor_WaitForMoveById(4);
   Actor_SetModeById(4, 13);
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Event_Wait(14);
   Import_EventSetExitRequest(value);
 }
@@ -634,11 +634,11 @@ void Caverns_InitializeRoom4(void) {
 void Func_02000fe4(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(158);
+  Sound_Play(SE_DOOR_OPEN);
   Event_Wait(10);
   MapGrid_CopyCellsTo(7, 94, 6, 94, 1, 2);
   Event_Wait(16);
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(8);
   Event_End();
 }

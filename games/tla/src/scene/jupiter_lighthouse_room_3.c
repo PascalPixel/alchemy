@@ -143,7 +143,7 @@ void JupiterLighthouse_PushLogOffTheLedge(void) {
     FieldActor_SetSpritePriority(ACTOR_LEDGE_LOG, 3);
     object->motionFlags = 3;
     System_Wait(5);
-    Event_PlaySound(134);
+    Event_PlaySound(SE_HEAVY_IMPACT);
     object->motionFlags = 2;
     for (i = 0, x = 0xb00000; i <= 3; i++, x += 0x100000) {
       Lift_(0x1000000, x, 0, 0);
@@ -174,7 +174,7 @@ void JupiterLighthouse_FinishMovingPillar(s32 unused, s32 id) {
   }
   if (placed) {
     System_Wait(10);
-    Event_PlaySound(134);
+    Event_PlaySound(SE_HEAVY_IMPACT);
     for (i = 0; i < 30; i++) {
       if (object->y <= object->terrainHeight && object->velocityY == 0)
         break;

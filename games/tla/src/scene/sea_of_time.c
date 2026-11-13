@@ -339,7 +339,7 @@ void SeaOfTime_RideCurrent(void) {
   phase &= frame;
   if (phase == 0) {
     if ((frame & 10) == 0)
-      Event_PlaySound(0x255);
+      Event_PlaySound(SE_597);
     spark.priority = 2;
     spark.palette = 7;
     spark.startScaleX = 0xcccc;
@@ -422,7 +422,7 @@ void SeaOfTime_FollowChannel(void) {
       phase &= gFrameCount;
       if (phase == 0) {
         if ((gFrameCount & 10) == 0) {
-          Sound_Play(0x255);
+          Sound_Play(SE_597);
         }
         spark.priority = 2;
         spark.palette = 7;
@@ -541,7 +541,7 @@ void SeaOfTime_CountLaps(void) {
       p->priority = 2;
       x = Random16() & 31;
       z = Random16() & 31;
-      Event_PlaySound(246);
+      Event_PlaySound(SE_GLITTER);
       x <<= 16;
       z <<= 16;
       FieldEffect_Spawn(spots.spot[(u16)index].x + x, 0,
@@ -588,7 +588,7 @@ s32 SeaOfTime_StartWaves(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetFlag(0x200);
-  Event_PlaySound(0x22d);
+  Event_PlaySound(SE_557);
   do {
     wait(10);
     changed = 0;
@@ -645,7 +645,7 @@ s32 SeaOfTime_StopWaves(void) {
   Task_Remove(SeaOfTime_TrackWaves);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(0x22c);
+  Sound_Play(SE_556);
   gSeaOfTime_WaveState = 1;
   // Each of the 14 colours steps one unit per channel toward its saved colour
   // every 10 frames, until none changes.
@@ -825,8 +825,8 @@ void SeaOfTime_CrossToLemuria(void) {
   FieldCamera_MoveWithinMapBounds(352 << 16, -1, 196 << 16, 1);
   FieldCamera_WaitForArrival();
   Actor_WaitForMoveById(8);
-  Sound_Play(78);
-  Sound_Play(556);
+  Sound_Play(SOUND_FADE_OUT_BGM);
+  Sound_Play(SE_556);
   // Fills palette 3's entries 1 to 14 with one colour.
   fill = RGB(11, 6, 23);
   Dma_Set((const void *)&fill, (void *)&BG_PLTT_COLOR(3, 1),
@@ -886,7 +886,7 @@ fade:
   i = 0;
 sparks:
   if ((i & 63) == 0)
-    Sound_Play(164);
+    Sound_Play(SE_SCATTER);
   if (i < 120) {
     if (i & 15)
       goto next;
@@ -1121,7 +1121,7 @@ void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   pz = (z << 19) + 0x80000;
   FieldCamera_MoveTo(px, -1, pz, 1);
   FieldCamera_WaitForArrival();
-  Event_PlaySound(144);
+  Event_PlaySound(SE_CLATTER);
   MapGrid_SetShake(0, 0x100000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   spark.startScaleX = 0x13333;
@@ -1152,7 +1152,7 @@ void SeaOfTime_Open(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_PlaySound(0);
+  Event_PlaySound(MUS_000);
   MapGrid_CopyCellsTo(49, 70, 19, 73, 6, 6);
   actor = FieldActor_Create(159, 0x15c0000, 0, 0xb80000);
   actor->update = (void (*)(void))SeaOfTime_UpdateSpray;
@@ -1171,11 +1171,11 @@ void SeaOfTime_Open(void) {
   FieldCamera_WaitForArrival();
   Event_SetFlag(0x200);
   ((struct EventWork687 *)Ram_HeapSlots->eventWork)->unk16a = 200;
-  Event_PlaySound(0x212);
+  Event_PlaySound(SE_530);
   Event_Wait(40);
   for (i = 0; i != 360; i++) {
     if ((i & 31) == 0)
-      Event_PlaySound(164);
+      Event_PlaySound(SE_SCATTER);
     if (i < 120) {
       if (i & 15)
         continue;
@@ -1218,7 +1218,7 @@ void SeaOfTime_Open(void) {
     wait(1);
   }
   Actor_Release(actor);
-  Event_PlaySound(0x22d);
+  Event_PlaySound(SE_557);
   do {
     wait(10);
     changed = 0;

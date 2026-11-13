@@ -281,7 +281,7 @@ void Func_0200036c(void) {
   OverlayObject_PrepareObject(0x2c80000, 0, 0x1d40000, 286);
   OverlayObject_PrepareObject(0x2c80000, 0, 0x1ea0000, 286);
   Func_02004eec_(gMainRoutineWork.currentOwner, 6, 0x800);
-  Event_PlaySound(310);
+  Event_PlaySound(SE_310);
   Event_SetFlag(290);
   FieldEvent_SetExitRequest(8);
 }
@@ -318,7 +318,7 @@ s32 Func_0200042c(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   actor->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
@@ -354,7 +354,7 @@ loop:
   }
   if (i <= 16)
     goto loop;
-  Event_PlaySound(188);
+  Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
@@ -505,7 +505,7 @@ s32 Func_020007f4(void) {
   struct Actor *source = Actor_Get(9);
   s32 i;
 
-  Event_PlaySound(202);
+  Event_PlaySound(SE_FLAME_FLARE);
   i = 3;
   do {
     {
@@ -616,7 +616,7 @@ void Func_02000a60(struct Actor *object) {
   if ((gData_02005ee4 & 31) == 0) {
     object->scaleX = 0x10000;
     Actor_StartScript(object, gData_02005e28);
-    Event_PlaySound(106);
+    Event_PlaySound(SE_DRIP);
   }
   gData_02005ee4++;
 }
@@ -630,7 +630,7 @@ void Func_02000aac(struct Actor *object) {
   if ((gData_02005ee4 & 31) == 0) {
     object->scaleY = 0x10000;
     Actor_StartScript(object, gData_02005d6c);
-    Event_PlaySound(106);
+    Event_PlaySound(SE_DRIP);
   }
   gData_02005ee4++;
 }
@@ -779,7 +779,7 @@ void Func_02000d18(void) {
   OverlayObject_PrepareObject(175 << 18, 0, 0x1ea0000, 286);
   OverlayObject_PrepareObject(181 << 18, 0, 0x1d40000, 286);
   OverlayObject_PrepareObject(181 << 18, 0, 0x1ea0000, 286);
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   guard->motionFlags = 3;
   ((struct BoulderSprite *)guard->sprite)->layer = 3;
   FieldEvent_Wait(10);
@@ -1075,13 +1075,13 @@ void Func_020015d0(s32 idA, s32 idB) {
   // Unused: gives the stack frame its 12 bytes.
   UNUSED s32 unused[3];
 
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Event_Wait(30);
   FieldCamera_SetSpeed(0x8000, 0x1000);
   FieldCamera_MoveWithinMapBounds(((s16 *)&a->x)[1] << 16,
                                   ((s16 *)&a->y)[1] << 16,
                                   ((s16 *)&a->z)[1] << 16, 1);
-  Sound_Play(141);
+  Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(0x20000, 0x20000, 0x10000);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
@@ -1090,7 +1090,7 @@ void Func_020015d0(s32 idA, s32 idB) {
   a->acceleration = 0x3333;
   a->speedLimit = 0x3333;
   Actor_SetMovementTypeById(idA, gData_02005264);
-  Sound_Play(194);
+  Sound_Play(SE_194);
   Event_Wait(45);
   Actor_ConfigureSpriteColor(idA, 0x100);
   REG_BLDALPHA = 0x1008;
@@ -1099,7 +1099,7 @@ void Func_020015d0(s32 idA, s32 idB) {
 first:
   {
     struct Spark *spark = ((void *)Import_ActorCreate(kind, a->x, a->y, a->z));
-    Sound_Play(246);
+    Sound_Play(SE_GLITTER);
     spark->x += ((Random16() & 31) - 16) << 16;
     spark->y += ((Random16() & 15) - 8) << 16;
     spark->speedLimit = 0x80000;
@@ -1129,7 +1129,7 @@ first:
 second:
   {
     struct Spark *spark = ((void *)Import_ActorCreate(kind, b->x, b->y, b->z));
-    Sound_Play(195);
+    Sound_Play(SE_195);
     angle = &spark->action;
     *angle = (Random16() & 0x7fff) + 0x8000;
     spark->unk66 = ((i & 1) * 2 - 1) << ((Random16() & 3) + 9);
@@ -1160,7 +1160,7 @@ second:
   i++;
   if (i != 16)
     goto second;
-  Sound_Play(220);
+  Sound_Play(SE_SHIMMER);
   wait(16);
   i = 2;
 third:
@@ -1186,7 +1186,7 @@ third:
   i += 2;
   if (i != 32)
     goto third;
-  Sound_Play(220);
+  Sound_Play(SE_SHIMMER);
   wait(50);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
   PaletteFade_StartInterpolation(8);
@@ -1194,7 +1194,7 @@ third:
   MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(idA, 0);
   Actor_ConfigureSpriteColor(idB, 0);
-  Sound_Play(574);
+  Sound_Play(SE_574);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(idA, gData_020052ac);
@@ -1202,7 +1202,7 @@ third:
   b->update = Actor_EmitBubbles;
   wait(120);
   b->update = 0;
-  Sound_Play(390);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Scene_PlayMusic();
   wait(1);
 }
@@ -1358,7 +1358,7 @@ void Func_02001d14(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   MapGrid_SetShake(Q16_ONE * 10, Q16_ONE * 10, Q16_ONE);
-  Event_PlaySound(107);
+  Event_PlaySound(SE_TREMOR);
   BlendScript_Suspend();
   level &= 0xff;
   while (level != 0) {
@@ -1384,7 +1384,7 @@ void Func_02001d14(void) {
   object->z = 0;
   FieldEvent_Wait(1);
   Actor_Release(object);
-  Event_PlaySound(390);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   FieldEvent_Wait(30);
   REG_DISPCNT |= 0xf00;
   REG_BLDALPHA = level | 0x1000;
@@ -1497,7 +1497,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered((s32)&MsgGaiaRockInside01, 1);
-  Event_PlaySound(193);
+  Event_PlaySound(SE_193);
   Actor_SetSpritePriorityDirect(object, 1);
   v_r5 = (s32)&gMainRoutineWork;
   v_r5 = (v_r5 + 0x214);
@@ -1508,7 +1508,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   FieldEvent_Wait(45);
   Actor_FaceActor(8, FIELD_AT(v_r5, s32, 0), 0);
   Actor_FaceActor(9, FIELD_AT(v_r5, s32, 0), 0);
-  Event_PlaySound(0x240);
+  Event_PlaySound(SE_576);
   Actor_SetAnimation(8, 5);
   Actor_SetAnimation(9, 5);
   System_Wait(30);
@@ -1518,7 +1518,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   Actor_SetAnimation(8, 3);
   Actor_SetAnimation(9, 3);
   FieldEvent_Wait(40);
-  Event_PlaySound(191);
+  Event_PlaySound(SE_191);
   t26 = Event_GetFlag(0xa62);
   v_r5 = 119;
   if (t26 != 0)
@@ -1601,7 +1601,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
-  Sound_Play(193);
+  Sound_Play(SE_193);
   Actor_SetSpritePriorityDirect(partner, 1);
   Actor_MoveToObject(12, gMainRoutineWork.currentOwner);
   Actor_SetDestination(12, 528, 372);
@@ -1609,14 +1609,14 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   Actor_WaitForMoveById(12);
   Event_Wait(45);
   Actor_FaceActorById(8, gMainRoutineWork.currentOwner, 0);
-  Sound_Play(576);
+  Sound_Play(SE_576);
   Actor_SetModeById(8, 5);
   wait(30);
   Actor_SetModeById(8, 2);
   Event_Wait(30);
   Actor_SetModeById(8, 3);
   Event_Wait(40);
-  Sound_Play(191);
+  Sound_Play(SE_191);
   if (!GameFlag_Get(0x9bd)) {
     for (i = 19; i >= 0; i--) {
       object->velocityY = Random16();
@@ -1640,7 +1640,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
       object->velocityY = Random16();
       wait(1);
     }
-    Sound_Play(564);
+    Sound_Play(SE_564);
     Actor_SetModeById(8, 4);
     Event_Wait(30);
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1689,7 +1689,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
-  Sound_Play(193);
+  Sound_Play(SE_193);
   Actor_SetSpritePriorityDirect(partner, 1);
   Actor_MoveToObject(12, gMainRoutineWork.currentOwner);
   Actor_SetDestination(12, 672, 372);
@@ -1697,14 +1697,14 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   Actor_WaitForMoveById(12);
   Event_Wait(45);
   Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
-  Sound_Play(576);
+  Sound_Play(SE_576);
   Actor_SetModeById(9, 5);
   wait(30);
   Actor_SetModeById(9, 2);
   Event_Wait(30);
   Actor_SetModeById(9, 3);
   Event_Wait(40);
-  Sound_Play(191);
+  Sound_Play(SE_191);
   if (!GameFlag_Get(0x9be)) {
     for (i = 19; i >= 0; i--) {
       object->velocityY = Random16();
@@ -1728,7 +1728,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
       object->velocityY = Random16();
       wait(1);
     }
-    Sound_Play(564);
+    Sound_Play(SE_564);
     Actor_SetModeById(9, 4);
     Event_Wait(30);
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1777,7 +1777,7 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
-  Sound_Play(193);
+  Sound_Play(SE_193);
   Actor_SetSpritePriorityDirect(partner, 1);
   Actor_MoveToObject(14, gMainRoutineWork.currentOwner);
   Actor_SetDestination(14, 336, 396);
@@ -1785,14 +1785,14 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
   Actor_WaitForMoveById(14);
   Event_Wait(45);
   Actor_FaceActorById(8, gMainRoutineWork.currentOwner, 0);
-  Sound_Play(576);
+  Sound_Play(SE_576);
   Actor_SetModeById(8, 5);
   wait(30);
   Actor_SetModeById(8, 2);
   Event_Wait(30);
   Actor_SetModeById(8, 3);
   Event_Wait(40);
-  Sound_Play(191);
+  Sound_Play(SE_191);
   if (!GameFlag_Get(0x9bc)) {
     for (i = 19; i >= 0; i--) {
       object->velocityY = Random16();
@@ -1816,7 +1816,7 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
       object->velocityY = Random16();
       wait(1);
     }
-    Sound_Play(564);
+    Sound_Play(SE_564);
     Actor_SetModeById(8, 4);
     Event_Wait(30);
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -3920,7 +3920,7 @@ void Func_0200485c(s32 direction) {
     FieldEvent_SetExitRequest(direction);
     break;
   }
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
 }
 
 extern s8 gData_020053fc[][2];
@@ -4088,13 +4088,13 @@ burst:
   i--;
   if (i >= 0)
     goto burst;
-  Event_PlaySound(590);
-  Event_PlaySound(217);
+  Event_PlaySound(SE_590);
+  Event_PlaySound(SE_FLOOR_SWITCH);
   MapGrid_SetShake(0x20000, 0x20000, 0xe666);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 257);
   Actor_SelectAnimation(leader, 40);
   FieldEvent_Wait(40);
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   leader->motionFlags = 3;
   leader->gravity = 0x547a;
   for (value = 0; value < 180; value++) {
@@ -4102,7 +4102,7 @@ burst:
     if (leader->y <= leader->terrainHeight)
       break;
   }
-  Event_PlaySound(188);
+  Event_PlaySound(SE_THUMP);
   work = &gMainRoutineWork;
   leader->gravity = gravity;
   Actor_SetAttachedEffect(work->currentOwner, 0);

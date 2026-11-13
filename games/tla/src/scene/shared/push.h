@@ -102,7 +102,7 @@
       call3(object, 3);                                                        \
     else                                                                       \
       call3(object, 2);                                                        \
-    Event_PlaySound(239);                                                      \
+    Event_PlaySound(SE_HEAVY_MOVE);                                            \
     Actor_SetSpeed(target.id, 0x8000, 0x1999);                                 \
     FieldActor_SetMoveTarget(object, target.x, target.y, target.z);            \
     FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);                 \
@@ -119,8 +119,8 @@
     leader->speedLimit = speed;                                                \
     leader->acceleration = acceleration;                                       \
     FieldActor_WaitForMove(object);                                            \
-    Event_PlaySound(298);                                                      \
-    Event_PlaySound(213);                                                      \
+    Event_PlaySound(SE_298);                                                   \
+    Event_PlaySound(SE_HEAVY_STOP);                                            \
     FieldActor_SetPositionAndResetMotion(object, target.x, object->y,          \
                                          target.z);                            \
     call3(object, 1);                                                          \
@@ -189,7 +189,7 @@
       call2(object, 3);                                                        \
     else                                                                       \
       call2(object, 2);                                                        \
-    Event_PlaySound(239);                                                      \
+    Event_PlaySound(SE_HEAVY_MOVE);                                            \
     Actor_SetSpeed(target.id, 0x8000, 0x1999);                                 \
     FieldActor_SetMoveTarget(object, target.x, target.y, target.z);            \
     FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);                 \
@@ -206,8 +206,8 @@
     leader->speedLimit = speed;                                                \
     leader->acceleration = acceleration;                                       \
     FieldActor_WaitForMove(object);                                            \
-    Event_PlaySound(298);                                                      \
-    Event_PlaySound(213);                                                      \
+    Event_PlaySound(SE_298);                                                   \
+    Event_PlaySound(SE_HEAVY_STOP);                                            \
     FieldActor_SetPositionAndResetMotion(object, target.x, object->y,          \
                                          target.z);                            \
     call2(object, 1);                                                          \
@@ -378,7 +378,7 @@
     call2(lead, 8);                                                            \
     rate = 0x3333;                                                             \
     System_Wait(15);                                                           \
-    Event_PlaySound(185);                                                      \
+    Event_PlaySound(SE_PUSH);                                                  \
     next->moveRateX = rate;                                                    \
     next->moveRateZ = rate;                                                    \
     FieldActor_SetMoveTarget(next, dst.x, dst.y, dst.z);                       \

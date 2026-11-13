@@ -223,7 +223,7 @@
       FieldActor_SetSpriteColor(Actor_Get(*owner), 9);                         \
       Actor_SetSpriteFlags(Actor_Get(*owner), 0);                              \
       Event_StartScreenTransition();                                           \
-      Event_PlaySound(228);                                                    \
+      Event_PlaySound(SE_SPARKLING_PASSAGE);                                   \
       leader->update = (void (*)(void))call1;                                  \
       Actor_SetSpeed(*owner, 0x6666, 0x3333);                                  \
       Actor_WalkByAndWait(*owner, 0, 8);                                       \
@@ -251,9 +251,9 @@
     FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);            \
     leader->motionFlags = 0;                                                   \
     leader->priorityFlags |= 0x20;                                             \
-    Event_PlaySound(215);                                                      \
+    Event_PlaySound(SE_SPLASH_SMALL);                                          \
     call1(leader, 18);                                                         \
-    Event_PlaySound(612);                                                      \
+    Event_PlaySound(SE_612);                                                   \
     for (i = 0; i < 60; i++) {                                                 \
       s32 angle;                                                               \
                                                                                \
@@ -293,7 +293,7 @@
                                                                                \
     Event_Start();                                                             \
     FieldEvent_ResolvePendingActions(0);                                       \
-    Event_PlaySound(228);                                                      \
+    Event_PlaySound(SE_SPARKLING_PASSAGE);                                     \
     leader->update = (void (*)(void))call1;                                    \
     leader->motionFlags = 0;                                                   \
     leader->speedLimit = 0x3333;                                               \
@@ -315,16 +315,16 @@
     struct Actor *object = Actor_GetById(id);                                  \
                                                                                \
     call1(object->x + 0x80000, object->y + 0x1c0000, object->z, 0x1000, 15);   \
-    Sound_Play(151);                                                           \
+    Sound_Play(SE_LIGHT_APPEAR);                                               \
     Event_Wait(15);                                                            \
     call1(object->x - 0x80000, object->y + 0x1c0000, object->z, 0xf000, 15);   \
-    Sound_Play(151);                                                           \
+    Sound_Play(SE_LIGHT_APPEAR);                                               \
     Event_Wait(15);                                                            \
     call1(object->x + 0x80000, object->y + 0x1c0000, object->z, 0x1000, 15);   \
-    Sound_Play(151);                                                           \
+    Sound_Play(SE_LIGHT_APPEAR);                                               \
     Event_Wait(15);                                                            \
     call1(object->x - 0x80000, object->y + 0x1c0000, object->z, 0xf000, 15);   \
-    Sound_Play(151);                                                           \
+    Sound_Play(SE_LIGHT_APPEAR);                                               \
     Event_Wait(15);                                                            \
   }
 

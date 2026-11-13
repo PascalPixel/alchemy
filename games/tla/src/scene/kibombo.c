@@ -380,7 +380,7 @@ void Func_02000734(void) {
     do
       wait(1);
     while (object->velocityY != 0);
-    Sound_Play(188);
+    Sound_Play(SE_THUMP);
     wait(10);
     object->motionFlags = 0;
     Actor_GetById(11)->motionFlags = 0;
@@ -552,7 +552,7 @@ void Func_02003610(void);
 
 void Func_02000d74(void) {
   Func_020032c8();
-  Sound_Play(0);
+  Sound_Play(MUS_000);
   Event_ShowMessageAndWait(17, 0);
   Actor_ArmCallback(7, FACING_EAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
@@ -566,7 +566,7 @@ void Func_02000d74(void) {
   Kibombo_ObjArm(17, FACING_SOUTHEAST + FACING_STEP, 20);
   Motion_SetModeAndWaitAnimation(17, 3);
   Event_ShowMessageAndWait(0x4011, 0);
-  Sound_Play(26);
+  Sound_Play(MUS_026);
   Actor_SetSpriteFlags(Actor_GetById(27), 0);
   Actor_GetById(27)->motionFlags = 0;
   Actor_SetPositionAndResetMotion(Actor_GetById(27), PIXELS(265), PIXELS(24),
@@ -582,15 +582,15 @@ void Func_02000d74(void) {
   KIBOMBO_TASK_ADD(Func_02002ccc, 0x480);
   Event_ShowMessageAndWait(7, 0);
   Event_ShowMessageAndWait(17, 0);
-  Sound_Play(11);
+  Sound_Play(MUS_011);
   Func_02003610();
   Event_Wait(160);
   Event_ShowMessageThenWait(17, 0, 80);
-  Sound_Play(0x240);
+  Sound_Play(SE_576);
   Func_02003640(1, 1);
   Event_Wait(20);
   Event_ShowMessageThenWait(17, 0, 80);
-  Sound_Play(161);
+  Sound_Play(SE_RATTLE);
   Func_02003640(0, 1);
   Event_Wait(20);
   FieldEffect_SetAttached(17, 0x102);
@@ -618,8 +618,8 @@ void Func_02000d74(void) {
   Actor_WalkToAndWaitById(17, 264, 392);
   Event_Wait(20);
   Event_ShowMessageAndWait(0x8011, 0);
-  Sound_Play(148);
-  Sound_Play(11);
+  Sound_Play(SE_BOSS_ROAR);
+  Sound_Play(MUS_011);
   Func_020032b0();
   Event_Wait(80);
   FieldCamera_MoveWithinMapBounds(PIXELS(88), PIXELS(32), PIXELS(392), 1);
@@ -1720,7 +1720,7 @@ void Func_02003308(struct Actor *actor) {
     ((struct FieldSprite *)object->actor.sprite)->rotation += 0x1000;
     if (((struct FieldSprite *)object->actor.sprite)->rotation == 0 &&
         --*timer == 0) {
-      Sound_Play(220);
+      Sound_Play(SE_SHIMMER);
       *stage = 2;
     }
     break;
@@ -1781,14 +1781,14 @@ void Func_02003504(void) {
   s32 y;
   s32 z;
 
-  Sound_Play(154);
+  Sound_Play(SE_CAST);
   for (i = 0; i <= 7; i++) {
     Actor_SetSpriteColor(Actor_GetById(17), 7);
     wait(2);
     Actor_SetSpriteColor(Actor_GetById(17), 0);
     wait(2);
   }
-  Sound_Play(209);
+  Sound_Play(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
   i = 0;
   angle = 0;
   do {
@@ -1935,7 +1935,7 @@ void Kibombo_LeaveRoom(void) {
   Event_ResolvePendingActions(0);
   if (GameFlag_Get(0x202))
     Func_02003898();
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(work->exit);
@@ -1969,7 +1969,7 @@ void Func_02003948(void) {
     Func_02003898();
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_02005cd0);
   wait(12);
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(work->exit);
@@ -1991,7 +1991,7 @@ void Func_02003a08(s32 x, s32 z) {
   Actor_SetMoveTarget(leader, x << 16, PIXELS(-12), z << 16);
   Actor_WaitForMove(leader);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(work->exit);
@@ -2070,7 +2070,7 @@ done:
 }
 
 void Func_02003c84(void) {
-  Sound_Play(212);
+  Sound_Play(SE_POWER_UP);
   Kibombo_FadeTo(0x7fff, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
@@ -2083,7 +2083,7 @@ void Func_02003c84(void) {
   Task_Remove(Func_02002d64);
   wait(1);
 
-  Sound_Play(212);
+  Sound_Play(SE_POWER_UP);
   Kibombo_FadeTo(0x7fff, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
@@ -2098,7 +2098,7 @@ void Func_02003c84(void) {
   Task_Remove(Func_02002d64);
   wait(1);
 
-  Sound_Play(212);
+  Sound_Play(SE_POWER_UP);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
@@ -2127,7 +2127,7 @@ void Kibombo_CeremonyBegins(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   Event_SetMessageId((s32)MsgAtLastThe);
   Event_ShowMessageAndWait(17, 0);
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Kibombo_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Kibombo_ObjWalk(gMainRoutineWork.currentOwner, 86, 455);
   Actor_SetHorizontalPositionWithTerrain(26, PIXELS(86), PIXELS(455));
@@ -2154,9 +2154,9 @@ void Kibombo_CeremonyBegins(void) {
   Event_Wait(20);
   Kibombo_ObjArm(17, FACING_SOUTHEAST + FACING_STEP, 20);
   Event_ShowMessageAndWait(0x4000 + 17, 0);
-  Sound_Play(11);
+  Sound_Play(MUS_011);
   GameFlag_Set(0x8f2);
-  Sound_Play(148);
+  Sound_Play(SE_BOSS_ROAR);
   Actor_GetById(18)->velocityY = PIXELS(4);
   wait(5);
   Actor_GetById(19)->velocityY = PIXELS(4);
@@ -2212,7 +2212,7 @@ void Kibombo_PresentOrbToGabomba(void) {
   Event_WaitTransitionFrames();
   Kibombo_TaskAdd(Func_02002ccc, 0x480);
   Event_Wait(40);
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Kibombo_CamSpeed(0xcccc, 0x1999);
   Kibombo_CamMove(PIXELS(264), -1, PIXELS(388), 1);
   FieldCamera_WaitForArrival();
@@ -2220,7 +2220,7 @@ void Kibombo_PresentOrbToGabomba(void) {
   Motion_SetModeAndWaitAnimation(17, 3);
   Event_SetMessageId((s32)MsgLetUsNow);
   Event_ShowMessageAndWait(0x4000 + 17, 0);
-  Sound_Play(26);
+  Sound_Play(MUS_026);
   Actor_SetSpriteFlags(Actor_GetById(27), 0);
   Actor_GetById(27)->motionFlags = 0;
   Actor_SetPositionAndResetMotion(Actor_GetById(27), PIXELS(265), PIXELS(24),
@@ -2236,11 +2236,11 @@ void Kibombo_PresentOrbToGabomba(void) {
   Func_020032e0();
   Kibombo_TaskAdd(Func_02002ccc, 0x480);
   Event_ShowMessageAndWait(17, 0);
-  Sound_Play(11);
+  Sound_Play(MUS_011);
   Func_02003610();
   Event_Wait(160);
   Event_ShowMessageThenWait(17, 0, 80);
-  Sound_Play(0x240);
+  Sound_Play(SE_576);
   Func_02003640(1, 1);
   Event_Wait(20);
   Event_ShowMessageThenWait(17, 0, 40);
@@ -2276,7 +2276,7 @@ void Kibombo_GabombaNotPleased(void) {
   Event_WaitTransitionFrames();
   KIBOMBO_TASK_ADD(Func_02002ccc, 0x480);
   Event_Wait(40);
-  Sound_Play(161);
+  Sound_Play(SE_RATTLE);
   Func_02003640(0, 1);
   Event_Wait(20);
   FieldEffect_SetAttached(17, 0x102);
@@ -2309,7 +2309,7 @@ void Kibombo_GabombaNotPleased(void) {
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Event_ShowMessageAndWait(0x4000 + 17, 0);
   GameFlag_Clear(0x8f7);
-  Sound_Play(11);
+  Sound_Play(MUS_011);
   Event_Wait(80);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
   Event_FinishScreenTransition();
@@ -2439,7 +2439,7 @@ void Kibombo_GabombaStillNotPleased(void) {
   struct Actor *object;
 
   Func_02004524();
-  Sound_Play(161);
+  Sound_Play(SE_RATTLE);
   Func_02003640(0, 1);
   Event_Wait(20);
   Event_SetMessageId((s32)MsgYouAreStillNot);
@@ -2469,7 +2469,7 @@ void Kibombo_GabombaStillNotPleased(void) {
 
 void Kibombo_GabombaSeesOrb(void) {
   Func_02004524();
-  Sound_Play(0x240);
+  Sound_Play(SE_576);
   Actor_SetSpriteColor(Actor_GetById(12), 7);
   Actor_SetSpriteColor(Actor_GetById(13), 7);
   wait(8);
@@ -2479,7 +2479,7 @@ void Kibombo_GabombaSeesOrb(void) {
   Actor_ShowEmoteById(17, 0x100, 20);
   Event_SetMessageId((s32)MsgLookLookThe);
   Event_ShowMessageAndWait(17, 0);
-  Sound_Play(0x241);
+  Sound_Play(SE_577);
   Actor_SetMovementTypeById(12, gData_0200614c);
   Actor_SetMovementTypeAndWaitById(13, gData_0200614c);
   Actor_SetMovementTypeById(12, gData_0200613c);
@@ -2504,10 +2504,10 @@ void Kibombo_GabombaResponds(void) {
   Actor_ShowEmoteById(17, 0x100, 20);
   Event_SetMessageId((s32)MsgLookTheGreat);
   Event_ShowMessageThenWait(17, 0, 20);
-  Sound_Play(0x240);
+  Sound_Play(SE_576);
   Func_020036e0(1, 0);
   Event_Wait(20);
-  Sound_Play(162);
+  Sound_Play(SE_162);
   Task_Add(Func_02002f34, 0x480);
   Event_Wait(120);
   Func_020045d0();
@@ -2536,7 +2536,7 @@ void Kibombo_GabombaRespondsToGift(void) {
   Kibombo_SePlay(0x240);
   Func_020036e0(1, 0);
   Event_Wait(20);
-  Sound_Play(233);
+  Sound_Play(SE_CART_ROLL);
   object->scaleY = 0x1999;
   Actor_SetPositionAndResetMotion(Actor_GetById(14), 0x1080000, 0x180000,
                                   0x1340000);
@@ -2547,7 +2547,7 @@ void Kibombo_GabombaRespondsToGift(void) {
     object->y += 0x2000;
     wait(1);
   }
-  Sound_Play(0x12a);
+  Sound_Play(SE_298);
   if (gData_02007950 != 0) {
     struct Actor *gift = gData_02007950;
 
@@ -2562,7 +2562,7 @@ void Kibombo_GabombaRespondsToGift(void) {
         goto lower;
     }
   }
-  Sound_Play(232);
+  Sound_Play(SE_CRUNCH);
   if (gData_02007950 != 0) {
     gData_02007950->motionFlags = 0;
     // As a for loop, which moves the global's address out of the loop, 25 of
@@ -2592,7 +2592,7 @@ void Kibombo_GabombaRespondsToGift(void) {
   Kibombo_SePlay(0x240);
   Func_02003640(1, 1);
   Func_020036e0(1, 0);
-  Sound_Play(132);
+  Sound_Play(SE_WATER);
   Actor_SetPositionAndResetMotion(Actor_GetById(14), 0x1080000, 0x180000,
                                   0x1340000);
   wait(1);

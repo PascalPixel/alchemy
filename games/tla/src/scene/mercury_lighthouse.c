@@ -236,7 +236,7 @@ s32 Scene_Initialize(void) {
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Event_PlaySound(201);
+    Event_PlaySound(SE_ASCEND);
     BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
     PaletteFade_StartInterpolation(20);
     wait(20);

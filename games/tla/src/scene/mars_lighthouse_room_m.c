@@ -333,7 +333,7 @@ void Func_020000c0(void) {
 }
 
 void Func_020002c8(void) {
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_SetExitRequest(gMainRoutineWork.entrance);
 }
 
@@ -356,7 +356,7 @@ void Func_0200030c(void) {
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(30);
   FieldEvent_Wait(30);
-  Event_PlaySound(190);
+  Event_PlaySound(SE_WARP);
   switch (gMainRoutineWork.entrance) {
   case 1:
     Event_SetFlag(0xa32);
@@ -474,7 +474,7 @@ void Func_020006c8(s32 state) {
   if (state == gData_02003a82)
     return;
   if ((state ^ gData_02003a82) & 1)
-    Event_PlaySound(560);
+    Event_PlaySound(SE_560);
   gData_02003a82 = state;
   /* FAKEMATCH(temporary): the low bit held in a local, so it is taken before
    * the state is copied for the next index, as in the native; as the test
@@ -639,7 +639,7 @@ s32 Scene_Initialize(void) {
         FieldEvent_ResolvePendingActions(0);
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
-        Event_PlaySound(78);
+        Event_PlaySound(SOUND_FADE_OUT_BGM);
         FieldCamera_SetSpeed(0x20000, 0x4000);
         FieldCamera_MoveTo(0xe00000, 0x400000, 0xd80000, 1);
         FieldCamera_WaitForArrival();
@@ -685,7 +685,7 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellAttributes(30, 12, 4, 3, 12, 12);
         FieldEvent_Wait(40);
         Event_SetFlag(0xa31);
-        Event_PlaySound(80);
+        Event_PlaySound(MUS_080);
         Sound_WaitForBgmRestore();
         Scene_PlayMusic();
         Event_End();
@@ -907,7 +907,7 @@ void Func_02001324(s32 x, s32 z, s32 c, s32 d, s32 e, s32 f) {
   s32 px;
   s32 pz;
 
-  Event_PlaySound(144);
+  Event_PlaySound(SE_CLATTER);
   Func_020012a4(x, z + 12, 1);
   for (i = 0; i < 3; i++) {
     px = x + ((u32)(Random16() * 12) >> 16) - 6;
@@ -972,7 +972,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     FieldCamera_MoveTo(PIXELS(224), PIXELS(88), PIXELS(216), 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(20);
-    Event_PlaySound(560);
+    Event_PlaySound(SE_560);
     Func_0200080c();
     FieldEvent_Wait(20);
     BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
@@ -1735,7 +1735,7 @@ void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
 /// from self, 12 pixels up, along self's angle (unk66), faces it that way,
 /// gives it Actor_RollAndCrumble as its update hook and its speed, clears its
 /// scale and action, has it watch what self watches, and calls
-/// Event_PlaySound(104). Overlays 6aa and 6ab keep the same code.
+/// Event_PlaySound(SE_104). Overlays 6aa and 6ab keep the same code.
 DEFINE_ACTOR_LAUNCH_AHEAD(Actor_LaunchAhead, Actor_RollAndCrumble)
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);

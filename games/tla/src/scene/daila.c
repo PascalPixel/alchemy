@@ -130,7 +130,7 @@ void Daila_EnterDoor(void) {
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -6);
   Event_Wait(10);

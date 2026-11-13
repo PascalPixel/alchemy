@@ -167,7 +167,7 @@ void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   FieldCamera_WaitForArrival();
   MapGrid_SetShake(0, 0x100000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Event_PlaySound(567);
+  Event_PlaySound(SE_567);
   options.startScaleX = 0x13333;
   options.startScaleY = 0x18000;
   options.priority = 1;

@@ -48,7 +48,7 @@
 #include "objcmd.h"
 
 s32 Func_02000038(s32 a0) {
-  Event_PlaySound(0x98);
+  Event_PlaySound(SE_JUMP);
   Actor_SetSpriteFlags(a0, 0);
   return 0;
 }
@@ -530,7 +530,7 @@ void Func_0200065c(void) {
       actor37->scaleX = 0x2000;
       actor37->scaleY = 0x2000;
       FieldEvent_SetMessageId((s32)MsgThereSeemsTo + 1);
-      Event_PlaySound(36);
+      Event_PlaySound(MUS_036);
       if (created != 0) {
         flags = &created->motionFlags;
         *flags = 0;
@@ -599,7 +599,7 @@ void Func_0200065c(void) {
       Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
       Actor_SetAnimation(7, 1);
       FieldEvent_Wait(50);
-      Event_PlaySound(141);
+      Event_PlaySound(SE_RUMBLE);
       FieldEvent_Wait(30);
       MapGrid_SetShake(0x10000, 0x10000, 0x10000);
       FieldEvent_Wait(30);
@@ -652,16 +652,16 @@ void Func_0200065c(void) {
       Actor_SetPosition(10, 0, 0);
       Actor_SetPosition(23, 0, 0);
       Actor_SetPosition(24, 0, 0);
-      Event_PlaySound(145);
+      Event_PlaySound(SE_CRASH);
       MapGrid_SetShake(0x60000, 0x60000, 0x10000);
       PaletteFade_ApplyTarget(0x4063ff, 0);
       PaletteFade_Interpolate(16);
       System_Wait(16);
-      Event_PlaySound(63);
+      Event_PlaySound(MUS_063);
       System_Wait(180);
       PaletteFade_ApplyTarget(0x7fff, 0);
       PaletteFade_Interpolate(60);
-      Event_PlaySound(141);
+      Event_PlaySound(SE_RUMBLE);
       System_Wait(60);
       FieldTask_Remove(Func_020004c8);
       Event_SetFlag(0x11a);
@@ -1195,7 +1195,7 @@ void Func_020016e8(void) {
 void Func_02001ac4(s32 a0, s32 a1) {
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(((s32)Actor_Get(a0)), 2);
-  Event_PlaySound(0xc9);
+  Event_PlaySound(SE_ASCEND);
   FieldEvent_Wait(60);
   BattleEffect_SetObjectUpdateMode(((s32)Actor_Get(a0)), 0);
   BattleEffect_WaitForArcGroups();
@@ -1310,14 +1310,14 @@ void Func_02001bc4(void) {
   FieldActor_ShowEmote(28, 0x107, 30);
   FieldEvent_ShowMessageThenWait(28, 0, 0);
   FieldEvent_ShowMessageThenWait(29, 0, 0);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Actor_FaceDirection(27, 0x4000, 0);
   Actor_FaceDirectionAndWait(28, 0x4000);
   FieldEvent_Wait(10);
   FieldCamera_MoveTo(0x2080000, 0x680000, 0x1580000, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  Event_PlaySound(39);
+  Event_PlaySound(MUS_039);
   FieldActor_ShowEmote(27, 0x107, 30);
   FieldEvent_ShowMessageThenWait(27, 0, 0);
   ACTOR_SET_MODE_AND_WAIT(29, 4, 33);
@@ -1387,7 +1387,7 @@ void Func_02001bc4(void) {
   Actor_Get(27)->priorityFlags |= 32;
   Actor_Get(28)->priorityFlags |= 32;
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_ShowMessageThenWait(30, 0, 0);
   Actor_SetPositionAndFacing(30, 0x2000000, 0x1480000, mid);
   Func_02003a6c(0);
@@ -1817,11 +1817,11 @@ void Func_02002ae4(void) {
         (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
     FieldEvent_ShowMessageThenWait(0x1d, 0, 0);
   }
-  Event_PlaySound(0x4e);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldCamera_MoveTo(0x2080000, 0x680000, 0x1600000, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(0xa);
-  Event_PlaySound(0x27);
+  Event_PlaySound(MUS_039);
   FieldActor_ShowEmote(5, 0x100, 0x1e);
   Actor_FaceDirection(5, 0x6000, 0);
   FieldEvent_ShowMessageThenWait(5, 0, 0);
@@ -1935,7 +1935,7 @@ void Func_02002ae4(void) {
   t186 = (s32)Actor_Get(0x1c);
   FIELD_AT((t186 + 0x23), u8, 0) = (0x20 | FIELD_AT((t186 + 0x23), u8, 0));
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Event_PlaySound(0x4e);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_ShowMessageThenWait(0x1e, 0, 0);
   {
     s32 speed = 0xc000;
@@ -2250,7 +2250,7 @@ void Func_02003a6c(s32 mode) {
     FieldActor_SetSpritePriority(gData_020069dc[i], 0);
   }
 
-  Event_PlaySound(223);
+  Event_PlaySound(SE_LIFT);
 
   for (i = 0; i <= 227; i++) {
     work->unk_0c -= speed;
@@ -2321,7 +2321,7 @@ void Func_02003c58(s32 mode) {
     count++;
   }
   if (mode != 0) {
-    Event_PlaySound(223);
+    Event_PlaySound(SE_LIFT);
     i = 0;
     work->height += 0x18000;
     while (work->height < Data_02006a1c) {
@@ -2521,7 +2521,7 @@ void Func_020040f4(void) {
         break;
     } while (actor->y > actor->terrainHeight + 0x100000);
   }
-  Event_PlaySound(127);
+  Event_PlaySound(SE_LANDING_THUD);
   i = 0;
   if (actor->velocityY != 0) {
     do {
@@ -2561,7 +2561,7 @@ void Whirlwind_Update(struct Object6a5 *object) {
   timer = object->unk64 + 1;
   object->unk64 = timer;
   if ((timer & 31) == 31)
-    Event_PlaySound(231);
+    Event_PlaySound(SE_WATER_LEVEL);
   {
     s8 *from = leader->sprite;
     s8 *to = object->sprite;
@@ -2603,7 +2603,7 @@ void Whirlwind_Update(struct Object6a5 *object) {
   object->unk63 = 0;
   object->update = 0;
   Actor_StartScript(object, gData_020069fc);
-  Event_PlaySound(228);
+  Event_PlaySound(SE_SPARKLING_PASSAGE);
   Data_02006a28 = 0;
 }
 
@@ -2843,7 +2843,7 @@ void CrackedTile_DropIn(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   leader->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
@@ -2862,7 +2862,7 @@ void CrackedTile_DropIn(void) {
     FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity.x, velocity.y,
                       velocity.z, 0x1090001, &options);
   }
-  Event_PlaySound(188);
+  Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
   Func_020057ac_(0x50000, 0x50000, 0x10000);

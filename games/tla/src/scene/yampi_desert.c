@@ -731,16 +731,16 @@ void YampiDesert_StirScorpion(void) {
   Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
   FieldEvent_Wait(40);
   YampiDesert_BurstSand(0x1600000, 0, 0xf80000);
-  Sound_Play(176);
+  Sound_Play(SE_KOLIMA_BRIDGE_HOP);
   Actor_GetById(16)->velocityY = 0x60000;
   Actor_SetSpriteColor(Actor_GetById(16), 0);
   Actor_SetSpriteFlags(Actor_GetById(16), 1);
   Actor_MoveToAndWaitById(16, 380, 248);
   Actor_Stop(gMainRoutineWork.currentOwner);
-  Sound_Play(241);
+  Sound_Play(SE_WATER_MOVE);
   Scene_SetSpeed(16, 0xcccc, 0x6666);
   Actor_WalkToAndWaitById(16, 428, 248);
-  Sound_Play(390);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   GameFlag_Set(0x889);
   Event_End();
@@ -763,17 +763,17 @@ void YampiDesert_StirScorpionAgain(void) {
   Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
   FieldEvent_Wait(20);
   YampiDesert_BurstSand(0xf80000, 0, 0x2400000);
-  Sound_Play(176);
+  Sound_Play(SE_KOLIMA_BRIDGE_HOP);
   Actor_GetById(21)->velocityY = 0x60000;
   Actor_SetSpriteColor(Actor_GetById(21), 0);
   Actor_SetSpriteFlags(Actor_GetById(21), 1);
   Actor_MoveToAndWaitById(21, 256, 560);
   FieldEvent_Wait(20);
   Actor_Stop(gMainRoutineWork.currentOwner);
-  Sound_Play(241);
+  Sound_Play(SE_WATER_MOVE);
   Scene_SetSpeed(21, 0xcccc, 0x6666);
   Scene_SetPositionAndReset(21, 248, 496);
-  Sound_Play(390);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Actor_SetHorizontalPositionWithTerrain(21, 0, 0);
   GameFlag_Set(0x88a);
   Event_End();
@@ -871,7 +871,7 @@ loop_3:
   Scene_Call4098(21, 232 << 16, 184 << 16, angle);
   wait(1);
   YampiDesert_BurstSand(232 << 16, 0, 184 << 16);
-  Sound_Play(176);
+  Sound_Play(SE_KOLIMA_BRIDGE_HOP);
   partner->velocityY = 0x60000;
   partner->priorityFlags &= ~2;
   Actor_SetSpritePriority(21, 2);
@@ -883,7 +883,7 @@ loop_3:
   Actor_FaceDirectionById(21, 0);
   FieldEvent_Wait(20);
   YampiDesert_ScorpionUsesScoop();
-  Sound_Play(136);
+  Sound_Play(SE_WHOOSH);
   YampiDesert_RaiseSandCloud();
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   FieldEvent_Wait(20);
@@ -892,7 +892,7 @@ loop_3:
   FieldEvent_Wait(30);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
   FieldEvent_Wait(10);
-  Sound_Play(204);
+  Sound_Play(SE_DUST_PUFF);
   i = 0;
 step_13:
   leader->scaleX += -0x400;
@@ -903,12 +903,12 @@ step_13:
   if (i <= 13)
     goto step_13;
   Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
-  Sound_Play(153);
+  Sound_Play(SE_HIGH_JUMP);
   partner->velocityY = 0x80000;
   Actor_SetSpriteFlags(Actor_GetById(21), 0);
   Actor_MoveToAndWaitById(21, 232, 168);
   FieldEvent_Wait(3);
-  Sound_Play(204);
+  Sound_Play(SE_DUST_PUFF);
   i = 0;
 step_5:
   partner->scaleX += -0x800;
@@ -1555,7 +1555,7 @@ void YampiDesert_PlayScorpionRumble(void) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
     if (party->renderMode != 5 || gInput.held == 0)
-      Sound_Play(596);
+      Sound_Play(SE_596);
   }
 }
 
@@ -1928,7 +1928,7 @@ void YampiDesert_ClimbOut(struct Actor *object, s32 x, s32 z, s32 mode) {
   Actor_SetMoveTarget(object, object->x, object->y - 0xa0000, object->z);
   Actor_WaitForMove(object);
   Actor_SetModeById(party->currentOwner, 10);
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(mode);
@@ -1978,7 +1978,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Call4(FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
   Call4(FieldCamera_MoveWithinMapBounds, PIXELS(232), -1, PIXELS(184), 0);
   Map_CenterOnFollowedPoint();
@@ -2005,23 +2005,23 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x203;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Sound_Play(204);
+  Sound_Play(SE_DUST_PUFF);
   leader->motionFlags = 3;
   Actor_SetSpriteFlags(Actor_GetById(party->currentOwner), 1);
   FieldEvent_Wait(24);
   YampiDesert_BurstSand(leader->x, leader->y, leader->z);
-  Sound_Play(188);
+  Sound_Play(SE_THUMP);
   FieldEffect_SetAttached(party->currentOwner, 0x101);
   Motion_SetModeAndWaitAnimation(party->currentOwner, 49);
-  Sound_Play(204);
+  Sound_Play(SE_DUST_PUFF);
   actor8->motionFlags = 3;
   Actor_SetSpriteFlags(Actor_GetById(8), 1);
   FieldEvent_Wait(24);
   YampiDesert_BurstSand(actor8->x, actor8->y, actor8->z);
-  Sound_Play(188);
+  Sound_Play(SE_THUMP);
   Actor_ArmCallback(party->currentOwner, TRIG_TURN * 3 / 4, 0);
   FieldEvent_Wait(40);
-  Sound_Play(147);
+  Sound_Play(SE_BEAST_CRY);
   Actor_SetModeById(8, 3);
   FieldEvent_Wait(20);
   actor8->velocityY = Q16_ONE * 8;
@@ -2230,7 +2230,7 @@ void YampiDesert_SetUpRoom8(void) {
   struct Actor *object = Actor_GetById(64);
   s32 scene;
 
-  Scene_QueueMusic(137);
+  Scene_QueueMusic(SE_137);
   Rope_Initialize();
   Scene_Call41d8(0, 524, 8, 9);
   if (object != NULL)
@@ -2303,7 +2303,7 @@ void YampiDesert_SetUpRoom11(void) {
 
 void YampiDesert_SetUpRoom12(void) {
   ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  Scene_QueueMusic(137);
+  Scene_QueueMusic(SE_137);
   YampiDesert_PlaceStakes(gYampiDesert_Room12Stakes);
   YampiDesert_SetUpRoom12SlideActors();
   Scene_TaskAdd(YampiDesert_UpdateSandSlide, 0x480);
@@ -2400,11 +2400,11 @@ void YampiDesert_UpdateRisingSand(void) {
     if (object->x == 0 && object->z == 0)
       continue;
     if (entry->timer == entry->riseAt) {
-      Sound_Play(206);
+      Sound_Play(SE_CURSE_FALL);
       entry->step = 4;
     }
     if (entry->timer == entry->fallAt) {
-      Sound_Play(395);
+      Sound_Play(SOUND_FADE_OUT_SE5);
       entry->step = -8;
     }
     if (entry->step != 0) {

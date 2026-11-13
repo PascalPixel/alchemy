@@ -439,7 +439,7 @@ void CrackedTile_Fall(struct CellTarget__s14dc *table,
   s32 z = (leader->z >> 20) | (s16)(table->z & 64);
 
   Leader_CenterInCell();
-  Event_PlaySound(229);
+  Event_PlaySound(SE_SPLASH);
   MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
   FieldEvent_Wait(12);
   leader->facing = 0x4000;
@@ -452,7 +452,7 @@ void CrackedTile_Fall(struct CellTarget__s14dc *table,
   FieldEvent_Wait(16);
   for (x = 0; x < 40; x++) {
     if (x == 5)
-      Event_PlaySound(204);
+      Event_PlaySound(SE_DUST_PUFF);
     leader->scaleX += -0x400;
     leader->scaleY += -0x300;
     leader->y += -0x9999;

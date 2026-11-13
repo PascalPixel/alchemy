@@ -82,13 +82,13 @@ void EasternAlhafraShip_ShakeDownTheBread(void) {
   Actor_MoveToAndWaitById(14, 136, 475);
   object1 = Actor_GetById(15);
   *(s32 *)((u8 *)object1 + 40) = v6;
-  Sound_Play(0x237);
+  Sound_Play(SE_567);
   Actor_WaitForMoveById(*(s32 *)((u8 *)v5 + 0));
   Actor_SetModeById(*(s32 *)((u8 *)v5 + 0), 1);
   Actor_ArmCallback(*(s32 *)((u8 *)v5 + 0), FACING_NORTH, 0);
   Event_Wait(20);
   Actor_WaitForMoveById(15);
-  Sound_Play(159);
+  Sound_Play(SE_DOOR_CLOSE);
   return;
 }
 
@@ -109,7 +109,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   Field_StartColorTransition(8, 0x1210);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode((s32)Actor_GetById(id), 2);
-  Sound_Play(201);
+  Sound_Play(SE_ASCEND);
   Event_Wait(30);
   flags = &object->motionFlags;
   *flags = 4;
@@ -125,7 +125,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   *flags = 3;
   object->gravity = 0x8000;
   Event_Wait(5);
-  Sound_Play(132);
+  Sound_Play(SE_WATER);
   if (Event_GetFlag(0x8ae) == 0) {
     GameFlag_Set(0x8ae);
     Event_Wait(30);
@@ -323,7 +323,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   Actor_ArmCallback(9, 0x3000, 0);
   Event_Wait(30);
   Actor_EmitNotes(9);
-  Sound_Play(151);
+  Sound_Play(SE_LIGHT_APPEAR);
   Actor_ShowEmote(9, 0x101, 40);
   Actor_ArmCallback(9, 0xd000, 0);
   Event_Wait(30);

@@ -199,9 +199,9 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
     actor->terrainId = 0;
     FieldActor_WaitForMoveById(id);
     GondowanCliffs_WaitToLand(actor, 0);
-    Event_PlaySound(188);
+    Event_PlaySound(SE_THUMP);
     MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-    Event_PlaySound(141);
+    Event_PlaySound(SE_RUMBLE);
     MapGrid_SetShake(-1, -1, 0xe666);
     ((struct FieldSprite *)actor->sprite)->rotation = 0x1000;
     // Cleared through a word: as a function pointer the store sinks below the
@@ -216,7 +216,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
                       EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                           EFFECT_SCALE_TO_TARGET,
                       &options);
-    Event_PlaySound(154);
+    Event_PlaySound(SE_CAST);
     Actor_SetAnimation(id, 3);
     FieldMapGrid_WaitForShakeToSettle();
     Actor_GetById(15)->priorityFlags |= 2;
@@ -376,7 +376,7 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   Actor_SetPosition(5, 0, 0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 528, 488);
   Event_FinishScreenTransition();
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 512, 488);
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(1);
@@ -489,11 +489,11 @@ void Geysers_Update(void) {
     if (object->x == 0 && object->z == 0)
       continue;
     if (entry->timer == entry->riseAt) {
-      Sound_Play(206);
+      Sound_Play(SE_CURSE_FALL);
       entry->step = 4;
     }
     if (entry->timer == entry->fallAt) {
-      Sound_Play(395);
+      Sound_Play(SOUND_FADE_OUT_SE5);
       entry->step = -8;
     }
     if (entry->step != 0) {

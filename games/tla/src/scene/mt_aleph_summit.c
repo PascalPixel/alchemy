@@ -476,7 +476,7 @@ s32 Scene_Initialize(void) {
       goto L5;
     Actor_SetAnimation(8, 15);
     System_Wait(60);
-    Event_PlaySound(212);
+    Event_PlaySound(SE_POWER_UP);
     REG_BG1CNT &= 0xfffc;
     REG_BG1CNT |= 1;
     REG_BLDCNT = 0x3f42;
@@ -484,11 +484,11 @@ s32 Scene_Initialize(void) {
     j = 0;
   L6:
     if (j == 16) {
-      Event_PlaySound(140);
+      Event_PlaySound(SE_SPIN);
       Actor_SetAnimation(8, 16);
     }
     if (j == 51) {
-      Event_PlaySound(107);
+      Event_PlaySound(SE_TREMOR);
       Iwram_CopyWordsEntry(buffer, (void *)0x5000000, 0x1c0);
       Iwram_CopyWordsEntry(block + 0xf80, block + 0x1040, 96);
     }
@@ -510,10 +510,10 @@ s32 Scene_Initialize(void) {
       goto L6;
     FieldActor_SetSpritePriority(8, 3);
     MapGrid_SetShake(-1, -1, 0xe666);
-    Event_PlaySound(0x186);
+    Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
     FieldCamera_MoveTo(0x1000000, -1, 0x13e0000, 0);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, (REG_BG1CNT & ~3) | 3, 0x20000);
-    Event_PlaySound(212);
+    Event_PlaySound(SE_POWER_UP);
     System_Wait(1);
     Task_AddFrame(MtAlephSummit_PulseColors, 0x480);
     j = 0;
@@ -532,7 +532,7 @@ s32 Scene_Initialize(void) {
     Actor_WalkToAndWait(8, 248, 128);
     Actor_RunRepeatedMotion(8, 2);
     FieldEvent_Wait(5);
-    Event_PlaySound(78);
+    Event_PlaySound(SOUND_FADE_OUT_BGM);
     FieldEvent_SetMessageId(MsgGoldenSunEternalLifeAndPower);
     FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
     Actor_FaceDirection(8, 0x4000, 0);
@@ -565,7 +565,7 @@ s32 Scene_Initialize(void) {
     Actor_ShowEmote(8, 0x102, 30);
     FieldEvent_SetMessageId((MsgGoldenSunEternalLifeAndPower + 4));
     FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
-    Event_PlaySound(0x2d2);
+    Event_PlaySound(MUS_722);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     Actor_SetAnimation(8, 1);
     Actor_FaceDirection(8, 0xa000, 0);
@@ -596,7 +596,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(8, 13);
     BattleEffect_StartArcEffect();
     BattleEffect_SetObjectUpdateMode((s32)Actor_Get(8), 2);
-    Event_PlaySound(178);
+    Event_PlaySound(SE_178);
     Field_StartColorTransition(8, 0x4084);
     FieldEvent_Wait(20);
     Actor_SetAnimation(9, 3);
@@ -631,7 +631,7 @@ s32 Scene_Initialize(void) {
     BattleEffect_StartArcEffect();
     BattleEffect_SetObjectUpdateMode((s32)Actor_Get(9), 2);
     System_Wait(30);
-    Event_PlaySound(212);
+    Event_PlaySound(SE_POWER_UP);
     MapGrid_SetShake(0x100000, 0x100000, 0x10000);
     i = 0;
   L10:
@@ -654,13 +654,13 @@ s32 Scene_Initialize(void) {
     ACTOR(8)->actionFlags &= ~1;
     Actor_WalkTo(8, 0x118, 160);
     Actor_SetAnimation(8, 17);
-    Event_PlaySound(134);
+    Event_PlaySound(SE_HEAVY_IMPACT);
     FieldEvent_Wait(2);
     MtAlephSummit_ScatterDustRing(128, 8);
     FieldEvent_Wait(2);
     MtAlephSummit_ScatterDustRing(128, 8);
     FieldEvent_Wait(56);
-    Event_PlaySound(178);
+    Event_PlaySound(SE_178);
     i = 0;
     ACTOR(8)->motionFlags = i;
   L11:
@@ -691,14 +691,14 @@ s32 Scene_Initialize(void) {
       goto L13;
     MtAlephSummit_ScatterDustRing(0x100, 16);
     Actor_SetAnimation(8, 17);
-    Event_PlaySound(145);
+    Event_PlaySound(SE_CRASH);
     MapGrid_SetShake(0x100000, 0x100000, 0x10000);
     FieldEvent_Wait(10);
     MapGrid_SetShake(-1, -1, 0xe666);
     BattleEffect_SetObjectUpdateMode((s32)Actor_Get(9), 0);
     BattleEffect_WaitForArcGroups();
     BattleEffect_EndArcEffect();
-    Event_PlaySound(0x186);
+    Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
     Actor_SetAnimation(9, 4);
     Field_StartPaletteTransition(32);
     FieldEvent_Wait(10);
@@ -712,7 +712,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(10);
     FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
     FieldEvent_Wait(120);
-    Event_PlaySound(107);
+    Event_PlaySound(SE_TREMOR);
     i = 0;
   L14:
     MapGrid_SetShake((i << 16) + 0x10000, (i << 16) + 0x10000, 0x10000);
@@ -767,15 +767,15 @@ s32 Scene_Initialize(void) {
     scale += 0x1000;
     if (j != 128)
       goto L16;
-    Event_PlaySound(78);
+    Event_PlaySound(SOUND_FADE_OUT_BGM);
     FieldEvent_Wait(32);
-    Event_PlaySound(208);
+    Event_PlaySound(SE_BANE_ESCAPE);
     FieldEvent_Wait(120);
     FieldTask_Remove(MtAlephSummit_PulseColors);
     PaletteFade_ApplyTarget(0x7fff, 0);
     PaletteFade_Interpolate(1);
     System_Wait(1);
-    Event_PlaySound(0x186);
+    Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
     PaletteFade_ApplyTarget(0, 0);
     PaletteFade_Interpolate(120);
     System_Wait(0x12c);

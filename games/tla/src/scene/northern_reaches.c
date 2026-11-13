@@ -250,7 +250,7 @@ ready:
   t40 = Actor_Get(8);
   t40->actionFlags &= 254;
   Actor_WalkBy(8, 0, 16);
-  Event_PlaySound(144);
+  Event_PlaySound(SE_CLATTER);
   FieldEvent_Wait(4);
   v_r8->scaleX = 0x18000;
   v_r8->scaleY = 0x18000;
@@ -276,7 +276,7 @@ growBall:
   FieldCamera_MoveTo(0x1d80000, -1, 0xb00000, 1);
   FieldCamera_WaitForArrival();
   FieldActor_WaitForMoveById(9);
-  Event_PlaySound(145);
+  Event_PlaySound(SE_CRASH);
   t59 = v_r6->x;
   from[0] = (t59 - 0x20000);
   t60 = v_r6->y;
@@ -451,18 +451,18 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
           (volatile u32 *)0x40000d4);
   for (frame = 0; frame <= 149; frame++) {
     if ((frame & 31) == 0) {
-      Event_PlaySound(145);
+      Event_PlaySound(SE_CRASH);
     }
     if (frame == 60) {
       BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
       PaletteFade_StartInterpolation(90);
-      Event_PlaySound(141);
+      Event_PlaySound(SE_RUMBLE);
     }
     if (frame == 105) {
       callback();
       flying = 1;
       MapGrid_SetShake(0x60000, 0x60000, 0x10000);
-      Event_PlaySound(228);
+      Event_PlaySound(SE_SPARKLING_PASSAGE);
     }
     if (frame == 130) {
       flying = 1;

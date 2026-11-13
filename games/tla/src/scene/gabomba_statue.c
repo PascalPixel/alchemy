@@ -443,7 +443,7 @@ void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
   saved = *flags;
   Actor_SelectAnimation(object, 6);
   System_Wait(6);
-  Event_PlaySound(152);
+  Event_PlaySound(SE_JUMP);
   Actor_SelectAnimation(object, 7);
   object->speedLimit = 0x30000;
   object->acceleration = 0x20000;
@@ -598,7 +598,7 @@ void Func_02000a20(struct Actor *object) {
     object->y -= 0x18000;
     System_Wait(1);
     if (i == 10)
-      Event_PlaySound(204);
+      Event_PlaySound(SE_DUST_PUFF);
     if (i == 20) {
       ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
       Event_FinishScreenTransition();
@@ -738,7 +738,7 @@ void Func_02000cf0(struct Actor *object) {
   FieldEvent_Wait(20);
   Actor_FaceActor(39, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(10);
-  Event_PlaySound(262);
+  Event_PlaySound(SE_VOICE_GIRL_3);
   {
     s32 a = 256, b = 30;
 
@@ -749,11 +749,11 @@ void Func_02000cf0(struct Actor *object) {
   FieldEvent_Wait(2);
   Actor_FaceDirection(39, FACING_WEST, 0);
   FieldEvent_Wait(15);
-  Event_PlaySound(152);
+  Event_PlaySound(SE_JUMP);
   Actor_Get(39)->velocityY = PIXELS(4);
   Actor_SetSpeed(39, 0x40000, 0x20000);
   Actor_WalkToAndWait(39, 312, 200);
-  Event_PlaySound(152);
+  Event_PlaySound(SE_JUMP);
   Actor_Get(39)->velocityY = PIXELS(6);
   Actor_SetSpeed(39, 0x40000, 0x20000);
   Actor_WalkToAndWait(39, 312, 168);
@@ -761,12 +761,12 @@ void Func_02000cf0(struct Actor *object) {
   Actor_WalkToAndWait(39, 328, 152);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   FieldEvent_Wait(15);
-  Event_PlaySound(152);
+  Event_PlaySound(SE_JUMP);
   Actor_Get(39)->velocityY = PIXELS(6);
   Actor_SetSpeed(39, 0x40000, 0x20000);
   Actor_WalkToAndWait(39, 360, 152);
   FieldEvent_Wait(15);
-  Event_PlaySound(152);
+  Event_PlaySound(SE_JUMP);
   Actor_Get(39)->velocityY = PIXELS(6);
   Actor_SetSpeed(39, 0x20000, 0x10000);
   Actor_WalkToAndWait(39, 360, 184);
@@ -775,7 +775,7 @@ void Func_02000cf0(struct Actor *object) {
   Actor_WalkToAndWait(39, 392, 200);
   Actor_WalkToAndWait(39, 408, 184);
   FieldEvent_Wait(15);
-  Event_PlaySound(152);
+  Event_PlaySound(SE_JUMP);
   Actor_Get(39)->velocityY = PIXELS(6);
   Actor_SetSpeed(39, 0x40000, 0x20000);
   Actor_WalkToAndWait(39, 440, 184);
@@ -812,14 +812,14 @@ void GabombaStatue_HearTheOffering(void) {
   Event_SetFlag(0x205);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Func_0200533c();
   FieldEvent_Wait(40);
   FieldEvent_SetMessageId(MsgGabombaAcceptOffering);
   Event_ShowMessage(24, 0);
   FieldCamera_MoveTo(PIXELS(392), -1, PIXELS(256), 1);
   FieldCamera_WaitForArrival();
-  Event_PlaySound(220);
+  Event_PlaySound(SE_SHIMMER);
   System_Wait(1);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);
@@ -832,14 +832,14 @@ void GabombaStatue_HearTheOffering(void) {
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(10);
   System_Wait(20);
-  Event_PlaySound(130);
+  Event_PlaySound(SE_PSYNERGY_START);
   FieldActor_SetSpriteColor(Actor_Get(9), 7);
   FieldActor_SetSpriteColor(Actor_Get(10), 7);
   System_Wait(8);
   FieldActor_SetSpriteColor(Actor_Get(10), 3);
   FieldActor_SetSpriteColor(Actor_Get(9), 0);
   System_Wait(8);
-  Event_PlaySound(11);
+  Event_PlaySound(MUS_011);
   result = Func_02004d48(11, 1);
   ObjectTable_Snapshot();
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
@@ -908,7 +908,7 @@ void Func_020011bc(s32 x, s32 z) {
   FieldActor_SetMoveTarget(object, x << 16, PIXELS(-12), z << 16);
   FieldActor_WaitForMove(object);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 10);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(work->exit);
@@ -1063,7 +1063,7 @@ void Func_02001630(void) {
   FieldActor_SetMoveTarget(leader, PIXELS(472), 0, PIXELS(156));
   FieldActor_WaitForMove(leader);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 10);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(work->exit);
@@ -1073,7 +1073,7 @@ void Func_02001630(void) {
   void name(struct Actor *actor) {                                             \
     Event_Start();                                                             \
     FieldEvent_ResolvePendingActions(0);                                       \
-    Event_PlaySound(581);                                                      \
+    Event_PlaySound(SE_581);                                                   \
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);           \
     Actor_MoveToAndWait(gMainRoutineWork.currentOwner, n1, n2);                \
     Event_End();                                                               \
@@ -1087,7 +1087,7 @@ void Func_0200176c(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(581);
+  Event_PlaySound(SE_581);
   actor->motionFlags = 0;
   speed = 0x19999;
   /* FAKEMATCH(barrier): an empty asm on speed, so the speed is loaded before
@@ -1098,7 +1098,7 @@ void Func_0200176c(void) {
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 488);
   actor->motionFlags = 3;
   FieldEvent_Wait(8);
-  Event_PlaySound(161);
+  Event_PlaySound(SE_RATTLE);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
   FieldEvent_Wait(20);
   Event_End();
@@ -1159,10 +1159,10 @@ void Func_020019d0(void) {
   FieldCamera_SetSpeed(0x9999, 0x1333);
   FieldCamera_MoveTo(180 << 17, 0, 248 << 17, 1);
   FieldCamera_WaitForArrival();
-  Event_PlaySound(586);
+  Event_PlaySound(SE_586);
   Func_020020f0(0);
   FieldEvent_Wait(40);
-  Event_PlaySound(582);
+  Event_PlaySound(SE_582);
   actor->motionFlags = 0;
   actor->y = PIXELS(8);
   FieldEvent_Wait(10);
@@ -1187,7 +1187,7 @@ void Func_02001a8c(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(20);
-  Event_PlaySound(214);
+  Event_PlaySound(SE_RISING_CHIMES);
   Actor_SelectAnimation(object, 5);
   object->scaleY = 0x10000;
   Event_End();
@@ -1501,7 +1501,7 @@ void Func_02002394(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   actor->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
@@ -1524,7 +1524,7 @@ void Func_02002394(void) {
                       velocity[2], 0x1090001, &options);
     i++;
   } while (i <= 16);
-  Event_PlaySound(188);
+  Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
@@ -1625,7 +1625,7 @@ void Func_020027cc(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   speed = 0x4000;
   Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, PIXELS(348),
                              PIXELS(312), speed);
@@ -1642,7 +1642,7 @@ void Func_020027cc(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
-  Event_PlaySound(220);
+  Event_PlaySound(SE_SHIMMER);
   System_Wait(1);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);
@@ -1663,7 +1663,7 @@ void Func_020027cc(void) {
   Actor_FaceDirection(6, FACING_NORTH, 0);
   Actor_FaceDirection(7, FACING_NORTH, 0);
   Actor_FaceDirection(23, FACING_NORTHWEST + FACING_STEP, 60);
-  Event_PlaySound(130);
+  Event_PlaySound(SE_PSYNERGY_START);
   FieldActor_SetSpriteColor(Actor_Get(9), 7);
   FieldActor_SetSpriteColor(Actor_Get(10), 7);
   System_Wait(8);
@@ -1681,7 +1681,7 @@ void Func_020027cc(void) {
   Actor_SetScript(5, gData_02005ca0);
   Actor_SetScript(6, gData_02005ca0);
   Actor_SetScript(23, gData_02005ca0);
-  Event_PlaySound(11);
+  Event_PlaySound(MUS_011);
   Func_02004d48(11, 0);
   FieldEvent_Wait(80);
   Event_SetFlag(0x8f7);
@@ -2832,7 +2832,7 @@ void Func_02004530(void) {
     MapGrid_CopyCellsLayered(1, 13, 1, 1, state->originX + 3,
                              state->originZ - 2);
     if (state->statuesReady != 0) {
-      Event_PlaySound(248);
+      Event_PlaySound(SE_248);
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Func_020044b4(3);
@@ -2869,7 +2869,7 @@ void Func_02004620(void) {
     MapGrid_CopyCellsLayered(0, 13, 1, 1, state->originX + 7,
                              state->originZ - 2);
     if (state->statuesReady != 0) {
-      Event_PlaySound(248);
+      Event_PlaySound(SE_248);
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Func_020044b4(2);
@@ -3006,7 +3006,7 @@ void Func_02004938(struct Actor *ball, s32 step) {
   if (goal == 2) {
     heading = row = col = 0;
     if (((u8 *)ball)[99] == 1) {
-      Sound_Play(204);
+      Sound_Play(SE_DUST_PUFF);
       Actor_StartScript(ball, gData_02006f38);
       ((u8 *)ball)[99] = goal;
     }
@@ -3118,7 +3118,7 @@ void Func_02004938(struct Actor *ball, s32 step) {
       if (x >> 20 == 24 && z >> 20 == 14) {
         ((u8 *)ball)[99] = 7;
       } else {
-        Sound_Play(204);
+        Sound_Play(SE_DUST_PUFF);
         Actor_StartScript(ball, gData_02006f38);
         ((u8 *)ball)[99] = 2;
       }
@@ -3130,7 +3130,7 @@ void Func_02004938(struct Actor *ball, s32 step) {
   default:
     heading = row = col = 0;
     if (((u8 *)ball)[99] == 1) {
-      Sound_Play(132);
+      Sound_Play(SE_WATER);
       Actor_StartScript(ball, gData_02006ec0);
       ((u8 *)ball)[99] = 2;
     }
@@ -3328,7 +3328,7 @@ s32 Func_02005020(s32 time) {
     *ringing = 1;
   } else if (*ringing) {
     if (clock->timer != 0)
-      Event_PlaySound(236);
+      Event_PlaySound(SE_COLOSSO_COUNTDOWN);
     *ringing = second;
   }
   if (second <= 19) {

@@ -385,7 +385,7 @@ void TaopoSwamp_StartMadPlantBattle(void) {
 void TaopoSwamp_FallThroughHole(s32 a) {
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
   TaopoSwamp_JumpDownLedge(gMainRoutineWork.currentOwner, 6, 0x1000);
-  Event_PlaySound(310);
+  Event_PlaySound(SE_310);
   Event_SetFlag(0x122);
   FieldEvent_SetExitRequest(a);
 }
@@ -496,13 +496,13 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
   i = 2;
   do {
     object->velocityY = 0x20000;
-    Event_PlaySound(152);
+    Event_PlaySound(SE_JUMP);
     object->speedLimit = speed;
     object->acceleration = speed / 2;
     Actor_WalkByAndWait(8, 0, 8);
     speed += 0x4000;
   } while (--i >= 0);
-  Event_PlaySound(310);
+  Event_PlaySound(SE_310);
   object->velocityY = 0x40000;
   Actor_WalkByAndWait(8, 0, 8);
   FieldEvent_Wait(60);
@@ -764,9 +764,9 @@ void TaopoSwamp_TremorPillar(void) {
   rock->y = rock->terrainHeight;
   Actor_SetPosition(19, 0x1e00000, 0xf80000);
   ((struct FieldSprite *)rock->sprite)->rotation = 0;
-  Event_PlaySound(188);
+  Event_PlaySound(SE_THUMP);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  Event_PlaySound(141);
+  Event_PlaySound(SE_RUMBLE);
   MapGrid_SetShake(-1, -1, 0xe666);
   Actor_SetPosition(10, 0x1e00000, 0xf80000);
   Actor_SetDestination(10, 440, 232);
@@ -954,7 +954,7 @@ s32 TaopoSwamp_LandDrop(struct Actor *object) {
       Actor_SetSpriteFlags(spark, 0);
       Actor_SelectAnimation(spark, 2);
     }
-    Event_PlaySound(106);
+    Event_PlaySound(SE_DRIP);
     object->y = object->terrainHeight;
     object->velocityY = 0;
     return 0;
@@ -993,7 +993,7 @@ void TaopoSwamp_CycleDjinniVents(void) {
     Vent_SetActive(1, 1);
     Vent_SetActive(4, 1);
     Vent_SetActive(5, 1);
-    Scene_QueueMusic(170);
+    Scene_QueueMusic(SE_170);
     break;
   case 180:
     Vent_SetActive(0, 0);
@@ -1009,7 +1009,7 @@ void TaopoSwamp_CycleDjinniVents(void) {
     Vent_SetActive(7, 1);
     Vent_SetActive(8, 1);
     Vent_SetActive(9, 1);
-    Scene_QueueMusic(170);
+    Scene_QueueMusic(SE_170);
     break;
   case 420:
     Vent_SetActive(2, 0);
@@ -1036,7 +1036,7 @@ void TaopoSwamp_CycleSpotVent(void) {
   case 0:
     Vent_SetActive(0, 1);
     Vent_SetActive(1, 1);
-    Scene_QueueMusic(170);
+    Scene_QueueMusic(SE_170);
     break;
   case 120:
     Vent_SetActive(0, 0);
@@ -1061,7 +1061,7 @@ void TaopoSwamp_CycleDripVent(void) {
   case 0:
     Vent_SetActive(0, 1);
     Vent_SetActive(1, 1);
-    Scene_QueueMusic(170);
+    Scene_QueueMusic(SE_170);
     break;
   case 120:
     Vent_SetActive(0, 0);
@@ -1085,7 +1085,7 @@ void TaopoSwamp_CycleRockRoomVents(void) {
   case 0:
     Vent_SetActive(0, 1);
     Vent_SetActive(1, 1);
-    Scene_QueueMusic(170);
+    Scene_QueueMusic(SE_170);
     break;
   case 180:
     Vent_SetActive(0, 0);
@@ -1107,7 +1107,7 @@ s32 TaopoSwamp_LandDrip(struct Actor *object) {
   if (object->y + object->velocityY < object->terrainHeight) {
     flag = Event_GetFlag(0x221);
     if (flag) {
-      Event_PlaySound(106);
+      Event_PlaySound(SE_DRIP);
       return 0;
     }
     spark = TaopoSwamp_CreateActor(0x10d, object->x, object->y, object->z);
@@ -1119,7 +1119,7 @@ s32 TaopoSwamp_LandDrip(struct Actor *object) {
       Actor_SetSpriteFlags(spark, 0);
       Actor_SelectAnimation(spark, 2);
     }
-    Event_PlaySound(106);
+    Event_PlaySound(SE_DRIP);
     object->y = object->terrainHeight;
     object->velocityY = 0;
     if (Event_GetFlag(0x104) == 0) {

@@ -418,10 +418,10 @@ void WorldMap_BoardShip(void) {
   gMainRoutineWork.savedX = ship->x;
   gMainRoutineWork.savedZ = ship->z;
   gMainRoutineWork.unk280 = ship->facing;
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Import_ActorSelectAnimation(leader, 6);
   System_Wait(6);
-  Event_PlaySound(152);
+  Event_PlaySound(SE_JUMP);
   Actor_SetSpriteFlags(leader, 0);
   Import_ActorSelectAnimation(leader, 7);
   leader->speedLimit = 0x30000;
@@ -488,7 +488,7 @@ void WorldMap_LeaveShip(void) {
     }
   }
   if (blocked == 0) {
-    Event_PlaySound(78);
+    Event_PlaySound(SOUND_FADE_OUT_BGM);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEffect_ScheduleRatioTransition(0x10000, 10);
@@ -506,7 +506,7 @@ void WorldMap_LeaveShip(void) {
     Actor_SetSpriteFlags(leader, 0);
     Import_ActorSelectAnimation(leader, 6);
     System_Wait(6);
-    Event_PlaySound(152);
+    Event_PlaySound(SE_JUMP);
     Import_ActorSelectAnimation(leader, 7);
     leader->speedLimit = 0x30000;
     leader->acceleration = 0x20000;
@@ -542,7 +542,7 @@ void Func_02000918(void) {
   gMainRoutineWork.unk280 = 0;
   gMainRoutineWork.ownerOverride = 0;
   Event_ClearFlag(0x176);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_SetExitRequest(work->scene);
 }
 
@@ -631,7 +631,7 @@ void WorldMap_RefuseToRunAway(void) {
 
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Event_PlaySound(123);
+    Event_PlaySound(SE_MAP_EXIT);
     FieldEvent_SetExitRequest(work->scene);
   }
 }
@@ -851,7 +851,7 @@ void WorldMap_ExplainGivingDjinn(void) {
                           (s32)MsgAfterBringingA);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(30);
-  Event_PlaySound(111);
+  Event_PlaySound(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
   Event_ClearFlag(0x16f);
   Event_ClearFlag(0x171);
@@ -1455,7 +1455,7 @@ void WorldMap_MeetEcho(void) {
     Event_ShowMessageAndWait(9, 0);
   joined:
     MessageArgument_Push(0x133, 4);
-    Sound_Play(81);
+    Sound_Play(MUS_081);
     FieldMessage_Show(TUTORIAL_MESSAGE(MsgTheVenusDjinni), 3);
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgTheVenusDjinni + 1));
     Actor_Jump(9, 2, 20);
@@ -1463,9 +1463,9 @@ void WorldMap_MeetEcho(void) {
     if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
       goto refused;
     if (Event_GetFlag(0x175))
-      Sound_Play(17);
+      Sound_Play(MUS_017);
     else
-      Sound_Play(35);
+      Sound_Play(MUS_035);
     goto tutorial;
   }
   Event_Start();
@@ -1486,7 +1486,7 @@ void WorldMap_MeetEcho(void) {
   Event_ShowMessageAndWait(9, 0);
   Motion_SetVarCbAndRefresh(9, 2);
   Event_ShowMessageAndWait(9, 0);
-  Sound_Play(111);
+  Sound_Play(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
   Event_SetFlag(0x16f);
   Event_ClearFlag(0x171);
@@ -1603,7 +1603,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   FieldEvent_Wait(30);
   Event_ShowMessage(5, 0);
   WorldMap_ReloadPendingAreaGraphics();
-  Event_PlaySound(145);
+  Event_PlaySound(SE_CRASH);
   PaletteFade_ApplySource(0x7fff, 0);
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(60);
@@ -1625,13 +1625,13 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   Event_ShowMessage(5, 0);
   Event_ShowMessage(8, 0);
   WorldMap_ReloadPendingAreaGraphics();
-  Event_PlaySound(145);
+  Event_PlaySound(SE_CRASH);
   Func_02002640(0, 128, 0, 0);
   Actor_SetAnimation(5, 19);
   Actor_SetAnimation(8, 5);
   Actor_SetAnimation(9, 7);
   System_Wait(4);
-  Event_PlaySound(145);
+  Event_PlaySound(SE_CRASH);
   Func_02002640(32, 128, 32, 0);
   System_Wait(4);
   Func_02002640(64, 128, 32, 0);
@@ -1654,8 +1654,8 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   WorldMap_Freeze();
   Event_ShowMessage(8, 0);
   Event_ShowMessage(5, 0);
-  Event_PlaySound(78);
-  Event_PlaySound(390);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(64);
@@ -1770,11 +1770,11 @@ void WorldMap_DriftNorthOfContinent(void) {
   Event_ShowMessage(8, 0);
   Event_ShowMessage(6, 0);
   Event_ShowMessage(5, 0);
-  Event_PlaySound(78);
-  Event_PlaySound(162);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
+  Event_PlaySound(SE_162);
   Event_ShowMessage(gMainRoutineWork.currentOwner, 0);
   Event_ShowMessage(8, 0);
-  Event_PlaySound(61);
+  Event_PlaySound(MUS_061);
   WorldMap_ReloadPendingAreaGraphics();
   FieldCamera_SetSpeed(0x40000, 0x8000);
   FieldCamera_MoveTo(0x283f0000, -1, 0x1e8c0000, 1);
@@ -1821,7 +1821,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   Event_ShowMessage(8, 0);
   Actor_SetSpeed(8, 0x10000, 0x8000);
   Actor_WalkTo(8, 0xe18, 0x1e0f);
-  Event_PlaySound(163);
+  Event_PlaySound(SE_163);
   Func_020042e0(0);
   FieldEvent_SetExitRequest(65);
 }
@@ -1971,7 +1971,7 @@ void WorldMap_TakeOff(void) {
   Actor_SetPosition(23, x << 16, z << 16);
   WorldMap_Freeze();
   FieldEvent_SetMessageId((s32)MsgWeDidIt);
-  Event_PlaySound(390);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_ShowMessage(2, 0);
   Actor_ShowEmote(8, 0x102, 40);
   Event_ShowMessage(1, 0);
@@ -1981,12 +1981,12 @@ void WorldMap_TakeOff(void) {
   Event_ShowMessage(5, 0);
   Event_ShowMessage(6, 0);
   Event_ShowMessage(23, 0);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(50);
   Event_ShowMessage(6, 0);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(30);
-  Event_PlaySound(38);
+  Event_PlaySound(MUS_038);
   Event_ShowMessage(6, 0);
   FieldEvent_Wait(20);
   Event_ShowMessage(0, 0);
@@ -2023,7 +2023,7 @@ void WorldMap_TakeOff(void) {
   Event_ShowMessage(23, 0);
   FieldEvent_Wait(60);
   Event_ShowMessage(6, 0);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_ShowMessage(23, 0);
   FieldEvent_Wait(40);
   Event_ShowMessage(23, 0);
@@ -2176,7 +2176,7 @@ void Func_02003d44(s32 mode) {
   Event_WaitTransitionFrames();
   if (mode == 2) {
     MapGrid_SetShake(0x20000, 0x30000, 0x10000);
-    Event_PlaySound(141);
+    Event_PlaySound(SE_RUMBLE);
   }
   WorldMap_Freeze();
   buffer = Heap_AllocEwram(0x4000);
@@ -2188,7 +2188,7 @@ void Func_02003d44(s32 mode) {
   Task_AddFrame(Func_02003c50, 0x480);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(246);
+  Event_PlaySound(SE_GLITTER);
   gData_02006e08 = 0xe00;
   PUSH_PICTURE(0x3480);
   FieldEvent_Wait(2);
@@ -2229,7 +2229,7 @@ void Func_02003d44(s32 mode) {
   PUSH_PICTURE(0x3a80);
   if (mode == 1) {
     MapGrid_SetShake(0x20000, 0x20000, 0x10000);
-    Event_PlaySound(141);
+    Event_PlaySound(SE_RUMBLE);
     gData_02006e08 = 0xd00;
     FieldEvent_Wait(4);
     gData_02006e08 = 0xe00;
@@ -2297,7 +2297,7 @@ void Func_020042e0(void) {
     y += 352;
     x += 17;
   }
-  Event_PlaySound(164);
+  Event_PlaySound(SE_SCATTER);
   System_Wait(120);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   // mode holds one 0 for the rest of the function; the closing scroll reset
@@ -2309,9 +2309,9 @@ void Func_020042e0(void) {
   System_Wait(1);
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(60);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   System_Wait(60);
-  Event_PlaySound(390);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   System_Wait(120);
   Ram_HeapSlots->objectSystem->suspended = 1;
   System_Wait(1);

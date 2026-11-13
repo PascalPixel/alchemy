@@ -1105,7 +1105,7 @@ void KandoreanTemple_RunWestLift(void) {
   s32 *timer = &gKandoreanTemple_LeftTimer;
 
   if (*timer == 300) {
-    Scene_QueueMusic(162);
+    Scene_QueueMusic(SE_162);
     FieldActor_SetPositionAndResetMotion(Actor_GetById(13), PIXELS(440),
                                          PIXELS(-20), PIXELS(204));
     Actor_SetPositionAndResetMotion(Actor_GetById(15), PIXELS(440), PIXELS(-20),
@@ -1155,7 +1155,7 @@ void KandoreanTemple_RunWestLift(void) {
        * *timer = 0, 6 of 193 instructions differ in tla-en. */
       s32 **timerRef = &timer;
 
-      Scene_QueueMusic(245);
+      Scene_QueueMusic(SE_245);
       Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
       **timerRef = 0;
@@ -1170,7 +1170,7 @@ void KandoreanTemple_RunEastLift(void) {
   s32 *timer = &gKandoreanTemple_RightTimer;
 
   if (*timer == 300) {
-    Scene_QueueMusic(162);
+    Scene_QueueMusic(SE_162);
     FieldActor_SetPositionAndResetMotion(Actor_GetById(14), PIXELS(600),
                                          PIXELS(-20), PIXELS(236));
     Actor_SetPositionAndResetMotion(Actor_GetById(16), PIXELS(600), PIXELS(-20),
@@ -1220,7 +1220,7 @@ void KandoreanTemple_RunEastLift(void) {
        * *timer = 0, 6 of 193 instructions differ in tla-en. */
       s32 **timerRef = &timer;
 
-      Scene_QueueMusic(245);
+      Scene_QueueMusic(SE_245);
       Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
       **timerRef = 0;
@@ -1267,7 +1267,7 @@ void KandoreanTemple_WatchVentPlatforms(void) {
       Event_ClearFlag(0x20e);
     }
   } else if (Event_GetFlag(0x20c) || Event_GetFlag(0x20d)) {
-    Scene_QueueMusic(162);
+    Scene_QueueMusic(SE_162);
     Event_SetFlag(0x20e);
   }
 }
@@ -1448,7 +1448,7 @@ void KandoreanTemple_ClimbDownTheWell(void) {
   Actor_SetMoveTarget(leader, PIXELS(168), PIXELS(-12), PIXELS(80));
   Actor_WaitForMove(leader);
   Actor_SetModeById(party->currentOwner, 10);
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(8);
@@ -1469,14 +1469,14 @@ void KandoreanTemple_DropThroughTheTrapdoor(void) {
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 400, 648);
   Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_NORTH);
   if (GameFlag_Get(0x212) == 0) {
-    Sound_Play(188);
+    Sound_Play(SE_THUMP);
     KandoreanTemple_OpenTheTrapdoor();
   }
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
   Actor_WalkToById(gMainRoutineWork.currentOwner, 400, 640);
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(9);
@@ -1576,7 +1576,7 @@ void KandoreanTemple_TouchTheHotFloor(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x100, 20);
-  Sound_Play(132);
+  Sound_Play(SE_WATER);
   Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 10);
   leader->velocityY = PIXELS(6);
   wait(20);
@@ -1589,7 +1589,7 @@ void KandoreanTemple_TouchTheHotFloor(void) {
 void KandoreanTemple_OpenTheWellPassage(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(188);
+  Sound_Play(SE_THUMP);
   MapGrid_CopyCellPictureIndicesRect(77, 33, 77, 24, 2, 2);
   MapGrid_CopyCellAttributes(32, 30, 2, 1, 17, 25);
   wait(10);
@@ -1711,11 +1711,11 @@ void KandoreanTemple_FightChestbeaters(void) {
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 328, 174);
   Motion_SetVarCbAndRefresh(11, 2);
-  Sound_Play(146);
+  Sound_Play(SE_ENEMY_CRY);
   Actor_SetModeById(11, 2);
   Actor_GetById(11)->velocityY = PIXELS(4);
   Event_Wait(10);
-  Sound_Play(146);
+  Sound_Play(SE_ENEMY_CRY);
   Actor_SetModeById(12, 2);
   Actor_SetModeById(13, 2);
   Actor_GetById(12)->velocityY = PIXELS(6);
@@ -1794,7 +1794,7 @@ void KandoreanTemple_StartLiftRoom(void) {
   Actor_PlaceBlocks(gKandoreanTemple_BlockActors);
   REG_BLDALPHA = 0xc08;
   REG_BLDCNT = 0x3f10;
-  Scene_QueueMusic(245);
+  Scene_QueueMusic(SE_245);
   Task_Add(KandoreanTemple_BlowStream, TASK_PASS_VBLANK);
   Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
@@ -2013,7 +2013,7 @@ void KandoreanTemple_LandFromAbove(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Sound_Play(204);
+  Sound_Play(SE_DUST_PUFF);
   leader->motionFlags = 3;
   Event_Wait(24);
   options.palette = 7;
@@ -2033,7 +2033,7 @@ void KandoreanTemple_LandFromAbove(void) {
     FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity[0], velocity[1],
                       velocity[2], 0x01090001, &options);
   }
-  Sound_Play(188);
+  Sound_Play(SE_THUMP);
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
@@ -2068,7 +2068,7 @@ void KandoreanTemple_RiseOnLeftVent(void) {
   GameFlag_Clear(0x209);
   GameFlag_Set(0x301);
   GameFlag_Clear(0x300);
-  Sound_Play(162);
+  Sound_Play(SE_162);
   KandoreanTemple_StartLeftVent();
   i = 0;
   do {
@@ -2108,7 +2108,7 @@ void KandoreanTemple_RiseOnLeftVent(void) {
   DEFINE_KANDOREAN_TEMPLE_SINK_STEP(11, 13, 14, 15, 16)
   gKandoreanTemple_LeftVentBlowing = 0;
   GameFlag_Clear(0x20c);
-  Sound_Play(390);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
@@ -2145,7 +2145,7 @@ void KandoreanTemple_RiseOnRightVent(void) {
   GameFlag_Set(0x209);
   GameFlag_Clear(0x301);
   GameFlag_Set(0x300);
-  Sound_Play(162);
+  Sound_Play(SE_162);
   KandoreanTemple_StartRightVent();
   i = 0;
   do {
@@ -2171,7 +2171,7 @@ void KandoreanTemple_RiseOnRightVent(void) {
   DEFINE_KANDOREAN_TEMPLE_SINK_STEP(12, 17, 18, 19, 20)
   gKandoreanTemple_RightVentBlowing = 0;
   GameFlag_Clear(0x20d);
-  Sound_Play(390);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
@@ -2243,7 +2243,7 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
     object->y += -0x20000;
     wait(1);
     if (i == 10)
-      Sound_Play(204);
+      Sound_Play(SE_DUST_PUFF);
     if (i == 20) {
       ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
       Event_FinishScreenTransition();
@@ -2261,7 +2261,7 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
                                                                                \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    Scene_QueueMusic(162);                                                     \
+    Scene_QueueMusic(SE_162);                                                  \
     FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
     wait(1);                                                                   \
     leader->motionFlags = 0;                                                   \
@@ -2366,7 +2366,7 @@ void KandoreanTemple_StartRoom6(void) {
   struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->mapWork;
 
   gKandoreanTemple_SteamCounter = 0;
-  Scene_QueueMusic(170);
+  Scene_QueueMusic(SE_170);
   map->mode = 1;
   FieldEffect_StartBlankOverlay(0);
 }
@@ -2544,7 +2544,7 @@ void KandoreanTemple_TestTheStudents(void) {
   FieldCamera_MoveWithinMapBounds(0x1c80000, 0, 0x2b00000, 1);
   FieldCamera_WaitForArrival();
   Motion_SetVarCbAndRefresh(13, 2);
-  Sound_Play(131);
+  Sound_Play(SE_PSYNERGY_SPARKLE);
   Actor_ConfigureSpriteColor(13, 0x100);
   Event_Wait(20);
   Actor_ConfigureSpriteColor(13, 0);
@@ -2569,7 +2569,7 @@ rise13:
   Event_Wait(60);
   object->motionFlags = 3;
   Event_Wait(5);
-  Sound_Play(159);
+  Sound_Play(SE_DOOR_CLOSE);
   object->velocityY = 0x30000;
   sprite->rotation = 0;
   Event_Wait(60);
@@ -2597,7 +2597,7 @@ rise13:
   FieldCamera_MoveWithinMapBounds(0x1560000, 0, 0x2b00000, 1);
   FieldCamera_WaitForArrival();
   Motion_SetVarCbAndRefresh(14, 2);
-  Sound_Play(131);
+  Sound_Play(SE_PSYNERGY_SPARKLE);
   Actor_ConfigureSpriteColor(14, 0x100);
   Event_Wait(20);
   Actor_ConfigureSpriteColor(14, 0);
@@ -2620,7 +2620,7 @@ rise14:
   Actor_SetAttachedEffect(14, 0x100);
   object->motionFlags = 3;
   Event_Wait(5);
-  Sound_Play(159);
+  Sound_Play(SE_DOOR_CLOSE);
   object->velocityY = 0x30000;
   Event_Wait(60);
   Event_ShowMessageAndWait(14, 0);
@@ -2632,7 +2632,7 @@ rise14:
   FieldCamera_MoveWithinMapBounds(0x1900000, 0, 0x2b00000, 1);
   FieldCamera_WaitForArrival();
   Motion_SetVarCbAndRefresh(15, 2);
-  Sound_Play(131);
+  Sound_Play(SE_PSYNERGY_SPARKLE);
   Actor_ConfigureSpriteColor(15, 0x100);
   Event_Wait(20);
   Actor_ConfigureSpriteColor(15, 0);
@@ -2694,7 +2694,7 @@ fall15:
   Actor_SetSpeed(15, 0xcccc, 0x6666);
   Actor_WalkToAndWait(15, 400, 644);
   Event_Wait(20);
-  Sound_Play(188);
+  Sound_Play(SE_THUMP);
   KandoreanTemple_OpenTheTrapdoor();
   Event_ShowMessageAndWait(12, 0);
   Task_Remove(KandoreanTemple_MatchLiftPriority);
@@ -3030,7 +3030,7 @@ void KandoreanTemple_LowerTheLadder(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  Sound_Play(121);
+  Sound_Play(SE_SCUFFLE);
   MapGrid_CopyCellPictureIndicesRect(41, 0, 20, 0, 1, 1);
   Event_Wait(10);
   MapGrid_CopyCellPictureIndicesRect(41, 1, 20, 1, 1, 1);

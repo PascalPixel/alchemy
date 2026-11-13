@@ -71,7 +71,7 @@ void LemuriaPalace_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
                                     s32 unused) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(step->script, step->x, step->z);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
@@ -166,7 +166,7 @@ void LemuriaPalace_CastMapSparks(s32 actorId) {
 
   Actor_SetAnimation(13, 5);
   FieldEvent_Wait(28);
-  Event_PlaySound(112);
+  Event_PlaySound(SE_MENU_CONFIRM);
   first =
       Actor_Spawn(674, object->x + 0xa0000, object->y + 0x100000, object->z);
   first->speedLimit = 0x20000;
@@ -235,12 +235,12 @@ void LemuriaPalace_DrawMaps(void) {
     if (step == 0) {
       gLemuriaPalace_FirstMapShown = 1;
       gLemuriaPalace_SecondMapShown = step;
-      Event_PlaySound(153);
+      Event_PlaySound(SE_HIGH_JUMP);
     }
     if (step == 14) {
       gLemuriaPalace_FirstMapShown = 0;
       gLemuriaPalace_SecondMapShown = 1;
-      Event_PlaySound(153);
+      Event_PlaySound(SE_HIGH_JUMP);
     }
     (*time)++;
   }
@@ -595,7 +595,7 @@ answeredNo:
   r8_1 = 1;
   gLemuriaPalace_FirstMapShown = r8_1;
   gLemuriaPalace_SecondMapShown = r7_1;
-  Event_PlaySound(153);
+  Event_PlaySound(SE_HIGH_JUMP);
   LemuriaPalace_FadeMapsIn();
   Actor_ShowEmote(4, 0x100, 0);
   Actor_ShowEmote(17, 0x100, 0);
@@ -609,7 +609,7 @@ answeredNo:
   Event_Wait(30);
   gLemuriaPalace_FirstMapShown = r7_1;
   gLemuriaPalace_SecondMapShown = r8_1;
-  Event_PlaySound(153);
+  Event_PlaySound(SE_HIGH_JUMP);
   LemuriaPalace_FadeMapsIn();
   FieldEvent_ShowMessageThenWait(0x200d, 0, 10);
   Event_ShowMessageThenWait(14, 0, 5);
@@ -680,7 +680,7 @@ answeredNo:
   Actor_FaceDirectionAndWait(13, FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
   LemuriaPalace_CastMapSparks(13);
-  Event_PlaySound(153);
+  Event_PlaySound(SE_HIGH_JUMP);
   r5_3 = 0;
   goto waitForCycle;
 nextFrame:

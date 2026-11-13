@@ -406,7 +406,7 @@ void Func_020004bc(s32 unused, s32 id) {
   column = (Actor_Get(12)->x >> 20) - 42;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(0x22c);
+  Event_PlaySound(SE_556);
   for (i = 0; i <= 31; i++) {
     Func_02003460(i << 16);
     {
@@ -440,7 +440,7 @@ void Func_02000574(s32 unused, s32 id) {
   Map_CenterOnFollowedPoint();
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(0x22c);
+  Event_PlaySound(SE_556);
   for (i = 0; i <= 31; i++) {
     Func_02003460(i << 16);
     layer[3] += 0x10000;
@@ -463,7 +463,7 @@ void Func_0200061c(struct Actor *object) {
   do {
     System_Wait(1);
   } while (object->velocityY != 0);
-  Event_PlaySound(188);
+  Event_PlaySound(SE_THUMP);
   System_Wait(10);
   object->motionFlags = 0;
 }
@@ -518,7 +518,7 @@ void Func_0200071c(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_ArmCallback_(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Event_PlaySound(0x22d);
+  Event_PlaySound(SE_557);
   priority = 0x480;
   FieldTask_AddFrame(Func_020006d0, priority);
   FieldCamera_SetSpeed(0x28000, 0x4000);
@@ -553,9 +553,9 @@ void Func_020007d4(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 0);
   Func_020007a8();
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(60);
-  Event_PlaySound(162);
+  Event_PlaySound(SE_162);
   MapGrid_SetShake(0x10000, 0x10000, 0x10000);
   FieldEvent_Wait(20);
   MapGrid_SetShake(0x10000, 0x20000, 0x10000);
@@ -566,7 +566,7 @@ void Func_020007d4(void) {
   FieldTask_AddFrame(Func_020006d0, priority);
   FieldCamera_SetSpeed(0x28000, 0x4000);
   FieldCamera_MoveTo(0x1380000, -1, 0x1f80000, 1);
-  Event_PlaySound(164);
+  Event_PlaySound(SE_SCATTER);
   Func_02003d24_(75, 96, 7, 13, 80, 27);
   MapGrid_CopyCellsLayered(91, 96, 7, 10, 16, 31);
   MapGrid_CopyCellsLayered(99, 96, 7, 14, 16, 91);
@@ -592,9 +592,9 @@ cell:
     goto row;
   FieldCamera_WaitForArrival();
   MapGrid_SetShake(-1, -1, 0xe666);
-  Event_PlaySound(390);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   FieldEvent_Wait(30);
-  Event_PlaySound(80);
+  Event_PlaySound(MUS_080);
   Sound_WaitForBgmRestore();
   Event_End();
   Scene_PlayMusic();
@@ -608,7 +608,7 @@ void Func_02000958(s32 value) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(188);
+  Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(107, 96, 19, 29, width, height);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(108, 96, 19, 29, width, height);
@@ -620,7 +620,7 @@ void Func_02000958(s32 value) {
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Actor_Get(gMainRoutineWork.currentOwner)->speedLimit =
       Actor_Get(gMainRoutineWork.currentOwner)->acceleration = 0x8000;
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 312, 496);
   FieldEvent_Wait(5);
   FieldEvent_SetExitRequest(value);
@@ -726,7 +726,7 @@ void Func_02000c28(s32 unused, s32 id) {
   Map_CenterOnFollowedPoint();
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(0x22d);
+  Event_PlaySound(SE_557);
   for (i = 31; i >= 0; i--) {
     layer[3] += 0x10000;
     System_Wait(4);
@@ -835,11 +835,11 @@ void Func_02000e18(s32 value) {
   *flags = 0;
   object->priorityFlags |= 0x20;
   Actor_SelectAnimation(object, 18);
-  Event_PlaySound(215);
+  Event_PlaySound(SE_SPLASH_SMALL);
   System_Wait(13);
   Actor_SetSpriteColorMode(object, 9);
   Actor_SelectAnimation(object, 28);
-  Event_PlaySound(0x236);
+  Event_PlaySound(SE_566);
   for (i = 0; i <= 59; i++) {
     if (i == 30)
       Event_FinishScreenTransition();
@@ -863,7 +863,7 @@ void Func_02000ecc(s32 unused, s32 id) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-    Event_PlaySound(0x22d);
+    Event_PlaySound(SE_557);
     Actor_SetAnimation(9, 2);
     Func_02003d24_(114, 39, 1, 2, 113, 39);
     for (i = 31; i >= 0; i--) {
@@ -951,7 +951,7 @@ void AquaRockInside_CheckPsynergyStone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered(MsgCheckedThePsynergy, 1);
-  Event_PlaySound(126);
+  Event_PlaySound(SE_RECOVERY);
   Party_AddPp(999, 0);
   FieldEvent_Wait(10);
   Event_ClearFlag(0x142);
@@ -1001,7 +1001,7 @@ void Func_020011d4(s32 unused, s32 id) {
   Map_CenterOnFollowedPoint();
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(0x22c);
+  Event_PlaySound(SE_556);
   for (i = 31; i >= 0; i--) {
     layer[3] += 0x10000;
     System_Wait(4);
@@ -1125,13 +1125,13 @@ void Func_02001620(s32 firstId, s32 secondId) {
   s32 unused[3];
 
   script = gData_02004058;
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Event_Wait(30);
   FieldCamera_SetSpeed(0x8000, 0x1000);
   FieldCamera_MoveWithinMapBounds((first->x >> 16) << 16,
                                   (first->y >> 16) << 16,
                                   (first->z >> 16) << 16, 1);
-  Sound_Play(141);
+  Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(0x20000, 0x20000, 0x10000);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
@@ -1140,7 +1140,7 @@ void Func_02001620(s32 firstId, s32 secondId) {
   first->acceleration = 0x3333;
   first->speedLimit = 0x3333;
   Actor_SetMovementTypeById(firstId, gData_02004034);
-  Sound_Play(194);
+  Sound_Play(SE_194);
   Event_Wait(45);
   Actor_ConfigureSpriteColor(firstId, 256);
   REG_BLDALPHA = 0x1008;
@@ -1148,7 +1148,7 @@ void Func_02001620(s32 firstId, s32 secondId) {
   i = 0;
 burst:
   object = ((void *)Import_ActorCreate(672, first->x, first->y, first->z));
-  Sound_Play(246);
+  Sound_Play(SE_GLITTER);
   object->x += ((Random16() & 31) - 16) << 16;
   object->y += ((Random16() & 15) - 8) << 16;
   object->speedLimit = 0x80000;
@@ -1183,7 +1183,7 @@ burst:
   }
 spiral:
   spark = FieldActor_Create(672, second->x, second->y, second->z);
-  Sound_Play(195);
+  Sound_Play(SE_195);
   spark->timer = (Random16() & 0x7fff) + 0x8000;
   spark->unk66 = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
   noMotion = 0;
@@ -1210,7 +1210,7 @@ tail:
   i++;
   if (i != 16)
     goto spiral;
-  Sound_Play(220);
+  Sound_Play(SE_SHIMMER);
   wait(16);
   i = 2;
 column:
@@ -1234,7 +1234,7 @@ column:
   i += 2;
   if (i != 32)
     goto column;
-  Sound_Play(220);
+  Sound_Play(SE_SHIMMER);
   wait(50);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
   PaletteFade_StartInterpolation(8);
@@ -1242,7 +1242,7 @@ column:
   MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(firstId, 0);
   Actor_ConfigureSpriteColor(secondId, 0);
-  Sound_Play(574);
+  Sound_Play(SE_574);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(firstId, gData_0200407c);
@@ -1250,7 +1250,7 @@ column:
   second->update = Actor_EmitBubbles;
   wait(120);
   second->update = 0;
-  Sound_Play(390);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Scene_PlayMusic();
   wait(1);
 }
@@ -1306,7 +1306,7 @@ void AquaRockInside_ReadParchTablet(void) {
   Func_02001620(14, 7);
   Party_LearnAbility(PIERS, ABILITY_PARCH);
   Event_SetFlag(0x9ae);
-  Event_PlaySound(107);
+  Event_PlaySound(SE_TREMOR);
   FieldEvent_Wait(30);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
@@ -1314,7 +1314,7 @@ void AquaRockInside_ReadParchTablet(void) {
   Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
   Actor_ShowEmote(7, 0x100, 0);
   Func_0200124c();
-  Event_PlaySound(0x186);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   FieldEvent_Wait(30);
   FieldEvent_SetMessageId((s32)&MsgWhatWentWrong);
   Actor_ShowEmote(7, 0x105, 20);
@@ -1480,7 +1480,7 @@ fall:
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
   *flags = saved;
   object->velocityY = 0x80000;
-  Event_PlaySound(215);
+  Event_PlaySound(SE_SPLASH_SMALL);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 168, 200);
   Event_End();
 }
@@ -1492,7 +1492,7 @@ void Func_02001fcc(void) {
   case 0:
     Func_02003bb8(0, 1);
     Func_02003bb8(1, 1);
-    Scene_QueueMusic(170);
+    Scene_QueueMusic(SE_170);
     break;
   case 0x34bbf:
     Func_02003bb8(0, 0);
@@ -1579,12 +1579,12 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_Ov67cRoom5) {
     if ((u32)(entrance - 5) <= 1) {
       Func_02003ab0(gData_020040f4, gData_02004102, Func_02001fcc);
-      Scene_QueueMusic(170);
+      Scene_QueueMusic(SE_170);
     }
   } else if (scene == (s32)&SceneId_Ov67cRoom6) {
     if (entrance == 5 || entrance == 7) {
       Func_02003ab0(gData_02004106, gData_02004114, Func_02001fcc);
-      Scene_QueueMusic(170);
+      Scene_QueueMusic(SE_170);
       Func_0200107c(0, 10);
     }
     if (!GameFlag_Get(0x238)) {
@@ -2271,7 +2271,7 @@ void Func_02003628(void) {
   Heap_Release(buffer);
   priority = 0x41c;
   FieldTask_AddFrame(Func_020034fc, priority);
-  Event_PlaySound(220);
+  Event_PlaySound(SE_SHIMMER);
 }
 
 s32 Func_02003688(s32 x, s32 y, s32 z, s32 kind) {

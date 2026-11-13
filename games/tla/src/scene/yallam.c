@@ -244,7 +244,7 @@ void Yallam_EnterDoor(void) {
     }
   }
   index = *(s16 *)(event + 340);
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   index--;
   MapGrid_AnimateCells(gYallam_Doors[index].steps, gYallam_Doors[index].x,
                        gYallam_Doors[index].y);
@@ -1411,7 +1411,7 @@ void Yallam_ShowSongGame(void) {
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 296, 872);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Actor_FaceDirection(8, 0xb000, 20);
   Actor_FaceDirectionAndWait(8, 0xd000);
   FieldActor_Jump(8, 2, 10);
@@ -1442,7 +1442,7 @@ void Yallam_ShowSongGame(void) {
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 316, 0x380);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 344, 0x390);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0xc000);
-  Event_PlaySound(17);
+  Event_PlaySound(MUS_017);
   Actor_FaceDirectionAndWait(8, 0xc000);
   Event_ShowMessage(8, 0);
   EventCamera_FollowActor(8, 1);
@@ -1512,7 +1512,7 @@ wait3:
     FieldEvent_ShowMessageThenWait(8, 0, 20);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    Event_PlaySound(123);
+    Event_PlaySound(SE_MAP_EXIT);
     FieldEvent_Wait(40);
     FieldEvent_SetExitRequest(15);
   }
@@ -1598,7 +1598,7 @@ declined:
   FieldEvent_ShowMessageThenWait(8, 0, 20);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_Wait(40);
   FieldEvent_SetExitRequest(15);
 done:
@@ -1731,7 +1731,7 @@ waitFourthVerse:
   FieldEvent_ShowMessageThenWait(8, 0, 20);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_Wait(40);
   FieldEvent_SetExitRequest(15);
 }
@@ -1773,7 +1773,7 @@ void Yallam_ForcePillarDown(void) {
   Event_SetFlag(0x300);
   object->acceleration = 0x18000;
   object->speedLimit = 0x80000;
-  Event_PlaySound(227);
+  Event_PlaySound(SE_TOPPLE);
   FieldActor_SetMoveTarget(object, 0xb00000, 0x280000, 0xb80000);
   step = 0;
   for (i = 15; i >= 0; i--) {
@@ -1790,7 +1790,7 @@ void Yallam_ForcePillarDown(void) {
   }
   FieldActor_WaitForMove(object);
   FieldEvent_Wait(2);
-  Event_PlaySound(240);
+  Event_PlaySound(SE_LOG_FALL);
   i = 0;
   sprite->tile = i;
   object->x = 0xa80000;

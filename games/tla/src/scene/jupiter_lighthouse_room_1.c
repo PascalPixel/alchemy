@@ -97,7 +97,7 @@ void JupiterLighthouse_LeaveByCyclone(void) { Import_EventSetExitRequest(6); }
 
 void JupiterLighthouse_OpenDoor(s32 animate) {
   if (animate == 1) {
-    Event_PlaySound(133);
+    Event_PlaySound(SE_IMPACT);
     MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 29);
     MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 37);
     System_Wait(6);
@@ -109,7 +109,7 @@ void JupiterLighthouse_OpenDoor(s32 animate) {
 }
 
 void JupiterLighthouse_CloseDoor(void) {
-  Event_PlaySound(134);
+  Event_PlaySound(SE_HEAVY_IMPACT);
   MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 29);
   MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 37);
   System_Wait(6);

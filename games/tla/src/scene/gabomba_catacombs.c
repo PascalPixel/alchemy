@@ -300,7 +300,7 @@ void Func_0200094c(void) {
       Actor_SelectAnimation(steam, 1);
       Actor_StartScript(steam, gData_0200128c);
     }
-    Sound_Play(0x26f);
+    Sound_Play(SE_623);
   }
   Func_020008a0(leader, 0xd999);
 }
@@ -330,10 +330,10 @@ void Func_020009d4(void) {
   PaletteFade_ApplyTarget(0x403108, 1);
   PaletteFade_StartInterpolation(60);
   FieldCamera_MoveTo(0xa80000, -1, 0x9e0000, 1);
-  Sound_Play(26);
+  Sound_Play(MUS_026);
   Event_Wait(60);
   Actor_SetModeById(8, 2);
-  Sound_Play(0x240);
+  Sound_Play(SE_576);
   Event_Wait(60);
   Event_SetMessageId((s32)MsgByReachingThis);
   work += 0x1c4;
@@ -341,7 +341,7 @@ void Func_020009d4(void) {
   Actor_SetPosition(0x40, 0xa80000, 0x980000);
   statue->motionFlags = 6;
   statue->terrainHeight += 0x100000;
-  Sound_Play(220);
+  Sound_Play(SE_SHIMMER);
   glow = ((struct Actor *)Import_ActorCreate(412, 0, 0, 0));
   Actor_StartScript(glow, gFieldEffect_MediumScript);
   Actor_SetSpriteColorMode(glow, 1);

@@ -130,7 +130,7 @@ void Lemuria_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(warp->scene, warp->x, warp->z);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
@@ -430,7 +430,7 @@ void Lemuria_DrinkFromSpring(void) {
 
   if (y < 0x5a0000) {
     Message_ShowCentered((s32)MsgAndTheOthers, 1);
-    Event_PlaySound(126);
+    Event_PlaySound(SE_RECOVERY);
     Party_RestoreHpPp(1);
   } else {
     FIELD_AT(Ram_HeapSlots->eventWork, u16, 346) = 1;

@@ -134,7 +134,7 @@ void Mikasalla_EnterDoor(void) {
   }
   choice = (s16 *)(work + 340);
   index = *choice;
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   index--;
   MapGrid_AnimateCells(gMikasalla_Doors[index].map, gMikasalla_Doors[index].x,
                        gMikasalla_Doors[index].z);
@@ -283,7 +283,7 @@ void Mikasalla_ClimbDownLadder(void) {
   Actor_WaitForMoveById(4);
   Actor_SetAnimation(4, 10);
   Event_Wait(10);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(exit);
   Event_End();
 }

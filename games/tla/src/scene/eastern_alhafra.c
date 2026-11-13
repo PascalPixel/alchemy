@@ -247,16 +247,16 @@ void Func_02000200(s32 mode, s32 id) {
   }
   if (hit) {
     if (id != 10)
-      Event_PlaySound(310);
+      Event_PlaySound(SE_310);
     object->gravity = 0x170a;
     object->motionFlags = 3;
     Actor_SetSpriteFlags(Actor_Get(id), 1);
     System_Wait(5);
     for (i = 0; i < 60 && object->y > 0; i++)
       System_Wait(1);
-    Event_PlaySound(298);
+    Event_PlaySound(SE_298);
     System_Wait(1);
-    Event_PlaySound(240);
+    Event_PlaySound(SE_LOG_FALL);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
     Actor_SelectAnimation(object, 4);
@@ -267,7 +267,7 @@ void Func_02000200(s32 mode, s32 id) {
     spark->scaleX = 0xa666;
     Actor_SelectAnimation(spark, 1);
     Actor_SetSpriteFlags(spark, 0);
-    Event_PlaySound(154);
+    Event_PlaySound(SE_CAST);
     System_Wait(5);
     i++;
     if (i <= 2)
@@ -370,7 +370,7 @@ void Func_02000514(void) {
         } while (i <= 59 && actor15->y > 0);
       }
       Func_02000fa4();
-      Event_PlaySound(240);
+      Event_PlaySound(SE_LOG_FALL);
       Actor_SetAnimation(15, 8);
       FieldEvent_Wait(60);
       EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
@@ -459,7 +459,7 @@ void EasternAlhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
                                      s32 unused) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(step->script, step->x, step->z);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
@@ -1156,19 +1156,19 @@ void Func_02001bf4(s32 id) {
 
   Func_02001b9c__s1bf4(object->x + 0x80000, object->y + 0x1c0000, object->z,
                        0x1000, 15);
-  Event_PlaySound(151);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   Func_02001b9c__s1bf4(object->x - 0x80000, object->y + 0x1c0000, object->z,
                        0xf000, 15);
-  Event_PlaySound(151);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   Func_02001b9c__s1bf4(object->x + 0x80000, object->y + 0x1c0000, object->z,
                        0x1000, 15);
-  Event_PlaySound(151);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   Func_02001b9c__s1bf4(object->x - 0x80000, object->y + 0x1c0000, object->z,
                        0xf000, 15);
-  Event_PlaySound(151);
+  Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
 }
 
@@ -1591,7 +1591,7 @@ void Func_02002a08(void) {
   FieldCamera_SetSpeed(0x40000, 0x8000);
   FieldCamera_MoveTo(PIXELS(208), -1, PIXELS(168), 1);
   FieldEvent_Wait(50);
-  Event_PlaySound(0x4e);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_FinishScreenTransition();
   PaletteFade_Interpolate(0x10);
   Event_WaitTransitionFrames();
@@ -1614,7 +1614,7 @@ void Func_02002a08(void) {
   Actor_SetPosition(23, PIXELS(824), PIXELS(856));
   Actor_SetPosition(26, PIXELS(744), PIXELS(1016));
   Actor_SetPosition(25, PIXELS(744), PIXELS(1016));
-  Event_PlaySound(0x23);
+  Event_PlaySound(MUS_035);
   PaletteFade_ApplyTarget(0x10000, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1694,7 +1694,7 @@ void Func_02002a08(void) {
   Actor_FaceDirection(22, 0x5000, 0);
   FieldEvent_Wait(30);
   Func_02001bf4(0x16);
-  Event_PlaySound(0x67);
+  Event_PlaySound(SE_CURSE);
   Func_02004b6c_(0x16, 0x105, 0x32);
   Actor_ArmCallback(22, FACING_EAST, 0);
   FieldEvent_Wait(20);
@@ -1794,7 +1794,7 @@ scroll:
   System_Wait(1);
   if (i >= 0)
     goto scroll;
-  Event_PlaySound(0x4e);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(30);
   Event_End();
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -1852,7 +1852,7 @@ void Func_02003274(void) {
   Actor_GetById(25)->actionFlags |= 1;
   Actor_GetById(25)->actionFlags &= 0xfe;
   Actor_WalkBy(25, 0, 8);
-  Event_PlaySound(0x85);
+  Event_PlaySound(SE_IMPACT);
   Actor_SetSpeed(29, 0x26666, 0x13333);
   Actor_GetById(29)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(29, 0, -4);
@@ -1901,7 +1901,7 @@ void Func_02003274(void) {
   Actor_WalkByAndWait(25, 0, 16);
   FieldEvent_Wait(1);
   Actor_GetById(25)->actionFlags |= 1;
-  Event_PlaySound(0x85);
+  Event_PlaySound(SE_IMPACT);
   Actor_SetSpeed(29, 0x26666, 0x13333);
   Actor_GetById(27)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(27, 0, 3);
@@ -2377,7 +2377,7 @@ void Func_020044c4(struct PushTarget target) {
     Actor_SelectAnimation(object, 3);
   else
     Actor_SelectAnimation(object, 2);
-  Event_PlaySound(239);
+  Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeed(target.id, 0x8000, 0x1999);
   FieldActor_SetMoveTarget(object, target.x, target.y, target.z);
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -2394,8 +2394,8 @@ void Func_020044c4(struct PushTarget target) {
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   FieldActor_WaitForMove(object);
-  Event_PlaySound(298);
-  Event_PlaySound(213);
+  Event_PlaySound(SE_298);
+  Event_PlaySound(SE_HEAVY_STOP);
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
   Actor_SelectAnimation(object, 1);
   target.x = target.x + (gPushFootprints[footprint][0] << 16);

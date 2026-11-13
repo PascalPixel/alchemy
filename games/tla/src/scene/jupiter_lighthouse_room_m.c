@@ -219,7 +219,7 @@ void Func_020000c4(void) {
   PaletteFade_ApplyTarget(0x10003, 0);
   PaletteFade_Interpolate(8);
   REG_DISPCNT |= 0x100;
-  Event_PlaySound(144);
+  Event_PlaySound(SE_CLATTER);
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
@@ -294,7 +294,7 @@ void Func_020003b8(s32 unused, s32 id) {
       } while (object->y > object->terrainHeight || object->velocityY != 0);
     }
     object->motionFlags = 0;
-    Event_PlaySound(134);
+    Event_PlaySound(SE_HEAVY_IMPACT);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Camera_MoveWithinMapBounds_(254 << 18, -1, 232 << 16, 1);
@@ -341,7 +341,7 @@ void Func_020003b8(s32 unused, s32 id) {
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(10);
     object->update = 0;
-    Event_PlaySound(80);
+    Event_PlaySound(MUS_080);
     Sound_WaitForJingle();
     FieldEvent_Wait(10);
     Camera_MoveWithinMapBounds_(246 << 18, -0x400000, 248 << 16, 1);
@@ -368,13 +368,13 @@ void Func_0200060c(void) {
   GameFlag_Set(514);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(124);
+  Sound_Play(SE_CHEST_OPEN);
   /* FAKEMATCH(wrapper): forwarded through Camera_MoveWithinMapBounds_ above;
    * as plain calls, 63 of 292 instructions differ in tla-en. */
   Camera_MoveWithinMapBounds_(194 << 18, -1, PIXELS(208), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(6);
-  Sound_Play(217);
+  Sound_Play(SE_FLOOR_SWITCH);
   MapGrid_CopyCellsLayered(49, 103, 4, 3, 49, 76);
   Event_Wait(6);
   MapGrid_CopyCellsLayered(49, 106, 4, 3, 49, 76);
@@ -397,7 +397,7 @@ void Func_0200060c(void) {
     FieldCamera_SetSpeed(0x40000, 0x8000);
     EventCamera_FollowActor(23, 1);
     FieldCamera_WaitForArrival();
-    Sound_Play(310);
+    Sound_Play(SE_310);
     object->gravity = 0x8000;
     object->motionFlags = 2;
     object->terrainHeight = PIXELS(-80);
@@ -411,7 +411,7 @@ void Func_0200060c(void) {
       } while (object->y > object->terrainHeight);
     }
     MapGrid_SetShake(0x30000, 0x30000, 0xf333);
-    Sound_Play(134);
+    Sound_Play(SE_HEAVY_IMPACT);
     object->gravity = 0x10000;
     object->velocityY = PIXELS(6);
     Actor_SetSpeed(23, 0x18000, 0xc000);
@@ -425,7 +425,7 @@ void Func_0200060c(void) {
     object->terrainHeight = PIXELS(-240);
     Event_Wait(80);
     MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-    Sound_Play(144);
+    Sound_Play(SE_CLATTER);
     Event_Wait(20);
     MapGrid_SetShake(-1, -1, 0xe666);
     Actor_SetPosition(23, 0, 0);
@@ -435,7 +435,7 @@ void Func_0200060c(void) {
     FieldCamera_SetSpeed(0x40000, 0x8000);
     EventCamera_FollowActor(23, 1);
     FieldCamera_WaitForArrival();
-    Sound_Play(310);
+    Sound_Play(SE_310);
     object->gravity = 0x8000;
     object->motionFlags = 2;
     object->terrainHeight = PIXELS(-240);
@@ -443,7 +443,7 @@ void Func_0200060c(void) {
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     Event_Wait(60);
     MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-    Sound_Play(144);
+    Sound_Play(SE_CLATTER);
     Event_Wait(20);
     MapGrid_SetShake(-1, -1, 0xe666);
     Actor_SetPosition(23, 0, 0);
@@ -461,13 +461,13 @@ void Func_020008c8(void) {
   Event_ClearFlag(0x202);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(125);
+  Event_PlaySound(SE_CHEST_CLOSE);
   FieldCamera_MoveTo(PIXELS(776), -1, PIXELS(208), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(6);
   MapGrid_CopyCellsLayered(49, 103, 4, 3, 49, 76);
   FieldEvent_Wait(6);
-  Event_PlaySound(133);
+  Event_PlaySound(SE_IMPACT);
   MapGrid_CopyCellsLayered(49, 100, 4, 3, 49, 76);
   FieldEvent_Wait(20);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
@@ -531,23 +531,23 @@ s32 Func_02000a78(void) {
 s32 Func_02000ad0(void) {
   switch (Random16() & 7) {
   case 0:
-    Event_PlaySound(126);
+    Event_PlaySound(SE_RECOVERY);
     break;
   case 1:
-    Event_PlaySound(212);
+    Event_PlaySound(SE_POWER_UP);
     break;
   case 2:
-    Event_PlaySound(134);
+    Event_PlaySound(SE_HEAVY_IMPACT);
     break;
   case 3:
   case 5:
   case 6:
   default:
-    Event_PlaySound(133);
+    Event_PlaySound(SE_IMPACT);
     break;
   case 4:
   case 7:
-    Event_PlaySound(154);
+    Event_PlaySound(SE_CAST);
     break;
   }
   return 0;
@@ -630,22 +630,22 @@ void Func_02000cac(s32 arg) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetMessageId(MsgAhhhh2);
-  Event_PlaySound(124);
+  Event_PlaySound(SE_CHEST_OPEN);
   FieldEvent_Wait(26);
-  Event_PlaySound(217);
+  Event_PlaySound(SE_FLOOR_SWITCH);
   Actor_SetScript(4, gData_020056ec);
   if (arg != 0) {
     FieldEvent_ShowTwoMessagesAndWait(3, 20, 9, 15, 8, 1, 20, 2, 15, 1, 25);
-    Event_PlaySound(310);
+    Event_PlaySound(SE_310);
     FieldEvent_Wait(30);
-    Event_PlaySound(144);
+    Event_PlaySound(SE_CLATTER);
     FieldEvent_ShowTwoMessagesAndWait(3, 21, 9, 16, 8, 1, 21, 2, 16, 1, 0);
     FieldEvent_ShowTwoMessagesAndWait(0, 20, 9, 15, 8, 2, 20, 2, 15, 1, 0);
   } else {
     FieldEvent_ShowTwoMessagesAndWait(3, 5, 9, 0, 8, 1, 5, 2, 0, 1, 25);
-    Event_PlaySound(310);
+    Event_PlaySound(SE_310);
     FieldEvent_Wait(30);
-    Event_PlaySound(144);
+    Event_PlaySound(SE_CLATTER);
     FieldEvent_ShowTwoMessagesAndWait(3, 5, 9, 0, 8, 1, 5, 2, 0, 1, 0);
     FieldEvent_ShowTwoMessagesAndWait(0, 5, 9, 0, 8, 2, 5, 2, 0, 1, 0);
   }
@@ -724,7 +724,7 @@ void Func_02000cac(s32 arg) {
   FieldCamera_SetSpeed(0x40000, 0x8000);
   FieldCamera_MoveTo(PIXELS(800), 0, PIXELS(270), 1);
   FieldCamera_WaitForArrival();
-  Event_PlaySound(39);
+  Event_PlaySound(MUS_039);
   FieldEvent_Wait(50);
   Actor_RunRepeatedMotion(0, 2);
   FieldEvent_ShowMessageThenWait(0, 0, 5);
@@ -803,7 +803,7 @@ void Func_02000cac(s32 arg) {
   Actor_SetScript(3, gData_02005548);
   Actor_SetPositionAndFacing(26, PIXELS(665), PIXELS(128), angle);
   Actor_SetPositionAndFacing(27, PIXELS(641), PIXELS(128), angle);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_ShowMessageThenWait(26, 0, 5);
   I_Func_020048cc(0, 0x100, 0);
   I_Func_020048cc(2, 0x100, 30);
@@ -820,7 +820,7 @@ void Func_02000cac(s32 arg) {
   FieldEvent_Wait(20);
   I_Func_020048cc(2, 0x102, 30);
   FieldEvent_ShowMessageThenWait(2, 0, 5);
-  Event_PlaySound(34);
+  Event_PlaySound(MUS_034);
   I_Func_020048cc(27, 0x108, 30);
   FieldEvent_ShowMessageThenWait(27, 0, 5);
   I_Func_020048cc(26, 0x107, 30);

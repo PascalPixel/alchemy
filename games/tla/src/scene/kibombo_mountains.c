@@ -140,10 +140,10 @@ void Func_020001a0(s32 unused, s32 id) {
       other = Actor_GetById(10);
       cell = other->z >> 20;
       if (cell == 27) {
-        Sound_Play(257);
+        Sound_Play(SE_VOICE_ANIMAL_2);
         other->z = 220 << 17;
       } else if (cell == 28 || cell == 29) {
-        Sound_Play(258);
+        Sound_Play(SE_VOICE_ANIMAL_3);
         other->z = 236 << 17;
       }
       if (block->z < other->z)

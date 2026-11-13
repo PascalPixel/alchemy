@@ -795,7 +795,7 @@ void Func_02001224(s32 unused, s32 id) {
   object->update = (void (*)(void))Actor_FlickerChild;
   wait(30);
   Func_02002834(8);
-  Sound_Play(220);
+  Sound_Play(SE_SHIMMER);
   for (i = 3; i >= 0; i--) {
     BattleEffect_ApplyColorToTargetBuffer(Random16() & 0x7fff, 0);
     PaletteFade_StartInterpolation(15);
@@ -828,7 +828,7 @@ void Func_02001224(s32 unused, s32 id) {
   Actor_GetById(15)->update = (void (*)(void))Actor_EmitWaterDrop;
   Event_Wait(30);
   for (i = 5; i >= 0; i--) {
-    Sound_Play(623);
+    Sound_Play(SE_623);
     wait(10);
   }
   Event_Wait(30);
@@ -868,7 +868,7 @@ void Func_02001460(void) {
   s32 up;
   struct MainRoutineWork *state;
 
-  Sound_Play(612);
+  Sound_Play(SE_612);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
@@ -968,7 +968,7 @@ void Func_0200169c(void) {
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, 0, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Sound_Play(184);
+  Sound_Play(SE_184);
   // Two goto loops: the ROM loads the zero and the update address on each pass,
   // which loop.c hoists out of for loops (differ 18).
   i = 17;
@@ -998,7 +998,7 @@ settle:
   Actor_GetById(i)->update = (void (*)(void))Func_02001630;
   if (++i <= 21)
     goto settle;
-  Sound_Play(298);
+  Sound_Play(SE_298);
   Event_Wait(60);
   {
     struct Actor *object = Actor_GetById(21);
@@ -1026,7 +1026,7 @@ s32 Scene_Initialize(void) {
   gMainRoutineWork.retreatScene = (s32)&SceneId_Ov67bRoom1;
   gMainRoutineWork.retreatEntrance = 1;
   map->mode = 1;
-  Scene_QueueMusic(170);
+  Scene_QueueMusic(SE_170);
   if (scene == (s32)&SceneId_Ov67bRoom1) {
     Actor_SetSpriteColor(Actor_GetById(8), 4);
     Actor_SetSpriteColor(Actor_GetById(9), 4);
@@ -1271,9 +1271,9 @@ void Func_02001f90(s32 arg0) {
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   object->motionFlags = 0;
   object->priorityFlags |= 0x20;
-  Sound_Play(215);
+  Sound_Play(SE_SPLASH_SMALL);
   Actor_SelectAnimation(object, 18);
-  Sound_Play(612);
+  Sound_Play(SE_612);
   for (i = 0; i < 60; i++) {
     if (i == 30)
       Event_FinishScreenTransition();
@@ -1300,7 +1300,7 @@ void Func_020020bc(s32 entrance) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(228);
+  Sound_Play(SE_SPARKLING_PASSAGE);
   leader->update = (void (*)(void))Actor_EmitMist;
   leader->motionFlags = 0;
   leader->speedLimit = 0x3333;
@@ -1333,7 +1333,7 @@ void Func_02002158(void) {
     Actor_SetSpriteColor(Actor_GetById(*owner), 9);
     Actor_SetSpriteFlags(Actor_GetById(*owner), 0);
     Event_StartScreenTransition();
-    Sound_Play(228);
+    Sound_Play(SE_SPARKLING_PASSAGE);
     leader->update = (void (*)(void))Actor_EmitMist;
     Actor_SetSpeedParameters(*owner, 0x6666, 0x3333);
     Actor_WalkByAndWaitById(*owner, 0, 8);

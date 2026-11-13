@@ -84,7 +84,7 @@ s32 Title_Run(void) {
 
   if (gMainRoutineWork.entrance == 10) {
     Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-    Event_PlaySound(75);
+    Event_PlaySound(MUS_075);
     Title_RevealScreen(0);
     wait(120);
     for (frames = 0; frames <= 3599; frames++) {
@@ -96,27 +96,27 @@ s32 Title_Run(void) {
     return 0;
   }
   if (gMainRoutineWork.entrance == 8) {
-    Event_PlaySound(68);
+    Event_PlaySound(MUS_068);
     Credits_Run(1);
-    Event_PlaySound(78);
+    Event_PlaySound(SOUND_FADE_OUT_BGM);
     ScreenFade_ToBlack(60);
     ScreenFade_Wait();
     Event_Wait(240);
-    Event_PlaySound(0);
+    Event_PlaySound(MUS_000);
     Event_SetDestination((s32)&SceneId_Title, 2);
     return 0;
   }
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00B);
   if (gMainRoutineWork.entrance == 1) {
     for (;;) {
-      Event_PlaySound(0);
+      Event_PlaySound(MUS_000);
       Title_ShowNintendoLogo(0);
       Title_ShowCamelotLogo(0);
       if (Save_ScanFileSummaries() > 0) {
-        Event_PlaySound(40);
+        Event_PlaySound(MUS_040);
         TitleIntro_Run(1);
         if (Title_ShowIntro(1) == 0) {
-          Event_PlaySound(78);
+          Event_PlaySound(SOUND_FADE_OUT_BGM);
           ScreenFade_ToBlack(30);
           ScreenFade_Wait();
           /* FAKEMATCH(dead): an empty once-only block keeps the counter's zero
@@ -142,7 +142,7 @@ s32 Title_Run(void) {
     Event_SetDestination((s32)&SceneId_Ov64a, 1);
   } else {
     if (gMainRoutineWork.entrance == 2) {
-      Event_PlaySound(40);
+      Event_PlaySound(MUS_040);
       TitleIntro_Run(0);
       FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                              gMainRoutineWork.paletteGlow[1]);
@@ -150,7 +150,7 @@ s32 Title_Run(void) {
       Event_SetDestination((s32)&SceneId_VenusLighthouse, 99);
     }
     if (gMainRoutineWork.entrance == 3) {
-      Event_PlaySound(75);
+      Event_PlaySound(MUS_075);
       Title_ShowIntro(0);
       FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                              gMainRoutineWork.paletteGlow[1]);
@@ -158,11 +158,11 @@ s32 Title_Run(void) {
       Event_SetDestination((s32)&SceneId_Ov650, 13);
     }
   }
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   ScreenFade_ToBlack(30);
   ScreenFade_Wait();
   Event_Wait(60);
-  Event_PlaySound(0);
+  Event_PlaySound(MUS_000);
   return 0;
 }
 

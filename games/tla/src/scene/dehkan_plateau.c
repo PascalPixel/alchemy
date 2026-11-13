@@ -224,7 +224,7 @@ void CrumblingPillars_Step(u16 *list) {
       flag = list[1];
       Event_Start();
       if (GameFlag_Get(flag) == 0) {
-        Sound_Play(125);
+        Sound_Play(SE_CHEST_CLOSE);
         Actor_SetSpriteColor(Actor_GetById(id), 7);
         wait(2);
         Actor_SelectAnimation(target, 0);
@@ -241,7 +241,7 @@ void CrumblingPillars_Step(u16 *list) {
 
         if (result == 0) {
           leader->motionFlags = result;
-          Sound_Play(185);
+          Sound_Play(SE_PUSH);
           MapGrid_SetShake(0x10000, 0x40000, 0x10000);
           Rubble_Spray(0);
           wait(8);
@@ -257,7 +257,7 @@ void CrumblingPillars_Step(u16 *list) {
           wait(5);
           Actor_SetPositionAndResetMotion(target, 0, 0, 0);
           wait(2);
-          Sound_Play(188);
+          Sound_Play(SE_THUMP);
           Rubble_Burst();
           wait(20);
           GameFlag_Set(done);
@@ -290,7 +290,7 @@ loop:
   flag = list[1];
   Event_Start();
   if (!GameFlag_Get(flag + 1)) {
-    Sound_Play(185);
+    Sound_Play(SE_PUSH);
     MapGrid_SetShake(0x10000, 0x40000, 0x10000);
     Rubble_Spray(0);
     wait(8);
@@ -302,7 +302,7 @@ loop:
     wait(8);
     Actor_SetPositionAndResetMotion(object, 0, 0, 0);
     wait(2);
-    Sound_Play(188);
+    Sound_Play(SE_THUMP);
     Rubble_Burst();
     wait(20);
     GameFlag_Set(flag);
@@ -424,7 +424,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
         Actor_SelectAnimation(helper, 1);
         Actor_TakePlaceOf(helper, target);
         wait(1);
-        Sound_Play(125);
+        Sound_Play(SE_CHEST_CLOSE);
         Actor_SetSpriteColor(Actor_GetById(8), 7);
         wait(2);
         Actor_SelectAnimation(helper, 0);
@@ -447,7 +447,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
           Actor_TakePlaceOf(helper, target);
           wait(1);
           leader->motionFlags = result;
-          Sound_Play(185);
+          Sound_Play(SE_PUSH);
           MapGrid_SetShake(0x10000, 0x40000, 0x10000);
           Rubble_Spray(0);
           wait(8);
@@ -463,7 +463,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
           wait(5);
           Actor_SetPositionAndResetMotion(helper, 0, 0, 0);
           wait(2);
-          Sound_Play(188);
+          Sound_Play(SE_THUMP);
           Rubble_Burst();
           wait(20);
           GameFlag_Set(done);
@@ -1065,7 +1065,7 @@ void DehkanPlateau_StepOnCrack(void) {
   if (GameFlag_Get(flag)) {
     s32 x, y, index, toX, toZ;
 
-    Sound_Play(229);
+    Sound_Play(SE_SPLASH);
     x = *record;
     record = next;
     {
@@ -1155,7 +1155,7 @@ void DehkanPlateau_StepOnCrack(void) {
     Event_Wait(16);
     for (cellX = 0; (u32)cellX <= 39; cellX++) {
       if (cellX == 5)
-        Sound_Play(204);
+        Sound_Play(SE_DUST_PUFF);
       leader->scaleX += -0x400;
       leader->scaleY += -0x300;
       leader->y += -0x9999;
@@ -1168,7 +1168,7 @@ void DehkanPlateau_StepOnCrack(void) {
   } else {
     s32 x, y;
 
-    Sound_Play(161);
+    Sound_Play(SE_RATTLE);
     y = *next;
     x = *record;
     {
@@ -1388,12 +1388,12 @@ void DehkanPlateau_CannonFleesOverCracks(void) {
   Actor_SetSpeed(24, 0x19999, 0xcccc);
   Actor_MoveTo(24, 664, 136);
   MapGrid_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
-  Sound_Play(161);
+  Sound_Play(SE_RATTLE);
   DehkanPlateau_JoltCamera();
   GameFlag_Set(0x247);
   Actor_MoveTo(24, 664, 104);
   MapGrid_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
-  Sound_Play(229);
+  Sound_Play(SE_SPLASH);
   DehkanPlateau_JoltCamera();
   Event_Wait(10);
   Actor_Jump(24, 6, 16);
@@ -1432,7 +1432,7 @@ void DehkanPlateau_CannonLeapsAway(void) {
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_WalkToAndWaitById(25, 168, 104);
   Event_Wait(10);
-  Sound_Play(153);
+  Sound_Play(SE_HIGH_JUMP);
   Actor_GetById(25)->velocityY = 0x80000;
   Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWaitById(25, 200, 104);
@@ -1462,7 +1462,7 @@ void DehkanPlateau_CannonPoundsPillar(void) {
   Actor_MoveTo(25, 456, 184);
   GameFlag_Set(0x241);
   MapGrid_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
-  Sound_Play(161);
+  Sound_Play(SE_RATTLE);
   DehkanPlateau_JoltCamera();
   Actor_MoveTo(25, 456, 216);
   Actor_MoveTo(25, 584, 216);
@@ -1533,7 +1533,7 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
   s32 frame;
   u32 i;
 
-  Sound_Play(125);
+  Sound_Play(SE_CHEST_CLOSE);
   Actor_SetSpriteColor(Actor_GetById(id), 7);
   wait(2);
   Actor_SetModeById(id, 0);
@@ -1593,13 +1593,13 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_WalkToAndWait(25, 632, 280);
   Actor_SetSpeed(25, 0x20000, 0x10000);
-  Sound_Play(153);
+  Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = 0x80000;
   Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWait(25, 664, 280);
   Actor_SetSpriteFlags(Actor_GetById(25), 1);
   DehkanPlateau_CrumblePillar(21, 25, 0x210);
-  Sound_Play(153);
+  Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = 0x80000;
   Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWait(25, 696, 280);
@@ -1616,14 +1616,14 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_FaceDirectionById(25, FACING_EAST);
   Actor_SetSpeedParameters(25, 0x20000, 0x10000);
-  Sound_Play(153);
+  Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = 0x80000;
   Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWait(25, 744, 168);
   Actor_SetSpriteFlags(Actor_GetById(25), 1);
   DehkanPlateau_CrumblePillar(24, 25, 0x216);
   Actor_FaceDirectionById(25, FACING_NORTH);
-  Sound_Play(153);
+  Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = 0x80000;
   Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWait(25, 744, 136);
@@ -1631,7 +1631,7 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   Event_Wait(10);
   Actor_WalkToAndWait(25, 744, 72);
   MapGrid_CopyCellPictureIndicesRect(66, 51, 110, 4, 1, 1);
-  Sound_Play(229);
+  Sound_Play(SE_SPLASH);
   DehkanPlateau_JoltCamera();
   Event_Wait(10);
   Actor_Jump(25, 6, 16);
@@ -1655,7 +1655,7 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
   }
   MapGrid_CopyCellPictureIndicesRect(65, 64, 15, 8, 1, 1);
   GameFlag_Set(0x245);
-  Sound_Play(161);
+  Sound_Play(SE_RATTLE);
   DehkanPlateau_JoltCamera();
   Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(9, 0x100, 20);
@@ -1669,7 +1669,7 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
   Event_Wait(16);
   for (i = 0; i < 40; i++) {
     if (i == 5)
-      Sound_Play(204);
+      Sound_Play(SE_DUST_PUFF);
     leader->scaleX -= 0x400;
     leader->scaleY -= 0x300;
     leader->y -= 0x9999;
@@ -1683,7 +1683,7 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
 
 void DehkanPlateau_PoundLeaderThrough(void) {
   if (((struct EffectWork7c4 *)Ram_HeapSlots->effectWork)->active != 0) {
-    Sound_Play(229);
+    Sound_Play(SE_SPLASH);
     MapGrid_CopyCellPictureIndicesRect(64, 64, 15, 8, 1, 1);
     MapGrid_CopyCellPictureIndicesRect(64, 66, 15, 72, 1, 2);
     Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
@@ -1752,10 +1752,10 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Sound_Play(204);
+  Sound_Play(SE_DUST_PUFF);
   leader->motionFlags = 3;
   Event_Wait(24);
-  Sound_Play(176);
+  Sound_Play(SE_KOLIMA_BRIDGE_HOP);
   DehkanPlateau_JoltCamera();
   if (gDehkanPlateau_PoundCube != NULL) {
     FieldActor_SetPositionAndResetMotion(gDehkanPlateau_PoundCube, 0xf80000, 0,
@@ -1806,19 +1806,19 @@ void DehkanPlateau_CannonCrumblesLastPillar(void) {
   // before the 0x100's shift.
   Actor_ShowEmote(16, 0x100, 40);
   Actor_SetSpeedParameters(16, 0x20000, 0x10000);
-  Sound_Play(153);
+  Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = 0x80000;
   Actor_SetSpriteFlags(Actor_GetById(16), 0);
   Actor_WalkToAndWaitById(16, 760, 200);
   Actor_SetSpriteFlags(Actor_GetById(16), 1);
   Event_Wait(20);
-  Sound_Play(153);
+  Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = 0x80000;
   Actor_SetSpriteFlags(Actor_GetById(16), 0);
   Actor_WalkToAndWaitById(16, 792, 200);
   Actor_SetSpriteFlags(Actor_GetById(16), 1);
   DehkanPlateau_CrumblePillar(9, 16, 0x210);
-  Sound_Play(153);
+  Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = 0x80000;
   Actor_SetSpriteFlags(Actor_GetById(16), 0);
   Actor_WalkToAndWaitById(16, 824, 200);
@@ -1879,7 +1879,7 @@ void DehkanPlateau_LeaveRoom(void) {
   Event_ResolvePendingActions(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov655Room1)
     Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(*(s16 *)(work + 0x154));
@@ -2191,7 +2191,7 @@ void Func_02003764(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Sound_Play(204);
+  Sound_Play(SE_DUST_PUFF);
   leader->motionFlags = 3;
   Event_Wait(24);
   opts = &options;
@@ -2225,7 +2225,7 @@ loop:
   }
   if (i <= 16)
     goto loop;
-  Sound_Play(188);
+  Sound_Play(SE_THUMP);
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);

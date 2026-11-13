@@ -96,7 +96,7 @@
     struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());             \
     s32 i;                                                                     \
                                                                                \
-    Event_PlaySound(212);                                                      \
+    Event_PlaySound(SE_POWER_UP);                                              \
     call1(object, 1);                                                          \
     for (i = 0; i < 20; i++) {                                                 \
       s32 hit = call2(&object->x);                                             \
@@ -114,12 +114,12 @@
     if (mode == 0) {                                                           \
       object->update = 0;                                                      \
       Actor_SetSpriteColorMode(object, 0);                                     \
-      Event_PlaySound(390);                                                    \
+      Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);                               \
     } else if (mode == 1) {                                                    \
       object->update = (void (*)(void))call1;                                  \
     } else {                                                                   \
       object->update = (void (*)(void))call2;                                  \
-      Event_PlaySound(291);                                                    \
+      Event_PlaySound(SE_291);                                                 \
     }                                                                          \
   }
 

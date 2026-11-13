@@ -684,7 +684,7 @@ void Func_02000ac8(void) {
       goto fadeIn;
   }
   BlendScript_Resume();
-  Event_PlaySound(246);
+  Event_PlaySound(SE_GLITTER);
   FieldEvent_Wait(48);
 
   last = count - 1;
@@ -708,7 +708,7 @@ void Func_02000ac8(void) {
     to.z = leader->z + (gData_020036fc[slot][1] << 16);
     Func_0200088c(&from, &to, part);
     if (i & 1)
-      Event_PlaySound(195);
+      Event_PlaySound(SE_195);
     i++;
     FieldEvent_Wait(8);
   }
@@ -743,7 +743,7 @@ void Func_02000ac8(void) {
     FieldCamera_SetSpeed(0x40000, 0x8000);
     FieldCamera_MoveTo(0x2180000, -1, 0x780000, 1);
     FieldCamera_WaitForArrival();
-    Event_PlaySound(220);
+    Event_PlaySound(SE_SHIMMER);
     {
       s32 a = targetX << 16;
       s32 b = targetZ << 16;
@@ -761,13 +761,13 @@ void Func_02000ac8(void) {
     System_Wait(1);
     PaletteFade_ApplyTarget(0x10000, 0);
     PaletteFade_Interpolate(32);
-    Event_PlaySound(0x23e);
+    Event_PlaySound(SE_574);
     Func_02000a78(targetX, targetZ, part);
     FieldEvent_Wait(80);
     if (GameFlag_Get(0xa87) && GameFlag_Get(0xa88) && GameFlag_Get(0xa89) &&
         GameFlag_Get(0xa8a)) {
       Event_SetFlag(0xa8b);
-      Event_PlaySound(188);
+      Event_PlaySound(SE_THUMP);
       MapGrid_CopyCellsTo(52, 7, 33, 7, 1, 2);
       System_Wait(5);
       MapGrid_CopyCellsTo(54, 7, 33, 7, 1, 2);
@@ -858,9 +858,9 @@ void Func_02001160(void) {
     if (x == 67 && z == 45) {
       MapGrid_CopyCellsTo(50, 22, 33, 22, 1, 1);
       Actor_SetPosition(14, 0, 0);
-      Event_PlaySound(0x248);
+      Event_PlaySound(SE_584);
       FieldEvent_Wait(30);
-      Event_PlaySound(188);
+      Event_PlaySound(SE_THUMP);
       MapGrid_CopyCellsTo(50, 20, 31, 20, 1, 2);
       FieldEvent_Wait(5);
       MapGrid_CopyCellsTo(51, 20, 31, 20, 1, 2);
@@ -904,7 +904,7 @@ void Func_02001398(void) {
     MapGrid_CopyCellsTo(17, 71, leader->x >> 20, (leader->z >> 20) + 64, 1, 1);
   else
     MapGrid_CopyCellsTo(54, 87, leader->x >> 20, (leader->z >> 20) + 64, 1, 1);
-  Event_PlaySound(106);
+  Event_PlaySound(SE_DRIP);
   object = FieldActor_Create(0x15d, ((leader->x >> 20) << 20) + 0x80000, 0,
                              ((leader->z >> 20) << 20) + 0x80000);
   object->priorityFlags |= 2;
@@ -931,7 +931,7 @@ void Func_02001398(void) {
     FieldCamera_MoveToActorById(id, 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(10);
-    Event_PlaySound(0x246);
+    Event_PlaySound(SE_582);
     Actor_SetAnimation(id, 2);
     Event_SetFlag(0x207);
     Actor_Get(id)->motionFlags = 4;
@@ -968,7 +968,7 @@ void Func_02001518(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   object->speedLimit = 0x20000;
   object->acceleration = 0x800;
-  Event_PlaySound(198);
+  Event_PlaySound(SE_KOLIMA_BRIDGE_POST);
   FieldActor_SetMoveTarget(object, object->x, object->y + 0x40000, object->z);
   FieldActor_WaitForMove(object);
   Scene_SetActorSpritePriority(leader, 1);
@@ -1000,9 +1000,9 @@ void Func_02001660(void) {
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(50, 22, 33, 22, 1, 1);
   Actor_SetPosition(14, 0, 0);
-  Event_PlaySound(0x248);
+  Event_PlaySound(SE_584);
   FieldEvent_Wait(30);
-  Event_PlaySound(0xbc);
+  Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(50, 20, 31, 20, 1, 2);
   FieldEvent_Wait(5);
   MapGrid_CopyCellsTo(51, 20, 31, 20, 1, 2);
@@ -1022,9 +1022,9 @@ void Func_020016fc(void) {
   object->terrainHeight = -917504;
   object->y = -917504;
   MapGrid_CopyCellsTo(51, 22, 33, 22, 1, 1);
-  Event_PlaySound(0x248);
+  Event_PlaySound(SE_584);
   FieldEvent_Wait(30);
-  Event_PlaySound(0xbc);
+  Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(50, 20, 31, 20, 1, 2);
   FieldEvent_Wait(5);
   MapGrid_CopyCellsTo(52, 20, 31, 20, 1, 2);
@@ -1086,7 +1086,7 @@ void Func_020017b4(struct Actor *self) {
     self->unk4c = leader->x;
     self->acceleration = leader->z;
     if ((gFrameCount & 3) == 0)
-      Event_PlaySound(106);
+      Event_PlaySound(SE_DRIP);
   }
   if (ahead[2] >> 16 > 248)
     return;
@@ -1178,7 +1178,7 @@ void Func_020019a8(void) {
   REG_WINOUT = WINOUT_WIN01_ALL | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |
                WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_BG3 | WINOUT_WINOBJ_CLR;
   REG_DISPCNT |= DISPCNT_OBJWIN_ON;
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   object->motionFlags = 3;
   OverlayObject_WaitUntilIdle(object);
   object->x = 0;
@@ -1219,7 +1219,7 @@ void Func_02001a94(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldActor_SetMoveTarget(object, target[0], 0, target[2]);
   FieldActor_WaitForMove(object);
-  Event_PlaySound(188);
+  Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(18, 4, column, 4, 1, 2);
   System_Wait(5);
   MapGrid_CopyCellsTo(18, 7, column, 4, 1, 2);
@@ -1325,7 +1325,7 @@ loop:
   i++;
   if ((u32)i <= 63)
     goto loop;
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room1) {
     MapGrid_AnimateCells(gData_020043e4, 33, 7);
   } else {
@@ -1847,7 +1847,7 @@ void CrackedTile_Fall(struct PushEvent *event) {
   z = object->z >> 20;
   z |= (s16)(event->z & mask);
   Leader_CenterInCell();
-  Sound_Play(229);
+  Sound_Play(SE_SPLASH);
   Map_CopyCellsRect(event->x, event->z + 2, 1, 1, x, z);
   Event_Wait(12);
   {
@@ -1870,7 +1870,7 @@ void CrackedTile_Fall(struct PushEvent *event) {
   Event_Wait(16);
   for (x = 0; x < 40; x++) {
     if (x == 5)
-      Sound_Play(204);
+      Sound_Play(SE_DUST_PUFF);
     object->scaleX += -0x400;
     object->scaleY += -0x300;
     object->y += -0x9999;
@@ -1919,7 +1919,7 @@ void CrackedTile_DropIn(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySound(204);
+  Event_PlaySound(SE_DUST_PUFF);
   actor->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
@@ -1956,7 +1956,7 @@ loop:
   }
   if (i <= 16)
     goto loop;
-  Event_PlaySound(188);
+  Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);

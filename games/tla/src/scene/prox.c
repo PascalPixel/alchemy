@@ -583,7 +583,7 @@ void Prox_SearchForParents(void) {
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Event_PlaySound(158);
+    Event_PlaySound(SE_DOOR_OPEN);
     MapGrid_CopyCellsTo(0x59, 0, 0x4d, 0x10, 1, 2);
     Event_SetFlag(0x200);
     FieldEvent_Wait(10);
@@ -954,7 +954,7 @@ void Func_020015d0(void) {
   object = Actor_Get(gMainRoutineWork.currentOwner);
   object->actionFlags |= 1;
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 0);
-  Event_PlaySound(0xa1);
+  Event_PlaySound(SE_RATTLE);
   object = (struct Actor *)((s32)FieldCamera_GetActor());
   object->y += 0x20000;
   object = Actor_Get(20);
@@ -964,13 +964,13 @@ void Func_020015d0(void) {
   object = Actor_Get(20);
   object->actionFlags |= 1;
   Actor_SetPosition(20, 0, 0);
-  Event_PlaySound(0xb0);
+  Event_PlaySound(SE_KOLIMA_BRIDGE_HOP);
   MapGrid_SetShake(0x10000, 0x20000, 0x10000);
   FieldEvent_Wait(30);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Event_PlaySound(0x7f);
+  Event_PlaySound(SE_LANDING_THUD);
   FieldEvent_Wait(30);
-  Event_PlaySound(0x92);
+  Event_PlaySound(SE_ENEMY_CRY);
   FieldEvent_Wait(20);
   Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x105, 40);
   FieldActor_SetSpritePriority(20, 2);
@@ -1086,9 +1086,9 @@ void Prox_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   FieldEvent_ResolvePendingActions(0);
   if (!Event_GetFlag(0x200)) {
     if (mode == 2)
-      Event_PlaySound(188);
+      Event_PlaySound(SE_THUMP);
     else
-      Event_PlaySound(158);
+      Event_PlaySound(SE_DOOR_OPEN);
     MapGrid_CopyCellsTo(a, b, c, d, mode, f);
     FieldEvent_Wait(20);
   }
@@ -1103,7 +1103,7 @@ void Prox_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   }
   Actor_SetScript(gMainRoutineWork.currentOwner, gProx_EnterDoorScript);
   System_Wait(12);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(work->returnEntrance);
@@ -1138,7 +1138,7 @@ void Func_02001b7c(void) {
                            object->y, object->z - 0x40000);
   FieldActor_WaitForMove(object);
   object->facing = 0xc000;
-  Event_PlaySound(128);
+  Event_PlaySound(SE_STAIRS_UP);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   id = gMainRoutineWork.currentOwner;
   if (entrance == 6)
@@ -1660,7 +1660,7 @@ void Prox_SayFarewell(void) {
   if (Event_GetFlag(0x9c5) != 0) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Event_PlaySound(78);
+    Event_PlaySound(SOUND_FADE_OUT_BGM);
     FieldActor_Jump(5, 2, 10);
     FieldActor_Jump(5, 4, 10);
     FieldEvent_SetMessageId((s32)MsgProx153);
@@ -1670,7 +1670,7 @@ void Prox_SayFarewell(void) {
     FieldCamera_WaitForArrival();
     FieldActor_ShowEmote(10, 0x108, 0);
     Event_ShowMessage(0x200a, 0);
-    Event_PlaySound(37);
+    Event_PlaySound(MUS_037);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 136, 196);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
@@ -1994,7 +1994,7 @@ void Prox_SayFarewell(void) {
     Map_SetLayerEntryFlag(4);
     Map_SetLayerEntryFlag(5);
     Map_SetLayerEntryFlag(6);
-    Event_PlaySound(78);
+    Event_PlaySound(SOUND_FADE_OUT_BGM);
     FieldEvent_Wait(40);
     PaletteFade_ApplyTarget(0x10009, 0);
     PaletteFade_Interpolate(0x78);

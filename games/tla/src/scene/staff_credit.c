@@ -267,7 +267,7 @@ void Func_0200020c(s32 stage) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Task_Add(Func_0200005c, 0x480);
-  Event_PlaySound(246);
+  Event_PlaySound(SE_GLITTER);
   for (frame = 0; frame != 172; frame++) {
     if (frame == 0) {
       if (stage == 4) {
@@ -596,7 +596,7 @@ void Func_02001400(s32 mode) {
   Event_WaitTransitionFrames();
   if (mode == 2) {
     MapGrid_SetShake(0x20000, 0x30000, 0x10000);
-    Event_PlaySound(141);
+    Event_PlaySound(SE_RUMBLE);
   }
   WorldMap_Freeze();
   buffer = Heap_AllocEwram(0x4000);
@@ -624,7 +624,7 @@ void Func_02001400(s32 mode) {
   Task_AddFrame(Func_0200130c, 0x480);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(246);
+  Event_PlaySound(SE_GLITTER);
   gData_02003fc0 = 0xe00;
   PUSH_PICTURE(0x3480);
   FieldEvent_Wait(2);
@@ -665,7 +665,7 @@ void Func_02001400(s32 mode) {
   PUSH_PICTURE(0x3a80);
   if (mode == 1) {
     MapGrid_SetShake(0x20000, 0x20000, 0x10000);
-    Event_PlaySound(141);
+    Event_PlaySound(SE_RUMBLE);
     gData_02003fc0 = 0xd00;
     FieldEvent_Wait(4);
     gData_02003fc0 = 0xe00;

@@ -227,7 +227,7 @@
     do {                                                                       \
       wait(1);                                                                 \
     } while (object->velocityY != 0);                                          \
-    Sound_Play(188);                                                           \
+    Sound_Play(SE_THUMP);                                                      \
     wait(10);                                                                  \
     *flags = 0;                                                                \
   }

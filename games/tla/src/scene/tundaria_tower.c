@@ -235,7 +235,7 @@ void Func_020005d0(void) {
   choice = (s16 *)(work + 340);
   if (*choice == 3)
     x = 25;
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   one = 1;
   height = 2;
   MapGrid_CopyCellsTo(30, 38, x, 49, one, height);
@@ -249,7 +249,7 @@ void Func_020005d0(void) {
   cell = (((struct Actor *)((s32)Actor_GetById(*owner)))->x >> 19) | one;
   Actor_WalkToAndWait(*owner, cell << 3,
                       *(s16 *)((u8 *)((s32)Actor_GetById(*owner)) + 18) | one);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   cell = ((struct Actor *)((s32)Actor_GetById(*owner)))->x;
   Actor_WalkTo(*owner, (cell >> 19) << 3,
                (*(s16 *)((u8 *)((s32)Actor_GetById(*owner)) + 18) | one) - 16);
@@ -398,7 +398,7 @@ void Func_02000964(void) {
   TundariaTower_FadeFrom(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
   PaletteFade_StartInterpolation(2);
-  Sound_Play(132);
+  Sound_Play(SE_WATER);
   TundariaTower_SetWork(0x50000, 0x70000, 0x10000);
   TundariaTower_SetWork(-1, -1, 0xe666);
   Event_Wait(2);
@@ -542,7 +542,7 @@ void Func_02000d2c(void) {
     object->terrainId = 2;
     object->motionFlags = 3;
     OverlayObject_WaitUntilIdle(object);
-    Sound_Play(188);
+    Sound_Play(SE_THUMP);
     OverlayObject_WaitUntilIdle(object);
     object->motionFlags = 0;
     object->terrainId = 0;
@@ -796,7 +796,7 @@ void Func_020011e0(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Sound_Play(204);
+  Sound_Play(SE_DUST_PUFF);
   leader->motionFlags = 3;
   Event_Wait(24);
   options.palette = 7;
@@ -818,7 +818,7 @@ void Func_020011e0(void) {
                       velocity[2], 0x01090001, &options);
     i++;
   } while (i <= 16);
-  Sound_Play(188);
+  Sound_Play(SE_THUMP);
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
@@ -1190,7 +1190,7 @@ next:
     flag = table[1];
     Event_Start();
     if (!GameFlag_Get(flag)) {
-      Sound_Play(125);
+      Sound_Play(SE_CHEST_CLOSE);
       Actor_SetSpriteColor(Actor_GetById(id), 7);
       wait(2);
       Actor_SelectAnimation(trap, 0);
@@ -1205,7 +1205,7 @@ next:
       second = flag + 1;
       if (!GameFlag_Get(second)) {
         leader->motionFlags = 0;
-        Sound_Play(185);
+        Sound_Play(SE_PUSH);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_020029d0(0);
         wait(8);
@@ -1221,7 +1221,7 @@ next:
         wait(5);
         Actor_SetPositionAndResetMotion(trap, 0, 0, 0);
         wait(2);
-        Sound_Play(188);
+        Sound_Play(SE_THUMP);
         Func_02002b04();
         wait(20);
         GameFlag_Set(second);
@@ -1251,7 +1251,7 @@ loop:
   Event_Start();
   nextFlag = flag + 1;
   if (!GameFlag_Get(nextFlag)) {
-    Sound_Play(185);
+    Sound_Play(SE_PUSH);
     TundariaTower_SetWork(0x10000, 0x40000, 0x10000);
     Func_020029d0(0);
     wait(8);
@@ -1263,7 +1263,7 @@ loop:
     wait(8);
     Actor_SetPositionAndResetMotion(object, 0, 0, 0);
     wait(2);
-    Sound_Play(188);
+    Sound_Play(SE_THUMP);
     Func_02002b04();
     wait(20);
     GameFlag_Set(flag);
@@ -1385,7 +1385,7 @@ void Func_02002764(const u16 *table) {
       Actor_SelectAnimation(partner, 1);
       Func_02002748(partner, trap);
       wait(1);
-      Sound_Play(125);
+      Sound_Play(SE_CHEST_CLOSE);
       Actor_SetSpriteColor(Actor_GetById(8), 7);
       wait(2);
       Actor_SelectAnimation(partner, 0);
@@ -1407,7 +1407,7 @@ void Func_02002764(const u16 *table) {
         motion = &leader->motionFlags;
         wait(1);
         *motion = 0;
-        Sound_Play(185);
+        Sound_Play(SE_PUSH);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_020029d0(0);
         wait(8);
@@ -1423,7 +1423,7 @@ void Func_02002764(const u16 *table) {
         wait(5);
         Actor_SetPositionAndResetMotion(partner, 0, 0, 0);
         wait(2);
-        Sound_Play(188);
+        Sound_Play(SE_THUMP);
         Func_02002b04();
         wait(20);
         GameFlag_Set(second);

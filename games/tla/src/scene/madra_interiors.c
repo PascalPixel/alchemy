@@ -481,7 +481,7 @@ void MadraInteriors_InterrogatePiers(void) {
   object0->actionFlags &= 254;
   for (i = 2; i >= 0; i--) {
     Actor_WalkByAndWait(9, 0, -8);
-    Event_PlaySound(134);
+    Event_PlaySound(SE_HEAVY_IMPACT);
     Actor_WalkByAndWait(9, 0, 8);
   }
   object1 = Actor_Get(9);
@@ -547,7 +547,7 @@ void MadraInteriors_InterrogatePiers(void) {
   Actor_SetDestinationOffset(9, -8, 0);
   Actor_SetScript(9, gMadraInteriors_InterrogatorTopples);
   FieldActor_RefreshSelectorById(9);
-  Event_PlaySound(127);
+  Event_PlaySound(SE_LANDING_THUD);
   FieldEvent_Wait(60);
   object7 = Actor_Get(9);
   object7->actionFlags = (object7->actionFlags | 1);

@@ -154,7 +154,7 @@ void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(warp->scene, warp->x, warp->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);

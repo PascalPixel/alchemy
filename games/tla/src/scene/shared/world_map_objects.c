@@ -50,7 +50,7 @@ void WorldMap_SetCountdownByX(s32 slot, s32 before, s32 after) {
     else
       work->countdown = elseValue;
   }
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
 }
 
 /// The same on z.
@@ -78,7 +78,7 @@ void WorldMap_SetCountdownByZ(s32 slot, s32 before, s32 after) {
     else
       work->countdown = elseValue;
   }
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
 }
 
 /// One of the scene's placed objects, 20 bytes; a zero kind ends the list.

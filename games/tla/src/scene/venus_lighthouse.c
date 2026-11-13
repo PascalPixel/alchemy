@@ -184,7 +184,7 @@ s32 OverlayObject_UpdateEveryFourFrames(void *obj) {
     FieldActor_SetSpriteColor(obj, 0);
 
   if ((gFrameCount & 7) == 0)
-    Event_PlaySound(138);
+    Event_PlaySound(SE_ITEM_BREAK);
   return 0;
 }
 
@@ -390,7 +390,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
     MapGrid_CopyCellPictureIndicesRect(52, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(52, 117, 41, 117, 3, 5);
     GameFlag_Set(0x201);
-    Sound_Play(161);
+    Sound_Play(SE_RATTLE);
     leader->motionFlags &= ~1;
     leader->terrainHeight = -0x20000;
     leader->y = -0x20000;
@@ -413,7 +413,7 @@ void VenusLighthouse_SinkStatue(void) {
   FieldEvent_ResolvePendingActions(0);
   if (obj->x >> 20 == 42) {
     FieldEvent_Wait(30);
-    Event_PlaySound(188);
+    Event_PlaySound(SE_THUMP);
     obj->motionFlags = 0;
     val = 0xfffe0000;
     obj->terrainHeight = val;
@@ -631,7 +631,7 @@ void VenusLighthouse_FelixLeaves(void) {
   FieldActor_WatchAndSetScript(8, 4);
   Actor_WalkToAndWait(4, 744, 816);
   Actor_WalkToAndWait(4, 744, 780);
-  Event_PlaySound(129);
+  Event_PlaySound(SE_STAIRS_DOWN);
   Exit_PrepareActorAnimation(4, -1);
   FieldEvent_Wait(50);
   Actor_FaceDirection(5, FACING_NORTH, 0);
@@ -698,7 +698,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(30);
-  Event_PlaySound(198);
+  Event_PlaySound(SE_KOLIMA_BRIDGE_POST);
   Actor_SetPosition(9, PIXELS(680), PIXELS(920));
   Actor_FaceDirection(9, 0xb000, 0);
   Actor_VanishInSparks(9);
@@ -1043,7 +1043,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_WalkToAndWait(5, 728, 944);
   Actor_WalkToAndWait(5, 728, 928);
   Actor_SetPosition(5, PIXELS(728), PIXELS(912));
-  Event_PlaySound(129);
+  Event_PlaySound(SE_STAIRS_DOWN);
   Venus_ObjEffectSet(5, -1);
   FieldEvent_Wait(40);
   MapGrid_CopyCellsTo(53, 50, 42, 49, 1, 1);

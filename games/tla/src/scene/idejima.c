@@ -345,7 +345,7 @@ void Idejima_WakeSheba(void) {
 void Idejima_EnterDoor(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(3);

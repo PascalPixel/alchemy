@@ -476,10 +476,10 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       FieldActor_Stop(4);
       FieldCamera_MoveTo(-1, -1, -1, 0);
       Actor_SetPosition(32, 0, 0);
-      Event_PlaySound(0x7b);
+      Event_PlaySound(SE_MAP_EXIT);
       FieldActor_RefreshSelectorById(31);
       Actor_SetPosition(31, 0, 0);
-      Event_PlaySound(0x7b);
+      Event_PlaySound(SE_MAP_EXIT);
       FieldEvent_Wait(10);
       Event_End();
     }

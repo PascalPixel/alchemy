@@ -205,7 +205,7 @@ inPlace:
   Actor_MoveToAndWait(4, 0x1e7, 0x179);
   Actor_FaceDirectionAndWait(4, 0xc000);
   Event_Wait(30);
-  Event_PlaySound(140);
+  Event_PlaySound(SE_SPIN);
   FieldActor_StartRepeatedMotion(16, 2);
   FieldActor_StartRepeatedMotion(18, 2);
   Actor_RunRepeatedMotion(17, 2);
@@ -218,7 +218,7 @@ inPlace:
   Actor_WalkByAndWait(4, 24, 12);
   Actor_FaceDirectionAndWait(4, 0xc000);
   Event_Wait(30);
-  Event_PlaySound(144);
+  Event_PlaySound(SE_CLATTER);
   FieldActor_ShowItemIconById(21, 0x1cc);
   Actor_SetPosition(21, 0x1e80000, 0x14a0000);
   Actor_SetDestinationOffset(20, 0, 8);
@@ -257,12 +257,12 @@ seedSparks:
 frame:
   if ((31 & i) != 0)
     goto checkFlash;
-  Event_PlaySound(145);
+  Event_PlaySound(SE_CRASH);
 checkFlash:
   if (i != 30)
     goto sparks;
   ScreenFade_ToWhite(90);
-  Event_PlaySound(141);
+  Event_PlaySound(SE_RUMBLE);
 sparks:
   p = table;
 spark:
@@ -305,7 +305,7 @@ nextSpark:
   Actor_SetPositionAndFacing(14, 0xf80000, 0x1e00000, 0);
   Loho_DrawBrokenWall();
   MapGrid_SetShake(0, 0, 0x10000);
-  Event_PlaySound(0x186);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_Wait(180);
   ScreenFade_FromWhite(120);
   Event_SetMessageId((s32)MsgLoho28);
@@ -647,12 +647,12 @@ loop:
   if ((u32)i <= 63)
     goto loop;
   work = (u8 *)&((struct EventWork154 *)work)->returnEntrance;
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   Loho_AnimateCells(gLoho_HouseDoor.data, gLoho_HouseDoor.a, gLoho_HouseDoor.b);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Event_Wait(6);
   Import_EventSetExitRequest(*(s16 *)work);
   Event_FinishScreenTransition();
@@ -671,7 +671,7 @@ void Loho_EnterDoor(void) {
   } while (0);
   Actor_SetAnimation(party->currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   Import_EventSetExitRequest(work->returnEntrance);
 }
@@ -695,7 +695,7 @@ void Loho_ClimbDownLadder(void) {
   Actor_WaitForMoveById(4);
   Actor_SetAnimation(4, 10);
   Event_Wait(14);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(value);
   Event_End();
 }

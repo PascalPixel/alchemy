@@ -465,7 +465,7 @@ void GarohInteriors_WakeAtInn(void) {
   Event_ResolvePendingActions(0);
   Event_Wait(30);
   ActorSystem_SuspendProjectionAndShowSprites();
-  Sound_Play(86);
+  Sound_Play(MUS_086);
   // "Felix and party stayed the night at the inn."
   FieldMessage_ShowCentered((s32)MsgGarohInteriors33, 0, 0);
   Event_Wait(20);

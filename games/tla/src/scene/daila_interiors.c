@@ -9,6 +9,7 @@
 /// rescued, the drained floor opens the way on (DailaInteriors_Start).
 
 #include "shared/tables.h"
+#include "sounds.h"
 #include "shared/actors.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -448,7 +449,7 @@ void DailaInteriors_TakeSeaGodsTear(void) {
   Event_ResolvePendingActions(0);
   if (PartyInventory_FindRoom(item) >= 0) {
     ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR), 3);
-    Sound_Play(83);
+    Sound_Play(MUS_083);
     MessageArgument_Push(item, 2);
     FieldMessage_Show((s32)MsgItemReceived, 1);
     PartyInventory_Add(item);
@@ -458,7 +459,7 @@ void DailaInteriors_TakeSeaGodsTear(void) {
     GameFlag_Set(FLAG_SEA_GODS_TEAR_TAKEN);
   } else {
     ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR), 3);
-    Sound_Play(83);
+    Sound_Play(MUS_083);
     if (DailaInteriors_GiveItem(item, 0) != -1) {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(ACTOR_TEAR_SPOT, 232 << 16,
@@ -537,7 +538,7 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
       Unit_RefreshPsynergy(member);
       Unit_Calculate(member);
       owner = PartyInventory_Add(item);
-      Sound_Play(83);
+      Sound_Play(MUS_083);
       if (owner == gMainRoutineWork.currentOwner) {
         MessageArgument_Push(item, 2);
         FieldMessage_Show((s32)MsgItemReceived, 3);
@@ -550,7 +551,7 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
       return owner;
     }
   } else {
-    Sound_Play(83);
+    Sound_Play(MUS_083);
     MessageArgument_Push(item, 2);
     FieldMessage_Show((s32)MsgItemReceived, 3);
     if (owner != gMainRoutineWork.currentOwner) {

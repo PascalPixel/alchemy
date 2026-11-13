@@ -215,7 +215,7 @@
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;      \
     Event_StartScreenTransition();                                             \
     Event_WaitTransitionFrames();                                              \
-    Event_PlaySound(204);                                                      \
+    Event_PlaySound(SE_DUST_PUFF);                                             \
     actor->motionFlags = 3;                                                    \
     FieldEvent_Wait(24);                                                       \
     options.palette = 7;                                                       \
@@ -238,7 +238,7 @@
             velocity[2], 0x1090001, &options);                                 \
       i++;                                                                     \
     } while (i <= 16);                                                         \
-    Event_PlaySound(188);                                                      \
+    Event_PlaySound(SE_THUMP);                                                 \
     Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);             \
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);                     \
     MapGrid_SetShake(0x50000, 0x50000, 0x10000);                               \
@@ -261,7 +261,7 @@
     s32 z = (leader->z >> 20) | (s16)(table->z & 64);                          \
                                                                                \
     call1();                                                                   \
-    Event_PlaySound(229);                                                      \
+    Event_PlaySound(SE_SPLASH);                                                \
     MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);                     \
     FieldEvent_Wait(12);                                                       \
     leader->facing = 0x4000;                                                   \
@@ -275,7 +275,7 @@
     x = 0;                                                                     \
     do {                                                                       \
       if (x == 5)                                                              \
-        Event_PlaySound(204);                                                  \
+        Event_PlaySound(SE_DUST_PUFF);                                         \
       leader->scaleX += -0x400;                                                \
       leader->scaleY += -0x300;                                                \
       leader->y += -0x9999;                                                    \
@@ -428,7 +428,7 @@
     x = (leader->x >> 20) | (s16)(table->x & 64);                              \
     z = (leader->z >> 20) | (s16)(table->z & 64);                              \
     call1();                                                                   \
-    Event_PlaySound(161);                                                      \
+    Event_PlaySound(SE_RATTLE);                                                \
     MapGrid_CopyCells(table->x, table->z + 1, 1, 1, x, z);                     \
     FieldEvent_Wait(12);                                                       \
   }
@@ -453,7 +453,7 @@
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;      \
     Event_StartScreenTransition();                                             \
     Event_WaitTransitionFrames();                                              \
-    Event_PlaySound(204);                                                      \
+    Event_PlaySound(SE_DUST_PUFF);                                             \
     actor->motionFlags = 3;                                                    \
     FieldEvent_Wait(24);                                                       \
     options.palette = 7;                                                       \
@@ -490,7 +490,7 @@
     }                                                                          \
     if (i <= 16)                                                               \
       goto loop;                                                               \
-    Event_PlaySound(188);                                                      \
+    Event_PlaySound(SE_THUMP);                                                 \
     Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);             \
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);                     \
     SetWorkTriple(0x50000, 0x50000, 0x10000);                                  \
@@ -520,7 +520,7 @@
     z = object->z >> 20;                                                       \
     z |= (s16)(event->z & mask);                                               \
     call1();                                                                   \
-    Event_PlaySound(229);                                                      \
+    Event_PlaySound(SE_SPLASH);                                                \
     MapGrid_CopyCells(event->x, event->z + 2, 1, 1, x, z);                     \
     FieldEvent_Wait(12);                                                       \
     {                                                                          \
@@ -548,7 +548,7 @@
     FieldEvent_Wait(16);                                                       \
     for (x = 0; x < 40; x++) {                                                 \
       if (x == 5)                                                              \
-        Event_PlaySound(204);                                                  \
+        Event_PlaySound(SE_DUST_PUFF);                                         \
       object->scaleX += -0x400;                                                \
       object->scaleY += -0x300;                                                \
       object->y += -0x9999;                                                    \

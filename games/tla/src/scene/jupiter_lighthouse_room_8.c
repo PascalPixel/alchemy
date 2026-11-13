@@ -148,7 +148,7 @@ void JupiterLighthouse_DropBlockIntoHole(s32 unused, s32 id) {
   if (object->x >> 20 == 6 && object->z >> 20 == 14) {
     Event_SetFlag(FLAG_PILLAR_DROPPED);
     System_Wait(10);
-    Event_PlaySound(134);
+    Event_PlaySound(SE_HEAVY_IMPACT);
     y = object->y;
     floor = object->terrainHeight;
     /* FAKEMATCH(dead): the height and the floor are read before the counter

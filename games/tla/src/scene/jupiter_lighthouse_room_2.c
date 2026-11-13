@@ -351,7 +351,7 @@ void Func_02000500(s32 unused, s32 id) {
                 (object->y > object->terrainHeight || object->velocityY != 0);
          i++)
       System_Wait(1);
-    Event_PlaySound(188);
+    Event_PlaySound(SE_THUMP);
   }
   if (object->x >> 20 == 20 && object->z >> 20 == 39) {
     Event_SetFlag(0xa02);
@@ -362,13 +362,13 @@ void Func_02000500(s32 unused, s32 id) {
     MapGrid_CopyCellsLayered(28, 39, 1, 1, 20, 39);
     MapGrid_CopyCellsLayered(92, 39, 1, 1, 84, 39);
     FieldEvent_Wait(30);
-    Event_PlaySound(167);
+    Event_PlaySound(SE_MAP_TRANSITION);
     MapGrid_CopyCellsLayered(92, 40, 1, 1, 84, 40);
     FieldEvent_Wait(20);
-    Event_PlaySound(167);
+    Event_PlaySound(SE_MAP_TRANSITION);
     CopyCells(92, 41, 1, 1, 84, 41);
     FieldEvent_Wait(20);
-    Event_PlaySound(167);
+    Event_PlaySound(SE_MAP_TRANSITION);
     MapGrid_CopyCellsLayered(93, 41, 1, 1, 85, 41);
     FieldMapGrid_SetCellBehavior(168 << 17, 164 << 18, 2, 236);
   }

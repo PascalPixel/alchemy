@@ -509,7 +509,7 @@ row:
   if (i != 18)
     goto row;
   Heap_Release(buffer);
-  Event_PlaySound(246);
+  Event_PlaySound(SE_GLITTER);
   OBJ14_BYTE(98) = 9;
   OBJ14_BYTE(99) = 1;
   Actor_GetById(14)->update = ShamanVillage_FlickerRock;
@@ -540,7 +540,7 @@ row:
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(424), 1);
   FieldCamera_WaitForArrival();
   Task_Add(ShamanVillage_WaveWhirlwindLines, 0xc80);
-  Event_PlaySound(207);
+  Event_PlaySound(SE_RUSH);
   REG_BLDALPHA = 0xf00;
   REG_BLDCNT = 0x3f41;
   REG_DISPCNT |= DISPCNT_BG0_ON;
@@ -650,7 +650,7 @@ clear:
   REG_BLDCNT = 0x3f41;
   REG_BLDALPHA = 15;
   MapGrid_SetShake(-1, -1, 0xe666);
-  Event_PlaySound(390);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   OBJ14_BYTE(98) = 6;
   i = 0;
 fade:
@@ -973,7 +973,7 @@ void ShamanVillage_HopFortuneTeller(void) {
   Actor_Stop(17);
   wait(1);
   Actor_Jump(17, 4, 20);
-  Event_PlaySound(229);
+  Event_PlaySound(SE_SPLASH);
   wait(2);
   Actor_RunScriptAndWait(16, gShamanVillage_HopFortuneTellerScript);
 }
@@ -991,7 +991,7 @@ void ShamanVillage_TellFortune(void) {
       Event_SetMessageId((s32)MsgShamanFortuneAvoidSouth);
     Event_ShowMessage(17, 0);
   } else {
-    Event_PlaySound(0);
+    Event_PlaySound(MUS_000);
     if (Event_GetFlag(0xa21))
       Event_SetMessageId((s32)MsgShamanFortuneOfferAfterTrial);
     else
@@ -1003,7 +1003,7 @@ void ShamanVillage_TellFortune(void) {
     } else {
       ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
       Event_ShowMessage(17, 0);
-      Event_PlaySound(11);
+      Event_PlaySound(MUS_011);
       Actor_SetAnimation(17, 5);
       Event_ShowMessage(17, 0);
       ShamanVillage_HopFortuneTeller();
@@ -1035,7 +1035,7 @@ void ShamanVillage_ExplainTrialRules(void) {
   if (Event_GetFlag(0x200)) {
     Event_SetMessageId((s32)MsgShamanTrialRulesAreSimple);
   } else {
-    Event_PlaySound(78);
+    Event_PlaySound(SOUND_FADE_OUT_BGM);
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_SetSpeed(0x19999, 0x3333);
@@ -1043,7 +1043,7 @@ void ShamanVillage_ExplainTrialRules(void) {
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x13333, 0x9999);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
-    Event_PlaySound(76);
+    Event_PlaySound(MUS_076);
     Actor_FaceDirection(15, FACING_WEST, 0);
     Actor_FaceDirection(16, FACING_WEST, 0);
     Actor_FaceDirectionAndWait(17, FACING_WEST);
@@ -1154,7 +1154,7 @@ void ShamanVillage_ChallengeMoapa(void) {
     Event_OpenMessage(0x200f, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
-      Event_PlaySound(76);
+      Event_PlaySound(MUS_076);
       Event_ShowMessage(0x200f, 0);
       Event_SetFlag(0x200);
       ShamanVillage_ExplainTrialRules();
@@ -1317,7 +1317,7 @@ void ShamanVillage_DropPillar(void) {
     do {
       wait(1);
     } while (object->velocityY != 0);
-    Event_PlaySound(188);
+    Event_PlaySound(SE_THUMP);
     wait(10);
     object->motionFlags = 0;
     MapGrid_CopyCellAttributes(30, 11, 1, 1, 32, 11);
@@ -1332,7 +1332,7 @@ void ShamanVillage_DropPillar(void) {
 void ShamanVillage_MeetMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(43, 40, 7, 6, 1, 2);
   Event_Wait(20);
   Actor_SetPosition(15, PIXELS(120), PIXELS(194));
@@ -1442,7 +1442,7 @@ void ShamanVillage_ShowShamansRod(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   angle = 0xc000;
   ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))->facing =
       angle;
@@ -1460,7 +1460,7 @@ void ShamanVillage_ShowShamansRod(void) {
   SHAMAN_VILLAGE_EMOTE(15, 256, 20)
   Actor_SetSpeed(15, 0x26666, 0x13333);
   Actor_WalkToAndWait(15, 120, 242);
-  Event_PlaySound(29);
+  Event_PlaySound(MUS_029);
   Event_SetMessageId((s32)MsgShamanRecognizeShamanRod);
   Event_ShowMessage(15, 0);
   Event_Wait(20);
@@ -1624,7 +1624,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Event_Wait(20);
   Actor_SetScript(17, gShamanVillage_GuardLeavesHouseScript);
   Actor_SetScript(16, gShamanVillage_OtherGuardLeavesHouseScript);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   do {
     wait(1);
   } while (object->blockMarked == 0);
@@ -1699,7 +1699,7 @@ void ShamanVillage_ShowItemToOtherGuard(void) {
 /// ★ Named from the game: "Hoolabaloo!" (MsgShamanFortuneGreeting)
 void ShamanVillage_GreetFortuneSeeker(void) {
   if (Event_GetFlag(0x9fe)) {
-    Event_PlaySound(0);
+    Event_PlaySound(MUS_000);
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgShamanFortuneGreeting);
@@ -2078,22 +2078,22 @@ void ShamanVillage_LoadLettering(s32 graphic) {
 void ShamanVillage_CountDownToStart(void) {
   gShamanVillage_LetteringSlideScript[15] = 180;
   Event_Wait(30);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   ShamanVillage_LoadLettering(5);
   ShamanVillage_StartLettering(2, 0);
-  Event_PlaySound(236);
+  Event_PlaySound(SE_COLOSSO_COUNTDOWN);
   Event_Wait(60);
   ShamanVillage_StartLettering(2, 1);
-  Event_PlaySound(236);
+  Event_PlaySound(SE_COLOSSO_COUNTDOWN);
   Event_Wait(60);
   ShamanVillage_LoadLettering(6);
   ShamanVillage_StartLettering(2, 0);
-  Event_PlaySound(236);
+  Event_PlaySound(SE_COLOSSO_COUNTDOWN);
   Event_Wait(60);
   ShamanVillage_LoadLettering(7);
   ShamanVillage_StartLettering(4, 0);
-  Event_PlaySound(237);
-  Event_PlaySound(76);
+  Event_PlaySound(SE_COLOSSO_GO);
+  Event_PlaySound(MUS_076);
 }
 
 /// Moapa's first test: Sheba steps up and casts Whirlwind on the purple rock,
@@ -2112,7 +2112,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   work[35] = 0;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_PlaySound(0);
+  Event_PlaySound(MUS_000);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   FieldCamera_SetSpeed(0x6666, 0xccc);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(528), 1);
@@ -2150,7 +2150,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirection(16, FACING_NORTH, 0);
   FieldCamera_SetSpeed(0x19999, 0x3333);
   ShamanVillage_CastWhirlwindOnSand();
-  Event_PlaySound(29);
+  Event_PlaySound(MUS_029);
   FieldCamera_SetSpeed(0x4cccc, 0x9999);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(540), 1);
   FieldCamera_WaitForArrival();
@@ -2364,7 +2364,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Event_Wait(20);
   Actor_SetScript(17, gShamanVillage_HeadForTrialRoadScript);
   Actor_SetScript(16, gShamanVillage_HeadForTrialRoadScript);
-  Event_PlaySound(78);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   do {
     wait(1);
   } while (*done == 0);
@@ -2413,7 +2413,7 @@ void ShamanVillage_ShebaClearsSand(void) {
 
 void ShamanVillage_CastWhirlwindOnSand(void) {
   Actor_SetSpritePriority(6, 1);
-  Event_PlaySound(131);
+  Event_PlaySound(SE_PSYNERGY_SPARKLE);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(6)), 2);
   Event_Wait(40);
@@ -2432,9 +2432,9 @@ void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (mode == 2)
-    Event_PlaySound(188);
+    Event_PlaySound(SE_THUMP);
   else
-    Event_PlaySound(158);
+    Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(a, b, c, d, mode, f);
   Event_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
@@ -2449,7 +2449,7 @@ void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   Actor_SetScript(gMainRoutineWork.currentOwner,
                   gShamanVillage_EnterDoorScript);
   wait(12);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(work->exit);
@@ -2479,7 +2479,7 @@ void ShamanVillage_EnterMoapasHouse(void) {
   if (Event_GetFlag(0x202)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Event_PlaySound(123);
+    Event_PlaySound(SE_MAP_EXIT);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Import_EventSetExitRequest(13);
@@ -2534,7 +2534,7 @@ void ShamanVillage_RestartTrial(void) {
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
       Actor_SetAnimationAndWait(15, 3);
-      Event_PlaySound(76);
+      Event_PlaySound(MUS_076);
       Event_ShowMessage(0x200f, 0);
       Event_SetFlag(0x200);
       ShamanVillage_ExplainTrialRules();

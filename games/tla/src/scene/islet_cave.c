@@ -310,7 +310,7 @@ loop:
   if (i <= 63)
     goto loop;
   index = *(s16 *)(work + 0x154) - 1;
-  Sound_Play(158);
+  Sound_Play(SE_DOOR_OPEN);
   index >>= 1;
   {
     s32 x = gData_020019ec[index].x;
@@ -513,10 +513,10 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   } else {
     Actor_SelectAnimation(actor, 3);
   }
-  Sound_Play(226);
+  Sound_Play(SE_LOG_PUSH);
   Actor_WaitForMove(leader);
   Actor_SelectAnimation(actor, 2);
-  Sound_Play(298);
+  Sound_Play(SE_298);
   Event_End();
 }
 

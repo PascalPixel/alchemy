@@ -136,11 +136,11 @@ void Func_02000408(void) {
   object->scaleY = 0x4000;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(151);
+  Sound_Play(SE_LIGHT_APPEAR);
   Actor_SetSpriteColor(Actor_GetById(8), 7);
   Actor_SetSpriteColor(Actor_GetById(15), 7);
   Event_Wait(20);
-  Sound_Play(190);
+  Sound_Play(SE_WARP);
   Actor_MoveToObject(15, 8);
   wait(1);
   Actor_SetMovementTypeById(8, gData_02000ea4);
@@ -195,7 +195,7 @@ void Func_020004e4(s32 a, s32 b) {
     }
   }
   GameFlag_Set(0x200);
-  Sound_Play(201);
+  Sound_Play(SE_ASCEND);
   Func_02000be0(1);
   Func_02000494();
 }
@@ -253,13 +253,13 @@ next:
     Actor_SetSpriteFlags(object, 1);
     Actor_SetMoveTarget(object, object->x, 0xfff80000, object->z);
     object->update = Func_020004b4;
-    Sound_Play(152);
+    Sound_Play(SE_JUMP);
     wait((Random16() * 4 >> 16) + 3);
   }
   if (++i <= 6)
     goto next;
   wait(40);
-  Sound_Play(198);
+  Sound_Play(SE_KOLIMA_BRIDGE_POST);
   i = 9;
 lower:
   {
@@ -285,7 +285,7 @@ land:
   if (++i <= 14)
     goto land;
   wait(3);
-  Sound_Play(188);
+  Sound_Play(SE_THUMP);
   wait(10);
   if (!GameFlag_Get(0xa9f) && shift > 0)
     Func_02000388();

@@ -92,7 +92,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 /// replenished!"
 void LemuriaSpring_DrinkFromSpring(void) {
   Message_ShowCentered((s32)MsgAndTheOthers, 1);
-  Event_PlaySound(0x7e);
+  Event_PlaySound(SE_RECOVERY);
   Party_RestoreHpPp(1);
 }
 
@@ -105,7 +105,7 @@ void LemuriaSpring_RiseAndFadeIn(void) {
   s32 *layer;
   s32 i;
 
-  Event_PlaySound(216);
+  Event_PlaySound(SE_BURST);
   layer = (s32 *)(map + 0x178);
   for (i = 0; i < 16; i++) {
     layer[3] -= PIXELS(1);
@@ -285,15 +285,15 @@ toss:
   Text_DrawMessageAsTiles(result, window, 0, 0);
   Text_DrawMessageAsTiles(result + 1, window, 0, 8);
   wait(5);
-  Event_PlaySound(116);
+  Event_PlaySound(SE_TOLBI_SPRING_TOSS_PROMPT);
   for (;;) {
     if (gInput.pressed & 1) {
-      Event_PlaySound(112);
+      Event_PlaySound(SE_MENU_CONFIRM);
       result = 0;
       break;
     }
     if (gInput.pressed & 2) {
-      Event_PlaySound(113);
+      Event_PlaySound(SE_MENU_CANCEL);
       result = -1;
       break;
     }
@@ -355,15 +355,15 @@ toss:
     Text_DrawMessageAsTiles(result, window, 0, 0);
     Text_DrawMessageAsTiles(result + 1, window, 0, 8);
     wait(5);
-    Event_PlaySound(116);
+    Event_PlaySound(SE_TOLBI_SPRING_TOSS_PROMPT);
     for (;;) {
       if (gInput.pressed & 1) {
-        Event_PlaySound(112);
+        Event_PlaySound(SE_MENU_CONFIRM);
         result = 0;
         break;
       }
       if (gInput.pressed & 2) {
-        Event_PlaySound(113);
+        Event_PlaySound(SE_MENU_CANCEL);
         result = -1;
         break;
       }
@@ -385,12 +385,12 @@ toss:
     if (choice == 0) {
       if (result != 4) {
         Party_AdjustCoins(gLemuriaSpring_CoinPrizes[result]);
-        Event_PlaySound(91);
+        Event_PlaySound(MUS_091);
         MessageArgument_Push(gLemuriaSpring_CoinPrizes[result], 5);
         Event_SetMessageId((s32)MsgYouWonCoin);
         Event_ShowMessage((s32)minusOne, 0);
       } else {
-        Event_PlaySound(113);
+        Event_PlaySound(SE_MENU_CANCEL);
         FieldEvent_Wait(10);
       }
     } else {
@@ -431,55 +431,55 @@ void LemuriaSpring_GivePrize(s32 a0) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(30);
-  Event_PlaySound(0x94);
+  Event_PlaySound(SE_BOSS_ROAR);
   FieldEvent_Wait(100);
   Actor_FaceDirection(0, FACING_NORTH, 0);
   FieldEvent_Wait(40);
   MapGrid_CopyCellsTo(0x52, 0x14, 0x46, 0, 3, 8);
   FieldEvent_Wait(3);
   MapGrid_CopyCellsTo(0x55, 0x14, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x58, 0x14, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x5b, 0x14, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x5e, 0x14, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x61, 0x14, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x64, 0x14, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x4f, 0x1d, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x52, 0x1d, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x55, 0x1d, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x58, 0x1d, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x5b, 0x1d, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x5e, 0x1d, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x61, 0x1d, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x64, 0x1d, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(70);
-  Event_PlaySound(0x7e);
+  Event_PlaySound(SE_RECOVERY);
   if (a0 == -1) {
     t52 = Actor_Get(0x1d);
     Actor_MoveToObject(0x1d, FIELD_AT(&gMainRoutineWork, s32, 532));
@@ -497,46 +497,46 @@ void LemuriaSpring_GivePrize(s32 a0) {
     FieldEvent_Wait(20);
   }
   MapGrid_CopyCellsTo(0x61, 0x1d, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x5e, 0x1d, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x5b, 0x1d, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x58, 0x1d, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x55, 0x1d, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x52, 0x1d, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x64, 0x14, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x61, 0x14, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x5e, 0x14, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x5b, 0x14, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x58, 0x14, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x55, 0x14, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x52, 0x14, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(0x4f, 0x14, 0x46, 0, 3, 8);
-  Event_PlaySound(0x9a);
+  Event_PlaySound(SE_CAST);
   FieldEvent_Wait(8);
   Event_End();
 }
@@ -900,7 +900,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
           toss->velocity.z = -deltaZ * speed / distance;
           toss->attractionFrames = toss->attractionFrames - 100;
         }
-        Event_PlaySound(301);
+        Event_PlaySound(SE_TOLBI_SPRING_OBSTACLE_HIT);
         nextMode = (obstacle->speedMode + 1) % 3;
         obstacle->reactionFrames = 36;
         obstacle->speedMode = nextMode;
@@ -1040,7 +1040,7 @@ s32 LemuriaSpring_RunToss(s32 side) {
   ride->hold = 0xffff;
   for (gLemuriaSpring_TossFrame = 0;; gLemuriaSpring_TossFrame++) {
     if (gLemuriaSpring_TossFrame == 50)
-      Event_PlaySound(300);
+      Event_PlaySound(SE_TOLBI_SPRING_TOSS);
     if (gLemuriaSpring_TossFrame == 16) {
       Actor_SetAnimation(gMainRoutineWork.currentOwner, 39);
       ride->hold = 0;

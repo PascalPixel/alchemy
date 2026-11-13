@@ -11,6 +11,7 @@
 /// (Izumo_StopThePartyToThankThem).
 
 #include "shared/tables.h"
+#include "sounds.h"
 #include "event_work.h"
 #include "types.h"
 #include "flags.h"
@@ -118,7 +119,7 @@ void Izumo_FinishMovingStone(void) {
    * GameFlag_Clear and Map_CopyCellAttributeRect, 27 of 135 instructions
    * differ in tla-en. */
   Actor_PlaceMovedBlock();
-  Sound_Play(132);
+  Sound_Play(SE_WATER);
   if (x == 20 && z == 9) {
     if (Flag_IsSet(FLAG_REVEALING)) {
       MapGrid_CopyCellPictureIndicesRect(36, 12, 22, 8, 3, 3);
@@ -257,7 +258,7 @@ void Izumo_EnterDoor(void) {
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  Sound_Play(123);
+  Sound_Play(SE_MAP_EXIT);
   Func_02000db0(*(s16 *)(work + 340));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -577,7 +578,7 @@ void Izumo_DescendIntoTheRuins(void) {
   Actor_WaitForMoveById(4);
   Actor_SetSpriteFlags(Actor_GetById(4), 0);
 #if TLA_PATCH_1 /* From patch 1. */
-  Sound_Play(129);
+  Sound_Play(SE_STAIRS_DOWN);
 #endif
   Actor_SetDestinationOffsetById(4, 0, 16);
   Actor_WaitForMoveById(4);

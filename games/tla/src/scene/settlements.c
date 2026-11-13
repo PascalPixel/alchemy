@@ -365,7 +365,7 @@ void Settlements_EnterDoor(void) {
   FieldActor_WaitForMoveById(4);
   Actor_SetAnimation(4, 10);
   FieldEvent_Wait(10);
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_SetExitRequest(next);
   Event_End();
 }
@@ -654,7 +654,7 @@ loop:
     MapGrid_CopyCellsTo(33, 30, 23, 14, 1, 2);
   else
     MapGrid_CopyCellsTo(27, 29, 40, 16, 1, 2);
-  Event_PlaySound(158);
+  Event_PlaySound(SE_DOOR_OPEN);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
@@ -716,7 +716,7 @@ void Settlements_CycleWaterColors(void) {
 void Settlements_StartWaterfall(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 514;
   FieldTask_AddFrame(Settlements_CycleWaterColors, 0x480);
-  Scene_QueueMusic(170);
+  Scene_QueueMusic(SE_170);
   Scroll_StartHBlank();
 }
 
@@ -988,7 +988,7 @@ void Settlements_SplashCrate(s32 id) {
   spawn.speed = 0x10000;
   spawn.acceleration = 0x10000;
   spawn.script = gSettlements_SmokeScript;
-  Event_PlaySound(154);
+  Event_PlaySound(SE_CAST);
   FieldEffect_Spawn(object->x, object->y, object->z, 0, 0, 0, 0x1c0000, &spawn);
 }
 

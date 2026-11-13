@@ -316,7 +316,7 @@
                                             n8, n9, n10, n11)                  \
   void name(s32 mode) {                                                        \
     if (mode == 1) {                                                           \
-      Event_PlaySound(133);                                                    \
+      Event_PlaySound(SE_IMPACT);                                              \
       MapGrid_CopyCellsLayered(n1, n2, n3, 3, n4, n5);                         \
       System_Wait(6);                                                          \
     }                                                                          \
@@ -328,7 +328,7 @@
 #define DEFINE_JUPITER_LIGHTHOUSE_CLOSE_DOOR(name, n1, n2, n3, n4, n5, n6, n7, \
                                              n8, n9, n10)                      \
   void name(void) {                                                            \
-    Event_PlaySound(134);                                                      \
+    Event_PlaySound(SE_HEAVY_IMPACT);                                          \
     MapGrid_CopyCellsLayered(n1, n2, n3, 3, n4, n5);                           \
     System_Wait(6);                                                            \
     MapGrid_CopyCellsLayered(n6, 42, n3, 3, n4, n5);                           \

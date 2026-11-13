@@ -343,12 +343,12 @@ void Func_020007a4(s32 unused, s32 id) {
   Event_Start();
   Event_ResolvePendingActions(0);
   actor->update = Actor_FlickerChild;
-  Sound_Play(78);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   wait(30);
-  Sound_Play(21);
+  Sound_Play(MUS_021);
   Func_02001ad8();
   Func_02001ba0(17);
-  Scene_QueueMusic(170);
+  Scene_QueueMusic(SE_170);
   i = 3;
   /* FAKEMATCH(wrapper): both flashes forwarded through ApojiiIslands_Flash,
    * which keeps each call's own constants; as direct calls, 10 of 188
@@ -465,7 +465,7 @@ void ApojiiIslands_EnterDoor(void) {
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  Event_PlaySound(123);
+  Event_PlaySound(SE_MAP_EXIT);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_CenterOnColumn_(gMainRoutineWork.currentOwner, 2, -6);
   FieldEvent_Wait(10);
@@ -625,7 +625,7 @@ void ApojiiIslands_InitializeRoom2(void) {
   Task_AddFrame(Func_020003e8, TASK_PASS_VBLANK);
   Rope_Initialize();
   Rope_Place(0, 0x200, 8, 9);
-  Scene_QueueMusic(170);
+  Scene_QueueMusic(SE_170);
   Scroll_StartHBlank();
   if (gMainRoutineWork.entrance == 3)
     Leader_RiseFromWater();

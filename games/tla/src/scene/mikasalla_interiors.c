@@ -215,9 +215,6 @@ void Func_02000454(void) {
   return;
 }
 
-/// Galahad introduces himself, asks whether the party knows Isaac, and warns
-/// that the three gladiators Isaac beat are seeking revenge (flags 0xa39 and
-/// 0x341; 0x340 if the party says it knows him).
 void MikasallaInteriors_MeetGalahad(void);
 
 /// Galahad, in the inn in a linked game, tells of Isaac's enemies once he has
@@ -241,6 +238,9 @@ void MikasallaInteriors_MindReadGalahad(void) {
   }
 }
 
+/// Galahad introduces himself, asks whether the party knows Isaac, and warns
+/// that the three gladiators Isaac beat are seeking revenge (flags 0xa39 and
+/// 0x341; 0x340 if the party says it knows him).
 void MikasallaInteriors_MeetGalahad(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);

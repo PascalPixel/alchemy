@@ -177,8 +177,6 @@ void NaribweInteriors_TalkToFortuneTeller(void) {
 #include "version.h"
 
 void *Unit_Get(s32 owner);
-/// An item of kind 6: a power shining beyond it, and where the story goes next.
-/// "I feel a shining power glowing beyond the item before me."
 void NaribweInteriors_ReadShiningItem(void);
 
 /// Object 10 steps to (x, 96) without turning, then dances (mode 5).
@@ -330,8 +328,6 @@ s32 Func_0200097c(void);
 s32 Func_020009a4(void);
 s32 Func_020009f8(void);
 s32 Func_02000a7c(void);
-/// The message telling where an unfound Djinni waits, or MsgInTheItem when none
-/// is left to find.
 u8 *NaribweInteriors_GetDjinniHint(void);
 
 /// A weapon: the foe that lies beyond it.
@@ -357,6 +353,8 @@ void NaribweInteriors_ReadWeapon(void) {
   }
 }
 
+/// An item of kind 6: a power shining beyond it, and where the story goes next.
+/// "I feel a shining power glowing beyond the item before me."
 void NaribweInteriors_ReadShiningItem(void) {
   u8 *message = MsgIFeelA;
 
@@ -591,6 +589,8 @@ s32 Func_02000ba0(s32 limit, s32 group, s32 *out) {
 
 #include "call.h"
 
+/// The message telling where an unfound Djinni waits, or MsgInTheItem when none
+/// is left to find.
 u8 *NaribweInteriors_GetDjinniHint(void) {
   s32 *hints = (s32 *)Value2((s32 (*)())HeapSlot_AllocEwram, 252, 320);
   s32 limits[4];

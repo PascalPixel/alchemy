@@ -49,9 +49,6 @@ extern struct Trigger gMadraInteriors_TriggersOnReturn[];
 void Event_End(void);
 void Sanctum_Run(s32 actor);
 void Inn_CheckIn(s32 slot, s32 actor);
-/// The party enters the jail as Piers is questioned, and sees him drive off an
-/// interrogator with Psynergy.
-/// "Admit it! You're one of the Champa, aren't you, Piers?"
 void MadraInteriors_InterrogatePiers(void);
 
 #include "version.h"
@@ -403,6 +400,9 @@ s32 Func_020007c8(struct Actor *object) {
   return 0;
 }
 
+/// The party enters the jail as Piers is questioned, and sees him drive off an
+/// interrogator with Psynergy.
+/// "Admit it! You're one of the Champa, aren't you, Piers?"
 void MadraInteriors_InterrogatePiers(void) {
   s32 i;
   struct Actor *object0;

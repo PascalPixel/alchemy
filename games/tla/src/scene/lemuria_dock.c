@@ -46,12 +46,7 @@ extern struct WarpTarget gLemuriaDock_HouseDoor;
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
-/// The party leader walks into the door `warp` names, which opens with its cell
-/// animation, and leaves by exit `door`; mode 0 lines the leader up with the
-/// door first.
 void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode);
-/// A palette task: every 8 frames it turns colours 5 to 9 and 13 to 15 of
-/// background palette 11 round by one.
 void LemuriaDock_CyclePalette(void);
 void Event_End(void);
 #include "event_inline.h"
@@ -150,6 +145,9 @@ void LemuriaDock_AskSettingOff(void) {
   }
 }
 
+/// The party leader walks into the door `warp` names, which opens with its cell
+/// animation, and leaves by exit `door`; mode 0 lines the leader up with the
+/// door first.
 void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode) {
   s32 id;
 
@@ -176,6 +174,8 @@ void LemuriaDock_EnterHouse(s32 door) { LemuriaDock_EnterDoor(&gLemuriaDock_Hous
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
+/// A palette task: every 8 frames it turns colours 4 to 9 and 12 to 15 of
+/// background palette 11 round by one.
 void LemuriaDock_CyclePalette(void) {
   if ((gFrameCount & 7) == 0) {
     volatile u16 *palette;

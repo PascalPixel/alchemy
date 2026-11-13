@@ -88,9 +88,6 @@ void *Scene_GetPlacements(void) {
 
 void Map_SetLayerEntryFlag(s32 a);
 
-/// The leader, already beside a ladder top, turns north, steps onto the rungs
-/// and climbs down out of sight, then leaves by exit 12 from the village or
-/// exit 3 from the tunnels.
 void Mikasalla_ClimbDownLadder(void);
 
 extern u8 MsgFieldAreYouLookingForSomeone[];
@@ -248,6 +245,9 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
+/// The leader, already beside a ladder top, turns north, steps onto the rungs
+/// and climbs down out of sight, then leaves by exit 12 from the village or
+/// exit 3 from the tunnels.
 void Mikasalla_ClimbDownLadder(void) {
   s32 exit;
   s32 drop;

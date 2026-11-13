@@ -32,6 +32,7 @@ void System_Initialize(void) {
   Dma_Fill32(0, (void *)IWRAM_START, 30 * 1024);
   Heap_Initialize();
   System_InstallIwramAndIrqs();
+  // UB: the count and its pad are cleared with one word store
 #ifdef UBFIX
   gIoWriteQueue.count = 0;
   gIoWriteQueue.pad = 0;
@@ -171,10 +172,17 @@ UNUSED void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
 
   entryCount = byteLength >> 1;
   entryIndex = 1;
+#ifndef UBFIX
+  entries++;
+#endif
   if (entryIndex < entryCount) {
     u32 nextMarkerMask = 0xf800;
     u32 payloadMask = 0x7ff;
     u32 currentMarkerMask = 0xf000;
+#ifndef UBFIX
+    // UB: temporarily forms a pointer before the start of the code block.
+    entries -= 2;
+#endif
     // Only adjacent halfwords with both BL marker patterns are relocated.
     do {
       u16 currentEntry;
@@ -182,8 +190,15 @@ UNUSED void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
       u32 nextMarkerBits;
       u32 currentMarkerBits;
 
+#ifdef UBFIX
       nextEntry = entries[1];
+#else
+      nextEntry = entries[2];
+#endif
       nextMarkerBits = nextEntry & nextMarkerMask;
+#ifndef UBFIX
+      entries++;
+#endif
       if (nextMarkerBits == nextMarkerMask) {
         currentEntry = entries[0];
         currentMarkerBits = currentEntry & nextMarkerBits;
@@ -202,7 +217,9 @@ UNUSED void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
           entries[1] = adjustedNext;
         }
       }
+#ifdef UBFIX
       entries++;
+#endif
       entryIndex++;
     } while (entryIndex < entryCount);
   }

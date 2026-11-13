@@ -23,16 +23,17 @@ void String_FormatHex(u32 value) {
 /// (a space or '-') and its decimal digits, right-aligned. Called by
 /// DebugText_PrintDecimal and the Djinn preview's number text.
 void String_FormatDecimal(s32 number) {
-  const u32 *placeValue = (const u32 *)gString_PowersOfTen;
+  const u32 *powers = (const u32 *)gString_PowersOfTen;
+  s8 sign = ' ';
   u8 *output = gNumberBuffer;
   s32 places;
+  u32 power;
   s32 digit;
 #ifdef UBFIX
   u32 magnitude = number;
 #else
   s32 magnitude = number;
 #endif
-  s8 sign = ' ';
 
   if (number < 0) {
 #ifdef UBFIX
@@ -43,18 +44,27 @@ void String_FormatDecimal(s32 number) {
 #endif
     sign = '-';
   }
-  // A space for each power of ten above the number, then its sign, then a
-  // digit for each power of ten left and the units.
-  for (places = 9; places != 0 && magnitude < *placeValue; places--) {
-    *output++ = ' ';
-    placeValue++;
+  // A space for each power of ten above the number
+  power = *powers++;
+  places = 9;
+  if (magnitude < power) {
+    do {
+      places--;
+      *output++ = ' ';
+      if (places == 0)
+        break;
+      power = *powers++;
+    } while (magnitude < power);
   }
   *output++ = sign;
-  for (; places != 0; places--) {
-    digit = magnitude / *placeValue;
+  // Then its sign, a digit for each power of ten left and the units
+  powers--;
+  while (places != 0) {
+    power = *powers++;
+    digit = magnitude / power;
     *output++ = digit + '0';
-    magnitude -= digit * *placeValue;
-    placeValue++;
+    magnitude -= digit * power;
+    places--;
   }
   output[0] = magnitude + '0';
   output[1] = 0;
@@ -94,14 +104,19 @@ void *memcpy(void *destination, const void *source, unsigned long size) {
 void DebugText_Print(const u8 *text) {
   if (gDebugTextEnabled != 0) {
     u16 *cursor = gDebugTextCursor;
-    u32 c = *text++;
+    u32 c = *text;
     u32 count = 0;
+
+    text++;
 
     if (c != 0) {
       // The end of the 32 by 20 entry screen wraps to its start.
+      u32 attribute = WINDOW_PALETTE << 12;
+      u16 *end = (u16 *)(BG_SCREEN_BLOCK(4) + 32 * 20 * 2);
+
       do {
-        *cursor++ = c | WINDOW_PALETTE << 12;
-        if (cursor == (u16 *)(BG_SCREEN_BLOCK(4) + 32 * 20 * 2))
+        *cursor++ = c | attribute;
+        if (cursor == end)
           cursor = (u16 *)BG_SCREEN_BLOCK(4);
         if (++count > 31)
           break;

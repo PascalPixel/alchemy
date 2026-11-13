@@ -131,7 +131,7 @@ void wait(s32 frames) {
       // CPU load: the scanline the frame's work ended on, counted from the
       // last VBlank, plus 256 for each VBlank it overran; the peak is held
       // for 30 frames
-      line = REG_VCOUNT;
+      line = *(u16 *)&REG_VCOUNT;
       if (line >= DISPLAY_HEIGHT)
         line -= DISPLAY_HEIGHT;
       else
@@ -248,21 +248,41 @@ void wait(s32 frames) {
     }
   }
   // Put the caller's stack back
-  if (gSavedStackSize != 0) {
-    /* FAKEMATCH(barrier): the read also takes the old base as an input
-     * ("+r"), which the asm never reads, keeping base in sl and the stack
-     * frame at 8 bytes; as an output only ("=r"), 134 of 403 instructions
-     * differ in tbs-en. */
-    CAMELOT_ASM("read the hardware stack pointer for its restore copy")
-    __asm__ volatile("mov %0, sp" : "+r"(base));
-    base -= gSavedStackSize;
-    CAMELOT_ASM(
-        "restore the hardware stack pointer after the proven stack copy")
-    __asm__ volatile("mov sp, %0" : : "r"(base) : "memory");
-    Dma_Set(gSavedStack, base, DMA_COPY_WORDS(gSavedStackSize >> 2), REG_DMA3);
-    while (DMA3->control & (DMA_ENABLE << 16))
-      ;
-    gSavedStackSize = 0;
+  {
+    u32 *size = &gSavedStackSize;
+
+    if (*size) {
+      /* FAKEMATCH(barrier): the read also takes the old base as an input
+       * ("+r"), which the asm never reads, keeping base in sl and the stack
+       * frame at 8 bytes; as an output only ("=r"), 134 of 403 instructions
+       * differ in tbs-en. */
+      CAMELOT_ASM("read the hardware stack pointer for its restore copy")
+      __asm__ volatile("mov %0, sp" : "+r"(base));
+      /* FAKEMATCH(volatile): the size reread through a volatile pointer, a
+       * load apart from the test's; as *size, 17 of 403 instructions differ
+       * in tbs-en. */
+      base -= *(volatile u32 *)size;
+      sp = base;
+      CAMELOT_ASM(
+          "restore the hardware stack pointer after the proven stack copy")
+      __asm__ volatile("mov sp, %0" : : "r"(sp) : "memory");
+      /* FAKEMATCH(dead): size cleared and nextSize set under complementary
+       * tests, which end the CSE block so the size address reloads; as
+       * *size >> 2 through size, 4 of 403 instructions differ in tbs-en. */
+      size = NULL;
+      {
+        u32 *nextSize = NULL;
+
+        if (sp)
+          nextSize = &gSavedStackSize;
+        if (!sp)
+          nextSize = &gSavedStackSize;
+        Dma_Set(gSavedStack, base, DMA_COPY_WORDS(*nextSize >> 2), REG_DMA3);
+      }
+      while (DMA3->control & (DMA_ENABLE << 16))
+        ;
+      gSavedStackSize = 0;
+    }
   }
 }
 

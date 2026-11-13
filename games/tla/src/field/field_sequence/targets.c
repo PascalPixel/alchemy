@@ -3,8 +3,10 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
-
-s32 ArcTan2(s32 y, s32 x);
+#include "module/field/field.h"
+#include "module/field/field_sequence.h"
+#include "module/field/map.h"
+#include "module/system/system.h"
 
 /// Picks the object nearest object id, under 32 pixels away and 48 pixels in
 /// height. Distances to ids above 63 count double and to objects with
@@ -94,22 +96,13 @@ struct DescriptorEntry *Field_GetPsynergyTargetRule(s32 id) {
 /// made positive, when that is within the id's table range (pixels), else -1.
 s32 Func_080cda84(s32 id, struct Actor *actor, s32 *position) {
   struct DescriptorEntry *entry = Field_GetPsynergyTargetRule(id);
-  s32 height = MapGrid_GetTerrainHeightAboveFar(
+  s32 height = MapGrid_GetTerrainHeightAboveFar__field_sequence(
       position[0], position[2], actor->terrainId, actor->terrainHeight);
 
   if (ABS(height) <= entry->range << 16)
     return ABS(height);
   return -1;
 }
-
-// How far, how high and how wide of the caster's facing an animation reaches
-// (gData_080eff28, one row per animation, ended by -1).
-struct NearbyRule {
-  s16 animation;
-  s16 range;  // pixels, inclusive
-  s16 height; // pixels above or below
-  s16 width;  // of the facing, in 1/65536 turns
-};
 
 // The Lift-style animation measures height by the object's footing, not y.
 #define ANIMATION_MEASURES_FOOTING 18
@@ -212,9 +205,6 @@ s32 BattleEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-struct Actor *Func_080eaf28(s32 *position, s32 mode);
-s32 Func_08020210(struct Actor *object, s32 *position);
-
 /// Whether the object 16 pixels in front of the current owner, along its
 /// facing rounded to a quarter turn, can be pushed on by 16 pixels: 1 when
 /// nothing solid stands on the cell beyond it or above it and its terrain
@@ -274,8 +264,6 @@ s32 Func_080cdc74(void) {
 }
 
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
-
-void Event_NoOp(void);
 
 void Func_080cdd80(void) {
   s32 position[3];

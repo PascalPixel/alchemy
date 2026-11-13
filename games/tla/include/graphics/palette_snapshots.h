@@ -36,4 +36,13 @@ s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count);
 void PaletteQueue_Stop(void);
 void PaletteQueue_StepCycles(void);
 
+struct PaletteCycle {
+  u16 *source;
+  s16 position;
+  u16 timer;
+  s16 delay;
+  s16 count;
+  u16 colors[16];
+};
+
 #endif

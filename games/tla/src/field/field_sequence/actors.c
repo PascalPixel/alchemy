@@ -5,6 +5,9 @@
 
 #include "../field_sequence_internal.h"
 #include "actor_view.h"
+#include "module/field/field_sequence.h"
+#include "module/field/object.h"
+#include "module/tla.h"
 
 /// Picks the sprite a scene placement's character id shows: character 8
 /// becomes 9 on the world map and 11 elsewhere, one more once flag 0x8df is
@@ -27,44 +30,6 @@ s32 Party_RemapCharacterIdByFlags(s32 character) {
 }
 
 void Func_080ca6e4(void) {}
-
-// The field's event work (heap slot 0x6c): the placement tables spawned so
-// far, the actors by index and the field mode.
-struct FieldStepWork {
-  struct ActorPlacement *tables[4];
-  const struct Trigger *triggers;
-  struct Actor *actors[66];
-  u8 unk11c[0x6e];
-  s8 mode;
-};
-
-struct SpawnSpritePart {
-  u8 unk00[2];
-  u16 frame;
-};
-
-// The Lost Age's sprite object as this function reads it.
-struct SpawnSprite {
-  u8 unk00[12];
-  s32 scale;
-  u8 slot;
-  u8 displayFlags;
-  u8 unk12[7];
-  u8 unk19;
-  u8 unk1a;
-  u8 partCount;
-  u8 unk1c[12];
-  struct SpawnSpritePart *parts[1];
-};
-
-// The object fields this function sets as an actor's home cell.
-struct SpawnActor {
-  u8 unk00[100];
-  s16 homeX;
-  s16 homeZ;
-};
-
-struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 
 void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
   struct FieldStepWork *work = Ram_HeapSlots->eventWork;
@@ -208,16 +173,6 @@ void Actor_ReleaseAtIndex(u32 actorIndex) {
   }
 }
 
-// The event work as this function reads it: the four event tables it clears
-// and the leader's two-row placement table at 0x1ec.
-struct EventWorkPlacements {
-  const struct ActorPlacement *tables[4];
-  u8 unk010[0x1dc];
-  struct ActorPlacement leader[2];
-};
-
-extern const struct ActorPlacement gData_080f21d4[];
-
 u8 *ResourceMetadata_RegisterFar(void *resource, s32 id);
 
 void Func_080caa4c(s32 table) {
@@ -332,24 +287,6 @@ s32 ObjectTable_FindLastActiveId(void) {
     last = -1;
   return last;
 }
-
-struct SceneRegionEntry {
-  s16 id;
-  s16 flag;
-  u8 unk04[4];
-  s32 x;
-  u8 unk0c[4];
-  s32 z;
-  u8 unk14[4];
-};
-
-struct MapViewBounds {
-  u8 unk000[0xec];
-  s32 minX;
-  s32 minY;
-  s32 maxX;
-  s32 maxY;
-};
 
 void Scene_AssignViewFlags(struct SceneRegionEntry *entry) {
   struct MapViewBounds *view = (struct MapViewBounds *)Ram_HeapSlots->mapWork;

@@ -1,5 +1,7 @@
 #include "objcmd.h"
 #include "types.h"
+#include "module/field/object.h"
+#include "resource_ids.h"
 
 //--------------------------------------------------------------------------
 // Field object tables: the animation picture for each facing, the tile
@@ -146,43 +148,6 @@ const s32 gData_0802ed28[] = {
     SC_WAIT(60),
     SC_FREE,
 };
-
-extern char ResourceId_WorldMapPaletteA;
-extern char ResourceId_DefaultMapAnimation;
-extern char ResourceId_DefaultCellPictureAttributes;
-extern char ResourceId_WorldMapTilesA1;
-extern char ResourceId_WorldMapTilesA2;
-extern char ResourceId_WorldMapTilesA3;
-extern char ResourceId_WorldMapTilesA4;
-extern char ResourceId_WorldMapTilesA5;
-extern char ResourceId_WorldMapTilesA6;
-extern char ResourceId_WorldMapPaletteC;
-extern char ResourceId_Data1AD;
-extern char ResourceId_Data1AE;
-extern char ResourceId_WorldMapTilesC1;
-extern char ResourceId_WorldMapTilesC2;
-extern char ResourceId_WorldMapTilesC3;
-extern char ResourceId_WorldMapTilesC4;
-extern char ResourceId_WorldMapTilesC5;
-extern char ResourceId_WorldMapTilesC6;
-extern char ResourceId_WorldMapPaletteB;
-extern char ResourceId_Data1A4;
-extern char ResourceId_Data1A5;
-extern char ResourceId_WorldMapTilesB1;
-extern char ResourceId_WorldMapTilesB2;
-extern char ResourceId_WorldMapTilesB3;
-extern char ResourceId_WorldMapTilesB4;
-extern char ResourceId_WorldMapTilesB5;
-extern char ResourceId_WorldMapTilesB6;
-extern char ResourceId_WorldMapPaletteD;
-extern char ResourceId_Data1B6;
-extern char ResourceId_Data1B7;
-extern char ResourceId_WorldMapTilesD1;
-extern char ResourceId_WorldMapTilesD2;
-extern char ResourceId_WorldMapTilesD3;
-extern char ResourceId_WorldMapTilesD4;
-extern char ResourceId_WorldMapTilesD5;
-extern char ResourceId_WorldMapTilesD6;
 
 //--------------------------------------------------------------------------
 // World map graphics in four sets, each a palette, two more resources and

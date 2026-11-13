@@ -3,6 +3,9 @@
 // Part of screens.c.
 
 #include "../screens_internal.h"
+#include "module/system/system.h"
+#include "module/window/screens.h"
+#include "module/window/window.h"
 
 // The Japanese name entry screen enters kana, whose voicing marks (dakuten
 // and handakuten) are characters of their own that join the kana before them.
@@ -239,24 +242,7 @@ void Text_DrawPaddedLabel(s32 output, u8 *input) {
 #define IS_KANA_MARK(c)                                                        \
   ((u8)((c) - TEXT_MARK_VOICED) <= TEXT_MARK_SEMIVOICED - TEXT_MARK_VOICED)
 
-struct NameCursorMotion {
-  struct WindowSprite *anchor;
-  u16 x;
-  u16 y;
-  s16 targetX;
-  s16 targetY;
-  s8 active;
-  s8 kind;
-};
-
-union NameCursor {
-  struct WindowSprite *sprite;
-  struct NameCursorMotion cursor;
-};
-
 extern char ResourceId_UiIconTiles, ResourceId_UiFixedBlockATiles;
-extern const s8 gNameEntry_CaretWave[];
-extern const u8 gNameEntry_KeyboardTilemap[];
 #if LANGUAGE == LANGUAGE_JAPANESE
 extern const u8 gNameEntry_AlternateKeyboardTilemap[];
 
@@ -271,13 +257,9 @@ extern u8 gNameEntry_EndKeyLabel[];
 
 #endif
 
-void Window_LoadGraphics(void);
 void Portrait_OpenWindow(s32 member, s32 x, s32 y, s32 side);
 void Func_08108048(struct NameCursorMotion *cursor, s32 x, s32 y);
 void Func_08108040(struct NameCursorMotion *cursor, s32 x, s32 y, s32 speed);
-void Func_08108030(struct NameCursorMotion *cursor);
-void Func_08108038(struct NameCursorMotion *cursor);
-void Portrait_CloseWindow(s32 member);
 
 // The Japanese form enters kana: a dakuten or handakuten joins the kana before
 // it (Func_08044488 refuses a mark that cannot), takes a byte but is no

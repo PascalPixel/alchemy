@@ -1,6 +1,8 @@
 #include "ride.h"
 #include "event_inline.h"
 #include "field.h"
+#include "module/scene/mars_lighthouse_entrance.h"
+#include "module/scene/scene.h"
 
 s32 Func_02000038(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);
@@ -29,13 +31,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "room.h"
 
-extern char SceneId_Ov6aaRoom1;
-extern char SceneId_Ov6aaRoom2;
-extern char SceneId_Ov6aaRoom3;
-extern char SceneId_Ov6aaRoom4;
-extern char SceneId_Ov6aaRoom5;
-extern char SceneId_Ov6aaRoom6;
-extern char SceneId_Ov6aaRoom7;
 extern const u8 gData_02005af4[];
 extern const u8 gData_02005b0c[];
 extern const u8 gData_02005b54[];
@@ -44,14 +39,6 @@ extern const u8 gData_02005d4c[];
 extern const u8 gData_02005eb4[];
 extern const u8 gData_02005f74[];
 extern const u8 gData_020060c4[];
-
-void Func_02000414(s32 id);
-void Func_02000798(void);
-void Func_020019c4(void);
-void Func_020046b4(void);
-void Func_02004718(void);
-void Func_02004dc8(void);
-void Func_02004dd0(void);
 
 s32 Func_02000070(void) {
   Func_0200246c(0, 65);

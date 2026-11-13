@@ -9,32 +9,18 @@
 #include "call.h"
 #include "scene_ids.h"
 #include "field/event_work.h"
-
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
-struct MagmaRockEffectOptions {
-  s32 kind;
-  s32 palette;
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk10[8];
-  u16 id;
-  u8 unk1a[2];
-  const void *data;
-  s32 unk20;
-  void (*update)();
-};
+#include "event_work.h"
+#include "field.h"
+#include "module/field/object.h"
+#include "module/scene/magma_rock.h"
 
 struct MagmaRockEventWork {
   u8 unk000[0x1ac];
   s32 field1ac;
 };
 
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotion();
-void Event_Start(void);
 void Map_CenterOnFollowedPoint(void);
 void Func_02003af4(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -153,8 +139,6 @@ struct LayeredSprite {
   struct AnimationEntry *entries[4];
 };
 
-void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Func_02003a54(struct Actor *object, s32 a);
 void Func_020015e4(void);
 void Func_02001528(void);
 
@@ -206,27 +190,33 @@ void Func_02002518(u16 id) {
   BuildParts(Actor_Get(id)->watchedObject);
 }
 
-extern u8 gData_02003d9e[];
-extern u8 gData_02003d98[];
-extern s16 gData_02003dba[];
-extern u8 gData_02003db2[];
-extern u8 gData_02003dac[];
-extern u8 gData_02003dd2[];
-extern u8 gData_02003dc4[];
-extern u8 gData_02003de4[];
-extern u8 gData_02003dd6[];
-extern u8 gData_02003dee[];
-extern u8 gData_02003de8[];
-extern u8 gData_02003e02[];
+/* VIEW(s22ac): variable gData_02003d9e as u8 gData_02003d9e[]; module/scene/magma_rock.h has s16 gData_02003d9e[]. */
+extern u8 gData_02003d9e__s22ac[] __asm__("gData_02003d9e");
+/* VIEW(s22ac): variable gData_02003d98 as u8 gData_02003d98[]; module/scene/magma_rock.h has s16 gData_02003d98[]. */
+extern u8 gData_02003d98__s22ac[] __asm__("gData_02003d98");
+/* VIEW(s22ac): variable gData_02003db2 as u8 gData_02003db2[]; module/scene/magma_rock.h has s16 gData_02003db2[]. */
+extern u8 gData_02003db2__s22ac[] __asm__("gData_02003db2");
+/* VIEW(s22ac): variable gData_02003dac as u8 gData_02003dac[]; module/scene/magma_rock.h has s16 gData_02003dac[]. */
+extern u8 gData_02003dac__s22ac[] __asm__("gData_02003dac");
+/* VIEW(s22ac): variable gData_02003dd2 as u8 gData_02003dd2[]; module/scene/magma_rock.h has s16 gData_02003dd2[]. */
+extern u8 gData_02003dd2__s22ac[] __asm__("gData_02003dd2");
+/* VIEW(s22ac): variable gData_02003dc4 as u8 gData_02003dc4[]; module/scene/magma_rock.h has s16 gData_02003dc4[]. */
+extern u8 gData_02003dc4__s22ac[] __asm__("gData_02003dc4");
+/* VIEW(s22ac): variable gData_02003de4 as u8 gData_02003de4[]; module/scene/magma_rock.h has s16 gData_02003de4[]. */
+extern u8 gData_02003de4__s22ac[] __asm__("gData_02003de4");
+/* VIEW(s22ac): variable gData_02003dd6 as u8 gData_02003dd6[]; module/scene/magma_rock.h has s16 gData_02003dd6[]. */
+extern u8 gData_02003dd6__s22ac[] __asm__("gData_02003dd6");
+/* VIEW(s22ac): variable gData_02003dee as u8 gData_02003dee[]; module/scene/magma_rock.h has s16 gData_02003dee[]. */
+extern u8 gData_02003dee__s22ac[] __asm__("gData_02003dee");
+/* VIEW(s22ac): variable gData_02003de8 as u8 gData_02003de8[]; module/scene/magma_rock.h has s16 gData_02003de8[]. */
+extern u8 gData_02003de8__s22ac[] __asm__("gData_02003de8");
+/* VIEW(s22ac): variable gData_02003e02 as u8 gData_02003e02[]; module/scene/magma_rock.h has s16 gData_02003e02[]. */
+extern u8 gData_02003e02__s22ac[] __asm__("gData_02003e02");
 s32 Func_02000668();
 void Func_02000ee4();
-void Func_02003c0c();
 s32 Func_020006cc();
-void Func_02002d08(const u16 *table);
-void Func_02003bec();
-void Func_02003bf4();
-void Func_02003be4();
-void Func_02003bfc();
+/* VIEW(s22ac): routine Func_02003bfc as void Func_02003bfc(); module/scene/mars_lighthouse_star_room.h has void Func_02003bfc(struct CellTarget *table, struct CellTargetEntry *entry). */
+extern void Func_02003bfc__s22ac() __asm__("Func_02003bfc");
 void Func_0200079c();
 
 s32 Scene_Initialize(void) {
@@ -253,14 +243,14 @@ s32 Scene_Initialize(void) {
     Actor_GetById(work->currentOwner)->priorityFlags |= value1;
     Actor_GetById(8)->priorityFlags |= value1;
     Actor_GetById(10)->priorityFlags |= value1;
-    Func_02000668(gData_02003d9e);
+    Func_02000668(gData_02003d9e__s22ac);
     if (Event_GetFlag(0x109) == 0)
       Call3((void (*)())Func_02000ee4, 21, 13, 0);
     if (Event_GetFlag(0x8d5))
       Actor_SetPosition(8, 0x1080000, 0x1680000);
     if (Event_GetFlag(0x8d6))
       Actor_SetPosition(10, 0xf80000, 0x1980000);
-    other = (s32)gData_02003d98;
+    other = (s32)gData_02003d98__s22ac;
     value2 = 78;
     Func_02003c0c(other);
     MapGrid_CopyCellAttributes(98, 21, 4, 3, value2, 21);
@@ -290,12 +280,12 @@ s32 Scene_Initialize(void) {
       s32 id;
 
       Func_02002d08(gData_02003dba);
-      Func_02000668(gData_02003db2);
+      Func_02000668(gData_02003db2__s22ac);
       Func_02003bec();
       Call3((void (*)())Func_02003bf4, 0, 11, 12);
       if (Event_GetFlag(0x8d7))
         Actor_SetPosition(15, 0x1b80000, 0x2180000);
-      Func_02003c0c(gData_02003dac);
+      Func_02003c0c(gData_02003dac__s22ac);
       id = *entrance;
       if (id == 1) {
         if (Event_GetFlag(0x109) == 0) {
@@ -336,8 +326,8 @@ s32 Scene_Initialize(void) {
         }
         if (Event_GetFlag(0x8d8))
           Actor_SetPosition(16, 0x3780000, 0x2380000);
-        Func_02003c0c(gData_02003dd2);
-        Func_02000668(gData_02003dc4);
+        Func_02003c0c(gData_02003dd2__s22ac);
+        Func_02000668(gData_02003dc4__s22ac);
         if (Event_GetFlag(0x109) == 0) {
           actor = Actor_GetById(15);
           other = 0x10000;
@@ -375,12 +365,12 @@ s32 Scene_Initialize(void) {
       } else if (*entrance <= 12) {
         if (Event_GetFlag(0x8d9))
           Actor_SetPosition(8, 0x1080000, 0x2480000);
-        rise = (s32)gData_02003de4;
+        rise = (s32)gData_02003de4__s22ac;
         Func_02003c0c(rise);
         Func_020006cc(rise);
         Func_02003be4();
-        Call4((void (*)())Func_02003bfc, 0, 0x250, 14, 13);
-        Func_02000668(gData_02003dd6);
+        Call4((void (*)())Func_02003bfc__s22ac, 0, 0x250, 14, 13);
+        Func_02000668(gData_02003dd6__s22ac);
         if (Event_GetFlag(0x109) == 0) {
           actor = Actor_GetById(10);
           other = 0x10000;
@@ -404,7 +394,7 @@ s32 Scene_Initialize(void) {
           goto move;
         }
       } else {
-        Func_02000668(gData_02003dee);
+        Func_02000668(gData_02003dee__s22ac);
         if (Event_GetFlag(0x109) == 0) {
           actor = Actor_GetById(13);
           actor->x += 0x10000;
@@ -418,7 +408,7 @@ s32 Scene_Initialize(void) {
           Actor_SetPosition(8, 0x2880000, 0x2580000);
         if (Event_GetFlag(0x8db))
           Actor_SetPosition(9, 0x2380000, 0x2680000);
-        Func_0200079c(gData_02003de8);
+        Func_0200079c(gData_02003de8__s22ac);
         if (Event_GetFlag(0x250))
           MapGrid_CopyCellAttributes(121, 48, 1, 3, 123, 48);
         if (Event_GetFlag(0x251))
@@ -453,7 +443,7 @@ s32 Scene_Initialize(void) {
     }
     leader = &work->currentOwner;
     Actor_GetById(*leader)->priorityFlags |= 32;
-    Func_02000668(gData_02003e02);
+    Func_02000668(gData_02003e02__s22ac);
     if (work->entrance <= 2) {
       if (Event_GetFlag(0x109) == 0) {
         actor = Actor_GetById(*leader);
@@ -473,9 +463,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 extern u8 gMapShapeGrid[];
 
-s32 Func_02003c04(struct Actor *object);
 s32 Func_02003adc(s32 layer, s32 x, s32 z);
-void Func_02003b3c(s32 id);
 u8 Func_02003c24(s32 layer, s32 shape, s32 height);
 
 void Func_02002d08(const u16 *table) {
@@ -530,10 +518,6 @@ done:
   }
 }
 
-s32 Func_02003b8c(void);
-struct Actor *Func_02003c2c(s32 *position, s32 flags);
-void Func_020034ac(s32 mode);
-void Func_02003784(s32 level, s32 layer);
 void Func_020035e0(void);
 
 void Func_02002e30(u16 *list) {
@@ -607,13 +591,6 @@ test:
     goto body;
 }
 
-struct Func_02002fc4_Entry {
-  u16 id;
-  u16 flag;
-};
-
-void Func_020036f8(s32 a, s32 b, s32 c);
-
 void Func_02002fc4(struct Func_02002fc4_Entry *entry, s32 id) {
   struct Actor *target;
   s32 flag;
@@ -664,7 +641,6 @@ void Func_020030a4(s32 id) {
 // Places the listed actors on their cells.
 
 void Actor_MoveToObject(s32 id, s32 owner);
-void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 
 /// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell

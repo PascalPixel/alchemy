@@ -41,6 +41,10 @@
 #include "field_sprite.h"
 #include "facing_object.h"
 #include "actor_view.h"
+#include "flag_call.h"
+#include "gamepak/far_call/window.h"
+#include "module/field/field.h"
+#include "module/system/system.h"
 
 // The object's functions its parts call before their definitions.
 struct FacingObject;
@@ -49,22 +53,11 @@ struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z);
 void Actor_MoveToObject(u32 objectId, u32 otherId);
 void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 frames);
-void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first,
-                                          struct FacingObject *second);
-void Actor_ApplyIndexedChildValue(struct Actor *object);
 void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 
 // Outside routines the parts had declared each in its own way, with the one
 // type they share (the definition's, where it is C).
 struct Actor;
 struct ActionDescriptor;
-s32 GameFlag_Test(s32 flag);
-void FieldMessage_ShowFar(s32 message, s32 mode);
-void MessageArgument_PushFar(s32 value, s32 slot);
-void Sound_PlayFar(s32 cue);
-s32 ArcTan2(s32 y, s32 x);
-struct Actor *ObjectTable_Get(u32 objectId);
-s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position);
-void BattleEffect_SelectBattleCue(s32 zone, s32 slot);
 
 #endif

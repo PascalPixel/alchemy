@@ -3,25 +3,13 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "event.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/field/radial.h"
+#include "scene_call.h"
 
 #define SLOT_MAX 24
-
-struct SpinObject {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 floor;
-  s32 fall;
-  u8 unk1c[0x1c];
-  s32 targetX;
-  u8 unk3c[0x19];
-  u8 motionFlags;
-  u8 unk56[0xe];
-  s16 timer;
-  u8 unk66[6];
-  void (*update)(struct SpinObject *);
-};
 
 struct SpinScene {
   u8 unk00[0x10];
@@ -32,35 +20,17 @@ struct SpinScene {
   struct FieldParticle slots[SLOT_MAX];
 };
 
-struct SpinVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-void Event_Start(void);
-void Camera_MoveWithinMapBounds(s32, s32, s32, s32);
-void BattleEffect_InitializeSharedScene(void);
-void wait(s32 frames);
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
-void Sound_PlayFar(s32 cue);
 /* VIEW(launch): routine Animation_ApplyChildValuesFar as void Animation_ApplyChildValuesFar(void *object, s32 value); actor_view.h has void Animation_ApplyChildValuesFar(struct Actor *, u32). */
 extern void Animation_ApplyChildValuesFar__launch(void *object, s32 value) __asm__("Animation_ApplyChildValuesFar");
 /* VIEW(launch): routine Actor_SetSingleChildFlagsFar as void Actor_SetSingleChildFlagsFar(void *object, s32 flags); actor_view.h has void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags). */
 extern void Actor_SetSingleChildFlagsFar__launch(void *object, s32 flags) __asm__("Actor_SetSingleChildFlagsFar");
 /* VIEW(launch): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct SpinVector *position); age_and_cue has void Camera_WorldToScreen(struct EffectVector *pos). */
 extern void Camera_WorldToScreen__launch(struct SpinVector *position) __asm__("Camera_WorldToScreen");
-void Camera_WorldToScreen(struct EffectVector *position);
-void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x,
-                              s32 z);
-u32 Random16(void);
-void BattleEffect_PrepareBufferInterpolation(void);
 void Actor_ApplyRandomChildValues(struct SpinObject *owner);
 /* VIEW(launch): routine BattleEffect_AdvanceAngleWithRamp as void BattleEffect_AdvanceAngleWithRamp(struct SpinObject *object); the definition has void BattleEffect_AdvanceAngleWithRamp(struct Actor *object). */
 extern void BattleEffect_AdvanceAngleWithRamp__launch(struct SpinObject *object) __asm__("BattleEffect_AdvanceAngleWithRamp");
 /* VIEW(launch): routine BattleEffect_UpdateDescendingObject as void BattleEffect_UpdateDescendingObject(struct SpinObject *obj); the definition has void BattleEffect_UpdateDescendingObject(struct Actor *obj). */
 extern void BattleEffect_UpdateDescendingObject__launch(struct SpinObject *obj) __asm__("BattleEffect_UpdateDescendingObject");
-void Func_080e0cec(struct FieldParticle *slot);
 
 void FieldEffect_RunRetreat(void) {
   struct SpinScene *scene = Ram_HeapSlots->effectWork;
@@ -132,9 +102,6 @@ void FieldEffect_RunRetreat(void) {
   wait(10);
 }
 
-
-void Actor_Destroy(struct Actor *object);
-
 void BattleEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
   struct Actor *source;
   s32 y;
@@ -190,62 +157,6 @@ void BattleEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   particle->y = y - 0x20000;
   particle->z = source->z - ((0x10000 - scale) * 5) + 0x100000;
 }
-
-
-struct ArcPicture {
-  u8 padding00[22];
-  u8 visible;
-};
-
-struct ArcSprite {
-  u8 padding00[5];
-  u8 flags05_0 : 5;
-  u8 flags05_5 : 1;
-  u8 layer : 2;
-  u8 padding06;
-  u8 flags07_0 : 6;
-  u8 size : 2;
-  union {
-    struct {
-      u16 tile : 10;
-      u16 flags08_10 : 6;
-    } half;
-    struct {
-      u8 tileLow;
-      u8 flags09_0 : 2;
-      u8 variant : 2;
-      u8 flags09_4 : 4;
-    } byte;
-  } attr;
-  u8 padding0c[4];
-  u8 resource;
-  u8 active : 1;
-  u8 flags11_1 : 7;
-  u8 padding12[8];
-  u8 animation;
-  u8 padding1b[13];
-  struct ArcPicture *picture;
-};
-
-struct ArcObject {
-  u8 padding00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 unk14;
-  s32 scaleX;
-  s32 scaleY;
-  u8 padding20[0x30];
-  struct ArcSprite *sprite;
-  u8 padding54;
-  u8 unk55;
-  u8 padding56[0x0e];
-  u16 unk64;
-  u8 padding66[2];
-  struct ArcObject *source;
-  void *callback;
-};
-
 
 struct ArcObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildArgumentFar(struct ArcSprite *sprite, s32 animation);

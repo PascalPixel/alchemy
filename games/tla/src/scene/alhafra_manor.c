@@ -13,6 +13,9 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "event_work.h"
+#include "module/scene/alhafra_manor.h"
+#include "module/system/system.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -35,10 +38,6 @@ const u8 *Scene_GetPlacements(void) {
 #include "event_work.h"
 #include "scene_ids.h"
 #include "event_inline.h"
-
-void Event_Start(void);
-void Event_End(void);
-void Event_SetDestination(s32 scene, s32 entrance);
 
 void Func_0200006c(s32 actor) {
   s32 msg = (s32)&MsgAlhafraManor02;
@@ -202,9 +201,6 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 #include "input.h"
 
-void Func_02000658(void);
-void Func_02001488(void);
-
 s32 Scene_Initialize(void) {
   s32 cameraY = -1;
   s32 cameraZ = 160 << 17;
@@ -260,7 +256,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 #define EVENT_WORD(offset)                                                     \
   (*(s32 *)((u8 *)Ram_HeapSlots->eventWork + (offset)))
 
-void Party_PlaySavedMusic(void);
 void Func_020015f0(void);
 
 /// Walks actor `id` to the controlled character's cell, when it has one.

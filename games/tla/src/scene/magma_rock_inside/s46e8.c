@@ -7,21 +7,25 @@
 #include "field_sprite.h"
 #include "field_effect.h"
 #include "event_inline.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/field/field_effect.h"
+#include "module/scene/magma_rock_inside.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "particle.h"
+#include "resource.h"
 
 /* VIEW(s46e8): variable gData_02005638 as extern const s32 gData_02005638[]; the definition has u32 gData_02005638[] = { SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1), SC_FREE, }. */
 extern const s32 gData_02005638__s46e8[] __asm__("gData_02005638");
-extern u32 gData_02005638[];
 
-u32 Func_02004e98(struct FieldSprite *sprite, u32 frame);
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+/* VIEW(s46e8): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s46e8(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
 /* VIEW(s46e8): routine Func_02004c98 as void Func_02004c98(struct FieldEffect *effect, s32 mode); local.h has void Func_02004c98(struct Actor *object, s32 a). */
 extern void Func_02004c98__s46e8(struct FieldEffect *effect, s32 mode) __asm__("Func_02004c98");
 /* VIEW(s46e8): routine Actor_StartScript as void Actor_StartScript(struct FieldEffect *effect, const s32 *script); local.h has void Actor_StartScript(struct Actor *object, const void *data). */
 extern void Func_02004ca0__s46e8(struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
-void Func_02004c98(struct Actor *object, s32 a);
 void Actor_StartScript(struct Actor *object, const void *data);
-s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
 void Func_020046e8(s32 spread) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -42,7 +46,7 @@ void Func_020046e8(s32 spread) {
       frame = Func_02004e98(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags(effect, 0);
+      Actor_SetSingleChildFlags__s46e8(effect, 0);
       Func_02004c98__s46e8(effect, 2);
       Func_02004ca0__s46e8(effect, gData_02005638__s46e8);
       effect->scaleY = effect->scaleX = 0xb333;
@@ -66,7 +70,6 @@ void Func_020046e8(s32 spread) {
 
 /* VIEW(s46e8): variable gData_02005668 as extern const s32 gData_02005668[]; the definition has u32 gData_02005668[] = { SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1), SC_FREE, }. */
 extern const s32 gData_02005668__s46e8[] __asm__("gData_02005668");
-extern u32 gData_02005668[];
 
 void Func_0200481c(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -85,7 +88,7 @@ void Func_0200481c(void) {
       frame = Func_02004e98(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags(effect, 0);
+      Actor_SetSingleChildFlags__s46e8(effect, 0);
       Func_02004c98__s46e8(effect, 2);
       Func_02004ca0__s46e8(effect, gData_02005668__s46e8);
       effect->velocity.x = Math_Cosine(i << 12);
@@ -110,7 +113,6 @@ void Func_0200481c(void) {
 #include "map.h"
 
 s32 Func_02004d20(s32 layer, s32 x, s32 z);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02004ef0(s32 layer, s32 shape, s32 height);
 
 void Func_02004934(s32 level, s32 layer, s32 owner) {
@@ -135,31 +137,6 @@ void Func_020049c0(s32 a, s32 b) {
 
 #include "system/ram_buffer.h"
 
-struct Particle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 age;
-};
-
-struct ParticleSprite {
-  u8 unk0[8];
-  u16 attr;
-  u8 unkA[30];
-};
-
-struct ParticleWork {
-  u8 tiles[0x500];
-  struct Particle particles[64];
-  struct ParticleSprite sprites[64];
-  s16 next;
-  u16 tile;
-};
-
-void Func_02004f18(struct ParticleSprite *sprite, struct Particle *particle);
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
 void Func_020049d8(void) {
@@ -189,16 +166,9 @@ next:
     goto next;
 }
 
-
-/// One falling rock: where it is, how it moves and how long it has fallen.
-struct Rock {
-  s32 position[3];
-  s32 velocity[3];
-  s32 timer;
-};
-
 /// A falling rock's sprite.
-struct RockSprite {
+/* VIEW(s46e8): tag struct RockSprite as struct RockSprite__s46e8; module/tla.h has another definition. */
+struct RockSprite__s46e8 {
   u8 unk00[5];
   u8 unk05;
   u8 unk06[2];
@@ -215,7 +185,7 @@ struct RockSprite {
 struct RockWork {
   u8 tiles[0x500];
   struct Rock rocks[64];
-  struct RockSprite sprites[64];
+  struct RockSprite__s46e8 sprites[64];
   s16 next;
   u16 tileBase;
   s16 resource;
@@ -264,8 +234,6 @@ void Func_02004a5c(s32 x, s32 y, s32 z, s32 count) {
 // ---- games/tla/src/scene/magma_rock_inside/s4b18.c ----
 #include "system/task.h"
 
-extern char ResourceId_FallingRock;
-
 /* VIEW(s4b18): tag struct Rock as struct Rock__s4b18; s46e8.c has another definition. */
 struct Rock__s4b18 {
   u8 unk00[24];
@@ -297,13 +265,8 @@ struct RockWork__s4b18 {
   u16 resource;
 };
 
-struct RockWork__s4b18 *HeapSlot_AllocFar(s32 slot, s32 size);
-void *Resource_GetTableEntry(s32 id);
-void Func_02004c58(void *entry, void *destination);
-s32 Resource_FindFreeEntry(void);
-void Func_02004f10(struct RockSprite__s4b18 *sprite, s32 width, s32 height,
-                   u32 attributes, s32 tile);
-void Func_020049d8(void);
+/* VIEW(s46e8): routine HeapSlot_AllocFar as struct RockWork__s4b18 *HeapSlot_AllocFar(s32 slot, s32 size); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
+extern struct RockWork__s4b18 *HeapSlot_AllocFar__s46e8(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
 
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
@@ -312,7 +275,7 @@ static __inline__ void StartTask(void (*func)(void), s32 priority) {
 }
 
 void Func_02004b18(void) {
-  struct RockWork__s4b18 *work = HeapSlot_AllocFar(220, sizeof(struct RockWork__s4b18));
+  struct RockWork__s4b18 *work = HeapSlot_AllocFar__s46e8(220, sizeof(struct RockWork__s4b18));
   s32 entry;
   s32 tile;
   s32 i;
@@ -342,15 +305,6 @@ void Func_02004b18(void) {
   StartTask(Func_020049d8, 0x480);
 }
 
-
-struct MagmaRockInsideSparkWork {
-  u8 unk0000[0x1604];
-  s16 resource;
-};
-
-s32 Resource_ResetEntry(u32 slot);
-void HeapSlot_Release(s32 slot);
-
 void Func_02004bd4(void) {
   struct MagmaRockInsideSparkWork *work = Ram_HeapSlots->menuRuntime;
 
@@ -362,40 +316,18 @@ void Func_02004bd4(void) {
 #include "scene_tables.h"
 #include "objcmd.h"
 
-void Func_02000594(void);
 void Func_020005a0(void);
-void Func_0200099c(void);
-void Func_02000a30(void);
 void Func_02000e14(void);
 void Func_02000e20(void);
 void Func_02001148(void);
-void Func_020011fc(void);
-void Func_02001828(void);
 void Func_02001ca0(void);
 void Func_02001cd0(void);
-void Func_02001d64(void);
-void Func_02002128(void);
 void Func_0200217c(void);
-void Func_020021c0(void);
-void Func_02002318(void);
-void Func_02002364(void);
 void Func_020023e8(void);
-void Func_0200257c(void);
-void Func_02002610(void);
-void Func_020027d4(void);
-void Func_02002868(void);
-void Func_020028ac(void);
-void Func_020029dc(void);
 void Func_02002a6c(void);
 void Func_02002b2c(void);
 void Func_02002bd0(void);
-void Func_020030cc(void);
-void Func_020032d8(void);
-void Func_02003348(void);
-void Func_020033b0(void);
 
-extern u32 gData_02004f38[];
-extern u32 gData_02004f74[];
 extern u32 gData_02004fb0[];
 
 // clang-format off

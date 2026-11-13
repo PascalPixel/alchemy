@@ -2,13 +2,11 @@
 #include "scene_tables.h"
 #include "version.h"
 #include "objcmd.h"
+#include "module/scene/airs_rock.h"
+#include "module/scene/mars_lighthouse_room_f.h"
 
-void Func_020000bc(void);
 void Func_020000d0(void);
-void Func_02000168(void);
-void Func_02000170(void);
 void Func_020001f4(void);
-void Func_0200021c(void);
 void Func_02000248(void);
 void Func_0200025c(void);
 void Func_02000280(void);
@@ -20,41 +18,23 @@ void Func_020002ec(void);
 #else
 #define MARS_LIGHTHOUSE_ROOM_F_FUNC_020002EC ((s32)Func_020002ec)
 #endif
-void Func_02000418(void);
 void Func_02000444(void);
 void Func_02000480(void);
 void Func_020004bc(void);
-void Func_020004f8(void);
-void Func_02000554(void);
 void Func_02000670(void);
-void Func_02000754(void);
-void Func_02000760(void);
-void Func_0200076c(void);
 void Func_02000778(void);
 void Func_02000784(void);
-void Func_02000790(void);
 void Func_0200079c(void);
-void Func_020007a8(void);
 void Func_020007b4(void);
-void Func_020007c0(void);
 void Func_020007cc(void);
-void Func_020007d8(void);
-void Func_020007e4(void);
 void Func_020007f0(void);
 void Func_020008a0(void);
-void Func_020008bc(void);
 void Func_02000900(void);
-void Func_02000944(void);
 void Func_02000aac(void);
-void Func_02000ad8(void);
-void Func_02000b40(void);
 void Func_02000cf4(void);
 void Func_02000d38(void);
 void Func_0200297c(void);
-void Func_02002b88(void);
-s32 Func_02002ba0(void);
 void Func_02002ce0(void);
-void Func_02004140(void);
 
 extern u8 gData_020056c8[];
 extern u8 gData_020056d4[];
@@ -67,8 +47,6 @@ extern u8 gData_02005a88[];
 extern u8 gData_02005e44[];
 extern u8 gData_02005e80[];
 extern u8 gData_02005ebc[];
-
-extern u32 gData_02006980[];
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},

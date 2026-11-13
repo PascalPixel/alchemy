@@ -214,8 +214,6 @@ s32 Task_SuspendOverlayTasks(void) {
 }
 
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->priority)[1])
-extern volatile u8 gTasksRunning;
-extern u8 gTasksInitialized;
 extern struct Task gTasks[24];
 
 s32 Task_SetFlags(TaskFunc func, u32 mask) {
@@ -237,9 +235,6 @@ s32 Task_SetFlags(TaskFunc func, u32 mask) {
   IRQ_UNLOCK(saved_interrupt_master);
   return result;
 }
-
-/// Keyed callbacks return a value (the target address is left in r0).
-typedef s32 (*TaskIntFunc)(void);
 
 s32 Task_ResumeAll(TaskFunc func) {
   struct Task *task;

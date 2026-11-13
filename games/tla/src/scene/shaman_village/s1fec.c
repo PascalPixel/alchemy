@@ -2,8 +2,13 @@
 #include "event_inline.h"
 #include "scene_tables.h"
 #include "game/item.h"
+#include "item_icon.h"
+#include "module/scene/scene.h"
+#include "module/scene/shaman_village.h"
+#include "task.h"
 
-u8 *HeapSlot_AllocFar(s32 slot, s32 size);
+/* VIEW(s1fec): routine HeapSlot_AllocFar as u8 *HeapSlot_AllocFar(s32 slot, s32 size); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
+extern u8 *HeapSlot_AllocFar__s1fec(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
 
 struct ShamanVillageObject *Func_02001fec(void) {
   struct ShamanVillageObject *object =
@@ -23,7 +28,7 @@ struct ShamanVillageObject *Func_02001fec(void) {
     object->field5c = 1;
     sprite->nextFrame = 0;
     sprite->unk1b[0] = 0;
-    buffer = HeapSlot_AllocFar(68, 0x608);
+    buffer = HeapSlot_AllocFar__s1fec(68, 0x608);
     Icon_DrawItem(65);
     VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
     HeapSlot_Release(68);
@@ -33,14 +38,8 @@ struct ShamanVillageObject *Func_02001fec(void) {
 
 void DriftScene_SpawnObject(s32 x, s32 y, s32 z, u16 value);
 
-extern u32 gData_02004cfc[];
-extern u32 gData_02004d40[];
 extern u32 gData_02004d84[];
-extern u32 gData_02004dc8[];
-extern u32 gData_02004e0c[];
 extern u32 gData_02004e5c[];
-extern u32 gData_02004eac[];
-extern u32 gData_02004f08[];
 
 void Func_02002068(void) {
   struct ShamanVillageObject *rod;
@@ -332,7 +331,6 @@ void Func_0200289c(void) {
 #define EVENT_WORK ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)
 
 void *Unit_Get(s32 owner);
-struct ItemDefinition *Func_02004894(s32 item);
 
 // Forwards to Party_ListMembers; tagged where it is used.
 void Func_0200290c(void) {
@@ -401,28 +399,7 @@ struct Sprite {
   u32 words[3];
 };
 
-extern u32 gData_020064d0[];
-extern s16 gData_02005158[];
-extern s16 gData_020064bc;
-extern s16 *gData_020064c0;
-extern s32 gData_020064a0;
-extern s16 gData_02006504;
-extern s16 gData_0200649c;
 extern s16 gData_02006500;
-extern s16 gData_020064a8;
-extern s16 gData_020064a4;
-extern s16 gData_02006498;
-extern s16 gData_02006490;
-extern s16 gData_02006508;
-extern s16 gData_020064b4;
-extern s16 gData_020064b8;
-extern s16 gData_020064c4;
-extern s16 gData_020064ac;
-extern s16 gData_020064b0;
-extern s16 gData_02006494;
-
-s32 Resource_ResetEntry(u32 slot);
-void Oam_AddSpriteAtDepth(void *entry, s32 slot);
 
 /// The portrait mode task: reads its command script, eases the portrait's
 /// scale, blend and position, and queues its sprites.
@@ -619,12 +596,6 @@ commands:
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend, 0x20000);
 }
 
-extern s16 gData_0200515a[];
-extern s16 gData_02004b58[];
-extern s16 gData_02005186[];
-extern s16 gData_02004b80[];
-extern u32 gData_02005204[];
-
 /// Starts the mode task: keeps the mode and its parameter, schedules
 /// Func_02002a20 and picks the script the mode runs, then rewinds the
 /// task's timer and position.
@@ -669,11 +640,6 @@ void Func_02002f20(s32 modeArg, s32 paramArg) {
 #else
 #define LETTERING_PALETTE_ROWS 5
 #endif
-
-extern u8 gData_02004bfe[];
-extern char ResourceId_LetteringBanner;
-
-void Func_0200479c(const void *source, void *destination);
 
 /// The decoded lettering sheet: its palette rows, then eight graphics of 32
 /// tiles each.
@@ -735,15 +701,8 @@ void Func_02003040(void) {
   Sound_Play(76);
 }
 
-void Actor_WaitForAnimationChange(s32 actor);
-void Func_02003b24(void);
-
-extern u32 gData_02004f3c[];
-extern u32 gData_02004f80[];
-extern u32 gData_02004fc4[];
-extern u32 gData_02005008[];
-extern u32 gData_0200504c[];
-extern u32 gData_020050bc[];
+/* VIEW(s1fec): routine Actor_WaitForAnimationChange as void Actor_WaitForAnimationChange(s32 actor); actor.h has void Actor_WaitForAnimationChange(u32). */
+extern void Actor_WaitForAnimationChange__s1fec(s32 actor) __asm__("Actor_WaitForAnimationChange");
 
 void Func_020030bc(void) {
   u8 *work = Ram_HeapSlots->effectWork;
@@ -987,11 +946,11 @@ void Func_020030bc(void) {
   done = &object->unk63;
   owner = gMainRoutineWork.currentOwner;
   if (result == 0) {
-    Actor_WaitForAnimationChange(owner);
+    Actor_WaitForAnimationChange__s1fec(owner);
     Motion_SetModeAndWaitAnimation(15, 4);
     Event_ShowMessageAndWait(15, 0);
   } else {
-    Actor_WaitForAnimationChange(owner);
+    Actor_WaitForAnimationChange__s1fec(owner);
     Motion_SetModeAndWaitAnimation(15, 4);
     EVENT_WORK->field1c4++;
     Event_ShowMessageAndWait(15, 0);
@@ -1125,8 +1084,6 @@ void Func_02003ce4(void) {
   }
 }
 
-void Map_CenterOnFollowedPoint(void);
-
 void Func_02003d30(void) {
   s32 angle;
 
@@ -1193,12 +1150,6 @@ void Func_02003d30(void) {
   GameFlag_ClearBit(0x12f);
   Event_End();
 }
-
-void Func_02004060(void);
-void Func_020041b8(void);
-void Func_020043f8(void);
-void Func_02004534(void);
-void Func_020046ec(void);
 
 void Func_02003f78(void) {
   Event_Start();
@@ -1363,8 +1314,6 @@ void Func_020043c8(void) {
   Actor_SetSpritePriority(21, variant);
   Actor_SetSpritePriority(14, variant);
 }
-
-void Func_020048ac(s32 mode);
 
 struct IoReg16 {
   u16 value;
@@ -1723,23 +1672,8 @@ void Func_02000280(void);
 void Func_02000d08(void);
 void Func_02000d28(void);
 void Func_02000d48(void);
-void Func_02000d68(void);
 void Func_02000e3c(void);
-void Func_02000ef8(void);
-void Func_02000f2c(void);
-void Func_02000f60(void);
 void Func_02000fc4(void);
-void Func_020010c8(void);
-void Func_02001118(void);
-void Func_0200113c(void);
-void Func_020011c0(void);
-void Func_0200122c(void);
-void Func_02001644(void);
-void Func_02001764(void);
-void Func_02001880(void);
-void Func_02001aa4(void);
-void Func_02001cc8(void);
-void Func_02001d3c(void);
 
 // clang-format off
 u32 gData_02005204[] = {

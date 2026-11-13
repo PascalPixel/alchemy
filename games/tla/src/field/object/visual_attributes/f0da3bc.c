@@ -4,9 +4,10 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
-
-s32 ArcTan2(s32 y, s32 x);
-void wait(s32 frames);
+#include "item_icon.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "module/system/system.h"
 
 s32 Func_080da3bc(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   struct WorkA0 *work = WORK_A0;
@@ -91,10 +92,7 @@ s32 Func_080da3bc(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   return 0;
 }
 
-
 extern s32 gData_080f394c;
-s32 Func_080da6e0(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
-                  s32 wave);
 
 void Func_080da660(s32 arg, s32 firstId, s32 secondId) {
   struct Actor **work;
@@ -114,7 +112,6 @@ void Func_080da660(s32 arg, s32 firstId, s32 secondId) {
     gData_080f394c += 0x1000;
   }
 }
-
 
 s32 Func_080da6e0(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
                   s32 wave) {
@@ -193,10 +190,7 @@ s32 Func_080da6e0(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
   return 0;
 }
 
-
 extern s32 gData_080f3950;
-
-void Func_080da060(s32 a0, s32 a1, s32 a2, s32 a3);
 
 void Func_080da908(s32 index) {
   struct WorkA0 *work = WORK_A0;
@@ -227,21 +221,9 @@ void Func_080da968(struct Actor *object) {
     Func_080da060(0, 12, 13, 0);
 }
 
-
 // The four 256-byte pictures of each set (type-01 compressed).
 extern const u8 Data_080f0c1c[], Data_080f0c63[], Data_080f0cb8[];
 extern const u8 Data_080f0d07[], Data_080f0d5e[], Data_080f0dbb[];
-extern const u8 Data_080f0e00[];
-
-s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
-void Func_080daab0(void);
-void Func_080dacb8(void);
-
-struct TileEffectWork {
-  s32 vramEntry;
-  u8 unk04[0x10e0];
-};
 
 #define TILE_EFFECT_SLOT 164
 #define TILE_EFFECT_KIND_ALT 372 // the kind that takes the first picture set
@@ -295,22 +277,10 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
   return work;
 }
 
-
 /* VIEW(f0da3bc): routine Func_080140d8 as void Func_080140d8(void *entry, s32 slot); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
 extern void Func_080140d8__f0da3bc(void *entry, s32 slot) __asm__("Func_080140d8");
 
 // The transform as this function builds it, a word at a time.
-
-struct ChainLink {
-  struct ChainLink *next;
-  s32 x;
-  s32 y;
-  s32 z;
-  u16 angle;
-  s8 kind; ///< 0 or 1: not drawn; else its picture, from 2
-  u8 unk13;
-  struct AnimationSpritePart sprite;
-};
 
 /* VIEW(f0da3bc): tag struct ChainSlot as struct ChainSlot__f0da3bc; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:6634: structure has no member named `root'. */
 struct ChainSlot__f0da3bc {

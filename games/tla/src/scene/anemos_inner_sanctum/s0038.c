@@ -10,13 +10,8 @@
 #include "actor.h"
 
 #include "main_routine_work.h"
-
-extern u16 *gData_02004444;
-extern u16 *Data_02004448;
-extern u16 *Data_0200444c;
-extern u16 *Data_02004438;
-
-void Func_02000328(void);
+#include "event_work.h"
+#include "module/scene/anemos_inner_sanctum.h"
 
 /// Writes one background palette entry from its red, green and blue.
 // A statement macro, written do { } while (0): this store matches through that
@@ -54,15 +49,6 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   if ((s8)gMainRoutineWork.unk2c2 == 2)
     Func_02000328();
 }
-
-extern u16 gData_02004434;
-extern u16 gData_0200443c;
-extern u16 gData_02004440;
-extern u16 gData_02004450;
-extern u16 gData_02004454;
-
-s32 Func_020001d4(u16 *list);
-void Func_020001f8(void);
 
 void Func_020000f4(void) {
   gData_02004454 = 0;
@@ -155,15 +141,7 @@ void Func_020001f8(void) {
     gData_02004454 = 0;
 }
 
-struct AnemosInnerSanctumEventWork {
-  u8 unk000[0x1ac];
-  s32 value1ac;
-};
-
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Func_020017b4(void);
-void Func_020034a8(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

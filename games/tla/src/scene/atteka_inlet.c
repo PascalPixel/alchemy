@@ -16,6 +16,9 @@
 #include "text/msg_ids.h"
 #include "field_event.h"
 #include "field_sprite.h"
+#include "event_work.h"
+#include "module/scene/atteka_inlet.h"
+#include "module/scene/scene.h"
 
 void Func_02000038(void) {
   Func_080d7788(14, 0, 15);
@@ -27,13 +30,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-extern u32 gData_02001194[];
-extern u32 gData_020011ac[];
-extern u32 gData_020012cc[];
-extern u32 gData_0200147c[];
-extern u32 gData_0200159c[];
-extern u32 gData_0200165c[];
 
 void *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -53,9 +49,7 @@ void *Scene_GetPlacements(void) {
   return gData_02001194;
 }
 
-extern s32 gData_0200171c[];
 extern s32 gData_02001728[];
-extern s32 gData_020018f0[];
 
 s32 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -66,9 +60,6 @@ s32 *Scene_GetEvents(void) {
     return gData_020018f0;
   return gData_0200171c;
 }
-
-void Event_Start(void);
-void Event_End(void);
 
 /// Object 18 asks whether to set out: a yes sets the owner override and, once
 /// flag 0x9d0 is set, flags 0x8df and 0x9b2; a no counts the refusal and
@@ -168,8 +159,6 @@ void Func_02000208(void) {
     Event_End();
   }
 }
-
-void Func_020010e0(void);
 
 /// Once flag 0x9d0 is set, the camera pans over object 23, who greets the
 /// party, turns, talks and walks to its place; flag 0x9b1 is set.
@@ -278,15 +267,15 @@ void Func_02000640(void) {
   }
 }
 
-void Func_0200097c(void);
-void Func_02001120(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY, s32 layer);
+/* VIEW(atteka_inlet): routine Func_02001120 as void Func_02001120(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY, s32 layer); module/scene/yampi_desert_cave.h has void Func_02001120(void). */
+extern void Func_02001120__atteka_inlet(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
+                   s32 destY, s32 layer) __asm__("Func_02001120");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                            s32 destY, s32 layer) {
-  Func_02001120(srcX, srcY, width, height, destX, destY, layer);
+  Func_02001120__atteka_inlet(srcX, srcY, width, height, destX, destY, layer);
 }
 
 void Func_0200077c(void) {
@@ -465,9 +454,6 @@ void Func_02000c8c(void) {
   Import_EventSetExitRequest(*(s16 *)(work + 340));
 }
 
-void Func_02000dc4(void);
-void Func_02000ed0(void);
-
 s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.scene;
 
@@ -490,12 +476,6 @@ s32 Scene_PrepareMap(void) {
   }
   return 0;
 }
-
-struct MapBits {
-  u8 unk00[23];
-  u8 low : 2;
-  u8 mode : 2;
-};
 
 static __inline__ void Task_Add_(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline, which keeps each

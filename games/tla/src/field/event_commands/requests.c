@@ -3,6 +3,9 @@
 // Part of event_commands.c.
 
 #include "../event_commands_internal.h"
+#include "flag_call.h"
+#include "module/field/event_commands.h"
+#include "module/field/object.h"
 
 void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
@@ -14,7 +17,6 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
   BattleEffect_SelectBattleCue(row, column);
 }
 
-void Func_080d7524(s32 element);
 s32 Encounter_GetDjinnEnemyGroup(s32 djinn);
 
 extern s8 gData_02001000[];
@@ -95,8 +97,6 @@ void Func_080d2c9c(void) {
   }
 }
 
-void GameFlag_ClearBit(s32 flag);
-
 s32 Party_FindOwnerWithActionFar(s32 action);
 
 struct EventWork15a {
@@ -113,13 +113,6 @@ void Func_080d2cc4(s32 message) {
   if (Party_FindOwnerWithActionFar(136) != -1)
     ((struct EventWork15a *)Ram_HeapSlots->eventWork)->flag = 1;
 }
-
-struct CueObject {
-  u8 unk00[8];
-  s32 x;
-  s32 base;
-  s32 top;
-};
 
 struct EventWork1cc {
   u8 unk000[0x1cc];

@@ -3,10 +3,9 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
-
-s32 ArcTan2(s32 y, s32 x);
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "module/system/system.h"
 
 /* VIEW(f0d9790): tag struct ChainNode as struct ChainNode__f0d9790; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5764: structure has no member named `visible'. */
 struct ChainNode__f0d9790 {
@@ -124,10 +123,7 @@ s32 Func_080d9790(s32 index, s32 x, s32 y, s32 z) {
 
 void Func_080d9974(void) {}
 
-
 extern s32 gData_080f3944;
-
-void Func_080d8fa8(s32 a0, s32 a1, s32 a2, s32 a3);
 
 void Func_080d9978(struct Actor *object) {
   u8 *parts = object->sprite;
@@ -177,7 +173,6 @@ s32 Func_080d99b8(s32 firstId, s32 secondId) {
   return 0;
 }
 
-
 s32 Func_080d9a74(s32 id, s32 *value, s32 *index) {
   struct Work9c *work = WORK_9C;
   struct Work9cSlot *slot = work->slots;
@@ -206,10 +201,6 @@ s32 Func_080d9ab0(s32 index) {
   return slot->state;
 }
 
-s32 GameFlag_Test(s32 flag);
-void Func_080d8d68(s32 index, s32 a1, s32 a2);
-void Func_080d9104(s32 index, s32 a1, s32 a2);
-
 void Func_080d9ad0(s32 index, s32 flag, s32 a2, s32 a3) {
   struct Work9c *work = WORK_9C;
   struct Work9cSlot *slot;
@@ -222,14 +213,8 @@ void Func_080d9ad0(s32 index, s32 flag, s32 a2, s32 a3) {
     Func_080d8d68(index, a2, a3);
 }
 
-
 // XXX: what the work block in heap slot 40 holds, and what this family does;
 // its callers and the block's readers would settle it.
-
-extern const u8 gData_080f0c04[];
-
-void Func_080d9b80(void);
-void Func_080d9d40(void);
 
 void Func_080d9b08(void) {
   struct WorkA0 *work = HeapSlot_AllocEwram(160, sizeof(struct WorkA0));

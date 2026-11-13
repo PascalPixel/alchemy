@@ -19,15 +19,15 @@
 #include "field_event.h"
 #include "vram_tab.h"
 #include "task.h"
+#include "item_icon.h"
+#include "module/field/field.h"
+#include "module/scene/jupiter_lighthouse_room_2.h"
+#include "module/scene/scene.h"
 
 extern const s32 gData_02002b3c[];
-extern s32 Data_02002b94;
 
-void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
-s32 Func_020022fc(s32 x, s32 z, s32 layer);
-void Camera_WorldToScreen(s32 *position);
-s32 Func_02000d68(s32 *from, s32 *to);
-s32 Math_Cosine(s32 angle);
+/* VIEW(s0d94): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
+extern void Camera_WorldToScreen__s0d94(s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_02000d94(struct Actor *self) {
@@ -51,7 +51,7 @@ void Func_02000d94(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Camera_WorldToScreen(position);
+    Camera_WorldToScreen__s0d94(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -100,28 +100,10 @@ stop:
   Data_02002b94 = 0;
 }
 
-struct GustObject {
-  u8 unk00[6];
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x0f];
-  u8 priorityFlags;
-  u8 unk24[0x0c];
-  s32 unk30;
-  u8 unk34[0x21];
-  u8 motionFlags;
-  u8 unk56[0x0c];
-  u8 unk62;
-  u8 unk63;
-  u16 unk64;
-  u8 unk66[6];
-  void (*update)(struct GustObject *object);
-};
-
-void Func_020021b4(struct GustObject *object, s32 mode);
-void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags);
+/* VIEW(s0d94): routine Func_020021b4 as void Func_020021b4(struct GustObject *object, s32 mode); module/scene/dehkan_plateau.h has void Func_020021b4(void). */
+extern void Func_020021b4__s0d94(struct GustObject *object, s32 mode) __asm__("Func_020021b4");
+/* VIEW(s0d94): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s0d94(struct GustObject *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
 
 void Func_0200165c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -138,8 +120,8 @@ struct GustObject *Func_02000f54(struct GustObject *source) {
                                   Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                    position.z));
-  Func_020021b4(object, 2);
-  Actor_SetSingleChildFlags(object, 0);
+  Func_020021b4__s0d94(object, 2);
+  Actor_SetSingleChildFlags__s0d94(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -175,21 +157,6 @@ s32 Func_0200102c(struct Actor *object) {
   }
   return 0;
 }
-
-/// struct Actor as this function reads it, its coordinates as
-/// FieldCoordinate.
-struct PositionedActor {
-  u8 unk00[8];
-  union FieldCoordinate x;
-  union FieldCoordinate y;
-  union FieldCoordinate z;
-  s32 terrainHeight;
-  s32 scaleX;
-  u8 unk1c[0x34];
-  struct FieldSprite *animation;
-  u8 animationKind;
-  u8 motionFlags;
-};
 
 void Func_020010cc(void) {
   struct PositionedActor *actor9 = ((struct PositionedActor *)Actor_Get(9));
@@ -246,23 +213,8 @@ void Func_020010cc(void) {
   }
 }
 
-struct LightOam {
-  u32 link;
-  u32 attr01;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u16 unk0a;
-};
-
-extern s16 gData_02002bd8;
-extern s16 gData_02002bda;
-extern struct Actor *gData_02002bdc[];
-extern struct LightOam Data_02002c1c[];
 extern s16 gData_02002cdc;
-extern s16 gData_02002cde;
 
-s32 Func_020022f4(struct Actor *actor);
 void Func_0200218c(struct LightOam *oam, s32 depth);
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
@@ -340,12 +292,8 @@ void Func_0200125c(void) {
   }
 }
 
-extern u8 gField_CachedTilesA[];
-extern u8 gField_CachedTilesB[];
-extern u8 gField_CachedTilesC[];
-
-void Resource_DecodeType01(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
+/* VIEW(s0d94): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
+extern void Resource_DecodeType01__s0d94(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -355,7 +303,7 @@ void Func_02001418(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02002bdc, 64);
-  Resource_DecodeType01(gField_CachedTilesA, buffer);
+  Resource_DecodeType01__s0d94(gField_CachedTilesA, buffer);
   gData_02002bd8 = Resource_FindFreeEntry();
   VramCache_Load(gData_02002bd8, 0xc00, buffer);
   Heap_Release(buffer);
@@ -369,7 +317,7 @@ void Func_02001498(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_02002bdc, 64);
-  Resource_DecodeType01(gField_CachedTilesB, buffer);
+  Resource_DecodeType01__s0d94(gField_CachedTilesB, buffer);
   gData_02002bd8 = Resource_FindFreeEntry();
   Vram_Load(gData_02002bd8, 0x800, buffer);
   Heap_Release(buffer);
@@ -383,7 +331,7 @@ void Func_02001518(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_02002bdc, 64);
-  Resource_DecodeType01(gField_CachedTilesC, buffer);
+  Resource_DecodeType01__s0d94(gField_CachedTilesC, buffer);
   gData_02002bd8 = Resource_FindFreeEntry();
   Vram_Load(gData_02002bd8, 0x800, buffer);
   Heap_Release(buffer);

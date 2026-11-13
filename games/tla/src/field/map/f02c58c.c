@@ -7,41 +7,13 @@
 #include "heap_release.h"
 #include "resource.h"
 #include "graphics.h"
+#include "module/field/field.h"
+#include "module/field/map.h"
+#include "module/field/object.h"
+#include "module/tla.h"
 
-/// One word of the table at Ram_MapBlocks, 32 words to a row.
-struct Data02020000 {
-  u32 unk0 : 24;
-  /// Passed to Func_0802d088; region / 10 picks the set. The Broken Seal's
-  /// WorldMapCell keeps the encounter region at these bits.
-  u32 region : 6;
-  u32 unk1e : 2;
-};
-
-struct MapTileWindow {
-  s32 *origin;
-  u8 unk004[0x11c];
-  const u32 *resources;
-  u8 unk124[0x24];
-  u16 tileIds[32 * 32];
-  u8 unk948[0x10];
-  s32 reloadSteps;
-};
-
-extern const u32 gData_0802ed34[4][9];
-extern u8 Data_0202d000[];
-extern u8 gData_02038000[];
-extern u8 gData_0203a000[];
-extern u8 gData_0203c000[];
-extern u8 gData_0203e000[];
-extern u8 gData_02028000[];
-extern u8 gMapCollision[];
-extern u8 gWorldMapWork[];
-
-s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
-void Func_0802d088(s32 region, s32 gradual);
-s32 Func_080c8950(void);
-void Func_080c8970(void *palette);
-void TilesetAnim_StartAll(const u16 *script);
+/* VIEW(f02c58c): variable gWorldMapWork as u8 gWorldMapWork[]; world_map.h has struct WorldMapWork gWorldMapWork. */
+extern u8 gWorldMapWork__f02c58c[] __asm__("gWorldMapWork");
 
 void Func_0802c58c(void) {
   struct MapTileWindow *window = (struct MapTileWindow *)Ram_HeapSlots->mapWork;
@@ -156,7 +128,7 @@ void Func_0802c58c(void) {
     Resource_DecodeType01(Resource_GetTableEntry(resources[7]), gData_02028000);
     break;
   case 1:
-    Resource_DecodeType01(Resource_GetTableEntry(resources[8]), gWorldMapWork);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[8]), gWorldMapWork__f02c58c);
     break;
   }
   window->reloadSteps--;
@@ -186,9 +158,6 @@ void MapAnimation_PresentPicture(void) {
           dma);
 }
 
-extern void (*gData_030011f8)(void);
-extern u8 gData_0201c000[];
-void MapAnimation_Update(void);
 void Func_0802dd08(void *source, void *destination);
 
 void MapAnimation_Start(void) {
@@ -237,9 +206,6 @@ void Map_ShowBg1FromBuffer(void) {
   Dma_Set(gData_02038000, (void *)0x06008000, DMA_COPY_WORDS(0x8000 / 4), dma);
 }
 
-extern char ResourceId_DefaultMapCells;
-void Map_UpdateCurrentTileBlock(void);
-
 s32 Func_0802c9c8(void) {
   struct MapViewWork *state;
   u32 *resources;
@@ -258,7 +224,7 @@ s32 Func_0802c9c8(void) {
   Resource_DecodeType01(Resource_GetTableEntry(resources[5]), gData_0203c000);
   Resource_DecodeType01(Resource_GetTableEntry(resources[6]), gData_0203e000);
   Resource_DecodeType01(Resource_GetTableEntry(resources[7]), gData_02028000);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[8]), gWorldMapWork);
+  Resource_DecodeType01(Resource_GetTableEntry(resources[8]), gWorldMapWork__f02c58c);
   gData_030011f8 = Map_ShowBg1FromBuffer;
   state->windowTop = 0;
   state->windowBottom = 159;
@@ -553,14 +519,6 @@ void PaletteQueue_StepCycles(void) {
 
 #include "io_write_queue.h"
 #include "flag_call.h"
-
-struct WorldTint {
-  struct MapWork map;
-  u8 unk970[3];
-  s8 region;
-  s8 tint;
-  s8 target;
-};
 
 void Func_0802d088(s32 region, s32 gradual) {
   struct WorldTint *work = (struct WorldTint *)Ram_HeapSlots->mapWork;
@@ -862,8 +820,6 @@ s32 Terrain_GetSplitBottomStepHeight(const s8 *samples, u32 column, u32 row) {
   return value << CURVE_VALUE_SHIFT;
 }
 
-extern u8 gMapShapeGrid[];
-
 typedef s32 (*TerrainHeightFn)(u8 *heights, s32 x, s32 z);
 
 extern TerrainHeightFn gMapGrid_TerrainHeightFunctions[16];
@@ -890,9 +846,6 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 z) {
 #include "edition.h"
 
 extern u8 gMapCellBuffer[];
-
-s32 Func_080c8730(s32 layer, s32 unused, s32 value);
-s32 Func_080c8720(s32 layer, s32 unused, s32 value);
 
 /// Returns the terrain kind of a layer's cell at (x, z) in 16.16 pixels, as
 /// The Broken Seal's.
@@ -1163,13 +1116,8 @@ s32 MapGrid_IsWallAt(s32 *position) {
   return (cell[2] != 255) - 1;
 }
 
-struct WorldMapBlock {
-  u8 unk0[2];
-  u8 unk2;
-  u8 unk3;
-};
-
-extern struct WorldMapBlock gMapBlocks[];
+/* VIEW(f02c58c): variable gMapBlocks as struct WorldMapBlock gMapBlocks[]; module/tla.h has u32 gMapBlocks[]. */
+extern struct WorldMapBlock gMapBlocks__f02c58c[] __asm__("gMapBlocks");
 
 /// Reads byte 2 of the world map block under position: blocks are 32 pixels
 /// square on a 32 by 32 grid, positions are Q16 pixels.
@@ -1183,7 +1131,7 @@ s32 Func_0802da88(struct WorldPosition *position) {
   if (z < 0)
     z += 0x1fffff;
   z = z >> 21 & 31;
-  return gMapBlocks[x + z * 32].unk2;
+  return gMapBlocks__f02c58c[x + z * 32].unk2;
 }
 
 s32 GetWorldMapCollision(struct WorldPosition *position) {
@@ -1252,11 +1200,6 @@ s32 Func_0802db88(void *object, struct WorldPosition *position) {
   }
   return -1;
 }
-
-struct WorldMover {
-  u8 unk00[12];
-  s32 height;
-};
 
 s32 Func_0802dbd0(struct WorldMover *mover, struct WorldPosition *position) {
   if (Func_0802da88(position) != 255) {

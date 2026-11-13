@@ -4,6 +4,12 @@
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"
+#include "flag_call.h"
+#include "gamepak/far_call/game.h"
+#include "module/battle/battle.h"
+#include "module/battle/f11e3ac.h"
+#include "module/battle/presentation.h"
+#include "module/tla.h"
 
 // Battle: test whether a unit is in a battle formation.
 
@@ -27,15 +33,6 @@ u32 BattleParty_IsUnitListed(u32 id) {
 
   return i != cnt;
 }
-
-struct PlacementList {
-  struct DjinnRecoveryEntry entries[72];
-  s32 count;
-};
-struct PlacementTable {
-  u8 padding[8];
-  struct PlacementList list;
-};
 
 s32 BattleParty_CountStandbyDjinn(u32 arg0, u8 *counts) {
   u16 values[8];
@@ -78,47 +75,7 @@ s32 BattleParty_CountStandbyDjinn(u32 arg0, u8 *counts) {
   return found;
 }
 
-struct ActionRunBattleWork {
-  u8 unk000[0x44];
-  u8 twoSided;
-  u8 unk045[0x58 - 0x45];
-  s16 partyUnits[7];
-  s16 enemyIds[7];
-  u8 unk074[0x862 - 0x74];
-  u16 summonedMask;
-  u8 unk864;
-  u8 summonCount;
-};
-
-struct DjinnRecoveryEntryDraft {
-  u8 element;
-  u8 index;
-  u8 unitId;
-  s8 turns;
-};
-
-struct DjinnRecoveryListDraft {
-  struct DjinnRecoveryEntryDraft entries[72];
-  s32 count;
-};
-
-extern const u32 Data_08128c50[];
-extern u8 Data_08128972[];
-extern u8 Data_0812896c[];
-
 s32 Battle_GetTaggedSlotValue(s32 tag);
-s32 Unit_AddHpFar(s32 owner, s32 delta);
-s32 GameFlag_Test(s32 flag);
-s32 Inventory_GetEquippedItemFar(struct BattleUnit *owner, s32 slot);
-s32 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
-s32 Djinn_IsSetFar(s32 unitId, s32 element, s32 index);
-s32 Djinn_CanSetFar(s32 unitId, s32 element, s32 index);
-u32 *DjinnRecovery_AddStandbyFar(u32 owner, u32 element, u32 djinn);
-void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
-s32 Item_GetEquippedElementFar(s32 unitId);
-u32 BattleClass_GetAttackEffect(u32 index);
-s32 Func_0811d79c(s32 classId);
-s32 Equipment_GetUnleashRateBonusFar(struct BattleUnit *owner);
 
 s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
   struct BattleUnit *actor = Unit_Get__f11f66c(request->unitId);

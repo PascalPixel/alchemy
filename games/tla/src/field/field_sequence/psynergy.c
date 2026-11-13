@@ -3,9 +3,8 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
-
-s32 Func_080dbcd8(s32 x, s32 z, s32 terrain);
-void Func_080dc6d8(void);
+#include "module/field/event_commands.h"
+#include "module/field/object.h"
 
 #define FIELD_PSYNERGY_MESSAGE(user, ability, message)                         \
   (MessageArgument_PushFar((user), 1), MessageArgument_PushFar((ability), 4),          \

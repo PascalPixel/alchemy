@@ -1,40 +1,15 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
+#include "module/scene/shrine_of_the_sea_god.h"
 
 void Func_02000280(void);
 void Func_020004b0(void);
-void Func_020004e0(void);
-void Func_02000554(void);
-void Func_02000688(void);
-void Func_02000e38(void);
-void Func_02000f34(void);
-void Func_02000f58(void);
-void Func_02000f80(void);
-void Func_02000fa8(void);
-void Func_02000fb8(void);
-void Func_02000fec(void);
 void Func_02001038(void);
-void Func_02001290(void);
-void Func_020012b4(void);
-void Func_02001474(void);
-void Func_020016d8(void);
 void Func_020018bc(void);
 void Func_020019dc(void);
-void Func_02001a0c(void);
-void Func_02001a3c(void);
-void Func_02001d24(void);
-void Func_02002384(void);
-void Func_02002430(void);
-void Func_020024e4(void);
-void Func_020025fc(void);
-void Func_020026f8(void);
-void Func_02002d50(void);
-void Func_02002e8c(void);
-void Func_02002ea8(void);
 
 extern u32 gData_02003b50[];
-extern u32 gData_02003b8c[];
 extern u32 gData_02003bc8[];
 
 // clang-format off

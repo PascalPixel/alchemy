@@ -5,44 +5,28 @@
 #include "map.h"
 #include "system/task.h"
 #include "event_inline.h"
+#include "item_icon.h"
+#include "module/scene/eastern_alhafra.h"
+#include "module/tla.h"
+#include "resource.h"
 
-extern char ResourceId_FallingRock;
-
-struct Rock {
+/* VIEW(s4004): tag struct Rock as struct Rock__s4004; module/tla.h has another definition. */
+struct Rock__s4004 {
   u8 unk00[24];
   s32 timer;
 };
 
-struct RockSprite {
-  u8 unk00[5];
-  u8 unk05_0 : 5;
-  u8 unk05_5 : 1;
-  u8 unk05_6 : 2;
-  u8 unk06[3];
-  u8 unk09_0 : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-  u8 unk0a[20];
-  u16 unk1e;
-  u8 unk20[8];
-};
-
 struct RockWork {
   u8 tiles[0x500];
-  struct Rock rocks[64];
+  struct Rock__s4004 rocks[64];
   struct RockSprite sprites[64];
   s16 next;
   u16 tileBase;
   u16 resource;
 };
 
-struct RockWork *HeapSlot_AllocFar(s32 slot, s32 size);
-void *Resource_GetTableEntry(s32 id);
-void Func_020049d4(void *entry, void *destination);
-s32 Resource_FindFreeEntry(void);
-void Func_02004c64(struct RockSprite *sprite, s32 width, s32 height,
-                   u32 attributes, s32 tile);
-void Func_02003ec4(void);
+/* VIEW(s4004): routine HeapSlot_AllocFar as struct RockWork *HeapSlot_AllocFar(s32 slot, s32 size); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
+extern struct RockWork *HeapSlot_AllocFar__s4004(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
 
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
@@ -51,11 +35,11 @@ static __inline__ void StartTask(void (*func)(void), s32 priority) {
 }
 
 void Func_02004004(void) {
-  struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
+  struct RockWork *work = HeapSlot_AllocFar__s4004(220, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
   s32 i;
-  struct Rock *rock;
+  struct Rock__s4004 *rock;
   struct RockSprite *sprite;
 
   Func_020049d4(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
@@ -85,11 +69,6 @@ void Func_02004004(void) {
 #include "resource.h"
 #include "heap_release.h"
 
-struct EasternAlhafraSparkWork {
-  u8 unk0000[0x1604];
-  s16 resource;
-};
-
 void Func_020040c0(void) {
   struct EasternAlhafraSparkWork *work = Ram_HeapSlots->menuRuntime;
 
@@ -107,7 +86,6 @@ void Func_020040c0(void) {
 
 #include "actor.h"
 
-extern u16 gData_02004ca4[];
 extern s8 gData_02004cb0[][4];
 
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
@@ -162,18 +140,7 @@ s32 Func_020040ec(s32 id) {
 
 #include "system/vector3.h"
 
-struct PushState {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 kind;
-  s32 number;
-  s32 unk14;
-};
-
 extern s32 gData_02004cc8[];
-struct Actor *Func_020043a8(s32 *direction, s32 *number, s32 *kind);
-s32 Func_02004a64(struct Actor *actor, struct Vector3 *cell);
 
 static __inline__ s32 CallFunc_02004a64(struct Actor *actor,
                                         struct Vector3 *cell) {

@@ -3,53 +3,18 @@
 #include "text/msg_ids.h"
 #include "version.h"
 #include "objcmd.h"
+#include "module/scene/islets.h"
+#include "module/scene/mars_lighthouse_entrance.h"
+#include "module/scene/shrine_of_the_sea_god.h"
 
-void Func_020000d8(void);
-void Func_02000210(void);
-void Func_020002ac(void);
 void Func_0200030c(void);
-void Func_02000380(void);
-void Func_0200040c(void);
-void Func_02000440(void);
 void Func_020004f4(void);
 void Func_02000520(void);
-void Func_02000568(void);
 void Func_020006f4(void);
-void Func_02000e38(void);
-void Func_020014e0(void);
-void Func_02001a68(void);
-void Func_02001bf4(void);
-void Func_02001c38(void);
 void Func_02001db0(void);
 void Func_02001f74(void);
-void Func_0200208c(void);
-void Func_020020b4(void);
-void Func_020020d0(void);
-void Func_02002144(void);
 void Func_020021d0(void);
-void Func_02002430(void);
-void Func_020024c8(void);
-void Func_020024f0(void);
-void Func_0200253c(void);
-void Func_020025a4(void);
-void Func_020025b0(void);
-void Func_020025bc(void);
-void Func_020025dc(void);
-void Func_020025fc(void);
-void Func_0200261c(void);
-void Func_0200263c(void);
-void Func_0200265c(void);
-void Func_0200267c(void);
-void Func_0200274c(void);
 void Func_02002780(void);
-void Func_02003620(void);
-void Func_0200367c(void);
-
-extern u32 gData_020040d4[];
-extern u32 gData_02004198[];
-extern u32 gData_02004640[];
-extern s16 gData_020046a4[];
-extern s16 gData_020046ba[];
 
 // clang-format off
 u32 gData_02004004[] = {

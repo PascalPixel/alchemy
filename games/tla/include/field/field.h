@@ -116,4 +116,8 @@ s32 Message_OpenWindowFar(s32, s32, s32, s32);
 void AreaNameWindow_HideFar(void);
 s32 Window_IsClosedFar(s32);
 
+extern u8 gWorldMapPackedTiles[];
+extern u8 gWorldMapPackedPictures[];
+extern u8 gWorldMapPalettes[];
+
 #endif

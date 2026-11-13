@@ -3,32 +3,11 @@
 // Part of f0dcb44.c.
 
 #include "../f0dcb44_internal.h"
+#include "module/field/event_commands.h"
+#include "module/field/f0dcb44.h"
+#include "module/field/object.h"
 
-struct BattleEffectScene {
-  u8 reserved00[4];
-  s32 x;
-  s32 y;
-  s32 z;
-  void *mainObject;
-  void *child;
-};
-
-struct EffectChild {
-  u8 reserved00[12];
-  s32 y;
-  u8 reserved10[0x55 - 0x10];
-  u8 flag;
-  u8 reserved56[0x6c - 0x56];
-  void (*callback)(void);
-};
-
-extern const s32 gData_080f0e60[];
-
-struct Actor *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
-                                                s32 magnitude, s32 angle);
 void Actor_ApplyRandomChildValues(void);
-void UpdateRisingParticleBurst(void *effect);
 
 void FieldEffect_RunLiftOnTarget(void) {
   struct BattleEffectScene *scene;
@@ -88,15 +67,7 @@ void FieldEffect_RunLiftOnTarget(void) {
   BattleEffect_PrepareBufferInterpolation();
 }
 
-struct ScatterPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 extern const s32 gData_080f0e78[];
-
-void Actor_Destroy(struct Actor *object);
 
 void FieldPsynergy_Lift(void) {
   struct BattleFxScene *work;
@@ -146,7 +117,6 @@ void FieldPsynergy_Lift(void) {
   BattleEffect_PrepareBufferInterpolation();
 }
 
-
 /// Spawns object 278 and grows it from a quarter to full size, an eighth of a
 /// turn a frame, then faces it to angle.
 struct Actor *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
@@ -182,40 +152,16 @@ struct EffectPosition {
   s32 z;
 };
 
-struct EffectTarget {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 struct EffectWork {
   u16 angle;
   u8 unk02[14];
   struct EffectTarget *target;
 };
 
-struct RadialBurstEffect {
-  u8 unk00[12];
-  s32 x;
-  s32 z;
-  s32 sourceX;
-  s32 sourceZ;
-  u8 unk1c[4];
-  s32 velocityX;
-  s32 velocityZ;
-  u8 unk28[10];
-  u16 scale;
-  u8 unk34[12];
-  s8 state;
-  u8 unk41;
-  u8 enabled;
-};
-
-void Camera_WorldToScreen(struct EffectPosition *value);
+/* VIEW(f0dcb44): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct EffectPosition *value); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
+extern void Camera_WorldToScreen__f0dcb44(struct EffectPosition *value) __asm__("Camera_WorldToScreen");
 /* VIEW(f0dd820): routine BattleEffect_ClearOwnedSlot as void BattleEffect_ClearOwnedSlot(struct RadialBurstEffect *effect); f0dd054 has void BattleEffect_ClearOwnedSlot(struct FieldParticle *). */
 extern void BattleEffect_ClearOwnedSlot__f0dd820(struct RadialBurstEffect *effect) __asm__("BattleEffect_ClearOwnedSlot");
-void BattleEffect_ClearOwnedSlot(struct FieldParticle *slot);
 
 void Func_080de060(struct RadialBurstEffect *effect) {
   struct EffectWork *work = Ram_HeapSlots->effectWork;
@@ -252,7 +198,7 @@ again:
     value.y = target->y + 0x100000;
     value.z = target->z;
     Vector_AddPolarOffset__f0dd820(0x80000, work->angle, &value);
-    Camera_WorldToScreen(&value);
+    Camera_WorldToScreen__f0dcb44(&value);
     Vector_AddPolarOffset__f0dd820(0x40000, Random16(), &value);
     effect->x = value.x;
     effect->z = value.z;
@@ -265,17 +211,6 @@ again:
   if (state == 3 && FieldParticle_HasPendingTarget(effect) == 0)
     BattleEffect_ClearOwnedSlot__f0dd820(effect);
 }
-
-struct ImpactVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct ParticleTimer {
-  u8 unk00[0x5e];
-  u16 timer;
-};
 
 /// A heavy impact, as The Broken Seal's: an actor placed below the source
 /// for a moment, scattering shards from it.

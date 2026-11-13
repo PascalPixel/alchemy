@@ -3,8 +3,7 @@
 // Part of field.c.
 
 #include "../field_internal.h"
-
-extern struct AnimationMetadata gResource_Data012[];
+#include "module/field/field.h"
 
 struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 id) {
   id &= 0xfff;

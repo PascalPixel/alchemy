@@ -1,44 +1,18 @@
 #include "types.h"
 #include "scene_tables.h"
+#include "module/scene/dehkan_plateau.h"
 
-void Func_0200118c(void);
-void Func_020012c8(void);
-void Func_02001368(void);
-void Func_020013fc(void);
-void Func_02001444(void);
-void Func_020014ec(void);
-void Func_02001500(void);
 void Func_02001554(void);
 void Func_02001568(void);
 void Func_0200157c(void);
 void Func_02001590(void);
 void Func_020015a4(void);
-void Func_020015e0(void);
-void Func_02001630(void);
-void Func_02001640(void);
-void Func_020016a0(void);
 void Func_020016b0(void);
 void Func_02001788(void);
-void Func_020017a0(void);
-void Func_020017f4(void);
-void Func_02001a30(void);
-void Func_020020dc(void);
-void Func_02002114(void);
-void Func_02002124(void);
 void Func_02002140(void);
 void Func_02002180(void);
-void Func_020021e8(void);
 void Func_020022e0(void);
-void Func_02002390(void);
-void Func_02002458(void);
-void Func_020027e0(void);
-void Func_02002a5c(void);
-void Func_02002f74(void);
-void Func_02002f9c(void);
-void Func_02002ff4(void);
 
-extern u32 gData_02003e60[];
-extern u32 gData_02003e9c[];
 extern u32 gData_02003ed8[];
 
 // clang-format off

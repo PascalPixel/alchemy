@@ -3,6 +3,7 @@
 // Part of f0cf050.c.
 
 #include "../f0cf050_internal.h"
+#include "module/field/f0cf050.h"
 
 /// Suspends the fade overlay's drawing callback.
 void FadeOverlay_Suspend(void) { Task_SuspendAll(Func_080d1840); }
@@ -95,7 +96,8 @@ void BattleEffect_FillOverlayTiles(s32 solid) {
   HeapSlot_Release(56);
 }
 
-struct EffectSprite {
+/* VIEW(f0cf050): tag struct EffectSprite as struct EffectSprite__f0cf050; effect_sprite.h has another definition. */
+struct EffectSprite__f0cf050 {
   u8 unk00[4];
   u16 y : 8;
   u16 affineMode : 2;
@@ -111,21 +113,23 @@ struct EffectSprite {
   u16 depth;
 };
 
-void Func_080eaf98();
+/* VIEW(f0cf050): routine Func_080eaf98 as void Func_080eaf98(); effect_sprite.h has void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY, u32 attributes, s32 tile). */
+extern void Func_080eaf98__f0cf050() __asm__("Func_080eaf98");
 
 /// Sets up sprite through Func_080eaf98 with resource 94's tiles, at
 /// priority 1 in palette 0.
-void Func_080d1dac(struct EffectSprite *sprite, s32 a, s32 b, s32 c) {
-  Func_080eaf98(sprite, a, b, c, gResourceTableEntries[94].offset >> 5);
+void Func_080d1dac(struct EffectSprite__f0cf050 *sprite, s32 a, s32 b, s32 c) {
+  Func_080eaf98__f0cf050(sprite, a, b, c, gResourceTableEntries[94].offset >> 5);
   sprite->depth = 0;
   sprite->priority = 1;
   sprite->palette256 = 0;
   sprite->palette = 0;
 }
 
-
-void Camera_WorldToScreen(s32 *position);
-void Func_080eb01c(void *sprite);
+/* VIEW(f0cf050): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
+extern void Camera_WorldToScreen__f0cf050(s32 *position) __asm__("Camera_WorldToScreen");
+/* VIEW(f0cf050): routine Func_080eb01c as void Func_080eb01c(void *sprite); effect_sprite.h has void Func_080eb01c(struct EffectSprite *sprite). */
+extern void Func_080eb01c__f0cf050(void *sprite) __asm__("Func_080eb01c");
 
 /// Projects the world position (x, y, z) to the screen, stores it as the
 /// effect sprite's position and draws the sprite.
@@ -133,29 +137,21 @@ void BattleEffect_DrawSpriteAtWorldPosition(s32 *sprite, s32 x, s32 y, s32 z) {
   s32 position[3];
 
   SET_VECTOR(position, x, y, z);
-  Camera_WorldToScreen(position);
+  Camera_WorldToScreen__f0cf050(position);
   sprite[3] = position[0];
   sprite[4] = position[2];
-  Func_080eb01c(sprite);
+  Func_080eb01c__f0cf050(sprite);
 }
 
 /// The twin of Func_080d1dac with object mode 1 and priority 0.
-void Func_080d1e18(struct EffectSprite *sprite, s32 a, s32 b, s32 c) {
-  Func_080eaf98(sprite, a, b, c, gResourceTableEntries[94].offset >> 5);
+void Func_080d1e18(struct EffectSprite__f0cf050 *sprite, s32 a, s32 b, s32 c) {
+  Func_080eaf98__f0cf050(sprite, a, b, c, gResourceTableEntries[94].offset >> 5);
   sprite->depth = 0;
   sprite->priority = 0;
   sprite->palette256 = 0;
   sprite->palette = 0;
   sprite->objectMode = 1;
 }
-
-struct BattleFxDefinition {
-  u16 id;
-  u8 value;
-  u8 flags;
-};
-
-extern struct BattleFxDefinition gData_080f0308[];
 
 /// Finds the battle effect definition of id among the first 243 entries; when
 /// none matches it returns entry 243.
@@ -173,12 +169,6 @@ struct BattleFxDefinition *BattleEffect_FindDefinition(u32 id) {
   }
   return entry;
 }
-
-struct BattleRenderObject {
-  u8 unk00[0x50];
-  struct ObjectAnimationState *animation;
-  u8 kind;
-};
 
 s32 BattleEffect_GetAnimationValue(u32 objectId) {
   struct BattleRenderObject *object =

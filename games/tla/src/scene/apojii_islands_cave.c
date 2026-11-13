@@ -12,6 +12,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "ram_buffer.h"
+#include "module/scene/apojii_islands_cave.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -42,8 +43,6 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-extern u32 gData_02000090[];
 
 // clang-format off
 u32 gData_02000090[] = {

@@ -3,6 +3,7 @@
 // Part of game.c.
 
 #include "../game_internal.h"
+#include "module/game/game.h"
 
 /// Returns the item's definition.
 /// item: item ID; the inventory's equipment and quantity bits are ignored.
@@ -432,10 +433,6 @@ s32 PartyInventory_Discard(s32 item_id) {
   Inventory_Discard(owner, Inventory_Find(owner, item_id));
   return 0;
 }
-
-enum { ITEM_COUNTER_COUNT = 300 };
-
-extern u8 gItemCounters[ITEM_COUNTER_COUNT];
 
 s32 Inventory_Break(s32 owner, s32 slot) {
   struct OwnerInventoryState *inv = Unit_Get(owner);

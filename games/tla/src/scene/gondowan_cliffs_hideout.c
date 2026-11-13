@@ -12,6 +12,9 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "event_work.h"
+#include "module/scene/gondowan_cliffs_hideout.h"
+#include "module/scene/scene.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -24,19 +27,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "actor.h"
 #include "event_inline.h"
 
-/// The hideout's placed actors: two not yet understood, then the four
-/// Kibombo warriors, named for what each says when spoken to.
-enum GondowanCliffsHideoutActorId {
-  ACTOR_WARRIOR_FROM_KIBOMBO = ACTOR_FIRST_PLACED + 2,
-  ACTOR_WARRIOR_BLAMING_THE_COLLISION,
-  ACTOR_WARRIOR_CLAIMING_TO_CAMP,
-  ACTOR_WARRIOR_AWAITING_FRIENDS
-};
-
-extern struct ActorPlacement gPlacementsWithoutWarriors[];
-extern struct ActorPlacement gPlacementsWithWarriors[];
-void Event_Start(void);
-void Event_End(void);
 void Func_0200020c(void);
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
@@ -93,7 +83,6 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
   GameFlag_SetBit(2447);
 }
 
-
 s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 513;
   Actor_SetSingleChildFlags(Actor_GetById(8), 0);
@@ -105,8 +94,6 @@ s32 Scene_PrepareMap(void) {
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
   return 0;
 }
-
-extern u32 gData_02000224[];
 
 u32 gData_02000224[] = {
     39,

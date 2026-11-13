@@ -3,16 +3,13 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "gamepak/far_call/shop.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "object_effect_scripts.h"
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-
-extern u32 gVBlankCount;
-extern u32 gData_080f0bfc[];
-
-void Shop_SaveAndTintFieldPaletteFar(s32 value);
-void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x,
-                              s32 z);
-void Shop_RestoreFieldPaletteFar(void);
 
 /// Ends a heavy impact: object id spins, leaps and vanishes in 24 sparks that
 /// circle and then close on the current owner, which turns and takes mode 28.
@@ -123,7 +120,6 @@ void BattleEffect_ShrinkObjectAndDestroySlow(void *obj) {
     Actor_Destroy(obj);
 }
 
-
 struct BattleFxScene__motes;
 
 #define Actor_SetChildValueUnlessFifteenFar                                    \
@@ -131,75 +127,6 @@ struct BattleFxScene__motes;
 #define Actor_ReleaseFar Actor_Destroy
 #define gBattleEffect_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
-
-struct EffectOwner {
-  u8 unk00[8];
-  struct EffectVector position;
-  u8 unk14[0x3c];
-  struct AnimationObject *sprite;
-};
-
-void Map_SetScreenShakeFar(s32, s32, s32);
-
-struct OrbitPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct DescendingOrbitObject {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[80];
-  u16 timer;
-  s16 angle;
-};
-
-struct SpreadPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-extern const s32 gBattleEffect_SharedParticleScript[];
-
-struct CaptureObject {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 baseY;
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk20[8];
-  s32 gravity;
-  u8 unk2c[4];
-  s32 speed;
-  u8 unk34[33];
-  u8 mode;
-  u8 unk56[5];
-  u8 visible;
-  u8 unk5c[2];
-  u16 lifetime;
-  u8 unk60[4];
-  u16 timer;
-  u16 angle;
-  u8 unk68[4];
-  void *callback;
-};
-
-struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-
-struct LinkedCaptureObject {
-  u8 padding000[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 padding014[84];
-  struct LinkedCaptureObject *target;
-};
 
 void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
   struct EffectOwner *owner;
@@ -271,16 +198,6 @@ void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
   }
 }
 
-void BattleEffect_ShrinkObjectAndDestroyFast(void *obj);
-
-void BattleEffect_UpdateDescendingOrbitObject(
-    struct DescendingOrbitObject *arg);
-
-void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect);
-
-void Djinn_RunVenusJoinEffect(s32 arg);
-
-void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect);
 #undef Actor_SetChildValueUnlessFifteenFar
 #undef Actor_ReleaseFar
 #undef gBattleEffect_PulseScales

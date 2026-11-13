@@ -5,6 +5,10 @@
 // ---- games/tla/src/scene/sea_of_time.c ----
 
 #include "sea_of_time/sea_of_time.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/scene/scene.h"
+#include "module/scene/sea_of_time.h"
 
 s32 Func_0200033c(struct Actor *object) {
   ((struct SeaOfTimeSprite *)object->sprite)->visible = 0;
@@ -73,7 +77,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 /* VIEW(sea_of_time): variable gData_020021e4 as extern const u8 gData_020021e4[]; the definition has struct ActorPlacement gData_020021e4[] = { { 8, CONDITION_ALWAYS, (s32) gData_02002154, PIXELS(120), 0, PIXELS(280), FACING_NORTH, 2, 0 }, {...; tried as the definition's extern struct WarpTarget gData_020021e4, it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:80: cannot convert to a pointer type. */
 extern const u8 gData_020021e4__sea_of_time[] __asm__("gData_020021e4");
-extern struct ActorPlacement gData_02002214[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room2)
@@ -121,11 +124,6 @@ void Func_0200043c(void) {
     object->z = z;
   }
 }
-
-struct SeaOfTimeEventWork0154 {
-  u8 unk000[0x154];
-  s16 unk154;
-};
 
 void Func_0200054c(void) {
   struct SeaOfTimeEventWork0154 *work =
@@ -272,8 +270,6 @@ void Func_0200054c(void) {
 #include "event_work.h"
 #include "system/field_effect.h"
 
-s32 Func_02001f9c(struct Actor *actor);
-
 /// Walks actor 8 along a run of cells in the facing the event work names,
 /// throwing sparks from both sides of it every fourth frame.
 void Func_02000818(void) {
@@ -361,18 +357,8 @@ void Func_02000818(void) {
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
 
-struct Spot {
-  s32 x;
-  s32 z;
-};
-
-struct Spots {
-  struct Spot spot[6];
-};
-
 /* VIEW(sea_of_time): variable gData_020022c4 as extern u32 gData_020022c4; the definition has u32 gData_020022c4[] = { 0, }. */
 extern u32 gData_020022c4__sea_of_time __asm__("gData_020022c4");
-extern u32 gData_020022c4[];
 /* VIEW(sea_of_time): variable gData_020022be as extern u16 gData_020022be; the definition has u16 gData_020022be[] = { 0, }; tried as the definition's extern u16 gData_020022be[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:407: `gData_020022be' has an incomplete type. */
 extern u16 gData_020022be__sea_of_time __asm__("gData_020022be");
 /* VIEW(sea_of_time): variable gData_020022c0 as extern s16 gData_020022c0; the definition has u32 gData_020022c0[] = { 0, }; tried as the definition's extern u32 gData_020022c0[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:408: `gData_020022c0' has an incomplete type. */
@@ -383,11 +369,6 @@ extern u16 gData_020022bc__sea_of_time __asm__("gData_020022bc");
 extern struct Spots gData_02002118__sea_of_time __asm__("gData_02002118");
 /* VIEW(sea_of_time): variable gData_02002110 as extern u8 gData_02002110[]; the definition has u32 gData_02002110[] = { 0x18101810, 0x1810, }; tried as the definition's extern u32 gData_02002110[], Func_02000a80 moves: 5 of 188 instructions in tla-ja. */
 extern u8 gData_02002110__sea_of_time[] __asm__("gData_02002110");
-
-struct EventWork687 {
-  u8 unk000[0x16a];
-  u16 unk16a;
-};
 
 /// Tracks actor 8 around the ring of cells: counts steps made in one direction,
 /// spawning an effect every fourth frame once past 3, and rewards a full count.
@@ -491,8 +472,6 @@ void Func_02000c50(void) {
 #include "system/io_reg.h"
 
 extern u32 gData_020022cc;
-void Func_02000c50(void);
-void Event_Start(void);
 /* VIEW(s0c94): routine Func_02001fb4 as s32 Func_02001fb4(void); sea_of_time.h has void Func_02001fb4(void); tried as the definition's void Func_02001fb4(s32 *position, s32 speed, s32 mode), it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:494: conflicting types for `Func_02001fb4'. */
 extern s32 Func_02001fb4__s0c94(void) __asm__("Func_02001fb4");
 
@@ -552,13 +531,6 @@ s32 Func_02000c94(void) {
   Task_Add(Func_02000c50, 0x480);
   return Func_02001fb4__s0c94();
 }
-
-/// The 14 colours of BG palette 3 (entries 1 to 14) that the fade returns to,
-/// copied from palette RAM by Scene_Initialize and rotated by Func_02001650 in
-/// step with BG palette entries 49 to 62.
-struct SavedColors {
-  u16 colors[14];
-};
 
 extern struct SavedColors gData_020026c0;
 
@@ -632,10 +604,6 @@ fade:
 // Scene code of overlay 0x687, in ROM order, from s0ef0's offset up to the
 // next object the overlay links.
 
-
-void Event_Start(void);
-s32 Math_Cosine(s32 angle);
-s32 Func_02001f9c(struct Actor *actor);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
@@ -707,7 +675,6 @@ void Func_02000ef0(void) {
   Func_02001fb4();
 }
 
-
 #include "io_reg.h"
 
 void Func_02001068(void) {
@@ -741,9 +708,6 @@ void Func_020010a8(struct Actor *object) {
 }
 
 extern struct SavedColors gData_020026c0;
-
-void Func_02001f4c(struct Actor *object, s32 value);
-void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
 void Func_02001108(void) {
   volatile u16 fill;
@@ -884,10 +848,6 @@ next:
   Func_02001fb4();
 }
 
-extern struct Trigger gData_020022d0[];
-extern struct Trigger gData_0200242c[];
-extern struct Trigger gData_0200251c[];
-
 void Func_0200141c(s32 x, s32 z, s32 actor) {
   s32 cx = x >> 20;
   s32 cz = z >> 20;
@@ -991,23 +951,7 @@ const struct Trigger *Scene_GetEvents(void) {
   return gData_0200251c;
 }
 
-
 #include "map.h"
-
-// The Sea of Time's frame callback: rotates two runs of the background palette,
-// pulses the red of colour 15 (or steps it with the alarm), copies the palette
-// and ripples the layer's horizontal scroll line by line.
-/// The event work's fields this function reads that SeaOfTimeEventWork lacks.
-struct EventWork_02001650 {
-  u8 unk000[0x166];
-  s16 unk166;
-  u8 unk168[0x4a];
-  u16 unk1b2;
-};
-
-extern u16 Data_02002580[160];
-
-extern s16 gData_0200257c[1];
 
 /// The Sea of Time's frame callback: rotates two runs of the background
 /// palette, pulses the red of colour 15 (or steps it with the alarm), copies
@@ -1148,10 +1092,8 @@ void Func_02001928(s32 x, s32 z, s32 actor) {
   Event_Wait(20);
 }
 
-
-
-void Func_02001f64();
-void Party_PlaySavedMusic();
+/* VIEW(sea_of_time): routine Party_PlaySavedMusic as void Party_PlaySavedMusic(); module/system/system.h has void Party_PlaySavedMusic(void). */
+extern void Party_PlaySavedMusic__sea_of_time() __asm__("Party_PlaySavedMusic");
 /// The Sea of Time's opening: places the camera and the first effects, showers
 /// sparks for 360 frames and larger effects for 16, then fades BG palette 3 to
 /// RGB(11, 6, 23).
@@ -1276,17 +1218,14 @@ void Func_02001a14(void) {
     gData_020022cc += gFrameCount & 1;
   } while (changed);
   Task_RemoveFar(Func_02001650);
-  Party_PlaySavedMusic();
+  Party_PlaySavedMusic__sea_of_time();
   GameFlag_SetBit(0x940);
   Func_02001fb4();
 }
 
-
 // The overlay's start: sets the screen effect, restores the clock and palette
 // in the first room, draws the unlit cells in the second, and schedules the
 // frame callback.
-
-void Func_02000c50(void);
 
 /// The overlay's start: sets the screen effect, restores the clock and palette
 /// in the first room, draws the unlit cells in the second, and schedules the
@@ -1363,14 +1302,7 @@ s32 Scene_PrepareMap(void) {
 }
 
 void Func_0200043c(void);
-void Func_0200054c(void);
 void Func_02000818(void);
-void Func_02000a80(void);
-
-extern u32 gData_0200205c[];
-extern u32 gData_02002098[];
-extern u32 gData_020020d4[];
-extern s32 gData_02002154[];
 
 // clang-format off
 u32 gData_0200205c[] = {

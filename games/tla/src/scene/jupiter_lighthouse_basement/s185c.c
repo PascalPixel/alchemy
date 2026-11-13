@@ -5,14 +5,14 @@
 #include "field_effect.h"
 #include "event_inline.h"
 #include "../jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "event_work.h"
+#include "module/field/field_effect.h"
+#include "module/scene/jupiter_lighthouse_basement.h"
+#include "module/scene/scene.h"
 
-void Event_Start(void);
-void Map_CenterOnFollowedPoint(void);
-s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotion(union FieldObject *object);
-void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Event_End(void);
+/* VIEW(s185c): routine Func_02001094 as void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct EffectOptions *options); module/scene/jupiter_lighthouse_basement.h has void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct EffectOptions *options). */
+extern void Func_02001094__s185c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("Func_02001094");
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
@@ -69,7 +69,7 @@ loop:
       velocity[0] += velocity[0] >> 1;
       velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;
       velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
-      Func_02001094(actor->x, actor->y, actor->z, velocity[0], velocity[1],
+      Func_02001094__s185c(actor->x, actor->y, actor->z, velocity[0], velocity[1],
                     velocity[2], 0x1090001, &options);
     }
     i++;
@@ -124,13 +124,6 @@ s32 Func_020019f4(void) {
 
 #include "cell_target.h"
 
-struct JupiterLighthouseRoom8EventWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-  u8 unk1b0[0x1c];
-  struct Actor *marker;
-};
-
 void Func_02001aa4(s32 x, s32 z, s32 effect) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
@@ -158,15 +151,8 @@ void Func_02001aa4(s32 x, s32 z, s32 effect) {
 #include "objcmd.h"
 
 void Func_02000054(void);
-void Func_02000074(void);
 void Func_02000094(void);
-void Func_020000f8(void);
-void Func_02000118(void);
 void Func_02000124(void);
-
-extern u32 gData_020021c8[];
-extern u32 gData_02002204[];
-extern u32 gData_02002240[];
 
 // clang-format off
 u32 gData_020021c8[] = {

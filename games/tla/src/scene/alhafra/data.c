@@ -1,6 +1,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
+#include "module/scene/alhafra.h"
 
 void Func_0200010c(void);
 void Func_02000124(void);
@@ -8,24 +9,14 @@ void Func_02000130(void);
 void Func_0200013c(void);
 void Func_020001a4(void);
 void Func_020001f0(void);
-void Func_0200023c(void);
 void Func_02000248(void);
-void Func_02000254(void);
-void Func_02000260(void);
 void Func_0200026c(void);
-void Func_02000288(void);
 void Func_020002f8(void);
-void Func_02000398(void);
+/* VIEW(data): routine Func_02000398 as void Func_02000398(void); module/scene/alhafra.h has void Func_02000398(s32 a). */
+extern void Func_02000398__data(void) __asm__("Func_02000398");
 void Func_0200047c(void);
 void Func_0200066c(void);
-void Func_02000760(void);
-void Func_02000774(void);
 void Func_02000aa0(void);
-
-extern u32 gData_02001d64[];
-extern s16 gData_02002760[];
-extern s16 gData_02002762[];
-extern s16 gData_0200276e[];
 
 // clang-format off
 s16 gData_02001d54[] = {
@@ -686,7 +677,7 @@ s32 gData_02002ad0[] = {
     MSGNO(MsgAlhafra64),
     0,
     (s32)0xffff001b,
-    (s32)Func_02000398,
+    (s32)Func_02000398__data,
     0x8d15,
     (s32)0xffff0019,
     MSGNO(MsgAlhafra66),

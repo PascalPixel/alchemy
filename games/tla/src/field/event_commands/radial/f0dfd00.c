@@ -3,12 +3,10 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
-
-struct EffectVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "module/field/radial.h"
 
 // An orbiting mote: radial.c's OrbitEffect.
 /* VIEW(f0dfd00): tag struct OrbitEffect as struct OrbitEffect__f0dfd00; radial.c has another definition. */
@@ -29,27 +27,14 @@ struct OrbitEffect__f0dfd00 {
   void (*update)(struct OrbitEffect__f0dfd00 *);
 };
 
-// ⚓️'s composite sprite, as far as this reads it.
-struct OrbTargetSprite {
-  u8 unk00[0x28];
-  struct AnimationEntry *entries[4];
-};
-
-struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void BattleEffect_InitializeSharedScene(void);
-void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p);
-void BattleEffect_ShrinkObjectScaleUntilHalf(struct Actor *object);
+/* VIEW(radial): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p); module/system/system.h has void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position). */
+extern void Vector_AddPolarOffset__radial(s32 magnitude, s32 angle, struct EffectVector *p) __asm__("Vector_AddPolarOffset");
 /* VIEW(f0dfd00): routine BattleEffect_WanderAroundAnchor as void BattleEffect_WanderAroundAnchor(struct OrbitEffect__f0dfd00 *mote); the definition has void BattleEffect_WanderAroundAnchor(struct OrbitEffect *effect). */
 extern void BattleEffect_WanderAroundAnchor__f0dfd00(struct OrbitEffect__f0dfd00 *mote) __asm__("BattleEffect_WanderAroundAnchor");
 /* VIEW(f0dfd00): routine BattleEffect_CircleAnchor as void BattleEffect_CircleAnchor(struct OrbitEffect__f0dfd00 *mote); the definition has void BattleEffect_CircleAnchor(struct OrbitEffect *effect). */
 extern void BattleEffect_CircleAnchor__f0dfd00(struct OrbitEffect__f0dfd00 *mote) __asm__("BattleEffect_CircleAnchor");
 /* VIEW(f0dfd00): routine BattleEffect_AgeAndCueAtEighty as void BattleEffect_AgeAndCueAtEighty(struct Actor *object); the definition has void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object); tried as the definition's void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object), which the object already declares, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:311: `BattleEffect_AgeAndCueAtEighty' undeclared (first use in this function). */
 extern void BattleEffect_AgeAndCueAtEighty__f0dfd00(struct Actor *object) __asm__("BattleEffect_AgeAndCueAtEighty");
-void BattleEffect_PrepareBufferInterpolation(void);
-void Func_080db0b0(s32 objectId);
-void Func_08020340(struct Actor *object);
-void Actor_Destroy(struct Actor *object);
-void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 
 #define ORB_OBJECT 280
 #define MOTE_OBJECT 308
@@ -59,13 +44,6 @@ void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 // The two targets ⚓️ treats apart, by their first animation.
 #define TARGET_ANIMATION_A 372
 #define TARGET_ANIMATION_B 373
-
-enum OrbKind {
-  ORB_PLAIN,    // the scene is enabled: the orb only comes and goes
-  ORB_ORBITING, // motes circle the orb while the target shrinks
-  ORB_WANDER,   // target 372: motes wander off, the target is handed on
-  ORB_HANDOFF,  // target 373: the target is handed on
-};
 
 // Animation 14: carry an orb from the caster to the scene's position over
 // ten frames, growing it from a quarter size, then play out the kind.
@@ -145,7 +123,7 @@ void FieldEffect_RunWhirlwind(void) {
       position.y = orb->y + i * 0xcccc + (4 << 16);
       position.z = orb->z;
       distance = Random16() * 5 + (3 << 16);
-      Vector_AddPolarOffset(distance, Random16(), &position);
+      Vector_AddPolarOffset__radial(distance, Random16(), &position);
       mote = (struct OrbitEffect__f0dfd00 *)Actor_Spawn(MOTE_OBJECT, position.x,
                                                position.y, position.z);
       if (mote != 0) {
@@ -177,7 +155,7 @@ void FieldEffect_RunWhirlwind(void) {
         position.z = orb->z;
         distance = Random16() * 5;
         distance += 3 << 16;
-        Vector_AddPolarOffset(distance, Random16(), &position);
+        Vector_AddPolarOffset__radial(distance, Random16(), &position);
         mote = (struct OrbitEffect__f0dfd00 *)Actor_Spawn(MOTE_OBJECT, position.x,
                                                  position.y, position.z);
         if (mote != 0) {

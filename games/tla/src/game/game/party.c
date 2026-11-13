@@ -3,6 +3,9 @@
 // Part of game.c.
 
 #include "../game_internal.h"
+#include "gamepak/far_call/window.h"
+#include "module/game/game.h"
+#include "text/msg_ids.h"
 
 // A unit whose suffix is below SUFFIX_COUNT gets one more character after its
 // name, SUFFIX_BASE plus the suffix: the digits 1 to 9 outside Japan, and the
@@ -14,27 +17,6 @@
 #define SUFFIX_BASE '1'
 #define SUFFIX_COUNT 9
 #endif
-
-struct EnemyRecord {
-  u8 unk00[15];
-  u8 level;
-  u16 hp;
-  u16 pp;
-  u16 atk;
-  u16 def;
-  u16 agi;
-  u8 luck;
-  u8 turns;
-  u8 hpRegen;
-  u8 ppRegen;
-  u16 items[4];
-  u8 counts[4];
-  u8 unk2a[34];
-};
-
-extern u8 MsgEnemyName[];
-
-void Message_DecodeRawFar(s32 message, u16 *buffer, s32 length);
 
 s32 Func_080afbec(s32 unitId, s32 enemyId, s32 suffix) {
   struct BattleUnit *unit;
@@ -132,7 +114,7 @@ s32 Party_AddMember(s32 value) {
   s32 count = Party_CountMembers();
   s32 index;
 
-  GameFlag_SetBit(value);
+  GameFlag_SetBit__game(value);
   index = 0;
   while (index < count) {
     if (gMainRoutineWork.activeOwners[index] == value)

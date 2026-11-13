@@ -3,24 +3,8 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
-
-/// The inn's view of the shop work (heap slot 220).
-struct InnRuntime {
-  u8 unk000[0x4ca];
-  s16 partyMemberIds[8];
-  u8 unk4da[0x2a];
-  s8 partyMemberCount;
-  u8 unk505;
-  u8 busy;
-};
-
-struct InnUnit {
-  u8 unk00[0x38];
-  s16 hp;
-};
-
-/// The price per guest of each inn.
-extern const s8 gData_0810cf2c[];
+#include "gamepak/far_call/field_sequence.h"
+#include "module/shop/shop.h"
 
 /// Multiplies the inn's price per guest by the number of living party members.
 // As ☀️'s Inn_RoomPrice.
@@ -64,36 +48,6 @@ s32 Inn_QuoteRoomPrice(s32 value) {
 // clean up) and its work-block offsets; this game has no special-inn flag.
 // Messages from MsgInnWelcome ("Welcome to our inn.").
 
-// The inn work block, as this function reads it.
-struct InnRuntimeState {
-  u8 unk000[0x0c];
-  s32 window;
-  u8 unk010[0x4ea];
-  u16 resourceId;
-  u8 unk4fc[0x0a];
-  u8 active;
-};
-
-struct InnObjectComponent {
-  u8 padding00[0x28];
-  u16 *resourceId;
-};
-
-struct InnObject {
-  u8 padding00[0x50];
-  struct InnObjectComponent *component;
-};
-
-enum InnMessageId {
-  INN_MESSAGE_WELCOME,
-  INN_MESSAGE_STAY_COMPLETE,
-  INN_MESSAGE_NOT_ENOUGH_COINS,
-  INN_MESSAGE_GOODBYE,
-  INN_MESSAGE_REST_COMPLETE,
-};
-
-void Inn_PlaySleep(s32 price);
-
 s32 Inn_CheckIn(s32 mode, s32 objectId) {
   struct InnRuntimeState *state;
   struct InnObject *object;
@@ -105,7 +59,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
   state = Ram_HeapSlots->menuRuntime;
   state->active = 1;
 
-  object = Actor_GetByIdFar(objectId);
+  object = Actor_GetByIdFar__shop(objectId);
   state->resourceId = *object->component->resourceId;
   win = Func_080380f8(state->resourceId, 0, 0, 0);
 
@@ -128,7 +82,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
     Window_CloseFar(win, 2);
     Inn_PlaySleep(amount);
 
-    object = Actor_GetByIdFar(objectId);
+    object = Actor_GetByIdFar__shop(objectId);
     state->resourceId = *object->component->resourceId;
     win = Func_080380f8(state->resourceId, 0, 0, 0);
     Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_REST_COMPLETE);
@@ -138,16 +92,6 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
   Shop_ReleaseWork();
   return 0;
 }
-
-struct FieldEffectState {
-  u8 padding0[0x1AC];
-  s32 effect;
-  u8 padding1B0[4];
-  s32 delay;
-};
-
-void Event_WaitTransitionFramesFar(void);
-void Event_StartScreenTransitionFar(void);
 
 void Inn_PlaySleep(s32 roomPrice) {
   s16 objects[8];

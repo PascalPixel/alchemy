@@ -1,40 +1,45 @@
 #include "local.h"
 #include "io_reg.h"
 #include "call.h"
-
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+#include "event_work.h"
+#include "field.h"
+#include "module/field/object.h"
+#include "module/scene/magma_rock_inside.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 extern const u8 gData_02005074[];
 extern const u8 gData_020050d4[];
 extern const u8 gData_02005134[];
 extern const u8 gData_0200519c[];
 extern const u8 gData_020051fc[];
-extern const u8 gData_0200525c[];
-extern const u8 gData_020052bc[];
-extern const u8 gData_0200531c[];
-extern const u8 gData_0200537c[];
+/* VIEW(s3678): variable gData_0200525c as const u8 gData_0200525c[]; module/scene/magma_rock_inside.h has s16 gData_0200525c[]. */
+extern const u8 gData_0200525c__s3678[] __asm__("gData_0200525c");
+/* VIEW(s3678): variable gData_020052bc as const u8 gData_020052bc[]; module/scene/magma_rock_inside.h has s16 gData_020052bc[]. */
+extern const u8 gData_020052bc__s3678[] __asm__("gData_020052bc");
+/* VIEW(s3678): variable gData_0200531c as const u8 gData_0200531c[]; module/scene/magma_rock_inside.h has s16 gData_0200531c[]. */
+extern const u8 gData_0200531c__s3678[] __asm__("gData_0200531c");
+/* VIEW(s3678): variable gData_0200537c as const u8 gData_0200537c[]; module/scene/magma_rock_inside.h has s16 gData_0200537c[]. */
+extern const u8 gData_0200537c__s3678[] __asm__("gData_0200537c");
 extern const u8 gData_020053dc[];
 extern const u8 gData_0200543c[];
 extern const u8 gData_0200549c[];
-extern const u8 gData_020054fc[];
+/* VIEW(s3678): variable gData_020054fc as const u8 gData_020054fc[]; module/scene/magma_rock_inside.h has s16 gData_020054fc[]. */
+extern const u8 gData_020054fc__s3678[] __asm__("gData_020054fc");
 extern u16 gData_02005500[];
-extern const u8 gData_02005508[];
+/* VIEW(s3678): variable gData_02005508 as const u8 gData_02005508[]; module/scene/magma_rock_inside.h has s16 gData_02005508[]. */
+extern const u8 gData_02005508__s3678[] __asm__("gData_02005508");
 extern u16 gData_0200550c[];
-extern const u8 gData_02005520[];
+/* VIEW(s3678): variable gData_02005520 as const u8 gData_02005520[]; module/scene/magma_rock_inside.h has s16 gData_02005520[]. */
+extern const u8 gData_02005520__s3678[] __asm__("gData_02005520");
 extern const u8 gData_02005528[];
-extern const u8 gData_0200552e[];
+/* VIEW(s3678): variable gData_0200552e as const u8 gData_0200552e[]; module/scene/magma_rock_inside.h has s16 gData_0200552e[]. */
+extern const u8 gData_0200552e__s3678[] __asm__("gData_0200552e");
 
 void Func_02000800(s32 id, const u8 *script, s32 flag);
-void Func_02004e60(s32 value);
 void Func_02004ed8(const u8 *table);
-void Func_02000880(u16 *table);
-void Func_02004ec0(void);
 void Func_02004ec8(s32 a, s32 b, s32 c);
-void Func_02004f08(s32 id, s32 value);
 s32 Func_02000694(u32 layer, s32 x, s32 y, s32 value);
-void Func_020034bc(void);
-void Func_020034f0(void);
-void Func_02003548(void);
 void Func_02003630(void);
 
 #define CLOSED_BLEND()                                                         \
@@ -83,7 +88,7 @@ s32 Scene_Initialize(void) {
     } while (++j != 6);
     if (GameFlag_Test(2544))
       Actor_GetById(15)->z = 132 << 17;
-    Func_02004ed8(gData_020054fc);
+    Func_02004ed8(gData_020054fc__s3678);
     Func_02000880(gData_02005500);
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
     Raise(16);
@@ -95,7 +100,7 @@ s32 Scene_Initialize(void) {
     Func_02004e60(0);
     if (GameFlag_Test(2545))
       Actor_GetById(11)->z = 166 << 18;
-    Func_02004ed8(gData_02005508);
+    Func_02004ed8(gData_02005508__s3678);
     Func_02004ec0();
     Func_02004ec8(0, 13, 14);
     Func_02000880(gData_02005500);
@@ -133,7 +138,7 @@ s32 Scene_Initialize(void) {
         Actor_GetById(24)->x = 172 << 17;
       if (GameFlag_Test(2548))
         Actor_GetById(25)->x = 172 << 17;
-      Func_02004ed8(gData_02005520);
+      Func_02004ed8(gData_02005520__s3678);
       Lower(26, 0);
       Actor_GetById(15)->unk5c[0] = 3;
       Actor_GetById(16)->unk5c[0] = 3;
@@ -143,14 +148,14 @@ s32 Scene_Initialize(void) {
       Actor_GetById(20)->unk5c[0] = 3;
       Actor_GetById(21)->unk5c[0] = 3;
       Actor_GetById(22)->unk5c[0] = 3;
-      Func_02000800(15, gData_0200525c, 770);
-      Func_02000800(16, gData_0200525c, 770);
-      Func_02000800(17, gData_020052bc, 770);
-      Func_02000800(18, gData_020052bc, 770);
-      Func_02000800(19, gData_0200531c, 770);
-      Func_02000800(20, gData_0200531c, 770);
-      Func_02000800(21, gData_0200537c, 770);
-      Func_02000800(22, gData_0200537c, 770);
+      Func_02000800(15, gData_0200525c__s3678, 770);
+      Func_02000800(16, gData_0200525c__s3678, 770);
+      Func_02000800(17, gData_020052bc__s3678, 770);
+      Func_02000800(18, gData_020052bc__s3678, 770);
+      Func_02000800(19, gData_0200531c__s3678, 770);
+      Func_02000800(20, gData_0200531c__s3678, 770);
+      Func_02000800(21, gData_0200537c__s3678, 770);
+      Func_02000800(22, gData_0200537c__s3678, 770);
       if (GameFlag_Test(770))
         Func_02003548();
       else
@@ -211,7 +216,7 @@ s32 Scene_Initialize(void) {
       Actor_SetModeById(23, 4);
       Actor_SetPosition(23, 174 << 18, 162 << 18);
     }
-    Func_02004ed8(gData_0200552e);
+    Func_02004ed8(gData_0200552e__s3678);
     Func_02004e60(0);
     if (!Event_GetFlag(771))
       Actor_SetPosition(21, 0, 0);
@@ -283,11 +288,7 @@ s32 Scene_PrepareMap(void) {
 #include "main_routine_work.h"
 #include "event_inline.h"
 
-extern u8 gMapShapeGrid[];
-
-s32 Func_02004ed0(struct Actor *object);
 s32 Func_02004d20(s32 layer, s32 x, s32 z);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02004ef0(s32 unused, s32 key, s32 value);
 
 /// On entering, sets each listed pillar from its two flags, then lifts the
@@ -345,14 +346,6 @@ done:
 }
 
 #include "../trial_road/trial_road.h"
-
-s32 Func_02004e38(void);
-struct Actor *Func_02004ef8(s32 *position, s32 mode);
-void Event_Start(void);
-void Event_End(void);
-void Func_020046e8(s32 value);
-void Func_020049c0(s32 offset, s32 layer);
-void Func_0200481c(void);
 
 void Func_0200406c(const u16 *table) {
   struct Actor *leader;
@@ -427,11 +420,6 @@ test:
     goto next;
 }
 
-struct TrapEntry {
-  u16 actor;
-  u16 flag;
-};
-
 void Func_02004200(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
   struct Actor *object = Actor_Get(id);
@@ -478,7 +466,6 @@ void Func_020042e0(s32 id) {
 }
 
 void Actor_MoveToObject(s32 id, s32 owner);
-void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 /// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes

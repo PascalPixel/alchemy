@@ -3,12 +3,14 @@
 #include "actor.h"
 #include "event_inline.h"
 #include "field.h"
-
-extern s16 gData_02001cde;
-extern struct Actor *gData_02001ce0[];
-extern u16 gData_02001de2;
-extern u16 gData_02001de4;
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+#include "event.h"
+#include "event_work.h"
+#include "item_icon.h"
+#include "module/scene/anemos_inner_sanctum_entrance.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "scene_call.h"
+#include "text/msg_ids.h"
 
 s32 Func_0200033c(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);
@@ -34,10 +36,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern const u8 gData_020019dc[];
 extern const u8 gData_020019f4[];
-extern s32 gData_02000e20[];
-extern s32 gData_02000e5c[];
-extern s32 gData_02000ea4[];
-extern u8 MsgIAmTheShadow;
 
 const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1)
@@ -156,17 +154,11 @@ void Func_02000534(s32 a) {
 // ---- games/tla/src/scene/anemos_inner_sanctum_entrance/s0588.c ----
 #include "version.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
-extern s8 gData_02000eec[];
-
 void Func_02000388(void);
 /* VIEW(s0588): routine Func_020004b4 as void Func_020004b4(void); the definition has void Func_020004b4(struct Actor *object). */
 extern void Func_020004b4__s0588(void) __asm__("Func_020004b4");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Script_WaitForEventTimeout(struct Actor *actor);
-s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
-void Actor_ArmCallback(s32 id, s32 angle, s32 a);
 
 static __inline__ void MoveTo(struct Actor *object, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): MoveTo forwarded inline; as direct calls to
@@ -260,17 +252,7 @@ const u8 *Scene_GetEvents(void) {
   return gData_02001c1c;
 }
 
-struct AnemosInnerSanctumEntranceEventWork {
-  u8 unk000[0x1ac];
-  s32 route;
-};
-
 void Func_02000408(void);
-void Func_02000b18(void);
-void Func_02000ba4(s32 id, s32 value);
-void Func_02000bd4(u16 value);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -331,7 +313,6 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-
 s32 Scene_PrepareMap(void) { return 0; }
 
 #include "ram_buffer.h"
@@ -340,27 +321,14 @@ s32 Scene_PrepareMap(void) { return 0; }
 #include "vram_tab.h"
 #include "frame.h"
 
-struct LightOam {
-  u32 link;
-  u32 attr01;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u16 unk0a;
-};
-
-extern s16 gData_02001cdc;
-extern s16 gData_02001cde;
-extern struct Actor *gData_02001ce0[];
 extern struct LightOam gData_02001d20[];
-extern s16 gData_02001de0;
 /* VIEW(s0588): variable gData_02001de2 as extern s16 gData_02001de2; hide has extern u16 gData_02001de2; tried as the one declaration extern s16 gData_02001de2, it does not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum_entrance.c:355: conflicting types for `gData_02001de2'. */
 extern s16 gData_02001de2__s0588 __asm__("gData_02001de2");
 /* VIEW(s0588): variable gData_02001de4 as extern s16 gData_02001de4; hide has extern u16 gData_02001de4; tried as the one declaration extern s16 gData_02001de4, it does not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum_entrance.c:357: conflicting types for `gData_02001de4'. */
 extern s16 gData_02001de4__s0588 __asm__("gData_02001de4");
 
-s32 Func_02000d5c(struct Actor *actor);
-void Func_02000c3c(struct LightOam *oam, s32 depth);
+/* VIEW(anemos_inner_sanctum_entrance): routine Func_02000c3c as void Func_02000c3c(struct LightOam *oam, s32 depth); module/scene/settlements.h has void Func_02000c3c(void). */
+extern void Func_02000c3c__anemos_inner_sanctum_entrance(struct LightOam *oam, s32 depth) __asm__("Func_02000c3c");
 
 void Func_02000858(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -406,7 +374,7 @@ void Func_02000858(void) {
           oam->priority = Func_02000d5c(actor);
         else
           oam->priority = gData_02001de2__s0588;
-        Func_02000c3c(oam, depth);
+        Func_02000c3c__anemos_inner_sanctum_entrance(oam, depth);
         oam++;
       } else {
         s32 frame = actor->timer;
@@ -426,7 +394,7 @@ void Func_02000858(void) {
           oam->priority = Func_02000d5c(actor);
         else
           oam->priority = gData_02001de2__s0588;
-        Func_02000c3c(oam, depth);
+        Func_02000c3c__anemos_inner_sanctum_entrance(oam, depth);
         oam++;
       }
     }
@@ -436,11 +404,8 @@ void Func_02000858(void) {
 #include "iwram_call.h"
 #include "task.h"
 
-extern u8 gField_CachedTilesA[];
-extern u8 gField_CachedTilesD[];
-
-void Resource_DecodeType01(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
+/* VIEW(anemos_inner_sanctum_entrance): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
+extern void Resource_DecodeType01__anemos_inner_sanctum_entrance(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -450,7 +415,7 @@ void Func_02000a98(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02001ce0, 64);
-  Resource_DecodeType01(gField_CachedTilesA, buffer);
+  Resource_DecodeType01__anemos_inner_sanctum_entrance(gField_CachedTilesA, buffer);
   gData_02001cdc = Resource_FindFreeEntry();
   VramCache_Load(gData_02001cdc, 0xc00, buffer);
   Heap_Release(buffer);
@@ -464,7 +429,7 @@ void Func_02000b18(void) {
   u8 *buffer = BumpAlloc(0x1800);
 
   Iwram_ClearWords(gData_02001ce0, 64);
-  Resource_DecodeType01(gField_CachedTilesD, buffer);
+  Resource_DecodeType01__anemos_inner_sanctum_entrance(gField_CachedTilesD, buffer);
   gData_02001cdc = Resource_FindFreeEntry();
   VramCache_Load(gData_02001cdc, 0x1800, buffer);
   Heap_Release(buffer);
@@ -474,9 +439,6 @@ void Func_02000b18(void) {
   gData_02001de2__s0588 = -1;
   gData_02001de4__s0588 = 0;
 }
-
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 void Func_02000ba4(s32 id, s32 value) {
   struct Actor *object = Actor_GetById(id);

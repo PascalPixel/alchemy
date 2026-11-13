@@ -15,12 +15,12 @@
 #include "text/msg_ids.h"
 #include "event_inline.h"
 #include "version.h"
+#include "module/scene/lemuria_interiors.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
-void Func_0200031c(void);
 void Event_Start();
 void Event_End();
-
-extern s16 gSceneRegions[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -165,7 +165,8 @@ L_0200825a:
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Party_RemoveMember();
+/* VIEW(lemuria_interiors): routine Party_RemoveMember as void Party_RemoveMember(); module/game/game.h has s32 Party_RemoveMember(s32 owner). */
+extern void Party_RemoveMember__lemuria_interiors() __asm__("Party_RemoveMember");
 
 s32 Scene_Initialize(void) {
   struct Actor *object;
@@ -205,7 +206,7 @@ void Func_0200031c(void) {
   struct Actor *object3;
 
   GameFlag_SetBit(0x965);
-  Party_RemoveMember(7);
+  Party_RemoveMember__lemuria_interiors(7);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaInteriors07);
@@ -669,30 +670,9 @@ L_02008a86:
 
 #include "field_event.h"
 
-extern u32 gData_02002dec[];
-
-void Func_020027f4(struct Actor *object, s32 mode);
+/* VIEW(lemuria_interiors): routine Func_020027f4 as void Func_020027f4(struct Actor *object, s32 mode); module/scene/kandorean_temple.h has void Func_020027f4(void). */
+extern void Func_020027f4__lemuria_interiors(struct Actor *object, s32 mode) __asm__("Func_020027f4");
 void Actor_StartScript(struct Actor *object, const void *script);
-
-struct SpritePictures {
-  u8 unk00[5];
-  u8 picture;
-};
-
-struct AnimatedSprite {
-  u8 unk00[0x12];
-  s16 rotation;
-  u8 unk14[5];
-  u8 picture;
-  u8 nextPicture;
-  u8 unk1b[0xd];
-  struct SpritePictures *pictures;
-};
-
-struct SpawnedActor {
-  u8 unk00[0x5e];
-  u16 timer;
-};
 
 void Func_0200128c(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {
   struct Actor *object;
@@ -701,7 +681,7 @@ void Func_0200128c(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {
   object = Import_ActorCreate(0x1e8, x, y, z);
   if (object != 0) {
     sprite = (struct AnimatedSprite *)object->sprite;
-    Func_020027f4(object, 1);
+    Func_020027f4__lemuria_interiors(object, 1);
     Actor_StartScript(object, gData_02002dec);
     object->motionFlags = 0;
     {

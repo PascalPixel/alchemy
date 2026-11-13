@@ -3,6 +3,8 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "module/shop/shop.h"
+#include "module/tla.h"
 
 void QuantityBar_Fill(s32 count, s32 selector, u8 *base) {
   u32 shifted = selector << 4;
@@ -47,8 +49,6 @@ void Shop_CopyGlyphs(s32 digit, u8 *tiles, u32 place) {
     count--;
   } while (count >= 0);
 }
-
-extern const u8 gShop_PriceTiles[];
 
 struct WindowSprite *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
                                             s32 y) {
@@ -110,41 +110,6 @@ void Shop_RestoreFieldPalette(void) {
 // (games/tbs/src/shop/shop.c). The x field is written through a u32 mask, as
 // MenuCursor_MoveTowardTarget does, so the
 // 0x1ff mask is split as the native's.
-
-struct SpriteAttr {
-  unsigned y : 8;
-  unsigned affine : 2;
-  unsigned blendMode : 2;
-  unsigned mosaic : 1;
-  unsigned fullColor : 1;
-  unsigned shape : 2;
-  unsigned x : 9;
-  unsigned affineIndex : 5;
-  unsigned size : 2;
-};
-
-struct SpriteAttr2 {
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-};
-
-struct ShopCursorSprite3 {
-  struct WindowSprite *next;
-  u8 unk04[2];
-  u16 x;
-  u16 y;
-  u8 unk0a[0x0a];
-  struct SpriteAttr2 oam;
-};
-
-void MenuCursor_Set(struct ShopCursor *cursor, s32 targetX, s32 targetY, s8 kind);
 
 void MenuCursor_Advance(struct ShopCursor *cursor) {
   struct WindowSprite *sprite;

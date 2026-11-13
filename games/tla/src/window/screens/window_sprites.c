@@ -3,6 +3,7 @@
 // Part of screens.c.
 
 #include "../screens_internal.h"
+#include "module/window/screens.h"
 
 s32 Portrait_GetForSpeaker(s32 key);
 
@@ -175,9 +176,6 @@ void WindowSprite_SetInvertedSentinel(u8 *window, s32 value) {
   if (window != NULL)
     window[15] = ~value;
 }
-
-extern u8 Tile_BuildCellPicturesCode[];
-extern u8 Tile_BuildCellPicturesCodeSize[];
 
 /// Fills the 0x140-byte row buffer with blank tiles, or builds it from the
 /// window tiles' map through the cell picture routine copied to RAM.

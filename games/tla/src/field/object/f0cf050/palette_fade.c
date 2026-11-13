@@ -3,6 +3,10 @@
 // Part of f0cf050.c.
 
 #include "../f0cf050_internal.h"
+#include "ground_mask.h"
+#include "module/field/f0cf050.h"
+#include "module/field/object.h"
+#include "module/system/system.h"
 
 void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                      s32 frames) {
@@ -25,7 +29,6 @@ void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
     } while (index >= 0);
   }
 }
-
 
 void BattlePalette_UpdateBlend(void) {
   struct BattleEffectBuffers *work = Ram_HeapSlots->block32;
@@ -78,31 +81,6 @@ void BattlePalette_UpdateBlend(void) {
 
 #define COLOR_MAX 448
 #define COLOR_HALF 224
-
-enum PaletteTint {
-  PALETTE_TINT_FROM_SOURCE = 0x8000,
-  PALETTE_TINT_NONE = 0x10000,
-  PALETTE_TINT_GRAYSCALE = 0x10001,
-  PALETTE_TINT_SEPIA = 0x10002,
-  PALETTE_TINT_WARM = 0x10003,
-  PALETTE_TINT_MUTED = 0x10004,
-  PALETTE_TINT_PALE = 0x10005,
-  PALETTE_TINT_RED = 0x10006,
-  PALETTE_TINT_WARM_DARK = 0x10007,
-  PALETTE_TINT_DIM_BRIGHT = 0x10008,
-  PALETTE_TINT_DIM_GRAY = 0x10009,
-  PALETTE_TINT_FLAGS = 0x100000,
-  PALETTE_TINT_CUSTOM = 0x200000,
-  PALETTE_TINT_BLEND = 0x400000,
-  PALETTE_TINT_SPLIT = 0x800000
-};
-
-s32 Graphics_ClampRgb555Channel(s32 value);
-s32 Graphics_ClampRgb555Component(s32 value);
-
-extern u16 Data_080f0246[];
-extern u16 Data_080f0286[];
-extern u16 Data_080f02c6[];
 
 #define gColorBuffer_ChannelCurve Data_080f0246
 #define gColorBuffer_ChannelCurveLight Data_080f0286
@@ -417,7 +395,6 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
   }
 }
 
-
 void BattleEffect_InitializeBuffers(void) {
   volatile s32 zero;
   struct BattleEffectBuffers *buffer;
@@ -534,30 +511,6 @@ s32 Graphics_ClampRgb555Component(s32 val) {
   return val;
 }
 
-
-void Func_080140d8(void *entry, s32 priority);
-
-struct FadeActor {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u16 unk14;
-  s16 floor;
-  u8 unk18[10];
-  u8 terrainId;
-};
-
-struct FadeOverlayWork {
-  struct AnimationSpritePart marks[2];
-  struct FadeActor *actor;
-};
-
-struct FadeView {
-  u8 unk00[228];
-  s16 camera[4];
-};
-
 // ☀️'s FadeOverlay_DrawMarks: each frame, on the two cells beside the actor
 // where the ground one or two cells south rises above the actor's floor,
 // draws a 16-pixel-wide mark at the height of that ground.
@@ -621,7 +574,6 @@ void Func_080d1840(void) {
     Func_080140d8(mark, 0);
   }
 }
-
 
 /// Clears the overlay tiles to colour 1, sets the blend registers and starts
 /// Func_080d1840 at priority 0x480 on a 28-byte work block whose last word is

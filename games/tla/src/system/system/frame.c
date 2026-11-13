@@ -3,6 +3,8 @@
 // Part of system.c.
 
 #include "../system_internal.h"
+#include "gamepak/far_call/sound.h"
+#include "module/tla.h"
 
 void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
   if (irq <= 13) {
@@ -39,15 +41,6 @@ void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
 }
 
 #include "sound_driver_symbols.h"
-
-// volatile: the VBlank handler sets it while System_WaitForFrameInterrupt
-// waits on it, so it is no device.
-extern volatile u16 gVBlankDone;
-extern u32 gVBlankCount;
-extern u8 *gData_03007ff0;
-void Sound_UpdateBgmRampsFar(void);
-s32 SoundDriver_EnterVBlankUpdate(void);
-void IwramSoundRenderVBlank(s32) __attribute__((long_call));
 
 void System_WaitForFrameInterrupt(void) {
   u32 saved;
@@ -322,17 +315,6 @@ void Input_UpdateKeyRepeatAndDirection(void) {
   gInput.previousHeld = held;
 }
 
-struct BgScrollRegs {
-  u32 words[4];
-};
-
-
-extern void (*gData_030011f8)(void);
-extern volatile u8 gBlendDuration;
-
-void SoundDriver_VSyncRefresh(void);
-void Fade_Update(void);
-
 CAMELOT_ASM("ldmia and stmia of four registers: agscc's block moves stop at "
             "three, so a 16-byte struct copy compiles to 12 and 4")
 static __inline__ void Copy16Bytes(const void *source, volatile void *destination) {
@@ -452,7 +434,6 @@ void Input_HandleKeyInterrupt(void) {
     gResetRequested = 1;
   }
 }
-
 
 #undef SLEEP_IDLE_FRAMES
 #undef RGB_WHITE

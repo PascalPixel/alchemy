@@ -3,33 +3,12 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
-
-struct LinkedEffectVisual {
-  u8 unk00[9];
-  u8 flags;
-  u8 unk0a[16];
-  u8 value26;
-};
-
-struct LinkedEffectObject {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[60];
-  struct LinkedEffectVisual *visual;
-  u8 value54;
-  u8 value55;
-  u8 unk56[14];
-  u16 counter;
-  u16 resourceId;
-  struct LinkedEffectObject *resource;
-  void (*callback)(void);
-};
+#include "module/field/field.h"
+#include "module/system/system.h"
+#include "scene_call.h"
 
 /* VIEW(f0d489c): routine Func_080200c0 as struct LinkedEffectObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
 extern struct LinkedEffectObject *Func_080200c0__f0d489c(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
-void Actor_StartScriptFar(struct Actor *object, const s32 *script);
 /* VIEW(f0d489c): routine Actor_Destroy as void Actor_Destroy(struct LinkedEffectObject *object); battle.h has void Actor_Destroy(struct Actor *object). */
 extern void Actor_Destroy__f0d489c(struct LinkedEffectObject *object) __asm__("Actor_Destroy");
 /* VIEW(f0d489c): routine Actor_IsOutsideAnimation108 as s32 Actor_IsOutsideAnimation108(struct LinkedEffectObject *object); the definition has s32 Actor_IsOutsideAnimation108(struct Actor *object). */
@@ -115,7 +94,6 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   }
 }
 
-
 s32 __divsi3(s32, s32);
 
 s32 Actor_ClearChildAndCollisionFlags(struct Actor *obj) {
@@ -128,11 +106,6 @@ s32 Actor_ClearChildFlags(struct Actor *obj) {
   Actor_SetSingleChildFlagsFar((struct Actor *)obj, 0);
   return 0;
 }
-
-struct ObjectFlags23 {
-  u8 unk00[0x23];
-  u8 flags23;
-};
 
 s32 Actor_SetPriorityBit5(struct ObjectFlags23 *obj) {
   obj->flags23 |= 0x20;
@@ -175,9 +148,6 @@ s32 Actor_MoveTowardTarget(struct Actor *object) {
 
 // Objects: turn toward the linked target.
 
-
-s32 ArcTan2(s32, s32);
-
 /// Turns the object toward its facing target, if it has one, by at most
 /// 0x1000 (22.5 degrees).
 /// obj: object to turn.
@@ -210,16 +180,6 @@ void Func_080d4aa8(struct Actor *object, struct Actor *target) {
   object->watchedObject = target;
   object->update = SceneActor_UpdateFacingTowardTarget;
 }
-
-
-struct ObjectLayerAnimation {
-  u8 unk00[9];
-  u8 unused09 : 2;
-  u8 layer : 2;
-  u8 unk0a[27];
-  u8 unused25 : 2;
-  u8 shadowLayer : 2;
-};
 
 /// Gives the object the party leader's display layer.
 s32 Func_080d4ab4(struct Actor *object) {
@@ -290,19 +250,6 @@ void Actor_SetActionCallback(struct Actor *object, s32 kind) {
   Actor_StartScriptFar(object, (const void *)kind);
 }
 
-
-u32 Func_080202f0(s32 terrain, s32 x, s32 z);
-
-
-struct ObjectAnimationEntry {
-  s16 animId;
-};
-
-struct ObjectAnimation {
-  u8 unk00[0x28];
-  struct ObjectAnimationEntry *entries[1];
-};
-
 /// The Broken Seal's Actor_FindNearestFacingTarget: the nearest object
 /// within 40 pixels in the direction self faces, if its first animation is id.
 struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
@@ -368,27 +315,9 @@ s32 Func_080d4ccc(struct Actor *object, s32 *position) {
   return 1;
 }
 
-
-struct JumpSprite {
-  u8 unk00[26];
-  u8 flags;
-};
-
-struct JumpEventWork {
-  u8 unk000[0x19c];
-  s32 walkingDistanceScale;
-  s32 walkingDistance;
-};
-
 extern struct MapCell gMapCellBuffer[];
 
-void Event_Start(void);
-void Event_End(void);
-void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
-s32 Func_08020210(struct Actor *object, s32 *position);
 void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
-void Func_080203a0(struct Actor *object, s32 kind);
-s32 GetMapCellCollisionFar(s32 layer, s32 x, s32 z);
 
 /// The leader jumps two tiles forward, over the tile in
 /// front, when it faces a quarter turn, the map allows it (Func_080d4ccc and
@@ -568,16 +497,6 @@ again:
   return result;
 }
 
-struct ClimbSprite {
-  u8 unk00[26];
-  u8 flags;
-};
-
-void Event_Wait(s32 frames);
-s32 Func_08020258(s32 *position);
-s32 Field_CheckSpheresOverlapFar(s32 *position, s32 radius, s32 *other,
-                                 s32 otherRadius);
-void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
 void Actor_WaitForMoveById(s32 id);
 
 s32 Func_080d50f8(void) {
@@ -778,14 +697,6 @@ failure:
   return -1;
 }
 
-
-struct Work9cItemPosition {
-  u8 unk00[4];
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 struct Work9cItem *Func_080d5670(s32 *position) {
   struct Work9cItem *found;
   struct Work9c *work;
@@ -822,17 +733,6 @@ struct Work9cItem *Func_080d5670(s32 *position) {
   return found;
 }
 
-
-struct GrabSave {
-  u8 unk00[98];
-  u8 priority;
-};
-
-struct EventWorkGrab {
-  u8 unk000[388];
-  s16 grabState;
-};
-
 s32 Func_080d5720(void) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
   struct FieldSprite *sprite = leader->sprite;
@@ -860,11 +760,6 @@ s32 Func_080d5720(void) {
   gMainRoutineWork.renderMode = 3;
   return 1;
 }
-
-
-s32 Func_080201d0(s32 layer, s32 x, s32 z);
-
-extern const u16 Data_080f0890[];
 
 s32 Func_080d57e4(void) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
@@ -903,7 +798,6 @@ s32 Func_080d57e4(void) {
   gMainRoutineWork.renderMode = 0;
   return 1;
 }
-
 
 struct WorkA0Node *Func_080d5930(s32 *position) {
   struct WorkA0Node *found;

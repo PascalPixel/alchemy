@@ -3,19 +3,11 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
-
-struct ArcEntry {
-  u8 unk00[5];
-  u8 param;
-};
-
-struct ArcGroup {
-  u8 unk00[25];
-  u8 dirty;
-  u8 flags;
-  u8 unk1b[13];
-  struct ArcEntry *entries[1];
-};
+#include "flag_call.h"
+#include "gamepak/far_call/window.h"
+#include "module/field/field.h"
+#include "module/field/radial.h"
+#include "text/msg_ids.h"
 
 /* VIEW(launch): tag struct ArcEffectObject as struct ArcEffectObject__launch; field_psynergy_work.h has another definition. */
 struct ArcEffectObject__launch {
@@ -29,14 +21,6 @@ struct ArcEffectObject__launch {
   u8 unk68[4];
   void (*callback)(struct ArcEffectObject__launch *);
 };
-
-extern char MsgAbilityWoreOff;
-extern char MsgItemWoreOff;
-
-void Func_080cb82c(void);
-void Func_080cb8a4(void);
-void MessageArgument_PushFar(s32 value, s32 slot);
-void FieldMessage_ShowFar(s32 message, s32 flags);
 
 /// The caster during Avoid (BattleEffect_RunEffect16): sheds a pair of falling
 /// arcs every 5 frames (7 in scene Ov64a), and spins in phase 1.
@@ -73,18 +57,6 @@ void FieldEvent_ShowStatusMessage(void) {
   }
   Func_080cb8a4();
 }
-
-struct ArcScene {
-  u8 unk00[0x10];
-  struct ArcEffectObject__launch *mainObject;
-  u8 unk14[0x6fc];
-  s16 arcTileSlot;
-};
-
-extern const u8 gData_080ed90c[];
-extern char MsgMonstersAttackLess;
-
-s32 GameFlag_Test(s32 flag);
 
 /// Psynergy effect 16: the user spins, rains arc particles, then flashes.
 void BattleEffect_RunEffect16(void) {

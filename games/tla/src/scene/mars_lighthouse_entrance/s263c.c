@@ -9,6 +9,14 @@
 #include "vector3.h"
 #include "fixed_math.h"
 #include "event_inline.h"
+#include "display_transition.h"
+#include "event_work.h"
+#include "field.h"
+#include "item_icon.h"
+#include "module/field/field.h"
+#include "module/scene/mars_lighthouse_entrance.h"
+#include "module/system/system.h"
+#include "scene_ids.h"
 
 struct Work020023c4 {
   u8 unk00[4];
@@ -19,12 +27,12 @@ struct Work020023c4 {
 };
 
 void Func_020024c0();
-void Event_Start(void);
 void Func_02004bc0(struct Actor *actor, s32 a);
-s32 Func_02004c18(s32 terrain, s32 x, s32 z);
 s32 Func_02004c38(struct Actor *actor, struct Vector3 *position);
-void Actor_JumpDownLedge();
-s32 Func_02004c78(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
+/* VIEW(s263c): routine Actor_JumpDownLedge as void Actor_JumpDownLedge(); module/field/event_commands.h has void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle). */
+extern void Actor_JumpDownLedge__s263c() __asm__("Actor_JumpDownLedge");
+/* VIEW(s263c): routine Func_02004c78 as s32 Func_02004c78(s32 *from, s32 radius, struct Vector3 *to, s32 radius2); module/scene/mars_lighthouse_entrance.h has s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB). */
+extern s32 Func_02004c78__s263c(s32 *from, s32 radius, struct Vector3 *to, s32 radius2) __asm__("Func_02004c78");
 void Animation_ApplyChildValues(struct Actor *actor, s32 a);
 void Func_02002614(void);
 extern u8 gData_020023c4[];
@@ -113,7 +121,7 @@ void Func_0200263c(void) {
           break;
         if (result < 0) {
           actor->facing = TRIG_TURN / 4;
-          Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, -1);
+          Actor_JumpDownLedge__s263c(gMainRoutineWork.currentOwner, 6, -1);
           break;
         }
 #if TLA_PATCH_1
@@ -125,7 +133,7 @@ void Func_0200263c(void) {
          */
         for (i = 0; i <= 63; i++, flags += 128, other++) {
           if (other->script != 0 && (*flags & 1) && other != actor &&
-              Value4((s32 (*)())Func_02004c78, (s32)&other->x, radius,
+              Value4((s32 (*)())Func_02004c78__s263c, (s32)&other->x, radius,
                      (s32)&position, other->radius - 2) >= 0) {
             System_Wait(1);
             goto done;
@@ -197,8 +205,6 @@ void Func_02002848(void) {
 
 /* VIEW(s2860): routine Func_020024c0 as s32 Func_020024c0(s32 a, s32 b); s263c has void Func_020024c0(); tried as the definition's void Func_020024c0(void), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:259: too many arguments to function `Func_020024c0'. */
 extern s32 Func_020024c0__s2860(s32 a, s32 b) __asm__("Func_020024c0");
-void ScreenTransition_Start(s32 a, s32 b);
-s32 Func_02004c18(s32 layer, s32 x, s32 z);
 void Func_02002614(void);
 extern u8 gData_020023c4[];
 
@@ -336,7 +342,6 @@ struct Work {
 };
 
 extern u8 gData_020056d0[];
-s32 Resource_ResetEntry(u32 slot);
 
 #define WORK ((struct Work *)(gData_020023c4 + 0x188))
 
@@ -597,10 +602,6 @@ void Func_02002c40(struct Actor *actor) {
 #undef WORK
 #undef ABS
 
-// ---- games/tla/src/scene/mars_lighthouse_entrance/s2f4c.c ----
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
-extern char SceneId_Ov6a8Room2;
 extern char SceneId_Ov6ACRoom3;
 extern char SceneId_Ov6aaRoom1;
 extern char SceneId_Ov6aaRoom2;
@@ -628,15 +629,11 @@ extern s16 gData_02006868;
 extern s16 gData_020068a0;
 extern u16 gData_020068a2;
 
-s32 Resource_FindFreeEntry(void);
-void Func_02000d18(void);
-void Func_02000fe0(u8 *cell);
-void Func_020012e4(struct Actor *object);
-void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
+/* VIEW(s263c): routine Func_02000fe0 as void Func_02000fe0(u8 *cell); module/scene/mars_lighthouse_entrance.h has void Func_02000fe0(const struct MapCell *cell). */
+extern void Func_02000fe0__s263c(u8 *cell) __asm__("Func_02000fe0");
 /* VIEW(s2f4c): routine Func_02002c2c as void Func_02002c2c(void); the definition has void Func_02002c2c(struct Actor *object). */
 extern void Func_02002c2c__s2f4c(void) __asm__("Func_02002c2c");
 void Func_02004c88(s32 scene, s32 a1);
-void Event_ResolveAllPendingActions(void);
 
 void Func_02002f4c(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   struct Actor *source = Actor_Get(id);
@@ -657,8 +654,6 @@ void Func_02002f4c(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
 #include "field_sprite.h"
 #include "scene_tables.h"
 #include "system/vector3.h"
-
-void Func_02002c40(struct Actor *actor);
 
 /// Sets up the actor whose id self keeps in byte 0x62: places it 32 pixels out
 /// from self, 12 pixels up, along self's angle (unk66), faces it that way,
@@ -776,9 +771,6 @@ s32 Func_020031dc(struct Actor *object) {
 
 extern const s16 gData_02005758[];
 
-void Actor_SetAnimationSpeed(struct Actor *object,
-                                         s32 value);
-
 void Func_020031f8(struct Actor *object) {
   s32 angle;
   s32 turn;
@@ -829,7 +821,6 @@ struct Position {
   s32 z;
 };
 
-s32 ArcTan2(s32 y, s32 x);
 /* VIEW(s32b8): routine Func_020031f8 as void Func_020031f8(void); the definition has void Func_020031f8(struct Actor *object). */
 extern void Func_020031f8__s32b8(void) __asm__("Func_020031f8");
 void Func_02003284(void);
@@ -837,7 +828,6 @@ void Func_02004bc0(struct Actor *actor, s32 mode);
 /* VIEW(s32b8): routine Func_02004c78 as s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); s263c has s32 Func_02004c78(s32 *from, s32 radius, struct Vector3 *to, s32 radius2). */
 extern s32 Func_02004c78__s32b8(s32 *a, s32 radiusA, struct Position *b, s32 radiusB) __asm__("Func_02004c78");
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
 extern s16 gData_02005798[];
 
 void Func_020032b8(void) {
@@ -984,10 +974,7 @@ extern s16 gData_02005798[];
 extern void Func_020031f8__s3564(struct Actor *object) __asm__("Func_020031f8");
 void Func_02003284(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 ArcTan2(s32 y, s32 x);
 void Func_02004bc0(struct Actor *object, s32 mode);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-s32 Func_02004c70(struct Actor *object);
 /* VIEW(s3564): routine Func_02004c78 as s32 Func_02004c78(s32 *a, s32 aRadius, s32 *b, s32 bRadius); s32b8 has s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); tried as the one declaration s32 Func_02004c78(s32 *a, s32 aRadius, s32 *b, s32 bRadius), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:988: conflicting types for `Func_02004c78'. */
 extern s32 Func_02004c78__s3564(s32 *a, s32 aRadius, s32 *b, s32 bRadius) __asm__("Func_02004c78");
 

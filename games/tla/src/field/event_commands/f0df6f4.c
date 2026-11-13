@@ -5,22 +5,10 @@
 #include "actor.h"
 #include "field_psynergy_work.h"
 #include "ram_buffer.h"
-
-struct ScatterPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-extern const s32 gData_080f0e78[];
-
-void BattleEffect_InitializeSharedScene(void);
-void BattleEffect_PrepareBufferInterpolation(void);
-struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-struct Actor *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
-                                                s32 magnitude, s32 angle);
-void Actor_Destroy(struct Actor *object);
+#include "battle.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
 
 void Func_080df6f4(void) {
   struct BattleFxScene *work;

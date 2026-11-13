@@ -15,6 +15,10 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "gamepak/far_call/system.h"
+#include "module/scene/gabomba_statue_chamber.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -87,8 +91,6 @@ extern const u8 gData_02001f9c[];
 extern const u8 gData_02001fe4[];
 extern const u8 gData_0200200c[];
 #define OBJECT(id) (Actor_Get((id)))
-void Func_02001094(void);
-void Func_02001d78(void);
 void Func_02001d80(void);
 
 void Func_02000184(void) {
@@ -413,7 +415,6 @@ void Func_02000b70(void) {
 }
 
 void DisplayBlend_EnableRunScript(void);
-void Map_CenterOnFollowedPoint(void);
 
 void Func_02000be8(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -536,12 +537,8 @@ void Func_02000ef0(struct Actor *object) {
 // ---- games/tla/src/scene/gabomba_statue_chamber/s0f00.c ----
 // Scene code of overlay 0x672, in ROM order, from s0f00's offset up to the next object the overlay links.
 
-
-
 /* VIEW(s0f00): variable gData_02002058 as extern struct GabombaStatueChamberObject *gData_02002058; gabomba_statue_chamber has extern struct Actor *gData_02002058. */
 extern struct GabombaStatueChamberObject *gData_02002058__s0f00 __asm__("gData_02002058");
-void *HeapSlot_AllocFar(s32 slot, s32 size);
-void Func_02000ef0();
 
 void Func_02000f00(void) {
   struct GabombaStatueChamberObject *leader =
@@ -614,7 +611,6 @@ void Func_02001010(void) {
   Map_CopyCellPictureIndicesRect(86, 30, 84, 22, 9, 2);
 }
 
-
 void Func_02001064(void) {
   Map_CopyCellAttributeRect(23, 1, 3, 1, 23, 9);
   Map_CopyCellAttributeRect(23, 0, 3, 1, 25, 9);
@@ -633,7 +629,6 @@ void Func_02001094(void) {
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
 extern const u8 gData_02001f18[];
-void Party_PlaySavedMusic(void);
 
 /// Places the party around the statue object (its sprite reloaded with item
 /// 242's picture), raises and moves the statue while the camera follows, has
@@ -819,16 +814,9 @@ void Func_020010d4(void) {
   Import_EventSetExitRequest(2);
 }
 
-void Map_CenterOnFollowedPoint(void);
-s32 Func_02001f08();
+/* VIEW(gabomba_statue_chamber): routine Func_02001f08 as s32 Func_02001f08(); module/scene/trial_road.h has void Func_02001f08(void). */
+extern s32 Func_02001f08__gabomba_statue_chamber() __asm__("Func_02001f08");
 extern u8 gData_02001f4c[];
-
-struct GroupWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-  u8 unk1b0[0x1c4 - 0x1b0];
-  u16 unk1c4;
-};
 
 void Func_02001710(void) {
   s32 *owner;
@@ -915,7 +903,7 @@ void Func_02001710(void) {
     ((struct GroupWork *)heap->eventWork)->unk1c4++;
     Actor_FaceDirectionAndWait(7, angleC);
     Event_ShowMessage(0x4007, 0);
-    Func_02001f08();
+    Func_02001f08__gabomba_statue_chamber();
   }
   Actor_FaceDirection(6, 0x8000, 0);
   Actor_SetAttachedEffect(6, 0x102);
@@ -950,10 +938,6 @@ void Func_02001710(void) {
   Event_SetFlag(0x8fd);
   Event_End();
 }
-
-void Func_02001b14(void);
-void Func_02001ba8(void);
-void Func_02001c44(void);
 
 s32 Scene_Initialize(void) {
   struct GabombaStatueChamberEventWork *work;
@@ -1011,19 +995,7 @@ void Func_02001b14(void) {
 
 #include "../../include/system/io_reg.h"
 
-struct GabombaStatueChamberLayer {
-  u8 unk00[12];
-  s32 y;
-  u8 unk10[0x28];
-};
-
-struct GabombaStatueChamberMapWork {
-  u8 unk000[0x108];
-  struct GabombaStatueChamberLayer layers[3];
-};
-
 void DisplayBlend_EnableRunScript(void);
-void Func_02000be8(void);
 
 void Func_02001ba8(void) {
   if (GameFlag_Test(265)) {

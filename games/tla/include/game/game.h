@@ -66,4 +66,11 @@ s32 Owner_UpdateClassActions(s32 owner_id);
 void *Resource_FarCall005(s32);
 void Message_DecodeRawUnboundedFar(s32, u16 *);
 
+extern const s16 gElement_PowerResistCurve[5][2];
+
+extern const u8 gCharacter_ElementGroupTable[];
+
+extern const s16 gDjinn_ElementSprites[];
+extern const s16 gCharacter_SpriteTable[];
+
 #endif

@@ -4,6 +4,9 @@
 #include "actor.h"
 #include "event_inline.h"
 #include "map.h"
+#include "field.h"
+#include "module/field/event_commands.h"
+#include "module/scene/magma_rock.h"
 
 struct EventObjects {
   u8 unk00[20];
@@ -220,12 +223,6 @@ const struct Trigger *Scene_GetPlacements(void) {
   return (const struct Trigger *)gData_0200403c;
 }
 
-extern s16 gData_02003d98[];
-extern s16 gData_02003dac[];
-extern s16 gData_02003dd2[];
-extern s16 gData_02003de4[];
-extern s16 gData_02003de8[];
-
 void Func_02003c14(s16 *table);
 
 void Func_02000940(void) {
@@ -317,10 +314,7 @@ s32 Func_02000a48(void) {
 
 #include "frame.h"
 
-void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
 void Func_02003bb4(s32 owner, u16 value);
-void BattleEffect_StopMainActor(void);
-void BattleEffect_CleanupSceneObjects(void);
 
 void Func_02000c08(s16 value) {
   struct MainRoutineWork *party;
@@ -346,7 +340,6 @@ extern const u8 gData_02003d74[];
 
 void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
                    s32 *params);
-void Func_02000dc0(struct Actor *object);
 
 void Func_02000c40(struct Actor *object) {
   struct Actor *linked = object->watchedObject;
@@ -409,8 +402,6 @@ struct MagmaRockEffectConfig {
   const void *data;
   u8 unk20[8];
 };
-
-extern u32 gData_02003d50[];
 
 void Func_02003c4c(struct Actor *object, s32 value);
 

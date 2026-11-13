@@ -3,8 +3,9 @@
 // Part of game.c.
 
 #include "../game_internal.h"
-
-s32 Unit_KnowsPsynergy(s32 owner, s32 value);
+#include "character.h"
+#include "module/game/game.h"
+#include "text/msg_ids.h"
 
 /// Returns the definition of ability `abilityId` (its low 14 bits); an id
 /// past the table gives the first. Every bank reads an ability through its far
@@ -51,13 +52,6 @@ s32 Unit_KnowsPsynergy(s32 owner, s32 value) {
   } while (index <= 31);
   return 0;
 }
-
-struct ClassAbilities {
-  u8 unk00[0x10];
-  struct ClassAbility abilities[16];
-};
-
-enum { OWNER_ACTION_CLASS = 0x8000, OWNER_ACTION_ITEM = 0x4000 };
 
 s32 Owner_UpdateClassActions(s32 owner) {
   struct BattleUnit *st;
@@ -198,7 +192,6 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
 }
 
 struct LevelUpResult;
-struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains);
 
 /// Levels the character up once if it has the experience. Returns `gains`
 /// filled with the gains, or NULL. Only a far-call veneer reaches it.
@@ -206,17 +199,6 @@ struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,
                                         struct LevelUpResult *gains) {
   return Unit_TryLevelUp(unitId, gains);
 }
-
-struct OwnerGrowthRecord {
-  u8 unk00[0x50];
-  s16 hp[6];
-  s16 pp[6];
-  u16 atk[6];
-  u16 def[6];
-  u16 agi[6];
-  u8 luck[6];
-  u8 unk92[0x22];
-};
 
 extern struct OwnerGrowthRecord gOwner_GrowthRecords[8];
 
@@ -240,22 +222,6 @@ struct OwnerGrowthRecord *Character_GetDefinition(s32 index) {
   return (struct OwnerGrowthRecord *)(index * stride + (u32)base);
 }
 
-struct OwnerStart {
-  u8 unk00[150];
-  u8 level;
-  u8 unk97;
-  u16 items[13];
-};
-
-struct OwnerName {
-  u8 name[14];
-  u8 nameFlags;
-  u8 unk0f[5];
-  u16 hpRatio;
-  u16 ppRatio;
-};
-
-extern u8 MsgCharacterName[];
 extern s32 gData_080b2340[];
 
 void Party_InitializeCharacters(void) {
@@ -335,53 +301,6 @@ u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
   }
   return -1;
 }
-
-struct OwnerLevelState {
-  u8 unk000[0x0f];
-  u8 level;
-  u16 baseHp;
-  u16 basePp;
-  u8 unk014[4];
-  u16 baseAttack;
-  u16 baseDefense;
-  u16 baseAgility;
-  u8 baseLuck;
-  u8 baseTurns;
-  u8 base20;
-  u8 base21;
-  u8 unk022[0x102];
-  u32 experience;
-  u8 character;
-  u8 classId;
-};
-
-struct OwnerGrowth {
-  u8 unk00[0x50];
-  s16 hp[6];
-  s16 pp[6];
-  u16 atk[6];
-  u16 def[6];
-  u16 agi[6];
-  u8 luck[6];
-};
-
-struct LevelUpResult {
-  s16 level;
-  u16 ability;
-  u16 hp;
-  u16 pp;
-  u16 atk;
-  u16 def;
-  u16 agi;
-  u16 luck;
-};
-
-struct LevelUpWork {
-  s32 classId;
-  s32 level;
-  struct OwnerGrowth *growth;
-  u8 unused0c[0x20];
-};
 
 u32 __udivsi3(u32 numerator, u32 denominator);
 

@@ -1,19 +1,15 @@
 #include "types.h"
 #include "scene_tables.h"
+#include "module/scene/aqua_rock.h"
 
 void Func_02000b68(void);
 void Func_02000cd8(void);
-void Func_02000d80(void);
-void Func_02000f8c(void);
-void Func_02001010(void);
-void Func_0200106c(void);
 void Func_020010f4(void);
 void Func_0200112c(void);
 void Func_02001164(void);
 void Func_0200119c(void);
 void Func_020011e0(void);
 void Func_02001224(void);
-void Func_02001e00(void);
 void Func_02001f90(void);
 void Func_020020bc(void);
 

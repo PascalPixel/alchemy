@@ -3,27 +3,11 @@
 // Part of f0cf050.c.
 
 #include "../f0cf050_internal.h"
-
-struct TransitionSpan {
-  u16 count;
-  u16 value;
-  u8 x0;
-  u8 x1;
-  u8 y0;
-  u8 y1;
-};
-
-struct TransitionShape {
-  u16 first;
-  u16 second;
-  struct TransitionSpan spans[3];
-};
-
-extern const u8 Data_080f01c4[];
-extern const s8 Data_080f01e6[];
-extern struct TransitionShape Data_080f2e9c[];
-
-void ScanlineWindow_FillSpansFar(u16 *pairs);
+#include "event.h"
+#include "gamepak/far_call/window.h"
+#include "module/field/f0cf050.h"
+#include "module/field/object.h"
+#include "module/system/system.h"
 
 void Func_080cf78c(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -414,11 +398,6 @@ struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
   return state;
 }
 
-
-void Fade_FromBlack(s32 vblanks);
-void Fade_ToBlack(s32 vblanks);
-void BattleEffect_SetPrimaryBufferValue(u32 value);
-
 // Fades the screen in over frames frames, as ☀️'s ScreenTransition_Start.
 void ScreenTransition_Start(s32 mode, s32 frames) {
   struct MapViewWork *display;
@@ -506,8 +485,6 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
                       0x20000);
 }
 
-void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 index);
-
 /// Fades the screen out over frames frames, as The Broken Seal's
 /// ScreenTransition_Finish does, with this game's callbacks and priorities.
 void ScreenTransition_Finish(s32 mode, s32 frames) {
@@ -587,11 +564,6 @@ s32 Func_080d072c(void) {
 
   return 1 - ((u32)(-other | other) >> 31);
 }
-
-struct MapLayerFlags {
-  u8 unk00[0x14];
-  u16 flags;
-};
 
 /// The layer flags read through a volatile pointer, which keeps them the AND's
 /// second operand and builds the mask in the result register; as map->flags,
@@ -745,8 +717,6 @@ again:
     break;
   }
 }
-
-extern const u8 gData_080f0206[];
 
 /// The Broken Seal's ScreenTransition_UpdateDissolve: steps the transition's
 /// value toward its end each frame, turning DMA0 off when it arrives, then

@@ -9,8 +9,11 @@
 #include "scene_tables.h"
 #include "scene_ids.h"
 #include "frame.h"
+#include "module/scene/scene.h"
+#include "module/scene/shrine_of_the_sea_god.h"
 
-extern s32 gData_02004a18[3];
+/* VIEW(s1340): variable gData_02004a18 as s32 gData_02004a18[3]; module/scene/jupiter_lighthouse_room_m.h has u32 gData_02004a18[]. */
+extern s32 gData_02004a18__s1340[3] __asm__("gData_02004a18");
 
 void Func_02001340(struct ShrineOfTheSeaGodObject *object,
                    struct ShrineOfTheSeaGodObject *other) {
@@ -40,9 +43,9 @@ void Func_02001340(struct ShrineOfTheSeaGodObject *object,
   }
   other->y += 0x10000;
   wait(20);
-  gData_02004a18[0] = other->x - object->x;
-  gData_02004a18[1] = other->y - object->y;
-  gData_02004a18[2] = other->z - object->z;
+  gData_02004a18__s1340[0] = other->x - object->x;
+  gData_02004a18__s1340[1] = other->y - object->y;
+  gData_02004a18__s1340[2] = other->z - object->z;
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
 }
@@ -50,7 +53,7 @@ void Func_02001340(struct ShrineOfTheSeaGodObject *object,
 void Func_0200142c(struct ShrineOfTheSeaGodObject *object) {
   struct ShrineOfTheSeaGodObject *leader =
       Actor_GetById(gMainRoutineWork.currentOwner);
-  s32 *offset = gData_02004a18;
+  s32 *offset = gData_02004a18__s1340;
 
   SET_POSITION(object, leader->x + offset[0], leader->y + offset[1],
                leader->z + offset[2]);
@@ -76,10 +79,10 @@ struct EffectOptions {
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-void Effect_AdvanceMotion(void *object);
+/* VIEW(s1340): routine Effect_AdvanceMotion as void Effect_AdvanceMotion(void *object); module/field/field_effect.h has void Effect_AdvanceMotion(union FieldObject *object). */
+extern void Effect_AdvanceMotion__s1340(void *object) __asm__("Effect_AdvanceMotion");
 void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Map_WaitForShakeToSettle(void);
-s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 void Task_RemoveFar(void (*func)(void));
 
@@ -109,7 +112,7 @@ void Func_02001474(void) {
   Sound_Play(227);
   Call3((void (*)())Map_SetScreenShake, 0x10000, 0x20000, 0x10000);
   options.palette = 7;
-  options.update = Effect_AdvanceMotion;
+  options.update = Effect_AdvanceMotion__s1340;
   options.startScaleX = 0xa3d7;
   options.startScaleY = 0xa3d7;
   for (i = 0; i <= 16;) {
@@ -148,9 +151,6 @@ void Func_02001474(void) {
   wait(10);
   Event_End();
 }
-
-void Func_02001658(struct ShrineOfTheSeaGodObject *object, s32 base);
-void Func_020016c8(void);
 
 void Func_02001658(struct ShrineOfTheSeaGodObject *object, s32 base) {
   do {
@@ -214,8 +214,6 @@ void Func_020016d8(void) {
   Event_End();
   GameFlag_SetBit(0x231);
 }
-
-void Func_020018ac(void);
 
 void Func_020018ac(void) { Func_0200142c(Actor_GetById(16)); }
 
@@ -331,12 +329,6 @@ void Func_02001a3c(void) {
   GameFlag_SetBit(0x872);
   Event_End();
 }
-
-/// A word of the object written through a one-member union (see the
-/// FAKEMATCH(signature) tag in Func_02001d24).
-union ObjectWord {
-  s32 value;
-};
 
 extern const u8 gData_02003c58[];
 
@@ -943,29 +935,14 @@ void Func_02002d50(void) {
   }
 }
 
-struct ShrineOfTheSeaGodSpot {
-  s32 x;
-  s32 z;
-  s32 field18;
-  s32 rotation;
-};
-
 extern const struct ShrineOfTheSeaGodSpot gData_02003cc0[];
 extern const u8 gData_02003cbc[];
 extern const u8 gData_02003c10[];
 
 void Actor_SetPartAttribute(struct ShrineOfTheSeaGodObject *object, s32 value);
-void Func_02003b00(s32 value);
-void Func_02003b18(void);
 void Func_02003b20(s32 a, s32 b, s32 c, s32 d);
 void Func_02003b30(const void *script);
-void Func_02003854(s32 actor);
-void Func_0200123c(void);
-void Func_020010e8(void);
-void Func_02001088(void);
 void Func_02001128(void);
-void Func_020011a0(void);
-void Func_02000f18(s32 actor);
 
 void Func_02002e70(void) {
   Actor_SetModeById(8, 2);
@@ -980,17 +957,6 @@ void Func_02002e8c(void) {
 void Func_02002ea8(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->layer = 0;
 }
-
-void Func_02003094(void);
-void Func_02003134(void);
-void Func_0200320c(void);
-void Func_02003354(void);
-void Func_0200338c(void);
-void Func_02003504(void);
-void Func_02003598(void);
-void Func_02003740(void);
-void Func_0200377c(void);
-void Func_0200380c(void);
 
 s32 Scene_Initialize(void) {
   s16 scene;
@@ -1319,21 +1285,6 @@ void Func_02003598(void) {
   object->priorityFlags |= 2;
   object->motionFlags = 0;
 }
-
-struct ShrineOfTheSeaGodEffectParams {
-  u8 unk00[0x18];
-  u16 kind;
-  u8 unk1a[0xe];
-};
-
-struct ShrineOfTheSeaGodPartyExtra {
-  u8 unk000[0x256];
-  s16 value;
-};
-
-void Map_CenterOnFollowedPoint(void);
-void Func_02000994(void);
-void Func_02000ce8(void);
 
 void Func_02003740(void) {
   Func_02003854(8);

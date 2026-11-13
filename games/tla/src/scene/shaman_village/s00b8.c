@@ -3,6 +3,11 @@
 #include "field_effect.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
+#include "event.h"
+#include "module/scene/scene.h"
+#include "module/scene/shaman_village.h"
+#include "module/system/system.h"
+#include "resource.h"
 
 extern const s32 *gData_02004c50[];
 
@@ -130,10 +135,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern u32 gData_02005410[];
 extern u32 gData_02005428[];
 extern s16 gData_02005590[];
-struct ShamanVillageSceneBlock {
-  u8 unk00[22];
-  u8 field16;
-};
 
 extern struct ShamanVillageSceneBlock gData_020056b0;
 extern u32 gData_02005860[];
@@ -164,8 +165,6 @@ void *Scene_GetPlacements(void) {
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"
-
-extern s16 gData_02006350[];
 
 /// Fills BG0's line scroll table with a jittered sine wave and streams it
 /// to BG0HOFS by HBlank DMA 0.
@@ -224,8 +223,6 @@ void Func_02000458(struct ShamanVillageObject *object) {
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 
 /// Circles the object around the centre in words 68 and 76, twice as wide
@@ -281,32 +278,18 @@ void Func_02000508(struct ShamanVillageObject *object) {
 #include "system/io_reg.h"
 #include "system/field_effect.h"
 
-/// A field sprite's byte 9: the top of its first tile and its priority (OAM
-/// attribute 2), read as bit-fields.
-struct SpriteAttr2High {
-  u8 unk00[9];
-  u8 tileHigh : 2;
-  u8 priority : 2;
-};
-
-extern char ResourceId_WhirlwindTiles;
-extern char ResourceId_WhirlwindMap;
 extern const s32 gData_02004ae0[];
 
-void *Resource_GetTableEntry(s32 id);
-void Func_0200479c(void *resource, void *destination);
+/* VIEW(s00b8): routine Func_0200479c as void Func_0200479c(void *resource, void *destination); module/scene/shaman_village.h has void Func_0200479c(const void *source, void *destination). */
+extern void Func_0200479c__s00b8(void *resource, void *destination) __asm__("Func_0200479c");
 /* VIEW(s057c): routine Effect_CircleAndBlink as void Effect_CircleAndBlink(void); the definition has void Effect_CircleAndBlink(struct Actor *object). */
 extern void Effect_CircleAndBlink__s057c(void) __asm__("Effect_CircleAndBlink");
 void Func_020049f4(void);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-void Window_LoadGraphics(void);
-void DebugText_Clear(void);
-void Map_CenterOnFollowedPoint(void);
 /* VIEW(s057c): routine Func_02000458 as void Func_02000458(void); the definition has void Func_02000458(struct ShamanVillageObject *object). */
 extern void Func_02000458__s057c(void) __asm__("Func_02000458");
-void Func_02000378(void);
 void Func_02000420(void);
 /* VIEW(s057c): routine Func_02000508 as void Func_02000508(union FieldObject *object); the definition has void Func_02000508(struct ShamanVillageObject *object). */
 extern void Func_02000508__s057c(union FieldObject *object) __asm__("Func_02000508");
@@ -322,7 +305,7 @@ void Func_0200057c(void) {
 
   buffer = Heap_Alloc(0x680);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
-  Func_0200479c(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
+  Func_0200479c__s00b8(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                 buffer);
   Dma_Set(buffer, (void *)0x0600e800, 0x840000d0, REG_DMA3);
   Dma_Set(buffer + 0x1a0, (void *)0x0600ec00, 0x840000d0, REG_DMA3);
@@ -338,7 +321,7 @@ void Func_0200057c(void) {
   REG_BG0CNT |= 1;
   Dma_Fill16(16, (void *)0x06002000, 0x500);
   buffer = Heap_Alloc(576);
-  Func_0200479c(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
+  Func_0200479c__s00b8(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
   i = 0;
   cell = buffer;
 mask:
@@ -574,7 +557,6 @@ void *Scene_GetEvents(void) {
   return gData_02005aa0;
 }
 
-
 void Func_02000d08(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -690,8 +672,10 @@ s32 Func_02000f94(void) {
 }
 
 u32 Func_02004a8c(s32 shop);
-void Inn_PlaySleep(u32 price);
-void MessageArgument_Push(u32 value, s32 digits);
+/* VIEW(s00b8): routine Inn_PlaySleep as void Inn_PlaySleep(u32 price); module/shop/shop.h has void Inn_PlaySleep(s32 price). */
+extern void Inn_PlaySleep__s00b8(u32 price) __asm__("Inn_PlaySleep");
+/* VIEW(s00b8): routine MessageArgument_Push as void MessageArgument_Push(u32 value, s32 digits); module/window/window.h has void MessageArgument_Push(u32 value, u32 kind). */
+extern void MessageArgument_Push__s00b8(u32 value, s32 digits) __asm__("MessageArgument_Push");
 
 void Func_02000fc4(void) {
   if (GameFlag_Test(0x9fe)) {
@@ -713,8 +697,8 @@ void Func_02000fc4(void) {
       Actor_SetModeById(13, 5);
       Event_Wait(30);
       Event_SetMessageId((s32)MsgShamanInnPaymentPrompt);
-      MessageArgument_Push(price, 5);
-      MessageArgument_Push(price, 5);
+      MessageArgument_Push__s00b8(price, 5);
+      MessageArgument_Push__s00b8(price, 5);
       FieldMessage_ShowAtActor(12, 0);
       if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
           0) {
@@ -726,7 +710,7 @@ void Func_02000fc4(void) {
           Event_SetMessageId((s32)MsgShamanInnPaymentPrompt + 3);
           Event_ShowMessageAndWait(12, 0);
         } else {
-          Inn_PlaySleep(price);
+          Inn_PlaySleep__s00b8(price);
         }
       }
       Actor_SetModeById(13, 6);

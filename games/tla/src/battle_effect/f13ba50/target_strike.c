@@ -3,8 +3,11 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
-
-void Func_0813d098(struct BattleEffectArgument *effect, s32 mode);
+#include "gamepak/far_call/battle.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/battle_effect/f13ba50.h"
+#include "module/system/system.h"
+#include "resource_ids.h"
 
 /// Abilities: Numbing Sting, Paralytail (kind 313).
 void BattleEffect_RunNumbingSting(void *object) { Func_0813d098(object, 6); }
@@ -69,8 +72,6 @@ void BattleEffect_RunTargetStrikeMode20(void *object) {
   Func_0813d098(object, 20);
 }
 
-void BattleEffect_SetApproachMotion(s32 x, s32 y, s32 width, s32 height);
-
 /// Abilities: Mad Zephyr (kind 117).
 void BattleEffect_RunMadZephyr(u8 *object) {
   BattleEffect_SetApproachMotion(*(s32 *)(object + 8), *(s16 *)(object + 36), 4,
@@ -86,7 +87,6 @@ void BattleEffect_RunMadZephyr(u8 *object) {
 
 // The body of 21 strike and column effects.
 
-
 struct Model;
 
 #define gBlitter ((DrawRectangle)Ram_HeapSlots->unk64[1])
@@ -95,9 +95,6 @@ struct Model;
 // The pixel half of a 16.16 value.
 #define HI(value) (((s16 *)&(value))[1])
 
-// Seven bytes for each mode (The Broken Seal's gTargetStrike_Styles, grown
-// from 12 modes to 21).
-extern u8 Data_0819754f[][7];
 #define RECORD(mode, field) Data_0819754f[(mode)][(field)]
 #define RECORD_KIND 0    // 0: strikes across the target, 1: columns on it
 #define RECORD_COUNT 1   // strikes or columns
@@ -115,73 +112,11 @@ extern u8 Data_0819754f[][7];
 #define FLAG_FLASH 32 // as heavy, with flash pictures for wisps
 #define FLAG_STAR 64  // a star model swells on the target
 
-// The strike pictures (gTargetStrike_Widths, Heights, Offsets, Reach)
-// and the column stages (gTargetStrike_ColumnStages).
-extern u8 Data_081975e2[];
-extern u8 Data_081975e8[];
-extern u16 Data_081975ee[];
-extern u8 Data_081975fa[];
-extern u8 Data_08197600[];
-
-// The glint pictures (gBattleEffect_GlintCellWidths, Heights, Offsets) and
-// their flips (gTargetStrike_GlintDrawFlags).
-extern u8 gData_08197492[];
-extern u8 gData_08197498[];
-extern u16 gData_08197486[];
-extern u8 Data_08197605[];
-
-// The star model and its four projected corners.
-extern const u8 gData_08199340[];
-extern const u8 gData_08199210[];
-
 // The motes live in the map cell buffer, the sparks 0x3800 bytes on.
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 #define gSparks ((struct EffectStep *)(Ram_MapCellBuffer + 0x3800))
 
-extern char ResourceId_TornadoSheet;
-extern char ResourceId_BeamImage;
-extern char ResourceId_TwelveModeImage;
-
-extern char ResourceId_PinkPalette;
-
-extern char ResourceId_MarsDjinnSheet;
-extern char ResourceId_LightningBoltSheet;
-extern char ResourceId_OrangePaletteB;
-extern char ResourceId_FlashBurstSheet;
-extern char ResourceId_StarCrossSheet;
-extern char ResourceId_SmokeSheet;
-
-// The star's texture, 64x64 pixels.
-struct StarTexture {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  u8 *pixels;
-};
-
-// One model for the IWRAM renderer.
-struct ModelDraw {
-  s32 kind;
-  s32 next;
-  const void *model;
-  void *corners;
-  struct StarTexture *texture;
-  s32 unk14;
-  s32 tail;
-};
-
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode); // BattleEffect_BuildBlitter
-
-void EffectPosition_ProjectBattler(s32 actor, struct EffectPosition *out);
-
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_080151e4(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyPitch(s32 pitch);
-void SceneTransform_ApplyYaw(s32 yaw);
 
 #define BUILD_BLITTER(slot, width, height, flags, mode)                        \
   do {                                                                         \
@@ -704,8 +639,6 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-extern char ResourceId_CrossedDaggersSheet;
-
 // A rain of daggers on the first target (unused).
 
 // Sixteen daggers fall 8 pixels a frame, one every 4 frames, from columns
@@ -847,12 +780,6 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
 
 // The flecks live in the map cell buffer.
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
-
-extern char ResourceId_IceTileSheet;
-
-extern char ResourceId_YellowPaletteA;
-extern char ResourceId_RedPaletteA;
-extern char ResourceId_VioletPaletteA;
 
 // A pillar of ice rising at the user's feet with flecks spiralling up
 // around it, for the scenes.
@@ -1001,26 +928,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
   HeapSlot_Release(SLOT_BATTLE_EFFECT);
 }
 
-
-
-// The battle background's id, read through a union view of the bytes that
-// begin with it. A union's member has the union's alias set, which conflicts
-// with every store, so the read waits for view->secondMode's store as well
-// as the scroll's and the scheduler keeps the two stores in source order; as
-// *(u16 *)(battle)->unk670, 4 of 376 instructions differ in tla-en.
-union BattleBackgroundId {
-  u16 id;
-  u8 bytes[6];
-};
 #define BACKGROUND(battle) (((union BattleBackgroundId *)(battle)->unk670)->id)
-
-void BattleEffect_ClearActorTimers(void);
-void Func_08191530(struct BattleEffectArgument *effect);
-
-void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background, s32 value);
-void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
-void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
-void Func_08164b2c(s32 redDelta, s32 greenDelta, s32 blueDelta);
 
 static inline s32 FillWords(void *destination, s32 size, u32 value) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to

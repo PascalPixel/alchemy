@@ -4,6 +4,8 @@
 
 #include "../screens_internal.h"
 #include "version.h"
+#include "module/window/screens.h"
+#include "module/window/window.h"
 
 // The Japanese list window is 9 tiles wide from column 21, its messages hold
 // 32 characters and a recovering Djinni's turns stand at x 40.
@@ -27,61 +29,12 @@
 #define DJINN_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-struct DjinnMenuWindow {
-  u8 unk00[8];
-  u16 width;
-  u16 height;
-  s16 x;
-  s16 y;
-};
-
-struct DjinnMenuWork {
+/* VIEW(screens): tag struct DjinnMenuWork as struct DjinnMenuWork__screens; djinn_menu.h has another definition. */
+struct DjinnMenuWork__screens {
   u8 unk00[3];
   u8 dirty;
   u8 unk04[2];
   u8 holdTilemapUpload;
-};
-
-struct DjinnMenuNavigation {
-  u8 unk00[0x30];
-  s32 row;
-  s32 page;
-  s32 preferredRow;
-  u8 unk3c[0x10];
-  s32 timer;
-  u8 unk50[0x88];
-  s32 tutorialStep;
-  s32 tutorialDelay;
-  u8 unke0[4];
-  u32 chosenDjinn[8];
-};
-
-struct DjinnMenuUnit {
-  u8 unk000[0xf8];
-  u32 djinnHeld[4];
-  u32 djinnSet[4];
-};
-
-struct DjinnMenuPartyStatus {
-  struct DjinnMenuWindow *window;
-  u8 unk04[8];
-  u16 flags;
-};
-
-struct DjinnMenuSprite {
-  u8 unk00[4];
-  u32 attr01;
-  u32 attr23;
-};
-
-struct DjinnMenuOam {
-  u8 unk00[4];
-  u8 y;
-  u8 attr0high;
-  u16 x : 9;
-  u16 attr1high : 7;
-  u16 tile : 10;
-  u16 attr2high : 6;
 };
 
 #define NAVIGATION ((struct DjinnMenuNavigation *)Ram_HeapSlots->unke4[0])
@@ -106,16 +59,10 @@ struct DjinnMenuOam {
 #define DJINN_ENTRY_RECOVERY_SHIFT 17
 #define DJINN_ENTRY_END 0x80000000
 
-extern const u8 gDjinnMenu_BlinkTile[32];
-extern u8 gDjinnMenu_ElementXOffsets[4];
-extern u8 gDjinnMenu_ElementYOffsets[4];
-
-void Text_UseExtraTiles(s32 on);
-
 s32 BattleDjinnMenu_Run(s32 member) {
   struct DjinnMenuOam cursorSprite;
   u16 messageText[64];
-  struct DjinnMenuWork *work;
+  struct DjinnMenuWork__screens *work;
   struct DjinnMenuWindow *previewWindow;
   s32 drawnRow;
   s32 cursorSlot;
@@ -156,7 +103,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
   s32 i;
   s32 j;
 
-  work = (struct DjinnMenuWork *)Ram_HeapSlots->windowTiles;
+  work = (struct DjinnMenuWork__screens *)Ram_HeapSlots->windowTiles;
   previewWindow = NULL;
   drawnRow = -1;
   cursorSlot = VramCache_AllocEntry(0x80);

@@ -108,4 +108,15 @@ struct EnemyElementPreset {
 
 STATIC_ASSERT(sizeof(struct EnemyElementPreset) == 24);
 
+struct LevelUpResult {
+  s16 level;
+  u16 ability;
+  u16 hp;
+  u16 pp;
+  u16 atk;
+  u16 def;
+  u16 agi;
+  u16 luck;
+};
+
 #endif

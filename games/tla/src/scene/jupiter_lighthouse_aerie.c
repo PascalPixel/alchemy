@@ -17,6 +17,11 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "event_work.h"
+#include "module/field/field.h"
+#include "module/scene/jupiter_lighthouse_aerie.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -27,13 +32,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
-
-union ActorCoordinate {
-  s32 value;
-  u16 half;
-};
-
-void Func_0200105c(struct Actor *object);
 
 void Func_02000054(s32 mode) {
   struct Actor *left = Actor_Get(9);
@@ -85,20 +83,8 @@ void Func_02000054(s32 mode) {
   rider->motionFlags = 4;
 }
 
-struct JupiterLighthouseAerieObject {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 /* VIEW(jupiter_lighthouse_aerie): routine Func_02001070 as void Func_02001070(struct JupiterLighthouseAerieObject *object); the definition has void Func_02001070(struct Actor *object). */
 extern void Func_02001070__jupiter_lighthouse_aerie(struct JupiterLighthouseAerieObject *object) __asm__("Func_02001070");
-void Func_020017a8(s32 a, s32 b, s32 c);
-void Func_02002a78(s32 x, s32 z, s32 a, s32 b);
-void Event_Start(void);
-void Event_End(void);
-void Func_02002af0(void);
 
 void Func_020001b4(void) {
   Event_SetFlag(0xa0a);
@@ -251,9 +237,6 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-void Func_02001cb4(void);
-void Func_02001dbc(s32 actor, s32 mode);
-
 /// The room's setup: actors 13 and 14 by flags 0xa0a and 0xa0b (with the map
 /// cells copied when set), then the terrain under each.
 s32 Scene_PrepareMap(void) {
@@ -349,9 +332,6 @@ next:
   gData_02003314++;
 }
 
-extern u16 gData_02003360[];
-extern u16 gData_02003364[];
-
 void Func_02000858(s32 mode) {
   gData_02003318 = 1;
   if (mode != 2) {
@@ -371,9 +351,6 @@ void Func_02000858(s32 mode) {
             REG_DMA3);
   }
 }
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02002b58();
 
 void Func_020008dc(s32 id) {
   struct Actor *object;
@@ -466,12 +443,12 @@ s32 Func_02000b1c(s32 *a, s32 *b) {
 }
 
 extern const s32 gData_0200331c[];
-extern s32 gData_0200333c;
+/* VIEW(jupiter_lighthouse_aerie): variable gData_0200333c as s32 gData_0200333c; module/scene/eastern_alhafra_ship.h has s32 gData_0200333c[]. */
+extern s32 gData_0200333c__jupiter_lighthouse_aerie __asm__("gData_0200333c");
 
-void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_02002b50(s32 x, s32 z, s32 layer);
-void Camera_WorldToScreen(s32 *position);
-s32 Math_Cosine(s32 angle);
+/* VIEW(jupiter_lighthouse_aerie): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
+extern void Camera_WorldToScreen__jupiter_lighthouse_aerie(s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_02000b48(struct Actor *self) {
@@ -499,7 +476,7 @@ void Func_02000b48(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Camera_WorldToScreen(position);
+    Camera_WorldToScreen__jupiter_lighthouse_aerie(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -549,7 +526,7 @@ stop:
     self->update = zero;
     Actor_StartScript(self, gData_0200331c);
     Event_PlaySound(228);
-    gData_0200333c = zero;
+    gData_0200333c__jupiter_lighthouse_aerie = zero;
   }
 }
 
@@ -557,35 +534,12 @@ stop:
 #include "call.h"
 #include "field_effect.h"
 
-struct GustObject {
-  u8 unk00[6];
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x0f];
-  u8 priorityFlags;
-  u8 unk24[0x0c];
-  s32 unk30;
-  u8 unk34[0x21];
-  u8 motionFlags;
-  u8 unk56[0x0c];
-  u8 unk62;
-  u8 unk63;
-  u16 unk64;
-  u8 unk66[6];
-  void (*update)(struct GustObject *object);
-};
-
-s32 Math_Cosine(s32 angle);
-void Func_020029f0(struct GustObject *object, s32 mode);
+/* VIEW(jupiter_lighthouse_aerie): routine Func_020029f0 as void Func_020029f0(struct GustObject *object, s32 mode); module/scene/scene.h has void Func_020029f0(struct FieldEffect *effect, s32 mode). */
+extern void Func_020029f0__jupiter_lighthouse_aerie(struct GustObject *object, s32 mode) __asm__("Func_020029f0");
 /* VIEW(s0d08): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
 extern void Actor_SetSingleChildFlags__s0d08(struct GustObject *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
 /* VIEW(s0d08): routine Func_02000b48 as void Func_02000b48(struct GustObject *object); the definition has void Func_02000b48(struct Actor *self). */
 extern void Func_02000b48__s0d08(struct GustObject *object) __asm__("Func_02000b48");
-void Func_02001e78(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
 
 struct GustObject *Func_02000d08(struct GustObject *source) {
   struct Vector3 position;
@@ -599,7 +553,7 @@ struct GustObject *Func_02000d08(struct GustObject *source) {
                                   Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                    position.z));
-  Func_020029f0(object, 2);
+  Func_020029f0__jupiter_lighthouse_aerie(object, 2);
   Actor_SetSingleChildFlags__s0d08(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
@@ -638,21 +592,6 @@ s32 Func_02000de0(struct Actor *object) {
   }
   return 0;
 }
-
-/// struct Actor as this function reads it, its coordinates as
-/// FieldCoordinate.
-struct PositionedActor {
-  u8 unk00[8];
-  union FieldCoordinate x;
-  union FieldCoordinate y;
-  union FieldCoordinate z;
-  s32 terrainHeight;
-  s32 scaleX;
-  u8 unk1c[0x34];
-  struct FieldSprite *animation;
-  u8 animationKind;
-  u8 motionFlags;
-};
 
 void Func_02000e80(void) {
   struct PositionedActor *actor9 = ((struct PositionedActor *)Actor_Get(9));
@@ -740,26 +679,6 @@ void Func_02001070(struct Actor *object) {
   Animation_ApplyChildValues(object, 4);
 }
 
-struct BeamSprite {
-  u8 unk00[8];
-  u16 tile : 10;
-  u16 bits : 6;
-  u8 unk0a[2];
-  s32 x;
-  s32 z;
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk1c[0x0c];
-};
-
-struct BeamSpark {
-  s32 position[3];
-  s32 unk0c;
-  s32 drift;
-  s32 unk14;
-  u32 age;
-};
-
 struct BeamWork {
   u8 tiles[0x200];
   struct BeamSprite sprites[32];
@@ -782,10 +701,6 @@ struct BeamWork {
   struct Actor *first;
   struct Actor *second;
 };
-
-void Camera_WorldToScreen(s32 *position);
-void Func_02002b38(struct BeamSprite *sprite);
-void Func_02002b40(struct BeamSprite *sprite, struct BeamSpark *spark);
 
 #define LERP(from, to, t, n) ((from) + ((to) - (from)) * (t) / (n))
 
@@ -912,7 +827,7 @@ void Func_02001080(void) {
   pos[0] = work->carried[0];
   pos[1] = work->carried[1];
   pos[2] = work->carried[2];
-  Camera_WorldToScreen(pos);
+  Camera_WorldToScreen__jupiter_lighthouse_aerie(pos);
   large->x = pos[0];
   large->z = pos[2];
   Func_02002b38(large);

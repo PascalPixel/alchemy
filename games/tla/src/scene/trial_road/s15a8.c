@@ -1,9 +1,17 @@
 // ---- games/tla/src/scene/trial_road/s15a8.c ----
 #include "trial_road.h"
 #include "event_inline.h"
-
-void Func_02002dec(void);
-void Func_0200322c(void);
+#include "event_work.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/field/object.h"
+#include "module/scene/scene.h"
+#include "module/scene/trial_road.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "resource.h"
+#include "serial.h"
+#include "task.h"
 
 void Func_020015a8(void) { GameFlag_SetBit(0x289); }
 
@@ -183,13 +191,11 @@ void Func_02001a70(void) {
   Func_0200062c(19);
 }
 
-extern const u8 gData_02007734[];
+/* VIEW(s15a8): variable gData_02007734 as const u8 gData_02007734[]; module/scene/trial_road.h has s16 gData_02007734[]. */
+extern const u8 gData_02007734__s15a8[] __asm__("gData_02007734");
 
-void Func_02000924(s32 id);
-void Func_0200095c(s32 id);
 /* VIEW(s15a8): routine Func_020042f0 as void Func_020042f0(const void *data); the definition has void Func_020042f0(const u16 *table). */
 extern void Func_020042f0__s15a8(const void *data) __asm__("Func_020042f0");
-void Func_02000d70(void);
 
 void Func_02001afc(void) {
   OBJECT_BYTE(Actor_GetById(18), 98) = 1;
@@ -226,7 +232,7 @@ void Func_02001afc(void) {
   }
 }
 
-void Func_02001bdc(void) { Func_020042f0__s15a8(gData_02007734); }
+void Func_02001bdc(void) { Func_020042f0__s15a8(gData_02007734__s15a8); }
 
 /// Copies two blocks of map cells, sets byte 98 of objects 16 to 18 and clears
 /// their collision flags; then runs Func_02000d70, and Func_020006b4 and
@@ -251,27 +257,6 @@ void Func_02001bec(void) {
   Func_0200062c(15);
 }
 
-/// The head of a mover's slot, as Func_02004224 fills it.
-struct TrialRoadMover {
-  s16 id;
-  s16 value;
-  s16 unk04;
-  s16 unk06;
-  s16 unk08;
-  s16 unk0a;
-};
-
-/// A view of the map work's byte 23.
-struct MapWorkByte23 {
-  u8 unk00[0x17];
-  u8 bits0 : 2;
-  // XXX: what bits 2 and 3 select; the map code that reads them would settle
-  // it.
-  u8 bits2 : 2;
-  u8 bits4 : 4;
-};
-
-void Func_02004188(s32 a, s32 b);
 /* VIEW(s15a8): routine Func_02004224 as struct TrialRoadMover *Func_02004224(s32 index, s32 id, s32 value, s32 low, s32 high); the definition has struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low, s32 high); tried as the definition's s32 Func_02004224(s32 row, s32 column, s32 direction), it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:283: too many arguments to function `Func_02004224'. */
 extern struct TrialRoadMover *Func_02004224__s15a8(s32 index, s32 id, s32 value, s32 low,
                                      s32 high) __asm__("Func_02004224");
@@ -321,9 +306,6 @@ void Func_02001c6c(void) {
   Func_0200062c(15);
 }
 
-void Func_02005a08(void);
-void Func_02005a10(s32 a, s32 b, s32 c);
-
 void Func_02001d8c(void) {
   Func_02005a08();
   Func_02005a10(0, 15, 16);
@@ -334,8 +316,6 @@ void Func_02001d8c(void) {
 }
 
 void Func_02001dd0(void) {}
-
-extern u32 gData_02005b44[];
 
 void Func_02001dd4(void) {
   struct Actor *partner = Actor_GetById(8);
@@ -398,7 +378,6 @@ void Func_02001eb0(void) {
 void Func_02001efc(s32 value) { gData_02007e24 = value; }
 
 extern s32 gData_02007e20;
-extern u16 gData_02007e28[];
 
 void Func_02001f08(void) {
   u16 colors[16];
@@ -439,11 +418,8 @@ next:
 // ---- games/tla/src/scene/trial_road/s1fc4.c ----
 #include "system.h"
 
-
 extern s32 gData_02007e20;
 extern s32 gData_02007e24;
-
-void Func_02001f08(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -483,12 +459,7 @@ void Func_02001fc4(s32 mode) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02001754();
 void Func_02002db0(void);
-void Func_02002db4(void);
-void Func_020034b4(void);
-void Func_020037c8(void);
-void Func_02005868();
 
 void Func_0200200c(void) {
   s32 t7, t8, t10, t13, t16, p3;
@@ -539,10 +510,6 @@ L_0200a0bc:
 /* VIEW(s1fc4): variable gData_02005b64 as extern s32(*const gData_02005b64[]) (void); the definition has void(*gData_02005b64[]) (void) = { Func_02001904, Func_02001974, Func_02001a70, Func_02001afc, Func_02001bdc, Func_02001bec, Func_02001c6c, ...; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:553: `gData_02005b64' undeclared (first use in this function). */
 extern s32 (*const gData_02005b64__s1fc4[])(void) __asm__("gData_02005b64");
 
-void Func_02003900(void);
-void Func_02001dd0(void);
-void Func_02001eb0(void);
-
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
@@ -569,8 +536,6 @@ s32 Scene_Initialize(void) {
   }
   return 0;
 }
-
-extern u8 gMapShapeGrid[];
 
 void Func_0200217c(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
                    s32 dstY) {
@@ -599,22 +564,6 @@ void Func_0200217c(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
   }
 }
 
-struct TrialRoadStage {
-  s16 order[8];
-  s16 pattern;
-  s16 mirrored;
-  s16 timer;
-  s16 current;
-  s16 stage;
-  s16 unk1a;
-  s16 best;
-};
-
-extern u32 gData_02005b84[];
-
-s32 Func_020056e8(void);
-s32 Func_020000fc(s32 value);
-void Func_020056c4(s32 a);
 void Func_020002a4(s32 mirrored, s32 stage);
 
 void Func_0200223c(void) {
@@ -709,23 +658,7 @@ extern const s8 gData_02005bcc__s1fc4[] __asm__("gData_02005bcc");
 extern const s8 gData_02005bd6__s1fc4[] __asm__("gData_02005bd6");
 
 void *Unit_Get(s32 owner);
-void Func_02002c30(u32 seed);
-void Func_02005828(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Map_CenterOnFollowedPoint(void);
-void Func_020055c4(s32 a, s32 b);
 void Func_02005688(s32 a);
-void Func_02000218(s32 side, s32 phase);
-
-// The state as this function reads it: its first 16 bytes are the dealt order.
-struct TrialRoadDeal {
-  s16 order[8];
-  s16 pattern;
-  s16 mirrored;
-  s16 field14;
-  s16 field16[2];
-  s16 field1a;
-  s16 field1c;
-};
 
 // Places `layer` `column` cells into the map: its offset (column << 20), its
 // cells and terrain from that column on, and its position from the view. The
@@ -1057,9 +990,7 @@ void Func_02002db4(void) {
   Func_02002d78(14, 296, 280, 0x8000);
 }
 
-void Event_Start(void);
 void Actor_MoveToObject(s32 actor, s32 value);
-void Func_02005980(void);
 
 void Func_02002dec(void) {
   struct Actor *object;
@@ -1226,12 +1157,6 @@ void Func_0200322c(void) {
   Event_Wait(6);
 }
 
-/// The byte at 0x5a of an actor, as the field its bit 0 is set through.
-struct ActorSolid {
-  u8 unk00[0x5a];
-  u8 solid : 8;
-};
-
 void PartyInventory_Discard(s32 cue);
 
 void Func_020034b4(void) {
@@ -1359,13 +1284,8 @@ void Func_020037c8(void) {
 
 /// The byte at 0x5a of an actor, as the field its bit 0 is set through.
 
-extern u32 gData_02005c88[];
-extern u32 gData_02005be8[];
-extern u32 gData_02005d28[];
 /* VIEW(s1fc4): variable gData_02005dc8 as extern const u8 gData_02005dc8[]; the definition has u32 gData_02005dc8[] = { 22, 15, 0x18000, 22, 16, 0x10000, 39, 5, 4, 0xd80000, 0, 0xa80000, 1, 4, 0xe80000, 0, 0x980000, 1, 4, 0xe80000, 0, ...; tried as the definition's extern s16 gData_02005dc8[], it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:3017: conflicting types for `gData_02005dc8'. */
 extern const u8 gData_02005dc8__s1fc4[] __asm__("gData_02005dc8");
-extern u32 gData_02005e40[];
-extern u32 gData_02005ed4[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1632,11 +1552,6 @@ void Func_02003da0(void) {
 // Effect_AdvanceMotionAtLeaderPriority, in ROM order.
 #include "frame.h"
 
-struct ResourceTableEntry {
-  u16 unk0;
-  u16 offset;
-};
-
 /* VIEW(s3f68): tag struct TrialRoadMover as struct TrialRoadMover__s3f68; s15a8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:1689: structure has no member named `offset'. */
 struct TrialRoadMover__s3f68 {
   s16 id;
@@ -1657,8 +1572,6 @@ struct TrialRoadMovers__s3f68 {
 
 /* VIEW(s3f68): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/include/graphics/vram_tab.h:26: conflicting types for `gResourceTableEntries'. */
 extern struct ResourceTableEntry gResourceTableEntries__s3f68[] __asm__("gResourceTableEntries");
-
-void Oam_AddSpriteAtDepth(void *entry, s32 priority);
 
 /// Queues the Trial Road movers' sprites.
 void Func_02003f68(void) {
@@ -1755,20 +1668,7 @@ void Func_02003f68(void) {
 
 #include "actor.h"
 
-struct TrialRoadGauge {
-  u16 handle;
-  u16 field02;
-  u8 unk004[0x1c0];
-  void *buffer;
-};
-
-extern const u8 gField_Tiles64D[];
-
-void *Heap_AllocEwram(s32 size);
-s32 Resource_FindFreeEntry(void);
-void Heap_Release(void *block);
 void Func_02003da0(void);
-void Func_02005770(const void *source, void *destination);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1867,13 +1767,6 @@ struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low,
 // takes mode 0 when its first flag is set. Then the leader is lifted onto the
 // ground if it stands below it.
 
-extern u8 gMapShapeGrid[];
-
-s32 Func_02005a18(struct Actor *object);
-s32 Func_02005848(s32 layer, s32 x, s32 z);
-void Func_02005958(s32 id);
-s32 Func_02005a20(s32 layer, s32 shape, s32 height);
-
 /// The trap table's setup: a trap whose second flag is set is put away; any
 /// other marks its cell, writes a shape for its height into the shape grid, and
 /// takes mode 0 when its first flag is set. Then the leader is lifted onto the
@@ -1929,13 +1822,6 @@ done:
     leader->y = ground;
   }
 }
-
-struct Actor *Func_02005a28(s32 *position, s32 mode);
-void Event_Start(void);
-void Event_End(void);
-void Func_02004a94(s32 value);
-void Func_02004d6c(s32 offset, s32 layer);
-void Func_02004bc8(void);
 
 void Func_02004418(const u16 *table) {
   struct Actor *leader;
@@ -2010,13 +1896,6 @@ test:
     goto next;
 }
 
-struct TrapEntry {
-  u16 actor;
-  u16 flag;
-};
-
-void Func_02004ce0(s32 a, s32 b, s32 c);
-
 void Func_020045ac(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
   struct Actor *object = Actor_GetById(id);
@@ -2061,7 +1940,6 @@ void Func_0200468c(s32 id) {
 }
 
 void Actor_MoveToObject(s32 id, s32 owner);
-void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 /// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
@@ -2217,18 +2095,6 @@ void Func_02004828(const u16 *table) {
   }
 }
 
-/// The sprite's priority bits, read as the byte that holds them.
-struct EffectSpriteBits {
-  u8 unk0 : 2;
-  u8 priority : 2;
-} __attribute__((packed));
-
-/// A sprite's attribute 2, as the byte bits view reaches it.
-struct EffectSpriteAttributes {
-  u8 unk00[9];
-  struct EffectSpriteBits bits;
-};
-
 /// A second copy of Effect_AdvanceMotionAtLeaderPriority in this overlay:
 /// Effect_AdvanceMotion, then the leader's sprite priority for the effect.
 void Func_02004a14(union FieldObject *object) {
@@ -2282,15 +2148,12 @@ void Func_02004a14(union FieldObject *object) {
 
 extern const s32 gData_02006254[];
 
-u32 Func_020059f0(struct FieldSprite *sprite, u32 frame);
 /* VIEW(s4a94): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
 extern void Actor_SetSingleChildFlags__s4a94(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
 /* VIEW(s4a94): routine Func_020057c8 as void Func_020057c8(struct FieldEffect *effect, s32 mode); trial_road.h has void Func_020057c8(struct Actor *object, s32 a). */
 extern void Func_020057c8__s4a94(struct FieldEffect *effect, s32 mode) __asm__("Func_020057c8");
 /* VIEW(s4a94): routine Actor_StartScript as void Actor_StartScript(struct FieldEffect *effect, const s32 *script); trial_road.h has void Actor_StartScript(struct Actor *object, const void *script). */
 extern void Func_020057d0__s4a94(struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
-s32 Math_Cosine(s32 angle);
-void Func_02004a14(union FieldObject *object);
 
 void Func_02004a94(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -2374,10 +2237,6 @@ void Func_02004bc8(void) {
 
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 
-s32 Func_02005848(s32 layer, s32 x, s32 z);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 Func_02005a20(s32 layer, s32 shape, s32 height);
-
 void Func_02004ce0(s32 level, s32 layer, s32 owner) {
   struct Actor *object = Actor_GetById(owner);
   u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapWork->layers[layer].cells -
@@ -2391,9 +2250,6 @@ void Func_02004ce0(s32 level, s32 layer, s32 owner) {
   shape += object->x / 0x100000 + object->z / 0x100000 * 128;
   *shape = Func_02005a20(object->terrainId, value, height);
 }
-
-// ---- games/tla/src/scene/trial_road/s4d6c.c ----
-void Func_02004ce0(s32 a, s32 b, s32 owner);
 
 void Func_02004d6c(s32 a, s32 b) {
   Func_02004ce0(a, b, gMainRoutineWork.currentOwner);
@@ -2450,35 +2306,10 @@ void TrialRoad_WaitForBalanceState(void) {
 
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 
-struct TrialRoadReplay {
-  s16 mode;
-  s16 mirrored;
-  s16 id;
-  s16 point;
-  s16 still;
-  s16 resource;
-};
-
-struct TrialRoadLinkWork {
-  u8 unk00[0xe4];
-  u16 rival;
-  u16 unke6;
-  u16 linkAngle;
-  s16 resource;
-  s32 linkX;
-  s32 linkZ;
-  s16 path[0x1c20];
-};
-
 /* VIEW(s4ddc): variable gSceneState as extern struct TrialRoadReplay gSceneState; s4d6c has extern u8 gSceneState[]. */
 extern struct TrialRoadReplay gSceneState__s4ddc __asm__("gSceneState");
-extern u8 gLinkPeerSignatures[][24];
-extern volatile u16 gLinkStatus;
-
-s32 ArcTan2(s32 dz, s32 dx);
-void *Resource_GetTableEntry(s32 id);
-void Func_02005770(const void *source, void *destination);
-void Func_020057f0(struct Actor *object);
+/* VIEW(s15a8): variable gLinkPeerSignatures as u8 gLinkPeerSignatures[][24]; heap_slots.h has u16 gLinkPeerSignatures[][12]. */
+extern u8 gLinkPeerSignatures__s15a8[][24] __asm__("gLinkPeerSignatures");
 
 /// Updates the Trial Road rival by the scene state's mode: 4 follows the
 /// leader's position mirrored across the course; 3 places the rival and its
@@ -2528,7 +2359,7 @@ void Func_02004ddc(void) {
     s16 st;
 
     player = ((s32)GameFlag_GetByte(760)) ^ 1;
-    signature = (s16 *)gLinkPeerSignatures[player];
+    signature = (s16 *)gLinkPeerSignatures__s15a8[player];
     if (((gLinkStatus >> player) & 1) == 0)
       return;
     x = *signature++;
@@ -2643,7 +2474,6 @@ void Func_02004ddc(void) {
 // Scene code of overlay 0x697, in ROM order, from s51a0's offset up to the
 // next object the overlay links, and the overlay's data.
 
-
 #include "heap_release.h"
 #include "resource.h"
 #include "vram_tab.h"
@@ -2663,16 +2493,8 @@ struct TrialRoadLinkWork__s51a0 {
   s32 originZ;
 };
 
-/// One queued sprite: the three words Oam_AddSpriteAtDepth adds to OAM.
-struct TrialRoadSprite {
-  u32 words[3];
-};
-
-extern const u16 Data_020062b4[];
 extern const u8 gData_020062d4[];
 
-void Func_02005770(const void *source, void *destination);
-void Oam_AddSpriteAtDepth(void *entry, s32 priority);
 s32 Func_02002ce8(s32 side);
 
 // The picture's buffer: 576 bytes of EWRAM, the size VramCache_Load copies.
@@ -2805,19 +2627,6 @@ void Func_020051a0(void) {
   }
 }
 
-struct TrialRoadLink {
-  u8 unk00[0xd8];
-  s16 vramEntry;
-  u16 unkda;
-  u8 unkdc[4];
-  u16 unke0;
-  u16 a;
-  u16 b;
-  u8 unke6[6];
-  s32 height;
-  s32 unkf0;
-};
-
 void Func_020055c4(s32 a, s32 b) {
   struct TrialRoadLink *link = HeapSlot_AllocEwram(236, 0x3934);
   void *buffer = Heap_AllocEwram(576);
@@ -2856,18 +2665,7 @@ void Func_020055c4(s32 a, s32 b) {
   Heap_Release(buffer);
 }
 
-struct TrialRoadControl {
-  s16 state;
-  s16 field02;
-  s16 field04;
-  s16 field06;
-  s16 field08;
-  s16 field0a;
-};
-
 extern u8 gSceneState[];
-
-void Func_02004ddc(void);
 
 void Func_02005688(s32 a) {
   u8 *work = Ram_HeapSlots->unkec[0];
@@ -2908,17 +2706,8 @@ s32 Func_020056e8(void) {
 
 void Func_02005704(void) {}
 
-
 void Func_02000058(void);
 void Func_02000694(void);
-void Func_02001904(void);
-void Func_02001974(void);
-void Func_02001a70(void);
-void Func_02001afc(void);
-void Func_02001bdc(void);
-void Func_02001bec(void);
-void Func_02001c6c(void);
-void Func_02001d8c(void);
 
 s32 gData_02005a70[] = {
     46,

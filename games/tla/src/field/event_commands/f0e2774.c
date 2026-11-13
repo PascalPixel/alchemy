@@ -1,52 +1,23 @@
 #include "types.h"
 #include "actor.h"
 #include "ram_buffer.h"
+#include "event.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/system/system.h"
+#include "module/tla.h"
 
-struct TouchCell {
-  s16 x;
-  s16 z;
-};
-
-struct TouchLayer {
-  u8 unk00[8];
-  s32 x;
-  s32 z;
-  u8 unk10[40];
-};
-
-struct TouchMap {
-  u8 unk000[264];
-  struct TouchLayer layers[1];
-};
-
-struct TouchCopy {
-  u8 toX;
-  u8 toZ;
-  u8 fromX;
-  u8 fromZ;
-  u8 cellX;
-  u8 cellZ;
-  u8 unk06[2];
-};
-
-struct MapCell {
+/* VIEW(f0e2774): tag struct MapCell as struct MapCell__f0e2774; map.h has another definition. */
+struct MapCell__f0e2774 {
   u8 unk00[2];
   u8 unk02;
 };
 
-struct TouchCopies {
-  struct TouchCell unk0000[1491];
-  struct TouchCopy copies[64];
-  s8 count;
-};
+/* VIEW(f0e2774): variable gData_02001000 as struct TouchCopies gData_02001000; module/tla.h has s8 gData_02001000[]. */
+extern struct TouchCopies gData_02001000__f0e2774 __asm__("gData_02001000");
 
-extern struct TouchCopies gData_02001000;
-
-s32 Party_GetLeaderActor(void);
 struct Actor *Actor_GetById(u32 objectId);
-void Func_080201f0(s32 toX, s32 toZ, s32 width, s32 height, s32 fromX,
-                   s32 fromZ);
-struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer);
+struct MapCell__f0e2774 *Func_080dbb78(s32 x, s32 z, s32 layer);
 
 void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height, s32 toX,
                    s32 toZ) {
@@ -89,15 +60,15 @@ void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height, s32 toX,
 
       Func_080201f0(toX + dx, toZ + dz, 1, 1, x + dx, z + dz);
       Func_080dbb78(cx << 20, cz << 20, 2)->unk02 = 0;
-      n = gData_02001000.count;
+      n = gData_02001000__f0e2774.count;
       if (n < 64) {
-        gData_02001000.copies[n].toX = toX + dx;
-        gData_02001000.copies[n].toZ = toZ + dz;
-        gData_02001000.copies[n].fromX = x + dx;
-        gData_02001000.copies[n].fromZ = z + dz;
-        gData_02001000.copies[n].cellX = cell[i].x;
-        gData_02001000.copies[n].cellZ = cell[i].z;
-        gData_02001000.count++;
+        gData_02001000__f0e2774.copies[n].toX = toX + dx;
+        gData_02001000__f0e2774.copies[n].toZ = toZ + dz;
+        gData_02001000__f0e2774.copies[n].fromX = x + dx;
+        gData_02001000__f0e2774.copies[n].fromZ = z + dz;
+        gData_02001000__f0e2774.copies[n].cellX = cell[i].x;
+        gData_02001000__f0e2774.copies[n].cellZ = cell[i].z;
+        gData_02001000__f0e2774.count++;
       }
     }
   }
@@ -106,12 +77,11 @@ void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height, s32 toX,
 #include "fixed_math.h"
 #include "actor_view.h"
 
-struct Actor *Func_080200c0(s32 sprite, s32 x, s32 y, s32 z);
-void FacingObject_TurnPairToFaceEachOther(struct Actor *first,
-                                          struct Actor *second);
-void Event_Wait(s32 frames);
-void Actor_StartRepeatedMotion(s32 actor, s32 variant);
-void FieldEffect_SetAttached(s32 actor, s32 value);
+/* VIEW(f0e2774): routine FacingObject_TurnPairToFaceEachOther as void FacingObject_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second); field.h has void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first, struct FacingObject *second). */
+extern void FacingObject_TurnPairToFaceEachOther__f0e2774(struct Actor *first,
+                                          struct Actor *second) __asm__("FacingObject_TurnPairToFaceEachOther");
+/* VIEW(f0e2774): routine Actor_StartRepeatedMotion as void Actor_StartRepeatedMotion(s32 actor, s32 variant); event.h has void Actor_StartRepeatedMotion(u32 objectId, s32 variant). */
+extern void Actor_StartRepeatedMotion__f0e2774(s32 actor, s32 variant) __asm__("Actor_StartRepeatedMotion");
 
 void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   s32 ownerId = Party_GetLeaderActor();
@@ -135,10 +105,10 @@ void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   } while (object->scaleX <= 0xffff);
   object->scaleY = object->scaleX = 0x10000;
   Actor_SetMode(owner, 1);
-  FacingObject_TurnPairToFaceEachOther(object, owner);
+  FacingObject_TurnPairToFaceEachOther__f0e2774(object, owner);
   owner->timer = owner->facing;
   Event_Wait(10);
-  Actor_StartRepeatedMotion(ownerId, 3);
+  Actor_StartRepeatedMotion__f0e2774(ownerId, 3);
   FieldEffect_SetAttached(ownerId, 258);
   Event_Wait(32);
   object->gravity = 0x10000;
@@ -185,38 +155,6 @@ void Func_080e2a68(s32 radius, s32 angle, u16 *offsets, u8 *pixels) {
 #include "resource.h"
 #include "system.h"
 #include "effect_sprite.h"
-
-s32 ArcTan2(s32 y, s32 x);
-
-struct BurstParticle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 heading;
-  s32 speed;
-  s32 spin;
-  s32 delay;
-};
-
-struct BurstWork {
-  u8 tiles[384];
-  struct EffectSprite sprites[96];
-  struct BurstParticle particles[96];
-  s16 resource;
-  s16 vram;
-  u8 unk1b04[2];
-  s16 frame;
-  s16 active;
-};
-
-struct BurstCell {
-  s16 x;
-  s16 z;
-};
-
-void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
-void Func_080e2c38(void);
-extern char ResourceId_Leaves;
 
 void Func_080e2acc(void) {
   struct BurstWork *work = (struct BurstWork *)Ram_HeapSlots->battleFxWork[0];

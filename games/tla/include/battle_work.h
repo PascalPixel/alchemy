@@ -99,4 +99,8 @@ STATIC_ASSERT(offsetof(struct BattleWork, highlightMode) == 0x678);
 STATIC_ASSERT(offsetof(struct BattleWork, events) == 0x6e4);
 STATIC_ASSERT(offsetof(struct BattleWork, unk868) == 0x868);
 
+struct LinkRuntimeState;
+
+extern struct LinkRuntimeState *gBattleWork;
+
 #endif

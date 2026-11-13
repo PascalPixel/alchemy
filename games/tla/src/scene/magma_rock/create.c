@@ -7,11 +7,7 @@
 #include "iwram_call.h"
 #include "actor.h"
 #include "event_inline.h"
-
-struct EventObjects {
-  u8 unk00[20];
-  struct Actor *objects[64];
-};
+#include "module/scene/scene.h"
 
 struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 kind) {
   struct Actor *object = (FieldActor_Create(kind, x, y, z));

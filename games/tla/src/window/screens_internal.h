@@ -57,40 +57,15 @@
 #include "irq.h"
 #include "system/io_write_queue.h"
 #include "battle_system.h"
-
-// The window object's functions, declared once as it defines them.
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
-void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2, u32 y2);
-void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y);
-void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y);
-void WindowSprite_RedrawSavedRect(struct Window *window);
-void WindowSprite_PrepareForRedraw(struct Window *work);
-void MessageArgument_Push(u32 value, u32 kind);
-void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
-                                  s32 palette, s32 reuse);
+#include "event.h"
+#include "flag_call.h"
+#include "module/system/system.h"
+#include "module/window/screens.h"
+#include "module/window/window.h"
 
 // The screens object's functions its parts call before their definitions.
 struct BobPairObject;
-void Func_08043b70(void);
-s32 FileList_SelectFile(s32 selectedFile, s32 menuMode);
-void MenuTitle_Bob(struct BobPairObject *object);
-struct WindowSprite *MenuTitle_Create(s32 group,
-                                               struct RenderInput *input, s32 x,
-                                               s32 y);
 
-// What several parts call, declared once here for all of them.
-extern u32 gVBlankCount;
-void Func_0803f9c0(s32 glow, s32 sub);
-s32 GameFlag_Test(s32 flag);
-s32 Message_AllTyped(void);
 s32 Message_OpenWindow(s32 message, s32 x, s32 y, s32 style);
-void Text_SetColor(s32 nibble);
-extern const u8 gResource_FixedBlockBTiles[];
-void Text_FillCanvasBackground(void);
-void MessageArgument_ClearAll(void);
-void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
-void Window_MarkVisibleTextTiles(void);
-void Input_ResetKeyRepeat(void);
 
 #endif

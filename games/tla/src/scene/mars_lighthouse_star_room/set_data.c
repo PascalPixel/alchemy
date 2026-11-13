@@ -3,13 +3,14 @@
 #include "frame.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "mars_lighthouse_star_room.h"
+#include "module/field/field.h"
+#include "module/scene/mars_lighthouse_star_room.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
-extern u8 gData_020023c4[];
-extern u16 gData_02004cf0[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_02002148(void);
 void Func_0200236c(void);
-void Func_02002ad0(struct Actor *object);
 
 void Func_02003384(u16 value) { gData_02004cf0[0] = value; }
 
@@ -24,12 +25,8 @@ struct Position {
   s32 z;
 };
 
-void Func_02002d90(void);
-void Func_020041cc(struct Actor *actor, s32 mode);
-s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
-void Func_02002d04(void);
+/* VIEW(set_data): routine Func_02002d04 as void Func_02002d04(void); module/scene/mars_lighthouse_star_room.h has void Func_02002d04(struct Actor *object). */
+extern void Func_02002d04__set_data(void) __asm__("Func_02002d04");
 
 void Func_02003390(void) {
   struct Position probe;
@@ -97,7 +94,7 @@ top:
   actor->timer = zero;
   Func_020041cc(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
-  actor->update = Func_02002d04;
+  actor->update = Func_02002d04__set_data;
   /* FAKEMATCH(barrier): the empty asm clobbering sfp and reading nextBehavior
    * twice; as no asm, 18 of 246 instructions differ in tla-en. */
   asm("" : : "r"(nextBehavior), "r"(nextBehavior) : SFP_CLOBBER);

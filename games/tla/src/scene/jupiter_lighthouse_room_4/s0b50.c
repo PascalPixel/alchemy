@@ -15,30 +15,14 @@
 #include "vram_tab.h"
 #include "task.h"
 #include "frame.h"
+#include "item_icon.h"
+#include "module/scene/jupiter_lighthouse_room_4.h"
+#include "module/scene/scene.h"
 
-struct GustObject {
-  u8 unk00[6];
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x0f];
-  u8 priorityFlags;
-  u8 unk24[0x0c];
-  s32 unk30;
-  u8 unk34[0x21];
-  u8 motionFlags;
-  u8 unk56[0x0c];
-  u8 unk62;
-  u8 unk63;
-  u16 unk64;
-  u8 unk66[6];
-  void (*update)(struct GustObject *object);
-};
-
-s32 Math_Cosine(s32 angle);
-void Func_02001da8(struct GustObject *object, s32 mode);
-void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags);
+/* VIEW(s0b50): routine Func_02001da8 as void Func_02001da8(struct GustObject *object, s32 mode); module/scene/airs_rock.h has void Func_02001da8(void). */
+extern void Func_02001da8__s0b50(struct GustObject *object, s32 mode) __asm__("Func_02001da8");
+/* VIEW(s0b50): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s0b50(struct GustObject *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
 void Func_02000990(struct GustObject *object);
 void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -55,8 +39,8 @@ struct GustObject *Func_02000b50(struct GustObject *source) {
                                   Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                     position.z));
-  Func_02001da8(object, 2);
-  Actor_SetSingleChildFlags(object, 0);
+  Func_02001da8__s0b50(object, 2);
+  Actor_SetSingleChildFlags__s0b50(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -139,21 +123,8 @@ void Func_02000cc8(void) {
   }
 }
 
-struct LightOam {
-  u32 link;
-  u32 attr01;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u16 unk0a;
-};
-
-extern s16 gData_0200275c;
-extern s16 gData_0200275e;
-extern struct Actor *gData_02002760[];
-extern struct LightOam gData_020027a0[];
-extern s16 gData_02002860;
-extern s16 gData_02002862;
+/* VIEW(s0b50): variable gData_02002760 as struct Actor *gData_02002760[]; module/scene/alhafra.h has s16 gData_02002760[]. */
+extern struct Actor *gData_02002760__s0b50[] __asm__("gData_02002760");
 
 s32 Func_02001ee0(struct Actor *actor);
 void Func_02001d80(struct LightOam *oam, s32 depth);
@@ -174,7 +145,7 @@ void Func_02000e58(void) {
   oam = gData_020027a0;
 
   for (i = 0; i < gData_0200275e; i++) {
-    struct Actor *actor = gData_02002760[i];
+    struct Actor *actor = gData_02002760__s0b50[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
@@ -232,12 +203,8 @@ void Func_02000e58(void) {
   }
 }
 
-extern u8 gField_CachedTilesA[];
-extern u8 gField_CachedTilesB[];
-extern u8 gField_CachedTilesC[];
-
-void Resource_DecodeType01(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
+/* VIEW(s0b50): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
+extern void Resource_DecodeType01__s0b50(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -246,8 +213,8 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 void Func_02001014(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
-  Iwram_ClearWords(gData_02002760, 64);
-  Resource_DecodeType01(gField_CachedTilesA, buffer);
+  Iwram_ClearWords(gData_02002760__s0b50, 64);
+  Resource_DecodeType01__s0b50(gField_CachedTilesA, buffer);
   gData_0200275c = Resource_FindFreeEntry();
   VramCache_Load(gData_0200275c, 0xc00, buffer);
   Heap_Release(buffer);
@@ -260,8 +227,8 @@ void Func_02001014(void) {
 void Func_02001094(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
-  Iwram_ClearWords(gData_02002760, 64);
-  Resource_DecodeType01(gField_CachedTilesB, buffer);
+  Iwram_ClearWords(gData_02002760__s0b50, 64);
+  Resource_DecodeType01__s0b50(gField_CachedTilesB, buffer);
   gData_0200275c = Resource_FindFreeEntry();
   Vram_Load(gData_0200275c, 0x800, buffer);
   Heap_Release(buffer);
@@ -274,8 +241,8 @@ void Func_02001094(void) {
 void Func_02001114(void) {
   u8 *buffer = BumpAlloc(0x800);
 
-  Iwram_ClearWords(gData_02002760, 64);
-  Resource_DecodeType01(gField_CachedTilesC, buffer);
+  Iwram_ClearWords(gData_02002760__s0b50, 64);
+  Resource_DecodeType01__s0b50(gField_CachedTilesC, buffer);
   gData_0200275c = Resource_FindFreeEntry();
   Vram_Load(gData_0200275c, 0x800, buffer);
   Heap_Release(buffer);
@@ -293,7 +260,7 @@ void Func_0200119c(s32 id, s32 value) {
 
     object->timer = value;
     count = &gData_0200275e;
-    gData_02002760[*count] = object;
+    gData_02002760__s0b50[*count] = object;
     (*count)++;
   }
 }

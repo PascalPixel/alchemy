@@ -83,4 +83,15 @@ STATIC_ASSERT(offsetof(struct BattleActionRecord, parameter) == 0x08);
 STATIC_ASSERT(offsetof(struct BattleActionRecord, target) == 0x0a);
 STATIC_ASSERT(sizeof(struct BattleSpoils) == 0x14);
 
+struct BattleAction {
+  u16 unitId;
+  u16 unk02;
+  s16 priority;
+  u16 command;
+  u16 parameter;
+  u16 target;
+  u16 range;
+  u16 unk0e;
+};
+
 #endif

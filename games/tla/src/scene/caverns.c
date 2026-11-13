@@ -8,6 +8,10 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "module/field/object.h"
+#include "module/scene/caverns.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -77,9 +81,6 @@ s32 Func_020003f0(u32 layer, s32 x, s32 y, s32 value) {
 #include "main_routine_work.h"
 #include "event_work.h"
 #include "text/msg_ids.h"
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_020010cc(s32 x, s32 z, s32 layer, s32 height);
 
 void Func_02000454(const s16 *data) {
   const u16 *ids = (const u16 *)data;
@@ -158,13 +159,6 @@ void Func_0200053c(s32 offset) {
     SET_CELL_HEIGHT(142 << 18, 134 << 18);
   }
 }
-
-struct CurrentUnit {
-  u8 unk00[0x14];
-  struct Actor *object;
-  u8 unk18[4];
-  s16 unk1c;
-};
 
 void Func_020006a8(void) {
   s32 position[3];
@@ -255,9 +249,6 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 void Func_0200108c(struct Actor *object);
-struct Actor *Func_0200115c(s32 *position, s32 mode);
-s32 Math_Cosine(s32 angle);
-struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 
 void Func_0200087c(void) {
   s32 velocity[3];
@@ -584,10 +575,6 @@ void Func_02000fe4(void) {
   Import_EventSetExitRequest(8);
   Event_End();
 }
-
-extern u32 gData_0200116c[];
-extern u32 gData_020011a8[];
-extern u32 gData_020011e4[];
 
 // clang-format off
 u32 gData_0200116c[] = {

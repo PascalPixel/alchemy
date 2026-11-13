@@ -5,9 +5,6 @@
 #include "../system_internal.h"
 #include "ram_code.h"
 
-extern const u8 Resource_DecodeHalfwordLzCode[];
-extern u8 Resource_DecompressHalfwordsCodeSize[];
-
 void Resource_DecompressHalfwords(const void *source, void *destination) {
   u8 routine[(u32)Resource_DecompressHalfwordsCodeSize];
 

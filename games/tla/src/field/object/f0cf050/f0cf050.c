@@ -3,10 +3,10 @@
 // Part of f0cf050.c.
 
 #include "../f0cf050_internal.h"
+#include "module/system/system.h"
 
-s32 Party_GetLeaderActor(void);
-s32 ArcTan2(s32 y, s32 x);
-void Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position);
+/* VIEW(f0cf050): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position); module/system/system.h has void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position). */
+extern void Vector_AddPolarOffset__f0cf050(s32 distance, u16 angle, s32 *position) __asm__("Vector_AddPolarOffset");
 
 void Func_080cf050(void) {
   struct Actor *leader;
@@ -24,7 +24,7 @@ void Func_080cf050(void) {
       if (dz > -0x100000 && dz < 0x100000) {
         leader->x = other->x;
         leader->z = other->z;
-        Vector_AddPolarOffset(0x140000, ArcTan2(dz, dx), &leader->x);
+        Vector_AddPolarOffset__f0cf050(0x140000, ArcTan2(dz, dx), &leader->x);
         leader->targetX = 0x80000000;
         leader->targetY = 0x80000000;
         leader->targetZ = 0x80000000;

@@ -3,6 +3,9 @@
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"
+#include "gamepak/far_call/game.h"
+#include "module/battle/battle.h"
+#include "module/battle/f11e3ac.h"
 
 // XXX: what this encodes, and whether item ids here are wider than The Broken
 // Seal's 9 bits; its callers would settle it.
@@ -64,27 +67,6 @@ s32 Func_08128228(u8 *s) {
   }
   return FIRST_DIGIT_COUNT;
 }
-
-struct DefeatSpoils {
-  s32 coins;
-  s32 experience;
-  s32 defeated;
-  u16 items[4];
-  u16 lastEnemyIds[2];
-  u8 lastDigits[2];
-  s8 lastSlot;
-  s8 lastCount;
-};
-
-struct DefeatBattleWork {
-  u8 unk00[0x10];
-  u16 enemyClasses[6];
-  u8 unk1c[0x20];
-  u16 firstDefeated;
-  u16 defeatState;
-  u8 unk40[0x510];
-  struct DefeatSpoils spoils;
-};
 
 static __inline__ s32 BattleEnemy_CalculateCoinReward(struct BattleUnit *unit,
                                                       u16 *reward) {
@@ -214,12 +196,6 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
 }
 
 #define ACTION_ID_MASK OWNER_ACTION_ID_MASK
-
-extern u16 Data_0200049c;
-
-s32 Func_0811a24c(s32 side, u16 *units);
-s32 Func_080ad0b0(s32 unitId, s16 *gains);
-s32 PartyInventory_AddFar(s32 item);
 
 void Battle_AwardSpoils(void) {
   struct BattleSpoils *spoils;

@@ -1,6 +1,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "objcmd.h"
+#include "module/scene/gabomba_statue.h"
 
 void Func_02000280(void);
 void Func_0200028c(void);
@@ -8,46 +9,23 @@ void Func_02000364(void);
 void Func_02000408(void);
 void Func_0200047c(void);
 void Func_02000550(void);
-void Func_02000740(void);
 void Func_02000784(void);
-void Func_02000978(void);
-void Func_02000ad4(void);
-void Func_02000c38(void);
-void Func_02000c8c(void);
 void Func_02000cf0(void);
-void Func_02000fc0(void);
-void Func_02001284(void);
-void Func_020012ec(void);
-void Func_02001364(void);
 void Func_020013bc(void);
-void Func_02001430(void);
-void Func_02001498(void);
-void Func_02001500(void);
 void Func_02001564(void);
-void Func_020015b8(void);
-void Func_02001630(void);
 void Func_02001728(void);
-void Func_0200176c(void);
 void Func_020017dc(void);
 void Func_02001820(void);
 void Func_02001864(void);
 void Func_020018a8(void);
 void Func_02001990(void);
-void Func_020019d0(void);
 void Func_02001a6c(void);
 void Func_02001a8c(void);
 void Func_020043ec(void);
-void Func_02004530(void);
-void Func_020045d8(void);
-void Func_02004620(void);
-void Func_020046c8(void);
 
 extern u8 gData_0200585c[];
 extern u8 gData_02005898[];
 extern u8 gData_020058d4[];
-
-extern s32 gData_02005fbc[];
-extern s32 gData_02005fc8[];
 
 // clang-format off
 u8 gData_02005aac[] = {

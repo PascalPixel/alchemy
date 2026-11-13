@@ -1,23 +1,15 @@
 #include "types.h"
 #include "scene_tables.h"
+#include "module/scene/yampi_desert_cave.h"
 
-void Func_02000cec(void);
-void Func_02000d04(void);
-void Func_02000d84(void);
-void Func_02000dac(void);
-void Func_02000de0(void);
 void Func_02000e14(void);
 void Func_02000e3c(void);
 void Func_02000e68(void);
 void Func_02000f10(void);
-void Func_02001040(void);
-void Func_02001120(void);
 void Func_020011b4(void);
 void Func_02001238(void);
 void Func_0200130c(void);
 void Func_020013c8(void);
-
-extern u32 gData_02001b48[];
 
 // clang-format off
 u16 gData_02001968[] = {

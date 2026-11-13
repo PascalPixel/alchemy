@@ -4,6 +4,9 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "gamepak/far_call/game.h"
+#include "module/battle/battle.h"
+#include "module/battle/presentation.h"
 
 /// Readies every unit's battle graphics, releasing those of departed units,
 /// and resets everyone's display mode and motion.
@@ -25,11 +28,6 @@ void BattleParty_ListAllUnitsAndSubmit(void) {
 
 s32 BattleMotion_GetSlotPalette(s32 id) { return BattleObject_Get(id)->palette; }
 
-struct Layout {
-  u8 pad[4];
-  s16 field[6];
-};
-
 s32 Enemy_CheckRoom(s32 arg0) {
   s32 retval;
   s32 i;
@@ -48,15 +46,6 @@ s32 Enemy_CheckRoom(s32 arg0) {
   }
   return i != 6;
 }
-
-struct BattleSpriteSlots {
-  s32 enemyGroup;
-  s16 spriteSlots[6];
-};
-
-s32 BattleClass_GetSprite(s32 index);
-s32 BattleClass_GetPalette(s32 index);
-s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 
 /// Loads the battle sprites of a unit into free sprite slots: one slot, or
 /// two neighbouring ones for a wide sprite. A few sprites load a second part
@@ -168,17 +157,6 @@ s32 BattleUnit_GetWeaponKind(s32 key) {
 done:
   return result;
 }
-
-extern const u16 gData_081287d4[];
-extern const u16 gData_081287e2[];
-extern const u16 gData_081287f0[];
-extern const u16 gData_081287fe[];
-extern const u16 gData_0812880c[];
-extern const u16 gData_0812881a[];
-extern const u16 gData_08128828[];
-extern const u16 gData_08128836[];
-
-s32 Inventory_FindEquippedFar(s32 owner, s32 kind);
 
 /// The value of the owner's equipped weapon from its class's table, or 0.
 s32 BattleUnit_LookupWeaponValueByClass(s32 owner) {

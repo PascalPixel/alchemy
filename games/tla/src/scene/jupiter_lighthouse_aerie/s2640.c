@@ -8,12 +8,10 @@
 #include "field_effect.h"
 #include "event_inline.h"
 #include "jupiter_lighthouse_aerie.h"
-
-void Event_Start(void);
-s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotion(union FieldObject *object);
-
-void Event_End(void);
+#include "event_work.h"
+#include "module/field/field_effect.h"
+#include "module/scene/jupiter_lighthouse_aerie.h"
+#include "module/scene/scene.h"
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
@@ -136,8 +134,6 @@ void Func_02000314(void);
 void Func_0200032c(void);
 
 extern u32 gData_02002fe4[];
-extern u32 gData_02003020[];
-extern u32 gData_0200305c[];
 
 // clang-format off
 u32 gData_02002fe4[] = {

@@ -3,10 +3,10 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "module/field/event_commands.h"
 
 /* VIEW(f0e2718): variable gData_02001000 as extern u8 gData_02001000[]; f0e150c has extern struct TouchCopies gData_02001000; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:2361: incompatible types in initialization. */
 extern u8 gData_02001000__f0e2718[] __asm__("gData_02001000");
-void Func_080201f0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 /* VIEW(f0e2718): routine Func_080dbb78 as struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer); f0e150c has struct MapCell__f0e150c *Func_080dbb78(s32 x, s32 z, s32 layer); tried as the definition's struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer), it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:2357: conflicting types for `Func_080dbb78'. */
 extern struct MapCell *Func_080dbb78__f0e2718(s32 x, s32 z, s32 layer) __asm__("Func_080dbb78");
 

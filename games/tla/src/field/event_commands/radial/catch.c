@@ -3,6 +3,9 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "module/field/event_commands.h"
+#include "module/field/object.h"
+#include "module/field/radial.h"
 
 void FieldPsynergy_Catch(void) {
   struct FxScene13 *scene = Ram_HeapSlots->effectWork;
@@ -90,39 +93,6 @@ void FieldPsynergy_Catch(void) {
   Actor_Destroy(object);
   BattleEffect_PrepareBufferInterpolation();
 }
-
-
-struct ScatterParticle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 timer;
-};
-
-struct ScatterWork {
-  u8 tiles[0x1000];
-  struct EffectSprite sprites[64];
-  struct ScatterParticle particles[64];
-  struct Actor *object;
-  s16 phase;
-  s16 timer;
-  s16 spawnCount;
-  s16 next;
-  u16 tileA;
-  u16 tileB;
-  s16 flash;
-  s16 hit;
-};
-
-struct ScatterEvent {
-  u8 unk000[0xd31];
-  s8 target;
-  s8 targetY;
-  s8 targetZ;
-};
 
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct ScatterParticle *p);
@@ -237,20 +207,10 @@ void Func_080e0618(void) {
   work->timer++;
 }
 
-struct EffectSceneState {
-  u8 unk000[0xd31];
-  u8 valueD31;
-  u8 valueD32;
-  u8 valueD33;
-};
-
 struct EffectSceneWork {
   u8 unk00[0x20];
   u8 failed;
 };
-
-s32 Func_080d9a74(s32 value, s32 *first, s32 *second);
-void Func_080e09c0(void);
 
 /// Effect 17 on a target: asks Func_080d9a74 for two results; on failure
 /// marks the effect failed, else stores the target and both in the event work.
@@ -275,12 +235,6 @@ void Func_080e0978(s32 value) {
   Func_080e09c0();
 }
 
-
-void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
-struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
-void Func_080d92d4(s32 target, s32 y, s32 z);
-
-extern char ResourceId_SparkleFade;
 extern char ResourceId_StarSparkleFade;
 
 void Func_080e09c0(void) {
@@ -376,7 +330,6 @@ void Func_080e09c0(void) {
   HeapSlot_Release(92);
 }
 
-
 void BattleEffect_AdvanceAngleWithRamp(struct Actor *object) {
   u32 step;
 
@@ -404,25 +357,6 @@ void BattleEffect_UpdateDescendingObject(struct Actor *obj) {
     obj->animationKind = 0;
   }
 }
-
-
-struct LaunchVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct LaunchObject {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct LaunchScene {
-  u8 unk00[0x10];
-  struct LaunchObject *mainObject;
-};
 
 void Func_080e0cec(struct FieldParticle *slot) {
   struct LaunchVector pos;

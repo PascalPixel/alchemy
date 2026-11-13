@@ -5,10 +5,13 @@
 #include "io_reg.h"
 #include "event_inline.h"
 #include "field.h"
+#include "event_work.h"
+#include "module/scene/jupiter_lighthouse_room_8.h"
 
 struct CellTargetEntry;
 
-struct CellTarget {
+/* VIEW(s1c30): tag struct CellTarget as struct CellTarget__s1c30; cell_target.h has another definition. */
+struct CellTarget__s1c30 {
   s16 firstFlag;
   s16 flagByte;
   s16 kind;
@@ -20,12 +23,9 @@ struct CellTarget {
   s16 tile;
 };
 
-void Func_02001b38(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 #include "io_write.h"
 
-void Func_02001c30(struct CellTarget *table, struct CellTargetEntry *entry) {
+void Func_02001c30(struct CellTarget__s1c30 *table, struct CellTargetEntry *entry) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = (leader->x >> 20) | (s16)(table->x & 64);
   s32 z = (leader->z >> 20) | (s16)(table->z & 64);

@@ -4,10 +4,11 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
 
 /* VIEW(f0d8ff8): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); f0d8740 has s32 ArcTan2(s32 y, s32 x); tried as the definition's s32 ArcTan2(s32 x, s32 y), which the object already declares, Func_080d8ff8 moves: 1 of 120 instructions in tla-ja. */
 extern s16 ArcTan2__f0d8ff8(s32 y, s32 x) __asm__("ArcTan2");
-s32 Func_080d9194(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ);
 
 /* VIEW(f0d8ff8): tag struct ChainNode as struct ChainNode__f0d8ff8; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5333: structure has no member named `visible'. */
 struct ChainNode__f0d8ff8 {
@@ -62,27 +63,6 @@ s32 Func_080d8ff8(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
   }
   return 0;
 }
-
-
-struct LinkAnimation {
-  u8 unk00[9];
-  u8 unused09 : 2;
-  u8 layer : 2;
-};
-
-struct LinkEnds {
-  s16 first;
-  s16 second;
-  s16 unk04;
-  s16 layer;
-};
-
-struct LinkEntry {
-  u8 unk00[12];
-  struct LinkEnds ends;
-  u8 unk14[12];
-};
-
 
 // Link two objects.
 void Func_080d9104(s32 slot, s32 firstId, s32 secondId) {

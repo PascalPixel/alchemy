@@ -3,45 +3,17 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
-
-s32 Func_081197f0(s32 enemyGroup);
+#include "flag_call.h"
+#include "gamepak/far_call/game.h"
+#include "module/battle/battle.h"
+#include "module/battle/presentation.h"
+#include "module/system/system.h"
+#include "resource_ids.h"
 
 void Func_08118430(void) {
   for (;;)
     Func_081197f0(0);
 }
-
-struct SnapshotVitals {
-  u16 hp;
-  u16 pp;
-};
-
-struct Snapshot {
-  u8 listed[8];
-  u8 tags[3][4];
-  u8 unk14[0x80];
-  struct SnapshotVitals vitals[5];
-};
-
-struct SnapshotUnit {
-  u8 unk00[0x38];
-  s16 hp;
-  u16 unk3a;
-  u8 unk3c[0xf0];
-  u8 tags[4];
-  u8 snapshot[25];
-};
-
-extern struct Snapshot Data_0200ff58;
-struct SnapshotCopy {
-  u8 bytes[25];
-};
-
-extern struct SnapshotCopy Data_0200ff6c[];
-extern struct SnapshotVitals Data_0200ffec[];
-extern u8 Data_0812a16c[];
-
-u32 BattleParty_IsUnitListed(u32 id);
 
 void Func_0811843c(void) {
   s32 j;
@@ -116,8 +88,6 @@ void Func_0811843c(void) {
   }
 }
 
-void Unit_SetPpFar(struct BattleUnit *unit, s32 pp);
-
 /// Restores the five units Func_0811843c snapshotted: for each one still in
 /// the battle party and listed, the first three's four tag bytes and each
 /// one's 25 snapshot bytes, and the last two's HP and PP through
@@ -170,20 +140,6 @@ void Func_081185c4(void) {
   }
 }
 
-struct DebugPartyEntry {
-  s8 owner;
-  u8 level;
-  s8 djinnCounts[4];
-  u16 items[6];
-  u16 actions[2];
-  u16 unk16;
-};
-
-extern struct DebugPartyEntry gData_0812a174[];
-
-void Unit_LevelUpToFar(s32 owner, s32 level);
-void Unit_LearnPsynergyFar(s32 owner, s32 action);
-s32 Inventory_EquipFar(s32 owner, s32 slot);
 void Unit_UpdateClassFar(s32 owner);
 
 s32 DebugParty_LoadPreset(s32 preset) {
@@ -269,15 +225,8 @@ s32 DebugParty_LoadPreset(s32 preset) {
 void Func_08118954(void) {}
 
 extern u8 gData_03001110;
-extern u16 Data_02000436;
-extern char ResourceId_ColossoBackdrop;
 
 void Func_080ad090(void);
-void Window_LoadGraphics(void);
-void DebugText_Clear(void);
-void VramCache_Reset(void);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 
 void Func_08118958(void) {
   s32 startModeSet = 0;

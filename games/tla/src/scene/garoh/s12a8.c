@@ -9,15 +9,12 @@
 #include "event_inline.h"
 #include "garoh.h"
 #include "field_sprite.h"
+#include "field.h"
+#include "module/field/event_commands.h"
+#include "module/field/field_effect.h"
+#include "module/scene/garoh.h"
+#include "module/scene/scene.h"
 
-struct Vec {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotion(union FieldObject *object);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
@@ -52,19 +49,9 @@ burst:
     goto burst;
 }
 
-struct SpawnObject {
-  u8 unk00[0x50];
-  struct FieldSprite *sprite;
-  u8 unk54;
-  u8 motionFlags;
-  u8 unk56[8];
-  u16 unk5e;
-};
-
 /* VIEW(s12a8): variable gData_02006330 as extern u8 gData_02006330[]; the definition has u32 gData_02006330[] = { 38, }; tried as the definition's extern u32 gData_02006330[], it does not compile in tla-ja: games/tla/src/scene/garoh/s12a8.c:95: `gData_02006330__s12a8' undeclared (first use in this function). */
 extern u8 gData_02006330__s12a8[] __asm__("gData_02006330");
 
-void Func_02005164(struct SpawnObject *object, s32 mode);
 void Actor_StartScript(struct SpawnObject *object, const void *script);
 
 void Func_0200132c(void) {
@@ -116,11 +103,6 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 #include "call.h"
 #include "field.h"
 #include "text/msg_ids.h"
-
-void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
-void BattleEffect_SetupObjectPair(s32 a, s32 b);
-void BattleEffect_StopMainActor(void);
-void BattleEffect_CleanupSceneObjects(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -182,10 +164,6 @@ void Func_02001454(s32 actor) {
     FieldActor_WaitForMoveById(id);                                                 \
     Actor_SetPosition(id, 0, 0);                          \
   }
-
-extern u32 gData_0200545c[];
-
-void Func_020052b4(void);
 
 static inline s32 Garoh_PathStep(s32 from, s32 to, s32 i) {
   return from + ((to - from) * i) / 8;
@@ -686,10 +664,6 @@ L_0200a66c:;
   }
   Event_End();
 }
-
-s32 Func_02001344();
-
-s32 Func_020052bc();
 
 void Func_02002694(void) {
   s32 v5;
@@ -2469,41 +2443,19 @@ L_0200d0fa:;
 #include "objcmd.h"
 
 void Func_02000420(void);
-void Func_020004cc(void);
 void Func_02000580(void);
 void Func_020005cc(void);
 void Func_02000618(void);
 void Func_02000664(void);
 void Func_02000698(void);
 void Func_020006ec(void);
-void Func_02000808(void);
-void Func_02000960(void);
-void Func_020009a4(void);
 void Func_02000e58(void);
 void Func_02000e68(void);
-void Func_02000f74(void);
-void Func_02000f80(void);
-void Func_02000f8c(void);
-void Func_02000f98(void);
-void Func_02000fa4(void);
 void Func_02000fbc(void);
-void Func_02000fec(void);
 void Func_0200101c(void);
-void Func_0200105c(void);
 void Func_0200108c(void);
-void Func_02001098(void);
-void Func_020010d4(void);
-void Func_02001104(void);
-void Func_02001144(void);
-void Func_020011c8(void);
 
-extern u32 gData_0200539c[];
 extern u32 gData_020053d8[];
-extern u32 gData_02005414[];
-extern s32 gData_0200552c[];
-extern s16 gData_02005d9c[];
-extern s16 gData_02005db2[];
-extern s16 gData_02005dc8[];
 
 // clang-format off
 u32 gData_0200539c[] = {

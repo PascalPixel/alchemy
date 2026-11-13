@@ -9,14 +9,13 @@
 #include "field_effect.h"
 #include "event_inline.h"
 #include "cell_target.h"
+#include "event_work.h"
+#include "module/field/field_effect.h"
+#include "module/scene/jupiter_lighthouse_room_4.h"
+#include "module/scene/scene.h"
 
-void Event_Start(void);
-void Map_CenterOnFollowedPoint(void);
-s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Event_End(void);
 
 void Func_02001a20(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
@@ -72,10 +71,8 @@ void Func_02001a20(void) {
   Event_End();
 }
 
-extern struct CellTarget gData_02002864;
-
-void GameFlag_SetByte(s32 index, s32 value);
-void Func_02001818(struct CellTarget *puzzle, struct CellTargetEntry *tile);
+/* VIEW(s1a20): routine GameFlag_SetByte as void GameFlag_SetByte(s32 index, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
+extern void GameFlag_SetByte__s1a20(s32 index, s32 value) __asm__("GameFlag_SetByte");
 void Func_02001888(struct CellTarget *puzzle, struct CellTargetEntry *tile);
 
 s32 Func_02001bb8(void) {
@@ -98,8 +95,8 @@ s32 Func_02001bb8(void) {
         break;
       puzzle->current = i;
       Func_02001888(puzzle, tile);
-      GameFlag_SetByte(puzzle->flagByte, x);
-      GameFlag_SetByte(puzzle->flagByte + 8, z);
+      GameFlag_SetByte__s1a20(puzzle->flagByte, x);
+      GameFlag_SetByte__s1a20(puzzle->flagByte + 8, z);
       return 1;
     }
   }
@@ -116,8 +113,8 @@ void Func_02001c68(s32 dx, s32 dz, s32 value) {
   if (x != 0 || z != 0) {
     struct Actor *shadow;
 
-    GameFlag_SetByte(work->flagByte, 0);
-    GameFlag_SetByte(work->flagByte + 8, 0);
+    GameFlag_SetByte__s1a20(work->flagByte, 0);
+    GameFlag_SetByte__s1a20(work->flagByte + 8, 0);
     object->x = ((x + dx) << 20) + 0x80000;
     object->z = ((z + dz) << 20) + 0x80000;
     shadow = *(struct Actor **)(event + 460);
@@ -133,18 +130,13 @@ void Func_02001c68(s32 dx, s32 dz, s32 value) {
 #include "objcmd.h"
 
 void Func_02000054(void);
-void Func_020000c0(void);
 void Func_02000108(void);
 void Func_02000114(void);
-void Func_02000164(void);
-void Func_02000170(void);
 void Func_020001dc(void);
 void Func_020001fc(void);
-void Func_0200021c(void);
 
 extern u32 gData_02002384[];
 extern u32 gData_020023c0[];
-extern u32 gData_020023fc[];
 
 // clang-format off
 u32 gData_02002384[] = {

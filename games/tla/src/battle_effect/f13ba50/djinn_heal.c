@@ -4,9 +4,14 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
+#include "gamepak/far_call/battle.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/battle_effect/f13ba50.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "resource_ids.h"
 
 struct Model;
-
 
 #define HEAP_BLITTER 104 // ☀️ HEAP_SLOT_BLITTER
 
@@ -20,62 +25,9 @@ struct Model;
 #define SHEET_TEXTURE 0x2710
 #define SHEET_DJINN 0x65c0
 
-// The kinds this body draws, chosen by the effect's entry.
-enum {
-  QUADS_MERCURY, // over a prepared canvas, with the Mercury Djinn
-  QUADS_MARS,    // over a prepared canvas, with the Mars Djinn
-  QUADS_RISING   // rising from the first target
-};
-
-// A texture as the render jobs take it: 1 << logWidth by 1 << logHeight.
-struct Texture {
-  u8 logWidth;
-  u8 logHeight;
-  u16 unk02;
-  void *pixels;
-};
-
-// A render job (the first of Render_AllocateModelList's entries).
-struct RenderJob {
-  s32 kind;
-  s32 next;
-  const void *faces;
-  void *vertices;
-  struct Texture *texture;
-  s32 fade;
-  s32 tail;
-};
-
-extern char ResourceId_Data0D0;           // directory row 0xd0
-extern char ResourceId_FeatherSheet;      // directory row 0xd1
-extern char ResourceId_MercuryDjinnSheet; // directory row 0x154
-extern char ResourceId_BlueFlameSheet;    // directory row 0x130
-extern char ResourceId_MarsDjinnSheet;    // directory row 0x150
-
-extern const u8 gData_08199210[]; // a quad's four corners, x y z for each
-extern const u8 gData_08199340[]; // the quad's face
-
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(
     void); // ☀️ ProcessPendingGraphicsTransfer
-void BattleEffect_CountDownBattlerTints(void);
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 flags); // ☀️ BattleEffect_BuildBlitter
-void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ☀️ BattleEffect_TintBattler
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-                   s32 *world); // the canvas preparer
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *pos);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z); // translate
-void Func_080151e4(s32 x, s32 y, s32 z); // scale
-void Func_080150e4(s32 angle);           // roll
-void SceneTransform_ApplyPitch(s32 angle);
-void Sound_PlayFar(s32 cue);
 
 // Sixteen textured quads tumble down over the targets (or, from the first
 // target, rise), three frames apart, for 64 frames; with a prelude a Djinn
@@ -281,71 +233,11 @@ struct FxPartyList;
 
 struct StripQuad;
 
-
-struct RequestPair {
-  s32 x, y;
-};
-
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
-
-void Func_0801521c(s32 scale);
-
-void SceneTransform_ApplyYaw(s32 angle);
-
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                          s32 drag);
-
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void Transform_SetLookAt(s32 *eye, s32 *target);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Push(void);
-void Transform_Pop(void);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
-
-
-void Func_08179e6c(void);
-void Animation_ApplyChildArgumentFar(void *object, s32 animation);
-
-extern char ResourceId_Data134;
-extern char ResourceId_PetalSheet;
-extern char ResourceId_CrescentRowSheet;
-extern char ResourceId_OrangePaletteB;
-extern char ResourceId_Data0C1;
-extern u8 gData_02014000[];
-extern u16 gData_08197410[];
-extern const struct RequestPair Data_08196e0c;
-extern const u16 Data_08197a38[][2]; // the charging Zagan's parts
-extern const u16 Data_08197a64[][2]; // the galloping Zagan's
-extern const u8 Data_08197a94[];     // each ring's start
-extern const u8 Data_08197a98[];     // growth
-extern const s8 Data_08197a9c[];     // height
-extern const u8 Data_08198cac[];
-extern const u8 Data_08198ec4[];
 
 #define ZAGAN_PARTS 12
 

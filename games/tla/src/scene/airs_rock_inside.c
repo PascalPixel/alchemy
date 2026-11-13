@@ -3,20 +3,17 @@
 
 #include "airs_rock_inside/airs_rock_inside.h"
 #include "system.h"
+#include "module/field/field.h"
+#include "module/scene/airs_rock_inside.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
-extern u32 gData_0200654c[];
-extern u32 gData_02006564[];
-extern u32 gData_0200663c[];
-extern u32 gData_020066b4[];
 extern u32 gData_0200675c[];
-extern u32 gData_020068ac[];
 extern u32 gData_020068f4[];
 extern u32 gData_020069e4[];
 extern u32 gData_02006aec[];
 extern u32 gData_02006bac[];
 
-s32 Math_Cosine(s32 angle);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);
 
@@ -125,9 +122,6 @@ s32 Func_02000690(u32 layer, s32 x, s32 y) {
 
 #include "types.h"
 #include "actor.h"
-
-s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
-void Func_02005df4(s32 x, s32 z, s32 terrain, s32 height);
 
 /// Sets an object's cells by its flag (its action parameter): when the flag is
 /// set it clears the kind byte of its layer 2 cell and its layer 0 cell, sinks
@@ -267,11 +261,6 @@ void Func_02000908(u16 *list) {
 #include "main_routine_work.h"
 #include "input.h"
 
-void Func_02005efc(s32 a);
-void Func_02005ee4(void);
-struct Actor *Func_02005ef4(void);
-void Func_02005d8c(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02005d94(struct Actor *object);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Camera_FollowActor(s32 id, s32 flag);
 
@@ -444,13 +433,7 @@ s32 Func_02000d18(s32 *a, s32 *b) {
 #include "field/event_work.h"
 
 extern u8 gData_020061ac[], gData_02006194[];
-struct Shot {
-  u8 unk00[0x62];
-  u8 unk62; ///< set once it has hit the leader
-  u8 unk63; ///< set with unk62, cleared when it ends
-};
 
-void Func_02005f8c(struct Actor *object, s32 cue);
 s32 Math_Sine(s32 angle);
 
 /// Func_020010b4's twin for another shot: it also stops while the render mode
@@ -719,8 +702,6 @@ void Func_02001420(struct Actor *object, s16 timer, u8 value) {
   }
 }
 
-void Func_02005d7c(struct Actor *object);
-
 void Func_02001458(struct Actor *object) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -872,23 +853,11 @@ void Func_020017f4(struct Actor *object) {
   SET_POSITION(object, target->x, target->y + (128 << 12), target->z);
 }
 
-extern const u8 gData_02005fd8[];
+/* VIEW(airs_rock_inside): variable gData_02005fd8 as const u8 gData_02005fd8[]; module/scene/airs_rock_inside.h has u32 gData_02005fd8[]. */
+extern const u8 gData_02005fd8__airs_rock_inside[] __asm__("gData_02005fd8");
 void Func_02002bd0(void);
 void Camera_SetSpeedParameters(s32 a, s32 b);
-s32 Func_02005dec(struct Actor *object);
-void Map_CenterOnFollowedPoint(void);
 void Map_SetScreenShake(s32 a, s32 b, s32 c);
-void Func_02005eec(s32 actor, s32 a);
-
-/// A cell of the map, and a step from one cell to the next.
-struct Cell {
-  s32 x, z;
-};
-
-struct EffectWork {
-  u8 unknown[20];
-  struct Actor *target;
-};
 
 #define TARGET(effect) ((effect)->target)
 
@@ -964,7 +933,7 @@ void Func_02001828(void) {
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02005d5c(spark, 7);
-      Actor_StartScript(spark, gData_02005fd8);
+      Actor_StartScript(spark, gData_02005fd8__airs_rock_inside);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetPartAttribute(spark, 2);
       spark->update = Func_02002bd0;
@@ -1294,8 +1263,6 @@ u32 *Scene_GetPlacements(void) {
     return gData_02006bac;
   return gData_0200654c;
 }
-
-void Func_020026c0(void);
 
 void Func_020026c0(void) {
   struct Actor *object = Actor_GetById(Party_GetLeaderActor());

@@ -5,6 +5,14 @@
 // ---- games/tla/src/scene/aqua_rock_inside.c ----
 
 #include "aqua_rock_inside/local.h"
+#include "field.h"
+#include "module/field/map.h"
+#include "module/scene/aqua_rock_inside.h"
+#include "module/scene/scene.h"
+#include "module/sound/sound.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "text/msg_ids.h"
 
 void Func_0200033c(void) { Func_080d2b4c(10, 32); }
 
@@ -102,8 +110,6 @@ void Func_0200042c(s32 unused, s32 id) {
 
 void Func_020004b4(void) { Func_02003e6c(); }
 
-void Func_0200349c(u32 index, s32 height);
-
 void Func_020004bc(s32 unused, s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 *layer;
@@ -171,8 +177,6 @@ void Func_020005f8(void) {
   Func_02003d1c_(41, 42, 1, 1, 43, 44);
   Event_SetFlag(0x250);
 }
-
-void Func_0200061c(struct Actor *object);
 
 #if TLA_PATCH_1
 void Func_0200061c(struct Actor *object) {
@@ -260,9 +264,6 @@ void Func_020007a8(void) {
 }
 
 extern const u8 gData_02003fb8[];
-
-void Sound_WaitForBgmRestore(void);
-void Party_PlaySavedMusic(void);
 
 void Func_020007d4(void) {
   s32 priority;
@@ -469,11 +470,8 @@ void Func_02000ca8(void) {
 #include "event_inline.h"
 #include "io_write_queue.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
 /* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before it has another declaration; tried as the definition's void Func_02000ca8(void), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/aqua_rock_inside.c:513: too many arguments to function `Func_02000ca8'. */
 extern void Func_02000ca8__s0cc8() __asm__("Func_02000ca8");
-s32 Func_02003d2c(struct Actor *object, struct Vector3 *target);
 
 void Func_02000cc8(s32 trigger) {
   s32 clear = 1;
@@ -580,9 +578,6 @@ void Func_02000e18(s32 value) {
   Event_End();
   FieldEvent_SetExitRequest(value);
 }
-
-void DisplayBlend_DisableRunScript(void);
-void DisplayBlend_EnableRunScript(void);
 
 void Func_02000ecc(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
@@ -813,21 +808,6 @@ void Func_02001364(struct Actor *object) {
 // overlay 681's Func_0200136c. The first push goes through Call3 (directly, its
 // offset pointer is set after the angle's load).
 
-struct Orbiter {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x38];
-  s32 radius;
-  u8 unk50[0x12];
-  u8 countdown;
-  u8 unk63;
-  s16 angle;
-  u16 speed;
-  struct Actor *anchor;
-};
-
 /* VIEW(s13bc): routine Func_02001364 as void Func_02001364(struct Orbiter *orbiter); the definition has void Func_02001364(struct Actor *object). */
 extern void Func_02001364__s13bc(struct Orbiter *orbiter) __asm__("Func_02001364");
 
@@ -859,25 +839,6 @@ s32 Func_020013bc(struct Orbiter *orbiter) {
   orbiter->radius -= 0x40000;
   return 1;
 }
-
-struct Orbit {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x30];
-  s32 centreX;
-  s32 centreZ;
-  s32 radius;
-  u8 unk50[0x12];
-  u8 phase;
-  u8 growth;
-  s16 angle;
-  s16 speed;
-};
-
-// Called by its linked name, as Gaia Rock's Func_0200142c does.
-s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
 
 // Moves around in a circle.
 s32 Func_0200147c(struct Orbit *object) {
@@ -967,14 +928,9 @@ union ActorView {
 };
 extern const u8 gData_02004034[], gData_02003fe8[], gData_02004004[],
     gData_02004058[], gData_02004014[], gData_0200407c[], gData_020040ac[];
-void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Func_02003cc4(struct Actor *object, s32 mode);
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-void Animation_SetStateFlags(struct Actor *object, u32 value);
 void Actor_StartScript(struct Actor *object, const void *data);
 /* VIEW(s1620): routine Func_02001598 as void Func_02001598(void); the definition has void Func_02001598(struct Actor *object). */
 extern void Func_02001598__s1620(void) __asm__("Func_02001598");
-void Party_PlaySavedMusic(void);
 
 void Func_02001620(s32 firstId, s32 secondId) {
   struct Actor *first = Actor_GetById(firstId);
@@ -1140,8 +1096,8 @@ void Func_0200124c();
 void Event_Start();
 void Event_End();
 void Actor_MoveToObject();
-void Party_LearnAbility();
-extern u8 MsgCheckedTheTabletIt[];
+/* VIEW(aqua_rock_inside): routine Party_LearnAbility as void Party_LearnAbility(); module/field/event_commands.h has void Party_LearnAbility(s32 unit, s32 ability). */
+extern void Party_LearnAbility__aqua_rock_inside() __asm__("Party_LearnAbility");
 extern u8 MsgWhatWentWrong[];
 
 void Func_02001a1c(void) {
@@ -1186,7 +1142,7 @@ L_02009a46:
   FieldEvent_Wait(20);
   Message_ShowCentered(((s32)&MsgCheckedTheTabletIt + 2), 1);
   Func_02001620(14, 7);
-  Party_LearnAbility(7, 138);
+  Party_LearnAbility__aqua_rock_inside(7, 138);
   Event_SetFlag(0x9ae);
   Event_PlaySound(107);
   FieldEvent_Wait(30);
@@ -1402,10 +1358,8 @@ extern const u8 gData_02004102[];
 extern const u8 gData_02004106[];
 extern const u8 gData_02004114[];
 
-void Func_02002ffc(void);
 // Returns what its closing Task_Add call leaves in r0.
 s32 Func_02003ab0(const u8 *a, const u8 *b, void (*handler)(void));
-void Func_0200107c(s32 a, s32 b);
 
 /// Aqua Rock's entry setup: in each room it shows the statues already filled by
 /// their flags (or dims those still empty), opens what the story has opened and
@@ -1515,12 +1469,6 @@ s32 Scene_Initialize(void) {
 #include "iwram_call.h"
 #include "text/msg_ids.h"
 
-struct MapBits {
-  u8 unk00[23];
-  u8 low : 2;
-  u8 mode : 2;
-};
-
 // The original keeps the masked BG1CNT in a stack slot it never reads again:
 // control is volatile, and the register is written in a once-only block.
 #define BG1_SET_PRIORITY_1()                                                   \
@@ -1533,16 +1481,8 @@ struct MapBits {
     } while (0);                                                               \
   }
 
-void Func_02003278(void);
-void Func_020032d4(u32 first, s32 level, s32 baseLevel);
-void Func_0200349c(u32 index, s32 height);
-void Func_02003ea4();
-void Func_020007a8(void);
-void Func_02003420(s32 id, s32 kind, s32 height);
 void Func_02000b84(void);
-void Func_02000ad8(void);
 void Func_02003edc();
-void Func_02003ee4();
 
 /// Aqua Rock's map preparation: for each room and entrance it sets the water
 /// level, places the statues and boulders the flags have moved, opens or
@@ -1852,11 +1792,6 @@ void Func_02002c3c(struct Actor *object) {
   }
 }
 
-struct SlideWork {
-  u8 unk000[0x1cc];
-  struct Actor *camera;
-};
-
 /* VIEW(s1620): routine Func_02003d2c as s32 Func_02003d2c(struct Actor *object, s32 *position); s0cc8 has s32 Func_02003d2c(struct Actor *object, struct Vector3 *target). */
 extern s32 Func_02003d2c__s1620(struct Actor *object, s32 *position) __asm__("Func_02003d2c");
 
@@ -2047,8 +1982,6 @@ void Func_02002ffc(void) {
 #include "map.h"
 #include "vram_tab.h"
 
-void Func_02003c94(u32 *sprite, s32 depth);
-
 /// Draws the scene's pillars: a top sprite for each active one and, when it
 /// stands above its base, a column sprite as tall as its height.
 void Func_020030f4(void) {
@@ -2147,8 +2080,6 @@ void Func_02003278(void) {
   priority = 0x41c;
   FieldTask_AddFrame(Func_020030f4, priority);
 }
-
-extern u8 Data_0202c001[];
 
 #define LAYER_S32(layer, off) (*(s32 *)((layer)->unk08 + (off) - 8))
 

@@ -9,13 +9,13 @@
 #include "dma.h"
 #include "io_reg.h"
 #include "event_inline.h"
+#include "event_work.h"
+#include "module/scene/garoh.h"
+#include "module/scene/islet_cave.h"
+#include "module/scene/scene.h"
 
-extern u16 *gData_02001a24;
 extern u16 *gData_02001a28;
-extern u16 *Data_02001a2c;
 extern u16 *gData_02001a18;
-
-void Func_02000328(void);
 
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
@@ -57,20 +57,14 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
 
 #include "task.h"
 
-extern u16 gData_02001a14;
-extern u16 gData_02001a1c;
-extern u16 gData_02001a20;
-extern u16 gData_02001a30;
-extern u16 gData_02001a34;
-
-s32 Func_020001d4(u16 *list);
-void Func_020001f8(void);
+/* VIEW(islet_cave): variable gData_02001a1c as u16 gData_02001a1c; module/scene/madra_catacombs.h has struct Trigger gData_02001a1c[]. */
+extern u16 gData_02001a1c__islet_cave __asm__("gData_02001a1c");
 
 void Func_020000f4(void) {
   gData_02001a34 = 0;
   gData_02001a30 = Func_020001d4(gData_02001a24);
   gData_02001a20 = 15;
-  gData_02001a1c = 16;
+  gData_02001a1c__islet_cave = 16;
   gData_02001a14 = 1;
   Task_Add(Func_020001f8, TASK_PASS_VBLANK);
 }
@@ -84,7 +78,7 @@ void Func_02000178(void) {
   gData_02001a34 = 0;
   gData_02001a30 = Func_020001d4(gData_02001a24);
   gData_02001a20 = 2;
-  gData_02001a1c = 2;
+  gData_02001a1c__islet_cave = 2;
   gData_02001a14 = 1;
   Task_Add(Func_020001f8, TASK_PASS_VBLANK);
 }
@@ -108,10 +102,10 @@ void Func_020001f8(void) {
   int red, green, blue;
 
   step = 0;
-  if (gData_02001a1c != 0) {
-    if (--gData_02001a1c == 0) {
+  if (gData_02001a1c__islet_cave != 0) {
+    if (--gData_02001a1c__islet_cave == 0) {
       step = 1;
-      gData_02001a1c = gData_02001a20;
+      gData_02001a1c__islet_cave = gData_02001a20;
       if (gData_02001a20 > 2)
         gData_02001a20--;
     }
@@ -151,15 +145,6 @@ void Func_020001f8(void) {
 }
 
 #include "actor.h"
-
-struct IsletCaveEventWork {
-  u8 unk000[0x1ac];
-  s32 value1ac;
-};
-
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_0200132c(void);
 
 void Func_02000328(void) {
   struct IsletCaveEventWork *work = Ram_HeapSlots->eventWork;
@@ -205,8 +190,6 @@ s32 Func_020003c8(s32 arg0) {
 }
 
 #include "scene_tables.h"
-
-s32 Math_Cosine(s32 angle);
 
 s32 Func_020003d4(struct Actor *object) {
   u8 *phase = (u8 *)object + 0x62;
@@ -265,8 +248,6 @@ const u8 *Scene_GetEvents(void) {
     return gData_020019b0;
   return gData_02001788;
 }
-
-void Func_02001334(void);
 
 void Func_020004ac(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -343,15 +324,7 @@ void Func_02000580(s32 scale) {
 
 #include "stddef.h"
 
-struct IsletCaveEntry {
-  s32 value;
-  u16 position[2];
-};
-
 extern const struct IsletCaveEntry gData_020019ec[];
-
-void Event_Start(void);
-void Event_End(void);
 
 void Func_020005fc(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -401,9 +374,6 @@ loop:
 extern u16 gData_0200134c[], gData_0200135c[], gData_02001388[],
     gData_020013b4[];
 extern u8 gData_02001454[];
-void Func_0200131c(s32 mode);
-void Func_020008c8(void);
-void Func_0200133c(void);
 
 s32 Scene_Initialize(void) {
   s32 scene, dim;
@@ -534,7 +504,8 @@ void Func_020009ec(void) {
   return;
 }
 
-struct FieldActor {
+/* VIEW(islet_cave): tag struct FieldActor as struct FieldActor__islet_cave; field_event.h has another definition. */
+struct FieldActor__islet_cave {
   u8 unk00[8];
   s32 x;
   s32 y;
@@ -544,16 +515,16 @@ struct FieldActor {
   s32 acceleration;
 };
 
-void Func_02001214(struct FieldActor *actor, s32 mode);
+void Func_02001214(struct FieldActor__islet_cave *actor, s32 mode);
 
 void Func_020009f8(s32 actorId, s32 dx, s32 dz) {
-  struct FieldActor *leader;
-  struct FieldActor *actor;
+  struct FieldActor__islet_cave *leader;
+  struct FieldActor__islet_cave *actor;
   s32 x;
   s32 z;
 
-  leader = ((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner));
-  actor = ((struct FieldActor *)Actor_GetById(actorId));
+  leader = ((struct FieldActor__islet_cave *)Actor_GetById(gMainRoutineWork.currentOwner));
+  actor = ((struct FieldActor__islet_cave *)Actor_GetById(actorId));
   Event_Start();
   Event_ResolvePendingActions(0);
   x = ((leader->x + (dx << 16)) & 0xfff00000) + 0x80000;
@@ -899,7 +870,8 @@ void Func_02001034(void) {
    } *)(base))                                                                 \
        ->v)
 
-s32 Field_RequestBattleFromEncounterTable();
+/* VIEW(islet_cave): routine Field_RequestBattleFromEncounterTable as s32 Field_RequestBattleFromEncounterTable(); module/field/event_commands.h has void Field_RequestBattleFromEncounterTable(s32 row, s32 column). */
+extern s32 Field_RequestBattleFromEncounterTable__islet_cave() __asm__("Field_RequestBattleFromEncounterTable");
 
 void Func_020010ac(void) {
   s32 t12, cue;
@@ -929,7 +901,7 @@ void Func_020010ac(void) {
    * second, as the native does; as Field_RequestBattleFromEncounterTable(0x67, 2), 2 of 64
    * instructions differ in tla-en. */
   __asm__ volatile("" : "+r"(cue));
-  Field_RequestBattleFromEncounterTable(cue, 2);
+  Field_RequestBattleFromEncounterTable__islet_cave(cue, 2);
   Event_End();
 }
 

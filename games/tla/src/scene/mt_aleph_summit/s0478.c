@@ -21,9 +21,15 @@
 
 #include "scene_tables.h"
 #include "field.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/field/field_effect.h"
+#include "module/scene/contigo.h"
+#include "module/scene/mt_aleph_summit.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "text/msg_ids.h"
 
-s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotion(union FieldObject *object);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
@@ -61,7 +67,8 @@ next:
 #define ACTOR(id) (Actor_Get(id))
 #define FIELD(p, off) (*(s32 *)((u8 *)(p) + (off)))
 
-struct EventWorkView {
+/* VIEW(s0478): tag struct EventWorkView as struct EventWorkView__s0478; module/tla.h has another definition. */
+struct EventWorkView__s0478 {
   u8 unk000[0x1ac];
   s32 unk1ac;
 };
@@ -69,18 +76,7 @@ struct EventWorkView {
 void Func_020002a4(u16 *colors, u16 *target, s32 count);
 void Func_0200032c(u16 *colors, s32 count, s32 delta);
 void Func_02000394(void);
-void Window_LoadGraphics(void);
-void Func_0200152c(void);
-void Event_SetDestination(s32 scene, s32 entrance);
 void Func_02001564(s32 a, s32 b);
-void BattleEffect_StartArcEffect(void);
-void BattleEffect_EndArcEffect(void);
-void BattleEffect_WaitForArcGroups(void);
-void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 a);
-extern u8 MsgGoldenSunEternalLifeAndPower[];
-extern u8 MsgGoldenSunFormation[];
-extern char SceneId_Ov64c;
-extern char SceneId_Ov6b3;
 
 static __inline__ void CopyToPalette(void *from, void *to, s32 size) {
   /* FAKEMATCH(wrapper): the copy forwarded inline; as Call3, 4 of 1526
@@ -114,7 +110,7 @@ s32 Scene_Initialize(void) {
           (s32)(s32)Actor_Get(8), 0);
     Actor_SetAnimation(8, 12);
     Actor_SetAnimationSpeedById(8, 8);
-    ((struct EventWorkView *)Ram_HeapSlots->eventWork)->unk1ac = 0;
+    ((struct EventWorkView__s0478 *)Ram_HeapSlots->eventWork)->unk1ac = 0;
     REG_DISPCNT &= 0xfdff;
     REG_BG1CNT &= 0xfffc;
     REG_BG1CNT |= 3;
@@ -212,7 +208,7 @@ s32 Scene_Initialize(void) {
     REG_BG3CNT &= 0xfffc;
     REG_BG3CNT |= 2;
     System_Wait(1);
-    ((struct EventWorkView *)slots->eventWork)->unk1ac = scale;
+    ((struct EventWorkView__s0478 *)slots->eventWork)->unk1ac = scale;
     REG_DISPCNT &= 0xfdff;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -532,7 +528,7 @@ s32 Scene_Initialize(void) {
     System_Wait(0x12c);
     Event_SetDestination((s32)&SceneId_Ov6b3, 1);
   } else {
-    ((struct EventWorkView *)Ram_HeapSlots->eventWork)->unk1ac = 0;
+    ((struct EventWorkView__s0478 *)Ram_HeapSlots->eventWork)->unk1ac = 0;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     for (j = 0; j != 0x140; j++) {

@@ -3,6 +3,9 @@
 // Part of screens.c.
 
 #include "../screens_internal.h"
+#include "module/tla.h"
+#include "module/window/scales.h"
+#include "module/window/screens.h"
 
 s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
   s32 result;
@@ -21,78 +24,12 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #define WINDOW_X 23
 #endif
 
-struct CommandRowIcon {
-  u8 unk00[4];
-  u8 y;
-  u8 objMode : 2; ///< 3: double-size affine
-  u8 high05 : 6;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u8 unk08[4];
-  u16 resource;
-  u16 unused;
-  s32 positionX;
-  s32 positionY;
-  s32 kind;
-};
-
-struct CommandRowAffine {
-  u16 scaleX;
-  u16 scaleY;
-  u16 angle;
-};
-
-struct CommandRowWork {
-  u8 paletteSlots[256];
-  s32 paletteCount;
-  struct CommandRowIcon entries[6];
-  void *window;
-  s32 iconCount;
-  struct CommandRowAffine affine;
-  s32 affineIndex;
-  s32 selectedIndex;
-  s32 drawnIndex;
-  s32 commandKinds[6];
-};
-
-/// The battle menu's navigation work (heap slot 57).
-struct CommandRowNavigation {
-  u8 unk00[0x3c];
-  s32 commandSelection[2];
-  u8 unk44[8];
-  s32 timer; ///< the link battle's time left; 0 takes the first command
-  u8 unk50[0x88];
-  s32 tutorialStep;
-  s32 tutorialDelay;
-  s32 commandActor;
-  u8 unke4[0x20];
-  s32 reserveChoice; ///< -1 while no reserve member is chosen
-};
-
-struct CommandRowWindowWork {
-  u8 unk00[3];
-  u8 dirty;
-  u8 unk04;
-  u8 flags05;
-  u8 holdTilemapUpload;
-  u8 unk07;
-  u16 tilemap[0x400];
-};
-
-struct BgScrollPair {
-  s16 x;
-  s16 y;
-};
-
 #define NAVIGATION ((struct CommandRowNavigation *)Ram_HeapSlots->unke4[0])
 #define WINDOW_WORK ((struct CommandRowWindowWork *)Ram_HeapSlots->windowTiles)
 
-extern const u16 gWindowSprite_BounceScales[32];
-extern struct BgScrollPair gBgScroll[];
+/* VIEW(screens): variable gBgScroll as struct BgScrollPair gBgScroll[]; bg_scroll.h has struct BgScroll gBgScroll[]. */
+extern struct BgScrollPair gBgScroll__screens[] __asm__("gBgScroll");
 #include "main_routine_work.h"
-
-void Func_08118128(s32 x, s32 y);
 
 /// Runs a battle command row: the commands as icons along the bottom of the
 /// screen, the selected one pulsing as a sprite and named in a window, until
@@ -158,7 +95,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     selectionUi->commandKinds[memberCount++] = 0;
     selectionUi->commandKinds[memberCount++] = 1;
     if (*(s32 *)Djinn_GetRecoveryTableFar(0) != 0) {
-      Func_08118130(0, party);
+      Func_08118130__screens(0, party);
       for (i = 0; i <= 3; i++)
         tradeCount += party[i];
       selectionUi->commandKinds[memberCount++] = 15;
@@ -199,8 +136,8 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     pulseScale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
     pulseScale = (pulseScale - 256) / 4 + 304;
     selectionUi->affine.scaleY = selectionUi->affine.scaleX = pulseScale;
-    gBgScroll[1].x = 0;
-    gBgScroll[1].y = 32;
+    gBgScroll__screens[1].x = 0;
+    gBgScroll__screens[1].y = 32;
     if (stripDirty != 0) {
       stripDirty = 0;
       work->holdTilemapUpload = 1;
@@ -399,13 +336,6 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   wait(1);
   return command;
 }
-
-struct WindowTiles {
-  u8 unk00[3];
-  u8 dirty;
-  u8 unk04[4];
-  u16 cells[32][32];
-};
 
 void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt) {
   struct WindowTiles *tiles = (struct WindowTiles *)Ram_HeapSlots->windowTiles;

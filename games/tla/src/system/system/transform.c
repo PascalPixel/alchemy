@@ -3,6 +3,8 @@
 // Part of system.c.
 
 #include "../system_internal.h"
+#include "module/tla.h"
+#include "projection.h"
 
 // gTransform contains twelve s32 values in Q16 (1.0 = 0x10000).
 // Entries 0-8 form the 3x3 rotation; entries 9-11 hold the translation.
@@ -263,7 +265,6 @@ void SceneTransform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
   {
     s32 quarter;
 
-
     quarter = 0x4000;
     cx = Trig_Sin(ang[0] + quarter);
   }
@@ -294,9 +295,6 @@ void SceneTransform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
 
 #define FixedSqrt(v) (Iwram_Sqrt(v) << 8)
 #define RelocatedQ16DotProduct Math_DotProductQ16Code
-extern const u32 Math_DotProductQ16Code[];
-
-typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 
 void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   /* FAKEMATCH(pin): dot held in r10; as a plain local, 175 of 228
@@ -396,8 +394,6 @@ void Transform_ApplyLookAt(s32 *eye, s32 *target) {
   Iwram_TransformMatrix(work);
 }
 
-s32 Trig_Sin(s32);
-
 void Projection_SetFieldOfView(s32 value, s32 param1, s32 param2) {
   s32 half;
   s32 first;
@@ -417,20 +413,6 @@ void Projection_Set(u32 value0, u32 value1, u32 value2) {
   work[1] = value1;
   work[2] = value2;
 }
-
-struct Projection {
-  s32 focal;
-  s32 near;
-  s32 far;
-  s32 centerX;
-  s32 centerY;
-};
-
-struct ProjectedPoint {
-  s32 x;
-  s32 y;
-  s32 z;
-};
 
 // The Broken Seal's typed Iwram_TransformVector inline from iwram_call.h, the
 // layer every call goes through there; as a direct call to the fixed entry, 4

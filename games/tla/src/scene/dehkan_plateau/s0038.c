@@ -8,8 +8,11 @@
 #include "ram_buffer.h"
 #include "field.h"
 #include "map.h"
-
-void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer);
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/scene/dehkan_plateau.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 void Func_02000038(const u16 *list) {
   const u16 *spec;
@@ -41,11 +44,6 @@ next:
   }
 }
 
-struct EffectWork1a {
-  u8 unk00[0x1a];
-  s16 active;
-};
-
 void Func_020000a4(const void *data, s32 mode, s32 timer) {
   const u16 *spec = data;
   struct EffectWork1a *work = Ram_HeapSlots->effectWork;
@@ -73,9 +71,6 @@ void Func_020000a4(const void *data, s32 mode, s32 timer) {
     spec += 3;
   }
 }
-
-s32 Func_02003db0(struct Actor *object);
-void Func_02003ba0(struct Actor *object, s32 mode);
 
 void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer) {
   struct Actor *object = Actor_GetById(id);
@@ -125,13 +120,6 @@ void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer) {
 #include "field_sprite.h"
 #include "iwram_call.h"
 
-extern u8 gMapShapeGrid[];
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 Func_02003c10(s32 layer, s32 x, s32 z);
-void Func_02003cc0(s32 id);
-s32 Func_02003dd0(s32 layer, s32 shape, s32 height);
-
 void Func_020001d0(const void *data) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   const u16 *list = data;
@@ -175,14 +163,6 @@ void Func_020001d0(const void *data) {
     leader->y = height;
   }
 }
-
-s32 Func_02003d20(void);
-struct Actor *Func_02003dd8(s32 *position, s32 mode);
-void Event_Start(void);
-void Event_End(void);
-void Func_02000974(s32 mode);
-void Func_02000aa8(void);
-void Func_02000c4c(s32 level, s32 layer);
 
 void Func_020002f8(u16 *list) {
   struct Actor *leader;
@@ -258,8 +238,6 @@ test:
   }
 }
 
-void Func_02000bc0(s32 a, s32 b, s32 owner);
-
 /// Runs the event of the listed object `id` once: the list holds (object id,
 /// flag) pairs ended by 0xffff, and unless the flag after the entry's own is
 /// set, cues 185 and 188 play around Func_02000bc0 and both flags are set. The
@@ -315,48 +293,22 @@ extern const u8 gData_02003fb8[];
 extern const u8 gData_02003fc0[];
 extern const u8 gData_02003fc4[];
 
-void Func_02001474(s32 show);
 void Func_02002180(void);
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
-void Func_02003de8(void);
-void Func_020015b8(struct Actor *object);
-void Func_0200172c(void);
 void Func_02001804(void);
-
-struct CellRecord {
-  u16 present;
-  u16 x;
-  u16 y;
-  u16 unk06[3];
-};
 
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-void Func_02003cf0(void);
-void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
-void BattleEffect_SetupObjectPair(s32 a, s32 b);
-void BattleEffect_StopMainActor(void);
-void BattleEffect_CleanupSceneObjects(void);
-void EventObject_Initialize(void);
-void Func_02003d40(struct Actor *object, s32 mode);
-void Func_02003bb8(struct Actor *object);
-void Func_02002b68(void);
-void Func_02002f08(void);
-
-struct EffectWork7c4 {
-  u8 unk000[0x7c4];
-  s16 active;
-  s16 timer;
-};
+/* VIEW(s0038): routine Func_02003d40 as void Func_02003d40(struct Actor *object, s32 mode); module/scene/airs_rock_inside.h has void Func_02003d40(void). */
+extern void Func_02003d40__s0038(struct Actor *object, s32 mode) __asm__("Func_02003d40");
 
 void Func_0200056c(s32 id) {
   Actor_GetById(id)->unk5c[0] = 3;
   Func_02003cc0(id);
 }
 
-void ObjectVisual_CopyAttributes(s32 id, s32 value);
+/* VIEW(s0038): routine ObjectVisual_CopyAttributes as void ObjectVisual_CopyAttributes(s32 id, s32 value); module/field/object.h has void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId). */
+extern void ObjectVisual_CopyAttributes__s0038(s32 id, s32 value) __asm__("ObjectVisual_CopyAttributes");
 void Actor_MoveToObject(s32 id, s32 target);
 
 /// Places actors 8 to 10 at the leader, then walks a list of (actor, flag)
@@ -409,7 +361,7 @@ void Func_02000584(u16 *list) {
       cell->attributeB = 128;
       *slot = Func_02003dd0(actor->terrainId, shape, (ground >> 19) + 4);
       if (GameFlag_Test(flag))
-        ObjectVisual_CopyAttributes(id, 9);
+        ObjectVisual_CopyAttributes__s0038(id, 9);
     }
     list += 2;
   }
@@ -421,25 +373,9 @@ void Func_020006ec(struct Actor *object, struct Actor *target) {
   Actor_SetPositionAndResetMotion(target, 0, 0, 0);
 }
 
-s32 Math_Cosine(s32 angle);
 void Actor_StartScript(struct Actor *object, const void *script);
-s32 Func_02003d80(void *sprite, s32 frame);
-
-/// The effect fields of an Actor, as field_effect.h names them.
-struct EffectView {
-  u8 unk00[0x30];
-  s32 scaleRateX;
-  s32 scaleRateY;
-  u8 unk38[0x0c];
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  struct FieldSprite *sprite;
-  u8 unk54[0x10];
-  u16 spin;
-  u8 unk66[6];
-  void (*update)(struct Actor *object);
-};
+/* VIEW(s0038): routine Func_02003d80 as s32 Func_02003d80(void *sprite, s32 frame); module/scene/mars_lighthouse_room_f.h has void Func_02003d80(void). */
+extern s32 Func_02003d80__s0038(void *sprite, s32 frame) __asm__("Func_02003d80");
 
 void Func_02000708(u16 *list) {
   struct Actor *leader;
@@ -476,7 +412,7 @@ next:
       Actor_SetPartAttribute(Actor_GetById(8), 7);
       wait(2);
       Func_02003ba0(helper, 0);
-      ObjectVisual_CopyAttributes(id, 9);
+      ObjectVisual_CopyAttributes__s0038(id, 9);
       Actor_SetPartAttribute(Actor_GetById(8), 0);
       wait(2);
       Actor_SetPartAttribute(Actor_GetById(8), 7);

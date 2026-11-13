@@ -3,6 +3,9 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/battle_effect/f13ba50.h"
+#include "resource_ids.h"
 
 #undef HEAP_BLITTER
 #undef HEAP_BLITTER_ALTERNATE
@@ -11,19 +14,8 @@
 #define HEAP_BLITTER 104           // ☀️ HEAP_SLOT_BLITTER
 #define HEAP_BLITTER_ALTERNATE 188 // ☀️ HEAP_SLOT_BLITTER_ALTERNATE
 
-// The Lost Age numbers its blitter modes in the reverse of The Broken Seal's
-// order: Func_08196404 builds additive for 0, max for 1, transparent for 2.
-enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
-
 #define MOTE_COUNT 30
 #define SEAT_FIRST 32 // the particles that hold each target's seat
-
-extern char ResourceId_VortexSheet;
-
-// ☀️ gVortices_Counts: motes, then frames, for each variant.
-extern u8 gData_081979a8[];
-
-void Camera_ApplyPhasedDelta(void);
 
 // Thirty motes rise from the caster, swirl, and home in on the targets; each
 // one that reaches the ground flashes and knocks back its target and plays a
@@ -175,9 +167,6 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
 #define TORNADO_FRAMES 80
 #define GLINT_COUNT 16 // four glints for each of up to four funnels
 #define GLINT_CELS 6   // three cels of two frames each
-
-// ☀️ gVortices_Shapes: funnels, sway radius and shake, for each variant.
-extern u8 gData_081979ae[];
 
 // One to four funnels of wind sway across the targets for 80 frames, each
 // drawn as three stacked segments with glints swirling around it; the canvas

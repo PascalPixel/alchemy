@@ -11,15 +11,21 @@
 #include "event_inline.h"
 #include "ram_buffer.h"
 #include "map.h"
+#include "event_work.h"
+#include "module/field/field_effect.h"
+#include "module/scene/dehkan_plateau.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 extern const s32 gData_02003e00[];
 
-u32 Func_02003d80(struct FieldSprite *sprite, u32 frame);
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
-void Func_02003ba0(struct FieldEffect *effect, s32 mode);
+/* VIEW(s0974): routine Func_02003d80 as u32 Func_02003d80(struct FieldSprite *sprite, u32 frame); module/scene/mars_lighthouse_room_f.h has void Func_02003d80(void). */
+extern u32 Func_02003d80__s0974(struct FieldSprite *sprite, u32 frame) __asm__("Func_02003d80");
+/* VIEW(s0974): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s0974(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
+/* VIEW(s0974): routine Func_02003ba0 as void Func_02003ba0(struct FieldEffect *effect, s32 mode); module/scene/scene.h has void Func_02003ba0(struct Actor *object, s32 mode). */
+extern void Func_02003ba0__s0974(struct FieldEffect *effect, s32 mode) __asm__("Func_02003ba0");
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
 /// Eight puffs (type 285) in a row over the leader, flung outwards when spread
 /// is set.
@@ -39,11 +45,11 @@ void Func_02000974(s32 spread) {
           285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
     }
     if (effect != 0) {
-      frame = Func_02003d80(effect->sprite, frame);
+      frame = Func_02003d80__s0974(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags(effect, 0);
-      Func_02003ba0(effect, 2);
+      Actor_SetSingleChildFlags__s0974(effect, 0);
+      Func_02003ba0__s0974(effect, 2);
       Actor_StartScript(effect, gData_02003e00);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
@@ -64,41 +70,11 @@ void Func_02000974(s32 spread) {
   } while (i <= 7);
 }
 
-extern u8 gMapShapeGrid[];
-
-void ObjectVisual_CopyAttributes(s32 id, s32 value);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_0200056c(s32 id);
+/* VIEW(s0974): routine ObjectVisual_CopyAttributes as void ObjectVisual_CopyAttributes(s32 id, s32 value); module/field/object.h has void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId). */
+extern void ObjectVisual_CopyAttributes__s0974(s32 id, s32 value) __asm__("ObjectVisual_CopyAttributes");
 void Func_020006ec(struct Actor *object, struct Actor *other);
-void Func_02000aa8(void);
-void Func_02000c4c(s32 level, s32 layer);
 
-s32 Func_02003c10(s32 layer, s32 x, s32 z);
-void Event_Start(void);
-void Event_End(void);
 void Actor_MoveToObject(s32 id, s32 target);
-void Func_02003cc0(s32 id);
-s32 Func_02003d20(void);
-
-s32 Func_02003db0(struct Actor *object);
-s32 Func_02003dd0(s32 layer, s32 shape, s32 height);
-struct Actor *Func_02003dd8(s32 *position, s32 mode);
-
-/// The effect fields of an Actor, as field_effect.h names them.
-struct EffectView {
-  u8 unk00[0x30];
-  s32 scaleRateX;
-  s32 scaleRateY;
-  u8 unk38[0x0c];
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  struct FieldSprite *sprite;
-  u8 unk54[0x10];
-  u16 spin;
-  u8 unk66[6];
-  void (*update)(struct Actor *object);
-};
 
 extern const u8 gData_02003e30[];
 
@@ -118,11 +94,11 @@ void Func_02000aa8(void) {
 
       if (object == NULL)
         goto skip;
-      frame = Func_02003d80(effect->sprite, frame);
+      frame = Func_02003d80__s0974(effect->sprite, frame);
       object->motionFlags = 0;
       object->collisionFlags = 0;
-      Actor_SetSingleChildFlags(object, 0);
-      Func_02003ba0(object, 2);
+      Actor_SetSingleChildFlags__s0974(object, 0);
+      Func_02003ba0__s0974(object, 2);
       Actor_StartScript(object, gData_02003e30);
       effect->velocityX = Math_Cosine(i << 12);
       effect->velocityY = 0;

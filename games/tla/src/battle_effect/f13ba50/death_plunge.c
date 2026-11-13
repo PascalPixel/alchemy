@@ -4,6 +4,12 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
+#include "gamepak/far_call/battle.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/battle_effect/f13ba50.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "resource_ids.h"
 
 // Heap slots, as byte offsets into Ram_HeapSlots.
 #define SLOT_BATTLE_EFFECT 92      // battleFxWork[0]
@@ -37,35 +43,6 @@ union BattleBackgroundId__f13eb70 {
 #define PLOT(x, y)                                                             \
   (*(Ram_MapCellBuffer + ((x) & 7) + (x) / 8 * 64 + ((y) & 7) * 8 +            \
      (y) / 8 * 2048) = 2)
-
-// The 33 pieces: each one's size, place in the sheet and starting point
-// (The Broken Seal's gDeathPlunge_PieceWidths, Height, Offset, StartX and
-// StartY).
-extern u8 Data_08197609[];
-extern u8 Data_0819762a[];
-extern u16 Data_0819764c[];
-extern u8 Data_08197690[];
-extern u8 Data_081976b1[];
-
-extern char ResourceId_TileAnimationMask;
-extern char ResourceId_FlashBurstSheet;
-
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ClearActorTimers(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-
-void Sound_PlayFar(s32 cue);
-u32 Random16(void);
-void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background, s32 value);
-void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
-void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // BattleEffect_TintBattler
-void BattleEffect_CountDownBattlerTints(void);
-void wait(s32 frames);
 
 /* VIEW(f13eb70): static ClearWords as ClearWords__f13eb70; f13ba50 has static inline s32 ClearWords(void *destination, s32 size) { return Iwram_ClearWords(destination, size); }; not tried: ClearWords's definition holds a FAKEMATCH tag. */
 static inline s32 ClearWords__f13eb70(void *destination, s32 size) {
@@ -438,30 +415,8 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
 // blitters are loaded through Func_08196404 directly, with all five
 // arguments.
 
-
 // The rising sparkles live in the map cell buffer.
 #define gSparkles ((struct EffectStep *)Ram_MapCellBuffer)
-
-// The four corner sparks: their flips and their place around the target
-// (The Broken Seal's gDeathPlunge_DrawFlags, _X and _Y).
-extern u8 Data_081976da[];
-extern s8 Data_081976d2[];
-extern s8 Data_081976d6[];
-
-// The mote's cell for each size from 1 to 6 (gBattleEffect_FlareCells).
-extern u16 Data_08197424[];
-
-extern char ResourceId_CyanSparkSheet;
-extern char ResourceId_ParticleSpritesD;
-extern char ResourceId_YellowPaletteA;
-extern char ResourceId_IceTileSheet;
-extern char ResourceId_RedPaletteA;
-extern char ResourceId_VioletPaletteA;
-
-void BattleEffect_StartCanvasLayer(s32 control);
-
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode); // BattleEffect_BuildBlitter
 
 // Light gathering on the user and bursting, for the scenes.
 
@@ -604,16 +559,6 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
   HeapSlot_Release(SLOT_BATTLE_EFFECT);
 }
 
-
-struct BattleFxFadeWork {
-  s32 unk00;
-  s32 halvePending;
-  s32 framesLeft;
-  s32 step;
-};
-
-void ColorBuffer_Halve(void *source, void *destination, s32 size);
-
 /// Frame callback: when a transfer is pending, writes the canvas to BG
 /// character block 1 at half brightness.
 void BattleEffect_TransferHalvedCanvas(void) {
@@ -635,35 +580,6 @@ void BattleEffect_TransferHalvedCanvas(void) {
     IRQ_UNLOCK(ime);
   }
 }
-
-
-struct StreakWork {
-  s32 frame;
-  s32 transferPending;
-};
-
-struct Streak {
-  s32 head;
-  s32 tail;
-  s32 unused08;
-  s32 pitch;
-  s32 yaw;
-  s32 roll;
-  s32 unused18;
-};
-
-struct StreakPoint {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-void Render_ResetTransformState(void);
-void Func_080150e4(s32 roll); // SceneTransform_ApplyRoll
-void SceneTransform_ApplyPitch(s32 pitch);
-void SceneTransform_ApplyYaw(s32 yaw);
-
-void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 
 /// The Broken Seal's BattleEffect_DrawStreaks.
 void Func_0813f8d4(void) {
@@ -721,9 +637,6 @@ void Func_0813f8d4(void) {
   work->transferPending = 1;
 }
 
-void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
-                          s32 count);
-
 /// Each frame while frames are left, darkens the battle background's 128
 /// colours by one more step of 1092 into BG palette 0x050000c0.
 void BattleEffect_DimBackgroundStep(void) {
@@ -743,24 +656,6 @@ void BattleEffect_DimBackgroundStep(void) {
 
 // The battle background's id.
 #define BACKGROUND(battle) (*(u16 *)(battle)->unk670)
-
-// The backdrop's work, in place of the battle effect work.
-struct StreakSceneWork {
-  s32 frame;        // the streaks' frame count (Func_0813f8d4)
-  s32 halvePending; // the streaks are drawn: halve the canvas into VRAM
-  s32 fadeFrames;   // frames of the background's fade left
-                    // (BattleEffect_DimBackgroundStep)
-  s32 fadeStep;
-};
-
-extern char ResourceId_YellowPaletteB;
-extern char ResourceId_CrystalSheet;
-extern char ResourceId_EmberStreakSheet;
-extern char ResourceId_VioletPaletteD;
-extern char ResourceId_DustPuffSheet;
-
-void BattleEffect_ConfigureEffectDisplay(void);
-void Func_0814355c(void); // the BG2 canvas's registers
 
 // Raises the light-streak backdrop in colour set kind (yellow, crystal,
 // ember, violet or dust).
@@ -879,123 +774,31 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-
-struct ModelTextureB {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const void *pixels;
-};
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-                   s32 *world);
-void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
 
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 /* VIEW(f13eb70): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f13ba50.c:3126: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f13eb70(s32 objectId) __asm__("GetBattleObjectSlotFar");
 
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void Transform_SetLookAt(s32 *eye, s32 *target);
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Push(void);
-void Transform_Pop(void);
-
 #define HI(v) (((s16 *)&(v))[1])
 
-
-struct ResourceTableEntry {
+/* VIEW(f13ba50): tag struct ResourceTableEntry as struct ResourceTableEntry__f13ba50; module/tla.h has another definition. */
+struct ResourceTableEntry__f13ba50 {
   u16 unk0;
   u16 tile;
 };
 
-struct RuinObject {
-  u8 unk0[8];
-  union {
-    struct {
-      u16 tile : 10;
-      u16 priority : 2;
-      u16 palette : 4;
-    } bits;
-    u16 all;
-  } attr;
-  u8 unk0a[4];
-  u8 resource;
-};
-
-struct WordPair {
-  s32 a;
-  s32 b;
-};
-
 /* VIEW(f13eb70): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/include/graphics/vram_tab.h:26: conflicting types for `gResourceTableEntries'. */
-extern struct ResourceTableEntry gResourceTableEntries__f13eb70[] __asm__("gResourceTableEntries");
+extern struct ResourceTableEntry__f13ba50 gResourceTableEntries__f13eb70[] __asm__("gResourceTableEntries");
 extern char ResourceId_Data0B4, ResourceId_Data0C2, ResourceId_Data0C9;
 extern char ResourceId_Data0CA, ResourceId_Data104, ResourceId_Data134;
 extern char ResourceId_CornerRuneASheet, ResourceId_ForestCanopyTiles;
 extern char ResourceId_SunbeamCloudsBackdrop, ResourceId_VioletSkyBackdrop;
 extern u8 gMapCellBuffer[];
-extern u8 gData_02014000[];
-extern u8 Data_02012000[];
 extern u32 gCameraSceneParameters[];
-extern const struct WordPair Data_08196dd8;
-extern const u16 Data_08197438[];
-extern const u8 Data_081976e0[];
-extern const u16 Data_081976f0[];
-extern const u16 Data_081976f8[];
-extern const u8 Data_08197700[];
-extern const u8 Data_08197702[];
-extern const u8 Data_08197704[];
-extern const u8 Data_0819770a[];
-extern const u8 Data_08197710[];
-extern const u8 Data_08197716[];
-extern const u8 Data_0819771c[];
-extern const u8 Data_08197720[];
-extern const u8 Data_08197724[];
-extern const u8 Data_08197728[];
-extern const u8 Data_0819772c[];
-extern const u8 Data_08197730[];
-extern const s32 Data_08197734[];
-extern const u8 Data_081991c0[];
-extern const u8 Data_081991e0[];
-extern const u8 Data_08199220[];
-extern const u8 gData_08199340[];
-extern const u8 gData_08199364[];
 
 struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
                                    u32 attributes);
 struct RuinObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode);
-
-void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
-void Palette_LoadBasicObjColors(void);
-void Graphics_LoadGreyRamp(void);
-void Func_0815b510(u8 *map, s32 size, s32 scale);
-void Func_08164a4c(s32 r, s32 g, s32 b);
-void Func_08164abc(s32 r, s32 g, s32 b);
-void Func_08164b2c(s32 r, s32 g, s32 b);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->unkb8[1])

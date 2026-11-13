@@ -10,12 +10,13 @@
 #include "actor.h"
 
 #include "macros.h"
+#include "field.h"
+#include "module/scene/anemos_inner_sanctum.h"
 
-void Func_020032e0(struct Actor *, s32);
+/* VIEW(s0480): routine Func_020032e0 as void Func_020032e0(struct Actor *, s32); module/scene/kibombo.h has void Func_020032e0(void). */
+extern void Func_020032e0__s0480(struct Actor *, s32) __asm__("Func_020032e0");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 extern const s32 *gData_02003840[];
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 
 void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -34,7 +35,7 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_020032e0(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Func_020032e0__s0480(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_02003840[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
@@ -78,7 +79,7 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_020032e0(effect, 1);
+    Func_020032e0__s0480(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
@@ -118,8 +119,6 @@ s32 Func_02000660(struct Actor *object) {
 
 extern const u8 gData_02003674[];
 
-void Animation_SetStateFlags(struct Actor *object, u32 value);
-
 void Func_020006a4(struct Actor *source) {
   struct Actor *object =
       (FieldActor_Create(672, source->x, source->y, source->z));
@@ -127,29 +126,11 @@ void Func_020006a4(struct Actor *source) {
   object->motionFlags = 0;
   Actor_SetSpriteColor(object, BYTE_AT(source, 98));
   Scene_SetActorSpritePriority(object, 2);
-  Func_020032e0(object, 1);
+  Func_020032e0__s0480(object, 1);
   Actor_SetSingleChildFlags(object, 0);
   Actor_StartScript(object, gData_02003674);
   Animation_SetStateFlags(object, 1);
 }
-
-struct Mover {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 fall;
-  u8 unk18[24];
-  s32 step;
-  s32 height;
-  u8 unk38[12];
-  s32 originX;
-  s32 originZ;
-  s32 radius;
-  u8 unk50[20];
-  s16 angle;
-  s16 spin;
-};
 
 s32 Func_020006f8(struct Mover *mover) {
   if (mover->radius < mover->step)
@@ -174,12 +155,6 @@ s32 Func_020006f8(struct Mover *mover) {
   mover->height -= mover->fall;
   return 1;
 }
-
-struct SpawnParams {
-  s32 kind;
-  s32 part;
-  u8 unk08[32];
-};
 
 s32 Func_02000794(struct Actor *object) {
   struct SpawnParams params;

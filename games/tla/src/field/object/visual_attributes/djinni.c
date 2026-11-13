@@ -3,6 +3,12 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "gamepak/far_call/game.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "module/system/system.h"
+#include "scene_call.h"
 
 /// Per-frame update: spins an object 1/8 turn a frame.
 void FieldEffect_AdvanceSpinAngle(struct MotionObject *object) {
@@ -10,7 +16,6 @@ void FieldEffect_AdvanceSpinAngle(struct MotionObject *object) {
 }
 
 // Objects: follow a watched object.
-
 
 /// Halves the distance to the watched object along x, y and z.
 /// obj: object to move.
@@ -32,9 +37,6 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *obj) {
   }
 }
 
-
-void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
-
 #if TLA_PATCH_1
 #define LEAP_SOUND 153
 #else
@@ -42,17 +44,10 @@ void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
 #endif
 
 struct Actor *Actor_GetById(u32 objectId);
-void Event_Start(void);
-void Event_End(void);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
-void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
 void Actor_Jump(s32 id, s32 speed, s32 frames);
 /* VIEW(motes): routine Func_080200c0 as struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
 extern struct Actor *Func_080200c0__motes(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
-void Animation_ApplyChildValuesFar(struct Actor *object, u32 value);
-void *Sprite_ShareVramCacheEntry(void *sprite, void *last);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
-                                                s32 magnitude, s32 angle);
 
 void Func_080d7524(s32 djinniId) {
   struct Actor *djinni;
@@ -164,21 +159,7 @@ void Func_080d7524(s32 djinniId) {
   Event_End();
 }
 
-s32 Djinn_GiveToPartyFar(s32 element, s32 djinni);
-void Djinn_RunVenusJoinEffect(s32 actor);
-void Djinn_RunMercuryJoinEffect(s32 actor);
-void Djinn_RunMarsJoinEffect(s32 actor);
-void Djinn_RunJupiterJoinEffect(s32 actor);
-void Func_080cb82c(void);
-void Func_08038328(s32 owner, s32 element, s32 djinni);
-void Func_080cb8a4(void);
-
 extern s8 gData_02001000[];
-
-struct EventActors {
-  u8 unk00[20];
-  void *actors[64];
-};
 
 /// A Djinni joins. Djinni 19 means the one recorded for the element in the
 /// save (none: nothing happens). With flag 366 set it joins the current owner
@@ -223,15 +204,6 @@ void Func_080d7788(s32 actor, s32 element, s32 djinni) {
 #endif
   Event_End();
 }
-
-struct ActorDescriptor {
-  s16 action;
-  s16 scene;
-  u8 unk04[4];
-  s32 x;
-  s32 y;
-  s32 z;
-};
 
 /// Puts a Djinni's actor back where its battle started from: for a
 /// pending Djinni battle (pendingDjinni 300 to 380,
@@ -280,11 +252,6 @@ void Djinn_RestoreActorAfterBattle(void) {
     }
   }
 }
-
-struct MapActor {
-  s16 id;
-  s16 event;
-};
 
 /// The Broken Seal's Djinn_ResolvePendingEvent, with this game's actors up to
 /// 79, the plain flag calls, the event at gMainRoutineWork's 0x254 and its
@@ -335,7 +302,6 @@ void Djinn_ResolvePending(s32 shown) {
   gMainRoutineWork.pendingDjinnEvent = 0;
 }
 
-
 /* VIEW(motes): tag struct BattleFxScene as struct BattleFxScene__motes; field_psynergy_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:3869: dereferencing pointer to incomplete type. */
 struct BattleFxScene__motes {
   u8 unk00[0x50];
@@ -368,8 +334,6 @@ void BattleEffect_InitializeSlots(void) {
   Task_Add((s32)BattleEffect_UpdateAllSlots, TASK_PASS_VBLANK);
 }
 
-void BattleEffect_ClearOwnedSlot(struct FieldParticle *);
-
 void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void) {
   struct BattleFxScene__motes *scene = Ram_HeapSlots->effectWork;
   struct FieldParticle *slot;
@@ -389,19 +353,11 @@ void BattleEffect_AdvanceSpinAngle(struct MotionObject *object) {
   object->angle += 0x2000;
 }
 
-
-struct EffectVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 /* VIEW(motes): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct EffectVector *position); ground_particles has void Camera_WorldToScreen(union FieldCoordinate *position). */
 extern void Camera_WorldToScreen__motes(struct EffectVector *position) __asm__("Camera_WorldToScreen");
 /* VIEW(motes): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *position); f0d489c has void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position). */
 extern void Vector_AddPolarOffset__motes(s32 magnitude, s32 angle,
                            struct EffectVector *position) __asm__("Vector_AddPolarOffset");
-void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
 /// Field effect sprite callback of a Jupiter Djinni's light particles: each
 /// circles its centre while it widens for 60 frames, circles 40, drifts toward

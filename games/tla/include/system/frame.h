@@ -23,4 +23,9 @@ extern u32 gFrameWaitCount;
 
 void m4aSoundVSyncOffFar(void);
 
+extern u32 gVBlankCount;
+// volatile: the VBlank handler sets it while System_WaitForFrameInterrupt
+// waits on it, so it is no device.
+extern volatile u16 gVBlankDone;
+
 #endif

@@ -4,8 +4,11 @@
 
 #include "../screens_internal.h"
 #include "system/io_write.h"
-
-extern const u8 gWindow_ProgressBarRows[];
+#include "gamepak/far_call/game.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "module/window/screens.h"
+#include "module/window/window.h"
 
 /// The progress bar's serial callback: advances the stored progress by step
 /// and draws row min(progress, 6) of gWindow_ProgressBarRows.
@@ -26,11 +29,6 @@ void Func_08042dc4(s32 step) {
   for (i = 11; i >= 0; i--)
     *dst++ = *src++ + 0xf080;
 }
-
-extern const u8 gWindow_ProgressBarTiles[];
-
-void Sound_SetBgmVolumeTargetFar(s32 target, s32 step);
-void Func_080c8698(void);
 
 // Heading x coordinate: only French differs.
 #if (LANGUAGE == LANGUAGE_FRENCH)
@@ -82,9 +80,6 @@ struct Window *SaveProgress_Close(struct Window *window) {
   Window_Close(window, 0);
   return window;
 }
-
-void Serial_QueueCommand(u32 command);
-s32 Func_08015ca4(s32 partId, void *buffer);
 
 #define DMA_STOP(n)                                                            \
   do {                                                                         \
@@ -170,8 +165,6 @@ s32 Func_08042ff0(s32 partId) {
 //
 // Each field comes from String_FormatNumber; a two-digit field is formatted
 // with 100 added, which gives it a leading zero in its last two digits.
-
-u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
 
 // XXX: what shows this clock; the overlays that call Func_08038400 would
 // settle it.
@@ -283,10 +276,6 @@ u32 Save_FindFreeFile(void) {
   return 999;
 }
 
-s32 Func_0801596c(void);
-s32 Save_LoadFileSummaries(void);
-void Save_ReleaseWork(void);
-
 s32 Save_CountFilesExcludingSent(s32 flag) {
   s32 i;
   s32 cnt;
@@ -310,9 +299,12 @@ s32 Save_CountFilesExcludingSent(s32 flag) {
   return cnt;
 }
 
-extern u16 gData_02003860;
-extern u16 gData_020036d8;
-extern u16 gData_02005350;
+/* VIEW(screens): variable gData_020036d8 as u16 gData_020036d8;
+ * module/window/window.h has s16 gData_020036d8. */
+extern u16 gData_020036d8__screens __asm__("gData_020036d8");
+/* VIEW(screens): variable gData_02005350 as u16 gData_02005350;
+ * module/window/window.h has s16 gData_02005350. */
+extern u16 gData_02005350__screens __asm__("gData_02005350");
 
 s32 Func_080432a4(void) {
   s32 err;
@@ -329,17 +321,17 @@ s32 Func_080432a4(void) {
     ret = Save_LoadFileSummaries();
     work = Ram_HeapSlots->serialWork;
     gData_02003860 = 0;
-    gData_020036d8 = 0;
-    gData_02005350 = 0;
+    gData_020036d8__screens = 0;
+    gData_02005350__screens = 0;
     for (i = 0; i < 3; i++) {
       if (work->summary[i].sendFlag != 0) {
         gData_02003860 = 1;
         cnt++;
       }
       if (work->summary[i].flagCount != 0)
-        gData_020036d8 = 1;
+        gData_020036d8__screens = 1;
       if (work->summary[i].level != 0 && work->summary[i].hasFlag34 == 0)
-        gData_02005350 = 1;
+        gData_02005350__screens = 1;
     }
   }
   Save_ReleaseWork();
@@ -348,19 +340,11 @@ s32 Func_080432a4(void) {
   return ret;
 }
 
-struct SaveGameWords {
-  u32 buildStamp;
-  u32 playTime;
-};
-
 #define SAVE_GAME_WORDS ((struct SaveGameWords *)&gMainRoutineWork)
 
-extern u8 gData_02000000[];
-extern u32 gData_02001000;
-
-// No prototype, as The Broken Seal declares it: this caller passes 0, and
-// FileList_SelectFile's twin passes nothing.
-u32 BuildStamp_GetTimeFar();
+/* VIEW(screens): variable gData_02001000 as u32 gData_02001000; module/tla.h
+ * has s8 gData_02001000[]. */
+extern u32 gData_02001000__screens __asm__("gData_02001000");
 
 // Builds the save header.
 s32 Save_BuildFileSummary(void) {
@@ -376,7 +360,7 @@ s32 Save_BuildFileSummary(void) {
   summary = (struct SaveSummary *)(gData_02000000 - 16);
   SAVE_GAME_WORDS->buildStamp = BuildStamp_GetTimeFar(0);
   SAVE_GAME_WORDS->playTime = gFrameWaitCount;
-  gData_02001000 = gFrameWaitCount;
+  gData_02001000__screens = gFrameWaitCount;
   gMainRoutineWork.unk244[6] = gAutoSleepEnabled;
   owner = Unit_Get(gMainRoutineWork.currentOwner);
   destination = summary->name;
@@ -431,9 +415,6 @@ s32 Save_BuildFileSummary(void) {
   summary->checksum = sum;
   return 0;
 }
-
-extern u8 gData_02000504[];
-extern s16 gData_020036d0;
 
 s32 Save_ReadPart(s32 partId, void *buffer);
 void FieldMessage_Show(s32 message, s32 position);
@@ -493,9 +474,6 @@ s32 Func_08043534(void) {
   return value;
 }
 
-void ObjectTable_SnapshotFar(void);
-void Message_CloseFinishedWindows(void);
-
 /// Saves the game to slot (at most 2).
 s32 Save_ToFile(u32 slot) {
   s32 result = 0;
@@ -527,8 +505,6 @@ s32 Save_ToFile(u32 slot) {
   Save_ReleaseWork();
   return result;
 }
-
-s32 YesNoMenu_Run(s32 low, s32 message, s32 w, s32 selection);
 
 /// Lets the player choose a file and saves the game to it, asking first before
 /// it writes over a file in use.
@@ -783,17 +759,6 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
   }
 }
 
-struct ObjectRowWork {
-  u8 unk000[0xf8];
-  void *icons[4];
-  u8 unk108[0x10];
-  s16 x[8];
-  s16 y[8];
-  s32 scale[4];
-};
-
-void Animation_ApplyChildArgumentFar(void *, s32);
-
 void Func_08043a64(struct RenderInput *origin, s32 x, s32 y,
                    struct SaveSummary *descriptor) {
   struct ObjectRowWork *state = Ram_HeapSlots->menuRuntime;
@@ -840,15 +805,6 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void) {
   } while (count >= 0);
 }
 
-struct ObjectRowState {
-  u8 unk000[248];
-  void *objects[4];
-  u8 unk108[16];
-  s16 x[8];
-  s16 y[8];
-  s32 scale[4];
-};
-
 void Func_08043b70(void) {
   struct ObjectRowState *state =
       (struct ObjectRowState *)Ram_HeapSlots->menuRuntime;
@@ -878,12 +834,6 @@ void Func_08043b70(void) {
 
 // Saves: draw the recorded Djinn counts in a row, one per element. The first
 // section was written as draw_four_numbers_in_row.c.
-
-/// The portion of the file summary (SaveSummary) read here.
-struct NumberRow {
-  u8 unk00[0x28];
-  s8 values[4]; ///< Djinn count for each element.
-};
 
 /// Draws four two-digit numbers 24 pixels apart at y = 16.
 /// win: destination; nothing is drawn if zero.
@@ -979,14 +929,6 @@ void FileList_DrawSummary(s32 win, u8 *rec) {
 #define FILE_LIST_LEADER_X 6
 #define FILE_LIST_AREA_X 62
 #endif
-
-void Func_080f8070(void);
-void Func_080f8078(void);
-void Func_080f8080(s32 shown);
-void Func_080f8090(s32 index, s32 x, s32 y);
-
-// Messages 0 to 4 and 3672, the first area name.
-extern u8 MsgSaveNoData[];
 
 #define SAVE_FILE_COUNT 3
 #define SAVE_MENU_NO_FILE -2

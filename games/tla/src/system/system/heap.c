@@ -12,8 +12,6 @@ void Heap_Initialize(void) {
   Ram_HeapSlots->nextEwram = gEwramHeap;
 }
 
-extern u8 IwramSoundMixWorkspace[];
-
 s32 Heap_GetRemainingIwram(void) {
   struct HeapSlots *work = Ram_HeapSlots;
 

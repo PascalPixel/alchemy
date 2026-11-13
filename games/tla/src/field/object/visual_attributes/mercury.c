@@ -4,14 +4,16 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "gamepak/far_call/shop.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/field_sequence.h"
+#include "module/field/object.h"
+#include "module/system/system.h"
+#include "scene_call.h"
 
 /* VIEW(f0d8740): routine FieldEffect_UpdateRandomTargetParticle as void FieldEffect_UpdateRandomTargetParticle(void); the definition has void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect). */
 extern void FieldEffect_UpdateRandomTargetParticle__f0d8740(void) __asm__("FieldEffect_UpdateRandomTargetParticle");
-
-struct CaptureSprite {
-  u8 unk00[40];
-  s16 *resource;
-};
 
 /* VIEW(f0d8740): tag struct CaptureObject as struct CaptureObject__f0d8740; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:4832: structure has no member named `sprite'. */
 struct CaptureObject__f0d8740 {
@@ -37,22 +39,14 @@ struct CaptureObject__f0d8740 {
   void *callback;
 };
 
-struct CaptureResource {
-  u8 unk00[16];
-  u8 id;
-};
-
 /* VIEW(f0d8740): routine Actor_GetById as struct CaptureObject__f0d8740 *Actor_GetById(s32 id); mars_join has struct Actor *Actor_GetById(u32 objectId). */
 extern struct CaptureObject__f0d8740 *Actor_GetById__f0d8740(s32 id) __asm__("Actor_GetById");
-void BattleEffect_InitializeSlots(void);
-void Shop_SaveAndTintFieldPaletteFar(s32 value);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Actor_Jump(s32 id, s32 height, s32 frames);
 /* VIEW(f0d8740): routine Func_080200c0 as struct CaptureObject__f0d8740 *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
 extern struct CaptureObject__f0d8740 *Func_080200c0__f0d8740(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
 /* VIEW(f0d8740): routine Actor_Destroy as void Actor_Destroy(struct CaptureObject__f0d8740 *object); battle.h has void Actor_Destroy(struct Actor *object). */
 extern void Actor_Destroy__f0d8740(struct CaptureObject__f0d8740 *object) __asm__("Actor_Destroy");
-void Actor_ArmCallback(s32 id, s32 value, s32 flags);
 /* VIEW(f0d8740): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); mars_join has void Camera_WorldToScreen(struct EffectVector *position). */
 extern void Camera_WorldToScreen__f0d8740(s32 *position) __asm__("Camera_WorldToScreen");
 /* VIEW(f0d8740): routine FieldParticle_Initialize as void FieldParticle_Initialize(void *slot, s32 kind, s32 x, s32 y); motes has void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x, s32 z). */
@@ -61,11 +55,6 @@ extern void FieldParticle_Initialize__f0d8740(void *slot, s32 kind, s32 x, s32 y
 extern void FieldParticle_SetCallback__f0d8740(void *slot, void *callback) __asm__("FieldParticle_SetCallback");
 /* VIEW(f0d8740): routine FieldParticle_SetActorMode as void FieldParticle_SetActorMode(void *slot, s32 mode); field_particle.h has void FieldParticle_SetActorMode(struct FieldParticle *, s32). */
 extern void FieldParticle_SetActorMode__f0d8740(void *slot, s32 mode) __asm__("FieldParticle_SetActorMode");
-void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x, s32 z);
-void FieldParticle_SetCallback(struct FieldParticle *effect, EffectCallback callback);
-void FieldParticle_SetActorMode(struct FieldParticle *effect, s32 mode);
-void Shop_RestoreFieldPaletteFar(void);
-void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
 
 void Djinn_RunMercuryJoinEffect(s32 arg) {
   struct CaptureObject__f0d8740 *djinni;
@@ -191,14 +180,8 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 
-
 // XXX: what the work block in heap slot 39 holds, and what this family does;
 // its callers and the block's readers would settle it.
-
-extern const u8 gData_080f0c04[];
-
-void Func_080d8a00(void);
-void Func_080d8c10(void);
 
 void Func_080d897c(void) {
   struct Work9c *work = HeapSlot_AllocEwram(156, sizeof(struct Work9c));
@@ -213,43 +196,12 @@ void Func_080d897c(void) {
   Heap_Release(buffer);
 }
 
-
-struct ChainTransform {
-  u32 scaleX : 16;
-  u32 scaleY : 16;
-  u32 angle : 16;
-  u32 unk06 : 16;
-};
-
-struct ChainNode {
-  struct ChainNode *next;
-  s32 x;
-  s32 y;
-  s32 z;
-  u16 angle;
-  s8 used;
-  u8 unk13;
-  struct AnimationSpritePart sprite;
-};
-
-struct ChainSlot {
-  s16 id;
-  s16 value;
-  s16 depth;
-  s16 priority;
-  s16 flag;
-  s16 state;
-  u8 unk0c[16];
-  struct ChainNode *head;
-};
-
 struct ChainWork {
   u8 unk000[8];
   s32 vramEntry;
   struct ChainSlot slots[8];
 };
 
-s32 ArcTan2(s32 y, s32 x);
 /* VIEW(f0d8740): routine AffineMatrix_BuildForEffect as s32 AffineMatrix_BuildForEffect(struct ChainTransform *source); affine.h has s32 AffineMatrix_BuildForEffect(struct AffineTransform *source). */
 extern s32 AffineMatrix_BuildForEffect__f0d8740(struct ChainTransform *source) __asm__("AffineMatrix_BuildForEffect");
 /* VIEW(f0d8740): routine Func_080140d8 as void Func_080140d8(void *entry, s32 slot); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
@@ -338,34 +290,10 @@ void Func_080d8a00(void) {
   }
 }
 
-
-struct SwingSlot {
-  s16 id;
-  s16 value;
-  u8 unk04[8];
-  s32 amplitude;
-  u8 unk10[4];
-  s32 phase;
-  s32 active;
-  u8 unk1c[4];
-};
-
-struct SwingEvent {
-  u8 unk000[362];
-  s16 prompt;
-  u8 unk16c[24];
-  s16 timer;
-};
-
 struct SwingWork {
   u8 unk000[12];
   struct SwingSlot slots[8];
 };
-
-s32 Field_FindNearbyTalkTarget(s32 owner);
-s32 Func_080d99b8(s32 id, s32 value);
-s32 Trig_Sin(s32 angle);
-void Func_080d8fa8(s32 index, s32 id, s32 value, s32 offset);
 
 void Func_080d8c10(void) {
   struct SwingEvent *event = Ram_HeapSlots->eventWork;
@@ -417,9 +345,6 @@ struct Work9cItem *Func_080d8d40(void) {
   return NULL;
 }
 
-
-s32 Func_080d8e08(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2);
-
 void Func_080d8d68(s32 index, s32 id, s32 other) {
   struct Work9c *work = WORK_9C;
   s32 priority = 2;
@@ -448,36 +373,6 @@ void Func_080d8d68(s32 index, s32 id, s32 other) {
   Actor_SetMode(first, 2);
   Actor_SetMode(second, 2);
 }
-
-
-struct RopeNode {
-  struct RopeNode *next;
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk10[2];
-  u8 kind;
-  u8 slot;
-};
-
-struct RopeSlot {
-  s16 id;
-  s16 value;
-  s16 count;
-  u8 unk06[2];
-  s16 flag;
-  s16 state;
-  s32 amplitude;
-  u8 unk10[4];
-  s32 phase;
-  s32 active;
-  struct RopeNode *head;
-};
-
-struct RopeWork {
-  u8 unk000[12];
-  struct RopeSlot slots[8];
-};
 
 s32 Func_080d8e08(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
   struct RopeWork *work = Ram_HeapSlots->unk84[6];
@@ -536,9 +431,6 @@ s32 Func_080d8e08(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
     GameFlag_SetBit(slot->flag);
   return result;
 }
-
-s32 Func_080d8ff8(s32 index, s32 x, s32 y, s32 z, s32 to_x, s32 to_y, s32 to_z,
-                  s32 mode);
 
 void Func_080d8fa8(s32 index, s32 from, s32 to, s32 mode) {
   struct Actor *a = ObjectTable_Get(from);

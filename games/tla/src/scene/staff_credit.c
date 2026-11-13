@@ -21,6 +21,14 @@
 #include "bg_scroll.h"
 #include "event_inline.h"
 #include "frame.h"
+#include "module/field/field.h"
+#include "module/scene/gabomba_statue.h"
+#include "module/scene/scene.h"
+#include "module/scene/staff_credit.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "resource.h"
+#include "scene_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -33,9 +41,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
-
-extern u16 gData_02003dbc;
-extern u16 gData_02003dbe;
 
 /// Sets the layer blend, switching its alpha every two frames unless
 /// gData_02003dbe is set.
@@ -76,8 +81,6 @@ void Func_020000c0(u16 *colors, s32 count, s32 red, s32 green, s32 blue) {
     *colors++ = (b << 10) | (g << 5) | r;
   }
 }
-
-s32 Math_Cosine(s32 angle);
 
 void Func_02000138(u8 *grid, s32 count, s32 scale) {
   // Through a local pointer: the routine's address loads before the arguments.
@@ -140,29 +143,12 @@ extern u8 gData_02003d84[];
 extern u8 gData_02003d88[];
 extern u16 gData_02003d8e[];
 extern s8 gData_02003d9c[][2];
-extern u8 Data_020020bc[];
-extern u8 Data_0200213c[];
-extern u8 gData_0200215c[];
-extern u8 Data_0200217c[];
-extern u8 Data_02002469[];
+/* VIEW(staff_credit): variable gData_0200215c as u8 gData_0200215c[]; module/scene/venus_lighthouse.h has s32 gData_0200215c[]. */
+extern u8 gData_0200215c__staff_credit[] __asm__("gData_0200215c");
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, -1, z, mode);
 }
-void Map_UpdateCurrentTileBlock(void);
-void Func_02002074(void);
-// The veneer of Resource_DecodeType01Far.
-s32 Resource_DecodeType01(const void *source, void *destination);
-void Event_Start(void);
-
-void Func_0200207c(void);
-void DebugText_Clear(void);
-
-struct WorldCamera {
-  u8 unk000[0x11c];
-  u16 unk11c;
-  u16 yaw;
-};
 
 void Func_0200020c(s32 stage) {
   struct WorldCamera *map = (struct WorldCamera *)Ram_HeapSlots->mapWork;
@@ -268,7 +254,7 @@ void Func_0200020c(s32 stage) {
         gBgScroll[0].x = 8;
         gBgScroll[0].y = frame;
         IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)Data_0200213c, 0x80000010);
-        IO_WRITE_QUEUE_PUSH(0x050001e0, (u32)gData_0200215c, 0x80000010);
+        IO_WRITE_QUEUE_PUSH(0x050001e0, (u32)gData_0200215c__staff_credit, 0x80000010);
       } else {
         gBgScroll[0].x = gData_02003d9c[stage][0];
         gBgScroll[0].y = gData_02003d9c[stage][1];
@@ -458,14 +444,7 @@ void Func_0200020c(s32 stage) {
   Event_SetFlag(0x101);
 }
 
-extern char ResourceId_FarCall00A;
-extern char SceneId_Ov64c;
-extern char SceneId_Ov6b4;
-
 void Func_0200101c(void);
-void Resource_ReservedNoOp(s32 resource);
-void Event_SetDestination(s32 scene, s32 entrance);
-void Func_020020ac(s32 value);
 
 /// Chooses where the credits go next by the entrance they were entered from:
 /// entrances 0 to 5 run resource FarCall00A with 2 to 7 and continue, 2 to 6
@@ -523,13 +502,6 @@ s32 Scene_Initialize(void) {
   }
   return 0;
 }
-
-struct TileSprite {
-  u8 unk00[18];
-  u16 tile;
-  u8 unk14[6];
-  u8 frame;
-};
 
 s32 Scene_PrepareMap(void) { return 0; }
 
@@ -609,7 +581,6 @@ void Func_020011f4(struct Actor *object) {
 }
 
 extern s32 gData_02003db8;
-extern u32 gData_02002eac[];
 
 void Func_0200122c(struct Actor *object) {
   if (gFrameCount & 1) {
@@ -633,9 +604,6 @@ void Func_02001274(struct Actor *object, s32 mode) {
     Event_PlaySound(291);
   }
 }
-
-s32 Func_02002004(s32 *position);
-s32 SceneEvent_FindActiveRecord(s32 mode, s32 value);
 
 void Func_020012ac(void) {
   struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
@@ -705,10 +673,6 @@ void Func_02001364(void) {
     }
   }
 }
-
-extern u8 gWorldMapPackedTiles[];
-extern u8 gWorldMapPackedPictures[];
-extern u8 gWorldMapPalettes[];
 
 #define PUSH_PICTURE(offset)                                                   \
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)
@@ -831,8 +795,6 @@ void Func_02001400(s32 mode) {
   Event_SetFlag(0x101);
 }
 
-void Func_02001ad0(struct Actor *object);
-
 void Func_0200199c(struct Actor *object) {
   if ((gFrameCount & 2) != 0) {
     Animation_ApplyChildValues(object, 7);
@@ -900,7 +862,6 @@ void Func_02001a80(struct Actor *object) {
   object->z = parent->z - (rise - scale) * 5 + 0x100000;
 }
 
-
 #include "field_sprite.h"
 #include "vram_tab.h"
 #include "actor_view.h"
@@ -908,24 +869,10 @@ void Func_02001a80(struct Actor *object) {
 #include "call.h"
 #include "task.h"
 
-struct LinkedDetail {
+/* VIEW(staff_credit): tag struct LinkedDetail as struct LinkedDetail__staff_credit; module/scene/scene.h has another definition. */
+struct LinkedDetail__staff_credit {
   u8 unk00[22];
   u8 unk16;
-};
-
-struct LinkedEffectWork {
-  u8 unk000[0x7c0];
-  u16 vramBlock;
-};
-
-struct LinkedSpriteView {
-  u8 unk00[6];
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u8 unk08[9];
-  u8 retainCacheEntry : 1;
-  u8 unk11 : 7;
 };
 
 void Func_02001ad0(struct Actor *parent) {
@@ -960,7 +907,7 @@ void Func_02001ad0(struct Actor *parent) {
         sprite->fullColor = 0;
         sprite->shape = 1;
         ((struct LinkedSpriteView *)sprite)->size = 2;
-        ((struct LinkedDetail *)sprite->record)->unk16 = 0;
+        ((struct LinkedDetail__staff_credit *)sprite->record)->unk16 = 0;
       }
     }
   }
@@ -982,9 +929,7 @@ void Func_02001ad0(struct Actor *parent) {
 }
 
 extern s16 gData_02003fc4;
-extern s16 gData_02003fc6;
 extern u8 gData_02003fd8[][32];
-extern u8 gData_020040d8[][32];
 
 void Func_02001be0(s32 progress) {
   s32 level = ((progress * 30 + 0x8000) >> 16) + 1;
@@ -1080,13 +1025,12 @@ done:
   Vram_Load(gData_02003fc6, 0x100, gData_02003fd8);
 }
 
-extern u32 gInput;
+/* VIEW(staff_credit): variable gInput as u32 gInput; input.h has struct InputState gInput. */
+extern u32 gInput__staff_credit __asm__("gInput");
 extern s16 gData_02003fc8;
-extern u32 Data_02003fcc[3];
 
-void Func_0200200c(s32 value);
-s32 Func_02002014(void);
-void Func_02001f7c(u32 *oam, s32 priority);
+/* VIEW(staff_credit): routine Func_02002014 as s32 Func_02002014(void); module/scene/kandorean_temple.h has void Func_02002014(void). */
+extern s32 Func_02002014__staff_credit(void) __asm__("Func_02002014");
 
 // The same cursor as the world map's, in this overlay: counts down while A or B
 // is held, redraws the gauge and queues its sprite over the leader.
@@ -1097,13 +1041,13 @@ void Func_02001d90(void) {
   s32 screen[3];
   u32 attributes;
 
-  if ((gInput & 3) != 0 && Event_GetFlag(0x106) == 0 && leader->y > 0x40000) {
+  if ((gInput__staff_credit & 3) != 0 && Event_GetFlag(0x106) == 0 && leader->y > 0x40000) {
     if (--gData_02003fc8 <= 0) {
       Func_0200200c(1);
       gData_02003fc8 = 10;
     }
   }
-  Func_02001be0(Func_02002014());
+  Func_02001be0(Func_02002014__staff_credit());
   attributes = 0x80004000;
   Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x), (s32)(screen));
   {
@@ -1116,8 +1060,6 @@ void Func_02001d90(void) {
   *oam = tile | 0x400;
   Func_02001f7c(Data_02003fcc, 255);
 }
-
-extern const u8 gWorldMapPackedTilesC[];
 
 void Func_02001e58(void) {
   Resource_DecodeType01(gWorldMapPackedTilesC, gData_020040d8);

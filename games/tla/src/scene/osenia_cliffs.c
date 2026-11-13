@@ -15,6 +15,8 @@
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "frame.h"
+#include "module/scene/osenia_cliffs.h"
+#include "module/scene/scene.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -42,18 +44,7 @@ void Func_02000054(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-extern u32 gData_020001b0[];
-
-struct MapBits {
-  u8 unk00[23];
-  u8 low : 2;
-  u8 mode : 2;
-};
-
 void Func_02000190(void);
-void Func_02000198(s32 a, s32 b, s32 c);
-void Func_020001a8(s32 a, s32 flag, s32 b, s32 c);
-void Func_020000fc(void);
 
 s32 Scene_Initialize(void) {
   struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;

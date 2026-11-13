@@ -3,25 +3,19 @@
 #include "actor.h"
 #include "frame.h"
 #include "event_inline.h"
+#include "event_work.h"
+#include "field.h"
+#include "item_icon.h"
+#include "module/scene/jupiter_lighthouse_aerie_beacon.h"
+#include "module/scene/mars_lighthouse_aerie.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "system.h"
 
-struct MarsLighthouseAerieSprite {
-  u8 unk00[9];
-  u8 unk09_0 : 2;
-  u8 layer : 2;
-  u8 unk09_4 : 4;
-  u8 unk0a[0x10];
-  u8 unk1a;
-};
-
-extern u32 Data_02006ccc;
-extern u32 Data_02006b68;
 /* VIEW(s3370): variable gData_02006180 as extern const u8 gData_02006180[]; the definition has s32 gData_02006180[] = { 22, 9, 0xcccc, 22, 10, 0xcccc, 39, 1, (s32) 0x80010000, 23, 6, - 0x10000, 0, 1, 13, 16, (s32) 0xc0010000, 3, 0, 1, .... */
 extern const u8 gData_02006180__s3370[] __asm__("gData_02006180");
 extern s32 gData_02005b54[];
-extern s32 gData_02006180[];
 
-u32 Random16Far(void);
-void SceneActor_ParkRecord(struct Actor *object);
 void Actor_StartScript(struct Actor *object, const u8 *script);
 void Func_020000e4(void);
 
@@ -143,82 +137,21 @@ void Func_02003648(s32 id) { Actor_GetById(id)->motionFlags = 3; }
 #include "system/main_routine_work.h"
 #include "ram_buffer.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
 struct Actor;
-void Animation_SetStateFlags(struct Actor *object, u32 value);
 void Func_02000610(s32 id);
 void Func_02000640(s32 id);
-s32 Func_0200557c();
-void Func_02005734();
-void Func_02005794();
-s32 PartyInventory_Remove();
-s32 HeapSlot_AllocFar();
-s32 HeapSlot_Release();
-void Func_0200326c(void);
+/* VIEW(s3370): routine PartyInventory_Remove as s32 PartyInventory_Remove(); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
+extern s32 PartyInventory_Remove__s3370() __asm__("PartyInventory_Remove");
+/* VIEW(s3370): routine HeapSlot_AllocFar as s32 HeapSlot_AllocFar(); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
+extern s32 HeapSlot_AllocFar__s3370() __asm__("HeapSlot_AllocFar");
+/* VIEW(s3370): routine HeapSlot_Release as s32 HeapSlot_Release(); heap_release.h has void HeapSlot_Release(s32 slot). */
+extern s32 HeapSlot_Release__s3370() __asm__("HeapSlot_Release");
 extern u8 MsgTheBeaconIs[];
-extern s32 gData_020060b4[];
 extern s32 gData_020060fc[];
-extern u32 gData_02006120[];
-extern u32 gData_02006150[];
 
 #define OWNER gMainRoutineWork.currentOwner
 
-/// A halfword whose store may alias any read after it.
-union StoredHalfword {
-  u16 value;
-  s32 word;
-};
-
-struct OverlayActor {
-  u8 unk0[8];
-  s32 x, y, z, terrainHeight, scaleX, scaleY;
-  u8 unk20[3];
-  u8 priorityFlags;
-  u8 unk24[12];
-  s32 speedLimit, acceleration;
-  u8 unk38[16];
-  s32 gravity;
-  s32 unk4c;
-  s32 animation;
-  u8 unk54;
-  u8 motionFlags;
-  u8 unk56[6];
-  u8 unk5c;
-  u8 unk5d[15];
-  s32 update;
-};
 #define A(p) ((struct OverlayActor *)(p))
-
-struct OverlaySprite {
-  u8 unk0[5];
-  u8 unk5_0 : 5;
-  u8 unk5_5 : 1;
-  u8 unk5_6 : 2;
-  u8 unk6[3];
-  u8 unk9_0 : 2;
-  u8 unk9_2 : 2;
-  u8 unk9_4 : 4;
-  u8 unkA[6];
-  u8 vramBlock;
-  u8 unk11[10];
-  u8 unk1b;
-};
-
-/// The heap slots read as words.
-struct HeapWords {
-  u8 unk00[108];
-  s32 eventWord;
-};
-
-/// The event work's step counter.
-struct AerieEventWork {
-  u8 unk000[452];
-  union {
-    union StoredHalfword step;
-    u16 stepRead;
-  };
-};
 
 void Func_02003658(void) {
   struct AerieEventWork *work, *later;
@@ -258,7 +191,7 @@ void Func_02003658(void) {
   Actor_FaceDirectionAndWait((OWNER), 0xc000);
   Actor_RunRepeatedMotion((OWNER), 2);
   FieldEvent_Wait(20);
-  PartyInventory_Remove(222);
+  PartyInventory_Remove__s3370(222);
   anchor = (s32)Actor_Get(4);
   y = A(anchor)->y;
   x = A(anchor)->x;
@@ -282,11 +215,11 @@ void Func_02003658(void) {
   A(object)->speedLimit = 0x6666;
   A(object)->acceleration = 0xccc;
   A(object)->gravity = 0x8000;
-  block = HeapSlot_AllocFar(68, 0x608);
+  block = HeapSlot_AllocFar__s3370(68, 0x608);
   Item_LoadIcon(247);
   tiles = (block + 0x400);
   Vram_Load(sprite->vramBlock, 128, tiles);
-  HeapSlot_Release(68);
+  HeapSlot_Release__s3370(68);
   A(object)->motionFlags = zero;
   FieldActor_SetMoveTarget(object, 0x2000000, 0x800000, 0x1180000);
   Actor_WaitForMove(object);
@@ -517,12 +450,10 @@ L_0200bcea:
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-s32 Map_CenterOnFollowedPoint();
+/* VIEW(s3370): routine Map_CenterOnFollowedPoint as s32 Map_CenterOnFollowedPoint(); module/scene/scene.h has void Map_CenterOnFollowedPoint(void). */
+extern s32 Map_CenterOnFollowedPoint__s3370() __asm__("Map_CenterOnFollowedPoint");
 void Func_020004a4(void);
 extern u8 MsgWhatCouldHe[];
-extern s32 gData_020061d4[];
 
 static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
   /* FAKEMATCH(wrapper): W_Func_02005714 forwarded inline; as direct calls to
@@ -577,7 +508,7 @@ void Func_02003ff4(void) {
   t21 = FieldCamera_GetActor();
   ((struct Actor *)t21)->motionFlags = 0;
   FieldCamera_MoveTo(0x2000000, 0x600000, 0x1200000, 0);
-  Map_CenterOnFollowedPoint();
+  Map_CenterOnFollowedPoint__s3370();
   System_Wait(1);
   t25 = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT(t25, s32, 428) = 0x201;
@@ -1099,12 +1030,6 @@ void Func_02004ee4(void) { Func_02004e80(29, 21); }
 #include "dma.h"
 #include "io_reg.h"
 
-extern u16 *Data_02006ce4;
-extern u16 *Data_02006ce8;
-extern u16 *Data_02006cd4;
-
-void Func_020051e0(void);
-
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
@@ -1229,12 +1154,11 @@ void Func_020050b0(void) {
     gData_02006cf0 = 0;
 }
 
-struct MarsLighthouseAerieEventWork {
+/* VIEW(s3370): tag struct MarsLighthouseAerieEventWork as struct MarsLighthouseAerieEventWork__s3370; module/scene/scene.h has another definition. */
+struct MarsLighthouseAerieEventWork__s3370 {
   u8 unk000[0x1ac];
   s32 value1ac;
 };
-
-void Func_020057c4(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1243,13 +1167,13 @@ static __inline__ void Func_0200575c_(s32 a, s32 b) {
 }
 
 void Func_020051e0(void) {
-  struct MarsLighthouseAerieEventWork *work = Ram_HeapSlots->eventWork;
+  struct MarsLighthouseAerieEventWork__s3370 *work = Ram_HeapSlots->eventWork;
   s32 saved;
 
   saved = work->value1ac;
   PaletteFade_ApplyTarget(0x202108, 1);
   Func_0200575c_(0x10000, 2);
-  ((struct MarsLighthouseAerieEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
+  ((struct MarsLighthouseAerieEventWork__s3370 *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02005030();
@@ -1269,35 +1193,9 @@ void Func_020051e0(void) {
 
 #include "system/vector3.h"
 
-struct SparkleSprite {
-  u8 unk00[12];
-  s32 unk0c;
-  s32 unk10;
-  s32 unk14;
-  s32 unk18;
-  u8 unk1c[2];
-  u16 unk1e;
-  u8 unk20[8];
-};
-
-struct SparkleWork {
-  struct SparkleSprite sprites[4];
-  s16 unka0[2];
-  s16 vramEntry;
-  s16 unka6;
-  struct Actor *object;
-};
-
-struct CounterBits {
-  u8 low : 1;
-  u8 rest : 7;
-};
-
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-s32 Resource_ResetEntry(u32 slot);
-void Camera_WorldToScreen(struct Vector3 *v);
-void Func_020057ac(struct SparkleSprite *sprite);
-s32 Func_020057bc(struct Actor *object);
+/* VIEW(s3370): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct Vector3 *v); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
+extern void Camera_WorldToScreen__s3370(struct Vector3 *v) __asm__("Camera_WorldToScreen");
 
 void Func_02005268(struct Actor *object) {
   struct Vector3 position;
@@ -1334,7 +1232,7 @@ void Func_02005268(struct Actor *object) {
         p->x = object->x;
         p->y = object->y + (work->unka0[i] << 16);
         p->z = object->z;
-        Camera_WorldToScreen(p);
+        Camera_WorldToScreen__s3370(p);
         x = p->x;
         j = 0;
         z = p->z;
@@ -1363,12 +1261,6 @@ void Func_02005268(struct Actor *object) {
 #undef A
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/mars_lighthouse_aerie/s53e4.c ----
-struct ResourceTableEntry {
-  u16 unk0;
-  u16 offset; ///< in bytes; its tile is offset / 32
-};
-
 /* VIEW(s53e4): tag struct SparkleSprite as struct SparkleSprite__s53e4; s3370.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1422: structure has no member named `flag'. */
 struct SparkleSprite__s53e4 {
   u8 unk00[5];
@@ -1393,14 +1285,11 @@ struct SparkleWork__s53e4 {
   struct Actor *object;
 };
 
-extern s32 gData_020057e4[];
-extern struct ResourceTableEntry gResourceTableEntries[];
+/* VIEW(s3370): variable gResourceTableEntries as struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has struct VramBlockCacheEntry gResourceTableEntries[]. */
+extern struct ResourceTableEntry gResourceTableEntries__s3370[] __asm__("gResourceTableEntries");
 
-s32 Resource_FindFreeEntry(void);
-void Func_020057a4(struct SparkleSprite__s53e4 *sprite, s32 width, s32 height,
-                   u32 attributes, s32 tile);
-s32 Func_020057b4(struct Actor *object);
-void Func_02005268(struct Actor *object);
+/* VIEW(s3370): routine Func_020057b4 as s32 Func_020057b4(struct Actor *object); module/scene/scene.h has void Func_020057b4(void). */
+extern s32 Func_020057b4__s3370(struct Actor *object) __asm__("Func_020057b4");
 
 void Func_020053e4(struct Actor *object, struct SparkleWork__s53e4 *work) {
   struct SparkleSprite__s53e4 *sprite;
@@ -1418,7 +1307,7 @@ void Func_020053e4(struct Actor *object, struct SparkleWork__s53e4 *work) {
   ((u8 *)object)[0x62] = 0;
   ((u8 *)object)[0x63] = 0;
   object->update = Func_02005268;
-  tile = gResourceTableEntries[work->vramEntry].offset >> 5;
+  tile = gResourceTableEntries__s3370[work->vramEntry].offset >> 5;
   object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     col = 1;
@@ -1428,12 +1317,11 @@ void Func_020053e4(struct Actor *object, struct SparkleWork__s53e4 *work) {
       Func_020057a4(sprite, 16, 16, 0x80004000, tile);
       sprite->flag = 0;
       sprite->palette = 0;
-      sprite->priority = Func_020057b4(object) & 3;
+      sprite->priority = Func_020057b4__s3370(object) & 3;
       sprite++;
     }
   }
 }
-
 
 void Func_020054e4(struct Actor *object) { object->unk5c[6] = 1; }
 
@@ -1442,18 +1330,7 @@ void Func_020054e4(struct Actor *object) { object->unk5c[6] = 1; }
 
 void Func_020001a0(void);
 void Func_0200065c(void);
-void Func_02004bc4(void);
-void Func_02004c2c(void);
-void Func_02004c94(void);
-void Func_02004d14(void);
-void Func_02004da0(void);
-void Func_02004df0(void);
-void Func_02004e20(void);
-void Func_02004e50(void);
-void Func_02004ec0(void);
-void Func_02004ecc(void);
 void Func_02004ed8(void);
-void Func_02004ee4(void);
 
 // clang-format off
 s32 gData_020057e4[] = {

@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "module/field/field.h"
 
 /// Writes the object's position on screen, in pixels, to position[0] and
 /// position[1]; an animated object is raised by its frame box. Returns -1 when
@@ -42,7 +43,6 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   return 0;
 }
 
-
 /// The Broken Seal's Scene_FadeColorFromWhite, playing cue 298 where that
 /// plays 288: turns the backdrop (on the world map, a colour of palette 15)
 /// white, finishes the screen transition and fades that colour to black
@@ -78,16 +78,6 @@ void Field_StartEncounterTransition(s32 unused) {
     }
   }
 }
-
-struct ContextAnimation {
-  u8 unk00[0x1a];
-  u8 flags;
-};
-
-struct ContextEffect {
-  u8 unk00[5];
-  u8 param;
-};
 
 void *ResourceMetadata_RegisterFar(void *, s32);
 

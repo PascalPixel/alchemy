@@ -73,7 +73,6 @@ s32 Func_080d9194(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   return result;
 }
 
-
 void Func_080d92a4(s32 index, s32 *position) {
   struct Work9c *work = WORK_9C;
   struct Work9cSlot *slot = &work->slots[index];

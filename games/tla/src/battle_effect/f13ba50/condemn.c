@@ -3,11 +3,8 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
-
-extern char ResourceId_CounterRevealSheet;
-extern char ResourceId_RedCrescentSheetA;
-extern u8 Data_081978f0[]; // each panel's x, by side (7 a side)
-extern u8 Data_081978fe[]; // each panel's y
+#include "module/battle_effect/f13ba50.h"
+#include "resource_ids.h"
 
 // The seven panels of the counter picture: the first two in the work sheet,
 // the rest in the map buffer.

@@ -3,6 +3,10 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "gamepak/far_call/game.h"
+#include "gamepak/far_call/menu.h"
+#include "module/shop/shop.h"
+#include "module/tla.h"
 
 // The Japanese money window is a tile narrower, as in Shop_SelectBuy.
 #if LANGUAGE == LANGUAGE_JAPANESE
@@ -10,10 +14,6 @@
 #else
 #define MONEY_WINDOW_WIDTH 12
 #endif
-
-s32 Shop_SelectSell(s32 unitId);
-s32 Shop_SelectRepair(s32 unitId);
-s32 Forge_SelectItem(s32 unitId);
 
 s32 Shop_ChooseMember(void) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
@@ -107,16 +107,6 @@ s32 Shop_ChooseMember(void) {
 #define PRICE_WINDOW_WIDTH 15
 #define DETAILS_WINDOW_WIDTH 18
 #endif
-
-// Unnamed in the catalog yet: 4699, 4723 and 4862 take placeholders here.
-extern u8 MsgSellAnythingElse[];
-
-s32 Shop_RepairPrice(s32 item);
-s32 Forge_GetMaterialChance(s32 item);
-
-s32 Shop_SelectSellCount(s32 unitId, s32 slot);
-void Shop_RepairItem(s32 unitId, s32 slot);
-s32 Forge_OfferItem(s32 unitId, s32 slot);
 
 s32 Shop_SelectSell(s32 unitId) {
   struct ShopRuntime *shop;
@@ -281,16 +271,6 @@ void Shop_DrawMemberItems(void *window, s32 item) {
   }
 }
 
-struct ShopSellWork {
-  u8 unk000[0x4dc];
-  struct ShopCursor cursor;
-  u8 unk4ec[0x19];
-  u8 mode;
-};
-
-s32 Inventory_GetQuantityFar(s32 unitId, s32 slot);
-void Icon_PrepareActorFar(struct WindowSprite *object);
-
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define QUANTITY_CURSOR_X 120
 #elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                    \
@@ -337,9 +317,6 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
 }
 
 #undef QUANTITY_CURSOR_X
-
-void Inventory_DiscardFar(s32 unitId, s32 slot);
-void Unit_RefreshPsynergyFar(s32 unitId);
 
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   struct ShopRuntime *shop;

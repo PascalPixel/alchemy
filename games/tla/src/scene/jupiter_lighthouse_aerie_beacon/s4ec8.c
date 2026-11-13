@@ -11,40 +11,13 @@
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_room_3/local.h"
 #include "io_reg.h"
 #include "cell_target.h"
+#include "event_work.h"
+#include "field.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/scene/jupiter_lighthouse_aerie_beacon.h"
+#include "module/scene/scene.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
-struct CellMapCell {
-  u8 unk00[2];
-  u8 event;
-  u8 unk03;
-};
-
-struct CellMapLayer {
-  s32 unk00[2];
-  s32 originX;
-  s32 originZ;
-  u8 unk10[0x20];
-  struct CellMapCell *cells;
-};
-
-struct CellMapWork {
-  u8 unk000[0xec];
-  s32 minX;
-  s32 minZ;
-  s32 maxX;
-  s32 maxZ;
-  u8 unk0fc[0xc];
-  struct CellMapLayer layers[4];
-};
-
-/// The cells Func_02005534 watches, and the cell it copies over the one the
-/// leader steps on.
-extern struct CellTarget Data_02006b74;
-
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *buffer);
-s32 Resource_FindFreeEntry(void);
 void Func_02004d9c(void);
 
 s32 Func_02004ec8(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
@@ -194,17 +167,6 @@ void Func_02005194(struct CellTarget *table, struct CellTargetEntry *entry) {
   MapGrid_CopyCells(table->x, table->z + 1, 1, 1, x, z);
   FieldEvent_Wait(12);
 }
-
-struct PushEvent {
-  u8 unk00[6];
-  s16 x;
-  s16 z;
-  u8 unk0a[4];
-  u16 busy;
-};
-
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 void Func_02005204(struct PushEvent *event) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);

@@ -3,6 +3,10 @@
 #include "frame.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "module/field/field.h"
+#include "module/scene/mars_lighthouse_star_room.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 struct RideEntry {
   s16 a;
@@ -40,13 +44,9 @@ struct RideWork {
   void *handle;
 };
 
-extern u8 gData_020023c4[];
-extern u16 gData_02004cf0[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Func_020041ec(void *handle);
-void Func_02002148(void);
 void Func_0200236c(struct Actor *object, s32 unused);
-void Func_02002ad0(struct Actor *object);
 
 s32 Func_02002758(s32 index) {
   return ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->a;
@@ -104,7 +104,6 @@ struct MarsLighthouseEventWork {
   u16 downOwners[8];
 };
 
-void BattleParty_ApplyHealthDelta(s32 a, s32 b);
 struct BattleUnit *Unit_Get(s32 owner);
 
 void Func_02002800(void) {

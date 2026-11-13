@@ -2,31 +2,15 @@
 #include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "version.h"
+#include "module/scene/yallam.h"
 
 void Func_02000044(void);
 void Func_02000270(void);
-void Func_02000328(void);
-void Func_0200036c(void);
 void Func_0200038c(void);
-void Func_0200041c(void);
 void Func_0200043c(void);
-void Func_020004cc(void);
-void Func_02000544(void);
 void Func_02000584(void);
-void Func_02000614(void);
-void Func_020022f8(void);
 
-void Func_020022f4(void);
-
-extern s32 gData_020025a8[];
-extern s32 gData_020025d4[];
 extern s32 gData_020025f8[];
-extern u32 gData_02002634[];
-extern u32 gData_020026d8[];
-extern s16 gData_02002c8c[];
-extern s16 gData_02002ca2[];
-extern s16 gData_02002cb8[];
-extern s16 gData_02002cce[];
 
 s32 gData_020025a8[] = {
     39, 3, 22, 26, 0, 23, 6, 0x20000, 46, (s32)Func_02000044, 17,

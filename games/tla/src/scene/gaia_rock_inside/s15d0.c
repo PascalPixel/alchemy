@@ -10,6 +10,12 @@
 #include "text/msg_ids.h"
 #include "field_effect.h"
 #include "fixed_math.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/field/object.h"
+#include "module/scene/gaia_rock_inside.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
 
 struct Spark {
   u8 unk00[8];
@@ -37,13 +43,15 @@ struct Spark {
 
 extern const u8 gData_02005264[], gData_02005218[], gData_02005234[],
     gData_02005288[], gData_02005244[], gData_020052ac[], gData_020052dc[];
-void Scene_SetActorSpritePriority(void *object, s32 priority);
+/* VIEW(s15d0): routine Scene_SetActorSpritePriority as void Scene_SetActorSpritePriority(void *object, s32 priority); field.h has void Scene_SetActorSpritePriority(struct Actor *object, s32 priority). */
+extern void Scene_SetActorSpritePriority__s15d0(void *object, s32 priority) __asm__("Scene_SetActorSpritePriority");
 void Func_02004d9c(void *object, s32 mode);
-void Actor_SetSingleChildFlags(void *object, u32 value);
-void Animation_SetStateFlags(void *object, s32 flags);
+/* VIEW(s15d0): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(void *object, u32 value); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s15d0(void *object, u32 value) __asm__("Actor_SetSingleChildFlags");
+/* VIEW(s15d0): routine Animation_SetStateFlags as void Animation_SetStateFlags(void *object, s32 flags); field.h has void Animation_SetStateFlags(struct Actor *object, u32 value). */
+extern void Animation_SetStateFlags__s15d0(void *object, s32 flags) __asm__("Animation_SetStateFlags");
 void Actor_StartScript(void *object, const u8 *script);
 void Func_02001548(void);
-void Party_PlaySavedMusic(void);
 
 void Func_020015d0(s32 idA, s32 idB) {
   struct Actor *a = Actor_GetById(idA);
@@ -86,10 +94,10 @@ first:
     spark->acceleration = 0x3333;
     spark->motionFlags = 0;
     Actor_SetPartAttribute(spark, 2);
-    Scene_SetActorSpritePriority(spark, 1);
+    Scene_SetActorSpritePriority__s15d0(spark, 1);
     Func_02004d9c(spark, 7);
-    Actor_SetSingleChildFlags(spark, 0);
-    Animation_SetStateFlags(spark, 1);
+    Actor_SetSingleChildFlags__s15d0(spark, 0);
+    Animation_SetStateFlags__s15d0(spark, 1);
     Actor_StartScript(spark, gData_02005218);
     REG_BLDALPHA = 0x1004;
     wait(2);
@@ -118,10 +126,10 @@ second:
     spark->watchedObject = b;
     spark->unk62 = (16 - i) * 8 + 15;
     Actor_SetPartAttribute(spark, 2);
-    Scene_SetActorSpritePriority(spark, 1);
+    Scene_SetActorSpritePriority__s15d0(spark, 1);
     Func_02004d9c(spark, 7);
-    Actor_SetSingleChildFlags(spark, 0);
-    Animation_SetStateFlags(spark, 1);
+    Actor_SetSingleChildFlags__s15d0(spark, 0);
+    Animation_SetStateFlags__s15d0(spark, 1);
     /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2
      * of 402 instructions differ in tla-en. */
     FieldVector_AddPolarOffset(spark->unk4c, *angle, &spark->x);
@@ -163,8 +171,8 @@ third:
     spark->priorityFlags = 1;
     Actor_SetPartAttribute(spark, 2);
     Func_02004d9c(spark, 7);
-    Actor_SetSingleChildFlags(spark, 0);
-    Animation_SetStateFlags(spark, 1);
+    Actor_SetSingleChildFlags__s15d0(spark, 0);
+    Animation_SetStateFlags__s15d0(spark, 1);
     Actor_StartScript(spark, gData_02005244);
   }
   i += 2;
@@ -191,13 +199,11 @@ third:
   wait(1);
 }
 
-// The party meets person 11 on the ledge: they talk, the ground shakes, the screen blends out and back while the ledge changes, the party gains the item and person 11 joins the leader (flag 0x9ba).
-void Event_Start(void);
 void Actor_MoveToObject(s32 id, s32 target);
 void DisplayBlend_EnableRunScript(void);
 void DisplayBlend_DisableRunScript(void);
-void Party_LearnAbility(s32 unit, s32 ability);
-s32 Func_02004e64(void);
+/* VIEW(s15d0): routine Func_02004e64 as s32 Func_02004e64(void); module/scene/scene.h has void Func_02004e64(void). */
+extern s32 Func_02004e64__s15d0(void) __asm__("Func_02004e64");
 
 /// The party meets person 11 on the ledge: they talk, the ground shakes, the
 /// screen blends out and back while the ledge changes, the party gains the item
@@ -275,7 +281,7 @@ s32 Func_020019cc(void) {
   FieldActor_WaitForMoveById(11);
   Actor_SetPosition(11, 0, 0);
   FieldEvent_Wait(20);
-  return Func_02004e64();
+  return Func_02004e64__s15d0();
 }
 
 void Effect_AdvanceMotionLocal(union FieldObject *object) {
@@ -304,7 +310,6 @@ void Effect_AdvanceMotionLocal(union FieldObject *object) {
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-s32 Math_Cosine(s32 angle);
 
 void Func_02001c9c(void) {
   s32 velocity[3];
@@ -327,9 +332,6 @@ void Func_02001c9c(void) {
     }
   } while (i <= 16);
 }
-
-struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
-void Func_02004dbc(struct Actor *object);
 
 /// Unless flag 0x9ee or 0x9ba is set: fades the blend out, lowers person 12 by
 /// one unit every 2 frames for 20 steps, with Func_02001c9c's ring at the start
@@ -390,7 +392,7 @@ void Func_02001d14(void) {
     System_Wait(1);
   }
   DisplayBlend_DisableRunScript();
-  Func_02004e64();
+  Func_02004e64__s15d0();
 }
 
 // Leaving Gaia Rock: after flag 0x927 a message; otherwise sets the next
@@ -399,9 +401,8 @@ void Func_02001d14(void) {
 // as u16 the scene symbol loads through ldrh and the pools break up.
 #include "text/msg_ids.h"
 
-extern char SceneId_Ov681Room1;
-
-s32 Field_RequestBattleFromEncounterTable(s32 entrance, s32 count);
+/* VIEW(s15d0): routine Field_RequestBattleFromEncounterTable as s32 Field_RequestBattleFromEncounterTable(s32 entrance, s32 count); module/field/event_commands.h has void Field_RequestBattleFromEncounterTable(s32 row, s32 column). */
+extern s32 Field_RequestBattleFromEncounterTable__s15d0(s32 entrance, s32 count) __asm__("Field_RequestBattleFromEncounterTable");
 
 void Func_02001ebc(void) {
   s32 count;
@@ -432,6 +433,6 @@ void Func_02001ebc(void) {
     } else {
       Event_SetDefeatDestination(scene, 11);
     }
-    Field_RequestBattleFromEncounterTable(12, count);
+    Field_RequestBattleFromEncounterTable__s15d0(12, count);
   }
 }

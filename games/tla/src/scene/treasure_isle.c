@@ -9,6 +9,11 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "module/scene/jupiter_lighthouse_room_4.h"
+#include "module/scene/mars_lighthouse_entrance.h"
+#include "module/scene/scene.h"
+#include "module/scene/treasure_isle.h"
+#include "scene_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -29,11 +34,6 @@ extern const u8 gData_02001480__scene_tables[] __asm__("gData_02001480");
 extern const u8 gData_02001504__scene_tables[] __asm__("gData_02001504");
 /* VIEW(scene_tables): variable gData_0200169c as extern const u8 gData_0200169c[]; the definition has struct ActorPlacement gData_0200169c[] = { { 169, 0x9bb, 1, PIXELS(792), 0, PIXELS(136), FACING_SOUTH, 0, 0 }, { 243, 0x43, 1, PIXELS(200), .... */
 extern const u8 gData_0200169c__scene_tables[] __asm__("gData_0200169c");
-extern struct ActorPlacement gData_02001330[];
-extern struct ActorPlacement gData_02001390[];
-extern struct ActorPlacement gData_02001480[];
-extern struct ActorPlacement gData_02001504[];
-extern struct ActorPlacement gData_0200169c[];
 
 const u8 *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -74,15 +74,6 @@ s32 Func_020003b4(u32 layer, s32 x, s32 y, s32 value) {
 
 #include "event_inline.h"
 
-/// One entry of the cell lists Func_020005ac walks.
-struct TreasureIsleCell {
-  s32 x; ///< in 16-pixel cells
-  s32 z; ///< in 16-pixel cells
-  s32 unk08;
-  u16 flag; ///< set once the cell has been opened (Func_020003fc)
-  u16 unk0e;
-};
-
 void Func_020003fc(struct TreasureIsleCell *cells, s16 index) {
   MapGrid_CopyCellsLayered(0, 0x64, 3, 4, cells[index].x + 0x3f,
                            cells[index].z - 2);
@@ -92,9 +83,6 @@ void Func_020003fc(struct TreasureIsleCell *cells, s16 index) {
 
 #include "field_effect.h"
 
-extern u32 gData_02001128[];
-
-void Func_02001014(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
@@ -146,14 +134,6 @@ void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
 }
 
 #include "field_event.h"
-
-// Import stubs: Event_Start and Event_End, and the pending
-// actions' resolution.
-void Func_02000fcc(void);
-void Func_02000fd4(void);
-
-extern struct TreasureIsleCell gData_0200117c[];
-extern struct TreasureIsleCell gData_020011cc[];
 
 /// For each of cells 0 to 3 of gData_0200117c whose flag (0x303 to 0x306) is
 /// still clear, calls Func_0200043c and sets the flag; the event is
@@ -382,7 +362,8 @@ void Func_02000a5c(void) {
 }
 
 #include "call.h"
-s32 Field_RequestBattleFromEncounterTable();
+/* VIEW(treasure_isle): routine Field_RequestBattleFromEncounterTable as s32 Field_RequestBattleFromEncounterTable(); module/field/event_commands.h has void Field_RequestBattleFromEncounterTable(s32 row, s32 column). */
+extern s32 Field_RequestBattleFromEncounterTable__treasure_isle() __asm__("Field_RequestBattleFromEncounterTable");
 extern u8 MsgIAmTheGuardian[];
 
 void Func_02000a8c(void) {
@@ -407,7 +388,7 @@ void Func_02000a8c(void) {
   FieldEvent_Wait(20);
   gMainRoutineWork.pendingDjinnEvent = 0x19bb;
   gMainRoutineWork.battleRule24b = 2;
-  Call2(Field_RequestBattleFromEncounterTable, 0x67, 0);
+  Call2(Field_RequestBattleFromEncounterTable__treasure_isle, 0x67, 0);
 }
 
 /* VIEW(scene_tables): variable gData_020016e4 as extern const u8 gData_020016e4[]; the definition has struct Trigger gData_020016e4[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 1, 4, CON...; tried as the definition's extern s16 gData_020016e4[], it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:791: conflicting types for `gData_020016e4'. */
@@ -420,10 +401,6 @@ extern const u8 gData_0200184c__scene_tables[] __asm__("gData_0200184c");
 extern const u8 gData_020018f4__scene_tables[] __asm__("gData_020018f4");
 /* VIEW(scene_tables): variable gData_02001a5c as extern const u8 gData_02001a5c[]; the definition has struct Trigger gData_02001a5c[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 2, 42, 0x.... */
 extern const u8 gData_02001a5c__scene_tables[] __asm__("gData_02001a5c");
-extern struct Trigger gData_02001780[];
-extern struct Trigger gData_0200184c[];
-extern s32 gData_020018f4[];
-extern struct Trigger gData_02001a5c[];
 
 const u8 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -442,19 +419,9 @@ const u8 *Scene_GetEvents(void) {
 #include "iwram_call.h"
 #include "io_write_queue.h"
 
-struct TreasureIsleEventWork {
-  u8 unk000[0x166];
-  s16 unk166;
-  u8 unk168[0xb3c];
-  u8 unkca4;
-};
-
 /* VIEW(scene_tables): variable gData_02001aa4 as extern s32 gData_02001aa4; the definition has s32 gData_02001aa4[] = { - 1, }; tried as the definition's extern s32 gData_02001aa4[], it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:462: `gData_02001aa4' has an incomplete type. */
 extern s32 gData_02001aa4__scene_tables __asm__("gData_02001aa4");
-extern u16 Data_02001aa8[];
 extern volatile u16 gData_02001ac8[];
-extern volatile u16 Data_02001ae8[];
-extern u16 Data_02001b08[];
 
 void Func_02000ba0(void) {
   struct TreasureIsleEventWork *work = Ram_HeapSlots->eventWork;
@@ -500,19 +467,6 @@ struct TreasureIsleEventWork__s0cf4 {
   u8 unk000[0x1ac];
   s32 route;
 };
-
-extern char SceneId_Ov6afRoom1;
-extern char SceneId_Ov6afRoom2;
-extern char SceneId_Ov6afRoom3;
-extern char SceneId_Ov6afRoom4;
-
-extern struct TreasureIsleCell gData_0200117c[];
-extern struct TreasureIsleCell gData_020011cc[];
-
-void Func_020003fc(struct TreasureIsleCell *cells, s16 index);
-void Func_02000ba0(void);
-void Func_0200105c(void);
-s32 Func_02001064(s32 a, s32 b, s32 c);
 
 /// Treasure Isle's setup for each of its four rooms: places the objects whose
 /// flags are set, schedules Func_02000ba0 in rooms 2 and 3 and opens again
@@ -593,8 +547,6 @@ s32 Scene_PrepareMap(void) { return 0; }
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_0200102c();
-
 void Func_02000f4c(void) { Func_0200102c(); }
 
 #include "text/msg_ids.h"
@@ -610,23 +562,8 @@ void Func_02000f4c(void) { Func_0200102c(); }
 void Func_020005ac(void);
 void Func_02000684(void);
 void Func_02000728(void);
-void Func_02000864(void);
-void Func_02000870(void);
-void Func_02000914(void);
 void Func_02000940(void);
 void Func_02000970(void);
-void Func_020009a0(void);
-void Func_020009d0(void);
-void Func_020009fc(void);
-void Func_02000a2c(void);
-void Func_02000a5c(void);
-void Func_02000a8c(void);
-
-extern u32 gData_02001074[];
-extern u32 gData_020010b0[];
-extern u32 gData_020010ec[];
-extern u32 gData_0200131c[];
-extern u32 gData_020014e0[];
 
 // clang-format off
 u32 gData_02001074[] = {

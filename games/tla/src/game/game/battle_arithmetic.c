@@ -4,8 +4,6 @@
 
 #include "../game_internal.h"
 
-extern const s16 gElement_PowerResistCurve[5][2];
-
 s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
   s32 min;
   s32 max;

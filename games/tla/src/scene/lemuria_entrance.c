@@ -17,37 +17,22 @@
 #include "scene_tables.h"
 #include "event_work.h"
 #include "call.h"
+#include "module/scene/lemuria_entrance.h"
+#include "module/scene/scene.h"
+#include "module/window/window.h"
+#include "text/msg_ids.h"
 
-struct EventWorkRoute {
-  u8 unk000[0x1ac];
-  s32 route;
-  u8 unk1b0[4];
-  s32 countdown;
-};
-
-struct EventWork1c4 {
+/* VIEW(lemuria_entrance): tag struct EventWork1c4 as struct EventWork1c4__lemuria_entrance; module/scene/scene.h has another definition. */
+struct EventWork1c4__lemuria_entrance {
   u8 unk000[0x1c4];
   s16 message;
 };
 
-struct AnimationRecord26 {
-  u8 unk00[0x1a];
-  u8 frame;
-};
-
-extern u8 MsgFieldAddressCompanion;
-extern u32 gData_020005e4[];
-
-s32 BattleEffect_GetResourceId(s32 id);
 void Text_GetMessageSize(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
 void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);
-s32 Message_AllTyped(void);
-void Window_Close(s32 work, s32 mode);
-void Message_CloseFinishedWindows(void);
+/* VIEW(lemuria_entrance): routine Window_Close as void Window_Close(s32 work, s32 mode); uiflow.h has void Window_Close(struct Window *window, s32 release). */
+extern void Window_Close__lemuria_entrance(s32 work, s32 mode) __asm__("Window_Close");
 s32 Func_0200053c(s32 a, s32 b, s32 c, s32 d);
-void Event_Start(void);
-void Event_End(void);
-void Func_02000310(s32 kind, s32 frames);
 
 s32 Func_02000038(struct Actor *object) {
   ((struct AnimationRecord26 *)object->sprite)->frame = 0;
@@ -120,13 +105,6 @@ void Func_02000120(void) {
   }
 }
 
-// The scene's setup: places its actors, then plays what the entrance it was
-// reached by calls for.
-extern char SceneId_Ov688;
-
-void Event_SetDestination(s32 scene, s32 entrance);
-void Func_020003cc(void);
-
 /// The scene's setup: places its actors, then plays what the entrance it was
 /// reached by calls for.
 s32 Scene_Initialize(void) {
@@ -176,14 +154,14 @@ s32 Scene_PrepareMap(void) { return 0; }
 void Func_02000310(s32 kind, s32 frames) {
   // This routine's own view of the event work. A union: the read of width
   // keeps its place after this store.
-  struct EventWork1c4 {
+  struct EventWork1c4__lemuria_entrance {
     u8 unk000[0x1c4];
     union {
       s16 message;
       s32 word;
     } u;
   };
-  struct EventWork1c4 *work = Ram_HeapSlots->eventWork;
+  struct EventWork1c4__lemuria_entrance *work = Ram_HeapSlots->eventWork;
   s32 b;
   s32 a;
   s32 height;
@@ -214,7 +192,7 @@ void Func_02000310(s32 kind, s32 frames) {
   while (Message_AllTyped() == 0)
     System_Wait(1);
   FieldEvent_Wait(frames);
-  Window_Close(x, 2);
+  Window_Close__lemuria_entrance(x, 2);
   Message_CloseFinishedWindows();
 }
 
@@ -264,8 +242,6 @@ void Func_020003cc(void) {
 }
 
 #include "objcmd.h"
-
-extern s32 gData_02000728[];
 
 // clang-format off
 u32 gData_020005e4[] = {

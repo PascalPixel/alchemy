@@ -8,14 +8,20 @@
 #include "field_effect.h"
 #include "fixed_math.h"
 #include "event_inline.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/scene/scene.h"
 
 extern const s32 *gData_0200270c[];
 
-extern void Func_02001da8(struct FieldEffect *effect, s32 mode);
+/* VIEW(s1258): routine Func_02001da8 as void Func_02001da8(struct FieldEffect *effect, s32 mode); module/scene/airs_rock.h has void Func_02001da8(void). */
+extern void Func_02001da8__s1258(struct FieldEffect *effect, s32 mode) __asm__("Func_02001da8");
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-extern void Actor_SetSingleChildFlags(struct FieldEffect *effect, u32 flags);
-extern void Scene_SetActorSpritePriority(struct FieldEffect *effect,
-                                         s32 priority);
+/* VIEW(s1258): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s1258(struct FieldEffect *effect, u32 flags) __asm__("Actor_SetSingleChildFlags");
+/* VIEW(s1258): routine Scene_SetActorSpritePriority as void Scene_SetActorSpritePriority(struct FieldEffect *effect, s32 priority); field.h has void Scene_SetActorSpritePriority(struct Actor *object, s32 priority). */
+extern void Scene_SetActorSpritePriority__s1258(struct FieldEffect *effect,
+                                         s32 priority) __asm__("Scene_SetActorSpritePriority");
 
 void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -35,15 +41,15 @@ void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_02001da8(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Func_02001da8__s1258(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_0200270c[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSingleChildFlags(effect, 0);
+  Actor_SetSingleChildFlags__s1258(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority(effect, party->sprite->priority);
+  Scene_SetActorSpritePriority__s1258(effect, party->sprite->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;
@@ -54,7 +60,7 @@ void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     Actor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
-    Scene_SetActorSpritePriority(effect, options->priority);
+    Scene_SetActorSpritePriority__s1258(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;
   if (start != 0) {
@@ -77,7 +83,7 @@ void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_02001da8(effect, 1);
+    Func_02001da8__s1258(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
@@ -101,34 +107,6 @@ void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "field_event.h"
 #include "scene_tables.h"
 #include "cell_target.h"
-
-struct CellMapCell {
-  u8 unk00[2];
-  u8 event;
-  u8 unk03;
-};
-
-struct CellMapLayer {
-  s32 unk00[2];
-  s32 originX;
-  s32 originZ;
-  u8 unk10[0x20];
-  struct CellMapCell *cells;
-};
-
-struct CellMapWork {
-  u8 unk000[0xec];
-  s32 minX;
-  s32 minZ;
-  s32 maxX;
-  s32 maxZ;
-  u8 unk0fc[0xc];
-  struct CellMapLayer layers[4];
-};
-
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *buffer);
-s32 Resource_FindFreeEntry(void);
 
 s32 Func_0200154c(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   struct CellTarget *table = &gData_02002864;

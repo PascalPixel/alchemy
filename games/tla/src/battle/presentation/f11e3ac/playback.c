@@ -4,6 +4,9 @@
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"
+#include "module/battle/f11e3ac.h"
+#include "module/battle/presentation.h"
+#include "module/tla.h"
 
 void BattlePlayback_Start(s32 cue) {
   struct BattleEventState *ev;
@@ -32,19 +35,11 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
   return Task_Add(BattleEvent_Playback, TASK_PASS_VBLANK);
 }
 
-
 #define OBJ_VRAM 0x06010000
 #define KEYS_HELD (*(volatile u32 *)&gInput.held)
 
-struct AnimationRecord {
-  u8 unk00[0x10];
-  u8 slot;
-  u8 unk11[3];
-  u8 width;
-  u8 height;
-};
-
-struct ArrowSprite {
+/* VIEW(f11e3ac): tag struct ArrowSprite as struct ArrowSprite__f11e3ac; module/tla.h has another definition. */
+struct ArrowSprite__f11e3ac {
   void *next;
   u16 y : 8;
   u16 flags : 8;
@@ -60,7 +55,7 @@ struct PlaybackEvents {
   s32 phase;
   s32 eventIndex;
   s32 timer;
-  struct ArrowSprite arrow;
+  struct ArrowSprite__f11e3ac arrow;
   s32 arrowResource;
   s32 actorId;
   s16 pendingCue;
@@ -76,43 +71,6 @@ struct PlaybackBattleWork {
   u8 unk6e0[4];
   struct PlaybackEvents events;
 };
-
-struct MessageWindow {
-  u8 unk00[0x0c];
-  s16 x;
-  s16 y;
-};
-
-struct MessageOffset {
-  u8 unk00[4];
-  u16 x;
-  u16 y;
-};
-
-struct BattleMessageDisplay {
-  struct MessageWindow *window;
-  struct MessageOffset *offset;
-  s32 marked;
-};
-
-struct ChildEntry {
-  u8 unk00[5];
-  u8 colorMode;
-  u8 unk06[16];
-  u8 frame;
-};
-
-struct MotionRecord {
-  u8 unk00[40];
-  struct ChildEntry *entries[1];
-};
-
-extern u32 gVBlankCount;
-
-void Func_080381d0(s32 message);
-void Animation_ApplyChildArgumentFar(void *record, s32 value);
-u32 BattleClass_GetDefeatSoundKind(s32 index);
-void Map_RenderAnimatedTilePictureFar(void *record, s32 step);
 
 void BattleEvent_Playback(void) {
   u16 selection[2];
@@ -269,7 +227,7 @@ void BattleEvent_Playback(void) {
         events->timer = gVBlankCount;
       }
     } else if (events->phase == 5) {
-      struct ArrowSprite *prompt = &events->arrow;
+      struct ArrowSprite__f11e3ac *prompt = &events->arrow;
       u8 *arrowTiles = Data_0812996c;
       s32 pictureTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
       struct BattleMessageDisplay *display =

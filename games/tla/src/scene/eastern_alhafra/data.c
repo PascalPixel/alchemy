@@ -1,6 +1,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
+#include "module/scene/eastern_alhafra.h"
 
 void Func_0200006c(void);
 void Func_020000c8(void);
@@ -8,19 +9,9 @@ void Func_02000190(void);
 void Func_02000200(void);
 void Func_02000394(void);
 void Func_0200042c(void);
-void Func_02000514(void);
 void Func_020006ec(void);
-void Func_02000730(void);
-void Func_02000838(void);
 void Func_02000940(void);
-void Func_02000954(void);
 void Func_02000958(void);
-void Func_02000968(void);
-void Func_02001574(void);
-void Func_02002048(void);
-void Func_02002a08(void);
-
-extern s16 gData_02005284[];
 
 // clang-format off
 u16 gData_02004ca4[] = {

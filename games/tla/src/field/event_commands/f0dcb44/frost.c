@@ -3,63 +3,25 @@
 // Part of f0dcb44.c.
 
 #include "../f0dcb44_internal.h"
+#include "item_icon.h"
+#include "module/field/event_commands.h"
+#include "module/field/f0dcb44.h"
 
 struct PendingEvent;
 
-struct ResourceEntry {
-  u8 unk00[0x10];
-  u8 vramBlock;
-};
-
-struct Effect04Scene {
-  u16 angle;
-  u8 unk02[2];
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-  struct Actor *child;
-  s16 firstObjectId;
-  s16 secondObjectId;
-  u8 unk1c[4];
-  s8 enabled;
-  u8 unk21[0x13];
-  s8 childOption;
-  s8 childMode;
-  u8 unk36[0x1a];
-  struct FieldParticle slots[24];
-};
-
-struct Effect04Vector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-void BattleEffect_InitializeSharedScene(void);
-void BattleEffect_PrepareBufferInterpolation(void);
 /* VIEW(f0de21c): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct Effect04Vector *position); f0dd820 has void Camera_WorldToScreen(struct EffectPosition *value). */
 extern void Camera_WorldToScreen__f0de21c(struct Effect04Vector *position) __asm__("Camera_WorldToScreen");
-void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x,
-                              s32 z);
 /* VIEW(f0de21c): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); hue has extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *). */
 extern void Vector_AddPolarOffset__f0de21c(s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
 /* VIEW(f0de21c): routine Actor_Spawn as struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z); hue has extern struct ItemBreakFragmentObject *Actor_Spawn(s32, s32, s32, s32). */
 extern struct Actor *Actor_Spawn__f0de21c(s32 kind, s32 x, s32 y, s32 z) __asm__("Actor_Spawn");
-struct ResourceEntry *Sprite_ShareVramCacheEntry(void *sprite,
-                                                 struct ResourceEntry *last);
+/* VIEW(f0dcb44): routine Sprite_ShareVramCacheEntry as struct ResourceEntry *Sprite_ShareVramCacheEntry(void *sprite, struct ResourceEntry *last); module/field/event_commands.h has void *Sprite_ShareVramCacheEntry(void *sprite, void *last). */
+extern struct ResourceEntry *Sprite_ShareVramCacheEntry__f0dcb44(void *sprite,
+                                                 struct ResourceEntry *last) __asm__("Sprite_ShareVramCacheEntry");
 /* VIEW(f0de21c): routine Func_08020210 as s32 Func_08020210(struct Actor *object, struct Effect04Vector *position); f0dd054 has s32 Func_08020210(struct Actor *object, struct Vec3 *position). */
 extern s32 Func_08020210__f0de21c(struct Actor *object, struct Effect04Vector *position) __asm__("Func_08020210");
-s32 ScriptObject_CheckOverlapFar(struct Actor *object,
-                                 struct Effect04Vector *position);
-s32 Func_080ce31c(s32 kind);
-s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target);
-s32 Resource_ResetEntry(u32 slot);
 /* VIEW(f0de21c): routine Func_080de060 as void Func_080de060(struct FieldParticle *slot); the definition has void Func_080de060(struct RadialBurstEffect *effect). */
 extern void Func_080de060__f0de21c(struct FieldParticle *slot) __asm__("Func_080de060");
-
-extern const u8 gData_080f0ef8[];
-extern const u8 gData_080f0e58[];
 
 // Twelve sparks burst over the user, two frames apart; a ball grows in
 // front of it and flies off with three trailing copies, and the target is
@@ -143,7 +105,7 @@ void Func_080de21c(void) {
       copy->motionFlags = 0;
       Actor_SetMode(copy, 5);
       Animation_ApplyChildValuesFar(copy, 2);
-      resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
+      resource = Sprite_ShareVramCacheEntry__f0dcb44(copy->sprite, resource);
     }
   }
   marker = resource->vramBlock;
@@ -198,7 +160,6 @@ void Func_080de21c(void) {
     Resource_ResetEntry(marker);
 }
 
-
 struct OrbitingParticle;
 
 s32 BattleEffect_UpdateOrbitingParticleMain(struct OrbitingParticle *particle) {
@@ -224,12 +185,6 @@ void BattleEffect_UpdateOrbitingParticleFade(struct Actor *object) {
                            (u32)gBattleEffect_SharedParticleScript);
   }
 }
-
-struct OrbitingParticleVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
 
 void BattleEffect_UpdateOrbitingParticleLeft(struct Actor *particle) {
   struct OrbitingParticleVector pos;
@@ -276,11 +231,6 @@ void BattleEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
     }
   }
 }
-
-struct OrbitingParticleChild {
-  u8 reserved00[35];
-  u8 flags;
-};
 
 void FieldEffect_RunFrostOnTarget(void) {
   struct BattleFxScene *state = Ram_HeapSlots->effectWork;

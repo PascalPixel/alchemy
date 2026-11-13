@@ -55,4 +55,6 @@ extern u8 gSoundFlags[];
 s32 Sound_GetBgmRestoreDelayFar(void);
 void Sound_WaitForJingle(void);
 
+extern s32 gBuildStamp[];
+
 #endif

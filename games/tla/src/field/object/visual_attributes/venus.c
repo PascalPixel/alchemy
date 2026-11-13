@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "module/field/field.h"
 
 struct BattleFxScene;
 
@@ -136,9 +137,6 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
 }
 
 struct BattleFxScene;
-
-void BattleEffect_UpdateDescendingOrbitObject(
-    struct DescendingOrbitObject *arg);
 
 /// Field effect sprite callback of a Mercury Djinni's droplets: each falls from
 /// 100 pixels above (on screen) to a random point 2 to 8 pixels round a spot 15

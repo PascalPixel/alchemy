@@ -4,24 +4,16 @@
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"
+#include "fixed_math.h"
+#include "module/field/field.h"
+#include "module/field/map.h"
+#include "module/field/object.h"
+#include "module/field/resource_slot.h"
+#include "module/system/system.h"
+#include "transform.h"
 
-/// One word of the table at Ram_MapBlocks, 32 words to a row.
-struct Data02020000 {
-  u32 unk0 : 24;
-  /// Passed to Func_0802d088; region / 10 picks the set. The Broken Seal's
-  /// WorldMapCell keeps the encounter region at these bits.
-  u32 region : 6;
-  u32 unk1e : 2;
-};
-
-extern const u32 gData_0802ed34[4][9];
-extern u8 gData_02028000[];
 /* VIEW(world_map): variable gWorldMapWork as extern u8 gWorldMapWork[]; battle.h has extern struct WorldMapWork gWorldMapWork; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:8903: `gWorldMapWork' has an incomplete type. */
 extern u8 gWorldMapWork__world_map[] __asm__("gWorldMapWork");
-
-void Func_0802d088(s32 region, s32 mode);
-void Func_080c8970(void *palette);
-void TilesetAnim_StartAll(const u16 *script);
 
 void Func_0802be4c(s32 x, s32 z) {
   u8 *buffer;
@@ -111,29 +103,6 @@ void Func_0802be4c(s32 x, s32 z) {
   }
   Heap_Release(buffer);
 }
-
-
-struct MapScanline {
-  u8 unk00[20];
-};
-
-struct MapAffinePair {
-  u32 words[8];
-};
-
-struct MapAffineWork {
-  struct MapScanline scanlines[160];
-  struct MapAffinePair pages[2][160];
-};
-
-struct PerspectiveWindow {
-  u8 unk000[0x104];
-  u16 windowTop;
-  u16 windowBottom;
-  u16 shownTop;
-  u16 shownBottom;
-  u16 windowPending;
-};
 
 void Func_0802c088(void) {
   struct MapAffinePair(*affinePages)[160] =
@@ -269,22 +238,8 @@ void Map_RenderPaletteMappedColumn(u32 tileColumn) {
   } while (row <= 63);
 }
 
-
-extern u32 gData_03001144;
-extern u32 Data_03001244;
-
 u32 Random16(void);
-s32 Trig_Cos(s32 angle);
-s32 Trig_Sin(s32 angle);
-void Projection_Set(s32 distance, s32 nearPlane, s32 farPlane);
-void SceneTransform_ApplyPosition(void *position);
-void SceneTransform_ApplyYaw(s32 yaw);
-void SceneTransform_ApplyPitch(s32 pitch);
-void Transform_SetLookAt(s32 *eye, s32 *target);
-void Func_0802c58c(void);
 void Func_0802dd70(s32 ratio, s32 *position, void *affineWork);
-
-
 
 void Func_0802c240(void) {
   u8 *camera = Ram_HeapSlots->cameraWork;
@@ -356,9 +311,9 @@ void Func_0802c240(void) {
   }
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 96;
-  Projection_Set(distance, height / 2, height * 2);
+  Projection_Set__resource_slot(distance, height / 2, height * 2);
   Render_ResetTransformState();
-  SceneTransform_ApplyPosition(cameraPosition);
+  SceneTransform_ApplyPosition__resource_slot(cameraPosition);
   SceneTransform_ApplyYaw(view->yaw);
   SceneTransform_ApplyPitch(view->pitch);
   if (view->fixedEye == 0) {
@@ -382,16 +337,15 @@ void Func_0802c240(void) {
       affinePages + (gFrameCount & 1) * 0x1400);
 }
 
-struct MapTileWindow {
+/* VIEW(resource_slot): tag struct MapTileWindow as struct MapTileWindow__resource_slot; module/field/field.h has another definition. */
+struct MapTileWindow__resource_slot {
   s32 *origin;
   u8 unk004[0x144];
   u16 tileIds[32 * 32];
 };
 
-s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
-
 void Map_UpdateCurrentTileBlock(void) {
-  struct MapTileWindow *window = (struct MapTileWindow *)Ram_HeapSlots->mapWork;
+  struct MapTileWindow__resource_slot *window = (struct MapTileWindow__resource_slot *)Ram_HeapSlots->mapWork;
   s32 x0 = 0;
   s32 y0 = 0;
   u32 layer;

@@ -5,8 +5,7 @@
 #include "../system_internal.h"
 #include "battle_unit.h"
 #include "owner_state.h"
-
-extern struct BattleUnit gOwnerStates[];
+#include "module/tla.h"
 
 void *Unit_Get(s32 owner) {
   struct BattleUnit *states;
@@ -118,7 +117,6 @@ s32 GameFlag_GetNibble(u32 flag) {
   result &= mask << shift;
   return result >> shift;
 }
-
 
 /// Sets the four bits `flag` is in.
 void GameFlag_SetNibble(s32 flag, s32 value) {

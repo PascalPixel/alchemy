@@ -8,14 +8,13 @@
 #include "field_effect.h"
 #include "event_inline.h"
 #include "../jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "event_work.h"
+#include "module/field/field_effect.h"
+#include "module/scene/jupiter_lighthouse_room_3.h"
+#include "module/scene/scene.h"
 
-void Event_Start(void);
-void Map_CenterOnFollowedPoint(void);
-s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02001788(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Event_End(void);
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
@@ -79,7 +78,6 @@ void Func_02001f50(void) {
   Event_End();
 }
 
-extern struct CellTarget gData_02002e34;
 void Func_02001d48();
 void Func_02001db8();
 
@@ -112,13 +110,6 @@ s32 Func_020020e8(void) {
 }
 
 #include "cell_target.h"
-
-struct JupiterLighthouseRoom8EventWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-  u8 unk1b0[0x1c];
-  struct Actor *marker;
-};
 
 void Func_02002198(s32 x, s32 z, s32 effect) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);

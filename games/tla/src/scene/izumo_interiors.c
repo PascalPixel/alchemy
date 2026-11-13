@@ -16,6 +16,10 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/scene/izumo_interiors.h"
+#include "module/scene/scene.h"
 
 s32 Func_02000038(void) {
   struct Actor *object = Actor_GetById(10);
@@ -58,19 +62,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
    } *)(base))                                                                 \
        ->v)
 
-extern struct ActorPlacement gData_02002b40[];
-extern struct ActorPlacement gData_02002cf0[];
-extern struct ActorPlacement gData_02002d80[];
-extern struct Trigger gData_02002f78[];
-extern struct Trigger gData_02003164[];
-extern struct Trigger gData_0200323c[];
-
-void Event_Start(void);
-void Event_End(void);
 void Func_02002304(s32 slot, s32 actor);
-void Func_0200230c(s32 actor);
-void Func_02002314(s32 slot, s32 actor);
-void Func_0200061c(s32 mode);
 
 static inline void LeaderAnimate(s32 animation, s32 frames) {
   Func_080d47b4(gMainRoutineWork.currentOwner, animation, frames);
@@ -277,8 +269,6 @@ s32 Func_0200051c(void) {
 void Func_02000604(void) { Func_0200061c(0); }
 
 void Func_02000610(void) { Func_0200061c(1); }
-
-void Func_02001d8c(void);
 
 /// The scene that opens with MsgWarriorsAppearedFrom: the warriors confront
 /// the party in front of persons 20, 21 and 22 through three yes-or-no
@@ -990,14 +980,6 @@ void Func_0200061c(s32 mode) {
   Event_End();
 }
 
-typedef s32 (*HandlerFn)(void);
-
-void BattleEffect_LoadActionEffectResources(s32, s32);
-void BattleEffect_SetupObjectPair(s32, s32);
-void BattleEffect_StopMainActor(void);
-void BattleEffect_CleanupSceneObjects(void);
-void EventObject_Initialize(void);
-
 s32 Func_02001d84(void) { return -1; }
 
 void Func_02001d8c(void) {
@@ -1012,11 +994,16 @@ void Func_02001d8c(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-void BattleEffect_StartArcEffect();
-void BattleEffect_EndArcEffect();
-void BattleEffect_WaitForArcGroups();
-void BattleEffect_SetObjectUpdateMode();
-void PartyInventory_Remove();
+/* VIEW(izumo_interiors): routine BattleEffect_StartArcEffect as void BattleEffect_StartArcEffect(); module/field/event_commands.h has void BattleEffect_StartArcEffect(void). */
+extern void BattleEffect_StartArcEffect__izumo_interiors() __asm__("BattleEffect_StartArcEffect");
+/* VIEW(izumo_interiors): routine BattleEffect_EndArcEffect as void BattleEffect_EndArcEffect(); module/field/event_commands.h has void BattleEffect_EndArcEffect(void). */
+extern void BattleEffect_EndArcEffect__izumo_interiors() __asm__("BattleEffect_EndArcEffect");
+/* VIEW(izumo_interiors): routine BattleEffect_WaitForArcGroups as void BattleEffect_WaitForArcGroups(); module/field/event_commands.h has void BattleEffect_WaitForArcGroups(void). */
+extern void BattleEffect_WaitForArcGroups__izumo_interiors() __asm__("BattleEffect_WaitForArcGroups");
+/* VIEW(izumo_interiors): routine BattleEffect_SetObjectUpdateMode as void BattleEffect_SetObjectUpdateMode(); module/field/event_commands.h has void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode). */
+extern void BattleEffect_SetObjectUpdateMode__izumo_interiors() __asm__("BattleEffect_SetObjectUpdateMode");
+/* VIEW(izumo_interiors): routine PartyInventory_Remove as void PartyInventory_Remove(); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
+extern void PartyInventory_Remove__izumo_interiors() __asm__("PartyInventory_Remove");
 
 void Func_02001dd0(void) {
   s32 t9, t21, t31;
@@ -1045,9 +1032,9 @@ L_02009e48:
   Actor_ShowEmote(15, 0x105, 120);
   Func_080d47b4(15, 0x106, 60);
   Event_ShowMessageAndWait(15, 0);
-  BattleEffect_StartArcEffect();
+  BattleEffect_StartArcEffect__izumo_interiors();
   t21 = ((s32)Actor_GetById(15));
-  BattleEffect_SetObjectUpdateMode(t21, 2);
+  BattleEffect_SetObjectUpdateMode__izumo_interiors(t21, 2);
   Sound_Play(201);
   Event_Wait(60);
   Actor_SetPosition(24, PIXELS(144), PIXELS(520));
@@ -1057,9 +1044,9 @@ L_02009e48:
   Actor_ArmCallback(24, FACING_SOUTH, 0);
   Event_Wait(60);
   t31 = ((s32)Actor_GetById(15));
-  BattleEffect_SetObjectUpdateMode(t31, 0);
-  BattleEffect_WaitForArcGroups();
-  BattleEffect_EndArcEffect();
+  BattleEffect_SetObjectUpdateMode__izumo_interiors(t31, 0);
+  BattleEffect_WaitForArcGroups__izumo_interiors();
+  BattleEffect_EndArcEffect__izumo_interiors();
   Event_Wait(30);
   Event_Wait(30);
   Actor_SetAngleToward(15, 24, 0);
@@ -1093,7 +1080,7 @@ L_02009e48:
   Event_ShowMessageAndWait(15, 0);
   Event_Wait(60);
   GameFlag_SetBit(0x92c);
-  PartyInventory_Remove(0x1c3);
+  PartyInventory_Remove__izumo_interiors(0x1c3);
   Event_End();
 }
 
@@ -1140,9 +1127,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 #include "objcmd.h"
 
-extern s32 gData_02002324[];
-extern s32 gData_020024f0[];
-extern s32 gData_020026bc[];
 extern s32 gData_020028dc[];
 
 s32 gData_02002324[] = {

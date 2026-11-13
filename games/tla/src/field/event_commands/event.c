@@ -3,13 +3,13 @@
 // Part of event_commands.c.
 
 #include "../event_commands_internal.h"
-
-extern u8 gDebugMode;
-
-struct EventWaitWork {
-  u8 unk000[0x1b8];
-  s32 waitMode;
-};
+#include "flag_call.h"
+#include "frame.h"
+#include "gamepak/far_call/game.h"
+#include "gamepak/far_call/window.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
 
 void Event_UpdateDebugSkip(void) {
   struct EventWaitWork *work = Ram_HeapSlots->eventWork;
@@ -82,8 +82,6 @@ void Event_End(void) {
 
 void Event_EmptyCallback(void) {}
 
-void Func_080caa4c(s32 object);
-
 void Event_EmptyObjectHook(void) {}
 
 struct Actor *Event_RunObjectHookAndWait(s32 object) {
@@ -92,11 +90,6 @@ struct Actor *Event_RunObjectHookAndWait(s32 object) {
   wait(1);
   return ObjectTable_Get(Party_GetLeaderActor());
 }
-
-struct EventWordWork {
-  u8 unk00[0x10];
-  s32 word10;
-};
 
 void Event_CallWithLastActiveObjectId(s32 event_id) {
   Event_SpawnObjectTable((struct ActorPlacement *)event_id,
@@ -133,19 +126,6 @@ s32 Event_ValidatePackedId(u32 packed_id) {
     return -3;
   return 0;
 }
-
-struct OwnerVitals {
-  u8 unk000[20];
-  s16 hpRatio;
-  s16 ppRatio;
-  u8 unk018[28];
-  s16 maxHp;
-  s16 maxPp;
-  s16 hp;
-  s16 pp;
-  u8 unk03c[0x131 - 60];
-  u8 status;
-};
 
 void Event_ClearValidPackedIds(void) {
   if (Event_ValidatePackedId(gMainRoutineWork.packedEvents[0]))
@@ -207,8 +187,6 @@ void Party_RemoveMemberRestored(s32 owner) {
   }
 }
 
-s32 PartyInventory_FindRoomFar(s32 item);
-
 s32 Func_080d25c8(s32 item) {
   Party_CountMembersFar();
   if (PartyInventory_FindRoomFar(item) < 0) {
@@ -229,19 +207,7 @@ s32 Func_080d25c8(s32 item) {
 #define ITEM_GIVEN_MODE 3
 #endif
 
-struct ItemHead {
-  u8 unk00[3];
-  u8 flags;
-};
-
-s32 PartyInventory_AddFar(s32 item);
-s32 Func_08108068(s32 *member, s32 *slot);
-void Message_CloseFinishedWindowsFar(void);
-s32 Item_AdjustCounterFar(s32 item, s32 delta);
 s32 Inventory_GetQuantityFar(s32 member, s32 slot);
-s32 Inventory_CountItemFar(s32 member, s32 item);
-void Inventory_DiscardFar(s32 member, s32 slot);
-void Unit_RefreshPsynergyFar(s32 member);
 
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -353,10 +319,6 @@ void Actor_WaitForAnimationEnd(s32 objectId, s32 value) {
   }
 }
 
-s32 Message_AllTypedFar(void);
-s32 YesNoMenu_RunFar(s32 useBottom, s32 name, s32 width, s32 third);
-void Window_CloseMatchingIdFar(s32 sprite);
-
 /// The event command "choose yes or no": waits for the message, asks yes or no
 /// below it or above it when the message windows reach past row 15, and the
 /// speaker nods (animation 3) at yes and shakes its head (4) at no. It waits
@@ -412,9 +374,6 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
 
 s32 Func_080d295c(s32 a) { return YesNoMenu_RunFar(a, 0, 0, 0); }
 
-void BattleEffect_StartEffectObject22(s32 item, s32 mode);
-void GameFlag_SetBit(s32 flag);
-
 /// Gives the party item from actor: with no room it shows the item, says it
 /// was found and left behind and returns -1; otherwise it adds the item, sets
 /// flag (unless -1) and returns 0.
@@ -441,7 +400,8 @@ s32 Func_080d296c(s32 actor, s32 item, s32 flag) {
 
 // Messages: teach an ability and display the learning message.
 
-void Unit_LearnPsynergyFar(void);
+/* VIEW(event_commands): routine Unit_LearnPsynergyFar as void Unit_LearnPsynergyFar(void); gamepak/far_call/game.h has void Unit_LearnPsynergyFar(s32 owner, s32 action). */
+extern void Unit_LearnPsynergyFar__event_commands(void) __asm__("Unit_LearnPsynergyFar");
 
 /// Teaches the ability, plays a sound, shows a message and waits for it to
 /// advance.
@@ -449,7 +409,7 @@ void Unit_LearnPsynergyFar(void);
 /// ability: ability ID (message ability 4).
 void Party_LearnAbility(s32 unit, s32 ability) {
   // Declared without arguments, but unit and ability pass through in r0 and r1.
-  Unit_LearnPsynergyFar();
+  Unit_LearnPsynergyFar__event_commands();
   Sound_PlayFar(83);
   MessageArgument_PushFar(unit, 1);
   MessageArgument_PushFar(ability, 4);

@@ -4,15 +4,7 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
-
-struct ForgeRecipe {
-  s16 item;
-  s16 chance;
-  s16 results[8];
-  s16 weights[8];
-};
-
-extern struct ForgeRecipe gData_0810cc34[];
+#include "module/shop/shop.h"
 
 /// The forge's recipe for an item, or NULL when it has none; the table ends at
 /// an item of -1.

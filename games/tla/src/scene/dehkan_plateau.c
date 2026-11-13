@@ -22,6 +22,13 @@
 #include "field_sprite.h"
 #include "iwram_call.h"
 #include "event_work.h"
+#include "event.h"
+#include "flag_call.h"
+#include "module/field/event_commands.h"
+#include "module/scene/dehkan_plateau.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "scene_call.h"
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -35,47 +42,16 @@ extern const u8 gData_02003fb8[];
 extern const u8 gData_02003fc0[];
 extern const u8 gData_02003fc4[];
 
-void Func_020000a4(const void *data, s32 a, s32 b);
 void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
-void Func_02001474(s32 show);
 void Func_02002180(void);
-void Event_Start(void);
-void Event_End(void);
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
-void Func_02003de8(void);
-void Func_020015b8(struct Actor *object);
-void Func_0200172c(void);
 void Func_02001804(void);
-
-struct CellRecord {
-  u16 present;
-  u16 x;
-  u16 y;
-  u16 unk06[3];
-};
 
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-void Func_02003cf0(void);
-void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
-void BattleEffect_SetupObjectPair(s32 a, s32 b);
-void BattleEffect_StopMainActor(void);
-void BattleEffect_CleanupSceneObjects(void);
-void EventObject_Initialize(void);
-void Func_02003cc0(s32 id);
-void Func_02003d40(struct Actor *object, s32 mode);
-void Func_02003bb8(struct Actor *object);
-void Func_02002b68(void);
-void Func_02002f08(void);
-
-struct EffectWork7c4 {
-  u8 unk000[0x7c4];
-  s16 active;
-  s16 timer;
-};
+/* VIEW(dehkan_plateau): routine Func_02003d40 as void Func_02003d40(struct Actor *object, s32 mode); module/scene/airs_rock_inside.h has void Func_02003d40(void). */
+extern void Func_02003d40__dehkan_plateau(struct Actor *object, s32 mode) __asm__("Func_02003d40");
 
 void Func_0200118c(void) {
   GameFlag_SetBit(0x209);
@@ -469,10 +445,6 @@ void Func_02001930(void) {
     Func_02001804();
 }
 
-extern u16 gData_02003fea[];
-extern u16 gData_020041b6[];
-extern u16 gData_020041b8[];
-
 void Func_020019b8(void) {
   u16 *record = gData_020041b6;
   s32 flag = 0x240;
@@ -498,54 +470,18 @@ void Func_020019b8(void) {
   }
 }
 
-extern u8 gMapShapeGrid[];
-
-s32 Math_Cosine(s32 angle);
-
-void ObjectVisual_CopyAttributes(s32 id, s32 value);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_0200056c(s32 id);
+/* VIEW(dehkan_plateau): routine ObjectVisual_CopyAttributes as void ObjectVisual_CopyAttributes(s32 id, s32 value); module/field/object.h has void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId). */
+extern void ObjectVisual_CopyAttributes__dehkan_plateau(s32 id, s32 value) __asm__("ObjectVisual_CopyAttributes");
 void Func_020006ec(struct Actor *object, struct Actor *other);
-void Func_02000974(s32 mode);
-void Func_02000aa8(void);
-void Func_02000c4c(s32 level, s32 layer);
-void Func_02003ba0(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
-s32 Func_02003c10(s32 layer, s32 x, s32 z);
 void Actor_MoveToObject(s32 id, s32 target);
-s32 Func_02003d20(void);
-s32 Func_02003d80(void *sprite, s32 frame);
-s32 Func_02003db0(struct Actor *object);
-s32 Func_02003dd0(s32 layer, s32 shape, s32 height);
-struct Actor *Func_02003dd8(s32 *position, s32 mode);
-void Effect_AdvanceMotionAtLeaderPriority(struct Actor *object);
+/* VIEW(dehkan_plateau): routine Func_02003d80 as s32 Func_02003d80(void *sprite, s32 frame); module/scene/mars_lighthouse_room_f.h has void Func_02003d80(void). */
+extern s32 Func_02003d80__dehkan_plateau(void *sprite, s32 frame) __asm__("Func_02003d80");
+/* VIEW(dehkan_plateau): routine Effect_AdvanceMotionAtLeaderPriority as void Effect_AdvanceMotionAtLeaderPriority(struct Actor *object); module/field/field_effect.h has void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object). */
+extern void Effect_AdvanceMotionAtLeaderPriority__dehkan_plateau(struct Actor *object) __asm__("Effect_AdvanceMotionAtLeaderPriority");
 
-/// The effect fields of an Actor, as field_effect.h names them.
-struct EffectView {
-  u8 unk00[0x30];
-  s32 scaleRateX;
-  s32 scaleRateY;
-  u8 unk38[0x0c];
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  struct FieldSprite *sprite;
-  u8 unk54[0x10];
-  u16 spin;
-  u8 unk66[6];
-  void (*update)(struct Actor *object);
-};
-
-extern u16 gData_02003ff2[];
-extern u16 gData_02004012[];
-extern u16 gData_02004032[];
-extern u16 gData_02004052[];
-extern u16 gData_02004068[];
-extern u16 gData_02004110[];
-extern u16 gData_02004170[];
 extern struct Actor *gData_02004420;
 extern s32 gData_02005678;
-extern s32 gData_0200567c;
 
 #define SCENE(name) ((s32)&SceneId_##name)
 
@@ -785,11 +721,6 @@ void Func_02001ff4(void) {
   Func_02001f68();
 }
 
-struct MapCells {
-  u8 unk000[0x138];
-  u8 *cells;
-};
-
 void Func_02000e9c(struct Actor *object);
 
 void Func_0200200c(struct Actor *object) {
@@ -821,8 +752,6 @@ void Func_0200200c(struct Actor *object) {
   }
 }
 
-s32 Func_02003de0(void);
-s32 Func_02003d10(s32 owner);
 void Func_02000d78(const void *data);
 extern const u8 gData_02003fc8[];
 
@@ -838,11 +767,6 @@ void Func_020020dc(void) {
 }
 
 void Func_02002114(void) { Func_02000d78(gData_02003fc8); }
-
-struct EventWorkCbc {
-  u8 unk000[0xcbc];
-  struct Actor *active;
-};
 
 void Func_02002124(void) {
   struct EventWorkCbc *work = Ram_HeapSlots->eventWork;
@@ -889,7 +813,6 @@ void Func_020021b4(void) {
 // ---- games/tla/src/scene/dehkan_plateau/events_g.c ----
 // Scene code of overlay 0x655, in ROM order, from events_g's offset up to the next object the overlay links.
 
-
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
 extern const u8 gData_02003f80[];
@@ -902,33 +825,14 @@ extern const u8 gData_02003fb8[];
 extern const u8 gData_02003fc0[];
 extern const u8 gData_02003fc4[];
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
 struct Actor *Actor_GetById(u32 objectId);
-void Func_020000a4(const void *data, s32 a, s32 b);
 void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
-void Func_02001474(s32 show);
 void Func_02002180(void);
-void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Event_Start(void);
-void Event_End(void);
-void Event_ResolvePendingActions(s32 skip);
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
-void Sound_Play(s32 cue);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
-void Func_02003de8(void);
 void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                    s32 height);
-void Func_020015b8(struct Actor *object);
-void Func_0200172c(void);
 void Func_02001804(void);
-void Func_020021b4(void);
-void Func_02002604(void);
-
 
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
@@ -936,21 +840,11 @@ extern const struct CellRecord gData_02004066[];
 /* VIEW(events_g): routine Actor_SetHorizontalPositionAndAngleWithTerrain as void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16 angle); event.h has void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z, s32 angle); tried as the definition's void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x, s32 z, s16 angle), it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:936: conflicting types for `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
 extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(u32 id, s32 x, s32 z, s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
 s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
-void Func_02003cf0(void);
 struct Actor *Func_080d4568(void);
-void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
-void BattleEffect_SetupObjectPair(s32 a, s32 b);
-void BattleEffect_StopMainActor(void);
-void BattleEffect_CleanupSceneObjects(void);
-void EventObject_Initialize(void);
-void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
-void Actor_SetAngleToward(s32 id, s32 target, s32 mode);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Actor_Jump(s32 id, s32 a, s32 b);
-void Actor_ArmCallback(s32 id, s32 a, s32 b);
 void Actor_WatchAndSetScript(s32 id, s32 target);
-void Event_Wait(s32 frames);
 /* VIEW(events_g): routine Task_Add as void Task_Add(void(*func) (void), s32 priority); task.h has s32 Task_Add(TaskFunc func, s32 order); tried as the definition's s32 Task_Add(TaskFunc func, s32 order), which the object already declares, Func_02002604 moves: 1 of 20 instructions in tla-ja. */
 extern void Task_Add__events_g(void (*func)(void), s32 priority) __asm__("Task_Add");
 void Task_RemoveFar(void (*func)(void));
@@ -960,7 +854,6 @@ void Task_RemoveFar(void (*func)(void));
 static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
   Camera_MoveWithinMapBounds(a, b, c, d);
 }
-
 
 static __inline__ void Actor_MoveTo(s32 id, s32 x, s32 z) {
   Actor_SetPositionAndReset(id, x, z);
@@ -1066,7 +959,6 @@ void Func_02002458(void) {
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-
 
 void Func_02002574(void) {
   struct EffectWork7c4 *work = Ram_HeapSlots->effectWork;

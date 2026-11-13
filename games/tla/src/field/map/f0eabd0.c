@@ -3,6 +3,9 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "actor_view.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/system/system.h"
 
 struct SwitchCell {
   u8 unk00[2];
@@ -24,10 +27,7 @@ struct RestoreMap {
 extern u8 gMapShapeGrid[];
 
 struct Actor *Actor_GetById(u32 objectId);
-s32 Func_080eab70(struct Actor *object);
-u32 Func_080202f0(s32 terrain, s32 x, s32 z);
 #include "field.h"
-s32 Func_080eab98(s32 unused, s32 key, s32 value);
 
 void Func_080eabd0(u16 *actors) {
   struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
@@ -166,7 +166,6 @@ void Func_080eadfc(void) {
   }
 }
 
-void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 struct Actor *Func_080eaf28(s32 *position, s32 check_y);
 
 struct Actor *Func_080eaeb4(void) {
@@ -194,7 +193,8 @@ struct Actor *Func_080eaeb4(void) {
 
 #include "fixed_math.h"
 
-struct EventWork {
+/* VIEW(f0eabd0): tag struct EventWork as struct EventWork__f0eabd0; event_work.h has another definition. */
+struct EventWork__f0eabd0 {
   u8 unk00[20];
   struct Actor *objects[64];
 };
@@ -203,7 +203,7 @@ struct Actor *Func_080eaf28(s32 *position, s32 checkY) {
   u32 i;
 
   for (i = 8; i < 64; i++) {
-    struct EventWork *event = Ram_HeapSlots->eventWork;
+    struct EventWork__f0eabd0 *event = Ram_HeapSlots->eventWork;
     struct Actor *object = event->objects[i];
 
     if (checkY) {
@@ -256,8 +256,6 @@ void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
 #include <affine.h>
 
 #define Q16_ONE 0x10000
-
-void Func_080140d8(void *entry, s32 depth);
 
 // Draws a field effect's sprite. An unscaled, unrotated sprite needs no
 // affine matrix; any other takes one, and one scaled past 1 is drawn in a
@@ -356,7 +354,8 @@ struct ScreenSprite {
   u8 unk14[0x14];
 };
 
-void Camera_WorldToScreen(s32 *position);
+/* VIEW(f0eabd0): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
+extern void Camera_WorldToScreen__f0eabd0(s32 *position) __asm__("Camera_WorldToScreen");
 
 /// Places sprite at the screen position of world position and draws it.
 void EffectSprite_DrawAtWorldPosition(struct ScreenSprite *sprite,
@@ -371,7 +370,7 @@ void EffectSprite_DrawAtWorldPosition(struct ScreenSprite *sprite,
     arg = p;
     p[1] = position[1];
     p[2] = position[2];
-    Camera_WorldToScreen(arg);
+    Camera_WorldToScreen__f0eabd0(arg);
     sprite->x = screen[0];
     sprite->y = screen[2];
     Func_080eb01c(sprite);

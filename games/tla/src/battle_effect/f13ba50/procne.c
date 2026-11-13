@@ -3,6 +3,11 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/battle_effect/f13ba50.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "resource_ids.h"
 
 // Summon 8 (BattleEffect_RunSceneEffect's case 8). Twin: The Broken Seal's
 // BattleEffect_RunProcne, ported by trial 2 and rewritten here. The
@@ -21,36 +26,6 @@
 // to s16 * gave screen + 6 its own register and two spills); the twin's
 // declaration order; wave and drift in a block opened after the blitter fetch,
 // whose spill slots fall below the pointer to draw.
-
-void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
-
-s32 ArcTan2(s32 x, s32 y);
-u32 Math_UnsignedMulHigh(u32 value, u32 magic);
-s32 Math_UnsignedMulHighAdd(s32 value, u32 magic, s32 multiplier);
-
-struct Point2D {
-  s32 x;
-  s32 y;
-};
-
-struct Scale {
-  s32 x;
-  s32 y;
-};
-
-extern char ResourceId_WhirlwindSheet;
-
-extern char ResourceId_VioletSkyBackdrop;
-extern char ResourceId_VioletCometSheet;
-
-extern struct Scale Data_08196df8; // the comets' unit scale
-extern u8 Data_0819793e[];         // the nine comets' grid: x
-extern u8 Data_08197947[];         // ... and depth
-extern u16 Data_08197950[];        // the four comet strikes' frames
-extern u8 Data_08197958[];         // a strike's three pictures: widths
-extern u8 Data_0819795b[];         // ... heights
-extern u8 Data_0819795e[];         // ... raise above the mark
-extern u16 Data_08197962[];        // ... cell offsets
 
 // frame / 4 % 3, as the source writes it: the multiply-high routine with the
 // reciprocal of 3, where a plain % calls __modsi3.
@@ -576,8 +551,6 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
   }
 }
 
-void Func_08147aec(struct BattleEffectArgument *effect, s32 mode);
-
 /// Abilities: Dragon Driver (kind 385).
 DEFINE_EFFECT_KIND(BattleEffect_RunDragonDriver, Func_08147aec, 1)
 
@@ -590,21 +563,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, Func_08147aec, 0)
 
 // The high halfword of a 16.16 value: its whole pixels.
 #define HI(v) (((s16 *)&(v))[1])
-
-void Func_0816442c(s32 formation, s32 x, s32 y); // ..PlaceFormationObjects
-void Func_0816467c(s32 formation, s32 x, s32 y); // ..RunImpactBurst
-void Animation_ApplyChildArgumentFar(void *object, s32 animation);
-
-extern char ResourceId_EmberStreakSheet;
-
-extern char ResourceId_LightningBoltSheet; // directory row 0x188
-extern u8 Data_08197968[];                 // a grain's added speed, by grain
-extern u8 Data_0819796c[];                 // a spark's two pixels
-extern u8 Data_0819796e[];                 // a grain's size, by grain
-extern u8 Data_08197972[];                 // the streak's six pictures: widths
-extern u8 Data_08197978[];                 // ... heights
-extern u8 Data_0819797e[];                 // ... drops below the streak
-extern u16 Data_08197984[];                // ... cell offsets
 
 #define STREAK_SHEET 0x3000 // the ember streaks, after the flashes
 #define FORMATION_RESOURCE 647

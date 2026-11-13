@@ -4,8 +4,13 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
-
-s32 Func_0811a24c(s32 sideMask, u16 *unitIds);
+#include "flag_call.h"
+#include "frame.h"
+#include "gamepak/far_call/window.h"
+#include "module/battle/battle.h"
+#include "module/battle/presentation.h"
+#include "module/system/system.h"
+#include "range_falloff.h"
 
 void Func_081195ec(void) {
   u16 actors[6];
@@ -62,23 +67,6 @@ void BattleCamera_Create(void) {
   camera->distance = 0x1000000;
 }
 
-struct BattleFxRequest {
-  s32 field00;
-  s32 field04;
-  s32 field08;
-  s32 field0c;
-  s32 field10;
-  s32 field14;
-  s32 field18;
-  u8 unk1c[8];
-  s16 field24;
-  u8 unk26[0x32];
-};
-
-void Func_08138050(struct BattleFxRequest *request, s32 value);
-
-s32 BattleUnit_SetFar(s32 slot, s32 unit, s32 mask);
-
 void Func_08119734(s32 id) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   s32 unit;
@@ -114,8 +102,6 @@ void Func_081197a8(s32 value) {
   request.field18 = 0;
   Func_08138050(&request, value);
 }
-
-s32 GameFlag_Test(s32);
 
 s32 Tutorial_GetDjinnGiveMessage(void) {
   if (GameFlag_Test(0x175))
@@ -161,42 +147,18 @@ struct EncounterWork {
   u8 nextExtraCount;
   u8 unk866[0x16];
 };
-extern u8 gCpuLoadDisplayEnabled;
 /// The actor sprite slot buffers, 0x4000 bytes a slot.
 extern u8 Data_02018000[];
 
 // The ROM's call here keeps the whole return register, as an s32 return
 // does; system/system/flags.c defines it returning u8.
 s32 GameFlag_GetByte(s32 flag);
-s32 Event_GetSpecialValueFar(void);
 void ObjectSystem_InitializeFar(s32 mode);
-void WindowSystem_InitBattleFar(s32 mode);
-s32 Func_08127cd4(s32 enemyGroup);
 void Sound_LoadReverbCode(s32 preset);
-void BattleUnit_RefreshPlacement(void);
-void PartyStatus_CreateWindowFar(s32 layout);
-void Func_081263c4(void);
-void Func_081263fc(s32 mode, s32 background, s32 value);
-void BattleSpoils_Clear(void);
-s32 BattleUnit_ListIds(s32 groups, u16 *dst);
-void Func_08125d74(s32 enemyCount, s32 enemyGroup);
-void Func_0811b9fc(void);
-void Func_0811d7e4(void);
-s32 Battle_GatherActions(struct BattleActionRecord *actions);
 struct BattleSortedUnitEntry;
-s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries);
-s32 Func_0811d9cc(struct BattleActionRecord *action, s32 delay);
-s32 AutoBattle_RunAction(s16 *action);
-s32 Battle_FindTaggedSlotByValue(u32 id);
-void Func_08124cc0(void);
-void Battle_ProcessTurnEnd(void);
-s32 Message_AllTypedFar(void);
-void Window_CloseFar(s32 window, s32 mode);
+/* VIEW(battle): routine Window_CloseFar as void Window_CloseFar(s32 window, s32 mode); gamepak/far_call/window.h has void Window_CloseFar(struct RenderInput *window, s32 mode). */
+extern void Window_CloseFar__battle(s32 window, s32 mode) __asm__("Window_CloseFar");
 void Func_08120060(s32 x, s32 y);
-void Battle_AwardSpoils(void);
-void Fade_ToBlack(s32 vblanks);
-void Fade_Wait(void);
-void Func_081263f0(void);
 
 s32 Func_081197f0(s32 enemyGroup) {
   struct BattleCamera *camera;
@@ -458,12 +420,12 @@ s32 Func_081197f0(s32 enemyGroup) {
     window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 7, 0, 4, 1);
     while (Message_AllTypedFar() == 0)
       wait(1);
-    Window_CloseFar(window, 1);
+    Window_CloseFar__battle(window, 1);
     wait(1);
     window =
         Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 8, 10, 4, 1);
     Func_08120060(44, 24);
-    Window_CloseFar(window, 1);
+    Window_CloseFar__battle(window, 1);
     wait(1);
   }
 

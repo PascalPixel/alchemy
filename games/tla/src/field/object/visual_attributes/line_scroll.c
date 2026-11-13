@@ -4,8 +4,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
-
-void GameFlag_SetBit(s32 flag);
+#include "module/field/field.h"
 
 /// Starts the leader's animation for leaving through an exit: centres it on
 /// its tile, at the tile's south edge, stops it and gives it the animation's
@@ -54,23 +53,6 @@ void ObjectEffect_StartContextEffect25(void) {
   GameFlag_SetBit(0x121);
 }
 
-struct ContextSprite {
-  u8 unk00[0xc];
-  s32 scale;
-  u8 unk10[0xa];
-  u8 flags;
-  u8 count;
-  u8 unk1c[0xc];
-  void *entries[4];
-};
-
-struct ContextEffectEntry {
-  u8 unk00[5];
-  u8 param;
-};
-
-void ResourceMetadata_ClearRecordFar(void *record);
-
 void ObjectEffect_EndContextEffect(s32 mode) {
   s32 zero;
   struct Actor *obj = ObjectTable_Get(gMainRoutineWork.currentOwner);
@@ -101,9 +83,6 @@ void ObjectEffect_EndContextEffect(s32 mode) {
   Actor_CommitPosition(obj);
 }
 
-
-s32 GameFlag_Test(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 void Camera_MoveWithinMapBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
 s32 ObjectEffect_RunPendingFlagEvent(void) {
@@ -154,16 +133,6 @@ void Func_080d5fd4(void) {
   metadata[5] = 15;
 }
 
-
-struct DmaFxPage {
-  u32 lines[0x1e0];
-};
-
-struct DmaFxPages {
-  struct DmaFxPage pages[2];
-  u8 page;
-};
-
 /// Writes the current page's first entry each frame; HBlank DMA writes the
 /// rest.
 void Func_080d5ff8(void) {
@@ -199,23 +168,6 @@ void Func_080d5ff8(void) {
           3,
       REG_DMA0);
 }
-
-
-struct DisplayScrollWork {
-  struct BgScroll rows[2][160][3];
-  u8 page;
-  u8 mode;
-  u16 frame;
-  u8 unkf04[4];
-  s32 freqX;
-  s32 freqY;
-  s32 stepX;
-  s32 stepY;
-  s32 ampX;
-  s32 ampY;
-};
-
-extern const s16 Data_080f08b0[];
 
 void Func_080d607c(void) {
   struct DisplayScrollWork *work = Ram_HeapSlots->unk84[1];
@@ -340,18 +292,6 @@ void Func_080d607c(void) {
   work->page ^= 1;
 }
 
-struct DmaFxWork {
-  u8 unk000[0xf01];
-  u8 kind;
-  u8 unkf02[6];
-  s32 unkf08;
-  s32 unkf0c;
-  s32 unkf10;
-  s32 unkf14;
-  s32 unkf18;
-  s32 unkf1c;
-};
-
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   while ((channel->control & DMA_ENABLE << 16) != 0) {
   }
@@ -398,8 +338,8 @@ void LineScroll_Stop(void) {
   }
 }
 
-
-struct GroundParticle {
+/* VIEW(visual_attributes): tag struct GroundParticle as struct GroundParticle__visual_attributes; ground_mask.h has another definition. */
+struct GroundParticle__visual_attributes {
   u8 unk00[4];
   u16 y : 8;
   u16 attr0 : 6;
@@ -422,12 +362,11 @@ struct GroundParticle {
 struct GroundParticleWork {
   u8 unk00[4];
   s32 tile;
-  struct GroundParticle particles[64];
+  struct GroundParticle__visual_attributes particles[64];
 };
 
-void Func_080140d8(struct GroundParticle *sprite, s32 depth);
-
-extern const s16 Data_080f0ab0[];
+/* VIEW(visual_attributes): routine Func_080140d8 as void Func_080140d8(struct GroundParticle *sprite, s32 depth); module/system/system.h has void Func_080140d8(void *entry, s32 slot). */
+extern void Func_080140d8__visual_attributes(struct GroundParticle__visual_attributes *sprite, s32 depth) __asm__("Func_080140d8");
 
 void Func_080d64f0(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -435,7 +374,7 @@ void Func_080d64f0(void) {
   s32 *origin = (s32 *)(map + 228);
   s32 originX = origin[0];
   s32 originZ = origin[1];
-  struct GroundParticle *particle = work->particles;
+  struct GroundParticle__visual_attributes *particle = work->particles;
   u32 i;
 
   for (i = 0; i < 64; i++, particle++) {
@@ -458,7 +397,7 @@ void Func_080d64f0(void) {
       frame++;
       particle->shape = *(u8 *)frame;
       particle->size = *(u8 *)(frame + 1);
-      Func_080140d8(particle, 240);
+      Func_080140d8__visual_attributes(particle, 240);
     }
     if (particle->timer == 0) {
       s32 *focus = *(s32 **)map;

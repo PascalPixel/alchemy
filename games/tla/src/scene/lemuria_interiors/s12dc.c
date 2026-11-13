@@ -8,23 +8,11 @@
 #include "text/msg_ids.h"
 #include "scene_tables.h"
 #include "field.h"
+#include "module/scene/lemuria_interiors.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 void Func_0200128c();
-
-struct SpritePictures {
-  u8 unk00[5];
-  u8 picture;
-};
-
-struct AnimatedSprite {
-  u8 unk00[0x12];
-  s16 rotation;
-  u8 unk14[5];
-  u8 picture;
-  u8 nextPicture;
-  u8 unk1b[0xd];
-  struct SpritePictures *pictures;
-};
 
 void Func_020012dc(s32 id) {
   struct Actor *object = Actor_GetById(id);
@@ -75,14 +63,8 @@ void Func_02001398(struct Actor *object) {
   object->timer++;
 }
 
-struct EventWork1c4 {
-  u8 unk000[0x1c4];
-  u16 count;
-};
-
 void Event_Start();
 void Event_End();
-void Func_020028f4();
 
 void Func_020013f0(void) {
   struct Actor *leader;
@@ -626,10 +608,7 @@ void Func_020013f0(void) {
 
 void Func_02000058(s32 arg0);
 void Func_02000104(s32 unused, s32 id);
-void Func_02000154(s32 arg0);
 void Func_020001a0(s32 arg0);
-void Func_020001ec(s32 arg0, s32 arg1);
-void Func_02000a5c(s32 a0, s32 a1, s32 a2);
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

@@ -4,6 +4,10 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "module/field/field.h"
+#include "module/field/field_sequence.h"
+#include "module/field/object.h"
+#include "module/system/system.h"
 
 /* VIEW(f0d9b80): tag struct ChainSlot as struct ChainSlot__f0d9b80; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5953: structure has no member named `angle'. */
 struct ChainSlot__f0d9b80 {
@@ -101,19 +105,6 @@ void Func_080d9b80(void) {
   }
 }
 
-
-struct WobbleEvent {
-  u8 unk000[362];
-  u16 cue;
-  u8 unk16c[24];
-  s16 counter;
-};
-
-s32 GameFlag_Test(s32 flag);
-s32 Field_FindNearbyTalkTarget(s32 id);
-s32 Func_080d99b8(s32 first, s32 second);
-void Func_080da060(s32 index, s32 first, s32 second, s32 wobble);
-
 /// The heap slot 0xa0 work's per-frame callback (Func_080d9b08 adds it).
 /// Unless flag 260 is set, once the event work's counter passes 12 it picks
 /// the event work's cue: with render mode 0 the slot linking the leader's
@@ -175,9 +166,6 @@ struct WorkA0Node *Func_080d9e74(void) {
   return NULL;
 }
 
-
-s32 Func_080d9f1c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ);
-
 void Func_080d9e98(s32 slotNo, s32 firstId, s32 secondId) {
   struct WorkA0 *work = WORK_A0;
   struct Actor *first = ObjectTable_Get(firstId);
@@ -194,33 +182,6 @@ void Func_080d9e98(s32 slotNo, s32 firstId, s32 secondId) {
     Actor_SetMode(second, 4);
   }
 }
-
-s32 ArcTan2(s32 x, s32 y);
-
-struct LineNode {
-  struct LineNode *next;
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 kind;
-  u8 slot;
-};
-
-struct LineSlot {
-  s16 first;
-  s16 second;
-  s32 direction;
-  s32 amplitude;
-  u8 unk0c[4];
-  s32 angle;
-  s32 active;
-  struct LineNode *head;
-};
-
-struct LineWork {
-  u8 unk00[12];
-  struct LineSlot slots[8];
-};
 
 s32 Func_080d9f1c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   struct LineWork *work = Ram_HeapSlots->unk84[7];
@@ -262,9 +223,6 @@ s32 Func_080d9f1c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   return result;
 }
 
-s32 Func_080da0b0(s32 index, s32 x, s32 y, s32 z, s32 to_x, s32 to_y, s32 to_z,
-                  s32 mode);
-
 void Func_080da060(s32 index, s32 from, s32 to, s32 mode) {
   struct Actor *a = ObjectTable_Get(from);
   struct Actor *b = ObjectTable_Get(to);
@@ -304,8 +262,6 @@ s32 Func_080da0b0(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
   }
   return 0;
 }
-
-s32 Func_080da22c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ);
 
 void Func_080da1b8(s32 index, s32 from, s32 to) {
   struct WorkA0 *work = WORK_A0;
@@ -366,7 +322,6 @@ s32 Func_080da22c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   *link = NULL;
   return result;
 }
-
 
 extern s32 gData_080f3948;
 /* VIEW(f0d9b80): routine Func_080da3bc as void Func_080da3bc(s32 arg, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2, s32 wave); the definition has s32 Func_080da3bc(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ). */

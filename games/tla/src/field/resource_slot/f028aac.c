@@ -3,6 +3,9 @@
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "module/field/resource_slot.h"
 
 /* VIEW(f028aac): tag struct PlayerSprite as struct PlayerSprite__f028aac; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:6227: structure has no member named `objectMode'. */
 struct PlayerSprite__f028aac {
@@ -27,22 +30,12 @@ struct WorldEventWork__f028aac {
 
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gData_0802ec5c[16];
-// The camera yaw each direction-pad combination turns toward.
-extern const s32 gData_0802eca0[16];
-extern const s32 gData_0802ec94[];
 
-void Vector_AddPolarOffset(s32 radius, s32 angle,
-                           struct FieldPosition *position);
 s32 Func_0802dbd0(struct Actor *object, struct FieldPosition *position);
-s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
-void Actor_SelectAnimation(struct Actor *object, s32 argument);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-s32 FixedSqrt(s32 value);
-struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *, const s32 *);
 /* VIEW(f028aac): routine Animation_ApplyChildArgument as s32 Animation_ApplyChildArgument(struct PlayerSprite__f028aac *, s32); f027064 has s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
 extern s32 Animation_ApplyChildArgument__f028aac(struct PlayerSprite__f028aac *, s32) __asm__("Animation_ApplyChildArgument");
-s32 Func_080ad318(void);
 
 s32 Func_08028aac(struct Actor *object) {
   struct FieldPosition position;
@@ -57,7 +50,7 @@ s32 Func_08028aac(struct Actor *object) {
   s32 terrain;
   s32 speed;
   s32 targetCameraYaw;
-  struct WorldCamera *camera;
+  struct WorldCamera__resource_slot *camera;
   s32 yawStep;
   struct Actor *ripple;
   struct PlayerSprite__f028aac *rippleSprite;
@@ -92,29 +85,29 @@ s32 Func_08028aac(struct Actor *object) {
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
-  Vector_AddPolarOffset(0x80000, direction, &position);
+  Vector_AddPolarOffset__resource_slot(0x80000, direction, &position);
   if (gDebugMode != 0 && (gInput.held & 0x200) != 0)
     goto update_object;
   if (Func_0802dbd0(object, &position) == 0) {
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, direction + 0x1000, &testPosition);
+    Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x1000, &testPosition);
     if (Func_0802dbd0(object, &testPosition) == 0) {
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
-      Vector_AddPolarOffset(0x80000, direction - 0x1000, &testPosition);
+      Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x1000, &testPosition);
       if (Func_0802dbd0(object, &testPosition) == 0) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(0x80000, direction + 0x2000, &testPosition);
+        Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x2000, &testPosition);
         if (Func_0802dbd0(object, &testPosition) == 0) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
-          Vector_AddPolarOffset(0x80000, direction - 0x2000, &testPosition);
+          Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x2000, &testPosition);
           if (Func_0802dbd0(object, &testPosition) == 0)
             goto check_objects;
         }
@@ -132,31 +125,31 @@ s32 Func_08028aac(struct Actor *object) {
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;
-    Vector_AddPolarOffset(0x80000, direction, &position);
+    Vector_AddPolarOffset__resource_slot(0x80000, direction, &position);
     if (Func_0802dbd0(object, &position) != 0)
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, direction + 0x1000, &testPosition);
+    Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x1000, &testPosition);
     if (Func_0802dbd0(object, &testPosition) != 0)
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, direction - 0x1000, &testPosition);
+    Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x1000, &testPosition);
     if (Func_0802dbd0(object, &testPosition) != 0)
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, direction + 0x2000, &testPosition);
+    Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x2000, &testPosition);
     if (Func_0802dbd0(object, &testPosition) != 0)
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, direction - 0x2000, &testPosition);
+    Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x2000, &testPosition);
     if (Func_0802dbd0(object, &testPosition) != 0)
       continue;
     angle = (s16)direction;
@@ -214,7 +207,7 @@ update_object:
     object->velocityX = collision;
     object->velocityZ = collision;
     direction = angle;
-    Vector_AddPolarOffset(speed, direction,
+    Vector_AddPolarOffset__resource_slot(speed, direction,
                           (struct FieldPosition *)&object->velocityX);
     if (object->timer != 0)
       object->timer--;
@@ -227,7 +220,7 @@ update_object:
     object->facing += difference;
   }
 
-  camera = (struct WorldCamera *)Ram_HeapSlots->mapWork;
+  camera = (struct WorldCamera__resource_slot *)Ram_HeapSlots->mapWork;
   targetCameraYaw = Iwram_MulQ16(gData_0802eca0[(gInput.held >> 4) & 15],
                                  object->y / 4 + 0x10000);
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;

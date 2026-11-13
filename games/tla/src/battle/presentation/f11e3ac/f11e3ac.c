@@ -5,24 +5,14 @@
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"
+#include "module/battle/battle.h"
+#include "module/battle/f11e3ac.h"
+#include "module/battle/presentation.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "text/msg_ids.h"
 
-struct SavedBattleObj {
-  struct BattleObj object;
-  u32 *buffer;
-  u8 unitId;
-  u8 single;
-  u8 reactivate;
-  u16 classId;
-};
-
-extern u32 Data_02018000[];
-
-void wait(s32 frames);
-s32 BattleParty_ListActorIds(s32 side, u16 *ids);
 void BattleObject_Reset();
-s32 BattleClass_GetSprite(s32 index);
-s32 BattleClass_GetPalette(s32 index);
-s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 
 struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
                                      struct BattlePresentationWork *work) {
@@ -222,22 +212,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   return saved;
 }
 
-
-struct Work0811e7dc {
-  u8 unk00[0x2c];
-  void *buffer;
-  u8 objectId;
-};
-
-struct Record0811e7dc {
-  u8 unk00[26];
-  u8 flags;
-};
-
-// Far call to Func_080219cc.
-void Func_08020370(void *record);
 #define Func_080219ccFar Func_08020370
-void ResourceMetadata_ReleaseSlotFar(void *record, s32 slot);
 
 /// Frees the borrowed buffer and releases the motion graphics slot.
 void Func_0811e7dc(struct Work0811e7dc *work) {
@@ -256,9 +231,6 @@ void Func_0811e7dc(struct Work0811e7dc *work) {
     ResourceMetadata_ReleaseSlotFar(GetMotionRecord(object, 0), 0);
   }
 }
-
-
-s32 SummonSlot_RegisterActorSprites(s32 unitId);
 
 void Func_0811e830(struct SavedBattleObj *saved) {
   u16 ids[14];
@@ -326,21 +298,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
   }
 }
 
-
-struct AttackAnimationEntry {
-  s16 animationId;
-};
-
-struct AttackAnimation {
-  u8 unk00[40];
-  struct AttackAnimationEntry *entries[1];
-};
-
-extern u8 MsgNimblyDodgesBlow[];
-
-s32 ArcTan2(s32 x, s32 y);
 void *Unit_Get(s32 owner);
-s32 ResourceMetadata_SumCommandLengthsFar(s32 animation, s32 a, s32 b);
 /* VIEW(f11e3ac): routine BattleClass_GetAttackHop as s32
  * BattleClass_GetAttackHop(s32 classId); the definition has void
  * BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) { void
@@ -350,13 +308,6 @@ s32 ResourceMetadata_SumCommandLengthsFar(s32 animation, s32 a, s32 b);
  * games/tla/src/battle/presentation/f11e3ac.c:7982: conflicting types for
  * `BattleClass_GetAttackHop'. */
 extern s32 BattleClass_GetAttackHop__f11e3ac(s32 classId) __asm__("BattleClass_GetAttackHop");
-void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 frames,
-                                 s32 hop);
-void BattleCamera_SetViewAtPairMidpoint(s32 first, s32 second, s32 scale);
-void BattleParty_ListAllUnitsAndSubmit(void);
-void Func_08138008(struct BattlePresentationWork *work);
-void Func_08138018(struct BattlePresentationWork *work);
-s32 BattlePlayback_WaitForReady(void);
 
 s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
@@ -531,23 +482,6 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
 // Func_0811ddd8 is void (r0 is set before r1 for the call, as the
 // native).
 
-struct ItemAnimationEntry {
-  u8 unk00[5];
-  u8 param;
-};
-
-struct ItemAnimation {
-  u8 unk00[27];
-  u8 count;
-  u8 unk1c[12];
-  struct ItemAnimationEntry *entries[1];
-};
-
-extern u8 MsgItemBroke[];
-
-void ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size);
-void Func_0811ddd8(struct BattlePlan *plan,
-                   struct BattlePresentationWork *work);
 s32 Inventory_BreakFar(s32 owner, s32 slot);
 
 /// Plays an item's use: the camera turns to the user's side, the user raises
@@ -677,20 +611,6 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
   return 0;
 }
 
-struct RecordChild {
-  u8 unk00[5];
-  u8 param;
-  u8 unk06[0x10];
-  u8 frame;
-};
-
-struct ChildRecord {
-  u8 unk00[0x1b];
-  u8 count;
-  u8 unk1c[0xc];
-  struct RecordChild *entries[4];
-};
-
 /// Sets the first child's value of each of the object's records and clears the
 /// others, hiding every child's frame.
 void BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value) {
@@ -731,24 +651,6 @@ void BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value) {
 // set. mode: 1 a Djinni, 2 an enemy's cast. The two fixed yaws are stores in
 // each arm of an if (as a ternary or one value the arms are folded into a
 // default and an override).
-
-struct CastAnimationEntry {
-  u8 unk00[5];
-  u8 param;
-};
-
-struct CastAnimation {
-  u8 unk00[27];
-  u8 count;
-  u8 unk1c[12];
-  struct CastAnimationEntry *entries[1];
-};
-
-extern u8 MsgCastLacksPp[];
-extern u8 MsgPsynergyBlocked[];
-
-void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
-void BattleBackground_RestorePalette(void);
 
 /// Plays Psynergy, a Djinni or an enemy's cast. The camera turns toward
 /// the targets from the caster's side, the caster raises its hand and glows
@@ -898,9 +800,6 @@ void BattleMotion_FlashHit(s32 id) {
 }
 
 // Battle: clean up defeated units' graphics and formation entries.
-
-
-void Animation_ApplyChildArgumentFar(void *, s32);
 
 /// Removes the unit from the ally and enemy formations and the planned
 /// actions. Returns 0 on removal, or -1 if absent from both formations.

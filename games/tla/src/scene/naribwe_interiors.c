@@ -12,6 +12,10 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "event_work.h"
+#include "module/scene/magma_rock_inside.h"
+#include "module/scene/naribwe_interiors.h"
+#include "module/scene/scene.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -25,9 +29,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 #include "text/msg_ids.h"
 #include "event_inline.h"
-
-void Event_Start(void);
-void Event_End(void);
 
 s32 Func_02000054(void) {
   Event_Start();
@@ -49,12 +50,6 @@ s32 Func_0200007c(void) {
 
 #include "main_routine_work.h"
 #include "actor.h"
-
-extern struct Trigger gData_02001370[];
-extern struct Trigger gData_020014c0[];
-
-void Func_02001190(s32 slot, s32 actor);
-void Func_02001198(s32 slot, s32 actor);
 
 const struct Trigger *Scene_GetEvents(void) {
   if (Event_GetFlag(0x8ff))
@@ -146,8 +141,6 @@ void Func_020002a4(s32 actor) {
   }
 }
 
-void Func_02000390(void);
-
 void Func_02000304(void) {
   u8 *message;
 
@@ -178,21 +171,14 @@ void Func_02000304(void) {
 
 #include "version.h"
 
-s32 Func_020011a0(s32 *unit, s32 *slot);
 void *Unit_Get(s32 owner);
-const u8 *Func_020010b8(s32 item);
-void MessageArgument_Push(s32 item, s32 a);
-void Func_02000920(void);
+/* VIEW(naribwe_interiors): routine MessageArgument_Push as void MessageArgument_Push(s32 item, s32 a); module/window/window.h has void MessageArgument_Push(u32 value, u32 kind). */
+extern void MessageArgument_Push__naribwe_interiors(s32 item, s32 a) __asm__("MessageArgument_Push");
 void Func_020007b4(void);
-void Func_02000760(void);
-void Func_02000838(void);
-void Func_02000878(void);
-void Party_AdjustCoins(s32 coins);
-
-struct UnitData {
-  u8 filler[216];
-  u16 items[15];
-};
+/* VIEW(naribwe_interiors): routine Func_02000878 as void Func_02000878(void); module/scene/daila_interiors.h has s32 Func_02000878(s32 item, s32 mode). */
+extern void Func_02000878__naribwe_interiors(void) __asm__("Func_02000878");
+/* VIEW(naribwe_interiors): routine Party_AdjustCoins as void Party_AdjustCoins(s32 coins); module/game/game.h has s32 Party_AdjustCoins(s32 amount). */
+extern void Party_AdjustCoins__naribwe_interiors(s32 coins) __asm__("Party_AdjustCoins");
 
 /// Object 10 steps to (x, 96) without turning, then dances (mode 5).
 #define DANCE_TO(x)                                                            \
@@ -239,7 +225,7 @@ ask:
   Actor_SetItemIcon(Actor_Get(18), unitData->items[slot]);
   Actor_SetPosition(18, 0x2a00000, 0x680000);
   FieldEvent_Wait(60);
-  MessageArgument_Push(unitData->items[slot], 2);
+  MessageArgument_Push__naribwe_interiors(unitData->items[slot], 2);
   Message_ShowCentered(MsgPlacedOnThe, 1);
   message = MsgAreYouPrepared;
   FieldEvent_SetMessageId(message);
@@ -247,7 +233,7 @@ ask:
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) != 1)
     goto read;
   Actor_SetPosition(18, 0, 0);
-  MessageArgument_Push(unitData->items[slot], 2);
+  MessageArgument_Push__naribwe_interiors(unitData->items[slot], 2);
   Message_ShowCentered(message + 1, 1);
   FieldEvent_SetMessageId(message + 2);
   Event_OpenMessage(10, 0);
@@ -329,10 +315,10 @@ read:
     else if ((u8)((u8)rawKind - 2) <= 3)
       Func_02000838();
     else
-      Func_02000878();
+      Func_02000878__naribwe_interiors();
   }
   Actor_SetPosition(18, 0, 0);
-  Party_AdjustCoins(-20);
+  Party_AdjustCoins__naribwe_interiors(-20);
 }
 
 s32 Party_FindOwnerWithAction(s32 item);
@@ -410,7 +396,7 @@ void Func_02000838(void) {
   }
 }
 
-void Func_02000878(void) {
+void Func_02000878__naribwe_interiors(void) {
   FieldEvent_SetMessageId((s32)MsgBeyondTheItem);
   Event_ShowMessage(10, 0);
   switch (Func_020009f8()) {

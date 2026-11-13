@@ -3,12 +3,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
-
-extern const u8 gDebug_PaletteSwatchTiles[];
-
-void Resource_DecompressHalfwords(const void *source, void *destination);
-void Window_LoadGraphics(void);
-void DebugText_Clear(void);
+#include "module/system/system.h"
 
 #define PALETTE ((u16 *)0x05000000)
 #define EDITOR_MAP ((u16 *)0x0600205a)

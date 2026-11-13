@@ -3,6 +3,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "module/field/field_sequence.h"
 
 void Actor_SnapToTerrain(void *object) {
   struct Actor *state = object;
@@ -12,8 +13,6 @@ void Actor_SnapToTerrain(void *object) {
   state->y = height;
   state->terrainHeight = height;
 }
-
-extern s16 Data_080f2204[];
 
 /// The current scene's rows of the scene item table (Data_080f2204): those
 /// after the first header for this scene whose flag is -1 or not yet set, or
@@ -48,13 +47,6 @@ s32 Func_080cec24(s32 value, s32 *out) {
   SET_VECTOR(out, 0, 0, 0);
   return Func_080ca9cc(value, out);
 }
-
-struct SceneItemWork {
-  u8 unk000[0x114];
-  struct Actor *objects[16];
-  u8 unk154[0x18a - 0x154];
-  s8 mode;
-};
 
 void Func_080d3b28(s32 id, s32 item);
 
@@ -153,7 +145,8 @@ void Func_080cec34(void) {
   } while (!(type & 0x4000));
 }
 
-struct ObjectSprite {
+/* VIEW(field_sequence): tag struct ObjectSprite as struct ObjectSprite__field_sequence; module/field/field.h has another definition. */
+struct ObjectSprite__field_sequence {
   u8 unk00[5];
   u8 attr0High;
   u8 unk06;
@@ -164,7 +157,7 @@ struct ObjectSprite {
 
 void Actor_SetWideSprite(u32 objectId, s32 mode) {
   struct Actor *object;
-  struct ObjectSprite *sprite;
+  struct ObjectSprite__field_sequence *sprite;
 
   object = ObjectTable_Get(objectId);
   if (object == 0)
@@ -185,7 +178,7 @@ void Actor_SetWideSprite(u32 objectId, s32 mode) {
 
 void Actor_SetSquareSprite(u32 objectId) {
   struct Actor *object;
-  struct ObjectSprite *sprite;
+  struct ObjectSprite__field_sequence *sprite;
 
   object = ObjectTable_Get(objectId);
   if (object == 0)
@@ -200,7 +193,7 @@ void Actor_SetSquareSprite(u32 objectId) {
 
 s32 Actor_GetSpriteShape(u32 objectId) {
   struct Actor *object;
-  struct ObjectSprite *sprite;
+  struct ObjectSprite__field_sequence *sprite;
   s32 shape = 0;
 
   object = ObjectTable_Get(objectId);

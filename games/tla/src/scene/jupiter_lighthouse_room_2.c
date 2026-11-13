@@ -12,6 +12,12 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/scene/jupiter_lighthouse_room_2.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -46,10 +52,6 @@ void Func_02000054(void) {
   }
 }
 
-s32 Func_0200231c();
-extern s32 gData_02002b88[3];
-extern const u8 gData_02002b60[];
-
 void Func_020000b4(void) {
   Func_0200231c((s32)gData_02002b60, gData_02002b88[0], gData_02002b88[1],
                 gData_02002b88[2]);
@@ -60,11 +62,8 @@ void Func_020000b4(void) {
 #include "ram_buffer.h"
 #include "event_work.h"
 
-struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Func_020021b4(struct Actor *object, s32 a);
-void Func_020021d4(struct Actor *object);
-void Event_Start(void);
-void Event_End(void);
+/* VIEW(jupiter_lighthouse_room_2): routine Func_020021b4 as void Func_020021b4(struct Actor *object, s32 a); module/scene/dehkan_plateau.h has void Func_020021b4(void). */
+extern void Func_020021b4__jupiter_lighthouse_room_2(struct Actor *object, s32 a) __asm__("Func_020021b4");
 
 void Func_020000d0(s32 kind) {
   s32 owner = gMainRoutineWork.currentOwner;
@@ -98,7 +97,7 @@ void Func_020000d0(s32 kind) {
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
   effect = Actor_Spawn(280, leader->x, leader->y, leader->z);
-  Func_020021b4(effect, 2);
+  Func_020021b4__jupiter_lighthouse_room_2(effect, 2);
   effect->scaleX = 0x18000;
   effect->scaleY = 0x10000;
   ((struct FieldSprite *)effect->sprite)->priority = 1;
@@ -110,7 +109,7 @@ void Func_020000d0(s32 kind) {
     effect->z = leader->z;
     System_Wait(1);
   }
-  Func_020021b4(effect, 6);
+  Func_020021b4__jupiter_lighthouse_room_2(effect, 6);
   i = 14;
   do {
     leader->facing += 0x2000;
@@ -155,7 +154,7 @@ void Func_02000230(s32 kind) {
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
   effect = Actor_Spawn(280, leader->x, leader->y, leader->z);
-  Func_020021b4(effect, 2);
+  Func_020021b4__jupiter_lighthouse_room_2(effect, 2);
   effect->scaleX = 0x18000;
   effect->scaleY = 0x10000;
   ((struct FieldSprite *)effect->sprite)->priority = 1;
@@ -183,7 +182,7 @@ void Func_02000230(s32 kind) {
   }
   effect->scaleX = 0x18000;
   effect->scaleY = 0x10000;
-  Func_020021b4(effect, 6);
+  Func_020021b4__jupiter_lighthouse_room_2(effect, 6);
   leader->scaleX = 0x6000;
   leader->scaleY = 0x6000;
   i = 19;
@@ -231,8 +230,6 @@ void Func_02000440(void) {
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x16a), u16, 0) = 0x21;
 }
 
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-
 /// Once the leader stands at height 32 or more, it rises and spins for 110
 /// frames.
 void Func_02000454(void) {
@@ -274,8 +271,6 @@ void Func_020004d0(s32 a0, s32 a1) {
 #include "io_reg.h"
 #include "io_write.h"
 #include "call.h"
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 static inline void CopyCells(s32 srcX, s32 srcY, s32 width, s32 height,
                              s32 destX, s32 destY) {
@@ -331,8 +326,6 @@ void Func_02000500(s32 unused, s32 id) {
 
 void Func_02000674(s32 a0, s32 a1) { Actor_SetSpritePriority(a1, 2); }
 
-void Func_02000b28(s32 id);
-
 void Func_02000680(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 i;
@@ -359,8 +352,6 @@ void Func_02000704(void) { Func_080dbdd4(0x1500000, 0x2500000, 0, 4); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-s32 Math_Cosine(s32 angle);
-
 /// A particle's step: it circles at its angle (action) around x 214 and
 /// rises with its phase (unk66), drawn in front while the sine is
 /// negative and behind otherwise.
@@ -374,7 +365,7 @@ void Func_02000720(struct Actor *object) {
                (height * 3 << 16) + 0x80000, 170 << 18);
   // Read signed, as the phase is above; the field is declared unsigned.
   if ((s16)object->unk66 == 0)
-    Func_020021b4(object, 7);
+    Func_020021b4__jupiter_lighthouse_room_2(object, 7);
   if (object->y > 170 << 17)
     object->unk66 = 0xffff;
   if (Math_Sin(angle) < 0)
@@ -404,13 +395,6 @@ void Func_020007d0(void) {
     ((struct FieldSprite *)object->sprite)->priority = 1;
   }
 }
-
-void Func_02001498(void);
-void Func_020015a0(s32 id, s32 value);
-void Func_02002314(s32 a);
-void Func_02002324(const void *script, s32 a, s32 b, s32 c);
-
-void Func_02000aa4(s32 mode);
 
 /// The scene's set-up entry: screen effect 0x204, actors 13 and 14 at action
 /// variant 3, the blend registers, the particles, and the map and actors by
@@ -472,7 +456,6 @@ extern s32 gData_02002b34;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_02002b34 = value; }
-extern u16 gData_02002b98[];
 
 void Func_020009e8(void) {
   u16 colors[16];
@@ -511,7 +494,6 @@ next:
 }
 
 extern u16 gData_02002bb8[];
-extern u16 gData_02002bbc[];
 
 void Func_02000aa4(s32 mode) {
   gData_02002b38 = 1;
@@ -529,7 +511,8 @@ void Func_02000aa4(s32 mode) {
 }
 
 void Func_0200223c();
-void Func_0200230c();
+/* VIEW(jupiter_lighthouse_room_2): routine Func_0200230c as void Func_0200230c(); module/scene/scene.h has void Func_0200230c(s32 actor). */
+extern void Func_0200230c__jupiter_lighthouse_room_2() __asm__("Func_0200230c");
 
 void Func_02000b28(s32 id) {
   struct Actor *object;
@@ -543,7 +526,7 @@ void Func_02000b28(s32 id) {
   object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
   Func_0200223c(object->x, object->z, 0, (height >> 19) + 6);
-  Func_0200230c(object->x, object->z, 0, 128);
+  Func_0200230c__jupiter_lighthouse_room_2(object->x, object->z, 0, 128);
 }
 
 #include "frame.h"

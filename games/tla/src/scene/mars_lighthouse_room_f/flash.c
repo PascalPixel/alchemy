@@ -4,6 +4,12 @@
 #include "frame.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/scene/mars_lighthouse_room_f.h"
+#include "module/scene/mars_lighthouse_star_room.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 struct RideEntry {
   s16 a;
@@ -42,13 +48,9 @@ struct RideWork {
   void *handle;
 };
 
-extern u8 gData_020023c4[];
-extern u16 gData_02004cf0[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Func_020041ec(void *handle);
-void Func_02002148(void);
 void Func_0200236c(struct Actor *object, s32 unused);
-void Func_02002ad0(struct Actor *object);
 
 void Func_02002954(struct Actor *object) {
   switch (gFrameCount & 7) {
@@ -68,21 +70,10 @@ void Func_02002954(struct Actor *object) {
 #include "vector3.h"
 #include "fixed_math.h"
 
-struct Work020023c4 {
-  u8 unk00[4];
-  u16 unk04;
-  u8 unk06[0x68 - 6];
-  s16 unk68;
-  s16 unk6a;
-};
-
-void Func_02002800(void);
-void Event_Start(void);
-void Func_02005480(struct Actor *object, s32 mode);
-s32 Func_020054d8(s32 terrain, s32 x, s32 z);
-s32 Func_020054f8(struct Actor *actor);
-void Actor_JumpDownLedge(s32 owner, s32 a, s32 b);
-s32 Func_02005538(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
+/* VIEW(flash): routine Func_020054f8 as s32 Func_020054f8(struct Actor *actor); module/scene/mars_lighthouse_room_f.h has s32 Func_020054f8(struct Actor *object, s32 *position). */
+extern s32 Func_020054f8__flash(struct Actor *actor) __asm__("Func_020054f8");
+/* VIEW(flash): routine Func_02005538 as s32 Func_02005538(s32 *from, s32 radius, struct Vector3 *to, s32 radius2); module/scene/mars_lighthouse_room_f.h has s32 Func_02005538(s32 *a, s32 radiusA, struct Position *b, s32 radiusB). */
+extern s32 Func_02005538__flash(s32 *from, s32 radius, struct Vector3 *to, s32 radius2) __asm__("Func_02005538");
 
 #if TLA_PATCH_1
 void Func_0200297c(void) {
@@ -142,7 +133,7 @@ s32 Func_0200297c(void) {
           position.x = actor->x + (work->unk68 << 19);
           position.y = actor->y;
           position.z = actor->z + (work->unk6a << 19);
-          if (Func_020054f8(actor) != 0) {
+          if (Func_020054f8__flash(actor) != 0) {
             actor->velocityX = 0;
             actor->velocityZ = 0;
             break;
@@ -165,7 +156,7 @@ s32 Func_0200297c(void) {
         position.x = actor->x + (work->unk68 << 19);
         position.y = actor->y;
         position.z = actor->z + (work->unk6a << 19);
-        result = Func_020054f8(actor);
+        result = Func_020054f8__flash(actor);
         if (result > 0)
           break;
         if (result < 0) {
@@ -181,7 +172,7 @@ s32 Func_0200297c(void) {
           /* FAKEMATCH(wrapper): Func_02005538 forwarded through Value4; as a
            * direct call, 110 of 236 instructions differ in tla-en. */
           if (other->script != 0 && (*flags & 1) && other != actor &&
-              Value4((s32 (*)())Func_02005538, (s32)&other->x, radius,
+              Value4((s32 (*)())Func_02005538__flash, (s32)&other->x, radius,
                      (s32)&position, other->radius - 2) >= 0) {
             System_Wait(1);
             goto done;

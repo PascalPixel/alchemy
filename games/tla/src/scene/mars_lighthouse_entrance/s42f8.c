@@ -1,10 +1,11 @@
 #include "room.h"
 #include "field_effect.h"
+#include "module/field/field_effect.h"
+#include "module/scene/mars_lighthouse_entrance.h"
+#include "module/scene/scene.h"
 
-void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Map_CenterOnFollowedPoint(void);
 
 static __inline__ void Func_02004c50_(s32 a, s32 b, s32 c) {
   Map_SetScreenShake(a, b, c);
@@ -72,11 +73,8 @@ next:
 #include "event_inline.h"
 #include "cell_target.h"
 
-extern struct CellTarget Data_020068b4;
-
-void GameFlag_SetByte(s32 flag, s32 value);
-void Func_020040f0(struct CellTarget *work,
-                   struct CellTargetEntry *entry);
+/* VIEW(s42f8): routine GameFlag_SetByte as void GameFlag_SetByte(s32 flag, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
+extern void GameFlag_SetByte__s42f8(s32 flag, s32 value) __asm__("GameFlag_SetByte");
 void Func_02004160(struct CellTarget *work,
                    struct CellTargetEntry *entry);
 
@@ -100,20 +98,13 @@ s32 Func_02004490(void) {
         break;
       work->current = i;
       Func_02004160(work, entry);
-      GameFlag_SetByte(work->flagByte, x);
-      GameFlag_SetByte(work->flagByte + 8, z);
+      GameFlag_SetByte__s42f8(work->flagByte, x);
+      GameFlag_SetByte__s42f8(work->flagByte + 8, z);
       return 1;
     }
   }
   return 0;
 }
-
-struct JupiterLighthouseRoom8EventWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-  u8 unk1b0[0x1c];
-  struct Actor *marker;
-};
 
 void Func_02004540(s32 x, s32 z, s32 effect) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -124,8 +115,8 @@ void Func_02004540(s32 x, s32 z, s32 effect) {
   if (dx != 0 || dz != 0) {
     struct Actor *marker;
 
-    GameFlag_SetByte(Data_020068b4.flagByte, 0);
-    GameFlag_SetByte(Data_020068b4.flagByte + 8, 0);
+    GameFlag_SetByte__s42f8(Data_020068b4.flagByte, 0);
+    GameFlag_SetByte__s42f8(Data_020068b4.flagByte + 8, 0);
     leader->x = ((dx + x) << 20) + 0x80000;
     leader->z = ((dz + z) << 20) + 0x80000;
     marker = work->marker;
@@ -143,10 +134,6 @@ void Func_02004540(s32 x, s32 z, s32 effect) {
 
 extern u16 *gData_0200e88c;
 extern u16 *gData_02006890;
-extern u16 *Data_02006894;
-extern u16 *Data_02006880;
-
-void Func_020048e8(void);
 
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
@@ -188,14 +175,7 @@ void Func_020045f8(u16 *slots, u16 *colours, u16 *a, u16 *b) {
 
 #include "task.h"
 
-extern u16 gData_0200687c;
-extern u16 gData_02006884;
 extern u16 gData_02006898;
-extern u16 gData_0200689c;
-extern u16 gData_0200e888;
-
-s32 Func_02004794(u16 *list);
-void Func_020047b8(void);
 
 void Func_020046b4(void) {
   gData_0200689c = 0;
@@ -281,13 +261,6 @@ void Func_020047b8(void) {
     gData_0200689c = 0;
 }
 
-struct MarsLighthouseEntranceEventWork {
-  u8 unk000[0x1ac];
-  s32 value1ac;
-};
-
-void Func_02004dc8(void);
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02004d58_(s32 a, s32 b) {
@@ -321,8 +294,6 @@ void Func_020048e8(void) {
 
 #include "field.h"
 
-void Func_02004a60(s32 id, u32 kind, s32 flag, s32 layer);
-
 void Func_02004970(const u16 *list) {
   const u16 *spec;
   u16 id;
@@ -350,11 +321,6 @@ void Func_02004970(const u16 *list) {
     first = spec[0];
   } while (first != ((limit << 8) + 0xff));
 }
-
-struct GabombaStatueEffectWork {
-  u8 unk00[0x1a];
-  s16 objectId;
-};
 
 // Finds the current target's table row and shrinks it.
 void Func_020049dc(u16 *list, s32 mode, s32 count) {
@@ -393,8 +359,6 @@ void Func_020049dc(u16 *list, s32 mode, s32 count) {
 
 #include "field_event.h"
 #include "map.h"
-
-s32 Func_02004db8(struct Actor *object);
 
 void Func_02004a60(s32 id, u32 kind, s32 flag, s32 layer) {
   struct Actor *object = Actor_Get(id);
@@ -437,10 +401,6 @@ void Func_02004a60(s32 id, u32 kind, s32 flag, s32 layer) {
 
 void Func_02000038(void);
 void Func_02000070(void);
-void Func_02000808(void);
-void Func_02000a24(void);
-void Func_02000c1c(void);
-void Func_02000c68(void);
 void Func_0200308c(void);
 void Func_02003138(void);
 void Func_020031dc(void);
@@ -1030,39 +990,21 @@ struct ActorPlacement gData_02005b54[] = {
 
 void Func_02000044(void);
 void Func_02000050(void);
-void Func_0200040c(void);
 void Func_0200051c(void);
-void Func_02000564(void);
-void Func_02000590(void);
 void Func_02000648(void);
 void Func_02000678(void);
-void Func_02000710(void);
 void Func_02000718(void);
 void Func_0200085c(void);
 void Func_020008f4(void);
-void Func_02000930(void);
-void Func_0200093c(void);
 void Func_0200096c(void);
-void Func_020009c0(void);
-void Func_020009e8(void);
-void Func_02000a74(void);
-void Func_02000a7c(void);
-void Func_02000af4(void);
 void Func_02000b24(void);
-void Func_02000b54(void);
 void Func_02000b84(void);
-void Func_02000c84(void);
-void Func_02000cb4(void);
 void Func_02000ce4(void);
 void Func_02000e3c(void);
-void Func_02000fa4(void);
-void Func_02000fd4(void);
 void Func_0200112c(void);
 void Func_02001138(void);
-void Func_0200263c(void);
-int Func_02002860(void);
-void Func_020029a0(void);
-void Func_020032b8(void);
+/* VIEW(s42f8): routine Func_020029a0 as void Func_020029a0(void); module/scene/mars_lighthouse_entrance.h has s32 Func_020029a0(void). */
+extern void Func_020029a0__s42f8(void) __asm__("Func_020029a0");
 
 // clang-format off
 struct ActorPlacement gData_02005bcc[] = {
@@ -1290,7 +1232,7 @@ struct Trigger gData_02006628[] = {
     {TRIGGER_STEP, 35, 0x234, EVENT(Func_02000fa4)},
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_02000fd4)},
     {TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(Func_02002860)},
-    {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(Func_020029a0)},
+    {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(Func_020029a0__s42f8)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, 0x210, EVENT(Func_0200040c)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, 0x211, EVENT(Func_0200040c)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 15, 0x212, EVENT(Func_0200040c)},

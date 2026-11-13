@@ -4,10 +4,9 @@
 // Part of f04a85c.c.
 
 #include "../f04a85c_internal.h"
-
-s32 PauseMenu_Choose(s32 selection);
-s32 Func_08043690(void);
-s32 SettingsMenu_Run(void);
+#include "item_icon.h"
+#include "module/window/f04a85c.h"
+#include "module/window/window.h"
 
 /// Runs the save screen's selection until a choice completes: saving (refused
 /// while flag 0x17c or 0x17d is set), sleep mode or the options. Returns -1
@@ -81,14 +80,6 @@ void Render_SetTilemapFlagBitRect(const struct Window *object, s32 x, s32 y,
   }
 }
 
-
-extern u8 gWorkspace_ItemTitle[];
-extern u8 gWorkspace_EnergyTitle[];
-extern u8 gWorkspace_StatusTitle[];
-extern u8 gWorkspace_PageLabel[];
-extern u8 gWorkspace_RangeDash[];
-
-void wait(s32 frames);
 /* VIEW(flag_bit_rect): routine Window_Create as struct RenderInput *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style); selrow has struct Work *Window_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer). */
 extern struct RenderInput *Window_Create__flag_bit_rect(s32 x, s32 y, s32 width, s32 height,
                                   s32 style) __asm__("Window_Create");
@@ -100,8 +91,6 @@ extern void Text_DrawNumberInWindow__flag_bit_rect(s32 value, s32 width, struct 
                              s32 x, s32 y) __asm__("Text_DrawNumberInWindow");
 void Icon_BuildItemIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile,
                              s32 reuse);
-void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot, s32 *tileOut, s32 reuse);
-s32 Resource_FindFreeEntry(void);
 void Icon_BuildMiscIconTiles(s32 pattern, s32 unused, s32 slot);
 
 /// Browses pages of item, Psynergy and status-pattern icons, suspending the
@@ -194,15 +183,12 @@ s32 DebugBrowser_Icons(void) {
   return 0;
 }
 
-
 extern s16 gPortrait_CharacterMap[];
 extern s16 gPortrait_SpriteMap[];
 
 struct RenderInput *Portrait_OpenWindow(s32 x, s32 y, s32 width, s32 height);
 /* VIEW(flag_bit_rect): routine WindowSprite_PrepareForRedraw as void WindowSprite_PrepareForRedraw(struct RenderInput *window); resource_work has void WindowSprite_PrepareForRedraw(struct Window *). */
 extern void WindowSprite_PrepareForRedraw__flag_bit_rect(struct RenderInput *window) __asm__("WindowSprite_PrepareForRedraw");
-void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
-                                  s32 palette, s32 reuse);
 
 /// A debug browser of the portraits: left and right step through
 /// gPortrait_CharacterMap and then gPortrait_SpriteMap, L and R by ten, each

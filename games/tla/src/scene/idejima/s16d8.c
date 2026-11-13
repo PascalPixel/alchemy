@@ -14,13 +14,15 @@
 #include "task.h"
 #include "scene_ids.h"
 #include "field.h"
+#include "module/scene/idejima.h"
+#include "module/scene/kibombo.h"
+#include "module/scene/scene.h"
 
-void Import_ActorPlaceAtActor();
 void DriftScene_SpawnObject();
-void Map_CenterOnFollowedPoint();
+/* VIEW(s16d8): routine Map_CenterOnFollowedPoint as void Map_CenterOnFollowedPoint(); module/scene/scene.h has void Map_CenterOnFollowedPoint(void). */
+extern void Map_CenterOnFollowedPoint__s16d8() __asm__("Map_CenterOnFollowedPoint");
 
 extern u32 gData_02003330[];
-extern u32 gData_0200336c[];
 
 /// Idejima: the scene of actors 5, 8 and 10 that opens with
 /// MsgIdejimaIsThisThePlace, ending in a screen transition and countdown 11.
@@ -36,7 +38,7 @@ void Func_020016d8(void) {
   System_Wait(1);
   FieldCamera_MoveTo(PIXELS(252), -1, PIXELS(216), 0);
   System_Wait(1);
-  Map_CenterOnFollowedPoint();
+  Map_CenterOnFollowedPoint__s16d8();
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
   east = 0x4000;
   Actor_SetPositionAndFacing(5, PIXELS(184), PIXELS(168), east);
@@ -222,15 +224,6 @@ void Func_020016d8(void) {
   FieldEvent_SetExitRequest(11);
 }
 
-extern u32 gData_020033a8[];
-extern u32 gData_02003400[];
-extern u32 gData_0200346c[];
-extern u32 gData_020034e4[];
-extern u32 gData_0200350c[];
-
-void Func_0200161c(void);
-void DriftScene_Prepare(void);
-
 void Func_02001ee0(void) {
   struct Actor *actor = Actor_Get(5);
 
@@ -249,7 +242,7 @@ void Func_02001ee0(void) {
   Actor_SetPosition(10, PIXELS(392), PIXELS(172));
   System_Wait(1);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(214), 0);
-  Map_CenterOnFollowedPoint();
+  Map_CenterOnFollowedPoint__s16d8();
   System_Wait(1);
   Actor_SetPosition(5, PIXELS(208), PIXELS(218));
   Actor_SetAnimation(5, 19);
@@ -334,13 +327,6 @@ void Func_02001ee0(void) {
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(12);
 }
-
-extern u32 gData_02003534[];
-extern u32 gData_02003578[];
-extern u32 gData_020035bc[];
-extern u32 gData_02003600[];
-
-void Func_020032e0(void);
 
 void Func_02002304(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -610,7 +596,7 @@ void Func_02002c64(void) {
   Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(384), PIXELS(728));
   Actor_SetPosition(11, PIXELS(384), PIXELS(702));
   System_Wait(1);
-  Map_CenterOnFollowedPoint();
+  Map_CenterOnFollowedPoint__s16d8();
   System_Wait(1);
   FelixWake_EndStep();
   Event_StartScreenTransition();
@@ -687,12 +673,6 @@ void Func_02002c64(void) {
   FelixWake_EndStep();
 }
 
-void Func_0200153c(void);
-void Func_02001558(void);
-void Func_020015a0(void);
-void Func_02002fd4(void);
-void Func_020031a8(s32 a);
-
 /// The scene's start entry: the two scene callbacks, then by entrance the
 /// scene that runs (2 and 4 also set the saved scene and entrance).
 s32 Scene_Initialize(void) {
@@ -732,11 +712,6 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-struct ActorSprite {
-  u8 unk00[18];
-  u16 rotation;
-};
 
 void Func_02002f88(s32 id) {
   struct Actor *object = Actor_Get(id);
@@ -799,12 +774,7 @@ void Func_02002fd4(void) {
 
 #include "objcmd.h"
 
-void Func_020000f0(void);
-void Func_020002b4(void);
-void Func_0200049c(void);
 void Func_02000640(void);
-void Func_020006a8(void);
-void Idejima_RunAlexDeparture(void);
 
 // clang-format off
 u32 gData_02003330[] = {

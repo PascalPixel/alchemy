@@ -26,6 +26,12 @@
 #include "ram_buffer.h"
 #include "bg_scroll.h"
 #include "frame.h"
+#include "event_work.h"
+#include "module/game/game.h"
+#include "module/scene/scene.h"
+#include "module/scene/title.h"
+#include "module/system/system.h"
+#include "resource_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -39,31 +45,17 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-struct TitleSprite {
+/* VIEW(title): tag struct TitleSprite as struct TitleSprite__title; module/tla.h has another definition. */
+struct TitleSprite__title {
   u32 attr[3];
 };
 
-extern char SceneId_Ov650;
-extern char ResourceId_FarCall00B;
-extern char ResourceId_IntroTilesB;
-extern s16 gTitleVramBlock;
-extern s16 gData_020006dc;
-extern struct TitleSprite gData_020006f0[];
+extern struct TitleSprite__title gData_020006f0[];
 
-void Fade_ToBlack(s32 vblanks);
-void Fade_Wait(void);
-
-void Func_020005ac(struct TitleSprite *sprite, s32 priority);
-void Resource_ReservedNoOp(s32 resource);
+void Func_020005ac(struct TitleSprite__title *sprite, s32 priority);
 s32 Func_020005d4(void);
-void Party_SetLeaderJenna(void);
-void Party_SetLeaderFelix(void);
-void Event_SetDestination(s32 scene, s32 entrance);
-void Func_0200061c(s32 value);
-s32 Func_02000624(s32 value);
 void Func_0200062c(s32 value);
 void Func_02000634(s32 value);
-void Func_0200063c(s32 value);
 
 /// Runs the title by entrance: at entrance 10 the title is revealed and waits
 /// up to 3600 frames for a key before the title scene starts again at
@@ -193,7 +185,7 @@ void Title_LoadSprites(s32 unused) {
 // ☀️'s Title_RevealSpriteRow.
 void Func_02000278(void) {
   u32 *w;
-  struct TitleSprite *p;
+  struct TitleSprite__title *p;
   s32 tile;
   s32 i;
   s32 n;
@@ -230,10 +222,6 @@ void Func_02000278(void) {
   } while (++i <= 17);
   gData_020006dc++;
 }
-
-void Title_LoadBackground(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 /// The title screen appears: the logo and its sprite row are loaded, the
 /// blend fades the logo in over 17 steps and the screen transition opens.
@@ -273,13 +261,6 @@ fade:
   Event_WaitTransitionFrames();
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 60;
 }
-
-struct TitleWork {
-  u8 unk00[20];
-  u16 mode;
-};
-
-extern char ResourceId_LogoOnBlack;
 
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH(wrapper): the decode forwarded through this inline keeps the

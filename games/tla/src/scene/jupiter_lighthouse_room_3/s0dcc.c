@@ -9,6 +9,9 @@
 #include "main_routine_work.h"
 #include "event_work.h"
 #include "event_inline.h"
+#include "module/field/field.h"
+#include "module/scene/jupiter_lighthouse_room_3.h"
+#include "module/scene/scene.h"
 
 /// Where a pushed object comes to rest, read by the push that follows.
 struct PushTarget {
@@ -22,9 +25,6 @@ struct PushTarget {
 
 extern s8 gData_02002484[][4];
 extern s32 gData_0200249c[];
-
-struct Actor *Func_02000f34(s32 *direction, s32 *slot, s32 *kind);
-s32 Func_02002338(struct Actor *object, s32 *position);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -101,8 +101,6 @@ s32 Func_02000dcc(struct PushTarget *target) {
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
 
-extern u16 gData_02002478[];
-
 /// Finds the object the leader is pushing: among objects 8 to 63 whose sprite
 /// shape is in the six-entry footprint table, the one whose footprint holds the
 /// cell one step ahead of the leader, when the leader is not in line with its
@@ -156,15 +154,7 @@ inner:
 }
 
 void Func_020022e0(struct Actor *object, s32 mode);
-void Event_NoOp(void);
 void Func_02001300(void);
-
-/// The heap slots read as words: the map slot comes through u32, not its
-/// pointer type, so its load stays behind the stores of the block.
-struct HeapSlotWords {
-  u32 slots[8];
-  u32 mapWork;
-};
 
 void Func_02001050(struct PushTarget target) {
   u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;

@@ -4,6 +4,9 @@
 
 #include "../screens_internal.h"
 #include "system/io_write.h"
+#include "module/tla.h"
+#include "module/window/screens.h"
+#include "resource_ids.h"
 
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
@@ -43,20 +46,11 @@ MenuTitle_Create(s32 group, struct RenderInput *input, s32 x, s32 y) {
   return first;
 }
 
-struct BobPairObject {
-  struct BobPairObject *next;
-  u8 unk04[4];
-  u8 baseY;
-  u8 unk09[11];
-  u8 y;
-};
-
 #ifndef MODERN
 // A current GCC refuses the volatile redeclaration and reads name_entry.c's.
 /// Counted up by every VBlank.
 extern volatile u32 gVBlankCount;
 #endif
-extern const u8 gWindow_PairBobOffsets[];
 
 /// Bobs the two sprites of a pair (see MenuTitle_Create) up and down
 /// by gWindow_PairBobOffsets, one step every four VBlanks.
@@ -69,8 +63,6 @@ void MenuTitle_Bob(struct BobPairObject *obj) {
   value = obj->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
   obj->y = value;
 }
-
-extern char ResourceId_CommandIcons;
 
 /// Decompresses command icon `icon` (a 32x32 picture of 256 colours, 1 KB)
 /// into VRAM slot `slot`, remapping its first 768 bytes' colours by table
@@ -110,31 +102,6 @@ struct WindowSprite *CommandIcon_Create(s32 arg0, s32 arg1,
   return entity;
 }
 
-struct Effect {
-  unsigned x : 16;
-  unsigned y : 16;
-  unsigned z : 16;
-  unsigned unk : 16;
-};
-
-struct Object {
-  u8 filler0[6];
-  u16 src6;
-  u8 src8;
-  u8 filler9[6];
-  u8 out15;
-  u8 filler16[4];
-  u8 out20;
-  u8 mode21 : 2;
-  u8 rest21 : 6;
-  u16 pos22 : 9;
-  u16 affine22 : 5;
-  u16 rest22 : 2;
-};
-
-extern u32 gVBlankCount;
-extern s32 gWindowSprite_PulseScales[];
-
 void WindowSprite_Pulse(struct Object *obj) {
   s32 v;
   struct Effect effect;
@@ -159,13 +126,6 @@ s32 Func_0804519c(void) {
     return (s32)MsgDjinnGiveTutorialB;
   return (s32)MsgDjinnGiveTutorialA;
 }
-
-struct BarPatternRow {
-  u32 word0;
-  u32 word1;
-};
-
-extern const struct BarPatternRow gMenu_BarPatternRows[];
 
 static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 

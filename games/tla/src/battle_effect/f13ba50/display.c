@@ -3,6 +3,7 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
+#include "module/battle_effect/f13ba50.h"
 
 /// Puts the battle screen back into the display state the effects start
 /// from and end with: no blending, window 0 and window 1 both covering the
@@ -28,15 +29,6 @@ void BattleEffect_ConfigureEffectDisplay(void) {
   wait(1);
 }
 
-
-struct ScrollStepWork {
-  u8 unk0000[0x7790];
-  s32 counter;
-  s32 period;
-  s32 stepX;
-  s32 stepY;
-};
-
 void Func_0813baec(void) {
   struct ScrollStepWork *work;
 
@@ -48,18 +40,6 @@ void Func_0813baec(void) {
     work->counter = 0;
   }
 }
-
-
-struct AffineStepWork {
-  u8 unk0000[0x7790];
-  s32 counter;
-  s32 period;
-  s32 stepX;
-  s32 stepY;
-  u8 unk77a0[0x30];
-  s32 x;
-  s32 y;
-};
 
 /// A task: every period frames, writes the BG2 reference point to
 /// the hardware, then moves it by (stepX, stepY).

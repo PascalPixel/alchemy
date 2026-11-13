@@ -1,41 +1,25 @@
 #include "types.h"
 #include "scene_tables.h"
+#include "module/scene/aqua_rock_inside.h"
 
 void Func_0200033c(void);
 void Func_0200042c(void);
-void Func_020004b4(void);
 void Func_020004bc(void);
 void Func_02000574(void);
 void Func_020005f8(void);
 void Func_02000644(void);
-void Func_02000690(void);
-void Func_0200071c(void);
-void Func_020007d4(void);
 void Func_02000958(void);
-void Func_02000a24(void);
-void Func_02000a98(void);
-void Func_02000ad8(void);
 void Func_02000b84(void);
-void Func_02000bac(void);
-void Func_02000bd4(void);
 void Func_02000c28(void);
 void Func_02000cc8(void);
-void Func_02000de4(void);
 void Func_02000e18(void);
 void Func_02000ecc(void);
 void Func_0200101c(void);
-void Func_02001060(void);
-void Func_0200107c(void);
-void Func_020010ec(void);
+/* VIEW(data2): routine Func_0200107c as void Func_0200107c(void); module/scene/aqua_rock_inside.h has void Func_0200107c(s32 a, s32 b). */
+extern void Func_0200107c__data2(void) __asm__("Func_0200107c");
 void Func_02001138(void);
-void Func_02001170(void);
 void Func_020011d4(void);
-void Func_02001328(void);
 void Func_02001a1c(void);
-void Func_02001c68(void);
-void Func_02001cd8(void);
-void Func_02001d40(void);
-void Func_02002ca4(void);
 void Func_02002f60(void);
 
 extern u8 Data_020005f4[];
@@ -591,13 +575,13 @@ s32 gData_0200507c[] = {
     (s32)Func_02001060,
     0x8c15,
     (s32)0xffff000a,
-    (s32)Func_0200107c,
+    (s32)Func_0200107c__data2,
     0x8c15,
     (s32)0xffff000b,
-    (s32)Func_0200107c,
+    (s32)Func_0200107c__data2,
     9,
     -0x10000,
-    (s32)Func_0200107c,
+    (s32)Func_0200107c__data2,
     -1,
     0,
     0,

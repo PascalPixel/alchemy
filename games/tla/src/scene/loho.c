@@ -17,22 +17,18 @@
 #include "main_routine_work.h"
 #include "dma.h"
 #include "text/msg_ids.h"
-
-extern u32 gData_020017d8[];
-extern u32 gData_020017a4[];
-extern u32 gData_0200171c[];
+#include "event_work.h"
+#include "item_icon.h"
+#include "module/scene/loho.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "scene_ids.h"
 
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
-void Func_02001440(s32 a, s32 b);
-void Event_Start(void);
-void Func_02000f38(void);
 
 void Func_02000038(void) { Func_080d7788(19, 3, 16); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
-
-extern char SceneId_Ov6A6Room2;
-extern u32 gData_0200183c[];
 
 const u32 *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room2)
@@ -41,14 +37,6 @@ const u32 *Scene_GetRegions(void) {
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-extern struct ActorPlacement gData_02001900[];
-extern struct ActorPlacement gData_02001a80[];
-
-struct EventWork15a {
-  u8 unk000[0x15a];
-  u16 flag;
-};
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room2)
@@ -91,52 +79,28 @@ void Func_02000178(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-s32 Resource_DecodeType01();
-s32 Func_02001268();
-s32 Fade_ToWhite();
-s32 Fade_FromWhite();
+/* VIEW(loho): routine Resource_DecodeType01 as s32 Resource_DecodeType01(); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
+extern s32 Resource_DecodeType01__loho() __asm__("Resource_DecodeType01");
+/* VIEW(loho): routine Fade_ToWhite as s32 Fade_ToWhite(); module/system/system.h has void Fade_ToWhite(s32 vblanks). */
+extern s32 Fade_ToWhite__loho() __asm__("Fade_ToWhite");
+/* VIEW(loho): routine Fade_FromWhite as s32 Fade_FromWhite(); module/system/system.h has void Fade_FromWhite(s32 vblanks). */
+extern s32 Fade_FromWhite__loho() __asm__("Fade_FromWhite");
 
-void Event_End(void);
 void Func_020013c8();
 
-s32 Resource_FindFreeEntry();
-s32 Resource_GetTableEntry();
-s32 Resource_ResetEntry(u32 slot);
+/* VIEW(loho): routine Resource_FindFreeEntry as s32 Resource_FindFreeEntry(); item_icon.h has s32 Resource_FindFreeEntry(void). */
+extern s32 Resource_FindFreeEntry__loho() __asm__("Resource_FindFreeEntry");
+/* VIEW(loho): routine Resource_GetTableEntry as s32 Resource_GetTableEntry(); resource.h has void *Resource_GetTableEntry(s32 resourceId). */
+extern s32 Resource_GetTableEntry__loho() __asm__("Resource_GetTableEntry");
 
-extern char ResourceId_FieldEffectExplosion;
-extern u8 Field_Palette685[];
-extern u32 gData_02001470[];
-extern s32 gData_0200151c[];
-extern s32 gData_0200154c[];
-extern u32 gData_0200158c[];
-extern u32 gData_020015e0[];
-extern u32 gData_02001638[];
-extern s32 gData_0200166c[];
+/* VIEW(loho): variable Field_Palette685 as u8 Field_Palette685[]; module/scene/scene.h has const u16 Field_Palette685[]. */
+extern u8 Field_Palette685__loho[] __asm__("Field_Palette685");
 
 static __inline__ void W_Func_020013a8(s32 a0, s32 a1, s32 a2) {
   /* FAKEMATCH(wrapper): W_Func_020013a8 forwarded inline; as direct calls to
    * Func_080d47b4, 70 of 1050 instructions differ in tla-en. */
   Func_080d47b4(a0, a1, a2);
 }
-
-struct Unk16 {
-  u8 unk00[4];
-  union {
-    u32 words[2];
-    u16 halves[4];
-    u8 bytes[8];
-    struct {
-      u16 y : 8;
-      u16 attr0 : 8;
-      u16 x : 9;
-      u16 attr1 : 7;
-      u16 tile : 10;
-      u16 priority : 2;
-      u16 palette : 4;
-    } oam;
-  } sprite;
-  s32 unk_0c;
-};
 
 void Func_02000198(void) {
   s32 v_r1, v_r2, v_r0, t0;
@@ -221,9 +185,9 @@ L_0200821e:
   MapGrid_SetShake(0x70000, 0x70000, 0x10000);
   table = (struct Unk16 *)Heap_AllocEwram(0x600);
   p = (struct Unk16 *)Heap_Alloc(0x1000);
-  t38 = Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion);
-  Resource_DecodeType01(t38, p);
-  entry = Resource_FindFreeEntry();
+  t38 = Resource_GetTableEntry__loho((s32)&ResourceId_FieldEffectExplosion);
+  Resource_DecodeType01__loho(t38, p);
+  entry = Resource_FindFreeEntry__loho();
   tiles = VramCache_Load(entry, 0x400, p);
   Heap_Release(p);
   p = (struct Unk16 *)&table->unk_0c;
@@ -234,7 +198,7 @@ L_0200838c:
   p = (struct Unk16 *)((s32)p + 16);
   if (i >= 0)
     goto L_0200838c;
-  Dma_Set((const void *)(s32)Field_Palette685, (void *)0x50003e0, 0x80000010,
+  Dma_Set((const void *)(s32)Field_Palette685__loho, (void *)0x50003e0, 0x80000010,
           (volatile u32 *)0x40000d4);
   i = 0;
   /* FAKEMATCH(dead): this test that never passes, with its edge into the loop,
@@ -251,7 +215,7 @@ L_020083b6:
 L_020083c4:
   if (i != 30)
     goto L_020083d4;
-  Fade_ToWhite(90);
+  Fade_ToWhite__loho(90);
   Sound_Play(141);
 L_020083d4:
   p = table;
@@ -297,7 +261,7 @@ L_02008474:
   MapGrid_SetShake(0, 0, 0x10000);
   Sound_Play(0x186);
   Event_Wait(180);
-  Fade_FromWhite(120);
+  Fade_FromWhite__loho(120);
   Event_SetMessageId((s32)MsgLoho28);
   Event_Wait(120);
   Actor_RunRepeatedMotion(18, 2);
@@ -545,11 +509,6 @@ void Func_02000c74(s32 id) {
   Actor_ReturnHome(id, kind, value + 2);
 }
 
-extern char SceneId_Ov6A6Room1;
-extern struct Trigger gData_02001ae0[];
-extern struct Trigger gData_02001aec[];
-extern struct Trigger gData_02001dd4[];
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02001348_(s32 id, s32 x, s32 z) {
@@ -589,13 +548,13 @@ void Func_02000d40(void) {
   Func_02001440(13, count);
 }
 
-void Func_02001430(s32 a, s32 b);
-void Func_02001438(s32 id);
+/* VIEW(loho): routine Func_02001430 as void Func_02001430(s32 a, s32 b); module/scene/gabomba_statue.h has void Func_02001430(void). */
+extern void Func_02001430__loho(s32 a, s32 b) __asm__("Func_02001430");
 
 void Func_02000d4c(void) {
   Actor_GetById(gMainRoutineWork.currentOwner);
   if (GameFlag_Test(800)) {
-    Func_02001430(30, 8);
+    Func_02001430__loho(30, 8);
   } else {
     if (GameFlag_Test(0xa5f))
       Event_SetMessageId((s32)MsgLoho51);
@@ -636,21 +595,11 @@ void Func_02000e3c(void) {
   Actor_SetMovementTypeById(8, gData_0200171c);
 }
 
-struct EventWork154 {
+/* VIEW(loho): tag struct EventWork154 as struct EventWork154__loho; module/scene/scene.h has another definition. */
+struct EventWork154__loho {
   u8 unk000[0x154];
   s16 value;
 };
-
-struct LohoPicture {
-  const void *data;
-  u16 a;
-  u16 b;
-};
-
-extern struct LohoPicture gData_02001f14;
-
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -682,7 +631,7 @@ loop:
   i++;
   if ((u32)i <= 63)
     goto loop;
-  work = (u8 *)&((struct EventWork154 *)work)->value;
+  work = (u8 *)&((struct EventWork154__loho *)work)->value;
   Sound_Play(158);
   Func_020012a0_(gData_02001f14.data, gData_02001f14.a, gData_02001f14.b);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
@@ -701,7 +650,7 @@ loop:
 
 void Func_02000eec(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
-  struct EventWork154 *work = Ram_HeapSlots->eventWork;
+  struct EventWork154__loho *work = Ram_HeapSlots->eventWork;
 
   /* FAKEMATCH(dead): an empty once-only block, so gMainRoutineWork loads
    * before the event work; as no block, one row is reordered, 2 of 31
@@ -723,7 +672,7 @@ static __inline__ void Func_020012a8_(s32 srcX, s32 srcY, s32 width, s32 height,
 }
 
 void Func_02000f38(void) {
-  s32 value = ((struct EventWork154 *)Ram_HeapSlots->eventWork)->value;
+  s32 value = ((struct EventWork154__loho *)Ram_HeapSlots->eventWork)->value;
 
   if (value == 2)
     Func_02001348_(8, PIXELS(144), PIXELS(224));
@@ -851,9 +800,6 @@ s32 Scene_PrepareMap(void) {
 }
 
 #include "objcmd.h"
-
-extern u32 gData_020016b8[];
-extern s16 gData_02001ef4[];
 
 // clang-format off
 u32 gData_02001470[] = {

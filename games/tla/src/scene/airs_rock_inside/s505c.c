@@ -12,24 +12,21 @@
 #include "system/vector3.h"
 #include "call.h"
 #include "field.h"
+#include "airs_rock_inside.h"
+#include "event_work.h"
+#include "flag_call.h"
+#include "module/field/field_effect.h"
+#include "module/scene/airs_rock_inside.h"
+#include "module/scene/scene.h"
 
 struct Actor *Actor_GetById(u32 objectId);
-void Event_Start(void);
-void Event_End(void);
-void Event_ResolvePendingActions(s32 skip);
 void Sound_Play(s32 cue);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Map_CenterOnFollowedPoint(void);
-void FieldEvent_Wait(s32 frames);
-s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-void Effect_AdvanceMotion(union FieldObject *object);
 void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-void Func_02005ec4(u32 id, s32 mode);
 void Map_SetScreenShake(s32 a, s32 b, s32 c);
-void Func_02005dd4(void);
 
 void Func_0200505c(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -96,25 +93,14 @@ extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
 extern s16 gData_02006050[], gData_02006054[], gData_0200605a[],
     gData_02006064[], gData_02006068[], gData_02006072[], gData_0200607e[],
     gData_0200621c[];
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void Func_02002770(void);
-void Func_02004f3c(void);
 void Func_02001690(void);
-void Func_02004eb0(void);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
-void Func_02005f6c(u16 *actors);
 void Func_02001084(struct Actor *object, s32 a, s32 b);
 void Func_02001420(struct Actor *object, s32 a, s32 b);
 void Map_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height, s32 a, s32 b);
 void Map_CopyCellAttributeRect(s32 srcX, s32 srcZ, s32 width, s32 height, s32 destX,
                    s32 destZ);
-void Func_02004cc8(void);
-void Func_02005f4c(s32 id);
-void Func_02005f54(void);
-s32 Func_02005f5c(s32 slot, s32 a, s32 b);
 s32 Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
-void Func_02000908(u16 *list);
 
 s32 Scene_Initialize(void) {
   struct Actor *object;
@@ -372,44 +358,13 @@ s32 Scene_PrepareMap(void) {
 }
 
 void Func_02000610(void);
-void Func_0200061c(void);
-void Func_02000988(void);
-void Func_02001828(void);
-void Func_02002790(void);
-void Func_02002898(void);
-void Func_02002980(void);
-void Func_02002a14(void);
-void Func_02002cf0(void);
-void Func_02003170(void);
-void Func_02003254(void);
-void Func_0200332c(void);
-void Func_02003654(void);
-void Func_02003ac4(void);
-void Func_02003b08(void);
-void Func_02003cac(void);
-void Func_02003d40(void);
-void Func_02003dd4(void);
-void Func_02003e28(void);
 void Func_02003ed4(void);
 void Func_02003f94(void);
 void Func_02004038(void);
 void Func_02004084(void);
-void Func_02004534(void);
-void Func_02004740(void);
-void Func_020047b0(void);
-void Func_02004818(void);
-void Func_02004884(void);
-void Func_020048bc(void);
-void Func_020048c4(void);
-void Func_02004ab8(void);
-void Func_02004bb4(void);
-
-void Func_02004880(void);
 
 extern u32 gData_02005f9c[];
-extern u32 gData_02005fd8[];
 extern u32 gData_02006014[];
-extern u32 gData_020061f8[];
 
 // clang-format off
 u32 gData_02005f9c[] = {

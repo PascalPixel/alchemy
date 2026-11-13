@@ -3,21 +3,19 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
 
 /* VIEW(ground_particles): tag struct GroundParticleWork as struct GroundParticleWork__ground_particles; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:2771: structure has no member named `entry'. */
 struct GroundParticleWork__ground_particles {
   s32 entry;
   s32 tileBase;
-  struct GroundParticle particles[64];
+  struct GroundParticle__visual_attributes particles[64];
   s32 unk808;
   s32 stopped;
   s32 unk810;
 };
-
-void Scene_QueueMusic(s32 sound);
-void Func_080d64f0(void);
-s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
-extern const u8 gData_080f3798[];
 
 /// Starts the ground particles: 64 sprites placed at the leader's position on
 /// the terrain, their tiles decoded into VRAM, the blend set, and
@@ -25,7 +23,7 @@ extern const u8 gData_080f3798[];
 void Func_080d690c(void) {
   struct GroundParticleWork__ground_particles *work;
   s32 *leader;
-  struct GroundParticle *particle;
+  struct GroundParticle__visual_attributes *particle;
   // words is the decode buffer, then each particle's attribute cursor.
   u32 *words;
   u32 i;
@@ -64,52 +62,10 @@ void Func_080d690c(void) {
   Task_Add(Func_080d64f0, TASK_PASS_VBLANK);
 }
 
-
-/// One rising particle: its sprite, world position, drift and frames left.
-struct RisingParticle {
-  /// The sprite: set as three words by the start, drawn field by field.
-  union {
-    u32 words[3];
-    struct {
-      u8 unk00[4];
-      /// OAM attributes 0 to 2.
-      ///@{
-      u16 y : 8; ///< screen pixels
-      u16 attr0 : 2;
-      u16 blendMode : 2;
-      u16 attr0b : 2;
-      u16 shape : 2;
-      u16 x : 9; ///< screen pixels
-      u16 attr1 : 5;
-      u16 size : 2;
-      u16 tile : 10;
-      u16 priority : 2;
-      u16 palette : 4;
-      ///@}
-      u8 unk0a[2];
-    } attributes;
-  } sprite;
-  s32 posX;
-  s32 posY;
-  s32 posZ;
-  s32 drift;
-  u16 timer;
-  u8 unk1e[2];
-};
-
-/// Heap slot 0x74 while the rising particles run.
-struct RisingParticleWork {
-  s32 vramEntry;
-  s32 tile;
-  struct RisingParticle particles[64];
-};
-
-u32 Random16(void);
-void Camera_WorldToScreen(union FieldCoordinate *position);
+/* VIEW(visual_attributes): routine Camera_WorldToScreen as void Camera_WorldToScreen(union FieldCoordinate *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
+extern void Camera_WorldToScreen__visual_attributes(union FieldCoordinate *position) __asm__("Camera_WorldToScreen");
 /* VIEW(ground_particles): routine Func_080140d8 as void Func_080140d8(void *sprite, s32 depth); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
 extern void Func_080140d8__ground_particles(void *sprite, s32 depth) __asm__("Func_080140d8");
-
-extern const u8 gData_080f385e[];
 
 /// Updates the 64 rising particles: each starts on the ground at a random
 /// point of the strip for 120 frames, drifts right by a random amount each
@@ -137,7 +93,7 @@ void Func_080d69f4(void) {
     screen[0].fixed = particle->posX + particle->drift;
     screen[1].fixed = particle->posY;
     screen[2].fixed = particle->posZ;
-    Camera_WorldToScreen(screen);
+    Camera_WorldToScreen__visual_attributes(screen);
     x = screen[0].part.pixel;
     y = screen[2].part.pixel - particle->timer - 8;
     particle->drift += Random16() + Q16_ONE / 2;
@@ -205,35 +161,11 @@ void Func_080d6b90(void) {
   Task_Add(Func_080d69f4, priority);
 }
 
-struct MoteParticle {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 attr3[2];
-  s32 posX;
-  s32 posY;
-  s32 posZ;
-  s32 delay;
-  u16 timer;
-};
-
 struct MoteWork {
   s32 entry;
   s32 tileBase;
   struct MoteParticle particles[64];
 };
-
-s32 GameFlag_Test(s32 flag);
 
 /// The Broken Seal's FieldMotes_Update with 64 motes in the heap slot 0x74
 /// workspace, started by FieldMotes_Start.

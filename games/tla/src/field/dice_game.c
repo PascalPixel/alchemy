@@ -23,12 +23,19 @@
 #include "main_routine_work.h"
 #include "bg_scroll.h"
 #include "version.h"
+#include "actor.h"
+#include "frame.h"
+#include "gamepak/far_call/game.h"
+#include "gamepak/far_call/window.h"
+#include "heap_release.h"
+#include "module/field/field.h"
+#include "module/system/system.h"
+#include "resource.h"
+#include "task.h"
+#include "transform.h"
 
-void Render_ResetTransformState(void);
-void SceneTransform_ApplyPosition(void *position);
-void SceneTransform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyPitch(s32 angle);
-void Projection_Set(u32 value0, u32 value1, u32 value2);
+/* VIEW(dice_game): routine SceneTransform_ApplyPosition as void SceneTransform_ApplyPosition(void *position); module/system/system.h has void SceneTransform_ApplyPosition(const s32 *pos). */
+extern void SceneTransform_ApplyPosition__dice_game(void *position) __asm__("SceneTransform_ApplyPosition");
 
 s32 Func_081b83c4_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
@@ -56,7 +63,7 @@ void Camera_ResetSceneDefaultsB(void) {
   state->unk18 = 0;
 
   Render_ResetTransformState();
-  SceneTransform_ApplyPosition(&state->pos[0]);
+  SceneTransform_ApplyPosition__dice_game(&state->pos[0]);
   SceneTransform_ApplyYaw((s16)state->yaw);
   SceneTransform_ApplyPitch((s16)state->pitch);
 
@@ -133,14 +140,6 @@ void Func_081b810c(u16 *source, u16 *destination, u32 count, s32 angle) {
     destination++;
   }
 }
-
-/// A sprite's attribute words. They are volatile, as The Broken Seal's
-/// LuckyWheels_Update keeps its OAM shadow; as plain words, the two offset
-/// counters, the multiply on each pass and the stack slots all differ.
-struct ReelSprite {
-  volatile u32 attr01;
-  volatile u32 attr2;
-};
 
 struct ReelWork {
   u8 unk000[0xc4];
@@ -371,55 +370,8 @@ const u8 gData_081ba30c[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #define BET_WINDOW_WIDTH COIN_WINDOW_WIDTH
 #endif
 
-extern const u8 gData_081ba30c[];
-
-// The casino's four-dice game, built
-// like LuckyDice_Run (four dice in a round dome, Slots_DomePicture): A throws
-// for a bet of ten coins a level. A pair, two pairs, a triple or four of a kind
-// (Func_081b834c, banners Slots_OnePairBanner to Slots_PerfectBanner) pays 1,
-// 2, 3 or 8 times the bet; a win offers a double-up round (state 5,
-// Slots_DoubleUpBanner and Slots_CashOutBanner): guess whether the next total
-// is higher or lower than this one (state 1, Slots_HigherBanner and
-// Slots_LowerBanner) for twice the winnings, up to five rounds, the last the
-// final game; a miss loses everything. Winnings are counted into the coins a
-// coin a frame (state 4). The dice bounce off the dome's round wall, settle to
-// a face and are drawn back to front with their shadows; palettes of the
-// banners pulse with Func_081b810c.
-struct DiceParticle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 variant;
-};
-
-struct DiceWork {
-  struct DiceParticle particles[4];
-};
-
-struct DiceOam {
-  volatile u32 attr01;
-  volatile u32 attr2;
-};
-
 struct RenderInput;
 
-struct DiceSprites {
-  u8 filler[196];
-  struct DiceOam oam[128];
-  struct RenderInput *coinsWindow;
-  struct RenderInput *betWindow;
-  struct RenderInput *helpWindow;
-};
-
-struct DiceCamera {
-  s32 eye[3];
-  s32 focus[3];
-};
-
-extern u8 gRenderOamEnabled;
 extern u8 gMapCellBuffer[];
 extern char MsgLuckyDiceCoins, MsgLuckyDiceWinnings, MsgDiceGameThrow,
     MsgDiceGameHigher, MsgDiceGameLower, MsgDiceGameHigherAgain,
@@ -435,35 +387,8 @@ extern char ResourceId_FarCall00C, ResourceId_SlotsDomePicture,
     ResourceId_SlotsGreenDigits, ResourceId_SlotsDoubleUpBanner,
     ResourceId_SlotsCashOutBanner;
 
-void *HeapSlot_Alloc(s32 slot, s32 size);
-void *HeapSlot_AllocEwram(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
-void Resource_ReservedNoOp(s32 id);
-void Task_ResetAll(void);
-void *Resource_GetTableEntry(s32 resourceId);
-s32 Resource_DecodeType01(const void *source, void *destination);
-s32 Graphics_ScaleRgb555BufferB(u16 *source, u16 *destination, s32 scale,
-                                s32 count);
-void Func_081b810c(u16 *source, u16 *destination, u32 count, s32 angle);
-s32 Func_081b834c(s32 *dice);
-s32 Func_081b8180(s32 sprite, s32 x, s32 y, s32 value, s32 palette, s32 digits);
-s32 Func_081b8274(s32 sprite, s32 x, s32 y, s32 value, s32 palette, s32 digits);
-void Transform_SetLookAt(s32 *eye, s32 *target);
-s32 Render_ProjectPoint(const void *point, s32 *screen);
-void WindowSystem_InitFieldFar(void);
-struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
-                                     s32 mode);
-void Window_CloseFar(struct RenderInput *window, s32 mode);
-void Text_DrawMessageAsTilesFar(s32 message, struct RenderInput *window,
-                                   s32 x, s32 y);
-void WindowSprite_PrepareForRedrawFar(struct RenderInput *window);
-void Party_AdjustCoinsFar(s32 amount);
-s32 Party_GetAverageLevelFar(void);
-void Sound_PlayFar(s32 cue);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-void wait(s32 frames);
+/* VIEW(dice_game): routine WindowSprite_PrepareForRedrawFar as void WindowSprite_PrepareForRedrawFar(struct RenderInput *window); gamepak/far_call/window.h has void WindowSprite_PrepareForRedrawFar(void *window). */
+extern void WindowSprite_PrepareForRedrawFar__dice_game(struct RenderInput *window) __asm__("WindowSprite_PrepareForRedrawFar");
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
@@ -811,7 +736,7 @@ void Func_081b83c4(void) {
         if (message != -1) {
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
-          WindowSprite_PrepareForRedrawFar(sprites->helpWindow);
+          WindowSprite_PrepareForRedrawFar__dice_game(sprites->helpWindow);
 #endif
           Text_DrawMessageAsTilesFar(message, sprites->helpWindow, 0, 0);
           Text_DrawMessageAsTilesFar((s32)&MsgDiceGameChoose,

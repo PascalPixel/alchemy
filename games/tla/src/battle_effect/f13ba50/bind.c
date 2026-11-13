@@ -3,6 +3,9 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/battle_effect/f13ba50.h"
+#include "resource_ids.h"
 
 #define PIXEL_BUFFER Ram_MapCellBuffer
 
@@ -94,15 +97,8 @@ void Graphics_ConvertBackgroundToBlueRamp(void) {
   wait(1);
 }
 
-void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
-                   s32 bluePhase); // Graphics_UpdatePhasePalette
 void Func_080151ac(s32 *scale);    // SceneTransform_ApplyScale
 
-extern char ResourceId_RuneSheet;
-extern char ResourceId_ParticleSpritesD;
-extern char ResourceId_JupiterDjinnSheet;
-extern s32 Data_0819790c[]; // the triangle's first corner: (0, 24, 0)
-extern u16 Data_08197424[]; // flare sizes 1 to 5: cell offsets
 #define FLARE_SHEET 0x1000  // the flares, after the rune picture
 #define DJINN_SHEET 0x2000  // the Jupiter Djinn, after the flares
 #define DJINN_SIZE 40
@@ -269,8 +265,6 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-
-extern s32 Data_08197918[]; // the triangle's first corner: (0, 24, 0)
 
 // Triangle strike (kind 67): a triangle of flares spins down onto the
 // target, shrinking, for 64 frames; then the rune picture is stamped in two

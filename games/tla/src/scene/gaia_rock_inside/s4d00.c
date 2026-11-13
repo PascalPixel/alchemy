@@ -1,4 +1,5 @@
 #include "types.h"
+#include "module/scene/gaia_rock_inside.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -18,7 +19,6 @@ void Func_02004d00(void) {
 #include "text/msg_ids.h"
 #include "objcmd.h"
 
-void Func_0200036c(void);
 void Func_020005dc(void);
 void Func_020005f8(void);
 void Func_02000610(void);
@@ -32,39 +32,15 @@ void Func_020008b4(void);
 void Func_02000900(void);
 void Func_02000af8(void);
 void Func_02000b6c(void);
-void Func_02000c38(void);
-void Func_02000c74(void);
 void Func_02000cd8(void);
-void Func_02000cf8(void);
-void Func_02000d18(void);
-void Func_02000edc(void);
-void Func_02001048(void);
-void Func_020011c8(void);
-void Func_020012ac(void);
 void Func_0200136c(void);
 void Func_0200142c(void);
 void Func_020014d0(void);
 void Func_0200151c(void);
 void Func_020019cc(void);
-void Func_02001d14(void);
-void Func_02001ebc(void);
-void Func_02001f68(void);
-void Func_02001f84(void);
-void Func_02001fa0(void);
-void Func_02001fd8(void);
-void Func_02002020(void);
-void Func_0200225c(void);
-void Func_020024b8(void);
-void Func_02002718(void);
 void Func_02002974(void);
-void Func_02002a14(void);
-void Func_02002a24(void);
-void Func_02002a34(void);
 void Func_0200485c(void);
 
-extern u32 gData_0200501c[];
-extern u32 gData_02005058[];
-extern u32 gData_02005094[];
 extern u32 gData_02005528[];
 extern u32 gData_02005a30[];
 

@@ -4,6 +4,11 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/field_sequence.h"
+#include "module/field/object.h"
+#include "module/system/system.h"
 
 /* VIEW(f0daecc): tag struct ChainLink as struct ChainLink__f0daecc; visual_attributes.c has another definition. */
 struct ChainLink__f0daecc {
@@ -27,26 +32,9 @@ struct ChainSlot__f0daecc {
   struct ChainLink__f0daecc *root;
 };
 
-struct ChainObject {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x3c];
-  struct {
-    u8 unk00[0x28];
-    s16 *entries[4];
-  } *sprite;
-  u8 unk54;
-  u8 motionFlags;
-  u8 unk56[3];
-  u8 collisionFlags;
-};
-
 struct Actor *Actor_GetById(u32 objectId);
 /* VIEW(f0daecc): routine Func_080da9a8 as void *Func_080da9a8(s32 kind); the definition has struct TileEffectWork *Func_080da9a8(s32 kind). */
 extern void *Func_080da9a8__f0daecc(s32 kind) __asm__("Func_080da9a8");
-struct WorkA4Slot *Func_080dae70(s32 id);
 /* VIEW(f0daecc): routine Func_080dae3c as struct ChainSlot__f0daecc *Func_080dae3c(void); the definition has struct WorkA4Slot *Func_080dae3c(void). */
 extern struct ChainSlot__f0daecc *Func_080dae3c__f0daecc(void) __asm__("Func_080dae3c");
 /* VIEW(f0daecc): routine Func_080daea8 as struct ChainLink__f0daecc *Func_080daea8(void); the definition has struct WorkA4Item *Func_080daea8(void). */
@@ -156,12 +144,6 @@ void Func_080daecc(s32 objectId, s32 grow) {
   slot->objectId = objectId;
   slot->spacing = 14 << 16;
 }
-
-
-struct Unk_080db0b0Sprite {
-  u8 unk00[18];
-  u16 unk12;
-};
 
 // The half turn on the leader's side of the anchor: 0 on its right, 1 on its
 // left.
@@ -344,70 +326,17 @@ void Func_080db444(s32 id, s32 force) {
 
 // Field Psynergy: the dispatchers that run each animation
 
-
-/// The Psynergy animations (BattleFxScene.animation) the dispatchers name.
-// The Broken Seal has 1-16; ⚓️ adds 17-30.
-enum FieldPsynergyAnimation {
-  FIELD_FX_PUSH = 1,  ///< pushes the target the way the pad points
-  FIELD_FX_WAVE = 2,  ///< the hue wave from the caster to the target
-  FIELD_FX_PAUSE = 9, ///< stops an object in its tracks
-};
-
-void BattleEffect_Run(void);
-void BattleEffect_DispatchRequestKind(void);
-void BattleEffect_ClearChildValueOnMismatch(void);
-void FieldEvent_RunTypeHandler(void);
-
-void FieldEffect_RunMove(void);
-void FieldPsynergy_Lift(void);
-void Func_080df6f4(void);
-void Func_080de21c(void);
-void FieldEffect_RunDouse(void);
-void FieldEffect_RunWhirlwind(void);
-void FieldEffect_RunFrost(void);
-void FieldEffect_RunPly(void);
-void FieldEffect_RunGrowth(void);
-void FieldPsynergy_Catch(void);
-void FieldEffect_RunRetreat(void);
-void BattleEffect_RunEffect16(void);
-void Func_080decb8(void);
-void Func_080dd820(void);
-void Func_080e09c0(void);
-void Func_080e1f2c(void);
-void Func_080e3074(void);
-void Func_080e3d04(void);
-void Func_080e572c(void);
-void Func_080e5d5c(void);
-void Func_080e68d0(void);
-void Func_080e9090(void);
-void BattleEffect_RunViewSway(void);
-void Func_080e9af4(void);
-void Func_080e4a34(void);
-void BattleEffect_RunEffect30(void);
-void Func_080e7844(void);
-void Func_080e82cc(void);
-void BattleEffect_ResumeObject(s32 id);
-s32 BattleEffect_FindNearestObject(s32 self, s32 animation);
-s32 BattleEffect_FilterObjectIdByFlags(s32 id);
-void *Scene_FindActorTalkTrigger(s32 id);
-void BattleEffect_SetupObjectPair(s32 userId, s32 targetId);
 void BattleEffect_MarkChildAndRunFallbackTransition(s32 id);
-void BattleEffect_PauseObject(s32 id);
-void FieldPsynergy_Halt(void);
-void Func_080dd950(void);
 void Func_080dc978(s32 sourceId, s32 targetId);
 void Func_080dd054(s32 targetId);
 void FieldEffect_RunLiftOnTarget(s32 targetId);
-void BattleEffect_SteerLiftedTarget(s32 targetId);
 void FieldEffect_RunForceOnTarget(s32 targetId);
 void FieldEffect_RunDouseOnTarget(s32 targetId);
 void FieldEffect_RunFrostOnTarget(s32 targetId);
-void Func_080dda30(s32 targetId);
 void FieldEffect_RunPlyOnTarget(s32 targetId);
 /* VIEW(f0daecc): routine FieldEffect_RunWhirlwindOnTarget as void FieldEffect_RunWhirlwindOnTarget(s32 targetId); battle.h has void FieldEffect_RunWhirlwindOnTarget(void); tried as the definition's void FieldEffect_RunWhirlwindOnTarget(void), which the object already declares, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:7369: too many arguments to function `FieldEffect_RunWhirlwindOnTarget'. */
 extern void FieldEffect_RunWhirlwindOnTarget__f0daecc(s32 targetId) __asm__("FieldEffect_RunWhirlwindOnTarget");
 void BattleEffect_CallEffect13(s32 targetId);
-void Func_080e0978(s32 targetId);
 void BattleEffect_CallEffect23(s32 targetId);
 void BattleEffect_CallEffect26(s32 targetId);
 void BattleEffect_CallSpinEffect(s32 targetId);
@@ -616,34 +545,6 @@ void BattleEffect_DispatchRequestKind(void) {
   }
 }
 
-
-void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
-
-struct CompositeAnimation {
-  u8 unk00[0x11];
-  u8 displayFlags;
-  u8 unk12[7];
-  u8 dirty;
-  u8 unk1a;
-  u8 count;
-  u8 unk1c[0x0c];
-  struct AnimationEntry *entries[4];
-};
-
-void Func_080debd8(void);
-void FieldEvent_ShowStatusMessage(void);
-void Func_080e4730(void);
-void Func_080e9db4(void);
-void Func_080e87c4(void);
-
-void BattleEffect_FinishSceneAndReleaseHeapBlock(void);
-
-/// unk26a from main_routine_work.h.
-struct PartyPauseView {
-  u8 unk000[0x26a];
-  s16 pausedObject;
-};
-
 void BattleEffect_ClearChildValueOnMismatch(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
 
@@ -725,31 +626,8 @@ void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
   }
 }
 
-struct DepthPart {
-  u8 unk00[9];
-  u8 unk09_0 : 2;
-  u8 priority : 2;
-  u8 unk09_4 : 4;
-};
-
-struct DepthMapBase {
-  u8 unk00[4];
-  s32 base;
-};
-
-struct DepthScroll {
-  s32 unk00;
-  s32 offset;
-};
-
-struct DepthMap {
-  struct DepthMapBase *base;
-  u8 unk04[0xe0];
-  struct DepthScroll scroll;
-};
-
-s32 Render_ProjectPoint(const void *point, s32 *screen);
-void Func_080eb01c(void *work);
+/* VIEW(visual_attributes): routine Func_080eb01c as void Func_080eb01c(void *work); effect_sprite.h has void Func_080eb01c(struct EffectSprite *sprite). */
+extern void Func_080eb01c__visual_attributes(void *work) __asm__("Func_080eb01c");
 
 s32 Func_080db9a8(struct Actor *object, s32 kind) {
   if (kind == 0xc000)
@@ -792,42 +670,11 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object) {
 
 /// Per-frame callback: draws the effect scene's sprite (effect work +0x7c8).
 void BattleEffect_DrawSceneSprite(void) {
-  Func_080eb01c((u8 *)Ram_HeapSlots->effectWork + 0x7c8);
+  Func_080eb01c__visual_attributes((u8 *)Ram_HeapSlots->effectWork + 0x7c8);
 }
 
-
-struct DepthSprite {
-  u8 unk00[5];
-  u8 unk05_0 : 5;
-  u8 hidden : 1;
-  u8 unk05_6 : 2;
-  u8 unk06[3];
-  u8 unk09_0 : 2;
-  u8 priority : 2;
-  u8 layer : 4;
-  u8 unk0a[2];
-  s32 x;
-  s32 y;
-  u8 unk14[4];
-  s32 scale;
-  u8 unk1c[2];
-  u16 frame;
-  u8 unk20[8];
-};
-
-struct DepthScene {
-  u16 mode;
-  u8 unk02[2];
-  s32 x;
-  u8 unk08[8];
-  struct Actor *mainObject;
-  u8 unk14[0x7b4];
-  struct DepthSprite sprite;
-  s16 vramSlot;
-  s16 active;
-};
-
-void Func_080eaf98(struct DepthSprite *sprite, s32 a, s32 b, u32 c, s32 tiles);
+/* VIEW(visual_attributes): routine Func_080eaf98 as void Func_080eaf98(struct DepthSprite *sprite, s32 a, s32 b, u32 c, s32 tiles); effect_sprite.h has void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY, u32 attributes, s32 tile). */
+extern void Func_080eaf98__visual_attributes(struct DepthSprite *sprite, s32 a, s32 b, u32 c, s32 tiles) __asm__("Func_080eaf98");
 /* VIEW(f0daecc): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); ground_particles has void Camera_WorldToScreen(union FieldCoordinate *position). */
 extern void Camera_WorldToScreen__f0daecc(s32 *position) __asm__("Camera_WorldToScreen");
 
@@ -854,7 +701,7 @@ void Func_080dba5c(void) {
     scene->vramSlot = slot;
     Heap_Release(buffer);
     sprite = &scene->sprite;
-    Func_080eaf98(sprite, 16, 31, 0x80000000, tiles);
+    Func_080eaf98__visual_attributes(sprite, 16, 31, 0x80000000, tiles);
     sprite->frame = 0;
     sprite->priority = 0;
     sprite->hidden = 0;

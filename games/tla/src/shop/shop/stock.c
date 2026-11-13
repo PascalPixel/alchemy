@@ -3,12 +3,8 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
-
-extern const s16 Data_0810c38e[];
-// Unnamed in the catalog yet: 4724, 4687 and 4695 take placeholders here.
-extern u8 MsgLetMeGiveYouThis[];
-
-void Party_AdjustShopGiftsFar(s32 amount);
+#include "gamepak/far_call/game.h"
+#include "module/shop/shop.h"
 
 void Shop_GiveGameTicket(void *window, void *itemWindow) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
@@ -79,8 +75,6 @@ void Shop_GiveGameTicket(void *window, void *itemWindow) {
 }
 
 s32 ShopStock_GetRowCount(void) { return 32; }
-
-extern const s16 gData_0810c3f4[][33];
 
 void ShopStock_AddArtifacts(s32 rowNo) {
   s32 flag = rowNo + 0x400;

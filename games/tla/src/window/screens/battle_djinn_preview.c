@@ -3,6 +3,11 @@
 // Part of screens.c.
 
 #include "../screens_internal.h"
+#include "djinn_preview.h"
+#include "gamepak/far_call/game.h"
+#include "module/tla.h"
+#include "module/window/screens.h"
+#include "module/window/window.h"
 
 s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
   s16 *dst;
@@ -20,11 +25,6 @@ s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
     dst += 1;
   } while (n >= 0);
 }
-
-struct DjinnSlot {
-  u16 id;
-  u16 state;
-};
 
 /// Lists into `out` the abilities usable in battle (flag 0x80) of the action
 /// list `newGrid`, in its order, marking with bit 15 those `oldGrid` lacks;
@@ -135,64 +135,10 @@ s32 WindowSprite_CreateAbilityIcon(struct RenderInput *input, s32 x, s32 y,
 #define PSYNERGY_PROMPT_X 24
 #endif
 
-struct PreviewUnit {
-  u8 unk000[0x38];
-  s16 hp;
-  s16 pp;
-  u16 atk;
-  u16 def;
-  u16 agi;
-  u8 luck;
-  u8 unk043[0x15];
-  u16 psynergy[1];
-  u8 unk05a[0xcf];
-  u8 classId;
-  u8 unk12a[0x22];
-};
-
-struct PreviewAbility {
-  u8 unk00[2];
-  u8 element; ///< 4 for none
-  u8 unk03[5];
-  u8 range; ///< 255 for everyone
-  u8 ppCost;
-};
-
 // Text colours (Text_SetColor).
 #define PREVIEW_RED 2
 #define PREVIEW_YELLOW 4
 #define PREVIEW_WHITE 15
-
-extern const u8 gDjinnMenu_ArrowUpTiles[];
-extern const u8 gDjinnMenu_ArrowDownTiles[];
-
-s32 Djinn_IsSetFar(s32 member, s32 element, s32 index);
-void Djinn_PutOnStandbyFar(s32 member, s32 element, s32 index);
-// Text_DrawWideStringInWindow is called with no prototype in scope, as The
-// Broken Seal's window functions are from its menu object: an implicit int
-// call sets r0, which is what orders each call's arguments.
-void Text_SetColor(s32 color);
-
-// The sprite cell at WindowSprite.sprite: a link, then the OAM words.
-struct ArrowSprite {
-  u32 link;
-  union {
-    u32 word;
-    struct {
-      unsigned y : 8;
-      unsigned flags : 8;
-      unsigned x : 9;
-      unsigned high : 7;
-    } bits;
-  } attributes;
-  union {
-    u32 value;
-    struct {
-      unsigned index : 10;
-      unsigned high : 6;
-    } bits;
-  } tile;
-};
 
 /// Shows what setting or removing Djinni `encodedDjinn` (element << 8 |
 /// index) would change for `member`: closes the preview window `win`, opens a

@@ -15,19 +15,17 @@
 #include "scene_tables.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
+#include "module/scene/eastern_alhafra.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "particle.h"
 
 extern u8 gData_02004d0c[];
 extern u8 gData_02004dbc[];
 extern u8 gData_02004fe4[];
 
-void Func_02000fa4(void);
-void Func_02003f48(s32, s32, s32, s32);
-void Func_02004004(void);
-void Func_020040c0(void);
 void Func_02004868(void *, s32, s32);
 s32 Func_02004a7c();
-s32 Func_02004c24();
-s32 Func_02004c8c();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -114,25 +112,18 @@ void Func_02000190(s32 unused, s32 id) {
 #include "event_work.h"
 #include "text/msg_ids.h"
 
-struct DoorPlan {
-  s32 value[6];
-};
-
 extern u8 gData_02005290[];
 
 void Func_0200112c(void);
-void Func_020017ec(void);
-void Func_02001cb0(void);
 s32 Func_02004240(struct DoorPlan *);
 void Func_020044c4(struct DoorPlan);
-s32 Func_02004a0c();
-s32 Func_02004a24();
+/* VIEW(eastern_alhafra): routine Func_02004a0c as s32 Func_02004a0c(); module/scene/scene.h has void Func_02004a0c(struct Actor *object, s32 mode). */
+extern s32 Func_02004a0c__eastern_alhafra() __asm__("Func_02004a0c");
 s32 Party_FindOwnerWithAction();
 void Event_Start();
 void Event_End();
-s32 Func_02004bb4();
-s32 Func_02004c44();
-s32 Func_02004c4c();
+/* VIEW(eastern_alhafra): routine Func_02004bb4 as s32 Func_02004bb4(); module/scene/airs_rock_inside.h has void Func_02004bb4(void). */
+extern s32 Func_02004bb4__eastern_alhafra() __asm__("Func_02004bb4");
 
 void Func_02000200(s32 mode, s32 id) {
   struct Actor *object;
@@ -181,13 +172,13 @@ void Func_02000200(s32 mode, s32 id) {
     Event_PlaySound(240);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
-    Func_02004a0c(object, 4);
+    Func_02004a0c__eastern_alhafra(object, 4);
     i = 0;
   create:
     spark = (FieldActor_Create(276, object->x, object->y, object->z));
     sparks[i] = spark;
     spark->scaleX = 0xa666;
-    Func_02004a0c(spark, 1);
+    Func_02004a0c__eastern_alhafra(spark, 1);
     Actor_SetSingleChildFlags(spark, 0);
     Event_PlaySound(154);
     System_Wait(5);
@@ -250,32 +241,16 @@ void Func_0200042c(s32 mode, s32 id) {
 
 #include "field/field.h"
 
-
-struct Unk_02004240 {
-  s32 value[6];
-};
-
-void Func_02000fa4(void);
 void Func_0200112c(void);
-void Func_020017ec(void);
-void Func_02001cb0(void);
-void Func_02003f48(s32, s32, s32, s32);
-void Func_02004004(void);
-void Func_020040c0(void);
 /* VIEW(s0514): routine Func_02004240 as s32 Func_02004240(struct Unk_02004240 *); eastern_alhafra has s32 Func_02004240(struct DoorPlan *). */
 extern s32 Func_02004240__s0514(struct Unk_02004240 *) __asm__("Func_02004240");
 /* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct Unk_02004240); eastern_alhafra has void Func_020044c4(struct DoorPlan); tried as the definition's void Func_020044c4(struct PushTarget target), it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:265: conflicting types for `Func_020044c4'. */
 extern void Func_020044c4__s0514(struct Unk_02004240) __asm__("Func_020044c4");
 void Func_02004868(void *, s32, s32);
-s32 Func_02004a24();
 s32 Func_02004a7c();
 s32 Party_FindOwnerWithAction();
 void Event_Start();
 void Event_End();
-s32 Func_02004bb4();
-s32 Func_02004c44();
-s32 Func_02004c4c();
-s32 Func_02004c8c();
 
 void Func_02000514(void) {
   struct Actor *actor15;
@@ -329,12 +304,6 @@ void Func_02000514(void) {
     Func_080dbdd4(actor16->x, actor16->z, 2, 0);
 }
 
-struct DoorStep {
-  s32 script;
-  u16 x;
-  u16 z;
-};
-
 /* VIEW(s0514): variable gData_02005290 as extern struct DoorStep gData_02005290[]; eastern_alhafra has extern u8 gData_02005290[]. */
 extern struct DoorStep gData_02005290__s0514[] __asm__("gData_02005290");
 
@@ -344,7 +313,7 @@ void Func_0200042c(s32, s32);
 void Func_020006ec(s32 mode) {
   s32 tile;
 
-  tile = Func_02004bb4(gMainRoutineWork.currentOwner);
+  tile = Func_02004bb4__eastern_alhafra(gMainRoutineWork.currentOwner);
   if (tile == 16) {
     Func_02000394(mode, 16);
     if (Func_02004c44() != 0)
@@ -474,7 +443,6 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 #include "frame.h"
 
 extern u8 gData_020054f0[];
-extern u16 gData_020056e0[2][160];
 
 // BG1's wave: each frame the finished table of scanline offsets is handed to
 // an HBlank DMA, while the other table is filled for the next frame.
@@ -522,14 +490,12 @@ void Func_02000af8(void) {
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 #define OBJECT(id) (Actor_Get((id)))
 
-void Func_02004c5c();
-void Func_02003274(void);
 void Func_020040ec();
-void Func_02004c14(void);
-void Func_02004c2c();
-void Func_02004c1c(void);
+/* VIEW(eastern_alhafra): routine Func_02004c2c as void Func_02004c2c(); module/scene/mars_lighthouse_aerie.h has void Func_02004c2c(void). */
+extern void Func_02004c2c__eastern_alhafra() __asm__("Func_02004c2c");
 void Func_020047fc();
-void Func_02004c94();
+/* VIEW(eastern_alhafra): routine Func_02004c94 as void Func_02004c94(); module/scene/mars_lighthouse_aerie.h has void Func_02004c94(void). */
+extern void Func_02004c94__eastern_alhafra() __asm__("Func_02004c94");
 
 s32 Scene_Initialize(void) {
   struct Actor *object;
@@ -610,7 +576,7 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(0x8a6) == 0)
     Func_020040ec(15);
   Func_02004c14();
-  Func_02004c2c(0, 0x8a3, 8, 9);
+  Func_02004c2c__eastern_alhafra(0, 0x8a3, 8, 9);
   OBJECT(8)->priorityFlags |= 32;
   OBJECT(9)->priorityFlags |= 32;
   Func_02004c1c();
@@ -632,7 +598,7 @@ s32 Scene_Initialize(void) {
     object->motionFlags = flag;
     object->y = 0x100000;
     Func_02004c24(1, 18, 19);
-    Func_02004c94(1);
+    Func_02004c94__eastern_alhafra(1);
     object = OBJECT(20);
     object->collisionFlags |= 8;
     object = OBJECT(21);
@@ -661,7 +627,6 @@ s32 Scene_PrepareMap(void) { return 0; }
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-void Func_02004c84();
 
 void Func_02000fa4(void) {
   s32 t1, t2, t8, t10, t12, t13, t18, t19, t24, v_r5;
@@ -736,8 +701,6 @@ L_02009122:
 }
 
 #include "field_sprite.h"
-
-void Func_02004b94();
 
 void Func_0200112c(void) {
   struct Actor *object0;
@@ -1119,19 +1082,11 @@ L_02009b74:
   return;
 }
 
-struct SpawnObject {
-  u8 unk00[0x50];
-  struct FieldSprite *sprite;
-  u8 unk54;
-  u8 motionFlags;
-  u8 unk56[8];
-  u16 unk5e;
-};
-
 extern const u8 gData_020056d4[];
 
 void Actor_StartScript(struct SpawnObject *object, const void *script);
-void Actor_SetSpritePriorityDirect(struct SpawnObject *object, s32 priority);
+/* VIEW(eastern_alhafra): routine Actor_SetSpritePriorityDirect as void Actor_SetSpritePriorityDirect(struct SpawnObject *object, s32 priority); actor_view.h has void Actor_SetSpritePriorityDirect(struct Actor *, s32). */
+extern void Actor_SetSpritePriorityDirect__eastern_alhafra(struct SpawnObject *object, s32 priority) __asm__("Actor_SetSpritePriorityDirect");
 
 /// Spawns object type 0x1e8 at x, y, z with its sprite turned to value and
 /// its timer set.
@@ -1142,9 +1097,9 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
   object = ((struct SpawnObject *)FieldActor_Create(0x1e8, x, y, z));
   if (object != 0) {
     sprite = object->sprite;
-    Func_02004a0c(object, 1);
+    Func_02004a0c__eastern_alhafra(object, 1);
     Actor_StartScript(object, gData_020056d4);
-    Actor_SetSpritePriorityDirect(object, 1);
+    Actor_SetSpritePriorityDirect__eastern_alhafra(object, 1);
     object->motionFlags = 0;
     {
       /* FAKEMATCH(signature): the timer copied into an s64 local, so it loads
@@ -1164,7 +1119,6 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 
 // ---- games/tla/src/scene/eastern_alhafra/s1bf4.c ----
 // Scene code of overlay 0x668, in ROM order, from s1bf4's offset up to the next object the overlay links.
-
 
 /* VIEW(s1bf4): routine Func_02001b9c as s32 Func_02001b9c(s32 x, s32 y, s32 z, s32 rotation, s32 timer); the definition has void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer); tried as the definition's void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer), which the object already declares, Func_02001bf4 moves: 2 of 79 instructions in tla-ja. */
 extern s32 Func_02001b9c__s1bf4(s32 x, s32 y, s32 z, s32 rotation, s32 timer) __asm__("Func_02001b9c");
@@ -1192,15 +1146,8 @@ void Func_02001bf4(s32 id) {
 
 #include "scene_ids.h"
 
-extern s32 gData_020054f4[];
-extern s32 gData_0200556c[];
-extern u32 gData_0200d5d0[];
-extern u32 gData_02005620[];
-extern s32 gData_02005670[];
-
 void Event_Start();
 void Event_End();
-void Func_02004b94();
 void Event_SetDestination();
 
 static __inline__ void Func_02004b6c_(s32 actor, s32 a, s32 b) {
@@ -2155,31 +2102,6 @@ void Func_02003274(void) {
   Event_End();
 }
 
-struct Particle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 age;
-};
-
-struct ParticleSprite {
-  u8 unk0[8];
-  u16 attr;
-  u8 unkA[30];
-};
-
-struct ParticleWork {
-  u8 tiles[0x500];
-  struct Particle particles[64];
-  struct ParticleSprite sprites[64];
-  s16 next;
-  u16 tile;
-};
-
-void Func_02004c6c(struct ParticleSprite *sprite, struct Particle *particle);
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
 void Func_02003ec4(void) {
@@ -2209,15 +2131,9 @@ next:
     goto next;
 }
 
-/// One falling rock: where it is, how it moves and how long it has fallen.
-struct Rock {
-  s32 position[3];
-  s32 velocity[3];
-  s32 timer;
-};
-
 /// A falling rock's sprite.
-struct RockSprite {
+/* VIEW(eastern_alhafra): tag struct RockSprite as struct RockSprite__eastern_alhafra; module/tla.h has another definition. */
+struct RockSprite__eastern_alhafra {
   u8 unk00[5];
   u8 unk05;
   u8 unk06[2];
@@ -2234,7 +2150,7 @@ struct RockSprite {
 struct RockWork {
   u8 tiles[0x500];
   struct Rock rocks[64];
-  struct RockSprite sprites[64];
+  struct RockSprite__eastern_alhafra sprites[64];
   s16 next;
   u16 tileBase;
   s16 resource;

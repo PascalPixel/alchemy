@@ -3,21 +3,9 @@
 // Part of f0dcb44.c.
 
 #include "../f0dcb44_internal.h"
-
-struct SwayObject {
-  u8 unk00[8];
-  s32 y;
-  u8 unk0c[44];
-  s32 baseY;
-  u8 unk3c[40];
-  s16 phase;
-};
-
-struct OrbitVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
+#include "module/field/event_commands.h"
+#include "module/field/f0dcb44.h"
+#include "module/field/object.h"
 
 /// Per-frame update: sways 4 pixels either side of the anchor, once every
 /// 128 frames.
@@ -60,28 +48,6 @@ void BattleEffect_UpdateShrinkingOrbitObject(struct Actor *object) {
   }
 }
 
-struct SparkObject {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[4];
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk20[24];
-  s32 anchorX;
-  u8 unk3c[12];
-  s32 gravity;
-  u8 unk4c[9];
-  u8 motionFlags;
-  u8 unk56[8];
-  u16 unk5e;
-  u8 unk60[4];
-  s16 phase;
-  u8 unk66[6];
-  void (*update)(struct SparkObject *);
-};
-
 void Func_080de8d0(struct SparkObject *obj) {
   struct BattleFxScene *scene;
   s16 *phase;
@@ -120,10 +86,6 @@ void Func_080de8d0(struct SparkObject *obj) {
   }
 }
 
-void FieldEffect_RunPly(void);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
-                                                s32 magnitude, s32 angle);
-
 /// Effect 3 cast on a target: runs effect 3, then stops the caster's hook.
 void FieldEffect_RunPlyOnTarget(void) {
   FieldEffect_RunPly();
@@ -152,7 +114,7 @@ void FieldEffect_RunPly(void) {
       object->timer = 120;
       object->unk66 = i << 13;
       object->motionFlags = 4;
-      last = Sprite_ShareVramCacheEntry(object->sprite, last);
+      last = Sprite_ShareVramCacheEntry__f0dcb44(object->sprite, last);
     }
     wait(1);
   }
@@ -214,22 +176,12 @@ void FieldEffect_RunPly(void) {
   BattleEffect_PrepareBufferInterpolation();
 }
 
-struct OwnerObject {
-  u8 unk00[8];
-  s32 x;
-  u8 unk0c[4];
-  s32 z;
-  u8 unk14[14];
-  u8 layer;
-};
-
 /* VIEW(f0de21c): tag struct EventWork as struct EventWork__f0de21c; event_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0dcb44.c:2076: structure has no member named `state'. */
 struct EventWork__f0de21c {
   u8 unk000[0x166];
   u16 state;
 };
 
-s32 Party_GetLeaderActor(void);
 s32 Func_080dbca8(s32 x, s32 z, s32 layer);
 
 /// A task of Cloak: when the controlled character does not
@@ -241,23 +193,6 @@ void FieldEffect_CheckCloakTile(void) {
   if (Func_080dbca8(owner->x, owner->z, owner->layer) == 0)
     event->state = 0x2092;
 }
-
-
-// ⚓️'s composite sprite (as worka0/f0daecc.c's CompositeAnimation).
-struct CloakSprite {
-  u8 unk00[0x19];
-  u8 dirty; // redraw the parts
-  u8 blend; // 2 draws the caster half transparent, 1 shows it plainly
-  u8 unk1b[0x0d];
-  struct AnimationEntry *entries[4];
-};
-
-struct CloakCaster {
-  u8 unk00[0x50];
-  struct CloakSprite *sprite;
-  u8 unk54[0x18];
-  void (*hook)(void);
-};
 
 #define SE_CLOAK_END 154
 

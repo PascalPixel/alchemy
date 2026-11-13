@@ -3,54 +3,25 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
+#include "event.h"
+#include "field.h"
+#include "field_event.h"
+#include "flag_call.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/scene/islets.h"
+#include "module/scene/scene.h"
+#include "module/scene/venus_lighthouse.h"
+#include "system.h"
 
-struct VenusActor {
-  u8 unk00[6];
-  u16 facing;
-  s16 xLow;
-  s16 xPixel;
-  s32 y;
-  s16 zLow;
-  s16 zPixel;
-  s32 terrainHeight;
-  u8 unk18[0xa];
-  u8 terrainId;
-  u8 unk23;
-  s32 velocityX;
-  s32 speed;
-  s32 velocityZ;
-  s32 moveRateX;
-  s32 moveRateZ;
-  s32 targetX;
-  s32 targetY;
-  s32 targetZ;
-  u8 unk44[0x11];
-  u8 motionFlags;
-  u8 unk56[3];
-  u8 collisionFlags;
-  u8 selectFlags;
-  u8 unk5b[7];
-  u8 busy;
-  u8 unk63[9];
-  void *update;
-};
-
-extern s16 gData_02001d8c[];
 /* VIEW(floor): variable gData_02001dd8 as extern const u8 gData_02001dd8[]; the definition has s32 gData_02001dd8[] = { 39, 12, 22, 38, (s32) OverlayObject_UpdateEveryFourFrames, (s32) 0x80010000, 22, 9, 0x11999, 22, 10, 0x11999, 0, 2,...; tried as the definition's extern s32 gData_02001dd8[], it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse/floor.c:86: `gData_02001dd8__floor' undeclared (first use in this function). */
 extern const u8 gData_02001dd8__floor[] __asm__("gData_02001dd8");
 extern u8 gMapCellBuffer[];
 
 /* VIEW(floor): routine Actor_GetById as struct VenusActor *Actor_GetById(s32 id); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse/floor.c:100: invalid type argument of `->'. */
 extern struct VenusActor *Actor_GetById__floor(s32 id) __asm__("Actor_GetById");
-void Import_EventStart(void);
-void Import_EventEnd(void);
-void Sound_Play(s32 cue);
-void GameFlag_SetBit(s32 flag);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                           s32 destY, s32 width, s32 height);
-void wait(s32 frames);
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
 /* VIEW(floor): routine Actor_RefreshSelectorById as void Actor_RefreshSelectorById(s32 actor); actor.h has void Actor_RefreshSelectorById(u32); tried as the definition's void Actor_RefreshSelectorById(u32 objectId), Func_020006ac moves: 1 of 85 instructions in tla-ja. */
 extern void Actor_RefreshSelectorById__floor(s32 actor) __asm__("Actor_RefreshSelectorById");
@@ -65,7 +36,6 @@ void Script_WaitForEventTimeout(struct Actor *actor);
 s32 Func_02001b64(struct VenusActor *object, s32 *position);
 /* VIEW(floor): routine Func_080d47b4 as void Func_080d47b4(s32 actor, s32 height, s32 frames); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/include/field/event.h:46: conflicting types for `Func_080d47b4'. */
 extern void Func_080d47b4__floor(s32 actor, s32 height, s32 frames) __asm__("Func_080d47b4");
-void Event_NoOp(void);
 s32 VenusLighthouse_EmitRisingParticles(struct VenusActor *object);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -171,12 +141,6 @@ void Func_0200078c(void) {
 #include "scene_ids.h"
 #include "version.h"
 
-void BattleEffect_LoadActionEffectResources(s32, s32);
-void BattleEffect_SetupObjectPair(s32, s32);
-void BattleEffect_StopMainActor(void);
-void BattleEffect_CleanupSceneObjects(void);
-void EventObject_Initialize(void);
-
 void SceneState_RunActor13AtColumn42Setup(void) {
   struct Actor *obj;
   s32 val;
@@ -257,21 +221,12 @@ void SceneState_ApplySixRectsAfterFlag161(void) {
   MapGrid_CopyCellsTo(117, 55, 110, 55, a, a);
 }
 
-void Func_02000b2c(void);
-
 #define Actor_SetPartAttribute                                                 \
   ((void (*)(struct Actor *, s32))Actor_SetPartAttribute)
-
-enum { ENTRANCE_OPENING = 99 };
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 VenusLighthouse_Idle(void) { return 0; }
-
-struct SetupWork {
-  u8 unk00[0x24];
-  s32 (*idle)(void);
-};
 
 void VenusLighthouse_RunSetupStep(void) {
   BattleEffect_LoadActionEffectResources(140, 1);
@@ -284,7 +239,8 @@ void VenusLighthouse_RunSetupStep(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-struct AerieEventWork {
+/* VIEW(floor): tag struct AerieEventWork as struct AerieEventWork__floor; module/scene/scene.h has another definition. */
+struct AerieEventWork__floor {
   u8 unk000[0x1ac];
   s32 mode;
 };
@@ -293,7 +249,7 @@ struct AerieEventWork {
 // entrance 22.
 #if !TLA_PATCH_1
 s32 VenusLighthouse_Start(void) {
-  ((struct AerieEventWork *)Ram_HeapSlots->eventWork)->mode = 0x204;
+  ((struct AerieEventWork__floor *)Ram_HeapSlots->eventWork)->mode = 0x204;
   if (gMainRoutineWork.entrance == ENTRANCE_OPENING) {
     Import_EventStart();
     FieldEvent_ResolvePendingActions(0);
@@ -316,7 +272,6 @@ s32 VenusLighthouse_Start(void) {
 }
 #endif
 
-
 void Func_02000d30(void);
 
 // The Japanese edition has no form of this function here.
@@ -325,7 +280,7 @@ s32 VenusLighthouse_Start(void) {
   struct MainRoutineWork *routine;
 
   routine = &gMainRoutineWork;
-  ((struct AerieEventWork *)Ram_HeapSlots->eventWork)->mode = 0x204;
+  ((struct AerieEventWork__floor *)Ram_HeapSlots->eventWork)->mode = 0x204;
   if (routine->entrance == ENTRANCE_OPENING) {
     // From patch 1 it also saves this scene and entrance 22.
     routine->savedScene = (s32)&SceneId_VenusLighthouse;
@@ -353,11 +308,8 @@ s32 VenusLighthouse_Start(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-
-void Func_02001c4c(void);
-void Func_02001cd4(s32 actor);
-void Func_02001ccc(s32 actor, s32 value);
-void Party_RemoveMember(s32 owner);
+/* VIEW(floor): routine Party_RemoveMember as void Party_RemoveMember(s32 owner); module/game/game.h has s32 Party_RemoveMember(s32 owner). */
+extern void Party_RemoveMember__floor(s32 owner) __asm__("Party_RemoveMember");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -869,7 +821,7 @@ void Func_02000d30(void) {
   Venus_ObjSetPos(10, PIXELS(664), PIXELS(792));
   Venus_CamMove(-1, -1, -1, 0);
   gMainRoutineWork.currentOwner = 5;
-  Party_RemoveMember(4);
+  Party_RemoveMember__floor(4);
   FieldEvent_Wait(50);
   work = Ram_HeapSlots->eventWork;
   work->delay = 60;
@@ -879,17 +831,11 @@ void Func_02000d30(void) {
   FieldEvent_SetExitRequest(22);
 }
 
-void Func_020006ac(void);
-void Func_0200078c(void);
 void OverlayObject_UpdateEveryFourFrames(void);
 void SceneActor_ApplyCounterLowBitsAsMode(void);
 void SceneActor_ClearSingleChildField(void);
 
-extern u32 gData_02001ce4[];
-extern u32 gData_02001d1c[];
 extern u32 gData_02001d54[];
-extern s32 gData_0200215c[];
-extern s32 gData_02002180[];
 
 // clang-format off
 u32 gData_02001ce4[] = {

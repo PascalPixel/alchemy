@@ -11,6 +11,10 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/scene/alhafran_cave.h"
+#include "module/scene/scene.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -136,7 +140,6 @@ s32 Scene_Initialize(void) {
 
 #include "task.h"
 
-void Func_02001578(const void *data);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
 void Func_020002f8(void) {
@@ -207,15 +210,11 @@ void Func_020002f8(void) {
 
 #include "call.h"
 
-void Func_02001230(const u16 *table);
 void Func_02001520(s32 value);
 void Func_02001568(void);
-void Func_02001570(s32 a, s32 b, s32 c, s32 d);
-void Func_020015e0(s32 value);
+/* VIEW(alhafran_cave): routine Func_020015e0 as void Func_020015e0(s32 value); module/scene/dehkan_plateau.h has void Func_020015e0(void). */
+extern void Func_020015e0__alhafran_cave(s32 value) __asm__("Func_020015e0");
 void Func_020015e8(const void *data, s32 a, s32 b, s32 c);
-void Func_02001220(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 /// The rooms' setup: sprite priorities, the scene callback, actors 12 to 14,
 /// actors 15 to 24 by flags 0x8a7, 0x8ab and 0x8bd, and actor 8 stepping in
@@ -231,7 +230,7 @@ void Func_0200051c(void) {
   Actor_Get(8)->priorityFlags |= 32;
   Func_02001520(0);
   data = gData_02001be0;
-  Func_020015e0(0);
+  Func_020015e0__alhafran_cave(0);
   Call4((void (*)())Func_020015e8, (s32)data, 8, 15, 0x40000000);
   FieldTask_AddFrame(Func_02000258, 0x480);
   if ((u16)(gMainRoutineWork.entrance - 8) <= 1) {
@@ -316,18 +315,8 @@ void Func_02000814(void) {}
 
 extern u8 MsgYouHereTo[];
 
-void Event_Start(void);
-void Event_End(void);
 void Func_02001508(void);
-void Func_020015a0(s32 frames, s32 color);
-void BattleEffect_StartArcEffect(void);
-void BattleEffect_EndArcEffect(void);
-void BattleEffect_WaitForArcGroups(void);
-void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 void Func_02001228(void);
-extern s32 gData_02001610[];
-extern u32 gData_02001674[];
-extern s32 gData_02001c08;
 
 void Func_02000818(void) {
   struct Actor *actor21;

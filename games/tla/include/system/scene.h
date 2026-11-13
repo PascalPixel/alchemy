@@ -24,4 +24,12 @@ struct Cam {
   s32 y;
 };
 
+struct FieldPosition {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+extern void *gOverlayArea[];
+
 #endif

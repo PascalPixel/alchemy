@@ -8,6 +8,7 @@
 #include "glyph.h"
 #include "text_font.h"
 #include "edition.h"
+#include "graphics.h"
 
 /// The pixel rows text may reach: four tiles; a glyph is cut off below it.
 #define TEXT_CANVAS_PIXEL_HEIGHT 32
@@ -15,8 +16,6 @@
 #define TEXT_CANVAS_VRAM ((void *)0x06002500)
 /// The window's canvas text gets an outline.
 #define WINDOW_FLAG_OUTLINED_TEXT 0x40
-
-extern const u8 gFont_GlyphWidths[];
 
 /// Sets one pixel in the column-major text canvas. windowHeight includes the
 /// two border rows; doubledPixelRow is twice the row within a tile.

@@ -13,6 +13,10 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "event_work.h"
+#include "module/scene/alhafra.h"
+#include "module/scene/scene.h"
+#include "text/msg_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -23,17 +27,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "actor.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
-
-struct DoorStep {
-  s32 script;
-  u16 x;
-  u16 z;
-};
-
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Event_Start(void);
-void Event_End(void);
 
 extern const u8 gData_02001e48[];
 extern const u8 gData_02002100[];
@@ -96,11 +89,6 @@ void Func_02000124(s32 a0) { Func_02001d44(7, a0); }
 void Func_02000130(s32 a0) { Func_02001d44(8, a0); }
 #undef FIELD_AT
 
-extern u8 MsgAlhafra03[];
-extern u8 MsgAlhafra04[];
-extern u8 MsgAlhafra16[];
-extern u8 MsgAlhafra33[];
-
 void Func_0200013c(s32 actor) {
   s32 msg;
 
@@ -158,8 +146,6 @@ void Func_020001f0(s32 actor) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02001958(s32 a0);
-
 void Func_0200023c(void) { Func_02001958(1); }
 #undef FIELD_AT
 
@@ -200,13 +186,14 @@ void Func_02000260(void) { FieldActor_SetSpritePriority(25, 3); }
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_02001d2c();
+/* VIEW(alhafra): routine Func_02001d2c as s32 Func_02001d2c(); module/scene/scene.h has s32 Func_02001d2c(s32 x, s32 z, s32 layer). */
+extern s32 Func_02001d2c__alhafra() __asm__("Func_02001d2c");
 extern u8 gData_02001d54[];
 
 void Func_0200026c(s32 a0, s32 a1) {
   s32 t1;
 
-  Func_02001d2c((s32)gData_02001d54);
+  Func_02001d2c__alhafra((s32)gData_02001d54);
   t1 = ((s32)Actor_GetById(a1));
   FIELD_AT((t1 + 0x23), u8, 0) = 0;
 }
@@ -218,8 +205,6 @@ void Func_0200026c(s32 a0, s32 a1) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
-extern u8 MsgAlhafra50[];
 
 void Func_02000288(void) {
   Event_SetMessageId((s32)MsgAlhafra50);
@@ -243,13 +228,12 @@ void Func_02000288(void) {
    } *)(base))                                                                 \
        ->v)
 
-void PartyInventory_Remove(s32 a);
-void Func_02000398(s32 a);
-extern u8 MsgAlhafra69[];
+/* VIEW(alhafra): routine PartyInventory_Remove as void PartyInventory_Remove(s32 a); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
+extern void PartyInventory_Remove__alhafra(s32 a) __asm__("PartyInventory_Remove");
 
 void Func_020002f8(void) {
   GameFlag_SetBit(0x8b5);
-  PartyInventory_Remove(0x1c9);
+  PartyInventory_Remove__alhafra(0x1c9);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra69);
@@ -269,17 +253,6 @@ void Func_020002f8(void) {
 #undef FIELD_AT
 
 #include "ram_buffer.h"
-
-struct AlhafraEventWork {
-  u8 unk000[0x15a];
-  s16 value15a;
-  u8 unk15c[0x68];
-  u16 value1c4;
-};
-
-extern const u8 MsgAlhafra65[];
-extern const u8 MsgAlhafra70[];
-extern const u8 MsgAlhafra71[];
 
 void Func_02000398(s32 id) {
   if (!GameFlag_Test(0x8b5)) {
@@ -317,9 +290,8 @@ void Func_02000398(s32 id) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02001ccc(void);
-s32 Func_02001cec();
-extern u8 MsgAlhafra74[];
+/* VIEW(alhafra): routine Func_02001ccc as void Func_02001ccc(void); module/scene/scene.h has void Func_02001ccc(s32 actor, s32 value). */
+extern void Func_02001ccc__alhafra(void) __asm__("Func_02001ccc");
 
 void Func_0200047c(void) {
   GameFlag_SetBit(0x8b7);
@@ -327,7 +299,7 @@ void Func_0200047c(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra74);
   Camera_MoveWithinMapBounds(0x2300000, -1, 0x1f00000, 1);
-  Func_02001ccc();
+  Func_02001ccc__alhafra();
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(29, 2);
   Event_Wait(10);
@@ -376,12 +348,10 @@ void Func_0200047c(void) {
   Actor_FaceDirection(29, 0x4000, 0);
   Actor_FaceDirection(28, 0xc000, 0);
   FieldCamera_FollowActor(FIELD_AT(&gMainRoutineWork, s32, 532), 1);
-  Func_02001ccc();
+  Func_02001ccc__alhafra();
   Event_End();
 }
 #undef FIELD_AT
-
-extern u8 MsgAlhafra92[];
 
 /// Talking to the actor: once flag 0x8b9 is set it says its last line;
 /// otherwise it asks a yes-or-no question. A nonzero answer ends with another
@@ -464,8 +434,8 @@ const u8 *Scene_GetEvents(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02001d24();
-void Func_02000a98();
+/* VIEW(alhafra): routine Func_02001d24 as void Func_02001d24(); module/scene/shrine_of_the_sea_god.h has void Func_02001d24(void). */
+extern void Func_02001d24__alhafra() __asm__("Func_02001d24");
 
 s32 Scene_Initialize(void) {
   s32 t1, t2, t3, t4, t9, t10, t11, t23, t24, t25, t37, t39, t41, t44, t50, t51,
@@ -560,7 +530,7 @@ L_020089c8:
     goto L_020089e0;
   Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
 L_020089e0:
-  Func_02001d24((s32)&gData_02001d54);
+  Func_02001d24__alhafra((s32)&gData_02001d54);
   t56 = ((s32)Actor_GetById(26));
   Actor_SetActionCallback(t56, 9);
   t58 = ((s32)Actor_GetById(27));
@@ -610,8 +580,6 @@ s32 Scene_PrepareMap(void) {
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_02001d3c();
-
 void Func_02000a98(void) { Func_02001d3c(); }
 #undef FIELD_AT
 
@@ -622,7 +590,6 @@ void Func_02000a98(void) { Func_02001d3c(); }
    } *)(base))                                                                 \
        ->v)
 
-extern u8 MsgAlhafra10[];
 extern u8 gData_020033a0[];
 extern u8 gData_020033f8[];
 extern u8 gData_02003434[];
@@ -669,7 +636,7 @@ void Func_02000aa0(s32 a0) {
   }
   Event_Wait(20);
   FieldCamera_MoveTo(0x1900000, -1, 0x3280000, 1);
-  Func_02001ccc();
+  Func_02001ccc__alhafra();
   Actor_WalkBy(31, 0, -96);
   Actor_WalkByAndWait(32, 0, -96);
   Actor_SetModeById(31, 1);
@@ -838,7 +805,7 @@ void Func_02000aa0(s32 a0) {
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
   FieldCamera_FollowActor(29, 1);
-  Func_02001ccc();
+  Func_02001ccc__alhafra();
   Actor_WalkToAndWait(29, 488, 808);
   Actor_FaceDirection(31, 0, 0);
   Actor_FaceDirection(32, 0, 0);
@@ -851,11 +818,11 @@ void Func_02000aa0(s32 a0) {
   Actor_SetAnimationAndWait(29, 4);
   FieldCamera_SetSpeed(0x40000, 0x8000);
   FieldCamera_MoveTo(0x2880000, -1, 0x2180000, 1);
-  Func_02001ccc();
+  Func_02001ccc__alhafra();
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
   FieldCamera_MoveTo(0x1b80000, -1, 0x3280000, 1);
-  Func_02001ccc();
+  Func_02001ccc__alhafra();
   FieldCamera_SetSpeed(0x10000, 0x2000);
   Event_Wait(20);
   Actor_WalkByAndWait(33, 32, 36);
@@ -929,7 +896,7 @@ void Func_02000aa0(s32 a0) {
   Actor_SetSpeed(35, 0x8000, 0x4000);
   Actor_SetSpeed(17, 0x8000, 0x4000);
   FieldCamera_FollowActor(30, 1);
-  Func_02001ccc();
+  Func_02001ccc__alhafra();
   if (a0 == 0x15) {
     FieldActor_SetSpritePriority(30, 2);
     FieldActor_WatchAndSetScript(31, 29);
@@ -989,7 +956,7 @@ void Func_02000aa0(s32 a0) {
   Actor_RefreshSelectorById(34);
   Event_Wait(50);
   FieldCamera_MoveTo(0xf80000, -1, 0x2980000, 1);
-  Func_02001ccc();
+  Func_02001ccc__alhafra();
   FieldEvent_ShowMessageThenWait(0x11, 0, 0xa);
   Actor_ArmCallback(17, 0x3000, 0);
   Event_Wait(20);
@@ -1044,7 +1011,7 @@ void Func_02000aa0(s32 a0) {
   Actor_SetHorizontalPositionWithTerrain(35, 0, 0);
   Event_Wait(15);
   Camera_FollowActor(FIELD_AT(&gMainRoutineWork, s32, 532), 1);
-  Func_02001ccc();
+  Func_02001ccc__alhafra();
   Event_End();
 }
 #undef FIELD_AT
@@ -1055,8 +1022,6 @@ void Func_02000aa0(s32 a0) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
-extern u8 MsgAlhafra28[];
 
 void Func_02001958(s32 a0) {
   s32 t22;

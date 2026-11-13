@@ -4,6 +4,7 @@
 #include "edition.h"
 #include "field_event.h"
 #include "vector3.h"
+#include "types.h"
 
 /// A field effect: a small object on the field that moves at its velocity and
 /// grows and spins at its rates, run by its script and update hook.
@@ -111,5 +112,11 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 void Effect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                           s32 velocityZ, u32 flags,
                           const struct EffectOptions *options);
+
+struct EffectOptions;
+
+void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
+                               s32 velocityY, s32 velocityZ, u32 flags,
+                               const struct EffectOptions *options);
 
 #endif

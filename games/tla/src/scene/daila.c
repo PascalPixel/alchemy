@@ -18,19 +18,12 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "actor.h"
-
-extern struct SceneEntrance gDailaEntrances[];
+#include "module/scene/daila.h"
+#include "module/scene/scene.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gDailaEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
-
-extern s32 gData_02001018[];
-extern s32 gData_02001068[];
-extern s32 gData_020010d0[];
-extern s32 gData_02001238[];
-extern s32 gData_02001490[];
-extern s32 gData_02001664[];
 
 static inline void ReturnHome(s32 mode, s32 actor, s32 flag) {
   /* FAKEMATCH(wrapper): the call forwarded through the inline, as in the scene
@@ -416,14 +409,9 @@ void Func_02000a5c(void) {
   Import_EventEnd();
 }
 
-extern s16 gData_02000d80[];
-
-void Func_02000d18(void);
-void Func_02000d50(s16 *data);
-void Func_02000d68(s32 a, s32 b);
+/* VIEW(daila): routine Func_02000d50 as void Func_02000d50(s16 *data); module/scene/yampi_desert.h has void Func_02000d50(void). */
+extern void Func_02000d50__daila(s16 *data) __asm__("Func_02000d50");
 void Actor_SetWideSprite(s32 actor, s32 flag);
-
-void Func_02000d58(s16 *data);
 
 void Func_02000a9c(void) {
   u8 *event = Ram_HeapSlots->eventWork;
@@ -443,7 +431,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila1)
     Func_02000d68(12, 0);
   else if (gMainRoutineWork.scene == (s32)&SceneId_Daila2)
-    Func_02000d50(gData_02000d80);
+    Func_02000d50__daila(gData_02000d80);
   Actor_SetSpritePriority(21, 1);
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila2 &&
       GameFlag_Test(0x300) == 0)
@@ -470,9 +458,6 @@ s32 Scene_PrepareMap(void) {
 }
 
 void Func_02000c30(void) { Func_02000d18(); }
-
-extern s32 gData_02000d9c[];
-extern u32 gData_02000f44[];
 
 // clang-format off
 s16 gData_02000d80[] = {

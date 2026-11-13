@@ -9,6 +9,14 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "event_work.h"
+#include "module/scene/mars_lighthouse_room_m.h"
+#include "module/scene/scene.h"
+#include "module/sound/sound.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "scene_ids.h"
+#include "text/msg_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -57,23 +65,10 @@ struct RideWork {
   void *handle;
 };
 
-extern u8 gData_020023c4[];
-extern u16 gData_02004cf0[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_02003130(void *handle);
-void Func_020024e4(void);
-s32 Func_02002708(void);
-void Func_02002e6c(struct Actor *self);
 #include "main_routine_work.h"
 
-void Func_02003118(struct Actor *object, s32 value);
-void Func_02003230(s32 a, s32 b);
-void Func_02003228(void);
-void Func_02001608(void);
-void Func_020032a8(void);
 void Func_0200166c(void);
-void Func_0200055c(void);
-void Func_0200170c(void);
 
 s32 Func_0200004c(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);
@@ -104,17 +99,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 #include "iwram_call.h"
 #include "io_write_queue.h"
 
-struct Overlay6acEventWork {
-  u8 unk000[0x166];
-  s16 unk166;
-  u8 unk168[0xb3c];
-  u8 unkca4;
-};
-
 extern s32 gData_020036c4;
 extern u16 gData_0200393c[];
-extern u16 gData_0200397c[];
-extern u16 Data_020039bc[];
+/* VIEW(mars_lighthouse_room_m): variable gData_0200397c as u16 gData_0200397c[]; module/scene/lemurian_ship.h has struct LemurianShipWarp gData_0200397c[]. */
+extern u16 gData_0200397c__mars_lighthouse_room_m[] __asm__("gData_0200397c");
 
 void Func_020000c0(void) {
   s32 entrance = gMainRoutineWork.entrance;
@@ -131,28 +119,28 @@ void Func_020000c0(void) {
   if (gData_020036c4 == -1) {
     Iwram_CopyWords(Data_020039bc, (void *)0x050001a0, 32);
     Iwram_CopyWords(gData_0200393c, (void *)0x05000100, 64);
-    Iwram_CopyWords(gData_0200397c, gData_0200393c, 64);
+    Iwram_CopyWords(gData_0200397c__mars_lighthouse_room_m, gData_0200393c, 64);
     gData_020036c4 = 0;
   }
   base = gData_020036c4 / 8 % 6;
-  Iwram_CopyWords(gData_0200397c, Data_020039bc, 32);
+  Iwram_CopyWords(gData_0200397c__mars_lighthouse_room_m, Data_020039bc, 32);
   if (entrance == 1 && Event_GetFlag(0xa32)) {
     for (i = 0; i <= 5; i++)
-      gData_0200397c[i + 10] = gData_0200393c[(base + i) % 6 + 10];
+      gData_0200397c__mars_lighthouse_room_m[i + 10] = gData_0200393c[(base + i) % 6 + 10];
   }
   if (entrance == 2 && Event_GetFlag(0xa33)) {
     for (i = 0; i <= 5; i++)
-      gData_0200397c[i + 10] = gData_0200393c[(base + i) % 6 + 20];
+      gData_0200397c__mars_lighthouse_room_m[i + 10] = gData_0200393c[(base + i) % 6 + 20];
   }
   if (entrance == 3 && Event_GetFlag(0xa34)) {
     for (i = 0; i <= 5; i++)
-      gData_0200397c[i + 10] = gData_0200393c[(base + i) % 6 + 26];
+      gData_0200397c__mars_lighthouse_room_m[i + 10] = gData_0200393c[(base + i) % 6 + 26];
   }
   if (entrance == 4 && Event_GetFlag(0xa35)) {
     for (i = 0; i <= 5; i++)
-      gData_0200397c[i + 10] = gData_0200393c[(base + i) % 6 + 4];
+      gData_0200397c__mars_lighthouse_room_m[i + 10] = gData_0200393c[(base + i) % 6 + 4];
   }
-  IO_WRITE_QUEUE_PUSH(0x050001a0, (u32)gData_0200397c, 0x84000008);
+  IO_WRITE_QUEUE_PUSH(0x050001a0, (u32)gData_0200397c__mars_lighthouse_room_m, 0x84000008);
   gData_020036c4++;
 }
 
@@ -207,9 +195,6 @@ void Func_0200030c(void) {
 
 extern s32 gData_02003704;
 extern u16 gData_02003a5c[];
-extern volatile u16 Data_020039dc[];
-extern u16 Data_02003a1c[];
-extern const u16 Data_0200ba70[];
 
 void Func_020003c4(void) {
   struct Overlay6acEventWork *work = Ram_HeapSlots->eventWork;
@@ -251,10 +236,6 @@ void Func_020003c4(void) {
 
 #include "io_reg.h"
 
-extern s16 Data_02003a7c;
-extern s16 gData_02003a7e;
-extern s16 gData_02003a80;
-
 /// Scheduled by Func_02000934: steps room 1's blend (Data_02003a7c) one toward
 /// its target (gData_02003a7e) each frame and queues the BLDALPHA write; as it
 /// reaches 0 or 16, sets the cells the step (gData_02003a80) selects. The cell
@@ -293,8 +274,6 @@ void Func_0200055c(void) {
       MapGrid_CopyCellAttributes(30, 0, 3, 3, 8, 8);
   }
 }
-
-extern s16 gData_02003a82;
 
 /// Moves the Func_0200080c cells for a new state: the cells of the old index
 /// (gData_02003a80) are put back with (0, 122, 3, 3), gData_02003a7e becomes 0
@@ -442,23 +421,13 @@ const struct Trigger *Scene_GetEvents(void) {
 
 // ---- games/tla/src/scene/mars_lighthouse_room_m/s0b64.c ----
 #include "call.h"
-extern char SceneId_Ov6ACRoom6;
-extern char SceneId_Ov6ACRoom1;
 
-void Sound_WaitForBgmRestore(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02001324(s32 x, s32 z, s32 c, s32 d, s32 e, s32 f);
 void Func_0200154c(u16 *slots, u16 *colours, u16 *a, u16 *b);
 /* VIEW(s0b64): routine Func_02002e6c as void Func_02002e6c(void); mars_lighthouse_room_m has void Func_02002e6c(struct Actor *self); tried as the definition's void Func_02002e6c(struct Actor *self), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:523: too few arguments to function `Func_02002e6c'. */
 extern void Func_02002e6c__s0b64(void) __asm__("Func_02002e6c");
-void Event_Start(void);
-void Event_End(void);
-void Func_02003228(void);
-void Func_02003278(s32 a);
-void Party_PlaySavedMusic(void);
+/* VIEW(mars_lighthouse_room_m): routine Func_02003278 as void Func_02003278(s32 a); module/scene/aqua_rock_inside.h has void Func_02003278(void). */
+extern void Func_02003278__mars_lighthouse_room_m(s32 a) __asm__("Func_02003278");
 
-extern u8 MsgYouHaveProven[];
 extern u8 gData_0200338c[];
 extern u8 gData_0200339c[];
 extern u8 gData_020033c8[];
@@ -476,7 +445,7 @@ s32 Scene_Initialize(void) {
   Call4((void (*)())Func_0200154c, (s32)gData_0200338c, (s32)gData_0200339c,
         (s32)gData_020033c8, (s32)gData_020033f4);
   if (scene != (s32)&SceneId_Ov6ACRoom6 && scene == (s32)&SceneId_Ov6ACRoom1) {
-    Call1((void (*)())Func_02003278, 0);
+    Call1((void (*)())Func_02003278__mars_lighthouse_room_m, 0);
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x204;
     if ((u32)(entrance - 1) <= 1 || entrance == 8 || entrance == 10 ||
         entrance == 12 || entrance == 14) {
@@ -551,18 +520,10 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-
-extern char SceneId_Ov6a8Room2;
-
-void Func_020000c0(void);
-void Func_020003c4(void);
 /* VIEW(s0b64): routine Func_02000058 as s32 Func_02000058(); the definition has void Func_02000058(s32 id, s32 value); tried as the definition's void Func_02000058(void), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:559: conflicting types for `Func_02000058'. */
 extern s32 Func_02000058__s0b64() __asm__("Func_02000058");
-void Func_02000934(s32 entrance);
-void Func_02002118(void);
-void Func_02003150(s32 value);
-void Func_020031b8(s32 scene, s32 a1);
-void DisplayScroll_InitializeHBlankDma(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+/* VIEW(mars_lighthouse_room_m): routine Func_02003150 as void Func_02003150(s32 value); module/scene/scene.h has u32 Func_02003150(struct FieldSprite *sprite, u32 frame). */
+extern void Func_02003150__mars_lighthouse_room_m(s32 value) __asm__("Func_02003150");
 void Func_020032b0(s32 a);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -587,26 +548,26 @@ s32 Scene_PrepareMap(void) {
     case 1:
       Actor_SetSpriteColor(Actor_Get(8), 1);
       Func_02000058__s0b64(9, 4);
-      Func_02003150(4);
-      Func_02003150(5);
+      Func_02003150__mars_lighthouse_room_m(4);
+      Func_02003150__mars_lighthouse_room_m(5);
       break;
     case 2:
       Actor_SetSpriteColor(Actor_Get(8), 3);
       Func_02000058__s0b64(9, 5);
-      Func_02003150(6);
-      Func_02003150(7);
+      Func_02003150__mars_lighthouse_room_m(6);
+      Func_02003150__mars_lighthouse_room_m(7);
       break;
     case 3:
       Actor_SetSpriteColor(Actor_Get(8), 0);
       Func_02000058__s0b64(9, 2);
-      Func_02003150(0);
-      Func_02003150(1);
+      Func_02003150__mars_lighthouse_room_m(0);
+      Func_02003150__mars_lighthouse_room_m(1);
       break;
     case 4:
       Actor_SetSpriteColor(Actor_Get(8), 4);
       Func_02000058__s0b64(9, 3);
-      Func_02003150(2);
-      Func_02003150(3);
+      Func_02003150__mars_lighthouse_room_m(2);
+      Func_02003150__mars_lighthouse_room_m(3);
       break;
     }
     object = Actor_Get(10);
@@ -654,10 +615,6 @@ s32 Scene_PrepareMap(void) {
 }
 
 #include "version.h"
-
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
-void Func_0200080c(void);
 
 void Func_020010e4(void) {
   u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
@@ -907,9 +864,6 @@ void Func_02001608(void) {
 
 // ---- games/tla/src/scene/mars_lighthouse_room_m/stop.c ----
 
-
-
-
 extern u8 gData_020023c4[];
 extern u16 gData_02004cf0[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
@@ -932,7 +886,6 @@ void Func_0200166c(void) {
   FieldTask_Remove(Func_0200170c);
 }
 
-
 void Func_0200168c(void) {
   gData_02003938 = 0;
   gData_02003934 = Func_020016e8(gData_02003928);
@@ -952,7 +905,6 @@ s32 Func_020016e8(u16 *list) {
   count--;
   return count;
 }
-
 
 extern u16 *Data_0200391c;
 extern u16 *Data_0200392c;
@@ -1271,7 +1223,6 @@ void Func_02001b64(struct Actor *object) {
     }
   }
 }
-
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 

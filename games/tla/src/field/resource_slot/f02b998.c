@@ -3,62 +3,22 @@
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"
+#include "fixed_math.h"
+#include "module/field/field.h"
+#include "module/field/resource_slot.h"
+#include "module/system/system.h"
+#include "resource_ids.h"
+#include "transform.h"
 
-extern char ResourceId_PerspectiveDataA;
-extern char ResourceId_DefaultMapCells;
-extern char ResourceId_Data199;
-extern u8 gData_0202e000[];
 extern u32 gCameraSceneParameters[];
-extern const u8 Data_0802146c[];
-extern u8 Data_0802146cSize[];
-extern u32 gData_03001144;
-extern u32 Data_03001244;
 
-void Fade_FromBlack(s32 vblanks);
-s32 Trig_Cos(s32 angle);
-s32 Trig_Sin(s32 angle);
-void Projection_Set(s32 distance, s32 nearPlane, s32 farPlane);
+/* VIEW(resource_slot): routine Projection_Set as void Projection_Set(s32 distance, s32 nearPlane, s32 farPlane); module/system/system.h has void Projection_Set(u32 value0, u32 value1, u32 value2). */
+extern void Projection_Set__resource_slot(s32 distance, s32 nearPlane, s32 farPlane) __asm__("Projection_Set");
 /* VIEW(f02b998): routine Render_ResetTransformState as u32 Render_ResetTransformState(void); graphics.h has void Render_ResetTransformState(void); tried as the definition's void Render_ResetTransformState(void), which the object already declares, Func_0802b998 moves: 1 of 372 instructions in tla-ja. */
 extern u32 Render_ResetTransformState__f02b998(void) __asm__("Render_ResetTransformState"); // Returns void; see the tag.
-void SceneTransform_ApplyPosition(void *position);
-void SceneTransform_ApplyYaw(s32 yaw);
-void SceneTransform_ApplyPitch(s32 pitch);
-void Transform_SetLookAt(s32 *eye, s32 *target);
+/* VIEW(resource_slot): routine SceneTransform_ApplyPosition as void SceneTransform_ApplyPosition(void *position); module/system/system.h has void SceneTransform_ApplyPosition(const s32 *pos). */
+extern void SceneTransform_ApplyPosition__resource_slot(void *position) __asm__("SceneTransform_ApplyPosition");
 void Func_0802dd70(s32 ratio, s32 *position, void *affineWork);
-void Func_0802c240(void);
-void Func_0802c088(void);
-
-struct WorldView {
-  s32 *origin;
-  s32 shakeX, shakeY, shakeDecay;
-  u8 *unk010;
-  u16 unk014;
-  u8 unk016;
-  u8 unk017[0xcd];
-  s32 viewX;
-  s32 viewY;
-  u8 unk0ec[0x18];
-  u16 windowTop;
-  u16 windowBottom;
-  u8 unk108[0x14];
-  u16 pitch;
-  u16 yaw;
-  u8 unk120[0x83c];
-  s32 farPlane;
-  s32 distance;
-  u8 unk964[4];
-  s32 unk968;
-  u16 unk96c;
-  u8 unk96e[3];
-  s8 flat;
-  s8 paused;
-  u8 unk973[3];
-  s8 fixedEye;
-};
-
-struct EyeOffset {
-  s32 x, y, z;
-};
 
 void Func_0802b998(void) {
   /* FAKEMATCH(signature): Render_ResetTransformState declared returning u32;
@@ -126,12 +86,12 @@ void Func_0802b998(void) {
   *(s32 *)(camera + 28) = 0;
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 96;
-  Projection_Set(farPlane, farPlane >> 1, farPlane << 1);
+  Projection_Set__resource_slot(farPlane, farPlane >> 1, farPlane << 1);
   cameraPosition[0] = 0;
   cameraPosition[1] = 0;
   cameraPosition[2] = 0;
   Render_ResetTransformState__f02b998();
-  SceneTransform_ApplyPosition(cameraPosition);
+  SceneTransform_ApplyPosition__resource_slot(cameraPosition);
   SceneTransform_ApplyYaw(view->yaw);
   SceneTransform_ApplyPitch(view->pitch);
   eyeOffset.x = 0;
@@ -155,7 +115,7 @@ void Func_0802b998(void) {
   view->pitch = 0xe000;
   view->yaw = 0;
   Render_ResetTransformState__f02b998();
-  SceneTransform_ApplyPosition(cameraPosition);
+  SceneTransform_ApplyPosition__resource_slot(cameraPosition);
   SceneTransform_ApplyYaw(view->yaw);
   SceneTransform_ApplyPitch(view->pitch);
   if (view->fixedEye == 0) {
@@ -181,14 +141,6 @@ void Func_0802b998(void) {
 }
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
-
-struct MapTileWindow_08010d48 {
-  s32 *position;
-  u8 unk004[0x144];
-  u16 tiles[32][32];
-};
-
-s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
 void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
   struct MapTileWindow_08010d48 *window;

@@ -3,30 +3,10 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "event_inline.h"
-
-struct MarsLighthouseEntranceAnimation {
-  u8 unk00[9];
-  u8 unused09 : 2;
-  u8 layer : 2;
-  u8 unk0a[6];
-  u8 value10;
-  u8 flag11 : 1;
-  u16 angle;
-};
-
-struct MarsLighthouseEntranceRideHead {
-  s32 counter;
-  s16 active;
-  u8 unk06[6];
-  u16 value0c;
-  s16 value0e;
-  u8 unk10[0x60];
-  struct Actor *handle;
-};
-
-extern u8 gData_020023c4[];
-
-void Func_02004bc0(struct Actor *object, s32 value);
+#include "module/field/field.h"
+#include "module/scene/mars_lighthouse_entrance.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 void Func_02002270(void) {
   struct MarsLighthouseEntranceRideHead *work =
@@ -47,8 +27,6 @@ void Func_02002270(void) {
 
 #include "ride.h"
 
-void Func_02004be0(void *handle);
-
 void Func_020022c4(void) {
   struct RideWork *work = RIDE_WORK;
 
@@ -60,28 +38,6 @@ void Func_020022d8(s16 value) { RIDE_WORK->value0e = value; }
 
 #include "io_reg.h"
 #include "field.h"
-
-/// One object the beam reaches, as Func_020022e4 records it.
-struct MarsLighthouseBeamTarget {
-  u16 active;
-  u16 index;
-  u16 flags;
-  u16 unk06;
-  struct Actor *object;
-  s32 height; ///< 16.16 pixels
-};
-
-struct MarsLighthouseBeam {
-  u8 unk00[10];
-  u16 unk0a;
-  u8 unk0c[4];
-  s32 unk10;
-  struct MarsLighthouseBeamTarget targets[4];
-  struct {
-    u16 unk00;
-    u16 unk02;
-  } stops[4];
-};
 
 void Func_020020ec(void);
 
@@ -194,7 +150,6 @@ struct MarsLighthouseEventWork {
   u16 downOwners[8];
 };
 
-void BattleParty_ApplyHealthDelta(s32 a, s32 b);
 struct BattleUnit *Unit_Get(s32 owner);
 
 void Func_020024c0(void) {

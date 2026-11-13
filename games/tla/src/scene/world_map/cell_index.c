@@ -8,33 +8,16 @@
 #include "iwram_call.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "event_work.h"
+#include "item_icon.h"
+#include "module/scene/scene.h"
+#include "module/scene/staff_credit.h"
+#include "module/scene/world_map.h"
 
-extern u8 gData_02006c08[];
-extern const u8 gWorldMapPackedTilesC[];
-extern u8 gData_02006f20[];
-extern u8 gData_02006e0e[];
-extern u8 gData_02006e0c[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Event_Start(void);
-void Event_End(void);
-s32 Func_02004c38(s32 a, s32 b, s32 c);
-void Func_02003654(s32 a, s32 b, s32 c);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Event_FinishScreenTransition(void);
-void Func_020036a8(void);
-void Func_020048f4(void);
-void Func_02003bb8(struct Actor *object, s32 value);
-void Resource_DecodeType01(const u8 *a, u8 *b);
-s32 Resource_ResetEntry(u32 slot);
+/* VIEW(cell_index): routine Resource_DecodeType01 as void Resource_DecodeType01(const u8 *a, u8 *b); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
+extern void Resource_DecodeType01__cell_index(const u8 *a, u8 *b) __asm__("Resource_DecodeType01");
 u32 __umodsi3(u32 a, u32 b);
-
-struct TileSprite {
-  u8 unk00[18];
-  u16 tile;
-  u8 unk14[6];
-  u8 frame;
-};
 
 s32 Func_02003988(s32 x, s32 z) { return x / 0x100000 + (z / 0x100000) * 128; }
 

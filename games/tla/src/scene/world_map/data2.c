@@ -1,34 +1,19 @@
 #include "types.h"
 #include "scene_tables.h"
+#include "module/scene/world_map.h"
 
 void Func_02000038(void);
-void Func_0200009c(void);
-void Func_02000100(void);
-void Func_02000164(void);
-void Func_020001c8(void);
-void Func_0200022c(void);
 void Func_020002a4(void);
 void Func_02000388(void);
 void Func_020003a8(void);
 void Func_020003b4(void);
-void Func_02000458(void);
-void Func_0200050c(void);
 void Func_02000574(void);
 void Func_020006d0(void);
-void Func_02000918(void);
-void Func_02000994(void);
-void Func_02000be0(void);
-void Func_02000d1c(void);
 void Func_02000d98(void);
 void Func_02000da4(void);
 void Func_02000db0(void);
-void Func_02003144(void);
 void Func_020035e0(void);
 void StoryActor_Initialize(void);
-
-extern s32 gData_02006320[];
-extern s32 gData_02006578[];
-extern s32 gData_02006584[];
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 9850, 0, 9748, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

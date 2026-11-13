@@ -15,6 +15,10 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
+#include "module/field/field.h"
+#include "module/scene/jupiter_lighthouse_room_6.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -27,13 +31,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 extern s32 gData_020023c0;
-extern s16 gData_0200242a;
-extern struct Actor *gData_0200242c[];
-extern u16 gData_0200252e;
+/* VIEW(jupiter_lighthouse_room_6): variable gData_0200242c as struct Actor *gData_0200242c[]; module/scene/sea_of_time.h has struct Trigger gData_0200242c[]. */
+extern struct Actor *gData_0200242c__jupiter_lighthouse_room_6[] __asm__("gData_0200242c");
 s32 Func_020018bc(s32 value);
-void Func_020000b4(s32 value);
 void Func_02000108(void);
-void Func_02000154(void);
 void Func_020003a4(s32 value);
 
 void Func_02000054(s32 value) {
@@ -109,14 +110,9 @@ extern s32 gData_020023bc;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_020023bc = value; }
-extern u16 gData_020023e8[];
 
 s32 __modsi3();
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02001b34();
-void Func_02001be4();
 void Func_02001250(s32 a, s32 b, s32 c, s32 d, s32 e);
-void Func_0200196c(s32 a, s32 b, s32 c);
 
 s32 Scene_Initialize(void) {
   struct JupiterLighthouseRoom6EventWork *work = Ram_HeapSlots->eventWork;
@@ -191,9 +187,6 @@ next:
   Dma_Set(p, (void *)0x05000184, 0x84000002, REG_DMA3);
   gData_020023bc++;
 }
-
-extern u16 gData_02002408[];
-extern u16 gData_0200240c[];
 
 void Func_020003a4(s32 mode) {
   gData_020023c0 = 1;
@@ -308,12 +301,11 @@ s32 Func_02000668(s32 *a, s32 *b) {
 }
 
 extern const s32 gData_0200a3c4[];
-extern s32 Data_020023e4;
 
-void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
-s32 Func_02001bdc(s32 x, s32 z, s32 layer);
-void Camera_WorldToScreen(s32 *position);
-s32 Math_Cosine(s32 angle);
+/* VIEW(jupiter_lighthouse_room_6): routine Func_02001bdc as s32 Func_02001bdc(s32 x, s32 z, s32 layer); module/scene/trial_road.h has void Func_02001bdc(void). */
+extern s32 Func_02001bdc__jupiter_lighthouse_room_6(s32 x, s32 z, s32 layer) __asm__("Func_02001bdc");
+/* VIEW(jupiter_lighthouse_room_6): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
+extern void Camera_WorldToScreen__jupiter_lighthouse_room_6(s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_02000694(struct Actor *self) {
@@ -337,11 +329,11 @@ void Func_02000694(struct Actor *self) {
     u32 a = from[9] & 12;
     to[9] = (s8)((to[9] & ~12) | a);
   }
-  if (Func_02001bdc(self->x, self->z, 2) != 255) {
+  if (Func_02001bdc__jupiter_lighthouse_room_6(self->x, self->z, 2) != 255) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Camera_WorldToScreen(position);
+    Camera_WorldToScreen__jupiter_lighthouse_room_6(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;

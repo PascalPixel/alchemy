@@ -4,6 +4,8 @@
 
 #include "../event_commands_internal.h"
 #include "frame.h"
+#include "module/field/event_commands.h"
+#include "module/field/object.h"
 
 struct Actor *Actor_GetById(u32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
@@ -200,8 +202,6 @@ void Actor_CommitPositionAndActivate(u32 objectId, s32 xOffset,
   }
 }
 
-extern const s32 gData_080f32e0[];
-
 void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
   struct Actor *object = ObjectTable_Get(actorId);
 
@@ -302,8 +302,6 @@ void Actor_SetModeById(u32 objectId, s32 action) {
   ((void (*)(struct Actor *,                                           \
              s32))Actor_SetAnimationSpeedFar)
 
-void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3);
-
 void Actor_SetActionById(u32 objectId, s32 action) {
   struct Actor *object = ObjectTable_Get(objectId);
 
@@ -312,7 +310,8 @@ void Actor_SetActionById(u32 objectId, s32 action) {
 }
 
 /// ⚓️'s animation group: the number last applied and its entries.
-struct AnimationGroup {
+/* VIEW(event_commands): tag struct AnimationGroup as struct AnimationGroup__event_commands; module/field/field.h has another definition. */
+struct AnimationGroup__event_commands {
   u8 unk00[0x18];
   u8 lastNo;
   u8 unk19[0x0f];
@@ -323,7 +322,7 @@ struct AnimationGroup {
 /// first entry's script to reach code 241.
 void Actor_WaitForAnimationChange(u32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
-  struct AnimationGroup *group;
+  struct AnimationGroup__event_commands *group;
   // volatile: saved lives in a 4-byte stack frame, stored once and loaded again
   // for each compare, as the bytes have it; as a plain u32, 29 of 37
   // instructions differ in tla-en.
@@ -402,9 +401,6 @@ void FieldEffect_UpdateParticleLinearMotion(struct Actor *object) {
   object->speedLimit = driftX - driftX / 18;
   object->acceleration = driftZ - driftZ / 16;
 }
-
-extern const s32 Data_080f085c[];
-extern const s32 Data_080f0874[];
 
 struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 
@@ -518,14 +514,6 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   Event_NoOp();
 }
 
-struct ObjectPairPosition {
-  u8 unk00[6];
-  s16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 frames) {
   struct ObjectPairPosition *first;
   struct ObjectPairPosition *second;
@@ -612,22 +600,6 @@ void Actor_ConfigureSpriteColor(s32 objectId, s32 value) {
     Actor_SetPartAttribute(object, value);
   }
 }
-
-struct ObjectPart {
-  u8 unk00[5];
-  u8 attribute;
-  u8 unk06[0xa];
-  void *graphics;
-};
-
-struct ObjectPartList {
-  u8 unk00[0x19];
-  u8 dirty;
-  u8 unk1a;
-  u8 count;
-  u8 unk1c[0xc];
-  struct ObjectPart *parts[1];
-};
 
 void Actor_ApplyIndexedChildValue(struct Actor *object) {
   struct ObjectPartList *list;

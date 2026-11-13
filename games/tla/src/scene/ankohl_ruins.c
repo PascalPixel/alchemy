@@ -12,6 +12,9 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/scene/scene.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -31,8 +34,6 @@ const struct ActorPlacement *Scene_GetRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "version.h"
-
-void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -506,8 +507,6 @@ void Func_0200104c(s32 unused, s32 id) {
 
 extern struct MapCell gMapCellBuffer[];
 
-s32 Func_02002e0c(struct Actor *object, s32 *position);
-
 void Func_020010f4(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct AnkohlRuinsEventWork *work =
@@ -587,31 +586,6 @@ void Func_02001264(s32 a, s32 id) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4)
     Event_SetFlag(id + 0x996);
 }
-
-// Draws eight sprites while flag 0x205 is clear and the level is below
-// 0x200000: each moves by the level as its kind says, is placed relative to
-// the view and is drawn when it is on screen. Then sets a word in map layer
-// 1 to the level plus a base.
-struct AnkohlRuinsSprite {
-  s32 x;
-  s32 z;
-  s32 y;
-  u32 kind;
-  u32 oam[3];
-};
-
-struct AnkohlRuinsSpriteWork {
-  s16 unk00;
-  s16 tile;
-  s32 level;
-  s32 unk08;
-  s32 unk0c;
-  struct AnkohlRuinsSprite sprites[8];
-};
-
-extern struct AnkohlRuinsSpriteWork Data_02004030;
-
-void Func_02002dac(u32 *oam, s32 b);
 
 /// Draws eight sprites while flag 0x205 is clear and the level is below
 /// 0x200000: each moves by the level as its kind says, is placed relative to
@@ -799,15 +773,6 @@ void Func_020015ac(void) {
 }
 
 #include "frame.h"
-
-struct AnkohlRuinsWaterRow {
-  u8 level;
-  u8 width;
-  u8 height;
-  u8 x;
-  u8 z;
-  u8 unk05[3];
-};
 
 extern struct AnkohlRuinsWaterRow gData_02002fa8[];
 
@@ -1149,8 +1114,6 @@ extern const u8 gData_02003c94[];
 extern const u8 gData_02003e38[];
 extern const u8 gData_02003f4c[];
 extern const u8 gData_02004018[];
-
-void ObjectTable_Snapshot(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

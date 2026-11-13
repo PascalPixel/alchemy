@@ -23,7 +23,6 @@ struct ChainWork__f0dacb8 {
 };
 
 struct Actor *Actor_GetById(u32 objectId);
-s32 Party_GetLeaderActor(void);
 
 #define CHAIN_WORK ((struct ChainWork__f0dacb8 *)Ram_HeapSlots->unk84[8])
 
@@ -84,7 +83,6 @@ void Func_080dacb8(void) {
       slot->swing = Iwram_MulQ16(slot->swing, 0x11c28);
   }
 }
-
 
 /// Returns the first of WORK_A4's eight slots with no chain, or NULL.
 struct WorkA4Slot *Func_080dae3c(void) {

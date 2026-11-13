@@ -1,45 +1,27 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
+#include "module/scene/yampi_desert.h"
 
 void Func_02000280(void);
 void Func_020003b8(void);
 void Func_020004bc(void);
 void Func_02000550(void);
-void Func_020005a8(void);
-void Func_02000600(void);
 void Func_02000620(void);
 void Func_02000634(void);
 void Func_02000648(void);
 void Func_02000670(void);
 void Func_02000684(void);
 void Func_020006ac(void);
-void Func_020007e0(void);
-void Func_02000994(void);
-void Func_02000a10(void);
-void Func_02000a8c(void);
-void Func_02000c34(void);
-void Func_02000d50(void);
-void Func_02000e78(void);
-void Func_02000fc8(void);
 void Func_02001288(void);
-void Func_020012dc(void);
-void Func_020013f8(void);
-void Func_02001518(void);
 void Func_0200157c(void);
 void Func_020015d4(void);
-void Func_02001628(void);
 void Func_0200163c(void);
 void Func_02001690(void);
-void Func_02002e14(void);
-void Func_02002e98(void);
 
 extern u8 gData_02004200[];
 extern u8 gData_0200423c[];
 extern u8 gData_02004278[];
-
-extern u32 gData_020045d4[];
-extern u32 gData_02004630[];
 
 s32 gData_020045c8[] = {
     (s32)gData_02004200,

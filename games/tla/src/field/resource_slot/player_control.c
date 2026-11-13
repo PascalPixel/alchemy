@@ -3,6 +3,11 @@
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"
+#include "flag_call.h"
+#include "frame.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "module/field/resource_slot.h"
 
 /* VIEW(f0267bc): tag struct PartyKeys as struct PartyKeys__f0267bc; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:4350: structure has no member named `keys23c'. */
 struct PartyKeys__f0267bc {
@@ -10,25 +15,13 @@ struct PartyKeys__f0267bc {
   u16 keys23c;
 };
 
-struct LeaderUnit {
-  u8 unk00[0x38];
-  s16 hp;
-};
-
-extern u8 gDebugMode;
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gData_0802ec5c[16];
 
-void Vector_AddPolarOffset(s32 radius, s32 angle,
-                           struct FieldPosition *position);
 s32 MapGrid_CheckCollision(struct Actor *object, struct FieldPosition *position);
-s32 Field_CheckSpheresOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values);
 /* VIEW(f0267bc): routine Unit_Get as struct LeaderUnit *Unit_Get(s32 owner); offset has void *Unit_Get(s32 owner); tried as the definition's void *Unit_Get(s32 owner), which the object already declares, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:4584: request for member `hp' in something not a structure or union. */
 extern struct LeaderUnit *Unit_Get__f0267bc(s32 owner) __asm__("Unit_Get");
-void Actor_SelectAnimation(struct Actor *object, s32 argument);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-s32 Field_CheckConfiguredKeys(void);
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
@@ -70,7 +63,7 @@ s32 Func_080267bc(struct Actor *object) {
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
-  Vector_AddPolarOffset(0x80000, angle, &position);
+  Vector_AddPolarOffset__resource_slot(0x80000, angle, &position);
   if (object->priorityFlags & 0x40) {
     s32 withinHalfCell;
 
@@ -120,22 +113,22 @@ s32 Func_080267bc(struct Actor *object) {
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, angle + 0x1000, &testPosition);
+    Vector_AddPolarOffset__resource_slot(0x80000, angle + 0x1000, &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition)) {
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
-      Vector_AddPolarOffset(0x80000, angle - 0x1000, &testPosition);
+      Vector_AddPolarOffset__resource_slot(0x80000, angle - 0x1000, &testPosition);
       if (!MapGrid_CheckCollision(object, &testPosition)) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(0x80000, angle + 0x2000, &testPosition);
+        Vector_AddPolarOffset__resource_slot(0x80000, angle + 0x2000, &testPosition);
         if (!MapGrid_CheckCollision(object, &testPosition)) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
-          Vector_AddPolarOffset(0x80000, angle - 0x2000, &testPosition);
+          Vector_AddPolarOffset__resource_slot(0x80000, angle - 0x2000, &testPosition);
           if (!MapGrid_CheckCollision(object, &testPosition)) {
             heading = angle;
             goto push_objects;
@@ -162,31 +155,31 @@ s32 Func_080267bc(struct Actor *object) {
       position.x = object->x;
       position.y = object->y;
       position.z = object->z;
-      Vector_AddPolarOffset(0x80000, (u16)heading, &position);
+      Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading, &position);
       if (MapGrid_CheckCollision(object, &position))
         continue;
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
-      Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &testPosition);
+      Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading + 0x1000, &testPosition);
       if (MapGrid_CheckCollision(object, &testPosition))
         continue;
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
-      Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &testPosition);
+      Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading - 0x1000, &testPosition);
       if (MapGrid_CheckCollision(object, &testPosition))
         continue;
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
-      Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &testPosition);
+      Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading + 0x2000, &testPosition);
       if (MapGrid_CheckCollision(object, &testPosition))
         continue;
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
-      Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &testPosition);
+      Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading - 0x2000, &testPosition);
       if (!MapGrid_CheckCollision(object, &testPosition))
         goto push_objects;
     }
@@ -208,7 +201,7 @@ push_objects:
   contact.x = object->x;
   contact.y = object->y;
   contact.z = object->z;
-  Vector_AddPolarOffset(0x40000, (u16)heading, &contact);
+  Vector_AddPolarOffset__resource_slot(0x40000, (u16)heading, &contact);
   other = (struct Actor *)Ram_HeapSlots->scriptObjects;
   for (angleIndex = 63; angleIndex >= 0; angleIndex--, other++) {
     s32 radius;
@@ -230,26 +223,26 @@ push_objects:
       testPosition.x = other->x;
       testPosition.y = other->y;
       testPosition.z = other->z;
-      Vector_AddPolarOffset(0x4000, direction, &testPosition);
+      Vector_AddPolarOffset__resource_slot(0x4000, direction, &testPosition);
       if (!ScriptObject_CheckOverlap(other, &testPosition.x)) {
         testPosition.x = other->x;
         testPosition.y = other->y;
         testPosition.z = other->z;
-        Vector_AddPolarOffset(0xa0000, direction, &testPosition);
+        Vector_AddPolarOffset__resource_slot(0xa0000, direction, &testPosition);
         if (!MapGrid_CheckCollision(other, &testPosition)) {
           testPosition.x = other->x;
           testPosition.y = other->y;
           testPosition.z = other->z;
-          Vector_AddPolarOffset(0xa0000, direction + 0x1000, &testPosition);
+          Vector_AddPolarOffset__resource_slot(0xa0000, direction + 0x1000, &testPosition);
           // The same probe is tested twice.
           if (!MapGrid_CheckCollision(other, &testPosition) &&
               !MapGrid_CheckCollision(other, &testPosition)) {
             testPosition.x = other->x;
             testPosition.y = other->y;
             testPosition.z = other->z;
-            Vector_AddPolarOffset(0xa0000, direction - 0x1000, &testPosition);
+            Vector_AddPolarOffset__resource_slot(0xa0000, direction - 0x1000, &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
-              Vector_AddPolarOffset(0x4000, direction,
+              Vector_AddPolarOffset__resource_slot(0x4000, direction,
                                     (struct FieldPosition *)&other->x);
               other->targetX = 0x80000000;
               other->targetY = 0x80000000;
@@ -314,24 +307,6 @@ counted:
   object->step++;
   return 1;
 }
-
-/// The requests the configured keys raise.
-// Named as in ☀️'s FieldWork.
-struct EventPrompt {
-  u8 unk000[0x15a];
-  u16 menu;
-  u16 examine;
-  u16 start;
-  u8 unk160[6];
-  u16 choice[2];
-  u16 result;
-  u8 unk16c[30];
-  s8 mode;
-  u8 unk18b[0xb21];
-  s8 pendingSecond;
-};
-
-s32 GameFlag_Test(s32 flag);
 
 s32 Func_08026dd0(u32 value) {
   struct EventPrompt *event = Ram_HeapSlots->eventWork;
@@ -414,19 +389,6 @@ s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
     return 0;
   return -1;
 }
-
-
-struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
-extern const s32 gData_0802ec88[];
-
-struct Child {
-  u8 unk00[9];
-  u8 low9 : 2;
-  u8 layer : 2;
-  u8 high9 : 4;
-  u8 unk0a[0x10];
-  u8 value1a;
-};
 
 void Func_08026fc8(struct Actor *object, s32 mode) {
   struct Actor *created;

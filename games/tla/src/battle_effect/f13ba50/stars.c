@@ -3,14 +3,7 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
-
-// The camera's heading, as the camera work holds it.
-struct CameraView {
-  u8 unk00[0x36];
-  u16 yaw;
-};
-
-extern s32 gData_08197924[]; // the two ring points, alternating
+#include "module/battle_effect/f13ba50.h"
 
 #define BOLT_COUNT 3
 #define RING_POINTS 10
@@ -201,8 +194,6 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
 #undef RING_STEPS
 
 // Shining Star's rings of stars.
-
-extern u8 gData_0819793c[]; // ring radii, alternating: 32, 16
 
 #define STAR_COUNT 8
 

@@ -3,6 +3,8 @@
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"
+#include "module/field/resource_slot.h"
+#include "module/tla.h"
 
 s32 Actor_IsTargetUnset(struct Actor *object) {
   s32 first;
@@ -23,12 +25,6 @@ s32 Actor_IsTargetUnset(struct Actor *object) {
 }
 
 s32 Func_08023f94(struct Actor *object) { return Actor_IsTargetUnset(object); }
-
-/// The words of an object's script. As in The Broken Seal's ActorScriptWords,
-/// a flat word pointer changes one load's base and index order.
-struct MotionScript {
-  s32 word[1];
-};
 
 /// An object as the motion update reads it (struct Actor's layout).
 struct MotionObject {
@@ -79,7 +75,6 @@ typedef s32 (*MotionCommand)(struct MotionObject *object);
 extern const MotionCommand gData_0802f204[];
 extern const s32 gData_0802ebc8[];
 
-s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
 /* VIEW(f023680): routine ScriptObject_CheckOverlap as s32 ScriptObject_CheckOverlap(struct MotionObject *object, s32 *values); the definition has s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values). */
 extern s32 ScriptObject_CheckOverlap__f023680(struct MotionObject *object, s32 *values) __asm__("ScriptObject_CheckOverlap");
 
@@ -427,7 +422,6 @@ void Func_08023f9c(void) {
     }
   }
 }
-
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 

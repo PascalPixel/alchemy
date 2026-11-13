@@ -16,6 +16,10 @@
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "debug.h"
+#include "event_work.h"
+#include "module/scene/jupiter_lighthouse_room_1.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -84,8 +88,6 @@ void Func_020001f4(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Func_02001bcc(s32 owner);
-
 s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
   if (!Event_GetFlag(0x109) && gMainRoutineWork.entrance == 6)
@@ -119,7 +121,6 @@ extern s32 gData_0200222c;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_0200222c = value; }
-extern u16 gData_02002258[];
 
 void Func_020002c8(void) {
   u16 colors[16];
@@ -157,11 +158,8 @@ next:
   gData_0200222c++;
 }
 
-extern u16 gData_02002278[];
-extern u16 gData_0200227c[];
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02001b14();
+/* VIEW(jupiter_lighthouse_room_1): routine Func_02001b14 as void Func_02001b14(); module/scene/gabomba_statue_chamber.h has void Func_02001b14(void). */
+extern void Func_02001b14__jupiter_lighthouse_room_1() __asm__("Func_02001b14");
 void Func_02001bc4();
 
 void Func_02000384(s32 mode) {
@@ -190,16 +188,13 @@ void Func_02000408(s32 id) {
   object->y = height + 0x200000;
   object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
-  Func_02001b14(object->x, object->z, 0, (height >> 19) + 6);
+  Func_02001b14__jupiter_lighthouse_room_1(object->x, object->z, 0, (height >> 19) + 6);
   Func_02001bc4(object->x, object->z, 0, 128);
 }
 
 #include "actor.h"
 #include "frame.h"
 #include "event_work.h"
-
-void Event_Start(void);
-void Event_End(void);
 
 void Func_0200045c(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;

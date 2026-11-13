@@ -18,10 +18,10 @@
 
 #include "objcmd.h"
 #include "frame.h"
+#include "module/scene/mt_aleph_summit.h"
 
 extern void LinkLobby_RunRoundResult(struct FieldEffect *effect, s32 mode);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-extern s32 gData_02001650[];
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
@@ -200,10 +200,6 @@ next:
   if (i != 15)
     goto next;
 }
-
-extern u32 gData_0200159c[];
-extern u32 gData_020015d8[];
-extern u32 gData_02001614[];
 
 // clang-format off
 u32 gData_0200159c[] = {

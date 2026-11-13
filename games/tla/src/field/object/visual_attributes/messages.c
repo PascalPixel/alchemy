@@ -3,18 +3,16 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "gamepak/far_call/window.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/field_sequence.h"
+#include "module/field/object.h"
+#include "scene_call.h"
 
 struct Actor;
 
-s32 Actor_GetScreenPosition(s32 objectId, s32 *position);
-void Text_GetMessageSizeAltFar(s32 message, s32 *left, s32 *top, u32 *width,
-                               u32 *height);
-void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top, u32 *width,
-                            u32 *height);
-s32 Portrait_GetForSpeakerFar(s32 sprite);
-s32 Speaker_GetVoice(s32 sprite);
 s32 Func_080380f8(s32 sprite, s32 zero, s32 x, s32 y);
-s32 Message_AllTypedFar(void);
 
 #define SPEAKER_PORTRAIT_LEFT 0x1000
 #define SPEAKER_PORTRAIT_RIGHT 0x2000
@@ -189,11 +187,6 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   return handle;
 }
 
-
-void Window_CloseMatchingIdFar(s32 id);
-void Message_CloseFinishedWindowsFar(void);
-void Func_080d4330(s32 key);
-
 /// The held keys, read again at each test through a volatile pointer; as
 /// plain reads, combined into one test of 0x305, 62 of 82 instructions of
 /// Func_080d3fb0 differ in tla-en.
@@ -240,8 +233,6 @@ void Event_ShowMessageThenWait(s32 object, s32 message, s32 frames) {
 void Event_ShowMessageAndWait(s32 object, s32 message) {
   Func_080d3fb0(object, message);
 }
-
-s32 Event_AskYesNoWithActorAnimation(s32 owner, s32 mode);
 
 s32 Event_AskYesNoAndShowResponse(s32 object, s32 message) {
   s32 result;
@@ -294,9 +285,6 @@ void Event_ShowSpeakerMessage(s32 speaker) {
   }
   work->messageId++;
 }
-
-
-void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
 
 void Event_ShowCounter(s32 a, s32 b, s32 c, s32 d) {
   Event_ShowCounterAtPosition(a, b, c, d);
@@ -416,7 +404,6 @@ void Func_080d4330(s32 key) {
     *(s16 *)&work->speakerVoiceCountdown = value;
   }
 }
-
 
 void Camera_FollowActor(s32 id, s32 flag) {
   struct Actor *obj;

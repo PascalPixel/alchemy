@@ -21,6 +21,17 @@
 #include "call.h"
 #include "field_sprite.h"
 #include "frame.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/game/game.h"
+#include "module/scene/jupiter_lighthouse_room_m.h"
+#include "module/scene/scene.h"
+#include "module/scene/world_map.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "resource.h"
+#include "text/msg_ids.h"
 
 s32 Func_02000038(s32 object) {
   Actor_SetSingleChildFlags(object, 0);
@@ -66,14 +77,11 @@ void Func_02000080(void) {
   }
 }
 
-extern char ResourceId_LightningTiles;
-extern char ResourceId_LightningMap;
-extern s16 gBgScroll[];
+/* VIEW(jupiter_lighthouse_room_m): variable gBgScroll as s16 gBgScroll[]; bg_scroll.h has struct BgScroll gBgScroll[]. */
+extern s16 gBgScroll__jupiter_lighthouse_room_m[] __asm__("gBgScroll");
 
-void *Resource_GetTableEntry(s32 id);
-void Resource_DecodeType01(void *resource, void *destination);
-void Window_LoadGraphics(void);
-void DebugText_Clear(void);
+/* VIEW(jupiter_lighthouse_room_m): routine Resource_DecodeType01 as void Resource_DecodeType01(void *resource, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
+extern void Resource_DecodeType01__jupiter_lighthouse_room_m(void *resource, void *destination) __asm__("Resource_DecodeType01");
 void Func_0200354c(void);
 
 static __inline__ void Func_0200474c_(s32 a, s32 b, s32 c, s32 d, s32 e,
@@ -109,13 +117,13 @@ void Func_020000c4(void) {
   REG_DISPCNT &= ~0x100;
   Io_Write16(0x400, &REG_BG0CNT);
   buffer = Heap_Alloc(0x800);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
+  Resource_DecodeType01__jupiter_lighthouse_room_m(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                 buffer);
   Dma_Set(buffer, (void *)(0x06000000), 0x84000200, REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)0x06002000, 0x800);
   buffer = Heap_Alloc(128);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
+  Resource_DecodeType01__jupiter_lighthouse_room_m(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
   p = buffer;
   for (i = 0; i != 64; i++)
     *p++ &= 0xfcff;
@@ -127,8 +135,8 @@ void Func_020000c4(void) {
   Heap_Release(buffer);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f41;
-  gBgScroll[0] = -104;
-  gBgScroll[1] = 16;
+  gBgScroll__jupiter_lighthouse_room_m[0] = -104;
+  gBgScroll__jupiter_lighthouse_room_m[1] = 16;
   System_Wait(30);
   Func_02004924_(0x10003, 0);
   Func_0200491c_(0x7fff, 0);
@@ -163,28 +171,24 @@ void Func_020000c4(void) {
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
   REG_DISPCNT |= 0x100;
-  gBgScroll[0] = 0;
-  gBgScroll[1] = 0;
+  gBgScroll__jupiter_lighthouse_room_m[0] = 0;
+  gBgScroll__jupiter_lighthouse_room_m[1] = 0;
   System_Wait(1);
   gCpuLoadDisplayEnabled = 1;
   MapGrid_SetShake(0, 0, 0);
 }
 
-void Func_02004774(s32 x, s32 z, s32 a, s32 b);
+/* VIEW(jupiter_lighthouse_room_m): routine Func_02004774 as void Func_02004774(s32 x, s32 z, s32 a, s32 b); module/scene/eastern_alhafra.h has void Func_02004774(struct Actor *object). */
+extern void Func_02004774__jupiter_lighthouse_room_m(s32 x, s32 z, s32 a, s32 b) __asm__("Func_02004774");
 
 void Func_0200039c(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Call4(Func_02004774, object->x, object->z, 0, -8);
+  Call4(Func_02004774__jupiter_lighthouse_room_m, object->x, object->z, 0, -8);
 }
 
-void Event_Start(void);
-void Event_End(void);
-void Func_020048f4(void);
-void Func_02002efc(s32 value);
-
 static __inline__ void Func_02004774_(s32 x, s32 z, s32 a, s32 b) {
-  Func_02004774(x, z, a, b);
+  Func_02004774__jupiter_lighthouse_room_m(x, z, a, b);
 }
 
 static __inline__ void Func_020048b4_(s32 id, s32 angle) {
@@ -413,12 +417,6 @@ void Func_020008c8(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-extern const u8 MsgNoWhyAre[];
-extern const u8 MsgDonTWorry[];
-extern const u8 MsgWeHaveTo[];
-extern const u8 MsgIDonT[];
-extern const u8 MsgYouVeBeen[];
-
 /// Talking to one of the party: each answers with its own message.
 void Func_02000970(s32 actor) {
   Event_Start();
@@ -506,8 +504,6 @@ s32 Func_02000b38(u8 *object) {
   return 0;
 }
 
-extern u32 gData_02005524[];
-extern u32 gData_02005548[];
 extern u32 gData_0200558c[];
 extern u32 gData_020055ec[];
 extern u32 gData_02005644[];
@@ -574,26 +570,12 @@ void Func_02000c08(void) {
 
 #undef PLACE
 
-extern const u8 MsgAhhhh2[];
-extern u32 gData_020056ec[];
 extern u32 gData_02005748[];
 extern u32 gData_0200578c[];
-extern u32 gData_020057d0[];
-extern u32 gData_02005800[];
-extern u32 gData_0200d830[];
 extern u32 gData_02005860[];
 extern u32 gData_02005890[];
-extern u32 gData_020058d8[];
-extern u32 gData_02005920[];
 extern u32 gData_02005950[];
-extern u32 gData_020049cc[];
 extern u32 gData_020049dc[];
-extern u32 gData_020049ec[];
-extern u32 gData_020049fc[];
-extern u32 gData_02004a18[];
-extern u32 gData_02004a34[];
-extern u32 gData_02004a50[];
-extern u32 gData_0200599c[];
 
 static __inline__ void I_Func_020048bc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                        s32 g, s32 h, s32 i, s32 j, s32 k) {
@@ -1150,13 +1132,10 @@ void Func_02000cac(s32 arg) {
 #include "actor.h"
 #include "event_work.h"
 
-extern const u8 MsgIMSorry[];
-
-void Party_RemoveMember(s32 owner);
-s32 Party_AddMember(s32 owner);
-void Unit_Calculate(s32 owner);
-s32 Unit_AddPp(s32 owner, s32 delta);
-void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
+/* VIEW(jupiter_lighthouse_room_m): routine Party_RemoveMember as void Party_RemoveMember(s32 owner); module/game/game.h has s32 Party_RemoveMember(s32 owner). */
+extern void Party_RemoveMember__jupiter_lighthouse_room_m(s32 owner) __asm__("Party_RemoveMember");
+/* VIEW(jupiter_lighthouse_room_m): routine Unit_AddPp as s32 Unit_AddPp(s32 owner, s32 delta); module/game/game.h has s16 Unit_AddPp(s32 owner, s32 delta). */
+extern s32 Unit_AddPp__jupiter_lighthouse_room_m(s32 owner, s32 delta) __asm__("Unit_AddPp");
 
 static __inline__ void JupiterLighthouseRoomM_AddHp(s32 owner, s32 delta) {
   /* FAKEMATCH(wrapper): forwarding through the inline reloads -10000 from
@@ -1171,7 +1150,7 @@ static __inline__ void JupiterLighthouseRoomM_AddPp(s32 owner, s32 delta) {
    * the pool at each call, as the native does; as direct calls, 23 of 160
    * instructions of Func_02001c7c differ in tla-en, the four uses sharing it
    * in r5. */
-  Unit_AddPp(owner, delta);
+  Unit_AddPp__jupiter_lighthouse_room_m(owner, delta);
 }
 
 static __inline__ void JupiterLighthouseRoomM_Func_020048b4(s32 actor, s32 a) {
@@ -1229,23 +1208,23 @@ void Func_02001c7c(void) {
   } while (0);
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6a3, 77);
   Event_SetDefeatDestination((s32)&SceneId_Ov6a3, 77);
-  Party_RemoveMember(4);
-  Party_RemoveMember(7);
-  Party_RemoveMember(5);
-  Party_RemoveMember(6);
-  Party_RemoveMember(2);
-  Party_RemoveMember(0);
+  Party_RemoveMember__jupiter_lighthouse_room_m(4);
+  Party_RemoveMember__jupiter_lighthouse_room_m(7);
+  Party_RemoveMember__jupiter_lighthouse_room_m(5);
+  Party_RemoveMember__jupiter_lighthouse_room_m(6);
+  Party_RemoveMember__jupiter_lighthouse_room_m(2);
+  Party_RemoveMember__jupiter_lighthouse_room_m(0);
   Party_AddMember(2);
   Party_AddMember(0);
-  Party_RemoveMember(3);
-  Party_RemoveMember(1);
+  Party_RemoveMember__jupiter_lighthouse_room_m(3);
+  Party_RemoveMember__jupiter_lighthouse_room_m(1);
   JupiterLighthouseRoomM_AddHp(2, -10000);
   JupiterLighthouseRoomM_AddHp(0, -10000);
   Unit_Calculate(0);
   Unit_Calculate(2);
   FieldUnit_AddHp(0, 173);
   JupiterLighthouseRoomM_AddPp(2, -10000);
-  Unit_AddPp(0, -10000);
+  Unit_AddPp__jupiter_lighthouse_room_m(0, -10000);
   gMainRoutineWork.currentOwner = 0;
   Field_RequestBattleFromEncounterTable(102, 4);
 }
@@ -1278,20 +1257,10 @@ void Func_02001e38(void) {
 
 #define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
 
-extern const u8 MsgWeDidItAgatio[];
-extern u32 gData_02004a6c[];
-extern u32 gData_02004a90[];
-extern u32 gData_02004ab4[];
-extern u32 gData_02004ae8[];
-extern u32 gData_02004b1c[];
-extern u32 gData_020059a4[];
-extern u32 gData_02005a00[];
-
-void PartyInventory_Remove(s32 a);
-s32 PartyInventory_Add(s32 item);
+/* VIEW(jupiter_lighthouse_room_m): routine PartyInventory_Remove as void PartyInventory_Remove(s32 a); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
+extern void PartyInventory_Remove__jupiter_lighthouse_room_m(s32 a) __asm__("PartyInventory_Remove");
 void *Unit_Get(s32 owner);
 s32 Inventory_Equip();
-s32 Event_ClearInvalidPackedValues();
 
 #define ACTOR_SET_MODE_AND_WAIT(id, mode, frames)                              \
   do {                                                                         \
@@ -1316,13 +1285,13 @@ void Func_02001ed0(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(0x2e10000, 0, 0xd10000, 0);
   gMainRoutineWork.currentOwner = 4;
-  Party_RemoveMember(0);
-  Party_RemoveMember(2);
-  Party_RemoveMember(5);
-  Party_RemoveMember(6);
-  Party_RemoveMember(7);
-  Party_RemoveMember(3);
-  Party_RemoveMember(1);
+  Party_RemoveMember__jupiter_lighthouse_room_m(0);
+  Party_RemoveMember__jupiter_lighthouse_room_m(2);
+  Party_RemoveMember__jupiter_lighthouse_room_m(5);
+  Party_RemoveMember__jupiter_lighthouse_room_m(6);
+  Party_RemoveMember__jupiter_lighthouse_room_m(7);
+  Party_RemoveMember__jupiter_lighthouse_room_m(3);
+  Party_RemoveMember__jupiter_lighthouse_room_m(1);
   Party_AddMember(4);
   Actor_SetSpeed(4, 0x10000, 0x8000);
   {
@@ -1612,7 +1581,7 @@ void Func_02001ed0(void) {
   FieldActor_StartRepeatedMotion(0, 2);
   FieldEvent_Wait(4);
   Actor_RunRepeatedMotion(4, 2);
-  PartyInventory_Remove(0xdf);
+  PartyInventory_Remove__jupiter_lighthouse_room_m(0xdf);
   PartyInventory_Add(0xf5);
   Message_ShowCentered((s16)EVENT_WORK->messageId++, 5);
   index = 0;
@@ -1687,10 +1656,6 @@ void Func_02001ed0(void) {
   Event_End();
 }
 
-void Func_02004994(s32 id, s32 mode);
-void Func_02004984(void);
-void Func_0200498c(s32 a, s32 b, s32 c, s32 d);
-
 /// Sets up Jupiter Lighthouse room M: objects 8 to 15 take mode 1, objects 24
 /// and 25 stand at heights 0 and 32, the cells flags 514 and 2591 opened are
 /// stamped again, and with 2591 set the arrival is chosen by flags 2595, 2593
@@ -1758,7 +1723,6 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-void Func_02002fc4(s32 mode);
 void Func_02003a38();
 void Func_02003ac0();
 
@@ -1784,7 +1748,7 @@ s32 Scene_PrepareMap(void) {
     /* FAKEMATCH(barrier): the last call's zero is built before the position
      * loads; as a plain 0 argument, 2 of 62 instructions differ in tla-en. */
     __asm__("" : : "r"(zero));
-    Func_02004774(object->x, object->z, zero, -6);
+    Func_02004774__jupiter_lighthouse_room_m(object->x, object->z, zero, -6);
   }
   return 0;
 }
@@ -1843,12 +1807,6 @@ next:
   gData_02005a14++;
 }
 
-extern u16 gData_02005a60[];
-extern u16 gData_02005a64[];
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_020049b4();
-
 void Func_02002fc4(s32 mode) {
   gData_02005a18 = 1;
   if (mode != 2) {
@@ -1875,7 +1833,7 @@ void Func_02003048(s32 id) {
   object->y = height + 0x200000;
   object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
-  Func_02004774(object->x, object->z, 0, (height >> 19) + 6);
+  Func_02004774__jupiter_lighthouse_room_m(object->x, object->z, 0, (height >> 19) + 6);
   Func_020049b4(object->x, object->z, 0, 128);
 }
 
@@ -1959,10 +1917,8 @@ s32 Func_02003288(s32 *a, s32 *b) {
 
 extern const s32 gData_02005a1c[];
 
-void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
-s32 Func_020049a4(s32 x, s32 z, s32 layer);
-void Camera_WorldToScreen(s32 *position);
-s32 Math_Cosine(s32 angle);
+/* VIEW(jupiter_lighthouse_room_m): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
+extern void Camera_WorldToScreen__jupiter_lighthouse_room_m(s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_020032b4(struct Actor *self) {
@@ -1990,7 +1946,7 @@ void Func_020032b4(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Camera_WorldToScreen(position);
+    Camera_WorldToScreen__jupiter_lighthouse_room_m(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;

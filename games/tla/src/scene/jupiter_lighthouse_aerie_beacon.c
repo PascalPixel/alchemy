@@ -45,7 +45,8 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 #include "field_event.h"
 
-s32 Math_Cosine();
+/* VIEW(jupiter_lighthouse_aerie_beacon): routine Math_Cosine as s32 Math_Cosine(); module/scene/scene.h has s32 Math_Cosine(s32 angle). */
+extern s32 Math_Cosine__jupiter_lighthouse_aerie_beacon() __asm__("Math_Cosine");
 
 void Func_02000090(struct Actor *self) {
   struct Actor *centre = Actor_Get(31);
@@ -54,7 +55,7 @@ void Func_02000090(struct Actor *self) {
   s32 x;
   s32 z;
 
-  self->x = centre->x + Math_Cosine(angle) * (self->speedLimit + 3);
+  self->x = centre->x + Math_Cosine__jupiter_lighthouse_aerie_beacon(angle) * (self->speedLimit + 3);
   sine = Math_Sin(angle);
   z = centre->z;
   x = self->x;
@@ -78,7 +79,7 @@ void Func_02000090(struct Actor *self) {
 void Func_020000ec(struct Actor *self) {
   struct Actor *centre = Actor_Get(36);
   u16 angle = self->timer;
-  s32 cosine = Math_Cosine(angle);
+  s32 cosine = Math_Cosine__jupiter_lighthouse_aerie_beacon(angle);
   s32 radius = self->speedLimit + BYTE_AT(self, 98);
   self->x = centre->x + cosine * (radius + 6);
   self->z = centre->z + Math_Sin(angle) * (BYTE_AT(self, 98) + 4);

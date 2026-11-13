@@ -1,19 +1,9 @@
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_room_3/local.h"
 #include "io_reg.h"
-
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
-struct PushEvent {
-  u8 unk00[6];
-  s16 x;
-  s16 z;
-  u8 unk0a[4];
-  u16 busy;
-};
-
-void Func_02002cb8(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
+#include "event_work.h"
+#include "field.h"
+#include "module/scene/anemos_inner_sanctum.h"
+#include "module/scene/scene.h"
 
 void Func_02002db0(struct PushEvent *event) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);

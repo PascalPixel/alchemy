@@ -13,10 +13,10 @@
 #include "scene_tables.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
+#include "event_work.h"
+#include "module/scene/mikasalla.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
-
-extern s16 gData_02000794[];
 
 s16 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -27,9 +27,6 @@ s16 *Scene_GetRegions(void) {
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-extern struct ActorPlacement gData_02000fa0[];
-extern struct ActorPlacement gData_020010c0[];
 
 void *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -42,16 +39,14 @@ void *Scene_GetPlacements(void) {
 #include "mikasalla/local.h"
 #include "event_inline.h"
 
-struct WarpEntry {
+/* VIEW(mikasalla): tag struct WarpEntry as struct WarpEntry__mikasalla; module/scene/scene.h has another definition. */
+struct WarpEntry__mikasalla {
   s32 map;
   u16 x;
   u16 z;
 };
 
-extern struct WarpEntry gData_0200073c[];
-
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
+extern struct WarpEntry__mikasalla gData_0200073c[];
 
 void Func_0200009c(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -92,9 +87,6 @@ void Func_0200009c(void) {
 }
 
 void Func_0200014c(void) { Func_080d7788(18, 2, 8); }
-
-extern struct Trigger gData_020012ac[];
-extern struct Trigger gData_020010d8[];
 
 struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -286,12 +278,6 @@ void Func_020005d4(void) {
 #include "text/msg_ids.h"
 #include "objcmd.h"
 
-extern s16 gData_020006f8[];
-extern s16 gData_0200070e[];
-extern s16 gData_02000724[];
-extern s32 gData_02000850[];
-extern s32 gData_02000bf8[];
-
 // clang-format off
 s16 gData_020006f8[] = {
     81, 50, 1, 2, 6, 80, 50, 1,
@@ -308,7 +294,7 @@ s16 gData_02000724[] = {
     2, 6, -1, 0,
 };
 
-struct WarpEntry gData_0200073c[] = {
+struct WarpEntry__mikasalla gData_0200073c[] = {
     {(s32)gData_020006f8, 84, 29},
     {(s32)gData_020006f8, 77, 34},
     {(s32)gData_0200070e, 86, 38},

@@ -14,6 +14,12 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "event.h"
+#include "ground_mask.h"
+#include "module/scene/aqua_rock.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "task.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -35,11 +41,6 @@ const u8 *Scene_GetRegions(void) {
 #include "event_inline.h"
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-struct ActorTail {
-  u8 head[0x5e];
-  u16 unk5e;
-};
 
 s32 Func_02000384(struct Actor *object) {
   struct Vector3 spot;
@@ -140,24 +141,6 @@ void Func_0200052c(struct Actor *object) {
     }
   }
 }
-
-struct Unk02003450 {
-  s16 unk00;
-  s16 unk02;
-  s16 unk04;
-  s16 unk06;
-  s16 unk08;
-  s16 unk0A;
-  s16 unk0C;
-  s16 unk0E;
-  s16 unk10;
-  s16 unk12;
-  s16 unk14;
-  s16 unk16[2];
-  s16 unk1A[2];
-  s16 unk1E;
-};
-extern struct Unk02003450 Data_02003450[];
 
 void Func_02000580(void) {
   struct Unk02003450 *entry;
@@ -339,10 +322,7 @@ void Func_02000b58(struct Actor *object) {
   object->update = 0;
 }
 
-void Func_02002834(s32 id);
-void Func_020025a8(s32 id);
 void Func_02002948(s32 layer);
-void Func_02002940(s32 layer);
 
 /// Toggles flag 0xa68 and with it which of two layer pairs is shown: four
 /// rounds of a random colour value, then one pair's blend scripts and layer
@@ -398,7 +378,8 @@ void Func_02000b68(s32 unused, s32 id) {
   Event_End();
 }
 
-void GameFlag_SetByte(s32 flag, s32 value);
+/* VIEW(aqua_rock): routine GameFlag_SetByte as void GameFlag_SetByte(s32 flag, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
+extern void GameFlag_SetByte__aqua_rock(s32 flag, s32 value) __asm__("GameFlag_SetByte");
 
 void Func_02000cd8(s32 unused, s32 id) {
 
@@ -410,8 +391,8 @@ void Func_02000cd8(s32 unused, s32 id) {
 
     column = first->x >> 20;
     row = first->z >> 20;
-    GameFlag_SetByte(0x310, column);
-    GameFlag_SetByte(0x318, row);
+    GameFlag_SetByte__aqua_rock(0x310, column);
+    GameFlag_SetByte__aqua_rock(0x318, row);
     GameFlag_ClearBit_(0x320);
     GameFlag_ClearBit(0x321);
     if (column == 7 && row == 35)
@@ -444,14 +425,8 @@ void Func_02000d64(struct Actor *object, s32 limit) {
 #include "ram_buffer.h"
 #include "frame.h"
 
-void Func_02001e00(void);
-s32 Func_02002970(struct Actor *object, struct Vector3 *position);
-void Func_02001d30(struct Actor *object);
-
-struct EventWork1cc {
-  u8 unk000[0x1cc];
-  struct Actor *object;
-};
+/* VIEW(aqua_rock): routine Func_02002970 as s32 Func_02002970(struct Actor *object, struct Vector3 *position); module/scene/lemurian_ship.h has void Func_02002970(void). */
+extern s32 Func_02002970__aqua_rock(struct Actor *object, struct Vector3 *position) __asm__("Func_02002970");
 
 void Func_02000d80(void) {
   struct Actor *leader, *carried;
@@ -471,7 +446,7 @@ void Func_02000d80(void) {
     ahead.x = leader->x;
     ahead.y = leader->y;
     ahead.z = leader->z + 0x20000;
-    result = Func_02002970(leader, &ahead);
+    result = Func_02002970__aqua_rock(leader, &ahead);
     if ((gFrameCount & 4) == 0)
       Func_02001d30(leader);
     if (result < 0) {
@@ -490,7 +465,7 @@ void Func_02000d80(void) {
     ahead.x = leader->x;
     ahead.y = leader->y;
     ahead.z = leader->z - 0x80000;
-    result = Func_02002970(leader, &ahead);
+    result = Func_02002970__aqua_rock(leader, &ahead);
     if (result > 0) {
       if (gMainRoutineWork.scene != (s32)&SceneId_Ov67bRoom1)
         return;
@@ -516,13 +491,13 @@ void Func_02000d80(void) {
     ahead.x = leader->x + 0x5b333;
     ahead.y = leader->y;
     ahead.z = leader->z - 0x5b333;
-    result = Func_02002970(leader, &ahead);
+    result = Func_02002970__aqua_rock(leader, &ahead);
     if (result > 0)
       return;
     ahead.x = leader->x - 0x5b333;
     ahead.y = leader->y;
     ahead.z = leader->z - 0x5b333;
-    result = Func_02002970(leader, &ahead);
+    result = Func_02002970__aqua_rock(leader, &ahead);
     if (result > 0)
       return;
     carried->z += -0x20000;
@@ -533,11 +508,6 @@ void Func_02000d80(void) {
 
 #include "map.h"
 #include "input.h"
-
-struct AquaRockEventWork {
-  u8 unk000[0x16a];
-  s16 field16a;
-};
 
 static inline u8 CellAttribute(struct MapCell *cells, s32 row, s32 col) {
   cells += row * 128 + col;
@@ -563,8 +533,6 @@ void Func_02000f8c(void) {
       Func_02001e00();
   }
 }
-
-void Func_02001f60(s32 id);
 
 void Func_02001010(void) {
   Func_02002960_(62, 41, 1, 2, 33, 41);
@@ -650,9 +618,6 @@ void Func_020011e0(s32 unused, s32 id) {
     Map_CopyCellAttributeRect(54, 58, 1, 1, column, 58);
   }
 }
-
-void Func_02002a10(void);
-void Func_02001d98(struct Actor *object);
 
 /// Sets flag 0xa69 after four rounds of a random colour value, runs the
 /// blend scripts, then moves the camera to object 15, starts its update and
@@ -892,36 +857,14 @@ settle:
 
 #include "call.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
-struct MapBits {
-  u8 unk00[23];
-  u8 low : 2;
-  u8 mode : 2;
-};
-
-void Func_02002a58(s32 a);
-void Func_02001f60(s32 id);
 s32 GameFlag_GetByte(s32 flag);
-void Func_020013f8(void);
-void Func_02002550(void);
-void Func_0200276c(void);
-void Func_020025a8(s32 id);
-void Func_02002834(s32 id);
 void Func_02002948(s32 a);
-void Func_02002940(s32 a);
 /* VIEW(s17f4): routine Func_02000b58 as void Func_02000b58(void); the definition has void Func_02000b58(struct Actor *object). */
 extern void Func_02000b58__s17f4(void) __asm__("Func_02000b58");
-void Func_0200169c(void);
 /* VIEW(s17f4): routine Func_02001670 as void Func_02001670(void); the definition has void Func_02001670(struct Actor *object). */
 extern void Func_02001670__s17f4(void) __asm__("Func_02001670");
-void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02000844(void);
-void Func_02002158(void);
 /* VIEW(s17f4): routine Func_02001d98 as void Func_02001d98(void); aqua_rock has void Func_02001d98(struct Actor *object). */
 extern void Func_02001d98__s17f4(void) __asm__("Func_02001d98");
-void Func_02001460(void);
-void Func_0200153c(void);
 
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -1120,9 +1063,6 @@ void Func_02001d98(struct Actor *object) {
 
 #include "scene_ids.h"
 
-void Func_02001d30(struct Actor *object);
-
-
 void Func_02001e00(void) {
   struct Actor *anchor;
   s32 owner;
@@ -1143,7 +1083,7 @@ void Func_02001e00(void) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z + 0x20000;
-  result = Func_02002970(leader, position);
+  result = Func_02002970__aqua_rock(leader, position);
   if ((gFrameCount & 4) == 0)
     Func_02001d30(leader);
   if (result < 0) {
@@ -1162,27 +1102,25 @@ void Func_02001e00(void) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z + 0x80000;
-  result = Func_02002970(leader, position);
+  result = Func_02002970__aqua_rock(leader, position);
   if (result > 0)
     return;
   position[0] = leader->x + 0x5b333;
   position[1] = leader->y;
   position[2] = leader->z + 0x5b333;
-  result = Func_02002970(leader, position);
+  result = Func_02002970__aqua_rock(leader, position);
   if (result > 0)
     return;
   position[0] = leader->x - 0x5b333;
   position[1] = leader->y;
   position[2] = leader->z + 0x5b333;
-  result = Func_02002970(leader, position);
+  result = Func_02002970__aqua_rock(leader, position);
   if (result > 0)
     return;
   anchor->z += 0x20000;
   leader->z += 0x20000;
   leader->facing = 0x4000;
 }
-
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
 void Func_02001f60(s32 id) {
   struct Actor *object = Actor_GetById(id);
@@ -1312,8 +1250,6 @@ void Func_02002158(void) {
 
 #include "graphics/vram_tab.h"
 
-void Oam_AddSpriteAtDepth(void *entry, s32 slot);
-
 void Func_02002250(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
 #ifndef UBFIX
@@ -1386,7 +1322,6 @@ void Func_02002250(void) {
     }
   }
 }
-
 
 void Func_020023c0(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -1486,38 +1421,6 @@ void Func_020025a8(s32 id) {
 #include "io_reg.h"
 #include "resource.h"
 
-struct GroundParticle {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[2];
-  s32 posX;
-  s32 posY;
-  s32 posZ;
-  s32 delay;
-  u16 timer;
-  u8 unk1e[2];
-};
-
-struct GroundParticleWork {
-  s32 entry;
-  s32 tileBase;
-  struct GroundParticle particles[64];
-  s32 *leader;
-};
-
-extern s16 gData_02002cd4[];
-
 void Func_020025d4(void) {
   struct MapWork *view = Ram_HeapSlots->mapWork;
   struct GroundParticleWork *work = Ram_HeapSlots->unk70[1];
@@ -1568,29 +1471,6 @@ void Func_020025d4(void) {
     }
   }
 }
-
-struct DustParticle {
-  u32 link;
-  u32 attr01;
-  u32 attr2;
-  s32 posX;
-  s32 posY;
-  s32 posZ;
-  u8 pad18[4];
-  u16 timer;
-  u8 pad1e[2];
-};
-
-struct DustWork {
-  s32 vramEntry;
-  s32 tileBase;
-  struct DustParticle particles[64];
-  u32 field808;
-  u8 pad80c[8];
-};
-
-extern const u8 gField_Tiles679[];
-void Func_020028b0(const void *source, void *destination);
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
 /// decoded into VRAM, and Func_020025d4 scheduled at priority 0x480 to move
@@ -1646,9 +1526,7 @@ void Func_02002834(s32 id) {
     *slot = (s32)&object->x;
 }
 
-
 s32 Func_02000384(struct Actor *object);
-s32 Func_02000478(struct Actor *object);
 
 // clang-format off
 u32 gData_02002a78[] = {

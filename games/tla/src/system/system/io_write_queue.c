@@ -19,11 +19,6 @@ DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay9, IO_WRITE_CLEAR | IO_WRITE_8)
 DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay10, IO_WRITE_CLEAR | IO_WRITE_16)
 DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay11, IO_WRITE_CLEAR | IO_WRITE_32)
 
-typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
-
-extern u8 Resource_ExecuteTransferCode[];
-extern u8 Resource_ExecuteTransferSize[];
-
 /// Runs the queued I/O writes with the transfer routine copied to the stack.
 void IoWriteQueue_FlushPending(void) {
   struct IoWriteQueue *queue;

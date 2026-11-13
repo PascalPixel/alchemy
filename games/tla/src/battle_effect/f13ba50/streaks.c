@@ -3,10 +3,11 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/battle_effect/f13ba50.h"
+#include "resource_ids.h"
 
 struct BattleEffectArgument;
-
-void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Sonic Wave (kind 300).
 void BattleEffect_RunSonicWave(void *object) { Func_0813c5f4(object, 0); }
@@ -27,33 +28,15 @@ void BattleEffect_RunWickedHowl(void *object) { Func_0813c5f4(object, 3); }
 /// points here.
 void BattleEffect_RunLimeStreaks(void *object) { Func_0813c5f4(object, 1); }
 
-
-
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-// Four signed bytes for each mode (The Broken Seal's gStreaks_Styles).
-extern s8 Data_08197533[];
 #define RECORD(mode, field) Data_08197533[(mode) * 4 + (field)]
 #define RECORD_ANIMATE 0 // cycle the streak through its three pictures
 #define RECORD_HIT 1     // sound the hit and flash the target
 #define RECORD_MOTION 2  // the target's recoil motion, or -1
 #define RECORD_SHAKE 3   // tremble the target after the hit
 
-// The struck target's sideways tremble, in pixels (gStreaks_Tremble).
-extern s8 Data_08197547[];
-
 #define STREAK_MAX 3 // streaks for each target
-
-extern char ResourceId_FiveModeImage;
-extern char ResourceId_EmberStreakSheet;
-extern char ResourceId_LimePalette;
-extern char ResourceId_VioletPaletteD;
-extern char ResourceId_RedPaletteB;
-extern char ResourceId_CyanPalette;
-
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
 
 // Sonic Wave (mode 0), Shriek (1), Banshee Howl (2), Wicked Howl (3) and War
 // Cry (4): effect kinds 300 to 305.
@@ -260,8 +243,6 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode);
-
 /// Abilities: Sleep Star (kind 349).
 void BattleEffect_RunSleepStar(void *object) { Func_0813cb34(object, 1); }
 
@@ -271,23 +252,8 @@ void BattleEffect_RunSoothingStar(void *object) { Func_0813cb34(object, 0); }
 /// Abilities: Slaver (kind 395).
 void BattleEffect_RunSlaver(void *object) { Func_0813cb34(object, 2); }
 
-typedef DrawRectangle BlitterPair[2];
-
-enum { MODE_SOOTHING_STAR, MODE_SLEEP_STAR, MODE_SLAVER };
-
 // The motes live in the map cell buffer.
 #define EFFECT_STEPS ((struct EffectStep *)Ram_MapCellBuffer)
-
-// The mote's cell for each size from 1 to 6 (The Broken Seal's
-// gBattleEffect_MoteCells).
-extern u16 gData_08197410[];
-
-extern char ResourceId_Data134; // The Broken Seal's ParticleSpritesA
-extern char ResourceId_OrangePaletteA;
-extern char ResourceId_EarthWallSheet;
-extern char ResourceId_GreenPalette;
-
-void SummonEffect_RunCanvasMode1(void *effect);
 
 // The IWRAM routines are called through one inline each, as The Broken Seal's
 // iwram_call.h layer calls them: called directly, CSE shares the size

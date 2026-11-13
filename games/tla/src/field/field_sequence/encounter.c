@@ -3,6 +3,11 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "encounter_zone.h"
+#include "gamepak/far_call/game.h"
+#include "module/field/field_sequence.h"
+#include "module/tla.h"
+#include "resource_ids.h"
 
 void Func_080c9de0(s32 id, s32 variant) {
   const struct FlagEntry *entry = FlagEntries_GetTable();
@@ -27,16 +32,6 @@ s32 Func_080c9e1c(s32 flag) {
   }
   return 1;
 }
-
-struct SceneMusicEntry {
-  s16 scene;
-  s16 entrance; // -1 any
-  s16 flag;     // -1 none; the entry applies while the flag is clear
-  u8 first;
-  u8 second;
-};
-
-extern const struct SceneMusicEntry Data_080ee6d4[];
 
 void Func_080c9e48(s32 search) {
   struct EventWorkView *work = Ram_HeapSlots->eventWork;
@@ -70,19 +65,6 @@ void Func_080c9e48(s32 search) {
   Func_080ca4a8();
 }
 
-/// A world map encounter rule, ended by kind -1.
-struct TerrainRule {
-  s16 kind;     ///< the terrain kind of the map block, 0 to 19
-  s16 behavior; ///< the terrain's behavior, or -1 for any
-  s16 flag;     ///< -1, or a flag the rule needs set
-  s16 zone;
-};
-
-extern struct TerrainRule gData_080eedbc[];
-extern struct TerrainRule gData_080eef34[];
-
-s32 GetWorldMapTerrainBehaviorFar(void *position, s32 *kind);
-
 /// Returns the world map encounter zone for the terrain at position (0 for
 /// none) and chooses the battle backdrop for that terrain. There are no
 /// encounters in render mode 8, render mode 7 reads the second rule table,
@@ -115,22 +97,6 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
   BattleBackground_SelectForEnvironment(behavior);
   return zone;
 }
-
-struct EncounterZone {
-  u16 rate;
-  u16 level;
-  s16 enemies[8];
-  u8 weights[8];
-};
-
-struct EncounterWork {
-  u8 unk000[0x194];
-  s32 bias;
-  s32 threshold;
-};
-
-s32 Party_GetAverageLevelFar(void);
-extern const struct EncounterZone gEncounter_EnemyGroupTable[];
 
 #define ENCOUNTER_STEPS (gMainRoutineWork.encounterSteps)
 
@@ -246,16 +212,6 @@ u16 Encounter_GetDjinnEnemyGroup(s32 djinni) {
 #endif
 }
 
-struct SceneCueRule {
-  s16 id;
-  s16 entrance : 15;
-  u16 byScene : 1;
-  s16 flag;
-  s16 cue;
-};
-
-extern const struct SceneCueRule gScene_CueRuleTable[];
-
 void Scene_ResolveInteractionResult(void) {
   s16 cue = 79;
   s16 scene = gMainRoutineWork.scene;
@@ -288,15 +244,6 @@ void Scene_ResolveInteractionResult(void) {
   gMainRoutineWork.cue = cue;
 }
 
-struct SceneAreaNameRule {
-  s16 id;
-  s16 entrance : 15;
-  u16 useSceneId : 1;
-  s32 areaNameIndex;
-};
-
-extern const struct SceneAreaNameRule gScene_AreaNameRules[];
-
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance) {
   const struct SceneAreaNameRule *entry = gScene_AreaNameRules;
   s32 areaNameIndex = 0;
@@ -323,8 +270,6 @@ s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance) {
   return areaNameIndex;
 }
 
-extern const s16 gParty_PairResolveRules[];
-
 /// Sets the scene the party returns to after a defeat
 /// (gMainRoutineWork.savedScene and savedEntrance), from the first rule of
 /// gParty_PairResolveRules that matches the current scene and entrance: rows
@@ -350,8 +295,6 @@ void Scene_SetRestartPoint(void) {
     entry += 8;
   }
 }
-
-extern u8 Data_020004b8[];
 
 /// With flag 0x8de set, finds the first rule of gParty_PairResolveRules for
 /// scene and entrance (-1 on either side matches any entrance) and copies its
@@ -396,11 +339,6 @@ void Func_080ca3f4(s32 scene, s32 entrance) {
 
 s16 Event_GetSpecialValue(void) { return gMainRoutineWork.special; }
 
-extern s32 gData_080ef984[];
-
-extern char ResourceId_DragonHallABackdrop;
-extern char ResourceId_DragonHallBBackdrop;
-
 /// The Broken Seal's BattleEffect_SetSpecialFromTable, with this game's
 /// dragon hall check after the loop: looks the scene up in gData_080ef984 and
 /// keeps the last marked backdrop before it; with flag 0xa30 set, the second
@@ -424,18 +362,6 @@ void Func_080ca4a8(void) {
     result = (s32)&ResourceId_DragonHallABackdrop;
   gMainRoutineWork.special = result;
 }
-
-extern char ResourceId_GrasslandBBackdrop;
-extern char ResourceId_RockyBeachBackdrop;
-extern char ResourceId_DenseForestBackdrop;
-extern char ResourceId_ShipDeckBackdrop;
-extern char ResourceId_SnowfieldBBackdrop;
-extern char ResourceId_BlizzardBackdrop;
-extern char ResourceId_DesertBackdrop;
-
-/// The battle music table: each song as 0x8000 | song, followed by the
-/// encounters that use it as (zone << 4) + slot, ended by 0.
-extern const s16 Data_080efd1c[];
 
 /// Chooses the battle backdrop for a terrain; the ship deck's is the default.
 void BattleBackground_SelectForEnvironment(s32 behavior) {

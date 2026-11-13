@@ -4,16 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
-
-struct BattleSortedUnitEntry {
-  u16 unitId;
-  u16 unk02;
-  s16 value;
-  s16 width;
-  s16 mode;
-  s16 priority;
-  u8 unk0c[4];
-};
+#include "module/battle/battle.h"
 
 s32 AutoBattle_BuildActions(
     struct BattleSortedUnitEntry *entries) {
@@ -77,9 +68,6 @@ s32 AutoBattle_BuildActions(
   return count;
 }
 
-s32 AutoBattle_ShowDefend(s16 *);
-s32 BattleStaging_RunUnitAction(s16 *);
-
 void BattleCamera_AdjustByShoulderKeys(void) {
   struct BattleCamera *cam = Ram_HeapSlots->cameraWork;
   struct BattlePresentationTransition *trans = Ram_HeapSlots->transitionWork;
@@ -96,10 +84,6 @@ void BattleCamera_AdjustByShoulderKeys(void) {
     BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);
   }
 }
-
-extern u8 gData_03001ae8[];
-s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action);
-s32 AutoBattle_RunPsynergy(struct BattleActionRecord *);
 
 s32 AutoBattle_RunAction(s16 *action) {
   struct BattlePresentationTransition *transition;
@@ -314,8 +298,6 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   return 0;
 }
 
-void Func_08138008(struct BattlePresentationWork *work);
-
 /// The actor announces its attack, walks up to its target and plays the
 /// attack's effect on it. Returns -1 when either id is not a battle object.
 s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
@@ -360,9 +342,6 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   ObjMotRst(work.actor);
   return 0;
 }
-
-void Func_08138018(struct BattlePresentationWork *work);
-void Func_08138020(struct BattlePresentationWork *work);
 
 /// Auto battle: an attack or an item. Turns the camera to the acting unit's
 /// side, poses the unit and plays the battle effect (kind action->parameter) on
@@ -497,11 +476,6 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   slot = BattleObject_Get(unitId);
   Actor_SetMode((struct Actor *)slot->object, 1);
 }
-
-struct BattleObjectAnimation {
-  u8 unk00[0x28];
-  struct AnimationEntry *entry;
-};
 
 s32 Animation_ApplyChildArgumentFar(void *group, s32 flags);
 

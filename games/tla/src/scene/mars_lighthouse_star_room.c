@@ -5,6 +5,9 @@
 #include "actor.h"
 #include "event_inline.h"
 #include "field.h"
+#include "module/scene/mars_lighthouse_star_room.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 struct RideEntry {
   s16 a;
@@ -42,12 +45,8 @@ struct RideWork {
   void *handle;
 };
 
-extern u8 gData_020023c4[];
-extern u16 gData_02004cf0[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_02002148(void);
 void Func_0200236c(void);
-void Func_02002ad0(struct Actor *object);
 
 s32 Func_02000038(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);
@@ -78,8 +77,6 @@ void Func_02000060(void) {
 
   event[3384] = 1;
 }
-
-void Func_020014f4(void);
 
 void Func_02000074(void) { Func_020014f4(); }
 
@@ -696,7 +693,6 @@ void Func_02000d88(void) {
   MapGrid_CopyCellAttributes(104, 9, 5, 6, 40, 9);
 }
 
-
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -1134,7 +1130,6 @@ void Func_02001424(void) {
   }
 }
 
-
 extern const u8 gData_020044b8[];
 extern const u8 gData_020045b8[];
 
@@ -1455,7 +1450,6 @@ s32 Func_02001a44(struct Actor *a, struct Actor *b) {
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
-
 void Func_02001a9c(struct Actor *object) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 dx = object->bounce;
@@ -1482,7 +1476,6 @@ void Func_02001a9c(struct Actor *object) {
     object->unk4c = 0;
   }
 }
-
 
 extern const u8 gData_02004744[];
 

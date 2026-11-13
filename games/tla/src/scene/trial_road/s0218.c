@@ -8,6 +8,8 @@
 #include "text/msg_ids.h"
 #include "vector3.h"
 #include "field.h"
+#include "event_work.h"
+#include "module/scene/trial_road.h"
 
 void Func_02000218(s32 side, s32 phase) {
   if (side == 0) {
@@ -43,8 +45,6 @@ void Func_020002a4(s32 side, s32 phase) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-void Func_02005868();
-void Event_Start(void);
 
 s32 Func_02000330(void) {
   s32 t1, t2, t9, v_r5, v_r6;
@@ -87,10 +87,6 @@ L_02008400:
 
 void Func_02000418(void) { GameFlag_ClearBit(0x281); }
 
-void Event_End(void);
-void TrialRoad_Idle(void);
-s32 Func_020000fc(s32 value);
-
 void Func_02000428(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct TrialRoadState *state = gTrialRoadState;
@@ -125,9 +121,8 @@ void Func_02000428(void) {
   Event_End();
 }
 
-void MessageArgument_Push(s32 value, s32 slot);
-/// Func_080af0e4 through its far call: empties an inventory slot and returns 2.
-s32 Func_02005870(s32 owner, s32 slot);
+/* VIEW(s0218): routine MessageArgument_Push as void MessageArgument_Push(s32 value, s32 slot); module/window/window.h has void MessageArgument_Push(u32 value, u32 kind). */
+extern void MessageArgument_Push__s0218(s32 value, s32 slot) __asm__("MessageArgument_Push");
 
 /// Puts an item in the chest: "{protagonist} put {actor}'s {item} in the
 /// chest." (MsgTrialRoadStoredItem) with sound 125 while the chest object
@@ -141,8 +136,8 @@ void Func_020004f4(s32 item, s32 owner, s32 slot) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  MessageArgument_Push(owner, 1);
-  MessageArgument_Push(item, 2);
+  MessageArgument_Push__s0218(owner, 1);
+  MessageArgument_Push__s0218(item, 2);
   FieldMessage_Show((s32)&MsgTrialRoadStoredItem, 1);
   Sound_Play(125);
   Motion_SetModeAndWaitAnimation(kind, 5);
@@ -159,7 +154,8 @@ void Func_020004f4(s32 item, s32 owner, s32 slot) {
   Event_End();
 }
 
-struct EventWork15a {
+/* VIEW(s0218): tag struct EventWork15a as struct EventWork15a__s0218; module/tla.h has another definition. */
+struct EventWork15a__s0218 {
   u8 unk000[0x15a];
   u16 value;
 };
@@ -179,7 +175,7 @@ void Func_020005b4(s32 id) {
   } else {
     FieldMessage_Show((s32)MsgTrialRoadPlaceItemPrompt, 13);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 1) == 0)
-      ((struct EventWork15a *)Ram_HeapSlots->eventWork)->value = 1;
+      ((struct EventWork15a__s0218 *)Ram_HeapSlots->eventWork)->value = 1;
   }
 }
 
@@ -534,8 +530,6 @@ void Func_02000c84(void) {
   }
 }
 
-extern s16 gData_02007734[];
-
 void Func_02000cc0(void) { Func_02004418(gData_02007734); }
 
 void Func_02000cd0(s32 phase) {
@@ -611,11 +605,6 @@ s32 Func_02000df8(s32 x, s32 z) {
   value = cell[2];
   return IsZero(value ^ 0xff);
 }
-
-struct EventWork184 {
-  u8 unk000[388];
-  s16 value;
-};
 
 void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   struct Actor *object = Actor_GetById(id);

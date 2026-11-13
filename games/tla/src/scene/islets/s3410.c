@@ -5,6 +5,9 @@
 #include "heap_release.h"
 #include "palette_snapshots.h"
 #include "field.h"
+#include "module/field/field.h"
+#include "module/scene/islets.h"
+#include "module/scene/scene.h"
 
 void Func_02003410(void) {
   struct PaletteSnapshotWork *queue;
@@ -58,8 +61,6 @@ inner:
 #include "text/msg_ids.h"
 #include "event_inline.h"
 
-void Func_020034fc(void);
-
 void Func_020034d8(void) {
   Task_AddFrame(&Func_020034fc, 0x480);
   return;
@@ -69,15 +70,6 @@ void Func_020034ec(void) {
   FieldTask_Remove(Func_020034fc);
   return;
 }
-
-struct PaletteCycle {
-  u16 *source;
-  s16 position;
-  u16 timer;
-  s16 delay;
-  s16 count;
-  u16 colors[16];
-};
 
 struct PaletteCycleWork {
   struct PaletteCycle entries[4];
@@ -120,7 +112,6 @@ void Func_020034fc(void) {
 }
 
 void Event_Start();
-void Func_02003f84();
 
 void Func_02003620(void) {
   s32 v5;
@@ -157,7 +148,6 @@ void Func_0200367c(void) {
 #include "islets.h"
 
 extern s8 gData_0200407c[][4];
-void Func_02003790(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
 
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
@@ -227,7 +217,6 @@ void Func_02003790(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value) {
 #include "system/vector3.h"
 
 extern s32 gData_02004094[];
-struct Actor *Func_02003940(s32 *direction, s32 *number, s32 *kind);
 
 static __inline__ s32 RowByte(s8 *row, s32 index) { return row[index]; }
 
@@ -358,15 +347,7 @@ inner:
   return NULL;
 }
 
-void Event_NoOp(void);
 void Func_02003d0c(void);
-
-/// The heap slots read as words: the map slot comes through u32, not its
-/// pointer type, so its load stays behind the stores of the block.
-struct HeapSlotWords {
-  u32 slots[8];
-  u32 mapWork;
-};
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 

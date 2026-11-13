@@ -3,24 +3,13 @@
 // Part of f0dcb44.c.
 
 #include "../f0dcb44_internal.h"
-
-// The field event work's Reveal state (eventWork + 0xca4).
-struct RevealEvent {
-  u8 unk000[0xca4];
-  s8 active;   // Reveal is showing
-  u8 markers;  // the nearby markers are up
-  s16 frames;  // how long it lasts
-  s16 centreX; // pixels
-  s16 centreY;
-};
+#include "event.h"
+#include "module/field/event_commands.h"
+#include "module/field/f0dcb44.h"
+#include "module/field/object.h"
 
 /* VIEW(f0dd820): routine BattleEffect_RunBusyWaitDelay as void BattleEffect_RunBusyWaitDelay(s32 value); the definition has void BattleEffect_RunBusyWaitDelay(void); tried as the definition's void BattleEffect_RunBusyWaitDelay(void), which the object already declares, it does not compile in tla-ja: games/tla/src/field/event_commands/f0dcb44.c:877: too many arguments to function `BattleEffect_RunBusyWaitDelay'. */
 extern void BattleEffect_RunBusyWaitDelay__f0dd820(s32 value) __asm__("BattleEffect_RunBusyWaitDelay");
-void BattleEffect_ApplyColorToTargetBuffer(u32 value, s32 enabled);
-void BattleEffect_StartBufferInterpolation(s32 frames);
-s32 Func_080ce31c(s32 kind);
-void Func_080cf554(void);
-void Func_080dd754(void);
 
 #define FIELD_FX_REVEAL 8
 #define REVEAL_EVENT_START 0x50000005 // the Reveal event, stage 5
@@ -46,7 +35,7 @@ void Func_080dd820(void) {
   transition->centreX = caster->x;
   transition->centreY = caster->z - caster->y;
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10001, 1);
+  BattleEffect_ApplyColorToTargetBuffer__f0dcb44(0x10001, 1);
   BattleEffect_StartBufferInterpolation(1);
   event->active = 0;
   wait(1);
@@ -92,10 +81,10 @@ void Func_080dd950(void) {
     event->active = 0;
     event->frames = 0;
     BattleEffect_RunBusyWaitDelay__f0dd820(0);
-    BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
+    BattleEffect_ApplyColorToTargetBuffer__f0dcb44(0x10000, 1);
     BattleEffect_StartBufferInterpolation(1);
     BattleEffect_ApplyColorToSourceBuffer(0, 0);
-    BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+    BattleEffect_ApplyColorToTargetBuffer__f0dcb44(0x10000, 0);
     BattleEffect_StartBufferInterpolation(30);
     wait(1);
     pending = Func_080ce458(0x40000005, FIELD_FX_REVEAL,
@@ -112,22 +101,12 @@ void Func_080dd950(void) {
   }
 }
 
-
-struct BurstParticleVector {
-  s32 values[3];
-};
-
 extern const s32 gData_080f0ee8[];
 
-void Func_080ddbd8(void);
 /* VIEW(f0dd820): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); hue has extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *). */
 extern void Vector_AddPolarOffset__f0dd820(s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
 /* VIEW(f0dd820): routine Actor_Spawn as struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z); hue has extern struct ItemBreakFragmentObject *Actor_Spawn(s32, s32, s32, s32). */
 extern struct Actor *Actor_Spawn__f0dd820(s32 kind, s32 x, s32 y, s32 z) __asm__("Actor_Spawn");
-void BattleEffect_PrepareBufferInterpolation(void);
-// Far call to the target classifier Func_080237c8.
-s32 Func_08020330(struct Actor *object);
-void Func_080daecc(s32 objectId, s32 mode);
 
 #define BURST_FALL_OBJECT 281 ///< the object that falls round the target
 
@@ -221,37 +200,6 @@ void FieldEffect_RunGrowth(void) {
   wait(30);
   BattleEffect_PrepareBufferInterpolation();
 }
-
-
-struct BurstParticleVisual {
-  u8 reserved00[5];
-  u8 flagsALow : 5;
-  u8 flip : 1;
-  u8 flagsAHigh : 2;
-  u8 reserved06;
-  u8 flagsBLow : 6;
-  u8 flagsBHigh : 2;
-  union {
-    struct {
-      u16 shape : 10;
-      u16 unused : 6;
-    } bits;
-    struct {
-      u8 lo;
-      u8 highLow : 4;
-      u8 palette : 4;
-    } bytes;
-  } attributes;
-};
-
-// ⚓️'s sprite keeps its second part 28 bytes in.
-struct BurstParticleVisualGroup {
-  struct BurstParticleVisual primary;
-  u8 reserved0c[16];
-  struct BurstParticleVisual child;
-};
-
-void BattleEffect_InitializeSharedScene(void);
 
 void Func_080ddbd8(void) {
   struct BattleFxScene *work;

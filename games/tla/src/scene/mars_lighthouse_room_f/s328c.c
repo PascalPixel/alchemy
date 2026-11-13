@@ -1,6 +1,6 @@
 #include "room.h"
-
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+#include "field.h"
+#include "module/scene/mars_lighthouse_star_room.h"
 
 void Func_02002f6c(struct Actor *object);
 
@@ -176,7 +176,6 @@ struct RideWork {
 extern u8 gData_020023c4[];
 extern u16 gData_02004cf0[];
 void Func_020041ec(void *handle);
-void Func_02002148(void);
 void Func_0200236c(struct Actor *object, s32 unused);
 
 s32 Func_0200351c(struct Actor *object) {

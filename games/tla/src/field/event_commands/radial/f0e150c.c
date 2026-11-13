@@ -3,6 +3,11 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "module/field/radial.h"
 
 /* VIEW(f0e150c): tag struct ArcSprite as struct ArcSprite__f0e150c; radial.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:1599: structure has no member named `x'. */
 struct ArcSprite__f0e150c {
@@ -27,8 +32,6 @@ struct ArcWork__f0e150c {
 
 /* VIEW(f0e150c): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); launch has void Camera_WorldToScreen(struct SpinVector *position). */
 extern void Camera_WorldToScreen__f0e150c(s32 *position) __asm__("Camera_WorldToScreen");
-void Camera_WorldToScreen(struct EffectVector *position);
-s32 BattleEffect_GetObjectDepth(struct Actor *object);
 
 void BattleEffect_UpdateArcEffect(void) {
   struct ArcWork__f0e150c *work = Ram_HeapSlots->block62;
@@ -72,7 +75,6 @@ void BattleEffect_UpdateArcEffect(void) {
   }
 }
 
-
 void BattleEffect_StartArcEffect(void) {
   struct ArcEffectWork *work = HeapSlot_Alloc(248, sizeof(*work));
 
@@ -93,65 +95,8 @@ void BattleEffect_EndArcEffect(void) {
   HeapSlot_Release(248);
 }
 
-
-// One moving point: a spark on the canvas (x and y only, counting delay) or
-// a sprite's place in the world.
-struct BowMotion {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 delay;
-};
-
-struct BowWork {
-  u8 *tiles;
-  struct BowMotion sparks[32];
-  struct BowMotion arrowMotion;
-  struct EffectSprite arrow;
-  struct BowMotion bowMotion;
-  struct EffectSprite bow;
-  s32 start[3];
-  s32 target[3];
-  s16 phase;
-  s16 timer;
-  u16 bowTile;
-  s16 frame;
-  s8 bowGrowing;
-  s8 bowShrinking;
-  s8 sparking;
-  s8 sparksRepeat;
-  s16 result;
-  s8 done;
-  s8 arrowMoving;
-};
-
-struct BowScene {
-  u16 angleFraction;
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-};
-
-struct BowEvent {
-  u8 unk00[20];
-  struct Actor *objects[80];
-};
-
-extern const s32 Data_080f0f34[8];
-extern const s32 Data_080f0f54[4];
-extern const u8 Data_080eda0c[];
-
 /* VIEW(f0e150c): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position); f0dfd00 has void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p). */
 extern void Vector_AddPolarOffset__f0e150c(s32 distance, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
-s32 Func_08020210(struct Actor *object, s32 *position);
-s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
-                                  s32 height);
 
 #define BOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
@@ -427,19 +372,14 @@ again:
   work->timer++;
 }
 
-void Func_080e1f2c(void);
-
 /// Effect 29 cast on a target: runs the effect. Nothing calls it; the
 /// targeted dispatch has no case for animation 29.
 void BattleEffect_CallEffect29(void) { Func_080e1f2c(); }
-
 
 // One moving point: a spark on the canvas (x and y only, counting delay) or
 // a sprite's place in the world.
 
 extern char ResourceId_BowDraw, ResourceId_FlamingArrow;
-
-s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
 void Func_080e1f2c(void) {
   struct BowWork *work = HeapSlot_Alloc(92, sizeof(struct BowWork));
@@ -560,20 +500,6 @@ void Func_080e1f2c(void) {
   HeapSlot_Release(92);
 }
 
-struct PointWork {
-  u8 unk_0[0xcc0];
-  s16 points[62];
-  u16 unk_d3c;
-  u16 unk_d3e;
-  u16 unk_d40;
-  u16 unk_d42;
-};
-
-extern const s8 Data_080f0f64[];
-
-s32 Func_080dbda8(s32 x, s32 z, s32 layer);
-s32 Func_080cda84(s32 id, struct Actor *object, s32 *position);
-
 /// Looks at 21 map cells around the effect owner, at the tile offsets of
 /// Data_080f0f64 (signed x, z byte pairs), on the owner's layer. Each cell of
 /// kind 1, 2 or 3 that Func_080cda84 accepts for the effect's id is listed as a
@@ -639,26 +565,6 @@ void Func_080e2264(void) {
 
 // Runs the field events an effect touched.
 
-struct TouchOwner {
-  u8 unk00[34];
-  u8 layer;
-};
-
-struct TouchWork {
-  u8 unk00[16];
-  struct TouchOwner *owner;
-  u8 unk14[4];
-  s16 argument0;
-  s16 argument1;
-  u8 unk1c[2];
-  s16 kind;
-};
-
-struct TouchCell {
-  s16 x;
-  s16 z;
-};
-
 s32 Func_080dbdc8(s32 x, s32 z, s32 layer);
 /* VIEW(f0e150c): routine Field_RunPsynergyEvent as void Field_RunPsynergyEvent(s32 event, s32 argument0, s32 argument1); event_work.h has s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target). */
 extern void Field_RunPsynergyEvent__f0e150c(s32 event, s32 argument0, s32 argument1) __asm__("Field_RunPsynergyEvent");
@@ -714,46 +620,15 @@ void Func_080e249c(void) {
   }
 }
 
-struct TouchLayer {
-  u8 unk00[8];
-  s32 x;
-  s32 z;
-  u8 unk10[40];
-};
-
-struct TouchMap {
-  u8 unk000[264];
-  struct TouchLayer layers[1];
-};
-
-struct TouchCopy {
-  u8 toX;
-  u8 toZ;
-  u8 fromX;
-  u8 fromZ;
-  u8 cellX;
-  u8 cellZ;
-  u8 unk06[2];
-};
-
 /* VIEW(f0e150c): tag struct MapCell as struct MapCell__f0e150c; map.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:2328: dereferencing pointer to incomplete type. */
 struct MapCell__f0e150c {
   u8 unk00[2];
   u8 unk02;
 };
 
-struct TouchCopies {
-  struct TouchCell unk0000[1491];
-  struct TouchCopy copies[64];
-  s8 count;
-};
-
 extern struct TouchCopies gData_02001000;
 
-s32 Party_GetLeaderActor(void);
 struct Actor *Actor_GetById(u32 objectId);
-void Func_080201f0(s32 toX, s32 toZ, s32 width, s32 height, s32 fromX,
-                   s32 fromZ);
 struct MapCell__f0e150c *Func_080dbb78(s32 x, s32 z, s32 layer);
 
 void Func_080e25e8(s32 toX, s32 toZ, s32 width, s32 height, s32 originX,

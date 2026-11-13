@@ -13,13 +13,14 @@
 #include "system/ram_buffer.h"
 #include "izumo_ruins.h"
 #include "field.h"
+#include "module/field/field_effect.h"
+#include "module/scene/izumo_ruins.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 extern const s32 gData_02001540[];
 
-u32 Func_020014f0(struct FieldSprite *sprite, u32 frame);
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
 void Func_02000974(s32 spread) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -101,9 +102,6 @@ void Func_02000aa8(void) {
   } while (i <= 16);
 }
 
-extern u8 gMapShapeGrid[];
-
-s32 Func_02001478(s32 terrainId, s32 x, s32 z);
 s32 Func_02001528(s32 terrainId, s32 value, s32 height);
 
 void Func_02000bc0(s32 heightOffset, s32 layer, s32 id) {

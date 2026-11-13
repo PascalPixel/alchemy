@@ -7,6 +7,10 @@
 #include "types.h"
 #include "event_inline.h"
 #include "field.h"
+#include "module/field/object.h"
+#include "module/scene/izumo_ruins.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -14,8 +18,6 @@
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
-s32 Func_02000128();
 
 s32 Func_02000038(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 r0, r3, r7, r8, v0, r5, r6, r4, v1;
@@ -60,11 +62,6 @@ L_0200809c:
 #include "izumo_ruins.h"
 #include "map.h"
 #include "../trial_road/trial_road.h"
-
-struct GabombaStatueEffectWork {
-  u8 unk00[0x1a];
-  s16 objectId;
-};
 
 /* VIEW(s00a4): routine Func_02000128 as void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer); s0038 has s32 Func_02000128(); tried as the definition's void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer), it does not compile in tla-ja: games/tla/src/scene/izumo_ruins/s0038.c:69: conflicting types for `Func_02000128'. */
 extern void Func_02000128__s00a4(s32 id, u32 kind, s32 flag, s32 layer) __asm__("Func_02000128");
@@ -139,9 +136,6 @@ void Func_02000128__s00a4(s32 id, u32 kind, s32 flag, s32 layer) {
   }
 }
 
-extern u8 gMapShapeGrid[];
-
-s32 Func_02001478(s32 layer, s32 x, s32 z);
 s32 Func_02001528(s32 layer, s32 shape, s32 height);
 
 void Func_020001d0(u16 *list) {
@@ -185,10 +179,6 @@ void Func_020001d0(u16 *list) {
     leader->y = height;
   }
 }
-
-s32 Func_020014d8(void);
-struct Actor *Func_02001530(s32 *position, s32 flags);
-void Func_02000c4c(s32 level, s32 layer);
 
 void Func_020002f8(u16 *list) {
   struct Actor *leader;
@@ -263,11 +253,6 @@ test:
     goto body;
 }
 
-struct TrapEntry {
-  u16 actor;
-  u16 flag;
-};
-
 void Func_0200048c(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
   struct Actor *object = Actor_Get(id);
@@ -312,7 +297,6 @@ void Func_0200056c(s32 id) {
 }
 
 void Actor_MoveToObject(s32 id, s32 target);
-void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 
 void Func_02000584(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;

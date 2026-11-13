@@ -16,6 +16,8 @@
 #include "text/msg_ids.h"
 #include "event_inline.h"
 #include "actor.h"
+#include "event_work.h"
+#include "module/scene/madra_drawbridge.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -26,10 +28,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
-
-void Event_Start(void);
-void Event_End(void);
-void Func_02000338(void);
 
 void Func_02000054(void) {
   Event_Start();

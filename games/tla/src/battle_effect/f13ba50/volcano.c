@@ -3,14 +3,10 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
+#include "module/battle_effect/f13ba50.h"
+#include "resource_ids.h"
 
 #define PILLAR_FRAMES 96
-
-extern char ResourceId_RedPaletteB; // directory row 0x147
-
-extern u8 Data_08197a20[];    // ☀️ gVolcano_Counts, for each variant
-extern s8 Data_08197a23[][4]; // ☀️ gVolcano_Depths
-extern u8 Data_08197a2f[];    // ☀️ gVolcano_StartFrames
 
 // One, two or four pillars of fire rise in front of the targets, one after
 // another; each burns for the rest of the first 64 frames, scrolling its

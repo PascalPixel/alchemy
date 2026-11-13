@@ -2,6 +2,7 @@
 #include "scene_tables.h"
 #include "version.h"
 #include "objcmd.h"
+#include "module/scene/jupiter_lighthouse_aerie_beacon.h"
 
 void Func_02000038(void);
 void Func_02000050(void);
@@ -280,7 +281,6 @@ s32 gData_020068b0[] = {
 
 #include "text/msg_ids.h"
 
-void Func_0200045c(void);
 void Func_0200065c(void);
 
 struct Trigger gSceneEvents[] = {

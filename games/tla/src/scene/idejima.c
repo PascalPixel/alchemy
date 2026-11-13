@@ -22,14 +22,8 @@
 #include "io_reg.h"
 #include "dma.h"
 #include "map.h"
-
-extern struct SceneEntrance gIdejimaEntrances[];
-extern struct Trigger gIdejimaEvents[];
-extern struct Trigger gIdejimaEventsEntrance1[];
-extern struct Trigger gIdejimaEventsWake[];
-extern struct ActorPlacement gIdejimaPlacements[];
-
-enum { ENTRANCE_WAKE = 2, ENTRANCE_WAKE_AGAIN = 4 };
+#include "module/scene/idejima.h"
+#include "module/scene/scene.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gIdejimaEntrances;
@@ -55,11 +49,6 @@ const struct Trigger *Scene_GetEvents(void) {
     return gIdejimaEvents;
   }
 }
-
-struct ActorSprite {
-  u8 unk00[18];
-  u16 rotation;
-};
 
 void Func_02000098(s32 id) {
   struct Actor *object = Actor_Get(id);
@@ -191,8 +180,6 @@ void Func_020002b4(void) {
   Import_EventEnd();
 }
 
-extern s32 gData_02003650[];
-extern u32 gData_02003734[];
 extern u32 gData_02003790[];
 
 /// A scene of actor 6 and the leader that ends by setting flag 0x865.
@@ -430,9 +417,6 @@ void Func_020006a8(void) {
   }
 }
 
-void Import_ActorPlaceAtActor();
-void Func_02003320();
-
 void Idejima_RunAlexDeparture(void) {
   const u8 *script;
 
@@ -641,15 +625,12 @@ void Idejima_RunAlexDeparture(void) {
   Import_EventEnd();
 }
 
-extern s16 gData_02003c14;
 extern s32 gData_02003c10;
 
 void Func_0200153c(void) {
   gData_02003c14 = 0;
   gData_02003c10 = 0;
 }
-
-extern s16 gData_02003990[2][160];
 
 /// The water's wave scroll: each scanline's vertical offset for BG3 from the
 /// back one of two line tables, streamed by DMA 0 at every HBlank.
@@ -683,10 +664,6 @@ void Func_020015a0(void) {
   gData_02003c14 ^= 1;
   gData_02003c10++;
 }
-
-struct FadePalette {
-  u16 colors[256];
-};
 
 /// Copies colours 128 to 191 of heap block 32 over colours 0 to 63, clears
 /// colour 0 and calls PaletteFade_ApplyTarget(0x10000, 0).

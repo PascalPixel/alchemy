@@ -3,14 +3,13 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/battle_effect/f13ba50.h"
+#include "module/system/system.h"
+#include "resource_ids.h"
 
 // The skulls live in the map buffer, 64 for each target.
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
-
-void SceneTransform_ApplyPosition(const s32 *pos);
-
-extern char ResourceId_SkullSheet;
-extern char ResourceId_PinkBurstSheet; // directory row 0x17f
 
 #define SKULLS 8 // per target
 #define SKULL_SIZE 24
@@ -136,8 +135,6 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
 #define HEAP_BLITTER HEAP_OFFSET(unk64[1])
 #define HEAP_BLITTER_ALTERNATE HEAP_OFFSET(unkb8[1])
 
-extern char ResourceId_SpiralSheet;
-
 #define SPIRAL_SIZE 32
 #define SPIRAL_CELS 4
 
@@ -255,9 +252,6 @@ void BattleEffect_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-
-void Func_08144628(struct BattleEffectArgument *effect, s32 mode);
-
 /// Abilities: Demon Night (kind 50).
 DEFINE_EFFECT_KIND(BattleEffect_RunDemonNight, Func_08144628, 0)
 
@@ -269,17 +263,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunHaunting, Func_08144628, 2)
 
 /// Abilities: Thorny Grave (kind 127).
 DEFINE_EFFECT_KIND(BattleEffect_RunThornyGrave, Func_08144628, 3)
-
-void BattleEffect_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA
-void Func_0815b634(void);                // mode 3 only
-
-extern char ResourceId_MemberBurstImage;
-
-extern char ResourceId_MarsDjinnSheet; // directory row 0x150
-extern char ResourceId_MercuryDjinnSheet;
-// Per mode: how many motes each target gets, and the effect's frame count
-// before the targets' share.
-extern u8 Data_08197864[];
 
 #define MOTES_PER_TARGET 128
 #define MOTE_CELL (20 * 32)

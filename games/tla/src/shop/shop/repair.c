@@ -3,6 +3,7 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "gamepak/far_call/game.h"
 
 /// Returns what a repair costs: a quarter of the price for a broken item,
 /// nothing for one that is not broken.
@@ -20,14 +21,6 @@ s32 Shop_RunRepairMemberChoice(void) { return Shop_ChooseMember(); }
 
 /// In The Lost Age the sell screen serves repairs too, by shop->partyAction.
 s32 Shop_SelectRepair(s32 unitId) { return Shop_SelectSell(unitId); }
-
-extern u8 MsgRepairNotHandled[];     // MsgCannotRepairKind
-extern u8 MsgRepairNotDamaged[];     // MsgNotDamaged
-extern u8 MsgRepairStuckOn[];        // MsgCursedWontComeOff
-extern u8 MsgRepairNotEnoughMoney[]; // MsgNotEnoughMoney
-extern u8 MsgRepairOffer[]; // MsgShopRepairConfirm, then its three replies
-
-void Inventory_RepairFar(s32 unitId, s32 slot);
 
 void Shop_RepairItem(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;

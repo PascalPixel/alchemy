@@ -1,4 +1,7 @@
 #include "types.h"
+#include "event.h"
+#include "module/sound/sound.h"
+#include "system.h"
 
 /// An empty function in the sound driver.
 // As ☀️'s UnusedDummyFunc (games/tbs/src/sound/audio.c).
@@ -10,15 +13,10 @@ void Func_081c1010(void) {}
 #include "sound_driver_symbols.h"
 
 extern s32 gSoundMixerClipped;
-extern s32 gBuildStamp;
+/* VIEW(noop_stub): variable gBuildStamp as s32 gBuildStamp; sound.h has s32 gBuildStamp[]. */
+extern s32 gBuildStamp__noop_stub __asm__("gBuildStamp");
 
 void Sound_LoadReverbCode(s32 preset);
-void Sound_Play(s32 id);
-void wait(s32 frames);
-
-struct SoundTestCues {
-  s32 cue[3];
-};
 
 /// The three cues the test starts with: the object's .rodata, which the
 /// object list places after DummyFunc.
@@ -42,7 +40,7 @@ void SoundTest_Run(void) {
   // VBlank state's; as the plain store, 10 of 145 instructions differ in
   // tla-en.
   do {
-    gBuildStamp = 0;
+    gBuildStamp__noop_stub = 0;
   } while (0);
   gSoundVBlankState.soundTestActive = 1;
   timer = 20;
@@ -149,8 +147,6 @@ void SoundFlag_Clear(s32 sound) {
 }
 
 #include "iwram_call.h"
-
-extern u8 gData_02003a90[];
 
 s32 __divsi3(s32 numerator, s32 denominator);
 

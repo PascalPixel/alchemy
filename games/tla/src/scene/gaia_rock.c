@@ -26,11 +26,11 @@
 #include "text/msg_ids.h"
 #include "map.h"
 #include "task.h"
+#include "actor_view.h"
+#include "module/field/event_commands.h"
+#include "module/scene/gaia_rock.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
-
-extern s16 gData_02000f5c[];
-extern u32 gData_02000f8c[];
 
 const struct ActorPlacement *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1)
@@ -43,13 +43,6 @@ const struct ActorPlacement *Scene_GetRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 struct Trigger;
-
-void Func_02000bc0(s32 id, s32 flag);
-
-extern struct ActorPlacement gData_0200102c[];
-extern struct ActorPlacement gData_02001044[];
-extern struct ActorPlacement gData_02001194[];
-extern s16 gData_020012cc[];
 
 const struct Trigger *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1)
@@ -175,14 +168,7 @@ void Func_02000164(s32 unused, s32 id) {
 
 struct SceneEntrance;
 
-void Event_Start(void);
-void Event_End(void);
-void Func_02000edc(s32 a);
 void Func_02000f04(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
-
-extern struct Trigger gData_020013c8[];
-extern struct Trigger gData_020014b8[];
-extern struct Trigger gData_02001554[];
 
 void Func_02000258(void) {
   MapGrid_CopyCellAttributes(13, 18, 1, 1, 13, Actor_Get(8)->z >> 20);
@@ -293,10 +279,6 @@ struct OrbitEffect {
 
 s32 Math_Cosine(s32 angle);
 void Actor_StartScript(struct Actor *object, const s32 *script);
-void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
-struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-
-extern u32 gData_020015c0[];
 
 void Func_02000474(struct OrbitEffect *effect) {
   s32 radius;
@@ -398,10 +380,7 @@ void Func_02000630(void) {
   slot->value04 += 128;
 }
 
-void Func_02000e24(struct Actor *object, s32 a);
 void Func_02000f1c(struct Actor *object, s32 a);
-
-extern s32 gData_020015c4[];
 
 void Func_02000670(void) {
   struct Actor *object = Actor_Get(17);
@@ -433,8 +412,6 @@ void Func_02000670(void) {
 
 s32 Func_02000f14();
 void Func_02000ed4();
-void Func_02000dd0(void);
-void Func_02000b2c(s32 id, s32 x, s32 y, s32 z);
 
 s32 Scene_Initialize(void) {
   struct Actor *actor;
@@ -577,9 +554,6 @@ void Func_02000b2c(s32 id, s32 x, s32 y, s32 z) {
   Actor_SetSingleChildFlags(object, 0);
 }
 
-extern s32 gData_020016cc[];
-extern u32 gData_02001688[];
-
 void Func_02000ecc(void);
 
 void Func_02000bc0(s32 id, s32 flag) {
@@ -664,8 +638,6 @@ fall:
 void Func_02000dd0(void) { Task_AddFrame(Func_02000ab4, TASK_PASS_VBLANK); }
 
 #include "objcmd.h"
-
-extern u32 gData_0200101c[];
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 24, 0, 408, FACING_EAST, 0, -1, -1, -1, -1, 0},

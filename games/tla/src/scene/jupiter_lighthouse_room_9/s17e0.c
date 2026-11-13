@@ -9,14 +9,13 @@
 #include "field_effect.h"
 #include "event_inline.h"
 #include "cell_target.h"
+#include "event_work.h"
+#include "module/field/field_effect.h"
+#include "module/scene/jupiter_lighthouse_room_9.h"
+#include "module/scene/scene.h"
 
-void Event_Start(void);
-void Map_CenterOnFollowedPoint(void);
-s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02001018(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Event_End(void);
 
 void Func_020017e0(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
@@ -72,10 +71,8 @@ void Func_020017e0(void) {
   Event_End();
 }
 
-extern struct CellTarget Data_02002764;
-
-void GameFlag_SetByte(s32 flag, s32 value);
-void Func_020015d8(struct CellTarget *work, struct CellTargetEntry *entry);
+/* VIEW(s17e0): routine GameFlag_SetByte as void GameFlag_SetByte(s32 flag, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
+extern void GameFlag_SetByte__s17e0(s32 flag, s32 value) __asm__("GameFlag_SetByte");
 void Func_02001648(struct CellTarget *work, struct CellTargetEntry *entry);
 
 s32 Func_02001978(void) {
@@ -98,20 +95,13 @@ s32 Func_02001978(void) {
         break;
       work->current = i;
       Func_02001648(work, entry);
-      GameFlag_SetByte(work->flagByte, x);
-      GameFlag_SetByte(work->flagByte + 8, z);
+      GameFlag_SetByte__s17e0(work->flagByte, x);
+      GameFlag_SetByte__s17e0(work->flagByte + 8, z);
       return 1;
     }
   }
   return 0;
 }
-
-struct JupiterLighthouseRoom8EventWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-  u8 unk1b0[0x1c];
-  struct Actor *marker;
-};
 
 void Func_02001a28(s32 x, s32 z, s32 effect) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -122,8 +112,8 @@ void Func_02001a28(s32 x, s32 z, s32 effect) {
   if (dx != 0 || dz != 0) {
     struct Actor *marker;
 
-    GameFlag_SetByte(Data_02002764.flagByte, 0);
-    GameFlag_SetByte(Data_02002764.flagByte + 8, 0);
+    GameFlag_SetByte__s17e0(Data_02002764.flagByte, 0);
+    GameFlag_SetByte__s17e0(Data_02002764.flagByte + 8, 0);
     leader->x = ((dx + x) << 20) + 0x80000;
     leader->z = ((dz + z) << 20) + 0x80000;
     marker = work->marker;
@@ -140,16 +130,12 @@ void Func_02001a28(s32 x, s32 z, s32 effect) {
 #include "objcmd.h"
 
 void Func_02000054(void);
-void Func_0200007c(void);
 void Func_02000090(void);
 void Func_020000e8(void);
 void Func_0200018c(void);
 void Func_020001bc(void);
 void Func_02000228(void);
-void Func_02000538(void);
 
-extern u32 gData_0200211c[];
-extern u32 gData_02002158[];
 extern u32 gData_02002194[];
 
 // clang-format off

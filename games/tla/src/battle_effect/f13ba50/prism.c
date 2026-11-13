@@ -3,23 +3,15 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/battle_effect/f13ba50.h"
+#include "resource_ids.h"
 
 #undef GROUND_Y
 
 #define SHARDS_PER_CRYSTAL 16
 #define GROUND_Y (56 << 16)
 #define SHATTERED 1 // a crystal's z once it has hit the ground
-
-extern char ResourceId_BoulderSheet; // directory row 0x14d
-extern char ResourceId_CrystalSheet; // directory row 0x193
-
-// ☀️ gPrism_Counts, with a third byte: crystals, frames and the frame
-// that begins phase 134, for each variant.
-extern u8 Data_081979b7[];
-extern s32 gData_08197834[]; // ☀️ gPrism_ShardOffsets
-extern u8 gData_0819781a[];  // ☀️ gPrism_ShardWidths
-extern u8 gData_08197826[];  // ☀️ gPrism_ShardHeights
-extern u8 gData_081977f8[];  // ☀️ gPrism_ShardStarts: x, y for each shard
 
 // Crystals fall one after another, eight frames apart, onto the targets'
 // ground and shatter into sixteen spinning shards each; the screen darkens

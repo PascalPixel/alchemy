@@ -32,7 +32,8 @@ struct FarCallRuntimeTrigView {
   struct FarCallTrigVeneer cos;
 };
 
-struct Vector3 {
+/* VIEW(f021470): tag struct Vector3 as struct Vector3__f021470; vector3.h has another definition. */
+struct Vector3__f021470 {
   s32 x;
   s32 y;
   s32 z;
@@ -62,7 +63,7 @@ extern u32 Data_03001244;
 
 s32 Func_080216f0(s32 x, s32 y);
 
-void Func_08021470(struct Vector3 *eye, struct Vector3 *target,
+void Func_08021470(struct Vector3__f021470 *eye, struct Vector3__f021470 *target,
                    struct ScanVertex *line, struct BgAffine *affine) {
   u32 angle;
   s32 originX;

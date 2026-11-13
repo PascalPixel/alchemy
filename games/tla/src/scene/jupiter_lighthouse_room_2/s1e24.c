@@ -8,14 +8,13 @@
 #include "field_effect.h"
 #include "event_inline.h"
 #include "../jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "event_work.h"
+#include "module/field/field_effect.h"
+#include "module/scene/jupiter_lighthouse_room_2.h"
+#include "module/scene/scene.h"
 
-void Event_Start(void);
-void Map_CenterOnFollowedPoint(void);
-s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotion(union FieldObject *object);
 void Func_0200165c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Event_End(void);
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
@@ -79,7 +78,6 @@ void Func_02001e24(void) {
   Event_End();
 }
 
-extern struct CellTarget gData_02002ce0;
 void Func_02001c1c();
 void Func_02001c8c();
 
@@ -113,13 +111,6 @@ s32 Func_02001fbc(void) {
 
 #include "cell_target.h"
 
-struct JupiterLighthouseRoom8EventWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-  u8 unk1b0[0x1c];
-  struct Actor *marker;
-};
-
 void Func_0200206c(s32 x, s32 z, s32 effect) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
@@ -148,21 +139,11 @@ void Func_0200206c(s32 x, s32 z, s32 effect) {
 
 void Func_020000d0(void);
 void Func_02000230(void);
-void Func_020003f4(void);
-void Func_02000410(void);
 void Func_0200042c(void);
-void Func_02000440(void);
-void Func_02000454(void);
 void Func_020004d0(void);
 void Func_02000500(void);
 void Func_02000674(void);
 void Func_02000680(void);
-void Func_020006dc(void);
-void Func_02000704(void);
-
-extern u32 gData_020027a8[];
-extern u32 gData_020027e4[];
-extern u32 gData_02002820[];
 
 // clang-format off
 u32 gData_020027a8[] = {

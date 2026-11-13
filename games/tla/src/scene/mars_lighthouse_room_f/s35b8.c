@@ -3,12 +3,15 @@
 #include "field_sprite.h"
 #include "field_effect.h"
 #include "event_inline.h"
+#include "field.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/scene/scene.h"
 
-void Func_02005480(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
 extern const s32 *gData_02007058[];
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-extern void Scene_SetActorSpritePriority(struct FieldEffect *effect, s32 priority);
+/* VIEW(s35b8): routine Scene_SetActorSpritePriority as void Scene_SetActorSpritePriority(struct FieldEffect *effect, s32 priority); field.h has void Scene_SetActorSpritePriority(struct Actor *object, s32 priority). */
+extern void Scene_SetActorSpritePriority__s35b8(struct FieldEffect *effect, s32 priority) __asm__("Scene_SetActorSpritePriority");
 void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
@@ -34,7 +37,7 @@ void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority(effect, party->sprite->priority);
+  Scene_SetActorSpritePriority__s35b8(effect, party->sprite->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;
@@ -45,7 +48,7 @@ void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     Actor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
-    Scene_SetActorSpritePriority(effect, options->priority);
+    Scene_SetActorSpritePriority__s35b8(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;
   if (start != 0) {
@@ -88,34 +91,6 @@ void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "actor.h"
 #include "iwram_call.h"
 #include "cell_target.h"
-
-struct CellMapCell {
-  u8 unk00[2];
-  u8 event;
-  u8 unk03;
-};
-
-struct CellMapLayer {
-  s32 unk00[2];
-  s32 originX;
-  s32 originZ;
-  u8 unk10[0x20];
-  struct CellMapCell *cells;
-};
-
-struct CellMapWork {
-  u8 unk000[0xec];
-  s32 minX;
-  s32 minZ;
-  s32 maxX;
-  s32 maxZ;
-  u8 unk0fc[0xc];
-  struct CellMapLayer layers[4];
-};
-
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *buffer);
-s32 Resource_FindFreeEntry(void);
 
 s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   struct CellTarget *table = &gData_020070a8;
@@ -316,14 +291,6 @@ void Func_02003b78(struct CellTarget *table, struct CellTargetEntry *entry) {
 
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_room_3/local.h"
 #include "io_reg.h"
-
-struct PushEvent {
-  u8 unk00[6];
-  s16 x;
-  s16 z;
-  u8 unk0a[4];
-  u16 busy;
-};
 
 void Func_02003be8(struct PushEvent *event) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);

@@ -2,13 +2,12 @@
 #include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "objcmd.h"
+#include "module/scene/gondowan_cliffs.h"
 
 void Func_02000038(void);
 void Func_02000058(void);
 void Func_020003f8(void);
 void Func_02000584(void);
-void Func_020005bc(void);
-void Func_02000600(void);
 void Func_02000610(void);
 void Func_02000660(void);
 void Func_020006f4(void);
@@ -16,8 +15,6 @@ void Func_020006f4(void);
 extern u8 gData_02001324[];
 extern u8 gData_02001360[];
 extern u8 gData_0200139c[];
-
-extern s32 gData_0200168c[];
 
 s32 gData_0200168c[] = {
     SC_CALL(Func_02000038),

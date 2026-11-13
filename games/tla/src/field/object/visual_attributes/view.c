@@ -3,9 +3,9 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "module/field/field.h"
 
 s32 __divsi3(s32, s32);
-extern u32 gData_03001144;
 
 /// Sets the map coordinates the camera keeps the screen inside.
 void MapGrid_SetCameraBounds(s32 minX, s32 minZ, s32 maxX, s32 maxZ) {
@@ -76,7 +76,6 @@ void Func_080d4714(void) {
   }
 }
 
-
 s32 BattleEffect_CopyWatchedObjectPosition(struct Actor *object) {
   struct Actor *link;
 
@@ -95,34 +94,6 @@ s32 BattleEffect_CopyWatchedObjectPosition(struct Actor *object) {
   }
   return 0;
 }
-
-struct BattleEffectVisual {
-  u8 unk00[9];
-  u8 flags;
-  u8 unk0a[16];
-  u8 value26;
-};
-
-struct BattleEffectResource {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[60];
-  struct BattleEffectVisual *visual;
-};
-
-struct BattleEffectWatchedObject {
-  u8 unk00[80];
-  struct BattleEffectVisual *visual;
-  u8 value54;
-  u8 value55;
-  u8 unk56[14];
-  u16 counter;
-  u16 resourceId;
-  struct BattleEffectResource *resource;
-  void (*callback)(void);
-};
 
 struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 extern const u8 gData_080f3310[];

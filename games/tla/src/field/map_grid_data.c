@@ -5,6 +5,7 @@
 /// the script command table and the work value handlers.
 
 #include "types.h"
+#include "module/field/field.h"
 
 //--------------------------------------------------------------------------
 // Map terrain: the height curve of each cell kind, the world map's
@@ -15,10 +16,14 @@
 /// leaves them unspecified.
 typedef s32 (*TerrainHeightFn)();
 
-s32 Terrain_GetFlatHeight();
-s32 Terrain_GetSlopeXHeight();
-s32 Terrain_GetSlopeYHeight();
-s32 Terrain_GetStepSumDiagonalHeight();
+/* VIEW(map_grid_data): routine Terrain_GetFlatHeight as s32 Terrain_GetFlatHeight(); curve.h has s32 Terrain_GetFlatHeight(const s8 *samples). */
+extern s32 Terrain_GetFlatHeight__map_grid_data() __asm__("Terrain_GetFlatHeight");
+/* VIEW(map_grid_data): routine Terrain_GetSlopeXHeight as s32 Terrain_GetSlopeXHeight(); curve.h has s32 Terrain_GetSlopeXHeight(const s8 *samples, s32 position). */
+extern s32 Terrain_GetSlopeXHeight__map_grid_data() __asm__("Terrain_GetSlopeXHeight");
+/* VIEW(map_grid_data): routine Terrain_GetSlopeYHeight as s32 Terrain_GetSlopeYHeight(); curve.h has s32 Terrain_GetSlopeYHeight(const s8 *samples, s32 unused, s32 position). */
+extern s32 Terrain_GetSlopeYHeight__map_grid_data() __asm__("Terrain_GetSlopeYHeight");
+/* VIEW(map_grid_data): routine Terrain_GetStepSumDiagonalHeight as s32 Terrain_GetStepSumDiagonalHeight(); curve.h has s32 Terrain_GetStepSumDiagonalHeight(const s8 *samples, s32 start, s32 end). */
+extern s32 Terrain_GetStepSumDiagonalHeight__map_grid_data() __asm__("Terrain_GetStepSumDiagonalHeight");
 s32 Terrain_GetStepDifferenceDiagonalHeight();
 s32 Terrain_GetBendSumDiagonalHeight();
 s32 Terrain_GetBendDifferenceDiagonalHeight();
@@ -27,50 +32,20 @@ s32 Terrain_GetStepXHeight();
 s32 Terrain_GetStepYHeight();
 s32 Terrain_GetSampleTableTransposedHeight();
 s32 Terrain_GetSampleTableTransposedMirroredHeight();
-s32 Terrain_GetSampleTableHeight();
+/* VIEW(map_grid_data): routine Terrain_GetSampleTableHeight as s32 Terrain_GetSampleTableHeight(); curve.h has s32 Terrain_GetSampleTableHeight(const s8 *samples, u32 position, u32 row). */
+extern s32 Terrain_GetSampleTableHeight__map_grid_data() __asm__("Terrain_GetSampleTableHeight");
 s32 Terrain_GetSampleTableMirroredHeight();
 s32 Terrain_GetSplitTopStepHeight();
 s32 Terrain_GetSplitBottomStepHeight();
-
-/// A map cell's terrain kind, as The Broken Seal's enum TerrainKind: the low
-/// four bits of its shape's first byte, which pick its height function. This
-/// game has no bends along an axis; its sample tables take their kinds.
-enum TerrainKind {
-  TERRAIN_FLAT = 0,
-  TERRAIN_SLOPE_X = 1,
-  TERRAIN_SLOPE_Y = 2,
-  TERRAIN_STEP_SUM_DIAGONAL = 3,
-  TERRAIN_STEP_DIFFERENCE_DIAGONAL = 4,
-  TERRAIN_BEND_SUM_DIAGONAL = 5,
-  TERRAIN_BEND_DIFFERENCE_DIAGONAL = 6,
-  TERRAIN_ROUNDED_SQUARE = 7,
-  TERRAIN_STEP_X = 8,
-  TERRAIN_STEP_Y = 9,
-  /// As TERRAIN_SAMPLE_TABLE with x and y swapped.
-  TERRAIN_SAMPLE_TABLE_TRANSPOSED = 10,
-  /// As TERRAIN_SAMPLE_TABLE_MIRRORED with x and y swapped.
-  TERRAIN_SAMPLE_TABLE_TRANSPOSED_MIRRORED = 11,
-  /// The sample gTerrain_SampleIndexTable picks for each pixel.
-  TERRAIN_SAMPLE_TABLE = 12,
-  /// As TERRAIN_SAMPLE_TABLE, mirrored left to right.
-  TERRAIN_SAMPLE_TABLE_MIRRORED = 13,
-  /// Above y 8, the first sample left of x 8 and the second right of it; below,
-  /// the third.
-  TERRAIN_SPLIT_TOP_STEP = 14,
-  /// Above y 8, the first sample; below, the second left of x 8 and the third
-  /// right of it.
-  TERRAIN_SPLIT_BOTTOM_STEP = 15,
-  TERRAIN_KIND_COUNT = 16
-};
 
 /// Ground height functions, by enum TerrainKind, called with (the remaining
 /// samples, x within the cell, y within the cell). Each reads only the
 /// arguments it needs.
 const TerrainHeightFn gMapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
-    [TERRAIN_FLAT] = Terrain_GetFlatHeight,
-    [TERRAIN_SLOPE_X] = Terrain_GetSlopeXHeight,
-    [TERRAIN_SLOPE_Y] = Terrain_GetSlopeYHeight,
-    [TERRAIN_STEP_SUM_DIAGONAL] = Terrain_GetStepSumDiagonalHeight,
+    [TERRAIN_FLAT] = Terrain_GetFlatHeight__map_grid_data,
+    [TERRAIN_SLOPE_X] = Terrain_GetSlopeXHeight__map_grid_data,
+    [TERRAIN_SLOPE_Y] = Terrain_GetSlopeYHeight__map_grid_data,
+    [TERRAIN_STEP_SUM_DIAGONAL] = Terrain_GetStepSumDiagonalHeight__map_grid_data,
     [TERRAIN_STEP_DIFFERENCE_DIAGONAL] =
         Terrain_GetStepDifferenceDiagonalHeight,
     [TERRAIN_BEND_SUM_DIAGONAL] = Terrain_GetBendSumDiagonalHeight,
@@ -82,7 +57,7 @@ const TerrainHeightFn gMapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
     [TERRAIN_SAMPLE_TABLE_TRANSPOSED] = Terrain_GetSampleTableTransposedHeight,
     [TERRAIN_SAMPLE_TABLE_TRANSPOSED_MIRRORED] =
         Terrain_GetSampleTableTransposedMirroredHeight,
-    [TERRAIN_SAMPLE_TABLE] = Terrain_GetSampleTableHeight,
+    [TERRAIN_SAMPLE_TABLE] = Terrain_GetSampleTableHeight__map_grid_data,
     [TERRAIN_SAMPLE_TABLE_MIRRORED] = Terrain_GetSampleTableMirroredHeight,
     [TERRAIN_SPLIT_TOP_STEP] = Terrain_GetSplitTopStepHeight,
     [TERRAIN_SPLIT_BOTTOM_STEP] = Terrain_GetSplitBottomStepHeight,
@@ -138,11 +113,6 @@ const s32 gBattle_FormationPlacementScale[2] = {
 // table and the work value handlers SC_SET, SC_ADD and SC_CMP call.
 //--------------------------------------------------------------------------
 
-/// A command handler takes the object and returns nonzero to go on with
-/// the script this frame, zero to stop. The handlers take different views
-/// of the object, so the type leaves the parameters unspecified.
-typedef s32 (*ScriptCommandFn)();
-
 struct ScriptOperands;
 typedef void (*OperandFunc)(struct ScriptOperands *state, s32 operation,
                             s32 value);
@@ -190,89 +160,15 @@ s32 Script_SetAnimation();
 s32 Script_Nop();
 s32 Script_PlaySound();
 s32 Script_CallWithOperand();
-s32 Script_JumpToNextOperandPointer();
-s32 Script_ClearByte54();
-s32 Script_SetByte54();
+/* VIEW(map_grid_data): routine Script_JumpToNextOperandPointer as s32 Script_JumpToNextOperandPointer(); script.h has s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *interpreter). */
+extern s32 Script_JumpToNextOperandPointer__map_grid_data() __asm__("Script_JumpToNextOperandPointer");
+/* VIEW(map_grid_data): routine Script_ClearByte54 as s32 Script_ClearByte54(); script.h has s32 Script_ClearByte54(struct ScriptInterpreter *interpreter). */
+extern s32 Script_ClearByte54__map_grid_data() __asm__("Script_ClearByte54");
+/* VIEW(map_grid_data): routine Script_SetByte54 as s32 Script_SetByte54(); script.h has s32 Script_SetByte54(struct ScriptInterpreter *interpreter). */
+extern s32 Script_SetByte54__map_grid_data() __asm__("Script_SetByte54");
 s32 Script_InvokeCallback();
 s32 Func_08025428();
 s32 Func_0802509c();
-
-void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation,
-                                s32 value);
-void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation,
-                               s32 value);
-void Script_SetOrCompareUnsignedHalfword(struct ScriptOperands *state,
-                                         s32 operation, s32 value);
-void Script_SetOrCompareX(struct ScriptOperands *state, s32 operation,
-                          s32 value);
-void Script_SetOrCompareY(struct ScriptOperands *state, s32 operation,
-                          s32 value);
-void Script_SetOrCompareZ(struct ScriptOperands *state, s32 operation,
-                          s32 value);
-void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
-                               s32 value);
-void Script_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation,
-                               s32 value);
-void Script_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation,
-                               s32 value);
-void Script_SetOrCompareVelocityX(struct ScriptOperands *state, s32 operation,
-                                  s32 value);
-void Script_SetOrCompareVelocityY(struct ScriptOperands *state, s32 operation,
-                                  s32 value);
-void Script_SetOrCompareVelocityZ(struct ScriptOperands *state, s32 operation,
-                                  s32 value);
-void Script_SetOrCompareSpeedLimit(struct ScriptOperands *state, s32 operation,
-                                   s32 value);
-void Script_SetOrCompareAcceleration(struct ScriptOperands *state,
-                                     s32 operation, s32 value);
-void Script_SetOrCompareTargetX(struct ScriptOperands *state, s32 operation,
-                                s32 value);
-void Script_SetOrCompareTargetY(struct ScriptOperands *state, s32 operation,
-                                s32 value);
-void Script_SetOrCompareTargetZ(struct ScriptOperands *state, s32 operation,
-                                s32 value);
-void Script_SetOrCompareVerticalMotion(struct ScriptOperands *state,
-                                       s32 operation, s32 value);
-void Script_SetOrCompareGravity(struct ScriptOperands *state, s32 operation,
-                                s32 value);
-void Script_SetOrCompareTerrainHeight(struct ScriptOperands *state,
-                                      s32 operation, s32 value);
-void Script_SetOrCompareWord4c(struct ScriptOperands *state, s32 operation,
-                               s32 value);
-void Script_SetOrCompareAddress50(struct ScriptOperands *state, s32 operation,
-                                  s32 value);
-void Script_SetOrCompareByte54(struct ScriptOperands *state, s32 operation,
-                               s32 value);
-void Script_SetOrCompareMotionFlags(struct ScriptOperands *state, s32 operation,
-                                    s32 value);
-void Script_SetOrCompareArrivalAxis(struct ScriptOperands *state, s32 operation,
-                                    s32 value);
-void Script_SetOrCompareComparisonResult(struct ScriptOperands *state,
-                                         s32 operation, s32 value);
-void Script_SetOrCompareSnapToTarget(struct ScriptOperands *state,
-                                     s32 operation, s32 value);
-void Script_SetOrCompareCollisionFlags(struct ScriptOperands *state,
-                                       s32 operation, s32 value);
-void Script_SetOrCompareSteeringFlags(struct ScriptOperands *state,
-                                      s32 operation, s32 value);
-void Script_SetOrComparePaused(struct ScriptOperands *state, s32 operation,
-                               s32 value);
-void Script_SetOrCompareRepeatCount(struct ScriptOperands *state, s32 operation,
-                                    s32 value);
-void Script_SetOrCompareHalfword5e(struct ScriptOperands *state, s32 operation,
-                                   s32 value);
-void Script_SetOrCompareSignedHalfword64(struct ScriptOperands *state,
-                                         s32 operation, s32 value);
-void Script_SetOrCompareSignedHalfword66(struct ScriptOperands *state,
-                                         s32 operation, s32 value);
-void Script_SetOrCompareWord68(struct ScriptOperands *state, s32 operation,
-                               s32 value);
-void Script_SetOrCompareUpdateAddress(struct ScriptOperands *state,
-                                      s32 operation, s32 value);
-void Script_SetOrCompareByte62(struct ScriptOperands *state, s32 operation,
-                               s32 value);
-void Script_SetOrCompareByte63(struct ScriptOperands *state, s32 operation,
-                               s32 value);
 
 /// Each runs one control command every frame: the command, SC_WAIT(1),
 /// SC_LOOP(SC_FOREVER, SC_TOP).
@@ -415,9 +311,9 @@ const ScriptCommandFn gData_0802f204[54] = {
     Script_Nop,                          // 0x28 SC_NOP
     Script_PlaySound,                    // 0x29 SC_SE
     Script_CallWithOperand,              // 0x2a SC_CMD_2A
-    Script_JumpToNextOperandPointer,     // 0x2b SC_GOTO
-    Script_ClearByte54,                  // 0x2c SC_B54_OFF
-    Script_SetByte54,                    // 0x2d SC_B54_ON
+    Script_JumpToNextOperandPointer__map_grid_data,     // 0x2b SC_GOTO
+    Script_ClearByte54__map_grid_data,                  // 0x2c SC_B54_OFF
+    Script_SetByte54__map_grid_data,                    // 0x2d SC_B54_ON
     Script_InvokeCallback,               // 0x2e SC_CALL
     Func_08025428,                       // 0x2f SC_CMD_2F
     Func_0802509c,                       // 0x30 SC_MOVE_XZ

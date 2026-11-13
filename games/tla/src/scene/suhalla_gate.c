@@ -5,15 +5,12 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
+#include "module/field/event_commands.h"
+#include "module/scene/scene.h"
+#include "module/scene/suhalla_gate.h"
+#include "scene_ids.h"
 
 void Func_02000038(void) { Func_080d2b4c(13, 26); }
-
-extern char SceneId_SuhallaGate2;
-extern char SceneId_SuhallaGate3;
-
-extern struct SceneEntrance gData_02000cd8[];
-extern struct SceneEntrance gData_02000d98[];
-extern struct SceneEntrance gData_02000e40[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -38,15 +35,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-extern char SceneId_SuhallaGate1;
-
-extern struct ActorPlacement gData_02000f10[];
-extern struct ActorPlacement gData_02000f58[];
-extern struct ActorPlacement gData_02001048[];
-extern struct Trigger gData_02001078[];
-extern struct Trigger gData_020010e4[];
-extern struct Trigger gData_02001180[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -156,10 +144,6 @@ void Func_02000378(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-extern char SceneId_VenusLighthouseEntrance;
-
-void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
 /// Places the leader and the camera after a message, runs actor 8's motions
 /// and sends the party to Suhalla Gate 1, entrance 99. The message is

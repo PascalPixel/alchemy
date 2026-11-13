@@ -3,13 +3,8 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
-
-struct TimedObject {
-  u8 unk00[0x64];
-  s16 age;
-  u8 unk66[6];
-  void *update;
-};
+#include "module/field/event_commands.h"
+#include "module/field/radial.h"
 
 void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object) {
   if (object->age == 80) {
@@ -19,12 +14,8 @@ void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object) {
   object->age++;
 }
 
-
-
 /* VIEW(age_and_cue): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); f0dfd00 has void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p). */
 extern void Vector_AddPolarOffset__age_and_cue(s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
-void Camera_WorldToScreen(struct EffectVector *pos);
-void BattleEffect_ClearOwnedSlot(struct FieldParticle *slot);
 
 void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect) {
   struct BattleFxScene *scene;
@@ -73,27 +64,11 @@ top:
     BattleEffect_ClearOwnedSlot(effect);
 }
 
-void FieldPsynergy_Halt(void);
-
 /// Pauses the scene's child (byte 91) and runs the fallback transition.
 void BattleEffect_MarkChildAndRunFallbackTransition(void) {
   (*(u8 **)((u8 *)Ram_HeapSlots->effectWork + 20))[91] = 1;
   FieldPsynergy_Halt();
 }
-
-
-// ⚓️'s effect work holds its slots 8 bytes earlier than ☀️'s.
-struct FallbackScene {
-  u8 unk00[0x50];
-  struct FieldParticle slots[16];
-};
-
-void BattleEffect_InitializeSharedScene(void);
-void BattleEffect_PrepareBufferInterpolation(void);
-struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Actor_Destroy(struct Actor *object);
-void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
-                              s32 z);
 
 void FieldPsynergy_Halt(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
@@ -169,7 +144,6 @@ void FieldPsynergy_Halt(void) {
   BattleEffect_PrepareBufferInterpolation();
 }
 
-
 #define Actor_SetAnimationSpeedFar                                             \
   ((void (*)(void *, s32))Actor_SetAnimationSpeedFar)
 
@@ -226,28 +200,8 @@ s32 BattleEffect_FilterObjectIdByFlags(s32 id) {
   return id;
 }
 
-void FieldPsynergy_Catch(void);
-
 /// Runs field effect 13 (FieldPsynergy_Catch) for the request dispatcher.
 void BattleEffect_CallEffect13(void) { FieldPsynergy_Catch(); }
-
-struct FxScene13 {
-  u16 angle;
-  u8 unk02[2];
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-  struct Actor *child;
-  u8 unk18[8];
-  s8 enabled;
-};
-
-struct FxPosition13 {
-  s32 x;
-  s32 y;
-  s32 z;
-};
 
 static __inline__ s32 Interpolate(s32 from, s32 to, s32 step) {
   return from + (to - from) * step / 10;

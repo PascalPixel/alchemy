@@ -16,6 +16,9 @@
 #include "version.h"
 #include "event_inline.h"
 #include "main_routine_work.h"
+#include "module/game/game.h"
+#include "module/scene/scene.h"
+#include "module/scene/yallam_interiors.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -253,7 +256,6 @@ void Func_02000480(void) {
 
 s32 Func_02000a90(void);
 void Func_02000a60(s32 actor, s32 angle);
-void Func_02000a80(s32 actor);
 
 s32 Func_020004e0(void) {
   s32 item;
@@ -350,12 +352,12 @@ void Func_02000524(void) {
   }
 }
 
-void Party_AdjustCoins(s32 amount);
-void MessageArgument_Push(s32 value, s32 slot);
-u16 *Func_02000988(s32 item);
-s32 PartyInventory_FindRoom(s32 item);
-void Func_02000a40(s32 item, s32 mode);
-void Func_02000a88(s32 value);
+/* VIEW(yallam_interiors): routine Party_AdjustCoins as void Party_AdjustCoins(s32 amount); module/game/game.h has s32 Party_AdjustCoins(s32 amount). */
+extern void Party_AdjustCoins__yallam_interiors(s32 amount) __asm__("Party_AdjustCoins");
+/* VIEW(yallam_interiors): routine MessageArgument_Push as void MessageArgument_Push(s32 value, s32 slot); module/window/window.h has void MessageArgument_Push(u32 value, u32 kind). */
+extern void MessageArgument_Push__yallam_interiors(s32 value, s32 slot) __asm__("MessageArgument_Push");
+/* VIEW(yallam_interiors): routine Func_02000988 as u16 *Func_02000988(s32 item); module/scene/airs_rock_inside.h has void Func_02000988(void). */
+extern u16 *Func_02000988__yallam_interiors(s32 item) __asm__("Func_02000988");
 
 void Func_0200077c(s32 actor) {
   if (!Event_GetFlag(0x10f)) {
@@ -366,11 +368,11 @@ void Func_0200077c(s32 actor) {
     Event_ShowMessageAndWait(actor, 0);
   } else if (Func_02000a90()) {
     s32 item = Func_02000a90();
-    u32 price = *Func_02000988(item);
+    u32 price = *Func_02000988__yallam_interiors(item);
     s32 message;
 
-    MessageArgument_Push(item, 2);
-    MessageArgument_Push(price, 5);
+    MessageArgument_Push__yallam_interiors(item, 2);
+    MessageArgument_Push__yallam_interiors(price, 5);
     message = (s32)MsgHereSThe;
     Event_SetMessageId(message);
     FieldMessage_ShowAtActor(actor, 0);
@@ -389,7 +391,7 @@ void Func_0200077c(s32 actor) {
       Func_02000a40(item, 3);
       PartyInventory_GiveItem(item, 0);
       Func_02000a88(0);
-      Party_AdjustCoins(-price);
+      Party_AdjustCoins__yallam_interiors(-price);
     }
   } else {
     Event_SetMessageId((s32)MsgManSunshineWould);

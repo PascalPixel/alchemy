@@ -4,6 +4,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "module/battle/battle.h"
 
 #define Actor_ResetMotion ((void (*)(struct MotionObject *))Actor_ResetMotion)
 #define Actor_SetTargetPosition                                                \
@@ -129,12 +130,6 @@ void BattleMotion_LeapBack(s32 objectId) {
   Actor_SetMode(object, 5);
 }
 
-// The Broken Seal's gBattleMotion_Variant* tables, indexed by the variant.
-extern const s32 Data_0812cbb0[]; ///< acceleration
-extern const s32 Data_0812cbd8[]; ///< speed limit
-extern const s32 Data_0812cc00[]; ///< upward velocity
-extern const s32 Data_0812cc28[]; ///< distance, in percent of the anchor's x
-
 /// Sends a battle object back by its variant's distance and speed, with a hop
 /// when it stands on the ground or for the strong variants (5 and up). Four
 /// enemies stay where they stand, and every object gets its vertical motion
@@ -170,8 +165,6 @@ void BattleMotion_ApplyKnockback(s32 id, s32 variant) {
   object->autoFaceMotion = 0;
   Actor_SetMode(object, 5);
 }
-
-void BattleMotion_ReservedNoOp83B0();
 
 /// The actor walks three quarters of the way to its target, at a speed that
 /// covers the distance in about travelDivisor frames.
@@ -271,16 +264,6 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   BattleMotion_NoOp(&pos, 0x1000);
 }
 
-struct SlotEffectObject {
-  u8 unk00[0x50];
-  void *resource;
-  u8 kind;
-};
-
-struct SlotEffectEntry {
-  struct SlotEffectObject *object;
-};
-
 void BattleMotion_SpawnSlotEffectAndWait(s32 slot) {
   struct SlotEffectEntry *entry = (struct SlotEffectEntry *)BattleObject_Get(slot);
   u8 *effect;
@@ -296,13 +279,6 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 slot) {
     }
   }
 }
-
-struct SlotMotionRecord {
-  u8 unk00[12];
-  s32 height;
-};
-
-s32 BattleUnit_GetEffectHeight(s32 owner);
 
 /// Projects the point above unit id where its battle effects play (its class's
 /// height, BattleUnit_GetEffectHeight) onto the screen, into projected; the
@@ -339,11 +315,6 @@ s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
     screen[1] -= Iwram_MulQ16(scale, 48);
   return 0;
 }
-
-struct SummonOwnerState {
-  u8 unk000[0x14a];
-  u16 summon;
-};
 
 u8 BattleClass_GetEffectHeight(s32 index);
 

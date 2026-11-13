@@ -2,6 +2,8 @@
 /// Scene code of overlay 0x661, in ROM order, from placements' offset up to the next object the overlay links.
 
 #include "scene.h"
+#include "module/scene/yampi_desert.h"
+#include "module/tla.h"
 
 extern const u8 gData_02004810[];
 extern const u8 gData_02004840[];
@@ -38,7 +40,6 @@ const u8 *Scene_GetRegions(void) {
 #include "scene_tables.h"
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
 
 #include "text/msg_ids.h"
 #include "ram_buffer.h"
@@ -204,12 +205,6 @@ void Func_02000684(s32 a, s32 b) {
       gData_02004808 = 210;
   }
 }
-
-extern u8 gMapShapeGrid[];
-
-s32 Func_02004020(s32 layer, s32 x, s32 z);
-
-s32 Func_020041e8(s32 layer, s32 shape, s32 height);
 
 void Func_020006ac(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;

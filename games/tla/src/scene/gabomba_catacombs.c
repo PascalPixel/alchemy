@@ -4,6 +4,9 @@
 #include "gabomba_catacombs/local.h"
 
 #include "event_inline.h"
+#include "module/scene/gabomba_catacombs.h"
+#include "module/scene/scene.h"
+#include "text/msg_ids.h"
 
 #define LEADER_HOP()                                                           \
   do {                                                                         \
@@ -322,17 +325,11 @@ s32 Func_020009bc(struct Actor *object) {
 #include "actor.h"
 #include "main_routine_work.h"
 
-extern const u8 MsgByReachingThis[];
-extern u32 gData_020012a4[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Actor_MoveToObject(s32 actor, s32 target);
-s32 Party_PlaySavedMusic(void);
+/* VIEW(gabomba_catacombs): routine Party_PlaySavedMusic as s32 Party_PlaySavedMusic(void); module/system/system.h has void Party_PlaySavedMusic(void). */
+extern s32 Party_PlaySavedMusic__gabomba_catacombs(void) __asm__("Party_PlaySavedMusic");
 void Func_02001214(s32 actor, s32 a);
-
-union EventLine {
-  s32 word;
-  u16 line;
-};
 
 #define TALK()                                                                 \
   FieldMessage_ShowCentered((s16)((union EventLine *)work)->line++, 0, -3)
@@ -433,7 +430,7 @@ void Func_020009d4(void) {
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Actor_WaitForMoveById(9);
   GameFlag_SetBit(0x9ce);
-  Party_PlaySavedMusic();
+  Party_PlaySavedMusic__gabomba_catacombs();
   PaletteFade_ApplyTarget(speed, 0);
   BattleEffect_StartBufferInterpolation(60);
   Func_02001214(gMainRoutineWork.currentOwner, 1);
@@ -460,8 +457,6 @@ void Func_02000d90(void) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-extern u32 gData_02001310[];
-
 const struct SceneRegion *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1)
     return (const struct SceneRegion *)gData_02001310;
@@ -470,18 +465,7 @@ const struct SceneRegion *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct ActorPlacement gData_02001378[];
-extern struct ActorPlacement gData_02001390[];
-extern struct ActorPlacement gData_020013a8[];
-extern struct ActorPlacement gData_020013d8[];
-extern struct ActorPlacement gData_02001498[];
-extern struct ActorPlacement gData_02001510[];
 extern struct Trigger gData_02001540[];
-extern struct Trigger gData_0200154c[];
-extern struct Trigger gData_02001594[];
-extern struct Trigger gData_020015c4[];
-extern struct Trigger gData_020016cc[];
-extern struct Trigger gData_02001714[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1)
@@ -521,7 +505,6 @@ const struct Trigger *Scene_GetEvents(void) {
 
 extern char SceneId_Ov671Room7, SceneId_Ov672Room1;
 void Func_02001254(s32 a);
-void Func_0200126c(s32 id);
 
 s32 Scene_Initialize(void) {
   s32 entrance;

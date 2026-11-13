@@ -4,22 +4,14 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
-
-struct ActionDescriptor {
-  u16 sprite;
-  s16 condition;
-  s32 behavior;
-  s32 x;
-  s32 y;
-  s32 z;
-  u16 facing;
-  u8 talkFacing;
-  u8 flags;
-};
-
-struct ActionDescriptorTables {
-  struct ActionDescriptor *tables[4];
-};
+#include "gamepak/far_call/game.h"
+#include "gamepak/far_call/window.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/field/event_commands.h"
+#include "module/field/field_sequence.h"
+#include "module/field/object.h"
+#include "module/shop/shop.h"
+#include "module/window/screens.h"
 
 /// The Broken Seal's Scene_FindActorPlacement: finds actor id's placement in
 /// the event work's four tables (ids up to 7 by sprite, later ones counted
@@ -148,15 +140,7 @@ struct FxGroup {
 
 extern struct DescriptorEntry gData_080eff28[];
 
-void BattleEffect_StartTiledCanvas(s32 mode);
-void BattleEffect_EndCanvasLayer(void);
 void Func_0814ea58(void *effect, s32 mode);
-void PartyStatus_CreateWindow(s32 flags);
-s32 Func_080dbde8(s32 x, s32 z, s32 layer);
-u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
-void Shop_InitializeWork(void);
-s32 Inn_RoomPrice(s32 innId);
-void Shop_ReleaseWork(void);
 
 /// Unused: runs the loaded overlay's initialize entry; nothing calls it.
 UNUSED void Overlay_CallInitialize(void) { ((s32 (*)(void))gOverlayArea[1])(); }
@@ -181,28 +165,8 @@ void *Scene_FindActorTalkTrigger(s32 id) {
   return event;
 }
 
-struct ContainerRow {
-  s16 type;
-  s16 noHint;
-  s16 flag;
-  s16 contents;
-};
-
-struct TalkEvent {
-  u8 unk00[8];
-  s32 script;
-};
-
-void PartyStatus_CreateWindowFar(s32 layout);
-void PartyStatus_CloseFar(void);
-void Func_080ea14c(s32 targetId);
-void Func_08038340(s32 value);
-void Func_080ad2f8(s32 value);
-s32 PartyInventory_AddFar(s32 item);
 s32 BattleEffect_GetFlags(s32 id);
 void Actor_TurnToFaceEachOther(s32 first, s32 second, s32 mode);
-void Message_SetDecodeFlagsFar(s32 flags);
-void BattleEffect_ResumeObject(s32 id);
 
 s32 Func_080ccec8(s32 id) {
   struct ActorPlacement *placement;
@@ -502,30 +466,13 @@ resume:
   return result;
 }
 
-/// A scene event as the event finder (Func_080ccd78) returns it.
-struct TouchEvent {
-  s32 flags;
-  u8 target;
-  u8 unk05;
-  s16 condition;
-  /// A message number below 0x10000, else a function; read as a union
-  /// member, so a store to the field work does not let it stay in a
-  /// register.
-  union {
-    s32 result;
-  } u;
-};
-
-struct TouchWork {
+/* VIEW(field_sequence): tag struct TouchWork as struct TouchWork__field_sequence; module/field/field.h has another definition. */
+struct TouchWork__field_sequence {
   u8 unk000[0x158];
   s16 exit;
   u8 unk15a[0x184 - 0x15a];
   s16 blockedSteps;
 };
-
-void ObjectEffect_StartContextEffect25(void);
-void ObjectEffect_StartContextEffect26(void);
-void Func_080d5fd4(void);
 
 s32 Scene_RunRaisedEvent(s32 id) {
   u8 *descriptor = (u8 *)Func_080ccd78(6, id);
@@ -552,7 +499,7 @@ s32 Scene_RunRaisedEvent(s32 id) {
 s32 Scene_RunTouchOrExit(s32 value) {
   struct TouchEvent *event;
   s32 handled;
-  struct TouchWork *work;
+  struct TouchWork__field_sequence *work;
 
   event = Func_080ccd78(2, value);
   handled = -1;
@@ -593,19 +540,6 @@ s32 Scene_RunTouchOrExit(s32 value) {
   }
   return handled;
 }
-
-struct SceneEventEntry {
-  s32 flags;
-  u8 value;
-  u8 unk05;
-  s16 condition;
-  s32 result;
-};
-
-void Actor_JumpDownLedge(s32 owner, s32 a, s32 b);
-s32 Func_080d4d08(void);
-s32 Func_080d50f8(void);
-s32 Func_080d53b8(void);
 
 /// The field's push and button handler for keys, idle while
 /// gMainRoutineWork.pendingThird is set. After the leader has pushed for more than
@@ -678,8 +612,6 @@ s32 Func_080cd680(s32 keys) {
 // matching "found nothing" message. MsgKey0dc4 is the base of the "X
 // checked the Y..." lines, MsgKey0def the base of the "found nothing"
 // lines.
-
-extern const u8 Data_080eff22[];
 
 /// The search command. Collision codes 242 to 247 show their pair of messages
 /// from Data_080eff22; otherwise the search event (kind 3) of the cell runs:

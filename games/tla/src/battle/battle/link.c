@@ -3,6 +3,8 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "heap_slots.h"
+#include "module/battle/battle.h"
 
 s32 LinkBattle_ReceiveParty(void) {
   u16 name_text[16];
@@ -64,27 +66,6 @@ s32 LinkBattle_ReceiveParty(void) {
 
 #define LINK_PARTY_UNIT_BYTES 340
 #define LINK_PARTY_OFFER_BYTES 340
-
-struct LinkOfferEntry {
-  u8 unk00[2];
-  u8 unitId;
-  u8 unk03;
-};
-
-struct LinkOfferList {
-  struct LinkOfferEntry entries[72];
-  s32 count;
-};
-
-struct LinkOfferTable {
-  u8 unk00[8];
-  struct LinkOfferList list;
-};
-
-struct LinkUnit {
-  u8 unk000[0x12a];
-  u8 side;
-};
 
 s32 LinkBattle_SendParty(void) {
   u8 *buffer;
@@ -164,8 +145,6 @@ u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source) {
   base[4] = 0;
   return dst;
 }
-
-extern u16 gLinkPeerSignatures[][12];
 
 /// In a link battle, exchanges the "EXEC" signal with the other console.
 /// Returns zero if both agree within 30 frames, or -1 on timeout or disconnect.

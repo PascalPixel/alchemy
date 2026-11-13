@@ -13,6 +13,19 @@
 #include "io_write_queue.h"
 #include "system/io_reg.h"
 #include "event_inline.h"
+#include "event.h"
+#include "event_work.h"
+#include "field.h"
+#include "field_event.h"
+#include "flag_call.h"
+#include "ground_mask.h"
+#include "module/field/field.h"
+#include "module/scene/apojii_islands.h"
+#include "module/scene/jupiter_lighthouse_aerie.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "system.h"
+#include "task.h"
 
 void Func_0200033c(void) { Func_080d7788(10, 3, 11); }
 
@@ -30,10 +43,6 @@ extern const u8 gData_02002218__apojii_islands[] __asm__("gData_02002218");
 extern const u8 gData_02002320__apojii_islands[] __asm__("gData_02002320");
 /* VIEW(apojii_islands): variable gData_02002458 as extern const u8 gData_02002458[]; the definition has u32 gData_02002458[] = { 0xffff0197, 1, 0x1080000, 0, 0x1180000, 0x2c000, 0xffff0197, 1, 0xd80000, 0, 0x1180000, 0x2c000, 0x7700f6, 1, 0x178.... */
 extern const u8 gData_02002458__apojii_islands[] __asm__("gData_02002458");
-extern u32 gData_02002200[];
-extern u32 gData_02002218[];
-extern s32 gData_02002320[];
-extern u32 gData_02002458[];
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -135,8 +144,6 @@ void Func_020006a8(void) {
   System_Wait(3);
 }
 
-extern s32 gData_020024cc[];
-extern u16 gData_02002a58[16];
 extern u16 gData_02002a78[16];
 
 s32 __modsi3(s32 a, s32 b);
@@ -174,32 +181,13 @@ void Func_02000780(struct Actor *object) {
 #include "task.h"
 
 struct Actor *Actor_GetById(u32 objectId);
-void Event_Start(void);
-void Event_ResolvePendingActions(s32 skip);
 /* VIEW(s07a4): routine Func_02000780 as void Func_02000780(void); the definition has void Func_02000780(struct Actor *object). */
 extern void Func_02000780__s07a4(void) __asm__("Func_02000780");
-void Sound_Play(s32 cue);
-void wait(s32 frames);
-void Func_02001ad8(void);
-void Func_02001ba0(s32 a);
-void Func_02001dec(s32 a);
 /* VIEW(s07a4): routine Random16Far as u16 Random16Far(void); system.h has u32 Random16Far(void); tried as the rest of the object declares it, Func_020007a4 moves: 1 of 188 instructions in tla-ja. */
 extern u16 Random16Far__s07a4(void) __asm__("Random16Far");
 /* VIEW(s07a4): routine BattleEffect_ApplyColorToTargetBuffer as s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b); event.h has void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode); tried as the definition's void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode), which the object already declares, Func_020007a4 moves: 1 of 188 instructions in tla-ja. */
 extern s32 BattleEffect_ApplyColorToTargetBuffer__s07a4(s32 a, s32 b) __asm__("BattleEffect_ApplyColorToTargetBuffer");
-void BattleEffect_StartBufferInterpolation(s32 frames);
-void ObjectTable_Snapshot(void);
-void Task_RemoveFar(TaskFunc func);
-void Func_02000540(void);
-void Func_020006bc(void);
-void Func_020017bc(void);
-void Func_020017f8(u32 base, s32 a, s32 b);
-void GameFlag_SetBit(s32 flag);
-void Camera_SetSpeedParameters(s32 a, s32 b);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
-void Func_02001d8c(void);
-void Import_EventSetExitRequest(s32 cue);
 
 static inline void ApojiiIslands_Flash(s32 strength, s32 mode) {
   BattleEffect_ApplyColorToTargetBuffer__s07a4(strength, mode);
@@ -425,10 +413,6 @@ extern const u8 gData_020024d0__events_d[] __asm__("gData_020024d0");
 extern const u8 gData_02002698__events_d[] __asm__("gData_02002698");
 /* VIEW(events_d): variable gData_0200280c as extern const u8 gData_0200280c[]; the definition has s32 gData_0200280c[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 2, (s32) 0xffff0003, (s32) Func_02001464, 2, (s32) 0xffff0004, (s32.... */
 extern const u8 gData_0200280c__events_d[] __asm__("gData_0200280c");
-extern s32 gData_020024b8[];
-extern s32 gData_020024d0[];
-extern s32 gData_02002698[];
-extern s32 gData_0200280c[];
 
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -523,7 +507,8 @@ void Func_02000f98(void) {
   FieldTask_AddFrame(Func_02000f58, priority);
 }
 
-struct MapBits {
+/* VIEW(apojii_islands): tag struct MapBits as struct MapBits__apojii_islands; module/scene/scene.h has another definition. */
+struct MapBits__apojii_islands {
   u8 unk00[23];
   u8 low : 2;
   u8 mode : 2;
@@ -537,7 +522,7 @@ s32 Scene_Initialize(void) {
   s16 scene;
   struct MainRoutineWork *party;
 
-  ((struct MapBits *)Ram_HeapSlots->mapWork)->mode = 1;
+  ((struct MapBits__apojii_islands *)Ram_HeapSlots->mapWork)->mode = 1;
   effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
   *effect = 0x202;
   party = &gMainRoutineWork;
@@ -581,8 +566,6 @@ void Func_020010d0(void) { Func_02001d9c(); }
 
 #include "field_sprite.h"
 
-
-
 void Func_020010d8(struct Actor *object) {
   struct Actor *child;
   struct FieldSprite *parent;
@@ -607,9 +590,6 @@ void Func_020010d8(struct Actor *object) {
 // ---- games/tla/src/scene/apojii_islands/events_h.c ----
 // Scene code of overlay 0x679, in ROM order, from events_h's offset up to the next object the overlay links.
 
-
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
 void Func_02001140(struct Actor *object) {
   s32 phase = gFrameCount & 15;
 
@@ -632,11 +612,6 @@ void Func_02001140(struct Actor *object) {
     }
   }
 }
-
-struct EventWork1cc {
-  u8 unk000[0x1cc];
-  struct Actor *object;
-};
 
 void Func_020011a8(void) {
   struct EventWork1cc *work = Ram_HeapSlots->eventWork;
@@ -817,8 +792,6 @@ void Func_02001500(void) {
 #include "graphics/vram_tab.h"
 #include "system/dma.h"
 
-void Oam_AddSpriteAtDepth(void *entry, s32 slot);
-
 #define COPY_PICTURE(from, to)                                                 \
   Dma_Set((void *)(from), (void *)(offset + (to)), DMA_COPY_WORDS(16), REG_DMA3)
 
@@ -905,8 +878,6 @@ void Func_020017bc(void) {
 #include "io_reg.h"
 #include "resource.h"
 
-extern u8 Data_0202c001[];
-
 void Func_020017f8(u32 base, s32 a, s32 b) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapLayer *second = &map->layers[1];
@@ -965,36 +936,6 @@ void Func_020017f8(u32 base, s32 a, s32 b) {
   }
 }
 
-struct GroundParticle {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[2];
-  s32 posX;
-  s32 posY;
-  s32 posZ;
-  s32 delay;
-  u16 timer;
-  u8 unk1e[2];
-};
-
-struct GroundParticleWork {
-  s32 entry;
-  s32 tileBase;
-  struct GroundParticle particles[64];
-  s32 *leader;
-};
-
 extern s16 gData_02001f18[];
 
 void Func_02001940(void) {
@@ -1047,26 +988,6 @@ void Func_02001940(void) {
     }
   }
 }
-
-struct DustParticle {
-  u32 link;
-  u32 attr01;
-  u32 attr2;
-  s32 posX;
-  s32 posY;
-  s32 posZ;
-  u8 pad18[4];
-  u16 timer;
-  u8 pad1e[2];
-};
-
-struct DustWork {
-  s32 vramEntry;
-  s32 tileBase;
-  struct DustParticle particles[64];
-  u32 field808;
-  u8 pad80c[8];
-};
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
 /// decoded into VRAM, and Func_02001940 scheduled at priority 0x480 to move
@@ -1135,23 +1056,10 @@ void Func_02001ba0(s32 id) {
 #endif
 
 void Func_0200033c(void);
-void Func_020003b0(void);
-void Func_020003cc(void);
 void Func_02000694(void);
-void Func_020006a8(void);
 void Func_02000a48(void);
 void Func_02000a68(void);
 void Func_02000af8(void);
-void Func_02000b88(void);
-void Func_02000ba8(void);
-void Func_02000c38(void);
-void Func_02000d74(void);
-void Func_020010d0(void);
-
-extern u32 gData_02001e34[];
-extern u32 gData_02001e70[];
-extern u32 gData_02001eac[];
-extern s32 gData_02002044[];
 
 // clang-format off
 u32 gData_02001e34[] = {

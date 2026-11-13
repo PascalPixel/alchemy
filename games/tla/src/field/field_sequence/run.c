@@ -4,89 +4,25 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
-
-struct FieldWork {
-  u8 unk000[16];
-  const void *events;
-  u8 unk014[0x140];
-  s16 coordEvent;
-  s16 pushCell;
-  s16 warp;
-  s16 menu;
-  s16 examine;
-  s16 start;
-  s16 talk;
-  s16 searchCell;
-  s16 battle;
-  s16 psynergy;
-  s16 item;
-  s16 raisedEvent;
-  s16 fallenCount;
-  s16 survivorCount;
-  s16 fallenOwners[9];
-  s16 itemArgument;
-  u8 unk184[2];
-  u16 keys;
-  u8 unk188[2];
-  s8 eventMode;
-  u8 unk18b[9];
-  s32 unk194;
-  u8 unk198[4];
-  s32 walkingScale;
-  s32 walkingDistance;
-  u8 unk1a4[4];
-  void *previousCell;
-  s32 transition;
-  u8 unk1b0[2];
-  u16 transitionActive;
-  s32 transitionFrames;
-  u8 unk1b8[0xaea];
-  s16 busy;
-  u8 unkca4;
-  u8 effectTimerRunning;
-  u8 unkca6[0x12];
-  s16 queuedSound;
-  u8 unkcba[0x7c];
-  u8 sceneAttributeLow;
-  u8 sceneAttributeHigh;
-  u8 unkd38[0x18];
-};
+#include "field_work.h"
+#include "gamepak/far_call/field.h"
+#include "gamepak/far_call/sound.h"
+#include "gamepak/far_call/window.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/field_sequence.h"
+#include "module/field/object.h"
+#include "module/tla.h"
 
 extern u8 gMapCellBuffer[];
 
-void Djinn_ResolvePending(s32 capture);
-void Func_08020110(void);
-void Func_08020108(s32 map);
-void Func_080e2718(void);
-void WindowSystem_InitFieldFar(void);
-void ObjectSystem_InitializeFar(s32 mode);
-void Djinn_RestoreActorAfterBattle(void);
-void Map_UpdateCurrentTileBlockFar(void);
-void WorldMap_LoadGraphicsFar(s32 x, s32 z);
-void Func_08020180(void);
-void BattleEffect_InitializeBuffers(void);
 void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 mode);
-void FieldEffect_ResumeCloakCheck(void);
 s32 Field_GetSceneAttributes(s32 scene);
-s32 ObjectEffect_RunPendingFlagEvent(void);
-void Func_080e7804(void);
-void Func_080e7238(void);
-void Func_08038200(s32 scene);
-s32 Func_080d25c8(s32 item);
 s32 PartyInventory_GiveItem(s32 item);
-s32 Func_080ed2a4(s32 mode);
-void BattleEffect_RunVisibilityTransition(void);
 void Func_080d5720(void);
 void Func_080d57e4(void);
 void Func_080d59dc(void);
 void Func_080d5aa0(void);
-void Field_StartEncounterTransition(s32 battle);
-void DebugFlagEditor_RunFar(void);
-void FieldMenu_RunFar(void);
-void DebugSceneSelect_RunFar(void);
-s32 Sound_GetCurrentBgmFar(void);
-void Func_08038358(s32 mode);
-void Func_080200b0(void);
 
 static __inline__ s32 Unit_ClampGauge(s32 ratio) {
   s32 clamped;
@@ -109,20 +45,6 @@ static __inline__ s32 Unit_ClampGauge(s32 ratio) {
     if ((unit)->ppGauge == 0 && (unit)->pp != 0)                               \
       (unit)->ppGauge = 1;                                                     \
   } while (0)
-
-struct ArrivalView {
-  u8 unk000[0x2be];
-  s16 scene;
-  s16 entrance;
-  s8 state;
-};
-
-struct HazardView {
-  u8 unk000[0x24c];
-  u16 limit;
-  u16 mode;
-  u16 damage;
-};
 
 #define HAZARD (*(struct HazardView *)&gMainRoutineWork)
 #define ARRIVAL (*(struct ArrivalView *)&gMainRoutineWork)
@@ -581,18 +503,8 @@ done:
   return result;
 }
 
-struct EffectVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-union PolarOffsetPosition {
-  struct EffectVector vector;
-  s32 coordinates[3];
-};
-
-struct Object {
+/* VIEW(field_sequence): tag struct Object as struct Object__field_sequence; module/tla.h has another definition. */
+struct Object__field_sequence {
   u8 pad0[6];
   u16 angle;
   struct EffectVector pos;
@@ -600,12 +512,10 @@ struct Object {
   u8 kind;
 };
 
-s32 GetWorldMapCollisionFar(s32 *position);
-
 s32 Func_080cc54c(void) {
   u8 *workBytes;
   u8 *mapBytes;
-  struct Object *leader;
+  struct Object__field_sequence *leader;
   union PolarOffsetPosition probePosition;
   u8 *cell;
   s32 collisionCode;
@@ -710,11 +620,6 @@ s32 Func_080cc67c(s32 findEntrance) {
     map->minZ = map->maxZ - (160 << 16);
   return 1;
 }
-
-extern u8 gData_0202e000[];
-extern u8 Data_0202e004[];
-extern s32 Data_02000448;
-extern u16 Data_0200044c;
 
 /// Reads the map's entrance stream (gData_0202e000) for the current entrance,
 /// places the party there unless flag 0x109 keeps its position, then sets the

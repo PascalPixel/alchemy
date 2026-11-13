@@ -14,8 +14,13 @@
 #include "map.h"
 #include "actor.h"
 #include "event_inline.h"
-
-s32 Func_02000348(u32 layer, s32 x, s32 z);
+#include "module/field/field.h"
+#include "module/scene/airs_rock.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "resource.h"
+#include "text/msg_ids.h"
 
 void Func_020003e8(u16 *ids) {
   struct Actor *object;
@@ -47,15 +52,6 @@ void Func_020003e8(u16 *ids) {
     ids++;
   }
 }
-
-struct Unk_02000468 {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x63 - 0x14];
-  u8 unk63;
-};
 
 void Func_02000468(struct Unk_02000468 *unk) {
   struct MapWork *map;
@@ -92,10 +88,6 @@ void Func_02000468(struct Unk_02000468 *unk) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-extern char SceneId_Ov663Room1;
-extern char SceneId_Ov663Room2;
-extern s16 gData_02003e84[];
-extern s16 gData_02003ec4[];
 extern s16 gData_02003f44[];
 
 s16 *Scene_GetRegions(void) {
@@ -109,10 +101,6 @@ s16 *Scene_GetRegions(void) {
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-extern s32 gData_020040ec[];
-extern u32 gData_02004194[];
-extern u32 gData_02004314[];
 
 void *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -130,10 +118,6 @@ void *Scene_GetPlacements(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
-void Event_Start(void);
-void Event_End(void);
-extern u8 MsgFieldWindStoneWarning[];
 
 void Func_02000548(void) {
   Event_Start();
@@ -222,7 +206,6 @@ void Func_020006d4(void) {
 }
 
 void Func_02003b28(struct Actor *object, s32 mode);
-void Event_NoOp(void);
 
 /// The leader jumps up 12 pixels (cue 390, mode 6 then 1), climbs 28 pixels
 /// over 14 frames with cue 217 while turned to angle 0x5000, then lands 16
@@ -258,10 +241,6 @@ void Func_02000700(void) {
   Event_NoOp();
 }
 
-extern s32 gData_020043d4[];
-extern s32 gData_020044d0[];
-extern s32 gData_0200459c[];
-
 s32 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
@@ -282,8 +261,6 @@ void Func_02000830(void) {
 #include "iwram_call.h"
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
-s32 Math_Cosine(s32 angle);
 
 /// Circles the object around the centre in words 68 and 76, the radius
 /// growing with its height, one step of 256 per lap.
@@ -334,34 +311,14 @@ void Func_0200092c(struct Actor *object) {
 #include "system/vector3.h"
 
 extern s16 gData_02004674[][4];
-extern const u8 gData_02003d1c[];
+/* VIEW(airs_rock): variable gData_02003d1c as const u8 gData_02003d1c[]; module/scene/airs_rock.h has u32 gData_02003d1c[]. */
+extern const u8 gData_02003d1c__airs_rock[] __asm__("gData_02003d1c");
 void Actor_StartScript(struct Actor *object, const u8 *script);
-s32 Func_02003ba8(struct Actor *object);
-void Map_CenterOnFollowedPoint(void);
-void Func_02003b48(struct Actor *object);
-void Func_02003c38(s32 actor, s32 a);
-void Func_02003c30(void);
+/* VIEW(airs_rock): routine Func_02003ba8 as s32 Func_02003ba8(struct Actor *object); module/scene/scene.h has void Func_02003ba8(struct Actor *object, const void *script). */
+extern s32 Func_02003ba8__airs_rock(struct Actor *object) __asm__("Func_02003ba8");
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-
-struct EffectWork {
-  u8 unknown[20];
-  struct Actor *target;
-};
-
-/// The actor word at 84 seen as bit fields, for one store (see Func_0200095c).
-struct MotionView {
-  u8 pad[84];
-  u32 kind : 8;
-  u32 flags : 8;
-};
-
-/// A map cell, or a step between cells, kept as one 8-byte pair: written by the
-/// word, it keeps the native's store before the travel loop.
-struct Cell {
-  s32 x, z;
-};
 
 /// Whirlwind on a target in Air's Rock: a gust (object type 280) rises from the
 /// target and grows, shedding sparks every fourth frame while the target
@@ -412,7 +369,7 @@ void Func_0200095c(void) {
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02003b28(spark, 7);
-      Actor_StartScript(spark, gData_02003d1c);
+      Actor_StartScript(spark, gData_02003d1c__airs_rock);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetPartAttribute(spark, 2);
       spark->update = Func_02000840;
@@ -455,7 +412,7 @@ void Func_0200095c(void) {
   Actor_SetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
   FieldCamera_SetSpeed(0x50000, 0x50000);
   FieldCamera_MoveTo((s32)(newX << 16), (s32)(-1), (s32)(newZ << 16), (s32)(1));
-  while (Func_02003ba8(gust) == 0) {
+  while (Func_02003ba8__airs_rock(gust) == 0) {
     if ((gFrameCount & 1) == 0) {
       leaves.priority = 1;
       leaves.type = 674;
@@ -479,7 +436,7 @@ void Func_0200095c(void) {
     Actor_SetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
     Sound_Play(235);
     hit -= 30;
-    while (Func_02003ba8(gust) == 0) {
+    while (Func_02003ba8__airs_rock(gust) == 0) {
       if ((gFrameCount & 1) == 0) {
         dust.priority = 1;
         dust.startScaleX = dust.startScaleY =
@@ -586,20 +543,8 @@ struct SpriteParts {
   u8 unk09Low : 2;
   u8 part : 2;
 };
-struct ObjBits {
-  u8 unk00[35];
-  u8 flags : 8;
-};
-extern char ResourceId_WhirlwindMap;
-extern char ResourceId_WhirlwindTiles;
-void *Resource_GetTableEntry(s32 id);
-void Resource_DecodeType01(void *resource, void *dest);
-
-void Func_020024b0(void);
-void Func_0200257c(void);
-void Func_02000ef4(void);
-void Window_LoadGraphics(void);
-void DebugText_Clear(void);
+/* VIEW(airs_rock): routine Resource_DecodeType01 as void Resource_DecodeType01(void *resource, void *dest); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
+extern void Resource_DecodeType01__airs_rock(void *resource, void *dest) __asm__("Resource_DecodeType01");
 
 void Func_02001010(void) {
   struct MainRoutineWork *work;
@@ -612,7 +557,7 @@ void Func_02001010(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~0x100;
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
+  Resource_DecodeType01__airs_rock(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                 buffer);
   Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
@@ -629,7 +574,7 @@ void Func_02001010(void) {
   REG_BG1CNT |= 2;
   Dma_Fill16(0x10, (void *)0x6002000, 0x500);
   buffer = Heap_Alloc(0x240);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
+  Resource_DecodeType01__airs_rock(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
   i = 0;
   cell = buffer;
 offset:
@@ -669,7 +614,7 @@ row:
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02003b28(spark, 7);
-      Actor_StartScript(spark, gData_02003d1c);
+      Actor_StartScript(spark, gData_02003d1c__airs_rock);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
@@ -778,8 +723,6 @@ fade:
 }
 
 #include "input.h"
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 void Func_02001560(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -927,14 +870,6 @@ s32 Func_020018d8(s32 *a, s32 *b) {
 #include "field/event_work.h"
 
 extern u8 gData_02003de0[], gData_02003dcc[];
-struct Shot {
-  u8 unk00[0x62];
-  u8 unk62; ///< set once it has hit the leader
-  u8 unk63; ///< set with unk62, cleared when it ends
-};
-
-void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
-void Func_02003cd0(struct Actor *object, s32 cue);
 
 void Func_02001908(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1065,15 +1000,6 @@ void Func_02001b54(struct Actor *object) {
   object->timer++;
 }
 
-struct AirsRockEventWork {
-  u8 unk000[0xcbc];
-  s32 valueCbc;
-};
-
-extern s16 gData_02003d94[];
-
-void Func_02003cb8(const void *data);
-
 void Func_02001ca4(void) {
   struct AirsRockEventWork *work = Ram_HeapSlots->eventWork;
 
@@ -1081,7 +1007,8 @@ void Func_02001ca4(void) {
   Func_02000468(work->valueCbc);
 }
 
-void Func_02003cc0(void);
+/* VIEW(airs_rock): routine Func_02003cc0 as void Func_02003cc0(void); module/scene/scene.h has void Func_02003cc0(s32 id). */
+extern void Func_02003cc0__airs_rock(void) __asm__("Func_02003cc0");
 
 void Func_02001cc8(void) {
   struct Actor *object =
@@ -1090,7 +1017,7 @@ void Func_02001cc8(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Func_02003cc0();
+  Func_02003cc0__airs_rock();
   Func_020003e8(((u8 *)gData_02003d94));
   if (Map_GetTerrainHeight(2, object->x, object->z) != object->y) {
     object->terrainId = 2;
@@ -1117,7 +1044,6 @@ void Func_02001cc8(void) {
 }
 
 s32 Func_02003ca8();
-extern s16 gData_02003e4c[];
 
 void Func_02001da8(void) {
   Event_Start();
@@ -1181,22 +1107,6 @@ void Func_02001dc4(s32 x, s32 z) {
 
 #include "bg_scroll.h"
 
-/// A field sprite's byte 9: the top of its first tile and its priority (OAM
-/// attribute 2), read as bit-fields.
-struct SpriteAttr2High {
-  u8 unk00[9];
-  u8 tileHigh : 2;
-  u8 priority : 2;
-};
-/// An object's priority flags read as a whole-byte bit-field.
-struct ObjectPriorityByte {
-  u8 unk00[35];
-  u8 priorityFlags : 8;
-};
-extern char ResourceId_LightningMap;
-extern char ResourceId_LightningTiles;
-void Func_02005dcc(s32 a, s32 b, s32 c);
-
 /// The pillar of light in Air's Rock, overlay 664's Func_02003654 with object
 /// 14 glowing: the camera moves to (0x218, 0xd8), the leader turns, and the
 /// light flashes twice (cue 138), each time copying cells into the map
@@ -1220,13 +1130,13 @@ void Func_02001f7c(void) {
 
     REG_BG0CNT = control;
   } while (0);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
+  Resource_DecodeType01__airs_rock(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                 buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
+  Resource_DecodeType01__airs_rock(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
   i = 0;
   cell = buffer;
 mask:
@@ -1270,7 +1180,7 @@ row:
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02003b28(spark, 7);
-      Actor_StartScript(spark, gData_02003d1c);
+      Actor_StartScript(spark, gData_02003d1c__airs_rock);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
@@ -1365,8 +1275,6 @@ fade2:
   Event_End();
 }
 
-extern s8 gData_02004694;
-extern s8 gData_02004695;
 extern s16 gData_020046a0[];
 
 void Func_020024b0(void) {
@@ -1395,9 +1303,6 @@ void Func_020024b0(void) {
   channel[5];
   Dma_Set(line + 1, (void *)&REG_BG1HOFS, 0xa2600001, (volatile u32 *)channel);
 }
-
-extern s8 gData_02004696;
-extern s8 gData_02004697;
 
 void Func_0200257c(void) {
   s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178);
@@ -1452,7 +1357,7 @@ void Func_020026b8(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~0x100;
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
+  Resource_DecodeType01__airs_rock(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                 buffer);
   Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
@@ -1469,7 +1374,7 @@ void Func_020026b8(void) {
     Dma_Fill16(0x10, (void *)0x6002000, 0x500);
   } while (0);
   buffer = Heap_Alloc(0x240);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
+  Resource_DecodeType01__airs_rock(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
   cell = buffer;
   for (i = 0; i != 0x120; i++) {
     *cell += 0xff40;
@@ -1506,7 +1411,7 @@ void Func_020026b8(void) {
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02003b28(spark, 7);
-      Actor_StartScript(spark, gData_02003d1c);
+      Actor_StartScript(spark, gData_02003d1c__airs_rock);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
@@ -1629,11 +1534,6 @@ void Func_02002c24(s32 height) {
     System_Wait(1);
   }
 }
-
-extern char SceneId_Ov663Room3;
-void Func_02003cb0(const u8 *table);
-void Func_02003ca0(const u8 *table);
-void Func_02003c80(s32 a);
 
 #define LEADER() Actor_GetById(gMainRoutineWork.currentOwner)
 #define BEAM ((s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178))
@@ -1929,8 +1829,6 @@ s32 Scene_Initialize(void) {
   }
   return 0;
 }
-
-extern u8 MsgCurePoison2[];
 
 s32 Scene_PrepareMap(void) {
   if (FIELD_AT(&gMainRoutineWork, s16, 480) == (s32)MsgCurePoison2) {

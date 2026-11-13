@@ -6,8 +6,8 @@
 #include "iwram_call.h"
 #include "system/io_reg.h"
 #include "event_inline.h"
-
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+#include "field.h"
+#include "module/scene/aqua_rock_inside.h"
 
 #define VENT_TOUCHING Func_02003844
 #define VENT_BOUNCE Func_0200389c
@@ -66,22 +66,6 @@ void Func_02003a70(void) {
     }
   }
 }
-
-struct WaterOutlet {
-  u16 state;
-  u16 index;
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 level;
-};
-
-struct WaterWork {
-  u32 unk00;
-  void (*handler)(void);
-  struct WaterOutlet outlets[16];
-  u16 levels[4];
-};
 
 void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
   struct WaterWork *work = (struct WaterWork *)(gData_020023c4 + 0x188);

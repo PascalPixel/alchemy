@@ -27,13 +27,15 @@
 #include "task.h"
 #include "fixed_math.h"
 #include "input.h"
-
-/// The world map's event work, as far as the encounter events read it.
-struct EncounterWork {
-  u8 unk000[0x194];
-  s32 bias;
-  s32 threshold;
-};
+#include "item_icon.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/scene/scene.h"
+#include "module/scene/staff_credit.h"
+#include "module/scene/world_map.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "module/window/window.h"
 
 // Once the party has walked nine tenths of the encounter threshold, a coin
 // toss either requests the event's battle now or makes the party walk the
@@ -94,30 +96,10 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern u8 gData_02006c08[];
-extern const u8 gWorldMapPackedTilesC[];
-extern u8 gData_02006f20[];
-extern u8 gData_02006e0e[];
-extern u8 gData_02006e0c[];
-
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Event_Start(void);
-void Event_End(void);
-s32 Func_02004c38(s32 a, s32 b, s32 c);
-void Func_02003654(s32 a, s32 b, s32 c);
-void Func_020036a8(void);
-void Func_020048f4(void);
-void Func_02003bb8(struct Actor *object, s32 value);
-void Resource_DecodeType01(const u8 *a, u8 *b);
-s32 Resource_ResetEntry(u32 slot);
+/* VIEW(world_map): routine Resource_DecodeType01 as void Resource_DecodeType01(const u8 *a, u8 *b); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
+extern void Resource_DecodeType01__world_map(const u8 *a, u8 *b) __asm__("Resource_DecodeType01");
 u32 __umodsi3(u32 a, u32 b);
-
-struct TileSprite {
-  u8 unk00[18];
-  u16 tile;
-  u8 unk14[6];
-  u8 frame;
-};
 
 s32 Func_020002a4(struct Actor *object) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
@@ -127,17 +109,6 @@ s32 Func_020002a4(struct Actor *object) {
   sprite->frame = 0;
   return 1;
 }
-
-struct BobbingMarker {
-  u8 unk00[6];
-  u16 facing;
-  union FieldCoordinate x;
-  union FieldCoordinate y;
-  union FieldCoordinate z;
-  u8 unk14[80];
-  s16 angle;
-  s16 stopped;
-};
 
 static __inline__ s32 MulQ16(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): through the inline the multiply's address loads between
@@ -228,13 +199,9 @@ extern u8 gData_02006598[];
 extern u8 gData_02006700[];
 extern u8 gData_02006790[];
 
-void Message_CloseFinishedWindows(void);
 void Func_02003bf0(void);
-void Func_020049bc(void);
-void Func_02004b28(void);
-void MessageArgument_Push(s32 a, s32 b);
-void Func_02004da8(void);
-void Func_02004db0(void);
+/* VIEW(world_map): routine MessageArgument_Push as void MessageArgument_Push(s32 a, s32 b); module/window/window.h has void MessageArgument_Push(u32 value, u32 kind). */
+extern void MessageArgument_Push__world_map(s32 a, s32 b) __asm__("MessageArgument_Push");
 
 u8 *Scene_GetPlacements(void) {
   switch (gMainRoutineWork.entrance) {
@@ -260,7 +227,7 @@ void Func_02000458(void) {
   gMainRoutineWork.renderMode = 8;
   if (Event_GetFlag(0x147)) {
     Func_02004da8();
-    MessageArgument_Push(153, 4);
+    MessageArgument_Push__world_map(153, 4);
     Message_ShowCentered((s32)MsgBlank2, 4);
   }
   if (Actor_Get(FieldParty_GetLeaderActor()) != NULL)
@@ -290,9 +257,8 @@ void Func_02000458(void) {
   }
 }
 
-s32 Unit_AddPp();
-void Func_02003c3c(void);
-void Func_02004a1c(void);
+/* VIEW(world_map): routine Unit_AddPp as s32 Unit_AddPp(); module/game/game.h has s16 Unit_AddPp(s32 owner, s32 delta). */
+extern s32 Unit_AddPp__world_map() __asm__("Unit_AddPp");
 
 /// Sets render mode 7, clears object 8's child flags, then adds up the PP of
 /// the active party; when it is 0, the current owner gets 1 PP back. The loop
@@ -320,14 +286,10 @@ void Func_0200050c(void) {
       goto loop;
   }
   if (pp == 0)
-    Unit_AddPp(gMainRoutineWork.currentOwner, 1);
+    Unit_AddPp__world_map(gMainRoutineWork.currentOwner, 1);
 }
 
-s32 Func_02004d68(s32 owner);
-void Func_02004b18(struct Actor *object, s32 mode);
 void Func_02004b48(struct Actor *object);
-void Scene_ResolveInteractionResult(void);
-void Party_PlaySavedMusic(void);
 
 void Func_02000574(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -380,21 +342,22 @@ void Func_02000574(void) {
   FieldEffect_ScheduleRatioTransition(0x10000, 30);
 }
 
-extern u8 gMapBlocks[];
+/* VIEW(world_map): variable gMapBlocks as u8 gMapBlocks[]; module/tla.h has u32 gMapBlocks[]. */
+extern u8 gMapBlocks__world_map[] __asm__("gMapBlocks");
 
-s32 GetWorldMapCollision(s32 *position);
-s32 Func_02004b88(struct Actor *object, s32 *position);
+/* VIEW(world_map): routine GetWorldMapCollision as s32 GetWorldMapCollision(s32 *position); map.h has s32 GetWorldMapCollision(struct WorldPosition *position). */
+extern s32 GetWorldMapCollision__world_map(s32 *position) __asm__("GetWorldMapCollision");
 
 void Func_020006d0(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *ship = Actor_GetById(8);
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  s32 cell = GetWorldMapCollision(&ship->x);
+  s32 cell = GetWorldMapCollision__world_map(&ship->x);
   s32 position[3];
   s32 shore = 0;
   s32 blocked;
   u8 *block;
-  u8 *blocks = gMapBlocks;
+  u8 *blocks = gMapBlocks__world_map;
   u8 flags;
 
   position[0] = ship->x;
@@ -462,11 +425,6 @@ void Func_020006d0(void) {
     *(s16 *)work->unk15c = 0;
   }
 }
-
-struct EventDestination {
-  u8 unk000[0x154];
-  s16 scene;
-};
 
 void Actor_MoveToObject(s32 actor, s32 target);
 
@@ -580,8 +538,6 @@ void Func_02000994(void) {
   }
 }
 
-void Func_02004d70(s32 value);
-
 void Func_02000be0(void) {
   u32 roll = (Random16Far() << 4) >> 16;
 
@@ -671,20 +627,7 @@ extern char SceneId_WorldMap;
 extern char SceneId_Ov6a5;
 extern u8 gData_0200632c[];
 
-void Func_020012bc(s32 entrance);
-void Func_02001c5c(void);
-void Func_02001e34(void);
 void Func_02002698(void);
-void Func_020029a4(void);
-void Func_02002ab0(void);
-void Func_02002e00(void);
-void Func_02002e78(void);
-void Func_0200310c(void);
-void Func_02003490(void);
-void Func_02003960(void);
-void Func_02003d44(s32 mode);
-void Func_02004c00(void);
-void Event_SetDestination(s32 scene, s32 entrance);
 
 s32 Scene_Initialize(void) {
   struct EventWork *work;
@@ -794,9 +737,6 @@ s32 Scene_Initialize(void) {
 }
 
 void Menu_AnimateSelectionToEntry(s32 a, s32 b);
-void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-void Func_02004e00(void);
-void Func_02004e28(void);
 
 s32 Scene_PrepareMap(void) { return 0; }
 
@@ -835,13 +775,6 @@ void Func_020011fc(void) {
   FieldEvent_Wait(30);
   Field_RequestBattleFromEncounterTable(9, 5);
 }
-
-/// gMainRoutineWork.savedScene and savedEntrance as this script reads them.
-struct SavedDestination {
-  u8 unk000[0x1e4];
-  s16 scene;
-  s16 entrance;
-};
 
 #define ARM_WEST(id)                                                           \
   do {                                                                         \
@@ -1257,12 +1190,13 @@ void Func_02001c5c(void) {
   Event_End();
 }
 
-void Party_RemoveMember(s32 owner);
-void Party_AddMember(s32 owner);
+/* VIEW(world_map): routine Party_RemoveMember as void Party_RemoveMember(s32 owner); module/game/game.h has s32 Party_RemoveMember(s32 owner). */
+extern void Party_RemoveMember__world_map(s32 owner) __asm__("Party_RemoveMember");
+/* VIEW(world_map): routine Party_AddMember as void Party_AddMember(s32 owner); module/game/game.h has s32 Party_AddMember(s32 owner). */
+extern void Party_AddMember__world_map(s32 owner) __asm__("Party_AddMember");
 static inline void SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   Actor_SetMoveTarget(object, x, y, z);
 }
-void Func_02004bf8(s32 value);
 
 static inline void ShowEmote(s32 id, s32 animation, s32 frames) {
   Func_080d47b4(id, animation, frames);
@@ -1307,17 +1241,17 @@ void Func_02001e34(void) {
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Party_RemoveMember(0);
-    Party_RemoveMember(1);
-    Party_RemoveMember(2);
-    Party_RemoveMember(3);
-    Party_RemoveMember(4);
-    Party_RemoveMember(5);
-    Party_RemoveMember(6);
-    Party_RemoveMember(7);
-    Party_AddMember(4);
-    Party_AddMember(5);
-    Party_AddMember(6);
+    Party_RemoveMember__world_map(0);
+    Party_RemoveMember__world_map(1);
+    Party_RemoveMember__world_map(2);
+    Party_RemoveMember__world_map(3);
+    Party_RemoveMember__world_map(4);
+    Party_RemoveMember__world_map(5);
+    Party_RemoveMember__world_map(6);
+    Party_RemoveMember__world_map(7);
+    Party_AddMember__world_map(4);
+    Party_AddMember__world_map(5);
+    Party_AddMember__world_map(6);
     owner = gMainRoutineWork.currentOwner;
     Func_02004bf8(1);
     Event_SetFlag(0x16e);
@@ -1451,7 +1385,7 @@ void Func_02001e34(void) {
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgIMSo));
     Event_ShowMessageAndWait(9, 0);
   joined:
-    MessageArgument_Push(0x133, 4);
+    MessageArgument_Push__world_map(0x133, 4);
     Sound_Play(81);
     FieldMessage_Show(TUTORIAL_MESSAGE(MsgTheVenusDjinni), 3);
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgTheVenusDjinni + 1));
@@ -1592,8 +1526,6 @@ void Func_02002640(s32 a, s32 b, s32 dx, s32 dz) {
   Func_02002618(10, dx, dz);
   WorldMap_SetWindowCellTileAndDraw(a + 16, b, 64, 224);
 }
-
-void Func_02004d30(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1760,13 +1692,6 @@ void Func_020029a4(void) {
 }
 
 void Func_020042e0(s32 mode);
-void Map_UpdateCurrentTileBlock(void);
-
-struct RescueMap {
-  u8 unk000[0x11c];
-  u16 unk11c;
-  u16 unk11e;
-};
 
 void Func_02002ab0(void) {
   struct Actor *boat = Actor_Get(10);
@@ -1861,11 +1786,6 @@ void Func_02002ab0(void) {
 }
 
 #include "scene_ids.h"
-
-struct EventCounters {
-  u8 unk000[0x1c4];
-  u16 count;
-};
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1984,8 +1904,6 @@ void Func_0200310c(void) {
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(66);
 }
-
-extern s32 Data_02006be8[8];
 
 void Func_02003144(void) {
   s32 x, z, i;

@@ -4,6 +4,9 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/battle_effect/f13ba50.h"
+#include "resource_ids.h"
 
 // Battle effects: particle effect entry points.
 
@@ -41,16 +44,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDrown, BattleEffect_RunTargetMotes, 6)
 #define CONVERGES(mode)                                                        \
   ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)
 #define DECAYS(mode) ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6)
-
-// Where mode 3 unpacks the tornado's glints in the sheet.
-enum { RENDER_MODE_TORNADO = 0x2580 };
-
-extern char ResourceId_CyanPalette;  // directory row 0x166
-extern char ResourceId_BlastSheet;   // directory row 0x184
-extern char ResourceId_GlowOrbSheet; // directory row 0x17b
-extern char ResourceId_HeartSheet;   // directory row 0x16e
-
-extern u8 Data_08197a34[]; // ☀️ gTargetMotes_GlintFlips
 
 // Motes swirl around each target in turn, eight frames apart, over a
 // rippling canvas: smoke, hearts, glowing orbs or vortex motes by mode,
@@ -315,10 +308,6 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
 #define SHEEP_FRAMES 98
 #define GROUND_Y (92 << 16)
 
-extern char ResourceId_SheepCardSheet; // directory row 0xe3
-
-void Func_0815e22c(struct EffectPosition *middle); // the targets' middle
-
 // A flock of sheep cards drops in over the targets, one every four frames,
 // and bounces on the ground, tumbling through eight cels; at frame 80 the
 // next phase begins, and each target turns back to its own palette in turn.
@@ -445,8 +434,6 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
 #define MARKER_STAGGER 16
 #define MARKER_CELS 9
 
-extern char ResourceId_FlameColumnSheet;
-
 // As in The Broken Seal's twin, which loads the same sheet: a small flame
 // burns above each target in turn, MARKER_STAGGER frames apart, for up to
 // MARKER_FRAMES frames each, over a marker at its feet.
@@ -531,13 +518,6 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   HeapSlot_Release(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();
 }
-
-extern char ResourceId_MercuryDjinnSmallSheet; // directory row 0x155
-
-extern char ResourceId_SparkleDots; // directory row 0x17e
-
-extern u16 Data_0819744c[]; // ☀️ gBattleEffect_PuffCells
-extern u8 Data_0819745e[];  // ☀️ gBattleEffect_PuffSizes
 
 // A Djinn rides a swarm of sparks from the caster to the first target: 32
 // sparks spin around it in four planes while it travels, then it hovers
@@ -781,8 +761,6 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
   HeapSlot_Release(HEAP_BLITTER);
   BattleEffect_EndCanvasLayer();
 }
-
-void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Balm (kind 230).
 void BattleEffect_RunBalm(struct BattleEffectArgument *effect) {

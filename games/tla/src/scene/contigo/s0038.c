@@ -7,13 +7,11 @@
 #include "contigo.h"
 #include "task.h"
 #include "actor.h"
+#include "module/scene/contigo.h"
+#include "module/scene/scene.h"
 
-extern u16 *gData_02006010;
 extern u16 *gData_02006014;
-extern u16 *Data_02006018;
 extern u16 *gData_02006004;
-
-void Func_02000328(void);
 
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
@@ -52,15 +50,6 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   if ((s8)gMainRoutineWork.unk2c2 == 2)
     Func_02000328();
 }
-
-extern u16 gData_02006000;
-extern u16 gData_02006008;
-extern u16 gData_0200600c;
-extern u16 gData_0200601c;
-extern u16 gData_02006020;
-
-s32 Func_020001d4(u16 *list);
-void Func_020001f8(void);
 
 void Func_020000f4(void) {
   gData_02006020 = 0;
@@ -151,11 +140,6 @@ void Func_020001f8(void) {
   if (++gData_02006020 == gData_0200601c)
     gData_02006020 = 0;
 }
-
-struct ContigoEventWork {
-  u8 unk000[0x1ac];
-  s32 value1ac;
-};
 
 void Func_02004284(void);
 

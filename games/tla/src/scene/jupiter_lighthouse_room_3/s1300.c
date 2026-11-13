@@ -10,11 +10,15 @@
 #include "iwram_call.h"
 #include "task.h"
 #include "event_inline.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/scene/jupiter_lighthouse_room_3.h"
+#include "module/scene/scene.h"
 
-extern const u16 gData_02002478[];
+/* VIEW(s1300): variable gData_02002478 as const u16 gData_02002478[]; module/scene/jupiter_lighthouse_room_3.h has u16 gData_02002478[]. */
+extern const u16 gData_02002478__s1300[] __asm__("gData_02002478");
 
 struct Actor *Func_02002438(s32 *position, s32 mode);
-s32 Func_02002338(struct Actor *object, s32 *position);
 
 /// Stops the object where it stands (Actor_SetPositionAndResetMotion) when
 /// the point a cell ahead along its facing holds another object
@@ -37,7 +41,7 @@ void Func_02001300(struct Actor *object) {
     i = 0;
   next:
     if (*((struct ObjectAnimationState *)other->sprite)->value28 ==
-        gData_02002478[i])
+        gData_02002478__s1300[i])
       return;
     i++;
     if (i < 6)
@@ -51,23 +55,8 @@ void Func_02001300(struct Actor *object) {
     FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
 }
 
-struct LightOam {
-  u32 link;
-  u32 attr01;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u16 unk0a;
-};
-
 extern s16 gData_02002d2c;
-extern s16 gData_02002d2e;
-extern struct Actor *gData_02002d30[];
-extern struct LightOam Data_02002d70[];
-extern s16 gData_02002e30;
-extern s16 gData_02002e32;
 
-s32 Func_02002448(struct Actor *actor);
 void Func_020022b8(struct LightOam *oam, s32 depth);
 
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
@@ -144,14 +133,8 @@ void Func_02001388(void) {
   }
 }
 
-extern u8 gField_CachedTilesA[];
-extern u8 gField_CachedTilesB[];
-extern u8 gField_CachedTilesC[];
-
-void *Heap_Alloc(s32 size);
-void Resource_DecodeType01(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
-void Heap_Release(void *block);
+/* VIEW(s1300): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
+extern void Resource_DecodeType01__s1300(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -161,7 +144,7 @@ void Func_02001544(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02002d30, 64);
-  Resource_DecodeType01(gField_CachedTilesA, buffer);
+  Resource_DecodeType01__s1300(gField_CachedTilesA, buffer);
   gData_02002d2c = Resource_FindFreeEntry();
   VramCache_Load(gData_02002d2c, 0xc00, buffer);
   Heap_Release(buffer);
@@ -175,7 +158,7 @@ void Func_020015c4(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_02002d30, 64);
-  Resource_DecodeType01(gField_CachedTilesB, buffer);
+  Resource_DecodeType01__s1300(gField_CachedTilesB, buffer);
   gData_02002d2c = Resource_FindFreeEntry();
   Vram_Load(gData_02002d2c, 0x800, buffer);
   Heap_Release(buffer);
@@ -189,7 +172,7 @@ void Func_02001644(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_02002d30, 64);
-  Resource_DecodeType01(gField_CachedTilesC, buffer);
+  Resource_DecodeType01__s1300(gField_CachedTilesC, buffer);
   gData_02002d2c = Resource_FindFreeEntry();
   Vram_Load(gData_02002d2c, 0x800, buffer);
   Heap_Release(buffer);

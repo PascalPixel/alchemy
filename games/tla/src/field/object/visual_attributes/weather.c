@@ -3,19 +3,15 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "module/field/field.h"
 
 /* VIEW(f0d6674): tag struct GroundParticleWork as struct GroundParticleWork__f0d6674; visual_attributes.c has another definition; tried with the definition the rest of the object has, Func_080d6674 moves: 1 of 167 instructions in tla-ja. */
 struct GroundParticleWork__f0d6674 {
   u8 unk00[4];
   // long, not s32: its own alias set lets the sprite stores pass its load.
   long tile;
-  struct GroundParticle particles[64];
+  struct GroundParticle__visual_attributes particles[64];
 };
-
-u32 Random16(void);
-void Func_080140d8(struct GroundParticle *sprite, s32 depth);
-
-extern const s16 Data_080f0b50[];
 
 /// The Broken Seal's Weather_UpdateRain with fixed sprites, and
 /// Func_080d64f0's sibling for the same 64 ground particles: each counts down
@@ -29,7 +25,7 @@ void Func_080d6674(void) {
   struct GroundParticleWork__f0d6674 *work = Ram_HeapSlots->unk70[1];
   s32 *origin = (s32 *)(map + 228);
   s32 originX = origin[0];
-  struct GroundParticle *particle = work->particles;
+  struct GroundParticle__visual_attributes *particle = work->particles;
   s32 originZ = origin[1];
   u32 i;
 
@@ -52,7 +48,7 @@ void Func_080d6674(void) {
       particle->tile = work->tile;
       particle->shape = 1;
       particle->size = 2;
-      Func_080140d8(particle, 240);
+      Func_080140d8__visual_attributes(particle, 240);
     }
     if (particle->timer == 0) {
       s32 *focus = *(s32 **)map;
@@ -67,10 +63,7 @@ void Func_080d6674(void) {
   }
 }
 
-
 void BattleEffect_ApplyColorToTargetBuffer(void *buffer, s32 mode);
-
-void Sound_PlayFar(s32 cue);
 
 // Lightning: selects the palette according to the remaining duration.
 void Weather_UpdateLightning(void) {

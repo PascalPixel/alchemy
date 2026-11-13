@@ -4,6 +4,8 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "module/battle/battle.h"
+#include "module/battle/presentation.h"
 
 void Camera_ConfigureScene(s32 pos) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
@@ -61,12 +63,6 @@ void BattleUnit_ResetGuardLevels(void) {
   }
 }
 
-struct BattleEscapeState {
-  u8 reserved00[0x45];
-  u8 guaranteed;
-  u8 failedAttempts;
-};
-
 s32 BattleEscape_CheckSuccess(void) {
   s32 escaped;
   s16 livingUnits[14];
@@ -106,8 +102,6 @@ s32 BattleEscape_CheckSuccess(void) {
   return escaped;
 }
 
-s32 Func_080381c0(struct BattleActionRecord *entries, void *buffer, s32 mode);
-
 s32 Battle_BuildUnitActions(struct BattleActionRecord *entries) {
   void *buffer = Heap_AllocEwram(17);
   s32 count = Func_080381c0(entries, buffer, 0);
@@ -118,8 +112,6 @@ s32 Battle_BuildUnitActions(struct BattleActionRecord *entries) {
   Heap_Release(buffer);
   return result;
 }
-
-s32 Func_08122514(struct BattleActionRecord *request, s32 retry);
 
 s32 Battle_BuildOpponentActions(struct BattleActionRecord *entries) {
   u16 unitIds[14];
@@ -253,13 +245,6 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
     }
   } while (swapped != 0);
 }
-
-struct BattleLinkedActionState {
-  s32 count;
-  s32 check;
-  s32 seed;
-  u8 unk0c[28];
-};
 
 s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
@@ -410,8 +395,6 @@ fail:
   Heap_Release(state);
   return -1;
 }
-
-extern struct BattlePresentationTransition *gTransitionWork;
 
 /// Copies BG palettes 15 to 14 and 5 to 4, adjusting brightness.
 /// offset: amount added to each RGB component, clamped to 0-31.

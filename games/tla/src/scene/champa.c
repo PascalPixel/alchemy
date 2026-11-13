@@ -15,9 +15,11 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "field_event.h"
-
-void Event_Start(void);
-void Event_End(void);
+#include "event_work.h"
+#include "module/field/object.h"
+#include "module/scene/champa.h"
+#include "module/scene/scene.h"
+#include "module/window/window.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -26,7 +28,6 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern s16 gData_02002c5c[];
-extern s16 gData_02002efc[];
 
 const s16 *Scene_GetPlacements(void) {
   if (Event_GetFlag(0x97f))
@@ -78,7 +79,6 @@ void Func_02000080(const void *warp, s32 door, s32 mode) {
   Event_End();
 }
 
-extern s32 gData_020031fc[];
 void Func_020029f4(s32 a);
 
 void Func_020000fc(s32 door) {
@@ -110,8 +110,6 @@ void Func_02000178(void) { TreasureSpot_SetPosition(0x40, 0, 0); }
 
 #include "text/msg_ids.h"
 #include "actor.h"
-
-s32 Func_02002b3c();
 
 void Func_02000188(void) {
   s32 t24;
@@ -272,7 +270,6 @@ void Func_02000590(s32 actor) {
 }
 
 #include "call.h"
-s32 Func_02002a5c();
 
 void Func_020005dc(s32 a0) {
   s32 t2;
@@ -471,9 +468,6 @@ void Func_02000638(void) {
   }
 }
 
-extern s32 gData_0200320c[];
-extern s32 gData_0200b410[];
-
 const s32 *Scene_GetEvents(void) {
   if (Event_GetFlag(0x97f))
     return gData_0200b410;
@@ -516,9 +510,7 @@ void Func_02000a80(void) {
   }
 }
 
-s32 Func_020029fc();
 s32 Func_02002ba4();
-s32 Func_02002bac();
 
 s32 Scene_Initialize(void) {
   s32 t7;
@@ -574,7 +566,6 @@ s32 Scene_PrepareMap(void) {
 
 extern u32 gData_02003620[];
 
-void Func_020029dc(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
 
 void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
@@ -621,16 +612,8 @@ void Func_02000c90(s32 firstId, s32 secondId) {
   FieldEvent_Wait(15);
 }
 
-struct ChampaEventWork {
-  u8 unk000[0x1c4];
-  s16 message;
-};
-
-s32 ObjectTable_ReadActiveValue(s32 id);
-s32 BattleEffect_GetResourceId(s32 object);
 void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);
 void Func_02002a2c(s32 object, s32 a, s32 b, s32 c);
-s32 Message_AllTyped(void);
 
 void Func_02000d4c(s32 firstId, s32 firstX, s32 firstY, s32 firstA, s32 firstB,
                    s32 secondId, volatile s32 secondX, s32 secondY, s32 secondA,
@@ -658,8 +641,6 @@ void Func_02000d4c(s32 firstId, s32 firstX, s32 firstY, s32 firstA, s32 firstB,
     System_Wait(1);
   System_Wait(1);
 }
-
-s32 Window_CloseMatchingId();
 
 void Func_02000e04(s32 a0, s32 a1) {
   s32 t0;
@@ -1423,9 +1404,6 @@ void Func_02000e30(void) {
   Actor_SetPosition(28, 0, 0);
   Event_End();
 }
-
-extern s16 gData_020031e4[];
-extern s16 gData_020031e6[];
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 280, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

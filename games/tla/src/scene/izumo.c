@@ -18,6 +18,7 @@
 #include "task.h"
 #include "version.h"
 #include "frame.h"
+#include "module/scene/izumo.h"
 
 void Func_02000038(void) { Func_02000de8(gData_02000e10); }
 
@@ -513,13 +514,6 @@ void Func_02000ca4(void) {
 
 #include "text/msg_ids.h"
 #include "objcmd.h"
-
-extern u32 gData_02000e14[];
-extern u32 gData_02000f14[];
-extern u32 gData_02001014[];
-extern u32 gData_02001114[];
-extern u32 gData_02001214[];
-extern u32 gData_02001314[];
 
 s16 gData_02000e10[] = {
     12,

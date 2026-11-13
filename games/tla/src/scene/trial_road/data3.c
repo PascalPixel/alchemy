@@ -1,59 +1,35 @@
 #include "types.h"
 #include "scene_tables.h"
+#include "module/scene/trial_road.h"
 
 void Func_02000038(void);
 void Func_02000138(void);
 void Func_02000330(void);
-void Func_02000418(void);
 void Func_02000428(void);
 void Func_020004f4(void);
 void Func_020005b4(void);
 void Func_02000728(void);
 void Func_02000748(void);
-void Func_02000768(void);
 void Func_02000784(void);
-void Func_020007e8(void);
 void Func_02000818(void);
 void Func_0200082c(void);
-void Func_020008a4(void);
 void Func_020008d0(void);
 void Func_02000904(void);
 void Func_02000990(void);
-void Func_020009ac(void);
+/* VIEW(data3): routine Func_020009ac as void Func_020009ac(void); games/tla/src/scene/trial_road/trial_road.h has void Func_020009ac ( s32 , s32 ). */
+extern void Func_020009ac__data3(void) __asm__("Func_020009ac");
 void Func_02000b3c(void);
 void Func_02000b4c(void);
 void Func_02000b5c(void);
 void Func_02000b6c(void);
-void Func_02000c34(void);
-void Func_02000c48(void);
-void Func_02000c5c(void);
-void Func_02000c70(void);
-void Func_02000c84(void);
-void Func_02000cc0(void);
 void Func_02000cd0(void);
 void Func_02000ce4(void);
-void Func_0200106c(void);
-void Func_02001080(void);
-void Func_02001090(void);
-void Func_020010a4(void);
-void Func_020010b4(void);
-void Func_020010c8(void);
-void Func_020010d8(void);
 void Func_02001148(void);
 void Func_02001158(void);
 void Func_02001168(void);
 void Func_02001178(void);
-void Func_020011c0(void);
-void Func_020011dc(void);
-void Func_020011f8(void);
-void Func_020014e4(void);
-void Func_020015a8(void);
-void Func_020015b8(void);
-void Func_020015d8(void);
-void Func_0200163c(void);
-void Func_020016c8(void);
-void Func_02001754(void);
-void Func_020017e0(void);
+/* VIEW(data3): routine Func_02001754 as void Func_02001754(void); module/scene/trial_road.h has void Func_02001754(). */
+extern void Func_02001754__data3(void) __asm__("Func_02001754");
 void Func_0200185c(void);
 void Func_02000628(void);
 
@@ -61,23 +37,6 @@ extern u8 gData_02005a70[];
 extern u8 gData_02005a8c[];
 extern u8 gData_02005ac8[];
 extern u8 gData_02005b04[];
-
-extern struct ActorPlacement gData_02006484[];
-extern struct ActorPlacement gData_020065d4[];
-extern struct ActorPlacement gData_02006754[];
-extern struct ActorPlacement gData_020068bc[];
-extern struct ActorPlacement gData_02006a3c[];
-extern struct ActorPlacement gData_02006b2c[];
-extern struct ActorPlacement gData_02006c4c[];
-extern struct ActorPlacement gData_02006d9c[];
-extern struct Trigger gData_02007050[];
-extern struct Trigger gData_02007200[];
-extern struct Trigger gData_020073bc[];
-extern struct Trigger gData_0200756c[];
-extern struct Trigger gData_02007740[];
-extern struct Trigger gData_0200789c[];
-extern struct Trigger gData_02007a64[];
-extern struct Trigger gData_02007bcc[];
 
 // clang-format off
 u32 gData_020063ac[] = {
@@ -447,9 +406,9 @@ struct Trigger gData_0200756c[] = {
     {TRIGGER_STEP, 52, 0x337, EVENT(Func_02000c5c)},
     {TRIGGER_STEP, 53, 0x1337, EVENT(Func_02000c70)},
     {0x202, 60, CONDITION_ALWAYS, EVENT(Func_02000c84)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(Func_020009ac)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x1339, EVENT(Func_020009ac)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(Func_020009ac)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(Func_020009ac__data3)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x1339, EVENT(Func_020009ac__data3)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(Func_020009ac__data3)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 22, 0x339, EVENT(Func_02000990)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, 0x335, EVENT(Func_02000b3c)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 19, 0x1335, EVENT(Func_02000b4c)},
@@ -622,7 +581,7 @@ struct Trigger gData_02007d40[] = {
 };
 
 struct Trigger gData_02007d94[] = {
-    {TRIGGER_STEP, 33, 0x283, EVENT(Func_02001754)},
+    {TRIGGER_STEP, 33, 0x283, EVENT(Func_02001754__data3)},
     {TRIGGER_STEP, 40, 0x19ff, EVENT(Func_020017e0)},
     {TRIGGER_STEP, 41, 0x19ff, EVENT(Func_020017e0)},
     {49, 1, CONDITION_ALWAYS, 1},

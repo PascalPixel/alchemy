@@ -4,11 +4,11 @@
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"
+#include "module/field/field.h"
+#include "module/field/resource_slot.h"
+#include "module/tla.h"
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
-
-void Func_0802af9c(s32 x, s32 y);
-void Func_0802ad84(void);
 
 void Func_0802aa74(void) {
   struct MapWork *work = Ram_HeapSlots->mapWork;
@@ -55,20 +55,6 @@ void Func_0802aa74(void) {
   Func_0802af9c(x, z - height);
   Func_0802ad84();
 }
-
-/// A map layer as its renderers read it: its scroll, then the window over
-/// the map's cells (masks and origins that wrap the source cells).
-struct MapLayerWindow {
-  s32 x, y;
-  s32 offsetX, offsetY;
-  s32 scaleX, scaleY;
-  s32 speedX, speedY;
-  s32 phaseX, phaseY;
-  u16 maskX, maskY;
-  u16 originX, originY;
-  struct MapCell *cells;
-  u8 *terrainIds;
-};
 
 /// Draws a row of 16 cell pictures (32 tiles) of a layer's cells into its BG
 /// map (screen block 5 + layer), starting at tile (tileX, tileY); the BG map
@@ -184,7 +170,6 @@ void Func_0802ac90(u32 layer, s32 tileX, s32 tileY) {
 #include "bg_scroll.h"
 
 u32 Random16(void);
-
 
 void Func_0802ad84(void) {
   struct MapWork *work;
@@ -372,11 +357,6 @@ void Func_0802af9c(s32 x, s32 y) {
   }
 }
 
-
-struct TilePos {
-  s32 x, y;
-};
-
 void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
                                     u32 width, u32 height) {
   u32 *src = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
@@ -455,11 +435,6 @@ void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
 
 void wait(s32 frames);
 
-struct MapCopyCommand {
-  u16 source;
-  s16 y, width, height, delay;
-} __attribute__((packed, aligned(2)));
-
 void Map_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   struct MapCopyCommand *copyCommand = (struct MapCopyCommand *)steps;
   u32 sourceX = copyCommand->source;
@@ -529,8 +504,6 @@ void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
   Map_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
   Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
 }
-
-extern u8 gMapShapeGrid[];
 
 #define MAP_CELL_TILE_MASK 0x00000fff
 #define MAP_CELL_ATTRIBUTE_MASK 0xfffff000
@@ -691,10 +664,6 @@ void Map_SetShownLayers(u32 v) {
   state->flags = flags;
 }
 
-extern u8 gData_0202e000[];
-extern u8 gData_0202e002[];
-u32 Map_ReadEditU16(u8 **cursor);
-
 void Map_ApplySetFlagEdits(void) {
   u8 *cursor = gData_0202e002;
   u32 entry;
@@ -728,8 +697,6 @@ u32 Map_ReadEditU16(u8 **cursor) {
 
   return low | (high << 8);
 }
-
-void Map_ApplyFlagEdits(s32 flag, s32 attributes);
 
 void Map_SetFlagAndApplyEdits(s32 flag) {
   flag &= 0xfff;
@@ -770,8 +737,6 @@ next:
   goto next;
 }
 
-extern char ResourceId_Map000;
-
 void Map_GetHeaderSize(s32 map, s32 *size) {
   u8 *header;
 
@@ -790,13 +755,6 @@ void Map_GetHeaderSize(s32 map, s32 *size) {
     size[3] = header[3];
 }
 
-struct MapHeader {
-  u8 unk00[44];
-  s32 cells;
-  s32 shapes;
-};
-void Tilemap_ConvertBuffer(void);
-
 void Map_LoadCellsAndShapes(void) {
   u8 *source;
   struct MapHeader *header = Resource_GetTableEntry(
@@ -809,14 +767,6 @@ void Map_LoadCellsAndShapes(void) {
   source = (u8 *)header + header->shapes;
   Resource_DecodeType01(source, gMapShapeGrid);
 }
-
-
-struct PerspectiveTiles {
-  u8 unk000[0x114];
-  u32 *tiles;
-  u8 unk118[0x830];
-  u16 quarterTiles[8];
-};
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   struct PerspectiveTiles *perspective =

@@ -3,6 +3,8 @@
 // Part of screens.c.
 
 #include "../screens_internal.h"
+#include "module/window/screens.h"
+#include "module/window/window.h"
 
 s32 Func_08044a54(void) { return 0; }
 
@@ -15,12 +17,6 @@ s32 Func_08044a54(void) { return 0; }
 #define DJINN_JOIN_WIDTH 26
 #endif
 
-extern const s16 gDjinn_ElementSprites[];
-// Message 46, "<member> found the Venus Djinni <name>!", followed by the
-// Mercury, Mars and Jupiter messages; still "message" in every catalog.
-extern u8 MsgFoundVenusDjinni[];
-
-s32 Message_DecodeMode1(s32 message);
 // UB: Message_Start is called with five of its six arguments, so the flags it
 // reads are whatever the stack word after the fifth holds (the 0 left there as
 // Icon_LoadWithPalette's last argument); UBFIX declares it whole and
@@ -101,8 +97,6 @@ void Func_08044a58(s32 member, s32 element, s32 djinn) {
     Resource_ResetEntry(slot);
   }
 }
-
-extern const s16 gCharacter_SpriteTable[];
 
 s32 Func_08044b80(u32 index) {
   if (index > 8)
@@ -244,13 +238,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 #define TO_SUMMON_WINDOW_HEIGHT 7
 #endif
 
-void Func_0803cf6c(s32 message);
-
-extern const u16 Data_0805f676[];
 extern u8 MsgCanNowSummon[], MsgToSummon[];
-/// The first of four Djinn counts (Venus, Mercury, Mars, Jupiter); the message
-/// four past it ends their line.
-extern u8 MsgSummonVenus[];
 
 void Func_08044dc8(s32 summon) {
   struct WindowWork *work = Ram_HeapSlots->windowTiles;

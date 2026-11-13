@@ -3,6 +3,7 @@
 // Part of game.c.
 
 #include "../game_internal.h"
+#include "module/game/game.h"
 
 const u16 *Djinn_GetDefinition(u32 group, u32 index) {
   s32 entry;
@@ -66,7 +67,7 @@ s32 Djinn_GiveToParty(s32 index, s32 bit) {
 
   Djinn_Give(bestNo, index, bit);
   DjinnRecovery_AddStandby(bestNo, index, bit);
-  GameFlag_SetBit(flag);
+  GameFlag_SetBit__game(flag);
   return bestNo;
 }
 
@@ -88,16 +89,6 @@ s32 Djinn_Give(s32 owner, s32 index, s32 bit) {
   state->flags.slots[index] |= 1 << bit;
   return 0;
 }
-
-struct TradeOfferList {
-  struct TradeOffer offers[72];
-  s32 count;
-};
-
-struct TradeOfferTable {
-  u8 unk00[8];
-  struct TradeOfferList list;
-};
 
 /// Whether the djinn can be set: it is owned, fewer than ten are set, it is
 /// not set already, and no trade offer holds it unless the offer has run out.

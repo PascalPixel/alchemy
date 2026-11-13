@@ -3,6 +3,10 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
+#include "gamepak/far_call/battle.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/battle_effect/f13ba50.h"
+#include "module/tla.h"
 
 // Battle effects: repeat an empty effect.
 
@@ -20,48 +24,13 @@ void BattleEffect_CallDoNothing(s32 cnt) {
   }
 }
 
-
-
 struct SummonArgument;
 
-struct FxRunWork {
-  u8 unk0000[0x78e4];
-  s32 active;
-  u8 unk78e8[8];
-  s32 *script;
-};
-
 struct BattleEffectArgument;
-void BattleEffect_RunRamses(struct BattleEffectArgument *effect);
-void BattleEffect_RunNereid(struct BattleEffectArgument *effect);
-void BattleEffect_RunKirin(struct BattleEffectArgument *effect);
-void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect);
 
-void BattleEffect_RunNeptune(struct BattleEffectArgument *effect);
 /* VIEW(f14b9e8): routine BattleEffect_RunTiamat as void BattleEffect_RunTiamat(s32 *arg); the definition has DEFINE_EFFECT_KIND(BattleEffect_RunDragonDriver, Func_08147aec, 1) DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, Func_08147aec, 0) void Func_08.... */
 extern void BattleEffect_RunTiamat__f14b9e8(s32 *arg) __asm__("BattleEffect_RunTiamat");
-void BattleEffect_RunProcne(struct BattleEffectArgument *effect);
-void BattleEffect_RunJudgment(struct BattleEffectArgument *effect);
-void BattleEffect_RunBoreas(struct BattleEffectArgument *effect);
-void BattleEffect_RunThor(struct BattleEffectArgument *effect);
-void BattleEffect_RunMegaera(struct BattleEffectArgument *effect);
-void BattleEffect_RunFlora(struct BattleEffectArgument *effect);
-void BattleEffect_RunMoloch(struct BattleEffectArgument *effect);
-void BattleEffect_RunUlysses(struct BattleEffectArgument *effect);
-void BattleEffect_RunHaures(struct BattleEffectArgument *effect);
-void BattleEffect_RunEclipse(struct BattleEffectArgument *effect);
-void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect);
-void BattleEffect_RunDaedalus(struct SummonArgument *arg);
-void BattleEffect_RunAzul(struct BattleEffectArgument *effect);
-void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect);
-void BattleEffect_RunCharon(struct BattleEffectArgument *arg);
-void BattleEffect_RunIris(struct BattleEffectArgument *effect);
-void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect);
-void BattleEffect_RunTrident(struct BattleEffectArgument *effect);
-void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect);
-void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect);
 
-extern void (*gData_08197aa0[])(s32 *script);
 extern u8 gMapCellBuffer[];
 
 /// Runs the battle effect of mode *arg (1 to 29; 0 and 11 the default one)
@@ -222,27 +191,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
   }
 }
 
-
-struct FxPartyList {
-  u8 unk00[20];
-  s32 count;
-  u8 unk18[12];
-  s16 ids[8];
-};
-
-struct FxUnit {
-  u8 unk00[56];
-  s16 hp;
-};
-
-struct FxBgScroll {
-  u8 unk00[6];
-  u16 y;
-};
-
 void *Unit_Get(s32 owner);
-void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
-void BattleBackground_LoadFar(s32, s32, s32);
 
 /// Spawns the battle objects of each unit in the list that has HP left.
 void BattleEffect_SelectLivingTargets(struct FxPartyList *party) {

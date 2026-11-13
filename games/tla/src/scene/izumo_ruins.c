@@ -20,6 +20,7 @@
 #include "call.h"
 #include "text/msg_ids.h"
 #include "event_inline.h"
+#include "module/scene/izumo_ruins.h"
 
 s32 Func_02000eac(u32 layer, s32 x, s32 y) {
   struct IzumoRuinsMapWork *map =
@@ -264,10 +265,6 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 #include "objcmd.h"
-
-extern u32 gData_020015a0[];
-extern u32 gData_020015dc[];
-extern u32 gData_02001618[];
 
 // clang-format off
 u32 gData_02001540[] = {

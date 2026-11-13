@@ -33,40 +33,12 @@
 #include "display_scroll.h"
 #include "render_input.h"
 #include "text/msg_ids.h"
+#include "module/menu/menu.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "resource_ids.h"
 
-/// One eight-byte OAM entry in the credits' sprite buffer.
-struct DisplayScrollObject {
-  u32 attr01;
-  u32 attr2;
-};
-
-extern u32 gVBlankCount;
-extern u8 gData_03001110;
-extern s16 Data_02007500;
-extern struct DisplayScrollObject *gDisplayScroll_Objects;
-extern const u32 gDisplayScroll_SlideResources[];
-extern const void *gDisplayScroll_LineTable[];
-
-/// The scrolling picture's state. Func_081a133c, a VBlank task, moves the
-/// scroll toward its target while Func_081a17d0 waits for it to arrive.
-///@{
-extern s16 Data_02007514;           ///< which character block the picture is in
-extern s16 Data_02007516;           ///< frames of the fade-in, to 64
-extern u32 Data_02007518;           ///< the tilemap's scroll, 16.16 pixels
-extern volatile s32 gData_0200751c; ///< the scroll, 16.16 pixels
-extern s16 gData_02007520;          ///< the row the scroll is heading for
-extern s16 Data_02007524;           ///< the most rows a frame moves
-extern u8 *Data_02007528;           ///< the picture's map
-/// The 24 sprites of the picture's border strips.
-extern struct QueuedSprite *gData_0200752c;
 ///@}
-
-void Func_081a0a70(void);
-void Func_081a0e0c(s32 credits);
-void Func_081a0fb8(void);
-void Window_LoadGraphics(void);
-void DebugText_Clear(void);
-s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
 
 /// Fills 30K bytes of 256-colour characters with colour 1 and clears 128
 /// palette colours.
@@ -97,11 +69,8 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alt) {
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 64, REG_DMA3);
 }
 
-typedef s32 (*PackedDecoder)(const u8 *source, void *destination, u32 fill);
-
-extern const u8 BattleEffect_ExpandCode[];
-extern u16 gFlash_Handler3[];
-extern u8 BattleEffect_ExpandCodeSize[];
+/* VIEW(credits): variable gFlash_Handler3 as u16 gFlash_Handler3[]; sound_driver_symbols.h has struct LzPackWork *gFlash_Handler3. */
+extern u16 gFlash_Handler3__credits[] __asm__("gFlash_Handler3");
 
 /// Loads a backdrop resource (its 128 colours, then its packed tiles) into
 /// one half of BG VRAM and queues its palette for the next VBlank, as The
@@ -151,9 +120,9 @@ void Func_081a052c(u32 resourceId, s32 alternate) {
     blue = (sum + blue * 5) / 16;
     green = (sum + green * 5) / 16;
     red = (sum + red * 5) / 16;
-    gFlash_Handler3[i] = blue << 10 | green << 5 | red;
+    gFlash_Handler3__credits[i] = blue << 10 | green << 5 | red;
   }
-  IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)gFlash_Handler3,
+  IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)gFlash_Handler3__credits,
                       DMA_COPY_WORDS(64));
 }
 
@@ -401,8 +370,6 @@ static inline s32 ClearWords(void *destination, s32 size) {
   return Iwram_ClearWordsEntry(destination, size);
 }
 
-s32 Func_08038418(s32 message, u8 *canvas, s32 align);
-
 /// Draws one line of the credits' scrolling text: the message is drawn into a
 /// canvas of one byte a pixel, packed to two pixels a byte, and copied into
 /// object tiles from slot on, its top half then its bottom half.
@@ -619,8 +586,6 @@ void Func_081a0fb8(void) {
   Dma_Set(gDisplayScroll_Objects, OAM, DMA_COPY_WORDS(256), REG_DMA3);
 }
 
-extern const u8 gDisplayScroll_GlyphWidths[];
-extern const u8 gDisplayScroll_Font[];
 static __inline__ void DisplayScroll_CopyWords(void *destination, void *source,
                                                s32 size) {
   Iwram_CopyWords(destination, source, size);
@@ -855,8 +820,6 @@ void Func_081a133c(void) {
   gBgScroll[3].x = d;
 }
 
-void Func_081a1830(void);
-
 void Func_081a150c(void) {
   gCpuLoadDisplayEnabled = 0;
   gData_03001110 = 0;
@@ -882,9 +845,6 @@ void Func_081a150c(void) {
   Io_Write16(16, &REG_BLDALPHA);
   Func_081a1830();
 }
-
-extern const u8 BattleEffect_Expand2Code[];
-extern u8 BattleEffect_Expand2CodeSize[];
 
 /// Func_081a1294's body as Func_081a15dc inlines it: the same copy, written
 /// with each column's strip and tilemap found from its number.
@@ -981,8 +941,6 @@ void Func_081a17d0(void) {
   }
 }
 
-void Func_080140d8(void *entry, s32 slot);
-
 void Func_081a1810(void) {
   struct QueuedSprite *entry = gData_0200752c;
   s32 i;
@@ -1046,38 +1004,6 @@ void Func_081a18f8(s32 enable) {
     }
   }
 }
-
-extern char ResourceId_SuhallaGateBackdrop;
-extern char ResourceId_PirateShipBackdrop;
-extern char ResourceId_CrossboneIsleCaveBackdrop;
-extern char ResourceId_ColossoBackdrop;
-extern char ResourceId_VenusLighthouseAerieStormBackdrop;
-extern char ResourceId_VenusLighthouseAerieBackdrop;
-extern char ResourceId_VenusLighthouseBackdrop;
-extern char ResourceId_SuhallaDesertBackdrop;
-extern char ResourceId_AltmillerCaveBackdrop;
-extern char ResourceId_TunnelRuinsBackdrop;
-extern char ResourceId_BabiLighthouseBackdrop;
-extern char ResourceId_LamakanDesertBackdrop;
-extern char ResourceId_MogallForestBackdrop;
-extern char ResourceId_MercuryLighthouseAerieBackdrop;
-extern char ResourceId_TolbiShipInteriorsBackdrop;
-extern char ResourceId_ImilFuchinFallsBackdrop;
-extern char ResourceId_KolimaForestBackdrop;
-extern char ResourceId_TretTreeInteriorsBackdrop;
-extern char ResourceId_InteriorBackdrop;
-extern char ResourceId_AltinPeakBackdrop;
-extern char ResourceId_TolbiShipDeckBackdrop;
-extern char ResourceId_MercuryLighthouseBackdrop;
-extern char ResourceId_ValeStormBackdrop;
-extern char ResourceId_TretTreeBranchBackdrop;
-extern char ResourceId_BeachBackdrop;
-extern char ResourceId_SnowfieldBackdrop;
-extern char ResourceId_GrasslandBackdrop;
-extern char ResourceId_SolSanctumBackdrop;
-extern char ResourceId_ForestBackdrop;
-extern char ResourceId_VioletSkyBackdrop;
-extern char ResourceId_DuskCloudsBackdrop;
 
 /// The slideshow backdrops, ending in 0. Nothing reads this list.
 // The Broken Seal's list less one.

@@ -4,6 +4,7 @@
 // Part of f04a85c.c.
 
 #include "../f04a85c_internal.h"
+#include "flag_call.h"
 
 // The debug selection row's keys (The Broken Seal's
 // DebugSceneSelect_HandleRowInput): A returns -1 and B -2; Up or Down switches
@@ -82,7 +83,6 @@ s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
 
 // Menu: flag list (move the cursor and press A to toggle).
 
-
 /// Shows 16x16 flags per page and takes input until closed, starting on page
 /// 8. Returns 0.
 s32 DebugFlagEditor_Run(void) {
@@ -97,7 +97,7 @@ s32 DebugFlagEditor_Run(void) {
   win = 0;
   cur[0] = win;
   cur[1] = win;
-  win = Window_Create(1, 0, 28, 20, 2);
+  win = Window_Create__f04a85c(1, 0, 28, 20, 2);
   DebugFlagEditor_DrawTable(win, page);
   MenuArrow_Create(obj, &res);
   for (;;) {
@@ -136,14 +136,10 @@ void String_FormatHexDigits(u32 value, u32 count, u8 *out) {
     *out++ = buf[i];
 }
 
-extern const u8 gMenu_HexDigitsString[];
-
-extern const u8 gMenu_ColonString[];
-
 /* VIEW(handle_selection_row_input): routine WindowSprite_PrepareForRedraw as void WindowSprite_PrepareForRedraw(void); resource_work has void WindowSprite_PrepareForRedraw(struct Window *); tried as the definition's void WindowSprite_PrepareForRedraw(struct Window *work), which the object already declares, it does not compile in tla-ja: games/tla/src/window/f04a85c.c:3393: too few arguments to function `WindowSprite_PrepareForRedraw'. */
 extern void WindowSprite_PrepareForRedraw__handle_selection_row_input(void) __asm__("WindowSprite_PrepareForRedraw");
-void Text_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y);
-s32 GameFlag_Test(s32 flag);
+/* VIEW(f04a85c): routine Text_DrawStringInWindow as void Text_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y); module/window/window.h has void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y). */
+extern void Text_DrawStringInWindow__f04a85c(s32 text, s32 window, s32 x, s32 y) __asm__("Text_DrawStringInWindow");
 
 /// Draws one page of 256 flags as sixteen rows of hexadecimal labels and bits.
 /// Each row: its first flag's number in three hex digits, then its 16 flags
@@ -156,7 +152,7 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
   char bits[17];
 
   WindowSprite_PrepareForRedraw__handle_selection_row_input();
-  Text_DrawStringInWindow((s32)gMenu_HexDigitsString, window, 48, 0);
+  Text_DrawStringInWindow__f04a85c((s32)gMenu_HexDigitsString, window, 48, 0);
 
   flag = startFlag << 8;
   for (row = 0; row != 16; row++) {
@@ -168,8 +164,8 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
       label[i] = 0;
     }
     String_FormatHexDigits(flag, 3, label);
-    Text_DrawStringInWindow((s32)label, window, 0, y);
-    Text_DrawStringInWindow((s32)gMenu_ColonString, window, 32, y);
+    Text_DrawStringInWindow__f04a85c((s32)label, window, 0, y);
+    Text_DrawStringInWindow__f04a85c((s32)gMenu_ColonString, window, 32, y);
 
     for (i = 0; i < 16; i++) {
       s32 val = GameFlag_Test(flag);
@@ -177,11 +173,9 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
       flag++;
     }
     bits[i] = 0;
-    Text_DrawStringInWindow((s32)bits, window, 48, y);
+    Text_DrawStringInWindow__f04a85c((s32)bits, window, 48, y);
   }
 }
-
-void GameFlag_ClearBit(s32);
 
 /// Moves within the flag grid, changes pages, or toggles the selected flag.
 /// Returns 1 when flags/page need redrawing, -1 to close, and 0 otherwise.

@@ -95,4 +95,6 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index);
 void ResourceMetadata_ClearRecord(void *destination);
 void NumberText_FormatHex(u32);
 
+void Iwram_Halt(void);
+
 #endif

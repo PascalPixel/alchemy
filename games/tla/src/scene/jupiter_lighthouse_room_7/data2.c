@@ -1,23 +1,14 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "objcmd.h"
+#include "module/scene/jupiter_lighthouse_room_7.h"
 
 void Func_02000038(void);
 void Func_0200013c(void);
-void Func_02000160(void);
-void Func_02000184(void);
 void Func_02000778(void);
 void Func_020007a4(void);
-void Func_020009d8(void);
 void Func_020009e4(void);
-void Func_02000a74(void);
-void Func_02000c7c(void);
-void Func_02000cec(void);
 void Func_02000e20(void);
-
-extern u32 gData_02003110[];
-extern u32 gData_0200314c[];
-extern u32 gData_02003188[];
 
 // clang-format off
 u32 gData_02003110[] = {

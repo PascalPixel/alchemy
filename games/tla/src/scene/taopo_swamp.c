@@ -14,8 +14,12 @@
 #include "ram_buffer.h"
 #include "call.h"
 #include "scene_tables.h"
-
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+#include "field.h"
+#include "graphics.h"
+#include "module/scene/airs_rock_inside.h"
+#include "module/scene/scene.h"
+#include "module/scene/taopo_swamp.h"
+#include "module/tla.h"
 
 void Func_02000038(void) { Func_080d2b4c(8, 11); }
 
@@ -64,16 +68,13 @@ void Func_02000118(void) {
   Event_SetFlag(0x220);
 }
 
-struct Charge {
-  u8 pad[17];
-  u8 low : 2;
-  u8 level : 6;
-};
-
 extern u8 gData_02002ae8[];
-void Animation_ApplyChildArgument(void *sprite, s32 argument);
-void Animation_ApplyChildValuesToRecord(void *sprite, s32 value);
-void Animation_ApplyChildValue(void *sprite, s32 value);
+/* VIEW(taopo_swamp): routine Animation_ApplyChildArgument as void Animation_ApplyChildArgument(void *sprite, s32 argument); actor_view.h has s32 Animation_ApplyChildArgument(struct ActorSpriteView *, s32). */
+extern void Animation_ApplyChildArgument__taopo_swamp(void *sprite, s32 argument) __asm__("Animation_ApplyChildArgument");
+/* VIEW(taopo_swamp): routine Animation_ApplyChildValuesToRecord as void Animation_ApplyChildValuesToRecord(void *sprite, s32 value); actor_view.h has void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *, u32). */
+extern void Animation_ApplyChildValuesToRecord__taopo_swamp(void *sprite, s32 value) __asm__("Animation_ApplyChildValuesToRecord");
+/* VIEW(taopo_swamp): routine Animation_ApplyChildValue as void Animation_ApplyChildValue(void *sprite, s32 value); actor_view.h has void Animation_ApplyChildValue(struct ActorSpriteView *, s32). */
+extern void Animation_ApplyChildValue__taopo_swamp(void *sprite, s32 value) __asm__("Animation_ApplyChildValue");
 
 // When actor id stands at x 12, inside an event: the actor drops in place, then
 // for 25 frames throws splashes, then two sparks, and sets flag 0x8e5.
@@ -111,11 +112,11 @@ do {
         Actor_StartScript(splash, gData_02002ae8);
         splash->motionFlags = 0;
         if (splashSprite != 0) {
-          ((s32 (*)())Animation_ApplyChildArgument)(splashSprite, 1);
+          ((s32 (*)())Animation_ApplyChildArgument__taopo_swamp)(splashSprite, 1);
           splashSprite->nextFrame = k;
           splashSprite->priority = sprite->priority;
-          Animation_ApplyChildValuesToRecord(splashSprite, 13);
-          Animation_ApplyChildValue(splashSprite, 8);
+          Animation_ApplyChildValuesToRecord__taopo_swamp(splashSprite, 13);
+          Animation_ApplyChildValue__taopo_swamp(splashSprite, 8);
         }
       }
     }
@@ -138,7 +139,7 @@ do {
       }
       spark->terrainId = 1;
       if (sparkSprite != 0) {
-        Animation_ApplyChildArgument(sparkSprite, 2);
+        Animation_ApplyChildArgument__taopo_swamp(sparkSprite, 2);
         sparkSprite->nextFrame = zero;
         sparkSprite->priority = 2;
       }
@@ -220,8 +221,6 @@ void Func_02000464(s32 a, s32 id) {
 
 extern u8 gData_020029b8[];
 extern u8 gData_020029c0[];
-s32 Func_02002708(s32 hole);
-s32 Func_02002850(struct Actor *object, struct Vector3 *position);
 
 void Func_020004c8(s32 hole) {
   struct Actor *leader;
@@ -1001,16 +1000,11 @@ void Func_020016fc(void) {
   }
 }
 
-extern u8 gDecodeFillByte;
 extern const u8 gData_02002a78[], gData_02002ab6[], gData_02002abc[],
     gData_02002aca[], gData_02002ad8[];
 void Func_02002120(void);
 void Actor_SetWideSprite(s32 id, s32 wide);
-void Func_02002960(s32 a);
 void Func_02002614(u16 *points, u16 *values, s32 arg);
-void Func_02002980(void);
-void Func_02002988(s32 a, s32 flag, s32 b, s32 c);
-void Func_02002114();
 
 #if !TLA_PATCH_1
 s32 Scene_Initialize(void) {
@@ -1445,22 +1439,6 @@ void Func_02001eb8(void) {
     Func_02002848_(45, frame, 3, 3, 76, 61);
 }
 
-struct MapFocus {
-  s32 scrolledX;
-  s32 scrolledZ;
-  s32 x;
-  s32 z;
-  s32 scaleX;
-  s32 scaleZ;
-  s32 unk18[4];
-  u16 unk28;
-  u16 unk2a;
-  u16 cellX;
-  u16 row;
-  u8 *cell;
-  u8 *shape;
-};
-
 extern u8 gMapCellBuffer[];
 
 void Func_02001ff0(s32 x, s32 z) {
@@ -1529,7 +1507,8 @@ void Func_02002120(void) {
 }
 
 // volatile: the VBlank handler sets the held keys, as gKeysHeld in The Broken Seal.
-extern volatile u32 gInput;
+/* VIEW(taopo_swamp): variable gInput as volatile u32 gInput; input.h has struct InputState gInput. */
+extern volatile u32 gInput__taopo_swamp __asm__("gInput");
 
 void Func_02002144(void) {
   struct SceneState *state = &gSceneState;
@@ -1548,9 +1527,9 @@ void Func_02002144(void) {
   do {
     sprite->dirty = 1;
   } while (0);
-  if (gInput & 0xf0) {
+  if (gInput__taopo_swamp & 0xf0) {
     step = 0x1400;
-    if (gInput & 2)
+    if (gInput__taopo_swamp & 2)
       step = step * 3 >> 1;
     state->timer += step / 96 + 1;
   }
@@ -1569,7 +1548,7 @@ void Func_02002144(void) {
       spark->motionFlags = 0;
       spark->terrainId = 1;
       if (sparkSprite != 0) {
-        Animation_ApplyChildArgument(sparkSprite, 2);
+        Animation_ApplyChildArgument__taopo_swamp(sparkSprite, 2);
         sparkSprite->nextFrame = 0;
         sparkSprite->priority = 2;
       }
@@ -1700,24 +1679,6 @@ void Func_020025d4(void) {
 // register its own way for Func_02002084 above.
 #undef REG_BLDALPHA
 #include "system/io_reg.h"
-
-struct SwingPoint {
-  u16 unk00;
-  u16 index;
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 w;
-};
-
-struct SwingWork {
-  u32 unk00;
-  s32 arg;
-  struct SwingPoint points[16];
-  u16 values[4];
-};
-
-s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
 void Func_02002614(u16 *points, u16 *values, s32 arg) {
   struct SwingWork *work = (struct SwingWork *)(gData_020023c4 + 0x188);

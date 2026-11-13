@@ -5,14 +5,22 @@
 #include "actor.h"
 #include "event_inline.h"
 #include "field.h"
+#include "event_work.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/scene/gondowan_cliffs.h"
+#include "module/scene/jupiter_lighthouse_room_7.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
-struct TileSprite {
+/* VIEW(s03cc): tag struct TileSprite as struct TileSprite__s03cc; module/scene/scene.h has another definition. */
+struct TileSprite__s03cc {
   u8 unk00[18];
   u16 tile;
 };
 
 void Func_020003cc(struct Actor *object) {
-  struct TileSprite *sprite = object->sprite;
+  struct TileSprite__s03cc *sprite = object->sprite;
 
   sprite->tile -= 0x800;
 }
@@ -30,13 +38,6 @@ void Func_020003dc(struct Actor *object, s32 height) {
 
 #include "field_sprite.h"
 #include "system/field_effect.h"
-
-void Event_Start(void);
-void Event_End(void);
-s32 Math_Cosine(s32 angle);
-void Func_020001ec(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
 
 void Func_020003f8(s32 unk0, s32 id) {
   struct Actor *actor = Actor_GetById(id);
@@ -96,8 +97,6 @@ void Func_020003f8(s32 unk0, s32 id) {
 }
 
 #include "scene_tables.h"
-
-s32 Map_GetTerrainHeight(s32, s32, s32);
 
 void Func_02000584(void) {
   struct Actor *object = Actor_Get(12);
@@ -188,7 +187,8 @@ const u8 *Scene_GetEvents(void) {
 #include "frame.h"
 #include "io_reg.h"
 
-extern u16 gData_02001ae0[];
+/* VIEW(s03cc): variable gData_02001ae0 as u16 gData_02001ae0[]; module/scene/loho.h has struct Trigger gData_02001ae0[]. */
+extern u16 gData_02001ae0__s03cc[] __asm__("gData_02001ae0");
 
 void Func_02000738(void) {
   u16 *color = (u16 *)&BG_PLTT_COLOR(0, 12);
@@ -199,17 +199,13 @@ void Func_02000738(void) {
     u32 index = 3;
 
     index &= phase;
-    *color++ = gData_02001ae0[index];
+    *color++ = gData_02001ae0__s03cc[index];
     phase++;
   }
 }
 
 #include "iwram_call.h"
 #include "call.h"
-
-void Event_SetDestination(s32, s32);
-void Func_020012fc(void);
-void Func_02001304(s32 a, s32 b, s32 c);
 
 void Func_02000768(void) {
   if (gMainRoutineWork.entrance == 99) {
@@ -219,7 +215,7 @@ void Func_02000768(void) {
   }
   Func_020012fc();
   Value3((s32 (*)())Func_02001304, 0, 9, 10);
-  Value3((s32 (*)())Iwram_CopyWordsEntry, (s32)gData_02001ae0, 0x05000018, 8);
+  Value3((s32 (*)())Iwram_CopyWordsEntry, (s32)gData_02001ae0__s03cc, 0x05000018, 8);
   Task_AddFrame(Func_02000738, 0x480);
 }
 
@@ -287,16 +283,7 @@ void Func_020007d8(void) {
   FieldEvent_SetExitRequest(1);
 }
 
-struct MapLayerBits {
-  u8 unk00[23];
-  u8 unk17Low : 2;
-  u8 priority : 2;
-  u8 unk17High : 4;
-};
-
-void Func_020012f4(void);
 void Func_0200130c(s32 a, s32 b, s32 c, s32 d);
-void Func_02000fcc(s32 a, s32 b);
 struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
                                 s32 high);
 
@@ -362,7 +349,7 @@ s32 Scene_Initialize(void) {
   } else {
     Actor_GetById(15)->collisionFlags |= 16;
   }
-  Iwram_CopyWords(((u8 *)gData_02001ae0), (void *)&BG_PLTT_COLOR(0, 12), 8);
+  Iwram_CopyWords(((u8 *)gData_02001ae0__s03cc), (void *)&BG_PLTT_COLOR(0, 12), 8);
   Task_AddFrame(Func_02000738, 0x480);
   ((struct MapLayerBits *)Ram_HeapSlots->mapWork)->priority = 1;
 done:
@@ -405,8 +392,6 @@ struct RideWork {
   struct RideEntry entries[16];
   void *block;
 };
-
-extern u8 gData_020023c4[];
 
 // The swinging actors' callback, the same as Yampi Desert's platforms: for each
 // of the 16 entries it moves the actor on its timer, writes its height to the
@@ -488,23 +473,8 @@ void Func_02000be4(void) {
 
 #include "graphics/vram_tab.h"
 
-struct SwingActor {
-  s16 id;
-  s16 phase;
-  s16 height;
-  s16 period;
-  s16 riseAt;
-  s16 sinkAt;
-  s16 top;
-  s16 bottom;
-  s16 unk10;
-  s16 speed;
-  s16 unk14;
-  s16 bob;
-  struct Actor *shadow;
-};
-
-struct SwingWork {
+/* VIEW(s03cc): tag struct SwingWork as struct SwingWork__s03cc; module/tla.h has another definition. */
+struct SwingWork__s03cc {
   s16 entry;
   s16 value;
   struct SwingActor actors[16];
@@ -518,7 +488,7 @@ void Func_0200119c(u32 *oam, s32 depth);
 // 16 pixels of its height and the bobbing head on top, at most 80 sprites,
 // queued by Func_0200119c.
 void Func_02000dac(void) {
-  struct SwingWork *work = (struct SwingWork *)(gData_020023c4 + 0x188);
+  struct SwingWork__s03cc *work = (struct SwingWork__s03cc *)(gData_020023c4 + 0x188);
   struct SwingActor *swing = work->actors;
   s32 k;
   u32 tile = gResourceTableEntries[work->entry].offset >> 5;
@@ -597,19 +567,8 @@ void Func_02000dac(void) {
   }
 }
 
-struct GondowanCliffsWork {
-  s16 entry;
-  u16 value;
-  u8 unk004[0x1c0];
-  void *block;
-};
-
-extern const u8 gField_Tiles64D[];
-
-void *Heap_AllocEwram(s32 size);
-void Resource_DecodeType01(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
-void Heap_Release(void *block);
+/* VIEW(s03cc): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
+extern void Resource_DecodeType01__s03cc(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 void Func_02000fcc(s32 unused, s32 value) {
   struct GondowanCliffsWork *work =
@@ -619,7 +578,7 @@ void Func_02000fcc(s32 unused, s32 value) {
   if (!Event_GetFlag(0x109))
     Call2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
-  Resource_DecodeType01(gField_Tiles64D, buffer);
+  Resource_DecodeType01__s03cc(gField_Tiles64D, buffer);
   work->entry = Resource_FindFreeEntry();
   Vram_Load(work->entry, 0x800, buffer);
   Heap_Release(buffer);

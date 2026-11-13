@@ -20,6 +20,12 @@
 #include "field_sprite.h"
 #include "macros.h"
 #include "main_routine_work.h"
+#include "event_work.h"
+#include "module/field/field.h"
+#include "module/scene/clear.h"
+#include "module/scene/jupiter_lighthouse_room_4.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -31,13 +37,8 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_02000724(s32 id);
-void PartyInventory_Remove();
-
-struct EventWorkLock {
-  u8 unk000[0x15a];
-  u16 locked;
-};
+/* VIEW(jupiter_lighthouse_room_4): routine PartyInventory_Remove as void PartyInventory_Remove(); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
+extern void PartyInventory_Remove__jupiter_lighthouse_room_4() __asm__("PartyInventory_Remove");
 
 static inline void SetCollisionCode(s32 x, s32 z, s32 layer, s32 value) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
@@ -100,14 +101,14 @@ void Func_020001dc(s32 item) {
   Event_SetFlag(0xa07);
   Event_PlaySound(134);
   Func_0200017c();
-  PartyInventory_Remove(item);
+  PartyInventory_Remove__jupiter_lighthouse_room_4(item);
 }
 
 void Func_020001fc(s32 item) {
   Event_SetFlag(0xa08);
   Event_PlaySound(134);
   Func_020001ac();
-  PartyInventory_Remove(item);
+  PartyInventory_Remove__jupiter_lighthouse_room_4(item);
 }
 
 void Func_0200021c(void) {
@@ -117,8 +118,8 @@ void Func_0200021c(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-s32 Math_Cosine(s32 angle);
-void Func_02001da8(struct Actor *object, s32 mode);
+/* VIEW(jupiter_lighthouse_room_4): routine Func_02001da8 as void Func_02001da8(struct Actor *object, s32 mode); module/scene/airs_rock.h has void Func_02001da8(void). */
+extern void Func_02001da8__jupiter_lighthouse_room_4(struct Actor *object, s32 mode) __asm__("Func_02001da8");
 
 /// A particle's step, Jupiter Lighthouse room 2's Func_02000720 with other
 /// numbers: it circles at its angle (action) around x 232 and rises with its
@@ -134,9 +135,9 @@ void Func_02000244(struct Actor *object) {
                    (232 << 16),
                (height * 3 << 16) - (120 << 16), 130 << 18);
   if ((s16)object->unk66 == 1)
-    Func_02001da8(object, 7);
+    Func_02001da8__jupiter_lighthouse_room_4(object, 7);
   if ((s16)object->unk66 == 38)
-    Func_02001da8(object, 2);
+    Func_02001da8__jupiter_lighthouse_room_4(object, 2);
   if (object->y > 0)
     object->unk66 = 0xffff;
   if (Math_Sin(angle) < 0)
@@ -168,11 +169,6 @@ void Func_02000300(void) {
     phase += 5;
   }
 }
-
-void Event_Start(void);
-void Event_End(void);
-void Func_02001f00(s32 id);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 
 s32 Scene_Initialize(void) {
   struct Actor *leader;
@@ -262,7 +258,6 @@ extern s32 gData_020026f0;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_020026f0 = value; }
-extern u16 gData_0200271c[];
 
 void Func_020005e4(void) {
   u16 colors[16];
@@ -302,13 +297,6 @@ next:
   Dma_Set(p, (void *)0x05000184, 0x84000002, REG_DMA3);
   gData_020026f0++;
 }
-
-extern u16 gData_0200273c[];
-extern u16 gData_02002740[];
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02001e28();
-void Func_02001ef8();
 
 void Func_020006a0(s32 mode) {
   gData_020026f4 = 1;
@@ -422,10 +410,10 @@ s32 Func_02000964(s32 *a, s32 *b) {
 }
 
 extern const s32 gData_020026f8[];
-extern s32 gData_02002718;
 
 s32 Func_02001ee8(s32 x, s32 z, s32 layer);
-void Camera_WorldToScreen(s32 *position);
+/* VIEW(jupiter_lighthouse_room_4): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
+extern void Camera_WorldToScreen__jupiter_lighthouse_room_4(s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_02000990(struct Actor *self) {
@@ -453,7 +441,7 @@ void Func_02000990(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Camera_WorldToScreen(position);
+    Camera_WorldToScreen__jupiter_lighthouse_room_4(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;

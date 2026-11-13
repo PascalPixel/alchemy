@@ -8,6 +8,9 @@
 #include "event_inline.h"
 #include "field.h"
 #include "map.h"
+#include "module/field/field.h"
+#include "module/scene/eastern_alhafra.h"
+#include "module/scene/scene.h"
 
 struct PushTarget {
   s32 x; ///< 16.16 fixed-point pixels
@@ -20,17 +23,6 @@ struct PushTarget {
 
 extern s8 gData_02004cb0[];
 extern s32 gData_02004cc8[];
-
-void Func_02004a0c(struct Actor *object, s32 mode);
-void Event_NoOp(void);
-void Func_02004774(struct Actor *object);
-
-/// The heap slots read as words: the map slot comes through u32, not its
-/// pointer type, so its load stays behind the stores of the block.
-struct HeapSlotWords {
-  u32 slots[8];
-  u32 mapWork;
-};
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -120,10 +112,8 @@ void Func_020044c4(struct PushTarget target) {
   Event_NoOp();
 }
 
-extern u16 gData_02004ca4[];
-
-struct Actor *Func_02004c3c(s32 *position, s32 mode);
-s32 Func_02004a64(struct Actor *object, s32 *position);
+/* VIEW(s44c4): routine Func_02004a64 as s32 Func_02004a64(struct Actor *object, s32 *position); module/scene/eastern_alhafra.h has s32 Func_02004a64(struct Actor *actor, struct Vector3 *cell). */
+extern s32 Func_02004a64__s44c4(struct Actor *object, s32 *position) __asm__("Func_02004a64");
 
 void Func_02004774(struct Actor *object) {
   s32 position[3];
@@ -151,11 +141,9 @@ void Func_02004774(struct Actor *object) {
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
-  if (Func_02004a64(object, position) > 0)
+  if (Func_02004a64__s44c4(object, position) > 0)
     FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
 }
-
-void Func_020048ec(s32 id, u32 kind, s32 flag, s32 layer);
 
 void Func_020047fc(const u16 *list) {
   const u16 *spec;
@@ -187,11 +175,6 @@ next:
   }
 }
 
-struct GabombaStatueEffectWork {
-  u8 unk00[0x1a];
-  s16 objectId;
-};
-
 // Finds the current target's table row and shrinks it.
 void Func_02004868(u16 *list, s32 mode, s32 count) {
   struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
@@ -222,8 +205,6 @@ void Func_02004868(u16 *list, s32 mode, s32 count) {
 }
 
 #include "field_event.h"
-
-s32 Func_02004c34(struct Actor *object);
 
 void Func_020048ec(s32 id, u32 kind, s32 flag, s32 layer) {
   struct Actor *object = Actor_Get(id);

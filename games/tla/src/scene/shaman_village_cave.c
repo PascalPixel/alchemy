@@ -17,6 +17,8 @@
 #include "event_work.h"
 #include "text/msg_ids.h"
 #include "event_inline.h"
+#include "module/scene/scene.h"
+#include "module/scene/shaman_village_cave.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -189,7 +191,8 @@ void Func_02000384(void) {
 
 #include "call.h"
 
-void Func_02001098();
+/* VIEW(shaman_village_cave): routine Func_02001098 as void Func_02001098(); module/scene/garoh.h has void Func_02001098(void). */
+extern void Func_02001098__shaman_village_cave() __asm__("Func_02001098");
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -198,7 +201,7 @@ void Func_0200039c(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  result0 = Value3((s32 (*)())Func_02001098, 22, 0x190, -1);
+  result0 = Value3((s32 (*)())Func_02001098__shaman_village_cave, 22, 0x190, -1);
   if (result0 != 0)
     goto L_020083c4;
   Event_ClearFlag(0xa73);
@@ -230,8 +233,6 @@ void Func_02000404(void) {
 #include "scene_ids.h"
 #include "edition.h"
 #include "version.h"
-
-void Func_02001180();
 
 void Func_02000430(void) {
   s32 angle;
@@ -369,8 +370,8 @@ void Func_0200083c(void) {
 }
 
 void Event_SetDestination();
-void Func_02001208();
-void Message_CloseFinishedWindows();
+/* VIEW(shaman_village_cave): routine Message_CloseFinishedWindows as void Message_CloseFinishedWindows(); module/window/window.h has void Message_CloseFinishedWindows(void). */
+extern void Message_CloseFinishedWindows__shaman_village_cave() __asm__("Message_CloseFinishedWindows");
 
 #define EVENT_MESSAGE                                                          \
   (((struct {                                                                  \
@@ -407,11 +408,11 @@ void Func_0200087c(void) {
   Actor_ShowEmote(19, 263, 30);
   Event_OpenMessage(19, 0);
   if (FieldYesNo_Ask(1) == 0) {
-    Message_CloseFinishedWindows();
+    Message_CloseFinishedWindows__shaman_village_cave();
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     EVENT_MESSAGE++;
   } else {
-    Message_CloseFinishedWindows();
+    Message_CloseFinishedWindows__shaman_village_cave();
     EVENT_MESSAGE++;
     FieldEvent_ShowMessageThenWait(20, 0, 5);
   }
@@ -436,9 +437,6 @@ void Func_0200087c(void) {
    } *)Ram_HeapSlots->eventWork)
       ->value = 0;
 }
-
-extern u32 gData_020015e0[];
-extern s32 gData_0200161c[];
 
 void Func_02000a24(void) {
   s16 *target;
@@ -566,11 +564,6 @@ next:
   Event_End();
 }
 
-struct ShamanVillageCaveSceneWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-};
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void ShamanVillageCave_ObjPlace(s32 id, s32 x, s32 z) {
@@ -629,8 +622,6 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-void Func_020011c0();
-
 s32 Scene_PrepareMap(void) {
   s32 result0;
   s32 result1;
@@ -652,9 +643,6 @@ void Func_02001038(void) {
   Func_020011c0();
   return;
 }
-
-extern s32 gData_020012a0[];
-extern u32 gData_020012b8[];
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

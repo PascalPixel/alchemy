@@ -3,13 +3,8 @@
 // Part of game.c.
 
 #include "../game_internal.h"
-
-/// One of the 48 element presets an enemy record names.
-struct ElementPreset {
-  u32 element;
-  u8 digits[4];
-  struct BattleElementStats values[4];
-};
+#include "module/game/game.h"
+#include "module/tla.h"
 
 struct OwnerGrowthRecord;
 
@@ -80,8 +75,6 @@ s32 Enemy_GetAttackElement(void *state) {
 
 extern struct ElementLevelBonus Data_080c6644[16];
 
-u32 Math_UnsignedMulHigh(u32 a, u32 b);
-
 void Unit_CalculateBaseElements(s32 owner,
                                 struct BattleElementStats *destination) {
   struct BattleUnit *state = Unit_Get(owner);
@@ -129,8 +122,6 @@ void Unit_CalculateBaseElements(s32 owner,
 #endif
   }
 }
-
-extern const s32 Data_080c6604[4][4];
 
 /// Chooses a character's class: the series comes from its two strongest
 /// elements (or the item that picks one), and the class is the last of that

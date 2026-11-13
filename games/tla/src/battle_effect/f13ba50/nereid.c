@@ -3,16 +3,12 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
+#include "module/battle_effect/f13ba50.h"
+#include "resource_ids.h"
 
 #undef FORMATION_RESOURCE
 
 // Nereid, summon 2.
-
-extern char ResourceId_WaterSpraySheet;
-extern char ResourceId_FirePillarSheetA; // directory row 0x146
-
-extern u8 Data_08197990[];  // the three columns' feet, x and y
-extern s32 Data_08197998[]; // a falling spark's gravity, by spark
 
 #define SPARK_COUNT 1024
 #define FORMATION_SIZE 12

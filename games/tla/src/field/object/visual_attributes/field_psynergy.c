@@ -4,8 +4,10 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
-
-void BattleEffect_DrawSceneSprite(void);
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/field_effect.h"
+#include "module/field/object.h"
 
 /// If the scene's sprite is active, stops its update callback
 /// (Func_080dba44) and frees its VRAM cache entry.
@@ -20,7 +22,6 @@ void Func_080dbb40(void) {
 }
 
 // Finds a map cell by position.
-
 
 /// Returns the map cell at position x, z in the given layer, read from the
 /// world map's blocks or the cell buffer by the event work's mode.
@@ -41,12 +42,6 @@ struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer) {
   }
   return cells;
 }
-
-s32 GetWorldMapCollisionFar(s32 *position);
-s32 Func_080dbcd8(s32 x, s32 z, s32 layer);
-s32 Func_080dbda8(s32 x, s32 z, s32 layer);
-s32 Func_080dbd5c(s32 x, s32 z, s32 layer);
-s32 Func_080201d0(s32 layer, s32 x, s32 z);
 
 s32 Func_080dbc04(s32 x, s32 z, s32 layer) {
   u8 *event = Ram_HeapSlots->eventWork;
@@ -70,7 +65,6 @@ s32 Func_080dbca8(s32 x, s32 z) {
 s32 Func_080dbcc0(s32 x, s32 z) {
   return Func_080dbb78(x, z, 2)->collisionCode == 236;
 }
-
 
 s32 Func_080dbcd8(s32 x, s32 z, s32 layer) {
   u8 *event = Ram_HeapSlots->eventWork;
@@ -177,16 +171,6 @@ s32 Func_080dbe80(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
 
 // Moves an object into place while growing it.
 
-
-struct MoveScene {
-  u16 mode;
-  u8 unk02[14];
-  struct Actor *mainObject;
-};
-
-void Actor_SetSpritePriorityDirectFar(struct Actor *object, s32 priority);
-void wait(s32 frames);
-
 /// Moves the object from 16 pixels above the effect's main object to (x, y,
 /// z), growing it from 0.25 to 1.
 void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z) {
@@ -210,14 +194,7 @@ void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z) {
   } while (i <= 10);
 }
 
-
 struct MapCell;
-void Actor_StartScriptFar(struct Actor *object, const s32 *script);
-struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
-                                                s32 magnitude, s32 angle);
-u32 Random16(void);
-extern const s32 gData_080f0e78[];
 
 void Func_080dbf94(struct Actor *object, s32 x, s32 y, s32 z) {
   struct Actor *mainObject =
@@ -304,17 +281,11 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
   return ret;
 }
 
-
 #define Actor_SetAnimationSpeedFar                                             \
   ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
 /* VIEW(depthend): routine Func_080200c0 as struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); f0d8740 has struct CaptureObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
 extern struct Actor *Func_080200c0__depthend(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
-
-struct SpawnScene {
-  u8 unk00[0x10];
-  struct Actor *mainObject;
-};
 
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   struct SpawnScene *scene = Ram_HeapSlots->effectWork;
@@ -359,12 +330,8 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
   } while (objectId <= 0x50);
 }
 
-
 /* VIEW(depthend): routine BattleEffect_ApplyColorToTargetBuffer as void BattleEffect_ApplyColorToTargetBuffer(s32 colors, s32 mode); f0d6674 has void BattleEffect_ApplyColorToTargetBuffer(void *buffer, s32 mode). */
 extern void BattleEffect_ApplyColorToTargetBuffer__depthend(s32 colors, s32 mode) __asm__("BattleEffect_ApplyColorToTargetBuffer");
-void GameFlag_ClearBit(s32 flag);
-
-void GameFlag_SetBit(s32 flag);
 
 void Field_StartColorTransition(s32 frames, s32 color) {
   u8 *state = Ram_HeapSlots->eventWork;
@@ -392,12 +359,6 @@ void Field_StartPaletteTransition(s32 frames) {
   GameFlag_ClearBit(0x108);
   BattleEffect_StartBufferInterpolation(frames);
 }
-
-
-s32 GameFlag_Test(s32 flag);
-
-/// The eight tints a field Psynergy washes the screen in (BGR555, fxdata.c).
-extern const u32 gData_080f3954[8];
 
 /// Flags 0x148-0x14f each force one tint, the last set one winning.
 #define FLAG_TINT_FIRST 0x148

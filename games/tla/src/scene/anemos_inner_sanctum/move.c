@@ -1,5 +1,8 @@
 #include "types.h"
 #include "field_effect.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/scene/scene.h"
 
 void Effect_MoveLocal(union FieldObject *object) {
   s32 x;
@@ -22,10 +25,12 @@ void Effect_MoveLocal(union FieldObject *object) {
 #include "field_sprite.h"
 #include "event_inline.h"
 
-extern void Func_020032e0(struct FieldEffect *effect, s32 mode);
+/* VIEW(move): routine Func_020032e0 as void Func_020032e0(struct FieldEffect *effect, s32 mode); module/scene/kibombo.h has void Func_020032e0(void). */
+extern void Func_020032e0__move(struct FieldEffect *effect, s32 mode) __asm__("Func_020032e0");
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gData_02004428[];
-extern void Actor_SetSingleChildFlags(struct FieldEffect *effect, u32 flags);
+/* VIEW(move): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__move(struct FieldEffect *effect, u32 flags) __asm__("Actor_SetSingleChildFlags");
 extern void Actor_SetSpritePriorityB(struct FieldEffect *effect, s32 priority);
 void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -45,10 +50,10 @@ void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_020032e0(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Func_020032e0__move(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_02004428[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSingleChildFlags(effect, 0);
+  Actor_SetSingleChildFlags__move(effect, 0);
   effect->update = Effect_MoveLocal;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
@@ -87,7 +92,7 @@ void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_020032e0(effect, 1);
+    Func_020032e0__move(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
@@ -107,34 +112,6 @@ void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "actor.h"
 #include "iwram_call.h"
 #include "cell_target.h"
-
-struct CellMapCell {
-  u8 unk00[2];
-  u8 event;
-  u8 unk03;
-};
-
-struct CellMapLayer {
-  s32 unk00[2];
-  s32 originX;
-  s32 originZ;
-  u8 unk10[0x20];
-  struct CellMapCell *cells;
-};
-
-struct CellMapWork {
-  u8 unk000[0xec];
-  s32 minX;
-  s32 minZ;
-  s32 maxX;
-  s32 maxZ;
-  u8 unk0fc[0xc];
-  struct CellMapLayer layers[4];
-};
-
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *buffer);
-s32 Resource_FindFreeEntry(void);
 
 s32 Func_02002a74(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   struct CellTarget *table = &Data_02004458;

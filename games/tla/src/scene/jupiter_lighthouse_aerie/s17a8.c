@@ -11,8 +11,16 @@
 #include "vram_tab.h"
 #include "iwram_call.h"
 #include "task.h"
+#include "gamepak/far_call/system.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/scene/jupiter_lighthouse_aerie.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "resource.h"
 
-struct BeamSpark {
+/* VIEW(s17a8): tag struct BeamSpark as struct BeamSpark__s17a8; module/scene/scene.h has another definition. */
+struct BeamSpark__s17a8 {
   u8 unk00[0x18];
   s32 age;
 };
@@ -20,7 +28,7 @@ struct BeamSpark {
 struct BeamWork {
   u8 tiles[0x200];
   struct EffectSprite sprites[32];
-  struct BeamSpark sparks[32];
+  struct BeamSpark__s17a8 sparks[32];
   struct EffectSprite large;
   u8 unkaa8[0x1c];
   s32 from[3];
@@ -39,20 +47,9 @@ struct BeamWork {
   struct Actor *second;
 };
 
-extern char ResourceId_StarSparkleFade;
-extern char ResourceId_GoldenTrident;
-
-void *HeapSlot_AllocFar(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
-void *Resource_GetTableEntry(s32 id);
-void Resource_DecodeType01(void *resource, void *destination);
-s32 Resource_FindFreeEntry(void);
-s32 Resource_ResetEntry(u32 slot);
-void Func_02002b30(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
-                   u32 attributes, s32 tile);
+/* VIEW(s17a8): routine Resource_DecodeType01 as void Resource_DecodeType01(void *resource, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
+extern void Resource_DecodeType01__s17a8(void *resource, void *destination) __asm__("Resource_DecodeType01");
 void Func_02002a20(struct Actor *object);
-void Func_0200105c(struct Actor *object);
-void Func_02001080(void);
 
 static __inline__ void SetUp(struct EffectSprite *sprite, s32 pivotX,
                              s32 pivotY, u32 attributes, s32 tile) {
@@ -67,7 +64,7 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
       *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 460);
   struct EffectSprite *sprite;
   struct EffectSprite *large;
-  struct BeamSpark *spark;
+  struct BeamSpark__s17a8 *spark;
   s32 smallEntry;
   s32 largeEntry;
   s32 smallTile;
@@ -77,7 +74,7 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
 
   work->first = Actor_Get(a);
   work->second = Actor_Get(b);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade), work);
+  Resource_DecodeType01__s17a8(Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade), work);
   smallEntry = Resource_FindFreeEntry();
   smallTile = Vram_Load(smallEntry, 256, work);
   work->smallTile = smallTile;
@@ -93,7 +90,7 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
     *(u16 *)&sprite->depth = 240;
     spark->age = age;
   }
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GoldenTrident), work);
+  Resource_DecodeType01__s17a8(Resource_GetTableEntry((s32)&ResourceId_GoldenTrident), work);
   largeEntry = Resource_FindFreeEntry();
   {
     /* FAKEMATCH(temporary): sprite also holds the size; as a plain argument, 7
@@ -149,24 +146,8 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   HeapSlot_Release(220);
 }
 
-struct LightOam {
-  u32 link;
-  u32 attr01;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u16 unk0a;
-};
-
-extern s16 gData_02003380;
-extern s16 gData_02003382;
-extern struct Actor *gData_02003384[];
-extern struct LightOam Data_020033c4[];
-extern s16 gData_02003484;
-extern s16 gData_02003486;
-
-s32 Func_02002b48(struct Actor *actor);
-void Func_020029c0(struct LightOam *oam, s32 depth);
+/* VIEW(s17a8): variable gData_02003380 as s16 gData_02003380; module/scene/lemurian_ship.h has struct ActorPlacement gData_02003380[]. */
+extern s16 gData_02003380__s17a8 __asm__("gData_02003380");
 
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
@@ -179,7 +160,7 @@ void Func_02001a78(void) {
   s32 i;
   viewX = view[0] & 0xffff0000;
   viewZ = view[1] & 0xffff0000;
-  tile = gResourceTableEntries[gData_02003380].offset >> 5;
+  tile = gResourceTableEntries[gData_02003380__s17a8].offset >> 5;
   viewY = map->origin[1];
   oam = Data_020033c4;
 
@@ -242,14 +223,6 @@ void Func_02001a78(void) {
   }
 }
 
-extern u8 gField_CachedTilesA[];
-extern u8 gField_CachedTilesB[];
-extern u8 gField_CachedTilesC[];
-
-void *Heap_Alloc(s32 size);
-
-void Heap_Release(void *block);
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
@@ -258,9 +231,9 @@ void Func_02001c34(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02003384, 64);
-  Resource_DecodeType01(gField_CachedTilesA, buffer);
-  gData_02003380 = Resource_FindFreeEntry();
-  VramCache_Load(gData_02003380, 0xc00, buffer);
+  Resource_DecodeType01__s17a8(gField_CachedTilesA, buffer);
+  gData_02003380__s17a8 = Resource_FindFreeEntry();
+  VramCache_Load(gData_02003380__s17a8, 0xc00, buffer);
   Heap_Release(buffer);
   Task_Add(Func_02001a78, TASK_PASS_VBLANK);
   gData_02003382 = 0;
@@ -272,9 +245,9 @@ void Func_02001cb4(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_02003384, 64);
-  Resource_DecodeType01(gField_CachedTilesB, buffer);
-  gData_02003380 = Resource_FindFreeEntry();
-  Vram_Load(gData_02003380, 0x800, buffer);
+  Resource_DecodeType01__s17a8(gField_CachedTilesB, buffer);
+  gData_02003380__s17a8 = Resource_FindFreeEntry();
+  Vram_Load(gData_02003380__s17a8, 0x800, buffer);
   Heap_Release(buffer);
   Task_AddFrame(Func_02001a78, TASK_PASS_VBLANK);
   gData_02003382 = 0;
@@ -286,9 +259,9 @@ void Func_02001d34(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_02003384, 64);
-  Resource_DecodeType01(gField_CachedTilesC, buffer);
-  gData_02003380 = Resource_FindFreeEntry();
-  Vram_Load(gData_02003380, 0x800, buffer);
+  Resource_DecodeType01__s17a8(gField_CachedTilesC, buffer);
+  gData_02003380__s17a8 = Resource_FindFreeEntry();
+  Vram_Load(gData_02003380__s17a8, 0x800, buffer);
   Heap_Release(buffer);
   Task_AddFrame(Func_02001a78, TASK_PASS_VBLANK);
   gData_02003382 = 0;

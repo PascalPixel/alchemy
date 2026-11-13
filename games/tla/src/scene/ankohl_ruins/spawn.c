@@ -1,8 +1,5 @@
 #include "ankohl_ruins.h"
-
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
-void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
+#include "field.h"
 
 struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *object = FieldActor_Create(type, x, y, z);

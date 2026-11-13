@@ -6,13 +6,14 @@
 #include "main_routine_work.h"
 #include "field_effect.h"
 #include "event_inline.h"
-
-void Event_Start(void);
-void Map_CenterOnFollowedPoint(void);
-s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotion(union FieldObject *object);
-void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct EffectOptions *options);
-void Event_End(void);
+#include "event_work.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/field/field.h"
+#include "module/field/field_effect.h"
+#include "module/scene/mars_lighthouse_room_f.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
@@ -78,30 +79,8 @@ void Func_02003d80(void) {
 
 #include "room.h"
 
-struct WarpEntry {
-  s16 x;
-  s16 z;
-  s16 flag;
-  s16 unk6;
-};
-
-struct WarpWork {
-  s16 unk00;
-  s16 positionFlag;
-  s16 unk04;
-  s16 sourceX;
-  s16 sourceZ;
-  s16 count;
-  s16 current;
-  s16 busy;
-  u8 unk10[0x10];
-  struct WarpEntry entries[1];
-};
-
-extern struct WarpWork gData_020070a8;
-
-void GameFlag_SetByte(s32 flag, s32 value);
-void Func_02003af0(void);
+/* VIEW(s3d80): routine GameFlag_SetByte as void GameFlag_SetByte(s32 flag, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
+extern void GameFlag_SetByte__s3d80(s32 flag, s32 value) __asm__("GameFlag_SetByte");
 void Func_02003b78(struct WarpWork *work, struct WarpEntry *entry);
 void Func_02003be8(struct WarpWork *work, struct WarpEntry *entry);
 
@@ -128,8 +107,8 @@ top:
       goto end;
     work->current = index;
     Func_02003be8(work, entry);
-    GameFlag_SetByte(work->positionFlag, x);
-    GameFlag_SetByte(work->positionFlag + 8, z);
+    GameFlag_SetByte__s3d80(work->positionFlag, x);
+    GameFlag_SetByte__s3d80(work->positionFlag + 8, z);
     return 1;
   }
   index++;
@@ -150,8 +129,8 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value) {
   if (x != 0 || z != 0) {
     struct Actor *other;
 
-    GameFlag_SetByte(work->positionFlag, 0);
-    GameFlag_SetByte(work->positionFlag + 8, 0);
+    GameFlag_SetByte__s3d80(work->positionFlag, 0);
+    GameFlag_SetByte__s3d80(work->positionFlag + 8, 0);
     object->x = ((x + dx) << 20) + 0x80000;
     object->z = ((z + dz) << 20) + 0x80000;
     other = *(struct Actor **)(event + 460);
@@ -167,9 +146,6 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value) {
 
 /* VIEW(s3d80): variable gData_02005ef8 as extern const s16 gData_02005ef8[]; the definition has s32 gData_02005ef8[] = { 0xffff, - 0x8000, (s32) 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000, }; tried as the definition's extern struct Trigger gData_02005ef8[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:185: invalid use of undefined type `struct Trigger'. */
 extern const s16 gData_02005ef8__s3d80[] __asm__("gData_02005ef8");
-
-void Actor_SetAnimationSpeed(struct Actor *object,
-                                         s32 value);
 
 void Func_02004080(struct Actor *object) {
   s32 angle;
@@ -198,8 +174,6 @@ void Func_02004080(struct Actor *object) {
   Actor_SetAnimationSpeed(object, 48);
 }
 
-void Event_ResolveAllPendingActions(void);
-
 void Func_0200410c(void) {
   u8 *event = Ram_HeapSlots->eventWork;
 
@@ -222,8 +196,6 @@ struct Position {
   s32 z;
 };
 
-s32 ArcTan2(s32 y, s32 x);
-s32 Func_02005538(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
 /* VIEW(s3d80): variable gData_02005f38 as extern s16 gData_02005f38[]; the definition has s32 gData_02005f38[] = { 0xffff, - 0x8000, 0xc000, (s32) 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the definition's extern s32 gData_02005f38[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:275: `gData_02005f38__s3d80' undeclared (first use in this function). */
 extern s16 gData_02005f38__s3d80[] __asm__("gData_02005f38");
 
@@ -367,9 +339,6 @@ done:
 #include "version.h"
 
 #include "call.h"
-
-extern volatile s16 gData_020074c8;
-s32 Func_02005530(struct Actor *object);
 
 void Func_020043ec(void) {
   struct Actor *object;
@@ -531,11 +500,6 @@ void Func_02004700(s32 value) { gData_020074c8 = value; }
 
 #include "system/main_routine_work.h"
 
-void Func_0200410c(void);
-s32 Func_02005538(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
-void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
-void Func_02004080(struct Actor *object);
-
 void Func_0200470c(void) {
   struct Position probe;
   s32 heading;
@@ -676,8 +640,6 @@ extern u16 gData_02005f58[];
 /* VIEW(s4700): variable gData_02005f64 as extern s8 gData_02005f64[][4]; the definition has u32 gData_02005f64[] = { 0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8, }; tried as the definition's extern u32 gData_02005f64[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:714: subscripted value is neither array nor pointer. */
 extern s8 gData_02005f64__s4700[][4] __asm__("gData_02005f64");
 
-void Func_02004a44(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
-
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 s32 Func_02004938(s32 id) {
@@ -739,9 +701,6 @@ void Func_02004a44(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value) {
 
 /* VIEW(s4700): variable gData_02005f7c as extern s32 gData_02005f7c[]; the definition has s16 gData_02005f7c[] = { 0, 16, 0, 16, 0, 16, 16, 0, 16, 0, 16, 0, 16, 0, 0, - 16, 0, - 16, 0, - 16, 0, - 16, - 16, 0, - 16, 0, - 16, 0, - 1...; tried as the definition's extern s16 gData_02005f7c[], Func_02004a8c moves: 12 of 171 instructions, Func_02004bf4 moves: 41 of 132 instructions, Func_02004d10 moves: 27 of 304 instructions in tla-ja. */
 extern s32 gData_02005f7c__s4700[] __asm__("gData_02005f7c");
-
-struct Actor *Func_02004bf4(s32 *direction, s32 *slot, s32 *kind);
-s32 Func_020054f8(struct Actor *object, s32 *position);
 
 static inline s32 Func_020054f8_(struct Actor *object, s32 *position) {
   return Func_020054f8(object, position);
@@ -869,16 +828,6 @@ inner:
 
 #undef PIXELS
 
-void Event_NoOp(void);
-void Func_02004fc0(struct Actor *object);
-
-/// The heap slots read as words: the map slot comes through u32, not its
-/// pointer type, so its load stays behind the stores of the block.
-struct HeapSlotWords {
-  u32 slots[8];
-  u32 mapWork;
-};
-
 void Func_02004d10(struct PushTarget target) {
   u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1005,25 +954,6 @@ void Func_02004fc0(struct Actor *object) {
 #include "field_event.h"
 #include "vram_tab.h"
 
-struct LightOam {
-  u32 link;
-  u32 attr01;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u16 unk0a;
-};
-
-extern s16 gData_020074cc;
-extern s16 gData_020074ce;
-extern struct Actor *gData_020074d0[];
-extern struct LightOam Data_0200f510[];
-extern s16 gData_020075d0;
-extern s16 gData_020075d2;
-
-s32 Func_02005698(struct Actor *actor);
-void Func_02005440(struct LightOam *oam, s32 depth);
-
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
 /// 64 one when the big switch is set, at its animation picture and depth.
@@ -1101,14 +1031,8 @@ void Func_02005048(void) {
 #include "iwram_call.h"
 #include "task.h"
 
-extern u8 gField_CachedTilesA[];
-extern u8 gField_CachedTilesB[];
-extern u8 gField_CachedTilesC[];
-
-void *Heap_Alloc(s32 size);
-void Resource_DecodeType01(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
-void Heap_Release(void *block);
+/* VIEW(s3d80): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
+extern void Resource_DecodeType01__s3d80(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1118,7 +1042,7 @@ void Func_02005204(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_020074d0, 64);
-  Resource_DecodeType01(gField_CachedTilesA, buffer);
+  Resource_DecodeType01__s3d80(gField_CachedTilesA, buffer);
   gData_020074cc = Resource_FindFreeEntry();
   VramCache_Load(gData_020074cc, 0xc00, buffer);
   Heap_Release(buffer);
@@ -1132,7 +1056,7 @@ void Func_02005284(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_020074d0, 64);
-  Resource_DecodeType01(gField_CachedTilesB, buffer);
+  Resource_DecodeType01__s3d80(gField_CachedTilesB, buffer);
   gData_020074cc = Resource_FindFreeEntry();
   Vram_Load(gData_020074cc, 0x800, buffer);
   Heap_Release(buffer);
@@ -1146,7 +1070,7 @@ void Func_02005304(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_020074d0, 64);
-  Resource_DecodeType01(gField_CachedTilesC, buffer);
+  Resource_DecodeType01__s3d80(gField_CachedTilesC, buffer);
   gData_020074cc = Resource_FindFreeEntry();
   Vram_Load(gData_020074cc, 0x800, buffer);
   Heap_Release(buffer);
@@ -1175,7 +1099,6 @@ void Func_020053bc(s32 value) { gData_020075d2 = value; }
 
 void Func_0200004c(void);
 void Func_020006f4(void);
-void Func_02000d80(void);
 void Func_02003478(void);
 void Func_0200351c(void);
 

@@ -12,6 +12,14 @@
 #include "types.h"
 
 #include "scene_tables.h"
+#include "frame.h"
+#include "item_icon.h"
+#include "module/scene/epilogue.h"
+#include "module/scene/scene.h"
+#include "module/window/window.h"
+#include "resource.h"
+#include "scene_ids.h"
+#include "text/msg_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -24,29 +32,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
-
-extern s8 gData_02000a34;
-extern s16 gData_02000a38;
-extern s16 gData_02000a2c;
-struct EpilogueSprite {
-  u8 unk00[5];
-  u8 unk05_0 : 5;
-  u8 unk05_5 : 1;
-  u8 unk05_6 : 2;
-  u8 unk06[3];
-  u8 unk09_0 : 2;
-  u8 unk09_2 : 2;
-  u8 unk09_4 : 4;
-  u8 unk0a[2];
-  s32 unk0c;
-  s32 unk10;
-  u8 unk14[10];
-  u16 unk1e;
-};
-
-extern struct EpilogueSprite gData_02000a00;
-
-void Func_0200083c(struct EpilogueSprite *sprite);
 
 void Func_0200005c(void) {
   if (gData_02000a34 != 0) {
@@ -83,14 +68,8 @@ struct Trigger gSceneEvents[] = {
 #include "system/input.h"
 #include "system/ram_buffer.h"
 
-extern const u16 Data_02000874[];
-extern s32 Data_020008f0;
-extern s32 Data_02000a30;
-
-void *Resource_GetTableEntry(s32 id);
-extern char ResourceId_GreenPanel;
-s32 Resource_FindFreeEntry(void);
-void Resource_DecodeType01(void *resource, void *destination);
+/* VIEW(epilogue): routine Resource_DecodeType01 as void Resource_DecodeType01(void *resource, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
+extern void Resource_DecodeType01__epilogue(void *resource, void *destination) __asm__("Resource_DecodeType01");
 void Func_02000834(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
                    s32 tile);
 
@@ -114,7 +93,7 @@ void Func_02000098(void) {
 
   Dma_Set(Data_02000874, (void *)0x050003c0, 0x80000010, REG_DMA3);
   sprite = &gData_02000a00;
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GreenPanel), buffer);
+  Resource_DecodeType01__epilogue(Resource_GetTableEntry((s32)&ResourceId_GreenPanel), buffer);
   slot = &Data_020008f0;
   value = Resource_FindFreeEntry();
   *slot = value;
@@ -133,22 +112,12 @@ void Func_02000098(void) {
   FieldTask_AddFrame(Func_0200005c, priority);
 }
 
-struct EpilogueWindow {
-  u8 unk00[8];
-  u16 unk08;
-  u16 unk0a;
-  u8 unk0c[2];
-  u16 unk0e;
-};
-
-extern s32 gData_02000a28;
-
-s32 BattleEffect_GetResourceId(s32 message);
 struct EpilogueWindow *Message_OpenWindow(s32 id, s32 x, s32 y,
                                                 s32 resource);
-struct EpilogueWindow *Func_02000804(s32 message, s32 a, s32 left, s32 line);
-s32 Message_AllTyped(void);
-void Window_Close(struct EpilogueWindow *window, s32 mode);
+/* VIEW(epilogue): routine Func_02000804 as struct EpilogueWindow *Func_02000804(s32 message, s32 a, s32 left, s32 line); module/scene/champa_cliff_caves.h has void Func_02000804(s32 item). */
+extern struct EpilogueWindow *Func_02000804__epilogue(s32 message, s32 a, s32 left, s32 line) __asm__("Func_02000804");
+/* VIEW(epilogue): routine Window_Close as void Window_Close(struct EpilogueWindow *window, s32 mode); uiflow.h has void Window_Close(struct Window *window, s32 release). */
+extern void Window_Close__epilogue(struct EpilogueWindow *window, s32 mode) __asm__("Window_Close");
 
 /// Opens the epilogue's message window at x and y and, unless bit 15 of the
 /// message is set, a name window at left and line that Func_0200005c follows;
@@ -169,7 +138,7 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 frames,
     /* FAKEMATCH(temporary): the name window held in a temporary until after
      * the stores; as name = Func_02000804(...), 2 of 100 instructions differ
      * in tla-en. */
-    struct EpilogueWindow *opened = Func_02000804(message, 0, left, line);
+    struct EpilogueWindow *opened = Func_02000804__epilogue(message, 0, left, line);
 
     gData_02000a34 = 1;
     gData_02000a38 = left << 3;
@@ -184,9 +153,9 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 frames,
   while (!Message_AllTyped())
     System_Wait(1);
   System_Wait(1);
-  Window_Close(window, 2);
+  Window_Close__epilogue(window, 2);
   if (!wide) {
-    Window_Close(name, 2);
+    Window_Close__epilogue(name, 2);
     gData_02000a34 = wide;
   }
   if (frames > 0) {
@@ -256,22 +225,19 @@ void Func_02000244(s32 message, s32 position, s32 frames) {
   Func_02000158(message, x, y, left, line, frames, mode);
 }
 
-s32 DebugText_Clear();
-s32 Window_LoadGraphics();
-s32 Func_02000824();
-s32 Func_02000844();
-s32 Func_0200084c();
+/* VIEW(epilogue): routine DebugText_Clear as s32 DebugText_Clear(); module/system/system.h has void DebugText_Clear(void). */
+extern s32 DebugText_Clear__epilogue() __asm__("DebugText_Clear");
+/* VIEW(epilogue): routine Window_LoadGraphics as s32 Window_LoadGraphics(); module/system/system.h has void Window_LoadGraphics(void). */
+extern s32 Window_LoadGraphics__epilogue() __asm__("Window_LoadGraphics");
+/* VIEW(epilogue): routine Func_02000844 as s32 Func_02000844(); module/scene/aqua_rock.h has void Func_02000844(void). */
+extern s32 Func_02000844__epilogue() __asm__("Func_02000844");
 s32 Func_02000854();
 s32 Func_0200085c();
-s32 Func_02000864();
 s32 WindowSystem_InitField();
-extern u8 MsgFinallyWeVe[];
-extern u8 gRenderOamEnabled;
 extern char ResourceId_EndingCliffDayPicture,
     ResourceId_EndingCliffSunsetPicture, ResourceId_EndingVillagersPictureA,
     ResourceId_EndingEmbracePicture, ResourceId_EndingReunionPicture,
     ResourceId_EndingSunsetPlainPicture, ResourceId_EndingTheEndPicture;
-extern char SceneId_Ov64a;
 
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define TILES_FLAG_OFFSET 0x118c
@@ -298,7 +264,7 @@ s32 Scene_Initialize(void) {
   actor[85] = zero;
   one = 1;
   *eventMode = one;
-  Func_02000844();
+  Func_02000844__epilogue();
   WindowSystem_InitField();
   tiles = Ram_HeapSlots->windowTiles;
   tiles[6] = one;
@@ -462,8 +428,8 @@ L_0200871e:
   } while (0);
   value = 0x1040;
   REG_DISPCNT = value;
-  Window_LoadGraphics();
-  DebugText_Clear();
+  Window_LoadGraphics__epilogue();
+  DebugText_Clear__epilogue();
   gRenderOamEnabled = 1;
   Event_ClearFlag(0x17c);
   Call2((void (*)())Func_02000824, (s32)&SceneId_Ov64a, 2);

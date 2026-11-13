@@ -3,13 +3,7 @@
 // Part of system.c.
 
 #include "../system_internal.h"
-
-struct SerialCommandWork {
-  u8 unk0000[0x313c];
-  u32 command;
-  u16 progress;
-  u16 state;
-};
+#include "actor.h"
 
 void Serial_QueueCommand(u32 command) {
   struct SerialCommandWork *work = Ram_HeapSlots->serialWork;
@@ -480,10 +474,6 @@ void BattleLink_ResetTransferState(void) {
   *ime = saved;
 }
 
-struct SerialHalfword {
-  u16 v;
-};
-
 void Serial_StepBlockTransfer(void) {
   struct SerialTransferState *peer;
   u32 id;
@@ -586,9 +576,6 @@ void Serial_StepBlockTransfer(void) {
 }
 
 extern u8 gMapCellBuffer[];
-extern const u8 Cartridge_Restart[];
-
-void Sound_PlayFar(s32 cue);
 
 void Func_08016bd8(void) {}
 

@@ -8,15 +8,16 @@
 #include "field_event.h"
 #include "event_inline.h"
 #include "field.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "module/scene/scene.h"
+#include "module/scene/tundaria_tower.h"
+#include "module/tla.h"
 
 void Func_02001e5c(s32 value) { gData_02003cd0 = value; }
 
 void Func_020017dc(void);
-void Func_02001868(void);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02002f80(struct Actor *object, s32 mode);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-s32 Func_02003028(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 void Func_02001e68(void) {
   struct Actor *object;
@@ -127,8 +128,6 @@ end:
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-void Func_02002184(s32 id, u32 kind, s32 flag, s32 layer);
-
 void Func_02002094(u16 *table) {
   u16 *row;
   s32 id;
@@ -151,11 +150,6 @@ loop:
   if (row[0] != 0xffff)
     goto loop;
 }
-
-struct GabombaStatueEffectWork {
-  u8 unk00[0x1a];
-  s16 objectId;
-};
 
 // Finds the current target's table row and shrinks it.
 void Func_02002100(u16 *list, s32 mode, s32 count) {
@@ -192,7 +186,6 @@ top:
     goto top;
 }
 
-s32 Func_02003160(struct Actor *object);
 #include "map.h"
 
 void Func_02002184(s32 id, u32 kind, s32 flag, s32 layer) {
@@ -233,11 +226,6 @@ void Func_02002184(s32 id, u32 kind, s32 flag, s32 layer) {
 // On entering, sets each listed pillar from its two flags (pushed: moved to its
 // place; else its cell raised and its shape redrawn), then lifts the leader
 // onto the ground under it.
-
-extern u8 gMapShapeGrid[];
-
-s32 Func_02003010(s32 layer, s32 x, s32 z);
-s32 Func_02003180(s32 layer, s32 shape, s32 height);
 
 /// On entering, sets each listed pillar from its two flags (pushed: moved to
 /// its place; else its cell raised and its shape redrawn), then lifts the
@@ -293,12 +281,6 @@ done:
     leader->y = ground;
   }
 }
-
-s32 Func_020030f8(void);
-struct Actor *Func_02003188(s32 *position, s32 mode);
-void Func_020029d0(s32 value);
-void Func_02002ca8(s32 offset, s32 layer);
-void Func_02002b04(void);
 
 static __inline__ void Shake(s32 a, s32 b, s32 c) {
   /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 28 of 158
@@ -427,8 +409,6 @@ void Func_020025c8(s32 id) {
 
 // Places the listed actors on their cells.
 
-void Func_02003090(s32 id, s32 target);
-void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 /// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes

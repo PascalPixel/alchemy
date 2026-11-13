@@ -1,24 +1,13 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
+#include "module/scene/naribwe.h"
 
-void Func_02000088(void);
-void Func_020000d8(void);
-void Func_02000140(void);
-void Func_020001a8(void);
 void Func_020001f0(void);
 void Func_02000250(void);
 void Func_020002b0(void);
 void Func_0200030c(void);
-void Func_02000368(void);
-void Func_02000400(void);
-void Func_02000448(void);
 void Func_02000464(void);
-
-extern u32 gData_02000604[];
-extern u32 gData_02000610[];
-extern u32 gData_02000634[];
-extern s16 gData_02000640[];
 
 // clang-format off
 s16 gData_020005fc[] = {

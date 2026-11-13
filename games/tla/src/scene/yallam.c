@@ -4,14 +4,17 @@
 #include "types.h"
 #include "actor.h"
 #include "field.h"
+#include "module/scene/scene.h"
+#include "module/scene/yallam.h"
 
-struct TileSprite {
+/* VIEW(yallam): tag struct TileSprite as struct TileSprite__yallam; module/scene/scene.h has another definition. */
+struct TileSprite__yallam {
   u8 unk00[18];
   u16 tile;
 };
 
 s32 Func_02000038(struct Actor *object) {
-  struct TileSprite *sprite = object->sprite;
+  struct TileSprite__yallam *sprite = object->sprite;
 
   sprite->tile = 0x8000;
   return 0;
@@ -146,8 +149,6 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern char SceneId_Ov676Room1;
-extern char SceneId_Ov676Room2;
 extern const u8 gData_02002ac4[];
 extern const u8 gData_02002be4[];
 extern const u8 gData_02002bfc[];
@@ -199,8 +200,6 @@ void Func_02000270(void) {
   Event_WaitTransitionFrames();
   Event_End();
 }
-
-void Func_02002598(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -270,15 +269,6 @@ const u8 *Scene_GetEvents(void) {
   return gData_02002d24;
 }
 
-/// The bytes of an actor this handler uses. unk63 is the last of the four
-/// scene-owned bytes the Broken Seal's actors keep at this place.
-struct TalkActor {
-  u8 unk00[6];
-  u16 angle; ///< 1/65536 turns
-  u8 unk08[0x5b];
-  u8 unk63;
-};
-
 void Func_02000544(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -340,22 +330,6 @@ s32 Func_020006a4(struct Actor *object) {
     return 1;
   return 0;
 }
-
-// The layout Func_02001904 reads: state and timer sit where
-// struct Actor has its callback and action.
-struct YallamActor {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[78];
-  u8 state;
-  u8 kind;
-  s16 timer;
-  s16 count;
-  u8 unk68[4];
-  void (*update)(struct YallamActor *actor);
-};
 
 void Func_020006bc(s32 actor) {
   /* FAKEMATCH(pin): the object in r5, as the native keeps it; as a plain local,
@@ -1338,7 +1312,6 @@ extern const u8 gData_02002948[];
 extern const u8 gData_02002998[];
 extern const u8 gData_020029c0[];
 extern const u8 gData_02002a04[];
-void Func_02001d14(void);
 
 void Func_02001944(void) {
   struct Actor *actor = Actor_Get(8);
@@ -1474,7 +1447,6 @@ wait3:
    } *)(base))                                                                 \
        ->v)
 
-void Func_02001ec0(void);
 extern u8 MsgIfYouWant[];
 
 void Func_02001d14(void) {
@@ -1685,8 +1657,6 @@ L_02009f9c:
   FieldEvent_SetExitRequest(15);
 }
 
-void Func_020023c8(void);
-
 void Func_02002244(void) {
   if (Event_GetFlag(0x300)) {
     SET_POSITION(Actor_Get(9), 0xa80000, 0, 0xc00000);
@@ -1715,7 +1685,7 @@ void Func_020022f8(void) {
   s32 step;
   s32 i;
   struct Actor *object = Actor_Get(9);
-  struct TileSprite *sprite = object->sprite;
+  struct TileSprite__yallam *sprite = object->sprite;
 
   Event_SetFlag(0x300);
   object->acceleration = 0x18000;

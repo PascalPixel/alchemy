@@ -19,6 +19,9 @@
 #include "io_reg.h"
 #include "map.h"
 #include "frame.h"
+#include "event_work.h"
+#include "module/scene/scene.h"
+#include "text/msg_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -36,11 +39,6 @@ const u8 *Scene_GetPlacements(void) {
     return gData_0200235c;
   return gData_020022cc;
 }
-
-void Event_Start(void);
-void Event_End(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 static __inline__ void Func_02001f2c_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
@@ -101,8 +99,6 @@ const u8 *Scene_GetEvents(void) {
   return gData_020023ec;
 }
 
-extern const u8 MsgTheDoorIsHeld[];
-
 void Func_02000168(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -149,7 +145,6 @@ void Func_020001cc(void) {
 }
 
 void Func_02001f34(s32 a);
-void Event_StartScreenTransition(void);
 
 void Func_02000210(void) {
   Event_Start();
@@ -166,9 +161,6 @@ void Func_02000210(void) {
 }
 
 #define LAYER_WORD(layer, offset) (*(s32 *)((u8 *)(layer) + (offset)))
-
-extern s32 gData_020024b4;
-extern s32 gData_020024b0;
 
 void Func_02000258(void) {
   s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x108);

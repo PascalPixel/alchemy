@@ -17,10 +17,14 @@
 #include "main_routine_work.h"
 #include "event_work.h"
 #include "call.h"
+#include "item_icon.h"
+#include "module/debug/debug.h"
+#include "module/debug/psynergy_test_2.h"
+#include "module/scene/kibombo.h"
+#include "module/tla.h"
+#include "particle.h"
+#include "resource.h"
 
-void Func_020001e0(s32 x, s32 y, s32 z, s32 count);
-void Func_0200029c(void);
-void Func_02000358(void);
 void Func_020005d8(s32 a, s32 b);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -69,15 +73,6 @@ void Func_020000d8(s32 id) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-struct EventFlags {
-  u8 unk000[0xd36];
-  u8 unkd36;
-  u8 unkd37;
-};
-
-void Func_020005e0(void);
-void Func_020005e8(s32 a, s32 b, s32 c);
-
 s32 Func_02000104(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
@@ -96,32 +91,7 @@ s32 Func_02000104(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-struct Particle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 age;
-};
-
-struct ParticleSprite {
-  u8 unk0[8];
-  u16 attr;
-  u8 unkA[30];
-};
-
-struct ParticleWork {
-  u8 tiles[0x500];
-  struct Particle particles[64];
-  struct ParticleSprite sprites[64];
-  s16 next;
-  u16 tile;
-};
-
 void Func_020005f8(struct ParticleSprite *sprite, struct Particle *particle);
-void Func_02000600(struct Particle *particle, s32 unk1, s32 step);
 
 void Func_0200015c(void) {
   struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
@@ -183,15 +153,14 @@ struct Trigger gSceneEvents[] = {
     {TRIGGERS_END},
 };
 
-extern char ResourceId_FallingRock;
-
 struct Spark {
   s32 position[3];
   s32 velocity[3];
   s32 timer;
 };
 
-struct SparkSprite {
+/* VIEW(psynergy_test_2): tag struct SparkSprite as struct SparkSprite__psynergy_test_2; module/tla.h has another definition. */
+struct SparkSprite__psynergy_test_2 {
   u8 unk00[5];
   u8 unk05_0 : 5;
   u8 unk05_5 : 1;
@@ -208,7 +177,7 @@ struct SparkSprite {
 struct SparkWork {
   u8 unk0000[0x500];
   struct Spark sparks[64];
-  struct SparkSprite sprites[64];
+  struct SparkSprite__psynergy_test_2 sprites[64];
   s16 next;
   u16 tileBase;
   s16 resource;
@@ -246,38 +215,23 @@ void Func_020001e0(s32 x, s32 y, s32 z, s32 count) {
 
 #include "system/task.h"
 
-struct Rock {
+/* VIEW(psynergy_test_2): tag struct Rock as struct Rock__psynergy_test_2; module/tla.h has another definition. */
+struct Rock__psynergy_test_2 {
   u8 unk00[24];
   s32 timer;
 };
 
-struct RockSprite {
-  u8 unk00[5];
-  u8 unk05_0 : 5;
-  u8 unk05_5 : 1;
-  u8 unk05_6 : 2;
-  u8 unk06[3];
-  u8 unk09_0 : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-  u8 unk0a[20];
-  u16 unk1e;
-  u8 unk20[8];
-};
-
 struct RockWork {
   u8 tiles[0x500];
-  struct Rock rocks[64];
+  struct Rock__psynergy_test_2 rocks[64];
   struct RockSprite sprites[64];
   s16 next;
   u16 tileBase;
   u16 resource;
 };
 
-struct RockWork *HeapSlot_AllocFar(s32 slot, s32 size);
-void *Resource_GetTableEntry(s32 id);
-void Func_02000560(void *entry, void *destination);
-s32 Resource_FindFreeEntry(void);
+/* VIEW(psynergy_test_2): routine HeapSlot_AllocFar as struct RockWork *HeapSlot_AllocFar(s32 slot, s32 size); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
+extern struct RockWork *HeapSlot_AllocFar__psynergy_test_2(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
 void Func_020005f0(struct RockSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 
@@ -288,11 +242,11 @@ static __inline__ void StartTask(void (*func)(void), s32 priority) {
 }
 
 void Func_0200029c(void) {
-  struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
+  struct RockWork *work = HeapSlot_AllocFar__psynergy_test_2(220, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
   s32 i;
-  struct Rock *rock;
+  struct Rock__psynergy_test_2 *rock;
   struct RockSprite *sprite;
 
   Func_02000560(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
@@ -319,8 +273,6 @@ void Func_0200029c(void) {
 }
 
 #include "fixed_math.h"
-
-s32 Resource_ResetEntry(u32 slot);
 
 void Func_02000358(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;

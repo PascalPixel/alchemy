@@ -4,10 +4,14 @@
 // ---- games/tla/src/scene/kibombo/s2f34.c ----
 
 #include "kibombo.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/scene/kibombo.h"
+#include "module/scene/scene.h"
 
-s32 Math_Cosine(s32 angle);
 void Actor_StartScript(struct KibomboObject *object, const void *script);
-void Effect_AdvanceMotion(struct KibomboObject *object);
+/* VIEW(s2f34): routine Effect_AdvanceMotion as void Effect_AdvanceMotion(struct KibomboObject *object); module/field/field_effect.h has void Effect_AdvanceMotion(union FieldObject *object). */
+extern void Effect_AdvanceMotion__s2f34(struct KibomboObject *object) __asm__("Effect_AdvanceMotion");
 extern u32 gData_02005ca4[];
 
 void Func_02002f34(void) {
@@ -32,7 +36,7 @@ void Func_02002f34(void) {
       object->field64 = 0;
       *(s32 *)&object->unk2c[4] = 0;
       *(s32 *)&object->unk2c[8] = 0;
-      object->update = Effect_AdvanceMotion;
+      object->update = Effect_AdvanceMotion__s2f34;
     }
   }
 }
@@ -379,7 +383,6 @@ void Func_02003308(struct Actor *actor) {
 // ---- games/tla/src/scene/kibombo/s3504.c ----
 // Scene code of overlay 0x670, in ROM order, from s3504's offset up to the next object the overlay links.
 
-
 s32 Func_02005c44(struct FieldSprite *sprite, s32 previous);
 /* VIEW(s3504): routine Func_02003308 as void Func_02003308(struct KibomboObject *object); the definition has void Func_02003308(struct Actor *actor). */
 extern void Func_02003308__s3504(struct KibomboObject *object) __asm__("Func_02003308");
@@ -428,7 +431,6 @@ void Func_02003504(void) {
     i++;
   } while (i <= 15);
 }
-
 
 void Func_02003610(void) {
   Task_RemoveFar(Func_02002ccc);
@@ -497,7 +499,6 @@ void Func_020036e0(s32 open, s32 mode) {
     Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
   }
 }
-
 
 void Func_020037e4(void) {
   struct KibomboEffectWork *work = Ram_HeapSlots->effectWork;
@@ -689,7 +690,6 @@ done:
   Import_EventSetExitRequest(11);
 }
 
-void Map_CenterOnFollowedPoint(void);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 
 void Func_02003c84(void) {
@@ -827,7 +827,6 @@ void Func_02003dec(void) {
 }
 
 void Func_02002eb0(void);
-void Func_020032e0(void);
 
 void Func_020040cc(void) {
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
@@ -1361,7 +1360,6 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-
 s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_020050ac(void) {
@@ -1408,14 +1406,9 @@ extern void Actor_SetPartAttribute__s516c(struct Actor *object, s32 attribute) _
 #undef Animation_SetStateFlags
 #undef Actor_SetSingleChildFlags
 
-void Event_Start(void);
-void Event_End(void);
 void *Unit_Get(s32 owner);
-void Party_RemoveMemberRestored(s32 unit);
 void Func_020050ac(void);
 void Func_020031f0(s32 id);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Func_02002c34(void);
 
 static __inline__ s32 Gauge(s32 value, s32 max) {
@@ -1528,7 +1521,6 @@ void Func_0200516c(void) {
 // ---- games/tla/src/scene/kibombo/s538c.c ----
 // Scene code of overlay 0x670, in ROM order, from s538c's offset up to the next object the overlay links and the overlay's data.
 
-
 void Func_02002de0(void);
 void Func_0200324c(void);
 
@@ -1597,7 +1589,6 @@ void Func_020054e0(void) {
     Actor_SetModeById(14, 4);
   }
 }
-
 
 void Func_020040cc(void);
 void Func_02004294(void);

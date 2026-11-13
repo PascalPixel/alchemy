@@ -3,6 +3,12 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "event_inline.h"
+#include "gamepak/far_call/system.h"
+#include "item_icon.h"
+#include "module/scene/jupiter_lighthouse_room_5.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "resource.h"
 
 struct Spark {
   u8 unk00[0x0c];
@@ -10,22 +16,6 @@ struct Spark {
   s32 dy;
   s32 speed;
   s32 age;
-};
-
-struct SparkSprite {
-  u8 unk00[4];
-  u8 y;
-  u8 low : 5;
-  u8 fullColor : 1;
-  u8 shape : 2;
-  u16 attr1;
-  u8 tile;
-  u8 tileHigh : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-  u8 unk0a[0x14];
-  u16 depth;
-  u8 unk20[8];
 };
 
 struct SparkWork {
@@ -38,8 +28,6 @@ struct SparkWork {
   u16 tile;
   s16 vramEntry;
 };
-
-s32 Math_Cosine(s32 angle);
 
 /// Adds count sparks to the spark ring's 96 entries in heap slot 220, each
 /// with a random angle from 0x6000 across three quarters of a turn, the
@@ -79,16 +67,10 @@ void Func_02001650(s32 count) {
 #include "actor.h"
 #include "main_routine_work.h"
 
-void *HeapSlot_AllocFar(s32 slot, s32 size);
-void *Resource_GetTableEntry(s32 id);
-extern char ResourceId_ColouredOrbs;
-s32 Resource_DecodeType01(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
-void Func_020029e0(struct SparkSprite *sprite, s32 width, s32 height,
-                   s32 attributes, s32 tile);
-s32 Func_020029f0(struct Actor *object);
-s32 Func_020029f8(struct Actor *object);
-void Func_02001538(void);
+/* VIEW(s1650): routine Func_020029f0 as s32 Func_020029f0(struct Actor *object); module/scene/scene.h has void Func_020029f0(struct FieldEffect *effect, s32 mode). */
+extern s32 Func_020029f0__s1650(struct Actor *object) __asm__("Func_020029f0");
+/* VIEW(s1650): routine Func_020029f8 as s32 Func_020029f8(struct Actor *object); module/scene/champa_cliff_caves.h has void Func_020029f8(s32 id, s32 mode). */
+extern s32 Func_020029f8__s1650(struct Actor *object) __asm__("Func_020029f8");
 
 void Func_02001718(const s32 *from, const s32 *to) {
   struct SparkWork *work = HeapSlot_AllocFar(220, sizeof(struct SparkWork));
@@ -117,13 +99,13 @@ void Func_02001718(const s32 *from, const s32 *to) {
     Func_020029e0(sprite, 4, 4, 0, tile + (i & 15) * 2);
     sprite->fullColor = 1;
     sprite->palette = 0;
-    sprite->priority = Func_020029f0(leader) & 3;
+    sprite->priority = Func_020029f0__s1650(leader) & 3;
     // Through a union, so this store may alias the age store after it.
     ((union {
        u16 v;
        s32 w;
      } *)&sprite->depth)
-        ->v = Func_020029f8(leader) - 1;
+        ->v = Func_020029f8__s1650(leader) - 1;
     spark->age = -1;
   }
   {
@@ -139,8 +121,6 @@ void Func_02001718(const s32 *from, const s32 *to) {
 #include "vram_tab.h"
 #include "task.h"
 
-s32 Resource_ResetEntry(u32 slot);
-
 void Func_0200185c(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
 
@@ -149,21 +129,7 @@ void Func_0200185c(void) {
   HeapSlot_Release(220);
 }
 
-struct LightOam {
-  u32 link;
-  u32 attr01;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u16 unk0a;
-};
-
-extern s16 gData_02003444;
-extern s16 gData_02003446;
-extern struct Actor *gData_02003448[];
 extern struct LightOam gData_02003488[];
-extern s16 gData_02003548;
-extern s16 gData_0200354a;
 
 void Func_020027d8(struct LightOam *oam, s32 depth);
 
@@ -210,7 +176,7 @@ void Func_02001888(void) {
         *word++ = oy | (ox << 16) | 0x40002000;
         *word = (tile + frame * 8) | 0x800;
         if (gData_0200354a == -1)
-          oam->priority = Func_020029f0(actor);
+          oam->priority = Func_020029f0__s1650(actor);
         else
           oam->priority = gData_0200354a;
         Func_020027d8(oam, depth);
@@ -231,7 +197,7 @@ void Func_02001888(void) {
         *word++ = oy | (ox << 16) | 0xc000a000;
         *word = (tile + frame * 8) | 0x800;
         if (gData_0200354a == -1)
-          oam->priority = Func_020029f0(actor);
+          oam->priority = Func_020029f0__s1650(actor);
         else
           oam->priority = gData_0200354a;
         Func_020027d8(oam, depth);
@@ -240,10 +206,6 @@ void Func_02001888(void) {
     }
   }
 }
-
-extern u8 gField_CachedTilesA[];
-extern u8 gField_CachedTilesB[];
-extern u8 gField_CachedTilesC[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

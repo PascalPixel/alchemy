@@ -10,6 +10,13 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "event_work.h"
+#include "module/field/field.h"
+#include "module/scene/mars_lighthouse_room_f.h"
+#include "module/scene/mars_lighthouse_star_room.h"
+#include "module/scene/scene.h"
+#include "module/scene/trial_road.h"
+#include "module/tla.h"
+#include "scene_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -19,10 +26,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "mars_lighthouse_room_f/room.h"
 
-extern char SceneId_Ov6adRoom1;
-extern char SceneId_Ov6adRoom2;
-extern char SceneId_Ov6adRoom3;
-extern char SceneId_Ov6adRoom4;
 extern const u8 gData_02006518[];
 extern const u8 gData_02006530[];
 extern const u8 gData_02006710[];
@@ -445,10 +448,6 @@ step:
 #include "input.h"
 #include "macros.h"
 
-extern s16 gData_02005f18[];
-
-void Func_02000cb8(s32 id);
-
 void Func_020009ec(void) {
   Func_020027ac(2, 65);
   Func_020027ac(1, 65);
@@ -560,10 +559,8 @@ extern const u8 gData_02006b98[];
 extern const u8 gData_02006d78[];
 extern const u8 gData_02006e38[];
 extern const u8 gData_02006f64[];
-s32 Func_02002cfc(void);
 void Func_02002ce0(void);
 void Func_020043ec(void);
-void Func_02004700(s32 a0);
 
 void Func_02000c80(s32 id) {
   struct Actor *object = Actor_Get(id);
@@ -657,24 +654,8 @@ void Func_02000e68(void) {
 }
 
 void Func_020015a4(s32 mode);
-void Func_020025b0(void);
-void Func_02002604(void);
 /* VIEW(mars_lighthouse_room_f): routine Func_02002624 as s32 Func_02002624(const void *targets, const void *stops, void *a2, s32 a3); the definition has void Func_02002624(u16 *targets, u16 *stops, s32 a2, s32 a3). */
 extern s32 Func_02002624__mars_lighthouse_room_f(const void *targets, const void *stops, void *a2, s32 a3) __asm__("Func_02002624");
-void Func_020027cc(s32 index, s16 value);
-void Func_02003d80(void);
-s32 Func_02004938(s32 id);
-void Func_02005284(void);
-void Func_0200538c(s32 id, s32 value);
-void Func_020053bc(s32 value);
-void Func_020055b8(s32 id);
-void Func_02005638(s32 a0);
-void Func_02005670(void);
-void Func_02005678(s32 a0, s32 a1, s32 a2);
-void Func_020056b0(s32 id);
-void Func_020056b8(s32 id);
-void Func_02001468(void);
-void Func_02001490(void);
 extern const u16 gData_02005bf0[];
 extern const u16 gData_02005bf6[];
 extern const u16 gData_02005bfc[];
@@ -856,13 +837,10 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-extern char SceneId_Ov6a8Room2;
-extern char SceneId_Ov6ACRoom3;
 extern const u8 gData_02005c84[];
 extern const u8 gData_02005ce0[];
 extern const u8 gData_02005d3c[];
 
-void Func_02005548(s32 scene, s32 a1);
 s32 Func_0200328c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 
 s32 Scene_PrepareMap(void) {
@@ -941,12 +919,6 @@ next:
 #include "ram_buffer.h"
 #include "field_event.h"
 
-extern u16 gData_02007088[];
-extern u16 gData_0200708c[];
-
-void Func_02005540();
-void Func_020056a8();
-
 void Func_020015a4(s32 mode) {
   gData_02007040 = 1;
   if (mode != 2) {
@@ -988,10 +960,6 @@ void Func_02001628(s32 id) {
 #include "actor.h"
 #include "main_routine_work.h"
 #include "frame.h"
-
-void Event_Start(void);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Event_End(void);
 
 /* VIEW(s167c): tag struct EventWork as struct EventWork__s167c; event_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:1017: structure has no member named `unk_d46'. */
 struct EventWork__s167c {
@@ -1076,7 +1044,6 @@ void Func_0200167c(void) {
   Event_End();
 }
 
-
 s32 Func_02001868(s32 *a, s32 *b) {
   s32 dx = (a[0] - b[0]) >> 16;
   s32 dz = (a[2] - b[2]) >> 16;
@@ -1087,12 +1054,9 @@ s32 Func_02001868(s32 *a, s32 *b) {
 #include "field_sprite.h"
 
 extern const s32 gData_02007044[];
-extern s32 Data_02007064;
 
-void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
-s32 Func_020056a0(s32 x, s32 z, s32 layer);
-void Camera_WorldToScreen(s32 *position);
-s32 Math_Cosine(s32 angle);
+/* VIEW(mars_lighthouse_room_f): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
+extern void Camera_WorldToScreen__mars_lighthouse_room_f(s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const void *script);
 
 void Func_02001894(struct Actor *self) {
@@ -1120,7 +1084,7 @@ void Func_02001894(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Camera_WorldToScreen(position);
+    Camera_WorldToScreen__mars_lighthouse_room_f(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -1177,32 +1141,6 @@ stop:
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s1a54.c ----
 #include "field_effect.h"
 
-struct GustObject {
-  u8 unk00[6];
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x0f];
-  u8 priorityFlags;
-  u8 unk24[0x0c];
-  s32 unk30;
-  u8 unk34[0x21];
-  u8 motionFlags;
-  u8 unk56[0x0c];
-  u8 unk62;
-  u8 unk63;
-  u16 unk64;
-  u8 unk66[6];
-  void (*update)(struct GustObject *object);
-};
-
-s32 Math_Cosine(s32 angle);
-void Func_02005480(struct Actor *object, s32 mode);
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-void Func_02001894(struct Actor *self);
-void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct EffectOptions *options);
-
 static __inline__ s32 MulQ16(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): MulQ16 forwarded inline; as direct calls to
    * Iwram_MulQ16, 69 of 92 instructions differ in tla-en. */
@@ -1235,7 +1173,6 @@ struct GustObject *Func_02001a54(struct GustObject *source) {
   return object;
 }
 
-
 s32 Func_02001b2c(struct Actor *object) {
   s32 params[10];
 
@@ -1258,21 +1195,6 @@ s32 Func_02001b2c(struct Actor *object) {
 
 #include "call.h"
 #include "field_coordinate.h"
-
-/// struct Actor as this function reads it, its coordinates as
-/// FieldCoordinate.
-struct PositionedActor {
-  u8 unk00[8];
-  union FieldCoordinate x;
-  union FieldCoordinate y;
-  union FieldCoordinate z;
-  s32 terrainHeight;
-  s32 scaleX;
-  u8 unk1c[0x34];
-  struct FieldSprite *animation;
-  u8 animationKind;
-  u8 motionFlags;
-};
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
@@ -1331,7 +1253,6 @@ void Func_02001bcc(void) {
   }
 }
 
-
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
 s32 Func_02001d5c(struct Actor *a, struct Actor *b) {
@@ -1382,11 +1303,6 @@ struct RideWork {
   u16 value68;
   u16 direction;
 };
-
-extern u8 gData_020023c4[];
-
-s32 Func_02001d5c(struct Actor *a, struct Actor *b);
-s32 Func_02001dc0(struct Actor *a, struct Actor *b);
 
 void Func_02001e20(struct Actor *object) {
   struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
@@ -1453,13 +1369,8 @@ void Func_02001e20(struct Actor *object) {
   }
 }
 
-// ---- games/tla/src/scene/mars_lighthouse_room_f/s1f84.c ----
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
 extern const u8 gData_02005d8c[];
 
-void Func_02001e20(struct Actor *object);
-void Func_02001ffc(struct Actor *object);
 void Func_02001f84(struct Actor *object, s32 unused) {
   object->motionFlags = 0;
   object->collisionFlags = 0;
@@ -1489,7 +1400,6 @@ void Func_02001fb4(s32 *position, s32 speed, s32 mode) {
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s1ffc.c ----
 #include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
 
-
 struct RideDirection {
   u16 unk00;
   u16 unk02;
@@ -1507,11 +1417,6 @@ struct RideWork__s1ffc {
   u8 unk64[4];
   struct RideDirection direction;
 };
-
-extern u8 gData_020023c4[];
-
-s32 Func_02001d5c(struct Actor *a, struct Actor *b);
-s32 Func_02001dc0(struct Actor *a, struct Actor *b);
 
 void Func_02001ffc(struct Actor *object) {
   struct RideWork__s1ffc *work = (struct RideWork__s1ffc *)(gData_020023c4 + 0x188);
@@ -1567,16 +1472,10 @@ void Func_02001ffc(struct Actor *object) {
   }
 }
 
-// ---- games/tla/src/scene/mars_lighthouse_room_f/s21a0.c ----
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
 #define ABS(value) ((value) < 0 ? -(value) : (value))
-
 
 extern const u8 gData_02005d8c[];
 
-void Func_02001e20(struct Actor *object);
-void Func_02001ffc(struct Actor *object);
 void Func_020022d0(struct Actor *object);
 
 /// Stops the object and sets its sprite part, then restarts its script at
@@ -1743,13 +1642,8 @@ typedef struct State {
   Entry entries[4];
 } State;
 
-void Func_02001fb4();
-void Func_020021a0();
-void Func_020021e8();
-void Func_02002230();
 /* VIEW(s242c): routine Func_020023ac as void Func_020023ac(); the parts before it has another declaration; tried as the definition's void Func_020023ac(s32 *position, s32 speed), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:1846: too many arguments to function `Func_020023ac'. */
 extern void Func_020023ac__s242c() __asm__("Func_020023ac");
-extern u8 gData_020023c4[];
 
 typedef struct Position {
   s32 x;
@@ -1863,22 +1757,6 @@ void Func_0200242c(void) {
 }
 #undef IWRAM
 
-// ---- games/tla/src/scene/mars_lighthouse_room_f/s25b0.c ----
-struct MarsLighthouseRoomFAnimation {
-  u8 unk00[0x10];
-  u8 value10;
-  u8 flag11 : 1;
-};
-
-struct MarsLighthouseRoomFRideWork {
-  u8 unk00[0x0c];
-  u16 value0c;
-  u8 unk0e[0x62];
-  struct Actor *handle;
-};
-
-extern u8 gData_020023c4[];
-
 void Func_020025b0(void) {
   struct MarsLighthouseRoomFRideWork *work =
       (struct MarsLighthouseRoomFRideWork *)(gData_020023c4 + 0x188);
@@ -1895,7 +1773,6 @@ void Func_020025b0(void) {
   work->value0c = animation->value10;
   animation->flag11 = 1;
 }
-
 
 struct RideEntry {
   s16 a;
@@ -1916,7 +1793,6 @@ struct RideRow {
   s32 d;
 };
 
-
 /* VIEW(s25b0): tag struct RideWork as struct RideWork__s25b0; mars_lighthouse_room_f.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:1936: structure has no member named `handle'. */
 struct RideWork__s25b0 {
   s32 counter;
@@ -1930,11 +1806,7 @@ struct RideWork__s25b0 {
   void *handle;
 };
 
-extern u16 gData_02004cf0[];
-void Func_020054a0(void *handle);
-void Func_02002148(void);
 void Func_0200236c(struct Actor *object, s32 unused);
-void Func_02002ad0(struct Actor *object);
 
 void Func_02002604(void) {
   struct RideWork__s25b0 *work = (struct RideWork__s25b0 *)(gData_020023c4 + 0x188);
@@ -1946,31 +1818,6 @@ void Func_02002604(void) {
 void Func_02002618(s16 value) {
   ((struct RideWork__s25b0 *)(gData_020023c4 + 0x188))->value0e = value;
 }
-
-
-/// One object the beam reaches, as Func_02002624 records it.
-struct MarsLighthouseBeamTarget {
-  u16 active;
-  u16 index;
-  u16 flags;
-  u16 unk06;
-  struct Actor *object;
-  s32 height; ///< 16.16 pixels
-};
-
-struct MarsLighthouseBeam {
-  u8 unk00[10];
-  u16 unk0a;
-  u8 unk0c[4];
-  s32 unk10;
-  struct MarsLighthouseBeamTarget targets[4];
-  struct {
-    u16 unk00;
-    u16 unk02;
-  } stops[4];
-};
-
-void Func_0200242c(void);
 
 void Func_02002624(u16 *targets, u16 *stops, s32 a2, s32 a3) {
   struct MarsLighthouseBeam *beam =

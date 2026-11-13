@@ -4,6 +4,11 @@
 // ---- games/tla/src/scene/kibombo/s0038.c ----
 
 #include "kibombo/kibombo.h"
+#include "event_work.h"
+#include "gamepak/far_call/system.h"
+#include "module/field/event_commands.h"
+#include "module/scene/kibombo.h"
+#include "resource.h"
 
 s32 Func_02000038(struct KibomboObject *object) {
   object->sprite->rotation += 0x600;
@@ -111,7 +116,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 // ---- games/tla/src/scene/kibombo/events_a.c ----
 // Scene code of overlay 0x670, in ROM order, from events_a's offset up to the next object the overlay links.
-
 
 extern u8 gData_02006510[];
 extern u8 gData_020066d8[];
@@ -576,7 +580,6 @@ void Func_02005c7c(void);
 void Func_02002eb0(void);
 void Func_020032b0(void);
 void Func_020032c8(void);
-void Func_020032e0(void);
 void Func_02003610(void);
 
 void Func_02000d74(void) {
@@ -699,8 +702,6 @@ void Func_02000d74(void) {
     Func_02005c7c();
   }
 }
-
-void Party_RemoveMemberRestored(s32 owner);
 
 void Func_02001218(void) {
   if (!Kibombo_FlagCheck(0x92e)) {
@@ -1116,10 +1117,8 @@ extern const u8 gData_02006058[];
 extern const u8 gData_0200609c[];
 extern const u8 gData_020060e0[];
 extern const u8 gData_02006108[];
-void Event_Start(void);
 void Actor_MoveToObject();
 void Func_0200384c(void);
-void Event_End(void);
 
 void Func_02002050(void) {
   s32 done = Event_GetFlag(0x86a);
@@ -1390,8 +1389,6 @@ ask:
 // ---- games/tla/src/scene/kibombo/s2ad8.c ----
 // Scene code of overlay 0x670, in ROM order, from s2ad8's offset up to the next object the overlay links.
 
-
-
 void Func_02002ad8(void) {
   struct KibomboWork90 *work = Ram_HeapSlots->unk84[3];
 
@@ -1494,10 +1491,7 @@ void Func_02002d64(void) {
   }
 }
 
-
-void *HeapSlot_AllocFar(s32 slot, s32 size);
 void Icon_DrawItem(s32 resource);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
 
 void Func_02002de0(void) {
   struct KibomboObject **slot = &gData_02007950;

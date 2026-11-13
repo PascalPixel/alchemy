@@ -1,28 +1,9 @@
 #include "types.h"
 #include "scene_tables.h"
+#include "module/scene/airs_rock.h"
 
 void Func_0200033c(void);
-void Func_02000548(void);
-void Func_02000568(void);
-void Func_020005ec(void);
 void Func_02000620(void);
-void Func_020006d4(void);
-void Func_02000700(void);
-void Func_02000824(void);
-void Func_02000830(void);
-void Func_0200095c(void);
-void Func_02001010(void);
-void Func_02001560(void);
-void Func_02001ca4(void);
-void Func_02001cc8(void);
-void Func_02001da8(void);
-void Func_02001f7c(void);
-void Func_020026b8(void);
-
-extern u32 gData_02003ce0[];
-extern u32 gData_02003d1c[];
-extern u32 gData_02003d58[];
-extern s32 gData_02003dac[];
 
 // clang-format off
 u32 gData_02003ce0[] = {

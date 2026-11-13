@@ -4,6 +4,9 @@
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"
+#include "gamepak/far_call/game.h"
+#include "module/battle/f11e3ac.h"
+#include "module/battle/presentation.h"
 
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   struct BattleUnit *state = Unit_Get__f11f66c(unitId);
@@ -182,7 +185,6 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 id) {
   expired = 0;
   return expired;
 }
-
 
 s32 sub_08124af8(s32 id) {
   struct BattleUnit *unit = Unit_Get__f11f66c(id);
@@ -380,7 +382,6 @@ s32 Func_08124cc4(s32 side) {
   return result;
 }
 
-
 // The Japanese text holds these messages in the same order two places later,
 // but its labels for several of them belong to their neighbours, so the
 // Japanese release reaches each of those by its place beside a message whose
@@ -411,24 +412,6 @@ s32 Func_08124cc4(s32 side) {
 #define MSG_CURE_STUN ((s32)&MsgCureStun)
 #define MSG_REFLECT_END ((s32)&MsgReflectEnd)
 #endif
-
-struct TurnEndList {
-  struct DjinnRecoveryEntry entries[72];
-  s32 count;
-};
-
-struct TurnEndTable {
-  u8 padding[8];
-  struct TurnEndList list;
-};
-
-struct BattleGroupOrder {
-  s32 group[2];
-};
-
-extern const struct BattleGroupOrder Data_081297c4;
-
-void Func_0812628c(s32 mode, s32 background, s32 value);
 
 #define ANNOUNCE_END(test, message)                                            \
   if (test(unitId) != 0) {                                                     \
@@ -604,8 +587,6 @@ void Battle_ProcessTurnEnd(void) {
     }
   }
 }
-
-void Djinn_PutOnStandbyFar(s32 unitId, s32 element, s32 djinni);
 
 void Battle_ApplyActionExtras(s32 unitId, s32 all, s32 announce) {
   u8 elements[10];

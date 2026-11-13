@@ -1,6 +1,8 @@
 /// @file
 /// Scene code of overlay 0x663, in ROM order, from s015c's offset up to the next object the overlay links.
 
+#include "module/scene/airs_rock.h"
+
 #define EFFECT_SPAWN Func_0200015c
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Func_02003b28
@@ -23,17 +25,6 @@ s32 Func_0200033c(s32 a0) {
 }
 
 #include "ram_buffer.h"
-
-struct AirsRockMapLayer {
-  u8 unk00[0x30];
-  u8 *cells;
-  u8 unk34[4];
-};
-
-struct AirsRockMapWork {
-  u8 unk000[0x108];
-  struct AirsRockMapLayer layers[3];
-};
 
 extern u8 gMapCellBuffer[];
 

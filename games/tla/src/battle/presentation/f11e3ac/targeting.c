@@ -4,6 +4,15 @@
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"
+#include "gamepak/far_call/game.h"
+#include "gamepak/far_call/window.h"
+#include "item_icon.h"
+#include "menu_list.h"
+#include "module/battle/battle.h"
+#include "module/battle/f11e3ac.h"
+#include "module/battle/presentation.h"
+#include "module/tla.h"
+#include "resource.h"
 
 #define TARGET_MODE_NONE 0
 #define TARGET_MODE_FOES 1
@@ -15,7 +24,6 @@
 
 /* VIEW(f11f66c): routine Unit_Get as void *Unit_Get(s32 owner); strongest_unit has struct BattleUnit *Unit_Get(s32 unitId); tried as the definition's void *Unit_Get(s32 owner), which the object already declares, BattleAI_ChooseTarget moves: 5 of 776 instructions, BattleActor_ResetRuntimeFields moves: 1 of 97 instructions, BattleActor_DestroyTemporaryObject moves: 1 of 24 instructions, 32 more in tla-ja. */
 extern void *Unit_Get__f11f66c(s32 owner) __asm__("Unit_Get");
-const struct EnemyDefinition *Enemy_GetDefinitionFar(s32 id);
 
 #define COUNT_PARTIAL_CURES(unit, count)                                       \
   {                                                                            \
@@ -365,9 +373,6 @@ s32 BattleAI_ChooseTarget(s32 actorId, struct BattleAct *action) {
   return targetPositions[(Random16() * targetCount) >> 16];
 }
 
-
-struct BattleObj *BattleObject_Get(s32 objectId);
-
 void BattleActor_ResetRuntimeFields(s32 actor) {
   u8 *state;
   u8 *cursor;
@@ -411,47 +416,6 @@ void BattleActor_ResetRuntimeFields(s32 actor) {
   Unit_CalculateFar(actor);
   BattleUnit_BuildStatusFlags(actor, BattleObject_Get(actor));
 }
-
-
-struct AdvanceSprite {
-  struct AdvanceSprite *next;
-  u16 y : 8;
-  u16 flags : 8;
-  u16 x : 9;
-  u16 size : 7;
-  u16 tile : 10;
-  u16 palette : 6;
-  u16 affineParam;
-};
-
-struct AdvanceWindow {
-  u8 unk00[0xc];
-  s16 x; ///< tiles
-  s16 y; ///< tiles
-};
-
-struct AdvanceOffset {
-  u8 unk00[4];
-  u16 x; ///< 1/256 pixels
-  u16 y; ///< 1/256 pixels
-};
-
-/// The battle message window and its scroll offset, in heap slot 0x94.
-struct AdvanceDisplay {
-  struct AdvanceWindow *window;
-  struct AdvanceOffset *offset;
-};
-
-extern u8 Data_0812996c[];
-
-s32 Message_AllTypedFar(void);
-s32 VramCache_AllocEntry(s32 size);
-s32 VramCache_Reload(s32 slot, s32 source);
-s32 Resource_ResetEntry(u32 slot);
-void QueueIoWriteDelay10(u32 address, u32 value);
-void QueueIoWriteDelay6(u32 address, u32 value);
-s32 Trig_Sin(s32 angle);
-void Oam_AddSpriteAtDepth(void *entry, s32 priority);
 
 /// Waits for the player to advance a battle message: once the window has
 /// finished printing, shows the bobbing arrow at its corner until B is held,
@@ -506,30 +470,6 @@ void BattleMessage_WaitForAdvance(void) {
   wait(1);
 }
 
-struct CursorSprite {
-  struct CursorSprite *next;
-  u16 y : 8;
-  u16 affine : 2;
-  u16 mode : 2;
-  u16 mosaic : 1;
-  u16 colors : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u16 unk;
-};
-
-struct MenuPoint {
-  s32 x;
-  s32 y;
-};
-
-s32 WindowSprite_GetPointerTilesFar(s32 index);
-
 /// The Broken Seal's BattleMessage_WaitForAdvanceAt: shows the cursor
 /// bobbing at (x, y) and waits for A, B, L or R; returns 1.
 s32 Func_08120060(s32 x, s32 y) {
@@ -571,9 +511,6 @@ void Func_08120158(void) {
   ((s32 *)Ram_HeapSlots->unk84[4])[2] = 1;
 }
 
-
-s32 BattleObject_MarkForRelease(s32 arg0);
-
 s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
   // UB: declared s32 but returns no value; no caller reads it.
   struct BattleUnit *creature;
@@ -591,26 +528,13 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
   }
 }
 
-struct BattleEventFlagWork {
-  u8 unk00[0x16c];
-  u32 flags;
-};
-
 void BattleEvent_GrantDjinnBonus(struct BattleEventFlagWork *runtime,
                                  u32 operand) {
   runtime->flags |= 1;
 }
 
-struct BattleDisplayFlags {
-  u8 unk00[8];
-  s32 marked;
-};
-
 /* VIEW(f11f66c): routine BattleMotion_FlashHit as void BattleMotion_FlashHit(u32 unitId, s32 a, s32 b); the definition has void BattleMotion_FlashHit(s32 id); tried as the definition's void BattleMotion_FlashHit(s32 id), which the object already declares, it does not compile in tla-ja: games/tla/src/battle/presentation/f11e3ac.c:1720: too many arguments to function `BattleMotion_FlashHit'. */
 extern void BattleMotion_FlashHit__f11f66c(u32 unitId, s32 a, s32 b) __asm__("BattleMotion_FlashHit");
-s32 BattleEnemy_RecordDefeat(s32 unitId, s32 earned);
-void BattleObject_UpdatePose(s32 id);
-u32 BattlePlayback_Reset(void);
 
 /// Runs the queued battle events in order, then resets the queue.
 u32 BattleEvent_DispatchQueued(void) {
@@ -715,7 +639,6 @@ s32 BattleEffect_CheckDead(s32 effect) {
   }
 }
 
-
 s32 BattleUnit_KeepsOneHp(s32 unitId) {
   struct BattleUnit *unit = Unit_Get__f11f66c(unitId);
 
@@ -784,7 +707,6 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
 }
 
 // An ability applied to one target: damage, healing and its added effect.
-
 
 #define ALLY 2 /* Ally. */
 
@@ -2210,42 +2132,7 @@ u32 Ability_IsPsynergy(s32 abilityId) {
   return (u32)((0 - pp) | pp) >> 31; // 1 if pp is nonzero.
 }
 
-
-struct AIState {
-  unsigned initialized : 1;
-  unsigned selection : 3;
-  unsigned form : 2;
-  unsigned remaining : 26;
-};
-
-struct AIEnemyRest {
-  u8 unk00[0x2c];
-  u16 abilities[8];
-};
-
-struct AIBattleWork {
-  u8 unk000[0x564];
-  u16 queuedSummons[2];
-  u8 queuedCharges[2];
-  s8 queueHead;
-  s8 queueCount;
-  u8 unk56c[0x869 - 0x56c];
-  u8 unk869;
-  u8 unk86a[2];
-  u32 aiStates[4];
-};
-
 #define AI_BATTLE ((struct AIBattleWork *)Ram_HeapSlots->battleWork)
-
-s32 Func_0811f4d4(s32 party);
-s32 Battle_FindTaggedSlotByValue(u32 id);
-s32 BattleParty_CountStandbyDjinn(u32 arg0, u8 *counts);
-s32 Summon_ListLearnedFar(u8 *list);
-
-extern u8 Data_0812cc5c[];
-extern u8 Data_0812cc64[];
-extern u8 Data_0812cc6c[];
-extern u16 Data_08128960[];
 
 s32 Func_08122514(struct BattleActionRecord *request, s32 retry) {
   struct BattleUnit *unit;
@@ -2571,9 +2458,6 @@ done:
     selectionMemory->form = (selectionMemory->form + 1) % 3;
   return 0;
 }
-
-
-u32 Math_UnsignedMulHigh(u32 a, u32 b);
 
 void Func_08122c18(void) {
   Math_UnsignedMulHigh(5, 0);

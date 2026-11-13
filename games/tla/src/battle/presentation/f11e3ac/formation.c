@@ -4,19 +4,10 @@
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"
-
-/// One kept formation: its record and its average level, -1 while empty.
-struct FormationCandidate {
-  s16 recordId;
-  s32 score : 16;
-};
-
-/// The enemy flags (0x600 + id) cleared before every search.
-extern const u16 Data_08130c5c[];
+#include "flag_call.h"
+#include "module/battle/f11e3ac.h"
 
 u8 GameFlag_GetByte(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 
 /// Keeps up to thirty-two eligible formations near the party's adjusted
 /// average level, chooses one randomly and returns its level adjustment
@@ -122,12 +113,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   return result;
 }
 
-struct OwnerElementStats {
-  s16 power;
-  s16 res;
-};
-
-struct OwnerStats {
+/* VIEW(f11e3ac): tag struct OwnerStats as struct OwnerStats__f11e3ac; module/tla.h has another definition. */
+struct OwnerStats__f11e3ac {
   s16 maxHp;
   s16 maxPp;
   s16 hp;
@@ -143,24 +130,24 @@ struct OwnerStats {
 struct OwnerState {
   u8 unk00[15];
   u8 level;
-  struct OwnerStats stats;
+  struct OwnerStats__f11e3ac stats;
 };
 
 /// Raises an enemy by levels, The Broken Seal's BattleEnemy_AdjustLevel with
 /// HP capped at 16383 instead of 9999. Returns nothing, though declared s32 as
 /// there.
 s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
-  struct OwnerStats *base;
+  struct OwnerStats__f11e3ac *base;
   struct OwnerState *state;
-  struct OwnerStats *stats;
+  struct OwnerStats__f11e3ac *stats;
   s32 value;
   s32 floor;
   s32 i;
 
-  base = Heap_AllocEwram(sizeof(struct OwnerStats));
+  base = Heap_AllocEwram(sizeof(struct OwnerStats__f11e3ac));
   state = Unit_Get__f11f66c(owner);
   stats = &state->stats;
-  Iwram_CopyWords(base, stats, sizeof(struct OwnerStats));
+  Iwram_CopyWords(base, stats, sizeof(struct OwnerStats__f11e3ac));
 
   value = stats->maxHp;
   value += __divsi3(levels * 97, 10);
@@ -279,15 +266,6 @@ void Func_08127a0c(s32 unitId) {
 #define CH_CNT 9
 #endif
 
-struct SummonChargeState {
-  u8 unk00[0x10];
-  u16 classIds[6];
-  u32 usedMasks[6];
-  s8 channels[6];
-  u8 unk3a[6];
-  u8 count;
-};
-
 s32 BattleEnemy_ClaimNameLetter(s32 no, s32 n) {
   struct SummonChargeState *w;
   s32 num;
@@ -325,16 +303,7 @@ s32 BattleEnemy_ClaimNameLetter(s32 no, s32 n) {
   return -1;
 }
 
-
 #define LIST_MARKER_CHAR SUMMON_CHANNEL_MARKER
-
-struct BattleActorDefinition {
-  u8 name[14];
-  u8 unk0e[0x11b];
-  u8 unavailable;
-  u8 unk12a[0x20];
-  u16 classId;
-};
 
 s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
   struct SummonChargeState *state =
@@ -442,17 +411,6 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
 
   return choices[(Random16() * count) >> 16];
 }
-
-struct FormationBattleWork {
-  u8 unk00[0x3c];
-  u16 firstDefeated;
-  u16 defeatState;
-  u8 unk40;
-  u8 unk41;
-  u8 battleType;
-  u8 unk43[0x825];
-  u8 unk868;
-};
 
 s32 Func_08127cd4(s32 recordId) {
   u16 *enemyClasses;

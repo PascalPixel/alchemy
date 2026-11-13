@@ -3,15 +3,9 @@
 // Part of screens.c.
 
 #include "../screens_internal.h"
-
-struct UiWindowBounds {
-  s32 handle;
-  u16 left;
-  u16 top;
-  u16 right;
-  u16 height;
-  u16 flags;
-};
+#include "menu_list.h"
+#include "module/system/system.h"
+#include "module/window/screens.h"
 
 void PartyStatus_BuildLayoutBounds(s32 flags) {
   struct UiWindowBounds *state = Ram_HeapSlots->windowLayout;
@@ -63,8 +57,6 @@ void PartyStatus_CreateWindow(s32 flags) {
   PartyStatus_Draw(flags);
   tiles[6] = zero;
 }
-
-extern const s8 gWindow_PartyColumnOffsets[];
 
 /// Draws the vertical lines between the party members' columns of the party
 /// status `window`, with their top and bottom joints, at the offsets listed in
@@ -143,8 +135,6 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
 #define TILE_ROW_FROM_BOTTOM(tile, up)                                         \
   ((u32 *)((tile) * 32 - (up) * 4 + 0x0600001c))
 
-s32 Palette_GetBasicObjColors(void);
-
 s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
   s32 i;
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
@@ -198,23 +188,6 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
   }
 }
 
-struct PartyStatusWindow {
-  struct Window *window;
-  u16 x;
-  u16 y;
-  u16 width;
-  u16 height;
-  u16 flags;
-};
-
-struct StatusUnit {
-  u8 name[0x34];
-  s16 maxHp;
-  s16 maxPp;
-  s16 hp;
-  s16 pp;
-};
-
 #define PARTY_STATUS_KEEP_FLAGS -1
 #define PARTY_STATUS_SHOW_PP 1
 #define PARTY_STATUS_SHOW_DJINN 2
@@ -222,9 +195,9 @@ struct StatusUnit {
 #define PARTY_STATUS_DJINN_WIDTH 5
 #define PARTY_STATUS_COLUMN_WIDTH 6
 
-extern const u8 Data_080aa1b8[];
-
-s32 Func_08118130(s32 a, u8 *counts);
+/* VIEW(screens): routine Func_08118130 as s32 Func_08118130(s32 a, u8 *counts);
+ * module/window/window.h has void Func_08118130(s32 kind, u8 *counts). */
+extern s32 Func_08118130__screens(s32 a, u8 *counts) __asm__("Func_08118130");
 void Window_DrawBorder(s32 x, s32 y, s32 width, s32 height);
 // Text_DrawPrefixedNumberAtOffset is called with no prototype in scope, as The
 // Broken Seal's screens.c calls it: with one, hp reaches r0 before the call's
@@ -266,7 +239,7 @@ void PartyStatus_Draw(s32 flags) {
     flags = layout->flags;
   if (!(flags & PARTY_STATUS_SHOW_PP))
     flags &= ~PARTY_STATUS_SHOW_DJINN;
-  if (work->menuState == 0 || Func_08118130(0, 0) == 0)
+  if (work->menuState == 0 || Func_08118130__screens(0, 0) == 0)
     flags &= ~PARTY_STATUS_SHOW_DJINN;
   if (flags == PARTY_STATUS_CLOSED) {
     Window_EraseBorderRect(layout->x, layout->y, layout->width, layout->height);
@@ -349,7 +322,7 @@ void PartyStatus_Draw(s32 flags) {
     i = 0;
     if (flags & PARTY_STATUS_SHOW_PP)
       row++;
-    Func_08118130(0, standbyDjinn);
+    Func_08118130__screens(0, standbyDjinn);
     Window_SetTilemapEntry(window, 0x5001, 0, row, 0);
     Window_SetTilemapEntry(window, 0x5002, 2, row, 0);
     Window_SetTilemapEntry(window, 0x5003, 0, row + 1, 0);

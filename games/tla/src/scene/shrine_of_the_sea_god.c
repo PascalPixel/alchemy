@@ -1,5 +1,8 @@
 // ---- games/tla/src/scene/shrine_of_the_sea_god/event0.c ----
 #include "shrine_of_the_sea_god/shrine_of_the_sea_god.h"
+#include "event_work.h"
+#include "module/scene/scene.h"
+#include "module/scene/shrine_of_the_sea_god.h"
 
 void Func_02000280(void) {
   struct ShrineOfTheSeaGodObject *leader =
@@ -231,8 +234,6 @@ void Func_0200063c(s32 x, s32 y) {
 void DisplayBlend_EnableRunScript(void);
 void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Import_EventSetExitRequest(s32 value);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 void Func_02000688(void) {
   u32 i;
@@ -350,9 +351,7 @@ loop:
     goto loop;
 }
 
-void Map_CenterOnFollowedPoint(void);
 void Map_WaitForShakeToSettle(void);
-void Func_02003854(s32 actor);
 
 void Func_02000994(void) {
   struct ShrineOfTheSeaGodMapWork *map =
@@ -460,8 +459,6 @@ void Func_02000994(void) {
 }
 
 extern const u8 gData_02003cbc[];
-
-void Event_StartScreenTransition(void);
 
 /// The leader is placed at y -50 and map layer 1 moved by -50; then both move
 /// by 0x8000 in y a frame for 100 frames as a screen transition starts.

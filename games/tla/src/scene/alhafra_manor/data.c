@@ -1,13 +1,11 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
+#include "module/scene/alhafra_manor.h"
 
 void Func_0200006c(void);
 void Func_020000b8(void);
 void Func_02000150(void);
-void Func_0200019c(void);
-void Func_02000238(void);
-void Func_02000370(void);
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

@@ -2,15 +2,10 @@
 #include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "objcmd.h"
+#include "module/scene/gabomba_statue_chamber.h"
 
-void Func_02000184(void);
-void Func_02000b60(void);
-void Func_02000b70(void);
-void Func_02000d3c(void);
 void Func_02000e50(void);
 void Func_02000e60(void);
-
-extern s32 gData_02002048[];
 
 // clang-format off
 u32 gData_02001f18[] = {

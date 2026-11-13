@@ -6,15 +6,16 @@
 #include "field_sprite.h"
 #include "field_effect.h"
 #include "event_inline.h"
+#include "gamepak/far_call/system.h"
+#include "module/field/field_effect.h"
+#include "module/scene/scene.h"
+#include "module/scene/tundaria_tower.h"
+#include "module/tla.h"
+#include "particle.h"
 
-extern u32 gData_020032d4[];
-
-u32 Func_02003150(struct FieldSprite *sprite, u32 frame);
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+/* VIEW(s29d0): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s29d0(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
 void Func_02002f80(struct FieldEffect *effect, s32 mode);
-void Func_02002f90(struct FieldEffect *effect, const s32 *script);
-s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
 void Func_020029d0(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -35,7 +36,7 @@ void Func_020029d0(s32 spread) {
       frame = Func_02003150(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags(effect, 0);
+      Actor_SetSingleChildFlags__s29d0(effect, 0);
       Func_02002f80(effect, 2);
       Func_02002f90(effect, gData_020032d4);
       effect->scaleY = effect->scaleX = 0xb333;
@@ -59,8 +60,6 @@ void Func_020029d0(s32 spread) {
 
 union FieldObject;
 
-extern u32 gData_02003304[];
-
 void Func_02002b04(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 state;
@@ -81,7 +80,7 @@ void Func_02002b04(void) {
         zero = 0;
         effect->motionFlags = zero;
         effect->collisionFlags = zero;
-        Actor_SetSingleChildFlags(effect, 0);
+        Actor_SetSingleChildFlags__s29d0(effect, 0);
         Func_02002f80(effect, 2);
         Func_02002f90(effect, gData_02003304);
         angle = i << 12;
@@ -106,10 +105,6 @@ void Func_02002b04(void) {
 #include "map.h"
 #include "system/ram_buffer.h"
 
-s32 Func_02003010(s32 layer, s32 x, s32 z);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 Func_02003180(s32 layer, s32 shape, s32 height);
-
 void Func_02002c1c(s32 level, s32 layer, s32 owner) {
   struct Actor *object = Actor_GetById(owner);
   u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapWork->layers[layer].cells -
@@ -127,33 +122,6 @@ void Func_02002c1c(s32 level, s32 layer, s32 owner) {
 void Func_02002ca8(s32 a, s32 b) {
   Func_02002c1c(a, b, gMainRoutineWork.currentOwner);
 }
-
-struct Particle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 age;
-};
-
-struct ParticleSprite {
-  u8 unk0[8];
-  u16 attr;
-  u8 unkA[30];
-};
-
-struct ParticleWork {
-  u8 tiles[0x500];
-  struct Particle particles[64];
-  struct ParticleSprite sprites[64];
-  s16 next;
-  u16 tile;
-};
-
-void Func_02003198(struct ParticleSprite *sprite, struct Particle *particle);
-void Func_020031a0(struct Particle *particle, s32 unk1, s32 step);
 
 void Func_02002cc0(void) {
   struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
@@ -182,15 +150,9 @@ next:
     goto next;
 }
 
-/// One falling rock: where it is, how it moves and how long it has fallen.
-struct Rock {
-  s32 position[3];
-  s32 velocity[3];
-  s32 timer;
-};
-
 /// A falling rock's sprite.
-struct RockSprite {
+/* VIEW(s29d0): tag struct RockSprite as struct RockSprite__s29d0; module/tla.h has another definition. */
+struct RockSprite__s29d0 {
   u8 unk00[5];
   u8 unk05_0 : 5;
   u8 blend : 1;
@@ -209,7 +171,7 @@ struct RockSprite {
 struct RockWork {
   u8 tiles[0x500];
   struct Rock rocks[64];
-  struct RockSprite sprites[64];
+  struct RockSprite__s29d0 sprites[64];
   s16 next;
   u16 tileBase;
   s16 resource;
@@ -258,10 +220,7 @@ void Func_02002d44(s32 x, s32 y, s32 z, s32 count) {
 // The falling rocks' setup, and Func_02002ebc, which stops their task and
 // frees their picture and heap slot.
 
-void *HeapSlot_AllocFar(s32 slot, s32 size);
-extern char ResourceId_FallingRock;
-void Func_02002f40(void *source, void *destination);
-void Func_02003190(struct RockSprite *sprite, s32 width, s32 height, u32 attr,
+void Func_02003190(struct RockSprite__s29d0 *sprite, s32 width, s32 height, u32 attr,
                    s32 tile);
 
 /// The falling rocks' setup: loads their picture, sets up 64 small sprites,
@@ -271,7 +230,7 @@ void Func_02002e00(void) {
   s32 resource;
   s32 tile;
   struct Rock *rock;
-  struct RockSprite *sprite;
+  struct RockSprite__s29d0 *sprite;
   s32 i;
 
   Func_02002f40(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
@@ -316,29 +275,11 @@ void Func_02002ebc(void) {
 #include "scene_tables.h"
 
 void Func_02000280(void);
-void Func_02000548(void);
-void Func_0200058c(void);
 void Func_020005d0(void);
-void Func_020007dc(void);
 void Func_020008a8(void);
-void Func_02000920(void);
-void Func_0200095c(void);
-void Func_02000964(void);
-void Func_02000b34(s32 arg0, s32 arg1);
 void Func_02000b3c(void);
 void Func_02000bfc(void);
 void Func_02000c64(void);
-void Func_02000d2c(void);
-void Func_02000de4(void);
-void Func_02000e78(void);
-void Func_02000f00(void);
-void Func_02000f0c(void);
-void Func_02000fac(void);
-void Func_02000fb8(void);
-
-extern u32 gData_020031b0[];
-extern u32 gData_020031ec[];
-extern u32 gData_02003228[];
 
 // clang-format off
 u32 gData_020031b0[] = {

@@ -2,6 +2,8 @@
 /// The scene code of overlay 0x69c that its scene tables belong to, in ROM order; the rest of the overlay is in jupiter_lighthouse_room_3/.
 
 #include "jupiter_lighthouse_room_3/local.h"
+#include "event_work.h"
+#include "field.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -229,11 +231,6 @@ void Func_02000544(s32 id) {
 #include "main_routine_work.h"
 #include "frame.h"
 #include "event_work.h"
-
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
-void Event_Start(void);
-void Event_End(void);
 
 void Func_02000598(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;

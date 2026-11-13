@@ -2,8 +2,7 @@
 /// The scene code of overlay 0x66d, in ROM order.
 
 #include "naribwe/local.h"
-
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+#include "field.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

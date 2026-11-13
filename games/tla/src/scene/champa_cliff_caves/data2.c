@@ -1,20 +1,14 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
+#include "module/scene/champa_cliff_caves.h"
 
 void Func_020001f4(void);
-void Func_02000208(void);
 void Func_02000304(void);
 void Func_02000350(void);
 void Func_0200038c(void);
-void Func_020003bc(void);
-void Func_020003ec(void);
 void Func_02000464(void);
 void Func_02000f48(void);
-void Func_0200115c(void);
-
-extern s16 gData_02003ce4[];
-extern s16 gData_02003cfa[];
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 440, 0, 520, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

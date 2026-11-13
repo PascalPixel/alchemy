@@ -4,8 +4,10 @@
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"
-
-void Fade_ToBlack(s32 arg0);
+#include "gamepak/far_call/window.h"
+#include "module/battle/battle.h"
+#include "module/battle/f11e3ac.h"
+#include "module/system/system.h"
 
 /// Fades the screen to black over sixteen frames as every background's
 /// mosaic grows, then shows no layer. Sets REG_BLDCNT to darken the
@@ -119,9 +121,6 @@ void BattleTransition_BuildTilemap(s32 *destination) {
   FillWords_(destination, 0x280, 0x03ff03ff);
 }
 
-
-extern const u8 gData_0812cc74[];
-
 /// Copies this frame's BG2CNT word and starts the HBlank DMA of the BG2 lines
 /// and the affine block, while the background view is in mode 2.
 void BattleStaging_UpdateHBlankScroll(void) {
@@ -225,16 +224,7 @@ void Func_08125d68(void) {
   REG_BG0VOFS = zero;
 }
 
-
 #define DMA3 ((volatile u32 *)0x040000d4)
-
-extern u8 Data_0812cd74[];
-
-void PartyStatus_CreateWindowFar(s32 flags);
-void Func_08138028(struct BattlePresentationWork *work);
-void BattleIntro_AnnounceEncounter(s32 value);
-
-extern char ResourceId_SerpentStarsBackdrop;
 
 void Func_08125d74(s32 arg, s32 kind) {
   struct BattlePresentationWork work;

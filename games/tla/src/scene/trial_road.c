@@ -9,6 +9,7 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "module/field/object.h"
 
 void Func_02000038(void) { Func_080d2b4c(8, 75); }
 
@@ -66,7 +67,6 @@ s32 Func_020000fc(s32 fallback) {
 #include "event_inline.h"
 
 s32 Func_02000330(s32 value);
-void ObjectEffect_StartContextEffect26(void);
 
 void Func_02000138(s32 direction) {
   struct TrialRoadState *state = gTrialRoadState;

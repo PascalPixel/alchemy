@@ -16,6 +16,11 @@
 #include "edition.h"
 #include "graphics.h"
 #include "uiwindow.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/field/object.h"
+#include "module/shop/shop.h"
+#include "module/tla.h"
+#include "module/window/screens.h"
 
 #define BATTLE_OK 0x80 ///< flags: usable in battle.
 
@@ -65,18 +70,9 @@ struct DescriptorEntry {
   u8 unk02[6];
 };
 
-extern void *gOverlayArea[];
 extern struct DescriptorEntry gData_080eff28[];
 
-void BattleEffect_StartTiledCanvas(s32 mode);
-void BattleEffect_EndCanvasLayer(void);
 void Func_0814ea58(void *effect, s32 mode);
-s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer);
-s32 Func_080dbde8(s32 x, s32 z, s32 layer);
-u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
-void Shop_InitializeWork(void);
-s32 Inn_RoomPrice(s32 innId);
-void Shop_ReleaseWork(void);
 
 /// Copies one 4bpp tile of BG character block 0 to another, each given as a
 /// tilemap entry whose palette and flip bits are ignored. The battle lists copy
@@ -109,70 +105,11 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
 #define MENU_TEXT_COPY Message_DecodeRaw
 #endif
 
-struct ItemMenuWindow {
-  u8 unk00[8];
-  u16 width;
-  u16 height;
-  s16 x;
-  s16 y;
-};
-
 struct ItemMenuWork {
   u8 unk00[3];
   u8 dirty;
   u8 unk04[2];
   u8 holdTilemapUpload;
-};
-
-struct ItemMenuNavigation {
-  u8 unk00[0x30];
-  s32 row;
-  s32 page;
-  s32 preferredRow;
-  u8 unk3c[0x10];
-  s32 timer;
-};
-
-struct ItemMenuSprite {
-  struct ItemMenuSprite *next;
-  union {
-    struct {
-      unsigned long attr01;
-      unsigned long attr23;
-    } word;
-    struct {
-      u16 y : 8;
-      u16 affine : 2;
-      u16 mode : 2;
-      u16 mosaic : 1;
-      u16 colors : 1;
-      u16 shape : 2;
-      u16 x : 9;
-      u16 affineIndex : 5;
-      u16 size : 2;
-      u16 tile : 10;
-      u16 priority : 2;
-      u16 palette : 4;
-      u16 unused;
-    } f;
-  } oam;
-};
-
-struct ItemMenuOam {
-  struct ItemMenuOam *next;
-  u16 y : 8;
-  u16 affine : 2;
-  u16 mode : 2;
-  u16 mosaic : 1;
-  u16 colors : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u16 unused;
 };
 
 #define NAVIGATION ((struct ItemMenuNavigation *)Ram_HeapSlots->unke4[0])

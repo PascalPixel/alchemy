@@ -4,51 +4,19 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
+#include "field_coordinate.h"
+#include "module/field/field.h"
+#include "module/scene/scene.h"
+#include "scene.h"
 
-union FieldCoordinate {
-  s32 fixed;
-  struct {
-    u16 fraction;
-    s16 pixel;
-  } part;
-};
+/* VIEW(venus_lighthouse): variable gData_02001d8c as s32 gData_02001d8c[]; module/scene/venus_lighthouse.h has s16 gData_02001d8c[]. */
+extern s32 gData_02001d8c__venus_lighthouse[] __asm__("gData_02001d8c");
 
-struct FieldPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct StagedActor {
-  u8 unk00[6];
-  u16 facing;
-  union FieldCoordinate x;
-  union FieldCoordinate y;
-  union FieldCoordinate z;
-  u8 unk14[0x0e];
-  u8 transitionMode;
-  u8 unk23;
-  s32 velocityX;
-  u8 unk28[4];
-  s32 velocityZ;
-  s32 moveRateX;
-  s32 moveRateZ;
-  s32 targetX;
-  u8 unk3c[4];
-  s32 targetZ;
-  u8 unk44[0x15];
-  u8 collisionFlags;
-  u8 unk5a[8];
-  u8 transitionBusy;
-};
-
-extern s32 gData_02001d8c[];
-
-struct StagedActor *Actor_FindInCell(struct FieldPosition *position,
-                                     struct StagedActor *self);
+/* VIEW(venus_lighthouse): routine Actor_FindInCell as struct StagedActor *Actor_FindInCell(struct FieldPosition *position, struct StagedActor *self); module/scene/magma_rock.h has struct Actor *Actor_FindInCell(s32 *position, struct Actor *self). */
+extern struct StagedActor *Actor_FindInCell__venus_lighthouse(struct FieldPosition *position,
+                                     struct StagedActor *self) __asm__("Actor_FindInCell");
 void Func_02001b2c(struct StagedActor *object, s32 mode);
 s32 Func_02001b64(struct StagedActor *object, struct FieldPosition *position);
-void Event_NoOp(void);
 
 void Func_0200038c(void) {
   struct FieldPosition dst;
@@ -61,33 +29,33 @@ void Func_0200038c(void) {
 
   lead = (struct StagedActor *)Actor_GetById(gMainRoutineWork.currentOwner);
   dir = lead->facing >> 12;
-  step = gData_02001d8c[dir];
+  step = gData_02001d8c__venus_lighthouse[dir];
   dst.x = lead->x.fixed + (step & 0xffff0000);
   dst.y = lead->y.fixed;
   step <<= 16;
   dst.z = lead->z.fixed + step;
-  next = Actor_FindInCell(&dst, lead);
+  next = Actor_FindInCell__venus_lighthouse(&dst, lead);
   if (next == 0)
     return;
 
-  step = gData_02001d8c[dir];
+  step = gData_02001d8c__venus_lighthouse[dir];
   dst.x = next->x.fixed + (step & 0xffff0000);
   dst.y = next->y.fixed;
   step <<= 16;
   dst.z = next->z.fixed + step;
-  blocker = Actor_FindInCell(&dst, next);
+  blocker = Actor_FindInCell__venus_lighthouse(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 
   dst.x = next->x.fixed;
   dst.y = next->y.fixed + 0x100000;
   dst.z = next->z.fixed;
-  blocker = Actor_FindInCell(&dst, next);
+  blocker = Actor_FindInCell__venus_lighthouse(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 
   next->transitionMode = 2;
-  step = gData_02001d8c[dir];
+  step = gData_02001d8c__venus_lighthouse[dir];
   dst.x = next->x.fixed + (step & 0xffff0000);
   dst.y = next->y.fixed;
   step <<= 16;
@@ -159,21 +127,6 @@ s32 OverlayObject_UpdateEveryFourFrames(void *obj) {
   return 0;
 }
 
-struct SceneEffectSource {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct SceneEffectParams {
-  s32 priority;    ///< the sprite's priority
-  s32 palette;     ///< the sprite's palette
-  s32 startScaleX; ///< 16.16 fixed point, 0x10000 full size
-  s32 startScaleY; ///< 16.16 fixed point, 0x10000 full size
-  u8 unk10[0x18];
-};
-
 void Func_02000150(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase,
                    s32 life, struct SceneEffectParams *params);
 
@@ -200,8 +153,6 @@ done:
 
 #define Actor_SetSingleChildFlags                                     \
   ((void (*)(void *, s32))Actor_SetSingleChildFlags)
-
-enum { ENTRANCE_ALTERNATE_PLACEMENTS = 99 };
 
 extern const struct ActorPlacement gActorPlacementsEntrance99[];
 

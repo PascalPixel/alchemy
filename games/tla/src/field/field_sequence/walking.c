@@ -4,11 +4,9 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
-
-struct BattleEffectCounterState {
-  u8 unk000[0x154];
-  s16 counters[12];
-};
+#include "module/field/field.h"
+#include "module/field/field_sequence.h"
+#include "module/tla.h"
 
 s32 Func_080caf6c(void) { return 0; }
 
@@ -41,8 +39,6 @@ s32 BattleEffect_SumCounters(void) {
          state->counters[9] + state->counters[10] + state->counters[11];
 }
 
-s32 Party_FindOwnerWithActionFar(s32 action);
-
 /// Sets event work byte 0xd39 when flag 0x8df is set and a party member
 /// has action 153; clears it otherwise.
 void Func_080cb05c(void) {
@@ -53,14 +49,6 @@ void Func_080cb05c(void) {
   else
     work[0xd39] = 0;
 }
-
-struct DisplayBlock {
-  u8 unk000[0x18a];
-  s8 mode;
-  s8 pending;
-  u8 unk18c[0x40];
-  u8 *object;
-};
 
 s32 Func_080cb09c(void) {
   struct DisplayBlock *block = Ram_HeapSlots->eventWork;
@@ -118,36 +106,9 @@ s32 Func_080cb144(void) {
   return cell->collisionCode;
 }
 
-// A box of the map in whole cells (16.16 when compared) and the value it
-// selects while its condition holds; a row with minX -1 ends the list.
-struct MapRegion {
-  s16 minX;
-  s16 minY;
-  s16 minZ;
-  s16 maxX;
-  s16 maxY;
-  s16 maxZ;
-  s16 condition;
-  s16 value;
-};
-
 #define REGION_FIXED(value) ((value) << 16)
 
 // The overlay's entry table; entry 11 returns the map's region list.
-
-struct MapFocusObject {
-  u8 padding00[6];
-  u16 kind;
-  s32 x;
-  s32 unk0c;
-  s32 y;
-};
-
-struct MapFocusPosition {
-  s32 x;
-  s32 unk04;
-  s32 y;
-};
 
 void UpdateMapRegionAtPosition(s32 positionX, s32 positionY, s32 positionZ) {
   s32 selectedValue;
@@ -195,58 +156,9 @@ void UpdateMapRegionAtPosition(s32 positionX, s32 positionY, s32 positionZ) {
   }
 }
 
-// The event work as this function reads it.
-struct StepWork {
-  u8 unk000[0x154];
-  s16 exit;     ///< the cell's exit code (1 to 230)
-  s16 pushCell; ///< the cell's attributes when any of 0xe2 is set
-  u8 unk158[0xc];
-  s16 encounterEnemyGroup;
-  s16 psynergy; ///< a pending Psynergy request
-  u8 unk168[2];
-  s16 raisedEvent;
-  s16 fallenCount;
-  s16 survivorCount;
-  s16 fallenOwners[8];
-  u8 unk180[0x1c];
-  s32 walkingDistanceScale;
-  s32 walkingDistance;
-  struct MapCell *currentCell;
-  struct MapCell *previousCell;
-};
-
-// A unit as this function reads it.
-struct UnitStepView {
-  u8 unk000[0x38];
-  s16 hp;
-  u8 unk03a[0xf7];
-  s8 poison;
-};
-
-// gMainRoutineWork as this function reads it: struct MainRoutineWork's
-// unk24c[6] holds the hazard's limit, mode (0 counts steps on hazard cells, 1
-// counts frames) and damage, which adoption names in main_routine_work.h; read
-// through one struct, as the native's alias order needs (through struct
-// MainRoutineWork and a view of the hazard fields, differ 103).
-struct PartyStepView {
-  u8 unk000[0x212];
-  u8 renderMode;
-  u8 unk213[5];
-  u8 activeOwners[8];
-  u8 unk220[0x2c];
-  s16 hazardLimit;
-  s16 hazardMode;
-  s16 hazardDamage;
-  u16 hazardSteps;
-  u8 unk254[0xa];
-  s16 sceneVariant;
-  u8 unk260[4];
-  s32 avoidDistance;
-};
 #define gPartyStep (*(struct PartyStepView *)&gMainRoutineWork)
 
 s32 DjinnRecovery_CountDownFar(void);
-void Event_ClearValidPackedIds(void);
 void FieldEffect_SetAttached(s32 owner, s32 mode);
 
 void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
@@ -470,29 +382,6 @@ s32 BattleParty_ApplyStatusDamage(void) {
   return result;
 }
 
-struct FxSprite {
-  u8 unk00[91];
-  u8 visible;
-};
-
-struct FxWork {
-  u8 unk000[394];
-  u8 state;
-  u8 busy;
-  u8 unk18c[64];
-  struct FxSprite *sprite;
-};
-
-struct FadeWork {
-  u8 unk000[0x53a];
-  u8 level;
-  u8 step;
-  u8 active;
-  s8 pending;
-};
-
-void Func_08020268();
-
 /// In control mode 3, marks the event work busy, shows its object and, when a
 /// fade is pending, starts it at level 80 and waits 2 frames; then calls
 /// Func_08020268.
@@ -518,8 +407,6 @@ void Func_080cb82c(void) {
     Func_08020268();
   }
 }
-
-void Func_08020270(void);
 
 void Func_080cb8a4(void) {
   struct DisplayBlock *block = HeapSlot_AllocEwram(108, 0xd50);

@@ -1,16 +1,14 @@
 #include "types.h"
 #include "scene_tables.h"
+#include "module/scene/anemos_inner_sanctum_entrance.h"
 
 void Func_0200033c(void);
 void Func_020004e4(void);
 void Func_02000534(void);
-void Func_02000588(void);
 
 extern u8 gData_02000d6c[];
 extern u8 gData_02000da8[];
 extern u8 gData_02000de4[];
-
-extern s32 gData_02001970[];
 
 s32 gData_02001964[] = {
     (s32)gData_02000d6c,

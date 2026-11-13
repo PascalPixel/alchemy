@@ -2,52 +2,26 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
-
-union FieldCoordinate {
-  s32 fixed;
-  struct {
-    u16 fraction;
-    s16 pixel;
-  } part;
-};
-
-struct FieldPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct StagedActor {
-  u8 unk00[6];
-  u16 facing;
-  union FieldCoordinate x;
-  union FieldCoordinate y;
-  union FieldCoordinate z;
-  u8 unk14[0x0e];
-  u8 transitionMode;
-  u8 unk23;
-  s32 velocityX;
-  u8 unk28[4];
-  s32 velocityZ;
-  s32 moveRateX;
-  s32 moveRateZ;
-  s32 targetX;
-  u8 unk3c[4];
-  s32 targetZ;
-  u8 unk44[0x15];
-  u8 collisionFlags;
-  u8 unk5a[8];
-  u8 transitionBusy;
-};
+#include "event_work.h"
+#include "field.h"
+#include "field_coordinate.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "module/scene/magma_rock_inside.h"
+#include "module/scene/mars_lighthouse_aerie.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "scene.h"
+#include "text/msg_ids.h"
 
 extern s32 gData_02004fec[];
 
-struct StagedActor *Actor_FindInCell(struct FieldPosition *position,
-                                     struct StagedActor *self);
+/* VIEW(magma_rock_inside): routine Actor_FindInCell as struct StagedActor *Actor_FindInCell(struct FieldPosition *position, struct StagedActor *self); module/scene/magma_rock.h has struct Actor *Actor_FindInCell(s32 *position, struct Actor *self). */
+extern struct StagedActor *Actor_FindInCell__magma_rock_inside(struct FieldPosition *position,
+                                     struct StagedActor *self) __asm__("Actor_FindInCell");
 /* VIEW(s03b4): routine Func_02004c98 as void Func_02004c98(struct StagedActor *object, s32 mode); local.h has void Func_02004c98(struct Actor *object, s32 a). */
 extern void Func_02004c98__s03b4(struct StagedActor *object, s32 mode) __asm__("Func_02004c98");
-s32 Func_02004cf8(struct StagedActor *object, struct FieldPosition *position);
-void Event_NoOp(void);
 
 void Func_020003b4(void) {
   struct FieldPosition dst;
@@ -65,7 +39,7 @@ void Func_020003b4(void) {
   dst.y = lead->y.fixed;
   step <<= 16;
   dst.z = lead->z.fixed + step;
-  next = Actor_FindInCell(&dst, lead);
+  next = Actor_FindInCell__magma_rock_inside(&dst, lead);
   if (next == 0)
     return;
 
@@ -74,14 +48,14 @@ void Func_020003b4(void) {
   dst.y = next->y.fixed;
   step <<= 16;
   dst.z = next->z.fixed + step;
-  blocker = Actor_FindInCell(&dst, next);
+  blocker = Actor_FindInCell__magma_rock_inside(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 
   dst.x = next->x.fixed;
   dst.y = next->y.fixed + 0x100000;
   dst.z = next->z.fixed;
-  blocker = Actor_FindInCell(&dst, next);
+  blocker = Actor_FindInCell__magma_rock_inside(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 
@@ -171,9 +145,6 @@ s32 Func_020005b0(s32 *a, s32 *b) {
 
 #include "actor.h"
 
-extern u8 gMapShapeGrid[];
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02004d20(s32 layer, s32 x, s32 z);
 s32 Func_02004ef0(s32 layer, s32 shape, s32 height);
 
@@ -269,15 +240,6 @@ void Func_020006dc(u16 *ids) {
   }
 }
 
-struct Object0200074c {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x4f];
-  u8 marked;
-};
-
 /// Clears the object's mark and the cells ahead of and behind it that the mark
 /// blocked.
 void Func_0200075c(struct Object0200074c *object) {
@@ -330,7 +292,6 @@ void Actor_StartScript();
 s32 GameFlag_Test();
 /* VIEW(s0800): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/magma_rock_inside.c:336: too few arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s0800() __asm__("Actor_GetById");
-void Func_020007ac();
 
 void Func_02000800(s32 a0, s32 a1, s32 a2) {
   s32 t1, t4, t5, v5, v6, v7;
@@ -378,8 +339,6 @@ L_02008870:
 // ---- games/tla/src/scene/magma_rock_inside.c ----
 // The scene code of overlay 0x692 that its scene tables belong to, in ROM order; the rest of the overlay is in magma_rock_inside/.
 
-
-s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 s32 Func_020005dc(s32 terrain, s32 x, s32 z, s32 height);
 
 void Func_02000880(u16 *list) {
@@ -410,7 +369,6 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-
 extern u8 gData_02005840[];
 extern u8 gData_02005870[];
 extern u8 gData_02005978[];
@@ -420,15 +378,10 @@ extern u8 gData_02005ca8[];
 extern u8 gData_02005d38[];
 extern u8 gData_02005ed0[];
 
-extern s16 gData_020054fc[];
-extern s16 gData_02005508[];
-extern s16 gData_02005520[];
 extern s16 gData_02005528[];
-extern s16 gData_0200552e[];
 
 /* VIEW(magma_rock_inside): routine Func_0200075c as void Func_0200075c(s32 value); the definition has void Func_0200075c(struct Object0200074c *object). */
 extern void Func_0200075c__magma_rock_inside(s32 value) __asm__("Func_0200075c");
-void Func_02004ee0(s16 *cells);
 
 u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -472,14 +425,6 @@ void Func_0200099c(void) {
 }
 
 #include "io_reg.h"
-
-void Event_Start(void);
-void Event_End(void);
-void Func_02004ee8(void);
-void Func_020006dc(u16 *ids);
-struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
-void Func_0200063c(struct Actor *object);
-void Func_02004cb0(struct Actor *object);
 
 void Func_02000a30(void) {
   struct Actor *object =
@@ -587,10 +532,9 @@ void Func_02000a30(void) {
 #include "frame.h"
 #include "field_effect.h"
 
-void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
-void Func_02004e78(s32 owner, u16 value);
 s32 Func_02004e80(void);
-s32 BattleEffect_CleanupSceneObjects(void);
+/* VIEW(magma_rock_inside): routine BattleEffect_CleanupSceneObjects as s32 BattleEffect_CleanupSceneObjects(void); module/field/event_commands.h has void BattleEffect_CleanupSceneObjects(void). */
+extern s32 BattleEffect_CleanupSceneObjects__magma_rock_inside(void) __asm__("BattleEffect_CleanupSceneObjects");
 
 void Func_02000ce4(s16 value) {
   struct MainRoutineWork *party;
@@ -600,12 +544,11 @@ void Func_02000ce4(s16 value) {
   Func_02004e78(party->currentOwner, value);
   Field_DispatchTypeHandler(1);
   Func_02004e80();
-  BattleEffect_CleanupSceneObjects();
+  BattleEffect_CleanupSceneObjects__magma_rock_inside();
 }
 
 extern const s32 gData_0200502c[];
 
-void Func_02004f28(struct Actor *object, s32 sound);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
@@ -651,18 +594,6 @@ void Func_02000da4(struct Actor *object) {
 // layout, which rebuilds 0xffff on every pass, where loop.c would hoist it out
 // of a C loop.
 
-/// The cell watch's work: the object found on the leader's cell.
-struct CellWatch {
-  u8 unk00[4];
-  s32 x;
-  u8 unk08[4];
-  s32 z;
-  u8 unk10[4];
-  struct Actor *object;
-};
-
-s32 Func_02000658(u32 layer, s32 x, s32 y);
-
 s32 Func_02000dcc(u16 *table) {
   struct CellWatch *watch = Ram_HeapSlots->effectWork;
   s32 result = 0;
@@ -690,7 +621,6 @@ void Func_02000e14(void) { Event_ResolvePendingActions(0); }
 extern u16 gData_02005500[];
 extern u16 gData_0200550c[];
 
-s32 Func_02000dcc(u16 *table);
 void Func_02000da4(struct Actor *object);
 
 /// The cell watch's callback: in modes 2 and 3 it finds the object on the
@@ -741,28 +671,13 @@ void Func_02000ea4(struct Actor *object) {
   object->unk4c = dz;
 }
 
-
-s32 Math_Cosine(s32 angle);
-
 extern const s32 gData_0200502c[];
 
-s32 Func_020005b0(s32 *from, s32 *to);
-void Event_Start(void);
-void Event_End(void);
-void Func_02004cb0(struct Actor *object);
-void Func_02004e20(void);
-void Func_02000d1c(struct Actor *object);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-void Func_02001350(void);
 /* VIEW(s0e20): routine Func_02000ce4 as void Func_02000ce4(u16 id); the definition has void Func_02000ce4(s16 value); tried as the definition's void Func_02000ce4(s16 value), which the object already declares, Func_02000ed0 moves: 1 of 270 instructions in tla-ja. */
 extern void Func_02000ce4__s0e20(u16 id) __asm__("Func_02000ce4");
-
-struct ActorTable {
-  u8 unk_0[20];
-  struct Actor *actors[64];
-};
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -882,17 +797,6 @@ hit:
 
 #include "macros.h"
 
-struct MagmaRockInsideWork {
-  s32 unk00;
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 unk10;
-  struct Actor *target;
-};
-
-void Func_02004a5c(s32 x, s32 y, s32 z, s32 kind);
-void Func_02004b18(void);
 void Func_02004bd4(void);
 
 void Func_02001148(void) {
@@ -986,13 +890,7 @@ void Func_020011fc(void) {
   Event_End();
 }
 
-
 extern const s32 gData_02005050[];
-
-void Map_CenterOnFollowedPoint(void);
-void Func_020034bc(void);
-void Func_020034f0(void);
-void Func_02003548(void);
 
 static __inline__ void Func_02004cd8_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
@@ -1209,7 +1107,6 @@ last:
     Func_02003548();
 }
 
-
 /// A Magma Rock room's opening event: the leader is centred on its cell, the
 /// screen shakes, and by room (2, 3 or 5, the last by entrance) it picks the
 /// cells to open, the flag that was set (768 to 770, cleared here) and where
@@ -1393,16 +1290,6 @@ void Func_02001cd0(s32 a, s32 b) {
   Event_SetFlag(0x351);
 }
 
-struct EffectConfig {
-  s32 kind;
-  s32 variant;
-  u8 unk08[16];
-  u16 id;
-  u8 unk1a[2];
-  const u8 *data;
-  u8 unk20[8];
-};
-
 /* VIEW(s1ca0): variable gData_0200502c as extern const u8 gData_0200502c[]; s0e20 has extern const s32 gData_0200502c[]. */
 extern const u8 gData_0200502c__s1ca0[] __asm__("gData_0200502c");
 
@@ -1428,9 +1315,6 @@ void Func_02001d04(struct Actor *object) {
 // ---- games/tla/src/scene/magma_rock_inside/s1d64.c ----
 extern const s32 gData_02005050[];
 
-void Event_Start(void);
-void Event_End(void);
-void Func_02004e20(void);
 /* VIEW(s1d64): routine Func_02001d04 as void Func_02001d04(void); the definition has void Func_02001d04(struct Actor *object). */
 extern void Func_02001d04__s1d64(void) __asm__("Func_02001d04");
 
@@ -1532,9 +1416,6 @@ void Func_0200217c(void) {
 
 struct Actor;
 
-struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
-void Func_02004cb0(struct Actor *actor);
-
 void Func_020021c0(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct Actor *object;
@@ -1597,10 +1478,6 @@ void Func_02002318(void) {
   }
 }
 
-extern const u8 MsgBlazeStoneEmber[];
-
-void Func_02004e58(s32 item, s32 mode);
-
 void Func_02002364(void) {
   const u8 *message;
 
@@ -1648,13 +1525,6 @@ void Func_020023e8(void) {
   FieldEvent_SetExitRequest(1);
   Event_End();
 }
-
-// The cell stampers keep their last cell and the block they copy.
-extern s32 Data_020067ec;
-extern s32 Data_020067f0;
-extern s32 Data_020067f4;
-extern s32 Data_020067f8;
-
 
 static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
                              s32 destX, s32 destZ) {
@@ -1753,8 +1623,6 @@ void Func_02002610(void) {
 
 #include "field_sprite.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
 void Func_020026a4(s32 x, s32 z) {
   struct Actor *object;
   s32 i;
@@ -1792,7 +1660,6 @@ fadeOut:
   REG_BLDCNT = 0;
   REG_DISPCNT &= 0x7fff;
 }
-
 
 /// Reads what the leader stands on (Func_02000658, kind 2): on cells 1 and 7
 /// it only redraws the marker when flag 0x200 is set; elsewhere it clears
@@ -1906,7 +1773,8 @@ void Func_02002a14(struct Actor *source) {
   Actor_StartScript(object, gData_02005534);
 }
 
-struct Orbiter {
+/* VIEW(magma_rock_inside): tag struct Orbiter as struct Orbiter__magma_rock_inside; module/scene/scene.h has another definition. */
+struct Orbiter__magma_rock_inside {
   u8 unk00[8];
   s32 x;
   s32 y;
@@ -1918,13 +1786,13 @@ struct Orbiter {
   u8 unk63;
   u16 angle;
   u16 speed;
-  struct Orbiter *parent;
+  struct Orbiter__magma_rock_inside *parent;
 };
 
-s32 Func_02002a6c(struct Orbiter *object) {
+s32 Func_02002a6c(struct Orbiter__magma_rock_inside *object) {
   u16 *angle = &object->angle;
   u16 *speed = &object->speed;
-  struct Orbiter *parent = object->parent;
+  struct Orbiter__magma_rock_inside *parent = object->parent;
   s32 *position;
   s16 heading;
 
@@ -1949,26 +1817,6 @@ s32 Func_02002a6c(struct Orbiter *object) {
   object->radius -= 0x40000;
   return 1;
 }
-
-struct Orbit {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x30];
-  s32 centreX;
-  s32 centreZ;
-  s32 radius;
-  u8 unk50[0x12];
-  u8 phase;
-  u8 growth;
-  s16 angle;
-  s16 speed;
-};
-
-s32 Math_Cosine(s32 angle);
-// Called by its linked name, as Gaia Rock's Func_0200142c does.
-s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
 
 // Moves around in a circle.
 s32 Func_02002b2c(struct Orbit *object) {
@@ -2062,8 +1910,6 @@ extern const u8 gData_020055b4[];
 extern const s32 gData_02005570[];
 extern const u8 gData_020055d8[];
 extern const u8 gData_02005608[];
-
-void Party_PlaySavedMusic(void);
 
 void Func_02002cd0(s32 a, s32 b) {
   struct Actor *first = Actor_GetById(a);
@@ -2218,10 +2064,9 @@ column:
        ->v)
 #define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
 
-extern const u8 MsgBlazeTabletInscription[];
-
 s32 Actor_MoveToObject();
-s32 Party_LearnAbility();
+/* VIEW(magma_rock_inside): routine Party_LearnAbility as s32 Party_LearnAbility(); module/field/event_commands.h has void Party_LearnAbility(s32 unit, s32 ability). */
+extern s32 Party_LearnAbility__magma_rock_inside() __asm__("Party_LearnAbility");
 
 /// Reading the Blaze tablet shows its inscription; the first time (flag 0x9fa
 /// clear) the scene with actor 5 follows.
@@ -2271,7 +2116,7 @@ void Func_020030cc(void) {
     MapGrid_SetShake(-1, -1, 0xe666);
     MapGrid_WaitForShakeToSettle();
     Call2(Func_02002cd0, 8, 5);
-    Party_LearnAbility(5, 0x9a);
+    Party_LearnAbility__magma_rock_inside(5, 0x9a);
     Event_SetFlag(0x9fa);
     Actor_FaceEachOther(gMainRoutineWork.currentOwner, 5, 0);
     FieldEvent_Wait(10);
@@ -2388,11 +2233,6 @@ void Func_020034f0(void) {
     Func_02000694(0, 26, 14, 0);
   }
 }
-
-extern s16 gData_0200525c[];
-extern s16 gData_020052bc[];
-extern s16 gData_0200531c[];
-extern s16 gData_0200537c[];
 
 /* VIEW(s1d64): routine Func_02000800 as void Func_02000800(s32 id, s16 *script, s32 flag); the definition has void Func_02000800(s32 a0, s32 a1, s32 a2). */
 extern void Func_02000800__s1d64(s32 id, s16 *script, s32 flag) __asm__("Func_02000800");

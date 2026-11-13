@@ -4,8 +4,7 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
-
-s32 Forge_ChooseMember(void);
+#include "module/shop/shop.h"
 
 /// Runs the forge: the smith's line, then a party member's materials to
 /// forge, until the player leaves. `objectId` is the actor whose portrait the
@@ -22,7 +21,7 @@ s32 Forge_Run(s32 objectId) {
   shop = Ram_HeapSlots->menuRuntime;
   shop->shopType = 1;
   shop->partyAction = 4;
-  shop->keeperResource = *((struct FieldObject *)Actor_GetByIdFar(objectId))->sprite->portrait;
+  shop->keeperResource = *((struct FieldObject *)Actor_GetByIdFar__shop(objectId))->sprite->portrait;
   window = Func_080380f8(shop->keeperResource, 0, 0, 0);
   icon = WindowSprite_CreateFar(shop->cursorIcon, 0x40000000, window, 0, 0);
   icon->sentinel = 255;
@@ -90,8 +89,6 @@ s32 Forge_OfferItem(s32 unitId, s32 slot) {
   return result;
 }
 
-s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode);
-
 // XXX: what the item picker's mode 1 chooses an item for; the callers through
 // the far-call table and Func_080ad270 would settle it.
 void Func_0810b79c(s32 a, s32 b) { ItemPicker_Run(a, b, 1); }
@@ -102,8 +99,6 @@ void ItemPicker_RunToDrop(s32 a, s32 b) { ItemPicker_Run(a, b, 0); }
 // ItemPicker_Run picks a party member and then one of their items, four members
 // a page, returning the unit and slot through the pointers (both -1 when
 // cancelled): the twin of The Broken Seal's Shop_PickUnitItem.
-
-s32 ItemPicker_SelectItem(s32 unitId);
 
 /// ItemPicker_Run picks a party member and then one of their items, four members
 /// a page, returning the unit and slot through the pointers (both -1 when
@@ -205,14 +200,6 @@ s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode) {
 #else
 #define DETAILS_WINDOW_WIDTH 18
 #endif
-
-// Unnamed in the catalog yet: 4676 and 4675 take placeholders here.
-extern u8 MsgCannotRemoveIt[];
-
-void ItemPicker_DrawItem(void *window, s32 unitId, s32 slot);
-
-s32 Func_080ad268(s32 unitId, s32 slot);
-s32 Func_080ad270(s32 unitId, s32 slot);
 
 s32 ItemPicker_SelectItem(s32 unitId) {
   void *nameWindow;
@@ -391,24 +378,24 @@ void ItemPicker_DrawItem(void *window, s32 unitId, s32 slot) {
   if (window == 0)
     return;
   WindowSprite_RedrawSavedRectFar(window);
-  Text_DrawMessageAsTilesFar(item + (s32)MsgItemName, window, 0, 0);
+  Text_DrawMessageAsTilesFar__shop(item + (s32)MsgItemName, window, 0, 0);
   if (shop->itemMode == 0)
     flags = Func_080ad268(unitId, slot);
   else
     flags = Func_080ad270(unitId, slot);
   if (flags & 2) {
-    Text_DrawMessageAsTilesFar((s32)MsgCannotDrop, window, SHOP_PRICE_NOTE_X,
+    Text_DrawMessageAsTilesFar__shop((s32)MsgCannotDrop, window, SHOP_PRICE_NOTE_X,
                                   8);
   } else if (flags & 1) {
-    Text_DrawMessageAsTilesFar((s32)MsgCannotRemove, window,
+    Text_DrawMessageAsTilesFar__shop((s32)MsgCannotRemove, window,
                                   SHOP_PRICE_NOTE_X, 8);
   } else if (shop->itemMode == 0) {
     price = Shop_SalePrice(unit->inventory[slot]) * quantity;
     message = (s32)MsgPriceHeading;
-    Text_DrawMessageAsTilesFar(message, window, 8, 8);
+    Text_DrawMessageAsTilesFar__shop(message, window, 8, 8);
     Text_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
     // Five messages before the price heading: MsgCoins.
-    Text_DrawMessageAsTilesFar(message - 5, window, SHOP_PRICE_COINS_X, 8);
+    Text_DrawMessageAsTilesFar__shop(message - 5, window, SHOP_PRICE_COINS_X, 8);
   }
 }
 

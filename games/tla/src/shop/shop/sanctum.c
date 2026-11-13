@@ -3,6 +3,11 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "gamepak/far_call/field_sequence.h"
+#include "gamepak/far_call/window.h"
+#include "module/shop/shop.h"
+#include "module/system/system.h"
+#include "module/tla.h"
 
 s32 Sanctum_ServicePrice(s32 entry_id, s32 kind) {
   u8 value = ((struct BattleUnit *)Unit_Get(entry_id))->level;
@@ -118,12 +123,7 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 message) {
 // the downed, Sanctum_RunPartyService for the service, Shop_ReleaseWork to clean up), its
 // work-block offsets and numbered messages.
 
-extern u8 MsgReviveService[]; // "Hmm, you were downed ...", then "Fear not ..."
-
 void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
-
-s32 Sanctum_RunPartyService(void);
-s32 Menu_SelectSanctumServiceFar(s32 prev);
 
 s32 Sanctum_Run(s32 unitId) {
   s32 partyAction = 0;
@@ -136,7 +136,7 @@ s32 Sanctum_Run(s32 unitId) {
   shop->partyAction = listWindow;
 
   shop->keeperResource =
-      **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar(unitId) + 80) + 40);
+      **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar__shop(unitId) + 80) + 40);
 
   listWindow = Func_080380f8(shop->keeperResource, 0, 0, 0);
   if (listWindow == 0) {
@@ -182,15 +182,6 @@ s32 Sanctum_Run(s32 unitId) {
   Shop_ReleaseWork();
   return 0;
 }
-
-// Unnamed in the catalog yet: 4823 ("who to treat") and 4824 to 4828 (the
-// donation and its answers) take placeholders here.
-extern u8 MsgWhoShallIRevive[];
-
-void Sanctum_HighlightMembers(void *window, s32 memberIndex);
-void Sanctum_DrawFee(s32 window, s32 unitId);
-void Sanctum_ApplyService(s32 unitId, s32 serviceKind);
-void Sanctum_RunMemberIconBurst(s32 member);
 
 // Italian creates no price window and passes 0 where the others pass it, a
 // layout difference of that language's edition.
@@ -468,33 +459,11 @@ void Sanctum_DrawFee(s32 window, s32 unitId) {
   }
 }
 
-void FieldParticle_SetPositionFar(struct Effect_080b2f4c *, s32, s32);
-s32 FieldParticle_HasPendingTargetFar(struct Effect_080b2f4c *);
-void BattleEffect_ClearOwnedSlotFar(struct Effect_080b2f4c *);
-
 struct Position {
   s32 x;
   s32 y;
   s32 z;
 };
-
-struct Effect_080b2f4c {
-  u8 unk000[0xc];
-  s32 x;
-  s32 z;
-  s32 sourceX;
-  s32 sourceZ;
-  s32 filler1C;
-  s32 velocity;
-  s32 acceleration;
-  u8 unk028[0x18];
-  s8 state;
-  u8 filler41;
-  s8 flag;
-  u8 unk043[5];
-};
-
-void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
 void Sanctum_UpdateBurstSparkle(struct Effect_080b2f4c *effect) {
   struct Position position;
@@ -528,16 +497,8 @@ void Sanctum_UpdateBurstSparkle(struct Effect_080b2f4c *effect) {
   }
 }
 
-void FieldParticle_UpdateFar(void *slot);
-void Animation_ApplyChildValuesToRecordFar(void *child, u32 value);
-
-struct ShopFxWork {
-  u8 unk000[248];
-  void *children[0x104];
-  s8 selected;
-  u8 unk509[3];
-  u8 slots[24][72];
-};
+/* VIEW(shop): routine Animation_ApplyChildValuesToRecordFar as void Animation_ApplyChildValuesToRecordFar(void *child, u32 value); actor_view.h has void Animation_ApplyChildValuesToRecordFar(struct ActorSpriteView *, u32). */
+extern void Animation_ApplyChildValuesToRecordFar__shop(void *child, u32 value) __asm__("Animation_ApplyChildValuesToRecordFar");
 
 void Sanctum_UpdateBurst(void) {
   struct ShopFxWork *work = Ram_HeapSlots->menuRuntime;
@@ -548,53 +509,11 @@ void Sanctum_UpdateBurst(void) {
     FieldParticle_UpdateFar(work->slots[i]);
   selected = work->selected;
   if (selected != -1)
-    Animation_ApplyChildValuesToRecordFar(work->children[selected],
+    Animation_ApplyChildValuesToRecordFar__shop(work->children[selected],
                                           (Random16() * 7) >> 16);
 }
 
-void FieldParticle_InitializeFar(struct Effect_080b2f4c *effect, s32 mode,
-                                 s32 x, s32 z);
-void FieldParticle_SetCallbackFar(struct Effect_080b2f4c *effect,
-                                  void (*callback)(struct Effect_080b2f4c *));
-void FieldParticle_SetActorModeFar(struct Effect_080b2f4c *effect, s32 value);
-
 void Animation_ApplyChildValueFar(s32 object, s32 arg);
-
-extern s8 Data_0810cf28[];
-
-struct BurstSprite {
-  s32 object;
-  s32 x, z, targetX, targetZ, originX, originZ, speed, speedMax, acceleration;
-  s32 scaleX;
-  s32 scaleY;
-  u16 heading;
-  s16 turnStepMax;
-  void *callback;
-  u16 age;
-  s16 callbackDelay;
-  s16 orbitRadius;
-  s16 orbitAngle;
-  s8 state;
-  s8 stopAtTarget;
-  s8 turnStepLimited;
-  s8 updateMotion;
-  s8 render;
-  s8 active;
-};
-
-struct BurstShop {
-  u8 unk000[0xf8];
-  s32 partyMemberIcons[8];
-  s16 partyMemberX[8];
-  s16 partyMemberY[8];
-  u8 unk138[0x4dc - 0x138];
-  struct ShopCursor cursor;
-  u8 unk4ec[0x507 - 0x4ec];
-  s8 action;
-  s8 burstMember;
-  u8 unk509[3];
-  struct BurstSprite effects[24];
-};
 
 void Sanctum_RunMemberIconBurst(s32 member) {
   struct BurstShop *shop;
@@ -626,7 +545,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     FieldParticle_SetCallbackFar((struct Effect_080b2f4c *)effect,
                                  Sanctum_UpdateBurstSparkle);
     FieldParticle_SetActorModeFar((struct Effect_080b2f4c *)effect, 7);
-    Animation_ApplyChildValuesToRecordFar(effect->object,
+    Animation_ApplyChildValuesToRecordFar__shop(effect->object,
                                           (Random16() * 7) >> 16);
     effect->scaleY = Q16_ONE * 7 / 10;
     effect->scaleX = Q16_ONE * 7 / 10;
@@ -653,7 +572,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   wait(20);
   Sound_PlayFar(126);
   shop->burstMember = -1;
-  Animation_ApplyChildValuesToRecordFar(shop->partyMemberIcons[member], 0);
+  Animation_ApplyChildValuesToRecordFar__shop(shop->partyMemberIcons[member], 0);
   wait(20);
 
   {

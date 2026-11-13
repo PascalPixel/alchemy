@@ -3,6 +3,12 @@
 // Part of f04a85c.c.
 
 #include "../f04a85c_internal.h"
+#include "flag_call.h"
+#include "gamepak/far_call/battle.h"
+#include "item_icon.h"
+#include "module/tla.h"
+#include "module/window/f04a85c.h"
+#include "module/window/window.h"
 
 // Widths in tiles that fit each language's text: the "Set Djinni" window
 // (MsgSetDjinni), the condition list, and the Mystery names' copy, which
@@ -19,126 +25,42 @@
 #define TARGET_MYSTERY_NAME_CAPACITY 14
 #endif
 
-extern u8 MsgMysteryMan[];
-extern u8 MsgEffectNone[];
-extern u8 MsgEffectCurePoison[];
-extern u8 MsgRemoveDelusion[];
-extern u8 MsgRemoveStun[];
-extern u8 MsgWakeFromSleep[];
-extern u8 MsgBreakPsynergySeal[];
-extern u8 MsgDispelGrimReaper[];
-extern u8 MsgDispelEvilSpirit[];
-extern u8 MsgEffectDowned[];
-extern u8 MsgSetDjinni[];
-
-struct TargetWindow {
-  u8 unk00[8];
-  u16 width;
-  u16 height;
-  s16 x;
-  s16 y;
-};
-
-struct TargetNavigation {
-  u8 unk00[0x28];
-  s32 targetViewOffset;
-  u8 unk2c[0x20];
-  s32 timer;
-  u8 unk50[0x88];
-  s32 tutorialStep;
-  s32 tutorialDelay;
-  u8 unke0[0x2c];
-  s32 lastTarget;
-};
-
-struct TargetBattle {
-  u8 unk00[0x58];
-  s16 partyUnits[7];
-  s16 enemyIds[7];
-};
-
-struct TargetPoint {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct TargetTrack {
-  u8 x;
-  u8 y;
-  u8 flags;
-  s8 index;
-};
-
-struct TargetSprite {
-  u8 unk00[4];
-  u8 y;
-  u8 affine : 2;
-  u8 mode : 2;
-  u8 high05 : 4;
-  u16 x : 9;
-  u16 matrix : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 attr2high : 6;
-  u16 unk0a;
-};
-
-struct TargetAffine {
-  u16 scaleX;
-  u16 scaleY;
-  u16 angle;
-  u16 unk06;
-};
-
 #define NAVIGATION ((struct TargetNavigation *)Ram_HeapSlots->unke4[0])
 
-extern const u8 gData_0805c9c4[];
-extern const u8 gOwnerStatus_HpString[];
-extern const u8 gOwnerStatus_SlashString[];
-extern const u8 gOwnerStatus_PpString[];
 #if TLA_PATCH_2
 extern const u8 gOwnerStatus_KpString[];
 extern const u8 gOwnerStatus_PvString[];
 s32 System_GetLanguage(void);
 #endif
 
-s32 VramCache_AllocEntry(s32 size);
 /* VIEW(f04a85c): routine VramCache_Reload as s32 VramCache_Reload(s32 entry, const void *tiles); resource.h has s32 VramCache_Reload(s32 slot, s32 source); tried as the definition's s32 VramCache_Reload(s32 no, s32 src), BattleTarget_RunSelection moves: 1 of 1647 instructions in tla-ja. */
 extern s32 VramCache_Reload__f04a85c(s32 entry, const void *tiles) __asm__("VramCache_Reload");
 /* VIEW(f04a85c): routine Unit_Get as struct BattleUnit *Unit_Get(s32 unit); the definition has s32 Func_0804b8b8(s32 slot) { u16 owners[6]; u16 selected[2]; struct BattleWork *battle; s32 count; count = BattleParty_PrepareReserveOwners...; tried as the definition's void *Unit_Get(s32 owner), which the object already declares, it does not compile in tla-ja: games/tla/src/window/f04a85c.c:328: invalid type argument of `->'. */
 extern struct BattleUnit *Unit_Get__f04a85c(s32 unit) __asm__("Unit_Get");
-s32 GameFlag_Test(s32 flag);
-s32 BattleMotion_ProjectConditionalPositionFar(s32 unit,
-                                               struct TargetPoint *point);
-struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                   s32 flags);
-s32 Trig_Sin(s32 angle);
+/* VIEW(f04a85c): routine Window_Create as struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); module/window/window.h has struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style). */
+extern struct TargetWindow *Window_Create__f04a85c(s32 x, s32 y, s32 width, s32 height,
+                                   s32 flags) __asm__("Window_Create");
 /* VIEW(f04a85c): routine Oam_AddSpriteAtDepth as s32 Oam_AddSpriteAtDepth(void *sprite, s32 depth); task.h has void Oam_AddSpriteAtDepth(void *entry, s32 priority); tried as the definition's void Oam_AddSpriteAtDepth(void *entry, s32 slot), BattleTarget_RunSelection moves: 2 of 1647 instructions in tla-ja. */
 extern s32 Oam_AddSpriteAtDepth__f04a85c(void *sprite, s32 depth) __asm__("Oam_AddSpriteAtDepth"); // Returns void; see the tag.
-s32 AffineMatrix_BuildForEffect(struct TargetAffine *affine);
-void BattleHighlight_SetModesFar(u16 *units, s32 mode);
+/* VIEW(f04a85c): routine AffineMatrix_BuildForEffect as s32 AffineMatrix_BuildForEffect(struct TargetAffine *affine); affine.h has s32 AffineMatrix_BuildForEffect(struct AffineTransform *source). */
+extern s32 AffineMatrix_BuildForEffect__f04a85c(struct TargetAffine *affine) __asm__("AffineMatrix_BuildForEffect");
 /* VIEW(f04a85c): routine Window_Close as void Window_Close(void *window, s32 mode); uiflow.h has void Window_Close(struct Window *window, s32 release); tried as the definition's void Window_Close(struct Window *work, s32 release), it does not compile in tla-ja: games/tla/include/graphics/uiflow.h:7: conflicting types for `Window_Close'. */
 extern void Window_Close__f04a85c(void *window, s32 mode) __asm__("Window_Close");
 /* VIEW(f04a85c): routine Text_DrawStringAtOffset as void Text_DrawStringAtOffset(const u8 *text, struct TargetWindow *window, s32 x, s32 y); text_render.h has void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX, s32 offsetY); tried as the definition's void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX, s32 offsetY), which the object already declares, BattleTarget_RunSelection moves: 8 of 1647 instructions in tla-ja. */
 extern void Text_DrawStringAtOffset__f04a85c(const u8 *text, struct TargetWindow *window, s32 x,
                              s32 y) __asm__("Text_DrawStringAtOffset");
-void Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window,
-                             s32 x, s32 y);
+/* VIEW(f04a85c): routine Text_DrawNumberInWindow as void Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window, s32 x, s32 y); module/window/window.h has void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y). */
+extern void Text_DrawNumberInWindow__f04a85c(s32 value, s32 digits, struct TargetWindow *window,
+                             s32 x, s32 y) __asm__("Text_DrawNumberInWindow");
 /* VIEW(f04a85c): routine Text_DrawMessageAsTiles as void Text_DrawMessageAsTiles(s32 message, struct TargetWindow *window, s32 x, s32 y); text_render.h has void Text_DrawMessageAsTiles(s32 character, struct RenderInput *work, u32 offsetX, u32 offsetY); tried as the definition's void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY), it does not compile in tla-ja: games/tla/include/graphics/text_render.h:10: conflicting types for `Text_DrawMessageAsTiles'. */
 extern void Text_DrawCharacterAtOffset__f04a85c(s32 message, struct TargetWindow *window, s32 x,
                                 s32 y) __asm__("Text_DrawMessageAsTiles");
-void Text_SetColor(s32 color);
-void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
-void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
-s32 Text_GetWideStringWidth(u16 *text);
+/* VIEW(f04a85c): routine Message_CopyExpanded as void Message_CopyExpanded(s32 message, u16 *text, s32 capacity); module/window/window.h has s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity). */
+extern void Message_CopyExpanded__f04a85c(s32 message, u16 *text, s32 capacity) __asm__("Message_CopyExpanded");
 /* VIEW(f04a85c): routine Text_ClearCanvas as void Text_ClearCanvas(void); graphics.h has s32 Text_ClearCanvas(void); tried as the definition's s32 Text_ClearCanvas(void), which the object already declares, BattleTarget_RunSelection moves: 1 of 1647 instructions in tla-ja. */
 extern void Vram_ClearWindowBlock__f04a85c(void) __asm__("Text_ClearCanvas");
 void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x,
                                  s32 y);
-void Sound_PlayFar(s32 cue);
-void wait(s32 frames);
-s32 Resource_ResetEntry(u32 slot);
 
 // The help window's column beside the aimed member, kept on screen.
 #define TARGET_HELP_COLUMN(back, width, last)                                  \
@@ -340,7 +262,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
    * no asm, 96 of 1647 instructions differ in tla-en. */
   __asm__("" : : : "r8", "r10");
 #endif
-  window = Window_Create(0, 12, 30, 4, 74);
+  window = Window_Create__f04a85c(0, 12, 30, 4, 74);
 
   for (;;) {
     // A once-only block: its end keeps the tile reload after the sprite's
@@ -394,7 +316,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       effect.scaleY = 176;
     }
     effect.angle = 0;
-    matrix = AffineMatrix_BuildForEffect(&effect);
+    matrix = AffineMatrix_BuildForEffect__f04a85c(&effect);
 
     if (redraw & 1) {
       targetCount = 0;
@@ -447,21 +369,21 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             if (System_GetLanguage() == CARTRIDGE_LANGUAGE_ITALIAN) {
               if (anchor + 6 > 29)
                 helpColumn = 20;
-              conditionWindow = Window_Create(helpColumn, 8, 10, 3, 6);
+              conditionWindow = Window_Create__f04a85c(helpColumn, 8, 10, 3, 6);
             } else if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
               if (anchor + 7 > 29)
                 helpColumn = 19;
-              conditionWindow = Window_Create(helpColumn, 8, 11, 3, 6);
+              conditionWindow = Window_Create__f04a85c(helpColumn, 8, 11, 3, 6);
             } else {
               if (anchor + 5 > 29)
                 helpColumn = 21;
-              conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
+              conditionWindow = Window_Create__f04a85c(helpColumn, 8, 9, 3, 6);
             }
           }
 #else
             TARGET_HELP_COLUMN(4, 4, 22);
             conditionWindow =
-                Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
+                Window_Create__f04a85c(helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
 #endif
             Text_SetColor(2);
             Text_DrawCharacterAtOffset__f04a85c((s32)MsgSetDjinni, conditionWindow, 0,
@@ -470,7 +392,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             break;
           case 1:
             TARGET_HELP_COLUMN(7, 6, 17);
-            conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
+            conditionWindow = Window_Create__f04a85c(helpColumn, 8, 13, 3, 6);
 #if TLA_PATCH_2
             switch (System_GetLanguage()) {
             case CARTRIDGE_LANGUAGE_GERMAN:
@@ -491,24 +413,24 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             Text_DrawStringAtOffset__f04a85c(gOwnerStatus_HpString, conditionWindow, 0,
                                     0);
 #endif
-            Text_DrawNumberInWindow(unit->hp, 4, conditionWindow, 16, 0);
+            Text_DrawNumberInWindow__f04a85c(unit->hp, 4, conditionWindow, 16, 0);
             Text_DrawStringAtOffset__f04a85c(gOwnerStatus_SlashString, conditionWindow,
                                     48, 0);
-            Text_DrawNumberInWindow(unit->maxHp, 4, conditionWindow, 56, 0);
+            Text_DrawNumberInWindow__f04a85c(unit->maxHp, 4, conditionWindow, 56, 0);
             break;
           case 2:
             TARGET_HELP_COLUMN(7, 6, 17);
-            conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
+            conditionWindow = Window_Create__f04a85c(helpColumn, 8, 13, 3, 6);
             Text_DrawStringAtOffset__f04a85c(gOwnerStatus_PpString, conditionWindow, 0,
                                     0);
-            Text_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
+            Text_DrawNumberInWindow__f04a85c(unit->pp, 4, conditionWindow, 16, 0);
             Text_DrawStringAtOffset__f04a85c(gOwnerStatus_SlashString, conditionWindow,
                                     48, 0);
-            Text_DrawNumberInWindow(unit->maxPp, 4, conditionWindow, 56, 0);
+            Text_DrawNumberInWindow__f04a85c(unit->maxPp, 4, conditionWindow, 56, 0);
             break;
           case 5:
             TARGET_HELP_COLUMN(7, 5, 18);
-            conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
+            conditionWindow = Window_Create__f04a85c(helpColumn, 8, 12, 3, 6);
             if (unit->hp != 0)
               goto no_condition;
             Text_DrawCharacterAtOffset__f04a85c((s32)MsgEffectDowned, conditionWindow, 0,
@@ -516,7 +438,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             break;
           case 3:
             TARGET_HELP_COLUMN(7, 5, 18);
-            conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
+            conditionWindow = Window_Create__f04a85c(helpColumn, 8, 12, 3, 6);
             if (unit->poison == 0)
               goto no_condition;
             Text_DrawCharacterAtOffset__f04a85c((s32)MsgEffectCurePoison,

@@ -10,21 +10,19 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
+#include "module/scene/lemurian_ship.h"
+#include "module/scene/scene.h"
 
 /* VIEW(scene_tables): variable gData_02003054 as extern u8 gData_02003054[]; the definition has s32 gData_02003054[] = { - 0x10000, 172, 0x40000095, - 0x10000, - 1, 0xffff, 0xffff, 0, 0, 0, 0, 0, }. */
 extern u8 gData_02003054__scene_tables[] __asm__("gData_02003054");
 /* VIEW(scene_tables): variable gData_02003084 as extern u8 gData_02003084[]; the definition has u32 gData_02003084[] = { 0xffff0009, 406, 0xc0000178, 0x1500000, 0x2680108, 424, 0xffff000a, 550, 0xc0000179, 0x1500000, 0x2680108, 424, 0xf.... */
 extern u8 gData_02003084__scene_tables[] __asm__("gData_02003084");
-extern s32 gData_02003054[];
-extern u32 gData_02003084[];
 /* VIEW(scene_tables): variable gData_0200312c as extern u8 gData_0200312c[]; the definition has s16 gData_0200312c[] = { 0, - 1, 72, 0, 72, 0x4000, 0, - 1, - 1, - 1, - 1, 0, 1, - 1, 72, 0, 72, 0x4000, 0, 8, 16, 248, 256, 0, 2, - 1, 168,...; tried as the definition's extern u32 gData_0200312c[], it does not compile in tla-ja: games/tla/src/scene/lemurian_ship.c:1713: conflicting types for `gData_0200312c'. */
 extern u8 gData_0200312c__scene_tables[] __asm__("gData_0200312c");
 /* VIEW(scene_tables): variable gData_02003234 as extern u8 gData_02003234[]; the definition has u32 gData_02003234[] = { 0xffec01d2, 0x1da0244, 0x24cfff4, 0x13ffff, 0xffff, 0, 0, 0, }. */
 extern u8 gData_02003234__scene_tables[] __asm__("gData_02003234");
 /* VIEW(scene_tables): variable gData_02003254 as extern u8 gData_02003254[]; the definition has u32 gData_02003254[] = { 0x100200, 0x21000be, 0xce0020, 0xaffff, 0xffff, 0, 0, 0, }. */
 extern u8 gData_02003254__scene_tables[] __asm__("gData_02003254");
-extern u32 gData_02003234[];
-extern u32 gData_02003254[];
 
 u8 *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -66,14 +64,8 @@ extern void Animation_SetStateFlags__s00b8(struct LemurianShipObject *object, s3
 #include "version.h"
 #include "macros.h"
 
-extern struct ActorPlacement gData_02003380[];
-extern struct ActorPlacement gData_02003398[];
-extern struct ActorPlacement gData_0200b410[];
 extern struct ActorPlacement gData_02003560[];
 extern struct ActorPlacement gData_02003590[];
-extern struct ActorPlacement gData_02003710[];
-extern struct ActorPlacement gData_020037d0[];
-extern struct ActorPlacement gData_02003848[];
 
 struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room1) {
@@ -121,16 +113,6 @@ struct ActorPlacement *Scene_GetPlacements(void) {
   }
   return gData_02003380;
 }
-
-struct LemurianShipWarp {
-  u16 exit;
-  s32 value;
-  u16 x;
-  u16 z;
-};
-
-extern struct LemurianShipWarp gData_02003904[];
-extern struct LemurianShipWarp gData_0200397c[];
 
 void Func_0200021c(void) {
   struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
@@ -225,8 +207,6 @@ next2:
   Import_EventSetExitRequest(work->exit);
 }
 
-extern s32 gData_02002de8[];
-
 void Func_02000438(void) {
   if (GameFlag_Test(0x982)) {
     struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
@@ -256,15 +236,9 @@ void Func_02000438(void) {
   }
 }
 
-extern struct Trigger gData_020039c4[];
-extern struct Trigger gData_020039d0[];
-extern struct Trigger gData_02003a84[];
-extern struct Trigger gData_02003ae4[];
 extern struct Trigger gData_02003c10[];
-extern struct Trigger gData_02003c7c[];
 extern struct Trigger gData_02003d9c[];
 extern struct Trigger gData_02003dfc[];
-extern struct Trigger gData_02003ebc[];
 
 struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room1) {
@@ -916,12 +890,8 @@ void Func_020015c8(void) {
   }
 }
 
-extern u32 gData_02002f1c[];
-extern u32 gData_02002f44[];
-extern u32 gData_02002f88[];
-extern u32 gData_02002fcc[];
-
-void PartyInventory_Remove(s32 item);
+/* VIEW(lemurian_ship): routine PartyInventory_Remove as void PartyInventory_Remove(s32 item); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
+extern void PartyInventory_Remove__lemurian_ship(s32 item) __asm__("PartyInventory_Remove");
 
 /// The scene that clears the ship and sets its flags.
 /// "How did all these monsters get on board?"
@@ -981,7 +951,7 @@ void Func_02001650(void) {
       513;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  PartyInventory_Remove(242);
+  PartyInventory_Remove__lemurian_ship(242);
   GameFlag_SetBit(0x983);
   GameFlag_SetBit(0x930);
   GameFlag_SetBit(0x931);
@@ -1070,13 +1040,6 @@ void Func_02001a9c(void) {
 }
 
 void Func_02001c88(void);
-void Func_020027e4(void);
-void Func_02001e0c(void);
-void Func_0200241c(void);
-void Func_02002498(void);
-void Func_02002820(void);
-void Func_02002970(void);
-void Func_02002b98(void);
 
 s32 Scene_Initialize(void) {
   ((struct LemurianShipEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
@@ -1596,9 +1559,6 @@ void Func_02002b98(void) {
 
 #include "text/msg_ids.h"
 #include "objcmd.h"
-
-extern s16 gData_020038c0[];
-extern s16 gData_020038e0[];
 
 // clang-format off
 s32 gData_02002de8[] = {

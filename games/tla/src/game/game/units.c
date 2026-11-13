@@ -3,9 +3,11 @@
 // Part of game.c.
 
 #include "../game_internal.h"
-
-void Func_080addf0(void);
-void MainRoutine_RunFar(s32 mode);
+#include "flag_call.h"
+#include "gamepak/far_call/field_sequence.h"
+#include "module/game/game.h"
+#include "module/tla.h"
+#include "resource_ids.h"
 
 /// Starts a new game: sets up a new game's state (Func_080addf0) and runs the
 /// main routine afresh from mode 0.
@@ -67,90 +69,6 @@ void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
     } while (index != 0);
   }
 }
-
-struct OwnerStats {
-  u8 unk000[0x10];
-  s16 baseHp;
-  s16 basePp;
-  s16 hpRatio;
-  s16 ppRatio;
-  u16 baseAttack;
-  u16 baseDefense;
-  u16 baseAgility;
-  u8 baseLuck;
-  u8 baseTurns;
-  u8 base20;
-  u8 base21;
-  u8 unk022[2];
-  s16 baseElement[4][2];
-  s16 maxHp;
-  s16 maxPp;
-  s16 hp;
-  s16 pp;
-  s16 atk;
-  s16 def;
-  s16 agi;
-  u8 luck;
-  u8 turns;
-  u8 stat44;
-  u8 stat45;
-  u8 unk046[2];
-  s16 element[4][2];
-  u8 unk058[0x80];
-  u16 equipment[15];
-  u8 unk0f6[0x12];
-  u32 djinn[4];
-  u8 unk118[0x10];
-  u8 character;
-  u8 classId;
-  u8 unk12a[2];
-  s8 elementLevel[4];
-  s8 curse;
-  u8 unk131[2];
-  s8 attackLevel;
-  u8 unk134;
-  s8 defenseLevel;
-  u8 unk136;
-  s8 resistLevel;
-  u8 unk138[3];
-  u8 unk13b[7];
-  u8 bonus142;
-  u8 bonus143;
-  u8 extraTurn;
-  u8 unk145[2];
-  s8 agilityLevel;
-  u8 unk148[2];
-  u16 id;
-};
-
-struct ClassRecord {
-  u8 unk00[8];
-  u8 hp;
-  u8 pp;
-  u8 atk;
-  u8 def;
-  u8 agi;
-  u8 luck;
-};
-
-struct StatWork {
-  s32 hp;
-  s32 pp;
-  s32 atk;
-  s32 def;
-  s32 agi;
-  s32 unused14;
-  s32 luck;
-  s32 turns;
-  s32 stat20;
-  s32 stat24;
-  s32 element[4][2];
-  s32 kind;
-  s32 unused4c[2];
-  s32 amount;
-  struct ItemDefinition *item;
-  s32 unused5c;
-};
 
 #define STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
@@ -488,8 +406,6 @@ asm("");
   Heap_Release(work);
 }
 
-void GameFlag_ClearBit(s32 flag);
-
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
   s32 partyIndex;
@@ -513,7 +429,7 @@ void GameFlag_RefreshLureCap(void) {
           effectKind = effect->kind;
           effect++;
           if (effectKind == 27) {
-            GameFlag_SetBit(0x167);
+            GameFlag_SetBit__game(0x167);
           }
         }
       }
@@ -578,8 +494,6 @@ void Func_080add5c(s32 count) {
   Func_080adc90();
 }
 
-extern char ResourceId_BuildStamp;
-
 u16 BuildStamp_GetTime(void) {
   u8 *digits;
   s32 hourTens;
@@ -632,19 +546,14 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   }
 }
 
-extern u8 gData_02001000[];
-extern u8 gOwnerStates[];
+/* VIEW(game): variable gData_02001000 as u8 gData_02001000[]; module/tla.h has s8 gData_02001000[]. */
+extern u8 gData_02001000__game[] __asm__("gData_02001000");
+/* VIEW(game): variable gOwnerStates as u8 gOwnerStates[]; module/tla.h has struct BattleUnit gOwnerStates[]. */
+extern u8 gOwnerStates__game[] __asm__("gOwnerStates");
 #ifndef MODERN
 // A current GCC refuses the volatile redeclaration and reads frame.h's.
 extern volatile u8 gAutoSleepEnabled;
 #endif
-extern s16 gData_020036d0;
-extern u16 gData_02003860;
-extern const u8 Data_080b1f2c[4][5];
-
-void Party_InitializeCharacters(void);
-s32 Party_AddMember(s32 owner);
-s32 Unit_LearnPsynergy(s32 owner, s32 ability);
 
 /// Starts a new game's state: clears gMainRoutineWork, the work block, the
 /// flags and the owners by DMA, builds the characters, sets the defaults (the
@@ -661,7 +570,7 @@ void Func_080addf0(void) {
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 184);
   zero = 0;
 #if TLA_PATCH_1
-  START_DMA(&zero, gData_02001000,
+  START_DMA(&zero, gData_02001000__game,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 1992);
   WaitDma(DMA3);
 #else
@@ -672,7 +581,7 @@ void Func_080addf0(void) {
     register u32 held asm("r3") = (u32)DMA3;
     struct DmaRegisters volatile *channel;
 
-    Dma_Set((const void *)&zero, gData_02001000,
+    Dma_Set((const void *)&zero, gData_02001000__game,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 1992,
             (volatile u32 *)held);
     channel = (struct DmaRegisters volatile *)held;
@@ -684,9 +593,9 @@ void Func_080addf0(void) {
   zero = 0;
   START_DMA(&zero, gGameFlagBytes,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 128);
-  gData_02001000[4] = 0xff;
+  gData_02001000__game[4] = 0xff;
   zero = 0;
-  START_DMA(&zero, gOwnerStates,
+  START_DMA(&zero, gOwnerStates__game,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 664);
   Party_InitializeCharacters();
   gMainRoutineWork.keys230 = 1;
@@ -752,15 +661,13 @@ void Func_080addf0(void) {
 
   for (i = 0; i < 32; i++) {
     for (j = 0; j < 8; j++)
-      gData_02001000[0x11b8 + i * 12 + j] = (Random16() * 5) >> 16;
+      gData_02001000__game[0x11b8 + i * 12 + j] = (Random16() * 5) >> 16;
   }
   for (i = 0; i < 4; i++) {
     for (j = 0; j < 5; j++)
-      gData_02001000[0x1338 + i * 5 + j] = Data_080b1f2c[i][j];
+      gData_02001000__game[0x1338 + i * 5 + j] = Data_080b1f2c[i][j];
   }
 }
-
-s32 Party_RemoveMember(s32 owner);
 
 void Party_SetLeaderJenna(void) { gMainRoutineWork.currentOwner = 5; }
 
@@ -776,7 +683,7 @@ void Func_080ae118(void) {
   s32 count;
 
   for (i = 10; i < 12; i++) {
-    GameFlag_SetBit(i + 67);
+    GameFlag_SetBit__game(i + 67);
     Djinn_Give(7, 1, i - 1);
     Djinn_Set(7, 1, i - 1);
   }
@@ -847,8 +754,6 @@ void Party_RestoreHpPp(s32 cureConditions) {
     }
   }
 }
-
-extern const u8 gCharacter_ElementGroupTable[];
 
 // Party_RestorePpOfLitElements from The Broken Seal.
 /// Restores the PP of each party member whose element group has a lit
@@ -932,11 +837,6 @@ void Party_RestorePpOfLitElements(void) {
   }
 }
 
-struct UnitDjinnSets {
-  u8 unk00[0xf8];
-  u32 djinn[4];
-};
-
 /// Element and index of the last owned Djinni.
 s32 Func_080ae2fc(s32 unit, s32 *element_out, s32 *index_out) {
   u32 *sets = ((struct UnitDjinnSets *)Unit_Get(unit))->djinn;
@@ -1018,12 +918,6 @@ s32 FlagBits_Test(u8 *bytes, s32 flag) {
   return (bytes[flag] >> bit) & 1;
 }
 
-s32 GameFlag_Test(s32 flag);
-void Func_08038348(s32 a, s32 b);
-void Djinn_ActivateOfferedForParty(void);
-
-extern const u16 Data_080b1284[6];
-
 /// Copies a The Broken Seal save's djinn, flags, coins, options (unless
 /// keepSettings) and units into this game's state.
 void Func_080ae410(u8 *save, s32 keepSettings) {
@@ -1044,7 +938,7 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
       s32 flag = 0x800 + k + j;
 
       if (FlagBits_Test(flags, 0x30 + i * 20 + j))
-        GameFlag_SetBit(flag);
+        GameFlag_SetBit__game(flag);
       else
         GameFlag_ClearBit(flag);
       /* FAKEMATCH(barrier): an empty asm reading j, which keeps the counter
@@ -1055,14 +949,14 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
   }
   for (i = 0; i < 6; i++) {
     if (FlagBits_Test(flags, Data_080b1284[i]))
-      GameFlag_SetBit(0x820 + i);
+      GameFlag_SetBit__game(0x820 + i);
     else
       GameFlag_ClearBit(0x820 + i);
   }
   if (GameFlag_Test(0x822))
     GameFlag_ClearBit(0x822);
   else
-    GameFlag_SetBit(0x822);
+    GameFlag_SetBit__game(0x822);
 
   state = &gMainRoutineWork;
   *(s32 *)&state->unk284[8] = party->coins;
@@ -1096,8 +990,8 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
   }
   Djinn_ActivateOfferedForParty();
   Party_RestoreHpPp(1);
-  GameFlag_SetBit((keepSettings & 1) + 44);
-  GameFlag_SetBit(47);
+  GameFlag_SetBit__game((keepSettings & 1) + 44);
+  GameFlag_SetBit__game(47);
   gFrameWaitCount = gMainRoutineWork.playTime;
 }
 
@@ -1152,7 +1046,7 @@ void Func_080ae6e4(void) {
 
     for (j = 0; j < 7; j++) {
       if (GameFlag_Test(0x800 + k + j))
-        GameFlag_SetBit(0x30 + i * 20 + j);
+        GameFlag_SetBit__game(0x30 + i * 20 + j);
       /* FAKEMATCH(barrier): an empty asm reading j keeps loop.c from
        * reversing the signed counter; as the same loop without it, 8 of
        * 142 instructions differ in tla-en. */
@@ -1174,7 +1068,7 @@ void Func_080ae6e4(void) {
   for (i = 0; i < 8; i++)
     Unit_Calculate(i);
   Party_RestoreHpPp(1);
-  GameFlag_SetBit(34);
+  GameFlag_SetBit__game(34);
 
   for (i = 0; i < 4; i++) {
     count = 0;
@@ -1186,7 +1080,7 @@ void Func_080ae6e4(void) {
       djinni = missing[(Random16() * count) >> 16] + 1;
     else
       djinni = 0;
-    gData_02001000[0x1950 + i] = djinni;
+    gData_02001000__game[0x1950 + i] = djinni;
   }
   Func_080ae6c8(202, 3);
   Func_080ae6c8(201, 3);
@@ -1208,7 +1102,7 @@ void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn) {
   Djinn_Give(owner, element, djinn);
   flag += 0x30;
   DjinnRecovery_AddStandby(owner, element, djinn);
-  GameFlag_SetBit(flag);
+  GameFlag_SetBit__game(flag);
 }
 
 extern const s16 Data_080b1290[4][7];
@@ -1284,7 +1178,7 @@ void Func_080ae868(void) {
       // element carries the flag to read after the one to set.
       element = 0x30 + i * 20 + j;
       if (GameFlag_Test(element))
-        GameFlag_SetBit(flag);
+        GameFlag_SetBit__game(flag);
       GameFlag_ClearBit(element);
     }
   }

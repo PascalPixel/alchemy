@@ -1,10 +1,11 @@
 #include "mars_lighthouse_room_m.h"
 #include "event_inline.h"
+#include "display_transition.h"
+#include "item_icon.h"
+#include "module/scene/mars_lighthouse_room_m.h"
 
 s32 Func_02002368(s32 a, s32 b);
-void ScreenTransition_Start(s32 a, s32 b);
 s32 Func_02003168(s32 layer, s32 x, s32 z);
-void Func_020024bc(struct Actor *object);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
 struct RideEvent {
@@ -134,15 +135,11 @@ struct RideWork {
 
 extern u16 gData_02004cf0[];
 void Func_02003130(void *handle);
-void Func_020024e4(void);
-void Func_02002e6c(struct Actor *self);
 #include "main_routine_work.h"
 
 void Func_02003230(s32 a, s32 b);
 void Func_02003228(void);
-void Func_02001608(void);
 void Func_020032a8(void);
-void Func_0200055c(void);
 
 s32 Func_02002848(void) {
   if (((struct RideWork *)(gData_020023c4 + 0x188))->active) {
@@ -192,9 +189,6 @@ struct Work {
   u8 unk0e[98];
   struct Actor *owner;
 };
-
-extern u32 gData_02003304[];
-s32 Resource_ResetEntry(u32 slot);
 
 #define WORK ((struct Work *)(gData_020023c4 + 0x188))
 
@@ -262,8 +256,6 @@ void Func_02002870(struct Actor *actor) {
     }
   }
 }
-
-extern u32 gData_02003348[];
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about
 /// speed plus 0x14000 with a random spread, at a random angle and size.
@@ -596,19 +588,8 @@ s32 Func_02003084(struct Actor *object) {
 #include "objcmd.h"
 
 void Func_0200004c(void);
-void Func_020002c8(void);
-void Func_020002e8(void);
-void Func_020002fc(void);
 void Func_0200030c(void);
 void Func_020006c8(void);
-void Func_02000abc(void);
-void Func_020010e4(void);
-void Func_02001154(void);
-void Func_020011c4(void);
-void Func_02001234(void);
-void Func_020013a0(void);
-
-extern s32 gData_020032c8[];
 
 s32 gData_020032c8[] = {
     SC_CALL(Func_0200004c),

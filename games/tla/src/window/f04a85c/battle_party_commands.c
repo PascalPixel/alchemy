@@ -4,6 +4,9 @@
 // Part of f04a85c.c.
 
 #include "../f04a85c_internal.h"
+#include "module/tla.h"
+#include "module/window/f04a85c.h"
+#include "motobj.h"
 
 /// Classifies an ability's effect for target selection.
 /// 0 other, 1 restore HP, 2 restore PP, 3 cure poison, 4 cure an ailment,
@@ -33,17 +36,6 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
     kind = 5;
   return kind;
 }
-
-
-s32 BattleParty_PrepareReserveOwnersFar(u16 *owners);
-s32 Func_08118140(s32, s32);
-struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
-void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
-                                        s32 z);
-void PartyStatus_Draw(s32 flags);
-void BattleActor_CommitPlacementFar(void);
-void BattleHighlight_SetModesFar(u16 *, s32);
-s32 PartyStatus_HighlightMembers(u16 *ids);
 
 // The keys, read through a volatile view: the loop reloads them on each test.
 #define INPUT ((volatile struct InputState *)&gInput)
@@ -156,7 +148,6 @@ s32 Func_0804b8b8(s32 slot) {
     return result;
   }
 }
-
 
 s32 BattleParty_ListLivingUnitsFar(s32 sideMask, u16 *unitIds);
 void *Unit_Get(s32 owner);

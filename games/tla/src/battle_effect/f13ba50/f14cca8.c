@@ -3,13 +3,14 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
+#include "gamepak/far_call/battle.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/battle_effect/f13ba50.h"
+#include "module/tla.h"
 
 /* VIEW(f14cca8): variable gBgScroll as extern struct FxBgScroll gBgScroll[]; bg_scroll.h has extern struct BgScroll gBgScroll[]; tried as the rest of the object declares it, Func_0814cca8 moves: 1 of 57 instructions in tla-ja. */
 extern struct FxBgScroll gBgScroll__f14cca8[] __asm__("gBgScroll");
 extern u32 gCameraSceneParameters[];
-
-void BattleBackground_LoadFar(s32, s32, s32);
-void wait(s32 frames);
 
 /* VIEW(f14cca8): static FillWords_ as FillWords___f14cca8; f13eb70 has static __inline__ void FillWords_(void *destination, s32 size, u32 value) { Iwram_FillWords(destination, size, value); }; tried with the definition the rest of the object has, Func_0814cca8 moves: 3 of 57 instructions in tla-ja. */
 static __inline__ void FillWords___f14cca8(void *destination, s32 size, u32 value) {
@@ -40,38 +41,12 @@ void Func_0814cca8(void) {
   Sound_PlayFar(390);
 }
 
-
-struct FxGroupEntry {
-  u8 unk00[5];
-  u8 param;
-  u8 unk06[16];
-  u8 frame;
-};
-
 struct FxGroup {
   u8 unk00[27];
   u8 count;
   u8 unk1c[12];
   struct FxGroupEntry *entries[4];
 };
-
-struct FxSlot {
-  void *object;
-  u8 unk04[28];
-  struct FxGroupEntry *animationEntry;
-  struct FxGroupEntry *effectEntry;
-  u8 unk28[2];
-  u8 fading;
-};
-
-struct FxTimerWork {
-  u8 unk0000[0x78dc];
-  u8 actorTimers[8];
-};
-
-void *GetMotionRecordFar(void *object, s32 index);
-s32 BattleMotion_GetSlotPaletteFar(s32 id);
-void Animation_ApplyChildArgumentFar(void *group, s32 value);
 
 static __inline__ u8 GroupCount(struct FxGroup *group) { return group->count; }
 

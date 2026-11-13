@@ -40,13 +40,12 @@
 #include "battle_random.h"
 #include "enemy_definition.h"
 #include "range_falloff.h"
+#include "module/game/game.h"
 
 // The game object's functions its parts call before their definitions, or
 // with declarations of their own that disagree.
-s32 GameFlag_SetBit(s32 flag);
-void Func_080ae358(void);
-s16 Unit_AddPp(s32 owner, s32 delta);
-s32 PartyInventory_Remove(s32 item_id);
+/* VIEW(game): routine GameFlag_SetBit as s32 GameFlag_SetBit(s32 flag); flag_call.h has void GameFlag_SetBit(s32 flag). */
+extern s32 GameFlag_SetBit__game(s32 flag) __asm__("GameFlag_SetBit");
 struct AbilityDefinition *Ability_GetDirect(s32 actionId);
 
 /// Keeps occupied slots in order and clears the unused inventory tail, for

@@ -1,17 +1,12 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
+#include "module/scene/alhafran_cave.h"
 
 void Func_02000084(void);
 void Func_020000a0(void);
 void Func_020000ec(void);
-void Func_020000fc(void);
-void Func_02000168(void);
-void Func_020001d4(void);
 void Func_02000818(void);
-
-void Func_02000098(void);
-void Func_0200009c(void);
 
 // clang-format off
 s16 gData_02001608[] = {

@@ -3,6 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "module/field/field.h"
 
 /* VIEW(f0d92d4): tag struct ChainSlot as struct ChainSlot__f0d92d4; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5515: structure has no member named `segments'. */
 struct ChainSlot__f0d92d4 {
@@ -19,11 +20,8 @@ struct ChainWork__f0d92d4 {
   struct ChainSlot__f0d92d4 slots[8];
 };
 
-typedef void (*TargetHook)(struct Actor *, s32 *, s32 *);
-
 extern s32 gData_080f393c;
 
-void wait(s32 frames);
 /* VIEW(f0d92d4): routine Func_080d9498 as void Func_080d9498(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ, s32 wobble); the definition has s32 Func_080d9498(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ). */
 extern void Func_080d9498__f0d92d4(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
                    s32 wobble) __asm__("Func_080d9498");

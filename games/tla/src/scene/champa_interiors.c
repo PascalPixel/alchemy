@@ -17,6 +17,8 @@
 #include "event_work.h"
 #include "scene_ids.h"
 #include "event_inline.h"
+#include "module/scene/champa_interiors.h"
+#include "module/scene/scene.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -24,15 +26,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern u32 gData_02000228[];
-extern u32 gData_020003a8[];
-extern s32 gData_020003d8[];
-extern s32 gData_020005ac[];
-extern s32 gData_02000780[];
-
-void Func_0200014c(void);
 void Func_02000178(s32 a, s32 b);
-void Func_02000180(s32 a, s32 b);
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov683 &&

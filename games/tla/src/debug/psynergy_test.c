@@ -26,21 +26,21 @@
 #include "system/vector3.h"
 
 #include "edition.h"
+#include "item_icon.h"
+#include "module/debug/debug.h"
+#include "module/debug/psynergy_test.h"
+#include "module/game/game.h"
+#include "module/tla.h"
+#include "module/window/window.h"
 
-extern s16 gData_02001300[];
-
-void Func_02000f34(s32 *, s32 *);
 void Func_02000e04(s32);
-void *Func_02000dec(s32, s32, s32, s32);
-void Func_02000df4(s32, s32);
+/* VIEW(psynergy_test): routine Func_02000df4 as void Func_02000df4(s32, s32); module/tla.h has s32 Func_02000df4(s32 *member, s32 *slot). */
+extern void Func_02000df4__psynergy_test(s32, s32) __asm__("Func_02000df4");
 void Func_02000f1c(s32, s32);
-void Func_02000f2c(s32, s32);
 void Func_02000ecc(s32, s32, s32, s32, s32, s32, s32);
-void Message_CloseFinishedWindows(void);
 void Message_OpenWindow(s32, s32, s32, s32);
-s32 Message_AllTyped(void);
-void Unit_Calculate(s32);
-s32 Unit_AddPp(s32, s32);
+/* VIEW(psynergy_test): routine Unit_AddPp as s32 Unit_AddPp(s32, s32); module/game/game.h has s16 Unit_AddPp(s32 owner, s32 delta). */
+extern s32 Unit_AddPp__psynergy_test(s32, s32) __asm__("Unit_AddPp");
 
 #define INPUT_HELD (*(volatile u32 *)&gInput.held)
 
@@ -78,9 +78,9 @@ void Func_020000a4(s32 message, s32 count) {
 
   window = Func_02000dec(206, 0, 0, 0);
   for (i = 0; i < count; i++) {
-    Func_02000df4(1, 1);
-    Func_02000df4(5, 2);
-    Func_02000df4(0x1e240, 5);
+    Func_02000df4__psynergy_test(1, 1);
+    Func_02000df4__psynergy_test(5, 2);
+    Func_02000df4__psynergy_test(0x1e240, 5);
     Func_02000078(message);
     goto check;
   wait:
@@ -172,9 +172,9 @@ void Func_0200026c(void) {
   Unit_AddHpBy(4, -100);
   FieldUnit_AddHp(5, -100);
   FieldUnit_AddHp(6, -33);
-  Unit_AddPp(4, -50);
-  Unit_AddPp(5, -40);
-  Unit_AddPp(6, -35);
+  Unit_AddPp__psynergy_test(4, -50);
+  Unit_AddPp__psynergy_test(5, -40);
+  Unit_AddPp__psynergy_test(6, -35);
   state = Unit_Get(4);
   state[0x131] = 1;
   state += 0x140;
@@ -319,8 +319,6 @@ void Func_02000604(void) {
   Func_02000ecc(34, 26, 5, 4, a, b, c);
 }
 
-void Func_02000eb4(s32 scene, s32 entrance);
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
@@ -335,19 +333,11 @@ void Func_02000624(void) {
 
 void Func_02000650(void) { Func_02000eb4((s32)&SceneId_Ov6b8Room1, 8); }
 
-extern u8 gData_020017b0[];
-extern u8 gData_02001860[];
+/* VIEW(psynergy_test): variable gData_020017b0 as u8 gData_020017b0[]; module/tla.h has s32 gData_020017b0. */
+extern u8 gData_020017b0__psynergy_test[] __asm__("gData_020017b0");
 
-void Func_02000f14(s32, s32, s32);
-void Func_02000ebc(s32, s32);
-void Func_02000e5c(s32, s32, s32);
-void Func_0200092c(s32, s32, s32, s32, s32, s32, s32);
-void Func_02000950(s32, s32, s32, s32);
-void Func_020009c0(s32, s32, s32, s32);
-void Func_02000a10(s32, s32, s32, s32, s32);
 /* VIEW(psynergy_test): routine Func_02000c4c as void Func_02000c4c(struct Actor *, void *); the definition has void Func_02000c4c(struct Actor *object, struct SparkleWork *work). */
 extern void Func_02000c4c__psynergy_test(struct Actor *, void *) __asm__("Func_02000c4c");
-void Func_02000d4c(struct Actor *);
 
 void Func_02000660(void) {
   Func_02000f14(249, 40, 168);
@@ -394,7 +384,7 @@ void Func_02000744(void) {}
 
 void Func_02000748(s32 actor) {
   Func_02000c4c__psynergy_test(Actor_Get(actor), gData_02001860);
-  Func_02000c4c__psynergy_test(Actor_Get(gMainRoutineWork.currentOwner), gData_020017b0);
+  Func_02000c4c__psynergy_test(Actor_Get(gMainRoutineWork.currentOwner), gData_020017b0__psynergy_test);
   System_Wait(100);
   Func_02000d4c(Actor_Get(actor));
   Func_02000d4c(Actor_Get(gMainRoutineWork.currentOwner));
@@ -403,9 +393,7 @@ void Func_02000748(s32 actor) {
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 void Func_02000ed4(s32 actor, s32 angle);
-void Func_02000edc(s32 actor, s32 angle, s32 frames);
 void Func_02000f04(s32 actor);
-void Func_02000f0c(s32 actor);
 
 s32 Func_0200079c(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -557,35 +545,7 @@ void Func_02000a10(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
   }
 }
 
-struct SparkleSprite {
-  u8 unk00[12];
-  s32 unk0c;
-  s32 unk10;
-  s32 unk14;
-  s32 unk18;
-  u8 unk1c[2];
-  u16 unk1e;
-  u8 unk20[8];
-};
-
-struct SparkleWork {
-  struct SparkleSprite sprites[4];
-  s16 unka0[2];
-  s16 vramEntry;
-  s16 unka6;
-  struct Actor *object;
-};
-
-struct CounterBits {
-  u8 low : 1;
-  u8 rest : 7;
-};
-
 void Animation_ApplyChildValues(struct Actor *, u32);
-s32 Resource_ResetEntry(u32 slot);
-void Func_02000ec4(struct Vector3 *v);
-void Func_02000eec(struct SparkleSprite *sprite);
-s32 Func_02000efc(struct Actor *object);
 
 void Func_02000ad0(struct Actor *object) {
   struct Vector3 position;
@@ -804,13 +764,6 @@ struct Trigger gSceneEvents[] = {
 // ---- games/tla/src/debug/psynergy_test/s0c4c.c ----
 // Overlay 0x6b8's code from Func_02000c4c on, in ROM order.
 
-
-
-struct ResourceTableEntry {
-  u16 unk0;
-  u16 offset; ///< in bytes; its tile is offset / 32
-};
-
 /* VIEW(s0c4c): tag struct SparkleSprite as struct SparkleSprite__s0c4c; psynergy_test.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/debug/psynergy_test.c:855: structure has no member named `flag'. */
 struct SparkleSprite__s0c4c {
   u8 unk00[5];
@@ -835,13 +788,11 @@ struct SparkleWork__s0c4c {
   struct Actor *object;
 };
 
-extern s32 gData_02000f44[];
-extern struct ResourceTableEntry gResourceTableEntries[];
+/* VIEW(psynergy_test): variable gResourceTableEntries as struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has struct VramBlockCacheEntry gResourceTableEntries[]. */
+extern struct ResourceTableEntry gResourceTableEntries__psynergy_test[] __asm__("gResourceTableEntries");
 
-s32 Resource_FindFreeEntry(void);
 void Func_02000ee4(struct SparkleSprite__s0c4c *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
-s32 Func_02000ef4(struct Actor *object);
 /* VIEW(s0c4c): routine Func_02000ad0 as void Func_02000ad0(void); the definition has void Func_02000ad0(struct Actor *object). */
 extern void Func_02000ad0__s0c4c(void) __asm__("Func_02000ad0");
 
@@ -861,7 +812,7 @@ void Func_02000c4c(struct Actor *object, struct SparkleWork__s0c4c *work) {
   ((u8 *)object)[0x62] = 0;
   ((u8 *)object)[0x63] = 0;
   object->update = Func_02000ad0__s0c4c;
-  tile = gResourceTableEntries[work->vramEntry].offset >> 5;
+  tile = gResourceTableEntries__psynergy_test[work->vramEntry].offset >> 5;
   object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     col = 1;

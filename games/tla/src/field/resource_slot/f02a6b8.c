@@ -11,79 +11,15 @@
 #include "../resource_slot_internal.h"
 
 #include "io_write.h"
-
-struct LayeredSceneEntry {
-  u16 resources[6];
-};
-
-struct LayeredSceneLayer {
-  u8 x;
-  u8 y;
-  s8 scaleX;
-  s8 scaleY;
-  s8 speedX;
-  s8 speedY;
-  u8 periodX;
-  u8 periodY;
-};
-
-struct LayeredSceneHeader {
-  u8 origin[4];
-  u8 priority[3];
-  u8 charBase[3];
-  u16 unk0a;
-  struct LayeredSceneLayer layers[3];
-  s32 tiles;
-  s32 collision;
-  s32 tilemap;
-  s32 shapes;
-  s32 animation;
-  s32 blend;
-  s32 script;
-};
-
-
-struct MapLayerScroll {
-  s32 x, y;
-  s32 offsetX, offsetY;
-  s32 scaleX, scaleY;
-  s32 speedX, speedY;
-  s32 phaseX, phaseY;
-  u16 maskX, maskY;
-  u16 cellX, cellY;
-  struct MapCell *cells;
-  u8 *shapes;
-};
-
-struct MapScrollWork {
-  u8 unk000[0x14];
-  u16 flags;
-  u8 unk016[0xe4 - 0x16];
-  s32 viewX, viewY;
-  s32 minX, minY, maxX, maxY;
-  u8 unk0fc[5];
-  u8 unk101;
-  u8 unk102[2];
-  u8 enabled[3];
-  u8 unk107;
-  struct MapLayerScroll layers[3];
-};
+#include "flag_call.h"
+#include "module/field/field.h"
+#include "module/field/map.h"
+#include "module/field/resource_slot.h"
+#include "module/system/system.h"
+#include "module/tla.h"
 
 /* VIEW(f02a6b8): variable gData_0802f380 as extern struct LayeredSceneEntry gData_0802f380[]; f0298c0 has extern const u16 gData_0802f380[][6]. */
 extern struct LayeredSceneEntry gData_0802f380__f02a6b8[] __asm__("gData_0802f380");
-extern char ResourceId_Map000;
-extern u8 gMapShapeGrid[];
-extern u8 gData_02028000[];
-
-void Fade_FromBlack(s32);
-void Tilemap_DecodeStagedBuffer(s32 size);
-void Tilemap_ConvertBuffer(void);
-void TilesetAnim_StartAll(const u16 *);
-void DisplayBlend_StartScript(u16 *);
-s32 Resource_DecodeType2(const void *source, void *destination);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void Func_0802ad84(void);
 
 s32 Func_0802a6b8(s32 index) {
   struct LayeredSceneEntry *sceneResources;

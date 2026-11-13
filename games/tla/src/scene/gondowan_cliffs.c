@@ -7,16 +7,10 @@
 #include "main_routine_work.h"
 #include "scene_ids.h"
 #include "event_inline.h"
+#include "module/scene/scene.h"
 
 extern const u8 gData_02001698[];
 extern const u8 gData_02001728[];
-
-struct TileSprite {
-  u8 unk00[18];
-  u16 tile;
-  u8 unk14[6];
-  u8 frame;
-};
 
 s32 Func_02000038(struct Actor *object) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
@@ -57,7 +51,6 @@ const u8 *Scene_GetPlacements(void) {
     return gData_0200193c;
   return gData_0200178c;
 }
-
 
 #include "objcmd.h"
 

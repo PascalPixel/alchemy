@@ -13,6 +13,7 @@
 #include "scene_tables.h"
 #include "garoh_interiors/garoh_interiors.h"
 #include "event_inline.h"
+#include "module/scene/garoh_interiors.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -235,10 +236,6 @@ const struct Trigger *Scene_GetEvents(void) {
     return gData_02000de4;
   return gData_02000b5c;
 }
-
-void Func_02000710(void);
-void Func_020007dc(s32 value);
-void Func_0200087c(s32 value);
 
 s32 Scene_Initialize(void) {
   s32 turn;

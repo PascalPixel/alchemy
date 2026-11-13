@@ -2,6 +2,9 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
+#include "field.h"
+#include "module/field/map.h"
+#include "module/scene/magma_rock.h"
 
 extern u8 gMapCellBuffer[];
 
@@ -27,9 +30,7 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value) {
 // ---- games/tla/src/scene/tundaria_tower.c ----
 #include "../../scene/tundaria_tower/tundaria_tower.h"
 
-s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
-void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02003030(s32 x, s32 z, s32 terrain, s32 height);
 
 /// Sets the cell under the object by the flag its action names: with the flag
@@ -346,8 +347,6 @@ void Func_02000920(void) {
   Func_02003050();
 }
 
-void Func_0200189c(void);
-
 void Func_0200095c(void) { Func_0200189c(); }
 
 extern const u8 gData_02003370[];
@@ -457,8 +456,6 @@ void Func_02000bfc(void) {
   }
 }
 
-void Func_02003178(void);
-
 /// The event's object keeps stepping a cell at a time in the direction it was
 /// pushed (its cell against the one Func_02000bfc stored in its action) while
 /// the next cell's layer 1 attribute is 50 and its layer 2 attribute is not
@@ -531,8 +528,6 @@ void Func_02000d2c(void) {
   Func_02003050();
 }
 
-void Func_02002fc8(void);
-
 void Func_02000de4(void) {
   Func_02002fc8();
   GameFlag_ClearBit(0x212);
@@ -550,8 +545,6 @@ void Func_02000de4(void) {
     }
   }
 }
-
-void Func_02002fd0(void);
 
 void Func_02000e78(void) {
   Func_02002fd0();
@@ -630,19 +623,6 @@ const struct Trigger *Func_02001044(void) {
     return gData_02003c90;
   return gData_0200381c;
 }
-
-struct ReflectionSprite {
-  u8 unk00[2];
-  u16 unk02;
-  u8 unk04[12];
-  s32 unk10;
-  u8 unk14;
-};
-
-struct ReflectionAnimation {
-  u8 unk00[0x28];
-  struct ReflectionSprite *sprite;
-};
 
 void Func_020010d4(struct Actor *object) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);

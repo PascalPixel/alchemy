@@ -3,30 +3,12 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
 
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(const void *, void *))Resource_DecodeByteLzInRam)
-
-
-extern const u8 gData_080f385e[];
-
-union MoteWord {
-  u32 value;
-  void *link;
-};
-
-/// One floating mote: its sprite's attribute words and its world position.
-struct Mote {
-  union MoteWord link;
-  u32 attr01;
-  u32 attr2;
-  s32 posX;
-  s32 posY;
-  s32 posZ;
-  u8 pad18[4];
-  u16 timer;
-  u8 pad1e[2];
-};
 
 /// Heap slot 0x74 while the motes run.
 /* VIEW(motes): tag struct MoteWork as struct MoteWork__motes; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:3089: structure has no member named `motes'. */
@@ -36,8 +18,6 @@ struct MoteWork__motes {
   struct Mote motes[64];
   u8 pad808[12];
 };
-
-void Func_080d6c60(void);
 
 /// Starts the 64 floating motes (Func_080d6c60): loads their tiles and puts
 /// each under the leader with staggered timers, drawn semi-transparent.
@@ -119,31 +99,6 @@ void FieldMotes_Start(void) {
 
 #undef Resource_DecodeByteLzInRam
 
-
-/// One of Func_080d6674's particles: its sprite's attribute words, its world
-/// position and its frames left.
-struct SparkParticle {
-  u32 sprite[3];
-  s32 posX;
-  s32 posY;
-  s32 posZ;
-  u8 unk18[4];
-  u16 timer;
-  u8 unk1e[2];
-};
-
-/// Heap slot 0x74 while the particles run.
-struct SparkParticleWork {
-  s32 vramEntry;
-  s32 tile;
-  struct SparkParticle particles[64];
-};
-
-void Func_080d6674(void);
-void Scene_QueueMusic(s32 cue);
-
-extern const u8 Data_080f3901[];
-
 /// Starts Func_080d6674's particles: allocates and clears heap slot 0x74,
 /// decodes the particle tiles into VRAM, sets each of the 64 particles' sprite
 /// words and places it on the ground at the map's focus with a timer of
@@ -207,30 +162,6 @@ void Func_080d6f34(s32 withCue) {
 
 void Func_080d7024(void) { Task_Remove(Func_080d6674); }
 
-
-struct Sparkle {
-  u8 padding00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 matrix : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 padding0a[2];
-  s32 posX;
-  s32 height;
-  s32 posZ;
-  s32 delay;
-  u16 timer;
-  u8 padding1e[2];
-};
-
 struct SparkleWork {
   u8 padding00[4];
   s32 tileBase;
@@ -238,13 +169,6 @@ struct SparkleWork {
   u8 padding808[8];
   s32 stopped;
 };
-
-struct SparklePicture {
-  s16 dy;
-  u16 tile;
-};
-
-extern const struct SparklePicture gData_080f0b7c[];
 
 /* VIEW(motes): routine Func_080140d8 as void Func_080140d8(void *entry, s32 priority); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
 extern void Func_080140d8__motes(void *entry, s32 priority) __asm__("Func_080140d8");
@@ -342,18 +266,8 @@ void FieldEffect_UpdateSparkles(void) {
   } while (i <= 63);
 }
 
-void Weather_UpdateLightning(void);
-
-void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
-                                     s32 frames);
-
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(const void *, void *))Resource_DecodeByteLzInRam)
-
-union DustWord {
-  u32 value;
-  void *link;
-};
 
 struct DustParticle {
   union DustWord link;
@@ -373,8 +287,6 @@ struct DustWork {
   struct DustParticle particles[64];
   u8 pad808[12];
 };
-
-extern const u8 gData_080f38b2[];
 
 void FieldEffect_InitializeSparkles(void) {
   u32 size = sizeof(struct DustWork);

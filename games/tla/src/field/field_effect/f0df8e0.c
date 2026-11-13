@@ -20,7 +20,8 @@ struct LayeredSprite {
 extern const s32 *gData_080f3978[];
 
 struct Actor *Actor_GetById(u32 objectId);
-struct FieldEffect *Func_080200c0(s32 type, s32 x, s32 y, s32 z);
+/* VIEW(f0df8e0): routine Func_080200c0 as struct FieldEffect *Func_080200c0(s32 type, s32 x, s32 y, s32 z); module/tla.h has struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
+extern struct FieldEffect *Func_080200c0__f0df8e0(s32 type, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
 void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 
 void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -32,9 +33,9 @@ void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY
   const s32 *script;
 
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = Func_080200c0(options->type, x, y, z);
+    effect = Func_080200c0__f0df8e0(options->type, x, y, z);
   else
-    effect = Func_080200c0(285, x, y, z);
+    effect = Func_080200c0__f0df8e0(285, x, y, z);
   if (effect == 0)
     return;
 

@@ -4,6 +4,8 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "module/battle/battle.h"
+#include "module/system/system.h"
 
 /// Builds a battle object's status icon flags from its unit: poison
 /// (1) or deadly poison (2), delusion (0x20), stun (4, not for nine large
@@ -49,18 +51,6 @@ void BattleUnit_BuildStatusFlags(s32 id, struct BattleObj *output) {
     output->activeConditions = flags;
   }
 }
-
-struct StatusIconRecord {
-  u8 unk00[0x14];
-  u8 width;
-  u8 unk15[4];
-  u8 dirty;
-};
-
-struct StatusIconEntry {
-  u8 unk00[6];
-  u8 priority;
-};
 
 #define ICON_MAX 14
 
@@ -181,18 +171,6 @@ void ReleaseBattleObjectRecords(s32 no) {
     }
   }
 }
-
-struct TlaSpriteRecord {
-  struct AnimationSpritePart image;
-  s32 scale;
-  u8 unk10[4];
-  u8 width;
-  u8 unk15[4];
-  u8 dirty;
-  u8 flags;
-  u8 unk1b[13];
-  struct SpriteEntry *entries[1];
-};
 
 /// Readies the sprites of the units in list: releases those of every place
 /// list lacks, then creates each listed unit's sprites (body, weapon, status
@@ -324,11 +302,6 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh) {
   BattleObject_SpawnObjectsForList(list, refresh, 1);
 }
-
-struct AnimationEntryGroup {
-  u8 unk00[0x28];
-  struct AnimationEntry *entries[4];
-};
 
 void ResetMotionRecordGroup(void *owner) {
   struct AnimationEntryGroup *object = owner;
@@ -555,14 +528,10 @@ s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out) {
   return result;
 }
 
-s32 Transform_ApplyLookAt(void *, void *);
-s32 Transform_SetLookAt(void *, void *);
-extern const s32 gData_08128868[];
-
-struct MotionRecordScale {
-  u8 unk00[0xc];
-  s32 scale;
-};
+/* VIEW(battle): routine Transform_ApplyLookAt as s32 Transform_ApplyLookAt(void *, void *); transform.h has void Transform_ApplyLookAt(s32 *eye, s32 *target). */
+extern s32 Transform_ApplyLookAt__battle(void *, void *) __asm__("Transform_ApplyLookAt");
+/* VIEW(battle): routine Transform_SetLookAt as s32 Transform_SetLookAt(void *, void *); transform.h has void Transform_SetLookAt(s32 *eye, s32 *target). */
+extern s32 Transform_SetLookAt__battle(void *, void *) __asm__("Transform_SetLookAt");
 
 s32 Camera_ApplyTransformByFlag(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
@@ -570,9 +539,9 @@ s32 Camera_ApplyTransformByFlag(void) {
   Render_ResetTransformState();
   if (GameFlag_Test(0x16B) != 0) {
     Iwram_TransformMatrix(gData_08128868);
-    return Transform_ApplyLookAt(state, state->pos);
+    return Transform_ApplyLookAt__battle(state, state->pos);
   } else {
-    return Transform_SetLookAt(state, state->pos);
+    return Transform_SetLookAt__battle(state, state->pos);
   }
 }
 
@@ -613,8 +582,6 @@ void *GetMotionRecord(struct MotionObject *object, s32 recordIndex) {
   }
   return NULL;
 }
-
-void SceneTransform_ApplyYaw(s32);
 
 void Camera_InitializeDefaultTransform(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;

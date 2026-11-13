@@ -3,10 +3,7 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
-
-s32 ArcTan2(s32 y, s32 x);
-void GameFlag_SetBit(s32 flag);
-void wait(s32 frames);
+#include "module/system/system.h"
 
 /* VIEW(f0d9498): tag struct ChainNode as struct ChainNode__f0d9498; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5629: structure has no member named `visible'. */
 struct ChainNode__f0d9498 {

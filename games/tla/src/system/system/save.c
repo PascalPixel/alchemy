@@ -18,18 +18,7 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 
 #define WAIT_DMA() WaitDma(DMA3)
 
-extern u16 (*gFlash_Handler0)(u16 sector, u8 *source);
-extern const u8 gSave_Signature[];
 extern const u8 gSave_HeaderTemplate[];
-
-u32 Random16(void);
-s32 Save_CompareBytes(u8 *left, u8 *right, s32 count);
-s32 Save_ChecksumSector(void);
-s32 Save_ReadSector(s32 index);
-u32 Save_WriteSector(s32 sector);
-s32 Save_InvalidateSector(s32 index);
-u32 Save_SelectWriteSector(s32 partId);
-u32 Save_GetLatestCounter(s32 partId);
 
 s32 Func_0801596c(void) {
   struct SaveWorkspace *work;

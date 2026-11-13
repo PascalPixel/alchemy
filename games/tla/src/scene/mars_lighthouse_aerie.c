@@ -1,4 +1,10 @@
 #include "mars_lighthouse_aerie/mars_lighthouse_aerie.h"
+#include "event_work.h"
+#include "module/scene/mars_lighthouse_aerie.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "scene_ids.h"
+#include "text/msg_ids.h"
 
 void Func_02000038(struct Actor *object) {
   u8 *timer = &object->unk5c[6];
@@ -118,7 +124,6 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 #include "main_routine_work.h"
 #include "event_inline.h"
 
-extern u32 Data_0200eb60;
 extern const u8 gData_02005aa4[];
 extern const u8 gData_02005ab4[];
 extern const u8 gData_02005ae0[];
@@ -169,19 +174,6 @@ void Func_020001d8(void) {
 
 #include "io_reg.h"
 
-struct MarsLighthouseAerieEventWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-};
-
-void Func_02001f10(void);
-void Func_020029ac(void);
-void Func_02003658(void);
-void Func_02003ff4(void);
-void Map_CenterOnFollowedPoint(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-
 /// Sets the scene up for the entrance the party arrived by (5 to 2).
 s32 Scene_Initialize(void) {
   ((struct MarsLighthouseAerieEventWork *)Ram_HeapSlots->eventWork)
@@ -229,11 +221,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-extern char SceneId_Ov6a8Room2;
-extern char SceneId_Ov6ACRoom3;
-
 void Func_020057d4(s32 a);
-void Func_020055dc(s32 scene, s32 a1);
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.entrance == 1 && Event_GetFlag(0xa3d) == 0)
@@ -243,15 +231,6 @@ s32 Scene_PrepareMap(void) {
                 0x5000000);
   return 0;
 }
-
-struct MarsLighthouseAerieSprite {
-  u8 unk00[9];
-  u8 unk09_0 : 2;
-  u8 layer : 2;
-  u8 unk09_4 : 4;
-  u8 unk0a[0x10];
-  u8 unk1a;
-};
 
 extern const u8 gData_02006ad0[];
 
@@ -339,12 +318,10 @@ void Func_02000640(s32 id) {
        ->v)
 struct SparkleWork;
 void Func_020053e4(struct Actor *object, struct SparkleWork *work);
-void Func_020054e4(struct Actor *object);
 s32 ObjectTable_DestroyById();
 s32 Actor_MoveToObject();
-void Func_02005734();
-s32 Field_RequestBattleFromEncounterTable();
-extern u8 MsgBetrayersYouHave[];
+/* VIEW(mars_lighthouse_aerie): routine Field_RequestBattleFromEncounterTable as s32 Field_RequestBattleFromEncounterTable(); module/field/event_commands.h has void Field_RequestBattleFromEncounterTable(s32 row, s32 column). */
+extern s32 Field_RequestBattleFromEncounterTable__mars_lighthouse_aerie() __asm__("Field_RequestBattleFromEncounterTable");
 extern u8 gData_02005ba8[];
 extern u8 gData_02005bd0[];
 extern u8 gData_02005bf8[];
@@ -360,8 +337,6 @@ extern u8 gData_02005df8[];
 extern u8 gData_02005e3c[];
 extern u8 gData_02005e80[];
 extern u8 gData_02005ec4[];
-extern u8 gData_02006c20[];
-extern char SceneId_Ov6aeRoom1;
 
 void Func_0200065c(void) {
   u8 *unk85;
@@ -1112,7 +1087,7 @@ L_02009638:
   Event_ShowMessage(0x2013, 0);
   FIELD_AT(work, u8, 0x24b) = 2;
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6aeRoom1, 2);
-  Call2(Field_RequestBattleFromEncounterTable, 102, 1);
+  Call2(Field_RequestBattleFromEncounterTable__mars_lighthouse_aerie, 102, 1);
   return;
 }
 
@@ -1131,7 +1106,6 @@ void Func_02001ee4(struct Actor *object) {
     Actor_SetSpriteColor(object, 15);
 }
 
-extern u8 MsgWhoAreThey[];
 extern u8 gData_02005f08[];
 extern u8 gData_02005f50[];
 extern u8 gData_02005f98[];
@@ -1139,7 +1113,6 @@ extern u8 gData_02005fdc[];
 extern u8 gData_02006004[];
 extern u8 gData_0200602c[];
 extern u8 gData_02006070[];
-extern u8 gData_02006b70[];
 
 static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
   Func_080d47b4(a0, a1, a2);
@@ -1451,9 +1424,8 @@ L_0200a47a:
 
 #include "event_work.h"
 
-extern const u8 MsgWhatSTheMatter[];
-void Func_020055fc();
-void Party_RemoveMemberRestored();
+/* VIEW(mars_lighthouse_aerie): routine Party_RemoveMemberRestored as void Party_RemoveMemberRestored(); module/field/event_commands.h has void Party_RemoveMemberRestored(s32 owner). */
+extern void Party_RemoveMemberRestored__mars_lighthouse_aerie() __asm__("Party_RemoveMemberRestored");
 
 static __inline__ void Func_02005714_(s32 actor, s32 a, s32 b) {
   Func_080d47b4(actor, a, b);
@@ -1658,13 +1630,13 @@ void Func_020029ac(void) {
   Event_SetFlag(0x202);
   MapGrid_CopyCellAttributes(0x27, 0x28, 0x12, 0x10, 0x17, 0xa);
   Func_020055fc(1);
-  Party_RemoveMemberRestored(7);
-  Party_RemoveMemberRestored(5);
-  Party_RemoveMemberRestored(6);
-  Party_RemoveMemberRestored(0);
-  Party_RemoveMemberRestored(3);
-  Party_RemoveMemberRestored(2);
-  Party_RemoveMemberRestored(1);
+  Party_RemoveMemberRestored__mars_lighthouse_aerie(7);
+  Party_RemoveMemberRestored__mars_lighthouse_aerie(5);
+  Party_RemoveMemberRestored__mars_lighthouse_aerie(6);
+  Party_RemoveMemberRestored__mars_lighthouse_aerie(0);
+  Party_RemoveMemberRestored__mars_lighthouse_aerie(3);
+  Party_RemoveMemberRestored__mars_lighthouse_aerie(2);
+  Party_RemoveMemberRestored__mars_lighthouse_aerie(1);
   Actor_Get(20)->collisionFlags |= 8;
   Actor_Get(21)->collisionFlags |= 8;
   Actor_SetSpriteColor(Actor_Get(28), 0xf);
@@ -1683,8 +1655,6 @@ void Func_020029ac(void) {
 }
 
 #include "field_event.h"
-
-void Func_02003210(struct Actor *self);
 
 /// Circles the actor around actor 23 by its timer, at its speed plus 3 in x
 /// and twice the sine in z, and turns the timer back by 0x800; Func_02000148
@@ -1712,26 +1682,6 @@ void Func_02003210(struct Actor *self) {
 }
 
 #include "frame.h"
-
-struct OrbitEffect {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x1c];
-  s32 radius;
-  u8 unk34[0x1c];
-  struct FieldSprite *sprite;
-  u8 unk54;
-  u8 motionFlags;
-  u8 unk56[0x0e];
-  u16 angle;
-  u16 unk66;
-  u8 unk68[4];
-  void (*update)(struct OrbitEffect *effect);
-};
-
-extern u32 gData_02006afc[];
 
 static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
                                                     s32 z) {

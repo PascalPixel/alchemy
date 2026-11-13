@@ -4,11 +4,12 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "gamepak/far_call/game.h"
+#include "module/battle/battle.h"
+#include "module/system/system.h"
+#include "transform.h"
 
-void SceneTransform_RewindStack(void);
 void SceneTransform_SetPosition(s32 *position);
-void Func_080150ac(s32 yaw);
-void SceneTransform_ApplyPitch(s32);
 
 void BattleCamera_Update(void) {
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
@@ -100,8 +101,6 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
 }
 
 // BattleUnit_Collect: The Broken Seal's BattleParty_CollectUnitList.
-
-extern const s8 gData_081287c8[];
 
 void BattleUnit_Collect(void) {
   u16 buf[14];
@@ -222,8 +221,8 @@ void Func_08118e64(void) {
   }
 }
 
-s32 Djinn_CanSetFar(s32 owner, s32 element, s32 djinn);
-void DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 djinn);
+/* VIEW(battle): routine DjinnRecovery_AddStandbyFar as void DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 djinn); gamepak/far_call/game.h has u32 *DjinnRecovery_AddStandbyFar(u32 owner, u32 element, u32 djinn). */
+extern void DjinnRecovery_AddStandbyFar__battle(s32 owner, s32 element, s32 djinn) __asm__("DjinnRecovery_AddStandbyFar");
 
 /// Adds to the trade offers every djinn an active owner can offer that is
 /// not offered yet; owners above 7 offer on the second side.
@@ -252,7 +251,7 @@ void DjinnRecovery_Reconcile(void) {
               break;
           }
           if (i == list->count)
-            DjinnRecovery_AddStandbyFar(owner, element, djinn);
+            DjinnRecovery_AddStandbyFar__battle(owner, element, djinn);
         }
       }
     }

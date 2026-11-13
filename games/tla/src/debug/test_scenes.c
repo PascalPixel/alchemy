@@ -13,6 +13,7 @@
 #include "scene_tables.h"
 
 #include "event_inline.h"
+#include "module/debug/test_scenes.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -51,8 +52,6 @@ s32 Func_020000ac(void) { return 0; }
 s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_02000054(void);
-void Func_02000068(void);
-void Func_0200007c(void);
 void Func_02000090(void);
 
 struct SceneEntrance gSceneEntrances[] = {

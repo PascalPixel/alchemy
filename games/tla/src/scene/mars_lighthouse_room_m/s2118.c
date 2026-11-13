@@ -1,5 +1,9 @@
 #include "mars_lighthouse_room_m.h"
 #include "event_inline.h"
+#include "module/field/field.h"
+#include "module/scene/dehkan_plateau.h"
+#include "module/scene/mars_lighthouse_room_m.h"
+#include "module/scene/scene.h"
 
 void Func_02002118(void) {
   struct MarsLighthouseRoomMRideWork *work =
@@ -59,19 +63,8 @@ struct RideWork {
   void *handle;
 };
 
-extern u16 gData_02004cf0[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_02003130(void *handle);
-void Func_020024e4(void);
-s32 Func_02002708(void);
-void Func_02002e6c(struct Actor *self);
 #include "main_routine_work.h"
-
-void Func_02003230(s32 a, s32 b);
-void Func_02003228(void);
-void Func_02001608(void);
-void Func_020032a8(void);
-void Func_0200055c(void);
 
 void Func_0200216c(void) {
   struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
@@ -86,30 +79,6 @@ void Func_02002180(s16 value) {
 
 #include "io_reg.h"
 #include "field.h"
-
-/// One object the beam reaches, as Func_0200218c records it.
-struct MarsLighthouseBeamTarget {
-  u16 active;
-  u16 index;
-  u16 flags;
-  u16 unk06;
-  struct Actor *object;
-  s32 height; ///< 16.16 pixels
-};
-
-struct MarsLighthouseBeam {
-  u8 unk00[10];
-  u16 unk0a;
-  u8 unk0c[4];
-  s32 unk10;
-  struct MarsLighthouseBeamTarget targets[4];
-  struct {
-    u16 unk00;
-    u16 unk02;
-  } stops[4];
-};
-
-void Func_02001f94(void);
 
 void Func_0200218c(u16 *targets, u16 *stops, s32 a2, s32 a3) {
   struct MarsLighthouseBeam *beam =
@@ -221,7 +190,6 @@ struct MarsLighthouseEventWork {
   u16 downOwners[8];
 };
 
-void BattleParty_ApplyHealthDelta(s32 a, s32 b);
 struct BattleUnit *Unit_Get(s32 owner);
 
 void Func_02002368(void) {
@@ -272,18 +240,11 @@ void Func_020024bc(struct Actor *object) {
 #include "vector3.h"
 #include "fixed_math.h"
 
-struct Work020023c4 {
-  u8 unk00[4];
-  u16 unk04;
-  u8 unk06[0x68 - 6];
-  s16 unk68;
-  s16 unk6a;
-};
-
 s32 Func_02003168(s32 terrain, s32 x, s32 z);
-s32 Func_02003180(struct Actor *actor, struct Vector3 *position);
-void Actor_JumpDownLedge();
-s32 Func_020031b0(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
+/* VIEW(s2118): routine Func_02003180 as s32 Func_02003180(struct Actor *actor, struct Vector3 *position); module/scene/scene.h has s32 Func_02003180(s32 layer, s32 shape, s32 height). */
+extern s32 Func_02003180__s2118(struct Actor *actor, struct Vector3 *position) __asm__("Func_02003180");
+/* VIEW(s2118): routine Actor_JumpDownLedge as void Actor_JumpDownLedge(); module/field/event_commands.h has void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle). */
+extern void Actor_JumpDownLedge__s2118() __asm__("Actor_JumpDownLedge");
 
 void Func_020024e4(void) {
   struct MainRoutineWork *main = &gMainRoutineWork;
@@ -332,7 +293,7 @@ void Func_020024e4(void) {
             position.z = actor->z + (work->unk6a << 19);
           } while (0);
 #endif
-          if (Func_02003180(actor, &position) != 0) {
+          if (Func_02003180__s2118(actor, &position) != 0) {
             actor->velocityX = 0;
             actor->velocityZ = 0;
             break;
@@ -356,20 +317,20 @@ void Func_020024e4(void) {
         position.y = actor->y;
 #if TLA_PATCH_1
         position.z = actor->z + (work->unk6a << 19);
-        result = Func_02003180(actor, &position);
+        result = Func_02003180__s2118(actor, &position);
 #else
         // A once-only block, as in the loop above, with the call inside so
         // the call reuses position's address.
         do {
           position.z = actor->z + (work->unk6a << 19);
-          result = Func_02003180(actor, &position);
+          result = Func_02003180__s2118(actor, &position);
         } while (0);
 #endif
         if (result > 0)
           break;
         if (result < 0) {
           actor->facing = TRIG_TURN / 4;
-          Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, -1);
+          Actor_JumpDownLedge__s2118(gMainRoutineWork.currentOwner, 6, -1);
           break;
         }
 #if TLA_PATCH_1

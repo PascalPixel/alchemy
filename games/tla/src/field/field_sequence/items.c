@@ -3,6 +3,9 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "gamepak/far_call/window.h"
+#include "module/field/event_commands.h"
+#include "module/field/field_sequence.h"
 
 void Event_RunMessage(s32 actor, s32 message) {
   Event_Start();
@@ -89,37 +92,7 @@ s32 Event_FindFacingTrigger(s32 source) {
   return 0;
 }
 
-struct ItemUnit {
-  u8 unk000[0xd8];
-  u16 inventory[15];
-};
-
-struct ItemTrigger {
-  u8 unk00[4];
-  u16 trigger;
-  u8 unk06[2];
-  u32 value;
-};
-
-struct ItemDefinitionView {
-  u8 unk00[12];
-  u8 useType;
-  u8 unk0d[27];
-  u16 actionId;
-};
-
-struct ItemFieldWork {
-  u8 unk000[0x158];
-  s16 exit;
-  u8 unk15a[0xcb6 - 0x15a];
-  u8 resolvingAction;
-};
-
-typedef void (*ItemTriggerCallback)(s32 item, s32 actor, s32 slot);
-
 s32 Func_080d295c(s32 mode);
-void Message_CloseFinishedWindowsFar(void);
-void BattleEffect_CleanupSceneObjects(void);
 
 /// Uses an item on the field. packedItem holds the item (bits 0 to 9) and the
 /// character using it (bits 10 to 13; 15 for the character carrying most of
@@ -250,23 +223,6 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     Inventory_RemoveFar(actor, slot);
   return result;
 }
-
-struct TriggerEvent {
-  s32 control;
-  s16 trigger;
-  s16 condition;
-  u32 value;
-};
-
-struct TriggerWork {
-  u8 unk000[0x10];
-  struct TriggerEvent *events;
-};
-
-struct PendingAction {
-  u8 unk00[6];
-  u8 eventKind;
-};
 
 s32 Func_080ce31c(s32 kind) {
   struct TriggerWork *work = Ram_HeapSlots->eventWork;

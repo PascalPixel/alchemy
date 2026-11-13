@@ -108,4 +108,21 @@ STATIC_ASSERT(offsetof(struct WindowSprite, sprite) == 0x10);
 STATIC_ASSERT(offsetof(struct WindowSprite, sprite.oam) == 0x14);
 STATIC_ASSERT(sizeof(struct WindowSprite) == 0x1c);
 
+/// The sprite attributes, as The Broken Seal's render_input.h lays them out.
+struct OamData {
+  u16 y : 8;
+  u16 affineMode : 2;
+  u16 objectMode : 2;
+  u16 mosaic : 1;
+  u16 fullColor : 1;
+  u16 shape : 2;
+  u16 x : 9;
+  u16 matrix : 5;
+  u16 size : 2;
+  u16 index : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u16 high;
+};
+
 #endif

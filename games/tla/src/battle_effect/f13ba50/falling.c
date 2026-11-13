@@ -3,6 +3,9 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/battle_effect/f13ba50.h"
+#include "resource_ids.h"
 
 // The blitter pair's heap slots, as byte offsets into Ram_HeapSlots.
 #define SLOT_BLITTER 104           // unk64[1]
@@ -12,31 +15,10 @@
 
 #define PHASE_RESULTS 133
 
-// Shards and frames for each variant (The Broken Seal's
-// gFalling_IceCounts).
-extern u8 Data_08197521[];
 #define SHARD_COUNT(variant) Data_08197521[(variant) * 2]
 #define FRAME_COUNT(variant) Data_08197521[(variant) * 2 + 1]
 
-// The sparkle puff's size and cell for each of its nine pictures
-// (gBattleEffect_PuffSizes and gBattleEffect_PuffCells).
-extern u8 Data_0819745e[];
-extern u16 Data_0819744c[];
-
-extern char ResourceId_IceShardSheet;
-extern char ResourceId_SparkleDots;
 extern u8 gMapCellBuffer[];
-
-void BattleEffect_StartCanvasLayer(s32 control);
-void BattleEffect_EndCanvasLayer(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-
-void Sound_PlayFar(s32 cue);
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
-void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // BattleEffect_TintBattler
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffect_CountDownBattlerTints(void);
 
 // Ice, Ice Horn and Ice Missile (effect kind 7, variants 0 to 2).
 
@@ -239,29 +221,12 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
 
 #undef FRAME_COUNT
 
-// The map cell buffer holds WIN0's line table and then the splashes.
-struct DropSplashBuffer {
-  u16 lines[160];
-  struct EffectStep splashes[512];
-};
-
 #define gDropSplashes ((struct DropSplashBuffer *)Ram_MapCellBuffer)
 
-// Four bytes for each variant (The Broken Seal's gFalling_Counts).
-extern u8 Data_08197527[];
 #define DROP_COUNT(variant) Data_08197527[(variant) * 4]
 #define SPLASH_COUNT(variant) Data_08197527[(variant) * 4 + 1]
 #define DROP_SPACING(variant) Data_08197527[(variant) * 4 + 2]
 #define FRAME_COUNT(variant) Data_08197527[(variant) * 4 + 3]
-
-// The splash's cell for each size from 1 to 6 (gBattleEffect_FlareCells).
-extern u16 Data_08197424[];
-
-extern char ResourceId_BlueBeamSheet;
-extern char ResourceId_ParticleSpritesD;
-
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
 
 // Douse, Drench and Deluge (effect kind 9, variants 0 to 2).
 

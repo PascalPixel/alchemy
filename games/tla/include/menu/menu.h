@@ -67,4 +67,8 @@ void MenuArrow_SetPosition(struct Obj *obj, s32 arg1, s32 arg2);
 #endif
 void Window_SetTilemapEntryFar(s32, s32, s32, s32, s32);
 
+extern const u8 gMenu_ColonString[];
+extern const u8 gMenu_HexDigitsString[];
+extern u8 gMenu_SelectionStepDelays[];
+
 #endif

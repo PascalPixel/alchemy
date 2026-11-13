@@ -6,6 +6,18 @@
 
 #include "event_inline.h"
 #include "champa_cliff_caves/scene.h"
+#include "event.h"
+#include "event_work.h"
+#include "field.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/field/event_commands.h"
+#include "module/scene/champa_cliff_caves.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "resource.h"
+#include "scene_call.h"
+#include "system.h"
 
 void Func_02000038(struct RiseObject *object) {
   object->scale += 0x1000;
@@ -35,17 +47,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "scene_ids.h"
 
-extern u32 gData_0200375c[];
-extern u32 gData_020037a4[];
 extern u32 gData_0200381c[];
 extern u32 gData_02003864[];
-extern u32 gData_020038ac[];
-extern u32 gData_0200390c[];
-extern u32 gData_02003984[];
 extern u32 gData_020039cc[];
-extern u32 gData_02003aec[];
-extern u32 gData_02003b94[];
-extern u32 gData_02003c0c[];
 extern u32 gData_02003c84[];
 
 u32 *Scene_GetPlacements(void) {
@@ -209,9 +213,6 @@ void Func_020003ec(void) {
 }
 
 extern s32 gData_02003d20[];
-extern s32 gData_02003e7c[];
-extern s32 gData_02003ffc[];
-extern s32 gData_02004104[];
 
 void Func_02000464(s32 a) { Func_02003474(a, 326, 0x978); }
 
@@ -230,15 +231,6 @@ s32 *Scene_GetEvents(void) {
 }
 
 #include "version.h"
-
-struct EventTransition {
-  u8 unk000[0x1ac];
-  s32 type;
-};
-
-void Func_02001774(void);
-void Func_02001868(void);
-void Func_020035ac(s32 a);
 
 static __inline__ void Func_0200361c_(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
@@ -283,12 +275,6 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-/// The byte at 0x5a of an actor, as the field its bit 0 is set through.
-struct ActorSolid {
-  u8 unk00[0x5a];
-  u8 solid : 8;
-};
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -363,11 +349,6 @@ void Func_02000734(u16 *from, u16 *to, s32 frames) {
     wait(1);
   }
 }
-
-struct EventCounters {
-  u8 unk000[0x1c4];
-  u16 count;
-};
 
 void Func_02000804(s32 actor) {
   Event_Start();
@@ -466,52 +447,22 @@ void Func_02000978(s32 actor) {
    } *)(base))                                                                 \
        ->v)
 
-struct ThrowAnimations {
-  s32 animations[3];
-};
-
 /* VIEW(s0a34): variable gData_02003634 as extern const struct ThrowAnimations gData_02003634; the definition has u32 gData_02003634[] = { 439, 440, 441, }; tried as the definition's extern u32 gData_02003634[], it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:580: incompatible types in assignment. */
 extern const struct ThrowAnimations gData_02003634__s0a34 __asm__("gData_02003634");
 
 struct Actor *Actor_GetById(u32 objectId);
-void Event_Start(void);
-void Event_ResolvePendingActions(s32 mode);
-void Event_SetMessageId(s32 message);
-void Func_020005e8(s32 value);
 s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
-void Event_ShowMessageThenWait(s32 speaker, s32 a, s32 b);
-void Func_0200067c(s32 mode);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void Actor_ArmCallbackAndRefresh(s32 id, s32 angle);
-void Event_Wait(s32 frames);
-s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
-s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 follow);
-void Func_02003564(void);
 void Func_080d3b28(s32 id, s32 animation);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
 void Actor_SetSpeedParameters(s32 actorId, s32 speed, s32 acceleration);
 void Actor_OffsetPositionAndResetMotion(s32 actorId, s32 dx, s32 dz);
-void Sound_Play(s32 cue);
 void Func_02000734(u16 *from, u16 *to, s32 frames);
-void Actor_CommitPositionAndActivate(u32 objectId, s32 x_offset, s32 z_offset);
-void Actor_StartRepeatedMotion(u32 objectId, s32 variant);
-void FieldEffect_SetAttached(s32 id, s32 animation);
-void Func_0200360c(s32 a, s32 b);
-void Map_SetScreenShake(s32 x, s32 y, s32 z);
 /* VIEW(s0a34): routine Func_02003164 as void Func_02003164(s32 *position); the definition has void Func_02003164(const struct Vec3 *origin). */
 extern void Func_02003164__s0a34(s32 *position) __asm__("Func_02003164");
 /* VIEW(s0a34): routine Func_0200320c as void Func_0200320c(s32 *position); the definition has void Func_0200320c(void). */
 extern void Func_0200320c__s0a34(s32 *position) __asm__("Func_0200320c");
-void Field_StartPaletteTransition(s32 mode);
-void Field_EndActorSpriteEffect(s32 mode);
-void Func_020032a4(void);
-void wait(s32 frames);
-void Party_PlaySavedMusic(void);
-void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
-void Event_End(void);
 /* VIEW(s0a34): routine Func_02000038 as void Func_02000038(void); the definition has void Func_02000038(struct RiseObject *object). */
 extern void Func_02000038__s0a34(void) __asm__("Func_02000038");
 
@@ -680,16 +631,9 @@ void Func_02000a34(s32 value) {
   Event_End();
 }
 
-
-struct EventFlags685 {
-  u8 unk000[0x15a];
-  u16 field15a;
-};
-
-void PartyInventory_Remove(s32 item);
+/* VIEW(champa_cliff_caves): routine PartyInventory_Remove as void PartyInventory_Remove(s32 item); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
+extern void PartyInventory_Remove__champa_cliff_caves(s32 item) __asm__("PartyInventory_Remove");
 void Func_0200343c(s32 x, s32 z, s32 a, s32 b);
-void Func_02000804(s32 item);
-void Func_02000978(s32 item);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -716,7 +660,7 @@ void Func_02000f48(s32 actor) {
   ((struct EventFlags685 *)Ram_HeapSlots->eventWork)->field15a = 1;
   return;
 remove:
-  PartyInventory_Remove(item);
+  PartyInventory_Remove__champa_cliff_caves(item);
   goto chosen;
 last:
   item = 441;
@@ -731,7 +675,7 @@ first:
   item++;
   if ((owner = PartyInventory_FindMember(item)) == -1)
     goto last;
-  PartyInventory_Remove(item);
+  PartyInventory_Remove__champa_cliff_caves(item);
 chosen:
   if (item != -1) {
     if (!GameFlag_Test_(0x975)) {
@@ -782,15 +726,12 @@ void Func_02001138(struct RiseObject *object) {
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-
 struct Position {
   s32 x;
   s32 y;
   s32 z;
 };
 
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-void Field_RequestBattleFromEncounterTable(s32 actor, s32 value);
 /* VIEW(s0a34): routine Func_02002f58 as void Func_02002f58(struct Position *position); the definition has void Func_02002f58(const s32 *position). */
 extern void Func_02002f58__s0a34(struct Position *position) __asm__("Func_02002f58");
 
@@ -1006,7 +947,6 @@ void Func_0200115c(void) {
   Event_End();
 }
 
-
 /* VIEW(s0a34): tag struct EventTransition as struct EventTransition__s0a34; champa_cliff_caves.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:1059: structure has no member named `frames'. */
 struct EventTransition__s0a34 {
   u8 unk000[0x1ac];
@@ -1014,8 +954,6 @@ struct EventTransition__s0a34 {
   u8 unk1b0[4];
   s32 frames;
 };
-
-void Event_SetDestination(s32 scene, s32 entrance);
 
 // The scene's own event inline: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1055,8 +993,6 @@ extern const u8 gData_020041e8[];
 extern const u8 gData_02004254[];
 extern const u8 gData_0200432c[];
 extern const u8 gData_020042d4[];
-
-void Func_020029f8(s32 id, s32 mode);
 
 /// The scene that opens with MsgMySalamanderYou: persons 8 and 11 talk and
 /// move with the party through three yes-or-no answers (each counted in the
@@ -1552,45 +1488,14 @@ void Func_02001868(void) {
 
 #include "system/dma.h"
 
-extern const u16 Field_Palette685[];
-extern char ResourceId_FieldEffectExplosion;
-
-struct FlashSprite {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 attr1;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[2];
-  s32 x;
-  s32 z;
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk1c[2];
-  u16 unk1e;
-};
-
-struct FlashWork {
-  u8 tiles[0x400];
-  struct FlashSprite sprite;
-};
-
-struct FlashWork *HeapSlot_AllocFar(s32 slot, s32 size);
-void *Resource_GetTableEntry(s32 resourceId);
-void Resource_DecodeType01(void *entry, void *destination);
-s32 Resource_FindFreeEntry(void);
-void Func_020035fc(struct FlashSprite *sprite, s32 width, s32 height,
-                   u32 attributes, s32 tile);
-void Camera_WorldToScreen(s32 *position);
-void Func_02003604(struct FlashSprite *sprite);
-s32 Resource_ResetEntry(u32 slot);
-void HeapSlot_Release(s32 slot);
+/* VIEW(champa_cliff_caves): routine HeapSlot_AllocFar as struct FlashWork *HeapSlot_AllocFar(s32 slot, s32 size); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
+extern struct FlashWork *HeapSlot_AllocFar__champa_cliff_caves(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
+/* VIEW(champa_cliff_caves): routine Resource_DecodeType01 as void Resource_DecodeType01(void *entry, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
+extern void Resource_DecodeType01__champa_cliff_caves(void *entry, void *destination) __asm__("Resource_DecodeType01");
+/* VIEW(champa_cliff_caves): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
+extern void Camera_WorldToScreen__champa_cliff_caves(s32 *position) __asm__("Camera_WorldToScreen");
+/* VIEW(champa_cliff_caves): routine Func_02003604 as void Func_02003604(struct FlashSprite *sprite); module/scene/gabomba_statue.h has s32 Func_02003604(void). */
+extern void Func_02003604__champa_cliff_caves(struct FlashSprite *sprite) __asm__("Func_02003604");
 
 static __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d,
                              s32 e) {
@@ -1600,7 +1505,7 @@ static __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d,
 }
 
 void Func_020029f8(s32 id, s32 mode) {
-  struct FlashWork *work = HeapSlot_AllocFar(220, 0x428);
+  struct FlashWork *work = HeapSlot_AllocFar__champa_cliff_caves(220, 0x428);
   struct Actor *object = Actor_GetById(id);
   s32 slot;
   s32 tile;
@@ -1622,7 +1527,7 @@ void Func_020029f8(s32 id, s32 mode) {
   Actor_SetSingleChildFlags(object, 0);
   Dma_Set(Field_Palette685, (void *)0x050003e0, 0x80000010,
           (volatile u32 *)0x040000d4);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
+  Resource_DecodeType01__champa_cliff_caves(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
                 work);
   slot = Resource_FindFreeEntry();
   tile = Vram_Load(slot, 0x400, work);
@@ -1635,7 +1540,7 @@ void Func_020029f8(s32 id, s32 mode) {
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
-  Camera_WorldToScreen(position);
+  Camera_WorldToScreen__champa_cliff_caves(position);
   sprite->x = position[0];
   sprite->z = z = position[2];
   if (mode == 1) {
@@ -1669,7 +1574,7 @@ void Func_020029f8(s32 id, s32 mode) {
       sprite->tile = tile + 28;
       break;
     }
-    Func_02003604(sprite);
+    Func_02003604__champa_cliff_caves(sprite);
     wait(1);
   }
   Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
@@ -1682,57 +1587,9 @@ void Func_020029f8(s32 id, s32 mode) {
 #undef BYTE_AT
 #undef WORD_AT
 
-// ---- games/tla/src/scene/champa_cliff_caves/s2c88.c ----
-struct ChampaCliffCavesSprite {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 attr1;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[0x14];
-  u16 unk1e;
-  u8 unk20[8];
-};
-
-struct ChampaCliffCavesWork {
-  u8 tiles[0x1000];
-  s32 originX;
-  s32 originY;
-  s32 originZ;
-  struct ChampaCliffCavesSprite spriteA;
-  struct ChampaCliffCavesSprite spriteB;
-  u16 entryA;
-  u16 vramA;
-  u16 entryB;
-  u16 vramB;
-  // A union: the two stores below keep their place after the sprite's.
-  union {
-    s32 value;
-    u16 half;
-  } field1064, field1068;
-  s32 field106c;
-  s32 field1070;
-  u16 field1074;
-  u8 unk1076[2];
-};
-
-extern char ResourceId_Data1F7;
-
-void *Resource_GetTableEntry(s32 id);
-void Resource_DecodeType01(void *resource, void *destination);
-s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
 /* VIEW(s2c88): routine Func_020035fc as void Func_020035fc(struct ChampaCliffCavesSprite *sprite, s32 width, s32 height, u32 attributes, s32 vram); s0a34 has void Func_020035fc(struct FlashSprite *sprite, s32 width, s32 height, u32 attributes, s32 tile). */
 extern void Func_020035fc__s2c88(struct ChampaCliffCavesSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 vram) __asm__("Func_020035fc");
-
-extern char ResourceId_GlowDisc;
 
 /* VIEW(s2c88): static Place as Place__s2c88; the definition has static __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d, s32 e); not tried: Place's definition holds a FAKEMATCH tag. */
 static __inline__ void Place__s2c88(struct ChampaCliffCavesSprite *a, s32 b, s32 c,
@@ -1750,7 +1607,7 @@ void Func_02002c88(void) {
   s32 entry;
   s32 vram;
 
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GlowDisc), work);
+  Resource_DecodeType01__champa_cliff_caves(Resource_GetTableEntry((s32)&ResourceId_GlowDisc), work);
   i = 0;
   tile = work->tiles;
 next:
@@ -1799,14 +1656,9 @@ struct ChampaCliffCavesWork__s2d34 {
   u8 unk1076[2];
 };
 
-void *Resource_GetTableEntry(s32 id);
-void Resource_DecodeType01(void *resource, void *destination);
-s32 Resource_FindFreeEntry(void);
 /* VIEW(s2d34): routine Func_020035fc as void Func_020035fc(struct ChampaCliffCavesSprite *sprite, s32 width, s32 height, u32 attributes, s32 vram); s0a34 has void Func_020035fc(struct FlashSprite *sprite, s32 width, s32 height, u32 attributes, s32 tile). */
 extern void Func_020035fc__s2d34(struct ChampaCliffCavesSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 vram) __asm__("Func_020035fc");
-
-extern char ResourceId_FireColumn;
 
 /* VIEW(s2d34): static Place as Place__s2d34; the definition has static __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d, s32 e); not tried: Place's definition holds a FAKEMATCH tag. */
 static __inline__ void Place__s2d34(struct ChampaCliffCavesSprite *a, s32 b, s32 c,
@@ -1824,7 +1676,7 @@ void Func_02002d34(void) {
   s32 entry;
   s32 vram;
 
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FireColumn), work);
+  Resource_DecodeType01__champa_cliff_caves(Resource_GetTableEntry((s32)&ResourceId_FireColumn), work);
   i = 0;
   tile = work->tiles;
 next:
@@ -1848,9 +1700,9 @@ next:
   work->field1070.value = 0;
 }
 
-
 // The glow's frame callback.
-struct GlowSprite {
+/* VIEW(champa_cliff_caves): tag struct GlowSprite as struct GlowSprite__champa_cliff_caves; module/scene/scene.h has another definition. */
+struct GlowSprite__champa_cliff_caves {
   u8 unk_0[12];
   s32 x;
   s32 z;
@@ -1862,7 +1714,7 @@ struct GlowSprite {
 struct Glow {
   u8 unk_0[4096];
   s32 position[3];
-  struct GlowSprite sprites[2];
+  struct GlowSprite__champa_cliff_caves sprites[2];
   u8 unk_105C[8];
   s32 scale;
   s32 trailingScale;
@@ -1871,9 +1723,8 @@ struct Glow {
   s16 frame;
 };
 
-void Camera_WorldToScreen(s32 *position);
 /* VIEW(s2d34): routine Func_02003604 as void Func_02003604(struct GlowSprite *sprite); s0a34 has void Func_02003604(struct FlashSprite *sprite). */
-extern void Func_02003604__s2d34(struct GlowSprite *sprite) __asm__("Func_02003604");
+extern void Func_02003604__s2d34(struct GlowSprite__champa_cliff_caves *sprite) __asm__("Func_02003604");
 
 /// Cycles thirty-two colours of the object palettes through a wave of greens
 /// and blues, places the glow's two sprites at its spot with their scales, and
@@ -1881,7 +1732,7 @@ extern void Func_02003604__s2d34(struct GlowSprite *sprite) __asm__("Func_020036
 void Func_02002de4(void) {
   struct Glow *work = (struct Glow *)Ram_HeapSlots->menuRuntime;
   s32 position[3];
-  struct GlowSprite *sprite;
+  struct GlowSprite__champa_cliff_caves *sprite;
   s32 i;
 
   i = 0;
@@ -1911,7 +1762,7 @@ loop:
   position[1] = work->position[1];
   position[2] = work->position[2];
   sprite = &work->sprites[0];
-  Camera_WorldToScreen(position);
+  Camera_WorldToScreen__champa_cliff_caves(position);
   sprite->x = position[0];
   sprite->z = position[2];
   sprite->scale = work->scale;
@@ -1921,7 +1772,7 @@ loop:
   position[1] = work->position[1];
   position[2] = work->position[2];
   sprite = &work->sprites[1];
-  Camera_WorldToScreen(position);
+  Camera_WorldToScreen__champa_cliff_caves(position);
   sprite->x = position[0];
   sprite->z = position[2];
   sprite->scale = work->scale2;
@@ -1941,7 +1792,6 @@ loop:
 
 /* VIEW(s2d34): routine HeapSlot_AllocFar as u8 *HeapSlot_AllocFar(s32 slot, s32 size); s0a34 has struct FlashWork *HeapSlot_AllocFar(s32 slot, s32 size). */
 extern u8 *HeapSlot_AllocFar__s2d34(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
-void Func_02002c88(void);
 
 void Func_02002f58(const s32 *position) {
   u8 *work = HeapSlot_AllocFar__s2d34(220, 0x1078);
@@ -1995,9 +1845,6 @@ void Func_02002f58(const s32 *position) {
     time++;
   } while (state != 999);
 }
-
-s32 Resource_ResetEntry(u32 slot);
-void HeapSlot_Release(s32 slot);
 
 void Func_02003078(void) {
   u8 *work = Ram_HeapSlots->menuRuntime;
@@ -2073,9 +1920,6 @@ struct Vec3 {
 
 /* VIEW(s3164): routine HeapSlot_AllocFar as void *HeapSlot_AllocFar(s32 slot, s32 size); s2d34 has u8 *HeapSlot_AllocFar(s32 slot, s32 size). */
 extern void *HeapSlot_AllocFar__s3164(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
-void wait(s32 frames);
-void Func_02002c88(void);
-void Func_02002de4(void);
 
 void Func_02003164(const struct Vec3 *origin) {
   struct ChampaCliffCavesWork__s3164 *work =
@@ -2126,8 +1970,6 @@ struct ChampaCliffCavesWork__s320c {
 
 /* VIEW(s320c): routine HeapSlot_AllocFar as void *HeapSlot_AllocFar(s32 slot, s32 size); s2d34 has u8 *HeapSlot_AllocFar(s32 slot, s32 size). */
 extern void *HeapSlot_AllocFar__s320c(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
-void Func_02002d34(void);
-void Func_02002de4(void);
 
 void Func_0200320c(void) {
   struct ChampaCliffCavesWork__s320c *work =
@@ -2163,16 +2005,12 @@ void Func_0200320c(void) {
   } while (state != 999);
 }
 
-
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
-s32 Resource_ResetEntry(u32 slot);
-void HeapSlot_Release(s32 slot);
 
 void Func_020032a4(void) {
   u8 *work = Ram_HeapSlots->menuRuntime;
@@ -2217,7 +2055,6 @@ void Func_020032a4(void) {
   Resource_ResetEntry(FIELD_AT(work, s16, 4192));
   HeapSlot_Release(220);
 }
-
 
 u32 gData_02003634[] = {
     439,

@@ -5,34 +5,16 @@
 #include "actor.h"
 #include "field_effect.h"
 #include "event_inline.h"
+#include "item_icon.h"
+#include "module/scene/clear.h"
+#include "module/scene/jupiter_lighthouse_basement.h"
+#include "module/scene/scene.h"
 
-struct GustObject {
-  u8 unk00[6];
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x0f];
-  u8 priorityFlags;
-  u8 unk24[0x0c];
-  s32 unk30;
-  u8 unk34[0x21];
-  u8 motionFlags;
-  u8 unk56[0x0c];
-  u8 unk62;
-  u8 unk63;
-  u16 unk64;
-  u8 unk66[6];
-  void (*update)(struct GustObject *object);
-};
-
-s32 Math_Cosine(s32 angle);
-void Func_02001bec(struct GustObject *object, s32 mode);
-void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags);
+/* VIEW(s098c): routine Func_02001bec as void Func_02001bec(struct GustObject *object, s32 mode); module/scene/jupiter_lighthouse_basement.h has void Func_02001bec(struct FieldEffect *effect, s32 mode). */
+extern void Func_02001bec__s098c(struct GustObject *object, s32 mode) __asm__("Func_02001bec");
+/* VIEW(s098c): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s098c(struct GustObject *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
 void Func_020007cc(struct GustObject *object);
-void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
 
 struct GustObject *Func_0200098c(struct GustObject *source) {
   struct Vector3 position;
@@ -46,8 +28,8 @@ struct GustObject *Func_0200098c(struct GustObject *source) {
                                   Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                    position.z));
-  Func_02001bec(object, 2);
-  Actor_SetSingleChildFlags(object, 0);
+  Func_02001bec__s098c(object, 2);
+  Actor_SetSingleChildFlags__s098c(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -88,21 +70,6 @@ s32 Func_02000a64(struct Actor *object) {
   }
   return 0;
 }
-
-/// struct Actor as this function reads it, its coordinates as
-/// FieldCoordinate.
-struct PositionedActor {
-  u8 unk00[8];
-  union FieldCoordinate x;
-  union FieldCoordinate y;
-  union FieldCoordinate z;
-  s32 terrainHeight;
-  s32 scaleX;
-  u8 unk1c[0x34];
-  struct FieldSprite *animation;
-  u8 animationKind;
-  u8 motionFlags;
-};
 
 void Animation_ApplyChildValues(struct PositionedActor *object, s32 value);
 
@@ -169,23 +136,10 @@ void Func_02000b04(void) {
 #include "map.h"
 #include "vram_tab.h"
 
-struct LightOam {
-  u32 link;
-  u32 attr01;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u16 unk0a;
-};
-
-extern s16 gData_020023f0;
-extern s16 gData_020023f2;
-extern struct Actor *gData_020023f4[];
-extern struct LightOam Data_02002434[];
 extern s16 gData_020024f4;
-extern s16 gData_020024f6;
 
-s32 Func_02001d24(struct Actor *actor);
+/* VIEW(s098c): routine Func_02001d24 as s32 Func_02001d24(struct Actor *actor); module/scene/shrine_of_the_sea_god.h has void Func_02001d24(void). */
+extern s32 Func_02001d24__s098c(struct Actor *actor) __asm__("Func_02001d24");
 void Func_02001bc4(struct LightOam *oam, s32 depth);
 
 void Func_02000c94(void) {
@@ -229,7 +183,7 @@ void Func_02000c94(void) {
         *word++ = oy | (ox << 16) | 0x40002000;
         *word = (tile + frame * 8) | 0x800;
         if (gData_020024f6 == -1)
-          oam->priority = Func_02001d24(actor);
+          oam->priority = Func_02001d24__s098c(actor);
         else
           oam->priority = gData_020024f6;
         Func_02001bc4(oam, depth);
@@ -250,7 +204,7 @@ void Func_02000c94(void) {
         *word++ = oy | (ox << 16) | 0xc000a000;
         *word = (tile + frame * 8) | 0x800;
         if (gData_020024f6 == -1)
-          oam->priority = Func_02001d24(actor);
+          oam->priority = Func_02001d24__s098c(actor);
         else
           oam->priority = gData_020024f6;
         Func_02001bc4(oam, depth);
@@ -260,12 +214,8 @@ void Func_02000c94(void) {
   }
 }
 
-extern u8 gField_CachedTilesA[];
-extern u8 gField_CachedTilesB[];
-extern u8 gField_CachedTilesC[];
-
-void Resource_DecodeType01(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
+/* VIEW(s098c): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
+extern void Resource_DecodeType01__s098c(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -275,7 +225,7 @@ void Func_02000e50(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_020023f4, 64);
-  Resource_DecodeType01(gField_CachedTilesA, buffer);
+  Resource_DecodeType01__s098c(gField_CachedTilesA, buffer);
   gData_020023f0 = Resource_FindFreeEntry();
   VramCache_Load(gData_020023f0, 0xc00, buffer);
   Heap_Release(buffer);
@@ -289,7 +239,7 @@ void Func_02000ed0(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_020023f4, 64);
-  Resource_DecodeType01(gField_CachedTilesB, buffer);
+  Resource_DecodeType01__s098c(gField_CachedTilesB, buffer);
   gData_020023f0 = Resource_FindFreeEntry();
   Vram_Load(gData_020023f0, 0x800, buffer);
   Heap_Release(buffer);
@@ -303,7 +253,7 @@ void Func_02000f50(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_020023f4, 64);
-  Resource_DecodeType01(gField_CachedTilesC, buffer);
+  Resource_DecodeType01__s098c(gField_CachedTilesC, buffer);
   gData_020023f0 = Resource_FindFreeEntry();
   Vram_Load(gData_020023f0, 0x800, buffer);
   Heap_Release(buffer);

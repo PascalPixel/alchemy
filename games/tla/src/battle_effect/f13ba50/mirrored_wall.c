@@ -3,6 +3,9 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/battle_effect/f13ba50.h"
+#include "resource_ids.h"
 
 /// Builds the two usual routines that draw onto the 128x128 canvas, clipped,
 /// mirrored when flip is nonzero. out[0] keeps the higher colour index (heap
@@ -43,8 +46,6 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
   }
 }
 
-void Func_08144b14(struct BattleEffectArgument *effect, s32 mode);
-
 /// Abilities: Revive, Water of Life, Lich (kind 25); Quartz (kind 201).
 DEFINE_EFFECT_KIND(BattleEffect_RunRevive, Func_08144b14, 0)
 
@@ -53,16 +54,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDew, Func_08144b14, 1)
 
 /// Abilities: Spark (kind 255).
 DEFINE_EFFECT_KIND(BattleEffect_RunSpark, Func_08144b14, 2)
-
-
-extern char ResourceId_EarthWallSheet;
-extern char ResourceId_CrescentMoonSheet;
-extern char ResourceId_VenusDjinnSheet;
-
-extern u8 Data_0819786c[];  // the mote's picture for each step of its sway
-extern u16 Data_08197874[]; // the beam's head: three pictures, offsets
-extern u8 Data_0819787a[];  // ... their widths
-extern u8 Data_0819787d[];  // ... their heights
 
 // The pictures in the work sheet, after the beam (EarthWallSheet).
 #define PIC_MOTE 0x2710  // the crescent motes, 24 x 24
@@ -265,8 +256,6 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_0814512c(struct BattleEffectArgument *effect, s32 mode);
-
 /// Abilities: Mad Spatter (kind 347).
 DEFINE_EFFECT_KIND(BattleEffect_RunMadSpatter, Func_0814512c, 4)
 
@@ -302,27 +291,10 @@ DEFINE_EFFECT_KIND(BattleEffect_RunFormicAcid, Func_0814512c, 9)
 
 #define BURSTS ((struct EffectStep *)(Ram_MapCellBuffer + 0x1c00))
 
-void SummonEffect_RunCanvasMode1(void *action);
-void SummonEffect_RunCanvasMode3(void *action);
-
-extern char ResourceId_GoldShellSheet;
-extern char ResourceId_SmokeSheet; // directory row 0x161
-extern char ResourceId_BluePalette;
-extern char ResourceId_SpiderWebSheet;
-extern char ResourceId_LimePalette; // directory row 0x163
-extern char ResourceId_GreenPalette;
-
-// Each mode's record: whether its shots burst into shards (else into smoke),
-// the shots' blitter, shots per target, and frames before the targets'
-// share.
-extern s8 Data_08197880[];
 #define RECORD_SHARDS 0
 #define RECORD_SHOT_BLITTER 1
 #define RECORD_SHOTS 2
 #define RECORD_FRAMES 3
-extern u8 Data_081978a8[];  // shard widths
-extern u8 Data_081978ba[];  // shard heights
-extern u16 Data_081978cc[]; // shard cell offsets
 
 #define SMOKE_SHEET 0x3e80 // the smoke, after the gold shells
 #define SHARD_SHEET 0x1e00 // the shards, among the gold shells

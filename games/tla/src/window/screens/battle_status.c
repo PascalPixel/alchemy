@@ -5,6 +5,10 @@
 #include "../screens_internal.h"
 #include "module/system/system.h"
 #include "version.h"
+#include "gamepak/far_call/game.h"
+#include "module/tla.h"
+#include "module/window/screens.h"
+#include "module/window/window.h"
 
 // Room for the help line of an item and of a Djinni, and the second letter
 // tile of the PP cost's label, as measured: the item line grows from German
@@ -21,182 +25,6 @@
 #define SUMMARY_DJINN_HELP_CAPACITY 32
 #define SUMMARY_PP_LABEL_SECOND_TILE 0xf01e
 #endif
-
-extern u8 Msg_0d10[];
-extern u8 Msg_0d11[];
-extern u8 Msg_0d12[];
-extern u8 Msg_0d13[];
-extern u8 Msg_0d15[];
-extern u8 Msg_0d16[];
-extern u8 Msg_0d17[];
-extern u8 Msg_0d19[];
-
-struct SummaryElement {
-  s16 power;
-  s16 resist;
-};
-
-struct SummaryPsynergy {
-  u16 id;
-  u16 unk02;
-};
-
-/// A unit as the summary screen reads it.
-struct SummaryUnit {
-  u8 name[15];
-  u8 level;
-  u8 unk10[0x24];
-  s16 hpMax;
-  s16 ppMax;
-  s16 hp;
-  s16 pp;
-  u16 atk;
-  u16 def;
-  u16 agi;
-  u8 luck;
-  u8 unk43[5];
-  struct SummaryElement element[4];
-  struct SummaryPsynergy psynergy[32];
-  u16 items[15];
-  u8 unkf6[2];
-  u32 djinnOwned[4];
-  u32 djinnSet[4];
-  u8 djinnHeld[4];
-  u8 djinnSetCount[4];
-  u8 unk120[4];
-  u32 experience;
-  u8 unk128;
-  u8 classId;
-  u8 unk12a[6];
-  s8 curse;
-  s8 poison;
-  u8 attackTurns;
-  s8 attackStage;
-  u8 defenseTurns;
-  s8 defenseStage;
-  u8 resistanceTurns;
-  s8 resistanceStage;
-  u8 delusion;
-  u8 unk139[2];
-  u8 stun;
-  u8 sleep;
-  u8 psySeal;
-  u8 unk13e[2];
-  u8 haunt;
-  u8 grimReaper;
-  u8 unk142[5];
-  s8 agilityStage;
-  u8 unk148[4];
-};
-
-struct SummaryOam {
-  u8 unk00[4];
-  union {
-    struct {
-      u32 attr01;
-      u32 attr23;
-    } word;
-    struct {
-      u8 y;
-      u8 attr0high;
-      u16 x : 9;
-      u16 affineIndex : 5;
-      u16 size : 2;
-      u16 tile : 10;
-      u16 priority : 2;
-      u16 palette : 4;
-      u16 unk0a;
-    } f;
-  } oam;
-};
-
-struct SummaryPoint {
-  s32 x;
-  s32 y;
-};
-
-struct SummaryCursor {
-  s8 groupPositions[8];
-  s32 helpEntry;
-  s32 drawnHelpEntry;
-  s32 group;
-  s32 groupSize;
-  s32 column;
-  s32 row;
-};
-
-struct SummaryWindow {
-  u8 unk00[8];
-  u16 width;
-  u16 height;
-  s16 x;
-  s16 y;
-};
-
-struct SummaryWindowWork {
-  u8 unk00[3];
-  u8 dirty;
-  u8 unk04[2];
-  u8 holdTilemapUpload;
-  u8 textColor;
-};
-
-struct SummaryNavigation {
-  u8 unk00[0x44];
-  void *timerWindow;
-  s32 timerHidden;
-  s32 timer;
-  u8 unk50[0x46];
-  u16 list[64];
-};
-
-struct SummaryAbility {
-  u8 unk00;
-  u8 flags; ///< bit 7: usable in battle
-  u8 element;
-  u8 unk03[5];
-  u8 range;
-  u8 ppCost;
-};
-
-struct SummaryStatCursor {
-  u8 entry;
-  u8 column;
-  u8 row;
-  u8 highlightColumn;
-  u8 highlightRow;
-  u8 highlightWidth;
-  u8 unk06[2];
-};
-
-struct SummaryCursorStop {
-  u8 entry;
-  u8 column;
-  u8 row;
-  u8 unk03;
-};
-
-struct SummaryRecoveryEntry {
-  u8 element;
-  u8 index;
-  u8 owner;
-  s8 turns;
-};
-
-struct SummaryRecoveryList {
-  struct SummaryRecoveryEntry entries[72];
-  s32 count;
-};
-
-struct SummaryRecovery {
-  u8 unk000[8];
-  struct SummaryRecoveryList list;
-};
-
-struct SummaryResourceEntry {
-  u16 unk00;
-  u16 offset;
-};
 
 // Japanese text is shorter: its help lines and Psynergy descriptions take
 // smaller buffers, and its stat numbers sit one tile further left. It decodes
@@ -216,35 +44,23 @@ struct SummaryResourceEntry {
 
 #define NAVIGATION ((struct SummaryNavigation *)Ram_HeapSlots->unke4[0])
 
-extern const struct SummaryStatCursor gOwnerStatus_StatCursors[];
-extern const struct SummaryCursorStop gOwnerStatus_EquipmentCursors[];
-extern const struct SummaryCursorStop gOwnerStatus_ConditionCursors[];
-extern const u8 gOwnerStatus_LevelString[];
 #if TLA_PATCH_2
 extern const u8 gOwnerStatus_NivString[];
 extern const u8 gOwnerStatus_NvString[];
 extern const u8 gOwnerStatus_KpString[];
 extern const u8 gOwnerStatus_PvString[];
 #endif
-extern const u8 gOwnerStatus_HpString[];
-extern const u8 gOwnerStatus_SlashString[];
-extern const u8 gOwnerStatus_PpString[];
 
-void BattleActor_SpawnObjectsForListFar(u16 *list, s32 count);
-void BattleActor_CommitPlacementFar(void);
-void ReleaseBattleObjectRecordsFar(s32 member);
+/* VIEW(screens): routine BattleActor_SpawnObjectsForListFar as void BattleActor_SpawnObjectsForListFar(u16 *list, s32 count); module/tla.h has void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode). */
+extern void BattleActor_SpawnObjectsForListFar__screens(u16 *list, s32 count) __asm__("BattleActor_SpawnObjectsForListFar");
 void Func_08118148(u16 *list, s32 count, s32 mode);
-void **GetBattleObjectSlotFar(s32 member);
-s32 Item_ClassifyUseAbility(s32 member, s32 item);
-s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
+/* VIEW(screens): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 member); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId). */
+extern void **GetBattleObjectSlotFar__screens(s32 member) __asm__("GetBattleObjectSlotFar");
 // Returns nothing; typed s32 here, see the help window in page 2.
 s32 Window_MapTextCanvasTiles(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void Text_DrawWideStringAtOffset(u16 *text, struct SummaryWindow *window, s32 x,
                                  s32 y);
-// Returns nothing; typed s32 here, see the range column in page 1.
-s32 Unit_GetElementLevelFar(s32 member, s32 element);
 s32 Unit_GetExperienceForLevelFar(s32 member, s32 level);
-s32 System_GetLanguage(void);
 
 // The four list-page scroll marks, one tile per page of four rows (Psynergy
 // and items).
@@ -324,7 +140,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   itemCount = psynergyCount = djinnCount = 0;
   shownMember = figureList[0] = list[0];
   figureList[1] = 255;
-  BattleActor_SpawnObjectsForListFar(figureList, 1);
+  BattleActor_SpawnObjectsForListFar__screens(figureList, 1);
   portraitSlot = VramCache_AllocEntry(0x200);
   navigation = NAVIGATION;
   navigation->timerHidden = redraw;
@@ -655,7 +471,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     }
     {
       struct SummaryOam *face =
-          ((struct SummaryOam **)*GetBattleObjectSlotFar(member))[20];
+          ((struct SummaryOam **)*GetBattleObjectSlotFar__screens(member))[20];
 
       portraitSprite.oam.word.attr01 = 0xc0002400;
       portraitSprite.oam.word.attr23 = 0;

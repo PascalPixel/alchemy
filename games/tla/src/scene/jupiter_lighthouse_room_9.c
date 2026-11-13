@@ -16,6 +16,10 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "event_work.h"
+#include "module/field/field.h"
+#include "module/scene/jupiter_lighthouse_room_9.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -26,8 +30,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
-
-extern s32 gData_02002618;
 
 s32 Func_02001978();
 struct Actor *Func_02000910();
@@ -142,8 +144,6 @@ void Func_02000228(s32 arg) {
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 void Func_0200130c(s32 kind, s32 x, s32 z, s32 a, s32 b);
-void Func_02001a28(s32 dx, s32 dz, s32 effect);
-void Func_02000460(s32 mode);
 
 /// The scene's set-up: screen effect 0x204, actor 64's action variant 3 and
 /// actor 8 held still, then Func_0200130c and Func_02001a28 by the entrance.
@@ -190,7 +190,6 @@ extern s32 gData_020025f0;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_020025f0 = value; }
-extern u16 gData_0200261c[];
 
 void Func_020003a4(void) {
   u16 colors[16];
@@ -231,13 +230,6 @@ next:
   gData_020025f0++;
 }
 
-extern u16 gData_0200263c[];
-extern u16 gData_02002640[];
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02001bd8();
-void Func_02001c98();
-
 void Func_02000460(s32 mode) {
   gData_020025f4 = 1;
   if (mode != 2) {
@@ -270,9 +262,6 @@ void Func_020004e4(s32 id) {
 
 #include "frame.h"
 #include "field_sprite.h"
-
-void Event_Start(void);
-void Event_End(void);
 
 void Func_02000538(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -354,10 +343,9 @@ s32 Func_02000724(s32 *a, s32 *b) {
 
 extern const s32 gData_020025f8[];
 
-void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_02001c88(s32 x, s32 z, s32 layer);
-void Camera_WorldToScreen(s32 *position);
-s32 Math_Cosine(s32 angle);
+/* VIEW(jupiter_lighthouse_room_9): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
+extern void Camera_WorldToScreen__jupiter_lighthouse_room_9(s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_02000750(struct Actor *self) {
@@ -385,7 +373,7 @@ void Func_02000750(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Camera_WorldToScreen(position);
+    Camera_WorldToScreen__jupiter_lighthouse_room_9(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;

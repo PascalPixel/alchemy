@@ -7,8 +7,13 @@
 #include "actor.h"
 #include "macros.h"
 #include "event_inline.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/scene/scene.h"
+#include "module/scene/yampi_desert_cave.h"
+#include "scene_ids.h"
 
-extern u16 gData_02001968[];
 extern s8 gData_02001974[];
 
 s32 Func_02000038(s32 id) {
@@ -67,11 +72,9 @@ s32 Func_02000038(s32 id) {
 
 #include "../field/map/cellfill.c"
 
-
 extern s32 gData_0200198c[];
 
 struct Actor *Func_0200033c(s32 *direction, s32 *slot, s32 *kind);
-s32 Func_02001850(struct Actor *object, s32 *position);
 
 static inline s32 Func_02001850_Call(struct Actor *object, s32 *position) {
   return Func_02001850(object, position);
@@ -146,7 +149,6 @@ s32 Func_020001d4(s32 *position) {
   }
 }
 
-
 #include "field/field.h"
 #include "text/msg_ids.h"
 #include "system/main_routine_work.h"
@@ -205,15 +207,6 @@ inner:
 }
 
 #include "yampi_desert_cave/yampi_desert_cave.h"
-
-void Func_02000754(struct Actor *object);
-void Func_02001828(struct Actor *object, s32 mode);
-void Event_NoOp(void);
-
-struct HeapView {
-  s32 pad[8];
-  s32 word;
-};
 
 void Func_02000458(struct YampiDesertCaveRect rect) {
   // Read as s32: the load then keeps its place after the argument stores.
@@ -299,8 +292,6 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
   Event_NoOp();
 }
 
-struct Actor *Func_02001948(s32 *position, s32 mode);
-
 void Func_02000754(struct Actor *object) {
   s32 position[3];
   struct Actor *hit;
@@ -333,12 +324,6 @@ void Func_02000754(struct Actor *object) {
 
 #include "dma.h"
 #include "io_reg.h"
-
-extern u16 *gData_02001fdc;
-extern u16 *gData_02001fe0;
-extern u16 *gData_02001fcc;
-
-void Func_02000acc(void);
 
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
@@ -464,11 +449,6 @@ void Func_0200099c(void) {
     gData_02001fe8 = 0;
 }
 
-struct YampiDesertCaveEventWork {
-  u8 unk000[0x1ac];
-  s32 value1ac;
-};
-
 void Func_02001950(void);
 
 void Func_02000acc(void) {
@@ -525,11 +505,6 @@ loop:
   if (entry[0] != 0xffff)
     goto loop;
 }
-
-struct GabombaStatueEffectWork {
-  u8 unk00[0x1a];
-  s16 objectId;
-};
 
 // Finds the current target's table row and shrinks it.
 void Func_02000bc0(u16 *list, s32 mode, s32 count) {
@@ -614,7 +589,6 @@ void Func_02000cec(void) {
   return;
 }
 
-void Event_Start(void);
 void Event_End();
 
 void Func_02000d04(void) {
@@ -801,7 +775,8 @@ void Func_020011b4(s32 a, s32 b) {
 
 extern const s16 gData_020019cc[];
 
-void GameFlag_SetByte(s32 flag, s32 value);
+/* VIEW(yampi_desert_cave): routine GameFlag_SetByte as void GameFlag_SetByte(s32 flag, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
+extern void GameFlag_SetByte__yampi_desert_cave(s32 flag, s32 value) __asm__("GameFlag_SetByte");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -819,7 +794,7 @@ void Func_020011e0(void) {
     Actor_SetHorizontalPositionWithTerrain(16, column << 19, row << 19);
     if (GameFlag_Test(0x104) == 0)
       step++;
-    GameFlag_SetByte(0x278, step);
+    GameFlag_SetByte__yampi_desert_cave(0x278, step);
   }
 }
 
@@ -877,10 +852,6 @@ void Func_02001238(s32 mode) {
    } *)(base))                                                                 \
        ->v)
 
-extern char SceneId_Ov664Room4;
-
-void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-
 /// The guardian speaks, then the party leaves for overlay 664's fourth room.
 /// Overlay 6af's Func_02000a8c is the same scene for actor 8.
 void Func_0200130c(void) {
@@ -929,17 +900,11 @@ const u8 *Scene_GetEvents(void) {
 // room's palette cycle and Retreat destination, the third room's background
 // priorities, and in each room the objects its flags place.
 
-extern char SceneId_Ov661Room1;
-extern char SceneId_Ov661Room8;
-extern char SceneId_Ov661Room9;
 extern u16 gData_020019ec[];
 extern u16 gData_020019fc[];
 extern u16 gData_02001a28[];
-extern u16 gData_02001a54[];
 
 void Actor_SetWideSprite(s32 id, s32 wide);
-void Func_020018c8(s32 id);
-void Func_02001928(s32 value);
 
 /// Sets up Yampi Desert Cave's three rooms as each one loads: the first room's
 /// palette cycle and Retreat destination, the third room's background
@@ -1043,7 +1008,7 @@ s32 Scene_Initialize(void) {
                                                gData_020019cc[step + 1] << 19);
       } else {
         if (GameFlag_Test(0x109))
-          GameFlag_SetByte(0x278, 0);
+          GameFlag_SetByte__yampi_desert_cave(0x278, 0);
         Task_Add(Func_020011e0, 0x480);
         GameFlag_SetBit(0x270);
         Actor_SetSpritePriority(16, 3);

@@ -3,18 +3,13 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
+#include "event_work.h"
+#include "module/field/object.h"
+#include "module/scene/anemos_inner_sanctum.h"
+#include "text/msg_ids.h"
 
-struct AnemosInnerSanctumEventWork {
-  u8 unk000[0x1ac];
-  s32 value1ac;
-};
-
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02000158(void);
 void Func_02000178(void);
 void Func_020017b4(void);
-void Func_020034a8(void);
 
 void Func_02001938(void) {
   struct Actor *object;
@@ -36,11 +31,6 @@ void Func_02001938(void) {
 
 #include "field_sprite.h"
 #include "io_reg.h"
-
-struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
-void Event_Start(void);
-void Event_End(void);
-void Func_020032f8(struct Actor *object);
 
 struct SpriteView {
   u8 unk00[4];
@@ -90,8 +80,6 @@ void Func_020019a8(void) {
   Func_020032f8(effect);
   Event_End();
 }
-
-void Func_02003380(s32 x, s32 z, s32 a, s32 b);
 
 static __inline__ void Func_02003328_(s32 srcX, s32 srcY, s32 dstX, s32 dstY,
                                       s32 width, s32 height) {
@@ -148,8 +136,6 @@ void Func_02001a94(void) {
    } *)(base))                                                                 \
        ->v)
 
-extern u8 MsgSummonInheritedEarthDarkness[];
-
 void Func_02001b88(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -166,10 +152,6 @@ void Func_02001b88(void) {
 }
 
 extern char SceneId_Ov6B0Room1;
-extern char SceneId_Ov6B0Room2;
-extern char SceneId_Ov6B0Room3;
-extern char SceneId_Ov6B0Room4;
-extern char SceneId_Ov6B0Room5;
 extern const u8 gData_02003dc0[];
 extern const u8 gData_02003dcc[];
 extern const u8 gData_02003e38[];
@@ -193,15 +175,6 @@ const u8 *Scene_GetEvents(void) {
 
 extern char SceneId_Ov694Room1;
 
-struct MainRoutineWork2c2 {
-  u8 unk000[0x2c2];
-  u8 value;
-};
-
-void Func_020000f4(void);
-void Event_SetDestination(s32 scene, s32 entrance);
-void Func_020034b0(void);
-
 void Func_02001c60(void) {
   Func_020000f4();
   Func_020034b0();
@@ -218,21 +191,14 @@ void Func_02001c60(void) {
 
 #include "scene_ids.h"
 
-struct EventWork154 {
+/* VIEW(s1938): tag struct EventWork154 as struct EventWork154__s1938; module/scene/scene.h has another definition. */
+struct EventWork154__s1938 {
   u8 unk000[0x154];
   s16 value;
 };
 
-struct AnemosInnerSanctumPicture {
-  const void *data;
-  u16 a;
-  u16 b;
-};
-
 extern const s16 gData_020043e4[];
 extern const struct AnemosInnerSanctumPicture gData_02004410[];
-
-void Event_FinishScreenTransition(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -243,7 +209,7 @@ static __inline__ void Func_02003320_(const void *data, s32 a, s32 b) {
 /// The scene opening: clears the actors' motion flags, plays the entrance's
 /// map edit and steps the leader in.
 void Func_02001c94(void) {
-  struct EventWork154 *work = Ram_HeapSlots->eventWork;
+  struct EventWork154__s1938 *work = Ram_HeapSlots->eventWork;
   s32 i;
 
   Event_Start();
@@ -329,7 +295,8 @@ s32 Func_02000038();
 s32 Func_02000a78();
 s32 Func_02002a74();
 s32 Func_02003190();
-s32 Func_02003490();
+/* VIEW(s1938): routine Func_02003490 as s32 Func_02003490(); module/scene/world_map.h has void Func_02003490(void). */
+extern s32 Func_02003490__s1938() __asm__("Func_02003490");
 extern u8 gData_020036e4[];
 extern u8 gData_020036ea[];
 extern u8 gData_020036f6[];
@@ -395,7 +362,7 @@ s32 Scene_Initialize(void) {
   if ((Event_GetFlag(0xa81)) != 0) {
     Actor_SetPosition(10, 0x1b80000, 0x2f80000);
   }
-  Call1((void (*)())Func_02003490, (s32)gData_020036e4);
+  Call1((void (*)())Func_02003490__s1938, (s32)gData_020036e4);
   FIELD_AT(((s32)Actor_Get((FIELD_AT(v_r6, s32, 532)))), u8, 35) |= 64;
   FIELD_AT(((s32)Actor_Get(9)), u8, 85) = 0;
   FIELD_AT(((s32)Actor_Get(9)), u8, 35) |= 128;
@@ -479,7 +446,7 @@ L_0200a1b4:
 L_0200a2b8:
   Actor_SetPosition(12, 0x2d80000, 0x1d80000);
 L_0200a2c6:
-  Call1((void (*)())Func_02003490, (s32)gData_020036ea);
+  Call1((void (*)())Func_02003490__s1938, (s32)gData_020036ea);
   goto L_0200a6e6;
 L_0200a2ce:
   if (v_r1 != (s32)&SceneId_Ov6B0Room4)
@@ -487,7 +454,7 @@ L_0200a2ce:
   if ((Event_GetFlag(0xa86)) != 0) {
     Actor_SetPosition(9, 0x1080000, 0x1680000);
   }
-  Call1((void (*)())Func_02003490, (s32)gData_020036f6);
+  Call1((void (*)())Func_02003490__s1938, (s32)gData_020036f6);
   v_r3 = (FIELD_AT(v_r6, u16, 482));
   v_r2 = (FIELD_AT(v_r6, s16, 482));
   if (v_r2 != 1)

@@ -4,6 +4,11 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "event.h"
+#include "event_work.h"
+#include "field.h"
+#include "flag_call.h"
+#include "module/scene/magma_rock.h"
 
 struct MagmaRockEventWork {
   u8 unk000[0x15a];
@@ -19,7 +24,6 @@ struct MagmaRockEventWork {
 
 /* VIEW(s0ff4): routine Func_02001738 as void Func_02001738(void); the definition has void Func_02001738(struct Actor *object). */
 extern void Func_02001738__s0ff4(void) __asm__("Func_02001738");
-void Func_02001738(struct Actor *object);
 
 void Func_02000ff4(struct Actor *object) {
   struct MagmaRockEventWork *work = Ram_HeapSlots->eventWork;
@@ -44,8 +48,6 @@ void Func_02000ff4(struct Actor *object) {
 }
 
 #include "magma_rock.h"
-
-s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
 
 s32 Func_02001084(u16 *table) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
@@ -86,15 +88,6 @@ s32 Func_020010cc(s32 x, s32 z, u16 *table) {
   }
   return result;
 }
-
-extern s16 gData_02003d9e[];
-extern s16 gData_02003db2[];
-extern s16 gData_02003dc4[];
-extern s16 gData_02003dd6[];
-extern s16 gData_02003dee[];
-extern s16 gData_02003e02[];
-
-void Func_02000fcc(struct Actor *object);
 
 /// Picks the cell table for the room and entrance, finds the target in it and,
 /// in modes 2 and 3, sets the target's byte 99 to 4 or 2 and makes it blink
@@ -150,8 +143,6 @@ void Func_020011b8(struct Actor *object) {
 #include "frame.h"
 #include "field.h"
 
-extern u32 gData_02003d50[];
-
 s32 Math_Cosine(s32 angle);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -161,9 +152,7 @@ s32 Func_020005a0(s32 *a, s32 *b);
 // game declares.
 void Func_02000c08(u16 index);
 void Func_02000d40(void);
-void Func_02003a54(struct Actor *object, s32 a);
 void Func_02003a6c(struct Actor *object);
-void Event_Start(void);
 s32 Func_02003af4(void);
 void Func_02003b6c(void);
 
@@ -282,11 +271,6 @@ hit:
 
 /* VIEW(target): routine Func_02000ff4 as void Func_02000ff4(void); the definition has void Func_02000ff4(struct Actor *object). */
 extern void Func_02000ff4__target(void) __asm__("Func_02000ff4");
-void Func_02003820(s32 x, s32 y, s32 z, s32 kind);
-void Func_020038dc(void);
-void Func_02003998(void);
-void Func_02003a54(struct Actor *object, s32 a);
-void Event_Start(void);
 /* VIEW(target): routine Func_02003af4 as void Func_02003af4(void); s0ff4 has s32 Func_02003af4(void). */
 extern void Func_02003af4__target(void) __asm__("Func_02003af4");
 
@@ -392,7 +376,6 @@ struct MagmaRockEffectConfig {
   void (*unk24)(void);
 };
 
-extern u32 gData_02003d50[];
 /* VIEW(target): routine Func_020011b8 as void Func_020011b8(void); the definition has void Func_020011b8(struct Actor *object). */
 extern void Func_020011b8__target(void) __asm__("Func_020011b8");
 /* VIEW(target): routine Func_0200015c as void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectConfig *config); s0ff4 has void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct EffectOptions *options). */
@@ -449,19 +432,13 @@ void Func_020015e4(union FieldObject *object) {
 // ---- games/tla/src/scene/magma_rock/s1738.c ----
 #include "system/ram_buffer.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
 /// The native reads these event work halfwords signed (ldrsh).
 
-
-extern u32 gData_02003d50[];
 /* VIEW(s1738): routine Func_0200015c as void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectConfig *config); s0ff4 has void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct EffectOptions *options). */
 extern void Func_0200015c__s1738(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    struct MagmaRockEffectConfig *config) __asm__("Func_0200015c");
 
-void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Func_02003a54(struct Actor *object, s32 a);
 void Func_02003c4c(struct Actor *object, s32 a);
 /* VIEW(s1738): routine Func_020011b8 as void Func_020011b8(void); the definition has void Func_020011b8(struct Actor *object). */
 extern void Func_020011b8__s1738(void) __asm__("Func_020011b8");
@@ -610,9 +587,6 @@ void Func_02001738(struct Actor *object) {
     object->timer++;
 }
 
-
-void Func_020014bc(s32 mode, s32 cue);
-
 /// In room 1 or 2, targets actor 15 or 14, runs Func_020014bc and sets flag
 /// 0x200.
 void Func_020019e8(s32 mode, s32 cue) {
@@ -648,8 +622,6 @@ void Func_02001a38(s32 mode, s32 cue) {
   }
   Event_SetFlag(0x201);
 }
-
-void Event_Start(void);
 
 void Func_02001a8c(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
@@ -698,14 +670,13 @@ void Func_02001b44(void) {
   Event_SetFlag(0x2f8);
 }
 
-extern const u8 gData_02003dba[];
+/* VIEW(s0ff4): variable gData_02003dba as const u8 gData_02003dba[]; module/scene/magma_rock.h has s16 gData_02003dba[]. */
+extern const u8 gData_02003dba__s0ff4[] __asm__("gData_02003dba");
 void Func_02002e30(const u8 *data);
-void Func_02003b3c(s32 id);
-void Func_020036f8(s32 a, s32 b, s32 owner);
 
 void Func_02001ba4(void) { Event_ResolvePendingActions(0); }
 
-void Func_02001bb0(void) { Func_02002e30(gData_02003dba); }
+void Func_02001bb0(void) { Func_02002e30(gData_02003dba__s0ff4); }
 
 void Func_02001bc0(void) {
   Field_SetCellBehaviorAt(0, 0x1080000, 0x2280000, 30);
@@ -720,34 +691,12 @@ void Func_02001be0(void) {
 // ---- games/tla/src/scene/magma_rock/s1c00.c ----
 #include "call.h"
 
-struct MagmaRockEffectOptions {
-  s32 kind;
-  s32 palette;
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk10[8];
-  u16 id;
-  u8 unk1a[2];
-  const void *data;
-  s32 unk20;
-  void (*update)();
-};
-
 struct Actor *Actor_GetById(u32 objectId);
-void Event_Start(void);
-void Event_ResolvePendingActions(s32 value);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void Sound_Play(s32 cue);
 void Actor_SetActionById(s32 id, s32 action);
 /* VIEW(s1c00): routine Func_0200015c as void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectOptions *options); s1738 has void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectConfig *config). */
 extern void Func_0200015c__s1c00(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    struct MagmaRockEffectOptions *options) __asm__("Func_0200015c");
-void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
-void Event_Wait(s32 frames);
-void Map_SetScreenShake(s32 a, s32 b, s32 c);
-void Map_WaitForShakeToSettle(void);
 /* VIEW(s1c00): routine Func_080d452c as void Func_080d452c(s32 a, s32 b); event.h has s32 Func_080d452c(s32 actorId, s32 pan); tried as the definition's void Func_080d452c(s32 id, s32 use_setter), it does not compile in tla-ja: games/tla/src/scene/magma_rock/s0ff4.c:725: conflicting types for `Func_080d452c'. */
 extern void Func_080d452c__s1c00(s32 a, s32 b) __asm__("Func_080d452c");
 void Func_02003b6c(void);
@@ -830,9 +779,6 @@ second:
 // ---- games/tla/src/scene/magma_rock/s1e08.c ----
 #include "fixed_math.h"
 
-extern s16 gData_02003de4[];
-
-struct Actor *Actor_FindInCell(s32 *position, struct Actor *except);
 void Func_0200074c(struct Actor *object);
 void Func_020005cc(s32 layer, s32 x, s32 z, s32 height);
 void Func_020003b4(void);
@@ -872,8 +818,6 @@ void Func_02001e08(void) {
   if (cell[0] == 16 && cell[2] == 36)
     Event_SetFlag(0x8d9);
 }
-
-extern s16 gData_02003de8[];
 
 void Func_02001edc(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -937,8 +881,6 @@ struct MagmaRockEffectConfig__s1e08 {
   u8 unk20[8];
 };
 
-extern u32 gData_02003d50[];
-
 /* VIEW(s1e08): routine Func_0200015c as void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectConfig__s1e08 *config); s1738 has void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectConfig *config). */
 extern void Func_0200015c__s1e08(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -977,10 +919,6 @@ void Func_020020d0(struct Actor *object) {
 }
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-
-void Func_02003820(s32 x, s32 y, s32 z, s32 kind);
-void Func_020038dc(void);
-void Func_02003998(void);
 
 /// Func_020014bc's counterpart: on cue 0 it hands the target to Func_020020d0;
 /// modes 2 and 3 run Func_02002024 at the target's cell, and mode 3 also clears

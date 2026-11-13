@@ -3,22 +3,12 @@
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/battle_effect/f13ba50.h"
+#include "resource_ids.h"
 
 #define SPARK_MAX 1024
 #define PILLAR_BASE_Y 104
-
-// The camera work, as far as this effect reads it.
-struct CameraWork {
-  u8 unk00[0x36];
-  u16 scroll;
-};
-
-extern char ResourceId_LightningPillarSheet; // directory row 0x194
-extern char ResourceId_VioletPaletteB;       // directory row 0x122
-
-extern u8 Data_081979da[];  // ☀️ gPlasma_Counts
-extern u8 Data_081979cc[];  // ☀️ gPlasma_Columns, 7 for each side
-extern u16 Data_081979c0[]; // ☀️ gPlasma_Sparks: sparks, shake
 
 // Pillars of lightning strike the targets' row one after another, eight
 // frames apart; each flashes the screen, throws a fan of sparks up from its
@@ -197,18 +187,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDynamite, BattleEffect_RunSparkGroups, 1)
 #define FLASH_DRAWN 12  // of which the first 12 are drawn
 #define FLASH_FRAMES 18 // six cels of three frames
 #define GROUND_Y (108 << 16)
-
-// The kinds of spark group, chosen by the effect's entry.
-enum {
-  SPARKS_FIXED,     // from a fixed point, canvas at priority 1
-  SPARKS_ORANGE,    // from a lower point, orange, with a palette fade
-  SPARKS_FROM_ACTOR // from the caster, lightning colours, sparks rising
-};
-
-// ☀️ gPlasma_Shapes, five halfwords for each variant: sparks in each
-// group, groups, and each group's x offset.
-extern u16 Data_081979de[][5];
-extern u8 Data_08197a1a[]; // ☀️ gPlasma_FlashCells
 
 #define SHAPE(n) Data_081979de[effect->variant][n]
 #define SPARK_COUNT SHAPE(0)

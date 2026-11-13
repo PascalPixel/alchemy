@@ -6,6 +6,10 @@
 
 #include "types.h"
 #include "main_routine_work.h"
+#include "actor_view.h"
+#include "event_work.h"
+#include "module/field/field.h"
+#include "module/scene/gaia_rock_inside.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -31,12 +35,6 @@ void Func_02001f84(void) {
 }
 
 #include "ram_buffer.h"
-s32 Func_02004f8c();
-
-struct GaiaRockInsideEventWork {
-  u8 unk000[0x15a];
-  u16 unk15a;
-};
 
 extern u8 MsgCheckedTheAltar[];
 
@@ -73,8 +71,6 @@ void Func_02001fd8(void) {
 
 #include "system.h"
 #include "text/msg_ids.h"
-void Actor_SetSpritePriorityDirect(struct Actor *object, s32 value);
-void Event_Start(void);
 void Func_02004e64(void);
 void Actor_MoveToObject(s32 id, s32 target);
 
@@ -184,8 +180,6 @@ L_0200a22e:
 #include "actor.h"
 #include "scene_tables.h"
 #include "iwram_call.h"
-
-void ObjectTable_Snapshot(void);
 
 /// Three scene events of one shape, for objects 8 and 12, 9 and 12, and 8 and
 /// 14: the first object shakes with random vertical speeds, and while the flag
@@ -456,7 +450,8 @@ void Func_02002718(void) {
 }
 
 extern const s16 gData_0200530c[][2];
-s32 GameFlag_SetByte(s32 flag, s32 value);
+/* VIEW(s1f68): routine GameFlag_SetByte as s32 GameFlag_SetByte(s32 flag, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
+extern s32 GameFlag_SetByte__s1f68(s32 flag, s32 value) __asm__("GameFlag_SetByte");
 
 /// Records which of eleven listed cells persons 10 and 11 stand on, as the two
 /// halves of the byte flag 0x210.
@@ -479,7 +474,7 @@ s32 Func_02002974(void) {
   }
   {
     u32 high = secondIndex << 28;
-    return GameFlag_SetByte(0x210, (s32)((firstIndex << 24) | high) >> 24);
+    return GameFlag_SetByte__s1f68(0x210, (s32)((firstIndex << 24) | high) >> 24);
   }
 }
 
@@ -491,9 +486,6 @@ void Func_02002a24(void) { Func_02004af0(0xc, 0x304); }
 
 void Func_02002a34(void) { Func_02004af0(0xd, 0x305); }
 
-extern char SceneId_Ov681Room2;
-extern char SceneId_Ov681Room3;
-extern char SceneId_Ov681Room4;
 extern char SceneId_Ov681Room5;
 extern const u8 gData_02005ee8[];
 extern const u8 gData_02005f30[];
@@ -531,7 +523,8 @@ const u8 *Scene_GetEvents(void) {
 
 /* VIEW(s2ac8): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s1f68.c:539: too few arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s2ac8() __asm__("Actor_GetById");
-s32 ResourceMetadata_Register();
+/* VIEW(s1f68): routine ResourceMetadata_Register as s32 ResourceMetadata_Register(); actor_view.h has s32 ResourceMetadata_Register(struct ActorSpriteView *, s32). */
+extern s32 ResourceMetadata_Register__s1f68() __asm__("ResourceMetadata_Register");
 s32 Func_02004d9c();
 
 void Func_02002ac8(s32 a0, s32 a1) {
@@ -541,7 +534,7 @@ void Func_02002ac8(s32 a0, s32 a1) {
   t0 = Actor_GetById__s2ac8();
   Actor_SetAngleToward(a0, a1, 0);
   if (t0 != 0) {
-    t2 = ResourceMetadata_Register(FIELD_AT(t0, s32, 80), 0x185);
+    t2 = ResourceMetadata_Register__s1f68(FIELD_AT(t0, s32, 80), 0x185);
     FIELD_AT(t2, u8, 5) = 0;
     FIELD_AT(t2, u8, 6) = 0;
     Func_02004d9c(t0, 0);
@@ -596,14 +589,7 @@ void Func_02002b58(s32 a0, s32 a1, s32 a2) {
 
 #include "event_work.h"
 
-struct SwayState {
-  u16 frame;
-  u16 pending;
-};
-
 extern struct SwayState gSceneState;
-
-void Func_02002b58(s32 id, s32 x, s32 z);
 
 void Func_02002b8c(void) {
   // Pointers that stay on one global for their whole life.

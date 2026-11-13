@@ -3,6 +3,13 @@
 #include "field_effect.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
+#include "event_work.h"
+#include "item_icon.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/game/game.h"
+#include "module/scene/contigo.h"
+#include "module/system/system.h"
 /* VIEW(contigo): routine Func_02003e54 as void Func_02003e54(struct ContigoObject *object, const void *effect); the definition has void Func_02003e54(struct Actor *object, struct SparkleWork *work); tried as the definition's void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2264: conflicting types for `Func_02003e54'. */
 struct ContigoObject;
 extern void Func_02003e54__contigo(struct ContigoObject *object, const void *effect) __asm__("Func_02003e54");
@@ -35,7 +42,6 @@ extern void Func_02003f54__contigo(struct ContigoObject *object) __asm__("Func_0
 
 /* VIEW(contigo): variable gData_0200474c as extern const s32 *gData_0200474c[]; the definition has s32 gData_0200474c[] = { (s32) gData_0200457c, (s32) gData_020045b8, (s32) gData_020045f4, }. */
 extern const s32 *gData_0200474c__contigo[] __asm__("gData_0200474c");
-extern s32 gData_0200474c[];
 
 void Func_02003fdc(struct Actor *object, s32 mode);
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
@@ -127,8 +133,6 @@ s32 Func_02000620(s32 *a, s32 *b) {
   return Iwram_Sqrt(dxsq + dysq + dzsq);
 }
 
-s32 ArcTan2(s32 y, s32 x);
-
 s32 Func_02000658(struct Actor *self, struct Actor *other, s32 range) {
   s32 result = 0;
   s32 *to;
@@ -217,12 +221,6 @@ extern u8 gData_02005228__contigo[] __asm__("gData_02005228");
 extern u8 gData_02005318__contigo[] __asm__("gData_02005318");
 /* VIEW(contigo): variable gData_02005390 as extern u8 gData_02005390[]; the definition has u32 gData_02005390[] = { 0xffff00ec, 1, 0x780000, 0, 0x3480000, 0x3000, 0xffff00ec, 1, 0x880000, 0, 0x3480000, 0x5000, 0xffff0072, 1, 0x5c00.... */
 extern u8 gData_02005390__contigo[] __asm__("gData_02005390");
-extern s32 gData_02004c88[];
-extern s32 gData_02004d90[];
-extern u32 gData_02005018[];
-extern s16 gData_02005228[];
-extern s32 gData_02005318[];
-extern u32 gData_02005390[];
 
 u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -258,10 +256,7 @@ extern u8 gData_02005e70__contigo[] __asm__("gData_02005e70");
 /* VIEW(contigo): variable gData_02005ed0 as extern u8 gData_02005ed0[]; the definition has s32 gData_02005ed0[] = { 1, (s32) 0xffff0008, 8, 1, (s32) 0xffff0009, 9, 1, (s32) 0xffff000a, 10, 0, (s32) 0xffff0008, (s32) Func_02001b84, .... */
 extern u8 gData_02005ed0__contigo[] __asm__("gData_02005ed0");
 extern s32 gData_020054e0[];
-extern s32 gData_020054ec[];
 extern s32 gData_02005870[];
-extern s32 gData_02005a44[];
-extern s32 gData_02005e70[];
 extern s32 gData_02005ed0[];
 
 u8 *Scene_GetEvents(void) {
@@ -343,7 +338,8 @@ struct OrbitEffect {
 };
 
 s32 Math_Cosine(s32 angle);
-void Func_02003ff4(struct Actor *obj);
+/* VIEW(contigo): routine Func_02003ff4 as void Func_02003ff4(struct Actor *obj); module/scene/mars_lighthouse_aerie.h has void Func_02003ff4(void). */
+extern void Func_02003ff4__contigo(struct Actor *obj) __asm__("Func_02003ff4");
 
 void Func_020009d0(struct OrbitEffect *effect) {
   s32 radius;
@@ -365,10 +361,8 @@ void Func_020009d0(struct OrbitEffect *effect) {
     effect->pause = ((Random16Far() << 4) >> 16) + 8;
   }
   if (++effect->timer == 101)
-    Func_02003ff4(effect);
+    Func_02003ff4__contigo(effect);
 }
-
-struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 void Func_02000a80(void) {
   if ((gFrameCount & 7) == 0) {
@@ -398,10 +392,8 @@ struct ContigoGlow {
   u8 motionFlags;
 };
 
-void BattleEffect_StartArcEffect(void);
-void BattleEffect_EndArcEffect(void);
-void BattleEffect_WaitForArcGroups(void);
-void BattleEffect_SetObjectUpdateMode(struct ContigoObject *object, s32 mode);
+/* VIEW(contigo): routine BattleEffect_SetObjectUpdateMode as void BattleEffect_SetObjectUpdateMode(struct ContigoObject *object, s32 mode); module/field/event_commands.h has void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode). */
+extern void BattleEffect_SetObjectUpdateMode__contigo(struct ContigoObject *object, s32 mode) __asm__("BattleEffect_SetObjectUpdateMode");
 
 /// The glow that grows over actor 17 and sinks away again, then the scene goes
 /// on.
@@ -422,7 +414,7 @@ void Func_02000af4(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x204084, 1);
   BattleEffect_StartBufferInterpolation(16);
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(((struct ContigoObject *)Actor_GetById(17)), 2);
+  BattleEffect_SetObjectUpdateMode__contigo(((struct ContigoObject *)Actor_GetById(17)), 2);
   effect = ((struct ContigoGlow *)Import_ActorCreate(280, x, 0, z));
   if (effect != 0) {
     Actor_SetSingleChildFlags(effect, 0);
@@ -452,9 +444,9 @@ void Func_02000af4(void) {
     i++;
     if (i < 28)
       goto shrink;
-    Func_02003ff4(effect);
+    Func_02003ff4__contigo(effect);
   }
-  BattleEffect_SetObjectUpdateMode(((struct ContigoObject *)Actor_GetById(17)), 0);
+  BattleEffect_SetObjectUpdateMode__contigo(((struct ContigoObject *)Actor_GetById(17)), 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
@@ -747,10 +739,7 @@ void Func_0200118c(void) {
   Event_End();
 }
 
-void Func_020000f4(void);
-void Func_02000158(void);
 void Func_0200428c(void);
-void Event_SetDestination(s32 scene, s32 entrance);
 
 void Func_02001250(void) {
   Func_020000f4();
@@ -956,10 +945,8 @@ void Func_020017f4(void) {
   Actor_SetModeById(33, 0);
 }
 
-s32 PartyInventory_CountItem(s32 item);
-s32 PartyInventory_CountFreeSlots(void);
-void ObjectTable_Snapshot(void);
-void MessageArgument_Push(s32 value, s32 digits);
+/* VIEW(contigo): routine MessageArgument_Push as void MessageArgument_Push(s32 value, s32 digits); module/window/window.h has void MessageArgument_Push(u32 value, u32 kind). */
+extern void MessageArgument_Push__contigo(s32 value, s32 digits) __asm__("MessageArgument_Push");
 void Field_SetDestination(s32 scene, s32 entrance);
 
 /// The lucky wheels attendant: checks the game tickets and free item slots, then
@@ -979,7 +966,7 @@ void Func_02001938(s32 spoken) {
       return;
     }
     Event_SetMessageId(message + 2);
-    MessageArgument_Push(tickets, 5);
+    MessageArgument_Push__contigo(tickets, 5);
     FieldMessage_ShowAtActor(18, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
       Event_ShowMessageAndWait(18, 0);
@@ -1027,8 +1014,6 @@ struct ContigoTopicState {
   s8 cursor[6];
 };
 
-extern u32 gData_02004630[];
-
 s32 Func_02001a60(s32 topic) {
   struct ContigoTopicState *state;
   s32 cursor;
@@ -1055,8 +1040,6 @@ struct ContigoEventCount {
 
 extern u8 gSceneState[];
 
-u32 Party_GetAverageLevel(void);
-
 /// The dice game attendant: the fee is ten coins a level.
 void Func_02001abc(void) {
   u32 price = Party_GetAverageLevel() * 10;
@@ -1069,7 +1052,7 @@ void Func_02001abc(void) {
     return;
   }
   Event_SetMessageId((s32)MsgContigo01);
-  MessageArgument_Push(price, 5);
+  MessageArgument_Push__contigo(price, 5);
   FieldMessage_ShowAtActor(14, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     /* FAKEMATCH(pin): the scene state's address pinned to r3, so that it
@@ -1133,8 +1116,6 @@ void Func_02001c44(s32 id) {
   object->scaleY = 0xb333;
   object->radius = 8;
 }
-
-extern s32 gData_0200466c[];
 
 void Func_02001c5c(s32 a, s32 b, s32 c, s32 d) {
   Event_Start();
@@ -1637,7 +1618,6 @@ void Func_02001d50(void) {
 }
 
 extern u32 gData_02004ac0[];
-extern u32 gData_02004b18[];
 
 void Func_02002e18(void) {
   if (GameFlag_Test(0x9b2)) {
@@ -1853,11 +1833,6 @@ struct SpriteAttributes {
   u8 priority : 2;
 };
 
-void Func_02003720(void);
-void Func_02003880(void);
-void Func_020039d4(void);
-void Func_02003a8c(void);
-
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
 
@@ -1891,10 +1866,6 @@ extern const u8 gData_020046ac__contigo[] __asm__("gData_020046ac");
 extern const u8 gData_020046d8__contigo[] __asm__("gData_020046d8");
 /* VIEW(contigo): variable gData_02004704 as extern const u8 gData_02004704[]; the definition has u16 gData_02004704[] = { 94, 89, 90, 91, 92, 93, 93, 94, 89, 90, 91, 92, 92, 93, 94, 89, 90, 91, 91, 92, 93, 94, 89, 90, 90, 91, 92, 93, 94,.... */
 extern const u8 gData_02004704__contigo[] __asm__("gData_02004704");
-extern s16 gData_0200469c[];
-extern s16 gData_020046ac[];
-extern s16 gData_020046d8[];
-extern u16 gData_02004704[];
 
 void Func_02000038(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
 void Map_CenterOnFollowedPoint(void);
@@ -1999,8 +1970,6 @@ struct ContigoEventWork {
   s32 value1ac;
 };
 
-extern s32 gData_02004a1c[];
-
 void Func_020039d4(void) {
   ((struct ContigoEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x209;
   if (gMainRoutineWork.entrance == 4) {
@@ -2083,12 +2052,12 @@ void Func_02003a8c(void) {
         Sound_Play(91);
       Event_Wait(20);
       Event_SetMessageId(MSG_COINS_WON);
-      MessageArgument_Push(diff, 5);
+      MessageArgument_Push__contigo(diff, 5);
       Event_ShowMessageAndWait(14, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
       Event_SetMessageId(MSG_COINS_LOST);
-      MessageArgument_Push(-diff, 5);
+      MessageArgument_Push__contigo(-diff, 5);
       Event_ShowMessageAndWait(14, 0);
     }
     Event_End();
@@ -2107,12 +2076,12 @@ void Func_02003a8c(void) {
         Sound_Play(91);
       Event_Wait(20);
       Event_SetMessageId(MSG_COINS_WON);
-      MessageArgument_Push(diff, 5);
+      MessageArgument_Push__contigo(diff, 5);
       Event_ShowMessageAndWait(14, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
       Event_SetMessageId(MSG_COINS_LOST);
-      MessageArgument_Push(-diff, 5);
+      MessageArgument_Push__contigo(-diff, 5);
       Event_ShowMessageAndWait(14, 0);
     }
     Event_End();
@@ -2139,7 +2108,7 @@ void Func_02003a8c(void) {
         else
           Event_SetMessageId(MSG_NEXT_PRIZE);
         item = Func_02001a60(*prize);
-        MessageArgument_Push(item, 2);
+        MessageArgument_Push__contigo(item, 2);
         Event_ShowMessageAndWait(18, 0);
         Func_020041fc(item, 3);
         PartyInventory_GiveItem(item, 0);
@@ -2185,8 +2154,8 @@ struct CounterBits {
 };
 
 void Animation_ApplyChildValues(struct Actor *, u32);
-s32 Resource_ResetEntry(u32 slot);
-void Camera_WorldToScreen(struct Vector3 *v);
+/* VIEW(contigo): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct Vector3 *v); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
+extern void Camera_WorldToScreen__contigo(struct Vector3 *v) __asm__("Camera_WorldToScreen");
 void Func_0200424c(struct SparkleSprite *sprite);
 s32 Func_0200425c(struct Actor *object);
 
@@ -2225,7 +2194,7 @@ void Func_02003cd8(struct Actor *object) {
         position.x = object->x;
         position.y = object->y + (work->unka0[i] << 16);
         position.z = object->z;
-        Camera_WorldToScreen(&position);
+        Camera_WorldToScreen__contigo(&position);
         x = position.x;
         z = position.z;
         sprite = &work->sprites[i * 2];
@@ -2290,10 +2259,9 @@ struct SparkleWork__s3e54 {
   struct Actor *object;
 };
 
-extern s32 gData_020042bc[];
-extern struct ResourceTableEntry gResourceTableEntries[];
+/* VIEW(contigo): variable gResourceTableEntries as struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has struct VramBlockCacheEntry gResourceTableEntries[]. */
+extern struct ResourceTableEntry gResourceTableEntries__contigo[] __asm__("gResourceTableEntries");
 
-s32 Resource_FindFreeEntry(void);
 void Func_02004244(struct SparkleSprite__s3e54 *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 s32 Func_02004254(struct Actor *object);
@@ -2317,7 +2285,7 @@ void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work) {
   ((u8 *)object)[0x62] = 0;
   ((u8 *)object)[0x63] = 0;
   object->update = Func_02003cd8__s3e54;
-  tile = gResourceTableEntries[work->vramEntry].offset >> 5;
+  tile = gResourceTableEntries__contigo[work->vramEntry].offset >> 5;
   object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     for (col = 1, sprite = work->sprites + row + row; col >= 0; col--) {
@@ -2338,64 +2306,12 @@ struct ContigoObject__s3e54 {
 
 void Func_02003f54(struct ContigoObject__s3e54 *object) { object->unk62 = 1; }
 
-
 void Func_020005f8(void);
-void Func_02000608(void);
-void Func_020008ec(void);
-void Func_0200090c(void);
-void Func_0200092c(void);
-void Func_0200094c(void);
 void Func_0200096c(void);
-void Func_0200098c(void);
-void Func_020009ac(void);
-void Func_02000af4(void);
 void Func_02000cf4(void);
-void Func_02000d44(void);
-void Func_02000d94(void);
-void Func_02000de4(void);
 void Func_02000e50(void);
-void Func_02000eb8(void);
-void Func_02000edc(void);
-void Func_02000f40(void);
-void Func_02000f7c(void);
-void Func_02000fc8(void);
-void Func_02000fe0(void);
-void Func_0200102c(void);
-void Func_02001070(void);
-void Func_02001094(void);
-void Func_0200118c(void);
 void Func_02001250(void);
-void Func_02001284(void);
-void Func_020012a4(void);
-void Func_020012c4(void);
-void Func_02001354(void);
-void Func_02001374(void);
-void Func_02001394(void);
-void Func_020013b4(void);
-void Func_020013d4(void);
-void Func_020013f4(void);
-void Func_02001414(void);
-void Func_02001434(void);
-void Func_02001454(void);
-void Func_02001474(void);
-void Func_02001494(void);
-void Func_020014b4(void);
-void Func_020014d4(void);
-void Func_0200152c(void);
 void Func_0200156c(void);
-void Func_020015ac(void);
-void Func_02001abc(void);
-void Func_02001b84(void);
-void Func_02001d08(void);
-void Func_02001d38(void);
-void Func_02002e18(void);
-
-extern u32 gData_0200457c[];
-extern u32 gData_020045b8[];
-extern u32 gData_020045f4[];
-extern u32 gData_02004758[];
-extern u32 gData_020047fc[];
-extern s32 gData_02004b54[];
 
 // clang-format off
 s32 gData_020042bc[] = {

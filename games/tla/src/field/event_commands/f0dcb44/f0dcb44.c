@@ -4,61 +4,19 @@
 // Part of f0dcb44.c.
 
 #include "../f0dcb44_internal.h"
+#include "event.h"
+#include "module/field/event_commands.h"
+#include "module/field/f0dcb44.h"
+#include "module/system/system.h"
 
-struct WaveFxWork {
-  u16 lines[2][162];
-  u16 phase;
-  u8 page;
-  s8 red;
-  s8 green;
-  s8 blue;
-  u16 hue;
-  u16 sourceId;
-  u16 targetId;
-  u8 delay;
-  u8 counter;
-};
-
-struct WaveFxSprite {
-  u32 unk00[2];
-  u8 unk08;
-  u32 unk09_0 : 2;
-  u32 mode : 2;
-  u32 unk09_4 : 4;
-  u8 unk0a[8];
-  u16 orientation;
-  u8 unk14[6];
-  u8 palette;
-};
-
-struct WaveFxVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct WaveFxDescriptor {
-  s16 sprite;
-};
-
-struct WaveFxMetadata {
-  u8 unk00[8];
-  s8 boxX;
-};
-
-s32 Trig_Sin(s32 angle);
-void BattleEffect_AdvanceHueCycle(void);
-void BattleEffect_ApplyColorToTargetBuffer(u32 color, s32 mode);
-void BattleEffect_StartBufferInterpolation(s32 frames);
+/* VIEW(f0dcb44): routine BattleEffect_ApplyColorToTargetBuffer as void BattleEffect_ApplyColorToTargetBuffer(u32 color, s32 mode); event.h has void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode). */
+extern void BattleEffect_ApplyColorToTargetBuffer__f0dcb44(u32 color, s32 mode) __asm__("BattleEffect_ApplyColorToTargetBuffer");
 struct Actor *Actor_GetById(u32 objectId);
 /* VIEW(f0dcb44): routine Scene_FindActorPlacement as struct WaveFxDescriptor *Scene_FindActorPlacement(s32 id); battle.h has struct ActionDescriptor *Scene_FindActorPlacement(s32 id). */
 extern struct WaveFxDescriptor *Scene_FindActorPlacement__f0dcb44(s32 id) __asm__("Scene_FindActorPlacement");
-struct ActionDescriptor *Scene_FindActorPlacement(s32 id);
-struct WaveFxMetadata *Resource_GetMetadataRecordFarFar(s32 sprite);
+/* VIEW(f0dcb44): routine Resource_GetMetadataRecordFarFar as struct WaveFxMetadata *Resource_GetMetadataRecordFarFar(s32 sprite); sprite_metadata.h has struct AnimationMetadata *Resource_GetMetadataRecordFarFar(u32 number). */
+extern struct WaveFxMetadata *Resource_GetMetadataRecordFarFar__f0dcb44(s32 sprite) __asm__("Resource_GetMetadataRecordFarFar");
 struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-s32 ArcTan2(s32 y, s32 x);
-void BattleEffect_SetCallbackWhenTargetUnset(struct Actor *object);
-void BattleEffect_ApplyFlickerValue(void *object, s32 value);
 
 // Each frame after the delay: rewrites the 160-line wave into the other
 // page, cycles the colour every other frame, and at counts 0, 8 and 16 of
@@ -89,7 +47,7 @@ void Func_080dcb44(void) {
   work->page ^= 1;
   if (work->page != 0) {
     BattleEffect_AdvanceHueCycle();
-    BattleEffect_ApplyColorToTargetBuffer(
+    BattleEffect_ApplyColorToTargetBuffer__f0dcb44(
         (work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
     BattleEffect_StartBufferInterpolation(1);
   }
@@ -102,14 +60,14 @@ void Func_080dcb44(void) {
       descriptor = Scene_FindActorPlacement__f0dcb44(work->sourceId);
       spriteId = descriptor->sprite;
       from.x = source->x;
-      metadata = Resource_GetMetadataRecordFarFar(spriteId);
+      metadata = Resource_GetMetadataRecordFarFar__f0dcb44(spriteId);
       from.y = source->y + (metadata->boxX << 16) - 0x20000;
       from.z = source->z;
       sprite = target->sprite;
       descriptor = Scene_FindActorPlacement__f0dcb44(work->targetId);
       spriteId = descriptor->sprite;
       to.x = target->x;
-      metadata = Resource_GetMetadataRecordFarFar(spriteId);
+      metadata = Resource_GetMetadataRecordFarFar__f0dcb44(spriteId);
       {
         s32 box = metadata->boxX;
         s32 y = target->y;

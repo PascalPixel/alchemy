@@ -15,6 +15,7 @@
 #include "event_inline.h"
 #include "version.h"
 #include "io_reg.h"
+#include "module/scene/lemuria_dock.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -181,8 +182,6 @@ s32 Scene_PrepareMap(void) {
   }
   return 0;
 }
-
-extern s16 gData_02000604[];
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 440, 0, 520, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

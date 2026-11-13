@@ -18,6 +18,13 @@
 #include "text/msg_ids.h"
 #include "event_inline.h"
 #include "system/dma.h"
+#include "gamepak/far_call/system.h"
+#include "item_icon.h"
+#include "module/scene/izumo.h"
+#include "module/scene/northern_reaches.h"
+#include "module/scene/scene.h"
+#include "render_input.h"
+#include "resource.h"
 
 s32 Func_02000038(s32 arg0) {
   *(u8 *)((u8 *)*(s32 *)((u8 *)arg0 + 80) + 26) = 0;
@@ -107,8 +114,6 @@ L_020081d2:
    } *)(base))                                                                 \
        ->v)
 s32 Animation_ApplyChildValues();
-
-void Func_020006b0(s32 unused, s32 *position, void (*callback)(void));
 
 void Func_020001d8(void) {
   s32 from[3];
@@ -300,11 +305,6 @@ struct SceneWork {
   s32 unk1ac;
 };
 
-extern char SceneId_Ov6a7Room1;
-
-void Event_SetDestination(s32 scene, s32 entrance);
-void Func_02000b08(void);
-
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *state;
 
@@ -328,74 +328,11 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// The sprite attributes, as The Broken Seal's render_input.h lays them out.
-struct OamData {
-  u16 y : 8;
-  u16 affineMode : 2;
-  u16 objectMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 matrix : 5;
-  u16 size : 2;
-  u16 index : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u16 high;
-};
-
-/// The sprite words as one stored pair, or the attributes field by field.
-union SparkOam {
-  struct {
-    u32 first;
-    u32 second;
-  } words;
-  struct OamData oam;
-};
-
-struct Sprite6a7 {
-  u32 unk_00;
-  struct OamData oam;
-  u8 unk_0c[18];
-  u16 unk_1e;
-  u8 unk_20[8];
-};
-
-struct Particle6a7 {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 unk_14;
-  u32 age;
-};
-
-struct Spark6a7 {
-  u32 unk_00;
-  union SparkOam oam;
-  s32 timer;
-};
-
-struct Work6a7 {
-  u8 sheet[0x1000];
-  struct Sprite6a7 sprites[54];
-  struct Particle6a7 particles[54];
-};
-
-s32 *Resource_DecodeType01(void *resource, void *to);
-void Func_02000a10(struct Spark6a7 *spark, s32 value);
-void Func_02000b40(struct Sprite6a7 *sprite, s32 a, s32 b, s32 c, s32 tile);
-void Func_02000b48(struct Sprite6a7 *sprite, struct Particle6a7 *particle);
+/* VIEW(northern_reaches): routine Resource_DecodeType01 as s32 *Resource_DecodeType01(void *resource, void *to); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
+extern s32 *Resource_DecodeType01__northern_reaches(void *resource, void *to) __asm__("Resource_DecodeType01");
+/* VIEW(northern_reaches): routine Func_02000b40 as void Func_02000b40(struct Sprite6a7 *sprite, s32 a, s32 b, s32 c, s32 tile); module/scene/mars_lighthouse_room_f.h has void Func_02000b40(void). */
+extern void Func_02000b40__northern_reaches(struct Sprite6a7 *sprite, s32 a, s32 b, s32 c, s32 tile) __asm__("Func_02000b40");
 void BattleEffect_StepVector3(struct Particle6a7 *particle, s32 a, s32 b);
-void *HeapSlot_AllocFar(s32 slot, s32 size);
-void *Resource_GetTableEntry(s32 resourceId);
-s32 Resource_FindFreeEntry(void);
-s32 Resource_ResetEntry(u32 slot);
-extern const u16 Field_Palette685[];
-extern char ResourceId_FieldEffectIceShard;
-extern char ResourceId_FieldEffectExplosion;
 
 void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
   struct Work6a7 *work;
@@ -412,7 +349,7 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
 
   work = HeapSlot_AllocFar(220, 0x1e58);
   flying = 0;
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FieldEffectIceShard),
+  Resource_DecodeType01__northern_reaches(Resource_GetTableEntry((s32)&ResourceId_FieldEffectIceShard),
                 work);
   entry = Resource_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x500, work);
@@ -420,7 +357,7 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
   particle = work->particles;
   sprite = work->sprites;
   for (; i <= 53; i++) {
-    Func_02000b40(sprite, 0, 0, 0x40000000, (i & 3) * 8 + tiles);
+    Func_02000b40__northern_reaches(sprite, 0, 0, 0x40000000, (i & 3) * 8 + tiles);
     zero = 0;
     sprite->unk_1e = 250;
     sprite->oam.priority = zero;
@@ -443,7 +380,7 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
    * buffer; as Heap_Alloc(0x1000), 19 of 323 instructions differ in tbs-en. */
   sheet = (void *)0x1000;
   sheet = Heap_Alloc((s32)sheet);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
+  Resource_DecodeType01__northern_reaches(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
                 sheet);
   sparkEntry = Resource_FindFreeEntry();
   sparkTiles = VramCache_Load(sparkEntry, 0x400, sheet);
@@ -515,8 +452,6 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
   Resource_ResetEntry(entry);
   HeapSlot_Release(220);
 }
-
-extern s32 gData_02000b80[];
 
 s32 gData_02000b80[] = {
     46, (s32)Func_02000038, 39, 7, 17,

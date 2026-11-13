@@ -4,56 +4,19 @@
 // Part of f04a85c.c.
 
 #include "../f04a85c_internal.h"
-
-void Camera_ConfigureSceneFar(s32 offset);
-void Link_DrawPageArrows(s32 destination);
-s32 Link_CreateCountdownLabelWindow(void);
+#include "module/window/f04a85c.h"
+#include "module/window/screens.h"
+#include "module/window/window.h"
 
 #define COUNTDOWN_START_FRAMES 900
 #define FRAMES_PER_SECOND 60
 
-struct CountdownDisplayEntry {
-  u8 data[12];
-};
-
-struct LinkSignature {
-  u8 padding000[8];
-  u16 e;
-  u16 d;
-  u16 v;
-  u16 s;
-  u8 padding010[8];
-};
-
-struct LinkCountdownState {
-  struct CountdownDisplayEntry entries[3];
-  u8 entryActive[3];
-  u8 padding027;
-  s32 targetOffset;
-  s32 currentOffset;
-  u8 padding030[20];
-  s32 displayHandle;
-  s32 secondaryHandle;
-  s32 timer;
-  s32 enabled;
-};
-
-struct LinkRuntimeState {
-  u8 padding000[80];
-  u8 side;
-  u8 padding051;
-  u8 paused;
-};
-
-extern struct LinkCountdownState *gLinkCountdownWork;
-extern struct LinkRuntimeState *gBattleWork;
-extern struct LinkSignature gLinkPeerSignatures[];
+/* VIEW(f04a85c): variable gLinkPeerSignatures as struct LinkSignature gLinkPeerSignatures[]; heap_slots.h has u16 gLinkPeerSignatures[][12]. */
+extern struct LinkSignature gLinkPeerSignatures__f04a85c[] __asm__("gLinkPeerSignatures");
 
 /* VIEW(countdown): routine Text_DrawNumberInWindow as void Text_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4); f04a85c has void Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window, s32 x, s32 y). */
 extern void Text_DrawNumberInWindow__countdown(s32 value, s32 width, s32 handle, s32 arg3,
                              s32 arg4) __asm__("Text_DrawNumberInWindow");
-
-void Sound_PlayFar(s32 soundId);
 
 void UpdateLinkSessionCountdown(void) {
   struct LinkCountdownState *state =
@@ -121,7 +84,7 @@ void UpdateLinkSessionCountdown(void) {
     timer = state->timer;
     if (timer >= 0)
       goto timer_ready;
-    signature = &gLinkPeerSignatures[runtime->side ^ 1];
+    signature = &gLinkPeerSignatures__f04a85c[runtime->side ^ 1];
     if (signature->e != 'E')
       goto signature_done;
     if (signature->d == 'D')
@@ -157,7 +120,8 @@ done:
   return;
 }
 
-unsigned char Text_FillCanvasBackground(void);
+/* VIEW(f04a85c): routine Text_FillCanvasBackground as unsigned char Text_FillCanvasBackground(void); module/window/window.h has void Text_FillCanvasBackground(void). */
+extern unsigned char Text_FillCanvasBackground__f04a85c(void) __asm__("Text_FillCanvasBackground");
 /* VIEW(countdown): routine Text_DrawWideStringAtOffset as void Text_DrawWideStringAtOffset(s16 *, s32, s32, s32); f04a85c has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x, s32 y). */
 extern void Text_DrawWideStringAtOffset__countdown(s16 *, s32, s32, s32) __asm__("Text_DrawWideStringAtOffset");
 
@@ -177,10 +141,8 @@ extern s32 Window_Create__countdown(s32, s32, s32, s32, s32) __asm__("Window_Cre
 /* VIEW(countdown): routine Message_CopyExpanded as s32 Message_CopyExpanded(s32, s16 *, s32); f04a85c has void Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity), it does not compile in tla-ja: games/tla/src/window/f04a85c.c:977: conflicting types for `Message_CopyExpanded'. */
 extern s32 Message_CopyExpanded__countdown(s32, s16 *, s32) __asm__("Message_CopyExpanded");
 
-extern s32 gKeyState;
 /* VIEW(countdown): variable MsgNoTimeToRun as extern char MsgNoTimeToRun; msg_ids.h has extern u8 MsgNoTimeToRun[]. */
 extern char MsgNoTimeToRun__countdown __asm__("MsgNoTimeToRun");
-extern u8 MsgNoTimeToRun[];
 
 /// Tests whether the party may not run from this battle: battle types 3 and
 /// 4 (the battles an event starts, and link battles; see
@@ -211,7 +173,7 @@ s32 Battle_RefuseFlee(void) {
   if (result != 0) {
     attrs = 42;
     work = Window_Create__countdown(0, 7, 30, 4, attrs);
-    Text_FillCanvasBackground();
+    Text_FillCanvasBackground__f04a85c();
     BATTLE_MENU_MESSAGE_COPY((s32)&MsgNoTimeToRun__countdown, buffer,
                              BATTLE_MENU_MESSAGE_CAPACITY);
     Text_DrawWideStringAtOffset__countdown(buffer, work, 0, 4);

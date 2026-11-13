@@ -2,6 +2,10 @@
 /// The scene code of overlay 0x653 that its scene tables belong to, in ROM order; the rest of the overlay is in kandorean_temple/.
 
 #include "kandorean_temple/local.h"
+#include "field.h"
+#include "module/scene/kandorean_temple.h"
+#include "module/scene/scene.h"
+#include "text/msg_ids.h"
 
 void Func_02000280(void) { Func_080d2b4c(11, 27); }
 
@@ -75,7 +79,6 @@ s32 Func_0200035c(struct Actor *object) {
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 extern u32 gData_020056a0[];
-extern u32 gData_020056c0[];
 
 u32 *Scene_GetRegions(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -102,8 +105,6 @@ extern u32 gData_020057c0[];
 extern u32 gData_020058b0[];
 extern u32 gData_02005958[];
 extern u32 gData_02005aa8[];
-extern struct ActorPlacement gData_02005b20[];
-extern struct ActorPlacement gData_02005be0[];
 
 void *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -169,7 +170,6 @@ void Func_020004a8(void) {
 
 extern s32 gData_02005d48[];
 extern s32 gData_02005d54[];
-extern s16 gData_02005de4[];
 extern s32 gData_02005e20[];
 extern s32 gData_02005e8c[];
 extern s32 gData_02005ef8[];
@@ -262,14 +262,15 @@ void Func_02000710(void) {
   Func_02000778(leader, 0xd999);
 }
 
-struct EventWork1cc {
+/* VIEW(kandorean_temple): tag struct EventWork1cc as struct EventWork1cc__kandorean_temple; module/tla.h has another definition. */
+struct EventWork1cc__kandorean_temple {
   u8 unk000[0x1cc];
   struct Actor *focus;
 };
 
 void Func_02000778(struct Actor *object, s32 dz) {
   struct Actor *focus =
-      ((struct EventWork1cc *)Ram_HeapSlots->eventWork)->focus;
+      ((struct EventWork1cc__kandorean_temple *)Ram_HeapSlots->eventWork)->focus;
   s32 position[3];
 
   position[0] = object->x;
@@ -356,9 +357,6 @@ void Func_02000930(struct Actor *object, s32 priority) {
   object->speedLimit = 0;
   object->acceleration = 0;
 }
-
-s32 Math_Cosine(s32 angle);
-void Animation_SetStateFlags(struct Actor *object, u32 value);
 
 void Func_0200098c(s32 *position, s32 value) {
   struct Actor *object =
@@ -602,9 +600,6 @@ void Func_02000e60(void) {
   Event_SetFlag(0x20d);
 }
 
-extern s32 gData_020062a0;
-extern u16 gData_020062a8;
-
 void Func_02000f60(void) {
   s32 *timer = &gData_020062a0;
   struct Actor *statue;
@@ -739,9 +734,6 @@ void Func_02000f60(void) {
 count:
   gData_020062a0++;
 }
-
-extern s32 gData_020062a4;
-extern u16 gData_020062aa;
 
 // Bob the statue on a sine.
 #define BOB(statue, phase)                                                     \
@@ -1092,7 +1084,8 @@ void Func_02001b50(void) {
   GameFlag_ClearBit(0x17d);
 }
 
-struct MapCell {
+/* VIEW(kandorean_temple): tag struct MapCell as struct MapCell__kandorean_temple; map.h has another definition. */
+struct MapCell__kandorean_temple {
   u8 unk0[2];
   u8 unk2;
   u8 unk3;
@@ -1100,7 +1093,7 @@ struct MapCell {
 
 struct MapWork170 {
   u8 unk000[0x170];
-  struct MapCell *cells;
+  struct MapCell__kandorean_temple *cells;
 };
 
 void Func_02001c8c(void) {
@@ -1116,7 +1109,7 @@ void Func_02001cc4(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct MapWork170 *map = (struct MapWork170 *)Ram_HeapSlots->mapWork;
 
-  struct MapCell *cell = &map->cells[Func_020053b0()];
+  struct MapCell__kandorean_temple *cell = &map->cells[Func_020053b0()];
 
   if (cell->unk2 != 0) {
     leader->y = 0;
@@ -1394,11 +1387,6 @@ void Func_02002314(void) {
   Event_End();
 }
 
-extern u8 MsgKandoreanTemple08;
-
-void Func_02005330(struct Actor *object, s32 mode);
-void Func_02005148(struct Actor *object);
-
 void Func_020023e8(void) {
   s16 angle = *(s16 *)&Actor_GetById(gMainRoutineWork.currentOwner)->facing;
   struct Actor *object;
@@ -1546,11 +1534,8 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_02005398(void);
 s32 Func_020053a0(s32 a, s32 b, s32 c);
-void Func_020053b8(const void *data);
 void Func_02003684(void);
-void Func_020037e0(void);
 
 void Func_0200290c(void) {
   Func_02005398();
@@ -1598,8 +1583,6 @@ void Func_02002a5c(void) {
     GameFlag_ClearBit(0x12f);
 #endif
 }
-
-void Func_02005028(void);
 
 void Func_02002a84(void) {
   struct Actor *object = Actor_GetById(9);

@@ -18,6 +18,13 @@
 #include "field_sprite.h"
 #include "debug.h"
 #include "cell_target.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/scene/jupiter_lighthouse_basement.h"
+#include "module/scene/mars_lighthouse_entrance.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -37,9 +44,8 @@ struct MainRoutineWork254 {
 extern const u8 gData_020022e8[];
 extern const u8 gData_0200236c[];
 
-void Func_02001bec(struct Actor *object, s32 mode);
-void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-void Func_02001d1c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+/* VIEW(jupiter_lighthouse_basement): routine Func_02001bec as void Func_02001bec(struct Actor *object, s32 mode); module/scene/jupiter_lighthouse_basement.h has void Func_02001bec(struct FieldEffect *effect, s32 mode). */
+extern void Func_02001bec__jupiter_lighthouse_basement(struct Actor *object, s32 mode) __asm__("Func_02001bec");
 void Func_02001d44(s32 a, s32 b, s32 c);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -93,9 +99,9 @@ void Func_0200015c(struct Actor *object) {
   }
   object->unk66 = object->timer;
   if (object->timer == 212)
-    Func_02001bec(object, 9);
+    Func_02001bec__jupiter_lighthouse_basement(object, 9);
   else
-    Func_02001bec(object, 10);
+    Func_02001bec__jupiter_lighthouse_basement(object, 10);
 }
 
 struct EventWork1ac {
@@ -103,13 +109,9 @@ struct EventWork1ac {
   s32 value;
 };
 
-s32 Math_Cosine(s32 angle);
-void Actor_SetAnimationSpeed(struct Actor *object,
-                                         s32 value);
 void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);
 void Func_020004dc(s32 mode);
-void Func_02001d3c(s32 id);
 
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
@@ -217,7 +219,6 @@ extern s32 gData_02002384;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_02002384 = value; }
-extern u16 gData_020023b0[];
 
 void Func_02000420(void) {
   u16 colors[16];
@@ -255,13 +256,6 @@ next:
   gData_02002384++;
 }
 
-extern u16 gData_020023d0[];
-extern u16 gData_020023d4[];
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02001c74();
-void Func_02001d34();
-
 void Func_020004dc(s32 mode) {
   gData_02002388 = 1;
   if (mode != 2) {
@@ -293,9 +287,6 @@ void Func_02000560(s32 id) {
 }
 
 #include "event_work.h"
-
-void Event_Start(void);
-void Event_End(void);
 
 void Func_020005b4(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -366,10 +357,9 @@ s32 Func_020007a0(s32 *a, s32 *b) {
 }
 
 extern const s32 gData_0200238c[];
-extern s32 Data_020023ac;
 
-s32 Func_02001d2c(s32 x, s32 z, s32 layer);
-void Camera_WorldToScreen(s32 *position);
+/* VIEW(jupiter_lighthouse_basement): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
+extern void Camera_WorldToScreen__jupiter_lighthouse_basement(s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_020007cc(struct Actor *self) {
@@ -393,7 +383,7 @@ void Func_020007cc(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Camera_WorldToScreen(position);
+    Camera_WorldToScreen__jupiter_lighthouse_basement(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;

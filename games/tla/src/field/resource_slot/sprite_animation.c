@@ -3,6 +3,10 @@
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"
+#include "module/field/field.h"
+#include "module/field/resource_slot.h"
+#include "module/system/system.h"
+#include "module/tla.h"
 
 /* VIEW(resource_slot): routine AnimationObject_Allocate as s32 AnimationObject_Allocate(s32 id); the definition has struct AnimationEntry *AnimationObject_Allocate(s32 id); tried as the definition's struct AnimationEntry *AnimationObject_Allocate(s32 id), which the object already declares, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:482: conflicting types for `AnimationObject_Allocate'. */
 extern s32 AnimationObject_Allocate__resource_slot(s32 id) __asm__("AnimationObject_Allocate");
@@ -14,15 +18,6 @@ extern s32 AnimationObject_Allocate__resource_slot(s32 id) __asm__("AnimationObj
 #include "sprite.h"
 #include "sprite_metadata.h"
 #include "ram_buffer.h"
-
-enum { RESOURCE_SLOT_COUNT = 8 };
-
-struct ResourceSlotNumber {
-  u16 resource;
-  s16 number;
-};
-
-extern struct ResourceSlotNumber gResourceSlot_NumberTable[];
 
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
@@ -209,20 +204,6 @@ void Animation_InitializeWorkFromMetadata(struct AnimationEntry *work) {
   }
 }
 
-struct MetadataSlotState {
-  u8 unk00[0x0c];
-  s32 scale;
-  u8 unk10[4];
-  u8 width;
-  u8 height;
-  s8 offsetX;
-  s8 offsetY;
-  u8 unk18[3];
-  u8 count;
-  u8 unk1c[0x0c];
-  s32 slots[4];
-};
-
 s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id) {
   s32 value = state->slots[0];
   s32 index = 0;
@@ -324,17 +305,6 @@ void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no) {
   }
 }
 
-struct AnimationGroup {
-  u8 unk00[0x16];
-  s8 offsetX;
-  s8 offsetY;
-  u8 lastNo;
-  u8 unk19[2];
-  u8 count;
-  u8 unk1c[0x0c];
-  struct AnimationEntry *entries[4];
-};
-
 s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags) {
   s32 highBit;
   s32 index;
@@ -384,15 +354,6 @@ s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags) {
   return 0;
 }
 
-struct ChildObject {
-  u8 unk00[2];
-  u16 value;
-  u8 unk04[8];
-  s32 active;
-  u8 unk10[5];
-  u8 mode;
-};
-
 struct ChildGroup {
   u8 unk00[27];
   u8 count;
@@ -431,11 +392,6 @@ void Animation_ApplyChildValue(struct ChildGroup *group, s32 value) {
 #define ANIMATION_OBJECT_COUNT 64
 
 s32 Animation_LookupValueByKey(s32 key);
-void Palette_LoadBasicObjColors(void);
-
-extern const u8 gData_0802e89c[];
-extern u8 Render_CopyStridedCode[];
-extern u8 Render_CopyStridedCodeSize[];
 
 /// Takes the sprite and layer pools (from the fixed heap blocks in mode 3,
 /// the heap otherwise) and clears them, loads the shadow tiles into VRAM cache
@@ -548,40 +504,10 @@ void ResourceMetadata_ClearRecord(void *dst) {
 
 #include "edition.h"
 
-struct ResourceObjectWork {
-  u8 unk00[16];
-  u8 resource; ///< VRAM cache index.
-  u8 flags;    ///< Bit 0: do not return the VRAM cache entry.
-  u8 unk12[22];
-  void *children[4];
-};
-
 typedef char
     ResourceObjectWork_size[sizeof(struct ResourceObjectWork) == 56 ? 1 : -1];
 
 #include "vram_tab.h"
-
-/// The sprite as ResourceObject_Create fills it: the image's three attribute
-/// words, its layout, then the shadow's three words.
-struct ResourceSprite {
-  u32 imageAttributes[3];
-  s32 scale;
-  u8 slot;
-  u8 retainCacheEntry : 1;
-  u8 useOwnScale : 1;
-  u8 unk11 : 6;
-  u16 rotation;
-  u8 width;
-  u8 height;
-  s8 offsetX;
-  s8 offsetY;
-  u8 lastNo;
-  u8 dirty;
-  u8 flags;
-  u8 count;
-  u32 shadowAttributes[3];
-  struct AnimationEntry *entries[4];
-};
 
 /* VIEW(vram_block_93): routine ResourceMetadata_Register as s32 ResourceMetadata_Register(struct ResourceSprite *sprite, s32 id); the definition has s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id). */
 extern s32 ResourceMetadata_Register__vram_block_93(struct ResourceSprite *sprite, s32 id) __asm__("ResourceMetadata_Register");

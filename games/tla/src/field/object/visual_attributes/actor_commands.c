@@ -4,6 +4,8 @@
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "module/field/field.h"
+#include "module/system/system.h"
 
 struct Actor *Actor_GetById(u32 objectId);
 
@@ -83,39 +85,8 @@ void Func_080d3928(u32 id, s32 rotation) {
     sprite->rotation = rotation;
 }
 
-
-void SetMapCellCollisionFar(s32 terrain, s32 x, s32 z, s32 value);
-void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-void Func_08038248(s32 resource, u8 *buffer);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
-void ResourceMetadata_ClearRecordFar(void *record);
-
-struct ObjectSprite {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affineMode : 2;
-  u16 objectMode : 2;
-  u16 mosaic : 1;
-  u16 palette256 : 1;
-  u16 shape : 2;
-  u8 unk06[2];
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[6];
-  u8 vramBlock;
-  u8 unk11;
-  u16 rotation;
-  u8 unk14[2];
-  s8 offsetX;
-  s8 offsetY;
-  u8 frame;
-  u8 frameTimer;
-  u8 nextFrame;
-  u8 unk1b;
-  u8 unk1c[0xc];
-  void *record;
-};
+/* VIEW(visual_attributes): routine Func_08038248 as void Func_08038248(s32 resource, u8 *buffer); module/field/field.h has void Func_08038248(s32 item). */
+extern void Func_08038248__visual_attributes(s32 resource, u8 *buffer) __asm__("Func_08038248");
 
 void Func_080d3940(u32 id, u32 angle) {
   s32 position[3];
@@ -195,7 +166,6 @@ void Func_080d3a10(s32 id, u32 angle, s32 mode) {
   sprite->rotation = angle + 0x4000;
 }
 
-
 /// Gives an actor's sprite a still picture: resource, drawn by Func_08038248
 /// into a cleared 128-byte buffer, or a blank one when bit 15 is set, loaded
 /// into the sprite's VRAM block as its tile.
@@ -219,7 +189,7 @@ void Func_080d3b28(u32 id, s32 resource) {
       zero = 0;
       buffer += 0x400;
       Dma_Fill32(zero, buffer, 0x80);
-      Func_08038248(resource, buffer);
+      Func_08038248__visual_attributes(resource, buffer);
       tile = VramCache_Load(sprite->vramBlock, 0x80, buffer);
       HeapSlot_Release(68);
       object->unk5c[0] = kind;

@@ -4,6 +4,12 @@
 #include "garoh/garoh.h"
 #include "event_inline.h"
 #include "map.h"
+#include "field.h"
+#include "module/field/event_commands.h"
+#include "module/scene/garoh.h"
+#include "module/scene/scene.h"
+#include "scene_ids.h"
+#include "text/msg_ids.h"
 
 void Func_02000280(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -23,8 +29,6 @@ void Func_02000280(void) {
 #include "palette_buffers.h"
 #include "frame.h"
 #include "field.h"
-
-extern u16 Data_02006340[];
 
 void Func_020002a4(void) {
   // Declared first: x then wins its allocation tie with sine.
@@ -152,25 +156,12 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "main_routine_work.h"
 #include "event_work.h"
 
-extern char SceneId_Ov65FRoom1;
-extern char SceneId_Ov65FRoom2;
-extern char SceneId_Ov65FRoom3;
-extern char SceneId_Ov65FRoom4;
-extern char SceneId_Ov65FRoom5;
-
 extern u32 gData_020056dc[];
 extern u32 gData_020056f4[];
-extern s16 gData_02005874[];
 extern u32 gData_020059dc[];
 extern s32 gData_02005a54[];
 extern u32 gData_02005b5c[];
 extern s32 gData_02005c1c[];
-
-struct GarohPicture {
-  const void *data;
-  u16 a;
-  u16 b;
-};
 
 extern const struct GarohPicture gData_02005de0[];
 
@@ -253,12 +244,6 @@ loop:
   Event_End();
 }
 
-extern u8 MsgGaroh02[];
-extern u8 MsgGaroh04[];
-extern u8 MsgGaroh06[];
-extern u8 MsgGaroh17[];
-extern u8 MsgGaroh18[];
-
 void Func_02000580(s32 actor) {
   s32 msg = (s32)MsgGaroh02;
 
@@ -332,9 +317,6 @@ void Func_02000698(s32 actor) {
   Event_End();
 }
 
-extern u8 MsgGaroh20[];
-extern u8 MsgGaroh21[];
-
 void Func_020006ec(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -373,14 +355,6 @@ void Func_020006ec(void) {
   Actor_SetScript(13, 2);
   Event_End();
 }
-
-extern u8 MsgGaroh12[];
-
-void Func_020052b4(void);
-void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
-void BattleEffect_SetupObjectPair(s32 id, s32 a);
-void BattleEffect_StopMainActor(void);
-void BattleEffect_CleanupSceneObjects(void);
 
 void Func_02000808(void) {
   s32 flag;
@@ -445,14 +419,10 @@ extern s32 gData_02005e10[];
 extern s32 gData_02005e34[];
 extern s32 gData_02005f78[];
 extern s32 gData_020060d4[];
-extern s32 gData_0200611c[];
 extern s32 gData_020061d0[];
 extern s32 gData_02006278[];
 
 extern s32 gData_0200632c;
-
-void Func_02002694(void);
-void Func_02003878(void);
 
 static inline void CamMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH(wrapper): the call through this inline, so each -1 is built on
@@ -509,13 +479,7 @@ void Func_02000a68(void) {
   }
 }
 
-extern char SceneId_Ov660Room3;
-
-void Func_02000be4(void);
 void Func_02000d30(void);
-void Func_02000e00(void);
-void Func_020052f4(s32 value);
-void Func_0200538c(void);
 
 s32 Scene_Initialize(void) {
   struct EventWork *work;
@@ -608,15 +572,15 @@ void Func_02000be4(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_0200535c();
-void Func_02005364();
+/* VIEW(garoh): routine Func_02005364 as void Func_02005364(); module/scene/gabomba_statue.h has void Func_02005364(void). */
+extern void Func_02005364__garoh() __asm__("Func_02005364");
 
 void Func_02000d30(void) {
   s32 t4;
 
   Task_AddFrame(Func_02000a68, 0x480);
   Func_0200535c();
-  Func_02005364(0, 10, 11);
+  Func_02005364__garoh(0, 10, 11);
   t4 = Event_GetFlag(0x310);
   if (t4 == 0)
     goto L_02008da6;
@@ -662,11 +626,6 @@ void Func_02000e00(void) {
 void Func_02000e58(void) { Func_02005374(gData_02005450); }
 
 void Func_02000e68(void) { Func_02005374(gData_02005450); }
-
-struct GarohEventWork {
-  u8 unk000[0xca4];
-  s8 fadeLock;
-};
 
 void Func_02000e78(s32 id, struct Actor *object) {
   s32 i;

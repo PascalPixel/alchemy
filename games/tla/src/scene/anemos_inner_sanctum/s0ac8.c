@@ -6,35 +6,32 @@
 #include "system/main_routine_work.h"
 #include "event_inline.h"
 #include "field.h"
+#include "event_work.h"
+#include "module/scene/anemos_inner_sanctum.h"
+#include "text/msg_ids.h"
 
 struct Work {
   u8 pad[340];
   u16 room;
 };
 
-struct Globals {
-  u8 pad[108];
-  struct Work *work;
-};
-
-struct Vector3 {
+/* VIEW(s0ac8): tag struct Vector3 as struct Vector3__s0ac8; vector3.h has another definition. */
+struct Vector3__s0ac8 {
   s32 x;
   s32 y;
   s32 z;
 };
 
-void Event_WaitTransitionFrames(void);
 void Func_0200088c();
 void Func_020009b8();
 void Func_02000a78();
 void Actor_StartScript();
-void Func_020032f8();
-void DisplayBlend_DisableRunScript();
-void DisplayBlend_EnableRunScript();
-void Func_02003380(s32 x, s32 z, s32 a, s32 b);
-void Event_Start(void);
-void Event_End(void);
-void Func_02003430(void);
+/* VIEW(s0ac8): routine Func_020032f8 as void Func_020032f8(); module/scene/anemos_inner_sanctum.h has void Func_020032f8(struct Actor *object). */
+extern void Func_020032f8__s0ac8() __asm__("Func_020032f8");
+/* VIEW(s0ac8): routine DisplayBlend_DisableRunScript as void DisplayBlend_DisableRunScript(); module/field/map.h has void DisplayBlend_DisableRunScript(void). */
+extern void DisplayBlend_DisableRunScript__s0ac8() __asm__("DisplayBlend_DisableRunScript");
+/* VIEW(s0ac8): routine DisplayBlend_EnableRunScript as void DisplayBlend_EnableRunScript(); module/field/map.h has void DisplayBlend_EnableRunScript(void). */
+extern void DisplayBlend_EnableRunScript__s0ac8() __asm__("DisplayBlend_EnableRunScript");
 extern u8 gData_020035cc[];
 extern u8 gData_02003620[];
 extern s32 gData_020036fc[][2];
@@ -58,8 +55,8 @@ void Func_02000ac8(void) {
   struct Actor *actor;
   u8 found[20];
   u8 order[20];
-  struct Vector3 from;
-  struct Vector3 to;
+  struct Vector3__s0ac8 from;
+  struct Vector3__s0ac8 to;
 
   x = ((index & 1) << 8) + 408;
   base = 0;
@@ -137,7 +134,7 @@ void Func_02000ac8(void) {
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(60);
-  DisplayBlend_EnableRunScript();
+  DisplayBlend_EnableRunScript__s0ac8();
   alpha = alpha & 255;
   REG_BLDALPHA = 0x1000;
   t0 = x >> 4;
@@ -154,7 +151,7 @@ void Func_02000ac8(void) {
     if (i != alpha)
       goto fadeIn;
   }
-  DisplayBlend_DisableRunScript();
+  DisplayBlend_DisableRunScript__s0ac8();
   Event_PlaySound(246);
   FieldEvent_Wait(48);
 
@@ -187,7 +184,7 @@ void Func_02000ac8(void) {
   if (count != 18) {
     FieldEvent_Wait(96);
     Actor_StartScript(actor, gData_02003620);
-    DisplayBlend_EnableRunScript();
+    DisplayBlend_EnableRunScript__s0ac8();
     alpha = REG_BLDALPHA & 255;
     PaletteFade_ApplyTarget(0x10000, 1);
     PaletteFade_Interpolate(60);
@@ -205,7 +202,7 @@ void Func_02000ac8(void) {
           (leader->z + (gData_020036fc[slot][1] << 16)) >> 20, 1, 1);
     }
     MapGrid_CopyCellsTo(64, 0, column + 63, row - 3, 3, 5);
-    DisplayBlend_DisableRunScript();
+    DisplayBlend_DisableRunScript__s0ac8();
     Event_WaitTransitionFrames();
   } else {
     Event_SetFlag((s16)work->room + 0xa55);
@@ -247,7 +244,7 @@ void Func_02000ac8(void) {
     }
   }
 
-  Func_020032f8(actor);
+  Func_020032f8__s0ac8(actor);
   Event_SetFlag(0x200);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003430();
@@ -264,12 +261,8 @@ void Func_02000ac8(void) {
 
 void Func_02001090(void) { GameFlag_ClearBit(0x200); }
 
-s32 Func_02003498();
-extern u8 MsgHat[];
 extern u8 gData_020036e4[];
-extern u8 MsgCrownBoostsLuck[];
 extern u8 gData_020036ea[];
-extern u8 MsgHatBoostsAgility[];
 extern u8 gData_020036f6[];
 
 void Func_0200109c(void) {
@@ -294,12 +287,6 @@ void Func_0200109c(void) {
 }
 
 #include "scene_tables.h"
-
-extern char SceneId_Ov6B0Room2;
-extern char SceneId_Ov6B0Room3;
-extern char SceneId_Ov6B0Room4;
-
-void Func_020034a0(void);
 
 static __inline__ void SetCell(s32 a, s32 x, s32 z, s32 b) {
   /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as direct calls, 36
@@ -378,9 +365,9 @@ void Func_02001160(void) {
 
 extern const s32 gData_02003574[];
 
-void Func_020032e0(struct Actor *object, s32 value);
+/* VIEW(s0ac8): routine Func_020032e0 as void Func_020032e0(struct Actor *object, s32 value); module/scene/kibombo.h has void Func_020032e0(void). */
+extern void Func_020032e0__s0ac8(struct Actor *object, s32 value) __asm__("Func_020032e0");
 void Actor_StartScript(struct Actor *object, const s32 *script);
-void Func_02003438(s32 id, s32 a);
 
 static __inline__ struct Actor *Create(s32 type, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as a direct call, 4
@@ -414,7 +401,7 @@ void Func_02001398(void) {
   object->scaleY = 0x16000;
   object->scaleX = 0x16000;
   Scene_SetActorSpritePriority(object, 2);
-  Func_020032e0(object, 3);
+  Func_020032e0__s0ac8(object, 3);
   Actor_SetSingleChildFlags(object, 0);
   Actor_StartScript(object, gData_02003574);
   Event_SetFlag(work->exit + 0x1ce);
@@ -440,8 +427,6 @@ void Func_02001398(void) {
     Event_End();
   }
 }
-
-void Event_FinishScreenTransition(void);
 
 /// Centres the party leader on its cell and raises actor 8 (in Ov6B0Room4) or
 /// actor 9 with cue 198, 4 pixels at once and then 128 more, before the screen
@@ -605,7 +590,7 @@ void Func_020017b4(struct Actor *self) {
     dust->motionFlags = 0;
     Actor_SetSpriteColor(dust, ((u8 *)self)[0x62]);
     Scene_SetActorSpritePriority(dust, 2);
-    Func_020032e0(dust, 1);
+    Func_020032e0__s0ac8(dust, 1);
     Actor_SetSingleChildFlags(dust, 0);
     Actor_StartScript(dust, gData_02003594);
     self->unk4c = leader->x;

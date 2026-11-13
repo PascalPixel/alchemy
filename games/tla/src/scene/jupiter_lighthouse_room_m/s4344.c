@@ -9,14 +9,13 @@
 #include "field_effect.h"
 #include "event_inline.h"
 #include "cell_target.h"
+#include "event_work.h"
+#include "module/field/field_effect.h"
+#include "module/scene/jupiter_lighthouse_room_m.h"
+#include "module/scene/scene.h"
 
-void Event_Start(void);
-void Map_CenterOnFollowedPoint(void);
-s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02003b7c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Event_End(void);
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
@@ -80,11 +79,8 @@ void Func_02004344(void) {
   Event_End();
 }
 
-extern struct CellTarget Data_02005b88;
-
-void GameFlag_SetByte(s32 flag, s32 value);
-void Func_0200413c(struct CellTarget *work, struct CellTargetEntry *entry);
-void Func_020041ac(struct CellTarget *work, struct CellTargetEntry *entry);
+/* VIEW(s4344): routine GameFlag_SetByte as void GameFlag_SetByte(s32 flag, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
+extern void GameFlag_SetByte__s4344(s32 flag, s32 value) __asm__("GameFlag_SetByte");
 
 s32 Func_020044dc(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -106,20 +102,13 @@ s32 Func_020044dc(void) {
         break;
       work->current = i;
       Func_020041ac(work, entry);
-      GameFlag_SetByte(work->flagByte, x);
-      GameFlag_SetByte(work->flagByte + 8, z);
+      GameFlag_SetByte__s4344(work->flagByte, x);
+      GameFlag_SetByte__s4344(work->flagByte + 8, z);
       return 1;
     }
   }
   return 0;
 }
-
-struct JupiterLighthouseRoom8EventWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-  u8 unk1b0[0x1c];
-  struct Actor *marker;
-};
 
 void Func_0200458c(s32 x, s32 z, s32 effect) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -130,8 +119,8 @@ void Func_0200458c(s32 x, s32 z, s32 effect) {
   if (dx != 0 || dz != 0) {
     struct Actor *marker;
 
-    GameFlag_SetByte(Data_02005b88.flagByte, 0);
-    GameFlag_SetByte(Data_02005b88.flagByte + 8, 0);
+    GameFlag_SetByte__s4344(Data_02005b88.flagByte, 0);
+    GameFlag_SetByte__s4344(Data_02005b88.flagByte + 8, 0);
     leader->x = ((dx + x) << 20) + 0x80000;
     leader->z = ((dz + z) << 20) + 0x80000;
     marker = work->marker;

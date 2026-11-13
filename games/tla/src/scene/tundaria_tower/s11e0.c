@@ -8,12 +8,17 @@
 #include "frame.h"
 #include "field_effect.h"
 #include "event_inline.h"
+#include "event.h"
+#include "field.h"
+#include "module/field/field.h"
+#include "module/scene/scene.h"
+#include "module/scene/tundaria_tower.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "tundaria_tower.h"
 
-void Func_02003048(void);
-void Func_02003050(void);
-void Func_02002fa8(void);
-s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotion(struct FieldEffect *effect);
+/* VIEW(s11e0): routine Effect_AdvanceMotion as void Effect_AdvanceMotion(struct FieldEffect *effect); module/field/field_effect.h has void Effect_AdvanceMotion(union FieldObject *object). */
+extern void Effect_AdvanceMotion__s11e0(struct FieldEffect *effect) __asm__("Effect_AdvanceMotion");
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
@@ -44,7 +49,7 @@ void Func_020011e0(void) {
   leader->motionFlags = 3;
   Event_Wait(24);
   options.palette = 7;
-  options.update = (void *)Effect_AdvanceMotion;
+  options.update = (void *)Effect_AdvanceMotion__s11e0;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
   i = 0;
@@ -81,8 +86,6 @@ void Func_020011e0(void) {
 #include "scene_ids.h"
 #include "scene_tables.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
 void Func_0200137c(void) {
   if ((Actor_GetById(gMainRoutineWork.currentOwner)->y >> 19) != 0)
     MapCell_SetAttributes(0, 14, 17, 0);
@@ -90,21 +93,9 @@ void Func_0200137c(void) {
     MapCell_SetAttributes(0, 14, 17, 0x3200);
 }
 
-struct TundariaTowerEventWork {
-  u8 unk000[428];
-  s32 screenEffect;
-};
-
 extern const u8 gData_02003340[];
 extern const u8 gData_0200335a[];
 union FieldObject;
-extern union FieldObject *Data_02003ccc;
-void Func_020010d4(void);
-void Func_02000548(void);
-void Func_0200058c(void);
-void Func_02000404(const u8 *data);
-void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Animation_SetStateFlags(struct Actor *object, u32 value);
 void Func_02003168(const s16 *data);
 
 s32 Scene_Initialize(void) {
@@ -245,9 +236,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 /* VIEW(s11e0): variable gInput as extern u32 gInput; input.h has extern struct InputState gInput; tried as the 3 declarations' extern u32 gInput, it does not compile in tla-ja: games/tla/include/system/input.h:37: conflicting types for `gInput'. */
 extern u32 gInput__s11e0 __asm__("gInput");
-extern s16 gData_02003272[];
 void Func_02002f80(struct Actor *object, s32 mode);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 
 void Func_020017dc(struct Actor *object) {
   s32 angle;
@@ -290,18 +279,11 @@ void Func_02001868(void) {
   }
 }
 
-extern s16 gData_020032b2[];
 /* VIEW(events_e): routine Func_020017dc as void Func_020017dc(void); the definition has void Func_020017dc(struct Actor *object); tried as the definition's void Func_020017dc(struct Actor *actor), it does not compile in tla-ja: games/tla/src/scene/tundaria_tower/s11e0.c:374: `Func_020017dc__events_e' undeclared (first use in this function). */
 extern void Func_020017dc__events_e(void) __asm__("Func_020017dc");
-s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 ArcTan2(s32 y, s32 x);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Func_02002f80(struct Actor *object, s32 mode);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Script_WaitForEventTimeout(struct Actor *actor);
-s32 Func_02003028(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 void Func_0200189c(void) {
   struct Actor *object;

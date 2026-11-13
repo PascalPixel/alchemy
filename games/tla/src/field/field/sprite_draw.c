@@ -3,29 +3,13 @@
 // Part of field.c.
 
 #include "../field_internal.h"
-
-struct ScriptChannel {
-  u8 unk00[2];
-  u16 unk02;
-  u8 unk04;
-  u8 unk05[11];
-  u8 *script;
-  u8 position;
-  u8 unk15[2];
-  u8 unk17;
-};
-
-struct ScriptPlayer {
-  u8 unk00[22];
-  u8 unk16;
-  u8 unk17;
-  u8 unk18;
-  u8 unk19;
-  u8 unk1a;
-  u8 channelCount;
-  u8 unk1c[12];
-  struct ScriptChannel *channels[1];
-};
+#include "actor.h"
+#include "affine.h"
+#include "fixed_math.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "module/system/system.h"
+#include "task.h"
 
 void Func_080219cc(struct ScriptPlayer *player) {
   s32 i;
@@ -107,33 +91,6 @@ struct LayeredSprite {
   struct AnimationSpritePart shadow;
   struct AnimationEntry *entries[4];
 };
-
-struct ObjectSystemColours {
-  u16 used;
-  u8 unk02[4];
-  u8 edge;
-  u8 fill;
-};
-
-typedef void (*DrawFn)(const void *src, void *dst, s32 param);
-typedef void (*UploadFn)(const void *src, u32 w, u32 h, void *vram);
-typedef void (*OutlineFn)(u32 w, u32 h, void *pixels, u32 edge, u32 fill);
-
-extern u8 Render_DecodePictureCode[];
-extern u8 Render_DecodePictureCopyEnd[];
-extern u8 Render_DecodePictureBlockSize[];
-extern const u8 Data_08021824[];
-extern u8 Data_08021824Size[];
-extern const u8 Data_080209a8[];
-extern const u8 gData_0802eac4[16];
-extern const u8 gData_0802ead4[8];
-extern const u8 gData_0802eadc[8];
-extern const u8 gData_0802eae4[16];
-extern const u8 gData_0802eb04[64];
-extern const u8 gData_0802eb44[8];
-void Animation_SetWorkEntry(struct AnimationEntry *entry, s32 animation);
-void Sound_PlayFar(s32 cue);
-u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
 
 s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
   s32 mirrored;
@@ -458,10 +415,6 @@ void Func_08022010(struct LayeredSprite *sprite, s32 screenX, s32 height,
 // The object casts a shadow.
 #define OBJECT_SHADOW 1
 
-void Func_080140d8(void *entry, s32 slot);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-
 // Places an animation object's sprite (and its shadow) at the screen point
 // of a projected position (x, y, z, ground), scaled by scale[0] and
 // scale[1]; the sprites go into the depth list by their depth.
@@ -557,7 +510,6 @@ void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
 static inline u8 PlacedObject_Height(struct LayeredSprite *object) {
   return object->height;
 }
-void Oam_AddSpriteAtDepth(void *entry, s32 slot);
 
 void Func_08022318(struct LayeredSprite *object, s32 *pos, s32 *scale, s32 mode,
                    s32 depth) {
@@ -662,9 +614,6 @@ void Func_08022318(struct LayeredSprite *object, s32 *pos, s32 *scale, s32 mode,
 }
 
 s32 Render_ProjectPoint(const void *point, s32 *screen);
-s32 AffineMatrix_Build(s32 angle, s32 scaleX, s32 scaleY);
-void Func_080140d8(void *part, s32 slot);
-s32 VramCache_ReleaseVram(u32 slot);
 
 void Func_0802254c(struct LayeredSprite *sprite, s32 *point, s32 *scale,
                    s32 facing, s32 depth) {

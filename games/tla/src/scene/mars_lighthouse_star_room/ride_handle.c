@@ -3,6 +3,10 @@
 #include "frame.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "module/field/field.h"
+#include "module/scene/mars_lighthouse_star_room.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 struct RideEntry {
   s16 a;
@@ -40,13 +44,9 @@ struct RideWork {
   void *handle;
 };
 
-extern u8 gData_020023c4[];
-extern u16 gData_02004cf0[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Func_020041ec(struct Actor *object);
-void Func_02002148(void);
 void Func_0200236c(void);
-void Func_02002ad0(struct Actor *object);
 
 void Func_02001dd0(void) {
   struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
@@ -62,17 +62,8 @@ void Func_02001de4(s16 value) {
 #include "io_reg.h"
 #include "field.h"
 
-/// One object the beam reaches, as Func_02001df0 records it.
-struct MarsLighthouseBeamTarget {
-  u16 active;
-  u16 index;
-  u16 flags;
-  u16 unk06;
-  struct Actor *object;
-  s32 height; ///< 16.16 pixels
-};
-
-struct MarsLighthouseBeam {
+/* VIEW(ride_handle): tag struct MarsLighthouseBeam as struct MarsLighthouseBeam__ride_handle; module/scene/scene.h has another definition. */
+struct MarsLighthouseBeam__ride_handle {
   u8 unk00[10];
   u16 unk0a;
   u8 unk0c[4];
@@ -82,11 +73,9 @@ struct MarsLighthouseBeam {
   u16 stops[7];
 };
 
-void Func_02001bf8(void);
-
 void Func_02001df0(u16 *targets, u16 *stops, s32 a2, s32 a3) {
-  struct MarsLighthouseBeam *beam =
-      (struct MarsLighthouseBeam *)(gData_020023c4 + 0x188);
+  struct MarsLighthouseBeam__ride_handle *beam =
+      (struct MarsLighthouseBeam__ride_handle *)(gData_020023c4 + 0x188);
   struct MarsLighthouseBeamTarget *target = beam->targets;
   s32 id;
   s32 i;
@@ -241,7 +230,6 @@ struct MarsLighthouseEventWork {
   u16 downOwners[8];
 };
 
-void BattleParty_ApplyHealthDelta(s32 a, s32 b);
 struct BattleUnit *Unit_Get(s32 owner);
 
 void Func_02001fcc(void) {

@@ -8,13 +8,13 @@
 #include "version.h"
 #include "task.h"
 #include "text/msg_ids.h"
+#include "module/field/field_effect.h"
+#include "module/scene/kandorean_temple.h"
+#include "module/scene/scene.h"
 
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-void Effect_AdvanceMotion(union FieldObject *object);
-void Map_CenterOnFollowedPoint(void);
-s32 Math_Cosine(s32 angle);
 
 void Func_02002ec4(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -69,7 +69,6 @@ void Func_02002ec4(void) {
 }
 
 void Func_02000cd8(s32 id, s32 offset, s32 limit);
-void Func_02000d64(void);
 
 void Func_0200306c(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -281,9 +280,6 @@ void Func_02003584(void) {
   Import_EventSetExitRequest(5);
 }
 
-extern s32 gData_020062a0;
-extern s32 gData_020062a4;
-
 /// The leader and actor 13 rise into view while actor 15 scales.
 void Func_02003684(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -419,16 +415,6 @@ rise:
   Import_EventSetExitRequest(7);
 }
 
-struct MapWork17 {
-  s32 *origin;
-  s32 shakeX, shakeY, shakeDecay;
-  u8 *script;
-  u16 flags;
-  u8 wideTiles;
-  u8 bits0 : 2;
-  u8 mode : 2;
-};
-
 void Func_02003a14(void) {
   struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->mapWork;
 
@@ -532,11 +518,6 @@ void Func_02003c54(void) {
 }
 
 void Func_02001c8c(void);
-void Func_02003e8c(void);
-void Func_020044d4(void);
-void Func_020046d8(void);
-void Func_0200482c(void);
-void Func_02004fb4(void);
 
 void Func_02003c8c(void) {
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
@@ -901,12 +882,6 @@ void Func_020047f0(void) {
   Event_ShowMessageAndWait(0x400c, 0);
 }
 
-extern u32 gData_02005564[];
-extern u32 gData_020055a0[];
-extern u32 gData_020055e4[];
-
-void Func_02000bcc(void);
-
 #define WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
 
 void Func_0200482c(void) {
@@ -1160,41 +1135,10 @@ void Func_0200028c(void);
 void Func_020002a0(void);
 void Func_020002dc(void);
 void Func_0200035c(void);
-void Func_020004a8(void);
-void Func_02000710(void);
-void Func_02001d00(void);
-void Func_02001d20(void);
-void Func_02001e0c(void);
-void Func_02001e30(void);
-void Func_02001e44(void);
-void Func_02001e58(void);
-void Func_02001f7c(void);
-void Func_02002014(void);
-void Func_020020c8(void);
-void Func_020020d8(void);
 void Func_02002120(void);
-void Func_02002154(void);
-void Func_020021b8(void);
-void Func_020021dc(void);
-void Func_02002248(void);
-void Func_020022c0(void);
-void Func_02002314(void);
 void Func_020023e8(void);
-void Func_02002674(void);
-void Func_0200269c(void);
-void Func_020026cc(void);
-void Func_020027b4(void);
-void Func_020027d4(void);
-void Func_020027f4(void);
-void Func_02002814(void);
-void Func_02002834(void);
 
-extern u32 gData_020053e0[];
-extern u32 gData_0200541c[];
 extern u32 gData_02005458[];
-extern s32 gData_02005634[];
-extern s32 gData_0200564c[];
-extern s32 gData_02005664[];
 
 // clang-format off
 u32 gData_020053e0[] = {

@@ -10,15 +10,21 @@
 #include "event_inline.h"
 #include "main_routine_work.h"
 #include "field.h"
-
-extern u32 gData_020050f4[];
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/scene/gaia_rock_inside.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "text/msg_ids.h"
 
 void Func_02004d9c(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const s32 *script);
-s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotionAtLeaderPriority(void);
+/* VIEW(s07f4): routine Effect_AdvanceMotionAtLeaderPriority as void Effect_AdvanceMotionAtLeaderPriority(void); module/field/field_effect.h has void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object). */
+extern void Effect_AdvanceMotionAtLeaderPriority__s07f4(void) __asm__("Effect_AdvanceMotionAtLeaderPriority");
 
-struct DustSprite {
+/* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4; module/scene/scene.h has another definition. */
+struct DustSprite__s07f4 {
   u8 unk00[9];
   u8 unused09 : 2;
   u8 layer : 2;
@@ -41,22 +47,19 @@ s32 Func_020007f4(void) {
         Actor_SetSingleChildFlags(dust, 0);
         Func_02004d9c(dust, 1);
         Actor_StartScript(dust, gData_020050f4);
-        ((struct DustSprite *)dust->sprite)->layer = 1;
+        ((struct DustSprite__s07f4 *)dust->sprite)->layer = 1;
         dust->bounce = Math_Cosine(((Random16Far() << 3) >> 16) << 14) >> 1;
         dust->unk4c = Math_Sin(((Random16Far() << 3) >> 16) << 14) >> 1;
         dust->gravity = 0;
         dust->timer = ((Random16Far() << 9) >> 16) - 0x100;
         dust->speedLimit = 0;
         dust->acceleration = 0;
-        dust->update = Effect_AdvanceMotionAtLeaderPriority;
+        dust->update = Effect_AdvanceMotionAtLeaderPriority__s07f4;
       }
     }
   } while (--i >= 0);
   return 0;
 }
-
-extern s32 gData_020056c4[];
-extern s32 gData_02005728[];
 
 s32 Func_020008b4(void) {
   struct Actor *object = Actor_Get(9);
@@ -79,19 +82,6 @@ s32 Func_020008b4(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
-struct Counted {
-  s32 *script;
-  u8 unk04[0x57];
-  u8 movementState;
-  u8 unk5c[4];
-  u8 count;
-};
-
-struct EventWork900 {
-  u8 unk000[362];
-  u16 timer;
-};
 
 void Func_02000900(struct Counted *object) {
   struct Counted *other = (struct Counted *)Actor_Get(9);
@@ -130,24 +120,14 @@ void Func_02000900(struct Counted *object) {
   }
 }
 
-extern char SceneId_Ov681Room2;
-extern char SceneId_Ov681Room3;
-extern char SceneId_Ov681Room4;
-extern char SceneId_Ov681Room5;
-extern struct ActorPlacement gData_02005970[];
-extern struct ActorPlacement gData_020059a0[];
 extern struct ActorPlacement gData_02005a54[];
-extern struct ActorPlacement gData_02005afc[];
-extern struct ActorPlacement gData_02005b8c[];
-extern struct ActorPlacement gData_02005c7c[];
 
 extern s32 gData_02005ee4;
-extern s32 gData_02005d6c[];
 extern s32 gData_02005e28[];
-extern u8 gData_020023c4[];
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-u32 Func_02004904(void);
+/* VIEW(s07f4): routine Func_02004904 as u32 Func_02004904(void); module/scene/gaia_rock_inside.h has s32 Func_02004904(void). */
+extern u32 Func_02004904__s07f4(void) __asm__("Func_02004904");
 
 /// Return the table for the current room.
 const void *Scene_GetPlacements(void) {
@@ -197,7 +177,7 @@ void Func_02000af8(s32 unused, u32 id) {
   u32 direction;
   s32 *state;
 
-  direction = Func_02004904();
+  direction = Func_02004904__s07f4();
   state = (s32 *)(gData_020023c4 + 0x288);
   object->collisionFlags = 0;
   Func_02004d9c(object, ((direction & 0xc000) >> 14) + 2);
@@ -210,11 +190,6 @@ void Func_02000af8(s32 unused, u32 id) {
   Event_SetFlag(0x200);
   System_Wait(20);
 }
-
-void Event_Start(void);
-void Func_02004e64(void);
-void ObjectTable_Snapshot(void);
-void Func_02004ff4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
 /// Unless MapGrid_GetCellBehaviorAt(2, ...) holds, copies map cell (36, 23) to
 /// (38, 25), moves a leader standing on that cell aside, and sets flag 0x30a,
@@ -246,8 +221,6 @@ void Func_02000b6c(void) {
 }
 
 void Func_02002cb4(s32 a);
-void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-void Func_0200500c(s32 a, s32 b, s32 c);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -291,22 +264,10 @@ void Func_02000cd8(void) { Call7(Func_02004ff4, 0x13, 0x18, 0, 4, 3, 0x1f, 4); }
 
 void Func_02000cf8(void) { Func_02004ff4_(18, 17, 0, 3, 3, 31, 0); }
 
-struct CellPoint {
-  s16 position[2];
-};
-
 extern const struct CellPoint gData_020051d8[12];
-extern u32 gData_020051b8[];
-extern s32 gData_02005118[];
-extern s32 gData_02005168[];
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
-
-struct BoulderSprite {
-  u8 unk00[9];
-  u8 unused09 : 2;
-  u8 layer : 2;
-};
+/* VIEW(s07f4): routine OverlayObject_PrepareObject as void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type); module/field/object.h has struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type). */
+extern void *OverlayObject_PrepareObject__s07f4(s32 x, s32 y, s32 z, s32 type) __asm__("OverlayObject_PrepareObject");
 
 void Func_02000d18(void) {
   struct Actor *guard;
@@ -349,10 +310,10 @@ void Func_02000d18(void) {
     MapGrid_CopyCellAttributes(49, destY, 8, 8, destX, destY);
   }
   FieldEvent_Wait(30);
-  OverlayObject_PrepareObject(175 << 18, 0, 0x1d40000, 286);
-  OverlayObject_PrepareObject(175 << 18, 0, 0x1ea0000, 286);
-  OverlayObject_PrepareObject(181 << 18, 0, 0x1d40000, 286);
-  OverlayObject_PrepareObject(181 << 18, 0, 0x1ea0000, 286);
+  OverlayObject_PrepareObject__s07f4(175 << 18, 0, 0x1d40000, 286);
+  OverlayObject_PrepareObject__s07f4(175 << 18, 0, 0x1ea0000, 286);
+  OverlayObject_PrepareObject__s07f4(181 << 18, 0, 0x1d40000, 286);
+  OverlayObject_PrepareObject__s07f4(181 << 18, 0, 0x1ea0000, 286);
   Event_PlaySound(204);
   guard->motionFlags = 3;
   ((struct BoulderSprite *)guard->sprite)->layer = 3;
@@ -374,15 +335,8 @@ void Func_02000edc(void) {
 }
 
 extern struct Actor gData_0200646c;
-extern s32 gData_020064ec;
-extern s32 gData_020064f0;
-extern s32 Data_020064f4;
 extern s32 gData_020064f8;
-extern s32 gData_020055c0[];
 extern s32 gData_0200559c[];
-
-void Actor_ResetTargetsAndVelocity(u32 objectId);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 
 void Func_02000f00(void) {
   struct Actor *walker = Actor_Get(9);
@@ -443,19 +397,8 @@ void Func_02000fac(void) {
 #include "text/msg_ids.h"
 
 extern s32 gData_0200559c[];
-extern s32 gData_02005610[];
-extern s32 gData_020056c4[];
-extern s32 gData_02005728[];
 /* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4 has extern struct Actor gData_0200646c; tried as the definition's extern struct ActorPlacement gData_0200646c[], it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s07f4.c:449: conflicting types for `gData_0200646c'. */
 extern s32 gData_0200646c__s1048[] __asm__("gData_0200646c");
-extern s32 gData_020064ec;
-extern s32 gData_020064f0;
-
-void Func_02000f00(void);
-void Func_02000fac(void);
-void Event_Start(void);
-void Func_02004e64(void);
-void Func_02004f54(void);
 
 /// Object 10 turns to the leader, talks and walks to its place while the camera
 /// follows; flag 0x9de is set, and object 9's script decides whether two
@@ -537,18 +480,12 @@ void Func_020011c8(void) {
 // ---- games/tla/src/scene/gaia_rock_inside/s12ac.c ----
 // Scene code of overlay 0x681, in ROM order, from s12ac's offset up to the next object the overlay links.
 
-
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
-extern u8 MsgGaiaRockInside07[];
-extern u8 MsgGaiaRockInside04[];
 
 void Func_020012ac(void) {
   s32 t5;
@@ -606,21 +543,6 @@ void Func_02001314(s32 a0) {
 #include "frame.h"
 #include "system/field_effect.h"
 
-struct Orbiter {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x38];
-  s32 radius;
-  u8 unk50[0x12];
-  u8 countdown;
-  u8 unk63;
-  s16 angle;
-  u16 speed;
-  struct Actor *anchor;
-};
-
 /* VIEW(s136c): routine Func_02001314 as void Func_02001314(struct Orbiter *orbiter); the definition has void Func_02001314(s32 a0). */
 extern void Func_02001314__s136c(struct Orbiter *orbiter) __asm__("Func_02001314");
 
@@ -658,28 +580,6 @@ s32 Func_0200136c(struct Orbiter *orbiter) {
   orbiter->radius -= 0x40000;
   return 1;
 }
-
-struct GaiaRockInsideOrbit {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x30];
-  s32 centreX;
-  s32 centreZ;
-  s32 radius;
-  u8 unk50[0x12];
-  u8 phase;
-  u8 growth;
-  s16 angle;
-  s16 speed;
-};
-
-s32 Math_Cosine(s32 angle);
-// Called by its linked name: through Iwram_MulQ16's fixed address the
-// multiply's address is loaded one call early (2 of 75 instructions differ in
-// tla-en).
-s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
 
 // Moves around in a circle.
 s32 Func_0200142c(struct GaiaRockInsideOrbit *object) {

@@ -6,14 +6,14 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "event_inline.h"
+#include "field.h"
+#include "module/field/field.h"
+#include "module/scene/settlements.h"
+#include "module/tla.h"
 
 void Func_02001d30(s32 value) { gData_02002ce8 = value; }
 
 void Func_020016b0(void);
-void Func_0200173c(void);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 void Func_02001d3c(void) {
   struct Actor *object;
@@ -126,39 +126,17 @@ end:
 #include "text/msg_ids.h"
 
 void Func_02000280(void);
-void Func_02000290(void);
 void Func_020002a0(void);
 void Func_020002b0(void);
 void Func_020002bc(void);
-void Func_02000404(void);
 void Func_0200043c(void);
-void Func_02000488(void);
-void Func_020004a8(void);
 void Func_020005cc(void);
-void Func_020005f4(void);
-void Func_02000624(void);
 void Func_02000644(void);
-void Func_02000c1c(void);
-void Func_02000c2c(void);
-void Func_02000c3c(void);
 void Func_02000c44(void);
-void Func_02000cfc(void);
-void Func_02000ef0(void);
-void Func_02000f00(void);
 void Func_020011bc(void);
-void Func_020011c8(void);
 void Func_020011d4(void);
-void Func_0200125c(void);
-void Func_020012c0(void);
-void Func_02001304(void);
-void Func_0200155c(void);
-void Func_020016a4(void);
 
-extern u32 gData_020021b8[];
-extern u32 gData_020021f4[];
 extern u32 gData_02002230[];
-extern s32 gData_020022e4[];
-extern u32 gData_0200231c[];
 
 // clang-format off
 u32 gData_020021b8[] = {

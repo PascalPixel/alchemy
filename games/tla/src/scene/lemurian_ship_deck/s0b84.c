@@ -18,22 +18,11 @@
 #include "call.h"
 #include "frame.h"
 #include "field.h"
+#include "module/scene/lemurian_ship_deck.h"
+#include "module/scene/scene.h"
 
-extern s32 gData_020024b4;
-extern s32 gData_020024b0;
-extern u32 gData_0200218c[];
-extern u32 gData_020021e8[];
-extern u32 gData_0200221c[];
-
-void Func_02000188(void);
 void Func_020001cc(void);
-void Func_02000258(void);
-void Func_02000288(void);
-void Func_020002cc(void);
 void Func_020006e4(void);
-void Map_CenterOnFollowedPoint(void);
-void Event_Start(void);
-void Func_0200206c(void);
 
 static __inline__ void AddTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
@@ -300,19 +289,6 @@ void Func_02000b84(void) {
     Func_020006e4();
 }
 
-extern s16 gData_020020dc[];
-
-void Func_020020c4(const void *data);
-void Func_02000210(void);
-
-struct MapMode {
-  u8 unk00[23];
-  struct MapModeBits {
-    u8 low : 2;
-    u8 mode : 2;
-  } __attribute__((packed)) bits;
-};
-
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *party;
   struct MapMode *map = (struct MapMode *)Ram_HeapSlots->mapWork;
@@ -353,8 +329,6 @@ s32 Scene_Initialize(void) {
   }
   return 0;
 }
-
-void Event_End(void);
 
 static __inline__ void Func_02001f2c_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
@@ -481,8 +455,6 @@ void Func_02000ce0(void) {
   Event_SetFlag(0x980);
 }
 
-void Func_020020cc(const void *data);
-
 void Func_02001064(void) { Func_020020cc(gData_020020dc); }
 
 void Actor_MoveToObject(s32 id, s32 target);
@@ -532,8 +504,6 @@ void Func_02001074(void) {
 
 void Func_02001178(void) { GameFlag_ClearBit(0x212); }
 
-extern u32 gData_0200247c[];
-
 void Func_02001efc(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *data);
 
@@ -555,7 +525,8 @@ void Func_02001188(void) {
   }
 }
 
-u8 *HeapSlot_AllocFar(s32 slot, s32 size);
+/* VIEW(s0b84): routine HeapSlot_AllocFar as u8 *HeapSlot_AllocFar(s32 slot, s32 size); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
+extern u8 *HeapSlot_AllocFar__s0b84(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
 
 struct Actor *Func_02001210(void) {
   struct Actor *object = (struct Actor *)Import_ActorCreate(0x1e9, 0x1680000, 0x400000, 0x1a80000);
@@ -572,16 +543,12 @@ struct Actor *Func_02001210(void) {
   object->unk5c[0] = 1;
   sprite->nextFrame = 0;
   sprite->unk1b[0] = 0;
-  buffer = HeapSlot_AllocFar(68, 0x608);
+  buffer = HeapSlot_AllocFar__s0b84(68, 0x608);
   Icon_DrawItem(242);
   VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
   HeapSlot_Release(68);
   return object;
 }
-
-extern u32 gData_02002120[];
-
-void Func_02001f14(struct Actor *object);
 
 /// Once flag 7 is set, and only until flag 0x985 is: a scene of actor 7 and the
 /// leader, which ends by setting flags 0x201 and 0x985.
@@ -653,8 +620,6 @@ void Func_0200128c(void) {
   Event_SetFlag(0x985);
   Event_End();
 }
-
-extern u32 gData_020020e4[];
 
 /// Once flag 0x8ff is set, and only until flag 0x989 is: the crew talks
 /// over the ship, the leader answers two prompts, and everyone leaves by
@@ -878,8 +843,6 @@ void Func_020014c0(void) {
   Event_End();
 }
 
-extern u32 gData_02002498[];
-
 void Func_02001d60(struct Actor *object) {
   struct Actor *spawned;
 
@@ -936,9 +899,6 @@ void Func_02001da0(void) {
 }
 
 #include "objcmd.h"
-
-void Func_02000078(void);
-void Func_02000168(void);
 
 // clang-format off
 s16 gData_020020dc[] = {

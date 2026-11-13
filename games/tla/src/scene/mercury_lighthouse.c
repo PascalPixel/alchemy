@@ -21,14 +21,12 @@
 
 #include "objcmd.h"
 #include "frame.h"
-
-extern u32 gData_020007e4;
+#include "event_work.h"
+#include "module/scene/mercury_lighthouse.h"
+#include "module/scene/scene.h"
+#include "text/msg_ids.h"
 
 struct Actor;
-void Func_020001b0(void);
-void Event_Start(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 s32 Func_02000038(struct Actor *object) {
   if ((gData_020007e4 >> 1) & 1)
@@ -80,9 +78,8 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-extern s32 gData_02000618[];
-
-void Func_02000540(struct Actor *object, s32 mode);
+/* VIEW(mercury_lighthouse): routine Func_02000540 as void Func_02000540(struct Actor *object, s32 mode); module/scene/apojii_islands.h has void Func_02000540(void). */
+extern void Func_02000540__mercury_lighthouse(struct Actor *object, s32 mode) __asm__("Func_02000540");
 void Actor_StartScript(struct Actor *object, const void *script);
 
 void Func_020000f4(void) {
@@ -113,16 +110,11 @@ void Func_020000f4(void) {
       object->priorityFlags &= ~1;
       sprite->priority = 2;
       Actor_StartScript(object, gData_02000618);
-      Func_02000540(object, 1);
+      Func_02000540__mercury_lighthouse(object, 1);
     }
   }
   gData_020007e4++;
 }
-
-extern u8 MsgImilVoicesDisbeliefReply[];
-
-void Event_FinishScreenTransition(void);
-void Func_02000608(void);
 
 void Func_020001b0(void) {
   struct Actor *actor;

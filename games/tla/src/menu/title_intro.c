@@ -25,8 +25,11 @@
 #include "scene.h"
 #include "bg_scroll.h"
 #include "palette_buffers.h"
-
-extern char ResourceId_Data018;
+#include "actor.h"
+#include "module/menu/menu.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "resource_ids.h"
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
@@ -64,12 +67,6 @@ s32 Title_WaitOrPress(u32 frames) {
   return 0;
 }
 
-struct TitleScrollStep {
-  s32 frames;
-  s32 speed[4];
-  u32 mask[4];
-};
-
 s32 Title_RunScrollStep(struct TitleScrollStep *step) {
   s32 i;
 
@@ -87,9 +84,6 @@ s32 Title_RunScrollStep(struct TitleScrollStep *step) {
   }
   return 1;
 }
-
-void PaletteFade_SetCurrent(s32 index, s32 transform);
-void Fade_Wait(void);
 
 #define TITLE_STEP(f, s0, s1, s2, s3, m0, m1, m2, m3)                          \
   (step.frames = (f), step.speed[0] = (s0), step.speed[1] = (s1),              \
@@ -337,25 +331,6 @@ s32 Func_081a6724(void) {
   return 1;
 }
 
-struct TitleScroll {
-  s16 pos;
-  s16 limit;
-  u16 step;
-  u8 *src;
-  u8 *dst;
-  u16 *cursor;
-  u16 tile;
-  s16 scroll;
-  u16 rows;
-  u32 frames;
-};
-
-struct TitleFadeTimers {
-  u8 unk00[10];
-  s16 white;
-  s16 back;
-};
-
 /// Scrolls the intro's tall picture from one position to another: each step
 /// moves it by the scroll's step and waits its frames, streams in the next map
 /// rows' tiles when scrolling down and takes them back when scrolling up, and
@@ -432,22 +407,6 @@ done:
   return 0;
 }
 
-struct OamEntry {
-  u32 y : 8;
-  u32 affine : 2;
-  u32 mode : 2;
-  u32 mosaic : 1;
-  u32 colors256 : 1;
-  u32 shape : 2;
-  u32 x : 9;
-  u32 matrix : 5;
-  u32 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u16 unused;
-};
-
 void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y) {
   struct OamEntry oam;
 
@@ -480,29 +439,12 @@ void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y) {
 #define LOGO_RIGHT_X 140
 #endif
 
-struct TitleLogoState {
-  s16 phase;
-  s16 frame; ///< index into gData_081a8378 (5 halfwords a frame)
-  s16 timer;
-  s16 step; ///< index into gData_081a84e6 (3 halfwords a step); the scale in
-            ///< phase 1
-  s16 delay;
-  s16 white;
-  s16 back;
-};
-
 // Declared here without const, as Camelot's code read them: a const table's
 // loads are scheduled across the stores before them (4 of 360 differ with
 // either const, 6 with both). menu/title_intro/logo.c defines both, const, in
 // ROM.
 extern s16 gData_081a8378[];
 extern s16 gData_081a84e6[];
-extern u8 Data_02026800[];
-extern char ResourceId_Data01B;
-extern char ResourceId_Data01C;
-extern char ResourceId_Data01D;
-extern char ResourceId_Data01E;
-extern char ResourceId_Data01F;
 
 #define LOAD_LOGO_TILES(id)                                                    \
   {                                                                            \
@@ -614,10 +556,6 @@ void Func_081a6b50(void) {
 }
 
 extern u8 gMapCellBuffer[];
-extern u8 Data_02019600[];
-extern u8 Data_02017080[];
-extern char ResourceId_IntroLighthousePicture;
-extern char ResourceId_IntroGullSprites;
 
 s32 Func_081a6ea0(void) {
   struct TitleScroll scroll;
@@ -775,10 +713,6 @@ done:
 #define PROMPT_TILE_BLOCKS 5
 #endif
 
-void DebugText_Clear(void);
-void VramCache_Reset(void);
-void Window_LoadGraphics(void);
-
 /// Runs the intro's pictures in turn (Func_081a6154's steps
 /// 0 to 2 between the pictures of Func_081a6638 and Func_081a6724), fading
 /// out early when a key cuts one short and running Func_081a6ea0 when all
@@ -828,29 +762,6 @@ s32 Func_081a71c8(void) {
 // (at the French position) from the first frame, without the 120-frame wait;
 // the German one, laid out for its longer prompt, loads eight prompt tiles and
 // draws two rows of three sprites from y 116.
-
-struct TitleSprite {
-  u32 next; ///< the render slot link
-  u8 y;
-  u8 attr0High; ///< shape and mode bits of attribute 0
-  u16 x : 9;
-  u16 attr1High : 7; ///< flip and size bits of attribute 1
-  s32 tile;
-};
-
-/// The title screen's state, in heap slot 172.
-struct TitleScreenWork {
-  u8 unk00[16];
-  struct TitleSprite sprites[8];
-};
-
-extern char ResourceId_TitleScreenPicture;
-extern const u8 Data_081a873e[];
-extern const u8 gTitle_PromptTiles[];
-
-void Fade_ToWhite(s32 vblanks);
-void Fade_FromWhite(s32 vblanks);
-void Func_080140d8(void *entry, s32 slot);
 
 /// The title screen: fades to white, shows Title_ScreenPicture on BG2 (its
 /// map numbered from tile 0x1a0, two blank columns a row) and, with prompt
@@ -1027,12 +938,6 @@ column:
 // As The Broken Seal's.
 void Title_NoOpPalette(void) {}
 
-extern char ResourceId_NintendoLogo;
-
-void Sound_PlayFar(s32 cue);
-void Fade_ToBlack(s32 vblanks);
-void Fade_FromBlack(s32 vblanks);
-
 /// Shows the Nintendo logo with its jingle. With mode 0 it fades in and holds
 /// two seconds; otherwise it waits a second, fades in, holds three seconds and
 /// fades out, faster once skipped. Returns -1 when A or Start skipped it.
@@ -1166,8 +1071,6 @@ col:
 // C: the `result` local (zero, stored to gBgScroll[2].y and returned), the one
 // buffer local and `* 1024 + buffer`.
 
-extern char ResourceId_CamelotLogo;
-
 s32 Func_081a76f8(void) {
   s32 result;
   u32 i;
@@ -1279,12 +1182,6 @@ void PaletteFade_Update(void) {
   IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)bank, DMA_COPY_WORDS(128));
   IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(bank + 256), DMA_COPY_WORDS(128));
 }
-
-extern u16 Data_081a877a[];
-extern u16 Data_081a87ba[];
-extern u16 Data_081a87fa[];
-s32 BattleEffect_ClampRgb555Channel(s32 value);
-s32 BattleEffect_ClampRgb555Component(s32 value);
 
 void Palette_Transform(u32 mode, u16 *source, u16 *destination,
                        s32 selectedPalettes) {

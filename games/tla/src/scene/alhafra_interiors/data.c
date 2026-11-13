@@ -1,6 +1,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
+#include "module/scene/alhafra_interiors.h"
 
 void Func_02000084(void);
 void Func_020001ac(void);
@@ -12,7 +13,6 @@ void Func_02000444(void);
 void Func_0200047c(void);
 void Func_020004b8(void);
 void Func_020004f4(void);
-void Func_02000738(void);
 
 // clang-format off
 u32 gData_02000be4[] = {

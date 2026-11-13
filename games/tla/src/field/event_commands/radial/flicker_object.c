@@ -3,6 +3,8 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "module/field/object.h"
+#include "module/field/radial.h"
 
 void BattleEffect_WaitForArcGroups(void) {
   struct ArcEffectWork *work = Ram_HeapSlots->block62;
@@ -46,17 +48,6 @@ void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode) {
 }
 
 // The arc effect's next pair of scaled sprites.
-
-
-struct ArcWork {
-  struct EffectSprite sprites[2][2];
-  s16 age[2];
-  s16 resource;
-  s16 group;
-  struct Actor *target;
-};
-
-s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
 /// Sets up the current group's two arc sprites from the effect's tiles, at the
 /// target's priority, then restarts that group's age, records the target and

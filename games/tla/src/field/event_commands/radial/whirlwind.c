@@ -3,8 +3,10 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "module/field/event_commands.h"
 
-extern const u8 gBattleEffect_SharedParticleScript[];
+/* VIEW(radial): variable gBattleEffect_SharedParticleScript as const u8 gBattleEffect_SharedParticleScript[]; object_effect_scripts.h has const s32 gBattleEffect_SharedParticleScript[]. */
+extern const u8 gBattleEffect_SharedParticleScript__radial[] __asm__("gBattleEffect_SharedParticleScript");
 
 struct OrbitEffect {
   u8 unk00[6];
@@ -23,11 +25,8 @@ struct OrbitEffect {
   void (*update)(struct OrbitEffect *);
 };
 
-void Effect_AdvanceMotion(struct FieldEffect *effect);
-void FieldEffect_RunWhirlwind(void);
-void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+/* VIEW(radial): routine Effect_AdvanceMotion as void Effect_AdvanceMotion(struct FieldEffect *effect); module/field/field_effect.h has void Effect_AdvanceMotion(union FieldObject *object). */
+extern void Effect_AdvanceMotion__radial(struct FieldEffect *effect) __asm__("Effect_AdvanceMotion");
 
 void BattleEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
   struct EffectOptions options;
@@ -37,7 +36,7 @@ void BattleEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
   u32 i;
 
   options.palette = 0;
-  options.update = Effect_AdvanceMotion;
+  options.update = Effect_AdvanceMotion__radial;
   options.startScaleX = 0xCCCC;
   options.startScaleY = 0xCCCC;
   i = 0;
@@ -74,7 +73,7 @@ void BattleEffect_WanderAroundAnchor(struct OrbitEffect *effect) {
   }
   if (++effect->timer == 101)
     Actor_StartScriptFar((struct Actor *)effect,
-                         (u32)gBattleEffect_SharedParticleScript);
+                         (u32)gBattleEffect_SharedParticleScript__radial);
 }
 
 /// Per-frame update of a Whirlwind particle: circles the anchor at 8 pixels,
@@ -106,10 +105,8 @@ void BattleEffect_CircleAnchor(struct OrbitEffect *effect) {
   }
 }
 
-
 #define Actor_SetPositionAndResetMotionFar                                     \
   ((s32 (*)(void *, s32, s32, s32))Actor_SetPositionAndResetMotionFar)
-
 
 void BattleEffect_ShrinkObjectScaleUntilHalf(struct Actor *object) {
   s32 scale;

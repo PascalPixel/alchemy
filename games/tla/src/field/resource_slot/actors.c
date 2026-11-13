@@ -4,19 +4,11 @@
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"
-
-struct AnimTrack {
-  u8 unk00[0x10];
-  u8 *script;
-  u8 index;
-};
-
-struct AnimObject {
-  u8 unk00[0x18];
-  u8 frame;
-  u8 unk19[0xf];
-  struct AnimTrack *track;
-};
+#include "flag_call.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "module/field/resource_slot.h"
+#include "module/system/system.h"
 
 void Animation_WaitForTrackEnd(struct AnimObject *object) {
   u8 frame = object->frame;
@@ -122,13 +114,6 @@ void Map_RenderAllAnimatedTilePictures(u8 **table, s32 cnt) {
   } while (pos <= 0x7FU);
 }
 
-struct Thing {
-  u8 filler0[8];
-  s32 field8;
-  u8 filler12[4];
-  s32 field16;
-};
-
 s32 Map_GetScreenRelativePosition(struct Thing *obj, s32 *out) {
   u8 *state = (u8 *)Ram_HeapSlots->mapWork;
   s32 *org = (s32 *)(state + 228);
@@ -152,18 +137,6 @@ s32 Map_GetScreenRelativePosition(struct Thing *obj, s32 *out) {
 }
 
 #include "task.h"
-
-struct MapAnimationWork {
-  u8 unk00[6];
-  u8 unk06;
-  u8 unk07;
-  u8 unk08[84];
-};
-
-void Func_0802493c(void);
-void Func_08023f9c(void);
-void Func_080246b8(void);
-void Func_0802386c(void);
 
 /// Sets up the map animation work for map mode: its 92-byte work and an 8 KB
 /// buffer, both cleared by DMA from one zero word, and the animation callbacks
@@ -281,7 +254,6 @@ void Actor_Release(struct Actor *obj) {
             REG_DMA3);
   }
 }
-
 
 struct Actor *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *object;
@@ -465,21 +437,6 @@ void Actor_RegisterSpriteMetadata(struct Actor *object, s32 value) {
 
 #include "main_routine_work.h"
 
-extern const s32 gData_0802f098[];
-extern const s32 gData_0802f0b0[];
-extern const s32 gData_0802f0c8[];
-extern const s32 gData_0802f0e0[];
-extern const s32 gData_0802f0f8[];
-extern const s32 gData_0802f110[];
-extern const s32 gData_0802f128[];
-extern const s32 gData_0802f140[];
-extern const s32 gData_0802f158[];
-extern const s32 gData_0802f170[];
-extern const s32 gData_0802f188[];
-extern const s32 gData_0802f1a0[];
-extern const s32 gData_0802f1b8[];
-extern const s32 gData_0802f1e8[];
-
 /// Starts an actor on the script that approaches its watched actor
 /// (SC_APPROACH_WATCHED), watching watched.
 void Actor_StartApproachWatched(struct Actor *actor, struct Actor *watched) {
@@ -608,7 +565,8 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority) {
 #include "render_input.h"
 #include "fixed_math.h"
 
-struct IconSprite {
+/* VIEW(resource_slot): tag struct IconSprite as struct IconSprite__resource_slot; item_icon.h has another definition. */
+struct IconSprite__resource_slot {
   u8 unk00[4];
   struct RenderOam oam;
   s32 scale;
@@ -626,21 +584,19 @@ struct IconSprite {
 
 struct IconOwner {
   u8 unk00[80];
-  struct IconSprite *sprite;
+  struct IconSprite__resource_slot *sprite;
   u8 unk54[8];
   u8 unk5c;
   u8 unk5d[5];
   u8 iconId;
 };
 
-void Func_08038248(s32 id);
-
 /// Shows icon id on its owner's 16 by 16 sprite: Func_08038248 prepares the
 /// icon in heap slot 68, whose tiles at +0x400 go to the sprite's VRAM cache
 /// slot, and the sprite is reset to scale 1.0, 16-colour palette 0.
 // No ☀️ twin found.
 void Func_0802372c(struct IconOwner *owner, s32 id) {
-  struct IconSprite *sprite;
+  struct IconSprite__resource_slot *sprite;
   u8 *buffer;
   s32 tile;
 
@@ -675,14 +631,10 @@ s32 Func_080237c8(u8 *object) {
   return 0;
 }
 
-
 void Func_080237e8(u8 *object) {
   if (object != NULL)
     Animation_WaitForTrackEnd(*(void **)(object + 0x50));
 }
-
-void Func_0802386c(void);
-void ObjectSystem_UpdateCameraFixed(void);
 
 void Graphics_EnableObjLayerAndCallbacks(void) {
   u16 dispcnt;
@@ -712,41 +664,6 @@ s32 Actor_ReturnTrue(void) { return 1; }
 #include "field/sprite.h"
 #include "field/field.h"
 
-struct PlacedSprite {
-  u8 unk00[9];
-  u8 low09 : 2;
-  u8 priority : 2;
-  u8 high09 : 4;
-  u8 unk0a[2];
-  s32 scale; ///< 16.16 fixed point
-  u8 slot;
-  u8 retainCacheEntry; ///< bit 0
-  u8 unk12[7];
-  u8 dirty;
-  u8 unk1a[0x0b];
-  u8 low25 : 2;
-  u8 shadowPriority : 2;
-  u8 high25 : 4;
-};
-
-struct CameraPoint {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct MapPriorityWork {
-  u8 unk000[0x101];
-  s8 basePriority;
-};
-
-// The decoder's block: its code, tables and work area (ld_script.ld). Only
-// the code and tables are copied.
-extern u8 Render_DecodePictureCode[];
-extern u8 Render_DecodePictureCopyEnd[];
-extern u8 Render_DecodePictureBlockSize[];
-
-s32 MapGrid_GetTerrainHeight(s32 terrainId, s32 x, s32 z);
 void Func_08022318(struct PlacedSprite *sprite, struct SpritePlacement *point,
                    s32 *scale, s32 facing, s32 depth);
 void Func_08021a84(struct PlacedSprite *sprite, s32 facing);
@@ -964,39 +881,11 @@ void Func_0802386c(void) {
   HeapSlot_Release(80);
 }
 
-
 // The fixed camera: each frame it places every object's sprites, facing them
 // by the angle from the eye to the target. The Lost Age places each object in
 // a function of its own, the body of ☀️'s ObjectSystem_UpdateCameraFixed
 // loop.
 
-struct FixedCamera {
-  struct CameraPoint eye;
-  struct CameraPoint target;
-  struct CameraPoint *eyeOverride;    ///< when set, used as the eye
-  struct CameraPoint *targetOverride; ///< when set, used as the target
-};
-
-struct PlacedObject {
-  u8 unk00[2];
-  u16 active;
-  u8 unk04[2];
-  u16 angle;
-  s32 position[4];
-  s32 scale[2];
-  u8 unk20[2];
-  u8 layer;
-  u8 flags;
-  u8 unk24[0x2c];
-  void *target;
-  u8 kind;
-  u8 unk55[0x2b];
-};
-
-extern const s32 gData_0802eb90[2];
-extern const s32 gData_0802eb98[12];
-s32 ArcTan2(s32 x, s32 y);
-s32 GameFlag_Test(s32 flag);
 void Func_0802254c(void *sprite, s32 *point, const s32 *scale, s32 facing,
                    s32 depth);
 
@@ -1115,7 +1004,6 @@ s32 Script_SetByte54(struct ScriptInterpreter *sc) {
   sc->cursor++;
   return 1;
 }
-
 
 /// Waits up to 600 frames for a field object's movement target to be unset.
 void Script_WaitForEventTimeout(void *fieldObject) {

@@ -17,6 +17,16 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
+#include "event.h"
+#include "event_work.h"
+#include "field_event.h"
+#include "flag_call.h"
+#include "module/game/game.h"
+#include "module/scene/madra.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "scene_call.h"
+#include "text/msg_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -24,7 +34,6 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern const u8 gData_02002d38[];
 extern const u8 gData_02002ff0[];
 
 const u8 *Scene_GetPlacements(void) {
@@ -33,24 +42,8 @@ const u8 *Scene_GetPlacements(void) {
   return gData_02002d38;
 }
 
-struct MadraEventWork {
-  u8 unk000[0x154];
-  s16 value154;
-};
-
-struct MadraPlacement {
-  const void *data;
-  u16 x;
-  u16 y;
-};
-
 /* VIEW(madra): variable gData_02003308 as extern struct MadraPlacement gData_02003308[]; the definition has s32 gData_02003308[] = { (s32) gData_020032fc, 0x30014, (s32) gData_020032f0, 0x17000d, (s32) gData_020032f0, 0x110011, (s32) gData_020032f0...; tried as the definition's extern s32 gData_02003308[], it does not compile in tla-ja: games/tla/src/scene/madra.c:77: request for member `x' in something not a structure or union. */
 extern struct MadraPlacement gData_02003308__madra[] __asm__("gData_02003308");
-
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Event_Start(void);
-void Event_End(void);
 
 void Func_0200006c(void) {
   struct MadraEventWork *work;
@@ -89,14 +82,6 @@ next:
   Event_WaitTransitionFrames();
   Event_End();
 }
-
-void Func_02002c88(s32 a, s32 b);
-void Func_02000f80(void);
-void Func_020019d8(void);
-
-extern const u8 gData_02003358[];
-extern const u8 gData_0200367c[];
-extern const u8 gData_0200394c[];
 
 extern u8 MsgItLooksLikeThe[];
 extern u8 MsgTheArmorerAnd[];
@@ -200,53 +185,19 @@ void Func_020002bc(void) {
   }
 }
 
-// ---- games/tla/src/scene/madra/events_b.c ----
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
-void Event_Wait(s32 frames);
 struct Actor *Actor_GetById(u32 objectId);
-void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
 void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void Actor_WaitForMoveById(s32 id);
-void Actor_CommitPositionAndActivate(u32 objectId, s32 x_offset, s32 z_offset);
-void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
-void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
-s32 FieldMessage_ShowAtActor(s32 localId, s32 unused);
-s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Map_PlayMapEdit(const void *data, s32 a, s32 b);
-void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
-void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
-void Event_Start(void);
-void Event_End(void);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 y, s32 z);
-void Event_SetMessageId(s32 message);
-void Event_ShowMessageThenWait(s32 id, s32 a, s32 b);
-void Event_ShowMessageAndWait(s32 a, s32 b);
-void Actor_ArmCallbackAndRefresh(s32 id, s32 a);
 /* VIEW(events_b): routine Func_080d47b4 as void Func_080d47b4(s32 id, s32 a, s32 b); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/src/scene/madra.c:235: conflicting types for `Func_080d47b4'. */
 extern void Func_080d47b4__events_b(s32 id, s32 a, s32 b) __asm__("Func_080d47b4");
-void Import_EventSetExitRequest(s32 a);
-void Event_ResolvePendingActions(s32 a);
-s32 Party_GetLeaderActor(void);
-void Func_02002c88(s32 a, s32 b);
-void Sound_Play(s32 a);
-void Func_02000f80(void);
-void Func_020019d8(void);
 
-extern const u8 gData_02002d38[];
 extern const u8 gData_02002ff0[];
-extern const u8 gData_02003358[];
-extern const u8 gData_0200367c[];
-extern const u8 gData_0200394c[];
 
 extern u8 MsgItLooksLikeThe[];
 extern u8 MsgTheArmorerAnd[];
@@ -377,11 +328,6 @@ void Func_02000490(void) {
 #include "event_work.h"
 #include "field_sprite.h"
 
-void Func_02000404(void);
-void Func_02000490(void);
-void Event_Start(void);
-void Event_End(void);
-
 #define PLACE(id, x, z, angle)                                                 \
   {                                                                            \
     /* FAKEMATCH(temporary): the angle held in a block local, as overlay       \
@@ -442,15 +388,7 @@ void Func_020005b8(void) {
   }
 }
 
-void Func_02002c88(s32 a, s32 b);
-void Func_02000f80(void);
-void Func_020019d8(void);
-
-extern const u8 gData_02002d38[];
 extern const u8 gData_02002ff0[];
-extern const u8 gData_02003358[];
-extern const u8 gData_0200367c[];
-extern const u8 gData_0200394c[];
 
 extern u8 MsgItLooksLikeThe[];
 extern u8 MsgTheArmorerAnd[];
@@ -659,52 +597,26 @@ void Func_02000a48(void) {
 }
 #undef PLACE
 
-// ---- games/tla/src/scene/madra/s0ac4.c ----
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void Event_Wait(s32 frames);
 struct Actor *Actor_GetById(u32 objectId);
-void Actor_TurnToFaceEachOther(s32 a, s32 b, s32 c);
-void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
-void Actor_OffsetPositionAndReset(u32 id, s32 dx, s32 dz);
 void Actor_WaitForMoveById(s32 id);
-void Actor_CommitPositionAndActivate(u32 objectId, s32 x_offset, s32 z_offset);
-void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
-void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 d);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
-s32 FieldMessage_ShowAtActor(s32 localId, s32 unused);
-s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
-void Event_Start(void);
-void Event_End(void);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 /* VIEW(s0ac4): routine Event_SetMessageId as void Event_SetMessageId(const u8 *message); event_work.h has void Event_SetMessageId(s32 message). */
 extern void Event_SetMessageId__s0ac4(const u8 *message) __asm__("Event_SetMessageId");
-void Event_ShowMessageThenWait(s32 id, s32 a, s32 b);
-void Actor_ArmCallbackAndRefresh(s32 id, s32 a);
 /* VIEW(s0ac4): routine Func_080d47b4 as struct Actor *Func_080d47b4(s32 id, s32 emote, s32 frames); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames). */
 extern struct Actor *Func_080d47b4__s0ac4(s32 id, s32 emote, s32 frames) __asm__("Func_080d47b4");
-void FieldEffect_SetAttached(s32 id, s32 a);
-void Func_02002c28(void);
-void Event_ResolvePendingActions(s32 a);
-void Event_ShowMessageAndWait(s32 id, s32 a);
 void Actor_Jump(s32 id, s32 a, s32 b);
 void Actor_LaunchFromLeader(s32 id, s32 a, s32 b, s32 c);
 /* VIEW(s0ac4): routine Map_PlayMapEdit as s32 Map_PlayMapEdit(const void *edit, s32 a, s32 b); events_b has void Map_PlayMapEdit(const void *data, s32 a, s32 b); tried as the definition's void Map_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY), it does not compile in tla-ja: games/tla/src/scene/madra.c:695: conflicting types for `Map_PlayMapEdit'. */
 extern s32 Map_PlayMapEdit__s0ac4(const void *edit, s32 a, s32 b) __asm__("Map_PlayMapEdit");
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
-void MessageArgument_Push(s32 item, s32 a);
-s32 PartyInventory_FindRoom(s32 item);
+/* VIEW(madra): routine MessageArgument_Push as void MessageArgument_Push(s32 item, s32 a); module/window/window.h has void MessageArgument_Push(u32 value, u32 kind). */
+extern void MessageArgument_Push__madra(s32 item, s32 a) __asm__("MessageArgument_Push");
 void Func_02002c50(s32 item, s32 a);
-void Party_PlaySavedMusic(void);
-void Sound_Play(s32 cue);
 s32 PartyInventory_GiveItem(s32 item, s32 count);
 void FieldMessage_Show(s32 message, s32 position);
 void Camera_FollowActor(s32 id, s32 mode);
@@ -728,15 +640,6 @@ extern const u8 MsgTheMayorTried__s0ac4[] __asm__("MsgTheMayorTried");
 extern const u8 MsgICanTBelieveIt__s0ac4[] __asm__("MsgICanTBelieveIt");
 /* VIEW(s0ac4): variable MsgWhoIsThis as extern const u8 MsgWhoIsThis[]; msg_ids.h has extern u8 MsgWhoIsThis[]. */
 extern const u8 MsgWhoIsThis__s0ac4[] __asm__("MsgWhoIsThis");
-extern u8 MsgYouThereHold[];
-extern u8 MsgHasEscaped2[];
-extern u8 MsgHeyYouLot[];
-extern u8 MsgItWasThem[];
-extern u8 MsgWasAnythingStolen[];
-extern u8 MsgWait3[];
-extern u8 MsgTheMayorTried[];
-extern u8 MsgICanTBelieveIt[];
-extern u8 MsgWhoIsThis[];
 
 static __inline__ void CommitPos(s32 id, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
@@ -1227,14 +1130,6 @@ void Func_020014fc(void) {
   Event_End();
 }
 
-/// A map edit and where it applies (Map_PlayMapEdit forwards
-/// to Map_PlayMapEdit).
-struct CellPictureCopyEntry {
-  const s16 *steps;
-  u16 unk04;
-  u16 unk06;
-};
-
 /* VIEW(s0ac4): variable gData_02003308 as extern const struct CellPictureCopyEntry gData_02003308[]; madra has extern struct MadraPlacement gData_02003308[]; tried as the definition's extern s32 gData_02003308[], it does not compile in tla-ja: games/tla/src/scene/madra.c:1293: request for member `steps' in something not a structure or union. */
 extern const struct CellPictureCopyEntry gData_02003308__s0ac4[] __asm__("gData_02003308");
 
@@ -1349,12 +1244,12 @@ void Func_020019d8(void) {
     s32 count = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) + 1;
 
     Event_SetMessageId__s0ac4(MsgTheMayorTried__s0ac4);
-    MessageArgument_Push(210, 2);
+    MessageArgument_Push__madra(210, 2);
     FieldMessage_Show((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
     Motion_SetVarCbAndRefresh(34, 2);
     Event_ShowMessageAndWait(34, 0);
     Actor_CommitPositionAndActivate(34, 16, 0);
-    MessageArgument_Push(210, 2);
+    MessageArgument_Push__madra(210, 2);
     FieldMessage_Show((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
     CommitPos(34, -16, 0);
     ArmCallbackAndRefresh(34, FACING_SOUTH);
@@ -1741,12 +1636,6 @@ void Func_020019d8(void) {
 // ---- games/tla/src/scene/madra/events_d.c ----
 #include "text/msg_ids.h"
 
-void Event_Start(void);
-void Event_End(void);
-void Func_02002c88(s32 a, s32 b);
-void Func_02000f80(void);
-void Func_020019d8(void);
-
 /* VIEW(events_d): variable gData_02002d38 as extern s16 gData_02002d38[]; s051c has extern const u8 gData_02002d38[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1888: conflicting types for `gData_02002d38'. */
 extern s16 gData_02002d38__events_d[] __asm__("gData_02002d38");
 /* VIEW(events_d): variable gData_02002ff0 as extern struct ActorPlacement gData_02002ff0[]; s051c has extern const u8 gData_02002ff0[]; tried as the definition's extern u32 gData_02002ff0[], it does not compile in tla-ja: games/tla/src/scene/madra.c:1768: conflicting types for `gData_02002ff0'. */
@@ -1832,20 +1721,9 @@ void Func_02002ab0(void) {
 
 void Func_0200006c(void);
 void Func_020002bc(void);
-void Func_02000320(void);
-void Func_0200036c(void);
-void Func_02000404(void);
-void Func_02000490(void);
 void Func_0200051c(void);
-void Func_020005b8(void);
-void Func_02000894(void);
-void Func_02000968(void);
 void Func_02000a48(void);
-void Func_02000ac4(void);
 void Func_020014fc(void);
-
-extern s16 gData_020032f0[];
-extern s16 gData_020032fc[];
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

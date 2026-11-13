@@ -3,12 +3,8 @@
 // Part of system.c.
 
 #include "../system_internal.h"
-
-extern u8 gNumberTextBuffer[];
-extern const u8 gText_HexDigits[];
-extern u16 *gData_030011c4;
-
-u32 Math_UnsignedMulHigh(u32 a, u32 b);
+#include "module/tla.h"
+#include "resource_ids.h"
 
 void NumberText_FormatHex(u32 value) {
   u8 *buffer = gNumberTextBuffer;
@@ -121,8 +117,6 @@ void DebugText_PrintDecimal(s32 value, s32 digits) {
   NumberText_FormatDecimal(value);
   DebugText_Print((const u8 *)(((u32)&gNumberTextDecimalEnd) - n));
 }
-
-extern char ResourceId_WindowTiles;
 
 /// Blanks the debug text screen (screen block 4), homes the debug text cursor
 /// and points BG0 at the screen.

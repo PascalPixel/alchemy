@@ -13,6 +13,7 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "module/scene/scene.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -107,7 +108,6 @@ void Func_0200024c(s32 actor) {
     Event_ShowMessageAndWait(actor, 0);
   }
 }
-
 
 void Func_02000298(s32 a0) {
   Actor_ShowEmote(a0, 0x107, 0x1e);
@@ -208,15 +208,12 @@ u8 *Scene_GetEvents(void) {
 }
 
 s32 Func_02000bbc();
-extern u8 gData_02001c90[];
 
 s32 Func_02000578(s32 a0) {
   Func_02000bbc((s32)gData_02001c90, FIELD_AT(a0, s32, 8),
                 (FIELD_AT(a0, s32, 12) + 0xc0000), FIELD_AT(a0, s32, 16));
   return 0;
 }
-
-extern u8 gData_02001c60[];
 
 s32 Func_02000598(s32 a0) {
   Func_02000bbc((s32)gData_02001c60, FIELD_AT(a0, s32, 8),

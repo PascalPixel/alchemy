@@ -21,34 +21,21 @@
 #include "main_routine_work.h"
 #include "scene_ids.h"
 #include "scene_tables.h"
+#include "actor.h"
+#include "flag_call.h"
+#include "frame.h"
+#include "gamepak/far_call/lucky_dice.h"
+#include "module/field/field.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "task.h"
 
-extern u8 gDebugMode;
-extern u8 gRenderOamEnabled;
-extern struct SceneEntries gOverlayArea;
+/* VIEW(main_routine): variable gOverlayArea as struct SceneEntries gOverlayArea; scene.h has void *gOverlayArea[]. */
+extern struct SceneEntries gOverlayArea__main_routine __asm__("gOverlayArea");
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void GameFlag_RefreshLureCapFar(void);
 void *Unit_Get(s32 owner);
-void Sound_PlayFar(s32 cue);
-void Func_080ad090(void);
-void Func_08038348(s32 first, s32 second);
-void VramCache_Reset(void);
-void Task_ResetAll(void);
-void Irq_SetHandler(s32 index, s32 a, s32 b);
-void Heap_Initialize(void);
-void DebugText_Clear(void);
-s32 Battle_RunEncounterFar(s32 entrance);
-s32 LuckyDice_StartFar(s32 entrance);
-s32 Resource_FarCall00E(s32 entrance);
-s32 Resource_FarCall00F(s32 entrance);
-void Func_080c9c38(s32 unused, s32 keep);
-void Func_080c9de0(s32 id, s32 variant);
-void Func_080ca3f4(s32 scene, s32 entrance);
-void Scene_ResolveInteractionResult(void);
-void Party_PlaySavedMusic(void);
-void BattleEffect_LoadResourceGroup(s32 unused);
+/* VIEW(main_routine): routine Irq_SetHandler as void Irq_SetHandler(s32 index, s32 a, s32 b); irq.h has void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler). */
+extern void Irq_SetHandler__main_routine(s32 index, s32 a, s32 b) __asm__("Irq_SetHandler");
 s32 FieldSequence_Run(s32 entrance);
 
 /// The scene overlay's exit table: a header word holding a scene id, then that
@@ -82,7 +69,7 @@ void Scene_TakeExit(s32 exitKind) {
   s32 flag;
 
   currentScene = gMainRoutineWork.scene;
-  exitTable = gOverlayArea.exits();
+  exitTable = gOverlayArea__main_routine.exits();
   nextScene = EXIT_NONE;
   nextEntrance = 0;
   if (exitKind == EXIT_NONE)
@@ -194,21 +181,6 @@ s16 Field_GetSceneAttributes(s32 scene) {
   return gScenes[scene].attributes;
 }
 
-/// Sequence ids above the scene table's rows, as The Broken Seal's
-/// SEQUENCE_ values: the sequences other than the field sequence.
-enum {
-  // XXX: what sequence Resource_FarCall00F runs here, where The Broken
-  // Seal's SEQUENCE_NONE runs nothing; Func_081b83c4
-  // (field/dice_game.c) and a scene that leaves for it would
-  // settle it.
-  SEQUENCE_UNK_1FB = 0x1fb,
-  SEQUENCE_SLOTS = 0x1fc, ///< the slots sequence (LuckyWheels_Run)
-  SEQUENCE_DICE = 0x1fd,  ///< the dice sequence (LuckyDice_Run)
-  SEQUENCE_BATTLE = 0x1fe ///< a battle; the entrance is the formation
-};
-
-enum { MINIGAME_PALETTE_FIRST = 14, MINIGAME_PALETTE_BYTES = 64 };
-
 #define RUN_SAVING_PALETTES(call)                                              \
   {                                                                            \
     void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);         \
@@ -268,8 +240,8 @@ void MainRoutine_Run(s32 mode) {
     }
     gRenderOamEnabled = 1;
     Task_ResetAll();
-    Irq_SetHandler(1, 0, 0);
-    Irq_SetHandler(2, 0, 0);
+    Irq_SetHandler__main_routine(1, 0, 0);
+    Irq_SetHandler__main_routine(2, 0, 0);
     Heap_Initialize();
     DebugText_Clear();
     VramCache_Reset();
@@ -315,7 +287,7 @@ void BattleEffect_LoadResourceGroup(s32 unused) {
   const struct Scene *table = gScenes;
   s16 scene = gMainRoutineWork.scene;
 
-  Resource_LoadCode(table[scene].resourceId, &gOverlayArea);
+  Resource_LoadCode(table[scene].resourceId, &gOverlayArea__main_routine);
 }
 
 #define SCENE_RECORD(id) (&gScenes[id])

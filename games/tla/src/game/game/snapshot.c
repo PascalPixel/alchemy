@@ -3,6 +3,7 @@
 // Part of game.c.
 
 #include "../game_internal.h"
+#include "module/game/game.h"
 
 // Added in patch 1; the Japanese release has no such function.
 #if TLA_PATCH_1
@@ -24,8 +25,8 @@ s32 Func_080b106c(s32 id) {
 s32 Func_080b106c(s32 item);
 #endif
 
-extern u16 gData_020023c4[];
-extern u16 Data_02000458[];
+/* VIEW(game): variable gData_020023c4 as u16 gData_020023c4[]; module/tla.h has u8 gData_020023c4[]. */
+extern u16 gData_020023c4__game[] __asm__("gData_020023c4");
 
 // XXX: what this snapshot puts aside and when; the twin of The Broken Seal's
 // Colosso snapshot, its callers in this game would settle it.
@@ -38,7 +39,7 @@ void InventorySnapshot_Save(void) {
   s16 first;
   s16 second;
 
-  save = gData_020023c4;
+  save = gData_020023c4__game;
   if (*save != 0x6774) {
     *save++ = 0x6774;
     first = gMainRoutineWork.packedEvents[0];
@@ -69,14 +70,14 @@ void InventorySnapshot_Save(void) {
     save[0] = inventory[0];
     save[1] = inventory[1];
   }
-  GameFlag_SetBit(0x9ff);
+  GameFlag_SetBit__game(0x9ff);
   Party_RestoreHpPp(1);
   for (i = 0xe50; i <= 0xe59; i++)
     GameFlag_ClearBit(i);
 }
 
 void InventorySnapshot_Restore(void) {
-  u16 *src = gData_020023c4;
+  u16 *src = gData_020023c4__game;
   s32 owner;
 
   if (*src++ == 0x6774) {
@@ -109,7 +110,7 @@ void InventorySnapshot_Restore(void) {
       *owners = *src;
     }
 #endif
-    src = gData_020023c4;
+    src = gData_020023c4__game;
     *src = 0;
   }
   GameFlag_ClearBit(0x9ff);

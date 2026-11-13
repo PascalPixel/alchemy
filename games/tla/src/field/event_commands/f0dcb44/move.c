@@ -4,14 +4,10 @@
 // Part of f0dcb44.c.
 
 #include "../f0dcb44_internal.h"
-
-struct WaveFxScroll {
-  u16 lines[2][162];
-  u8 unk288[2];
-  u8 page;
-  u8 unk28b[9];
-  u8 delay;
-};
+#include "module/field/event_commands.h"
+#include "module/field/f0dcb44.h"
+#include "module/field/object.h"
+#include "module/system/system.h"
 
 /// Applies BG0 line scrolling with HBlank DMA.
 void BattleEffect_ArmBg0HBlankDma(void) {
@@ -47,7 +43,6 @@ s32 BattleEffect_HueChannelRamp(s16 hue) {
   return level;
 }
 
-
 /// Advances the hue by four degrees and calculates its colour.
 void BattleEffect_AdvanceHueCycle(void) {
   struct WaveFxWork *work = Ram_HeapSlots->unk4c[3];
@@ -69,7 +64,6 @@ void BattleEffect_AdvanceHueCycle(void) {
     work->hue = 0;
 }
 
-
 void BattleEffect_SetCallbackWhenTargetUnset(struct Actor *target) {
   s32 tx;
   s32 ty;
@@ -84,8 +78,6 @@ void BattleEffect_SetCallbackWhenTargetUnset(struct Actor *target) {
   }
 }
 
-extern u8 gData_080f0e9c[];
-
 void BattleEffect_ApplyFlickerValue(void *object, s32 value) {
   s32 child = value - 1;
 
@@ -93,7 +85,6 @@ void BattleEffect_ApplyFlickerValue(void *object, s32 value) {
     child = gData_080f0e9c[(gFrameCount >> 1) & 7];
   Animation_ApplyChildValuesFar(object, child);
 }
-
 
 u16 BattleEffect_GetCycledTableWord(void) {
   struct InputState *input = &gInput;
@@ -111,38 +102,10 @@ u16 BattleEffect_GetEightWayHeadingWord(void) {
 
 // Effects: motion of the main object in an item-breaking effect.
 
-
-struct ItemBreakFragmentPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct ItemBreakFragmentSource {
-  u8 reserved00[6];
-  u16 angle; ///< Facing angle (0x10000 is one turn).
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 reserved14[70];
-  u8 flag5a;
-  u8 reserved5b[13];
-  struct ItemBreakFragmentSource *target; ///< Facing target.
-};
-
-struct ItemBreakFragmentObject {
-  u8 reserved00[72];
-  s32 field48; ///< Gravity (same offset as gravity).
-  u8 reserved4c[9];
-  u8 mode55; ///< Same offset as motionFlags.
-  u8 reserved56[8];
-  u16 field5e;
-};
-
-extern s32 ArcTan2(s32, s32);
-
-extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *);
-extern struct ItemBreakFragmentObject *Actor_Spawn(s32, s32, s32, s32);
+/* VIEW(f0dcb44): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *); module/system/system.h has void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position). */
+extern void Vector_AddPolarOffset__f0dcb44(s32, s32, struct ItemBreakFragmentPosition *) __asm__("Vector_AddPolarOffset");
+/* VIEW(f0dcb44): routine Actor_Spawn as struct ItemBreakFragmentObject *Actor_Spawn(s32, s32, s32, s32); module/field/event_commands.h has struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z). */
+extern struct ItemBreakFragmentObject *Actor_Spawn__f0dcb44(s32, s32, s32, s32) __asm__("Actor_Spawn");
 
 /// Updates the broken item's main object: with a facing target it turns toward
 /// it by at most 0x1000 (22.5 degrees), then emits one fragment particle
@@ -183,9 +146,9 @@ void BattleEffect_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src) {
   pos.z = src->z;
   dist = Random16() * 3;
   dist <<= 4;
-  Vector_AddPolarOffset(dist, Random16(), &pos);
+  Vector_AddPolarOffset__f0dcb44(dist, Random16(), &pos);
 
-  obj = Actor_Spawn(0x2a1, pos.x, pos.y, pos.z);
+  obj = Actor_Spawn__f0dcb44(0x2a1, pos.x, pos.y, pos.z);
   if (obj != 0) {
     obj->mode55 = 2;
     obj->field48 = 0x1999;
@@ -196,7 +159,6 @@ void BattleEffect_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src) {
   }
 }
 
-
 struct Vec3 {
   s32 x;
   s32 y;
@@ -205,29 +167,15 @@ struct Vec3 {
 
 struct PendingEvent;
 
-void BattleEffect_InitializeSharedScene(void);
-void BattleEffect_PrepareBufferInterpolation(void);
-void BattleEffect_SnapScaleToFull(struct Actor *object);
-s32 Func_080ce31c(s32 kind);
 /* VIEW(f0dd054): routine Func_080ce458 as struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector); battle.h has struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector). */
 extern struct PendingEvent *Func_080ce458__f0dd054(u32 filter, s32 kind, s32 selector) __asm__("Func_080ce458");
 /* VIEW(f0dd054): routine BattleEffect_GetCycledTableWord as u32 BattleEffect_GetCycledTableWord(u32 keys); the definition has u16 BattleEffect_GetCycledTableWord(void); tried as the definition's u16 BattleEffect_GetCycledTableWord(void), which the object already declares, it does not compile in tla-ja: games/tla/src/field/event_commands/f0dcb44.c:463: too many arguments to function `BattleEffect_GetCycledTableWord'. */
 extern u32 BattleEffect_GetCycledTableWord__f0dd054(u32 keys) __asm__("BattleEffect_GetCycledTableWord");
 s32 Func_08020210(struct Actor *object, struct Vec3 *position);
-struct Actor *ScriptObject_FindOverlappingEntryFar(struct Actor *object,
-                                                   struct Vec3 *position);
 s32 Func_080202f0(s32 layer, s32 x, s32 z);
 struct Actor *Actor_GetById(u32 objectId);
-void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
-                                        s32 z);
-s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target);
 void BattleEffect_StopMainActor(void);
-void UpdateRisingParticleBurst(void *object);
 void Actor_ApplyRandomChildValues(void);
-void wait(s32 frames);
-
-extern const s32 gData_080f0e60[];
-extern const u8 Data_080f0ee4[];
 
 #define MOVE_CELL_MASK 0xfff00000 ///< a 16-pixel cell
 
@@ -283,7 +231,7 @@ void Func_080dd054(void) {
   position.x = target->x;
   position.y = target->y + (16 << 16);
   position.z = target->z;
-  Vector_AddPolarOffset(16 << 16, angle, &position);
+  Vector_AddPolarOffset__f0dcb44(16 << 16, angle, &position);
   Actor_SetTargetPosition(pusher, position.x, position.y, position.z);
   BattleEffect_SnapScaleToFull(pusher);
   pusher->speedLimit = 4 << 16;
@@ -315,7 +263,7 @@ void Func_080dd054(void) {
       position.x = target->x;
       position.y = target->y + (16 << 16);
       position.z = target->z;
-      Vector_AddPolarOffset(16 << 16, angle, &position);
+      Vector_AddPolarOffset__f0dcb44(16 << 16, angle, &position);
       Actor_SetTargetPosition(pusher, position.x, position.y, position.z);
       Actor_SetMode(pusher, 1);
       pusher->velocityX = 0;
@@ -327,18 +275,18 @@ void Func_080dd054(void) {
     position.x = target->x;
     position.y = target->y + (16 << 16);
     position.z = target->z;
-    Vector_AddPolarOffset(16 << 16, angle, &position);
-    Vector_AddPolarOffset(2 << 16, direction, &position);
+    Vector_AddPolarOffset__f0dcb44(16 << 16, angle, &position);
+    Vector_AddPolarOffset__f0dcb44(2 << 16, direction, &position);
     Actor_SetTargetPosition(pusher, position.x, position.y, position.z);
     Actor_CommitPosition(pusher);
     position.x = target->x;
     position.y = target->y;
     position.z = target->z;
-    Vector_AddPolarOffset(16 << 16, direction, &position);
+    Vector_AddPolarOffset__f0dcb44(16 << 16, direction, &position);
     beyond.x = target->x;
     beyond.y = target->y;
     beyond.z = target->z;
-    Vector_AddPolarOffset(32 << 16, direction, &beyond);
+    Vector_AddPolarOffset__f0dcb44(32 << 16, direction, &beyond);
     if (Func_08020210(target, &position) > 0) {
       Actor_SetMode(pusher, 4);
       if ((gFrameCount & 15) == 0)
@@ -388,7 +336,7 @@ void Func_080dd054(void) {
     pusher->motionFlags = 0;
     pusher->speedLimit = 0x3333;
     pusher->acceleration = 0x3333;
-    Vector_AddPolarOffset(16 << 16, direction, &position);
+    Vector_AddPolarOffset__f0dcb44(16 << 16, direction, &position);
     Actor_SetTargetPosition(pusher, position.x, position.y + (16 << 16),
                             position.z);
     if (moved == 1) {
@@ -431,15 +379,6 @@ void Func_080dd054(void) {
   UpdateRisingParticleBurst(pusher);
 }
 
-
-void BattleEffect_ClearOwnedSlot(struct FieldParticle *);
-
-struct Output_08097f80 {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 void BattleEffect_UpdateOrbitAndReturn(struct FieldParticle *effect) {
   struct Output_08097f80 position;
   s8 *statePointer = &effect->state;
@@ -453,7 +392,7 @@ next_state:
     position.x = effect->originX;
     position.z = effect->originZ;
     angle = Random16();
-    Vector_AddPolarOffset(0x1e0000, (u16)angle, &position);
+    Vector_AddPolarOffset__f0dcb44(0x1e0000, (u16)angle, &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = 0x40000;
@@ -489,8 +428,6 @@ next_state:
 }
 #undef MOVE_CELL_MASK
 
-
-
 void FieldEffect_RunMove(void) {
   // Unused: gives the stack frame its 12 bytes.
   s32 work[3];
@@ -511,13 +448,10 @@ void FieldEffect_RunMove(void) {
   UpdateRisingParticleBurst(object);
 }
 
-
 extern const s32 gData_080f0e78[];
 
 /* VIEW(item_break): routine Actor_Spawn as struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z); hue has extern struct ItemBreakFragmentObject *Actor_Spawn(s32, s32, s32, s32). */
 extern struct Actor *Actor_Spawn__item_break(s32 kind, s32 x, s32 y, s32 z) __asm__("Actor_Spawn");
-void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
-                                                s32 magnitude, s32 angle);
 /* VIEW(item_break): routine BattleEffect_UpdateItemBreakFragment as void BattleEffect_UpdateItemBreakFragment(void); the definition has void BattleEffect_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src). */
 extern void BattleEffect_UpdateItemBreakFragment__item_break(void) __asm__("BattleEffect_UpdateItemBreakFragment");
 
@@ -643,7 +577,6 @@ loop:
   if (i >= 0)
     goto loop;
 }
-
 
 /// The Broken Seal's FieldEffect_WatchLeaderDistance with this game's
 /// offsets: counts the timer down and, once the leader is 60 pixels from the

@@ -4,6 +4,9 @@
 // Part of shop.c.
 
 #include "../shop_internal.h"
+#include "gamepak/far_call/window.h"
+#include "module/shop/shop.h"
+#include "module/tla.h"
 
 /// Lists the current shop's artifacts: every item of the shop's type whose
 /// shared stock counter is above zero, or of any type at a general store.
@@ -34,19 +37,6 @@ s32 Shop_ListAvailableArtifacts(void) {
   shop->stockCount = count;
   return count;
 }
-
-extern char ResourceId_ShopGemTiles;
-extern char ResourceId_MenuSmallDownArrowTiles;
-extern char ResourceId_MenuArrowTiles;
-extern char ResourceId_ShopUpArrowTiles;
-extern char ResourceId_ShopDownArrowTiles;
-
-void MenuCursor_Advance(struct ShopCursor *cursor);
-void Event_ResolveAllPendingActionsFar(void);
-void Palette_CopyObjectBankToBackground14Far(void);
-void VramBlock_LoadResource(s32 slot, s32 size, s32 resource);
-void ItemIconGrid_Initialize(void);
-void ItemIconGrid_Release(void);
 
 /// Advances the hand cursor one frame. Runs every frame as a task while a
 /// counter is open.
@@ -111,21 +101,6 @@ void Shop_ReleaseWork(void) {
   HeapSlot_Release(220);
 }
 
-s32 ShopStock_GetRowCount(void);
-s32 ShopStock_GetType(s32 row);
-void ShopStock_AddArtifacts(s32 row);
-struct RenderInput *Func_080380f8(s32 resource, s32 x, s32 y, s32 mode);
-struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
-                                       s32 style);
-void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y);
-void Shop_ShowKeeperMessage(s32 message);
-s32 Menu_SelectShopCommandFar(s32 action);
-s32 ShopStock_CopyItems(s32 stockRow, s16 *output);
-s32 Shop_SelectBuy(void);
-s32 Shop_ChooseMember(void);
-s32 Shop_RunRepairMemberChoice(void);
-void Window_CloseFar(struct RenderInput *window, s32 mode);
-
 /// Runs a shop: the shopkeeper's welcome, then buy, sell, artifacts and repair
 /// until the player leaves. `stockRow` picks the row of the stock table (the
 /// empty row 0 for one out of range) and `keeperId` the actor whose portrait
@@ -146,7 +121,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   shop = Ram_HeapSlots->menuRuntime;
   shop->shopType = ShopStock_GetType(stockRow);
   shop->keeperResource =
-      **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar(keeperId) + 80) + 40);
+      **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar__shop(keeperId) + 80) + 40);
   // The shopkeeper's portrait window, or an empty one off the right edge when
   // there is no portrait.
   window = Func_080380f8(shop->keeperResource, 0, 0, 0);
@@ -201,9 +176,9 @@ s32 Shop_OpenDebugShop(void) {
   gMainRoutineWork.coins = 200000;
   gMainRoutineWork.counterC = 28;
   // A broken Virtuous Armlet (141), a broken Muramasa (11) and a Bone (231)
-  Inventory_EquipFar(GARET,
+  Inventory_EquipFar__shop(GARET,
                      Inventory_AddItemFar(GARET, INVENTORY_BROKEN | 141));
-  Inventory_EquipFar(ISAAC, Inventory_AddItemFar(ISAAC, INVENTORY_BROKEN | 11));
+  Inventory_EquipFar__shop(ISAAC, Inventory_AddItemFar(ISAAC, INVENTORY_BROKEN | 11));
   Inventory_AddItemFar(IVAN, 231);
   ((struct BattleUnit *)Unit_Get(MIA))->poison = 1;
   ((struct BattleUnit *)Unit_Get(JENNA))->poison = 1;
@@ -220,8 +195,6 @@ void Sound_WaitForJingle(void) {
     wait(1);
   }
 }
-
-s32 BattleEffect_GetResourceIdFar(u16 id);
 
 void Shop_ShowKeeperMessage(s32 messageId) {
   struct ShopRuntime *state = Ram_HeapSlots->menuRuntime;

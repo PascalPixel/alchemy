@@ -10,14 +10,19 @@
 #include "main_routine_work.h"
 #include "field_effect.h"
 #include "event_inline.h"
+#include "event_work.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/field/field.h"
+#include "module/field/field_effect.h"
+#include "module/scene/gabomba_statue.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "resource.h"
 
-void Func_020056b4(void);
-void Map_CenterOnFollowedPoint(void);
-s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotion(union FieldObject *object);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Event_End(void);
 
 void Func_02002394(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
@@ -83,16 +88,8 @@ struct Wanderer {
 };
 
 extern u32 gData_02005af4[];
-extern u32 gData_02005b1c[];
-extern u32 gData_02005b60[];
-extern u32 gData_02005ba4[];
-extern u32 gData_02005be8[];
-extern s32 gData_02005c74[];
-extern s32 gData_02005ca0[];
 void Actor_MoveToObject(s32 id, s32 target);
-void Func_020057b4(void);
 void Func_02000f6c(void);
-s32 Func_02004d48(s32 a, s32 b);
 
 static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b) {
   /* FAKEMATCH(pin): the second argument pinned to r1, so the id is set after
@@ -244,31 +241,11 @@ void Func_020027cc(void) {
 
 #include "field.h"
 
-extern u32 gData_02005944[];
 extern const u8 gData_02005d7c[];
-extern u32 gData_02005ccc[];
-extern u32 gData_02005d24[];
 extern u32 gData_02005d8c[];
 void *Unit_Get(s32 owner);
-void Func_0200533c(void);
-void Func_02005364(void);
-void Func_02001b38(void);
-void Func_02001b68(void);
 /* VIEW(s2394): routine Func_020053bc as void Func_020053bc(const u8 *data); the definition has void Func_020053bc(const u16 *entry). */
 extern void Func_020053bc__s2394(const u8 *data) __asm__("Func_020053bc");
-void Func_02005824(void);
-void Func_0200583c(s32 index, s32 flag, s32 a, s32 b);
-void Func_0200582c(s32 index, s32 a, s32 b);
-s32 Func_02003604(void);
-s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id);
-void Func_02004f40(u32 *x_out, u32 *z_out);
-void Func_02005624(struct Actor *object, s32 mode);
-s32 ArcTan2(s32 y, s32 x);
-void Func_02005644(struct Actor *object);
-
-extern u32 gData_02005c40[];
-
-void ObjectTable_Snapshot(void);
 
 void Func_02002a64(void) {
   s32 speed;
@@ -535,15 +512,6 @@ struct EventWork1ac {
   s32 screenEffect;
 };
 
-void Func_02001c10(void);
-void Func_020020f0(s32 value);
-void Func_020034ec(void);
-void Func_020034f4(void);
-void Func_0200359c(void);
-void Func_020035f0(void);
-void Func_02003634(void);
-void Func_02003868(void);
-
 /// Prepares the current room.
 s32 Scene_Initialize(void) {
   s16 scene;
@@ -644,10 +612,9 @@ s32 Func_02003604(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-void Func_020052a4();
-void Func_020053ac();
 void Func_02001ac0();
-void Func_02002074();
+/* VIEW(s2394): routine Func_02002074 as void Func_02002074(); module/scene/gabomba_statue.h has void Func_02002074(void). */
+extern void Func_02002074__s2394() __asm__("Func_02002074");
 
 void Func_02003634(void) {
   s32 t1, t4, t6, t8, t10, t12, t14, t16, t18, t20, t22, t24, t26, t27, t29,
@@ -656,7 +623,7 @@ void Func_02003634(void) {
 
   t1 = ((s32)Actor_Get(10));
   Actor_SetSpriteColor(t1, 3);
-  Task_AddFrame((s32)Func_02002074, 0x480);
+  Task_AddFrame((s32)Func_02002074__s2394, 0x480);
   t4 = ((s32)Actor_Get(11));
   Actor_SetSpriteColor(t4, 11);
   t6 = ((s32)Actor_Get(12));
@@ -777,13 +744,6 @@ struct Sprite {
   u32 w8;
 };
 
-struct PuzzleCell {
-  u8 kind;
-  u8 blocked;
-  u8 state;
-  u8 occupied;
-};
-
 struct SceneState {
   struct PuzzleCell cells[88];
   s32 count;
@@ -801,8 +761,8 @@ struct SceneState {
 };
 
 extern struct SceneState gSceneState;
-extern const u8 gField_CachedTilesA[];
-void Func_020055cc(const u8 *data, void *buffer);
+/* VIEW(s2394): variable gField_CachedTilesA as const u8 gField_CachedTilesA[]; module/scene/scene.h has u8 gField_CachedTilesA[]. */
+extern const u8 gField_CachedTilesA__s2394[] __asm__("gField_CachedTilesA");
 
 void Func_02003868(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
@@ -821,7 +781,7 @@ void Func_020038ac(void) {
   void *buffer = Mem_Alloc(0xc00);
   s32 handle;
 
-  Func_020055cc(gField_CachedTilesA, buffer);
+  Func_020055cc(gField_CachedTilesA__s2394, buffer);
   handle = Resource_FindFreeEntry();
   VramCache_Load(handle, 0xc00, buffer);
   state->tileEntry = handle;
@@ -882,8 +842,6 @@ void Func_02003974(void) {
 
 #include "iwram_call.h"
 
-s32 Func_02003fc0(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c, s32 d);
-void Func_02004270(s32 col, s32 row, s32 a, s32 b);
 /* VIEW(s2394): routine Func_02004380 as s32 Func_02004380(s32 col, s32 row, s32 turn); the definition has u8 Func_02004380(s32 x, s32 z, s32 direction); tried as the definition's u8 Func_02004380(s32 x, s32 z, s32 direction), which the object already declares, it does not compile in tla-ja (make modern): games/tla/include/field/event_inline.h:170:48: note: expected 's32' {aka 'int'} but argument is of type 'u8 *' {aka 'unsigned char *'}. */
 extern s32 Func_02004380__s2394(s32 col, s32 row, s32 turn) __asm__("Func_02004380");
 
@@ -1126,8 +1084,6 @@ extern u8 Data_02006fc8[], Data_02006fe8[], Data_02007008[], Data_02007028[],
     Data_02007048[], gData_02007068[];
 extern s8 gData_02005ac0[];
 extern u8 gData_02005ac8[];
-s32 abs(s32);
-s32 Func_02004224(s32 from, s32 to, s32 kind);
 // Lays a random path of `length` cells across the Gabomba Statue grid (gSceneState,
 // 11 by 8 cells of four bytes) from (x0, z0) to (endX, endZ), backtracking through
 // per-step stacks (Data_02006fc8 to gData_02007068: direction, x, z, kind, tried
@@ -1253,7 +1209,6 @@ done:
 
 extern const u8 gData_02005ad4[];
 extern const u8 gData_02006ea8[];
-void Func_02004288(s32 id, s32 value);
 s32 Func_02004224(s32 row, s32 column, s32 direction) {
   s32 value = gData_02005ad4[row * 4 + column];
 
@@ -1355,13 +1310,9 @@ nextColumn: {
 
 // ---- games/tla/src/scene/gabomba_statue/puzzle_turn.c ----
 
-
-
 extern struct SceneState gSceneState;
 extern const u8 gData_02005ad4[];
 extern const u8 gData_02006ea8[];
-void Func_02004288(s32 id, s32 value);
-void Func_02005624(struct Actor *object, s32 mode);
 u8 Func_02004380(s32 x, s32 z, s32 direction) {
   s32 i;
 
@@ -1390,7 +1341,6 @@ void Func_020043a4(s32 value, s32 row) {
     object->scaleY = 0x10000;
   }
 }
-
 
 void Func_020043ec(s32 mode) {
   struct SceneState *state;
@@ -1431,9 +1381,6 @@ void Func_020043ec(s32 mode) {
 }
 
 void Func_020044b4(s32 mode) { Actor_SetModeById(gSceneState.firstId, mode); }
-
-void Func_020056b4(void);
-void Event_End(void);
 
 void Func_020044d0(s32 value) {
   struct SceneState *state = &gSceneState;
@@ -1525,8 +1472,6 @@ void Func_020046c8(void) {
 #include "affine.h"
 #include "graphics/vram_tab.h"
 
-void Func_020055ec(struct Sprite *oam, s32 depth);
-
 void Func_02004710(void) {
   s32 affine = 0;
   s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0xe4);
@@ -1576,10 +1521,6 @@ void Func_02004710(void) {
 
 #include "task.h"
 
-void Func_020038ac(void);
-void Func_02003974(void);
-s32 Func_02003a64(s32 value);
-
 s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
   struct SceneState *state = &gSceneState;
   s32 count;
@@ -1605,7 +1546,6 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
 #include "call.h"
 
 extern const u8 gData_02006f38[], gData_02006ec0[];
-s32 Math_Cosine(s32 angle);
 void Actor_StartScript(struct Actor *object, const u8 *script);
 
 void Func_02004938(struct Actor *ball, s32 step) {
@@ -1781,21 +1721,6 @@ done:
 // ---- games/tla/src/scene/gabomba_statue/s4d48.c ----
 // Scene code of overlay 0x671, in ROM order, from s4d48's offset up to the next object the overlay links.
 
-
-struct Unk02004d48 {
-  u8 unk00[8];
-  s32 x;
-  u8 unk0c[76 - 12];
-  u32 unk4c;
-  u8 unk50[98 - 80];
-  u8 unk62;
-  u8 unk63;
-  u16 unk64;
-  u16 unk66;
-};
-
-void Func_02005654();
-void Func_02005624(struct Actor *object, s32 mode);
 /* VIEW(s4d48): routine Func_02004938 as void Func_02004938(); the parts before it has another declaration; tried as the definition's void Func_02004938(struct Actor *ball, s32 step), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/gabomba_statue/s2394.c:1848: too many arguments to function `Func_02004938'. */
 extern void Func_02004938__s4d48() __asm__("Func_02004938");
 
@@ -1910,9 +1835,6 @@ s32 Func_02004d48(s32 first, s32 check) {
   return result;
 }
 
-
-
-
 void Func_02004f40(u32 *x_out, u32 *z_out) {
   u32 z;
   u32 x;
@@ -1929,8 +1851,6 @@ void Func_02004f40(u32 *x_out, u32 *z_out) {
   }
 }
 
-
-
 struct ClockWork {
   u8 *tiles;  ///< the digit sheet
   u8 *digits; ///< the five digit pictures, as loaded
@@ -1943,9 +1863,6 @@ struct ClockWork {
   u8 ringing;
   u8 mode;
 };
-
-extern u8 gData_020023c4[];
-s32 Math_Cosine(s32 angle);
 
 /// Converts the remaining frames into minutes, seconds and tenths
 /// (`MM:SS:T`).
@@ -1991,9 +1908,6 @@ s32 Func_02005020(s32 time) {
     volume = 16;
   return volume;
 }
-
-
-void Func_020055ec(struct Sprite *oam, s32 depth);
 
 /// Draws the clock's five-digit count: copies the pictures of the digits of
 /// timer + 50 out of the digit sheet and loads them, builds a plain and a
@@ -2047,9 +1961,6 @@ void Func_02005090(void) {
   }
 }
 
-
-void Func_02005210(void);
-void Func_0200525c(void);
 s32 __divsi3(s32 numerator, s32 denominator);
 s32 __modsi3(s32 numerator, s32 denominator);
 
@@ -2073,12 +1984,6 @@ void Func_0200525c(void) {
 }
 
 #include "map.h"
-
-void *Heap_AllocEwram(s32 size);
-void *Resource_GetTableEntry(s32 index);
-void Func_020055cc(const u8 *data, void *buffer);
-s32 Resource_FindFreeEntry(void);
-extern char ResourceId_ClockDigits;
 
 void Func_020052a4(s32 mode) {
   struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
@@ -2129,10 +2034,8 @@ void Func_020053ac(void) {
   ((struct ClockWork *)(gData_020023c4 + 0x288))->timer = 3600;
 }
 
-
-void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer);
-
-struct EffectWork {
+/* VIEW(s2394): tag struct EffectWork as struct EffectWork__s2394; module/tla.h has another definition. */
+struct EffectWork__s2394 {
   u8 unk00[26];
   s16 target;
 };
@@ -2153,11 +2056,6 @@ void Func_020053bc(const u16 *entry) {
     entry += 2;
   }
 }
-
-struct GabombaStatueEffectWork {
-  u8 unk00[0x1a];
-  s16 objectId;
-};
 
 // Finds the current target's table row and shrinks it.
 void Func_02005428(u16 *list, s32 mode, s32 count) {
@@ -2187,8 +2085,6 @@ void Func_02005428(u16 *list, s32 mode, s32 count) {
     list += 3;
   }
 }
-
-s32 Func_02005844(struct Actor *object);
 
 void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
   struct Actor *object = Actor_Get(id);

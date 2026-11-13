@@ -4,6 +4,8 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "module/battle/battle.h"
+#include "module/battle/presentation.h"
 
 s32 Func_0811d79c(s32 kind) {
   s32 value = kind;
@@ -28,26 +30,8 @@ s32 Func_0811d79c(s32 kind) {
 
 void Func_0811d7e4(void) {}
 
-struct ActionTargets {
-  u8 side;
-  u8 count;
-  u8 unk02;
-  u8 ids[14];
-  u8 stateA[14];
-  u8 stateB[14];
-  u8 stateC[14];
-  u8 stateD[14];
-  u16 value4a;
-  s32 message;
-  s32 value50;
-  s32 value54;
-  s32 cue;
-  s32 unk5c;
-  s32 extra;
-  s32 unk64;
-};
-
-s32 Func_0811f4d4();
+/* VIEW(battle): routine Func_0811f4d4 as s32 Func_0811f4d4(); module/battle/presentation.h has s32 Func_0811f4d4(s32 party). */
+extern s32 Func_0811f4d4__battle() __asm__("Func_0811f4d4");
 
 void Func_0811d7e8(u16 *source, struct ActionTargets *targets) {
   u16 ids[10];
@@ -63,7 +47,7 @@ void Func_0811d7e8(u16 *source, struct ActionTargets *targets) {
   own = 0;
   if (source[0] <= 7)
     own = 1;
-  own = Battle_GetTaggedSlotValue(Func_0811f4d4(own));
+  own = Battle_GetTaggedSlotValue(Func_0811f4d4__battle(own));
   targets->value50 = 2;
   targets->value54 = 14;
   {
@@ -146,30 +130,6 @@ void Func_0811d9a4(void) {
     ObjMotRst(ids[i]);
 }
 
-struct DispatchBattleWork {
-  u8 unk000[0x66c];
-  s32 brightness;
-  u16 background;
-  u8 unk672[0x67c - 0x672];
-  struct BattlePlan plan;
-  s32 skipPlayback;
-  u8 unk6e4[0x84e - 0x6e4];
-  u16 unk84e;
-  u8 unk850[0x869 - 0x850];
-  u8 actorMode;
-};
-
-s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan);
-s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode);
-s32 Func_0811df70(struct BattlePlan *plan, s32 mode);
-s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode);
-s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
-                          struct BattleActionRecord *selection);
-s32 BattleStaging_RunFlee(struct BattlePlan *plan);
-s32 Func_08124cc4(s32 party);
-void BattleUnit_ProcessActionEnd(struct BattlePlan *plan);
-void Func_0812628c(s32 mode, s32 background, s32 value);
-
 s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
   struct BattlePresentationTransition *view;
   struct DispatchBattleWork *battle;
@@ -196,7 +156,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
   camera = Ram_HeapSlots->cameraWork;
   battle->brightness = 0x10000;
   Render_ResetTransformState();
-  Transform_SetLookAt(camera->eye, camera->pos);
+  Transform_SetLookAt__battle(camera->eye, camera->pos);
   {
     s32 param;
     s32 ratio;
@@ -388,12 +348,6 @@ void Func_0811ddd8(struct BattlePlan *plan,
   effect->initialValue = 1;
 }
 
-struct EscapeTransition {
-  s32 targetYaw;
-  s32 unk04[3];
-  s32 active;
-};
-
 /// Plays a flee action, The Broken Seal's BattleStaging_RunFlee without its
 /// last wait: the party runs unless encounterMode is 2, and an enemy gets away
 /// 7 times in 10. Returns 1 when the party got away.
@@ -452,21 +406,8 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   return completed;
 }
 
-struct CastAnimationEntry {
-  u8 unk00[5];
-  u8 param;
-};
-
-struct CastAnimation {
-  u8 unk00[27];
-  u8 count;
-  u8 unk1c[12];
-  struct CastAnimationEntry *entries[1];
-};
-
-void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
-void BattleBackground_RestorePalette(void);
-void BattlePlayback_WaitForReady(void);
+/* VIEW(battle): routine BattlePlayback_WaitForReady as void BattlePlayback_WaitForReady(void); module/battle/battle.h has s32 BattlePlayback_WaitForReady(void). */
+extern void BattlePlayback_WaitForReady__battle(void) __asm__("BattlePlayback_WaitForReady");
 
 s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
   u16 units[14];
@@ -586,7 +527,7 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
       Func_08138008(&work);
     else
       Func_08138018(&work);
-    BattlePlayback_WaitForReady();
+    BattlePlayback_WaitForReady__battle();
   }
 
   BattleObject_Put();

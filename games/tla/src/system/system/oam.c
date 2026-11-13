@@ -4,8 +4,6 @@
 
 #include "../system_internal.h"
 
-extern u8 gOamBucketMasks[];
-
 void Render_ResetFrame(void) {
   gObjAffineCount = 0;
   Iwram_ClearWords(gOamBucketMasks, 32);
@@ -59,8 +57,6 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
 
   return index;
 }
-
-extern void *gOamBuckets[];
 
 /// Link entry at the head of its priority bucket (0-239).
 void Func_080140d8(void *entry, s32 slot) {

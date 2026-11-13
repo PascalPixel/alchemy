@@ -1,0 +1,104 @@
+#ifndef ALCHEMY_MODULE_SCENE_DEHKAN_PLATEAU_H
+#define ALCHEMY_MODULE_SCENE_DEHKAN_PLATEAU_H
+
+/// @file
+/// What The Lost Age's code declares for the files that use it, written once.
+
+#include "types.h"
+
+struct Actor;
+
+struct EffectWork1a {
+  u8 unk00[0x1a];
+  s16 active;
+};
+
+/// A shape grid byte seen as a bit-field, so its store takes the struct's
+/// alias set (see the FAKEMATCH tag in Func_02000d78).
+struct ShapeBits {
+  u32 shape : 8;
+};
+
+void Func_02002390(void);
+
+void Func_020000a4(const void *data, s32 mode, s32 timer);
+
+void Func_02001474(s32 show);
+
+void Func_020015b8(struct Actor *object);
+void Func_0200172c(void);
+
+void Func_02003bb8(struct Actor *object);
+
+void Func_02002b68(void);
+void Func_02002f08(void);
+
+extern u16 gData_02003fea[];
+extern u16 gData_020041b6[];
+extern u16 gData_020041b8[];
+
+void Func_0200056c(s32 id);
+
+void Func_02000974(s32 spread);
+
+void Func_02000aa8(void);
+
+void Func_02000c4c(s32 a, s32 b);
+
+extern u16 gData_02003ff2[];
+extern u16 gData_02004012[];
+extern u16 gData_02004032[];
+extern u16 gData_02004052[];
+extern u16 gData_02004068[];
+extern u16 gData_02004110[];
+extern u16 gData_02004170[];
+
+void Func_020021b4(void);
+void Func_02002604(void);
+
+void Func_0200118c(void);
+
+void Func_020012c8(void);
+void Func_02001368(void);
+void Func_020013fc(void);
+void Func_02001444(void);
+void Func_020014ec(void);
+
+void Func_02001500(void);
+
+void Func_020015e0(void);
+
+void Func_02001630(void);
+
+void Func_02001640(void);
+void Func_020016a0(void);
+
+void Func_020017a0(void);
+
+void Func_020017f4(void);
+
+void Func_02001a30(void);
+void Func_020020dc(void);
+void Func_02002114(void);
+void Func_02002124(void);
+void Func_020021e8(void);
+void Func_02002458(void);
+
+void Func_020027e0(void);
+void Func_02002a5c(void);
+void Func_02002f74(void);
+void Func_02002f9c(void);
+void Func_02002ff4(void);
+
+extern u32 gData_02003e60[];
+extern u32 gData_02003e9c[];
+
+void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer);
+
+void Func_02000bc0(s32 level, s32 layer, s32 owner);
+
+struct Actor *Func_02003df0(void);
+
+void Func_02001f94(void);
+
+#endif

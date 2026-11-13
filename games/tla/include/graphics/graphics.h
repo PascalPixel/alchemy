@@ -110,4 +110,18 @@ void WindowSystem_StartBattleUpdate(s32 kind);
 s32 Text_SetColorFar(s32 color);
 void VramBlock_LoadResourceFar(s32 entry_id, s32 mode, s32 resourceId);
 
+extern u8 gDecodeFillByte;
+
+extern const u8 gTitle_PromptTiles[];
+
+extern const u8 gFont_GlyphWidths[];
+extern s32 gWindowSprite_PulseScales[];
+extern const s8 gNameEntry_CaretWave[];
+
+extern const u8 gNameEntry_KeyboardTilemap[];
+
+extern const s8 gWindow_PartyColumnOffsets[];
+
+extern u8 Tile_BuildCellPicturesCodeSize[];
+
 #endif

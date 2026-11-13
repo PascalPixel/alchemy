@@ -3,11 +3,11 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
-
-extern const s32 Data_0812cacc[];
+#include "gamepak/far_call/game.h"
+#include "module/battle/battle.h"
+#include "module/system/system.h"
 
 struct MotionObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-s32 ArcTan2(s32 y, s32 x);
 
 /// Resets a battle actor, making its object when it has none: scale 0xe666,
 /// the anchors cleared unless keep is set, no sprite, animation, effect or
@@ -53,8 +53,6 @@ void BattleObject_Reset(struct BattleObj *actor, s32 keep) {
   actor->visible = 1;
   Actor_StartScriptFar((struct Actor *)object, Data_0812cacc);
 }
-
-s32 Inventory_GetEquippedItemFar(struct BattleUnit *unit, s32 slot);
 
 void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;

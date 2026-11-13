@@ -3,19 +3,14 @@
 // Part of f0cf050.c.
 
 #include "../f0cf050_internal.h"
-
-struct ParticleEmitter {
-  u8 padding[8];
-  struct ParticlePosition position;
-  u8 padding2[20];
-  s32 travelOffset;
-  u8 padding3[41];
-  u8 active;
-};
+#include "module/field/f0cf050.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
 
 /* VIEW(emitter): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); f0cf050 has void Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position); tried as the definition's void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position), it does not compile in tla-ja: games/tla/src/field/object/f0cf050.c:56: conflicting types for `Vector_AddPolarOffset'. */
 extern void Vector_AddPolarOffset__emitter(s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
-struct ParticleEffectObject *Actor_Spawn(s32, s32, s32, s32);
+/* VIEW(f0cf050): routine Actor_Spawn as struct ParticleEffectObject *Actor_Spawn(s32, s32, s32, s32); module/field/event_commands.h has struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z). */
+extern struct ParticleEffectObject *Actor_Spawn__f0cf050(s32, s32, s32, s32) __asm__("Actor_Spawn");
 
 void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter) {
   struct ParticlePosition position;
@@ -33,7 +28,7 @@ void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter) {
   position.z = emitter->position.z;
   randomAngle = Random16();
   Vector_AddPolarOffset__emitter(randomAngle << 4, Random16(), &position);
-  object = Actor_Spawn(0x2a1, position.x, position.y, position.z);
+  object = Actor_Spawn__f0cf050(0x2a1, position.x, position.y, position.z);
   if (object != 0) {
     s32 mask;
     u8 flags;
@@ -50,11 +45,6 @@ void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter) {
   }
 }
 
-struct RevealWork {
-  u8 unk000[0xca4];
-  s8 revealActive;
-};
-
 /// Returns 1 while Reveal is active, else 0.
 // As ☀️'s Field_IsRevealActive.
 s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
@@ -70,31 +60,7 @@ s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
   return isActive;
 }
 
-
-struct EmitterWork {
-  u8 unk000[0x14];
-  struct Actor *actors[(0xca4 - 0x14) / 4];
-  s8 revealActive;
-};
-
-struct EffectVisual {
-  u8 unk00[5];
-  u8 flags05;
-  u8 unk06[2];
-  u16 tile : 10;
-  u16 attributes : 6;
-  u8 unk0a[6];
-  u8 tileSlot;
-  u8 unk11[9];
-  u8 value1a;
-  u8 value1b;
-};
-
-extern const u8 gData_080effd8[];
-extern const u8 Data_080f01b8[];
 struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-void Func_08038248(s32 item);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
 /* VIEW(emitter): routine BattleEffect_SpawnRandomParticleAtPosition as void BattleEffect_SpawnRandomParticleAtPosition(void); the definition has void BattleEffect_SpawnRandomParticleAtPosition(const struct ParticleSource *source); tried as the definition's void BattleEffect_SpawnRandomParticleAtPosition(const struct ParticleSource *source), which the object already declares, it does not compile in tla-ja: games/tla/src/field/object/f0cf050.c:168: `BattleEffect_SpawnRandomParticleAtPosition' undeclared (first use in this function). */
 extern void BattleEffect_SpawnRandomParticleAtPosition__emitter(void) __asm__("BattleEffect_SpawnRandomParticleAtPosition");
 
@@ -190,13 +156,8 @@ void Actor_ReleaseIfPresent(struct Actor *object) {
 /// Nothing in the image calls it.
 void Func_080cf34c(void) {}
 
-
-s32 Party_GetLeaderActor(void);
 /* VIEW(rising): routine Marker_MoveLeaderAwayFromEmitter as void Marker_MoveLeaderAwayFromEmitter(void); the definition has void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter). */
 extern void Marker_MoveLeaderAwayFromEmitter__rising(void) __asm__("Marker_MoveLeaderAwayFromEmitter");
-void Actor_SetSpritePriorityDirectFar(struct Actor *object, s32 priority);
-extern const u8 gData_080effd8[];
-extern const u8 gData_080f0074[];
 
 /// Places the object 36 pixels above the controlled owner, gives it its
 /// sprite priority and, three frames on, the descent script, and turns the
@@ -257,9 +218,6 @@ struct EffectVisual__rising {
   u8 value1b;
 };
 struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-void Func_08038248(s32 item);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
-void Actor_Destroy(struct Actor *object);
 
 void BattleEffect_StartEffectObject22(s32 item, s32 flags) {
   struct Actor *owner = ObjectTable_Get(Party_GetLeaderActor());
@@ -302,15 +260,8 @@ void BattleEffect_StartEffectObject22(s32 item, s32 flags) {
   }
 }
 
-
-struct ParticleSource {
-  u8 padding[8];
-  struct ParticlePosition position;
-};
-
 /* VIEW(rising): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *); f0cf050 has void Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position); tried as the definition's void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position), it does not compile in tla-ja: games/tla/src/field/object/f0cf050.c:353: conflicting types for `Vector_AddPolarOffset'. */
 extern void Vector_AddPolarOffset__rising(s32, s32, struct ParticlePosition *) __asm__("Vector_AddPolarOffset");
-struct ParticleEffectObject *Actor_Spawn(s32, s32, s32, s32);
 
 void BattleEffect_SpawnRandomParticleAtPosition(
     const struct ParticleSource *source) {
@@ -326,7 +277,7 @@ void BattleEffect_SpawnRandomParticleAtPosition(
   position.z = source->position.z;
   random = Random16();
   Vector_AddPolarOffset__rising(random << 4, Random16(), &position);
-  object = Actor_Spawn(0x2a1, position.x, position.y, position.z);
+  object = Actor_Spawn__f0cf050(0x2a1, position.x, position.y, position.z);
   if (object != 0) {
     s32 mask;
     u8 flags;
@@ -349,10 +300,6 @@ void BattleEffect_SpawnRandomParticleAtPosition(
 // cell of a tile event, when that point is on screen.
 
 struct Actor;
-
-s16 *Func_080ceba8(void);
-s32 Func_080cec24(s32 value, s32 *out);
-struct Actor *ObjectEvent_GetObject(u32 objectId);
 
 /* VIEW(rising): variable Data_080f01b8 as extern const s32 Data_080f01b8[]; emitter has extern const u8 Data_080f01b8[]. */
 extern const s32 Data_080f01b8__rising[] __asm__("Data_080f01b8");
@@ -431,7 +378,6 @@ void Func_080cf554(void) {
     }
   }
 }
-
 
 /// Each frame, before drawing: turns windows 0 and 1 on, writes the first four
 /// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0

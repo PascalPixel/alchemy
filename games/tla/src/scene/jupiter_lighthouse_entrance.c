@@ -8,6 +8,10 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "event_work.h"
+#include "module/scene/jupiter_lighthouse_entrance.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -42,9 +46,6 @@ void Func_020000d4(void) { Call7(Func_02001b1c, 0x38, 0, 5, 3, 0x5e, 0x1a, 1); }
 
 #include "main_routine_work.h"
 
-void Event_Start(void);
-void Event_End(void);
-
 void Func_020000f4(void) {
   s32 t0;
   s32 t2;
@@ -76,7 +77,8 @@ void Func_02000184(void) { Import_EventSetExitRequest(4); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-s32 Func_02001b3c();
+/* VIEW(jupiter_lighthouse_entrance): routine Func_02001b3c as s32 Func_02001b3c(); module/scene/lemuria.h has void Func_02001b3c(void). */
+extern s32 Func_02001b3c__jupiter_lighthouse_entrance() __asm__("Func_02001b3c");
 
 s32 Scene_Initialize(void) {
   s32 clear;
@@ -85,7 +87,7 @@ s32 Scene_Initialize(void) {
   clear = Event_GetFlag(0x109);
   if (clear == 0) {
     if (gMainRoutineWork.entrance == 4)
-      Func_02001b3c(gMainRoutineWork.currentOwner);
+      Func_02001b3c__jupiter_lighthouse_entrance(gMainRoutineWork.currentOwner);
   }
   gMainRoutineWork.savedScene = (s32)&SceneId_Ov694Room2;
   gMainRoutineWork.savedEntrance = 6;
@@ -112,7 +114,6 @@ extern s32 gData_02002194;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_02002194 = value; }
-extern u16 gData_020021c0[];
 
 void Func_02000238(void) {
   u16 colors[16];
@@ -152,12 +153,7 @@ next:
 
 #include "field_event.h"
 
-extern u16 gData_020021e0[];
-extern u16 gData_020021e4[];
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02001a6c();
-void Func_02001b34();
 
 void Func_020002f4(s32 mode) {
   gData_02002198 = 1;

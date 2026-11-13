@@ -6,14 +6,14 @@
 #include "system.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "module/scene/gaia_rock_inside.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
 
 // Starts the room where persons 8 to 16 sway: unless flag 265 is set, clears
 // the sway state and places each person, then starts the sway's task.
 extern u16 gSceneState[];
 extern const s16 gData_0200533c[][2];
-
-void Func_02002b04(u32 id, s8 mode);
-void Func_02002b8c(void);
 
 /// Starts the room where persons 8 to 16 sway: unless flag 265 is set, clears
 /// the sway state and places each person, then starts the sway's task.
@@ -1543,18 +1543,9 @@ end:
    } *)(base))                                                                 \
        ->v)
 
-void Func_0200495c(s32 layer, s32 keep);
-
 void Func_02004274(s32 a0) { Func_0200495c(1, a0); }
 
-extern u8 gData_020023c4[];
-extern u32 gData_020053e4[];
-
 void *Unit_Get(s32 owner);
-void Func_020044f8(s32 level);
-void Func_020048a0(void);
-s32 Func_02004904(void);
-void Map_CenterOnFollowedPoint(void);
 void DisplayBlend_StartScript(u16 *script);
 void Func_02000aac(void);
 void Func_02000a60(void);
@@ -1682,36 +1673,9 @@ s32 Scene_PrepareMap(void) {
 
 #define GRID_WIDTH 28
 
-// One grid cell: the step that stands on it (0 for none, 99 for the border)
-// and the column and row of the next step.
-typedef struct {
-  s8 unk_0;
-  s8 unk_1;
-  s8 unk_2;
-} Unk_Cell;
-
 typedef struct {
   Unk_Cell cells[GRID_WIDTH * GRID_WIDTH];
 } Unk_Grid;
-
-// One step of the path: its number, then the step found below, to the left,
-// to the right and above it.
-typedef struct {
-  u8 unk_0;
-  u8 unk_1;
-  u8 unk_2;
-  u8 unk_3;
-  u8 unk_4;
-  u8 unk_5;
-  u8 unk_6;
-  u8 unk_7;
-} Unk_Step;
-
-// At gData_020023c4 + 0x288.
-typedef struct {
-  s32 unk_0;
-  Unk_Step steps[15];
-} Unk_Path;
 
 #define gPath ((Unk_Path *)(gData_020023c4 + 0x288))
 
@@ -1952,21 +1916,7 @@ void Func_0200485c(s32 direction) {
   Event_PlaySound(123);
 }
 
-struct GaiaRockInsideLayer {
-  u8 unk00[8];
-  s32 x;
-  s32 z;
-  u8 unk10[0x28];
-};
-
-struct GaiaRockInsideMapWork {
-  u8 unk000[0x108];
-  struct GaiaRockInsideLayer layers[2];
-};
-
 extern s8 gData_020053fc[][2];
-
-void Func_02004e0c(s32 x, s32 z, s32 width, s32 height, s32 cellX, s32 cellZ);
 
 /// From the third state on, for each of the two map layers: Func_02004e0c
 /// with the state's origin plus the layer's cell, a 15 by 10 size and the
@@ -1993,17 +1943,6 @@ void Func_020048a0(void) {
     }
   }
 }
-
-struct GaiaRockInsideNode {
-  u8 unk0[2];
-  u8 next[4];
-  u8 unk6[2];
-};
-
-struct GaiaRockInsidePath {
-  s32 current;
-  struct GaiaRockInsideNode nodes[1];
-};
 
 #define GAIA_ROCK_INSIDE_PATH                                                  \
   ((struct GaiaRockInsidePath *)(gData_020023c4 + 0x288))
@@ -2091,8 +2030,6 @@ void Func_02004a5c(s32 id, s32 x, s32 y, s32 z) {
 
 extern const u8 gData_020062d4[];
 extern const u8 gData_02006290[];
-
-s32 Math_Cosine(s32 angle);
 
 void Func_02004af0(s32 id, s32 flag) {
   struct MainRoutineWork *entryWork = &gMainRoutineWork;

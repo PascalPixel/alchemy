@@ -75,7 +75,6 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
   }
 }
 
-
 /// The event command "camera move to actor": Camera_MoveWithinMapBounds to
 /// the actor's x and z.
 void FieldCamera_MoveToActorById(s32 id, s32 use_setter) {

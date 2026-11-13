@@ -1,41 +1,12 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "objcmd.h"
+#include "module/scene/islet_cave.h"
 
-void Func_020003b0(void);
-void Func_020003bc(void);
 void Func_020003c8(void);
 void Func_020003d4(void);
-void Func_02000508(void);
-void Func_02000544(void);
-void Func_020005fc(void);
-void Func_020009a4(void);
-void Func_020009b0(void);
-void Func_020009bc(void);
-void Func_020009c8(void);
-void Func_020009d4(void);
-void Func_020009e0(void);
-void Func_020009ec(void);
-void Func_02000aec(void);
 void Func_02000b4c(void);
-void Func_02000bb0(void);
-void Func_02000c1c(void);
-void Func_02000c8c(void);
 void Func_02000cf0(void);
-void Func_02000d54(void);
-void Func_02000db8(void);
-void Func_02000e1c(void);
-void Func_02000e7c(void);
-void Func_02000ee0(void);
-void Func_02000f44(void);
-void Func_02000fa8(void);
-void Func_02001034(void);
-void Func_020010ac(void);
-void Func_0200115c(void);
-
-extern u32 gData_020013fc[];
-extern s32 gData_02001418[];
-extern s16 gData_020019d4[];
 
 // clang-format off
 s16 gData_0200134c[] = {

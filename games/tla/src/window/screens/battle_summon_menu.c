@@ -3,6 +3,8 @@
 // Part of screens.c.
 
 #include "../screens_internal.h"
+#include "gamepak/far_call/game.h"
+#include "module/window/screens.h"
 
 // Where the Japanese layout differs: the summon list's window and its Djinn
 // costs, in tiles. The Japanese edition decodes a summon's description
@@ -22,79 +24,9 @@
 #define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-struct SummonMenuWindow {
-  u8 unk00[8];
-  u16 width;
-  u16 height;
-  s16 x;
-  s16 y;
-};
-
-struct SummonMenuWork {
-  u8 unk00[3];
-  u8 dirty;
-  u8 unk04[2];
-  u8 holdTilemapUpload;
-};
-
-struct SummonMenuNavigation {
-  u8 unk00[0x30];
-  s32 row;
-  s32 page;
-  s32 preferredRow;
-  u8 unk3c[0x10];
-  s32 timer;
-  u8 unk50[0x88];
-  s32 tutorialStep;
-  s32 tutorialDelay;
-};
-
-struct SummonMenuSprite {
-  struct SummonMenuSprite *next;
-  union {
-    struct {
-      unsigned long attr01;
-      unsigned long attr23;
-    } word;
-    struct {
-      u16 y : 8;
-      u16 affine : 2;
-      u16 mode : 2;
-      u16 mosaic : 1;
-      u16 colors : 1;
-      u16 shape : 2;
-      u16 x : 9;
-      u16 affineIndex : 5;
-      u16 size : 2;
-      u16 tile : 10;
-      u16 priority : 2;
-      u16 palette : 4;
-      u16 unused;
-    } f;
-  } oam;
-};
-
-struct SummonMenuOam {
-  struct SummonMenuOam *next;
-  u16 y : 8;
-  u16 affine : 2;
-  u16 mode : 2;
-  u16 mosaic : 1;
-  u16 colors : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u16 unused;
-};
-
 #define NAVIGATION ((struct SummonMenuNavigation *)Ram_HeapSlots->unke4[0])
 #define SUMMON_END 32
 
-s32 Summon_ListLearnedFar(u8 *summons);
 void Window_PutGlyph(struct SummonMenuWindow *window, s32 character, s32 x, s32 y,
                    s32 mode);
 

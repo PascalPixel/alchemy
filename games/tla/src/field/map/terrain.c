@@ -16,8 +16,11 @@
 #include "heap_release.h"
 #include "io_reg.h"
 #include "ram_code.h"
-
-extern u32 gMapBlocks[];
+#include "frame.h"
+#include "module/field/field.h"
+#include "module/field/map.h"
+#include "module/system/system.h"
+#include "module/tla.h"
 
 u8 GetWorldMapTerrainBehavior(struct WorldPosition *position,
                               s32 *terrainKind) {
@@ -96,11 +99,6 @@ done:
   work[3] = 0;
 }
 
-extern const u8 Render_DrawMapCode[];
-extern u8 Render_DrawMapCodeSize[];
-extern u8 gData_0201c000[];
-extern u8 gData_0203c000[];
-
 void Func_0802dd08(s32 arg0, s32 arg1) {
   void (*routine)(s32, s32, u8 *, u8 *);
   u8 *tiles = gData_0201c000;
@@ -112,14 +110,6 @@ void Func_0802dd08(s32 arg0, s32 arg1) {
 
 #include "iwram_call.h"
 #include "fixed_math.h"
-
-struct ScanlineRow {
-  s32 scale;
-  s32 depth;
-  s32 offsetX;
-  s32 offsetY;
-  s32 unk10;
-};
 
 // An inline function over the fixed address, as ☀️'s iwram_call.h reaches
 // this entry (☀️'s returns the entry's s32).
@@ -189,50 +179,17 @@ void Func_0802dd70(s32 pitchSlope, s32 *position, struct ScanlineRow *row) {
 #include "input.h"
 #include "module/system/system.h"
 
-struct SpriteViewerLayer {
-  s16 spriteId;
-  s16 animationIndex;
-  u8 enabled;
-  s8 priority;
-  s8 colorMode;
-};
-
-struct ViewerMetadata {
-  u8 unk00[4];
-  u8 drawKind; ///< 20 for a sprite drawn in two parts
-};
-
-struct ViewerSprite {
-  u8 unk00[0x1a];
-  u8 flags;
-  u8 unk1b[0x1d];
-};
-
-extern u8 gDecodeFillByte;
-extern u8 gDebugMode;
 extern u32 gMapCellBuffer[];
-extern u32 Data_02018000[];
-extern u8 gResource_Data012[];
-extern const u16 gData_0802f054[8];
+/* VIEW(terrain): variable gResource_Data012 as u8 gResource_Data012[]; module/field/field.h has struct AnimationMetadata gResource_Data012[]. */
+extern u8 gResource_Data012__terrain[] __asm__("gResource_Data012");
 
-void VramCache_Reset(void);
-void Func_080230e0(s32 mode);
-s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
 /* VIEW(terrain): routine Resource_GetMetadataRecordFar as struct ViewerMetadata *Resource_GetMetadataRecordFar(s32 id); sprite_metadata.h has struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 number); tried as the definition's struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 id), it does not compile in tla-ja: games/tla/src/field/map/terrain.c:285: dereferencing pointer to incomplete type. */
 extern struct ViewerMetadata *Resource_GetMetadataRecordFar__terrain(s32 id) __asm__("Resource_GetMetadataRecordFar");
-struct ViewerSprite *ResourceObject_Create(s32 id);
-s32 ResourceMetadata_Register(struct ViewerSprite *sprite, s32 id);
-void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value);
-void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value);
-void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value);
-void SpriteViewer_SetGridColumnNumber(s32 slot, s32 value);
-s32 Func_0802e444(s32 spriteId, s32 direction);
+/* VIEW(terrain): routine ResourceObject_Create as struct ViewerSprite *ResourceObject_Create(s32 id); resource.h has struct ResourceObject *ResourceObject_Create(s32 resource). */
+extern struct ViewerSprite *ResourceObject_Create__terrain(s32 id) __asm__("ResourceObject_Create");
+/* VIEW(terrain): routine ResourceMetadata_Register as s32 ResourceMetadata_Register(struct ViewerSprite *sprite, s32 id); actor_view.h has s32 ResourceMetadata_Register(struct ActorSpriteView *, s32). */
+extern s32 ResourceMetadata_Register__terrain(struct ViewerSprite *sprite, s32 id) __asm__("ResourceMetadata_Register");
 struct SpritePlacement;
-void SpriteViewer_BuildProbeRing(s32 x, s32 z, struct SpritePlacement *out);
-void Battle_PlaceActorsByFormationKind(void);
-void Fade_FromBlack(s32 vblanks);
-
-extern char ResourceId_Data012;
 
 // The native reads the held keys afresh at each test.
 #define HELD (*(volatile u32 *)&gInput.held)
@@ -292,10 +249,10 @@ restart:
     if (Resource_GetMetadataRecordFar__terrain(layers[0].spriteId)->drawKind == 20 &&
         (i & 1))
       part = 1;
-    sprite = ResourceObject_Create(layers[0].spriteId + part + (part << 12));
-    ResourceMetadata_Register(sprite, layers[1].spriteId);
-    ResourceMetadata_Register(sprite, layers[2].spriteId);
-    ResourceMetadata_Register(sprite, layers[3].spriteId);
+    sprite = ResourceObject_Create__terrain(layers[0].spriteId + part + (part << 12));
+    ResourceMetadata_Register__terrain(sprite, layers[1].spriteId);
+    ResourceMetadata_Register__terrain(sprite, layers[2].spriteId);
+    ResourceMetadata_Register__terrain(sprite, layers[3].spriteId);
     sprite->flags = shadowsEnabled;
   }
   for (i = 0; i < 4; i++) {
@@ -474,7 +431,7 @@ next:
     }
     if (gInput.repeat & 4) {
       Task_ResetAll();
-      System_ReturnZero((s32)&ResourceId_Data012, gResource_Data012);
+      System_ReturnZero((s32)&ResourceId_Data012, gResource_Data012__terrain);
       goto restart;
     }
     if (gInput.pressed & 2) {
@@ -543,19 +500,8 @@ s32 Func_0802e444(s32 value, s32 delta) {
 #include "sprite.h"
 #include "render_placement.h"
 
-extern s32 gVBlankCount;
-
-struct ProbeShape {
-  u8 unk00[4];
-  u8 kind;
-};
-
-struct ProbeObjects {
-  u8 unk00[40];
-  struct ProbeShape *shape;
-};
-
-void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *point);
+/* VIEW(terrain): variable gVBlankCount as s32 gVBlankCount; frame.h has u32 gVBlankCount. */
+extern s32 gVBlankCount__terrain __asm__("gVBlankCount");
 
 /// Lays out the sprite viewer's ring around pixel (x, z): one position per
 /// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
@@ -572,7 +518,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY, struct SpritePlacemen
   angle = 0;
   kind = ((struct ProbeObjects *)Ram_HeapSlots->unk0c[1])->shape->kind;
   if ((gInput.held & 2) != 0)
-    angle = (s16)(gVBlankCount << 8);
+    angle = (s16)(gVBlankCount__terrain << 8);
   switch ((u32)kind) {
   case 3:
     for (i = 0; i < 6; i++) {
@@ -666,8 +612,6 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY, struct SpritePlacemen
 // ---- games/tla/src/field/grid.c ----
 #include "sprite_metadata.h"
 
-extern u8 gData_03001e60[];
-
 void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value) {
   u8 *base = Ram_HeapSlots->unk0c[1];
   s32 offset = (slot & 3) * 4 + 40;
@@ -695,19 +639,6 @@ void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value) {
     base += 56;
   } while (count >= 0);
 }
-
-struct UiGridEntry {
-  s16 no;
-  u16 x;
-  u8 value04;
-  u8 unk05[7];
-  s32 *table0c;
-  s32 value10;
-  u8 value14;
-  u8 value15;
-  u8 value16;
-  u8 value17;
-};
 
 void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
   s32 index;
@@ -759,23 +690,6 @@ void SpriteViewer_SetGridColumnNumber(s32 slot, s32 no) {
     base += 56;
   } while (count >= 0);
 }
-
-
-struct BattleCells {
-  u8 *actors;
-  u8 *unk04;
-  u8 *unk08;
-  u8 *unk0c;
-  u8 *unk10;
-  u8 *work;
-};
-
-struct Vec2 {
-  s32 x;
-  s32 y;
-};
-
-extern struct BattleCells gSpriteObjects;
 
 extern struct Vec2 gBattle_FormationPlacementScale;
 

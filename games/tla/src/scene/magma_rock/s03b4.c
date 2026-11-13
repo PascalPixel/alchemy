@@ -1,51 +1,20 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
-
-union FieldCoordinate {
-  s32 fixed;
-  struct {
-    u16 fraction;
-    s16 pixel;
-  } part;
-};
-
-struct FieldPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct StagedActor {
-  u8 unk00[6];
-  u16 facing;
-  union FieldCoordinate x;
-  union FieldCoordinate y;
-  union FieldCoordinate z;
-  u8 unk14[0x0e];
-  u8 transitionMode;
-  u8 unk23;
-  s32 velocityX;
-  u8 unk28[4];
-  s32 velocityZ;
-  s32 moveRateX;
-  s32 moveRateZ;
-  s32 targetX;
-  u8 unk3c[4];
-  s32 targetZ;
-  u8 unk44[0x15];
-  u8 collisionFlags;
-  u8 unk5a[8];
-  u8 transitionBusy;
-};
+#include "field_coordinate.h"
+#include "module/field/field.h"
+#include "module/scene/scene.h"
+#include "scene.h"
 
 extern s32 gData_02003d10[];
 
-struct StagedActor *Actor_FindInCell(struct FieldPosition *position,
-                                     struct StagedActor *self);
-void Func_02003a54(struct StagedActor *object, s32 mode);
-s32 Func_02003aac(struct StagedActor *object, struct FieldPosition *position);
-void Event_NoOp(void);
+/* VIEW(s03b4): routine Actor_FindInCell as struct StagedActor *Actor_FindInCell(struct FieldPosition *position, struct StagedActor *self); module/scene/magma_rock.h has struct Actor *Actor_FindInCell(s32 *position, struct Actor *self). */
+extern struct StagedActor *Actor_FindInCell__s03b4(struct FieldPosition *position,
+                                     struct StagedActor *self) __asm__("Actor_FindInCell");
+/* VIEW(s03b4): routine Func_02003a54 as void Func_02003a54(struct StagedActor *object, s32 mode); module/scene/magma_rock.h has void Func_02003a54(struct Actor *object, s32 a). */
+extern void Func_02003a54__s03b4(struct StagedActor *object, s32 mode) __asm__("Func_02003a54");
+/* VIEW(s03b4): routine Func_02003aac as s32 Func_02003aac(struct StagedActor *object, struct FieldPosition *position); module/scene/staff_credit.h has void Func_02003aac(struct Actor *object). */
+extern s32 Func_02003aac__s03b4(struct StagedActor *object, struct FieldPosition *position) __asm__("Func_02003aac");
 
 void Func_020003b4(void) {
   struct FieldPosition dst;
@@ -63,7 +32,7 @@ void Func_020003b4(void) {
   dst.y = lead->y.fixed;
   step <<= 16;
   dst.z = lead->z.fixed + step;
-  next = Actor_FindInCell(&dst, lead);
+  next = Actor_FindInCell__s03b4(&dst, lead);
   if (next == 0)
     return;
 
@@ -72,14 +41,14 @@ void Func_020003b4(void) {
   dst.y = next->y.fixed;
   step <<= 16;
   dst.z = next->z.fixed + step;
-  blocker = Actor_FindInCell(&dst, next);
+  blocker = Actor_FindInCell__s03b4(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 
   dst.x = next->x.fixed;
   dst.y = next->y.fixed + 0x100000;
   dst.z = next->z.fixed;
-  blocker = Actor_FindInCell(&dst, next);
+  blocker = Actor_FindInCell__s03b4(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 
@@ -89,13 +58,13 @@ void Func_020003b4(void) {
   dst.y = next->y.fixed;
   step <<= 16;
   dst.z = next->z.fixed + step;
-  if (Func_02003aac(next, &dst) > 0)
+  if (Func_02003aac__s03b4(next, &dst) > 0)
     return;
 
   if (next->transitionBusy != 0)
     return;
 
-  Func_02003a54(lead, 8);
+  Func_02003a54__s03b4(lead, 8);
   rate = 0x3333;
   System_Wait(15);
   Event_PlaySound(185);
@@ -123,7 +92,7 @@ void Func_020003b4(void) {
   lead->velocityZ = 0;
   lead->x.fixed = lead->x.part.pixel << 16;
   lead->z.fixed = lead->z.part.pixel << 16;
-  Func_02003a54(lead, 1);
+  Func_02003a54__s03b4(lead, 1);
 }
 
 #include "../../field/map/cell_fill_byte.c"

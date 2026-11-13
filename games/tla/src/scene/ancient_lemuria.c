@@ -18,6 +18,8 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "text/msg_ids.h"
+#include "module/scene/ancient_lemuria.h"
+#include "module/scene/scene.h"
 
 void Func_02000038(void) { Func_080d7788(12, 1, 13); }
 
@@ -155,9 +157,6 @@ void Func_0200043c(void) { MapCopy(39, 0, 4, 3, 25, 8, 0); }
 
 void Func_0200045c(void) { Func_02000080(13); }
 
-void Event_Start(void);
-void Event_End(void);
-
 /// Once flag 0x96c is set and 0x96d is not: sets 0x96d, clears 0x96e, launches
 /// object 12 from 22 pixels up at half size and turns it an eighth of a turn a
 /// frame for 24 frames while it grows back to full size, then leaves it facing
@@ -240,8 +239,6 @@ void Func_02000534(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-extern s16 gData_02001c30[];
-
 /// Rotates colours 2-14 of palettes 7 and 8 by one entry every four frames,
 /// and selects colour 0x7f from the table.
 s32 Func_02000630(void) {
@@ -323,14 +320,9 @@ s32 Scene_PrepareMap(void) {
 
 void Func_02000830(void) { Func_020019f4(); }
 
-struct EventWork1c4 {
-  u8 unk000[0x1c4];
-  u16 count;
-};
-
 void Actor_MoveToObject();
-void Func_020019e4();
-void Message_CloseFinishedWindows();
+/* VIEW(ancient_lemuria): routine Message_CloseFinishedWindows as void Message_CloseFinishedWindows(); module/window/window.h has void Message_CloseFinishedWindows(void). */
+extern void Message_CloseFinishedWindows__ancient_lemuria() __asm__("Message_CloseFinishedWindows");
 
 void Func_02000838(void) {
   struct Actor *leader;
@@ -444,7 +436,7 @@ void Func_02000838(void) {
   FieldMessage_ShowAtActor(9, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(0x800a, 0, 0);
-  Message_CloseFinishedWindows();
+  Message_CloseFinishedWindows__ancient_lemuria();
   Event_Wait(10);
   Actor_ShowEmote(7, 0x108, 40);
   Actor_WalkByAndWait(9, -8, 8);

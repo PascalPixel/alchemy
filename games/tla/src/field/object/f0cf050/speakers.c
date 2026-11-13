@@ -3,6 +3,9 @@
 // Part of f0cf050.c.
 
 #include "../f0cf050_internal.h"
+#include "event.h"
+#include "module/field/f0cf050.h"
+#include "resource_ids.h"
 
 /* VIEW(definition_flags): routine BattleEffect_GetAnimationValue as s32 BattleEffect_GetAnimationValue(void); the definition has s32 BattleEffect_GetAnimationValue(u32 objectId); tried as the definition's s32 BattleEffect_GetAnimationValue(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/field/object/f0cf050.c:2239: too few arguments to function `BattleEffect_GetAnimationValue'. */
 extern s32 BattleEffect_GetAnimationValue__definition_flags(void) __asm__("BattleEffect_GetAnimationValue");
@@ -48,14 +51,6 @@ s32 Func_080d1f0c(s32 key) {
 }
 
 s32 Func_080d1f18(s32 key) { return Func_080d1ee8(key); }
-
-
-extern char ResourceId_Headings;
-
-s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
-void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode);
-void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 amount);
-void BattleEffect_StartBufferInterpolation(s32 frames);
 
 /// Draws heading picture `heading` of the headings resource into a 26 by 5 cell
 /// window and opens the window from the centre, 5 pixels a side each frame
@@ -107,7 +102,6 @@ void Func_080d1f20(s32 heading) {
   }
 }
 
-
 /// Waits up to 120 frames, stopping early when a button is pressed.
 void Event_WaitTwoSecondsOrPress(void) {
   u32 i;
@@ -148,7 +142,6 @@ void Tile_ClearLeftPixels(s32 x, s32 y, u32 corner) {
 }
 
 extern s16 gData_080f3230[];
-extern char ResourceId_WindowTiles;
 
 #define DMA3 REG_DMA3
 

@@ -18,15 +18,14 @@
 #include "event_work.h"
 #include "text/msg_ids.h"
 #include "event_inline.h"
+#include "module/scene/mikasalla_interiors.h"
+#include "module/scene/scene.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-extern struct ActorPlacement gData_02000840[];
-extern struct ActorPlacement gData_02000960[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65ERoom2)
@@ -55,18 +54,13 @@ s32 Func_020000a0(void) {
   return 0;
 }
 
-extern struct Trigger gData_02000a20[];
-extern struct Trigger gData_02000bac[];
-
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65ERoom2)
     return (const struct Trigger *)gData_02000bac;
   return (const struct Trigger *)gData_02000a20;
 }
 
-void Func_0200063c();
 void Func_02000644();
-void Func_0200064c();
 
 void Func_020000f4(void) {
   s32 result0;
@@ -173,8 +167,6 @@ void Func_020002e4(s32 actor) {
   }
 }
 
-void Func_02000454(void);
-
 s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
@@ -274,9 +266,6 @@ L_02008582:
 }
 
 #include "objcmd.h"
-
-extern u32 gData_02000654[];
-extern u32 gData_0200070c[];
 
 // clang-format off
 u32 gData_02000654[] = {

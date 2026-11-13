@@ -6,10 +6,10 @@
 #include "system.h"
 
 #include "actor.h"
+#include "module/scene/airs_rock_inside.h"
+#include "module/scene/scene.h"
 
-s32 Func_02005f64(struct Actor *object);
 void Func_020006cc(struct Actor *object);
-void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer);
 
 void Func_02000038(s16 *list) {
   s16 *entry;
@@ -35,11 +35,6 @@ next:
 
 #include "types.h"
 #include "ram_buffer.h"
-
-struct GabombaStatueEffectWork {
-  u8 unk00[0x1a];
-  s16 objectId;
-};
 
 // Finds the current target's table row and shrinks it.
 void Func_020000a4(u16 *list, s32 mode, s32 count) {

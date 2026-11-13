@@ -11,9 +11,15 @@
 #include "io_write_queue.h"
 #include "io_reg.h"
 #include "main_routine_work.h"
+#include "event_work.h"
+#include "field.h"
+#include "module/scene/scene.h"
+#include "module/scene/staff_credit.h"
+#include "module/scene/world_map.h"
+#include "module/system/system.h"
+#include "resource.h"
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_020039f4(struct Actor *object);
 
 void Func_02003b38(struct Actor *object) {
   if ((gFrameCount & 2) != 0) {
@@ -27,8 +33,6 @@ void Func_02003b38(struct Actor *object) {
 }
 
 extern s32 gData_02006be4;
-extern u32 gData_02004fc8[];
-void Func_02003aac(struct Actor *object);
 
 void Func_02003b70(struct Actor *object) {
   if (gFrameCount & 1) {
@@ -53,9 +57,6 @@ void Func_02003bb8(struct Actor *object, s32 mode) {
   }
 }
 
-s32 Func_02004b90(s32 *position);
-s32 SceneEvent_FindActiveRecord(s32 a, s32 b);
-
 void Func_02003bf0(void) {
   struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
   s32 i;
@@ -72,28 +73,9 @@ void Func_02003bf0(void) {
   Func_02003bb8(object, 2);
 }
 
-void Event_Start(void);
-void Event_End(void);
-s32 Func_02004c38(s32 a, s32 b, s32 c);
-void Func_02003654(s32 a, s32 b, s32 c);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Event_FinishScreenTransition(void);
-void Func_020036a8(void);
-void Func_020048f4(void);
-
 u32 __umodsi3(u32 a, u32 b);
 
-struct TileSprite {
-  u8 unk00[18];
-  u16 tile;
-  u8 unk14[6];
-  u8 frame;
-};
-
 void Func_02003c3c(void) { Func_02003bb8(Actor_GetById(Party_GetLeaderActor()), 0); }
-
-extern u16 gData_02006e08;
 
 static inline void QueueBlend(u32 address, u32 value) {
   /* FAKEMATCH(wrapper): forwarding through the inline sets the arguments up in
@@ -156,14 +138,6 @@ void Func_02003ca8(void) {
 #include "field_sprite.h"
 #include "vram_tab.h"
 #include "resource.h"
-
-extern u8 gWorldMapPackedTiles[];
-extern u8 gWorldMapPackedPictures[];
-extern u8 gWorldMapPalettes[];
-
-void Func_02004da8(void);
-s32 Resource_DecodeType01(const void *source, void *destination);
-void DebugText_Clear(void);
 
 #define PUSH_PICTURE(offset)                                                   \
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)
@@ -270,12 +244,6 @@ void Func_02003d44(s32 mode) {
   Event_SetFlag(0x101);
 }
 
-extern u8 gWorldMapPackedTilesB[];
-extern u8 gWorldMapPackedPicturesB[];
-extern u8 gWorldMapPalettesB[];
-
-void Window_LoadGraphics(void);
-
 void Func_020042e0(void) {
   u8 *buffer = Heap_AllocEwram(0x4000);
   u8 *frames;
@@ -334,8 +302,6 @@ void Func_020042e0(void) {
   gBgScroll[0].y = 0;
 }
 
-void Func_02004634(struct Actor *object);
-
 void Func_02004500(struct Actor *object) {
   if ((gFrameCount & 2) != 0) {
     Animation_ApplyChildValues(object, 7);
@@ -362,8 +328,6 @@ void Func_02004570(struct Actor *object) {
   if (frame & 1)
     Animation_ApplyChildValues(object, (frame >> 1) % 6);
 }
-
-void Func_02004b38(struct Actor *object);
 
 void Func_02004598(struct Actor *object) {
   struct Actor *parent = object->watchedObject;
@@ -405,29 +369,8 @@ void Func_020045e4(struct Actor *object) {
   object->z = parent->z - (rise - scale) * 5 + 0x100000;
 }
 
-struct LinkedDetail {
-  u8 unk00[22];
-  u8 field16;
-};
-
-struct LinkedEffectWork {
-  u8 unk000[0x7c0];
-  u16 vramBlock;
-};
-
-/// FieldSprite's byte 0x11 read as its bits.
-struct SpriteCacheBits {
-  u8 retainCacheEntry : 1; ///< keeps the VRAM cache entry when it is released
-};
-
-struct WorldMapOam {
-  u8 unk00[6];
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-};
-
-void Animation_ApplyChildArgument(void *sprite, s32 argument);
+/* VIEW(s3b38): routine Animation_ApplyChildArgument as void Animation_ApplyChildArgument(void *sprite, s32 argument); actor_view.h has s32 Animation_ApplyChildArgument(struct ActorSpriteView *, s32). */
+extern void Animation_ApplyChildArgument__s3b38(void *sprite, s32 argument) __asm__("Animation_ApplyChildArgument");
 
 void Func_02004634(struct Actor *parent) {
   struct Actor *pair[2];
@@ -447,7 +390,7 @@ void Func_02004634(struct Actor *parent) {
       child->timer = 0;
       child->watchedObject = parent;
       if (sprite != NULL) {
-        Animation_ApplyChildArgument(sprite, 0);
+        Animation_ApplyChildArgument__s3b38(sprite, 0);
         sprite->nextFrame = 0;
         Resource_ResetEntry(sprite->vramBlock);
         sprite->vramBlock = work->vramBlock;
@@ -484,10 +427,12 @@ void Func_02004634(struct Actor *parent) {
 #include "task.h"
 #include "input.h"
 
-extern s16 gData_02006e0c;
-extern s16 gData_02006e0e;
-extern u8 Data_02006e20[][32];
-extern u8 gData_02006f20[][32];
+/* VIEW(s3b38): variable gData_02006e0c as s16 gData_02006e0c; module/scene/scene.h has u8 gData_02006e0c[]. */
+extern s16 gData_02006e0c__s3b38 __asm__("gData_02006e0c");
+/* VIEW(s3b38): variable gData_02006e0e as s16 gData_02006e0e; module/scene/scene.h has u8 gData_02006e0e[]. */
+extern s16 gData_02006e0e__s3b38 __asm__("gData_02006e0e");
+/* VIEW(s3b38): variable gData_02006f20 as u8 gData_02006f20[][32]; module/scene/scene.h has u8 gData_02006f20[]. */
+extern u8 gData_02006f20__s3b38[][32] __asm__("gData_02006f20");
 
 void Func_02004744(s32 progress) {
   s32 level = ((progress * 30 + 0x8000) >> 16) + 1;
@@ -500,43 +445,43 @@ void Func_02004744(s32 progress) {
     kind = 200;
   if (level <= 7 && (gFrameCount & 7) <= 1)
     kind = 200;
-  if (kind + level == gData_02006e0c)
+  if (kind + level == gData_02006e0c__s3b38)
     return;
-  gData_02006e0c = kind + level;
+  gData_02006e0c__s3b38 = kind + level;
   Call2((void (*)())Iwram_ClearWords, (s32)(Data_02006e20), (s32)(0x100));
   {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
 
     if (kind == 0) {
-      copy(Data_02006e20, gData_02006f20[8], 0x80);
+      copy(Data_02006e20, gData_02006f20__s3b38[8], 0x80);
       goto done;
     }
     if (kind == 100)
-      copy(Data_02006e20, gData_02006f20[4], 0x80);
+      copy(Data_02006e20, gData_02006f20__s3b38[4], 0x80);
     else
-      copy(Data_02006e20, gData_02006f20[8], 0x80);
+      copy(Data_02006e20, gData_02006f20__s3b38[8], 0x80);
   }
   base = 0;
   count = level;
   if (count > 7) {
-    Iwram_CopyWords(Data_02006e20, gData_02006f20, 32);
+    Iwram_CopyWords(Data_02006e20, gData_02006f20__s3b38, 32);
     base = 8;
     count -= 8;
   }
   if (level > 15) {
-    Iwram_CopyWords(Data_02006e20[1], gData_02006f20[1], 32);
+    Iwram_CopyWords(Data_02006e20[1], gData_02006f20__s3b38[1], 32);
     count = level;
     base = 16;
     count -= 16;
   }
   if (level > 23) {
-    Iwram_CopyWords(Data_02006e20[2], gData_02006f20[2], 32);
+    Iwram_CopyWords(Data_02006e20[2], gData_02006f20__s3b38[2], 32);
     count = level;
     base = 24;
     count -= 24;
   }
   if (level > 30) {
-    Iwram_CopyWords(Data_02006e20[3], gData_02006f20[3], 32);
+    Iwram_CopyWords(Data_02006e20[3], gData_02006f20__s3b38[3], 32);
     base = 0;
     count = 0;
   }
@@ -547,7 +492,7 @@ void Func_02004744(s32 progress) {
   loop:
     {
       s32 j;
-      u8 *source = &gData_02006f20[base / 8][4] + i / 2;
+      u8 *source = &gData_02006f20__s3b38[base / 8][4] + i / 2;
       u8 *dest = &Data_02006e20[base / 8][4] + i / 2;
       /* FAKEMATCH(barrier): the empty asm on dest changes its allocation rank;
        * as no asm, 22 of 181 instructions differ in tla-en. */
@@ -580,22 +525,17 @@ void Func_02004744(s32 progress) {
       goto loop;
   }
 done:
-  Vram_Load(gData_02006e0e, 0x100, Data_02006e20);
+  Vram_Load(gData_02006e0e__s3b38, 0x100, Data_02006e20);
 }
 
-extern s16 gData_02006e10;
-extern u32 Data_02006e14[3];
-
-void Func_02004c08(s32 value);
-s32 Func_02004c10(void);
-void Render_ProjectPoint(s32 *position, s32 *screen);
-void Func_02004ad0(u32 *oam, s32 priority);
+/* VIEW(s3b38): routine Render_ProjectPoint as void Render_ProjectPoint(s32 *position, s32 *screen); field.h has s32 Render_ProjectPoint(const void *point, s32 *screen). */
+extern void Render_ProjectPoint__s3b38(s32 *position, s32 *screen) __asm__("Render_ProjectPoint");
 
 // The world map cursor: counts down while A or B is held, redraws the gauge and
 // queues its sprite over the leader.
 void Func_020048f4(void) {
   u32 *oam = Data_02006e14;
-  s32 tile = gResourceTableEntries[gData_02006e0e].offset >> 5;
+  s32 tile = gResourceTableEntries[gData_02006e0e__s3b38].offset >> 5;
   struct Actor *leader = Actor_Get(FieldParty_GetLeaderActor());
   s32 screen[3];
   u32 attributes;
@@ -608,7 +548,7 @@ void Func_020048f4(void) {
   }
   Func_02004744(Func_02004c10());
   attributes = 0x80004000;
-  Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x), (s32)(screen));
+  Call2((void (*)())Render_ProjectPoint__s3b38, (s32)(&leader->x), (s32)(screen));
   {
     s32 x = screen[0] - 16;
     s32 y = screen[1] - 32;
@@ -620,21 +560,19 @@ void Func_020048f4(void) {
   Func_02004ad0(Data_02006e14, 255);
 }
 
-extern const u8 gWorldMapPackedTilesC[];
-
 void Func_020049bc(void) {
-  Resource_DecodeType01(gWorldMapPackedTilesC, gData_02006f20);
-  gData_02006e0e = Resource_FindFreeEntry();
-  Vram_Load(gData_02006e0e, 0x100, 0);
-  gData_02006e0c = -1;
+  Resource_DecodeType01(gWorldMapPackedTilesC, gData_02006f20__s3b38);
+  gData_02006e0e__s3b38 = Resource_FindFreeEntry();
+  Vram_Load(gData_02006e0e__s3b38, 0x100, 0);
+  gData_02006e0c__s3b38 = -1;
   gData_02006e10 = 10;
   Task_AddFrame(Func_020048f4, TASK_PASS_VBLANK - 10);
 }
 
 void Func_02004a1c(void) {
-  Resource_DecodeType01(gWorldMapPackedTilesC, gData_02006f20);
-  Resource_ResetEntry(gData_02006e0e);
-  gData_02006e0c = -1;
+  Resource_DecodeType01(gWorldMapPackedTilesC, gData_02006f20__s3b38);
+  Resource_ResetEntry(gData_02006e0e__s3b38);
+  gData_02006e0c__s3b38 = -1;
   FieldTask_Remove(Func_020048f4);
 }
 

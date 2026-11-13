@@ -10,15 +10,15 @@
 #include "system/ram_buffer.h"
 #include "resource.h"
 #include "heap_release.h"
+#include "field.h"
+#include "module/field/field_effect.h"
+#include "module/scene/magma_rock.h"
+#include "particle.h"
 
-extern u32 gData_02003e0c[];
-
-struct ResourceEntry *Func_02003bd4(void *sprite, struct ResourceEntry *last);
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-void Func_02003a54(struct FieldEffect *effect, s32 mode);
+/* VIEW(s34ac): routine Func_02003a54 as void Func_02003a54(struct FieldEffect *effect, s32 mode); module/scene/magma_rock.h has void Func_02003a54(struct Actor *object, s32 a). */
+extern void Func_02003a54__s34ac(struct FieldEffect *effect, s32 mode) __asm__("Func_02003a54");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
 void Func_020034ac(s32 spread) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -40,7 +40,7 @@ void Func_020034ac(s32 spread) {
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
-      Func_02003a54(effect, 2);
+      Func_02003a54__s34ac(effect, 2);
       Actor_StartScript(effect, gData_02003e0c);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
@@ -60,8 +60,6 @@ void Func_020034ac(s32 spread) {
     i++;
   } while (i <= 7);
 }
-
-extern u32 gData_02003e3c[];
 
 void Func_020035e0(void) {
   struct Actor *leader;
@@ -86,7 +84,7 @@ void Func_020035e0(void) {
       effect->motionFlags = zero;
       effect->collisionFlags = zero;
       Actor_SetSingleChildFlags((struct Actor *)effect, 0);
-      Func_02003a54(effect, 2);
+      Func_02003a54__s34ac(effect, 2);
       Actor_StartScript(effect, gData_02003e3c);
       angle = i << 12;
       effect->velocity.x = Math_Cosine(angle);
@@ -127,23 +125,11 @@ void Func_020036f8(s32 heightOffset, s32 layer, s32 id) {
   *shapes = Func_02003c24(actor->terrainId, value, height);
 }
 
-extern s16 gData_02003dba[];
 void Func_02002e30(const u8 *data);
-void Func_02003b3c(s32 id);
 
 void Func_02003784(s32 a, s32 b) {
   Func_020036f8(a, b, gMainRoutineWork.currentOwner);
 }
-
-struct Particle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 age;
-};
 
 struct ParticleSprite {
   u8 unk0[8];
@@ -159,7 +145,8 @@ struct ParticleWork {
   u16 tile;
 };
 
-void Func_02003c3c(struct ParticleSprite *sprite, struct Particle *particle);
+/* VIEW(s34ac): routine Func_02003c3c as void Func_02003c3c(struct ParticleSprite *sprite, struct Particle *particle); module/scene/world_map.h has void Func_02003c3c(void). */
+extern void Func_02003c3c__s34ac(struct ParticleSprite *sprite, struct Particle *particle) __asm__("Func_02003c3c");
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
 void Func_0200379c(void) {
@@ -178,7 +165,7 @@ next:
     s32 attr = sprite->attr;
 
     sprite->attr = (attr & ~0x3ff) | tile;
-    Func_02003c3c(sprite, particle);
+    Func_02003c3c__s34ac(sprite, particle);
     BattleEffect_StepVector3(particle, 63, step);
     particle->age++;
   }
@@ -188,23 +175,6 @@ next:
   if (i >= 0)
     goto next;
 }
-
-struct Entry {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 unk18;
-};
-
-struct EntryWork {
-  u8 unk0[0x500];
-  struct Entry entries[64];
-  u8 unkc00[0xa00];
-  s16 unk1600;
-};
 
 void Func_02003820(s32 x, s32 y, s32 z, s32 count) {
   struct EntryWork *work;
@@ -275,13 +245,14 @@ struct RockWork {
   u16 resource;
 };
 
-struct RockWork *HeapSlot_AllocFar(s32 slot, s32 size);
+/* VIEW(s34ac): routine HeapSlot_AllocFar as struct RockWork *HeapSlot_AllocFar(s32 slot, s32 size); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
+extern struct RockWork *HeapSlot_AllocFar__s34ac(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
 void Func_02003a14(void *entry, void *destination);
 void Func_02003c34(struct RockSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 
 void Func_020038dc(void) {
-  struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
+  struct RockWork *work = HeapSlot_AllocFar__s34ac(220, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
   s32 i;
@@ -317,11 +288,6 @@ void Func_020038dc(void) {
   Task_AddFrame(Func_0200379c, 0x480);
 }
 
-struct MagmaRockSparkWork {
-  u8 unk0000[0x1604];
-  s16 resource;
-};
-
 void Func_02003998(void) {
   struct MagmaRockSparkWork *work = Ram_HeapSlots->menuRuntime;
 
@@ -336,31 +302,14 @@ void Func_02003998(void) {
 void Func_02000940(void);
 void Func_02000a48(void);
 void Func_02001110(void);
-void Func_02001444(void);
-void Func_0200148c(void);
-void Func_020014bc(void);
+/* VIEW(s34ac): routine Func_020014bc as void Func_020014bc(void); module/scene/magma_rock.h has void Func_020014bc(s32 mode, s32 cue). */
+extern void Func_020014bc__s34ac(void) __asm__("Func_020014bc");
 void Func_020019e8(void);
 void Func_02001a38(void);
 void Func_02001a8c(void);
 void Func_02001ac0(void);
 void Func_02001af4(void);
-void Func_02001b24(void);
-void Func_02001b44(void);
-void Func_02001ba4(void);
-void Func_02001bb0(void);
-void Func_02001bc0(void);
-void Func_02001be0(void);
-void Func_02001c00(void);
-void Func_02001e08(void);
-void Func_02001edc(void);
-void Func_02001fb0(void);
-void Func_02001fd4(void);
-void Func_02001ffc(void);
 void Func_020020f8(void);
-
-extern u32 gData_02003c5c[];
-extern u32 gData_02003c98[];
-extern u32 gData_02003cd4[];
 
 // clang-format off
 u32 gData_02003c5c[] = {
@@ -644,7 +593,7 @@ struct Trigger gData_0200460c[] = {
     {0x50009705, 35, 0x204, EVENT(Func_02001af4)},
     {0x80009705, 30, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 30, 0x2f0, EVENT(Func_02001110)},
-    {0x50009705, 30, CONDITION_ALWAYS, EVENT(Func_020014bc)},
+    {0x50009705, 30, CONDITION_ALWAYS, EVENT(Func_020014bc__s34ac)},
     {0x9705, 30, CONDITION_ALWAYS, EVENT(Func_02001444)},
     {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_02001110)},
@@ -666,7 +615,7 @@ struct Trigger gData_02004720[] = {
     {TRIGGER_STEP, 51, CONDITION_ALWAYS, EVENT(Func_02001be0)},
     {0x80009705, 30, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 30, 0x2f0, EVENT(Func_02001110)},
-    {0x50009705, 30, CONDITION_ALWAYS, EVENT(Func_020014bc)},
+    {0x50009705, 30, CONDITION_ALWAYS, EVENT(Func_020014bc__s34ac)},
     {0x9705, 30, CONDITION_ALWAYS, EVENT(Func_02001444)},
     {TRIGGERS_END},
 };
@@ -717,11 +666,11 @@ struct Trigger gData_02004930[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x8db, EVENT(Func_02000a48)},
     {0x80009705, 30, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 30, 0x2f0, EVENT(Func_02001110)},
-    {0x50009705, 30, CONDITION_ALWAYS, EVENT(Func_020014bc)},
+    {0x50009705, 30, CONDITION_ALWAYS, EVENT(Func_020014bc__s34ac)},
     {0x9705, 30, CONDITION_ALWAYS, EVENT(Func_02001444)},
     {0x80009705, 31, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 31, 0x2f0, EVENT(Func_02001110)},
-    {0x50009705, 31, CONDITION_ALWAYS, EVENT(Func_020014bc)},
+    {0x50009705, 31, CONDITION_ALWAYS, EVENT(Func_020014bc__s34ac)},
     {0x9705, 31, CONDITION_ALWAYS, EVENT(Func_02001444)},
     {0x50009705, 32, 0x201, EVENT(Func_02001a38)},
     {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02001ba4)},

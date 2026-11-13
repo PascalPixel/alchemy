@@ -4,16 +4,9 @@
 
 #include "../system_internal.h"
 #include "ram_code.h"
-
-void System_CopyBuildStamp(void);
-void Window_LoadGraphics(void);
-void DebugText_Clear(void);
-void VramCache_Reset(void);
-void Func_0801399c(void);
-void Sound_InitializeFar(void);
-void MainRoutine_RunFar(s32);
-void wait(s32 frames);
-void Iwram_Halt(void);
+#include "gamepak/far_call/field_sequence.h"
+#include "gamepak/far_call/sound.h"
+#include "resource_ids.h"
 
 void Func_0801319c(void) {
   {
@@ -98,9 +91,6 @@ void Func_080132c4(void) {}
 void Func_080132c8(void) {}
 
 s32 System_ReturnZero(s32 unused0, const u8 *unused1) { return 0; }
-
-extern s32 gBuildStamp[];
-extern char ResourceId_BuildStamp;
 
 /// Copies the build stamp resource (three words) into gBuildStamp and
 /// writes the zero word that ends it. Called at power-up, before the window

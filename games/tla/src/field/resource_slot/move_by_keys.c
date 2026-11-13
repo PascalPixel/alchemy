@@ -3,18 +3,14 @@
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"
+#include "gamepak/far_call/field_sequence.h"
+#include "module/field/field.h"
+#include "module/field/resource_slot.h"
 
 /// The heading of each direction-pad combination, 0xffff for none.
 /* VIEW(move_by_keys): variable gData_0802ec5c as extern const u16 gData_0802ec5c[16]; f028aac has extern const s16 gData_0802ec5c[16]. */
 extern const u16 gData_0802ec5c__move_by_keys[16] __asm__("gData_0802ec5c");
 
-void Vector_AddPolarOffset(s32 radius, s32 angle,
-                           struct FieldPosition *position);
-s32 Func_080c8710(struct Actor *object);
-s32 Func_080c8700(struct Actor *object);
-s32 MapGrid_IsWallAt(s32 *position);
-s32 MapGrid_GetTerrainHeight(s32 terrainId, s32 x, s32 z);
-void Actor_SelectAnimation(struct Actor *object, s32 argument);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
 /// The held keys, read again at each use through a volatile pointer, as The
@@ -67,7 +63,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
     position.x = 0;
     position.y = 0;
     position.z = 0;
-    Vector_AddPolarOffset(0x80000, angle, &position);
+    Vector_AddPolarOffset__resource_slot(0x80000, angle, &position);
     position.x += object->x;
     deltaZ = position.z;
     if (deltaZ < 0)
@@ -122,8 +118,8 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   return 1;
 }
 
-
-struct ChainSlot {
+/* VIEW(resource_slot): tag struct ChainSlot as struct ChainSlot__resource_slot; module/field/field.h has another definition. */
+struct ChainSlot__resource_slot {
   s16 unk00;
   s16 unk02;
   u8 unk04[8];
@@ -133,7 +129,8 @@ struct ChainSlot {
   u8 unk1c[4];
 };
 
-struct ChainNode {
+/* VIEW(resource_slot): tag struct ChainNode as struct ChainNode__resource_slot; module/field/field.h has another definition. */
+struct ChainNode__resource_slot {
   u8 unk00[4];
   s32 x;
   s32 y;
@@ -146,19 +143,11 @@ struct ChainNode {
 
 struct ChainWork {
   u8 unk000[12];
-  struct ChainSlot slots[8];
-  struct ChainNode nodes[128];
-};
-
-struct SpriteAngle {
-  u8 unk00[18];
-  u16 angle;
+  struct ChainSlot__resource_slot slots[8];
+  struct ChainNode__resource_slot nodes[128];
 };
 
 #define CHAIN_WORK (*(struct ChainWork **)&Ram_HeapSlots->unk84[6])
-
-struct Actor *Actor_GetByIdFar(s32 id);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 
 s32 Func_080292fc(struct Actor *object) {
   struct FieldPosition position;
@@ -168,9 +157,9 @@ s32 Func_080292fc(struct Actor *object) {
   s32 bestDistance;
   s32 value;
   s32 speed;
-  struct ChainNode *best;
-  struct ChainNode *node;
-  struct ChainSlot *slot;
+  struct ChainNode__resource_slot *best;
+  struct ChainNode__resource_slot *node;
+  struct ChainSlot__resource_slot *slot;
   s32 count;
   u16 angle;
   s32 turn;
@@ -187,14 +176,14 @@ s32 Func_080292fc(struct Actor *object) {
   object->motionFlags = 0;
   angle = gData_0802ec5c__move_by_keys[(INPUT_HELD >> 4) & 15];
   if (angle == 0xffff) {
-    best = (struct ChainNode *)object->watchedObject;
+    best = (struct ChainNode__resource_slot *)object->watchedObject;
     value = 0;
   } else {
     value = 16;
     position.x = 0;
     position.y = 0;
     position.z = 0;
-    Vector_AddPolarOffset(0x80000, angle, &position);
+    Vector_AddPolarOffset__resource_slot(0x80000, angle, &position);
     position.x += object->x;
     position.y = object->y - position.z;
     position.z = object->z;
@@ -327,7 +316,7 @@ s32 Func_08029570(struct Actor *object) {
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;
-    Vector_AddPolarOffset(0x80000, angle, &position);
+    Vector_AddPolarOffset__resource_slot(0x80000, angle, &position);
     // Read through the slot's address: as Ram_HeapSlots->unk84[7], 44 of 324
     // instructions differ in tla-en.
     workA0 = *(struct WorkA0 **)&Ram_HeapSlots->unk84[7];
@@ -435,8 +424,6 @@ void Func_08029810(struct Actor *object) {
   first >>= 1;
   object->x = x + (first - second);
 }
-
-s32 Func_080c8828(s32 arg);
 
 /// When one of three party key sets is pressed: plays cue 113 if the far call
 /// accepts the argument, else posts event request 0x208b and returns 1 while

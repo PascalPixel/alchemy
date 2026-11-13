@@ -40,9 +40,10 @@ void Palette_UpdatePulseBrightness(void) {
 /// task leaves the background alone), gProjection and the background's
 /// affine page.
 void BattleCamera_SetCommandView(s32 verticalOffset) {
-  struct BattleCamera *camera = gBattleCamera;
+  void **slots = &gHeapSlots[HEAP_SLOT_CAMERA];
+  struct BattleCamera *camera = slots[0];
   struct BattleBackgroundWork *view =
-      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_CAMERA, HEAP_SLOT_BATTLE_BACKGROUND);
   struct FixedPointPosition eyeOffset;
   u32 result;
 

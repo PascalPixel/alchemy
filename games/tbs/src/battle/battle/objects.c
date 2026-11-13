@@ -474,6 +474,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
 /// unit with no place. Called throughout the battle parts.
 struct BattleObject *BattleObject_Get(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
+  struct BattleObject *objects = battle->objects;
   s32 place = unitId;
 
   // Enemy unit ids from FIRST_ENEMY_UNIT index the places from
@@ -482,7 +483,7 @@ struct BattleObject *BattleObject_Get(s32 unitId) {
     place -= FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
   if (battle->objectIndex[place] == BATTLE_OBJECT_NONE)
     return NULL;
-  return &battle->objects[battle->objectIndex[place]];
+  return &objects[battle->objectIndex[place]];
 }
 
 /// Detaches the scripts from the four sprite entries of one sprite. Called
@@ -547,9 +548,12 @@ void *BattleObject_DestroyAll(void) {
 
   for (place = 0; place < UNIT_MAX; place++) {
     // Places 0 to 7 are the party unit ids, 8 to 13 the enemies.
-    s32 unitId =
-        place <= ALLY_MAX ? place : place + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
-    struct BattleObject *battleObject = BattleObject_Get(unitId);
+    s32 unitId = place + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
+    struct BattleObject *battleObject;
+
+    if (place <= ALLY_MAX)
+      unitId = place;
+    battleObject = BattleObject_Get(unitId);
 
     if (battleObject != NULL && battleObject->active != 0) {
       Actor_ReleaseFar(battleObject->actor);

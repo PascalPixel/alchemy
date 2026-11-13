@@ -391,7 +391,7 @@ struct Unit {
   /// cost the unit its actions.
   ///@{
   u8 delusion;
-  s8 confusion;
+  u8 confusion;
   u8 charm;
   u8 stun;
   u8 sleep;

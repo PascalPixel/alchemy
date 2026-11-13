@@ -19,10 +19,12 @@
 /// transform state, and through BattleCamera_SetRange the background's affine
 /// page.
 void BattleCamera_Update(void) {
-  struct BattleCamera *camera = gBattleCamera;
+  void **slots = &gHeapSlots[HEAP_SLOT_CAMERA];
+  struct BattleCamera *camera = slots[0];
   struct BattleBackgroundWork *view =
-      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-  struct BattleWork *battle = gBattleWork;
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_CAMERA, HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleWork *battle =
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_CAMERA, HEAP_SLOT_BATTLE);
   struct FixedPointPosition eyeOffset;
   s32 *focus;
   s16 delta;
@@ -137,16 +139,18 @@ void BattleUnit_Collect(void) {
   // the centre and the rest alternately either side of it.
   count = BattleEnemy_List(unitIds);
   formation = battle->layout;
-  if (formation >= FORMATION_LAYOUT_SHUFFLED &&
-      formation <= FORMATION_LAYOUT_INTERLEAVED) {
-    for (i = 0; i < count; i++)
-      battle->enemyIds[i] = unitIds[i];
-  } else {
-    for (i = 0; i < count; i++) {
-      position = gBattleParty_CenterOrderOffsets[i] + count / 2;
-      battle->enemyIds[position] = unitIds[i];
+  if (formation >= FORMATION_LAYOUT_SHUFFLED) {
+    if (formation <= FORMATION_LAYOUT_INTERLEAVED) {
+      for (i = 0; i < count; i++)
+        battle->enemyIds[i] = unitIds[i];
+      goto placed;
     }
   }
+  for (i = 0; i < count; i++) {
+    position = gBattleParty_CenterOrderOffsets[i] + count / 2;
+    battle->enemyIds[position] = unitIds[i];
+  }
+placed:
   battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 
@@ -162,7 +166,11 @@ s32 Battle_ShiftVramTiles(void) {
 }
 
 /// Nothing in the source calls it.
-void Battle_ClearBg0Vofs(void) { REG_BG0VOFS = 0; }
+void Battle_ClearBg0Vofs(void) {
+  u32 top = 0;
+
+  REG_BG0VOFS = top;
+}
 
 /// Does nothing; Battle_Run calls it with 1 as the battle is set
 /// up.

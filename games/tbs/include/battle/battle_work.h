@@ -170,4 +170,9 @@ STATIC_ASSERT(offsetof(struct BattlePlaybackWork, flags) == 0x16c);
 /// The battle's work: gHeapSlots[HEAP_SLOT_BATTLE] under its own name.
 extern struct BattleWork *gBattleWork;
 
+/// Heap slot `slot` read through `slots`, a pointer to slot `from` of
+/// gHeapSlots: the battle code holds one slot's address and reaches its
+/// neighbours by their distance from it. The name is ours.
+#define HEAP_SLOT_FROM(slots, from, slot) ((slots)[(slot) - (from)])
+
 #endif

@@ -183,7 +183,11 @@ void BattleTransition_DrawRows(void) {
 /// interrupt fires on.
 /// Installed by BattleTransition_Run as the VCount interrupt's
 /// handler at line 32, while gBgScroll[0].y holds BG0 scrolled.
-void BattleTransition_ClearBg0Vofs(void) { REG_BG0VOFS = 0; }
+void BattleTransition_ClearBg0Vofs(void) {
+  u32 top = 0;
+
+  REG_BG0VOFS = top;
+}
 
 /// Opens a battle: the curtain opening, or for the Fusion Dragon the storm
 /// on the Venus Lighthouse aerie; then announces the enemies and leaves the

@@ -11,10 +11,6 @@
 struct ContigoObject;
 
 void Actor_MoveToObject(s32 actor, s32 target);
-void Event_Start(void);
-void Event_End(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Actor_WaitForAnimationChange(u32 objectId);
 void Func_0200419c(void);
 void Func_02003e54(struct ContigoObject *object, const void *effect);

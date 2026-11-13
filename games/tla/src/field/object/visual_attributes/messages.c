@@ -10,8 +10,6 @@
 #include "module/field/object.h"
 #include "scene_call.h"
 
-struct Actor;
-
 s32 Func_080380f8(s32 sprite, s32 zero, s32 x, s32 y);
 
 #define SPEAKER_PORTRAIT_LEFT 0x1000

@@ -7,8 +7,6 @@
 #include "types.h"
 #include "module/scene/scene.h"
 
-struct Actor;
-
 void Func_020000b4(s32 value);
 
 void Func_02000154(void);

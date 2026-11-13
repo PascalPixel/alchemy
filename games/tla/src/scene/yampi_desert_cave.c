@@ -241,7 +241,6 @@ void Func_020008fc(void);
 s32 Func_02000978(u16 *list);
 void Func_0200099c(void);
 void Func_02000bc0(u16 *list, s32 mode, s32 count);
-void Event_SetDestination(s32 scene, s32 entrance);
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02001958(void);
 

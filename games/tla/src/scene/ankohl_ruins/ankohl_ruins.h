@@ -33,7 +33,6 @@ void Func_0200160c(void);
 void Func_020019a0(void);
 void Func_02001f7c(void);
 s32 Task_Find(void (*callback)(void));
-void Event_Start(void);
 void Event_End(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as

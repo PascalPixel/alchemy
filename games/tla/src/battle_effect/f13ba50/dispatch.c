@@ -24,10 +24,6 @@ void BattleEffect_CallDoNothing(s32 cnt) {
   }
 }
 
-struct SummonArgument;
-
-struct BattleEffectArgument;
-
 /* VIEW(f14b9e8): routine BattleEffect_RunTiamat as void BattleEffect_RunTiamat(s32 *arg); the definition has DEFINE_EFFECT_KIND(BattleEffect_RunDragonDriver, Func_08147aec, 1) DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, Func_08147aec, 0) void Func_08.... */
 extern void BattleEffect_RunTiamat__f14b9e8(s32 *arg) __asm__("BattleEffect_RunTiamat");
 
@@ -190,8 +186,6 @@ void BattleEffect_BuildWindowEdgeTable(void) {
             DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);
   }
 }
-
-void *Unit_Get(s32 owner);
 
 /// Spawns the battle objects of each unit in the list that has HP left.
 void BattleEffect_SelectLivingTargets(struct FxPartyList *party) {

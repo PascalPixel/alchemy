@@ -11,7 +11,6 @@ void SampleFreqSet(u32 mode);
 void m4aSoundVSyncOff(void);
 void m4aSoundVSyncOn(void);
 extern const u16 gSound_PcmSamplesPerVBlank[];
-extern SoundCommand gSound_CommandTable[36];
 
 void ClearChain(struct SoundNote *note) {
   void (*func)(struct SoundNote *) =
@@ -29,8 +28,6 @@ void Clear64byte(void *block) {
 void MPlayMain(struct SoundPlayer *player);
 void TrackStop(struct SoundPlayer *player, struct SoundTrack *track);
 void m4aSoundMode(u32 mode);
-
-struct SoundPlayer;
 
 extern const u8 gSound_CgbPitchCodes[];
 extern const s16 gSound_CgbFrequencySteps[];

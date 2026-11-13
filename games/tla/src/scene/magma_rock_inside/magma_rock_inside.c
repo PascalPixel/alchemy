@@ -21,7 +21,6 @@
 
 extern s32 gData_02004fec[];
 
-
 DEFINE_FUNC_0200038C(Func_020003b4, gData_02004fec, Func_02004cf8,
     Func_02004c98)
 
@@ -198,7 +197,6 @@ extern u8 gData_02005d38[];
 extern u8 gData_02005ed0[];
 
 extern s16 gData_02005528[];
-
 
 u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -645,7 +643,6 @@ void Func_02001190(s32 mode, s32 cue) {
     Func_02004c98(work->target, 3);
 }
 
-
 void Func_020011fc(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *target;
@@ -1081,8 +1078,6 @@ DEFINE_FUNC_02001CA0(Func_02001ca0, 9, 0x350)
 
 DEFINE_FUNC_02001CA0(Func_02001cd0, 11, 0x351)
 
-
-
 void Func_02001d04(struct Actor *object) {
   if (++object->timer > 64)
     object->update = 0;
@@ -1100,7 +1095,6 @@ void Func_02001d04(struct Actor *object) {
 
 // ---- games/tla/src/scene/magma_rock_inside/s1d64.c ----
 extern const s32 gData_02005050[];
-
 
 static __inline__ void Arrive(s32 id, s32 x, s32 z) {
   Actor_SetHorizontalPositionWithTerrain(id, 194 << 18, 248 << 16);
@@ -1467,8 +1461,6 @@ void Func_020027d4(void) {
 }
 
 DEFINE_FUNC_0200217C(Func_02002868, 0x305, 11, 136, 360)
-
-struct Actor;
 
 void Func_020028ac(void) {
   struct Actor *object;
@@ -1960,7 +1952,6 @@ void Func_020034f0(void) {
     Func_02000694(0, 26, 14, 0);
   }
 }
-
 
 void Func_02003548(void) {
   // Event_SetFlag, event.h's command, keeps 0x302 from being shared with the

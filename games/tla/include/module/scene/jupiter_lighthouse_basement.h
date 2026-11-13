@@ -7,9 +7,7 @@
 #include "types.h"
 #include "module/scene/scene.h"
 
-struct Actor;
 struct EffectOptions;
-struct FieldEffect;
 
 void Func_02001d3c(s32 id);
 

@@ -184,7 +184,6 @@ void Func_0802dd70(s32 pitchSlope, s32 *position, struct ScanlineRow *row) {
 extern u32 gMapCellBuffer[];
 
 s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id);
-struct SpritePlacement;
 
 // The native reads the held keys afresh at each test.
 #define HELD (*(volatile u32 *)&gInput.held)

@@ -106,7 +106,6 @@ DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSize, 0)
 DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSizeAlt, 1)
 
 void Text_ResetStyle(void);
-s32 GameFlag_Test(s32 flag);
 
 /// Measures decoded text from entryIndex to its first page's end: returns the
 /// width of the longest line and the height (15 pixels a line) in pixels. With

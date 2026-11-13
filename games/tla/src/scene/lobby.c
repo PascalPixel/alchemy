@@ -214,8 +214,6 @@ s32 Func_02000344(void) {
 #include "edition.h"
 #include "owner_state.h"
 
-s32 Serial_GetActiveTransfers(void);
-
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define LOBBY_PREFIX_LIMIT 7
@@ -577,8 +575,6 @@ check:
 }
 
 #include "task.h"
-
-struct Window;
 
 void Func_02001944(void *callback, s32 mask);
 void Func_0200198c(s32 layer);
@@ -1073,12 +1069,9 @@ void MessageArgument_Push(s32 value, s32 digits);
 void Func_020019ec(void);
 void Event_Start(void);
 void Event_End(void);
-void Event_SetMessageId(s32 message);
-void Event_ShowMessageAndWait(s32 actor, s32 flags);
 /* VIEW(talk): routine Func_080d47b4 as void Func_080d47b4(s32 actor, s32 animation, s32 flags); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/src/scene/lobby.c:1075: conflicting types for `Func_080d47b4'. */
 extern void Func_080d47b4__talk(s32 actor, s32 animation, s32 flags) __asm__("Func_080d47b4");
 s32 Func_02001a84(s32 scene, s32 entrance);
-void Event_ResolvePendingActions(s32 skip);
 void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 void FieldMessage_Show(s32 no, s32 flags);
 
@@ -1227,13 +1220,10 @@ s32 Func_02001388(s32 id) {
 // ---- games/tla/src/scene/lobby/scene_events.c ----
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-
 s32 Func_02000f6c(s32 id);
-void Serial_RemoveIrqHandlers(void);
 void Map_CenterOnFollowedPoint(void);
 void MessageArgument_Push(s32 value, s32 digits);
 void Func_020019ec(void);
-void Event_Start(void);
 void Event_End(void);
 s32 Func_02001a84(s32 scene, s32 entrance);
 
@@ -1264,7 +1254,6 @@ next:
     goto next;
   Map_CenterOnFollowedPoint();
 }
-
 
 /* VIEW(scene_events): tag struct LobbyEventWork as struct LobbyEventWork__scene_events; lobby.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/lobby.c:1315: structure has no member named `startTransition'. */
 struct LobbyEventWork__scene_events {
@@ -1488,8 +1477,6 @@ s32 LinkLobby_RunRoundResult(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-
 
 /// Edition-specific link handshake values (each word is four ASCII characters).
 // clang-format off

@@ -7,7 +7,6 @@
 
 // Battle effects: sparks after approaching the target (type 4).
 
-
 /// Jumps the user toward the first target and emits type 4 sparks after 29
 /// frames.
 /// effect: effect arguments.
@@ -19,7 +18,6 @@ void BattleEffect_RunThrash(struct BattleEffectArgument *effect) {
   effect->variant = 4;
   BattleEffect_RunSparkGroups(effect, 2); // 2: from the user's position.
 }
-
 
 void BattleEffect_LongApproachThenSpark(struct BattleEffectArgument *effect) {
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 0x18,
@@ -44,8 +42,6 @@ void BattleEffect_RunSparkApproachVariant3(
   BattleEffect_RunSparkGroups(effect, 2); // 2: from the user's position.
 }
 
-struct BattleEffectArgument;
-
 void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant);
 
 /// Abilities: Quick Strike (kind 52).
@@ -62,7 +58,6 @@ void BattleEffect_RunBoostHack(s32 a0) { Func_0816a2d8(a0, 4); }
 
 /// Abilities: Twin Shear (kind 425).
 void BattleEffect_RunTwinShear(s32 a0) { Func_0816a2d8(a0, 5); }
-
 
 #undef RESULTS_FRAME
 

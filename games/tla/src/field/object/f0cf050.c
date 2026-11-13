@@ -369,8 +369,6 @@ void BattleEffect_SpawnRandomParticleAtPosition(
 // event has not run, a marker object goes at its event object, or at the map
 // cell of a tile event, when that point is on screen.
 
-struct Actor;
-
 /* VIEW(rising): variable Data_080f01b8 as extern const s32 Data_080f01b8[]; emitter has extern const u8 Data_080f01b8[]. */
 extern const s32 Data_080f01b8__rising[] __asm__("Data_080f01b8");
 

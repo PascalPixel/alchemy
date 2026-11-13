@@ -12,8 +12,6 @@
 #include "event_work.h"
 #include "module/scene/jupiter_lighthouse_room_5.h"
 
-struct CellTargetEntry;
-
 /* VIEW(s22b8): tag struct CellTarget as struct CellTarget__s22b8; cell_target.h has another definition; tried with the definition the rest of the object has, Func_020022b8 moves: 2 of 131 instructions in tla-ja. */
 struct CellTarget__s22b8 {
   s16 firstFlag;

@@ -123,7 +123,6 @@ extern const u8 gData_02005ae0[];
 extern const u8 gData_02005b0c[];
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-struct Actor;
 void Func_02004ef0(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
 void Func_020004a4(void);
 
@@ -213,7 +212,6 @@ s32 Scene_Initialize(void) {
   }
   return 0;
 }
-
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.entrance == 1 && Event_GetFlag(0xa3d) == 0)

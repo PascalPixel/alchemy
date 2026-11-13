@@ -8,7 +8,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-
 /* VIEW(f171430): tag struct RenderModel as struct RenderModel__f171430; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunLightSurge moves: 2 of 823 instructions in tla-ja. */
 struct RenderModel__f171430 {
   s32 kind;
@@ -39,7 +38,6 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
@@ -60,21 +58,13 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
 extern void **GetBattleObjectSlotFar__f171430(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
-void Sound_PlayFar(s32 cue);
-void wait(s32 frames);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Push(void);
 void Transform_Pop(void);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
@@ -435,8 +425,6 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }
-
-struct BattleEffectArgument;
 
 void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode);
 

@@ -6,7 +6,6 @@
 
 // Flora, the blossom spirit's summon.
 
-
 struct FxPartyList;
 struct Model;
 struct StripQuad;
@@ -33,7 +32,6 @@ struct RenderModel__f179f18 {
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
@@ -50,7 +48,6 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
@@ -70,21 +67,13 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
 
 void *Resource_GetTableEntry(s32 resource);
 
-void Sound_PlayFar(s32 cue);
-void wait(s32 frames);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Push(void);
 void Transform_Pop(void);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
@@ -92,7 +81,6 @@ void Transform_Pop(void);
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1]) // the pixel half of a 16.16 value
-
 
 struct FloraObject {
   u8 unk0[8];
@@ -126,7 +114,6 @@ struct WordPair {
 /* VIEW(f179f18): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:26450: conflicting types for `gResourceTableEntries'. */
 extern struct ResourceTableEntry gResourceTableEntries__f179f18[] __asm__("gResourceTableEntries");
 extern u8 gData_02014000[];
-extern u32 gCameraSceneParameters[];
 extern const struct WordPair Data_08196ec8;
 extern u16 gData_08197410[];
 extern const u8 Data_08199421[];
@@ -951,9 +938,6 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-
-void *Unit_Get(s32 owner);
-
 /// BattleEffect_StartActorMotion with fixed values: unless the unit is one of
 /// four enemies, the actor steps 15 pixels further from x = 0 on its
 /// anchor's side, its y velocity growing by 0x28000 while y is under 10.
@@ -983,7 +967,6 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
   object->autoFaceMotion = 0;
   Actor_SetMode(object, 5);
 }
-
 
 #define DAGGER_FRAMES 96
 #define DAGGER_COUNT 8       // of the 32 steps set up, the first 8 are drawn

@@ -21,7 +21,6 @@ struct Point2D {
   s32 y;
 };
 
-
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_Data0C1;
 extern char ResourceId_Data134;
@@ -39,7 +38,6 @@ extern const s8 Data_08199f3c[];
 void BattleEffect_StartCanvasLayer(s32 layer);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Graphics_LoadGreyRamp(void);
 void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
@@ -59,7 +57,6 @@ void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void SceneTransform_ApplyPitch(s32 angle);
@@ -382,8 +379,6 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-
-
 extern char ResourceId_VioletSkyBackdrop;
 
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
@@ -495,7 +490,6 @@ next:
 
 // One model vertex: signed byte coordinates, padded to a word.
 
-
 extern const struct ModelVertex Data_08196f30[6];
 extern const u16 Data_08199f4c[];
 
@@ -565,7 +559,6 @@ void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color) {
   x1 = x - h;
   Func_08143eb4(x, y, x1, y1, color);
 }
-
 
 struct StripQuad;
 
@@ -3040,7 +3033,6 @@ void RamCode_RunKernel0(s32 arg0, s32 arg1) {
   routine(arg0, arg1);
   Heap_Release(routine);
 }
-
 
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 

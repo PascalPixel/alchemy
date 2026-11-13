@@ -105,7 +105,6 @@ const s32 gBattle_FormationPlacementScale[2] = {
 // table and the work value handlers SC_SET, SC_ADD and SC_CMP call.
 //--------------------------------------------------------------------------
 
-struct ScriptOperands;
 typedef void (*OperandFunc)(struct ScriptOperands *state, s32 operation,
                             s32 value);
 

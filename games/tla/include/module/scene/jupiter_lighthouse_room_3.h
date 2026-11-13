@@ -8,8 +8,6 @@
 #include "field/cell_target.h"
 #include "module/scene/scene.h"
 
-struct Actor;
-
 void Data_02000130(void);
 
 void Func_020001c0(void);

@@ -156,8 +156,6 @@ void Func_02000534(s32 a) {
 #include "version.h"
 
 void Func_02000388(void);
-void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-void Script_WaitForEventTimeout(struct Actor *actor);
 
 void Func_02000588(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -320,7 +318,6 @@ extern s16 gData_02001de2__s0588 __asm__("gData_02001de2");
 /* VIEW(s0588): variable gData_02001de4 as extern s16 gData_02001de4; hide has extern u16 gData_02001de4; tried as the rest of the object declares it, Func_02000858 moves: 2 of 260 instructions in tla-ja. */
 extern s16 gData_02001de4__s0588 __asm__("gData_02001de4");
 
-
 void Func_02000858(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 *view = &map->viewX;
@@ -394,7 +391,6 @@ void Func_02000858(void) {
 
 #include "iwram_call.h"
 #include "task.h"
-
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

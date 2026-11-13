@@ -294,6 +294,8 @@ void Func_08044dc8(s32 summon) {
         most = counts[i];
       }
     }
+    // MsgSummonVenus is the first of four Djinn counts (Venus, Mercury, Mars,
+    // Jupiter); the message four past it ends their line.
     MessageArgument_Push(most, 5);
     Func_0803cf6c((s32)MsgSummonVenus + best);
     counts[best] = 0;

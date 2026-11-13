@@ -400,6 +400,7 @@ draw:
       goto not_broken;
     }
   }
+  // MsgItemCondition starts a list: "----------", "Processed", "Rusted".
   if (priceKind == 3)
     Text_DrawMessageAsTilesFar__shop(price + (s32)MsgItemCondition, window, 8,
                                     8);

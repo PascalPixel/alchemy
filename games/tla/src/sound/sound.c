@@ -49,15 +49,12 @@ void SoundInit(struct SoundWork *work);
 void m4aSoundMode(u32 mode);
 void SoundMain(void);
 void MPlayOpen(struct SoundPlayer *player, struct SoundTrack *tracks, u8 count);
-void MPlayStart(struct SoundPlayer *player, const struct SongHeader *header);
 void m4aMPlayStop(struct SoundPlayer *player);
 void MPlayFadeOut(struct SoundPlayer *player, u16 speed);
 void MPlayContinue(struct SoundPlayer *player);
 extern struct SoundWork gSound_Work;
 extern struct CgbNote gSound_CgbNotes[4];
 extern u8 gSound_WorkBytes[];
-extern const struct PlayerSlot gSound_PlayerSlots[];
-extern const struct SongEntry gSongTable[];
 
 void ply_memacc(struct SoundPlayer *player, struct SoundTrack *track);
 void ply_lfos(struct SoundPlayer *player, struct SoundTrack *track);
@@ -70,7 +67,6 @@ void TrkVolPitSet(struct SoundPlayer *player, struct SoundTrack *track);
 void CgbSound(void);
 void CgbOscOff(u8 channel);
 s32 MidiKeyToCgbFreq(u8 kind, u8 key, u8 fine);
-extern SoundCommand gSound_CommandTable[36];
 
 /// Clears the paused flag while holding the player lock.
 void MPlayContinue(struct SoundPlayer *player) {

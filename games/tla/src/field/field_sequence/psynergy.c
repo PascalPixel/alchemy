@@ -204,8 +204,6 @@ s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode,
   return 0;
 }
 
-struct PendingEvent;
-
 s32 BattleEffect_HasMatchingEvent5(s32 effectId) {
   u16 kind = effectId;
   s32 result = (s32)Func_080ce458(0xf0000005, kind, Func_080ce31c(kind));

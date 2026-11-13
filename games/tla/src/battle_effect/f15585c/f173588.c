@@ -48,7 +48,6 @@ extern const u8 gData_08199210[]; // its four corners
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 BattleEffect_LoadBlitter(
     s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
@@ -65,7 +64,6 @@ void Func_080151e4(s32 x, s32 y, s32 z);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Sound_PlayFar(s32 cue);
 
 // Rime and Haze: the Djinni rises swaying through the canvas over the
 // party while its sign turns in the air: for Rime a crystal that spins in
@@ -256,8 +254,6 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-
-struct BattleEffectArgument;
 
 void Func_08173aac(struct BattleEffectArgument *effect, s32 mode);
 

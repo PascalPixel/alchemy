@@ -78,6 +78,8 @@ void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
 
 extern u16 Data_08197424[]; // flare sizes 1 to 5: cell offsets
 
+/// The canvas layer and its helpers; the comments give The Broken Seal's
+/// names where the twin is known.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
@@ -140,9 +142,9 @@ extern u8 gData_08197492[];  // ☀️ gBattleEffect_GlintCellWidths
 extern u8 gData_08197498[];  // ☀️ gBattleEffect_GlintCellHeights
 extern const u8 gData_081991b0[];
 extern const u8 Data_081991c0[];
-extern const u8 gData_08199210[];
+extern const u8 gData_08199210[]; // a quad's four corners, x y z for each
 extern const u8 Data_08199220[];
-extern const u8 gData_08199340[];
+extern const u8 gData_08199340[]; // the quad's face
 
 void Func_08179e6c(void);
 
@@ -161,7 +163,7 @@ void Func_08164b2c(s32 red, s32 green, s32 blue);
 void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles,
                    s32 segments);
 
-void Graphics_LoadGreyRamp(void);
+void Graphics_LoadGreyRamp(void); // a grey ramp from color 1
 
 void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
                    s32 cellWidth, s32 cellHeight);
@@ -243,7 +245,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect);
 
 void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect);
 
-extern char ResourceId_Data134;
+extern char ResourceId_Data134; // The Broken Seal's ParticleSpritesA
 extern char ResourceId_PetalSheet;
 extern char ResourceId_Data0C1;
 
@@ -251,8 +253,8 @@ extern const u8 Data_08198cac[];
 extern const u8 Data_08198ec4[];
 // The sparkle puff's size and cell for each of its nine pictures
 // (gBattleEffect_PuffSizes and gBattleEffect_PuffCells).
-extern u8 Data_0819745e[];
-extern u16 Data_0819744c[];
+extern u8 Data_0819745e[];  // ☀️ gBattleEffect_PuffSizes
+extern u16 Data_0819744c[]; // ☀️ gBattleEffect_PuffCells
 
 void Func_08144b14(struct BattleEffectArgument *effect, s32 mode);
 void Func_0814512c(struct BattleEffectArgument *effect, s32 mode);
@@ -262,9 +264,9 @@ void SummonEffect_RunCanvasMode3(void *action);
 
 void Func_08144628(struct BattleEffectArgument *effect, s32 mode);
 
-void BattleEffect_ArmBg1HBlankDma(void);
+void BattleEffect_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA
 
-void Func_0815b634(void);
+void Func_0815b634(void); // mode 3 only
 
 extern s32 gData_08197834[]; // ☀️ gPrism_ShardOffsets
 extern u8 gData_0819781a[];  // ☀️ gPrism_ShardWidths
@@ -299,7 +301,6 @@ void Func_08191530(struct BattleEffectArgument *effect);
 
 void Camera_ApplyPhasedDelta(void);
 
-struct BattleEffectArgument;
 struct EffectPosition;
 
 typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
@@ -391,11 +392,11 @@ extern char ResourceId_EffectPalette01;
 extern char ResourceId_Data0C2;
 
 extern u8 gData_08197467[];
-extern u8 gData_0819746d[];
-extern u8 gData_08197473[];
-extern u16 gData_0819747a[];
+extern u8 gData_0819746d[];  // gBattleEffect_PuffArcCellHeights
+extern u8 gData_08197473[];  // gBattleEffect_PuffArcCellBiasY
+extern u16 gData_0819747a[]; // gBattleEffect_PuffArcCells
 extern u8 gData_0819749e[];
-extern u8 gData_081974ad[];
+extern u8 gData_081974ad[]; // the shard heights
 extern u16 gData_081974bc[];
 
 void Func_0815f0a0(s32);
@@ -413,9 +414,9 @@ void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
 // The quad meshes and corners: the card, the pictures and their spread.
 extern u8 Data_081992b0[];
 // The dagger's shards, ☀️'s palette ramp shards.
-extern u16 Data_081974dc[];
-extern u8 Data_081974f4[];
-extern u8 Data_08197500[];
+extern u16 Data_081974dc[]; // gStatChange_ShardCells
+extern u8 Data_081974f4[];  // gStatChange_ShardWidths
+extern u8 Data_08197500[];  // gStatChange_ShardHeights
 
 void BattleEffect_BuildWindowEdgeTable(void);
 

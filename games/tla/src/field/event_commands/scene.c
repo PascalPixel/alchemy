@@ -165,7 +165,6 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
 #include "sprite.h"
 #include "actor.h"
 
-
 void BattleEffect_SetupObjectPair(s32 userId, s32 targetId) {
   struct Actor *user;
   struct Actor *target;
@@ -365,9 +364,6 @@ void Func_080dc978(s32 id, s32 value) {
   Palette_FillNumber15Grey();
   Task_Add((TaskFunc)Func_080dcb44, TASK_PASS_VBLANK);
 }
-
-struct Actor;
-struct Actor *Actor_GetById(u32 objectId);
 
 void BattleEffect_FinishSceneAndReleaseHeapBlock(void) {
   u8 *work = Ram_HeapSlots->unk4c[3];

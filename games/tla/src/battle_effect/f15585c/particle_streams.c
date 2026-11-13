@@ -5,8 +5,6 @@
 
 #include "../f15585c_internal.h"
 
-void *Unit_Get(s32 owner);
-
 /// BattleEffect_StartActorMotion with fixed speeds and a random distance:
 /// unless the unit is one of four enemies, the actor leaps back to 130-193% of
 /// its anchor's x, then takes mode 5.
@@ -35,9 +33,6 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
 }
 
 // Unused: a second copy of Nereid's summon effect.
-
-
-
 
 struct FxPartyList;
 
@@ -80,7 +75,6 @@ extern u16 gData_08197410[];
 extern const s32 gData_08198974[]; // ☀️ gNereid_Gravity
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
@@ -331,13 +325,10 @@ UNUSED void Func_08163e14(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-
 struct FormationScale {
   s32 x;
   s32 y;
 };
-
-struct ScaledSprite;
 
 extern const struct FormationScale gData_08196e5c;
 extern const struct FormationScale gData_08196e64;
@@ -423,8 +414,6 @@ void Func_0816442c(s32 formation, s32 x, s32 z) {
   }
 }
 
-
-
 #define SHARD_E 0x59d8
 
 extern char ResourceId_FlareSheet;
@@ -438,7 +427,6 @@ s32 BattleEffect_LoadBlitter(
     s32 modeAndFlags); // BattleEffect_BuildBlitter(slot, 7, 7, flags, mode)
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
-
 
 void Func_0816467c(s32 formation, s32 x, s32 y) {
   struct BattleFxWork *work;
@@ -641,7 +629,6 @@ void Func_08164abc(s32 red_delta, s32 green_delta, s32 blue_delta) {
   }
 }
 
-
 /// As Func_08164abc, from the battle work's saved palette into BG palette
 /// entries 96 to 223.
 void Func_08164b2c(s32 redDelta, s32 greenDelta, s32 blueDelta) {
@@ -673,7 +660,6 @@ void Func_08164b2c(s32 redDelta, s32 greenDelta, s32 blueDelta) {
     source++;
   }
 }
-
 
 /// Stops DMA 0, then arms it to copy one palette line from the battle effect
 /// work into the BG palette at each horizontal blank.
@@ -713,10 +699,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunOuterSpace, BattleEffect_RunParticleStreams,
 // the work (☀️ 0x1f80), the blitter modes counted down from 3, and the callback
 // orders 0xc80, 0xcfe and 0xcff (☀️ 0x480, 0x4fe, 0x4ff).
 
-
-
-
-
 // The map cell buffer: first a 256 x 128 picture the streams draw into (BG1's
 // tiles), then, in the second act, the flashes and the embers.
 #define FLASHES ((struct EffectStep *)Ram_MapCellBuffer)
@@ -737,7 +719,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunOuterSpace, BattleEffect_RunParticleStreams,
 #define SE_RISE 145
 #define SE_STREAMS 141
 #define SE_BLAST 156
-
 
 struct FxAnimObject {
   u8 unk00[9];

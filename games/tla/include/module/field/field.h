@@ -12,8 +12,6 @@
 #include "system/sprite_metadata.h"
 #include "tla_edition.h"
 
-struct Actor;
-struct AnimationEntry;
 struct AnimationObject;
 struct RenderInput;
 struct ScriptOperands;

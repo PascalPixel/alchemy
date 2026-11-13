@@ -12,7 +12,6 @@
 #include "scene_call.h"
 
 struct Actor *Actor_GetById(u32 objectId);
-void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 /* VIEW(mars_join): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct EffectVector *position); ground_particles has void Camera_WorldToScreen(union FieldCoordinate *position). */
 extern void Camera_WorldToScreen__mars_join(struct EffectVector *position) __asm__("Camera_WorldToScreen");
 /* VIEW(mars_join): routine FieldParticle_Initialize as void FieldParticle_Initialize(void *slot, s32 kind, s32 x, s32 z); motes has void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x, s32 z). */

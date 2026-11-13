@@ -243,8 +243,6 @@ void Func_02000848(struct Actor *object) {
    } *)(base))                                                                 \
        ->v)
 
-struct Actor;
-
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);

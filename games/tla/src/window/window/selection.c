@@ -531,9 +531,7 @@ struct MenuSelection {
   u8 unk68[0x27a];
   u16 mode;
 };
-extern u32 gVBlankCount;
 extern u8 gData_0805c5c4[], gData_0805c1c4[];
-extern s32 GameFlag_Test(s32 flag);
 
 void SelectionMenu_DrawArrow(struct MenuSelection *state, s32 index) {
   u32 frame = (gVBlankCount >> 2) & 7;
@@ -1277,8 +1275,6 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
 
 void Icon_BuildCommandIconTiles(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
                                   s32 arg4);
-s32 Icon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
-s32 Resource_FindFreeEntry(void);
 
 s32 Resource_LoadByMode(u32 mode, s32 value) {
   s32 output;
@@ -1419,8 +1415,6 @@ void SelectionMenu_SetupIcon(u32 kind, s32 base, struct ListNode *node,
   obj->field80 = tile;
   obj->field8a = 0;
 }
-
-void wait(s32 frames);
 
 /// The Broken Seal's Menu_ConfirmSelection in this game's form.
 u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {

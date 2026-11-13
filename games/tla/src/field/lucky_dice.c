@@ -41,7 +41,6 @@
 #include "text/msg_ids.h"
 #include "transform.h"
 
-
 s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   Sound_PlayFar(2);
@@ -227,9 +226,6 @@ s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
 #else
 #define DICE_RESULT_LABEL_CENTER_X 632
 #endif
-
-
-struct RenderInput;
 
 void LuckyDice_Run(void) {
   u16 bgPalette[256];

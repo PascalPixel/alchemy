@@ -47,7 +47,6 @@
 #include "module/system/system.h"
 
 // The object's functions its parts call before their definitions.
-struct FacingObject;
 s32 Func_080d295c(s32 a);
 struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z);
@@ -57,7 +56,5 @@ void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 
 // Outside routines the parts had declared each in its own way, with the one
 // type they share (the definition's, where it is C).
-struct Actor;
-struct ActionDescriptor;
 
 #endif

@@ -364,8 +364,6 @@ s32 Script_ToggleFlag(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-struct Actor;
-
 s32 Script_SetAnimation(struct ScriptInterpreter *interpreter) {
   Actor_SelectAnimation((struct Actor *)interpreter,
                         interpreter->script[interpreter->cursor + 1]);

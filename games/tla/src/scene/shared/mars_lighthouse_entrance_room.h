@@ -50,7 +50,6 @@ void Event_WaitTransitionFrames(void);
 s32 Func_0200246c(s32 index, s32 value);
 s32 Func_0200249c(s32 index);
 void Actor_StartScript(struct Actor *object, const void *script);
-void Event_Start(void);
 void Event_End(void);
 void Func_02004d20(void);
 void Func_02004d40(void);

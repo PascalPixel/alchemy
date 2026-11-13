@@ -6,8 +6,6 @@
 
 // Nirvana's ring of sparks.
 
-
-
 extern char ResourceId_Data134;
 extern char ResourceId_PinkBurstSheet;
 // The Broken Seal's gBattleEffect_MoteCells: spark cells of the
@@ -15,12 +13,10 @@ extern char ResourceId_PinkBurstSheet;
 extern u16 gData_08197410[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 blitter); // BattleEffect_BuildBlitter, packed
-void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames); // BattleEffect_TintBattler
@@ -138,9 +134,6 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }
-
-
-
 
 // The pixel half of a 16.16 fixed-point value.
 static inline s16 *Fixed_Halves(s32 *value) {
@@ -324,8 +317,6 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
 }
 
 #undef HI
-
-
 
 // The pixel half of a 16.16 fixed-point value.
 #define HI(v) (((s16 *)&(v))[1])
@@ -638,7 +629,6 @@ void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
-
 
 struct ProjectedPoint {
   s32 x, y, depth;
@@ -1085,8 +1075,6 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }
-
-struct BattleEffectArgument;
 
 void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode);
 

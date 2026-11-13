@@ -61,7 +61,6 @@ struct JupiterLighthouseRoom6EventWork {
   u16 field1c4;
 };
 
-void Event_Start(void);
 void Event_End(void);
 void Func_02001ab4(struct JupiterLighthouseRoom6Object *object, s32 mode);
 void Field_DispatchTypeHandler(s32 type);

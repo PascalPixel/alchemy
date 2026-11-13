@@ -42,9 +42,6 @@ extern u8 gMapCellBuffer[];
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 s32 Math_Cosine(s32 angle);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Event_Start(void);
 void Func_02001fb4(void);
 void Func_02001ffc(void);
 

@@ -43,8 +43,6 @@ void Func_02000d10(void);
 void Func_02000ea0(void);
 void Func_02001074(struct Actor *object, s32 value);
 s32 Func_020010b4(struct Actor *object, s16 *position);
-void Event_Start(void);
-void Event_End(void);
 void Func_0200114c(void);
 void Func_02001154(s32 a, s32 b, s32 c, s32 d);
 void Func_02000ba8(void);

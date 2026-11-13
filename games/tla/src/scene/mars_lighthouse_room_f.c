@@ -958,8 +958,6 @@ DEFINE_FUNC_020003D0(Func_02001868)
 
 extern const s32 gData_02007044[];
 
-void Actor_StartScript(struct Actor *object, const void *script);
-
 DEFINE_FUNC_02000628(Func_02001894, Func_020056a0, Func_02001868,
     gData_02007044, Data_02007064)
 
@@ -1002,8 +1000,6 @@ DEFINE_FUNC_0200090C(Func_02001b2c, Func_020035b8)
 
 #include "call.h"
 #include "field_coordinate.h"
-
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
 void Func_02001bcc(void) {
   struct PositionedActor *actor9 = Actor_GetById(9);

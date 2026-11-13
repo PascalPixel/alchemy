@@ -7,9 +7,7 @@
 #include "types.h"
 #include "module/tla.h"
 
-struct RenderInput;
 struct ShopCursor;
-struct WindowSprite;
 
 struct ShopCursorSprite {
   u8 unk00[5];

@@ -735,9 +735,7 @@ void BattleEffect_EndElementStreaks(void) {
 
 #undef HI
 
-struct FxPartyList;
 struct Model;
-struct StripQuad;
 
 void Render_DrawModelList(struct Model *model);
 

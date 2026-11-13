@@ -558,16 +558,10 @@ struct PopTransform {
   u32 unk06 : 16;
 };
 
-extern u32 gVBlankCount;
 extern const u8 Data_0805ec84[];
 extern const u8 gUiSprite_CursorBobOffsets[];
 extern const s8 gUiSprite_WobbleOffsets[][2];
 extern const s8 gUiSprite_BounceOffsets[];
-
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-void Oam_AddSpriteAtDepth(void *entry, s32 priority);
 
 void WindowSprite_UpdateAll(void) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;

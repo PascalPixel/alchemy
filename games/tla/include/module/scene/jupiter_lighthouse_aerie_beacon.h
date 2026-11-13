@@ -8,10 +8,8 @@
 #include "field/cell_target.h"
 #include "module/scene/scene.h"
 
-struct Actor;
 struct CellTarget;
 struct CellTargetEntry;
-struct FieldEffect;
 
 void Func_0200045c(void);
 

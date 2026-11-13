@@ -141,7 +141,6 @@ void Func_02003648(s32 id) { Actor_GetById(id)->motionFlags = 3; }
 #include "system/main_routine_work.h"
 #include "ram_buffer.h"
 
-struct Actor;
 void Func_02000610(s32 id);
 void Func_02000640(s32 id);
 extern s32 gData_020060fc[];

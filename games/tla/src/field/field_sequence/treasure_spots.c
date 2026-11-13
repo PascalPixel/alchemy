@@ -246,8 +246,6 @@ void Actor_ShakeAngle(u32 objectId) {
   object->facing = angle;
 }
 
-struct Actor;
-
 void ObjectEvent_SetMode5WithCue(u32 objectId) {
   Actor_SetMode(ObjectTable_Get(objectId), 5);
   Sound_PlayFar(125);

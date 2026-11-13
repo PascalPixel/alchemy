@@ -26,8 +26,6 @@
 #include "module/scene/scene.h"
 #include "text/msg_ids.h"
 
-struct Actor;
-
 s32 Func_02000038(struct Actor *object) {
   if ((gData_020007e4 >> 1) & 1)
     Actor_SetPartAttribute(object, 15);

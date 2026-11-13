@@ -18,7 +18,6 @@ extern u32 gSceneExits[];
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
 void Event_Wait(s32 frames);
 struct Actor *Actor_GetById(u32 objectId);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
@@ -47,8 +46,6 @@ void Event_WaitTransitionFrames(void);
 void Task_RemoveFar(TaskFunc func);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
-void *HeapSlot_AllocEwram(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 #include "scene_ids.h"
@@ -72,7 +69,6 @@ struct AquaRockWork {
 };
 
 s32 Math_Sine(s32 angle);
-void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 void Func_020028b8(const void *source, void *destination);
 void Func_02002910(struct Actor *object, s32 mode);

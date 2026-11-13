@@ -9,6 +9,7 @@
 
 union FieldObject;
 
+/// The eight tints a field Psynergy washes the screen in (BGR555, fxdata.c).
 extern const u32 gData_080f3954[8];
 
 void Effect_AdvanceMotion(union FieldObject *object);

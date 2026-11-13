@@ -245,7 +245,6 @@ void Func_020027cc(void) {
 
 extern const u8 gData_02005d7c[];
 extern u32 gData_02005d8c[];
-void *Unit_Get(s32 owner);
 
 void Func_02002a64(void) {
   s32 speed;
@@ -2019,7 +2018,6 @@ s32 Func_020053a0(void) {
 void Func_020053ac(void) {
   ((struct ClockWork *)(gData_020023c4 + 0x288))->timer = 3600;
 }
-
 
 // Layer switch table: three words (id, mode, flag), terminated by 0xffff.
 void Func_020053bc(const u16 *entry) {

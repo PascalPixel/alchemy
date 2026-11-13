@@ -79,15 +79,11 @@ struct DescriptorEntry {
 };
 
 // The object's functions its parts call before their definitions.
-struct TriggerView;
-struct PendingEvent;
 
 // Outside routines and data the parts had declared each in its own way, with
 // the one type they share.
-struct Actor;
 struct Actor *Actor_GetById(u32 objectId);
 /* VIEW(field_sequence): routine MapGrid_GetTerrainHeightAboveFar as s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer, s32 height); module/tla.h has s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer). */
 extern s32 MapGrid_GetTerrainHeightAboveFar__field_sequence(s32 x, s32 z, s32 layer, s32 height) __asm__("MapGrid_GetTerrainHeightAboveFar");
-struct ParticleEmitter;
 
 #endif

@@ -317,8 +317,6 @@ s32 Func_080d4ccc(struct Actor *object, s32 *position) {
 
 extern struct MapCell gMapCellBuffer[];
 
-void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
-
 /// The leader jumps two tiles forward, over the tile in
 /// front, when it faces a quarter turn, the map allows it (Func_080d4ccc and
 /// the step check) or a platform object (flag 0x80) waits 16 pixels below the

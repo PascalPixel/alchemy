@@ -63,7 +63,6 @@ struct ShamanVillageEventWork {
   u16 field1c4;
 };
 
-void Event_Start(void);
 void Event_End(void);
 void Func_02004a74(s32 shop, s32 keeper);
 void Func_02004a7c(s32 keeper);

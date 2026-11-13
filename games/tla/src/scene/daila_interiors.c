@@ -22,15 +22,7 @@
 #include "text/msg_ids.h"
 #include "types.h"
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void FieldEvent_Wait(s32 frames);
-void Import_EventSetMessageId(s32 message);
 void Import_EventShowMessageAndWait(s32 actor, s32 flags);
-void Actor_Jump(s32 actor, s32 speed, s32 frames);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 void Func_02000d94(s32 actor, s32 jump, s32 frames);
 void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,

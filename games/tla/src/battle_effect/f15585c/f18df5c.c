@@ -36,7 +36,6 @@ struct RenderModel__f18df5c {
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
@@ -53,7 +52,6 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
@@ -71,20 +69,12 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
 
 void *Resource_GetTableEntry(s32 resource);
 
-void Sound_PlayFar(s32 cue);
-void wait(s32 frames);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Push(void);
 void Transform_Pop(void);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
@@ -137,8 +127,6 @@ void Func_08164abc(s32 red, s32 green, s32 blue);
 void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows, s32 cellWidth, s32 cellHeight);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags, u32 mode);
 void SceneTransform_ApplyPosition(const s32 *pos);
-s32 Render_ProjectPoint(const void *point, s32 *screen);
-
 
 /// Meteor Blow.
 /// ★ Named from the game: "Meteor Blow" (message 02130)

@@ -76,7 +76,6 @@ next:
 
 // Shaded circles of growing radius, drawn into a half-width byte map.
 
-
 /// Fills a size by size/2 byte map with circles of growing radius, each
 /// shaded by the cosine of its radius (0 to 63).
 void Func_0815b434(u8 *map, s32 size, s32 scale) {
@@ -159,8 +158,6 @@ void Func_0815b510(u8 *map, s32 size, s32 scale) {
   }
 }
 
-
-
 // Mirrors the first 64 background colours, keeping the backdrop colour.
 void Func_0815b634(void) {
   u16 saved[64];
@@ -174,7 +171,6 @@ void Func_0815b634(void) {
   Iwram_CopyWords((void *)BG_PLTT, flipped, 128);
   REG_BLDALPHA = 0x810;
 }
-
 
 // A scale of one in 16.16 on both axes.
 extern const struct SpriteScale gData_08196e4c;
@@ -210,8 +206,6 @@ void Func_0815b68c(void) {
   work->frame++;
 }
 
-
-
 struct FxPartyList;
 struct Model;
 struct StripQuad;
@@ -240,7 +234,6 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
 void BattleEffect_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
 void BattleEffect_CountDownBattlerTints(void);
 // Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
@@ -280,19 +273,13 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 
-void Sound_PlayFar(s32 cue);
-void wait(s32 frames);
-u32 Random16(void);
-
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Push(void);
 void Transform_Pop(void);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
@@ -300,8 +287,6 @@ void Transform_Pop(void);
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) ((v) >> 16)
-
-
 
 extern char ResourceId_Data0B1;
 extern char ResourceId_Data0B3;
@@ -338,7 +323,6 @@ extern const u8 gData_08199210[];
 void BattleEffect_ProcessPendingBlock2Transfer(void);
 void Display_ApplyBg2Affine(void);
 // Steps the background palette fade.
-void Palette_StepFadeTransfer(void);
 void Func_0815f0a0(s32 palette);
 
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
@@ -1012,8 +996,6 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   }
 }
 
-struct BattleEffectArgument;
-
 void Func_0815c970(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Poison Beat (kind 382).
@@ -1021,7 +1003,6 @@ void BattleEffect_RunPoisonBeat(void *object) { Func_0815c970(object, 0); }
 
 /// Abilities: Spinning Beat (kind 383).
 void BattleEffect_RunSpinningBeat(void *object) { Func_0815c970(object, 1); }
-
 
 // Byte offset of the blitter slot in gHeapSlots (unk64[1]).
 #define HEAP_BLITTER 104

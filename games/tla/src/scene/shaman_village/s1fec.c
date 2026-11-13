@@ -328,8 +328,6 @@ void Func_0200289c(void) {
 
 #define EVENT_WORK ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)
 
-void *Unit_Get(s32 owner);
-
 // Forwards to Party_ListMembers; tagged where it is used.
 void Func_0200290c(void) {
   s16 owners[10];

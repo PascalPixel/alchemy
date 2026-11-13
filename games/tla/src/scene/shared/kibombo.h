@@ -63,7 +63,6 @@ struct KibomboEventWork {
   u16 field1c4;
 };
 
-void wait(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);

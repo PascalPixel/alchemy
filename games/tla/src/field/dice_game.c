@@ -34,7 +34,6 @@
 #include "task.h"
 #include "transform.h"
 
-
 s32 Func_081b83c4_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   Func_081b83c4();
@@ -368,8 +367,6 @@ const u8 gData_081ba30c[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #define BET_WINDOW_WIDTH COIN_WINDOW_WIDTH
 #endif
 
-struct RenderInput;
-
 extern u8 gMapCellBuffer[];
 extern char MsgLuckyDiceCoins, MsgLuckyDiceWinnings, MsgDiceGameThrow,
     MsgDiceGameHigher, MsgDiceGameLower, MsgDiceGameHigherAgain,
@@ -384,7 +381,6 @@ extern char ResourceId_FarCall00C, ResourceId_SlotsDomePicture,
     ResourceId_SlotsTripleBanner, ResourceId_SlotsPerfectBanner,
     ResourceId_SlotsGreenDigits, ResourceId_SlotsDoubleUpBanner,
     ResourceId_SlotsCashOutBanner;
-
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 

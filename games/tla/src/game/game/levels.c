@@ -381,8 +381,6 @@ struct LevelUpResult *Unit_LevelUp(s32 owner, struct LevelUpResult *res) {
   return res;
 }
 
-struct LevelUpResult;
-
 /// Levels the character up once if its experience reaches the next level.
 /// Returns `gains` filled with the gains, or NULL. Called after a battle by
 /// Battle_AwardSpoils, once for each level a party member reaches.

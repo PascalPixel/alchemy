@@ -46,7 +46,6 @@ extern struct Trigger gData_02002c9c[];
 extern struct Trigger gData_02002da4[];
 extern struct Trigger gData_0200308c[];
 
-void Event_Start(void);
 void Event_End(void);
 void Func_02001f00(s32 actor);
 void Func_02001f08(s32 slot, s32 actor);

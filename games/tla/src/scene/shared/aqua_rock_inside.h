@@ -23,8 +23,6 @@ void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 s32 Resource_FindFreeEntry(void);
-void *HeapSlot_AllocEwram(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 #include "map.h"
@@ -117,7 +115,6 @@ struct FieldSpriteFlags {
 };
 
 s32 Math_Cosine(s32 angle);
-void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 void Animation_SetStateFlags(struct Actor *object, u32 value);
 void Resource_DecodeType01(const void *source, void *destination);
@@ -126,7 +123,6 @@ void Actor_StartScript(struct Actor *object, const void *data);
 void Map_CenterOnFollowedPoint(void);
 void Func_02003d54(void);
 void MessageArgument_Push(s32 item, s32 mode);
-void Event_Start(void);
 void Event_End(void);
 void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
 void Func_02003e54(void);

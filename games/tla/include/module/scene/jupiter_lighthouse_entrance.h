@@ -9,7 +9,6 @@
 #include "module/scene/scene.h"
 
 struct EffectOptions;
-struct FieldEffect;
 
 extern u16 gData_020021e4[];
 

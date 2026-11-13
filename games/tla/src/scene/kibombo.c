@@ -761,7 +761,6 @@ struct Actor;
 extern void Script_WaitForEventTimeout__s1318(struct Actor *actor) __asm__("Script_WaitForEventTimeout");
 #define Script_WaitForEventTimeout Script_WaitForEventTimeout__s1318
 /* VIEW(s1318): routine Func_080d4568 as struct Actor *Func_080d4568(void); kibombo.h has struct KibomboObject *Func_080d4568(void); tried as the definition's struct Actor *Func_080d4568(void), which the object already declares, it does not compile in tla-ja: games/tla/include/field/event.h:124: conflicting types for `Func_080d4568'. */
-struct Actor;
 extern struct Actor *Func_080d4568__s1318(void) __asm__("Func_080d4568");
 #define Func_080d4568 Func_080d4568__s1318
 #include "event_inline.h"
@@ -779,7 +778,6 @@ extern s32 Task_Add__s1318(TaskFunc func, s32 order) __asm__("Task_Add");
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
 void Func_02005a8c(void);
-void Func_02005bb4(void);
 void Func_02005c7c(void);
 extern const u8 gData_02005e88[];
 extern const u8 gData_02005eec[];

@@ -94,7 +94,6 @@ void Func_0200137c(void) {
 
 extern const u8 gData_02003340[];
 extern const u8 gData_0200335a[];
-union FieldObject;
 void Func_02003168(const s16 *data);
 
 s32 Scene_Initialize(void) {
@@ -280,9 +279,7 @@ void Func_02001868(void) {
 
 /* VIEW(events_e): routine Func_020017dc as void Func_020017dc(void); the definition has void Func_020017dc(struct Actor *object); tried as the definition's void Func_020017dc(struct Actor *actor), it does not compile in tla-ja: games/tla/src/scene/tundaria_tower/s11e0.c:355: `Func_020017dc__events_e' undeclared (first use in this function). */
 extern void Func_020017dc__events_e(void) __asm__("Func_020017dc");
-void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Func_02002f80(struct Actor *object, s32 mode);
-void Script_WaitForEventTimeout(struct Actor *actor);
 
 void Func_0200189c(void) {
   struct Actor *object;

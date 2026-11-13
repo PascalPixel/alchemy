@@ -225,10 +225,6 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-struct FxPartyList;
-
-struct StripQuad;
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 

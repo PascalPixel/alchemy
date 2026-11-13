@@ -59,8 +59,6 @@ void Func_020029d0(s32 spread) {
   } while (i <= 7);
 }
 
-union FieldObject;
-
 void Func_02002b04(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 state;

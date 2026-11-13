@@ -7,10 +7,8 @@
 #include "types.h"
 #include "module/scene/scene.h"
 
-struct Actor;
 struct EffectOptions;
 struct LightOam;
-struct Position;
 
 struct WarpWork {
   s16 unk00;

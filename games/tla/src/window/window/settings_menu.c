@@ -203,7 +203,6 @@ void *CommandIcon_Create(s32 frame, s32 flags,
                                        struct RenderInput *input, s32 offsetX,
                                        s32 offsetY);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
-s32 __divsi3(s32 numerator, s32 denominator);
 void Func_08108048(void *object, s32 x, s32 y);
 
 // The option screen's work (heap slot 0xd0), as The Broken Seal's
@@ -708,7 +707,6 @@ struct WorkspaceChoiceScreen {
 
 extern const s8 gMenu_WorkspaceIcons[];
 
-s32 GameFlag_Test(s32 flag);
 void PauseMenu_Initialize(void);
 void PauseMenu_Release(void);
 struct RenderInput *PauseMenu_Open(void);

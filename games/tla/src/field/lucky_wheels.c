@@ -345,8 +345,6 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 #define REEL_TITLE_TILE 0x370
 #endif
 
-struct Window;
-
 struct ReelWork {
   struct Reel reels[5];
   s32 state;

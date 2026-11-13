@@ -7,7 +7,6 @@
 #include "types.h"
 #include "module/scene/scene.h"
 
-struct Actor;
 struct EffectOptions;
 struct EffectSprite;
 struct LightOam;

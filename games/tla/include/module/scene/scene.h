@@ -1949,7 +1949,6 @@ extern char SceneId_Ov664Room4;
 
 void Func_020018c8(s32 id);
 
-struct Actor;
 struct SparkSprite__jupiter_lighthouse_room_5;
 struct Vector3;
 struct Window;

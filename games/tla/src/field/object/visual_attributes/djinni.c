@@ -44,7 +44,6 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *obj) {
 #endif
 
 struct Actor *Actor_GetById(u32 objectId);
-void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Actor_Jump(s32 id, s32 speed, s32 frames);
 /* VIEW(motes): routine Func_080200c0 as struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
 extern struct Actor *Func_080200c0__motes(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");

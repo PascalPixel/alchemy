@@ -30,15 +30,11 @@ extern const struct WarpTarget gData_02003d10;
 
 struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
 void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 
 void Func_0200016c(const struct WarpTarget *warp, s32 door, s32 mode);
-void Map_PlayMapEdit(const void *steps, s32 x, s32 y);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Event_Start(void);
-void Event_End(void);
 void Func_02003474(s32 a, s32 b, s32 c);
 void Actor_ArmCallbackAndRefresh(s32 actor, s32 angle);
 void Func_02003624(struct Actor *object, struct Actor *target);
@@ -488,14 +484,8 @@ void Func_02000978(s32 actor) {
 /* VIEW(s0a34): variable gData_02003634 as extern const struct ThrowAnimations gData_02003634; the definition has u32 gData_02003634[] = { 439, 440, 441, }; tried as the definition's extern u32 gData_02003634[], it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:522: incompatible types in assignment. */
 extern const struct ThrowAnimations gData_02003634__s0a34 __asm__("gData_02003634");
 
-struct Actor *Actor_GetById(u32 objectId);
-s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Func_080d3b28(s32 id, s32 animation);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
-void Actor_Jump(s32 actor, s32 speed, s32 frames);
-void Actor_SetSpeedParameters(s32 actorId, s32 speed, s32 acceleration);
-void Actor_OffsetPositionAndResetMotion(s32 actorId, s32 dx, s32 dz);
 void Func_02000734(u16 *from, u16 *to, s32 frames);
 
 void Func_02000a34(s32 value) {
@@ -750,7 +740,6 @@ struct Position {
   s32 y;
   s32 z;
 };
-
 
 static __inline__ void FieldMessage_ShowAtActor_(s32 speaker, s32 flags) {
   /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 35 of
@@ -1580,7 +1569,6 @@ void Func_020029f8(s32 id, s32 mode) {
 #undef BYTE_AT
 #undef WORD_AT
 
-
 /* VIEW(s2c88): static Place as Place__s2c88; the definition has static __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d, s32 e); not tried: Place's definition holds a FAKEMATCH tag. */
 static __inline__ void Place__s2c88(struct ChampaCliffCavesSprite *a, s32 b, s32 c,
                              u32 d, s32 e) {
@@ -1646,7 +1634,6 @@ struct ChampaCliffCavesWork__s2d34 {
   u8 unk1076[2];
 };
 
-
 /* VIEW(s2d34): static Place as Place__s2d34; the definition has static __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d, s32 e); not tried: Place's definition holds a FAKEMATCH tag. */
 static __inline__ void Place__s2d34(struct ChampaCliffCavesSprite *a, s32 b, s32 c,
                              u32 d, s32 e) {
@@ -1709,7 +1696,6 @@ struct Glow {
   s32 trailingScale2;
   s16 frame;
 };
-
 
 /// Cycles thirty-two colours of the object palettes through a wave of greens
 /// and blues, places the glow's two sprites at its spot with their scales, and
@@ -1774,7 +1760,6 @@ loop:
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
 
 void Func_02002f58(const s32 *position) {
   u8 *work = HeapSlot_AllocFar(220, 0x1078);
@@ -1901,7 +1886,6 @@ struct Vec3 {
   s32 z;
 };
 
-
 void Func_02003164(const struct Vec3 *origin) {
   struct ChampaCliffCavesWork__s3164 *work =
       HeapSlot_AllocFar(220, sizeof(struct ChampaCliffCavesWork__s3164));
@@ -1934,7 +1918,6 @@ void Func_02003164(const struct Vec3 *origin) {
 }
 
 // ---- games/tla/src/scene/champa_cliff_caves/s320c.c ----
-
 
 void Func_0200320c(void) {
   struct ChampaCliffCavesWork *work =

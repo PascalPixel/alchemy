@@ -53,10 +53,6 @@ struct ShamanVillageCaveEventWork {
   s16 value154;
 };
 
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Event_Start(void);
-void Event_End(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
 void Func_02000098(s32 id);

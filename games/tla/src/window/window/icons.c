@@ -16,7 +16,6 @@ extern u8 *gIcon_BasePointerTable[];
 extern u8 *gIcon_OverlayPointerTable[];
 
 void Icon_Decode(GlyphTransfer *work, s32 layer);
-s32 Resource_FindFreeEntry(void);
 
 void Icon_BuildCommandIconTiles(s32 no0, s32 no1, s32 *slot, s32 *ret,
                                   s32 flag) {
@@ -192,8 +191,6 @@ s32 Icon_BuildMiscIconTiles(s32 no, s32 unused, s32 slot) {
   return 1;
 }
 
-extern u8 *gItemIcons[];
-
 void Icon_Decode(GlyphTransfer *work, s32 layer);
 
 /// Decodes item code's icon (the first icon for code 0) into the glyph work.
@@ -216,7 +213,6 @@ struct BattleActionGlyph {
 };
 
 extern u8 *gIcon_BasePointerTable[];
-extern u8 *gPsynergyIcons[];
 
 void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                                   s32 *tileOut, s32 reuse);

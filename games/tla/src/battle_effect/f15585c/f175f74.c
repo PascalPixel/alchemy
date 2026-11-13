@@ -91,7 +91,6 @@ struct SummonWork__f175f74 {
   s32 frameDone;
 };
 
-
 struct Scene68 {
   u8 unk000[0x56c];
   u16 palette[0x82];
@@ -143,9 +142,7 @@ struct RegisterQueue {
   struct RegisterQueueEntry entries[32];
 };
 
-
 #define SYSTEM_WORK ((struct SystemWork *)Ram_HeapSlots)
-extern u32 gCameraSceneParameters[];
 #define REGISTER_QUEUE ((struct RegisterQueue *)&gIoWriteQueue)
 
 #define TILE_SLOTS ((struct TileSlot *)gResourceTableEntries)
@@ -187,7 +184,6 @@ extern u8 gData_08198c67[];
 extern const u8 gData_08199210[];
 extern const u8 gData_08199340[];
 extern const u8 gData_08199364[];
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
 void BattleEffect_StartCanvasLayer(s32);
 void BattleEffect_ConfigureEffectDisplay(void);
@@ -203,15 +199,12 @@ extern struct SpriteObject__f175f74 *Func_0815b290__f175f74(s32, s32, u32, u32) 
 /* VIEW(f175f74): routine Func_0815b3b0 as struct SpriteObject__f175f74 *Func_0815b3b0(s32, s32, u32, u32); the definition has struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value); tried as the definition's struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object already declares, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:23681: too many arguments to function `Func_0815b3b0'. */
 extern struct SpriteObject__f175f74 *Func_0815b3b0__f175f74(s32, s32, u32, u32) __asm__("Func_0815b3b0");
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
-void Sound_PlayFar(s32);
-u32 Random16(void);
 s32 Func_0800206c(s32, s32);
 
 s32 Trig_Sin(s32);
 s32 Trig_Cos(s32);
 s32 __divsi3(s32, s32);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_ResetTransformState(void);
 void Func_080151e4(s32, s32, s32);
 void Func_08015160(s32, s32, s32);
 void SceneTransform_ApplyPitch(s32);
@@ -1793,7 +1786,6 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-
 
 /// Two triangles of a strip: three vertex indices and a texture coordinate
 /// pair for each corner.

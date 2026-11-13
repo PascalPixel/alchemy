@@ -25,7 +25,7 @@ extern char ResourceId_IceTileSheet;
 extern char ResourceId_RedPaletteA;
 extern char ResourceId_VioletPaletteA;
 extern char ResourceId_YellowPaletteB;
-extern char ResourceId_CrystalSheet;
+extern char ResourceId_CrystalSheet; // directory row 0x193
 extern char ResourceId_EmberStreakSheet;
 extern char ResourceId_VioletPaletteD;
 extern char ResourceId_DustPuffSheet;
@@ -35,7 +35,7 @@ extern char ResourceId_BlueFlameSheet;    // directory row 0x130
 extern char ResourceId_MarsDjinnSheet;    // directory row 0x150
 
 extern char ResourceId_IceShardSheet;
-extern char ResourceId_SparkleDots;
+extern char ResourceId_SparkleDots; // directory row 0x17e
 extern char ResourceId_BlueBeamSheet;
 
 extern char ResourceId_EarthWallSheet;
@@ -67,8 +67,8 @@ extern char ResourceId_VioletCometSheet;
 extern char ResourceId_LightningBoltSheet; // directory row 0x188
 
 extern char ResourceId_FiveModeImage;
-extern char ResourceId_RedPaletteB;
-extern char ResourceId_CyanPalette;
+extern char ResourceId_RedPaletteB; // directory row 0x147
+extern char ResourceId_CyanPalette; // directory row 0x166
 extern char ResourceId_OrangePaletteA;
 
 extern char ResourceId_BlastSheet;   // directory row 0x184

@@ -69,7 +69,7 @@ void Func_080150ac(s32 ang);
 void SceneTransform_ApplyPitch(s32 ang);
 void SceneTransform_ApplyPosition(const s32 *pos);
 void Projection_Set(u32 value0, u32 value1, u32 value2);
-void Func_08015160(s32 x, s32 y, s32 z);
+void Func_08015160(s32 x, s32 y, s32 z); // translate
 void Func_0801521c(s32 scale);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_080150e4(s32 ang);

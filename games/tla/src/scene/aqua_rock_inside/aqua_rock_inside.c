@@ -843,7 +843,6 @@ union ActorView {
 };
 extern const u8 gData_02004034[], gData_02003fe8[], gData_02004004[],
     gData_02004058[], gData_02004014[], gData_0200407c[], gData_020040ac[];
-void Actor_StartScript(struct Actor *object, const void *data);
 
 void Func_02001620(s32 firstId, s32 secondId) {
   struct Actor *first = Actor_GetById(firstId);

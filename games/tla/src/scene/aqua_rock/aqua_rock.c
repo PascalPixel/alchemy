@@ -805,7 +805,6 @@ settle:
 
 #include "call.h"
 
-s32 GameFlag_GetByte(s32 flag);
 void Func_02002948(s32 a);
 
 s32 Scene_Initialize(void) {

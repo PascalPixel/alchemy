@@ -10,10 +10,7 @@
 #include "field/particle.h"
 #include "module/scene/scene.h"
 
-struct Actor;
 struct AnimationEntry;
-struct FieldEffect;
-struct FieldSprite;
 struct RenderInput;
 struct WindowSprite;
 

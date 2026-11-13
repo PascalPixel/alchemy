@@ -9,11 +9,9 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
@@ -31,7 +29,6 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
@@ -49,21 +46,13 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 void *Resource_GetTableEntry(s32 resource);
 
-void Sound_PlayFar(s32 cue);
-void wait(s32 frames);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Push(void);
 void Transform_Pop(void);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
@@ -324,8 +313,6 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-
-
 // The column pictures: 36 pixels wide, and a slim 17-pixel one after them.
 #define SLIM_COLUMN_OFFSET 0x870
 #define SPARK_OFFSET 0x3060
@@ -539,7 +526,6 @@ extern u16 gData_08197410[];      // gBattleEffect_MoteCells
 extern const s8 Data_08198bea[];  // the drops' bounce speeds
 extern const u8 Data_08199244[];  // the glow's and the splashes' mesh
 extern const u8 gData_08199210[]; // its four corners
-extern u32 gCameraSceneParameters[];
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
 
@@ -811,7 +797,6 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
 }
 
 #undef BLITTER
-
 
 struct Model;
 
@@ -1177,8 +1162,6 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   SummonEffect_RunCanvasMode3(effect);
 }
-
-struct BattleEffectArgument;
 
 void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode);
 

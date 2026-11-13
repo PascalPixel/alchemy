@@ -6,9 +6,6 @@
 
 void *GetMotionRecordFar(void *object, s32 index);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void Render_ResetTransformState(void);
-
-s32 Render_ProjectPoint(const void *point, s32 *screen);
 
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   u8 *camera;
@@ -71,8 +68,6 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
   HeapSlot_Release(100);
 }
 
-
-
 // The blitter slots read as what they hold, a drawing routine.
 #define ALTERNATE_BLITTER_SLOT                                                 \
   (((struct {                                                                  \
@@ -96,7 +91,6 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
 
 #define SPARK_COUNT 64
 
-
 extern char ResourceId_WaveSheet;
 extern char ResourceId_BeamImage;
 extern char ResourceId_BlueArcSheetA;
@@ -115,11 +109,8 @@ extern u8 Data_08198866[];
 // gLuckyWheels_SparkCellOffsets).
 extern u16 Data_08197424[];
 
-void wait(s32 frames);
-u32 Random16(void);
 void *Resource_GetTableEntry(s32 id);
 
-void *Unit_Get(s32 owner);
 s32 Summon_IsEntrySecondaryFlaggedFar(s32 enemyId);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
@@ -134,7 +125,6 @@ void BattleEffect_SetupCanvasTileMap(void);
 // Marks the transition done and shows the battle view again.
 void BattleEffect_HideBg1AndRestoreBackdrop(void);
 // Copies the canvas to VRAM when a transfer is pending.
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
@@ -388,11 +378,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
 
-
-
 extern char ResourceId_GreyCrescentSheet;
-
-void Sound_PlayFar(s32 cue);
 
 void BattleCamera_SetViewAtPairMidpointFar(s32 actor, s32 target, s32 frames);
 void BattleBackground_SetPaletteLevelFar(s32 background, s32 level);
@@ -654,7 +640,6 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   }
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
-
 
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent) {

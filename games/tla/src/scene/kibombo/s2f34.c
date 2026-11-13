@@ -637,8 +637,6 @@ done:
   Import_EventSetExitRequest(11);
 }
 
-void BattleEffect_StartBufferInterpolation(s32 frames);
-
 void Func_02003c84(void) {
   Sound_Play(212);
   Kibombo_FadeTo(0x7fff, 0);
@@ -1342,7 +1340,6 @@ struct Actor;
 extern void Animation_SetStateFlags__s516c(struct Actor *object, u32 value) __asm__("Animation_SetStateFlags");
 #define Animation_SetStateFlags Animation_SetStateFlags__s516c
 /* VIEW(s516c): routine Actor_SetPartAttribute as void Actor_SetPartAttribute(struct Actor *object, s32 attribute); kibombo.h has void Actor_SetPartAttribute(struct KibomboObject *object, s32 value); tried as the definition's void Actor_SetPartAttribute(struct Actor *object, s32 attribute), which the object already declares, it does not compile in tla-ja: games/tla/include/field/field.h:93: conflicting types for `Actor_SetPartAttribute'. */
-struct Actor;
 extern void Actor_SetPartAttribute__s516c(struct Actor *object, s32 attribute) __asm__("Actor_SetPartAttribute");
 #define Actor_SetPartAttribute Actor_SetPartAttribute__s516c
 #include "field.h"
@@ -1351,9 +1348,6 @@ extern void Actor_SetPartAttribute__s516c(struct Actor *object, s32 attribute) _
 #undef Actor_SetSingleChildFlags
 
 void *Unit_Get(s32 owner);
-void Func_020050ac(void);
-void Func_020031f0(s32 id);
-void Func_02002c34(void);
 
 static __inline__ s32 Gauge(s32 value, s32 max) {
   s32 gauge = (value << 14) / max;

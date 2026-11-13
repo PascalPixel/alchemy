@@ -298,7 +298,6 @@ void Func_0811e830(struct SavedBattleObj *saved) {
   }
 }
 
-void *Unit_Get(s32 owner);
 /* VIEW(f11e3ac): routine BattleClass_GetAttackHop as s32
  * BattleClass_GetAttackHop(s32 classId); the definition has void
  * BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) { void

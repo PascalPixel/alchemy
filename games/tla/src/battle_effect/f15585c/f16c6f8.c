@@ -7,10 +7,8 @@
 struct MeshTriangle;
 struct Model;
 
-
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
@@ -22,7 +20,6 @@ void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void Func_081180e8(s32 phase);                      // BattlePlayback_StartFar
@@ -31,16 +28,10 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 extern void **GetBattleObjectSlotFar__f16c6f8(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
-void Sound_PlayFar(s32 cue);
-void wait(s32 frames);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,

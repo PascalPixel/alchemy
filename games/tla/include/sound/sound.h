@@ -8,8 +8,6 @@
 #include "edition.h"
 #include "sound_driver_types.h"
 
-struct SoundPlayer;
-struct SoundTrack;
 struct SoundWork;
 
 extern const u8 gSound_Cgb3LevelCodes[];

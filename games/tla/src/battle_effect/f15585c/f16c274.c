@@ -33,7 +33,6 @@ struct BattleObjectPosition {
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
@@ -49,17 +48,10 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Render_ResetTransformState(void);
 
 /* VIEW(f16c274): routine GetBattleObjectSlotFar as struct BattleObjectPosition **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:16041: conflicting types for `GetBattleObjectSlotFar'. */
 extern struct BattleObjectPosition **GetBattleObjectSlotFar__f16c274(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
-
-void Sound_PlayFar(s32 cue);
-void wait(s32 frames);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
 
 extern char ResourceId_Data0FB;
 extern char ResourceId_VenusDjinnSmallSheet;
@@ -68,7 +60,6 @@ extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
 extern const u8 gData_08199364[]; // the crystal's mesh
 extern const u8 gData_08199210[]; // its four corners
-extern u32 gCameraSceneParameters[];
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
 #define CRYSTAL_FRAMES 103

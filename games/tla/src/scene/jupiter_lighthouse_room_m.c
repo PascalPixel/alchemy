@@ -1153,7 +1153,6 @@ void Func_02001e38(void) {
 
 #define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
 
-void *Unit_Get(s32 owner);
 s32 Inventory_Equip();
 
 #define ACTOR_SET_MODE_AND_WAIT(id, mode, frames)                              \

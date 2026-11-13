@@ -116,7 +116,7 @@ void BattleHighlight_SetSpriteMode(s32 actor, s32 mode);
 void BattleObject_Put(void);
 void BattleEffect_RunSceneEffectFar(s32 *context);
 /// Copies the canvas to VRAM when a transfer is pending.
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // ☀️ ProcessPendingGraphicsTransfer
 void BattleEffect_ArmBg2AffineHBlankDma(void);
 /// Steps the background palette fade.
 void Palette_StepFadeTransfer(void);

@@ -62,6 +62,7 @@ s32 Sanctum_GetServiceMessage(s32 value) {
   shop = Ram_HeapSlots->menuRuntime;
   mode = shop[0x507];
   if (mode == 1) {
+    // MsgReviveService: "Hmm, you were downed ...", then "Fear not ..."
     value += (u32)MsgCurePoisonService - (u32)MsgReviveService;
   }
   if (mode == 2) {

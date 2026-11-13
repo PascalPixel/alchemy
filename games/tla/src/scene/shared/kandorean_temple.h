@@ -17,7 +17,6 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
 extern u32 gSceneExits[];
 
-void Event_Start(void);
 void Event_End(void);
 void Func_02000668(struct Actor *object, s32 a);
 
@@ -82,7 +81,6 @@ void Func_020053a8(s32 a, s32 b, s32 c, s32 d);
 void Actor_MoveToObject(s32 id, s32 target);
 void Event_StartScreenTransition(void);
 void *HeapSlot_AllocFar(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
 extern struct Actor *gData_020062ac;
 extern s32 gData_02005548[];
 extern s32 gData_02005550[];

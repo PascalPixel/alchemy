@@ -44,7 +44,6 @@ extern u16 gData_02002ce6;
 void Func_02000e30(void);
 void Func_02000e90(void);
 void Irq_SetHandler(s32 a, s32 b, void (*callback)(void));
-void Event_Start(void);
 void Event_End(void);
 void Func_02002130(s32 a, s32 b);
 void Func_020021a0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);

@@ -1979,7 +1979,6 @@ struct MapCell__f0e150c {
 
 extern struct TouchCopies gData_02001000;
 
-struct Actor *Actor_GetById(u32 objectId);
 struct MapCell__f0e150c *Func_080dbb78(s32 x, s32 z, s32 layer);
 
 void Func_080e25e8(s32 toX, s32 toZ, s32 width, s32 height, s32 originX,

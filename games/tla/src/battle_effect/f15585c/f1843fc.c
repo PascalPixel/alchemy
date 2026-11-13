@@ -8,7 +8,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-
 /* VIEW(f1843fc): tag struct RenderModel as struct RenderModel__f1843fc; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunCatastrophe moves: 2 of 4547 instructions in tla-ja. */
 struct RenderModel__f1843fc {
   s32 kind;
@@ -23,7 +22,6 @@ struct RenderModel__f1843fc {
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
@@ -40,7 +38,6 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
@@ -58,20 +55,12 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
 
 void *Resource_GetTableEntry(s32 resource);
 
-void Sound_PlayFar(s32 cue);
-void wait(s32 frames);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Push(void);
 void Transform_Pop(void);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
@@ -83,13 +72,11 @@ void Transform_Pop(void);
 // An effect sprite as this effect reaches it: its OAM priority and its VRAM
 // cache entry.
 
-
 struct MeshVertex {
   s8 x;
   s8 y;
   s8 z;
 };
-
 
 extern char ResourceId_AerialViewBackdrop;
 extern char ResourceId_ChainedDemonTiles;
@@ -119,7 +106,6 @@ extern u8 Data_02011000[];
 extern u8 Data_02012000[];
 extern u8 Data_02016000[];
 extern struct EffectStep Data_02016d00[];
-extern u32 gCameraSceneParameters[];
 extern const struct WordPair Data_08196ef8;
 extern u16 gData_08197410[];
 extern u16 gData_08197486[];

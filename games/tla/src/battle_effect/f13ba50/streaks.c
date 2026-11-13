@@ -7,8 +7,6 @@
 #include "module/battle_effect/f13ba50.h"
 #include "resource_ids.h"
 
-struct BattleEffectArgument;
-
 /// Abilities: Sonic Wave (kind 300).
 void BattleEffect_RunSonicWave(void *object) { Func_0813c5f4(object, 0); }
 

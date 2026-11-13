@@ -7,7 +7,6 @@
 #include "types.h"
 #include "module/scene/scene.h"
 
-struct Actor;
 struct CellTarget;
 struct CellTargetEntry;
 struct LightOam;

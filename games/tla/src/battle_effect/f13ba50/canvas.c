@@ -11,12 +11,7 @@
 #include "module/tla.h"
 #include "resource_ids.h"
 
-struct FxPartyList;
-struct MeshTriangle;
-struct MeshVertex;
 struct Model;
-struct ResourceObjectWork;
-struct StripQuad;
 
 // A texture for the IWRAM renderer.
 /* VIEW(f14153c): tag struct ModelTexture as struct ModelTexture__f14153c; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunEclipse moves: 1 of 2142 instructions, Func_08142944 moves: 1 of 730 instructions in tla-ja. */

@@ -208,13 +208,8 @@ void Func_02002cc0(struct Actor *object) {
 #include "system/io_reg.h"
 #include "frame.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
 void Sound_Play(s32 cue);
-struct Actor *Actor_GetById(u32 objectId);
-struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *object, const u8 *script);
-void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 void BattleEffect_ApplyColorToSourceBuffer(s32 a, s32 b);
 s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
 s32 BattleEffect_StartBufferInterpolation(s32 frames);

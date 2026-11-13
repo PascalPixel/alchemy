@@ -8,7 +8,6 @@
 #include "types.h"
 #include "battle/battle.h"
 
-struct Actor;
 struct ObjectAnimationState;
 
 struct BattleFxDefinition {

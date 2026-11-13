@@ -45,11 +45,7 @@ void *Scene_GetPlacements(void) {
 #include "scene_tables.h"
 #include "event_inline.h"
 
-extern u32 gSceneExits[];
-
 void Func_02000620(s32 a);
-void Event_Start(void);
-void Event_End(void);
 
 void Func_02000438(void);
 

@@ -23,7 +23,6 @@ struct MagmaRockEventWork {
   u16 value1b2;
 };
 
-
 void Func_02000ff4(struct Actor *object) {
   struct MagmaRockEventWork *work = Ram_HeapSlots->eventWork;
 
@@ -262,7 +261,6 @@ hit:
 // ---- games/tla/src/scene/magma_rock/target.c ----
 #include "macros.h"
 
-
 void Func_02001444(void) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
   struct Actor *object;
@@ -416,7 +414,6 @@ void Func_020015e4(union FieldObject *object) {
 #include "system/ram_buffer.h"
 
 /// The native reads these event work halfwords signed (ldrsh).
-
 
 void Func_02003c4c(struct Actor *object, s32 a);
 
@@ -616,7 +613,6 @@ void Func_02001be0(void) {
 // ---- games/tla/src/scene/magma_rock/s1c00.c ----
 #include "call.h"
 
-struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetActionById(s32 id, s32 action);
 /* VIEW(s1c00): routine Func_080d452c as void Func_080d452c(s32 a, s32 b); event.h has s32 Func_080d452c(s32 actorId, s32 pan); tried as the definition's void Func_080d452c(s32 id, s32 use_setter), it does not compile in tla-ja: games/tla/src/scene/magma_rock/s0ff4.c:672: conflicting types for `Func_080d452c'. */
 extern void Func_080d452c__s1c00(s32 a, s32 b) __asm__("Func_080d452c");
@@ -789,8 +785,6 @@ void Func_02001ffc(void) {
   Event_SetFlag(0x252);
 }
 
-
-
 void Func_02002024(s32 x, s32 z) {
   struct MagmaRockEffectConfig config;
   s32 position[3];
@@ -858,8 +852,6 @@ void Func_020020f8(s32 mode, s32 cue) {
   if (cue == 0x3e7)
     Func_02003998();
 }
-
-struct Trigger;
 
 extern const u8 gData_0200460c[];
 extern const u8 gData_02004720[];

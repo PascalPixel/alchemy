@@ -7,7 +7,6 @@
 #include "module/scene/scene.h"
 #include "module/scene/yallam.h"
 
-
 s32 Func_02000038(struct Actor *object) {
   struct TileSprite *sprite = object->sprite;
 
@@ -38,7 +37,6 @@ extern const u8 MsgIOnceHeard[];
 
 void Func_020006bc(s32 id);
 void Func_02001944(void);
-void Event_Start(void);
 void Event_End(void);
 
 struct YallamSaved {

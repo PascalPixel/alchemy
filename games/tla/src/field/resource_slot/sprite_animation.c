@@ -391,8 +391,6 @@ void Animation_ApplyChildValue(struct ChildGroup *group, s32 value) {
 
 #define ANIMATION_OBJECT_COUNT 64
 
-s32 Animation_LookupValueByKey(s32 key);
-
 /// Takes the sprite and layer pools (from the fixed heap blocks in mode 3,
 /// the heap otherwise) and clears them, loads the shadow tiles into VRAM cache
 /// entry 93 and copies the strided tile copier into RAM.

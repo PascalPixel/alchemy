@@ -23,9 +23,6 @@ struct FieldActor {
 #define ACTOR_NO_TARGET ((s32)0x80000000)
 
 void Task_Wait(s32 frames);
-void Event_Wait(s32 frames);
-void Event_Start(void);
-void Event_End(void);
 struct Actor *Actor_Create(s32 type, s32 x, s32 y, s32 z);
 void Sound_PlayFar(s32 cue);
 

@@ -93,14 +93,9 @@ void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void Func_0815b510(u8 *map, s32 size, s32 scale);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
-void *Heap_AllocEwram(s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -110,7 +105,6 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 /* VIEW(f18bc98): routine Render_DrawModelList as void Render_DrawModelList(struct Model__f18bc98 *model); f18ad40 has void Render_DrawModelList(struct Model__f18ad40 *model). */
 extern void Render_DrawModelList__f18bc98(struct Model__f18bc98 *model) __asm__("Render_DrawModelList");
 void Heap_Release(void *block);
-void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
@@ -118,10 +112,7 @@ void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_08118088(s32 actor, s32 motion);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
-void wait(s32 frames);
-void HeapSlot_Release(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
 // The breaths (Beam, Rolling Flame, Ghost Soldier and Pike Assault, Blast
 // Breath): 32 motes gather at the user's mouth, then burst out of it as
@@ -573,8 +564,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunEchoCut, Func_0818c7b8, 1)
 // Does nothing and gives no value: inlined with its value ignored, it leaves
 // only a clobber of the return register, an insn with no code.
 static inline s32 Nothing(void) {}
-
-struct EffectPosition;
 
 extern char ResourceId_GreyCrescentSheet;
 extern char ResourceId_StarCrescentSheet;

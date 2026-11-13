@@ -95,7 +95,6 @@ void Func_080415a0(u16 *entry, u16 *mirror, s32 pattern, u8 *remap) {
 
 extern char ResourceId_WindowTiles;
 extern const u8 gText_ColourPens[];
-extern const u8 gFont_GlyphWidths[];
 void *Resource_GetTableEntry(s32 id);
 
 s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
@@ -321,8 +320,6 @@ void Window_MarkVisibleTextTiles(void) {
       ((struct WindowWork *)base)->tileAttributes[0] = 0;
   }
 }
-
-void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 
 struct WindowTileWork {
   u8 unk000[2];

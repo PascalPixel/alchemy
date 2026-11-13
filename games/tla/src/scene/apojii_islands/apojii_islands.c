@@ -37,7 +37,6 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
@@ -169,12 +168,10 @@ DEFINE_FUNC_02000780(Func_02000780, 7)
 #include "actor.h"
 #include "task.h"
 
-struct Actor *Actor_GetById(u32 objectId);
 /* VIEW(s07a4): routine Random16Far as u16 Random16Far(void); system.h has u32 Random16Far(void); tried as the rest of the object declares it, Func_020007a4 moves: 1 of 188 instructions in tla-ja. */
 extern u16 Random16Far__s07a4(void) __asm__("Random16Far");
 /* VIEW(s07a4): routine BattleEffect_ApplyColorToTargetBuffer as s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b); event.h has void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode); tried as the definition's void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode), which the object already declares, Func_020007a4 moves: 1 of 188 instructions in tla-ja. */
 extern s32 BattleEffect_ApplyColorToTargetBuffer__s07a4(s32 a, s32 b) __asm__("BattleEffect_ApplyColorToTargetBuffer");
-s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 
 static inline void ApojiiIslands_Flash(s32 strength, s32 mode) {
   BattleEffect_ApplyColorToTargetBuffer__s07a4(strength, mode);
@@ -344,7 +341,6 @@ s32 Func_02000d20(void) {
 
 void Func_02000d74(void) { Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 1, 5); }
 
-
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
@@ -425,7 +421,6 @@ DEFINE_FUNC_02000E90(Func_02000f58, gData_02002a98, gData_02002a9c,
     gData_02002a9e)
 
 DEFINE_FUNC_02000ED0(Func_02000f98, Func_02000ef8, Func_02000f58)
-
 
 /// The overlay's entry: sets the map mode and screen effect 0x202, then starts
 /// each room's own setup.

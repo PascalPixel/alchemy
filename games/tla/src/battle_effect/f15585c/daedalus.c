@@ -69,28 +69,20 @@ extern const s32 gData_081994e0[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
                                 s32 wait);
-void *Resource_GetTableEntry(s32 resourceId);
 
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
-void Render_ResetTransformState(void);
-void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 blitter); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer,
                    s32 frames); // BattleEffect_TintBattler
-void *Heap_AllocEwram(s32 size);
-void HeapSlot_Release(s32 slot);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Heap_Release(void *buffer);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
-void wait(s32 frames);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
 
 // A symmetrical burst over the target. Three half-pictures of the earth
@@ -201,7 +193,6 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
 
 // Tiles: pack each horizontal pair of bytes into one byte.
 
-
 /// Copies 288 rows of 40 bytes, reducing each horizontal pair to one byte.
 /// The second byte, from the odd column, survives.
 /// stride: source bytes per row; destination uses half as many.
@@ -220,9 +211,6 @@ void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride) {
     y++;
   } while (y != h);
 }
-
-
-struct EffectStep;
 
 typedef volatile u16 vu16;
 typedef volatile u32 vu32;
@@ -319,7 +307,6 @@ struct SummonArgument {
   s16 actors[8];
 };
 
-
 typedef void (*CopyFunc)(void *, const void *, s32);
 typedef void (*ClearFunc)(void *, s32);
 typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
@@ -351,7 +338,6 @@ struct SystemWork__f17e698 {
 /* VIEW(f17e698): variable gInput as extern struct InputState__f17e698 gInput; input.h has extern struct InputState gInput; tried as the 3 declarations' extern u32 gInput, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:30276: conflicting types for `gInput'. */
 extern struct InputState gInput__f17e698 __asm__("gInput");
 
-extern struct BgScroll gBgScroll[];
 extern char ResourceId_VioletSkyBackdrop;
 extern char ResourceId_ForestCanopyTiles;
 extern char ResourceId_BronzeAutomatonTiles;
@@ -394,7 +380,6 @@ extern struct SpriteObject *Func_0815b290__f17e698(s32 width, s32 height, u32 sh
 extern Sprite *Func_0815b3b0__f17e698(s32, s32, u32, s32) __asm__("Func_0815b3b0");
 
 void BattleEffect_FetchRectangleBlitters(s32, void **);
-u32 Random16(void);
 s32 Trig_Cos(s32);
 s32 Trig_Sin(s32);
 void Func_0815f0a0(s32);
@@ -1504,10 +1489,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
 
 #undef BLITTER
 
-
-
 struct FxPartyList;
-
 
 /* VIEW(f17e698): tag struct RenderModel as struct RenderModel__f17e698; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunDaedalusAlt moves: 2 of 572 instructions in tla-ja. */
 struct RenderModel__f17e698 {

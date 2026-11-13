@@ -38,7 +38,6 @@ extern void Actor_SetPositionAndResetMotion__shrine_of_the_sea_god(struct Actor 
 extern void Actor_SetSpritePriority__shrine_of_the_sea_god(u32, s32) __asm__("Actor_SetSpritePriority");
 #define Actor_SetSpritePriority Actor_SetSpritePriority__shrine_of_the_sea_god
 /* VIEW(shrine_of_the_sea_god): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); shrine_of_the_sea_god.h has void Actor_SetSingleChildFlags(struct ShrineOfTheSeaGodObject *object, u32 value); tried as the 35 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/include/field/field.h:25: conflicting types for `Actor_SetSingleChildFlags'. */
-struct Actor;
 extern void Actor_SetSingleChildFlags__shrine_of_the_sea_god(struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
 #define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__shrine_of_the_sea_god
 #include "field.h"

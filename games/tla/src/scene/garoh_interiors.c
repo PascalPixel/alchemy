@@ -40,7 +40,6 @@ void Event_WaitTransitionFrames(void);
 void Map_CenterOnFollowedPoint(void);
 void Func_020007cc(void);
 void Func_020007d4(void);
-void Event_Start(void);
 void Event_End(void);
 void Func_0200089c(s32 slot, s32 actor);
 void Func_020008a4(s32 id);

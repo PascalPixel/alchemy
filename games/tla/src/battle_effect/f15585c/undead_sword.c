@@ -334,8 +334,6 @@ void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height) {
   }
 }
 
-struct BattleEffectArgument;
-
 void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Dreamtide (kind 106).

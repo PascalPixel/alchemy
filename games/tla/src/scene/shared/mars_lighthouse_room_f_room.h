@@ -56,7 +56,6 @@ s32 Func_020027dc(s32 index);
 s32 Func_02004a8c(struct PushTarget *target);
 void Func_02004d10(struct PushTarget target);
 void Actor_StartScript(struct Actor *object, const void *script);
-void Event_Start(void);
 void Event_End(void);
 void Func_020055e0(void);
 s32 Func_020055f8(s32 id);
@@ -66,7 +65,6 @@ void ObjectTable_Snapshot(void);
 struct Actor *Func_02005680(s32 *position, s32 mode);
 void Func_02005688(void);
 void Func_02005480(struct Actor *object, s32 mode);
-struct Actor;
 void Animation_SetStateFlags(struct Actor *object, u32 value);
 s32 Math_Cosine(s32 angle);
 

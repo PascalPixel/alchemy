@@ -6,18 +6,15 @@
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);
-void Render_ResetTransformState(void);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void Transform_SetLookAt(s32 *eye, s32 *target);
 
 void Func_081180e8(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
@@ -26,12 +23,6 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
 /* VIEW(f17d174): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:28796: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f17d174(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
-
-void Sound_PlayFar(s32 cue);
-void wait(s32 frames);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
 
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_BlueCrescentSheet;
@@ -272,7 +263,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-
 /* VIEW(f17d174): tag struct RenderModel as struct RenderModel__f17d174; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunRisingDragonEnemy moves: 5 of 1028 instructions in tla-ja. */
 struct RenderModel__f17d174 {
   s32 kind;
@@ -316,14 +306,12 @@ void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
 
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Push(void);
 void Transform_Pop(void);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void Func_08164a4c(s32 red, s32 green, s32 blue); // Palette_BrightenBgEntries
@@ -333,7 +321,6 @@ extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_ClawSlashSheet;
 
 extern char ResourceId_RedHazeBackdrop;
-extern u32 gCameraSceneParameters[];
 struct CornerRow {
   struct Corner corners[2];
 };
@@ -754,8 +741,6 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-
-struct BattleEffectArgument;
 
 void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode);
 

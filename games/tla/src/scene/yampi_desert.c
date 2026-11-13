@@ -1655,8 +1655,6 @@ loop:
 #undef ARRIVE_OR
 #undef MAIN_ROUTINE_WORK_U16
 
-struct Actor *Actor_GetById(u32 objectId);
-
 // Finds the current target's table row and shrinks it.
 DEFINE_FUNC_02000BC0_69(Func_0200388c, Func_02003910)
 

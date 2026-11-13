@@ -66,7 +66,6 @@ void Func_02002848(void) {
 /* VIEW(s2860): routine Func_020024c0 as s32 Func_020024c0(s32 a, s32 b); s263c has void Func_020024c0(); tried as the definition's void Func_020024c0(void), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:261: too many arguments to function `Func_020024c0'. */
 extern s32 Func_020024c0__s2860(s32 a, s32 b) __asm__("Func_020024c0");
 void Func_02002614(void);
-extern u8 gData_020023c4[];
 
 struct RideEvent {
   u8 unk000[0x15a];

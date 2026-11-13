@@ -313,8 +313,6 @@ extern struct PendingEvent *Func_080ce458__f0dd054(u32 filter, s32 kind, s32 sel
 extern u32 BattleEffect_GetCycledTableWord__f0dd054(u32 keys) __asm__("BattleEffect_GetCycledTableWord");
 s32 Func_08020210(struct Actor *object, struct Vec3 *position);
 s32 Func_080202f0(s32 layer, s32 x, s32 z);
-struct Actor *Actor_GetById(u32 objectId);
-void BattleEffect_StopMainActor(void);
 void Actor_ApplyRandomChildValues(void);
 
 #define MOVE_CELL_MASK 0xfff00000 ///< a 16-pixel cell
@@ -1256,8 +1254,6 @@ s32 SpawnHeavyImpactEffect(struct Actor *src) {
   return 0;
 }
 
-struct BattleEffectArgument;
-
 /* VIEW(f0dd820): routine Func_080de21c as void Func_080de21c(struct BattleEffectArgument *effect); the definition has void Func_080de21c(void). */
 extern void Func_080de21c__f0dd820(struct BattleEffectArgument *effect) __asm__("Func_080de21c");
 
@@ -1268,8 +1264,6 @@ void FieldEffect_RunForceOnTarget(struct BattleEffectArgument *effect) {
 #include "item_icon.h"
 #include "module/field/event_commands.h"
 #include "module/field/f0dcb44.h"
-
-struct PendingEvent;
 
 /* VIEW(f0de21c): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct Effect04Vector *position); f0dd820 has void Camera_WorldToScreen(struct EffectPosition *value). */
 extern void Camera_WorldToScreen__f0de21c(struct Effect04Vector *position) __asm__("Camera_WorldToScreen");

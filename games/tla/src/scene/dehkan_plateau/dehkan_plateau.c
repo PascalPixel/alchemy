@@ -51,7 +51,6 @@ void Func_02001804(void);
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-
 void Func_0200118c(void) {
   GameFlag_SetBit(0x209);
   Func_080d2b4c(16, 47);
@@ -664,7 +663,6 @@ extern const u8 gData_02003fb8[];
 extern const u8 gData_02003fc0[];
 extern const u8 gData_02003fc4[];
 
-struct Actor *Actor_GetById(u32 objectId);
 void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
 void Func_02002180(void);
@@ -678,8 +676,6 @@ extern const struct CellRecord gData_02004066[];
 
 /* VIEW(events_g): routine Actor_SetHorizontalPositionAndAngleWithTerrain as void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16 angle); event.h has void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z, s32 angle); tried as the definition's void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x, s32 z, s16 angle), it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:832: conflicting types for `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
 extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(u32 id, s32 x, s32 z, s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
-s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
-struct Actor *Func_080d4568(void);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Actor_Jump(s32 id, s32 a, s32 b);

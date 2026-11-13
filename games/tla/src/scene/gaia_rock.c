@@ -43,8 +43,6 @@ const struct ActorPlacement *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-struct Trigger;
-
 const struct Trigger *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1)
     return (const struct Trigger *)gData_02001044;
@@ -164,8 +162,6 @@ void Func_02000164(s32 unused, s32 id) {
     }
   }
 }
-
-struct SceneEntrance;
 
 void Func_02000f04(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 

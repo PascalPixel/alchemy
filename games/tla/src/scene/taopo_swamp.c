@@ -30,7 +30,6 @@ extern char SceneId_Ov678Room11;
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02002764(s32 id, s32 a);
 void Func_02002778(s32 a, s32 b);
-void Event_Start(void);
 void Event_End(void);
 void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
 void Func_02002928(void);

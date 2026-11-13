@@ -34,8 +34,6 @@ const u8 *Scene_GetRegions(void) {
   return 0;
 }
 
-struct Actor;
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02004eec_(s32 id, s32 a, s32 b) {

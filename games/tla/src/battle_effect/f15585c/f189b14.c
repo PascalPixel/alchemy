@@ -57,19 +57,13 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
-void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
-void *Heap_AllocEwram(s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -82,10 +76,7 @@ extern void Render_DrawModelList__f189b14(struct Model__f189b14 *model) __asm__(
 void Heap_Release(void *block);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
-void wait(s32 frames);
-void HeapSlot_Release(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
 // Legend (effect kind 122): a fan of eight blades opens over the target for
 // 50 frames while a rune, mirrored from one corner, rises and turns behind

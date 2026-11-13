@@ -12,7 +12,6 @@ struct Actor;
 struct AnimationEntry;
 struct Effect04Vector;
 struct EffectVector;
-struct FieldParticle;
 
 struct ObjectPairPosition {
   u8 unk00[6];

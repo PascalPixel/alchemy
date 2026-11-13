@@ -16,7 +16,6 @@ struct MapCell__f0e2774 {
 /* VIEW(f0e2774): variable gData_02001000 as struct TouchCopies gData_02001000; module/tla.h has s8 gData_02001000[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2774.c:61: request for member `count' in something not a structure or union. */
 extern struct TouchCopies gData_02001000__f0e2774 __asm__("gData_02001000");
 
-struct Actor *Actor_GetById(u32 objectId);
 struct MapCell__f0e2774 *Func_080dbb78(s32 x, s32 z, s32 layer);
 
 void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height, s32 toX,
@@ -76,7 +75,6 @@ void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height, s32 toX,
 
 #include "fixed_math.h"
 #include "actor_view.h"
-
 
 void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   s32 ownerId = Party_GetLeaderActor();

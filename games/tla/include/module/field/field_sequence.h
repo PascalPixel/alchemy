@@ -9,7 +9,6 @@
 #include "module/field/field.h"
 #include "scene_tables.h"
 
-struct Actor;
 struct ActorPlacement;
 struct MapCell;
 struct Trigger;

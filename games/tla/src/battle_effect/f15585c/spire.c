@@ -148,8 +148,6 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
 
 // Effects: burst effect entry points.
 
-struct BattleEffectArgument;
-
 /// Each entry passes a burst type to BattleEffect_RunBurstScene.
 /// step: effect arguments.
 void BattleEffect_RunGust(struct EffectStep *step) {

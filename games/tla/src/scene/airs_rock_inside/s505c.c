@@ -19,7 +19,6 @@
 #include "module/scene/airs_rock_inside.h"
 #include "module/scene/scene.h"
 
-struct Actor *Actor_GetById(u32 objectId);
 void Sound_Play(s32 cue);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 s32 Math_Sine(s32 angle);

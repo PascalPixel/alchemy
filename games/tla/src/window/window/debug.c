@@ -365,8 +365,6 @@ void Func_08041054(void) {
   HeapSlot_Release(208);
 }
 
-struct RenderInput;
-
 /// One row of the debug warp menu: its name and what choosing it does.
 struct DebugWarpPreset {
   const u8 *name;
@@ -509,7 +507,6 @@ void Func_08041268(s32 ability, s32 arg1, s32 arg2, s32 arg3) {
 
 extern const s16 gData_080aa170[4][9];
 
-struct Window;
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 
 /// Opens the ability grid's window: eight dividers, then the four columns

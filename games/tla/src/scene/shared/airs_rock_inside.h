@@ -34,7 +34,6 @@ extern char SceneId_Ov664Room9;
 extern char SceneId_Ov664Room10;
 extern u8 gMapCellBuffer[];
 
-struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
@@ -49,8 +48,6 @@ void Func_02005d5c(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const u8 *data);
 void Map_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Event_Start(void);
-void Event_End(void);
 void Event_ResolvePendingActions(s32 value);
 void BattleParty_ApplyDrain(s32 a, s32 b);
 void Sound_Play(s32 value);
@@ -62,7 +59,6 @@ extern s32 gData_020073e0;
 extern s32 gData_020073e4;
 extern s32 gData_020073e8;
 
-s32 Party_GetLeaderActor(void);
 void Func_02005db4(s32 srcX, s32 src_z, s32 width, s32 height, s32 destX,
                    s32 destZ);
 

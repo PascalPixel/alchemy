@@ -17,7 +17,6 @@ void Actor_StartScript(struct Actor *object, const void *script);
 struct GabombaCatacombsVec;
 s32 Func_02001174(struct Actor *object,
                   struct GabombaCatacombsVec *position);
-void Event_Start(void);
 void Event_End(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Func_02001234(s32 a);

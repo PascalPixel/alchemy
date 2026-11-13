@@ -70,8 +70,6 @@ struct WindowZoomScratch {
   s32 result;
 };
 
-void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height);
-
 /// Draws a zooming window at its size for this frame: the window grows from
 /// its centre as zoomStage counts down to 0. With savePosition set (when
 /// closing) the drawn rectangle is remembered, for the next frame to erase.
@@ -136,7 +134,6 @@ u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count) {
 }
 
 u16 *Memory_FillHalfwordsDma(u16 *destination, s32 value, s32 count);
-void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 
 void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
   struct WindowWork *canvas =
@@ -361,7 +358,6 @@ void BattleMessage_Open(s32 message) {
   }
 }
 
-void wait(s32 frames);
 s32 Message_AllTyped(void);
 
 /// Shows a message in the battle message window and waits until it has been

@@ -78,7 +78,6 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -482,7 +481,6 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-
 typedef DrawRectangle BlitterPair[2];
 
 // The swirl runs until A is pressed, at most this many frames.
@@ -500,7 +498,6 @@ void BattleEffect_FlushPendingGraphicsTransfer(void);
 void Func_0815f0a0(s32 resource);
 
 void *Resource_GetTableEntry(s32 id);
-s32 Resource_DecodeType01(const void *source, void *destination);
 
 static inline s32 Swirl_CopyPalette(const void *source) {
   return Iwram_CopyWordsEntry((void *)&BG_PLTT[96], source, 128);
@@ -825,7 +822,6 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
       table[j * count * 2 + i] = table[i];
   }
 }
-
 
 void Func_08118088(s32 actor, s32 mode);
 void Palette_LoadBasicObjColors(void);

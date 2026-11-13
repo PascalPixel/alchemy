@@ -36,14 +36,8 @@ extern u16 gData_08197410[];
 // Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
 
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_08164abc(s32 red, s32 green, s32 blue);
-void Sound_PlayFar(s32 cue);
-void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(const s32 *pos);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -55,8 +49,6 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
-void wait(s32 frames);
-void HeapSlot_Release(s32 slot);
 
 // The opening every Djinn effect shares: sparks gather from around the
 // caster, spin about a point travelling from the caster to the anchor, and
@@ -372,7 +364,6 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
   REG_BLDALPHA = 0x1010;
 }
 
-
 #define Actor_SetAnimationSpeedFar                                             \
   ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
@@ -474,7 +465,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunIceBlessing,
 
 DEFINE_EFFECT_KIND(BattleEffect_RunProjectileVolleyMode18,
                    BattleEffect_RunProjectileVolley, 18)
-
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
@@ -1248,8 +1238,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }
-
-
 
 void BattleEffect_InitializeRisingObject(s32 slot) {
   struct BattleObj *context = GetBattleObjectSlotFar(slot);

@@ -224,8 +224,6 @@ extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z, s32 angle);
-s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
-struct Actor *Func_080d4568(void);
 /* VIEW(s2698): routine Func_02003d40 as void Func_02003d40(struct Actor *object, s32 mode); module/scene/airs_rock_inside.h has void Func_02003d40(void); tried as the definition's void Func_02003d40(void), which the object already declares, Func_02002f9c moves: 1 of 34 instructions in tla-ja. */
 extern void Func_02003d40__s2698(struct Actor *object, s32 mode) __asm__("Func_02003d40");
 s32 PartyInventory_GiveItem(s32 item, s32 unused);
@@ -773,7 +771,6 @@ extern const u8 gData_02003fb0[];
 extern struct Actor *gData_02004420;
 extern s32 gData_02005678;
 
-struct Actor *Actor_GetById(u32 objectId);
 void Func_02000038(const void *data);
 void Func_02001804(void);
 void Func_02001ee8(void);

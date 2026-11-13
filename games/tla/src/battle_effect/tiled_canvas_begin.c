@@ -16,8 +16,6 @@
 #include "scene.h"
 #include "system.h"
 
-struct BattleEffectArgument;
-
 struct MenuFlagWork {
   u8 unk000[0x506];
   u8 busy;
@@ -56,8 +54,6 @@ void BattleEffect_InitializeTilemapAndFlushQueue(void) {
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "resource.h"
-
-struct FxPartyList;
 
 // The pixel half of a 16.16 value.
 #define HI(v) (((s16 *)&(v))[1])
@@ -566,8 +562,6 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
 // follow the first 128 particles.
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 #define TRAILS ((struct EffectStep *)(Ram_MapCellBuffer + 0xe00))
-
-struct ScaledSprite;
 
 // An object's sprite attributes, as far as this scene sets them.
 struct SpriteAttributes {
@@ -4571,7 +4565,6 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
      DrawRectangle draw;                                                       \
    } *)Ram_HeapSlots)                                                          \
        ->draw)
-
 
 // A sprite object as Func_0815b290 returns it.
 struct SpriteObject {

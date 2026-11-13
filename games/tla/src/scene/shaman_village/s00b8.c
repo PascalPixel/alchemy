@@ -113,7 +113,6 @@ struct Actor;
 extern void Actor_SetSingleChildFlags__scene_tables(struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
 #define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__scene_tables
 /* VIEW(scene_tables): routine Animation_SetStateFlags as void Animation_SetStateFlags(struct Actor *object, u32 value); shaman_village.h has void Animation_SetStateFlags(struct ShamanVillageObject *object, s32 flags); tried as the definition's void Animation_SetStateFlags(struct Actor *object, u32 value), which the object already declares, it does not compile in tla-ja: games/tla/include/field/field.h:58: conflicting types for `Animation_SetStateFlags'. */
-struct Actor;
 extern void Animation_SetStateFlags__scene_tables(struct Actor *object, u32 value) __asm__("Animation_SetStateFlags");
 #define Animation_SetStateFlags Animation_SetStateFlags__scene_tables
 #include "field.h"
@@ -223,8 +222,6 @@ void Func_02000458(struct ShamanVillageObject *object) {
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
-
 /// Circles the object around the centre in words 68 and 76, twice as wide
 /// as it is deep, the radius growing with its height, one step of 256 per
 /// lap, and blinks the part attribute every other frame. Overlay 663's
@@ -278,7 +275,6 @@ void Func_02000508(struct ShamanVillageObject *object) {
 
 extern const s32 gData_02004ae0[];
 
-void Func_020049f4(void);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);

@@ -71,7 +71,6 @@ struct YallamInteriorsEventWork {
   u16 field1c4;
 };
 
-void Event_Start(void);
 void Event_End(void);
 void Func_02000a68(s32 shop, s32 keeper);
 void Func_02000a70(s32 keeper);

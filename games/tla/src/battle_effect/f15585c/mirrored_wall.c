@@ -68,32 +68,23 @@ extern u16 gData_08197410[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void *Resource_GetTableEntry(s32 resourceId);
 
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
-u32 Random16(void);
-void *Heap_AllocEwram(s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Heap_Release(void *buffer);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void Func_08118088(s32 actor, s32 motion);
 void Func_081180e8(s32 phase);
-void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
-void wait(s32 frames);
-void HeapSlot_Release(s32 slot);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
 
 // A lunge. The caster runs 80 percent of the way to the target in ten
@@ -337,8 +328,6 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
   HeapSlot_Release(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }
-
-struct BattleEffectArgument;
 
 void Func_0817e698(struct BattleEffectArgument *effect, s32 mode);
 

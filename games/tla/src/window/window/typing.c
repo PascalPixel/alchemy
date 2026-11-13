@@ -91,8 +91,6 @@ void Message_ApplyStyle(struct UiChannelSlot *channel);
 s32 Text_CheckPauseSkipped(struct UiChannelSlot *channel);
 s32 Text_CheckTextDismissed(struct UiChannelSlot *channel);
 void WindowSprite_PrepareForRedraw(struct Window *window);
-void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
-s32 Resource_ResetEntry(u32 slot);
 void Sound_PlayFar(s32 cue);
 
 #define TEXT_SPEED gMainRoutineWork.eventMode

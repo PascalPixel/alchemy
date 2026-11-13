@@ -9,10 +9,8 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
@@ -29,7 +27,6 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
@@ -47,21 +44,13 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 
-void Sound_PlayFar(s32 cue);
-void wait(s32 frames);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void Transform_Push(void);
 void Transform_Pop(void);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
@@ -534,7 +523,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunPlanetDiver, Func_0818d5a8, 0)
 /// Abilities: Planetary (kind 128).
 DEFINE_EFFECT_KIND(BattleEffect_RunPlanetary, Func_0818d5a8, 1)
 
-
 #define LEAP_FRAMES 88
 #define SPARKS ((struct EffectStep *)(Ram_MapCellBuffer + 0x6000))
 
@@ -888,7 +876,6 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }
-
 
 /// Meteor Blow's horizontal-blank callback, the same routine as
 /// actor_move_random.c's BattleEffect_ArmPaletteHBlankDma: stops DMA 0,

@@ -12,8 +12,6 @@
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 
 s32 Math_Cosine(s32 angle);
-void Leader_StopMoving(void);
-void Event_ResolveAllPendingActions(void);
 void Func_020041cc(struct Actor *object, s32 mode);
 void Func_02001928(struct Actor *object, s32 priority);
 

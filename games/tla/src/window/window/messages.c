@@ -40,8 +40,6 @@ s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity) {
 extern const u8 Text_DecodeSymbolCode[];
 extern u8 Text_DecodeSymbolCodeSize[];
 
-void Message_Find(struct TextReader *reader, s32 message);
-
 /// Decodes message into text as a zero-terminated string of 16-bit codes, with
 /// at most capacity entries, keeping style codes with their operands.
 /// capacity includes the terminating halfword.
@@ -278,8 +276,6 @@ u32 MessageArgument_Lookup(u32 kind, u32 clear) {
   return value;
 }
 
-s32 Sound_GetBgmRestoreDelayFar(void);
-
 /// Ends a message wait (clearing the channel's countdown and returning 1) when
 /// the window's voice has finished or A, B or a shoulder button is held.
 s32 Text_CheckPauseSkipped(struct UiChannelSlot *ch) {
@@ -367,7 +363,6 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 attrs);
 s32 Message_AllTyped(void);
 s32 Window_IsClosed(struct Window *window);
-void wait(s32 frames);
 
 void Func_0803ce64(s32 message, s32 mode, s32 yOffset) {
   struct WindowWork *work;

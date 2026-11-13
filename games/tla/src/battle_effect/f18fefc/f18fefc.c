@@ -4,12 +4,9 @@
 
 #include "../f18fefc_internal.h"
 
-struct Actor;
 struct FxPartyList;
 struct Model;
-struct ScaledSprite;
 struct StripQuad;
-
 
 // One model vertex: signed byte coordinates, padded to a word. Written
 // through this struct, its stores are not char stores, so a reload of the
@@ -23,7 +20,6 @@ struct ModelVertex {
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
@@ -40,7 +36,6 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
@@ -111,7 +106,6 @@ extern char ResourceId_OrangePaletteB;
 
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames,
                                     s32 speed);
-void Actor_SetAnimationSpeedFar(struct Actor *object, s32 value);
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleActor_CommitPlacementFar(void);
 void BattleEffect_BuildRepeatingTilemap(void);

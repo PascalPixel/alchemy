@@ -587,14 +587,9 @@ static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
 /// Saturos and Menardi demand the stars, and the masked man with them, Felix,
 /// appears beside them.
 static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
-  u8 *motionFlags;
-  u8 *spriteFlags;
   struct Actor *felix;
   struct Actor *shadow;
   s32 i;
-  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 29 of
-   * 464 instructions differ in tbs-en. */
-  u8 zero = 0;
 
   Sound_Play(MUS_OMINOUS);
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
@@ -622,16 +617,14 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
   felix = Actor_Get(ACTOR_FELIX_MASKED);
   shadow = Actor_Get(ACTOR_PLATFORM_SHADOW);
-  spriteFlags = &felix->sprite->flags;
-  *spriteFlags = zero;
+  felix->sprite->flags = 0;
   felix->scaleX = Q16_ONE / 10;
   felix->scaleY = Q16_ONE / 10;
   shadow->scaleX = Q16_ONE / 10;
   shadow->scaleY = Q16_ONE / 10;
   Actor_SetSpriteColorById(ACTOR_FELIX_MASKED, SPRITE_COLOR_BLINK);
   Actor_SetPosition(ACTOR_FELIX_MASKED, 471, 290);
-  motionFlags = &felix->motionFlags;
-  *motionFlags = zero;
+  felix->motionFlags = 0;
   felix->y.fixed = px(40);
   Event_Wait(1);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_FELIX_MASKED, 10);
@@ -655,15 +648,15 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
     shadow->scaleY += Q16_ONE / 100;
     Event_Wait(1);
   }
-  *motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
+  felix->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
   Event_Wait(80);
   for (i = 0; i != 60; i++) {
     felix->y.fixed -= px(1) / 2;
     Event_Wait(1);
   }
-  *motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  felix->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(30);
-  *spriteFlags = 1;
+  felix->sprite->flags = 1;
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 0, 0);
   Actor_SetSpritePriority(ACTOR_FELIX_MASKED, 1);
   {

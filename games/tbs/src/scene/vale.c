@@ -441,8 +441,7 @@ const u32 *Vale_GetExits(void) { return gVale_Exits; }
 /// Places the villagers for the story so far, or for the roof repair
 /// (VALE_FROM_TITLE).
 const struct ActorPlacement *Vale_GetActorPlacements(void) {
-  u8 *gameStateBytes = (u8 *)&gMainRoutineWork;
-  if (((struct MainRoutineWork *)gameStateBytes)->entrance == VALE_FROM_TITLE)
+  if (gMainRoutineWork.entrance == VALE_FROM_TITLE)
     return gVale_RepairActorPlacements;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     return gVale_ActorPlacementsAfterKalay;
@@ -1613,8 +1612,8 @@ s32 Vale_Initialize(void) {
   s32 set;
 
   if (gMainRoutineWork.entrance == VALE_FROM_TITLE) {
-    WindowColor_Apply(((u8 *)&gMainRoutineWork)[517],
-                      ((u8 *)&gMainRoutineWork)[518]);
+    WindowColor_Apply(gMainRoutineWork.windowHue,
+                      gMainRoutineWork.windowBrightness);
     Vale_MendingTheRoof();
   } else {
     if (!GameFlag_Get(FLAG_VALE_NUT_CAUGHT)) {
@@ -2460,7 +2459,7 @@ static void Vale_RoofMended(void) {
   actor->y.fixed = px(160);
   actor->z.fixed = px(848);
   Actor_SetSpriteFlags(actor, 0);
-  ((u8 *)FieldCamera_GetActor())[85] = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   wait(1);
   FieldCamera_MoveTo(383, 160, 877, 0);
   MapGrid_CenterOnFollowedPoint();
@@ -3176,13 +3175,7 @@ static void Vale_TrailSparkles(struct Actor *source) {
     Actor_SetSpriteFlags(particle, 0);
     Actor_SelectAnimation(particle, 0);
     Actor_StartScript(particle, gVale_SparkleScript);
-    {
-      struct Sprite *record = particle->sprite;
-      s32 priorityFlags = ~12;
-      priorityFlags &= ((u8 *)&record->image)[9];
-      priorityFlags |= ACTOR_PRIORITY_OVERHEAD;
-      ((u8 *)&record->image)[9] = priorityFlags;
-    }
+    particle->sprite->image.priority = 1;
   }
   Sound_Play(SE_ITEM_BREAK);
 }
@@ -3290,7 +3283,7 @@ static void Vale_MovePillarBelowCliff(void) {
 /// The task that plays SE_PSYNERGY_SPARKLE every 16 frames while Isaac's
 /// Psynergy lifts a board at the roof's end.
 static void Vale_PlayStepSound(void) {
-  if ((*(u32 *)&gFrameCount & 15) == 0)
+  if ((gFrameCount & 15) == 0)
     Sound_Play(SE_PSYNERGY_SPARKLE);
 }
 

@@ -610,31 +610,20 @@ static s32 sOarDepth[8];
 /// Bobs the actor between 4 and 12 pixels high by a random amount
 /// each frame.
 ///
-/// The actor's work halfword says which way it is going. Returns 1.
+/// The actor's userValue says which way it is going, 1 down and 0 up.
+/// Returns 1.
 static s32 TolbiShipDeck_Bob(struct Actor *actor) {
-  s16 *flag = (s16 *)&actor->userValue;
-  s32 val;
-  s32 tmp;
-
-  // The one store of the new direction matches only through these jumps;
-  // written as two stores, their constants load from the literal pool.
-  if (*flag != 0) {
-    val =
-        actor->y.fixed - (((u32)(Import_RandomNext() << 15)) >> 16) - px(1) / 2;
-    actor->y.fixed = val;
-    if (val >= px(4))
-      goto done;
-    tmp = 0;
+  if ((s16)actor->userValue != 0) {
+    actor->y.fixed -= ((u32)(Import_RandomNext() << 15) >> 16) + px(1) / 2;
+    if (actor->y.fixed < px(4)) {
+      actor->userValue = 0;
+    }
   } else {
-    val =
-        actor->y.fixed + (((u32)(Import_RandomNext() << 15)) >> 16) + px(1) / 2;
-    actor->y.fixed = val;
-    if (val <= px(12))
-      goto done;
-    tmp = 1;
+    actor->y.fixed += ((u32)(Import_RandomNext() << 15) >> 16) + px(1) / 2;
+    if (actor->y.fixed > px(12)) {
+      actor->userValue = 1;
+    }
   }
-  *flag = tmp;
-done:
   return 1;
 }
 
@@ -1313,14 +1302,12 @@ static void TolbiShipDeck_ConfrontCrewman(void) {
 /// at a random angle and stops the sea's scroll. Then it redraws the map grid
 /// and applies the voyage's state.
 s32 TolbiShipDeck_Initialize(void) {
-  void **base = gMapGridWork;
-  struct MapGridLayerScroll *layer =
-      &((struct MapGridScrollWork *)base[0])->layers[MAPGRID_LAYER_GROUND];
+  struct MapGridScrollWork *map = gMapGridWork[0];
 
   GameFlag_Clear(FLAG_WORLD_MAP_LEFT);
-  ((struct FieldWork *)base[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID])->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  layer->speedY = 0;
+  map->layers[MAPGRID_LAYER_GROUND].speedY = 0;
   sSwayAngleX = (u16)Import_RandomNext();
   sSwayAngleY = (u16)Import_RandomNext();
   sSeaScroll[0] = 0;
@@ -1779,12 +1766,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
     wait(1);
   } while (Actor_Get(ACTOR_SEA_FIRST_ATTACK_MONSTER)->timer == 0);
   TolbiShipDeck_OpenFirstDoor();
-  /* FAKEMATCH(dead): the walk in a once-only block loads its actor id straight
-   * after the call above; as the plain call, 2 of 163 instructions differ in
-   * tbs-en. */
-  do {
-    Actor_WalkTo(ACTOR_SEA_OURANOS, 196, 612);
-  } while (0);
+  Actor_WalkTo(ACTOR_SEA_OURANOS, 196, 612);
   Actor_WaitForScriptEndById(ACTOR_SEA_FIRST_ATTACK_MONSTER);
   Event_Wait(10);
   Event_FinishScreenTransition();
@@ -2229,15 +2211,8 @@ static void TolbiShipDeck_SightLand(void) {
   Actor_SetPosition(ACTOR_SEA_OURANOS, 184, 632);
   record = Actor_Get(ACTOR_SEA_OURANOS);
   record->facing = FACING_NORTH_NORTHWEST;
-  // UB: a u32 lvalue aliases the pointer, which keeps the facing stores ahead
-  // of its load; the defined build reads it directly.
-#ifdef UBFIX
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-#else
-  ((struct FieldWork *)*(u32 *)&gFieldWork)->transition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-#endif
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);

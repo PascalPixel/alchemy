@@ -194,8 +194,7 @@ static void Xian_RotateTrainingTree(void) {
 
 /// Emits particles beside the student every fourth frame.
 static void Xian_SpawnTrainingParticles(void) {
-  // The byte view keeps the Z load ahead of the options-script store.
-  u8 *studentActor = (u8 *)Actor_Get(ACTOR_KUNG_FU_STUDENT);
+  struct Actor *student = Actor_Get(ACTOR_KUNG_FU_STUDENT);
 
   if ((gFrameCount & 3) == 0) {
     struct EffectOptions config;
@@ -203,11 +202,8 @@ static void Xian_SpawnTrainingParticles(void) {
     config.palette = 9;
     config.type = SPRITE_GIRL_IN_PINK;
     config.script = gXian_TrainingParticleScript;
-    FieldEffect_Spawn(*(s32 *)(studentActor + offsetof(struct Actor, x)),
-                      *(s32 *)(studentActor + offsetof(struct Actor, y)),
-                      *(s32 *)(studentActor + offsetof(struct Actor, z)) -
-                          px(1),
-                      0, -px(1), -px(1),
+    FieldEffect_Spawn(student->x.fixed, student->y.fixed,
+                      student->z.fixed - px(1), 0, -px(1), -px(1),
                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
                           EFFECT_USE_TYPE | EFFECT_USE_SCRIPT,
                       &config);

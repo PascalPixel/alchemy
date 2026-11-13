@@ -148,17 +148,13 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
 // the party talks to someone or Mind Read shows thoughts (the range widens to
 // 26 pixels), the child being talked to stops whatever the direction.
 static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
-  u8 **workAreas = gWindowWork;
-  struct WindowWork *ui = (struct WindowWork *)workAreas[0];
-  struct FieldWork *work =
-      (struct FieldWork *)workAreas[HEAP_SLOT_FIELD - HEAP_SLOT_WINDOW];
-  u16 *kidFlags = (u16 *)&updated->timer;
+  struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
   s32 force = 0;
   s32 range = 18;
   struct Actor *other;
   struct Actor *leader;
 
-  if ((*kidFlags & KID_CHASES_YOUNGER) != 0) {
+  if ((updated->timer & KID_CHASES_YOUNGER) != 0) {
     other = Actor_Get(ACTOR_TOLBI_YOUNGER_SISTER);
   } else {
     other = Actor_Get(ACTOR_TOLBI_OLDER_BROTHER);
@@ -169,9 +165,9 @@ static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if ((s16)work->talk != 0 || ui->mindRead != 0) {
+  if (gFieldWork->talk != 0 || window->mindRead != 0) {
     range = 26;
-    if ((*kidFlags & KID_TALKING) != 0) {
+    if ((updated->timer & KID_TALKING) != 0) {
       force = 1;
     }
   }

@@ -556,29 +556,19 @@ static s32 ShipRooms_ResetActor(struct Actor *actor) {
 }
 
 /// Bobs the actor between the floor and 8 pixels up by a random amount each
-/// frame.
+/// frame. The actor's userValue says which way it is going, 1 down and 0 up.
 ///
 /// Returns 1.
 static s32 ShipRooms_Bob(struct Actor *actor) {
-  s16 verticalMotionDirection;
-  s32 descendingY;
-  s32 ascendingY;
-
   if ((s16)actor->userValue != 0) {
-    descendingY =
-        (actor->y.fixed - ((u32)(Import_RandomNext() << 15) >> 16)) - px(1) / 2;
-    actor->y.fixed = descendingY;
-    if (descendingY < 0) {
-      verticalMotionDirection = 0;
-      actor->userValue = verticalMotionDirection;
+    actor->y.fixed -= ((u32)(Import_RandomNext() << 15) >> 16) + px(1) / 2;
+    if (actor->y.fixed < 0) {
+      actor->userValue = 0;
     }
   } else {
-    ascendingY =
-        actor->y.fixed + ((u32)(Import_RandomNext() << 15) >> 16) + px(1) / 2;
-    actor->y.fixed = ascendingY;
-    if (ascendingY > px(8)) {
-      verticalMotionDirection = 1;
-      actor->userValue = verticalMotionDirection;
+    actor->y.fixed += ((u32)(Import_RandomNext() << 15) >> 16) + px(1) / 2;
+    if (actor->y.fixed > px(8)) {
+      actor->userValue = 1;
     }
   }
   return 1;
@@ -758,20 +748,11 @@ const struct SceneExitRegion *ShipRooms_GetRegions(void) { return 0; }
 
 const u32 *ShipRooms_GetExits(void) { return gShipRooms_Exits; }
 
-/// A byte view keeps the native address arithmetic, where direct row-field
-/// writes choose different bases and registers. The layout still belongs to the
-/// row.
-#define TOLBI_SHIP_TALK_FACING(bytes, row)                                     \
-  ((bytes)[(row) * sizeof(struct ActorPlacement) +                             \
-           offsetof(struct ActorPlacement, talkFacing)])
-
 /// Picks the actor placements for the room entered and the voyage's stage.
 ///
 /// Some stages change who turns to face the party when talked to (talkFacing)
 /// in the shared tables.
 const struct ActorPlacement *ShipRooms_SelectActorPlacements(void) {
-  u8 *placementBytes;
-
   switch (gMainRoutineWork.entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK:
@@ -780,17 +761,16 @@ const struct ActorPlacement *ShipRooms_SelectActorPlacements(void) {
       return gShipRooms_HoldActorPlacements;
     } else if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
       if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
-        // Update talkFacing in the actor placement rows, preserving their
-        // write order.
-        placementBytes = (u8 *)gShipRooms_HoldActorPlacementsAtSea;
-        TOLBI_SHIP_TALK_FACING(placementBytes, 0) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(placementBytes, 2) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(placementBytes, 4) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(placementBytes, 5) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(placementBytes, 8) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(placementBytes, 7) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(placementBytes, 6) = TALK_FACING_PARTY_AND_BACK;
-        TOLBI_SHIP_TALK_FACING(placementBytes, 3) = TALK_FACING_KEEP;
+        // At the island the passengers no longer turn to the party.
+        gShipRooms_HoldActorPlacementsAtSea[0].talkFacing = TALK_FACING_KEEP;
+        gShipRooms_HoldActorPlacementsAtSea[2].talkFacing = TALK_FACING_KEEP;
+        gShipRooms_HoldActorPlacementsAtSea[4].talkFacing = TALK_FACING_KEEP;
+        gShipRooms_HoldActorPlacementsAtSea[5].talkFacing = TALK_FACING_KEEP;
+        gShipRooms_HoldActorPlacementsAtSea[8].talkFacing = TALK_FACING_KEEP;
+        gShipRooms_HoldActorPlacementsAtSea[7].talkFacing = TALK_FACING_KEEP;
+        gShipRooms_HoldActorPlacementsAtSea[6].talkFacing =
+            TALK_FACING_PARTY_AND_BACK;
+        gShipRooms_HoldActorPlacementsAtSea[3].talkFacing = TALK_FACING_KEEP;
       }
       return gShipRooms_HoldActorPlacementsAtSea;
     } else if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
@@ -818,17 +798,18 @@ const struct ActorPlacement *ShipRooms_SelectActorPlacements(void) {
   case SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK:
   case SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SECOND_ATTACK:
   case SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_THIRD_ATTACK:
-    placementBytes = (u8 *)gShipRooms_RowingDeckActorPlacements;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 0) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 1) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 3) = TALK_FACING_PARTY_AND_BACK;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 4) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 5) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 6) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 7) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 8) = TALK_FACING_PARTY_AND_BACK;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 9) = TALK_FACING_KEEP;
-    return (const struct ActorPlacement *)placementBytes;
+    gShipRooms_RowingDeckActorPlacements[0].talkFacing = TALK_FACING_KEEP;
+    gShipRooms_RowingDeckActorPlacements[1].talkFacing = TALK_FACING_KEEP;
+    gShipRooms_RowingDeckActorPlacements[3].talkFacing =
+        TALK_FACING_PARTY_AND_BACK;
+    gShipRooms_RowingDeckActorPlacements[4].talkFacing = TALK_FACING_KEEP;
+    gShipRooms_RowingDeckActorPlacements[5].talkFacing = TALK_FACING_KEEP;
+    gShipRooms_RowingDeckActorPlacements[6].talkFacing = TALK_FACING_KEEP;
+    gShipRooms_RowingDeckActorPlacements[7].talkFacing = TALK_FACING_KEEP;
+    gShipRooms_RowingDeckActorPlacements[8].talkFacing =
+        TALK_FACING_PARTY_AND_BACK;
+    gShipRooms_RowingDeckActorPlacements[9].talkFacing = TALK_FACING_KEEP;
+    return gShipRooms_RowingDeckActorPlacements;
   case SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK:
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gShipRooms_CaptainsQuartersActorPlacementsArrived;
@@ -861,10 +842,7 @@ const struct ActorPlacement *ShipRooms_SelectActorPlacements(void) {
     return gShipRooms_ActorPlacementsNone;
     break;
   }
-  return (const struct ActorPlacement *)placementBytes;
 }
-
-#undef TOLBI_SHIP_TALK_FACING
 
 /// Chooses the room's interactions for the current stage of the voyage.
 const struct Trigger *ShipRooms_SelectTriggers(void) {
@@ -3076,13 +3054,10 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
   struct Actor *actor;
   s32 halfStep;
   s32 leftSeat;
-  s32 x;
+  s32 x = 432;
 
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 0, 0);
-  /* FAKEMATCH(temporary): x set here, after the camera reset; as declared with
-   * its 432, 10 of 337 instructions differ in tbs-en. */
-  x = 432;
   halfStep = px(1) / 2;
   ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, x, 134, FACING_WEST);
   ShipRooms_PlaceFoundActors(1);

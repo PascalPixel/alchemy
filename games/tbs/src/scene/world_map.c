@@ -2205,19 +2205,12 @@ static void WorldMap_UseBlackOrb(void) {
   orb = FieldActor_Create(SPRITE_BLANK, leader->x.fixed + px(2), px(38),
                           leader->z.fixed);
   if (orb != NULL) {
-    u8 *motion;
-
     orb->motionFlags = 0;
     sprite = orb->sprite;
     sprite->flags = 0;
     sprite->count = 0;
     sprite->image.fullColor = 0;
     sprite->image.palette = 0;
-    /* FAKEMATCH(dead): a second clear through a byte pointer, removed after
-     * reload, keeps the zero in r1 and the address in r0; without it, 11 of
-     * 363 instructions differ in tbs-en. */
-    motion = &orb->motionFlags;
-    *motion = 0;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Item_LoadIcon(ITEM_BLACK_ORB);
     Vram_Load(sprite->slot, 128, buffer + 1024);

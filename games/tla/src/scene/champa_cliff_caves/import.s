@@ -82,10 +82,10 @@ Map_SetScreenShake:
 	.thumb_func
 Func_0200343c:
 	overlay_veneer Func_08020360
-	.global PartyInventory_FindOwner
+	.global PartyInventory_FindMember
 	.thumb_func
-PartyInventory_FindOwner:
-	overlay_veneer PartyInventory_FindOwnerFar
+PartyInventory_FindMember:
+	overlay_veneer PartyInventory_FindMemberFar
 	.global PartyInventory_Remove
 	.thumb_func
 PartyInventory_Remove:

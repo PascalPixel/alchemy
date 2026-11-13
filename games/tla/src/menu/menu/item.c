@@ -82,7 +82,7 @@ s32 Func_080f94a4(void) {
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
   Window_InitializeWork(0);
-  screen->partyCount = Party_ListActiveOwnersFar(screen->memberIds);
+  screen->partyCount = Party_ListMembersFar(screen->memberIds);
   ItemMenu_Initialize(0, 3, 0, 7);
   Resource_LoadPairedBlocks();
   Palette_LightenHighlight(14);

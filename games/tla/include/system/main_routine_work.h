@@ -121,8 +121,8 @@ struct MainRoutineWork {
 };
 
 extern struct MainRoutineWork gMainRoutineWork;
-s32 Party_CountActiveOwners(void);
-s32 Party_ListActiveOwners(s16 *owners);
+s32 Party_CountMembers(void);
+s32 Party_ListMembers(s16 *owners);
 void Unit_LevelUpTo(s32 owner, s32 level);
 
 #endif

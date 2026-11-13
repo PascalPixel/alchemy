@@ -197,14 +197,14 @@ s32 DebugParty_LoadPreset(s32 preset) {
   s32 i;
 
   done = 0;
-  Party_RemoveActiveOwnerFar(0);
-  Party_RemoveActiveOwnerFar(1);
-  Party_RemoveActiveOwnerFar(2);
-  Party_RemoveActiveOwnerFar(3);
-  Party_RemoveActiveOwnerFar(5);
-  Party_RemoveActiveOwnerFar(4);
-  Party_RemoveActiveOwnerFar(6);
-  Party_RemoveActiveOwnerFar(7);
+  Party_RemoveMemberFar(0);
+  Party_RemoveMemberFar(1);
+  Party_RemoveMemberFar(2);
+  Party_RemoveMemberFar(3);
+  Party_RemoveMemberFar(5);
+  Party_RemoveMemberFar(4);
+  Party_RemoveMemberFar(6);
+  Party_RemoveMemberFar(7);
   ((struct TradeOfferState *)Djinn_GetRecoveryTableFar(0))->count = done;
 
   set = 0;
@@ -230,7 +230,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
     if (set < preset)
       continue;
 
-    Party_AddActiveOwnerFar(owner);
+    Party_AddMemberFar(owner);
     Unit_LevelUpToFar(owner, gData_0812a174[row].level);
     state = Unit_Get(owner);
     for (i = 0; i < 4; i++) {
@@ -249,8 +249,8 @@ s32 DebugParty_LoadPreset(s32 preset) {
     }
     for (i = 0; i < 4; i++) {
       for (j = 0; j < gData_0812a174[row].djinnCounts[i]; j++) {
-        Djinn_AddToOwnerFar(owner, i, (nextDjinn[i] + 7) % 18);
-        Djinn_ActivateFar(owner, i, (nextDjinn[i] + 7) % 18);
+        Djinn_GiveFar(owner, i, (nextDjinn[i] + 7) % 18);
+        Djinn_SetFar(owner, i, (nextDjinn[i] + 7) % 18);
         nextDjinn[i]++;
       }
     }

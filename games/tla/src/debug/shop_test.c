@@ -247,7 +247,7 @@ void Func_020003a4(void) {
     Func_02000d20(i);
 }
 
-void Party_RemoveActiveOwner(s32 owner);
+void Party_RemoveMember(s32 owner);
 
 static __inline__ void Inventory_AddItemAgain(s32 owner, s32 item) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline where the next
@@ -299,10 +299,10 @@ void Func_020003b8(void) {
   Inventory_AddItem(7, 203);
   Inventory_AddItem(7, 204);
   Inventory_AddItem(7, 207);
-  Party_RemoveActiveOwner(0);
-  Party_RemoveActiveOwner(1);
-  Party_RemoveActiveOwner(2);
-  Party_RemoveActiveOwner(3);
+  Party_RemoveMember(0);
+  Party_RemoveMember(1);
+  Party_RemoveMember(2);
+  Party_RemoveMember(3);
 }
 
 void Func_0200012c(void);
@@ -482,9 +482,9 @@ void Func_02000520(void) {
 
 void Func_020005fc(s32 owner, s32 element, s32 djinn, s32 activate) {
   GameFlag_SetBit(element * 20 + djinn + 48);
-  Djinn_AddToOwner(owner, element, djinn);
+  Djinn_Give(owner, element, djinn);
   if (activate == 1)
-    Djinn_Activate(owner, element, djinn);
+    Djinn_Set(owner, element, djinn);
 }
 
 #if !TLA_PATCH_1
@@ -511,7 +511,7 @@ void Func_02000638(void) {
   FieldMessage_Show((s32)MsgYouGotA, 1);
   for (element = 0; element < 4; element++) {
     for (djinn = 0; djinn < 18; djinn++)
-      Djinn_AddToLeastLoadedOwner(element, djinn);
+      Djinn_GiveToParty(element, djinn);
   }
   Func_02000dc0();
 }

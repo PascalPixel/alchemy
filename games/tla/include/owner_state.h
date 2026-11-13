@@ -100,11 +100,11 @@ s32 Owner_SumDjinnCounts(s32 owner, s32 element);
 
 const u16 *Djinn_GetDefinition(u32 element, u32 djinn);
 u16 Djinn_GetDefinitionHeader(u32 element, u32 djinn);
-s32 Djinn_AddToOwner(s32 owner, s32 element, s32 djinn);
-s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn);
-u32 Djinn_IsActive(s32 owner, s32 element, s32 djinn);
-s32 Djinn_Activate(s32 owner, s32 element, s32 djinn);
-u32 Djinn_Deactivate(s32 owner, s32 element, s32 djinn);
+s32 Djinn_Give(s32 owner, s32 element, s32 djinn);
+s32 Djinn_GiveToParty(s32 element, s32 djinn);
+u32 Djinn_IsSet(s32 owner, s32 element, s32 djinn);
+s32 Djinn_Set(s32 owner, s32 element, s32 djinn);
+u32 Djinn_PutOnStandby(s32 owner, s32 element, s32 djinn);
 s32 Djinn_Transfer(s32 source, s32 element, s32 djinn, s32 target);
 
 struct TradeOfferState *Djinn_GetRecoveryTable(s32 which);

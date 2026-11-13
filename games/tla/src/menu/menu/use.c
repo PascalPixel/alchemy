@@ -114,7 +114,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
           } else if (partyResultShown == 0) {
             messageOffset = 1;
           }
-          Unit_UpdateRatiosFar(targetId);
+          Unit_RecalculateGaugesFar(targetId);
           changed = 1;
           if (effect->range == 0xff) {
             partyResultShown = 1;
@@ -184,7 +184,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         } else if (partyResultShown == 0) {
           messageOffset = 6;
         }
-        Unit_UpdateRatiosFar(targetId);
+        Unit_RecalculateGaugesFar(targetId);
         changed = 1;
         if (effect->range == 0xff) {
           partyResultShown = 1;
@@ -218,7 +218,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         } else if (partyResultShown == 0) {
           messageOffset = 1;
         }
-        Unit_UpdateRatiosFar(targetId);
+        Unit_RecalculateGaugesFar(targetId);
         changed = 1;
       }
       break;
@@ -236,7 +236,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         } else if (partyResultShown == 0) {
           messageOffset = 6;
         }
-        Unit_UpdateRatiosFar(targetId);
+        Unit_RecalculateGaugesFar(targetId);
         changed = 1;
       }
       break;
@@ -244,7 +244,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_EFFECT_REVIVE:
       if (target->hp == 0) {
         target->hp = target->maxHp;
-        Unit_UpdateRatiosFar(targetId);
+        Unit_RecalculateGaugesFar(targetId);
         changed = 1;
         if (partyResultShown == 0)
           messageOffset = 0xc;
@@ -256,7 +256,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_EFFECT_REVIVE_HALF:
       if (target->hp == 0) {
         target->hp = target->maxHp / 2;
-        Unit_UpdateRatiosFar(targetId);
+        Unit_RecalculateGaugesFar(targetId);
         if (partyResultShown == 0)
           messageOffset = 0xc;
       } else if (partyResultShown == 0) {
@@ -267,7 +267,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_EFFECT_REVIVE_80:
       if (target->hp == 0) {
         target->hp = target->maxHp * 7 / 10;
-        Unit_UpdateRatiosFar(targetId);
+        Unit_RecalculateGaugesFar(targetId);
         if (partyResultShown == 0)
           messageOffset = 0xc;
       } else if (partyResultShown == 0) {

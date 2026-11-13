@@ -12,7 +12,7 @@ struct ItemDefinition *Item_GetDirect(s32 item) {
 
 /// Returns whether a character can equip the item: bit classId of its
 /// equipMask, or 0 for classId 8 and up.
-s32 Item_CanOwnerEquipDirect(s32 unit, s32 item) {
+s32 Item_CanUnitEquipDirect(s32 unit, s32 item) {
   struct OwnerInventoryState *st = Unit_Get(unit);
   struct ItemDefinition *def = Item_GetDirect(item);
   s32 mask = def->equipMask;
@@ -25,11 +25,11 @@ s32 Item_CanOwnerEquipDirect(s32 unit, s32 item) {
 
 /// Returns 1 for an item that is not equipment, otherwise whether the
 /// character can equip it.
-s32 Item_IsCompatibleWithOwner(s32 unit, s32 item) {
+s32 Item_IsCompatibleWithUnit(s32 unit, s32 item) {
   if (Item_GetEquipmentGroup(item) == 0) {
     return 1;
   }
-  return Item_CanOwnerEquipDirect(unit, item);
+  return Item_CanUnitEquipDirect(unit, item);
 }
 
 /// Returns an item's equipment group from its type: 1 for types 1, 7 and 10,
@@ -93,7 +93,7 @@ s32 PartyInventory_HasSpace(void) {
 
   if (Inventory_Count(gMainRoutineWork.currentOwner) != 15)
     return 1;
-  ownerCount = Party_ListActiveOwners(owners);
+  ownerCount = Party_ListMembers(owners);
   ownerCursor = owners;
   ownerIndex = 0;
   if (ownerIndex < ownerCount) {
@@ -108,7 +108,7 @@ s32 PartyInventory_HasSpace(void) {
 
 s32 PartyInventory_CountFreeSlots(void) {
   s16 owners[10];
-  s32 ownerCount = Party_ListActiveOwners(owners);
+  s32 ownerCount = Party_ListMembers(owners);
   s32 cnt = 0;
   s16 *ownerCursor = owners;
 
@@ -175,7 +175,7 @@ s32 PartyInventory_Add(s32 itemId) {
   s32 ownerIndex;
   s16 *ownerCursor;
 
-  ownerCount = Party_ListActiveOwners(owners);
+  ownerCount = Party_ListMembers(owners);
   ownerCursor = owners;
   ownerIndex = 0;
   if (ownerIndex < ownerCount) {
@@ -195,7 +195,7 @@ s32 PartyInventory_FindRoom(s32 itemId) {
   s32 ownerCount;
   s32 ownerIndex;
 
-  ownerCount = Party_ListActiveOwners(owners);
+  ownerCount = Party_ListMembers(owners);
   for (ownerIndex = 0; ownerIndex < ownerCount; ownerIndex++) {
     s16 ownerId = owners[ownerIndex];
     s32 slot = Inventory_AddItem(ownerId, itemId);
@@ -220,7 +220,8 @@ s32 Inventory_Find(s32 owner, s32 item_id) {
   return -1;
 }
 
-s32 PartyInventory_FindOwner(s32 itemId) {
+/// Returns who carries `itemId`, asking the selected character first, or -1.
+s32 PartyInventory_FindMember(s32 itemId) {
   s16 owners[10];
   s32 ownerCount;
   s32 ownerIndex;
@@ -229,7 +230,7 @@ s32 PartyInventory_FindOwner(s32 itemId) {
 
   if (Inventory_Find(gMainRoutineWork.currentOwner, itemId) != -1)
     return gMainRoutineWork.currentOwner;
-  ownerCount = Party_ListActiveOwners(owners);
+  ownerCount = Party_ListMembers(owners);
   ownerCursor = owners;
   ownerIndex = 0;
   if (ownerIndex < ownerCount) {
@@ -250,7 +251,7 @@ s32 Inventory_Equip(s32 owner, s32 slot) {
   u8 type;
   s32 other;
 
-  if (Item_CanOwnerEquipDirect(owner, item_id) == 0)
+  if (Item_CanUnitEquipDirect(owner, item_id) == 0)
     return -1;
   if (item_id & INVENTORY_EQUIPPED)
     return 0;
@@ -415,7 +416,7 @@ s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
 }
 
 s32 PartyInventory_Remove(s32 item_id) {
-  s32 owner = PartyInventory_FindOwner(item_id);
+  s32 owner = PartyInventory_FindMember(item_id);
 
   if (owner == -1)
     return 0;
@@ -424,7 +425,7 @@ s32 PartyInventory_Remove(s32 item_id) {
 }
 
 s32 PartyInventory_Discard(s32 item_id) {
-  s32 owner = PartyInventory_FindOwner(item_id);
+  s32 owner = PartyInventory_FindMember(item_id);
 
   if (owner == -1)
     return 0;
@@ -455,12 +456,14 @@ s32 Inventory_Repair(s32 owner, s32 slot) {
 }
 
 u8 Item_GetTargetMode(s32 itemId) {
-  return ((struct BattleAct *)BattleAction_GetDirect(
+  return ((struct BattleAct *)Ability_GetDirect(
               Item_GetDirect(itemId)->actionId))
       ->targetMode;
 }
 
-s32 ItemCounter_Adjust(s32 index, s32 delta) {
+/// Adds `delta` to rare item counter `index`, kept between 0 and 99, and
+/// returns the new count (0 for an index past 127).
+s32 RareItemStock_Adjust(s32 index, s32 delta) {
   s32 counter_slot = index;
   u8 *data = gItemCounters;
 
@@ -499,7 +502,7 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   counter = *(u16 *)((u8 *)table + index);
   result = 0;
   if (counter)
-    result = ItemCounter_Adjust(counter - 1, delta);
+    result = RareItemStock_Adjust(counter - 1, delta);
   return result;
 }
 
@@ -527,7 +530,7 @@ s32 Inventory_CountItem(s32 owner, s32 item_id) {
 s32 PartyInventory_CountItem(s32 itemId) {
   u16 owners[16];
   s32 itemCount = 0;
-  s32 ownerCount = Party_ListActiveOwners(owners);
+  s32 ownerCount = Party_ListMembers(owners);
 
   if (itemCount < ownerCount) {
     u16 *ownerCursor = owners;

@@ -405,7 +405,7 @@ loop:
 void Func_02001fcc();
 /* VIEW(s03a0): routine Func_02001fd4 as s32 Func_02001fd4(); lemuria_palace has void Func_02001fd4(); tried as the definition's void Func_02001fd4(void), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:442: void value not ignored as it ought to be. */
 extern s32 Func_02001fd4__s03a0() __asm__("Func_02001fd4");
-s32 Party_AddActiveOwner();
+s32 Party_AddMember();
 void Func_020020ac();
 /* VIEW(s03a0): routine Func_020001d8 as s32 Func_020001d8(); the definition has void Func_020001d8(void); tried as the definition's void Func_020001d8(struct Actor *object), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:406: conflicting types for `Func_020001d8'. */
 extern s32 Func_020001d8__s03a0() __asm__("Func_020001d8");
@@ -455,7 +455,7 @@ L_0200863c:
   Actor_WatchAndSetScript(16, FIELD_AT(r5_1, s32, 0));
   GameFlag_SetBit(0x96a);
   GameFlag_SetBit(0x96b);
-  Party_AddActiveOwner(7);
+  Party_AddMember(7);
   v3 = Actor_GetById(64);
   v3->scaleY = r7_1;
   Actor_ArmCallback(14, FACING_EAST, 0);

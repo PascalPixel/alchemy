@@ -166,8 +166,8 @@ struct PreviewAbility {
 extern const u8 gDjinnMenu_ArrowUpTiles[];
 extern const u8 gDjinnMenu_ArrowDownTiles[];
 
-s32 Djinn_IsActiveFar(s32 member, s32 element, s32 index);
-void Djinn_DeactivateFar(s32 member, s32 element, s32 index);
+s32 Djinn_IsSetFar(s32 member, s32 element, s32 index);
+void Djinn_PutOnStandbyFar(s32 member, s32 element, s32 index);
 // Text_DrawWideStringInWindow is called with no prototype in scope, as The
 // Broken Seal's window functions are from its menu object: an implicit int
 // call sets r0, which is what orders each call's arguments.
@@ -275,10 +275,10 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window, s32 memb
 
   element = (encodedDjinn >> 8) & 15;
   djinnIndex = encodedDjinn & 255;
-  if (Djinn_IsActiveFar(member, element, djinnIndex) != 0)
-    Djinn_DeactivateFar(member, element, djinnIndex);
+  if (Djinn_IsSetFar(member, element, djinnIndex) != 0)
+    Djinn_PutOnStandbyFar(member, element, djinnIndex);
   else
-    Djinn_ActivateFar(member, element, djinnIndex);
+    Djinn_SetFar(member, element, djinnIndex);
   Unit_CalculateFar(member);
 
   abilityCount = BattleDjinnMenu_ListChangedDjinn(

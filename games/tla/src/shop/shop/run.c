@@ -68,7 +68,7 @@ void Shop_InitializeWork(void) {
   Dma_Fill32(0, work, 0xcec);
   // The hand cursor's glides take 12 frames until a screen changes it
   work->mode = 12;
-  work->partyMemberCount = Party_ListActiveOwnersFar(work->partyMemberIds);
+  work->partyMemberCount = Party_ListMembersFar(work->partyMemberIds);
   Palette_CopyObjectBankToBackground14Far();
   // Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite
   slot = Resource_FindFreeEntry();

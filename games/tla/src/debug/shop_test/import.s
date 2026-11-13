@@ -142,22 +142,22 @@ Unit_AddHp:
 	.thumb_func
 Unit_AddPp:
 	overlay_veneer Unit_AddPpFar
-	.global Party_ListActiveOwners
+	.global Party_ListMembers
 	.thumb_func
-Party_ListActiveOwners:
-	overlay_veneer Party_ListActiveOwnersFar
-	.global Party_RemoveActiveOwner
+Party_ListMembers:
+	overlay_veneer Party_ListMembersFar
+	.global Party_RemoveMember
 	.thumb_func
-Party_RemoveActiveOwner:
-	overlay_veneer Party_RemoveActiveOwnerFar
-	.global Djinn_AddToOwner
+Party_RemoveMember:
+	overlay_veneer Party_RemoveMemberFar
+	.global Djinn_Give
 	.thumb_func
-Djinn_AddToOwner:
-	overlay_veneer Djinn_AddToOwnerFar
-	.global Djinn_Activate
+Djinn_Give:
+	overlay_veneer Djinn_GiveFar
+	.global Djinn_Set
 	.thumb_func
-Djinn_Activate:
-	overlay_veneer Djinn_ActivateFar
+Djinn_Set:
+	overlay_veneer Djinn_SetFar
 	.global Unit_LevelUpTo
 	.thumb_func
 Unit_LevelUpTo:
@@ -175,10 +175,10 @@ PartyInventory_HasSpace:
 Func_02000db0:
 	overlay_veneer Func_080ad240
 	.ifndef TLA_EDITION_JA
-	.global Djinn_AddToLeastLoadedOwner
+	.global Djinn_GiveToParty
 	.thumb_func
-Djinn_AddToLeastLoadedOwner:
-	overlay_veneer Djinn_AddToLeastLoadedOwnerFar
+Djinn_GiveToParty:
+	overlay_veneer Djinn_GiveToPartyFar
 	.endif
 	.global Func_02000dc0
 	.thumb_func

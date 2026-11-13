@@ -178,14 +178,14 @@ Func_020057ec:
 	.thumb_func
 Unit_AddHp:
 	overlay_veneer Unit_AddHpFar
-	.global Party_CountActiveOwners
+	.global Party_CountMembers
 	.thumb_func
-Party_CountActiveOwners:
-	overlay_veneer Party_CountActiveOwnersFar
-	.global Party_AddActiveOwner
+Party_CountMembers:
+	overlay_veneer Party_CountMembersFar
+	.global Party_AddMember
 	.thumb_func
-Party_AddActiveOwner:
-	overlay_veneer Party_AddActiveOwnerFar
+Party_AddMember:
+	overlay_veneer Party_AddMemberFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:

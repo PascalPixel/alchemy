@@ -108,7 +108,7 @@ void Func_0200030c(void);
 void Func_020028bc(void);
 s32 Func_020028a4();
 void Func_02001c30(void);
-s32 Party_RemoveActiveOwner();
+s32 Party_RemoveMember();
 s32 Func_0200299c();
 s32 Func_02002a04();
 
@@ -169,9 +169,9 @@ s32 Func_02000128(void) {
   }
   if (gMainRoutineWork.entrance == 0x5a) {
     gMainRoutineWork.currentOwner = 5;
-    Party_RemoveActiveOwner(4);
-    Party_RemoveActiveOwner(6);
-    Party_RemoveActiveOwner(7);
+    Party_RemoveMember(4);
+    Party_RemoveMember(6);
+    Party_RemoveMember(7);
     Func_0200299c((s32)&SceneId_VenusLighthouseEntrance, 1);
   }
   t33 = Event_GetFlag(0x893);

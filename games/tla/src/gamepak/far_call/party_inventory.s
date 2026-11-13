@@ -20,8 +20,8 @@ PartyInventory_CountFreeSlotsFar:
 	.global Func_080ad2d8
 	.thumb_func
 Func_080ad2d8:
-	overlay_veneer Func_080b1088
+	overlay_veneer InventorySnapshot_Save
 	.global Func_080ad2e0
 	.thumb_func
 Func_080ad2e0:
-	overlay_veneer Func_080b11f8
+	overlay_veneer InventorySnapshot_Restore

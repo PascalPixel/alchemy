@@ -78,10 +78,10 @@ Func_020006bc:
 	.thumb_func
 PartyInventory_Add:
 	overlay_veneer PartyInventory_AddFar
-	.global Party_ListActiveOwners
+	.global Party_ListMembers
 	.thumb_func
-Party_ListActiveOwners:
-	overlay_veneer Party_ListActiveOwnersFar
+Party_ListMembers:
+	overlay_veneer Party_ListMembersFar
 	.global Unit_LevelUpTo
 	.thumb_func
 Unit_LevelUpTo:

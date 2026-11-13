@@ -164,7 +164,7 @@ void Func_080d7524(s32 djinniId) {
   Event_End();
 }
 
-s32 Djinn_AddToLeastLoadedOwnerFar(s32 element, s32 djinni);
+s32 Djinn_GiveToPartyFar(s32 element, s32 djinni);
 void Func_080d82e0(s32 actor);
 void BattleEffect_RunMercuryDjinnCapture(s32 actor);
 void Djinn_RunMarsJoinEffect(s32 actor);
@@ -200,7 +200,7 @@ void Func_080d7788(s32 actor, s32 element, s32 djinni) {
     owner = gMainRoutineWork.currentOwner;
     GameFlag_SetBit(element * 20 + djinni + 48);
   } else {
-    owner = Djinn_AddToLeastLoadedOwnerFar(element, djinni);
+    owner = Djinn_GiveToPartyFar(element, djinni);
   }
   if (owner < 0)
     return;

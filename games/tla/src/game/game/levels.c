@@ -4,9 +4,12 @@
 
 #include "../game_internal.h"
 
-s32 Unit_KnowsAction(s32 owner, s32 value);
+s32 Unit_KnowsPsynergy(s32 owner, s32 value);
 
-struct AbilityDefinition *BattleAction_GetDirect(s32 actionId) {
+/// Returns the definition of ability `abilityId` (its low 14 bits); an id
+/// past the table gives the first. Reached through GAME.S as
+/// Ability_Get, which every bank uses to read an ability.
+struct AbilityDefinition *Ability_GetDirect(s32 actionId) {
   u32 entryIndex = actionId & 0x3fff;
 
   if (entryIndex > 0x2de)
@@ -16,11 +19,11 @@ struct AbilityDefinition *BattleAction_GetDirect(s32 actionId) {
 
 s32 Party_FindOwnerWithAction(s32 action) {
   s16 owners[10];
-  s32 count = Party_ListActiveOwners(owners);
+  s32 count = Party_ListMembers(owners);
   s32 i;
 
   for (i = 0; i < count; i++) {
-    if (Unit_KnowsAction(owners[i], action) != 0)
+    if (Unit_KnowsPsynergy(owners[i], action) != 0)
       break;
   }
   if (i == count)
@@ -28,7 +31,10 @@ s32 Party_FindOwnerWithAction(s32 action) {
   return owners[i];
 }
 
-s32 Unit_KnowsAction(s32 owner, s32 value) {
+/// Returns 1 when `abilityId` is in the unit's Psynergy list. Called by the
+/// events that check whether a party member knows a Psynergy
+/// (Party_CheckShortcut).
+s32 Unit_KnowsPsynergy(s32 owner, s32 value) {
   struct BattleUnit *unit = Unit_Get(owner);
   struct OwnerActionSlot *entry;
   s32 index = 0;
@@ -196,7 +202,8 @@ struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains);
 
 /// Levels the character up once if it has the experience. Returns `gains`
 /// filled with the gains, or NULL. Only a far-call veneer reaches it.
-struct LevelUpResult *Func_080af794(s32 unitId, struct LevelUpResult *gains) {
+struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,
+                                        struct LevelUpResult *gains) {
   return Unit_TryLevelUp(unitId, gains);
 }
 
@@ -304,7 +311,8 @@ void Party_InitializeCharacters(void) {
   }
 }
 
-void Func_080af8cc(void) {}
+/// Unused: reserved entry; keeps its place in the far-call table.
+void Unit_LevelNoOp(void) {}
 
 extern u32 gOwner_ExperienceThresholds[];
 
@@ -377,7 +385,13 @@ struct LevelUpWork {
 
 u32 __udivsi3(u32 numerator, u32 denominator);
 
-struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res) {
+/// Raises a character one level (up to 99), adding to each base stat the
+/// growth between the two points of its growth curve around the new level
+/// (one point every 20 levels), a twentieth of it per level with a random
+/// part. Writes the unit's level, base stats and, if short, its experience,
+/// then rebuilds its Psynergy and stats. The gains go to `gains`, which is
+/// returned.
+struct LevelUpResult *Unit_LevelUp(s32 owner, struct LevelUpResult *res) {
   struct OwnerLevelState *st;
   struct LevelUpWork *work;
   u32 threshold;
@@ -459,7 +473,7 @@ struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains) {
   unit = (struct BattleUnit *)Unit_Get(unitId);
   if ((unit->experience >=
        Unit_GetExperienceForLevel(unitId, unit->level + 1)) &&
-      (Owner_LevelUp(unitId, gains) != NULL)) {
+      (Unit_LevelUp(unitId, gains) != NULL)) {
     return gains;
   }
   return 0;
@@ -473,7 +487,7 @@ void Unit_LevelUpTo(s32 unit, s32 lv) {
   s32 cur = ((struct BattleUnit *)Unit_Get(unit))->level;
 
   while (cur < lv) {
-    Owner_LevelUp(unit, (struct LevelUpResult *)res);
+    Unit_LevelUp(unit, (struct LevelUpResult *)res);
     cur++;
   }
   Unit_Calculate(unit);

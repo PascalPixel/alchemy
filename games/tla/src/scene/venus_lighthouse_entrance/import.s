@@ -98,10 +98,10 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 Map_SetScreenShake:
 	overlay_veneer Map_SetScreenShakeFar
-	.global Party_RemoveActiveOwner
+	.global Party_RemoveMember
 	.thumb_func
-Party_RemoveActiveOwner:
-	overlay_veneer Party_RemoveActiveOwnerFar
+Party_RemoveMember:
+	overlay_veneer Party_RemoveMemberFar
 	.global Func_020028a4
 	.thumb_func
 Func_020028a4:

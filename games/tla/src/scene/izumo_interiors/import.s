@@ -14,10 +14,10 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global PartyInventory_FindOwner
+	.global PartyInventory_FindMember
 	.thumb_func
-PartyInventory_FindOwner:
-	overlay_veneer PartyInventory_FindOwnerFar
+PartyInventory_FindMember:
+	overlay_veneer PartyInventory_FindMemberFar
 	.global PartyInventory_Remove
 	.thumb_func
 PartyInventory_Remove:

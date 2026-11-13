@@ -158,10 +158,10 @@ Func_02004e3c:
 	.thumb_func
 FieldMessage_Show:
 	overlay_veneer FieldMessage_ShowFar
-	.global PartyInventory_FindOwner
+	.global PartyInventory_FindMember
 	.thumb_func
-PartyInventory_FindOwner:
-	overlay_veneer PartyInventory_FindOwnerFar
+PartyInventory_FindMember:
+	overlay_veneer PartyInventory_FindMemberFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:

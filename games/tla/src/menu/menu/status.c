@@ -24,7 +24,7 @@ s32 PartyMemberChooser_Open(void) {
   wait(1);
   Window_InitializeWork(0);
 
-  state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
+  state->partyCount = Party_ListMembersFar(state->ownerIds);
   StatusScreen_Initialize(0, 3, 0, 7);
   state->selectorWindow = Window_CreateFar(13, 0, 17, 5, 2);
   {
@@ -104,7 +104,7 @@ s32 StatusScreen_Run(void) {
   Window_InitializeWork(0);
   page = &state->page;
   *page = 0;
-  state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
+  state->partyCount = Party_ListMembersFar(state->ownerIds);
   StatusScreen_Initialize(0, 3, 0, 7);
   /* FAKEMATCH(wrapper): the copies forwarded through item.c's CopyWords_
    * inline, which keeps each call's own constants; as direct Iwram_CopyWords
@@ -591,10 +591,10 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
   }
 
   for (index = 0; index < menu->partyCount; index++)
-    Party_RemoveActiveOwnerFar(menu->ownerIds[index]);
+    Party_RemoveMemberFar(menu->ownerIds[index]);
   for (index = 0; index < menu->partyCount; index++)
-    Party_AddActiveOwnerFar(reordered[index]);
-  menu->partyCount = Party_ListActiveOwnersFar(menu->ownerIds);
+    Party_AddMemberFar(reordered[index]);
+  menu->partyCount = Party_ListMembersFar(menu->ownerIds);
   return 1;
 }
 

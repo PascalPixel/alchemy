@@ -81,7 +81,7 @@ s32 DjinnMenu_Run(void) {
   Menu_SuspendFieldTasks();
   Text_UseExtraTilesFar(1);
   Link_DrawPageArrowsFar((void *)0x06002500);
-  menu->memberCount = Party_ListActiveOwnersFar(menu->owners);
+  menu->memberCount = Party_ListMembersFar(menu->owners);
   Resource_LoadPairedBlocksIfAvailable();
   ItemMenu_Initialize(0, 3, 0, 7);
   Menu_SetFirstObjectRowCoordinates(0);
@@ -131,7 +131,7 @@ s32 DjinnMenu_ShowHelp(void);
 s32 PsynergyList_RunCompareLoop(u32 mode);
 s32 Djinn_TransferFar(s32 owner, s32 element, s32 index, s32 recipient);
 
-u32 Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
+u32 Djinn_PutOnStandbyFar(s32 owner, s32 element, s32 index);
 s32 DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 index);
 
 void DjinnMenu_BuildLists(struct OwnerList *list);
@@ -305,8 +305,8 @@ s32 DjinnMenu_RunScreen(void) {
         break;
     case 12:
       Sound_PlayFar(175);
-      Djinn_DeactivateFar(menu->shownMember[0], menu->pairElement[0],
-                          menu->pairIndex[0]);
+      Djinn_PutOnStandbyFar(menu->shownMember[0], menu->pairElement[0],
+                            menu->pairIndex[0]);
       result = DjinnRecovery_AddStandbyFar(
           menu->shownMember[0], menu->pairElement[0], menu->pairIndex[0]);
       Unit_CalculateFar(menu->shownMember[0]);
@@ -352,8 +352,8 @@ s32 DjinnMenu_RunScreen(void) {
         break;
     case 11:
       Sound_PlayFar(139);
-      Djinn_ActivateFar(menu->shownMember[0], menu->pairElement[0],
-                        menu->pairIndex[0]);
+      Djinn_SetFar(menu->shownMember[0], menu->pairElement[0],
+                   menu->pairIndex[0]);
       result = DjinnRecovery_RemoveFar(
           menu->shownMember[0], menu->pairElement[0], menu->pairIndex[0]);
       Unit_CalculateFar(menu->shownMember[0]);
@@ -600,8 +600,8 @@ void DjinnMenu_BuildLists(struct OwnerList *list) {
 
 extern u8 MsgDjinnName[]; ///< the first djinni's name
 
-s32 Djinn_IsReadyFar(s32 owner, s32 element, s32 index);
-s32 Djinn_IsActiveFar(s32 owner, s32 element, s32 index);
+s32 Djinn_CanSetFar(s32 owner, s32 element, s32 index);
+s32 Djinn_IsSetFar(s32 owner, s32 element, s32 index);
 
 /// The state of a packed djinni entry (owner in bits 8-11, element in 5-7,
 /// index in 0-4, bit 15 set): 2 when the djinni is neither ready nor active,
@@ -612,8 +612,8 @@ s32 Func_08101a04(u32 entry) {
   s32 index = entry & 31;
   s32 state;
 
-  if (Djinn_IsReadyFar(owner, element, index) ||
-      Djinn_IsActiveFar(owner, element, index)) {
+  if (Djinn_CanSetFar(owner, element, index) ||
+      Djinn_IsSetFar(owner, element, index)) {
     u32 set = entry & 0x8000;
 
     state = ((0u - set) | set) >> 31;
@@ -658,7 +658,7 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
 
   tiles[6] = 1;
   WindowSprite_RedrawSavedRectFar(window);
-  owners = Party_CountActiveOwnersFar();
+  owners = Party_CountMembersFar();
   djinn = Party_SumDjinnCountsFar(-1);
   if (owners != 0 && (djinn - 1) / owners <= 6) {
     Text_DrawMessageAsTilesFar((s32)MsgDjinnUnleashEffectLabel, window, 0,
@@ -1253,7 +1253,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           DjinnRecovery_CountDownFar();
           DjinnRecovery_CountDownFar();
           DjinnRecovery_CountDownFar();
-          Djinn_DeactivateFar(4, 0, 7);
+          Djinn_PutOnStandbyFar(4, 0, 7);
           DjinnRecovery_AddStandbyFar(4, 0, 7);
           Unit_CalculateFar(4);
           repeat = 2;
@@ -1395,12 +1395,12 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       switch (state) {
       case 0:
         Sound_PlayFar(139);
-        Djinn_ActivateFar(owner, element, number);
+        Djinn_SetFar(owner, element, number);
         DjinnRecovery_RemoveFar(owner, element, number);
         break;
       case 1:
         Sound_PlayFar(175);
-        Djinn_DeactivateFar(owner, element, number);
+        Djinn_PutOnStandbyFar(owner, element, number);
         DjinnRecovery_AddStandbyFar(owner, element, number);
         break;
       default:
@@ -1478,14 +1478,14 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
             switch (Func_08101a04(entry)) {
             case 0:
               if (setAll) {
-                Djinn_ActivateFar(entryOwner, entryElement, entryNumber);
+                Djinn_SetFar(entryOwner, entryElement, entryNumber);
                 DjinnRecovery_RemoveFar(entryOwner, entryElement, entryNumber);
                 Unit_CalculateFar(entryOwner);
               }
               break;
             case 1:
               if (!setAll) {
-                Djinn_DeactivateFar(entryOwner, entryElement, entryNumber);
+                Djinn_PutOnStandbyFar(entryOwner, entryElement, entryNumber);
                 DjinnRecovery_AddStandbyFar(entryOwner, entryElement,
                                             entryNumber);
                 Unit_CalculateFar(entryOwner);
@@ -1782,26 +1782,26 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId, s32 removeP
 
   switch (previewMode) {
   case 0:
-    Djinn_AddToOwnerFar(ownerId, takeElement, takeIndex & 31);
-    Djinn_ActivateFar(ownerId, takeElement, takeIndex & 31);
+    Djinn_GiveFar(ownerId, takeElement, takeIndex & 31);
+    Djinn_SetFar(ownerId, takeElement, takeIndex & 31);
     break;
   case 1:
     giveIndex &= 31;
-    Djinn_DeactivateFar(ownerId, giveElement, giveIndex);
+    Djinn_PutOnStandbyFar(ownerId, giveElement, giveIndex);
     break;
   case 2:
     if (giveSet) {
       giveIndex &= 31;
-      Djinn_DeactivateFar(ownerId, giveElement, giveIndex);
+      Djinn_PutOnStandbyFar(ownerId, giveElement, giveIndex);
     }
-    Djinn_AddToOwnerFar(ownerId, takeElement, takeIndex & 31);
+    Djinn_GiveFar(ownerId, takeElement, takeIndex & 31);
     if (takeSet)
-      Djinn_ActivateFar(ownerId, takeElement, takeIndex & 31);
+      Djinn_SetFar(ownerId, takeElement, takeIndex & 31);
     break;
   case 4:
-    Djinn_AddToOwnerFar(ownerId, takeElement, takeIndex & 31);
+    Djinn_GiveFar(ownerId, takeElement, takeIndex & 31);
     if (takeSet)
-      Djinn_ActivateFar(ownerId, takeElement, takeIndex & 31);
+      Djinn_SetFar(ownerId, takeElement, takeIndex & 31);
     break;
   }
 

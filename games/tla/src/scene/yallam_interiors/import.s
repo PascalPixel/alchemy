@@ -26,10 +26,10 @@ Func_02000980:
 	.thumb_func
 Func_02000988:
 	overlay_veneer Item_Get
-	.global PartyInventory_FindOwner
+	.global PartyInventory_FindMember
 	.thumb_func
-PartyInventory_FindOwner:
-	overlay_veneer PartyInventory_FindOwnerFar
+PartyInventory_FindMember:
+	overlay_veneer PartyInventory_FindMemberFar
 	.global Party_AdjustCoins
 	.thumb_func
 Party_AdjustCoins:

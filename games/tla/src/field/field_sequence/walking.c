@@ -272,7 +272,7 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
   if (work == NULL)
     return;
 
-  partyCount = Party_CountActiveOwnersFar();
+  partyCount = Party_CountMembersFar();
   for (i = 0; i < partyCount; i++)
     previousHp[i] =
         ((struct UnitStepView *)Unit_Get(gPartyStep.activeOwners[i]))->hp;
@@ -379,7 +379,7 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
 }
 
 void BattleParty_ApplyDrain(s32 amount, s32 unused) {
-  s32 targetCount = Party_CountActiveOwnersFar();
+  s32 targetCount = Party_CountMembersFar();
   s32 i;
 
   for (i = 0; i < targetCount; i++)
@@ -401,7 +401,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
   } else {
     Sound_PlayFar(126);
   }
-  count = Party_CountActiveOwnersFar();
+  count = Party_CountMembersFar();
   for (i = 0; i < count; i++) {
     unit = Unit_Get(gMainRoutineWork.activeOwners[i]);
     if (!scaled) {
@@ -420,7 +420,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
 
 s32 BattleParty_ApplyStatusDamage(void) {
   s32 result = 0;
-  s32 count = Party_CountActiveOwnersFar();
+  s32 count = Party_CountMembersFar();
 
   if (result < count) {
     s32 offset = 134;

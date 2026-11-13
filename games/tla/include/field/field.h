@@ -27,7 +27,7 @@ void ObjectSystem_UpdateCamera(void);
 void ObjectSystem_UpdateCameraFixed(void);
 s32 ObjectTable_FindLastActiveId(void);
 void BattleMotion_ProjectPositionFar(s32, s32 *);
-s32 Unit_KnowsActionFar(s32 group, s32 entry);
+s32 Unit_KnowsPsynergyFar(s32 group, s32 entry);
 s32 Party_ShowJoinedMessageFar(s32 event_id, s32 value);
 s32 Party_ShowPairJoinedMessageFar(s32 first, s32 second);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
@@ -104,8 +104,8 @@ void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
 void Actor_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z);
 void Actor_StartRepeatedMotion(u32 objectId, s32 variant);
 void ObjectSystem_Configure(s32 mode);
-s32 Party_AddActiveOwnerFar(s32 event_id);
-void Party_RemoveActiveOwnerFar(s32 owner);
+s32 Party_AddMemberFar(s32 event_id);
+void Party_RemoveMemberFar(s32 owner);
 void Render_ApplyProjectedPlacement(void *sprite, s32 *position, s32 *scale,
                                     u16 angle);
 void Render_PlaceProjectedSprite(void *sprite, s32 *position, s32 *scale,

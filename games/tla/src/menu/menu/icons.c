@@ -324,7 +324,7 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
       menu->ids[i] = -1;
     }
   }
-  menu->count = Party_ListActiveOwnersFar(owners);
+  menu->count = Party_ListMembersFar(owners);
   for (i = 0; i < 4 && owners[first + i] != 255; i++) {
     menu->ids[i] = owners[first + i];
     object = ResourceObject_CreateFar(Func_080c82b8(owners[first + i]));

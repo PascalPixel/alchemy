@@ -156,7 +156,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   struct FieldObject *object;
   struct FieldEffectState *state;
 
-  count = Party_ListActiveOwnersFar(objects);
+  count = Party_ListMembersFar(objects);
   Party_AdjustCoinsFar(-roomPrice);
 
   for (index = 0; index < count; index++) {
@@ -164,7 +164,7 @@ void Inn_PlaySleep(s32 roomPrice) {
     if (object->x != 0) {
       object->x = object->savedX;
       object->y = object->savedY;
-      Unit_UpdateRatiosFar(objects[index]);
+      Unit_RecalculateGaugesFar(objects[index]);
     }
   }
 

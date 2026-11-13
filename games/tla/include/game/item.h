@@ -124,11 +124,11 @@ s32 RollWeaponUnleash(struct BattleUnit *owner);
 
 s32 RollWeaponUnleashFar(struct BattleUnit *owner);
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
-s32 Item_CanOwnerEquipDirect(s32 owner, s32 item);
-s32 Item_IsCompatibleWithOwner(s32 owner, s32 item);
+s32 Item_CanUnitEquipDirect(s32 owner, s32 item);
+s32 Item_IsCompatibleWithUnit(s32 owner, s32 item);
 s32 Item_GetEquipmentGroup(s32 item);
 u8 Item_GetTargetMode(s32 item);
-s32 ItemCounter_Adjust(s32 counter, s32 delta);
+s32 RareItemStock_Adjust(s32 counter, s32 delta);
 s32 Item_AdjustCounter(s32 item, s32 delta);
 
 #endif

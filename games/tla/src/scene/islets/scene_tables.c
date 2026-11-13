@@ -797,7 +797,7 @@ void Func_020014e0(void) {
 
   Func_02003e64();
   FieldEvent_ResolvePendingActions(0);
-  if (PartyInventory_FindOwner(455) != -1) {
+  if (PartyInventory_FindMember(455) != -1) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (GameFlag_Test(513) != 0) {
       Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);

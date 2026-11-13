@@ -190,22 +190,22 @@ Menu_AnimateSelectionToEntry:
 	.thumb_func
 Unit_AddPp:
 	overlay_veneer Unit_AddPpFar
-	.global Party_CountActiveOwners
+	.global Party_CountMembers
 	.thumb_func
-Party_CountActiveOwners:
-	overlay_veneer Party_CountActiveOwnersFar
-	.global Party_AddActiveOwner
+Party_CountMembers:
+	overlay_veneer Party_CountMembersFar
+	.global Party_AddMember
 	.thumb_func
-Party_AddActiveOwner:
-	overlay_veneer Party_AddActiveOwnerFar
-	.global Party_RemoveActiveOwner
+Party_AddMember:
+	overlay_veneer Party_AddMemberFar
+	.global Party_RemoveMember
 	.thumb_func
-Party_RemoveActiveOwner:
-	overlay_veneer Party_RemoveActiveOwnerFar
-	.global Djinn_AddToOwner
+Party_RemoveMember:
+	overlay_veneer Party_RemoveMemberFar
+	.global Djinn_Give
 	.thumb_func
-Djinn_AddToOwner:
-	overlay_veneer Djinn_AddToOwnerFar
+Djinn_Give:
+	overlay_veneer Djinn_GiveFar
 	.global DjinnRecovery_AddStandby
 	.thumb_func
 DjinnRecovery_AddStandby:

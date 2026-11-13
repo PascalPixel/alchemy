@@ -12,7 +12,7 @@ const u8 gCharacter_ElementGroupTable[] = {0, 0, 1, 1, 0, 0, 1, 1};
 const u16 Data_080b1284[6] = {0x941, 0x951, 0x8b3, 0x8d1, 0x81e, 0x868};
 
 /// The percent chance of each of seven Djinn of each element that
-/// Func_080ae868 gives to Djinn_AddToLeastLoadedOwner, one row per element.
+/// Func_080ae868 gives to Djinn_GiveToParty, one row per element.
 const u16 Data_080b1290[4][7] = {
     {100, 70, 70, 30, 40, 50, 20},
     {100, 50, 70, 70, 30, 30, 70},

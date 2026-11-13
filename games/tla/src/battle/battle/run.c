@@ -553,7 +553,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners) {
   if (Ram_HeapSlots->battleWork->twoSided != 0)
     limit = 3;
 
-  count = Party_CountActiveOwnersFar();
+  count = Party_CountMembersFar();
   if (count > limit)
     count = limit;
 
@@ -574,7 +574,7 @@ s32 BattleParty_PrepareReserveOwners(u16 *owners) {
   s32 count;
   s32 index;
 
-  count = Party_CountActiveOwnersFar();
+  count = Party_CountMembersFar();
   if (count > 4)
     count -= 4;
   else

@@ -158,7 +158,7 @@ extern s8 gData_02001000[];
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 s32 Map_GetTerrainHeightFar(u8 layer, s32 x, s32 z);
 void wait(s32 frames);
-s32 Party_CountActiveOwnersFar(void);
+s32 Party_CountMembersFar(void);
 s32 GameFlag_Test(s32 flag);
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void *HeapSlot_AllocEwram(s32 slot, s32 size);

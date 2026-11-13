@@ -14,7 +14,12 @@ const u16 *Djinn_GetDefinition(u32 group, u32 index) {
   return (const u16 *)&gDjinn_Definitions[entry];
 }
 
-s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit) {
+/// Gives a newly found Djinni to the party member holding the fewest Djinn who
+/// has room in that element, puts it on standby and sets its found flag.
+/// Returns who got it, -1 if it was found before or -2 when nobody has room.
+/// Called by Djinn_JoinParty when a Djinni joins in the field. Of party members
+/// holding equally few, the earliest in the party order gets it.
+s32 Djinn_GiveToParty(s32 index, s32 bit) {
   s32 flag = bit + index * 20 + 48;
   s32 bestNo = 0;
   s32 bestVal = 999;
@@ -25,7 +30,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit) {
   if (GameFlag_Test(flag) != 0)
     return -1;
 
-  result = Party_CountActiveOwners();
+  result = Party_CountMembers();
   if (bestNo < result) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -59,13 +64,18 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit) {
   if (bestVal == 999)
     return -2;
 
-  Djinn_AddToOwner(bestNo, index, bit);
+  Djinn_Give(bestNo, index, bit);
   DjinnRecovery_AddStandby(bestNo, index, bit);
   GameFlag_SetBit(flag);
   return bestNo;
 }
 
-s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit) {
+/// Gives Djinni `djinnIndex` of `element` to a unit: sets its bit in
+/// djinnHeld and counts it. Returns -1 when the unit holds ten of the
+/// element or has it already. Called by Djinn_GiveToParty and
+/// Djinn_Transfer, by the events where a party member joins with Djinn, and by
+/// the debug menus.
+s32 Djinn_Give(s32 owner, s32 index, s32 bit) {
   struct OwnerDjinnState *state = Unit_Get(owner);
   u32 owned;
 
@@ -91,7 +101,7 @@ struct TradeOfferTable {
 
 /// Whether the djinn can be set: it is owned, fewer than ten are set, it is
 /// not set already, and no trade offer holds it unless the offer has run out.
-s32 Djinn_IsReady(s32 owner, s32 index, s32 bit) {
+s32 Djinn_CanSet(s32 owner, s32 index, s32 bit) {
   struct OwnerDjinnState *state = Unit_Get(owner);
   struct TradeOfferList *table;
   s32 i;
@@ -123,7 +133,8 @@ s32 Djinn_IsReady(s32 owner, s32 index, s32 bit) {
   return 0;
 }
 
-u32 Djinn_IsActive(s32 owner, s32 index, s32 bit) {
+/// Returns 1 when the Djinni is set on the unit.
+u32 Djinn_IsSet(s32 owner, s32 index, s32 bit) {
   s32 value =
       ((struct OwnerDjinnState *)Unit_Get(owner))->flags.banks.active[index] &
       (1 << bit);
@@ -131,9 +142,12 @@ u32 Djinn_IsActive(s32 owner, s32 index, s32 bit) {
   return (u32)(-value | value) >> 31;
 }
 
-s32 Djinn_Activate(s32 owner, s32 index, s32 bit) {
+/// Sets a ready Djinni on the unit, counts it and works out the unit's class
+/// again. Returns 1 when it was set. Called by the Djinn menu, by battle when
+/// a Djinni recovers, and by Djinn_Transfer.
+s32 Djinn_Set(s32 owner, s32 index, s32 bit) {
   struct OwnerDjinnState *state = Unit_Get(owner);
-  s32 result = Djinn_IsReady(owner, index, bit);
+  s32 result = Djinn_CanSet(owner, index, bit);
 
   if (result != 0) {
     u32 owned = state->flags.banks.owned[index];
@@ -148,9 +162,12 @@ s32 Djinn_Activate(s32 owner, s32 index, s32 bit) {
   return result;
 }
 
-u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit) {
+/// Takes a set Djinni off the unit and works out its class again. Returns 1
+/// when it was set. Called by the Djinn menu, by battle when a Djinni is
+/// unleashed, and by Djinn_Transfer.
+u32 Djinn_PutOnStandby(s32 owner, s32 index, s32 bit) {
   struct OwnerDjinnState *state = Unit_Get(owner);
-  u32 present = Djinn_IsActive(owner, index, bit);
+  u32 present = Djinn_IsSet(owner, index, bit);
 
   if (present != 0) {
     state->counts.banks.active[index]--;
@@ -215,14 +232,14 @@ s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target) {
   u32 present;
 
   if ((state->flags.banks.owned[index] & (mask = 1U << bit)) != 0) {
-    present = Djinn_IsActive(source, index, bit);
-    if (Djinn_AddToOwner(target, index, bit) == 0) {
-      Djinn_Deactivate(source, index, bit);
+    present = Djinn_IsSet(source, index, bit);
+    if (Djinn_Give(target, index, bit) == 0) {
+      Djinn_PutOnStandby(source, index, bit);
       state->flags.banks.owned[index] &= ~mask;
       state->counts.banks.owned[index]--;
 
       if (present != 0) {
-        Djinn_Activate(target, index, bit);
+        Djinn_Set(target, index, bit);
       } else {
         DjinnRecovery_Remove(source, index, bit);
         DjinnRecovery_AddStandby(target, index, bit);
@@ -288,7 +305,7 @@ s32 Owner_SumDjinnCounts(s32 owner, s32 index) {
 s32 Party_SumDjinnCounts(s32 index) {
   u16 owners[16];
   s32 result = 0;
-  s32 count = Party_ListActiveOwners((s16 *)owners);
+  s32 count = Party_ListMembers((s16 *)owners);
 
   if (result < count) {
     u16 *owner = owners;
@@ -313,7 +330,7 @@ s32 Party_SumDjinnCounts(s32 index) {
 
 void Djinn_ActivateOfferedForParty(void) {
   u16 owners[16];
-  s32 count = Party_ListActiveOwners((s16 *)owners);
+  s32 count = Party_ListMembers((s16 *)owners);
   s32 i;
   s32 element;
   s32 djinn;
@@ -322,8 +339,8 @@ void Djinn_ActivateOfferedForParty(void) {
   for (i = 0; i < count; i++) {
     for (element = 0; element <= 3; element++) {
       for (djinn = 0; djinn <= 19; djinn++) {
-        if (Djinn_IsReady(owners[i], element, djinn)) {
-          Djinn_Activate(owners[i], element, djinn);
+        if (Djinn_CanSet(owners[i], element, djinn)) {
+          Djinn_Set(owners[i], element, djinn);
           DjinnRecovery_Remove(owners[i], element, djinn);
         }
       }

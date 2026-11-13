@@ -304,7 +304,7 @@ s32 Func_080ccec8(s32 id) {
         BattleParty_ApplyDrain(1999, 0);
         PartyStatus_CreateWindowFar(1);
         Sound_PlayFar(126);
-        if (Party_CountActiveOwnersFar() == 1)
+        if (Party_CountMembersFar() == 1)
           FieldMessage_ShowFar((s32)&MsgKey0e17 + 6, 1);
         else
           FieldMessage_ShowFar((s32)&MsgKey0e17 + 1, 1);

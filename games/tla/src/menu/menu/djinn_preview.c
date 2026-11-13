@@ -42,7 +42,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   menu->cursor->active = 13;
   selectedPages[0] = 0;
   selectedPages[1] = 0;
-  Party_ListActiveOwnersFar(owners);
+  Party_ListMembersFar(owners);
   first = owners[menu->selectedColumn[0]];
   second = owners[menu->selectedColumn[1]];
   Func_08104e38(first, second);
@@ -86,14 +86,14 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     firstWasSet = (u16)(menu->pairEntries[0] & 0x8000);
     unit = Unit_Get(memberId);
     Iwram_CopyWords(original, unit, size);
-    Djinn_DeactivateFar(memberId, firstElement, firstIndex);
+    Djinn_PutOnStandbyFar(memberId, firstElement, firstIndex);
     if (mode == 0) {
       secondElement = menu->pairElement[1];
       secondIndex = menu->pairIndex[1] & 31;
       secondWasSet = (u16)(menu->pairEntries[1] & 0x8000);
-      Djinn_AddToOwnerFar(memberId, secondElement, secondIndex);
+      Djinn_GiveFar(memberId, secondElement, secondIndex);
       if (secondWasSet != 0)
-        Djinn_ActivateFar(memberId, secondElement, secondIndex);
+        Djinn_SetFar(memberId, secondElement, secondIndex);
     }
     Unit_CalculateFar(memberId);
     pageCounts[0] =
@@ -105,10 +105,10 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     unit = Unit_Get(memberId);
     Iwram_CopyWords(original, unit, size);
     if (mode == 0)
-      Djinn_DeactivateFar(memberId, secondElement, secondIndex);
-    Djinn_AddToOwnerFar(memberId, firstElement, firstIndex);
+      Djinn_PutOnStandbyFar(memberId, secondElement, secondIndex);
+    Djinn_GiveFar(memberId, firstElement, firstIndex);
     if (firstWasSet != 0)
-      Djinn_ActivateFar(memberId, firstElement, firstIndex);
+      Djinn_SetFar(memberId, firstElement, firstIndex);
     Unit_CalculateFar(memberId);
     pageCounts[1] =
         PsynergyList_Diff((u16 *)(original + 88), (u16 *)(unit + 88), diffWork,
@@ -135,9 +135,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     applySecond = (mode == 3);
     unit = Unit_Get(memberId);
     Iwram_CopyWords(original, unit, 332);
-    Djinn_DeactivateFar(memberId, firstElement, firstIndex);
+    Djinn_PutOnStandbyFar(memberId, firstElement, firstIndex);
     if (applySecond != 0)
-      Djinn_ActivateFar(memberId, firstElement, firstIndex);
+      Djinn_SetFar(memberId, firstElement, firstIndex);
     Unit_CalculateFar(memberId);
     pageCounts[0] =
         PsynergyList_Diff((u16 *)(original + 88), (u16 *)(unit + 88), diffWork,

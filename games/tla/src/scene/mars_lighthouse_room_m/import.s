@@ -152,14 +152,14 @@ Func_020031b8:
 	.thumb_func
 Func_0803ce64:
 	overlay_veneer Func_08038210
-	.global PartyInventory_FindOwner
+	.global PartyInventory_FindMember
 	.thumb_func
-PartyInventory_FindOwner:
-	overlay_veneer PartyInventory_FindOwnerFar
-	.global Party_CountActiveOwners
+PartyInventory_FindMember:
+	overlay_veneer PartyInventory_FindMemberFar
+	.global Party_CountMembers
 	.thumb_func
-Party_CountActiveOwners:
-	overlay_veneer Party_CountActiveOwnersFar
+Party_CountMembers:
+	overlay_veneer Party_CountMembersFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:

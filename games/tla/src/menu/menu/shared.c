@@ -569,7 +569,7 @@ void Func_080f89a4(void) {
   s32 i;
   s32 count;
 
-  count = (u16)Party_CountActiveOwnersFar();
+  count = (u16)Party_CountMembersFar();
   for (i = 0; i < count; i++) {
     struct AnimationObject *figure = menu->tabObjects[i];
     s32 placeY = 0x00728000 - (menu->rowPositions[i] << 15);

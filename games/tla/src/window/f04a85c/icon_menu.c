@@ -184,7 +184,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby);
 void Window_PutGlyph(struct Window *window, s32 character, s32 x, s32 y,
                    s32 mode);
 s32 BattleDjinnMenu_Run(s32 member, s32 unused);
-s32 Djinn_IsActiveFar(s32 member, s32 element, s32 index);
+s32 Djinn_IsSetFar(s32 member, s32 element, s32 index);
 s32 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
 s32 Func_0804519c(void);
 void *Message_ShowAndWait(s32 message, s32 x, s32 y);
@@ -724,7 +724,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         NAVIGATION->chosenDjinn[commandIndex] = mode;
         element = (parameter >> 8) & 15;
         index = parameter & 255;
-        if (Djinn_IsActiveFar(actorId, element, index) != 0) {
+        if (Djinn_IsSetFar(actorId, element, index) != 0) {
           ability =
               BattleAction_Get(Djinn_GetDefinitionHeaderFar(element, index));
           cost = ability->range;

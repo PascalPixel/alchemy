@@ -172,7 +172,7 @@ s32 RollWeaponUnleash(struct BattleUnit *owner) {
 
 /// A rate for the effect id: 20 to 75 for the ids listed, otherwise a
 /// negative value (-60, -90 and -70 for three ids, -100 by default).
-s32 Func_080b0514(s32 effect_id) {
+s32 Battle_GetEffectBaseSuccessRate(s32 effect_id) {
   s32 battle_result;
   u32 entry_index;
 
@@ -251,7 +251,11 @@ s32 Battle_IsEffect91Class(s32 classId) {
   return 0;
 }
 
-s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId) {
+/// Returns 1 when the unit is weak to effect `effectId`: one of three listed
+/// for its enemy kind (EnemyDefinition.weakEffects) or class
+/// (ClassDefinition.weakEffects). Called by Battle_RollEffectSuccess.
+s32 BattleAbility_IsWeakToEffect(const struct BattleUnit *target,
+                                 s32 effectId) {
   const u8 *entries;
   s32 i;
 
@@ -288,8 +292,16 @@ s32 Battle_IsReviveEffect(s32 effect_id) {
 /// luck or more shrugs off effects 18, 19, 26 to 28, 34, 80 and 82, and a
 /// character 82; effects 80 and 85 get three tries as 67 does.
 // As The Broken Seal's function of the same name, with effects 90 and 91 added.
-s32 BattleEffect_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
-                         s32 effectId, s32 successScale) {
+/// Rolls whether effect `effectId` takes hold on `target`: it fails at once
+/// when there is nothing for it to do. The chance is the base rate, plus three
+/// times the caster's lead over the target in the element's level less half
+/// the target's luck (so every two points of luck take off three), plus
+/// 25 against a weakness, times `successScale` percent. A base rate of 0 or
+/// less counts as its magnitude, still scaled but skipping the levels, luck
+/// and weakness; 0 still succeeds when Battle_RandomPercent gives 0, about 1
+/// time in 100. Luff gets three tries.
+s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
+                             s32 effectId, s32 successScale) {
   u8 *state = Unit_Get(target);
   struct BattleUnit *unit = (struct BattleUnit *)state;
   s32 attempts = 1;
@@ -368,13 +380,13 @@ action4_done:
   if (unit->classIndex != 0 && effectId == 82)
     return 0;
 
-  score = Func_080b0514(effectId);
+  score = Battle_GetEffectBaseSuccessRate(effectId);
   if (score > 0) {
     s32 difference = Unit_GetElementLevel(caster, resistanceCategory) -
                      Unit_GetElementLevel(target, resistanceCategory) -
                      (*luck >> 1);
     score += difference * 3;
-    if (BattleTarget_IsWeakToEffect(unit, effectId) != 0) {
+    if (BattleAbility_IsWeakToEffect(unit, effectId) != 0) {
       score += 25;
     }
   } else {

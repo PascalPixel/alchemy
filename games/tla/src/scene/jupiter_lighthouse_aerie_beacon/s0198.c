@@ -1112,7 +1112,7 @@ void Func_02001bc4(void) {
     struct BattleUnit *member;
     s16 maxHp;
 
-    count = Party_CountActiveOwners();
+    count = Party_CountMembers();
     for (n = 0; n < count; n++) {
       struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -2256,7 +2256,7 @@ void Func_02003c58(s32 mode) {
 
 s32 Func_020059b4();
 s32 Func_02004644();
-s32 Party_AddActiveOwner();
+s32 Party_AddMember();
 
 s32 Func_02003d9c(void) {
   s32 t11;
@@ -2307,11 +2307,11 @@ s32 Func_02003d9c(void) {
     gMainRoutineWork.retreatEntrance = 1;
   } else {
     if (gMainRoutineWork.entrance == 0xa) {
-      Party_AddActiveOwner(5);
+      Party_AddMember(5);
       Func_02001388();
     } else {
       if (gMainRoutineWork.entrance == 0xb) {
-        Party_AddActiveOwner(6);
+        Party_AddMember(6);
         Func_020016e8();
       } else {
         if (gMainRoutineWork.entrance == 0xc) {

@@ -357,7 +357,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 void Func_02001c4c(void);
 void Func_02001cd4(s32 actor);
 void Func_02001ccc(s32 actor, s32 value);
-void Party_RemoveActiveOwner(s32 owner);
+void Party_RemoveMember(s32 owner);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -869,7 +869,7 @@ void Func_02000d30(void) {
   Venus_ObjSetPos(10, PIXELS(664), PIXELS(792));
   Venus_CamMove(-1, -1, -1, 0);
   gMainRoutineWork.currentOwner = 5;
-  Party_RemoveActiveOwner(4);
+  Party_RemoveMember(4);
   FieldEvent_Wait(50);
   work = Ram_HeapSlots->eventWork;
   work->delay = 60;

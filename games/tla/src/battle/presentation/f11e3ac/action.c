@@ -111,8 +111,8 @@ s32 Unit_AddHpFar(s32 owner, s32 delta);
 s32 GameFlag_Test(s32 flag);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *owner, s32 slot);
 s32 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
-s32 Djinn_IsActiveFar(s32 unitId, s32 element, s32 index);
-s32 Djinn_IsReadyFar(s32 unitId, s32 element, s32 index);
+s32 Djinn_IsSetFar(s32 unitId, s32 element, s32 index);
+s32 Djinn_CanSetFar(s32 unitId, s32 element, s32 index);
 u32 *DjinnRecovery_AddStandbyFar(u32 owner, u32 element, u32 djinn);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 s32 Item_GetEquippedElementFar(s32 unitId);
@@ -367,7 +367,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     if (canCast) {
       plan->failure = 0;
       actor->pp -= ability->ppCost;
-      Unit_UpdateRatiosFar(request->unitId);
+      Unit_RecalculateGaugesFar(request->unitId);
       if (actor->pp < 0)
         actor->pp = 0;
       if (actor->pp > actor->maxPp)
@@ -498,14 +498,14 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
   case COMMAND_DJINN:
     abilityId = Djinn_GetDefinitionHeaderFar((request->parameter >> 8) & 15,
                                              request->parameter & 255);
-    if (!Djinn_IsActiveFar(request->unitId, (request->parameter >> 8) & 15,
-                           request->parameter & 255)) {
-      if (Djinn_IsReadyFar(request->unitId, (request->parameter >> 8) & 15,
-                           request->parameter & 255)) {
+    if (!Djinn_IsSetFar(request->unitId, (request->parameter >> 8) & 15,
+                        request->parameter & 255)) {
+      if (Djinn_CanSetFar(request->unitId, (request->parameter >> 8) & 15,
+                          request->parameter & 255)) {
         BattleAction_Get(abilityId);
         BattleHighlight_SetModes(0, 0);
-        Djinn_ActivateFar(request->unitId, (request->parameter >> 8) & 15,
-                          request->parameter & 255);
+        Djinn_SetFar(request->unitId, (request->parameter >> 8) & 15,
+                     request->parameter & 255);
         DjinnRecovery_RemoveFar(request->unitId, (request->parameter >> 8) & 15,
                                 request->parameter & 255);
         Unit_CalculateFar(request->unitId);
@@ -717,7 +717,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
         } else {
           rate = 100;
         }
-        plan->targetHit[index] = BattleEffect_RollSuccessFar(
+        plan->targetHit[index] = Battle_RollEffectSuccessFar(
             request->unitId, plan->targetIds[index], ability->element,
             ability->effect, rate);
       }

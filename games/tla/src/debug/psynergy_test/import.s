@@ -114,14 +114,14 @@ Unit_AddHp:
 	.thumb_func
 Unit_AddPp:
 	overlay_veneer Unit_AddPpFar
-	.global Djinn_AddToOwner
+	.global Djinn_Give
 	.thumb_func
-Djinn_AddToOwner:
-	overlay_veneer Djinn_AddToOwnerFar
-	.global Djinn_Activate
+Djinn_Give:
+	overlay_veneer Djinn_GiveFar
+	.global Djinn_Set
 	.thumb_func
-Djinn_Activate:
-	overlay_veneer Djinn_ActivateFar
+Djinn_Set:
+	overlay_veneer Djinn_SetFar
 	.global Unit_LevelUpTo
 	.thumb_func
 Unit_LevelUpTo:

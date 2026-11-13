@@ -8,15 +8,15 @@ Inventory_GetEquippedItemFar:
 	.global BattleAction_Get
 	.thumb_func
 BattleAction_Get:
-	overlay_veneer BattleAction_GetDirect
+	overlay_veneer Ability_GetDirect
 	.global Unit_LearnPsynergyFar
 	.thumb_func
 Unit_LearnPsynergyFar:
 	overlay_veneer Unit_LearnPsynergy
-	.global Unit_KnowsActionFar
+	.global Unit_KnowsPsynergyFar
 	.thumb_func
-Unit_KnowsActionFar:
-	overlay_veneer Unit_KnowsAction
+Unit_KnowsPsynergyFar:
+	overlay_veneer Unit_KnowsPsynergy
 	.global Func_080ad090
 	.thumb_func
 Func_080ad090:
@@ -24,7 +24,7 @@ Func_080ad090:
 	.global Func_080ad098
 	.thumb_func
 Func_080ad098:
-	overlay_veneer Func_080af794
+	overlay_veneer Unit_CheckLevelUp
 	.global Func_080ad0a0
 	.thumb_func
 Func_080ad0a0:
@@ -32,4 +32,4 @@ Func_080ad0a0:
 	.global Func_080ad0a8
 	.thumb_func
 Func_080ad0a8:
-	overlay_veneer Func_080af8cc
+	overlay_veneer Unit_LevelNoOp

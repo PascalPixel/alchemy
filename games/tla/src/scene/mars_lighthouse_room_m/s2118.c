@@ -232,7 +232,7 @@ void Func_02002368(void) {
   s16 hp[8];
 
   (void *)Actor_Get(leader);
-  count = Party_CountActiveOwners();
+  count = Party_CountMembers();
   for (i = 0; i < count; i++)
     hp[i] = Unit_Get(gMainRoutineWork.activeOwners[i])->hp;
   Func_02003288(-10, 0);

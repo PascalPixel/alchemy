@@ -94,7 +94,7 @@ struct ItemMenuWork {
   struct WindowSprite *ownerIcons[2];
   u8 unk180[0x44];
   u16 items[32];    ///< the inventory entries listed
-  s16 memberIds[8]; ///< the party in order (Party_ListActiveOwnersFar)
+  s16 memberIds[8]; ///< the party in order (Party_ListMembersFar)
   u8 itemCount;
   u8 partyCount;
   u8 sideMember[2]; ///< each side's party member

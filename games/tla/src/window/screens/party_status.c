@@ -25,7 +25,7 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
     n = BattleParty_PrepareActiveOwnersFar(0);
     height = 3;
   } else {
-    n = Party_CountActiveOwnersFar();
+    n = Party_CountMembersFar();
     if ((u32)n > 4)
       n = 4;
   }
@@ -253,7 +253,7 @@ void PartyStatus_Draw(s32 flags) {
         break;
     }
   } else {
-    count = Party_CountActiveOwnersFar();
+    count = Party_CountMembersFar();
     if (count > 4)
       count = 4;
     for (i = 0; i < count; i++)

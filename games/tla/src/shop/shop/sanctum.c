@@ -379,7 +379,7 @@ void Sanctum_ApplyService(s32 id, s32 mode) {
   unit = Unit_Get(id);
   if (mode == 0) {
     unit->hp = unit->maxHp;
-    Unit_UpdateRatiosFar(id);
+    Unit_RecalculateGaugesFar(id);
   } else if (mode == 1) {
     unit->poison = 0;
   } else if (mode == 2) {

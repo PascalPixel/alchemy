@@ -40,7 +40,7 @@ static inline s32 FieldGameFlag_GetByte(s32 flag) {
 }
 
 static inline s32 FieldParty_ListMembers(s16 *owners) {
-  return Party_ListActiveOwners(owners);
+  return Party_ListMembers(owners);
 }
 
 static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {

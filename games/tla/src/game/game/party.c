@@ -110,7 +110,8 @@ s32 Func_080afbec(s32 unitId, s32 enemyId, s32 suffix) {
   return 1;
 }
 
-s32 Party_CountActiveOwners(void) {
+/// Returns the number of party members, counted from its FLAG_IN_PARTY flags.
+s32 Party_CountMembers(void) {
   s32 count;
   s32 i;
 
@@ -122,8 +123,13 @@ s32 Party_CountActiveOwners(void) {
   return count;
 }
 
-s32 Party_AddActiveOwner(s32 value) {
-  s32 count = Party_CountActiveOwners();
+/// Adds character `unitId` to the end of the party: sets its game flag and
+/// appends it to gMainRoutineWork.party unless it is already listed.
+/// Returns the party size. Called by the events where a character joins, by
+/// the party member chooser and the File Screen, and by the debug parameter
+/// sets.
+s32 Party_AddMember(s32 value) {
+  s32 count = Party_CountMembers();
   s32 index;
 
   GameFlag_SetBit(value);
@@ -137,8 +143,12 @@ s32 Party_AddActiveOwner(s32 value) {
   return count + 1;
 }
 
-s32 Party_RemoveActiveOwner(s32 value) {
-  s32 count = Party_CountActiveOwners();
+/// Takes character `unitId` out of the party: clears its game flag and closes
+/// the gap it leaves in gMainRoutineWork.party. Returns the party size.
+/// Called by the events where a character leaves, by the party member chooser
+/// and the File Screen, and by the debug parameter sets.
+s32 Party_RemoveMember(s32 value) {
+  s32 count = Party_CountMembers();
   s32 i;
   s32 j;
 
@@ -149,16 +159,19 @@ s32 Party_RemoveActiveOwner(s32 value) {
   }
   for (j = i; j < count - 1; j++)
     gMainRoutineWork.activeOwners[j] = gMainRoutineWork.activeOwners[j + 1];
-  return Party_CountActiveOwners();
+  return Party_CountMembers();
 }
 
-s32 Party_ListActiveOwners(s16 *owners) {
+/// Writes the party members to `unitIds`, ending with BATTLE_UNIT_LIST_END, and
+/// returns how many there are. Every screen that lists the party starts here:
+/// the menus, the shops, the inn and the party inventory searches.
+s32 Party_ListMembers(s16 *owners) {
   s32 count = 0;
 
   if (owners != NULL) {
     s32 index;
 
-    count = Party_CountActiveOwners();
+    count = Party_CountMembers();
     index = 0;
     if (count != 0) {
       do {
@@ -237,7 +250,10 @@ const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId) {
   return &gSummon_DefinitionTable[summonId];
 }
 
-void Func_080aff94(s32 bit) {
+/// Returns the class series of a character whose strongest element is
+/// `primaryElement` and second `secondaryElement`, from the 4 by 4 table.
+/// Called by Class_Determine.
+void Class_GetSeries(s32 bit) {
   u32 *state = (u32 *)Djinn_GetRecoveryTable(0);
 
   *state |= 1 << bit;

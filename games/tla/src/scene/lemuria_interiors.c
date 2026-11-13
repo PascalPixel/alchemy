@@ -165,7 +165,7 @@ L_0200825a:
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Party_RemoveActiveOwner();
+void Party_RemoveMember();
 
 s32 Func_02000284(void) {
   struct Actor *object;
@@ -205,7 +205,7 @@ void Func_0200031c(void) {
   struct Actor *object3;
 
   GameFlag_SetBit(0x965);
-  Party_RemoveActiveOwner(7);
+  Party_RemoveMember(7);
   Func_0200282c();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaInteriors07);

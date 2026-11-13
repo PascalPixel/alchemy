@@ -222,7 +222,7 @@ void Func_08118e64(void) {
   }
 }
 
-s32 Djinn_IsReadyFar(s32 owner, s32 element, s32 djinn);
+s32 Djinn_CanSetFar(s32 owner, s32 element, s32 djinn);
 void DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 djinn);
 
 /// Adds to the trade offers every djinn an active owner can offer that is
@@ -242,7 +242,7 @@ void Func_08118eb0(void) {
     owner = owners[n];
     for (element = 0; element <= 3; element++) {
       for (djinn = 0; djinn <= 19; djinn++) {
-        if (Djinn_IsReadyFar(owner, element, djinn) != 0) {
+        if (Djinn_CanSetFar(owner, element, djinn) != 0) {
           list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
                       owner > 7))
                       ->list;

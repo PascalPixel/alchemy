@@ -48,7 +48,7 @@ s32 DebugFlagEditor_HandleInput(s32, s32 *, s32 *);
 void IconMenu_LayoutIcons(s32 x, s32 y, s32 w, s32 h);
 s32 IconMenu_Run(s32);
 void Party_AdjustCoinsFar(s32);
-s32 Party_ListActiveOwnersFar(s16 *);
+s32 Party_ListMembersFar(s16 *);
 s32 Party_SumDjinnCountsFar(s32);
 #ifndef OWN_WindowSprite_CreateFromResourceFar
 struct WindowSprite *

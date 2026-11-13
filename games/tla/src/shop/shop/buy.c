@@ -39,7 +39,7 @@ struct ShopCursorSprite {
   u8 active;
 };
 
-s32 Item_IsCompatibleWithOwnerFar(s32 unit, s32 item);
+s32 Item_IsCompatibleWithUnitFar(s32 unit, s32 item);
 
 s32 PartyInventory_CountItemFar(s32 item);
 
@@ -220,7 +220,7 @@ next_page:
         purchaseResult = -1;
         break;
       }
-      if (Item_IsCompatibleWithOwnerFar(unitId, shop->selectedItem) == 0) {
+      if (Item_IsCompatibleWithUnitFar(unitId, shop->selectedItem) == 0) {
         MessageArgument_PushFar(unitId, 1);
         Shop_ShowKeeperMessage((s32)MsgCannotEquipStillWant);
         if (Shop_AskYesNo(0) != 0) {
@@ -505,7 +505,7 @@ void Shop_DrawParty(struct RenderInput *window, s32 selected, s32 itemId) {
         else
           Animation_ApplyChildArgumentFar(figure, 1);
         shop->partyMemberScale[i] = 0x10000;
-        if (!Item_IsCompatibleWithOwnerFar(owner, itemId))
+        if (!Item_IsCompatibleWithUnitFar(owner, itemId))
           shop->partyMemberScale[i] = 0xcccc;
       }
     }

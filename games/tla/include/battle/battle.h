@@ -137,7 +137,7 @@ void BattleMessage_WaitForAdvance(void);
 void BattleQueue_SortByPriority(struct BattleActionRecord *actions, s32 count);
 void Camera_ConfigureScene(s32 scene);
 s32 Battle_GetElementMultiplier(s32 selector, s32 mode);
-s32 Djinn_ActivateFar(s32 unitId, s32 element, s32 index);
+s32 Djinn_SetFar(s32 unitId, s32 element, s32 index);
 s32 Func_08020190(s32, s32, s32);
 s32 Func_080cdac0(s32 effect, s32 from, s32 to);
 s32 Func_080ce31c(s32 kind);
@@ -155,7 +155,7 @@ s32 Enemy_GetAttackElement(void *state);
 #ifndef OWN_Unit_CalculateFar
 void Unit_CalculateFar(s32);
 #endif
-s32 Party_CountActiveOwnersFar(void);
+s32 Party_CountMembersFar(void);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
 void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,

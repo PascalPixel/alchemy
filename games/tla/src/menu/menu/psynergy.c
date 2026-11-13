@@ -44,7 +44,7 @@ s32 PsynergyMenu_Run(void) {
   FillWords_((void *)0x06004000, 0x2000, 0x33333333);
   Text_UseExtraTilesFar(1);
 #endif
-  screen->partyCount = Party_ListActiveOwnersFar(screen->ownerIds);
+  screen->partyCount = Party_ListMembersFar(screen->ownerIds);
   ItemMenu_Initialize(0, 3, 0, 7);
   screen->messageWindow = Window_CreateFar(13, 0, 17, 3, 2);
   Palette_LightenHighlight(14);

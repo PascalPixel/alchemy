@@ -393,7 +393,7 @@ s32 Save_BuildFileSummary(void) {
   summary->djinn[1] = Party_SumDjinnCountsFar(1);
   summary->djinn[2] = Party_SumDjinnCountsFar(2);
   summary->djinn[3] = Party_SumDjinnCountsFar(3);
-  Party_ListActiveOwnersFar((s16 *)owners);
+  Party_ListMembersFar((s16 *)owners);
   for (i = 0; i <= 3 && owners[i] != 255; i++)
     summary->party[i] = owners[i];
   summary->party[i] = -1;

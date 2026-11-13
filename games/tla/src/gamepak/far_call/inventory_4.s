@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/gamepak/far_call/veneer.s"
-	.global Djinn_AddToLeastLoadedOwnerFar
+	.global Djinn_GiveToPartyFar
 	.thumb_func
-Djinn_AddToLeastLoadedOwnerFar:
-	overlay_veneer Djinn_AddToLeastLoadedOwner
+Djinn_GiveToPartyFar:
+	overlay_veneer Djinn_GiveToParty
 	.global Party_SumDjinnCountsFar
 	.thumb_func
 Party_SumDjinnCountsFar:

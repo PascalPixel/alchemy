@@ -991,7 +991,7 @@ power_end:
 
     res = plan->targetHit[slot];
     if (res == -1)
-      hit = BattleEffect_RollSuccessFar(aid, tid, element, action->effect,
+      hit = Battle_RollEffectSuccessFar(aid, tid, element, action->effect,
                                         gHitTable[dist]);
     else
       hit = res;
@@ -1210,7 +1210,7 @@ power_end:
         BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
       dealt = target->hp - hp;
       target->hp = hp;
-      Unit_UpdateRatiosFar(tid);
+      Unit_RecalculateGaugesFar(tid);
       break;
     }
 
@@ -1249,7 +1249,7 @@ power_end:
       BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
       dealt = target->pp - pp;
       target->pp = pp;
-      Unit_UpdateRatiosFar(tid);
+      Unit_RecalculateGaugesFar(tid);
       break;
     }
 
@@ -1279,7 +1279,7 @@ power_end:
       }
       dealt = target->hp - cur;
       target->hp = cur;
-      Unit_UpdateRatiosFar(tid);
+      Unit_RecalculateGaugesFar(tid);
       break;
     }
 
@@ -1312,7 +1312,7 @@ power_end:
         pp = 0;
       BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
       target->pp = pp;
-      Unit_UpdateRatiosFar(tid);
+      Unit_RecalculateGaugesFar(tid);
       break;
     }
 
@@ -1462,7 +1462,7 @@ power_end:
         BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
       dealt = target->hp - cur;
       target->hp = cur;
-      Unit_UpdateRatiosFar(tid);
+      Unit_RecalculateGaugesFar(tid);
       break;
     }
 
@@ -1487,7 +1487,7 @@ power_end:
         MESSAGE_PUSH(MsgPpRecover);
       }
       target->pp = pp;
-      Unit_UpdateRatiosFar(tid);
+      Unit_RecalculateGaugesFar(tid);
       break;
     }
 
@@ -1536,7 +1536,7 @@ power_end:
           BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
         dealt = target->hp - cur;
         target->hp = cur;
-        Unit_UpdateRatiosFar(tid);
+        Unit_RecalculateGaugesFar(tid);
         break;
       }
       BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
@@ -1690,7 +1690,7 @@ power_end:
         MESSAGE_PUSH(MsgHpRecover);
       }
       target->hp = heal;
-      Unit_UpdateRatiosFar(tid);
+      Unit_RecalculateGaugesFar(tid);
       break;
     }
 
@@ -1736,7 +1736,7 @@ power_end:
         MESSAGE_PUSH(MsgPpRecover);
       }
       target->pp = heal;
-      Unit_UpdateRatiosFar(tid);
+      Unit_RecalculateGaugesFar(tid);
       break;
     }
 
@@ -1839,7 +1839,7 @@ power_end:
         break;
       MESSAGE_PUSH(MsgRevived);
       target->hp = target->maxHp;
-      Unit_UpdateRatiosFar(tid);
+      Unit_RecalculateGaugesFar(tid);
       break;
 
     case 56:
@@ -1847,7 +1847,7 @@ power_end:
         break;
       MESSAGE_PUSH(MsgRevived);
       target->hp = target->maxHp / 2;
-      Unit_UpdateRatiosFar(tid);
+      Unit_RecalculateGaugesFar(tid);
       break;
 
     case 57:
@@ -1855,7 +1855,7 @@ power_end:
         break;
       MESSAGE_PUSH(MsgRevived);
       target->hp = target->maxHp * 8 / 10;
-      Unit_UpdateRatiosFar(tid);
+      Unit_RecalculateGaugesFar(tid);
       break;
 
     case 73:
@@ -1863,7 +1863,7 @@ power_end:
         break;
       MESSAGE_PUSH(MsgRevived);
       target->hp = (s16)(target->maxHp * 6 / 10);
-      Unit_UpdateRatiosFar(tid);
+      Unit_RecalculateGaugesFar(tid);
       break;
 
     case 3:
@@ -1963,7 +1963,7 @@ power_end:
       else
         MESSAGE_PUSH(MsgSpiritDrain);
       target->hp = 0;
-      Unit_UpdateRatiosFar(tid);
+      Unit_RecalculateGaugesFar(tid);
       break;
 
     case 29:
@@ -2000,7 +2000,7 @@ power_end:
         MESSAGE_PUSH(MsgHpRecover);
       }
       actor->hp = dmg;
-      Unit_UpdateRatiosFar(aid);
+      Unit_RecalculateGaugesFar(aid);
       break;
 
     case 32: {
@@ -2023,7 +2023,7 @@ power_end:
         MESSAGE_PUSH(MsgPpRecover);
       }
       actor->pp = heal;
-      Unit_UpdateRatiosFar(aid);
+      Unit_RecalculateGaugesFar(aid);
       break;
     }
 

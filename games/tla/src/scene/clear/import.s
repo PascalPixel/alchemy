@@ -208,14 +208,14 @@ PartyInventory_Add:
 	.thumb_func
 Func_02002350:
 	overlay_veneer Func_080ad090
-	.global Party_AddActiveOwner
+	.global Party_AddMember
 	.thumb_func
-Party_AddActiveOwner:
-	overlay_veneer Party_AddActiveOwnerFar
-	.global Party_RemoveActiveOwner
+Party_AddMember:
+	overlay_veneer Party_AddMemberFar
+	.global Party_RemoveMember
 	.thumb_func
-Party_RemoveActiveOwner:
-	overlay_veneer Party_RemoveActiveOwnerFar
+Party_RemoveMember:
+	overlay_veneer Party_RemoveMemberFar
 	.ifndef TLA_EDITION_JA
 	.global Unit_GetExperienceForLevel
 	.thumb_func
@@ -226,10 +226,10 @@ Unit_GetExperienceForLevel:
 	.thumb_func
 Func_02002370:
 	overlay_veneer Func_080ad238
-	.global Djinn_AddToLeastLoadedOwner
+	.global Djinn_GiveToParty
 	.thumb_func
-Djinn_AddToLeastLoadedOwner:
-	overlay_veneer Djinn_AddToLeastLoadedOwnerFar
+Djinn_GiveToParty:
+	overlay_veneer Djinn_GiveToPartyFar
 	.global Unit_UpdateClass
 	.thumb_func
 Unit_UpdateClass:

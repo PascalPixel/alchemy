@@ -280,7 +280,7 @@ void Event_WaitTransitionFrames(void);
 void Message_CloseFinishedWindows(void);
 s32 YesNoMenu_Run(s32 a, s32 b, s32 c, s32 d);
 s32 FileList_SelectAction(void);
-void Party_AddActiveOwner(s32 id);
+void Party_AddMember(s32 id);
 
 #define PARTY_WORD(party, index) FIELD_AT(party, u32, 4 * (index))
 
@@ -335,12 +335,12 @@ s32 Func_02000328(void) {
     if (i == 0) {
       FieldMessage_Show(message + 1, 1);
       gMainRoutineWork.unk22d[2] = 1;
-      Party_AddActiveOwner(5);
-      Party_AddActiveOwner(6);
-      Party_AddActiveOwner(7);
-      Party_AddActiveOwner(1);
-      Party_AddActiveOwner(2);
-      Party_AddActiveOwner(3);
+      Party_AddMember(5);
+      Party_AddMember(6);
+      Party_AddMember(7);
+      Party_AddMember(1);
+      Party_AddMember(2);
+      Party_AddMember(3);
       i = Func_020022d0();
       if (i == -1)
         goto ask_save;
@@ -937,7 +937,7 @@ void Text_DrawStringInWindow(const u8 *text, struct Window *window, s32 x,
 void Text_DrawMessageAsTiles(s32 message, struct Window *window, s32 x,
                                 s32 y);
 void WindowSprite_RedrawSavedRect(struct Window *window);
-void Party_RemoveActiveOwner(s32 id);
+void Party_RemoveMember(s32 id);
 u16 Func_0200217c(u32 length, u8 *p);
 void Func_020018e0(s32 mode, u8 *data);
 s32 Func_02002068(u8 *src, s32 length, u8 *dst);
@@ -1289,14 +1289,14 @@ s32 Func_02000e44(void) {
             Func_02002350();
             party = &gMainRoutineWork;
             party->currentOwner = 0;
-            Party_RemoveActiveOwner(4);
-            Party_RemoveActiveOwner(5);
-            Party_RemoveActiveOwner(6);
-            Party_RemoveActiveOwner(7);
-            Party_AddActiveOwner(0);
-            Party_AddActiveOwner(1);
-            Party_AddActiveOwner(2);
-            Party_AddActiveOwner(3);
+            Party_RemoveMember(4);
+            Party_RemoveMember(5);
+            Party_RemoveMember(6);
+            Party_RemoveMember(7);
+            Party_AddMember(0);
+            Party_AddMember(1);
+            Party_AddMember(2);
+            Party_AddMember(3);
             Func_020018e0(mode, DECODED_PASSWORD);
             Window_Close(box, 2);
             Window_Close(grid, 2);
@@ -1581,7 +1581,7 @@ void Func_020018e0(s32 mode, u8 *in) {
 
   for (i = 0; i != 28; i++) {
     if ((djinnBits >> i) & 1)
-      Djinn_AddToLeastLoadedOwner(i / 7, i % 7);
+      Djinn_GiveToParty(i / 7, i % 7);
   }
 
   if (mode != 0) {

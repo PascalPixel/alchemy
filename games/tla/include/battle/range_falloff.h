@@ -14,7 +14,7 @@ extern s32 gHpDmgTable6[];
 extern s32 gPpRecoveryTable[];
 extern s32 gHpDmgTable[];
 
-s32 BattleEffect_RollSuccessFar(s32 actor, s32 target, s32 range, s32 effect,
+s32 Battle_RollEffectSuccessFar(s32 actor, s32 target, s32 range, s32 effect,
                                 s32 table);
 s32 Battle_CalculateAttackDamageFar(s32 amount, s32 reduction, s32 adjustment,
                                     s32 selector);

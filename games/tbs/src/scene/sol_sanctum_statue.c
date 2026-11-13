@@ -92,6 +92,7 @@
 #include "heap.h"
 #include "sound_driver_symbols.h"
 #include "ability_ids.h"
+#include "shared/walk_into_leader.h"
 
 /// Both beams have opened the hole in the floor before the centre statue.
 /// ★ Named from what the player sees: the statue holding a bowl at the head of
@@ -307,9 +308,7 @@ static s32 SolSanctumStatue_SelectStoryExit(void) {
 static void SolSanctumStatue_OpenCentralHole(void) {
   s32 flash;
 
-  {
-    MapGrid_CopyCellsTo(0, 28, 17, 8, 2, 1);
-  }
+  MapGrid_CopyCellsTo(0, 28, 17, 8, 2, 1);
   Sound_Play(SE_SPARKLE_FALL);
   for (flash = 0; flash != 22; flash++) {
     MapGrid_CopyCellsTo(10, 61, 17, 40, 2, 1);
@@ -317,14 +316,10 @@ static void SolSanctumStatue_OpenCentralHole(void) {
     MapGrid_CopyCellsTo(8, 61, 17, 40, 2, 1);
     Event_Wait(4);
   }
-  {
-    MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
-    MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
-  }
+  MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
+  MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
   MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
-  {
-    MapGrid_CopyCellAttributes(0, 0, 2, 1, 17, 8);
-  }
+  MapGrid_CopyCellAttributes(0, 0, 2, 1, 17, 8);
   GameFlag_Set(FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN);
   SolSanctumStatue_CenterStatueMoved();
 }
@@ -479,14 +474,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   // Rejoin the companions to the leader and restore normal field control.
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_JENNA, 1);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
@@ -1057,11 +1045,7 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
     *attributeWords = tile | OBJ_PRIORITY(3);
   }
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
-  {
-    s32 priority = 3200;
-
-    Task_AddFrame(SolSanctumStatue_UpdateScrollingSprites, priority);
-  }
+  Task_AddFrame(SolSanctumStatue_UpdateScrollingSprites, TASK_PASS_FRAME);
 }
 
 /// Moving the northwest statue with Move opens its seal when it stands on it.

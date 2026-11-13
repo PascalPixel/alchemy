@@ -1106,7 +1106,6 @@ s32 ValePlaza_Initialize(void) {
 static void ValePlaza_SentToAidElders(void) {
   struct Actor *leader;
   s32 skipReply = 0;
-  s32 speechFlags = SPEAKER_WINDOW_ABOVE;
 
   if (GameFlag_Get(FLAG_VALE_STORM) != 0 &&
       GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) == 0) {
@@ -1212,8 +1211,6 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_FaceDirection(ACTOR_STORM_JENNA, FACING_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARET, FACING_NORTHEAST, 10);
-    // Through event.h: called directly, the speeds' copies lengthen
-    // speechFlags' life and swap r5 and r6 below.
     FieldCamera_SetSpeed(1.2);
     FieldCamera_MoveTo(215, CAMERA_KEEP, 758, 1);
     FieldCamera_WaitForMove();
@@ -1236,13 +1233,15 @@ static void ValePlaza_SentToAidElders(void) {
     // and Garet to show the way past the fallen rocks; Jenna thanks Isaac.
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARETS_GRANDFATHER, FACING_SOUTH,
                                    30);
-    ValePlaza_SayThenWait(speechFlags + ACTOR_STORM_GARETS_GRANDFATHER, 10);
+    ValePlaza_SayThenWait(SPEAKER_WINDOW_ABOVE + ACTOR_STORM_GARETS_GRANDFATHER,
+                          10);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_JENNA, FACING_NORTHEAST, 30);
     Actor_SetAnimationAndWait(ACTOR_STORM_JENNA, ANIM_NOD);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARETS_GRANDFATHER, FACING_WEST,
                                    30);
     Actor_RunRepeatedMotion(ACTOR_STORM_GARETS_GRANDFATHER, 2);
-    ValePlaza_SayThenWait(speechFlags + ACTOR_STORM_GARETS_GRANDFATHER, 10);
+    ValePlaza_SayThenWait(SPEAKER_WINDOW_ABOVE + ACTOR_STORM_GARETS_GRANDFATHER,
+                          10);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_STORM_GARET, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARET, FACING_EAST, 20);
@@ -1464,7 +1463,6 @@ static void ValePlaza_FightTravelers(void) {
 /// (scene/title.c).
 static void ValePlaza_TravelersLeaveAfterBattle(void) {
   struct Actor *actor;
-  s32 gravityQ8 = 128;
 
   // The screen opens on Isaac and Garet lying beaten in the storm, the
   // travelers standing over them.
@@ -1512,13 +1510,13 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   Actor_SetSpeed(ACTOR_FIRST_TRAVELER, 2.4);
   actor = Actor_Get(ACTOR_FIRST_TRAVELER);
   actor->bounce = Q16_ONE / 100;
-  actor->gravity = gravityQ8 << 8;
+  actor->gravity = px(1) / 2;
   Actor_SetScript(ACTOR_FIRST_TRAVELER, gValePlaza_FirstTravelerBounceActions);
   Event_Wait(24);
   Actor_SetSpeed(ACTOR_SECOND_TRAVELER, 2.4);
   actor = Actor_Get(ACTOR_SECOND_TRAVELER);
   actor->bounce = Q16_ONE / 100;
-  actor->gravity = gravityQ8 << 8;
+  actor->gravity = px(1) / 2;
   Actor_RunScriptAndWait(ACTOR_SECOND_TRAVELER,
                          gValePlaza_SecondTravelerBounceActions);
   Event_Wait(40);
@@ -1555,6 +1553,7 @@ static void ValePlaza_DepartForQuest(void) {
   const s32 *faceActions;
   const s32 *chaseActions;
   const s32 *departureActions;
+  u8 value;
 
   // The village gathers at the gate to see Isaac and Garet off; the camera
   // starts on the two children up the path.
@@ -1702,13 +1701,10 @@ static void ValePlaza_DepartForQuest(void) {
                                  FACING_SOUTH_SOUTHWEST, 60);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_FIRST_CHILD, ANIM_NOD);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_FIRST_CHILD, 10);
-  {
-    struct Actor *actor = Actor_GetById(ACTOR_FAREWELL_DOG);
+  actor = Actor_GetById(ACTOR_FAREWELL_DOG);
 
-    if (actor != NULL) {
-      Actor_SetPositionFixed(ACTOR_FAREWELL_CAT, actor->x.fixed,
-                             actor->z.fixed);
-    }
+  if (actor != NULL) {
+    Actor_SetPositionFixed(ACTOR_FAREWELL_CAT, actor->x.fixed, actor->z.fixed);
   }
   priorityFlags = (u8)~ACTOR_PRIORITY_AUTOMATIC;
   wait(2);
@@ -1916,12 +1912,9 @@ static void ValePlaza_DepartForQuest(void) {
   priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   Event_Wait(80);
   Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= priorityFlags;
-  {
-    struct Actor *actor = Actor_GetById(ACTOR_GARET);
-    u8 value = (priorityFlags | actor->priorityFlags);
+  value = (priorityFlags | actor->priorityFlags);
 
-    actor->priorityFlags = value;
-  }
+  actor->priorityFlags = value;
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);

@@ -7,6 +7,13 @@
 #define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
 
 /// Expands message into buf without an upper length bound.
+/* VIEW(window): routine Message_DecodeRawUnbounded as void
+ * Message_DecodeRawUnbounded(s32 message, s32 buf); field/event.h has void
+ * Message_DecodeRawUnbounded(s32 message, u16 *buffer); not tried:
+ * Message_DecodeRawUnbounded's declaration holds a FAKEMATCH tag. */
+void Message_DecodeRawUnbounded__window(s32 message, s32 buf) __asm__(
+    "Message_DecodeRawUnbounded");
+#define Message_DecodeRawUnbounded Message_DecodeRawUnbounded__window
 void Message_DecodeRawUnbounded(s32 message, s32 buf) {
   Message_DecodeRaw(message, buf, 0x7fffffff);
 }
@@ -716,8 +723,14 @@ extern const s16 gPortrait_CharacterMap[];
 extern const s16 gPortrait_SpriteMap[];
 
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
-s32 Portrait_Create(s32 id, s32 kind, s32 slot, struct Window *window, s32 x,
-                    s32 y);
+/* VIEW(window): routine Portrait_Create as s32 Portrait_Create(s32 id, s32
+ * kind, s32 slot, struct Window *window, s32 x, s32 y); window/screens has
+ * struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
+ * s32 arg3, s32 arg4, s32 arg5) {; not tried: Portrait_Create's declaration
+ * holds a FAKEMATCH tag. */
+s32 Portrait_Create__window(s32 id, s32 kind, s32 slot, struct Window *window,
+                            s32 x, s32 y) __asm__("Portrait_Create");
+#define Portrait_Create Portrait_Create__window
 
 void Portrait_ClearSlots(void) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
@@ -733,8 +746,8 @@ extern const s16 gPortrait_CharacterMap[];
 extern const s16 gPortrait_SpriteMap[];
 
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
-s32 Portrait_Create(s32 id, s32 kind, s32 slot, struct Window *window, s32 x,
-                    s32 y);
+s32 Portrait_Create__window(s32 id, s32 kind, s32 slot, struct Window *window,
+                            s32 x, s32 y) __asm__("Portrait_Create");
 
 s32 Portrait_GetForSpeaker(u32 value) {
   s32 result = -1;

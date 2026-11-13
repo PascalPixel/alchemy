@@ -1,5 +1,5 @@
-#ifndef STUCCO_ROOMS_B_H
-#define STUCCO_ROOMS_B_H
+#ifndef ALCHEMY_STUCCO_ROOMS_B_H
+#define ALCHEMY_STUCCO_ROOMS_B_H
 
 #include "types.h"
 #include "event.h"

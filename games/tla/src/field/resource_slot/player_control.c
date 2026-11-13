@@ -1,7 +1,7 @@
 /// @file
 /// Player control: the configured keys, and SC_PLAYER, the leader moved by the
 /// pad (Actor_UpdatePlayerControl).
-// Part of resource_slot.c.
+// Part of field.c.
 
 #include "../resource_slot_internal.h"
 #include "flag_call.h"
@@ -13,8 +13,7 @@
 /* VIEW(f0267bc): tag struct PartyKeys as struct PartyKeys__f0267bc;
  * resource_slot.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/resource_slot.c:4350: structure has no member named
- * `keys23c'. */
+ * games/tla/src/field/field.c:5093: structure has no member named `keys23c'. */
 struct PartyKeys__f0267bc {
   u8 unk000[0x23c];
   u16 keys23c;
@@ -23,13 +22,14 @@ struct PartyKeys__f0267bc {
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
-s32 MapGrid_CheckCollision(struct Actor *object,
-                           struct FieldPosition *position);
+s32 MapGrid_CheckCollision__resource_slot(
+    struct Actor *object,
+    struct FieldPosition *position) __asm__("MapGrid_CheckCollision");
 /* VIEW(f0267bc): routine Unit_Get as struct LeaderUnit *Unit_Get(s32 owner);
  * offset has void *Unit_Get(s32 owner); tried as the definition's void
  * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/field/resource_slot.c:4584: request for member `hp'
- * in something not a structure or union. */
+ * in tla-ja: games/tla/src/field/field.c:5337: request for member `hp' in
+ * something not a structure or union. */
 extern struct LeaderUnit *Unit_Get__f0267bc(s32 owner) __asm__("Unit_Get");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
@@ -75,7 +75,7 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
-  Vector_AddPolarOffset__resource_slot(0x80000, angle, &position);
+  Vector_AddPolarOffset(0x80000, angle, &position);
   if (object->priorityFlags & 0x40) {
     s32 withinHalfCell;
 
@@ -125,26 +125,22 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset__resource_slot(0x80000, angle + 0x1000,
-                                         &testPosition);
+    Vector_AddPolarOffset(0x80000, angle + 0x1000, &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition)) {
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(0x80000, angle - 0x1000,
-                                           &testPosition);
+      Vector_AddPolarOffset(0x80000, angle - 0x1000, &testPosition);
       if (!MapGrid_CheckCollision(object, &testPosition)) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset__resource_slot(0x80000, angle + 0x2000,
-                                             &testPosition);
+        Vector_AddPolarOffset(0x80000, angle + 0x2000, &testPosition);
         if (!MapGrid_CheckCollision(object, &testPosition)) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
-          Vector_AddPolarOffset__resource_slot(0x80000, angle - 0x2000,
-                                               &testPosition);
+          Vector_AddPolarOffset(0x80000, angle - 0x2000, &testPosition);
           if (!MapGrid_CheckCollision(object, &testPosition)) {
             heading = angle;
             goto push_objects;
@@ -171,35 +167,31 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
       position.x = object->x;
       position.y = object->y;
       position.z = object->z;
-      Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading, &position);
+      Vector_AddPolarOffset(0x80000, (u16)heading, &position);
       if (MapGrid_CheckCollision(object, &position))
         continue;
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading + 0x1000,
-                                           &testPosition);
+      Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &testPosition);
       if (MapGrid_CheckCollision(object, &testPosition))
         continue;
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading - 0x1000,
-                                           &testPosition);
+      Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &testPosition);
       if (MapGrid_CheckCollision(object, &testPosition))
         continue;
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading + 0x2000,
-                                           &testPosition);
+      Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &testPosition);
       if (MapGrid_CheckCollision(object, &testPosition))
         continue;
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading - 0x2000,
-                                           &testPosition);
+      Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &testPosition);
       if (!MapGrid_CheckCollision(object, &testPosition))
         goto push_objects;
     }
@@ -221,7 +213,7 @@ push_objects:
   contact.x = object->x;
   contact.y = object->y;
   contact.z = object->z;
-  Vector_AddPolarOffset__resource_slot(0x40000, (u16)heading, &contact);
+  Vector_AddPolarOffset(0x40000, (u16)heading, &contact);
   other = (struct Actor *)Ram_HeapSlots->scriptObjects;
   for (angleIndex = 63; angleIndex >= 0; angleIndex--, other++) {
     s32 radius;
@@ -243,29 +235,27 @@ push_objects:
       testPosition.x = other->x;
       testPosition.y = other->y;
       testPosition.z = other->z;
-      Vector_AddPolarOffset__resource_slot(0x4000, direction, &testPosition);
+      Vector_AddPolarOffset(0x4000, direction, &testPosition);
       if (!ActorScript_CheckOverlap(other, &testPosition.x)) {
         testPosition.x = other->x;
         testPosition.y = other->y;
         testPosition.z = other->z;
-        Vector_AddPolarOffset__resource_slot(0xa0000, direction, &testPosition);
+        Vector_AddPolarOffset(0xa0000, direction, &testPosition);
         if (!MapGrid_CheckCollision(other, &testPosition)) {
           testPosition.x = other->x;
           testPosition.y = other->y;
           testPosition.z = other->z;
-          Vector_AddPolarOffset__resource_slot(0xa0000, direction + 0x1000,
-                                               &testPosition);
+          Vector_AddPolarOffset(0xa0000, direction + 0x1000, &testPosition);
           // The same probe is tested twice.
           if (!MapGrid_CheckCollision(other, &testPosition) &&
               !MapGrid_CheckCollision(other, &testPosition)) {
             testPosition.x = other->x;
             testPosition.y = other->y;
             testPosition.z = other->z;
-            Vector_AddPolarOffset__resource_slot(0xa0000, direction - 0x1000,
-                                                 &testPosition);
+            Vector_AddPolarOffset(0xa0000, direction - 0x1000, &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
-              Vector_AddPolarOffset__resource_slot(
-                  0x4000, direction, (struct FieldPosition *)&other->x);
+              Vector_AddPolarOffset(0x4000, direction,
+                                    (struct FieldPosition *)&other->x);
               other->targetX = 0x80000000;
               other->targetY = 0x80000000;
               other->targetZ = 0x80000000;
@@ -451,8 +441,7 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
 /* VIEW(f027064): tag struct PartyKeys as struct PartyKeys__f027064;
  * resource_slot.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/resource_slot.c:4836: structure has no member named
- * `keys23c'. */
+ * games/tla/src/field/field.c:5534: structure has no member named `keys23c'. */
 struct PartyKeys__f027064 {
   u8 unk000[0x23c];
   u16 keys23c;
@@ -462,20 +451,16 @@ extern struct MapCell gMapCellBuffer[];
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
-s32 MapGrid_CheckCollision(struct Actor *object,
-                           struct FieldPosition *position);
+s32 MapGrid_CheckCollision__resource_slot(
+    struct Actor *object,
+    struct FieldPosition *position) __asm__("MapGrid_CheckCollision");
 /* VIEW(f027064): routine Unit_Get as struct LeaderUnit *Unit_Get(s32 owner);
  * offset has void *Unit_Get(s32 owner); tried as the definition's void
  * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/field/resource_slot.c:5066: request for member `hp'
- * in something not a structure or union. */
+ * in tla-ja: games/tla/src/field/field.c:5776: request for member `hp' in
+ * something not a structure or union. */
 extern struct LeaderUnit *Unit_Get__f027064(s32 owner) __asm__("Unit_Get");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-/* VIEW(f027064): routine Animation_ApplyChildArgument as s32
- * Animation_ApplyChildArgument(struct PlayerSprite *, s32); the definition has
- * s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags). */
-extern s32 Animation_ApplyChildArgument__f027064(
-    struct PlayerSprite *, s32) __asm__("Animation_ApplyChildArgument");
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
@@ -527,7 +512,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
-  Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle, &position);
+  Vector_AddPolarOffset(0x80000, (u16)angle, &position);
   if (object->priorityFlags & 0x40) {
     // Standing on another object a cell below: the step is clear when the
     // object under the step (and, after Japanese, both its sides) is a still
@@ -536,13 +521,11 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
     testPosition.x = position.x;
     testPosition.y = position.y;
     testPosition.z = position.z;
-    Vector_AddPolarOffset__resource_slot(0x20000, (u16)angle + 0x4000,
-                                         &testPosition);
+    Vector_AddPolarOffset(0x20000, (u16)angle + 0x4000, &testPosition);
     contact.x = position.x;
     contact.y = position.y;
     contact.z = position.z;
-    Vector_AddPolarOffset__resource_slot(0x20000, (u16)angle - 0x4000,
-                                         &contact);
+    Vector_AddPolarOffset(0x20000, (u16)angle - 0x4000, &contact);
 #endif
     angleIndex = 0;
     other = (struct Actor *)Ram_HeapSlots->scriptObjects;
@@ -584,26 +567,22 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle + 0x1000,
-                                         &testPosition);
+    Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition)) {
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle - 0x1000,
-                                           &testPosition);
+      Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &testPosition);
       if (!MapGrid_CheckCollision(object, &testPosition)) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle + 0x2000,
-                                             &testPosition);
+        Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &testPosition);
         if (!MapGrid_CheckCollision(object, &testPosition)) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
-          Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle - 0x2000,
-                                               &testPosition);
+          Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &testPosition);
           if (!MapGrid_CheckCollision(object, &testPosition)) {
             heading = angle;
             goto push_objects;
@@ -625,35 +604,31 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;
-    Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading, &position);
+    Vector_AddPolarOffset(0x80000, (u16)heading, &position);
     if (MapGrid_CheckCollision(object, &position))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading + 0x1000,
-                                         &testPosition);
+    Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading - 0x1000,
-                                         &testPosition);
+    Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading + 0x2000,
-                                         &testPosition);
+    Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading - 0x2000,
-                                         &testPosition);
+    Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition))
       goto push_objects;
   }
@@ -673,7 +648,7 @@ push_objects:
   contact.x = object->x;
   contact.y = object->y;
   contact.z = object->z;
-  Vector_AddPolarOffset__resource_slot(0x40000, (u16)heading, &contact);
+  Vector_AddPolarOffset(0x40000, (u16)heading, &contact);
   other = (struct Actor *)Ram_HeapSlots->scriptObjects;
   for (angleIndex = 63; angleIndex >= 0; angleIndex--, other++) {
     s32 radius;
@@ -694,29 +669,27 @@ push_objects:
       testPosition.y = other->y;
       testPosition.z = other->z;
       heading = direction;
-      Vector_AddPolarOffset__resource_slot(0x4000, direction, &testPosition);
+      Vector_AddPolarOffset(0x4000, direction, &testPosition);
       if (!ActorScript_CheckOverlap(other, &testPosition.x)) {
         testPosition.x = other->x;
         testPosition.y = other->y;
         testPosition.z = other->z;
-        Vector_AddPolarOffset__resource_slot(0xa0000, direction, &testPosition);
+        Vector_AddPolarOffset(0xa0000, direction, &testPosition);
         if (!MapGrid_CheckCollision(other, &testPosition)) {
           testPosition.x = other->x;
           testPosition.y = other->y;
           testPosition.z = other->z;
-          Vector_AddPolarOffset__resource_slot(0xa0000, direction + 0x1000,
-                                               &testPosition);
+          Vector_AddPolarOffset(0xa0000, direction + 0x1000, &testPosition);
           // The same probe is tested twice.
           if (!MapGrid_CheckCollision(other, &testPosition) &&
               !MapGrid_CheckCollision(other, &testPosition)) {
             testPosition.x = other->x;
             testPosition.y = other->y;
             testPosition.z = other->z;
-            Vector_AddPolarOffset__resource_slot(0xa0000, direction - 0x1000,
-                                                 &testPosition);
+            Vector_AddPolarOffset(0xa0000, direction - 0x1000, &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
-              Vector_AddPolarOffset__resource_slot(
-                  0x4000, direction, (struct FieldPosition *)&other->x);
+              Vector_AddPolarOffset(0x4000, direction,
+                                    (struct FieldPosition *)&other->x);
               other->targetX = 0x80000000;
               other->targetY = 0x80000000;
               other->targetZ = 0x80000000;
@@ -781,8 +754,8 @@ counted:
                       Iwram_MulQ16(object->velocityZ, object->velocityZ));
     object->velocityX = collision;
     object->velocityZ = collision;
-    Vector_AddPolarOffset__resource_slot(
-        speed, (u16)heading, (struct FieldPosition *)&object->velocityX);
+    Vector_AddPolarOffset(speed, (u16)heading,
+                          (struct FieldPosition *)&object->velocityX);
     if (object->timer != 0)
       object->timer--;
   }
@@ -836,13 +809,13 @@ counted:
       effect->priorityFlags = 2;
       effect->motionFlags = collision;
       if (effectSprite != NULL) {
-        Animation_ApplyChildArgument__f027064(effectSprite, 1);
+        Animation_ApplyChildArgument(effectSprite, 1);
         effectSprite->flags = collision;
         effectSprite->rotation = footprintAngle + 0x4000;
         effectSprite->priority = 3;
       }
       if (*(s16 *)&object->unk66 == 2) {
-        Animation_ApplyChildArgument__f027064(effectSprite, 2);
+        Animation_ApplyChildArgument(effectSprite, 2);
         object->unk66 = collision;
       }
       if (*(s16 *)&object->unk66 != 0)

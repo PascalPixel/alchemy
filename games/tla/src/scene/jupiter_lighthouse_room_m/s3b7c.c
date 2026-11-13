@@ -14,7 +14,7 @@
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -109,3 +109,47 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 /// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
 /// one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
+
+// ---- scene/jupiter_lighthouse_room_m/s41ac.c ----
+
+/// Scene code of overlay 0x6a3, in ROM order.
+
+#include "io_reg.h"
+#include "field.h"
+#include "event_work.h"
+
+struct CellTargetEntry;
+
+/* VIEW(s41ac): tag struct CellTarget as struct CellTarget__s41ac; cell_target.h
+ * has another definition; tried with the definition the rest of the object has,
+ * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
+struct CellTarget__s41ac {
+  s16 firstFlag;
+  s16 flagByte;
+  s16 kind;
+  s16 x;
+  s16 z;
+  s16 count;
+  s16 current;
+  s16 shown;
+  s16 tile;
+};
+
+#include "io_write.h"
+
+/* VIEW(s41ac): routine CrackedTile_Fall as void CrackedTile_Fall(struct
+ * CellTarget__s41ac *table, struct CellTargetEntry *entry);
+ * module/scene/jupiter_lighthouse_room_m.h has void CrackedTile_Fall(struct
+ * CellTarget *table, struct CellTargetEntry *entry); tried as the definition's
+ * DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell) void
+ * CrackedTile_Fall(struct PushEvent *event), it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_m/s3b7c.c:146: conflicting types
+ * for `CrackedTile_Fall'. */
+void CrackedTile_Fall__s41ac(
+    struct CellTarget__s41ac *table,
+    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
+#define CrackedTile_Fall CrackedTile_Fall__s41ac
+DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s41ac,
+                         Leader_CenterInCell)
+
+#undef CrackedTile_Fall

@@ -80,6 +80,7 @@
 #include "macros.h"
 #include "sounds.h"
 #include "item_ids.h"
+#include "shared/walk_into_leader.h"
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
@@ -289,28 +290,23 @@ static void SolSanctumEntrance_OpenDoorAndEnter(void) {
 
   Event_Start();
   // The door opens over three frames.
-  {
-    s32 width = 3;
-    s32 height = 2;
-
-    Sound_Play(SE_BOOM);
-    MapGrid_CopyCellsTo(16, 28, 21, 3, width, height);
-    wait(10);
-    MapGrid_CopyCellsTo(16, 30, 21, 3, width, height);
-    wait(10);
-    MapGrid_CopyCellsTo(16, 32, 21, 3, width, height);
-    wait(10);
-    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 98);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
-    Event_Wait(10);
-    Event_FinishScreenTransition();
-    Event_WaitTransitionFrames();
-    Import_EventSetExitRequest(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS);
-    Event_End();
-  }
+  Sound_Play(SE_BOOM);
+  MapGrid_CopyCellsTo(16, 28, 21, 3, 3, 2);
+  wait(10);
+  MapGrid_CopyCellsTo(16, 30, 21, 3, 3, 2);
+  wait(10);
+  MapGrid_CopyCellsTo(16, 32, 21, 3, 3, 2);
+  wait(10);
+  Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 98);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
+  Event_Wait(10);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS);
+  Event_End();
 }
 
 /// Sol Sanctum: searching the first minotaur relief shows one eye sparkling, or
@@ -330,9 +326,7 @@ static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
   } else {
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
     if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) != 0) {
-      u16 *menuRequest = &gFieldWork->fieldMenu;
-      u16 open = 1;
-      *menuRequest = open;
+      gFieldWork->fieldMenu = 1;
     }
   }
 
@@ -380,20 +374,16 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
       message = MsgSolSanctumSetSmallGem;
       FieldMessage_Show(message, 1);
       Event_Wait(20);
-      {
-        s32 reliefWidth = 3;
-
-        Sound_Play(SE_STONE_RUMBLE);
-        MapGrid_CopyCellsTo(0, 29, 3, 1, reliefWidth, 2);
-        MapGrid_CopyCellAttributes(0, 29, 3, 2, reliefWidth, 1);
-        MapGrid_CopyCellsTo(1, 109, 4, 81, 1, 1);
-        MapGrid_CenterOnFollowedPoint();
-        SolSanctumEntrance_ReactToOpeningPassage();
-        FieldMessage_Show(message + 1, 1);
-        GameFlag_Set(FLAG_ITEM_USED_UP);
-        GameFlag_Set(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET);
-        Event_End();
-      }
+      Sound_Play(SE_STONE_RUMBLE);
+      MapGrid_CopyCellsTo(0, 29, 3, 1, 3, 2);
+      MapGrid_CopyCellAttributes(0, 29, 3, 2, 3, 1);
+      MapGrid_CopyCellsTo(1, 109, 4, 81, 1, 1);
+      MapGrid_CenterOnFollowedPoint();
+      SolSanctumEntrance_ReactToOpeningPassage();
+      FieldMessage_Show(message + 1, 1);
+      GameFlag_Set(FLAG_ITEM_USED_UP);
+      GameFlag_Set(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET);
+      Event_End();
     }
   }
 }
@@ -414,12 +404,7 @@ static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
   } else if (GameFlag_Get(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) != 0) {
     work = gFieldWork;
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
-    {
-
-      u16 *menuRequest = &work->fieldMenu;
-      s32 open = 1;
-      *menuRequest = open;
-    }
+    work->fieldMenu = 1;
   } else {
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
   }
@@ -1215,14 +1200,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 20);
   // Kraden: "Perhaps Psynergy is the key..."
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
-  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_KRADEN);
-  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_KRADEN);
   GameFlag_Set(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN);
   Event_End();
 }

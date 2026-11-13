@@ -1,6 +1,6 @@
 #include "edition.h"
-#ifndef TOLBI_H
-#define TOLBI_H
+#ifndef ALCHEMY_TOLBI_H
+#define ALCHEMY_TOLBI_H
 
 #include "types.h"
 #include "event.h"

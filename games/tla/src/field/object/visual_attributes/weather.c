@@ -66,7 +66,9 @@ void Weather_UpdateRain(void) {
   }
 }
 
-void BattleEffect_ApplyColorToTargetBuffer(void *buffer, s32 mode);
+void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode);
+#define BattleEffect_ApplyColorToTargetBuffer                                  \
+  BattleEffect_ApplyColorToTargetBuffer
 
 // Lightning: selects the palette according to the remaining duration.
 void Weather_UpdateLightning(void) {

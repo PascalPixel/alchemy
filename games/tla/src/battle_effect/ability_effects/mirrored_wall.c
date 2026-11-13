@@ -1,6 +1,6 @@
 /// @file
 /// A lunge behind a glowing streak.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 
@@ -21,7 +21,7 @@ struct Model;
 /* VIEW(f17e0c0): tag struct Texture as struct Texture__f17e0c0;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:29798: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:47117: structure has no member
  * named `logWidth'. */
 struct Texture__f17e0c0 {
   u8 logWidth;
@@ -35,7 +35,7 @@ struct Texture__f17e0c0 {
 /* VIEW(f17e0c0): tag struct RenderPrimitive as struct RenderPrimitive__f17e0c0;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:29770: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:47088: structure has no member
  * named `brightness'. */
 struct RenderPrimitive__f17e0c0 {
   s32 kind;
@@ -85,7 +85,7 @@ void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Transform_ApplyYaw(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct Model *model);
+void Render_DrawModelList__ability_effects(struct Model *model);
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 member, s32 timer,
                               s32 frames);
 void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);

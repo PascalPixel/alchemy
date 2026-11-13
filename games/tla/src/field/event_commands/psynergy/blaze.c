@@ -1,7 +1,7 @@
 /// @file
 /// A spray started from an event, and whether an object is blocked, with
 /// routines not yet understood.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 
@@ -31,6 +31,12 @@ struct FxEvent {
   s8 unkd38;
 };
 
+/* VIEW(psynergy): tag struct ObjectAnimation as struct
+ * ObjectAnimation__psynergy; module/field/field.h has another definition; tried
+ * with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/field/event_commands/radial.c:3048: redefinition of
+ * `struct ObjectAnimation'. */
+#define ObjectAnimation ObjectAnimation__psynergy
 struct ObjectAnimation {
   u8 unk00[40];
   s16 *definition;
@@ -48,7 +54,17 @@ extern char ResourceId_RedFlameBurst, ResourceId_VioletFlameBurst,
 
 s32 Actor_GetSpriteIdFar(struct Actor *object);
 void Field_StartColorTransition(s32 frames, s32 color);
-struct ObjectMetadata *Resource_GetMetadataRecordFarFar(s32 id);
+/* VIEW(psynergy): routine Resource_GetMetadataRecordFarFar as struct
+ * ObjectMetadata *Resource_GetMetadataRecordFarFar(s32 id);
+ * system/sprite_metadata.h has struct AnimationMetadata
+ * *Resource_GetMetadataRecordFarFar(u32 number); tried as the 2 declarations'
+ * struct ObjectMetadata *Resource_GetMetadataRecordFarFar(s32 id), it does not
+ * compile in tla-ja: games/tla/src/field/event_commands/radial.c:3067:
+ * conflicting types for `Resource_GetMetadataRecordFarFar'. */
+struct ObjectMetadata *Resource_GetMetadataRecordFarFar__psynergy(
+    s32 id) __asm__("Resource_GetMetadataRecordFarFar");
+#define Resource_GetMetadataRecordFarFar                                       \
+  Resource_GetMetadataRecordFarFar__psynergy
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target);
@@ -323,8 +339,8 @@ struct CueEvent {
 
 /* VIEW(f0e3d04): variable gMainRoutineWork as extern u8 gMainRoutineWork[];
  * main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried
- * as the 3 declarations' extern u8 gMainRoutineWork[], it does not compile in
- * tla-ja: games/tla/include/system/main_routine_work.h:123: conflicting types
+ * as the 6 declarations' extern u8 gMainRoutineWork[], it does not compile in
+ * tla-ja: games/tla/src/field/event_commands/radial.c:3344: conflicting types
  * for `gMainRoutineWork'. */
 extern u8 gMainRoutineWork__f0e3d04[] __asm__("gMainRoutineWork");
 

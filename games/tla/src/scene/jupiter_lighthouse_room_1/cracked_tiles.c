@@ -117,8 +117,7 @@ struct CellTargetEntry;
 
 /* VIEW(s156c): tag struct CellTarget as struct CellTarget__s156c; cell_target.h
  * has another definition; tried with the definition the rest of the object has,
- * as struct CellTarget it compiles, and
- * CrackedTile_Fall schedules two instructions otherwise. */
+ * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
 struct CellTarget__s156c {
   s16 firstFlag;
   s16 flagByte;

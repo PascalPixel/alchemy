@@ -77,6 +77,7 @@
 #include "fixed_math.h"
 #include "item_ids.h"
 #include "map_grid.h"
+#include "map_grid_scroll.h"
 #include "flags.h"
 #include "sounds.h"
 #include "shared/colosso_story_flags.h"
@@ -84,6 +85,10 @@
 /// The spring has risen and faded into view this visit.
 /// ★ Named from its area name: Tolbi Spring
 #define FLAG_TOLBI_SPRING_RISEN FLAG_SCENE_TEMP_00
+
+/// The party's coins as Lucky Dice starts, kept in gSceneLocalState so the
+/// attendant can tell the change when the party comes back.
+#define sLuckyDiceCoinsBefore (*(s32 *)gSceneLocalState)
 
 static void TolbiSpring_RiseAndFadeIn(void);
 static void TolbiSpring_OfferLuckyWheels(s32 spoken);
@@ -452,7 +457,7 @@ s32 TolbiSpring_Initialize(void) {
       Event_Wait(10);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 112);
       Event_Wait(20);
-      coinChange = gMainRoutineWork.coins - *(s32 *)gSceneLocalState;
+      coinChange = gMainRoutineWork.coins - sLuckyDiceCoinsBefore;
       if (coinChange > 0) {
         if (coinChange > 19999) {
           Sound_Play(MUS_JINGLE_LARGE);
@@ -578,15 +583,13 @@ static void TolbiSpring_RevealPrize(s32 item) {
 
 /// Raises the spring's displayed layer and blends it into view.
 static void TolbiSpring_RiseAndFadeIn(void) {
-  u8 *springLayer = gMapGridWork[0];
+  struct MapGridScrollWork *map = gMapGridWork[0];
   const u16 *alphaSteps;
   s32 stepIndex;
 
   Sound_Play(SE_BURST);
-  // This value belongs to layer 1; its individual field remains unnamed.
-  springLayer += offsetof(struct MapGridScrollAnimView, layers[1]) + 4;
   for (stepIndex = 0; stepIndex < 16; stepIndex++) {
-    *(s32 *)(springLayer + 12) -= px(1);
+    map->layers[MAPGRID_LAYER_OVERHEAD].offsetY -= px(1);
     wait(4);
   }
   alphaSteps = gTolbiSpring_AlphaSteps;
@@ -687,7 +690,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
     Event_OpenMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
     return;
   }
-  *(u32 *)gSceneLocalState = coins;
+  sLuckyDiceCoinsBefore = coins;
   Actor_Snapshot();
   Event_SetMessageId(MsgTolbiBuddyWannaTry);
   MessageArgument_Push(cost, MESSAGE_ARGUMENT_NUMBER);
@@ -715,7 +718,6 @@ static void TolbiSpring_OfferLuckyDice(void) {
 static s32 TolbiSpring_RunSpringGame(void) {
   s32 choice = 0;
   s32 text;
-  s32 cancel = -1;
   s32 coins;
   s32 medals;
   struct Window *window;
@@ -738,17 +740,15 @@ prompt:
   // "What will you throw?"
   Event_OpenMessage(-1, 0);
   window = Window_Create(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
-  {
-    text = MsgTolbiCoins;
-    Text_DrawMessageAsTiles(text, window, 0, 0);
-    Text_DrawNumberInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
-    Text_DrawMessageAsTiles(text + 1, window, 0, 8);
-    Text_DrawNumberInWindow(medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 8);
-  }
+  text = MsgTolbiCoins;
+  Text_DrawMessageAsTiles(text, window, 0, 0);
+  Text_DrawNumberInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
+  Text_DrawMessageAsTiles(text + 1, window, 0, 8);
+  Text_DrawNumberInWindow(medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 8);
   choice = Menu_SelectCoinsOrMedals(choice);
   Window_Close(window, 2);
   Message_CloseFinishedWindows();
-  if (choice == cancel) {
+  if (choice == (-1)) {
     Event_End();
     return 0;
   }
@@ -779,11 +779,9 @@ prompt:
   }
   window = Window_Create(TOLBI_SPRING_TOSS_MENU_X, 15,
                          TOLBI_SPRING_TOSS_MENU_WIDTH, 4, 2);
-  {
-    text = MsgTolbiToss;
-    Text_DrawMessageAsTiles(text, window, 0, 0);
-    Text_DrawMessageAsTiles(text + 1, window, 0, 8);
-  }
+  text = MsgTolbiToss;
+  Text_DrawMessageAsTiles(text, window, 0, 0);
+  Text_DrawMessageAsTiles(text + 1, window, 0, 8);
   wait(5);
   Sound_Play(SE_TOLBI_SPRING_TOSS_PROMPT);
   for (;;) {
@@ -821,7 +819,7 @@ prompt:
     choice = Menu_SelectCoinsOrMedals(choice);
     Window_Close(window, 2);
     Message_CloseFinishedWindows();
-    if (choice == cancel) {
+    if (choice == (-1)) {
       Event_End();
       return 0;
     }
@@ -876,7 +874,7 @@ prompt:
   }
 #endif
   // Charge the chosen token only after the player confirms the toss.
-  if (result != cancel) {
+  if (result != (-1)) {
     if (choice == SPRING_TOSS_COIN) {
       Party_AdjustCoins(-1);
     } else if (choice == SPRING_TOSS_MEDAL) {
@@ -885,24 +883,10 @@ prompt:
     result = TolbiSpring_RunToss(choice);
     if (choice == SPRING_TOSS_COIN) {
       if (result != 4) {
-#ifdef UBFIX
         Party_AdjustCoins(gTolbiSpring_CoinPrizes[result]);
-#else
-        // UB: the original view indexes beyond its one-element array.
-        Party_AdjustCoins(((struct { u16 coins[1]; } *)gTolbiSpring_CoinPrizes)
-                              ->coins[result]);
-#endif
         Sound_Play(MUS_JINGLE_SMALL);
-#ifdef UBFIX
         MessageArgument_Push(gTolbiSpring_CoinPrizes[result],
                              MESSAGE_ARGUMENT_NUMBER);
-#else
-        // UB: retain the same native one-element view for this second read.
-        MessageArgument_Push(
-            ((struct { u16 coins[1]; } *)gTolbiSpring_CoinPrizes)
-                ->coins[result],
-            MESSAGE_ARGUMENT_NUMBER);
-#endif
         Event_SetMessageId(MsgTolbiWonNumberCoin);
         // "You won ... coin!"
         Event_ShowMessage(-1, 0);
@@ -913,13 +897,8 @@ prompt:
     } else {
       // The prize ring limits the weighted pool of medal rewards.
       totalWeight = 0;
-      prizeIndex = 0;
-      if (prizeIndex < result * 3 + 3) {
-        do {
-          u8 prizeWeight = ((u8 *)state)[prizeIndex + 285];
-          totalWeight += (s8)prizeWeight;
-          prizeIndex++;
-        } while (prizeIndex < result * 3 + 3);
+      for (prizeIndex = 0; prizeIndex < result * 3 + 3; prizeIndex++) {
+        totalWeight += state->prizeWeights[prizeIndex];
       }
       prizeRoll = (u32)(Random_Next() * totalWeight) >> 16;
       for (prizeIndex = 0; prizeIndex < 15; prizeIndex++) {
@@ -932,35 +911,9 @@ prompt:
         prizeIndex = 14;
       }
       // Reveal the selected item, then reduce its chance on later tosses.
-#ifdef UBFIX
       TolbiSpring_RevealPrize(gTolbiSpring_PrizeItems[prizeIndex]);
-#else
-      // UB: the view reads past its one-element array; UBFIX reads the whole
-      // item array.
-      TolbiSpring_RevealPrize(
-          ((struct { s32 prize[1]; } *)gTolbiSpring_PrizeItems)
-              ->prize[prizeIndex]);
-#endif
-
-      /* FAKEMATCH(dead): the pointer pair, so the prize-weight base is computed
-       * again after the call; without it, 6 of 280 instructions differ in
-       * tbs-en. */
-      state++;
-      state--;
-      {
-        s32 slot = prizeIndex + 284;
-        s8 *prizeWeight = (s8 *)state + 1;
-
-        if (prizeWeight[slot] > 1) {
-          /* FAKEMATCH(dead): the halving in both arms of a test of slot, which
-           * adds the reference that ranks slot above the base, so slot takes r1
-           * and the base r0; as one halving, 10 of 280 instructions differ in
-           * tbs-en. */
-          if (slot)
-            prizeWeight[slot] /= 2;
-          else
-            prizeWeight[slot] /= 2;
-        }
+      if (state->prizeWeights[prizeIndex] > 1) {
+        state->prizeWeights[prizeIndex] /= 2;
       }
     }
   }
@@ -995,47 +948,34 @@ static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
   return gTolbiSpring_LuckyWheelsPrizeItems[category * 3 + variant];
 }
 
-/// Copies three coordinates and sets the actor's facing, child value and
-/// colors.
+/// Places the actor at the three coordinates and sets its facing, animation
+/// speed and colours.
 static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
                                            s32 facing, s32 colorVariant,
                                            s32 childValue) {
   struct Actor *actor = Actor_Get(actorId);
   struct Sprite *sprite;
-  u32 entryCount;
+  u32 i;
 
   if (actor != 0) {
-    actor->x.fixed = *coordinate++;
-    actor->y.fixed = *coordinate++;
-    actor->z.fixed = *coordinate;
+    actor->x.fixed = coordinate[0];
+    actor->y.fixed = coordinate[1];
+    actor->z.fixed = coordinate[2];
     actor->facing = facing;
     actor->motionFlags = 0;
     actor->sprite->flags = 0;
     Actor_SetAnimationSpeed(actor, childValue);
   }
-  // BUG: the original still dereferences actor here when lookup returned
-  // NULL.
+  // BUG: actor is read even when Actor_Get found none.
   sprite = actor->sprite;
-  entryCount = sprite->count;
-  if (entryCount != 0) {
-    u32 invalidFrame = 255;
-    struct SpriteAnimation **entries = sprite->entries;
-    u32 entriesLeft = entryCount;
+  for (i = 0; i < sprite->count; i++) {
+    struct SpriteAnimation *entry = sprite->entries[i];
 
-    do {
-      struct SpriteAnimation *entry = *entries++;
-
-      if (entry->colorMode != colorVariant) {
-        entry->colorMode = colorVariant;
-        {
-          u32 frame = entry->picture;
-
-          // Invalidate the cached frame so the new colors are applied.
-          frame |= invalidFrame;
-          entry->picture = frame;
-        }
-      }
-    } while (--entriesLeft != 0);
+    if (entry->colorMode != colorVariant) {
+      entry->colorMode = colorVariant;
+      // No picture is cached in the new colours yet.
+      entry->picture |= SPRITE_PICTURE_NONE;
+    }
   }
 }
 
@@ -1044,9 +984,7 @@ static void TolbiSpring_SetSpriteStorageKind(s32 actorId, s32 storageKind) {
   struct Actor *actor = Actor_Get(actorId);
 
   if (actor != 0) {
-    u8 *spriteStorageKind = &actor->spriteStorageKind;
-
-    *spriteStorageKind = storageKind;
+    actor->spriteStorageKind = storageKind;
   }
 }
 
@@ -1541,13 +1479,7 @@ static void TolbiSpring_InitializeTossSimulation(void) {
                         ANIM_TURTLE_SWIM);
   Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3),
                         ANIM_TURTLE_SWIM);
-
-  {
-    s32 budget = 3203;
-    void (*task)(void) = TolbiSpring_UpdateTossSimulation;
-
-    Task_AddFrame(task, budget);
-  }
+  Task_AddFrame(TolbiSpring_UpdateTossSimulation, TASK_PASS_FRAME + 3);
 }
 
 /// Launches the chosen coin or medal and waits for its final prize ring.

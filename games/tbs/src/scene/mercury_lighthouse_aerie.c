@@ -1659,7 +1659,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
       r = ((((u32)Import_RandomNext() * 24) >> 16) << 16);
       x = left->x.fixed;
       x += r;
-      x += -px(12);
+      x -= px(12);
       FieldEffect_Spawn(x,
                         left->y.fixed +
                             ((((u32)Import_RandomNext() << 5) >> 16) << 16) +
@@ -1672,7 +1672,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
       r = ((((u32)Import_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
-      x += -px(12);
+      x -= px(12);
       FieldEffect_Spawn(x,
                         right->y.fixed +
                             ((((u32)Import_RandomNext() << 5) >> 16) << 16) +
@@ -1712,7 +1712,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
       r = ((((u32)Import_RandomNext() * 24) >> 16) << 16);
       x = left->x.fixed;
       x += r;
-      x += -px(12);
+      x -= px(12);
       FieldEffect_Spawn(x,
                         left->y.fixed +
                             ((((u32)Import_RandomNext() << 5) >> 16) << 16) +
@@ -1725,7 +1725,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
       r = ((((u32)Import_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
-      x += -px(12);
+      x -= px(12);
       FieldEffect_Spawn(x,
                         right->y.fixed +
                             ((((u32)Import_RandomNext() << 5) >> 16) << 16) +
@@ -1840,7 +1840,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
       actor->targetZ = Actor_Get(ids[j])->z.fixed;
     }
     if ((i & 3) == 3 && i > 75)
-      speed += -px(1) / 5;
+      speed -= px(1) / 5;
     if (speed < px(1) / 20)
       speed = px(1) / 20;
     wait(1);

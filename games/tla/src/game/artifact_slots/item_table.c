@@ -1,7 +1,7 @@
 /// @file
 /// The 516 items, by item id. Each name is the English release's
 /// (MsgItemName plus the item id); the 55 rows past the last name have none.
-// Part of artifact_slots.c.
+// Part of game.c.
 
 #include "../artifact_slots_internal.h"
 

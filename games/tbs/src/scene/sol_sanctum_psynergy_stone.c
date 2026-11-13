@@ -64,7 +64,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 s32 Scene_Initialize(void) {
   s32 shakeX = px(1);
   s32 shakeY = px(1);
-  s32 decay = Q16_ONE;
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -72,7 +71,7 @@ s32 Scene_Initialize(void) {
   Import_GameFlagSet(FLAG_RETREAT_BLOCKED);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     Scene_QueueMusic(SE_RUMBLE);
-    MapGrid_SetScreenShake(shakeX, shakeY, decay);
+    MapGrid_SetScreenShake(shakeX, shakeY, Q16_ONE);
     FieldEffect_InitializeSparkles();
   }
   return 0;

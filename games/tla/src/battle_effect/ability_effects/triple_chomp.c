@@ -1,6 +1,6 @@
 /// @file
 /// Triple Chomp, Rolling Flame and Ghost Soldier.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 
@@ -30,7 +30,7 @@
 /* VIEW(f18b868): tag struct Model as struct Model__f18b868; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:39584: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:56856: structure has no member
  * named `vertices'. */
 struct Model__f18b868 {
   s32 kind;
@@ -74,11 +74,6 @@ void Transform_ApplyRoll(s32 angle);
 void Transform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyUniformScale(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f18b868): routine Render_DrawModelList as void
- * Render_DrawModelList(struct Model__f18b868 *model); f18ad40 has void
- * Render_DrawModelList(struct Model *model). */
-extern void Render_DrawModelList__f18b868(struct Model__f18b868 *model) __asm__(
-    "Render_DrawModelList");
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
@@ -204,7 +199,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
           Transform_ApplyPitch(-0x1000);
           SceneTransform_ApplyUniformScale(scale);
           Render_TransformVertices(gData_08199210, vertices, 4);
-          Render_DrawModelList__f18b868(model);
+          Render_DrawModelList(model);
         }
       }
     }

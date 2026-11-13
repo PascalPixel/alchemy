@@ -298,11 +298,6 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       McCoyPalaceGrounds_OpenGate();
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 246);
       MCCOY_GARDEN_SET_ACTOR_POSITION(ACTOR_WEST_GUARD, 0, 0);
-      /* FAKEMATCH(dead): an empty once-only loop keeps r0 last among the call
-       * above's arguments; without it, 2 of 233 instructions differ in
-       * tbs-en. */
-      do {
-      } while (0);
       GameFlag_Set(FLAG_MCCOY_PALACE_ADMITTED);
     guard:
       FieldActor_WatchAndStartScript(
@@ -459,11 +454,7 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
     Actor_Get(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_EAST_GUARD, 346, 263);
     Event_Wait(1);
-    {
-      struct Actor *guard = Actor_Get(ACTOR_EAST_GUARD);
-
-      guard->steeringFlags = ACTOR_FACES_MOTION | guard->steeringFlags;
-    }
+    Actor_Get(ACTOR_EAST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
   }
   Actor_SetSpeed(ACTOR_WEST_GUARD, 0.8);
   // Escort Isaac through the opened gate before changing to the palace.

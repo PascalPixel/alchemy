@@ -1,6 +1,6 @@
 /// @file
 /// The Neptune summon.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 
@@ -86,8 +86,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     Decompress_TaggedLz(sheet, tiles);
     for (i = 0; i != 8; i++) {
       struct SpriteObject *object =
-          EffectSprite_CreateWithTiles__actor_move_random(32, 32, 0x80002000,
-                                                          0);
+          EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
 
       object->priority = 1;
       work->objects[i] = object;

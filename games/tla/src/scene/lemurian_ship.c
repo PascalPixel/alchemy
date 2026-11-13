@@ -19,9 +19,10 @@
 /* VIEW(scene_tables): variable gData_0200312c as extern u8 gData_0200312c[];
  * the definition has s16 gData_0200312c[] = { 0, - 1, 72, 0, 72, 0x4000, 0, -
  * 1, - 1, - 1, - 1, 0, 1, - 1, 72, 0, 72, 0x4000, 0, 8, 16, 248, 256, 0, 2, -
- * 1, 168,...; tried as the definition's extern u32 gData_0200312c[], it does
- * not compile in tla-ja: games/tla/src/scene/lemurian_ship.c:1671: conflicting
- * types for `gData_0200312c'. */
+ * 1, 168,...; tried as the definition's extern struct ActorPlacement
+ * gData_0200312c[], it does not compile in tla-ja:
+ * games/tla/src/scene/lemurian_ship.c:1706: conflicting types for
+ * `gData_0200312c'. */
 extern u8 gData_0200312c__scene_tables[] __asm__("gData_0200312c");
 
 u8 *Scene_GetEntrances(void) {
@@ -48,25 +49,19 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 // object the overlay links.
 
-/* VIEW(s00b8): routine Actor_SetSpriteFlags as void
- * Actor_SetSpriteFlags(struct LemurianShipObject *object, u32 value);
- * field.h has void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
- * tried as the 35 declarations' void Actor_SetSpriteFlags(struct
- * FieldEffect *effect, s32 flags), it does not compile in tla-ja:
- * games/tla/src/scene/lemurian_ship/lemurian_ship.h:72: conflicting types for
- * `Actor_SetSpriteFlags'. */
+/* VIEW(s00b8): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
+ * LemurianShipObject *object, u32 value); field.h has void
+ * Actor_SetSpriteFlags(struct Actor *object, u32 flags); not tried:
+ * Actor_SetSpriteFlags's bound declaration was not found. */
 struct LemurianShipObject;
 extern void
 Actor_SetSingleChildFlags__s00b8(struct LemurianShipObject *object,
                                  u32 value) __asm__("Actor_SetSpriteFlags");
 #define Actor_SetSpriteFlags Actor_SetSingleChildFlags__s00b8
-/* VIEW(s00b8): routine Actor_SetBlendMode as void
- * Actor_SetBlendMode(struct LemurianShipObject *object, s32 flags);
- * field.h has void Actor_SetBlendMode(struct Actor *object, u32 value);
- * tried as the definition's void Actor_SetBlendMode(struct Actor *object,
- * u32 value), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/lemurian_ship/lemurian_ship.h:73: conflicting types for
- * `Actor_SetBlendMode'. */
+/* VIEW(s00b8): routine Actor_SetBlendMode as void Actor_SetBlendMode(struct
+ * LemurianShipObject *object, s32 flags); field.h has void
+ * Actor_SetBlendMode(struct Actor *object, u32 value); not tried:
+ * Actor_SetBlendMode's bound declaration was not found. */
 struct LemurianShipObject;
 extern void
 Animation_SetStateFlags__s00b8(struct LemurianShipObject *object,

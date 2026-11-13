@@ -1,6 +1,6 @@
 /// @file
 /// Actor motion, each frame.
-// Part of resource_slot.c.
+// Part of field.c.
 
 #include "../resource_slot_internal.h"
 #include "module/field/resource_slot.h"
@@ -82,7 +82,8 @@ extern const s32 gActorScript_CycleTable[];
 /* VIEW(f023680): routine ActorScript_CheckOverlap as s32
  * ActorScript_CheckOverlap(struct MotionObject *object, s32 *values); the
  * definition has s32 ActorScript_CheckOverlap(struct Actor *object, s32
- * *values). */
+ * *values); not tried: ActorScript_CheckOverlap's bound declaration was not
+ * found. */
 extern s32 ScriptObject_CheckOverlap__f023680(
     struct MotionObject *object,
     s32 *values) __asm__("ActorScript_CheckOverlap");

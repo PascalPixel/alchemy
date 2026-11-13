@@ -1,6 +1,6 @@
 /// @file
 /// A particle's sprite that grows as it animates.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 
@@ -9,7 +9,7 @@
 /* VIEW(psynergy_effects_11): tag struct EffectSprite as struct
  * EffectSprite__psynergy_effects_11; effect_sprite.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/event_commands/psynergy.c:2716: structure has no
+ * tla-ja: games/tla/src/field/event_commands/radial.c:4985: structure has no
  * member named `tile'. */
 struct EffectSprite__psynergy_effects_11 {
   u8 unk00[4];
@@ -30,20 +30,7 @@ struct EffectSprite__psynergy_effects_11 {
   u8 unk20[8];
 };
 
-/* VIEW(psynergy_effects_11): routine EffectSprite_Draw as void
- * EffectSprite_Draw(struct EffectSprite__psynergy_effects_11 *sprite);
- * effect_sprite.h has void EffectSprite_Draw(struct EffectSprite *sprite). */
-extern void EffectSprite_Draw__psynergy_effects_11(
-    struct EffectSprite__psynergy_effects_11
-        *sprite) __asm__("EffectSprite_Draw");
 void Camera_WorldToScreen(s32 *position);
-/* VIEW(psynergy_effects_11): routine BattleEffect_IntegrateVector3 as void
- * BattleEffect_IntegrateVector3(struct EffectParticle *particle, s32 frames,
- * s32 flags); battle.h has void BattleEffect_IntegrateVector3(s32 *vector, s32
- * damping, s32 gravity). */
-extern void BattleEffect_IntegrateVector3__psynergy_effects_11(
-    struct EffectParticle *particle, s32 frames,
-    s32 flags) __asm__("BattleEffect_IntegrateVector3");
 struct Actor *Actor_GetById(u32 objectId);
 
 /// Animates a particle's sprite through 8 tiles (4 frames each), grows its
@@ -66,6 +53,6 @@ void BattleEffect_UpdateGrowingParticleSprite(
   Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->y = position[2];
-  EffectSprite_Draw__psynergy_effects_11(sprite);
-  BattleEffect_IntegrateVector3__psynergy_effects_11(particle, 60, 0);
+  EffectSprite_Draw(sprite);
+  BattleEffect_IntegrateVector3(particle, 60, 0);
 }

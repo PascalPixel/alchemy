@@ -1,7 +1,7 @@
 /// @file
 /// Whether a unit stands in its side's formation and how many Djinn a side has
 /// on standby, and one routine not yet understood.
-// Part of presentation.c.
+// Part of battle.c.
 
 #include "../presentation_internal.h"
 #include "flag_call.h"
@@ -74,7 +74,14 @@ s32 BattleDjinn_CountStandby(u32 arg0, u8 *counts) {
   return found;
 }
 
-s32 Battle_GetUnitAtPlace(s32 tag);
+/* VIEW(presentation): routine Battle_GetUnitAtPlace as s32
+ * Battle_GetUnitAtPlace(s32 tag); battle/battle has s16
+ * Battle_GetUnitAtPlace(s32 slot) {; tried as the definition's s16
+ * Battle_GetUnitAtPlace(s32 slot), which the object already declares,
+ * BattleActionRun_Build moves: 4 of 1601 instructions in tla-ja. */
+s32 Battle_GetUnitAtPlace__presentation(s32 tag) __asm__(
+    "Battle_GetUnitAtPlace");
+#define Battle_GetUnitAtPlace Battle_GetUnitAtPlace__presentation
 
 s32 BattleActionRun_Build(struct BattleActionRecord *request,
                           struct BattlePlan *plan) {

@@ -31,10 +31,10 @@ u32 gData_020044c8[] = {
     0, 0, 0, 0, 1, 38,
 };
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gData_02003f04,
-    (s32)gData_02003f40,
-    (s32)gData_02003f7c,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gData_02003f04,
+    gData_02003f40,
+    gData_02003f7c,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

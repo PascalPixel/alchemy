@@ -14,7 +14,7 @@
 /* VIEW(motes): tag struct MoteWork as struct MoteWork__motes;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:3089: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:2854: structure has no member
  * named `motes'. */
 struct MoteWork__motes {
   s32 vramEntry;
@@ -178,7 +178,8 @@ struct SparkleWork {
 
 /* VIEW(motes): routine Oam_AddSpriteAtDepthClamped as void
  * Oam_AddSpriteAtDepthClamped(void *entry, s32 priority); f0d6674 has void
- * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth). */
+ * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth); not
+ * tried: Oam_AddSpriteAtDepthClamped's bound declaration was not found. */
 extern void
 Func_080140d8__motes(void *entry,
                      s32 priority) __asm__("Oam_AddSpriteAtDepthClamped");

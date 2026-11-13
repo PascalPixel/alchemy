@@ -1,6 +1,6 @@
 /// @file
 /// The body of Thunder Mine and Earth Force, then Megaera and Void Beam.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 
@@ -21,7 +21,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct Model *model);
+void Render_DrawModelList__ability_effects(struct Model *model);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
@@ -68,7 +68,7 @@ extern char ResourceId_VioletPaletteC;
 /* VIEW(f16fca8): variable gData_02014000 as extern struct EffectStep
  * gData_02014000[]; f16e65c has extern u8 gData_02014000[]; tried as the rest
  * of the object declares it, it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:19186: request for member
+ * games/tla/src/battle_effect/battle_effect.c:36555: request for member
  * `variant' in something not a structure or union. */
 extern struct EffectStep
     gData_02014000__f16fca8[] __asm__("gData_02014000"); // the sparks

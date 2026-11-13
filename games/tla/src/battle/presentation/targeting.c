@@ -1,7 +1,7 @@
 /// @file
 /// Applying an ability to each of its targets, the battle events queued on the
 /// way, and the wait for the player to advance a battle message.
-// Part of presentation.c.
+// Part of battle.c.
 
 #include "../presentation_internal.h"
 #include "gamepak/far_call/game.h"
@@ -26,10 +26,9 @@
 /* VIEW(f11f66c): routine Unit_Get as void *Unit_Get(s32 owner); strongest_unit
  * has struct BattleUnit *Unit_Get(s32 unitId); tried as the definition's void
  * *Unit_Get(s32 owner), which the object already declares,
- * BattleAI_ChooseTarget moves: 5 of 776 instructions,
- * BattleUnit_ClearStatuses moves: 1 of 97 instructions,
- * BattleObject_DestroyTemporaryObject moves: 1 of 24 instructions, 32 more in
- * tla-ja. */
+ * BattleAI_ChooseTarget moves: 5 of 776 instructions, BattleUnit_ClearStatuses
+ * moves: 1 of 97 instructions, BattleObject_DestroyTemporaryObject moves: 1 of
+ * 24 instructions, 32 more in tla-ja. */
 extern void *Unit_Get__f11f66c(s32 owner) __asm__("Unit_Get");
 
 #define COUNT_PARTIAL_CURES(unit, count)                                       \
@@ -545,8 +544,8 @@ void BattlePlayback_GrantDjinnBonus(struct BattleEventFlagWork *runtime,
  * BattleMotion_FlashHit(u32 unitId, s32 a, s32 b); the definition has void
  * BattleMotion_FlashHit(s32 id); tried as the definition's void
  * BattleMotion_FlashHit(s32 id), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/battle/presentation.c:1720: too many
- * arguments to function `BattleMotion_FlashHit'. */
+ * compile in tla-ja: games/tla/src/battle/battle.c:6851: too many arguments to
+ * function `BattleMotion_FlashHit'. */
 extern void
 BattleMotion_FlashHit__f11f66c(u32 unitId, s32 a,
                                s32 b) __asm__("BattleMotion_FlashHit");

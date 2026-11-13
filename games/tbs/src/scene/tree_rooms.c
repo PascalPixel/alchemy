@@ -856,6 +856,7 @@ s32 TreeRooms_EnterRoom(void) {
   struct FieldWork *work;
   s32 entrance;
   s32 leaderActorId;
+  struct Actor *tretSpeaker;
 
   tret = Actor_Get(ACTOR_TRET);
   // Point the cocoon latch at the scene state and save the palette first.
@@ -863,12 +864,10 @@ s32 TreeRooms_EnterRoom(void) {
   TretPalette_SaveMapColors();
   tret->motionFlags = 0;
   tret->y.fixed = -px(10);
-  {
-    struct Actor *tretSpeaker = Actor_Get(ACTOR_SECOND_TRET);
+  tretSpeaker = Actor_Get(ACTOR_SECOND_TRET);
 
-    tretSpeaker->motionFlags = 0;
-    tretSpeaker->y.fixed = -px(10);
-  }
+  tretSpeaker->motionFlags = 0;
+  tretSpeaker->y.fixed = -px(10);
   Actor_SetSpriteColorById(ACTOR_SECOND_TRET, SPRITE_COLOR_HIDDEN);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   if (gMainRoutineWork.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
@@ -879,7 +878,7 @@ s32 TreeRooms_EnterRoom(void) {
   }
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     TreeRooms_ApplyFlaggedMapPatches();
-  grid = HEAP_SLOT_BLOCK(8);
+  grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   // Match the first layer's parallax offset and scale to the room bounds.
   layer = &grid->layers[0];
   layer->offsetX += Iwram_MulQ16(grid->minX + px(160), Q16_ONE / 10);
@@ -894,7 +893,7 @@ s32 TreeRooms_EnterRoom(void) {
   GameFlag_Set(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_COCOON_TORN);
   wait(1);
   TreeRooms_ApplyPostBattleState(0);
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
+  work = gFieldWork;
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   entrance = gMainRoutineWork.entrance;
@@ -955,10 +954,8 @@ static void TretPalette_UpdateMapTint(void) {
   struct FieldWork *work;
   struct PaletteFade *paletteWork;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  // Through its heap slot rather than gPaletteFadeWork, the spelling this
-  // site matched with; the other is not measured.
-  paletteWork = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
+  work = gFieldWork;
+  paletteWork = gPaletteFadeWork;
   sourceColors = paletteWork->palette;
   if (work->psynergy != 0)
     return;
@@ -1103,8 +1100,8 @@ static void TreeRooms_UpdateSwirlSpark(struct Actor *spark) {
     spark->y.fixed = position.y;
     spark->z.fixed = position.z;
     if (spark->timer <= SWIRL_SPARK_SHRINK_LAST_FRAME) {
-      spark->scaleX += -Q16_ONE / 50;
-      spark->scaleY += -Q16_ONE / 50;
+      spark->scaleX -= Q16_ONE / 50;
+      spark->scaleY -= Q16_ONE / 50;
     }
     spark->timer++;
   } else {

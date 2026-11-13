@@ -1,7 +1,7 @@
 /// @file
 /// An ability classified for target selection, and a reserve member chosen for
 /// a party slot.
-// Part of menus.c.
+// Part of window.c.
 
 #include "../menus_internal.h"
 #include "gamepak/far_call/battle.h"

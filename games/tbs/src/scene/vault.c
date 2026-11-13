@@ -167,8 +167,7 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 // be fixing it and stops to face the leader when near, or while a conversation
 // holds the field.
 static UNREAD_RESULT Vault_UpdateRoofComplainerProximity(struct Actor *entity) {
-  struct WindowWork *work = (struct WindowWork *)gWindowWork[0];
-  u8 *workspace = gWindowWork[12];
+  struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
   s32 flag = 0;
   s32 selector = 18;
   struct Actor *leader;
@@ -177,7 +176,7 @@ static UNREAD_RESULT Vault_UpdateRoofComplainerProximity(struct Actor *entity) {
     RETURN_UNREAD(0);
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (*(s16 *)(workspace + 376) != 0 || work->mindRead != 0) {
+  if (gFieldWork->talk != 0 || window->mindRead != 0) {
     selector = 26;
     flag = 1;
   }
@@ -558,10 +557,7 @@ static void Vault_TalkToDogAfterCapture(void) {
   Actor_SetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
       GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
-    u16 *menuRequest = &gFieldWork->fieldMenu;
-    u16 open = 1;
-
-    *menuRequest = open;
+    gFieldWork->fieldMenu = 1;
   }
   Event_End();
 }
@@ -1092,20 +1088,8 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     effect->timer = 1;
   }
   // Install the custom motion and share the anchor's drawing priority.
-  {
-    /* FAKEMATCH(temporary): spriteFlags holds &sprite->flags; as
-     * sprite->flags, 2 of 141 instructions differ in tbs-en. */
-    u8 *spriteFlags = &sprite->flags;
-
-    effect->update = Vault_UpdateDriftingEffect;
-    /* FAKEMATCH(dead): the flags store in both arms of a test, which ends the
-     * scheduling block after the update store until jump2 merges the arms; as
-     * one store, 2 of 141 instructions differ in tbs-en. */
-    if (flags < 0)
-      *spriteFlags = 0;
-    else
-      *spriteFlags = 0;
-  }
+  effect->update = Vault_UpdateDriftingEffect;
+  sprite->flags = 0;
   sprite->image.priority = anchor->sprite->image.priority;
 }
 

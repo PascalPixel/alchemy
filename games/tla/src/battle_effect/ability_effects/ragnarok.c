@@ -1,6 +1,6 @@
 /// @file
 /// Ragnarok, and the great sword that falls onto the target.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 
@@ -663,7 +663,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct Model *model);
+void Render_DrawModelList__ability_effects(struct Model *model);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
@@ -725,15 +725,6 @@ extern const u16 gJudgment_ShardPictures[];
 extern const u8 gData_08199364[];
 extern const u8 gData_08199210[];
 
-/* VIEW(actor_move_random): routine EffectSprite_CreateWithTiles as struct
- * SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape,
- * u32 attributes); the definition has struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags). */
-extern struct SpriteObject *EffectSprite_CreateWithTiles__actor_move_random(
-    s32 width, s32 height, u32 shape,
-    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
-
 void Palette_LoadBasicSpriteColors(void);
 void BattleBackground_SetModeFar(s32 mode, s32 background, s32 speed);
 void Graphics_LoadGreyRamp(void);
@@ -742,7 +733,7 @@ void Graphics_LoadGreyRamp(void);
 /* VIEW(actor_move_random): static FILL as FILL__actor_move_random; fxdisp has
  * static __inline__ void FILL(void *dst, s32 size, s32 value) {
  * Iwram_FillWords(dst, size, value); }; tried with the definition the rest of
- * the object has, BattleEffect_RunJudgment moves: 18 of 2634 instructions in
+ * the object has, BattleEffect_RunJudgment moves: 684 of 2634 instructions in
  * tla-ja. */
 static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
   do {

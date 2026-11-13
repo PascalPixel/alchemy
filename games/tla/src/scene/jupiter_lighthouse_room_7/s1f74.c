@@ -14,7 +14,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -108,3 +108,34 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 /// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
 /// one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
+
+// ---- scene/jupiter_lighthouse_room_7/s25a4.c ----
+
+/// Scene code of overlay 0x6a0, in ROM order.
+
+#include "io_reg.h"
+#include "field.h"
+#include "event_work.h"
+#include "../jupiter_lighthouse_room_7.h"
+
+struct CellTargetEntry;
+
+/* VIEW(s25a4): tag struct CellTarget as struct CellTarget__s25a4; cell_target.h
+ * has another definition; tried with the definition the rest of the object has,
+ * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
+struct CellTarget__s25a4 {
+  s16 firstFlag;
+  s16 flagByte;
+  s16 kind;
+  s16 x;
+  s16 z;
+  s16 count;
+  s16 current;
+  s16 shown;
+  s16 tile;
+};
+
+#include "io_write.h"
+
+DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s25a4,
+                         Leader_CenterInCell)

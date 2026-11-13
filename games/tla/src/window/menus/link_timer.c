@@ -1,7 +1,7 @@
 /// @file
 /// The link battle timer, and a localized message shown until the player reads
 /// it.
-// Part of menus.c.
+// Part of window.c.
 
 #include "../menus_internal.h"
 #include "gamepak/far_call/battle.h"
@@ -12,14 +12,16 @@
 #define FRAMES_PER_SECOND 60
 
 /* VIEW(menus): variable gLinkPeerSignatures as struct LinkSignature
- * gLinkPeerSignatures[]; heap_slots.h has u16 gLinkPeerSignatures[][12]. */
+ * gLinkPeerSignatures[]; heap_slots.h has u16 gLinkPeerSignatures[][12]; not
+ * tried: gLinkPeerSignatures's declaration holds a FAKEMATCH tag. */
 extern struct LinkSignature
     gLinkPeerSignatures__menus[] __asm__("gLinkPeerSignatures");
 
 /* VIEW(countdown): routine Text_DrawNumberInWindow as void
  * Text_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32
  * arg4); menus has void Text_DrawNumberInWindow(s32 value, s32 digits, struct
- * TargetWindow *window, s32 x, s32 y). */
+ * TargetWindow *window, s32 x, s32 y); not tried: Text_DrawNumberInWindow's
+ * declaration holds a FAKEMATCH tag. */
 extern void
 Text_DrawNumberInWindow__countdown(s32 value, s32 width, s32 handle, s32 arg3,
                                    s32 arg4) __asm__("Text_DrawNumberInWindow");
@@ -129,13 +131,15 @@ done:
 
 /* VIEW(menus): routine Text_FillCanvasBackground as unsigned char
  * Text_FillCanvasBackground(void); module/window/window.h has void
- * Text_FillCanvasBackground(void). */
+ * Text_FillCanvasBackground(void); not tried: Text_FillCanvasBackground's bound
+ * declaration was not found. */
 extern unsigned char
 Text_FillCanvasBackground__menus(void) __asm__("Text_FillCanvasBackground");
 /* VIEW(countdown): routine Text_DrawWideStringAtOffset as void
  * Text_DrawWideStringAtOffset(s16 *, s32, s32, s32); menus has void
  * Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x,
- * s32 y). */
+ * s32 y); not tried: Text_DrawWideStringAtOffset's declaration holds a
+ * FAKEMATCH tag. */
 extern void Text_DrawWideStringAtOffset__countdown(
     s16 *, s32, s32, s32) __asm__("Text_DrawWideStringAtOffset");
 
@@ -151,22 +155,17 @@ extern void Text_DrawWideStringAtOffset__countdown(
 
 /* VIEW(countdown): routine Window_Create as s32 Window_Create(s32, s32, s32,
  * s32, s32); menus has struct TargetWindow *Window_Create(s32 x, s32 y, s32
- * width, s32 height, s32 flags). */
+ * width, s32 height, s32 flags); not tried: Window_Create's declaration holds a
+ * FAKEMATCH tag. */
 extern s32 Window_Create__countdown(s32, s32, s32, s32,
                                     s32) __asm__("Window_Create");
 
 /* VIEW(countdown): routine Message_CopyExpanded as s32
  * Message_CopyExpanded(s32, s16 *, s32); menus has void
- * Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the
- * definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32
- * capacity), it does not compile in tla-ja: games/tla/src/window/menus.c:977:
- * conflicting types for `Message_CopyExpanded'. */
+ * Message_CopyExpanded(s32 message, u16 *text, s32 capacity); not tried:
+ * Message_CopyExpanded's declaration holds a FAKEMATCH tag. */
 extern s32 Message_CopyExpanded__countdown(s32, s16 *,
                                            s32) __asm__("Message_CopyExpanded");
-
-/* VIEW(countdown): variable MsgNoTimeToRun as extern char MsgNoTimeToRun;
- * msg_ids.h has extern u8 MsgNoTimeToRun[]. */
-extern char MsgNoTimeToRun__countdown __asm__("MsgNoTimeToRun");
 
 /// Tests whether the party may not run from this battle: battle types 3 and
 /// 4 (the battles an event starts, and link battles; see
@@ -198,7 +197,7 @@ s32 Battle_RefuseFlee(void) {
     attrs = 42;
     work = Window_Create__countdown(0, 7, 30, 4, attrs);
     Text_FillCanvasBackground__menus();
-    BATTLE_MENU_MESSAGE_COPY((s32)&MsgNoTimeToRun__countdown, buffer,
+    BATTLE_MENU_MESSAGE_COPY((s32)&MsgNoTimeToRun, buffer,
                              BATTLE_MENU_MESSAGE_CAPACITY);
     Text_DrawWideStringAtOffset__countdown(buffer, work, 0, 4);
     do {

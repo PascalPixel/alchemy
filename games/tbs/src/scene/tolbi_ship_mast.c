@@ -192,14 +192,12 @@ enum TolbiShipMastCellBehavior {
 
 /// Keeps the effect actor relative to the saved camera origin and rotates it.
 static s32 TolbiShipMast_FollowCameraAndRotate(struct Actor *actor) {
-  s32 *position = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
-  s32 *origin = gTolbiShipMast_CameraOrigin;
-  s32 *center = gTolbiShipMast_CameraCenter;
-  s32 cameraX = *position++;
-  s32 cameraY = *position;
+  s32 *camera = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
 
-  actor->x.fixed = center[0] + (cameraX - origin[0]);
-  actor->y.fixed = center[1] + (cameraY - origin[1]) / 2;
+  actor->x.fixed = gTolbiShipMast_CameraCenter[0] +
+                   (camera[0] - gTolbiShipMast_CameraOrigin[0]);
+  actor->y.fixed = gTolbiShipMast_CameraCenter[1] +
+                   (camera[1] - gTolbiShipMast_CameraOrigin[1]) / 2;
   actor->sprite->rotation += TRIG_TURN * 3 / 128;
   return 0;
 }
@@ -209,13 +207,9 @@ static s32 TolbiShipMast_RandomizeLookoutFacing(struct Actor *actor) {
   u32 sample = (u32)(Import_RandomNext() << 6) >> 16;
 
   if (sample == 6) {
-    s32 value = FACING_NORTH_NORTHEAST;
-
-    actor->facing = value;
+    actor->facing = FACING_NORTH_NORTHEAST;
   } else if (sample == 9) {
-    s32 value = FACING_NORTH_NORTHWEST;
-
-    actor->facing = value;
+    actor->facing = FACING_NORTH_NORTHWEST;
   }
 
   return 1;
@@ -239,41 +233,36 @@ enum TolbiShipMastSway {
 
 /// Randomly reverses horizontal drift and vertical bobbing at their limits.
 static s32 TolbiShipMast_SwayActor(struct Actor *actor) {
-  s16 *state = &actor->timer;
-  s32 next;
-
-  if (*state == SWAY_HELD) {
+  // The drift: riseBaseY is the speed added to x each frame.
+  if (actor->timer == SWAY_HELD) {
     actor->riseBaseY = 0;
-  } else if (*state != SWAY_INCREASING) {
+  } else if (actor->timer != SWAY_INCREASING) {
     actor->riseBaseY -= (u32)(Import_RandomNext() << 11) >> 16;
     if (actor->riseBaseY < -px(3) / 4) {
-      next = SWAY_INCREASING;
-      *state = next;
+      actor->timer = SWAY_INCREASING;
     }
   } else {
     actor->riseBaseY += (u32)(Import_RandomNext() << 11) >> 16;
     if (actor->riseBaseY > px(3) / 4) {
-      next = SWAY_DECREASING;
-      *state = next;
+      actor->timer = SWAY_DECREASING;
     }
   }
   if (actor->x.fixed > px(40) && actor->x.fixed < px(320)) {
     actor->x.fixed += actor->riseBaseY;
   }
-  state = (s16 *)&actor->userValue;
-  if (*state == SWAY_HELD) {
+
+  // The bob, between the deck and 16 pixels up.
+  if ((s16)actor->userValue == SWAY_HELD) {
     actor->y.fixed = 0;
-  } else if (*state != SWAY_INCREASING) {
+  } else if ((s16)actor->userValue != SWAY_INCREASING) {
     actor->y.fixed -= ((u32)Import_RandomNext() * 3 << 14) >> 16;
     if (actor->y.fixed < 0) {
-      next = SWAY_INCREASING;
-      *state = next;
+      actor->userValue = SWAY_INCREASING;
     }
   } else {
     actor->y.fixed += ((u32)Import_RandomNext() * 3 << 14) >> 16;
     if (actor->y.fixed > px(16)) {
-      next = SWAY_DECREASING;
-      *state = next;
+      actor->userValue = SWAY_DECREASING;
     }
   }
   return 1;
@@ -471,15 +460,8 @@ static void TolbiShipMast_AnnounceClearCourse(void) {
 /// On the mast at TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK, the first
 /// attack, three monsters close in and the lookout cries out. "Avast!"
 static void TolbiShipMast_RunAvastEvent(void) {
-  s32 *placement = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
+  s32 *cameraOrigin = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   struct Actor *actor;
-  struct FieldWork **work;
-  s32 x;
-  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 8 of
-   * 207 instructions differ in tbs-en. */
-  s32 zero = 0;
-  s32 scale;
-  void (*update)(struct Actor *);
 
   Event_Start();
   Event_AppendActorPlacements(gTolbiShipMast_FirstAttackActorPlacements);
@@ -487,21 +469,18 @@ static void TolbiShipMast_RunAvastEvent(void) {
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
-  work = (struct FieldWork **)(gMapGridWork +
-                               (HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID));
-  (*work)->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   // Save the camera origin before the sparkle begins to turn.
   Event_Wait(20);
-  gTolbiShipMast_CameraOrigin[0] = *placement++;
-  gTolbiShipMast_CameraOrigin[1] = *placement;
+  gTolbiShipMast_CameraOrigin[0] = cameraOrigin[0];
+  gTolbiShipMast_CameraOrigin[1] = cameraOrigin[1];
   Actor_SetPosition(ACTOR_SPARKLE, 80, 210);
-  x = px(80);
-  Actor_Get(ACTOR_SPARKLE)->motionFlags = zero;
-  gTolbiShipMast_CameraCenter[0] = x;
-  gTolbiShipMast_CameraCenter[1] = zero;
+  Actor_Get(ACTOR_SPARKLE)->motionFlags = 0;
+  gTolbiShipMast_CameraCenter[0] = px(80);
+  gTolbiShipMast_CameraCenter[1] = 0;
   Actor_SetScript(ACTOR_SPARKLE, gTolbiShipMast_FollowCameraActions);
   Event_Wait(20);
   Sound_Play(MUS_CONFRONTATION);
@@ -514,9 +493,9 @@ static void TolbiShipMast_RunAvastEvent(void) {
   // "Avast!"
   Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   // The three monsters appear where the sparkle turned.
-  Actor_SetPositionFixed(ACTOR_FIRST_SIGHTED_MONSTER, x, px(210));
-  Actor_SetPositionFixed(ACTOR_FIRST_SIGHTED_MONSTER + 1, x, px(210));
-  Actor_SetPositionFixed(ACTOR_FIRST_SIGHTED_MONSTER + 2, x, px(210));
+  Actor_SetPosition(ACTOR_FIRST_SIGHTED_MONSTER, 80, 210);
+  Actor_SetPosition(ACTOR_FIRST_SIGHTED_MONSTER + 1, 80, 210);
+  Actor_SetPosition(ACTOR_FIRST_SIGHTED_MONSTER + 2, 80, 210);
   Actor_SetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER, 3);
   Actor_SetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER + 1, 3);
   Actor_SetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER + 2, 3);
@@ -525,19 +504,14 @@ static void TolbiShipMast_RunAvastEvent(void) {
   Actor_SetSpriteColorById(ACTOR_FIRST_SIGHTED_MONSTER + 2, SPRITE_COLOR_BGR);
   // Grow the three monsters from half size as they close in on the lookout.
   actor = Actor_Get(ACTOR_FIRST_SIGHTED_MONSTER);
-  scale = Q16_ONE / 2;
-  update = TolbiShipMast_GrowActorScale;
-  actor->scaleY = scale;
-  actor->scaleX = scale;
-  actor->update = update;
+  actor->scaleY = actor->scaleX = Q16_ONE / 2;
+  actor->update = TolbiShipMast_GrowActorScale;
   actor = Actor_Get(ACTOR_FIRST_SIGHTED_MONSTER + 1);
-  actor->scaleY = scale;
-  actor->scaleX = scale;
-  actor->update = update;
+  actor->scaleY = actor->scaleX = Q16_ONE / 2;
+  actor->update = TolbiShipMast_GrowActorScale;
   actor = Actor_Get(ACTOR_FIRST_SIGHTED_MONSTER + 2);
-  actor->scaleY = scale;
-  actor->scaleX = scale;
-  actor->update = update;
+  actor->scaleY = actor->scaleX = Q16_ONE / 2;
+  actor->update = TolbiShipMast_GrowActorScale;
   wait(1);
   Actor_SetSpeed(ACTOR_FIRST_SIGHTED_MONSTER, 0.52);
   Actor_SetSpeed(ACTOR_FIRST_SIGHTED_MONSTER + 1, 0.45);
@@ -553,7 +527,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   Actor_StartRepeatedMotion(ACTOR_LOOKOUT, 3);
   // "Monsters sighted!"
   Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 20);
-  (*work)->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -870,13 +844,12 @@ static void TolbiShipMast_AnnounceLand(void) {
 
 /// Adds horizontal and vertical sway to the camera origin each frame.
 static void TolbiShipMast_UpdateSway(void) {
-  s32 *position = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
+  s32 *camera = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   s32 swayX = Trig_Cos(gTolbiShipMast_SwayX);
-  s32 swayY = Trig_Sin(gTolbiShipMast_SwayY);
+  s32 swayY = Trig_Sin(gTolbiShipMast_SwayY) * 4;
 
-  *position++ += swayX;
-  swayY *= 4;
-  *position += swayY;
+  camera[0] += swayX;
+  camera[1] += swayY;
   gTolbiShipMast_DriftX += swayX;
   gTolbiShipMast_DriftY += swayY;
   gTolbiShipMast_SwayX += (u32)(Import_RandomNext() * 3 << 7) >> 16;

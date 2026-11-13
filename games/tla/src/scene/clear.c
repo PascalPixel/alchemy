@@ -235,9 +235,8 @@ s32 Func_020002e0(void) {
 #include "window.h"
 
 /* VIEW(clear): variable gData_02003860 as s16 gData_02003860; module/tla.h has
- * u16 gData_02003860; tried as the 2 declarations' extern s16 gData_02003860,
- * it does not compile in tla-ja: games/tla/src/scene/clear.c:243: conflicting
- * types for `gData_02003860'. */
+ * u16 gData_02003860; tried as the rest of the object declares it,
+ * Scene_Initialize moves: 4 of 738 instructions in tla-ja. */
 extern s16 gData_02003860__clear __asm__("gData_02003860");
 /* VIEW(clear): variable gData_02001000 as u32 gData_02001000; module/tla.h has
  * s8 gData_02001000[]; tried as the rest of the object declares it,

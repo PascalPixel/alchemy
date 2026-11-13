@@ -57,7 +57,6 @@ static __inline__ void Func_02003534_(s32 actor, s32 angle) {
 #include "module/scene/scene.h"
 #include "module/system/system.h"
 #include "resource.h"
-#include "scene_call.h"
 #include "system.h"
 
 #define DEFINE_CHAMPA_CLIFF_CAVES_GROW(name, n1)                               \
@@ -73,14 +72,11 @@ static __inline__ void Func_02003534_(s32 actor, s32 angle) {
 DEFINE_CHAMPA_CLIFF_CAVES_GROW(Func_02000038, 0x1000)
 
 #include "battle.h"
-#include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "lib.h"
 #include "menu.h"
 #include "sound.h"
-#include "system.h"
-#include "types.h"
 #include "scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -472,8 +468,6 @@ void Func_02000978(s32 actor) {
 // ---- games/tla/src/scene/champa_cliff_caves/s0a34.c ----
 #include "call.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
 #include "text/msg_ids.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -486,7 +480,7 @@ void Func_02000978(s32 actor) {
 /* VIEW(s0a34): variable gData_02003634 as extern const struct ThrowAnimations
  * gData_02003634; the definition has u32 gData_02003634[] = { 439, 440, 441, };
  * tried as the definition's extern u32 gData_02003634[], it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:522: incompatible types in
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:550: incompatible types in
  * assignment. */
 extern const struct ThrowAnimations
     gData_02003634__s0a34 __asm__("gData_02003634");
@@ -942,7 +936,7 @@ void Func_0200115c(void) {
 /* VIEW(s0a34): tag struct EventTransition as struct EventTransition__s0a34;
  * champa_cliff_caves.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:967: structure has no member named
+ * games/tla/src/scene/champa_cliff_caves.c:965: structure has no member named
  * `frames'. */
 struct EventTransition__s0a34 {
   u8 unk000[0x1ac];
@@ -1483,10 +1477,8 @@ void Func_02001868(void) {
 
 /* VIEW(champa_cliff_caves): routine Decompress_TaggedLz as void
  * Decompress_TaggedLz(void *entry, void *destination); resource.h has s32
- * Decompress_TaggedLz(const void *source, void *destination); tried as the
- * definition's s32 Decompress_TaggedLz(const void *source, void
- * *destination), which the object already declares, Func_02002d34 moves: 1 of
- * 78 instructions in tla-ja. */
+ * Decompress_TaggedLz(const void *source, void *destination); not tried:
+ * Decompress_TaggedLz's bound declaration was not found. */
 extern void Resource_DecodeType01__champa_cliff_caves(
     void *entry, void *destination) __asm__("Decompress_TaggedLz");
 /* VIEW(champa_cliff_caves): routine Camera_WorldToScreen as void
@@ -1498,8 +1490,7 @@ extern void Resource_DecodeType01__champa_cliff_caves(
 extern void Camera_WorldToScreen__champa_cliff_caves(s32 *position) __asm__(
     "Camera_WorldToScreen");
 
-static __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d,
-                             s32 e) {
+static __inline__ void Place(void *a, s32 b, s32 c, u32 d, s32 e) {
   /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 181
    * instructions differ in tla-en. */
   EffectSprite_Init(a, b, c, d, e);
@@ -1582,21 +1573,10 @@ void Func_020029f8(s32 id, s32 mode) {
   VramCache_FreeEntry(slot);
   HeapSlot_Release(220);
 }
-#undef Field_StartPaletteTransition
 #undef FIELD_AT
 #undef PALETTE
 #undef BYTE_AT
 #undef WORD_AT
-
-/* VIEW(s2c88): static Place as Place__s2c88; the definition has static
- * __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d, s32 e); not
- * tried: Place's definition holds a FAKEMATCH tag. */
-static __inline__ void Place__s2c88(struct ChampaCliffCavesSprite *a, s32 b,
-                                    s32 c, u32 d, s32 e) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 78
-   * instructions differ in tla-en. */
-  EffectSprite_Init(a, b, c, d, e);
-}
 
 void Func_02002c88(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuRuntime;
@@ -1622,7 +1602,7 @@ next:
   work->entryA = entry;
   work->vramA = vram;
   sprite = &work->spriteA;
-  Place__s2c88(sprite, 31, 31, 0xc0000000, vram);
+  Place(sprite, 31, 31, 0xc0000000, vram);
   sprite->fullColor = 1;
   sprite->palette = 0;
   sprite->priority = 2;
@@ -1636,7 +1616,7 @@ next:
 /* VIEW(s2d34): tag struct ChampaCliffCavesWork as struct
  * ChampaCliffCavesWork__s2d34; champa_cliff_caves.c has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1657: request for member
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1654: request for member
  * `value' in something not a structure or union. */
 struct ChampaCliffCavesWork__s2d34 {
   u8 tiles[0x1000];
@@ -1659,16 +1639,6 @@ struct ChampaCliffCavesWork__s2d34 {
   u16 field1074;
   u8 unk1076[2];
 };
-
-/* VIEW(s2d34): static Place as Place__s2d34; the definition has static
- * __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d, s32 e); not
- * tried: Place's definition holds a FAKEMATCH tag. */
-static __inline__ void Place__s2d34(struct ChampaCliffCavesSprite *a, s32 b,
-                                    s32 c, u32 d, s32 e) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 78
-   * instructions differ in tla-en. */
-  EffectSprite_Init(a, b, c, d, e);
-}
 
 void Func_02002d34(void) {
   struct ChampaCliffCavesWork__s2d34 *work = Ram_HeapSlots->menuRuntime;
@@ -1694,7 +1664,7 @@ next:
   work->entryB = entry;
   work->vramB = vram;
   sprite = &work->spriteB;
-  Place__s2d34(sprite, 15, 47, 0xc0008000, vram);
+  Place(sprite, 15, 47, 0xc0008000, vram);
   sprite->fullColor = 1;
   sprite->palette = 1;
   sprite->priority = 1;
@@ -1707,7 +1677,7 @@ next:
 /* VIEW(champa_cliff_caves): tag struct GlowSprite as struct
  * GlowSprite__champa_cliff_caves; module/scene/scene.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1735: structure has no
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1731: structure has no
  * member named `x'. */
 struct GlowSprite__champa_cliff_caves {
   u8 unk_0[12];
@@ -1896,7 +1866,7 @@ void Func_02003078(void) {
 /* VIEW(s3164): tag struct ChampaCliffCavesWork as struct
  * ChampaCliffCavesWork__s3164; champa_cliff_caves.c has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1900: invalid operands to
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1894: invalid operands to
  * binary +. */
 struct ChampaCliffCavesWork__s3164 {
   u8 tiles[0x1000];

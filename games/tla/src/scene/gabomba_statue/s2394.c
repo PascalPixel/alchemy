@@ -708,9 +708,6 @@ L_0200b84a:
 L_0200b856:
 }
 
-#include "heap_release.h"
-#include "resource.h"
-
 struct Sprite {
   u8 b0, b1, b2, b3, b4;
   u8 mode : 2;
@@ -822,7 +819,7 @@ void Func_02003974(void) {
  * turn); the definition has u8 Func_02004380(s32 x, s32 z, s32 direction);
  * tried as the definition's u8 Func_02004380(s32 x, s32 z, s32 direction),
  * which the object already declares, it does not compile in tla-ja (make
- * modern): games/tla/include/field/event_inline.h:170:48: note: expected 's32'
+ * modern): games/tla/include/field/event_inline.h:171:48: note: expected 's32'
  * {aka 'int'} but argument is of type 'u8 *' {aka 'unsigned char *'}. */
 extern s32 Func_02004380__s2394(s32 col, s32 row,
                                 s32 turn) __asm__("Func_02004380");
@@ -1708,7 +1705,7 @@ done:
  * it has another declaration; tried as the definition's void
  * Func_02004938(struct Actor *ball, s32 step), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue/s2394.c:1769: too many arguments to
+ * games/tla/src/scene/gabomba_statue/s2394.c:1753: too many arguments to
  * function `Func_02004938'. */
 extern void Func_02004938__s4d48() __asm__("Func_02004938");
 

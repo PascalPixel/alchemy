@@ -164,9 +164,8 @@ void Func_02000198(void) {
        ->v)
 
 /* VIEW(s0198): routine Event_End as s32 Event_End();
- * module/scene/jupiter_lighthouse_aerie_beacon.h has void Event_End(void);
- * tried as the rest of the object declares it, Func_020040f4 moves: 1 of 216
- * instructions in tla-ja. */
+ * module/scene/jupiter_lighthouse_aerie_beacon.h has void Event_End(void); not
+ * tried: Event_End's bound declaration was not found. */
 extern s32 Func_0200581c__s0198() __asm__("Event_End");
 
 void Func_0200045c(void) {
@@ -914,7 +913,6 @@ void Func_02001388(void) {
 #include "lib.h"
 #include "menu.h"
 #include "sound.h"
-#include "system.h"
 
 void Func_020016e8(void) {
   s32 northwest = FACING_NORTHWEST;
@@ -1997,8 +1995,6 @@ void Func_02002ae4(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-#include "event_work.h"
-
 /// Writes to out the ids of objects 0 to 63 standing in columns 4 to 8 and in
 /// the three rows from 72 less the row of z. Nothing in this overlay calls it.
 // As ☀️'s MercuryLighthouseAerie_CollectBandSlots does.
@@ -2028,7 +2024,7 @@ struct SceneWork {
 /* VIEW(s0198): tag struct FieldWork as struct FieldWork__s0198; field_work.h
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2064:
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2045:
  * dereferencing pointer to incomplete type. */
 struct FieldWork__s0198 {
   u8 pad0[0x178];
@@ -2133,7 +2129,7 @@ void Func_02003a6c(s32 mode) {
 /* VIEW(s0198): tag struct HeapSlotWords as struct HeapSlotWords__s0198;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2150: structure
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2132: structure
  * has no member named `map'. */
 struct HeapSlotWords__s0198 {
   s32 unk00[8];
@@ -2187,7 +2183,6 @@ void Func_02003c58(s32 mode) {
   System_Wait(2);
 }
 
-s32 Func_02004644();
 s32 Party_AddMember(s32 value);
 
 s32 Scene_Initialize(void) {
@@ -2297,10 +2292,8 @@ DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame,
                           gPaletteCyclePausesInEvents, gPaletteCycleColors)
 
 /* VIEW(s0198): routine MapGrid_SetCellHeight as void MapGrid_SetCellHeight();
- * module/scene/scene.h has void MapGrid_SetCellHeight(void); tried as the rest
- * of the object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2369: too many
- * arguments to function `MapGrid_SetCellHeight'. */
+ * module/scene/scene.h has void MapGrid_SetCellHeight(void); not tried:
+ * MapGrid_SetCellHeight's bound declaration was not found. */
 extern void Func_020057c4__s0198() __asm__("MapGrid_SetCellHeight");
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
@@ -2460,3 +2453,120 @@ void Whirlwind_Update(struct Object6a5 *object) {
   Event_PlaySound(228);
   Data_02006a28 = 0;
 }
+
+// ---- scene/jupiter_lighthouse_aerie_beacon/s44cc.c ----
+
+/// Scene code of overlay 0x6a5, in ROM order.
+
+#include "../shared/whirlwind.h"
+#include "field_effect.h"
+#include "vram_tab.h"
+#include "task.h"
+#include "item_icon.h"
+
+extern u8 gLightSpritesLarge[];
+
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
+
+DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Actor_SelectAnimation,
+                             Whirlwind_Update, FieldEffect_Spawn)
+
+DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, FieldEffect_Spawn)
+
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+
+static __inline__ void Func_02001c10_(s32 id, s32 x, s32 z) {
+  Actor_SetHorizontalPositionWithTerrain(id, x, z);
+}
+
+static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
+
+void Func_02004644(void) {
+  struct Actor *left = Actor_GetById(9);
+  struct Actor *right = Actor_GetById(10);
+  struct Actor *rider = Actor_GetById(23);
+  struct FieldSprite *sprite = rider->sprite;
+
+  Func_02001c10_(24, 0x2000000, 0xf80000);
+  Func_02001c10_(23, 0x2000000, 0xf80000);
+  Func_02001c10_(9, 0x1d80000, 0x1000000);
+  Func_02001c10_(10, 0x2280000, 0x1000000);
+  Actor_GetById(24)->scaleX = 0;
+  rider->motionFlags = 0;
+  rider->y = rider->terrainHeight;
+  left->motionFlags = 0;
+  left->y = left->terrainHeight;
+  right->motionFlags = 0;
+  right->y = right->terrainHeight;
+  if (GameFlag_Test_(0xa0a)) {
+    left->y += 0x66640;
+    rider->y += 0x1eb80;
+    rider->x += -0x28f40;
+    sprite->rotation += 0x800;
+    Actor_SetSpriteColorMode(Actor_GetById(9), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(11), 4);
+  }
+  if (GameFlag_Test_(0xa0b)) {
+    right->y += 0x66640;
+    rider->y += 0x1eb80;
+    rider->x += 0x28f40;
+    sprite->rotation -= 0x800;
+    Actor_SetSpriteColorMode(Actor_GetById(10), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(12), 4);
+  }
+  if (GameFlag_Test_(0xa0a) && GameFlag_Test_(0xa0b)) {
+    left->y += 0x199900;
+    right->y += 0x199900;
+    rider->y += 0x1b8480;
+    left->motionFlags = 4;
+    right->motionFlags = 4;
+    rider->motionFlags = 4;
+  }
+}
+
+/* VIEW(s44cc): variable gLightSpritesLarge as s16 gLightSpritesLarge;
+ * module/scene/scene.h has u8 gLightSpritesLarge[]; tried as the rest of the
+ * object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2552:
+ * `gLightSpritesLarge' has an incomplete type. */
+extern s16 gLightSpritesLarge__s44cc __asm__("gLightSpritesLarge");
+
+void Oam_AddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
+
+/// Queues the lit actors' sprites: for each listed actor with a position,
+/// projects it from the map's view, skips it off screen, and writes a 16 by 16
+/// sprite, or a 32 by 64 one when the big switch is set, at its animation
+/// picture and depth.
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
+                          gLightSpriteCount, gLightSpriteActors,
+                          gLightSpritesLarge__s44cc, gLightSpritePriority,
+                          BattleEffect_GetObjectPriority,
+                          Oam_AddSpriteAtDepthClamped)
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
+
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge__s44cc,
+                            gLightSpritePriority)
+
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge__s44cc,
+                            gLightSpritePriority)
+
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge__s44cc,
+                            gLightSpritePriority)
+
+DEFINE_LIGHT_SPRITES_ADD_COUNTED(LightSprites_AddCounted, gLightSpriteActors,
+                                 gLightSpriteCount)
+
+void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
+
+#include "../../field/object/set_sprite_priority.c"

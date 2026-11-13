@@ -238,7 +238,7 @@ Actor_SetSpritePriority__s3308(u32, s32) __asm__("Actor_SetSpritePriority");
  * objectId); kibombo.h has struct KibomboObject *Actor_GetById(s32 id); tried
  * as the definition's struct Actor *Actor_GetById(u32 objectId), which the
  * object already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:37: conflicting types for `Actor_GetById'. */
+ * games/tla/include/field/event.h:43: conflicting types for `Actor_GetById'. */
 struct Actor;
 extern struct Actor *
 Actor_GetById__s3308(u32 objectId) __asm__("Actor_GetById");
@@ -247,8 +247,9 @@ Actor_GetById__s3308(u32 objectId) __asm__("Actor_GetById");
  * Actor *actor, s32 x, s32 y, s32 z); kibombo.h has void
  * Actor_SetMoveTarget(struct KibomboObject *object, s32 x, s32 y, s32 z); tried
  * as the definition's void Actor_SetMoveTarget(struct Actor *object, s32 x, s32
- * y, s32 z), it does not compile in tla-ja: games/tla/include/field/event.h:59:
- * conflicting types for `Actor_SetMoveTarget'. */
+ * y, s32 z), which the object already declares, it does not compile in tla-ja:
+ * games/tla/include/field/event.h:67: conflicting types for
+ * `Actor_SetMoveTarget'. */
 struct Actor;
 extern void Actor_SetMoveTarget__s3308(struct Actor *actor, s32 x, s32 y,
                                        s32 z) __asm__("Actor_SetMoveTarget");
@@ -257,7 +258,7 @@ extern void Actor_SetMoveTarget__s3308(struct Actor *actor, s32 x, s32 y,
  * *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z); kibombo.h has struct
  * KibomboObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z); tried as
  * the rest of the object declares it, it does not compile in tla-ja:
- * games/tla/include/field/event.h:60: conflicting types for
+ * games/tla/include/field/event.h:68: conflicting types for
  * `Import_ActorCreate'. */
 struct Actor;
 extern struct Actor *
@@ -268,7 +269,7 @@ Import_ActorCreate__s3308(s32 type, s32 x, s32 y,
  * Actor_SetSpritePriority(u32 actorId, s32 priority); kibombo.h has void
  * Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's
  * void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile
- * in tla-ja: games/tla/include/field/event.h:105: conflicting types for
+ * in tla-ja: games/tla/include/field/event.h:113: conflicting types for
  * `Actor_SetSpritePriority'. */
 extern void
 Actor_SetSpritePriority__s3308(u32 actorId,
@@ -279,41 +280,33 @@ Actor_SetSpritePriority__s3308(u32 actorId,
  * kibombo.h has void Actor_SetPositionAndResetMotion(struct KibomboObject
  * *object, s32 x, s32 y, s32 z); tried as the definition's void
  * Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z), it
- * does not compile in tla-ja: games/tla/include/field/event.h:110: conflicting
+ * does not compile in tla-ja: games/tla/include/field/event.h:118: conflicting
  * types for `Actor_SetPositionAndResetMotion'. */
 struct Actor;
 extern void Actor_SetPositionAndResetMotion__s3308(
     struct Actor *object, s32 x, s32 y,
     s32 z) __asm__("Actor_SetPositionAndResetMotion");
 #define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion__s3308
-/* VIEW(s3308): routine Actor_SetSpriteColor as void
- * Actor_SetSpriteColor(struct Actor *object, s32 attribute); kibombo.h has
- * void Actor_SetSpriteColor(struct KibomboObject *object, s32 value); tried
- * as the definition's void Actor_SetSpriteColor(struct Actor *object, s32
- * attribute), which the object already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:112: conflicting types for
- * `Actor_SetSpriteColor'. */
+/* VIEW(s3308): routine Actor_SetSpriteColor as void Actor_SetSpriteColor(struct
+ * Actor *object, s32 attribute); kibombo.h has void Actor_SetSpriteColor(struct
+ * KibomboObject *object, s32 value); not tried: Actor_SetSpriteColor's bound
+ * declaration was not found. */
 struct Actor;
 extern void
 Actor_SetPartAttribute__s3308(struct Actor *object,
                               s32 attribute) __asm__("Actor_SetSpriteColor");
 #define Actor_SetSpriteColor Actor_SetPartAttribute__s3308
-/* VIEW(s3308): routine Actor_WaitForMove as void
- * Actor_WaitForMove(struct Actor *actor); kibombo.h has void
- * Actor_WaitForMove(struct KibomboObject *object); tried as the
- * definition's void Actor_WaitForMove(void *fieldObject), it does not
- * compile in tla-ja: games/tla/include/field/event.h:115: conflicting types for
- * `Actor_WaitForMove'. */
+/* VIEW(s3308): routine Actor_WaitForMove as void Actor_WaitForMove(struct Actor
+ * *actor); kibombo.h has void Actor_WaitForMove(struct KibomboObject *object);
+ * not tried: Actor_WaitForMove's bound declaration was not found. */
 struct Actor;
 extern void Script_WaitForEventTimeout__s3308(struct Actor *actor) __asm__(
     "Actor_WaitForMove");
 #define Actor_WaitForMove Script_WaitForEventTimeout__s3308
 /* VIEW(s3308): routine FieldCamera_GetActor as struct Actor
  * *FieldCamera_GetActor(void); kibombo.h has struct KibomboObject
- * *FieldCamera_GetActor(void); tried as the definition's struct Actor
- * *FieldCamera_GetActor(void), which the object already declares, it does not
- * compile in tla-ja: games/tla/include/field/event.h:124: conflicting types for
- * `FieldCamera_GetActor'. */
+ * *FieldCamera_GetActor(void); not tried: FieldCamera_GetActor's bound
+ * declaration was not found. */
 struct Actor;
 extern struct Actor *Func_080d4568__s3308(void) __asm__("FieldCamera_GetActor");
 #define FieldCamera_GetActor Func_080d4568__s3308
@@ -1420,37 +1413,28 @@ void Func_02005114(void) {
 // ---- games/tla/src/scene/kibombo/s516c.c ----
 // Kibombo's setup.
 #include "main_routine_work.h"
-/* VIEW(s516c): routine Actor_SetSpriteFlags as void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags); kibombo.h has
- * void Actor_SetSpriteFlags(struct KibomboObject *object, u32 value);
- * tried as the 35 declarations' void Actor_SetSpriteFlags(struct
- * FieldEffect *effect, s32 flags), it does not compile in tla-ja:
- * games/tla/include/field/field.h:25: conflicting types for
- * `Actor_SetSpriteFlags'. */
+/* VIEW(s516c): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
+ * Actor *object, u32 flags); kibombo.h has void Actor_SetSpriteFlags(struct
+ * KibomboObject *object, u32 value); not tried: Actor_SetSpriteFlags's bound
+ * declaration was not found. */
 struct Actor;
 extern void
 Actor_SetSingleChildFlags__s516c(struct Actor *object,
                                  u32 flags) __asm__("Actor_SetSpriteFlags");
 #define Actor_SetSpriteFlags Actor_SetSingleChildFlags__s516c
-/* VIEW(s516c): routine Actor_SetBlendMode as void
- * Actor_SetBlendMode(struct Actor *object, u32 value); kibombo.h has void
- * Actor_SetBlendMode(struct KibomboObject *object, s32 flags); tried as
- * the definition's void Actor_SetBlendMode(struct Actor *object, u32
- * value), which the object already declares, it does not compile in tla-ja:
- * games/tla/include/field/field.h:58: conflicting types for
- * `Actor_SetBlendMode'. */
+/* VIEW(s516c): routine Actor_SetBlendMode as void Actor_SetBlendMode(struct
+ * Actor *object, u32 value); kibombo.h has void Actor_SetBlendMode(struct
+ * KibomboObject *object, s32 flags); not tried: Actor_SetBlendMode's bound
+ * declaration was not found. */
 struct Actor;
 extern void
 Animation_SetStateFlags__s516c(struct Actor *object,
                                u32 value) __asm__("Actor_SetBlendMode");
 #define Actor_SetBlendMode Animation_SetStateFlags__s516c
-/* VIEW(s516c): routine Actor_SetSpriteColor as void
- * Actor_SetSpriteColor(struct Actor *object, s32 attribute); kibombo.h has
- * void Actor_SetSpriteColor(struct KibomboObject *object, s32 value); tried
- * as the definition's void Actor_SetSpriteColor(struct Actor *object, s32
- * attribute), which the object already declares, it does not compile in tla-ja:
- * games/tla/include/field/field.h:93: conflicting types for
- * `Actor_SetSpriteColor'. */
+/* VIEW(s516c): routine Actor_SetSpriteColor as void Actor_SetSpriteColor(struct
+ * Actor *object, s32 attribute); kibombo.h has void Actor_SetSpriteColor(struct
+ * KibomboObject *object, s32 value); not tried: Actor_SetSpriteColor's bound
+ * declaration was not found. */
 extern void
 Actor_SetPartAttribute__s516c(struct Actor *object,
                               s32 attribute) __asm__("Actor_SetSpriteColor");

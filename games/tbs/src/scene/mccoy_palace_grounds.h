@@ -1,5 +1,5 @@
-#ifndef MCCOY_PALACE_GROUNDS_H
-#define MCCOY_PALACE_GROUNDS_H
+#ifndef ALCHEMY_MCCOY_PALACE_GROUNDS_H
+#define ALCHEMY_MCCOY_PALACE_GROUNDS_H
 
 #include "types.h"
 #include "event.h"

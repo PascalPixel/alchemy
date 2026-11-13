@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MAP_VAULT_H
-#define ALCHEMY_MAP_VAULT_H
+#ifndef ALCHEMY_VAULT_H
+#define ALCHEMY_VAULT_H
 
 /// @file
 /// The cell behaviors of Vault's layout, which SceneId_Vault (vault.c) and

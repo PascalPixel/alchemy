@@ -1,6 +1,6 @@
 /// @file
 /// The Ramses summon.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

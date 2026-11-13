@@ -288,7 +288,11 @@ u32 MessageArgument_Lookup(u32 name, u32 clear);
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 void MessageArgument_ClearAll(void);
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
-struct BattleUnit *Unit_Get(s32 unitId);
+/* VIEW(window): routine Unit_Get as struct BattleUnit *Unit_Get(s32 unitId);
+ * owner_state.h has void *Unit_Get(s32 owner); not tried: Unit_Get's
+ * declaration holds a FAKEMATCH tag. */
+struct BattleUnit *Unit_Get__window(s32 unitId) __asm__("Unit_Get");
+#define Unit_Get Unit_Get__window
 
 #if LANGUAGE != LANGUAGE_JAPANESE
 

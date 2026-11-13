@@ -10,7 +10,7 @@
 /* VIEW(ground_particles): tag struct GroundParticleWork as struct
  * GroundParticleWork__ground_particles; visual_attributes.c has another
  * definition; tried with the definition the rest of the object has, it does not
- * compile in tla-ja: games/tla/src/field/object/visual_attributes.c:2771:
+ * compile in tla-ja: games/tla/src/field/object/visual_attributes.c:2617:
  * structure has no member named `entry'. */
 struct GroundParticleWork__ground_particles {
   s32 entry;
@@ -69,15 +69,10 @@ void GroundParticles_Start(void) {
   Task_Add(GroundParticles_Update, TASK_PASS_VBLANK);
 }
 
-/* VIEW(visual_attributes): routine Camera_WorldToScreen as void
- * Camera_WorldToScreen(union FieldCoordinate *position);
- * module/field/event_commands.h has void Camera_WorldToScreen(struct
- * EffectVector *position). */
-extern void Camera_WorldToScreen__visual_attributes(
-    union FieldCoordinate *position) __asm__("Camera_WorldToScreen");
 /* VIEW(ground_particles): routine Oam_AddSpriteAtDepthClamped as void
  * Oam_AddSpriteAtDepthClamped(void *sprite, s32 depth); f0d6674 has void
- * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth). */
+ * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth); not
+ * tried: Oam_AddSpriteAtDepthClamped's bound declaration was not found. */
 extern void Func_080140d8__ground_particles(void *sprite, s32 depth) __asm__(
     "Oam_AddSpriteAtDepthClamped");
 
@@ -107,7 +102,7 @@ void RisingParticles_Update(void) {
     screen[0].fixed = particle->posX + particle->drift;
     screen[1].fixed = particle->posY;
     screen[2].fixed = particle->posZ;
-    Camera_WorldToScreen__visual_attributes(screen);
+    Camera_WorldToScreen(screen);
     x = screen[0].part.pixel;
     y = screen[2].part.pixel - particle->timer - 8;
     particle->drift += Random16() + Q16_ONE / 2;

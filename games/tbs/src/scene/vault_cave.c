@@ -321,23 +321,7 @@ static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
 }
 
 #include "shared/actor_step.h"
-#ifdef UBFIX
-/// The table stores Z then X as halfwords. Build its packed word without
-/// reading a halfword array through an incompatible, more-aligned struct.
-#define VAULT_CAVE_DIRECTION_STEP(heading)                                     \
-  ((s32)(((u32)(u16)gVaultCave_DirectionSteps[(heading) * 2 + 1] << 16) |      \
-         (u16)gVaultCave_DirectionSteps[(heading) * 2]))
-#else
-/// The step table read as one word per heading. The x step in pixels is in
-/// the high halfword, the z step in the low. The struct's array reference
-/// keeps the native loads, which an s32 pointer to the table does not.
-struct DirectionSteps {
-  s32 xz[16];
-};
-
-#define VAULT_CAVE_DIRECTION_STEP(heading)                                     \
-  (((struct DirectionSteps *)gVaultCave_DirectionSteps)->xz[heading])
-#endif
+#include "pushed_actor.h"
 
 /// Pushes the faced pillar one cell unless another actor or terrain
 /// blocks it.
@@ -352,12 +336,11 @@ static void VaultCave_PushPillarAhead(void) {
   s32 row;
 
   column =
-      (leader->x.part.pixel + (VAULT_CAVE_DIRECTION_STEP(direction) >> 16)) >>
+      (leader->x.part.pixel + (gVaultCave_DirectionSteps[direction] >> 16)) >>
       4;
-  row = (leader->z.part.pixel + (s16)VAULT_CAVE_DIRECTION_STEP(direction)) >> 4;
+  row = (leader->z.part.pixel + (s16)gVaultCave_DirectionSteps[direction]) >> 4;
   pillar = VaultCave_FindCollidableActorAtCell(column, row);
-  // UB: the lookup may return NULL. The plain safe guard moves the null
-  // branch ahead of the byte load in EN, so matching keeps its original order.
+  // UB: the pillar's collisionFlags is read before the test for no pillar.
 #ifdef UBFIX
   if (pillar == NULL || pillar->collisionFlags == 0) {
 #else
@@ -373,15 +356,15 @@ static void VaultCave_PushPillarAhead(void) {
     }
   }
   column =
-      (pillar->x.part.pixel + (VAULT_CAVE_DIRECTION_STEP(direction) >> 16)) >>
+      (pillar->x.part.pixel + (gVaultCave_DirectionSteps[direction] >> 16)) >>
       4;
-  row = (pillar->z.part.pixel + (s16)VAULT_CAVE_DIRECTION_STEP(direction)) >> 4;
+  row = (pillar->z.part.pixel + (s16)gVaultCave_DirectionSteps[direction]) >> 4;
   beyond = VaultCave_FindCollidableActorAtCell(column, row);
   if (beyond != 0 && (beyond->collisionFlags & 1)) {
     return;
   }
   pillar->layer = 2;
-  Actor_StepFrom(&destination, pillar, VAULT_CAVE_DIRECTION_STEP(direction));
+  Actor_StepFrom(&destination, pillar, gVaultCave_DirectionSteps[direction]);
   if (FieldActor_CheckMovementCollision(pillar, &destination) > 0) {
     return;
   }
@@ -677,17 +660,16 @@ static void VaultCave_UseUnderfootFrostPriorities(void) {
   }
 }
 
-/// Restores automatic draw priority for the same six puddles.
+/// Restores automatic draw ACTOR_PRIORITY_AUTOMATIC for the same six puddles.
 static void VaultCave_UseAutomaticFrostPriorities(void) {
   s32 actorSlot = ACTOR_WEST_UPPER_PUDDLE;
-  s32 priority = ACTOR_PRIORITY_AUTOMATIC;
   s32 remaining = 5;
 
   do {
     struct Actor *target = Actor_Get(actorSlot);
 
     remaining--;
-    target->priorityFlags = priority;
+    target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     actorSlot++;
   } while (remaining >= 0);
 }
@@ -720,7 +702,7 @@ static void VaultCave_RunRumble(void) {
     layer->phaseY = (double)layer->phaseY - (4718.592 - (double)scrollDrift);
     Event_Wait(1);
   }
-  // Keep the packed native value written to BLDALPHA.
+  // Fade the blend out over 70 frames, a step every 20.
   fadeLevel = 6;
   lowFadeLevel = 6;
   frame = 0;
@@ -936,12 +918,7 @@ static void VaultCave_SpawnPuffs(struct Actor *source) {
     puff->speedLimit = Import_RandomNext() + px(4) / 5;
     puff->collisionFlags = ACTOR_SOLID;
     VaultCave_OffsetActorRadially(puff, px(32), Import_RandomNext());
-    {
-      u16 *timer = &puff->wait;
-      s32 frames = 8;
-
-      *timer = frames;
-    }
+    puff->wait = 8;
     Actor_StartScript(puff, gVaultCave_PuffScript);
   }
 }
@@ -1089,8 +1066,9 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_NORTHERN_PILLAR), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH), 0);
-    Actor_Get(ACTOR_NORTHERN_PILLAR)->collisionFlags |= 0x80;
-    Actor_Get(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags |= 0x80;
+    Actor_Get(ACTOR_NORTHERN_PILLAR)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
+    Actor_Get(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags |=
+        ACTOR_BLOCKED_BY_SOLID;
     switch (gMainRoutineWork.entrance) {
     case VAULT_CAVE_MOUTH_NORTH_FROM_SOUTH:
     case VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH:
@@ -1122,23 +1100,13 @@ s32 Scene_Initialize(void) {
 }
 
 // clang-format off
-const s16 gVaultCave_DirectionSteps[] = {
-    0, 16,
-    0, 16,
-    0, 16,
-    16, 0,
-    16, 0,
-    16, 0,
-    16, 0,
-    0, -16,
-    0, -16,
-    0, -16,
-    0, -16,
-    -16, 0,
-    -16, 0,
-    -16, 0,
-    -16, 0,
-    0, 16,
+const s32 gVaultCave_DirectionSteps[] = {
+    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
+    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(16, 0),
 };
 
 const s32 gVaultCave_PuffScript[] = {

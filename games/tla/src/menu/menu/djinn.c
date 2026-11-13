@@ -744,7 +744,6 @@ void UiPanel_HighlightGridCell(struct UiPanel *panel, s32 index, s32 row,
 }
 
 #undef GRID_CELL_WIDTH
-#undef GRID_CELL_WIDTH
 
 struct WindowTiles {
   u8 unk00[3];
@@ -1982,5 +1981,4 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
   return 1;
 }
 
-#undef MSG_NO_CHANGE
 #undef MSG_NO_CHANGE

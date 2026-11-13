@@ -1,7 +1,7 @@
 /// @file
 /// Layered maps: loading, drawing and scrolling, copying cells, and the edits
 /// flags apply.
-// Part of resource_slot.c.
+// Part of field.c.
 
 #include "../resource_slot_internal.h"
 
@@ -12,10 +12,6 @@
 #include "module/field/resource_slot.h"
 #include "module/system/system.h"
 #include "ram_buffer.h"
-
-/* VIEW(f02a6b8): variable gMaps as extern struct LayeredSceneEntry
- * gMaps[]; f0298c0 has extern const u16 gMaps[][6]. */
-extern struct LayeredSceneEntry gMaps__f02a6b8[] __asm__("gMaps");
 
 /// Loads a layered map, as The Broken Seal does: from
 /// layout index's entry in gMaps it decodes the blocks, the collision
@@ -41,7 +37,7 @@ s32 MapGrid_LoadMap(s32 index) {
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   ScreenFade_FromBlack(0);
-  sceneResources = &gMaps__f02a6b8[index];
+  sceneResources = &gMaps[index];
   work = HeapSlot_AllocEwram(32, sizeof(struct MapScrollWork));
   Iwram_ClearWordsEntry(work, sizeof(struct MapScrollWork));
   sceneHeader = (struct LayeredSceneHeader *)Resource_GetTableEntry(
@@ -714,9 +710,8 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
 
 /* VIEW(f02aa74): variable gMapCellBuffer as extern u8 gMapCellBuffer[]; f027064
  * has extern struct MapCell gMapCellBuffer[]; tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/field/resource_slot.c:8266: `gMapCellBuffer__f02aa74'
- * undeclared (first use in this function). */
+ * declares it, it does not compile in tla-ja: games/tla/src/field/field.c:8873:
+ * `gMapCellBuffer__f02aa74' undeclared (first use in this function). */
 extern u8 gMapCellBuffer__f02aa74[] __asm__("gMapCellBuffer");
 
 void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,

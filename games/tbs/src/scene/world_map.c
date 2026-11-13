@@ -143,6 +143,7 @@
 #include "sounds.h"
 #include "sound_driver_symbols.h"
 #include "item_ids.h"
+#include "shared/walk_into_leader.h"
 
 /// The falling rock of Hammet's caravan event has landed and shattered.
 /// ★ Named from the game: "being smashed by falling rocks here"
@@ -1042,7 +1043,7 @@ enum {
 /// trade reopens (FLAG_DODONPA_LOCKED_UP) and until the wagon has left. It
 /// sets FLAG_BUNZAS_WAGON_LEFT.
 static void WorldMap_BoardBunzasWagon(void) {
-  struct Actor *record;
+  struct Actor *actor;
 
   Event_Start();
   Event_StartScreenTransition();
@@ -1065,28 +1066,27 @@ static void WorldMap_BoardBunzasWagon(void) {
   Actor_SetPosition(ACTOR_WAGON, 5880, 1208);
   Event_Wait(60);
   Actor_SetAnimation(ACTOR_HAMMET, ANIM_WALK);
-  record = Actor_Get(ACTOR_WAGON);
-  if (record != 0) {
-    Actor_SetDestination(ACTOR_HAMMET, record->x.part.pixel,
-                         record->z.part.pixel);
+  actor = Actor_Get(ACTOR_WAGON);
+  if (actor != 0) {
+    Actor_SetDestination(ACTOR_HAMMET, actor->x.part.pixel,
+                         actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_HAMMET);
   Actor_SetPosition(ACTOR_HAMMET, 0, 0);
   Event_Wait(60);
   Actor_SetAnimation(ACTOR_BUNZA, ANIM_WALK);
-  record = Actor_Get(ACTOR_WAGON);
-  if (record != 0) {
-    Actor_SetDestination(ACTOR_BUNZA, record->x.part.pixel,
-                         record->z.part.pixel);
+  actor = Actor_Get(ACTOR_WAGON);
+  if (actor != 0) {
+    Actor_SetDestination(ACTOR_BUNZA, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_BUNZA);
   Actor_SetPosition(ACTOR_BUNZA, 0, 0);
   Event_Wait(60);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  record = Actor_Get(ACTOR_WAGON);
-  if (record != 0) {
-    Actor_SetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel,
-                         record->z.part.pixel);
+  actor = Actor_Get(ACTOR_WAGON);
+  if (actor != 0) {
+    Actor_SetDestination(ACTOR_PARTY_LEADER, actor->x.part.pixel,
+                         actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -2205,19 +2205,12 @@ static void WorldMap_UseBlackOrb(void) {
   orb = FieldActor_Create(SPRITE_BLANK, leader->x.fixed + px(2), px(38),
                           leader->z.fixed);
   if (orb != NULL) {
-    u8 *motion;
-
     orb->motionFlags = 0;
     sprite = orb->sprite;
     sprite->flags = 0;
     sprite->count = 0;
     sprite->image.fullColor = 0;
     sprite->image.palette = 0;
-    /* FAKEMATCH(dead): a second clear through a byte pointer, removed after
-     * reload, keeps the zero in r1 and the address in r0; without it, 11 of
-     * 363 instructions differ in tbs-en. */
-    motion = &orb->motionFlags;
-    *motion = 0;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Item_LoadIcon(ITEM_BLACK_ORB);
     Vram_Load(sprite->slot, 128, buffer + 1024);
@@ -2285,14 +2278,7 @@ static void WorldMap_UseBlackOrb(void) {
   Event_ShowMessageThenWait(gWorldMapIodem, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(gWorldMapIodem, ANIM_NOD);
-  Actor_SetAnimation(gWorldMapIodem, ANIM_WALK);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != NULL) {
-    Actor_SetDestination(gWorldMapIodem, actor->x.part.pixel,
-                         actor->z.part.pixel);
-  }
-  Actor_WaitForMoveById(gWorldMapIodem);
-  Actor_SetPosition(gWorldMapIodem, 0, 0);
+  Scene_WalkIntoLeader(gWorldMapIodem);
   WorldMap_Unfreeze();
   WorldMap_StartZoom(Q16_ONE, 6);
   Event_Wait(20);
@@ -2486,11 +2472,7 @@ static void WorldMap_ShakeVenusLighthouse(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   wait(1);
   FieldCamera_SetSpeed(4);
-  {
-    s32 priority = TASK_PASS_FRAME;
-    TaskFunc func = WorldMap_UpdateLighthouseQuake;
-    Task_AddFrame(func, priority);
-  }
+  Task_AddFrame(WorldMap_UpdateLighthouseQuake, TASK_PASS_FRAME);
   PaletteFade_ApplySource(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_MUTED, PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
@@ -2562,11 +2544,7 @@ static void WorldMap_SailTolbiShipToIsland(void) {
   Actor_SetAnimation(ACTOR_CROSSING_SHIP, ANIM_WALK);
   Actor_SetPosition(ACTOR_CROSSING_SHIP, 4872, 808);
   actor = Actor_Get(ACTOR_CROSSING_SHIP);
-  {
-    s32 value = FACING_NORTHWEST;
-
-    actor->facing = value;
-  }
+  actor->facing = FACING_NORTHWEST;
   wait(1);
   WorldMap_StartZoom(6 * Q16_ONE / 5, 1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -2634,39 +2612,36 @@ static s32 WorldMap_GetSeatRowValue(u32 seat) {
 
 /// Spawns a puff of the wake behind ACTOR_DRIFTING_ISLAND every 16 frames.
 static void WorldMap_SpawnIslandWake(void) {
-  struct Actor *leader;
-  struct Actor *actor;
-  struct Sprite *sprite;
-  u32 value;
+  struct Actor *island;
+  struct Actor *puff;
+  s32 distance;
 
-  if ((*(s32 *)&gFrameCount & 15) != 0)
+  if ((gFrameCount & 15) != 0)
     return;
-  leader = Actor_Get(ACTOR_DRIFTING_ISLAND);
-  actor = FieldActor_Create(SPRITE_DUST_PUFF, leader->x.fixed - px(32),
-                            leader->y.fixed, leader->z.fixed - px(16));
-  if (actor == 0)
+  island = Actor_Get(ACTOR_DRIFTING_ISLAND);
+  puff = FieldActor_Create(SPRITE_DUST_PUFF, island->x.fixed - px(32),
+                           island->y.fixed, island->z.fixed - px(16));
+  if (puff == 0)
     return;
-  actor->scaleX = Q16_ONE / 2;
-  actor->scaleY = Q16_ONE / 2;
-  sprite = actor->sprite;
-  if (((u32)Import_RandomNext() * 2 >> 16)) {
-    s32 back = (((u32)Import_RandomNext() * 48) >> 16) << 16;
-
-    actor->x.fixed -= back >> 1;
-    actor->z.fixed -= back;
+  puff->scaleX = Q16_ONE / 2;
+  puff->scaleY = Q16_ONE / 2;
+  // Up to 48 pixels behind the island, or up to 32 to the side.
+  if (((u32)Import_RandomNext() * 2 >> 16) != 0) {
+    distance = px(((u32)Import_RandomNext() * 48) >> 16);
+    puff->x.fixed -= distance / 2;
+    puff->z.fixed -= distance;
   } else {
-    value = (((u32)Import_RandomNext() << 5) >> 16) << 16;
-    actor->x.fixed += value;
-    value = (s32)value >> 1;
-    actor->z.fixed += value;
+    distance = px(((u32)Import_RandomNext() << 5) >> 16);
+    puff->x.fixed += distance;
+    puff->z.fixed += distance / 2;
   }
-  sprite->flags = 0;
-  sprite->image.priority = leader->sprite->image.priority;
-  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  actor->motionFlags = leader->motionFlags;
-  Actor_SetSpriteColor(actor, SPRITE_COLOR_BLUE_TINT);
-  Actor_SelectAnimation(actor, 2);
-  Actor_StartScript(actor, gIslandWakeScript);
+  puff->sprite->flags = 0;
+  puff->sprite->image.priority = island->sprite->image.priority;
+  puff->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  puff->motionFlags = island->motionFlags;
+  Actor_SetSpriteColor(puff, SPRITE_COLOR_BLUE_TINT);
+  Actor_SelectAnimation(puff, 2);
+  Actor_StartScript(puff, gIslandWakeScript);
 }
 
 /// Before the ending, the island Jenna and Kraden are adrift on drifts east
@@ -2744,7 +2719,7 @@ static void WorldMap_UpdateStormTimer(void) {
 static void WorldMap_CatchInStorm(s32 targetActorId) {
   s32 alreadyTraveling;
   struct Actor *actor;
-  struct Actor *record;
+  struct Actor *storm;
   s32 id;
 
   id = gMainRoutineWork.leaderActorId;
@@ -2755,9 +2730,9 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
     Actor_SetAttachedEffect(id,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
     Actor_SetAnimation(id, ANIM_LEADER_LOOK_AROUND);
-    record = Actor_Get(targetActorId);
-    if (record != 0) {
-      Actor_SetDestination(id, record->x.part.pixel, record->z.part.pixel);
+    storm = Actor_Get(targetActorId);
+    if (storm != 0) {
+      Actor_SetDestination(id, storm->x.part.pixel, storm->z.part.pixel);
     }
     Actor_WaitForMoveById(id);
     Sound_Play(SE_SANDSTORM);
@@ -2867,14 +2842,14 @@ static void WorldMap_UpdateTransitionBlend(void) {
 /// it moves the camera a pixel diagonally from the leader.
 static void WorldMap_JitterTransitionCamera(void) {
 
-  struct Actor *record;
+  struct Actor *actor;
   s32 sx;
   s32 sy;
   u32 mode;
 
-  record = Actor_Get(gMainRoutineWork.leaderActorId);
-  sx = record->x.part.pixel;
-  sy = record->z.part.pixel;
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  sx = actor->x.part.pixel;
+  sy = actor->z.part.pixel;
   if (gFrameCount % 3 == 0) {
     mode = (u32)(Random_Next() << 2) >> 16;
     switch (mode) {

@@ -1,6 +1,6 @@
 /// @file
 /// Legend, and the Bramble, Frost, Flame and Thunder Cards.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 
@@ -27,7 +27,7 @@
 /* VIEW(f189b14): tag struct Model as struct Model__f189b14; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:38301: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:55574: structure has no member
  * named `vertices'. */
 struct Model__f189b14 {
   s32 kind;
@@ -75,11 +75,6 @@ void Transform_ApplyYaw(s32 angle);
 void Transform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyUniformScale(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f189b14): routine Render_DrawModelList as void
- * Render_DrawModelList(struct Model__f189b14 *model); f188714 has void
- * Render_DrawModelList(struct Model *model). */
-extern void Render_DrawModelList__f189b14(struct Model__f189b14 *model) __asm__(
-    "Render_DrawModelList");
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);
@@ -270,7 +265,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyUniformScale(scale);
         SceneTransform_ApplyScale3(0x10000, 0x10000, 0x10000);
         Render_TransformVertices(Data_081991e0, vertices, 4);
-        Render_DrawModelList__f189b14(model);
+        Render_DrawModelList(model);
       }
 
       // Each sword's flash grows where it lands and fades over 16 frames.
@@ -296,7 +291,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
             Transform_ApplyRoll(frame << 9);
             SceneTransform_ApplyUniformScale(scale);
             Render_TransformVertices(Data_081991e0, vertices, 4);
-            Render_DrawModelList__f189b14(model);
+            Render_DrawModelList(model);
           }
         }
       }
@@ -323,7 +318,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
               0x8000, 0x10000,
               (Trig_Sin((frame + i * 8) << 9) / 8 + scale) * 2);
           Render_TransformVertices(Data_08199200, vertices, 4);
-          Render_DrawModelList__f189b14(model);
+          Render_DrawModelList(model);
         }
       }
       Heap_Release(model);
@@ -680,7 +675,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
       SceneTransform_ApplyUniformScale(scale);
       SceneTransform_ApplyScale3(0x10000, 0x20000, 0x10000);
       Render_TransformVertices(Data_081991e0, vertices, 4);
-      Render_DrawModelList__f189b14(model);
+      Render_DrawModelList(model);
       if (mode == CARD_BRAMBLE || mode == CARD_THUNDER) {
         SceneTransform_ApplyUniformScale(0x4000);
         Render_TransformVertices(Data_081991e0, vertices, 4);
@@ -761,7 +756,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
           SceneTransform_ApplyScale3(0x20000, 0x20000, 0x10000);
         }
         Render_TransformVertices(Data_081991c0, vertices, 4);
-        Render_DrawModelList__f189b14(model);
+        Render_DrawModelList(model);
       }
     }
     Heap_Release(model);

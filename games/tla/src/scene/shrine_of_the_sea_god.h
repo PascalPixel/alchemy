@@ -67,13 +67,24 @@ s32 GameFlag_Get(s32 flag);
 void GameFlag_Set(s32 flag);
 void GameFlag_Clear(s32 flag);
 void FieldMessage_Show(s32 message, s32 position);
-void Actor_SetSpritePriority(s32 actor, s32 variant);
+/* VIEW(shrine_header): routine Actor_SetSpritePriority as void
+ * Actor_SetSpritePriority(s32 actor, s32 variant); actor.h has another
+ * declaration. */
+void Actor_SetSpritePriority__shrine_header(s32 actor, s32 variant) __asm__(
+    "Actor_SetSpritePriority");
+#define Actor_SetSpritePriority Actor_SetSpritePriority__shrine_header
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
-void Actor_SetPositionAndResetMotion(struct ShrineOfTheSeaGodObject *object,
-                                     s32 x, s32 y, s32 z);
+/* VIEW(shrine_header): routine Actor_SetPositionAndResetMotion as void
+ * Actor_SetPositionAndResetMotion(struct ShrineOfTheSeaGodObject *object, s32
+ * x, s32 y, s32 z); actor.h has another declaration. */
+void Actor_SetPositionAndResetMotion__shrine_header(
+    struct ShrineOfTheSeaGodObject *object, s32 x, s32 y,
+    s32 z) __asm__("Actor_SetPositionAndResetMotion");
+#define Actor_SetPositionAndResetMotion                                        \
+  Actor_SetPositionAndResetMotion__shrine_header
 void Actor_SetModeById(u32 actorId, s32 animation);
 void Event_Start(void);
 void Event_End(void);

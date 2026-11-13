@@ -1,6 +1,6 @@
 /// @file
 /// The breaths, and the crescent slash of Human Hunt and Echo Cut.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 
@@ -46,7 +46,7 @@ struct ModelTexture__f18bc98 {
 /* VIEW(f18bc98): tag struct Model as struct Model__f18bc98; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:40081: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:57349: structure has no member
  * named `vertices'. */
 struct Model__f18bc98 {
   s32 kind;
@@ -107,11 +107,6 @@ void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void Transform_ApplyRoll(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f18bc98): routine Render_DrawModelList as void
- * Render_DrawModelList(struct Model__f18bc98 *model); f18ad40 has void
- * Render_DrawModelList(struct Model__f18ad40 *model). */
-extern void Render_DrawModelList__f18bc98(struct Model__f18bc98 *model) __asm__(
-    "Render_DrawModelList");
 void BattlePlayback_StartFar(s32 phase);
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
                               s32 frames);
@@ -427,7 +422,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
                 scale /= 2;
               SceneTransform_ApplyScale3(scale / 2, scale, scale / 2);
               Render_TransformVertices(gData_08199210, vertices, 4);
-              Render_DrawModelList__f18bc98(model);
+              Render_DrawModelList(model);
             }
           }
         }
@@ -475,7 +470,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
                 Transform_ApplyPitch(0x4000);
                 Transform_ApplyYaw(frame << 10);
                 Render_TransformVertices(Data_08198cac, vertices, 32);
-                Render_DrawModelList__f18bc98(model);
+                Render_DrawModelList(model);
               }
             }
           }
@@ -506,7 +501,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
           Transform_ApplyRoll(angle);
           SceneTransform_ApplyScale3(0x40000, 0x20000, 0x10000);
           Render_TransformVertices(Data_081991c0, vertices, 4);
-          Render_DrawModelList__f18bc98(model);
+          Render_DrawModelList(model);
         }
         Heap_Release(model);
         Heap_Release(vertices);

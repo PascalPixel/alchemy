@@ -1,11 +1,9 @@
 /// @file
 /// Window sprites, portraits and the window spans.
-// Part of screens.c.
+// Part of window.c.
 
 #include "../screens_internal.h"
 #include "module/window/screens.h"
-
-s32 Portrait_GetForSpeaker(s32 key);
 
 /// Takes a free window output, writes its OAM attributes at the window's
 /// position offset by (offsetX, offsetY) pixels and appends it to the window's

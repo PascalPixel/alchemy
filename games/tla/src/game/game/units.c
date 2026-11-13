@@ -613,12 +613,7 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   }
 }
 
-/* VIEW(game): variable gData_02001000 as u8 gData_02001000[]; module/tla.h has
- * s8 gData_02001000[]. */
-extern u8 gData_02001000__game[] __asm__("gData_02001000");
-/* VIEW(game): variable gOwnerStates as u8 gOwnerStates[]; module/tla.h has
- * struct BattleUnit gOwnerStates[]. */
-extern u8 gOwnerStates__game[] __asm__("gOwnerStates");
+extern s8 gData_02001000[];
 #ifndef MODERN
 // A current GCC refuses the volatile redeclaration and reads frame.h's.
 extern volatile u8 gAutoSleepEnabled;
@@ -639,7 +634,7 @@ void MainRoutineWork_InitializeDefaults(void) {
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 184);
   zero = 0;
 #if TLA_PATCH_1
-  START_DMA(&zero, gData_02001000__game,
+  START_DMA(&zero, gData_02001000,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 1992);
   WaitDma(DMA3);
 #else
@@ -650,7 +645,7 @@ void MainRoutineWork_InitializeDefaults(void) {
     register u32 held asm("r3") = (u32)DMA3;
     struct DmaRegisters volatile *channel;
 
-    Dma_Set((const void *)&zero, gData_02001000__game,
+    Dma_Set((const void *)&zero, gData_02001000,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 1992,
             (volatile u32 *)held);
     channel = (struct DmaRegisters volatile *)held;
@@ -662,9 +657,9 @@ void MainRoutineWork_InitializeDefaults(void) {
   zero = 0;
   START_DMA(&zero, gGameFlagBytes,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 128);
-  gData_02001000__game[4] = 0xff;
+  gData_02001000[4] = 0xff;
   zero = 0;
-  START_DMA(&zero, gOwnerStates__game,
+  START_DMA(&zero, gOwnerStates,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 664);
   Party_InitializeCharacters();
   gMainRoutineWork.keys230 = 1;
@@ -730,11 +725,11 @@ void MainRoutineWork_InitializeDefaults(void) {
 
   for (i = 0; i < 32; i++) {
     for (j = 0; j < 8; j++)
-      gData_02001000__game[0x11b8 + i * 12 + j] = (Random16() * 5) >> 16;
+      gData_02001000[0x11b8 + i * 12 + j] = (Random16() * 5) >> 16;
   }
   for (i = 0; i < 4; i++) {
     for (j = 0; j < 5; j++)
-      gData_02001000__game[0x1338 + i * 5 + j] = Data_080b1f2c[i][j];
+      gData_02001000[0x1338 + i * 5 + j] = Data_080b1f2c[i][j];
   }
 }
 
@@ -1161,7 +1156,7 @@ void Party_AddIsaacsParty(void) {
       djinni = missing[(Random16() * count) >> 16] + 1;
     else
       djinni = 0;
-    gData_02001000__game[0x1950 + i] = djinni;
+    gData_02001000[0x1950 + i] = djinni;
   }
   Party_GiveItemIfMissing(202, 3);
   Party_GiveItemIfMissing(201, 3);
@@ -1187,7 +1182,13 @@ void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn) {
   GameFlag_SetBit__game(flag);
 }
 
-extern const s16 Data_080b1290[4][7];
+/* VIEW(game): variable Data_080b1290 as const s16 Data_080b1290[4][7];
+ * game/experience_table has const u16 Data_080b1290[4][7] = {; tried as the
+ * definition's extern const u16 Data_080b1290[4][7], it does not compile in
+ * tla-ja: games/tla/src/game/game.c:1266: `Data_080b1290' undeclared (first use
+ * in this function). */
+extern const s16 Data_080b1290__game[4][7] __asm__("Data_080b1290");
+#define Data_080b1290 Data_080b1290__game
 
 /// Unless flag 0x800 is set, sets the party aside, makes the first four owners
 /// the party, gives them their first djinn, then hands out 16 random djinn

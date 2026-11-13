@@ -1,7 +1,7 @@
 /// @file
 /// Two lists the game's rules read, and each item's rare item counter number
 /// plus one, by item id.
-// Part of artifact_slots.c.
+// Part of game.c.
 
 #include "../artifact_slots_internal.h"
 

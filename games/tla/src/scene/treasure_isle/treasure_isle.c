@@ -1,4 +1,18 @@
 /// @file
+/// Treasure Isle's copy of the field effect spawner.
+
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#define EFFECT_SPRITE_PRIORITY
+#include "../../field/field_effect/spawn.c"
+
+#undef EFFECT_SPAWN
+
+// ---- scene/treasure_isle/treasure_isle.c ----
+
 /// Treasure Isle, the dungeon in the north-east of the world: buttons that
 /// raise spiky rocks Grind breaks, pillars Move pushes onto switches, rocks
 /// Lift raises, Gale the Jupiter Djinni, a Venus Djinni, and the guardian of
@@ -35,7 +49,6 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "main_routine_work.h"
-#include "scene_ids.h"
 
 const u8 *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -69,9 +82,6 @@ void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index) {
 }
 
 #include "field_effect.h"
-
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 /// A spiky rock rises out of the ground at a listed cell: the camera goes to
 /// it, the ground shakes and dust bursts, and TreasureIsle_SetSpikyRock leaves
@@ -392,8 +402,8 @@ void TreasureIsle_CycleWaterColors(void) {
 /* VIEW(s0cf4): tag struct TreasureIsleEventWork as struct
  * TreasureIsleEventWork__s0cf4; treasure_isle.c has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/treasure_isle.c:453: structure has no member
- * named `route'. */
+ * tla-ja: games/tla/src/scene/treasure_isle/treasure_isle.c:415: structure has
+ * no member named `route'. */
 struct TreasureIsleEventWork__s0cf4 {
   u8 unk000[0x1ac];
   s32 route;
@@ -488,8 +498,6 @@ void TreasureIsle_JumpForward(void) { Field_TryJumpForward(); }
 #define RUSTY_SWORD_MESSAGE MSGNO(MsgRustySword2)
 #endif
 
-void TreasureIsle_PressRoom3Button(void);
-void TreasureIsle_RaiseLastSpikyRock(void);
 void TreasureIsle_LiftSecondRock(void);
 void TreasureIsle_LiftThirdRock(void);
 
@@ -518,10 +526,10 @@ u32 gTreasureIsle_RockDust[] = {
     0, 0, 0, 1, 38, 17,
 };
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gFieldEffect_ShortScript,
-    (s32)gFieldEffect_MediumScript,
-    (s32)gFieldEffect_LongScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 struct TreasureIsleCell gTreasureIsle_Room2SpikyRocks[] = {

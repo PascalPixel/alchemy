@@ -51,12 +51,12 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   position[0] = djinni->x;
   position[1] = djinni->y;
   position[2] = djinni->z;
-  Camera_WorldToScreen__mars_join(position);
+  Camera_WorldToScreen(position);
 
   slot = (u8 *)effectSlots + 80;
   remaining = 23;
   do {
-    FieldParticle_Initialize__mars_join(slot, 672, position[0], position[2]);
+    FieldParticle_Initialize(slot, 672, position[0], position[2]);
     FieldParticle_SetCallback(slot, (void *)FieldEffect_UpdateRadialSpread);
     FieldParticle_SetActorMode(slot, 7);
     Actor_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
@@ -161,10 +161,9 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
       struct EffectVector *p = &position;
 
       position.z = source->z;
-      Camera_WorldToScreen__mars_join(p);
+      Camera_WorldToScreen(p);
     }
-    Vector_AddPolarOffset__mars_join(Random16() * 6 + 0x20000, Random16(),
-                                     &position);
+    Vector_AddPolarOffset(Random16() * 6 + 0x20000, Random16(), &position);
 
     {
       s32 accel = 0x30000;
@@ -185,7 +184,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
     if (FieldParticle_HasPendingTarget(effect) == 0) {
       position.x = effect->x;
       position.z = effect->z;
-      Vector_AddPolarOffset__mars_join(0xc0000, Random16(), &position);
+      Vector_AddPolarOffset(0xc0000, Random16(), &position);
       effect->targetX = position.x;
       effect->targetZ = position.z;
       effect->stopAtTarget = 0;

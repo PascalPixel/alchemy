@@ -86,6 +86,8 @@
 #include "sounds.h"
 #include "sound_driver_symbols.h"
 #include "item_ids.h"
+#include "speaker.h"
+#include "shared/walk_into_leader.h"
 
 /// The rooms of Sol and Luna show their plain colours (PALETTE_TINT_NONE), so a
 /// return after a battle keeps them.
@@ -323,9 +325,8 @@ static void SolSanctumLunaSolRooms_TintPassageBetweenRooms(void) {
 /// CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_BLACK_BACKDROP turns the backdrop
 /// black.
 static void SolSanctumLunaSolRooms_ClearBackdropColor(void) {
-  s32 black = 0;
   u16 *backdropColor = (u16 *)&PLTT_BACKDROP;
-  *backdropColor = black;
+  *backdropColor = 0;
 }
 
 /// Draws the light of each lit quarter of the Luna room's picture, from four
@@ -1364,7 +1365,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     frame = 0;
     do {
       actor->y.fixed += px(1) / 10;
-      sprite->scale += -Q16_ONE / 64;
+      sprite->scale -= Q16_ONE / 64;
       wait(1);
       frame++;
     } while (frame != 60);
@@ -1402,7 +1403,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     frame = 0;
     do {
       actor->y.fixed += px(1) / 10;
-      sprite->scale += -Q16_ONE / 64;
+      sprite->scale -= Q16_ONE / 64;
       wait(1);
       frame++;
     } while (frame != 60);
@@ -1651,10 +1652,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   wait(1);
   Actor_SetPosition(ACTOR_GARET, 280, 134);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
-  // This event reads its heap slots from one address: HEAP_SLOT_PALETTE_FADE
-  // is reached from HEAP_SLOT_FIELD's slot. As gFieldWork and
-  // gPaletteFadeWork they would load two.
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 1;
+  gFieldWork->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
@@ -1716,17 +1714,8 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_GARET, 10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
-  // Through its heap slot rather than gPaletteFadeWork, the spelling this
-  // site matched with; the other is not measured.
-  palette = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
+  Scene_WalkIntoLeader(ACTOR_GARET);
+  palette = gPaletteFadeWork;
   palette->target[0] = 0;
   palette->target[1] = 0;
   palette->target[2] = 0;
@@ -1735,9 +1724,9 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   palette->step = 1;
   palette->padding2a03 = 1;
   Io_Write16(0, &PLTT_BACKDROP);
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
   Event_End();
 }
 

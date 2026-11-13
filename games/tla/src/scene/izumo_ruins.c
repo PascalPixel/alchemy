@@ -9,6 +9,15 @@
 ///
 /// The pillars, the rubble and the effect spawner are in izumo_ruins/, which
 /// shared field effect objects link between.
+///
+/// It opens on its copy of the effect spawner, FieldEffect_Spawn.
+
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../../../../games/tla/src/field/field_effect/spawn.c"
 
 #include "flags.h"
 #include "shared/actors.h"
@@ -299,10 +308,10 @@ s16 gIzumoRuins_SecondRoomMovablePillars[] = {
     10, 11, 12, 13, 14, 15, -1, 0,
 };
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gFieldEffect_ShortScript,
-    (s32)gFieldEffect_MediumScript,
-    (s32)gFieldEffect_LongScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 s16 gIzumoRuins_FirstRoomPoundPillars[] = {

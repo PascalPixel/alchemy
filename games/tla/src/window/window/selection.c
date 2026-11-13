@@ -310,6 +310,12 @@ void SelectionMenu_StartDrawing(void) {
 /// Stops drawing the selection screen.
 void SelectionMenu_StopDrawing(void) { Task_Remove(SelectionMenu_Draw); }
 
+/* VIEW(window): tag struct EffectPosition as struct EffectPosition__window;
+ * field/effect_step.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/include/field/effect_step.h:43: redefinition of `struct
+ * EffectPosition'. */
+#define EffectPosition EffectPosition__window
 struct EffectPosition {
   s32 x;
   s32 y;
@@ -884,7 +890,10 @@ UNUSED void Menu_MoveSelectionForward(struct SelectionScrollScreen *screen) {
 }
 
 extern struct SelectionScrollScreen *gResQueueWork;
-extern u32 gKeyState;
+/* VIEW(window): variable gKeyState as u32 gKeyState; module/window/window.h has
+ * s32 gKeyState; not tried: gKeyState's declaration holds a FAKEMATCH tag. */
+extern u32 gKeyState__window __asm__("gKeyState");
+#define gKeyState gKeyState__window
 extern volatile u32 gKeysRepeat;
 
 void Menu_MoveSelectionBackward(struct SelectionScrollScreen *screen) {
@@ -1521,6 +1530,12 @@ void MenuArrow_NoOpCallback3(void) {}
 
 void MenuArrow_NoOpCallback4(void) {}
 
+/* VIEW(window): tag struct MenuSprite as struct MenuSprite__window;
+ * window/menu_list.h has another definition; tried with the definition the rest
+ * of the object has, it does not compile in tla-ja:
+ * games/tla/include/window/menu_list.h:35: redefinition of `struct MenuSprite'.
+ */
+#define MenuSprite MenuSprite__window
 struct MenuSprite {
   struct MenuSprite *next;
   union {

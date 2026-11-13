@@ -554,16 +554,15 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
 /// so the door stays open. Removes Kraden, Garet, Jenna, Saturos and Menardi.
 static void ValeKradensCottage_KradenSetsOff(void) {
   struct Actor *actor;
-  s32 facing = FACING_NORTH;
 
   Event_Start();
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetPosition(ACTOR_GARET, 216, 264);
   Actor_SetPosition(ACTOR_JENNA, 248, 264);
   actor = Actor_Get(ACTOR_GARET);
-  actor->facing = facing;
+  actor->facing = FACING_NORTH;
   actor = Actor_Get(ACTOR_JENNA);
-  actor->facing = facing;
+  actor->facing = FACING_NORTH;
   MapGrid_AnimateCells(gValeKradensCottage_DoorOpens, 43, 8);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -841,8 +840,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
 
   actor = Actor_Get(ACTOR_SATUROS);
   actor->steeringFlags |= ACTOR_FACES_MOTION;
-  actor = Actor_Get(ACTOR_MENARDI);
-  actor->steeringFlags = ACTOR_FACES_MOTION | actor->steeringFlags;
+  Actor_Get(ACTOR_MENARDI)->steeringFlags |= ACTOR_FACES_MOTION;
 
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_STILL);
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_STILL);
@@ -1008,20 +1006,12 @@ s32 ValeKradensCottage_Initialize(void) {
     Actor_SetPosition(ACTOR_SATUROS, 0, 0);
     Actor_SetPosition(ACTOR_MENARDI, 0, 0);
     Actor_SetPosition(ACTOR_JENNA, 0, 0);
-    {
-      struct Actor *actor = Actor_Get(ACTOR_FENCE_BOULDER);
-
-      actor->collisionFlags = 8 | actor->collisionFlags;
-    }
+    Actor_Get(ACTOR_FENCE_BOULDER)->collisionFlags |= ACTOR_NOT_TARGETED;
     Actor_SetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 83, 265);
     Actor_WalkToAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 83, 273);
     Actor_SetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, 5);
     actor = Actor_Get(ACTOR_ROCKSLIDE_SURVIVOR);
-    {
-      s32 collisionRadius = 12;
-
-      actor->radius = collisionRadius;
-    }
+    actor->radius = 12;
     Actor_SetScript(ACTOR_ROCKSLIDE_SURVIVOR,
                     gValeKradensCottage_RockslideSurvivorSquashes);
     if (GameFlag_Get(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) != 0) {

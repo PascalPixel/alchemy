@@ -54,19 +54,21 @@ static void Title_LoadBackground(void);
 /// entry/title.s.
 ///
 /// They hold one entrance row, the exit, and no actor placements or triggers.
-u8 *Title_GetEntrances(void) { return (u8 *)gTitleEntrances; }
+const struct SceneEntrance *Title_GetEntrances(void) { return gTitleEntrances; }
 
 /// The exit regions entry, which is empty because the title has no exit
 /// boxes.
-s32 Scene_GetExitRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-u8 *Title_GetExits(void) { return (u8 *)gTitleExits; }
+const u32 *Title_GetExits(void) { return gTitleExits; }
 
 /// The title overlay has no actors.
-u8 *Title_GetActorPlacements(void) { return (u8 *)gTitleActorPlacements; }
+const struct ActorPlacement *Title_GetActorPlacements(void) {
+  return gTitleActorPlacements;
+}
 
 /// The title overlay has no triggers.
-u8 *Title_GetTriggers(void) { return (u8 *)gTitleTriggers; }
+const struct Trigger *Title_GetTriggers(void) { return gTitleTriggers; }
 
 /// The overlay's initialize entry, which plays what the entrance asks for.
 ///
@@ -363,7 +365,6 @@ static void Title_LoadBackground(void) {
   u32 screenY;
   u16 tileIndex;
   struct ScrollPair *bgScroll;
-  s32 blankTile = LOGO_BLANK_TILE;
 
   resourceId = (s32)&ResourceId_GoldenSunLogo;
   ScreenFade_ToBlack(0);
@@ -381,8 +382,8 @@ static void Title_LoadBackground(void) {
   for (screenY = 0; screenY <= 19; screenY++) {
     for (screenX = 0; screenX <= 29; screenX++)
       *tilemap++ = tileIndex++;
-    *tilemap++ = blankTile;
-    *tilemap++ = blankTile;
+    *tilemap++ = LOGO_BLANK_TILE;
+    *tilemap++ = LOGO_BLANK_TILE;
   }
   // Reset all four background scroll pairs before enabling BG2 and sprites.
   bgScroll = (struct ScrollPair *)gBgScroll;

@@ -1,6 +1,6 @@
 /// @file
 /// The Sleep, Baffle, Death and Sword Cards.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 
@@ -48,7 +48,7 @@ struct ModelTexture__f18ad40 {
 /* VIEW(f18ad40): tag struct Model as struct Model__f18ad40; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:39213: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:56486: structure has no member
  * named `vertices'. */
 struct Model__f18ad40 {
   s32 kind;
@@ -106,11 +106,6 @@ void Transform_ApplyYaw(s32 angle);
 void Transform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyUniformScale(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f18ad40): routine Render_DrawModelList as void
- * Render_DrawModelList(struct Model__f18ad40 *model); f188714 has void
- * Render_DrawModelList(struct Model__f188714 *model). */
-extern void Render_DrawModelList__f18ad40(struct Model__f18ad40 *model) __asm__(
-    "Render_DrawModelList");
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);
@@ -366,7 +361,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
       SceneTransform_ApplyUniformScale(scale);
       SceneTransform_ApplyScale3(0x10000, 0x20000, 0x10000);
       Render_TransformVertices(Data_081991e0, vertices, 4);
-      Render_DrawModelList__f18ad40(model);
+      Render_DrawModelList(model);
       Heap_Release(model);
       Heap_Release(vertices);
     }

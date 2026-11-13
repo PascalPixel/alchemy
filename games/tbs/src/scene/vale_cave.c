@@ -577,32 +577,17 @@ static void ValeCave_KiteRunsBehindLedge(void) {
 /// is caught, once FLAG_VALE_CAVE_KITE_BEHIND_LEDGE is set. Each behavior sends
 /// Kite to its row of gValeCave_WalkTargets at the leader's speed.
 static void ValeCave_KiteKeepsAway(void) {
-  struct Actor *djinni;
-  struct Actor *leader;
-  s32 routeIndex;
-  const u8 *walkTargetBytes;
-  s32 targetZOffset;
-  struct FieldWork *work;
+  s32 route;
 
-  work = gFieldWork;
-  if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0) {
-    if (gMainRoutineWork.haltedActor != ACTOR_KITE) {
-      // Preserve the speed reads before resolving this route point.
-      routeIndex = work->stepTrigger;
-      djinni = Actor_Get(ACTOR_KITE);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      djinni->speedLimit = leader->speedLimit;
-      djinni = Actor_Get(ACTOR_KITE);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      djinni->acceleration = leader->acceleration;
-      routeIndex -= CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE;
-      // X/Z pairs occupy eight bytes.
-      walkTargetBytes = (const u8 *)gValeCave_WalkTargets;
-      routeIndex <<= 3;
-      targetZOffset = routeIndex + sizeof(s32);
-      Actor_WalkTo(ACTOR_KITE, *(const s32 *)(walkTargetBytes + routeIndex),
-                   *(const s32 *)(walkTargetBytes + targetZOffset));
-    }
+  if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0 &&
+      gMainRoutineWork.haltedActor != ACTOR_KITE) {
+    route = gFieldWork->stepTrigger - CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE;
+    Actor_Get(ACTOR_KITE)->speedLimit =
+        Actor_Get(ACTOR_PARTY_LEADER)->speedLimit;
+    Actor_Get(ACTOR_KITE)->acceleration =
+        Actor_Get(ACTOR_PARTY_LEADER)->acceleration;
+    Actor_WalkTo(ACTOR_KITE, gValeCave_WalkTargets[route][0],
+                 gValeCave_WalkTargets[route][1]);
   }
 }
 
@@ -645,11 +630,9 @@ static void ValeCave_PushLogOverEdge(void) {
       Actor_SetDestinationOffset(probe.actorSlot, -6, 0);
       ValeCave_WaitForActorLanding(Actor_Get(probe.actorSlot));
       Actor_SetAnimation(probe.actorSlot, 8);
-      {
-        struct Actor *movedLog = Actor_Get(probe.actorSlot);
+      movedLog = Actor_Get(probe.actorSlot);
 
-        movedLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      }
+      movedLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       // The cells it held on the ledge, and its landing, become open floor.
       PushedActor_FillGridAttributeRectangle(0, FIELD_CELL(probe.position.x),
                                              (FIELD_CELL(probe.position.z) - 2),
@@ -674,7 +657,6 @@ static void ValeCave_PushLogOverEdge(void) {
 static void ValeCave_PushLogOffLedge(void) {
 
   struct Actor *pushedLog;
-  s32 stationaryMotion = 0;
 
   Event_Start();
   Event_Wait(10);
@@ -687,9 +669,9 @@ static void ValeCave_PushLogOffLedge(void) {
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(ACTOR_WEST_LOG, 0.5, 0.1);
   Actor_SetAnimation(ACTOR_WEST_LOG, 2);
-  Actor_Get(ACTOR_WEST_LOG)->motionFlags = stationaryMotion;
+  Actor_Get(ACTOR_WEST_LOG)->motionFlags = 0;
   pushedLog = Actor_Get(ACTOR_WEST_LOG);
-  pushedLog->bounce = stationaryMotion;
+  pushedLog->bounce = 0;
   Actor_SetDestinationOffset(ACTOR_WEST_LOG, 12, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -718,6 +700,7 @@ static void ValeCave_PushLogOffLedge(void) {
 /// FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW, and then opens the cells above it.
 static void ValeCave_PushLogNorth(void) {
   struct PushedActorProbe probe;
+  struct Actor *slidingLog;
 
   Event_Start();
   if (PushedActor_FindClearPosition(&probe) != 0) {
@@ -729,25 +712,17 @@ static void ValeCave_PushLogNorth(void) {
     Event_Wait(45);
     Sound_Play(SE_LOG_FALL);
     Actor_SetAnimation(ACTOR_SOUTH_LOG, 8);
-    {
-      struct Actor *slidingLog = Actor_Get(ACTOR_SOUTH_LOG);
-      s32 clearedRows = 2;
-      s32 emptyAttributes = 0;
+    slidingLog = Actor_Get(ACTOR_SOUTH_LOG);
 
-      slidingLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      PushedActor_FillGridAttributeRectangle(0, 13,
-                                             (FIELD_CELL(probe.position.z)) - 1,
-                                             4, clearedRows, emptyAttributes);
-    }
+    slidingLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    PushedActor_FillGridAttributeRectangle(
+        0, 13, (FIELD_CELL(probe.position.z)) - 1, 4, 2, 0);
     if (FIELD_CELL(probe.position.z) == 20) {
       GameFlag_Set(FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW);
     } else {
       GameFlag_Set(FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW);
-      {
-
-        MapGrid_CopyCellAttributes(14, 17, 2, 1, 14, 16);
-        MapGrid_CopyCellAttributes(14, 13, 1, 1, 14, 15);
-      }
+      MapGrid_CopyCellAttributes(14, 17, 2, 1, 14, 16);
+      MapGrid_CopyCellAttributes(14, 13, 1, 1, 14, 15);
     }
   }
   Event_End();
@@ -778,12 +753,11 @@ const struct Trigger *ValeCave_GetTriggers(void) {
 /// FLAG_SHOW_AREA_NAME, so the area name is not shown again. The two rooms of
 /// Vale Cave open with the window transition.
 s32 ValeCave_Initialize(void) {
-  s32 *request = &gFieldWork->transition;
 
-  *request =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineWork.next == (s32)&SceneId_ValeCaveMouth) {
-    *request = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     wait(1);
     Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_FIRST_LOG, 3);
     Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_SECOND_LOG, 3);
@@ -993,7 +967,7 @@ static void ValeCave_TouchRidingLog(void) {
 
 /// The twelve points round the far side of Kite's ledge, x then z in pixels,
 /// one for each cell behavior from CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE on.
-s32 gValeCave_WalkTargets[] = {
+s32 gValeCave_WalkTargets[][2] = {
     760, 296,
     760, 280,
     776, 280,

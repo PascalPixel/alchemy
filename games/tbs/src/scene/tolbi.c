@@ -148,17 +148,13 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
 // the party talks to someone or Mind Read shows thoughts (the range widens to
 // 26 pixels), the child being talked to stops whatever the direction.
 static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
-  u8 **workAreas = gWindowWork;
-  struct WindowWork *ui = (struct WindowWork *)workAreas[0];
-  struct FieldWork *work =
-      (struct FieldWork *)workAreas[HEAP_SLOT_FIELD - HEAP_SLOT_WINDOW];
-  u16 *kidFlags = (u16 *)&updated->timer;
+  struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
   s32 force = 0;
   s32 range = 18;
   struct Actor *other;
   struct Actor *leader;
 
-  if ((*kidFlags & KID_CHASES_YOUNGER) != 0) {
+  if ((updated->timer & KID_CHASES_YOUNGER) != 0) {
     other = Actor_Get(ACTOR_TOLBI_YOUNGER_SISTER);
   } else {
     other = Actor_Get(ACTOR_TOLBI_OLDER_BROTHER);
@@ -169,9 +165,9 @@ static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if ((s16)work->talk != 0 || ui->mindRead != 0) {
+  if (gFieldWork->talk != 0 || window->mindRead != 0) {
     range = 26;
-    if ((*kidFlags & KID_TALKING) != 0) {
+    if ((updated->timer & KID_TALKING) != 0) {
       force = 1;
     }
   }
@@ -483,7 +479,6 @@ static void Tolbi_CopyLeaderPriority(struct Actor *updated) {
 s32 Tolbi_ApplyEntryState(s32 unused) {
   struct Actor *actor;
   void (*kidUpdate)(struct Actor *);
-  s32 clearFlags = 0;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
@@ -497,7 +492,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   Actor_SetPosition(ACTOR_TOLBI_YOUNGER_SISTER, 368, 320);
   Actor_SetScript(ACTOR_TOLBI_YOUNGER_SISTER, gTolbiYoungerSisterRun);
   actor = Actor_Get(ACTOR_TOLBI_YOUNGER_SISTER);
-  actor->timer = clearFlags;
+  actor->timer = 0;
   actor->update = kidUpdate;
   actor = Actor_Get(ACTOR_TOLBI_OLD_MAN);
   actor->update = Tolbi_CopyLeaderPriority;
@@ -575,9 +570,8 @@ static void Tolbi_EnterSpring(void) {
 
 /// Leaves by the exit numbered as the cell behavior the party walked into.
 static void Tolbi_RequestTouchedExit(void) {
-  s16 *trigger = &gFieldWork->stepTrigger;
 
-  Import_EventSetExitRequest(*trigger);
+  Import_EventSetExitRequest(gFieldWork->stepTrigger);
 }
 
 /// Two soldiers searching for the missing Babi stop the party and show his
@@ -709,9 +703,7 @@ static void Tolbi_FreezePuddle(void) {
     puddle->motionFlags = 0;
   }
   Actor_SetAnimation(ACTOR_TOLBI_PUDDLE, PUDDLE_ANIMATION_PILLAR);
-  {
-    MapGrid_CopyCellAttributes(36, 16, 1, 1, 34, 16);
-  }
+  MapGrid_CopyCellAttributes(36, 16, 1, 1, 34, 16);
   GameFlag_Set(FLAG_TOLBI_PUDDLE_FROZEN);
 }
 

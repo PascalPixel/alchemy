@@ -1307,9 +1307,9 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
     Sanctum_SpawnActorSpark(ACTOR_WISE_ONE);
     Event_Wait(4);
     wiseOne = Actor_Get(ACTOR_WISE_ONE);
-    wiseOne->scaleX += -Q16_ONE / 100;
+    wiseOne->scaleX -= Q16_ONE / 100;
     wiseOne = Actor_Get(ACTOR_WISE_ONE);
-    wiseOne->scaleY += -Q16_ONE / 100;
+    wiseOne->scaleY -= Q16_ONE / 100;
   }
   Sound_Play(SE_STOP_ACTION_SE);
   Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_NORMAL);
@@ -1641,8 +1641,7 @@ static void Sanctum_UpdateHealerAfterimage(struct Actor *actor) {
 /// Advances an effect around its watched actor on an elliptical path.
 static void Sanctum_UpdateOrbitingEffect(struct Actor *effect) {
   struct Actor *anchor = effect->watchedActor;
-  u16 *angle = &effect->timer;
-  u16 orbitAngle = *angle;
+  u16 orbitAngle = effect->timer;
   s32 x;
   s32 z;
   s32 currentX;
@@ -1656,7 +1655,7 @@ static void Sanctum_UpdateOrbitingEffect(struct Actor *effect) {
   effect->targetZ = z;
   effect->targetX = currentX;
 
-  *angle = (*angle + effect->userValue);
+  effect->timer += effect->userValue;
 }
 
 /// Creates an orbiting effect with the requested angular step.
@@ -1675,17 +1674,11 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
     if (effect != 0) {
       sprite = effect->sprite;
       Actor_StartScript(effect, gSanctum_OwnerEffectScript);
-      {
-
-        effect->motionFlags = 0;
-        effect->timer = 0;
-      }
+      effect->motionFlags = 0;
+      effect->timer = 0;
       effect->userValue = orbitStep;
       effect->update = Sanctum_UpdateOrbitingEffect;
-      {
-        u16 clearFlags = 0;
-        sprite->flags = clearFlags;
-      }
+      sprite->flags = 0;
       sourceSprite = center->sprite;
       effect->watchedActor = center;
       sprite->image.priority = sourceSprite->image.priority;
@@ -2057,7 +2050,7 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   randomOffset = Math_RemainderUnsigned(Import_RandomNext(), 20);
   x = actor->x.fixed;
   x += randomOffset << 16;
-  x += -px(10);
+  x -= px(10);
   spark = FieldActor_Create(SPRITE_GLINT, x,
                             actor->y.fixed +
                                 ((Import_RandomNext() & 15) << 16) + -px(8),
@@ -2076,12 +2069,8 @@ static void Sanctum_SpawnActorSpark(s32 id) {
 /// Copies two blocks of map grid cells for the quest's visits, the cell
 /// pictures of one and the cell behaviors of the other.
 static void Sanctum_RestoreQuestFloor(void) {
-  {
-    MapGrid_CopyCellsTo(0, 64, 11, 68, 3, 2);
-  }
-  {
-    MapGrid_CopyCellAttributes(11, 10, 3, 2, 11, 8);
-  }
+  MapGrid_CopyCellsTo(0, 64, 11, 68, 3, 2);
+  MapGrid_CopyCellAttributes(11, 10, 3, 2, 11, 8);
   wait(1);
 }
 

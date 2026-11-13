@@ -1,6 +1,6 @@
 /// @file
 /// Event commands: waits, received items, questions and destinations.
-// Part of event_commands.c.
+// Part of field_sequence.c.
 
 #include "../event_commands_internal.h"
 #include "flag_call.h"
@@ -398,7 +398,10 @@ s32 Event_PickUpItem(s32 actor, s32 item, s32 flag) {
 
 /* VIEW(event_commands): routine Unit_LearnPsynergyFar as void
  * Unit_LearnPsynergyFar(void); gamepak/far_call/game.h has void
- * Unit_LearnPsynergyFar(s32 owner, s32 action). */
+ * Unit_LearnPsynergyFar(s32 owner, s32 action); tried as the 2 declarations'
+ * void Unit_LearnPsynergyFar(void), it does not compile in tla-ja:
+ * games/tla/src/field/field_sequence.c:6871: conflicting types for
+ * `Unit_LearnPsynergyFar'. */
 extern void
 Unit_LearnPsynergyFar__event_commands(void) __asm__("Unit_LearnPsynergyFar");
 

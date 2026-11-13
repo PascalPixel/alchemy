@@ -426,12 +426,11 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   u32 sparkIndex;
   s32 angle;
   s32 arrivalSeen;
+  s32 alpha;
 
   Io_Write16(BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND, &REG_BLDCNT);
-  {
-    s32 alpha = BLEND_ALPHA(16, 16);
-    REG_BLDALPHA = alpha;
-  }
+  alpha = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = alpha;
   // Restore persistent lighting and the Retreat destination first.
   MercuryLighthouse_RestoreLights(
       CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER,

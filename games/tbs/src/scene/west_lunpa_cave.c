@@ -64,6 +64,7 @@
 #include "west_lunpa_cave.h"
 #include "text/msg_ids.h"
 #include "fixed_math.h"
+#include "shared/walk_into_leader.h"
 
 /// The gate's puddle is frozen into a pillar, propping the gate open.
 /// ★ Named from what the player sees: a small blue puddle beneath the green
@@ -941,14 +942,7 @@ static void Party_StaysBehind(void) {
 
   // Merge the companions back into the leader and restore player camera
   // control.
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
@@ -957,13 +951,7 @@ static void Party_StaysBehind(void) {
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
-  Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_MIA);
-  Actor_SetPosition(ACTOR_MIA, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_MIA);
   Event_Wait(30);
   FieldCamera_MoveToActorById(ACTOR_PARTY_LEADER, 1);
   FieldCamera_WaitForArrival();
@@ -1031,14 +1019,7 @@ static void Party_RidesWagon(void) {
   Actor_SetPosition(ACTOR_HAMMET, 0, 0);
   Actor_SetPosition(ACTOR_BUNZA, 0, 0);
 
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
@@ -1047,13 +1028,7 @@ static void Party_RidesWagon(void) {
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
-  Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_MIA);
-  Actor_SetPosition(ACTOR_MIA, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_MIA);
   Event_Wait(30);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, -16, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);

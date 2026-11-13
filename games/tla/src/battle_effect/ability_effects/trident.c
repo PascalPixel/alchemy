@@ -1,7 +1,7 @@
 /// @file
 /// Trident, the leaping strikes of Planet Diver and Planetary, and Meteor
 /// Blow's palette DMA.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

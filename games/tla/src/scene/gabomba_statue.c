@@ -24,9 +24,7 @@ extern u8 Data_0202c001[];
 /* VIEW(gabomba_statue): routine Actor_SelectAnimation as void
  * Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
  * module/scene/scene.h has void Actor_SelectAnimation(struct Actor *object, s32
- * mode); tried as the rest of the object declares it, Func_020006ac moves: 3 of
- * 62 instructions, Func_02001a8c moves: 1 of 19 instructions, Func_020020b0
- * moves: 1 of 26 instructions, 1 more in tla-ja. */
+ * mode); not tried: Actor_SelectAnimation's bound declaration was not found. */
 extern void
 Func_02005624__gabomba_statue(struct FieldEffect *effect,
                               s32 mode) __asm__("Actor_SelectAnimation");
@@ -150,12 +148,9 @@ s32 Func_0200028c(struct Wanderer *actor) {
 #include "lib.h"
 #include "menu.h"
 #include "sound.h"
-#include "system.h"
 #include "scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
-
-#include "scene_ids.h"
 
 extern const u8 gData_02005dfc[];
 extern const u8 gData_02005e2c[];
@@ -200,7 +195,7 @@ s32 Func_02000364(struct Actor *actor) {
 /* VIEW(gabomba_statue): tag struct Orbiter as struct Orbiter__gabomba_statue;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:194: structure has no member named
+ * games/tla/src/scene/gabomba_statue.c:201: structure has no member named
  * `phase'. */
 struct Orbiter__gabomba_statue {
   u8 unk00[6];
@@ -1035,7 +1030,7 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(Func_020015b8, 27, 17, 19, 18, 26, 28,
  * EventWork154__gabomba_statue; module/scene/scene.h has another definition;
  * tried with the definition the rest of the object has, its members read exit
  * as returnEntrance, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:905: structure has no member named
+ * games/tla/src/scene/gabomba_statue.c:906: structure has no member named
  * `returnEntrance'. */
 struct EventWork154__gabomba_statue {
   u8 unk000[0x154];

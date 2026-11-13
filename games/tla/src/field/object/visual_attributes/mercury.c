@@ -12,16 +12,10 @@
 #include "module/system/system.h"
 #include "scene_call.h"
 
-/* VIEW(f0d8740): routine FieldEffect_UpdateRandomTargetParticle as void
- * FieldEffect_UpdateRandomTargetParticle(void); the definition has void
- * FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect). */
-extern void FieldEffect_UpdateRandomTargetParticle__f0d8740(void) __asm__(
-    "FieldEffect_UpdateRandomTargetParticle");
-
 /* VIEW(f0d8740): tag struct CaptureObject as struct CaptureObject__f0d8740;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:4832: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:4410: structure has no member
  * named `sprite'. */
 struct CaptureObject__f0d8740 {
   u8 unk00[6];
@@ -46,44 +40,19 @@ struct CaptureObject__f0d8740 {
   void *callback;
 };
 
-/* VIEW(f0d8740): routine Actor_GetById as struct CaptureObject__f0d8740
- * *Actor_GetById(s32 id); mars_join has struct Actor *Actor_GetById(u32
- * objectId). */
-extern struct CaptureObject__f0d8740 *
-Actor_GetById__f0d8740(s32 id) __asm__("Actor_GetById");
 /* VIEW(f0d8740): routine Actor_CreateFar as struct CaptureObject__f0d8740
  * *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct
- * BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z). */
+ * BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
+ * not tried: Actor_CreateFar's bound declaration was not found. */
 extern struct CaptureObject__f0d8740 *
 Func_080200c0__f0d8740(s32 kind, s32 x, s32 y,
                        s32 z) __asm__("Actor_CreateFar");
 /* VIEW(f0d8740): routine Actor_ReleaseFar as void Actor_ReleaseFar(struct
  * CaptureObject__f0d8740 *object); battle.h has void Actor_ReleaseFar(struct
- * Actor *object). */
+ * Actor *object); not tried: Actor_ReleaseFar's bound declaration was not
+ * found. */
 extern void Actor_Destroy__f0d8740(
     struct CaptureObject__f0d8740 *object) __asm__("Actor_ReleaseFar");
-/* VIEW(f0d8740): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
- * *position); mars_join has void Camera_WorldToScreen(struct EffectVector
- * *position). */
-extern void
-Camera_WorldToScreen__f0d8740(s32 *position) __asm__("Camera_WorldToScreen");
-/* VIEW(f0d8740): routine FieldParticle_Initialize as void
- * FieldParticle_Initialize(void *slot, s32 kind, s32 x, s32 y); motes has void
- * FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x, s32 z).
- */
-extern void
-FieldParticle_Initialize__f0d8740(void *slot, s32 kind, s32 x,
-                                  s32 y) __asm__("FieldParticle_Initialize");
-/* VIEW(f0d8740): routine FieldParticle_SetCallback as void
- * FieldParticle_SetCallback(void *slot, void *callback); field_particle.h has
- * void FieldParticle_SetCallback(struct FieldParticle *, EffectCallback). */
-extern void FieldParticle_SetCallback__f0d8740(
-    void *slot, void *callback) __asm__("FieldParticle_SetCallback");
-/* VIEW(f0d8740): routine FieldParticle_SetActorMode as void
- * FieldParticle_SetActorMode(void *slot, s32 mode); field_particle.h has void
- * FieldParticle_SetActorMode(struct FieldParticle *, s32). */
-extern void FieldParticle_SetActorMode__f0d8740(void *slot, s32 mode) __asm__(
-    "FieldParticle_SetActorMode");
 
 void Djinn_RunMercuryJoinEffect(s32 arg) {
   struct CaptureObject__f0d8740 *djinni;
@@ -105,7 +74,7 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
     s32 z;
   } position;
 
-  djinni = Actor_GetById__f0d8740(arg);
+  djinni = Actor_GetById(arg);
   if (djinni == NULL)
     return;
 
@@ -167,22 +136,21 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   wait(10);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
   wait(20);
-  Actor_SelectAnimationFar(
-      Actor_GetById__f0d8740(gMainRoutineWork.currentOwner), 28);
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.currentOwner), 28);
   wait(20);
 
   position.x = djinni->x;
   position.y = djinni->y;
   position.z = djinni->z;
-  Camera_WorldToScreen__f0d8740(&position.x);
+  Camera_WorldToScreen(&position.x);
 
   slot = (u8 *)effectSlots + 80;
   remaining = 23;
   do {
-    FieldParticle_Initialize__f0d8740(slot, 301, position.x, position.z);
-    FieldParticle_SetCallback__f0d8740(
-        slot, (void *)FieldEffect_UpdateRandomTargetParticle__f0d8740);
-    FieldParticle_SetActorMode__f0d8740(slot, 7);
+    FieldParticle_Initialize(slot, 301, position.x, position.z);
+    FieldParticle_SetCallback(slot,
+                              (void *)FieldEffect_UpdateRandomTargetParticle);
+    FieldParticle_SetActorMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(*(struct ActorSpriteView **)slot, 9);
     remaining--;
     wait(1);
@@ -239,12 +207,14 @@ struct ChainWork {
 
 /* VIEW(f0d8740): routine OamMatrix_AllocFromTransform as s32
  * OamMatrix_AllocFromTransform(struct ChainTransform *source); affine.h has s32
- * OamMatrix_AllocFromTransform(struct AffineTransform *source). */
+ * OamMatrix_AllocFromTransform(struct AffineTransform *source); not tried:
+ * OamMatrix_AllocFromTransform's bound declaration was not found. */
 extern s32 AffineMatrix_BuildForEffect__f0d8740(
     struct ChainTransform *source) __asm__("OamMatrix_AllocFromTransform");
 /* VIEW(f0d8740): routine Oam_AddSpriteAtDepthClamped as void
  * Oam_AddSpriteAtDepthClamped(void *entry, s32 slot); f0d6674 has void
- * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth). */
+ * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth); not
+ * tried: Oam_AddSpriteAtDepthClamped's bound declaration was not found. */
 extern void
 Func_080140d8__f0d8740(void *entry,
                        s32 slot) __asm__("Oam_AddSpriteAtDepthClamped");

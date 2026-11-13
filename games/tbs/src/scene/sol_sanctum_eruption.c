@@ -508,7 +508,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Event_ShowMessageThenWait(ACTOR_FELIX, 0, 30);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   Event_Wait(20);
-  actor->steeringFlags |= 1;
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetSpeed(ACTOR_MENARDI, 1);
   Actor_WalkToAndWait(ACTOR_MENARDI, 475, 332);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHWEST, 20);
@@ -1739,7 +1739,7 @@ static void SolSanctumEruption_UpdateElementalArcs(void) {
     if (age != 0) {
       actor = gArcEffects[arcIndex];
       if ((u32)age <= 8) {
-        actor->scaleX += -ELEMENTAL_ARC_SCALE_X_DECREASE;
+        actor->scaleX -= ELEMENTAL_ARC_SCALE_X_DECREASE;
         actor->scaleY += Q16_ONE / 2;
         actor->y.fixed += px(3) / 10;
         actor->targetY += px(3) / 10;

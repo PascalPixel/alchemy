@@ -62,10 +62,6 @@ extern s32 gLemuriaPalace_FirstMapTile;
 extern s32 gLemuriaPalace_SecondMapTile;
 
 void Event_Start();
-/* VIEW(lemuria_palace): routine Event_End as void Event_End(); event_work.h has
- * void Event_End(void); not tried: Event_End's bound declaration was not found.
- */
-extern void Event_End__lemuria_palace() __asm__("Event_End");
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -92,7 +88,7 @@ void LemuriaPalace_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
   FieldEvent_SetExitRequest(countdown);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Event_End__lemuria_palace();
+  Event_End();
 }
 
 void LemuriaPalace_EnterDoor(s32 kind) {
@@ -284,48 +280,51 @@ void LemuriaPalace_DrawMaps(void) {
 extern s32 gLemuriaPalace_FirstMapVram;
 /* VIEW(s03a0): variable gLemuriaPalace_FirstMapSprite as extern struct
  * LemuriaPalaceMapSprite gLemuriaPalace_FirstMapSprite; lemuria_palace has
- * extern u8 gLemuriaPalace_FirstMapSprite[]; tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/lemuria_palace.c:264: request for member `unk1e' in
- * something not a structure or union. */
+ * extern u8 gLemuriaPalace_FirstMapSprite[]; tried as the one declaration
+ * extern struct LemuriaPalaceMapSprite gLemuriaPalace_FirstMapSprite, it does
+ * not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:276: conflicting
+ * types for `gLemuriaPalace_FirstMapSprite'. */
 extern struct LemuriaPalaceMapSprite
     gLemuriaPalace_FirstMapSprite__s03a0 __asm__(
         "gLemuriaPalace_FirstMapSprite");
 /* VIEW(s03a0): variable gLemuriaPalace_SecondMapSprite as extern struct
  * LemuriaPalaceMapSprite gLemuriaPalace_SecondMapSprite; lemuria_palace has
- * extern u8 gLemuriaPalace_SecondMapSprite[]; tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/lemuria_palace.c:275: request for member `unk1e' in
- * something not a structure or union. */
+ * extern u8 gLemuriaPalace_SecondMapSprite[]; tried as the one declaration
+ * extern struct LemuriaPalaceMapSprite gLemuriaPalace_SecondMapSprite, it does
+ * not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:280: conflicting
+ * types for `gLemuriaPalace_SecondMapSprite'. */
 extern struct LemuriaPalaceMapSprite
     gLemuriaPalace_SecondMapSprite__s03a0 __asm__(
         "gLemuriaPalace_SecondMapSprite");
 /* VIEW(s03a0): variable gLemuriaPalace_FirstMapShown as extern s32
  * gLemuriaPalace_FirstMapShown; lemuria_palace has extern u8
- * gLemuriaPalace_FirstMapShown[]; tried as the rest of the object declares it,
- * it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:280:
- * `gLemuriaPalace_FirstMapShown' has an incomplete type. */
+ * gLemuriaPalace_FirstMapShown[]; tried as the one declaration extern s32
+ * gLemuriaPalace_FirstMapShown, it does not compile in tla-ja:
+ * games/tla/src/scene/lemuria_palace.c:284: conflicting types for
+ * `gLemuriaPalace_FirstMapShown'. */
 extern s32
     gLemuriaPalace_FirstMapShown__s03a0 __asm__("gLemuriaPalace_FirstMapShown");
 /* VIEW(s03a0): variable gLemuriaPalace_SecondMapShown as extern s32
  * gLemuriaPalace_SecondMapShown; lemuria_palace has extern u8
- * gLemuriaPalace_SecondMapShown[]; tried as the rest of the object declares it,
- * it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:281:
- * `gLemuriaPalace_SecondMapShown' has an incomplete type. */
+ * gLemuriaPalace_SecondMapShown[]; tried as the one declaration extern s32
+ * gLemuriaPalace_SecondMapShown, it does not compile in tla-ja:
+ * games/tla/src/scene/lemuria_palace.c:287: conflicting types for
+ * `gLemuriaPalace_SecondMapShown'. */
 extern s32 gLemuriaPalace_SecondMapShown__s03a0 __asm__(
     "gLemuriaPalace_SecondMapShown");
 /* VIEW(s03a0): variable gLemuriaPalace_MapTime as extern s32
  * gLemuriaPalace_MapTime; lemuria_palace has extern u8
- * gLemuriaPalace_MapTime[]; tried as the rest of the object declares it, it
- * does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:282:
- * `gLemuriaPalace_MapTime' has an incomplete type. */
+ * gLemuriaPalace_MapTime[]; tried as the one declaration extern s32
+ * gLemuriaPalace_MapTime, it does not compile in tla-ja:
+ * games/tla/src/scene/lemuria_palace.c:290: conflicting types for
+ * `gLemuriaPalace_MapTime'. */
 extern s32 gLemuriaPalace_MapTime__s03a0 __asm__("gLemuriaPalace_MapTime");
 /* VIEW(s03a0): variable gLemuriaPalace_MapMode as extern u8
  * gLemuriaPalace_MapMode; lemuria_palace has extern u8
- * gLemuriaPalace_MapMode[]; tried as the definition's extern struct Trigger
- * gLemuriaPalace_MapMode[], which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/lemuria_palace.c:283:
- * `gLemuriaPalace_MapMode' has an incomplete type. */
+ * gLemuriaPalace_MapMode[]; tried as the one declaration extern u8
+ * gLemuriaPalace_MapMode, it does not compile in tla-ja:
+ * games/tla/src/scene/lemuria_palace.c:292: conflicting types for
+ * `gLemuriaPalace_MapMode'. */
 extern u8 gLemuriaPalace_MapMode__s03a0 __asm__("gLemuriaPalace_MapMode");
 
 /// Loads the two maps the council shows the party, the ancient world and
@@ -436,23 +435,12 @@ loop:
        ->v)
 
 void Event_Start();
-/* VIEW(s03a0): routine Event_End as s32 Event_End(); lemuria_palace has void
- * Event_End(); not tried: Event_End's bound declaration was not found. */
-extern s32 Event_End__s03a0() __asm__("Event_End");
-/* VIEW(lemuria_palace): routine FieldCamera_WaitForArrival as void
- * FieldCamera_WaitForArrival(); module/scene/scene.h has void
- * FieldCamera_WaitForArrival(s32 value); tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/lemuria_palace.c:411: too few arguments to function
- * `FieldCamera_WaitForArrival'. */
-extern void FieldCamera_WaitForArrival__lemuria_palace() __asm__(
-    "FieldCamera_WaitForArrival");
 /* VIEW(s03a0): routine LemuriaPalace_CastMapSparks as s32
  * LemuriaPalace_CastMapSparks(); the definition has void
  * LemuriaPalace_CastMapSparks(void); tried as the definition's void
- * LemuriaPalace_CastMapSparks(struct Actor *object), it does not compile in
- * tla-ja: games/tla/src/scene/lemuria_palace.c:356: conflicting types for
- * `LemuriaPalace_CastMapSparks'. */
+ * LemuriaPalace_CastMapSparks(void), which the object already declares, it does
+ * not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:622: too many
+ * arguments to function `LemuriaPalace_CastMapSparks'. */
 extern s32
 LemuriaPalace_CastMapSparks__s03a0() __asm__("LemuriaPalace_CastMapSparks");
 s32 __modsi3();
@@ -491,7 +479,7 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   Actor_WalkByAndWait(FIELD_AT(r5_1, s32, 0), 0, 16);
   Actor_WalkByAndWait(16, 24, 0);
   Actor_FaceDirectionAndWait(16, FACING_SOUTH + FACING_STEP);
-  v2 = Event_End__s03a0();
+  v2 = Event_End();
   r0 = v2;
   goto done;
 answeredNo:
@@ -511,7 +499,7 @@ answeredNo:
   Actor_SetSpeed(7, 0xb333, 0x5999);
   Actor_WalkToAndWait(4, 872, 528);
   FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(408), 1);
-  FieldCamera_WaitForArrival__lemuria_palace();
+  FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_FaceDirection(16, FACING_SOUTH + FACING_STEP, 0);
   Actor_ShowEmote(13, 0x100, 45);
@@ -570,7 +558,7 @@ answeredNo:
   Actor_SetAnimation(7, 1);
   Actor_FaceDirectionAndWait(7, FACING_SOUTH);
   FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(496), 1);
-  FieldCamera_WaitForArrival__lemuria_palace();
+  FieldCamera_WaitForArrival();
   Event_Wait(5);
   FieldActor_LaunchFromLeader(17, 16, 0, FACING_NORTHWEST + FACING_STEP);
   FieldActor_LaunchFromLeader(5, -16, 0, FACING_NORTH);
@@ -751,7 +739,7 @@ answeredNo:
   Actor_FaceDirectionAndWait(15, FACING_SOUTH + FACING_STEP);
   Event_Wait(5);
   FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(472), 1);
-  FieldCamera_WaitForArrival__lemuria_palace();
+  FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_FaceDirectionAndWait(15, FACING_WEST);
   Event_Wait(10);
@@ -995,7 +983,7 @@ waitForCycle:
   Actor_FaceDirection(5, FACING_NORTH, 0);
   Actor_FaceDirection(6, FACING_NORTH, 0);
   FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(480), 1);
-  FieldCamera_WaitForArrival__lemuria_palace();
+  FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_Stop(16);
   Actor_SetAnimation(16, 1);
@@ -1213,7 +1201,7 @@ grow:
   Actor_FaceDirectionAndWait(14, FACING_SOUTHEAST + FACING_STEP);
   Actor_FaceDirection(16, FACING_SOUTH + FACING_STEP, 0);
   Event_Wait(10);
-  v29 = Event_End__s03a0();
+  v29 = Event_End();
   r0 = v29;
 done:
   return r0;

@@ -194,8 +194,7 @@ static void Xian_RotateTrainingTree(void) {
 
 /// Emits particles beside the student every fourth frame.
 static void Xian_SpawnTrainingParticles(void) {
-  // The byte view keeps the Z load ahead of the options-script store.
-  u8 *studentActor = (u8 *)Actor_Get(ACTOR_KUNG_FU_STUDENT);
+  struct Actor *student = Actor_Get(ACTOR_KUNG_FU_STUDENT);
 
   if ((gFrameCount & 3) == 0) {
     struct EffectOptions config;
@@ -203,11 +202,8 @@ static void Xian_SpawnTrainingParticles(void) {
     config.palette = 9;
     config.type = SPRITE_GIRL_IN_PINK;
     config.script = gXian_TrainingParticleScript;
-    FieldEffect_Spawn(*(s32 *)(studentActor + offsetof(struct Actor, x)),
-                      *(s32 *)(studentActor + offsetof(struct Actor, y)),
-                      *(s32 *)(studentActor + offsetof(struct Actor, z)) -
-                          px(1),
-                      0, -px(1), -px(1),
+    FieldEffect_Spawn(student->x.fixed, student->y.fixed,
+                      student->z.fixed - px(1), 0, -px(1), -px(1),
                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
                           EFFECT_USE_TYPE | EFFECT_USE_SCRIPT,
                       &config);
@@ -498,12 +494,11 @@ static void Xian_UpdatePuddlePriority(void) {
 /// leader can stand on, and there is nothing left to jump over.
 static void Xian_FreezeSpilledWater(void) {
   struct Actor *puddle;
-  s32 stationaryMotionFlags = 0;
   s32 puddleX;
 
   Event_Start();
   Actor_Get(ACTOR_SPILLED_WATER)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
-  Actor_Get(ACTOR_SPILLED_WATER)->motionFlags = stationaryMotionFlags;
+  Actor_Get(ACTOR_SPILLED_WATER)->motionFlags = 0;
   puddle = Actor_Get(ACTOR_SPILLED_WATER);
   puddleX = puddle->x.fixed;
   puddle = Actor_Get(ACTOR_SPILLED_WATER);
@@ -525,7 +520,6 @@ static void Xian_FreezeSpilledWater(void) {
 static void Xian_TalkToKungFuStudent(void) {
   s32 demonstrationSeen;
   struct Actor *leader;
-  TaskFunc particleFunc;
   s32 reboundVelocity;
   s32 stepBackOffset[3];
   struct EffectOptions effectParams;
@@ -565,8 +559,7 @@ static void Xian_TalkToKungFuStudent(void) {
     FieldEffect_Spawn(px(192), 0, px(312), px(1) / 5, px(1) / 10, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     Sound_Play(SE_WATER);
-    particleFunc = Xian_SpawnTrainingParticles;
-    Task_AddFrame(particleFunc, TASK_PASS_FRAME);
+    Task_AddFrame(Xian_SpawnTrainingParticles, TASK_PASS_FRAME);
     Actor_Get(ACTOR_KUNG_FU_STUDENT)->velocityY = px(6);
     Actor_Get(ACTOR_KUNG_FU_STUDENT)->gravity = px(1);
     Actor_Get(ACTOR_KUNG_FU_STUDENT)->bounce = 0;
@@ -586,7 +579,7 @@ static void Xian_TalkToKungFuStudent(void) {
     Actor_SetDestination(ACTOR_KUNG_FU_STUDENT, 146, 312);
     Actor_WaitForMoveById(ACTOR_KUNG_FU_STUDENT);
     // Finish the impact effects and leave the student in the final pose.
-    Task_Remove((void (*)(void))particleFunc);
+    Task_Remove(Xian_SpawnTrainingParticles);
     FieldEffect_Spawn(px(144), 0, px(312), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     FieldEffect_Spawn(px(144), 0, px(312), -px(1) / 5, px(1) / 10, 0,
@@ -745,8 +738,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
 
   Event_Start();
   Actor_SetScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
-  rotationFunc = Xian_RotateTrainingTree;
-  Task_AddFrame(rotationFunc, TASK_PASS_FRAME);
+  Task_AddFrame(Xian_RotateTrainingTree, TASK_PASS_FRAME);
   Actor_WaitForScriptEndById(ACTOR_TRAINING_TREE);
   Sound_Play(SE_CHEST_OPEN);
   FieldEffect_Spawn(px(168), px(8), px(312), 0, 0, 0,

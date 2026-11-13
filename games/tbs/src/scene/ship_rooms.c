@@ -489,7 +489,7 @@ enum ShipRoomsCellBehavior {
 #define SHIP_CAMERA_RECENTER_LAYERS 0x01000000
 #define SHIP_CAMERA_WAIT_FOR_ARRIVAL 0x10000000
 
-// Defined below, in the order of the ROM.
+// The scene's routines, defined below.
 static void ShipRooms_StepBesideLeader(s32 passengerId);
 static s32 ShipRooms_IsSpotFree(s32 bucket);
 static s32 ShipRooms_GetChosenOarsman(void);
@@ -556,29 +556,19 @@ static s32 ShipRooms_ResetActor(struct Actor *actor) {
 }
 
 /// Bobs the actor between the floor and 8 pixels up by a random amount each
-/// frame.
+/// frame. The actor's userValue says which way it is going, 1 down and 0 up.
 ///
 /// Returns 1.
 static s32 ShipRooms_Bob(struct Actor *actor) {
-  s16 verticalMotionDirection;
-  s32 descendingY;
-  s32 ascendingY;
-
   if ((s16)actor->userValue != 0) {
-    descendingY =
-        (actor->y.fixed - ((u32)(Import_RandomNext() << 15) >> 16)) - px(1) / 2;
-    actor->y.fixed = descendingY;
-    if (descendingY < 0) {
-      verticalMotionDirection = 0;
-      actor->userValue = verticalMotionDirection;
+    actor->y.fixed -= ((u32)(Import_RandomNext() << 15) >> 16) + px(1) / 2;
+    if (actor->y.fixed < 0) {
+      actor->userValue = 0;
     }
   } else {
-    ascendingY =
-        actor->y.fixed + ((u32)(Import_RandomNext() << 15) >> 16) + px(1) / 2;
-    actor->y.fixed = ascendingY;
-    if (ascendingY > px(8)) {
-      verticalMotionDirection = 1;
-      actor->userValue = verticalMotionDirection;
+    actor->y.fixed += ((u32)(Import_RandomNext() << 15) >> 16) + px(1) / 2;
+    if (actor->y.fixed > px(8)) {
+      actor->userValue = 1;
     }
   }
   return 1;
@@ -592,11 +582,9 @@ static s32 ShipRooms_LookAround(struct Actor *actor) {
   u32 choice = (u32)(Import_RandomNext(actor) << 6) >> 16;
 
   if (choice == 6) {
-    s32 facing = FACING_SOUTH_SOUTHEAST;
-    actor->facing = facing;
+    actor->facing = FACING_SOUTH_SOUTHEAST;
   } else if (choice == 9) {
-    s32 facing = FACING_SOUTH_SOUTHWEST;
-    actor->facing = facing;
+    actor->facing = FACING_SOUTH_SOUTHWEST;
   }
   return 1;
 }
@@ -604,10 +592,9 @@ static s32 ShipRooms_LookAround(struct Actor *actor) {
 /// Counts the frames of a pause in riseCounter and moves the pacing
 /// actor to its next step after 80 frames.
 static void ShipRooms_WaitThenAdvance(struct Actor *actor) {
-  u8 *counter = &actor->riseCounter;
-  s32 frame = *counter + 1;
+  s32 frame = actor->riseCounter + 1;
 
-  *counter = frame;
+  actor->riseCounter = frame;
   if ((u8)frame > 80) {
     actor->userValue += 1;
   }
@@ -758,20 +745,11 @@ const struct SceneExitRegion *ShipRooms_GetRegions(void) { return 0; }
 
 const u32 *ShipRooms_GetExits(void) { return gShipRooms_Exits; }
 
-/// A byte view keeps the native address arithmetic, where direct row-field
-/// writes choose different bases and registers. The layout still belongs to the
-/// row.
-#define TOLBI_SHIP_TALK_FACING(bytes, row)                                     \
-  ((bytes)[(row) * sizeof(struct ActorPlacement) +                             \
-           offsetof(struct ActorPlacement, talkFacing)])
-
 /// Picks the actor placements for the room entered and the voyage's stage.
 ///
 /// Some stages change who turns to face the party when talked to (talkFacing)
 /// in the shared tables.
 const struct ActorPlacement *ShipRooms_SelectActorPlacements(void) {
-  u8 *placementBytes;
-
   switch (gMainRoutineWork.entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK:
@@ -780,17 +758,16 @@ const struct ActorPlacement *ShipRooms_SelectActorPlacements(void) {
       return gShipRooms_HoldActorPlacements;
     } else if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
       if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
-        // Update talkFacing in the actor placement rows, preserving their
-        // write order.
-        placementBytes = (u8 *)gShipRooms_HoldActorPlacementsAtSea;
-        TOLBI_SHIP_TALK_FACING(placementBytes, 0) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(placementBytes, 2) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(placementBytes, 4) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(placementBytes, 5) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(placementBytes, 8) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(placementBytes, 7) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(placementBytes, 6) = TALK_FACING_PARTY_AND_BACK;
-        TOLBI_SHIP_TALK_FACING(placementBytes, 3) = TALK_FACING_KEEP;
+        // At the island the passengers no longer turn to the party.
+        gShipRooms_HoldActorPlacementsAtSea[0].talkFacing = TALK_FACING_KEEP;
+        gShipRooms_HoldActorPlacementsAtSea[2].talkFacing = TALK_FACING_KEEP;
+        gShipRooms_HoldActorPlacementsAtSea[4].talkFacing = TALK_FACING_KEEP;
+        gShipRooms_HoldActorPlacementsAtSea[5].talkFacing = TALK_FACING_KEEP;
+        gShipRooms_HoldActorPlacementsAtSea[8].talkFacing = TALK_FACING_KEEP;
+        gShipRooms_HoldActorPlacementsAtSea[7].talkFacing = TALK_FACING_KEEP;
+        gShipRooms_HoldActorPlacementsAtSea[6].talkFacing =
+            TALK_FACING_PARTY_AND_BACK;
+        gShipRooms_HoldActorPlacementsAtSea[3].talkFacing = TALK_FACING_KEEP;
       }
       return gShipRooms_HoldActorPlacementsAtSea;
     } else if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
@@ -818,17 +795,18 @@ const struct ActorPlacement *ShipRooms_SelectActorPlacements(void) {
   case SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK:
   case SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SECOND_ATTACK:
   case SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_THIRD_ATTACK:
-    placementBytes = (u8 *)gShipRooms_RowingDeckActorPlacements;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 0) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 1) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 3) = TALK_FACING_PARTY_AND_BACK;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 4) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 5) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 6) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 7) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 8) = TALK_FACING_PARTY_AND_BACK;
-    TOLBI_SHIP_TALK_FACING(placementBytes, 9) = TALK_FACING_KEEP;
-    return (const struct ActorPlacement *)placementBytes;
+    gShipRooms_RowingDeckActorPlacements[0].talkFacing = TALK_FACING_KEEP;
+    gShipRooms_RowingDeckActorPlacements[1].talkFacing = TALK_FACING_KEEP;
+    gShipRooms_RowingDeckActorPlacements[3].talkFacing =
+        TALK_FACING_PARTY_AND_BACK;
+    gShipRooms_RowingDeckActorPlacements[4].talkFacing = TALK_FACING_KEEP;
+    gShipRooms_RowingDeckActorPlacements[5].talkFacing = TALK_FACING_KEEP;
+    gShipRooms_RowingDeckActorPlacements[6].talkFacing = TALK_FACING_KEEP;
+    gShipRooms_RowingDeckActorPlacements[7].talkFacing = TALK_FACING_KEEP;
+    gShipRooms_RowingDeckActorPlacements[8].talkFacing =
+        TALK_FACING_PARTY_AND_BACK;
+    gShipRooms_RowingDeckActorPlacements[9].talkFacing = TALK_FACING_KEEP;
+    return gShipRooms_RowingDeckActorPlacements;
   case SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK:
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gShipRooms_CaptainsQuartersActorPlacementsArrived;
@@ -861,10 +839,7 @@ const struct ActorPlacement *ShipRooms_SelectActorPlacements(void) {
     return gShipRooms_ActorPlacementsNone;
     break;
   }
-  return (const struct ActorPlacement *)placementBytes;
 }
-
-#undef TOLBI_SHIP_TALK_FACING
 
 /// Chooses the room's interactions for the current stage of the voyage.
 const struct Trigger *ShipRooms_SelectTriggers(void) {
@@ -1288,16 +1263,15 @@ static void ShipRooms_StepBesideLeader(s32 passengerId) {
   struct Actor *leaderPosition;
   s32 blocked;
   s32 direction;
+  struct Actor *passenger;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   blocked = 1;
   Actor_SetSpritePriority(passengerId, 2);
-  {
-    struct Actor *passenger = Actor_Get(passengerId);
+  passenger = Actor_Get(passengerId);
 
-    passenger->priorityFlags =
-        ACTOR_PRIORITY_AUTOMATIC | passenger->priorityFlags;
-  }
+  passenger->priorityFlags =
+      ACTOR_PRIORITY_AUTOMATIC | passenger->priorityFlags;
   // Try the leader's right, then left, then the space behind.
   direction = (((leader->facing + TRIG_TURN / 4) & 0xf000) >> 12);
   if (ShipRooms_IsSpotFree(
@@ -1818,10 +1792,7 @@ static void ShipRooms_WatchWarriorsStormOff(void) {
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 184, 520);
     Event_Wait(1);
-    {
-      struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
-      actor->steeringFlags = ACTOR_FACES_MOTION | actor->steeringFlags;
-    }
+    Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_Jump(ACTOR_HOLD_SECOND_GUIDE, 4, 20);
@@ -2551,7 +2522,7 @@ static void ShipRooms_SetUpCaptainsQuarters(void) {
     Actor_SetSpeed(ACTOR_QUARTERS_KAJA, 0.8);
     actor->userValue = done;
     actor->riseEnabled = 0;
-    actor->collisionFlags |= 128;
+    actor->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
     actor->update = ShipRooms_PaceCaptainsQuarters;
     other = Actor_Get(ACTOR_QUARTERS_CAPTAIN);
     other->riseCounter = 0;
@@ -2683,7 +2654,7 @@ static void ShipRooms_SetOarCollision(void) {
        actorId++) {
     struct Actor *actor = Actor_Get(actorId);
     u32 flags = actor->collisionFlags;
-    actor->collisionFlags = flags | 0x08;
+    actor->collisionFlags = flags | ACTOR_NOT_TARGETED;
   }
 }
 
@@ -2730,7 +2701,6 @@ static void ShipRooms_PlaceFoundActors(s32 gated) {
 /// (FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT).
 static void ShipRooms_AskForReplacementOarsmen(void) {
   struct Actor *actor;
-  s32 mode = 128;
 
   // Bring Isaac to the crewman who explains the shortage of rowers.
   Event_Start();
@@ -2743,7 +2713,7 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   ShipRooms_PlaceActor(ACTOR_ROWING_DRUMMER, 452, 190, FACING_NORTH_NORTHWEST);
   Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_STAND);
   ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, 440, 134, FACING_WEST);
-  gFieldWork->transition = (mode << 1);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 408, 134);
@@ -2786,7 +2756,7 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHWEST, 20);
   ShipRooms_Say(ACTOR_ROWING_KAJA);
   Actor_StartRepeatedMotion(ACTOR_ROWING_DRUMMER, 1);
-  Actor_ShowEmote(ACTOR_ROWING_DRUMMER, (mode << 1), 40);
+  Actor_ShowEmote(ACTOR_ROWING_DRUMMER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   ShipRooms_Say(ACTOR_ROWING_DRUMMER);
   Actor_StartRepeatedMotion(ACTOR_GARET, 3);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
@@ -2820,7 +2790,7 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   Actor_SetAnimation(ACTOR_ROWING_CREWMAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_ROWING_DRUMMER, ANIM_NOD);
   Event_Wait(40);
-  Actor_ShowEmote(ACTOR_ROWING_DRUMMER, (mode << 1), 20);
+  Actor_ShowEmote(ACTOR_ROWING_DRUMMER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   ShipRooms_Turn(ACTOR_ROWING_DRUMMER, FACING_NORTH_NORTHWEST);
   ShipRooms_Say(ACTOR_ROWING_DRUMMER);
   ShipRooms_Turn(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHEAST);
@@ -3076,15 +3046,11 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
   struct Actor *actor;
   s32 halfStep;
   s32 leftSeat;
-  s32 x;
 
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 0, 0);
-  /* FAKEMATCH(temporary): x set here, after the camera reset; as declared with
-   * its 432, 10 of 337 instructions differ in tbs-en. */
-  x = 432;
   halfStep = px(1) / 2;
-  ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, x, 134, FACING_WEST);
+  ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, 432, 134, FACING_WEST);
   ShipRooms_PlaceFoundActors(1);
   wait(1);
   Event_StartScreenTransition();
@@ -3105,7 +3071,7 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     leftSeat = 0;
     Actor_SetSpeedFixed(ACTOR_PARTY_LEADER, px(1), halfStep);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, x, 168);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 432, 168);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != 0) {
@@ -4069,23 +4035,16 @@ static void ShipRooms_NoticeShipRocking(void) {
   Event_End();
 }
 
-/// Now and then plays a rumble with a shake, easing the shake after ten frames.
+/// Now and then (one chance in 120 a frame) plays a rumble with a shake,
+/// easing the shake after ten frames; no other rumble starts for 80 frames.
 static void ShipRooms_ShakeWhileKrakenAboard(void) {
-  s32 value;
-  s32 *timer = &gShipRooms_ShakeTimer;
-  s32 remaining;
-  if (*timer != 0) {
-    remaining = *timer - 1;
-    *timer = *timer - 1;
-    if (remaining == 70)
+  if (gShipRooms_ShakeTimer != 0) {
+    if (--gShipRooms_ShakeTimer == 70)
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  } else {
-    value = Import_RandomNext();
-    if (((u32)(((value << 4) - value) << 3) >> 16) == 0) {
-      Sound_Play(SE_BOOM);
-      MapGrid_SetShake(2, 2, 1);
-      *timer = 80;
-    }
+  } else if (((u32)(Import_RandomNext() * 120) >> 16) == 0) {
+    Sound_Play(SE_BOOM);
+    MapGrid_SetShake(2, 2, 1);
+    gShipRooms_ShakeTimer = 80;
   }
 }
 

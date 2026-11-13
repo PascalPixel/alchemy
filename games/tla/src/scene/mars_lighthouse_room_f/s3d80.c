@@ -101,9 +101,12 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value) {
 /* VIEW(s3d80): variable gData_02005ef8 as extern const s16 gData_02005ef8[];
  * the definition has s32 gData_02005ef8[] = { 0xffff, - 0x8000, (s32)
  * 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000, };
- * tried as the definition's extern struct Trigger gData_02005ef8[], it does not
- * compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:160:
- * incompatible types in assignment. */
+ * tried as the definition's extern
+ * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_02005e44, 22)
+ * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_02005e80, 44)
+ * DEFINE_FIELD_EFFECT_D..., it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:101: initializer element
+ * is not constant. */
 extern const s16 gData_02005ef8__s3d80[] __asm__("gData_02005ef8");
 
 DEFINE_ACTOR_STEER_BY_PAD(Func_02004080, gData_02005ef8__s3d80, Func_02005480)
@@ -124,9 +127,8 @@ struct Position {
 /* VIEW(s3d80): variable gData_02005f38 as extern s16 gData_02005f38[]; the
  * definition has s32 gData_02005f38[] = { 0xffff, - 0x8000, 0xc000, (s32)
  * 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the
- * definition's extern s32 gData_02005f38[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:243:
- * `gData_02005f38__s3d80' undeclared (first use in this function). */
+ * definition's extern s32 gData_02005f38[], Func_02004140 moves: 4 of 302
+ * instructions, Func_020043ec moves: 1 of 330 instructions in tla-ja. */
 extern s16 gData_02005f38__s3d80[] __asm__("gData_02005f38");
 
 DEFINE_LEADER_SLIDE_ON_ICE(Func_02004140, Func_0200410c, gData_02005f38__s3d80,
@@ -169,7 +171,7 @@ extern u16 gData_02005f58[];
  * definition has u32 gData_02005f64[] = { 0x820f8e0, 0x2008e0f8, 0x20f0e0,
  * 0x2008e0f8, 0x820f8e0, 0x2008e0f8, }; tried as the definition's extern u32
  * gData_02005f64[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:668: subscripted value is
+ * games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:188: subscripted value is
  * neither array nor pointer. */
 extern s8 gData_02005f64__s4700[][4] __asm__("gData_02005f64");
 
@@ -236,14 +238,7 @@ void Func_02004a44(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value) {
   }
 }
 
-/* VIEW(s4700): variable gData_02005f7c as extern s32 gData_02005f7c[]; the
- * definition has s16 gData_02005f7c[] = { 0, 16, 0, 16, 0, 16, 16, 0, 16, 0,
- * 16, 0, 16, 0, 0, - 16, 0, - 16, 0, - 16, 0, - 16, - 16, 0, - 16, 0, - 16, 0,
- * - 1...; tried as the definition's extern s16 gData_02005f7c[],
- * PushTarget_FindSlide moves: 12 of 171 instructions, PushTarget_FindAhead
- * moves: 41 of 132 instructions, Func_02004d10 moves: 27 of 304 instructions in
- * tla-ja. */
-extern s32 gData_02005f7c__s4700[] __asm__("gData_02005f7c");
+extern s32 gData_02005f7c[];
 
 static inline s32 Func_020054f8_(struct Actor *object, s32 *position) {
   return MapGrid_CheckCollision(object, position);
@@ -254,23 +249,20 @@ static inline s32 Func_020054f8_(struct Actor *object, s32 *position) {
 /// (MapGrid_CheckCollision returns 2). Leaves the object's resting place in
 /// target and returns 1, or 0 when nothing is pushed or it cannot move at all.
 DEFINE_PUSH_TARGET_FIND_SLIDE(PushTarget_FindSlide, PushTarget_FindAhead,
-                              gData_02005f64__s4700, gData_02005f7c__s4700,
+                              gData_02005f64__s4700, gData_02005f7c,
                               Func_020054f8_)
-
-#include "event_work.h"
 
 #undef PIXELS
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
 
 DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gData_02005f58,
-                              gData_02005f7c__s4700, gData_02005f64__s4700)
+                              gData_02005f7c, gData_02005f64__s4700)
 
 #undef PIXELS
 
 DEFINE_PUSH_TARGET_PUSH(Func_02004d10, gData_02005f64__s4700, Func_02004a44,
-                        Actor_StopAtPushTarget, Func_02005480,
-                        gData_02005f7c__s4700)
+                        Actor_StopAtPushTarget, Func_02005480, gData_02005f7c)
 
 DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Actor_FindAtCell,
                                  gData_02005f58, MapGrid_CheckCollision)

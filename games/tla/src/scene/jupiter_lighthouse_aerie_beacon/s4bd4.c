@@ -10,7 +10,7 @@
 
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gFieldEffect_DurationScripts[];
-void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
@@ -87,3 +87,30 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../../field/map/cell_sprite.c"
+
+#include "../shared/cracked_tile.h"
+#include "ram_buffer.h"
+#include "actor.h"
+#include "iwram_call.h"
+#include "scene_tables.h"
+#include "io_reg.h"
+#include "cell_target.h"
+#include "event_work.h"
+#include "field.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/scene/scene.h"
+
+void CrackedTiles_Update(void);
+
+DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gCrackedTiles, CrackedTiles_Update)
+
+DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
+
+/// Centers the leader on its cell, plays sound 161 and copies the cell below
+/// the table's source cell over the leader's, keeping the source column's and
+/// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+/// one of the table's cells.
+DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
+
+DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)

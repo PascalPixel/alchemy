@@ -26,7 +26,6 @@ extern u8 gData_02004d0c[];
 extern u8 gData_02004dbc[];
 extern u8 gData_02004fe4[];
 
-void Statue_Sink(void *, s32, s32);
 s32 Actor_HasArrived();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -116,20 +115,16 @@ void Func_02000190(s32 unused, s32 id) {
 
 extern u8 gData_02005290[];
 
-s32 Func_02004240(struct DoorPlan *);
-void Func_020044c4(struct DoorPlan);
 /* VIEW(eastern_alhafra): routine Actor_SelectAnimation as s32
  * Actor_SelectAnimation(); module/scene/scene.h has void
- * Actor_SelectAnimation(struct Actor *object, s32 mode); tried as the rest of
- * the object declares it, Func_02001b9c moves: 1 of 35 instructions in tla-ja.
- */
+ * Actor_SelectAnimation(struct Actor *object, s32 mode); not tried:
+ * Actor_SelectAnimation's bound declaration was not found. */
 extern s32 Func_02004a0c__eastern_alhafra() __asm__("Actor_SelectAnimation");
 s32 Party_FindOwnerWithAction();
 /* VIEW(eastern_alhafra): routine Field_FindNearbyTalkTarget as s32
  * Field_FindNearbyTalkTarget(); module/scene/airs_rock_inside.h has void
- * Field_FindNearbyTalkTarget(void); tried as the definition's void
- * Field_FindNearbyTalkTarget(void), which the object already declares,
- * Func_020006ec moves: 1 of 25 instructions in tla-ja. */
+ * Field_FindNearbyTalkTarget(void); not tried: Field_FindNearbyTalkTarget's
+ * bound declaration was not found. */
 extern s32
 Func_02004bb4__eastern_alhafra() __asm__("Field_FindNearbyTalkTarget");
 void Event_Start();
@@ -255,9 +250,9 @@ void Func_0200042c(s32 mode, s32 id) {
 void Func_0200112c(void);
 /* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct
  * Unk_02004240); eastern_alhafra has void Func_020044c4(struct DoorPlan); tried
- * as the definition's void Func_020044c4(struct PushTarget target), it does not
- * compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:245: conflicting
- * types for `Func_020044c4'. */
+ * as the definition's void Func_020044c4(struct PushTarget target), which the
+ * object already declares, Func_02000514 moves: 1 of 198 instructions in
+ * tla-ja. */
 extern void Func_020044c4__s0514(struct Unk_02004240) __asm__("Func_020044c4");
 
 void Func_02000514(void) {
@@ -496,20 +491,14 @@ void Func_02000af8(void) {
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 #define OBJECT(id) (Actor_Get((id)))
 
-void Func_020040ec();
 /* VIEW(eastern_alhafra): routine Rope_Place as void Rope_Place();
- * module/scene/mars_lighthouse_aerie.h has void Rope_Place(void); tried as
- * the definition's void Rope_Place(void), which the object already declares,
- * it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:573: too
- * many arguments to function `Rope_Place'. */
+ * module/scene/mars_lighthouse_aerie.h has void Rope_Place(void); not tried:
+ * Rope_Place's bound declaration was not found. */
 extern void Func_02004c2c__eastern_alhafra() __asm__("Rope_Place");
 void Func_020047fc();
 /* VIEW(eastern_alhafra): routine Tightrope_Settle as void Tightrope_Settle();
- * module/scene/mars_lighthouse_aerie.h has void Tightrope_Settle(void); tried
- * as the definition's void Tightrope_Settle(void), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/scene/eastern_alhafra.c:595: too many arguments to function
- * `Tightrope_Settle'. */
+ * module/scene/mars_lighthouse_aerie.h has void Tightrope_Settle(void); not
+ * tried: Tightrope_Settle's bound declaration was not found. */
 extern void Func_02004c94__eastern_alhafra() __asm__("Tightrope_Settle");
 
 s32 Scene_Initialize(void) {
@@ -2139,3 +2128,348 @@ struct RockWork {
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
 DEFINE_ROCKS_SPAWN(Rocks_Spawn)
+
+// ---- scene/eastern_alhafra/s4004.c ----
+
+/// Scene code of overlay 0x668, in ROM order.
+
+#include "shared/push.h"
+#include "system/task.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "resource.h"
+
+static __inline__ void StartTask(void (*func)(void), s32 priority) {
+  /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
+   * instructions differ in tla-en. */
+  Task_Add(func, priority);
+}
+
+void Func_02004004(void) {
+  struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
+  s32 entry;
+  s32 tile;
+  s32 i;
+  struct Rock *rock;
+  struct RockSprite *sprite;
+
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock),
+                      work);
+  entry = VramCache_FindFreeEntry();
+  tile = Vram_Load(entry, 0x500, work);
+  work->tileBase = tile;
+  work->resource = entry;
+  rock = work->rocks;
+  sprite = work->sprites;
+  for (i = 63; i >= 0; i--, sprite++, rock++) {
+    Func_02004c64(sprite, 8, 8, 0x40000000, tile);
+    sprite->unk05_5 = 1;
+    sprite->palette = 0;
+    sprite->priority = 0;
+    sprite->unk1e = 240;
+    rock->timer = -1;
+  }
+  {
+    s32 zero = 0;
+
+    work->next = zero;
+  }
+  StartTask(Particles_UpdateFalling, 0x480);
+}
+
+void Func_020040c0(void) {
+  struct EasternAlhafraSparkWork *work = Ram_HeapSlots->menuRuntime;
+
+  FieldTask_Remove(Particles_UpdateFalling);
+  VramCache_FreeEntry(work->resource);
+  HeapSlot_Release(220);
+}
+
+// Rewrites the map cells under a pushable actor. The actor's sprite
+// shape picks one of the six footprints in gPushFootprints (four signed bytes
+// each, in sixteenths of a cell); the cells under it are copied from the
+// map's spare area (Map_CopyCellAttributeRect) and byte 2 of both collision
+// layers there is filled with 255. Returns 1, or 0 for a shape with no
+// footprint.
+
+extern s8 gPushFootprints[][4];
+
+static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
+
+/// Rewrites the map cells under a pushable actor. The actor's sprite shape
+/// picks one of the six footprints in gPushFootprints (four signed bytes each,
+/// in sixteenths of a cell); the cells under it are copied from the map's spare
+/// area (Map_CopyCellAttributeRect) and byte 2 of both collision layers there
+/// is filled with 255. Returns 1, or 0 for a shape with no footprint.
+s32 Func_020040ec(s32 id) {
+  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  struct Actor *actor = Actor_GetById(id);
+  s16 kind = *((struct ObjectAnimationState *)actor->sprite)->value28;
+  s16 i = 0;
+  s32 next;
+  u32 index;
+  s32 a, b;
+  s32 fromX, fromZ;
+  s32 width, height, x, z;
+
+  // A goto loop: a C loop is strength-reduced, which the original's is not.
+  if ((u16)kind != gPushKinds[(u16)i]) {
+  again:
+    next = (i + 1) * 65536;
+    index = (u32)next >> 16;
+    i = next >> 16;
+    if (index <= 5 && (u16)kind != gPushKinds[index])
+      goto again;
+  }
+  // fromX and b are reused for the next values they hold.
+  fromX = (u16)i;
+  if (fromX == 6)
+    return 0;
+  a = gPushFootprints[fromX][0];
+  width = (Abs(a) + Abs(gPushFootprints[fromX][2])) >> 4;
+  b = gPushFootprints[fromX][1];
+  height = (Abs(b) + Abs(gPushFootprints[fromX][3])) >> 4;
+  x = actor->x + (a << 16);
+  z = actor->z + (b << 16);
+  b = *(s32 *)(map + 0x148) >> 20;
+  x >>= 20;
+  z >>= 20;
+  fromZ = *(s32 *)(map + 0x14c) >> 20;
+  fromX = (u16)b;
+  Map_CopyCellAttributeRect(x, z, width, height, x + fromX, z + (u16)fromZ);
+  Map_FillCellRectByte2(0, x, z, width, height, 255);
+  Map_FillCellRectByte2(2, x, z, width, height, 255);
+  return 1;
+}
+
+#include "../field/map/cellfill.c"
+
+#include "system/vector3.h"
+
+extern s32 gPushDirectionSteps[];
+
+static __inline__ s32 CallFunc_02004a64(struct Actor *actor,
+                                        struct Vector3 *cell) {
+  return MapGrid_CheckCollision(actor, cell);
+}
+
+/// Measures a push: finds the pushable actor ahead of the leader
+/// (PushTarget_FindAhead, recording its number and kind in the push state),
+/// then steps the actor's box one cell at a time along the leader's direction
+/// until a cell of it is blocked (MapGrid_CheckCollision returns 2); with at
+/// least one free step it records the end position in the push state and
+/// returns 1, else 0. The actor stays on layer 2 while it is measured. The same
+/// code as overlay 674's Func_020037d8 and overlay 662's Func_020001d4.
+s32 Func_02004240(struct PushState *push) {
+  struct Actor *actor;
+  struct Vector3 cell;
+  s32 direction, kind, width, height, dx, dz, steps, i, j, offset;
+  u8 *layer;
+
+  actor = PushTarget_FindAhead(&direction, &push->number, &push->kind);
+  if (actor != 0) {
+    kind = push->kind;
+    width =
+        (Abs(gPushFootprints[kind][0]) + Abs(gPushFootprints[kind][2])) >> 4;
+    height =
+        (Abs(gPushFootprints[kind][1]) + Abs(gPushFootprints[kind][3])) >> 4;
+    offset = gPushDirectionSteps[direction];
+    dx = offset & 0xffff0000;
+    dz = offset << 16;
+    push->unk14 = 0;
+    steps = 0;
+    layer = &actor->terrainId;
+    *layer = 2;
+    push->x = actor->x + dx;
+    push->z = actor->z + dz;
+    cell.y = actor->y;
+    for (;;) {
+      cell.z = push->z + (gPushFootprints[kind][1] << 16);
+      for (j = 0; j < height; j++) {
+        cell.x = push->x + (gPushFootprints[kind][0] << 16);
+        for (i = 0; i < width; i++) {
+          /* FAKEMATCH(wrapper): the call through CallFunc_02004a64; as a direct
+           * call, 2 of 171 instructions differ in tla-en. */
+          if (CallFunc_02004a64(actor, &cell) == 2)
+            goto blocked;
+          cell.x += 0x100000;
+        }
+        cell.z += 0x100000;
+      }
+      push->x += dx;
+      steps++;
+      push->z += dz;
+    }
+  blocked:
+    *layer = 0;
+    if (steps == 0)
+      return 0;
+    {
+      s32 move = dx * steps;
+
+      push->x = actor->x + move;
+    }
+    push->y = actor->y;
+    push->z = actor->z + dz * steps;
+    return 1;
+  }
+  return 0;
+}
+
+/// The whole-pixel half of a 16.16 coordinate.
+#define PIXELS(v) (((s16 *)&(v))[1])
+
+DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds,
+                              gPushDirectionSteps, gPushFootprints)
+
+// ---- scene/eastern_alhafra/s44c4.c ----
+
+/// Scene code of overlay 0x668, in ROM order.
+
+#include "shared/map_cells.h"
+#include "module/field/field.h"
+
+struct PushTarget {
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y;
+  s32 z;
+  s32 footprint; ///< index into the footprint table
+  s32 id;
+  void (*callback)(void);
+};
+
+/* VIEW(s44c4): variable gPushFootprints as s8 gPushFootprints[];
+ * scene/eastern_alhafra/s4004 has s8 gPushFootprints[][4]; tried as the
+ * definition's extern u32 gPushFootprints[], it does not compile in tla-ja:
+ * games/tla/src/scene/eastern_alhafra.c:2348: conflicting types for
+ * `gPushFootprints'. */
+extern s8 gPushFootprints__s44c4[] __asm__("gPushFootprints");
+
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+
+void Func_020044c4(struct PushTarget target) {
+  u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(target.id);
+  s32 cell[3];
+  s32 from[3];
+  s32 footprint;
+  s32 width;
+  s32 height;
+  s32 originX;
+  s32 originZ;
+  s32 direction;
+  s32 speed;
+  s32 acceleration;
+
+  direction = leader->facing >> 16;
+  footprint = target.footprint;
+  speed = leader->speedLimit;
+  acceleration = leader->acceleration;
+  from[0] = object->x;
+  from[2] = object->z;
+  cell[0] = (object->x + (gPushFootprints__s44c4[footprint * 4] << 16)) >> 20;
+  cell[2] =
+      (object->z + (gPushFootprints__s44c4[footprint * 4 + 1] << 16)) >> 20;
+  width = (ABS(gPushFootprints__s44c4[footprint * 4]) +
+           ABS(gPushFootprints__s44c4[footprint * 4 + 2])) >>
+          4;
+  height = (ABS(gPushFootprints__s44c4[footprint * 4 + 1]) +
+            ABS(gPushFootprints__s44c4[footprint * 4 + 3])) >>
+           4;
+  Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 8);
+  System_Wait(15);
+  {
+    s32 deltaX = (target.x - from[0]) >> 17;
+    s32 deltaZ = (target.z - from[2]) >> 17;
+
+    Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, deltaX, deltaZ);
+  }
+  Actor_Get(gMainRoutineWork.currentOwner)->update = Actor_StopAtPushTarget;
+  System_Wait(4);
+  if ((u32)(direction - 6) <= 7)
+    Actor_SelectAnimation(object, 3);
+  else
+    Actor_SelectAnimation(object, 2);
+  Event_PlaySound(239);
+  Actor_SetSpeed(target.id, 0x8000, 0x1999);
+  FieldActor_SetMoveTarget(object, target.x, target.y, target.z);
+  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
+  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
+                             (gPushDirectionSteps[direction] << 16) >> 31,
+                             (gPushDirectionSteps[direction] << 16) >> 17);
+  if (target.callback != 0)
+    target.callback();
+  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  leader->update = 0;
+  leader->speedLimit = speed;
+  leader->acceleration = acceleration;
+  FieldActor_WaitForMove(object);
+  Event_PlaySound(298);
+  Event_PlaySound(213);
+  FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
+  Actor_SelectAnimation(object, 1);
+  target.x = target.x + (gPushFootprints__s44c4[footprint * 4] << 16);
+  target.z = target.z + (gPushFootprints__s44c4[footprint * 4 + 1] << 16);
+  target.x >>= 20;
+  target.z >>= 20;
+  originX = *(s32 *)(map + 328) >> 20;
+  originZ = *(s32 *)(map + 332) >> 20;
+  MapGrid_CopyCellAttributes(target.x, target.z, width, height,
+                             originX + target.x, originZ + target.z);
+  Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
+  Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
+  cell[0] = (from[0] + (gPushFootprints__s44c4[footprint * 4] << 16)) >> 20;
+  cell[2] = (from[2] + (gPushFootprints__s44c4[footprint * 4 + 1] << 16)) >> 20;
+  originX += cell[0];
+  originZ += cell[2];
+  MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
+  Map_FillCellRectByte2(2, cell[0], cell[2], width, height, 0);
+  Event_NoOp();
+}
+
+DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Actor_FindAtCell,
+                                 gPushKinds, MapGrid_CheckCollision)
+
+void Func_020047fc(const u16 *list) {
+  const u16 *spec;
+  u16 id;
+  struct Actor *object;
+  s16 mode;
+  s16 flag;
+  s32 limit;
+  s32 first;
+  limit = 0xff;
+  first = list[0];
+  if (first == ((limit << 8) + 0xff)) {
+    return;
+  }
+  spec = list;
+next:
+  id = spec[0];
+  object = Actor_Get(id);
+  mode = spec[1];
+  flag = spec[2];
+  object->collisionFlags &= 0xfe;
+  Actor_SetSpriteFlags(object, 0);
+  Actor_SetCellOpen(id, (u16)mode, (u16)flag, object->terrainId);
+  limit = 0xff;
+  spec += 3;
+  first = spec[0];
+  if (first != ((limit << 8) + 0xff)) {
+    goto next;
+  }
+}
+
+// Finds the current target's table row and shrinks it.
+DEFINE_STATUE_SINK(Statue_Sink, Actor_SetCellOpen)
+
+#include "field_event.h"
+
+DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
+                           Actor_SelectAnimation)

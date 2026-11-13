@@ -1,6 +1,6 @@
 /// @file
 /// Geode.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 
@@ -18,7 +18,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct Model *model);
+void Render_DrawModelList__ability_effects(struct Model *model);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
@@ -26,12 +26,10 @@ void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-/* VIEW(f16c6f8): routine BattleObject_GetFar as void
- * **BattleObject_GetFar(s32 objectId); f16c274 has struct
- * BattleObjectPosition **BattleObject_GetFar(s32 objectId); tried as the 11
- * declarations' void **BattleObject_GetFar(s32 objectId), it does not
- * compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:16275:
- * conflicting types for `BattleObject_GetFar'. */
+/* VIEW(f16c6f8): routine BattleObject_GetFar as void **BattleObject_GetFar(s32
+ * objectId); f16c274 has struct BattleObjectPosition **BattleObject_GetFar(s32
+ * objectId); not tried: BattleObject_GetFar's bound declaration was not found.
+ */
 extern void **
 GetBattleObjectSlotFar__f16c6f8(s32 objectId) __asm__("BattleObject_GetFar");
 

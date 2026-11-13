@@ -71,6 +71,7 @@
 #include "actor_script.h"
 #include "sounds.h"
 #include "flags.h"
+#include "shared/walk_into_leader.h"
 static void TimberRoomsBC_TellFaranAboutJenna(void);
 
 /// An entrance that sets FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED.
@@ -294,8 +295,8 @@ static inline u16 TimberRoomsBC_LeaderGetSide(void) {
 /// they tell of the rough sea.
 static void TimberRoomsBC_TalkToWeaponMerchant(s32 keeper) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  // TimberRoomsBC_LeaderGetSide's rounding, written with the mask 0xc000,
-  // which loads from the literal pool where the helper's builds the mask.
+  // The side of the counter the leader faces, as TimberRoomsBC_LeaderGetSide
+  // rounds it.
   u16 side = (leader->facing + TRIG_TURN / 8) & 0xc000;
 
   if (side == FACING_NORTH) {
@@ -810,14 +811,7 @@ static void TimberRoomsBC_ReportToFaran(void) {
   Actor_SetSpeed(ACTOR_GARET, 1.2);
   Actor_SetSpeed(ACTOR_MIA, 1.2);
   Actor_SetSpeed(ACTOR_IVAN, 1.2);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
@@ -825,14 +819,7 @@ static void TimberRoomsBC_ReportToFaran(void) {
   }
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
-  Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_IVAN);
-  Actor_SetPosition(ACTOR_IVAN, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_IVAN);
   Event_Wait(10);
   Event_End();
 }

@@ -1002,9 +1002,10 @@ static s32 BattleArena_EnterBattle(void) {
     // units (ENEMY_UNITS_SIZE, battle/battle/run.c). While it is
     // allocated, the exchange below receives the partner's party members and
     // Djinn into units 128 to 131. The copy to gActorSpriteSlots
-    // (gMapGridCellBuffer
-    // + 0x8000) hands them to Battle_Run, which copies them back.
-    savedWork = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 1992);
+    // (gMapGridCellBuffer + 0x8000) hands them to Battle_Run, which copies
+    // them back.
+    savedWork =
+        HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 6 * BATTLE_UNIT_SIZE);
     Task_Remove((TaskFunc)BattleArena_PollPeerReady);
     // Run the map's tileset animation 5 for eight frames.
     TilesetAnim_Resume(5);

@@ -66,9 +66,9 @@ ResourceMetadata_ClearRecord:
 	.thumb_func
 Func_02003118:
 	overlay_veneer Actor_SetMode
-	.global Func_02003120
+	.global Actor_StartScript
 	.thumb_func
-Func_02003120:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -94,9 +94,9 @@ Map_CopyCellPictureIndicesRect:
 	.thumb_func
 Func_02003150:
 	overlay_veneer Func_08020198
-	.global Func_02003158
+	.global DisplayBlend_EnableRunScript
 	.thumb_func
-Func_02003158:
+DisplayBlend_EnableRunScript:
 	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.global Map_GetTerrainHeight
 	.thumb_func
@@ -134,9 +134,9 @@ Map_SetScreenShake:
 	.thumb_func
 Animation_ApplyChildValues:
 	overlay_veneer Animation_ApplyChildValuesFar
-	.global Func_020031a8
+	.global Actor_SetSpritePriorityDirect
 	.thumb_func
-Func_020031a8:
+Actor_SetSpritePriorityDirect:
 	overlay_veneer Actor_SetSpritePriorityDirectFar
 	.ifndef TLA_EDITION_JA
 	.global Func_020031b0
@@ -164,13 +164,13 @@ Party_CountActiveOwners:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_020031e0
+	.global Event_Start
 	.thumb_func
-Func_020031e0:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020031e8
+	.global Event_End
 	.thumb_func
-Func_020031e8:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -180,9 +180,9 @@ Actor_GetById:
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
-	.global Func_02003200
+	.global Actor_JumpDownLedge
 	.thumb_func
-Func_02003200:
+Actor_JumpDownLedge:
 	overlay_veneer Actor_JumpDownLedgeFar
 	.global Actor_SetPartAttribute
 	.thumb_func
@@ -212,9 +212,9 @@ Func_02003230:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02003240
+	.global ScreenTransition_Start
 	.thumb_func
-Func_02003240:
+ScreenTransition_Start:
 	overlay_veneer ScreenTransition_StartFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
@@ -236,9 +236,9 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02003270
+	.global DisplayScroll_InitializeHBlankDma
 	.thumb_func
-Func_02003270:
+DisplayScroll_InitializeHBlankDma:
 	overlay_veneer DisplayScroll_InitializeHBlankDmaFar
 	.global Func_02003278
 	.thumb_func
@@ -248,13 +248,13 @@ Func_02003278:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02003288
+	.global BattleParty_ApplyHealthDelta
 	.thumb_func
-Func_02003288:
+BattleParty_ApplyHealthDelta:
 	overlay_veneer BattleParty_ApplyHealthDeltaFar
-	.global Func_02003290
+	.global Party_PlaySavedMusic
 	.thumb_func
-Func_02003290:
+Party_PlaySavedMusic:
 	overlay_veneer Party_PlaySavedMusicFar
 	.global Party_GetLeaderActor
 	.thumb_func

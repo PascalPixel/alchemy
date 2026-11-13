@@ -38,9 +38,9 @@ Func_0802372c:
 	.thumb_func
 FieldMessage_Show:
 	overlay_veneer FieldMessage_ShowFar
-	.global Func_020010b0
+	.global MessageArgument_Push
 	.thumb_func
-Func_020010b0:
+MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
 	.global Func_020010b8
 	.thumb_func
@@ -54,21 +54,21 @@ PartyInventory_FindOwner:
 	.thumb_func
 Party_AdjustCoins:
 	overlay_veneer Party_AdjustCoinsFar
-	.global Func_020010d0
+	.global Party_FindOwnerWithAction
 	.thumb_func
-Func_020010d0:
+Party_FindOwnerWithAction:
 	overlay_veneer Party_FindOwnerWithActionFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_020010e0
+	.global Event_Start
 	.thumb_func
-Func_020010e0:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020010e8
+	.global Event_End
 	.thumb_func
-Func_020010e8:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func

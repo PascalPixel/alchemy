@@ -54,13 +54,13 @@ Func_02001420:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02001430
+	.global Event_Start
 	.thumb_func
-Func_02001430:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02001438
+	.global Event_End
 	.thumb_func
-Func_02001438:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -260,21 +260,21 @@ Field_StartPaletteTransition:
 	overlay_veneer Field_StartPaletteTransitionFar
 	.endif
 	.endif
-	.global Func_020015b0
+	.global BattleEffect_StartArcEffect
 	.thumb_func
-Func_020015b0:
+BattleEffect_StartArcEffect:
 	overlay_veneer BattleEffect_StartArcEffectFar
-	.global Func_020015b8
+	.global BattleEffect_EndArcEffect
 	.thumb_func
-Func_020015b8:
+BattleEffect_EndArcEffect:
 	overlay_veneer BattleEffect_EndArcEffectFar
-	.global Func_020015c0
+	.global BattleEffect_WaitForArcGroups
 	.thumb_func
-Func_020015c0:
+BattleEffect_WaitForArcGroups:
 	overlay_veneer BattleEffect_WaitForArcGroupsFar
-	.global Func_020015c8
+	.global BattleEffect_SetObjectUpdateMode
 	.thumb_func
-Func_020015c8:
+BattleEffect_SetObjectUpdateMode:
 	overlay_veneer BattleEffect_SetObjectUpdateModeFar
 	.global Func_080dbdd4
 	.thumb_func

@@ -62,13 +62,13 @@ PartyInventory_Remove:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_0200110c
+	.global Event_Start
 	.thumb_func
-Func_0200110c:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02001114
+	.global Event_End
 	.thumb_func
-Func_02001114:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -86,9 +86,9 @@ Actor_SetMovementTypeById:
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
-	.global Func_0200113c
+	.global Actor_MoveToObject
 	.thumb_func
-Func_0200113c:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -126,9 +126,9 @@ Import_EventSetExitRequest:
 	.thumb_func
 Func_02001184:
 	overlay_veneer Func_080c82c0
-	.global Func_0200118c
+	.global BattleEffect_FindNearestObject
 	.thumb_func
-Func_0200118c:
+BattleEffect_FindNearestObject:
 	overlay_veneer BattleEffect_FindNearestObjectFar
 	.global Event_StartScreenTransition
 	.thumb_func

@@ -42,9 +42,9 @@ Heap_Alloc:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_02003c7c
+	.global Resource_DecodeType01
 	.thumb_func
-Func_02003c7c:
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global VramCache_Load
 	.thumb_func
@@ -82,17 +82,17 @@ ResourceMetadata_Register:
 	.thumb_func
 Func_02003cc4:
 	overlay_veneer Actor_SetMode
-	.global Func_02003ccc
+	.global Actor_StartScript
 	.thumb_func
-Func_02003ccc:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02003cdc
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_02003cdc:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -106,13 +106,13 @@ Script_WaitForEventTimeout:
 	.thumb_func
 Map_CopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
-	.global Func_02003cfc
+	.global DisplayBlend_DisableRunScript
 	.thumb_func
-Func_02003cfc:
+DisplayBlend_DisableRunScript:
 	overlay_veneer DisplayBlend_DisableRunScriptFar
-	.global Func_02003d04
+	.global DisplayBlend_EnableRunScript
 	.thumb_func
-Func_02003d04:
+DisplayBlend_EnableRunScript:
 	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.global Map_GetTerrainHeight
 	.thumb_func
@@ -158,9 +158,9 @@ Func_02003d54:
 	.thumb_func
 FieldMessage_Show:
 	overlay_veneer FieldMessage_ShowFar
-	.global Func_02003d64
+	.global MessageArgument_Push
 	.thumb_func
-Func_02003d64:
+MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
 	.global PartyInventory_FindOwner
 	.thumb_func
@@ -170,13 +170,13 @@ PartyInventory_FindOwner:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02003d7c
+	.global Event_Start
 	.thumb_func
-Func_02003d7c:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02003d84
+	.global Event_End
 	.thumb_func
-Func_02003d84:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Party_LearnAbility
 	.thumb_func
@@ -222,17 +222,17 @@ Actor_WaitForMoveById:
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
-	.global Func_02003de4
+	.global Actor_MoveToObject
 	.thumb_func
-Func_02003de4:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
 Actor_SetModeById:
 	overlay_veneer Actor_SetModeByIdFar
-	.global Func_02003df4
+	.global Actor_JumpDownLedge
 	.thumb_func
-Func_02003df4:
+Actor_JumpDownLedge:
 	overlay_veneer Actor_JumpDownLedgeFar
 	.global Actor_TurnToFaceEachOther
 	.thumb_func
@@ -326,13 +326,13 @@ Func_02003ea4:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02003eb4
+	.global BattleParty_ApplyDrain
 	.thumb_func
-Func_02003eb4:
+BattleParty_ApplyDrain:
 	overlay_veneer BattleParty_ApplyDrainFar
-	.global Func_02003ebc
+	.global Party_PlaySavedMusic
 	.thumb_func
-Func_02003ebc:
+Party_PlaySavedMusic:
 	overlay_veneer Party_PlaySavedMusicFar
 	.global Actor_CommitPositionAndActivate
 	.thumb_func
@@ -342,9 +342,9 @@ Actor_CommitPositionAndActivate:
 	.thumb_func
 Func_02003ecc:
 	overlay_veneer Func_080c8688
-	.global Func_02003ed4
+	.global Event_NoOp
 	.thumb_func
-Func_02003ed4:
+Event_NoOp:
 	overlay_veneer Event_NoOpFar
 	.global Func_02003edc
 	.thumb_func

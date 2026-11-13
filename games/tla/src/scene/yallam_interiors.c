@@ -23,7 +23,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Func_0200004c(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov677Room1)
@@ -43,7 +43,7 @@ const struct ActorPlacement *Func_0200004c(void) {
 s32 Func_0200008c(void) {
   s32 t2;
 
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   t2 = GameFlag_Test(0x301);
   if (t2 != 0) {
@@ -52,14 +52,14 @@ s32 Func_0200008c(void) {
     Event_SetMessageId((s32)MsgYallamInteriors33);
   }
   Event_ShowMessageAndWait(14, 0);
-  Func_020009b8();
+  Event_End();
   return 0;
 }
 
 s32 Func_020000cc(void) {
   s32 t2;
 
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   t2 = GameFlag_Test(0x301);
   if (t2 != 0) {
@@ -68,14 +68,14 @@ s32 Func_020000cc(void) {
     Event_SetMessageId((s32)MsgYallamInteriors34);
   }
   Event_ShowMessageAndWait(15, 0);
-  Func_020009b8();
+  Event_End();
   return 0;
 }
 
 s32 Func_0200010c(void) {
   s32 t2;
 
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   t2 = GameFlag_Test(0x301);
   if (t2 != 0) {
@@ -84,14 +84,14 @@ s32 Func_0200010c(void) {
     Event_SetMessageId((s32)MsgYallamInteriors35);
   }
   Event_ShowMessageAndWait(16, 0);
-  Func_020009b8();
+  Event_End();
   return 0;
 }
 
 s32 Func_0200014c(void) {
   s32 t2;
 
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   t2 = GameFlag_Test(0x301);
   if (t2 != 0) {
@@ -100,38 +100,38 @@ s32 Func_0200014c(void) {
     Event_SetMessageId((s32)MsgYallamInteriors32);
   }
   Event_ShowMessageAndWait(16, 0);
-  Func_020009b8();
+  Event_End();
   return 0;
 }
 
 s32 Func_0200018c(void) {
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors22);
   Event_ShowMessageAndWait(10, 0);
-  Func_020009b8();
+  Event_End();
   return 0;
 }
 
 s32 Func_020001b4(void) {
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors24);
   Event_ShowMessageAndWait(11, 0);
-  Func_020009b8();
+  Event_End();
   return 0;
 }
 
 s32 Func_020001dc(void) {
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors26);
   Event_ShowMessageAndWait(12, 0);
-  Func_020009b8();
+  Event_End();
   return 0;
 }
 
-const struct Trigger *Func_02000204(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov677Room1)
@@ -144,7 +144,7 @@ const struct Trigger *Func_02000204(void) {
 void Func_02000244(void) {
   s32 msg;
 
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgYallamInteriors10;
   Event_SetMessageId(msg);
@@ -157,7 +157,7 @@ void Func_02000244(void) {
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessageAndWait(9, 0);
-  Func_020009b8();
+  Event_End();
 }
 
 void Func_0200029c(s32 actor) {
@@ -166,11 +166,11 @@ void Func_0200029c(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000a68(20, actor);
   } else {
-    Func_020009b0();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgYallamInteriors21);
     Event_ShowMessageAndWait(actor, 0);
-    Func_020009b8();
+    Event_End();
   }
 }
 
@@ -180,11 +180,11 @@ void Func_020002fc(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000a68(21, actor);
   } else {
-    Func_020009b0();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgYallamInteriors23);
     Event_ShowMessageAndWait(actor, 0);
-    Func_020009b8();
+    Event_End();
   }
 }
 
@@ -194,11 +194,11 @@ void Func_0200035c(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000a68(22, actor);
   } else {
-    Func_020009b0();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgYallamInteriors25);
     Event_ShowMessageAndWait(actor, 0);
-    Func_020009b8();
+    Event_End();
   }
 }
 
@@ -209,11 +209,11 @@ void Func_020003bc(s32 actor) {
     Func_02000a78(7, actor);
     GameFlag_ClearBit(0x301);
   } else {
-    Func_020009b0();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgYallamInteriors27);
     Event_ShowMessageAndWait(actor, 0);
-    Func_020009b8();
+    Event_End();
   }
 }
 
@@ -223,18 +223,18 @@ void Func_02000424(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000a70(actor);
   } else {
-    Func_020009b0();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgMikasallaInteriors27);
     Event_ShowMessageAndWait(actor, 0);
-    Func_020009b8();
+    Event_End();
   }
 }
 
 void Func_02000480(void) {
   s32 msg;
 
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_StartRepeatedMotion(14, 2);
   msg = (s32)MsgYallamInteriors31;
@@ -248,7 +248,7 @@ void Func_02000480(void) {
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessageAndWait(14, 0);
-  Func_020009b8();
+  Event_End();
 }
 
 s32 Func_02000a90(void);
@@ -351,9 +351,9 @@ void Func_02000524(void) {
 }
 
 void Party_AdjustCoins(s32 amount);
-void Func_02000980(s32 value, s32 slot);
+void MessageArgument_Push(s32 value, s32 slot);
 u16 *Func_02000988(s32 item);
-s32 Func_020009a0(s32 item);
+s32 PartyInventory_FindRoom(s32 item);
 void Func_02000a40(s32 item, s32 mode);
 void Func_02000a88(s32 value);
 
@@ -369,15 +369,15 @@ void Func_0200077c(s32 actor) {
     u32 price = *Func_02000988(item);
     s32 message;
 
-    Func_02000980(item, 2);
-    Func_02000980(price, 5);
+    MessageArgument_Push(item, 2);
+    MessageArgument_Push(price, 5);
     message = (s32)MsgHereSThe;
     Event_SetMessageId(message);
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) != 0) {
       Event_SetMessageId(message + 1);
       Event_ShowMessageAndWait(actor, 0);
-    } else if (Func_020009a0(item) < 0) {
+    } else if (PartyInventory_FindRoom(item) < 0) {
       Event_SetMessageId(message + 2);
       Event_ShowMessageAndWait(actor, 0);
     } else if ((u32)gMainRoutineWork.coins < price) {
@@ -399,7 +399,7 @@ void Func_0200077c(s32 actor) {
 
 /// The scene's start entry: the screen effect 0x209, then the actors of
 /// rooms 1 and 2.
-s32 Func_0200086c(void) {
+s32 Scene_Initialize(void) {
   s32 scene;
 
   ((struct YallamInteriorsEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
@@ -520,60 +520,60 @@ struct ActorPlacement gData_02000dac[] = {
 };
 
 struct Trigger gData_02000e84[] = {
-    {1, 10, CONDITION_ALWAYS, 10},
-    {1, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGERS_END},
 };
 // clang-format on
 
 struct Trigger gData_02000ea8[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors09)},
-    {0, 9, CONDITION_ALWAYS, EVENT(Func_02000244)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors13)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors14)},
-    {0, 12, CONDITION_ALWAYS, EVENT(Func_020003bc)},
-    {0, 13, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors28)},
-    {0, 14, CONDITION_ALWAYS, EVENT(Func_02000524)},
-    {0, 15, CONDITION_ALWAYS, EVENT(Func_0200077c)},
-    {0, 16, CONDITION_ALWAYS, EVENT(Func_0200014c)},
-    {0, 17, CONDITION_ALWAYS, EVENT(Func_02000524)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors11)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors12)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors15)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors16)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors29)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors30)},
-    {0x8d15, 14, CONDITION_ALWAYS, EVENT(Func_0200008c)},
-    {0x8d15, 15, CONDITION_ALWAYS, EVENT(Func_020000cc)},
-    {0x8d15, 16, CONDITION_ALWAYS, EVENT(Func_0200010c)},
-    {0x8d15, 17, CONDITION_ALWAYS, EVENT(Func_0200008c)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors09)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000244)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors13)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors14)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_020003bc)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors28)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_02000524)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_0200077c)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_0200014c)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_02000524)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors11)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors12)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors15)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors16)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors29)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors30)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(Func_0200008c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT(Func_020000cc)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT(Func_0200010c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(Func_0200008c)},
     {0x173, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgYallamInteriors40))},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02000fe0[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors17)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors18)},
-    {0, 10, CONDITION_ALWAYS, EVENT(Func_0200029c)},
-    {0, 11, CONDITION_ALWAYS, EVENT(Func_020002fc)},
-    {0, 12, CONDITION_ALWAYS, EVENT(Func_0200035c)},
-    {0, 13, CONDITION_ALWAYS, EVENT(Func_0200029c)},
-    {0, 14, CONDITION_ALWAYS, EVENT(Func_020002fc)},
-    {0, 15, CONDITION_ALWAYS, EVENT(Func_0200035c)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors19)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors20)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors22)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors24)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors26)},
-    {0x8d15, 13, CONDITION_ALWAYS, EVENT(Func_0200018c)},
-    {0x8d15, 14, CONDITION_ALWAYS, EVENT(Func_020001b4)},
-    {0x8d15, 15, CONDITION_ALWAYS, EVENT(Func_020001dc)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors17)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors18)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_0200029c)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_020002fc)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_0200035c)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_0200029c)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_020002fc)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_0200035c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors19)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors20)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors22)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors24)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors26)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT(Func_0200018c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(Func_020001b4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT(Func_020001dc)},
     {TRIGGERS_END},
 };

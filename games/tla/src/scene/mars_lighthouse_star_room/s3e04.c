@@ -6,13 +6,13 @@
 #include "field_effect.h"
 #include "event_inline.h"
 
-void Func_020042dc(void);
-void Func_020041fc(void);
+void Event_Start(void);
+void Map_CenterOnFollowedPoint(void);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_0200363c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Func_020042e4(void);
+void Event_End(void);
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
@@ -27,10 +27,10 @@ void Func_02003e04(void) {
   u32 i;
   struct EffectOptions options;
 
-  Func_020042dc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   CamBounds(-1, -1, -1, 0);
-  Func_020041fc();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = 0x820000;
   actor->gravity = 0x8000;
@@ -73,7 +73,7 @@ void Func_02003e04(void) {
   actor->bounce = 0x4000;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Func_020042e4();
+  Event_End();
 }
 
 #include "cell_target.h"
@@ -137,7 +137,7 @@ void Func_0200404c(s32 x, s32 z, s32 effect) {
     marker = work->marker;
     marker->x = leader->x;
     marker->z = leader->z;
-    Func_020041fc();
+    Map_CenterOnFollowedPoint();
     Func_02003e04();
     ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
         ->screenEffect = effect;
@@ -472,28 +472,28 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {81, 2, CONDITION_ALWAYS, 2},
     {81, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {33, 5, CONDITION_ALWAYS, 5},
     {33, 6, CONDITION_ALWAYS, 6},
     {33, 7, CONDITION_ALWAYS, 7},
     {33, 8, CONDITION_ALWAYS, 8},
     {33, 9, CONDITION_ALWAYS, 9},
-    {1, 10, CONDITION_ALWAYS, 10},
-    {1, 11, CONDITION_ALWAYS, 11},
-    {2, 90, 0x1a4b, EVENT(Func_0200236c)},
-    {0x10009a15, 8, CONDITION_ALWAYS, EVENT(Func_02000060)},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_STEP, 90, 0x1a4b, EVENT(Func_0200236c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(Func_02000060)},
     {0x60009a15, 9, CONDITION_ALWAYS, EVENT(Func_02000074)},
-    {0x20009a15, 9, CONDITION_ALWAYS, (u32)(Func_0200007c)},
-    {6, 20, CONDITION_ALWAYS, EVENT(Func_020005b0)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 9, CONDITION_ALWAYS, (u32)(Func_0200007c)},
+    {TRIGGER_RAISED, 20, CONDITION_ALWAYS, EVENT(Func_020005b0)},
     {0x50009705, 20, 0x1233, EVENT(Func_0200024c)},
-    {0, 14, CONDITION_ALWAYS, EVENT(Func_02000ba4)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgMarsStar05)},
-    {0, 13, CONDITION_ALWAYS, EVENT(Func_02000bd8)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgMarsStar04)},
-    {3, 21, CONDITION_ALWAYS, EVENT(Func_02000e50)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_02000ba4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgMarsStar05)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_02000bd8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgMarsStar04)},
+    {TRIGGER_EXAMINE, 21, CONDITION_ALWAYS, EVENT(Func_02000e50)},
     {0xde04, 1045, CONDITION_ALWAYS, EVENT(Func_02000e80)},
     {TRIGGERS_END},
 };

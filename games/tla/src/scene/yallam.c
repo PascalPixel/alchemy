@@ -152,7 +152,7 @@ extern const u8 gData_02002ac4[];
 extern const u8 gData_02002be4[];
 extern const u8 gData_02002bfc[];
 
-const u8 *Func_02000218(void) {
+const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 &&
       gMainRoutineWork.entrance == 15)
     return gData_02002bfc;
@@ -166,7 +166,7 @@ void Func_02000270(void) {
   u32 i;
   s32 index;
 
-  Func_02002488();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   for (i = 8; i <= 63; i++) {
     u8 *actor = (u8 *)Actor_Get(i);
@@ -197,7 +197,7 @@ void Func_02000270(void) {
   FieldEvent_SetExitRequest(*(s16 *)(event + 340));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02002490();
+  Event_End();
 }
 
 void Func_02002598(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
@@ -224,13 +224,13 @@ void Func_0200038c(void) {
   if (Event_GetFlag(0xf62) == 0) {
     Actor_SetPosition(66, PIXELS(424), PIXELS(232));
     if (leader->x >> 20 == 26 && leader->z >> 20 == 14) {
-      Func_02002488();
+      Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
       Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = 0x60000;
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Func_02002490();
+      Event_End();
     }
   }
 }
@@ -244,13 +244,13 @@ void Func_0200043c(void) {
   if (Event_GetFlag(0xf60) == 0) {
     Actor_SetPosition(64, PIXELS(680), PIXELS(344));
     if (leader->x >> 20 == 42 && leader->z >> 20 == 21) {
-      Func_02002488();
+      Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
       Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -16);
       leader->velocityY = 0x60000;
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Func_02002490();
+      Event_End();
     }
   }
 }
@@ -261,7 +261,7 @@ extern const u8 gData_02002d24[];
 extern const u8 gData_02002eec[];
 extern const u8 gData_02002f10[];
 
-const u8 *Func_020004ec(void) {
+const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 &&
       gMainRoutineWork.entrance == 15)
     return gData_02002f10;
@@ -280,7 +280,7 @@ struct TalkActor {
 };
 
 void Func_02000544(void) {
-  Func_02002488();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgDoYouWant);
   Event_OpenMessage(8, 0);
@@ -288,7 +288,7 @@ void Func_02000544(void) {
     Func_02001944();
   else
     Event_ShowMessage(8, 0);
-  Func_02002490();
+  Event_End();
 }
 
 void Func_02000584(void) {
@@ -296,7 +296,7 @@ void Func_02000584(void) {
   struct TalkActor *object = (struct TalkActor *)Actor_Get(9);
   s16 angle = object->angle;
 
-  Func_02002488();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
   if (work->unk166 == 0) {
@@ -309,7 +309,7 @@ void Func_02000584(void) {
   if (work->unk166 == 0)
     object->angle = angle;
   object->unk63 = 0;
-  Func_02002490();
+  Event_End();
 }
 
 void Func_02000614(void) {
@@ -317,7 +317,7 @@ void Func_02000614(void) {
   struct TalkActor *object = (struct TalkActor *)Actor_Get(10);
   s16 angle = object->angle;
 
-  Func_02002488();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
   if (work->unk166 == 0) {
@@ -330,7 +330,7 @@ void Func_02000614(void) {
   if (work->unk166 == 0)
     object->angle = angle;
   object->unk63 = 0;
-  Func_02002490();
+  Event_End();
 }
 
 s32 Func_020006a4(struct Actor *object) {
@@ -1693,7 +1693,7 @@ void Func_02002244(void) {
   }
 }
 
-s32 Func_02002278(void) {
+s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1) {
     if (gMainRoutineWork.entrance == 15)
       Func_020023c8();
@@ -1703,7 +1703,7 @@ s32 Func_02002278(void) {
   return 0;
 }
 
-s32 Func_020022b0(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 && Event_GetFlag(0x300))
     MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);
   return 0;

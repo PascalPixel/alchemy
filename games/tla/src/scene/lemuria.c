@@ -59,7 +59,7 @@ s32 Func_02000070(struct Actor *self, struct Actor *other, s32 range) {
 }
 
 s32 Func_02001d54(struct Actor *object);
-void Func_02001ba4(struct Actor *object, s32 priority);
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority);
 void Func_02001b7c(struct Actor *object, s32 mode);
 
 s32 Func_020000e8(struct Actor *self) {
@@ -69,7 +69,7 @@ s32 Func_020000e8(struct Actor *self) {
   s8 *effect;
   struct Actor *other;
 
-  Func_02001ba4(self, Func_02001d54(Actor_Get(gMainRoutineWork.currentOwner)));
+  Actor_SetSpritePriorityDirect(self, Func_02001d54(Actor_Get(gMainRoutineWork.currentOwner)));
   mode = 0x3ff & *(u16 *)(event + 0x166);
   state = &self->movementState;
   if (mode == 141) {
@@ -103,9 +103,9 @@ struct WarpTarget {
 };
 
 void Animation_SetIndexAndInitializeObjects(struct Actor *object, s32 index);
-void Func_02001bcc(void);
-void Func_02001bd4(void);
-void Func_02001cf4(s32 a, s32 b, s32 c);
+void Event_Start(void);
+void Event_End(void);
+void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02001d44(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 s32 Func_02001d5c(s32 x, s32 z, s32 layer);
 void Func_02001d64(s32 x, s32 z, s32 layer, s32 value);
@@ -153,7 +153,7 @@ void Func_020001bc(void) {
 void Func_020001f0(const struct WarpTarget *warp, s32 door, s32 mode) {
   s32 id;
 
-  Func_02001bcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(158);
   MapGrid_AnimateCells(warp->scene, warp->x, warp->z);
@@ -169,7 +169,7 @@ void Func_020001f0(const struct WarpTarget *warp, s32 door, s32 mode) {
   FieldEvent_SetExitRequest(door);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02001bd4();
+  Event_End();
 }
 
 void Func_02000278(s32 door) {
@@ -221,7 +221,7 @@ void Func_02000308(void) {
   s16 angle = object->facing;
 
   object->timer = 1;
-  Func_02001bcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (*(s16 *)(work + 0x166) == 0) {
     FieldEvent_SetMessageId((s32)&MsgItHasBeen);
@@ -231,7 +231,7 @@ void Func_02000308(void) {
   }
   Actor_SetAnimation(18, 0);
   FieldEvent_ShowMessageThenWait(18, 0, 10);
-  Func_02001bd4();
+  Event_End();
   object->timer = 0;
   object->facing = angle;
   System_Wait(1);
@@ -244,7 +244,7 @@ void Func_02000398(void) {
   s16 angle = object->facing;
 
   object->timer = 1;
-  Func_02001bcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (*(s16 *)(work + 0x166) == 0) {
     FieldEvent_SetMessageId((s32)&MsgWeAreThe);
@@ -254,7 +254,7 @@ void Func_02000398(void) {
   }
   Actor_SetAnimation(19, 0);
   FieldEvent_ShowMessageThenWait(19, 0, 10);
-  Func_02001bd4();
+  Event_End();
   object->timer = 0;
   object->facing = angle;
   System_Wait(1);
@@ -286,25 +286,25 @@ void Func_020004a8(void) {
   if (Event_GetFlag(0xfbb) == 0) {
     Func_02001c2c_(69, PIXELS(808), PIXELS(1176));
     if (leader->x >> 20 == 50 && leader->z >> 20 == 73) {
-      Func_02001bcc();
+      Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
       Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = PIXELS(6);
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Func_02001bd4();
+      Event_End();
     }
   }
 }
 
 void Func_02001d74(void);
-void Func_02001ccc(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 
 void Func_02000538(void) {
   struct MainRoutineWork *party;
 
   Func_02001d74();
-  Func_02001ccc((s32)&SceneId_Ov68b, 2);
+  Event_SetDestination((s32)&SceneId_Ov68b, 2);
   party = &gMainRoutineWork;
 
   party->unk2c2 = 2;
@@ -338,7 +338,7 @@ void Func_02000560(void) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02001cf4_(s32 a, s32 b, s32 c) {
-  Func_02001cf4(a, b, c);
+  Actor_ReturnHome(a, b, c);
 }
 
 void Func_020005ac(s32 a) { Func_02001cf4_(a, 64, 0x300); }
@@ -364,7 +364,7 @@ void Func_0200061c(s32 a) { Func_02001cf4_(a, 72, 0x308); }
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_02001bbc();
+s32 Party_FindOwnerWithAction();
 void Func_02001cc4();
 void Func_02001d2c();
 void Func_02001d34();
@@ -394,7 +394,7 @@ L_02008682:
   goto L_020088d4;
 L_02008694:
   Event_SetFlag(0x968);
-  Func_02001bcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)&MsgAreYouKids);
   Actor_SetPosition(12, PIXELS(872), PIXELS(880));
@@ -416,7 +416,7 @@ L_02008694:
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(928), 1);
   Func_02001cc4();
-  t30 = Func_02001bbc(133);
+  t30 = Party_FindOwnerWithAction(133);
   v5 = t30;
   if (v5 == -1)
     goto L_02008778;
@@ -461,7 +461,7 @@ L_02008788:
   Event_SetFlag(0x96f);
 L_020088cc:
   Func_020001bc();
-  Func_02001bd4();
+  Event_End();
 L_020088d4:
 }
 
@@ -490,7 +490,7 @@ void Func_02000934(void) {
     Actor_FaceDirectionAndWait(30, FACING_NORTH + FACING_STEP);
     return;
   }
-  Func_02001bcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgDoYouWish);
   Actor_ShowEmote(30, 0x100, 30);
@@ -514,7 +514,7 @@ void Func_02000934(void) {
     Event_SetFlag(0x908);
   }
   Actor_FaceDirectionAndWait(30, FACING_NORTH + FACING_STEP);
-  Func_02001bd4();
+  Event_End();
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
@@ -612,7 +612,7 @@ void Func_02001b3c(void);
 extern u32 gData_02001d84[];
 extern u32 gData_02001e04[];
 
-s32 Func_02000bdc(void) {
+s32 Scene_Initialize(void) {
   s32 t3, t7, t11, t12, t15, t16, t17, t19, t20, t23, t25, t26, t27, t32, t33,
       t34, t40, t42, t45, t47, t49, t51, t53, t55, v5, v6;
 
@@ -737,7 +737,7 @@ void Func_02000e7c(s32 id) {
   s32 b;
   s32 c;
 
-  Func_02001bcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgOh2);
   Animation_SetIndexAndInitializeObjects((s32)Actor_Get(12), 56);
@@ -796,13 +796,13 @@ void Func_02000e7c(s32 id) {
   Actor_Get(4)->priorityFlags |= 1;
   Actor_WalkToAndWait(4, 464, 776);
   Func_020001bc();
-  Func_02001bd4();
+  Event_End();
 }
 
 void Func_0200109c(void) {
   struct Actor *leader;
 
-  Func_02001bcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgWhereAreYou);
   Animation_SetIndexAndInitializeObjects((s32)Actor_Get(12), 56);
@@ -822,7 +822,7 @@ void Func_0200109c(void) {
   FieldEvent_Wait(10);
   Actor_WalkByAndWait(4, 0, -16);
   Func_020001bc();
-  Func_02001bd4();
+  Event_End();
 }
 
 struct EventWork1c4 {
@@ -835,7 +835,7 @@ void Func_02001160(void) {
   s32 result;
 
   Event_SetFlag(0x964);
-  Func_02001bcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgThisPlaceIs);
   Actor_SetSpeed(24, 0x10000, 0x8000);
@@ -1104,7 +1104,7 @@ void Func_02001160(void) {
   FieldActor_WaitForMoveById(12);
   Actor_SetPosition(12, 0, 0);
   Func_020001bc();
-  Func_02001bd4();
+  Event_End();
 }
 
 void Func_02001d6c(void);
@@ -1236,67 +1236,67 @@ struct Trigger gSceneEvents[] = {
     {49, 4, CONDITION_ALWAYS, 4},
     {0xc401, 5, 0x1908, 5},
     {0xc602, 12, 0x1966, EVENT(Func_02000278)},
-    {1, 15, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {0xc602, 16, 0x1969, EVENT(Func_02000278)},
     {0xc602, 11, CONDITION_ALWAYS, EVENT(Func_02000278)},
     {0xc602, 10, CONDITION_ALWAYS, EVENT(Func_02000278)},
-    {1, 17, CONDITION_ALWAYS, 17},
-    {2, 20, 0x964, EVENT(Func_02001160)},
-    {2, 21, 0x964, EVENT(Func_02000e7c)},
-    {2, 22, 0x964, EVENT(Func_02000e7c)},
-    {2, 23, 0x964, EVENT(Func_0200109c)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgICannotRemember)},
-    {0, 13, CONDITION_ALWAYS, MSGNO(MsgLemuriaHasNo)},
-    {0, 14, CONDITION_ALWAYS, MSGNO(MsgInLemuriaWe)},
-    {0, 15, CONDITION_ALWAYS, MSGNO(MsgLifeNeverChanges)},
-    {0, 16, CONDITION_ALWAYS, MSGNO(MsgIOughtTo)},
-    {0, 17, CONDITION_ALWAYS, MSGNO(MsgHowOldAm)},
-    {0, 18, CONDITION_ALWAYS, EVENT(Func_02000308)},
-    {0, 19, CONDITION_ALWAYS, EVENT(Func_02000398)},
-    {0, 20, CONDITION_ALWAYS, MSGNO(MsgMeowMrrrfle2)},
-    {0, 21, CONDITION_ALWAYS, MSGNO(MsgWoofRrrrrroof2)},
-    {0, 22, CONDITION_ALWAYS, MSGNO(MsgMoo2)},
-    {0, 23, CONDITION_ALWAYS, MSGNO(MsgBukbukbuk2)},
-    {0, 7, CONDITION_ALWAYS, MSGNO(MsgBlank4)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgMoreOfThe)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgIHavenT)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgIVeAged)},
-    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgSometimesIThink)},
-    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgLongAgoA)},
-    {0x8d15, 17, CONDITION_ALWAYS, MSGNO(MsgKingHydrosIs)},
-    {0x8d15, 18, CONDITION_ALWAYS, EVENT(Func_02000308)},
-    {0x8d15, 19, CONDITION_ALWAYS, EVENT(Func_02000398)},
-    {0x8d15, 20, CONDITION_ALWAYS, MSGNO(MsgNoOneIn)},
-    {0x8d15, 21, CONDITION_ALWAYS, MSGNO(MsgThereSSo)},
-    {0x8d15, 22, CONDITION_ALWAYS, MSGNO(MsgLemuriansAreSo)},
-    {0x8d15, 23, CONDITION_ALWAYS, MSGNO(MsgIfItWeren)},
-    {0x8d15, 7, CONDITION_ALWAYS, MSGNO(MsgMotherWhyHave)},
-    {0, 24, 0x196a, MSGNO(MsgIVeNever)},
-    {0, 25, 0x196a, MSGNO(MsgLordConservatoHas)},
-    {0x8d15, 24, 0x196a, MSGNO(MsgIMSureThe)},
-    {0x8d15, 25, 0x196a, MSGNO(MsgHowCouldLord)},
-    {0, 24, 0x1969, MSGNO(MsgKingHydrosAwaits)},
-    {0, 25, 0x1969, MSGNO(MsgHisHighnessThe)},
-    {0x8d15, 24, 0x1969, MSGNO(MsgTheyAreClearly)},
-    {0x8d15, 25, 0x1969, MSGNO(MsgWhatDoesHis)},
-    {0, 24, CONDITION_ALWAYS, MSGNO(MsgTheKingIs)},
-    {0, 25, CONDITION_ALWAYS, MSGNO(MsgTheKingWill)},
-    {0x8d15, 24, CONDITION_ALWAYS, MSGNO(MsgHowMuchLongerWill)},
-    {0x8d15, 25, CONDITION_ALWAYS, MSGNO(MsgIHadHeard)},
-    {0, 26, 0x196a, MSGNO(MsgIfYouAnd)},
-    {0x8d15, 26, 0x196a, MSGNO(MsgIKnowWhy)},
-    {0, 26, CONDITION_ALWAYS, MSGNO(MsgTheSenateHolds)},
-    {0x8d15, 26, CONDITION_ALWAYS, MSGNO(MsgITrustThe)},
+    {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
+    {TRIGGER_STEP, 20, 0x964, EVENT(Func_02001160)},
+    {TRIGGER_STEP, 21, 0x964, EVENT(Func_02000e7c)},
+    {TRIGGER_STEP, 22, 0x964, EVENT(Func_02000e7c)},
+    {TRIGGER_STEP, 23, 0x964, EVENT(Func_0200109c)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgICannotRemember)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgLemuriaHasNo)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgInLemuriaWe)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLifeNeverChanges)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgIOughtTo)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgHowOldAm)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000308)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_02000398)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgMeowMrrrfle2)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgWoofRrrrrroof2)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgMoo2)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgBukbukbuk2)},
+    {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgBlank4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgMoreOfThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgIHavenT)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgIVeAged)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgSometimesIThink)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgLongAgoA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKingHydrosIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT(Func_02000308)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, EVENT(Func_02000398)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgNoOneIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgThereSSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgLemuriansAreSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgIfItWeren)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 7, CONDITION_ALWAYS, MSGNO(MsgMotherWhyHave)},
+    {TRIGGER_TALK, 24, 0x196a, MSGNO(MsgIVeNever)},
+    {TRIGGER_TALK, 25, 0x196a, MSGNO(MsgLordConservatoHas)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x196a, MSGNO(MsgIMSureThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x196a, MSGNO(MsgHowCouldLord)},
+    {TRIGGER_TALK, 24, 0x1969, MSGNO(MsgKingHydrosAwaits)},
+    {TRIGGER_TALK, 25, 0x1969, MSGNO(MsgHisHighnessThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x1969, MSGNO(MsgTheyAreClearly)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x1969, MSGNO(MsgWhatDoesHis)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTheKingIs)},
+    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgTheKingWill)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgHowMuchLongerWill)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgIHadHeard)},
+    {TRIGGER_TALK, 26, 0x196a, MSGNO(MsgIfYouAnd)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, 0x196a, MSGNO(MsgIKnowWhy)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgTheSenateHolds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgITrustThe)},
     {0xc400, 11, CONDITION_ALWAYS, MSGNO(MsgHouseOfThe)},
-    {0, 29, CONDITION_ALWAYS, MSGNO(MsgDrinkingFromThis)},
-    {0x8d15, 29, CONDITION_ALWAYS, MSGNO(MsgTheseTurtlesHave)},
-    {0, 30, CONDITION_ALWAYS, EVENT(Func_02000934)},
-    {0x8d15, 30, CONDITION_ALWAYS, MSGNO(MsgNoOneIs)},
-    {0, 31, CONDITION_ALWAYS, EVENT(Func_020008e8)},
-    {3, 25, CONDITION_ALWAYS, EVENT(Func_020008e8)},
-    {3, 40, CONDITION_ALWAYS, EVENT(Func_0200062c)},
-    {0x8515, 8, 0x962, 0},
-    {0xc15, 10, 0x963, EVENT(Func_02000560)},
+    {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgDrinkingFromThis)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTheseTurtlesHave)},
+    {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(Func_02000934)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgNoOneIs)},
+    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Func_020008e8)},
+    {TRIGGER_EXAMINE, 25, CONDITION_ALWAYS, EVENT(Func_020008e8)},
+    {TRIGGER_EXAMINE, 40, CONDITION_ALWAYS, EVENT(Func_0200062c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x962, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 10, 0x963, EVENT(Func_02000560)},
     {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000428)},
     {0x50008905, 31, CONDITION_ALWAYS, EVENT(Func_02000448)},
     {0x50008905, 32, CONDITION_ALWAYS, EVENT(Func_02000468)},

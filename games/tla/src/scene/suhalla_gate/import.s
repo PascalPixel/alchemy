@@ -26,13 +26,13 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02000988
+	.global Event_Start
 	.thumb_func
-Func_02000988:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02000990
+	.global Event_End
 	.thumb_func
-Func_02000990:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -118,9 +118,9 @@ Func_02000a30:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02000a40
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_02000a40:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_080d2b4c
 	.thumb_func

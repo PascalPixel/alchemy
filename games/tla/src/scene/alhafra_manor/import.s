@@ -22,13 +22,13 @@ GameFlag_ClearBit:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_020014b8
+	.global Event_Start
 	.thumb_func
-Func_020014b8:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020014c0
+	.global Event_End
 	.thumb_func
-Func_020014c0:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -126,9 +126,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02001588
+	.global Event_SetDestination
 	.thumb_func
-Func_02001588:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
@@ -154,9 +154,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_020015c0
+	.global Party_PlaySavedMusic
 	.thumb_func
-Func_020015c0:
+Party_PlaySavedMusic:
 	overlay_veneer Party_PlaySavedMusicFar
 	.global Actor_OffsetPositionAndReset
 	.thumb_func

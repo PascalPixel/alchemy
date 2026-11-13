@@ -194,7 +194,7 @@ struct MarsLighthouseEventWork {
   u16 downOwners[8];
 };
 
-void Func_02004da8(s32 a, s32 b);
+void BattleParty_ApplyHealthDelta(s32 a, s32 b);
 struct BattleUnit *Unit_Get(s32 owner);
 
 void Func_020024c0(void) {
@@ -208,7 +208,7 @@ void Func_020024c0(void) {
   count = Party_CountActiveOwners();
   for (i = 0; i < count; i++)
     hp[i] = Unit_Get(gMainRoutineWork.activeOwners[i])->hp;
-  Func_02004da8(-10, 0);
+  BattleParty_ApplyHealthDelta(-10, 0);
   work->downCount = 0;
   work->standingCount = 0;
   Actor_SetAttachedEffect(leader, 258);

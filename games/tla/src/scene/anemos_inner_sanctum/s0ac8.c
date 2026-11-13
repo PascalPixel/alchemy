@@ -27,13 +27,13 @@ void Event_WaitTransitionFrames(void);
 void Func_0200088c();
 void Func_020009b8();
 void Func_02000a78();
-void Func_020032e8();
+void Actor_StartScript();
 void Func_020032f8();
-void Func_02003330();
-void Func_02003338();
+void DisplayBlend_DisableRunScript();
+void DisplayBlend_EnableRunScript();
 void Func_02003380(s32 x, s32 z, s32 a, s32 b);
-void Func_02003398(void);
-void Func_020033a0(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02003430(void);
 extern u8 gData_020035cc[];
 extern u8 gData_02003620[];
@@ -117,7 +117,7 @@ void Func_02000ac8(void) {
   if (count == 0)
     return;
 
-  Func_02003398();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   FieldCamera_SetSpeed(0xcccc, 0x1999);
@@ -132,12 +132,12 @@ void Func_02000ac8(void) {
   actor->scaleY = 0x1999;
   actor->scaleX = 0x1999;
   Actor_SetSingleChildFlags((s32)actor, 0);
-  Func_020032e8(actor, gData_020035cc);
+  Actor_StartScript(actor, gData_020035cc);
   Animation_SetStateFlags(actor, 1);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(60);
-  Func_02003338();
+  DisplayBlend_EnableRunScript();
   alpha = alpha & 255;
   REG_BLDALPHA = 0x1000;
   t0 = x >> 4;
@@ -154,7 +154,7 @@ void Func_02000ac8(void) {
     if (i != alpha)
       goto fadeIn;
   }
-  Func_02003330();
+  DisplayBlend_DisableRunScript();
   Event_PlaySound(246);
   FieldEvent_Wait(48);
 
@@ -186,8 +186,8 @@ void Func_02000ac8(void) {
 
   if (count != 18) {
     FieldEvent_Wait(96);
-    Func_020032e8(actor, gData_02003620);
-    Func_02003338();
+    Actor_StartScript(actor, gData_02003620);
+    DisplayBlend_EnableRunScript();
     alpha = REG_BLDALPHA & 255;
     PaletteFade_ApplyTarget(0x10000, 1);
     PaletteFade_Interpolate(60);
@@ -205,11 +205,11 @@ void Func_02000ac8(void) {
           (leader->z + (gData_020036fc[slot][1] << 16)) >> 20, 1, 1);
     }
     MapGrid_CopyCellsTo(64, 0, column + 63, row - 3, 3, 5);
-    Func_02003330();
+    DisplayBlend_DisableRunScript();
     Event_WaitTransitionFrames();
   } else {
     Event_SetFlag((s16)work->room + 0xa55);
-    Func_020032e8(actor, gData_02003620);
+    Actor_StartScript(actor, gData_02003620);
     FieldEvent_Wait(60);
     FieldCamera_SetSpeed(0x40000, 0x8000);
     FieldCamera_MoveTo(0x2180000, -1, 0x780000, 1);
@@ -252,7 +252,7 @@ void Func_02000ac8(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003430();
   FieldEvent_Wait(60);
-  Func_020033a0();
+  Event_End();
 }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -301,12 +301,6 @@ extern char SceneId_Ov6B0Room4;
 
 void Func_020034a0(void);
 
-static __inline__ void MoveObject(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as a direct call, 2
-   * of 243 instructions differ in tla-en. */
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
-}
-
 static __inline__ void SetCell(s32 a, s32 x, s32 z, s32 b) {
   /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as direct calls, 36
    * of 243 instructions differ in tla-en. */
@@ -324,7 +318,7 @@ void Func_02001160(void) {
   s32 x;
   s32 z;
 
-  Func_02003398();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Func_020034a0();
   x = leader->x >> 19;
@@ -370,14 +364,14 @@ void Func_02001160(void) {
         s32 fromX = (Actor_Get(12)->x >> 16) << 16;
 
         Actor_SetPosition(13, fromX, (Actor_Get(12)->z >> 16) << 16);
-        MoveObject(12, PIXELS(728), PIXELS(472));
+        Actor_SetPosition(12, PIXELS(728), PIXELS(472));
       }
       GameFlag_SetBit(0xa85);
     }
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4 && x == 33 && z == 45)
     GameFlag_SetBit(0xa86);
-  Func_020033a0();
+  Event_End();
 }
 
 #include "field/event_work.h"
@@ -385,7 +379,7 @@ void Func_02001160(void) {
 extern const s32 gData_02003574[];
 
 void Func_020032e0(struct Actor *object, s32 value);
-void Func_020032e8(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 void Func_02003438(s32 id, s32 a);
 
 static __inline__ struct Actor *Create(s32 type, s32 x, s32 y, s32 z) {
@@ -422,13 +416,13 @@ void Func_02001398(void) {
   Scene_SetActorSpritePriority(object, 2);
   Func_020032e0(object, 3);
   Actor_SetSingleChildFlags(object, 0);
-  Func_020032e8(object, gData_02003574);
+  Actor_StartScript(object, gData_02003574);
   Event_SetFlag(work->exit + 0x1ce);
   all = Event_GetFlag(0x200);
   for (i = 1; i != 7; i++)
     all &= Event_GetFlag(0x200 + i);
   if (all) {
-    Func_02003398();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_Wait(10);
     FieldCamera_SetSpeed(0xcccc, 0x1999);
@@ -443,7 +437,7 @@ void Func_02001398(void) {
     Event_SetFlag(0x207);
     Actor_Get(id)->motionFlags = 4;
     FieldEvent_Wait(80);
-    Func_020033a0();
+    Event_End();
   }
 }
 
@@ -456,7 +450,7 @@ void Func_02001518(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *object;
 
-  Func_02003398();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4) {
     object = Actor_Get(8);
@@ -490,7 +484,7 @@ void Func_02001518(void) {
   FieldEvent_Wait(80);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_020033a0();
+  Event_End();
 }
 
 void Func_02001614(void) {
@@ -513,7 +507,7 @@ void Func_02001644(void) {
 }
 
 void Func_02001660(void) {
-  Func_02003398();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 536, 360);
   FieldEvent_Wait(8);
@@ -527,14 +521,14 @@ void Func_02001660(void) {
   MapGrid_CopyCellsTo(51, 20, 31, 20, 1, 2);
   FieldEvent_Wait(5);
   Event_SetFlag(0x200);
-  Func_020033a0();
+  Event_End();
 }
 
 void Func_020016fc(void) {
   s32 t0;
 
   t0 = ((s32)Actor_Get(14));
-  Func_02003398();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FIELD_AT(t0, s32, 8) = 0x2180000;
   FIELD_AT(t0, s32, 16) = 0x1680000;
@@ -549,7 +543,7 @@ void Func_020016fc(void) {
   MapGrid_CopyCellsTo(52, 20, 31, 20, 1, 2);
   FieldEvent_Wait(5);
   Event_ClearFlag(0x200);
-  Func_020033a0();
+  Event_End();
 }
 
 s32 Func_020030e0();
@@ -613,7 +607,7 @@ void Func_020017b4(struct Actor *self) {
     Scene_SetActorSpritePriority(dust, 2);
     Func_020032e0(dust, 1);
     Actor_SetSingleChildFlags(dust, 0);
-    Func_020032e8(dust, gData_02003594);
+    Actor_StartScript(dust, gData_02003594);
     self->unk4c = leader->x;
     self->acceleration = leader->z;
     if ((gFrameCount & 3) == 0)

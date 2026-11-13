@@ -20,7 +20,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Func_0200004c(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov660Room1)
@@ -127,7 +127,7 @@ void Func_02000298(void) {
 void Func_02000318(s32 actor) {
   s32 message;
 
-  Func_020007f4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   message = (s32)MsgGarohInteriors01;
   Event_SetMessageId(message);
@@ -144,51 +144,51 @@ void Func_02000318(s32 actor) {
   } else {
     Event_ShowMessageAndWait(actor, 0);
   }
-  Func_020007fc();
+  Event_End();
 }
 
 void Func_0200039c(void) {
-  Func_020007f4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x91b))
     Event_SetMessageId((s32)MsgGarohInteriors60);
   else
     Event_SetMessageId((s32)MsgGarohInteriors25);
   Event_ShowMessageAndWait(17, 0);
-  Func_020007fc();
+  Event_End();
 }
 
 void Func_020003dc(void) {
-  Func_020007f4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x91b))
     Event_SetMessageId((s32)MsgGarohInteriors61);
   else
     Event_SetMessageId((s32)MsgGarohInteriors26);
   Event_ShowMessageAndWait(18, 0);
-  Func_020007fc();
+  Event_End();
 }
 
 void Func_0200041c(void) {
-  Func_020007f4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x91b))
     Event_SetMessageId((s32)MsgGarohInteriors64);
   else
     Event_SetMessageId((s32)MsgGarohInteriors29);
   Event_ShowMessageAndWait(17, 0);
-  Func_020007fc();
+  Event_End();
 }
 
 void Func_0200045c(void) {
-  Func_020007f4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x91b))
     Event_SetMessageId((s32)MsgGarohInteriors65);
   else
     Event_SetMessageId((s32)MsgGarohInteriors30);
   Event_ShowMessageAndWait(18, 0);
-  Func_020007fc();
+  Event_End();
 }
 
 void Func_0200049c(void) {
@@ -209,7 +209,7 @@ void Func_0200049c(void) {
 
 /// Returns the room's table, chosen by flag 0x91B, the scene and, in the
 /// first room, the entrance.
-const struct Trigger *Func_020004f0(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s32 moved = GameFlag_Test(0x91b);
   struct MainRoutineWork *party = &gMainRoutineWork;
   s32 room1 = (s32)&SceneId_Ov660Room1;
@@ -240,7 +240,7 @@ void Func_02000710(void);
 void Func_020007dc(s32 value);
 void Func_0200087c(s32 value);
 
-s32 Func_02000580(void) {
+s32 Scene_Initialize(void) {
   s32 turn;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
@@ -302,7 +302,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_02000710(void) {
   GameFlag_SetBit(0x91b);
-  Func_020007f4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_Wait(30);
   Func_020007cc();
@@ -310,7 +310,7 @@ void Func_02000710(void) {
   Func_0803ce64((s32)MsgGarohInteriors33, 0, 0);
   Event_Wait(20);
   Func_020007d4();
-  Func_020007bc();
+  Map_CenterOnFollowedPoint();
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_SetMessageId((s32)MsgGarohInteriors34);
@@ -321,7 +321,7 @@ void Func_02000710(void) {
   Motion_SetModeAndWaitAnimation(15, 3);
   Event_Wait(30);
   Event_ShowMessageThenWait(15, 0, 10);
-  Func_020007fc();
+  Event_End();
 }
 
 #include "text/msg_ids.h"
@@ -384,42 +384,42 @@ struct ActorPlacement gData_02000b2c[] = {
 };
 
 struct Trigger gData_02000b5c[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGERS_END},
 };
 // clang-format on
 
 struct Trigger gData_02000b80[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {0x31, 6, CONDITION_ALWAYS, 6},
     {0x31, 7, CONDITION_ALWAYS, 7},
-    {0, 8, CONDITION_ALWAYS, EVENT(Func_02000318)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors02)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors03)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors04)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors05)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors06)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors13)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors14)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors15)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors16)},
-    {0, 13, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors18)},
-    {0, 14, CONDITION_ALWAYS, EVENT(Func_02000114)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors20)},
-    {0, 15, CONDITION_ALWAYS, EVENT(Func_02000230)},
-    {0, 16, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors24)},
-    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors27)},
-    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors28)},
-    {0, 19, CONDITION_ALWAYS, EVENT(Func_0200039c)},
-    {0, 20, CONDITION_ALWAYS, EVENT(Func_020003dc)},
-    {0x8d15, 19, CONDITION_ALWAYS, EVENT(Func_0200041c)},
-    {0x8d15, 20, CONDITION_ALWAYS, EVENT(Func_0200045c)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000318)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors02)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors03)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors04)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors05)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors06)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors13)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors14)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors15)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors16)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_0200009c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors18)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_02000114)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors20)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000230)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors24)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors27)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors28)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_0200039c)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_020003dc)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, EVENT(Func_0200041c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, EVENT(Func_0200045c)},
     {0x173, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors68))},
     {0x173, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors69))},
     {0x173, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors71))},
@@ -428,67 +428,67 @@ struct Trigger gData_02000b80[] = {
 };
 
 struct Trigger gData_02000d18[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {0x31, 5, CONDITION_ALWAYS, 5},
     {0x31, 6, CONDITION_ALWAYS, 6},
     {0x31, 7, CONDITION_ALWAYS, 7},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors07)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors08)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors09)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors10)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors11)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors12)},
-    {0, 11, CONDITION_ALWAYS, EVENT(Func_0200018c)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors22)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors07)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors08)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors09)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors10)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors11)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors12)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_0200018c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors22)},
     {0x173, 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors70))},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02000de4[] = {
-    {1, 2, CONDITION_ALWAYS, 2},
-    {0, 8, CONDITION_ALWAYS, EVENT(Func_02000298)},
-    {0x8d15, 8, 0x91b, MSGNO(MsgGarohInteriors32)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors67)},
-    {0, 9, CONDITION_ALWAYS, EVENT(Func_02000298)},
-    {0x8d15, 9, 0x91b, MSGNO(MsgGarohInteriors32)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors67)},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000298)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x91b, MSGNO(MsgGarohInteriors32)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors67)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000298)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x91b, MSGNO(MsgGarohInteriors32)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors67)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02000e44[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors35)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors36)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors37)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors38)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors39)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors40)},
-    {0, 11, 0x91a, EVENT(Func_0200049c)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors48)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors49)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors50)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors51)},
-    {0, 13, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors53)},
-    {0, 14, CONDITION_ALWAYS, EVENT(Func_02000114)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors55)},
-    {0, 15, CONDITION_ALWAYS, EVENT(Func_02000230)},
-    {0, 16, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors59)},
-    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors62)},
-    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors63)},
-    {0, 17, CONDITION_ALWAYS, EVENT(Func_0200039c)},
-    {0, 18, CONDITION_ALWAYS, EVENT(Func_020003dc)},
-    {0x8d15, 17, CONDITION_ALWAYS, EVENT(Func_0200041c)},
-    {0x8d15, 18, CONDITION_ALWAYS, EVENT(Func_0200045c)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors35)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors36)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors37)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors38)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors39)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors40)},
+    {TRIGGER_TALK, 11, 0x91a, EVENT(Func_0200049c)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors48)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors49)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors50)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors51)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_0200009c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors53)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_02000114)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors55)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000230)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors59)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors62)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors63)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_0200039c)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_020003dc)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(Func_0200041c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT(Func_0200045c)},
     {0x173, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors68))},
     {0x173, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors69))},
     {0x173, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors71))},
@@ -497,21 +497,21 @@ struct Trigger gData_02000e44[] = {
 };
 
 struct Trigger gData_02000fe8[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {0x31, 5, CONDITION_ALWAYS, 5},
     {0x31, 6, CONDITION_ALWAYS, 6},
     {0x31, 7, CONDITION_ALWAYS, 7},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors41)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors42)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors43)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors44)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors45)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors46)},
-    {0, 11, CONDITION_ALWAYS, EVENT(Func_0200018c)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors57)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors41)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors42)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors43)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors44)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors45)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors46)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_0200018c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors57)},
     {0x173, 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors70))},
     {TRIGGERS_END},
 };

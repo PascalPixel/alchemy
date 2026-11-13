@@ -82,9 +82,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Func_02004c98:
 	overlay_veneer Actor_SetMode
-	.global Func_02004ca0
+	.global Actor_StartScript
 	.thumb_func
-Func_02004ca0:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -98,9 +98,9 @@ Func_02004cb0:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Func_02004cc0
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_02004cc0:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -162,13 +162,13 @@ PartyInventory_FindOwner:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02004d40
+	.global Event_Start
 	.thumb_func
-Func_02004d40:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02004d48
+	.global Event_End
 	.thumb_func
-Func_02004d48:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
@@ -214,9 +214,9 @@ Actor_WaitForMoveById:
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
-	.global Func_02004da8
+	.global Actor_MoveToObject
 	.thumb_func
-Func_02004da8:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -314,9 +314,9 @@ Func_02004e60:
 	.thumb_func
 Field_DispatchTypeHandler:
 	overlay_veneer Field_DispatchTypeHandlerFar
-	.global Func_02004e70
+	.global BattleEffect_LoadActionEffectResources
 	.thumb_func
-Func_02004e70:
+BattleEffect_LoadActionEffectResources:
 	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
 	.global Func_02004e78
 	.thumb_func
@@ -326,9 +326,9 @@ Func_02004e78:
 	.thumb_func
 Func_02004e80:
 	overlay_veneer BattleEffect_StopMainActorFar
-	.global Func_02004e88
+	.global BattleEffect_CleanupSceneObjects
 	.thumb_func
-Func_02004e88:
+BattleEffect_CleanupSceneObjects:
 	overlay_veneer BattleEffect_CleanupSceneObjectsFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -338,9 +338,9 @@ Event_ResolvePendingActions:
 	.thumb_func
 Func_02004e98:
 	overlay_veneer Func_080c8518
-	.global Func_02004ea0
+	.global Party_PlaySavedMusic
 	.thumb_func
-Func_02004ea0:
+Party_PlaySavedMusic:
 	overlay_veneer Party_PlaySavedMusicFar
 	.global Func_080d7788
 	.thumb_func
@@ -350,9 +350,9 @@ Func_080d7788:
 	.thumb_func
 Actor_SetActionCallback:
 	overlay_veneer Actor_SetActionCallbackFar
-	.global Func_02004eb8
+	.global Event_NoOp
 	.thumb_func
-Func_02004eb8:
+Event_NoOp:
 	overlay_veneer Event_NoOpFar
 	.global Func_02004ec0
 	.thumb_func
@@ -402,9 +402,9 @@ Func_02004f10:
 	.thumb_func
 Func_02004f18:
 	overlay_veneer Func_080c87d0
-	.global Func_02004f20
+	.global BattleEffect_StepVector3
 	.thumb_func
-Func_02004f20:
+BattleEffect_StepVector3:
 	overlay_veneer BattleEffect_StepVector3Far
 	.global Func_02004f28
 	.thumb_func

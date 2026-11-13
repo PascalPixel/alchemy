@@ -34,9 +34,9 @@ GameFlag_SetBit:
 	.thumb_func
 Func_02001428:
 	overlay_veneer Actor_SetMode
-	.global Func_02001430
+	.global Actor_StartScript
 	.thumb_func
-Func_02001430:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -46,9 +46,9 @@ Import_ActorCreate:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Func_02001448
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_02001448:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Map_CopyCellPictureIndicesRect
 	.thumb_func
@@ -78,13 +78,13 @@ Func_02001478:
 	.thumb_func
 Func_02001480:
 	overlay_veneer Func_08020360
-	.global Func_02001488
+	.global Event_Start
 	.thumb_func
-Func_02001488:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02001490
+	.global Event_End
 	.thumb_func
-Func_02001490:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -94,9 +94,9 @@ Actor_GetById:
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
-	.global Func_020014a8
+	.global Actor_MoveToObject
 	.thumb_func
-Func_020014a8:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func

@@ -111,7 +111,7 @@ void Func_0200100c(u16 *list) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const u32 *Func_02001070(void) {
+const u32 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67FRoom1)
@@ -123,7 +123,7 @@ const u32 *Func_02001070(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Func_020010b0(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67FRoom1)
@@ -153,13 +153,13 @@ void Func_02001148(void) {
   struct IzumoRuinsEventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *object;
 
-  Func_02001488();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Func_02001500(gData_02001696);
   object = work->objectCbc;
   object->priorityFlags |= 1;
   object->priorityFlags &= ~2;
-  Func_02001490();
+  Event_End();
 }
 
 void Func_02001184(void) {
@@ -202,23 +202,23 @@ void Func_020011d4(void) {
 }
 
 void Func_02001228(void) {
-  Func_02001488();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Func_02001520();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov67FRoom2)
     Func_02000ee8(2, 50, 13, Func_02000eac(2, 50, 13) & 255);
-  Func_02001490();
+  Event_End();
 }
 
 void Func_02001270(void) {
-  Func_02001488();
+  Event_Start();
   MapGrid_CopyCellAttributes(7, 2, 8, 7, 7, 12);
   MapGrid_CopyCellsTo(7, 66, 7, 76, 8, 9);
   Event_SetFlag(0x941);
-  Func_02001490();
+  Event_End();
 }
 
-const struct Trigger *Func_020012b0(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67FRoom1)
@@ -226,7 +226,7 @@ const struct Trigger *Func_020012b0(void) {
   return gData_020019ac;
 }
 
-s32 Func_020012dc(void) {
+s32 Scene_Initialize(void) {
   struct IzumoRuinsEventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *object;
   s32 height;
@@ -246,7 +246,7 @@ s32 Func_020012dc(void) {
     if (Event_GetFlag(0x941)) {
       MapGrid_CopyCellAttributes(7, 2, 8, 7, 7, 12);
       MapGrid_CopyCellsTo(7, 66, 7, 76, 8, 9);
-      Func_02001448();
+      Map_CenterOnFollowedPoint();
       System_Wait(1);
       if (Event_GetFlag(0x109)) {
         object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -399,42 +399,42 @@ struct ActorPlacement gData_02001814[] = {
 // clang-format on
 
 struct Trigger gData_020018ec[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {0x50008615, 8, 0x200, EVENT(Func_020010f0)},
-    {0x50008615, 9, 0x201, EVENT(Func_020010f0)},
-    {0x50008615, 12, 0x202, EVENT(Func_020010f0)},
-    {0x1815, 10, 0x203, EVENT(Func_02001148)},
-    {0x1815, 11, 0x204, EVENT(Func_02001148)},
-    {0x8b85, 0, CONDITION_ALWAYS, EVENT(Func_02001184)},
-    {0x40008b85, 0, CONDITION_ALWAYS, EVENT(Func_020011b8)},
-    {0x10008c15, 13, CONDITION_ALWAYS, EVENT(Func_020011d4)},
-    {0x8c15, 13, CONDITION_ALWAYS, EVENT(Func_02001228)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x200, EVENT(Func_020010f0)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9, 0x201, EVENT(Func_020010f0)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 12, 0x202, EVENT(Func_020010f0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 10, 0x203, EVENT(Func_02001148)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x204, EVENT(Func_02001148)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02001184)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020011b8)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13, CONDITION_ALWAYS, EVENT(Func_020011d4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT(Func_02001228)},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_020011d4)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02001228)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_020019ac[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {0x50008615, 8, 0x200, EVENT(Func_020010f0)},
-    {0x50008615, 9, 0x201, EVENT(Func_020010f0)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x200, EVENT(Func_020010f0)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9, 0x201, EVENT(Func_020010f0)},
     {0x50008a05, 50, CONDITION_ALWAYS, EVENT(Func_02001270)},
-    {0x10008c15, 10, CONDITION_ALWAYS, EVENT(Func_020011d4)},
-    {0x8c15, 10, CONDITION_ALWAYS, EVENT(Func_02001228)},
-    {0x10008c15, 11, CONDITION_ALWAYS, EVENT(Func_020011d4)},
-    {0x8c15, 11, CONDITION_ALWAYS, EVENT(Func_02001228)},
-    {0x10008c15, 12, CONDITION_ALWAYS, EVENT(Func_020011d4)},
-    {0x8c15, 12, CONDITION_ALWAYS, EVENT(Func_02001228)},
-    {0x10008c15, 13, CONDITION_ALWAYS, EVENT(Func_020011d4)},
-    {0x8c15, 13, CONDITION_ALWAYS, EVENT(Func_02001228)},
-    {0x10008c15, 14, CONDITION_ALWAYS, EVENT(Func_020011d4)},
-    {0x8c15, 14, CONDITION_ALWAYS, EVENT(Func_02001228)},
-    {0x10008c15, 15, CONDITION_ALWAYS, EVENT(Func_020011d4)},
-    {0x8c15, 15, CONDITION_ALWAYS, EVENT(Func_02001228)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(Func_020011d4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_02001228)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, CONDITION_ALWAYS, EVENT(Func_020011d4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT(Func_02001228)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, CONDITION_ALWAYS, EVENT(Func_020011d4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT(Func_02001228)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13, CONDITION_ALWAYS, EVENT(Func_020011d4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT(Func_02001228)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 14, CONDITION_ALWAYS, EVENT(Func_020011d4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT(Func_02001228)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, CONDITION_ALWAYS, EVENT(Func_020011d4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(Func_02001228)},
     {TRIGGERS_END},
 };

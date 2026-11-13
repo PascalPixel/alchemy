@@ -38,7 +38,7 @@ extern const u8 gData_020022e8[];
 extern const u8 gData_0200236c[];
 
 void Func_02001bec(struct Actor *object, s32 mode);
-void Func_02001cec(s32 a, s32 b);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Func_02001d1c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_02001d44(s32 a, s32 b, s32 c);
 
@@ -63,7 +63,7 @@ void Func_02000094(void) {
     Func_02001d44_(249, 424, 488);
     ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b8;
     gMainRoutineWork.battleRule24b = 2;
-    Func_02001cec(106, 3);
+    Field_RequestBattleFromEncounterTable(106, 3);
   }
 }
 
@@ -73,7 +73,7 @@ void Func_02000118(void) { Import_EventSetExitRequest(4); }
 
 void Func_02000124(void) { Import_EventSetExitRequest(6); }
 
-const u8 *Func_02000130(void) {
+const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room2)
     return gData_0200236c;
   return gData_020022e8;
@@ -179,7 +179,7 @@ void Func_02000298(void) {
   } while (i != 16);
 }
 
-s32 Func_02000324(void) {
+s32 Scene_Initialize(void) {
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room1) {
     Func_020004dc(1);
@@ -214,6 +214,9 @@ extern s32 gData_02002388;
 void Func_02000414(s32 value) { gData_02002388 = value; }
 
 extern s32 gData_02002384;
+
+/// Sets the counter, its value built as a word.
+static inline void Counter_Set(s32 value) { gData_02002384 = value; }
 extern u16 gData_020023b0[];
 
 void Func_02000420(void) {
@@ -266,12 +269,7 @@ void Func_020004dc(s32 mode) {
     Iwram_CopyWords(gData_020023d0, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(0xa00) || mode == 1) {
-    /* FAKEMATCH(temporary): a local holding 0, so the zero is built in r2
-     * and the counter's address in r3; as the 0 stored directly, 6 of 44
-     * instructions differ in tla-en. */
-    s32 zero = 0;
-
-    gData_02002384 = zero;
+    Counter_Set(0);
     Task_Add(Func_02000420, 1152);
   } else {
     Dma_Set(gData_020023d4, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2),
@@ -288,15 +286,7 @@ void Func_02000560(s32 id) {
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
   object->y = height + 0x200000;
-  {
-    u8 *flags = &object->priorityFlags;
-    /* FAKEMATCH(temporary): a local holding 128, so the bit is built in the
-     * register it is ORed into; as *flags |= 128, 4 of 38 instructions differ
-     * in tla-en. */
-    s32 bit = 128;
-
-    *flags = bit | *flags;
-  }
+  object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
   Func_02001c74(object->x, object->z, 0, (height >> 19) + 6);
   Func_02001d34(object->x, object->z, 0, 128);
@@ -304,8 +294,8 @@ void Func_02000560(s32 id) {
 
 #include "event_work.h"
 
-void Func_02001c84(void);
-void Func_02001c8c(void);
+void Event_Start(void);
+void Event_End(void);
 
 void Func_020005b4(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -315,7 +305,7 @@ void Func_020005b4(void) {
   s32 facing;
   s32 i;
 
-  Func_02001c84();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkd46 = 0;
@@ -363,7 +353,7 @@ void Func_020005b4(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_02001c8c();
+  Event_End();
 }
 
 #include "irq.h"
@@ -379,8 +369,8 @@ extern const s32 gData_0200238c[];
 extern s32 Data_020023ac;
 
 s32 Func_02001d2c(s32 x, s32 z, s32 layer);
-void Func_02001d14(s32 *position);
-void Func_02001bfc(struct Actor *object, const s32 *script);
+void Camera_WorldToScreen(s32 *position);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_020007cc(struct Actor *self) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -403,7 +393,7 @@ void Func_020007cc(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Func_02001d14(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -447,7 +437,7 @@ stop:
     *((u8 *)self + 0x63) = zero;
     self->update = (void *)zero;
   }
-  Func_02001bfc(self, gData_0200238c);
+  Actor_StartScript(self, gData_0200238c);
   Event_PlaySound(228);
   Data_020023ac = 0;
 }

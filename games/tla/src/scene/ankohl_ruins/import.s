@@ -66,25 +66,25 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_02002dcc
+	.global Task_Find
 	.thumb_func
-Func_02002dcc:
+Task_Find:
 	overlay_veneer Task_FindFar
 	.global Func_02002dd4
 	.thumb_func
 Func_02002dd4:
 	overlay_veneer Actor_SetMode
-	.global Func_02002ddc
+	.global Actor_StartScript
 	.thumb_func
-Func_02002ddc:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02002dec
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_02002dec:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Map_CopyCellsRect
 	.thumb_func
@@ -120,21 +120,21 @@ Map_SetScreenShake:
 Map_WaitForShakeToSettle:
 	overlay_veneer Func_08020230
 	.endif
-	.global Func_02002e34
+	.global Actor_SetSpritePriorityDirect
 	.thumb_func
-Func_02002e34:
+Actor_SetSpritePriorityDirect:
 	overlay_veneer Actor_SetSpritePriorityDirectFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02002e44
+	.global Event_Start
 	.thumb_func
-Func_02002e44:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02002e4c
+	.global Event_End
 	.thumb_func
-Func_02002e4c:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -156,9 +156,9 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_SetModeById:
 	overlay_veneer Actor_SetModeByIdFar
-	.global Func_02002e7c
+	.global Actor_JumpDownLedge
 	.thumb_func
-Func_02002e7c:
+Actor_JumpDownLedge:
 	overlay_veneer Actor_JumpDownLedgeFar
 	.global Actor_SetPartAttribute
 	.thumb_func
@@ -210,9 +210,9 @@ Func_02002ed4:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02002ee4
+	.global ObjectTable_Snapshot
 	.thumb_func
-Func_02002ee4:
+ObjectTable_Snapshot:
 	overlay_veneer ObjectTable_SnapshotFar
 	.global Sound_Play
 	.thumb_func

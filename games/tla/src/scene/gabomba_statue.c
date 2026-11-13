@@ -12,7 +12,7 @@
 #include "event_inline.h"
 
 extern void Func_02005624(struct FieldEffect *effect, s32 mode);
-extern void Func_02005634(struct FieldEffect *effect, const s32 *script);
+extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gData_02005ae4[];
 
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -33,7 +33,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Func_02005624(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Func_02005634(effect, gData_02005ae4[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect, gData_02005ae4[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
@@ -75,7 +75,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
     Func_02005624(effect, 1);
-    Func_02005634(effect, options->script);
+    Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
     sprite->rotation = options->rotation;
@@ -146,7 +146,7 @@ extern const u8 gData_02005e8c[];
 extern const u8 gData_02005ecc[];
 extern const u8 gData_02005eec[];
 
-const u8 *Func_020002dc(void) {
+const u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov671Room7)
@@ -285,7 +285,7 @@ void Func_02004380(s32 x, s32 z, s32 a);
 void Func_020055cc(const u8 *data, void *buffer);
 void Func_0200561c(void *animation, s32 a);
 void Func_020056b4(struct Actor *object);
-void Func_020056bc(void);
+void Event_End(void);
 void Func_02005824(void);
 void Func_0200582c(s32 index, s32 a, s32 b);
 void Func_0200583c(s32 index, s32 flag, s32 a, s32 b);
@@ -315,7 +315,7 @@ extern const u8 gData_020067e4[];
 extern const u8 gData_02006898[];
 extern const u8 gData_02006a90[];
 
-const u8 *Func_020004b8(void) {
+const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
   const u8 *table = gData_02006b20;
 
@@ -706,7 +706,7 @@ void Func_02000ad4(void) {
   }
 }
 
-void Func_020056bc(void);
+void Event_End(void);
 
 void Func_02000c38(void) {
   s32 *speed = &gData_02005af0;
@@ -813,7 +813,7 @@ void Func_02000cf0(struct Actor *object) {
   Actor_WalkToAndWait(39, 440, 184);
   Actor_SetPosition(39, 0, 0);
   Event_SetFlag(0xa6c);
-  Func_020056bc();
+  Event_End();
 }
 
 #include "input.h"
@@ -824,7 +824,7 @@ void Func_020011bc(s32 message, s32 value);
 void Func_0200533c(void);
 void Func_020057b4(void);
 s32 Func_02004d48(s32 a, s32 b);
-void Func_0200581c(void);
+void ObjectTable_Snapshot(void);
 void Event_WaitTransitionFrames(void);
 
 void Func_02000f50(s32 id) {
@@ -879,7 +879,7 @@ void Func_02000fc0(void) {
   System_Wait(8);
   Event_PlaySound(11);
   result = Func_02004d48(11, 1);
-  Func_0200581c();
+  ObjectTable_Snapshot();
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -909,7 +909,7 @@ extern const u8 gData_02006d1c[];
 extern const u8 gData_02006db8[];
 extern const u8 gData_02006e78[];
 
-const u8 *Func_02001124(void) {
+const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
   const u8 *table = gData_02006e9c;
 
@@ -1145,7 +1145,7 @@ void Func_02001728(struct Actor *actor) {
   Event_PlaySound(581);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 424);
-  Func_020056bc();
+  Event_End();
 }
 
 void Func_0200176c(void) {
@@ -1168,7 +1168,7 @@ void Func_0200176c(void) {
   Event_PlaySound(161);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
   FieldEvent_Wait(20);
-  Func_020056bc();
+  Event_End();
 }
 
 void Func_020017dc(struct Actor *actor) {
@@ -1177,7 +1177,7 @@ void Func_020017dc(struct Actor *actor) {
   Event_PlaySound(581);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 376, 200);
-  Func_020056bc();
+  Event_End();
 }
 
 void Func_02001820(struct Actor *actor) {
@@ -1186,7 +1186,7 @@ void Func_02001820(struct Actor *actor) {
   Event_PlaySound(581);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 376, 136);
-  Func_020056bc();
+  Event_End();
 }
 
 void Func_02001864(struct Actor *actor) {
@@ -1195,7 +1195,7 @@ void Func_02001864(struct Actor *actor) {
   Event_PlaySound(581);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 440, 248);
-  Func_020056bc();
+  Event_End();
 }
 
 void Func_020018a8(struct Actor *actor) {
@@ -1204,7 +1204,7 @@ void Func_020018a8(struct Actor *actor) {
   Event_PlaySound(581);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 440, 184);
-  Func_020056bc();
+  Event_End();
 }
 
 void Func_02001950(s32 show, s32 first, u32 count);
@@ -1274,7 +1274,7 @@ void Func_020019d0(void) {
   Func_020020f0(-1);
   Event_SetFlag(0x8cd);
   FieldEvent_Wait(20);
-  Func_020056bc();
+  Event_End();
 }
 
 struct FieldPart {
@@ -1306,7 +1306,7 @@ void Func_02001a8c(void) {
   Event_PlaySound(214);
   Func_02005624__find_near(object, 5);
   object->scaleY = 0x10000;
-  Func_020056bc();
+  Event_End();
 }
 
 void Func_02001ac0(void) {
@@ -1588,8 +1588,8 @@ void Func_020020f0(s32 direction) {
 
 extern const u8 gData_0200e88c[];
 
-/* VIEW(find_near): routine Func_02005634 as void Func_02005634(struct Orbiter__find_near *object, const u8 *script); gabomba_statue has extern void Func_02005634(struct FieldEffect *effect, const s32 *script). */
-extern void Func_02005634__find_near(struct Orbiter__find_near *object, const u8 *script) __asm__("Func_02005634");
+/* VIEW(find_near): routine Actor_StartScript as void Actor_StartScript(struct Orbiter__find_near *object, const u8 *script); gabomba_statue has extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script). */
+extern void Func_02005634__find_near(struct Orbiter__find_near *object, const u8 *script) __asm__("Actor_StartScript");
 void Animation_ApplyChildValues(struct Orbiter__find_near *object, s32 value);
 
 void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {

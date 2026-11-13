@@ -18,9 +18,9 @@ Heap_Alloc:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_020007ac
+	.global Resource_DecodeType01
 	.thumb_func
-Func_020007ac:
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global VramCache_Load
 	.thumb_func
@@ -30,13 +30,13 @@ VramCache_Load:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
-	.global Func_020007c4
+	.global DebugText_Clear
 	.thumb_func
-Func_020007c4:
+DebugText_Clear:
 	overlay_veneer DebugText_ClearFar
-	.global Func_020007cc
+	.global Window_LoadGraphics
 	.thumb_func
-Func_020007cc:
+Window_LoadGraphics:
 	overlay_veneer Window_LoadGraphicsFar
 	.global Resource_GetTableEntry
 	.thumb_func

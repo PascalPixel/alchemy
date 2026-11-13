@@ -12,7 +12,7 @@
 #include "macros.h"
 
 void Func_020032e0(struct Actor *, s32);
-void Func_020032e8(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 extern const s32 *gData_02003840[];
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
@@ -35,7 +35,7 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Func_020032e0(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Func_020032e8(effect, gData_02003840[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect, gData_02003840[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
@@ -79,7 +79,7 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
     Func_020032e0(effect, 1);
-    Func_020032e8(effect, options->script);
+    Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
     sprite->rotation = options->rotation;
@@ -129,7 +129,7 @@ void Func_020006a4(struct Actor *source) {
   Scene_SetActorSpritePriority(object, 2);
   Func_020032e0(object, 1);
   Actor_SetSingleChildFlags(object, 0);
-  Func_020032e8(object, gData_02003674);
+  Actor_StartScript(object, gData_02003674);
   Animation_SetStateFlags(object, 1);
 }
 

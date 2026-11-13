@@ -10,23 +10,23 @@
 #include "event_inline.h"
 #include "cell_target.h"
 
-void Func_02001b44(void);
-void Func_02001adc(void);
+void Event_Start(void);
+void Map_CenterOnFollowedPoint(void);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02000f5c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Func_02001b4c(void);
+void Event_End(void);
 
 void Func_02001724(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   u32 i;
   struct EffectOptions options;
 
-  Func_02001b44();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Func_02001adc();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = 0x820000;
   actor->gravity = 0x8000;
@@ -69,7 +69,7 @@ void Func_02001724(void) {
   actor->bounce = 0x4000;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Func_02001b4c();
+  Event_End();
 }
 
 extern struct CellTarget gData_02002530;
@@ -129,7 +129,7 @@ void Func_0200196c(s32 x, s32 z, s32 effect) {
     marker = work->marker;
     marker->x = leader->x;
     marker->z = leader->z;
-    Func_02001adc();
+    Map_CenterOnFollowedPoint();
     Func_02001724();
     ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
         ->screenEffect = effect;
@@ -221,11 +221,11 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, 0x1a23, 21},
-    {1, 2, 0x1a23, 22},
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 1, 0x1a23, 21},
+    {TRIGGER_EXIT, 2, 0x1a23, 22},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {33, 4, CONDITION_ALWAYS, 4},
     {49, 5, CONDITION_ALWAYS, 5},
     {33, 6, CONDITION_ALWAYS, 6},
@@ -233,17 +233,17 @@ struct Trigger gSceneEvents[] = {
     {49, 8, CONDITION_ALWAYS, 8},
     {49, 9, CONDITION_ALWAYS, 9},
     {49, 10, CONDITION_ALWAYS, 10},
-    {1, 11, CONDITION_ALWAYS, 11},
-    {1, 12, CONDITION_ALWAYS, 12},
-    {2, 20, 0xa19, EVENT(Func_02000190)},
-    {2, 21, 0xa19, EVENT(Func_020001b0)},
-    {2, 33, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {2, 34, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {2, 35, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {2, 43, CONDITION_ALWAYS, EVENT(Func_02000084)},
-    {2, 44, CONDITION_ALWAYS, EVENT(Func_02000084)},
-    {2, 45, CONDITION_ALWAYS, EVENT(Func_02000084)},
-    {0x8c15, 12, 0xa19, EVENT(Func_020001d0)},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_STEP, 20, 0xa19, EVENT(Func_02000190)},
+    {TRIGGER_STEP, 21, 0xa19, EVENT(Func_020001b0)},
+    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(Func_02000084)},
+    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(Func_02000084)},
+    {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(Func_02000084)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0xa19, EVENT(Func_020001d0)},
     {TRIGGERS_END},
 };
 

@@ -14,9 +14,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_020007bc
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_020007bc:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -42,13 +42,13 @@ Func_0803ce64:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_020007f4
+	.global Event_Start
 	.thumb_func
-Func_020007f4:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020007fc
+	.global Event_End
 	.thumb_func
-Func_020007fc:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func

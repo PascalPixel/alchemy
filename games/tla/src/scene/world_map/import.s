@@ -42,9 +42,9 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_02004aa8
+	.global Resource_DecodeType01
 	.thumb_func
-Func_02004aa8:
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
@@ -58,17 +58,17 @@ VramCache_Load:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
-	.global Func_02004ac8
+	.global DebugText_Clear
 	.thumb_func
-Func_02004ac8:
+DebugText_Clear:
 	overlay_veneer DebugText_ClearFar
 	.global Func_02004ad0
 	.thumb_func
 Func_02004ad0:
 	overlay_veneer Oam_AddSpriteAtDepthFar
-	.global Func_02004ad8
+	.global Window_LoadGraphics
 	.thumb_func
-Func_02004ad8:
+Window_LoadGraphics:
 	overlay_veneer Window_LoadGraphicsFar
 	.global Render_ProjectPoint
 	.thumb_func
@@ -102,9 +102,9 @@ Animation_ApplyChildArgument:
 	.thumb_func
 Func_02004b18:
 	overlay_veneer Actor_SetMode
-	.global Func_02004b20
+	.global Actor_StartScript
 	.thumb_func
-Func_02004b20:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Func_02004b28
 	.thumb_func
@@ -118,9 +118,9 @@ Import_ActorCreate:
 	.thumb_func
 Func_02004b38:
 	overlay_veneer Actor_Destroy
-	.global Func_02004b40
+	.global Map_UpdateCurrentTileBlock
 	.thumb_func
-Func_02004b40:
+Map_UpdateCurrentTileBlock:
 	overlay_veneer Map_UpdateCurrentTileBlockFar
 	.global Func_02004b48
 	.thumb_func
@@ -170,9 +170,9 @@ GetWorldMapCollision:
 	.thumb_func
 FieldMessage_Show:
 	overlay_veneer FieldMessage_ShowFar
-	.global Func_02004ba8
+	.global MessageArgument_Push
 	.thumb_func
-Func_02004ba8:
+MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
 	.global Message_CloseFinishedWindows
 	.thumb_func
@@ -230,13 +230,13 @@ Func_02004c10:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02004c20
+	.global Event_Start
 	.thumb_func
-Func_02004c20:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02004c28
+	.global Event_End
 	.thumb_func
-Func_02004c28:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -290,9 +290,9 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_SetHorizontalPositionAndAngleWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionAndAngleWithTerrainFar
-	.global Func_02004c98
+	.global Actor_MoveToObject
 	.thumb_func
-Func_02004c98:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -370,17 +370,17 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_02004d30:
 	overlay_veneer Func_080c8240
-	.global Func_02004d38
+	.global Event_SetDestination
 	.thumb_func
-Func_02004d38:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02004d48
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_02004d48:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_080d2b4c
 	.thumb_func
@@ -438,13 +438,13 @@ Func_02004db0:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02004dc0
+	.global Party_PlaySavedMusic
 	.thumb_func
-Func_02004dc0:
+Party_PlaySavedMusic:
 	overlay_veneer Party_PlaySavedMusicFar
-	.global Func_02004dc8
+	.global Scene_ResolveInteractionResult
 	.thumb_func
-Func_02004dc8:
+Scene_ResolveInteractionResult:
 	overlay_veneer Scene_ResolveInteractionResultFar
 	.global Func_080d7788
 	.thumb_func
@@ -486,9 +486,9 @@ Party_GetLeaderActor:
 	.thumb_func
 Func_080d3b28:
 	overlay_veneer Func_080c8860
-	.global Func_02004e20
+	.global SceneEvent_FindActiveRecord
 	.thumb_func
-Func_02004e20:
+SceneEvent_FindActiveRecord:
 	overlay_veneer SceneEvent_FindActiveRecordFar
 	.global Func_02004e28
 	.thumb_func

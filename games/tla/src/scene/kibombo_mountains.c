@@ -56,7 +56,7 @@ extern const u8 gData_02001294[];
 extern const u8 gData_020015f0[];
 extern const u8 gData_020018c8[];
 
-const u8 *Func_020000ac(void) {
+const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov66fRoom1)
@@ -107,7 +107,7 @@ void Func_02000190(s32 unused, s32 id) {
 extern const u8 gData_02001404[];
 
 void Actor_ResetTargetsAndVelocity(s32 actor);
-void Func_02001044(struct Actor *object, const u8 *script);
+void Actor_StartScript(struct Actor *object, const u8 *script);
 void Func_0200104c(struct Actor *object);
 
 void Func_020001a0(s32 unused, s32 id) {
@@ -159,7 +159,7 @@ void Func_020001a0(s32 unused, s32 id) {
         other->speedLimit = 0x10000;
         FieldActor_SetMoveTarget(other, block->x, block->y, block->z);
         Actor_WaitForMove(other);
-        Func_02001044(block, gData_02001404);
+        Actor_StartScript(block, gData_02001404);
         Func_0200104c(other);
         other->x = 0;
         other->z = 0;
@@ -182,14 +182,14 @@ void Func_020001a0(s32 unused, s32 id) {
   }
 }
 
-void Func_02001084(void);
-void Func_0200108c(void);
+void Event_Start(void);
+void Event_End(void);
 
 void Func_0200036c(void) {
   /* FAKEMATCH(wrapper): the placements and flags through event.h's inlines,
    * which build each constant again at each call; as direct calls, which share
    * 764 and 380 in saved registers, 36 of 76 instructions differ in tla-en. */
-  Func_02001084();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetDestination(17, 764, 384);
   Actor_MoveToAndWait(16, 746, 380);
@@ -205,7 +205,7 @@ void Func_0200036c(void) {
     Actor_SetAttachedEffect(10, 257);
     Event_SetFlag(0x202);
   }
-  Func_0200108c();
+  Event_End();
 }
 
 void Func_02000428(void) { GameFlag_SetBit(0x882); }
@@ -291,7 +291,7 @@ extern const u8 gData_02001ae4[];
 extern const u8 gData_02001c58[];
 extern const u8 gData_02001db4[];
 
-const u8 *Func_020005ec(void) {
+const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov66fRoom1)
@@ -317,7 +317,7 @@ void Func_0200117c(s32 a, s32 b, s32 c, s32 d);
 #define EVENT_WORK_VALUE 0x204
 #endif
 
-s32 Func_0200063c(void) {
+s32 Scene_Initialize(void) {
   struct Actor *object;
   s16 scene;
   s32 flag;
@@ -413,7 +413,7 @@ void Func_02000960(void) {
   /* FAKEMATCH(wrapper): the calls through event.h's inlines keep each call's
    * own constants and argument order; as direct Actor_SetPositionAndReset calls
    * for Actor_WalkToAndWait, 42 of 140 instructions differ in tla-en. */
-  Func_02001084();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgIsTheWay);
   Actor_SetPosition(27, PIXELS(312), PIXELS(304));
@@ -450,7 +450,7 @@ void Func_02000960(void) {
   FieldEvent_Wait(60);
   Actor_SetPosition(27, 0, 0);
   Actor_SetScript(11, gData_020017f8);
-  Func_0200108c();
+  Event_End();
   Event_SetFlag(0x880);
 }
 
@@ -470,7 +470,7 @@ void Func_02000af0(void) {
   /* FAKEMATCH(wrapper): the calls through event.h's inlines, as in
    * Func_02000960, build each call's constants again in the original's argument
    * order; as direct calls, 126 of 251 instructions differ in tla-en. */
-  Func_02001084();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(23, PIXELS(248), PIXELS(472));
   Actor_SetPosition(24, PIXELS(264), PIXELS(472));
@@ -536,29 +536,29 @@ void Func_02000af0(void) {
   Actor_SetPosition(26, 0, 0);
   Actor_SetPosition(27, 0, 0);
   Actor_SetPosition(28, 0, 0);
-  Func_0200108c();
+  Event_End();
   Event_SetFlag(0x300);
 }
 
 extern const u8 MsgGuardsAnIntruder[];
 extern const u8 MsgGrrrrrRrrruffRrufff[];
 
-void Func_0200113c(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 
 void Func_02000d80(void) {
   s32 moved = Event_GetFlag(0x300);
   s32 scene = (s32)&SceneId_Ov66fRoom2;
 
   if (moved)
-    Func_0200113c(scene, 9);
+    Event_SetDestination(scene, 9);
   else
-    Func_0200113c(scene, 8);
+    Event_SetDestination(scene, 8);
 }
 
 void Func_02000da8(s32 id) {
   s32 owner = gMainRoutineWork.currentOwner;
 
-  Func_02001084();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_ResetTargetsAndVelocity(id);
   Actor_ShowEmote(id, 0x100, 30);
@@ -571,13 +571,13 @@ void Func_02000da8(s32 id) {
   Event_ShowMessage(id, 0);
   Actor_SetAttachedEffect(owner, 0x100);
   Func_02000d80();
-  Func_0200108c();
+  Event_End();
 }
 
 void Func_02000e28(s32 id) {
   s32 owner = gMainRoutineWork.currentOwner;
 
-  Func_02001084();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_Stop(id);
   Actor_ShowEmote(id, 0x100, 30);
@@ -590,7 +590,7 @@ void Func_02000e28(s32 id) {
   Event_ShowMessage(8, 0);
   Actor_SetAttachedEffect(owner, 0x100);
   Func_02000d80();
-  Func_0200108c();
+  Event_End();
 }
 
 void Func_02000ea8(void) {

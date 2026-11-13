@@ -57,7 +57,7 @@ extern char SceneId_Ov6ACRoom5;
 extern char SceneId_Ov6ACRoom6;
 
 void Func_02003118(struct Actor *object, s32 value);
-void Func_02003120(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 
 void Func_02001988(struct Actor *object);
 void Func_02001aec(struct Actor *object);
@@ -91,8 +91,8 @@ void Func_02001e38(struct Actor *object);
 void Func_02001ed4(struct Actor *object);
 void Func_020012a4(s32 x, s32 z, s32 kind);
 void Func_02002ad4(struct Actor *object);
-void Func_020031e0(void);
-void Func_020031e8(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_020032a0(void);
 s32 Math_Cosine(s32 angle);
 struct Actor;

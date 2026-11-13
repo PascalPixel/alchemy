@@ -38,9 +38,9 @@ GameFlag_SetBit:
 	.thumb_func
 Func_02000e24:
 	overlay_veneer Actor_SetMode
-	.global Func_02000e2c
+	.global Actor_StartScript
 	.thumb_func
-Func_02000e2c:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -62,9 +62,9 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 Map_SetScreenShake:
 	overlay_veneer Map_SetScreenShakeFar
-	.global Func_02000e5c
+	.global Actor_SetSpritePriorityDirect
 	.thumb_func
-Func_02000e5c:
+Actor_SetSpritePriorityDirect:
 	overlay_veneer Actor_SetSpritePriorityDirectFar
 	.global FieldMessage_Show
 	.thumb_func
@@ -74,13 +74,13 @@ FieldMessage_Show:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02000e74
+	.global Event_Start
 	.thumb_func
-Func_02000e74:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02000e7c
+	.global Event_End
 	.thumb_func
-Func_02000e7c:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func

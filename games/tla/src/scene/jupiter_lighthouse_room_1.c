@@ -86,7 +86,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 void Func_02001bcc(s32 owner);
 
-s32 Func_0200020c(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
   if (!Event_GetFlag(0x109) && gMainRoutineWork.entrance == 6)
     Func_02001bcc(gMainRoutineWork.currentOwner);
@@ -116,6 +116,9 @@ extern s32 gData_02002230;
 void Func_020002bc(s32 value) { gData_02002230 = value; }
 
 extern s32 gData_0200222c;
+
+/// Sets the counter, its value built as a word.
+static inline void Counter_Set(s32 value) { gData_0200222c = value; }
 extern u16 gData_02002258[];
 
 void Func_020002c8(void) {
@@ -168,12 +171,7 @@ void Func_02000384(s32 mode) {
     Iwram_CopyWords(gData_02002278, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(0xa00) || mode == 1) {
-    /* FAKEMATCH(temporary): a local holding 0, so the zero is built in r2
-     * and the counter's address in r3; as the 0 stored directly, 6 of 44
-     * instructions differ in tla-en. */
-    s32 zero = 0;
-
-    gData_0200222c = zero;
+    Counter_Set(0);
     Task_Add(Func_020002c8, 1152);
   } else {
     Dma_Set(gData_0200227c, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2),
@@ -190,15 +188,7 @@ void Func_02000408(s32 id) {
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
   object->y = height + 0x200000;
-  {
-    u8 *flags = &object->priorityFlags;
-    /* FAKEMATCH(temporary): a local holding 128, so the bit is built in the
-     * register it is ORed into; as *flags |= 128, 4 of 38 instructions differ
-     * in tla-en. */
-    s32 bit = 128;
-
-    *flags = bit | *flags;
-  }
+  object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
   Func_02001b14(object->x, object->z, 0, (height >> 19) + 6);
   Func_02001bc4(object->x, object->z, 0, 128);
@@ -208,8 +198,8 @@ void Func_02000408(s32 id) {
 #include "frame.h"
 #include "event_work.h"
 
-void Func_02001b24(void);
-void Func_02001b2c(void);
+void Event_Start(void);
+void Event_End(void);
 
 void Func_0200045c(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -219,7 +209,7 @@ void Func_0200045c(void) {
   s32 facing;
   s32 i;
 
-  Func_02001b24();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkd46 = 0;
@@ -267,7 +257,7 @@ void Func_0200045c(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_02001b2c();
+  Event_End();
 }
 
 s32 Func_02000648(s32 *a, s32 *b) {

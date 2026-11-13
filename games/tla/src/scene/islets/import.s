@@ -46,9 +46,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Func_02003de4:
 	overlay_veneer Actor_SetMode
-	.global Func_02003dec
+	.global Actor_StartScript
 	.thumb_func
-Func_02003dec:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -106,13 +106,13 @@ PartyInventory_Remove:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02003e64
+	.global Event_Start
 	.thumb_func
-Func_02003e64:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02003e6c
+	.global Event_End
 	.thumb_func
-Func_02003e6c:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
@@ -174,9 +174,9 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_SetHorizontalPositionAndAngleWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionAndAngleWithTerrainFar
-	.global Func_02003eec
+	.global Actor_MoveToObject
 	.thumb_func
-Func_02003eec:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -190,9 +190,9 @@ Motion_SetModeAndWaitAnimation:
 	.thumb_func
 Actor_Jump:
 	overlay_veneer Actor_JumpFar
-	.global Func_02003f0c
+	.global Actor_JumpDownLedge
 	.thumb_func
-Func_02003f0c:
+Actor_JumpDownLedge:
 	overlay_veneer Actor_JumpDownLedgeFar
 	.global Actor_SetAngleToward
 	.thumb_func
@@ -290,9 +290,9 @@ Func_02003fc4:
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global Func_02003fd4
+	.global Event_NoOp
 	.thumb_func
-Func_02003fd4:
+Event_NoOp:
 	overlay_veneer Event_NoOpFar
 	.global Func_02003fdc
 	.thumb_func

@@ -110,7 +110,7 @@ void Func_02000184(void) {
   if (dz == 1 && Event_GetFlag(514) != 0) {
     if (Event_GetFlag(516) != 0)
       return;
-    Func_02001080();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldActor_Jump(17, 4, 20);
     Actor_SetDestinationOffset(17, 0, 32);
@@ -129,11 +129,11 @@ void Func_02000184(void) {
     FieldEvent_Wait(30);
     Actor_ShowEmote(17, 258, 0);
     FieldEvent_Wait(30);
-    Func_02001088();
+    Event_End();
     Event_SetFlag(516);
     return;
   }
-  Func_02001080();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   dz <<= 5;
   FieldActor_Jump(17, 4, 20);
@@ -147,7 +147,7 @@ void Func_02000184(void) {
   FieldActor_WaitForMoveById(17);
   Actor_SetDestinationOffset(17, 0, dz);
   FieldActor_WaitForMoveById(17);
-  Func_02001088();
+  Event_End();
 }
 
 void Func_0200030c(void) {
@@ -196,14 +196,14 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 void Func_0200039c(void) {
   s32 result0;
 
-  Func_02001080();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Value3((s32 (*)())Func_02001098, 22, 0x190, -1);
   if (result0 != 0)
     goto L_020083c4;
   Event_ClearFlag(0xa73);
 L_020083c4:
-  Func_02001088();
+  Event_End();
   return;
 }
 
@@ -240,7 +240,7 @@ void Func_02000430(void) {
     return;
   if (Event_GetFlag(0) == 0)
     return;
-  Func_02001080();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_SetFlag(0xa70);
   FieldEvent_SetMessageId((s32)MsgIFound2);
@@ -347,11 +347,11 @@ void Func_02000430(void) {
   } while (0);
   Event_SetAfterBattleDestination((s32)&SceneId_Ov695, 20);
   Event_SetDefeatDestination((s32)&SceneId_Ov695, 21);
-  Func_020011a0(102, 2);
+  Field_RequestBattleFromEncounterTable(102, 2);
 }
 
 void Func_0200083c(void) {
-  Func_02001080();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -365,10 +365,10 @@ void Func_0200083c(void) {
   }
   Event_SetAfterBattleDestination((s32)&SceneId_Ov695, 20);
   Event_SetDefeatDestination((s32)&SceneId_Ov695, 21);
-  Func_020011a0(102, 2);
+  Field_RequestBattleFromEncounterTable(102, 2);
 }
 
-void Func_02001190();
+void Event_SetDestination();
 void Func_02001208();
 void Message_CloseFinishedWindows();
 
@@ -382,7 +382,7 @@ void Message_CloseFinishedWindows();
 void Func_0200087c(void) {
   s32 angle = 0xa000;
 
-  Func_02001080();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(273), 0);
   FieldEvent_SetMessageId((s32)MsgHeyTheseGuys);
@@ -425,7 +425,7 @@ void Func_0200087c(void) {
   FieldEvent_Wait(100);
   Actor_ShowEmote(18, 261, 1);
   FieldEvent_Wait(20);
-  Func_02001190((s16)gMainRoutineWork.savedScene,
+  Event_SetDestination((s16)gMainRoutineWork.savedScene,
                 (s16)gMainRoutineWork.savedEntrance);
 #if TLA_PATCH_1
   Func_02001208(gMainRoutineWork.scene, gMainRoutineWork.entrance);
@@ -446,7 +446,7 @@ void Func_02000a24(void) {
 
   Event_ClearFlag(0xa71);
   Event_SetFlag(0xa72);
-  Func_02001080();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(273), 0);
   FieldEvent_SetMessageId((s32)MsgTheseGuysWere);
@@ -537,7 +537,7 @@ void Func_02000a24(void) {
     Actor_SetDestination(18, target[5], target[9]);
   FieldActor_WaitForMoveById(18);
   Actor_SetPosition(18, 0, 0);
-  Func_02001088();
+  Event_End();
 }
 
 void Func_02000d84(void) {
@@ -545,7 +545,7 @@ void Func_02000d84(void) {
   struct Actor *object;
   u32 id;
 
-  Func_02001080();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   id = 8;
 next:
@@ -563,7 +563,7 @@ next:
   FieldEvent_SetExitRequest(work->value154);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02001088();
+  Event_End();
 }
 
 struct ShamanVillageCaveSceneWork {
@@ -577,7 +577,7 @@ static __inline__ void ShamanVillageCave_ObjPlace(s32 id, s32 x, s32 z) {
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
-s32 Func_02000e04(void) {
+s32 Scene_Initialize(void) {
   struct Actor *object;
 
   ((struct ShamanVillageCaveSceneWork *)Ram_HeapSlots->eventWork)
@@ -631,7 +631,7 @@ s32 Func_02000e04(void) {
 
 void Func_020011c0();
 
-s32 Func_02000fe8(void) {
+s32 Scene_PrepareMap(void) {
   s32 result0;
   s32 result1;
 
@@ -709,36 +709,36 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc402, 2, CONDITION_ALWAYS, EVENT(Func_02000d84)},
     {0xc402, 3, CONDITION_ALWAYS, EVENT(Func_02000d84)},
     {0xc402, 4, CONDITION_ALWAYS, EVENT(Func_02000d84)},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {0xc402, 8, CONDITION_ALWAYS, EVENT(Func_02000d84)},
-    {1, 9, CONDITION_ALWAYS, 9},
-    {1, 10, CONDITION_ALWAYS, 10},
-    {2, 50, 0x205, EVENT(Func_02000184)},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_STEP, 50, 0x205, EVENT(Func_02000184)},
     {0x602, 41, 0x201, EVENT(Func_02001038)},
     {0x8602, 42, 0x201, EVENT(Func_02001038)},
     {0x602, 43, 0x202, EVENT(Func_02001038)},
     {0x8602, 44, 0x202, EVENT(Func_02001038)},
-    {2, 100, 0xa70, EVENT(Func_02000430)},
-    {0, 17, CONDITION_ALWAYS, EVENT(Func_0200030c)},
-    {0, 19, CONDITION_ALWAYS, EVENT(Func_0200083c)},
-    {0, 20, CONDITION_ALWAYS, EVENT(Func_0200083c)},
-    {0, 21, CONDITION_ALWAYS, EVENT(Func_0200083c)},
-    {0, 22, CONDITION_ALWAYS, EVENT(Func_0200039c)},
-    {0x4e15, 8, CONDITION_ALWAYS, EVENT(Func_0200004c)},
-    {0x4e15, 10, CONDITION_ALWAYS, EVENT(Func_0200004c)},
-    {0x8f15, 11, 0x200, EVENT(Func_02000358)},
-    {0x8f15, 12, 0x201, EVENT(Func_02000364)},
-    {0x8f15, 13, 0x202, EVENT(Func_02000374)},
-    {0x8f15, 14, 0x203, EVENT(Func_02000384)},
-    {0x1815, 16, 0x302, EVENT(Func_02000148)},
-    {0x10008c15, 15, 0x9a8, EVENT(Func_020000d4)},
-    {0x8c15, 15, 0x9a8, EVENT(Func_020000f0)},
+    {TRIGGER_STEP, 100, 0xa70, EVENT(Func_02000430)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_0200030c)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_0200083c)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_0200083c)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(Func_0200083c)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_0200039c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, EVENT(Func_0200004c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, EVENT(Func_0200004c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 11, 0x200, EVENT(Func_02000358)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 12, 0x201, EVENT(Func_02000364)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 13, 0x202, EVENT(Func_02000374)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 14, 0x203, EVENT(Func_02000384)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, 0x302, EVENT(Func_02000148)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, 0x9a8, EVENT(Func_020000d4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x9a8, EVENT(Func_020000f0)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_020000f0)},
     {TRIGGERS_END},
 };

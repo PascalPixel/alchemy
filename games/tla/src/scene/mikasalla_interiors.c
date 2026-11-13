@@ -34,24 +34,24 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return (const struct ActorPlacement *)gData_02000840;
 }
 
-void Func_020005c4();
-void Func_020005cc();
+void Event_Start();
+void Event_End();
 
 s32 Func_02000078(void) {
-  Func_020005c4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors18);
   Event_ShowMessage(8, 0);
-  Func_020005cc();
+  Event_End();
   return 0;
 }
 
 s32 Func_020000a0(void) {
-  Func_020005c4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors32);
   Event_ShowMessage(9, 0);
-  Func_020005cc();
+  Event_End();
   return 0;
 }
 
@@ -72,7 +72,7 @@ void Func_020000f4(void) {
   s32 result0;
   s32 result1;
 
-  Func_020005c4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors03);
   Event_OpenMessage(10, 0);
@@ -88,7 +88,7 @@ L_0200812c:
   FieldEvent_SetMessageId(((s32)MsgMikasallaInteriors03 + 2));
 L_02008138:
   Event_ShowMessage(10, 0);
-  Func_020005cc();
+  Event_End();
   return;
 }
 
@@ -111,11 +111,11 @@ void Func_0200019c(s32 actor) {
   if (facing == 0xc000) {
     Func_0200064c(4, actor);
   } else {
-    Func_020005c4();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors14);
     Event_ShowMessage(actor, 0);
-    Func_020005cc();
+    Event_End();
   }
 }
 
@@ -126,7 +126,7 @@ void Func_020001fc(s32 actor) {
   if (facing == 0xc000) {
     Func_02000644(actor);
   } else {
-    Func_020005c4();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors17);
     Event_OpenMessage(actor, 0);
@@ -139,7 +139,7 @@ void Func_020001fc(s32 actor) {
       FieldEvent_SetMessageId((s32)MsgMikasallaInteriors17 + 2);
     }
     Event_ShowMessage(actor, 0);
-    Func_020005cc();
+    Event_End();
   }
 }
 
@@ -150,11 +150,11 @@ void Func_02000288(s32 actor) {
   if (facing == 0xc000) {
     Func_02000644(actor);
   } else {
-    Func_020005c4();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors29);
     Event_ShowMessage(actor, 0);
-    Func_020005cc();
+    Event_End();
   }
 }
 
@@ -165,17 +165,17 @@ void Func_020002e4(s32 actor) {
   if (facing == 0xc000) {
     Func_02000644(actor);
   } else {
-    Func_020005c4();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors27);
     Event_ShowMessage(actor, 0);
-    Func_020005cc();
+    Event_End();
   }
 }
 
 void Func_02000454(void);
 
-s32 Func_02000340(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65ERoom1) {
@@ -244,7 +244,7 @@ L_020084d4:
 void Func_020004dc(void) {
   s32 result0;
 
-  Func_020005c4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors19);
   Actor_ShowEmote(18, 0x100, 60);
@@ -269,7 +269,7 @@ L_02008568:
 L_02008582:
   Event_SetFlag(0xa39);
   Event_SetFlag(0x341);
-  Func_020005cc();
+  Event_End();
   return;
 }
 
@@ -373,34 +373,34 @@ struct ActorPlacement gData_02000960[] = {
 
 // clang-format off
 struct Trigger gData_02000a20[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors01)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors02)},
-    {0, 10, CONDITION_ALWAYS, EVENT(Func_020000f4)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors07)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors08)},
-    {0, 13, CONDITION_ALWAYS, EVENT(Func_0200014c)},
-    {0, 14, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors13)},
-    {0, 15, CONDITION_ALWAYS, EVENT(Func_0200019c)},
-    {0, 16, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors23)},
-    {0, 17, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors24)},
-    {0, 18, CONDITION_ALWAYS, EVENT(Func_02000470)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors04)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors05)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors06)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors09)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors10)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors12)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors15)},
-    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors16)},
-    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors25)},
-    {0x8d15, 17, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors26)},
-    {0x8d15, 18, CONDITION_ALWAYS, EVENT(Func_020004b0)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors01)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors02)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_020000f4)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors07)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors08)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_0200014c)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors13)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_0200019c)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors23)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors24)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000470)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors04)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors05)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors06)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors09)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors10)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors12)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors15)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors16)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors25)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors26)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT(Func_020004b0)},
     {0x173, 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaInteriors35))},
     {0x173, 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaInteriors36))},
     {0x173, 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaInteriors37))},
@@ -410,24 +410,24 @@ struct Trigger gData_02000a20[] = {
 // clang-format on
 
 struct Trigger gData_02000bac[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {0, 8, CONDITION_ALWAYS, EVENT(Func_020001fc)},
-    {0, 9, CONDITION_ALWAYS, EVENT(Func_02000288)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors30)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors31)},
-    {0, 12, CONDITION_ALWAYS, EVENT(Func_020002e4)},
-    {0, 13, CONDITION_ALWAYS, EVENT(Func_020001fc)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors18)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors32)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors33)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors34)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors28)},
-    {0x8d15, 13, CONDITION_ALWAYS, EVENT(Func_02000078)},
-    {0x8d15, 14, CONDITION_ALWAYS, EVENT(Func_020000a0)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_020001fc)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000288)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors30)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors31)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_020002e4)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_020001fc)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors18)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors32)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors33)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors34)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors28)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT(Func_02000078)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(Func_020000a0)},
     {TRIGGERS_END},
 };

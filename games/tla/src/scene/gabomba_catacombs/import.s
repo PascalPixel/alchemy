@@ -14,9 +14,9 @@ GameFlag_SetBit:
 	.thumb_func
 Func_0200114c:
 	overlay_veneer Actor_SetMode
-	.global Func_02001154
+	.global Actor_StartScript
 	.thumb_func
-Func_02001154:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -50,13 +50,13 @@ Func_0803ce64:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_0200119c
+	.global Event_Start
 	.thumb_func
-Func_0200119c:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020011a4
+	.global Event_End
 	.thumb_func
-Func_020011a4:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -78,9 +78,9 @@ Actor_WaitForMoveById:
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
-	.global Func_020011d4
+	.global Actor_MoveToObject
 	.thumb_func
-Func_020011d4:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -118,9 +118,9 @@ Func_02001214:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02001224
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_02001224:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_080d2b4c
 	.thumb_func
@@ -150,9 +150,9 @@ Func_02001254:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02001264
+	.global Party_PlaySavedMusic
 	.thumb_func
-Func_02001264:
+Party_PlaySavedMusic:
 	overlay_veneer Party_PlaySavedMusicFar
 	.global Func_0200126c
 	.thumb_func

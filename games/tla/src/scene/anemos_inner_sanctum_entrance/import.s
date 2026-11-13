@@ -30,9 +30,9 @@ Heap_Alloc:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_02000c24
+	.global Resource_DecodeType01
 	.thumb_func
-Func_02000c24:
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global VramCache_Load
 	.thumb_func
@@ -62,9 +62,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Func_02000c5c:
 	overlay_veneer Actor_SetMode
-	.global Func_02000c64
+	.global Actor_StartScript
 	.thumb_func
-Func_02000c64:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -102,13 +102,13 @@ Func_0803ce64:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02000cb4
+	.global Event_Start
 	.thumb_func
-Func_02000cb4:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02000cbc
+	.global Event_End
 	.thumb_func
-Func_02000cbc:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -122,9 +122,9 @@ Actor_SetMovementTypeById:
 	.thumb_func
 Actor_SetMovementTypeAndWaitById:
 	overlay_veneer Actor_SetMovementTypeAndWaitByIdFar
-	.global Func_02000cdc
+	.global Actor_MoveToObject
 	.thumb_func
-Func_02000cdc:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -142,9 +142,9 @@ Actor_SetPartAttribute:
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Func_02000d04
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_02000d04:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_02000d0c
 	.thumb_func

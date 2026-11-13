@@ -11,7 +11,7 @@
 extern const s32 *gData_020033f4[];
 
 void Func_02002810(struct FieldEffect *effect, s32 mode);
-void Func_02002820(struct FieldEffect *effect, const s32 *script);
+void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Scene_SetActorSpritePriority(struct FieldEffect *effect, s32 priority);
 
@@ -42,7 +42,7 @@ void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Func_02002810(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Func_02002820(effect, gData_020033f4[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect, gData_020033f4[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
@@ -83,7 +83,7 @@ void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
     Func_02002810(effect, 1);
-    Func_02002820(effect, options->script);
+    Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
     sprite->rotation = options->rotation;
@@ -256,6 +256,7 @@ void Func_020021c0(void) {
   FieldEvent_Wait(4);
   FieldCamera_GetActor()->y -= 0x80000;
 }
+#include "../shared/cell_with_bit.h"
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below
 /// the table's source cell over the leader's, keeping the source column's and
@@ -265,7 +266,6 @@ void Func_02002248(struct CellTarget *table, struct CellTargetEntry *entry) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s16 sourceX;
   s32 leaderX = leader->x;
-  s16 sourceZBit;
   s32 x;
   s32 z;
 
@@ -275,11 +275,7 @@ void Func_02002248(struct CellTarget *table, struct CellTargetEntry *entry) {
    * tla-en. */
   asm("" : "=r"(sourceX) : "0"(table->x), "r"(leaderX));
   x = (leaderX >> 20) | (s16)(sourceX & 64);
-  /* FAKEMATCH(temporary): the row's 64 bit in a local of its own; as
-   * (s16)(table->z & 64) in the expression, 16 of 49 instructions differ in
-   * tla-en. */
-  sourceZBit = table->z & 64;
-  z = (leader->z >> 20) | sourceZBit;
+  z = CellTarget_CellWithBit(leader->z, table->z & 64);
   Func_020021c0();
   Event_PlaySound(161);
   MapGrid_CopyCells(table->x, table->z + 1, 1, 1, x, z);

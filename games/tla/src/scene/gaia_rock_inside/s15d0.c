@@ -41,9 +41,9 @@ void Scene_SetActorSpritePriority(void *object, s32 priority);
 void Func_02004d9c(void *object, s32 mode);
 void Actor_SetSingleChildFlags(void *object, u32 value);
 void Animation_SetStateFlags(void *object, s32 flags);
-void Func_02004dac(void *object, const u8 *script);
+void Actor_StartScript(void *object, const u8 *script);
 void Func_02001548(void);
-void Func_02004fd4(void);
+void Party_PlaySavedMusic(void);
 
 void Func_020015d0(s32 idA, s32 idB) {
   struct Actor *a = Actor_GetById(idA);
@@ -90,7 +90,7 @@ first:
     Func_02004d9c(spark, 7);
     Actor_SetSingleChildFlags(spark, 0);
     Animation_SetStateFlags(spark, 1);
-    Func_02004dac(spark, gData_02005218);
+    Actor_StartScript(spark, gData_02005218);
     REG_BLDALPHA = 0x1004;
     wait(2);
     REG_BLDALPHA = 0x100a;
@@ -125,7 +125,7 @@ second:
     /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2
      * of 402 instructions differ in tla-en. */
     FieldVector_AddPolarOffset(spark->unk4c, *angle, &spark->x);
-    Func_02004dac(spark, gData_02005234);
+    Actor_StartScript(spark, gData_02005234);
     if (i == 3) {
       /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call,
        * 2 of 402 instructions differ in tla-en. */
@@ -165,7 +165,7 @@ third:
     Func_02004d9c(spark, 7);
     Actor_SetSingleChildFlags(spark, 0);
     Animation_SetStateFlags(spark, 1);
-    Func_02004dac(spark, gData_02005244);
+    Actor_StartScript(spark, gData_02005244);
   }
   i += 2;
   if (i != 32)
@@ -187,15 +187,15 @@ third:
   wait(120);
   b->update = 0;
   Sound_Play(390);
-  Func_02004fd4();
+  Party_PlaySavedMusic();
   wait(1);
 }
 
 // The party meets person 11 on the ledge: they talk, the ground shakes, the screen blends out and back while the ledge changes, the party gains the item and person 11 joins the leader (flag 0x9ba).
-void Func_02004e5c(void);
-void Func_02004ec4(s32 id, s32 target);
-void Func_02004ddc(void);
-void Func_02004dd4(void);
+void Event_Start(void);
+void Actor_MoveToObject(s32 id, s32 target);
+void DisplayBlend_EnableRunScript(void);
+void DisplayBlend_DisableRunScript(void);
 void Party_LearnAbility(s32 unit, s32 ability);
 s32 Func_02004e64(void);
 
@@ -209,10 +209,7 @@ s32 Func_020019cc(void) {
   volatile u16 level;
   s32 message;
 
-  /* FAKEMATCH(wrapper): the calls that repeat an argument are forwarded through
-   * call.h, so each builds its own; as direct calls, 32 of 250 instructions differ
-   * in tla-en. */
-  Func_02004e5c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   message = (s32)MsgGaiaRockInside09;
   ((s32 (*)())FieldMessage_Show)(message, 1);
@@ -221,7 +218,7 @@ s32 Func_020019cc(void) {
     Actor_WalkTo(gMainRoutineWork.currentOwner, 0x1b8, 0x148);
     FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
   }
-  Func_02004ec4(11, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(11, gMainRoutineWork.currentOwner);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 0x1d6, 0x162);
   Actor_WalkTo(11, 0x1be, 0x162);
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -246,7 +243,7 @@ s32 Func_020019cc(void) {
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   MapGrid_WaitForShakeToSettle();
-  Func_02004ddc();
+  DisplayBlend_EnableRunScript();
   level = REG_BLDALPHA & 0xff;
   while (level != 0) {
     REG_BLDALPHA = level | 0x1000;
@@ -263,7 +260,7 @@ s32 Func_020019cc(void) {
     level++;
     System_Wait(1);
   }
-  Func_02004dd4();
+  DisplayBlend_DisableRunScript();
   Actor_SetPosition(12, 0, 0);
   Party_LearnAbility(4, 139);
   Event_SetFlag(0x9ba);
@@ -349,13 +346,13 @@ void Func_02001d14(void) {
     return;
   person = Actor_Get(12);
   level = REG_BLDALPHA;
-  Func_02004e5c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   /* FAKEMATCH(wrapper): the form kept; as a direct call, 13 of 173
    * instructions differ in tla-en. */
   MapGrid_SetShake(Q16_ONE * 10, Q16_ONE * 10, Q16_ONE);
   Event_PlaySound(107);
-  Func_02004ddc();
+  DisplayBlend_EnableRunScript();
   level &= 0xff;
   while (level != 0) {
     REG_BLDALPHA = level | 0x1000;
@@ -392,7 +389,7 @@ void Func_02001d14(void) {
     level++;
     System_Wait(1);
   }
-  Func_02004dd4();
+  DisplayBlend_DisableRunScript();
   Func_02004e64();
 }
 
@@ -404,7 +401,7 @@ void Func_02001d14(void) {
 
 extern char SceneId_Ov681Room1;
 
-s32 Func_02004f74(s32 entrance, s32 count);
+s32 Field_RequestBattleFromEncounterTable(s32 entrance, s32 count);
 
 void Func_02001ebc(void) {
   s32 count;
@@ -435,6 +432,6 @@ void Func_02001ebc(void) {
     } else {
       Event_SetDefeatDestination(scene, 11);
     }
-    Func_02004f74(12, count);
+    Field_RequestBattleFromEncounterTable(12, count);
   }
 }

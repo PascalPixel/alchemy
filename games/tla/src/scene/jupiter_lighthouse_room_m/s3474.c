@@ -264,7 +264,7 @@ extern u8 gField_CachedTilesA[];
 extern u8 gField_CachedTilesB[];
 extern u8 gField_CachedTilesC[];
 
-void Func_0200468c(const void *source, void *destination);
+void Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -275,7 +275,7 @@ void Func_02003938(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02005a84, 64);
-  Func_0200468c(gField_CachedTilesA, buffer);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_02005a80 = Resource_FindFreeEntry();
   VramCache_Load(gData_02005a80, 0xc00, buffer);
   Heap_Release(buffer);
@@ -289,7 +289,7 @@ void Func_020039b8(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_02005a84, 64);
-  Func_0200468c(gField_CachedTilesB, buffer);
+  Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_02005a80 = Resource_FindFreeEntry();
   Vram_Load(gData_02005a80, 0x800, buffer);
   Heap_Release(buffer);
@@ -303,7 +303,7 @@ void Func_02003a38(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_02005a84, 64);
-  Func_0200468c(gField_CachedTilesC, buffer);
+  Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_02005a80 = Resource_FindFreeEntry();
   Vram_Load(gData_02005a80, 0x800, buffer);
   Heap_Release(buffer);

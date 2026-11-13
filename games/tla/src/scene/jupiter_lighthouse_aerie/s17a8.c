@@ -45,7 +45,7 @@ extern char ResourceId_GoldenTrident;
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void *Resource_GetTableEntry(s32 id);
-void Func_020029a0(void *resource, void *destination);
+void Resource_DecodeType01(void *resource, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 Resource_ResetEntry(u32 slot);
 void Func_02002b30(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
@@ -77,7 +77,7 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
 
   work->first = Actor_Get(a);
   work->second = Actor_Get(b);
-  Func_020029a0(Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade), work);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade), work);
   smallEntry = Resource_FindFreeEntry();
   smallTile = Vram_Load(smallEntry, 256, work);
   work->smallTile = smallTile;
@@ -93,7 +93,7 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
     *(u16 *)&sprite->depth = 240;
     spark->age = age;
   }
-  Func_020029a0(Resource_GetTableEntry((s32)&ResourceId_GoldenTrident), work);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GoldenTrident), work);
   largeEntry = Resource_FindFreeEntry();
   {
     /* FAKEMATCH(temporary): sprite also holds the size; as a plain argument, 7
@@ -258,7 +258,7 @@ void Func_02001c34(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02003384, 64);
-  Func_020029a0(gField_CachedTilesA, buffer);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_02003380 = Resource_FindFreeEntry();
   VramCache_Load(gData_02003380, 0xc00, buffer);
   Heap_Release(buffer);
@@ -272,7 +272,7 @@ void Func_02001cb4(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_02003384, 64);
-  Func_020029a0(gField_CachedTilesB, buffer);
+  Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_02003380 = Resource_FindFreeEntry();
   Vram_Load(gData_02003380, 0x800, buffer);
   Heap_Release(buffer);
@@ -286,7 +286,7 @@ void Func_02001d34(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_02003384, 64);
-  Func_020029a0(gField_CachedTilesC, buffer);
+  Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_02003380 = Resource_FindFreeEntry();
   Vram_Load(gData_02003380, 0x800, buffer);
   Heap_Release(buffer);

@@ -30,9 +30,9 @@ GameFlag_SetBit:
 	.thumb_func
 Func_020027f4:
 	overlay_veneer Actor_SetMode
-	.global Func_020027fc
+	.global Actor_StartScript
 	.thumb_func
-Func_020027fc:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -54,13 +54,13 @@ Party_RemoveActiveOwner:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_0200282c
+	.global Event_Start
 	.thumb_func
-Func_0200282c:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02002834
+	.global Event_End
 	.thumb_func
-Func_02002834:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func

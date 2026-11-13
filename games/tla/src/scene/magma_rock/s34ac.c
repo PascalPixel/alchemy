@@ -16,7 +16,7 @@ extern u32 gData_02003e0c[];
 struct ResourceEntry *Func_02003bd4(void *sprite, struct ResourceEntry *last);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 void Func_02003a54(struct FieldEffect *effect, s32 mode);
-void Func_02003a5c(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
@@ -41,7 +41,7 @@ void Func_020034ac(s32 spread) {
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
       Func_02003a54(effect, 2);
-      Func_02003a5c(effect, gData_02003e0c);
+      Actor_StartScript(effect, gData_02003e0c);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -87,7 +87,7 @@ void Func_020035e0(void) {
       effect->collisionFlags = zero;
       Actor_SetSingleChildFlags((struct Actor *)effect, 0);
       Func_02003a54(effect, 2);
-      Func_02003a5c(effect, gData_02003e3c);
+      Actor_StartScript(effect, gData_02003e3c);
       angle = i << 12;
       effect->velocity.x = Math_Cosine(angle);
       effect->velocity.y = zero;
@@ -160,7 +160,7 @@ struct ParticleWork {
 };
 
 void Func_02003c3c(struct ParticleSprite *sprite, struct Particle *particle);
-void Func_02003c44(struct Particle *particle, s32 unk1, s32 step);
+void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
 void Func_0200379c(void) {
   struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
@@ -179,7 +179,7 @@ next:
 
     sprite->attr = (attr & ~0x3ff) | tile;
     Func_02003c3c(sprite, particle);
-    Func_02003c44(particle, 63, step);
+    BattleEffect_StepVector3(particle, 63, step);
     particle->age++;
   }
   i--;
@@ -627,16 +627,16 @@ struct ActorPlacement gData_020045c4[] = {
 // clang-format on
 
 struct Trigger gData_0200460c[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xca02, 2, 0x2f8, EVENT(Func_02001b44)},
-    {2, 2, CONDITION_ALWAYS, EVENT(Func_02001b24)},
-    {0x8f15, 19, CONDITION_ALWAYS, 0},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_02001b24)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 19, CONDITION_ALWAYS, 0},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02000940)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a48)},
-    {0x10008c15, 8, 0x8d5, EVENT(Func_02000940)},
-    {0x8c15, 8, 0x8d5, EVENT(Func_02000a48)},
-    {0x10008c15, 10, 0x8d6, EVENT(Func_02000940)},
-    {0x8c15, 10, 0x8d6, EVENT(Func_02000a48)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x8d5, EVENT(Func_02000940)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x8d5, EVENT(Func_02000a48)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, 0x8d6, EVENT(Func_02000940)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x8d6, EVENT(Func_02000a48)},
     {0x50009705, 31, 0x200, EVENT(Func_020019e8)},
     {0x50009705, 32, 0x201, EVENT(Func_02001a38)},
     {0x50009705, 33, 0x202, EVENT(Func_02001a8c)},
@@ -653,17 +653,17 @@ struct Trigger gData_0200460c[] = {
 };
 
 struct Trigger gData_02004720[] = {
-    {1, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {0x202, 20, CONDITION_ALWAYS, EVENT(Func_02001bb0)},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02000940)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a48)},
-    {0x10008c15, 8, CONDITION_ALWAYS, EVENT(Func_02000940)},
-    {0x8c15, 8, CONDITION_ALWAYS, EVENT(Func_02000a48)},
-    {0x10008c15, 15, 0x8d7, EVENT(Func_02000940)},
-    {0x8c15, 15, 0x8d7, EVENT(Func_02000a48)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(Func_02000940)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT(Func_02000a48)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, 0x8d7, EVENT(Func_02000940)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x8d7, EVENT(Func_02000a48)},
     {0x50009705, 31, 0x200, EVENT(Func_020019e8)},
-    {2, 50, 0x212, EVENT(Func_02001bc0)},
-    {2, 51, CONDITION_ALWAYS, EVENT(Func_02001be0)},
+    {TRIGGER_STEP, 50, 0x212, EVENT(Func_02001bc0)},
+    {TRIGGER_STEP, 51, CONDITION_ALWAYS, EVENT(Func_02001be0)},
     {0x80009705, 30, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 30, 0x2f0, EVENT(Func_02001110)},
     {0x50009705, 30, CONDITION_ALWAYS, EVENT(Func_020014bc)},
@@ -672,30 +672,30 @@ struct Trigger gData_02004720[] = {
 };
 
 struct Trigger gData_020047e0[] = {
-    {1, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02000940)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a48)},
-    {0x10008c15, 16, 0x8d8, EVENT(Func_02000940)},
-    {0x8c15, 16, 0x8d8, EVENT(Func_02000a48)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, 0x8d8, EVENT(Func_02000940)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x8d8, EVENT(Func_02000a48)},
     {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_02001110)},
     {0x9705, 50, CONDITION_ALWAYS, EVENT(Func_0200148c)},
     {0x80009705, 51, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 51, CONDITION_ALWAYS, EVENT(Func_02001110)},
     {0x9705, 51, CONDITION_ALWAYS, EVENT(Func_0200148c)},
-    {6, 200, CONDITION_ALWAYS, EVENT(Func_02001c00)},
+    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Func_02001c00)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_0200487c[] = {
-    {1, 11, CONDITION_ALWAYS, 11},
-    {1, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {0x602, 40, 0x8, EVENT(Func_02001e08)},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02000940)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a48)},
-    {0x10008c15, 8, 0x8d9, EVENT(Func_02000940)},
-    {0x8c15, 8, 0x8d9, EVENT(Func_02000a48)},
-    {0x8515, 14, 0x250, 0},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x8d9, EVENT(Func_02000940)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x8d9, EVENT(Func_02000a48)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 14, 0x250, 0},
     {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_02001110)},
     {0x9705, 50, CONDITION_ALWAYS, EVENT(Func_0200148c)},
@@ -706,15 +706,15 @@ struct Trigger gData_0200487c[] = {
 };
 
 struct Trigger gData_02004930[] = {
-    {1, 13, CONDITION_ALWAYS, 13},
-    {1, 15, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
+    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {0x8602, 40, CONDITION_ALWAYS, EVENT(Func_02001edc)},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02000940)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a48)},
-    {0x10008c15, 8, 0x8da, EVENT(Func_02000940)},
-    {0x8c15, 8, 0x8da, EVENT(Func_02000a48)},
-    {0x10008c15, 9, 0x8db, EVENT(Func_02000940)},
-    {0x8c15, 9, 0x8db, EVENT(Func_02000a48)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x8da, EVENT(Func_02000940)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x8da, EVENT(Func_02000a48)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, 0x8db, EVENT(Func_02000940)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x8db, EVENT(Func_02000a48)},
     {0x80009705, 30, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 30, 0x2f0, EVENT(Func_02001110)},
     {0x50009705, 30, CONDITION_ALWAYS, EVENT(Func_020014bc)},
@@ -727,14 +727,14 @@ struct Trigger gData_02004930[] = {
     {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_02001110)},
     {0x9705, 50, CONDITION_ALWAYS, EVENT(Func_0200148c)},
-    {0xc15, 16, 0x250, EVENT(Func_02001fb0)},
-    {0xc15, 17, 0x251, EVENT(Func_02001fd4)},
-    {0xc15, 18, 0x252, EVENT(Func_02001ffc)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 16, 0x250, EVENT(Func_02001fb0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 17, 0x251, EVENT(Func_02001fd4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 18, 0x252, EVENT(Func_02001ffc)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02004a5c[] = {
-    {1, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 50, 0x2f0, EVENT(Func_02001110)},
     {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_020020f8)},

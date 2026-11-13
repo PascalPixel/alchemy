@@ -42,8 +42,8 @@ void Func_020000d4(void) { Call7(Func_02001b1c, 0x38, 0, 5, 3, 0x5e, 0x1a, 1); }
 
 #include "main_routine_work.h"
 
-void Func_02001a7c(void);
-void Func_02001a84(void);
+void Event_Start(void);
+void Event_End(void);
 
 void Func_020000f4(void) {
   s32 t0;
@@ -56,13 +56,13 @@ void Func_020000f4(void) {
     Actor_SetPosition(0x40, 0x1180000, 0x1b80000);
     if ((FIELD_AT(t0, s32, 8) >> 20) == 0x11) {
       if ((FIELD_AT(t0, s32, 16) >> 20) == 0x1b) {
-        Func_02001a7c();
+        Event_Start();
         FieldEvent_ResolvePendingActions(0);
         Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
         Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, -16, 0);
         FIELD_AT(t0, s32, 40) = 0x60000;
         FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-        Func_02001a84();
+        Event_End();
       }
     }
   }
@@ -78,7 +78,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 Func_02001b3c();
 
-s32 Func_02000198(void) {
+s32 Scene_Initialize(void) {
   s32 clear;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
@@ -109,6 +109,9 @@ void Func_0200022c(s32 a0) { gData_02002198 = a0; }
 #include "io_reg.h"
 
 extern s32 gData_02002194;
+
+/// Sets the counter, its value built as a word.
+static inline void Counter_Set(s32 value) { gData_02002194 = value; }
 extern u16 gData_020021c0[];
 
 void Func_02000238(void) {
@@ -163,12 +166,7 @@ void Func_020002f4(s32 mode) {
     Iwram_CopyWords(gData_020021e0, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(0xa00) || mode == 1) {
-    /* FAKEMATCH(temporary): a local holding 0, so the zero is built in r2
-     * and the counter's address in r3; as the 0 stored directly, 6 of 44
-     * instructions differ in tla-en. */
-    s32 zero = 0;
-
-    gData_02002194 = zero;
+    Counter_Set(0);
     Task_Add(Func_02000238, 1152);
   } else {
     Dma_Set(gData_020021e4, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2),
@@ -185,15 +183,7 @@ void Func_02000378(s32 id) {
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
   object->y = height + 0x200000;
-  {
-    u8 *flags = &object->priorityFlags;
-    /* FAKEMATCH(temporary): a local holding 128, so the bit is built in the
-     * register it is ORed into; as *flags |= 128, 4 of 38 instructions differ
-     * in tla-en. */
-    s32 bit = 128;
-
-    *flags = bit | *flags;
-  }
+  object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
   Func_02001a6c(object->x, object->z, 0, (height >> 19) + 6);
   Func_02001b34(object->x, object->z, 0, 128);
@@ -211,7 +201,7 @@ void Func_020003cc(void) {
   s32 facing;
   s32 i;
 
-  Func_02001a7c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkd46 = 0;
@@ -259,5 +249,5 @@ void Func_020003cc(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_02001a84();
+  Event_End();
 }

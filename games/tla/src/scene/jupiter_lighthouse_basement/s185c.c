@@ -6,13 +6,13 @@
 #include "event_inline.h"
 #include "../jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
 
-void Func_02001c84(void);
-void Func_02001c14(void);
+void Event_Start(void);
+void Map_CenterOnFollowedPoint(void);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Func_02001c8c(void);
+void Event_End(void);
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
@@ -28,10 +28,10 @@ void Func_0200185c(void) {
   struct EffectOptions options;
   s32 spawn = 1;
 
-  Func_02001c84();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   CamBounds(-1, -1, -1, 0);
-  Func_02001c14();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = 0x820000;
   actor->gravity = 0x8000;
@@ -87,7 +87,7 @@ loop:
   actor->bounce = 0x4000;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Func_02001c8c();
+  Event_End();
 }
 
 extern struct CellTarget gData_020024f8;
@@ -147,7 +147,7 @@ void Func_02001aa4(s32 x, s32 z, s32 effect) {
     marker = work->marker;
     marker->x = leader->x;
     marker->z = leader->z;
-    Func_02001c14();
+    Map_CenterOnFollowedPoint();
     Func_0200185c();
     ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
         ->screenEffect = effect;
@@ -221,10 +221,10 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gData_020022e8[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000054)},
     {0x50008905, 31, CONDITION_ALWAYS, EVENT(Func_02000074)},
     {0x50008905, 32, CONDITION_ALWAYS, EVENT(Func_020000f8)},
@@ -235,7 +235,7 @@ struct Trigger gData_020022e8[] = {
 };
 
 struct Trigger gData_0200236c[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGERS_END},
 };
 

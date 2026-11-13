@@ -10,23 +10,23 @@
 #include "event_inline.h"
 #include "cell_target.h"
 
-void Func_020028b0(void);
-void Func_02002838(void);
+void Event_Start(void);
+void Map_CenterOnFollowedPoint(void);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Func_020028b8(void);
+void Event_End(void);
 
 void Func_02002450(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   u32 i;
   struct EffectOptions options;
 
-  Func_020028b0();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Func_02002838();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = 0x820000;
   actor->gravity = 0x8000;
@@ -69,7 +69,7 @@ void Func_02002450(void) {
   actor->bounce = 0x4000;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Func_020028b8();
+  Event_End();
 }
 
 extern struct CellTarget Data_0200354c;
@@ -129,7 +129,7 @@ void Func_02002698(s32 x, s32 z, s32 effect) {
     marker = work->marker;
     marker->x = leader->x;
     marker->z = leader->z;
-    Func_02002838();
+    Map_CenterOnFollowedPoint();
     Func_02002450();
     ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
         ->screenEffect = effect;
@@ -268,31 +268,31 @@ struct Trigger gSceneEvents[] = {
     {49, 1, CONDITION_ALWAYS, 1},
     {33, 2, CONDITION_ALWAYS, 2},
     {49, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {1, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {33, 9, CONDITION_ALWAYS, 9},
     {33, 10, CONDITION_ALWAYS, 10},
-    {1, 11, CONDITION_ALWAYS, 11},
-    {1, 12, CONDITION_ALWAYS, 12},
-    {2, 21, 0xa00, EVENT(Func_020006ac)},
-    {2, 22, 0xa00, EVENT(Func_02000724)},
-    {2, 100, CONDITION_ALWAYS, EVENT(Func_020008a4)},
-    {0, 22, CONDITION_ALWAYS, MSGNO(MsgFieldFollowTrueFeelings)},
-    {0x8d15, 22, CONDITION_ALWAYS, MSGNO(MsgFieldPartWithAgatio)},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_STEP, 21, 0xa00, EVENT(Func_020006ac)},
+    {TRIGGER_STEP, 22, 0xa00, EVENT(Func_02000724)},
+    {TRIGGER_STEP, 100, CONDITION_ALWAYS, EVENT(Func_020008a4)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgFieldFollowTrueFeelings)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgFieldPartWithAgatio)},
     {8, -1, CONDITION_ALWAYS, EVENT(Func_02000054)},
     {9, -1, CONDITION_ALWAYS, EVENT(Func_02000064)},
-    {0x10008c15, 17, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {0x8c15, 17, CONDITION_ALWAYS, EVENT(Func_02000064)},
-    {0x10008c15, 18, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {0x8c15, 18, CONDITION_ALWAYS, EVENT(Func_02000064)},
-    {0x10008c15, 19, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {0x8c15, 19, CONDITION_ALWAYS, EVENT(Func_02000064)},
-    {0x10008c15, 11, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {0x8c15, 11, CONDITION_ALWAYS, EVENT(Func_02000064)},
-    {0x50009985, 0, 0xa00, EVENT(Func_020002b8)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(Func_02000064)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT(Func_02000064)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(Func_02000064)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT(Func_02000064)},
+    {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_ACTS), 0, 0xa00, EVENT(Func_020002b8)},
     {TRIGGERS_END},
 };
 

@@ -11,13 +11,13 @@
 #include "event_work.h"
 #include "event_inline.h"
 
-void Func_02003398(void);
-void Func_02003308(void);
+void Event_Start(void);
+void Map_CenterOnFollowedPoint(void);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Func_020033a0(void);
+void Event_End(void);
 
 void Func_02002f48(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
@@ -25,13 +25,10 @@ void Func_02002f48(void) {
   struct EffectOptions options;
   s32 spawn = 1;
 
-  Func_02003398();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  /* FAKEMATCH(wrapper): the call forwarded through Call4, which builds each -1
-   * in its own register; as a direct call, 8 of 169 instructions differ in
-   * tla-en. */
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Func_02003308();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = 0x820000;
   actor->gravity = 0x8000;
@@ -80,13 +77,7 @@ loop:
   Event_PlaySound(188);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  /* FAKEMATCH(wrapper): the call forwarded through Call3, which builds each
-   * constant in its own register; as a direct call, 26 of 169 instructions
-   * differ in tla-en. */
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  /* FAKEMATCH(wrapper): the call forwarded through Call3, which builds each -1
-   * in its own register; as a direct call, 7 of 169 instructions differ in
-   * tla-en. */
   MapGrid_SetShake(-1, -1, 0xe666);
   MapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
@@ -94,7 +85,7 @@ loop:
   actor->bounce = 0x4000;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Func_020033a0();
+  Event_End();
 }
 
 #include "cell_target.h"
@@ -156,7 +147,7 @@ void Func_02003190(s32 x, s32 z, s32 effect) {
     marker = work->marker;
     marker->x = leader->x;
     marker->z = leader->z;
-    Func_02003308();
+    Map_CenterOnFollowedPoint();
     Func_02002f48();
     ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
         ->screenEffect = effect;

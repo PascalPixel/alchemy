@@ -10,7 +10,7 @@
 extern s32 gData_02004f90[];
 extern u32 gData_02004f9c[];
 
-void Func_02004b20(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 
 static __inline__ struct Actor *Func_02004b30_(s32 kind, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): forwarding through the inline builds the kind after the
@@ -34,7 +34,7 @@ void Func_020039f4(struct Actor *object) {
   if (spark != NULL) {
     spark->terrainHeight = object->terrainHeight;
     sprite = spark->sprite;
-    Func_02004b20(spark, gData_02004f90);
+    Actor_StartScript(spark, gData_02004f90);
     spark->motionFlags = 0;
     spark->timer = 0;
     spark->watchedObject = object;
@@ -48,7 +48,7 @@ void Func_020039f4(struct Actor *object) {
   if (spark != NULL) {
     spark->terrainHeight = object->terrainHeight;
     sprite = spark->sprite;
-    Func_02004b20(spark, gData_02004f90);
+    Actor_StartScript(spark, gData_02004f90);
     spark->motionFlags = 0;
     spark->timer = 0;
     spark->watchedObject = object;
@@ -75,7 +75,7 @@ void Func_02003aac(struct Actor *object) {
   if (particle != NULL) {
     particle->terrainHeight = object->terrainHeight;
     sprite = particle->sprite;
-    Func_02004b20(particle, gData_02004f9c);
+    Actor_StartScript(particle, gData_02004f9c);
     Animation_ApplyChildArgument(sprite, 2);
     particle->gravity = 0x200;
     particle->scaleX = 0xcccc;

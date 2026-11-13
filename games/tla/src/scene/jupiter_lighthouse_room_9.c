@@ -147,7 +147,7 @@ void Func_02000460(s32 mode);
 
 /// The scene's set-up: screen effect 0x204, actor 64's action variant 3 and
 /// actor 8 held still, then Func_0200130c and Func_02001a28 by the entrance.
-s32 Func_02000290(void) {
+s32 Scene_Initialize(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 0x204;
@@ -168,7 +168,7 @@ s32 Func_02000290(void) {
   return 0;
 }
 
-s32 Func_02000358(void) {
+s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   Func_02000460(0);
   return 0;
@@ -187,6 +187,9 @@ extern s32 gData_020025f4;
 void Func_02000398(s32 value) { gData_020025f4 = value; }
 
 extern s32 gData_020025f0;
+
+/// Sets the counter, its value built as a word.
+static inline void Counter_Set(s32 value) { gData_020025f0 = value; }
 extern u16 gData_0200261c[];
 
 void Func_020003a4(void) {
@@ -242,12 +245,7 @@ void Func_02000460(s32 mode) {
     Iwram_CopyWords(gData_0200263c, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(0xa00) || mode == 1) {
-    /* FAKEMATCH(temporary): a local holding 0, so the zero is built in r2
-     * and the counter's address in r3; as the 0 stored directly, 6 of 44
-     * instructions differ in tla-en. */
-    s32 zero = 0;
-
-    gData_020025f0 = zero;
+    Counter_Set(0);
     Task_Add(Func_020003a4, 1152);
   } else {
     Dma_Set(gData_02002640, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2),
@@ -264,15 +262,7 @@ void Func_020004e4(s32 id) {
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
   object->y = height + 0x200000;
-  {
-    u8 *flags = &object->priorityFlags;
-    /* FAKEMATCH(temporary): a local holding 128, so the bit is built in the
-     * register it is ORed into; as *flags |= 128, 4 of 38 instructions differ
-     * in tla-en. */
-    s32 bit = 128;
-
-    *flags = bit | *flags;
-  }
+  object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
   Func_02001bd8(object->x, object->z, 0, (height >> 19) + 6);
   Func_02001c98(object->x, object->z, 0, 128);
@@ -281,13 +271,10 @@ void Func_020004e4(s32 id) {
 #include "frame.h"
 #include "field_sprite.h"
 
-void Func_02001be8(void);
-void Func_02001bf0(void);
+void Event_Start(void);
+void Event_End(void);
 
 void Func_02000538(void) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 8 of 216 instructions differ in
-   * tla-en. */
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *linked = actor->watchedObject;
@@ -296,7 +283,7 @@ void Func_02000538(void) {
   s32 angle;
   s32 i;
 
-  Func_02001be8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkd46 = i;
@@ -355,7 +342,7 @@ void Func_02000538(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_02001bf0();
+  Event_End();
 }
 
 s32 Func_02000724(s32 *a, s32 *b) {
@@ -369,9 +356,9 @@ extern const s32 gData_020025f8[];
 
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_02001c88(s32 x, s32 z, s32 layer);
-void Func_02001c78(s32 *position);
+void Camera_WorldToScreen(s32 *position);
 s32 Math_Cosine(s32 angle);
-void Func_02001b78(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_02000750(struct Actor *self) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -398,7 +385,7 @@ void Func_02000750(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Func_02001c78(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -446,7 +433,7 @@ stop:
     s32 zero = 0;
     *((u8 *)self + 0x63) = zero;
     self->update = zero;
-    Func_02001b78(self, gData_020025f8);
+    Actor_StartScript(self, gData_020025f8);
     Event_PlaySound(228);
     gData_02002618 = zero;
   }

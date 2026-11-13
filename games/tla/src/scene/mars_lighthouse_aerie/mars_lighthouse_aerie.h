@@ -19,8 +19,8 @@ void Func_02004d50(s32 id);
 void Func_02004fac(void);
 void Func_02005010(void);
 void Func_020050b0(void);
-void Func_0200560c(void);
-void Func_02005614(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_020057cc(void);
 
 extern u8 MsgUhhhhnnnICan[];

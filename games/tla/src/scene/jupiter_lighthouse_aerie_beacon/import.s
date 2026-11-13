@@ -54,9 +54,9 @@ Heap_Alloc:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_02005704
+	.global Resource_DecodeType01
 	.thumb_func
-Func_02005704:
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global VramCache_Load
 	.thumb_func
@@ -102,9 +102,9 @@ Func_02005754:
 	.thumb_func
 Actor_SetAnimationSpeed:
 	overlay_veneer Actor_SetAnimationSpeedFar
-	.global Func_02005764
+	.global Actor_StartScript
 	.thumb_func
-Func_02005764:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -114,9 +114,9 @@ Import_ActorCreate:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Func_0200577c
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_0200577c:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -170,9 +170,9 @@ PartyInventory_Add:
 	.thumb_func
 PartyInventory_Remove:
 	overlay_veneer PartyInventory_RemoveFar
-	.global Func_020057ec
+	.global Inventory_Equip
 	.thumb_func
-Func_020057ec:
+Inventory_Equip:
 	overlay_veneer Inventory_EquipFar
 	.global Unit_AddHp
 	.thumb_func
@@ -190,9 +190,9 @@ Party_AddActiveOwner:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02005814
+	.global Event_Start
 	.thumb_func
-Func_02005814:
+Event_Start:
 	overlay_veneer Event_StartFar
 	.global Func_0200581c
 	.thumb_func
@@ -254,9 +254,9 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_SetHorizontalPositionAndAngleWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionAndAngleWithTerrainFar
-	.global Func_02005894
+	.global Actor_MoveToObject
 	.thumb_func
-Func_02005894:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -338,9 +338,9 @@ Func_080d4568:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_0200593c
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_0200593c:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
@@ -378,13 +378,13 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_0200598c
+	.global Party_PlaySavedMusic
 	.thumb_func
-Func_0200598c:
+Party_PlaySavedMusic:
 	overlay_veneer Party_PlaySavedMusicFar
-	.global Func_02005994
+	.global Camera_WorldToScreen
 	.thumb_func
-Func_02005994:
+Camera_WorldToScreen:
 	overlay_veneer Camera_WorldToScreenFar
 	.global Actor_OffsetPositionAndReset
 	.thumb_func
@@ -406,21 +406,21 @@ Func_020059b4:
 	.thumb_func
 Func_020059bc:
 	overlay_veneer Func_080c87e8
-	.global Func_020059c4
+	.global BattleEffect_StartArcEffect
 	.thumb_func
-Func_020059c4:
+BattleEffect_StartArcEffect:
 	overlay_veneer BattleEffect_StartArcEffectFar
-	.global Func_020059cc
+	.global BattleEffect_EndArcEffect
 	.thumb_func
-Func_020059cc:
+BattleEffect_EndArcEffect:
 	overlay_veneer BattleEffect_EndArcEffectFar
-	.global Func_020059d4
+	.global BattleEffect_WaitForArcGroups
 	.thumb_func
-Func_020059d4:
+BattleEffect_WaitForArcGroups:
 	overlay_veneer BattleEffect_WaitForArcGroupsFar
-	.global Func_020059dc
+	.global BattleEffect_SetObjectUpdateMode
 	.thumb_func
-Func_020059dc:
+BattleEffect_SetObjectUpdateMode:
 	overlay_veneer BattleEffect_SetObjectUpdateModeFar
 	.global Func_020059e4
 	.thumb_func

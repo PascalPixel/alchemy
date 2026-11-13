@@ -20,7 +20,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-s32 *Func_02000044(void) {
+s32 *Scene_GetExits(void) {
   if (!GameFlag_Test(0x960))
     return gData_0200057c;
   return gData_0200059c;
@@ -34,7 +34,7 @@ void Func_0200006c(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->entrance == 2) {
-    Func_0200046c();
+    Event_Start();
     Event_ResolvePendingActions(0);
     if (Actor_GetById(8)->x == 0) {
       Actor_WalkByAndWait(4, 0, -16);
@@ -57,7 +57,7 @@ void Func_0200006c(void) {
       Actor_WaitForMoveById(8);
       Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
     }
-    Func_02000474();
+    Event_End();
   }
 }
 
@@ -104,7 +104,7 @@ void Func_02000158(void) {
 void Func_02000254(const struct WarpTarget *warp, s32 door, s32 mode) {
   s32 id;
 
-  Func_0200046c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(158);
   Map_PlayMapEdit(warp->scene, warp->x, warp->z);
@@ -120,7 +120,7 @@ void Func_02000254(const struct WarpTarget *warp, s32 door, s32 mode) {
   Import_EventSetExitRequest(door);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02000474();
+  Event_End();
 }
 
 void Func_020002dc(s32 door) { Func_02000254(&gData_02000610, door, 0); }
@@ -157,7 +157,7 @@ void Func_020002f8(void) {
   }
 }
 
-s32 Func_02000360(void) {
+s32 Scene_Initialize(void) {
   SCENE_WORK->unk1ac = 256;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Task_Add(Func_020002f8, 0x480);
@@ -171,7 +171,7 @@ s32 Func_02000360(void) {
   return 0;
 }
 
-s32 Func_020003cc(void) {
+s32 Scene_PrepareMap(void) {
   if (!Flag_IsSet(0x8df)) {
     Map_CopyCellPictureIndicesRect(57, 52, 64, 15, 1, 1);
     Map_CopyCellPictureIndicesRect(60, 53, 67, 16, 6, 3);
@@ -216,10 +216,10 @@ s16 gData_02000604[] = {
 struct WarpTarget gData_02000610 = {(s32)gData_02000604, 70, 22};
 
 struct Trigger gSceneEvents[] = {
-    {1, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_020002dc)},
-    {2, 21, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0, 8, CONDITION_ALWAYS, EVENT(Func_02000158)},
-    {0x8d15, 1032, CONDITION_ALWAYS, EVENT(Func_02000158)},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_0200006c)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000158)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1032, CONDITION_ALWAYS, EVENT(Func_02000158)},
     {TRIGGERS_END},
 };

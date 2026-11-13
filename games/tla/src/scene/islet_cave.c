@@ -246,7 +246,7 @@ extern const u8 gData_02001788[];
 extern const u8 gData_02001914[];
 extern const u8 gData_020019b0[];
 
-const u8 *Func_0200042c(void) {
+const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov675Room1)
@@ -256,7 +256,7 @@ const u8 *Func_0200042c(void) {
   return gData_02001548;
 }
 
-const u8 *Func_0200046c(void) {
+const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov675Room2)
@@ -350,15 +350,15 @@ struct IsletCaveEntry {
 
 extern const struct IsletCaveEntry gData_020019ec[];
 
-void Func_02001254(void);
-void Func_0200125c(void);
+void Event_Start(void);
+void Event_End(void);
 
 void Func_020005fc(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   u32 i;
   u32 index;
 
-  Func_02001254();
+  Event_Start();
   Event_ResolvePendingActions(0);
   // A goto loop carries no loop notes: the bytes rebuild the zero on every
   // pass; as a for loop, loop.c hoists it and 20 of 63 instructions differ.
@@ -395,7 +395,7 @@ loop:
   Import_EventSetExitRequest(*(s16 *)(work + 0x154));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_0200125c();
+  Event_End();
 }
 
 extern u16 gData_0200134c[], gData_0200135c[], gData_02001388[],
@@ -405,7 +405,7 @@ void Func_0200131c(s32 mode);
 void Func_020008c8(void);
 void Func_0200133c(void);
 
-s32 Func_0200069c(void) {
+s32 Scene_Initialize(void) {
   s32 scene, dim;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
@@ -554,7 +554,7 @@ void Func_020009f8(s32 actorId, s32 dx, s32 dz) {
 
   leader = ((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner));
   actor = ((struct FieldActor *)Actor_GetById(actorId));
-  Func_02001254();
+  Event_Start();
   Event_ResolvePendingActions(0);
   x = ((leader->x + (dx << 16)) & 0xfff00000) + 0x80000;
   z = ((leader->z + (dz << 16)) & 0xfff00000) + 0x80000;
@@ -576,7 +576,7 @@ void Func_020009f8(s32 actorId, s32 dx, s32 dz) {
   Script_WaitForEventTimeout(leader);
   Func_02001214(actor, 2);
   Sound_Play(298);
-  Func_0200125c();
+  Event_End();
 }
 
 void Func_02000aec(void) {
@@ -899,12 +899,12 @@ void Func_02001034(void) {
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_020012d4();
+s32 Field_RequestBattleFromEncounterTable();
 
 void Func_020010ac(void) {
   s32 t12, cue;
 
-  Func_02001254();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_StartRepeatedMotion(8, 2);
   Event_Wait(20);
@@ -926,11 +926,11 @@ void Func_020010ac(void) {
   FIELD_AT(&gMainRoutineWork, u8, 587) = 2;
   cue = 0x67;
   /* FAKEMATCH(barrier): the asm on the first argument loads it before the
-   * second, as the native does; as Func_020012d4(0x67, 2), 2 of 64
+   * second, as the native does; as Field_RequestBattleFromEncounterTable(0x67, 2), 2 of 64
    * instructions differ in tla-en. */
   __asm__ volatile("" : "+r"(cue));
-  Func_020012d4(cue, 2);
-  Func_0200125c();
+  Field_RequestBattleFromEncounterTable(cue, 2);
+  Event_End();
 }
 
 void Func_0200115c(void) {

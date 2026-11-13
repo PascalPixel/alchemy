@@ -20,7 +20,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "event_inline.h"
 
-u8 *Func_0200004c(void) {
+u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov674Room1)
@@ -64,7 +64,7 @@ void Func_020000d8(void) {
   }
 }
 
-const u8 *Func_0200019c(void) {
+const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov674Room1)
@@ -96,7 +96,7 @@ void Func_02000210(void) {
   s32 result0;
   s32 result1;
 
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa2);
   if (result0 == 0)
@@ -120,7 +120,7 @@ L_02008260:
   Event_ShowMessage(9, 0);
   FieldActor_WatchAndSetScript(9, 19);
 L_02008294:
-  Func_02003e6c();
+  Event_End();
   return;
 }
 
@@ -128,7 +128,7 @@ void Func_020002ac(void) {
   s32 result0;
   s32 result1;
 
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa2);
   if (result0 == 0)
@@ -147,7 +147,7 @@ L_020082ea:
   FieldEvent_SetMessageId((s32)MsgMyDarlingPengulina);
   Event_ShowMessage(9, 0);
 L_020082f8:
-  Func_02003e6c();
+  Event_End();
   return;
 }
 
@@ -155,7 +155,7 @@ void Func_0200030c(void) {
   s32 result0;
   s32 result1;
 
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa2);
   if (result0 == 0)
@@ -175,7 +175,7 @@ L_0200835c:
   FieldEvent_SetMessageId((s32)MsgPenPenPehnnn);
   Event_ShowMessage(19, 0);
 L_0200836a:
-  Func_02003e6c();
+  Event_End();
   return;
 }
 
@@ -183,7 +183,7 @@ void Func_02000380(void) {
   s32 result0;
   s32 result1;
 
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa2);
   if (result0 == 0)
@@ -225,11 +225,11 @@ void Func_0200040c(void) {
   Func_02003ff4(21);
   goto L_0200843a;
 L_0200841e:
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgIAmHere);
   Event_ShowMessage(21, 0);
-  Func_02003e6c();
+  Event_End();
 L_0200843a:
   return;
 }
@@ -237,7 +237,7 @@ L_0200843a:
 void Func_02000440(void) {
   s32 result0;
 
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0x214);
   if (result0 != 0)
@@ -258,24 +258,24 @@ L_020084b6:
   FieldEvent_SetMessageId((s32)MsgLookWeRe);
   Event_ShowMessage(8, 0);
   Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
-  Func_02003e6c();
+  Event_End();
   return;
 }
 
 void Func_020004f4(void) {
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgTheEasternSea);
   Event_ShowMessage(9, 0);
   Event_ShowMessage(9, 0);
-  Func_02003e6c();
+  Event_End();
   return;
 }
 
 void Func_02000520(void) {
   s32 result0;
 
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa4);
   if (result0 == 0)
@@ -284,7 +284,7 @@ void Func_02000520(void) {
 L_0200854a:
   FieldEvent_SetMessageId((s32)MsgChirpChirp2);
   Event_ShowMessage(10, 0);
-  Func_02003e6c();
+  Event_End();
   return;
 }
 
@@ -294,7 +294,7 @@ void Func_02000568(void) {
   struct Actor *object;
   struct Actor *spawned;
 
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (FieldPartyInventory_FindOwner(0x1c4) == -1) {
     if (Event_GetFlag(0xaa4)) {
@@ -341,7 +341,7 @@ void Func_02000568(void) {
     Actor_FaceDirectionAndWait(10, FACING_EAST);
     Event_SetFlag(0xaa4);
   }
-  Func_02003e6c();
+  Event_End();
 }
 
 // The Islets' trade of item 453 with object 10. With the item in the party,
@@ -413,7 +413,7 @@ void Func_020006f4(void) {
     u16 v;
   } zero;
 
-  Func_02003e64();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (FieldPartyInventory_FindOwner(453) != -1) {
     if (Event_GetFlag(513)) {
@@ -530,7 +530,7 @@ void Func_020006f4(void) {
     Event_ShowMessageAndWait(10, 0);
   }
   Actor_SetModeById(10, 4);
-  Func_02003e6c();
+  Event_End();
 }
 #undef STEP
 
@@ -557,7 +557,7 @@ void Func_02000df8(struct Actor *object) {
     if (spawned != 0) {
       Actor_SetSingleChildFlags(spawned, 0);
       Func_02003de4(spawned, 1);
-      Func_02003dec(spawned, gData_020044f0);
+      Actor_StartScript(spawned, gData_020044f0);
     }
   }
 }
@@ -575,7 +575,7 @@ void Func_02000e38(void) {
   s32 right;
   s32 giftItem;
 
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (FieldPartyInventory_FindOwner(454) != -1) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -677,7 +677,7 @@ void Func_02000e38(void) {
     }
     Event_ShowMessage(11, 0);
   }
-  Func_02003e6c();
+  Event_End();
 }
 
 void Func_02001278(struct Actor *object) {
@@ -786,7 +786,7 @@ void Func_0200129c(struct Actor *gift) {
       b->scaleY = 0x20000;                                                     \
       Actor_SetSingleChildFlags(b, 0);                                         \
       Func_02003de4(b, 1);                                                     \
-      Func_02003dec(b, gData_020044f0);                                        \
+      Actor_StartScript(b, gData_020044f0);                                        \
     }                                                                          \
   }
 
@@ -795,7 +795,7 @@ void Func_020014e0(void) {
   const u8 *message;
   s32 answer;
 
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (PartyInventory_FindOwner(455) != -1) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -923,7 +923,7 @@ void Func_020014e0(void) {
     Event_SetMessageId(MsgIMSoVeryVery);
     Event_ShowMessage(9, 0);
   }
-  Func_02003e6c();
+  Event_End();
 }
 
 extern const u8 gData_020045a4[];
@@ -936,7 +936,7 @@ void Func_02001a68(void) {
   s32 result;
   u8 *done;
 
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(10);
@@ -986,17 +986,17 @@ void Func_02001a68(void) {
     Event_ShowMessage(9, 0);
     Actor_FaceDirectionAndWait(9, FACING_SOUTH);
   }
-  Func_02003e6c();
+  Event_End();
 }
 
 void Func_02001bf4(void) {
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgMyPopS);
   Event_ShowMessage(9, 0);
   Actor_FaceDirectionAndWait(9, FACING_NORTHWEST + FACING_STEP);
-  Func_02003e6c();
+  Event_End();
 }
 
 void Func_02001c38(void) {
@@ -1086,7 +1086,7 @@ void Func_02001db0(void) {
     return;
   if (z > 0xac0000)
     return;
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(19, 1);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 216, 184);
@@ -1122,7 +1122,7 @@ void Func_02001db0(void) {
   Func_02003fb4();
   Actor_FaceDirectionAndWait(9, FACING_NORTHWEST + FACING_STEP);
   Event_SetFlag(0xaa2);
-  Func_02003e6c();
+  Event_End();
 }
 
 void Func_02001f58(void) {
@@ -1133,7 +1133,7 @@ void Func_02001f58(void) {
 void Func_02001f74(void) {
   struct Actor *object = Actor_Get(10);
 
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_Stop(10);
   System_Wait(1);
@@ -1161,16 +1161,16 @@ void Func_02001f74(void) {
   Actor_FaceDirectionAndWait(10, FACING_EAST);
   Event_SetFlag(0x215);
   System_Wait(1);
-  Func_02003e6c();
+  Event_End();
 }
 
-void Func_02003f0c();
+void Actor_JumpDownLedge();
 
 void Func_0200208c(void) {
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Func_02003f0c(gMainRoutineWork.currentOwner, 6, 1);
-  Func_02003e6c();
+  Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, 1);
+  Event_End();
   return;
 }
 
@@ -1268,7 +1268,7 @@ void Func_020021d0(void) {
   Func_020020ec(second->x, second->z, 3, 255);
   if (!Event_GetFlag(0x210) && firstX == 12 && firstZ == 26) {
     both = 0;
-    Func_02003e64();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     if (secondX == 12 && secondZ == 26) {
       MapGrid_CopyCellAttributes(7, 2, 1, 1, firstX, firstZ);
@@ -1288,11 +1288,11 @@ void Func_020021d0(void) {
       ((u8 *)first)[0x62] = 1;
       ((u8 *)second)[0x62] = 1;
     }
-    Func_02003e6c();
+    Event_End();
   }
   if (!Event_GetFlag(0x211) && secondX == 7 && secondZ == 29) {
     both = 0;
-    Func_02003e64();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     if (firstX == 7 && firstZ == 29) {
       MapGrid_CopyCellAttributes(7, 2, 1, 1, firstX, firstZ);
@@ -1312,7 +1312,7 @@ void Func_020021d0(void) {
       ((u8 *)first)[0x62] = 1;
       ((u8 *)second)[0x62] = 1;
     }
-    Func_02003e6c();
+    Event_End();
   }
 }
 
@@ -1324,7 +1324,7 @@ void Func_02002430(void) {
   gData_02005194 = first->z;
   gData_02005198 = second->x;
   gData_02005190 = second->z;
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (gData_0200519c >> 20 == 7 && gData_02005194 >> 20 == 29 &&
       gData_02005198 >> 20 == 7 && gData_02005190 >> 20 == 28) {
@@ -1333,7 +1333,7 @@ void Func_02002430(void) {
   }
   Func_02003fe4();
   Func_020021d0();
-  Func_02003e6c();
+  Event_End();
 }
 
 void Func_020024c8(void) {
@@ -1346,12 +1346,12 @@ void Func_020024f0(void) {
 
   if (gInput.held & 0x40) {
     object = Actor_Get(gMainRoutineWork.currentOwner);
-    Func_02003e64();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     object->motionFlags = 0;
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 72, 280);
     object->motionFlags = 3;
-    Func_02003e6c();
+    Event_End();
   }
 }
 
@@ -1363,12 +1363,12 @@ void Func_0200253c(void) {
     state = gSceneState;
     object = Actor_Get(gMainRoutineWork.currentOwner);
     if ((u16)(*state + 0xfff6) > 200) {
-      Func_02003e64();
+      Event_Start();
       FieldEvent_ResolvePendingActions(0);
       object->motionFlags = 0;
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 72, 296);
       object->motionFlags = 3;
-      Func_02003e6c();
+      Event_End();
     }
   }
 }
@@ -1426,7 +1426,7 @@ void Func_0200267c(void) {
   s32 index;
 
   object = Actor_Get(party->currentOwner);
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_SetAnimation(party->currentOwner, 2);
@@ -1451,7 +1451,7 @@ void Func_0200267c(void) {
 void Func_0200274c(void) {
   struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
 
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Func_020034ec();
   Event_PlaySound(123);
@@ -1466,7 +1466,7 @@ void Func_02002780(void) {
   struct Actor *object;
 
   object = Actor_Get(party->currentOwner);
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_SetAnimation(party->currentOwner, 2);
@@ -1488,7 +1488,7 @@ void Func_02002830(void) {
   struct Actor *owner = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *object = Actor_Get(9);
 
-  Func_02003eec(9, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
   Actor_SetPosition(10, PIXELS(273), PIXELS(520));
   System_Wait(1);
   object->facing = FACING_NORTH;
@@ -1544,7 +1544,7 @@ void Func_020029c4(void) {
   struct Actor *guide = OBJECT(9);
   u8 *done;
 
-  Func_02003eec(9, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
   Actor_SetPosition(10, PIXELS(240), PIXELS(540));
   System_Wait(1);
   guide->facing = FACING_SOUTH;
@@ -1564,7 +1564,7 @@ void Func_020029c4(void) {
   guide->update = Func_02000df8;
   done = (u8 *)guide + 0x63;
   *done = 0;
-  Func_02003dec((s32)guide, gData_02004508);
+  Actor_StartScript((s32)guide, gData_02004508);
   Actor_SetScript(10, gData_02004554);
   do
     System_Wait(1);
@@ -1592,7 +1592,7 @@ void Func_020029c4(void) {
 #endif
 }
 
-s32 Func_02002b64(void) {
+s32 Scene_Initialize(void) {
   struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
   s16 scene;
 
@@ -1899,7 +1899,7 @@ void Func_0200329c(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 done;
 
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   ((struct MapLayerBits *)map)->priority = 1;
   if (gMainRoutineWork.entrance == 2)
@@ -1959,7 +1959,7 @@ void Func_0200329c(void) {
     Event_WaitTransitionFrames();
     Func_020034d8();
   }
-  Func_02003e6c();
+  Event_End();
 }
 
 #else
@@ -1980,7 +1980,7 @@ void Func_0200329c(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 done;
 
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   ((struct MapLayerBits *)map)->priority = 1;
   if (gMainRoutineWork.entrance == 2)
@@ -2030,7 +2030,7 @@ void Func_0200329c(void) {
     Event_WaitTransitionFrames();
     Func_020034d8();
   }
-  Func_02003e6c();
+  Event_End();
 }
 
 #endif

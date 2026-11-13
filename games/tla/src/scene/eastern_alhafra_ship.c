@@ -27,7 +27,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-s32 Func_0200004c(void) { return (s32)gData_0200345c; }
+s32 Scene_GetPlacements(void) { return (s32)gData_0200345c; }
 
 void Func_02000054(void) {}
 
@@ -81,26 +81,26 @@ void Func_02000128(s32 arg0) {
   return;
 }
 
-void Func_02003130();
-void Func_02003138();
+void Event_Start();
+void Event_End();
 void Func_02003268();
-void Func_02003278();
-void Func_02003280();
-void Func_02003288();
-void Func_02003290();
+void BattleEffect_StartArcEffect();
+void BattleEffect_EndArcEffect();
+void BattleEffect_WaitForArcGroups();
+void BattleEffect_SetObjectUpdateMode();
 
 void Func_0200013c(s32 id) {
   struct Actor *object = Actor_GetById(12);
   u8 *flags;
   s32 i;
 
-  Func_02003130();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgGooGooGa);
   Event_ShowMessageAndWait(11, 0);
   Func_02003268(8, 0x1210);
-  Func_02003278();
-  Func_02003290((s32)Actor_GetById(id), 2);
+  BattleEffect_StartArcEffect();
+  BattleEffect_SetObjectUpdateMode((s32)Actor_GetById(id), 2);
   Sound_Play(201);
   Event_Wait(30);
   flags = &object->motionFlags;
@@ -110,9 +110,9 @@ void Func_0200013c(s32 id) {
     Event_Wait(1);
   }
   Event_Wait(70);
-  Func_02003290((s32)Actor_GetById(id), 0);
-  Func_02003288();
-  Func_02003280();
+  BattleEffect_SetObjectUpdateMode((s32)Actor_GetById(id), 0);
+  BattleEffect_WaitForArcGroups();
+  BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(8);
   *flags = 3;
   object->gravity = 0x8000;
@@ -128,7 +128,7 @@ void Func_0200013c(s32 id) {
     Event_ShowMessageThenWait(10, 0, 10);
     Actor_FaceDirection(10, 0xafff, 0);
   }
-  Func_02003138();
+  Event_End();
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
@@ -140,7 +140,7 @@ struct EventWork1ac {
 
 void Func_02000c5c(void);
 
-s32 Func_02000250(void) {
+s32 Scene_Initialize(void) {
   struct Actor *object;
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
@@ -211,7 +211,7 @@ struct Actor020003e8 {
 extern const u8 gData_02003720__eastern_alhafra_ship[] __asm__("gData_02003720");
 
 void Func_02003100(struct Actor020003e8 *object, s32 mode);
-void Func_02003108(struct Actor020003e8 *object, const void *script);
+void Actor_StartScript(struct Actor020003e8 *object, const void *script);
 
 void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
   struct Actor020003e8 *object;
@@ -221,7 +221,7 @@ void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
   if (object != 0) {
     sprite = object->sprite;
     Func_02003100(object, 1);
-    Func_02003108(object, gData_02003720__eastern_alhafra_ship);
+    Actor_StartScript(object, gData_02003720__eastern_alhafra_ship);
     object->motionFlags = 0;
     /* FAKEMATCH(barrier): an empty asm, so the fifth argument is read from the
      * stack before the zero for nextFrame, as the native does; as no asm, 2 of
@@ -263,8 +263,8 @@ void Func_02000438(s32 id) {
 
 
 extern u32 gData_020033c8[];
-void Func_02003130();
-void Func_02003138();
+void Event_Start();
+void Event_End();
 void Func_02003218();
 void Func_020032a0();
 
@@ -278,13 +278,13 @@ struct EventWork1c4 {
 
 extern u32 gData_020032b0[];
 extern s32 gData_0200333c[];
-void Func_02003220();
+void Field_RequestBattleFromEncounterTable();
 
 void Func_020004f4(void) {
   struct MapWork *map;
   s32 result;
 
-  Func_02003130();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgTheMayorOf);
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -485,8 +485,8 @@ void Func_020004f4(void) {
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov669, 99);
 
   gMainRoutineWork.battleRule24b = 2;
-  Func_02003220(10, 1);
-  Func_02003138();
+  Field_RequestBattleFromEncounterTable(10, 1);
+  Event_End();
 }
 
 void Func_02000c5c(void) {
@@ -514,7 +514,7 @@ void Func_02000c5c(void) {
   struct Actor *object21;
   struct Actor *object22;
 
-  Func_02003130();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWellThatTakes);
   Actor_SetPosition(8, PIXELS(436), PIXELS(416));
@@ -1523,7 +1523,7 @@ L_0200b0b8:
   Actor_WaitForMoveById(25);
   Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02003138();
+  Event_End();
   return;
 }
 
@@ -1608,22 +1608,22 @@ s16 gData_0200345c[] = {
 // clang-format on
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {2, 20, 0x8aa, EVENT(Func_020004f4)},
-    {0, 11, CONDITION_ALWAYS, EVENT(Func_0200013c)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgEoleoAndI)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgIMGonna)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgIfEoleoGets)},
-    {0, 15, CONDITION_ALWAYS, EVENT(Func_02000128)},
-    {0x10008c15, 13, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {0x8c15, 13, CONDITION_ALWAYS, EVENT(Func_02000058)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_STEP, 20, 0x8aa, EVENT(Func_020004f4)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_0200013c)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgEoleoAndI)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgIMGonna)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgIfEoleoGets)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000128)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT(Func_02000058)},
     {8, 30, CONDITION_ALWAYS, EVENT(Func_02000054)},
     {9, 30, CONDITION_ALWAYS, EVENT(Func_02000058)},
-    {0x8715, 14, 0x901, EVENT(Func_0200008c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 14, 0x901, EVENT(Func_0200008c)},
     {TRIGGERS_END},
 };
 

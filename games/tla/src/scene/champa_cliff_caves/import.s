@@ -30,9 +30,9 @@ HeapSlot_AllocFar:
 	.thumb_func
 HeapSlot_Release:
 	overlay_veneer HeapSlot_ReleaseFar
-	.global Func_020033dc
+	.global Resource_DecodeType01
 	.thumb_func
-Func_020033dc:
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
@@ -94,13 +94,13 @@ PartyInventory_Remove:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_0200345c
+	.global Event_Start
 	.thumb_func
-Func_0200345c:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02003464
+	.global Event_End
 	.thumb_func
-Func_02003464:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -230,17 +230,17 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_02003564:
 	overlay_veneer Func_080c8240
-	.global Func_0200356c
+	.global Event_SetDestination
 	.thumb_func
-Func_0200356c:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_0200357c
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_0200357c:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
@@ -270,13 +270,13 @@ Func_020035ac:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_020035bc
+	.global Party_PlaySavedMusic
 	.thumb_func
-Func_020035bc:
+Party_PlaySavedMusic:
 	overlay_veneer Party_PlaySavedMusicFar
-	.global Func_020035c4
+	.global Camera_WorldToScreen
 	.thumb_func
-Func_020035c4:
+Camera_WorldToScreen:
 	overlay_veneer Camera_WorldToScreenFar
 	.global Actor_LaunchFromLeader
 	.thumb_func

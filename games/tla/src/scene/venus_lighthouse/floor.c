@@ -65,7 +65,7 @@ void Script_WaitForEventTimeout(struct Actor *actor);
 s32 Func_02001b64(struct VenusActor *object, s32 *position);
 /* VIEW(floor): routine Func_080d47b4 as void Func_080d47b4(s32 actor, s32 height, s32 frames); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/include/field/event.h:46: conflicting types for `Func_080d47b4'. */
 extern void Func_080d47b4__floor(s32 actor, s32 height, s32 frames) __asm__("Func_080d47b4");
-void Func_02001cbc(void);
+void Event_NoOp(void);
 s32 VenusLighthouse_EmitRisingParticles(struct VenusActor *object);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -171,11 +171,11 @@ void Func_0200078c(void) {
 #include "scene_ids.h"
 #include "version.h"
 
-void Func_02001c7c(s32, s32);
-void Func_02001c84(s32, s32);
-void Func_02001c8c(void);
-void Func_02001c94(void);
-void Func_02001c9c(void);
+void BattleEffect_LoadActionEffectResources(s32, s32);
+void BattleEffect_SetupObjectPair(s32, s32);
+void BattleEffect_StopMainActor(void);
+void BattleEffect_CleanupSceneObjects(void);
+void EventObject_Initialize(void);
 
 void SceneState_RunActor13AtColumn42Setup(void) {
   struct Actor *obj;
@@ -274,14 +274,14 @@ struct SetupWork {
 };
 
 void VenusLighthouse_RunSetupStep(void) {
-  Func_02001c7c(140, 1);
-  Func_02001c84(4, 10);
+  BattleEffect_LoadActionEffectResources(140, 1);
+  BattleEffect_SetupObjectPair(4, 10);
   ((struct SetupWork *)Ram_HeapSlots->effectWork)->idle = VenusLighthouse_Idle;
-  Func_02001c9c();
+  EventObject_Initialize();
   FieldEvent_Wait(10);
   Field_DispatchTypeHandler(1);
-  Func_02001c8c();
-  Func_02001c94();
+  BattleEffect_StopMainActor();
+  BattleEffect_CleanupSceneObjects();
 }
 
 struct AerieEventWork {
@@ -1066,19 +1066,19 @@ struct ActorPlacement gActorPlacementsEntrance99[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {49, 4, CONDITION_ALWAYS, 4},
     {49, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {49, 8, CONDITION_ALWAYS, 8},
     {33, 9, CONDITION_ALWAYS, 9},
-    {1, 10, CONDITION_ALWAYS, 10},
-    {1, 11, CONDITION_ALWAYS, 11},
-    {1, 12, CONDITION_ALWAYS, 12},
-    {1, 13, CONDITION_ALWAYS, 13},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {33, 14, CONDITION_ALWAYS, 14},
     {49, 20, CONDITION_ALWAYS, 20},
     {49, 21, CONDITION_ALWAYS, 21},
@@ -1090,17 +1090,17 @@ struct Trigger gSceneEvents[] = {
     {33, 30, CONDITION_ALWAYS, 30},
     {33, 31, CONDITION_ALWAYS, 31},
     {33, 32, CONDITION_ALWAYS, 32},
-    {2, 45, 0x200, EVENT(Func_020006ac)},
-    {2, 46, CONDITION_ALWAYS, EVENT(Func_0200078c)},
-    {3, 35, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
-    {3, 36, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
-    {3, 37, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
-    {3, 38, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
-    {3, 39, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
-    {3, 40, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadTrueHeart)},
-    {0x50009085, 0, CONDITION_ALWAYS,
+    {TRIGGER_STEP, 45, 0x200, EVENT(Func_020006ac)},
+    {TRIGGER_STEP, 46, CONDITION_ALWAYS, EVENT(Func_0200078c)},
+    {TRIGGER_EXAMINE, 35, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
+    {TRIGGER_EXAMINE, 36, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
+    {TRIGGER_EXAMINE, 37, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
+    {TRIGGER_EXAMINE, 38, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
+    {TRIGGER_EXAMINE, 39, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
+    {TRIGGER_EXAMINE, 40, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadTrueHeart)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS,
      EVENT(SceneState_ApplySixRectsAfterFlag161)},
-    {0x40009085, 0, CONDITION_ALWAYS,
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(SceneState_ApplySixRectsAfter161)},
     {TRIGGERS_END},
 };

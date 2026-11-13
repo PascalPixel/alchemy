@@ -19,11 +19,11 @@ struct Work020023c4 {
 };
 
 void Func_02001fcc();
-void Func_020042dc(void);
+void Event_Start(void);
 void Func_020041cc(struct Actor *actor, s32 a);
 s32 Func_0200422c(s32 terrain, s32 x, s32 z);
 s32 Func_0200424c(struct Actor *actor, struct Vector3 *position);
-void Func_0200436c();
+void Actor_JumpDownLedge();
 s32 Func_0200428c(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
 void Animation_ApplyChildValues(struct Actor *actor, s32 a);
 void Func_02002120(void);
@@ -45,7 +45,7 @@ void Func_02002148(void) {
 #endif
     actor = Actor_Get(main->currentOwner);
     work = (struct Work020023c4 *)(gData_020023c4 + 0x188);
-    Func_020042dc();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     actor->update = Func_02002120;
     actor->facing = TRIG_TURN / 4;
@@ -113,7 +113,7 @@ void Func_02002148(void) {
           break;
         if (result < 0) {
           actor->facing = TRIG_TURN / 4;
-          Func_0200436c(gMainRoutineWork.currentOwner, 6, -1);
+          Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, -1);
           break;
         }
 #if TLA_PATCH_1
@@ -235,9 +235,9 @@ void Func_02002354(void) {
 #include "mars_lighthouse_star_room.h"
 
 void Func_02001fcc(void);
-void Func_020043fc(s32 a, s32 b);
+void ScreenTransition_Start(s32 a, s32 b);
 s32 Func_0200422c(s32 layer, s32 x, s32 z);
-void Func_020042dc(void);
+void Event_Start(void);
 extern u8 gData_020023c4[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
@@ -285,7 +285,7 @@ s32 Func_0200236c(void) {
    * void, 2 of 138 instructions differ in tla-en. */
 
   if (event->started == 0) {
-    Func_020043fc(event->field1ac, event->field1b4);
+    ScreenTransition_Start(event->field1ac, event->field1b4);
     event->started = 1;
   }
   Event_ClearFlag(0x106);
@@ -306,7 +306,7 @@ s32 Func_0200236c(void) {
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gData_020023c4 + 0x188);
   Event_SetFlag(0x106);
-  Func_020042dc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_ClearFlag(0x106);
   leader->update = (void (*)(void))Func_02002120;
@@ -428,7 +428,7 @@ void Func_020024d4(struct Actor *actor) {
       sum = Random16Far();
       sum += Random16Far();
       scale = (sum >> 2) + 0x8000;
-      Func_020041dc(object, gData_02004774);
+      Actor_StartScript(object, gData_02004774);
       Actor_SetSingleChildFlags(object, 0);
       object->velocityY = angle * 4 + 0x20000;
       radius <<= 3;
@@ -481,7 +481,7 @@ next:
       angle = 0x4000 + rise;
       radius = Random16Far() * 8;
       size = Random16Far();
-      Func_020041dc(object, gData_020047b8);
+      Actor_StartScript(object, gData_020047b8);
       Actor_SetSingleChildFlags(object, 0);
       /* FAKEMATCH(temporary): the scale is taken before the velocity stores, as
        * in the native; as object->scaleX = (size >> 1) + 0x4000, 14 of 98
@@ -669,7 +669,7 @@ void Func_02002a58(s32 sourceId, s32 id, s32 kind, s32 value,
   struct Actor *object = Actor_Get(id);
 
   FieldActor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
-  Func_020041dc(object, script);
+  Actor_StartScript(object, script);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   Func_020041cc(object, 1);
@@ -723,7 +723,7 @@ void Func_02002ad0(struct Actor *self) {
 }
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_0200427c(struct Actor *object, s32 mode);
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
 s32 Func_02002b98(struct Actor *object) {
@@ -735,7 +735,7 @@ s32 Func_02002b98(struct Actor *object) {
     object->scaleY = frame;
     object->speedLimit = 0x10000;
     object->acceleration = 0x10000;
-    Func_0200427c(object, 1);
+    Actor_SetSpritePriorityDirect(object, 1);
   } else if (frame <= 30) {
     if (frame == 30) {
       Event_PlaySound(136);
@@ -771,7 +771,7 @@ s32 Func_02002c44(struct Actor *object) {
     object->scaleY = frame;
     object->speedLimit = 0x10000;
     object->acceleration = 0x8000;
-    Func_0200427c(object, 1);
+    Actor_SetSpritePriorityDirect(object, 1);
   } else if (frame <= 32) {
     object->scaleX = 0x10000;
     object->scaleY = 0x10000;
@@ -840,8 +840,8 @@ void Func_02002d90(void) {
 
   if (work->actionCounter != 0) {
     Event_SetFlag(0x106);
-    Func_020043f4();
-    Func_02004444();
+    Leader_StopMoving();
+    Event_ResolveAllPendingActions();
     Event_ClearFlag(0x106);
   }
 }
@@ -870,9 +870,6 @@ void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
 extern s16 gData_0200483c[];
 
 void Func_02002dc4(void) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 2 of 304 instructions differ in
-   * tla-en. */
   struct Position probe;
   s32 startBehavior;
   s32 x;
@@ -1081,8 +1078,6 @@ retry:
     angle = ArcTan2(targetZ - object->z, targetX - object->x);
     angle = (angle + 0x2000) & 0xc000;
   }
-  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 2
-   * of 347 instructions differ in tla-en. */
   FieldVector_AddPolarOffset(0x100000, angle, position);
   cell = GetMapCellCollision(*layer, p[0], p[2]);
   if (cell == 255 ||
@@ -1160,8 +1155,6 @@ walk:
   /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
    * position's address; as no asm, 94 of 347 instructions differ in tla-en. */
   __asm__("" : : : SFP_CLOBBER);
-  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
-   * of 347 instructions differ in tla-en. */
   FieldVector_AddPolarOffset(0x100000, angle, position);
   q = position;
   cell = GetMapCellCollision(*layer, q[0], q[2]);

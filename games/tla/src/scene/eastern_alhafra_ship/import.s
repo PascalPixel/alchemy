@@ -18,9 +18,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Func_02003100:
 	overlay_veneer Actor_SetMode
-	.global Func_02003108
+	.global Actor_StartScript
 	.thumb_func
-Func_02003108:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -38,13 +38,13 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02003130
+	.global Event_Start
 	.thumb_func
-Func_02003130:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02003138
+	.global Event_End
 	.thumb_func
-Func_02003138:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -158,9 +158,9 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_02003218:
 	overlay_veneer Func_080c8240
-	.global Func_02003220
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_02003220:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
@@ -202,21 +202,21 @@ Func_02003268:
 	.thumb_func
 Field_StartPaletteTransition:
 	overlay_veneer Field_StartPaletteTransitionFar
-	.global Func_02003278
+	.global BattleEffect_StartArcEffect
 	.thumb_func
-Func_02003278:
+BattleEffect_StartArcEffect:
 	overlay_veneer BattleEffect_StartArcEffectFar
-	.global Func_02003280
+	.global BattleEffect_EndArcEffect
 	.thumb_func
-Func_02003280:
+BattleEffect_EndArcEffect:
 	overlay_veneer BattleEffect_EndArcEffectFar
-	.global Func_02003288
+	.global BattleEffect_WaitForArcGroups
 	.thumb_func
-Func_02003288:
+BattleEffect_WaitForArcGroups:
 	overlay_veneer BattleEffect_WaitForArcGroupsFar
-	.global Func_02003290
+	.global BattleEffect_SetObjectUpdateMode
 	.thumb_func
-Func_02003290:
+BattleEffect_SetObjectUpdateMode:
 	overlay_veneer BattleEffect_SetObjectUpdateModeFar
 	.global Func_080d3b28
 	.thumb_func

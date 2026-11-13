@@ -85,7 +85,7 @@ void Func_0200013c(s32 unused, s32 id) {
 
   if (actor->x >> 20 != 12)
     return;
-  Func_02002898();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   actor->motionFlags = 3;
   System_Wait(5);
@@ -108,7 +108,7 @@ do {
       if (splash != 0) {
         splashSprite = splash->sprite;
         splash->terrainHeight = actor->terrainHeight;
-        Func_02002800(splash, gData_02002ae8);
+        Actor_StartScript(splash, gData_02002ae8);
         splash->motionFlags = 0;
         if (splashSprite != 0) {
           ((s32 (*)())Animation_ApplyChildArgument)(splashSprite, 1);
@@ -129,7 +129,7 @@ do {
     spark = (FieldActor_Create(269, actor->x, actor->y, actor->z));
     if (spark != 0) {
       sparkSprite = spark->sprite;
-      Func_02002800(spark, gData_02002ae8);
+      Actor_StartScript(spark, gData_02002ae8);
       {
         u8 *flags = &spark->motionFlags;
 
@@ -148,7 +148,7 @@ do {
   FieldEvent_Wait(30);
   actor->animationKind = 1;
   Actor_SetPosition(id, 0, 0);
-  Func_020028a0();
+  Event_End();
   Event_SetFlag(0x8e5);
 }
 
@@ -165,14 +165,14 @@ void Func_02000334(void) {
   if (Event_GetFlag(0xf99) == 0) {
     Func_020028d0_(64, PIXELS(264), PIXELS(664));
     if (leader->x >> 20 == 16 && leader->z >> 20 == 41) {
-      Func_02002898();
+      Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
       Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 0,
                                                  -16);
       leader->velocityY = 0x60000;
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Func_020028a0();
+      Event_End();
     }
   }
 }
@@ -188,7 +188,7 @@ void Func_020003c4(void) {
     Func_020029a8_(249, 344, 648);
     ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b6;
     gMainRoutineWork.battleRule24b = 2;
-    Func_02002938(106, 1);
+    Field_RequestBattleFromEncounterTable(106, 1);
   }
 }
 
@@ -254,7 +254,7 @@ void Func_020004c8(s32 hole) {
   if (found == 0)
     return;
   leader = Actor_Get(gMainRoutineWork.currentOwner);
-  Func_02002898();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   goto test;
 sink:
@@ -293,7 +293,7 @@ void Func_0200065c(void) {
   s32 speed;
   s32 i;
 
-  Func_02002898();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceActor(gMainRoutineWork.currentOwner, 8, 0);
   FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 256, 30);
@@ -315,7 +315,7 @@ void Func_0200065c(void) {
   Actor_WalkByAndWait(8, 0, 8);
   FieldEvent_Wait(60);
   Event_SetFlag(0x310);
-  Func_020028a0();
+  Event_End();
 }
 
 void Func_02000710(s32 id) {
@@ -511,7 +511,7 @@ void Func_02000c24(void) {
   x = Random16Far() * 16 + a + 0x12c0000;
   z = Random16Far() * 16 + a + 0x1040000;
   object = FieldActor_Create(0x11d, x, 0, z);
-  Func_02002800(object, gData_020029c8);
+  Actor_StartScript(object, gData_020029c8);
   Actor_SetSingleChildFlags(object, 0);
   Animation_SetStateFlags(object, 1);
   if (gData_02003458 == 0)
@@ -545,7 +545,7 @@ void Func_02000d2c(void) {
   u32 angle, speed, scale;
   s32 turn = -256;
 
-  Func_02002898();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   for (i = 9; i >= 0; i--) {
     System_Wait(1);
@@ -580,7 +580,7 @@ burst:
   angle = Random16Far();
   speed = Random16Far();
   scale = (Random16Far() >> 2) + 0x1000;
-  Func_02002800(clod, gData_02002a04);
+  Actor_StartScript(clod, gData_02002a04);
   Actor_SetSingleChildFlags(clod, 0);
   clod->velocityY = (angle << 2) + 0x20000;
   cosine = Math_Cosine(angle);
@@ -616,7 +616,7 @@ drain:
   Task_AddFrame(Func_02000cec, 0x480);
   System_Wait(24);
   FieldEvent_Wait(120);
-  Func_020028a0();
+  Event_End();
   Event_SetFlag(0x330);
 }
 
@@ -737,7 +737,7 @@ s32 Func_02001228(struct Actor *object) {
     if (spark) {
       spark->scaleX = scale;
       spark->scaleY = scale;
-      Func_02002800(spark, gData_02002a48);
+      Actor_StartScript(spark, gData_02002a48);
       Actor_SetSingleChildFlags(spark, 0);
       Func_020027f8(spark, 2);
     }
@@ -761,9 +761,9 @@ void Func_02001288(void) {
       object->scaleX = scale;
       object->scaleY = scale;
       object->gravity = 0x7333;
-      Func_02002800(object, gData_02002a54);
+      Actor_StartScript(object, gData_02002a54);
       Actor_SetSingleChildFlags(object, 0);
-      Func_02002880(object, 3);
+      Actor_SetSpritePriorityDirect(object, 3);
     }
   }
 }
@@ -911,7 +911,7 @@ s32 Func_02001564(struct Actor *object) {
     if (spark) {
       spark->scaleX = scale;
       spark->scaleY = scale;
-      Func_02002800(spark, gData_02002a48);
+      Actor_StartScript(spark, gData_02002a48);
       Actor_SetSingleChildFlags(spark, 0);
       Func_020027f8(spark, 2);
     }
@@ -947,7 +947,7 @@ void Func_02001618(void) {
       object->scaleX = scale;
       object->scaleY = scale;
       object->gravity = 0x7333;
-      Func_02002800(object, gData_02002a60);
+      Actor_StartScript(object, gData_02002a60);
       Actor_SetSingleChildFlags(object, 0);
     }
   }
@@ -974,7 +974,7 @@ void Func_02001684(void) {
       object->motionFlags = 2;
       object->terrainHeight = 0xffc00000;
       object->gravity = 0x7333;
-      Func_02002800(object, gData_02002a6c);
+      Actor_StartScript(object, gData_02002a6c);
       Actor_SetSingleChildFlags(object, 0);
     }
   }
@@ -995,7 +995,7 @@ void Func_020016fc(void) {
       object->motionFlags = 2;
       object->terrainHeight = 0xffc00000;
       object->gravity = 0x7333;
-      Func_02002800(object, gData_02002a6c);
+      Actor_StartScript(object, gData_02002a6c);
       Actor_SetSingleChildFlags(object, 0);
     }
   }
@@ -1013,7 +1013,7 @@ void Func_02002988(s32 a, s32 flag, s32 b, s32 c);
 void Func_02002114();
 
 #if !TLA_PATCH_1
-s32 Func_02001774(void) {
+s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   struct Actor *object, *dummy, *piece;
@@ -1205,12 +1205,12 @@ s32 Func_02001774(void) {
         Func_02002114(0);
     }
     if ((u32)(entrance - 4) <= 1)
-      Func_02002828();
+      DisplayBlend_EnableRunScript();
   }
   return 0;
 }
 #else
-s32 Func_02001774(void) {
+s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 *effect = (s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac);
@@ -1408,7 +1408,7 @@ s32 Func_02001774(void) {
         Func_02002114(0);
     }
     if ((u32)(entrance - 4) <= 1)
-      Func_02002828();
+      DisplayBlend_EnableRunScript();
   }
   return 0;
 }
@@ -1486,7 +1486,7 @@ void Func_02001ff0(s32 x, s32 z) {
   focus->scrolledX = Iwram_MulQ16(*(s32 *)(map + 0xe4), 0x10000) + focus->x;
   focus->scrolledZ =
       Iwram_MulQ16(*(s32 *)(map + 0xe8), focus->scaleZ) + focus->z;
-  Func_02002810();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
 }
 
@@ -1495,7 +1495,7 @@ static __inline__ void Blend_SetAlpha(s32 value) {
 }
 
 void Func_02002084(s32 fade) {
-  Func_02002828();
+  DisplayBlend_EnableRunScript();
   if (fade) {
     Blend_SetAlpha(0xe06);
     /* FAKEMATCH(dead): the empty once-only block finishes the blend value
@@ -1558,14 +1558,14 @@ void Func_02002144(void) {
   state->mode = 1;
   if (state->timer < 0x1400)
     return;
-  Func_02002898();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   actor->animationKind = 0;
   for (i = 1; i >= 0; i--) {
     spark = (FieldActor_Create(269, actor->x, actor->y, actor->z));
     if (spark != 0) {
       sparkSprite = spark->sprite;
-      Func_02002800(spark, gData_02002ae8);
+      Actor_StartScript(spark, gData_02002ae8);
       spark->motionFlags = 0;
       spark->terrainId = 1;
       if (sparkSprite != 0) {
@@ -1580,7 +1580,7 @@ void Func_02002144(void) {
   actor->animationKind = 1;
   sprite->level = 0;
   sprite->mode = 0;
-  Func_020028a0();
+  Event_End();
   actor->x = state->x;
   actor->z = state->z;
   state->mode = 0;
@@ -1595,7 +1595,7 @@ void Func_020022ac(void) {
   if (state->mode != 2) {
     object = Actor_Get(FieldParty_GetLeaderActor());
     sprite = object->sprite;
-    Func_02002898();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Func_02002818_(object, (object->x & 0xfff00000) + 0x80000, object->y,
                    (object->z & 0xfff00000) + 0x80000);
@@ -1605,7 +1605,7 @@ void Func_020022ac(void) {
       sprite->dirty = 1;
       System_Wait(1);
     }
-    Func_020028a0();
+    Event_End();
     sprite->mode |= 8;
     sprite->mode &= 0xfe;
     state->mode = 2;
@@ -1649,7 +1649,7 @@ void Func_020024f8(struct Actor *object, s32 priority) {
   ((struct FieldSprite *)object->sprite)->priority = priority;
   Actor_SetSingleChildFlags(object, 0);
   Func_020027f8(object, 2);
-  Func_02002800(object, gData_02002af4);
+  Actor_StartScript(object, gData_02002af4);
   Actor_SetSpriteColor(object, 10);
   object->timer = 0;
   object->speedLimit = 0;

@@ -22,9 +22,9 @@ GameFlag_SetBit:
 	.thumb_func
 Func_02000540:
 	overlay_veneer Actor_SetMode
-	.global Func_02000548
+	.global Actor_StartScript
 	.thumb_func
-Func_02000548:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -38,9 +38,9 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02000568
+	.global Event_Start
 	.thumb_func
-Func_02000568:
+Event_Start:
 	overlay_veneer Event_StartFar
 	.global Actor_GetById
 	.thumb_func

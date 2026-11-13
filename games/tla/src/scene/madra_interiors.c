@@ -28,7 +28,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "text/msg_ids.h"
 #include "event_inline.h"
 
-const struct ActorPlacement *Func_0200004c(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2)
     return gData_02002828;
   if (gMainRoutineWork.entrance == 20)
@@ -41,7 +41,7 @@ const struct ActorPlacement *Func_0200004c(void) {
 void Func_020000a4(void) {
   s32 msg;
 
-  Func_02001d50();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   msg = (s32)MsgMadraInteriors06;
   FieldEvent_SetMessageId(msg);
@@ -55,7 +55,7 @@ void Func_020000a4(void) {
     FieldEvent_SetMessageId(msg + 2);
   }
   Event_ShowMessage(9, 0);
-  Func_02001d58();
+  Event_End();
 }
 
 void Func_020000fc(void) {
@@ -116,7 +116,7 @@ void Func_020001b8(s32 actor) {
 }
 
 void Func_0200023c(void) {
-  Func_02001d50();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceActor(14, 4, 0);
   FieldActor_Jump(14, 6, 20);
@@ -124,7 +124,7 @@ void Func_0200023c(void) {
   FieldEvent_SetMessageId((s32)MsgMadraInteriors18);
   Event_ShowMessage(14, 0);
   ActorTurn(14, FACING_SOUTHEAST, 0);
-  Func_02001d58();
+  Event_End();
 }
 
 void Func_0200028c(void) {
@@ -234,7 +234,7 @@ void Func_02000428(void) {
   }
 }
 
-const struct Trigger *Func_020004c4(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2)
     return gData_02002c9c;
   if (gMainRoutineWork.entrance == 20)
@@ -287,17 +287,17 @@ extern s32 gData_0200349c[];
 extern s32 gData_02003418[];
 extern u32 gData_020033c8[];
 void Func_02001e68();
-void Func_02001e90();
-void Func_02001e98();
-void Func_02001ea0();
-void Func_02001ea8();
-void Func_02001eb0();
+void BattleEffect_LoadActionEffectResources();
+void BattleEffect_SetupObjectPair();
+void BattleEffect_StopMainActor();
+void BattleEffect_CleanupSceneObjects();
+void EventObject_Initialize();
 
 void Func_02001e80(s32 value);
 
 /// The rooms' setup: the leader's sprite priority, the two rooms' actors and
 /// the sprite of actor 10, by the story flags.
-s32 Func_02000624(void) {
+s32 Scene_Initialize(void) {
   struct FieldSprite *sprite;
   void *event;
 
@@ -379,7 +379,7 @@ void Func_020007dc(void) {
   s32 result13;
   struct Actor *object14;
 
-  Func_02001d50();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(8, 1);
   Actor_SetPosition(4, PIXELS(400), PIXELS(888));
@@ -460,9 +460,9 @@ void Func_020007dc(void) {
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(7, 0, 16);
-  Func_02001e90(24, 1);
-  Func_02001e98(7, 8);
-  Func_02001eb0();
+  BattleEffect_LoadActionEffectResources(24, 1);
+  BattleEffect_SetupObjectPair(7, 8);
+  EventObject_Initialize();
   Actor_ShowEmote(9, 0x101, 30);
   Actor_FaceActor(9, 7, 0);
   Actor_FaceActor(10, 7, 0);
@@ -470,8 +470,8 @@ void Func_020007dc(void) {
   Actor_SetSingleChildFlags(object2, 0);
   Actor_SetScript(9, gData_0200349c);
   Field_DispatchTypeHandler(1);
-  Func_02001ea0();
-  Func_02001ea8();
+  BattleEffect_StopMainActor();
+  BattleEffect_CleanupSceneObjects();
   FieldEvent_ShowMessageThenWait(11, 0, 10);
   FieldActor_Stop(9);
   object3 = Actor_Get(9);
@@ -593,22 +593,22 @@ L_02008eb2:
   FieldActor_WaitForMoveById(11);
   Actor_SetPosition(11, 0, 0);
   Event_SetFlag(0x911);
-  Func_02001d58();
+  Event_End();
   return;
 }
 
 void Func_02000ed8(void) {
-  Func_02001d50();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors29);
   Actor_FaceDirection(11, FACING_SOUTH, 0);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Func_02001d58();
+  Event_End();
   return;
 }
 
 void Func_02000f0c(void) {
-  Func_02001d50();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors30);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
@@ -632,17 +632,17 @@ void Func_02000f0c(void) {
   Actor_FaceDirection(7, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Func_02001d58();
+  Event_End();
   return;
 }
 
 void Func_02000fe0(void) {
-  Func_02001e90(24, 1);
-  Func_02001e98(7, 8);
-  Func_02001eb0();
+  BattleEffect_LoadActionEffectResources(24, 1);
+  BattleEffect_SetupObjectPair(7, 8);
+  EventObject_Initialize();
   Field_DispatchTypeHandler(1);
-  Func_02001ea0();
-  Func_02001ea8();
+  BattleEffect_StopMainActor();
+  BattleEffect_CleanupSceneObjects();
   return;
 }
 
@@ -663,7 +663,7 @@ void Func_02001008(void) {
   Event_SetFlag(0x98a);
   Event_SetFlag(0x310);
   PartyInventory_Remove(0x1c0);
-  Func_02001d50();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeed(11, 0x6666, 0x3333);
   Actor_WalkTo(11, 410, 109);
@@ -742,14 +742,14 @@ void Func_02001008(void) {
   Actor_SetAnimationAndWait(11, 3);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(11, 0, 10);
-  Func_02001d58();
+  Event_End();
 }
 
 void Func_02001310(void) {
   struct Actor *object0;
 
   Event_SetFlag(0x210);
-  Func_02001d50();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object0 = Actor_Get(4);
   if (object0->z > 0x5f0000)
@@ -782,7 +782,7 @@ void Func_02001310(void) {
   Actor_RunRepeatedMotion(11, 2);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
-  Func_02001d58();
+  Event_End();
   return;
 }
 
@@ -794,7 +794,7 @@ void Func_02001450(void) {
   struct Actor *object4;
   struct Actor *object5;
 
-  Func_02001d50();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors126);
   Actor_ShowEmote(28, 0x100, 30);
@@ -945,7 +945,7 @@ L_020098ec:
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
   Event_SetFlag(0x989);
-  Func_02001d58();
+  Event_End();
   return;
 }
 
@@ -1260,66 +1260,66 @@ struct ActorPlacement gData_02002828[] = {
 };
 
 struct Trigger gData_020028a0[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {1, 8, CONDITION_ALWAYS, 8},
-    {1, 9, CONDITION_ALWAYS, 9},
-    {1, 10, CONDITION_ALWAYS, 10},
-    {1, 11, CONDITION_ALWAYS, 11},
-    {1, 12, CONDITION_ALWAYS, 12},
-    {1, 13, CONDITION_ALWAYS, 13},
-    {1, 14, CONDITION_ALWAYS, 14},
-    {1, 15, CONDITION_ALWAYS, 15},
-    {1, 16, CONDITION_ALWAYS, 16},
-    {1, 17, CONDITION_ALWAYS, 17},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors05)},
-    {0, 9, CONDITION_ALWAYS, EVENT(Func_020000a4)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors09)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
+    {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
+    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
+    {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors05)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_020000a4)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors09)},
     {0xc400, 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors10)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors13)},
-    {0, 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors14)},
-    {0, 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors17)},
-    {0, 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors19)},
-    {0, 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors20)},
-    {0, 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors21)},
-    {0, 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors22)},
-    {0, 19, CONDITION_ALWAYS, EVENT(Func_020001b8)},
-    {0, 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors34)},
-    {0, 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors35)},
-    {0, 22, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0, 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors40)},
-    {0, 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors41)},
-    {0, 26, CONDITION_ALWAYS, EVENT(Func_0200023c)},
-    {0, 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors42)},
-    {0, 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors43)},
-    {0, 29, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors165)},
-    {0, 30, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors166)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors07)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors08)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors11)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors12)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors15)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors16)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors23)},
-    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors24)},
-    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors25)},
-    {0x8d15, 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors26)},
-    {0x8d15, 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors27)},
-    {0x8d15, 19, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors36)},
-    {0x8d15, 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors37)},
-    {0x8d15, 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors38)},
-    {0x8d15, 22, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors44)},
-    {0x8d15, 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors45)},
-    {0x8d15, 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors46)},
-    {0x8d15, 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors47)},
-    {0x8d15, 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors48)},
-    {0x8d15, 29, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors167)},
-    {0x8d15, 30, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors168)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors13)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors14)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors17)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors19)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors20)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors21)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors22)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_020001b8)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors34)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors35)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_020000fc)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors40)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors41)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(Func_0200023c)},
+    {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors42)},
+    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors43)},
+    {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors165)},
+    {TRIGGER_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors166)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors07)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors08)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors11)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors12)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors15)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors16)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors23)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors24)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors25)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors26)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors27)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors36)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors37)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors38)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors44)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors45)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors46)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors47)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors48)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors167)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors168)},
     {0x173, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors169))},
     {0x173, 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors170))},
     {0x173, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors171))},
@@ -1329,109 +1329,109 @@ struct Trigger gData_020028a0[] = {
 };
 
 struct Trigger gData_02002bb8[] = {
-    {1, 20, CONDITION_ALWAYS, 20},
-    {0, 9, 0x18ff, MSGNO(MsgMadraInteriors143)},
-    {0, 10, 0x18ff, MSGNO(MsgMadraInteriors144)},
+    {TRIGGER_EXIT, 20, CONDITION_ALWAYS, 20},
+    {TRIGGER_TALK, 9, 0x18ff, MSGNO(MsgMadraInteriors143)},
+    {TRIGGER_TALK, 10, 0x18ff, MSGNO(MsgMadraInteriors144)},
     {0xc400, 13, 0x18ff, MSGNO(MsgWhenAndHis)},
     {0xa400, 13, 0x18ff, MSGNO(MsgWhenAndHis)},
     {0x8400, 13, 0x18ff, MSGNO(MsgWhenAndHis)},
-    {0, 14, 0x18ff, EVENT(Func_02000428)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors75)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors76)},
-    {0, 7, CONDITION_ALWAYS, EVENT(Func_02000ed8)},
-    {0x8d15, 9, 0x18ff, MSGNO(MsgMadraInteriors145)},
-    {0x8d15, 10, 0x18ff, MSGNO(MsgMadraInteriors146)},
-    {0x8d15, 13, 0x18ff, MSGNO(MsgSoThisFellow)},
-    {0x8d15, 14, 0x1211, MSGNO(MsgIKnewI)},
-    {0x8d15, 1038, 0x18ff, EVENT(Func_02000428)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors77)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors78)},
-    {0x8d15, 7, CONDITION_ALWAYS, EVENT(Func_02000f0c)},
+    {TRIGGER_TALK, 14, 0x18ff, EVENT(Func_02000428)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors75)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors76)},
+    {TRIGGER_TALK, 7, CONDITION_ALWAYS, EVENT(Func_02000ed8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x18ff, MSGNO(MsgMadraInteriors145)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x18ff, MSGNO(MsgMadraInteriors146)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x18ff, MSGNO(MsgSoThisFellow)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x1211, MSGNO(MsgIKnewI)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1038, 0x18ff, EVENT(Func_02000428)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors77)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors78)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 7, CONDITION_ALWAYS, EVENT(Func_02000f0c)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02002c9c[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {0, 8, 0x8ab, MSGNO(MsgMadraInteriors01)},
-    {0, 8, 0x8ff, MSGNO(MsgMadraInteriors49)},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors98)},
-    {0, 9, 0x8ab, MSGNO(MsgMadraInteriors02)},
-    {0, 9, 0x8ff, MSGNO(MsgMadraInteriors50)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors99)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors31)},
-    {0, 11, 0x8ff, MSGNO(MsgMadraInteriors79)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors147)},
-    {0x8d15, 8, 0x8ab, MSGNO(MsgMadraInteriors03)},
-    {0x8d15, 8, 0x8ff, MSGNO(MsgMadraInteriors51)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors100)},
-    {0x8d15, 9, 0x8ab, MSGNO(MsgMadraInteriors04)},
-    {0x8d15, 9, 0x8ff, MSGNO(MsgMadraInteriors52)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors101)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors32)},
-    {0x8d15, 11, 0x8ff, MSGNO(MsgMadraInteriors80)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors148)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_TALK, 8, 0x8ab, MSGNO(MsgMadraInteriors01)},
+    {TRIGGER_TALK, 8, 0x8ff, MSGNO(MsgMadraInteriors49)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors98)},
+    {TRIGGER_TALK, 9, 0x8ab, MSGNO(MsgMadraInteriors02)},
+    {TRIGGER_TALK, 9, 0x8ff, MSGNO(MsgMadraInteriors50)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors99)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors31)},
+    {TRIGGER_TALK, 11, 0x8ff, MSGNO(MsgMadraInteriors79)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors147)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8ab, MSGNO(MsgMadraInteriors03)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8ff, MSGNO(MsgMadraInteriors51)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors100)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x8ab, MSGNO(MsgMadraInteriors04)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x8ff, MSGNO(MsgMadraInteriors52)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors101)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors32)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x8ff, MSGNO(MsgMadraInteriors80)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors148)},
     {0x173, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors174))},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02002da4[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {1, 8, CONDITION_ALWAYS, 8},
-    {1, 9, CONDITION_ALWAYS, 9},
-    {1, 10, CONDITION_ALWAYS, 10},
-    {1, 11, CONDITION_ALWAYS, 11},
-    {1, 12, CONDITION_ALWAYS, 12},
-    {1, 13, CONDITION_ALWAYS, 13},
-    {1, 14, CONDITION_ALWAYS, 14},
-    {1, 15, CONDITION_ALWAYS, 15},
-    {1, 16, CONDITION_ALWAYS, 16},
-    {1, 17, CONDITION_ALWAYS, 17},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors53)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors54)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors57)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors58)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors61)},
-    {0, 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors62)},
-    {0, 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors65)},
-    {0, 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors66)},
-    {0, 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors67)},
-    {0, 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors68)},
-    {0, 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors69)},
-    {0, 19, CONDITION_ALWAYS, EVENT(Func_020001b8)},
-    {0, 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors82)},
-    {0, 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors83)},
-    {0, 22, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0, 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors88)},
-    {0, 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors89)},
-    {0, 26, CONDITION_ALWAYS, EVENT(Func_0200023c)},
-    {0, 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors90)},
-    {0, 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors91)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors55)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors56)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors59)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors60)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors63)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors64)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors70)},
-    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors71)},
-    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors72)},
-    {0x8d15, 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors73)},
-    {0x8d15, 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors74)},
-    {0x8d15, 19, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors84)},
-    {0x8d15, 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors85)},
-    {0x8d15, 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors86)},
-    {0x8d15, 22, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors92)},
-    {0x8d15, 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors93)},
-    {0x8d15, 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors94)},
-    {0x8d15, 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors95)},
-    {0x8d15, 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors96)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
+    {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
+    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
+    {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors53)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors54)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors57)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors58)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors61)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors62)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors65)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors66)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors67)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors68)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors69)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_020001b8)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors82)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors83)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_020000fc)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors88)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors89)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(Func_0200023c)},
+    {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors90)},
+    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors91)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors55)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors56)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors59)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors60)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors63)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors64)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors70)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors71)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors72)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors73)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors74)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors84)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors85)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors86)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors92)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors93)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors94)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors95)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors96)},
     {0x173, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors169))},
     {0x173, 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors170))},
     {0x173, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors171))},
@@ -1441,67 +1441,67 @@ struct Trigger gData_02002da4[] = {
 };
 
 struct Trigger gData_0200308c[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {1, 8, CONDITION_ALWAYS, 8},
-    {1, 9, CONDITION_ALWAYS, 9},
-    {1, 10, CONDITION_ALWAYS, 10},
-    {1, 11, CONDITION_ALWAYS, 11},
-    {1, 12, CONDITION_ALWAYS, 12},
-    {1, 13, CONDITION_ALWAYS, 13},
-    {1, 14, CONDITION_ALWAYS, 14},
-    {1, 15, CONDITION_ALWAYS, 15},
-    {1, 16, CONDITION_ALWAYS, 16},
-    {1, 17, CONDITION_ALWAYS, 17},
-    {2, 30, 0x989, EVENT(Func_02001450)},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors102)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors103)},
-    {0, 10, CONDITION_ALWAYS, EVENT(Func_0200028c)},
-    {0, 11, CONDITION_ALWAYS, EVENT(Func_02000308)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors122)},
-    {0, 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors123)},
-    {0, 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors129)},
-    {0, 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors130)},
-    {0, 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors131)},
-    {0, 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors132)},
-    {0, 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors133)},
-    {0, 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors134)},
-    {0, 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors135)},
-    {0, 19, CONDITION_ALWAYS, EVENT(Func_020001b8)},
-    {0, 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors150)},
-    {0, 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors151)},
-    {0, 22, CONDITION_ALWAYS, EVENT(Func_020000fc)},
-    {0, 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors156)},
-    {0, 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors157)},
-    {0, 26, CONDITION_ALWAYS, EVENT(Func_0200023c)},
-    {0, 32, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors158)},
-    {0, 33, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors159)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors104)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors105)},
-    {0x8d15, 10, CONDITION_ALWAYS, EVENT(Func_02000368)},
-    {0x8d15, 11, CONDITION_ALWAYS, EVENT(Func_020003c8)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors124)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors125)},
-    {0x8d15, 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors136)},
-    {0x8d15, 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors137)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors138)},
-    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors139)},
-    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors140)},
-    {0x8d15, 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors141)},
-    {0x8d15, 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors142)},
-    {0x8d15, 19, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors152)},
-    {0x8d15, 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors153)},
-    {0x8d15, 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors154)},
-    {0x8d15, 22, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors160)},
-    {0x8d15, 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors161)},
-    {0x8d15, 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors162)},
-    {0x8d15, 32, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors163)},
-    {0x8d15, 33, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors164)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
+    {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
+    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
+    {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
+    {TRIGGER_STEP, 30, 0x989, EVENT(Func_02001450)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors102)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors103)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_0200028c)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_02000308)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors122)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors123)},
+    {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors129)},
+    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors130)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors131)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors132)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors133)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors134)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors135)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_020001b8)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors150)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors151)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_020000fc)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors156)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors157)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(Func_0200023c)},
+    {TRIGGER_TALK, 32, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors158)},
+    {TRIGGER_TALK, 33, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors159)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors104)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors105)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, EVENT(Func_02000368)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT(Func_020003c8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors124)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors125)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors136)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors137)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors138)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors139)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors140)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors141)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors142)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors152)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors153)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors154)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors160)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors161)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors162)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 32, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors163)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors164)},
     {0x1c014, 10, 0x98a, EVENT(Func_02001008)},
     {0x1c114, 10, 0x98a, EVENT(Func_02001310)},
     {0x173, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors169))},

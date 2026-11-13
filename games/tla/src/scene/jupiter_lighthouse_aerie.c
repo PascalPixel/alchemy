@@ -96,13 +96,13 @@ struct JupiterLighthouseAerieObject {
 extern void Func_02001070__jupiter_lighthouse_aerie(struct JupiterLighthouseAerieObject *object) __asm__("Func_02001070");
 void Func_020017a8(s32 a, s32 b, s32 c);
 void Func_02002a78(s32 x, s32 z, s32 a, s32 b);
-void Func_02002a88(void);
-void Func_02002a90(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02002af0(void);
 
 void Func_020001b4(void) {
   Event_SetFlag(0xa0a);
-  Func_02002a88();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
@@ -121,12 +121,12 @@ void Func_020001b4(void) {
   Func_02001070__jupiter_lighthouse_aerie(((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
   Func_02001070__jupiter_lighthouse_aerie(((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
   Func_02002af0();
-  Func_02002a90();
+  Event_End();
 }
 
 void Func_02000264(void) {
   Event_SetFlag(0xa0b);
-  Func_02002a88();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
@@ -145,7 +145,7 @@ void Func_02000264(void) {
   Func_02001070__jupiter_lighthouse_aerie(((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
   Func_02001070__jupiter_lighthouse_aerie(((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
   Func_02002af0();
-  Func_02002a90();
+  Event_End();
 }
 
 void Func_02000314(s32 unused, s32 actor) {
@@ -233,7 +233,7 @@ void Func_0200032c(s32 unused, s32 id) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-s32 Func_02000538(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 513;
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
@@ -256,7 +256,7 @@ void Func_02001dbc(s32 actor, s32 mode);
 
 /// The room's setup: actors 13 and 14 by flags 0xa0a and 0xa0b (with the map
 /// cells copied when set), then the terrain under each.
-s32 Func_02000604(void) {
+s32 Scene_PrepareMap(void) {
   struct Actor *object;
 
   Scene_SetArrivalFlags(0);
@@ -384,15 +384,7 @@ void Func_020008dc(s32 id) {
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
   object->y = height + 0x200000;
-  {
-    u8 *flags = &object->priorityFlags;
-    /* FAKEMATCH(temporary): a local holding 128, so the bit is built in the
-     * register it is ORed into; as *flags |= 128, 4 of 38 instructions differ
-     * in tla-en. */
-    s32 bit = 128;
-
-    *flags = bit | *flags;
-  }
+  object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
   Func_02002a78(object->x, object->z, 0, (height >> 19) + 6);
   Func_02002b58(object->x, object->z, 0, 128);
@@ -415,7 +407,7 @@ void Func_02000930(void) {
   s32 facing;
   s32 i;
 
-  Func_02002a88();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkd46 = 0;
@@ -463,7 +455,7 @@ void Func_02000930(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_02002a90();
+  Event_End();
 }
 
 s32 Func_02000b1c(s32 *a, s32 *b) {
@@ -478,9 +470,9 @@ extern s32 gData_0200333c;
 
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_02002b50(s32 x, s32 z, s32 layer);
-void Func_02002b20(s32 *position);
+void Camera_WorldToScreen(s32 *position);
 s32 Math_Cosine(s32 angle);
-void Func_02002a00(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_02000b48(struct Actor *self) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -507,7 +499,7 @@ void Func_02000b48(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Func_02002b20(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -555,7 +547,7 @@ stop:
     s32 zero = 0;
     *((u8 *)self + 0x63) = zero;
     self->update = zero;
-    Func_02002a00(self, gData_0200331c);
+    Actor_StartScript(self, gData_0200331c);
     Event_PlaySound(228);
     gData_0200333c = zero;
   }
@@ -596,9 +588,6 @@ void Func_02001e78(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    const struct EffectOptions *options);
 
 struct GustObject *Func_02000d08(struct GustObject *source) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 69 of 92 instructions differ in
-   * tla-en. */
   struct Vector3 position;
   struct EffectOptions options;
   struct GustObject *object;
@@ -794,7 +783,7 @@ struct BeamWork {
   struct Actor *second;
 };
 
-void Func_02002b20(s32 *position);
+void Camera_WorldToScreen(s32 *position);
 void Func_02002b38(struct BeamSprite *sprite);
 void Func_02002b40(struct BeamSprite *sprite, struct BeamSpark *spark);
 
@@ -923,7 +912,7 @@ void Func_02001080(void) {
   pos[0] = work->carried[0];
   pos[1] = work->carried[1];
   pos[2] = work->carried[2];
-  Func_02002b20(pos);
+  Camera_WorldToScreen(pos);
   large->x = pos[0];
   large->z = pos[2];
   Func_02002b38(large);

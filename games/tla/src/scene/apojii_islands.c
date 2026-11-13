@@ -35,7 +35,7 @@ extern u32 gData_02002218[];
 extern s32 gData_02002320[];
 extern u32 gData_02002458[];
 
-const u8 *Func_02000360(void) {
+const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov679Room1)
@@ -174,7 +174,7 @@ void Func_02000780(struct Actor *object) {
 #include "task.h"
 
 struct Actor *Actor_GetById(u32 objectId);
-void Func_02001cc4(void);
+void Event_Start(void);
 void Event_ResolvePendingActions(s32 skip);
 /* VIEW(s07a4): routine Func_02000780 as void Func_02000780(void); the definition has void Func_02000780(struct Actor *object). */
 extern void Func_02000780__s07a4(void) __asm__("Func_02000780");
@@ -188,7 +188,7 @@ extern u16 Random16Far__s07a4(void) __asm__("Random16Far");
 /* VIEW(s07a4): routine BattleEffect_ApplyColorToTargetBuffer as s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b); event.h has void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode); tried as the definition's void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode), which the object already declares, Func_020007a4 moves: 1 of 188 instructions in tla-ja. */
 extern s32 BattleEffect_ApplyColorToTargetBuffer__s07a4(s32 a, s32 b) __asm__("BattleEffect_ApplyColorToTargetBuffer");
 void BattleEffect_StartBufferInterpolation(s32 frames);
-void Func_02001de4(void);
+void ObjectTable_Snapshot(void);
 void Task_RemoveFar(TaskFunc func);
 void Func_02000540(void);
 void Func_020006bc(void);
@@ -219,7 +219,7 @@ void Func_020007a4(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s32 i;
 
-  Func_02001cc4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   actor->update = Func_02000780__s07a4;
   Sound_Play(78);
@@ -245,7 +245,7 @@ flash:
   wait(10);
   if (i >= 0)
     goto flash;
-  Func_02001de4();
+  ObjectTable_Snapshot();
   IO_WRITE_QUEUE_PUSH(0x04000050, 0xf00, 0x20000);
   IO_WRITE_QUEUE_PUSH(0x04000052, 0x1000, 0x20000);
   wait(1);
@@ -282,7 +282,7 @@ blend:
 #include "event_work.h"
 
 void Func_02000974(void) {
-  Func_02001cc4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_Get(17)->update = (void (*)(void))Func_02000770;
   FieldEvent_SetMessageId((s32)&MsgWhatWhatJust);
@@ -303,7 +303,7 @@ void Func_02000974(void) {
   Event_ShowMessage(16, 0);
   Actor_SetAnimationAndWait(16, 3);
   Event_ShowMessage(16, 0);
-  Func_02001ccc();
+  Event_End();
   Event_ClearFlag(0x95e);
 }
 
@@ -316,13 +316,13 @@ void Func_02000a68(void) {
   if (Event_GetFlag(0xf9b) == 0) {
     Func_02001d04_(65, PIXELS(376), PIXELS(376));
     if (leader->x >> 20 == 23 && leader->z >> 20 == 23) {
-      Func_02001cc4();
+      Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
       Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = 0x60000;
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Func_02001ccc();
+      Event_End();
     }
   }
 }
@@ -334,13 +334,13 @@ void Func_02000af8(void) {
   if (Event_GetFlag(0xf9a) == 0) {
     Func_02001d04_(64, PIXELS(600), PIXELS(408));
     if (leader->x >> 20 == 37 && leader->z >> 20 == 25) {
-      Func_02001cc4();
+      Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
       Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = 0x60000;
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Func_02001ccc();
+      Event_End();
     }
   }
 }
@@ -354,13 +354,13 @@ void Func_02000ba8(void) {
   if (Event_GetFlag(0xf9e) == 0) {
     Func_02001d04_(64, PIXELS(200), PIXELS(152));
     if (leader->x >> 20 == 12 && leader->z >> 20 == 9) {
-      Func_02001cc4();
+      Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
       Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = 0x60000;
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Func_02001ccc();
+      Event_End();
     }
   }
 }
@@ -368,7 +368,7 @@ void Func_02000ba8(void) {
 void Func_02000c38(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
-  Func_02001cc4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
@@ -380,7 +380,7 @@ void Func_02000c38(void) {
   FieldEvent_SetExitRequest(*(s16 *)(work + 0x154));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02001ccc();
+  Event_End();
 }
 
 s32 Func_02000cb4(void) {
@@ -388,7 +388,7 @@ s32 Func_02000cb4(void) {
 
   facing = (s16)((Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) &
                  0xc000);
-  Func_02001cc4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (facing) {
     Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
@@ -396,7 +396,7 @@ s32 Func_02000cb4(void) {
     Event_ShowMessage(9, 0);
     Actor_ArmCallback_(9, FACING_SOUTHEAST, 0);
   }
-  Func_02001ccc();
+  Event_End();
   return 0;
 }
 
@@ -405,17 +405,17 @@ s32 Func_02000d20(void) {
 
   facing = (s16)((Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) &
                  0xc000);
-  Func_02001cc4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (facing) {
     FieldEvent_SetMessageId((s32)&MsgICanTEver);
     Event_ShowMessage(9, 0);
   }
-  Func_02001ccc();
+  Event_End();
   return 0;
 }
 
-void Func_02000d74(void) { Func_02001d2c(gMainRoutineWork.currentOwner, 1, 5); }
+void Func_02000d74(void) { Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 1, 5); }
 
 /* VIEW(events_d): variable gData_020024b8 as extern const u8 gData_020024b8[]; the definition has s32 gData_020024b8[] = { - 1, 0, 0, }. */
 extern const u8 gData_020024b8__events_d[] __asm__("gData_020024b8");
@@ -430,7 +430,7 @@ extern s32 gData_020024d0[];
 extern s32 gData_02002698[];
 extern s32 gData_0200280c[];
 
-const u8 *Func_02000d90(void) {
+const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov679Room1)
@@ -448,17 +448,17 @@ void Func_02000de0(s32 actor) {
     Func_02001e24(8, actor);
     return;
   }
-  Func_02001cc4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)&MsgWowYouLook);
   Event_ShowMessage(actor, 0);
-  Func_02001ccc();
+  Event_End();
 }
 
 void Func_02000e40(s32 actor) {
   s32 msg;
 
-  Func_02001cc4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   msg = (s32)&MsgYouGuysAren;
   FieldEvent_SetMessageId(msg);
@@ -471,7 +471,7 @@ void Func_02000e40(s32 actor) {
     FieldEvent_SetMessageId(msg + 2);
   }
   Event_ShowMessage(actor, 0);
-  Func_02001ccc();
+  Event_End();
 }
 
 void Func_02000e98(s32 actor) {
@@ -480,11 +480,11 @@ void Func_02000e98(s32 actor) {
     Func_02001e1c(23, actor);
     return;
   }
-  Func_02001cc4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)&MsgItDBe);
   Event_ShowMessage(actor, 0);
-  Func_02001ccc();
+  Event_End();
 }
 
 void Func_02000ef8(void) {
@@ -518,7 +518,7 @@ void Func_02000f58(void) {
 void Func_02000f98(void) {
   s32 priority;
 
-  Func_02001c0c(1, 0, Func_02000ef8);
+  Irq_SetHandler(1, 0, Func_02000ef8);
   priority = 0xc80;
   FieldTask_AddFrame(Func_02000f58, priority);
 }
@@ -532,7 +532,7 @@ struct MapBits {
 
 /// The overlay's entry: sets the map mode and screen effect 0x202, then starts
 /// each room's own setup.
-s32 Func_02000fb8(void) {
+s32 Scene_Initialize(void) {
   s32 *effect;
   s16 scene;
   struct MainRoutineWork *party;
@@ -594,7 +594,7 @@ void Func_020010d8(struct Actor *object) {
   if (child != NULL) {
     sprite = child->sprite;
     child->terrainHeight = object->terrainHeight;
-    Func_02001c74(child, gData_02001ee8);
+    Actor_StartScript(child, gData_02001ee8);
     child->motionFlags = 0;
     if (sprite != NULL) {
       Animation_ApplyChildArgument(sprite, 1);
@@ -620,7 +620,7 @@ void Func_02001140(struct Actor *object) {
     if (child != 0) {
       struct FieldSprite *sprite = child->sprite;
 
-      Func_02001c74(child, gData_02001ef4);
+      Actor_StartScript(child, gData_02001ef4);
       child->motionFlags = 0;
       child->y = -0x78000;
       child->terrainId = 1;
@@ -655,8 +655,6 @@ void Func_020011a8(void) {
     if ((gFrameCount & 4) == 0)
       Func_020010d8(leader);
     if (result < 0) {
-      /* FAKEMATCH(wrapper): Call2 kept; as a direct call, 2 of 151 instructions
-       * differ in tla-en. */
       Actor_SetAttachedEffect(owner, 0x102);
       FieldActor_SetMoveTarget(leader, leader->x, leader->y, leader->z + 0x80000);
       Func_02001c6c(leader, 49);
@@ -710,7 +708,7 @@ void Func_02001338(s32 entrance) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 i;
 
-  Func_02001cc4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   leader->motionFlags = 0;
@@ -730,7 +728,7 @@ void Func_02001338(s32 entrance) {
       Func_020010d8(Actor_Get(15));
     System_Wait(1);
   }
-  Func_02001ccc();
+  Event_End();
   FieldEvent_SetExitRequest(entrance);
 }
 
@@ -764,7 +762,7 @@ void Func_02001464(s32 entrance) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 *owner = &gMainRoutineWork.currentOwner;
 
-  Func_02001cc4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(228);
   leader->update = (void (*)(void))Func_020013d8;
@@ -779,7 +777,7 @@ void Func_02001464(s32 entrance) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(entrance);
-  Func_02001ccc();
+  Event_End();
 }
 
 void Func_02001500(void) {
@@ -789,7 +787,7 @@ void Func_02001500(void) {
   s32 offset;
 
   if (flag == 0) {
-    Func_02001cc4();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     leader->motionFlags = flag;
@@ -810,16 +808,16 @@ void Func_02001500(void) {
     Actor_WalkByAndWait(*owner, 0, offset);
     leader->motionFlags = 3;
     leader->update = (void (*)(void))flag;
-    Func_02001df4();
+    Event_NoOp();
     Event_WaitTransitionFrames();
-    Func_02001ccc();
+    Event_End();
   }
 }
 
 #include "graphics/vram_tab.h"
 #include "system/dma.h"
 
-void Func_02001c3c(void *entry, s32 slot);
+void Oam_AddSpriteAtDepth(void *entry, s32 slot);
 
 #define COPY_PICTURE(from, to)                                                 \
   Dma_Set((void *)(from), (void *)(offset + (to)), DMA_COPY_WORDS(16), REG_DMA3)
@@ -889,7 +887,7 @@ void Func_020015f8(void) {
     *attr++ = clear;
     *attr++ = top | (left << 16) | flip | 0x40000400;
     *attr = palette | (tile + picture);
-    Func_02001c3c(record->oam, 0);
+    Oam_AddSpriteAtDepth(record->oam, 0);
   }
 }
 
@@ -1028,7 +1026,7 @@ void Func_02001940(void) {
       frame++;
       particle->shape = *(u8 *)frame;
       particle->size = *(u8 *)(frame + 1);
-      Func_02001c3c(particle, 240);
+      Oam_AddSpriteAtDepth(particle, 240);
     }
     if (particle->timer == 0) {
       s32 *leader = work->leader;

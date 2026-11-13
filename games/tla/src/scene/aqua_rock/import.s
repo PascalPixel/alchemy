@@ -58,9 +58,9 @@ VramCache_Load:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
-	.global Func_020028d0
+	.global Oam_AddSpriteAtDepth
 	.thumb_func
-Func_020028d0:
+Oam_AddSpriteAtDepth:
 	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global GameFlag_Test
 	.thumb_func
@@ -94,9 +94,9 @@ ResourceMetadata_Register:
 	.thumb_func
 Func_02002910:
 	overlay_veneer Actor_SetMode
-	.global Func_02002918
+	.global Actor_StartScript
 	.thumb_func
-Func_02002918:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -158,13 +158,13 @@ Animation_ApplyChildValues:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02002998
+	.global Event_Start
 	.thumb_func
-Func_02002998:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020029a0
+	.global Event_End
 	.thumb_func
-Func_020029a0:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -258,9 +258,9 @@ Actor_CommitPositionAndActivate:
 	.thumb_func
 Func_02002a58:
 	overlay_veneer Func_080c8688
-	.global Func_02002a60
+	.global Event_NoOp
 	.thumb_func
-Func_02002a60:
+Event_NoOp:
 	overlay_veneer Event_NoOpFar
 	.global Party_GetLeaderActor
 	.thumb_func

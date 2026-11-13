@@ -32,7 +32,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 extern s16 gData_02000f5c[];
 extern u32 gData_02000f8c[];
 
-const struct ActorPlacement *Func_02000040(void) {
+const struct ActorPlacement *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1)
     return (const struct ActorPlacement *)gData_02000f5c;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2)
@@ -51,7 +51,7 @@ extern struct ActorPlacement gData_02001044[];
 extern struct ActorPlacement gData_02001194[];
 extern s16 gData_020012cc[];
 
-const struct Trigger *Func_02000080(void) {
+const struct Trigger *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1)
     return (const struct Trigger *)gData_02001044;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2)
@@ -175,8 +175,8 @@ void Func_02000164(s32 unused, s32 id) {
 
 struct SceneEntrance;
 
-void Func_02000e74(void);
-void Func_02000e7c(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02000edc(s32 a);
 void Func_02000f04(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
@@ -233,14 +233,14 @@ void Func_02000314(void) {
 
 void Func_02000378(void) {
   if (Event_GetFlag(0x927)) {
-    Func_02000e74();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId(MsgYouReGoing);
     FieldActor_StartRepeatedMotion(20, 1);
     FieldEvent_Wait(15);
     Event_AskYesNo(20, 0);
     Event_SetFlag(0x9ab);
-    Func_02000e7c();
+    Event_End();
   }
 }
 
@@ -264,7 +264,7 @@ void Func_020003fc(void) {
   }
 }
 
-const struct SceneEntrance *Func_02000434(void) {
+const struct SceneEntrance *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1)
     return (const struct SceneEntrance *)gData_020013c8;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2)
@@ -292,8 +292,8 @@ struct OrbitEffect {
 };
 
 s32 Math_Cosine(s32 angle);
-void Func_02000e2c(struct Actor *object, const s32 *script);
-void Func_02000e5c(struct Actor *object, s32 a);
+void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 extern u32 gData_020015c0[];
@@ -318,7 +318,7 @@ void Func_02000474(struct OrbitEffect *effect) {
     effect->pause = ((Random16Far() << 4) >> 16) + 8;
   }
   if (++effect->timer == 71)
-    Func_02000e2c((struct Actor *)effect, gData_020015c0);
+    Actor_StartScript((struct Actor *)effect, gData_020015c0);
 }
 
 s32 Func_02000528(struct OrbitEffect *source) {
@@ -348,7 +348,7 @@ loop:
       effect->scale = 0x30000;
       effect->angle = Random16Far();
       effect->priorityFlags = 0;
-      Func_02000e5c((struct Actor *)effect, 2);
+      Actor_SetSpritePriorityDirect((struct Actor *)effect, 2);
     }
   }
   timer -= 2;
@@ -419,8 +419,8 @@ void Func_02000670(void) {
       Func_02000e24(object, 2);
       FieldActor_SetMoveTarget(object, object->x - PIXELS(32), object->y,
                                object->z);
-      Func_02000e2c(object, gData_020015c4);
-      Func_02000e5c(object, 2);
+      Actor_StartScript(object, gData_020015c4);
+      Actor_SetSpritePriorityDirect(object, 2);
     }
   }
 }
@@ -436,7 +436,7 @@ void Func_02000ed4();
 void Func_02000dd0(void);
 void Func_02000b2c(s32 id, s32 x, s32 y, s32 z);
 
-s32 Func_020006ec(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   struct EventWork *work;
 
@@ -496,7 +496,7 @@ s32 Func_020006ec(void) {
         FieldActor_StartRepeatedMotion(20, 2);
         FieldEvent_Wait(30);
         Event_SetFlag(0xa61);
-        Func_02000e7c();
+        Event_End();
       }
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2) {
@@ -534,7 +534,7 @@ s32 Func_020006ec(void) {
   return 0;
 }
 
-s32 Func_02000a68(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2 &&
       (u16)(gMainRoutineWork.entrance - 3) <= 1) {
     s32 *layer = (s32 *)&Ram_HeapSlots->mapWork->layers[1];
@@ -588,12 +588,12 @@ void Func_02000bc0(s32 id, s32 flag) {
   struct Actor *pillar;
   s32 i;
 
-  Func_02000e74();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   pillar = Actor_Get(id);
   Func_02000b2c(id, leader->x, leader->y, leader->z);
-  Func_02000e2c(pillar, gData_020016cc);
+  Actor_StartScript(pillar, gData_020016cc);
   i = 15;
 dust:
   {
@@ -606,7 +606,7 @@ dust:
       u32 size;
       s32 scale;
 
-      Func_02000e2c(dust, gData_02001688);
+      Actor_StartScript(dust, gData_02001688);
       angle = Random16Far();
       speed = Random16Far();
       size = Random16Far();
@@ -657,7 +657,7 @@ fall:
   leader->velocityY = 0x40000;
   System_Wait(20);
   gMainRoutineWork.renderMode = 0;
-  Func_02000e7c();
+  Event_End();
   Event_SetFlag(flag);
 }
 
@@ -763,53 +763,53 @@ s16 gData_020012cc[] = {
 };
 
 struct Trigger gData_020013c8[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {2, 42, 0x9ab, EVENT(Func_02000378)},
-    {0, 20, CONDITION_ALWAYS, EVENT(Func_020003c4)},
-    {0x8d15, 20, CONDITION_ALWAYS, EVENT(Func_020003fc)},
-    {0x4e15, 8, CONDITION_ALWAYS, 0},
-    {0x4e15, 9, CONDITION_ALWAYS, 0},
-    {0x4e15, 10, CONDITION_ALWAYS, 0},
-    {0x4e15, 11, CONDITION_ALWAYS, 0},
-    {0x4e15, 12, CONDITION_ALWAYS, 0},
-    {0x4e15, 13, CONDITION_ALWAYS, 0},
-    {0x4e15, 14, CONDITION_ALWAYS, 0},
-    {0x4e15, 15, CONDITION_ALWAYS, 0},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_STEP, 42, 0x9ab, EVENT(Func_02000378)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_020003c4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, EVENT(Func_020003fc)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 14, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 15, CONDITION_ALWAYS, 0},
     {0x50008905, 20, CONDITION_ALWAYS, EVENT(Func_020002a0)},
-    {0x10008c15, 16, 0x920, EVENT(Func_02000148)},
-    {0x8c15, 16, 0x920, EVENT(Func_02000164)},
-    {0x8c15, 19, 0x921, EVENT(Func_02000164)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, 0x920, EVENT(Func_02000148)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x920, EVENT(Func_02000164)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, 0x921, EVENT(Func_02000164)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000164)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_020014b8[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {2, 20, 0x300, EVENT(Func_020000d0)},
-    {2, 21, 0x301, EVENT(Func_020000e0)},
-    {2, 22, 0x302, EVENT(Func_020000f0)},
-    {0x4e15, 8, CONDITION_ALWAYS, 0},
-    {0x4e15, 9, CONDITION_ALWAYS, 0},
-    {0x4e15, 10, CONDITION_ALWAYS, 0},
-    {0x4e15, 11, CONDITION_ALWAYS, 0},
-    {0x4e15, 12, CONDITION_ALWAYS, 0},
-    {0x4e15, 13, CONDITION_ALWAYS, 0},
-    {0x4e15, 14, CONDITION_ALWAYS, 0},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_STEP, 20, 0x300, EVENT(Func_020000d0)},
+    {TRIGGER_STEP, 21, 0x301, EVENT(Func_020000e0)},
+    {TRIGGER_STEP, 22, 0x302, EVENT(Func_020000f0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 14, CONDITION_ALWAYS, 0},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02001554[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {0, 15, CONDITION_ALWAYS, EVENT(Func_02000314)},
-    {0x10008c15, 8, CONDITION_ALWAYS, EVENT(Func_02000258)},
-    {0x8c15, 8, CONDITION_ALWAYS, EVENT(Func_0200027c)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000314)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(Func_02000258)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT(Func_0200027c)},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02000258)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_0200027c)},
-    {0x50009085, 0, CONDITION_ALWAYS, EVENT(Func_020002c0)},
-    {0x40009085, 0, CONDITION_ALWAYS, EVENT(Func_020002fc)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_020002c0)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020002fc)},
     {TRIGGERS_END},
 };
 

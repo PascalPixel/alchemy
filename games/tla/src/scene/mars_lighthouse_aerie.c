@@ -91,7 +91,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct Trigger *Func_02000164(void) {
+const struct Trigger *Scene_GetPlacements(void) {
   if (gMainRoutineWork.entrance == 2)
     return (const struct Trigger *)gData_0200644c;
   if ((u16)(gMainRoutineWork.entrance - 3) <= 2)
@@ -129,12 +129,6 @@ struct Actor;
 void Func_02004ef0(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
 void Func_020004a4(void);
 
-static __inline__ void PlaceObject(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 10 of 124
-   * instructions differ in tla-en. */
-  Actor_SetHorizontalPositionWithTerrain(id, a, b);
-}
-
 void Func_020001d8(void) {
   struct Actor *object;
   s32 i;
@@ -148,8 +142,8 @@ void Func_020001d8(void) {
   }
   if (!Event_GetFlag(0xa3c))
     return;
-  PlaceObject(8, 0x2000000, 0x1080000);
-  PlaceObject(9, 0x2000000, 0x10f0000);
+  Actor_SetPosition(8, 0x2000000, 0x1080000);
+  Actor_SetPosition(9, 0x2000000, 0x10f0000);
   System_Wait(1);
   FieldActor_SetSpritePriority(8, 1);
   object = Actor_Get(8);
@@ -184,12 +178,12 @@ void Func_02001f10(void);
 void Func_020029ac(void);
 void Func_02003658(void);
 void Func_02003ff4(void);
-void Func_0200558c(void);
+void Map_CenterOnFollowedPoint(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
 /// Sets the scene up for the entrance the party arrived by (5 to 2).
-s32 Func_02000314(void) {
+s32 Scene_Initialize(void) {
   ((struct MarsLighthouseAerieEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 0x204;
   Func_020001d8();
@@ -204,7 +198,7 @@ s32 Func_02000314(void) {
     REG_BLDCNT = 0x3f10;
     Func_02003ff4();
   } else if (gMainRoutineWork.entrance == 4) {
-    Func_0200560c();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_SetAnimation(20, 8);
     Actor_SetAnimation(21, 8);
@@ -216,13 +210,13 @@ s32 Func_02000314(void) {
     FieldCamera_MoveTo(-1, -1, -1, 0);
     FieldCamera_GetActor()->motionFlags = 0;
     FieldCamera_MoveTo(PIXELS(512), PIXELS(96), PIXELS(312), 1);
-    Func_0200558c();
+    Map_CenterOnFollowedPoint();
     System_Wait(1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     FieldEvent_Wait(40);
     Func_02003658();
-    Func_02005614();
+    Event_End();
   } else if (gMainRoutineWork.entrance == 3) {
     Actor_SetAnimation(20, 8);
     Actor_SetAnimation(21, 8);
@@ -241,7 +235,7 @@ extern char SceneId_Ov6ACRoom3;
 void Func_020057d4(s32 a);
 void Func_020055dc(s32 scene, s32 a1);
 
-s32 Func_02000450(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.entrance == 1 && Event_GetFlag(0xa3d) == 0)
     Func_020057d4(1);
   Func_020055dc(gMainRoutineWork.map +
@@ -261,7 +255,7 @@ struct MarsLighthouseAerieSprite {
 
 extern const u8 gData_02006ad0[];
 
-void Func_0200556c(struct Actor *object, const u8 *script);
+void Actor_StartScript(struct Actor *object, const u8 *script);
 void Func_020005a0(struct Actor *object);
 
 void Func_020004a4(void) {
@@ -272,15 +266,13 @@ void Func_020004a4(void) {
   u32 phase;
 
   if (anchor != NULL && (phase = Data_0200eb60 & 15) == 0) {
-    /* FAKEMATCH(wrapper): the spawn forwarded through Value4; as a direct call,
-     * 35 of 103 instructions differ in tla-en. */
     object = FieldActor_Create(0x2a0, anchor->x + 0x80000, anchor->y + offset + 0x80000, anchor->z);
     offset = (offset / 0x60000) << 16;
     if (object != NULL) {
       u8 zero;
 
       sprite = object->sprite;
-      Func_0200556c(object, gData_02006ad0);
+      Actor_StartScript(object, gData_02006ad0);
       Actor_SetSpriteColor(object, 10);
       object->motionFlags = phase;
       {
@@ -348,10 +340,10 @@ void Func_02000640(s32 id) {
 struct SparkleWork;
 void Func_020053e4(struct Actor *object, struct SparkleWork *work);
 void Func_020054e4(struct Actor *object);
-s32 Func_0200563c();
-s32 Func_0200568c();
+s32 ObjectTable_DestroyById();
+s32 Actor_MoveToObject();
 void Func_02005734();
-s32 Func_0200574c();
+s32 Field_RequestBattleFromEncounterTable();
 extern u8 MsgBetrayersYouHave[];
 extern u8 gData_02005ba8[];
 extern u8 gData_02005bd0[];
@@ -390,7 +382,7 @@ void Func_0200065c(void) {
   t0 = gMainRoutineWork.currentOwner;
   actor = Actor_Get(t0);
   palette = (u16 *)0x500021e;
-  Func_0200560c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   t4 = Actor_Get(18);
   Actor_SetSpriteColor(t4, 15);
@@ -417,12 +409,12 @@ void Func_0200065c(void) {
   t25 = gMainRoutineWork.currentOwner;
   Actor_FaceDirection(t25, 0xc000, 0);
   t27 = gMainRoutineWork.currentOwner;
-  Func_0200568c(0, t27);
+  Actor_MoveToObject(0, t27);
   System_Wait(1);
   Actor_SetSpeed(0, 0x19999, 0xcccc);
   Actor_WalkToAndWait(0, 0x208, 0x140);
   Actor_FaceDirection(0, 0xc000, 0);
-  Func_0200568c(1, 0);
+  Actor_MoveToObject(1, 0);
   System_Wait(1);
   Actor_SetSpeed(1, 0x19999, 0xcccc);
   Actor_WalkToAndWait(1, 0x218, 0x140);
@@ -430,7 +422,7 @@ void Func_0200065c(void) {
   Actor_FaceDirection(1, 0xe000, 20);
   Actor_FaceDirection(1, 0xc000, 0);
   Event_ShowMessage(1, 0);
-  Func_0200568c(3, 1);
+  Actor_MoveToObject(3, 1);
   System_Wait(1);
   Actor_SetSpeed(3, 0x19999, 0xcccc);
   Actor_WalkToAndWait(3, 0x220, 0x148);
@@ -445,15 +437,15 @@ void Func_0200065c(void) {
   Func_02000610(1);
   Func_02000610(3);
   t53 = gMainRoutineWork.currentOwner;
-  Func_0200568c(5, t53);
+  Actor_MoveToObject(5, t53);
   t55 = gMainRoutineWork.currentOwner;
-  Func_0200568c(6, t55);
+  Actor_MoveToObject(6, t55);
   t57 = gMainRoutineWork.currentOwner;
-  Func_0200568c(7, t57);
+  Actor_MoveToObject(7, t57);
   t59 = gMainRoutineWork.currentOwner;
-  Func_0200568c(2, t59);
+  Actor_MoveToObject(2, t59);
   t61 = gMainRoutineWork.currentOwner;
-  Func_0200568c(19, t61);
+  Actor_MoveToObject(19, t61);
   System_Wait(1);
   Actor_SetSpeed(5, 0x19999, 0xcccc);
   Actor_SetSpeed(6, 0x19999, 0xcccc);
@@ -466,13 +458,13 @@ void Func_0200065c(void) {
   Actor_SetScript(19, (s32)gData_02005c48);
   Actor_RunScriptAndWait(2, (s32)gData_02005c20);
   FieldEvent_Wait(10);
-  Func_0200563c(16);
-  Func_0200563c(15);
-  Func_0200563c(14);
-  Func_0200563c(13);
-  Func_0200563c(12);
-  Func_0200563c(11);
-  Func_0200563c(10);
+  ObjectTable_DestroyById(16);
+  ObjectTable_DestroyById(15);
+  ObjectTable_DestroyById(14);
+  ObjectTable_DestroyById(13);
+  ObjectTable_DestroyById(12);
+  ObjectTable_DestroyById(11);
+  ObjectTable_DestroyById(10);
   Func_02000610(5);
   Func_02000610(6);
   Func_02000610(7);
@@ -1120,7 +1112,7 @@ L_02009638:
   Event_ShowMessage(0x2013, 0);
   FIELD_AT(work, u8, 0x24b) = 2;
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6aeRoom1, 2);
-  Call2(Func_0200574c, 102, 1);
+  Call2(Field_RequestBattleFromEncounterTable, 102, 1);
   return;
 }
 
@@ -1166,32 +1158,18 @@ void Func_02001f10(void) {
   t1 = Actor_Get(30);
   t2 = Actor_Get(31);
   spill = (Actor_Get(32));
-  Func_0200560c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  /* FAKEMATCH(wrapper): Actor_SetModeById called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_SetAnimation(17, 2);
   FIELD_AT(actor, u8, 85) = 0;
   FIELD_AT(actor, s32, 8) -= 0x40000;
   FIELD_AT(actor, s32, 16) += 0x100000;
-  /* FAKEMATCH(wrapper): Actor_SetModeById called through call.h's Call2; as a
-   * direct call, 4 of 1038 instructions differ in tla-en. */
   Actor_SetAnimation(28, 2);
-  /* FAKEMATCH(wrapper): Actor_SetModeById called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_SetAnimation(29, 3);
-  /* FAKEMATCH(wrapper): Camera_MoveWithinMapBounds called through call.h's
-   * Call4; as a direct call, 34 of 1038 instructions differ in tla-en. */
   FieldCamera_MoveTo(-1, -1, -1, 0);
   System_Wait(1);
-  /* FAKEMATCH(wrapper): Actor_SetModeById called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_SetAnimation(30, 7);
-  /* FAKEMATCH(wrapper): Actor_SetModeById called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_SetAnimation(31, 7);
-  /* FAKEMATCH(wrapper): Actor_SetModeById called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_SetAnimation(32, 6);
   owner = (s32)&gMainRoutineWork;
   owner = (owner + 0x214);
@@ -1199,8 +1177,6 @@ void Func_02001f10(void) {
   lastArg = 0xc000;
   Actor_SetPositionAndFacing(t16, 0x1f80000, 0x1400000, lastArg);
   System_Wait(1);
-  /* FAKEMATCH(wrapper): BattleEffect_ApplyColorToSourceBuffer called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   PaletteFade_ApplySource(0, 0);
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(1);
@@ -1208,20 +1184,10 @@ void Func_02001f10(void) {
   Actor_SetSpriteColor((Actor_Get(31)), 15);
   Actor_SetSpriteColor((Actor_Get(32)), 15);
   System_Wait(1);
-  /* FAKEMATCH(wrapper): Actor_SetSpritePriority called through call.h's Call2;
-   * as a direct call, 2 of 1038 instructions differ in tla-en. */
   FieldActor_SetSpritePriority(21, 1);
-  /* FAKEMATCH(wrapper): Actor_SetSpritePriority called through call.h's Call2;
-   * as a direct call, 2 of 1038 instructions differ in tla-en. */
   FieldActor_SetSpritePriority(20, 1);
-  /* FAKEMATCH(wrapper): Actor_SetSpritePriority called through call.h's Call2;
-   * as a direct call, 2 of 1038 instructions differ in tla-en. */
   FieldActor_SetSpritePriority(19, 1);
-  /* FAKEMATCH(wrapper): Actor_SetSpritePriority called through call.h's Call2;
-   * as a direct call, 2 of 1038 instructions differ in tla-en. */
   FieldActor_SetSpritePriority(26, 1);
-  /* FAKEMATCH(wrapper): Actor_SetSpritePriority called through call.h's Call2;
-   * as a direct call, 2 of 1038 instructions differ in tla-en. */
   FieldActor_SetSpritePriority(25, 1);
   t34 = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT(t34, s32, 428) = 0x204;
@@ -1229,11 +1195,7 @@ void Func_02001f10(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(0x186);
-  /* FAKEMATCH(wrapper): BattleEffect_ApplyColorToTargetBuffer called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   PaletteFade_ApplyTarget(0x10003, 1);
-  /* FAKEMATCH(wrapper): BattleEffect_ApplyColorToTargetBuffer called through call.h's Call2; as a
-   * direct call, 12 of 1038 instructions differ in tla-en. */
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_Interpolate(16);
   System_Wait(16);
@@ -1247,20 +1209,12 @@ void Func_02001f10(void) {
   FIELD_AT(t1, s32, 108) = (s32)Func_02001ee4;
   FIELD_AT(t2, s32, 108) = (s32)Func_02001ee4;
   FIELD_AT((spill), s32, 108) = (s32)Func_02001ee4;
-  /* FAKEMATCH(wrapper): Sound_Play called through call.h's Call1; as a
-   * direct call, 31 of 1038 instructions differ in tla-en. */
   Event_PlaySound(0x253);
   System_Wait(10);
-  /* FAKEMATCH(wrapper): Sound_Play called through call.h's Call1; as a
-   * direct call, 27 of 1038 instructions differ in tla-en. */
   Event_PlaySound(0x253);
   System_Wait(10);
-  /* FAKEMATCH(wrapper): Sound_Play called through call.h's Call1; as a
-   * direct call, 23 of 1038 instructions differ in tla-en. */
   Event_PlaySound(0x253);
   System_Wait(10);
-  /* FAKEMATCH(wrapper): Sound_Play called through call.h's Call1; as a
-   * direct call, 15 of 1038 instructions differ in tla-en. */
   Event_PlaySound(0x253);
   System_Wait(10);
   Event_PlaySound(0x253);
@@ -1269,14 +1223,8 @@ void Func_02001f10(void) {
   System_Wait(30);
   *(s32 *)&gData_02006b6c = 2;
   System_Wait(20);
-  /* FAKEMATCH(wrapper): Actor_SetHorizontalPositionWithTerrain called through call.h's Call3; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_SetPosition(17, 0, 0);
-  /* FAKEMATCH(wrapper): Actor_SetHorizontalPositionWithTerrain called through call.h's Call3; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_SetPosition(27, 0, 0);
-  /* FAKEMATCH(wrapper): Actor_SetHorizontalPositionWithTerrain called through call.h's Call3; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_SetPosition(28, 0, 0);
   Actor_SetPosition(29, 0, 0);
   FIELD_AT((Actor_Get(17)), s32, 108) = 0;
@@ -1310,41 +1258,17 @@ void Func_02001f10(void) {
   PaletteFade_Interpolate(40);
   System_Wait(80);
   FieldEvent_SetMessageId((s32)MsgWhoAreThey);
-  /* FAKEMATCH(wrapper): Actor_ArmCallbackAndRefresh called through call.h's Call2; as a
-   * direct call, 24 of 1038 instructions differ in tla-en. */
   Actor_FaceDirectionAndWait(26, 0x8000);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(26, 0);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(19, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 25 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(22, 0x2000, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 26 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection((*(s32 *)owner), 0x2000, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 30 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(23, 0x4000, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 15 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(24, 0x4000, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 23 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(21, 0x2000, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 24 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(20, 0x2000, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 10 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(26, 0x4000, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(25, 0x4000, 0);
-  /* FAKEMATCH(wrapper): Camera_SetSpeedParameters called through call.h's Call2; as a
-   * direct call, 59 of 1038 instructions differ in tla-en. */
   FieldCamera_SetSpeed(0x19999, 0x3333);
   FIELD_AT((FieldCamera_GetActor()), u8, 85) = 0;
   FieldCamera_MoveTo(0x2000000, 0x500000, 0x1540000, 1);
@@ -1356,113 +1280,53 @@ void Func_02001f10(void) {
    * direct call, 8 of 1038 instructions differ in tla-en. */
   Actor_SetAttachedEffect(24, 0x102);
   FieldEvent_Wait(20);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(24, 0);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(25, 0);
-  /* FAKEMATCH(wrapper): Motion_SetModeAndWaitAnimation called through call.h's
-   * Call2; as a direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_SetAnimationAndWait(19, 3);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(19, 0);
   /* FAKEMATCH(wrapper): FieldEffect_SetAttached called through call.h's Call2; as a
    * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_SetAttachedEffect(26, 0x102);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(0x101a, 0);
-  /* FAKEMATCH(wrapper): Actor_SetModeById called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_SetAnimation(19, 4);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(19, 0);
   Actor_ShowEmote(23, 0x103, 0);
-  /* FAKEMATCH(wrapper): Actor_SetSpeedParameters called through call.h's Call3;
-   * as a direct call, 51 of 1038 instructions differ in tla-en. */
   Actor_SetSpeed(23, 0x19999, 0xcccc);
-  /* FAKEMATCH(wrapper): Actor_SetPositionAndReset called through call.h's
-   * Call3; as a direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_WalkToAndWait(23, 0x200, 0x148);
-  /* FAKEMATCH(wrapper): Actor_ArmCallbackAndRefresh called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_FaceDirectionAndWait(23, 0x2000);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(0x1017, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallbackAndRefresh called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_FaceDirectionAndWait(20, 0x8000);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(0xa014, 0);
   Actor_ShowEmote(19, 0x100, 20);
   FieldActor_SetSpritePriority(21, 2);
   FIELD_AT((Actor_Get(20)), u8, 98) = 0;
   FIELD_AT((Actor_Get(21)), u8, 98) = 0;
-  /* FAKEMATCH(wrapper): Actor_SetSpeedParameters called through call.h's Call3;
-   * as a direct call, 38 of 1038 instructions differ in tla-en. */
   Actor_SetSpeed(21, 0xcccc, 0x6666);
-  /* FAKEMATCH(wrapper): Actor_SetSpeedParameters called through call.h's Call3;
-   * as a direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_SetSpeed(20, 0xcccc, 0x6666);
   Actor_SetScript(21, (s32)gData_02005f08);
   Actor_SetScript(20, (s32)gData_02005f50);
-  /* FAKEMATCH(wrapper): Actor_SetSpeedParameters called through call.h's Call3;
-   * as a direct call, 4 of 1038 instructions differ in tla-en. */
   Actor_SetSpeed(19, 0x26666, 0x13333);
-  /* FAKEMATCH(wrapper): Actor_SetPositionAndReset called through call.h's
-   * Call3; as a direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_WalkToAndWait(19, 0x21c, 0x154);
-  /* FAKEMATCH(wrapper): Actor_Jump called through call.h's Call3; as a direct
-   * call, 2 of 1038 instructions differ in tla-en. */
   FieldActor_Jump(19, 4, 10);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(19, 0);
   actor = Actor_Get(21);
 L_0200a47a:
   System_Wait(1);
   if (FIELD_AT(actor, u8, 98) == 0)
     goto L_0200a47a;
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 55 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(20, 0x2000, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallbackAndRefresh called through call.h's Call2; as a
-   * direct call, 55 of 1038 instructions differ in tla-en. */
   Actor_FaceDirectionAndWait(21, 0x2000);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(21, 0);
-  /* FAKEMATCH(wrapper): Actor_SetSpritePriority called through call.h's Call2;
-   * as a direct call, 2 of 1038 instructions differ in tla-en. */
   FieldActor_SetSpritePriority(20, 2);
-  /* FAKEMATCH(wrapper): Actor_SetSpritePriority called through call.h's Call2;
-   * as a direct call, 2 of 1038 instructions differ in tla-en. */
   FieldActor_SetSpritePriority(22, 2);
   /* FAKEMATCH(wrapper): this call through W_Func_02005714; as Actor_ShowEmote(20,
    * 0x100, 0), 103 of 1038 instructions differ in tla-en (as Call3, 2). */
   W_Func_02005714(20, 0x100, 0);
-  /* FAKEMATCH(wrapper): Actor_SetSpeedParameters called through call.h's Call3;
-   * as a direct call, 55 of 1038 instructions differ in tla-en. */
   Actor_SetSpeed(20, 0x19999, 0xcccc);
-  /* FAKEMATCH(wrapper): Actor_SetPositionAndReset called through call.h's
-   * Call3; as a direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_WalkToAndWait(20, 0x1ea, 0x128);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 55 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(21, 0xe000, 20);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 139 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(20, 0xa000, 20);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 55 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(20, 0xe000, 20);
-  /* FAKEMATCH(wrapper): Actor_SetSpeedParameters called through call.h's Call3;
-   * as a direct call, 27 of 1038 instructions differ in tla-en. */
   Actor_SetSpeed(20, 0x3333, 0x1999);
   t158 = Actor_Get(20);
   FIELD_AT(t158, u8, 90) &= 254;
@@ -1474,112 +1338,52 @@ L_0200a47a:
   Actor_RunRepeatedMotion(20, 2);
   t166 = Actor_Get(20);
   FIELD_AT(t166, u8, 90) &= 254;
-  /* FAKEMATCH(wrapper): Actor_SetPositionAndReset called through call.h's
-   * Call3; as a direct call, 53 of 1038 instructions differ in tla-en. */
   Actor_WalkToAndWait(20, 0x1e6, 0x134);
   FieldEvent_Wait(1);
   t170 = Actor_Get(20);
   FIELD_AT(t170, u8, 90) |= 1;
-  /* FAKEMATCH(wrapper): Camera_SetSpeedParameters called through call.h's Call2; as a
-   * direct call, 57 of 1038 instructions differ in tla-en. */
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(0x2000000, 0x600000, 0x1400000, 1);
   Func_02005734();
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(21, 0, 40);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 55 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(21, 0xe000, 20);
-  /* FAKEMATCH(wrapper): Actor_ArmCallbackAndRefresh called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_FaceDirectionAndWait(21, 0);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(0x8015, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 128 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(22, 0xc000, 0);
   owner2 = (s32)&gMainRoutineWork;
   owner2 = (owner2 + 0x214);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 118 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection((*(s32 *)owner2), 0xa000, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 111 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(23, 0xa000, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 100 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(24, 0xa000, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 107 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(26, 0xa000, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 88 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(25, 0xa000, 0);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 100 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(0x8014, 0);
   actor = Actor_Get(32);
   FIELD_AT(actor, s32, 108) = 0;
   System_Wait(1);
   FIELD_AT(actor, s32, 24) = 0x10000;
   FIELD_AT(actor, s32, 28) = 0x10000;
-  /* FAKEMATCH(wrapper): Motion_SetVarCbAndRefresh called through call.h's
-   * Call2; as a direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_RunRepeatedMotion(32, 2);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(32, 0);
   Actor_ShowEmote(23, 0x100, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 55 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(23, 0xe000, 40);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(25, 0x8000, 0);
   Actor_ShowEmote(25, 0x101, 20);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(25, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(23, 0, 40);
-  /* FAKEMATCH(wrapper): Actor_ArmCallbackAndRefresh called through call.h's Call2; as a
-   * direct call, 179 of 1038 instructions differ in tla-en. */
   Actor_FaceDirectionAndWait(23, 0xc000);
-  /* FAKEMATCH(wrapper): Actor_StartRepeatedMotion called through call.h's
-   * Call2; as a direct call, 2 of 1038 instructions differ in tla-en. */
   FieldActor_StartRepeatedMotion(32, 3);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(32, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 162 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(24, 0xc000, 40);
-  /* FAKEMATCH(wrapper): Actor_ArmCallbackAndRefresh called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_FaceDirectionAndWait(24, 0x6000);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(0x4018, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallbackAndRefresh called through call.h's Call2; as a
-   * direct call, 91 of 1038 instructions differ in tla-en. */
   Actor_FaceDirectionAndWait(21, 0x2000);
   /* FAKEMATCH(wrapper): FieldEffect_SetAttached called through call.h's Call2; as a
    * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_SetAttachedEffect(21, 0x102);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(21, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 159 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection((*(s32 *)owner2), 0xc000, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 160 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(24, 0xc000, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 155 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(26, 0xc000, 0);
   Actor_FaceDirection(25, 0xc000, 0);
   actor = Actor_Get(30);
@@ -1593,68 +1397,30 @@ L_0200a47a:
   FIELD_AT(actor, s32, 24) = 0x10000;
   FIELD_AT(actor, s32, 28) = 0x10000;
   FieldEvent_Wait(10);
-  /* FAKEMATCH(wrapper): Motion_SetVarCbAndRefresh called through call.h's
-   * Call2; as a direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_RunRepeatedMotion(31, 1);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(0x201f, 0);
-  /* FAKEMATCH(wrapper): Motion_SetVarCbAndRefresh called through call.h's
-   * Call2; as a direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_RunRepeatedMotion(30, 2);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(30, 0);
-  /* FAKEMATCH(wrapper): Actor_Jump called through call.h's Call3; as a direct
-   * call, 2 of 1038 instructions differ in tla-en. */
   FieldActor_Jump(20, 2, 10);
-  /* FAKEMATCH(wrapper): Actor_Jump called through call.h's Call3; as a direct
-   * call, 2 of 1038 instructions differ in tla-en. */
   FieldActor_Jump(20, 4, 10);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(0x8014, 0);
-  /* FAKEMATCH(wrapper): Actor_SetSpeedParameters called through call.h's Call3;
-   * as a direct call, 85 of 1038 instructions differ in tla-en. */
   Actor_SetSpeed(20, 0x26666, 0x13333);
-  /* FAKEMATCH(wrapper): Actor_SetSpeedParameters called through call.h's Call3;
-   * as a direct call, 85 of 1038 instructions differ in tla-en. */
   Actor_SetSpeed((*(s32 *)owner2), 0x26666, 0x13333);
-  /* FAKEMATCH(wrapper): Actor_SetSpeedParameters called through call.h's Call3;
-   * as a direct call, 83 of 1038 instructions differ in tla-en. */
   Actor_SetSpeed(23, 0x26666, 0x13333);
-  /* FAKEMATCH(wrapper): Actor_SetSpeedParameters called through call.h's Call3;
-   * as a direct call, 31 of 1038 instructions differ in tla-en. */
   Actor_SetSpeed(24, 0x26666, 0x13333);
   Actor_SetScript(20, (s32)gData_02005f98);
   Actor_SetScript((*(s32 *)owner2), (s32)gData_02005fdc);
   Actor_SetScript(23, (s32)gData_02006004);
   Actor_RunScriptAndWait(24, (s32)gData_0200602c);
   FieldEvent_Wait(20);
-  /* FAKEMATCH(wrapper): Actor_SetSpeedParameters called through call.h's Call3;
-   * as a direct call, 18 of 1038 instructions differ in tla-en. */
   Actor_SetSpeed(22, 0x19999, 0xcccc);
-  /* FAKEMATCH(wrapper): Actor_SetPositionAndReset called through call.h's
-   * Call3; as a direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_WalkToAndWait(22, 0x210, 0x140);
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(22, 0x2000, 0);
-  /* FAKEMATCH(wrapper): Actor_ArmCallbackAndRefresh called through call.h's Call2; as a
-   * direct call, 10 of 1038 instructions differ in tla-en. */
   Actor_FaceDirectionAndWait(25, 0xa000);
-  /* FAKEMATCH(wrapper): Event_ShowMessageAndWait called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Event_ShowMessage(0x5016, 0);
-  /* FAKEMATCH(wrapper): Actor_SetSpeedParameters called through call.h's Call3;
-   * as a direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_SetScript(25, (s32)gData_02006070);
-  /* FAKEMATCH(wrapper): Actor_SetPositionAndReset called through call.h's
-   * Call3; as a direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_WalkToAndWait(22, 0x1e6, 0x134);
-  /* FAKEMATCH(wrapper): Actor_ArmCallbackAndRefresh called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_FaceDirectionAndWait(22, 0xa000);
   Actor_SetSpeed(21, 0x26666, 0x13333);
   t244 = Actor_Get(21);
@@ -1663,21 +1429,13 @@ L_0200a47a:
   FieldEvent_Wait(1);
   t248 = Actor_Get(21);
   FIELD_AT(t248, u8, 90) |= 1;
-  /* FAKEMATCH(wrapper): Actor_ArmCallback called through call.h's Call3; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_FaceDirection(21, 0xe000, 0);
-  /* FAKEMATCH(wrapper): Actor_SetPositionAndReset called through call.h's
-   * Call3; as a direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_WalkToAndWait(22, 0x1ce, 0x118);
-  /* FAKEMATCH(wrapper): Actor_ArmCallbackAndRefresh called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_FaceDirectionAndWait(22, 0);
   FieldActor_SetSpritePriority(22, 1);
   Func_020053e4((Actor_Get(22)), (s32)gData_02006c20);
   Func_020053e4((Actor_Get(25)), (s32)gData_02006b70);
   FieldEvent_Wait(40);
-  /* FAKEMATCH(wrapper): Motion_SetModeAndWaitAnimation called through call.h's
-   * Call2; as a direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_SetAnimationAndWait(19, 4);
   Event_ShowMessage(19, 0);
   Event_PlaySound(78);
@@ -1712,7 +1470,7 @@ void Func_0200298c(s32 id) {
 /// The scene that opens with MsgWhatSTheMatter; either answer to its prompt
 /// steps the event's message number.
 void Func_020029ac(void) {
-  Func_0200560c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   System_Wait(1);
@@ -1921,7 +1679,7 @@ void Func_020029ac(void) {
   System_Wait(1);
   Event_SetFlag(0x17c);
   Event_SetFlag(0x144);
-  Func_02005614();
+  Event_End();
 }
 
 #include "field_event.h"
@@ -2014,7 +1772,7 @@ void Func_0200326c(void) {
   }
   if (effect != 0) {
     sprite = effect->sprite;
-    Func_0200556c(effect, gData_02006afc);
+    Actor_StartScript(effect, gData_02006afc);
     Actor_SetSpriteColor(effect, 1);
     effect->motionFlags = 0;
     angle = Random16Far() & 0xffff000;

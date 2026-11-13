@@ -101,14 +101,14 @@ extern u8 gData_02006e0e[];
 extern u8 gData_02006e0c[];
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_02004c20(void);
-void Func_02004c28(void);
+void Event_Start(void);
+void Event_End(void);
 s32 Func_02004c38(s32 a, s32 b, s32 c);
 void Func_02003654(s32 a, s32 b, s32 c);
 void Func_020036a8(void);
 void Func_020048f4(void);
 void Func_02003bb8(struct Actor *object, s32 value);
-void Func_02004aa8(const u8 *a, u8 *b);
+void Resource_DecodeType01(const u8 *a, u8 *b);
 s32 Resource_ResetEntry(u32 slot);
 u32 __umodsi3(u32 a, u32 b);
 
@@ -232,11 +232,11 @@ void Message_CloseFinishedWindows(void);
 void Func_02003bf0(void);
 void Func_020049bc(void);
 void Func_02004b28(void);
-void Func_02004ba8(s32 a, s32 b);
+void MessageArgument_Push(s32 a, s32 b);
 void Func_02004da8(void);
 void Func_02004db0(void);
 
-u8 *Func_020003f8(void) {
+u8 *Scene_GetPlacements(void) {
   switch (gMainRoutineWork.entrance) {
   case 64:
     return gData_02006500;
@@ -260,7 +260,7 @@ void Func_02000458(void) {
   gMainRoutineWork.renderMode = 8;
   if (Event_GetFlag(0x147)) {
     Func_02004da8();
-    Func_02004ba8(153, 4);
+    MessageArgument_Push(153, 4);
     Message_ShowCentered((s32)MsgBlank2, 4);
   }
   if (Actor_Get(FieldParty_GetLeaderActor()) != NULL)
@@ -326,8 +326,8 @@ void Func_0200050c(void) {
 s32 Func_02004d68(s32 owner);
 void Func_02004b18(struct Actor *object, s32 mode);
 void Func_02004b48(struct Actor *object);
-void Func_02004dc8(void);
-void Func_02004dc0(void);
+void Scene_ResolveInteractionResult(void);
+void Party_PlaySavedMusic(void);
 
 void Func_02000574(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -345,7 +345,7 @@ void Func_02000574(void) {
   distance = dx * dx + dz * dz;
   if (kind != 8 && distance > 255)
     return;
-  Func_02004c20();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   gMainRoutineWork.renderMode = 7;
   gMainRoutineWork.ownerOverride = 1;
@@ -370,9 +370,9 @@ void Func_02000574(void) {
   System_Wait(6);
   leader->terrainHeight = 0;
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
-  Func_02004dc8();
-  Func_02004dc0();
-  Func_02004c28();
+  Scene_ResolveInteractionResult();
+  Party_PlaySavedMusic();
+  Event_End();
   *(s16 *)work->unk15c = 0;
 #if TLA_PATCH_1
   work->exit = 0;
@@ -428,7 +428,7 @@ void Func_020006d0(void) {
   }
   if (blocked == 0) {
     Event_PlaySound(78);
-    Func_02004c20();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEffect_ScheduleRatioTransition(0x10000, 10);
     gMainRoutineWork.renderMode = 1;
@@ -456,9 +456,9 @@ void Func_020006d0(void) {
     Actor_WaitForMove(leader);
     Func_02004b18(leader, 6);
     System_Wait(6);
-    Func_02004c28();
-    Func_02004dc8();
-    Func_02004dc0();
+    Event_End();
+    Scene_ResolveInteractionResult();
+    Party_PlaySavedMusic();
     *(s16 *)work->unk15c = 0;
   }
 }
@@ -468,14 +468,14 @@ struct EventDestination {
   s16 scene;
 };
 
-void Func_02004c98(s32 actor, s32 target);
+void Actor_MoveToObject(s32 actor, s32 target);
 
 /// Back to the map: actor 8's position is kept in gMainRoutineWork.
 void Func_02000918(void) {
   struct EventDestination *work = Ram_HeapSlots->eventWork;
   struct Actor *leader = Actor_Get(8);
 
-  Func_02004c20();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (gMainRoutineWork.renderMode == 8)
     Func_0200050c();
@@ -516,11 +516,11 @@ void Func_02000994(void) {
     z = object->z;
     x >>= 20;
     z >>= 20;
-    Func_02004c20();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     if (Event_GetFlag(0x9b3)) {
       FieldEffect_ScheduleRatioTransition(0x16666, 6);
-      Func_02004c98(5, gMainRoutineWork.currentOwner);
+      Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
       System_Wait(1);
       Actor_WalkToAndWait(5, (x << 4) + 24, (z << 4) - 12);
       Actor_FaceDirection(5, southwest, 0);
@@ -538,7 +538,7 @@ void Func_02000994(void) {
       s32 besideZ;
 
       FieldEffect_ScheduleRatioTransition(0x16666, 6);
-      Func_02004c98(5, gMainRoutineWork.currentOwner);
+      Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
       System_Wait(1);
       x <<= 4;
       besideZ = (z << 4) - 12;
@@ -569,11 +569,11 @@ void Func_02000994(void) {
       FieldEffect_ScheduleRatioTransition(0x10000, 6);
     }
     System_Wait(8);
-    Func_02004c28();
+    Event_End();
   } else {
     struct EventDestination *work = Ram_HeapSlots->eventWork;
 
-    Func_02004c20();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Event_PlaySound(123);
     FieldEvent_SetExitRequest(work->scene);
@@ -585,7 +585,7 @@ void Func_02004d70(s32 value);
 void Func_02000be0(void) {
   u32 roll = (Random16Far() << 4) >> 16;
 
-  Func_02004c20();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered((s32)MsgGazedIntoThe, 1);
   if (roll == 0) {
@@ -632,15 +632,15 @@ void Func_02000be0(void) {
   } else {
     Message_ShowCentered((s32)MsgTheBoatS + (roll >> 1), 1);
   }
-  Func_02004c28();
+  Event_End();
 }
 
 void Func_02000d1c(void) {
-  Func_02004c20();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Value3((s32 (*)())Func_02004c38, 19, 0x198, -1) == 0)
     Event_ClearFlag(0xa77);
-  Func_02004c28();
+  Event_End();
 }
 
 void Func_02000d4c(void) {
@@ -684,9 +684,9 @@ void Func_02003490(void);
 void Func_02003960(void);
 void Func_02003d44(s32 mode);
 void Func_02004c00(void);
-void Func_02004d38(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 
-s32 Func_02000dc4(void) {
+s32 Scene_Initialize(void) {
   struct EventWork *work;
 
   if (GameFlag_Test(0x109) == 0 && GameFlag_Test(0x8de) != 0 &&
@@ -709,9 +709,6 @@ s32 Func_02000dc4(void) {
   FieldCamera_SetSpeed(0x80000, 0x10000);
   GameFlag_ClearBit(0x12f);
   Func_02003960();
-  /* FAKEMATCH(wrapper): the three Map_SetWindowCellTile calls forwarded through
-   * Call4, so each builds its own constants (the 256 is not shared); as direct
-   * calls, 12 of 270 instructions differ in tla-en. */
   if (GameFlag_Test(0x90f))
     Field_SetWorldMapWindowCellTile(0, 240, 336, 288);
   if (GameFlag_Test(0xa21)) {
@@ -738,9 +735,6 @@ s32 Func_02000dc4(void) {
     Func_02003490();
     break;
   case 59:
-    /* FAKEMATCH(wrapper): the flag test here and case 98's four sets forwarded
-     * through flag_call.h's Flag_IsSet and Flag_Set; as direct GameFlag_Test
-     * and GameFlag_SetBit calls, 75 of 270 instructions differ in tla-en. */
     if (!Event_GetFlag(0x90a) && GameFlag_Test(0xa5f) != 0) {
       GameFlag_SetBit(0x90a);
       Func_02001c5c();
@@ -781,7 +775,7 @@ s32 Func_02000dc4(void) {
     Event_ShowMessage(7, 0);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    Func_02004d38((s32)&SceneId_Ov6a5, 9);
+    Event_SetDestination((s32)&SceneId_Ov6a5, 9);
     break;
   case 98:
     gMainRoutineWork.ownerOverride = 1;
@@ -789,7 +783,7 @@ s32 Func_02000dc4(void) {
     Event_SetFlag(0x8df);
     Event_SetFlag(0x163);
     Event_SetFlag(0x11d);
-    Func_02004d38((s32)&SceneId_WorldMap, 61);
+    Event_SetDestination((s32)&SceneId_WorldMap, 61);
     break;
   case 99:
     GameFlag_SetBit(0x163);
@@ -800,7 +794,7 @@ s32 Func_02000dc4(void) {
 }
 
 void Menu_AnimateSelectionToEntry(s32 a, s32 b);
-void Func_02004d48(s32 a, s32 b);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Func_02004e00(void);
 void Func_02004e28(void);
 
@@ -839,7 +833,7 @@ void Func_020011fc(void) {
   Event_SetFlag(0x171);
   Func_02004e28();
   FieldEvent_Wait(30);
-  Func_02004d48(9, 5);
+  Field_RequestBattleFromEncounterTable(9, 5);
 }
 
 /// gMainRoutineWork.savedScene and savedEntrance as this script reads them.
@@ -863,7 +857,7 @@ struct SavedDestination {
 void Func_020012bc(s32 entrance) {
   s32 east, west, east74, eastB, westB;
 
-  Func_02004c20();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (entrance == 9) {
     west = 0xc000;
@@ -992,7 +986,7 @@ void Func_020012bc(s32 entrance) {
     }
     Func_02004db0();
     FieldCamera_MoveTo(-1, -1, -1, 0);
-    Func_02004d48(102, 3);
+    Field_RequestBattleFromEncounterTable(102, 3);
   } else if (entrance == 74) {
     Event_ClearFlag(0xa76);
     east74 = 0x4000;
@@ -1043,7 +1037,7 @@ void Func_020012bc(s32 entrance) {
     Actor_SetAnimationAndWait(20, 3);
     Event_Wait(10);
     Event_Wait(40);
-    Func_02004d38(((struct SavedDestination *)&gMainRoutineWork)->scene,
+    Event_SetDestination(((struct SavedDestination *)&gMainRoutineWork)->scene,
                   ((struct SavedDestination *)&gMainRoutineWork)->entrance);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   } else {
@@ -1182,7 +1176,7 @@ void Func_020012bc(s32 entrance) {
     Actor_SetPosition(23, 0, 0);
     Func_02004db0();
     Func_080d46a4(0x10000, 15);
-    Func_02004c28();
+    Event_End();
   }
 }
 
@@ -1209,7 +1203,7 @@ static __inline__ void Func_02004c90_(s32 actor, s32 x, s32 z, s32 angle) {
 void Func_02001c5c(void) {
   s32 angle;
 
-  Func_02004c20();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_Get(16)->motionFlags = 2;
   Actor_Get(17)->motionFlags = 2;
@@ -1260,7 +1254,7 @@ void Func_02001c5c(void) {
   Func_02004db0();
   FieldEvent_Wait(30);
   FieldEffect_ScheduleRatioTransition(0x10000, 6);
-  Func_02004c28();
+  Event_End();
 }
 
 void Party_RemoveActiveOwner(s32 owner);
@@ -1309,7 +1303,7 @@ void Func_02001e34(void) {
   if (flag == 0) {
     if (gInput.held & 64)
       Event_SetFlag(0x175);
-    Func_02004c20();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -1327,7 +1321,7 @@ void Func_02001e34(void) {
     owner = gMainRoutineWork.currentOwner;
     Func_02004bf8(1);
     Event_SetFlag(0x16e);
-    Func_02004c20();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Djinn_AddToOwner(owner, 0, 7);
     DjinnRecovery_AddStandby(owner, 0, 7);
@@ -1457,7 +1451,7 @@ void Func_02001e34(void) {
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgIMSo));
     Event_ShowMessageAndWait(9, 0);
   joined:
-    Func_02004ba8(0x133, 4);
+    MessageArgument_Push(0x133, 4);
     Sound_Play(81);
     FieldMessage_Show(TUTORIAL_MESSAGE(MsgTheVenusDjinni), 3);
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgTheVenusDjinni + 1));
@@ -1471,11 +1465,11 @@ void Func_02001e34(void) {
       Sound_Play(35);
     goto tutorial;
   }
-  Func_02004c20();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02004c98(9, owner);
+  Actor_MoveToObject(9, owner);
   djinni->velocityY = 0xa0000;
   SetMoveTarget(djinni, x, 0, z);
   Event_Wait(30);
@@ -1533,8 +1527,8 @@ refused:
   // leaves is shared by the first visit's stores of 0 and its reloads take
   // other registers (differ 26).
   Djinn_JoinParty(9, zero, 7);
-  Func_02004dc0();
-  Func_02004c28();
+  Party_PlaySavedMusic();
+  Event_End();
   Event_ClearFlag(0x16e);
   Event_ClearFlag(0x16f);
   Event_ClearFlag(0x171);
@@ -1542,7 +1536,7 @@ refused:
 
 extern const u8 gData_02006bc8[];
 
-void Func_02004b20(struct Actor *object, const u8 *script);
+void Actor_StartScript(struct Actor *object, const u8 *script);
 
 /// Spawns object 285 at a random spot with a random scale and starts its
 /// script.
@@ -1569,7 +1563,7 @@ void Func_02002594(void) {
     obj->scaleX = scale;
     obj->scaleY = scale;
     Func_02004b18(obj, 1);
-    Func_02004b20(obj, gData_02006bc8);
+    Actor_StartScript(obj, gData_02006bc8);
   }
 }
 
@@ -1724,7 +1718,7 @@ void Func_020028cc(void) {
   obj->motionFlags = leader->motionFlags;
   Actor_SetSpriteColor(obj, 9);
   Func_02004b18(obj, 2);
-  Func_02004b20(obj, gData_02004f10);
+  Actor_StartScript(obj, gData_02004f10);
 }
 
 #include "io_reg.h"
@@ -1736,7 +1730,7 @@ void Func_020029a4(void) {
 
   actor = Actor_Get(8);
   FieldEvent_Wait(60);
-  Func_02004c20();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEffect_ScheduleRatioTransition(0x9999, 1);
   actor->scaleX = 0x13333;
@@ -1766,7 +1760,7 @@ void Func_020029a4(void) {
 }
 
 void Func_020042e0(s32 mode);
-void Func_02004b40(void);
+void Map_UpdateCurrentTileBlock(void);
 
 struct RescueMap {
   u8 unk000[0x11c];
@@ -1779,7 +1773,7 @@ void Func_02002ab0(void) {
   struct RescueMap *map = (struct RescueMap *)Ram_HeapSlots->mapWork;
   s32 i;
 
-  Func_02004c20();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   WorldMap_SetWindowCellTileAndDraw(64, 176, 304, 240);
   WorldMap_SetWindowCellTileAndDraw(80, 176, 320, 240);
@@ -1837,7 +1831,7 @@ void Func_02002ab0(void) {
   map->unk11c = 0xe000;
   System_Wait(1);
   FieldCamera_MoveTo(0x0e470000, -1, 0x1dd00000, 0);
-  Func_02004b40();
+  Map_UpdateCurrentTileBlock();
   Actor_SetPosition(8, 0x0e6a0000, 0x1dc00000);
   Actor_SetPosition(9, 0x0e3e0000, 0x1dff0000);
   Actor_SetPosition(4, 0x0e550000, 0x1df00000);
@@ -1904,7 +1898,7 @@ void Func_02002e00(void) {
     wait(1);
   wait:;
   } while (gInput.held == 0);
-  Func_02004d38((s32)&SceneId_Ov667, 80);
+  Event_SetDestination((s32)&SceneId_Ov667, 80);
 }
 
 void Func_02002e78(void) {
@@ -1912,7 +1906,7 @@ void Func_02002e78(void) {
   s32 seen = Event_GetFlag(0x8de);
 
   if (seen == 0) {
-    Func_02004c20();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     scale = Actor_GetById(gMainRoutineWork.currentOwner)->scaleX;
     Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = 0;
@@ -1976,12 +1970,12 @@ void Func_02002e78(void) {
     Actor_SetPosition(9, 0, 0);
     Actor_SetPosition(5, 0, 0);
     Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = scale;
-    Func_02004c28();
+    Event_End();
   }
 }
 
 void Func_0200310c(void) {
-  Func_02004c20();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1998,7 +1992,7 @@ void Func_02003144(void) {
 
   if (GameFlag_Test(0x8df) == 0)
     return;
-  Func_02004c20();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_SetFlag(0xa78);
   Actor_MoveToAndWait(8, 0x1bf6, 0x2154);
@@ -2080,7 +2074,7 @@ void Func_02003144(void) {
   Event_ShowMessage(23, 0);
   FieldEvent_Wait(40);
   Event_ShowMessage(23, 0);
-  Func_02004dc0();
+  Party_PlaySavedMusic();
   Func_02004db0();
   i = 0;
   {
@@ -2095,7 +2089,7 @@ void Func_02003144(void) {
       goto restore;
   }
   Actor_SetPosition(23, 0, 0);
-  Func_02004c28();
+  Event_End();
 }
 
 s32 Func_02003418(struct Actor *object) {
@@ -2114,7 +2108,7 @@ void Func_0200343c(struct Actor *parent) {
     struct Actor *object = (FieldActor_Create(673, x, y, z));
 
     if (object != NULL) {
-      Func_02004b20(object, gData_02004f70);
+      Actor_StartScript(object, gData_02004f70);
       Func_02004b18(object, 1);
       Actor_SetSingleChildFlags(object, 0);
       object->motionFlags = 0;
@@ -2132,7 +2126,7 @@ static __inline__ void Actor_SetPositionAndCommit_(s32 actor, s32 x,
 }
 
 void Func_02003490(void) {
-  Func_02004c20();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
@@ -2157,7 +2151,7 @@ void Func_02003490(void) {
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14257, 8720);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02004c28();
+  Event_End();
   FieldEvent_SetExitRequest(78);
 }
 

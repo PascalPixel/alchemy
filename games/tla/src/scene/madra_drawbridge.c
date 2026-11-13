@@ -27,12 +27,12 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_020002b8(void);
-void Func_020002c0(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02000338(void);
 
 void Func_02000054(void) {
-  Func_020002b8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgMadraGoingToOsenia);
   FieldMessage_ShowAtActor(8, 0);
@@ -43,14 +43,14 @@ void Func_02000054(void) {
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Event_ShowMessageThenWait(8, 0, 2);
   }
-  Func_020002c0();
+  Event_End();
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 void Func_020000c8(void) {
   if (Event_GetFlag(0x200) == 0) {
-    Func_020002b8();
+    Event_Start();
     Event_ResolvePendingActions(0);
     if (Event_GetFlag(0x301) == 0) {
       Camera_SetSpeedParameters(0x18000, 0x3000);
@@ -79,13 +79,13 @@ void Func_020000c8(void) {
       Motion_SetModeAndWaitAnimation(9, 3);
       Event_ShowMessageAndWait(9, 0);
       GameFlag_SetBit(0x301);
-      Func_020002c0();
+      Event_End();
     }
   }
 }
 
 void Func_02000224(void) {
-  Func_020002b8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgMadraHeardAboutYou);
   Camera_MoveWithinMapBounds(PIXELS(164), -1, PIXELS(260), 1);
@@ -95,10 +95,10 @@ void Func_02000224(void) {
   Motion_SetModeAndWaitAnimation(9, 3);
   Event_ShowMessageAndWait(9, 0);
   GameFlag_SetBit(0x916);
-  Func_020002c0();
+  Event_End();
 }
 
-s32 Func_02000280(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
   return 0;
 }
@@ -124,17 +124,17 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {2, 10, 0x913, EVENT(Func_020000c8)},
-    {2, 10, 0x916, EVENT(Func_02000224)},
-    {0, 8, 0x913, EVENT(Func_02000054)},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgMadraMikasallaVillage)},
-    {0, 9, 0x913, MSGNO(MsgMadraCanCrossWithPermission)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgMadraAvoidYampiDesert)},
-    {0x8d15, 8, 0x913, MSGNO(MsgMadraForTheirSafety)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgMadraWouldNeedBoat)},
-    {0x8d15, 9, 0x913, MSGNO(MsgMadraElderReturn)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgMadraRatherStayHome)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_STEP, 10, 0x913, EVENT(Func_020000c8)},
+    {TRIGGER_STEP, 10, 0x916, EVENT(Func_02000224)},
+    {TRIGGER_TALK, 8, 0x913, EVENT(Func_02000054)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraMikasallaVillage)},
+    {TRIGGER_TALK, 9, 0x913, MSGNO(MsgMadraCanCrossWithPermission)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraAvoidYampiDesert)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x913, MSGNO(MsgMadraForTheirSafety)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraWouldNeedBoat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x913, MSGNO(MsgMadraElderReturn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraRatherStayHome)},
     {TRIGGERS_END},
 };

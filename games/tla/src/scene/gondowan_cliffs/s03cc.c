@@ -31,8 +31,8 @@ void Func_020003dc(struct Actor *object, s32 height) {
 #include "field_sprite.h"
 #include "system/field_effect.h"
 
-void Func_0200120c(void);
-void Func_02001214(void);
+void Event_Start(void);
+void Event_End(void);
 s32 Math_Cosine(s32 angle);
 void Func_020001ec(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -47,7 +47,7 @@ void Func_020003f8(s32 unk0, s32 id) {
 
   if (actor->x >> 20 != 76)
     return;
-  Func_0200120c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
   if (Actor_GetById(15)->x >> 20 == 76) {
@@ -92,7 +92,7 @@ void Func_020003f8(s32 unk0, s32 id) {
     Actor_GetById(15)->priorityFlags |= 2;
     Event_SetFlag(0x884);
   }
-  Func_02001214();
+  Event_End();
 }
 
 #include "scene_tables.h"
@@ -159,13 +159,13 @@ void Func_02000660(void) {
   if ((position.x >> 20) == 119 && (position.z >> 20) == 45) {
     FIELD_AT(Ram_HeapSlots->eventWork, u16, 346) = 1;
   } else {
-    Func_0200120c();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_FaceEachOther(16, gMainRoutineWork.currentOwner, 0);
     FieldEvent_SetMessageId((s32)MsgRrruffRrruff2);
     Event_ShowMessage(16, 0);
     Actor_FaceDirection(16, FACING_WEST, 0);
-    Func_02001214();
+    Event_End();
   }
 }
 
@@ -179,7 +179,7 @@ void Func_020006f4(s32 unused, s32 id) {
   Event_SetFlag(0x8e6);
 }
 
-const u8 *Func_0200070c(void) {
+const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov66bRoom2)
     return gData_020019c0;
   return gData_020019f0;
@@ -207,7 +207,7 @@ void Func_02000738(void) {
 #include "iwram_call.h"
 #include "call.h"
 
-void Func_020012b4(s32, s32);
+void Event_SetDestination(s32, s32);
 void Func_020012fc(void);
 void Func_02001304(s32 a, s32 b, s32 c);
 
@@ -215,7 +215,7 @@ void Func_02000768(void) {
   if (gMainRoutineWork.entrance == 99) {
     gMainRoutineWork.renderMode = 7;
     gMainRoutineWork.ownerOverride = 1;
-    Func_020012b4((s32)&SceneId_Ov66bRoom2, 1);
+    Event_SetDestination((s32)&SceneId_Ov66bRoom2, 1);
   }
   Func_020012fc();
   Value3((s32 (*)())Func_02001304, 0, 9, 10);
@@ -223,7 +223,7 @@ void Func_02000768(void) {
   Task_AddFrame(Func_02000738, 0x480);
 }
 
-void Func_02001254(s32 actor, s32 target);
+void Actor_MoveToObject(s32 actor, s32 target);
 
 static inline void GondowanCliffs_ObjWalk(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): the call through this inline; as direct calls to
@@ -239,19 +239,19 @@ static inline void GondowanCliffs_Jump(s32 actor, s32 height, s32 frames) {
 /// The scene that asks where the party intends to go, to help recover the black
 /// orb.
 void Func_020007d8(void) {
-  Func_0200120c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 552, 488);
-  Func_02001254(5, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
   FieldActor_WatchAndSetScript(5, gMainRoutineWork.currentOwner);
   GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 568, 480);
   FieldActor_WatchAndSetScript(6, gMainRoutineWork.currentOwner);
-  Func_02001254(6, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
   GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 584, 472);
   FieldActor_WatchAndSetScript(22, gMainRoutineWork.currentOwner);
-  Func_02001254(22, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(22, gMainRoutineWork.currentOwner);
   GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 608, 472);
   FieldEvent_SetMessageId((s32)MsgWhereDoYou);
   GondowanCliffs_Jump(22, 258, 20);
@@ -307,7 +307,7 @@ struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
 /// (Func_02001068) and places it by flag 0x886, sets actor 16's mode, places
 /// actor 15 by flag 0x884, saves four palette colours, schedules Func_02000738
 /// and sets BG layer priority. Returns 0.
-s32 Func_02000988(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 height;
 
@@ -371,7 +371,7 @@ done:
 
 extern const u8 gData_02001ac8[];
 
-s32 Func_02000bb4(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov66bRoom1)
     FIELD_AT(Ram_HeapSlots->mapWork, const u8 *, 252) = gData_02001ac8;
   return 0;
@@ -607,7 +607,7 @@ struct GondowanCliffsWork {
 extern const u8 gField_Tiles64D[];
 
 void *Heap_AllocEwram(s32 size);
-void Func_02001184(const void *source, void *destination);
+void Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void Heap_Release(void *block);
 
@@ -619,7 +619,7 @@ void Func_02000fcc(s32 unused, s32 value) {
   if (!Event_GetFlag(0x109))
     Call2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
-  Func_02001184(gField_Tiles64D, buffer);
+  Resource_DecodeType01(gField_Tiles64D, buffer);
   work->entry = Resource_FindFreeEntry();
   Vram_Load(work->entry, 0x800, buffer);
   Heap_Release(buffer);

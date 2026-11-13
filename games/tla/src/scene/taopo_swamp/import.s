@@ -58,17 +58,17 @@ Animation_ApplyChildArgument:
 	.thumb_func
 Func_020027f8:
 	overlay_veneer Actor_SetMode
-	.global Func_02002800
+	.global Actor_StartScript
 	.thumb_func
-Func_02002800:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02002810
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_02002810:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -78,9 +78,9 @@ Actor_SetMoveTarget:
 	.thumb_func
 Script_WaitForEventTimeout:
 	overlay_veneer Actor_CommitPosition
-	.global Func_02002828
+	.global DisplayBlend_EnableRunScript
 	.thumb_func
-Func_02002828:
+DisplayBlend_EnableRunScript:
 	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.global Map_GetTerrainHeight
 	.thumb_func
@@ -122,9 +122,9 @@ Map_WaitForShakeToSettle:
 	.thumb_func
 Animation_ApplyChildValuesToRecord:
 	overlay_veneer Animation_ApplyChildValuesToRecordFar
-	.global Func_02002880
+	.global Actor_SetSpritePriorityDirect
 	.thumb_func
-Func_02002880:
+Actor_SetSpritePriorityDirect:
 	overlay_veneer Actor_SetSpritePriorityDirectFar
 	.global Animation_ApplyChildValue
 	.thumb_func
@@ -134,13 +134,13 @@ Animation_ApplyChildValue:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02002898
+	.global Event_Start
 	.thumb_func
-Func_02002898:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020028a0
+	.global Event_End
 	.thumb_func
-Func_020028a0:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -170,9 +170,9 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_SetModeById:
 	overlay_veneer Actor_SetModeByIdFar
-	.global Func_020028e0
+	.global Actor_JumpDownLedge
 	.thumb_func
-Func_020028e0:
+Actor_JumpDownLedge:
 	overlay_veneer Actor_JumpDownLedgeFar
 	.global Actor_SetAngleToward
 	.thumb_func
@@ -214,9 +214,9 @@ Func_02002928:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02002938
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_02002938:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_080d2b4c
 	.thumb_func
@@ -232,9 +232,9 @@ Func_02002948:
 	.thumb_func
 Actor_SetWideSprite:
 	overlay_veneer Actor_SetWideSpriteFar
-	.global Func_02002958
+	.global Actor_ReturnHome
 	.thumb_func
-Func_02002958:
+Actor_ReturnHome:
 	overlay_veneer Actor_ReturnHomeFar
 	.global Func_02002960
 	.thumb_func

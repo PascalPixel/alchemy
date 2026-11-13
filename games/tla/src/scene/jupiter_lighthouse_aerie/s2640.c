@@ -9,11 +9,11 @@
 #include "event_inline.h"
 #include "jupiter_lighthouse_aerie.h"
 
-void Func_02002a88(void);
+void Event_Start(void);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotion(union FieldObject *object);
 
-void Func_02002a90(void);
+void Event_End(void);
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
@@ -28,10 +28,10 @@ void Func_02002640(void) {
   u32 i;
   struct EffectOptions options;
 
-  Func_02002a88();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   CamBounds(-1, -1, -1, 0);
-  Func_02002a18();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = 0x820000;
   actor->gravity = 0x8000;
@@ -74,7 +74,7 @@ void Func_02002640(void) {
   actor->bounce = 0x4000;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Func_02002a90();
+  Event_End();
 }
 
 s32 Func_020027d8(void) {
@@ -123,7 +123,7 @@ void Func_02002888(s32 dx, s32 dz, s32 value) {
     shadow = *(struct Actor **)(event + 460);
     shadow->x = object->x;
     shadow->z = object->z;
-    Func_02002a18();
+    Map_CenterOnFollowedPoint();
     Func_02002640();
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = value;
   }
@@ -206,14 +206,14 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {0x10008c15, 13, CONDITION_ALWAYS, EVENT(Func_02000314)},
-    {0x8c15, 13, CONDITION_ALWAYS, EVENT(Func_0200032c)},
-    {0x10008c15, 14, CONDITION_ALWAYS, EVENT(Func_02000314)},
-    {0x8c15, 14, CONDITION_ALWAYS, EVENT(Func_0200032c)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13, CONDITION_ALWAYS, EVENT(Func_02000314)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT(Func_0200032c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 14, CONDITION_ALWAYS, EVENT(Func_02000314)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT(Func_0200032c)},
     {8, -1, CONDITION_ALWAYS, EVENT(Func_02000314)},
     {9, -1, CONDITION_ALWAYS, EVENT(Func_0200032c)},
     {TRIGGERS_END},

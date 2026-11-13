@@ -26,24 +26,24 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 #include "text/msg_ids.h"
 #include "event_inline.h"
 
-void Func_020010e0(void);
-void Func_020010e8(void);
+void Event_Start(void);
+void Event_End(void);
 
 s32 Func_02000054(void) {
-  Func_020010e0();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgTheItemsThat);
   Event_ShowMessage(10, 0);
-  Func_020010e8();
+  Event_End();
   return 0;
 }
 
 s32 Func_0200007c(void) {
-  Func_020010e0();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgItemsPlacedBefore);
   Event_ShowMessage(10, 0);
-  Func_020010e8();
+  Event_End();
   return 0;
 }
 
@@ -56,7 +56,7 @@ extern struct Trigger gData_020014c0[];
 void Func_02001190(s32 slot, s32 actor);
 void Func_02001198(s32 slot, s32 actor);
 
-const struct Trigger *Func_020000a4(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (Event_GetFlag(0x8ff))
     return gData_020014c0;
   return gData_02001370;
@@ -68,11 +68,11 @@ void Func_020000c4(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02001190(14, actor);
   } else {
-    Func_020010e0();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgIfYouAre);
     Event_ShowMessage(actor, 0);
-    Func_020010e8();
+    Event_End();
   }
 }
 
@@ -82,11 +82,11 @@ void Func_02000124(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02001190(14, actor);
   } else {
-    Func_020010e0();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgWheneverIGet);
     Event_ShowMessage(actor, 0);
-    Func_020010e8();
+    Event_End();
   }
 }
 
@@ -96,11 +96,11 @@ void Func_02000184(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02001190(15, actor);
   } else {
-    Func_020010e0();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgYouShouldVisit);
     Event_ShowMessage(actor, 0);
-    Func_020010e8();
+    Event_End();
   }
 }
 
@@ -110,11 +110,11 @@ void Func_020001e4(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02001190(15, actor);
   } else {
-    Func_020010e0();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgIfYouWish);
     Event_ShowMessage(actor, 0);
-    Func_020010e8();
+    Event_End();
   }
 }
 
@@ -124,11 +124,11 @@ void Func_02000244(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02001198(5, actor);
   } else {
-    Func_020010e0();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgOurCookingIs);
     Event_ShowMessage(actor, 0);
-    Func_020010e8();
+    Event_End();
   }
 }
 
@@ -138,11 +138,11 @@ void Func_020002a4(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02001198(5, actor);
   } else {
-    Func_020010e0();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgISeeSo);
     Event_ShowMessage(actor, 0);
-    Func_020010e8();
+    Event_End();
   }
 }
 
@@ -151,7 +151,7 @@ void Func_02000390(void);
 void Func_02000304(void) {
   u8 *message;
 
-  Func_020010e0();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   message = MsgIAmA;
   FieldEvent_SetMessageId((s32)message);
@@ -162,18 +162,18 @@ void Func_02000304(void) {
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
       if ((u32)gMainRoutineWork.coins > 19) {
         Func_02000390();
-        Func_020010e8();
+        Event_End();
       } else {
         FieldEvent_SetMessageId((s32)(message + 4));
         Event_ShowMessage(10, 0);
-        Func_020010e8();
+        Event_End();
       }
       return;
     }
   }
   FieldEvent_SetMessageId((s32)MsgThenStandBack);
   Event_ShowMessage(10, 0);
-  Func_020010e8();
+  Event_End();
 }
 
 #include "version.h"
@@ -181,7 +181,7 @@ void Func_02000304(void) {
 s32 Func_020011a0(s32 *unit, s32 *slot);
 void *Unit_Get(s32 owner);
 const u8 *Func_020010b8(s32 item);
-void Func_020010b0(s32 item, s32 a);
+void MessageArgument_Push(s32 item, s32 a);
 void Func_02000920(void);
 void Func_020007b4(void);
 void Func_02000760(void);
@@ -237,11 +237,9 @@ ask:
   unitData = Unit_Get(unit);
   Func_020010b8(unitData->items[slot]);
   Actor_SetItemIcon(Actor_Get(18), unitData->items[slot]);
-  /* FAKEMATCH(wrapper): Actor_SetHorizontalPositionWithTerrain called through
-   * Call3; as a direct call, 70 of 376 instructions differ in tla-en. */
   Actor_SetPosition(18, 0x2a00000, 0x680000);
   FieldEvent_Wait(60);
-  Func_020010b0(unitData->items[slot], 2);
+  MessageArgument_Push(unitData->items[slot], 2);
   Message_ShowCentered(MsgPlacedOnThe, 1);
   message = MsgAreYouPrepared;
   FieldEvent_SetMessageId(message);
@@ -249,7 +247,7 @@ ask:
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) != 1)
     goto read;
   Actor_SetPosition(18, 0, 0);
-  Func_020010b0(unitData->items[slot], 2);
+  MessageArgument_Push(unitData->items[slot], 2);
   Message_ShowCentered(message + 1, 1);
   FieldEvent_SetMessageId(message + 2);
   Event_OpenMessage(10, 0);
@@ -261,8 +259,6 @@ ask:
 read:
   FieldEvent_SetMessageId(message + 4);
   Event_ShowMessage(10, 0);
-  /* FAKEMATCH(wrapper): BattleEffect_ApplyColorToSourceBuffer called through
-   * Call2; as a direct call, 59 of 376 instructions differ in tla-en. */
   PaletteFade_ApplySource(0x10000, 0);
   FieldEvent_Wait(30);
   PaletteFade_ApplyTarget(0x40250d, 1);
@@ -271,8 +267,6 @@ read:
   Event_PlaySound(11);
   Actor_SetAnimation(10, 5);
   Actor_WaitForAnimationChange(10);
-  /* FAKEMATCH(wrapper): DANCE_TO calls through Call3 at its five sites; as a
-   * direct call, 67 of 376 instructions differ in tla-en. */
   DANCE_TO(664);
   FieldEvent_Wait(30);
   DANCE_TO(680);
@@ -289,16 +283,12 @@ read:
   Event_PlaySound(11);
   PaletteFade_ApplyTarget(0x10000, 1);
   PaletteFade_Interpolate(30);
-  /* FAKEMATCH(wrapper): Actor_SetHorizontalPositionWithTerrain called through
-   * Call3; as a direct call, 62 of 376 instructions differ in tla-en. */
   Actor_SetPosition(20, 0x2a00000, 0x680000);
   Event_PlaySound(0x90);
   Actor_SetAnimation(20, 2);
   Actor_WaitForAnimationChange(20);
   Actor_SetPosition(20, 0, 0);
   FieldEvent_Wait(4);
-  /* FAKEMATCH(wrapper): Actor_SetHorizontalPositionWithTerrain called through
-   * Call3; as a direct call, 2 of 376 instructions differ in tla-en. */
   Actor_SetPosition(19, 0x2a00000, 0x680000);
   Actor_SetAnimation(19, 4);
   Actor_WaitForAnimationChange(19);
@@ -345,7 +335,7 @@ read:
   Party_AdjustCoins(-20);
 }
 
-s32 Func_020010d0(s32 item);
+s32 Party_FindOwnerWithAction(s32 item);
 s32 Func_0200097c(void);
 s32 Func_020009a4(void);
 s32 Func_020009f8(void);
@@ -483,11 +473,11 @@ s32 Func_0200097c(void) {
 }
 
 s32 Func_020009a4(void) {
-  if (Func_020010d0(144) == -1)
+  if (Party_FindOwnerWithAction(144) == -1)
     return 3;
-  if (Func_020010d0(139) == -1)
+  if (Party_FindOwnerWithAction(139) == -1)
     return 4;
-  if (Func_020010d0(138) == -1)
+  if (Party_FindOwnerWithAction(138) == -1)
     return 5;
   if (FieldPartyInventory_FindOwner(213) == -1)
     return 6;
@@ -768,7 +758,7 @@ u8 *Func_02000c04(void) {
 
 void Func_02001158(s32 id);
 
-s32 Func_02000f28(void) {
+s32 Scene_Initialize(void) {
   struct Actor *object;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
@@ -851,63 +841,63 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gData_02001370[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgTheFortuneTeller)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgWeReA)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgIfYouDesire)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgMyFatherIs)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgByPaintingOur)},
-    {0, 13, CONDITION_ALWAYS, EVENT(Func_020000c4)},
-    {0, 14, CONDITION_ALWAYS, EVENT(Func_02000184)},
-    {0, 15, CONDITION_ALWAYS, MSGNO(MsgIfYouLike)},
-    {0, 16, CONDITION_ALWAYS, EVENT(Func_02000244)},
-    {0, 17, CONDITION_ALWAYS, EVENT(Func_02000304)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgTheFortuneTellerIn)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgAsLongAs)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgTheItemsThat)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgMyFatherMay)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgBodyPaintingAlso)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgICanLook)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgWheneverIGetMy)},
-    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgTheRiverIs)},
-    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgOurSpicesAre)},
-    {0x8d15, 17, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTheFortuneTeller)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgWeReA)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgIfYouDesire)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgMyFatherIs)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgByPaintingOur)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_020000c4)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_02000184)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgIfYouLike)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_02000244)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_02000304)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTheFortuneTellerIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgAsLongAs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTheItemsThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgMyFatherMay)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBodyPaintingAlso)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgICanLook)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgWheneverIGetMy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTheRiverIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgOurSpicesAre)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(Func_02000054)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_020014c0[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgIGuessThose)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgOurFortuneTeller)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgIfYouDesire)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgIfTroubleResides)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgReadingFortunesIn)},
-    {0, 13, CONDITION_ALWAYS, EVENT(Func_02000124)},
-    {0, 14, CONDITION_ALWAYS, EVENT(Func_020001e4)},
-    {0, 15, CONDITION_ALWAYS, MSGNO(MsgIfIsTraveling)},
-    {0, 16, CONDITION_ALWAYS, EVENT(Func_020002a4)},
-    {0, 17, CONDITION_ALWAYS, EVENT(Func_02000304)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgThePowerOf)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgTheFortuneTellerSaid)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgItemsPlacedBefore)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgFatherShouldCharge)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgAfterFatherS)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgWhenILook)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgILikeOffering)},
-    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgHePaidMe)},
-    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgWhyWouldTravel)},
-    {0x8d15, 17, CONDITION_ALWAYS, EVENT(Func_0200007c)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgIGuessThose)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgOurFortuneTeller)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgIfYouDesire)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgIfTroubleResides)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgReadingFortunesIn)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_02000124)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_020001e4)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgIfIsTraveling)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_020002a4)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_02000304)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgThePowerOf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTheFortuneTellerSaid)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgItemsPlacedBefore)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFatherShouldCharge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgAfterFatherS)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgWhenILook)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgILikeOffering)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgHePaidMe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgWhyWouldTravel)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(Func_0200007c)},
     {TRIGGERS_END},
 };

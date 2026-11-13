@@ -34,20 +34,13 @@ void Func_02001190(s32 a, s32 b);
 void Func_020024ac(void);
 void Func_02004934(s32 a, s32 b, s32 owner);
 void Func_02004c98(struct Actor *object, s32 a);
-void Func_02004ca0(struct Actor *object, const void *data);
+void Actor_StartScript(struct Actor *object, const void *data);
 void Func_02004df8(s32 id);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(kind, x, y, z);
-}
-
-static __inline__ void Actor_ResetAndSetPositionInMode2_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarding through the inline sets x between the two
-   * halves of z, as the native does (a direct call builds z whole first); as a
-   * direct call, 2 of 77 instructions of Func_020023e8 differ in tla-en. */
-  Actor_ResetAndSetPositionInMode2(id, x, z);
 }
 
 #endif

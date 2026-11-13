@@ -42,9 +42,9 @@ Func_02001d30:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Func_02001d40
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_02001d40:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -58,9 +58,9 @@ Script_WaitForEventTimeout:
 	.thumb_func
 Map_CopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
-	.global Func_02001d60
+	.global DisplayBlend_EnableRunScript
 	.thumb_func
-Func_02001d60:
+DisplayBlend_EnableRunScript:
 	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
@@ -94,9 +94,9 @@ Event_Wait:
 	.thumb_func
 Func_02001da0:
 	overlay_veneer Event_StartFar
-	.global Func_02001da8
+	.global Event_End
 	.thumb_func
-Func_02001da8:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
@@ -154,9 +154,9 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_SetHorizontalPositionAndAngleWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionAndAngleWithTerrainFar
-	.global Func_02001e20
+	.global Actor_MoveToObject
 	.thumb_func
-Func_02001e20:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -258,9 +258,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02001ef0
+	.global Party_PlaySavedMusic
 	.thumb_func
-Func_02001ef0:
+Party_PlaySavedMusic:
 	overlay_veneer Party_PlaySavedMusicFar
 	.global Actor_WatchAndSetScript
 	.thumb_func

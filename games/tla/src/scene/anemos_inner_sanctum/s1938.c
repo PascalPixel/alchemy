@@ -38,8 +38,8 @@ void Func_02001938(void) {
 #include "io_reg.h"
 
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
-void Func_02003398(void);
-void Func_020033a0(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_020032f8(struct Actor *object);
 
 struct SpriteView {
@@ -68,7 +68,7 @@ void Func_020019a8(void) {
   position[2] = (object->z & 0xfff00000) + 0x80000;
   object->acceleration = 0x10000;
   object->speedLimit = 0x10000;
-  Func_02003398();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_SetMoveTarget(object, position[0], 0, position[2]);
   effect =
@@ -88,7 +88,7 @@ void Func_020019a8(void) {
   object->z = 0;
   Actor_SetPosition(8, 0, 0);
   Func_020032f8(effect);
-  Func_020033a0();
+  Event_End();
 }
 
 void Func_02003380(s32 x, s32 z, s32 a, s32 b);
@@ -122,13 +122,13 @@ void Func_02001a94(void) {
     Event_SetFlag(0x303);
     column = 53;
   }
-  Func_02003398();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   target[0] = (object->x & 0xfff00000) + 0x80000;
   target[2] = (object->z & 0xfff00000) + 0x80000;
   object->acceleration = 0x10000;
   object->speedLimit = 0x10000;
-  Func_02003398();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_SetMoveTarget(object, target[0], 0, target[2]);
   Actor_WaitForMove(object);
@@ -138,7 +138,7 @@ void Func_02001a94(void) {
   MapGrid_CopyCellsTo(18, 7, column, 4, 1, 2);
   System_Wait(5);
   Func_02003380(column << 20, 0x580000, 0, 0);
-  Func_020033a0();
+  Event_End();
 }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -151,7 +151,7 @@ void Func_02001a94(void) {
 extern u8 MsgSummonInheritedEarthDarkness[];
 
 void Func_02001b88(void) {
-  Func_02003398();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x10003, 1);
@@ -162,7 +162,7 @@ void Func_02001b88(void) {
   PaletteFade_Interpolate(0x3c);
   FieldEvent_Wait(60);
   Event_SetFlag(0xa8c);
-  Func_020033a0();
+  Event_End();
 }
 
 extern char SceneId_Ov6B0Room1;
@@ -177,7 +177,7 @@ extern const u8 gData_02003fac[];
 extern const u8 gData_02004150[];
 extern const u8 gData_020042c4[];
 
-const u8 *Func_02001bec(void) {
+const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room1)
     return gData_02003dcc;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room2)
@@ -199,7 +199,7 @@ struct MainRoutineWork2c2 {
 };
 
 void Func_020000f4(void);
-void Func_02003448(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 void Func_020034b0(void);
 
 void Func_02001c60(void) {
@@ -211,7 +211,7 @@ void Func_02001c60(void) {
 
     party->value = 2;
   }
-  Func_02003448((s32)&SceneId_Ov694Room1, 99);
+  Event_SetDestination((s32)&SceneId_Ov694Room1, 99);
   FieldEvent_Wait(40);
   Func_02000158();
 }
@@ -246,7 +246,7 @@ void Func_02001c94(void) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
   s32 i;
 
-  Func_02003398();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   // A goto loop, as in overlay 6a6's Func_02000e54 (its twin): it carries no
   // loop notes.
@@ -277,7 +277,7 @@ loop:
   FieldEvent_SetExitRequest(work->value);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_020033a0();
+  Event_End();
 }
 
 #include "scene_tables.h"
@@ -291,7 +291,7 @@ static __inline__ void Func_020033e0_(s32 id, s32 x, s32 z) {
 void Func_02001d68(void) {
   struct Actor *object = Actor_Get(9);
 
-  Func_02003398();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(9, 2);
   object->y = -0x400000;
@@ -304,13 +304,13 @@ void Func_02001d68(void) {
   FieldActor_SetMoveTarget(object, object->x, object->y + 0x300000, object->z);
   Actor_WaitForMove(object);
   Event_SetFlag(0x300);
-  Func_020033a0();
+  Event_End();
 }
 
 void Func_02001df4(void) {
   struct Actor *object = Actor_Get(11);
 
-  Func_02003398();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->motionFlags = 0;
   object->y = -0x400000;
@@ -321,7 +321,7 @@ void Func_02001df4(void) {
   FieldActor_SetMoveTarget(object, object->x, object->y + 0x300000, object->z);
   Actor_WaitForMove(object);
   Event_SetFlag(0x304);
-  Func_020033a0();
+  Event_End();
 }
 
 #include "call.h"
@@ -338,7 +338,7 @@ extern u8 gData_0200385c[];
 extern u8 gData_02003888[];
 extern u8 gData_020038b4[];
 
-s32 Func_02001e64(void) {
+s32 Scene_Initialize(void) {
   s32 v_r1, v_r6, v_r7, v_r2, v_r5, v_r3, v_r0, t0, t1, t3;
   s32 t6, t9, t12, t15, t27;
   s32 t30, t35, t36, t38, t42;

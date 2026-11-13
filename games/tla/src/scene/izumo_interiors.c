@@ -65,8 +65,8 @@ extern struct Trigger gData_02002f78[];
 extern struct Trigger gData_02003164[];
 extern struct Trigger gData_0200323c[];
 
-void Func_020021c4(void);
-void Func_020021cc(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02002304(s32 slot, s32 actor);
 void Func_0200230c(s32 actor);
 void Func_02002314(s32 slot, s32 actor);
@@ -76,7 +76,7 @@ static inline void LeaderAnimate(s32 animation, s32 frames) {
   Func_080d47b4(gMainRoutineWork.currentOwner, animation, frames);
 }
 
-const struct ActorPlacement *Func_020000b4(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (GameFlag_Test(0x927))
     return gData_02002d80;
   if (gMainRoutineWork.entrance == 7)
@@ -84,7 +84,7 @@ const struct ActorPlacement *Func_020000b4(void) {
   return gData_02002b40;
 }
 
-const struct Trigger *Func_020000f0(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (GameFlag_Test(0x927))
     return gData_0200323c;
   if (gMainRoutineWork.entrance == 7)
@@ -98,7 +98,7 @@ void Func_0200012c(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_0200230c(actor);
   } else {
-    Func_020021c4();
+    Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Test(0x927)) {
       Event_SetMessageId((s32)MsgNowThatPeace);
@@ -107,7 +107,7 @@ void Func_0200012c(s32 actor) {
       Event_SetMessageId((s32)MsgWhyWouldOur);
       Event_ShowMessageAndWait(22, 0);
     }
-    Func_020021cc();
+    Event_End();
   }
 }
 
@@ -117,14 +117,14 @@ void Func_020001a8(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02002314(9, actor);
   } else {
-    Func_020021c4();
+    Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Test(0x927))
       Event_SetMessageId((s32)MsgBriggsFromChampa);
     else
       Event_SetMessageId((s32)MsgOfCourseI);
     Event_ShowMessageAndWait(actor, 0);
-    Func_020021cc();
+    Event_End();
   }
 }
 
@@ -134,19 +134,19 @@ void Func_02000220(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02002304(24, actor);
   } else {
-    Func_020021c4();
+    Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Test(0x927))
       Event_SetMessageId((s32)MsgYouMustSee);
     else
       Event_SetMessageId((s32)MsgIzumoSLeaders);
     Event_ShowMessageAndWait(actor, 0);
-    Func_020021cc();
+    Event_End();
   }
 }
 
 void Func_02000298(void) {
-  Func_020021c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (!Event_GetFlag(0x922)) {
     Event_SetMessageId((s32)MsgSusaSNot);
@@ -170,7 +170,7 @@ void Func_02000298(void) {
   Event_Wait(60);
   Event_SetMessageId((s32)MsgIfTheSerpent);
   Event_ShowMessageAndWait(8, 0);
-  Func_020021cc();
+  Event_End();
 }
 
 void Func_02000358(void) {
@@ -182,7 +182,7 @@ void Func_02000358(void) {
 void Func_02000378(void) {
   void *work = Ram_HeapSlots->eventWork;
 
-  Func_020021c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
   if (GameFlag_Test(0x92c)) {
@@ -195,13 +195,13 @@ void Func_02000378(void) {
       FIELD_AT(work, u16, 346) = 1;
   }
   Actor_FaceDirection(15, FACING_SOUTH, 0);
-  Func_020021cc();
+  Event_End();
 }
 
 void Func_02000400(void) {
   s32 msg;
 
-  Func_020021c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgTheyVeBeen;
   Event_SetMessageId(msg);
@@ -214,11 +214,11 @@ void Func_02000400(void) {
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessageAndWait(16, 0);
-  Func_020021cc();
+  Event_End();
 }
 
 void Func_02000458(void) {
-  Func_020021c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
   if (Event_GetFlag(0x92b)) {
@@ -239,11 +239,11 @@ void Func_02000458(void) {
     GameFlag_SetBit(0x92b);
   }
   Actor_FaceDirection(15, FACING_SOUTH, 0);
-  Func_020021cc();
+  Event_End();
 }
 
 s32 Func_0200051c(void) {
-  Func_020021c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (!Event_GetFlag(0x925)) {
     Event_SetMessageId((s32)MsgSusaDonT);
@@ -270,7 +270,7 @@ s32 Func_0200051c(void) {
   Actor_OffsetPositionAndReset(gMainRoutineWork.currentOwner, 0, 16);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
-  Func_020021cc();
+  Event_End();
   return 0;
 }
 
@@ -289,7 +289,7 @@ void Func_0200061c(s32 mode) {
   struct Actor *person, *leader;
   s32 party, owner, answer, message;
 
-  Func_020021c4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(PIXELS(143), -1, PIXELS(560), 1);
   party = (s32)&gMainRoutineWork;
@@ -987,41 +987,41 @@ void Func_0200061c(s32 mode) {
   Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
   GameFlag_SetBit(0x928);
   GameFlag_SetBit(0x350);
-  Func_020021cc();
+  Event_End();
 }
 
 typedef s32 (*HandlerFn)(void);
 
-void Func_02002294(s32, s32);
-void Func_0200229c(s32, s32);
-void Func_020022a4(void);
-void Func_020022ac(void);
-void Func_020022b4(void);
+void BattleEffect_LoadActionEffectResources(s32, s32);
+void BattleEffect_SetupObjectPair(s32, s32);
+void BattleEffect_StopMainActor(void);
+void BattleEffect_CleanupSceneObjects(void);
+void EventObject_Initialize(void);
 
 s32 Func_02001d84(void) { return -1; }
 
 void Func_02001d8c(void) {
-  Func_02002294(140, 1);
-  Func_0200229c(15, -1);
+  BattleEffect_LoadActionEffectResources(140, 1);
+  BattleEffect_SetupObjectPair(15, -1);
   FIELD_AT(Ram_HeapSlots->effectWork, HandlerFn, 36) = Func_02001d84;
   FIELD_AT(Ram_HeapSlots->effectWork, u8, 32) = 1;
-  Func_020022b4();
+  EventObject_Initialize();
   Event_Wait(10);
   Field_DispatchTypeHandler(0);
-  Func_020022a4();
-  Func_020022ac();
+  BattleEffect_StopMainActor();
+  BattleEffect_CleanupSceneObjects();
 }
 
-void Func_020022e4();
-void Func_020022ec();
-void Func_020022f4();
-void Func_020022fc();
+void BattleEffect_StartArcEffect();
+void BattleEffect_EndArcEffect();
+void BattleEffect_WaitForArcGroups();
+void BattleEffect_SetObjectUpdateMode();
 void PartyInventory_Remove();
 
 void Func_02001dd0(void) {
   s32 t9, t21, t31;
 
-  Func_020021c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAhCouldIt);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 144, 536);
@@ -1045,9 +1045,9 @@ L_02009e48:
   Actor_ShowEmote(15, 0x105, 120);
   Func_080d47b4(15, 0x106, 60);
   Event_ShowMessageAndWait(15, 0);
-  Func_020022e4();
+  BattleEffect_StartArcEffect();
   t21 = ((s32)Actor_GetById(15));
-  Func_020022fc(t21, 2);
+  BattleEffect_SetObjectUpdateMode(t21, 2);
   Sound_Play(201);
   Event_Wait(60);
   Actor_SetPosition(24, PIXELS(144), PIXELS(520));
@@ -1057,9 +1057,9 @@ L_02009e48:
   Actor_ArmCallback(24, FACING_SOUTH, 0);
   Event_Wait(60);
   t31 = ((s32)Actor_GetById(15));
-  Func_020022fc(t31, 0);
-  Func_020022f4();
-  Func_020022ec();
+  BattleEffect_SetObjectUpdateMode(t31, 0);
+  BattleEffect_WaitForArcGroups();
+  BattleEffect_EndArcEffect();
   Event_Wait(30);
   Event_Wait(30);
   Actor_SetAngleToward(15, 24, 0);
@@ -1083,8 +1083,8 @@ L_02009e48:
   Event_ShowMessageAndWait(15, 0);
   Actor_Jump(24, 2, 20);
   Func_080d7788(24, 2, 11);
-  Func_020021cc();
-  Func_020021c4();
+  Event_End();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(gMainRoutineWork.currentOwner, 15, 0);
   Event_Wait(60);
@@ -1094,10 +1094,10 @@ L_02009e48:
   Event_Wait(60);
   GameFlag_SetBit(0x92c);
   PartyInventory_Remove(0x1c3);
-  Func_020021cc();
+  Event_End();
 }
 
-s32 Func_0200200c(void) {
+s32 Scene_Initialize(void) {
   FIELD_AT(Ram_HeapSlots->eventWork, s32, 428) = 0x201;
   if (gMainRoutineWork.entrance != 7)
     Event_ClearFlag(0x350);
@@ -1539,108 +1539,108 @@ struct ActorPlacement gData_02002d80[] = {
 // clang-format on
 
 struct Trigger gData_02002f78[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {2, 21, CONDITION_ALWAYS, EVENT(Func_0200051c)},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgOkuniKushinadaAnd)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgIfLadyUzume)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgIMSoRelieved)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgWhatIWant)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgAWhileBack)},
-    {0, 13, CONDITION_ALWAYS, MSGNO(MsgThatDragonsbaneSeems)},
-    {0, 14, CONDITION_ALWAYS, MSGNO(MsgICanTFind)},
-    {0, 15, CONDITION_ALWAYS, MSGNO(MsgIAmOld)},
-    {0, 16, CONDITION_ALWAYS, MSGNO(MsgTheSerpentCan)},
-    {0, 18, CONDITION_ALWAYS, EVENT(Func_02000220)},
-    {0, 19, CONDITION_ALWAYS, MSGNO(MsgOneDayKushinada)},
-    {0, 20, CONDITION_ALWAYS, EVENT(Func_020001a8)},
-    {0, 21, CONDITION_ALWAYS, MSGNO(MsgIfIWere)},
-    {0, 22, CONDITION_ALWAYS, EVENT(Func_0200012c)},
-    {0, 23, CONDITION_ALWAYS, MSGNO(MsgSniffHowCould)},
-    {0, 24, CONDITION_ALWAYS, MSGNO(MsgWhenIGet)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgSusaSBeen)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgLadyUzumeS)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgIOnlySuggested)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgTheSerpentIs)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgIWonderIfAll)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgTheSerpentWill)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgAccordingToLegend)},
-    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgOurGuardianSerpent)},
-    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgThereSNo)},
-    {0x8d15, 18, CONDITION_ALWAYS, MSGNO(MsgThePowerThat)},
-    {0x8d15, 19, CONDITION_ALWAYS, MSGNO(MsgItWasThe)},
-    {0x8d15, 20, CONDITION_ALWAYS, MSGNO(MsgThingsLikeThis)},
-    {0x8d15, 21, CONDITION_ALWAYS, MSGNO(MsgWhatDoesThat)},
-    {0x8d15, 22, CONDITION_ALWAYS, MSGNO(MsgIfOnlyI)},
-    {0x8d15, 23, CONDITION_ALWAYS, MSGNO(MsgIDonTWantThe)},
-    {0x8d15, 24, CONDITION_ALWAYS, MSGNO(MsgNobodyWantsTo)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_0200051c)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgOkuniKushinadaAnd)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgIfLadyUzume)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgIMSoRelieved)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgWhatIWant)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAWhileBack)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgThatDragonsbaneSeems)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgICanTFind)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgIAmOld)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTheSerpentCan)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000220)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgOneDayKushinada)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_020001a8)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgIfIWere)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_0200012c)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgSniffHowCould)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgWhenIGet)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSusaSBeen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgLadyUzumeS)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgIOnlySuggested)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTheSerpentIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgIWonderIfAll)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTheSerpentWill)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgAccordingToLegend)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgOurGuardianSerpent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgThereSNo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgThePowerThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgItWasThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgThingsLikeThis)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgWhatDoesThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgIfOnlyI)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgIDonTWantThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgNobodyWantsTo)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02003164[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {0, 8, CONDITION_ALWAYS, EVENT(Func_02000298)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgThereSNoPoint)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgTheSerpentAttacked)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgTheSerpentAte)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgTheSerpentLives)},
-    {0x8d15, 8, CONDITION_ALWAYS, EVENT(Func_02000358)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgOkuniSSuch)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgTheSerpentWould)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgBeforeTheSerpent)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgLegendHasIt)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000298)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgThereSNoPoint)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTheSerpentAttacked)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTheSerpentAte)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTheSerpentLives)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, EVENT(Func_02000358)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgOkuniSSuch)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTheSerpentWould)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBeforeTheSerpent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgLegendHasIt)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_0200323c[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {2, 22, 0x928, EVENT(Func_02000604)},
-    {2, 23, 0x928, EVENT(Func_02000610)},
-    {0, 8, CONDITION_ALWAYS, EVENT(Func_02000220)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgMyGoodsAre)},
-    {0, 10, CONDITION_ALWAYS, EVENT(Func_020001a8)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgAsLadyUzume)},
-    {0, 12, CONDITION_ALWAYS, EVENT(Func_0200012c)},
-    {0, 13, CONDITION_ALWAYS, MSGNO(MsgNowThatTheSerpent)},
-    {0, 14, CONDITION_ALWAYS, MSGNO(MsgIfYouReA)},
-    {0, 15, CONDITION_ALWAYS, EVENT(Func_02000378)},
-    {0, 16, CONDITION_ALWAYS, EVENT(Func_02000400)},
-    {0, 17, CONDITION_ALWAYS, MSGNO(MsgSupposedlyTheDoll)},
-    {0, 18, CONDITION_ALWAYS, MSGNO(MsgLadyUzumeHas)},
-    {0, 19, CONDITION_ALWAYS, MSGNO(MsgLadyUzumeSNew)},
-    {0, 20, CONDITION_ALWAYS, MSGNO(MsgSomedaySusaAnd)},
-    {0, 21, CONDITION_ALWAYS, MSGNO(MsgIMSureYou)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgIDLoveTo)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgThisMayBe)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgIfBriggsS)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgIUnderstandNow)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgIThankThe)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgMaybeNowKushinada)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgThatDragonWanted)},
-    {0x8d15, 1039, CONDITION_ALWAYS, EVENT(Func_02000458)},
-    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgWhyDoesLadyUzume)},
-    {0x8d15, 17, CONDITION_ALWAYS, MSGNO(MsgIWonderWhatSort)},
-    {0x8d15, 18, CONDITION_ALWAYS, MSGNO(MsgIHeardThat)},
-    {0x8d15, 19, CONDITION_ALWAYS, MSGNO(MsgIDonTKnowWhatIt)},
-    {0x8d15, 20, CONDITION_ALWAYS, MSGNO(MsgIfSDescendants)},
-    {0x8d15, 21, CONDITION_ALWAYS, MSGNO(MsgIMNo)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_STEP, 22, 0x928, EVENT(Func_02000604)},
+    {TRIGGER_STEP, 23, 0x928, EVENT(Func_02000610)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000220)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMyGoodsAre)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_020001a8)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAsLadyUzume)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_0200012c)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgNowThatTheSerpent)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgIfYouReA)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000378)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_02000400)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgSupposedlyTheDoll)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgLadyUzumeHas)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgLadyUzumeSNew)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgSomedaySusaAnd)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgIMSureYou)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgIDLoveTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgThisMayBe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgIfBriggsS)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgIUnderstandNow)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgIThankThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgMaybeNowKushinada)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgThatDragonWanted)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1039, CONDITION_ALWAYS, EVENT(Func_02000458)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgWhyDoesLadyUzume)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgIWonderWhatSort)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgIHeardThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgIDonTKnowWhatIt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgIfSDescendants)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgIMNo)},
     {0x1c314, 15, 0x92c, EVENT(Func_02001dd0)},
     {TRIGGERS_END},
 };

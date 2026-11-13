@@ -13,7 +13,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 void Effect_AdvanceMotion(union FieldObject *object);
-void Func_02005158(void);
+void Map_CenterOnFollowedPoint(void);
 s32 Math_Cosine(s32 angle);
 
 void Func_02002ec4(void) {
@@ -21,10 +21,10 @@ void Func_02002ec4(void) {
   struct EffectOptions options;
   u32 i;
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Func_02005158();
+  Map_CenterOnFollowedPoint();
   wait(1);
   leader->y = 0x820000;
   leader->gravity = 0x8000;
@@ -65,7 +65,7 @@ void Func_02002ec4(void) {
   Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  Func_020051c8();
+  Event_End();
 }
 
 void Func_02000cd8(s32 id, s32 offset, s32 limit);
@@ -78,7 +78,7 @@ void Func_0200306c(void) {
   s16 i; u16 next;
   s32 limit;
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_080d4568()->motionFlags = 0;
@@ -105,7 +105,7 @@ do {
   next++;
   i = next;
 } while (next <= 15);
-  Func_02005158();
+  Map_CenterOnFollowedPoint();
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Event_StartScreenTransition();
@@ -140,7 +140,7 @@ do {
                                      1);
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  Func_020051c8();
+  Event_End();
 }
 
 void Func_02000e60(void);
@@ -152,7 +152,7 @@ void Func_020032c8(void) {
   s16 i; u16 next;
   s32 limit;
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_080d4568()->motionFlags = 0;
@@ -179,7 +179,7 @@ do {
   next++;
   i = next;
 } while (next <= 15);
-  Func_02005158();
+  Map_CenterOnFollowedPoint();
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Event_StartScreenTransition();
@@ -214,11 +214,11 @@ do {
                                      1);
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  Func_020051c8();
+  Event_End();
 }
 
 void Func_02003524(void) {
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x209;
@@ -241,7 +241,7 @@ void Func_02003584(void) {
   u32 i;
   struct MainRoutineWork *party;
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object->motionFlags = 0;
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
@@ -290,7 +290,7 @@ void Func_02003684(void) {
   struct Actor *first = Actor_GetById(13);
   struct Actor *second = Actor_GetById(15);
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Func_02005388(162);
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -328,7 +328,7 @@ rise:
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 27, 12);
   gData_020062a0 = 2000;
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 516;
-  Func_020051c8();
+  Event_End();
 }
 
 /// As Func_02003684, for actors 14 and 16 at another place.
@@ -337,7 +337,7 @@ void Func_020037e0(void) {
   struct Actor *first = Actor_GetById(14);
   struct Actor *second = Actor_GetById(16);
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Func_02005388(162);
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -375,14 +375,14 @@ rise:
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 37, 14);
   gData_020062a4 = 2000;
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 516;
-  Func_020051c8();
+  Event_End();
 }
 
 /// Actor 13 rises out of view while actor 15 scales, then the scene moves on.
 void Func_0200393c(void) {
   struct Actor *object = Actor_GetById(13);
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   // A goto loop: as a do-while, loop.c hoists the scale constant into r6
   // (differ 19).
@@ -403,7 +403,7 @@ rise:
 void Func_020039a8(void) {
   struct Actor *object = Actor_GetById(14);
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   // A goto loop, as in Func_0200393c.
 rise:
@@ -623,7 +623,7 @@ void Func_02003e8c(void) {
   struct FieldSprite *sprite;
   u32 i;
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_080d4568()->motionFlags = 0;
@@ -804,7 +804,7 @@ fall15:
   Camera_MoveWithinMapBounds(0x1900000, 0, 0x2f00000, 1);
   Func_020052e8();
   Task_Add(Func_02001c8c, 0x480);
-  Func_020051c8();
+  Event_End();
   GameFlag_SetBit(0x848);
 }
 
@@ -814,7 +814,7 @@ void Func_020044d4(void) {
    * instructions differ in tla-en. */
   s32 angle;
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   wait(1);
@@ -839,7 +839,7 @@ void Func_020044d4(void) {
   Actor_SetSpeed(12, 0x19999, 0xcccc);
   Actor_WalkToAndWait(12, 456, 408);
   Event_ShowMessageAndWait(12, 0);
-  Func_02005240(16, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(16, gMainRoutineWork.currentOwner);
   wait(1);
   Actor_SetSpeed(16, 0xcccc, 0x6666);
   Actor_WalkToAndWait(16, 376, 392);
@@ -865,7 +865,7 @@ void Func_020044d4(void) {
 }
 
 void Func_020046d8(void) {
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
@@ -914,7 +914,7 @@ void Func_0200482c(void) {
   struct FieldSprite *sprite;
   u8 *flags;
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_080d4568()->motionFlags = 0;
@@ -1102,7 +1102,7 @@ void Func_0200482c(void) {
 #if TLA_PATCH_1
   WORK->screenEffect = 0x209;
 #endif
-  Func_020051c8();
+  Event_End();
 }
 
 void Func_02004fb4(void) {
@@ -1133,7 +1133,7 @@ void Func_02004fb4(void) {
 }
 
 void Func_02005028(void) {
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1148,7 +1148,7 @@ void Func_02005028(void) {
   Map_CopyCellPictureIndicesRect(41, 3, 20, 3, 1, 1);
   Event_Wait(10);
   GameFlag_SetBit(0x92d);
-  Func_020051c8();
+  Event_End();
 }
 
 #include "types.h"
@@ -1492,17 +1492,17 @@ struct Trigger gData_02005d48[] = {
 };
 
 struct Trigger gData_02005d54[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x31, 3, CONDITION_ALWAYS, 3},
     {0x31, 4, CONDITION_ALWAYS, 4},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_020020c8)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_020020d8)},
-    {0x10008c15, 12, CONDITION_ALWAYS, EVENT(Func_020020c8)},
-    {0x8c15, 12, CONDITION_ALWAYS, EVENT(Func_020020d8)},
-    {2, 10, 0x211, EVENT(Func_02003584)},
-    {2, 12, CONDITION_ALWAYS, EVENT(Func_0200393c)},
-    {2, 13, CONDITION_ALWAYS, EVENT(Func_020039a8)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, CONDITION_ALWAYS, EVENT(Func_020020c8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT(Func_020020d8)},
+    {TRIGGER_STEP, 10, 0x211, EVENT(Func_02003584)},
+    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(Func_0200393c)},
+    {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(Func_020039a8)},
     {TRIGGERS_END},
 };
 
@@ -1515,25 +1515,25 @@ s16 gData_02005de4[] = {
 
 struct Trigger gData_02005e20[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
-    {0x10008c15, 8, 0x304, EVENT(Func_020021b8)},
-    {0x8c15, 8, 0x304, EVENT(Func_020021dc)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x304, EVENT(Func_020021b8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x304, EVENT(Func_020021dc)},
     {0x602, 10, 0x304, EVENT(Func_02002248)},
     {0xc602, 11, 0x304, EVENT(Func_02002248)},
     {0x8602, 12, 0x304, EVENT(Func_02002248)},
-    {0, 10, CONDITION_ALWAYS, EVENT(Func_02001d00)},
-    {2, 6, 0x92d, EVENT(Func_020026cc)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02001d00)},
+    {TRIGGER_STEP, 6, 0x92d, EVENT(Func_020026cc)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02005e8c[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02002120)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02002154)},
-    {0x10008c15, 8, CONDITION_ALWAYS, EVENT(Func_02002120)},
-    {0x8c15, 8, CONDITION_ALWAYS, EVENT(Func_02002154)},
-    {2, 20, CONDITION_ALWAYS, EVENT(Func_02003564)},
-    {2, 21, CONDITION_ALWAYS, EVENT(Func_02003574)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(Func_02002120)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT(Func_02002154)},
+    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Func_02003564)},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_02003574)},
     {TRIGGERS_END},
 };
 
@@ -1545,89 +1545,89 @@ struct Trigger gData_02005ef8[] = {
 
 struct Trigger gData_02005f10[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {2, 10, CONDITION_ALWAYS, EVENT(Func_02000710)},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_02000710)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02005f40[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {0x21, 4, CONDITION_ALWAYS, 4},
-    {0x8515, 8, 0x20f, 0},
-    {0, 11, CONDITION_ALWAYS, EVENT(Func_02000280)},
-    {2, 10, CONDITION_ALWAYS, EVENT(Func_02002674)},
-    {2, 11, CONDITION_ALWAYS, EVENT(Func_0200269c)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgFieldItSeemsIMayNotHave)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgFieldIsItReallyPossibleForAnyone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x20f, 0},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_02000280)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_02002674)},
+    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Func_0200269c)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgFieldItSeemsIMayNotHave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFieldIsItReallyPossibleForAnyone)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02005fc4[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x31, 3, CONDITION_ALWAYS, 3},
     {0x4602, 6, CONDITION_ALWAYS, EVENT(Func_02002014)},
     {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKandoreanTemple13))},
-    {2, 20, 0x230, EVENT(Func_020004a8)},
+    {TRIGGER_STEP, 20, 0x230, EVENT(Func_020004a8)},
     {0x4602, 4, 0x212, EVENT(Func_020022c0)},
     {0xc602, 5, 0x212, EVENT(Func_020022c0)},
-    {3, 10, CONDITION_ALWAYS, EVENT(Func_02001d20)},
-    {0x4e15, 8, CONDITION_ALWAYS, EVENT(Func_02002314)},
+    {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS, EVENT(Func_02001d20)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, EVENT(Func_02002314)},
     {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_020027b4)},
     {0x50008905, 31, CONDITION_ALWAYS, EVENT(Func_020027d4)},
     {0x50008905, 32, CONDITION_ALWAYS, EVENT(Func_020027f4)},
     {0x50008905, 33, CONDITION_ALWAYS, EVENT(Func_02002814)},
     {0x50008905, 34, CONDITION_ALWAYS, EVENT(Func_02002834)},
-    {0, 9, CONDITION_ALWAYS, EVENT(Func_02001d40)},
-    {0, 10, CONDITION_ALWAYS, EVENT(Func_02001db4)},
-    {0x8d15, 1033, 0x845, EVENT(Func_02001e30)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgFieldIDoNotUnderstandMasterPoi)},
-    {0x8d15, 1034, 0x846, EVENT(Func_02001e44)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgFieldIWasHopingToHearMaster)},
-    {0, 11, 0x849, MSGNO(MsgFieldIHopeToEnterTheTemple)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgFieldHeyWhatsAnOutsiderDoingOn)},
-    {0, 12, 0x849, MSGNO(MsgFieldPleaseDontBreakMyConcentrationI)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgFieldLooksLikeNoneOfOurBrothers)},
-    {0, 13, 0x849, MSGNO(MsgFieldIAmNotJustMeditatingI)},
-    {0, 13, CONDITION_ALWAYS, MSGNO(MsgFieldSomedayImGoingToBeA)},
-    {0x8d15, 11, 0x849, MSGNO(MsgFieldIStillCantBelieveThatThe)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgFieldGahIKeptMyEyesShut)},
-    {0x8d15, 12, 0x849, MSGNO(MsgFieldMyMindIsEmptyMyBody)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgFieldIveBeenMeditatingAllDayBut)},
-    {0x8d15, 13, 0x849, MSGNO(MsgFieldEmptyTheMindToLightenThe)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgFieldWheneverTheMasterGoesToTown)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02001d40)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02001db4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1033, 0x845, EVENT(Func_02001e30)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFieldIDoNotUnderstandMasterPoi)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1034, 0x846, EVENT(Func_02001e44)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFieldIWasHopingToHearMaster)},
+    {TRIGGER_TALK, 11, 0x849, MSGNO(MsgFieldIHopeToEnterTheTemple)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgFieldHeyWhatsAnOutsiderDoingOn)},
+    {TRIGGER_TALK, 12, 0x849, MSGNO(MsgFieldPleaseDontBreakMyConcentrationI)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgFieldLooksLikeNoneOfOurBrothers)},
+    {TRIGGER_TALK, 13, 0x849, MSGNO(MsgFieldIAmNotJustMeditatingI)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgFieldSomedayImGoingToBeA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x849, MSGNO(MsgFieldIStillCantBelieveThatThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFieldGahIKeptMyEyesShut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x849, MSGNO(MsgFieldMyMindIsEmptyMyBody)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFieldIveBeenMeditatingAllDayBut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x849, MSGNO(MsgFieldEmptyTheMindToLightenThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgFieldWheneverTheMasterGoesToTown)},
     {TRIGGERS_END},
 };
 
 // clang-format off
 struct Trigger gData_0200615c[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {0x202, 8, CONDITION_ALWAYS, EVENT(Func_02001e58)},
     {0xc602, 9, CONDITION_ALWAYS, EVENT(Func_02001f7c)},
-    {0x8515, 8, 0x20f, 0},
-    {0x8515, 10, 0x210, 0},
-    {0, 13, 0x849, MSGNO(MsgFieldHeWentInBeforeMeWhat)},
-    {0, 13, CONDITION_ALWAYS, EVENT(Func_02001e0c)},
-    {0, 14, 0x849, MSGNO(MsgFieldEmptyMindEmptyBodyByClearing)},
-    {0, 14, CONDITION_ALWAYS, MSGNO(MsgFieldIHearThatSomeonePassedThe)},
-    {0, 15, CONDITION_ALWAYS, MSGNO(MsgFieldWhenIAwokeILearnedThat)},
-    {0x8d15, 13, 0x849, MSGNO(MsgFieldTheresNoWayImRootingFor)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgFieldTheMasterSeemedSoDisappointedThat)},
-    {0x8d15, 14, 0x849, MSGNO(MsgFieldArrghIWasSoCloseI)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgFieldIKnewItItShouldHave)},
-    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgFieldBeforeIPassedOutISaw)},
-    {3, 16, 0x84a, EVENT(Func_020023e8)},
-    {0, 12, 0x84a, MSGNO(MsgFieldTakeThePowerOfLashIt)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouWishToPracticeThese)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgFieldHoHoIFeelTheStrength)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x20f, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 10, 0x210, 0},
+    {TRIGGER_TALK, 13, 0x849, MSGNO(MsgFieldHeWentInBeforeMeWhat)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_02001e0c)},
+    {TRIGGER_TALK, 14, 0x849, MSGNO(MsgFieldEmptyMindEmptyBodyByClearing)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgFieldIHearThatSomeonePassedThe)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgFieldWhenIAwokeILearnedThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x849, MSGNO(MsgFieldTheresNoWayImRootingFor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgFieldTheMasterSeemedSoDisappointedThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x849, MSGNO(MsgFieldArrghIWasSoCloseI)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgFieldIKnewItItShouldHave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgFieldBeforeIPassedOutISaw)},
+    {TRIGGER_EXAMINE, 16, 0x84a, EVENT(Func_020023e8)},
+    {TRIGGER_TALK, 12, 0x84a, MSGNO(MsgFieldTakeThePowerOfLashIt)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouWishToPracticeThese)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFieldHoHoIFeelTheStrength)},
     {TRIGGERS_END},
 };
 // clang-format on

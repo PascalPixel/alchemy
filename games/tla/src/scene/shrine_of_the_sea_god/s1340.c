@@ -92,7 +92,7 @@ void Func_02001474(void) {
   u32 i;
   s32 spin;
 
-  Func_020039d8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 408, 328);
   Func_02001340(leader, stone);
@@ -146,7 +146,7 @@ void Func_02001474(void) {
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   leader->layer = 0;
   wait(10);
-  Func_020039e0();
+  Event_End();
 }
 
 void Func_02001658(struct ShrineOfTheSeaGodObject *object, s32 base);
@@ -175,7 +175,7 @@ void Func_020016d8(void) {
       Actor_GetById(gMainRoutineWork.currentOwner);
   struct ShrineOfTheSeaGodObject *pillar = Actor_GetById(15);
 
-  Func_020039d8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 328, 216);
   Func_02001340(leader, pillar);
@@ -211,7 +211,7 @@ void Func_020016d8(void) {
   leader->motionFlags = 3;
   Task_RemoveFar(Func_020016c8);
   wait(1);
-  Func_020039e0();
+  Event_End();
   GameFlag_SetBit(0x231);
 }
 
@@ -224,7 +224,7 @@ void Func_020018bc(void) {
       Actor_GetById(gMainRoutineWork.currentOwner);
   struct ShrineOfTheSeaGodObject *pillar = Actor_GetById(16);
 
-  Func_020039d8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   ShrineOfTheSeaGod_ObjWalk(gMainRoutineWork.currentOwner, 408, 360);
   Func_02001340(leader, pillar);
@@ -246,7 +246,7 @@ void Func_020018bc(void) {
   Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
   Task_RemoveFar(Func_020018ac);
   wait(1);
-  Func_020039e0();
+  Event_End();
   GameFlag_SetBit(0x232);
 }
 
@@ -263,7 +263,7 @@ void Func_02001a0c(void) {
 void Func_02001a3c(void) {
   struct ShrineOfTheSeaGodObject *leader;
 
-  Func_020039d8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgFieldRopeThrownAgain);
   Event_ShowMessageAndWait(0x200c, 0);
@@ -329,7 +329,7 @@ void Func_02001a3c(void) {
   Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
   GameFlag_SetBit(0x872);
-  Func_020039e0();
+  Event_End();
 }
 
 /// A word of the object written through a one-member union (see the
@@ -357,7 +357,7 @@ void Func_02001d24(void) {
 
   if (ShrineOfTheSeaGod_FlagCheck(0x873))
     return;
-  Func_020039d8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Func_080d4568()->motionFlags = 0;
   ShrineOfTheSeaGod_CamMove(170 << 17, -1, 176 << 16, 1);
@@ -524,13 +524,13 @@ void Func_02001d24(void) {
   Actor_WaitForMoveById(14);
   ShrineOfTheSeaGod_ObjPlace(14, 0, 0);
   GameFlag_SetBit(0x873);
-  Func_020039e0();
+  Event_End();
 }
 
 void Func_02002384(void) {
   u8 off = 0;
 
-  Func_020039d8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Func_080d4568()->motionFlags = off;
   Camera_MoveWithinMapBounds(480 << 16, 32 << 16, 340 << 16, 1);
@@ -545,13 +545,13 @@ void Func_02002384(void) {
   Actor_WatchAndSetScript(15, gMainRoutineWork.currentOwner);
   Event_Wait(20);
   GameFlag_SetBit(0x874);
-  Func_020039e0();
+  Event_End();
 }
 
 void Func_02002430(void) {
   u8 off = 0;
 
-  Func_020039d8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_Stop(15);
   Func_080d4568()->motionFlags = off;
@@ -567,7 +567,7 @@ void Func_02002430(void) {
   Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
   Event_Wait(20);
   GameFlag_SetBit(0x875);
-  Func_020039e0();
+  Event_End();
 }
 
 /// Actor 14, linked to the leader, walks to (280, 432); then flags 0x876 and
@@ -576,7 +576,7 @@ void Func_020024e4(void) {
   struct ShrineOfTheSeaGodObject *object = Actor_GetById(13);
   s32 angle;
 
-  Func_020039d8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Value3((s32 (*)())Func_080d47b4, gMainRoutineWork.currentOwner, 0x100, 0);
   Func_080d4568()->motionFlags = 0;
@@ -605,14 +605,14 @@ void Func_020024e4(void) {
   wait(1);
   GameFlag_SetBit(0x876);
   GameFlag_SetBit(0x877);
-  Func_020039e0();
+  Event_End();
 }
 
 void Func_020025fc(void) {
   s32 done = ShrineOfTheSeaGod_FlagCheck(0x876);
 
   if (done == 0) {
-    Func_020039d8();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Func_080d47b4(gMainRoutineWork.currentOwner, 0x100, 0);
     Func_080d4568()->motionFlags = done;
@@ -637,7 +637,7 @@ void Func_020025fc(void) {
     Actor_GetById(14)->priorityFlags |= 1;
     wait(1);
     GameFlag_SetBit(0x876);
-    Func_020039e0();
+    Event_End();
   }
 }
 
@@ -645,7 +645,7 @@ void Func_020026f8(void) {
   u8 off;
 
   if (GameFlag_Test(0x877)) {
-    Func_020039d8();
+    Event_Start();
     Event_ResolvePendingActions(0);
     off = 0;
     Func_080d4568()->motionFlags = off;
@@ -658,12 +658,12 @@ void Func_020026f8(void) {
     Actor_GetById(14)->state = off;
     wait(10);
     GameFlag_SetBit(0x87c);
-    Func_020039e0();
+    Event_End();
   }
 }
 
 void Func_0200279c(void) {
-  Func_020039d8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Func_080d4568()->motionFlags = 0;
   Actor_Stop(14);
@@ -674,7 +674,7 @@ void Func_0200279c(void) {
 void Func_020027d4(void) {
   Actor_WatchAndSetScript(14, gMainRoutineWork.currentOwner);
   Event_Wait(5);
-  Func_020039e0();
+  Event_End();
 }
 
 void Func_020027f8(void) {
@@ -992,7 +992,7 @@ void Func_02003740(void);
 void Func_0200377c(void);
 void Func_0200380c(void);
 
-s32 Func_02002ec4(void) {
+s32 Scene_Initialize(void) {
   s16 scene;
 
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
@@ -1331,7 +1331,7 @@ struct ShrineOfTheSeaGodPartyExtra {
   s16 value;
 };
 
-void Func_02003988(void);
+void Map_CenterOnFollowedPoint(void);
 void Func_02000994(void);
 void Func_02000ce8(void);
 
@@ -1377,7 +1377,7 @@ void Func_0200380c(void) {
   struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[2];
 
   layer->x += 0x800000;
-  Func_02003988();
+  Map_CenterOnFollowedPoint();
   wait(1);
   if (object != NULL) {
     object->motionFlags = 0;
@@ -1397,7 +1397,7 @@ void Func_02003854(s32 id) {
   object->field1c = 0xe666;
 }
 
-s32 Func_02003894(void) {
+s32 Scene_PrepareMap(void) {
   s32 angle;
 
   if (GameFlag_Test(0x340)) {

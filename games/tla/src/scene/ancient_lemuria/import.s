@@ -50,13 +50,13 @@ Message_CloseFinishedWindows:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02001914
+	.global Event_Start
 	.thumb_func
-Func_02001914:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_0200191c
+	.global Event_End
 	.thumb_func
-Func_0200191c:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -90,9 +90,9 @@ Actor_WaitForMoveById:
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
-	.global Func_02001964
+	.global Actor_MoveToObject
 	.thumb_func
-Func_02001964:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func

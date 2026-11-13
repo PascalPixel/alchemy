@@ -6,7 +6,7 @@
 #include "kibombo.h"
 
 s32 Math_Cosine(s32 angle);
-void Func_02005a2c(struct KibomboObject *object, const void *script);
+void Actor_StartScript(struct KibomboObject *object, const void *script);
 void Effect_AdvanceMotion(struct KibomboObject *object);
 extern u32 gData_02005ca4[];
 
@@ -27,7 +27,7 @@ void Func_02002f34(void) {
       object->motionFlags = 0;
       Actor_SetSingleChildFlags(object, 0);
       Func_02005a24(object, 2);
-      Func_02005a2c(object, gData_02005ca4);
+      Actor_StartScript(object, gData_02005ca4);
       object->sprite->priority = 1;
       object->field64 = 0;
       *(s32 *)&object->unk2c[4] = 0;
@@ -200,12 +200,12 @@ void Func_020032c8(void) {
 }
 
 void Func_020032e0(void) {
-  Func_02005c14(143, 1);
+  BattleEffect_LoadActionEffectResources(143, 1);
   Func_02005c1c(17, 27);
-  Func_02005c34();
+  EventObject_Initialize();
   Field_DispatchTypeHandler(1);
-  Func_02005c24();
-  Func_02005c2c();
+  BattleEffect_StopMainActor();
+  BattleEffect_CleanupSceneObjects();
 }
 
 // ---- games/tla/src/scene/kibombo/s3308.c ----
@@ -515,14 +515,14 @@ void Func_020037e4(void) {
 }
 
 void Func_0200384c(void) {
-  Func_02005c14(136, 1);
+  BattleEffect_LoadActionEffectResources(136, 1);
   Task_Add(Func_020037e4, 0x480);
   Func_02005c1c(gMainRoutineWork.currentOwner, -1);
-  Func_02005c34();
+  EventObject_Initialize();
   Field_DispatchTypeHandler(1);
-  Func_02005c24();
+  BattleEffect_StopMainActor();
   Task_RemoveFar(Func_020037e4);
-  Func_02005c2c();
+  BattleEffect_CleanupSceneObjects();
 }
 
 void Func_02003898(void) {
@@ -539,7 +539,7 @@ void Func_02003898(void) {
 void Func_020038ec(void) {
   struct KibomboEventWork *work = Ram_HeapSlots->eventWork;
 
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x202))
     Func_02003898();
@@ -563,7 +563,7 @@ void Func_02003948(void) {
   s32 px;
 
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Kibombo_CamMove(-1, -1, -1, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
@@ -589,7 +589,7 @@ void Func_02003a08(s32 x, s32 z) {
   struct KibomboEventWork *work = Ram_HeapSlots->eventWork;
   struct KibomboObject *leader = Actor_GetById(party->currentOwner);
 
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   leader->motionFlags = 0;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
@@ -663,7 +663,7 @@ void Func_02003bf0(void) {
 void Func_02003c14(void) {
   u32 i;
 
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -689,7 +689,7 @@ done:
   Import_EventSetExitRequest(11);
 }
 
-void Func_02005a4c(void);
+void Map_CenterOnFollowedPoint(void);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 
 void Func_02003c84(void) {
@@ -711,7 +711,7 @@ void Func_02003c84(void) {
   BattleEffect_StartBufferInterpolation(1);
   wait(1);
   Kibombo_CamMove(146 << 18, -1, PIXELS(248), 0);
-  Func_02005a4c();
+  Map_CenterOnFollowedPoint();
   wait(1);
   Kibombo_FadeTo(0x10000, 0);
   BattleEffect_StartBufferInterpolation(1);
@@ -726,7 +726,7 @@ void Func_02003c84(void) {
   BattleEffect_StartBufferInterpolation(1);
   wait(1);
   Camera_MoveWithinMapBounds(PIXELS(248), -1, 134 << 18, 0);
-  Func_02005a4c();
+  Map_CenterOnFollowedPoint();
   wait(1);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(1);
@@ -952,7 +952,7 @@ void Func_02004424(void) {
   struct KibomboEventWork *work;
   s32 effect;
 
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
@@ -984,7 +984,7 @@ void Func_02004424(void) {
 void Func_02004524(void) {
   struct KibomboEventWork *work;
 
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Kibombo_CamMove(-1, -1, -1, 0);
   Func_080d4568()->motionFlags = 0;
@@ -1254,14 +1254,14 @@ void Func_02004cf4(void) {
   struct KibomboEventWork *work;
   struct KibomboObject *leader;
 
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Kibombo_CamMove(-1, -1, -1, 0);
   Camera_MoveWithinMapBounds(PIXELS(384), -1, PIXELS(601), 0);
   wait(1);
   Actor_SetHorizontalPositionAndAngleWithTerrain(
       gMainRoutineWork.currentOwner, PIXELS(370), PIXELS(636), FACING_NORTH);
-  Func_02005a4c();
+  Map_CenterOnFollowedPoint();
   wait(1);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   BattleEffect_ApplyColorToSourceBuffer(0, 0);
@@ -1340,10 +1340,10 @@ void Func_02004cf4(void) {
   work->field1b4 = 16;
   work->screenEffect = 0x209;
   GameFlag_SetBit(0x8ef);
-  Func_02005aa4();
+  Event_End();
 }
 
-s32 Func_02005034(void) {
+s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo1)
@@ -1408,8 +1408,8 @@ extern void Actor_SetPartAttribute__s516c(struct Actor *object, s32 attribute) _
 #undef Animation_SetStateFlags
 #undef Actor_SetSingleChildFlags
 
-void Func_02005a9c(void);
-void Func_02005aa4(void);
+void Event_Start(void);
+void Event_End(void);
 void *Unit_Get(s32 owner);
 void Party_RemoveOwnerRestored(s32 unit);
 void Func_020050ac(void);
@@ -1445,7 +1445,7 @@ void Func_0200516c(void) {
   u8 *unit;
   s32 done;
 
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   done = GameFlag_Test(265);
   if (!done) {
@@ -1522,7 +1522,7 @@ void Func_0200516c(void) {
 
     Task_Add(Func_02002c34, priority);
   }
-  Func_02005aa4();
+  Event_End();
 }
 
 // ---- games/tla/src/scene/kibombo/s538c.c ----
@@ -1611,7 +1611,7 @@ void Func_02003dec(void);
 void Func_02005594(void) {
   u32 i;
 
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_SetBit(0x869);
   GameFlag_SetBit(0x202);
@@ -1681,7 +1681,7 @@ void Func_02005594(void) {
   } else if (gMainRoutineWork.entrance == 5) {
     Func_02003dec();
   }
-  Func_02005aa4();
+  Event_End();
   if (gMainRoutineWork.entrance == 99) {
     Func_02003640(0, 0);
     Func_020036e0(0, 0);
@@ -1708,7 +1708,7 @@ void Func_02003c84(void);
 #define PALETTE_WORD(index) (*(u16 *)(0x05000000 + (index) * 2))
 
 void Func_020057e0(void) {
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_SetBit(514);
   gData_02007948[0] = PALETTE_WORD(169);
@@ -1728,7 +1728,7 @@ void Func_020057e0(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     KIBOMBO_TASK_ADD(Func_02002d64, 1152);
-    Func_02005aa4();
+    Event_End();
   }
 }
 
@@ -2329,131 +2329,131 @@ struct Trigger gData_02006ee8[] = {
 };
 
 struct Trigger gData_02006ef4[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02003948)},
     {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_02003948)},
     {0xc602, 5, CONDITION_ALWAYS, EVENT(Func_02003948)},
     {0xc602, 6, CONDITION_ALWAYS, EVENT(Func_02003948)},
     {0xc602, 7, CONDITION_ALWAYS, EVENT(Func_02003948)},
     {0xc602, 8, CONDITION_ALWAYS, EVENT(Func_02003948)},
-    {1, 9, CONDITION_ALWAYS, 9},
-    {1, 10, CONDITION_ALWAYS, 10},
-    {2, 16, CONDITION_ALWAYS, EVENT(Func_02002ad8)},
-    {2, 15, CONDITION_ALWAYS, EVENT(Func_02002af8)},
-    {0x1815, 8, 0x201, EVENT(Func_020005d0)},
-    {0x8515, 12, 0x9e9, 0},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(Func_02002ad8)},
+    {TRIGGER_STEP, 15, CONDITION_ALWAYS, EVENT(Func_02002af8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x201, EVENT(Func_020005d0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 12, 0x9e9, 0},
     {0xc602, 20, CONDITION_ALWAYS, EVENT(Func_02005994)},
     {0x8602, 21, CONDITION_ALWAYS, EVENT(Func_02005994)},
-    {0x10009a15, 11, CONDITION_ALWAYS, 0},
-    {0, 14, CONDITION_ALWAYS, MSGNO(MsgAkafubuHasFinally)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgEveryoneWasTerribly)},
-    {0, 15, CONDITION_ALWAYS, EVENT(Func_02000228)},
-    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgCoveringOurWarriors)},
-    {0, 16, CONDITION_ALWAYS, MSGNO(MsgTheGreatGabomba)},
-    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgIWantTo)},
-    {0, 17, CONDITION_ALWAYS, MSGNO(MsgNowThatThe)},
-    {0x8d15, 17, CONDITION_ALWAYS, MSGNO(MsgNowThatTheWitch)},
-    {0, 18, CONDITION_ALWAYS, MSGNO(MsgICouldnT)},
-    {0x8d15, 18, CONDITION_ALWAYS, MSGNO(MsgBecauseKibomboLies)},
-    {0, 19, CONDITION_ALWAYS, MSGNO(MsgOhISmell)},
-    {0x8d15, 19, CONDITION_ALWAYS, MSGNO(MsgYouDonTThink)},
-    {0, 20, CONDITION_ALWAYS, MSGNO(MsgGoodOlMeat)},
-    {0x8d15, 20, CONDITION_ALWAYS, MSGNO(MsgGulpTheSmell)},
-    {0, 21, CONDITION_ALWAYS, MSGNO(MsgWeGetTo)},
-    {0x8d15, 21, CONDITION_ALWAYS, MSGNO(MsgLatelyTheMonsters)},
-    {0, 22, CONDITION_ALWAYS, EVENT(Func_0200024c)},
-    {0x8d15, 22, CONDITION_ALWAYS, MSGNO(MsgNoOneInKibombo)},
-    {0, 23, CONDITION_ALWAYS, MSGNO(MsgTheOtherWarriors)},
-    {0x8d15, 23, CONDITION_ALWAYS, MSGNO(MsgWithAllOur)},
-    {0, 24, CONDITION_ALWAYS, EVENT(Func_02000270)},
-    {0x8d15, 24, CONDITION_ALWAYS, MSGNO(MsgIWonderIfI)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 11, CONDITION_ALWAYS, 0},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAkafubuHasFinally)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgEveryoneWasTerribly)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000228)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgCoveringOurWarriors)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTheGreatGabomba)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgIWantTo)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgNowThatThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgNowThatTheWitch)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgICouldnT)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgBecauseKibomboLies)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgOhISmell)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgYouDonTThink)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgGoodOlMeat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgGulpTheSmell)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgWeGetTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgLatelyTheMonsters)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_0200024c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgNoOneInKibombo)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTheOtherWarriors)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgWithAllOur)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, EVENT(Func_02000270)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgIWonderIfI)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_020070d4[] = {
-    {2, 1, CONDITION_ALWAYS, EVENT(Func_020038ec)},
-    {2, 2, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_020038ec)},
     {0xc602, 3, 0x209, EVENT(Func_02003948)},
     {0xc602, 4, 0x209, EVENT(Func_02003948)},
     {0xc602, 5, 0x209, EVENT(Func_02003948)},
     {0xc602, 6, 0x209, EVENT(Func_02003948)},
     {0xc602, 7, 0x209, EVENT(Func_02003948)},
     {0xc602, 8, 0x209, EVENT(Func_02003948)},
-    {2, 9, CONDITION_ALWAYS, EVENT(Func_020038ec)},
-    {2, 10, CONDITION_ALWAYS, EVENT(Func_020038ec)},
-    {2, 16, CONDITION_ALWAYS, EVENT(Func_02002ad8)},
-    {2, 15, CONDITION_ALWAYS, EVENT(Func_02002af8)},
-    {0x1815, 8, 0x201, EVENT(Func_020005d0)},
-    {0x8515, 12, 0x9e9, 0},
+    {TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(Func_02002ad8)},
+    {TRIGGER_STEP, 15, CONDITION_ALWAYS, EVENT(Func_02002af8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x201, EVENT(Func_020005d0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 12, 0x9e9, 0},
     {0xc602, 20, CONDITION_ALWAYS, EVENT(Func_02005994)},
-    {0, 20, 0x8fd, MSGNO(MsgAkafubuSCeremony)},
-    {0, 20, CONDITION_ALWAYS, MSGNO(MsgTheyToldMe)},
-    {0x8d15, 20, 0x8fd, MSGNO(MsgItSStrange)},
-    {0x8d15, 20, CONDITION_ALWAYS, MSGNO(MsgAsLongAsThis)},
-    {0, 14, 0x8fd, MSGNO(MsgDuringTheLast)},
-    {0, 14, CONDITION_ALWAYS, MSGNO(MsgAkafubuHasBeen)},
-    {0x8d15, 14, 0x8fd, MSGNO(MsgTheGreatGabombaIs)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgWhatSTaking)},
-    {0, 27, CONDITION_ALWAYS, MSGNO(MsgIMAfraid)},
-    {0x8d15, 27, CONDITION_ALWAYS, MSGNO(MsgWhenHeFails)},
-    {0, 21, 0x8fd, MSGNO(MsgIHopeThe)},
-    {0, 21, CONDITION_ALWAYS, MSGNO(MsgWhewThankGoodness)},
-    {0x8d15, 21, 0x8fd, MSGNO(MsgIfTheGreat)},
-    {0x8d15, 21, CONDITION_ALWAYS, MSGNO(MsgAmIGoing)},
-    {0, 17, 0x8fd, MSGNO(MsgIsMakingThe)},
-    {0, 17, CONDITION_ALWAYS, MSGNO(MsgOnceTheCeremony)},
-    {0x8d15, 17, 0x8fd, MSGNO(MsgHeSFailed)},
-    {0x8d15, 17, CONDITION_ALWAYS, MSGNO(MsgKibomboWasSo)},
-    {0, 22, 0x8fd, MSGNO(MsgWhenTheGabomba)},
-    {0, 22, CONDITION_ALWAYS, MSGNO(MsgLastTimeAkafubu)},
-    {0x8d15, 22, 0x8fd, MSGNO(MsgIHopeAkafubu)},
-    {0x8d15, 22, CONDITION_ALWAYS, MSGNO(MsgAkafubuSAlways)},
-    {0, 28, CONDITION_ALWAYS, MSGNO(MsgAkafubuWasA)},
-    {0x8d15, 28, CONDITION_ALWAYS, MSGNO(MsgAkafubuHasNot)},
-    {0, 15, 0x8fd, MSGNO(MsgAkafubuLooksReally)},
-    {0, 15, CONDITION_ALWAYS, MSGNO(MsgIThinkAkafubu)},
-    {0x8d15, 15, 0x8fd, MSGNO(MsgHeTravelsTo)},
-    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgAkafubuIsObsessed)},
-    {0, 25, 0x8fd, MSGNO(MsgIfTheGreatGabomba)},
-    {0, 25, CONDITION_ALWAYS, MSGNO(MsgIBelieveIn)},
-    {0x8d15, 25, 0x8fd, MSGNO(MsgIfTheGreatGabombaActually)},
-    {0x8d15, 25, CONDITION_ALWAYS, MSGNO(MsgAkafubuAndOeia)},
-    {0, 18, 0x8fd, MSGNO(MsgAkafubuHasTried)},
-    {0, 18, CONDITION_ALWAYS, MSGNO(MsgWhatDonT)},
-    {0x8d15, 18, 0x8fd, MSGNO(MsgAsAChildAkafubu)},
-    {0x8d15, 18, CONDITION_ALWAYS, MSGNO(MsgIMSoFar)},
-    {0, 26, CONDITION_ALWAYS, MSGNO(MsgHeyNoPushing)},
-    {0x8d15, 26, CONDITION_ALWAYS, MSGNO(MsgThereAreSo)},
-    {0, 16, 0x8fd, MSGNO(MsgAkafubuIsAttempting)},
-    {0, 16, CONDITION_ALWAYS, MSGNO(MsgTonightSeemsTo)},
-    {0x8d15, 16, 0x8fd, MSGNO(MsgOeiaSSudden)},
-    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgWillTheGreat)},
-    {0, 23, 0x8fd, MSGNO(MsgHeWhoIs)},
-    {0, 23, CONDITION_ALWAYS, MSGNO(MsgOeiaSDeath)},
-    {0x8d15, 23, 0x8fd, MSGNO(MsgIfOnlyOeia)},
-    {0x8d15, 23, CONDITION_ALWAYS, MSGNO(MsgISuspectAkafubu)},
-    {0, 19, 0x8fd, MSGNO(MsgAkafubuBlamesHis)},
-    {0, 19, CONDITION_ALWAYS, MSGNO(MsgTheySayThe)},
-    {0x8d15, 19, 0x8fd, MSGNO(MsgTheyAttackedSome)},
-    {0x8d15, 19, CONDITION_ALWAYS, MSGNO(MsgTheyReSaying)},
-    {0, 24, 0x8fd, MSGNO(MsgIfTheGreatGabombaS)},
-    {0, 24, CONDITION_ALWAYS, MSGNO(MsgAkafubuSeesThe)},
-    {0x8d15, 24, 0x8fd, MSGNO(MsgIFeelSo)},
-    {0x8d15, 24, CONDITION_ALWAYS, MSGNO(MsgIReallyWonder)},
-    {0, 36, CONDITION_ALWAYS, EVENT(Func_0200042c)},
-    {0x8d15, 36, CONDITION_ALWAYS, MSGNO(MsgIWonderIfA)},
+    {TRIGGER_TALK, 20, 0x8fd, MSGNO(MsgAkafubuSCeremony)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgTheyToldMe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x8fd, MSGNO(MsgItSStrange)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgAsLongAsThis)},
+    {TRIGGER_TALK, 14, 0x8fd, MSGNO(MsgDuringTheLast)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAkafubuHasBeen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x8fd, MSGNO(MsgTheGreatGabombaIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgWhatSTaking)},
+    {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgIMAfraid)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgWhenHeFails)},
+    {TRIGGER_TALK, 21, 0x8fd, MSGNO(MsgIHopeThe)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgWhewThankGoodness)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, 0x8fd, MSGNO(MsgIfTheGreat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgAmIGoing)},
+    {TRIGGER_TALK, 17, 0x8fd, MSGNO(MsgIsMakingThe)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgOnceTheCeremony)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x8fd, MSGNO(MsgHeSFailed)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKibomboWasSo)},
+    {TRIGGER_TALK, 22, 0x8fd, MSGNO(MsgWhenTheGabomba)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgLastTimeAkafubu)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, 0x8fd, MSGNO(MsgIHopeAkafubu)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgAkafubuSAlways)},
+    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgAkafubuWasA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgAkafubuHasNot)},
+    {TRIGGER_TALK, 15, 0x8fd, MSGNO(MsgAkafubuLooksReally)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgIThinkAkafubu)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x8fd, MSGNO(MsgHeTravelsTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgAkafubuIsObsessed)},
+    {TRIGGER_TALK, 25, 0x8fd, MSGNO(MsgIfTheGreatGabomba)},
+    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgIBelieveIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x8fd, MSGNO(MsgIfTheGreatGabombaActually)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgAkafubuAndOeia)},
+    {TRIGGER_TALK, 18, 0x8fd, MSGNO(MsgAkafubuHasTried)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgWhatDonT)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x8fd, MSGNO(MsgAsAChildAkafubu)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgIMSoFar)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgHeyNoPushing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgThereAreSo)},
+    {TRIGGER_TALK, 16, 0x8fd, MSGNO(MsgAkafubuIsAttempting)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTonightSeemsTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x8fd, MSGNO(MsgOeiaSSudden)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgWillTheGreat)},
+    {TRIGGER_TALK, 23, 0x8fd, MSGNO(MsgHeWhoIs)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgOeiaSDeath)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, 0x8fd, MSGNO(MsgIfOnlyOeia)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgISuspectAkafubu)},
+    {TRIGGER_TALK, 19, 0x8fd, MSGNO(MsgAkafubuBlamesHis)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgTheySayThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x8fd, MSGNO(MsgTheyAttackedSome)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgTheyReSaying)},
+    {TRIGGER_TALK, 24, 0x8fd, MSGNO(MsgIfTheGreatGabombaS)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgAkafubuSeesThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x8fd, MSGNO(MsgIFeelSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgIReallyWonder)},
+    {TRIGGER_TALK, 36, CONDITION_ALWAYS, EVENT(Func_0200042c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 36, CONDITION_ALWAYS, MSGNO(MsgIWonderIfA)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02007434[] = {
-    {2, 1, CONDITION_ALWAYS, EVENT(Func_020038ec)},
-    {2, 2, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_020038ec)},
     {0x4602, 3, 0x186a, EVENT(Func_02003bf0)},
-    {2, 4, CONDITION_ALWAYS, EVENT(Func_02003930)},
-    {2, 5, CONDITION_ALWAYS, EVENT(Func_020038ec)},
-    {0x1815, 8, 0x201, EVENT(Func_020005d0)},
-    {0x8c15, 11, 0x9ea, EVENT(Func_02000734)},
+    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_02003930)},
+    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x201, EVENT(Func_020005d0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x9ea, EVENT(Func_02000734)},
     {9, 0, 0x9ea, EVENT(Func_02000734)},
     {0x50008805, 10, 0x86a, EVENT(Func_02000618)},
     {0x50008805, 11, 0x204, EVENT(Func_0200065c)},
@@ -2464,102 +2464,102 @@ struct Trigger gData_02007434[] = {
 };
 
 struct Trigger gData_020074dc[] = {
-    {2, 1, CONDITION_ALWAYS, EVENT(Func_020038ec)},
-    {2, 2, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_020038ec)},
     {0x4602, 3, 0x186a, EVENT(Func_02003bf0)},
-    {2, 4, CONDITION_ALWAYS, EVENT(Func_02003930)},
-    {2, 5, 0x8f3, EVENT(Func_020038ec)},
-    {2, 5, 0x92f, EVENT(Func_02001218)},
-    {2, 5, CONDITION_ALWAYS, EVENT(Func_020038ec)},
-    {0x1815, 8, 0x201, EVENT(Func_020005d0)},
-    {0x8c15, 11, 0x9ea, EVENT(Func_02000734)},
+    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_02003930)},
+    {TRIGGER_STEP, 5, 0x8f3, EVENT(Func_020038ec)},
+    {TRIGGER_STEP, 5, 0x92f, EVENT(Func_02001218)},
+    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x201, EVENT(Func_020005d0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x9ea, EVENT(Func_02000734)},
     {9, 0, 0x9ea, EVENT(Func_02000734)},
     {0x50008805, 10, 0x86a, EVENT(Func_02000618)},
     {0x50008805, 11, 0x204, EVENT(Func_0200065c)},
     {0x50008805, 12, 0x205, EVENT(Func_020006a0)},
     {0x50008805, 13, 0x206, EVENT(Func_020006e4)},
     {0x50008805, 14, 0x207, EVENT(Func_02000728)},
-    {2, 20, 0x8f3, EVENT(Func_020007c8)},
-    {2, 22, 0x92e, EVENT(Func_02000c90)},
-    {0, 7, CONDITION_ALWAYS, MSGNO(MsgTheOrbIs)},
-    {0x8d15, 7, CONDITION_ALWAYS, MSGNO(MsgIAmCertain)},
-    {2, 21, 0x8f5, EVENT(Func_02002050)},
-    {0, 18, CONDITION_ALWAYS, MSGNO(MsgAhhSomethingIs)},
-    {0, 19, CONDITION_ALWAYS, MSGNO(MsgYouLookHuman)},
-    {0, 20, CONDITION_ALWAYS, MSGNO(MsgAkafubuPossessesThe)},
-    {0, 21, CONDITION_ALWAYS, MSGNO(MsgWeMustStand)},
-    {0, 22, CONDITION_ALWAYS, MSGNO(MsgMenOrGods)},
-    {0, 23, CONDITION_ALWAYS, MSGNO(MsgItSeemsThese)},
-    {0, 24, CONDITION_ALWAYS, MSGNO(MsgThisIsnT)},
-    {0, 25, CONDITION_ALWAYS, MSGNO(MsgItIsProper)},
-    {0x8d15, 18, CONDITION_ALWAYS, MSGNO(MsgTheyLookLike)},
-    {0x8d15, 19, CONDITION_ALWAYS, MSGNO(MsgIfNoPerson)},
-    {0x8d15, 20, CONDITION_ALWAYS, MSGNO(MsgISawAkafubu)},
-    {0x8d15, 21, CONDITION_ALWAYS, MSGNO(MsgIHopeAkafubuCompletes)},
-    {0x8d15, 22, CONDITION_ALWAYS, MSGNO(MsgWhatIfThe)},
-    {0x8d15, 23, CONDITION_ALWAYS, MSGNO(MsgLookAtThese)},
-    {0x8d15, 24, CONDITION_ALWAYS, MSGNO(MsgSureThisIs)},
-    {0x8d15, 25, CONDITION_ALWAYS, MSGNO(MsgKoffKoffAll)},
+    {TRIGGER_STEP, 20, 0x8f3, EVENT(Func_020007c8)},
+    {TRIGGER_STEP, 22, 0x92e, EVENT(Func_02000c90)},
+    {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgTheOrbIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 7, CONDITION_ALWAYS, MSGNO(MsgIAmCertain)},
+    {TRIGGER_STEP, 21, 0x8f5, EVENT(Func_02002050)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAhhSomethingIs)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgYouLookHuman)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgAkafubuPossessesThe)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgWeMustStand)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgMenOrGods)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgItSeemsThese)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgThisIsnT)},
+    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgItIsProper)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTheyLookLike)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgIfNoPerson)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgISawAkafubu)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgIHopeAkafubuCompletes)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgWhatIfThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgLookAtThese)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgSureThisIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgKoffKoffAll)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02007698[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {0x202, 7, CONDITION_ALWAYS, EVENT(Func_02003ac8)},
-    {1, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {0x202, 9, CONDITION_ALWAYS, EVENT(Func_02003b20)},
-    {1, 10, CONDITION_ALWAYS, 10},
-    {1, 11, CONDITION_ALWAYS, 11},
-    {1, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {0x202, 13, CONDITION_ALWAYS, EVENT(Func_02003b88)},
-    {0, 8, 0x8ee, MSGNO(MsgIMGoing)},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgIJustCan)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgDangWhyDid)},
-    {0, 9, 0x8ee, MSGNO(MsgIThinkThat)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgMySonHasBeen)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgAfterHeBecame)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgIHaveHeard)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgIKnowI)},
-    {0, 12, CONDITION_ALWAYS, EVENT(Func_020002c4)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgCrossingTheRiver)},
-    {0, 13, CONDITION_ALWAYS, MSGNO(MsgYouCanSee)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgIfIM)},
-    {0, 14, CONDITION_ALWAYS, MSGNO(MsgIfYouAreLooking)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgSureOurLegends)},
-    {0, 15, CONDITION_ALWAYS, MSGNO(MsgEachYearWhen)},
-    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgIWonderWhatOeia)},
-    {0, 16, CONDITION_ALWAYS, EVENT(Func_020004dc)},
-    {0x8d15, 16, CONDITION_ALWAYS, EVENT(Func_02000500)},
-    {0, 28, CONDITION_ALWAYS, EVENT(Func_020004dc)},
-    {0x8d15, 28, CONDITION_ALWAYS, EVENT(Func_02000500)},
-    {0, 17, CONDITION_ALWAYS, MSGNO(MsgAsSoonAs)},
-    {0x8d15, 17, CONDITION_ALWAYS, MSGNO(MsgAkafubuGetsSo)},
-    {0, 18, CONDITION_ALWAYS, MSGNO(MsgManyInGondowan)},
-    {0x8d15, 18, CONDITION_ALWAYS, MSGNO(MsgItWonT)},
-    {0, 19, CONDITION_ALWAYS, MSGNO(MsgWeThinkIt)},
-    {0x8d15, 19, CONDITION_ALWAYS, MSGNO(MsgIAmAMighty)},
-    {0, 20, CONDITION_ALWAYS, EVENT(Func_02000318)},
-    {3, 20, CONDITION_ALWAYS, EVENT(Func_02000318)},
-    {0x8d15, 20, CONDITION_ALWAYS, MSGNO(MsgOurWarriorsAppear)},
-    {0, 21, CONDITION_ALWAYS, EVENT(Func_02000350)},
-    {3, 21, CONDITION_ALWAYS, EVENT(Func_02000350)},
-    {0x8d15, 21, CONDITION_ALWAYS, MSGNO(MsgBecauseOurPaint)},
-    {0, 22, CONDITION_ALWAYS, EVENT(Func_02000388)},
-    {3, 22, CONDITION_ALWAYS, EVENT(Func_02000388)},
-    {0x8d15, 22, CONDITION_ALWAYS, MSGNO(MsgIfIHad)},
-    {0, 23, CONDITION_ALWAYS, EVENT(Func_020003c0)},
-    {3, 23, CONDITION_ALWAYS, EVENT(Func_020003c0)},
-    {0x8d15, 23, CONDITION_ALWAYS, MSGNO(MsgThatBedMakes)},
-    {0, 24, CONDITION_ALWAYS, MSGNO(MsgICanTRemember)},
-    {0x8d15, 24, CONDITION_ALWAYS, MSGNO(MsgILoveKibombo)},
-    {0, 25, CONDITION_ALWAYS, EVENT(Func_020003f8)},
-    {3, 24, CONDITION_ALWAYS, EVENT(Func_020003f8)},
-    {0x8d15, 25, CONDITION_ALWAYS, MSGNO(MsgICanTBelieve)},
+    {TRIGGER_TALK, 8, 0x8ee, MSGNO(MsgIMGoing)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgIJustCan)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgDangWhyDid)},
+    {TRIGGER_TALK, 9, 0x8ee, MSGNO(MsgIThinkThat)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMySonHasBeen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgAfterHeBecame)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgIHaveHeard)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgIKnowI)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_020002c4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgCrossingTheRiver)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgYouCanSee)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgIfIM)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgIfYouAreLooking)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgSureOurLegends)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgEachYearWhen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgIWonderWhatOeia)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_020004dc)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT(Func_02000500)},
+    {TRIGGER_TALK, 28, CONDITION_ALWAYS, EVENT(Func_020004dc)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, EVENT(Func_02000500)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAsSoonAs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgAkafubuGetsSo)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgManyInGondowan)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgItWonT)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgWeThinkIt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgIAmAMighty)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_02000318)},
+    {TRIGGER_EXAMINE, 20, CONDITION_ALWAYS, EVENT(Func_02000318)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgOurWarriorsAppear)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(Func_02000350)},
+    {TRIGGER_EXAMINE, 21, CONDITION_ALWAYS, EVENT(Func_02000350)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgBecauseOurPaint)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_02000388)},
+    {TRIGGER_EXAMINE, 22, CONDITION_ALWAYS, EVENT(Func_02000388)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgIfIHad)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, EVENT(Func_020003c0)},
+    {TRIGGER_EXAMINE, 23, CONDITION_ALWAYS, EVENT(Func_020003c0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgThatBedMakes)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgICanTRemember)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgILoveKibombo)},
+    {TRIGGER_TALK, 25, CONDITION_ALWAYS, EVENT(Func_020003f8)},
+    {TRIGGER_EXAMINE, 24, CONDITION_ALWAYS, EVENT(Func_020003f8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgICanTBelieve)},
     {TRIGGERS_END},
 };
 #undef PALETTE_WORD

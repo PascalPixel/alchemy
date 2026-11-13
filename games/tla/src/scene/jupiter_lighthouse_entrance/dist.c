@@ -27,9 +27,9 @@ extern s32 gData_020021bc;
 
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_02001b2c(s32 x, s32 z, s32 layer);
-void Func_02001b14(s32 *position);
+void Camera_WorldToScreen(s32 *position);
 s32 Math_Cosine(s32 angle);
-void Func_02001a0c(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_020005e4(struct Actor *self) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -52,7 +52,7 @@ void Func_020005e4(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Func_02001b14(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -96,7 +96,7 @@ stop:
     *((u8 *)self + 0x63) = zero;
     self->update = (void *)zero;
   }
-  Func_02001a0c(self, gData_0200219c);
+  Actor_StartScript(self, gData_0200219c);
   Event_PlaySound(228);
   gData_020021bc = 0;
 }
@@ -363,7 +363,7 @@ extern u8 gField_CachedTilesA[];
 extern u8 gField_CachedTilesB[];
 extern u8 gField_CachedTilesC[];
 
-void Func_020019bc(const void *source, void *destination);
+void Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -374,7 +374,7 @@ void Func_02000c68(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02002204, 64);
-  Func_020019bc(gField_CachedTilesA, buffer);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_02002200 = Resource_FindFreeEntry();
   VramCache_Load(gData_02002200, 0xc00, buffer);
   Heap_Release(buffer);
@@ -388,7 +388,7 @@ void Func_02000ce8(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_02002204, 64);
-  Func_020019bc(gField_CachedTilesB, buffer);
+  Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_02002200 = Resource_FindFreeEntry();
   Vram_Load(gData_02002200, 0x800, buffer);
   Heap_Release(buffer);
@@ -402,7 +402,7 @@ void Func_02000d68(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_02002204, 64);
-  Func_020019bc(gField_CachedTilesC, buffer);
+  Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_02002200 = Resource_FindFreeEntry();
   Vram_Load(gData_02002200, 0x800, buffer);
   Heap_Release(buffer);

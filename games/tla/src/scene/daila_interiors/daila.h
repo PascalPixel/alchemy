@@ -12,9 +12,9 @@ void Import_EventShowMessageAndWait(s32 actor, s32 flags);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
-void Func_02000d4c(s32 actor, s32 x, s32 z);
+void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 void Func_02000d94(s32 actor, s32 jump, s32 frames);
-void Func_02000cac(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
+void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                    s32 height);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -26,7 +26,7 @@ static inline void Daila_ObjWalk(s32 actor, s32 x, s32 z) {
 }
 
 static inline void Daila_ObjPlace(s32 actor, s32 x, s32 z) {
-  Func_02000d4c(actor, x, z);
+  Actor_SetHorizontalPositionWithTerrain(actor, x, z);
 }
 
 static inline void Daila_Jump(s32 actor, s32 height, s32 frames) {
@@ -44,7 +44,7 @@ static inline void Daila_Jump(s32 actor, s32 height, s32 frames) {
 
 static inline void Daila_CopyCells(s32 srcX, s32 srcY, s32 destX, s32 destY,
                                    s32 width, s32 height) {
-  Func_02000cac(srcX, srcY, destX, destY, width, height);
+  Map_CopyCellsRect(srcX, srcY, destX, destY, width, height);
 }
 
 #endif

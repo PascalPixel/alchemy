@@ -66,9 +66,9 @@ GameFlag_SetBit:
 	.thumb_func
 Func_02004a0c:
 	overlay_veneer Actor_SetMode
-	.global Func_02004a14
+	.global Actor_StartScript
 	.thumb_func
-Func_02004a14:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -114,29 +114,29 @@ Func_02004a64:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Func_02004a74
+	.global Actor_SetSpritePriorityDirect
 	.thumb_func
-Func_02004a74:
+Actor_SetSpritePriorityDirect:
 	overlay_veneer Actor_SetSpritePriorityDirectFar
 	.global Func_02004a7c
 	.thumb_func
 Func_02004a7c:
 	overlay_veneer Func_080202f8
-	.global Func_02004a84
+	.global Party_FindOwnerWithAction
 	.thumb_func
-Func_02004a84:
+Party_FindOwnerWithAction:
 	overlay_veneer Party_FindOwnerWithActionFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02004a94
+	.global Event_Start
 	.thumb_func
-Func_02004a94:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02004a9c
+	.global Event_End
 	.thumb_func
-Func_02004a9c:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -266,9 +266,9 @@ Func_02004b94:
 	.thumb_func
 Func_080d452c:
 	overlay_veneer Func_080c8250
-	.global Func_02004ba4
+	.global Event_SetDestination
 	.thumb_func
-Func_02004ba4:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Import_EventSetExitRequest
 	.thumb_func
@@ -318,9 +318,9 @@ Actor_CommitPositionAndActivate:
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global Func_02004c0c
+	.global Event_NoOp
 	.thumb_func
-Func_02004c0c:
+Event_NoOp:
 	overlay_veneer Event_NoOpFar
 	.global Func_02004c14
 	.thumb_func
@@ -370,9 +370,9 @@ Func_02004c64:
 	.thumb_func
 Func_02004c6c:
 	overlay_veneer Func_080c87d0
-	.global Func_02004c74
+	.global BattleEffect_StepVector3
 	.thumb_func
-Func_02004c74:
+BattleEffect_StepVector3:
 	overlay_veneer BattleEffect_StepVector3Far
 	.global Func_080dbdd4
 	.thumb_func

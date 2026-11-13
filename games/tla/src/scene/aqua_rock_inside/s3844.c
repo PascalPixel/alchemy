@@ -20,7 +20,7 @@ void Func_02003994(struct Actor *object, s32 priority) {
   ((struct FieldSprite *)object->sprite)->priority = priority;
   Actor_SetSingleChildFlags(object, 0);
   Func_02003cc4(object, 2);
-  Func_02003ccc(object, gData_020044c8);
+  Actor_StartScript(object, gData_020044c8);
   Actor_SetSpriteColor(object, 10);
   object->timer = 0;
   object->speedLimit = 0;

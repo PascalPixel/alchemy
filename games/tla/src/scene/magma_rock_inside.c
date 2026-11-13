@@ -47,7 +47,7 @@ struct StagedActor *Actor_FindInCell(struct FieldPosition *position,
 /* VIEW(s03b4): routine Func_02004c98 as void Func_02004c98(struct StagedActor *object, s32 mode); local.h has void Func_02004c98(struct Actor *object, s32 a). */
 extern void Func_02004c98__s03b4(struct StagedActor *object, s32 mode) __asm__("Func_02004c98");
 s32 Func_02004cf8(struct StagedActor *object, struct FieldPosition *position);
-void Func_02004eb8(void);
+void Event_NoOp(void);
 
 void Func_020003b4(void) {
   struct FieldPosition dst;
@@ -108,7 +108,7 @@ void Func_020003b4(void) {
   lead->moveRateZ = rate;
   FieldActor_SetMoveTarget(lead, dst.x, dst.y, dst.z);
   Actor_WaitForMove(next);
-  Func_02004eb8();
+  Event_NoOp();
   next->x.fixed = dst.x;
   {
     /* FAKEMATCH(temporary): z read ahead of velocityX's store; as dst.z at its
@@ -326,7 +326,7 @@ void Func_020007ac(struct Actor *object) {
        ->v)
 
 void Func_02004c98();
-void Func_02004ca0();
+void Actor_StartScript();
 s32 GameFlag_Test();
 /* VIEW(s0800): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/magma_rock_inside.c:336: too few arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s0800() __asm__("Actor_GetById");
@@ -365,7 +365,7 @@ void Func_02000800(s32 a0, s32 a1, s32 a2) {
   t5 = GameFlag_Test(0x109);
   if (t5 != 0)
     goto L_02008870;
-  Func_02004ca0(v6, v7);
+  Actor_StartScript(v6, v7);
   goto L_02008870;
 L_0200886a:
   FIELD_AT(v6, s32, 20) = -0xe0000;
@@ -430,7 +430,7 @@ extern s16 gData_0200552e[];
 extern void Func_0200075c__magma_rock_inside(s32 value) __asm__("Func_0200075c");
 void Func_02004ee0(s16 *cells);
 
-u8 *Func_020008f8(void) {
+u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene != (s32)&SceneId_Ov692Room1) {
@@ -473,8 +473,8 @@ void Func_0200099c(void) {
 
 #include "io_reg.h"
 
-void Func_02004d40(void);
-void Func_02004d48(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02004ee8(void);
 void Func_020006dc(u16 *ids);
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
@@ -491,7 +491,7 @@ void Func_02000a30(void) {
   s32 x;
   s32 z;
 
-  Func_02004d40();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Func_02004ee8();
   scene = gMainRoutineWork.scene;
@@ -581,26 +581,26 @@ void Func_02000a30(void) {
     if (x == 43)
       Event_SetFlag(2551);
   }
-  Func_02004d48();
+  Event_End();
 }
 
 #include "frame.h"
 #include "field_effect.h"
 
-void Func_02004e70(s32 a, s32 b);
+void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
 void Func_02004e78(s32 owner, u16 value);
 s32 Func_02004e80(void);
-s32 Func_02004e88(void);
+s32 BattleEffect_CleanupSceneObjects(void);
 
 void Func_02000ce4(s16 value) {
   struct MainRoutineWork *party;
 
-  Func_02004e70(151, 1);
+  BattleEffect_LoadActionEffectResources(151, 1);
   party = &gMainRoutineWork;
   Func_02004e78(party->currentOwner, value);
   Field_DispatchTypeHandler(1);
   Func_02004e80();
-  Func_02004e88();
+  BattleEffect_CleanupSceneObjects();
 }
 
 extern const s32 gData_0200502c[];
@@ -747,8 +747,8 @@ s32 Math_Cosine(s32 angle);
 extern const s32 gData_0200502c[];
 
 s32 Func_020005b0(s32 *from, s32 *to);
-void Func_02004d40(void);
-void Func_02004d48(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02004cb0(struct Actor *object);
 void Func_02004e20(void);
 void Func_02000d1c(struct Actor *object);
@@ -789,7 +789,7 @@ void Func_02000ed0(struct Actor *source) {
   flame->motionFlags = 0;
   Func_02004c98(flame, 1);
   Actor_SetSingleChildFlags(flame, 0);
-  Func_02004d40();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   position[0] = flame->x;
   position[1] = flame->y;
@@ -853,13 +853,13 @@ spark:
   System_Wait(24);
   if (cell == 222) {
     Func_02001350();
-    Func_02004d48();
+    Event_End();
     return;
   }
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02004e20();
   System_Wait(10);
-  Func_02004d48();
+  Event_End();
   return;
 hit:
   flame->acceleration = 0x20000;
@@ -877,7 +877,7 @@ hit:
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02004e20();
   System_Wait(10);
-  Func_02004d48();
+  Event_End();
 }
 
 #include "macros.h"
@@ -899,7 +899,7 @@ void Func_02001148(void) {
   struct MagmaRockInsideWork *work = Ram_HeapSlots->effectWork;
   struct Actor *object;
 
-  Func_02004d40();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(10);
   object = work->target;
@@ -909,7 +909,7 @@ void Func_02001148(void) {
   Actor_SetSpriteColor(work->target, 0);
   FieldEvent_Wait(1);
   Func_02000ed0(work->target);
-  Func_02004d48();
+  Event_End();
 }
 
 void Func_02001190(s32 mode, s32 cue) {
@@ -955,7 +955,7 @@ void Func_020011fc(void) {
   target = Actor_FindInCell__s0e20(position, leader);
   if (target == 0)
     return;
-  Func_02004d40();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Func_02004c98(leader, 6);
   System_Wait(6);
@@ -983,22 +983,16 @@ void Func_020011fc(void) {
   Func_02004c98(leader, 6);
   Actor_SetSingleChildFlags(leader, 1);
   leader->motionFlags |= 3;
-  Func_02004d48();
+  Event_End();
 }
 
 
 extern const s32 gData_02005050[];
 
-void Func_02004cc0(void);
+void Map_CenterOnFollowedPoint(void);
 void Func_020034bc(void);
 void Func_020034f0(void);
 void Func_02003548(void);
-
-static __inline__ void Func_02004d10_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): Func_02004d10_ forwarded inline; as direct calls to
-   * Map_SetScreenShake, 110 of 537 instructions differ in tla-en. */
-  Map_SetScreenShake(a, b, c);
-}
 
 static __inline__ void Func_02004cd8_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
@@ -1086,8 +1080,8 @@ burst:
   Sound_Play(145);
   Func_0200015c(burstPosition[0], burstPosition[1], burstPosition[2], 0,
                 (Random16Far() & mask) << 12, 0, 0x3a0001, effectOptions);
-  Func_02004d10_(0x50000, 0x50000, 0x10000);
-  Func_02004d10_(-1, -1, 0xe666);
+  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
   i++;
   Event_Wait(8);
   if (i != 16)
@@ -1110,8 +1104,8 @@ rise:
   if (i != 8)
     goto rise;
   Func_02004cd8_(68, 70, srcX, srcZ, 3, 6);
-  Func_02004d10_(0x50000, 0x70000, 0x10000);
-  Func_02004d10_(-1, -1, 0xe666);
+  MapGrid_SetShake(0x50000, 0x70000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
   Event_Wait(30);
   Map_CopyCellPictureIndicesRect(71, 70, srcX, srcZ, 3, 6);
   effectOptions->type = 403;
@@ -1123,7 +1117,7 @@ rise:
     Event_Wait(30);
     burstPosition[2] -= 0x280000;
   } else {
-    Func_02004d10_(0x20000, 0x10000, 0x10000);
+    MapGrid_SetShake(0x20000, 0x10000, 0x10000);
     Sound_Play(107);
     row = 0;
   row:
@@ -1161,7 +1155,7 @@ rise:
     }
     if (t == 0) {
       *(s32 *)&layer->unk08[4] -= 0x200000;
-      Func_02004cc0();
+      Map_CenterOnFollowedPoint();
       Event_Wait(1);
     } else if (t <= 63) {
       REG_BLDALPHA = ((16 - (t >> 2)) << 8) | (t >> 2);
@@ -1174,7 +1168,7 @@ rise:
       roomPosition[2] -= 0x8000;
       Func_02004cd8_(71, 76, srcX, srcZ - ((t - 47) >> 5) + 8, 3, 1);
     } else if (t == 128) {
-      Func_02004d10_(-1, -1, 0xe666);
+      MapGrid_SetShake(-1, -1, 0xe666);
     }
     t++;
     wait(1);
@@ -1200,7 +1194,7 @@ last:
   if (i != 6)
     goto last;
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
-  Func_02004d10_(-1, -1, 0xe666);
+  MapGrid_SetShake(-1, -1, 0xe666);
   Map_CopyCellPictureIndicesRect(68, 64, srcX, srcZ, 3, 6);
   MapGrid_WaitForShakeToSettle();
   Event_Wait(30);
@@ -1238,11 +1232,7 @@ void Func_02001828(void) {
   s32 *p;
   s32 rowAbove;
 
-  /* FAKEMATCH(wrapper): the calls that repeat a constant, the flag tests and
-   * the cell copies go through call.h's forwarding inlines, so that each call
-   * builds its own constants and stack arguments; as direct calls, 163 of 496
-   * instructions differ in tla-en. */
-  Func_02004d40();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   // One local reused for the position's address, the loop counters and the
   // owner's address: the native keeps all of them in r6.
@@ -1383,7 +1373,7 @@ void Func_02001828(void) {
   leader->facing = facing;
   Actor_WalkToAndWait(*(s32 *)j, ((s16 *)p)[1], ((s16 *)p)[5]);
   Actor_Get(*(s32 *)j)->actionFlags |= 1;
-  Func_02004d48();
+  Event_End();
 }
 
 // ---- games/tla/src/scene/magma_rock_inside/s1ca0.c ----
@@ -1438,8 +1428,8 @@ void Func_02001d04(struct Actor *object) {
 // ---- games/tla/src/scene/magma_rock_inside/s1d64.c ----
 extern const s32 gData_02005050[];
 
-void Func_02004d40(void);
-void Func_02004d48(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02004e20(void);
 /* VIEW(s1d64): routine Func_02001d04 as void Func_02001d04(void); the definition has void Func_02001d04(struct Actor *object). */
 extern void Func_02001d04__s1d64(void) __asm__("Func_02001d04");
@@ -1458,7 +1448,7 @@ void Func_02001d64(void) {
   struct EffectOptions options;
   s32 i;
 
-  Func_02004d40();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(107);
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
@@ -1518,7 +1508,7 @@ loop:
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02004e20();
   wait(10);
-  Func_02004d48();
+  Event_End();
 }
 
 void Func_02002128(void) {
@@ -1564,7 +1554,7 @@ void Func_020021c0(void) {
   GameFlag_SetBit(((s8 *)work)[0xd30] + 0x2ee);
   if (GameFlag_Test(0x303) && GameFlag_Test(0x304)) {
     other = Actor_GetById(11);
-    Func_02004d40();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     MapGrid_SetShake(0x20000, 0x10000, 0x10000);
     Sound_Play(141);
@@ -1594,7 +1584,7 @@ void Func_020021c0(void) {
     FieldEvent_Wait(1);
     REG_BLDCNT = 0;
     Func_02000694(0, 38, 18, 0);
-    Func_02004d48();
+    Event_End();
   }
 }
 
@@ -1614,7 +1604,7 @@ void Func_02004e58(s32 item, s32 mode);
 void Func_02002364(void) {
   const u8 *message;
 
-  Func_02004d40();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   message = MsgBlazeStoneEmber;
   Message_ShowCentered(message, 1);
@@ -1624,21 +1614,21 @@ void Func_02002364(void) {
       0) {
     Party_GiveItem(460, 0);
     if (FieldPartyInventory_FindOwner(460) == -1) {
-      Func_02004d48();
+      Event_End();
       return;
     }
     Func_02004e58(460, 3);
     Actor_SetAnimation(12, 2);
     Event_SetFlag(0x9f9);
   }
-  Func_02004d48();
+  Event_End();
 }
 
 void Func_020023e8(void) {
   s32 width = 1;
   s32 height = 2;
 
-  Func_02004d40();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(188);
   MapGrid_CopyCellsTo(72, 67, 15, 19, width, height);
@@ -1653,10 +1643,10 @@ void Func_020023e8(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->speedLimit =
       Actor_Get(gMainRoutineWork.currentOwner)->acceleration = 0x8000;
   Event_PlaySound(123);
-  Actor_ResetAndSetPositionInMode2_(gMainRoutineWork.currentOwner, 248, 328);
+  Actor_WalkTo(gMainRoutineWork.currentOwner, 248, 328);
   FieldEvent_Wait(5);
   FieldEvent_SetExitRequest(1);
-  Func_02004d48();
+  Event_End();
 }
 
 // The cell stampers keep their last cell and the block they copy.
@@ -1776,7 +1766,7 @@ void Func_020026a4(s32 x, s32 z) {
   Scene_SetActorSpritePriority(object, 0);
   Actor_SetSingleChildFlags(object, 0);
   ((struct FieldSprite *)object->sprite)->blendMode = 2;
-  Func_02004d40();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   REG_WINOUT = 0x3f1f;
   REG_DISPCNT |= 0x8000;
@@ -1798,7 +1788,7 @@ fadeOut:
   MapGrid_CopyCellsTo(65, 1, x + 64, cellZ, 1, 2);
   Func_02000694(0, x, cellZ, 0xff00);
   Func_02004cb0(object);
-  Func_02004d48();
+  Event_End();
   REG_BLDCNT = 0;
   REG_DISPCNT &= 0x7fff;
 }
@@ -1858,7 +1848,7 @@ void Func_020028ac(void) {
   } while (i != 16);
   Event_SetFlag(0x305);
   other = Actor_Get(9);
-  Func_02004d40();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   MapGrid_SetShake(0x20000, 0x10000, 0x10000);
   Event_PlaySound(141);
@@ -1888,7 +1878,7 @@ void Func_020028ac(void) {
   FieldEvent_Wait(1);
   REG_BLDCNT = 0;
   Func_02000694(0, 7, 21, 128);
-  Func_02004d48();
+  Event_End();
 }
 
 #include "call.h"
@@ -1913,7 +1903,7 @@ void Func_02002a14(struct Actor *source) {
   Func_02004c98(object, 1);
   Actor_SetSingleChildFlags(object, 0);
   Animation_SetStateFlags(object, 1);
-  Func_02004ca0(object, gData_02005534);
+  Actor_StartScript(object, gData_02005534);
 }
 
 struct Orbiter {
@@ -2073,7 +2063,7 @@ extern const s32 gData_02005570[];
 extern const u8 gData_020055d8[];
 extern const u8 gData_02005608[];
 
-void Func_02004ea0(void);
+void Party_PlaySavedMusic(void);
 
 void Func_02002cd0(s32 a, s32 b) {
   struct Actor *first = Actor_GetById(a);
@@ -2124,7 +2114,7 @@ burst:
   Func_02004c98(object, 7);
   Actor_SetSingleChildFlags(object, 0);
   Animation_SetStateFlags(object, 1);
-  Func_02004ca0(object, gData_02005544);
+  Actor_StartScript(object, gData_02005544);
   REG_BLDALPHA = 0x1004;
   wait(2);
   REG_BLDALPHA = 0x100a;
@@ -2162,7 +2152,7 @@ spiral:
   Actor_SetSingleChildFlags(spark, 0);
   Animation_SetStateFlags(spark, 1);
   FieldVector_AddPolarOffset(spark->unk4c, spark->timer, &spark->x);
-  Func_02004ca0(spark, gData_02005560);
+  Actor_StartScript(spark, gData_02005560);
   if (i == 3) {
     Actor_SetSpriteColorById(b, 256);
     second->motionFlags = noMotion;
@@ -2195,7 +2185,7 @@ column:
   Func_02004c98(riser, 7);
   Actor_SetSingleChildFlags(riser, 0);
   Animation_SetStateFlags(riser, 1);
-  Func_02004ca0(riser, gData_02005570);
+  Actor_StartScript(riser, gData_02005570);
   i += 2;
   if (i != 32)
     goto column;
@@ -2216,7 +2206,7 @@ column:
   wait(120);
   second->update = 0;
   Sound_Play(390);
-  Func_02004ea0();
+  Party_PlaySavedMusic();
   wait(1);
 }
 
@@ -2230,7 +2220,7 @@ column:
 
 extern const u8 MsgBlazeTabletInscription[];
 
-s32 Func_02004da8();
+s32 Actor_MoveToObject();
 s32 Party_LearnAbility();
 
 /// Reading the Blaze tablet shows its inscription; the first time (flag 0x9fa
@@ -2238,17 +2228,17 @@ s32 Party_LearnAbility();
 void Func_020030cc(void) {
   struct Actor *object;
 
-  Func_02004d40();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered(MsgBlazeTabletInscription, 1);
   if (Event_GetFlag(0x9fa) != 0) {
-    Func_02004d48();
+    Event_End();
   } else {
     FieldEvent_SetMessageId((s32)MsgBlazeTabletInscription);
     EVENT_WORK->messageId++;
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xb333, 0x5999);
     Actor_SetSpeed(5, 0xb333, 0x5999);
-    Func_02004da8(5, gMainRoutineWork.currentOwner);
+    Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
     FieldEvent_Wait(1);
     Actor_WalkTo(gMainRoutineWork.currentOwner, 256, 136);
     Actor_WalkTo(5, 272, 136);
@@ -2297,16 +2287,16 @@ void Func_020030cc(void) {
     FieldActor_WaitForMoveById(5);
     Actor_SetPosition(5, 0, 0);
     Actor_SetActionCallback(Actor_Get(8), 9);
-    Func_02004d48();
+    Event_End();
   }
 }
 
 void Func_020032d8(void) {
   if (Event_GetFlag(0x9fa)) {
-    Func_02004d40();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Message_ShowCentered(MsgBlazeTabletInscription, 1);
-    Func_02004d48();
+    Event_End();
   } else {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 248, 107);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 248, 136);
@@ -2319,10 +2309,10 @@ void Func_020032d8(void) {
 
 void Func_02003348(void) {
   if (Event_GetFlag(0x9fa)) {
-    Func_02004d40();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Message_ShowCentered(MsgBlazeTabletInscription, 1);
-    Func_02004d48();
+    Event_End();
   } else {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 280, 136);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 136);
@@ -2334,10 +2324,10 @@ void Func_02003348(void) {
 
 void Func_020033b0(void) {
   if (Event_GetFlag(0x9fa)) {
-    Func_02004d40();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Message_ShowCentered(MsgBlazeTabletInscription, 1);
-    Func_02004d48();
+    Event_End();
   } else {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 248, 136);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 136);
@@ -2356,7 +2346,7 @@ extern u8 gData_02006458[];
 extern u8 gData_0200659c[];
 extern u8 gData_02006714[];
 
-u8 *Func_02003418(void) {
+u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene != (s32)&SceneId_Ov692Room1) {

@@ -27,8 +27,8 @@ struct DoorStep {
 
 void Event_FinishScreenTransition();
 void Event_WaitTransitionFrames();
-void Func_02001fcc();
-void Func_02001fd4();
+void Event_Start();
+void Event_End();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -41,7 +41,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Func_02000054(struct DoorStep *step, s32 countdown, s32 unused) {
-  Func_02001fcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(158);
   MapGrid_AnimateCells(step->script, step->x, step->z);
@@ -53,7 +53,7 @@ void Func_02000054(struct DoorStep *step, s32 countdown, s32 unused) {
   FieldEvent_SetExitRequest(countdown);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02001fd4();
+  Event_End();
 }
 
 /* VIEW(lemuria_palace): variable gData_02002368 as extern u8 gData_02002368[]; the definition has s32 gData_02002368[] = { (s32) gData_0200233c, 0x170005, (s32) gData_0200233c, 0x17001e, }. */
@@ -121,7 +121,7 @@ void Func_020000f4(void) {
 }
 
 /// The room's setup: it schedules the palette cycle Func_020000f4.
-s32 Func_02000158(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
   Task_AddFrame(Func_020000f4, 0xc80);
   FieldActor_SetSpritePriority(8, 3);
@@ -177,7 +177,7 @@ extern u8 Data_02003024[];
 extern u8 Data_02003060[];
 extern u8 Data_02003030[];
 s32 __modsi3();
-s32 Func_020020d4();
+s32 Camera_WorldToScreen();
 s32 Func_0200210c();
 
 void Func_020002b4(void) {
@@ -233,7 +233,7 @@ void Func_020002b4(void) {
   position.x = 0x3400000;
   position.y = 0;
   position.z = 0x1c00000;
-  Func_020020d4(&position);
+  Camera_WorldToScreen(&position);
   if (*(s32 *)Data_02003090 != 0) {
     ((struct Actor *)Data_02003060)->y = position.x;
     ((struct Actor *)Data_02003060)->z = position.z;
@@ -291,7 +291,7 @@ extern u8 gData_0200308c__s03a0 __asm__("gData_0200308c");
 
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *p);
-void Func_02001f6c(const u8 *source, void *destination);
+void Resource_DecodeType01(const u8 *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void Func_02002104(struct Unk_020003a0Sprite *sprite, s32 a, s32 b, u32 attr,
                    s32 tile);
@@ -308,7 +308,7 @@ void Func_020003a0(void) {
 
   Io_Write16(0x3f40, &REG_BLDCNT);
   Io_Write16(0x1000, &REG_BLDALPHA);
-  Func_02001f6c(Data_02002620, buffer);
+  Resource_DecodeType01(Data_02002620, buffer);
   firstSlot = &gData_02003020;
   *firstSlot = Resource_FindFreeEntry();
   firstTile = &Data_02003088;
@@ -319,7 +319,7 @@ void Func_020003a0(void) {
   Data_02003060__s03a0.shape = 1;
   Data_02003060__s03a0.blend = 1;
   Data_02003060__s03a0.palette = 0;
-  Func_02001f6c(Data_02002af8, buffer);
+  Resource_DecodeType01(Data_02002af8, buffer);
   secondSlot = &gData_02003094;
   *secondSlot = Resource_FindFreeEntry();
   secondTile = &Data_02003058;
@@ -402,9 +402,9 @@ loop:
    } *)(base))                                                                 \
        ->v)
 
-void Func_02001fcc();
-/* VIEW(s03a0): routine Func_02001fd4 as s32 Func_02001fd4(); lemuria_palace has void Func_02001fd4(); tried as the definition's void Func_02001fd4(void), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:442: void value not ignored as it ought to be. */
-extern s32 Func_02001fd4__s03a0() __asm__("Func_02001fd4");
+void Event_Start();
+/* VIEW(s03a0): routine Event_End as s32 Event_End(); lemuria_palace has void Event_End(); tried as the definition's void Event_End(void), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:442: void value not ignored as it ought to be. */
+extern s32 Func_02001fd4__s03a0() __asm__("Event_End");
 s32 Party_AddActiveOwner();
 void Func_020020ac();
 /* VIEW(s03a0): routine Func_020001d8 as s32 Func_020001d8(); the definition has void Func_020001d8(void); tried as the definition's void Func_020001d8(struct Actor *object), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:406: conflicting types for `Func_020001d8'. */
@@ -419,7 +419,7 @@ s32 Func_0200058c(s32 a0, s32 a1, s32 a2, s32 a3) {
   struct Actor *v3, *v6, *v7, *v12, *v13, *v19, *v20, *v22, *v23, *v24, *v25,
       *v26, *v27;
 
-  Func_02001fcc();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaPalace11);
   Call3((void (*)())Actor_SetSpeedParameters, 16, 0x13333, 0x9999);
@@ -1264,50 +1264,50 @@ s32 gData_02002378[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_020000c8)},
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_020000c8)},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {1, 8, CONDITION_ALWAYS, 8},
-    {1, 9, CONDITION_ALWAYS, 9},
-    {1, 10, CONDITION_ALWAYS, 10},
-    {1, 11, CONDITION_ALWAYS, 11},
-    {1, 12, CONDITION_ALWAYS, 12},
-    {1, 13, CONDITION_ALWAYS, 13},
-    {1, 14, CONDITION_ALWAYS, 14},
-    {1, 15, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
+    {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
+    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {0xc602, 16, CONDITION_ALWAYS, EVENT(Func_020000c8)},
-    {1, 17, CONDITION_ALWAYS, 17},
-    {2, 20, 0x96a, EVENT(Func_0200058c)},
-    {0, 8, 0x196a, MSGNO(MsgLemuriaPalace12)},
-    {0, 9, 0x196a, MSGNO(MsgLemuriaPalace13)},
-    {0, 10, 0x196a, MSGNO(MsgLemuriaPalace14)},
-    {0, 11, 0x196a, MSGNO(MsgLemuriaPalace15)},
-    {0, 12, 0x196a, MSGNO(MsgLemuriaPalace16)},
-    {0x8d15, 8, 0x196a, MSGNO(MsgLemuriaPalace17)},
-    {0x8d15, 9, 0x196a, MSGNO(MsgLemuriaPalace18)},
-    {0x8d15, 10, 0x196a, MSGNO(MsgLemuriaPalace19)},
-    {0x8d15, 11, 0x196a, MSGNO(MsgLemuriaPalace20)},
-    {0x8d15, 12, 0x196a, MSGNO(MsgLemuriaPalace21)},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace01)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace02)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace03)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace04)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace05)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace06)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace07)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace08)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace09)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace10)},
-    {0, 13, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace22)},
-    {0, 14, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace23)},
-    {0, 16, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace24)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace25)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace26)},
-    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace27)},
+    {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
+    {TRIGGER_STEP, 20, 0x96a, EVENT(Func_0200058c)},
+    {TRIGGER_TALK, 8, 0x196a, MSGNO(MsgLemuriaPalace12)},
+    {TRIGGER_TALK, 9, 0x196a, MSGNO(MsgLemuriaPalace13)},
+    {TRIGGER_TALK, 10, 0x196a, MSGNO(MsgLemuriaPalace14)},
+    {TRIGGER_TALK, 11, 0x196a, MSGNO(MsgLemuriaPalace15)},
+    {TRIGGER_TALK, 12, 0x196a, MSGNO(MsgLemuriaPalace16)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x196a, MSGNO(MsgLemuriaPalace17)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x196a, MSGNO(MsgLemuriaPalace18)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x196a, MSGNO(MsgLemuriaPalace19)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x196a, MSGNO(MsgLemuriaPalace20)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x196a, MSGNO(MsgLemuriaPalace21)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace01)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace02)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace03)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace04)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace05)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace06)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace07)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace08)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace09)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace10)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace22)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace23)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace24)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace25)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace26)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalace27)},
     {243, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLemuriaInteriors27))},
     {243, 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLemuriaInteriors28))},
     {243, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLemuriaInteriors29))},

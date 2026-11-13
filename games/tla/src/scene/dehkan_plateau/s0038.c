@@ -178,8 +178,8 @@ void Func_020001d0(const void *data) {
 
 s32 Func_02003d20(void);
 struct Actor *Func_02003dd8(s32 *position, s32 mode);
-void Func_02003c28(void);
-void Func_02003c30(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02000974(s32 mode);
 void Func_02000aa8(void);
 void Func_02000c4c(s32 level, s32 layer);
@@ -208,7 +208,7 @@ next:
       goto test;
     }
     flag = list[1];
-    Func_02003c28();
+    Event_Start();
     if (GameFlag_Test(flag) == 0) {
       Sound_Play(125);
       Actor_SetPartAttribute(Actor_GetById(id), 7);
@@ -249,7 +249,7 @@ next:
         GameFlag_SetBit(done);
       }
     }
-    Func_02003c30();
+    Event_End();
     return;
   }
 test:
@@ -276,7 +276,7 @@ loop:
     goto test;
   }
   flag = list[1];
-  Func_02003c28();
+  Event_Start();
   if (!GameFlag_Test(flag + 1)) {
     Sound_Play(185);
     MapGrid_SetShake(0x10000, 0x40000, 0x10000);
@@ -296,7 +296,7 @@ loop:
     GameFlag_SetBit(flag);
     GameFlag_SetBit(flag + 1);
   }
-  Func_02003c30();
+  Event_End();
   return;
 test:
   if (list[0] != 0xffff)
@@ -335,11 +335,11 @@ extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
 void Func_02003cf0(void);
-void Func_02003d50(s32 a, s32 b);
-void Func_02003d58(s32 a, s32 b);
-void Func_02003d60(void);
-void Func_02003d68(void);
-void Func_02003d70(void);
+void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
+void BattleEffect_SetupObjectPair(s32 a, s32 b);
+void BattleEffect_StopMainActor(void);
+void BattleEffect_CleanupSceneObjects(void);
+void EventObject_Initialize(void);
 void Func_02003d40(struct Actor *object, s32 mode);
 void Func_02003bb8(struct Actor *object);
 void Func_02002b68(void);
@@ -357,7 +357,7 @@ void Func_0200056c(s32 id) {
 }
 
 void ObjectVisual_CopyAttributes(s32 id, s32 value);
-void Func_02003c78(s32 id, s32 target);
+void Actor_MoveToObject(s32 id, s32 target);
 
 /// Places actors 8 to 10 at the leader, then walks a list of (actor, flag)
 /// pairs ended by 0xffff: an actor whose flag + 1 is set is put back with
@@ -369,9 +369,9 @@ void Func_02000584(u16 *list) {
   // Holds the grid's address for the whole function.
   u8 *grid = gMapShapeGrid;
 
-  Func_02003c78(8, gMainRoutineWork.currentOwner);
-  Func_02003c78(9, gMainRoutineWork.currentOwner);
-  Func_02003c78(10, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(8, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(10, gMainRoutineWork.currentOwner);
   wait(1);
   Func_0200056c(8);
   Func_0200056c(9);
@@ -422,7 +422,7 @@ void Func_020006ec(struct Actor *object, struct Actor *target) {
 }
 
 s32 Math_Cosine(s32 angle);
-void Func_02003ba8(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 s32 Func_02003d80(void *sprite, s32 frame);
 
 /// The effect fields of an Actor, as field_effect.h names them.
@@ -467,7 +467,7 @@ next:
       goto test;
     }
     flag = list[1];
-    Func_02003c28();
+    Event_Start();
     if (GameFlag_Test(flag) == 0) {
       Func_02003ba0(helper, 1);
       Func_020006ec(helper, target);
@@ -517,7 +517,7 @@ next:
         GameFlag_SetBit(done);
       }
     }
-    Func_02003c30();
+    Event_End();
     return;
   }
 test:

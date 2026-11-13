@@ -19,11 +19,11 @@ struct Work020023c4 {
 };
 
 void Func_020024c0();
-void Func_02004ca8(void);
+void Event_Start(void);
 void Func_02004bc0(struct Actor *actor, s32 a);
 s32 Func_02004c18(s32 terrain, s32 x, s32 z);
 s32 Func_02004c38(struct Actor *actor, struct Vector3 *position);
-void Func_02004ce8();
+void Actor_JumpDownLedge();
 s32 Func_02004c78(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
 void Animation_ApplyChildValues(struct Actor *actor, s32 a);
 void Func_02002614(void);
@@ -45,7 +45,7 @@ void Func_0200263c(void) {
 #endif
     actor = Actor_Get(main->currentOwner);
     work = (struct Work020023c4 *)(gData_020023c4 + 0x188);
-    Func_02004ca8();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     actor->update = Func_02002614;
     actor->facing = TRIG_TURN / 4;
@@ -113,7 +113,7 @@ void Func_0200263c(void) {
           break;
         if (result < 0) {
           actor->facing = TRIG_TURN / 4;
-          Func_02004ce8(gMainRoutineWork.currentOwner, 6, -1);
+          Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, -1);
           break;
         }
 #if TLA_PATCH_1
@@ -197,7 +197,7 @@ void Func_02002848(void) {
 
 /* VIEW(s2860): routine Func_020024c0 as s32 Func_020024c0(s32 a, s32 b); s263c has void Func_020024c0(); tried as the definition's void Func_020024c0(void), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:259: too many arguments to function `Func_020024c0'. */
 extern s32 Func_020024c0__s2860(s32 a, s32 b) __asm__("Func_020024c0");
-void Func_02004d50(s32 a, s32 b);
+void ScreenTransition_Start(s32 a, s32 b);
 s32 Func_02004c18(s32 layer, s32 x, s32 z);
 void Func_02002614(void);
 extern u8 gData_020023c4[];
@@ -245,7 +245,7 @@ int Func_02002860(void) {
    * scheduler issues before the update hook is cleared; as void, 2 of 138
    * instructions differ in tla-en. */
   if (event->started == 0) {
-    Func_02004d50(event->field1ac, event->field1b4);
+    ScreenTransition_Start(event->field1ac, event->field1b4);
     event->started = 1;
   }
   Flag_Clear(0x106);
@@ -262,7 +262,7 @@ int Func_02002860(void) {
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gData_020023c4 + 0x188);
   Flag_Set(0x106);
-  Func_02004ca8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Flag_Clear(0x106);
   leader->update = Func_02002614;
@@ -371,7 +371,7 @@ void Func_020029c8(struct Actor *actor) {
       radius = Random16Far() * 8;
       sum = Random16Far() + Random16Far();
       scale = (sum >> 2) + 0x8000;
-      Func_02004bd0(object, gData_020056d0);
+      Actor_StartScript(object, gData_020056d0);
       Actor_SetSingleChildFlags(object, 0);
       object->velocityY = angle * 4 + 0x20000;
       object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));
@@ -421,7 +421,7 @@ next:
       angle = 0x4000 + rise;
       radius = Random16Far() * 8;
       size = Random16Far();
-      Func_02004bd0(object, gData_02005714);
+      Actor_StartScript(object, gData_02005714);
       Actor_SetSingleChildFlags(object, 0);
       /* FAKEMATCH(temporary): the scale is taken before the velocity stores, as
        * in the native; as object->scaleX = (size >> 1) + 0x4000, 14 of 98
@@ -636,14 +636,14 @@ void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 /* VIEW(s2f4c): routine Func_02002c2c as void Func_02002c2c(void); the definition has void Func_02002c2c(struct Actor *object). */
 extern void Func_02002c2c__s2f4c(void) __asm__("Func_02002c2c");
 void Func_02004c88(s32 scene, s32 a1);
-void Func_02004d98(void);
+void Event_ResolveAllPendingActions(void);
 
 void Func_02002f4c(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   struct Actor *source = Actor_Get(id);
   struct Actor *object = Actor_Get(target);
 
   FieldActor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
-  Func_02004bd0(object, script);
+  Actor_StartScript(object, script);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   Func_02004bc0(object, 1);
@@ -696,7 +696,7 @@ void Func_02002fc4(struct Actor *self) {
   Event_PlaySound(104);
 }
 
-void Func_02004c68(struct Actor *object, s32 mode);
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 
 s32 Func_0200308c(struct Actor *object) {
   s32 frame = object->timer;
@@ -707,7 +707,7 @@ s32 Func_0200308c(struct Actor *object) {
     object->scaleY = frame;
     object->speedLimit = 0x10000;
     object->acceleration = 0x10000;
-    Func_02004c68(object, 1);
+    Actor_SetSpritePriorityDirect(object, 1);
   } else if (frame <= 30) {
     if (frame == 30) {
       Event_PlaySound(136);
@@ -743,7 +743,7 @@ s32 Func_02003138(struct Actor *object) {
     object->scaleY = frame;
     object->speedLimit = 0x10000;
     object->acceleration = 0x8000;
-    Func_02004c68(object, 1);
+    Actor_SetSpritePriorityDirect(object, 1);
   } else if (frame <= 32) {
     object->scaleX = 0x10000;
     object->scaleY = 0x10000;
@@ -811,8 +811,8 @@ void Func_02003284(void) {
 
   if (S16_AT(event, 0xca2)) {
     Flag_Set(0x106);
-    Func_02004d48();
-    Func_02004d98();
+    Leader_StopMoving();
+    Event_ResolveAllPendingActions();
     Flag_Clear(0x106);
   }
 }
@@ -841,9 +841,6 @@ void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
 extern s16 gData_02005798[];
 
 void Func_020032b8(void) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 2 of 304 instructions differ in
-   * tla-en. */
   struct Position probe;
   s32 startBehavior;
   s32 x;
@@ -1050,8 +1047,6 @@ retry:
     angle = ArcTan2(targetZ - object->z, targetX - object->x);
     angle = (angle + 0x2000) & 0xc000;
   }
-  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 2
-   * of 347 instructions differ in tla-en. */
   FieldVector_AddPolarOffset(0x100000, angle, position);
   cell = GetMapCellCollision(*layer, p[0], p[2]);
   if (cell == 255 ||
@@ -1129,8 +1124,6 @@ walk:
   /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
    * position's address; as no asm, 94 of 347 instructions differ in tla-en. */
   __asm__("" : : : SFP_CLOBBER);
-  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
-   * of 347 instructions differ in tla-en. */
   FieldVector_AddPolarOffset(0x100000, angle, position);
   q = position;
   cell = GetMapCellCollision(*layer, q[0], q[2]);

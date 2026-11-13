@@ -34,25 +34,25 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 FieldMessage_Show:
 	overlay_veneer FieldMessage_ShowFar
-	.global Func_02002b10
+	.global MessageArgument_Push
 	.thumb_func
-Func_02002b10:
+MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
-	.global Func_02002b18
+	.global PartyInventory_FindRoom
 	.thumb_func
-Func_02002b18:
+PartyInventory_FindRoom:
 	overlay_veneer PartyInventory_FindRoomFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02002b28
+	.global Event_Start
 	.thumb_func
-Func_02002b28:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02002b30
+	.global Event_End
 	.thumb_func
-Func_02002b30:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
@@ -202,9 +202,9 @@ Func_02002c50:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02002c60
+	.global Party_PlaySavedMusic
 	.thumb_func
-Func_02002c60:
+Party_PlaySavedMusic:
 	overlay_veneer Party_PlaySavedMusicFar
 	.global Actor_LaunchFromLeader
 	.thumb_func

@@ -24,12 +24,12 @@ void Func_020010f4(void);
 void Func_020023d0(void);
 void Func_02002ed4();
 void Func_02000418(void);
-void Func_02002e44(void);
+void Event_Start(void);
 void Event_StartScreenTransition(void);
 void Func_02001420(s32 a0);
-void Func_02002dec(void);
+void Map_CenterOnFollowedPoint(void);
 
-s32 Func_02002438(s32 a0) {
+s32 Scene_Initialize(s32 a0) {
   struct MainRoutineWork *work = &gMainRoutineWork;
   s32 scene = work->scene;
   struct Actor *object;
@@ -173,7 +173,7 @@ s32 Func_02002438(s32 a0) {
       if (late->entrance == 20) {
         s32 frames;
 
-        Func_02002e44();
+        Event_Start();
         FieldEvent_ResolvePendingActions(0);
         FieldCamera_MoveTo(-1, -1, -1, 0);
         Actor_SetPosition(late->currentOwner, 0, 0);
@@ -268,7 +268,7 @@ s32 Func_02002438(s32 a0) {
       object->terrainHeight = level;
       object->y = level;
       FieldEvent_Wait(1);
-      Func_02002dec();
+      Map_CenterOnFollowedPoint();
     }
   } else if (scene == (s32)&SceneId_Ov686Room8) {
     object = Actor_GetById(64);
@@ -306,12 +306,12 @@ extern struct AnkohlRuinsFloatWork Data_02004030;
 void Func_020010f4(void);
 void Func_020023d0(void);
 void Func_02002ed4();
-void Func_02002e44(void);
+void Event_Start(void);
 void Event_StartScreenTransition(void);
 void Func_02001420(s32 a0);
-void Func_02002dec(void);
+void Map_CenterOnFollowedPoint(void);
 
-s32 Func_02002438(s32 a0) {
+s32 Scene_Initialize(s32 a0) {
   struct MainRoutineWork *work = &gMainRoutineWork;
   s32 scene = work->scene;
   struct Actor *object;
@@ -449,7 +449,7 @@ s32 Func_02002438(s32 a0) {
       if (late->entrance == 20) {
         s32 frames;
 
-        Func_02002e44();
+        Event_Start();
         FieldEvent_ResolvePendingActions(0);
         FieldCamera_MoveTo(-1, -1, -1, 0);
         Actor_SetPosition(late->currentOwner, 0, 0);
@@ -544,7 +544,7 @@ s32 Func_02002438(s32 a0) {
       object->terrainHeight = level;
       object->y = level;
       FieldEvent_Wait(1);
-      Func_02002dec();
+      Map_CenterOnFollowedPoint();
     }
   } else if (scene == (s32)&SceneId_Ov686Room8) {
     object = Actor_GetById(64);

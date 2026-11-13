@@ -28,8 +28,8 @@ struct AlhafraInteriorsEventWork {
   u16 field1c4;
 };
 
-void Func_02000a94(void);
-void Func_02000a9c(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02000bc4(s32 shop, s32 keeper);
 void Func_02000bcc(s32 keeper);
 void Func_02000bd4(s32 shop, s32 keeper);

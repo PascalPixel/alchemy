@@ -55,7 +55,7 @@ void Func_02000198(s32 a, s32 b, s32 c);
 void Func_020001a8(s32 a, s32 flag, s32 b, s32 c);
 void Func_020000fc(void);
 
-s32 Func_02000074(void) {
+s32 Scene_Initialize(void) {
   struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
 
   map->mode = 1;
@@ -102,7 +102,7 @@ s32 Func_02000074(void) {
   return 0;
 }
 
-/// The palette cycle Func_02000074 schedules: every 16 frames it copies four
+/// The palette cycle Scene_Initialize schedules: every 16 frames it copies four
 /// of the eight colours at 0x05000180, starting one further each time, to the
 /// colours at 0x050000c2.
 void Func_020000fc(void) {
@@ -153,14 +153,14 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgMadraChampaBoat)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgMadraSailorNotChampa)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgMadraWaveDamage)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgMadraCannotEscapeBySea)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgMadraBriggsNewShip)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgMadraPirateAttackParties)},
-    {0x8515, 13, 0x203, EVENT(Func_02000054)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraChampaBoat)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraSailorNotChampa)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMadraWaveDamage)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraCannotEscapeBySea)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraBriggsNewShip)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMadraPirateAttackParties)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 13, 0x203, EVENT(Func_02000054)},
     {TRIGGERS_END},
 };

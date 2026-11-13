@@ -21,10 +21,10 @@
 extern void Func_020023a4__venus_lighthouse_entrance(void *object) __asm__("Func_020023a4");
 void Func_0200260c(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02002a34(s32 a, s32 b);
-void Func_02002a44(void);
-void Func_02002a4c(void);
-void Func_02002a54(void);
-void Func_02002a5c(struct Actor *object, s32 mode);
+void BattleEffect_StartArcEffect(void);
+void BattleEffect_EndArcEffect(void);
+void BattleEffect_WaitForArcGroups(void);
+void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -38,13 +38,13 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 void VenusLighthouseEntrance_RunActorSparkBurst(void *object) {
   Func_02002a34(8, 0x4084);
-  Func_02002a44();
-  Func_02002a5c(Actor_Get(5), 2);
+  BattleEffect_StartArcEffect();
+  BattleEffect_SetObjectUpdateMode(Actor_Get(5), 2);
   FieldEvent_Wait(20);
   Func_020023a4__venus_lighthouse_entrance(object);
-  Func_02002a5c(Actor_Get(5), 0);
-  Func_02002a54();
-  Func_02002a4c();
+  BattleEffect_SetObjectUpdateMode(Actor_Get(5), 0);
+  BattleEffect_WaitForArcGroups();
+  BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(8);
 }
 
@@ -103,9 +103,9 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
    } *)(base))                                                                 \
        ->v)
 
-void Func_020028b4(void);
+void Event_Start(void);
 void Func_0200030c(void);
-void Func_020028bc(void);
+void Event_End(void);
 s32 Func_020028a4();
 void Func_02001c30(void);
 s32 Party_RemoveActiveOwner();
@@ -114,7 +114,7 @@ s32 Func_02002a04();
 
 extern char SceneId_VenusLighthouseEntrance;
 
-s32 Func_02000128(void) {
+s32 Scene_Initialize(void) {
   s32 t37;
   s32 t0;
   s32 t7;
@@ -152,10 +152,10 @@ s32 Func_02000128(void) {
   if (gMainRoutineWork.entrance == 9) {
     t21 = Event_GetFlag(0x891);
     if (t21 == 0) {
-      Func_020028b4();
+      Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Func_0200030c();
-      Func_020028bc();
+      Event_End();
     }
   }
   if (gMainRoutineWork.entrance == 0x62) {
@@ -195,7 +195,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 s32 Event_StartScreenTransition();
 s32 Event_WaitTransitionFrames();
-s32 Func_02002864();
+s32 Actor_StartScript();
 void Func_0200298c(void);
 extern u32 gData_0200b000[];
 
@@ -228,13 +228,13 @@ void Func_0200030c(void) {
   Actor_SetAnimation(10, 4);
   Event_PlaySound(165);
   FieldActor_SetMoveTarget(t9, PIXELS(352), PIXELS(8), PIXELS(176));
-  Func_02002864(t9, (s32)gData_0200b000);
+  Actor_StartScript(t9, (s32)gData_0200b000);
   FieldEvent_Wait(25);
   FieldCamera_MoveTo(PIXELS(376), -1, PIXELS(104), 1);
   t16 = ((s32)Actor_Get(11));
   Actor_SetAnimation(11, 4);
   FieldActor_SetMoveTarget(t16, PIXELS(416), PIXELS(8), PIXELS(152));
-  Func_02002864(t16, (s32)gData_0200b000);
+  Actor_StartScript(t16, (s32)gData_0200b000);
   FieldEvent_Wait(60);
   Event_PlaySound(165);
   FieldActor_WaitForMoveById(10);
@@ -250,7 +250,7 @@ void Func_02000440(void) {
   s32 t11;
 
   Event_SetFlag(0x892);
-  Func_020028b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(165);
   Actor_SetAnimation(10, 3);
@@ -262,15 +262,15 @@ void Func_02000440(void) {
   FIELD_AT(t7, s32, 52) = 0x8000;
   Actor_SetAnimation(10, 4);
   FieldActor_SetMoveTarget(t7, PIXELS(616), PIXELS(96), PIXELS(176));
-  Func_02002864(t7, (s32)gData_02003040__venus_lighthouse_entrance);
+  Actor_StartScript(t7, (s32)gData_02003040__venus_lighthouse_entrance);
   t11 = Actor_Get(11);
   FIELD_AT((t11 + 0x55), u8, 0) = 0;
   FIELD_AT(t11, s32, 48) = 0x20000;
   FIELD_AT(t11, s32, 52) = 0x8000;
   Actor_SetAnimation(11, 4);
   FieldActor_SetMoveTarget(t11, PIXELS(120), PIXELS(96), PIXELS(176));
-  Call2(Func_02002864, t11, (s32)gData_02003040__venus_lighthouse_entrance);
-  Func_020028bc();
+  Call2(Actor_StartScript, t11, (s32)gData_02003040__venus_lighthouse_entrance);
+  Event_End();
 }
 
 void Func_02002994(s32 id, s32 useSetter);
@@ -293,7 +293,7 @@ void Func_02000510(void) {
   s32 callback;
 
   Event_SetFlag(0x890);
-  Func_020028b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgThereTheyAre);
   Actor_SetSpeed(12, 0x10000, 0x8000);
@@ -555,9 +555,9 @@ void Func_02000510(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimation(9, 8);
   FieldEvent_Wait(50);
-  Func_02002a44();
+  BattleEffect_StartArcEffect();
   record = ((u8 *)Actor_GetById(9));
-  Func_02002a5c((s32)record, 2);
+  BattleEffect_SetObjectUpdateMode((s32)record, 2);
   Event_PlaySound(178);
   FieldEvent_Wait(20);
   Func_02002a34(8, 0x4084);
@@ -576,9 +576,9 @@ void Func_02000510(void) {
   Func_020023a4__venus_lighthouse_entrance(13);
   FieldEvent_Wait(30);
   record = ((u8 *)Actor_GetById(9));
-  Func_02002a5c((s32)record, 0);
-  Func_02002a54();
-  Func_02002a4c();
+  BattleEffect_SetObjectUpdateMode((s32)record, 0);
+  BattleEffect_WaitForArcGroups();
+  BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(16);
   FieldEvent_Wait(10);
   Actor_SetAnimation(9, 9);
@@ -949,14 +949,14 @@ void Func_02000510(void) {
   FieldActor_WaitForMoveById(8);
   Actor_SetPosition(8, 0, 0);
   FieldCamera_FollowActor(5, 1);
-  Func_020028bc();
+  Event_End();
 }
 
-s32 Func_020029a4();
+s32 Field_RequestBattleFromEncounterTable();
 extern u8 MsgWhyDoI[];
 
 void Func_02001a2c(void) {
-  Func_020028b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgWhyDoI);
   Actor_WalkToAndWait(5, 72, 266);
@@ -996,8 +996,8 @@ void Func_02001a2c(void) {
   Event_SetAfterBattleDestination((s32)&SceneId_VenusLighthouseEntrance, 0x63);
   Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseEntrance, 0x62);
   gMainRoutineWork.battleRule24b = 2;
-  Call2(Func_020029a4, 9, 0);
-  Func_020028bc();
+  Call2(Field_RequestBattleFromEncounterTable, 9, 0);
+  Event_End();
 }
 
 extern u8 MsgNotThatWayThe[];
@@ -1005,7 +1005,7 @@ extern u8 MsgNotThatWayThe[];
 void Func_02001bb0(void) {
   s32 t7;
 
-  Func_020028b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgNotThatWayThe);
   FieldActor_LaunchFromLeader(8, 0x10, 0, 0x8000);
@@ -1020,7 +1020,7 @@ void Func_02001bb0(void) {
   Actor_SetPosition(8, 0, 0);
   FieldEvent_Wait(10);
   Actor_WalkByAndWait(5, -16, 0);
-  Func_020028bc();
+  Event_End();
 }
 
 #include "iwram_call.h"
@@ -1030,7 +1030,7 @@ extern u8 MsgAreAreYou[];
 void Func_02001c30(void) {
   s32 t96;
 
-  Func_020028b4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(5, PIXELS(364), PIXELS(156));
   Actor_SetPosition(8, PIXELS(362), PIXELS(142));
@@ -1133,7 +1133,7 @@ void Func_02001c30(void) {
   FieldActor_WaitForMoveById(8);
   Actor_SetPosition(8, 0, 0);
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1b4), s32, 0) = 8;
-  Func_020028bc();
+  Event_End();
 }
 
 struct GlowState {
@@ -1429,7 +1429,7 @@ struct Unk_0200258cWork {
 
 /* VIEW(s23a4): routine Func_02002a14 as void Func_02002a14(struct Unk_0200258cSprite *sprite, struct Unk_0200258cState *state); venus_lighthouse_entrance has void Func_02002a14(struct GlowSprite *sprite, struct GlowState *state). */
 extern void Func_02002a14__s23a4(struct Unk_0200258cSprite *sprite, struct Unk_0200258cState *state) __asm__("Func_02002a14");
-void Func_02002a1c(struct Unk_0200258cState *state, s32 a, s32 b);
+void BattleEffect_StepVector3(struct Unk_0200258cState *state, s32 a, s32 b);
 
 void Func_0200258c(void) {
   struct Unk_0200258cWork *work = Ram_HeapSlots->menuRuntime;
@@ -1443,7 +1443,7 @@ void Func_0200258c(void) {
     if ((u32)value < 16) {
       sprite->tile = work->unk2182 + ((value >> 1) & 7) * 8;
       Func_02002a14__s23a4(sprite, state);
-      Func_02002a1c(state, 64, 0);
+      BattleEffect_StepVector3(state, 64, 0);
       state->frame++;
     }
   }
@@ -1642,15 +1642,15 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {2, 9, 0x892, EVENT(Func_02000440)},
-    {2, 10, 0x890, EVENT(Func_02000510)},
-    {2, 11, 0x893, EVENT(Func_02001a2c)},
-    {2, 12, CONDITION_ALWAYS, EVENT(Func_02001bb0)},
-    {0, 22, CONDITION_ALWAYS, MSGNO(MsgUggghICan)},
-    {0, 14, CONDITION_ALWAYS, EVENT(VenusLighthouseEntrance_RunActorSparkBurst)},
-    {0, 15, CONDITION_ALWAYS, EVENT(Func_020000c8)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_STEP, 9, 0x892, EVENT(Func_02000440)},
+    {TRIGGER_STEP, 10, 0x890, EVENT(Func_02000510)},
+    {TRIGGER_STEP, 11, 0x893, EVENT(Func_02001a2c)},
+    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(Func_02001bb0)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgUggghICan)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(VenusLighthouseEntrance_RunActorSparkBurst)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_020000c8)},
     {TRIGGERS_END},
 };
 

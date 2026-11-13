@@ -48,7 +48,7 @@ extern u32 gData_02003b94[];
 extern u32 gData_02003c0c[];
 extern u32 gData_02003c84[];
 
-u32 *Func_02000070(void) {
+u32 *Scene_GetPlacements(void) {
   s32 scene;
 
   if (GameFlag_Test(0x97e)) {
@@ -90,7 +90,7 @@ u32 *Func_02000070(void) {
 void Func_0200016c(const struct WarpTarget *warp, s32 door, s32 mode) {
   s32 id;
 
-  Func_0200345c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(158);
   Map_PlayMapEdit(warp->scene, warp->x, warp->z);
@@ -106,7 +106,7 @@ void Func_0200016c(const struct WarpTarget *warp, s32 door, s32 mode) {
   Import_EventSetExitRequest(door);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02003464();
+  Event_End();
 }
 
 void Func_020001f4(s32 door) { Func_0200016c(&gData_02003d10, door, 0); }
@@ -123,13 +123,6 @@ static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed,
   Actor_SetSpeedParameters(actor, speed, acceleration);
 }
 
-static __inline__ void Func_020034d4_(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as a direct call, 4 of 112
-   * instructions differ in tla-en (Func_020004d4). */
-  Actor_SetHorizontalPositionWithTerrain(actor, x, z);
-}
-
 void Func_02000208(void) {
   const struct WarpTarget *warp;
   s32 msg;
@@ -140,7 +133,7 @@ void Func_02000208(void) {
   Sound_Play(158);
   Map_PlayMapEdit(warp->scene, warp->x, warp->z);
   Actor_GetById(8)->motionFlags = 0;
-  Func_020034d4_(8, 184 << 16, 204 << 17);
+  Actor_SetPosition(8, 184 << 16, 204 << 17);
   Actor_SetSpeedParameters_(8, 0x1cccc, 0xe666);
   Actor_CommitPositionAndActivate(8, 0, 16);
   Actor_ArmCallbackAndRefresh(8, FACING_WEST);
@@ -222,7 +215,7 @@ extern s32 gData_02004104[];
 
 void Func_02000464(s32 a) { Func_02003474(a, 326, 0x978); }
 
-s32 *Func_02000478(void) {
+s32 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov685Room1)
@@ -250,11 +243,11 @@ void Func_020035ac(s32 a);
 static __inline__ void Func_0200361c_(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
    * constants, as ☀️'s scene layer does; as a direct call, 2 of 112
-   * instructions differ in tla-en (Func_020004d4). */
+   * instructions differ in tla-en (Scene_Initialize). */
   Func_080d3b28(a, b);
 }
 
-s32 Func_020004d4(void) {
+s32 Scene_Initialize(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
 #if !TLA_PATCH_1
@@ -275,11 +268,11 @@ s32 Func_020004d4(void) {
     }
     if (GameFlag_Test(0x977) && !GameFlag_Test(0x978)) {
       Func_0200361c_(10, 326);
-      Func_020034d4_(10, 0x2980000, 0xe80000);
+      Actor_SetPosition(10, 0x2980000, 0xe80000);
       Actor_GetById(10)->motionFlags = 4;
     }
     if (GameFlag_Test(0x977))
-      Func_020034d4_(8, 0x2980000, 0xc80000);
+      Actor_SetPosition(8, 0x2980000, 0xc80000);
   } else if (party->scene == (s32)&SceneId_Ov685Room3) {
     if (GameFlag_Test(0x97e)) {
       Actor_SetModeById(8, 11);
@@ -377,7 +370,7 @@ struct EventCounters {
 };
 
 void Func_02000804(s32 actor) {
-  Func_0200345c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgThisLooksLike);
   Func_020005e8(actor);
@@ -424,11 +417,11 @@ void Func_02000804(s32 actor) {
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_ShowMessageThenWait(8, 0, 5);
   Func_02003534_(8, 0x5000);
-  Func_02003464();
+  Event_End();
 }
 
 void Func_02000978(s32 actor) {
-  Func_0200345c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAhHaveYou);
   Func_020005e8(actor);
@@ -450,7 +443,7 @@ void Func_02000978(s32 actor) {
   Event_Wait(10);
   Event_ShowMessageThenWait(8, 0, 5);
   Func_02003534_(8, 0x5000);
-  Func_02003464();
+  Event_End();
 }
 
 // ---- games/tla/src/scene/champa_cliff_caves/s0a34.c ----
@@ -481,7 +474,7 @@ struct ThrowAnimations {
 extern const struct ThrowAnimations gData_02003634__s0a34 __asm__("gData_02003634");
 
 struct Actor *Actor_GetById(u32 objectId);
-void Func_0200345c(void);
+void Event_Start(void);
 void Event_ResolvePendingActions(s32 mode);
 void Event_SetMessageId(s32 message);
 void Func_020005e8(s32 value);
@@ -516,15 +509,13 @@ void Field_StartPaletteTransition(s32 mode);
 void Field_EndActorSpriteEffect(s32 mode);
 void Func_020032a4(void);
 void wait(s32 frames);
-void Func_020035bc(void);
+void Party_PlaySavedMusic(void);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
-void Func_02003464(void);
+void Event_End(void);
 /* VIEW(s0a34): routine Func_02000038 as void Func_02000038(void); the definition has void Func_02000038(struct RiseObject *object). */
 extern void Func_02000038__s0a34(void) __asm__("Func_02000038");
 
 void Func_02000a34(s32 value) {
-  /* FAKEMATCH(wrapper): calls forwarded through call.h's CallN and ValueN; as
-   * direct calls, 146 of 529 instructions differ in tla-en. */
   struct Actor *thrown = Actor_GetById(10);
   u16 bright[5];
   u16 dim[5];
@@ -548,7 +539,7 @@ void Func_02000a34(s32 value) {
   dim[2] = *palette++;
   dim[3] = *palette++;
   dim[4] = *palette;
-  Func_0200345c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWellDoneYou);
   Func_020005e8(value);
@@ -671,7 +662,7 @@ void Func_02000a34(s32 value) {
   thrown->gravity = 0x10000;
   thrown->y = 0;
   thrown->motionFlags = 4;
-  Func_020035bc();
+  Party_PlaySavedMusic();
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(5);
@@ -686,7 +677,7 @@ void Func_02000a34(s32 value) {
   do {
     Actor_SetSpritePriority(10, 2);
   } while (0);
-  Func_02003464();
+  Event_End();
 }
 
 
@@ -799,7 +790,7 @@ struct Position {
 };
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-void Func_0200357c(s32 actor, s32 value);
+void Field_RequestBattleFromEncounterTable(s32 actor, s32 value);
 /* VIEW(s0a34): routine Func_02002f58 as void Func_02002f58(struct Position *position); the definition has void Func_02002f58(const s32 *position). */
 extern void Func_02002f58__s0a34(struct Position *position) __asm__("Func_02002f58");
 
@@ -815,19 +806,7 @@ static __inline__ void Func_02003544_(s32 actor, s32 value, s32 frames) {
   Func_080d47b4(actor, value, frames);
 }
 
-/* VIEW(s0a34): static Func_020034d4_ as Func_020034d4___s0a34; champa_cliff_caves has static __inline__ void Func_020034d4_(s32 actor, s32 x, s32 z) { Actor_SetHorizontalPositionWithTerrain(actor, x, z); }; not tried: Func_020034d4_'s definition holds a FAKEMATCH tag. */
-static __inline__ void Func_020034d4___s0a34(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 2 of
-   * 613 instructions differ in tla-en. */
-  Actor_SetHorizontalPositionWithTerrain(actor, x, z);
-}
-
-static __inline__ void Func_02003434_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 58 of
-   * 613 instructions differ in tla-en. */
-  Map_SetScreenShake(a, b, c);
-}
-
+/* VIEW(s0a34): static Func_020034d4_ as Func_020034d4___s0a34; champa_cliff_caves has static __inline__ void Actor_SetPosition(s32 actor, s32 x, s32 z) { Actor_SetHorizontalPositionWithTerrain(actor, x, z); }; not tried: Func_020034d4_'s definition holds a FAKEMATCH tag. */
 static __inline__ void Actor_SetPositionAndReset_(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 2 of
    * 613 instructions differ in tla-en. */
@@ -835,13 +814,6 @@ static __inline__ void Actor_SetPositionAndReset_(s32 actor, s32 x, s32 z) {
 }
 
 /* VIEW(s0a34): static Actor_SetSpeedParameters_ as Actor_SetSpeedParameters___s0a34; champa_cliff_caves has static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed, s32 acceleration) { Actor_SetSpeedParameters(actor, speed, accelerati...; not tried: Actor_SetSpeedParameters_'s definition holds a FAKEMATCH tag. */
-static __inline__ void Actor_SetSpeedParameters___s0a34(s32 id, s32 speed,
-                                                 s32 acceleration) {
-  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 6 of
-   * 613 instructions differ in tla-en. */
-  Actor_SetSpeedParameters(id, speed, acceleration);
-}
-
 static __inline__ void FieldMessage_ShowAtActor_(s32 speaker, s32 flags) {
   /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 35 of
    * 613 instructions differ in tla-en. */
@@ -858,7 +830,7 @@ void Func_0200115c(void) {
 
   if (Flag_IsSet(0x97e))
     return;
-  Func_0200345c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 584, 248);
   if (Flag_IsSet(0x974)) {
@@ -948,15 +920,15 @@ void Func_0200115c(void) {
   Actor_SetModeById(8, 5);
   Event_Wait(30);
   Actor_SetModeById(8, 6);
-  Func_020034d4___s0a34(12, 724 << 16, 252 << 16);
+  Actor_SetPosition(12, 724 << 16, 252 << 16);
   WORD_AT(Actor_GetById(12), 24) = 0x13333;
   WORD_AT(Actor_GetById(12), 28) = 0x13333;
   Actor_SetSingleChildFlags(Actor_GetById(12), 0);
   FieldMessage_ShowAtActor_(0x2008, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-    Func_020035bc();
+    Party_PlaySavedMusic();
     Event_Wait(15);
-    Func_020034d4___s0a34(12, 0, 0);
+    Actor_SetPosition(12, 0, 0);
     Actor_SetModeById(8, 1);
     Actor_GetById(8)->facing = 0x8000;
     Func_0200351c_(0x2008, 0, 5);
@@ -980,12 +952,12 @@ void Func_0200115c(void) {
     Actor_Jump(12, 10, 0);
     Sound_Play(146);
     Actor_SetSpritePriority(12, 1);
-    Actor_SetSpeedParameters___s0a34(12, 0x30000, 0x18000);
+    Actor_SetSpeed(12, 0x30000, 0x18000);
     Actor_ResetAndSetPositionInMode2(12, 644, 248);
     Event_Wait(21);
-    Func_020034d4___s0a34(12, 0, 0);
+    Actor_SetPosition(12, 0, 0);
     Event_Wait(50);
-    Func_02003434_(0x20000, 0x20000, 0x10000);
+    MapGrid_SetShake(0x20000, 0x20000, 0x10000);
     Event_Wait(70);
     Sound_Play(148);
     Event_Wait(25);
@@ -1009,7 +981,7 @@ void Func_0200115c(void) {
     position.z = 0xee0000;
     Func_02002f58__s0a34(&position);
     Sound_Play(147);
-    Func_020034d4___s0a34(13, 664 << 16, 248 << 16);
+    Actor_SetPosition(13, 664 << 16, 248 << 16);
     WORD_AT(object, 72) = 0x10000;
     object->motionFlags = 2;
     object->terrainHeight = 0;
@@ -1019,7 +991,7 @@ void Func_0200115c(void) {
     WORD_AT(object, 28) = 0x4000;
     Actor_Jump(13, 11, 0);
     Sound_Play(147);
-    Actor_SetSpeedParameters___s0a34(13, 0x33333, 0x19999);
+    Actor_SetSpeed(13, 0x33333, 0x19999);
     Actor_SetPositionAndReset_(13, 584, 248);
     Party_SetFields1f2And1f4((s32)&SceneId_Ov685Room4, 98);
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov685Room4, 99);
@@ -1029,9 +1001,9 @@ void Func_0200115c(void) {
     do {
     } while (0);
     party->battleRule24b = 2;
-    Func_0200357c(12, 5);
+    Field_RequestBattleFromEncounterTable(12, 5);
   }
-  Func_02003464();
+  Event_End();
 }
 
 
@@ -1043,7 +1015,7 @@ struct EventTransition__s0a34 {
   s32 frames;
 };
 
-void Func_0200356c(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 
 // The scene's own event inline: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1051,14 +1023,14 @@ void Func_0200356c(s32 scene, s32 entrance);
 void Func_02001774(void) {
   struct EventTransition__s0a34 *work;
 
-  Func_0200345c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgHaveYouLearned);
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
                                          568 << 16, 248 << 16);
-  Func_020034d4___s0a34(8, 584 << 16, 224 << 16);
-  Func_020034d4___s0a34(13, 600 << 16, 240 << 16);
-  Func_020034d4___s0a34(11, 584 << 16, 264 << 16);
+  Actor_SetPosition(8, 584 << 16, 224 << 16);
+  Actor_SetPosition(13, 600 << 16, 240 << 16);
+  Actor_SetPosition(11, 584 << 16, 264 << 16);
   Actor_ArmCallback_(8, 0x5000, 0);
   Actor_ArmCallback_(11, 0xb000, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 41);
@@ -1075,7 +1047,7 @@ void Func_02001774(void) {
   work->type = 521;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_0200356c((s16)gMainRoutineWork.savedScene,
+  Event_SetDestination((s16)gMainRoutineWork.savedScene,
                 (s16)gMainRoutineWork.savedEntrance);
 }
 
@@ -1096,7 +1068,7 @@ void Func_02001868(void) {
   u8 *party;
   struct Actor *leader;
 
-  Func_0200345c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgMySalamanderYou);
   owner = (s32 *)&gMainRoutineWork;
@@ -1575,7 +1547,7 @@ void Func_02001868(void) {
   Actor_WaitForMoveById(15);
   Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
   GameFlag_SetBit(0x97e);
-  Func_02003464();
+  Event_End();
 }
 
 #include "system/dma.h"
@@ -1611,11 +1583,11 @@ struct FlashWork {
 
 struct FlashWork *HeapSlot_AllocFar(s32 slot, s32 size);
 void *Resource_GetTableEntry(s32 resourceId);
-void Func_020033dc(void *entry, void *destination);
+void Resource_DecodeType01(void *entry, void *destination);
 s32 Resource_FindFreeEntry(void);
 void Func_020035fc(struct FlashSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
-void Func_020035c4(s32 *position);
+void Camera_WorldToScreen(s32 *position);
 void Func_02003604(struct FlashSprite *sprite);
 s32 Resource_ResetEntry(u32 slot);
 void HeapSlot_Release(s32 slot);
@@ -1650,7 +1622,7 @@ void Func_020029f8(s32 id, s32 mode) {
   Actor_SetSingleChildFlags(object, 0);
   Dma_Set(Field_Palette685, (void *)0x050003e0, 0x80000010,
           (volatile u32 *)0x040000d4);
-  Func_020033dc(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
                 work);
   slot = Resource_FindFreeEntry();
   tile = Vram_Load(slot, 0x400, work);
@@ -1663,7 +1635,7 @@ void Func_020029f8(s32 id, s32 mode) {
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
-  Func_020035c4(position);
+  Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->z = z = position[2];
   if (mode == 1) {
@@ -1753,7 +1725,7 @@ struct ChampaCliffCavesWork {
 extern char ResourceId_Data1F7;
 
 void *Resource_GetTableEntry(s32 id);
-void Func_020033dc(void *resource, void *destination);
+void Resource_DecodeType01(void *resource, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 /* VIEW(s2c88): routine Func_020035fc as void Func_020035fc(struct ChampaCliffCavesSprite *sprite, s32 width, s32 height, u32 attributes, s32 vram); s0a34 has void Func_020035fc(struct FlashSprite *sprite, s32 width, s32 height, u32 attributes, s32 tile). */
@@ -1778,7 +1750,7 @@ void Func_02002c88(void) {
   s32 entry;
   s32 vram;
 
-  Func_020033dc(Resource_GetTableEntry((s32)&ResourceId_GlowDisc), work);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GlowDisc), work);
   i = 0;
   tile = work->tiles;
 next:
@@ -1828,7 +1800,7 @@ struct ChampaCliffCavesWork__s2d34 {
 };
 
 void *Resource_GetTableEntry(s32 id);
-void Func_020033dc(void *resource, void *destination);
+void Resource_DecodeType01(void *resource, void *destination);
 s32 Resource_FindFreeEntry(void);
 /* VIEW(s2d34): routine Func_020035fc as void Func_020035fc(struct ChampaCliffCavesSprite *sprite, s32 width, s32 height, u32 attributes, s32 vram); s0a34 has void Func_020035fc(struct FlashSprite *sprite, s32 width, s32 height, u32 attributes, s32 tile). */
 extern void Func_020035fc__s2d34(struct ChampaCliffCavesSprite *sprite, s32 width, s32 height,
@@ -1852,7 +1824,7 @@ void Func_02002d34(void) {
   s32 entry;
   s32 vram;
 
-  Func_020033dc(Resource_GetTableEntry((s32)&ResourceId_FireColumn), work);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FireColumn), work);
   i = 0;
   tile = work->tiles;
 next:
@@ -1899,7 +1871,7 @@ struct Glow {
   s16 frame;
 };
 
-void Func_020035c4(s32 *position);
+void Camera_WorldToScreen(s32 *position);
 /* VIEW(s2d34): routine Func_02003604 as void Func_02003604(struct GlowSprite *sprite); s0a34 has void Func_02003604(struct FlashSprite *sprite). */
 extern void Func_02003604__s2d34(struct GlowSprite *sprite) __asm__("Func_02003604");
 
@@ -1939,7 +1911,7 @@ loop:
   position[1] = work->position[1];
   position[2] = work->position[2];
   sprite = &work->sprites[0];
-  Func_020035c4(position);
+  Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->z = position[2];
   sprite->scale = work->scale;
@@ -1949,7 +1921,7 @@ loop:
   position[1] = work->position[1];
   position[2] = work->position[2];
   sprite = &work->sprites[1];
-  Func_020035c4(position);
+  Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->z = position[2];
   sprite->scale = work->scale2;

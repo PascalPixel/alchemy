@@ -46,9 +46,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Func_02001f4c:
 	overlay_veneer Actor_SetMode
-	.global Func_02001f54
+	.global Actor_StartScript
 	.thumb_func
-Func_02001f54:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -90,9 +90,9 @@ Func_02001f9c:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02001fac
+	.global Event_Start
 	.thumb_func
-Func_02001fac:
+Event_Start:
 	overlay_veneer Event_StartFar
 	.global Func_02001fb4
 	.thumb_func
@@ -138,9 +138,9 @@ Func_02001ffc:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_0200200c
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_0200200c:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
@@ -170,9 +170,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_0200204c
+	.global Party_PlaySavedMusic
 	.thumb_func
-Func_0200204c:
+Party_PlaySavedMusic:
 	overlay_veneer Party_PlaySavedMusicFar
 	.global Sound_Play
 	.thumb_func

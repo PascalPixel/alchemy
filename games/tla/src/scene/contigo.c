@@ -38,7 +38,7 @@ extern const s32 *gData_0200474c__contigo[] __asm__("gData_0200474c");
 extern s32 gData_0200474c[];
 
 void Func_02003fdc(struct Actor *object, s32 mode);
-void Func_02003fe4(struct FieldEffect *effect, const s32 *script);
+void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 
 void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -57,7 +57,7 @@ void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Func_02003fdc(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Func_02003fe4(effect, gData_0200474c__contigo[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect, gData_0200474c__contigo[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
@@ -99,7 +99,7 @@ void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
     Func_02003fdc(effect, 1);
-    Func_02003fe4(effect, options->script);
+    Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
     sprite->rotation = options->rotation;
@@ -151,7 +151,7 @@ s32 Func_02000658(struct Actor *self, struct Actor *other, s32 range) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-void Func_0200402c(struct Actor *object, s32 value);
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 value);
 s32 Func_02004254(struct Actor *object);
 
 s32 Func_020006d0(struct Actor *self) {
@@ -161,7 +161,7 @@ s32 Func_020006d0(struct Actor *self) {
   s8 *effect;
   struct Actor *other;
 
-  Func_0200402c(self, Func_02004254(Actor_GetById(gMainRoutineWork.currentOwner)));
+  Actor_SetSpritePriorityDirect(self, Func_02004254(Actor_GetById(gMainRoutineWork.currentOwner)));
   mode = 0x3ff & *(u16 *)(event + 0x166);
   state = &self->movementState;
   if (mode == 141) {
@@ -224,7 +224,7 @@ extern s16 gData_02005228[];
 extern s32 gData_02005318[];
 extern u32 gData_02005390[];
 
-u8 *Func_020007cc(void) {
+u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov694Room1)
@@ -264,7 +264,7 @@ extern s32 gData_02005a44[];
 extern s32 gData_02005e70[];
 extern s32 gData_02005ed0[];
 
-u8 *Func_02000874(void) {
+u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov694Room1)
@@ -282,53 +282,53 @@ u8 *Func_02000874(void) {
 }
 
 void Func_020008ec(void) {
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgContigo110, 1);
-  Func_02004074();
+  Event_End();
 }
 
 void Func_0200090c(void) {
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgContigo111, 1);
-  Func_02004074();
+  Event_End();
 }
 
 void Func_0200092c(void) {
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgContigo112, 1);
-  Func_02004074();
+  Event_End();
 }
 
 void Func_0200094c(void) {
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgContigo113, 1);
-  Func_02004074();
+  Event_End();
 }
 
 void Func_0200096c(void) {
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgContigo114, 1);
-  Func_02004074();
+  Event_End();
 }
 
 void Func_0200098c(void) {
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgShamanEntranceLocked, 1);
-  Func_02004074();
+  Event_End();
 }
 
 void Func_020009ac(void) {
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgContigo35);
   Event_AskYesNoAndShowResponse(8, 0);
-  Func_02004074();
+  Event_End();
 }
 
 struct OrbitEffect {
@@ -398,10 +398,10 @@ struct ContigoGlow {
   u8 motionFlags;
 };
 
-void Func_02004264(void);
-void Func_0200426c(void);
-void Func_02004274(void);
-void Func_0200427c(struct ContigoObject *object, s32 mode);
+void BattleEffect_StartArcEffect(void);
+void BattleEffect_EndArcEffect(void);
+void BattleEffect_WaitForArcGroups(void);
+void BattleEffect_SetObjectUpdateMode(struct ContigoObject *object, s32 mode);
 
 /// The glow that grows over actor 17 and sinks away again, then the scene goes
 /// on.
@@ -411,7 +411,7 @@ void Func_02000af4(void) {
   s32 z = PIXELS(116);
   u32 i;
 
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x9b2))
     FieldMessage_Show((s32)MsgContigo163, 1);
@@ -421,8 +421,8 @@ void Func_02000af4(void) {
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x204084, 1);
   BattleEffect_StartBufferInterpolation(16);
-  Func_02004264();
-  Func_0200427c(((struct ContigoObject *)Actor_GetById(17)), 2);
+  BattleEffect_StartArcEffect();
+  BattleEffect_SetObjectUpdateMode(((struct ContigoObject *)Actor_GetById(17)), 2);
   effect = ((struct ContigoGlow *)Import_ActorCreate(280, x, 0, z));
   if (effect != 0) {
     Actor_SetSingleChildFlags(effect, 0);
@@ -454,9 +454,9 @@ void Func_02000af4(void) {
       goto shrink;
     Func_02003ff4(effect);
   }
-  Func_0200427c(((struct ContigoObject *)Actor_GetById(17)), 0);
-  Func_02004274();
-  Func_0200426c();
+  BattleEffect_SetObjectUpdateMode(((struct ContigoObject *)Actor_GetById(17)), 0);
+  BattleEffect_WaitForArcGroups();
+  BattleEffect_EndArcEffect();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
   BattleEffect_StartBufferInterpolation(16);
   if (GameFlag_Test(0x9b2))
@@ -475,7 +475,7 @@ void Func_02000af4(void) {
   Motion_SetModeAndWaitAnimation(15, 3);
   Actor_FaceDirection(15, 0xd000, 0);
   Actor_FaceDirectionAndWait(14, 0x3000);
-  Func_02004074();
+  Event_End();
 }
 
 void Func_02004294(s32 a, s32 b);
@@ -497,14 +497,14 @@ void Func_02000cf4(void) {
   if (Func_02000cc4()) {
     Func_02004294(28, 13);
   } else {
-    Func_0200406c();
+    Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Test(0x9b2))
       Event_SetMessageId((s32)MsgContigo176);
     else
       Event_SetMessageId((s32)MsgContigo74);
     Event_ShowMessageAndWait(13, 0);
-    Func_02004074();
+    Event_End();
   }
 }
 
@@ -512,14 +512,14 @@ void Func_02000d44(void) {
   if (Func_02000cc4()) {
     Func_02004294(26, 18);
   } else {
-    Func_0200406c();
+    Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Test(0x9b2))
       Event_SetMessageId((s32)MsgContigo172);
     else
       Event_SetMessageId((s32)MsgContigo70);
     Event_ShowMessageAndWait(18, 0);
-    Func_02004074();
+    Event_End();
   }
 }
 
@@ -527,14 +527,14 @@ void Func_02000d94(void) {
   if (Func_02000cc4()) {
     Func_02004294(27, 19);
   } else {
-    Func_0200406c();
+    Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Test(0x9b2))
       Event_SetMessageId((s32)MsgContigo174);
     else
       Event_SetMessageId((s32)MsgContigo72);
     Event_ShowMessageAndWait(19, 0);
-    Func_02004074();
+    Event_End();
   }
 }
 
@@ -542,7 +542,7 @@ void Func_02000de4(void) {
   if (Func_02000cc4()) {
     Func_020042a4(12, 20);
   } else {
-    Func_0200406c();
+    Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Test(0x9b2))
       Event_SetMessageId((s32)MsgContigo178);
@@ -551,7 +551,7 @@ void Func_02000de4(void) {
     else
       Event_SetMessageId((s32)MsgContigo76);
     Event_ShowMessageAndWait(20, 0);
-    Func_02004074();
+    Event_End();
   }
 }
 
@@ -559,7 +559,7 @@ void Func_02000e50(void) {
   if (Func_02000cc4()) {
     Func_0200429c(28);
   } else {
-    Func_0200406c();
+    Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Test(0x9b2))
       Event_SetMessageId((s32)MsgContigo186);
@@ -568,22 +568,22 @@ void Func_02000e50(void) {
     else
       Event_SetMessageId((s32)MsgContigo88);
     Event_ShowMessageAndWait(28, 0);
-    Func_02004074();
+    Event_End();
   }
 }
 
 void Func_02000eb8(void) {
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgContigo26);
   Event_AskYesNoAndShowResponse(10, 0);
-  Func_02004074();
+  Event_End();
 }
 
 void Func_02000edc(void) {
   s32 msg;
 
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgContigo25;
   FieldMessage_Show(msg, 1);
@@ -595,26 +595,26 @@ void Func_02000edc(void) {
   FieldMessage_Show(msg + 6, 1);
   FieldMessage_Show(msg + 7, 1);
   FieldMessage_Show(msg + 8, 1);
-  Func_02004074();
+  Event_End();
 }
 
 void Func_02000f40(void) {
   s32 msg;
 
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgContigo06;
   FieldMessage_Show(msg, 1);
   FieldMessage_Show(msg + 1, 1);
   FieldMessage_Show(msg + 2, 1);
   FieldMessage_Show(msg + 3, 1);
-  Func_02004074();
+  Event_End();
 }
 
 void Func_02000f7c(void) {
   s32 msg;
 
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgContigo07;
   FieldMessage_Show(msg, 1);
@@ -623,20 +623,20 @@ void Func_02000f7c(void) {
   FieldMessage_Show(msg + 3, 1);
   FieldMessage_Show(msg + 4, 1);
   FieldMessage_Show(msg + 5, 1);
-  Func_02004074();
+  Event_End();
 }
 
 void Func_02000fc8(void) {
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Func_02001938(0);
-  Func_02004074();
+  Event_End();
 }
 
 void Func_02000fe0(void) {
   s32 msg;
 
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgContigo20;
   FieldMessage_Show(msg, 1);
@@ -645,13 +645,13 @@ void Func_02000fe0(void) {
   FieldMessage_Show(msg + 3, 1);
   FieldMessage_Show(msg + 4, 1);
   FieldMessage_Show(msg + 5, 1);
-  Func_02004074();
+  Event_End();
 }
 
 void Func_0200102c(void) {
   s32 msg;
 
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgContigo21;
   FieldMessage_Show(msg, 1);
@@ -662,15 +662,15 @@ void Func_0200102c(void) {
                               */
   FieldMessage_Show(msg + 4, 1);
 #endif
-  Func_02004074();
+  Event_End();
 }
 
 void Func_02001070(void) {
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgContigo102);
   Event_AskYesNoAndShowResponse(14, 0);
-  Func_02004074();
+  Event_End();
 }
 
 /// The bytes of an actor this handler uses. unk63 is the last of the four
@@ -687,7 +687,7 @@ void Func_02001094(void) {
   struct TalkActor *object = ((struct TalkActor *)Actor_GetById(14));
   s16 angle = object->angle;
 
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object->unk63 = 1;
   if (work->unk166 == 0) {
@@ -710,7 +710,7 @@ void Func_02001094(void) {
   if (work->unk166 == 0)
     object->angle = angle;
   object->unk63 = 0;
-  Func_02004074();
+  Event_End();
 }
 
 struct ContigoObject {
@@ -725,7 +725,7 @@ void Func_0200118c(void) {
   struct ContigoObject *object = ((struct ContigoObject *)Actor_GetById(15));
   s16 angle = object->angle;
 
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object->unk63 = 1;
   if (event->unk166 == 0) {
@@ -744,20 +744,20 @@ void Func_0200118c(void) {
   if (event->unk166 == 0)
     object->angle = angle;
   object->unk63 = 0;
-  Func_02004074();
+  Event_End();
 }
 
 void Func_020000f4(void);
 void Func_02000158(void);
 void Func_0200428c(void);
-void Func_020041ac(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 
 void Func_02001250(void) {
   Func_020000f4();
   Func_0200428c();
   
   gMainRoutineWork.unk2c2 = 2;
-  Func_020041ac((s32)&SceneId_Ov6B0Room1, 99);
+  Event_SetDestination((s32)&SceneId_Ov6B0Room1, 99);
   Event_Wait(40);
   Func_02000158();
 }
@@ -785,14 +785,14 @@ void Func_020012c4(void) {
   if (GameFlag_Test(0xfc7) == 0) {
     Actor_SetPosition(66, PIXELS(280), PIXELS(664));
     if (leader->x >> 20 == 17 && leader->z >> 20 == 41) {
-      Func_0200406c();
+      Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
       Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 0,
                                                  -16);
       leader->velocityY = 0x60000;
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Func_02004074();
+      Event_End();
     }
   }
 }
@@ -831,13 +831,13 @@ void Func_020014d4(void) {
   if (!GameFlag_Test(62)) {
     struct EventWork *work = Ram_HeapSlots->eventWork;
 
-    Func_0200406c();
+    Event_Start();
     Event_ResolvePendingActions(1);
     Actor_SetHorizontalPositionWithTerrain(16, 664 << 16, 952 << 16);
     wait(1);
     Actor_SetAngleToward(16, gMainRoutineWork.currentOwner, 0);
     work->unk16a = 200;
-    Func_02004074();
+    Event_End();
   }
 }
 
@@ -861,7 +861,7 @@ void Func_020015ac(void) {
   s32 angle;
   u32 i;
 
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetHorizontalPositionWithTerrain(17, 0x380000, 0x2ba0000);
   wait(1);
@@ -894,7 +894,7 @@ void Func_020015ac(void) {
   Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 17, 0);
   Event_Wait(10);
   GameFlag_SetBit(2535);
-  Func_02004074();
+  Event_End();
 }
 
 void Func_02001724(void) {
@@ -958,8 +958,8 @@ void Func_020017f4(void) {
 
 s32 PartyInventory_CountItem(s32 item);
 s32 PartyInventory_CountFreeSlots(void);
-void Func_0200422c(void);
-void Func_0200403c(s32 value, s32 digits);
+void ObjectTable_Snapshot(void);
+void MessageArgument_Push(s32 value, s32 digits);
 void Field_SetDestination(s32 scene, s32 entrance);
 
 /// The lucky wheels attendant: checks the game tickets and free item slots, then
@@ -968,7 +968,7 @@ void Func_02001938(s32 spoken) {
   s32 tickets = PartyInventory_CountItem(228);
   s32 room;
 
-  Func_0200422c();
+  ObjectTable_Snapshot();
   if (spoken == 0) {
     s32 message = (s32)MsgContigo10;
 
@@ -979,7 +979,7 @@ void Func_02001938(s32 spoken) {
       return;
     }
     Event_SetMessageId(message + 2);
-    Func_0200403c(tickets, 5);
+    MessageArgument_Push(tickets, 5);
     FieldMessage_ShowAtActor(18, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
       Event_ShowMessageAndWait(18, 0);
@@ -1055,13 +1055,13 @@ struct ContigoEventCount {
 
 extern u8 gSceneState[];
 
-u32 Func_0200404c(void);
+u32 Party_GetAverageLevel(void);
 
 /// The dice game attendant: the fee is ten coins a level.
 void Func_02001abc(void) {
-  u32 price = Func_0200404c() * 10;
+  u32 price = Party_GetAverageLevel() * 10;
 
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if ((u32)gMainRoutineWork.coins < price) {
     Event_SetMessageId((s32)MsgContigo03);
@@ -1069,7 +1069,7 @@ void Func_02001abc(void) {
     return;
   }
   Event_SetMessageId((s32)MsgContigo01);
-  Func_0200403c(price, 5);
+  MessageArgument_Push(price, 5);
   FieldMessage_ShowAtActor(14, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     /* FAKEMATCH(pin): the scene state's address pinned to r3, so that it
@@ -1078,7 +1078,7 @@ void Func_02001abc(void) {
     register u32 *state __asm__("r3") = (u32 *)gSceneState;
 
     *state = gMainRoutineWork.coins;
-    Func_0200422c();
+    ObjectTable_Snapshot();
     Event_ShowMessageAndWait(14, 0);
     GameFlag_SetBit(0x109);
     GameFlag_SetBit(0x9e5);
@@ -1089,14 +1089,14 @@ void Func_02001abc(void) {
     ((struct ContigoEventCount *)Ram_HeapSlots->eventWork)->refusals++;
     Event_ShowMessageAndWait(14, 0);
   }
-  Func_02004074();
+  Event_End();
 }
 
 /// The Super Lucky Dice attendant: the same check without the fee shown.
 void Func_02001b84(void) {
-  u32 price = Func_0200404c() * 10;
+  u32 price = Party_GetAverageLevel() * 10;
 
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if ((u32)gMainRoutineWork.coins < price) {
     Event_SetMessageId((s32)MsgContigo34);
@@ -1112,7 +1112,7 @@ void Func_02001b84(void) {
     register u32 *state __asm__("r3") = (u32 *)gSceneState;
 
     *state = gMainRoutineWork.coins;
-    Func_0200422c();
+    ObjectTable_Snapshot();
     Event_ShowMessageAndWait(8, 0);
     GameFlag_SetBit(0x109);
     GameFlag_SetBit(0x9e5);
@@ -1123,7 +1123,7 @@ void Func_02001b84(void) {
     ((struct ContigoEventCount *)Ram_HeapSlots->eventWork)->refusals++;
     Event_ShowMessageAndWait(8, 0);
   }
-  Func_02004074();
+  Event_End();
 }
 
 void Func_02001c44(s32 id) {
@@ -1137,7 +1137,7 @@ void Func_02001c44(s32 id) {
 extern s32 gData_0200466c[];
 
 void Func_02001c5c(s32 a, s32 b, s32 c, s32 d) {
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(188);
   {
@@ -1195,7 +1195,7 @@ void Func_02001d50(void) {
   s32 angle;
 
   object = ((struct ContigoObject *)Actor_GetById(8));
-  Func_0200406c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(78);
   Event_StartScreenTransition();
@@ -1209,10 +1209,10 @@ void Func_02001d50(void) {
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 160, 382);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  Func_020040e4(5, gMainRoutineWork.currentOwner);
-  Func_020040e4(7, gMainRoutineWork.currentOwner);
-  Func_020040e4(6, gMainRoutineWork.currentOwner);
-  Func_020040e4(9, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
   wait(1);
   Actor_SetSpeed(5, 0xcccc, 0x6666);
   Actor_SetSpeed(7, 0xcccc, 0x6666);
@@ -1568,7 +1568,7 @@ void Func_02001d50(void) {
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
   Camera_MoveWithinMapBounds(PIXELS(148), -1, PIXELS(368), 1);
   Func_0200419c();
-  Func_0200420c();
+  Party_PlaySavedMusic();
   Contigo_Jump(5, 265, 20);
   Event_ShowMessageAndWait(5, 0);
   Actor_FaceDirection(1, FACING_SOUTH, 0);
@@ -1633,7 +1633,7 @@ void Func_02001d50(void) {
   Actor_SetMovementTypeAndWaitById(7, gData_020049c4__contigo);
   Func_02004044();
   GameFlag_SetBit(2512);
-  Func_02004074();
+  Event_End();
 }
 
 extern u32 gData_02004ac0[];
@@ -1641,14 +1641,14 @@ extern u32 gData_02004b18[];
 
 void Func_02002e18(void) {
   if (GameFlag_Test(0x9b2)) {
-    Func_0200406c();
+    Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_SetSpeed(0xcccc, 0x1999);
     Camera_MoveWithinMapBounds(PIXELS(160), -1, PIXELS(368), 1);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 158, 394);
     Actor_FaceDirection(8, 0x5000, 0);
-    Func_020040e4(2, gMainRoutineWork.currentOwner);
+    Actor_MoveToObject(2, gMainRoutineWork.currentOwner);
     wait(1);
     Actor_SetSpeed(2, 0xcccc, 0x6666);
     Actor_SetPositionAndReset(2, 144, 374);
@@ -1683,7 +1683,7 @@ void Func_02002e18(void) {
     Event_ShowMessage(0x1002, 0);
     Contigo_Jump(8, 265, 20);
     Event_ShowMessageAndWait(8, 0);
-    Func_020040e4(0, gMainRoutineWork.currentOwner);
+    Actor_MoveToObject(0, gMainRoutineWork.currentOwner);
     wait(1);
     Contigo_Jump(0, 256, 0);
     Actor_SetSpeed(0, 0x13333, 0x9999);
@@ -1692,7 +1692,7 @@ void Func_02002e18(void) {
     Event_ShowMessageAndWait(0, 0);
     Contigo_Jump(8, 256, 0);
     Actor_FaceDirection(8, 0x3000, 0);
-    Func_020040e4(9, gMainRoutineWork.currentOwner);
+    Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
     wait(1);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
     Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_02004ac0);
@@ -1843,7 +1843,7 @@ void Func_02002e18(void) {
     Actor_SetMovementTypeById(0, gData_02004b18);
     Actor_SetMovementTypeAndWaitById(9, gData_02004b18);
     GameFlag_SetBit(2513);
-    Func_02004074();
+    Event_End();
   }
 }
 
@@ -1858,7 +1858,7 @@ void Func_02003880(void);
 void Func_020039d4(void);
 void Func_02003a8c(void);
 
-s32 Func_02003698(void) {
+s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov694Room1)
@@ -1897,7 +1897,7 @@ extern s16 gData_020046d8[];
 extern u16 gData_02004704[];
 
 void Func_02000038(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
-void Func_02003ffc(void);
+void Map_CenterOnFollowedPoint(void);
 
 /// Schedules Func_020036f0 and gives objects 14 and 15 their flag bytes and
 /// Func_020006d0 as their update (object 15 brought in and placed while flag
@@ -1949,7 +1949,7 @@ void Func_02003720(void) {
   if (GameFlag_Test(0x200) != 0) {
     Field_SetCameraBounds(0, 0x2000000, 0x3700000, 0x4000000);
     Camera_FollowActor(gMainRoutineWork.currentOwner, 0);
-    Func_02003ffc();
+    Map_CenterOnFollowedPoint();
     wait(1);
   }
   Func_02000038(gData_0200469c__contigo, gData_020046ac__contigo, gData_020046d8__contigo, gData_02004704__contigo);
@@ -2070,7 +2070,7 @@ void Func_02003a8c(void) {
   GameFlag_ClearBit(0x9e5);
   if (gMainRoutineWork.entrance == 18) {
     diff = gMainRoutineWork.coins - *(s32 *)gSceneState;
-    Func_0200406c();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -2083,18 +2083,18 @@ void Func_02003a8c(void) {
         Sound_Play(91);
       Event_Wait(20);
       Event_SetMessageId(MSG_COINS_WON);
-      Func_0200403c(diff, 5);
+      MessageArgument_Push(diff, 5);
       Event_ShowMessageAndWait(14, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
       Event_SetMessageId(MSG_COINS_LOST);
-      Func_0200403c(-diff, 5);
+      MessageArgument_Push(-diff, 5);
       Event_ShowMessageAndWait(14, 0);
     }
-    Func_02004074();
+    Event_End();
   } else if (gMainRoutineWork.entrance == 19) {
     diff = gMainRoutineWork.coins - *(s32 *)gSceneState;
-    Func_0200406c();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -2107,18 +2107,18 @@ void Func_02003a8c(void) {
         Sound_Play(91);
       Event_Wait(20);
       Event_SetMessageId(MSG_COINS_WON);
-      Func_0200403c(diff, 5);
+      MessageArgument_Push(diff, 5);
       Event_ShowMessageAndWait(14, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
       Event_SetMessageId(MSG_COINS_LOST);
-      Func_0200403c(-diff, 5);
+      MessageArgument_Push(-diff, 5);
       Event_ShowMessageAndWait(14, 0);
     }
-    Func_02004074();
+    Event_End();
   } else if (gMainRoutineWork.entrance == 20) {
     list = ((struct ContigoPrizes *)&gMainRoutineWork)->list;
-    Func_0200406c();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -2139,7 +2139,7 @@ void Func_02003a8c(void) {
         else
           Event_SetMessageId(MSG_NEXT_PRIZE);
         item = Func_02001a60(*prize);
-        Func_0200403c(item, 2);
+        MessageArgument_Push(item, 2);
         Event_ShowMessageAndWait(18, 0);
         Func_020041fc(item, 3);
         PartyInventory_GiveItem(item, 0);
@@ -2152,7 +2152,7 @@ void Func_02003a8c(void) {
       Event_SetMessageId(MSG_COME_AGAIN);
       Event_ShowMessageAndWait(18, 0);
     }
-    Func_02004074();
+    Event_End();
   }
 }
 
@@ -2186,7 +2186,7 @@ struct CounterBits {
 
 void Animation_ApplyChildValues(struct Actor *, u32);
 s32 Resource_ResetEntry(u32 slot);
-void Func_0200421c(struct Vector3 *v);
+void Camera_WorldToScreen(struct Vector3 *v);
 void Func_0200424c(struct SparkleSprite *sprite);
 s32 Func_0200425c(struct Actor *object);
 
@@ -2225,7 +2225,7 @@ void Func_02003cd8(struct Actor *object) {
         position.x = object->x;
         position.y = object->y + (work->unka0[i] << 16);
         position.z = object->z;
-        Func_0200421c(&position);
+        Camera_WorldToScreen(&position);
         x = position.x;
         z = position.z;
         sprite = &work->sprites[i * 2];

@@ -77,7 +77,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 extern u32 gData_020056a0[];
 extern u32 gData_020056c0[];
 
-u32 *Func_02000390(void) {
+u32 *Scene_GetRegions(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov653Room3)
@@ -105,7 +105,7 @@ extern u32 gData_02005aa8[];
 extern struct ActorPlacement gData_02005b20[];
 extern struct ActorPlacement gData_02005be0[];
 
-void *Func_020003d0(void) {
+void *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov653Room1)
@@ -141,7 +141,7 @@ void Func_020004a8(void) {
 
   if (GameFlag_Test(0x842) == 0) {
     GameFlag_SetBit(0x230);
-    Func_020051c0();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Actor_SetPositionAndReset(4, 104, 252);
     Actor_FaceDirection(4, FACING_NORTHWEST, 0);
@@ -163,7 +163,7 @@ void Func_020004a8(void) {
                                 ((s16 *)&object->z)[1]);
     Actor_WaitForMoveById(14);
     Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
-    Func_020051c8();
+    Event_End();
   }
 }
 
@@ -178,7 +178,7 @@ extern s32 gData_02005f40[];
 extern s32 gData_02005fc4[];
 extern s32 gData_0200615c[];
 
-void *Func_02000580(void) {
+void *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov653Room1)
@@ -234,7 +234,7 @@ void Func_020006b0(struct Actor *object) {
 
   if (steam) {
     sprite = steam->sprite;
-    Func_02005138(steam, gData_020054e4);
+    Actor_StartScript(steam, gData_020054e4);
     steam->motionFlags = 0;
     steam->terrainId = 1;
     steam->priorityFlags = 2;
@@ -256,7 +256,7 @@ void Func_02000710(void) {
     if (steam) {
       Actor_SetSingleChildFlags(steam, 0);
       Func_02005130(steam, 1);
-      Func_02005138(steam, gData_020054f0);
+      Actor_StartScript(steam, gData_020054f0);
     }
   }
   Func_02000778(leader, 0xd999);
@@ -350,7 +350,7 @@ void Func_02000930(struct Actor *object, s32 priority) {
   sprite->priority = priority;
   Actor_SetSingleChildFlags(object, 0);
   Func_02005130(object, 2);
-  Func_02005138(object, gData_02005494);
+  Actor_StartScript(object, gData_02005494);
   Actor_SetPartAttribute(object, 9);
   object->timer = 0;
   object->speedLimit = 0;
@@ -469,12 +469,12 @@ void Func_02000bac(s32 id) {
 }
 
 void Func_02000bcc(void) {
-  Func_02005348(133, 1);
-  Func_02005350(12, 10);
-  Func_02005368();
+  BattleEffect_LoadActionEffectResources(133, 1);
+  BattleEffect_SetupObjectPair(12, 10);
+  EventObject_Initialize();
   Field_DispatchTypeHandler(1);
-  Func_02005358();
-  Func_02005360();
+  BattleEffect_StopMainActor();
+  BattleEffect_CleanupSceneObjects();
 }
 
 void Func_02000bf4(void) {
@@ -1125,21 +1125,21 @@ void Func_02001cc4(void) {
 }
 
 void Func_02001d00(void) {
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)&MsgKandoreanTemple10, 1);
-  Func_020051c8();
+  Event_End();
 }
 
 void Func_02001d20(void) {
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)&MsgKandoreanTemple01, 1);
-  Func_020051c8();
+  Event_End();
 }
 
 void Func_02001d40(void) {
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_Stop(9);
   wait(1);
@@ -1150,28 +1150,28 @@ void Func_02001d40(void) {
   wait(1);
   Actor_SetMovementTypeById(9, gData_02005514);
   wait(1);
-  Func_020051c8();
+  Event_End();
   GameFlag_SetBit(0x845);
 }
 
 void Func_02001db4(void) {
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(10, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)&MsgKandoreanTemple03);
   Event_ShowMessageAndWait(10, 0);
   Actor_GetById(10)->facing = FACING_SOUTH + FACING_STEP;
   wait(1);
-  Func_020051c8();
+  Event_End();
   GameFlag_SetBit(0x846);
 }
 
 void Func_02001e0c(void) {
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgKandoreanTemple09);
   Event_AskYesNoAndShowResponse(13, 0);
-  Func_020051c8();
+  Event_End();
 }
 
 void Func_02001e30(void) {
@@ -1200,7 +1200,7 @@ void Func_02001e58(void) {
   } else if (x == 10 && z == 6 && (gInput.held & 64) == 0) {
     return;
   }
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   /* FAKEMATCH(temporary): the flags address and the zero held in locals, with
    * gMainRoutineWork's address taken in the block below, so the byte store
@@ -1233,7 +1233,7 @@ void Func_02001f3c(void) {
 }
 
 void Func_02001f7c(void) {
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 400, 648);
@@ -1256,7 +1256,7 @@ void Func_02002014(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   u32 i;
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 416, 288);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 10);
@@ -1341,7 +1341,7 @@ void Func_020021dc(void) {
 void Func_02002248(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Func_080d47b4(gMainRoutineWork.currentOwner, 0x100, 20);
   Sound_Play(132);
@@ -1351,18 +1351,18 @@ void Func_02002248(void) {
   while (leader->velocityY != 0)
     wait(1);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
-  Func_020051c8();
+  Event_End();
 }
 
 void Func_020022c0(void) {
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(188);
   Map_CopyCellPictureIndicesRect(77, 33, 77, 24, 2, 2);
   MapGrid_CopyCellAttributes(32, 30, 2, 1, 17, 25);
   wait(10);
   GameFlag_SetBit(0x212);
-  Func_020051c8();
+  Event_End();
 }
 
 void Func_02002314(void) {
@@ -1370,7 +1370,7 @@ void Func_02002314(void) {
 
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 5, 13);
   GameFlag_SetBit(0x842);
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetPositionAndReset(4, 89, 237);
   Actor_FaceDirection(4, FACING_SOUTHEAST, 0);
@@ -1391,7 +1391,7 @@ void Func_02002314(void) {
                               *(s16 *)((u8 *)object + 18));
   Actor_WaitForMoveById(14);
   Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
-  Func_020051c8();
+  Event_End();
 }
 
 extern u8 MsgKandoreanTemple08;
@@ -1400,14 +1400,11 @@ void Func_02005330(struct Actor *object, s32 mode);
 void Func_02005148(struct Actor *object);
 
 void Func_020023e8(void) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 180 of 260 instructions differ in
-   * tla-en. */
   s16 angle = *(s16 *)&Actor_GetById(gMainRoutineWork.currentOwner)->facing;
   struct Actor *object;
   struct FieldSprite *sprite;
 
-  Func_020051c0();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Func_080d4568()->motionFlags = 0;
   ((void (*)())Actor_ArmCallback)(12, 0);
@@ -1465,7 +1462,7 @@ void Func_020023e8(void) {
   FieldActor_WatchAndSetScript(12, gMainRoutineWork.currentOwner);
   FieldActor_SetSpritePriority(12, 2);
   Event_SetFlag(0x84a);
-  Func_020051c8();
+  Event_End();
 }
 
 void Func_02002674(void) {
@@ -1479,7 +1476,7 @@ void Func_0200269c(void) {
 }
 
 void Func_020026cc(void) {
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Camera_MoveWithinMapBounds(PIXELS(328), -1, PIXELS(174), 1);
   Func_020052e8();
@@ -1507,8 +1504,8 @@ void Func_020026cc(void) {
   } while (0);
   gMainRoutineWork.battleRule24b = 2;
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov653Room3, 3);
-  Func_02005300(9, 4);
-  Func_020051c8();
+  Field_RequestBattleFromEncounterTable(9, 4);
+  Event_End();
 }
 
 void Func_020027b4(void) { Func_020053d0_(76, 0, 2, 2, 73, 14, 1); }
@@ -1521,7 +1518,7 @@ void Func_02002814(void) { Func_020053d0_(76, 0, 1, 1, 80, 18, 1); }
 
 void Func_02002834(void) { Func_020053d0_(76, 0, 1, 1, 87, 15, 1); }
 
-s32 Func_02002854(void) {
+s32 Scene_Initialize(void) {
   s32 scene;
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;

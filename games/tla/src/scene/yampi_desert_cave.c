@@ -208,7 +208,7 @@ inner:
 
 void Func_02000754(struct Actor *object);
 void Func_02001828(struct Actor *object, s32 mode);
-void Func_02001938(void);
+void Event_NoOp(void);
 
 struct HeapView {
   s32 pad[8];
@@ -296,7 +296,7 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
                              cell[2]);
   MapGrid_CopyCellAttributes(cell[0] + 64, cell[2] + 64, w, h, cell[0] + bx,
                              cell[2] + bz);
-  Func_02001938();
+  Event_NoOp();
 }
 
 struct Actor *Func_02001948(s32 *position, s32 mode);
@@ -614,14 +614,14 @@ void Func_02000cec(void) {
   return;
 }
 
-void Func_02001870(void);
-void Func_02001878();
+void Event_Start(void);
+void Event_End();
 
 void Func_02000d04(void) {
-  Func_02001870();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Func_080d47b4(gMainRoutineWork.currentOwner, 0x101, 32);
-  Func_02001878();
+  Event_End();
   return;
 }
 
@@ -631,7 +631,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-u32 *Func_02000d44(void) {
+u32 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2)
     return (u32 *)gData_02001bd0;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3)
@@ -654,7 +654,7 @@ void Func_02000dac(void) {
 
     party[0x2c2] = 2;
   }
-  Func_020018d8((s32)&SceneId_Ov662Room1, 10);
+  Event_SetDestination((s32)&SceneId_Ov662Room1, 10);
   Event_Wait(40);
   Func_020008fc();
 }
@@ -667,7 +667,7 @@ void Func_02000de0(void) {
 
     party[0x2c2] = 2;
   }
-  Func_020018d8((s32)&SceneId_Ov662Room1, 9);
+  Event_SetDestination((s32)&SceneId_Ov662Room1, 9);
   Event_Wait(40);
   Func_020008fc();
 }
@@ -879,14 +879,14 @@ void Func_02001238(s32 mode) {
 
 extern char SceneId_Ov664Room4;
 
-void Func_020018e0(s32 a, s32 b);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
 /// The guardian speaks, then the party leaves for overlay 664's fourth room.
 /// Overlay 6af's Func_02000a8c is the same scene for actor 8.
 void Func_0200130c(void) {
   s32 leader;
 
-  Func_02001870();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_StartRepeatedMotion(9, 2);
   Event_Wait(20);
@@ -912,12 +912,12 @@ void Func_0200130c(void) {
     FIELD_AT(&gMainRoutineWork, u8, 0x24b) = 2;
   } while (0);
   FIELD_AT(&gMainRoutineWork, u16, 0x1f6) = (s32)&SceneId_Ov664Room4;
-  Func_020018e0(0x67, 1);
+  Field_RequestBattleFromEncounterTable(0x67, 1);
 }
 
 void Func_020013c8(s32 a) { YampiDesertCave_Call1920(a, 64, 0x302); }
 
-const u8 *Func_020013d8(void) {
+const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2)
     return gData_02001ddc;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3)
@@ -944,7 +944,7 @@ void Func_02001928(s32 value);
 /// Sets up Yampi Desert Cave's three rooms as each one loads: the first room's
 /// palette cycle and Retreat destination, the third room's background
 /// priorities, and in each room the objects its flags place.
-s32 Func_02001418(void) {
+s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Func_02001928(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room1) {

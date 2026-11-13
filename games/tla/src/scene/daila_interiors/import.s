@@ -26,9 +26,9 @@ Func_02000c9c:
 	.thumb_func
 Func_02000ca4:
 	overlay_veneer Func_080201a0
-	.global Func_02000cac
+	.global Map_CopyCellsRect
 	.thumb_func
-Func_02000cac:
+Map_CopyCellsRect:
 	overlay_veneer Map_CopyCellsRectFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -42,9 +42,9 @@ Func_02000cbc:
 	.thumb_func
 FieldMessage_Show:
 	overlay_veneer FieldMessage_ShowFar
-	.global Func_02000ccc
+	.global MessageArgument_Push
 	.thumb_func
-Func_02000ccc:
+MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
 	.global Message_CloseFinishedWindows
 	.thumb_func
@@ -78,9 +78,9 @@ Unit_RefreshPsynergy:
 	.thumb_func
 Inventory_CountItem:
 	overlay_veneer Inventory_CountItemFar
-	.global Func_02000d14
+	.global PartyInventory_FindRoom
 	.thumb_func
-Func_02000d14:
+PartyInventory_FindRoom:
 	overlay_veneer PartyInventory_FindRoomFar
 	.global FieldEvent_Wait
 	.thumb_func
@@ -106,9 +106,9 @@ Actor_GetById:
 	.thumb_func
 Actor_SetPositionAndReset:
 	overlay_veneer Actor_SetPositionAndResetFar
-	.global Func_02000d4c
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_02000d4c:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -174,9 +174,9 @@ Func_02000dc4:
 	.thumb_func
 Func_02000dcc:
 	overlay_veneer Func_080c8708
-	.global Func_02000dd4
+	.global Party_GetLeaderActor
 	.thumb_func
-Func_02000dd4:
+Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
 	.global Func_02000ddc
 	.thumb_func
@@ -194,7 +194,7 @@ Func_02000dec:
 	.thumb_func
 Func_02000df4:
 	overlay_veneer Func_08108068
-	.global Func_02000dfc
+	.global Sound_Play
 	.thumb_func
-Func_02000dfc:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

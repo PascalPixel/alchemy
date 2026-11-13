@@ -155,8 +155,8 @@ void Func_0200043c(void) { MapCopy(39, 0, 4, 3, 25, 8, 0); }
 
 void Func_0200045c(void) { Func_02000080(13); }
 
-void Func_02001914(void);
-void Func_0200191c(void);
+void Event_Start(void);
+void Event_End(void);
 
 /// Once flag 0x96c is set and 0x96d is not: sets 0x96d, clears 0x96e, launches
 /// object 12 from 22 pixels up at half size and turns it an eighth of a turn a
@@ -212,7 +212,7 @@ void Func_02000534(void) {
     Sound_Play(123);
     Import_EventSetExitRequest(2);
   } else {
-    Func_02001914();
+    Event_Start();
     Event_ResolvePendingActions(0);
     FieldActor_LaunchFromLeader(11, 0, -16, 0x5000);
     Actor_ArmCallback(4, FACING_NORTH, 0);
@@ -234,7 +234,7 @@ void Func_02000534(void) {
     Actor_WaitForMoveById(11);
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
     Actor_WalkToAndWait(4, 168, 832);
-    Func_0200191c();
+    Event_End();
   }
 }
 
@@ -277,7 +277,7 @@ s32 Func_02000630(void) {
   }
 }
 
-s32 Func_020006bc(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 513;
   Task_Add(Func_02000630, 0xc80);
   if (gMainRoutineWork.entrance != 1)
@@ -300,7 +300,7 @@ s32 Func_020006bc(void) {
   return 0;
 }
 
-s32 Func_020007a4(void) {
+s32 Scene_PrepareMap(void) {
   s32 entrance = gMainRoutineWork.entrance;
 
   if (entrance == 1)
@@ -328,7 +328,7 @@ struct EventWork1c4 {
   u16 count;
 };
 
-void Func_02001964();
+void Actor_MoveToObject();
 void Func_020019e4();
 void Message_CloseFinishedWindows();
 
@@ -336,14 +336,14 @@ void Func_02000838(void) {
   struct Actor *leader;
   s32 result;
 
-  Func_02001914();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaRecognizePsynergy);
   Event_ShowMessageThenWait(9, 0, 10);
   Actor_ShowEmote(4, 0x101, 40);
   Event_ShowMessageThenWait(10, 0, 10);
   Func_020019f4();
-  Func_02001914();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_Wait(20);
   Actor_SetModeById(4, 1);
@@ -425,7 +425,7 @@ void Func_02000838(void) {
   Motion_SetModeAndWaitAnimation(9, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(9, 0, 10);
-  Func_02001964(7, 4);
+  Actor_MoveToObject(7, 4);
   Actor_GetById(7)->scaleX = 0;
   Event_ShowMessageThenWait(7, 0, 10);
   Actor_ArmCallback(9, FACING_EAST, 0);
@@ -794,7 +794,7 @@ void Func_02000838(void) {
                               ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(11);
   Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
-  Func_0200191c();
+  Event_End();
 }
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -823,24 +823,24 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {2, 2, CONDITION_ALWAYS, EVENT(Func_02000534)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_02000534)},
     {33, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {2, 20, CONDITION_ALWAYS, EVENT(Func_020000b0)},
-    {2, 21, CONDITION_ALWAYS, EVENT(Func_020000c4)},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Func_020000b0)},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_020000c4)},
     {0x602, 22, CONDITION_ALWAYS, EVENT(Func_02000830)},
-    {0, 12, CONDITION_ALWAYS, EVENT(Func_02000038)},
-    {0x10008c15, 8, 0x961, (u32)(Func_020000d4)},
-    {0x8c15, 8, 0x961, EVENT(Func_020000d8)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_02000038)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x961, (u32)(Func_020000d4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x961, EVENT(Func_020000d8)},
     {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000110)},
     {0x50008905, 31, CONDITION_ALWAYS, EVENT(Func_020003bc)},
     {0x50008905, 32, CONDITION_ALWAYS, EVENT(Func_020003dc)},
     {0x50008905, 33, CONDITION_ALWAYS, EVENT(Func_020003fc)},
     {0x50008905, 34, CONDITION_ALWAYS, EVENT(Func_0200041c)},
     {0x50008905, 35, CONDITION_ALWAYS, EVENT(Func_0200043c)},
-    {0x10008715, 13, 0x196e, EVENT(Func_0200045c)},
-    {0x8715, 13, 0x196e, EVENT(Func_02000468)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_TREMOR, PSYNERGY_PHASE_BEFORE_CAST), 13, 0x196e, EVENT(Func_0200045c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 13, 0x196e, EVENT(Func_02000468)},
     {TRIGGERS_END},
 };
 

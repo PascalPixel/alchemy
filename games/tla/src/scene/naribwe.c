@@ -11,7 +11,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const u8 *Func_0200004c(void) {
+const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.entrance == 10)
     return gData_020008c4;
   if (GameFlag_Test(0x8ff))
@@ -31,7 +31,7 @@ void Func_02000088(void) {
     *flag = 0;
 }
 
-const u8 *Func_020000b8(void) {
+const u8 *Scene_GetEvents(void) {
   if (GameFlag_Test(0x8ff))
     return gData_02000cfc;
   return gData_02000b4c;
@@ -98,11 +98,11 @@ void Func_020001f0(s32 actor) {
     Func_020005e4(16, actor);
     return;
   }
-  Func_0200054c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgNaribwe21);
   Event_ShowMessageAndWait(actor, 0);
-  Func_02000554();
+  Event_End();
 }
 
 void Func_02000250(s32 actor) {
@@ -111,11 +111,11 @@ void Func_02000250(s32 actor) {
     Func_020005e4(16, actor);
     return;
   }
-  Func_0200054c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgNaribwe43);
   Event_ShowMessageAndWait(actor, 0);
-  Func_02000554();
+  Event_End();
 }
 
 void Func_020002b0(s32 actor) {
@@ -124,11 +124,11 @@ void Func_020002b0(s32 actor) {
     Func_020005ec(actor);
     return;
   }
-  Func_0200054c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgNaribwe23);
   Event_ShowMessageAndWait(26, 0);
-  Func_02000554();
+  Event_End();
 }
 
 void Func_0200030c(s32 actor) {
@@ -137,11 +137,11 @@ void Func_0200030c(s32 actor) {
     Func_020005ec(actor);
     return;
   }
-  Func_0200054c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgNaribwe45);
   Event_ShowMessageAndWait(26, 0);
-  Func_02000554();
+  Event_End();
 }
 
 void Func_02000368(void) {
@@ -149,7 +149,7 @@ void Func_02000368(void) {
   s32 index;
   u32 id;
 
-  Func_0200054c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   for (id = 8; id <= 63; id++) {
     u8 *actor = (u8 *)Actor_GetById(id);
@@ -173,14 +173,14 @@ void Func_02000368(void) {
   Import_EventSetExitRequest(*(s16 *)work);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02000554();
+  Event_End();
 }
 
 void Func_02000400(void) {
-  Func_0200054c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_SetBit(0x201);
-  Func_02000554();
+  Event_End();
 }
 
 void Func_0200041c(void) {
@@ -201,7 +201,7 @@ void Func_02000464(void) {
   Actor_SetPosition(27, PIXELS(104), PIXELS(104));
 }
 
-s32 Func_02000480(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
   Actor_SetSingleChildFlags(Actor_GetById(9), 0);
   Actor_SetSingleChildFlags(Actor_GetById(10), 0);

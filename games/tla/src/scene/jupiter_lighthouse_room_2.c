@@ -63,8 +63,8 @@ void Func_020000b4(void) {
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Func_020021b4(struct Actor *object, s32 a);
 void Func_020021d4(struct Actor *object);
-void Func_0200224c(void);
-void Func_02002254(void);
+void Event_Start(void);
+void Event_End(void);
 
 void Func_020000d0(s32 kind) {
   s32 owner = gMainRoutineWork.currentOwner;
@@ -73,7 +73,7 @@ void Func_020000d0(s32 kind) {
   s32 i;
   s32 *target;
 
-  Func_0200224c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   target = gData_02002b88;
   if (kind == 32) {
@@ -124,7 +124,7 @@ void Func_020000d0(s32 kind) {
   leader->motionFlags = 3;
   FieldTask_Remove(Func_020000b4);
   Func_02000054();
-  Func_02002254();
+  Event_End();
 }
 
 void Func_02000230(s32 kind) {
@@ -134,7 +134,7 @@ void Func_02000230(s32 kind) {
   s32 *target;
   s32 i;
 
-  Func_0200224c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   target = gData_02002b88;
   if (kind == 30) {
@@ -204,7 +204,7 @@ spin:
   leader->terrainHeight = 0x900000;
   FieldTask_Remove(Func_020000b4);
   Func_02000054();
-  Func_02002254();
+  Event_End();
 }
 
 void Func_020003f4(void) {
@@ -415,7 +415,7 @@ void Func_02000aa4(s32 mode);
 /// The scene's set-up entry: screen effect 0x204, actors 13 and 14 at action
 /// variant 3, the blend registers, the particles, and the map and actors by
 /// flags 0xa02, 0xa00 and 0xa03 and the entrance.
-s32 Func_02000854(void) {
+s32 Scene_Initialize(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 0x204;
@@ -453,7 +453,7 @@ s32 Func_02000854(void) {
   return 0;
 }
 
-s32 Func_0200099c(void) {
+s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   Func_02000aa4(0);
   return 0;
@@ -469,6 +469,9 @@ void Func_020009dc(s32 a0) { gData_02002b38 = a0; }
 #include "dma.h"
 
 extern s32 gData_02002b34;
+
+/// Sets the counter, its value built as a word.
+static inline void Counter_Set(s32 value) { gData_02002b34 = value; }
 extern u16 gData_02002b98[];
 
 void Func_020009e8(void) {
@@ -517,12 +520,7 @@ void Func_02000aa4(s32 mode) {
     Iwram_CopyWords(gData_02002bb8, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(0xa00) || mode == 1) {
-    /* FAKEMATCH(temporary): a local holding 0, so the zero is built in r2
-     * and the counter's address in r3; as the 0 stored directly, 6 of 44
-     * instructions differ in tla-en. */
-    s32 zero = 0;
-
-    gData_02002b34 = zero;
+    Counter_Set(0);
     Task_Add(Func_020009e8, 1152);
   } else {
     Dma_Set(gData_02002bbc, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2),
@@ -542,15 +540,7 @@ void Func_02000b28(s32 id) {
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
   object->y = height + 0x200000;
-  {
-    u8 *flags = &object->priorityFlags;
-    /* FAKEMATCH(temporary): a local holding 128, so the bit is built in the
-     * register it is ORed into; as *flags |= 128, 4 of 38 instructions differ
-     * in tla-en. */
-    s32 bit = 128;
-
-    *flags = bit | *flags;
-  }
+  object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
   Func_0200223c(object->x, object->z, 0, (height >> 19) + 6);
   Func_0200230c(object->x, object->z, 0, 128);
@@ -566,7 +556,7 @@ void Func_02000b7c(void) {
   s32 facing;
   s32 i;
 
-  Func_0200224c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkd46 = 0;
@@ -614,7 +604,7 @@ void Func_02000b7c(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_02002254();
+  Event_End();
 }
 
 s32 Func_02000d68(s32 *a, s32 *b) {

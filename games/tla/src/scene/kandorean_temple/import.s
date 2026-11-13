@@ -66,9 +66,9 @@ Animation_ApplyChildArgument:
 	.thumb_func
 Func_02005130:
 	overlay_veneer Actor_SetMode
-	.global Func_02005138
+	.global Actor_StartScript
 	.thumb_func
-Func_02005138:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -82,9 +82,9 @@ Func_02005148:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Func_02005158
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_02005158:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -134,13 +134,13 @@ Icon_DrawItem:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_020051c0
+	.global Event_Start
 	.thumb_func
-Func_020051c0:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020051c8
+	.global Event_End
 	.thumb_func
-Func_020051c8:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
@@ -198,9 +198,9 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_SetHorizontalPositionAndAngleWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionAndAngleWithTerrainFar
-	.global Func_02005240
+	.global Actor_MoveToObject
 	.thumb_func
-Func_02005240:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -294,9 +294,9 @@ Func_080d4568:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02005300
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_02005300:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_080d2b4c
 	.thumb_func
@@ -330,25 +330,25 @@ Func_02005338:
 	.thumb_func
 Field_DispatchTypeHandler:
 	overlay_veneer Field_DispatchTypeHandlerFar
-	.global Func_02005348
+	.global BattleEffect_LoadActionEffectResources
 	.thumb_func
-Func_02005348:
+BattleEffect_LoadActionEffectResources:
 	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
-	.global Func_02005350
+	.global BattleEffect_SetupObjectPair
 	.thumb_func
-Func_02005350:
+BattleEffect_SetupObjectPair:
 	overlay_veneer BattleEffect_SetupObjectPairFar
-	.global Func_02005358
+	.global BattleEffect_StopMainActor
 	.thumb_func
-Func_02005358:
+BattleEffect_StopMainActor:
 	overlay_veneer BattleEffect_StopMainActorFar
-	.global Func_02005360
+	.global BattleEffect_CleanupSceneObjects
 	.thumb_func
-Func_02005360:
+BattleEffect_CleanupSceneObjects:
 	overlay_veneer BattleEffect_CleanupSceneObjectsFar
-	.global Func_02005368
+	.global EventObject_Initialize
 	.thumb_func
-Func_02005368:
+EventObject_Initialize:
 	overlay_veneer EventObject_InitializeFar
 	.global Event_ResolvePendingActions
 	.thumb_func

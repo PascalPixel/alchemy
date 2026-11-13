@@ -54,9 +54,9 @@ VramCache_Load:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
-	.global Func_020032b0
+	.global Oam_AddSpriteAtDepth
 	.thumb_func
-Func_020032b0:
+Oam_AddSpriteAtDepth:
 	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global GameFlag_Test
 	.thumb_func
@@ -82,9 +82,9 @@ GameFlag_SetByte:
 	.thumb_func
 Func_020032e0:
 	overlay_veneer Actor_SetMode
-	.global Func_020032e8
+	.global Actor_StartScript
 	.thumb_func
-Func_020032e8:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -98,9 +98,9 @@ Func_020032f8:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Func_02003308
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_02003308:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -118,13 +118,13 @@ Map_PlayMapEdit:
 	.thumb_func
 Map_CopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
-	.global Func_02003330
+	.global DisplayBlend_DisableRunScript
 	.thumb_func
-Func_02003330:
+DisplayBlend_DisableRunScript:
 	overlay_veneer DisplayBlend_DisableRunScriptFar
-	.global Func_02003338
+	.global DisplayBlend_EnableRunScript
 	.thumb_func
-Func_02003338:
+DisplayBlend_EnableRunScript:
 	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.global Map_GetTerrainHeight
 	.thumb_func
@@ -170,13 +170,13 @@ Func_0803ce64:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02003398
+	.global Event_Start
 	.thumb_func
-Func_02003398:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020033a0
+	.global Event_End
 	.thumb_func
-Func_020033a0:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -258,9 +258,9 @@ Func_02003438:
 	.thumb_func
 Func_080d4568:
 	overlay_veneer Func_080c8258
-	.global Func_02003448
+	.global Event_SetDestination
 	.thumb_func
-Func_02003448:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Import_EventSetExitRequest
 	.thumb_func

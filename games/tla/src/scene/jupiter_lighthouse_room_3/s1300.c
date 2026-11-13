@@ -149,7 +149,7 @@ extern u8 gField_CachedTilesB[];
 extern u8 gField_CachedTilesC[];
 
 void *Heap_Alloc(s32 size);
-void Func_020022a0(const void *source, void *destination);
+void Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void Heap_Release(void *block);
 
@@ -161,7 +161,7 @@ void Func_02001544(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02002d30, 64);
-  Func_020022a0(gField_CachedTilesA, buffer);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_02002d2c = Resource_FindFreeEntry();
   VramCache_Load(gData_02002d2c, 0xc00, buffer);
   Heap_Release(buffer);
@@ -175,7 +175,7 @@ void Func_020015c4(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_02002d30, 64);
-  Func_020022a0(gField_CachedTilesB, buffer);
+  Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_02002d2c = Resource_FindFreeEntry();
   Vram_Load(gData_02002d2c, 0x800, buffer);
   Heap_Release(buffer);
@@ -189,7 +189,7 @@ void Func_02001644(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_02002d30, 64);
-  Func_020022a0(gField_CachedTilesC, buffer);
+  Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_02002d2c = Resource_FindFreeEntry();
   Vram_Load(gData_02002d2c, 0x800, buffer);
   Heap_Release(buffer);

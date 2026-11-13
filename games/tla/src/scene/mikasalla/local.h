@@ -11,8 +11,8 @@
 extern u32 gSceneExits[];
 
 void Func_02000620(s32 a);
-void Func_02000648(void);
-void Func_02000650(void);
+void Event_Start(void);
+void Event_End(void);
 
 void Func_02000438(void);
 

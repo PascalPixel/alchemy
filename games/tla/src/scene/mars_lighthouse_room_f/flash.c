@@ -77,11 +77,11 @@ struct Work020023c4 {
 };
 
 void Func_02002800(void);
-void Func_02005560(void);
+void Event_Start(void);
 void Func_02005480(struct Actor *object, s32 mode);
 s32 Func_020054d8(s32 terrain, s32 x, s32 z);
 s32 Func_020054f8(struct Actor *actor);
-void Func_020055a8(s32 owner, s32 a, s32 b);
+void Actor_JumpDownLedge(s32 owner, s32 a, s32 b);
 s32 Func_02005538(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
 
 #if TLA_PATCH_1
@@ -119,7 +119,7 @@ s32 Func_0200297c(void) {
 #endif
     actor = Actor_Get(main->currentOwner);
     work = (struct Work020023c4 *)(gData_020023c4 + 0x188);
-    Func_02005560();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     actor->update = Func_02002954;
     actor->facing = TRIG_TURN / 4;
@@ -170,7 +170,7 @@ s32 Func_0200297c(void) {
           break;
         if (result < 0) {
           actor->facing = TRIG_TURN / 4;
-          Func_020055a8(gMainRoutineWork.currentOwner, 6, -1);
+          Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, -1);
           break;
         }
 #if TLA_PATCH_1
@@ -242,7 +242,7 @@ void Func_02002b88(void) {
 #include "room.h"
 #include "event_work.h"
 
-void Func_02005610(s32 mode, s32 frames);
+void ScreenTransition_Start(s32 mode, s32 frames);
 
 s32 Func_02002ba0(void) {
   /* FAKEMATCH(signature): declared returning s32 with no return; as void, 2
@@ -256,7 +256,7 @@ s32 Func_02002ba0(void) {
   // Read unsigned: as event->screenStatus, 18 of 138 instructions differ in
   // tla-en.
   if (*(u16 *)&event->screenStatus == 0) {
-    Func_02005610(event->screenEffect, event->delay);
+    ScreenTransition_Start(event->screenEffect, event->delay);
     event->screenStatus = 1;
   }
   Flag_Clear(0x106);
@@ -279,7 +279,7 @@ s32 Func_02002ba0(void) {
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideWork *)(gData_020023c4 + 0x188);
   Flag_Set(0x106);
-  Func_02005560();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Flag_Clear(0x106);
   leader->update = (void (*)(void))Func_02002954;
@@ -392,7 +392,7 @@ void Func_02002d08(struct Actor *actor) {
       sum = Random16Far();
       sum += Random16Far();
       scale = (sum >> 2) + Q16_ONE / 2;
-      Func_02005490(object, gData_02005dbc);
+      Actor_StartScript(object, gData_02005dbc);
       Actor_SetSingleChildFlags(object, 0);
       object->velocityY = angle * 4 + Q16_ONE * 2;
       radius <<= 3;
@@ -444,7 +444,7 @@ next:
       angle = 0x4000 + rise;
       radius = Random16Far() * 8;
       size = Random16Far();
-      Func_02005490(object, gData_02005e00);
+      Actor_StartScript(object, gData_02005e00);
       Actor_SetSingleChildFlags(object, 0);
       /* FAKEMATCH(temporary): the scale is taken before the velocity stores, as
        * in the native; as object->scaleX = (size >> 1) + 0x4000, 14 of 98

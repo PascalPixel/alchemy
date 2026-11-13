@@ -34,7 +34,7 @@ s32 Func_0200004c(struct Actor *object) {
   return 0;
 }
 
-const u8 *Func_02000058(void) {
+const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom4)
     return gData_02006530;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom2)
@@ -300,9 +300,9 @@ void Func_0200055c(s32 id) {
         u32 pick = Random16Far();
 
         if (pick <= 0x7fff)
-          Func_02005490(object, gData_02005b68);
+          Actor_StartScript(object, gData_02005b68);
         else
-          Func_02005490(object, gData_02005bac);
+          Actor_StartScript(object, gData_02005bac);
       }
       Actor_SetSingleChildFlags(object, 0);
       object->velocityY = (angle << 2) + 0x20000;
@@ -326,7 +326,7 @@ void Func_02000670(void) {
   ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk166 = 0;
   Event_ClearFlag(0x106);
   Event_ClearFlag(0x104);
-  Func_02005560();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x20000, 0x4000);
   Camera_SetBounds(PIXELS(248), -1, PIXELS(712), 1);
@@ -336,7 +336,7 @@ void Func_02000670(void) {
   FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(872), 1);
   Func_020055e0();
   FieldEvent_Wait(120);
-  Func_02005568();
+  Event_End();
 }
 
 void Func_020006f4(s32 burst) {
@@ -420,7 +420,7 @@ void Func_02000944(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 frame;
 
-  Func_02005608();
+  Leader_StopMoving();
   Actor_SetSingleChildFlags(object, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
   FieldEvent_Wait(16);
@@ -471,7 +471,7 @@ void Func_020009ec(void) {
     FieldCamera_SetSpeed(0x20000, 0x4000);
     FieldCamera_MoveTo(PIXELS(616), -1, PIXELS(24), 1);
     FieldEvent_Wait(60);
-    Func_02005660();
+    ObjectTable_Snapshot();
     FieldEvent_SetExitRequest(9);
   }
 }
@@ -486,7 +486,7 @@ void Func_02000ad8(void) {
   struct SceneWork *work = Ram_HeapSlots->eventWork;
 
   Flag_Set(0x106);
-  Func_02005560();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   work->unk166 = 0;
   Flag_Clear(0x106);
@@ -496,7 +496,7 @@ void Func_02000ad8(void) {
   FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(744), 1);
   Func_020055e0();
   FieldEvent_Wait(60);
-  Func_02005568();
+  Event_End();
 }
 
 void Func_02000b40(void) {
@@ -639,7 +639,7 @@ void Func_02000df8(void) {
   Func_02002ce0();
 }
 
-const u8 *Func_02000e04(void) {
+const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom4)
     return gData_02006b98;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom2)
@@ -690,7 +690,7 @@ extern const u16 gData_02005c5a[];
 extern const u16 gData_02005c60[];
 extern const u16 gData_02005c6e[];
 
-s32 Func_02000e7c(void) {
+s32 Scene_Initialize(void) {
   struct MainRoutineWork *work = &gMainRoutineWork;
   s32 scene = work->scene;
   s32 entrance = work->entrance;
@@ -741,7 +741,7 @@ s32 Func_02000e7c(void) {
       Func_02002604();
     if (entrance == 9) {
       Flag_Set(0x351);
-      Func_02005560();
+      Event_Start();
       Event_ResolvePendingActions(0);
       Camera_SetBounds(-1, -1, -1, 0);
       Func_02005598_(work->currentOwner, 0, 0);
@@ -865,7 +865,7 @@ extern const u8 gData_02005d3c[];
 void Func_02005548(s32 scene, s32 a1);
 s32 Func_0200328c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 
-s32 Func_0200140c(void) {
+s32 Scene_PrepareMap(void) {
   struct MainRoutineWork *party;
   s32 flag = 0xa30;
 
@@ -978,15 +978,7 @@ void Func_02001628(s32 id) {
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
   object->y = height + 0x200000;
-  {
-    u8 *flags = &object->priorityFlags;
-    /* FAKEMATCH(temporary): the bit held in a local, so it is built in the
-     * register it ORs into; as *flags |= 128, 4 of 38 instructions differ in
-     * tla-en. */
-    s32 bit = 128;
-
-    *flags = bit | *flags;
-  }
+  object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
   Func_02005540(object->x, object->z, 0, (height >> 19) + 6);
   Func_020056a8(object->x, object->z, 0, 128);
@@ -997,9 +989,9 @@ void Func_02001628(s32 id) {
 #include "main_routine_work.h"
 #include "frame.h"
 
-void Func_02005560(void);
+void Event_Start(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02005568(void);
+void Event_End(void);
 
 /* VIEW(s167c): tag struct EventWork as struct EventWork__s167c; event_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:1017: structure has no member named `unk_d46'. */
 struct EventWork__s167c {
@@ -1021,7 +1013,7 @@ void Func_0200167c(void) {
   s32 facing;
   s32 i;
 
-  Func_02005560();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unk_d46 = 0;
@@ -1081,7 +1073,7 @@ void Func_0200167c(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unk_d46 = 1;
   work->unk_154 = 0;
-  Func_02005568();
+  Event_End();
 }
 
 
@@ -1099,9 +1091,9 @@ extern s32 Data_02007064;
 
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_020056a0(s32 x, s32 z, s32 layer);
-void Func_02005658(s32 *position);
+void Camera_WorldToScreen(s32 *position);
 s32 Math_Cosine(s32 angle);
-void Func_02005490(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 
 void Func_02001894(struct Actor *self) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -1128,7 +1120,7 @@ void Func_02001894(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Func_02005658(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -1176,7 +1168,7 @@ stop:
     s32 zero = 0;
     *((u8 *)self + 0x63) = zero;
     self->update = zero;
-    Func_02005490(self, gData_02007044);
+    Actor_StartScript(self, gData_02007044);
     Event_PlaySound(228);
     Data_02007064 = zero;
   }
@@ -1472,7 +1464,7 @@ void Func_02001f84(struct Actor *object, s32 unused) {
   object->motionFlags = 0;
   object->collisionFlags = 0;
   Actor_SetSingleChildFlags(object, 0);
-  Func_02005490(object, gData_02005d8c);
+  Actor_StartScript(object, gData_02005d8c);
   object->timer = 0;
   object->speedLimit = 0;
   object->acceleration = 0;
@@ -1600,7 +1592,7 @@ void Func_0200215c(struct Actor *object, s32 part) {
 
   ((struct SpriteParts *)object->sprite)->part = part;
   Actor_SetSingleChildFlags(object, 0);
-  Func_02005490(object, gData_02005d8c);
+  Actor_StartScript(object, gData_02005d8c);
   object->timer = zero;
   object->speedLimit = zero;
   object->acceleration = zero;
@@ -1697,7 +1689,7 @@ void Func_0200236c(struct Actor *object, s32 unused) {
   object->collisionFlags = 0;
   Actor_SetSingleChildFlags(object, 0);
   Func_02005480(object, 2);
-  Func_02005490(object, gData_02005d8c);
+  Actor_StartScript(object, gData_02005d8c);
   Actor_SetSpriteColor(object, 10);
   object->timer = 0;
   object->speedLimit = 0;

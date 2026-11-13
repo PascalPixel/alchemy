@@ -75,9 +75,9 @@ next2:
     goto next2;
 }
 
-void Func_02001380(void);
+void Event_Start(void);
 s32 Func_020001e4(void);
-void Func_02001388(void);
+void Event_End(void);
 
 void Func_020000d0(void) {
   s32 t0;
@@ -88,12 +88,12 @@ void Func_020000d0(void) {
     Event_SetFlag(0x200);
     Func_02000070();
   }
-  Func_02001380();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkToAndWait(actor, 120, 152);
   Actor_FaceDirection(actor, FACING_SOUTH, 0);
   Func_020001e4();
-  Func_02001388();
+  Event_End();
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
@@ -106,7 +106,7 @@ void Func_020010f4(void);
 /// Starts the scene: sets the colour blend, puts objects 24 and 25 in mode 2
 /// and starts the screen transition; when gMainRoutineWork's 0x1e2 halfword is
 /// 1 and flag 0x200 is set, it sets the blend's weights again.
-s32 Func_0200012c(void) {
+s32 Scene_Initialize(void) {
   s32 t0;
   s32 t3;
   s32 t4;
@@ -166,7 +166,7 @@ s32 PartyInventory_CountFreeSlots();
 s32 Party_AdjustCoins(s32 amount);
 s32 PartyInventory_Remove();
 s32 Func_02001184();
-void Func_02001328();
+void MessageArgument_Push();
 void Func_0200049c(s32 a0);
 
 // French draws the count window two tiles wider, its numbers 16 pixels further
@@ -217,7 +217,7 @@ s32 Func_020001e4(void) {
   s64 minusOne = -1;
 
 #if TLA_PATCH_1
-  Func_02001380();
+  Event_Start();
   choice = 0;
   Event_ResolvePendingActions(0);
 prompt:
@@ -288,7 +288,7 @@ toss:
   // coin or medal taken as soon as it is chosen, so cancelling the toss loses
   // it. From patch 1 it is taken once the toss is confirmed.
   choice = 0;
-  Func_02001380();
+  Event_Start();
   Event_ResolvePendingActions(0);
   for (;;) {
     coins = gMainRoutineWork.coins;
@@ -370,7 +370,7 @@ toss:
       if (result != 4) {
         Party_AdjustCoins(gData_0200173c[result]);
         Sound_Play(91);
-        Func_02001328(gData_0200173c[result], 5);
+        MessageArgument_Push(gData_0200173c[result], 5);
         Event_SetMessageId((s32)MsgYouWonCoin);
         Event_ShowMessageAndWait((s32)minusOne, 0);
       } else {
@@ -403,12 +403,12 @@ toss:
     }
   }
 end:
-  Func_02001388();
+  Event_End();
   return 0;
 }
 
 #include "call.h"
-s32 Func_020013b8();
+s32 Actor_MoveToObject();
 s32 Func_02001400();
 s32 Func_02001338();
 s32 Func_02001370();
@@ -417,7 +417,7 @@ s32 Func_020013f0();
 void Func_0200049c(s32 a0) {
   s32 t52;
 
-  Func_02001380();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(30);
   Event_PlaySound(0x94);
@@ -471,7 +471,7 @@ void Func_0200049c(s32 a0) {
   Event_PlaySound(0x7e);
   if (a0 == -1) {
     t52 = Actor_Get(0x1d);
-    Func_020013b8(0x1d, FIELD_AT(&gMainRoutineWork, s32, 532));
+    Actor_MoveToObject(0x1d, FIELD_AT(&gMainRoutineWork, s32, 532));
     FIELD_AT((t52 + 0x55), u8, 0) = 0;
     FIELD_AT(t52, s32, 12) = 0x200000;
     FieldActor_SetAnimation(FIELD_AT(&gMainRoutineWork, s32, 532), 0x1c);
@@ -527,7 +527,7 @@ void Func_0200049c(s32 a0) {
   MapGrid_CopyCellsTo(0x4f, 0x14, 0x46, 0, 3, 8);
   Event_PlaySound(0x9a);
   FieldEvent_Wait(8);
-  Func_02001388();
+  Event_End();
 }
 
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
@@ -1172,15 +1172,15 @@ u32 gData_02001678[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {0, 22, CONDITION_ALWAYS, MSGNO(MsgReadTheSign)},
-    {0, 23, CONDITION_ALWAYS, MSGNO(MsgReadTheSignThe)},
-    {0, 26, CONDITION_ALWAYS, MSGNO(MsgIfYouFace)},
-    {0x8d15, 26, CONDITION_ALWAYS, MSGNO(MsgIDLove)},
-    {0, 28, CONDITION_ALWAYS, MSGNO(MsgIRememberAn)},
-    {0x8d15, 28, CONDITION_ALWAYS, MSGNO(MsgHeHadSuch)},
-    {3, 25, 0x200, EVENT(Func_02000054)},
-    {3, 80, CONDITION_ALWAYS, EVENT(Func_020000d0)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgReadTheSign)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgReadTheSignThe)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgIfYouFace)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgIDLove)},
+    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgIRememberAn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgHeHadSuch)},
+    {TRIGGER_EXAMINE, 25, 0x200, EVENT(Func_02000054)},
+    {TRIGGER_EXAMINE, 80, CONDITION_ALWAYS, EVENT(Func_020000d0)},
     {TRIGGERS_END},
 };
 

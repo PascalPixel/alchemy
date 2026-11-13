@@ -100,9 +100,6 @@ static __inline__ void Func_02001c10_(s32 id, s32 x, s32 z) {
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Test(flag); }
 
 void Func_02004644(void) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 165 of 165 instructions differ in
-   * tla-en. */
   struct Actor *left = Actor_GetById(9);
   struct Actor *right = Actor_GetById(10);
   struct Actor *rider = Actor_GetById(23);
@@ -242,7 +239,7 @@ extern u8 gField_CachedTilesA[];
 extern u8 gField_CachedTilesB[];
 extern u8 gField_CachedTilesC[];
 
-void Func_02005704(const void *source, void *destination);
+void Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -253,7 +250,7 @@ void Func_02004990(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02006a70, 64);
-  Func_02005704(gField_CachedTilesA, buffer);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_02006a6c = Resource_FindFreeEntry();
   VramCache_Load(gData_02006a6c, 0xc00, buffer);
   Heap_Release(buffer);
@@ -267,7 +264,7 @@ void Func_02004a10(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_02006a70, 64);
-  Func_02005704(gField_CachedTilesB, buffer);
+  Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_02006a6c = Resource_FindFreeEntry();
   Vram_Load(gData_02006a6c, 0x800, buffer);
   Heap_Release(buffer);
@@ -281,7 +278,7 @@ void Func_02004a90(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_02006a70, 64);
-  Func_02005704(gField_CachedTilesC, buffer);
+  Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_02006a6c = Resource_FindFreeEntry();
   Vram_Load(gData_02006a6c, 0x800, buffer);
   Heap_Release(buffer);

@@ -76,7 +76,7 @@ void Func_02000038(u16 *list) {
   }
 }
 
-s32 Func_0200118c(s32 owner, s32 mode);
+s32 BattleEffect_FindNearestObject(s32 owner, s32 mode);
 struct Actor *Func_0200120c(void);
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
@@ -95,7 +95,7 @@ void Func_0200014c(u16 *list) {
   u8 *grid;
 
   if (held == NULL) {
-    s32 id = Func_0200118c(gMainRoutineWork.currentOwner, 1);
+    s32 id = BattleEffect_FindNearestObject(gMainRoutineWork.currentOwner, 1);
 
     if (id != -1)
       held = Actor_GetById(id);
@@ -240,7 +240,7 @@ void Func_02000fbc(void);
 void Func_02000fd8(void);
 void Func_0200102c(void);
 
-const struct SceneEntrance *Func_02000318(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom4)
     return gData_02001400;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom5)
@@ -248,7 +248,7 @@ const struct SceneEntrance *Func_02000318(void) {
   return gData_020013d0;
 }
 
-const s16 *Func_02000358(void) {
+const s16 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65aRoom2)
@@ -266,7 +266,7 @@ const s16 *Func_02000358(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Func_02000388(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom1)
     return gData_020015b4;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom3)
@@ -278,7 +278,7 @@ const struct ActorPlacement *Func_02000388(void) {
   return gData_0200159c;
 }
 
-const struct Trigger *Func_020003ec(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom1)
     return gData_02001920;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom2)
@@ -303,8 +303,8 @@ extern u8 MsgFieldDoorWontBudge[];
 extern s16 gData_020013c0[];
 extern s16 gData_020013c4[];
 
-void Func_0200110c(void);
-void Func_02001114(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_020011e4(const void *data);
 void Func_020011cc(const void *data);
 void Func_020011ec(void);
@@ -312,11 +312,11 @@ void Func_020011ec(void);
 void Func_02000474(void) {
   struct EventWork15a *work = Ram_HeapSlots->eventWork;
 
-  Func_0200110c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)&MsgFieldDoorWontBudge, 1);
   work->flag = 1;
-  Func_02001114();
+  Event_End();
 }
 
 void Func_020004a4(struct Actor *object) {
@@ -338,12 +338,12 @@ void Func_020004cc(void) {
   if ((object->x >> 20) == 40) {
     z = object->z >> 20;
     if (z == 13) {
-      Func_0200110c();
+      Event_Start();
       Event_ResolvePendingActions(0);
       Func_020004a4(object);
       Map_CopyCellAttributeRect(41, 13, 2, 1, 39, z);
       GameFlag_SetBit(0x8c8);
-      Func_02001114();
+      Event_End();
     }
   }
 }
@@ -372,7 +372,7 @@ void Func_02000568(void) {
   struct Actor *right = Actor_GetById(9);
   u32 i;
 
-  Func_0200110c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(183);
   for (i = 0; i < 120; i++) {
@@ -419,7 +419,7 @@ void Func_02000568(void) {
   Func_02000958();
   PartyInventory_Remove(459);
   GameFlag_SetBit(0x8c9);
-  Func_02001114();
+  Event_End();
 }
 
 struct EventWork154 {
@@ -444,7 +444,7 @@ extern s32 gData_0200121c[];
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_0200113c(s32 id, s32 value);
+void Actor_MoveToObject(s32 id, s32 value);
 void Func_0200115c(s32 id);
 s32 Func_02001184(s32 owner);
 void Func_020011b4(void);
@@ -473,7 +473,7 @@ void Func_02000778(void) {
 
 void Func_020007a0(void) {
   if (GameFlag_Test(0x203) != 0 && Event_GetFlag(0x8cb) == 0) {
-    Func_0200110c();
+    Event_Start();
     Event_ResolvePendingActions(1);
     Sound_Play(161);
     Map_CopyCellPictureIndicesRect(72, 63, 36, 38, 1, 2);
@@ -487,12 +487,12 @@ void Func_020007a0(void) {
     MapGrid_CopyCellAttributes(33, 37, 2, 2, 33, 39);
     wait(1);
     GameFlag_SetBit(0x8cb);
-    Func_02001114();
+    Event_End();
   } else {
-    Func_0200110c();
+    Event_Start();
     Event_ResolvePendingActions(0);
     FieldMessage_Show((s32)&MsgFieldEyesOfTruth, 1);
-    Func_02001114();
+    Event_End();
   }
 }
 
@@ -504,14 +504,14 @@ void Func_02000874(void) {
     object = Actor_GetById(64);
     x = object->x;
     if (x < (186 << 16)) {
-      Func_0200110c();
+      Event_Start();
       Event_ResolvePendingActions(0);
       Sound_Play(204);
       object->motionFlags = 3;
       wait(10);
       Actor_SetHorizontalPositionWithTerrain(64, 0, 0);
       Event_SetFlag(0x8cc);
-      Func_02001114();
+      Event_End();
     }
   }
 }
@@ -574,7 +574,7 @@ void Func_02000958(void) {
   actor = 20;
   for (i = 0; i < 10; i++) {
     Actor_SetModeById(actor, 0);
-    Func_0200113c(actor, target);
+    Actor_MoveToObject(actor, target);
     target++;
     actor++;
   }
@@ -605,7 +605,7 @@ void Func_02000a88(void) {
   s32 cell;
 
   object = Actor_GetById(party->currentOwner);
-  Func_0200110c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_SetModeById(party->currentOwner, 2);
@@ -628,7 +628,7 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   struct Actor *object;
   s32 cell;
 
-  Func_0200110c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (mode == 2)
     Sound_Play(188);
@@ -662,7 +662,7 @@ void Func_02000c5c(void) { Func_02000b38(118, 1, 118, 3, 1, 2); }
 void Func_02000c78(void) { Func_02000b38(92, 29, 92, 31, 1, 2); }
 
 void Func_02000c94(void) {
-  Func_0200110c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
@@ -675,7 +675,7 @@ void Func_02000c94(void) {
 }
 
 void Func_02000cf4(void) {
-  Func_0200110c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
@@ -687,7 +687,7 @@ void Func_02000cf4(void) {
   Import_EventSetExitRequest(8);
 }
 
-s32 Func_02000d54(void) {
+s32 Scene_Initialize(void) {
   ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk1ac = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom1)
     Func_02000dcc();
@@ -1022,80 +1022,80 @@ struct Trigger gData_02001920[] = {
     {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02000a88)},
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000a88)},
     {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_02000a88)},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {0x8515, 9, 0x201, 0},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 9, 0x201, 0},
     {9, 10, 0x8c8, EVENT(Func_020004cc)},
-    {0x8c15, 11, 0x8c8, EVENT(Func_020004cc)},
-    {0x10008c15, 12, 0x8ca, EVENT(Func_0200051c)},
-    {0x8c15, 12, 0x8ca, EVENT(Func_0200052c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x8c8, EVENT(Func_020004cc)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, 0x8ca, EVENT(Func_0200051c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x8ca, EVENT(Func_0200052c)},
     {0x602, 11, 0x9ef, EVENT(Func_020008f4)},
-    {0x10008c15, 8, 0x9ef, EVENT(Func_0200092c)},
-    {0x8c15, 8, 0x9ef, EVENT(Func_0200093c)},
-    {0x1815, 13, 0x202, EVENT(Func_02000558)},
-    {0x50009085, 0, CONDITION_ALWAYS, EVENT(Func_0200072c)},
-    {0x40009085, 0, CONDITION_ALWAYS, EVENT(Func_02000778)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9ef, EVENT(Func_0200092c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9ef, EVENT(Func_0200093c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x202, EVENT(Func_02000558)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_0200072c)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02000778)},
     {0xc403, 10, CONDITION_ALWAYS, EVENT(Func_020007a0)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_020019f8[] = {
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGERS_END},
 };
 // clang-format on
 
 struct Trigger gData_02001a1c[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {1, 8, CONDITION_ALWAYS, 8},
-    {0x8515, 8, 0x200, 0},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgFieldCaveFoundByChampa)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgFieldWhoDugCave)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x200, 0},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgFieldCaveFoundByChampa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFieldWhoDugCave)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02001aac[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {1, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {0xc602, 9, CONDITION_ALWAYS, EVENT(Func_02000c24)},
-    {1, 10, CONDITION_ALWAYS, 10},
-    {1, 11, CONDITION_ALWAYS, 11},
-    {1, 12, CONDITION_ALWAYS, 12},
-    {1, 13, CONDITION_ALWAYS, 13},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02001b54[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {0xc602, 5, CONDITION_ALWAYS, EVENT(Func_02000c40)},
     {0xc602, 6, CONDITION_ALWAYS, EVENT(Func_02000c5c)},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {1, 8, CONDITION_ALWAYS, 8},
-    {0x8715, 8, CONDITION_ALWAYS, EVENT(Func_02000874)},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 8, CONDITION_ALWAYS, EVENT(Func_02000874)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02001bcc[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000c78)},
-    {1, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {0x1cb04, 10, CONDITION_ALWAYS, EVENT(Func_02000568)},
-    {3, 10, 0x8c9, EVENT(Func_02000474)},
+    {TRIGGER_EXAMINE, 10, 0x8c9, EVENT(Func_02000474)},
     {TRIGGERS_END},
 };

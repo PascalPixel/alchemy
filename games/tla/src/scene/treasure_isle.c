@@ -35,7 +35,7 @@ extern struct ActorPlacement gData_02001480[];
 extern struct ActorPlacement gData_02001504[];
 extern struct ActorPlacement gData_0200169c[];
 
-const u8 *Func_02000350(void) {
+const u8 *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6afRoom2)
@@ -104,12 +104,6 @@ static __inline__ void CameraBounds(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
-static __inline__ void SetFade(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as direct calls, 11
-   * of 163 instructions differ in tla-en. */
-  Map_SetScreenShake(a, b, c);
-}
-
 static __inline__ void SetCells(s32 a, s32 b, s32 c, s32 d, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as direct calls, 24
    * of 163 instructions differ in tla-en. */
@@ -128,8 +122,8 @@ void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
   cell = (struct TreasureIsleCell *)((index << 4) + (s32)cells);
   CameraBounds((cell->x << 20) + 0x80000, -1, (cell->z << 20) + 0x80000, 1);
   Func_02001014();
-  SetFade(0, 0x100000, 0x10000);
-  SetFade(-1, -1, 0xe666);
+  MapGrid_SetShake(0, 0x100000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
   Event_PlaySound(567);
   options.startScaleX = 0x13333;
   options.startScaleY = 0x18000;
@@ -388,7 +382,7 @@ void Func_02000a5c(void) {
 }
 
 #include "call.h"
-s32 Func_0200101c();
+s32 Field_RequestBattleFromEncounterTable();
 extern u8 MsgIAmTheGuardian[];
 
 void Func_02000a8c(void) {
@@ -413,7 +407,7 @@ void Func_02000a8c(void) {
   FieldEvent_Wait(20);
   gMainRoutineWork.pendingDjinnEvent = 0x19bb;
   gMainRoutineWork.battleRule24b = 2;
-  Call2(Func_0200101c, 0x67, 0);
+  Call2(Field_RequestBattleFromEncounterTable, 0x67, 0);
 }
 
 /* VIEW(scene_tables): variable gData_020016e4 as extern const u8 gData_020016e4[]; the definition has struct Trigger gData_020016e4[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 1, 4, CON...; tried as the definition's extern s16 gData_020016e4[], it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:791: conflicting types for `gData_020016e4'. */
@@ -431,7 +425,7 @@ extern struct Trigger gData_0200184c[];
 extern s32 gData_020018f4[];
 extern struct Trigger gData_02001a5c[];
 
-const u8 *Func_02000b3c(void) {
+const u8 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6afRoom2)
@@ -520,17 +514,11 @@ void Func_02000ba0(void);
 void Func_0200105c(void);
 s32 Func_02001064(s32 a, s32 b, s32 c);
 
-static __inline__ void PlaceObject(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as direct calls, 12
-   * of 241 instructions differ in tla-en. */
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
-}
-
 /// Treasure Isle's setup for each of its four rooms: places the objects whose
 /// flags are set, schedules Func_02000ba0 in rooms 2 and 3 and opens again
 /// the cells already opened there (Func_020003fc), and in room 4 raises the
 /// part priority of objects 9 to 16.
-s32 Func_02000cf4(void) {
+s32 Scene_Initialize(void) {
   s32 i;
 
   ((struct TreasureIsleEventWork__s0cf4 *)Ram_HeapSlots->eventWork)->route = 0x204;
@@ -540,17 +528,17 @@ s32 Func_02000cf4(void) {
     Event_SetFlag(0x301);
     Event_SetFlag(0x302);
     if (Event_GetFlag(0x300))
-      PlaceObject(8, PIXELS(264), PIXELS(440));
+      Actor_SetPosition(8, PIXELS(264), PIXELS(440));
     if (Event_GetFlag(0x301))
-      PlaceObject(9, PIXELS(328), PIXELS(440));
+      Actor_SetPosition(9, PIXELS(328), PIXELS(440));
     if (Event_GetFlag(0x302))
-      PlaceObject(10, PIXELS(440), PIXELS(344));
+      Actor_SetPosition(10, PIXELS(440), PIXELS(344));
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom2) {
     Task_AddFrame(Func_02000ba0, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
     if (Event_GetFlag(0x308))
-      PlaceObject(10, PIXELS(264), PIXELS(184));
+      Actor_SetPosition(10, PIXELS(264), PIXELS(184));
     if (Event_GetFlag(0x303))
       Func_020003fc(gData_0200117c, 0);
     if (Event_GetFlag(0x304))
@@ -566,7 +554,7 @@ s32 Func_02000cf4(void) {
     Task_AddFrame(Func_02000ba0, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
     if (Event_GetFlag(0x309))
-      PlaceObject(10, PIXELS(664), PIXELS(248));
+      Actor_SetPosition(10, PIXELS(664), PIXELS(248));
     if (Event_GetFlag(0x30a))
       Func_020003fc(gData_020011cc, 0);
     if (Event_GetFlag(0x30b))
@@ -576,7 +564,7 @@ s32 Func_02000cf4(void) {
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom4) {
     if (Event_GetFlag(0x30d))
-      PlaceObject(8, PIXELS(696), PIXELS(600));
+      Actor_SetPosition(8, PIXELS(696), PIXELS(600));
     /* FAKEMATCH(signature): Func_02001064 declared returning s32, though it
      * reaches Func_080d9e98, whose draft returns nothing; as void, which sets
      * r0 first for these calls, 4 of 241 instructions differ in tla-en. */
@@ -808,54 +796,54 @@ struct ActorPlacement gData_0200169c[] = {
 // clang-format on
 
 struct Trigger gData_020016e4[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {1, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000760)},
-    {0x8c15, 8, 0x300, EVENT(Func_02000760)},
-    {0x8c15, 9, 0x301, EVENT(Func_02000760)},
-    {0x8c15, 10, 0x302, EVENT(Func_02000760)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x300, EVENT(Func_02000760)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x301, EVENT(Func_02000760)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x302, EVENT(Func_02000760)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02001780[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {2, 30, CONDITION_ALWAYS, EVENT(Func_020005ac)},
-    {2, 31, CONDITION_ALWAYS, EVENT(Func_02000728)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_020005ac)},
+    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Func_02000728)},
     {0x602, 35, CONDITION_ALWAYS, EVENT(Func_02000f4c)},
     {0x50009805, 40, 0x1303, EVENT(Func_02000880)},
     {0x50009805, 41, 0x1304, EVENT(Func_02000880)},
     {0x50009805, 42, 0x1305, EVENT(Func_02000880)},
     {0x50009805, 43, 0x1306, EVENT(Func_02000880)},
     {0x50009805, 44, 0x1307, EVENT(Func_02000880)},
-    {0x8c15, 10, 0x308, EVENT(Func_02000760)},
-    {0x8c15, 11, CONDITION_ALWAYS, EVENT(Func_02000760)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x308, EVENT(Func_02000760)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT(Func_02000760)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000760)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_0200184c[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {49, 5, CONDITION_ALWAYS, 5},
     {0xc602, 35, CONDITION_ALWAYS, EVENT(Func_02000f4c)},
     {0x602, 35, CONDITION_ALWAYS, EVENT(Func_02000f4c)},
-    {2, 30, CONDITION_ALWAYS, EVENT(Func_02000684)},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_02000684)},
     {0x50009805, 50, 0x130a, EVENT(Func_02000880)},
     {0x50009805, 51, 0x130b, EVENT(Func_02000880)},
     {0x50009805, 52, 0x130c, EVENT(Func_02000880)},
-    {0x8c15, 10, 0x309, EVENT(Func_02000760)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x309, EVENT(Func_02000760)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000760)},
     {TRIGGERS_END},
 };
@@ -954,11 +942,11 @@ s32 gData_020018f4[] = {
 };
 
 struct Trigger gData_02001a5c[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {2, 42, 0x9bb, EVENT(Func_02000a8c)},
-    {0, 9, CONDITION_ALWAYS, EVENT(Func_02000870)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_STEP, 42, 0x9bb, EVENT(Func_02000a8c)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000870)},
     {TRIGGERS_END},
 };
 

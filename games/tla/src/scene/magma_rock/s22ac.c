@@ -34,8 +34,8 @@ void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotion();
-void Func_02003aec(void);
-void Func_02003a7c(void);
+void Event_Start(void);
+void Map_CenterOnFollowedPoint(void);
 void Func_02003af4(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -48,10 +48,10 @@ void Func_020022ac(void) {
   s32 angle;
   s32 velocity[3];
 
-  Func_02003aec();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Func_02003a7c();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   leader->y += 0x820000;
   leader->gravity = 0x8000;
@@ -106,7 +106,7 @@ void Func_0200244c(s32 height) {
     gMainRoutineWork.renderMode = 2;
     object->actionFlags = 1;
     FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
-    Func_02003a7c();
+    Map_CenterOnFollowedPoint();
     System_Wait(1);
   }
 }
@@ -229,7 +229,7 @@ void Func_02003be4();
 void Func_02003bfc();
 void Func_0200079c();
 
-s32 Func_02002618(void) {
+s32 Scene_Initialize(void) {
   struct MainRoutineWork *work;
   s32 scene;
   s32 *owner, *leader;
@@ -562,7 +562,7 @@ body:
     {
       s32 flag = list[1];
 
-      Func_02003aec();
+      Event_Start();
       if (!GameFlag_Test(flag)) {
         Sound_Play(125);
         Actor_SetPartAttribute(Actor_GetById(id), 7);
@@ -619,8 +619,6 @@ void Func_02002fc4(struct Func_02002fc4_Entry *entry, s32 id) {
   s32 flag;
   s32 nextFlag;
 
-  /* FAKEMATCH(wrapper): Call3 kept; as direct Map_SetScreenShake calls, 20 of
-   * 91 instructions differ in tla-en. */
   target = Actor_Get(id);
   if (entry->id == 0xffff)
     return;
@@ -630,7 +628,7 @@ body:
     goto test;
   }
   flag = entry->flag;
-  Func_02003aec();
+  Event_Start();
   nextFlag = flag + 1;
   if (Event_GetFlag(nextFlag) == 0) {
     Event_PlaySound(185);
@@ -665,7 +663,7 @@ void Func_020030a4(s32 id) {
 
 // Places the listed actors on their cells.
 
-void Func_02003b14(s32 id, s32 owner);
+void Actor_MoveToObject(s32 id, s32 owner);
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 
 /// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
@@ -684,9 +682,9 @@ void Func_020030bc(u16 *list) {
   s32 index;
   u8 *grid = gMapShapeGrid; // the shape grid, read once
 
-  Func_02003b14(8, gMainRoutineWork.currentOwner);
-  Func_02003b14(9, gMainRoutineWork.currentOwner);
-  Func_02003b14(10, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(8, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(10, gMainRoutineWork.currentOwner);
   System_Wait(1);
   Func_020030a4(8);
   Func_020030a4(9);
@@ -770,7 +768,7 @@ body:
     {
       s32 flag = list[1];
 
-      Func_02003aec();
+      Event_Start();
       if (!GameFlag_Test(flag)) {
         Func_02003a54(actor8, 1);
         Func_02003224(actor8, target);
@@ -798,9 +796,6 @@ body:
         flags = &leader->motionFlags;
         *flags = 0;
         Sound_Play(185);
-        /* FAKEMATCH(wrapper): forwarded through Call3, which builds each
-         * 0x10000 apart; as MapGrid_SetShake(0x10000, 0x40000, 0x10000), 21
-         * of 191 instructions differ in tla-en. */
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_020034ac(0);
         wait(8);
@@ -810,9 +805,6 @@ body:
         wait(16);
         Func_02003784(-2, target->terrainId);
         wait(4);
-        /* FAKEMATCH(wrapper): forwarded through Call3, which builds each -1
-         * apart; as MapGrid_SetShake(-1, -1, 0xe666), 23 of 191 instructions
-         * differ in tla-en. */
         MapGrid_SetShake(-1, -1, 0xe666);
         wait(8);
         *flags = 3;

@@ -8,7 +8,7 @@
 #include "event_inline.h"
 
 extern void Func_020043c4(struct FieldEffect *effect, s32 mode);
-extern void Func_020043d4(struct FieldEffect *effect, const s32 *script);
+extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gData_020047a0[];
 extern void Actor_SetSingleChildFlags(struct FieldEffect *effect,
                                                u32 flags);
@@ -31,7 +31,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Func_020043c4(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Func_020043d4(effect, gData_020047a0[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect, gData_020047a0[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
@@ -73,7 +73,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
     Func_020043c4(effect, 1);
-    Func_020043d4(effect, options->script);
+    Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
     sprite->rotation = options->rotation;

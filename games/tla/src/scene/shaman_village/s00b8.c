@@ -91,7 +91,7 @@ extern void Import_ActorSetMode__s0280(struct ShamanVillageObject *object, s32 m
 
 void Func_02000280(void) { Func_080d7788(18, 3, 13); }
 
-const struct SceneEntrance *Func_02000290(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage5)
@@ -140,7 +140,7 @@ extern u32 gData_02005860[];
 extern u32 gData_02005998[];
 extern u32 gData_02005a40[];
 
-void *Func_020002dc(void) {
+void *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage1)
@@ -301,9 +301,9 @@ void Func_020049f4(void);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-void Func_020047d4(void);
-void Func_020047bc(void);
-void Func_0200482c(void);
+void Window_LoadGraphics(void);
+void DebugText_Clear(void);
+void Map_CenterOnFollowedPoint(void);
 /* VIEW(s057c): routine Func_02000458 as void Func_02000458(void); the definition has void Func_02000458(struct ShamanVillageObject *object). */
 extern void Func_02000458__s057c(void) __asm__("Func_02000458");
 void Func_02000378(void);
@@ -525,15 +525,15 @@ fade:
     Event_Wait(60);
     REG_BLDCNT = zero;
   }
-  Func_020047d4();
-  Func_020047bc();
+  Window_LoadGraphics();
+  DebugText_Clear();
   Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags &= ~32;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   Actor_GetById(14)->priorityFlags |= 1;
   REG_DISPCNT |= DISPCNT_BG2_ON;
-  Func_0200482c();
+  Map_CenterOnFollowedPoint();
   wait(1);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_020049f4();
@@ -556,7 +556,7 @@ extern u32 gData_02005f98[];
 extern u32 gData_020061f0[];
 extern u32 gData_020062d4[];
 
-void *Func_02000c80(void) {
+void *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage1)
@@ -576,28 +576,28 @@ void *Func_02000c80(void) {
 
 
 void Func_02000d08(void) {
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgShamanEntranceLocked, 1);
-  Func_020048cc();
+  Event_End();
 }
 
 void Func_02000d28(void) {
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgShamanEntranceClosed, 1);
-  Func_020048cc();
+  Event_End();
 }
 
 void Func_02000d48(void) {
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgShamanTrialRoadPermissionSign, 1);
-  Func_020048cc();
+  Event_End();
 }
 
 void Func_02000d68(void) {
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanGuardRepeatRulesBeforeTrial);
   FieldMessage_ShowAtActor(17, 0);
@@ -617,11 +617,11 @@ void Func_02000d68(void) {
     ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
     Event_ShowMessageAndWait(17, 0);
   }
-  Func_020048cc();
+  Event_End();
 }
 
 void Func_02000e3c(void) {
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanOtherGuardRepeatRulesBeforeTrial);
   FieldMessage_ShowAtActor(16, 0);
@@ -639,40 +639,40 @@ void Func_02000e3c(void) {
     ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
     Event_ShowMessageAndWait(16, 0);
   }
-  Func_020048cc();
+  Event_End();
 }
 
 void Func_02000ef8(void) {
   struct ShamanVillageEventWork *work = Ram_HeapSlots->eventWork;
 
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanOutsidersLeaveTown);
   Event_ShowMessageAndWait(15, 0);
   work->field15a = 1;
-  Func_020048cc();
+  Event_End();
 }
 
 void Func_02000f2c(void) {
   struct ShamanVillageEventWork *work = Ram_HeapSlots->eventWork;
 
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanFearMoapaPower);
   Event_ShowMessageAndWait(17, 0);
   work->field15a = 1;
-  Func_020048cc();
+  Event_End();
 }
 
 void Func_02000f60(void) {
   struct ShamanVillageEventWork *work = Ram_HeapSlots->eventWork;
 
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanSpeakToMoapa);
   Event_ShowMessageAndWait(16, 0);
   work->field15a = 1;
-  Func_020048cc();
+  Event_End();
 }
 
 s32 Func_02000f94(void) {
@@ -690,22 +690,22 @@ s32 Func_02000f94(void) {
 }
 
 u32 Func_02004a8c(s32 shop);
-void Func_02004a94(u32 price);
-void Func_0200487c(u32 value, s32 digits);
+void Inn_PlaySleep(u32 price);
+void MessageArgument_Push(u32 value, s32 digits);
 
 void Func_02000fc4(void) {
   if (GameFlag_Test(0x9fe)) {
     if (Func_02000f94()) {
       Func_02004a84(11, 13);
     } else {
-      Func_020048c4();
+      Event_Start();
       Event_ResolvePendingActions(0);
       Event_SetMessageId((s32)MsgShamanVisitorsHaveTraveledFar);
       Event_AskYesNoAndShowResponse(13, 0);
-      Func_020048cc();
+      Event_End();
     }
   } else {
-    Func_020048c4();
+    Event_Start();
     Event_ResolvePendingActions(0);
     if (Func_02000f94()) {
       u32 price = Func_02004a8c(11);
@@ -713,8 +713,8 @@ void Func_02000fc4(void) {
       Actor_SetModeById(13, 5);
       Event_Wait(30);
       Event_SetMessageId((s32)MsgShamanInnPaymentPrompt);
-      Func_0200487c(price, 5);
-      Func_0200487c(price, 5);
+      MessageArgument_Push(price, 5);
+      MessageArgument_Push(price, 5);
       FieldMessage_ShowAtActor(12, 0);
       if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
           0) {
@@ -726,7 +726,7 @@ void Func_02000fc4(void) {
           Event_SetMessageId((s32)MsgShamanInnPaymentPrompt + 3);
           Event_ShowMessageAndWait(12, 0);
         } else {
-          Func_02004a94(price);
+          Inn_PlaySleep(price);
         }
       }
       Actor_SetModeById(13, 6);
@@ -734,7 +734,7 @@ void Func_02000fc4(void) {
       Event_SetMessageId((s32)MsgShamanSilentVillager);
       Event_ShowMessageAndWait(13, 0);
     }
-    Func_020048cc();
+    Event_End();
   }
 }
 
@@ -742,27 +742,27 @@ void Func_020010c8(void) {
   if (Func_02000f94()) {
     Func_02004a7c(8);
   } else {
-    Func_020048c4();
+    Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Test(0x9fe))
       Event_SetMessageId((s32)MsgShamanMoapaDefeatIncredible);
     else
       Event_SetMessageId((s32)MsgShamanTribeForbidsTalking);
     Event_ShowMessageAndWait(8, 0);
-    Func_020048cc();
+    Event_End();
   }
 }
 
 void Func_02001118(void) {
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanCheckOtherMountainSide);
   Event_AskYesNoAndShowResponse(13, 0);
-  Func_020048cc();
+  Event_End();
 }
 
 void Func_0200113c(void) {
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (Event_GetFlag(0x9ed)) {
     Event_SetMessageId((s32)MsgShamanMoapaNeverForgetsVictor);
@@ -779,18 +779,18 @@ void Func_0200113c(void) {
       GameFlag_SetBit(0x9ed);
     }
   }
-  Func_020048cc();
+  Event_End();
 }
 
 void Func_020011c0(void) {
   if (Func_02000f94()) {
     Func_02004a74(29, 12);
   } else {
-    Func_020048c4();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgShamanWelcomeContigoHero);
     Event_ShowMessageAndWait(12, 0);
-    Func_020048cc();
+    Event_End();
   }
 }
 
@@ -804,7 +804,7 @@ void Func_020011f8(void) {
 }
 
 void Func_0200122c(void) {
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x301)) {
     if (GameFlag_Test(0xa21))
@@ -846,9 +846,9 @@ void Func_0200122c(void) {
       Event_ShowMessageAndWait(17, 0);
       GameFlag_SetBit(0x301);
     }
-    Func_02004a2c();
+    Party_PlaySavedMusic();
   }
-  Func_020048cc();
+  Event_End();
 }
 
 void Func_02001380(void) {
@@ -856,7 +856,7 @@ void Func_02001380(void) {
     Event_SetMessageId((s32)MsgShamanTrialRulesAreSimple);
   } else {
     Sound_Play(78);
-    Func_020048c4();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Camera_SetSpeedParameters(0x19999, 0x3333);
     FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(280), 1);
@@ -922,7 +922,7 @@ void Func_02001380(void) {
 }
 
 void Func_02001644(void) {
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Camera_SetSpeedParameters(0x33333, 0x6666);
   FieldCamera_MoveTo(PIXELS(182), -1, PIXELS(304), 1);
@@ -946,11 +946,11 @@ void Func_02001644(void) {
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 280);
   }
-  Func_020048cc();
+  Event_End();
 }
 
 void Func_02001764(void) {
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
   Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(280), 1);
@@ -979,7 +979,7 @@ void Func_02001764(void) {
       Func_0200290c();
     }
   }
-  Func_020048cc();
+  Event_End();
 }
 
 extern const u8 gData_02004c5c[];
@@ -993,7 +993,7 @@ void Func_02001880(void) {
   owner = ((struct ShamanVillageObject *)Actor_GetById(
       gMainRoutineWork.currentOwner));
   shaman = ((struct ShamanVillageObject *)Actor_GetById(15));
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_Stop(16);
   Actor_Stop(17);
@@ -1058,7 +1058,7 @@ void Func_02001aa4(void) {
   owner = ((struct ShamanVillageObject *)Actor_GetById(
       gMainRoutineWork.currentOwner));
   shaman = ((struct ShamanVillageObject *)Actor_GetById(15));
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_Stop(16);
   Actor_Stop(17);
@@ -1120,7 +1120,7 @@ void Func_02001cc8(void) {
       ((struct ShamanVillageObject *)Actor_GetById(14));
 
   if (object->x >> 20 == 32 && object->z >> 20 == 11) {
-    Func_020048c4();
+    Event_Start();
     Event_ResolvePendingActions(0);
     object->motionFlags = 3;
     do {
@@ -1132,12 +1132,12 @@ void Func_02001cc8(void) {
     MapGrid_CopyCellAttributes(30, 11, 1, 1, 32, 11);
     wait(1);
     GameFlag_SetBit(0x94e);
-    Func_020048cc();
+    Event_End();
   }
 }
 
 void Func_02001d3c(void) {
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(158);
   MapGrid_CopyCellsTo(43, 40, 7, 6, 1, 2);
@@ -1158,8 +1158,8 @@ void Func_02001d3c(void) {
   }
   Actor_SetSpeed(15, 0x6666, 0x3333);
   Actor_SetPositionAndReset(15, 120, 208);
-  Func_02004944(16, 15);
-  Func_02004944(17, 15);
+  Actor_MoveToObject(16, 15);
+  Actor_MoveToObject(17, 15);
   wait(1);
   Actor_SetSpeed(16, 0xcccc, 0x6666);
   Actor_SetSpeed(17, 0xcccc, 0x6666);
@@ -1201,5 +1201,5 @@ void Func_02001d3c(void) {
   Motion_SetModeAndWaitAnimation(15, 3);
   Event_ShowMessageAndWait(0x800f, 0);
   GameFlag_SetBit(0x94f);
-  Func_020048cc();
+  Event_End();
 }

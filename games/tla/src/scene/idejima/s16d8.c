@@ -17,7 +17,7 @@
 
 void Import_ActorPlaceAtActor();
 void DriftScene_SpawnObject();
-void Func_02003180();
+void Map_CenterOnFollowedPoint();
 
 extern u32 gData_02003330[];
 extern u32 gData_0200336c[];
@@ -36,7 +36,7 @@ void Func_020016d8(void) {
   System_Wait(1);
   FieldCamera_MoveTo(PIXELS(252), -1, PIXELS(216), 0);
   System_Wait(1);
-  Func_02003180();
+  Map_CenterOnFollowedPoint();
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
   east = 0x4000;
   Actor_SetPositionAndFacing(5, PIXELS(184), PIXELS(168), east);
@@ -249,7 +249,7 @@ void Func_02001ee0(void) {
   Actor_SetPosition(10, PIXELS(392), PIXELS(172));
   System_Wait(1);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(214), 0);
-  Func_02003180();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   Actor_SetPosition(5, PIXELS(208), PIXELS(218));
   Actor_SetAnimation(5, 19);
@@ -610,7 +610,7 @@ void Func_02002c64(void) {
   Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(384), PIXELS(728));
   Actor_SetPosition(11, PIXELS(384), PIXELS(702));
   System_Wait(1);
-  Func_02003180();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   FelixWake_EndStep();
   Event_StartScreenTransition();
@@ -695,7 +695,7 @@ void Func_020031a8(s32 a);
 
 /// The scene's start entry: the two scene callbacks, then by entrance the
 /// scene that runs (2 and 4 also set the saved scene and entrance).
-s32 Func_02002ec8(void) {
+s32 Scene_Initialize(void) {
   s32 entrance;
 
   Func_0200153c();
@@ -1002,14 +1002,14 @@ struct Trigger gIdejimaEventsEntrance1[] = {
 };
 
 struct Trigger gIdejimaEventsWake[] = {
-    {1, 4, CONDITION_ALWAYS, 4},
-    {3, 10, 0x863, EVENT(Func_020000f0)},
-    {3, 11, 0x864, EVENT(Func_020002b4)},
-    {3, 12, 0x865, EVENT(Func_0200049c)},
-    {0x8d15, 0x408, CONDITION_ALWAYS, EVENT(Func_020000f0)},
-    {0x8d15, 0x405, CONDITION_ALWAYS, EVENT(Func_020002b4)},
-    {2, 9, CONDITION_ALWAYS, EVENT(Func_020006a8)},
-    {2, 8, 0x867, EVENT(Idejima_RunAlexDeparture)},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXAMINE, 10, 0x863, EVENT(Func_020000f0)},
+    {TRIGGER_EXAMINE, 11, 0x864, EVENT(Func_020002b4)},
+    {TRIGGER_EXAMINE, 12, 0x865, EVENT(Func_0200049c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, CONDITION_ALWAYS, EVENT(Func_020000f0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x405, CONDITION_ALWAYS, EVENT(Func_020002b4)},
+    {TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(Func_020006a8)},
+    {TRIGGER_STEP, 8, 0x867, EVENT(Idejima_RunAlexDeparture)},
     {TRIGGERS_END},
 };
 

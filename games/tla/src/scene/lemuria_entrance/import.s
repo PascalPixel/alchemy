@@ -50,13 +50,13 @@ Message_CloseFinishedWindows:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_0200055c
+	.global Event_Start
 	.thumb_func
-Func_0200055c:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02000564
+	.global Event_End
 	.thumb_func
-Func_02000564:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -86,9 +86,9 @@ Actor_SetModeById:
 	.thumb_func
 Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
-	.global Func_020005a4
+	.global Event_SetDestination
 	.thumb_func
-Func_020005a4:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Import_EventSetExitRequest
 	.thumb_func

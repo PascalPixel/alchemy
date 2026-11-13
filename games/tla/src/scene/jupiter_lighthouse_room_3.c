@@ -15,7 +15,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 void Func_02000054(struct Actor *object) {
   if (object->x >> 20 == 14 && object->z >> 20 == 12)
-    Func_02002360(object, 2);
+    Actor_SetSpritePriorityDirect(object, 2);
 }
 
 void Func_02000070(void) {
@@ -78,7 +78,7 @@ void Func_020001c0(void) { Import_EventSetExitRequest(12); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-s32 Func_020001d4(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
   Func_02002440(12, 1);
   Func_02002440(13, 1);
@@ -89,7 +89,7 @@ s32 Func_020001d4(void) {
   return 0;
 }
 
-s32 Func_02000250(void) {
+s32 Scene_PrepareMap(void) {
   struct Actor *object;
   s32 i;
   s32 x;
@@ -219,15 +219,7 @@ void Func_02000544(s32 id) {
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
   object->y = height + 0x200000;
-  {
-    u8 *flags = &object->priorityFlags;
-    /* FAKEMATCH(temporary): a local holding 128, so the bit is built in the
-     * register it is ORed into; as *flags |= 128, 4 of 38 instructions differ
-     * in tla-en. */
-    s32 bit = 128;
-
-    *flags = bit | *flags;
-  }
+  object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
   Func_02002368(object->x, object->z, 0, (height >> 19) + 6);
   Func_02002460(object->x, object->z, 0, 128);
@@ -240,8 +232,8 @@ void Func_02000544(s32 id) {
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
-void Func_02002378(void);
-void Func_02002380(void);
+void Event_Start(void);
+void Event_End(void);
 
 void Func_02000598(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -251,7 +243,7 @@ void Func_02000598(void) {
   s32 facing;
   s32 i;
 
-  Func_02002378();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkd46 = 0;
@@ -299,7 +291,7 @@ void Func_02000598(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_02002380();
+  Event_End();
 }
 
 s32 Func_02000784(s32 *a, s32 *b) {

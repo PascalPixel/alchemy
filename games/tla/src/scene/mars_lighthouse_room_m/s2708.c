@@ -2,7 +2,7 @@
 #include "event_inline.h"
 
 s32 Func_02002368(s32 a, s32 b);
-void Func_02003240(s32 a, s32 b);
+void ScreenTransition_Start(s32 a, s32 b);
 s32 Func_02003168(s32 layer, s32 x, s32 z);
 void Func_020024bc(struct Actor *object);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
@@ -48,7 +48,7 @@ s32 Func_02002708(void) {
   UNUSED s32 unused[3];
 
   if (event->started == 0) {
-    Func_02003240(event->field1ac, event->field1b4);
+    ScreenTransition_Start(event->field1ac, event->field1b4);
     event->started = 1;
   }
   Event_ClearFlag(0x106);
@@ -64,7 +64,7 @@ s32 Func_02002708(void) {
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gData_020023c4 + 0x188);
   Event_SetFlag(0x106);
-  Func_020031e0();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_ClearFlag(0x106);
   leader->update = (void (*)(void))Func_020024bc;
@@ -233,7 +233,7 @@ void Func_02002870(struct Actor *actor) {
       sum = Random16Far();
       sum += Random16Far();
       scale = (sum >> 2) + Q16_ONE / 2;
-      Func_02003120(object, gData_02003304);
+      Actor_StartScript(object, gData_02003304);
       Actor_SetSingleChildFlags(object, 0);
       object->velocityY = angle * 4 + Q16_ONE * 2;
       radius <<= 3;
@@ -286,7 +286,7 @@ next:
       angle = 0x4000 + rise;
       radius = Random16Far() * 8;
       size = Random16Far();
-      Func_02003120(object, gData_02003348);
+      Actor_StartScript(object, gData_02003348);
       Actor_SetSingleChildFlags(object, 0);
       /* FAKEMATCH(temporary): the scale is taken before the velocity stores, as
        * in the native; as object->scaleX = (size >> 1) + 0x4000, 14 of 98
@@ -466,7 +466,7 @@ void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
   struct Actor *object = Actor_Get(id);
 
   FieldActor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
-  Func_02003120(object, script);
+  Actor_StartScript(object, script);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   Func_02003118(object, 1);
@@ -517,7 +517,7 @@ void Func_02002e6c(struct Actor *self) {
 }
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_020031a8(struct Actor *object, s32 mode);
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 
 s32 Func_02002f34(struct Actor *object) {
   s32 frame = object->timer;
@@ -528,7 +528,7 @@ s32 Func_02002f34(struct Actor *object) {
     object->scaleY = frame;
     object->speedLimit = 0x10000;
     object->acceleration = 0x10000;
-    Func_020031a8(object, 1);
+    Actor_SetSpritePriorityDirect(object, 1);
   } else if (frame <= 30) {
     if (frame == 30) {
       Event_PlaySound(136);
@@ -564,7 +564,7 @@ s32 Func_02002fe0(struct Actor *object) {
     object->scaleY = frame;
     object->speedLimit = 0x10000;
     object->acceleration = 0x8000;
-    Func_020031a8(object, 1);
+    Actor_SetSpritePriorityDirect(object, 1);
   } else if (frame <= 32) {
     object->scaleX = 0x10000;
     object->scaleY = 0x10000;
@@ -736,10 +736,10 @@ s32 gData_020036c4[] = {
 };
 
 struct Trigger gData_020036c8[] = {
-    {2, 1, CONDITION_ALWAYS, EVENT(Func_020002c8)},
-    {0x10009a15, 8, CONDITION_ALWAYS, EVENT(Func_020002e8)},
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_020002c8)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(Func_020002e8)},
     {0x60009a15, 10, CONDITION_ALWAYS, EVENT(Func_020002fc)},
-    {0x20009a15, 10, CONDITION_ALWAYS, EVENT(Func_0200030c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 10, CONDITION_ALWAYS, EVENT(Func_0200030c)},
     {TRIGGERS_END},
 };
 
@@ -749,38 +749,38 @@ s32 gData_02003704[] = {
 
 struct Trigger gData_02003708[] = {
     {0x31, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {1, 8, CONDITION_ALWAYS, 8},
-    {1, 9, CONDITION_ALWAYS, 9},
-    {1, 10, CONDITION_ALWAYS, 10},
-    {1, 11, CONDITION_ALWAYS, 11},
-    {1, 12, CONDITION_ALWAYS, 12},
-    {1, 13, CONDITION_ALWAYS, 13},
-    {1, 14, CONDITION_ALWAYS, 14},
-    {2, 20, 0x1a30, EVENT(Func_020006c8)},
-    {2, 21, 0x1a30, EVENT(Func_020006c8)},
-    {2, 22, 0x1a30, EVENT(Func_020006c8)},
-    {2, 23, 0x1a30, EVENT(Func_020006c8)},
-    {2, 24, 0x1a30, EVENT(Func_020006c8)},
-    {2, 25, 0x1a30, EVENT(Func_020006c8)},
-    {2, 26, 0x1a30, EVENT(Func_020006c8)},
-    {2, 27, 0x1a30, EVENT(Func_020006c8)},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
+    {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
+    {TRIGGER_STEP, 20, 0x1a30, EVENT(Func_020006c8)},
+    {TRIGGER_STEP, 21, 0x1a30, EVENT(Func_020006c8)},
+    {TRIGGER_STEP, 22, 0x1a30, EVENT(Func_020006c8)},
+    {TRIGGER_STEP, 23, 0x1a30, EVENT(Func_020006c8)},
+    {TRIGGER_STEP, 24, 0x1a30, EVENT(Func_020006c8)},
+    {TRIGGER_STEP, 25, 0x1a30, EVENT(Func_020006c8)},
+    {TRIGGER_STEP, 26, 0x1a30, EVENT(Func_020006c8)},
+    {TRIGGER_STEP, 27, 0x1a30, EVENT(Func_020006c8)},
     {0x9c05, 1, CONDITION_ALWAYS, EVENT(Func_02000abc)},
-    {3, 30, CONDITION_ALWAYS, EVENT(Func_020010e4)},
-    {3, 31, CONDITION_ALWAYS, EVENT(Func_02001154)},
-    {3, 32, CONDITION_ALWAYS, EVENT(Func_020011c4)},
-    {3, 33, CONDITION_ALWAYS, EVENT(Func_02001234)},
-    {2, 34, 0xa2e, EVENT(Func_020013a0)},
+    {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(Func_020010e4)},
+    {TRIGGER_EXAMINE, 31, CONDITION_ALWAYS, EVENT(Func_02001154)},
+    {TRIGGER_EXAMINE, 32, CONDITION_ALWAYS, EVENT(Func_020011c4)},
+    {TRIGGER_EXAMINE, 33, CONDITION_ALWAYS, EVENT(Func_02001234)},
+    {TRIGGER_STEP, 34, 0xa2e, EVENT(Func_020013a0)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02003858[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGERS_END},
 };
 

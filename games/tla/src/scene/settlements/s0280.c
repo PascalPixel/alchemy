@@ -43,7 +43,7 @@ s32 Func_020002bc(struct Actor *object) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-u32 *Func_02000318(void) {
+u32 *Scene_GetRegions(void) {
   s32 scene = gMainRoutineWork.scene;
   u32 *placements;
 
@@ -79,7 +79,7 @@ extern u8 gData_020027ac[];
 extern u8 gData_020027dc[];
 extern u8 gData_02002854[];
 
-u8 *Func_02000358(void) {
+u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov690Room1)
@@ -104,14 +104,14 @@ u8 *Func_02000358(void) {
 void Func_02000404(void) {
   s32 mode;
 
-  Func_02002068();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(11, 0, 0);
   Event_SetFlag(0xf5d);
   Func_02002130(193, 3);
   mode = 0;
   Party_GiveItem(193, mode);
-  Func_02002070();
+  Event_End();
 }
 
 void Func_0200043c(s32 actor) {
@@ -164,13 +164,13 @@ void Func_0200052c(void) {
   FieldEvent_Wait(10);
   Event_PlaySound(123);
   FieldEvent_SetExitRequest(next);
-  Func_02002070();
+  Event_End();
 }
 
 void Func_020005cc(void) {
   s32 id;
 
-  Func_02002068();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   CommitPos(4, 0, -14);
   id = 4;
@@ -181,7 +181,7 @@ void Func_020005cc(void) {
 void Func_020005f4(void) {
   s32 id, x, z;
 
-  Func_02002068();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   CommitPos(4, -2, -6);
   x = 14;
@@ -198,7 +198,7 @@ void Func_020005f4(void) {
 void Func_02000624(void) {
   s32 id, a;
 
-  Func_02002068();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   a = 192;
   id = 4;
@@ -225,7 +225,7 @@ extern u8 gData_02002b3c[];
 extern u8 gData_02002b90[];
 extern u8 gData_02002c2c[];
 
-u8 *Func_02000668(void) {
+u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov690Room1)
@@ -430,7 +430,7 @@ static __inline__ void Place(s32 id, s32 x, s32 z) {
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
-s32 Func_02000988(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x100;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room7)
     Func_02000860();
@@ -473,7 +473,7 @@ s32 Func_02000988(void) {
   return 0;
 }
 
-s32 Func_02000b18(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
     if (Flag_Test(0x205)) {
       CopyCells2(9, 11, 1, 1, 11, 12);
@@ -525,7 +525,7 @@ static __inline__ void CenterOn(s32 id, s32 column, s32 offset) {
 void Func_02000c44(void) {
   u32 i;
 
-  Func_02002068();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   // A goto loop carries no loop notes: the bytes rebuild the zero on every
   // pass, and a for loop hoists it.
@@ -552,7 +552,7 @@ loop:
   FieldEvent_SetExitRequest(2);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02002070();
+  Event_End();
 }
 
 void Func_02000cfc(void) {
@@ -655,7 +655,7 @@ void Func_02000e90(void) {
 void Func_02000ed0(void) {
   s32 priority;
 
-  Func_02001fa8(1, 0, Func_02000e30);
+  Irq_SetHandler(1, 0, Func_02000e30);
   priority = 0xc80;
   FieldTask_AddFrame(Func_02000e90, priority);
 }
@@ -691,13 +691,6 @@ void Func_02000f2c(void) {
   }
 }
 
-static __inline__ void Speed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH(wrapper): the call forwarded through the inline, which keeps
-   * each call's own constants; as direct Actor_SetSpeedParameters calls, 38
-   * of 199 instructions differ in tla-en. */
-  Actor_SetSpeedParameters(id, speed, acceleration);
-}
-
 void Func_02000fd0(void) {
   struct Actor *object = Actor_GetById(10);
   s32 column = object->x >> 20;
@@ -719,21 +712,21 @@ void Func_02000fd0(void) {
     Func_0200156c(10);
     FieldEvent_Wait(20);
     FieldCamera_MoveTo(0xc00000, -1, 0xe00000, 1);
-    Speed(10, 0xcccc, 0x6666);
+    Actor_SetSpeed(10, 0xcccc, 0x6666);
     Actor_SetDestinationOffset(10, 0, 8);
     FieldActor_WaitForMoveById(10);
     FieldEvent_Wait(10);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x4000, 0);
-    Speed(10, 0x26666, 0x13333);
+    Actor_SetSpeed(10, 0x26666, 0x13333);
     Actor_SetDestinationOffset(10, 0, 80);
     FieldActor_WaitForMoveById(10);
     Func_0200156c(10);
     if (!Event_GetFlag(0x204)) {
       FieldEvent_Wait(10);
-      Speed(10, 0xcccc, 0x6666);
+      Actor_SetSpeed(10, 0xcccc, 0x6666);
       Actor_SetDestinationOffset(10, 0, 80);
       FieldActor_WaitForMoveById(10);
-      Speed(10, 0x28000, 0x14000);
+      Actor_SetSpeed(10, 0x28000, 0x14000);
       Actor_SetDestinationOffset(10, 0, 80);
       FieldEvent_Wait(5);
       Actor_SetPosition(10, 0, 0);
@@ -749,7 +742,7 @@ void Func_02000fd0(void) {
       FieldEvent_Wait(30);
       Event_SetFlag(0x205);
     }
-    Func_02002070();
+    Event_End();
   } else if (!Flag_Test(0x207) && column == 16 && row == 12) {
     MapGrid_CopyCellAttributes(17, 12, 1, 1, column, row);
     flags = &object->motionFlags;
@@ -757,7 +750,7 @@ void Func_02000fd0(void) {
     FieldEvent_Wait(30);
     *flags = 0;
     Flag_Set(0x207);
-    Func_02002070();
+    Event_End();
   }
 }
 
@@ -844,7 +837,7 @@ void Func_0200138c(void) {
   s32 row;
   s32 i;
 
-  Func_02002068();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_FollowActor(10, 1);
   object = Actor_Get(10);
@@ -887,7 +880,7 @@ void Func_0200138c(void) {
     MapGrid_CopyCellAttributes(1, 3, 1, 1, 12, row);
     MapGrid_CopyCellAttributes(1, 3, 1, 1, column, row);
   }
-  Func_02002070();
+  Event_End();
 }
 
 void Func_0200155c(void) {

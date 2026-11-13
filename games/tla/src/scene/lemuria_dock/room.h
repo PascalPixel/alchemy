@@ -38,7 +38,7 @@ void Event_WaitTransitionFrames(void);
 
 void Func_02000254(const struct WarpTarget *warp, s32 door, s32 mode);
 void Func_020002f8(void);
-void Func_0200046c(void);
-void Func_02000474(void);
+void Event_Start(void);
+void Event_End(void);
 
 #endif

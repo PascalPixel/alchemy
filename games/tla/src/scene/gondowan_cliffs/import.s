@@ -42,9 +42,9 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_02001184
+	.global Resource_DecodeType01
 	.thumb_func
-Func_02001184:
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global VramCache_Load
 	.thumb_func
@@ -70,9 +70,9 @@ GameFlag_SetBit:
 	.thumb_func
 Func_020011b4:
 	overlay_veneer Actor_SetMode
-	.global Func_020011bc
+	.global Actor_StartScript
 	.thumb_func
-Func_020011bc:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -110,13 +110,13 @@ Map_WaitForShakeToSettle:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_0200120c
+	.global Event_Start
 	.thumb_func
-Func_0200120c:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02001214
+	.global Event_End
 	.thumb_func
-Func_02001214:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -146,9 +146,9 @@ Actor_WaitForMoveById:
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
-	.global Func_02001254
+	.global Actor_MoveToObject
 	.thumb_func
-Func_02001254:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -194,9 +194,9 @@ Func_080d47b4:
 	.thumb_func
 FieldEffect_SetAttached:
 	overlay_veneer Func_080c8218
-	.global Func_020012b4
+	.global Event_SetDestination
 	.thumb_func
-Func_020012b4:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Import_EventSetExitRequest
 	.thumb_func

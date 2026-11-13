@@ -34,13 +34,13 @@ PartyInventory_Remove:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02001d50
+	.global Event_Start
 	.thumb_func
-Func_02001d50:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02001d58
+	.global Event_End
 	.thumb_func
-Func_02001d58:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -194,25 +194,25 @@ Func_02001e80:
 	.thumb_func
 Field_DispatchTypeHandler:
 	overlay_veneer Field_DispatchTypeHandlerFar
-	.global Func_02001e90
+	.global BattleEffect_LoadActionEffectResources
 	.thumb_func
-Func_02001e90:
+BattleEffect_LoadActionEffectResources:
 	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
-	.global Func_02001e98
+	.global BattleEffect_SetupObjectPair
 	.thumb_func
-Func_02001e98:
+BattleEffect_SetupObjectPair:
 	overlay_veneer BattleEffect_SetupObjectPairFar
-	.global Func_02001ea0
+	.global BattleEffect_StopMainActor
 	.thumb_func
-Func_02001ea0:
+BattleEffect_StopMainActor:
 	overlay_veneer BattleEffect_StopMainActorFar
-	.global Func_02001ea8
+	.global BattleEffect_CleanupSceneObjects
 	.thumb_func
-Func_02001ea8:
+BattleEffect_CleanupSceneObjects:
 	overlay_veneer BattleEffect_CleanupSceneObjectsFar
-	.global Func_02001eb0
+	.global EventObject_Initialize
 	.thumb_func
-Func_02001eb0:
+EventObject_Initialize:
 	overlay_veneer EventObject_InitializeFar
 	.global Event_ResolvePendingActions
 	.thumb_func

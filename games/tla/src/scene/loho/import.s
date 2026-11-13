@@ -22,9 +22,9 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_02001248
+	.global Resource_DecodeType01
 	.thumb_func
-Func_02001248:
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
@@ -46,13 +46,13 @@ Func_02001268:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global Func_02001278
+	.global Fade_ToWhite
 	.thumb_func
-Func_02001278:
+Fade_ToWhite:
 	overlay_veneer Fade_ToWhiteFar
-	.global Func_02001280
+	.global Fade_FromWhite
 	.thumb_func
-Func_02001280:
+Fade_FromWhite:
 	overlay_veneer Fade_FromWhiteFar
 	.global GameFlag_Test
 	.thumb_func
@@ -98,13 +98,13 @@ FieldMessage_Show:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_020012e0
+	.global Event_Start
 	.thumb_func
-Func_020012e0:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020012e8
+	.global Event_End
 	.thumb_func
-Func_020012e8:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -234,9 +234,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Actor_SetWideSprite:
 	overlay_veneer Actor_SetWideSpriteFar
-	.global Func_020013f0
+	.global Actor_ReturnHome
 	.thumb_func
-Func_020013f0:
+Actor_ReturnHome:
 	overlay_veneer Actor_ReturnHomeFar
 	.global Event_ResolvePendingActions
 	.thumb_func

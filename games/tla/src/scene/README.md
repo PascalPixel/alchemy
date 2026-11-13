@@ -29,10 +29,11 @@ runs, its tables and its [events](../../../tbs/glossary.md#event).
 - The main-image code a scene imports is in the bank folders of this game,
   most of it under `games/tla/src/field/`. Code that only overlays use sits
   there too: compiled inside each scene that uses it, which includes it, or its
-  own object where an overlay still links it so. `scene/shared/` holds two
+  own object where an overlay still links it so. `scene/shared/` holds three
   such pieces: `drift_spawn.c`, compiled inside Idejima and its own object in
-  one other overlay, and `scene_set_arrival_flags.h`, compiled inside each
-  scene that links it.
+  one other overlay, `scene_set_arrival_flags.h`, compiled inside each
+  scene that links it, and `cell_with_bit.h`, the lighthouse rooms' cell
+  targets' one computation.
 - The Title (`title/`), the scene in the row after it, `SceneId_Ov64a`
   (`clear/`, `0x64a`), with its password grid and button codes, and the lobby
   where a link battle is arranged (`lobby/`, `0x6b5`) are overlays here, as

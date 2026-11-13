@@ -44,7 +44,7 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 s32 Math_Cosine(s32 angle);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_02001fac(void);
+void Event_Start(void);
 void Func_02001fb4(void);
 void Func_02001ffc(void);
 

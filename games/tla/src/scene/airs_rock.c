@@ -98,7 +98,7 @@ extern s16 gData_02003e84[];
 extern s16 gData_02003ec4[];
 extern s16 gData_02003f44[];
 
-s16 *Func_020004c0(void) {
+s16 *Scene_GetRegions(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov663Room1)
@@ -114,7 +114,7 @@ extern s32 gData_020040ec[];
 extern u32 gData_02004194[];
 extern u32 gData_02004314[];
 
-void *Func_02000508(void) {
+void *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov663Room1)
@@ -131,21 +131,21 @@ void *Func_02000508(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02003bc8(void);
-void Func_02003bd0(void);
+void Event_Start(void);
+void Event_End(void);
 extern u8 MsgFieldWindStoneWarning[];
 
 void Func_02000548(void) {
-  Func_02003bc8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered((s32)MsgFieldWindStoneWarning, 1);
-  Func_02003bd0();
+  Event_End();
 }
 
 s32 Func_02003b70();
 
 void Func_02000568(void) {
-  Func_02003bc8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(0x9e);
   MapGrid_CopyCellsTo(64, 64, 83, 35, 1, 2);
@@ -161,21 +161,21 @@ void Func_02000568(void) {
   FieldActor_WaitForMoveById(FIELD_AT(&gMainRoutineWork, s32, 532));
   Event_PlaySound(0x7b);
   FieldEvent_SetExitRequest(4);
-  Func_02003bd0();
+  Event_End();
 }
 
 void Func_020005ec(void) {
   s32 t0;
 
   t0 = ((s32)Actor_Get(10));
-  Func_02003bc8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if ((FIELD_AT(t0, s32, 8) >> 20) == 0x1f) {
     Event_SetFlag(0x310);
   } else {
     Event_ClearFlag(0x310);
   }
-  Func_02003bd0();
+  Event_End();
 }
 
 s32 Func_02000384();
@@ -190,7 +190,7 @@ void Func_02000620(void) {
 
   object = (struct Actor *)((s32)Actor_Get(11));
   value = Func_02000348(3, 70, 67);
-  Func_02003bc8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if ((object->x >> 20) == 32) {
     Event_SetFlag(0x311);
@@ -206,23 +206,23 @@ void Func_02000620(void) {
   leader = (struct Actor *)((s32)Actor_Get(gMainRoutineWork.currentOwner));
   if ((leader->y >> 19) == 26)
     MapGrid_CopyCellAttributes(70, 67, 1, 1, 33, 54);
-  Func_02003bd0();
+  Event_End();
 }
 
 void Func_020006d4(void) {
   s32 t0;
 
   t0 = ((s32)Actor_Get(13));
-  Func_02003bc8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if ((FIELD_AT(t0, s32, 8) >> 19) == 0x17) {
     Event_SetFlag(0x879);
   }
-  Func_02003bd0();
+  Event_End();
 }
 
 void Func_02003b28(struct Actor *object, s32 mode);
-void Func_02003c98(void);
+void Event_NoOp(void);
 
 /// The leader jumps up 12 pixels (cue 390, mode 6 then 1), climbs 28 pixels
 /// over 14 frames with cue 217 while turned to angle 0x5000, then lands 16
@@ -255,14 +255,14 @@ void Func_02000700(void) {
   Actor_WaitForMove(leader);
   Actor_SetSingleChildFlags(leader, 1);
   Event_PlaySound(390);
-  Func_02003c98();
+  Event_NoOp();
 }
 
 extern s32 gData_020043d4[];
 extern s32 gData_020044d0[];
 extern s32 gData_0200459c[];
 
-s32 *Func_020007e4(void) {
+s32 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov663Room1)
@@ -335,9 +335,9 @@ void Func_0200092c(struct Actor *object) {
 
 extern s16 gData_02004674[][4];
 extern const u8 gData_02003d1c[];
-void Func_02003b38(struct Actor *object, const u8 *script);
+void Actor_StartScript(struct Actor *object, const u8 *script);
 s32 Func_02003ba8(struct Actor *object);
-void Func_02003b50(void);
+void Map_CenterOnFollowedPoint(void);
 void Func_02003b48(struct Actor *object);
 void Func_02003c38(s32 actor, s32 a);
 void Func_02003c30(void);
@@ -380,10 +380,7 @@ void Func_0200095c(void) {
   struct Cell delta, cell;
   s32 cellZ, cellX, newZ, newX, flag = 0, steps = 0, hit, angle, i;
 
-  /* FAKEMATCH(wrapper): calls forwarded through call.h's Value4, Call2, Call4
-   * and Call6, so each builds its own constants; as direct calls, 382 of 632
-   * instructions differ in tla-en. */
-  Func_02003bc8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(207);
   gust = FieldActor_Create(280, leader->x, leader->y, leader->z);
@@ -415,7 +412,7 @@ void Func_0200095c(void) {
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02003b28(spark, 7);
-      Func_02003b38(spark, gData_02003d1c);
+      Actor_StartScript(spark, gData_02003d1c);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetPartAttribute(spark, 2);
       spark->update = Func_02000840;
@@ -521,14 +518,14 @@ void Func_0200095c(void) {
                                      gData_02004674[hit][1], 1, 1,
                                      gust->x >> 20, gust->z >> 20);
         }
-        Func_02003b50();
+        Map_CenterOnFollowedPoint();
       }
       Event_Wait(1);
     }
     if (hit == 2) {
       MapGrid_CopyCellsTo(gData_02004674[2][0], gData_02004674[2][1], cell.x,
                           cell.z, 1, 1);
-      Func_02003b50();
+      Map_CenterOnFollowedPoint();
     }
     Sound_Play(298);
     Event_SetFlag(flag + 0x850);
@@ -548,7 +545,7 @@ void Func_0200095c(void) {
   Event_Wait(30);
   Func_02003c38(gMainRoutineWork.currentOwner, 1);
   Func_02003c30();
-  Func_02003bd0();
+  Event_End();
 }
 
 /// The wave scroll that overlay 696's Func_02000378 also has.
@@ -596,13 +593,13 @@ struct ObjBits {
 extern char ResourceId_WhirlwindMap;
 extern char ResourceId_WhirlwindTiles;
 void *Resource_GetTableEntry(s32 id);
-void Func_02003af0(void *resource, void *dest);
+void Resource_DecodeType01(void *resource, void *dest);
 
 void Func_020024b0(void);
 void Func_0200257c(void);
 void Func_02000ef4(void);
-void Func_02003b00(void);
-void Func_02003af8(void);
+void Window_LoadGraphics(void);
+void DebugText_Clear(void);
 
 void Func_02001010(void) {
   struct MainRoutineWork *work;
@@ -612,10 +609,10 @@ void Func_02001010(void) {
   u32 i;
   s32 x;
 
-  Func_02003bc8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~0x100;
-  Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                 buffer);
   Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
@@ -632,7 +629,7 @@ void Func_02001010(void) {
   REG_BG1CNT |= 2;
   Dma_Fill16(0x10, (void *)0x6002000, 0x500);
   buffer = Heap_Alloc(0x240);
-  Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
   i = 0;
   cell = buffer;
 offset:
@@ -672,7 +669,7 @@ row:
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02003b28(spark, 7);
-      Func_02003b38(spark, gData_02003d1c);
+      Actor_StartScript(spark, gData_02003d1c);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
@@ -730,7 +727,7 @@ glow:
   MapGrid_CopyCellsTo(68, 0, 79, 0, 11, 10);
   MapGrid_CopyCellAttributes(38, 9, 1, 1, 16, 9);
   MapGrid_CopyCellAttributes(38, 9, 1, 1, 24, 9);
-  Func_02003b50();
+  Map_CenterOnFollowedPoint();
   FieldEvent_Wait(1);
   REG_BLDCNT = 0x3f41;
   REG_BLDALPHA = 15;
@@ -756,8 +753,8 @@ fade:
     FieldEvent_Wait(60);
     REG_BLDCNT = zero;
   }
-  Func_02003b00();
-  Func_02003af8();
+  Window_LoadGraphics();
+  DebugText_Clear();
   work = &gMainRoutineWork;
   WindowColor_Apply(work->paletteGlow[0], work->paletteGlow[1]);
   REG_BG1CNT &= ~3;
@@ -777,7 +774,7 @@ fade:
   }
   Func_02003c30();
   Event_SetFlag(0x858);
-  Func_02003bd0();
+  Event_End();
 }
 
 #include "input.h"
@@ -794,7 +791,7 @@ void Func_02001560(void) {
   u16 facing;
   s32 still;
 
-  Func_02003bc8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   motion = &leader->motionFlags;
   *motion = 4;
@@ -910,7 +907,7 @@ void Func_02001560(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003c30();
   wait(10);
-  Func_02003bd0();
+  Event_End();
 }
 
 s32 Func_020018ac(s32 *a, s32 *b) {
@@ -963,9 +960,9 @@ void Func_02001908(struct Actor *shot) {
     ((struct Shot *)shot)->unk63 = 0;
     shot->update = 0;
     if (shot->facing == 0xc000)
-      Func_02003b38(shot, gData_02003de0);
+      Actor_StartScript(shot, gData_02003de0);
     else
-      Func_02003b38(shot, gData_02003dcc);
+      Actor_StartScript(shot, gData_02003dcc);
     return;
   }
   if (((struct Shot *)shot)->unk62 == 0) {
@@ -1091,7 +1088,7 @@ void Func_02001cc8(void) {
       *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
   s32 x, z;
 
-  Func_02003bc8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Func_02003cc0();
   Func_020003e8(((u8 *)gData_02003d94));
@@ -1116,17 +1113,17 @@ void Func_02001cc8(void) {
     Event_SetFlag(0x862);
   else if (x == 49 && z == 18)
     Event_SetFlag(0x887);
-  Func_02003bd0();
+  Event_End();
 }
 
 s32 Func_02003ca8();
 extern s16 gData_02003e4c[];
 
 void Func_02001da8(void) {
-  Func_02003bc8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Func_02003ca8((s32)((u8 *)gData_02003e4c));
-  Func_02003bd0();
+  Event_End();
 }
 
 void Func_02003c90(void *sprite, void *source);
@@ -1163,7 +1160,7 @@ void Func_02001dc4(s32 x, s32 z) {
       Func_02003c90(rock->sprite, first->sprite);
     }
     Actor_SetSingleChildFlags(rock, 0);
-    Func_02003b38(rock, gData_02003dfc);
+    Actor_StartScript(rock, gData_02003dfc);
     Func_02003b28(rock, 2);
     rock->velocityY = ((Random16Far() & 3) << 16) + 0x40000;
     rock->gravity = 0x3333;
@@ -1212,7 +1209,7 @@ void Func_02001f7c(void) {
   struct Actor *spark;
   u32 i;
 
-  Func_02003bc8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   /* FAKEMATCH(dead): BG0CNT's value in a once-only block of its own, built
@@ -1223,13 +1220,13 @@ void Func_02001f7c(void) {
 
     REG_BG0CNT = control;
   } while (0);
-  Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                 buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
-  Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
   i = 0;
   cell = buffer;
 mask:
@@ -1273,7 +1270,7 @@ row:
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02003b28(spark, 7);
-      Func_02003b38(spark, gData_02003d1c);
+      Actor_StartScript(spark, gData_02003d1c);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
@@ -1357,15 +1354,15 @@ fade2:
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(60);
   System_Wait(70);
-  Func_02003b00();
-  Func_02003af8();
+  Window_LoadGraphics();
+  DebugText_Clear();
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
   REG_BLDCNT = 0;
   REG_DISPCNT |= DISPCNT_BG0_ON;
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
   Event_SetFlag(0x87b);
-  Func_02003bd0();
+  Event_End();
 }
 
 extern s8 gData_02004694;
@@ -1452,10 +1449,10 @@ void Func_020026b8(void) {
   s32 i;
   s32 z;
 
-  Func_02003bc8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~0x100;
-  Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                 buffer);
   Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
@@ -1472,7 +1469,7 @@ void Func_020026b8(void) {
     Dma_Fill16(0x10, (void *)0x6002000, 0x500);
   } while (0);
   buffer = Heap_Alloc(0x240);
-  Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
   cell = buffer;
   for (i = 0; i != 0x120; i++) {
     *cell += 0xff40;
@@ -1509,7 +1506,7 @@ void Func_020026b8(void) {
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02003b28(spark, 7);
-      Func_02003b38(spark, gData_02003d1c);
+      Actor_StartScript(spark, gData_02003d1c);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
@@ -1574,8 +1571,8 @@ void Func_020026b8(void) {
     FieldEvent_Wait(60);
     REG_BLDCNT = zero;
   }
-  Func_02003b00();
-  Func_02003af8();
+  Window_LoadGraphics();
+  DebugText_Clear();
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   REG_BG1CNT &= ~3;
@@ -1586,7 +1583,7 @@ void Func_020026b8(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003c30();
   Event_SetFlag(0x87a);
-  Func_02003bd0();
+  Event_End();
 }
 
 extern s32 gData_02004698;
@@ -1628,7 +1625,7 @@ void Func_02002c24(s32 height) {
     gMainRoutineWork.renderMode = 2;
     object->actionFlags = 1;
     FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
-    Func_02003b50();
+    Map_CenterOnFollowedPoint();
     System_Wait(1);
   }
 }
@@ -1652,7 +1649,7 @@ void Func_02003c80(s32 a);
   (Actor_GetById(id)->motionFlags = 0, Actor_GetById(id)->y = (height),        \
    SWAY(id, phase))
 
-s32 Func_02002ca0(void) {
+s32 Scene_Initialize(void) {
   struct Actor *leader;
   s32 *beam;
   volatile struct DmaRegisters *dma;
@@ -1821,7 +1818,7 @@ s32 Func_02002ca0(void) {
       beam[3] = 0x2400000;
       beam[4] = 0x4000;
       beam[5] = 0x4000;
-      Func_02003b50();
+      Map_CenterOnFollowedPoint();
       System_Wait(1);
       break;
     case 6:
@@ -1907,7 +1904,7 @@ s32 Func_02002ca0(void) {
         Actor_SetPartAttribute(Actor_GetById(14), 6);
       }
       Actor_SetSpritePriority(14, 1);
-      Func_02003b50();
+      Map_CenterOnFollowedPoint();
       System_Wait(1);
       if (GameFlag_Test(265)) {
         leader = LEADER();
@@ -1935,7 +1932,7 @@ s32 Func_02002ca0(void) {
 
 extern u8 MsgCurePoison2[];
 
-s32 Func_02003a7c(void) {
+s32 Scene_PrepareMap(void) {
   if (FIELD_AT(&gMainRoutineWork, s16, 480) == (s32)MsgCurePoison2) {
     Func_02002b88();
   }

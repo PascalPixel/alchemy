@@ -23,7 +23,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern const u8 gData_02001708[];
 extern const u8 gData_02001840[];
 
-const u8 *Func_0200004c(void) {
+const u8 *Scene_GetPlacements(void) {
   if (GameFlag_Test(0x8a7))
     return gData_02001840;
   return gData_02001708;
@@ -36,9 +36,9 @@ const u8 *Func_0200004c(void) {
 #include "scene_ids.h"
 #include "event_inline.h"
 
-void Func_020014b8(void);
-void Func_020014c0(void);
-void Func_02001588(s32 scene, s32 entrance);
+void Event_Start(void);
+void Event_End(void);
+void Event_SetDestination(s32 scene, s32 entrance);
 
 void Func_0200006c(s32 actor) {
   s32 msg = (s32)&MsgAlhafraManor02;
@@ -58,7 +58,7 @@ void Func_0200006c(s32 actor) {
 void Func_020000b8(s32 actor) {
   s32 msg = (s32)&MsgAlhafraManor09;
 
-  Func_020014b8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId(msg);
   FieldMessage_ShowAtActor(actor, 0);
@@ -69,12 +69,12 @@ void Func_020000b8(s32 actor) {
     Actor_FaceDirection(14, 0x5000, 0);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
     Event_Wait(10);
-    Func_02001588((s32)&SceneId_WorldMap, 67);
+    Event_SetDestination((s32)&SceneId_WorldMap, 67);
   } else {
     Event_SetMessageId(msg + 2);
     Event_ShowMessageAndWait(actor, 0);
   }
-  Func_020014c0();
+  Event_End();
 }
 
 void Func_02000150(s32 actor) {
@@ -96,7 +96,7 @@ void Func_0200019c(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   GameFlag_SetBit(0x8ba);
-  Func_020014b8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAlhafraManor18);
   if (*(s16 *)((u8 *)work + 0x166) != 0)
@@ -109,14 +109,14 @@ void Func_0200019c(void) {
   Event_ShowMessageThenWait(18, 0, 10);
   Motion_SetModeAndWaitAnimation(18, 4);
   Event_ShowMessageThenWait(18, 0, 10);
-  Func_020014c0();
+  Event_End();
 }
 
 void Func_02000238(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   GameFlag_SetBit(0x8bb);
-  Func_020014b8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAlhafraManor23);
   if (*(s16 *)((u8 *)work + 0x166) != 0)
@@ -145,7 +145,7 @@ void Func_02000238(void) {
   FieldEvent_ShowMessageThenWait(0x4008, 0, 10);
   Motion_SetModeAndWaitAnimation(8, 4);
   Event_ShowMessageThenWait(0x4008, 0, 10);
-  Func_020014c0();
+  Event_End();
 }
 
 void Func_02000370(void) {
@@ -156,7 +156,7 @@ void Func_02000370(void) {
     Event_Wait(10);
   }
   GameFlag_SetBit(0x8bc);
-  Func_020014b8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAlhafraManor24);
   Event_Wait(20);
@@ -193,7 +193,7 @@ void Func_02000370(void) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     Event_ShowMessageThenWait(9, 0, 10);
   }
-  Func_020014c0();
+  Event_End();
   if (*(s16 *)((u8 *)work + 0x166) != 0)
     Actor_FaceDirection(9, 0xd000, 0);
 }
@@ -205,7 +205,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 void Func_02000658(void);
 void Func_02001488(void);
 
-s32 Func_02000514(void) {
+s32 Scene_Initialize(void) {
   s32 cameraY = -1;
   s32 cameraZ = 160 << 17;
   s16 *entrance;
@@ -250,7 +250,7 @@ s32 Func_02000514(void) {
       wait(1);
     check:;
     } while (gInput.held == 0);
-    Func_02001588((s32)&SceneId_Ov667, 80);
+    Event_SetDestination((s32)&SceneId_Ov667, 80);
   }
   return 0;
 }
@@ -260,7 +260,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 #define EVENT_WORD(offset)                                                     \
   (*(s32 *)((u8 *)Ram_HeapSlots->eventWork + (offset)))
 
-void Func_020015c0(void);
+void Party_PlaySavedMusic(void);
 void Func_020015f0(void);
 
 /// Walks actor `id` to the controlled character's cell, when it has one.
@@ -285,7 +285,7 @@ void Func_020015f0(void);
 /// and flag 303 is cleared. Each call goes through the call layer
 /// (call.h), which builds its constants at the call.
 void Func_02000658(void) {
-  Func_020014b8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId(MsgAlhafraManor29);
   Actor_SetPosition(9, PIXELS(344), PIXELS(96));
@@ -394,7 +394,7 @@ void Func_02000658(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  Func_020015c0();
+  Party_PlaySavedMusic();
   Actor_SetSpeed(9, 0xcccc, 0x6666);
   Actor_SetSpeed(8, 0xcccc, 0x6666);
   Actor_SetSpeed(11, 0x19999, 0xcccc);
@@ -585,7 +585,7 @@ void Func_02000658(void) {
   Actor_WaitForMoveById(8);
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
   Event_Wait(30);
-  Func_020015c0();
+  Party_PlaySavedMusic();
   Func_080d47b4(7, 265, 30);
   Event_ShowMessageThenWait(7, 0, 10);
   Func_080d47b4(6, 263, 30);
@@ -632,7 +632,7 @@ void Func_02000658(void) {
   WALK_TO_LEADER(6);
   WALK_TO_LEADER(13);
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_020014c0();
+  Event_End();
   EVENT_WORD(0x1b4) = 16;
   EVENT_WORD(0x1ac) = 521;
   GameFlag_ClearBit(303);

@@ -21,7 +21,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "alhafran_cave/local.h"
 #include "version.h"
 
-u8 *Func_0200004c(void) {
+u8 *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov66aRoom1)
@@ -80,7 +80,7 @@ void Func_020001d4(void) {
   work->valueD4a = 2;
 }
 
-u8 *Func_020001e8(void) {
+u8 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov66aRoom1)
@@ -106,7 +106,7 @@ s32 Func_02000258(void) {
   return 0;
 }
 
-s32 Func_0200027c(void) {
+s32 Scene_Initialize(void) {
 #if !TLA_PATCH_1 /* The Japanese edition does not check the entrance. */
   ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x201;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov66aRoom1)
@@ -167,8 +167,6 @@ void Func_020002f8(void) {
   object = Actor_Get(11);
   object->motionFlags = 0;
   object->y = 0x100000;
-  /* FAKEMATCH(wrapper): the call forwarded through Call2; as a direct call,
-   * 4 of 223 instructions differ in tla-en. */
   Actor_SetSpriteRotationById(13, 0x1000);
   Actor_SetAnimation(11, 2);
   Actor_SetAnimation(12, 3);
@@ -182,11 +180,7 @@ void Func_020002f8(void) {
   Animation_ApplyChildValues(Actor_Get(11), 6);
   Animation_ApplyChildValues(Actor_Get(12), 6);
   Animation_ApplyChildValues(Actor_Get(13), 6);
-  /* FAKEMATCH(wrapper): the flag test forwarded through Value1; as a direct
-   * call, 11 of 223 instructions differ in tla-en. */
   if (Event_GetFlag(0x8a7)) {
-    /* FAKEMATCH(wrapper): both calls forwarded through Call3; as either one a
-     * direct call, 2 of 223 instructions differ in tla-en. */
     Actor_SetPosition(14, 0xc80000, 0x880000);
     Actor_SetPosition(15, 0x1880000, 0x1680000);
   }
@@ -308,7 +302,7 @@ void Func_0200051c(void) {
   }
 }
 
-s32 Func_020007a4(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov66aRoom2 &&
       Event_GetFlag(0x8a7)) {
     Func_02001408_(23, 46, 4, 5, 21, 14);
@@ -322,14 +316,14 @@ void Func_02000814(void) {}
 
 extern u8 MsgYouHereTo[];
 
-void Func_02001430(void);
-void Func_02001438(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02001508(void);
 void Func_020015a0(s32 frames, s32 color);
-void Func_020015b0(void);
-void Func_020015b8(void);
-void Func_020015c0(void);
-void Func_020015c8(struct Actor *object, s32 mode);
+void BattleEffect_StartArcEffect(void);
+void BattleEffect_EndArcEffect(void);
+void BattleEffect_WaitForArcGroups(void);
+void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 void Func_02001228(void);
 extern s32 gData_02001610[];
 extern u32 gData_02001674[];
@@ -349,7 +343,7 @@ void Func_02000818(void) {
   if (GameFlag_Test(0x8a7) == 1)
     return;
   Event_SetFlag(0x8bd);
-  Func_02001430();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeed(22, 0x10000, 0x8000);
   Actor_SetSpeed(21, 0x10000, 0x8000);
@@ -416,8 +410,8 @@ void Func_02000818(void) {
   actor21 = Actor_Get(21);
   actor15 = Actor_Get(15);
   Call2((void (*)())Func_020015a0, 8, 0x1210);
-  Func_020015b0();
-  Func_020015c8(Actor_Get(21), 2);
+  BattleEffect_StartArcEffect();
+  BattleEffect_SetObjectUpdateMode(Actor_Get(21), 2);
   Event_PlaySound(201);
   FieldEvent_Wait(40);
   effect = BattleEffect_StartItemBreak(actor21);
@@ -465,9 +459,9 @@ void Func_02000818(void) {
   actor15->update = 0;
   Animation_ApplyChildValues(actor15, 0);
   UpdateRisingParticleBurst(effect);
-  Func_020015c8(Actor_Get(21), 0);
-  Func_020015c0();
-  Func_020015b8();
+  BattleEffect_SetObjectUpdateMode(Actor_Get(21), 0);
+  BattleEffect_WaitForArcGroups();
+  BattleEffect_EndArcEffect();
 #if TLA_PATCH_4
   Field_EndActorSpriteEffect(8);
 #else
@@ -503,14 +497,14 @@ void Func_02000818(void) {
   Actor_FaceDirection(21, 0x3000, 0);
   FieldEvent_Wait(20);
   Func_020015a0(8, 0x1210);
-  Func_020015b0();
-  Func_020015c8(Actor_Get(21), 2);
+  BattleEffect_StartArcEffect();
+  BattleEffect_SetObjectUpdateMode(Actor_Get(21), 2);
   Event_PlaySound(201);
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(18, 0, 10);
-  Func_020015c8(Actor_Get(21), 0);
-  Func_020015c0();
-  Func_020015b8();
+  BattleEffect_SetObjectUpdateMode(Actor_Get(21), 0);
+  BattleEffect_WaitForArcGroups();
+  BattleEffect_EndArcEffect();
 #if TLA_PATCH_4
   Field_EndActorSpriteEffect(8);
 #else
@@ -628,7 +622,7 @@ void Func_02000818(void) {
   Actor_SetPosition(21, 0, 0);
   Actor_SetActionCallback(Actor_Get(24), 9);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02001438();
+  Event_End();
 }
 
 void Func_02001220(void) { Func_020015d8(); }

@@ -22,9 +22,9 @@ extern u32 gData_020017d8[];
 extern u32 gData_020017a4[];
 extern u32 gData_0200171c[];
 
-void Func_020013f0(s32 a, s32 b, s32 c);
+void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02001440(s32 a, s32 b);
-void Func_020012e0(void);
+void Event_Start(void);
 void Func_02000f38(void);
 
 void Func_02000038(void) { Func_080d7788(19, 3, 16); }
@@ -34,7 +34,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 extern char SceneId_Ov6A6Room2;
 extern u32 gData_0200183c[];
 
-const u32 *Func_02000050(void) {
+const u32 *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room2)
     return gData_0200183c;
   return 0;
@@ -50,7 +50,7 @@ struct EventWork15a {
   u16 flag;
 };
 
-const struct ActorPlacement *Func_02000080(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room2)
     return gData_02001a80;
   return gData_02001900;
@@ -91,12 +91,12 @@ void Func_02000178(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-s32 Func_02001248();
+s32 Resource_DecodeType01();
 s32 Func_02001268();
-s32 Func_02001278();
-s32 Func_02001280();
+s32 Fade_ToWhite();
+s32 Fade_FromWhite();
 
-void Func_020012e8(void);
+void Event_End(void);
 void Func_020013c8();
 
 s32 Resource_FindFreeEntry();
@@ -149,7 +149,7 @@ void Func_02000198(void) {
   u8 unused[4]; // Unused: gives the stack frame its 4 bytes.
 
   t0 = ((s32)Actor_GetById(4));
-  Func_020012e0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   p = (struct Unk16 *)t0;
   goto L_020081ec;
@@ -222,7 +222,7 @@ L_0200821e:
   table = (struct Unk16 *)Heap_AllocEwram(0x600);
   p = (struct Unk16 *)Heap_Alloc(0x1000);
   t38 = Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion);
-  Func_02001248(t38, p);
+  Resource_DecodeType01(t38, p);
   entry = Resource_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x400, p);
   Heap_Release(p);
@@ -251,7 +251,7 @@ L_020083b6:
 L_020083c4:
   if (i != 30)
     goto L_020083d4;
-  Func_02001278(90);
+  Fade_ToWhite(90);
   Sound_Play(141);
 L_020083d4:
   p = table;
@@ -297,7 +297,7 @@ L_02008474:
   MapGrid_SetShake(0, 0, 0x10000);
   Sound_Play(0x186);
   Event_Wait(180);
-  Func_02001280(120);
+  Fade_FromWhite(120);
   Event_SetMessageId((s32)MsgLoho28);
   Event_Wait(120);
   Actor_RunRepeatedMotion(18, 2);
@@ -492,7 +492,7 @@ L_020089c4:
   Actor_SetPosition(18, 0, 0);
   Actor_SetPosition(17, 0, 0);
   Actor_SetPosition(20, 0, 0);
-  Func_020012e8();
+  Event_End();
   return;
 }
 
@@ -520,7 +520,7 @@ void Func_02000c54(s32 id) {
    * between the value's halves; as constant arguments, 2 of 6 instructions
    * differ in tla-en. */
   asm("" : "+l"(high), "+l"(kind));
-  Func_020013f0(id, kind, high << 2);
+  Actor_ReturnHome(id, kind, high << 2);
 }
 
 void Func_02000c64(s32 id) {
@@ -531,7 +531,7 @@ void Func_02000c64(s32 id) {
    * between the value's halves; as constant arguments, 2 of 7 instructions
    * differ in tla-en. */
   asm("" : "+l"(value), "+l"(kind));
-  Func_020013f0(id, kind, value + 1);
+  Actor_ReturnHome(id, kind, value + 1);
 }
 
 void Func_02000c74(s32 id) {
@@ -542,7 +542,7 @@ void Func_02000c74(s32 id) {
    * between the value's halves; as constant arguments, 2 of 7 instructions
    * differ in tla-en. */
   asm("" : "+l"(value), "+l"(kind));
-  Func_020013f0(id, kind, value + 2);
+  Actor_ReturnHome(id, kind, value + 2);
 }
 
 extern char SceneId_Ov6A6Room1;
@@ -563,7 +563,7 @@ void Func_02000c84(void) {
     Func_02001348_(66, PIXELS(520), PIXELS(136));
 }
 
-const struct Trigger *Func_02000cc0(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room1)
     return gData_02001aec;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room2)
@@ -666,7 +666,7 @@ void Func_02000e54(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   s32 i;
 
-  Func_020012e0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   // The loop is written with goto so that it carries no loop notes: the bytes
   // rebuild the zero on every pass, and a for loop hoists it and moves the work
@@ -693,7 +693,7 @@ loop:
   Import_EventSetExitRequest(*(s16 *)work);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_020012e8();
+  Event_End();
 }
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -743,7 +743,7 @@ void Func_02000f38(void) {
   Event_Wait(14);
   Sound_Play(123);
   Import_EventSetExitRequest(value);
-  Func_020012e8();
+  Event_End();
 }
 
 void Func_02000ffc(void) {
@@ -751,7 +751,7 @@ void Func_02000ffc(void) {
   s32 id;
   s32 x;
 
-  Func_020012e0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   back = 14;
   id = 4;
@@ -771,7 +771,7 @@ void Func_0200102c(void) {
   s32 id;
   s32 x;
 
-  Func_020012e0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   back = 14;
   id = 4;
@@ -787,7 +787,7 @@ void Func_0200102c(void) {
 }
 
 void Func_0200105c(void) {
-  Func_020012e0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_ArmCallback(4, FACING_NORTH, 0);
   Event_Wait(10);
@@ -812,7 +812,7 @@ static __inline__ void Func_02001350_(s32 id, s32 x, s32 z, u16 angle) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
 }
 
-s32 Func_020010c0(void) {
+s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room1) {
     if (!GameFlag_Test(0x300))
       Actor_SetWideSprite(64, 0);
@@ -844,7 +844,7 @@ s32 Func_020010c0(void) {
   return 0;
 }
 
-s32 Func_020011ec(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room1 && GameFlag_Test(0xa5f))
     Func_020000ac();
   return 0;
@@ -1053,86 +1053,86 @@ struct Trigger gData_02001aec[] = {
     {0x4602, 6, CONDITION_ALWAYS, EVENT(Func_0200105c)},
     {0x8602, 8, CONDITION_ALWAYS, EVENT(Func_0200102c)},
     {0x602, 9, CONDITION_ALWAYS, EVENT(Func_02000ffc)},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {0, 8, 0x1a5f, MSGNO(MsgLoho29)},
-    {0, 9, 0x1a5f, MSGNO(MsgLoho30)},
-    {0, 10, 0x1a5f, MSGNO(MsgLoho31)},
-    {0, 11, 0x1a5f, EVENT(Func_02000bf4)},
-    {0x8d15, 8, 0x1a5f, MSGNO(MsgLoho33)},
-    {0x8d15, 9, 0x1a5f, MSGNO(MsgLoho34)},
-    {0x8d15, 10, 0x1a5f, MSGNO(MsgLoho35)},
-    {0x8d15, 11, 0x1a5f, EVENT(Func_02000c24)},
-    {0, 12, 0x1a5f, MSGNO(MsgLoho37)},
-    {0, 13, 0x1a5f, MSGNO(MsgLoho38)},
-    {0, 14, 0x1a5f, MSGNO(MsgLoho39)},
-    {0, 15, 0x1a5f, MSGNO(MsgLoho40)},
-    {0, 16, 0x1a5f, MSGNO(MsgLoho41)},
-    {0, 18, 0x1a5f, MSGNO(MsgLoho42)},
-    {0, 17, 0x1a5f, MSGNO(MsgLoho43)},
-    {0x8d15, 12, 0x1a5f, MSGNO(MsgLoho44)},
-    {0x8d15, 13, 0x1a5f, MSGNO(MsgLoho45)},
-    {0x8d15, 14, 0x1a5f, MSGNO(MsgLoho46)},
-    {0x8d15, 15, 0x1a5f, MSGNO(MsgLoho47)},
-    {0x8d15, 16, 0x1a5f, MSGNO(MsgLoho48)},
-    {0x8d15, 18, 0x1a5f, MSGNO(MsgLoho49)},
-    {0x8d15, 17, 0x1a5f, MSGNO(MsgLoho50)},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgLoho01)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgLoho02)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgLoho03)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgLoho04)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgLoho09)},
-    {0, 13, CONDITION_ALWAYS, MSGNO(MsgLoho10)},
-    {0, 14, CONDITION_ALWAYS, MSGNO(MsgLoho11)},
-    {0, 15, CONDITION_ALWAYS, MSGNO(MsgLoho12)},
-    {0, 16, CONDITION_ALWAYS, MSGNO(MsgLoho21)},
-    {0, 18, CONDITION_ALWAYS, MSGNO(MsgLoho22)},
-    {0, 17, CONDITION_ALWAYS, EVENT(Func_0200012c)},
-    {0, 20, CONDITION_ALWAYS, EVENT(Func_02000178)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgLoho05)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgLoho06)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgLoho07)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgLoho08)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgLoho13)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgLoho14)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgLoho15)},
-    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgLoho16)},
-    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgLoho24)},
-    {0x8d15, 18, CONDITION_ALWAYS, MSGNO(MsgLoho25)},
-    {0x8d15, 17, CONDITION_ALWAYS, MSGNO(MsgLoho26)},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_TALK, 8, 0x1a5f, MSGNO(MsgLoho29)},
+    {TRIGGER_TALK, 9, 0x1a5f, MSGNO(MsgLoho30)},
+    {TRIGGER_TALK, 10, 0x1a5f, MSGNO(MsgLoho31)},
+    {TRIGGER_TALK, 11, 0x1a5f, EVENT(Func_02000bf4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x1a5f, MSGNO(MsgLoho33)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x1a5f, MSGNO(MsgLoho34)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x1a5f, MSGNO(MsgLoho35)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x1a5f, EVENT(Func_02000c24)},
+    {TRIGGER_TALK, 12, 0x1a5f, MSGNO(MsgLoho37)},
+    {TRIGGER_TALK, 13, 0x1a5f, MSGNO(MsgLoho38)},
+    {TRIGGER_TALK, 14, 0x1a5f, MSGNO(MsgLoho39)},
+    {TRIGGER_TALK, 15, 0x1a5f, MSGNO(MsgLoho40)},
+    {TRIGGER_TALK, 16, 0x1a5f, MSGNO(MsgLoho41)},
+    {TRIGGER_TALK, 18, 0x1a5f, MSGNO(MsgLoho42)},
+    {TRIGGER_TALK, 17, 0x1a5f, MSGNO(MsgLoho43)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x1a5f, MSGNO(MsgLoho44)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x1a5f, MSGNO(MsgLoho45)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x1a5f, MSGNO(MsgLoho46)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x1a5f, MSGNO(MsgLoho47)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x1a5f, MSGNO(MsgLoho48)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x1a5f, MSGNO(MsgLoho49)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x1a5f, MSGNO(MsgLoho50)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgLoho01)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgLoho02)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgLoho03)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgLoho04)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgLoho09)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgLoho10)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgLoho11)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLoho12)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgLoho21)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgLoho22)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_0200012c)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_02000178)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgLoho05)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgLoho06)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgLoho07)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgLoho08)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgLoho13)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgLoho14)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgLoho15)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgLoho16)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgLoho24)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgLoho25)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgLoho26)},
     {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLoho58))},
     {0x1cc14, 20, CONDITION_ALWAYS, EVENT(Func_02000198)},
-    {0, 19, CONDITION_ALWAYS, EVENT(Func_02000038)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_02000038)},
     {0x50008805, 101, 0x300, EVENT(Func_02000c54)},
     {0x50008805, 102, 0x301, EVENT(Func_02000c64)},
     {0x50008805, 103, 0x302, EVENT(Func_02000c74)},
-    {0x8f15, 22, 0x201, EVENT(Func_02000c84)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 22, 0x201, EVENT(Func_02000c84)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_02001dd4[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {1, 8, CONDITION_ALWAYS, 8},
-    {1, 9, CONDITION_ALWAYS, 9},
-    {1, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {0xc402, 20, 0x320, EVENT(Func_02000e24)},
     {0x8402, 22, 0x320, EVENT(Func_02000e0c)},
-    {2, 21, 0x1320, EVENT(Func_02000e3c)},
-    {2, 23, 0x1320, EVENT(Func_02000e3c)},
-    {0, 8, CONDITION_ALWAYS, EVENT(Func_02000d4c)},
-    {0x8d15, 8, 0xa5f, MSGNO(MsgLoho18)},
-    {0x8d15, 8, 0x1a5f, MSGNO(MsgLoho52)},
-    {0, 9, 0x1320, EVENT(Func_02000d40)},
-    {0, 10, CONDITION_ALWAYS, EVENT(Func_02000da4)},
-    {0x8d15, 10, 0xa5f, MSGNO(MsgLoho20)},
-    {0x8d15, 10, 0x1a5f, MSGNO(MsgLoho54)},
-    {3, 20, CONDITION_ALWAYS, EVENT(Func_02000d40)},
-    {3, 30, CONDITION_ALWAYS, EVENT(Func_02000d00)},
+    {TRIGGER_STEP, 21, 0x1320, EVENT(Func_02000e3c)},
+    {TRIGGER_STEP, 23, 0x1320, EVENT(Func_02000e3c)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000d4c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa5f, MSGNO(MsgLoho18)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x1a5f, MSGNO(MsgLoho52)},
+    {TRIGGER_TALK, 9, 0x1320, EVENT(Func_02000d40)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02000da4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0xa5f, MSGNO(MsgLoho20)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x1a5f, MSGNO(MsgLoho54)},
+    {TRIGGER_EXAMINE, 20, CONDITION_ALWAYS, EVENT(Func_02000d40)},
+    {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(Func_02000d00)},
     {TRIGGERS_END},
 };
 

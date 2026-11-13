@@ -50,9 +50,9 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 Animation_SetIndexAndInitializeObjects:
 	overlay_veneer Animation_SetIndexAndInitializeObjectsFar
-	.global Func_02001ba4
+	.global Actor_SetSpritePriorityDirect
 	.thumb_func
-Func_02001ba4:
+Actor_SetSpritePriorityDirect:
 	overlay_veneer Actor_SetSpritePriorityDirectFar
 	.global FieldMessage_Show
 	.thumb_func
@@ -62,21 +62,21 @@ FieldMessage_Show:
 	.thumb_func
 Func_02001bb4:
 	overlay_veneer Func_080ad208
-	.global Func_02001bbc
+	.global Party_FindOwnerWithAction
 	.thumb_func
-Func_02001bbc:
+Party_FindOwnerWithAction:
 	overlay_veneer Party_FindOwnerWithActionFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02001bcc
+	.global Event_Start
 	.thumb_func
-Func_02001bcc:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02001bd4
+	.global Event_End
 	.thumb_func
-Func_02001bd4:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -198,9 +198,9 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_02001cc4:
 	overlay_veneer Func_080c8240
-	.global Func_02001ccc
+	.global Event_SetDestination
 	.thumb_func
-Func_02001ccc:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Import_EventSetExitRequest
 	.thumb_func
@@ -218,9 +218,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Actor_SetWideSprite:
 	overlay_veneer Actor_SetWideSpriteFar
-	.global Func_02001cf4
+	.global Actor_ReturnHome
 	.thumb_func
-Func_02001cf4:
+Actor_ReturnHome:
 	overlay_veneer Actor_ReturnHomeFar
 	.global Func_02001cfc
 	.thumb_func

@@ -12,12 +12,12 @@
 #include "event_inline.h"
 
 void Func_020056b4(void);
-void Func_0200564c(void);
+void Map_CenterOnFollowedPoint(void);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Func_020056bc(void);
+void Event_End(void);
 
 void Func_02002394(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
@@ -27,7 +27,7 @@ void Func_02002394(void) {
   Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Func_0200564c();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = 0x820000;
   actor->gravity = 0x8000;
@@ -71,7 +71,7 @@ void Func_02002394(void) {
   System_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
-  Func_020056bc();
+  Event_End();
 }
 
 #include "text/msg_ids.h"
@@ -89,7 +89,7 @@ extern u32 gData_02005ba4[];
 extern u32 gData_02005be8[];
 extern s32 gData_02005c74[];
 extern s32 gData_02005ca0[];
-void Func_02005724(s32 id, s32 target);
+void Actor_MoveToObject(s32 id, s32 target);
 void Func_020057b4(void);
 void Func_02000f6c(void);
 s32 Func_02004d48(s32 a, s32 b);
@@ -114,10 +114,10 @@ void Func_0200253c(void) {
   FieldEvent_Wait(40);
   FieldEvent_SetMessageId(MsgGabombaFocusEnergies);
   Event_ShowMessage(24, 0);
-  Func_02005724(23, gMainRoutineWork.currentOwner);
-  Func_02005724(5, gMainRoutineWork.currentOwner);
-  Func_02005724(6, gMainRoutineWork.currentOwner);
-  Func_02005724(7, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(23, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
   System_Wait(1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_SetSpeed(5, 0xcccc, 0x6666);
@@ -268,7 +268,7 @@ void Func_02005644(struct Actor *object);
 
 extern u32 gData_02005c40[];
 
-void Func_0200581c(void);
+void ObjectTable_Snapshot(void);
 
 void Func_02002a64(void) {
   s32 speed;
@@ -408,7 +408,7 @@ void Func_02002a64(void) {
   Event_SetFlag(0x8f6);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_0200581c();
+  ObjectTable_Snapshot();
   FieldEvent_SetExitRequest(13);
 }
 
@@ -445,7 +445,7 @@ void Func_02002f70(void) {
   slow = 0x3000;
   Actor_SetPositionAndFacing(24, PIXELS(472), PIXELS(200), slow);
   System_Wait(1);
-  Func_0200564c();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x202;
   Event_StartScreenTransition();
@@ -517,7 +517,7 @@ void Func_02002f70(void) {
 
 void Func_02003338(void) {
   Func_0200533c();
-  Func_02005724(23, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(23, gMainRoutineWork.currentOwner);
   Actor_SetSpriteColor(Actor_Get(23), 15);
   System_Wait(10);
   FieldEvent_SetMessageId(MsgGabombaChannelTiming);
@@ -545,7 +545,7 @@ void Func_02003634(void);
 void Func_02003868(void);
 
 /// Prepares the current room.
-s32 Func_02003398(void) {
+s32 Scene_Initialize(void) {
   s16 scene;
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 521;
@@ -577,7 +577,7 @@ s32 Func_02003398(void) {
   return 0;
 }
 
-s32 Func_02003494(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room7 &&
       gMainRoutineWork.entrance == 1 && !Event_GetFlag(0x109)) {
     Event_ClearFlag(0x8cd);
@@ -701,9 +701,9 @@ L_0200b6f2:
   Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(FIELD_AT(v_r5, s32, 8), -1, FIELD_AT(v_r5, s32, 16), 0);
-  Func_0200564c();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
-  Func_020056bc();
+  Event_End();
 L_0200b762:
   t42 = Event_GetFlag(0x8f6);
   if (t42 == 0)
@@ -759,7 +759,7 @@ L_0200b7e4:
   Func_02003338();
 L_0200b84a:
   Event_ClearFlag(0x12f);
-  Func_020056bc();
+  Event_End();
 L_0200b856:
 }
 
@@ -1433,7 +1433,7 @@ void Func_020043ec(s32 mode) {
 void Func_020044b4(s32 mode) { Actor_SetModeById(gSceneState.firstId, mode); }
 
 void Func_020056b4(void);
-void Func_020056bc(void);
+void Event_End(void);
 
 void Func_020044d0(s32 value) {
   struct SceneState *state = &gSceneState;
@@ -1470,7 +1470,7 @@ void Func_02004530(void) {
         i--;
       } while (i >= 0);
       Func_020044d0(0);
-      Func_020056bc();
+      Event_End();
       state->statueOffset = 0;
     }
     state->redrawA = 1;
@@ -1507,7 +1507,7 @@ void Func_02004620(void) {
         i--;
       } while (i >= 0);
       Func_020044d0(1);
-      Func_020056bc();
+      Event_End();
       state->statueOffset = 0;
     }
     state->redrawB = 1;
@@ -1606,7 +1606,7 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
 
 extern const u8 gData_02006f38[], gData_02006ec0[];
 s32 Math_Cosine(s32 angle);
-void Func_02005634(struct Actor *object, const u8 *script);
+void Actor_StartScript(struct Actor *object, const u8 *script);
 
 void Func_02004938(struct Actor *ball, s32 step) {
   s16 *colp = (s16 *)((u8 *)ball + 100);
@@ -1634,7 +1634,7 @@ void Func_02004938(struct Actor *ball, s32 step) {
     heading = row = col = 0;
     if (((u8 *)ball)[99] == 1) {
       Sound_Play(204);
-      Func_02005634(ball, gData_02006f38);
+      Actor_StartScript(ball, gData_02006f38);
       ((u8 *)ball)[99] = goal;
     }
     goto done;
@@ -1746,7 +1746,7 @@ void Func_02004938(struct Actor *ball, s32 step) {
         ((u8 *)ball)[99] = 7;
       } else {
         Sound_Play(204);
-        Func_02005634(ball, gData_02006f38);
+        Actor_StartScript(ball, gData_02006f38);
         ((u8 *)ball)[99] = 2;
       }
     }
@@ -1758,7 +1758,7 @@ void Func_02004938(struct Actor *ball, s32 step) {
     heading = row = col = 0;
     if (((u8 *)ball)[99] == 1) {
       Sound_Play(132);
-      Func_02005634(ball, gData_02006ec0);
+      Actor_StartScript(ball, gData_02006ec0);
       ((u8 *)ball)[99] = 2;
     }
     break;

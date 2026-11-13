@@ -50,8 +50,8 @@ void Func_02001104(s32 id, s32 a, s32 frame);
 void Func_02004418(const u16 *table);
 void Func_020045ac(const void *data, s32 a);
 void Func_020057c8(struct Actor *object, s32 a);
-void Func_020057d0(struct Actor *object, const void *script);
-void Func_02005918(s32 id, s32 a, s32 b);
+void Actor_StartScript(struct Actor *object, const void *script);
+void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
 s32 Func_020059b8(s32 id);
 s32 Func_020059c0(void);
 void Func_020059c8(void);
@@ -65,7 +65,7 @@ struct MainRoutineWork254 {
 
 void Func_020006b4(s32 id);
 void Func_020007b4(void);
-void Func_02005998(s32 a, s32 b);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Func_02005a50(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_02005a60(s32 a, s32 b, s32 c);
 

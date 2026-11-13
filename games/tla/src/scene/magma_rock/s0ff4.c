@@ -163,7 +163,7 @@ void Func_02000c08(u16 index);
 void Func_02000d40(void);
 void Func_02003a54(struct Actor *object, s32 a);
 void Func_02003a6c(struct Actor *object);
-void Func_02003aec(void);
+void Event_Start(void);
 s32 Func_02003af4(void);
 void Func_02003b6c(void);
 
@@ -188,7 +188,7 @@ s32 Func_020011e4(struct Actor *source) {
   object->motionFlags = 0;
   Func_02003a54(object, 1);
   Actor_SetSingleChildFlags(object, 0);
-  Func_02003aec();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   position[0] = object->x;
   position[1] = object->y;
@@ -286,7 +286,7 @@ void Func_02003820(s32 x, s32 y, s32 z, s32 kind);
 void Func_020038dc(void);
 void Func_02003998(void);
 void Func_02003a54(struct Actor *object, s32 a);
-void Func_02003aec(void);
+void Event_Start(void);
 /* VIEW(target): routine Func_02003af4 as void Func_02003af4(void); s0ff4 has s32 Func_02003af4(void). */
 extern void Func_02003af4__target(void) __asm__("Func_02003af4");
 
@@ -294,7 +294,7 @@ void Func_02001444(void) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
   struct Actor *object;
 
-  Func_02003aec();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(10);
   object = work->target;
@@ -311,7 +311,7 @@ void Func_0200148c(void) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
   struct Actor *object;
 
-  Func_02003aec();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object = work->target;
   object->timer = 0x400;
@@ -649,7 +649,7 @@ void Func_02001a38(s32 mode, s32 cue) {
   Event_SetFlag(0x201);
 }
 
-void Func_02003aec(void);
+void Event_Start(void);
 
 void Func_02001a8c(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
@@ -686,7 +686,7 @@ void Func_02001b44(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->renderMode != 2) {
-    Func_02003aec();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_Get(party->currentOwner)->motionFlags = 0;
     Actor_WalkTo(party->currentOwner, 264, 440);
@@ -734,7 +734,7 @@ struct MagmaRockEffectOptions {
 };
 
 struct Actor *Actor_GetById(u32 objectId);
-void Func_02003aec(void);
+void Event_Start(void);
 void Event_ResolvePendingActions(s32 value);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -761,7 +761,7 @@ void Func_02001c00(void) {
   s32 i;
   u32 phase;
 
-  Func_02003aec();
+  Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_SetBit(0x260);
   Sound_Play(133);
@@ -1033,7 +1033,7 @@ extern const u8 gData_0200487c[];
 extern const u8 gData_02004930[];
 extern const u8 gData_02004a5c[];
 
-const struct Trigger *Func_020021e8(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
     if (gMainRoutineWork.entrance <= 3)
       return (const struct Trigger *)gData_02004720;

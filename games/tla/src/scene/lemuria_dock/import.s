@@ -26,13 +26,13 @@ Map_CopyCellPictureIndicesRect:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_0200046c
+	.global Event_Start
 	.thumb_func
-Func_0200046c:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02000474
+	.global Event_End
 	.thumb_func
-Func_02000474:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func

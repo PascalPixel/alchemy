@@ -10,23 +10,23 @@
 #include "event_inline.h"
 #include "cell_target.h"
 
-void Func_02001be8(void);
-void Func_02001b90(void);
+void Event_Start(void);
+void Map_CenterOnFollowedPoint(void);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02001018(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Func_02001bf0(void);
+void Event_End(void);
 
 void Func_020017e0(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   u32 i;
   struct EffectOptions options;
 
-  Func_02001be8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Func_02001b90();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = 0x820000;
   actor->gravity = 0x8000;
@@ -69,7 +69,7 @@ void Func_020017e0(void) {
   actor->bounce = 0x4000;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Func_02001bf0();
+  Event_End();
 }
 
 extern struct CellTarget Data_02002764;
@@ -129,7 +129,7 @@ void Func_02001a28(s32 x, s32 z, s32 effect) {
     marker = work->marker;
     marker->x = leader->x;
     marker->z = leader->z;
-    Func_02001b90();
+    Map_CenterOnFollowedPoint();
     Func_020017e0();
     ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
         ->screenEffect = effect;
@@ -236,30 +236,30 @@ struct Trigger gSceneEvents[] = {
     {49, 1, CONDITION_ALWAYS, 1},
     {33, 2, CONDITION_ALWAYS, 2},
     {49, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {33, 5, CONDITION_ALWAYS, 5},
     {49, 6, CONDITION_ALWAYS, 6},
     {33, 7, CONDITION_ALWAYS, 7},
     {49, 8, CONDITION_ALWAYS, 8},
-    {1, 9, CONDITION_ALWAYS, 9},
-    {1, 10, CONDITION_ALWAYS, 10},
-    {1, 11, CONDITION_ALWAYS, 11},
-    {1, 12, CONDITION_ALWAYS, 12},
-    {2, 30, CONDITION_ALWAYS, EVENT(Func_02000090)},
-    {2, 31, CONDITION_ALWAYS, EVENT(Func_02000090)},
-    {2, 50, CONDITION_ALWAYS, EVENT(Func_020000e8)},
-    {2, 51, CONDITION_ALWAYS, EVENT(Func_020000e8)},
-    {2, 52, CONDITION_ALWAYS, EVENT(Func_020000e8)},
-    {2, 53, CONDITION_ALWAYS, EVENT(Func_020000e8)},
-    {6, 200, CONDITION_ALWAYS, EVENT(Func_02000538)},
-    {2, 33, CONDITION_ALWAYS, EVENT(Func_0200018c)},
-    {2, 34, CONDITION_ALWAYS, EVENT(Func_02000228)},
-    {2, 35, CONDITION_ALWAYS, EVENT(Func_0200018c)},
-    {2, 43, CONDITION_ALWAYS, EVENT(Func_020001bc)},
-    {2, 44, CONDITION_ALWAYS, EVENT(Func_020001bc)},
-    {2, 45, CONDITION_ALWAYS, EVENT(Func_020001bc)},
-    {0x9985, 0, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {0x20009985, 0, CONDITION_ALWAYS, EVENT(Func_0200007c)},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_02000090)},
+    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Func_02000090)},
+    {TRIGGER_STEP, 50, CONDITION_ALWAYS, EVENT(Func_020000e8)},
+    {TRIGGER_STEP, 51, CONDITION_ALWAYS, EVENT(Func_020000e8)},
+    {TRIGGER_STEP, 52, CONDITION_ALWAYS, EVENT(Func_020000e8)},
+    {TRIGGER_STEP, 53, CONDITION_ALWAYS, EVENT(Func_020000e8)},
+    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Func_02000538)},
+    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(Func_0200018c)},
+    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(Func_02000228)},
+    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(Func_0200018c)},
+    {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(Func_020001bc)},
+    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(Func_020001bc)},
+    {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(Func_020001bc)},
+    {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, EVENT(Func_0200007c)},
     {TRIGGERS_END},
 };
 

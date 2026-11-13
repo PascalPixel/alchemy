@@ -30,17 +30,17 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_020021f8
+	.global Resource_DecodeType01
 	.thumb_func
-Func_020021f8:
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global Resource_FindFreeEntry
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
-	.global Func_02002208
+	.global Window_LoadGraphics
 	.thumb_func
-Func_02002208:
+Window_LoadGraphics:
 	overlay_veneer Window_LoadGraphicsFar
 	.global Resource_GetTableEntry
 	.thumb_func
@@ -50,13 +50,13 @@ Resource_GetTableEntry:
 	.thumb_func
 Fade_ToBlack:
 	overlay_veneer Fade_ToBlackFar
-	.global Func_02002220
+	.global Serial_Initialize
 	.thumb_func
-Func_02002220:
+Serial_Initialize:
 	overlay_veneer Serial_InitializeFar
-	.global Func_02002228
+	.global Serial_RemoveIrqHandlers
 	.thumb_func
-Func_02002228:
+Serial_RemoveIrqHandlers:
 	overlay_veneer Serial_RemoveIrqHandlersFar
 	.global Serial_StartReceive
 	.thumb_func
@@ -164,13 +164,13 @@ Func_020022f0:
 	.thumb_func
 Func_020022f8:
 	overlay_veneer Func_080382f8
-	.global Func_02002300
+	.global Resource_CopyFixedBlockB
 	.thumb_func
-Func_02002300:
+Resource_CopyFixedBlockB:
 	overlay_veneer Resource_CopyFixedBlockBFar
-	.global Func_02002308
+	.global Resource_CopyFixedBlockA
 	.thumb_func
-Func_02002308:
+Resource_CopyFixedBlockA:
 	overlay_veneer Resource_CopyFixedBlockAFar
 	.global Func_0803f9c0
 	.thumb_func
@@ -180,9 +180,9 @@ Func_0803f9c0:
 	.thumb_func
 Menu_RunConfirmSelection:
 	overlay_veneer Menu_RunConfirmSelectionFar
-	.global Func_02002320
+	.global Graphics_ExpandVramTilesByColorTable
 	.thumb_func
-Func_02002320:
+Graphics_ExpandVramTilesByColorTable:
 	overlay_veneer Graphics_ExpandVramTilesByColorTableFar
 	.global Func_02002328
 	.thumb_func
@@ -234,9 +234,9 @@ Djinn_AddToLeastLoadedOwner:
 	.thumb_func
 Unit_UpdateClass:
 	overlay_veneer Unit_UpdateClassFar
-	.global Func_02002388
+	.global BuildStamp_GetTime
 	.thumb_func
-Func_02002388:
+BuildStamp_GetTime:
 	overlay_veneer BuildStamp_GetTimeFar
 	.global Func_02002390
 	.thumb_func
@@ -258,9 +258,9 @@ Event_Wait:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Func_020023b8
+	.global Event_SetDestination
 	.thumb_func
-Func_020023b8:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Event_StartScreenTransition
 	.thumb_func

@@ -74,9 +74,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Func_02005a24:
 	overlay_veneer Actor_SetMode
-	.global Func_02005a2c
+	.global Actor_StartScript
 	.thumb_func
-Func_02005a2c:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -90,9 +90,9 @@ Func_02005a3c:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Func_02005a4c
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_02005a4c:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -130,13 +130,13 @@ Func_02005a8c:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02005a9c
+	.global Event_Start
 	.thumb_func
-Func_02005a9c:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02005aa4
+	.global Event_End
 	.thumb_func
-Func_02005aa4:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_PrepareObjectAndApplyValue
 	.thumb_func
@@ -194,9 +194,9 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_SetHorizontalPositionAndAngleWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionAndAngleWithTerrainFar
-	.global Func_02005b1c
+	.global Actor_MoveToObject
 	.thumb_func
-Func_02005b1c:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -318,25 +318,25 @@ Func_02005c04:
 	.thumb_func
 Field_DispatchTypeHandler:
 	overlay_veneer Field_DispatchTypeHandlerFar
-	.global Func_02005c14
+	.global BattleEffect_LoadActionEffectResources
 	.thumb_func
-Func_02005c14:
+BattleEffect_LoadActionEffectResources:
 	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
 	.global Func_02005c1c
 	.thumb_func
 Func_02005c1c:
 	overlay_veneer BattleEffect_SetupObjectPairFar
-	.global Func_02005c24
+	.global BattleEffect_StopMainActor
 	.thumb_func
-Func_02005c24:
+BattleEffect_StopMainActor:
 	overlay_veneer BattleEffect_StopMainActorFar
-	.global Func_02005c2c
+	.global BattleEffect_CleanupSceneObjects
 	.thumb_func
-Func_02005c2c:
+BattleEffect_CleanupSceneObjects:
 	overlay_veneer BattleEffect_CleanupSceneObjectsFar
-	.global Func_02005c34
+	.global EventObject_Initialize
 	.thumb_func
-Func_02005c34:
+EventObject_Initialize:
 	overlay_veneer EventObject_InitializeFar
 	.global Event_ResolvePendingActions
 	.thumb_func

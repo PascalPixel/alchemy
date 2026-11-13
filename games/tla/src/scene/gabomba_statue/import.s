@@ -114,9 +114,9 @@ Func_02005624:
 	.thumb_func
 Actor_SetAnimationSpeed:
 	overlay_veneer Actor_SetAnimationSpeedFar
-	.global Func_02005634
+	.global Actor_StartScript
 	.thumb_func
-Func_02005634:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -126,9 +126,9 @@ Import_ActorCreate:
 	.thumb_func
 Func_02005644:
 	overlay_veneer Actor_Destroy
-	.global Func_0200564c
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_0200564c:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Func_02005654
 	.thumb_func
@@ -182,9 +182,9 @@ Event_Wait:
 	.thumb_func
 Func_020056b4:
 	overlay_veneer Event_StartFar
-	.global Func_020056bc
+	.global Event_End
 	.thumb_func
-Func_020056bc:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -234,9 +234,9 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_SetHorizontalPositionAndAngleWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionAndAngleWithTerrainFar
-	.global Func_02005724
+	.global Actor_MoveToObject
 	.thumb_func
-Func_02005724:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -358,9 +358,9 @@ Event_ResolvePendingActions:
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global Func_0200581c
+	.global ObjectTable_Snapshot
 	.thumb_func
-Func_0200581c:
+ObjectTable_Snapshot:
 	overlay_veneer ObjectTable_SnapshotFar
 	.global Func_02005824
 	.thumb_func

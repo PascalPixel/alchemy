@@ -8,8 +8,8 @@
 
 void Event_WaitTransitionFrames(void);
 
-void Func_020051ac(void);
-void Func_020051b4(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02005354(s32 a, s32 b, s32 c);
 void Func_0200536c(const void *data);
 void Func_02005374(const void *data);

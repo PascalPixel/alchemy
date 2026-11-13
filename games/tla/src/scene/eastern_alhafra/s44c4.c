@@ -22,7 +22,7 @@ extern s8 gData_02004cb0[];
 extern s32 gData_02004cc8[];
 
 void Func_02004a0c(struct Actor *object, s32 mode);
-void Func_02004c0c(void);
+void Event_NoOp(void);
 void Func_02004774(struct Actor *object);
 
 /// The heap slots read as words: the map slot comes through u32, not its
@@ -117,7 +117,7 @@ void Func_020044c4(struct PushTarget target) {
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
   Map_FillCellRectByte2(2, cell[0], cell[2], width, height, 0);
-  Func_02004c0c();
+  Event_NoOp();
 }
 
 extern u16 gData_02004ca4[];

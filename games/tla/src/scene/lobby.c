@@ -17,10 +17,10 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 #include "io_reg.h"
 #include "event_inline.h"
 
-void Func_0200191c(void);
-void Func_02001914(void);
-void Func_02001a14(void);
-void Func_02001a1c(void);
+void Serial_RemoveIrqHandlers(void);
+void Serial_Initialize(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02001abc(s32 value);
 
 void Func_02000044(void) {
@@ -28,8 +28,8 @@ void Func_02000044(void) {
   u32 saved = *ime;
 
   *ime = (u16)(u32)ime;
-  Func_0200191c();
-  Func_02001914();
+  Serial_RemoveIrqHandlers();
+  Serial_Initialize();
   *ime = saved;
 }
 
@@ -184,13 +184,13 @@ s32 LinkLobby_PromptToParticipate(void) {
   if (set != 0) {
     return set;
   }
-  Func_02001a14();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgIfYouWantToParticipate);
   FieldMessage_ShowAtActor(8, 0);
   wait(5);
   GameFlag_SetBit(0x200);
-  Func_02001a1c();
+  Event_End();
 }
 
 s32 Func_02000344(void) {
@@ -199,19 +199,19 @@ s32 Func_02000344(void) {
   LinkLobby_WriteSlotValue(4);
   GameFlag_ClearBit(0x200);
   GameFlag_ClearBit(0x203);
-  Func_02001a14();
+  Event_Start();
   Event_ResolvePendingActions(0);
   work->raisedTrigger = 0;
   Event_SetMessageId((s32)MsgTheLinkWas);
   FieldMessage_ShowAtActor(8, 0);
   GameFlag_ClearBit(0x205);
-  Func_02001a1c();
+  Event_End();
 }
 
 #include "edition.h"
 #include "owner_state.h"
 
-s32 Func_0200193c(void);
+s32 Serial_GetActiveTransfers(void);
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
@@ -245,7 +245,7 @@ s32 Func_0200039c(void) {
     tries = 0;
     if (transfer == -1)
       break;
-    while (Func_0200193c() != 0) {
+    while (Serial_GetActiveTransfers() != 0) {
       if (gSerialReceivedSize > size) {
         result = -1;
         goto done;
@@ -290,7 +290,7 @@ s32 Func_0200039c(void) {
     tries = 0;
     if (transfer == -1)
       break;
-    while (Func_0200193c() != 0) {
+    while (Serial_GetActiveTransfers() != 0) {
       s32 limit = 0x154;
 
       if (gSerialReceivedSize > limit) {
@@ -413,7 +413,7 @@ s32 Func_02000578(void) {
         }
       }
     testMember:
-      if (Func_0200193c() != 0)
+      if (Serial_GetActiveTransfers() != 0)
         goto waitMember;
       wait(2);
       i++;
@@ -436,7 +436,7 @@ wait:
     }
   }
 test:
-  if (Func_0200193c() != 0)
+  if (Serial_GetActiveTransfers() != 0)
     goto wait;
   wait(2);
   i++;
@@ -487,7 +487,7 @@ next:
       }
     }
   testOffers:
-    if (Func_0200193c() != 0)
+    if (Serial_GetActiveTransfers() != 0)
       goto waitOffers;
     wait(1);
     wait(2);
@@ -580,7 +580,7 @@ struct Window;
 void Func_02001944(void *callback, s32 mask);
 void Func_0200198c(s32 layer);
 void Func_02001994(s32 layer);
-void Func_02001a8c(s32 a, s32 b);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 struct Window *Message_OpenWindow(const u8 *message, s32 x, s32 y, s32 flags);
 
 extern char SceneId_Ov6b5;
@@ -605,14 +605,14 @@ s32 Func_02000864(void) {
   work = Ram_HeapSlots->eventWork;
   cnt = 0;
   if (Event_GetFlag(0x173)) {
-    Func_02001a14();
+    Event_Start();
     Event_ResolvePendingActions(0);
   } else {
     if (!Event_GetFlag(0x200))
       return;
     if (Event_GetFlag(0x205))
       return;
-    Func_02001a14();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetFlag(0x203);
     LinkLobby_WriteSlotValue(2);
@@ -686,7 +686,7 @@ s32 Func_02000864(void) {
         Event_ClearFlag(0x203);
         Event_ClearFlag(0x200);
         work->raisedTrigger = 2;
-        Func_02001a1c();
+        Event_End();
         return;
       }
       Actor_SetSpeedParameters(4, 0x8000, 0x4000);
@@ -705,7 +705,7 @@ s32 Func_02000864(void) {
       Party_SetFields1f2And1f4(scene, 11);
     }
     gMainRoutineWork.battleRule24b = 4;
-    Func_02001a8c(1, 1);
+    Field_RequestBattleFromEncounterTable(1, 1);
     table = (u16 *)gSerialTransfer.payload;
     table[0] = 0x45;
     table[1] = 0x58;
@@ -730,7 +730,7 @@ s32 Func_02000864(void) {
     }
     HeapSlot_Release(216);
   }
-  Func_02001a1c();
+  Event_End();
 }
 
 /// The lobby clerk: offers the link battle, or reports on the one waiting.
@@ -740,7 +740,7 @@ s32 Func_02000bb0(void) {
   s32 line;
 
   msg = (s32)MsgPleaseSpeakTo;
-  Func_02001a14();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
   if (Func_0200006c(0) == 0)
@@ -819,11 +819,11 @@ s32 Func_02000bb0(void) {
       }
     }
   }
-  Func_02001a1c();
+  Event_End();
 }
 
 void MessageArgument_ClearAll(void);
-void Func_020019e4(s32 value, s32 digits);
+void MessageArgument_Push(s32 value, s32 digits);
 
 // Tells the leader's win count, total or in a row by the way the lead faces.
 s32 Func_02000da0(s32 actor) {
@@ -831,7 +831,7 @@ s32 Func_02000da0(s32 actor) {
   u16 *count;
   s32 base;
 
-  Func_02001a14();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
   if ((facing - 0xa001) <= 0x3ffe) {
@@ -839,7 +839,7 @@ s32 Func_02000da0(s32 actor) {
     count = &gMainRoutineWork.linkTallies[4];
     if (*count != 0) {
       MessageArgument_ClearAll();
-      Func_020019e4(*count, 5);
+      MessageArgument_Push(*count, 5);
       Event_SetMessageId(base + 1);
       Event_ShowMessageAndWait(actor, 0);
     } else {
@@ -851,7 +851,7 @@ s32 Func_02000da0(s32 actor) {
     count = &gMainRoutineWork.linkTallies[7];
     if (*count != 0) {
       MessageArgument_ClearAll();
-      Func_020019e4(*count, 5);
+      MessageArgument_Push(*count, 5);
       Event_SetMessageId(base + 1);
       Event_ShowMessageAndWait(actor, 0);
     } else {
@@ -873,7 +873,7 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
   s32 choice;
   s32 shown;
 
-  Func_02001a14();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(actorId, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgChooseYourParameters);
@@ -929,14 +929,14 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
     }
   }
   wait(10);
-  Func_02001a1c();
+  Event_End();
 }
 
 void Func_02000f50(s32 value) {
-  Func_02001a14();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Func_02001abc(value);
-  Func_02001a1c();
+  Event_End();
 }
 
 /// Whether owner is one of the first three active owners, or the first four
@@ -980,9 +980,9 @@ extern u8 MsgComeBackWhen[];
 extern u16 gData_02001b02[];
 extern s16 gData_02003860;
 
-void Func_02001a14(void);
-void Func_02001a1c(void);
-s32 Func_02001adc(s32 song);
+void Event_Start(void);
+void Event_End(void);
+s32 SoundFlag_Test(s32 song);
 s32 Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void WindowSprite_PrepareForRedraw(s32 window);
 void Text_DrawNumber(s32 value, s32 digits, s32 window, s32 x, s32 y);
@@ -995,7 +995,7 @@ void Func_02000fbc(s32 actor) {
   s32 step;
   s32 all;
 
-  Func_02001a14();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgYouHaveA);
@@ -1027,7 +1027,7 @@ void Func_02000fbc(s32 actor) {
           song = 0;
         if (all != 0 || gMainRoutineWork.unk22d[2] != 0 || gData_02003860 != 0)
           break;
-        if (Func_02001adc(gData_02001b02[song]) != 0)
+        if (SoundFlag_Test(gData_02001b02[song]) != 0)
           goto keys;
       }
     keys:
@@ -1055,21 +1055,21 @@ void Func_02000fbc(s32 actor) {
   } while (0);
   Event_ShowMessageAndWait(actor, 0);
   wait(10);
-  Func_02001a1c();
+  Event_End();
 }
 
 // ---- games/tla/src/scene/lobby/talk.c ----
 #include "scene_ids.h"
 
 s32 Func_02000f6c(s32 id);
-void Func_0200191c(void);
-void Func_0200197c(void);
+void Serial_RemoveIrqHandlers(void);
+void Map_CenterOnFollowedPoint(void);
 void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
                                     s32 width, s32 height);
-void Func_020019e4(s32 value, s32 digits);
+void MessageArgument_Push(s32 value, s32 digits);
 void Func_020019ec(void);
-void Func_02001a14(void);
-void Func_02001a1c(void);
+void Event_Start(void);
+void Event_End(void);
 void Event_SetMessageId(s32 message);
 void Event_ShowMessageAndWait(s32 actor, s32 flags);
 /* VIEW(talk): routine Func_080d47b4 as void Func_080d47b4(s32 actor, s32 animation, s32 flags); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/src/scene/lobby.c:1069: conflicting types for `Func_080d47b4'. */
@@ -1087,7 +1087,7 @@ s32 Func_02001130(s32 actor) {
   s32 lead = Func_02000f6c(4);
   s32 own = Func_02000f6c(actor);
 
-  Func_02001a14();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
   if (GameFlag_Test(0x304)) {
@@ -1116,13 +1116,13 @@ s32 Func_02001130(s32 actor) {
     Func_080d47b4__talk(5, 263, 0);
     Event_Wait(10);
   }
-  Func_02001a1c();
+  Event_End();
 }
 
 /// Step trigger 1, the way out: stops the link, loads the normal reverb code
 /// and goes back to the File Screen (its entrance FILE_SCREEN_FROM_SANCTUM).
 s32 LinkLobby_LeaveArena(void) {
-  Func_0200191c();
+  Serial_RemoveIrqHandlers();
   Sound_LoadPresetParameters(2);
   /* FAKEMATCH(dead): the return in a once-only block, which loads the scene
    * number before the 1; as the plain return, the 1 comes first, 2 of 8
@@ -1139,7 +1139,7 @@ s32 Func_0200122c(s32 actor) {
     Func_02000fbc(14);
     return;
   }
-  Func_02001a14();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x206)) {
     switch (actor) {
@@ -1178,13 +1178,13 @@ s32 Func_0200122c(s32 actor) {
     Event_Wait(5);
     FieldMessage_ShowAtActor(14, 0);
   }
-  Func_02001a1c();
+  Event_End();
 }
 
 s32 Func_02001304(s32 actor) {
   s32 message;
 
-  Func_02001a14();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
   if (!Flag_Test(0x204)) {
@@ -1201,24 +1201,24 @@ s32 Func_02001304(s32 actor) {
   }
   Event_SetMessageId(message);
   FieldMessage_ShowAtActor(actor, 0);
-  Func_02001a1c();
+  Event_End();
 }
 
 s32 Func_02001388(s32 id) {
   struct MainRoutineWork *gs;
 
-  Func_02001a14();
+  Event_Start();
   Event_ResolvePendingActions(0);
   gs = &gMainRoutineWork;
   Actor_SetAngleToward(id, gs->currentOwner, 0);
   if (gs->linkTallies[2] != 0) {
-    Func_020019e4(gs->linkTallies[2], 5);
+    MessageArgument_Push(gs->linkTallies[2], 5);
     Event_SetMessageId((s32)MsgYouVeWon);
   } else {
     Event_SetMessageId((s32)MsgICanTWaitTo);
   }
   FieldMessage_ShowAtActor(id, 0);
-  Func_02001a1c();
+  Event_End();
 }
 
 // ---- games/tla/src/scene/lobby/scene_events.c ----
@@ -1226,12 +1226,12 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 
 s32 Func_02000f6c(s32 id);
-void Func_0200191c(void);
-void Func_0200197c(void);
-void Func_020019e4(s32 value, s32 digits);
+void Serial_RemoveIrqHandlers(void);
+void Map_CenterOnFollowedPoint(void);
+void MessageArgument_Push(s32 value, s32 digits);
 void Func_020019ec(void);
-void Func_02001a14(void);
-void Func_02001a1c(void);
+void Event_Start(void);
+void Event_End(void);
 s32 Func_02001a84(s32 scene, s32 entrance);
 
 s32 Func_020013ec(void) {
@@ -1259,7 +1259,7 @@ next:
   i++;
   if (i <= 2)
     goto next;
-  Func_0200197c();
+  Map_CenterOnFollowedPoint();
 }
 
 
@@ -1278,7 +1278,7 @@ extern u8 gAutoSleepEnabled;
 
 s32 Func_02000134(void);
 void Func_02000044(void);
-void Func_02001914(void);
+void Serial_Initialize(void);
 void Func_02001944(void *func, s32 mask);
 void Func_02001994(s32 entry);
 void Func_02001a04(s32 value);
@@ -1345,7 +1345,7 @@ s32 LinkLobby_RunRoundResult(void) {
     s32 msg;
     s32 v;
 
-    Func_02001a14();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -1378,7 +1378,7 @@ s32 LinkLobby_RunRoundResult(void) {
        * as the row read directly in entrances 8 and 9, 36 of 438 instructions
        * differ in tla-en. */
       score = (u32)&gMainRoutineWork.linkTallies[3];
-      Func_020019e4(*(u16 *)score, 5);
+      MessageArgument_Push(*(u16 *)score, 5);
       score = *(u16 *)score;
       if (gMainRoutineWork.linkTallies[2] < score) {
         gMainRoutineWork.linkTallies[2] = score;
@@ -1391,10 +1391,10 @@ s32 LinkLobby_RunRoundResult(void) {
       }
       LinkLobby_WriteSlotValue(0);
     }
-    Func_02001a1c();
+    Event_End();
   } else if (gMainRoutineWork.entrance == 9) {
     gMainRoutineWork.linkTallies[1]++;
-    Func_02001a14();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -1404,7 +1404,7 @@ s32 LinkLobby_RunRoundResult(void) {
      * as the row read directly in entrances 8 and 9, 36 of 438 instructions
      * differ in tla-en. */
     score = (u32)&gMainRoutineWork.linkTallies[3];
-    Func_020019e4(*(u16 *)score, 5);
+    MessageArgument_Push(*(u16 *)score, 5);
     score = *(u16 *)score;
     if (gMainRoutineWork.linkTallies[2] < score) {
       gMainRoutineWork.linkTallies[2] = score;
@@ -1419,11 +1419,11 @@ s32 LinkLobby_RunRoundResult(void) {
     Event_ClearFlag(0x173);
     GameFlag_SetByte(0x3f8, -1);
     LinkLobby_WriteSlotValue(0);
-    Func_02001a1c();
+    Event_End();
   } else if (gMainRoutineWork.entrance == 10) {
     s32 v;
 
-    Func_02001a14();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -1452,11 +1452,11 @@ s32 LinkLobby_RunRoundResult(void) {
       Event_SetFlag(0x304);
       Event_SetFlag(0x305);
     }
-    Func_02001a1c();
+    Event_End();
   } else if (gMainRoutineWork.entrance == 11) {
     s32 v;
 
-    Func_02001a14();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -1469,20 +1469,20 @@ s32 LinkLobby_RunRoundResult(void) {
     }
     Event_SetFlag(0x304);
     Event_ClearFlag(0x305);
-    Func_02001a1c();
+    Event_End();
   } else {
-    Func_02001914();
+    Serial_Initialize();
     Event_ClearFlag(0x172);
     GameFlag_SetByte(0x3f8, -1);
     if (gMainRoutineWork.unk244[6] != 0) {
-      Func_02001a14();
+      Event_Start();
       Event_ResolvePendingActions(0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
       Event_SetMessageId((s32)MsgNoteYouCan);
       Event_ShowMessageAndWait(8, 0);
-      Func_02001a1c();
+      Event_End();
     }
     gMainRoutineWork.unk244[6] = 0;
     gAutoSleepEnabled = 0;
@@ -1615,34 +1615,34 @@ u32 gData_02001ee0[] = {
 // clang-format on
 
 struct Trigger gSceneEvents[] = {
-    {0, 0, CONDITION_ALWAYS, EVENT(Func_02001130)},
-    {0, 1, CONDITION_ALWAYS, EVENT(Func_02001130)},
-    {0, 2, CONDITION_ALWAYS, EVENT(Func_02001130)},
-    {0, 3, CONDITION_ALWAYS, EVENT(Func_02001130)},
-    {0, 5, CONDITION_ALWAYS, EVENT(Func_02001130)},
-    {0, 6, CONDITION_ALWAYS, EVENT(Func_02001130)},
-    {0, 7, CONDITION_ALWAYS, EVENT(Func_02001130)},
-    {0, 8, CONDITION_ALWAYS, EVENT(Func_02000bb0)},
-    {0, 9, CONDITION_ALWAYS, EVENT(Func_02000da0)},
-    {0, 10, CONDITION_ALWAYS, EVENT(Func_02000f50)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgWelcomeToBattle)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgHmItComes)},
-    {0, 13, CONDITION_ALWAYS, EVENT(Func_0200122c)},
-    {0, 14, CONDITION_ALWAYS, EVENT(Func_0200122c)},
-    {0, 15, CONDITION_ALWAYS, EVENT(LinkLobby_ChooseDebugParameterSet)},
-    {0, 16, CONDITION_ALWAYS, EVENT(Func_02001304)},
-    {0, 17, CONDITION_ALWAYS, MSGNO(MsgInTheLinked)},
-    {0, 18, CONDITION_ALWAYS, MSGNO(MsgSoYouWin)},
-    {0, 19, CONDITION_ALWAYS, MSGNO(MsgYouCouldUse)},
-    {0, 20, CONDITION_ALWAYS, MSGNO(MsgShouldIEnter)},
-    {0, 21, CONDITION_ALWAYS, MSGNO(MsgMonsterBattleRules)},
-    {0, 22, CONDITION_ALWAYS, EVENT(Func_02001388)},
-    {0, 23, CONDITION_ALWAYS, MSGNO(MsgSometimesYourClass)},
-    {0, 24, CONDITION_ALWAYS, EVENT(Func_02000fbc)},
-    {0, 25, CONDITION_ALWAYS, MSGNO(MsgIDonTHaveThe)},
-    {2, 10, CONDITION_ALWAYS, EVENT(Func_02000864)},
-    {2, 1, CONDITION_ALWAYS, EVENT(LinkLobby_LeaveArena)},
-    {6, 1, CONDITION_ALWAYS, EVENT(LinkLobby_PromptToParticipate)},
-    {6, 2, CONDITION_ALWAYS, EVENT(Func_02000344)},
+    {TRIGGER_TALK, 0, CONDITION_ALWAYS, EVENT(Func_02001130)},
+    {TRIGGER_TALK, 1, CONDITION_ALWAYS, EVENT(Func_02001130)},
+    {TRIGGER_TALK, 2, CONDITION_ALWAYS, EVENT(Func_02001130)},
+    {TRIGGER_TALK, 3, CONDITION_ALWAYS, EVENT(Func_02001130)},
+    {TRIGGER_TALK, 5, CONDITION_ALWAYS, EVENT(Func_02001130)},
+    {TRIGGER_TALK, 6, CONDITION_ALWAYS, EVENT(Func_02001130)},
+    {TRIGGER_TALK, 7, CONDITION_ALWAYS, EVENT(Func_02001130)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000bb0)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000da0)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02000f50)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgWelcomeToBattle)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHmItComes)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_0200122c)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_0200122c)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(LinkLobby_ChooseDebugParameterSet)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_02001304)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgInTheLinked)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgSoYouWin)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgYouCouldUse)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgShouldIEnter)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgMonsterBattleRules)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_02001388)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgSometimesYourClass)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, EVENT(Func_02000fbc)},
+    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgIDonTHaveThe)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_02000864)},
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(LinkLobby_LeaveArena)},
+    {TRIGGER_RAISED, 1, CONDITION_ALWAYS, EVENT(LinkLobby_PromptToParticipate)},
+    {TRIGGER_RAISED, 2, CONDITION_ALWAYS, EVENT(Func_02000344)},
     {TRIGGERS_END},
 };

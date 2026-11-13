@@ -289,7 +289,7 @@ void Func_02000818(void) {
   work = Ram_HeapSlots->eventWork;
   actor = Actor_GetById(8);
   angle = (work->exit - 45) << 14;
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   x = actor->x >> 20;
   z = actor->z >> 20;
@@ -492,7 +492,7 @@ void Func_02000c50(void) {
 
 extern u32 gData_020022cc;
 void Func_02000c50(void);
-void Func_02001fac(void);
+void Event_Start(void);
 /* VIEW(s0c94): routine Func_02001fb4 as s32 Func_02001fb4(void); sea_of_time.h has void Func_02001fb4(void); tried as the definition's void Func_02001fb4(s32 *position, s32 speed, s32 mode), it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:494: conflicting types for `Func_02001fb4'. */
 extern s32 Func_02001fb4__s0c94(void) __asm__("Func_02001fb4");
 
@@ -505,7 +505,7 @@ s32 Func_02000c94(void) {
   s32 i;
   s32 frame;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_SetBit(0x200);
   Sound_Play(0x22d);
@@ -554,7 +554,7 @@ s32 Func_02000c94(void) {
 }
 
 /// The 14 colours of BG palette 3 (entries 1 to 14) that the fade returns to,
-/// copied from palette RAM by Func_02001cdc and rotated by Func_02001650 in
+/// copied from palette RAM by Scene_Initialize and rotated by Func_02001650 in
 /// step with BG palette entries 49 to 62.
 struct SavedColors {
   u16 colors[14];
@@ -570,7 +570,7 @@ s32 Func_02000da0(void) {
   u32 j;
 
   Task_RemoveFar(Func_02000c50);
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(0x22c);
   gData_020022cc = 1;
@@ -633,7 +633,7 @@ fade:
 // next object the overlay links.
 
 
-void Func_02001fac(void);
+void Event_Start(void);
 s32 Math_Cosine(s32 angle);
 s32 Func_02001f9c(struct Actor *actor);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -651,7 +651,7 @@ void Func_02000ef0(void) {
   s32 velocity, reverseVelocity, alternate;
 
   actor = Actor_GetById(8);
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetMoveTarget(actor, actor->x, actor->y, actor->z + 0x80000);
   // A goto loop: as while (Func_02001f9c(actor) == 0), loop.c moves 0xb0000
@@ -711,7 +711,7 @@ void Func_02000ef0(void) {
 #include "io_reg.h"
 
 void Func_02001068(void) {
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (!Event_GetFlag(0x8dd)) {
     Import_EventSetExitRequest(4);
@@ -743,7 +743,7 @@ void Func_020010a8(struct Actor *object) {
 extern struct SavedColors gData_020026c0;
 
 void Func_02001f4c(struct Actor *object, s32 value);
-void Func_0200200c(s32 a, s32 b);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
 void Func_02001108(void) {
   volatile u16 fill;
@@ -756,7 +756,7 @@ void Func_02001108(void) {
   u32 i;
   u32 j;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_SetBit(0x8dd);
   Actor_SetSpeed(8, 0x10000, 0x8000);
@@ -880,7 +880,7 @@ next:
   Event_Wait(40);
   gMainRoutineWork.battleRule24b = 2;
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov687Room2, 4);
-  Func_0200200c(12, 6);
+  Field_RequestBattleFromEncounterTable(12, 6);
   Func_02001fb4();
 }
 
@@ -902,7 +902,7 @@ void Func_0200141c(s32 x, s32 z, s32 actor) {
 void Func_02001480(void) {
   struct Actor *object;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object = Actor_GetById(9);
   Func_0200141c(object->x, Actor_GetById(9)->z, 9);
@@ -913,7 +913,7 @@ void Func_02001480(void) {
 void Func_020014b4(void) {
   struct Actor *object;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object = Actor_GetById(10);
   Func_0200141c(object->x, Actor_GetById(10)->z, 10);
@@ -924,7 +924,7 @@ void Func_020014b4(void) {
 void Func_020014ec(void) {
   struct Actor *object;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object = Actor_GetById(11);
   Func_0200141c(object->x, Actor_GetById(11)->z, 11);
@@ -935,7 +935,7 @@ void Func_020014ec(void) {
 void Func_02001524(void) {
   struct Actor *object;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object = Actor_GetById(12);
   Func_0200141c(object->x, Actor_GetById(12)->z, 12);
@@ -946,7 +946,7 @@ void Func_02001524(void) {
 void Func_0200155c(void) {
   struct Actor *object;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object = Actor_GetById(13);
   Func_0200141c(object->x, Actor_GetById(13)->z, 13);
@@ -957,7 +957,7 @@ void Func_0200155c(void) {
 void Func_02001594(void) {
   struct Actor *object;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object = Actor_GetById(9);
   Func_0200141c(object->x, Actor_GetById(9)->z, 9);
@@ -966,7 +966,7 @@ void Func_02001594(void) {
 }
 
 void Func_020015cc(void) {
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Import_EventSetExitRequest(4);
   Event_FinishScreenTransition();
@@ -975,7 +975,7 @@ void Func_020015cc(void) {
 }
 
 void Func_020015ec(void) {
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Import_EventSetExitRequest(5);
   Event_FinishScreenTransition();
@@ -1151,7 +1151,7 @@ void Func_02001928(s32 x, s32 z, s32 actor) {
 
 
 void Func_02001f64();
-void Func_0200204c();
+void Party_PlaySavedMusic();
 /// The Sea of Time's opening: places the camera and the first effects, showers
 /// sparks for 360 frames and larger effects for 16, then fades BG palette 3 to
 /// RGB(11, 6, 23).
@@ -1163,7 +1163,7 @@ void Func_02001a14(void) {
   struct EffectOptions params;
   struct EffectOptions burst;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(0);
   Map_CopyCellPictureIndicesRect(49, 70, 19, 73, 6, 6);
@@ -1276,7 +1276,7 @@ void Func_02001a14(void) {
     gData_020022cc += gFrameCount & 1;
   } while (changed);
   Task_RemoveFar(Func_02001650);
-  Func_0200204c();
+  Party_PlaySavedMusic();
   GameFlag_SetBit(0x940);
   Func_02001fb4();
 }
@@ -1291,7 +1291,7 @@ void Func_02000c50(void);
 /// The overlay's start: sets the screen effect, restores the clock and palette
 /// in the first room, draws the unlit cells in the second, and schedules the
 /// frame callback.
-s32 Func_02001cdc(void) {
+s32 Scene_Initialize(void) {
   ((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room1) {
     gData_020022c8 = gFrameCount;
@@ -1354,7 +1354,7 @@ s32 Func_02001cdc(void) {
   return 0;
 }
 
-s32 Func_02001ec8(void) {
+s32 Scene_PrepareMap(void) {
   void *block = Ram_HeapSlots->block32;
 
   Dma_Fill32(-1, block, 0x1c0);
@@ -1472,68 +1472,68 @@ volatile u32 gData_020022c8 = 0;
 u32 gData_020022cc = 0;
 
 struct Trigger gData_020022d0[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {2, 49, CONDITION_ALWAYS, EVENT(Func_02001068)},
-    {2, 30, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {2, 31, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {2, 32, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {2, 33, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {2, 34, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {2, 35, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {2, 36, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {2, 37, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {2, 40, CONDITION_ALWAYS, EVENT(Func_0200043c)},
-    {2, 41, CONDITION_ALWAYS, EVENT(Func_0200043c)},
-    {2, 44, CONDITION_ALWAYS, EVENT(Func_02000ef0)},
-    {2, 45, 0x200, EVENT(Func_02000818)},
-    {2, 46, 0x200, EVENT(Func_02000818)},
-    {2, 47, 0x200, EVENT(Func_02000818)},
-    {2, 48, 0x200, EVENT(Func_02000818)},
-    {2, 50, 0x200, EVENT(Func_02000a80)},
-    {2, 51, 0x200, EVENT(Func_02000a80)},
-    {2, 52, 0x200, EVENT(Func_02000a80)},
-    {2, 53, 0x200, EVENT(Func_02000a80)},
-    {2, 54, 0x200, EVENT(Func_02000a80)},
-    {2, 55, 0x200, EVENT(Func_02000a80)},
-    {2, 56, 0x200, EVENT(Func_02000a80)},
-    {2, 57, 0x200, EVENT(Func_02000a80)},
-    {6, 200, CONDITION_ALWAYS, EVENT(Func_02000c94)},
-    {6, 201, CONDITION_ALWAYS, EVENT(Func_02000da0)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_STEP, 49, CONDITION_ALWAYS, EVENT(Func_02001068)},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_0200054c)},
+    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Func_0200054c)},
+    {TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(Func_0200054c)},
+    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(Func_0200054c)},
+    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(Func_0200054c)},
+    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(Func_0200054c)},
+    {TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(Func_0200054c)},
+    {TRIGGER_STEP, 37, CONDITION_ALWAYS, EVENT(Func_0200054c)},
+    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(Func_0200043c)},
+    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(Func_0200043c)},
+    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(Func_02000ef0)},
+    {TRIGGER_STEP, 45, 0x200, EVENT(Func_02000818)},
+    {TRIGGER_STEP, 46, 0x200, EVENT(Func_02000818)},
+    {TRIGGER_STEP, 47, 0x200, EVENT(Func_02000818)},
+    {TRIGGER_STEP, 48, 0x200, EVENT(Func_02000818)},
+    {TRIGGER_STEP, 50, 0x200, EVENT(Func_02000a80)},
+    {TRIGGER_STEP, 51, 0x200, EVENT(Func_02000a80)},
+    {TRIGGER_STEP, 52, 0x200, EVENT(Func_02000a80)},
+    {TRIGGER_STEP, 53, 0x200, EVENT(Func_02000a80)},
+    {TRIGGER_STEP, 54, 0x200, EVENT(Func_02000a80)},
+    {TRIGGER_STEP, 55, 0x200, EVENT(Func_02000a80)},
+    {TRIGGER_STEP, 56, 0x200, EVENT(Func_02000a80)},
+    {TRIGGER_STEP, 57, 0x200, EVENT(Func_02000a80)},
+    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Func_02000c94)},
+    {TRIGGER_RAISED, 201, CONDITION_ALWAYS, EVENT(Func_02000da0)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_0200242c[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {2, 5, 0x940, EVENT(Func_02001108)},
-    {2, 30, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {2, 31, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {2, 32, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {2, 33, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {2, 34, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {2, 35, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {2, 36, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {2, 37, CONDITION_ALWAYS, EVENT(Func_0200054c)},
-    {2, 48, CONDITION_ALWAYS, EVENT(Func_02000818)},
-    {2, 41, CONDITION_ALWAYS, EVENT(Func_0200043c)},
-    {0x9815, 9, CONDITION_ALWAYS, EVENT(Func_02001480)},
-    {0x9815, 10, CONDITION_ALWAYS, EVENT(Func_020014b4)},
-    {0x9815, 11, CONDITION_ALWAYS, EVENT(Func_020014ec)},
-    {0x9815, 12, CONDITION_ALWAYS, EVENT(Func_02001524)},
-    {0x9815, 13, CONDITION_ALWAYS, EVENT(Func_0200155c)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_STEP, 5, 0x940, EVENT(Func_02001108)},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_0200054c)},
+    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Func_0200054c)},
+    {TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(Func_0200054c)},
+    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(Func_0200054c)},
+    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(Func_0200054c)},
+    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(Func_0200054c)},
+    {TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(Func_0200054c)},
+    {TRIGGER_STEP, 37, CONDITION_ALWAYS, EVENT(Func_0200054c)},
+    {TRIGGER_STEP, 48, CONDITION_ALWAYS, EVENT(Func_02000818)},
+    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(Func_0200043c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 9, CONDITION_ALWAYS, EVENT(Func_02001480)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 10, CONDITION_ALWAYS, EVENT(Func_020014b4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 11, CONDITION_ALWAYS, EVENT(Func_020014ec)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 12, CONDITION_ALWAYS, EVENT(Func_02001524)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 13, CONDITION_ALWAYS, EVENT(Func_0200155c)},
     {TRIGGERS_END},
 };
 
 struct Trigger gData_0200251c[] = {
-    {2, 1, CONDITION_ALWAYS, EVENT(Func_020015cc)},
-    {2, 2, CONDITION_ALWAYS, EVENT(Func_020015ec)},
-    {2, 45, CONDITION_ALWAYS, EVENT(Func_02000818)},
-    {2, 46, CONDITION_ALWAYS, EVENT(Func_02000818)},
-    {2, 47, CONDITION_ALWAYS, EVENT(Func_02000818)},
-    {2, 48, CONDITION_ALWAYS, EVENT(Func_02000818)},
-    {0x9815, 9, CONDITION_ALWAYS, EVENT(Func_02001594)},
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_020015cc)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_020015ec)},
+    {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(Func_02000818)},
+    {TRIGGER_STEP, 46, CONDITION_ALWAYS, EVENT(Func_02000818)},
+    {TRIGGER_STEP, 47, CONDITION_ALWAYS, EVENT(Func_02000818)},
+    {TRIGGER_STEP, 48, CONDITION_ALWAYS, EVENT(Func_02000818)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 9, CONDITION_ALWAYS, EVENT(Func_02001594)},
     {TRIGGERS_END},
 };
 

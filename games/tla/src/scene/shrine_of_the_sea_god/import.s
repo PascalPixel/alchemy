@@ -46,9 +46,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Func_02003968:
 	overlay_veneer Actor_SetMode
-	.global Func_02003970
+	.global Actor_StartScript
 	.thumb_func
-Func_02003970:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -58,9 +58,9 @@ Import_ActorCreate:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Func_02003988
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_02003988:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -70,9 +70,9 @@ Actor_SetMoveTarget:
 	.thumb_func
 Map_CopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
-	.global Func_020039a0
+	.global DisplayBlend_EnableRunScript
 	.thumb_func
-Func_020039a0:
+DisplayBlend_EnableRunScript:
 	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
@@ -98,13 +98,13 @@ FieldMessage_Show:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_020039d8
+	.global Event_Start
 	.thumb_func
-Func_020039d8:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020039e0
+	.global Event_End
 	.thumb_func
-Func_020039e0:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func

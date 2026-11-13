@@ -20,7 +20,7 @@ s32 ArcTan2(s32 y, s32 x);
 void Func_02001fe0(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Func_02002048(struct Actor *object);
-s32 Func_02002050(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 void Func_02001a1c(void) {
   struct Actor *object;
@@ -74,8 +74,6 @@ retry:
     angle = ArcTan2(targetZ - object->z, targetX - object->x);
     angle = (angle + 0x2000) & 0xc000;
   }
-  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 2
-   * of 347 instructions differ in tla-en. */
   FieldVector_AddPolarOffset(0x100000, angle, position);
   cell = GetMapCellCollision(*layer, p[0], p[2]);
   if (cell == 255 ||
@@ -115,7 +113,7 @@ overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
     /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
      * call, 2 of 347 instructions differ in tla-en. */
-    if (Value4((s32 (*)())Func_02002050, (s32)&entry->x, radius, (s32)position,
+    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius, (s32)position,
                entry->radius - 2) >= 0)
       goto blocked;
   }
@@ -145,8 +143,6 @@ walk:
   /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
    * position's address; as no asm, 94 of 347 instructions differ in tla-en. */
   __asm__("" : : : SFP_CLOBBER);
-  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
-   * of 347 instructions differ in tla-en. */
   FieldVector_AddPolarOffset(0x100000, angle, position);
   q = position;
   cell = GetMapCellCollision(*layer, q[0], q[2]);
@@ -189,7 +185,7 @@ s32 ArcTan2(s32 y, s32 x);
 void Func_02001fe0(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Func_02002048(struct Actor *object);
-s32 Func_02002050(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 void Func_02001a1c(void) {
   struct Actor *object;
@@ -241,8 +237,6 @@ retry:
     angle = ArcTan2(targetZ - object->z, targetX - object->x);
     angle = (angle + 0x2000) & 0xc000;
   }
-  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 2
-   * of 332 instructions differ in tla-ja. */
   FieldVector_AddPolarOffset(0x100000, angle, position);
   cell = GetMapCellCollision(*layer, p[0], p[2]);
   if (cell == 255 ||
@@ -278,7 +272,7 @@ overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
     /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
      * call, 2 of 332 instructions differ in tla-ja. */
-    if (Value4((s32 (*)())Func_02002050, (s32)&entry->x, radius, (s32)position,
+    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius, (s32)position,
                entry->radius - 2) >= 0)
       goto blocked;
   }
@@ -308,8 +302,6 @@ walk:
   /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
    * position's address; as no asm, 90 of 332 instructions differ in tla-ja. */
   __asm__("" : : : SFP_CLOBBER);
-  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
-   * of 332 instructions differ in tla-ja. */
   FieldVector_AddPolarOffset(0x100000, angle, position);
   q = position;
   cell = GetMapCellCollision(*layer, q[0], q[2]);

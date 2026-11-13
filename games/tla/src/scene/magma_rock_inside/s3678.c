@@ -56,7 +56,7 @@ static __inline__ void Lower(s32 id, s32 height) {
   Actor_GetById(id)->y = Actor_GetById(id)->terrainHeight = height;
 }
 
-s32 Func_02003678(void) {
+s32 Scene_Initialize(void) {
   s32 i;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
@@ -261,7 +261,7 @@ s32 Func_02003678(void) {
   return 0;
 }
 
-s32 Func_02003ee0(void) {
+s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
 
@@ -348,19 +348,11 @@ done:
 
 s32 Func_02004e38(void);
 struct Actor *Func_02004ef8(s32 *position, s32 mode);
-void Func_02004d40(void);
-void Func_02004d48(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_020046e8(s32 value);
 void Func_020049c0(s32 offset, s32 layer);
 void Func_0200481c(void);
-
-static __inline__ void Shake(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 28 of 158
-   * instructions of Func_0200406c differ in tla-en. */
-  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 28 of 191
-   * instructions of Func_0200447c differ in tla-en. */
-  Map_SetScreenShake(a, b, c);
-}
 
 void Func_0200406c(const u16 *table) {
   struct Actor *leader;
@@ -388,7 +380,7 @@ next:
   }
   {
     flag = table[1];
-    Func_02004d40();
+    Event_Start();
     if (!GameFlag_Test(flag)) {
       Sound_Play(125);
       Actor_SetPartAttribute(Actor_GetById(id), 7);
@@ -406,7 +398,7 @@ next:
       if (!GameFlag_Test(second)) {
         leader->motionFlags = 0;
         Sound_Play(185);
-        Shake(0x10000, 0x40000, 0x10000);
+        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_020046e8(0);
         wait(8);
         Func_02004c98(trap, 2);
@@ -415,7 +407,7 @@ next:
         wait(16);
         Func_020049c0(-2, trap->terrainId);
         wait(4);
-        Shake(-1, -1, 0xe666);
+        MapGrid_SetShake(-1, -1, 0xe666);
         wait(8);
         leader->motionFlags = 3;
         wait(5);
@@ -427,7 +419,7 @@ next:
         GameFlag_SetBit(second);
       }
     }
-    Func_02004d48();
+    Event_End();
     return;
   }
 test:
@@ -439,13 +431,6 @@ struct TrapEntry {
   u16 actor;
   u16 flag;
 };
-
-static __inline__ void Func_02005838_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as direct calls, 20 of 91
-   * instructions differ in tla-en. */
-  Map_SetScreenShake(a, b, c);
-}
 
 void Func_02004200(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
@@ -459,17 +444,17 @@ void Func_02004200(const void *data, s32 id) {
       goto test;
     }
     flag = entry->flag;
-    Func_02004d40();
+    Event_Start();
     if (!Event_GetFlag(flag + 1)) {
       Event_PlaySound(185);
-      Func_02005838_(0x10000, 0x40000, 0x10000);
+      MapGrid_SetShake(0x10000, 0x40000, 0x10000);
       Func_020046e8(0);
       System_Wait(8);
       Func_02004c98(object, 2);
       Func_02004934(-4, OBJECT_BYTE(object, 34), id);
       Func_020046e8(1);
       System_Wait(16);
-      Func_02005838_(-1, -1, 0xe666);
+      MapGrid_SetShake(-1, -1, 0xe666);
       System_Wait(8);
       FieldActor_SetPositionAndResetMotion(object, 0, 0, 0);
       System_Wait(2);
@@ -479,7 +464,7 @@ void Func_02004200(const void *data, s32 id) {
       Event_SetFlag(flag);
       Event_SetFlag(flag + 1);
     }
-    Func_02004d48();
+    Event_End();
     return;
   test:
     if (entry->actor != 0xffff)
@@ -492,7 +477,7 @@ void Func_020042e0(s32 id) {
   Func_02004df8(id);
 }
 
-void Func_02004da8(s32 id, s32 owner);
+void Actor_MoveToObject(s32 id, s32 owner);
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 /// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
@@ -510,9 +495,9 @@ void Func_020042f8(u16 *list) {
   s32 index;
   u8 *grid = gMapShapeGrid; // the shape grid, read once
 
-  Func_02004da8(8, gMainRoutineWork.currentOwner);
-  Func_02004da8(9, gMainRoutineWork.currentOwner);
-  Func_02004da8(10, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(8, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(10, gMainRoutineWork.currentOwner);
   System_Wait(1);
   Func_020042e0(8);
   Func_020042e0(9);
@@ -591,7 +576,7 @@ next:
   }
   {
     flag = table[1];
-    Func_02004d40();
+    Event_Start();
     if (!GameFlag_Test(flag)) {
       Func_02004c98(partner, 1);
       Func_02004460(partner, trap);
@@ -618,7 +603,7 @@ next:
         wait(1);
         leader->motionFlags = 0;
         Sound_Play(185);
-        Shake(0x10000, 0x40000, 0x10000);
+        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_020046e8(0);
         wait(8);
         Func_02004c98(partner, 2);
@@ -627,7 +612,7 @@ next:
         wait(16);
         Func_020049c0(-2, trap->terrainId);
         wait(4);
-        Shake(-1, -1, 0xe666);
+        MapGrid_SetShake(-1, -1, 0xe666);
         wait(8);
         leader->motionFlags = 3;
         wait(5);
@@ -639,7 +624,7 @@ next:
         GameFlag_SetBit(second);
       }
     }
-    Func_02004d48();
+    Event_End();
     return;
   }
 test:

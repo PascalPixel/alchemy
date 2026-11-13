@@ -22,14 +22,8 @@ extern s32 gData_02006180[];
 
 u32 Random16Far(void);
 void SceneActor_ParkRecord(struct Actor *object);
-void Func_0200556c(struct Actor *object, const u8 *script);
+void Actor_StartScript(struct Actor *object, const u8 *script);
 void Func_020000e4(void);
-
-static __inline__ void SetScale(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 41 of 207
-   * instructions differ in tla-en. */
-  Map_SetScreenShake(a, b, c);
-}
 
 void Func_02003370(void) {
   struct Actor *anchor = Actor_GetById(8);
@@ -40,7 +34,7 @@ void Func_02003370(void) {
   switch (Data_02006ccc) {
   case 0:
     Event_PlaySound(220);
-    SetScale(0x60000, 0x60000, 0x10000);
+    MapGrid_SetShake(0x60000, 0x60000, 0x10000);
     PaletteFade_ApplyTarget(0x2063ff, 1);
     PaletteFade_Interpolate(8);
     break;
@@ -49,7 +43,7 @@ void Func_02003370(void) {
     PaletteFade_Interpolate(8);
     break;
   case 16:
-    SetScale(0x10000, 0x10000, 0x10000);
+    MapGrid_SetShake(0x10000, 0x10000, 0x10000);
     break;
   case 24:
     anchor->x = 0x2000000;
@@ -87,15 +81,13 @@ void Func_02003370(void) {
     break;
   }
   if (spawn) {
-    /* FAKEMATCH(wrapper): the spawn forwarded through Value4; as a direct call,
-     * 2 of 207 instructions differ in tla-en. */
     object = FieldActor_Create(0x2a0, anchor->x, anchor->y - ((Random16Far() * 80 >> 16) << 16) - 0x80000, anchor->z);
     if (object != NULL) {
       u8 zero;
       s32 mask;
 
       sprite = object->sprite;
-      Func_0200556c(object, gData_02006180__s3370);
+      Actor_StartScript(object, gData_02006180__s3370);
       Actor_SetSpriteColor(object, 1);
       object->motionFlags = 0;
       {
@@ -527,7 +519,7 @@ L_0200bcea:
        ->v)
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-s32 Func_0200558c();
+s32 Map_CenterOnFollowedPoint();
 void Func_020004a4(void);
 extern u8 MsgWhatCouldHe[];
 extern s32 gData_020061d4[];
@@ -547,7 +539,7 @@ void Func_02003ff4(void) {
   s32 t215, t228, t238, t250, t263, t271, t274, t284, t292;
   s32 t296;
 
-  Func_0200560c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -585,7 +577,7 @@ void Func_02003ff4(void) {
   t21 = FieldCamera_GetActor();
   ((struct Actor *)t21)->motionFlags = 0;
   FieldCamera_MoveTo(0x2000000, 0x600000, 0x1200000, 0);
-  Func_0200558c();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   t25 = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT(t25, s32, 428) = 0x201;
@@ -927,7 +919,7 @@ L_0200c72a:
 extern u8 MsgWillYouCast[];
 
 void Func_02004bc4(void) {
-  Func_0200560c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirectionAndWait(19, FACING_SOUTH + FACING_STEP);
   FieldEvent_SetMessageId(MsgDoNotLet);
@@ -935,11 +927,11 @@ void Func_02004bc4(void) {
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 480, 348);
   MarsLighthouseAerie_ObjTurn(19, FACING_NORTHWEST + FACING_STEP);
-  Func_02005614();
+  Event_End();
 }
 
 void Func_02004c2c(void) {
-  Func_0200560c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirectionAndWait(19, FACING_SOUTHEAST + FACING_STEP);
   FieldEvent_SetMessageId(MsgDoNotLet);
@@ -947,11 +939,11 @@ void Func_02004c2c(void) {
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 544, 348);
   MarsLighthouseAerie_ObjTurn(19, FACING_NORTHWEST + FACING_STEP);
-  Func_02005614();
+  Event_End();
 }
 
 void Func_02004c94(void) {
-  Func_0200560c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(18, PIXELS(512), PIXELS(232));
   System_Wait(1);
@@ -965,7 +957,7 @@ void Func_02004c94(void) {
   Actor_SetPosition(18, 0, 0);
   System_Wait(1);
   Event_SetFlag(0x202);
-  Func_02005614();
+  Event_End();
 }
 
 #include "version.h"
@@ -1015,7 +1007,7 @@ void Func_02004d50(s32 id) {
 #endif
 
 void Func_02004da0(void) {
-  Func_0200560c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
 #if TLA_PATCH_1
   Func_02004d24(2);
@@ -1029,11 +1021,11 @@ void Func_02004da0(void) {
 #else
   MarsLighthouseAerie_ObjTurn(2, FACING_WEST);
 #endif
-  Func_02005614();
+  Event_End();
 }
 
 void Func_02004df0(void) {
-  Func_0200560c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
 #if TLA_PATCH_1
   Func_02004d24(20);
@@ -1043,11 +1035,11 @@ void Func_02004df0(void) {
 #if TLA_PATCH_1
   Func_02004d50(20);
 #endif
-  Func_02005614();
+  Event_End();
 }
 
 void Func_02004e20(void) {
-  Func_0200560c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
 #if TLA_PATCH_1
   Func_02004d24(22);
@@ -1057,11 +1049,11 @@ void Func_02004e20(void) {
 #if TLA_PATCH_1
   Func_02004d50(22);
 #endif
-  Func_02005614();
+  Event_End();
 }
 
 void Func_02004e50(void) {
-  Func_0200560c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
 #if TLA_PATCH_1
   Func_02004d24(21);
@@ -1071,7 +1063,7 @@ void Func_02004e50(void) {
 #if TLA_PATCH_1
   Func_02004d50(21);
 #endif
-  Func_02005614();
+  Event_End();
 }
 
 // From patch 1; the Japanese overlay has no such function.
@@ -1303,7 +1295,7 @@ struct CounterBits {
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 s32 Resource_ResetEntry(u32 slot);
-void Func_0200579c(struct Vector3 *v);
+void Camera_WorldToScreen(struct Vector3 *v);
 void Func_020057ac(struct SparkleSprite *sprite);
 s32 Func_020057bc(struct Actor *object);
 
@@ -1342,7 +1334,7 @@ void Func_02005268(struct Actor *object) {
         p->x = object->x;
         p->y = object->y + (work->unka0[i] << 16);
         p->z = object->z;
-        Func_0200579c(p);
+        Camera_WorldToScreen(p);
         x = p->x;
         j = 0;
         z = p->z;
@@ -1909,31 +1901,31 @@ s16 gData_020066bc[] = {
 
 struct Trigger gSceneEvents[] = {
     {0x9c05, 1, CONDITION_ALWAYS, EVENT(Func_020001a0)},
-    {2, 10, 0xa3d, EVENT(Func_0200065c)},
-    {0, 0, CONDITION_ALWAYS, MSGNO(MsgOurQuestIs)},
-    {0, 1, CONDITION_ALWAYS, MSGNO(MsgIWishICould)},
-    {0, 3, CONDITION_ALWAYS, MSGNO(MsgIfAlexSet)},
-    {0, 5, CONDITION_ALWAYS, MSGNO(MsgIThoughtID)},
-    {0, 6, CONDITION_ALWAYS, MSGNO(MsgIDonTKnowMy)},
-    {0, 7, CONDITION_ALWAYS, MSGNO(MsgIMSorryThings)},
-    {0, 19, CONDITION_ALWAYS, MSGNO(MsgBothKyleAnd)},
+    {TRIGGER_STEP, 10, 0xa3d, EVENT(Func_0200065c)},
+    {TRIGGER_TALK, 0, CONDITION_ALWAYS, MSGNO(MsgOurQuestIs)},
+    {TRIGGER_TALK, 1, CONDITION_ALWAYS, MSGNO(MsgIWishICould)},
+    {TRIGGER_TALK, 3, CONDITION_ALWAYS, MSGNO(MsgIfAlexSet)},
+    {TRIGGER_TALK, 5, CONDITION_ALWAYS, MSGNO(MsgIThoughtID)},
+    {TRIGGER_TALK, 6, CONDITION_ALWAYS, MSGNO(MsgIDonTKnowMy)},
+    {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgIMSorryThings)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgBothKyleAnd)},
     {0x4400, 28, CONDITION_ALWAYS, EVENT(Func_02004da0)},
     {0x4400, 17, CONDITION_ALWAYS, EVENT(Func_02004df0)},
     {0x6400, 17, CONDITION_ALWAYS, EVENT(Func_02004df0)},
     {0xe400, 30, CONDITION_ALWAYS, EVENT(Func_02004e20)},
     {0x400, 30, CONDITION_ALWAYS, EVENT(Func_02004e20)},
     {0x2400, 30, CONDITION_ALWAYS, EVENT(Func_02004e20)},
-    {0, 29, CONDITION_ALWAYS, EVENT(Func_02004e50)},
+    {TRIGGER_TALK, 29, CONDITION_ALWAYS, EVENT(Func_02004e50)},
 #if TLA_PATCH_1 /* From patch 1. */
-    {0x9115, 28, CONDITION_ALWAYS, EVENT(Func_02004ec0)},
-    {0x9115, 17, CONDITION_ALWAYS, EVENT(Func_02004ecc)},
-    {0x9115, 30, CONDITION_ALWAYS, EVENT(Func_02004ed8)},
-    {0x9115, 29, CONDITION_ALWAYS, EVENT(Func_02004ee4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_HALT), 28, CONDITION_ALWAYS, EVENT(Func_02004ec0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_HALT), 17, CONDITION_ALWAYS, EVENT(Func_02004ecc)},
+    {PSYNERGY_ON_ACTOR(ABILITY_HALT), 30, CONDITION_ALWAYS, EVENT(Func_02004ed8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_HALT), 29, CONDITION_ALWAYS, EVENT(Func_02004ee4)},
 #endif
-    {2, 20, CONDITION_ALWAYS, EVENT(Func_02004bc4)},
-    {2, 21, CONDITION_ALWAYS, EVENT(Func_02004c2c)},
-    {2, 22, 0x202, EVENT(Func_02004c94)},
-    {2, 23, 0x1202, EVENT(Func_02004d14)},
+    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Func_02004bc4)},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_02004c2c)},
+    {TRIGGER_STEP, 22, 0x202, EVENT(Func_02004c94)},
+    {TRIGGER_STEP, 23, 0x1202, EVENT(Func_02004d14)},
     {TRIGGERS_END},
 };
 

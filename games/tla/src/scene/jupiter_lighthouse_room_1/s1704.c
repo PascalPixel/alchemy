@@ -9,13 +9,13 @@
 #include "event_inline.h"
 #include "../jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
 
-void Func_02001b24(void);
-void Func_02001abc(void);
+void Event_Start(void);
+void Map_CenterOnFollowedPoint(void);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02000f3c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Func_02001b2c(void);
+void Event_End(void);
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
@@ -31,10 +31,10 @@ void Func_02001704(void) {
   struct EffectOptions options;
   s32 spawn = 1;
 
-  Func_02001b24();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   CamBounds(-1, -1, -1, 0);
-  Func_02001abc();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = 0x820000;
   actor->gravity = 0x8000;
@@ -90,7 +90,7 @@ loop:
   actor->bounce = 0x4000;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Func_02001b2c();
+  Event_End();
 }
 
 extern struct CellTarget gData_020023a0;
@@ -150,7 +150,7 @@ void Func_0200194c(s32 x, s32 z, s32 effect) {
     marker = work->marker;
     marker->x = leader->x;
     marker->z = leader->z;
-    Func_02001abc();
+    Map_CenterOnFollowedPoint();
     Func_02001704();
     ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
         ->screenEffect = effect;
@@ -224,15 +224,15 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {2, 20, 0xa01, EVENT(Func_020001b4)},
-    {2, 21, 0xa01, EVENT(Func_020001d4)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_STEP, 20, 0xa01, EVENT(Func_020001b4)},
+    {TRIGGER_STEP, 21, 0xa01, EVENT(Func_020001d4)},
     {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {0x8c15, 10, 0xa01, EVENT(Func_020001f4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa01, EVENT(Func_020001f4)},
     {TRIGGERS_END},
 };
 

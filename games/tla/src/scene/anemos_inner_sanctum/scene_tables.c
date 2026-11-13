@@ -29,7 +29,7 @@ extern const u8 gData_02003bc8[];
 extern const u8 gData_02003c88[];
 extern const u8 gData_02003ce8[];
 
-const u8 *Func_02000818(void) {
+const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room1)
     return gData_02003b50;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room2)
@@ -69,7 +69,7 @@ struct Work {
 s32 ArcTan2();
 void Func_020006f8();
 void Func_020032e0();
-void Func_020032e8();
+void Actor_StartScript();
 extern u8 gData_02003684[];
 
 void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
@@ -96,7 +96,7 @@ void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
   Func_020032e0(actor, 7);
   Actor_SetSingleChildFlags(actor, 0);
   FieldVector_AddPolarOffset(actor->unk4c, actor->unk64, &actor->position);
-  Func_020032e8(actor, gData_02003684);
+  Actor_StartScript(actor, gData_02003684);
   Func_020006f8(actor);
 }
 
@@ -107,7 +107,7 @@ void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
 extern s32 gData_02003584[];
 
 void Func_020032e0(struct Actor *object, s32 mode);
-void Func_020032e8(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 
 static __inline__ void Vector_AddPolarOffsetFar_(s32 radius, s32 angle,
                                                  s32 *vector) {
@@ -138,7 +138,7 @@ void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
     Scene_SetActorSpritePriority(object, 2);
     Func_020032e0(object, 7);
     Actor_SetSingleChildFlags(object, 0);
-    Func_020032e8(object, gData_02003584);
+    Actor_StartScript(object, gData_02003584);
     i += 2;
   }
 }

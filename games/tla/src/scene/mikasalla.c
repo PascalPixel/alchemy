@@ -18,7 +18,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 extern s16 gData_02000794[];
 
-s16 *Func_02000040(void) {
+s16 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65dRoom2)
@@ -31,7 +31,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern struct ActorPlacement gData_02000fa0[];
 extern struct ActorPlacement gData_020010c0[];
 
-void *Func_02000070(void) {
+void *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65dRoom1)
@@ -59,7 +59,7 @@ void Func_0200009c(void) {
   s16 *choice;
   s32 index;
 
-  Func_02000648();
+  Event_Start();
   Event_ResolvePendingActions(0);
   for (id = 8; id <= 63; id++) {
     u8 *actor = (u8 *)Actor_GetById(id);
@@ -88,7 +88,7 @@ void Func_0200009c(void) {
   Import_EventSetExitRequest(*choice);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02000650();
+  Event_End();
 }
 
 void Func_0200014c(void) { Func_080d7788(18, 2, 8); }
@@ -96,7 +96,7 @@ void Func_0200014c(void) { Func_080d7788(18, 2, 8); }
 extern struct Trigger gData_020012ac[];
 extern struct Trigger gData_020010d8[];
 
-struct Trigger *Func_0200015c(void) {
+struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65dRoom2)
@@ -107,7 +107,7 @@ struct Trigger *Func_0200015c(void) {
 void Func_02000188(void) {
   s32 msg;
 
-  Func_02000648();
+  Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)&MsgFieldAreYouLookingForSomeone;
   Event_SetMessageId(msg);
@@ -120,7 +120,7 @@ void Func_02000188(void) {
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessageAndWait(9, 0);
-  Func_02000650();
+  Event_End();
 }
 
 void Func_020001e0(void) {
@@ -147,12 +147,12 @@ void Func_02000218(void) {
   }
 }
 
-s32 Func_020002f8(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
   return 0;
 }
 
-s32 Func_0200030c(void) {
+s32 Scene_PrepareMap(void) {
   struct MainRoutineWork *party;
   struct Actor *object;
   u8 flags;
@@ -213,13 +213,13 @@ void Func_02000438(void) {
   Event_Wait(10);
   Sound_Play(123);
   Import_EventSetExitRequest(sound);
-  Func_02000650();
+  Event_End();
 }
 
 void Func_020004ec(void) {
   s32 id;
 
-  Func_02000648();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, 0, -14);
   id = 4;
@@ -230,7 +230,7 @@ void Func_020004ec(void) {
 void Func_02000514(void) {
   s32 id, x, z;
 
-  Func_02000648();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, -2, -6);
   x = 14;
@@ -247,7 +247,7 @@ void Func_02000514(void) {
 void Func_02000544(void) {
   s32 id, a;
 
-  Func_02000648();
+  Event_Start();
   Event_ResolvePendingActions(0);
   a = 192;
   id = 4;
@@ -262,7 +262,7 @@ void Func_02000544(void) {
 void Func_02000564(void) {
   s32 x = ((s16 *)&Actor_GetById(4)->x)[1];
 
-  Func_02000648();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (x % 16 <= 7) {
     Actor_WalkByAndWait(4, -4, -4);
@@ -276,7 +276,7 @@ void Func_02000564(void) {
 }
 
 void Func_020005d4(void) {
-  Func_02000648();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, 0, -4);
   Actor_WalkToAndWait(4, 424, 99);
@@ -566,37 +566,37 @@ struct Trigger gData_020010d8[] = {
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_0200009c)},
     {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_0200009c)},
     {0xc602, 5, CONDITION_ALWAYS, EVENT(Func_0200009c)},
-    {1, 6, CONDITION_ALWAYS, 6},
-    {1, 7, CONDITION_ALWAYS, 7},
-    {1, 8, CONDITION_ALWAYS, 8},
-    {1, 9, CONDITION_ALWAYS, 9},
-    {1, 10, CONDITION_ALWAYS, 10},
-    {1, 11, CONDITION_ALWAYS, 11},
-    {1, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {0x4602, 30, CONDITION_ALWAYS, EVENT(Func_02000544)},
     {0x602, 31, CONDITION_ALWAYS, EVENT(Func_020004ec)},
     {0x8602, 32, CONDITION_ALWAYS, EVENT(Func_02000514)},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgFieldItSBeenALong)},
-    {0, 9, CONDITION_ALWAYS, EVENT(Func_02000188)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgFieldIWentOutToInvestigate)},
-    {0, 11, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouReGoingDeeper)},
-    {0, 12, CONDITION_ALWAYS, MSGNO(MsgFieldInTheHeartOfOsenia)},
-    {0, 13, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouWantToGo)},
-    {0, 14, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouLookAcrossThe)},
-    {0, 15, CONDITION_ALWAYS, MSGNO(MsgFieldATownCalledGarohLies)},
-    {0, 16, CONDITION_ALWAYS, MSGNO(MsgFieldBukBukBuk)},
-    {0, 17, CONDITION_ALWAYS, MSGNO(MsgFieldBahBaaaaaaa)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgFieldWhyWouldAnyoneTravelAll)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgFieldILikeThisTimeOf)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgFieldOseniaWasBigAlreadyBut)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgFieldNoWayIDLeave)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgFieldAirSRockHasStood)},
-    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgFieldItSWeirdThatYou)},
-    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgFieldItSBitterColdIn)},
-    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgFieldThePeopleInGarohAre)},
-    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgFieldTheGroundHereIsSo)},
-    {0x8d15, 17, CONDITION_ALWAYS, MSGNO(MsgFieldOhYeahMmmIJust)},
-    {0, 18, CONDITION_ALWAYS, EVENT(Func_0200014c)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgFieldItSBeenALong)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000188)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgFieldIWentOutToInvestigate)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouReGoingDeeper)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgFieldInTheHeartOfOsenia)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouWantToGo)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouLookAcrossThe)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgFieldATownCalledGarohLies)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgFieldBukBukBuk)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgFieldBahBaaaaaaa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFieldWhyWouldAnyoneTravelAll)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFieldILikeThisTimeOf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFieldOseniaWasBigAlreadyBut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFieldNoWayIDLeave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFieldAirSRockHasStood)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgFieldItSWeirdThatYou)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgFieldItSBitterColdIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgFieldThePeopleInGarohAre)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgFieldTheGroundHereIsSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgFieldOhYeahMmmIJust)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_0200014c)},
     {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgFieldItSCompletelyFullOf))},
     {0x50008805, 50, CONDITION_ALWAYS, EVENT(Func_020001e0)},
     {TRIGGERS_END},
@@ -604,8 +604,8 @@ struct Trigger gData_020010d8[] = {
 // clang-format on
 
 struct Trigger gData_020012ac[] = {
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {0x4602, 30, CONDITION_ALWAYS, EVENT(Func_02000544)},
     {0x602, 31, CONDITION_ALWAYS, EVENT(Func_020004ec)},
     {0x8602, 32, CONDITION_ALWAYS, EVENT(Func_02000514)},

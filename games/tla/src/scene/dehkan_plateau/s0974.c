@@ -17,7 +17,7 @@ extern const s32 gData_02003e00[];
 u32 Func_02003d80(struct FieldSprite *sprite, u32 frame);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_02003ba0(struct FieldEffect *effect, s32 mode);
-void Func_02003ba8(struct FieldEffect *effect, const s32 *script);
+void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
@@ -44,7 +44,7 @@ void Func_02000974(s32 spread) {
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
       Func_02003ba0(effect, 2);
-      Func_02003ba8(effect, gData_02003e00);
+      Actor_StartScript(effect, gData_02003e00);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -74,9 +74,9 @@ void Func_02000aa8(void);
 void Func_02000c4c(s32 level, s32 layer);
 
 s32 Func_02003c10(s32 layer, s32 x, s32 z);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003c78(s32 id, s32 target);
+void Event_Start(void);
+void Event_End(void);
+void Actor_MoveToObject(s32 id, s32 target);
 void Func_02003cc0(s32 id);
 s32 Func_02003d20(void);
 
@@ -123,7 +123,7 @@ void Func_02000aa8(void) {
       object->collisionFlags = 0;
       Actor_SetSingleChildFlags(object, 0);
       Func_02003ba0(object, 2);
-      Func_02003ba8(object, gData_02003e30);
+      Actor_StartScript(object, gData_02003e30);
       effect->velocityX = Math_Cosine(i << 12);
       effect->velocityY = 0;
       effect->velocityZ = Math_Sine(i << 12);

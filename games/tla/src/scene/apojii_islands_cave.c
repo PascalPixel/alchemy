@@ -36,7 +36,7 @@ void Func_02000054(s32 a0, s32 a1) { GameFlag_SetBit((a1 + 0x8e1)); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-s32 Func_02000070(void) {
+s32 Scene_Initialize(void) {
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x201;
   return 0;
 }
@@ -81,14 +81,14 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, 0x18eb, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {1, 5, CONDITION_ALWAYS, 5},
-    {0x4e15, 8, 0x8e9, EVENT(Func_02000054)},
-    {0x4e15, 9, 0x8ea, EVENT(Func_02000054)},
-    {0x4e15, 10, 0x8eb, EVENT(Func_02000054)},
-    {0x4e15, 11, 0x8ec, EVENT(Func_02000054)},
+    {TRIGGER_EXIT, 1, 0x18eb, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, 0x8e9, EVENT(Func_02000054)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, 0x8ea, EVENT(Func_02000054)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, 0x8eb, EVENT(Func_02000054)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, 0x8ec, EVENT(Func_02000054)},
     {TRIGGERS_END},
 };

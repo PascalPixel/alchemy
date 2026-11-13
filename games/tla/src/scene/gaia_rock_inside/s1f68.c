@@ -73,10 +73,10 @@ void Func_02001fd8(void) {
 
 #include "system.h"
 #include "text/msg_ids.h"
-void Func_02004e3c(struct Actor *object, s32 value);
-void Func_02004e5c(void);
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 value);
+void Event_Start(void);
 void Func_02004e64(void);
-void Func_02004ec4(s32 id, s32 target);
+void Actor_MoveToObject(s32 id, s32 target);
 
 void Func_02002020(void) {
   s32 t1, t2, t26, t27, t28, t34, t35, t37, t38, t43, t44, t50, v_r5, v_r6,
@@ -88,14 +88,14 @@ void Func_02002020(void) {
   t2 = ((s32)Actor_Get(9));
   v_r8 = t2;
   v_r10 = Actor_Get(13);
-  Func_02004e5c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered((s32)&MsgGaiaRockInside01, 1);
   Event_PlaySound(193);
-  Func_02004e3c(v_r10, 1);
+  Actor_SetSpritePriorityDirect(v_r10, 1);
   v_r5 = (s32)&gMainRoutineWork;
   v_r5 = (v_r5 + 0x214);
-  Func_02004ec4(13, FIELD_AT(v_r5, s32, 0));
+  Actor_MoveToObject(13, FIELD_AT(v_r5, s32, 0));
   Actor_SetDestination(13, 496, 712);
   FIELD_AT(v_r10, s32, 40) = 0x60000;
   FieldActor_WaitForMoveById(13);
@@ -185,7 +185,7 @@ L_0200a22e:
 #include "scene_tables.h"
 #include "iwram_call.h"
 
-void Func_02004fdc(void);
+void ObjectTable_Snapshot(void);
 
 /// Three scene events of one shape, for objects 8 and 12, 9 and 12, and 8 and
 /// 14: the first object shakes with random vertical speeds, and while the flag
@@ -199,12 +199,12 @@ void Func_0200225c(void) {
 
   object = Actor_GetById(8);
   partner = Actor_GetById(12);
-  Func_02004e5c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Sound_Play(193);
-  Func_02004e3c(partner, 1);
-  Func_02004ec4(12, gMainRoutineWork.currentOwner);
+  Actor_SetSpritePriorityDirect(partner, 1);
+  Actor_MoveToObject(12, gMainRoutineWork.currentOwner);
   Actor_SetDestination(12, 528, 372);
   partner->velocityY = PIXELS(6);
   Actor_WaitForMoveById(12);
@@ -254,7 +254,7 @@ void Func_0200225c(void) {
     if (!GameFlag_Test(0x927)) {
       GameFlag_SetBit(0x308);
       Event_Wait(30);
-      Func_02004fdc();
+      ObjectTable_Snapshot();
       Import_EventSetExitRequest(20);
     } else {
       GameFlag_SetBit(0x9bd);
@@ -287,12 +287,12 @@ void Func_020024b8(void) {
 
   object = Actor_GetById(9);
   partner = Actor_GetById(12);
-  Func_02004e5c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Sound_Play(193);
-  Func_02004e3c(partner, 1);
-  Func_02004ec4(12, gMainRoutineWork.currentOwner);
+  Actor_SetSpritePriorityDirect(partner, 1);
+  Actor_MoveToObject(12, gMainRoutineWork.currentOwner);
   Actor_SetDestination(12, 672, 372);
   partner->velocityY = PIXELS(6);
   Actor_WaitForMoveById(12);
@@ -342,7 +342,7 @@ void Func_020024b8(void) {
     if (!GameFlag_Test(0x927)) {
       GameFlag_SetBit(0x309);
       Event_Wait(30);
-      Func_02004fdc();
+      ObjectTable_Snapshot();
       Import_EventSetExitRequest(20);
     } else {
       GameFlag_SetBit(0x9be);
@@ -375,12 +375,12 @@ void Func_02002718(void) {
 
   object = Actor_GetById(8);
   partner = Actor_GetById(14);
-  Func_02004e5c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Sound_Play(193);
-  Func_02004e3c(partner, 1);
-  Func_02004ec4(14, gMainRoutineWork.currentOwner);
+  Actor_SetSpritePriorityDirect(partner, 1);
+  Actor_MoveToObject(14, gMainRoutineWork.currentOwner);
   Actor_SetDestination(14, 336, 396);
   partner->velocityY = PIXELS(6);
   Actor_WaitForMoveById(14);
@@ -430,7 +430,7 @@ void Func_02002718(void) {
     if (!GameFlag_Test(0x927)) {
       GameFlag_SetBit(0x307);
       Event_Wait(30);
-      Func_02004fdc();
+      ObjectTable_Snapshot();
       Import_EventSetExitRequest(20);
     } else {
       GameFlag_SetBit(0x9bc);
@@ -504,7 +504,7 @@ extern const u8 gData_02006164[];
 extern const u8 gData_020061a0[];
 
 /// Returns the current room's table.
-const u8 *Func_02002a44(void) {
+const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room2)
     return gData_02006038;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room3)

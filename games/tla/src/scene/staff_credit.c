@@ -149,14 +149,14 @@ extern u8 Data_02002469[];
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, -1, z, mode);
 }
-void Func_02001fdc(void);
+void Map_UpdateCurrentTileBlock(void);
 void Func_02002074(void);
 // The veneer of Resource_DecodeType01Far.
-s32 Func_02001f54(const void *source, void *destination);
-void Func_02002024(void);
+s32 Resource_DecodeType01(const void *source, void *destination);
+void Event_Start(void);
 
 void Func_0200207c(void);
-void Func_02001f74(void);
+void DebugText_Clear(void);
 
 struct WorldCamera {
   u8 unk000[0x11c];
@@ -188,7 +188,7 @@ void Func_0200020c(s32 stage) {
   gBgScroll[0].x = 0;
   Camera_MoveWithinMapBounds_(gData_02003d20[stage][0] << 16,
                               gData_02003d20[stage][1] << 16, 0);
-  Func_02001fdc();
+  Map_UpdateCurrentTileBlock();
   Func_080d46a4(gData_02003d5c[stage], 1);
   map->yaw = 0x1000;
   map->unk11c = 0xd000;
@@ -222,8 +222,8 @@ void Func_0200020c(s32 stage) {
   if (stage == 4) {
     u8 *frames = buffer + 0x2000;
 
-    Func_02001f54(Data_02002469, buffer);
-    Func_02001f54(Data_0200217c, frames);
+    Resource_DecodeType01(Data_02002469, buffer);
+    Resource_DecodeType01(Data_0200217c, frames);
     IO_WRITE_QUEUE_PUSH(0x06000000, (u32)buffer, 0x84000800);
     IO_WRITE_QUEUE_PUSH(0x06002000, (u32)frames, 0x84000140);
     grid = frames;
@@ -258,7 +258,7 @@ void Func_0200020c(s32 stage) {
     IO_WRITE_QUEUE_PUSH(0x06002000, (u32)buffer, 0x80000400);
     wait(1);
   }
-  Func_02002024();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Task_Add(Func_0200005c, 0x480);
   Sound_Play(246);
@@ -452,7 +452,7 @@ void Func_0200020c(s32 stage) {
     gBgScroll[0].y = 0;
   }
   Heap_Release(buffer);
-  Func_02001f74();
+  DebugText_Clear();
   QueueIoWriteDelay2(0x04000052, gData_02003dbc);
   QueueIoWriteDelay2(0x04000050, 0);
   Event_SetFlag(0x101);
@@ -463,14 +463,14 @@ extern char SceneId_Ov64c;
 extern char SceneId_Ov6b4;
 
 void Func_0200101c(void);
-void Func_02001f8c(s32 resource);
-void Func_02002054(s32 scene, s32 entrance);
+void Resource_ReservedNoOp(s32 resource);
+void Event_SetDestination(s32 scene, s32 entrance);
 void Func_020020ac(s32 value);
 
 /// Chooses where the credits go next by the entrance they were entered from:
 /// entrances 0 to 5 run resource FarCall00A with 2 to 7 and continue, 2 to 6
 /// after Func_0200020c's stage 0 to 4; entrance 6 leaves for SceneId_Ov6b4.
-s32 Func_02000b64(void) {
+s32 Scene_Initialize(void) {
   struct EventWork *work;
 
   Event_SetFlag(0x144);
@@ -483,42 +483,42 @@ s32 Func_02000b64(void) {
   Func_0200101c();
   switch (gMainRoutineWork.entrance) {
   case 0:
-    Func_02001f8c((s32)&ResourceId_FarCall00A);
+    Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(2);
-    Func_02002054((s32)&SceneId_Ov6b4, 2);
+    Event_SetDestination((s32)&SceneId_Ov6b4, 2);
     break;
   case 1:
-    Func_02001f8c((s32)&ResourceId_FarCall00A);
+    Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(3);
-    Func_02002054((s32)&SceneId_Ov64c, 2);
+    Event_SetDestination((s32)&SceneId_Ov64c, 2);
     break;
   case 2:
     Func_0200020c(0);
-    Func_02001f8c((s32)&ResourceId_FarCall00A);
+    Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(4);
-    Func_02002054((s32)&SceneId_Ov64c, 3);
+    Event_SetDestination((s32)&SceneId_Ov64c, 3);
     break;
   case 3:
     Func_0200020c(1);
-    Func_02001f8c((s32)&ResourceId_FarCall00A);
+    Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(5);
-    Func_02002054((s32)&SceneId_Ov64c, 4);
+    Event_SetDestination((s32)&SceneId_Ov64c, 4);
     break;
   case 4:
     Func_0200020c(2);
-    Func_02001f8c((s32)&ResourceId_FarCall00A);
+    Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(6);
-    Func_02002054((s32)&SceneId_Ov64c, 5);
+    Event_SetDestination((s32)&SceneId_Ov64c, 5);
     break;
   case 5:
     Func_0200020c(3);
-    Func_02001f8c((s32)&ResourceId_FarCall00A);
+    Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(7);
-    Func_02002054((s32)&SceneId_Ov64c, 6);
+    Event_SetDestination((s32)&SceneId_Ov64c, 6);
     break;
   case 6:
     Func_0200020c(4);
-    Func_02002054((s32)&SceneId_Ov6b4, 3);
+    Event_SetDestination((s32)&SceneId_Ov6b4, 3);
     break;
   }
   return 0;
@@ -557,7 +557,7 @@ s32 Func_02000c9c(struct Actor *object) {
 #define Func_02004e08 Func_02002094
 #define Func_02004e10 Party_GetLeaderActor
 #define Func_02004b30 Import_ActorCreate
-#define Func_02004b20 Func_02001fc4
+#define Func_02004b20 Actor_StartScript
 #define Func_02004b18 Func_02001fbc
 #define Func_02004b38 Func_02001fd4
 #define gData_02006bd4 gData_02003da8
@@ -635,7 +635,7 @@ void Func_02001274(struct Actor *object, s32 mode) {
 }
 
 s32 Func_02002004(s32 *position);
-s32 Func_020020a4(s32 mode, s32 value);
+s32 SceneEvent_FindActiveRecord(s32 mode, s32 value);
 
 void Func_020012ac(void) {
   struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
@@ -646,7 +646,7 @@ void Func_020012ac(void) {
   for (i = 0; i < 20; i++) {
     s32 hit = Func_02002004(&object->x);
 
-    if (hit != 0 && Func_020020a4(2, hit) != 0)
+    if (hit != 0 && SceneEvent_FindActiveRecord(2, hit) != 0)
       break;
     System_Wait(1);
   }
@@ -733,8 +733,8 @@ void Func_02001400(s32 mode) {
   }
   Func_02002074();
   buffer = Heap_AllocEwram(0x4000);
-  Func_02001f54(gWorldMapPackedTiles, buffer);
-  Func_02001f54(gWorldMapPackedPictures, buffer + 0x1000);
+  Resource_DecodeType01(gWorldMapPackedTiles, buffer);
+  Resource_DecodeType01(gWorldMapPackedPictures, buffer + 0x1000);
   IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(gWorldMapPalettes + mode * 32),
                       0x80000010);
   {
@@ -755,7 +755,7 @@ void Func_02001400(s32 mode) {
     IRQ_UNLOCK(saved);
   }
   Task_AddFrame(Func_0200130c, 0x480);
-  Func_02002024();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(246);
   gData_02003fc0 = 0xe00;
@@ -808,7 +808,7 @@ void Func_02001400(s32 mode) {
     gData_02003fc0 = 0x1000;
     FieldEvent_Wait(45);
     FieldTask_Remove(Func_0200130c);
-    Func_02001f74();
+    DebugText_Clear();
     level = gData_02003fc0;
     QueueIoWriteDelay2(0x04000052, level);
     QueueIoWriteDelay2(0x04000050, 0);
@@ -822,7 +822,7 @@ void Func_02001400(s32 mode) {
     gData_02003fc0 = 0x1000;
     FieldEvent_Wait(45);
     FieldTask_Remove(Func_0200130c);
-    Func_02001f74();
+    DebugText_Clear();
     level = gData_02003fc0;
     QueueIoWriteDelay2(0x04000052, level);
     QueueIoWriteDelay2(0x04000050, 0);
@@ -987,9 +987,6 @@ extern u8 gData_02003fd8[][32];
 extern u8 gData_020040d8[][32];
 
 void Func_02001be0(s32 progress) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 2 of 181 instructions differ in
-   * tla-en. */
   s32 level = ((progress * 30 + 0x8000) >> 16) + 1;
   s32 kind = 0;
   s32 count, base, i;
@@ -1123,7 +1120,7 @@ void Func_02001d90(void) {
 extern const u8 gWorldMapPackedTilesC[];
 
 void Func_02001e58(void) {
-  Func_02001f54(gWorldMapPackedTilesC, gData_020040d8);
+  Resource_DecodeType01(gWorldMapPackedTilesC, gData_020040d8);
   gData_02003fc6 = Resource_FindFreeEntry();
   Vram_Load(gData_02003fc6, 0x100, 0);
   gData_02003fc4 = -1;
@@ -1132,7 +1129,7 @@ void Func_02001e58(void) {
 }
 
 void Func_02001eb8(void) {
-  Func_02001f54(gWorldMapPackedTilesC, gData_020040d8);
+  Resource_DecodeType01(gWorldMapPackedTilesC, gData_020040d8);
   Resource_ResetEntry(gData_02003fc6);
   gData_02003fc4 = -1;
   FieldTask_Remove(Func_02001d90);

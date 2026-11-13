@@ -42,9 +42,9 @@ Heap_Alloc:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_02001bac
+	.global Resource_DecodeType01
 	.thumb_func
-Func_02001bac:
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global VramCache_Load
 	.thumb_func
@@ -82,9 +82,9 @@ Func_02001bec:
 	.thumb_func
 Actor_SetAnimationSpeed:
 	overlay_veneer Actor_SetAnimationSpeedFar
-	.global Func_02001bfc
+	.global Actor_StartScript
 	.thumb_func
-Func_02001bfc:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -94,9 +94,9 @@ Import_ActorCreate:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Func_02001c14
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_02001c14:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -150,13 +150,13 @@ Func_02001c74:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02001c84
+	.global Event_Start
 	.thumb_func
-Func_02001c84:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02001c8c
+	.global Event_End
 	.thumb_func
-Func_02001c8c:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -202,9 +202,9 @@ Func_080d4568:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02001cec
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_02001cec:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -222,9 +222,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02001d14
+	.global Camera_WorldToScreen
 	.thumb_func
-Func_02001d14:
+Camera_WorldToScreen:
 	overlay_veneer Camera_WorldToScreenFar
 	.global Func_02001d1c
 	.thumb_func

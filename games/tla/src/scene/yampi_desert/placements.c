@@ -16,7 +16,7 @@ const u8 *Func_0200028c(void) {
   return gData_02004810;
 }
 
-const u8 *Func_020002b8(void) {
+const u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov661Room10)
@@ -57,7 +57,7 @@ extern const u8 gData_02004fdc[];
 extern const u8 gData_0200506c[];
 extern const u8 gData_020050b4[];
 
-const u8 *Func_020002f8(void) {
+const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov661Room1)
@@ -100,7 +100,7 @@ extern const u8 gData_020057e0[];
 
 /// Returns the current room's table.
 // As ☀️'s Scene_GetEntrances picks one.
-const u8 *Func_020003c8(void) {
+const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov661Room1)
@@ -131,56 +131,56 @@ const u8 *Func_020003c8(void) {
 }
 
 void Func_020004bc(void) {
-  Func_02004040();
-  Func_020041b8(0);
-  Func_020040c8((s32)MsgWeFollowedThe);
+  Event_Start();
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgWeFollowedThe);
   Func_020040d8(8, 0);
-  Func_02004048();
+  Event_End();
 }
 
 void Func_020004e0(void) {
-  Func_020040c8((s32)MsgCanTWe);
+  Event_SetMessageId((s32)MsgCanTWe);
   Actor_SetModeById(12, 4);
-  Func_020040d0(12, 0);
+  Event_ShowMessageAndWait(12, 0);
   Scene_ArmCallback(13, FACING_WEST, 20);
   Actor_SetModeById(13, 4);
-  Func_020040d0(13, 0);
+  Event_ShowMessageAndWait(13, 0);
   Actor_ArmCallback(13, 0, 20);
   Scene_ArmCallback(13, 0x3000, 20);
   Actor_ArmCallback(13, 0, 20);
   Scene_ArmCallback(13, 0x3000, 0);
-  Func_020040d0(13, 0);
+  Event_ShowMessageAndWait(13, 0);
 }
 
 void Func_02000550(void) {
-  Func_02004040();
-  Func_020041b8(0);
+  Event_Start();
+  Event_ResolvePendingActions(0);
   if (!Scene_FlagTest(0x88f))
     Func_020004e0();
   Actor_SetAngleToward(12, gMainRoutineWork.currentOwner, 0);
-  Func_020040c8((s32)MsgAsYouCan);
-  Func_020040d0(12, 0);
+  Event_SetMessageId((s32)MsgAsYouCan);
+  Event_ShowMessageAndWait(12, 0);
   GameFlag_SetBit(0x88f);
-  Func_02004048();
+  Event_End();
 }
 
 void Func_020005a8(void) {
-  Func_02004040();
-  Func_020041b8(0);
+  Event_Start();
+  Event_ResolvePendingActions(0);
   if (!Scene_FlagTest(0x88f))
     Func_020004e0();
   Actor_SetAngleToward(13, gMainRoutineWork.currentOwner, 0);
-  Func_020040c8((s32)MsgThisIsWhere);
-  Func_020040d0(13, 0);
+  Event_SetMessageId((s32)MsgThisIsWhere);
+  Event_ShowMessageAndWait(13, 0);
   GameFlag_SetBit(0x88f);
-  Func_02004048();
+  Event_End();
 }
 
 void Func_02000600(void) {
-  Func_02004040();
-  Func_020041b8(0);
+  Event_Start();
+  Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgNorthAlhafraSouth, 1);
-  Func_02004048();
+  Event_End();
 }
 
 void Func_02000620(s32 a, s32 b) { Func_0200388c(gData_02004768, a, b); }
@@ -378,8 +378,8 @@ void Func_02000a10(void) {
 void Func_02000a8c(void) {
   s16 scene;
 
-  Func_02004040();
-  Func_020041b8(0);
+  Event_Start();
+  Event_ResolvePendingActions(0);
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov661Room4) {
     Camera_FollowActor(16, 1);
@@ -396,5 +396,5 @@ void Func_02000a8c(void) {
     wait(1);
   test:;
   } while (gData_02004808 == 210);
-  Func_02004048();
+  Event_End();
 }

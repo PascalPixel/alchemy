@@ -24,9 +24,9 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
 void Func_02003de4(struct Actor *object, s32 value);
-void Func_02003dec(struct Actor *object, const void *script);
-void Func_02003e64(void);
-void Func_02003e6c(void);
+void Actor_StartScript(struct Actor *object, const void *script);
+void Event_Start(void);
+void Event_End(void);
 void Func_020034ec(void);
 
 void Func_02001cac(void);
@@ -102,7 +102,7 @@ void Func_02001f58(void);
 void Func_02001278(struct Actor *object);
 void Func_02000df8(struct Actor *object);
 void Func_020034d8(void);
-void Func_02003eec(s32 actor, s32 target);
+void Actor_MoveToObject(s32 actor, s32 target);
 void Func_02003fb4(void);
 void Event_StartScreenTransition(void);
 

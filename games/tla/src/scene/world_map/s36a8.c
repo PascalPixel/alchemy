@@ -34,7 +34,7 @@ extern struct Actor *gData_02006c08[];
 extern s32 gData_02006bd4[];
 
 struct WorldMapPlacement *Func_02004e08(void);
-void Func_02004b20(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 void Func_02004b18(struct Actor *object, s32 mode);
 void Func_02004b38(struct Actor *object);
 
@@ -104,7 +104,7 @@ void Func_020036a8(void) {
                                                        pz));
           if (object == NULL)
             goto next;
-          Func_02004b20(object, gData_02006bd4);
+          Actor_StartScript(object, gData_02006bd4);
           object->motionFlags = 0;
           object->collisionFlags = 1;
           object->facing = placement->angle;

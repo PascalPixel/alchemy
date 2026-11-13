@@ -116,6 +116,58 @@ struct TriggerView {
 /// heading in control bits 15..12.
 #define TRIGGER_FLAG_FACING 0x400
 
+#include "ability_ids.h"
+
+/// Actor ids: 0 to 7 the party's characters, the placed actors from 8. A
+/// party member's actor takes its character's number as its actor id, as in
+/// The Broken Seal.
+enum ActorId {
+  /// ★ Named from the game: "Felix" (MsgCharacterName)
+  ACTOR_FELIX = 4,
+  ACTOR_FIRST_PLACED = 8
+};
+
+/// Trigger.kind's low four bits: what the trigger answers.
+enum TriggerKind {
+  TRIGGER_TALK = 0, ///< the A button on an actor; the subject is its id
+  /// Stepping onto a cell whose cell behavior is the subject, when no
+  /// step trigger answers it; value is the exit kind.
+  TRIGGER_EXIT = 1,
+  TRIGGER_STEP = 2,    ///< stepping onto or pushing against a cell behavior
+  TRIGGER_EXAMINE = 3, ///< the A button on what is ahead, when it is no actor
+  TRIGGER_ITEM = 4,    ///< an item used on a cell or an actor
+  TRIGGER_PSYNERGY = 5,
+  TRIGGER_RAISED = 6, ///< raised by code
+  TRIGGER_TALK_HALTED = 7 ///< talking to an actor Halt has stopped
+};
+
+/// When a Psynergy trigger runs around its field Psynergy, control bits 30..28.
+enum PsynergyPhase {
+  /// After the field Psynergy, PSYNERGY_ON_ACTOR's phase.
+  PSYNERGY_PHASE_AFTER_CAST = 0,
+  PSYNERGY_PHASE_BEFORE_CAST = 1, ///< once the PP is paid, before the cast
+  /// After a Psynergy that runs out by itself has ended.
+  PSYNERGY_PHASE_AFTER_END = 2,
+  PSYNERGY_PHASE_BEFORE_END = 3, ///< as PSYNERGY_PHASE_AFTER_END, before it
+  PSYNERGY_PHASE_FADES = 4,      ///< as Reveal's colours come back
+  PSYNERGY_PHASE_ACTS = 5        ///< run by the field Psynergy as it acts
+};
+
+/// A Psynergy trigger on the actor the leader faces.
+#define TRIGGER_PSYNERGY_ON_ACTOR 0x10
+#define PSYNERGY_ON_ACTOR(ability)                                             \
+  (TRIGGER_PSYNERGY | TRIGGER_PSYNERGY_ON_ACTOR | (ability) << 8)
+/// A Psynergy trigger on an actor at one phase of the cast, as
+/// PSYNERGY_ANYWHERE is for any target.
+#define PSYNERGY_PHASE_ON_ACTOR(ability, phase)                                \
+  ((u32)(phase) << 28 | PSYNERGY_ON_ACTOR(ability))
+
+/// A Psynergy trigger for any target, not a particular actor or cell.
+#define TRIGGER_PSYNERGY_ANYWHERE 0x80
+#define PSYNERGY_ANYWHERE(ability, phase)                                      \
+  ((u32)(phase) << 28 | (ability) << 8 | TRIGGER_PSYNERGY_ANYWHERE |           \
+   TRIGGER_PSYNERGY)
+
 /// A scene overlay's own entrances, actor placements and triggers, which its
 /// getters return.
 extern struct SceneEntrance gSceneEntrances[];

@@ -87,8 +87,6 @@ enum MercurySheetPicture {
 ///
 /// args: the targets.
 void BattleEffect_RunMercury(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -100,8 +98,9 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   s32 i;
   s32 j;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_FetchRectangleBlitters(0, blit);
@@ -229,8 +228,6 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 ///
 /// args: the targets.
 void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sheet;
@@ -243,8 +240,9 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   s32 j;
   s32 angle;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -381,8 +379,6 @@ enum VenusSheetPicture {
 ///
 /// args: the targets.
 void BattleEffect_RunVenus(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -394,8 +390,9 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   s32 j;
   s32 angle;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -403,8 +400,8 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
                       COMPOSITE_LIGHTEN);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
-  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  draw[0] = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
+  draw[1] = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet,
                              1, 1);
@@ -514,8 +511,6 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
 ///
 /// args: the targets.
 void BattleEffect_RunMars(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sheet;
@@ -527,8 +522,9 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   s32 i;
   s32 diveY;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_FetchRectangleBlitters(0, blitters);

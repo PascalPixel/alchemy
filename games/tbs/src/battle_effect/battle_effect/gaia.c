@@ -32,8 +32,6 @@ enum EarthWallSheetPicture {
 ///         Gaia and Avalanche.
 void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   BlitterPair draw;
@@ -50,8 +48,9 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   s32 j;
   s32 k;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
 

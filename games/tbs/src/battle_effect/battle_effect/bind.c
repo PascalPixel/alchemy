@@ -140,8 +140,6 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   s32 originX;
   s32 originY;
   BlitterPair draw;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -157,8 +155,9 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   s32 j;
   s32 k;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
@@ -320,8 +319,6 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   } position;
   struct ScreenPoint screen;
   struct Vector3 scale;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -338,8 +335,9 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   s32 j;
   s32 k;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0);

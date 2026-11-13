@@ -113,7 +113,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   s32 originY;
 
   cursor = gBattleEffectWork;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
 
@@ -459,7 +460,8 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   s32 paletteId;
 
   cursor = gBattleEffectWork;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0);
   if (mode == STAT_REDUCTION_DULL)

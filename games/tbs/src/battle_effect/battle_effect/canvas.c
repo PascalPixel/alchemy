@@ -112,7 +112,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
   s32 nextCounter;
 
   if (work->transferPending == 1) {
-    source = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_CANVAS);
+    source = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
     switch (work->transferMode) {
     case CANVAS_COPY:
       Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, CANVAS_BYTES);

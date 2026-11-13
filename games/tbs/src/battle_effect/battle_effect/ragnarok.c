@@ -30,8 +30,6 @@
 /// Leaves args->variant at EFFECT_VARIANT_STRONGER, and the user in its
 /// action pose with its animation back at the usual speed.
 void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 col;
@@ -41,8 +39,9 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
 
   user = GetBattleObjectSlotFar(args->user)->actor;
   // Nothing in the effect or the battle reads the variant afterwards.

@@ -25,8 +25,6 @@
 /// args: the targets; its variant picks the number of boulders
 ///         (gSpire_RockCounts: 1, 3 or 5).
 void BattleEffect_RunSpire(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit;
@@ -42,14 +40,15 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   u32 width;
   u32 height;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  blit = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  blit = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
   // BG2 is scrolled so that canvas column 64 is the middle of the row of
   // targets.
   Projection_ScaledUnit(work->args->targets[0], &first);

@@ -87,8 +87,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 
   cache = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = (void *)cache[0];
-  work = (struct BattleEffectWork *)CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_EFFECT);
-  particleSheet = (u8 *)CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_SHEET);
+  work = (struct BattleEffectWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  particleSheet = (u8 *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
@@ -128,17 +128,16 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   neptuneVelocityX = -px(4);
   neptuneVelocityZ = -px(8);
   savedBg1ScrollX = gBgScroll[1].x;
-  view = (struct BattleBackgroundWork *)CANVAS_SLOT(
-      cache, HEAP_SLOT_BATTLE_BACKGROUND);
+  view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   // The effect owns BG1's scroll until the second stage.
   view->busy = 1;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  blit[0] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_RAM_CODE);
+  blit[0] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  blit[1] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_RAM_CODE_2);
+  blit[1] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 

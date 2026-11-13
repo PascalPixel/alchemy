@@ -73,8 +73,6 @@ void BattleEffect_RunPunji(struct BattleEffectParams *args) {
 ///         Punji Trap and Punji Strike, 12 for Wild Growth. The effect runs
 ///         4 frames a column and 56 more.
 void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   void *rectangle[2];
@@ -108,7 +106,8 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   s32 puffAge;
   s32 image;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
@@ -368,11 +367,11 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   REG_BG2X = (64 - first.x) << 8;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  draw[0] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
-  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  draw[1] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
   column = work->particles;
   i = 0;
   do {

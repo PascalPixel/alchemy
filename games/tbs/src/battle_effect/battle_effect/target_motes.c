@@ -139,7 +139,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   s32 i;
 
   cursor = gBattleEffectWork;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   // Motes drawn for each target: 16, but 24 for Demon Fire and 32 for Drown.
   count = 16;
   work->args = args;
@@ -378,8 +379,6 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 /// 64 background colours and sets REG_BLDCNT and BG2's affine registers (the
 /// narrow canvas, moved over the party's side when side is EFFECT_SIDE_PARTY).
 void BattleEffect_RunSleep(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 anchor[3];
@@ -392,7 +391,8 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   s32 targetIndex;
 
   sheep = PARTICLES;
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0);
   // Drawn solid.
@@ -400,10 +400,10 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  drawUpright = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  drawUpright = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                       COMPOSITE_TRANSPARENT);
-  drawFlipped = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  drawFlipped = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
 
   // Seed SLEEP_SEEDED sheep, of which SLEEP_SHEEP fall. Each starts 32
   // pixels above the canvas at a random x from 32 to 95, with a random
@@ -533,7 +533,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   // Redraw from blank each frame.
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0;
-  draw[0] = (DrawRectangle)CANVAS_SLOT(slot, HEAP_SLOT_RAM_CODE);
+  draw[0] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // Each flame starts at a random point of its effect.
   EFFECT_FOR_EACH_TARGET(i, work->args) {

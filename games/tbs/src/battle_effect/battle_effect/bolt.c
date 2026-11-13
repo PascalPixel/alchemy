@@ -40,8 +40,6 @@ enum {
 /// args: the targets; variant picks the row of gBolt_Counts
 ///         and the glints' blend.
 void BattleEffect_RunBolt(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 i;
@@ -57,13 +55,14 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   struct ScreenPoint screen;
   s32 j;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  draw[0] = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
   // The tornado sheet only for its glints.
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,

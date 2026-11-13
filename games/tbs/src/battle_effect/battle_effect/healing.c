@@ -116,8 +116,6 @@ void BattleEffect_RunPsyCrystal(struct BattleEffectParams *args) {
 ///       they and Ply draw sparkle dots. Psy Crystal takes the Mars
 ///       resource, Cure the blast resource.
 void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frameCount;
@@ -136,8 +134,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   s32 originY;
   BlitterPair blit;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   canvasShiftX = 0;
   work->args = args;
   BattleEffect_StartCanvasLayer(0);

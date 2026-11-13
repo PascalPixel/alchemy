@@ -23,8 +23,6 @@
 ///
 /// args: the user and the targets; prelude 1 keeps the Djinni circling.
 void BattleEffect_RunHail(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   struct ScreenPoint origin;
@@ -36,7 +34,8 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   s32 frame;
   s32 rise;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   // A Mercury Djinni appears over the user.

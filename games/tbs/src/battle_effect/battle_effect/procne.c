@@ -75,7 +75,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = slots[0];
-  camera = CANVAS_SLOT(slots, HEAP_SLOT_CAMERA);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
   graphics = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->args = args;

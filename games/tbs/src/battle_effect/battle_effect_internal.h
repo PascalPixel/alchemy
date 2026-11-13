@@ -95,13 +95,6 @@
 /// Outside the battle view: BG0 and blending only.
 #define EFFECT_WINOUT (WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL)
 
-/// A heap slot read through a pointer to the effect's own slot,
-/// gHeapSlots[HEAP_SLOT_BATTLE_EFFECT].
-#define EFFECT_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_EFFECT])
-/// A heap slot read through a pointer to the canvas slot,
-/// gHeapSlots[HEAP_SLOT_BATTLE_CANVAS], just after the effect's own.
-#define CANVAS_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_CANVAS])
-
 /// Index of DMAxCNT_H, the control half, in a channel's 16-bit registers.
 #define DMA_CONTROL_HALF 5
 
@@ -117,18 +110,6 @@ static inline void Dma_Stop(volatile u16 *channel) {
   channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
   (void)channel[DMA_CONTROL_HALF];
 }
-
-/// The work block and canvas occupy adjacent slots, starting at
-/// HEAP_SLOT_BATTLE_EFFECT. A cursor reads them in that order.
-#define EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas)                       \
-  ((work) = *(cursor)++, (canvas) = *(cursor))
-
-/// Lets EFFECT_SLOT(slots, s) reach any slot: an earlier one such as
-/// HEAP_SLOT_CAMERA, before HEAP_SLOT_BATTLE_EFFECT, sits at a negative index
-/// that is still inside gHeapSlots.
-#define EFFECT_GET_SLOTS(slots, cursor, work, canvas)                          \
-  ((slots) = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT], (cursor) = (slots),         \
-   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas))
 
 /// Marks particles[0] to particles[count - 1] free: a particle whose variant
 /// is -1 is not drawn or moved until an effect gives it a life.

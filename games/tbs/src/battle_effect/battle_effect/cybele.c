@@ -75,7 +75,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   BlitterPair draw;
 
   cursor = gBattleEffectWork;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_SpawnObjects(8, SPRITE_CYBELE, 1);
 

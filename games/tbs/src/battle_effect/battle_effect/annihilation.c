@@ -45,9 +45,10 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  particleSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  particleSheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   burstPixels = Ram_MapGridCellBuffer;
   work->args = args;
   BattleEffect_StartCanvasLayer(0);

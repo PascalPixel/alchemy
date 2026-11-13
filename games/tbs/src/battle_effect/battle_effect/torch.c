@@ -47,7 +47,8 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   s32 *line;
 
   slots = gBattleEffectWork;
-  EFFECT_GET_WORK_AND_CANVAS(slots, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_WRAP);
   // The Mars Djinni's long entrance, 84 frames, over the user.

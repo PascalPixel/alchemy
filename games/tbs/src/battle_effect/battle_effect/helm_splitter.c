@@ -27,8 +27,6 @@
 ///
 /// Abilities: Helm Splitter (BATTLE_EFFECT_HELM_SPLITTER).
 void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   u8 *graphics;
@@ -41,8 +39,9 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
@@ -262,7 +261,6 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 /// right of x, halved for the wide canvas.
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle additive;
@@ -275,7 +273,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
   // BG2 shows the canvas at twice its width, and BG1 and BG2 blend over the
   // layers below.
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
   orgX = x;
   x += px(40);

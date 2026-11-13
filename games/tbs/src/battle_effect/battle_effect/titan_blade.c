@@ -37,7 +37,6 @@
 /// (BattleEffect_StepPaletteToResource), one level a frame.
 void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   void **slots;
-  void **slotCursor;
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blitters[2];
@@ -49,7 +48,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   s32 sparkOriginX;
   s32 i;
 
-  EFFECT_GET_SLOTS(slots, slotCursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
 
   work->args = args;

@@ -96,10 +96,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                BGCNT_SCREEN_BASE(7);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[0] = CANVAS_SLOT(cursor, HEAP_SLOT_RAM_CODE);
+  draw[0] = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[1] = CANVAS_SLOT(cursor, HEAP_SLOT_RAM_CODE_2);
+  draw[1] = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
 
   // The breath from FlashBurst, the fireballs' flames from EmberStreak (at
   // sheet + 12288).

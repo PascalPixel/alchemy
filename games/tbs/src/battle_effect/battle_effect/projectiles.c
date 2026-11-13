@@ -31,8 +31,6 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   s32 step[3];
   s32 point[3];
   struct ScreenPoint position;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   BlitterPair draw;
@@ -45,8 +43,9 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   s32 frame;
   s32 i;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;
@@ -408,8 +407,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   struct ScreenPoint position;
   s32 screenX;
   s32 screenY;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 i;
@@ -431,9 +428,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   s32 hit;
   s32 x;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   soundCooldown = 0;
   work->args = args;
   comet = args->variant;

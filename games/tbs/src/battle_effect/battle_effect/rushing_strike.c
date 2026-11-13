@@ -83,8 +83,6 @@ void BattleEffect_RunHeadbutt(struct BattleEffectParams *args) {
 /// args: the user and the targets.
 /// mode: the sparks' palette (enum RushingStrikeMode).
 void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   BlitterPair draw;
@@ -104,9 +102,10 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   u8 *cells;
 
   cells = Ram_MapGridCellBuffer;
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
 

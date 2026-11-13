@@ -33,8 +33,6 @@
 ///
 /// Abilities: Death Plunge (BATTLE_EFFECT_DEATH_PLUNGE).
 void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   /* LEFTOVER(frame): draw[1], the idle half of the pair; the ROM's frame
@@ -56,7 +54,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   struct ScreenPoint screen;
   s32 frame;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
@@ -66,7 +65,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   // Trails keep 3/4 a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = CANVAS_FADE_THREE_QUARTERS;
-  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  draw[0] = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // The run: the user moves to 90% of the way to the target, with an
   // acceleration of 2 pixels a frame per frame and a top speed of 8 pixels a
@@ -197,8 +196,6 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
 UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
   BlitterPair draw;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle *blit;
@@ -206,7 +203,8 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   // Invisible to start with.
@@ -215,11 +213,11 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   // Setup: [0] draws as is, [1] mirrored; both skip colour 0.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  draw[0] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
-  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  draw[1] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
   blit = draw;
   Resource_LoadAndDecompress((s32)&ResourceId_SwordSlashSheet, work->sheet, 1,
                              1);

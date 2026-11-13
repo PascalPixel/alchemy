@@ -35,8 +35,6 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
   struct ScreenPoint anchor;
   struct ScreenPoint screen;
-  void **heapCache;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 scrollX;
@@ -50,9 +48,10 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  EFFECT_GET_SLOTS(heapCache, cursor, work, canvas);
-  sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
-  camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   kind = args->kind;
   work->args = args;
   unit = Unit_GetFar(args->user);
@@ -291,8 +290,6 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   struct ScreenPoint anchor;
   struct ScreenPoint screen;
   struct ScreenPoint spot;
-  void **heapCache;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 scrollX;
@@ -312,9 +309,10 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  EFFECT_GET_SLOTS(heapCache, cursor, work, canvas);
-  sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
-  camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   // DEAD: never true, as only kinds from EFFECT_RANGE_RING_AND_SPARK reach
   // this runner (BattleEffect_RunByIdRange), so big stays 1; the ROM keeps the
   // compare and the store.

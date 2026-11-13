@@ -60,6 +60,25 @@ struct JudgmentWork {
 #define JUDGMENT_DMA_FILL_WAVE                                                 \
   DMA_FILL_WORDS((JUDGMENT_WAVE_SIZE * JUDGMENT_WAVE_SIZE) / 4)
 
+/// Sets the wave picture's four points (left or right, top or bottom) of a
+/// ring to level 20, each clamped to the 120 by 120 picture.
+#define JUDGMENT_PLOT_RING_POINTS(left, right, top, bottom)                    \
+  do {                                                                         \
+    s32 plotLeft = (left);                                                     \
+    s32 plotRight = (right);                                                   \
+    s32 plotTop = (top);                                                       \
+    s32 plotBottom = (bottom);                                                 \
+                                                                               \
+    CLAMP(plotLeft, 0, JUDGMENT_WAVE_SIZE - 1);                                \
+    CLAMP(plotRight, 0, JUDGMENT_WAVE_SIZE - 1);                               \
+    CLAMP(plotTop, 0, JUDGMENT_WAVE_SIZE - 1);                                 \
+    CLAMP(plotBottom, 0, JUDGMENT_WAVE_SIZE - 1);                              \
+    work->sheet[plotBottom * JUDGMENT_WAVE_SIZE + plotRight] = 20;             \
+    work->sheet[plotTop * JUDGMENT_WAVE_SIZE + plotRight] = 20;                \
+    work->sheet[plotBottom * JUDGMENT_WAVE_SIZE + plotLeft] = 20;              \
+    work->sheet[plotTop * JUDGMENT_WAVE_SIZE + plotLeft] = 20;                 \
+  } while (0)
+
 /// The battle wipes away to a violet sky where a formation flies forward while
 /// motes gather into it, bursts in a flash and sends out a ring of light.
 ///
@@ -114,12 +133,12 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   cache = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   ime = (u16 *)&REG_IME;
   canvas = cache[0];
-  work = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_EFFECT);
-  view = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_BACKGROUND);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   // The sheet slot is one mote set (MOTE_SET_BYTES): the undimmed motes. The
   // dimmed copies are built in the work block.
-  ramp = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_SHEET);
-  camera = CANVAS_SLOT(cache, HEAP_SLOT_CAMERA);
+  ramp = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   BattleEffect_ConfigureEffectDisplay();
@@ -129,7 +148,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   *(u16 *)&BG_PLTT[1] = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[0] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_RAM_CODE);
+  draw[0] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // Setup: wipe the battle away, change the battle background behind it, wipe
@@ -362,27 +381,27 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(
+      ((DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2))(
           canvas, work->sheet + picture, 60 - high, 80 - high * 2, high,
           high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
-      (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(
+      ((DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2))(
           canvas, work->sheet + picture, 60, 80 - high * 2, high, high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
-      (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(
+      ((DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2))(
           canvas, work->sheet + picture, 60 - high, 80, high, high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
-      (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(
+      ((DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2))(
           canvas, work->sheet + picture, 60, 80, high, high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
 
@@ -689,27 +708,27 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(canvas, sheet, 36,
-                                                            top - 24, 24, 24);
+      ((DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2))(canvas, sheet, 36,
+                                                             top - 24, 24, 24);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
-      (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(canvas, sheet, 59,
-                                                            top - 24, 24, 24);
+      ((DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2))(canvas, sheet, 59,
+                                                             top - 24, 24, 24);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
-      (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(canvas, sheet, 36,
-                                                            top - 1, 24, 24);
+      ((DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2))(canvas, sheet, 36,
+                                                             top - 1, 24, 24);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
-      (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(canvas, sheet, 59,
-                                                            top - 1, 24, 24);
+      ((DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2))(canvas, sheet, 59,
+                                                             top - 1, 24, 24);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     }
 
@@ -780,95 +799,27 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           // 20, and the picture keeps every ring until its next clear (frames
           // 150 and 214).
           while (radius >= slope) {
-            s32 half;
-            s32 halfSlope;
-            s32 left;
-            s32 right;
+            s32 half = radius / 2;
+            s32 halfSlope = slope / 2;
             s32 top;
             s32 bottom;
-            s32 dx;
 
-            half = radius / 2;
-            dx = (half * sx) / 8;
-            right = cx + dx;
-            /* FAKEMATCH(dead): a branch whose store the next line overwrites
-             * restores the label CSE and reload saw between the edges; without
-             * it, 67 of 2455 instructions differ in tbs-en. */
-            if (dx > cx) {
-              left = 0;
-            }
-            left = cx - dx;
-            bottom = cy + (slope * squash) / 8;
+            // The steep octants: across by half the radius, up and down by
+            // the slope.
             top = cy - (slope * sx) / 8;
-            if (top < 0) {
-              top = 0;
-            }
-            if (bottom > 119) {
-              bottom = 119;
-            }
-            if (left < 0) {
-              left = 0;
-            }
-            if (right > 119) {
-              right = 119;
-            }
-            work->sheet[bottom * JUDGMENT_WAVE_SIZE + right] = 20;
-            work->sheet[top * JUDGMENT_WAVE_SIZE + right] = 20;
-            work->sheet[bottom * JUDGMENT_WAVE_SIZE + left] = 20;
-            work->sheet[top * JUDGMENT_WAVE_SIZE + left] = 20;
-            right = cx + half + 1;
-            left = cx - half + 1;
-            if (left < 0) {
-              left = 0;
-            }
-            if (right > 119) {
-              right = 119;
-            }
-            work->sheet[bottom * JUDGMENT_WAVE_SIZE + right] = 20;
-            work->sheet[top * JUDGMENT_WAVE_SIZE + right] = 20;
-            work->sheet[bottom * JUDGMENT_WAVE_SIZE + left] = 20;
-            work->sheet[top * JUDGMENT_WAVE_SIZE + left] = 20;
-
-            halfSlope = slope / 2;
-            dx = (halfSlope * sx) / 8;
-            right = cx + dx;
-            /* FAKEMATCH(dead): a branch whose store the next line overwrites
-             * restores the label CSE and reload saw between the edges; without
-             * it, 1954 of 2455 instructions differ in tbs-en. */
-            if (dx > cx) {
-              left = 0;
-            }
-            left = cx - dx;
-            bottom = cy + (radius * squash) / 8;
+            bottom = cy + (slope * squash) / 8;
+            JUDGMENT_PLOT_RING_POINTS(cx - half * sx / 8, cx + half * sx / 8,
+                                      top, bottom);
+            JUDGMENT_PLOT_RING_POINTS(cx - half + 1, cx + half + 1, top,
+                                      bottom);
+            // The flat octants: across by half the slope, up and down by the
+            // radius.
             top = cy - (radius * sx) / 8;
-            if (left < 0) {
-              left = 0;
-            }
-            if (right > 119) {
-              right = 119;
-            }
-            if (top < 0) {
-              top = 0;
-            }
-            if (bottom > 119) {
-              bottom = 119;
-            }
-            work->sheet[bottom * JUDGMENT_WAVE_SIZE + right] = 20;
-            work->sheet[top * JUDGMENT_WAVE_SIZE + right] = 20;
-            work->sheet[bottom * JUDGMENT_WAVE_SIZE + left] = 20;
-            work->sheet[top * JUDGMENT_WAVE_SIZE + left] = 20;
-            right = cx + halfSlope + 1;
-            left = cx - halfSlope + 1;
-            if (left < 0) {
-              left = 0;
-            }
-            if (right > 119) {
-              right = 119;
-            }
-            work->sheet[bottom * JUDGMENT_WAVE_SIZE + right] = 20;
-            work->sheet[top * JUDGMENT_WAVE_SIZE + right] = 20;
-            work->sheet[bottom * JUDGMENT_WAVE_SIZE + left] = 20;
-            work->sheet[top * JUDGMENT_WAVE_SIZE + left] = 20;
+            bottom = cy + (radius * squash) / 8;
+            JUDGMENT_PLOT_RING_POINTS(cx - halfSlope * sx / 8,
+                                      cx + halfSlope * sx / 8, top, bottom);
+            JUDGMENT_PLOT_RING_POINTS(cx - halfSlope + 1, cx + halfSlope + 1,
+                                      top, bottom);
 
             err = err - slope * 2 - 1;
             if (err < 0) {

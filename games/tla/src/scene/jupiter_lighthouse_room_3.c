@@ -157,41 +157,8 @@ void Func_020003c4(void) { Func_02002400(); }
 
 void Func_020003f8(s32 value) { gData_02002cc4 = value; }
 
-void Func_02000404(void) {
-  u16 colors[16];
-  s32 phase = (gData_02002cc0 / 4) % 5;
-  s32 i;
-  s32 offset;
-  u16 *p;
-
-  if (gData_02002cc4 != 0) {
-    u8 *work = Ram_HeapSlots->eventWork;
-    s16 *state = (s16 *)(work + 358);
-
-    if (*state != 0 && (*state & 0x3ff) != 153)
-      return;
-    if (*(s8 *)(work + 0xca4) != 0)
-      return;
-    if (*(s16 *)(work + 350) != 0)
-      return;
-  }
-  i = 0;
-  offset = 4;
-next:
-  p = colors;
-  {
-    s32 slot = (phase + i) % 5;
-    u8 *table = (u8 *)gData_02002cec;
-
-    colors[slot] = *(u16 *)(table + offset);
-  }
-  i++;
-  offset += 2;
-  if (i <= 4)
-    goto next;
-  Dma_Set(p, (void *)0x05000184, 0x84000002, REG_DMA3);
-  gData_02002cc0++;
-}
+DEFINE_FUNC_02000238(Func_02000404, gData_02002cc0, gData_02002cc4,
+    gData_02002cec, 0x05000184)
 
 DEFINE_FUNC_020004C0(Func_020004c0, gData_02002cc4, gData_02002cec,
     gData_02002d0c, gData_02002cc0, Func_02000404, gData_02002d10)

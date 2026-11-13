@@ -1760,44 +1760,8 @@ extern s32 gData_02005a14;
 static inline void Counter_Set(s32 value) { gData_02005a14 = value; }
 extern u16 gData_02005a40[];
 
-void Func_02002f08(void) {
-  u16 colors[16];
-  s32 phase = (gData_02005a14 / 4) % 5;
-  s32 i;
-  s32 offset;
-  u16 *p;
-
-  if (gData_02005a18 != 0) {
-    u8 *work = Ram_HeapSlots->eventWork;
-    s16 *state = (s16 *)(work + 358);
-
-    if (*state != 0 && (*state & 0x3ff) != 153)
-      return;
-    if (*(s8 *)(work + 0xca4) != 0)
-      return;
-    if (*(s16 *)(work + 350) != 0)
-      return;
-  }
-  i = 0;
-  offset = 4;
-next:
-  p = colors;
-  {
-    /* FAKEMATCH(temporary): the slot and the table address held in locals;
-     * as colors[(phase + i) % 5] = *(u16 *)((u8 *)gData_02005a40 + offset),
-     * 2 of 83 instructions differ in tla-en. */
-    s32 slot = (phase + i) % 5;
-    u8 *table = (u8 *)gData_02005a40;
-
-    colors[slot] = *(u16 *)(table + offset);
-  }
-  i++;
-  offset += 2;
-  if (i <= 4)
-    goto next;
-  Dma_Set(p, (void *)0x05000184, 0x84000002, REG_DMA3);
-  gData_02005a14++;
-}
+DEFINE_FUNC_0200027C(Func_02002f08, gData_02005a14, gData_02005a18,
+    gData_02005a40)
 
 DEFINE_FUNC_020002F4(Func_02002fc4, gData_02005a18, gData_02005a40,
     gData_02005a60, Func_02002f08, gData_02005a64)

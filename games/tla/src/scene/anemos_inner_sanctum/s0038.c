@@ -73,55 +73,9 @@ DEFINE_FUNC_020000F4(Func_02000178, gData_02004454, gData_02004450,
 
 DEFINE_FUNC_020001D4(Func_020001d4)
 
-void Func_020001f8(void) {
-  s32 step;
-  u32 i;
-  u16 *src;
-  volatile u16 *dst;
-  int red, green, blue;
-
-  step = 0;
-  if (gData_0200443c != 0) {
-    if (--gData_0200443c == 0) {
-      step = 1;
-      gData_0200443c = gData_02004440;
-      if (gData_02004440 > 2)
-        gData_02004440--;
-    }
-  }
-  if (step == 0)
-    return;
-  src = Data_0200444c;
-  for (i = 0; i < gData_02004450; i++) {
-    dst = &BG_PLTT[Data_02004438[gData_02004454 * gData_02004450 + i]];
-    red = *src++;
-    green = *src++;
-    blue = *src++;
-    /* FAKEMATCH(dead): the store in a once-only block, whose end holds the
-     * order around it; as the plain statement, 2 of 120 instructions differ in
-     * tla-en. */
-    do {
-      *dst = (blue << 10) | (green << 5) | red;
-    } while (0);
-  }
-  dst = &BG_PLTT[gData_02004444[gData_02004450]];
-  if (gData_02004434 != 0)
-    src = Data_02004448 + gData_02004450 * 3;
-  else
-    src = Data_0200444c + gData_02004450 * 3;
-  red = *src++;
-  green = *src++;
-  /* FAKEMATCH(dead): the last read in a once-only block, whose end holds the
-   * order around it; as the plain statement, 2 of 120 instructions differ in
-   * tla-en. */
-  do {
-    blue = *src++;
-  } while (0);
-  *dst = (blue << 10) | (green << 5) | red;
-  gData_02004434 ^= 1;
-  if (++gData_02004454 == gData_02004450)
-    gData_02004454 = 0;
-}
+DEFINE_FUNC_020001F8(Func_020001f8, gData_0200443c, gData_02004440,
+    Data_0200444c, gData_02004450, Data_02004438, gData_02004454,
+    gData_02004444, gData_02004434, Data_02004448)
 
 void Func_020017b4(void);
 

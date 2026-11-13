@@ -834,44 +834,8 @@ void Func_020014dc(s32 value) { gData_02007040 = value; }
 extern s32 gData_0200703c;
 extern u16 gData_02007068[];
 
-void Func_020014e8(void) {
-  u16 colors[16];
-  s32 phase = (gData_0200703c / 4) % 5;
-  s32 i;
-  s32 offset;
-  u16 *p;
-
-  if (gData_02007040 != 0) {
-    u8 *work = Ram_HeapSlots->eventWork;
-    s16 *state = (s16 *)(work + 358);
-
-    if (*state != 0 && (*state & 0x3ff) != 153)
-      return;
-    if (*(s8 *)(work + 0xca4) != 0)
-      return;
-    if (*(s16 *)(work + 350) != 0)
-      return;
-  }
-  i = 0;
-  offset = 4;
-next:
-  p = colors;
-  {
-    /* FAKEMATCH(temporary): the slot and the table address held in locals;
-     * as colors[(phase + i) % 5] = *(u16 *)((u8 *)gData_02007068 + offset),
-     * 2 of 83 instructions differ in tla-en. */
-    s32 slot = (phase + i) % 5;
-    u8 *table = (u8 *)gData_02007068;
-
-    colors[slot] = *(u16 *)(table + offset);
-  }
-  i++;
-  offset += 2;
-  if (i <= 4)
-    goto next;
-  Dma_Set(p, (void *)0x05000184, 0x84000002, REG_DMA3);
-  gData_0200703c++;
-}
+DEFINE_FUNC_0200027C(Func_020014e8, gData_0200703c, gData_02007040,
+    gData_02007068)
 
 #include "ram_buffer.h"
 #include "field_event.h"
@@ -1238,21 +1202,7 @@ void Func_020022d0(struct Actor *object);
 /// Stops the object and sets its sprite part, then restarts its script at
 /// gData_02005d8c; Func_02001e1c of the Mars Lighthouse entrance is the same
 /// function.
-void Func_0200215c(struct Actor *object, s32 part) {
-  /* FAKEMATCH(temporary): one zero for every cleared field; as six stores of
-   * 0, 29 of 30 instructions differ in tla-en. */
-  s32 zero = 0;
-
-  object->motionFlags = zero;
-  object->collisionFlags = zero;
-
-  ((struct SpriteParts *)object->sprite)->part = part;
-  Actor_SetSingleChildFlags(object, 0);
-  Actor_StartScript(object, gData_02005d8c);
-  object->timer = zero;
-  object->speedLimit = zero;
-  object->acceleration = zero;
-}
+DEFINE_FUNC_02001928(Func_0200215c, gData_02005d8c)
 
 DEFINE_FUNC_02001E60(Func_020021a0, Func_02005498_, Func_0200215c,
     Func_02001e20, Func_02005480)

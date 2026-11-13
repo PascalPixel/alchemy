@@ -1288,21 +1288,7 @@ void Func_02001928(struct Actor *object, s32 priority);
 /// Stops the object and sets its sprite part, then restarts its script at
 /// gData_02004744; Func_02001e1c of the Mars Lighthouse entrance is the same
 /// function.
-void Func_02001928(struct Actor *object, s32 part) {
-  /* FAKEMATCH(temporary): one zero for every cleared field; as six stores of
-   * 0, 29 of 30 instructions differ in tla-en. */
-  s32 zero = 0;
-
-  object->motionFlags = zero;
-  object->collisionFlags = zero;
-
-  ((struct SpriteParts *)object->sprite)->part = part;
-  Actor_SetSingleChildFlags(object, 0);
-  Actor_StartScript(object, gData_02004744);
-  object->timer = zero;
-  object->speedLimit = zero;
-  object->acceleration = zero;
-}
+DEFINE_FUNC_02001928(Func_02001928, gData_02004744)
 
 DEFINE_FUNC_0200196C_97(Func_0200196c, Func_020015ec)
 

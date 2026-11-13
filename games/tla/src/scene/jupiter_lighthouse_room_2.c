@@ -444,41 +444,8 @@ extern s32 gData_02002b34;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_02002b34 = value; }
 
-void Func_020009e8(void) {
-  u16 colors[16];
-  s32 phase = (gData_02002b34 / 4) % 5;
-  s32 i;
-  s32 offset;
-  u16 *p;
-
-  if (gData_02002b38 != 0) {
-    u8 *work = Ram_HeapSlots->eventWork;
-    s16 *state = (s16 *)(work + 358);
-
-    if (*state != 0 && (*state & 0x3ff) != 153)
-      return;
-    if (*(s8 *)(work + 0xca4) != 0)
-      return;
-    if (*(s16 *)(work + 350) != 0)
-      return;
-  }
-  i = 0;
-  offset = 4;
-next:
-  p = colors;
-  {
-    s32 slot = (phase + i) % 5;
-    u8 *table = (u8 *)gData_02002b98;
-
-    colors[slot] = *(u16 *)(table + offset);
-  }
-  i++;
-  offset += 2;
-  if (i <= 4)
-    goto next;
-  Dma_Set(p, (void *)0x05000184, 0x84000002, REG_DMA3);
-  gData_02002b34++;
-}
+DEFINE_FUNC_02000238(Func_020009e8, gData_02002b34, gData_02002b38,
+    gData_02002b98, 0x05000184)
 
 extern u16 gData_02002bb8[];
 

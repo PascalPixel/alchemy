@@ -4711,22 +4711,22 @@
             entry++;                                                           \
             table->count++;                                                    \
             /* FAKEMATCH(barrier): an empty asm on the stored count; as no     \
-             * asm, 2 of 268 instructions differ in tla-en. */                                      \
+             * asm, 2 of 268 instructions differ in tla-en. */                 \
             asm("" : "=m"(table->count) : "m"(table->count) : "r3");           \
             /* FAKEMATCH(barrier): an empty asm on the word over the count; as \
-             * no asm, 2 of 268 instructions differ in tla-en. */                               \
+             * no asm, 2 of 268 instructions differ in tla-en. */              \
             asm("" : "=m"(*(s32 *)&table->z));                                 \
           }                                                                    \
         }                                                                      \
       columnNext:                                                              \
         /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as   \
-         * no asm, 224 of 268 instructions differ in tla-en. */                             \
+         * no asm, 224 of 268 instructions differ in tla-en. */                \
         asm("");                                                               \
         /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as   \
-         * no asm, 224 of 268 instructions differ in tla-en. */                             \
+         * no asm, 224 of 268 instructions differ in tla-en. */                \
         asm("");                                                               \
         /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as   \
-         * no asm, 224 of 268 instructions differ in tla-en. */                             \
+         * no asm, 224 of 268 instructions differ in tla-en. */                \
         asm("");                                                               \
         i++;                                                                   \
         cell++;                                                                \
@@ -4977,7 +4977,7 @@
       step = &probe;                                                           \
       FieldVector_AddPolarOffset(PIXELS(16), heading, step);                   \
       /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the         \
-       * address, so next rebuilds it; as no store, 59 of 304 instructions                         \
+       * address, so next rebuilds it; as no store, 59 of 304 instructions     \
        * differ in tla-en.                                                     \
        */                                                                      \
       step = NULL;                                                             \
@@ -5043,7 +5043,7 @@
     actor->velocityX = zero;                                                   \
     actor->velocityZ = zero;                                                   \
     /* FAKEMATCH(temporary): cell holds the masked x; as one expression, 2 of  \
-     * 246 instructions differ in tla-en. */                                             \
+     * 246 instructions differ in tla-en. */                                   \
     cell = actor->x & 0xfff00000;                                              \
     /* FAKEMATCH(temporary): i holds half a cell here and the search's count   \
      * later; as a separate PIXELS(8), 18 of 246 instructions differ in        \
@@ -5079,7 +5079,7 @@
     Actor_SetAnimationSpeed(actor, 48);                                        \
     actor->update = call3;                                                     \
     /* FAKEMATCH(barrier): the empty asm clobbering sfp and reading            \
-     * nextBehavior twice; as no asm, 18 of 246 instructions differ in tla-en.                    \
+     * nextBehavior twice; as no asm, 18 of 246 instructions differ in tla-en. \
      */                                                                        \
     asm("" : : "r"(nextBehavior), "r"(nextBehavior) : SFP_CLOBBER);            \
     goto test;                                                                 \
@@ -5118,13 +5118,13 @@
   test:                                                                        \
     /* FAKEMATCH(barrier): the asm tied to heading, with an r4 clobber so PRE  \
      * leaves it, loads the angle ahead of the address; as heading in the      \
-     * call, 44 of 246 instructions differ in tla-en. */                                      \
+     * call, 44 of 246 instructions differ in tla-en. */                       \
     asm("" : "=r"(angle) : "0"(heading) : "r4");                               \
     step = &probe;                                                             \
     FieldVector_AddPolarOffset(PIXELS(16), angle, step);                       \
     /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address,  \
-     * so next rebuilds it; as &probe in the call, 97 of 246 instructions               \
-     * differ in tla-en. */                                                                    \
+     * so next rebuilds it; as &probe in the call, 97 of 246 instructions      \
+     * differ in tla-en. */                                                    \
     step = NULL;                                                               \
     next = &probe;                                                             \
     nextBehavior = MapGrid_GetCellBehaviorAt(*layer, next->x, next->z);        \
@@ -5168,7 +5168,7 @@
     /* FAKEMATCH(barrier): passes the source column through an asm reading the \
      * leader's x, so the x load ties the 64 mask's copy and wins on order; as \
      * (leader->x >> 20) | (s16)(table->x & 64), 2 of 49 instructions differ   \
-     * in tla-en. */                                                                    \
+     * in tla-en. */                                                           \
     asm("" : "=r"(sourceX) : "0"(table->x), "r"(leaderX));                     \
     x = (leaderX >> 20) | (s16)(sourceX & 64);                                 \
     z = CellTarget_CellWithBit(leader->z, table->z & 64);                      \
@@ -5302,7 +5302,7 @@
       dz = actor->z;                                                           \
       dx -= cameraX;                                                           \
       /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank;  \
-       * as no asm, 94 of 182 instructions differ in tla-en. */                           \
+       * as no asm, 94 of 182 instructions differ in tla-en. */                \
       asm("" : : "r"(dx));                                                     \
       y = actor->y;                                                            \
       dz -= cameraZ;                                                           \
@@ -5396,11 +5396,11 @@
         actor->timer = 1;                                                      \
         Event_PlaySound(145);                                                  \
         /* FAKEMATCH(wrapper): forwarded, so each argument builds its own      \
-         * 0x50000; as a direct call, 6 of 362 instructions differ in tla-en.                     \
+         * 0x50000; as a direct call, 6 of 362 instructions differ in tla-en.  \
          */                                                                    \
         MapGrid_SetShake(0x50000, 0x50000, 0x10000);                           \
         /* FAKEMATCH(wrapper): forwarded, so each argument builds its own -1;  \
-         * as a direct call, 17 of 362 instructions differ in tla-en. */                      \
+         * as a direct call, 17 of 362 instructions differ in tla-en. */       \
         MapGrid_SetShake(-1, -1, 0xe666);                                      \
         if (actor->watchedObject != NULL)                                      \
           ((void (*)(struct Actor *))actor->watchedObject)(actor);             \
@@ -5519,9 +5519,9 @@
       angle = i << 12;                                                         \
       cosine = Math_Cosine(angle);                                             \
       /* FAKEMATCH(dead): spawn is always 1, a constant GCSE only folds after  \
-       * its partial redundancy pass, so that pass leaves the velocity array's             \
+       * its partial redundancy pass, so that pass leaves the velocity array's \
        * address in the loop, built after the cosine call as the native has    \
-       * it; as the plain body, 4 of 169 instructions differ in tla-en. */                 \
+       * it; as the plain body, 4 of 169 instructions differ in tla-en. */     \
       if (spawn) {                                                             \
         velocity[0] = cosine;                                                  \
         velocity[1] = 0;                                                       \
@@ -5588,7 +5588,7 @@
           for (col = 0; col < width; col++) {                                  \
             /* FAKEMATCH(wrapper): the call through Func_02002338_; as         \
              * Func_02002338(object, position), 2 of 171 instructions differ   \
-             * in tla-en. */                                                                    \
+             * in tla-en. */                                                   \
             if (call2(object, position) == 2)                                  \
               goto blocked;                                                    \
             position[0] += 0x100000;                                           \
@@ -5674,7 +5674,7 @@
         u8 *source = &data3[base / 8][4] + i / 2;                              \
         u8 *dest = &data2[base / 8][4] + i / 2;                                \
         /* FAKEMATCH(barrier): the empty asm on dest changes its allocation    \
-         * rank; as no asm, 22 of 181 instructions differ in tla-en. */                        \
+         * rank; as no asm, 22 of 181 instructions differ in tla-en. */        \
         asm("" : "=r"(dest) : "0"(dest));                                      \
                                                                                \
         j = 2;                                                                 \
@@ -5772,7 +5772,7 @@
     next->x.fixed = dst.x;                                                     \
     {                                                                          \
       /* FAKEMATCH(temporary): z read ahead of velocityX's store; as dst.z at  \
-       * its store, 4 of 175 instructions differ in tla-en. */                             \
+       * its store, 4 of 175 instructions differ in tla-en. */                 \
       s32 z = dst.z;                                                           \
                                                                                \
       next->velocityX = 0;                                                     \
@@ -5813,8 +5813,8 @@
         Actor_StartScript(object, data1);                                      \
         Actor_SetSingleChildFlags(object, 0);                                  \
         /* FAKEMATCH(temporary): the scale is taken before the velocity        \
-         * stores, as in the native; as object->scaleX = (size >> 1) + 0x4000,                      \
-         * 14 of 98 instructions differ in tla-en. */                                             \
+         * stores, as in the native; as object->scaleX = (size >> 1) + 0x4000, \
+         * 14 of 98 instructions differ in tla-en. */                          \
         scale = (size >> 1) + 0x4000;                                          \
         object->velocityY = rise + 0x14000;                                    \
         object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));          \
@@ -5838,8 +5838,8 @@
     s32 i;                                                                     \
                                                                                \
     /* FAKEMATCH(barrier): an empty asm before the work is read keeps the      \
-     * spills of x and y at the entry; as an initializer, 4 of 88 instructions              \
-     * differ in tla-en. */                                                                    \
+     * spills of x and y at the entry; as an initializer, 4 of 88 instructions \
+     * differ in tla-en. */                                                    \
     asm("");                                                                   \
     work = Ram_HeapSlots->menuRuntime;                                         \
     /* A goto loop carries no loop notes, so the offsets are rebuilt on every  \
@@ -5967,7 +5967,7 @@
           x = *cell++;                                                         \
           y = *cell++;                                                         \
           /* FAKEMATCH(temporary): the destination table through a local set   \
-           * here, which loads its first halfword before the 1 is built; as                      \
+           * here, which loads its first halfword before the 1 is built; as    \
            * gData_02003fd2[0], 2 of 56 instructions differ in tla-en. */      \
           dest = data2;                                                        \
           Map_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);        \
@@ -6110,8 +6110,8 @@
     s32 x = leader->x;                                                         \
     s32 z = leader->z;                                                         \
     /* FAKEMATCH(temporary): a local holding the 0 for the three byte stores,  \
-     * set before the null test, so it takes r7; as the constant 0 in each               \
-     * store, 20 of 58 instructions differ in tla-en. */                                       \
+     * set before the null test, so it takes r7; as the constant 0 in each     \
+     * store, 20 of 58 instructions differ in tla-en. */                       \
     s32 zero = 0;                                                              \
     struct GabombaStatueChamberObject *object;                                 \
                                                                                \
@@ -6174,7 +6174,7 @@
                                                                                \
     /* FAKEMATCH(signature): Func_0200271c called as returning s32, as in      \
      * Func_02001304; as a call to the void setter, 4 of 50 instructions       \
-     * differ in tla-en. */                                                                    \
+     * differ in tla-en. */                                                    \
     switch (timer) {                                                           \
     case 0:                                                                    \
       Vent_SetActive(0, 1);                                                    \
@@ -6228,7 +6228,7 @@
     a = 192;                                                                   \
     id = 4;                                                                    \
     /* FAKEMATCH(barrier): the id held at an empty asm, so it comes between    \
-     * the angle byte and its shift; as no asm, 2 of 11 instructions differ in           \
+     * the angle byte and its shift; as no asm, 2 of 11 instructions differ in \
      * tla-en. */                                                              \
     __asm__ volatile("" : "+r"(id));                                           \
     Actor_ArmCallback(id, a << 8, 0);                                          \
@@ -6242,8 +6242,8 @@
     s32 kind = n1;                                                             \
                                                                                \
     /* FAKEMATCH(barrier): the empty asm on the value and kind, so the kind is \
-     * set between the value's halves; as constant arguments, 2 of 7                     \
-     * instructions differ in tla-en. */                                                          \
+     * set between the value's halves; as constant arguments, 2 of 7           \
+     * instructions differ in tla-en. */                                       \
     asm("" : "+l"(value), "+l"(kind));                                         \
     Actor_ReturnHome(id, kind, value + n2);                                    \
   }
@@ -6269,6 +6269,282 @@
     System_Wait(6);                                                            \
     MapGrid_CopyCellsLayered(n6, 42, n3, 3, n4, n5);                           \
     MapGrid_CopyCellAttributes(n7, n8, n3, 1, n9, n10);                        \
+  }
+
+/// 9 scenes: jupiter_lighthouse_aerie_beacon/s0198, jupiter_lighthouse_room_4,
+/// jupiter_lighthouse_room_5, jupiter_lighthouse_room_6,
+/// jupiter_lighthouse_room_7, jupiter_lighthouse_room_8,
+/// jupiter_lighthouse_room_9, jupiter_lighthouse_room_m,
+/// mars_lighthouse_room_f.
+#define DEFINE_FUNC_0200027C(name, data1, data2, data3)                        \
+  void name(void) {                                                            \
+    u16 colors[16];                                                            \
+    s32 phase = (data1 / 4) % 5;                                               \
+    s32 i;                                                                     \
+    s32 offset;                                                                \
+    u16 *p;                                                                    \
+                                                                               \
+    if (data2 != 0) {                                                          \
+      u8 *work = Ram_HeapSlots->eventWork;                                     \
+      s16 *state = (s16 *)(work + 358);                                        \
+                                                                               \
+      if (*state != 0 && (*state & 0x3ff) != 153)                              \
+        return;                                                                \
+      if (*(s8 *)(work + 0xca4) != 0)                                          \
+        return;                                                                \
+      if (*(s16 *)(work + 350) != 0)                                           \
+        return;                                                                \
+    }                                                                          \
+    i = 0;                                                                     \
+    offset = 4;                                                                \
+  next:                                                                        \
+    p = colors;                                                                \
+    {                                                                          \
+      /* FAKEMATCH(temporary): the slot and the table address held in locals;  \
+       * as colors[(phase + i) % 5] = *(u16 *)((u8 *)gData_02006a2c + offset), \
+       * 2 of 83 instructions differ in tla-en. */                             \
+      s32 slot = (phase + i) % 5;                                              \
+      u8 *table = (u8 *)data3;                                                 \
+                                                                               \
+      colors[slot] = *(u16 *)(table + offset);                                 \
+    }                                                                          \
+    i++;                                                                       \
+    offset += 2;                                                               \
+    if (i <= 4)                                                                \
+      goto next;                                                               \
+    Dma_Set(p, (void *)0x05000184, 0x84000002, REG_DMA3);                      \
+    data1++;                                                                   \
+  }
+
+/// 6 scenes: jupiter_lighthouse_basement, jupiter_lighthouse_entrance,
+/// jupiter_lighthouse_room_1, jupiter_lighthouse_room_2,
+/// jupiter_lighthouse_room_3, trial_road/s15a8.
+#define DEFINE_FUNC_02000238(name, data1, data2, data3, n1)                    \
+  void name(void) {                                                            \
+    u16 colors[16];                                                            \
+    s32 phase = (data1 / 4) % 5;                                               \
+    s32 i;                                                                     \
+    s32 offset;                                                                \
+    u16 *p;                                                                    \
+                                                                               \
+    if (data2 != 0) {                                                          \
+      u8 *work = Ram_HeapSlots->eventWork;                                     \
+      s16 *state = (s16 *)(work + 358);                                        \
+                                                                               \
+      if (*state != 0 && (*state & 0x3ff) != 153)                              \
+        return;                                                                \
+      if (*(s8 *)(work + 0xca4) != 0)                                          \
+        return;                                                                \
+      if (*(s16 *)(work + 350) != 0)                                           \
+        return;                                                                \
+    }                                                                          \
+    i = 0;                                                                     \
+    offset = 4;                                                                \
+  next:                                                                        \
+    p = colors;                                                                \
+    {                                                                          \
+      s32 slot = (phase + i) % 5;                                              \
+      u8 *table = (u8 *)data3;                                                 \
+                                                                               \
+      colors[slot] = *(u16 *)(table + offset);                                 \
+    }                                                                          \
+    i++;                                                                       \
+    offset += 2;                                                               \
+    if (i <= 4)                                                                \
+      goto next;                                                               \
+    Dma_Set(p, (void *)n1, 0x84000002, REG_DMA3);                              \
+    data1++;                                                                   \
+  }
+
+/// 4 scenes: anemos_inner_sanctum/s0038, mars_lighthouse_aerie/s3370,
+/// mars_lighthouse_entrance/s42f8, mars_lighthouse_room_m.
+#define DEFINE_FUNC_020001F8(name, data1, data2, data3, data4, data5, data6,   \
+                             data7, data8, data9)                              \
+  void name(void) {                                                            \
+    s32 step;                                                                  \
+    u32 i;                                                                     \
+    u16 *src;                                                                  \
+    volatile u16 *dst;                                                         \
+    int red, green, blue;                                                      \
+                                                                               \
+    step = 0;                                                                  \
+    if (data1 != 0) {                                                          \
+      if (--data1 == 0) {                                                      \
+        step = 1;                                                              \
+        data1 = data2;                                                         \
+        if (data2 > 2)                                                         \
+          data2--;                                                             \
+      }                                                                        \
+    }                                                                          \
+    if (step == 0)                                                             \
+      return;                                                                  \
+    src = data3;                                                               \
+    for (i = 0; i < data4; i++) {                                              \
+      dst = &BG_PLTT[data5[data6 * data4 + i]];                                \
+      red = *src++;                                                            \
+      green = *src++;                                                          \
+      blue = *src++;                                                           \
+      /* FAKEMATCH(dead): the store in a once-only block, whose end holds the  \
+       * order around it; as the plain statement, 2 of 120 instructions differ \
+       * in tla-en. */                                                                    \
+      do {                                                                     \
+        *dst = (blue << 10) | (green << 5) | red;                              \
+      } while (0);                                                             \
+    }                                                                          \
+    dst = &BG_PLTT[data7[data4]];                                              \
+    if (data8 != 0)                                                            \
+      src = data9 + data4 * 3;                                                 \
+    else                                                                       \
+      src = data3 + data4 * 3;                                                 \
+    red = *src++;                                                              \
+    green = *src++;                                                            \
+    /* FAKEMATCH(dead): the last read in a once-only block, whose end holds    \
+     * the order around it; as the plain statement, 2 of 120 instructions                \
+     * differ in tla-en. */                                                                    \
+    do {                                                                       \
+      blue = *src++;                                                           \
+    } while (0);                                                               \
+    *dst = (blue << 10) | (green << 5) | red;                                  \
+    data8 ^= 1;                                                                \
+    if (++data6 == data4)                                                      \
+      data6 = 0;                                                               \
+  }
+
+/// 2 scenes: jupiter_lighthouse_aerie_beacon/s4ec8,
+/// jupiter_lighthouse_room_3/s1a7c.
+#define DEFINE_FUNC_02001DB8(name, call1)                                      \
+  void name(struct PushEvent *event) {                                         \
+    struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);           \
+    s32 x;                                                                     \
+    s32 z;                                                                     \
+    s32 mask;                                                                  \
+                                                                               \
+    mask = 64;                                                                 \
+    x = object->x >> 20;                                                       \
+    do {                                                                       \
+    } while (0);                                                               \
+    x |= (s16)(event->x & mask);                                               \
+    z = object->z >> 20;                                                       \
+    z |= (s16)(event->z & mask);                                               \
+    call1();                                                                   \
+    Event_PlaySound(229);                                                      \
+    MapGrid_CopyCells(event->x, event->z + 2, 1, 1, x, z);                     \
+    FieldEvent_Wait(12);                                                       \
+    {                                                                          \
+      u32 zero = 0;                                                            \
+                                                                               \
+      object->facing = 0x4000;                                                 \
+      object->motionFlags = zero;                                              \
+    }                                                                          \
+    Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);    \
+    {                                                                          \
+      /* FAKEMATCH(temporary): a word local holding 0xf1f, built with movs,    \
+       * lsls, adds as the native does; as a constant stored to the halfword   \
+       * register, loaded from the pool, 20 of 131 instructions differ in      \
+       * tla-en.                                                               \
+       */                                                                      \
+      u32 winout = 0xf1f;                                                      \
+                                                                               \
+      REG_WINOUT = winout;                                                     \
+    }                                                                          \
+    do {                                                                       \
+    } while (0);                                                               \
+    REG_DISPCNT |= 0x8000;                                                     \
+    event->busy = 1;                                                           \
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);                     \
+    FieldEvent_Wait(16);                                                       \
+    for (x = 0; x < 40; x++) {                                                 \
+      if (x == 5)                                                              \
+        Event_PlaySound(204);                                                  \
+      object->scaleX += -0x400;                                                \
+      object->scaleY += -0x300;                                                \
+      object->y += -0x9999;                                                    \
+      System_Wait(1);                                                          \
+    }                                                                          \
+    do {                                                                       \
+      Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;             \
+    } while (0);                                                               \
+    event->busy = 0;                                                           \
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;                  \
+    Event_FinishScreenTransition();                                            \
+    Event_WaitTransitionFrames();                                              \
+  }
+
+/// 2 scenes: mars_lighthouse_room_f/s35b8, mars_lighthouse_star_room/s3804.
+#define DEFINE_FUNC_02003BE8(name, call1)                                      \
+  void name(struct PushEvent *event) {                                         \
+    struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);           \
+    s32 x;                                                                     \
+    s32 z;                                                                     \
+    s32 mask;                                                                  \
+                                                                               \
+    mask = 64;                                                                 \
+    x = object->x >> 20;                                                       \
+    do {                                                                       \
+    } while (0);                                                               \
+    x |= (s16)(event->x & mask);                                               \
+    z = object->z >> 20;                                                       \
+    z |= (s16)(event->z & mask);                                               \
+    call1();                                                                   \
+    Event_PlaySound(229);                                                      \
+    MapGrid_CopyCells(event->x, event->z + 2, 1, 1, x, z);                     \
+    FieldEvent_Wait(12);                                                       \
+    {                                                                          \
+      u32 zero = 0;                                                            \
+                                                                               \
+      object->facing = 0x4000;                                                 \
+      object->motionFlags = zero;                                              \
+    }                                                                          \
+    Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);    \
+    {                                                                          \
+      /* FAKEMATCH(temporary): 0xf1f held in a word local, so it is built with \
+       * movs, lsls, adds as the native does (a plain store loads it from the  \
+       * pool); as a plain store of the constant, 20 of 131 instructions       \
+       * differ in tla-en. */                                                                 \
+      u32 winout = 0xf1f;                                                      \
+                                                                               \
+      REG_WINOUT = winout;                                                     \
+    }                                                                          \
+    do {                                                                       \
+    } while (0);                                                               \
+    REG_DISPCNT |= 0x8000;                                                     \
+    event->busy = 1;                                                           \
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);                     \
+    FieldEvent_Wait(16);                                                       \
+    for (x = 0; x < 40; x++) {                                                 \
+      if (x == 5)                                                              \
+        Event_PlaySound(204);                                                  \
+      object->scaleX += -0x400;                                                \
+      object->scaleY += -0x300;                                                \
+      object->y += -0x9999;                                                    \
+      System_Wait(1);                                                          \
+    }                                                                          \
+    do {                                                                       \
+      Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;             \
+    } while (0);                                                               \
+    event->busy = 0;                                                           \
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;                  \
+    Event_FinishScreenTransition();                                            \
+    Event_WaitTransitionFrames();                                              \
+  }
+
+/// 3 scenes: mars_lighthouse_room_f, mars_lighthouse_room_m,
+/// mars_lighthouse_star_room.
+#define DEFINE_FUNC_02001928(name, data1)                                      \
+  void name(struct Actor *object, s32 part) {                                  \
+    /* FAKEMATCH(temporary): one zero for every cleared field; as six stores   \
+     * of 0, 29 of 30 instructions differ in tla-en. */                                 \
+    s32 zero = 0;                                                              \
+                                                                               \
+    object->motionFlags = zero;                                                \
+    object->collisionFlags = zero;                                             \
+                                                                               \
+    ((struct SpriteParts *)object->sprite)->part = part;                       \
+    Actor_SetSingleChildFlags(object, 0);                                      \
+    Actor_StartScript(object, data1);                                          \
+    object->timer = zero;                                                      \
+    object->speedLimit = zero;                                                 \
+    object->acceleration = zero;                                               \
   }
 
 #endif

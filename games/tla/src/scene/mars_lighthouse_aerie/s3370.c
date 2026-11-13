@@ -1042,55 +1042,9 @@ DEFINE_FUNC_020000F4(Func_02005030, gData_02006cf0, gData_02006cec,
 
 DEFINE_FUNC_020001D4(Func_0200508c)
 
-void Func_020050b0(void) {
-  s32 step;
-  u32 i;
-  u16 *src;
-  volatile u16 *dst;
-  int red, green, blue;
-
-  step = 0;
-  if (gData_02006cd8 != 0) {
-    if (--gData_02006cd8 == 0) {
-      step = 1;
-      gData_02006cd8 = gData_02006cdc;
-      if (gData_02006cdc > 2)
-        gData_02006cdc--;
-    }
-  }
-  if (step == 0)
-    return;
-  src = Data_02006ce8;
-  for (i = 0; i < gData_02006cec; i++) {
-    dst = &BG_PLTT[Data_02006cd4[gData_02006cf0 * gData_02006cec + i]];
-    red = *src++;
-    green = *src++;
-    blue = *src++;
-    /* FAKEMATCH(dead): the store in a once-only block, whose end holds the
-     * order around it; as the plain statement, 2 of 120 instructions differ in
-     * tla-en. */
-    do {
-      *dst = (blue << 10) | (green << 5) | red;
-    } while (0);
-  }
-  dst = &BG_PLTT[gData_02006ce0[gData_02006cec]];
-  if (gData_02006cd0 != 0)
-    src = Data_02006ce4 + gData_02006cec * 3;
-  else
-    src = Data_02006ce8 + gData_02006cec * 3;
-  red = *src++;
-  green = *src++;
-  /* FAKEMATCH(dead): the last read in a once-only block, whose end holds
-   * the order around it; as the plain statement, 2 of 120 instructions differ
-   * in tla-en. */
-  do {
-    blue = *src++;
-  } while (0);
-  *dst = (blue << 10) | (green << 5) | red;
-  gData_02006cd0 ^= 1;
-  if (++gData_02006cf0 == gData_02006cec)
-    gData_02006cf0 = 0;
-}
+DEFINE_FUNC_020001F8(Func_020050b0, gData_02006cd8, gData_02006cdc,
+    Data_02006ce8, gData_02006cec, Data_02006cd4, gData_02006cf0,
+    gData_02006ce0, gData_02006cd0, Data_02006ce4)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

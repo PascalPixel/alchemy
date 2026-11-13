@@ -101,18 +101,11 @@ enum {
 /// The swell (Ship_UpdateSwell) moves only those who have.
 #define SHIP_NOT_ON_DECK (-px(1))
 
-/// The sprite of a gangway piece or a party actor.
-// UB: the s32 read aliases the pointer field. UBFIX reads the field itself.
-#ifdef UBFIX
-#define ACTOR_SPRITE(actor) ((actor)->sprite)
-#else
-#define ACTOR_SPRITE(actor) ((struct Sprite *)*(s32 *)&(actor)->sprite)
-#endif
 /// The sprite priority of an actor's picture and of its shadow.
 #define SET_IMAGE_PRIORITY(actor, level)                                       \
-  ((void)(ACTOR_SPRITE(actor)->image.priority = (level)))
+  ((void)(actor->sprite->image.priority = (level)))
 #define SET_SHADOW_PRIORITY(actor, level)                                      \
-  ((void)(ACTOR_SPRITE(actor)->shadow.priority = (level)))
+  ((void)(actor->sprite->shadow.priority = (level)))
 
 const struct SceneEntrance *LemurianShip_GetEntrances(void) {
   return gLemurianShipEntrances;
@@ -233,9 +226,7 @@ static void OrbGlow_Fade(void) {
 /// part runs while its flag (gOrbGlowActive, gSwellActive, gSprayActive) is
 /// set.
 static void Ship_UpdateSwell(void) {
-  /* FAKEMATCH(volatile): blend kept at sp+18 and loaded again for the
-   * register write; as a plain u16, 5 of 225 instructions differ in tbs-en. */
-  volatile u16 blend;
+  u16 blend;
   struct FixedPointPosition sprayPosition;
   struct MapGridScrollWork *grid;
   struct Actor *actor;
@@ -610,7 +601,7 @@ static void LemurianShip_SetSail(void) {
   FieldCamera_MoveTo(808, CAMERA_KEEP, 168, 1);
   Event_Wait(300);
   // Fade out to the clear screen.
-  work = gMapGridWork[19];
+  work = gFieldWork;
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Io_Write16(0, &PLTT_BACKDROP);
   work->transitionFrames = 96;
@@ -662,9 +653,7 @@ static void LemurianShip_RaiseTheShip(void) {
   s32 white;
   s32 dark;
   s32 risen;
-  /* FAKEMATCH(volatile): each BGxCNT value stored at sp+6 on its way to the
-   * register; as a plain u16, 6 of 231 instructions differ in tbs-en. */
-  volatile u16 cnt;
+  u16 cnt;
 
   grid = gMapGridWork[0];
 
@@ -760,16 +749,13 @@ static void LemurianShip_RaiseTheShip(void) {
 /// Orb.
 s32 LemurianShip_SetupMap(void) {
   struct MapGridScrollWork *grid;
-  /* FAKEMATCH(volatile): each step stored at sp+2; as a plain u16, 2 of 165
-   * instructions differ in tbs-en. */
-  volatile u16 cnt;
+  u16 cnt;
 
   grid = gMapGridWork[0];
   if (gMainRoutineWork.entrance == LEMURIAN_SHIP_WITH_BLACK_ORB) {
     Inventory_AddItem(ACTOR_PARTY_LEADER, ITEM_BLACK_ORB);
   }
-  ((struct FieldWork *)gMapGridWork[19])->transition =
-      SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_Get(ACTOR_GANGWAY_NORTH)->collisionFlags = 0;
   Actor_Get(ACTOR_GANGWAY_NORTH)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   Actor_Get(ACTOR_GANGWAY_SOUTH)->collisionFlags = 0;
@@ -911,59 +897,40 @@ static void Ripple_Stop(void) {
 
 /// The curtains: three columns of eight 32 by 8 sprites that close in from
 /// the sides as the ship sails.
-static struct AnimationSpritePart sCurtainSprites[24];
+static struct MenuSprite sCurtainSprites[24];
 static s16 sCurtainGap;
 static s16 sCurtainVramSlot;
 
 /// Moves the curtains a step closer and queues their 24 sprites.
 /// Run each frame from Curtain_Start to the end of the game.
 static void Curtain_Close(void) {
-#ifdef UBFIX
-  u32 words[24 * sizeof(struct AnimationSpritePart) / sizeof(u32)];
-#endif
-  u32 *entry;
+  struct MenuSprite *sprite = sCurtainSprites;
   u32 tile;
-  s32 step;
-  s32 x;
+  s32 edge;
   u32 i;
 
   tile = gVramCacheEntries[sCurtainVramSlot].offset >> 5;
-  // Each part is written whole as three words: the queue link, attributes 0
-  // and 1, and attribute 2.
-  // UB: the word cursor crosses the parts' members. UBFIX builds the
-  // same words in a word array and copies them.
-#ifdef UBFIX
-  entry = words;
-#else
-  entry = (u32 *)sCurtainSprites;
-#endif
   if (sCurtainGap != 0)
     sCurtainGap--;
-  for (i = 0; i < 8; i++) {
-    s32 left;
-
-    step = sCurtainGap;
-    left = -step / 2;
-    *entry++ = 0;
-    *entry++ = (left & 0xff) | (i << 21) | OBJ_SIZE_32X16;
-    *entry++ = tile;
+  // Three columns of eight, each part a queue link and its attributes.
+  edge = (-sCurtainGap / 2) & 0xff;
+  for (i = 0; i < 8; i++, sprite++) {
+    sprite->next = NULL;
+    sprite->oam.word.attr01 = edge | (i << 21) | OBJ_SIZE_32X16;
+    sprite->oam.word.attr23 = tile;
   }
-  x = (step / 2 + 136) & 0xff;
-  for (i = 0; i < 8; i++) {
-    *entry++ = 0;
-    *entry++ = (i << 21) | x | OBJ_SIZE_32X16;
-    *entry++ = tile;
+  edge = (sCurtainGap / 2 + 136) & 0xff;
+  for (i = 0; i < 8; i++, sprite++) {
+    sprite->next = NULL;
+    sprite->oam.word.attr01 = edge | (i << 21) | OBJ_SIZE_32X16;
+    sprite->oam.word.attr23 = tile;
   }
-  i = 0;
-  x = (sCurtainGap / 2 + 152) & 0xff;
-  for (; i < 8; i++) {
-    *entry++ = 0;
-    *entry++ = (i << 21) | x | OBJ_SIZE_32X16;
-    *entry++ = tile;
+  edge = (sCurtainGap / 2 + 152) & 0xff;
+  for (i = 0; i < 8; i++, sprite++) {
+    sprite->next = NULL;
+    sprite->oam.word.attr01 = edge | (i << 21) | OBJ_SIZE_32X16;
+    sprite->oam.word.attr23 = tile;
   }
-#ifdef UBFIX
-  memcpy(sCurtainSprites, words, sizeof(words));
-#endif
   for (i = 0; i < 24; i++)
     Oam_AddSpriteAtDepth(&sCurtainSprites[i], 255);
 }

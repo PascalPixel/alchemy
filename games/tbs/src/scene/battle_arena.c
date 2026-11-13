@@ -714,6 +714,24 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
   return memberCount;
 }
 
+/// Waits a frame at a time for a send to finish. Once the timeout has run out,
+/// or while the link is not ready, every frame is a try, and past
+/// LOBBY_TRANSFER_RETRY_LIMIT tries the send fails (-1).
+static inline s32 BattleArena_FinishSend(s32 *timeout) {
+  s32 tries = 0;
+
+  while (Serial_GetActiveTransfers() != 0) {
+    wait(1);
+    if (--*timeout < 0 ||
+        (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+      if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+        return -1;
+      }
+    }
+  }
+  return 0;
+}
+
 /// Sends the first three party members' records, marked side 2
 /// (BATTLE_SIDE_PARTY).
 ///
@@ -728,137 +746,74 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
 /// Returns 0, or -1 when a send fails or runs out of time. The copies go
 /// through an EWRAM pool buffer freed before returning.
 static s32 BattleArena_SendPartyRecords(void) {
-  s32 result;
-  u8 *slotMap;
   u16 memberIds[8];
   u8 peerSlots[8];
-  s32 transferResult;
-  u8 *heap;
+  struct DjinnRecoveryList *list;
+  u8 *buffer;
   s32 memberCount;
   s32 timeout;
-  s32 tries;
+  s32 result = 0;
   s32 i;
   s32 j;
   s32 k;
-  u32 size;
-  struct DjinnRecoveryList *list;
 
-  size = LOBBY_UNIT_RECORD_BYTES;
-  heap = Heap_AllocEwram(size);
-  result = 0;
+  buffer = Heap_AllocEwram(LOBBY_UNIT_RECORD_BYTES);
   timeout = LOBBY_SEND_TIMEOUT_FRAMES;
   memberCount = BattleArena_CopyPartyOwnerIds(memberIds);
-  slotMap = peerSlots;
-  for (i = 7; i >= 0; i--) {
-    slotMap[i] = 0;
+  for (i = 0; i < 8; i++) {
+    peerSlots[i] = 0;
   }
   for (i = 0; i < memberCount; i++) {
-    Iwram_CopyWords(heap, Unit_Get(memberIds[i]), size);
-    ((struct Unit *)heap)->side = BATTLE_SIDE_PARTY;
-    // As a u8, i - 128 is 128 + i: this party member's unit on the partner's
-    // side.
-    slotMap[memberIds[i]] = i - 128;
-    transferResult = Serial_StartSend(heap, size);
-    tries = 0;
-    if (transferResult == -1) {
-      result = transferResult;
-      goto done;
-    }
-    while (Serial_GetActiveTransfers() != 0) {
-      wait(1);
-      if (--timeout < 0 ||
-          (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
-          result = -1;
-          goto done;
-        }
-      }
-    }
-    wait(2);
-  }
-  goto next;
-wait:
-  wait(1);
-  if (--timeout < 0 ||
-      (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-    if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+    Iwram_CopyWords(buffer, Unit_Get(memberIds[i]), LOBBY_UNIT_RECORD_BYTES);
+    ((struct Unit *)buffer)->side = BATTLE_SIDE_PARTY;
+    // This party member's unit on the partner's side.
+    peerSlots[memberIds[i]] = 128 + i;
+    if (Serial_StartSend(buffer, LOBBY_UNIT_RECORD_BYTES) == -1 ||
+        BattleArena_FinishSend(&timeout) != 0) {
       result = -1;
       goto done;
     }
-  }
-test:
-  if (Serial_GetActiveTransfers() != 0) {
-    goto wait;
-  }
-  wait(2);
-  i++;
-next:
-  // Pad to three records with the last copy marked absent (BATTLE_SIDE_NONE).
-  if (i <= 2) {
-    ((struct Unit *)heap)->side = tries = 0;
-    if ((transferResult = Serial_StartSend(heap, size)) != -1) {
-      goto test;
-    }
-    result = transferResult;
-    goto done;
-  }
-  Heap_Release(heap);
-  size = LOBBY_RECOVERY_RECORD_BYTES;
-  heap = Heap_AllocEwram(size);
-  /* FAKEMATCH(dead): the recovery table's copy in a once-only block gives the
-   * copy's argument order and keeps the list base's copy first after the call;
-   * as a plain call, 6 of 254 instructions differ in tbs-en. */
-  do {
-    Iwram_CopyWords(heap, Djinn_GetRecoveryTable(0), size);
-  } while (0);
-  {
-    s32 timeout;
-    s32 tries;
-
-    list = &((struct DjinnRecoveryTable *)heap)->list;
-    tries = 0;
-    timeout = LOBBY_SEND_TIMEOUT_FRAMES;
-    // Give each Djinni on the list its party member's number on the partner's
-    // side, and drop those of party members not sent (peerSlots 0).
-    for (j = 0; j < list->count; j++) {
-      list->entries[j].unitId = peerSlots[list->entries[j].unitId];
-      if (list->entries[j].unitId == 0) {
-        for (k = j; k < list->count - 1; k++) {
-          list->entries[k] = list->entries[k + 1];
-        }
-        list->count--;
-        j--;
-      }
-    }
-    if ((transferResult = Serial_StartSend(heap, size)) == -1) {
-      result = transferResult;
-      goto done;
-    }
-    goto testOffer;
-  waitOffer:
-    wait(1);
-    if (--timeout < 0 ||
-        (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-      if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
-        result = -1;
-        goto done;
-      }
-    }
-  testOffer:
-    if (Serial_GetActiveTransfers() != 0) {
-      goto waitOffer;
-    }
-    wait(1);
     wait(2);
   }
-  /* FAKEMATCH(dead): the shared exit in a once-only block, so loop.c finds no
-   * barrier at done to move the record loop's two failures to; as a plain
-   * label, 62 of 254 instructions differ in tbs-en. */
-  do {
-  done:
-    Heap_Release(heap);
-    return result;
-  } while (0);
+  // Pad to three records with the last copy marked absent (BATTLE_SIDE_NONE).
+  for (; i < LOBBY_UNIT_RECORD_COUNT; i++) {
+    ((struct Unit *)buffer)->side = BATTLE_SIDE_NONE;
+    if (Serial_StartSend(buffer, LOBBY_UNIT_RECORD_BYTES) == -1 ||
+        BattleArena_FinishSend(&timeout) != 0) {
+      result = -1;
+      goto done;
+    }
+    wait(2);
+  }
+  Heap_Release(buffer);
+
+  buffer = Heap_AllocEwram(LOBBY_RECOVERY_RECORD_BYTES);
+  Iwram_CopyWords(buffer, Djinn_GetRecoveryTable(0),
+                  LOBBY_RECOVERY_RECORD_BYTES);
+  list = &((struct DjinnRecoveryTable *)buffer)->list;
+  timeout = LOBBY_SEND_TIMEOUT_FRAMES;
+  // Give each Djinni on the list its party member's number on the partner's
+  // side, and drop those of party members not sent (peerSlots 0).
+  for (j = 0; j < list->count; j++) {
+    list->entries[j].unitId = peerSlots[list->entries[j].unitId];
+    if (list->entries[j].unitId == 0) {
+      for (k = j; k < list->count - 1; k++) {
+        list->entries[k] = list->entries[k + 1];
+      }
+      list->count--;
+      j--;
+    }
+  }
+  if (Serial_StartSend(buffer, LOBBY_RECOVERY_RECORD_BYTES) == -1 ||
+      BattleArena_FinishSend(&timeout) != 0) {
+    result = -1;
+    goto done;
+  }
+  wait(1);
+  wait(2);
+done:
+  Heap_Release(buffer);
+  return result;
 }
 
 /// Exchanges the two parties. The parent sends first, and the child (area flag
@@ -872,13 +827,8 @@ static s32 BattleArena_ExchangePartyRecords(void) {
   s32 receivedMemberCount;
   s32 receiveFirst;
 
-  result = 0;
-  /* FAKEMATCH(dead): an empty once-only loop after result's zero loads it into
-   * r6 ahead of the call; without it, 4 of 62 instructions differ in tbs-en. */
-  do {
-  } while (0);
   receiveFirst = GameFlag_Get(FLAG_BATTLE_ARENA_LINK_CHILD);
-  gLinkExchangeState = result;
+  gLinkExchangeState = 0;
   if (!receiveFirst) {
     wait(5);
     result = BattleArena_SendPartyRecords();
@@ -887,7 +837,7 @@ static s32 BattleArena_ExchangePartyRecords(void) {
     wait(5);
     receivedMemberCount = result = BattleArena_ReceivePartyRecords();
     if (result < 0)
-      goto check;
+      goto fail;
   } else {
     receivedMemberCount = result = BattleArena_ReceivePartyRecords();
     if (result < 0)
@@ -898,12 +848,9 @@ static s32 BattleArena_ExchangePartyRecords(void) {
       goto fail;
   }
   FieldGameFlag_SetByte(FLAG_LINK_PARTY_COUNT, receivedMemberCount);
-  result = receivedMemberCount;
-check:
-  if (receivedMemberCount < 0) {
-  fail:
-    Serial_ResetTransferState();
-  }
+  return receivedMemberCount;
+fail:
+  Serial_ResetTransferState();
   return result;
 }
 

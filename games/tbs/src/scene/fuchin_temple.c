@@ -2750,10 +2750,10 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
 /// Hama's and Ivan's update routine during the Reveal lesson: they glow, drawn
 /// red and blue in turn every two frames.
 static void FuchinTemple_AlternateLessonChildEffect(struct Actor *updated) {
-  if ((*(u32 *)&gFrameCount >> 1) & 1) {
-    Actor_SetSpriteColor((struct Actor *)updated, SPRITE_COLOR_RED_TINT);
+  if ((gFrameCount >> 1) & 1) {
+    Actor_SetSpriteColor(updated, SPRITE_COLOR_RED_TINT);
   } else {
-    Actor_SetSpriteColor((struct Actor *)updated, SPRITE_COLOR_BLUE_TINT);
+    Actor_SetSpriteColor(updated, SPRITE_COLOR_BLUE_TINT);
   }
 }
 

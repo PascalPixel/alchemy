@@ -383,8 +383,11 @@ static void BabiLighthouse_JumpFromLedge(void) {
     Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
     {
       u16 facing = leader->facing;
-      if ((u16)(facing + 0x4fff) <= 0x1fff ||
-          (u16)(facing - 0x3001) <= 0x1fff) {
+      // Facing roughly north or south, he steps aside to the east.
+      if ((u16)(facing - (FACING_NORTH_NORTHWEST + 1)) <
+              FACING_NORTH_NORTHEAST - FACING_NORTH_NORTHWEST ||
+          (u16)(facing - (FACING_SOUTH_SOUTHEAST + 1)) <
+              FACING_SOUTH_SOUTHWEST - FACING_SOUTH_SOUTHEAST) {
         Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER, 16, 0);
         Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
@@ -1186,23 +1189,14 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
 /// Finds the pushed actor one direction-table step ahead, including
 /// ground height.
 static struct Actor *BabiLighthouse_FindActorAhead(struct Actor *actor) {
-  struct FieldPosition position;
-  /* FAKEMATCH(temporary): target holds &position; as &position and position.x
-   * directly, 22 of 30 instructions differ in tbs-en. */
-  struct FieldPosition *target = &position;
-  s32 directionStep = gPushedActor_DirectionSteps[actor->facing >> 12];
+  struct FieldPosition ahead;
+  s32 step = gPushedActor_DirectionSteps[actor->facing >> 12];
 
-  {
-    s32 x = actor->x.fixed;
-    s32 z = actor->z.fixed;
-
-    x += -0x10000 & directionStep;
-    z += px(directionStep);
-    target->x = x;
-    target->z = z;
-  }
-  target->y = MapGrid_GetTerrainHeight(actor->layer, target->x, target->z);
-  return PushedActor_FindAtTile(target, actor);
+  // A step holds its x pixels in the high halfword and its z in the low.
+  ahead.x = actor->x.fixed + (step & -0x10000);
+  ahead.z = actor->z.fixed + px(step);
+  ahead.y = MapGrid_GetTerrainHeight(actor->layer, ahead.x, ahead.z);
+  return PushedActor_FindAtTile(&ahead, actor);
 }
 
 /// Before Carry is cast on the Road to Babi Lighthouse's pillar, sets the

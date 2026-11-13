@@ -79,7 +79,7 @@ static inline void FieldActor_LaunchFromLeader(s32 actorId, s32 dx, s32 dz,
 /// (Vector_AddPolarOffset).
 static inline void FieldVector_AddPolarOffset(s32 radius, s32 heading,
                                               s32 *probe) {
-  Vector_AddPolarOffsetFar(radius, heading, probe);
+  Vector_AddPolarOffset(radius, heading, probe);
 }
 
 /// Changes the cell behavior of the cell at (x, y), in 16.16 pixels,

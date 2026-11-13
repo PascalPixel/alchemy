@@ -219,12 +219,12 @@ void Func_020029c8(struct Actor *actor) {
     s32 a, b, c, d, e;
     s32 x, y, z;
 
-    a = Random16Far();
-    b = Random16Far();
+    a = Random16();
+    b = Random16();
     x = actor->x + a * 16 - b * 16;
-    c = Random16Far();
-    d = Random16Far();
-    e = Random16Far();
+    c = Random16();
+    d = Random16();
+    e = Random16();
     z = actor->z + d * 16 - e * 16;
     y = c * 8 + actor->y + 0x40000;
     object = (struct Actor *)Import_ActorCreate(0x1e9, x, y, z);
@@ -235,9 +235,9 @@ void Func_020029c8(struct Actor *actor) {
       struct Sprite *sprite;
       struct Sprite *source;
 
-      angle = Random16Far();
-      radius = Random16Far() * 8;
-      sum = Random16Far() + Random16Far();
+      angle = Random16();
+      radius = Random16() * 8;
+      sum = Random16() + Random16();
       scale = (sum >> 2) + 0x8000;
       Actor_StartScript(object, gData_020056d0);
       Actor_SetSpriteFlags(object, 0);

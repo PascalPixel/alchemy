@@ -400,8 +400,8 @@ void MagmaRockInside_TrailEmbers(struct Actor *object) {
   options.script = gMagmaRockInside_EmberScript;
   if ((frame & 15) == 0)
     Func_02004f28(object, 136);
-  dz = Random16Far() & 15;
-  vz = ((Random16Far() & 31) - 16) << 12;
+  dz = Random16() & 15;
+  vz = ((Random16() & 31) - 16) << 12;
   /* FAKEMATCH(temporary): z read into its own local; as object->z in the
    * call, 4 of 60 instructions differ in tla-en. */
   z = object->z;
@@ -580,8 +580,8 @@ spark:
         (void (*)(union FieldObject *))MagmaRockInside_DriftAndSlow;
     options.script = gMagmaRockInside_EmberScript;
     FieldEffect_Spawn(position[0], position[1], position[2],
-                      ((Random16Far() & 31) - 16) << 13,
-                      ((Random16Far() & 31) - 16) << 13, bit, 0x1320000,
+                      ((Random16() & 31) - 16) << 13,
+                      ((Random16() & 31) - 16) << 13, bit, 0x1320000,
                       &options);
   }
   System_Wait(1);
@@ -780,7 +780,7 @@ void MagmaRockInside_DrainLava(void) {
 burst:
   /* FAKEMATCH(temporary): burstRandom holding the first call's value; as the
    * call inside the sum, 4 of 537 instructions differ in tla-en. */
-  burstRandom = Random16Far();
+  burstRandom = Random16();
   mask = 31;
   /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 230 of 537
    * instructions differ in tla-en. */
@@ -789,7 +789,7 @@ burst:
   burstPosition[0] = baseX + ((burstRandom & mask) << 16);
   Event_PlaySound(145);
   FieldEffect_Spawn(burstPosition[0], burstPosition[1], burstPosition[2], 0,
-                    (Random16Far() & mask) << 12, 0, 0x3a0001, effectOptions);
+                    (Random16() & mask) << 12, 0, 0x3a0001, effectOptions);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   i++;
@@ -808,7 +808,7 @@ burst:
 rise:
   burstPosition[0] = riseX;
   FieldEffect_Spawn(burstPosition[0], burstPosition[1], burstPosition[2], 0, 0,
-                    (Random16Far() & 31) << 10, 0xe0001, effectOptions);
+                    (Random16() & 31) << 10, 0xe0001, effectOptions);
   i++;
   riseX += 0x60000;
   if (i != 8)
@@ -833,7 +833,7 @@ rise:
   row:
     i = 0;
   column:
-    burstPosition[0] = baseX + ((Random16Far() % 48) << 16);
+    burstPosition[0] = baseX + ((Random16() % 48) << 16);
     FieldEffect_Spawn(burstPosition[0], burstPosition[1],
                       burstPosition[2] + (row << 18) + 0x80000, 0, 0x10000, 0,
                       0x330000, effectOptions);
@@ -853,7 +853,7 @@ rise:
     spark:
       /* FAKEMATCH(temporary): sparkRandom holding the call's value; as the call
        * inside the sum, 2 of 537 instructions differ in tla-en. */
-      sparkRandom = Random16Far();
+      sparkRandom = Random16();
       sparkPosition = position;
       sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
       FieldEffect_Spawn(sparkPosition[0], sparkPosition[1],
@@ -895,7 +895,7 @@ rise:
 last:
   /* FAKEMATCH(temporary): sparkRandom holding the call's value; as the call
    * inside the sum, 2 of 537 instructions differ in tla-en. */
-  sparkRandom = Random16Far();
+  sparkRandom = Random16();
   sparkPosition = position;
   sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
   i++;
@@ -1037,7 +1037,7 @@ void MagmaRockInside_FloodWithLava(void) {
     options.script = gMagmaRockInside_EmberScript;
     for (i = 0; i != 10; i++) {
       for (j = 0; j != 6; j++) {
-        u32 random = Random16Far();
+        u32 random = Random16();
 
         p = position;
         p[0] = baseX + ((random % 48) << 16);
@@ -1148,8 +1148,8 @@ void MagmaRockInside_ReleaseRocks(void) {
   position[1] = 0;
   i = 0;
 loop:
-  position[0] = ((Random16Far() & 31) << 16) + (190 << 18);
-  position[2] = ((Random16Far() & 31) << 16) + (128 << 17);
+  position[0] = ((Random16() & 31) << 16) + (190 << 18);
+  position[2] = ((Random16() & 31) << 16) + (128 << 17);
   FieldEffect_Spawn(position[0], position[1], position[2], 0, 0x10000, 0,
                     0x3b0000, &options);
   if ((i & 7) == 0)
@@ -1646,8 +1646,8 @@ void MagmaRockInside_TrailSparks(struct Actor *object) {
   options.palette = 7;
   options.type = 673;
   options.priority = 1;
-  position[0] = object->x + (((Random16Far() & 31) - 16) << 16);
-  position[1] = object->y + ((Random16Far() & 31) << 16) + 0x80000;
+  position[0] = object->x + (((Random16() & 31) - 16) << 16);
+  position[1] = object->y + ((Random16() & 31) << 16) + 0x80000;
   position[2] = object->z;
   FieldEffect_Spawn(position[0], position[1], position[2] + 0x40000, 0, 0x8000,
                     frame, 0x130000, &options);
@@ -1708,8 +1708,8 @@ burst:
   object = (struct Actor *)(struct Actor *)Import_ActorCreate(
       672, first->x, first->y, first->z);
   Event_PlaySound(246);
-  object->x += ((Random16Far() & 31) - 16) << 16;
-  object->y += ((Random16Far() & 15) - 8) << 16;
+  object->x += ((Random16() & 31) - 16) << 16;
+  object->y += ((Random16() & 15) - 8) << 16;
   object->speedLimit = 0x80000;
   object->acceleration = 0x3333;
   object->motionFlags = 0;
@@ -1743,8 +1743,8 @@ burst:
 spiral:
   spark = FieldActor_Create(672, second->x, second->y, second->z);
   Event_PlaySound(195);
-  spark->timer = (Random16Far() & 0x7fff) + 0x8000;
-  spark->unk66 = (((i & 1) << 1) - 1) << ((Random16Far() & 3) + 9);
+  spark->timer = (Random16() & 0x7fff) + 0x8000;
+  spark->unk66 = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
   noMotion = 0;
   spark->motionFlags = noMotion;
   spark->unk4c = 0x7a0000;
@@ -1775,7 +1775,7 @@ tail:
 column:
   riser = FieldActor_Create(672, second->x, second->y + i * 0x10000 - 0x80000,
                             second->z);
-  riser->timer = Random16Far();
+  riser->timer = Random16();
   riser->unk66 = 0x800;
   ((union ActorView *)riser)->bytes.unk62 = i;
   ((union ActorView *)riser)->bytes.unk63 = 1;

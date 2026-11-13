@@ -125,7 +125,7 @@ s32 Func_0200028c(struct Wanderer *actor) {
     u8 *turned;
     u16 *facing;
 
-    *timer = (Random16Far() * 40 >> 16) + 10;
+    *timer = (Random16() * 40 >> 16) + 10;
     turned = &actor->turned;
     if (*turned != 0) {
       *turned = 0;

@@ -25,14 +25,14 @@ void Vent_Puff(s32 *position, s32 base) {
   s32 angle;
 
   if (object != 0) {
-    object->bounce = Trig_Cos(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
-    object->gravity = (u16)Random16Far();
-    object->unk4c = (u16)(Random16Far() << 1) + base;
+    object->bounce = Trig_Cos(((u32)(Random16() * 0x3000) >> 16) + 0x3000);
+    object->gravity = (u16)Random16();
+    object->unk4c = (u16)(Random16() << 1) + base;
     /* FAKEMATCH(temporary): the s32 local keeps the zero extension and the pool
      * word 0xffff8000; as a direct store, the add narrows to 16 bits (movs,
      * lsls for 0x8000, no extension), 10 of 50 instructions differ in
      * tla-en. */
-    angle = (u16)Random16Far() - 0x8000;
+    angle = (u16)Random16() - 0x8000;
     object->timer = angle;
     Actor_StartScripted(object, 3);
     object->update = (void (*)(void))Func_0200389c;

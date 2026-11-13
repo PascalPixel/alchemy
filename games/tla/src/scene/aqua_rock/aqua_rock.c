@@ -61,10 +61,10 @@ again:
     p->x = object->x;
     p->y = object->y;
     p->z = object->z;
-    distance = Iwram_MulQ16(Random16Far(), 0x80000) + 0x40000;
-    a = Random16Far();
-    b = Random16Far();
-    Vector_AddPolarOffsetFar(distance, object->facing + (a >> 2) - (b >> 2), p);
+    distance = Iwram_MulQ16(Random16(), 0x80000) + 0x40000;
+    a = Random16();
+    b = Random16();
+    Vector_AddPolarOffset(distance, object->facing + (a >> 2) - (b >> 2), p);
     x = p->x;
     if (x < 0)
       x += 0xffff;
@@ -130,9 +130,9 @@ void Func_020004e4(struct Actor *object) {
 }
 
 void Func_0200052c(struct Actor *object) {
-  if ((u32)Random16Far() < 0x1000) {
+  if ((u32)Random16() < 0x1000) {
     struct Actor *child;
-    s32 spread = Random16Far();
+    s32 spread = Random16();
     s32 x = object->x;
 
     x += spread * 48;
@@ -333,7 +333,7 @@ void Func_02000b68(s32 unused, s32 id) {
   else
     Func_02002834(0);
   for (i = 3; i >= 0; i--) {
-    BattleEffect_ApplyColorToTargetBuffer(Random16Far() & 0x7fff, 0);
+    BattleEffect_ApplyColorToTargetBuffer(Random16() & 0x7fff, 0);
     PaletteFade_StartInterpolation(15);
     wait(10);
     BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
@@ -477,7 +477,7 @@ void Func_02000d80(void) {
       for (i = 59; i >= 0; i--) {
         leader->y += 0x20000;
         leader->facing += 0x1000;
-        if (Random16Far() <= 0xfff)
+        if (Random16() <= 0xfff)
           Func_02001d30(leader);
         wait(1);
       }
@@ -613,7 +613,7 @@ void Func_02001224(s32 unused, s32 id) {
   Func_02002834(8);
   Sound_Play(220);
   for (i = 3; i >= 0; i--) {
-    BattleEffect_ApplyColorToTargetBuffer(Random16Far() & 0x7fff, 0);
+    BattleEffect_ApplyColorToTargetBuffer(Random16() & 0x7fff, 0);
     PaletteFade_StartInterpolation(15);
     wait(10);
     BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
@@ -795,7 +795,7 @@ scatter:
     object->speedLimit = 0x4000;
     object->acceleration = 0x400;
     object->update = (void (*)(void))Func_020015e8;
-    object->timer = Random16Far();
+    object->timer = Random16();
     object->unk66 = 0;
   }
   if (++i <= 21)
@@ -1201,9 +1201,9 @@ void Func_02002250(void) {
   struct Bubble *entry;
   s32 i, x, y, z, screenX, screenY;
 
-  if (Random16Far() < 0x1000 && (source = work->object) != 0) {
+  if (Random16() < 0x1000 && (source = work->object) != 0) {
     entry = &work->bubbles[work->next];
-    entry->x = source->x + Random16Far() * 3 * 16 - (24 << 16);
+    entry->x = source->x + Random16() * 3 * 16 - (24 << 16);
     entry->y = source->y;
     entry->z = source->z;
     entry->age = 0;
@@ -1265,9 +1265,9 @@ void Func_020023c0(void) {
   struct Bubble *bubble;
   s32 i, x, y, depth, screenX, screenY, z, row;
 
-  if (Random16Far() < 0x1000 && (source = work->object) != 0) {
+  if (Random16() < 0x1000 && (source = work->object) != 0) {
     bubble = &work->bubbles[work->next];
-    bubble->x = source->x + Random16Far() * 3 * 8 - 0xc0000;
+    bubble->x = source->x + Random16() * 3 * 8 - 0xc0000;
     bubble->y = source->y;
     bubble->z = source->z;
     bubble->age = 0;

@@ -79,7 +79,7 @@ void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
   x = (from->x - to->x) >> 16;
   z = (from->z - to->z) >> 16;
   actor->unk64 = ArcTan2(from->z - to->z, from->x - to->x);
-  actor->unk66 = (((Random16Far() & 2) - 1) * (Random16Far() & 15)) << 8;
+  actor->unk66 = (((Random16() & 2) - 1) * (Random16() & 15)) << 8;
   actor->unk62 = part;
   actor->unk55 = 0;
   actor->unk44 = to->x;

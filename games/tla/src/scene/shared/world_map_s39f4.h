@@ -62,8 +62,8 @@ void Func_02003aac(struct Actor *object) {
 
   Iwram_MulQ16(object->scaleX, 0x18000);
   SET_VECTOR(position, object->x, object->y + 0x20000, object->z);
-  angle = Random16Far();
-  FieldVector_AddPolarOffset(angle * 20, Random16Far(), position);
+  angle = Random16();
+  FieldVector_AddPolarOffset(angle * 20, Random16(), position);
   particle = (FieldActor_Create(674, position[0], position[1], position[2]));
   if (particle != NULL) {
     particle->terrainHeight = object->terrainHeight;

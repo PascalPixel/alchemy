@@ -64,7 +64,7 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
 
     /* FAKEMATCH(temporary): the form kept; as one call argument, 10 of 129
      * instructions differ in tla-en. */
-    y = leader->y - ((((Random16Far() * 7) << 1) >> 16) << 16);
+    y = leader->y - ((((Random16() * 7) << 1) >> 16) << 16);
     object = ((struct Actor *)Import_ActorCreate(
         285, (i << 17) + leader->x - Q16_ONE * 8, y - Q16_ONE * 2, leader->z));
     if (object != NULL) {
@@ -81,8 +81,8 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
       effect->velocityX = 0;
       effect->velocityZ = 0;
       effect->velocityY =
-          -((((u32)Random16Far() << 14) >> 16) + Q16_ONE * 3 / 8);
-      effect->spin = (((u32)Random16Far() << 9) >> 16) - 256;
+          -((((u32)Random16() << 14) >> 16) + Q16_ONE * 3 / 8);
+      effect->spin = (((u32)Random16() << 9) >> 16) - 256;
       effect->scaleRateX = -(Q16_ONE / 32);
       effect->scaleRateY = -(Q16_ONE * 3 / 128);
       effect->update = Effect_AdvanceMotion__s2698;
@@ -252,7 +252,6 @@ void Actor_WatchAndSetScript(s32 id, s32 target);
  * declares, Func_02002bcc moves: 1 of 24 instructions in tla-ja. */
 extern void Task_Add__events_i(void (*func)(void),
                                s32 priority) __asm__("Task_Add");
-void Task_RemoveFar(void (*func)(void));
 
 void Func_02002bcc(void) {
   BattleEffect_LoadActionEffectResources(134, 1);
@@ -261,7 +260,7 @@ void Func_02002bcc(void) {
   EventObject_Initialize();
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
-  Task_RemoveFar(Func_02002b68);
+  Task_Remove(Func_02002b68);
   BattleEffect_CleanupSceneObjects();
 }
 
@@ -772,9 +771,9 @@ loop:
       velocity[1] = 0;
       velocity[2] = Trig_Sin(angle);
       velocity[0] += velocity[0] >> 1;
-      velocity[0] += ((Random16Far() * 3) << 14) >> 16;
+      velocity[0] += ((Random16() * 3) << 14) >> 16;
       velocity[0] += -0x6000;
-      velocity[2] += (((Random16Far() * 3) << 13) >> 16) + -0x3000;
+      velocity[2] += (((Random16() * 3) << 13) >> 16) + -0x3000;
       FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity[0],
                         velocity[1], velocity[2], 0x01090001, opts);
     }
@@ -873,7 +872,7 @@ void Func_02003a30(void) {
     object->unk5c[0] = 1;
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
-    buffer = HeapSlot_AllocFar(68, 0x608);
+    buffer = HeapSlot_Alloc(68, 0x608);
     Icon_DrawItem(199);
     VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
     HeapSlot_Release(68);

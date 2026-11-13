@@ -291,9 +291,9 @@ void MagmaRock_ThrowEmbers(struct Actor *object) {
       {
         s32 mask = 15;
 
-        dx = mask & Random16Far();
+        dx = mask & Random16();
       }
-      dy = Random16Far() & 31;
+      dy = Random16() & 31;
       FieldEffect_Spawn(object->x + ((dx - 8) << 16),
                         object->y + (dy << 16) - 0x80000, object->z, 0, phase,
                         phase, 0x320001, &params);
@@ -353,8 +353,8 @@ void MagmaRock_TrailEmbers(struct Actor *object) {
     config.data = gMagmaRock_EmberScript;
     if ((frame & 15) == 0 && !Event_GetFlag(608))
       Func_02003c4c(object, 136);
-    dz = ((Random16Far() & 15) - 8) << 15;
-    velocityZ = ((Random16Far() & 31) - 16) << 12;
+    dz = ((Random16() & 15) - 8) << 15;
+    velocityZ = ((Random16() & 31) - 16) << 12;
     z = object->z;
     FieldEffect_Spawn(object->x, object->y, z + dz, 0, 0, velocityZ, 0x320001,
                       &config);

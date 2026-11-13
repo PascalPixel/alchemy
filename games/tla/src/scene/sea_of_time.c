@@ -469,8 +469,8 @@ void SeaOfTime_CountLaps(void) {
 
       p->type = 0x2a1;
       p->priority = 2;
-      x = Random16Far() & 31;
-      z = Random16Far() & 31;
+      x = Random16() & 31;
+      z = Random16() & 31;
       Event_PlaySound(246);
       x <<= 16;
       z <<= 16;
@@ -577,7 +577,7 @@ s32 SeaOfTime_StopWaves(void) {
   u32 i;
   u32 j;
 
-  Task_RemoveFar(SeaOfTime_TrackWaves);
+  Task_Remove(SeaOfTime_TrackWaves);
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(0x22c);
@@ -730,7 +730,7 @@ void SeaOfTime_UpdateSpray(struct Actor *object) {
   s32 even = gFrameCount & 1;
 
   if (even == 0) {
-    s32 dx = ((Random16Far() & 31) << 16) + -0xe0000;
+    s32 dx = ((Random16() & 31) << 16) + -0xe0000;
 
     spark.startScaleX = 0xb333;
     spark.startScaleY = 0xb333;
@@ -835,9 +835,9 @@ sparks:
   } else if (i & 1)
     goto next;
   {
-    s32 x = Random16Far();
+    s32 x = Random16();
     s32 mask = 31;
-    s32 z = Random16Far();
+    s32 z = Random16();
 
     burst.palette = 7;
     FieldEffect_Spawn(((x & mask) << 16) + 0x1500000, 0,
@@ -854,9 +854,9 @@ next:
   i = 0;
   while (i != 16) {
     {
-      s32 x = Random16Far();
+      s32 x = Random16();
       s32 mask = 31;
-      s32 z = Random16Far();
+      s32 z = Random16();
       s32 offsetZ = (z & mask) << 16;
       s32 offsetX = (x & mask) << 16;
 
@@ -1127,8 +1127,8 @@ void SeaOfTime_Open(void) {
       continue;
     {
       s32 mask = 31;
-      s32 x = Random16Far();
-      s32 y = Random16Far();
+      s32 x = Random16();
+      s32 y = Random16();
 
       params.startScaleX = 0xcccc;
       params.startScaleY = 0xcccc;
@@ -1144,8 +1144,8 @@ void SeaOfTime_Open(void) {
   }
   for (i = 0; i != 16; i++) {
     s32 mask = 31;
-    s32 x = Random16Far();
-    s32 y = Random16Far();
+    s32 x = Random16();
+    s32 y = Random16();
 
     burst.startScaleX = 0x18000;
     burst.startScaleY = 0x18000;
@@ -1197,7 +1197,7 @@ void SeaOfTime_Open(void) {
     }
     gSeaOfTime_WaveState += gFrameCount & 1;
   } while (changed);
-  Task_RemoveFar(SeaOfTime_AnimateSea);
+  Task_Remove(SeaOfTime_AnimateSea);
   Scene_PlayMusic();
   Event_SetFlag(0x940);
   Event_End();

@@ -1308,7 +1308,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *actor);
 /// A column of rising earth lifts an actor, holds it, then hurls it off the
 /// top of the screen, and the ground shakes as the column sinks.
 void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
-  struct GlowWork *work = HeapSlot_AllocFar(220, 0x860);
+  struct GlowWork *work = HeapSlot_Alloc(220, 0x860);
   struct Actor *actor = Actor_Get(id);
   struct Actor *effect;
   struct GlowSprite *sprite;
@@ -1412,7 +1412,7 @@ struct SparkWork {
 void VenusLighthouseEntrance_EmitDust(struct Actor *source, s32 x, s32 y,
                                       s32 z) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
-  s32 angle = Random16Far();
+  s32 angle = Random16();
   s16 *next = &work->next;
   struct SparkSprite__venus_lighthouse_entrance *sprite = &work->sprites[*next];
   struct SparkState *state = &work->states[*next];
@@ -1423,11 +1423,11 @@ void VenusLighthouseEntrance_EmitDust(struct Actor *source, s32 x, s32 y,
   state->x = x;
   state->y = y;
   state->z = z;
-  FieldVector_AddPolarOffset(Random16Far() * 2 + 0x20000, angle, &state->x);
+  FieldVector_AddPolarOffset(Random16() * 2 + 0x20000, angle, &state->x);
   state->velocityX = 0;
-  state->velocityY = (Random16Far() >> 1) + 0xc000;
+  state->velocityY = (Random16() >> 1) + 0xc000;
   state->velocityZ = 0;
-  FieldVector_AddPolarOffset(Random16Far() >> 2, angle, &state->velocityX);
+  FieldVector_AddPolarOffset(Random16() >> 2, angle, &state->velocityX);
   *next = *next + 1;
   *next = *next % 96;
 }
@@ -1466,7 +1466,7 @@ struct SparkWork__s26f4 {
 };
 
 void VenusLighthouseEntrance_StartDust(void) {
-  struct SparkWork__s26f4 *work = HeapSlot_AllocFar(220, 0x2188);
+  struct SparkWork__s26f4 *work = HeapSlot_Alloc(220, 0x2188);
   s32 resource;
   s32 tileBase;
   s32 i;

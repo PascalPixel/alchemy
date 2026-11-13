@@ -112,8 +112,8 @@ loop:
       velocity[1] = 0;
       velocity[2] = Math_Sin(angle);
       velocity[0] += velocity[0] >> 1;
-      velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;
-      velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
+      velocity[0] += (Random16() * 0xc000 >> 16) - 0x6000;
+      velocity[2] += (Random16() * 0x6000 >> 16) - 0x3000;
       FieldEffect_Spawn(actor->x, actor->y, actor->z, velocity[0], velocity[1],
                         velocity[2], 0x1090001, &options);
     }
@@ -178,7 +178,7 @@ s32 Func_02000610(void) {
 
 /// Randomly vary the scale.
 void Func_0200062c(struct Actor *object) {
-  u32 random = Random16Far();
+  u32 random = Random16();
   s32 scale = object->scaleX;
   s32 bias;
   s32 limit;
@@ -187,7 +187,7 @@ void Func_0200062c(struct Actor *object) {
   scale += (random << 12) >> 16;
   scale += bias;
   object->scaleX = scale;
-  object->scaleY = object->scaleY + ((Random16Far() << 12) >> 16) + bias;
+  object->scaleY = object->scaleY + ((Random16() << 12) >> 16) + bias;
   limit = 240;
   scale = object->scaleX;
   limit <<= 4;

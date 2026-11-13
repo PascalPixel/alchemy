@@ -82,7 +82,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 void MapGrid_WaitForShakeToSettle(void);
 s32 Trig_Sin(s32 angle);
-void Task_RemoveFar(void (*func)(void));
 
 void Func_02001474(void) {
   struct ShrineOfTheSeaGodObject *leader =
@@ -120,17 +119,17 @@ void Func_02001474(void) {
     velocity[1] = 0;
     velocity[2] = Trig_Sin(i << 12);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += ((Random16Far() * 3) << 14) >> 16;
+    velocity[0] += ((Random16() * 3) << 14) >> 16;
     i++;
     velocity[0] += -0x6000;
-    velocity[2] += (((Random16Far() * 3) << 13) >> 16) + -0x3000;
+    velocity[2] += (((Random16() * 3) << 13) >> 16) + -0x3000;
     FieldEffect_Spawn(leader->x, leader->y + -0x40000, leader->z, velocity[0],
                       velocity[1], velocity[2], 0x01090001, &options);
   }
   *(s32 *)((u8 *)leader + 40) = 0x40000;
   wait(2);
   Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
-  Task_RemoveFar(Func_02001464);
+  Task_Remove(Func_02001464);
   spin = 0x200;
   for (i = 0; i <= 7;) {
     sprite->rotation += spin;
@@ -206,7 +205,7 @@ void Func_020016d8(void) {
   Actor_SetSpritePriority(11, 2);
   Actor_GetById(11)->priorityFlags |= 2;
   leader->motionFlags = 3;
-  Task_RemoveFar(Func_020016c8);
+  Task_Remove(Func_020016c8);
   wait(1);
   Event_End();
   GameFlag_Set(0x231);
@@ -238,7 +237,7 @@ void Func_020018bc(void) {
   Sound_Play(161);
   Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
-  Task_RemoveFar(Func_020018ac);
+  Task_Remove(Func_020018ac);
   wait(1);
   Event_End();
   GameFlag_Set(0x232);
@@ -1177,9 +1176,9 @@ void Func_020037a4(struct ShrineOfTheSeaGodObject *object) {
     {
       s32 mask = 15;
 
-      dx = mask & Random16Far();
+      dx = mask & Random16();
     }
-    dy = Random16Far() & 7;
+    dy = Random16() & 7;
     params.kind = 673;
     FieldEffect_Spawn(object->x + ((dx - 8) << 16),
                       object->y + ((dy - 8) << 16), object->z, 0, 0x8000, phase,

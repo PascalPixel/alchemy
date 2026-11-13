@@ -58,7 +58,7 @@ retry:
   targetZ = z;
   layer = &object->terrainId;
   startCell = MapGrid_GetCellBehaviorAt(*layer, x, z);
-  Vector_AddPolarOffsetFar(0x100000, angle, p);
+  Vector_AddPolarOffset(0x100000, angle, p);
   cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
@@ -108,7 +108,7 @@ walk:
   /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
    * position's address; as no asm, 43 of 246 instructions differ in tla-en. */
   __asm__("" : : : SFP_CLOBBER);
-  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
+  Call3((void (*)())Vector_AddPolarOffset, 0x100000, angle, (s32)position);
   q = position;
   cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
   if (cell != 255)

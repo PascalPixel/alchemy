@@ -892,8 +892,8 @@ void Func_02001620(s32 firstId, s32 secondId) {
 burst:
   object = ((void *)Import_ActorCreate(672, first->x, first->y, first->z));
   Sound_Play(246);
-  object->x += ((Random16Far() & 31) - 16) << 16;
-  object->y += ((Random16Far() & 15) - 8) << 16;
+  object->x += ((Random16() & 31) - 16) << 16;
+  object->y += ((Random16() & 15) - 8) << 16;
   object->speedLimit = 0x80000;
   object->acceleration = 0x3333;
   object->motionFlags = 0;
@@ -927,8 +927,8 @@ burst:
 spiral:
   spark = FieldActor_Create(672, second->x, second->y, second->z);
   Sound_Play(195);
-  spark->timer = (Random16Far() & 0x7fff) + 0x8000;
-  spark->unk66 = (((i & 1) << 1) - 1) << ((Random16Far() & 3) + 9);
+  spark->timer = (Random16() & 0x7fff) + 0x8000;
+  spark->unk66 = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
   noMotion = 0;
   spark->motionFlags = noMotion;
   spark->unk4c = 0x7a0000;
@@ -959,7 +959,7 @@ tail:
 column:
   riser = FieldActor_Create(672, second->x, second->y + i * 0x10000 - 0x80000,
                             second->z);
-  riser->timer = Random16Far();
+  riser->timer = Random16();
   riser->unk66 = 0x800;
   ((union ActorView *)riser)->bytes.unk62 = i;
   ((union ActorView *)riser)->bytes.unk63 = 1;
@@ -1989,10 +1989,10 @@ void Func_020034fc(void) {
       z -= viewZ;
       z -= originY;
       screenY = z - y;
-      rawX = (x >> 16) + ((Random16Far() * 10) >> 16);
+      rawX = (x >> 16) + ((Random16() * 10) >> 16);
 
       x = rawX - 10;
-      rawY = (screenY >> 16) + ((Random16Far() * 10) >> 16);
+      rawY = (screenY >> 16) + ((Random16() * 10) >> 16);
       screenY = rawY - 10;
       z = ((y + z) >> 16) + 50;
 
@@ -2003,7 +2003,7 @@ void Func_020034fc(void) {
         screenY &= 255;
         splash->sprite[0] = 0;
         splash->sprite[1] = screenY | (column << 16) | 0x40002000;
-        *frame = (tile + (((Random16Far() * 3) >> 16) << 3)) | priority;
+        *frame = (tile + (((Random16() * 3) >> 16) << 3)) | priority;
         Import_OamAddSpriteAtDepthClamped(splash->sprite, z);
       }
     }

@@ -85,7 +85,7 @@ void Func_02003370(void) {
   if (spawn) {
     object = FieldActor_Create(
         0x2a0, anchor->x,
-        anchor->y - ((Random16Far() * 80 >> 16) << 16) - 0x80000, anchor->z);
+        anchor->y - ((Random16() * 80 >> 16) << 16) - 0x80000, anchor->z);
     if (object != NULL) {
       u8 zero;
       s32 mask;
@@ -96,9 +96,9 @@ void Func_02003370(void) {
       object->motionFlags = 0;
       {
         /* FAKEMATCH(temporary): the masked value held in a local; as
-         * object->action = Random16Far() & 0x0ffff000, 36 of 207 instructions
+         * object->action = Random16() & 0x0ffff000, 36 of 207 instructions
          * differ in tla-en. */
-        s32 action = Random16Far() & 0x0ffff000;
+        s32 action = Random16() & 0x0ffff000;
 
         object->timer = action;
       }
@@ -107,12 +107,12 @@ void Func_02003370(void) {
       {
         /* FAKEMATCH(temporary): the byte held in a local; as a direct store, 2
          * of 207 instructions differ in tla-en. */
-        u8 phase = Random16Far() >> 13;
+        u8 phase = Random16() >> 13;
 
         ((u8 *)object)[98] = phase;
       }
       object->update = Func_020000e4;
-      object->speedLimit = Math_Sin(Random16Far() * 0xffff >> 20) * 24;
+      object->speedLimit = Math_Sin(Random16() * 0xffff >> 20) * 24;
       object->speedLimit = anchor->speedLimit >> 16;
       sprite->unk1a = zero;
       mask = -13;
@@ -218,7 +218,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   A(object)->speedLimit = 0x6666;
   A(object)->acceleration = 0xccc;
   A(object)->gravity = 0x8000;
-  block = HeapSlot_AllocFar(68, 0x608);
+  block = HeapSlot_Alloc(68, 0x608);
   Item_LoadIcon(247);
   tiles = (block + 0x400);
   Vram_Load(sprite->vramBlock, 128, tiles);

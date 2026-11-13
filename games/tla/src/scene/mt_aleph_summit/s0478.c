@@ -53,8 +53,8 @@ next:
   dir.y = 0;
   dir.z = Math_Sin(angle) * radius / 256;
   dir.x += dir.x >> 1;
-  dir.x += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
-  dir.z += ((Random16Far() * 3) << 13 >> 16) - 0x3000;
+  dir.x += ((Random16() * 3) << 14 >> 16) - 0x6000;
+  dir.z += ((Random16() * 3) << 13 >> 16) - 0x3000;
   FieldEffect_Spawn(object->x, object->y, object->z, dir.x, dir.y, dir.z,
                     EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
                         EFFECT_USE_PRIORITY | 1,

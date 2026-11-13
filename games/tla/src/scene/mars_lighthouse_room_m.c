@@ -739,7 +739,7 @@ void Func_020012a4(s32 x, s32 z, s32 kind) {
       Actor_StartScript(object, gData_0200387c);
     } else {
       ((struct MarsLighthouseRoomMAnimation *)object->sprite)->layer = 1;
-      object->velocityX = (((u32)(Random16Far() * 8) >> 16) - 4) << 16;
+      object->velocityX = (((u32)(Random16() * 8) >> 16) - 4) << 16;
       object->velocityY = PIXELS(4);
       Actor_StartScript(object, gData_02003900);
     }
@@ -754,8 +754,8 @@ void Func_02001324(s32 x, s32 z, s32 c, s32 d, s32 e, s32 f) {
   Event_PlaySound(144);
   Func_020012a4(x, z + 12, 1);
   for (i = 0; i < 3; i++) {
-    px = x + ((u32)(Random16Far() * 12) >> 16) - 6;
-    pz = z + ((u32)(Random16Far() * 12) >> 16) - 6;
+    px = x + ((u32)(Random16() * 12) >> 16) - 6;
+    pz = z + ((u32)(Random16() * 12) >> 16) - 6;
     Func_020012a4(px, pz, 0);
   }
   wait(4);
@@ -1147,14 +1147,14 @@ void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
   s32 angle;
 
   if (object != 0) {
-    object->bounce = Trig_Cos(((u32)(Random16Far() * 3 << 12) >> 16) + 0x3000);
-    object->gravity = (u16)Random16Far();
-    object->unk4c = ((u32)(Random16Far() << 17) >> 16) + value;
+    object->bounce = Trig_Cos(((u32)(Random16() * 3 << 12) >> 16) + 0x3000);
+    object->gravity = (u16)Random16();
+    object->unk4c = ((u32)(Random16() << 17) >> 16) + value;
     /* FAKEMATCH(temporary): the angle held in an s32 local keeps the zero
      * extension and the pool word 0xffff8000 (a direct store narrows the add
      * to 16 bits: movs, lsls for 0x8000, no extension); as a direct store, 10
      * of 50 instructions differ in tla-en. */
-    angle = (u16)Random16Far() - 0x8000;
+    angle = (u16)Random16() - 0x8000;
     object->timer = angle;
     ((void (*)())Func_02001ed4)(object, 2);
     object->update = Func_02001e38;

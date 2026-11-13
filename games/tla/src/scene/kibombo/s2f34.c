@@ -25,10 +25,10 @@ void Func_02002f34(void) {
     s32 value;
 
     if (object != 0) {
-      object->field44 = Trig_Cos(((Random16Far() << 13) >> 16) + 0x3000);
+      object->field44 = Trig_Cos(((Random16() << 13) >> 16) + 0x3000);
       object->field48 = 0x10000;
-      object->field4c = 0x40000 - (u16)Random16Far();
-      value = (u16)Random16Far() + 0xffff8000;
+      object->field4c = 0x40000 - (u16)Random16();
+      value = (u16)Random16() + 0xffff8000;
       object->field64 = value;
       object->motionFlags = 0;
       Actor_SetSpriteFlags(object, 0);
@@ -85,7 +85,7 @@ void Func_020030b8(struct KibomboObject *object) {
   if (object->field64 != 0) {
     object->field64--;
   } else {
-    object->field64 = ((Random16Far() * 10) >> 16) + 10;
+    object->field64 = ((Random16() * 10) >> 16) + 10;
     if (object->field66 != 0) {
       object->scaleX = 0x18000;
       object->field66 = 0;
@@ -104,7 +104,7 @@ void Func_02003104(s32 x, s32 y, s32 z) {
     object->motionFlags = 0;
     object->priorityFlags &= ~1;
     object->scaleY = 0x20000;
-    object->field64 = ((Random16Far() * 10) >> 16) + 10;
+    object->field64 = ((Random16() * 10) >> 16) + 10;
     object->field66 = 0;
     object->update = Func_020030b8;
     sprite = object->sprite;
@@ -361,7 +361,7 @@ void Func_02003308(struct Actor *actor) {
   radius = object->actor.unk4c;
   spin = (s16)object->actor.unk66;
   turn = *action;
-  Vector_AddPolarOffsetFar((radius << 16) + wobble, turn * 3 * 256 + spin,
+  Vector_AddPolarOffset((radius << 16) + wobble, turn * 3 * 256 + spin,
                            &centre);
   object->actor.x = centre.x;
   object->actor.y = centre.y;
@@ -486,7 +486,7 @@ void Func_02003504(void) {
 }
 
 void Func_02003610(void) {
-  Task_RemoveFar(Func_02002ccc);
+  Task_Remove(Func_02002ccc);
   wait(1);
   Import_FieldCameraWaitForArrival();
   Event_Wait(40);
@@ -575,7 +575,7 @@ void Func_0200384c(void) {
   EventObject_Initialize();
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
-  Task_RemoveFar(Func_020037e4);
+  Task_Remove(Func_020037e4);
   BattleEffect_CleanupSceneObjects();
 }
 
@@ -583,11 +583,11 @@ void Func_02003898(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo4)
-    Task_RemoveFar(Func_02002c34);
+    Task_Remove(Func_02002c34);
   else if (scene == (s32)&SceneId_Kibombo5)
-    Task_RemoveFar(Func_02002ccc);
+    Task_Remove(Func_02002ccc);
   else if (scene == (s32)&SceneId_Kibombo6)
-    Task_RemoveFar(Func_02002d64);
+    Task_Remove(Func_02002d64);
 }
 
 void Func_020038ec(void) {
@@ -725,7 +725,7 @@ test:
   if ((gInput.held & 11) == 0)
     goto next;
 done:
-  Task_RemoveFar(Func_02002d64);
+  Task_Remove(Func_02002d64);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 32;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -743,7 +743,7 @@ void Func_02003c84(void) {
   Event_WaitTransitionFrames();
   Kibombo_TaskAdd(Func_02002d64, 0x480);
   wait(60);
-  Task_RemoveFar(Func_02002d64);
+  Task_Remove(Func_02002d64);
   wait(1);
 
   Sound_Play(212);
@@ -758,7 +758,7 @@ void Func_02003c84(void) {
   wait(1);
   Kibombo_TaskAdd(Func_02002d64, 0x480);
   wait(60);
-  Task_RemoveFar(Func_02002d64);
+  Task_Remove(Func_02002d64);
   wait(1);
 
   Sound_Play(212);
@@ -773,7 +773,7 @@ void Func_02003c84(void) {
   wait(1);
   Kibombo_TaskAdd(Func_02002d64, 0x480);
   wait(180);
-  Task_RemoveFar(Func_02002d64);
+  Task_Remove(Func_02002d64);
   wait(1);
 
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 1;
@@ -895,7 +895,7 @@ void Func_020040cc(void) {
   wait(1);
   Kibombo_TaskAdd(Func_02002eb0, 0x480);
   Event_Wait(20);
-  Task_RemoveFar(Func_02002ccc);
+  Task_Remove(Func_02002ccc);
   Func_020032e0();
   Kibombo_TaskAdd(Func_02002ccc, 0x480);
   Event_ShowMessageAndWait(17, 0);
@@ -907,7 +907,7 @@ void Func_020040cc(void) {
   Func_02003640(1, 1);
   Event_Wait(20);
   Event_ShowMessageThenWait(17, 0, 40);
-  Task_RemoveFar(Func_02002ccc);
+  Task_Remove(Func_02002ccc);
   wait(1);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x202;
   Event_FinishScreenTransition();
@@ -1001,7 +1001,7 @@ void Func_02004424(void) {
   Kibombo_MessagePut(0x4011, 0);
   Kibombo_ObjTurn(17, FACING_SOUTH + FACING_STEP);
   Event_ShowMessageAndWait(0x4011, 0);
-  Task_RemoveFar(Func_02002ccc);
+  Task_Remove(Func_02002ccc);
   Kibombo_ObjTurn(17, FACING_NORTH + FACING_STEP);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0, 0);

@@ -83,8 +83,8 @@ first:
   {
     struct Spark *spark = ((void *)Import_ActorCreate(kind, a->x, a->y, a->z));
     Sound_Play(246);
-    spark->x += ((Random16Far() & 31) - 16) << 16;
-    spark->y += ((Random16Far() & 15) - 8) << 16;
+    spark->x += ((Random16() & 31) - 16) << 16;
+    spark->y += ((Random16() & 15) - 8) << 16;
     spark->speedLimit = 0x80000;
     spark->acceleration = 0x3333;
     spark->motionFlags = 0;
@@ -114,8 +114,8 @@ second:
     struct Spark *spark = ((void *)Import_ActorCreate(kind, b->x, b->y, b->z));
     Sound_Play(195);
     angle = &spark->action;
-    *angle = (Random16Far() & 0x7fff) + 0x8000;
-    spark->unk66 = ((i & 1) * 2 - 1) << ((Random16Far() & 3) + 9);
+    *angle = (Random16() & 0x7fff) + 0x8000;
+    spark->unk66 = ((i & 1) * 2 - 1) << ((Random16() & 3) + 9);
     spark->motionFlags = 0;
     spark->unk4c = 0x7a0000;
     spark->watchedObject = b;
@@ -150,7 +150,7 @@ third:
   {
     struct Spark *spark = ((void *)Import_ActorCreate(
         kind, b->x, (i << 16) + b->y - 0x80000, b->z));
-    spark->action = Random16Far();
+    spark->action = Random16();
     spark->unk66 = 0x800;
     spark->unk62 = i;
     spark->unk63 = 1;

@@ -14,14 +14,14 @@ wait:
 	.thumb_func
 Task_Add:
 	overlay_veneer Task_AddFar
-	.global Task_RemoveFar
+	.global Task_Remove
 	.thumb_func
-Task_RemoveFar:
-	overlay_veneer Func_080000d8
-	.global Random16Far
+Task_Remove:
+	overlay_veneer Task_RemoveFar
+	.global Random16
 	.thumb_func
-Random16Far:
-	overlay_veneer Func_080000f8
+Random16:
+	overlay_veneer Random16Far
 	.global Trig_Sin
 	.thumb_func
 Trig_Sin:
@@ -30,10 +30,10 @@ Trig_Sin:
 	.thumb_func
 Trig_Cos:
 	overlay_veneer Trig_CosFar
-	.global HeapSlot_AllocFar
+	.global HeapSlot_Alloc
 	.thumb_func
-HeapSlot_AllocFar:
-	overlay_veneer Func_08000140
+HeapSlot_Alloc:
+	overlay_veneer HeapSlot_AllocFar
 	.global HeapSlot_Release
 	.thumb_func
 HeapSlot_Release:

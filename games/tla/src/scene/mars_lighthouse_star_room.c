@@ -99,19 +99,19 @@ void MarsLighthouseStarRoom_ScatterIceChips(s32 id) {
   i = 5;
 next:
   {
-    s32 x = source->x + (Random16Far() << 4) - (Random16Far() << 4);
+    s32 x = source->x + (Random16() << 4) - (Random16() << 4);
     struct Actor *object =
-        ObjectCreate_(0x145, x, (Random16Far() << 3) + source->y + 0x40000,
-                      source->z + (Random16Far() << 4) - (Random16Far() << 4));
+        ObjectCreate_(0x145, x, (Random16() << 3) + source->y + 0x40000,
+                      source->z + (Random16() << 4) - (Random16() << 4));
 
     if (object != NULL) {
       s32 angle;
       s32 radius;
       s32 scale;
 
-      angle = Random16Far();
-      radius = Random16Far();
-      scale = ((u32)Random16Far() >> 1) + 0x4000;
+      angle = Random16();
+      radius = Random16();
+      scale = ((u32)Random16() >> 1) + 0x4000;
       Actor_StartScript(object, gMarsLighthouseStarRoom_ScatterIceChipsScript);
       Actor_SetSpriteFlags(object, 0);
       /* FAKEMATCH(dead): an empty once-only block holds the order around it; as
@@ -553,7 +553,6 @@ void MarsLighthouseStarRoom_KeepStarAtLeaderPriority(struct Actor *object) {
 
 extern struct Actor *gMarsLighthouseStarRoom_MarsStar;
 
-u8 *HeapSlot_AllocFar(s32 slot, s32 size);
 
 /// The Mars Star (item 247's icon) as an actor on the floor, rising first when
 /// asked.
@@ -581,7 +580,7 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   size = 0x608;
   sprite->nextFrame = zero;
   sprite->unk1b[0] = zero;
-  block = HeapSlot_AllocFar(68, size);
+  block = HeapSlot_Alloc(68, size);
   Item_LoadIcon(247);
   block += 0x400;
   Vram_Load(sprite->vramBlock, 128, block);
@@ -774,7 +773,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     object->unk5c[0] = 1;
     sprite->unk1b[0] = 0;
     object->priorityFlags |= 2;
-    buffer = HeapSlot_AllocFar(68, 0x608);
+    buffer = HeapSlot_Alloc(68, 0x608);
     Item_LoadIcon(247);
     Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
     HeapSlot_Release(68);
@@ -894,7 +893,7 @@ L_02008ea2:
     object->unk5c[0] = 1;
     sprite->unk1b[0] = 0;
     object->priorityFlags |= 2;
-    buffer = HeapSlot_AllocFar(68, 0x608);
+    buffer = HeapSlot_Alloc(68, 0x608);
     Item_LoadIcon(247);
     Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
     HeapSlot_Release(68);
@@ -954,7 +953,7 @@ L_0200905c:
     object2->motionFlags = 0;
     object2->unk5c[0] = 1;
     object2->priorityFlags |= 2;
-    buffer2 = HeapSlot_AllocFar(68, 0x608);
+    buffer2 = HeapSlot_Alloc(68, 0x608);
     Item_LoadIcon(247);
     Vram_Load(sprite2->vramBlock, 128, buffer2 + 0x400);
     HeapSlot_Release(68);
@@ -1074,18 +1073,18 @@ void Func_02001424(void) {
   if (frame & 1)
     return;
   if ((frame >> 1) & 1) {
-    r = Random16Far();
+    r = Random16();
     x = r << 3;
     x -= r;
-    z = Random16Far() * 15;
+    z = Random16() * 15;
     x <<= 2;
     x >>= 16;
     column = 155;
   } else {
-    r = Random16Far();
+    r = Random16();
     x = r << 3;
     x -= r;
-    z = Random16Far() * 15;
+    z = Random16() * 15;
     x <<= 2;
     x >>= 16;
     column = 178;
@@ -1330,14 +1329,14 @@ void Func_02001b78(s32 *position, s32 base) {
   s32 angle;
 
   if (object != 0) {
-    object->bounce = Trig_Cos(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
-    object->gravity = (u16)Random16Far();
-    object->unk4c = (u16)(Random16Far() << 1) + base;
+    object->bounce = Trig_Cos(((u32)(Random16() * 0x3000) >> 16) + 0x3000);
+    object->gravity = (u16)Random16();
+    object->unk4c = (u16)(Random16() << 1) + base;
     /* FAKEMATCH(temporary): the angle held in an s32 local keeps the zero
      * extension and the pool word 0xffff8000 (a direct store narrows the add
      * to 16 bits: movs, lsls for 0x8000, no extension); as a direct store, 10
      * of 50 instructions differ in tla-en. */
-    angle = (u16)Random16Far() - 0x8000;
+    angle = (u16)Random16() - 0x8000;
     object->timer = angle;
     Func_02001b38__s1b78(object, 2);
     object->update = Func_02001a9c;

@@ -52,7 +52,7 @@ static __inline__ void SetUp(struct EffectSprite *sprite, s32 pivotX,
 }
 
 void Func_020017a8(s32 a, s32 b, s32 side) {
-  struct BeamWork *work = HeapSlot_AllocFar(220, sizeof(struct BeamWork));
+  struct BeamWork *work = HeapSlot_Alloc(220, sizeof(struct BeamWork));
   struct Actor *carrier =
       *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 460);
   struct EffectSprite *sprite;

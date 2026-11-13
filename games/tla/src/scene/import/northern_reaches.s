@@ -14,14 +14,14 @@ __modsi3:
 	.thumb_func
 wait:
 	overlay_veneer waitFar
-	.global Random16Far
+	.global Random16
 	.thumb_func
-Random16Far:
-	overlay_veneer Func_080000f8
-	.global HeapSlot_AllocFar
+Random16:
+	overlay_veneer Random16Far
+	.global HeapSlot_Alloc
 	.thumb_func
-HeapSlot_AllocFar:
-	overlay_veneer Func_08000140
+HeapSlot_Alloc:
+	overlay_veneer HeapSlot_AllocFar
 	.global HeapSlot_Release
 	.thumb_func
 HeapSlot_Release:

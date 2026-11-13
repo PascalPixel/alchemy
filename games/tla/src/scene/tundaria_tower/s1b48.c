@@ -15,7 +15,7 @@ extern s16 gData_020032b2[];
 void Func_020017dc(struct Actor *object);
 void Func_02001868(void);
 s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 z);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
+void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *vector);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
 void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
@@ -80,7 +80,7 @@ retry:
   }
   /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 2
    * of 347 instructions differ in tla-en. */
-  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
+  Call3((void (*)())Vector_AddPolarOffset, 0x100000, angle, (s32)position);
   cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
@@ -151,7 +151,7 @@ walk:
   __asm__("" : : : SFP_CLOBBER);
   /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
    * of 347 instructions differ in tla-en. */
-  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
+  Call3((void (*)())Vector_AddPolarOffset, 0x100000, angle, (s32)position);
   q = position;
   cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
   if (cell != 255)
@@ -189,7 +189,7 @@ extern s16 gData_020032b2[];
 void Func_020017dc(struct Actor *object);
 void Func_02001868(void);
 s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 z);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
+void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *vector);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
 void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
@@ -252,7 +252,7 @@ retry:
    * position address from reusing p; as no asm, 2 of 332 instructions differ
    * in tla-ja. */
   __asm__("" : : : SFP_CLOBBER);
-  Vector_AddPolarOffsetFar(0x100000, angle, position);
+  Vector_AddPolarOffset(0x100000, angle, position);
   cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
@@ -319,7 +319,7 @@ walk:
   __asm__("" : : : SFP_CLOBBER);
   /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
    * of 332 instructions differ in tla-ja. */
-  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
+  Call3((void (*)())Vector_AddPolarOffset, 0x100000, angle, (s32)position);
   q = position;
   cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
   if (cell != 255)

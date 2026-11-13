@@ -50,9 +50,9 @@ void Func_02001650(s32 count) {
     i = count;
   next:
     spark = &work->sparks[work->next];
-    angle = ((Random16Far() * 3) >> 2) + 0x6000;
+    angle = ((Random16() * 3) >> 2) + 0x6000;
     radius = 0x400000;
-    speed = ((Random16Far() << 4) >> 16) + 16;
+    speed = ((Random16() << 4) >> 16) + 16;
     /* FAKEMATCH(temporary): the cosine held in a 64-bit temporary; as
      * Iwram_MulQ16(Trig_Cos(angle), radius), 14 of 92 instructions differ
      * in tla-en. */
@@ -81,7 +81,7 @@ extern s32 Func_020029f0__s1650(struct Actor *object) __asm__(
     "BattleEffect_GetObjectPriority");
 
 void Func_02001718(const s32 *from, const s32 *to) {
-  struct SparkWork *work = HeapSlot_AllocFar(220, sizeof(struct SparkWork));
+  struct SparkWork *work = HeapSlot_Alloc(220, sizeof(struct SparkWork));
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct SparkSprite *sprite;
   struct Spark *spark;

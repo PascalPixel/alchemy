@@ -27,7 +27,7 @@ void WAVE_SCROLL(void) {
                           (144 - i) << 10) >>
              11) -
             4;
-    *line += Random16Far() % (range * 2) - range;
+    *line += Random16() % (range * 2) - range;
     if (*line > 56)
       *line -= 56;
     else if (*line < -64)

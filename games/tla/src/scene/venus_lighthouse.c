@@ -65,14 +65,14 @@ s32 VenusLighthouse_EmitRisingParticles(struct SceneEffectSource *actor) {
   framePhase = gFrameCount & 7;
   if (framePhase != 0)
     goto done;
-  options.priority = 3 - (s32)((u32)(Random16Far() * 2) >> 16);
+  options.priority = 3 - (s32)((u32)(Random16() * 2) >> 16);
   options.startScaleX = 0x6666;
   options.startScaleY = 0x6666;
   options.palette = 14;
-  particleX = actor->x + (((s32)((u32)(Random16Far() * 9) >> 16) - 4) << 16);
-  particleY = actor->y + ((32 - (s32)((u32)(Random16Far() * 32) >> 16)) << 16);
+  particleX = actor->x + (((s32)((u32)(Random16() * 9) >> 16) - 4) << 16);
+  particleY = actor->y + ((32 - (s32)((u32)(Random16() * 32) >> 16)) << 16);
   riseSpeed =
-      ((((s32)((u32)(Random16Far() * 5) >> 16)) << 16) + 0x00050000) / 10;
+      ((((s32)((u32)(Random16() * 5) >> 16)) << 16) + 0x00050000) / 10;
   FieldEffect_Spawn(particleX, particleY, actor->z, 0, riseSpeed, framePhase,
                     0x000b0000, &options);
 done:

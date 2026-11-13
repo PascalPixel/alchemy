@@ -36,8 +36,8 @@ s32 Func_02000054(struct KibomboObject *object) {
 
     dx = -0x10000;
     dy = dx;
-    dx += ((Random16Far() * 3) >> 16) << 16;
-    dy += ((Random16Far() * 3) >> 16) << 16;
+    dx += ((Random16() * 3) >> 16) << 16;
+    dy += ((Random16() * 3) >> 16) << 16;
 
     Actor_SetPositionAndResetMotion(object, object->field44 + dx,
                                     object->field48 + dy, object->z);
@@ -56,8 +56,8 @@ s32 Func_020000c4(struct KibomboObject *object) {
   if (object->timer != 0) {
     object->timer--;
   } else {
-    object->timer = ((Random16Far() * 10) >> 16) + 10;
-    object->facing = Random16Far();
+    object->timer = ((Random16() * 10) >> 16) + 10;
+    object->facing = Random16();
   }
   return 1;
 }
@@ -639,7 +639,7 @@ void Func_02000d74(void) {
   Kibombo_ObjWalk(17, 264, 374);
   Kibombo_TaskAdd(Func_02002eb0, 0x480);
   Event_Wait(20);
-  Task_RemoveFar(Func_02002ccc);
+  Task_Remove(Func_02002ccc);
   Func_020032e0();
   KIBOMBO_TASK_ADD(Func_02002ccc, 0x480);
   Event_ShowMessageAndWait(7, 0);
@@ -658,7 +658,7 @@ void Func_02000d74(void) {
   FieldEffect_SetAttached(17, 0x102);
   Event_Wait(20);
   Event_ShowMessageThenWait(17, 0, 20);
-  Task_RemoveFar(Func_02002eb0);
+  Task_Remove(Func_02002eb0);
   wait(1);
   Actor_SetHorizontalPositionWithTerrain(27, 0, 0);
   Kibombo_ObjArm(17, FACING_NORTH + FACING_STEP, 0);
@@ -1544,10 +1544,10 @@ void Func_02002ba4(s32 index, s32 entry, s32 delta) {
                                                                                \
     if (work->field166 == 0 && work->field15a == 0 && work->field15e == 0 &&   \
         (gFrameCount & 7) == 0) {                                              \
-      Func_02002b18(9, 0, ((Random16Far() * 10) >> 16) - 5);                   \
-      Func_02002b18(n1, 1, ((Random16Far() * n2) >> 16) - n3);                 \
-      Func_02002b18(n4, 2, ((Random16Far() * 4) >> 16) - 2);                   \
-      call1(n5, 3, ((Random16Far() * n6) >> 16) - n7);                         \
+      Func_02002b18(9, 0, ((Random16() * 10) >> 16) - 5);                   \
+      Func_02002b18(n1, 1, ((Random16() * n2) >> 16) - n3);                 \
+      Func_02002b18(n4, 2, ((Random16() * 4) >> 16) - 2);                   \
+      call1(n5, 3, ((Random16() * n6) >> 16) - n7);                         \
     }                                                                          \
   }
 
@@ -1560,9 +1560,9 @@ void Func_02002d64(void) {
 
   if (work->field166 == 0 && work->field15a == 0 && work->field15e == 0 &&
       (gFrameCount & 7) == 0) {
-    Func_02002b18(169, 0, ((Random16Far() * 4) >> 16) - 2);
-    Func_02002b18(167, 1, ((Random16Far() * 2) >> 16) - 1);
-    Func_02002b18(166, 2, Random16Far() >> 16);
+    Func_02002b18(169, 0, ((Random16() * 4) >> 16) - 2);
+    Func_02002b18(167, 1, ((Random16() * 2) >> 16) - 1);
+    Func_02002b18(166, 2, Random16() >> 16);
   }
 }
 
@@ -1584,7 +1584,7 @@ void Func_02002de0(void) {
     object->field5c = 1;
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
-    buffer = HeapSlot_AllocFar(68, 0x608);
+    buffer = HeapSlot_Alloc(68, 0x608);
     Icon_DrawItem(242);
     VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
     HeapSlot_Release(68);

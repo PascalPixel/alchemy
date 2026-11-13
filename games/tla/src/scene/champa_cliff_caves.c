@@ -1506,7 +1506,7 @@ static __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d,
 }
 
 void Func_020029f8(s32 id, s32 mode) {
-  struct FlashWork *work = HeapSlot_AllocFar(220, 0x428);
+  struct FlashWork *work = HeapSlot_Alloc(220, 0x428);
   struct Actor *object = Actor_GetById(id);
   s32 slot;
   s32 tile;
@@ -1795,7 +1795,7 @@ loop:
        ->v)
 
 void Func_02002f58(const s32 *position) {
-  u8 *work = HeapSlot_AllocFar(220, 0x1078);
+  u8 *work = HeapSlot_Alloc(220, 0x1078);
   s32 time;
   s32 state;
 
@@ -1882,7 +1882,7 @@ void Func_02003078(void) {
     wait(1);
     time++;
   } while (state != 999);
-  Task_RemoveFar(Func_02002de4);
+  Task_Remove(Func_02002de4);
   MapGrid_SetScreenShake(0, 0, 0);
   VramCache_FreeEntry(FIELD_AT(work, s16, 4188));
   VramCache_FreeEntry(FIELD_AT(work, s16, 4192));
@@ -1925,7 +1925,7 @@ struct Vec3 {
 
 void Func_02003164(const struct Vec3 *origin) {
   struct ChampaCliffCavesWork__s3164 *work =
-      HeapSlot_AllocFar(220, sizeof(struct ChampaCliffCavesWork__s3164));
+      HeapSlot_Alloc(220, sizeof(struct ChampaCliffCavesWork__s3164));
   s32 state;
 
   work->originX = origin->x;
@@ -1958,7 +1958,7 @@ void Func_02003164(const struct Vec3 *origin) {
 
 void Func_0200320c(void) {
   struct ChampaCliffCavesWork *work =
-      HeapSlot_AllocFar(220, sizeof(struct ChampaCliffCavesWork));
+      HeapSlot_Alloc(220, sizeof(struct ChampaCliffCavesWork));
   s32 state;
 
   Func_02002d34();
@@ -2035,7 +2035,7 @@ void Func_020032a4(void) {
     wait(1);
     time++;
   } while (state != 999);
-  Task_RemoveFar(Func_02002de4);
+  Task_Remove(Func_02002de4);
   VramCache_FreeEntry(FIELD_AT(work, s16, 4188));
   VramCache_FreeEntry(FIELD_AT(work, s16, 4192));
   HeapSlot_Release(220);

@@ -271,8 +271,8 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
     sprite->unk19 = 1;
     k &= 3;
     if (k == 0) {
-      x = actor->x + Random16Far() * 2 - Random16Far() * 2;
-      z = actor->z + Random16Far() * 2 - Random16Far() * 2;
+      x = actor->x + Random16() * 2 - Random16() * 2;
+      z = actor->z + Random16() * 2 - Random16() * 2;
       splash = (FieldActor_Create(14, x, actor->y, z));
       if (splash != 0) {
         splashSprite = splash->sprite;
@@ -690,9 +690,9 @@ void TaopoSwamp_PuffSteam(void) {
   struct Actor *object;
 
   gTaopoSwamp_SteamPuffs--;
-  a = Random16Far() * 32;
-  x = Random16Far() * 16 + a + 0x12c0000;
-  z = Random16Far() * 16 + a + 0x1040000;
+  a = Random16() * 32;
+  x = Random16() * 16 + a + 0x12c0000;
+  z = Random16() * 16 + a + 0x1040000;
   object = FieldActor_Create(0x11d, x, 0, z);
   Actor_StartScript(object, gTaopoSwamp_PuffSteamScript);
   Actor_SetSpriteFlags(object, 0);
@@ -765,9 +765,9 @@ burst:
   clod = (FieldActor_Create(255, rock->x, rock->y + 0x100000, rock->z));
   if (clod == 0)
     goto next;
-  angle = Random16Far();
-  speed = Random16Far();
-  scale = (Random16Far() >> 2) + 0x1000;
+  angle = Random16();
+  speed = Random16();
+  scale = (Random16() >> 2) + 0x1000;
   Actor_StartScript(clod, gTaopoSwamp_TremorPillarScript);
   Actor_SetSpriteFlags(clod, 0);
   clod->velocityY = (angle << 2) + 0x20000;
@@ -952,9 +952,9 @@ s32 TaopoSwamp_LandDrop(struct Actor *object) {
 
 /// Now and then a drop falls at a random place along the swamp's edge.
 void TaopoSwamp_DripAtRandom(void) {
-  if ((gFrameCount & 7) == 0 && (u32)Random16Far() < 0x4000) {
-    s32 x = (Random16Far() << 5) + 0x2080000;
-    s32 z = 0xb00000 - (Random16Far() << 3);
+  if ((gFrameCount & 7) == 0 && (u32)Random16() < 0x4000) {
+    s32 x = (Random16() << 5) + 0x2080000;
+    s32 z = 0xb00000 - (Random16() << 3);
     s32 y = 0xa00000;
     struct Actor *object = FieldActor_Create(0x12d, x, y, z);
     s32 scale = 0x547a;
@@ -1156,8 +1156,8 @@ s32 TaopoSwamp_IsDropFalling(struct Actor *object) {
 /// A task: now and then a drop falls from the ceiling near (n1, n2).
 #define DEFINE_DRIP_AT_RANDOM(name, n1, n2)                                    \
   void name(void) {                                                            \
-    if ((gFrameCount & 7) == 0 && (u32)Random16Far() < 0x4000) {               \
-      s32 offset = Random16Far() << 5;                                         \
+    if ((gFrameCount & 7) == 0 && (u32)Random16() < 0x4000) {               \
+      s32 offset = Random16() << 5;                                         \
       s32 x = offset + n1;                                                     \
       s32 z = n2 - offset;                                                     \
       s32 y = 0xa00000;                                                        \
@@ -1830,14 +1830,14 @@ void Vent_Puff(s32 *position, s32 base) {
   s32 angle;
 
   if (object != 0) {
-    object->bounce = Trig_Cos(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
-    object->gravity = (u16)Random16Far();
-    object->unk4c = (u16)(Random16Far() << 1) + base;
+    object->bounce = Trig_Cos(((u32)(Random16() * 0x3000) >> 16) + 0x3000);
+    object->gravity = (u16)Random16();
+    object->unk4c = (u16)(Random16() << 1) + base;
     /* FAKEMATCH(temporary): an s32 local keeps the zero extension and the
      * pool word 0xffff8000; as a direct store, which narrows the add to 16
      * bits (movs, lsls for 0x8000, no extension), 10 of 50 instructions differ
      * in tla-en. */
-    angle = (u16)Random16Far() - 0x8000;
+    angle = (u16)Random16() - 0x8000;
     object->timer = angle;
     Actor_StartScripted(object, 3);
     object->update = (void (*)(void))Vent_Bounce;

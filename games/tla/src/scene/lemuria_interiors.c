@@ -588,7 +588,7 @@ visited:
     sine = Trig_Sin(phase);
     pos[1] = start[1] + (target[1] - start[1]) * i / 192 + sine * 56;
     pos[2] = start[2] + (target[2] - start[2]) * i / 192;
-    Vector_AddPolarOffsetFar(radius, angle, pos);
+    Vector_AddPolarOffset(radius, angle, pos);
     actor->x = pos[0];
     actor->y = pos[1];
     actor->z = pos[2];
@@ -647,7 +647,7 @@ visited:
     sine = Trig_Sin(i * 32768 / 192);
     pos[1] = start[1] + (target[1] - start[1]) * i / 192 + (sine <<= 5);
     pos[2] = start[2] + (target[2] - start[2]) * i / 192;
-    Vector_AddPolarOffsetFar(radius, angle, pos);
+    Vector_AddPolarOffset(radius, angle, pos);
     actor->x = pos[0];
     actor->y = pos[1];
     actor->z = pos[2];

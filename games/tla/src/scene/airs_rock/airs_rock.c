@@ -341,7 +341,7 @@ void Func_0200095c(void) {
       spark->bounce = spark->x;
       spark->gravity = 0xcccc;
       spark->unk4c = spark->z;
-      spark->speedLimit = Random16Far() & 0xffff;
+      spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02003d1c);
       Actor_SetSpriteFlags(spark, 0);
@@ -392,7 +392,7 @@ void Func_0200095c(void) {
       leaves.type = 674;
       leaves.palette = 2;
       velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
-      velocity.y = gust->y + ((Random16Far() & 31) << 16);
+      velocity.y = gust->y + ((Random16() & 31) << 16);
       velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
       FieldEffect_Spawn(
           gust->x, velocity.y, gust->z, velocity.x, 0, velocity.z,
@@ -414,7 +414,7 @@ void Func_0200095c(void) {
       if ((gFrameCount & 1) == 0) {
         dust.priority = 1;
         dust.startScaleX = dust.startScaleY =
-            (Random16Far() & 0xffff) + 0x10000;
+            (Random16() & 0xffff) + 0x10000;
         velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
         velocity.y = 0x10000;
         velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
@@ -585,7 +585,7 @@ row:
       spark->bounce = spark->x;
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
-      spark->speedLimit = Random16Far() & 0xffff;
+      spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02003d1c);
       Actor_SetSpriteFlags(spark, 0);
@@ -608,7 +608,7 @@ row:
   i = 0;
 glow:
   REG_BLDALPHA = ((15 - (i >> 2)) << 8) | (i >> 2);
-  ((u8 *)Actor_Get(8))[98] = Random16Far() & 7;
+  ((u8 *)Actor_Get(8))[98] = Random16() & 7;
   i++;
   FieldEvent_Wait(1);
   if (i != 64)
@@ -631,13 +631,13 @@ glow:
       velocity.x = 0;
       velocity.y = 0;
       velocity.z = 0xfffe0000;
-      x = ((Random16Far() % 144) << 16) + 0x1000000;
-      FieldEffect_Spawn(x, 0, (Random16Far() % 144) << 16, velocity.x,
+      x = ((Random16() % 144) << 16) + 0x1000000;
+      FieldEffect_Spawn(x, 0, (Random16() % 144) << 16, velocity.x,
                         velocity.y, velocity.z,
                         EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | 1, &options);
     }
     REG_BLDALPHA = (((j >> 4) & 15) << 8) | (16 - ((j >> 4) & 15));
-    ((u8 *)Actor_Get(8))[98] = Random16Far() & 7;
+    ((u8 *)Actor_Get(8))[98] = Random16() & 7;
     FieldEvent_Wait(1);
     if (j != 255)
       goto burst;
@@ -1040,9 +1040,9 @@ void Func_02001dc4(s32 x, s32 z) {
   options.startScaleX = 0x20000;
   options.startScaleY = 0x20000;
   for (i = 0; i != 12; i++) {
-    scatter.x = x + ((Random16Far() & 63) << 16) - 0x200000;
-    scatter.y = (Random16Far() & 15) << 12;
-    scatter.z = z + ((Random16Far() & 63) << 16) - 0x300000;
+    scatter.x = x + ((Random16() & 63) << 16) - 0x200000;
+    scatter.y = (Random16() & 15) << 12;
+    scatter.z = z + ((Random16() & 63) << 16) - 0x300000;
     if (i & 3)
       FieldEffect_Spawn(scatter.x, 0, scatter.z, 0, scatter.y, 0,
                         EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | 1,
@@ -1060,13 +1060,13 @@ void Func_02001dc4(s32 x, s32 z) {
     Actor_SetSpriteFlags(rock, 0);
     Actor_StartScript(rock, gData_02003dfc);
     Actor_SelectAnimation(rock, 2);
-    rock->velocityY = ((Random16Far() & 3) << 16) + 0x40000;
+    rock->velocityY = ((Random16() & 3) << 16) + 0x40000;
     rock->gravity = 0x3333;
     rock->bounce = 0x6666;
     rock->scaleX = 0xcccc;
     rock->scaleY = 0xcccc;
     rock->speedLimit = 0xcccc;
-    scatter.y = Random16Far() & 7;
+    scatter.y = Random16() & 7;
     scatter.x = Iwram_MulQ16(Trig_Cos(scatter.y << 12), radius);
     scatter.z = Iwram_MulQ16(Math_Sin(scatter.y << 12), radius);
     ((struct FieldSprite *)rock->sprite)->priority = 1;
@@ -1151,7 +1151,7 @@ row:
       spark->bounce = spark->x;
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
-      spark->speedLimit = Random16Far() & 0xffff;
+      spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02003d1c);
       Actor_SetSpriteFlags(spark, 0);
@@ -1288,7 +1288,7 @@ void Func_0200257c(void) {
     wave = Math_Sin((i + (u8)gFrameCount) << 8);
     value = (Iwram_MulQ16(wave, (144 - i) << 10) >> 11) - 4;
     line[0] = value;
-    line[0] += Random16Far() % (spread * 2) - spread;
+    line[0] += Random16() % (spread * 2) - spread;
     if (line[0] > 56)
       line[0] -= 56;
     else if (line[0] < -64)
@@ -1378,7 +1378,7 @@ void Func_020026b8(void) {
       spark->bounce = spark->x;
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
-      spark->speedLimit = Random16Far() & 0xffff;
+      spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02003d1c);
       Actor_SetSpriteFlags(spark, 0);
@@ -1410,7 +1410,7 @@ void Func_020026b8(void) {
   for (i = 0x4000; i != 0x48000; i += 0x400, z += 0xfffffc00) {
     beam[6] = i;
     beam[7] = z;
-    ((u8 *)Actor_Get(12))[98] = Random16Far() & 7;
+    ((u8 *)Actor_Get(12))[98] = Random16() & 7;
     System_Wait(1);
   }
   FieldTask_Remove(Func_0200257c);
@@ -1419,7 +1419,7 @@ void Func_020026b8(void) {
   REG_BLDCNT = 0x3f42;
   for (i = 0; i != 257; i++) {
     REG_BLDALPHA = (8 - (i >> 5)) | 0x1000;
-    ((u8 *)Actor_Get(12))[98] = Random16Far() & 7;
+    ((u8 *)Actor_Get(12))[98] = Random16() & 7;
     FieldEvent_Wait(1);
   }
   REG_DISPCNT &= ~0x200;

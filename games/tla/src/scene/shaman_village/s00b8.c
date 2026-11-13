@@ -213,7 +213,7 @@ void ShamanVillage_WaveWhirlwindLines(void) {
                           (144 - i) << 10) >>
              11) -
             4;
-    *line += Random16Far() % (range * 2) - range;
+    *line += Random16() % (range * 2) - range;
     if (*line > 56)
       *line -= 56;
     else if (*line < -64)
@@ -371,7 +371,7 @@ row:
       spark->bounce = spark->x;
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
-      spark->speedLimit = Random16Far() & 0xffff;
+      spark->speedLimit = Random16() & 0xffff;
       Import_ActorSetMode((struct Actor *)spark, 7);
       Import_ActorStartScript((struct Actor *)spark, gFieldEffect_MediumScript);
       Actor_SetSpriteFlags(spark, 0);
@@ -394,7 +394,7 @@ row:
   i = 0;
 rise:
   REG_BLDALPHA = ((15 - (i >> 2)) << 8) | (i >> 2);
-  OBJ14_BYTE(98) = Random16Far() & 7;
+  OBJ14_BYTE(98) = Random16() & 7;
   i++;
   Event_Wait(1);
   if (i != 64)
@@ -410,7 +410,7 @@ rise:
   i = 0;
 swirl:
   REG_BLDALPHA = ((16 - (i >> 2)) << 8) | (i >> 2);
-  OBJ14_BYTE(98) = Random16Far() & 7;
+  OBJ14_BYTE(98) = Random16() & 7;
   i++;
   Event_Wait(1);
   if (i != 68)
@@ -450,14 +450,14 @@ frame:
     v[2] = -0x20000;
     v[1] = 0;
     {
-      s32 x = ((Random16Far() & 127) << 16) + (208 << 15);
+      s32 x = ((Random16() & 127) << 16) + (208 << 15);
 
-      FieldEffect_Spawn(x, 0, (472 - (Random16Far() & 127)) << 16, v[0], v[1],
+      FieldEffect_Spawn(x, 0, (472 - (Random16() & 127)) << 16, v[0], v[1],
                         v[2], 0x1020001, &options);
     }
   }
   REG_BLDALPHA = ((j >> 2) << 8) | (16 - (j >> 2));
-  OBJ14_BYTE(98) = Random16Far() & 7;
+  OBJ14_BYTE(98) = Random16() & 7;
   wait(1);
   j++;
   if (j != 64)
@@ -484,12 +484,12 @@ frame:
   i = 0;
 clear:
   REG_BLDALPHA = ((i >> 2) << 8) | (16 - (i >> 2));
-  OBJ14_BYTE(98) = Random16Far() & 7;
+  OBJ14_BYTE(98) = Random16() & 7;
   i++;
   Event_Wait(1);
   if (i != 68)
     goto clear;
-  Task_RemoveFar(ShamanVillage_ScrollSandLayer);
+  Task_Remove(ShamanVillage_ScrollSandLayer);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 1;
   MapGrid_CopyCellsTo(36, 64, 2, 83, 16, 16);
@@ -509,7 +509,7 @@ fade:
   i++;
   if (i != 65)
     goto fade;
-  Task_RemoveFar(ShamanVillage_WaveWhirlwindLines);
+  Task_Remove(ShamanVillage_WaveWhirlwindLines);
   {
     s32 zero = 0;
 

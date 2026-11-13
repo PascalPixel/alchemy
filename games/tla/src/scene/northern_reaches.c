@@ -377,7 +377,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
   void *sheet;
   s32 i, frame, column, zero, entry, sparkEntry, tiles, flying, sparkTiles;
 
-  work = HeapSlot_AllocFar(220, 0x1e58);
+  work = HeapSlot_Alloc(220, 0x1e58);
   flying = 0;
   Decompress_TaggedLz(
       Resource_GetTableEntry((s32)&ResourceId_FieldEffectIceShard), work);
@@ -399,8 +399,8 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
     column -= 4;
     sprite++;
     particle->z = position[2];
-    particle->velocityX = (Random16Far() * 3 >> 1) * column;
-    particle->velocityY = (Random16Far() << 2) + 0x20000;
+    particle->velocityX = (Random16() * 3 >> 1) * column;
+    particle->velocityY = (Random16() << 2) + 0x20000;
     particle->velocityZ = zero;
     particle->age = zero;
     particle++;
@@ -417,7 +417,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
   Heap_Release(sheet);
   timer = &sparks->timer;
   for (i = 95; i >= 0; i--) {
-    *timer = -(Random16Far() << 5 >> 16);
+    *timer = -(Random16() << 5 >> 16);
     timer += 4;
   }
   Dma_Set(Field_Palette685, (void *)0x50003e0, 0x80000010,
@@ -458,8 +458,8 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
       if (spark->timer == 0) {
         spark->oam.words.first = 0x40000000;
         spark->oam.words.second = 0;
-        spark->oam.oam.x = (Random16Far() << 7 >> 16) + 52;
-        spark->oam.oam.y = (Random16Far() << 6 >> 16) + 16;
+        spark->oam.oam.x = (Random16() << 7 >> 16) + 52;
+        spark->oam.oam.y = (Random16() << 6 >> 16) + 16;
         spark->oam.oam.palette = 15;
         spark->oam.oam.priority = 0;
       }
@@ -469,7 +469,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
       }
       spark->timer++;
       if (spark->timer > 31) {
-        spark->timer = -(Random16Far() * 7 >> 16);
+        spark->timer = -(Random16() * 7 >> 16);
       }
       spark++;
     } while ((s32)spark <= (s32)&sparks[95]);

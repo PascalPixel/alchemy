@@ -65,8 +65,8 @@ void YampiDesert_BurstSand(s32 x, s32 y, s32 z) {
     velocity[1] = 0;
     velocity[2] = Trig_Sin(i << 14);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += ((u32)(Random16Far() << 17) >> 16) + -0x10000;
-    velocity[2] += (u16)Random16Far() + -0x8000;
+    velocity[0] += ((u32)(Random16() << 17) >> 16) + -0x10000;
+    velocity[2] += (u16)Random16() + -0x8000;
     FieldEffect_Spawn(x, y, z, velocity[0], velocity[1], velocity[2],
                       0x01000001, &options);
   }
@@ -83,9 +83,9 @@ void YampiDesert_StirScorpion(void) {
   Scene_CamBounds(PIXELS(300), -1, PIXELS(248), 1);
   Actor_MoveToAndWaitById(16, 254, 248);
   Actor_MoveToAndWaitById(16, 352, 240);
-  Task_RemoveFar(YampiDesert_PlayScorpionRumble);
+  Task_Remove(YampiDesert_PlayScorpionRumble);
   FieldEvent_Wait(10);
-  Task_RemoveFar(YampiDesert_RippleFollowsScorpion);
+  Task_Remove(YampiDesert_RippleFollowsScorpion);
   wait(1);
   Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
   FieldEvent_Wait(40);
@@ -115,9 +115,9 @@ void YampiDesert_StirScorpionAgain(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(246), -1, PIXELS(616), 1);
   Scene_SetPositionAndCommit(21, 248, 648);
   Scene_SetPositionAndCommit(21, 248, 576);
-  Task_RemoveFar(YampiDesert_PlayScorpionRumble);
+  Task_Remove(YampiDesert_PlayScorpionRumble);
   FieldEvent_Wait(10);
-  Task_RemoveFar(YampiDesert_RippleFollowsScorpion);
+  Task_Remove(YampiDesert_RippleFollowsScorpion);
   wait(1);
   Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
   FieldEvent_Wait(20);
@@ -149,7 +149,7 @@ void YampiDesert_CornerScorpion(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(232), -1, PIXELS(200), 1);
   Scene_SetPositionAndCommit(21, 232, 280);
   Actor_MoveToAndWaitById(21, 232, 168);
-  Task_RemoveFar(YampiDesert_PlayScorpionRumble);
+  Task_Remove(YampiDesert_PlayScorpionRumble);
   Actor_ArmCallback(21, FACING_SOUTH, 0);
   Actor_Stop(gMainRoutineWork.currentOwner);
   FieldEvent_Wait(20);
@@ -170,8 +170,8 @@ void YampiDesert_RaiseSandCloud(void) {
 
     cell = (u16 *)gYampiDesert_SandCloudCells;
     for (i = 0; i <= 14; i++) {
-      s32 x = *cell++ + ((Random16Far() << 2) >> 16);
-      s32 z = *cell++ + ((Random16Far() << 2) >> 16);
+      s32 x = *cell++ + ((Random16() << 2) >> 16);
+      s32 z = *cell++ + ((Random16() << 2) >> 16);
       struct Actor *object =
           Import_ActorCreate(285, (x - 2) << 16, 0, (z - 2) << 16);
 
@@ -638,7 +638,7 @@ struct Actor *YampiDesert_CreateScoopGem(void) {
     object->unk5c[0] = 1;
     visual->value1a = 0;
     visual->value1b = 0;
-    buffer = HeapSlot_AllocFar(68, 0x608);
+    buffer = HeapSlot_Alloc(68, 0x608);
     Icon_DrawItem(209);
     VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
     HeapSlot_Release(68);
@@ -724,20 +724,20 @@ void YampiDesert_SlideLeader(struct Actor *object, s32 dx, s32 dz) {
         do {
         } while (0);
         if (gInput.held != 0) {
-          FIELD32(dust, 68) = Trig_Cos(((Random16Far() << 3) >> 16) << 14) + dx;
-          FIELD32(dust, 76) = Trig_Sin(((Random16Far() << 3) >> 16) << 14) + dz;
+          FIELD32(dust, 68) = Trig_Cos(((Random16() << 3) >> 16) << 14) + dx;
+          FIELD32(dust, 76) = Trig_Sin(((Random16() << 3) >> 16) << 14) + dz;
           if (gInput.held & 2) {
             FIELD32(dust, 68) += dx;
             FIELD32(dust, 76) += dz;
           }
         } else {
           FIELD32(dust, 68) =
-              (Trig_Cos(((Random16Far() << 3) >> 16) << 14) >> 1) + dx;
+              (Trig_Cos(((Random16() << 3) >> 16) << 14) >> 1) + dx;
           FIELD32(dust, 76) =
-              (Trig_Sin(((Random16Far() << 3) >> 16) << 14) >> 1) + dz;
+              (Trig_Sin(((Random16() << 3) >> 16) << 14) >> 1) + dz;
         }
         FIELD32(dust, 72) = 0;
-        dust->timer = ((Random16Far() << 9) >> 16) - 256;
+        dust->timer = ((Random16() << 9) >> 16) - 256;
         dust->speedLimit = 0;
         dust->acceleration = 0;
         dust->update = Effect_AdvanceMotionAtLeaderPriority;
@@ -1254,7 +1254,7 @@ void YampiDesert_ScorpionUsesScoop(void) {
   EventObject_Initialize();
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
-  Task_RemoveFar(YampiDesert_OpenScoopHole);
+  Task_Remove(YampiDesert_OpenScoopHole);
   BattleEffect_CleanupSceneObjects();
 }
 

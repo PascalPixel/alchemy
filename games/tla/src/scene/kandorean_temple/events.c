@@ -51,9 +51,9 @@ void KandoreanTemple_LandFromAbove(void) {
     velocity[1] = 0;
     velocity[2] = Trig_Sin(i << 12);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += ((Random16Far() * 3) << 14) >> 16;
+    velocity[0] += ((Random16() * 3) << 14) >> 16;
     velocity[0] += -0x6000;
-    velocity[2] += (((Random16Far() * 3) << 13) >> 16) + -0x3000;
+    velocity[2] += (((Random16() * 3) << 13) >> 16) + -0x3000;
     FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity[0], velocity[1],
                       velocity[2], 0x01090001, &options);
   }
@@ -412,7 +412,7 @@ void KandoreanTemple_StartMeditating(s32 id, s32 base) {
   struct Actor *object = Actor_GetById(id);
 
   Actor_SetModeById(id, 5);
-  object->timer = base + ((Random16Far() * 400) >> 16);
+  object->timer = base + ((Random16() * 400) >> 16);
   object->unk66 = id;
   Actor_SetMovementTypeById(id, gKandoreanTemple_MeditateScript);
 }
@@ -721,7 +721,7 @@ fall15:
   Sound_Play(188);
   KandoreanTemple_OpenTheTrapdoor();
   Event_ShowMessageAndWait(12, 0);
-  Task_RemoveFar(KandoreanTemple_MatchLiftPriority);
+  Task_Remove(KandoreanTemple_MatchLiftPriority);
   Motion_SetModeAndWaitAnimation(15, 3);
   Actor_SetSpritePriority(15, 3);
   Actor_WalkToAndWait(15, 400, 640);
@@ -1041,7 +1041,7 @@ void KandoreanTemple_CreateLashPebble(void) {
     object->unk5c[0] = 1;
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
-    buffer = HeapSlot_AllocFar(68, 0x608);
+    buffer = HeapSlot_Alloc(68, 0x608);
     Icon_DrawItem(198);
     VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
     HeapSlot_Release(68);

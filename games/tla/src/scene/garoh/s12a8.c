@@ -237,7 +237,7 @@ loop1:
     wave = Math_Sin(i << 13);
     position[2] = Garoh_PathStep(0x200000, 0x780000, i) - wave * 7;
     position[1] = 0;
-    r = ((Random16Far() * 10) >> 16) + 4;
+    r = ((Random16() * 10) >> 16) + 4;
     Actor_SetSpeed(8, r * 0x1999, r * 0xccc);
     Actor_WalkToAndWait(8, position[0] / 0x10000, position[2] / 0x10000);
     i++;
@@ -270,7 +270,7 @@ loop2:
     position[0] = Garoh_PathStep(x, toX, i) - wave * 4;
     position[2] = Garoh_PathStep(z, toZ, i);
     position[1] = 0;
-    r = ((Random16Far() * 10) >> 16) + 4;
+    r = ((Random16() * 10) >> 16) + 4;
     Actor_SetSpeed(8, r * 0x1999, r * 0xccc);
     Actor_WalkToAndWait(8, position[0] / 0x10000, position[2] / 0x10000);
     i++;

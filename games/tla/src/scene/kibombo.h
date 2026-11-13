@@ -93,7 +93,6 @@ void Actor_SetSpriteFlags(struct KibomboObject *object, u32 value);
 void Actor_SetBlendMode(struct KibomboObject *object, s32 flags);
 void Actor_SetModeById(u32 actorId, s32 animation);
 void Task_Add(void (*func)(void), s32 priority);
-void Task_RemoveFar(void (*func)(void));
 void FieldPsynergy_RunHandler(s32 type);
 void Import_FieldCameraWaitForArrival(void);
 void Import_EventSetExitRequest(s32 countdown);

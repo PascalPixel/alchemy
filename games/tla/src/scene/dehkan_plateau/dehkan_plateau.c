@@ -726,7 +726,6 @@ void Actor_WatchAndSetScript(s32 id, s32 target);
  * declares, Func_02002604 moves: 1 of 20 instructions in tla-ja. */
 extern void Task_Add__events_g(void (*func)(void),
                                s32 priority) __asm__("Task_Add");
-void Task_RemoveFar(void (*func)(void));
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -862,6 +861,6 @@ void Func_02002604(void) {
   EventObject_Initialize();
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
-  Task_RemoveFar(Func_02002574);
+  Task_Remove(Func_02002574);
   BattleEffect_CleanupSceneObjects();
 }

@@ -427,10 +427,10 @@
     s32 spin;                                                                  \
                                                                                \
     if (object != NULL) {                                                      \
-      object->bounce = Trig_Cos((u16)(Random16Far() * 3 >> 4) + 0x3000);       \
-      object->gravity = (u16)Random16Far();                                    \
-      object->unk4c = (u16)(Random16Far() << 1) + speed;                       \
-      spin = (u16)Random16Far() + 0xffff8000;                                  \
+      object->bounce = Trig_Cos((u16)(Random16() * 3 >> 4) + 0x3000);       \
+      object->gravity = (u16)Random16();                                    \
+      object->unk4c = (u16)(Random16() << 1) + speed;                       \
+      spin = (u16)Random16() + 0xffff8000;                                  \
       object->timer = spin;                                                    \
       call2(object, 2);                                                        \
       object->update = (void (*)(void))call3;                                  \
@@ -1162,10 +1162,10 @@
         u32 size;                                                              \
         s32 scale;                                                             \
                                                                                \
-        rise = speed + (Random16Far() >> 4) - (Random16Far() >> 4);            \
+        rise = speed + (Random16() >> 4) - (Random16() >> 4);            \
         angle = 0x4000 + rise;                                                 \
-        radius = Random16Far() * 8;                                            \
-        size = Random16Far();                                                  \
+        radius = Random16() * 8;                                            \
+        size = Random16();                                                  \
         Actor_StartScript(object, data1);                                      \
         Actor_SetSpriteFlags(object, 0);                                       \
         /* FAKEMATCH(temporary): the scale is taken before the velocity        \

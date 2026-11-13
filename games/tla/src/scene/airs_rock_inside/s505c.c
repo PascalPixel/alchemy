@@ -60,9 +60,9 @@ void Func_0200505c(void) {
     velocity[1] = 0;
     velocity[2] = Trig_Sin(angle);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += ((Random16Far() * 3) << 14) >> 16;
+    velocity[0] += ((Random16() * 3) << 14) >> 16;
     velocity[0] += -0x6000;
-    velocity[2] += (((Random16Far() * 3) << 13) >> 16) + -0x3000;
+    velocity[2] += (((Random16() * 3) << 13) >> 16) + -0x3000;
     FieldEffect_Spawn(
         leader->x, leader->y, leader->z, velocity[0], velocity[1], velocity[2],
         EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,

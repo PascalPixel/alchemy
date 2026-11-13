@@ -37,7 +37,7 @@ DEFINE_PALETTE_CYCLE_START_VBLANK(IsletCave_StartSlowPaletteCycle,
 
 void IsletCave_StopPaletteCycle(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
-  Task_RemoveFar(PaletteCycle_Fade);
+  Task_Remove(PaletteCycle_Fade);
 }
 
 DEFINE_PALETTE_CYCLE_START_VBLANK(IsletCave_StartFastPaletteCycle,

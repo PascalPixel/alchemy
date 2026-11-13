@@ -26,10 +26,10 @@ wait:
 	.thumb_func
 Task_Add:
 	overlay_veneer Task_AddFar
-	.global Random16Far
+	.global Random16
 	.thumb_func
-Random16Far:
-	overlay_veneer Func_080000f8
+Random16:
+	overlay_veneer Random16Far
 	.global ArcTan2
 	.thumb_func
 ArcTan2:

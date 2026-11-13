@@ -388,7 +388,7 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
-  Vector_AddPolarOffsetFar(0x100000, angle, position);
+  Vector_AddPolarOffset(0x100000, angle, position);
   hit = Func_02001948(position, 1);
   if (hit != 0) {
     i = 0;
@@ -431,7 +431,7 @@ DEFINE_PALETTE_CYCLE_START_VBLANK(
 
 void YampiDesertCave_StopMarkGlow(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
-  Task_RemoveFar(PaletteCycle_Fade);
+  Task_Remove(PaletteCycle_Fade);
 }
 
 DEFINE_PALETTE_CYCLE_START_VBLANK(
@@ -785,7 +785,7 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
   if (px / 16 != x || pz / 16 != z)
     return;
   if (mode == 1) {
-    Task_RemoveFar(YampiDesertCave_MoveSandRipple);
+    Task_Remove(YampiDesertCave_MoveSandRipple);
     Actor_SetPosition(16, 0, 0);
   }
   if (mode == 2) {

@@ -60,8 +60,8 @@ void Func_020011e0(void) {
     velocity[1] = 0;
     velocity[2] = Trig_Sin(angle);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
-    velocity[2] += ((Random16Far() * 3) << 13 >> 16) - 0x3000;
+    velocity[0] += ((Random16() * 3) << 14 >> 16) - 0x6000;
+    velocity[2] += ((Random16() * 3) << 13 >> 16) - 0x3000;
     Func_020000b8(leader->x, leader->y, leader->z, velocity[0], velocity[1],
                   velocity[2], 0x01090001, &options);
     i++;
@@ -336,7 +336,7 @@ retry:
   /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse's hoist of the
    * position's address; as no asm, 2 of 304 instructions differ in tla-en. */
   __asm__("" : : : SFP_CLOBBER);
-  Vector_AddPolarOffsetFar(0x100000, angle, position);
+  Vector_AddPolarOffset(0x100000, angle, position);
   cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
@@ -388,7 +388,7 @@ walk:
   /* FAKEMATCH(barrier): as the one above; as no asm, 126 of 304 instructions
    * differ in tla-en. */
   __asm__("" : : : SFP_CLOBBER);
-  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
+  Call3((void (*)())Vector_AddPolarOffset, 0x100000, angle, (s32)position);
   q = position;
   cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
   if (cell != 255)

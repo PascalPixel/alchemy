@@ -160,7 +160,7 @@ void Func_02000ac8(void) {
 
   last = count - 1;
   for (i = 0; i != count; i++) {
-    s32 pick = Random16Far();
+    s32 pick = Random16();
     pick &= last;
 
     order[i] = found[pick];
@@ -170,9 +170,9 @@ void Func_02000ac8(void) {
   for (i = 0; i != count;) {
     s32 slot;
 
-    from.x = leader->x + ((Random16Far() & 31) << 16) - 0x100000;
-    from.y = leader->y + ((Random16Far() & 15) << 16) + 0x80000;
-    from.z = leader->z + ((Random16Far() & 15) << 16) - 0x80000;
+    from.x = leader->x + ((Random16() & 31) << 16) - 0x100000;
+    from.y = leader->y + ((Random16() & 15) << 16) + 0x80000;
+    from.z = leader->z + ((Random16() & 15) << 16) - 0x80000;
     slot = order[i];
     to.x = leader->x + (gData_020036fc[slot][0] << 16);
     to.y = leader->y;
@@ -554,8 +554,8 @@ void Func_020017b4(struct Actor *self) {
   ahead[2] = next[1] = self->z + (leader->z - self->acceleration);
   if (self->unk4c != leader->x || self->acceleration != leader->z) {
     dust = (FieldActor_Create(0x2a0, self->x, self->y, self->z));
-    dust->x += ((Random16Far() & 15) - 8) << 16;
-    dust->y += ((Random16Far() & 31) - 4) << 16;
+    dust->x += ((Random16() & 15) - 8) << 16;
+    dust->y += ((Random16() & 31) - 4) << 16;
     dust->motionFlags = 0;
     FieldActor_SetSpriteColor(dust, ((u8 *)self)[0x62]);
     Scene_SetActorSpritePriority(dust, 2);

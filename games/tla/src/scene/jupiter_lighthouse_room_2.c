@@ -374,10 +374,10 @@ void Func_020007d0(void) {
     object = (FieldActor_Create(672, 0, 0, 0));
     object->motionFlags = 0;
     object->priorityFlags = 0;
-    object->speedLimit = (Random16Far() << 2) + 0x60000;
-    object->acceleration = ((Random16Far() << 11) >> 16) + 0x800;
+    object->speedLimit = (Random16() << 2) + 0x60000;
+    object->acceleration = ((Random16() << 11) >> 16) + 0x800;
     object->update = Func_02000720;
-    object->timer = Random16Far();
+    object->timer = Random16();
     object->unk66 = phase;
     Actor_SetSpriteFlags(object, 0);
     FieldActor_SetSpriteColor(object, 2);

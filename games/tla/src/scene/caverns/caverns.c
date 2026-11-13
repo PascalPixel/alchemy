@@ -185,7 +185,7 @@ void Func_020006a8(void) {
     position[0] = leader->x;
     position[1] = leader->y;
     position[2] = leader->z;
-    Vector_AddPolarOffsetFar(0x100000, angle, position);
+    Vector_AddPolarOffset(0x100000, angle, position);
     if (*ids == 0xffff)
       goto search_done;
   search:
@@ -314,8 +314,8 @@ void Func_0200087c(void) {
         velocity[1] = 0;
         velocity[2] = Trig_Sin(angle) * 2;
         velocity[0] += velocity[0] >> 1;
-        velocity[0] += ((u32)(Random16Far() * 3 << 14) >> 16) - 0x6000;
-        velocity[2] += ((u32)(Random16Far() * 3 << 13) >> 16) - 0x3000;
+        velocity[0] += ((u32)(Random16() * 3 << 14) >> 16) - 0x6000;
+        velocity[2] += ((u32)(Random16() * 3 << 13) >> 16) - 0x3000;
         /* FAKEMATCH(dead): sum, never read again, assigned the flags inside
          * the call's arguments; as 0x10b0000 passed directly, 6 of 255
          * instructions differ in tla-en. */

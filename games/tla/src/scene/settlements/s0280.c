@@ -270,8 +270,8 @@ s32 Settlements_CircleCentre(s32 *p) {
   p[2] = p[14] + Trig_Cos(p[12]) * 2;
   p[3] = p[15] + d;
   q[9] = Trig_Cos(p[12] + 0x8000) / 8;
-  a = Random16Far();
-  b = Random16Far();
+  a = Random16();
+  b = Random16();
   {
     u32 x;
     s32 angle;
@@ -321,7 +321,7 @@ void Settlements_SetUpKaltIsland(void) {
     actor->y += 0x100000;
   actor->flags23 &= 0xfe;
   actor->visible = 1;
-  transfer = HeapSlot_AllocFar(68, 0x608);
+  transfer = HeapSlot_Alloc(68, 0x608);
   Item_LoadIcon(193);
   transfer += 0x400;
   Vram_Load(sprite->palette, 128, transfer);

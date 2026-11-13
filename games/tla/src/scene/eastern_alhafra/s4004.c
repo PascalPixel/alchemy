@@ -5,6 +5,7 @@
 #include "types.h"
 #include "map.h"
 #include "system/task.h"
+#include "heap_release.h"
 #include "event_inline.h"
 #include "item_icon.h"
 #include "module/scene/eastern_alhafra.h"
@@ -27,7 +28,7 @@ static __inline__ void StartTask(void (*func)(void), s32 priority) {
 }
 
 void Func_02004004(void) {
-  struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
+  struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
   s32 i;
@@ -60,7 +61,6 @@ void Func_02004004(void) {
 
 #include "ram_buffer.h"
 #include "resource.h"
-#include "heap_release.h"
 
 void Func_020040c0(void) {
   struct EasternAlhafraSparkWork *work = Ram_HeapSlots->menuRuntime;

@@ -32,7 +32,7 @@ void Func_020029d0(s32 spread) {
     {
       /* FAKEMATCH(temporary): y held in a local, so x is computed before it; as
        * one expression, 14 of 122 instructions differ in tla-en. */
-      s32 y = leader->y - (((Random16Far() * 14) >> 16) << 16);
+      s32 y = leader->y - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
           285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
@@ -53,8 +53,8 @@ void Func_020029d0(s32 spread) {
         effect->velocity.x = spread;
         effect->velocity.z = spread;
       }
-      effect->velocity.y = -(((Random16Far() << 14) >> 16) + 0x6000);
-      effect->spin = ((Random16Far() << 9) >> 16) - 0x100;
+      effect->velocity.y = -(((Random16() << 14) >> 16) + 0x6000);
+      effect->spin = ((Random16() << 9) >> 16) - 0x100;
       effect->scaleRateX = -0x800;
       effect->scaleRateY = -0x600;
       effect->update = Effect_AdvanceMotionAtLeaderPriority;
@@ -91,9 +91,9 @@ void Func_02002b04(void) {
         effect->velocity.y = zero;
         effect->velocity.z = Trig_Sin(angle);
         effect->velocity.x += effect->velocity.x >> 1;
-        effect->velocity.x += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
-        effect->velocity.z += ((Random16Far() * 3) << 13 >> 16) - 0x3000;
-        effect->spin = ((Random16Far() << 12) >> 16) - 0x800;
+        effect->velocity.x += ((Random16() * 3) << 14 >> 16) - 0x6000;
+        effect->velocity.z += ((Random16() * 3) << 13 >> 16) - 0x3000;
+        effect->spin = ((Random16() << 12) >> 16) - 0x800;
         effect->scaleRateX = zero;
         effect->scaleRateY = zero;
         effect->update = Effect_AdvanceMotionAtLeaderPriority;
@@ -186,7 +186,7 @@ void Func_02003190(struct RockSprite__s29d0 *sprite, s32 width, s32 height,
 /// The falling rocks' setup: loads their picture, sets up 64 small sprites,
 /// marks each rock idle and starts the task that spawns them.
 void Func_02002e00(void) {
-  struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
+  struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
   s32 resource;
   s32 tile;
   struct Rock *rock;
@@ -222,7 +222,7 @@ void Func_02002e00(void) {
 void Func_02002ebc(void) {
   struct TundariaTowerSparkWork *work = Ram_HeapSlots->menuRuntime;
 
-  Task_RemoveFar(Func_02002cc0);
+  Task_Remove(Func_02002cc0);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(220);
 }

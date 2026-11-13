@@ -453,7 +453,7 @@ s32 Func_02000a78(void) {
 }
 
 s32 Func_02000ad0(void) {
-  switch (Random16Far() & 7) {
+  switch (Random16() & 7) {
   case 0:
     Event_PlaySound(126);
     break;

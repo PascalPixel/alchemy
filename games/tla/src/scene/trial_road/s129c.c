@@ -106,8 +106,8 @@ void TrialRoad_DriftWithStream(void) {
   velocity[1] = 0;
   velocity[2] = 0x10000;
   velocity[0] = 0;
-  velocity[0] += ((Random16Far() << 17) >> 16) - 0x10000;
-  velocity[2] += ((Random16Far() << 16) >> 16) - 0x8000;
+  velocity[0] += ((Random16() << 17) >> 16) - 0x10000;
+  velocity[2] += ((Random16() << 16) >> 16) - 0x8000;
   FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity[0], velocity[1],
                     velocity[2], 0x1000001, &options);
 }

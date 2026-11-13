@@ -66,7 +66,7 @@ void Scene_QueueMusic(s32 a);
 void Func_02005390(void);
 void Func_020053a8(s32 a, s32 b, s32 c, s32 d);
 void Actor_MoveToObject(s32 id, s32 target);
-void *HeapSlot_AllocFar(s32 slot, s32 size);
+void *HeapSlot_Alloc(s32 slot, s32 size);
 extern struct Actor *gKandoreanTemple_LashPebble;
 extern s32 gKandoreanTemple_MeditateScript[];
 extern s32 gKandoreanTemple_LevitateScript[];

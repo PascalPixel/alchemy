@@ -30,7 +30,7 @@ struct ShamanVillageObject *ShamanVillage_CreateRodIcon(void) {
     object->field5c = 1;
     sprite->nextFrame = 0;
     sprite->unk1b[0] = 0;
-    buffer = HeapSlot_AllocFar(68, 0x608);
+    buffer = HeapSlot_Alloc(68, 0x608);
     Icon_DrawItem(65);
     VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
     HeapSlot_Release(68);
@@ -455,7 +455,7 @@ commands:
       gShamanVillage_LetteringWait = *gShamanVillage_LetteringCursor++;
       break;
     case -1:
-      Task_RemoveFar(ShamanVillage_RunLettering);
+      Task_Remove(ShamanVillage_RunLettering);
       VramCache_FreeEntry(gShamanVillage_LetteringVramEntry[0]);
       return;
     }

@@ -18,10 +18,10 @@ wait:
 	.thumb_func
 Task_Add:
 	overlay_veneer Task_AddFar
-	.global Task_RemoveFar
+	.global Task_Remove
 	.thumb_func
-Task_RemoveFar:
-	overlay_veneer Func_080000d8
+Task_Remove:
+	overlay_veneer Task_RemoveFar
 	.global Import_TaskSuspendAll
 	.thumb_func
 Import_TaskSuspendAll:
@@ -30,10 +30,10 @@ Import_TaskSuspendAll:
 	.thumb_func
 Import_TaskResumeAll:
 	overlay_veneer Task_ResumeAllFar
-	.global Random16Far
+	.global Random16
 	.thumb_func
-Random16Far:
-	overlay_veneer Func_080000f8
+Random16:
+	overlay_veneer Random16Far
 	.global Irq_SetHandler
 	.thumb_func
 Irq_SetHandler:

@@ -498,7 +498,7 @@ void LemurianShipDeck_EmitSparkle(void) {
   struct Actor *object;
 
   SET_VECTOR(position, 0x1680000, 0x400000, 0x1a80000);
-  FieldVector_AddPolarOffset(0x200000, Random16Far(), position);
+  FieldVector_AddPolarOffset(0x200000, Random16(), position);
   object = FieldActor_Create(0x2a2, position[0], position[1], position[2]);
   if (object != NULL) {
     object->motionFlags = 0;
@@ -529,7 +529,7 @@ struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
   object->unk5c[0] = 1;
   sprite->nextFrame = 0;
   sprite->unk1b[0] = 0;
-  buffer = HeapSlot_AllocFar(68, 0x608);
+  buffer = HeapSlot_Alloc(68, 0x608);
   Icon_DrawItem(242);
   VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
   HeapSlot_Release(68);

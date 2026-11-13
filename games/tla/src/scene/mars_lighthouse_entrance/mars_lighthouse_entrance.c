@@ -122,9 +122,9 @@ void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
     options.type = 0x117;
     options.startScaleX = options.startScaleY = 0x10000;
     options.targetScaleX = options.targetScaleY = 0x8000;
-    options.rotation = (Random16Far() & 15) << 12;
+    options.rotation = (Random16() & 15) << 12;
     Func_02003b30(object->x, object->y - index * 3 * 0x10000 + 0x100000,
-                  object->z, ((Random16Far() & 15) - 8) << 13, 0, 0, 0x5a0000,
+                  object->z, ((Random16() & 15) - 8) << 13, 0, 0, 0x5a0000,
                   &options);
     object->scaleY -= 0x1f00;
   }
@@ -161,19 +161,19 @@ void Func_02000414(s32 id) {
   i = 5;
 next:
   {
-    s32 x = source->x + (Random16Far() << 4) - (Random16Far() << 4);
+    s32 x = source->x + (Random16() << 4) - (Random16() << 4);
     struct Actor *object =
-        Func_02004bd8_(0x145, x, (Random16Far() << 3) + source->y + 0x40000,
-                       source->z + (Random16Far() << 4) - (Random16Far() << 4));
+        Func_02004bd8_(0x145, x, (Random16() << 3) + source->y + 0x40000,
+                       source->z + (Random16() << 4) - (Random16() << 4));
 
     if (object != NULL) {
       s32 angle;
       s32 radius;
       s32 scale;
 
-      angle = Random16Far();
-      radius = Random16Far();
-      scale = (Random16Far() >> 1) + 0x4000;
+      angle = Random16();
+      radius = Random16();
+      scale = (Random16() >> 1) + 0x4000;
       Actor_StartScript(object, gData_02005394);
       Actor_SetSpriteFlags(object, 0);
       /* FAKEMATCH(dead): an empty once-only block holds the order around it; as

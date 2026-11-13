@@ -6,20 +6,20 @@ FarCall_RuntimeTable:
 	export waitFar, wait
 	export Task_ResetAllFar, Task_ResetAll
 	export Task_AddFar, Task_Add
-	export Func_080000d8, Task_Remove
+	export Task_RemoveFar, Task_Remove
 	export Task_SuspendAllFar, Task_SuspendAll
 	export Task_ResumeAllFar, Task_ResumeAll
 	export Task_RunPassFar, Task_RunPass
-	export Func_080000f8, Random16
+	export Random16Far, Random16
 	export ArcTan2Far, ArcTan2
 	export Math_IntegerSqrtFar, Math_IntegerSqrt
 	export FixedSqrtFar, FixedSqrt
 	export Trig_SinFar, Trig_Sin
 	export Trig_CosFar, Trig_Cos
-	export Func_08000128, Vector_AddPolarOffset
+	export Vector_AddPolarOffsetFar, Vector_AddPolarOffset
 	export Irq_SetHandlerFar, Irq_SetHandler
 	export Heap_InitializeFar, Heap_Initialize
-	export Func_08000140, HeapSlot_Alloc
+	export HeapSlot_AllocFar, HeapSlot_Alloc
 	export HeapSlot_AllocEwramFar, HeapSlot_AllocEwram
 	export HeapSlot_ReleaseFar, HeapSlot_Release
 	export Heap_GetRemainingIwramFar, Heap_GetRemainingIwram

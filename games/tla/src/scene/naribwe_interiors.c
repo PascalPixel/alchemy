@@ -641,7 +641,7 @@ u8 *NaribweInteriors_GetDjinniHint(void) {
     NaribweInteriors_ListUnfoundDjinn(18, lowestGroup, hints);
     index = 0;
   } else {
-    index = Random16Far() % count;
+    index = Random16() % count;
   }
   switch (hints[index]) {
   case 56:

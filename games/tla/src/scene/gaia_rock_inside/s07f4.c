@@ -52,10 +52,10 @@ s32 Func_020007f4(void) {
         Actor_SelectAnimation(dust, 1);
         Actor_StartScript(dust, gData_020050f4);
         ((struct DustSprite__s07f4 *)dust->sprite)->layer = 1;
-        dust->bounce = Trig_Cos(((Random16Far() << 3) >> 16) << 14) >> 1;
-        dust->unk4c = Math_Sin(((Random16Far() << 3) >> 16) << 14) >> 1;
+        dust->bounce = Trig_Cos(((Random16() << 3) >> 16) << 14) >> 1;
+        dust->unk4c = Math_Sin(((Random16() << 3) >> 16) << 14) >> 1;
         dust->gravity = 0;
-        dust->timer = ((Random16Far() << 9) >> 16) - 0x100;
+        dust->timer = ((Random16() << 9) >> 16) - 0x100;
         dust->speedLimit = 0;
         dust->acceleration = 0;
         dust->update = Effect_AdvanceMotionAtLeaderPriority;

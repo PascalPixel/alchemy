@@ -896,7 +896,7 @@ void TrialRoad_DealStageOrder(u32 seed) {
       order[i] = -1;
     for (i = 0; i <= 7; i++) {
       do {
-        offset = ((Random16Far() << 3) >> 16) * 2;
+        offset = ((Random16() << 3) >> 16) * 2;
       } while (*(s16 *)((u8 *)order + offset) != -1);
       *(s16 *)((u8 *)order + offset) = i;
     }
@@ -1877,7 +1877,7 @@ void TrialRoad_SpawnRubble(s32 spread) {
     {
       /* FAKEMATCH(temporary): y held in a local, so x is computed before it; as
        * one expression, 14 of 122 instructions differ in tla-en. */
-      s32 y = leader->y - (((Random16Far() * 14) >> 16) << 16);
+      s32 y = leader->y - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
           285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
@@ -1898,8 +1898,8 @@ void TrialRoad_SpawnRubble(s32 spread) {
         effect->velocity.x = spread;
         effect->velocity.z = spread;
       }
-      effect->velocity.y = -(((Random16Far() << 14) >> 16) + 0x6000);
-      effect->spin = ((Random16Far() << 9) >> 16) - 0x100;
+      effect->velocity.y = -(((Random16() << 14) >> 16) + 0x6000);
+      effect->spin = ((Random16() << 9) >> 16) - 0x100;
       effect->scaleRateX = -0x800;
       effect->scaleRateY = -0x600;
       effect->update = TrialRoad_DriftRubble;
@@ -1934,9 +1934,9 @@ void TrialRoad_SpawnDustRing(void) {
       effect->velocity.y = 0;
       effect->velocity.z = Trig_Sin(i << 12);
       effect->velocity.x += effect->velocity.x >> 1;
-      effect->velocity.x += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
-      effect->velocity.z += ((Random16Far() * 3) << 13 >> 16) - 0x3000;
-      effect->spin = ((Random16Far() << 12) >> 16) - 0x800;
+      effect->velocity.x += ((Random16() * 3) << 14 >> 16) - 0x6000;
+      effect->velocity.z += ((Random16() * 3) << 13 >> 16) - 0x3000;
+      effect->spin = ((Random16() << 12) >> 16) - 0x800;
       effect->scaleRateX = 0;
       effect->scaleRateY = 0;
       effect->update = TrialRoad_DriftRubble;

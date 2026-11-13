@@ -61,8 +61,8 @@ void Func_02002394(void) {
     velocity[1] = 0;
     velocity[2] = Math_Sin(angle);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;
-    velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
+    velocity[0] += (Random16() * 0xc000 >> 16) - 0x6000;
+    velocity[2] += (Random16() * 0x6000 >> 16) - 0x3000;
     FieldEffect_Spawn(actor->x, actor->y, actor->z, velocity[0], velocity[1],
                       velocity[2], 0x1090001, &options);
     i++;
@@ -215,11 +215,11 @@ void Func_020027cc(void) {
   FieldActor_SetSpriteColor(Actor_Get(9), 0);
   System_Wait(8);
   ((struct Wanderer *)Actor_Get(gMainRoutineWork.currentOwner))->timer =
-      (Random16Far() * 40 >> 16) + 10;
-  ((struct Wanderer *)Actor_Get(7))->timer = (Random16Far() * 40 >> 16) + 10;
-  ((struct Wanderer *)Actor_Get(5))->timer = (Random16Far() * 40 >> 16) + 10;
-  ((struct Wanderer *)Actor_Get(6))->timer = (Random16Far() * 40 >> 16) + 10;
-  ((struct Wanderer *)Actor_Get(23))->timer = (Random16Far() * 40 >> 16) + 10;
+      (Random16() * 40 >> 16) + 10;
+  ((struct Wanderer *)Actor_Get(7))->timer = (Random16() * 40 >> 16) + 10;
+  ((struct Wanderer *)Actor_Get(5))->timer = (Random16() * 40 >> 16) + 10;
+  ((struct Wanderer *)Actor_Get(6))->timer = (Random16() * 40 >> 16) + 10;
+  ((struct Wanderer *)Actor_Get(23))->timer = (Random16() * 40 >> 16) + 10;
   Actor_SetScript(gMainRoutineWork.currentOwner, gData_02005c74);
   Actor_SetScript(7, gData_02005c74);
   Actor_SetScript(5, gData_02005ca0);
@@ -883,7 +883,7 @@ draw_next:
   if (++row <= 7)
     goto draw_row;
   n = 0;
-  if (Random16Far() < 0x8000) {
+  if (Random16() < 0x8000) {
     n |= Func_02003fc0(2, 7, 5, 7, 4, 0, 3, 2);
     n |= Func_02003fc0(8, 7, 6, 6, 4, 2, 2, 3);
     Func_02004270(5, 6, 9, 12);
@@ -928,12 +928,12 @@ count_next:
     goto retry;
   if (cross == 0)
     goto retry;
-  mode = (Random16Far() * 2) >> 16;
+  mode = (Random16() * 2) >> 16;
   left = 7;
   tries = 1;
 start_try:
-  col = (Random16Far() * 11) >> 16;
-  row = ((Random16Far() * 3) >> 16) + 5;
+  col = (Random16() * 11) >> 16;
+  row = ((Random16() * 3) >> 16) + 5;
   if (Func_02003934(col, row) == 0) {
     piece = state->cells[row * 11 + col].kind;
     if ((u32)(piece - 1) <= 1) {
@@ -954,8 +954,8 @@ start_done:
 corner_next:
   tries = 1;
 corner_try:
-  col = (Random16Far() * 11) >> 16;
-  row = (Random16Far() * 8) >> 16;
+  col = (Random16() * 11) >> 16;
+  row = (Random16() * 8) >> 16;
   if (Func_02003934(col, row) == 0) {
     piece = state->cells[row * 11 + col].kind;
     if (piece == 3 || piece == 8 || piece == 9) {
@@ -964,13 +964,13 @@ corner_try:
       if (shape != 6 && shape != 9) {
         switch (piece) {
         case 3:
-          cell->kind = ((Random16Far() * 2) >> 16) + 1;
+          cell->kind = ((Random16() * 2) >> 16) + 1;
           break;
         case 8:
-          cell->kind = (((Random16Far() * 2) >> 16) << 1) + 4;
+          cell->kind = (((Random16() * 2) >> 16) << 1) + 4;
           break;
         case 9:
-          cell->kind = (((Random16Far() * 2) >> 16) << 1) + 5;
+          cell->kind = (((Random16() * 2) >> 16) << 1) + 5;
           break;
         }
         state->cells[row * 11 + col].occupied = 1;
@@ -987,8 +987,8 @@ corner_done:
     goto corner_next;
   tries = 1;
 straight_try:
-  col = (Random16Far() * 11) >> 16;
-  row = (Random16Far() * 8) >> 16;
+  col = (Random16() * 11) >> 16;
+  row = (Random16() * 8) >> 16;
   if (Func_02003934(col, row) == 0) {
     piece = state->cells[row * 11 + col].kind;
     if (piece == 4 || piece == 6 || piece == 5 || piece == 7) {
@@ -1006,8 +1006,8 @@ straight_done:
   plain_next:
     tries = 1;
   plain_try:
-    col = (Random16Far() * 11) >> 16;
-    row = (Random16Far() * 8) >> 16;
+    col = (Random16() * 11) >> 16;
+    row = (Random16() * 8) >> 16;
     if (Func_02003934(col, row) == 0) {
       piece = state->cells[row * 11 + col].kind;
       if ((u32)(piece - 1) <= 1) {
@@ -1029,7 +1029,7 @@ turn_col:
   piece = state->cells[row * 11 + col].kind;
   shape = state->cells[row * 11 + col].occupied;
   if (shape != 0) {
-    switch ((Random16Far() * 8) >> 16) {
+    switch ((Random16() * 8) >> 16) {
     case 0:
     case 1:
     case 2:
@@ -1119,10 +1119,10 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
       u32 value;
       if (++tries > 63)
         goto back;
-      value = Random16Far();
+      value = Random16();
       dir = direction;
       if (value > 0x7fff)
-        dir = (Random16Far() * 4) >> 16;
+        dir = (Random16() * 4) >> 16;
       tried = Data_02007048[step];
       if ((tried >> dir) & one)
         continue;

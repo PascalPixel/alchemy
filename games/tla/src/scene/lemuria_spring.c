@@ -377,7 +377,7 @@ toss:
       } else {
         for (prize = 0; prize < result * 3 + 3; prize++)
           total += (s8)gMainRoutineWork.unk13d[prize];
-        prizeRoll = (u32)(Random16Far() * total) >> 16;
+        prizeRoll = (u32)(Random16() * total) >> 16;
         for (prize = 0; prize < 15; prize++) {
           prizeRoll -= WEIGHT(prize);
           if (prizeRoll < 0)

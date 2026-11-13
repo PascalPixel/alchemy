@@ -51,8 +51,8 @@ next:
     velocity.y = 0;
     velocity.z = Math_Sin(angle);
     velocity.x += velocity.x >> 1;
-    velocity.x += ((u32)(Random16Far() * 3 << 14) >> 16) - 0x6000;
-    velocity.z += ((u32)(Random16Far() * 3 << 13) >> 16) - 0x3000;
+    velocity.x += ((u32)(Random16() * 3 << 14) >> 16) - 0x6000;
+    velocity.z += ((u32)(Random16() * 3 << 13) >> 16) - 0x3000;
     Func_02003b30(leader->x, leader->y, leader->z, velocity.x, velocity.y,
                   velocity.z, 0x1090001, &options);
   }

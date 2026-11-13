@@ -109,8 +109,8 @@ loop:
   velocity[1] = 0;
   velocity[2] = Math_Sin(angle);
   velocity[0] += velocity[0] >> 1;
-  velocity[0] += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
-  velocity[2] += ((Random16Far() * 3) << 13 >> 16) - 0x3000;
+  velocity[0] += ((Random16() * 3) << 14 >> 16) - 0x6000;
+  velocity[2] += ((Random16() * 3) << 13 >> 16) - 0x3000;
   FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity[0], velocity[1],
                     velocity[2], 0x1090001, &options);
   i++;
@@ -359,11 +359,11 @@ void Func_02000b78(s32 rows, s32 frames, s32 x, s32 y, s32 startZ, s32 count) {
   next_row:
     for (left = 0; left < count; left++) {
       {
-        s32 r = Random16Far();
+        s32 r = Random16();
         dx = 15;
         dx &= r;
       }
-      dy = Random16Far() & 31;
+      dy = Random16() & 31;
       FieldEffect_Spawn(((x + left * 16) << 16) + ((dx - 8) << 16),
                         (y + dy) << 16, z << 16, 0, 0, 0x100, 0x80001, &params);
     }
@@ -1174,9 +1174,9 @@ void Func_020023d0(struct Actor *object) {
     {
       s32 mask = 15;
 
-      dx = mask & Random16Far();
+      dx = mask & Random16();
     }
-    dy = Random16Far() & 7;
+    dy = Random16() & 7;
     params.type = 673;
     FieldEffect_Spawn(object->x + ((dx - 8) << 16),
                       object->y + ((dy - 8) << 16), object->z, 0, 0x8000, phase,

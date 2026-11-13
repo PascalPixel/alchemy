@@ -179,10 +179,10 @@ DEFINE_ACTOR_FLICKER_CHILD(Actor_FlickerChild, 7)
 #include "actor.h"
 #include "task.h"
 
-/* VIEW(s07a4): routine Random16Far as u16 Random16Far(void); system.h has u32
- * Random16Far(void); tried as the rest of the object declares it, Func_020007a4
+/* VIEW(s07a4): routine Random16 as u16 Random16(void); system.h has u32
+ * Random16(void); tried as the rest of the object declares it, Func_020007a4
  * moves: 1 of 188 instructions in tla-ja. */
-extern u16 Random16Far__s07a4(void) __asm__("Random16Far");
+extern u16 Random16Far__s07a4(void) __asm__("Random16");
 /* VIEW(s07a4): routine BattleEffect_ApplyColorToTargetBuffer as s32
  * BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b); event.h has void
  * BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode); tried as the
@@ -240,7 +240,7 @@ flash:
   IO_WRITE_QUEUE_PUSH(0x04000050, 0xf00, 0x20000);
   IO_WRITE_QUEUE_PUSH(0x04000052, 0x1000, 0x20000);
   wait(1);
-  Task_RemoveFar(Func_02000540);
+  Task_Remove(Func_02000540);
   Task_Add(Func_020006bc, TASK_PASS_VBLANK);
   Func_020017bc();
   Func_020017f8(33, 0, 0);

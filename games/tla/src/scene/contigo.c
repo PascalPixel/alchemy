@@ -34,7 +34,7 @@ void Contigo_StopPaletteCycle(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 256;
-  Task_RemoveFar(PaletteCycle_Fade);
+  Task_Remove(PaletteCycle_Fade);
 }
 
 DEFINE_PALETTE_CYCLE_START_VBLANK(Contigo_StartFastPaletteCycle,

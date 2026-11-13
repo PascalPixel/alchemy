@@ -311,7 +311,7 @@ void Func_020009d0(struct OrbitEffect *effect) {
   s32 dx;
   s32 dz;
 
-  radius = Random16Far() + 0x20000;
+  radius = Random16() + 0x20000;
   angle = effect->angle;
   dx = Iwram_MulQ16(radius, Trig_Cos(angle));
   dz = Iwram_MulQ16(radius, Trig_Sin(angle));
@@ -321,8 +321,8 @@ void Func_020009d0(struct OrbitEffect *effect) {
   if (effect->pause != 0) {
     effect->pause--;
     effect->angle += 0x800;
-  } else if ((Random16Far() << 5) >> 16 == 0) {
-    effect->pause = ((Random16Far() << 4) >> 16) + 8;
+  } else if ((Random16() << 5) >> 16 == 0) {
+    effect->pause = ((Random16() << 4) >> 16) + 8;
   }
   if (++effect->timer == 101)
     Import_ActorRelease(effect);
@@ -336,11 +336,11 @@ void Func_02000a80(void) {
       Actor_SetSpriteFlags(object, 0);
       object->update = Func_020009d0;
       object->motionFlags = 0;
-      object->timer = -(s32)((u32)(Random16Far() * 16) >> 16) * 2 + 20;
+      object->timer = -(s32)((u32)(Random16() * 16) >> 16) * 2 + 20;
       object->unk66 = 0;
       object->gravity = 0x1999;
       object->velocityY = 0x30000;
-      object->facing = Random16Far();
+      object->facing = Random16();
     }
   }
 }
@@ -394,7 +394,7 @@ void Func_02000af4(void) {
   }
   Task_Add(Func_02000a80, 0x480);
   Event_Wait(120);
-  Task_RemoveFar(Func_02000a80);
+  Task_Remove(Func_02000a80);
   if (effect != 0) {
     i = 0;
   shrink:
@@ -985,10 +985,10 @@ s32 Func_02001a60(s32 topic) {
   if (topic < 0)
     return 0;
   if (topic == 5)
-    topic = (s32)((u32)(Random16Far() * 5) >> 16);
+    topic = (s32)((u32)(Random16() * 5) >> 16);
   state = (struct ContigoTopicState *)&gMainRoutineWork;
   cursor = state->cursor[topic];
-  variant = (cursor + (s32)((u32)(Random16Far() * 2) >> 16) + 4) % 3;
+  variant = (cursor + (s32)((u32)(Random16() * 2) >> 16) + 4) % 3;
   state->cursor[topic] = variant;
   index = topic * 2;
 

@@ -1723,7 +1723,7 @@ restart:
       goto restart;
     nx = x;
     ny = y;
-    dir = (Random16Far() * 4) >> 16;
+    dir = (Random16() * 4) >> 16;
     if (dir == 0 && (step == 1 || step == 13))
       goto retry;
     switch (dir) {
@@ -2047,9 +2047,9 @@ burst:
     s32 scale;
 
     Actor_StartScript(object, gData_02006290);
-    angle = Random16Far();
-    value = Random16Far();
-    size = Random16Far();
+    angle = Random16();
+    value = Random16();
+    size = Random16();
     scale = (size >> 1) + 0x2000;
     object->velocityY = Iwram_MulQ16(value << 3, Trig_Cos(angle));
     object->velocityX = Iwram_MulQ16(value << 3, Math_Sin(angle));

@@ -196,7 +196,7 @@ next:
     Actor_SetMoveTarget(object, object->x, 0xfff80000, object->z);
     object->update = Func_020004b4;
     Sound_Play(152);
-    wait((Random16Far() * 4 >> 16) + 3);
+    wait((Random16() * 4 >> 16) + 3);
   }
   if (++i <= 6)
     goto next;

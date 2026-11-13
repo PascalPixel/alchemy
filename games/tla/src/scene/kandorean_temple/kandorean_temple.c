@@ -25,7 +25,7 @@ s32 KandoreanTemple_MeditateRestlessly(struct Actor *object) {
     object->timer--;
   } else {
     Actor_ShowEmoteById((s16)object->unk66, 0x105, 0);
-    object->timer = ((Random16Far() * 240) >> 16) + 240;
+    object->timer = ((Random16() * 240) >> 16) + 240;
   }
   return 1;
 }
@@ -53,7 +53,7 @@ s32 KandoreanTemple_LevitateStudentBob(struct Actor *object) {
   case 0:
     object->scaleX = 0x10000;
     object->scaleY = 0x10000;
-    object->timer = Random16Far() % 90 + 60;
+    object->timer = Random16() % 90 + 60;
     break;
   }
   object->timer--;
@@ -374,10 +374,10 @@ void KandoreanTemple_BlowSteam(s32 *position, s32 value) {
   if (object) {
     s32 timer;
 
-    object->bounce = Trig_Cos(((Random16Far() * 0x3000) >> 16) + 0x3000);
-    object->gravity = (u16)Random16Far();
-    object->unk4c = (u16)(Random16Far() * 2) + value;
-    timer = (u16)Random16Far() - 0x8000;
+    object->bounce = Trig_Cos(((Random16() * 0x3000) >> 16) + 0x3000);
+    object->gravity = (u16)Random16();
+    object->unk4c = (u16)(Random16() * 2) + value;
+    timer = (u16)Random16() - 0x8000;
     object->timer = timer;
     KandoreanTemple_InitializeSteam(object, 3);
     object->update = (void (*)(void))KandoreanTemple_UpdateVentSteam;
@@ -444,10 +444,10 @@ void KandoreanTemple_BlowStreamSteam(void) {
   if (object) {
     s32 timer;
 
-    object->bounce = Trig_Cos(((Random16Far() * 0x3000) >> 16) + 0x3000);
-    object->gravity = (u16)Random16Far();
-    object->unk4c = (u16)(Random16Far() * 2) + 0x58000;
-    timer = (u16)Random16Far() - 0x8000;
+    object->bounce = Trig_Cos(((Random16() * 0x3000) >> 16) + 0x3000);
+    object->gravity = (u16)Random16();
+    object->unk4c = (u16)(Random16() * 2) + 0x58000;
+    timer = (u16)Random16() - 0x8000;
     object->timer = timer;
     KandoreanTemple_InitializeSteam(object, 1);
     object->update = (void (*)(void))KandoreanTemple_UpdateStreamSteam;
@@ -647,7 +647,7 @@ void KandoreanTemple_RunLeftVent(void) {
       } else if (t < 600) {
         if (GameFlag_Get(0x208) && *timer == 400) {
           MapGrid_CopyCellAttributes(22, 0, 1, 1, 13, 13);
-          Task_RemoveFar(KandoreanTemple_RunLeftVent);
+          Task_Remove(KandoreanTemple_RunLeftVent);
         }
         phase = &gKandoreanTemple_LeftBobPhase;
         statue->y += Trig_Sin(*phase) >> 1;
@@ -735,8 +735,8 @@ void KandoreanTemple_RunLeftVent(void) {
 
     if (none != 0)
       return;
-    *timer += (Random16Far() << 7) >> 16;
-    if ((u32)*timer > ((Random16Far() * 10000) >> 16) + 10000)
+    *timer += (Random16() << 7) >> 16;
+    if ((u32)*timer > ((Random16() * 10000) >> 16) + 10000)
       *timer = none;
   }
 count:
@@ -786,7 +786,7 @@ void KandoreanTemple_RunRightVent(void) {
         } else if (t < 600) {
           if (GameFlag_Get(0x209) && *timer == 400) {
             MapGrid_CopyCellAttributes(23, 0, 1, 1, 23, 15);
-            Task_RemoveFar(KandoreanTemple_RunRightVent);
+            Task_Remove(KandoreanTemple_RunRightVent);
           }
           phase = &gKandoreanTemple_RightBobPhase;
           BOB(statue, phase);
@@ -866,8 +866,8 @@ void KandoreanTemple_RunRightVent(void) {
 
       if (none != 0)
         return;
-      *timer += (Random16Far() << 7) >> 16;
-      if ((u32)*timer > ((Random16Far() * 10000) >> 16) + 10000)
+      *timer += (Random16() << 7) >> 16;
+      if ((u32)*timer > ((Random16() * 10000) >> 16) + 10000)
         *timer = none;
     }
   }
@@ -912,7 +912,7 @@ void KandoreanTemple_RunWestLift(void) {
     if (*timer > 2300 && *phase == 0) {
       if (GameFlag_Get(0x208)) {
         MapGrid_CopyCellAttributes(21, 0, 1, 1, 27, 12);
-        Task_RemoveFar(KandoreanTemple_RunWestLift);
+        Task_Remove(KandoreanTemple_RunWestLift);
       } else {
         *timer = 2800;
       }
@@ -977,7 +977,7 @@ void KandoreanTemple_RunEastLift(void) {
     if (*timer > 2300 && *phase == 0) {
       if (GameFlag_Get(0x209)) {
         MapGrid_CopyCellAttributes(22, 0, 1, 1, 37, 14);
-        Task_RemoveFar(KandoreanTemple_RunEastLift);
+        Task_Remove(KandoreanTemple_RunEastLift);
       } else {
         *timer = 2800;
       }

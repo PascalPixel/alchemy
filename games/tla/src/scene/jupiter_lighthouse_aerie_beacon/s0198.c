@@ -130,7 +130,7 @@ void Func_02000198(void) {
     break;
   }
   if (spawn) {
-    rise = ((u32)(Random16Far() * 80) >> 16) << 16;
+    rise = ((u32)(Random16() * 80) >> 16) << 16;
     effect = FieldActor_Create(672, center->x, center->y - rise + 0xfff80000,
                                center->z);
     if (effect != 0) {
@@ -138,16 +138,16 @@ void Func_02000198(void) {
       Actor_StartScript(effect, gData_02006470);
       FieldActor_SetSpriteColor(effect, 1);
       effect->motionFlags = 0;
-      angle = Random16Far() & 0xffff000;
+      angle = Random16() & 0xffff000;
       effect->timer = angle;
       effect->unk66 = 0;
       {
-        u32 counter = Random16Far() >> 13;
+        u32 counter = Random16() >> 13;
 
         BYTE_AT(effect, 0x62) = counter;
       }
       effect->update = Func_020000ec;
-      effect->speedLimit = Math_Sin((u32)(Random16Far() * 0xffff) >> 20) * 24;
+      effect->speedLimit = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24;
       effect->speedLimit = center->speedLimit >> 16;
       sprite->nextFrame = 0;
       sprite->priority = 1;
@@ -218,7 +218,7 @@ void Func_020004c8(void) {
   if (Event_GetFlag(0x201) != 0) {
     u32 random;
 
-    random = Random16Far();
+    random = Random16();
     effect = FieldActor_Create(672, center->x,
                                (s32)((u32)(random << 8) >> 16 << 16) +
                                    center->y - 0x1c0000,
@@ -226,7 +226,7 @@ void Func_020004c8(void) {
   } else {
     u32 random;
 
-    random = Random16Far();
+    random = Random16();
     effect = FieldActor_Create(672, center->x,
                                (s32)((u32)(random << 6) >> 16 << 16) +
                                    center->y - 0x1c0000,
@@ -237,12 +237,12 @@ void Func_020004c8(void) {
     Actor_StartScript(effect, gData_020068b0);
     FieldActor_SetSpriteColor(effect, 1);
     effect->motionFlags = 0;
-    angle = Random16Far() & 0xffff000;
+    angle = Random16() & 0xffff000;
     effect->timer = angle;
     effect->unk66 = 0;
     effect->update = Func_02000090;
     effect->speedLimit =
-        Math_Sin((u32)(Random16Far() * 0xffff) >> 20) * 24 >> 16;
+        Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
     sprite->nextFrame = 0;
     sprite->priority = 1;
   }
@@ -255,7 +255,7 @@ void Func_020005b8(void) {
   struct Actor *object = Actor_Get(36);
   struct MapWork *map = Ram_HeapSlots->mapWork;
 
-  Random16Far();
+  Random16();
 #if TLA_PATCH_1
   // From patch 1; the Japanese release goes on when object 36 is missing.
   if (object == NULL)
@@ -332,7 +332,7 @@ void Func_0200065c(void) {
         created->unk5c[0] = 1;
         created->speedLimit = 0x6666;
         created->acceleration = 0xccc;
-        buffer = HeapSlot_AllocFar(68, 0x608);
+        buffer = HeapSlot_Alloc(68, 0x608);
         Item_LoadIcon(246);
         Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
         Call1((void (*)())HeapSlot_Release, 68);

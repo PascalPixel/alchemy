@@ -563,7 +563,7 @@ void Func_02000ef0(struct Actor *object) { object->x = Actor_GetById(8)->x; }
       object->update = Func_02000ef0;                                          \
       sprite->nextFrame = zero;                                                \
       sprite->unk1b[0] = zero;                                                 \
-      block = HeapSlot_AllocFar(68, 0x608);                                    \
+      block = HeapSlot_Alloc(68, 0x608);                                    \
       Icon_DrawItem(n1);                                                       \
       VramCache_Load(sprite->vramBlock, 128, block + 0x400);                   \
       HeapSlot_Release(68);                                                    \
@@ -637,7 +637,7 @@ void Func_020010d4(void) {
     sprite->palette = 0;
     sprite->priority = 1;
     ((u8 *)statue)[0x5c] = 1;
-    block = (u8 *)HeapSlot_AllocFar(68, 0x608);
+    block = (u8 *)HeapSlot_Alloc(68, 0x608);
     Icon_DrawItem(242);
     VramCache_Load(sprite->vramBlock, 0x80, (s32)(block + 0x400));
     HeapSlot_Release(68);

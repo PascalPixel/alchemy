@@ -6,6 +6,6 @@
 
 #include "types.h"
 
-void *HeapSlot_AllocFar(s32 slot, s32 size);
+void *HeapSlot_Alloc(s32 slot, s32 size);
 
 #endif

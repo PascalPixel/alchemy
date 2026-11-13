@@ -206,9 +206,9 @@ s32 JupiterLighthouse_EmitRisingMotes(struct SceneEffectSource *object) {
     params.startScaleX = 0xb333;
     params.startScaleY = 0xb333;
     params.palette = 14;
-    x = object->x + (((s32)((u32)(Random16Far() * 9) >> 16) - 4) << 16);
-    y = object->y + ((32 - (s32)((u32)(Random16Far() * 20) >> 16)) << 16);
-    speed = ((((s32)((u32)(Random16Far() * 5) >> 16)) << 16) + 0x50000) / 10;
+    x = object->x + (((s32)((u32)(Random16() * 9) >> 16) - 4) << 16);
+    y = object->y + ((32 - (s32)((u32)(Random16() * 20) >> 16)) << 16);
+    speed = ((((s32)((u32)(Random16() * 5) >> 16)) << 16) + 0x50000) / 10;
     FieldEffect_Spawn(x, y, object->z, 0, speed, phase, 0xb0000, &params);
   }
   return 0;

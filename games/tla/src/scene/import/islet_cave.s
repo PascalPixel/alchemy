@@ -10,10 +10,10 @@ wait:
 	.thumb_func
 Task_Add:
 	overlay_veneer Task_AddFar
-	.global Task_RemoveFar
+	.global Task_Remove
 	.thumb_func
-Task_RemoveFar:
-	overlay_veneer Func_080000d8
+Task_Remove:
+	overlay_veneer Task_RemoveFar
 	.global Trig_Cos
 	.thumb_func
 Trig_Cos:

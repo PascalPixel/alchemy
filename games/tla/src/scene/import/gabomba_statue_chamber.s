@@ -6,10 +6,10 @@
 	.thumb_func
 wait:
 	overlay_veneer waitFar
-	.global HeapSlot_AllocFar
+	.global HeapSlot_Alloc
 	.thumb_func
-HeapSlot_AllocFar:
-	overlay_veneer Func_08000140
+HeapSlot_Alloc:
+	overlay_veneer HeapSlot_AllocFar
 	.global HeapSlot_Release
 	.thumb_func
 HeapSlot_Release:

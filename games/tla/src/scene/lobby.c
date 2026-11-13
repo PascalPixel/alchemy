@@ -650,7 +650,7 @@ s32 LinkLobby_EnterBattle(void) {
   }
   if (!failed) {
     buf = HeapSlot_AllocEwram(216, 0x7c8);
-    Task_RemoveFar(LinkLobby_PollPeerReady);
+    Task_Remove(LinkLobby_PollPeerReady);
     Map_ClearLayerEntryFlag(5);
     wait(8);
     Map_SetLayerEntryFlag(5);

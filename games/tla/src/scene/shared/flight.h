@@ -27,7 +27,7 @@
     s32 z = *(s16 *)((u8 *)object + 18);                                       \
                                                                                \
     if (gFrameCount % 3 == 0) {                                                \
-      switch ((u32)(Random16Far() << 2) >> 16) {                               \
+      switch ((u32)(Random16() << 2) >> 16) {                               \
       case 0:                                                                  \
         CameraMove((x << 16) - 0x10000, -1, (z << 16) + 0x10000, 1);           \
         break;                                                                 \

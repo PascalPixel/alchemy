@@ -137,9 +137,9 @@ void Func_02002aa8(s32 x, s32 z) {
   options.targetScaleY = 0x8000;
   i = 0;
 burst:
-  spawn.x = x + ((Random16Far() & 63) << 16) - 0x200000;
-  spawn.y = (Random16Far() & 15) << 12;
-  spawn.z = z + ((Random16Far() & 7) << 16) - 0x100000;
+  spawn.x = x + ((Random16() & 63) << 16) - 0x200000;
+  spawn.y = (Random16() & 15) << 12;
+  spawn.z = z + ((Random16() & 7) << 16) - 0x100000;
   FieldEffect_Spawn(spawn.x, 0, spawn.z, 0, spawn.y, 0,
                     EFFECT_SCALE_TO_TARGET | EFFECT_USE_START_SCALE |
                         EFFECT_USE_PRIORITY | 1,
@@ -164,7 +164,7 @@ void Func_02002b58(s32 x, s32 z) {
   // every pass, which a for loop hoists (differ 55).
   i = 0;
 next:
-  position.x = x + ((Random16Far() & 31) << 16) - 0x100000;
+  position.x = x + ((Random16() & 31) << 16) - 0x100000;
   position.y = 0x40000;
   position.z = z;
   FieldEffect_Spawn(position.x, 0, position.z, 0, position.y, 0, 0x1a0000,
@@ -308,7 +308,7 @@ row:
       spark->bounce = spark->x;
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
-      spark->speedLimit = Random16Far() & 0xffff;
+      spark->speedLimit = Random16() & 0xffff;
       Import_ActorSelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02005fd8);
       Actor_SetSpriteFlags(spark, 0);
@@ -622,7 +622,7 @@ row:
       spark->bounce = spark->x;
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
-      spark->speedLimit = Random16Far() & 0xffff;
+      spark->speedLimit = Random16() & 0xffff;
       Import_ActorSelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02005fd8);
       Actor_SetSpriteFlags(spark, 0);
@@ -850,7 +850,7 @@ void Func_02003e7c(struct Actor *source) {
   Actor_StartScript(object, gData_02006084);
 }
 
-void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
+void Vector_AddPolarOffset(s32 length, s32 angle, s32 *position);
 
 s32 Func_02003ed4(struct Orbiter *orbiter) {
   struct Actor *anchor = orbiter->anchor;
@@ -859,7 +859,7 @@ s32 Func_02003ed4(struct Orbiter *orbiter) {
   orbiter->x = anchor->x;
   orbiter->y = anchor->y + 0x80000;
   orbiter->z = anchor->z;
-  Call3((void (*)())Vector_AddPolarOffsetFar, orbiter->radius, orbiter->angle,
+  Call3((void (*)())Vector_AddPolarOffset, orbiter->radius, orbiter->angle,
         (s32)&orbiter->x);
   if (--orbiter->countdown == 0)
     return 0;
@@ -871,7 +871,7 @@ s32 Func_02003ed4(struct Orbiter *orbiter) {
   orbiter->x = anchor->x;
   orbiter->y = anchor->y + 0x80000;
   orbiter->z = anchor->z;
-  Vector_AddPolarOffsetFar(orbiter->radius, orbiter->angle, &orbiter->x);
+  Vector_AddPolarOffset(orbiter->radius, orbiter->angle, &orbiter->x);
   Func_02003e7c(orbiter);
   orbiter->radius -= 0x40000;
   return 1;
@@ -945,8 +945,8 @@ first:
   {
     struct Actor *spark = Import_ActorCreate(0x2a0, a->x, a->y, a->z);
     Sound_Play(246);
-    spark->x += ((Random16Far() & 31) - 16) << 16;
-    spark->y += ((Random16Far() & 15) - 8) << 16;
+    spark->x += ((Random16() & 31) - 16) << 16;
+    spark->y += ((Random16() & 15) - 8) << 16;
     spark->speedLimit = 0x80000;
     spark->acceleration = 0x3333;
     spark->motionFlags = 0;
@@ -984,8 +984,8 @@ second:
                                                  0x2a0, b->x, b->y, b->z);
     Sound_Play(195);
     angle = &spark->timer;
-    *angle = (Random16Far() & 0x7fff) + 0x8000;
-    spark->unk66 = ((i & 1) * 2 - 1) << ((Random16Far() & 3) + 9);
+    *angle = (Random16() & 0x7fff) + 0x8000;
+    spark->unk66 = ((i & 1) * 2 - 1) << ((Random16() & 3) + 9);
     spark->motionFlags = 0;
     spark->unk4c = 0x7a0000;
     spark->watchedObject = b;
@@ -995,7 +995,7 @@ second:
     Import_ActorSelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
-    Call3(Vector_AddPolarOffsetFar, spark->unk4c, *angle, (s32)&spark->x);
+    Call3(Vector_AddPolarOffset, spark->unk4c, *angle, (s32)&spark->x);
     Actor_StartScript(spark, gData_020060b0);
     if (i == 3) {
       Call2(Actor_ConfigureSpriteColor, idB, 0x100);
@@ -1021,7 +1021,7 @@ third:
     struct Actor *spark =
         (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 0x2a0, b->x,
                                b->y + i * 65536 - 0x80000, b->z);
-    spark->timer = Random16Far();
+    spark->timer = Random16();
     spark->unk66 = 0x800;
     ((union SparkView *)spark)->bytes.unk62 = i;
     ((union SparkView *)spark)->bytes.unk63 = 1;

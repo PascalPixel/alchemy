@@ -209,7 +209,7 @@ inPlace:
   p = (struct LohoSpark *)&table->age;
   i = 95;
 seedSparks:
-  *(s32 *)p = -((u32)(Random16Far() << 5) >> 16);
+  *(s32 *)p = -((u32)(Random16() << 5) >> 16);
   i = (i - 1);
   p = (struct LohoSpark *)((s32)p + 16);
   if (i >= 0)
@@ -240,10 +240,10 @@ spark:
     goto drawSpark;
   p->sprite.words[0] = 0x40000000;
   p->sprite.words[1] = 0;
-  t47 = (u16)((((u32)(Random16Far() * 96) >> 16) + 72) & 0x1ff);
+  t47 = (u16)((((u32)(Random16() * 96) >> 16) + 72) & 0x1ff);
   t48 = p->sprite.halves[1];
   p->sprite.halves[1] = (t48 & -0x200) | t47;
-  p->sprite.oam.y = (u32)Random16Far() >> 10;
+  p->sprite.oam.y = (u32)Random16() >> 10;
   t51 = p->sprite.bytes[5];
   t51 |= 240;
   p->sprite.bytes[5] = t51 & -13;
@@ -260,7 +260,7 @@ ageSpark:
   p->age += 1;
   if (p->age <= 31)
     goto nextSpark;
-  p->age = -((u32)(Random16Far() * 7) >> 16);
+  p->age = -((u32)(Random16() * 7) >> 16);
 nextSpark:
   p++;
   if ((s32)p <= (s32)&table[95])

@@ -2079,7 +2079,7 @@ void Func_02004604(struct RockSprite__s4254 *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 
 void Func_02004254(void) {
-  struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
+  struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
   s32 i;

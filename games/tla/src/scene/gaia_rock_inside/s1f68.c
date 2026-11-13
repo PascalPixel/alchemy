@@ -104,9 +104,9 @@ void Func_02002020(void) {
     goto L_0200a1d8;
   v_r5 = 19;
 L_0200a10a:
-  t27 = Random16Far();
+  t27 = Random16();
   FIELD_AT(v_r7, s32, 40) = t27;
-  t28 = Random16Far();
+  t28 = Random16();
   FIELD_AT(v_r8, s32, 40) = t28;
   v_r5 = (v_r5 + -1);
   System_Wait(1);
@@ -120,17 +120,17 @@ L_0200a10a:
   v_r6 = (v_r6 + 86);
   v_r5 = 0;
   for (; v_r5 < 300 && FIELD_AT(v_r6, u8, 0) != 0; v_r5++) {
-    t34 = Random16Far();
+    t34 = Random16();
     FIELD_AT(v_r7, s32, 40) = t34;
-    t35 = Random16Far();
+    t35 = Random16();
     FIELD_AT(v_r8, s32, 40) = t35;
     System_Wait(1);
   }
   v_r5 = 9;
 L_0200a18c:
-  t37 = Random16Far();
+  t37 = Random16();
   FIELD_AT(v_r7, s32, 40) = t37;
-  t38 = Random16Far();
+  t38 = Random16();
   FIELD_AT(v_r8, s32, 40) = t38;
   v_r5 = (v_r5 + -1);
   System_Wait(1);
@@ -142,9 +142,9 @@ L_0200a18c:
   Event_SetFlag(0xa62);
   goto L_0200a1f8;
 L_0200a1d8:
-  t43 = Random16Far();
+  t43 = Random16();
   FIELD_AT(v_r7, s32, 40) = t43;
-  t44 = Random16Far();
+  t44 = Random16();
   FIELD_AT(v_r8, s32, 40) = t44;
   v_r5 = (v_r5 + -1);
   System_Wait(1);
@@ -203,7 +203,7 @@ void Func_0200225c(void) {
   Sound_Play(191);
   if (!GameFlag_Get(0x9bd)) {
     for (i = 19; i >= 0; i--) {
-      object->velocityY = Random16Far();
+      object->velocityY = Random16();
       wait(1);
     }
     Actor_SetSpeed(8, 0x4000, 0xccc);
@@ -213,7 +213,7 @@ void Func_0200225c(void) {
     i = 0;
     if (object->unk56 != 0) {
       do {
-        object->velocityY = Random16Far();
+        object->velocityY = Random16();
         wait(1);
         if (++i > 299)
           break;
@@ -221,7 +221,7 @@ void Func_0200225c(void) {
     }
     MapGrid_CopyCells(2, 93, 1, 5, 28, 85);
     for (i = 9; i >= 0; i--) {
-      object->velocityY = Random16Far();
+      object->velocityY = Random16();
       wait(1);
     }
     Sound_Play(564);
@@ -245,7 +245,7 @@ void Func_0200225c(void) {
     }
   } else {
     for (i = 119; i >= 0; i--) {
-      object->velocityY = Random16Far();
+      object->velocityY = Random16();
       wait(1);
     }
     Event_Wait(30);
@@ -291,7 +291,7 @@ void Func_020024b8(void) {
   Sound_Play(191);
   if (!GameFlag_Get(0x9be)) {
     for (i = 19; i >= 0; i--) {
-      object->velocityY = Random16Far();
+      object->velocityY = Random16();
       wait(1);
     }
     Actor_SetSpeed(9, 0x4000, 0xccc);
@@ -301,7 +301,7 @@ void Func_020024b8(void) {
     i = 0;
     if (object->unk56 != 0) {
       do {
-        object->velocityY = Random16Far();
+        object->velocityY = Random16();
         wait(1);
         if (++i > 299)
           break;
@@ -309,7 +309,7 @@ void Func_020024b8(void) {
     }
     MapGrid_CopyCells(2, 93, 1, 5, 36, 85);
     for (i = 9; i >= 0; i--) {
-      object->velocityY = Random16Far();
+      object->velocityY = Random16();
       wait(1);
     }
     Sound_Play(564);
@@ -333,7 +333,7 @@ void Func_020024b8(void) {
     }
   } else {
     for (i = 119; i >= 0; i--) {
-      object->velocityY = Random16Far();
+      object->velocityY = Random16();
       wait(1);
     }
     Event_Wait(30);
@@ -379,7 +379,7 @@ void Func_02002718(void) {
   Sound_Play(191);
   if (!GameFlag_Get(0x9bc)) {
     for (i = 19; i >= 0; i--) {
-      object->velocityY = Random16Far();
+      object->velocityY = Random16();
       wait(1);
     }
     Actor_SetSpeed(8, 0x4000, 0xccc);
@@ -389,7 +389,7 @@ void Func_02002718(void) {
     i = 0;
     if (object->unk56 != 0) {
       do {
-        object->velocityY = Random16Far();
+        object->velocityY = Random16();
         wait(1);
         if (++i > 299)
           break;
@@ -397,7 +397,7 @@ void Func_02002718(void) {
     }
     MapGrid_CopyCells(1, 85, 1, 4, 25, 85);
     for (i = 9; i >= 0; i--) {
-      object->velocityY = Random16Far();
+      object->velocityY = Random16();
       wait(1);
     }
     Sound_Play(564);
@@ -421,7 +421,7 @@ void Func_02002718(void) {
     }
   } else {
     for (i = 119; i >= 0; i--) {
-      object->velocityY = Random16Far();
+      object->velocityY = Random16();
       wait(1);
     }
     Event_Wait(30);

@@ -957,7 +957,7 @@ void Func_020015c8(void) {
   struct LemurianShipObject *object;
 
   SET_VECTOR(position, 0x3280000, 0x80000, 0x8c0000);
-  Vector_AddPolarOffsetFar(0x200000, Random16Far(), position);
+  Vector_AddPolarOffset(0x200000, Random16(), position);
   object = ((struct LemurianShipObject *)Import_ActorCreate(
       0x2a2, position[0], position[1], position[2]));
   if (object != NULL) {
@@ -1012,7 +1012,7 @@ void LemurianShip_FindMonstersAboard(void) {
   Event_Wait(60);
   Event_PlaySound(390);
   Event_Wait(20);
-  Task_RemoveFar(Func_020015c8);
+  Task_Remove(Func_020015c8);
   Event_PlaySound(251);
   Field_SetCameraBounds(0x2b00000, 0, 0x3a00000, 0x2200000);
   FieldCamera_MoveTo(PIXELS(808), -1, PIXELS(448), 0);

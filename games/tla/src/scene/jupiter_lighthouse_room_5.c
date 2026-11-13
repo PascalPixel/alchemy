@@ -328,7 +328,7 @@ void Func_02000734(void) {
   for (i = 0; i <= 31; i++) {
     FieldEvent_Wait(1);
     if (!(i & 1)) {
-      random = Random16Far();
+      random = Random16();
       // random * 24, written in steps around the two barriers below, so x
       // loads between the multiply's add and its last shift.
       scaled = random << 1;
@@ -336,7 +336,7 @@ void Func_02000734(void) {
       x = actor->x;
       x += (((scaled << 3) >> 16) << 16);
       x += -0xc0000;
-      random2 = Random16Far();
+      random2 = Random16();
       y = actor->y;
       FieldEffect_Spawn(x, y + (((random2 << 5) >> 16) << 16) + 0x200000,
                         actor->z, 0, -0x40000, 0, 0x1b0000, p);
@@ -708,9 +708,9 @@ s32 Func_02001308(struct Actor *object) {
   options.startScaleX = 0xb333;
   options.startScaleY = 0xb333;
   options.palette = 14;
-  x = object->x + (((s32)((u32)(Random16Far() * 9) >> 16) - 4) << 16);
-  y = object->y + ((32 - (s32)((u32)(Random16Far() * 20) >> 16)) << 16);
-  speed = (((s32)((u32)(Random16Far() * 5) >> 16) << 16) + 0x50000) / 10;
+  x = object->x + (((s32)((u32)(Random16() * 9) >> 16) - 4) << 16);
+  y = object->y + ((32 - (s32)((u32)(Random16() * 20) >> 16)) << 16);
+  speed = (((s32)((u32)(Random16() * 5) >> 16) << 16) + 0x50000) / 10;
   FieldEffect_Spawn(x, y, object->z, 0, speed, phase,
                     EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                         EFFECT_USE_START_SCALE,

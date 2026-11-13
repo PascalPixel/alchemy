@@ -6,10 +6,10 @@
 	.thumb_func
 wait:
 	overlay_veneer waitFar
-	.global Random16Far
+	.global Random16
 	.thumb_func
-Random16Far:
-	overlay_veneer Func_080000f8
+Random16:
+	overlay_veneer Random16Far
 	.global Heap_Alloc
 	.thumb_func
 Heap_Alloc:

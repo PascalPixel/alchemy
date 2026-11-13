@@ -48,7 +48,7 @@ void MercuryLighthouse_LookAround(struct Actor *object) {
     (*timer)--;
     return;
   }
-  *timer = ((Random16Far() * 80) >> 16) + 40;
+  *timer = ((Random16() * 80) >> 16) + 40;
   state = (u8 *)object + 99;
   switch (*state) {
   case 0:
@@ -102,7 +102,7 @@ void MercuryLighthouse_SpawnMotes(void) {
     object = ((struct Actor *)Import_ActorCreate(0x2a2, 0, 0, 0));
     if (object != NULL) {
       sprite = object->sprite;
-      x = Random16Far() * 40 + 0x32c0000;
+      x = Random16() * 40 + 0x32c0000;
       /* FAKEMATCH(temporary): z is built before the motion flag and x are
        * stored, as in the native; as object->z = 0x2b80000, 12 of 76
        * instructions differ in tla-en. */
@@ -164,14 +164,14 @@ void MercuryLighthouse_HearVoices(void) {
   Actor_SetAnimation(11, 4);
   Event_ShowMessage(0x400b, 0);
   actor = Actor_GetById(11);
-  *((u8 *)actor + 98) = ((Random16Far() * 80) >> 16) + 40;
+  *((u8 *)actor + 98) = ((Random16() * 80) >> 16) + 40;
   *((u8 *)actor + 99) = 0;
   actor->update = (void (*)(void))MercuryLighthouse_LookAround;
   actor = Actor_GetById(12);
   {
     /* FAKEMATCH(temporary): the timer's + 40 comes before its address, as in
      * the native; as a direct store, 2 of 303 instructions differ in tla-en. */
-    u8 timer = ((Random16Far() * 80) >> 16) + 40;
+    u8 timer = ((Random16() * 80) >> 16) + 40;
 
     *((u8 *)actor + 98) = timer;
   }

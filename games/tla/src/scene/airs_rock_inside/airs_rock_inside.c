@@ -26,10 +26,10 @@ void Func_020004d4(struct Actor *object) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *self = (struct Actor *)object;
 
-  if (Random16Far() & 0xff) {
-    object->x = ((Random16Far() & 0xff) << 16) + (176 << 16);
+  if (Random16() & 0xff) {
+    object->x = ((Random16() & 0xff) << 16) + (176 << 16);
     {
-      s32 r = Random16Far();
+      s32 r = Random16();
       /* FAKEMATCH(pin): the leader's y pinned to r3, which the ROM loads before
        * it builds the mask; as a plain local, 12 of 53 instructions differ in
        * tla-en (24 with z plain too). */
@@ -38,7 +38,7 @@ void Func_020004d4(struct Actor *object) {
       object->y = y + ((r & 31) << 16);
     }
     {
-      s32 r = Random16Far();
+      s32 r = Random16();
       /* FAKEMATCH(pin): as for y, the leader's z pinned to r3, so it loads
        * before the mask; as a plain local, 12 of 53 instructions differ in
        * tla-en (24 with y plain too). */
@@ -778,7 +778,7 @@ void Func_0200160c(s32 x, s32 y, s32 z) {
   BYTE_AT(object, 90) = 0;
   WORD_AT(object, 24) = 0x8000;
   object->speedLimit = 0x40000;
-  object->acceleration = ((Random16Far() & 0x7fff) << 1) + 0xffff8001;
+  object->acceleration = ((Random16() & 0x7fff) << 1) + 0xffff8001;
   WORD_AT(object, 76) = 0x3800;
   WORD_AT(object, 108) = (s32)Func_02001458;
 }
@@ -925,7 +925,7 @@ void Func_02001828(void) {
       spark->bounce = spark->x;
       spark->gravity = 0xcccc;
       spark->unk4c = spark->z;
-      spark->speedLimit = Random16Far() & 0xffff;
+      spark->speedLimit = Random16() & 0xffff;
       Import_ActorSelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02005fd8);
       Actor_SetSpriteFlags(spark, 0);
@@ -1007,7 +1007,7 @@ void Func_02001828(void) {
       leaves.type = 674;
       leaves.palette = 2;
       velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
-      velocity.y = gust->y + ((Random16Far() & 31) << 16);
+      velocity.y = gust->y + ((Random16() & 31) << 16);
       velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
       FieldEffect_Spawn(
           gust->x, velocity.y, gust->z, velocity.x, 0, velocity.z,
@@ -1074,7 +1074,7 @@ void Func_02001828(void) {
         dust.priority = 1;
         {
           dust.startScaleX = dust.startScaleY =
-              (Random16Far() & 0xffff) + 0x10000;
+              (Random16() & 0xffff) + 0x10000;
         }
         velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
         velocity.y = 0x10000;
@@ -1166,8 +1166,8 @@ shrink:
         Actor_SetSpritePriority(8, 2);
         for (i = 0; i != 8; i++) {
           dust.priority = 1;
-          FieldEffect_Spawn(velocity.x + ((Random16Far() & 15) << 16),
-                            velocity.y + ((Random16Far() & 31) << 16),
+          FieldEffect_Spawn(velocity.x + ((Random16() & 15) << 16),
+                            velocity.y + ((Random16() & 31) << 16),
                             velocity.z, 0, 0, -0x8000, EFFECT_USE_PRIORITY,
                             &dust);
         }
@@ -1192,9 +1192,9 @@ shrink:
         velocity.z = Actor_GetById(8)->z;
         for (i = 0; i != 8; i++) {
           dust.priority = 1;
-          FieldEffect_Spawn(velocity.x + ((Random16Far() & 15) << 16),
+          FieldEffect_Spawn(velocity.x + ((Random16() & 15) << 16),
                             velocity.y,
-                            velocity.z - ((Random16Far() & 31) << 16), 0, 0,
+                            velocity.z - ((Random16() & 31) << 16), 0, 0,
                             -0x8000, EFFECT_USE_PRIORITY, &dust);
         }
         wait(20);

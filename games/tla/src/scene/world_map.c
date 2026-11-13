@@ -66,7 +66,7 @@ extern s32 Data_02006be8[8];
     work = Ram_HeapSlots->eventWork;                                           \
     party = &gMainRoutineWork;                                                 \
     if (party->encounterSteps >= work->threshold * 9 / 10) {                   \
-      if (Random16Far() < 0x8000) {                                            \
+      if (Random16() < 0x8000) {                                            \
         Event_RequestDjinnBattle(a, b);                                        \
         work->bias = 0;                                                        \
       } else {                                                                 \
@@ -84,7 +84,7 @@ extern s32 Data_02006be8[8];
     work = Ram_HeapSlots->eventWork;                                           \
     if (party->renderMode == 1) {                                              \
       if (party->encounterSteps >= work->threshold * 9 / 10) {                 \
-        if (Random16Far() < 0x8000) {                                          \
+        if (Random16() < 0x8000) {                                          \
           Event_RequestDjinnBattle(a, b);                                      \
           work->bias = 0;                                                      \
         } else {                                                               \
@@ -355,7 +355,7 @@ void WorldMap_LeaveShip(void) {
   position[0] = ship->x;
   position[1] = ship->y;
   position[2] = ship->z;
-  Vector_AddPolarOffsetFar(0x180000, ship->facing, position);
+  Vector_AddPolarOffset(0x180000, ship->facing, position);
   blocked = 0;
   block = blocks + ((((position[0] / 0x200000) & 31) +
                      ((position[2] / 0x200000) & 31) * 32) *
@@ -532,7 +532,7 @@ void WorldMap_RefuseToRunAway(void) {
 
 /// ★ Named from the game: " gazed into the pond..." (MsgGazedIntoThe)
 void WorldMap_GazeIntoPond(void) {
-  u32 roll = (Random16Far() << 4) >> 16;
+  u32 roll = (Random16() << 4) >> 16;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -542,7 +542,7 @@ void WorldMap_GazeIntoPond(void) {
     s32 slot = 79;
     struct Actor *leader = Actor_Get(FieldParty_GetLeaderActor());
     u8 *unit = Unit_Get(gMainRoutineWork.currentOwner);
-    s32 amount = (((unit[15] * Random16Far()) << 1) >> 16) + 0x8001;
+    s32 amount = (((unit[15] * Random16()) << 1) >> 16) + 0x8001;
     s32 position[3];
     s32 x;
     /* FAKEMATCH(pin): object in r6, which leaves r7 to the amount; as a plain
@@ -1445,12 +1445,12 @@ void Func_02002594(void) {
   s32 z;
   s32 scale;
 
-  x = ((Random16Far() * 40) >> 16) << 16;
-  z = ((Random16Far() * 30) >> 16) << 16;
+  x = ((Random16() * 40) >> 16) << 16;
+  z = ((Random16() * 30) >> 16) << 16;
   obj = (FieldActor_Create(285, x + 0x7b80000, 0, z + 0x1c5c0000));
   if (obj != NULL) {
     sprite = obj->sprite;
-    scale = ((Random16Far() << 15) >> 16) + 0x13333;
+    scale = ((Random16() << 15) >> 16) + 0x13333;
     sprite->nextFrame = 0;
     sprite->priority = 2;
     // The flags byte's address in a local: stored directly, 2 of 53 differ.
@@ -1576,13 +1576,13 @@ void Func_020028cc(void) {
   obj->scaleX = Q16_ONE / 2;
   obj->scaleY = Q16_ONE / 2;
   spr = obj->sprite;
-  if ((Random16Far() * 2) >> 16) {
-    s32 back = ((Random16Far() * 48) >> 16) << 16;
+  if ((Random16() * 2) >> 16) {
+    s32 back = ((Random16() * 48) >> 16) << 16;
 
     obj->x -= back >> 1;
     obj->z -= back;
   } else {
-    value = ((Random16Far() << 5) >> 16) << 16;
+    value = ((Random16() << 5) >> 16) << 16;
     obj->x += value;
     value = (s32)value >> 1;
     obj->z += value;
@@ -1948,8 +1948,8 @@ void WorldMap_TakeOff(void) {
 }
 
 s32 Func_02003418(struct Actor *object) {
-  if (Random16Far() < 0x4000)
-    Actor_SetSpriteColorMode(object, Random16Far() * 8 >> 16);
+  if (Random16() < 0x4000)
+    Actor_SetSpriteColorMode(object, Random16() * 8 >> 16);
   return 0;
 }
 

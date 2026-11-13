@@ -58,8 +58,8 @@ loop:
     velocity[1] = 0;
     velocity[2] = Math_Sin(angle);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;
-    velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
+    velocity[0] += (Random16() * 0xc000 >> 16) - 0x6000;
+    velocity[2] += (Random16() * 0x6000 >> 16) - 0x3000;
     FieldEffect_Spawn(actor->x, actor->y, actor->z, velocity[0], velocity[1],
                       velocity[2], 0x1090001, &options);
   }

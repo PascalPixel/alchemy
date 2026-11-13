@@ -30,7 +30,6 @@ void GameFlag_Clear(s32 flag);
 void FieldMessage_Show(s32 message, s32 position);
 void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
 void Actor_SetWideSprite(s32 actor, s32 value);
-void Task_RemoveFar(TaskFunc func);
 void FieldPsynergy_RunHandler(s32 type);
 
 void YampiDesert_StepOntoStakeTops(void);

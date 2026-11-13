@@ -26,8 +26,8 @@ void Func_02000038(struct Actor *object) {
   if (*timer != 0) {
     (*timer)--;
   } else {
-    *timer = (((u32)Random16Far() * 80) >> 16) + 60;
-    object->facing = Random16Far();
+    *timer = (((u32)Random16() * 80) >> 16) + 60;
+    object->facing = Random16();
   }
 }
 
@@ -52,7 +52,7 @@ void Func_0200008c(struct Actor *object) {
   if (*timer != 0) {
     (*timer)--;
   } else {
-    u32 r = Random16Far();
+    u32 r = Random16();
 
     *timer = *timer + ((((r << 2) + r) * 16) >> 16) + 40;
     object->scaleX = 0x12000;
@@ -238,7 +238,7 @@ void Func_020005a0(struct Actor *object);
 
 void Func_020004a4(void) {
   struct Actor *anchor = Actor_Get(8);
-  s32 offset = (Random16Far() * 48 >> 16) << 16;
+  s32 offset = (Random16() * 48 >> 16) << 16;
   struct Actor *object;
   struct MarsLighthouseAerieSprite *sprite;
   u32 phase;
@@ -256,9 +256,9 @@ void Func_020004a4(void) {
       object->motionFlags = phase;
       {
         /* FAKEMATCH(temporary): the masked value held in a local; as
-         * object->action = Random16Far() & 0x0ffff000, 45 of 103 instructions
+         * object->action = Random16() & 0x0ffff000, 45 of 103 instructions
          * differ in tla-en. */
-        s32 action = Random16Far() & 0x0ffff000;
+        s32 action = Random16() & 0x0ffff000;
 
         object->timer = action;
       }
@@ -299,7 +299,7 @@ void Func_02000610(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   FieldActor_Stop(id);
-  object->unk5c[6] = (((u32)Random16Far() * 40) >> 16) + 20;
+  object->unk5c[6] = (((u32)Random16() * 40) >> 16) + 20;
   object->update = (void (*)(void))Func_02000038;
 }
 
@@ -407,7 +407,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Event_ShowMessage(3, 0);
   t48 = gMainRoutineWork.currentOwner;
   FieldActor_Stop(t48);
-  t50 = Random16Far();
+  t50 = Random16();
   FIELD_AT(actor, u8, 98) = (((u32)(((t50 << 2) + t50) << 2) >> 16) + 20);
   FIELD_AT(actor, s32, 108) = (s32)Func_02000038;
   Func_02000610(1);
@@ -1221,11 +1221,11 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FieldActor_SetSpriteColor((Actor_Get(31)), 0);
   FieldActor_SetSpriteColor((Actor_Get(32)), 0);
   FieldEvent_Wait(20);
-  t85 = Random16Far();
+  t85 = Random16();
   FIELD_AT(t1, u8, 98) = (((u32)(((t85 << 2) + t85) << 4) >> 16) + 40);
-  t86 = Random16Far();
+  t86 = Random16();
   FIELD_AT(t2, u8, 98) = (((u32)(((t86 << 2) + t86) << 4) >> 16) + 40);
-  t87 = Random16Far();
+  t87 = Random16();
   FIELD_AT((spill), u8, 98) = (((u32)(((t87 << 2) + t87) << 4) >> 16) + 40);
   FIELD_AT(t1, s32, 108) = (s32)Func_0200008c;
   FIELD_AT(t2, s32, 108) = (s32)Func_0200008c;

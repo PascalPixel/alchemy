@@ -261,18 +261,18 @@ void Func_02000708(struct TundariaTowerPosition *position, s32 count,
   for (i = 0; i != count; i++) {
     s32 mask;
 
-    options.rotation = (Random16Far() & 15) << 12;
-    velocityX = Random16Far();
+    options.rotation = (Random16() & 15) << 12;
+    velocityX = Random16();
     // One constant for the loop's life: the listing keeps 15 in a register.
     mask = 15;
     velocityX &= mask;
     velocityX -= 8;
     velocityX <<= 14;
-    velocityY = Random16Far() & mask;
+    velocityY = Random16() & mask;
     velocityY += 8;
     velocityY <<= 14;
-    x = position->x - ((Random16Far() & 31) << 16) + 0xf0000;
-    Func_020000b8(x, position->y + ((Random16Far() & mask) << 16), position->z,
+    x = position->x - ((Random16() & 31) << 16) + 0xf0000;
+    Func_020000b8(x, position->y + ((Random16() & mask) << 16), position->z,
                   velocityX, velocityY, 0, 0x15e0000, &options);
   }
 }
@@ -310,9 +310,9 @@ void Func_02000840(struct Actor *object) {
       // The mask, named where it is declared, is built before the draw.
       s32 mask = 15;
 
-      dx = mask & Random16Far();
+      dx = mask & Random16();
     }
-    dy = Random16Far() & 7;
+    dy = Random16() & 7;
     params.type = 673;
     Func_020000b8(object->x + ((dx - 8) << 16), object->y + ((dy - 8) << 16),
                   object->z, 0, 0x8000, phase, 0x100000, &params);
@@ -395,8 +395,8 @@ void Func_02000a48(s32 arg0, s32 arg1) {
     options.priority = 0;
     options.targetScaleY = 0x8000;
     options.targetScaleX = 0x8000;
-    options.rotation = (Random16Far() & 15) << 12;
-    velocityX = ((Random16Far() & 15) - 8) << 13;
+    options.rotation = (Random16() & 15) << 12;
+    velocityX = ((Random16() & 15) - 8) << 13;
     Func_020000b8(object->x, object->y - ((arg1 * 3) << 16) + 0x100000,
                   object->z, velocityX, 0, 0, 0x5a0000, &options);
     object->scaleY -= 7936;
@@ -591,7 +591,7 @@ void Func_02000fac(void) { Event_ResolvePendingActions(0); }
 void Func_02000fb8(s32 mode, s32 cue) {
   if (cue == 0) {
     Func_02002e00();
-    Task_RemoveFar(Func_0200137c);
+    Task_Remove(Func_0200137c);
   }
   if (mode == 1) {
     MapGrid_CopyCellPictureIndicesRect(13, 26, 13, 16, 3, 3);

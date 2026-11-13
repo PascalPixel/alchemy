@@ -6,10 +6,10 @@
 	.thumb_func
 Task_Add:
 	overlay_veneer Task_AddFar
-	.global Vector_AddPolarOffsetFar
+	.global Vector_AddPolarOffset
 	.thumb_func
-Vector_AddPolarOffsetFar:
-	overlay_veneer Func_08000128
+Vector_AddPolarOffset:
+	overlay_veneer Vector_AddPolarOffsetFar
 	.global GameFlag_Get
 	.thumb_func
 GameFlag_Get:

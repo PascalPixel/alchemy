@@ -534,9 +534,9 @@ s32 Func_02000de0(struct Actor *object) {
     spark.startScaleX = 0xb333;
     spark.startScaleY = 0xb333;
     spark.palette = 14;
-    x = object->x + (((((u32)Random16Far() * 9) >> 16) - 4) << 16);
-    y = object->y + ((32 - (((u32)Random16Far() * 20) >> 16)) << 16);
-    speed = (s32)(((((u32)Random16Far() * 5) >> 16) << 16) + 0x50000) / 10;
+    x = object->x + (((((u32)Random16() * 9) >> 16) - 4) << 16);
+    y = object->y + ((32 - (((u32)Random16() * 20) >> 16)) << 16);
+    speed = (s32)(((((u32)Random16() * 5) >> 16) << 16) + 0x50000) / 10;
     FieldEffect_Spawn(x, y, object->z, 0, speed, frame, 0xb0000, &spark);
   }
   return 0;
@@ -741,12 +741,12 @@ void Func_02001080(void) {
         spark->position[2] = work->pointB[2];
       }
       if (work->still == 0) {
-        spark->position[1] += Trig_Sin(Random16Far()) << 3;
+        spark->position[1] += Trig_Sin(Random16()) << 3;
         spark->drift = 0x4ccc;
       } else {
-        spark->position[1] += Trig_Sin(Random16Far()) << 1;
-        spark->position[0] += Trig_Cos(Random16Far()) * 10;
-        spark->drift = (Random16Far() - 0x8000) << 1;
+        spark->position[1] += Trig_Sin(Random16()) << 1;
+        spark->position[0] += Trig_Cos(Random16()) * 10;
+        spark->drift = (Random16() - 0x8000) << 1;
       }
     }
     if (spark->age <= 15) {

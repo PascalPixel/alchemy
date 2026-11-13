@@ -94,14 +94,14 @@ const u8 *Scene_GetEvents(void) {
 }
 
 void Func_0200015c(struct Actor *object) {
-  if (Random16Far() & 0xff) {
+  if (Random16() & 0xff) {
     s32 position[3];
     s32 radius;
     s32 angle;
 
     SET_VECTOR(position, 200 << 16, -32 << 16, 164 << 16);
-    radius = Random16Far();
-    angle = Random16Far();
+    radius = Random16();
+    angle = Random16();
     FieldVector_AddPolarOffset((radius << 5) + 0x80000, angle, position);
     SET_POSITION(object, position[0], position[1], position[2]);
   }

@@ -51,6 +51,6 @@ static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {
 static inline void System_Wait(s32 frames) { wait(frames); }
 
 /// Task_Remove, from an overlay.
-static inline void FieldTask_Remove(TaskFunc func) { Task_RemoveFar(func); }
+static inline void FieldTask_Remove(TaskFunc func) { Task_Remove(func); }
 
 #endif

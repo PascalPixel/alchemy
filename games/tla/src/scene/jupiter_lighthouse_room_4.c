@@ -226,10 +226,10 @@ void JupiterLighthouse_SpawnCirclingMotes(void) {
     object = (FieldActor_Create(672, 0, 0, 0));
     object->motionFlags = 0;
     object->priorityFlags = 0;
-    object->speedLimit = (Random16Far() << 2) + 0x60000;
-    object->acceleration = ((Random16Far() << 11) >> 16) + 0x800;
+    object->speedLimit = (Random16() << 2) + 0x60000;
+    object->acceleration = ((Random16() << 11) >> 16) + 0x800;
     object->update = (void (*)(void))JupiterLighthouse_CircleTheMote;
-    object->timer = Random16Far();
+    object->timer = Random16();
     object->unk66 = phase;
     Actor_SetSpriteFlags(object, 0);
     FieldActor_SetSpriteColor(object, 2);
@@ -376,9 +376,9 @@ UNUSED s32 Actor_EmitRisingSparks(struct Actor *object) {
     options.startScaleX = 0xb333;
     options.startScaleY = 0xb333;
     options.palette = 14;
-    x = object->x + ((((Random16Far() * 9) >> 16) - 4) << 16);
-    y = object->y + ((32 - ((Random16Far() * 20) >> 16)) << 16);
-    velocityY = (s32)(((((Random16Far() * 5) >> 16) << 16) + 0x50000)) / 10;
+    x = object->x + ((((Random16() * 9) >> 16) - 4) << 16);
+    y = object->y + ((32 - ((Random16() * 20) >> 16)) << 16);
+    velocityY = (s32)(((((Random16() * 5) >> 16) << 16) + 0x50000)) / 10;
     FieldEffect_Spawn(x, y, object->z, 0, velocityY, 0,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_START_SCALE,

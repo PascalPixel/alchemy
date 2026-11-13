@@ -11,7 +11,7 @@
 
 struct Trigger;
 
-u32 Random16Far(void);
+u32 Random16(void);
 void Func_02000038(struct Actor *object);
 void Func_02004d24(s32 id);
 void Func_02004d50(s32 id);

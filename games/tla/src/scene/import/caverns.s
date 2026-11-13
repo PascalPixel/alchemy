@@ -10,10 +10,10 @@ __divsi3:
 	.thumb_func
 wait:
 	overlay_veneer waitFar
-	.global Random16Far
+	.global Random16
 	.thumb_func
-Random16Far:
-	overlay_veneer Func_080000f8
+Random16:
+	overlay_veneer Random16Far
 	.global Trig_Sin
 	.thumb_func
 Trig_Sin:
@@ -22,10 +22,10 @@ Trig_Sin:
 	.thumb_func
 Trig_Cos:
 	overlay_veneer Trig_CosFar
-	.global Vector_AddPolarOffsetFar
+	.global Vector_AddPolarOffset
 	.thumb_func
-Vector_AddPolarOffsetFar:
-	overlay_veneer Func_08000128
+Vector_AddPolarOffset:
+	overlay_veneer Vector_AddPolarOffsetFar
 	.global GameFlag_Get
 	.thumb_func
 GameFlag_Get:

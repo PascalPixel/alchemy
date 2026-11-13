@@ -228,8 +228,8 @@ stop:
       options.priority = 1;
       options.update = (void (*)(union FieldObject *))MagmaRock_DriftAndSlow;
       options.script = (const s32 *)gMagmaRock_EmberScript;
-      dx = Random16Far() & 31;
-      dz = Random16Far() & 31;
+      dx = Random16() & 31;
+      dz = Random16() & 31;
       FieldEffect_Spawn(position[0], position[1], position[2], (dx - 16) << 13,
                         (dz - 16) << 13, parity, 0x1320000, &options);
     }
@@ -405,7 +405,7 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
     config.unk24 = MagmaRock_DriftAndSlow;
     config.data = gMagmaRock_EmberScript;
     FieldEffect_Spawn(object->effect.x + 0x10000, object->effect.y - 0x40000,
-                      object->effect.z, ((Random16Far() & mask) - 3) << 14,
+                      object->effect.z, ((Random16() & mask) - 3) << 14,
                       -0x20000, step, 0x1330000, &config);
   }
   MagmaRock_SetCellShape(watched->terrainId, watched->x >> 20, watched->z >> 20,
@@ -469,8 +469,8 @@ void MagmaRock_BurnStatue(struct Actor *object) {
       config.kind = 2;
       config.unk24 = MagmaRock_DriftAndSlow;
       config.data = gMagmaRock_EmberScript;
-      dx = Random16Far() & 15;
-      dz = Random16Far() & 15;
+      dx = Random16() & 15;
+      dz = Random16() & 15;
       FieldEffect_Spawn(object->x + 0x10000, object->y + 0x180000, object->z,
                         (dx - 8) << 14, 0, (dz - 8) << 14, 0x1330000, &config);
     }
@@ -680,12 +680,12 @@ void MagmaRock_AmplifyBurst(void) {
   i = 0;
 first:
   {
-    s32 r = Random16Far();
+    s32 r = Random16();
 
     offset = position;
     offset[0] = ((r & 15) << 16) - 0x80000;
   }
-  offset[1] = (Random16Far() & 15) << 16;
+  offset[1] = (Random16() & 15) << 16;
   FieldEffect_Spawn(leader->x + offset[0], leader->y + offset[1], leader->z, 0,
                     0x13333, 0, 0xb0000, opt);
   wait(5);
@@ -703,8 +703,8 @@ first:
 second:
   phase = gFrameCount & 1;
   if (phase == 0) {
-    offset[0] = ((Random16Far() & 15) << 16) - 0x80000;
-    offset[1] = (Random16Far() & 15) << 16;
+    offset[0] = ((Random16() & 15) << 16) - 0x80000;
+    offset[1] = (Random16() & 15) << 16;
     FieldEffect_Spawn(leader->x + offset[0], leader->y + offset[1], leader->z,
                       0, 0x13333, phase, 0xb0000, opt);
   }
@@ -836,9 +836,9 @@ void MagmaRock_ScatterEmbers(s32 x, s32 z) {
   config.kind = kind;
   i = 0;
 loop:
-  position[0] = x + ((Random16Far() & 63) << 16) - Q16_ONE * 32;
-  position[1] = (Random16Far() & 15) << 12;
-  position[2] = z + ((Random16Far() & 63) << 16) - Q16_ONE * 32;
+  position[0] = x + ((Random16() & 63) << 16) - Q16_ONE * 32;
+  position[1] = (Random16() & 15) << 12;
+  position[2] = z + ((Random16() & 63) << 16) - Q16_ONE * 32;
   FieldEffect_Spawn(position[0], 0, position[2], 0, position[1], 0, 0x3a0001,
                     &config);
   i++;

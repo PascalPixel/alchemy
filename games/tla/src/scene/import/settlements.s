@@ -14,10 +14,10 @@ wait:
 	.thumb_func
 Task_Add:
 	overlay_veneer Task_AddFar
-	.global Random16Far
+	.global Random16
 	.thumb_func
-Random16Far:
-	overlay_veneer Func_080000f8
+Random16:
+	overlay_veneer Random16Far
 	.global ArcTan2
 	.thumb_func
 ArcTan2:
@@ -30,18 +30,18 @@ Trig_Sin:
 	.thumb_func
 Trig_Cos:
 	overlay_veneer Trig_CosFar
-	.global Vector_AddPolarOffsetFar
+	.global Vector_AddPolarOffset
 	.thumb_func
-Vector_AddPolarOffsetFar:
-	overlay_veneer Func_08000128
+Vector_AddPolarOffset:
+	overlay_veneer Vector_AddPolarOffsetFar
 	.global Irq_SetHandler
 	.thumb_func
 Irq_SetHandler:
 	overlay_veneer Irq_SetHandlerFar
-	.global HeapSlot_AllocFar
+	.global HeapSlot_Alloc
 	.thumb_func
-HeapSlot_AllocFar:
-	overlay_veneer Func_08000140
+HeapSlot_Alloc:
+	overlay_veneer HeapSlot_AllocFar
 	.global HeapSlot_Release
 	.thumb_func
 HeapSlot_Release:

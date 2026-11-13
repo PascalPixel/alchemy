@@ -281,7 +281,7 @@ void Func_02000474(struct OrbitEffect *effect) {
   s32 dx;
   s32 dz;
 
-  radius = Random16Far() + 0x20000;
+  radius = Random16() + 0x20000;
   angle = effect->angle;
   dx = Iwram_MulQ16(radius, Trig_Cos(angle));
   dz = Iwram_MulQ16(radius, Math_Sin(angle));
@@ -291,8 +291,8 @@ void Func_02000474(struct OrbitEffect *effect) {
   if (effect->pause != 0) {
     effect->pause--;
     effect->angle += 0x800;
-  } else if ((Random16Far() << 5) >> 16 == 0) {
-    effect->pause = ((Random16Far() << 4) >> 16) + 8;
+  } else if ((Random16() << 5) >> 16 == 0) {
+    effect->pause = ((Random16() << 4) >> 16) + 8;
   }
   if (++effect->timer == 71)
     Actor_StartScript((struct Actor *)effect, gData_020015c0);
@@ -313,8 +313,8 @@ loop:
     position[0] = source->x;
     position[1] = source->y + i * 0xcccc + 0x40000;
     position[2] = source->z;
-    radius = Random16Far();
-    FieldVector_AddPolarOffset(radius * 5 + 0x30000, Random16Far(), position);
+    radius = Random16();
+    FieldVector_AddPolarOffset(radius * 5 + 0x30000, Random16(), position);
     effect = (struct OrbitEffect *)Value4(
         (s32 (*)())Actor_Spawn, 308, position[0], position[1], position[2]);
     if (effect != NULL) {
@@ -323,7 +323,7 @@ loop:
       effect->pause = 0;
       effect->speed = 0x1999;
       effect->scale = 0x30000;
-      effect->angle = Random16Far();
+      effect->angle = Random16();
       effect->priorityFlags = 0;
       Actor_SetSpritePriorityDirect((struct Actor *)effect, 2);
     }
@@ -573,9 +573,9 @@ dust:
       s32 scale;
 
       Actor_StartScript(dust, gData_02001688);
-      angle = Random16Far();
-      speed = Random16Far();
-      size = Random16Far();
+      angle = Random16();
+      speed = Random16();
+      size = Random16();
       scale = (size >> 1) + 0x2000;
       dust->velocityY = Iwram_MulQ16(speed * 8, Trig_Cos(angle));
       dust->velocityX = Iwram_MulQ16(speed * 8, Math_Sin(angle));

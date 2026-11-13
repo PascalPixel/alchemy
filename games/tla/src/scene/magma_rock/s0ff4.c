@@ -144,7 +144,7 @@ void Func_020011b8(struct Actor *object) {
 s32 Trig_Cos(s32 angle);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-s32 Func_020005a0(s32 *a, s32 *b);
+s32 Position_FlatDistance(s32 *a, s32 *b);
 // XXX: magma_rock.c defines this with an s16 value; this call matches only with
 // u16. A match of magma_rock.c's Func_02000c08 under u16 would settle which the
 // game declares.
@@ -195,7 +195,7 @@ s32 Func_020011e4(struct Actor *source) {
           source->y >> 20 == other->y >> 20 &&
           source->z >> 20 == other->z >> 20)
         continue;
-      if (Func_020005a0(&other->x, position) > 8)
+      if (Position_FlatDistance(&other->x, position) > 8)
         continue;
       if (other->y >> 20 != position[1] >> 20)
         continue;
@@ -729,7 +729,7 @@ second:
 void Func_0200074c(struct Actor *object);
 void Func_020005cc(s32 layer, s32 x, s32 z, s32 height);
 void Func_020003b4(void);
-void Func_020006cc(s16 *ids);
+void Blocks_MarkCells(s16 *ids);
 
 void Func_02001e08(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -759,7 +759,7 @@ void Func_02001e08(void) {
   MapGrid_CopyCellAttributes(79, 37, 2, 1, 79, 36);
   Func_020005cc(*terrainId, object->x >> 20, object->z >> 20,
                 (object->terrainHeight >> 19) + 4);
-  Func_020006cc(gData_02003de4);
+  Blocks_MarkCells(gData_02003de4);
   cell[0] = object->x >> 20;
   cell[2] = object->z >> 20;
   if (cell[0] == 16 && cell[2] == 36)
@@ -793,7 +793,7 @@ void Func_02001edc(void) {
   MapGrid_CopyCellAttributes(99, 42, 5, 1, 99, 38);
   Func_020005cc(*terrainId, object->x >> 20, object->z >> 20,
                 (object->terrainHeight >> 19) + 4);
-  Func_020006cc(gData_02003de8);
+  Blocks_MarkCells(gData_02003de8);
   position[0] = object->x >> 20;
   position[2] = object->z >> 20;
   if (position[0] == 35 && position[2] == 38)

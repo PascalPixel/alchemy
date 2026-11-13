@@ -132,7 +132,7 @@ end:
 void Func_02000280(void);
 void Func_020002a0(void);
 void Func_020002b0(void);
-void Func_020002bc(void);
+void Actor_Bob(void);
 void Settlements_WarnOfRiddleOfRock(void);
 void Func_020005cc(void);
 void Func_02000644(void);
@@ -206,7 +206,7 @@ u32 gData_0200231c[] = {
 
 s32 gData_0200232c[] = {
     46,
-    (s32)Func_020002bc,
+    (s32)Actor_Bob,
     17,
 };
 

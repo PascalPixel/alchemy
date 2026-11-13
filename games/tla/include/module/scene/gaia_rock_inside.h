@@ -180,7 +180,7 @@ void Func_020012ac(void);
 void Func_02001d14(void);
 void Func_02001ebc(void);
 
-void Func_02001f68(void);
+void Leader_SetLayerByte(void);
 
 void Func_02001f84(void);
 void Func_02001fa0(void);

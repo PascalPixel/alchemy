@@ -17,7 +17,7 @@ void Func_02004d24(s32 id);
 void Func_02004d50(s32 id);
 void Func_02004fac(void);
 void Func_02005010(void);
-void Func_020050b0(void);
+void PaletteCycle_Fade(void);
 void Func_020057cc(void);
 
 extern u8 MsgUhhhhnnnICan[];
@@ -45,6 +45,6 @@ struct MarsLighthouseAerieParty {
   s16 held;
 };
 
-s32 Func_0200508c(u16 *list);
+s32 List_CountEntries(u16 *list);
 
 #endif

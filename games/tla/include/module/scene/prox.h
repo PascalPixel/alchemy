@@ -46,7 +46,7 @@ extern u32 gData_0200617c[];
 extern u32 gData_020061fc[];
 extern u32 gData_0200622c[];
 void Func_020038e8(void);
-void Func_02004114(void);
+void Particles_UpdateFalling(void);
 
 void Func_02000290(void);
 

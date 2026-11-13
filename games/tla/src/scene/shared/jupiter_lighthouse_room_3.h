@@ -33,8 +33,8 @@ void Func_02002468(s32 id);
 void Func_02000054(struct Actor *object);
 void Func_02000404(void);
 void Func_02000c78(s32 id);
-s32 Func_02000dcc(struct PushedBlock *block);
-void Func_02001050(struct PushedBlock block);
+s32 PushTarget_FindSlide(struct PushedBlock *block);
+void PushTarget_PushFill(struct PushedBlock block);
 
 extern s32 gData_02002cc0;
 extern s32 gData_02002cc4;

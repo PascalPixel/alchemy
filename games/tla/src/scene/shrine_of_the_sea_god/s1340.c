@@ -901,11 +901,11 @@ struct ShrineOfTheSeaGodObject *Func_02002f88(s32 id) {
   return object;
 }
 
-DEFINE_ACTOR_HIDE(Func_02002fb0, Func_02003aa0)
+DEFINE_ACTOR_HIDE(Actor_Hide, Func_02003aa0)
 
-DEFINE_SCENE_RUN_UNLESS_FLAG(Func_02002fe0, 0x208, Func_0200123c)
+DEFINE_SCENE_RUN_UNLESS_FLAG(Scene_RunUnlessFlag, 0x208, Func_0200123c)
 
-DEFINE_ACTORS_FOR_RANGE(Func_0200300c, 2, Func_02002fb0, 9, Func_02002fe0)
+DEFINE_ACTORS_FOR_RANGE(Func_0200300c, 2, Actor_Hide, 9, Scene_RunUnlessFlag)
 
 void Func_02003024(void) {
   const struct ShrineOfTheSeaGodSpot *spot = gData_02003cc0;

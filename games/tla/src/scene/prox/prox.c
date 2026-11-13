@@ -250,7 +250,7 @@ void Prox_AskAboutIgloos(void) {
   Func_0200446c();
 }
 
-DEFINE_LEADER_IS_FACING_NORTH(Func_02000644)
+DEFINE_LEADER_IS_FACING_NORTH(Leader_IsFacingNorth)
 
 /// ★ Named from the game: ", your parents have gone away... They were very
 /// worried about you." (MsgProx56)
@@ -258,7 +258,7 @@ void Prox_TalkAboutParents(void) {
   s32 t0;
   s32 t4;
 
-  t0 = Func_02000644();
+  t0 = Leader_IsFacingNorth();
   if (t0 != 0) {
     Inn_CheckIn(0xe, 0x16);
   } else {
@@ -283,7 +283,7 @@ void Prox_PraiseReturnedWarrior(void) {
   s32 t0;
   s32 t4;
 
-  t0 = Func_02000644();
+  t0 = Leader_IsFacingNorth();
   if (t0 != 0) {
     Shop_Run(0x1f, 0xa);
   } else {
@@ -308,7 +308,7 @@ void Prox_FearForWeyard(void) {
   s32 t0;
   s32 t4;
 
-  t0 = Func_02000644();
+  t0 = Leader_IsFacingNorth();
   if (t0 != 0) {
     Sanctum_Run(8);
   } else {
@@ -2014,7 +2014,7 @@ struct ParticleWork {
 void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite, struct Particle *particle);
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_PARTICLES_UPDATE_FALLING(Func_02004114, EffectSprite_DrawAtWorldPosition)
+DEFINE_PARTICLES_UPDATE_FALLING(Particles_UpdateFalling, EffectSprite_DrawAtWorldPosition)
 
 /// One falling rock: where it is, how it moves and how long it has fallen.
 struct Rock {
@@ -2049,7 +2049,7 @@ struct RockWork {
 
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
-DEFINE_ROCKS_SPAWN(Func_02004198)
+DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 #undef FIELD_AT
 
 // ---- games/tla/src/scene/prox/s4254.c ----
@@ -2110,7 +2110,7 @@ void Func_02004254(void) {
 
     work->next = zero;
   }
-  FieldTask_AddFrame(Func_02004114, 0x480);
+  FieldTask_AddFrame(Particles_UpdateFalling, 0x480);
 }
 
 struct SparkWork {
@@ -2121,7 +2121,7 @@ struct SparkWork {
 void Func_02004310(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
 
-  FieldTask_Remove(Func_02004114);
+  FieldTask_Remove(Particles_UpdateFalling);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(220);
 }

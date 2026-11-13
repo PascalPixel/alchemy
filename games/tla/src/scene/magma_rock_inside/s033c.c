@@ -4,6 +4,6 @@
 #include "../shared/actors.h"
 #include "../magma_rock_inside.h"
 
-DEFINE_POSITION_DISTANCE(Func_0200033c)
+DEFINE_POSITION_DISTANCE(Position_Distance)
 
 #include "../../field/object/find_in_cell.c"

@@ -83,7 +83,7 @@ loop:
   Func_02003af4();
 }
 
-DEFINE_LEADER_LIFT(Func_0200244c)
+DEFINE_LEADER_LIFT(Leader_Lift)
 
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
@@ -180,7 +180,7 @@ void Func_02002518(u16 id) {
 
 s32 Func_02000668();
 void Func_02000ee4();
-s32 Func_020006cc();
+s32 Blocks_MarkCells();
 void Func_0200079c();
 
 s32 Scene_Initialize(void) {
@@ -218,7 +218,7 @@ s32 Scene_Initialize(void) {
     Func_02003c0c(other);
     MapGrid_CopyCellAttributes(98, 21, 4, 3, value2, 21);
     MapGrid_CopyCellAttributes(98, 27, 4, 3, value2, 24);
-    Func_020006cc(other);
+    Blocks_MarkCells(other);
     if (Event_GetFlag(0x109) == 0) {
       actor = Actor_GetById(20);
       actor->x += 0x10000;
@@ -255,13 +255,13 @@ s32 Scene_Initialize(void) {
           actor = Actor_GetById(*owner);
           actor->z += 0x100000;
         }
-        Call1((void (*)())Func_0200244c, -0x100000);
+        Call1((void (*)())Leader_Lift, -0x100000);
       } else if (id == 2) {
         if (Event_GetFlag(0x109) == 0) {
           actor = Actor_GetById(*owner);
           actor->z += 0x100000;
         }
-        Call1((void (*)())Func_0200244c, -0x600000);
+        Call1((void (*)())Leader_Lift, -0x600000);
       }
     } else {
       if (*entrance <= 8) {
@@ -311,7 +311,7 @@ s32 Scene_Initialize(void) {
         Call1((void (*)())Func_02002518, 18);
         id = *entrance;
         if (id == 5) {
-          Call1((void (*)())Func_0200244c, 0x1200000);
+          Call1((void (*)())Leader_Lift, 0x1200000);
         } else if (id == 6) {
           if (Event_GetFlag(0x109) == 0)
             Func_020022ac();
@@ -320,7 +320,7 @@ s32 Scene_Initialize(void) {
             actor = Actor_GetById(*owner);
             actor->z += 0x100000;
           }
-          Call1((void (*)())Func_0200244c, -0x300000);
+          Call1((void (*)())Leader_Lift, -0x300000);
         } else if (id == 8) {
           offset = 0x680000;
           goto move;
@@ -330,7 +330,7 @@ s32 Scene_Initialize(void) {
           Actor_SetPosition(8, 0x1080000, 0x2480000);
         rise = (s32)gData_02003de4;
         Func_02003c0c(rise);
-        Func_020006cc(rise);
+        Blocks_MarkCells(rise);
         Func_02003be4();
         Call4((void (*)())Func_02003bfc, 0, 0x250, 14, 13);
         Func_02000668(gData_02003dd6);
@@ -379,7 +379,7 @@ s32 Scene_Initialize(void) {
         if (Event_GetFlag(0x252))
           MapGrid_CopyCellAttributes(108, 56, 1, 3, 109, 56);
         if (*entrance == 14) {
-          Call1((void (*)())Func_0200244c, 0x300000);
+          Call1((void (*)())Leader_Lift, 0x300000);
         } else if (*entrance == 16 || *entrance == 17) {
           if (Event_GetFlag(0x109) == 0) {
             actor = Actor_GetById(work->currentOwner);
@@ -387,7 +387,7 @@ s32 Scene_Initialize(void) {
           }
           offset = -0x200000;
         move:
-          Func_0200244c(offset);
+          Leader_Lift(offset);
         }
       }
     settle:
@@ -412,7 +412,7 @@ s32 Scene_Initialize(void) {
         actor = Actor_GetById(*leader);
         actor->z += 0x100000;
       }
-      Call1((void (*)())Func_0200244c, -0x200000);
+      Call1((void (*)())Leader_Lift, -0x200000);
     }
   }
   return 0;

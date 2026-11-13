@@ -51,7 +51,7 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 s32 Func_020027ac(s32 index, s32 value);
 s32 Func_020027dc(s32 index);
-s32 Func_02004a8c(struct PushTarget *target);
+s32 PushTarget_FindSlide(struct PushTarget *target);
 void Func_02004d10(struct PushTarget target);
 void Actor_StartScript(struct Actor *object, const void *script);
 void FieldCamera_WaitForArrival(void);

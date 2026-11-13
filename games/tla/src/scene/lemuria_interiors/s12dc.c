@@ -19,9 +19,9 @@
 
 void Func_0200128c();
 
-DEFINE_ACTOR_EMIT_NOTES(Func_020012dc, Func_0200128c)
+DEFINE_ACTOR_EMIT_NOTES(Actor_EmitNotes, Func_0200128c)
 
-DEFINE_ACTOR_CYCLE_PICTURES(Func_02001398)
+DEFINE_ACTOR_CYCLE_PICTURES(Actor_CyclePictures)
 
 void Event_Start();
 void Event_End();
@@ -194,7 +194,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_ShowMessageThenWait(5, 0, 10);
   Actor_FaceDirection(18, FACING_SOUTH + FACING_STEP, 0);
   Event_Wait(30);
-  Func_020012dc(18);
+  Actor_EmitNotes(18);
   Event_PlaySound(151);
   Actor_ShowEmote(18, 0x101, 50);
   Actor_FaceDirection(18, FACING_NORTHWEST + FACING_STEP, 0);
@@ -484,7 +484,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_Jump(18, 6, 23);
   object = Actor_GetById(18);
   object->timer = 0;
-  object->update = (void (*)(void))Func_02001398;
+  object->update = (void (*)(void))Actor_CyclePictures;
   FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
   Actor_SetSpeed(18, 0x23333, 0x11999);
   Actor_WalkByAndWait(18, 0, 32);

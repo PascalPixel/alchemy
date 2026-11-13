@@ -33,7 +33,7 @@
 
 DEFINE_POSITION_DISTANCE(Func_02000038)
 
-DEFINE_ACTOR_IS_FACING_NEAR(Func_02000070, Func_02000038)
+DEFINE_ACTOR_IS_FACING_NEAR(Actor_IsFacingNear, Func_02000038)
 
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
@@ -58,9 +58,9 @@ s32 Func_020000e8(struct Actor *self) {
   other = Actor_Get(gMainRoutineWork.currentOwner);
   if (Func_02000038(&self->x, &other->x) <= 11)
     goto far;
-  if (Func_02000070(self, self->watchedObject, 18) != 0)
+  if (Actor_IsFacingNear(self, self->watchedObject, 18) != 0)
     goto near;
-  if (Func_02000070(self, Actor_Get(gMainRoutineWork.currentOwner), 26) != 0)
+  if (Actor_IsFacingNear(self, Actor_Get(gMainRoutineWork.currentOwner), 26) != 0)
     goto near;
 far:
   *state = 0;

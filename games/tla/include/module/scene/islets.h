@@ -24,7 +24,7 @@ void Func_02001bf4(void);
 
 void Func_02001c38(void);
 void Func_0200208c(void);
-void Func_020020b4(void);
+void Leader_SetLayer(void);
 void Func_020020d0(void);
 void Func_02002144(void);
 void Func_020024c8(void);

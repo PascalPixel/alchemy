@@ -382,7 +382,7 @@ void Func_02001efc(s32 value) { gData_02007e24 = value; }
 
 extern s32 gData_02007e20;
 
-DEFINE_PALETTE_CYCLE_STEP_AT(Func_02001f08, gData_02007e20, gData_02007e24,
+DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gData_02007e20, gData_02007e24,
     gData_02007e28, 0x050000a4)
 
 // ---- games/tla/src/scene/trial_road/s1fc4.c ----
@@ -402,7 +402,7 @@ void Func_02001fc4(s32 mode) {
     s32 zero = 0;
 
     gData_02007e20 = zero;
-    Task_Add(Func_02001f08, 0x480);
+    Task_Add(PaletteCycle_StepAt, 0x480);
   }
 }
 

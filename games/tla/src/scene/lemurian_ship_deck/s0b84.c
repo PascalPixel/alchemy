@@ -820,7 +820,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_End();
 }
 
-DEFINE_ACTOR_EMIT_SMOKE(Func_02001d60, 7, Actor_SelectAnimation, gData_02002498)
+DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 7, Actor_SelectAnimation, gData_02002498)
 
 /// ★ Named from the game: "Then let's waste no time! We should set out for
 /// Madra at once!" (MsgThenLetS)
@@ -831,7 +831,7 @@ void LemurianShipDeck_SetOutForMadra(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_SetSpeed(4, 0xcccc, 0x6666);
-    Actor_Get(7)->update = (void (*)(void))Func_02001d60;
+    Actor_Get(7)->update = (void (*)(void))Actor_EmitSmoke;
     FieldActor_LaunchFromLeader(7, 16, 0, FACING_WEST);
     Actor_SetSpriteFlags(Actor_Get(7), 0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
@@ -841,10 +841,10 @@ void LemurianShipDeck_SetOutForMadra(void) {
     Event_ShowMessage(7, 0);
     Actor_SetAnimationAndWait(4, 3);
     Actor_Get(gMainRoutineWork.currentOwner)->update =
-        (void (*)(void))Func_02001d60;
+        (void (*)(void))Actor_EmitSmoke;
     Actor_WalkByAndWait(4, 0, 16);
     Actor_Get(gMainRoutineWork.currentOwner)->update = 0;
-    Actor_Get(7)->update = (void (*)(void))Func_02001d60;
+    Actor_Get(7)->update = (void (*)(void))Actor_EmitSmoke;
     Actor_SetAnimation(7, 2);
     object = Actor_Get(4);
     if (object != 0)

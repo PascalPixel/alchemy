@@ -200,8 +200,8 @@ void Func_02001cd0(void);
 void Func_0200217c(void);
 void Func_020023e8(void);
 void Func_02002a6c(void);
-void Func_02002b2c(void);
-void Func_02002bd0(void);
+void Orbit_Update(void);
+void Actor_AimAtWatched(void);
 
 extern u32 gData_02004fb0[];
 
@@ -297,7 +297,7 @@ s32 gData_02005560[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_02005244(gData_02005570, Func_02002b2c, Func_02002bd0,
+DEFINE_G_DATA_02005244(gData_02005570, Orbit_Update, Actor_AimAtWatched,
     Func_02002c1c)
 
 DEFINE_G_DATA_02005264(gData_02005590, 24)

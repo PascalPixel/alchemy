@@ -24,15 +24,15 @@ DEFINE_TELEPORTERS_FIND(Func_02003e24, Data_020068b4, Func_02003cf8)
 
 #include "scene_tables.h"
 
-DEFINE_LEADER_CENTER_IN_CELL(Func_02004068)
+DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 
 /// Map_CopyCellsRect through this overlay's import.
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below
 /// the table's source cell over the leader's, keeping the source column's and
-/// row's 64 bit; Func_02004490 calls it the first time the leader steps on
+/// row's 64 bit; Teleporters_Step calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_TELEPORTER_UNCOVER(Func_020040f0, Func_02004068)
+DEFINE_TELEPORTER_UNCOVER(Func_020040f0, Leader_CenterInCell)
 
 #include "../shared/jupiter_lighthouse_room_3.h"
 #include "io_reg.h"
@@ -51,7 +51,7 @@ void Func_02004160(struct PushEvent *event) {
   x |= (s16)(event->x & mask);
   z = object->z >> 20;
   z |= (s16)(event->z & mask);
-  Func_02004068();
+  Leader_CenterInCell();
   Event_PlaySound(229);
   MapGrid_CopyCells(event->x, event->z + 2, 1, 1, x, z);
   FieldEvent_Wait(12);

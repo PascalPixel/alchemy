@@ -20,7 +20,7 @@ s32 Func_020002b0(struct Actor *object) {
   return 0;
 }
 
-DEFINE_ACTOR_BOB(Func_020002bc)
+DEFINE_ACTOR_BOB(Actor_Bob)
 
 #include "battle.h"
 #include "field.h"
@@ -513,14 +513,14 @@ void Func_02000e04(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 514;
   FieldTask_AddFrame(Func_02000d14, 0x480);
   Scene_QueueMusic(170);
-  Func_02000ed0();
+  Scroll_StartHBlank();
 }
 
-// The hblank split: above the line Func_02000ed0 sets, BG1 scrolls by one value
+// The hblank split: above the line Scroll_StartHBlank sets, BG1 scrolls by one value
 // and blending is off; below it, by the other, with BG1 blended.
 #include "system/io_write.h"
 
-/// The hblank split: above the line Func_02000ed0 sets, BG1 scrolls by one
+/// The hblank split: above the line Scroll_StartHBlank sets, BG1 scrolls by one
 /// value and blending is off; below it, by the other, with BG1 blended.
 void Func_02000e30(void) {
   if (REG_VCOUNT < gData_02002ce0) {
@@ -533,10 +533,10 @@ void Func_02000e30(void) {
   }
 }
 
-DEFINE_LAYER_TRACK_SCROLL(Func_02000e90, gData_02002ce0, gData_02002ce4,
+DEFINE_LAYER_TRACK_SCROLL(Layer_TrackScroll, gData_02002ce0, gData_02002ce4,
     gData_02002ce6)
 
-DEFINE_SCROLL_START_HBLANK(Func_02000ed0, Func_02000e30, Func_02000e90)
+DEFINE_SCROLL_START_HBLANK(Scroll_StartHBlank, Func_02000e30, Layer_TrackScroll)
 
 void Func_02000ef0(void) { Func_02002190(gData_0200226c); }
 

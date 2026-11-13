@@ -4,7 +4,7 @@
 #include "module/scene/world_map.h"
 
 void Func_02000038(void);
-void Func_020002a4(void);
+void TileSprite_Reset(void);
 void Func_02000388(void);
 void Func_020003a8(void);
 void Func_020003b4(void);
@@ -192,7 +192,7 @@ u32 gSceneExits[] = {
 
 s32 gData_02006320[] = {
     46,
-    (s32)Func_020002a4,
+    (s32)TileSprite_Reset,
     17,
 };
 

@@ -39,7 +39,7 @@ void Func_02003d80(void);
 
 s32 Func_02004938(s32 id);
 
-void Func_02005284(void);
+void LightSprites_InitB(void);
 
 void Func_0200538c(s32 id, s32 value);
 
@@ -118,7 +118,7 @@ s32 Func_020054d8(s32 terrain, s32 x, s32 z);
 
 extern struct WarpWork gData_020070a8;
 
-void Func_02003af0(void);
+void Leader_CenterInCell(void);
 
 s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct Position *b,
                                     s32 radiusB);
@@ -130,11 +130,11 @@ s32 Func_02005530(struct Actor *object);
 void Func_0200410c(void);
 void Func_02004080(struct Actor *object);
 void Func_02004a44(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
-struct Actor *Func_02004bf4(s32 *direction, s32 *slot, s32 *kind);
+struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 
 s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 
-void Func_02004fc0(struct Actor *object);
+void Actor_StopAtPushTarget(struct Actor *object);
 
 extern s16 gData_020074cc;
 extern s16 gData_020074ce;

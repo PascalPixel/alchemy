@@ -31,12 +31,12 @@ DEFINE_TELEPORTER_DROP_IN(Func_02003e04, Func_0200363c)
 #include "cell_target.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Func_02003c6c(struct CellTarget *work, struct CellTargetEntry *entry);
+void Teleporter_SinkEvent(struct CellTarget *work, struct CellTargetEntry *entry);
 
-DEFINE_TELEPORTERS_STEP(Func_02003f9c, gData_02004cf4, Func_02003bfc,
-    Func_02003c6c)
+DEFINE_TELEPORTERS_STEP(Teleporters_Step, gData_02004cf4, Func_02003bfc,
+    Teleporter_SinkEvent)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_0200404c, gData_02004cf4, Func_02003e04)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gData_02004cf4, Func_02003e04)
 
 #include "scene_tables.h"
 #include "text/msg_ids.h"

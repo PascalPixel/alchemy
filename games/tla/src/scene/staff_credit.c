@@ -519,7 +519,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-DEFINE_TILE_SPRITE_RESET(Func_02000c9c)
+DEFINE_TILE_SPRITE_RESET(TileSprite_Reset)
 
 /// The two countdown choices the world map (overlay 64b) also has, under this
 /// overlay's names.

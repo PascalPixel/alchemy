@@ -36,7 +36,7 @@ static inline s32 Func_02002338_(struct Actor *object, s32 *position) {
 /// at a time in the leader's direction, until a cell of it is blocked
 /// (MapGrid_CheckCollision returns 2). Leaves the object's resting place in target and
 /// returns 1, or 0 when nothing is pushed or it cannot move at all.
-DEFINE_PUSH_TARGET_FIND_SLIDE(Func_02000dcc, PushTarget_FindAhead,
+DEFINE_PUSH_TARGET_FIND_SLIDE(PushTarget_FindSlide, PushTarget_FindAhead,
                               gPushFootprints, gData_0200249c, Func_02002338_)
 
 /// The whole-pixel half of a 16.16 coordinate.
@@ -51,5 +51,5 @@ DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds, gData_0200249c,
 
 void Func_02001300(void);
 
-DEFINE_PUSH_TARGET_PUSH_FILL(Func_02001050, gPushFootprints, Func_02001300,
+DEFINE_PUSH_TARGET_PUSH_FILL(PushTarget_PushFill, gPushFootprints, Func_02001300,
                              Actor_SelectAnimation, gData_0200249c)

@@ -82,9 +82,9 @@ next:
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02004160(struct CellTarget *work, struct CellTargetEntry *entry);
 
-DEFINE_TELEPORTERS_STEP(Func_02004490, Data_020068b4, Func_020040f0, Func_02004160)
+DEFINE_TELEPORTERS_STEP(Teleporters_Step, Data_020068b4, Func_020040f0, Func_02004160)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_02004540, Data_020068b4, Func_020042f8)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, Data_020068b4, Func_020042f8)
 
 #include "dma.h"
 #include "io_reg.h"
@@ -148,7 +148,7 @@ void Func_020048e8(void) {
 
 #include "field.h"
 
-DEFINE_ACTORS_SET_CELLS_OPEN(Func_02004970, Func_02004a60)
+DEFINE_ACTORS_SET_CELLS_OPEN(Actors_SetCellsOpen, Func_02004a60)
 
 // Finds the current target's table row and shrinks it.
 void Func_020049dc(u16 *list, s32 mode, s32 count) {

@@ -226,7 +226,7 @@ extern u32 gData_02005b44[];
 
 extern u16 gData_02007e28[];
 
-void Func_02001f08(void);
+void PaletteCycle_StepAt(void);
 void Func_02001754();
 void TrialRoad_PlaceMoapaAtPeak(void);
 void TrialRoad_BeatMoapa(void);

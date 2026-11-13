@@ -89,7 +89,7 @@ void Func_02003c00(s32 a, s32 b, s32 c);
 // One-field view: the shape store is memory of its own to sched2, which sinks
 // it past the cell read; a plain store keeps its order.
 
-DEFINE_HELD_ACTOR_RAISE_CELL(Func_02000270, MapGrid_GetTerrainKind, Func_020011d4, Func_020011f4)
+DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind, Func_020011d4, Func_020011f4)
 
 struct SceneWork {
   u8 unk000[0x1ac];
@@ -169,7 +169,7 @@ void MadraCatacombs_TryLockedDoor(void) {
   Event_End();
 }
 
-DEFINE_ACTOR_DROP_AND_WAIT(Func_020004a4)
+DEFINE_ACTOR_DROP_AND_WAIT(Actor_DropAndWait)
 
 void Func_020004cc(void) {
   struct Actor *object = Actor_GetById(11);
@@ -180,7 +180,7 @@ void Func_020004cc(void) {
     if (z == 13) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      Func_020004a4(object);
+      Actor_DropAndWait(object);
       MapGrid_CopyCellAttributes(41, 13, 2, 1, 39, z);
       Event_SetFlag(0x8c8);
       Event_End();
@@ -344,12 +344,12 @@ void Func_02000874(void) {
 }
 
 void Func_020008d0(struct Actor *object) {
-  Func_02000270();
+  HeldActor_RaiseCell();
   if ((object->x >> 20) == 35 && (object->z >> 20) == 17)
     Event_SetFlag(0x9ef);
 }
 
-DEFINE_SCENE_RUN_IF_HELD(Func_020008f4, Func_020011fc, Field_FindNearbyTalkTarget, Func_0200014c,
+DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Func_020011fc, Field_FindNearbyTalkTarget, Func_0200014c,
     gData_020013ca, Func_02001204, Func_020008d0)
 
 void Func_0200092c(void) { Func_0200014c(gData_020013ca); }
@@ -827,7 +827,7 @@ struct Trigger gMadraCatacombs_Room1Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x8c8, EVENT(Func_020004cc)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, 0x8ca, EVENT(Func_0200051c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x8ca, EVENT(Func_0200052c)},
-    {0x602, 11, 0x9ef, EVENT(Func_020008f4)},
+    {0x602, 11, 0x9ef, EVENT(Scene_RunIfHeld)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9ef, EVENT(Func_0200092c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9ef, EVENT(Func_0200093c)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x202, EVENT(Func_02000558)},

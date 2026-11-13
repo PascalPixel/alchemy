@@ -55,7 +55,7 @@ s32 Func_02000388(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
-DEFINE_POSITION_FLAT_DISTANCE(Func_020003d0)
+DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 #include "battle.h"
 #include "field.h"
@@ -103,7 +103,7 @@ void Func_0200043c(void) {
   center[0] = ((object->x >> 21) << 21) + 0x100000;
   center[2] = ((object->z >> 21) << 21) + 0x100000;
   pos = &object->x;
-  if (Func_020003d0(pos, center) > 4) {
+  if (Position_FlatDistance(pos, center) > 4) {
     if (*pos < center[0])
       *pos += 0x3333;
     else
@@ -193,7 +193,7 @@ void Func_0200054c(void) {
   center.x = (((object->x >> 21) + center.x) << 21) + 0x100000;
   center.z = (((object->z >> 21) + center.z) << 21) + 0x100000;
   pos = &object->x;
-  if (Func_020003d0(pos, &center) > 46) {
+  if (Position_FlatDistance(pos, &center) > 46) {
     if (*pos < center.x)
       *pos += 0x8000;
     else

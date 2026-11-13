@@ -844,11 +844,11 @@ DEFINE_PALETTE_SET_COLORS_FADE(Func_0200154c, gData_02003928, Data_0200392c,
 #define DEFINE_FUNC_02001608(name, n1, n2)                                     \
   void name(void) {                                                            \
     gData_02003938 = 0;                                                        \
-    gData_02003934 = Func_020016e8(gData_02003928);                            \
+    gData_02003934 = List_CountEntries(gData_02003928);                            \
     gData_02003924 = n1;                                                       \
     gData_02003920 = n2;                                                       \
     gData_02003918 = 1;                                                        \
-    Task_AddFrame(Func_0200170c, 0x480);                                       \
+    Task_AddFrame(PaletteCycle_Fade, 0x480);                                       \
   }
 
 DEFINE_FUNC_02001608(Func_02001608, 15, 16)
@@ -870,22 +870,22 @@ void Func_02001608(void);
 void Func_020032a8(void);
 void Func_0200166c(void);
 void Func_0200055c(void);
-void Func_0200170c(void);
+void PaletteCycle_Fade(void);
 
 void Func_0200166c(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
-  FieldTask_Remove(Func_0200170c);
+  FieldTask_Remove(PaletteCycle_Fade);
 }
 
 DEFINE_FUNC_02001608(Func_0200168c, 2, 2)
 
-DEFINE_LIST_COUNT_ENTRIES(Func_020016e8)
+DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
 
 extern u16 *Data_0200391c;
 extern u16 *Data_0200392c;
 extern u16 *Data_02003930;
 
-DEFINE_PALETTE_CYCLE_FADE(Func_0200170c, gData_02003920, gData_02003924,
+DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gData_02003920, gData_02003924,
     Data_02003930, gData_02003934, Data_0200391c, gData_02003938,
     gData_02003928, gData_02003918, Data_0200392c)
 

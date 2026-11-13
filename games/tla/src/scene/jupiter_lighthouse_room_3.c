@@ -30,8 +30,8 @@ void Func_02000070(void) {
   s32 x;
 
   object->update = (void (*)(void))Func_02000054;
-  if (Func_02000dcc(&block))
-    Func_02001050(block);
+  if (PushTarget_FindSlide(&block))
+    PushTarget_PushFill(block);
   if (object->x >> 20 == 16 && object->z >> 20 == 12 &&
       Event_GetFlag(0x200) == 0) {
     Event_SetFlag(0x200);

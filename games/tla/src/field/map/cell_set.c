@@ -600,9 +600,9 @@ void Func_02000fb8(s32 mode, s32 cue) {
     GameFlag_SetBit(0x948);
   }
   if (mode == 2)
-    Func_02002d44(0xe80000, 0x100000, 0x1180000, 2);
+    Rocks_Spawn(0xe80000, 0x100000, 0x1180000, 2);
   if (mode == 3)
-    Func_02002d44(0xe80000, 0x100000, 0x1180000, 30);
+    Rocks_Spawn(0xe80000, 0x100000, 0x1180000, 30);
   if (cue == 0x3e7)
     Func_02002ebc();
 }

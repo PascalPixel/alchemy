@@ -174,7 +174,7 @@ struct RockWork {
 
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
-DEFINE_ROCKS_SPAWN(Func_02002d44)
+DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 
 // The falling rocks' setup, and Func_02002ebc, which stops their task and
 // frees their picture and heap slot.

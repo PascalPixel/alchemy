@@ -193,13 +193,13 @@ void YampiDesert_ReadSignpost(void) {
   Event_End();
 }
 
-void Func_02000620(s32 a, s32 b) { Func_0200388c(gData_02004768, a, b); }
+void Func_02000620(s32 a, s32 b) { Statue_Sink(gData_02004768, a, b); }
 
-void Func_02000634(s32 a, s32 b) { Func_0200388c(gData_0200478e, a, b); }
+void Func_02000634(s32 a, s32 b) { Statue_Sink(gData_0200478e, a, b); }
 
 #define DEFINE_FUNC_02000648(name, data1)                                      \
   void name(s32 a, s32 b) {                                                    \
-    Func_0200388c(data1, a, b);                                                \
+    Statue_Sink(data1, a, b);                                                \
     if (a == 1) {                                                              \
       if (gData_02004808 == 0)                                                 \
         gData_02004808 = 210;                                                  \
@@ -208,7 +208,7 @@ void Func_02000634(s32 a, s32 b) { Func_0200388c(gData_0200478e, a, b); }
 
 DEFINE_FUNC_02000648(Func_02000648, gData_020047d2)
 
-void Func_02000670(s32 a, s32 b) { Func_0200388c(gData_02004800, a, b); }
+void Func_02000670(s32 a, s32 b) { Statue_Sink(gData_02004800, a, b); }
 
 DEFINE_FUNC_02000648(Func_02000684, gData_020047ec)
 

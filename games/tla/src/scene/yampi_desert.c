@@ -26,17 +26,17 @@ void Import_ActorShowEmoteById(s32 actor, s32 a, s32 b);
 s32 Import_FieldCameraGetActor();
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 void Oam_AddSpriteAtDepthClamped(u32 *oam, s32 depth);
-/* VIEW(s0b84): routine Func_0200388c as void Func_0200388c(const void *script,
- * s32 a, s32 b); the definition has void Func_0200388c(u16 *list, s32 mode, s32
- * count); tried as the definition's void Func_0200388c(u16 *list, s32 mode, s32
+/* VIEW(s0b84): routine Statue_Sink as void Statue_Sink(const void *script,
+ * s32 a, s32 b); the definition has void Statue_Sink(u16 *list, s32 mode, s32
+ * count); tried as the definition's void Statue_Sink(u16 *list, s32 mode, s32
  * count), which the object already declares, it does not compile in tla-ja:
  * games/tla/src/scene/yampi_desert.c:1695: conflicting types for
- * `Func_0200388c'. */
+ * `Statue_Sink'. */
 extern void Func_0200388c__s0b84(const void *script, s32 a,
-                                 s32 b) __asm__("Func_0200388c");
-#define Func_0200388c Func_0200388c__s0b84
+                                 s32 b) __asm__("Statue_Sink");
+#define Statue_Sink Func_0200388c__s0b84
 #include "yampi_desert/scene.h"
-#undef Func_0200388c
+#undef Statue_Sink
 #include "scene_tables.h"
 #include "actor.h"
 #include "call.h"
@@ -1263,17 +1263,17 @@ void Func_02002ca0(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-DEFINE_ACTOR_HIDE(Func_02002ce0, Func_020040f8)
+DEFINE_ACTOR_HIDE(Actor_Hide, Func_020040f8)
 
-DEFINE_SCENE_RUN_UNLESS_FLAG(Func_02002d10, 0x20d, Func_0200163c)
+DEFINE_SCENE_RUN_UNLESS_FLAG(Scene_RunUnlessFlag, 0x20d, Func_0200163c)
 
 void Func_02002d40(void) {
-  Func_02002ce0(11);
-  Func_02002ce0(12);
-  Func_02002d10();
+  Actor_Hide(11);
+  Actor_Hide(12);
+  Scene_RunUnlessFlag();
 }
 
-DEFINE_ACTORS_FOR_RANGE(Func_02002d54, 6, Func_02002ce0, 9, Func_02002d10)
+DEFINE_ACTORS_FOR_RANGE(Func_02002d54, 6, Actor_Hide, 9, Scene_RunUnlessFlag)
 
 void Func_02002d6c(struct Actor *object, s32 x, s32 z, s32 mode) {
   struct MainRoutineWork *party;
@@ -1702,7 +1702,7 @@ loop:
 #undef MAIN_ROUTINE_WORK_U16
 
 // Finds the current target's table row and shrinks it.
-DEFINE_STATUE_SINK(Func_0200388c, Func_02003910)
+DEFINE_STATUE_SINK(Statue_Sink, Func_02003910)
 
 // ---- games/tla/src/scene/yampi_desert/s3910.c ----
 // Scene code of overlay 0x661, in ROM order, from s3910's offset up to the next

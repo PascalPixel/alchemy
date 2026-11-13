@@ -305,7 +305,7 @@ void Func_02000844(void) {
   Task_Add(Func_02000580, TASK_PASS_VBLANK);
 }
 
-DEFINE_ACTOR_FLICKER_CHILD(Func_02000b10, 7)
+DEFINE_ACTOR_FLICKER_CHILD(Actor_FlickerChild, 7)
 
 DEFINE_ACTOR_FLICKER_CHILD(Func_02000b34, 6)
 
@@ -325,7 +325,7 @@ void Func_02000b68(s32 unused, s32 id) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  object->update = (void (*)(void))Func_02000b10;
+  object->update = (void (*)(void))Actor_FlickerChild;
   wait(30);
   if (GameFlag_Test(0xa68) == 0)
     Func_02002834(26);
@@ -607,7 +607,7 @@ void Func_02001224(s32 unused, s32 id) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  object->update = (void (*)(void))Func_02000b10;
+  object->update = (void (*)(void))Actor_FlickerChild;
   wait(30);
   Func_02002834(8);
   Sound_Play(220);

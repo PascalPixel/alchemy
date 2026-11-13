@@ -21,7 +21,7 @@ extern u16 gData_02002ce8;
 
 void Func_02000758(s32 x, s32 y, s32 z);
 void Func_02000d14(void);
-void Func_02000ed0(void);
+void Scroll_StartHBlank(void);
 void Func_02000f2c(void);
 void Func_02000fd0(void);
 void Func_0200122c(void);
@@ -41,7 +41,7 @@ extern s32 gData_02002ce0;
 extern u16 gData_02002ce4;
 extern u16 gData_02002ce6;
 void Func_02000e30(void);
-void Func_02000e90(void);
+void Layer_TrackScroll(void);
 void Irq_SetHandler(s32 a, s32 b, void (*callback)(void));
 void Event_End(void);
 void ItemDisplay_ShowItem(s32 a, s32 b);

@@ -54,7 +54,7 @@ const u8 *Scene_GetPlacements(void) {
   return gData_02001294;
 }
 
-DEFINE_PILLAR_SET_MOVED(Func_020000ec, 11, 24, 32, 22, 0x221)
+DEFINE_PILLAR_SET_MOVED(Pillar_SetMoved, 11, 24, 32, 22, 0x221)
 
 void Func_02000124(void) {
   MapGrid_CopyCellAttributes(30, 35, 1, 1, 28, 34);

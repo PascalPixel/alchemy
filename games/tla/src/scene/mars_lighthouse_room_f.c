@@ -251,7 +251,7 @@ void Func_020003b4(void) {
 void Func_02000418(void) {
   struct PushTarget box;
 
-  if (Func_02004a8c(&box)) {
+  if (PushTarget_FindSlide(&box)) {
     Func_02004d10(box);
     Func_020003b4();
   }
@@ -513,7 +513,7 @@ void Func_02000ad8(void) {
 void Func_02000b40(void) {
   struct PushTarget box;
 
-  if (Func_02004a8c(&box)) {
+  if (PushTarget_FindSlide(&box)) {
     Func_02004d10(box);
     Func_020009ec();
     if (Func_020027dc(0) != 64 && Flag_IsSet(0x221)) {
@@ -656,7 +656,7 @@ void Func_02000e68(void) {
     Func_02004700(1);
 }
 
-void Func_020015a4(s32 mode);
+void JupiterLighthouse_LoadPalettesZero(s32 mode);
 extern const u16 gData_02005bf0[];
 extern const u16 gData_02005bf6[];
 extern const u16 gData_02005bfc[];
@@ -774,8 +774,8 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_Ov6adRoom3) {
     Func_02005638(0);
     ((struct SceneWork *)heap->eventWork)->unk1ac = value;
-    Func_020015a4(1);
-    Func_02005284();
+    JupiterLighthouse_LoadPalettesZero(1);
+    LightSprites_InitB();
     Func_020053bc(2);
     Func_0200538c(11, 6);
     if (Flag_IsSet(0x358)) {
@@ -884,11 +884,11 @@ DEFINE_PALETTE_CYCLE_STEP(Func_020014e8, gData_0200703c, gData_02007040,
 #include "ram_buffer.h"
 #include "field_event.h"
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(Func_020015a4, gData_02007040, gData_02007068, gData_02007088, gData_0200703c, Func_020014e8, gData_0200708c)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(JupiterLighthouse_LoadPalettesZero, gData_02007040, gData_02007068, gData_02007088, gData_0200703c, Func_020014e8, gData_0200708c)
 
 #include "event_inline.h"
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Func_02001628, Func_02005540, Func_020056a8)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02005540, Func_020056a8)
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s167c.c ----
 #include "actor.h"
@@ -982,13 +982,13 @@ void Func_0200167c(void) {
   Event_End();
 }
 
-DEFINE_POSITION_FLAT_DISTANCE(Func_02001868)
+DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 #include "field_sprite.h"
 
 extern const s32 gData_02007044[];
 
-DEFINE_WHIRLWIND_UPDATE(Func_02001894, Func_020056a0, Func_02001868,
+DEFINE_WHIRLWIND_UPDATE(Func_02001894, Func_020056a0, Position_FlatDistance,
     gData_02007044, Data_02007064)
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s1a54.c ----
@@ -1027,7 +1027,7 @@ struct GustObject *Func_02001a54(struct GustObject *source) {
   return object;
 }
 
-DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Func_02001b2c, Func_020035b8)
+DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, Func_020035b8)
 
 #include "call.h"
 #include "field_coordinate.h"

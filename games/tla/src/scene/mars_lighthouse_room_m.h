@@ -82,8 +82,8 @@ extern struct Trigger gMarsLighthouseRoomM_Room5Triggers[];
 extern s32 gData_0200387c[];
 extern u32 gData_02003900[];
 
-s32 Func_020016e8(u16 *list);
-void Func_0200170c(void);
+s32 List_CountEntries(u16 *list);
+void PaletteCycle_Fade(void);
 void Func_0200166c(void);
 void Func_0200168c(void);
 s32 Func_02001de0(struct Actor *a, struct Actor *b);

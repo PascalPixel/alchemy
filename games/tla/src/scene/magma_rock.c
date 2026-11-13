@@ -17,7 +17,7 @@ struct EventObjects {
 
 void Func_02000594(void) { Field_RequestDjinnBattle(8, 56); }
 
-DEFINE_POSITION_FLAT_DISTANCE(Func_020005a0)
+DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 extern u8 gMapShapeGrid[];
 
@@ -48,7 +48,7 @@ DEFINE_ACTORS_RAISE_CELLS(Func_02000668, Func_020005cc)
 // For each id of a list ended by 0xffff: clears the object's mark and, on a
 // cell with attribute bit 6, blocks the cells ahead of and behind it and sets
 // the mark.
-DEFINE_BLOCKS_MARK_CELLS(Func_020006cc, MapCell_GetAttributes)
+DEFINE_BLOCKS_MARK_CELLS(Blocks_MarkCells, MapCell_GetAttributes)
 
 // Clears the object's mark and the cells ahead of and behind it that the mark
 // blocked.
@@ -195,19 +195,19 @@ s32 Func_02000a48(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
     MapGrid_CopyCellAttributes(98, 21, 4, 3, 78, 21);
     MapGrid_CopyCellAttributes(98, 27, 4, 3, 78, 24);
-    Func_020006cc(gData_02003d98);
+    Blocks_MarkCells(gData_02003d98);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
     if (gMainRoutineWork.entrance <= 3) {
-      Func_020006cc(gData_02003dac);
+      Blocks_MarkCells(gData_02003dac);
     } else if (gMainRoutineWork.entrance <= 8) {
-      Func_020006cc(gData_02003dd2);
+      Blocks_MarkCells(gData_02003dd2);
     } else if (gMainRoutineWork.entrance <= 12) {
       MapGrid_CopyCellAttributes(79, 37, 2, 1, 79, 36);
-      Func_020006cc(gData_02003de4);
+      Blocks_MarkCells(gData_02003de4);
     } else {
       MapGrid_CopyCellAttributes(103, 39, 1, 1, 103, 38);
       MapGrid_CopyCellAttributes(99, 42, 5, 1, 99, 38);
-      Func_020006cc(gData_02003de8);
+      Blocks_MarkCells(gData_02003de8);
     }
   }
   x = leader->x >> 20;
@@ -385,7 +385,7 @@ void Func_02000dc0(struct Actor *object) {
     object->y = 0;
     object->z = 0;
   }
-  if (Func_020005a0(&object->x, &partner->x) <= 8 &&
+  if (Position_FlatDistance(&object->x, &partner->x) <= 8 &&
       object->y >> 20 == partner->y >> 20) {
     object->x = 0;
     object->update = NULL;

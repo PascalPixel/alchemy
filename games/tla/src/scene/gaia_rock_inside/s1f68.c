@@ -22,7 +22,7 @@
 
 #include "event_inline.h"
 
-DEFINE_LEADER_SET_LAYER_BYTE(Func_02001f68, 2)
+DEFINE_LEADER_SET_LAYER_BYTE(Leader_SetLayerByte, 2)
 
 DEFINE_LEADER_SET_LAYER_BYTE(Func_02001f84, 0)
 

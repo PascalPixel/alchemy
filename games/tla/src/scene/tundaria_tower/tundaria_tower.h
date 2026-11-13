@@ -56,7 +56,7 @@ extern s16 gData_0200326e[];
 extern u16 gData_02003cd0;
 
 void Func_02002e00(void);
-void Func_02002d44(s32 x, s32 y, s32 z, s32 frames);
+void Rocks_Spawn(s32 x, s32 y, s32 z, s32 frames);
 void Func_0200137c(void);
 extern struct Trigger gData_020037f8[];
 extern struct Trigger gData_0200381c[];

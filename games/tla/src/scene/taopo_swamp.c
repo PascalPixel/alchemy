@@ -30,7 +30,7 @@ extern char SceneId_Ov678Room11;
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Vent_SetGust(s32 id, s32 a);
-void Func_02002778(s32 a, s32 b);
+void Vents_SetId(s32 a, s32 b);
 void Event_End(void);
 void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
 void Import_FieldCameraWaitForArrival(void);
@@ -57,7 +57,7 @@ s32 Func_02002730(void);
 // current GCC gets it here.
 void Vent_SetActive(s32 index, s32 active);
 #endif
-s32 Func_0200273c(s32 a);
+s32 Vents_AdvanceCounter(s32 a);
 void Scene_QueueMusic(s32 a);
 
 struct SpriteWork {
@@ -488,13 +488,13 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
   Event_End();
 }
 
-DEFINE_ACTOR_WAIT_TO_LAND(Func_02000710)
+DEFINE_ACTOR_WAIT_TO_LAND(Actor_WaitToLand)
 
 void Func_02000744(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (id == 9 && object->x >> 20 == 16) {
-    Func_02000710(9);
+    Actor_WaitToLand(9);
     MapGrid_CopyCellAttributes(15, 26, 1, 1, 16, 26);
     Event_SetFlag(0xa6f);
   }
@@ -516,7 +516,7 @@ void TaopoSwamp_DouseVentSpot(s32 a, s32 id) {
     Func_02002840_(n1, n2, 1, 1, n3, n2);                                      \
     FieldActor_SetSpritePriority(id, 2);                                       \
     Actor_Get(id)->priorityFlags &= 0xfd;                                      \
-    Func_02002778(0, id);                                                      \
+    Vents_SetId(0, id);                                                      \
     Event_SetFlag(0x221);                                                      \
     Event_ClearFlag(0x222);                                                    \
   }
@@ -534,7 +534,7 @@ void TaopoSwamp_ShatterIcePillar(s32 id) {
   FieldActor_SetSpritePriority(id, 3);
   Actor_Get(id)->priorityFlags |= 2;
   Actor_Get(id)->update = (void (*)(void))zero;
-  Func_02002778(0, 0);
+  Vents_SetId(0, 0);
   Event_ClearFlag(0x220);
   Event_ClearFlag(0x221);
   Event_ClearFlag(0x222);
@@ -557,7 +557,7 @@ void TaopoSwamp_BlowAwayPuddle(s32 id) {
   FieldActor_SetSpritePriority(id, 3);
   Actor_Get(id)->priorityFlags |= 2;
   Actor_Get(id)->update = 0;
-  Func_02002778(0, 0);
+  Vents_SetId(0, 0);
   Event_ClearFlag(0x220);
   Event_ClearFlag(0x222);
 }
@@ -586,7 +586,7 @@ void TaopoSwamp_ShatterDripIcePillar(s32 id) {
   FieldActor_SetSpritePriority(id, 3);
   Actor_Get(id)->priorityFlags |= 2;
   Actor_Get(id)->update = 0;
-  Func_02002778(0, 0);
+  Vents_SetId(0, 0);
   Event_ClearFlag(0x220);
   Event_ClearFlag(0x221);
   Event_ClearFlag(0x222);
@@ -612,7 +612,7 @@ void TaopoSwamp_BlowAwayDripPuddle(s32 id) {
   FieldActor_SetSpritePriority(id, 3);
   Actor_Get(id)->priorityFlags |= 2;
   Actor_Get(id)->update = (void (*)(void))zero;
-  Func_02002778(0, 0);
+  Vents_SetId(0, 0);
   Event_ClearFlag(0x220);
   GameFlag_SetByte(0x230, 0);
 }
@@ -1001,7 +1001,7 @@ void TaopoSwamp_CycleDjinniVents(void) {
   if ((u32)(timer - 251) <= 178 && Event_GetFlag(0xa6e) && !Event_GetFlag(59) &&
       !Event_GetFlag(0x310))
     ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 100;
-  Func_0200273c(480);
+  Vents_AdvanceCounter(480);
 }
 
 /// The cycle of the vent under the circular spot: 120 frames of gust in 480
@@ -1027,7 +1027,7 @@ void TaopoSwamp_CycleSpotVent(void) {
     else if (Event_GetFlag(0x220))
       TaopoSwamp_BlowAwayPuddle(8);
   }
-  Func_0200273c(480);
+  Vents_AdvanceCounter(480);
 }
 
 /// As TaopoSwamp_CycleSpotVent, for the spot the ceiling drips onto.
@@ -1052,7 +1052,7 @@ void TaopoSwamp_CycleDripVent(void) {
     else if (Event_GetFlag(0x220))
       TaopoSwamp_BlowAwayDripPuddle(10);
   }
-  Func_0200273c(480);
+  Vents_AdvanceCounter(480);
 }
 
 /// The cycle of the two vents in the room of the cooled rocks: 180 frames of
@@ -1070,7 +1070,7 @@ void TaopoSwamp_CycleRockRoomVents(void) {
     Scene_QueueMusic(-1);
     break;
   }
-  Func_0200273c(240);
+  Vents_AdvanceCounter(240);
 }
 
 /// A drop from the ceiling lands: it splashes and grows the puddle below by
@@ -1796,7 +1796,7 @@ void TaopoSwamp_SaveFirmGround(void) {
 #define VENT_BOUNCE Func_02002400
 #include "../field/object/vent_bounce.c"
 
-DEFINE_ACTOR_START_SCRIPTED(Func_020024f8, Actor_SelectAnimation, gData_02002af4)
+DEFINE_ACTOR_START_SCRIPTED(Actor_StartScripted, Actor_SelectAnimation, gData_02002af4)
 
 void TaopoSwamp_PuffVent(s32 *position, s32 base) {
   struct Actor *object =
@@ -1814,7 +1814,7 @@ void TaopoSwamp_PuffVent(s32 *position, s32 base) {
      * in tla-en. */
     angle = (u16)Random16Far() - 0x8000;
     object->timer = angle;
-    Func_020024f8(object, 3);
+    Actor_StartScripted(object, 3);
     object->update = (void (*)(void))Func_02002400;
     Actor_SetBlendMode(object, 1);
   }
@@ -1905,7 +1905,7 @@ void Vent_SetActive(s32 index, s32 active) {
 
 s32 Func_02002730(void) { return VENT_WORK->counter; }
 
-DEFINE_VENTS_ADVANCE_COUNTER(Func_0200273c)
+DEFINE_VENTS_ADVANCE_COUNTER(Vents_AdvanceCounter)
 
 /// The accessors step the work pointer by whole entries and then take entry 0:
 /// the bytes add the base to index * 20 before the field offset.
@@ -1917,4 +1917,4 @@ void Vent_SetGust(s32 index, s32 value) {
   VENT_AT(work, index)->entries[0].value = value;
 }
 
-DEFINE_VENTS_SET_ID(Func_02002778)
+DEFINE_VENTS_SET_ID(Vents_SetId)

@@ -2,7 +2,7 @@
 #include "types.h"
 #include "scene_tables.h"
 
-void Func_02000c9c(void);
+void TileSprite_Reset(void);
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 9850, 0, 9748, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -150,7 +150,7 @@ u32 gData_02003d9c[] = {
     0x808,
 };
 
-DEFINE_G_DATA_02003584(gData_02003da8, Func_02000c9c, 17, 0)
+DEFINE_G_DATA_02003584(gData_02003da8, TileSprite_Reset, 17, 0)
 
 u32 gData_02003db8[] = {
     0,

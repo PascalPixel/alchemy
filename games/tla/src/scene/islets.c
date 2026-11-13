@@ -1153,7 +1153,7 @@ void Func_0200208c(void) {
   return;
 }
 
-DEFINE_LEADER_SET_LAYER(Func_020020b4, 2)
+DEFINE_LEADER_SET_LAYER(Leader_SetLayer, 2)
 
 DEFINE_LEADER_SET_LAYER(Func_020020d0, 0)
 

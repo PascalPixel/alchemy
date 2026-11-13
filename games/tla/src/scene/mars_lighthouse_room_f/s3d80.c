@@ -36,8 +36,8 @@ DEFINE_TELEPORTER_DROP_IN(Func_02003d80, Func_020035b8)
 #include "../mars_lighthouse_room_f.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Func_02003b78(struct WarpWork *work, struct WarpEntry *entry);
-void Func_02003be8(struct WarpWork *work, struct WarpEntry *entry);
+void Teleporter_Uncover(struct WarpWork *work, struct WarpEntry *entry);
+void Teleporter_SinkEvent(struct WarpWork *work, struct WarpEntry *entry);
 
 s32 Func_02003f18(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -53,7 +53,7 @@ s32 Func_02003f18(void) {
 top:
   if (entry->x == x && entry->z == z) {
     if (!Event_GetFlag(entry->flag)) {
-      Func_02003b78(work, entry);
+      Teleporter_Uncover(work, entry);
       Event_SetFlag(entry->flag);
       work->current = index;
       goto end;
@@ -61,7 +61,7 @@ top:
     if (index == work->current)
       goto end;
     work->current = index;
-    Func_02003be8(work, entry);
+    Teleporter_SinkEvent(work, entry);
     GameFlag_SetByte(work->positionFlag, x);
     GameFlag_SetByte(work->positionFlag + 8, z);
     return 1;
@@ -241,8 +241,8 @@ void Func_02004a44(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value) {
 /* VIEW(s4700): variable gData_02005f7c as extern s32 gData_02005f7c[]; the
  * definition has s16 gData_02005f7c[] = { 0, 16, 0, 16, 0, 16, 16, 0, 16, 0,
  * 16, 0, 16, 0, 0, - 16, 0, - 16, 0, - 16, 0, - 16, - 16, 0, - 16, 0, - 16, 0,
- * - 1...; tried as the definition's extern s16 gData_02005f7c[], Func_02004a8c
- * moves: 12 of 171 instructions, Func_02004bf4 moves: 41 of 132 instructions,
+ * - 1...; tried as the definition's extern s16 gData_02005f7c[], PushTarget_FindSlide
+ * moves: 12 of 171 instructions, PushTarget_FindAhead moves: 41 of 132 instructions,
  * Func_02004d10 moves: 27 of 304 instructions in tla-ja. */
 extern s32 gData_02005f7c__s4700[] __asm__("gData_02005f7c");
 
@@ -254,7 +254,7 @@ static inline s32 Func_020054f8_(struct Actor *object, s32 *position) {
 /// at a time in the leader's direction, until a cell of it is blocked
 /// (MapGrid_CheckCollision returns 2). Leaves the object's resting place in target and
 /// returns 1, or 0 when nothing is pushed or it cannot move at all.
-DEFINE_PUSH_TARGET_FIND_SLIDE(Func_02004a8c, Func_02004bf4, gData_02005f64__s4700,
+DEFINE_PUSH_TARGET_FIND_SLIDE(PushTarget_FindSlide, PushTarget_FindAhead, gData_02005f64__s4700,
     gData_02005f7c__s4700, Func_020054f8_)
 
 #include "event_work.h"
@@ -263,15 +263,15 @@ DEFINE_PUSH_TARGET_FIND_SLIDE(Func_02004a8c, Func_02004bf4, gData_02005f64__s470
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
 
-DEFINE_PUSH_TARGET_FIND_AHEAD(Func_02004bf4, gData_02005f58, gData_02005f7c__s4700,
+DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gData_02005f58, gData_02005f7c__s4700,
     gData_02005f64__s4700)
 
 #undef PIXELS
 
 DEFINE_PUSH_TARGET_PUSH(Func_02004d10, gData_02005f64__s4700, Func_02004a44,
-    Func_02004fc0, Func_02005480, gData_02005f7c__s4700)
+    Actor_StopAtPushTarget, Func_02005480, gData_02005f7c__s4700)
 
-DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Func_02004fc0, Func_02005680, gData_02005f58,
+DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Func_02005680, gData_02005f58,
     MapGrid_CheckCollision)
 #undef ABS
 #undef PIXELS
@@ -289,7 +289,7 @@ DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Func_02004fc0, Func_02005680, gData_02005f58,
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
 /// 64 one when the big switch is set, at its animation picture and depth.
-DEFINE_LIGHT_SPRITES_DRAW(Func_02005048, gData_020074cc, Data_0200f510,
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gData_020074cc, Data_0200f510,
     gData_020074ce, gData_020074d0, gData_020075d0, gData_020075d2,
     BattleEffect_GetObjectPriority, Import_OamAddSpriteAtDepthClamped)
 
@@ -300,14 +300,14 @@ DEFINE_LIGHT_SPRITES_DRAW(Func_02005048, gData_020074cc, Data_0200f510,
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(Func_02005204, gData_020074d0, gData_020074cc,
-    Func_02005048, gData_020074ce, gData_020075d0, gData_020075d2)
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_020074d0, gData_020074cc,
+    LightSprites_Draw, gData_020074ce, gData_020075d0, gData_020075d2)
 
-DEFINE_LIGHT_SPRITES_INIT_B(Func_02005284, gData_020074d0, gData_020074cc,
-    Func_02005048, gData_020074ce, gData_020075d0, gData_020075d2)
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_020074d0, gData_020074cc,
+    LightSprites_Draw, gData_020074ce, gData_020075d0, gData_020075d2)
 
-DEFINE_LIGHT_SPRITES_INIT_C(Func_02005304, gData_020074d0, gData_020074cc,
-    Func_02005048, gData_020074ce, gData_020075d0, gData_020075d2)
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_020074d0, gData_020074cc,
+    LightSprites_Draw, gData_020074ce, gData_020075d0, gData_020075d2)
 
 DEFINE_LIGHT_SPRITES_ADD(Func_0200538c, gData_020074ce, gData_020074d0)
 

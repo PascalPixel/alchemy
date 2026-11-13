@@ -41,13 +41,13 @@ void Func_02001650(s32 show, s32 first, u32 count);
 void Func_02001e58(void);
 void Func_02002010(void);
 void Func_02002c6c(void);
-void Func_02002ce0(s32 id);
-void Func_02002d10(void);
+void Actor_Hide(s32 id);
+void Scene_RunUnlessFlag(void);
 void Func_02002d54(void);
 void Func_02002d6c(struct Actor *object, s32 x, s32 z, s32 mode);
 void Func_020032c4(void);
 void Func_02003820(const void *script);
-void Func_0200388c(const void *script, s32 a, s32 b);
+void Statue_Sink(const void *script, s32 a, s32 b);
 void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);

@@ -1600,11 +1600,11 @@ s32 Func_02002a6c(struct Orbiter__magma_rock_inside *object) {
 }
 
 // Moves around in a circle.
-DEFINE_ORBIT_UPDATE(Func_02002b2c)
+DEFINE_ORBIT_UPDATE(Orbit_Update)
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-DEFINE_ACTOR_AIM_AT_WATCHED(Func_02002bd0)
+DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
 
 s32 Func_02002c1c(struct Actor *object) {
   u8 *steps;

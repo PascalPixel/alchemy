@@ -246,9 +246,9 @@ s32 Func_020001d4(s32 *position);
 void Func_02000458(struct YampiDesertCaveRect rect);
 void Func_02000898(void);
 void Func_020008fc(void);
-s32 Func_02000978(u16 *list);
+s32 List_CountEntries(u16 *list);
 void Func_0200099c(void);
-void Func_02000bc0(u16 *list, s32 mode, s32 count);
+void Statue_Sink(u16 *list, s32 mode, s32 count);
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02001958(void);
 
@@ -385,7 +385,7 @@ DEFINE_PALETTE_SET_COLORS(Func_020007dc, gData_02001fd8, gData_02001fdc,
 #include "task.h"
 
 DEFINE_PALETTE_CYCLE_START_VBLANK(Func_02000898, gData_02001fe8, gData_02001fe4,
-    Func_02000978, gData_02001fd8, gData_02001fd4, 15, gData_02001fd0, 16,
+    List_CountEntries, gData_02001fd8, gData_02001fd4, 15, gData_02001fd0, 16,
     gData_02001fc8, Func_0200099c)
 
 void Func_020008fc(void) {
@@ -394,10 +394,10 @@ void Func_020008fc(void) {
 }
 
 DEFINE_PALETTE_CYCLE_START_VBLANK(Func_0200091c, gData_02001fe8, gData_02001fe4,
-    Func_02000978, gData_02001fd8, gData_02001fd4, 2, gData_02001fd0, 2,
+    List_CountEntries, gData_02001fd8, gData_02001fd4, 2, gData_02001fd0, 2,
     gData_02001fc8, Func_0200099c)
 
-DEFINE_LIST_COUNT_ENTRIES(Func_02000978)
+DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
 
 void Func_0200099c(void) {
   s32 step = 0;
@@ -492,7 +492,7 @@ loop:
 }
 
 // Finds the current target's table row and shrinks it.
-DEFINE_STATUE_SINK(Func_02000bc0, Func_02000c44)
+DEFINE_STATUE_SINK(Statue_Sink, Func_02000c44)
 
 #include "field_event.h"
 
@@ -678,7 +678,7 @@ void Func_02001120(void) {
 }
 
 void Func_020011b4(s32 a, s32 b) {
-  Func_02000bc0(gData_02001d20, a, b);
+  Statue_Sink(gData_02001d20, a, b);
   MapGrid_CopyCellAttributes(47, 12, 1, 1, 46, 12);
 }
 

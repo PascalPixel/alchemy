@@ -116,7 +116,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 u32 __umodsi3(u32 a, u32 b);
 
-DEFINE_TILE_SPRITE_RESET(Func_020002a4)
+DEFINE_TILE_SPRITE_RESET(TileSprite_Reset)
 
 static __inline__ s32 MulQ16(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): through the inline the multiply's address loads between

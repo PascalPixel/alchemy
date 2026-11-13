@@ -134,7 +134,7 @@ struct ParticleWork {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_PARTICLES_UPDATE_FALLING(Func_0200379c, EffectSprite_DrawAtWorldPosition)
+DEFINE_PARTICLES_UPDATE_FALLING(Particles_UpdateFalling, EffectSprite_DrawAtWorldPosition)
 
 void Func_02003820(s32 x, s32 y, s32 z, s32 count) {
   struct EntryWork *work;
@@ -237,13 +237,13 @@ void Func_020038dc(void) {
 
     work->next = zero;
   }
-  Task_AddFrame(Func_0200379c, 0x480);
+  Task_AddFrame(Particles_UpdateFalling, 0x480);
 }
 
 void Func_02003998(void) {
   struct MagmaRockSparkWork *work = Ram_HeapSlots->menuRuntime;
 
-  FieldTask_Remove(Func_0200379c);
+  FieldTask_Remove(Particles_UpdateFalling);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(220);
 }

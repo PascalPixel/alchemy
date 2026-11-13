@@ -50,7 +50,7 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    const struct EffectOptions *options);
 s32 Func_0200034c(u32 layer, s32 x, s32 y);
 s32 Func_02000388(u32 layer, s32 x, s32 y, s32 value);
-s32 Func_020003d0(s32 *a, s32 *b);
+s32 Position_FlatDistance(s32 *a, s32 *b);
 void Func_0200141c(s32 x, s32 z, s32 actor);
 void Func_020018a8(s32 x, s32 z, s32 actor);
 

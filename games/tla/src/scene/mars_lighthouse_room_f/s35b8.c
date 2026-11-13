@@ -99,7 +99,7 @@ DEFINE_TELEPORTERS_FIND(Func_020038ac, gData_020070a8, Func_02003780)
 
 #include "scene_tables.h"
 
-DEFINE_LEADER_CENTER_IN_CELL(Func_02003af0)
+DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 
 /// Map_CopyCellsRect through this overlay's import.
 
@@ -107,9 +107,9 @@ DEFINE_LEADER_CENTER_IN_CELL(Func_02003af0)
 /// the table's source cell over the leader's, keeping the source column's and
 /// row's 64 bit; Func_02003f18 calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_TELEPORTER_UNCOVER(Func_02003b78, Func_02003af0)
+DEFINE_TELEPORTER_UNCOVER(Teleporter_Uncover, Leader_CenterInCell)
 
 #include "../shared/jupiter_lighthouse_room_3.h"
 #include "io_reg.h"
 
-DEFINE_TELEPORTER_SINK_EVENT(Func_02003be8, Func_02003af0)
+DEFINE_TELEPORTER_SINK_EVENT(Teleporter_SinkEvent, Leader_CenterInCell)

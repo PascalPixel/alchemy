@@ -60,13 +60,13 @@ const u8 *Scene_GetPlacements(void) {
 s32 TrialRoad_RivalIsAhead(s32 fallback) {
   struct TrialRoadState *state = gTrialRoadState;
 
-  if (state->field1a < state->field1c)
+  if (state->leaderBest < state->rivalBest)
     return 1;
-  if (state->field1a > state->field1c)
+  if (state->leaderBest > state->rivalBest)
     return 0;
   if (Event_GetFlag(0x284))
     return 0;
-  if (state->field14 != 0)
+  if (state->rivalTimer != 0)
     return 1;
   return fallback;
 }
@@ -80,7 +80,7 @@ void TrialRoad_TakeStairs(s32 direction) {
   s16 *order = (s16 *)state;
 
   if ((u32)(direction - 1) <= 1) {
-    if (state->field16[0] <= 0) {
+    if (state->stage[0] <= 0) {
       if (Event_GetFlag(2559)) {
         if (TrialRoad_OfferToGiveUp(0) == 0)
           Actor_WalkByAndWait(gMainRoutineWork.currentOwner, 0, -16);
@@ -88,14 +88,14 @@ void TrialRoad_TakeStairs(s32 direction) {
       }
       Import_EventSetExitRequest(direction + 4);
     } else {
-      state->field16[0]--;
+      state->stage[0]--;
       Import_EventSetExitRequest(direction);
     }
     Event_PlaySound(123);
   }
   if ((u32)(direction - 3) <= 1) {
-    state->field16[0]++;
-    if (state->field16[0] > 3) {
+    state->stage[0]++;
+    if (state->stage[0] > 3) {
       if (Event_GetFlag(2559) && TrialRoad_RivalIsAhead(0) == 0)
         Event_SetFlag(901);
       Event_PlaySound(128);
@@ -105,13 +105,13 @@ void TrialRoad_TakeStairs(s32 direction) {
       Import_EventSetExitRequest(direction);
       Event_PlaySound(123);
     }
-    if (state->field16[0] > state->field1a)
-      state->field1a = state->field16[0];
+    if (state->stage[0] > state->leaderBest)
+      state->leaderBest = state->stage[0];
   }
   {
     /* FAKEMATCH(temporary): the byte offset kept in a local; as order[index], 2
      * of 93 instructions differ in tla-en. */
-    s32 offset = (state->field16[0] * 2 + state->mirrored) * 2;
+    s32 offset = (state->stage[0] * 2 + state->mirrored) * 2;
 
     state->pattern = *(s16 *)((u8 *)order + offset);
   }

@@ -22,14 +22,15 @@ struct TrialRoadMapWork {
   struct TrialRoadMapLayer layers[3];
 };
 
+/// Trial Road's progress, kept in the inventory snapshot while the trial runs.
 struct TrialRoadState {
-  u8 unk00[0x10];
+  s16 order[8]; ///< the dealt stage patterns, two to a stage
   s16 pattern;
   s16 mirrored;
-  s16 field14;
-  s16 field16[2];
-  s16 field1a;
-  s16 field1c;
+  s16 rivalTimer; ///< frames the rival has spent at its current chest
+  s16 stage[2];   ///< the stages the leader (0) and the rival (1) are on
+  s16 leaderBest; ///< the furthest stage the leader has reached
+  s16 rivalBest;  ///< the furthest stage the rival has reached
 };
 
 extern u8 gInventorySnapshot[];
@@ -38,17 +39,6 @@ extern u8 gInventorySnapshot[];
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
-void Func_0200062c(s32 id);
-void Func_02000660(s32 id);
-void Func_0200070c(s32 id, s32 value);
-void Func_0200078c(s32 id);
-void Func_020009ac(s32 a, s32 b);
-void Func_02000a18(s32 id, s32 a, s32 b);
-void Func_02000b7c(s32 id, s32 other, s32 flag, s32 side);
-void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis);
-void Func_02001104(s32 id, s32 a, s32 frame);
-void Func_02004418(const u16 *table);
-void Func_020045ac(const void *data, s32 a);
 void Actor_SelectAnimation(struct Actor *object, s32 a);
 void Actor_StartScript(struct Actor *object, const void *script);
 void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
@@ -63,8 +53,6 @@ struct MainRoutineWork254 {
   u16 value;
 };
 
-void Func_020006b4(s32 id);
-void Func_020007b4(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Func_02005a50(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_02005a60(s32 a, s32 b, s32 c);

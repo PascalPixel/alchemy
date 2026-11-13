@@ -61,15 +61,6 @@ DEFINE_BLOCKS_MARK_CELLS(Blocks_MarkCells, MapCell_GetAttributes)
 // Clears the object's mark and the cells ahead of and behind it that the mark
 // blocked.
 
-struct Object0200074c {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x4f];
-  u8 marked;
-};
-
 DEFINE_BLOCK_CLEAR_CELLS(MagmaRock_ClearBlockCells)
 
 // For each id of a list ended by 0xffff: settles the object on its ground,

@@ -73,7 +73,8 @@ struct Actor {
     struct {
       u8 unk60[2];
       u8 riseCounter; ///< frames into the bob, its low six bits a cycle
-      u8 unk63;
+      /// A block's: nonzero while it blocks the cells ahead of and behind it.
+      u8 blockMarked;
     };
   };
   /// The parameter its action script reads (a follow distance or an angle to

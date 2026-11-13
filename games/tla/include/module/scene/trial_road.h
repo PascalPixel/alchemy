@@ -26,28 +26,6 @@ struct MapWorkByte23 {
   u8 bits4 : 4;
 };
 
-struct TrialRoadStage {
-  s16 order[8];
-  s16 pattern;
-  s16 mirrored;
-  s16 timer;
-  s16 current;
-  s16 stage;
-  s16 unk1a;
-  s16 best;
-};
-
-// The state as this function reads it: its first 16 bytes are the dealt order.
-struct TrialRoadDeal {
-  s16 order[8];
-  s16 pattern;
-  s16 mirrored;
-  s16 field14;
-  s16 field16[2];
-  s16 field1a;
-  s16 field1c;
-};
-
 /// The sprite's priority bits, read as the byte that holds them.
 struct EffectSpriteBits {
   u8 unk0 : 2;

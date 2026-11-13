@@ -97,7 +97,7 @@ void TrialRoad_OpenChests(void) {
   TrialRoad_Idle();
   found = TrialRoad_RivalIsAhead(0);
   if (found != 0)
-    Event_SetFlag(state->field16[0] + 897);
+    Event_SetFlag(state->stage[0] + 897);
   Event_PlaySound(124);
   if (state->mirrored == 0) {
     Actor_SetAnimation(9, 6);
@@ -122,7 +122,7 @@ void TrialRoad_OpenChests(void) {
 /// chest." (MsgTrialRoadStoredItem) with sound 125 while the chest object
 /// Field_FindNearbyTalkTarget picks plays motion 5; chests 9 and 11 clear flag
 /// 645, the others 646, and once both are clear it calls
-/// TrialRoad_OpenLeaderDoor with the stage state's mirrored and field16[0],
+/// TrialRoad_OpenLeaderDoor with the stage state's mirrored and stage[0],
 /// plays sound 138 and sets flag 642. Then the item leaves the owner's slot.
 void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   s32 kind = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
@@ -140,7 +140,7 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   else
     Event_ClearFlag(646);
   if (!Event_GetFlag(645) && !Event_GetFlag(646)) {
-    TrialRoad_OpenLeaderDoor(state->mirrored, state->field16[0]);
+    TrialRoad_OpenLeaderDoor(state->mirrored, state->stage[0]);
     Event_PlaySound(138);
     Event_SetFlag(642);
   }

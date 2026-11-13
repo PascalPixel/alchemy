@@ -679,25 +679,6 @@ struct SpawnedActor {
   u16 timer;
 };
 
-struct Unk_020003a0Sprite {
-  u8 unk00[5];
-  u8 unk05_0 : 2;
-  u8 shape : 2;
-  u8 unk05_4 : 1;
-  u8 blend : 1;
-  u8 unk05_6 : 2;
-  u8 unk06[2];
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u16 unk0a;
-  // XXX (no evidence): what these hold; read as s32, whose alias set orders
-  // the stores as the listing does.
-  s32 unk0c[4];
-  u16 unk1c;
-  u16 unk1e;
-};
-
 struct Half {
   u16 v;
 };
@@ -741,25 +722,6 @@ struct LemurianShipWarp {
   u16 z;
 };
 
-struct Unk16 {
-  u8 unk00[4];
-  union {
-    u32 words[2];
-    u16 halves[4];
-    u8 bytes[8];
-    struct {
-      u16 y : 8;
-      u16 attr0 : 8;
-      u16 x : 9;
-      u16 attr1 : 7;
-      u16 tile : 10;
-      u16 priority : 2;
-      u16 palette : 4;
-    } oam;
-  } sprite;
-  s32 unk_0c;
-};
-
 struct LohoPicture {
   const void *data;
   u16 a;
@@ -798,15 +760,6 @@ struct AnimationRecord18 {
 struct EventObjects {
   u8 unk00[20];
   struct Actor *objects[64];
-};
-
-struct Object0200074c {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x4f];
-  u8 marked;
 };
 
 struct StagedActor {
@@ -980,36 +933,6 @@ union SparkOam {
   struct OamData oam;
 };
 
-struct Sprite6a7 {
-  u32 unk_00;
-  struct OamData oam;
-  u8 unk_0c[18];
-  u16 unk_1e;
-  u8 unk_20[8];
-};
-
-struct Particle6a7 {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 unk_14;
-  u32 age;
-};
-
-struct Spark6a7 {
-  u32 unk_00;
-  union SparkOam oam;
-  s32 timer;
-};
-
-struct Work6a7 {
-  u8 sheet[0x1000];
-  struct Sprite6a7 sprites[54];
-  struct Particle6a7 particles[54];
-};
-
 struct SeaOfTimeEventWork0154 {
   u8 unk000[0x154];
   s16 unk154;
@@ -1153,26 +1076,6 @@ struct GlowAnimation {
   u32 unk00[4];
   u32 unk10 : 16;
   u32 angle : 16;
-};
-
-struct Unk_0200258cState {
-  u8 unk00[24];
-  s32 frame;
-};
-
-struct Unk_0200258cSprite {
-  u8 unk00[8];
-  u16 tile : 10;
-  u16 attributes : 6;
-  u8 unk0a[30];
-};
-
-struct Unk_0200258cWork {
-  u8 unk0000[0x800];
-  struct Unk_0200258cState states[96];
-  struct Unk_0200258cSprite sprites[96];
-  u16 unk2180;
-  u16 unk2182;
 };
 
 struct SparkState {

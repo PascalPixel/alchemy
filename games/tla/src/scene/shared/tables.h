@@ -64,51 +64,6 @@
       SC_END,                                                                  \
   };
 
-#define DEFINE_G_DATA_020006CC(name)                                           \
-  struct ActorPlacement name[] = {                                             \
-      {365, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(246), FACING_SOUTH, 0, \
-       0},                                                                     \
-      {304, CONDITION_ALWAYS, (s32)gData_02000604, PIXELS(316), 0,             \
-       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
-      {304, CONDITION_ALWAYS, (s32)gData_02000604, PIXELS(372), 0,             \
-       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
-      {410, CONDITION_ALWAYS, (s32)gData_02000610, PIXELS(316), 0,             \
-       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
-      {410, CONDITION_ALWAYS, (s32)gData_02000610, PIXELS(372), 0,             \
-       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
-      {115, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(344), FACING_SOUTH, 1, \
-       0},                                                                     \
-      {116, CONDITION_ALWAYS, 3, PIXELS(200), 0, PIXELS(296), FACING_EAST, 0,  \
-       0},                                                                     \
-      {114, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(152), FACING_SOUTH, 1, \
-       0},                                                                     \
-      {128, CONDITION_ALWAYS, 3, PIXELS(88), 0, PIXELS(376), FACING_NORTHEAST, \
-       0, 0},                                                                  \
-      {112, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(88), FACING_SOUTHEAST, \
-       1, 0},                                                                  \
-      {113, CONDITION_ALWAYS, 1, PIXELS(368), 0, PIXELS(224),                  \
-       FACING_SOUTHEAST, 1, 0},                                                \
-      {136, CONDITION_ALWAYS, 2, PIXELS(200), 0, PIXELS(200),                  \
-       FACING_NORTHEAST, 0, 0},                                                \
-      {147, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(232),                  \
-       FACING_SOUTHWEST, 1, 0},                                                \
-      {112, CONDITION_ALWAYS, 2, PIXELS(56), 0, PIXELS(232), FACING_EAST, 0,   \
-       0},                                                                     \
-      {110, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(360), FACING_EAST, 1,  \
-       0},                                                                     \
-      {307, CONDITION_ALWAYS, (s32)gData_02000634, PIXELS(40), 0, PIXELS(168), \
-       FACING_SOUTH, 2, 0},                                                    \
-      {407, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(376), FACING_SOUTH, 2, \
-       0},                                                                     \
-      {489, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(376), FACING_SOUTH, 2, \
-       0},                                                                     \
-      {201, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(168), FACING_SOUTH, 1, \
-       0},                                                                     \
-      {328, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(104), FACING_SOUTH, 1, \
-       0},                                                                     \
-      {SCENE_TABLE_END},                                                       \
-  };
-
 /// An actor that spins on the spot every second and a half, from facing
 /// south; the east and north forms start from those headings.
 #define DEFINE_SPIN_FROM_SOUTH_SCRIPT(name)                                    \

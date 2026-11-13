@@ -540,23 +540,23 @@ void TrialRoad_CopyCellsBackward(s32 srcX, s32 srcY, s32 width, s32 height,
 void TrialRoad_OpenRivalDoor(s32 mirrored, s32 stage);
 
 void TrialRoad_UpdateRival(void) {
-  struct TrialRoadStage *state = (struct TrialRoadStage *)gTrialRoadState;
+  struct TrialRoadState *state = gTrialRoadState;
   struct TrialRoadState *road = gTrialRoadState;
   s32 side;
 
-  if (state->stage > 3)
+  if (state->stage[1] > 3)
     return;
   if (TrialRoad_RivalIsWaiting() != 0) {
-    if (state->timer == 0) {
+    if (state->rivalTimer == 0) {
       side = TrialRoad_RivalIsAhead(1) ^ 1;
       TrialRoad_PlayRivalRecording(gTrialRoad_RivalRecordings[side + 8]);
-      state->timer = side * 5 * 120 + 1;
+      state->rivalTimer = side * 5 * 120 + 1;
     } else {
-      if (state->stage >= state->best)
-        state->best = state->stage + 1;
-      if (++road->field16[1] <= 3) {
+      if (state->stage[1] >= state->rivalBest)
+        state->rivalBest = state->stage[1] + 1;
+      if (++road->stage[1] <= 3) {
         s32 pattern =
-            state->order[state->stage * 2 + (s16)(state->mirrored ^ 1)];
+            state->order[state->stage[1] * 2 + (s16)(state->mirrored ^ 1)];
 
         TrialRoad_PlayRivalRecording(gTrialRoad_RivalRecordings[pattern & 7]);
         Actor_GetById(8)->terrainHeight = 0;
@@ -564,33 +564,33 @@ void TrialRoad_UpdateRival(void) {
       } else {
         Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
       }
-      state->timer = 0;
+      state->rivalTimer = 0;
     }
   }
   {
     u8 *kind = &Actor_GetById(8)->animationKind;
 
-    if (state->current == state->stage)
+    if (state->stage[0] == state->stage[1])
       *kind = 1;
     else
       *kind = 0;
   }
-  if (state->timer == 0)
+  if (state->rivalTimer == 0)
     return;
   if (GameFlag_Get(260))
     return;
-  if (state->current == state->stage) {
-    switch (state->timer) {
+  if (state->stage[0] == state->stage[1]) {
+    switch (state->rivalTimer) {
     case 1:
     case 601:
       Sound_Play(124);
       if (state->mirrored != 0) {
         Actor_SetModeById(9, 6);
-        if (state->timer > 600)
+        if (state->rivalTimer > 600)
           Actor_SetModeById(10, 6);
       } else {
         Actor_SetModeById(11, 6);
-        if (state->timer > 600)
+        if (state->rivalTimer > 600)
           Actor_SetModeById(12, 6);
       }
       break;
@@ -615,12 +615,12 @@ void TrialRoad_UpdateRival(void) {
       break;
     case 70:
     case 730:
-      TrialRoad_OpenRivalDoor(state->mirrored, state->stage);
+      TrialRoad_OpenRivalDoor(state->mirrored, state->stage[1]);
       Sound_Play(138);
       break;
     }
   }
-  road->field14++;
+  road->rivalTimer++;
 }
 
 extern s16 gTrialRoad_StageMapCells[][2];
@@ -652,7 +652,7 @@ s32 Scene_PrepareMap(void) {
 
   if (scene == (s32)&SceneId_Ov697Room1) {
     struct MapWork *map = Ram_HeapSlots->mapWork;
-    struct TrialRoadDeal *state = (struct TrialRoadDeal *)gTrialRoadState;
+    struct TrialRoadState *state = gTrialRoadState;
     struct Actor *leader;
     u8 *unit;
     s32 value;
@@ -671,13 +671,13 @@ s32 Scene_PrepareMap(void) {
         GameFlag_Set(896);
       }
       state->mirrored = (entrance - 1) & 1;
-      state->field16[0] = 0;
-      state->field16[1] = 0;
-      state->field1a = 0;
-      state->field1c = 0;
+      state->stage[0] = 0;
+      state->stage[1] = 0;
+      state->leaderBest = 0;
+      state->rivalBest = 0;
       value = state->order[state->mirrored ^ 1];
       TrialRoad_PlayRivalRecording((s32)gTrialRoad_RivalRecordings[value & 7]);
-      state->pattern = state->order[state->field16[0] * 2 + state->mirrored];
+      state->pattern = state->order[state->stage[0] * 2 + state->mirrored];
       n = entrance % 10;
       Event_SetDestination((s32)&SceneId_Ov697Room1, n);
     } else if ((u32)(entrance - 33) <= 1) {
@@ -696,10 +696,10 @@ s32 Scene_PrepareMap(void) {
         s16 side = (entrance - 1) & 1;
 
         state->mirrored = side;
-        state->field16[0] = 3;
-        state->field16[1] = 3;
-        state->field1a = 4;
-        state->field1c = 4;
+        state->stage[0] = 3;
+        state->stage[1] = 3;
+        state->leaderBest = 4;
+        state->rivalBest = 4;
         side ^= 1;
         {
           /* FAKEMATCH(temporary): index; as state->order[side + 6], 2 of 879
@@ -710,7 +710,7 @@ s32 Scene_PrepareMap(void) {
         }
       }
       TrialRoad_PlayRivalRecording((s32)gTrialRoad_RivalRecordings[value & 7]);
-      state->pattern = state->order[state->field16[0] * 2 + state->mirrored];
+      state->pattern = state->order[state->stage[0] * 2 + state->mirrored];
       n = entrance % 10;
       Event_SetDestination((s32)&SceneId_Ov697Room1, n);
     } else if (entrance == 50) {
@@ -721,10 +721,10 @@ s32 Scene_PrepareMap(void) {
         value += unit[n];
       TrialRoad_DealStageOrder(value);
       state->mirrored = 0;
-      state->field16[0] = 0;
-      state->field16[1] = 0;
-      state->field1a = 0;
-      state->field1c = 0;
+      state->stage[0] = 0;
+      state->stage[1] = 0;
+      state->leaderBest = 0;
+      state->rivalBest = 0;
       state->pattern = state->order[0];
       Event_SetDestination((s32)&SceneId_Ov697Room1, 55);
     } else {
@@ -839,22 +839,22 @@ s32 Scene_PrepareMap(void) {
           // The call's argument reads through the other struct: through the
           // same one GCSE moves the load into both predecessors (11 more of
           // gap).
-          if (road->field16[0] < road->field1a || GameFlag_Get(642)) {
+          if (road->stage[0] < road->leaderBest || GameFlag_Get(642)) {
             TrialRoad_OpenLeaderDoor(
-                road->mirrored, ((struct TrialRoadDeal *)road)->field16[0]);
+                road->mirrored, road->stage[0]);
             GameFlag_Set(642);
             GameFlag_Set(644);
           }
-          if (road->field16[0] < road->field1c)
-            TrialRoad_OpenRivalDoor(road->mirrored, road->field16[0]);
+          if (road->stage[0] < road->rivalBest)
+            TrialRoad_OpenRivalDoor(road->mirrored, road->stage[0]);
           TrialRoad_ShowProgress(gMainRoutineWork.currentOwner, 8);
           TrialRoad_StartRival((s16)(state->mirrored ^ 1));
           Task_Add(TrialRoad_UpdateRival, 0x480);
         } else {
-          TrialRoad_OpenLeaderDoor(state->mirrored, state->field16[0]);
+          TrialRoad_OpenLeaderDoor(state->mirrored, state->stage[0]);
           GameFlag_Set(642);
           GameFlag_Set(644);
-          TrialRoad_OpenRivalDoor(state->mirrored, state->field16[0]);
+          TrialRoad_OpenRivalDoor(state->mirrored, state->stage[0]);
         }
       }
     }
@@ -917,7 +917,7 @@ s32 TrialRoad_GetStage(s32 side) {
   struct TrialRoadState *state;
 
   state = gTrialRoadState;
-  return state->field16[side & 1];
+  return state->stage[side & 1];
 }
 
 s32 TrialRoad_IsMirrored(void) { return gTrialRoadState->mirrored; }

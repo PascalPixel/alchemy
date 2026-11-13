@@ -331,7 +331,7 @@
                                                                                \
     while (*ids != 0xffff) {                                                   \
       object = Actor_Get(*ids);                                                \
-      blocked = (u8 *)object + 0x63;                                           \
+      blocked = &object->blockMarked;                                          \
       *blocked = 0;                                                            \
       if (call1(0, object->x >> 20, object->z >> 20) & 0x40) {                 \
         map = Ram_HeapSlots->mapWork;                                          \
@@ -413,14 +413,14 @@
 
 /// Clears the cells a block marked.
 #define DEFINE_BLOCK_CLEAR_CELLS(name)                                         \
-  void name(struct Object0200074c *object) {                                   \
+  void name(struct Actor *object) {                                            \
     struct MapWork *map;                                                       \
     struct MapCell **cells;                                                    \
     struct MapCell *cell;                                                      \
     s32 x;                                                                     \
     s32 z;                                                                     \
                                                                                \
-    if (object->marked == 0)                                                   \
+    if (object->blockMarked == 0)                                              \
       return;                                                                  \
     map = Ram_HeapSlots->mapWork;                                              \
     if (map == NULL)                                                           \
@@ -434,7 +434,7 @@
     cell = *cells;                                                             \
     cell += x + ((z - 1) << 7);                                                \
     cell->collisionCode = 0;                                                   \
-    object->marked = 0;                                                        \
+    object->blockMarked = 0;                                                   \
   }
 
 /// Actor_SetCellShape as Izumo's ruins and Magma Rock compile it.

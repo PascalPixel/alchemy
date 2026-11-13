@@ -73,7 +73,7 @@ Resource_FarCall005:
 	export Party_SetLeaderJennaFar, Party_SetLeaderJenna
 	export Party_SetLeaderFelixFar, Party_SetLeaderFelix
 	export Func_080ad228, Party_GivePiersDjinn
-	export Func_080ad230, Func_080ae830
+	export Unit_ReservedNoOpFar, Unit_ReservedNoOp
 	export Func_080ad238, DataTransfer_Apply
 	export Func_080ad240, Party_AddIsaacsParty
 	export Djinn_GiveToPartyFar, Djinn_GiveToParty

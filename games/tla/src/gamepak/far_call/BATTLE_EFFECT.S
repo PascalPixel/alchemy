@@ -3,7 +3,7 @@
 	.include "games/tla/src/gamepak/far_call/veneer.s"
 	.global Resource_FarCall00C
 Resource_FarCall00C:
-	export Func_08138000, BattleEffect_BuildBlitter
+	export BattleEffect_BuildBlitterFar, BattleEffect_BuildBlitter
 	export BattleEffect_DispatchByIdRangeFar, BattleEffect_DispatchByIdRange
 	export BattleEffect_RunSceneEffectFar, BattleEffect_RunSceneEffect
 	export BattleEffect_RunFromTableFar, BattleEffect_RunFromTable

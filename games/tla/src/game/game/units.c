@@ -1175,7 +1175,8 @@ void Party_AddIsaacsParty(void) {
 #endif
 }
 
-void Func_080ae830(void) {}
+/// Does nothing; nothing calls Unit_ReservedNoOpFar.
+void Unit_ReservedNoOp(void) {}
 
 void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn) {
   s32 flag = element * 20 + djinn;

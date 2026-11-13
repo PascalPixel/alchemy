@@ -632,8 +632,8 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-// Declared as The Broken Seal's five-argument blitter builder, which this game
-// does not link; it serves only the never-taken call below.
+// The five-argument blitter builder's far call, which nothing calls; it serves
+// only the never-taken call below.
 s32 BattleEffect_BuildBlitterFar(s32 slot, s32 widthShift, s32 heightShift,
                                  s32 flags, u32 mode);
 

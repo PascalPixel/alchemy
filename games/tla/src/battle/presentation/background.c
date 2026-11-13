@@ -862,7 +862,7 @@ extern char ResourceId_RedPaletteC;
 extern char ResourceId_VioletPaletteD;
 
 s32 BattleEffect_LoadBlitterFar(s32 slot, s32 modeAndFlags);
-// The Broken Seal's five-argument blitter loader, named but never called.
+// The five-argument blitter builder's far call, never called.
 s32 BattleEffect_BuildBlitterFar(s32 slot, s32 source, s32 destination,
                                  s32 flags, s32 mode);
 

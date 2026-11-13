@@ -662,20 +662,28 @@ static void AltinPeak_FreezeSpritzRoomThirdPuddle(void) {
 ///
 /// Each time, background 1 (the water) stays on only when a random percentage
 /// reaches the timer. So as the timer climbs to 100 the water flickers away.
-static void Water_FlickerOut(void) {
-  volatile u16 *reg = &REG_DISPCNT;
-  s16 v = *reg & ~DISPCNT_BG1_ON;
+static void AltinPeak_FlickerWaterOut(void) {
+  s16 control = REG_DISPCNT & ~DISPCNT_BG1_ON;
 
   if ((u32)(Import_RandomNext() * 100) >> 16 >= gAltinPeak_FlickerTimer) {
-    s32 k = DISPCNT_BG1_ON;
-
-    v |= k;
+    control |= DISPCNT_BG1_ON;
   }
-  {
-    u32 t = (u16)v;
+  REG_DISPCNT = (u16)control;
+}
 
-    *reg = t;
-  }
+/// Flickers the water away while the timer counts to 100, then lets the
+/// screen settle; every drain ends this way.
+static inline void AltinPeak_FlickerWaterAway(void) {
+  Irq_SetHandler(1, 0, AltinPeak_FlickerWaterOut);
+  gAltinPeak_FlickerTimer = 0;
+  do {
+    wait(1);
+  } while (++gAltinPeak_FlickerTimer <= 100);
+  wait(1);
+  Irq_SetHandler(1, 0, 0);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+  Event_Wait(30);
 }
 
 /// The first drain, after the Frost Jewel is found.
@@ -686,20 +694,17 @@ static void Water_FlickerOut(void) {
 /// - The water flickers away over 100 frames.
 /// - The way on opens and the drain is remembered.
 static void AltinPeak_DrainFirstWater(void) {
-  s32 step;
+  struct MapGridScrollWork *map = gMapGridWork[0];
+  struct MapGridLayerScroll *water;
   struct Actor *puddle;
-  u8 *gridWork;
-  u8 *waterLayer;
-  s32 timer;
+  s32 step;
 
-  gridWork = gMapGridWork[0];
   Sound_Play(SE_WATER_DRAIN);
   MapGrid_SetShake(2, 2, 1);
   Event_Wait(10);
-  // Sink the water layer one pixel every 4 frames, 24 in all.
-  waterLayer = gridWork + 356;
-  for (step = 0; step <= 23; step++) {
-    *(s32 *)(waterLayer + 12) -= px(1);
+  water = &map->layers[MAPGRID_LAYER_OVERHEAD];
+  for (step = 0; step < 24; step++) {
+    water->offsetY -= px(1);
     wait(4);
     if (step == 8) {
       puddle = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
@@ -711,19 +716,7 @@ static void AltinPeak_DrainFirstWater(void) {
                       gAltinPeak_PuddleGrowScript);
     }
   }
-  // Flicker the water away while the timer counts to 100.
-  Irq_SetHandler(1, 0, Water_FlickerOut);
-  gAltinPeak_FlickerTimer = 0;
-  do {
-    wait(1);
-    timer = gAltinPeak_FlickerTimer + 1;
-    gAltinPeak_FlickerTimer = timer;
-  } while ((u32)(timer << 16) <= 100 << 16);
-  wait(1);
-  Irq_SetHandler(1, 0, 0);
-  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  Event_Wait(30);
+  AltinPeak_FlickerWaterAway();
   MapGrid_CopyCellAttributes(0, 0, 1, 2, 3, 14);
   GameFlag_Set(FLAG_ALTIN_MINE_FIRST_DRAIN);
 }
@@ -731,72 +724,42 @@ static void AltinPeak_DrainFirstWater(void) {
 /// The second drain is the same sinking and flicker over the cells the water
 /// leaves behind, which then take their dry form.
 static void AltinPeak_DrainSecondWater(void) {
+  struct MapGridScrollWork *map = gMapGridWork[0];
+  struct MapGridLayerScroll *water;
   s32 step;
-  u8 *gridWork;
-  u8 *waterLayer;
-  s32 timer;
 
-  gridWork = gMapGridWork[0];
   MapGrid_CopyCells(93, 41, 16, 4, 77, 28);
   Sound_Play(SE_WATER_DRAIN);
   MapGrid_SetShake(2, 2, 1);
   Event_Wait(10);
-  // Sink the water layer one pixel every 4 frames, 24 in all.
-  waterLayer = gridWork + 356;
-  for (step = 23; step >= 0; step--) {
-    *(s32 *)(waterLayer + 12) -= px(1);
+  water = &map->layers[MAPGRID_LAYER_OVERHEAD];
+  for (step = 0; step < 24; step++) {
+    water->offsetY -= px(1);
     wait(4);
   }
-  // Flicker the water away while the timer counts to 100.
-  Irq_SetHandler(1, 0, Water_FlickerOut);
-  gAltinPeak_FlickerTimer = 0;
-  do {
-    wait(1);
-    timer = gAltinPeak_FlickerTimer + 1;
-    gAltinPeak_FlickerTimer = timer;
-  } while ((u32)(timer << 16) <= 100 << 16);
-  wait(1);
-  Irq_SetHandler(1, 0, 0);
-  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  Event_Wait(30);
+  AltinPeak_FlickerWaterAway();
   MapGrid_CopyCells(77, 41, 16, 4, 77, 28);
   GameFlag_Set(FLAG_ALTIN_MINE_SECOND_DRAIN);
 }
 
 /// The third drain, likewise.
 static void AltinPeak_DrainThirdWater(void) {
+  struct MapGridScrollWork *map = gMapGridWork[0];
+  struct MapGridLayerScroll *water;
   s32 step;
-  u8 *gridWork;
-  u8 *waterLayer;
-  s32 timer;
 
-  gridWork = gMapGridWork[0];
   MapGrid_CopyCellsTo(113, 31, 103, 17, 1, 1);
   MapGrid_CopyCellsTo(111, 32, 104, 18, 3, 2);
   MapGrid_CopyCellsTo(64, 32, 103, 18, 1, 2);
   Sound_Play(SE_WATER_DRAIN);
   MapGrid_SetShake(2, 2, 1);
   Event_Wait(10);
-  // Sink the water layer one pixel every 4 frames, 24 in all.
-  waterLayer = gridWork + 356;
-  for (step = 23; step >= 0; step--) {
-    *(s32 *)(waterLayer + 12) -= px(1);
+  water = &map->layers[MAPGRID_LAYER_OVERHEAD];
+  for (step = 0; step < 24; step++) {
+    water->offsetY -= px(1);
     wait(4);
   }
-  // Flicker the water away while the timer counts to 100.
-  Irq_SetHandler(1, 0, Water_FlickerOut);
-  gAltinPeak_FlickerTimer = 0;
-  do {
-    wait(1);
-    timer = gAltinPeak_FlickerTimer + 1;
-    gAltinPeak_FlickerTimer = timer;
-  } while ((u32)(timer << 16) <= 100 << 16);
-  wait(1);
-  Irq_SetHandler(1, 0, 0);
-  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  Event_Wait(30);
+  AltinPeak_FlickerWaterAway();
   MapGrid_CopyCellsTo(103, 14, 103, 17, 4, 3);
   GameFlag_Set(FLAG_ALTIN_MINE_THIRD_DRAIN);
 }

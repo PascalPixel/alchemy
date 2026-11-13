@@ -663,9 +663,7 @@ static void Altin_EnterDoor(void) {
   struct FieldWork *work;
   struct Actor *actor;
   s32 doorIndex;
-  u8 *doorBytes;
-  s32 doorByteOffset;
-  s32 coordinatesByteOffset;
+  struct MapGridCellAnimation *door;
   s32 column;
   s32 row;
   s32 rightColumn;
@@ -679,16 +677,10 @@ static void Altin_EnterDoor(void) {
     }
   }
 
-  // The bytes read the entry through byte offsets and sign-extend the door
-  // number by shifts; indexing the structs loads the fields differently.
-  doorBytes = (u8 *)gAltin_Doors;
-  doorIndex =
-      ((*(u16 *)&work->stepTrigger - CELL_BEHAVIOR_ALTIN_FIRST_DOOR) << 16) >>
-      16;
-  doorByteOffset = doorIndex << 3;
-  coordinatesByteOffset = doorByteOffset + 4;
-  column = *(s16 *)(doorBytes + coordinatesByteOffset);
-  row = *(s16 *)(doorBytes + coordinatesByteOffset + 2);
+  doorIndex = (s16)(work->stepTrigger - CELL_BEHAVIOR_ALTIN_FIRST_DOOR);
+  door = &gAltin_Doors[doorIndex];
+  column = (s16)door->x;
+  row = (s16)door->y;
   if (doorIndex == DOOR_SANCTUM) {
     // The Sanctum's door slides open with SE_THUMP, as Bilibin's does.
     Sound_Play(SE_THUMP);
@@ -710,7 +702,7 @@ static void Altin_EnterDoor(void) {
         ALTIN_TO_COTTAGE_ROOMS_D_NORTH - CELL_BEHAVIOR_ALTIN_FIRST_DOOR) {
       MapGrid_CopyCellsTo(33, 42, 8, 17, 1, 2);
     }
-    MapGrid_AnimateCells(gAltin_Doors[doorIndex].steps, column, row);
+    MapGrid_AnimateCells(door->steps, column, row);
   }
 
   // Walk the leader through.

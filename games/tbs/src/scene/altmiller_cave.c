@@ -35,7 +35,7 @@
 ///
 /// AltmillerCaveEntrance darkens by steps instead
 /// (FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS). Step triggers 60 to 65 each set a
-/// level, kept in gSceneLocalState byte 4, from the lightest at the mouth to
+/// level, kept in struct AltmillerCaveState, from the lightest at the mouth to
 /// the darkest by the inner chamber. This room blends outside the light, while
 /// BG1 is left out inside it.
 ///
@@ -47,8 +47,8 @@
 /// Reveal lights a dark room while it lasts and shows the rocks' colours
 /// (AltmillerCave_StartReveal, AltmillerCave_EndReveal).
 ///
-/// The rock puzzle keeps the rounds matched in gSceneLocalState byte 0, and its
-/// state and the light at the top in struct RockPuzzle after it.
+/// The rock puzzle keeps the rounds matched, its state and the light at the top
+/// in struct AltmillerCaveState.
 ///
 /// Turning the leftmost rock and then the rightmost brings out the ring of five
 /// lights. The ring spins (AltmillerCave_SpinLights, a task) and stops with one
@@ -277,14 +277,17 @@ enum {
   WHEEL_STOPPED = 99
 };
 
-/// AltmillerCaveDraught's rock puzzle, kept in gSceneLocalState. The rounds of
-/// lights matched are in byte 0, then the state and the light shown.
-struct RockPuzzle {
-  u8 state;
-  s8 chosen;
+/// The cave's own state, in gSceneLocalState: AltmillerCaveDraught's rock
+/// puzzle and AltmillerCaveEntrance's darkness.
+struct AltmillerCaveState {
+  u8 roundsMatched; ///< the rounds of lights matched, up to three
+  u8 puzzle;        ///< the rock puzzle's state
+  s8 chosenLight;   ///< the light the ring stops with at the top, 0 to 4
+  u8 unused;
+  s8 darkness; ///< AltmillerCaveEntrance's darkness level, 0 to 5
 };
 
-#define ROCK_PUZZLE ((struct RockPuzzle *)&gSceneLocalState[1])
+#define CAVE_STATE ((struct AltmillerCaveState *)gSceneLocalState)
 
 /// The puzzle's states. The leftmost rock is turned, then the rightmost, which
 /// shows the lights. After three lights matched the wall opens.
@@ -333,45 +336,29 @@ const struct ActorPlacement *AltmillerCave_GetActorPlacements(void) {
 /// Darkens AltmillerCaveEntrance to its current level. The brighter blend is at
 /// level 0, and each level is one step darker.
 static void AltmillerCave_ApplyFadeBlend(void) {
-  s8 level = ((s8 *)gSceneLocalState)[4];
+  s8 level = CAVE_STATE->darkness;
 
   Io_Write16(ALTMILLER_CAVE_DARKNESS_BLEND, &REG_BLDCNT);
   if (level == 0) {
-    s32 alpha = BLEND_ALPHA(0, 16);
-
-    REG_BLDALPHA = alpha;
+    REG_BLDALPHA = BLEND_ALPHA(0, 16);
   } else if (level == 1) {
-    s32 alpha = BLEND_ALPHA(0, 14);
-
-    REG_BLDALPHA = alpha;
+    REG_BLDALPHA = BLEND_ALPHA(0, 14);
   } else if (level == 2) {
-    s32 alpha = BLEND_ALPHA(0, 12);
-
-    REG_BLDALPHA = alpha;
+    REG_BLDALPHA = BLEND_ALPHA(0, 12);
   } else if (level == 3) {
-    s32 alpha = BLEND_ALPHA(0, 10);
-
-    REG_BLDALPHA = alpha;
+    REG_BLDALPHA = BLEND_ALPHA(0, 10);
   } else if (level == 4) {
-    s32 alpha = BLEND_ALPHA(0, 8);
-
-    REG_BLDALPHA = alpha;
+    REG_BLDALPHA = BLEND_ALPHA(0, 8);
   } else {
-    s32 alpha = BLEND_ALPHA(0, 6);
-
-    REG_BLDALPHA = alpha;
+    REG_BLDALPHA = BLEND_ALPHA(0, 6);
   }
 }
 
 /// Keeps AltmillerCaveEntrance's darkness level, and shows it unless Reveal is
 /// lighting the room.
 static void AltmillerCave_SetFadeLevel(s32 level) {
-  struct FieldWork *work;
-  u8 *fade = &gSceneLocalState[4];
-
-  work = gFieldWork;
-  *fade = level;
-  if (work->revealActive == 0) {
+  CAVE_STATE->darkness = level;
+  if (gFieldWork->revealActive == 0) {
     AltmillerCave_ApplyFadeBlend();
   }
 }
@@ -476,9 +463,7 @@ static void AltmillerCave_InitializeDarkness(void) {
 /// AltmillerCaveDraught's rocks show their colors.
 static void AltmillerCave_StartReveal(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveEntrance) {
-    s32 alpha = BLEND_ALPHA(0, 16);
-
-    REG_BLDALPHA = alpha;
+    REG_BLDALPHA = BLEND_ALPHA(0, 16);
   }
   if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
     Actor_SetSpriteColorById(ACTOR_BLUE_ROCK, COLOR_BLUE);
@@ -709,10 +694,11 @@ static void AltmillerCave_SpinLights(void) {
       wheel->phase++;
     }
   } else if (phase == WHEEL_STOPPING) {
-    s32 chosenLight = ((s8 *)gSceneLocalState)[2];
+    s32 chosenLight = CAVE_STATE->chosenLight;
     s32 chosenAngle = Math_Divide(chosenLight * Q16_ONE, 5);
-    if ((unsigned int)(((u32)(wheel->angle - chosenAngle) << 16) +
-                       0xc2ff0000) <= 0x5fe0000) {
+
+    // Stop once the chosen light is within 767 of the top.
+    if ((u16)(wheel->angle - chosenAngle - TRIG_TURN / 4 + 767) <= 2 * 767) {
       wheel->angle = chosenAngle + TRIG_TURN / 4;
       wheel->phase = WHEEL_STOPPED;
       wheel->speed = 0;
@@ -754,7 +740,6 @@ static void AltmillerCave_TurnRock(s32 rock) {
   u8 previousLight;
   s32 radius;
   u16 angle;
-  u8 *puzzleState;
 
   Event_Start();
   Field_EndBusyAndReveal();
@@ -768,15 +753,10 @@ static void AltmillerCave_TurnRock(s32 rock) {
     actor->scaleX = Q16_ONE;
     actor->scaleY = Q16_ONE;
   }
-  {
-    struct LightWheel *wheel;
-
-    state = ROCK_PUZZLE->state;
-    previousLight = ROCK_PUZZLE->chosen;
-    wheel = gAltmillerCave_LightWheel;
-    chosenLight = ROCK_PUZZLE->chosen;
-    wheel->angle = (chosenLight * Q16_ONE) / 5 + TRIG_TURN / 4;
-  }
+  state = CAVE_STATE->puzzle;
+  previousLight = chosenLight = CAVE_STATE->chosenLight;
+  gAltmillerCave_LightWheel->angle =
+      (chosenLight * Q16_ONE) / 5 + TRIG_TURN / 4;
   // The leftmost rock, then the rightmost, before the rounds of lights.
   if (state == PUZZLE_START) {
     if (rock == ACTOR_BLUE_ROCK) {
@@ -785,7 +765,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
     } else {
       Sound_Play(SE_MENU_ERROR);
     }
-    gSceneLocalState[0] = 0;
+    CAVE_STATE->roundsMatched = 0;
   } else if (state == PUZZLE_LEFT_ROCK_TURNED) {
     if (rock == ACTOR_BLUE_ROCK) {
       Sound_Play(SE_CHIME);
@@ -838,14 +818,14 @@ static void AltmillerCave_TurnRock(s32 rock) {
       wait(30);
     }
   }
-  puzzleState = &gSceneLocalState[1];
-  puzzleState[0] = state;
+  CAVE_STATE->puzzle = state;
   // A light matched: choose a different light and spin the ring to it.
   if (correctRock) {
-    u8 rounds = ++puzzleState[-1];
+    u8 rounds = ++CAVE_STATE->roundsMatched;
 
-    puzzleState[1] =
-        ((s8)(((u32)(Random_Next() << 2) >> 16) + previousLight + 1) + 5) % 5;
+    // One of the four others: 1 to 4 lights on from the last.
+    CAVE_STATE->chosenLight =
+        ((s8)(((u32)(Random_Next() * 4) >> 16) + previousLight + 1) + 5) % 5;
     gAltmillerCave_LightWheel->phase = WHEEL_SPEEDING_UP;
     gAltmillerCave_LightWheel->frames = 0;
     gAltmillerCave_LightWheel->speed = TRIG_TURN / 128;
@@ -860,7 +840,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
     } else {
       // The third light matched: the ground shakes, the ring spirals in to
       // nothing, and the wall bursts.
-      puzzleState[0] = PUZZLE_SOLVED;
+      CAVE_STATE->puzzle = PUZZLE_SOLVED;
       while (gAltmillerCave_LightWheel->phase != WHEEL_SLOWING) {
         wait(1);
       }
@@ -2141,7 +2121,6 @@ static __inline__ void AltmillerCave_RedrawObstacleFootprints(void) {
 /// - AltmillerCaveSquall's obstacles and pillar and AltmillerCaveDraught's
 ///   obstacles, lights and rocks are restored.
 s32 AltmillerCave_Initialize(void) {
-  s8 *state;
   struct Actor *actor;
   s32 i;
 
@@ -2172,14 +2151,14 @@ s32 AltmillerCave_Initialize(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveEntrance) {
     if (gMainRoutineWork.entrance == ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        *(u8 *)((u32)gSceneLocalState + 4) = 0;
+        CAVE_STATE->darkness = 0;
       }
       GameFlag_Set(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
     }
     if (gMainRoutineWork.entrance ==
         ALTMILLER_CAVE_ENTRANCE_FROM_TORCH_CHAMBER) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        *(u8 *)((u32)gSceneLocalState + 4) = 5;
+        CAVE_STATE->darkness = 5;
       }
       GameFlag_Set(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
     }
@@ -2218,43 +2197,29 @@ s32 AltmillerCave_Initialize(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
-    // UB: the update routines are stored through an s32 view of update, which
-    // keeps the entrance read below the last store (as ->update, one store
-    // moves: 1 of 403 instructions differ in tbs-en).
-#ifdef UBFIX
     Actor_Get(ACTOR_FIRST_OBSTACLE)->update = AltmillerCave_MatchLeaderPriority;
     Actor_Get(ACTOR_FIRST_OBSTACLE + 1)->update =
         AltmillerCave_MatchLeaderPriority;
     Actor_Get(ACTOR_FIRST_OBSTACLE + 2)->update =
         AltmillerCave_MatchLeaderPriority;
-#else
-    *(s32 *)&Actor_Get(ACTOR_FIRST_OBSTACLE)->update =
-        (s32)AltmillerCave_MatchLeaderPriority;
-    *(s32 *)&Actor_Get(ACTOR_FIRST_OBSTACLE + 1)->update =
-        (s32)AltmillerCave_MatchLeaderPriority;
-    *(s32 *)&Actor_Get(ACTOR_FIRST_OBSTACLE + 2)->update =
-        (s32)AltmillerCave_MatchLeaderPriority;
-#endif
     // Coming up to the rocks (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE)
     // starts the puzzle over, with the red light first.
     if (gMainRoutineWork.entrance ==
         ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) {
       Dma_Fill32(0, gAltmillerCave_LightWheel, 12);
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        u8 *puzzleState = gSceneLocalState;
-
-        puzzleState[0] = 0;
-        puzzleState[1] = PUZZLE_START;
-        puzzleState[2] = ACTOR_RED_LIGHT - ACTOR_FIRST_LIGHT;
+        CAVE_STATE->roundsMatched = 0;
+        CAVE_STATE->puzzle = PUZZLE_START;
+        CAVE_STATE->chosenLight = ACTOR_RED_LIGHT - ACTOR_FIRST_LIGHT;
       }
     }
-    state = (s8 *)&gSceneLocalState[1];
-    if (state[0] == PUZZLE_SOLVED) {
+    if (CAVE_STATE->puzzle == PUZZLE_SOLVED) {
       MapGrid_CopyCellsLayered(41, 55, 3, 2, 30, 55);
       MapGrid_CopyCellAttributes(42, 8, 1, 1, 31, 8);
     }
-    if (state[0] == PUZZLE_LIGHTS_SHOWN) {
-      AltmillerCave_PlaceLights((state[1] * Q16_ONE) / 5 + TRIG_TURN / 4);
+    if (CAVE_STATE->puzzle == PUZZLE_LIGHTS_SHOWN) {
+      AltmillerCave_PlaceLights((CAVE_STATE->chosenLight * Q16_ONE) / 5 +
+                                TRIG_TURN / 4);
     }
     for (i = 0; i < LIGHT_COUNT; i++) {
       actor = Actor_Get(ACTOR_FIRST_LIGHT + i);
@@ -2292,39 +2257,29 @@ s32 AltmillerCave_Initialize(void) {
 }
 
 /// Update routine of a piece of the burst wall. It flies off to a random point
-/// 120 pixels away, with a crash every fourth frame as they start.
+/// 120 pixels away, with a crash every fourth frame as they start, and each
+/// time it lands picks another.
 static void AltmillerCave_UpdateWallFragment(struct FieldParticle *fragment) {
   s32 position[3];
-  s32 x;
-  s32 z;
-  u8 *phase;
-  s32 currentPhase;
 
-  phase = (u8 *)&fragment->state;
-  currentPhase = *(s8 *)phase;
-  if (currentPhase == 0) {
-    z = fragment->originZ;
-    x = fragment->originX;
-    fragment->z = z;
-    position[2] = z;
-    fragment->x = x;
-    position[0] = x;
+  if (fragment->state == 0) {
+    fragment->z = position[2] = fragment->originZ;
+    fragment->x = position[0] = fragment->originX;
     Vector_AddPolarOffset(px(120), Import_RandomNext(), position);
     fragment->targetX = position[0];
     fragment->targetZ = position[2];
     fragment->acceleration = px(5);
     fragment->speedMax = px(5);
-    fragment->turnStepLimited = currentPhase;
-    (*phase)++;
+    fragment->turnStepLimited = 0;
+    fragment->state++;
     if ((gVBlankCount & 3) == 0)
       Sound_Play(SE_HEAVY_IMPACT);
-  } else if (currentPhase == 1) {
+  } else if (fragment->state == 1) {
     if (FieldParticle_HasPendingTarget(fragment) == 0) {
-      s32 nextPhase = *phase;
-      nextPhase--;
-      *phase = nextPhase;
+      fragment->state--;
     }
-  } else if (currentPhase == 2) {
+  } else if (fragment->state == 2) {
+    // Unused: no step leads here.
     if (FieldParticle_HasPendingTarget(fragment) == 0)
       FieldEffect_ClearOwnedSlot(fragment);
   }

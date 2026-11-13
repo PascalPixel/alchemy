@@ -657,12 +657,11 @@ void BattleCamera_SetDefaultView(void) {
   struct BattleCamera *camera = gBattleCamera;
   struct FixedPointPosition eyeOffset;
 
-  // A yaw of 3/16 of a turn, a pitch of -1/128 of a turn, and 510 pixels
-  // away, the distance BattleCamera_SetView
-  // uses.
-  camera->yaw = 192 << 6;
-  camera->pitch = 254 << 8;
-  camera->distance = 255 << 17;
+  // A pitch of -1/128 of a turn, 510 pixels away, the distance
+  // BattleCamera_SetView uses.
+  camera->yaw = TRIG_TURN * 3 / 16;
+  camera->pitch = TRIG_TURN - TRIG_TURN / 128;
+  camera->distance = px(510);
   SET_VECTOR(camera->focus, 0, 0, 0);
   camera->followPosition = 0;
   camera->followEye = 0;

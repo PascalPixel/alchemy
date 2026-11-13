@@ -46,7 +46,7 @@ void Palette_UpdatePulseBrightness(void) {
     if (red < 0 || red > 31)
       red = 31;
 
-    *palette++ = (blue << 10) | (green << 5) | red;
+    *palette++ = RGB(red, green, blue);
     remainingColors--;
   } while (remainingColors >= 0);
 }
@@ -76,15 +76,16 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   u32 result;
 
   // Positions are 16.16 pixels and angles 1/65536 turns: the focus 5
-  // pixels up, a quarter turn of yaw, 750 pixels away.
-  camera->focus[1] = 160 << 11;
+  // pixels up, a quarter turn of yaw, a pitch of -3/64 of a turn, 750
+  // pixels away.
+  camera->focus[1] = px(5);
   camera->focus[0] = 0;
   camera->focus[2] = 0;
-  view->targetYaw = 128 << 7;
-  camera->yaw = 128 << 7;
-  camera->pitch = 244 << 8;
+  view->targetYaw = TRIG_TURN / 4;
+  camera->yaw = TRIG_TURN / 4;
+  camera->pitch = TRIG_TURN - TRIG_TURN * 3 / 64;
   camera->followPosition = 0;
-  camera->distance = 750 << 16;
+  camera->distance = px(750);
   camera->followEye = 0;
 
   Transform_Reset();
@@ -97,16 +98,16 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   eyeOffset.z = camera->distance;
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
 
-  result = Iwram_RatioMulQ14(969 << 16, 192 << 8);
-  Projection_Set(0, result, 1938 << 16);
+  result = Iwram_RatioMulQ14(px(969), Q16_ONE * 3 / 4);
+  Projection_Set(0, result, px(1938));
 
   // While active (the view's busy) is set, BattleCamera_SetRange leaves
   // BG1's scroll alone. The range: centre (120, 118 less verticalOffset),
-  // offset 8 pixels in y, in 8.8 (128 << 4), scale 2.0.
+  // offset 8 pixels in y, in 8.8, scale 2.0.
   gProjection.centerY = verticalOffset + 120;
   view->busy = 1;
-  BattleCamera_SetRange(240 << 15, px(118 - verticalOffset), 0, 128 << 4,
-                        128 << 10);
+  BattleCamera_SetRange(px(120), px(118 - verticalOffset), 0, 8 << 8,
+                        Q16_ONE * 2);
   view->flag = 1;
   view->busy = 0;
 }

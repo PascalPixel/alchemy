@@ -27,7 +27,7 @@ extern u32 gFieldEffect_ShortLifeScript[];
 extern u32 gFieldEffect_MediumLifeScript[];
 extern u32 gFieldEffect_LongLifeScript[];
 
-void Func_020001d0(void);
+void JupiterLighthouse_FinishMovingBlock(void);
 
 extern s16 gLightSpriteCount;
 extern u16 gLightSpritePriority;
@@ -35,6 +35,6 @@ extern u16 gPaletteCycleColors[];
 void Func_02001be4();
 extern u16 gPaletteCycleUnlitPalette[];
 extern u16 gPaletteCycleUnlitColors[];
-extern s32 Data_020023e4;
+extern s32 gWhirlwindRiding;
 
 #endif

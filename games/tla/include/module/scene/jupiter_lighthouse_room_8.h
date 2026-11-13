@@ -26,7 +26,7 @@ void Func_02002248(s32 id);
 
 void Teleporter_PlaceArrival(s32 x, s32 z, s32 effect);
 
-void Func_02000068(void);
+void JupiterLighthouse_PushBlock(void);
 
 extern u32 gFieldEffect_ShortLifeScript[];
 extern u32 gFieldEffect_MediumLifeScript[];
@@ -52,6 +52,6 @@ void Teleporter_Uncover(struct CellTarget *table,
 void Func_020021e0(s32 x, s32 z, s32 a, s32 b);
 extern u16 gPaletteCycleColors[];
 extern u16 gPaletteCycleUnlitColors[];
-extern s32 Data_02002aac;
+extern s32 gWhirlwindRiding;
 
 #endif

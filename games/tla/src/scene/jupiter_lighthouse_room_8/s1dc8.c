@@ -41,5 +41,5 @@ u32 gPushFootprints[] = {
     0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
 };
 
-DEFINE_G_DATA_0200198C(gData_020022f4)
+DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 // clang-format on

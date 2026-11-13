@@ -5,7 +5,8 @@
 #ifndef ALCHEMY_SCENE_SHARED_TABLES_H
 #define ALCHEMY_SCENE_SHARED_TABLES_H
 
-#define DEFINE_G_DATA_0200198C(name)                                           \
+/// The leader's step as he pushes, 16 pixels on one axis for each direction.
+#define DEFINE_PUSH_LEADER_STEPS(name)                                         \
   s16 name[] = {                                                               \
       0, 16,  0, 16,  0, 16,  16,  0, 16,  0, 16,  0, 16,  0, 0, -16,          \
       0, -16, 0, -16, 0, -16, -16, 0, -16, 0, -16, 0, -16, 0, 0, 16,           \

@@ -4,10 +4,10 @@
 #include "objcmd.h"
 #include "module/scene/jupiter_lighthouse_room_8.h"
 
-void Func_02000054(void);
-void Func_02000094(void);
+void JupiterLighthouse_StepOnTeleporter(void);
+void JupiterLighthouse_DropBlockIntoHole(void);
 
-void Func_02000090(void);
+void JupiterLighthouse_StartMovingBlock(void);
 
 // clang-format off
 DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortLifeScript, 22)
@@ -64,12 +64,12 @@ struct Trigger gSceneEvents[] = {
     {49, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {514, 30, CONDITION_ALWAYS, EVENT(Func_02000068)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(Func_02000090)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_02000094)},
+    {514, 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PushBlock)},
+    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnTeleporter)},
+    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnTeleporter)},
+    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnTeleporter)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(JupiterLighthouse_DropBlockIntoHole)},
     {TRIGGER_TABLE_END},
 };
 

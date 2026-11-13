@@ -35,7 +35,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_02000054(void) { Import_EventSetExitRequest(6); }
+void JupiterLighthouse_LeaveByCyclone(void) { Import_EventSetExitRequest(6); }
 
 void JupiterLighthouse_OpenDoor(s32 animate) {
   if (animate == 1) {
@@ -71,7 +71,7 @@ DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 0x200,
                                  JupiterLighthouse_CloseDoor,
                                  JupiterLighthouse_CheckBlockOnCell)
 
-void Func_020001f4(void) {
+void JupiterLighthouse_FinishMovingBlock(void) {
   System_Wait(10);
   JupiterLighthouse_CheckBlockOnCell();
 }

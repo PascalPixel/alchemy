@@ -36,8 +36,8 @@ DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters,
 #include "scene_tables.h"
 #include "objcmd.h"
 
-void Func_02000054(void);
-void Func_02000084(void);
+void JupiterLighthouse_StepOnLowerTeleporter(void);
+void JupiterLighthouse_StepOnUpperTeleporter(void);
 void Scene_RunOnce(void);
 
 // clang-format off
@@ -104,13 +104,13 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_STEP, 20, 0xa19, EVENT(Scene_RunOnce)},
     {TRIGGER_STEP, 21, 0xa19, EVENT(Scene_RunIfFlagCleared)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(Func_02000084)},
-    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(Func_02000084)},
-    {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(Func_02000084)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0xa19, EVENT(Func_020001d0)},
+    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerTeleporter)},
+    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerTeleporter)},
+    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerTeleporter)},
+    {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperTeleporter)},
+    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperTeleporter)},
+    {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperTeleporter)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0xa19, EVENT(JupiterLighthouse_FinishMovingBlock)},
     {TRIGGER_TABLE_END},
 };
 

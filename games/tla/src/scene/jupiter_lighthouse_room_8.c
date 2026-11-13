@@ -39,23 +39,23 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 s32 PushTarget_FindSlide(struct Probe *probe);
 void PushTarget_PushFill(struct Probe probe);
 
-void Func_02000054(void) {
+void JupiterLighthouse_StepOnTeleporter(void) {
   if (Teleporters_Step())
     FieldEvent_SetExitRequest(13);
 }
 
-void Func_02000068(void) {
+void JupiterLighthouse_PushBlock(void) {
   struct Probe probe;
 
   if (PushTarget_FindSlide(&probe))
     PushTarget_PushFill(probe);
 }
 
-void Func_02000090(void) {}
+void JupiterLighthouse_StartMovingBlock(void) {}
 
 /// On cell (6, 14), sets flag 0xa18, waits until the object finishes falling
 /// and stops (at most 30 frames), then releases it.
-void Func_02000094(s32 unused, s32 id) {
+void JupiterLighthouse_DropBlockIntoHole(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 i;
   s32 y;
@@ -94,7 +94,7 @@ void Func_02000094(s32 unused, s32 id) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Func_02000af0(s32 id);
+void PushTarget_FillFootprint(s32 id);
 void Teleporters_Find(s32 a, s32 b, s32 c, s32 d, s32 e);
 
 s32 Scene_Initialize(void) {
@@ -109,11 +109,11 @@ s32 Scene_Initialize(void) {
   Func_02002248(13);
   Func_02002248(14);
   Func_02002248(15);
-  Func_02000af0(11);
-  Func_02000af0(12);
-  Func_02000af0(13);
-  Func_02000af0(14);
-  Func_02000af0(15);
+  PushTarget_FillFootprint(11);
+  PushTarget_FillFootprint(12);
+  PushTarget_FillFootprint(13);
+  PushTarget_FillFootprint(14);
+  PushTarget_FillFootprint(15);
   Teleporters_Find(33, 0x280, 0x380, 0, 1);
   if (gMainRoutineWork.entrance == 13)
     Teleporter_PlaceArrival(19, 0, 0x204);
@@ -184,4 +184,4 @@ s32 Func_020022b8(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_020022b8, Position_FlatDistance,
-                        gWhirlwindEndScript, Data_02002aac)
+                        gWhirlwindEndScript, gWhirlwindRiding)

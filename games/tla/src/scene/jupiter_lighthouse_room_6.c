@@ -41,13 +41,13 @@ s32 Teleporters_Step(s32 value);
 void JupiterLighthouse_CloseDoor(void);
 void JupiterLighthouse_LoadPalettes(s32 value);
 
-void Func_02000054(s32 value) {
+void JupiterLighthouse_StepOnLowerTeleporter(s32 value) {
   if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 &&
       Teleporters_Step(value))
     FieldEvent_SetExitRequest(13);
 }
 
-void Func_02000084(s32 value) {
+void JupiterLighthouse_StepOnUpperTeleporter(s32 value) {
   if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 &&
       Teleporters_Step(value))
     FieldEvent_SetExitRequest(14);
@@ -77,7 +77,7 @@ DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 512,
                                  JupiterLighthouse_CloseDoor,
                                  JupiterLighthouse_CheckBlockOnCell)
 
-void Func_020001d0(void) {
+void JupiterLighthouse_FinishMovingBlock(void) {
   System_Wait(10);
   JupiterLighthouse_CheckBlockOnCell();
 }
@@ -146,7 +146,8 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         PaletteCycle_Step,
                                         gPaletteCycleUnlitColors)
 
-void Func_02000428(s32 id) {
+/// Unused: holds an actor 32 pixels above its ground, without gravity.
+UNUSED void JupiterLighthouse_FloatAboveGround(s32 id) {
   struct JupiterLighthouseRoom6Object *object;
   s32 height;
 
@@ -174,4 +175,4 @@ extern const s32 gWhirlwindEndScript[];
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_02001bdc, Position_FlatDistance,
-                        gWhirlwindEndScript, Data_020023e4)
+                        gWhirlwindEndScript, gWhirlwindRiding)

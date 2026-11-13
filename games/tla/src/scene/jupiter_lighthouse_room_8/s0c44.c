@@ -24,11 +24,12 @@ struct PushTarget {
 };
 
 extern s8 gPushFootprints[][4];
-extern s32 gData_020022f4[];
+extern s32 gPushLeaderSteps[];
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-static inline s32 Func_020021b8_(struct Actor *object, s32 *position) {
+static inline s32 PushTarget_CheckCollision(struct Actor *object,
+                                            s32 *position) {
   return MapGrid_CheckCollision(object, position);
 }
 
@@ -37,16 +38,17 @@ static inline s32 Func_020021b8_(struct Actor *object, s32 *position) {
 /// (MapGrid_CheckCollision returns 2). Leaves the object's resting place in
 /// target and returns 1, or 0 when nothing is pushed or it cannot move at all.
 DEFINE_PUSH_TARGET_FIND_SLIDE(PushTarget_FindSlide, PushTarget_FindAhead,
-                              gPushFootprints, gData_020022f4, Func_020021b8_)
+                              gPushFootprints, gPushLeaderSteps,
+                              PushTarget_CheckCollision)
 
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
 
-DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds, gData_020022f4,
-                              gPushFootprints)
+DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds,
+                              gPushLeaderSteps, gPushFootprints)
 
-void Func_02001178(void);
+void PushTarget_UpdatePusher(void);
 
 DEFINE_PUSH_TARGET_PUSH_FILL(PushTarget_PushFill, gPushFootprints,
-                             Func_02001178, Import_ActorSelectAnimation,
-                             gData_020022f4)
+                             PushTarget_UpdatePusher,
+                             Import_ActorSelectAnimation, gPushLeaderSteps)

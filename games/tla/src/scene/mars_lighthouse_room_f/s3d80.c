@@ -566,5 +566,5 @@ u32 gData_02005f64[] = {
     0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
 };
 
-DEFINE_G_DATA_0200198C(gData_02005f7c)
+DEFINE_PUSH_LEADER_STEPS(gData_02005f7c)
 // clang-format on

@@ -36,7 +36,7 @@ u32 gPushFootprints[] = {
     0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
 };
 
-DEFINE_G_DATA_0200198C(gPushLeaderSteps)
+DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 
 u32 gData_020040d4[] = {
 #if !TLA_PATCH_1

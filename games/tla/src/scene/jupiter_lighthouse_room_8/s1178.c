@@ -16,7 +16,7 @@
 #include "module/scene/jupiter_lighthouse_room_8.h"
 #include "module/scene/scene.h"
 
-void Func_02001178(struct Actor *object) {
+void PushTarget_UpdatePusher(struct Actor *object) {
   struct IsletsVector position;
   struct Actor *hit;
   u32 i;

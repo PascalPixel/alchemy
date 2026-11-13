@@ -846,7 +846,7 @@ u32 gData_02001d54[] = {
     1, 38,
 };
 
-DEFINE_G_DATA_0200198C(gData_02001d8c)
+DEFINE_PUSH_LEADER_STEPS(gData_02001d8c)
 // clang-format on
 
 s32 gData_02001dcc[] = {

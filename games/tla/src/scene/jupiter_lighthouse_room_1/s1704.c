@@ -43,8 +43,8 @@ DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters,
 #include "scene_tables.h"
 #include "objcmd.h"
 
-void Func_02000054(void);
-void Func_020001f4(void);
+void JupiterLighthouse_LeaveByCyclone(void);
+void JupiterLighthouse_FinishMovingBlock(void);
 
 // clang-format off
 DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortLifeScript, 22)
@@ -84,8 +84,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_STEP, 20, 0xa01, EVENT(Scene_RunOnce)},
     {TRIGGER_STEP, 21, 0xa01, EVENT(Scene_RunIfFlagCleared)},
-    {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa01, EVENT(Func_020001f4)},
+    {0x50008905, 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveByCyclone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa01, EVENT(JupiterLighthouse_FinishMovingBlock)},
     {TRIGGER_TABLE_END},
 };
 

@@ -789,9 +789,6 @@ void CgbSound(void) {
         *triggerRegister = note->trigger | 0x80;
         // CGB_CHANNEL_SQUARE_1 is restarted a second time unless NR10 bit 3 is
         // set (a falling sweep, or 8 alone, no sweep), as in pret's m4a.c.
-        // XXX (no evidence): why; GBATEK's channel 1 page says nothing of a
-        // second restart, and neither the ROM nor a render shows how the
-        // hardware starts a rising sweep.
         if (channel == CGB_CHANNEL_SQUARE_1 && !(*sweepOrWaveControl & 8))
           *triggerRegister = note->trigger | 0x80;
       }

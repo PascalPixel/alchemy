@@ -182,8 +182,6 @@ void ActorSystem_Initialize(s32 controlMode) {
     Task_Add(ActorSystem_ProjectSprites, TASK_PASS_FRAME);
   } else {
     Task_Add(ActorSystem_PlaceSprites, TASK_PASS_FRAME);
-    // XXX (no evidence): what the scrolling camera resets here; nothing in
-    // the game reads these two IWRAM words, by name or by address.
     gCamera_UnreadWord2 = 0;
     gCamera_UnreadWord1 = 0;
   }
@@ -281,8 +279,6 @@ struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
       // list would overlap the first and its zeroing clear count. No caller
       // passes ACTOR_CREATE_GROUP: every id is a sprite below 4096, an
       // actor placement's (0 to 504), or a kind with no sprite.
-      // XXX (no evidence): whether the lists were meant four words apart;
-      // nothing in the game creates a group to show it.
       spriteSlots =
           (void **)((u32 *)gActorSystemWork + gActorSystemWork->count++ + 2);
       actor->spriteStorageKind = spriteStorageKind;

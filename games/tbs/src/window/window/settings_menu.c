@@ -211,8 +211,6 @@ enum OptionMenuRow {
 
 // The five-row settings menu SettingsMenu_Run runs uses none of these four
 // functions.
-// XXX (no evidence): what screen they were written for; nothing calls them, so
-// the game never shows one.
 /// Moves the three-row settings cursor up, wrapping to the bottom. The three
 /// rows are those of SettingsMenu_LowerSetting.
 UNUSED void SettingsMenu_PreviousRow(struct OptionMenuWork *work) {

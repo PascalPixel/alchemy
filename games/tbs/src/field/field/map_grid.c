@@ -201,9 +201,6 @@ struct MapHeader {
   struct MapLayer layers[3];
   // Offsets from the header's start: type-01 packed data, but for the
   // treasure spots, which are read in place.
-  // XXX (no evidence): why the cells are packed as planes and the treasure
-  // spots left unpacked; only Camelot's tools would show what the packing was
-  // chosen for.
   s32 cellPictures; ///< the cell pictures, staged and unpacked into
                     ///< gCellPictures
   s32 shapes;       ///< the shapes, into Ram_MapGridShapes
@@ -601,11 +598,6 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
         y = (y + layer->phaseY) & ((layer->maskY << 19) | 0x7ffff);
         // A layer drifting vertically gets its whole 32-row BG map, others
         // the 22 rows (11 cell pictures) a 160-pixel screen can show.
-        // XXX (no evidence): why only vertical drift fills the whole map; the
-        // only layers that drift vertically are the ground of the Tolbi
-        // ship's deck and the haze over Suhalla Desert, and
-        // MapGrid_UpdateLayerScroll draws each row as it scrolls in with
-        // either fill, so the bytes show no row the shorter fill would miss.
         rows = 32;
       }
       x += layer->offsetX;

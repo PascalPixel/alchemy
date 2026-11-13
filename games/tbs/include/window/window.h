@@ -115,10 +115,7 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 struct WindowWork {
   u16 tilemap[640]; ///< the windows' BG tilemap, 32 by 20 tiles
   struct Window windows[WINDOW_COUNT]; ///< 12 in Japanese, 8 in the others
-  // XXX (no evidence): why three messages, and why the international
-  // editions gave up four windows when they doubled textBuffer; only Camelot's
-  // sources could say how the counts were chosen.
-  struct Message messages[3]; ///< the messages, NULL work when free
+  struct Message messages[3];          ///< the messages, NULL work when free
   struct WindowSprite sprites[WINDOW_SPRITE_COUNT];
   struct WindowSpriteList freeSprites; ///< the sprites not in any window
   /// Per text tile (tiles 128 to 255, then 512 to 639): bit 0 once

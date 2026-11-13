@@ -282,9 +282,6 @@ extern u16 gCreditsScrollPosition __asm__("gWaitForFlashWrite");
 // it reads them: IdentifyFlash, which Save_InitializeWork runs before
 // each use of the save, writes gFlash, gProgramFlashSector and
 // gWaitForFlashWrite, and each program routine sets gFlashNumRemainingBytes.
-// XXX (no evidence): why the credits borrow them rather than keep globals of
-// their own; only Camelot's link map or source could say whether the sharing
-// was meant.
 // UB: the casts alias the flash declarations and store a pointer through
 // a declared u16. UBFIX gives these assembler-backed cells their credits views.
 #ifdef UBFIX

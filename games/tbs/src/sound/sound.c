@@ -189,8 +189,6 @@ void SoundTest_Run(void) {
 
   row = 0;
   reverbCode = SOUND_REVERB_NORMAL;
-  // XXX (no evidence): why the sound test clears the first four digits of the
-  // build stamp copy; nothing in the game reads that copy.
   /* FAKEMATCH(dead): a once-only block keeps the store between the two
    * setups; as a plain store, 4 of 145 instructions differ in tbs-en. */
   do {
@@ -260,9 +258,6 @@ void Sound_Initialize(void) {
   gBgmTempoPitchStep = BGM_DEFAULT_RAMP_STEP;
   gBgmFadeRequested = 0;
   gSoundCommandMask = 0;
-  // XXX (no evidence): what gSound_UnreadByte holds; no code in either game
-  // reads it or its Lost Age twin (gData_02005804, also after
-  // gBgmRestoreDelay), and no literal in the ROM but this one points at it.
   gSound_UnreadByte = 0;
   for (i = 0; i < MUSIC_PLAYER_COUNT; i++)
     gMusicPlayerLastSound[i] = 0;

@@ -110,8 +110,6 @@ void Event_Start(void) {
   runtime->unusedBeforeCamera[0] = -1;
   runtime->unusedBeforeCamera[1] = -1;
   Task_Add(Event_UpdateDebugSkip, TASK_PASS_FRAME);
-  // XXX (no evidence): what flag 0x132 marks; it is cleared at every event,
-  // and no code or table in the game sets or tests it.
   GameFlag_ClearFar(0x132);
   runtime->speaker = gMainRoutineWork.leaderActorId;
   runtime->messageWindow = 0;
@@ -140,8 +138,6 @@ void Event_RunActorUpdateAndWait(struct ActorPlacement *table) {
   Event_NoOpUpdate();
   Actor_ResetForLeader(table);
   wait(1);
-  // XXX (no evidence): why the leader's actor is fetched and dropped; no
-  // code calls this function, so no caller reads a result.
   Actor_Lookup(gMainRoutineWork.leaderActorId);
 }
 

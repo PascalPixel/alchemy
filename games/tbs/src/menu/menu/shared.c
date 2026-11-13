@@ -1268,8 +1268,6 @@ s32 Sound_PlayReturnOne(s32 sound) {
 void Menu_WatchStart(void) {
   if (gKeysPressed & KEY_START) {
     Sound_PlayFar(SE_MENU_CANCEL);
-    // XXX (no evidence): why this is a game flag rather than a variable;
-    // nothing outside the menu's own code sets or tests it.
     GameFlag_SetFar(FLAG_MENU_START_PRESSED);
     Task_Remove(Menu_WatchStart);
   }

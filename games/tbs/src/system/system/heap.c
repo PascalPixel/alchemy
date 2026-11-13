@@ -169,7 +169,5 @@ void *Heap_AllocEwram(s32 size) {
   return (void *)allocationAddress;
 }
 
-// XXX (no evidence): what it was for; nothing in either game calls it, and The
-// Lost Age's heap code has no empty routine in its place.
 /// Unused: reserved empty memory export; nothing calls it.
 UNUSED void Heap_ReservedNoOp(void) {}

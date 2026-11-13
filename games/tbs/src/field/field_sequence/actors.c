@@ -104,7 +104,6 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
        entry++, placementSprite = entry->sprite) {
     // Current actor placement tables use sprites 0 to 504, so every live
     // row sets actorIndex.
-    // XXX (no evidence): what the 9989 cutoff was for; no table reaches it.
     if (entry->sprite <= 7)
       actorIndex = entry->sprite;
     else if (entry->sprite <= 9989)
@@ -155,8 +154,6 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
       // from its first frame, unless it happens to be ANIM_STAND. The first
       // selection has just started it from that frame, so the idle looks the
       // same either way.
-      // XXX (no evidence): why the value is random when only whether it is 1
-      // matters; nothing else reads lastNo before the selection.
       if (actor->spriteStorageKind == ACTOR_SPRITE_ONE &&
           (sprite = actor->sprite) != 0)
         sprite->lastNo = ((u32)(Random16()) % (u32)30);

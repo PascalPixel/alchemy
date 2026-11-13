@@ -48,8 +48,6 @@ enum AnimationFacingKind {
   /// As ANIM_FACING_FRONT_BACK, with the front picture mirrored the other
   /// way.
   ANIM_FACING_FRONT_BACK_SWAPPED = 22,
-  // XXX (no evidence): what this kind was for; no sprite takes it, and with
-  // no facing table nothing shows what it drew.
   /// Unused: no sprite's metadata or animation takes this kind. Ringed as eight
   /// facings by the sprite viewer, but with no facing table:
   /// Sprite_ComposePicture draws it as ANIM_FACING_NONE.

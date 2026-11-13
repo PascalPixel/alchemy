@@ -1017,11 +1017,7 @@ s32 ValeKradensCottage_Initialize(void) {
     Actor_WalkToAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 83, 273);
     Actor_SetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, 5);
     actor = Actor_Get(ACTOR_ROCKSLIDE_SURVIVOR);
-    {
-      s32 collisionRadius = 12;
-
-      actor->radius = collisionRadius;
-    }
+    actor->radius = 12;
     Actor_SetScript(ACTOR_ROCKSLIDE_SURVIVOR,
                     gValeKradensCottage_RockslideSurvivorSquashes);
     if (GameFlag_Get(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) != 0) {

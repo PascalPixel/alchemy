@@ -489,7 +489,7 @@ enum ShipRoomsCellBehavior {
 #define SHIP_CAMERA_RECENTER_LAYERS 0x01000000
 #define SHIP_CAMERA_WAIT_FOR_ARRIVAL 0x10000000
 
-// Defined below, in the order of the ROM.
+// The scene's routines, defined below.
 static void ShipRooms_StepBesideLeader(s32 passengerId);
 static s32 ShipRooms_IsSpotFree(s32 bucket);
 static s32 ShipRooms_GetChosenOarsman(void);
@@ -582,11 +582,9 @@ static s32 ShipRooms_LookAround(struct Actor *actor) {
   u32 choice = (u32)(Import_RandomNext(actor) << 6) >> 16;
 
   if (choice == 6) {
-    s32 facing = FACING_SOUTH_SOUTHEAST;
-    actor->facing = facing;
+    actor->facing = FACING_SOUTH_SOUTHEAST;
   } else if (choice == 9) {
-    s32 facing = FACING_SOUTH_SOUTHWEST;
-    actor->facing = facing;
+    actor->facing = FACING_SOUTH_SOUTHWEST;
   }
   return 1;
 }
@@ -4044,23 +4042,16 @@ static void ShipRooms_NoticeShipRocking(void) {
   Event_End();
 }
 
-/// Now and then plays a rumble with a shake, easing the shake after ten frames.
+/// Now and then (one chance in 120 a frame) plays a rumble with a shake,
+/// easing the shake after ten frames; no other rumble starts for 80 frames.
 static void ShipRooms_ShakeWhileKrakenAboard(void) {
-  s32 value;
-  s32 *timer = &gShipRooms_ShakeTimer;
-  s32 remaining;
-  if (*timer != 0) {
-    remaining = *timer - 1;
-    *timer = *timer - 1;
-    if (remaining == 70)
+  if (gShipRooms_ShakeTimer != 0) {
+    if (--gShipRooms_ShakeTimer == 70)
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  } else {
-    value = Import_RandomNext();
-    if (((u32)(((value << 4) - value) << 3) >> 16) == 0) {
-      Sound_Play(SE_BOOM);
-      MapGrid_SetShake(2, 2, 1);
-      *timer = 80;
-    }
+  } else if (((u32)(Import_RandomNext() * 120) >> 16) == 0) {
+    Sound_Play(SE_BOOM);
+    MapGrid_SetShake(2, 2, 1);
+    gShipRooms_ShakeTimer = 80;
   }
 }
 

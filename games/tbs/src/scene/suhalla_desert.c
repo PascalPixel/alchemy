@@ -870,7 +870,7 @@ s32 Scene_Initialize(void) {
   struct MapGridScrollAnimView *gridState;
 
   gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   if (FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT) != 0) {
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_AIRBORNE;

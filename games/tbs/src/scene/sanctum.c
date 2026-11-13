@@ -1682,10 +1682,7 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
       }
       effect->userValue = orbitStep;
       effect->update = Sanctum_UpdateOrbitingEffect;
-      {
-        u16 clearFlags = 0;
-        sprite->flags = clearFlags;
-      }
+      sprite->flags = 0;
       sourceSprite = center->sprite;
       effect->watchedActor = center;
       sprite->image.priority = sourceSprite->image.priority;

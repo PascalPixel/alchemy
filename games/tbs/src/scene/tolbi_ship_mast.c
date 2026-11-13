@@ -209,13 +209,9 @@ static s32 TolbiShipMast_RandomizeLookoutFacing(struct Actor *actor) {
   u32 sample = (u32)(Import_RandomNext() << 6) >> 16;
 
   if (sample == 6) {
-    s32 value = FACING_NORTH_NORTHEAST;
-
-    actor->facing = value;
+    actor->facing = FACING_NORTH_NORTHEAST;
   } else if (sample == 9) {
-    s32 value = FACING_NORTH_NORTHWEST;
-
-    actor->facing = value;
+    actor->facing = FACING_NORTH_NORTHWEST;
   }
 
   return 1;

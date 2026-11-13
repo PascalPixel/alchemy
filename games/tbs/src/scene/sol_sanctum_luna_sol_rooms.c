@@ -86,6 +86,7 @@
 #include "sounds.h"
 #include "sound_driver_symbols.h"
 #include "item_ids.h"
+#include "speaker.h"
 
 /// The rooms of Sol and Luna show their plain colours (PALETTE_TINT_NONE), so a
 /// return after a battle keeps them.
@@ -1651,10 +1652,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   wait(1);
   Actor_SetPosition(ACTOR_GARET, 280, 134);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
-  // This event reads its heap slots from one address: HEAP_SLOT_PALETTE_FADE
-  // is reached from HEAP_SLOT_FIELD's slot. As gFieldWork and
-  // gPaletteFadeWork they would load two.
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 1;
+  gFieldWork->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
@@ -1724,9 +1722,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
-  // Through its heap slot rather than gPaletteFadeWork, the spelling this
-  // site matched with; the other is not measured.
-  palette = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
+  palette = gPaletteFadeWork;
   palette->target[0] = 0;
   palette->target[1] = 0;
   palette->target[2] = 0;
@@ -1735,9 +1731,9 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   palette->step = 1;
   palette->padding2a03 = 1;
   Io_Write16(0, &PLTT_BACKDROP);
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
   Event_End();
 }
 

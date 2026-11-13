@@ -577,32 +577,17 @@ static void ValeCave_KiteRunsBehindLedge(void) {
 /// is caught, once FLAG_VALE_CAVE_KITE_BEHIND_LEDGE is set. Each behavior sends
 /// Kite to its row of gValeCave_WalkTargets at the leader's speed.
 static void ValeCave_KiteKeepsAway(void) {
-  struct Actor *djinni;
-  struct Actor *leader;
-  s32 routeIndex;
-  const u8 *walkTargetBytes;
-  s32 targetZOffset;
-  struct FieldWork *work;
+  s32 route;
 
-  work = gFieldWork;
-  if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0) {
-    if (gMainRoutineWork.haltedActor != ACTOR_KITE) {
-      // Preserve the speed reads before resolving this route point.
-      routeIndex = work->stepTrigger;
-      djinni = Actor_Get(ACTOR_KITE);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      djinni->speedLimit = leader->speedLimit;
-      djinni = Actor_Get(ACTOR_KITE);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      djinni->acceleration = leader->acceleration;
-      routeIndex -= CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE;
-      // X/Z pairs occupy eight bytes.
-      walkTargetBytes = (const u8 *)gValeCave_WalkTargets;
-      routeIndex <<= 3;
-      targetZOffset = routeIndex + sizeof(s32);
-      Actor_WalkTo(ACTOR_KITE, *(const s32 *)(walkTargetBytes + routeIndex),
-                   *(const s32 *)(walkTargetBytes + targetZOffset));
-    }
+  if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0 &&
+      gMainRoutineWork.haltedActor != ACTOR_KITE) {
+    route = gFieldWork->stepTrigger - CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE;
+    Actor_Get(ACTOR_KITE)->speedLimit =
+        Actor_Get(ACTOR_PARTY_LEADER)->speedLimit;
+    Actor_Get(ACTOR_KITE)->acceleration =
+        Actor_Get(ACTOR_PARTY_LEADER)->acceleration;
+    Actor_WalkTo(ACTOR_KITE, gValeCave_WalkTargets[route][0],
+                 gValeCave_WalkTargets[route][1]);
   }
 }
 
@@ -993,7 +978,7 @@ static void ValeCave_TouchRidingLog(void) {
 
 /// The twelve points round the far side of Kite's ledge, x then z in pixels,
 /// one for each cell behavior from CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE on.
-s32 gValeCave_WalkTargets[] = {
+s32 gValeCave_WalkTargets[][2] = {
     760, 296,
     760, 280,
     776, 280,

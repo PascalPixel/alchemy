@@ -110,7 +110,7 @@
 /// (MsgTolbiShipWonderWhatsWrongShipShouldnt)
 #define FLAG_TOLBI_SHIP_KRAKEN_ON_DECK 0x302
 
-// Defined below, in the order of the ROM.
+// The scene's routines, defined below.
 static void TolbiShipDeck_ConfrontCrewman(void);
 static void TolbiShipDeck_ApplyEntryState(void);
 static void TolbiShipDeck_PlaceWaitingPassengers(void);
@@ -376,7 +376,6 @@ enum TolbiShipDeckCellBehavior {
   CELL_BEHAVIOR_TOLBI_SHIP_DECK_WEST_OF_DOOR = 12
 };
 
-// Shared code, included where it sits in the ROM.
 #include "shared/actor_pulse.h"
 
 /// The door to the passengers' hold has been drawn open this visit.

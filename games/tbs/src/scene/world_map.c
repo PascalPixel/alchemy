@@ -2555,11 +2555,7 @@ static void WorldMap_SailTolbiShipToIsland(void) {
   Actor_SetAnimation(ACTOR_CROSSING_SHIP, ANIM_WALK);
   Actor_SetPosition(ACTOR_CROSSING_SHIP, 4872, 808);
   actor = Actor_Get(ACTOR_CROSSING_SHIP);
-  {
-    s32 value = FACING_NORTHWEST;
-
-    actor->facing = value;
-  }
+  actor->facing = FACING_NORTHWEST;
   wait(1);
   WorldMap_StartZoom(6 * Q16_ONE / 5, 1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -2627,39 +2623,36 @@ static s32 WorldMap_GetSeatRowValue(u32 seat) {
 
 /// Spawns a puff of the wake behind ACTOR_DRIFTING_ISLAND every 16 frames.
 static void WorldMap_SpawnIslandWake(void) {
-  struct Actor *leader;
-  struct Actor *actor;
-  struct Sprite *sprite;
-  u32 value;
+  struct Actor *island;
+  struct Actor *puff;
+  s32 distance;
 
-  if ((*(s32 *)&gFrameCount & 15) != 0)
+  if ((gFrameCount & 15) != 0)
     return;
-  leader = Actor_Get(ACTOR_DRIFTING_ISLAND);
-  actor = FieldActor_Create(SPRITE_DUST_PUFF, leader->x.fixed - px(32),
-                            leader->y.fixed, leader->z.fixed - px(16));
-  if (actor == 0)
+  island = Actor_Get(ACTOR_DRIFTING_ISLAND);
+  puff = FieldActor_Create(SPRITE_DUST_PUFF, island->x.fixed - px(32),
+                           island->y.fixed, island->z.fixed - px(16));
+  if (puff == 0)
     return;
-  actor->scaleX = Q16_ONE / 2;
-  actor->scaleY = Q16_ONE / 2;
-  sprite = actor->sprite;
-  if (((u32)Import_RandomNext() * 2 >> 16)) {
-    s32 back = (((u32)Import_RandomNext() * 48) >> 16) << 16;
-
-    actor->x.fixed -= back >> 1;
-    actor->z.fixed -= back;
+  puff->scaleX = Q16_ONE / 2;
+  puff->scaleY = Q16_ONE / 2;
+  // Up to 48 pixels behind the island, or up to 32 to the side.
+  if (((u32)Import_RandomNext() * 2 >> 16) != 0) {
+    distance = px(((u32)Import_RandomNext() * 48) >> 16);
+    puff->x.fixed -= distance / 2;
+    puff->z.fixed -= distance;
   } else {
-    value = (((u32)Import_RandomNext() << 5) >> 16) << 16;
-    actor->x.fixed += value;
-    value = (s32)value >> 1;
-    actor->z.fixed += value;
+    distance = px(((u32)Import_RandomNext() << 5) >> 16);
+    puff->x.fixed += distance;
+    puff->z.fixed += distance / 2;
   }
-  sprite->flags = 0;
-  sprite->image.priority = leader->sprite->image.priority;
-  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  actor->motionFlags = leader->motionFlags;
-  Actor_SetSpriteColor(actor, SPRITE_COLOR_BLUE_TINT);
-  Actor_SelectAnimation(actor, 2);
-  Actor_StartScript(actor, gIslandWakeScript);
+  puff->sprite->flags = 0;
+  puff->sprite->image.priority = island->sprite->image.priority;
+  puff->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  puff->motionFlags = island->motionFlags;
+  Actor_SetSpriteColor(puff, SPRITE_COLOR_BLUE_TINT);
+  Actor_SelectAnimation(puff, 2);
+  Actor_StartScript(puff, gIslandWakeScript);
 }
 
 /// Before the ending, the island Jenna and Kraden are adrift on drifts east

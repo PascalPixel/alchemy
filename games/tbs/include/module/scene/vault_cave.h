@@ -5,7 +5,7 @@
 #include "scene_tables.h"
 #include "scene.h"
 
-extern const s16 gVaultCave_DirectionSteps[];
+extern const s32 gVaultCave_DirectionSteps[];
 extern const s32 gVaultCave_PuffScript[];
 extern struct SceneEntrance gVaultCave_FallbackEntrances[];
 extern struct SceneEntrance gVaultCavePassage_Entrances[];

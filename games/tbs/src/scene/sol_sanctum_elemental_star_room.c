@@ -1478,14 +1478,9 @@ SolSanctumElementalStarRoom_ShowPedestal(s32 cameraX, s32 cameraZ, s32 actorX,
 /// FLAG_SHOW_AREA_NAME.
 static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   u16 i;
-  u8 *leaderMotion;
-  u8 *kradenMotion;
-  u8 *leaderSprite;
-  u8 *kradenSprite;
   struct Actor *rising;
   struct Actor *shadow;
   struct Actor *leader;
-  u8 *kradenSteeringFlags;
   s32 height = 192;
 
   Event_Start();
@@ -1498,14 +1493,12 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   shadow->scaleX = Q16_ONE / 10;
   shadow->scaleY = Q16_ONE / 10;
   rising = Actor_Get(ACTOR_PARTY_LEADER);
-  leaderSprite = &rising->sprite->flags;
-  *leaderSprite = 0;
+  rising->sprite->flags = 0;
   rising->scaleX = Q16_ONE / 10;
   rising->scaleY = Q16_ONE / 10;
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_BLINK);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 471, 290);
-  leaderMotion = &rising->motionFlags;
-  *leaderMotion = 0;
+  rising->motionFlags = 0;
   rising->y.fixed = px(40);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
@@ -1524,7 +1517,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
     shadow->scaleY += Q16_ONE / 100;
     Event_Wait(1);
   }
-  *leaderMotion = 5;
+  rising->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
   Event_Wait(80);
   FieldCamera_SetSpeed(0.3);
   FieldCamera_MoveTo(471, CAMERA_KEEP, 290, 1);
@@ -1532,21 +1525,13 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
     rising->y.fixed += -px(1) / 2;
     Event_Wait(1);
   }
-  *leaderMotion = 3;
+  rising->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(20);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
-  {
-    struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
-    s32 flags = 1 | actor->priorityFlags;
-    actor->priorityFlags = flags;
-  }
+  Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   // Finish Isaac's arrival and let the companions inspect the room.
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-  {
-    s32 shown = 1;
-
-    *leaderSprite = shown;
-  }
+  rising->sprite->flags = SPRITE_FLAG_SHADOW;
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 0, 0);
   FieldCamera_WaitForMove();
   Event_Wait(20);
@@ -1627,16 +1612,14 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 60);
   // Materialize Kraden after the companions have explored the chamber.
   rising = Actor_Get(ACTOR_KRADEN);
-  kradenSprite = &rising->sprite->flags;
-  *kradenSprite = 0;
+  rising->sprite->flags = 0;
   rising->scaleX = Q16_ONE / 10;
   rising->scaleY = Q16_ONE / 10;
   shadow->scaleX = Q16_ONE / 10;
   shadow->scaleY = Q16_ONE / 10;
   Actor_SetSpriteColorById(ACTOR_KRADEN, SPRITE_COLOR_BLINK);
   Actor_SetPosition(ACTOR_KRADEN, 471, 290);
-  kradenMotion = &rising->motionFlags;
-  *kradenMotion = 0;
+  rising->motionFlags = 0;
   rising->y.fixed = px(40);
   Event_Wait(1);
   Event_SetMessageId(MsgSolSanctumKradenWhereAreWe);
@@ -1662,26 +1645,18 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
     shadow->scaleY += Q16_ONE / 100;
     Event_Wait(1);
   }
-  *kradenMotion = 5;
+  rising->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
   Event_Wait(80);
   for (i = 0; i != 60; i++) {
     rising->y.fixed += -px(1) / 2;
     Event_Wait(1);
   }
-  *kradenMotion = 3;
+  rising->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(30);
   Actor_SetSpritePriority(ACTOR_KRADEN, 1);
-  {
-    struct Actor *actor = Actor_Get(ACTOR_KRADEN);
-    s32 flags = 1 | actor->priorityFlags;
-    actor->priorityFlags = flags;
-  }
+  Actor_Get(ACTOR_KRADEN)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpriteColorById(ACTOR_KRADEN, SPRITE_COLOR_NORMAL);
-  {
-    s32 shown = 1;
-
-    *kradenSprite = shown;
-  }
+  rising->sprite->flags = SPRITE_FLAG_SHADOW;
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 0, 0);
   Event_Wait(30);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
@@ -1980,8 +1955,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_MoveToAndWait(ACTOR_KRADEN, 471, 395);
   wait(6);
   Actor_SetSpeed(ACTOR_KRADEN, 0.3);
-  kradenSteeringFlags = &rising->steeringFlags;
-  *kradenSteeringFlags &= ~ACTOR_FACES_MOTION;
+  rising->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(ACTOR_KRADEN, 473, 395);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -1994,7 +1968,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_WalkToAndWait(ACTOR_KRADEN, 471, 411);
   Actor_SetSpeed(ACTOR_KRADEN, 0.3);
-  *kradenSteeringFlags &= ~ACTOR_FACES_MOTION;
+  rising->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(ACTOR_KRADEN, 474, 411);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 3);
@@ -2011,10 +1985,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_WalkToAndWait(ACTOR_KRADEN, 471, 395);
   Actor_SetMovementTypeById(ACTOR_KRADEN, MOVEMENT_TYPE_STAND);
   Event_Wait(30);
-  {
-    s32 flags = 1 | *kradenSteeringFlags;
-    *kradenSteeringFlags = flags;
-  }
+  rising->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 60);
   wait(6);
   rising->speedLimit = px(3);
@@ -2091,7 +2062,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Event_Wait(20);
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 60);
-  *kradenSteeringFlags &= ~ACTOR_FACES_MOTION;
+  rising->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_KRADEN, 456, 360);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);

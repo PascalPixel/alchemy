@@ -330,9 +330,7 @@ static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
   } else {
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
     if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) != 0) {
-      u16 *menuRequest = &gFieldWork->fieldMenu;
-      u16 open = 1;
-      *menuRequest = open;
+      gFieldWork->fieldMenu = 1;
     }
   }
 
@@ -416,9 +414,7 @@ static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
     {
 
-      u16 *menuRequest = &work->fieldMenu;
-      s32 open = 1;
-      *menuRequest = open;
+      work->fieldMenu = 1;
     }
   } else {
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);

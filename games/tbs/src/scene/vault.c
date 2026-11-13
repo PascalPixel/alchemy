@@ -557,10 +557,7 @@ static void Vault_TalkToDogAfterCapture(void) {
   Actor_SetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
       GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
-    u16 *menuRequest = &gFieldWork->fieldMenu;
-    u16 open = 1;
-
-    *menuRequest = open;
+    gFieldWork->fieldMenu = 1;
   }
   Event_End();
 }

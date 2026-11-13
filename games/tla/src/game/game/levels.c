@@ -465,8 +465,9 @@ struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains) {
   return 0;
 }
 
-/// Level up one level at a time until the target, recalculating stats each
-/// time. unit: character ID. lv: target level.
+/// Level up one level at a time until the target, recalculating stats each time.
+/// unit: character ID.
+/// lv: target level.
 void Unit_LevelUpTo(s32 unit, s32 lv) {
   u8 res[16]; // Receives struct LevelUpResult (unused).
   s32 cur = ((struct BattleUnit *)Unit_Get(unit))->level;

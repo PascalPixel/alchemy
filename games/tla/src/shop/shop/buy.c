@@ -335,8 +335,7 @@ void Shop_DrawStock(struct RenderInput *window, s32 selected) {
           icon->sentinel = 253;
         }
         // Read unsigned (ldrh), as the buy screen reads the price elsewhere.
-        icon =
-            Shop_CreatePriceSprite((u16)definition->price, window, priceX, 0);
+        icon = Shop_CreatePriceSprite((u16)definition->price, window, priceX, 0);
         icon->sentinel = 251;
       }
     }
@@ -406,11 +405,11 @@ void Func_081091cc(s32 window, s32 itemId, s32 price, s32 priceKind) {
   goto draw;
 cannot_buy:
   Text_DrawCharacterAtOffsetFar((s32)MsgCannotBuyThat, window,
-                                SHOP_PRICE_LABEL_X, 8);
+                                  SHOP_PRICE_LABEL_X, 8);
   return;
 not_broken:
   Text_DrawCharacterAtOffsetFar((s32)MsgNotBroken, window, SHOP_PRICE_LABEL_X,
-                                8);
+                                  8);
   return;
 show_price:
   labelMessage = (s32)MsgPrice;
@@ -431,7 +430,8 @@ draw:
     }
   }
   if (priceKind == 3)
-    Text_DrawCharacterAtOffsetFar(price + (s32)MsgItemCondition, window, 8, 8);
+    Text_DrawCharacterAtOffsetFar(price + (s32)MsgItemCondition, window, 8,
+                                    8);
   else
     goto show_price;
 }
@@ -615,8 +615,7 @@ void Func_081095b0(struct RenderInput *window, s32 unitId, s32 itemId) {
     slot = Inventory_FindFar(unitId, itemId);
     if (slot != -1) {
       quantityOffset = slot * 2 + 216;
-      MessageArgument_PushFar((*(u16 *)(unitBytes + quantityOffset) >> 11) + 1,
-                              5);
+      MessageArgument_PushFar((*(u16 *)(unitBytes + quantityOffset) >> 11) + 1, 5);
       Text_DrawCharacterAtOffsetFar((s32)MsgYouHave, window, 0, 0);
     } else {
       Text_DrawCharacterAtOffsetFar((s32)MsgShopNoneInStock, window, 0, 0);
@@ -630,7 +629,7 @@ s32 __udivsi3(s32, s32);
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define QUANTITY_CURSOR_Y 120
-#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||       \
+#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                    \
     (LANGUAGE == LANGUAGE_ITALIAN)
 #define QUANTITY_CURSOR_Y 104
 #else

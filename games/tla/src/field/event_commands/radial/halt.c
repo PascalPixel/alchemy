@@ -19,11 +19,10 @@ void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object) {
   object->age++;
 }
 
-/* VIEW(age_and_cue): routine Vector_AddPolarOffset as void
- * Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); f0dfd00 has void
- * Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p). */
-extern void Vector_AddPolarOffset__age_and_cue(
-    s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
+
+
+/* VIEW(age_and_cue): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); f0dfd00 has void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p). */
+extern void Vector_AddPolarOffset__age_and_cue(s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
 void Camera_WorldToScreen(struct EffectVector *pos);
 void BattleEffect_ClearOwnedSlot(struct FieldParticle *slot);
 
@@ -42,8 +41,7 @@ top:
     pos.x = effect->originX;
     pos.z = effect->originZ;
     angle = Random16();
-    Vector_AddPolarOffset__age_and_cue(Random16() * 30 + (40 << 16), (u16)angle,
-                                       &pos);
+    Vector_AddPolarOffset__age_and_cue(Random16() * 30 + (40 << 16), (u16)angle, &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->acceleration = 4 << 16;
@@ -82,6 +80,7 @@ void BattleEffect_MarkChildAndRunFallbackTransition(void) {
   (*(u8 **)((u8 *)Ram_HeapSlots->effectWork + 20))[91] = 1;
   FieldPsynergy_Halt();
 }
+
 
 // ⚓️'s effect work holds its slots 8 bytes earlier than ☀️'s.
 struct FallbackScene {
@@ -169,6 +168,7 @@ void FieldPsynergy_Halt(void) {
   wait(30);
   BattleEffect_PrepareBufferInterpolation();
 }
+
 
 #define Actor_SetAnimationSpeedFar                                             \
   ((void (*)(void *, s32))Actor_SetAnimationSpeedFar)

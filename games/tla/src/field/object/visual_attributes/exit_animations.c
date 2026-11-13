@@ -42,6 +42,7 @@ s32 Actor_GetScreenPosition(s32 objectId, s32 *position) {
   return 0;
 }
 
+
 /// The Broken Seal's Scene_FadeColorFromWhite, playing cue 298 where that
 /// plays 288: turns the backdrop (on the world map, a colour of palette 15)
 /// white, finishes the screen transition and fades that colour to black

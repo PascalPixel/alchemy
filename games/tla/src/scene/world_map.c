@@ -1,6 +1,5 @@
 /// @file
-/// The scene code of overlay 0x64b that its scene tables belong to, in ROM
-/// order; the rest of the overlay is in world_map/.
+/// The scene code of overlay 0x64b that its scene tables belong to, in ROM order; the rest of the overlay is in world_map/.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -526,7 +525,7 @@ void Func_02000994(void) {
       Actor_WalkToAndWait(5, (x << 4) + 24, (z << 4) - 12);
       Actor_FaceDirection(5, southwest, 0);
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner,
-                                 FACING_NORTHEAST);
+                                  FACING_NORTHEAST);
       Func_02004da8();
       FieldEvent_SetMessageId((s32)MsgWeShouldnT);
       Event_ShowMessage(5, 0);
@@ -546,7 +545,7 @@ void Func_02000994(void) {
       Actor_WalkToAndWait(5, x + 24, besideZ);
       Actor_FaceDirection(5, southwest, 0);
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner,
-                                 FACING_NORTHEAST);
+                                  FACING_NORTHEAST);
       Func_02004da8();
       FieldEvent_SetMessageId((s32)MsgYouReNot);
       Event_ShowMessage(5, 0);
@@ -817,8 +816,8 @@ void Func_020011fc(void) {
   Func_02004da8();
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_SetMessageId(Event_GetFlag(0x175) * ((s32)MsgDjinnGiveTutorialB -
-                                                  (s32)MsgDjinnGiveTutorialA) +
-                          (s32)MsgAfterBringingA);
+                                          (s32)MsgDjinnGiveTutorialA) +
+                     (s32)MsgAfterBringingA);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(30);
   Event_PlaySound(111);
@@ -1177,7 +1176,7 @@ void Func_020012bc(s32 entrance) {
 
       if (object != NULL)
         Actor_SetDestination(23, *(s16 *)((u8 *)object + 10),
-                             *(s16 *)((u8 *)object + 18));
+                                  *(s16 *)((u8 *)object + 18));
     }
     Actor_WaitForMoveById(23);
     Actor_SetPosition(23, 0, 0);
@@ -1194,11 +1193,12 @@ extern const u8 gData_02004e88[];
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed,
-                                                 s32 acceleration) {
+                                                        s32 acceleration) {
   Actor_SetSpeedParameters(actor, speed, acceleration);
 }
 
-static __inline__ void Actor_ArmCallback_(s32 actor, s32 angle, s32 frames) {
+static __inline__ void Actor_ArmCallback_(s32 actor, s32 angle,
+                                                 s32 frames) {
   Actor_ArmCallback(actor, angle, frames);
 }
 
@@ -1556,7 +1556,8 @@ void Func_02002594(void) {
 
   x = ((Random16Far() * 40) >> 16) << 16;
   z = ((Random16Far() * 30) >> 16) << 16;
-  obj = (FieldActor_Create(285, x + 0x7b80000, 0, z + 0x1c5c0000));
+  obj = (FieldActor_Create(285, x + 0x7b80000, 0,
+                                            z + 0x1c5c0000));
   if (obj != NULL) {
     sprite = obj->sprite;
     scale = ((Random16Far() << 15) >> 16) + 0x13333;
@@ -1743,7 +1744,8 @@ void Func_020029a4(void) {
   FieldCamera_FollowActor(8, 1);
   System_Wait(1);
   Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
+                                     0);
   Actor_SetSingleChildFlags(Actor_Get(8), 0);
   Actor_SetSpeedParameters_(8, 0x6666, 0x3333);
   actor->timer = 0;
@@ -1786,7 +1788,8 @@ void Func_02002ab0(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   System_Wait(1);
   Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
+                                     0);
   Actor_SetSingleChildFlags(Actor_Get(10), 0);
   Actor_SetSpeed(10, 0x6666, 0x3333);
   boat->timer = 0;
@@ -1841,7 +1844,8 @@ void Func_02002ab0(void) {
   Actor_SetPosition(5, 0x0e490000, 0x1dc50000);
   Actor_SetPosition(6, 0x0e770000, 0x1de30000);
   Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 1);
+  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
+                                     1);
   System_Wait(1);
   Func_02004da8();
   Actor_SetAttachedEffect(5, 0x102);
@@ -1879,7 +1883,8 @@ static __inline__ void Func_02004d08_(s32 actor, s32 value, s32 frames) {
 /// once a key is held the scene changes to SceneId_Ov667.
 void Func_02002e00(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = 0;
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                     0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
@@ -1911,7 +1916,8 @@ void Func_02002e78(void) {
     FieldEvent_ResolvePendingActions(0);
     scale = Actor_GetById(gMainRoutineWork.currentOwner)->scaleX;
     Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = 0;
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                       0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_02004da8();
@@ -2120,7 +2126,8 @@ void Func_0200343c(struct Actor *parent) {
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Actor_SetPositionAndCommit_(s32 actor, s32 x, s32 z) {
+static __inline__ void Actor_SetPositionAndCommit_(s32 actor, s32 x,
+                                                          s32 z) {
   Actor_SetPositionAndCommit(actor, x, z);
 }
 
@@ -2128,7 +2135,8 @@ void Func_02003490(void) {
   Func_02004c20();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
+                                     0);
   Actor_Get(gMainRoutineWork.currentOwner)->update = Func_0200343c;
   Actor_Get(gMainRoutineWork.currentOwner)->acceleration = 0x2000;
   Actor_Get(gMainRoutineWork.currentOwner)->speedLimit = 0x20000;

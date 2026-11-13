@@ -189,6 +189,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   return handle;
 }
 
+
 void Window_CloseMatchingIdFar(s32 id);
 void Message_CloseFinishedWindowsFar(void);
 void Func_080d4330(s32 key);
@@ -293,6 +294,7 @@ void Func_080d40dc(s32 speaker) {
   }
   work->messageId++;
 }
+
 
 void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
 
@@ -414,6 +416,7 @@ void Func_080d4330(s32 key) {
     *(s16 *)&work->speakerVoiceCountdown = value;
   }
 }
+
 
 void Camera_FollowActor(s32 id, s32 flag) {
   struct Actor *obj;

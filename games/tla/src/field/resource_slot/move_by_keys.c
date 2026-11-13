@@ -5,8 +5,7 @@
 #include "../resource_slot_internal.h"
 
 /// The heading of each direction-pad combination, 0xffff for none.
-/* VIEW(move_by_keys): variable gData_0802ec5c as extern const u16
- * gData_0802ec5c[16]; f028aac has extern const s16 gData_0802ec5c[16]. */
+/* VIEW(move_by_keys): variable gData_0802ec5c as extern const u16 gData_0802ec5c[16]; f028aac has extern const s16 gData_0802ec5c[16]. */
 extern const u16 gData_0802ec5c__move_by_keys[16] __asm__("gData_0802ec5c");
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
@@ -122,6 +121,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   object->step++;
   return 1;
 }
+
 
 struct ChainSlot {
   s16 unk00;

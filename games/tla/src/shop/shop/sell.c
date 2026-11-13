@@ -293,7 +293,7 @@ void Icon_PrepareActorFar(struct WindowSprite *object);
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define QUANTITY_CURSOR_X 120
-#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||       \
+#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                    \
     (LANGUAGE == LANGUAGE_ITALIAN)
 #define QUANTITY_CURSOR_X 104
 #else

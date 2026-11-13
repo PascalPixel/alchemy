@@ -8,6 +8,7 @@
 #undef FORMATION_SIZE
 #undef SCENE_FRAMES
 
+
 // The map cell buffer holds the sparks of the final blow.
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 #define SPARK_COUNT 512

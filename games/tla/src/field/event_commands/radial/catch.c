@@ -91,6 +91,7 @@ void FieldPsynergy_Catch(void) {
   BattleEffect_PrepareBufferInterpolation();
 }
 
+
 struct ScatterParticle {
   s32 x;
   s32 y;
@@ -274,6 +275,7 @@ void Func_080e0978(s32 value) {
   Func_080e09c0();
 }
 
+
 void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 void Func_080d92d4(s32 target, s32 y, s32 z);
@@ -374,6 +376,7 @@ void Func_080e09c0(void) {
   HeapSlot_Release(92);
 }
 
+
 void BattleEffect_AdvanceAngleWithRamp(struct Actor *object) {
   u32 step;
 
@@ -401,6 +404,7 @@ void BattleEffect_UpdateDescendingObject(struct Actor *obj) {
     obj->animationKind = 0;
   }
 }
+
 
 struct LaunchVector {
   s32 x;

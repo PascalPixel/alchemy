@@ -35,7 +35,7 @@ void Func_081195ec(void) {
     to->anchorX = from->anchorX;
     to->anchorZ = from->anchorZ;
     Actor_SetPositionAndResetMotionFar((void *)object, place->x, place->y,
-                                       place->z);
+                                        place->z);
     gMainRoutineWork.activeOwners[i] = id;
     work->partyUnits[i] = id;
   }

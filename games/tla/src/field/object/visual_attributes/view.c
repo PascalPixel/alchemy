@@ -73,6 +73,7 @@ void Func_080d4714(void) {
   }
 }
 
+
 s32 BattleEffect_CopyWatchedObjectPosition(struct Actor *object) {
   struct Actor *link;
 

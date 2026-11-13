@@ -8,10 +8,8 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f1843fc): tag struct RenderModel as struct RenderModel__f1843fc;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunCatastrophe moves: 2 of 4547 instructions in
- * tla-ja. */
+
+/* VIEW(f1843fc): tag struct RenderModel as struct RenderModel__f1843fc; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunCatastrophe moves: 2 of 4547 instructions in tla-ja. */
 struct RenderModel__f1843fc {
   s32 kind;
   s32 unk04;
@@ -33,8 +31,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-                   s32 *world);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -46,11 +43,9 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -69,8 +64,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
+void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -89,11 +83,13 @@ void Transform_Pop(void);
 // An effect sprite as this effect reaches it: its OAM priority and its VRAM
 // cache entry.
 
+
 struct MeshVertex {
   s8 x;
   s8 y;
   s8 z;
 };
+
 
 extern char ResourceId_AerialViewBackdrop;
 extern char ResourceId_ChainedDemonTiles;
@@ -114,20 +110,10 @@ extern char ResourceId_RedHazeBackdrop;
 extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_TornadoSheet;
 extern char ResourceId_WhiteSpikesTiles;
-/* VIEW(f1843fc): variable gResourceTableEntries as extern struct
- * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
- * VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations'
- * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
- * in tla-ja: games/tla/src/battle_effect/f15585c.c:34245: conflicting types for
- * `gResourceTableEntries'. */
-extern struct ResourceTableEntry
-    gResourceTableEntries__f1843fc[] __asm__("gResourceTableEntries");
+/* VIEW(f1843fc): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:34245: conflicting types for `gResourceTableEntries'. */
+extern struct ResourceTableEntry gResourceTableEntries__f1843fc[] __asm__("gResourceTableEntries");
 extern u8 gMapCellBuffer[];
-/* VIEW(f1843fc): variable gData_02014000 as extern u8 gData_02014000[]; f17e698
- * has extern struct EffectStep gData_02014000[]; tried as the rest of the
- * object declares it, it does not compile in tla-ja:
- * games/tla/src/battle_effect/f15585c.c:35854: `gData_02014000__f1843fc'
- * undeclared (first use in this function). */
+/* VIEW(f1843fc): variable gData_02014000 as extern u8 gData_02014000[]; f17e698 has extern struct EffectStep gData_02014000[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:35854: `gData_02014000__f1843fc' undeclared (first use in this function). */
 extern u8 gData_02014000__f1843fc[] __asm__("gData_02014000");
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
@@ -172,25 +158,11 @@ extern const s16 Data_081999f2[];
 
 void VramBlock_Reset93Far(void);
 void Func_08020388(void);
-/* VIEW(f1843fc): routine Func_0815b290 as struct SpriteObject
- * *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the
- * definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32
- * attributes, s32 flags); tried as the definition's struct EffectSprite
- * *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags), which the
- * object already declares, BattleEffect_RunCatastrophe moves: 4 of 4547
- * instructions in tla-ja. */
-extern struct SpriteObject *
-Func_0815b290__f1843fc(s32 width, s32 height, u32 shape,
-                       u32 attributes) __asm__("Func_0815b290");
-/* VIEW(f1843fc): routine Func_0815b3b0 as struct SpriteObject
- * *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode); f17e698 has
- * Sprite *Func_0815b3b0(s32, s32, u32, s32); tried as the definition's struct
- * EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object
- * already declares, BattleEffect_RunCatastrophe moves: 2 of 4547 instructions
- * in tla-ja. */
-extern struct SpriteObject *
-Func_0815b3b0__f1843fc(s32 width, s32 height, u32 shape,
-                       s32 mode) __asm__("Func_0815b3b0");
+/* VIEW(f1843fc): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags); tried as the definition's struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags), which the object already declares, BattleEffect_RunCatastrophe moves: 4 of 4547 instructions in tla-ja. */
+extern struct SpriteObject *Func_0815b290__f1843fc(s32 width, s32 height, u32 shape,
+                                   u32 attributes) __asm__("Func_0815b290");
+/* VIEW(f1843fc): routine Func_0815b3b0 as struct SpriteObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode); f17e698 has Sprite *Func_0815b3b0(s32, s32, u32, s32); tried as the definition's struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object already declares, BattleEffect_RunCatastrophe moves: 2 of 4547 instructions in tla-ja. */
+extern struct SpriteObject *Func_0815b3b0__f1843fc(s32 width, s32 height, u32 shape, s32 mode) __asm__("Func_0815b3b0");
 
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32 a, s32 b);
@@ -203,8 +175,7 @@ void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
 void Camera_ApplyVerticalShake(s32 range);
 void Func_08164a4c(s32 red, s32 green, s32 blue); // Palette_BrightenBgEntries
 void Func_08164b2c(s32 r, s32 g, s32 b);
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags, u32 mode);
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
 

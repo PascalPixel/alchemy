@@ -1,6 +1,5 @@
 /// @file
-/// Overlay 0x673's scene: its code, then its tables, in the order the ROM has
-/// them.
+/// Overlay 0x673's scene: its code, then its tables, in the order the ROM has them.
 
 #include "gabomba_catacombs/local.h"
 
@@ -10,7 +9,7 @@
   do {                                                                         \
     Func_0200119c();                                                           \
     Event_ResolvePendingActions(0);                                            \
-    FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);             \
+    FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);                       \
   } while (0)
 
 void Func_02000038(void) { Func_080d2b4c(8, 10); }

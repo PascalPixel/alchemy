@@ -203,9 +203,10 @@ int Window_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3,
   s32 tile_offset = arg3 * 2;
   s32 tile = tile_offset + 0xF315;
 
-  Window_SetTilemapEntry((struct Window *)arg0, 0x400 | tile, arg1, arg2, 0);
-  Window_SetTilemapEntry((struct Window *)arg0, tile_offset + 0xF314, arg1 + 1,
-                         arg2, 0);
+  Window_SetTilemapEntry((struct Window *)arg0, 0x400 | tile, arg1, arg2,
+                           0);
+  Window_SetTilemapEntry((struct Window *)arg0, tile_offset + 0xF314,
+                           arg1 + 1, arg2, 0);
   Window_SetTilemapEntry((struct Window *)arg0, tile, arg1 + 2, arg2, 0);
 }
 
@@ -370,8 +371,8 @@ s32 Func_08045528(u32 entry, s32 slot) {
 
   if (entry > 7)
     entry = 0;
-  UiGlyph_LoadEntryWithPalette(Portrait_GetForSpeaker(entry), 0, &slot, &tile,
-                               14, 1);
+  UiGlyph_LoadEntryWithPalette(Portrait_GetForSpeaker(entry), 0, &slot,
+                               &tile, 14, 1);
   return tile;
 }
 
@@ -395,7 +396,7 @@ void Func_08045564(u8 *work) {
   Heap_Release(routine);
 }
 
-#define Text_DrawStringAtOffset                                                \
+#define Text_DrawStringAtOffset                                              \
   ((void (*)(u8 *, s32, s32, s32))Text_DrawStringAtOffset)
 
 /// Opens a 6x4 window at the upper left, draws its label and returns its
@@ -426,7 +427,8 @@ s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1) {
   return ret;
 }
 
-void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile) {
+void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
+                              s32 tile) {
   GlyphTransfer *decoded;
   u8 *font;
   u8 *remapped;

@@ -5,8 +5,7 @@
 
 #include "../visual_attributes_internal.h"
 
-/* VIEW(f0daecc): tag struct ChainLink as struct ChainLink__f0daecc;
- * visual_attributes.c has another definition. */
+/* VIEW(f0daecc): tag struct ChainLink as struct ChainLink__f0daecc; visual_attributes.c has another definition. */
 struct ChainLink__f0daecc {
   struct ChainLink__f0daecc *next;
   s32 x;
@@ -16,11 +15,7 @@ struct ChainLink__f0daecc {
   s8 kind;
 };
 
-/* VIEW(f0daecc): tag struct ChainSlot as struct ChainSlot__f0daecc;
- * visual_attributes.c has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:6916: structure has no member
- * named `root'. */
+/* VIEW(f0daecc): tag struct ChainSlot as struct ChainSlot__f0daecc; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:6916: structure has no member named `root'. */
 struct ChainSlot__f0daecc {
   s16 objectId;
   u8 unk02[2];
@@ -49,20 +44,13 @@ struct ChainObject {
 };
 
 struct Actor *Actor_GetById(u32 objectId);
-/* VIEW(f0daecc): routine Func_080da9a8 as void *Func_080da9a8(s32 kind); the
- * definition has struct TileEffectWork *Func_080da9a8(s32 kind). */
+/* VIEW(f0daecc): routine Func_080da9a8 as void *Func_080da9a8(s32 kind); the definition has struct TileEffectWork *Func_080da9a8(s32 kind). */
 extern void *Func_080da9a8__f0daecc(s32 kind) __asm__("Func_080da9a8");
 struct WorkA4Slot *Func_080dae70(s32 id);
-/* VIEW(f0daecc): routine Func_080dae3c as struct ChainSlot__f0daecc
- * *Func_080dae3c(void); the definition has struct WorkA4Slot
- * *Func_080dae3c(void). */
-extern struct ChainSlot__f0daecc *
-Func_080dae3c__f0daecc(void) __asm__("Func_080dae3c");
-/* VIEW(f0daecc): routine Func_080daea8 as struct ChainLink__f0daecc
- * *Func_080daea8(void); the definition has struct WorkA4Item
- * *Func_080daea8(void). */
-extern struct ChainLink__f0daecc *
-Func_080daea8__f0daecc(void) __asm__("Func_080daea8");
+/* VIEW(f0daecc): routine Func_080dae3c as struct ChainSlot__f0daecc *Func_080dae3c(void); the definition has struct WorkA4Slot *Func_080dae3c(void). */
+extern struct ChainSlot__f0daecc *Func_080dae3c__f0daecc(void) __asm__("Func_080dae3c");
+/* VIEW(f0daecc): routine Func_080daea8 as struct ChainLink__f0daecc *Func_080daea8(void); the definition has struct WorkA4Item *Func_080daea8(void). */
+extern struct ChainLink__f0daecc *Func_080daea8__f0daecc(void) __asm__("Func_080daea8");
 
 #define CELL_MASK 0xfff00000 // 16-pixel cells
 
@@ -168,6 +156,7 @@ void Func_080daecc(s32 objectId, s32 grow) {
   slot->objectId = objectId;
   slot->spacing = 14 << 16;
 }
+
 
 struct Unk_080db0b0Sprite {
   u8 unk00[18];
@@ -355,6 +344,7 @@ void Func_080db444(s32 id, s32 force) {
 
 // Field Psynergy: the dispatchers that run each animation
 
+
 /// The Psynergy animations (BattleFxScene.animation) the dispatchers name.
 // The Broken Seal has 1-16; ⚓️ adds 17-30.
 enum FieldPsynergyAnimation {
@@ -414,15 +404,8 @@ void FieldEffect_RunDouseOnTarget(s32 targetId);
 void FieldEffect_RunFrostOnTarget(s32 targetId);
 void Func_080dda30(s32 targetId);
 void FieldEffect_RunPlyOnTarget(s32 targetId);
-/* VIEW(f0daecc): routine FieldEffect_RunWhirlwindOnTarget as void
- * FieldEffect_RunWhirlwindOnTarget(s32 targetId); battle.h has void
- * FieldEffect_RunWhirlwindOnTarget(void); tried as the definition's void
- * FieldEffect_RunWhirlwindOnTarget(void), which the object already declares, it
- * does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:7369: too many arguments to
- * function `FieldEffect_RunWhirlwindOnTarget'. */
-extern void FieldEffect_RunWhirlwindOnTarget__f0daecc(s32 targetId) __asm__(
-    "FieldEffect_RunWhirlwindOnTarget");
+/* VIEW(f0daecc): routine FieldEffect_RunWhirlwindOnTarget as void FieldEffect_RunWhirlwindOnTarget(s32 targetId); battle.h has void FieldEffect_RunWhirlwindOnTarget(void); tried as the definition's void FieldEffect_RunWhirlwindOnTarget(void), which the object already declares, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:7369: too many arguments to function `FieldEffect_RunWhirlwindOnTarget'. */
+extern void FieldEffect_RunWhirlwindOnTarget__f0daecc(s32 targetId) __asm__("FieldEffect_RunWhirlwindOnTarget");
 void BattleEffect_CallEffect13(s32 targetId);
 void Func_080e0978(s32 targetId);
 void BattleEffect_CallEffect23(s32 targetId);
@@ -633,6 +616,7 @@ void BattleEffect_DispatchRequestKind(void) {
   }
 }
 
+
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
 struct CompositeAnimation {
@@ -811,6 +795,7 @@ void BattleEffect_DrawSceneSprite(void) {
   Func_080eb01c((u8 *)Ram_HeapSlots->effectWork + 0x7c8);
 }
 
+
 struct DepthSprite {
   u8 unk00[5];
   u8 unk05_0 : 5;
@@ -843,11 +828,8 @@ struct DepthScene {
 };
 
 void Func_080eaf98(struct DepthSprite *sprite, s32 a, s32 b, u32 c, s32 tiles);
-/* VIEW(f0daecc): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
- * *position); ground_particles has void Camera_WorldToScreen(union
- * FieldCoordinate *position). */
-extern void
-Camera_WorldToScreen__f0daecc(s32 *position) __asm__("Camera_WorldToScreen");
+/* VIEW(f0daecc): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); ground_particles has void Camera_WorldToScreen(union FieldCoordinate *position). */
+extern void Camera_WorldToScreen__f0daecc(s32 *position) __asm__("Camera_WorldToScreen");
 
 void Func_080dba5c(void) {
   struct DepthScene *scene = Ram_HeapSlots->effectWork;

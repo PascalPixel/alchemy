@@ -32,8 +32,7 @@ u32 Party_GetAverageLevel(void) {
     return 0;
   }
   for (i = 0; i < count; i++) {
-    total += ((struct BattleUnit *)Unit_Get(gMainRoutineWork.activeOwners[i]))
-                 ->level;
+    total += ((struct BattleUnit *)Unit_Get(gMainRoutineWork.activeOwners[i]))->level;
   }
   total = total / count;
   return total;
@@ -49,7 +48,7 @@ const u8 *Enemy_GetDefinition(s32 selector) {
 }
 
 void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
-                                 s32 direction) {
+                                  s32 direction) {
   s32 index;
 
   if (direction != 0) {
@@ -212,10 +211,8 @@ void Unit_Calculate(s32 owner) {
       if (work->item->flags & 1)
         st->curse |= 3;
       work->atk += work->item->primaryBonus;
-      /* FAKEMATCH(barrier): an empty asm after `work->atk +=
-       * work->item->primaryBonus;`; as plain statements, 2 of 900 instructions
-       * differ in tla-en. */
-      asm("");
+/* FAKEMATCH(barrier): an empty asm after `work->atk += work->item->primaryBonus;`; as plain statements, 2 of 900 instructions differ in tla-en. */
+asm("");
       work->def += work->item->secondaryBonus;
       for (j = 0; j < 4; j++) {
         kind = work->item->effects[j].kind;

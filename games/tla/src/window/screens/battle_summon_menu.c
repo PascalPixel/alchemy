@@ -283,8 +283,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
                 break;
             }
             affordable = element == 4;
-            Ability_LoadGlyph(summon->nameMessageId & 0x3fff, 0,
-                              &iconSlots[index], &glyph, 1);
+            Ability_LoadGlyph(summon->nameMessageId & 0x3fff, 0, &iconSlots[index],
+                              &glyph, 1);
             y = index * 2;
             sprites[index].oam.f.tile = glyph;
             if (!affordable)

@@ -730,7 +730,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       }
       WindowSprite_RedrawSavedRect(statusWindow);
       Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y, helpWindow->width,
-                                helpWindow->height, 0);
+                    helpWindow->height, 0);
       Vram_FillWindowBlockPattern();
       Text_DrawWideStringAtOffset(itemText, helpWindow, 0, 20);
       if (rowBase != j) {
@@ -793,8 +793,8 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           SUMMARY_TEXT_COPY((s32)MsgKey0d48, psynergyText,
                             SUMMARY_PSYNERGY_TEXT_LENGTH);
         WindowSprite_RedrawSavedRect(statusWindow);
-        Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y,
-                                  helpWindow->width, helpWindow->height, 0);
+        Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y, helpWindow->width,
+                      helpWindow->height, 0);
         Text_DrawWideStringAtOffset(psynergyText, helpWindow, 0, 20);
         if (rowBase != j) {
           Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
@@ -856,11 +856,11 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       u32 entry;
 
       WindowSprite_RedrawSavedRect(statusWindow);
-      /* FAKEMATCH(signature): Window_MapTextCanvasTiles typed s32 though it
-       * returns nothing, so the call sets r0 and y's load leads x's; as void, 6
-       * of 3111 instructions differ in tla-en. */
+      /* FAKEMATCH(signature): Window_MapTextCanvasTiles typed s32 though it returns
+       * nothing, so the call sets r0 and y's load leads x's; as void, 6 of
+       * 3111 instructions differ in tla-en. */
       Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y, helpWindow->width,
-                                helpWindow->height, 0);
+                    helpWindow->height, 0);
       Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
       djinnCount = 0;
       for (element = 0; element <= 3; element++) {
@@ -870,9 +870,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             djinnCount++;
           } else if (unit->djinnOwned[element] & (1 << bit)) {
             struct SummaryRecoveryList *recovery =
-                &((struct SummaryRecovery *)Djinn_GetRecoveryTableFar(
-                      (u32)member > 7))
-                     ->list;
+                &((struct SummaryRecovery *)Djinn_GetRecoveryTableFar((u32)member > 7))->list;
             s32 k;
             s32 value;
 
@@ -961,8 +959,8 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
     if (redraw != 0) {
       if (page == 0) {
         WindowSprite_RedrawSavedRect(statusWindow);
-        Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y,
-                                  helpWindow->width, helpWindow->height, page);
+        Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y, helpWindow->width,
+                      helpWindow->height, page);
         Window_DrawDividerLine(statusWindow, 0, 14, 29, 14);
       }
       Text_DrawStringAtOffset(unit->name, statusWindow, 0, 0);

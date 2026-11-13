@@ -293,7 +293,9 @@ void SelectionMenu_StartDrawing(void) {
   Task_Add(SelectionMenu_Draw, TASK_PASS_VBLANK);
 }
 
-void Resource_ScheduleOwnerReset(void) { Task_Remove(SelectionMenu_Draw); }
+void Resource_ScheduleOwnerReset(void) {
+  Task_Remove(SelectionMenu_Draw);
+}
 
 struct EffectPosition {
   s32 x;
@@ -348,8 +350,7 @@ void SelectionMenu_Draw(void) {
     } else if (cnt == state->cursorIndex) {
       slot = 241;
       if (cursor->kind != 0) {
-        if (BattleMotion_ProjectScaledPositionFar(node->base, (s32 *)&pos) !=
-            -1) {
+        if (BattleMotion_ProjectScaledPositionFar(node->base, (s32 *)&pos) != -1) {
           cursor->targetX = pos.x;
           cursor->targetY = pos.y;
           if (cursor->scale == 0) {
@@ -849,8 +850,7 @@ UNUSED void Menu_MoveSelectionForward(struct SelectionScrollScreen *screen) {
     screen->upArrow = 1;
   }
   screen->status = NODE_STATUS_SHOWN;
-  Menu_LoadSelectionNodeResource((struct MenuResourceList *)screen,
-                                 screen->cursor);
+  Menu_LoadSelectionNodeResource((struct MenuResourceList *)screen, screen->cursor);
   wait(1);
   Menu_OpenSelectionWindow(screen->node->kind, 0);
   wait(1);
@@ -879,8 +879,7 @@ void Menu_MoveSelectionBackward(struct SelectionScrollScreen *screen) {
     screen->cursor--;
   }
   screen->status = NODE_STATUS_SHOWN;
-  Menu_LoadSelectionNodeResource((struct MenuResourceList *)screen,
-                                 screen->cursor);
+  Menu_LoadSelectionNodeResource((struct MenuResourceList *)screen, screen->cursor);
   wait(1);
   Menu_OpenSelectionWindow(screen->node->kind, 0);
   wait(1);
@@ -950,8 +949,7 @@ void Menu_StepRight(struct SelectionScreen *state) {
     state->cursorIndex = 0;
   }
   state->status = 1;
-  Menu_LoadSelectionNodeResource((struct MenuResourceList *)state,
-                                 state->cursorIndex);
+  Menu_LoadSelectionNodeResource((struct MenuResourceList *)state, state->cursorIndex);
   wait(1);
   Menu_OpenSelectionWindow(state->head->kind, 0);
   wait(1);
@@ -1059,8 +1057,7 @@ void Menu_StepLeft(struct StepMenu *state) {
     state->cursor = state->count - 1;
   }
   state->status = 1;
-  Menu_LoadSelectionNodeResource((struct MenuResourceList *)state,
-                                 state->cursor);
+  Menu_LoadSelectionNodeResource((struct MenuResourceList *)state, state->cursor);
   wait(1);
   kind = state->nodes->id;
   Menu_OpenSelectionWindow(kind, 0);
@@ -1083,7 +1080,7 @@ struct MenuResourceList {
 };
 
 void Icon_BuildCommandIconTiles(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
-                                s32 arg4);
+                                  s32 arg4);
 
 void Menu_ReloadNodeResource(struct MenuResourceList *state, u32 index) {
   struct MenuResourceNode *node = state->head;
@@ -1231,7 +1228,7 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
 }
 
 void Icon_BuildCommandIconTiles(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
-                                s32 arg4);
+                                  s32 arg4);
 s32 Icon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 s32 Resource_FindFreeEntry(void);
 
@@ -1320,9 +1317,9 @@ struct ListNode {
 };
 
 void Icon_BuildCommandIconTiles(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
-                                s32 arg4);
+                                  s32 arg4);
 void Icon_BuildItemIconTiles(u32 glyph, s32 includeBase, s32 *sourceIndex,
-                             s32 *result, s32 reuseSource);
+                               s32 *result, s32 reuseSource);
 
 void MenuSelection_SetupEntry(u32 kind, s32 base, struct ListNode *node,
                               s32 reuse) {
@@ -1382,8 +1379,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
 
   index = screen->top + screen->cursorIndex;
   Menu_SendNodeCountList((u8 *)screen);
-  Menu_ReloadNodeResource((struct MenuResourceList *)screen,
-                          screen->cursorIndex);
+  Menu_ReloadNodeResource((struct MenuResourceList *)screen, screen->cursorIndex);
   screen->status = 33;
   wait(1);
   screen->records[0].kind = 0;
@@ -1548,9 +1544,8 @@ extern char ResourceId_CommandIcons;
 
 void Menu_LoadSelectedResource(void) {
   struct SelectionScreen *state = Ram_HeapSlots->menuWork;
-  struct SelectionNode *selection =
-      (struct SelectionNode *)NodeChain_GetNodeAtCount(
-          (struct NodeChainState *)state);
+  struct SelectionNode *selection = (struct SelectionNode *)NodeChain_GetNodeAtCount(
+      (struct NodeChainState *)state);
   struct SelectionNode *transfer;
   GlyphTransfer *buffer;
   u8 *table;
@@ -1560,7 +1555,8 @@ void Menu_LoadSelectedResource(void) {
   if (selection->kind != 1 && selection->kind != 6)
     return;
 
-  buffer = (GlyphTransfer *)HeapSlot_Alloc(68, sizeof(GlyphTransfer));
+  buffer =
+      (GlyphTransfer *)HeapSlot_Alloc(68, sizeof(GlyphTransfer));
   transfer = &state->records[15];
   no = selection->base;
   table = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);

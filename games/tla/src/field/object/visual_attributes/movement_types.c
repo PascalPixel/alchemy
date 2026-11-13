@@ -27,27 +27,15 @@ struct LinkedEffectObject {
   void (*callback)(void);
 };
 
-/* VIEW(f0d489c): routine Func_080200c0 as struct LinkedEffectObject
- * *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct
- * BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
-extern struct LinkedEffectObject *
-Func_080200c0__f0d489c(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
+/* VIEW(f0d489c): routine Func_080200c0 as struct LinkedEffectObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
+extern struct LinkedEffectObject *Func_080200c0__f0d489c(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
 void Actor_StartScriptFar(struct Actor *object, const s32 *script);
-/* VIEW(f0d489c): routine Actor_Destroy as void Actor_Destroy(struct
- * LinkedEffectObject *object); battle.h has void Actor_Destroy(struct Actor
- * *object). */
-extern void Actor_Destroy__f0d489c(struct LinkedEffectObject *object) __asm__(
-    "Actor_Destroy");
-/* VIEW(f0d489c): routine Actor_IsOutsideAnimation108 as s32
- * Actor_IsOutsideAnimation108(struct LinkedEffectObject *object); the
- * definition has s32 Actor_IsOutsideAnimation108(struct Actor *object). */
-extern s32 Actor_IsOutsideAnimation108__f0d489c(
-    struct LinkedEffectObject *object) __asm__("Actor_IsOutsideAnimation108");
-/* VIEW(f0d489c): routine BattleEffect_CopyWatchedObjectPosition as void
- * BattleEffect_CopyWatchedObjectPosition(void); the definition has s32
- * BattleEffect_CopyWatchedObjectPosition(struct Actor *object). */
-extern void BattleEffect_CopyWatchedObjectPosition__f0d489c(void) __asm__(
-    "BattleEffect_CopyWatchedObjectPosition");
+/* VIEW(f0d489c): routine Actor_Destroy as void Actor_Destroy(struct LinkedEffectObject *object); battle.h has void Actor_Destroy(struct Actor *object). */
+extern void Actor_Destroy__f0d489c(struct LinkedEffectObject *object) __asm__("Actor_Destroy");
+/* VIEW(f0d489c): routine Actor_IsOutsideAnimation108 as s32 Actor_IsOutsideAnimation108(struct LinkedEffectObject *object); the definition has s32 Actor_IsOutsideAnimation108(struct Actor *object). */
+extern s32 Actor_IsOutsideAnimation108__f0d489c(struct LinkedEffectObject *object) __asm__("Actor_IsOutsideAnimation108");
+/* VIEW(f0d489c): routine BattleEffect_CopyWatchedObjectPosition as void BattleEffect_CopyWatchedObjectPosition(void); the definition has s32 BattleEffect_CopyWatchedObjectPosition(struct Actor *object). */
+extern void BattleEffect_CopyWatchedObjectPosition__f0d489c(void) __asm__("BattleEffect_CopyWatchedObjectPosition");
 extern const u8 gData_080f341c[];
 
 /// The Broken Seal's BattleEffect_ConfigureWatchedObject with this game's
@@ -68,8 +56,7 @@ void FieldEffect_SetAttached(s32 id, s32 flags) {
     return;
 
   if ((flags & 3) != 0) {
-    if ((flags & 3) == 2 ||
-        Actor_IsOutsideAnimation108__f0d489c(object->resource)) {
+    if ((flags & 3) == 2 || Actor_IsOutsideAnimation108__f0d489c(object->resource)) {
       child = Func_080200c0__f0d489c(264, object->x, object->y, object->z);
     }
   } else {
@@ -127,6 +114,7 @@ void FieldEffect_SetAttached(s32 id, s32 flags) {
     visual->flags = clearMask;
   }
 }
+
 
 s32 __divsi3(s32, s32);
 
@@ -187,6 +175,7 @@ s32 Actor_MoveTowardTarget(struct Actor *object) {
 
 // Objects: turn toward the linked target.
 
+
 s32 ArcTan2(s32, s32);
 
 /// Turns the object toward its facing target, if it has one, by at most
@@ -221,6 +210,7 @@ void Func_080d4aa8(struct Actor *object, struct Actor *target) {
   object->watchedObject = target;
   object->update = SceneActor_UpdateFacingTowardTarget;
 }
+
 
 struct ObjectLayerAnimation {
   u8 unk00[9];
@@ -300,7 +290,9 @@ void Actor_SetActionCallback(struct Actor *object, s32 kind) {
   Actor_StartScriptFar(object, (const void *)kind);
 }
 
+
 u32 Func_080202f0(s32 terrain, s32 x, s32 z);
+
 
 struct ObjectAnimationEntry {
   s16 animId;
@@ -375,6 +367,7 @@ s32 Func_080d4ccc(struct Actor *object, s32 *position) {
     return 0;
   return 1;
 }
+
 
 struct JumpSprite {
   u8 unk00[26];
@@ -785,6 +778,7 @@ failure:
   return -1;
 }
 
+
 struct Work9cItemPosition {
   u8 unk00[4];
   s32 x;
@@ -828,6 +822,7 @@ struct Work9cItem *Func_080d5670(s32 *position) {
   return found;
 }
 
+
 struct GrabSave {
   u8 unk00[98];
   u8 priority;
@@ -865,6 +860,7 @@ s32 Func_080d5720(void) {
   gMainRoutineWork.renderMode = 3;
   return 1;
 }
+
 
 s32 Func_080201d0(s32 layer, s32 x, s32 z);
 
@@ -907,6 +903,7 @@ s32 Func_080d57e4(void) {
   gMainRoutineWork.renderMode = 0;
   return 1;
 }
+
 
 struct WorkA0Node *Func_080d5930(s32 *position) {
   struct WorkA0Node *found;

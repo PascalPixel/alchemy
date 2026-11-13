@@ -152,7 +152,8 @@ void SettingsMenu_InitializeWork(void) {
   work->optionCount[3] = 2;
   work->option[4] = gMainRoutineWork.unk244[6];
   work->optionCount[4] = 2;
-  Task_Add(GraphicsPalette_LoadSelectionResourcesAndAdvance, TASK_PASS_VBLANK);
+  Task_Add(
+      GraphicsPalette_LoadSelectionResourcesAndAdvance, TASK_PASS_VBLANK);
 }
 
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void);

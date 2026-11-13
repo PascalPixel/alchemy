@@ -16,11 +16,7 @@ struct Data02020000 {
 
 extern const u32 gData_0802ed34[4][9];
 extern u8 gData_02028000[];
-/* VIEW(f02be4c): variable gWorldMapWork as extern u8 gWorldMapWork[]; battle.h
- * has extern struct WorldMapWork gWorldMapWork; tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/field/resource_slot.c:8903: `gWorldMapWork' has an incomplete
- * type. */
+/* VIEW(f02be4c): variable gWorldMapWork as extern u8 gWorldMapWork[]; battle.h has extern struct WorldMapWork gWorldMapWork; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:8903: `gWorldMapWork' has an incomplete type. */
 extern u8 gWorldMapWork__f02be4c[] __asm__("gWorldMapWork");
 
 void Func_0802d088(s32 region, s32 mode);
@@ -89,8 +85,7 @@ void Func_0802be4c(s32 x, s32 z) {
   Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000,
           DMA_COPY_WORDS(2048), REG_DMA3);
   Resource_DecodeType01(Resource_GetTableEntry(resources[7]), gData_02028000);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[8]),
-                        gWorldMapWork__f02be4c);
+  Resource_DecodeType01(Resource_GetTableEntry(resources[8]), gWorldMapWork__f02be4c);
   Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5), 1536);
   screenTiles = (u32 *)BG_SCREEN_BLOCK(6);
   tilePair = 0x01810180;
@@ -116,6 +111,7 @@ void Func_0802be4c(s32 x, s32 z) {
   }
   Heap_Release(buffer);
 }
+
 
 struct MapScanline {
   u8 unk00[20];
@@ -187,10 +183,7 @@ void Func_0802c088(void) {
   perspective->windowPending = 0;
 }
 
-/* VIEW(f02be4c): variable gMapBlocks as extern u8 gMapBlocks[]; f0298c0 has
- * extern u32 gMapBlocks[]; tried as the rest of the object declares it, it does
- * not compile in tla-ja: games/tla/src/field/resource_slot.c:9021:
- * `gMapBlocks__f02be4c' undeclared (first use in this function). */
+/* VIEW(f02be4c): variable gMapBlocks as extern u8 gMapBlocks[]; f0298c0 has extern u32 gMapBlocks[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:9021: `gMapBlocks__f02be4c' undeclared (first use in this function). */
 extern u8 gMapBlocks__f02be4c[] __asm__("gMapBlocks");
 
 /// Copies one world map cell's two tile entries (top and bottom) to a BG map.
@@ -276,6 +269,7 @@ void Map_RenderPaletteMappedColumn(u32 tileColumn) {
   } while (row <= 63);
 }
 
+
 extern u32 gData_03001144;
 extern u32 Data_03001244;
 
@@ -289,6 +283,8 @@ void SceneTransform_ApplyPitch(s32 pitch);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void Func_0802c58c(void);
 void Func_0802dd70(s32 ratio, s32 *position, void *affineWork);
+
+
 
 void Func_0802c240(void) {
   u8 *camera = Ram_HeapSlots->cameraWork;

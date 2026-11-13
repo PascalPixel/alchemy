@@ -5,11 +5,8 @@
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"
-/* VIEW(f11f66c): routine ColorBuffer_Scale as void ColorBuffer_Scale(u16
- * *source, u16 *destination, s32 scale, s32 count); f11e3ac has void
- * ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size). */
-extern void ColorBuffer_Scale__f11f66c(u16 *source, u16 *destination, s32 scale,
-                                       s32 count) __asm__("ColorBuffer_Scale");
+/* VIEW(f11f66c): routine ColorBuffer_Scale as void ColorBuffer_Scale(u16 *source, u16 *destination, s32 scale, s32 count); f11e3ac has void ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size). */
+extern void ColorBuffer_Scale__f11f66c(u16 *source, u16 *destination, s32 scale, s32 count) __asm__("ColorBuffer_Scale");
 
 /// Sets the palette brightness. Level 0 transfers the original colours
 /// unchanged.
@@ -44,8 +41,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
             REG_DMA3);
   } else {
     ColorBuffer_Scale__f11f66c(palette, (u16 *)0x050000c0,
-                               screen->brightness = 0x10000 - level * 1092,
-                               128);
+                      screen->brightness = 0x10000 - level * 1092, 128);
   }
   {
     u32 saved = *slot;
@@ -132,6 +128,7 @@ void Func_081263c4(void) {
 
 void Func_081263f0(void) { HeapSlot_Release(40); }
 
+
 // The parts of the battle work the backdrop uses.
 struct BattleBackdropWork {
   u8 unk000[0x56c];
@@ -179,8 +176,7 @@ void Func_081263fc(s32 mode, s32 resource, s32 level) {
   Dma_Set(data, palette, 0x84000040, REG_DMA3);
   if (level >= 0)
     ColorBuffer_Scale__f11f66c(palette, (u16 *)0x050000c0,
-                               session->brightness = 0x10000 - level * 1092,
-                               128);
+                      session->brightness = 0x10000 - level * 1092, 128);
   if (session->keepBackdropPalette == 0) {
     Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, REG_DMA3);
     *(u16 *)0x050000bc = *(u16 *)0x050001e8;
@@ -256,6 +252,7 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
     *line++ = 0x3f8e;
   scanlines->page ^= 1;
 }
+
 
 void Projection_Set(s32 span, u32 depth, s32 range);
 void SceneTransform_ApplyPosition(s32 *position);
@@ -439,6 +436,7 @@ void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
   Transform_SetIdentity(entries);
   entries[0].sum = previous + entries[0].value;
 }
+
 
 struct MenuFlagWork {
   u8 unk000[0x506];
@@ -994,6 +992,7 @@ s32 ElementGlow_End(s32 unused) {
 
 void Func_08127304(void) {}
 
+
 // The parts of the battle work this effect uses.
 struct ElementSession {
   u8 unk000[0x56c];
@@ -1046,7 +1045,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
       work = (struct SparkWork *)Ram_HeapSlots->battleFxWork[0];
       if (frame <= 24)
         ColorBuffer_Scale__f11f66c(session->palette, (u16 *)0x050000c0,
-                                   *brightness = 0x10000 - frame * 1092, 128);
+                          *brightness = 0x10000 - frame * 1092, 128);
       Func_0811c2b4(unit, (s32 *)pos);
       work->originX = (64 - pos->x) << 8;
       work->originY = (64 - pos->y) << 8;
@@ -1096,6 +1095,7 @@ void BattleBackground_RestorePalette(void) {
 
 /// Removes the VCount interrupt's handler; nothing calls it.
 void Irq_RemoveVCountHandler(void) { Irq_SetHandler(IRQ_VCOUNT, 0, 0); }
+
 
 /// The Broken Seal's BattleFormation_AverageLevel without its level check:
 /// the average level of a formation's enemy kinds, counting only kinds the

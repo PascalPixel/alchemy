@@ -12,11 +12,11 @@
 /// screens/, included here in the order it has in the ROM. Camelot's own files
 /// are not recoverable: the ROM shows one object, and these parts are ours,
 /// cut where The Broken Seal's are. The object ends at the battle Psynergy menu
-/// (battle_psynergy_menu.c): the target selection after it,
-/// BattleTarget_RunSelection, keeps Oam_AddSpriteAtDepth declared returning s32
-/// (a fake match its tag measures), which cannot share a translation unit with
-/// the routine's true declaration, so it and the functions after it stay in
-/// objects of their own. Where to start:
+/// (battle_psynergy_menu.c): the target selection after it, BattleTarget_RunSelection,
+/// keeps Oam_AddSpriteAtDepth declared returning s32 (a fake match its tag
+/// measures), which cannot share a translation unit with the routine's true
+/// declaration, so it and the functions after it stay in objects of their own.
+/// Where to start:
 ///
 ///   Party status    party_status.c: PartyStatus_CreateWindow,
 ///                   PartyStatus_Draw

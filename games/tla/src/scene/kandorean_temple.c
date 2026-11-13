@@ -1,6 +1,5 @@
 /// @file
-/// The scene code of overlay 0x653 that its scene tables belong to, in ROM
-/// order; the rest of the overlay is in kandorean_temple/.
+/// The scene code of overlay 0x653 that its scene tables belong to, in ROM order; the rest of the overlay is in kandorean_temple/.
 
 #include "kandorean_temple/local.h"
 
@@ -206,7 +205,8 @@ void *Func_02000580(void) {
 void Func_0200063c(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                     0);
   Func_02000668(leader, 0);
 }
 
@@ -228,7 +228,8 @@ void Func_02000668(struct Actor *object, s32 step) {
 }
 
 void Func_020006b0(struct Actor *object) {
-  struct Actor *steam = Func_02005140_(0x10d, object->x, object->y, object->z);
+  struct Actor *steam =
+      Func_02005140_(0x10d, object->x, object->y, object->z);
   struct FieldSprite *sprite;
 
   if (steam) {
@@ -251,8 +252,7 @@ void Func_02000710(void) {
   struct Actor *steam;
 
   if ((gFrameCount & 7) == 0) {
-    steam = ((struct Actor *)Import_ActorCreate(
-        14, leader->x, leader->y + 0x60000, leader->z));
+    steam = ((struct Actor *)Import_ActorCreate(14, leader->x, leader->y + 0x60000, leader->z));
     if (steam) {
       Actor_SetSingleChildFlags(steam, 0);
       Func_02005130(steam, 1);
@@ -431,8 +431,8 @@ void Func_02000a0c(struct Actor *object) {
 }
 
 void Func_02000adc(void) {
-  struct Actor *object = ((struct Actor *)Import_ActorCreate(
-      0x11d, 0x2b80000, 0x1c0000, 0x9c0000));
+  struct Actor *object =
+      ((struct Actor *)Import_ActorCreate(0x11d, 0x2b80000, 0x1c0000, 0x9c0000));
 
   if (object) {
     s32 timer;
@@ -882,10 +882,9 @@ void Func_02001634(void) {
 
   if (*timer == 300) {
     Func_02005388(162);
-    FieldActor_SetPositionAndResetMotion(Actor_GetById(13), PIXELS(440),
-                                         PIXELS(-20), PIXELS(204));
-    Actor_SetPositionAndResetMotion(Actor_GetById(15), PIXELS(440), PIXELS(-20),
-                                    PIXELS(200));
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(13), PIXELS(440), PIXELS(-20), PIXELS(204));
+    Actor_SetPositionAndResetMotion(Actor_GetById(15), PIXELS(440),
+                                    PIXELS(-20), PIXELS(200));
     Actor_SetSpritePriority(13, 3);
     Actor_SetSpritePriority(15, 3);
     base->priorityFlags |= 2;
@@ -947,10 +946,9 @@ void Func_02001804(void) {
 
   if (*timer == 300) {
     Func_02005388(162);
-    FieldActor_SetPositionAndResetMotion(Actor_GetById(14), PIXELS(600),
-                                         PIXELS(-20), PIXELS(236));
-    Actor_SetPositionAndResetMotion(Actor_GetById(16), PIXELS(600), PIXELS(-20),
-                                    PIXELS(232));
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(14), PIXELS(600), PIXELS(-20), PIXELS(236));
+    Actor_SetPositionAndResetMotion(Actor_GetById(16), PIXELS(600),
+                                    PIXELS(-20), PIXELS(232));
     Actor_SetSpritePriority(14, 3);
     Actor_SetSpritePriority(16, 3);
     base->priorityFlags |= 2;
@@ -1062,7 +1060,8 @@ void Func_02001b50(void) {
     return;
   if (cellX == 27 && cellZ == 12) {
     struct Actor *lift = Actor_GetById(13);
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                       0);
     Actor_SetModeById(13, 4);
     leader->motionFlags = riding;
     leader->y = lift->y;
@@ -1071,7 +1070,8 @@ void Func_02001b50(void) {
   }
   if (cellX == 37 && cellZ == 14) {
     struct Actor *lift = Actor_GetById(14);
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                       0);
     Actor_SetModeById(14, 4);
     leader->motionFlags = 0;
     leader->y = lift->y;
@@ -1084,7 +1084,8 @@ void Func_02001b50(void) {
   }
   Actor_SetModeById(13, 0);
   Actor_SetModeById(14, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                     1);
   leader->motionFlags = 3;
   GameFlag_ClearBit(0x208);
   GameFlag_ClearBit(0x209);

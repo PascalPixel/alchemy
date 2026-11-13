@@ -49,8 +49,7 @@ void Func_0810bdf4(void);
 void Func_0810be3c(void);
 
 void Func_08108130(void) {
-  ShopCursor_Advance(
-      &((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor);
+  ShopCursor_Advance(&((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor);
 }
 
 /// Opens the shop's work: lists the party, loads the cursor, page arrow, gem
@@ -116,7 +115,7 @@ s32 EventTable_GetRowType(s32 row);
 void EventTable_ApplyRowAbilities(s32 row);
 struct RenderInput *Func_080380f8(s32 resource, s32 x, s32 y, s32 mode);
 struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
-                                     s32 style);
+                                       s32 style);
 void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y);
 void Shop_ShowKeeperMessage(s32 message);
 s32 Menu_SelectShopCommandFar(s32 action);
@@ -266,7 +265,7 @@ s32 Shop_AskYesNo(s32 arg0) {
   u8 saved = (*slot)->active;
 
   Icon_PrepareActorFar(*slot);
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
     (LANGUAGE == LANGUAGE_ITALIAN)
   arg0 = Menu_RunConfirmSelectionAtFar(6, 5, arg0);
 #else

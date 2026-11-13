@@ -168,6 +168,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 // directly. Other editions place a differently built version; only the
 // English listing was compared.
 
+
 #define ROCK_COUNT 6
 #define CHIPS_PER_ROCK 4
 // The chips' shapes and flips live in particles[32..63].
@@ -380,6 +381,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
+
 /// Shakes the battle view while the effect work's shakeFrames lasts, moving
 /// BG1 and gCameraSceneParameters[3] and [4] by a random offset; once the
 /// shake runs out, BG1 returns to its saved position and both parameters to
@@ -439,6 +441,8 @@ void Camera_ApplyVerticalShake(s32 range) {
 
 // Thor: a beam of light falls from a dusk sky, then a pillar of lightning and
 // violet bolts strike the foes.
+
+
 
 struct FxPartyList;
 

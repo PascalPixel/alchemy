@@ -1,6 +1,5 @@
 /// @file
-/// Overlay 0x66c's scene: its code, then its tables, in the order the ROM has
-/// them.
+/// Overlay 0x66c's scene: its code, then its tables, in the order the ROM has them.
 
 #include "field/field.h"
 

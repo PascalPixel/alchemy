@@ -7,6 +7,7 @@
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(const void *, void *))Resource_DecodeByteLzInRam)
 
+
 extern const u8 gData_080f385e[];
 
 union MoteWord {
@@ -28,11 +29,7 @@ struct Mote {
 };
 
 /// Heap slot 0x74 while the motes run.
-/* VIEW(motes): tag struct MoteWork as struct MoteWork__motes;
- * visual_attributes.c has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:3089: structure has no member
- * named `motes'. */
+/* VIEW(motes): tag struct MoteWork as struct MoteWork__motes; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:3089: structure has no member named `motes'. */
 struct MoteWork__motes {
   s32 vramEntry;
   s32 tileBase;
@@ -122,6 +119,7 @@ void FieldMotes_Start(void) {
 
 #undef Resource_DecodeByteLzInRam
 
+
 /// One of Func_080d6674's particles: its sprite's attribute words, its world
 /// position and its frames left.
 struct SparkParticle {
@@ -209,6 +207,7 @@ void Func_080d6f34(s32 withCue) {
 
 void Func_080d7024(void) { Task_Remove(Func_080d6674); }
 
+
 struct Sparkle {
   u8 padding00[4];
   u16 y : 8;
@@ -247,11 +246,8 @@ struct SparklePicture {
 
 extern const struct SparklePicture gData_080f0b7c[];
 
-/* VIEW(motes): routine Func_080140d8 as void Func_080140d8(void *entry, s32
- * priority); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32
- * depth). */
-extern void Func_080140d8__motes(void *entry,
-                                 s32 priority) __asm__("Func_080140d8");
+/* VIEW(motes): routine Func_080140d8 as void Func_080140d8(void *entry, s32 priority); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
+extern void Func_080140d8__motes(void *entry, s32 priority) __asm__("Func_080140d8");
 
 void FieldEffect_UpdateSparkles(void) {
   struct SparkleWork *work;

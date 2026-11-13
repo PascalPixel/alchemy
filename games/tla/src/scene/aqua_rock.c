@@ -892,8 +892,7 @@ settle:
 #undef UNK02003450_SET
 
 // ---- games/tla/src/scene/aqua_rock/s17f4.c ----
-// Scene code of overlay 0x67b, in ROM order, from s17f4's offset up to the next
-// object the overlay links.
+// Scene code of overlay 0x67b, in ROM order, from s17f4's offset up to the next object the overlay links.
 
 #include "call.h"
 
@@ -915,18 +914,15 @@ void Func_020025a8(s32 id);
 void Func_02002834(s32 id);
 void Func_02002948(s32 a);
 void Func_02002940(s32 a);
-/* VIEW(s17f4): routine Func_02000b58 as void Func_02000b58(void); the
- * definition has void Func_02000b58(struct Actor *object). */
+/* VIEW(s17f4): routine Func_02000b58 as void Func_02000b58(void); the definition has void Func_02000b58(struct Actor *object). */
 extern void Func_02000b58__s17f4(void) __asm__("Func_02000b58");
 void Func_0200169c(void);
-/* VIEW(s17f4): routine Func_02001670 as void Func_02001670(void); the
- * definition has void Func_02001670(struct Actor *object). */
+/* VIEW(s17f4): routine Func_02001670 as void Func_02001670(void); the definition has void Func_02001670(struct Actor *object). */
 extern void Func_02001670__s17f4(void) __asm__("Func_02001670");
 void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02000844(void);
 void Func_02002158(void);
-/* VIEW(s17f4): routine Func_02001d98 as void Func_02001d98(void); aqua_rock has
- * void Func_02001d98(struct Actor *object). */
+/* VIEW(s17f4): routine Func_02001d98 as void Func_02001d98(void); aqua_rock has void Func_02001d98(struct Actor *object). */
 extern void Func_02001d98__s17f4(void) __asm__("Func_02001d98");
 void Func_02001460(void);
 void Func_0200153c(void);
@@ -1084,8 +1080,8 @@ s32 Func_020017f4(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_02001d30(struct Actor *object) {
-  struct Actor *child = Import_ActorCreate(14, object->x, object->y + 0x40000,
-                                           object->z + 0x40000);
+  struct Actor *child = Import_ActorCreate(
+      14, object->x, object->y + 0x40000, object->z + 0x40000);
   struct FieldSprite *parentSprite = object->sprite;
 
   if (child != 0) {
@@ -1129,6 +1125,7 @@ void Func_02001d98(struct Actor *object) {
 #include "scene_ids.h"
 
 void Func_02001d30(struct Actor *object);
+
 
 void Func_02001e00(void) {
   struct Actor *anchor;
@@ -1394,6 +1391,7 @@ void Func_02002250(void) {
   }
 }
 
+
 void Func_020023c0(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 *view = &map->viewX;
@@ -1651,6 +1649,7 @@ void Func_02002834(s32 id) {
   if (id != 0 && object != 0)
     *slot = (s32)&object->x;
 }
+
 
 s32 Func_02000384(struct Actor *object);
 s32 Func_02000478(struct Actor *object);

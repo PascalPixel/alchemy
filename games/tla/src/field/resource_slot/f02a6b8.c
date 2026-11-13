@@ -42,6 +42,7 @@ struct LayeredSceneHeader {
   s32 script;
 };
 
+
 struct MapLayerScroll {
   s32 x, y;
   s32 offsetX, offsetY;
@@ -68,10 +69,8 @@ struct MapScrollWork {
   struct MapLayerScroll layers[3];
 };
 
-/* VIEW(f02a6b8): variable gData_0802f380 as extern struct LayeredSceneEntry
- * gData_0802f380[]; f0298c0 has extern const u16 gData_0802f380[][6]. */
-extern struct LayeredSceneEntry
-    gData_0802f380__f02a6b8[] __asm__("gData_0802f380");
+/* VIEW(f02a6b8): variable gData_0802f380 as extern struct LayeredSceneEntry gData_0802f380[]; f0298c0 has extern const u16 gData_0802f380[][6]. */
+extern struct LayeredSceneEntry gData_0802f380__f02a6b8[] __asm__("gData_0802f380");
 extern char ResourceId_Map000;
 extern u8 gMapShapeGrid[];
 extern u8 gData_02028000[];

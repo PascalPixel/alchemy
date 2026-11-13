@@ -15,7 +15,8 @@ struct BattleSortedUnitEntry {
   u8 unk0c[4];
 };
 
-s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries) {
+s32 AutoBattle_BuildActions(
+    struct BattleSortedUnitEntry *entries) {
   struct BattleSortedUnitEntry swap;
   u16 unitIds[14];
   s32 firstCount;
@@ -444,7 +445,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
 }
 
 void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
-                            u8 *context) {
+                                        u8 *context) {
   u8 localContext[4];
   struct BattleUnit *character;
   struct BattleObj *slot;

@@ -1,6 +1,5 @@
 /// @file
-/// Scene code of overlay 0x653, in ROM order, from s2ec4's offset up to the
-/// next object the overlay links, and the overlay's data.
+/// Scene code of overlay 0x653, in ROM order, from s2ec4's offset up to the next object the overlay links, and the overlay's data.
 
 #include "local.h"
 #include "field_effect.h"
@@ -76,8 +75,7 @@ void Func_0200306c(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *statue = Actor_GetById(9);
   struct Actor *ride = Func_080d4568();
-  s16 i;
-  u16 next;
+  s16 i; u16 next;
   s32 limit;
 
   Func_020051c0();
@@ -93,38 +91,38 @@ void Func_0200306c(void) {
   Sound_Play(162);
   Func_02000d64();
   i = 0;
-  do {
-    leader->y += 0x48000;
-    statue->y += 0x48000;
-    ride->y += 0x1cccc;
-    limit = 0x1000;
-    Func_02000cd8(11, 0x20000, limit);
-    Func_02000cd8(13, 0x18000, limit);
-    Func_02000cd8(14, 0x10000, limit);
-    Func_02000cd8(15, 0x8000, limit);
-    Func_02000cd8(16, 0, limit);
-    next = i;
-    next++;
-    i = next;
-  } while (next <= 15);
+do {
+  leader->y += 0x48000;
+  statue->y += 0x48000;
+  ride->y += 0x1cccc;
+  limit = 0x1000;
+  Func_02000cd8(11, 0x20000, limit);
+  Func_02000cd8(13, 0x18000, limit);
+  Func_02000cd8(14, 0x10000, limit);
+  Func_02000cd8(15, 0x8000, limit);
+  Func_02000cd8(16, 0, limit);
+  next = i;
+  next++;
+  i = next;
+} while (next <= 15);
   Func_02005158();
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
-  do {
-    leader->y += -0x6c000;
-    statue->y += -0x6c000;
-    ride->y += -0x2b333;
-    limit = 0x1800;
-    Func_02000cf8(11, 0x30000, limit);
-    Func_02000cf8(13, 0x24000, limit);
-    Func_02000cf8(14, 0x18000, limit);
-    Func_02000cf8(15, 0xc000, limit);
-    Func_02000cf8(16, 0, limit);
-    wait(1);
-  } while (Actor_GetById(16)->scaleY > limit);
+do {
+  leader->y += -0x6c000;
+  statue->y += -0x6c000;
+  ride->y += -0x2b333;
+  limit = 0x1800;
+  Func_02000cf8(11, 0x30000, limit);
+  Func_02000cf8(13, 0x24000, limit);
+  Func_02000cf8(14, 0x18000, limit);
+  Func_02000cf8(15, 0xc000, limit);
+  Func_02000cf8(16, 0, limit);
+  wait(1);
+} while (Actor_GetById(16)->scaleY > limit);
   gData_02006298 = 0;
   GameFlag_ClearBit(0x20c);
   Sound_Play(390);
@@ -138,7 +136,8 @@ void Func_0200306c(void) {
   statue->priorityFlags |= 2;
   Actor_SetSpritePriority(9, 3);
   Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                     1);
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Func_020051c8();
@@ -150,8 +149,7 @@ void Func_020032c8(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *statue = Actor_GetById(10);
   struct Actor *ride = Func_080d4568();
-  s16 i;
-  u16 next;
+  s16 i; u16 next;
   s32 limit;
 
   Func_020051c0();
@@ -167,38 +165,38 @@ void Func_020032c8(void) {
   Sound_Play(162);
   Func_02000e60();
   i = 0;
-  do {
-    leader->y += 0x48000;
-    statue->y += 0x48000;
-    ride->y += 0x1cccc;
-    limit = 0x1000;
-    Func_02000cd8(12, 0x20000, limit);
-    Func_02000cd8(17, 0x18000, limit);
-    Func_02000cd8(18, 0x10000, limit);
-    Func_02000cd8(19, 0x8000, limit);
-    Func_02000cd8(20, 0, limit);
-    next = i;
-    next++;
-    i = next;
-  } while (next <= 15);
+do {
+  leader->y += 0x48000;
+  statue->y += 0x48000;
+  ride->y += 0x1cccc;
+  limit = 0x1000;
+  Func_02000cd8(12, 0x20000, limit);
+  Func_02000cd8(17, 0x18000, limit);
+  Func_02000cd8(18, 0x10000, limit);
+  Func_02000cd8(19, 0x8000, limit);
+  Func_02000cd8(20, 0, limit);
+  next = i;
+  next++;
+  i = next;
+} while (next <= 15);
   Func_02005158();
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
-  do {
-    leader->y += -0x6c000;
-    statue->y += -0x6c000;
-    ride->y += -0x2b333;
-    limit = 0x1800;
-    Func_02000cf8(12, 0x30000, limit);
-    Func_02000cf8(17, 0x24000, limit);
-    Func_02000cf8(18, 0x18000, limit);
-    Func_02000cf8(19, 0xc000, limit);
-    Func_02000cf8(20, 0, limit);
-    wait(1);
-  } while (Actor_GetById(20)->scaleY > limit);
+do {
+  leader->y += -0x6c000;
+  statue->y += -0x6c000;
+  ride->y += -0x2b333;
+  limit = 0x1800;
+  Func_02000cf8(12, 0x30000, limit);
+  Func_02000cf8(17, 0x24000, limit);
+  Func_02000cf8(18, 0x18000, limit);
+  Func_02000cf8(19, 0xc000, limit);
+  Func_02000cf8(20, 0, limit);
+  wait(1);
+} while (Actor_GetById(20)->scaleY > limit);
   gData_0200629c = 0;
   GameFlag_ClearBit(0x20d);
   Sound_Play(390);
@@ -212,7 +210,8 @@ void Func_020032c8(void) {
   statue->priorityFlags |= 2;
   Actor_SetSpritePriority(10, 3);
   Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                     1);
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Func_020051c8();
@@ -1112,8 +1111,8 @@ void Func_02004fb4(void) {
    * below; as plain zeros, built in r2 where they are stored, 22 of 51
    * instructions differ in tla-en. */
   s32 zero = 0;
-  struct Actor *object = ((struct Actor *)Import_ActorCreate(
-      0x1e9, 0x1980000, 0x280000, 0x1580000));
+  struct Actor *object =
+      ((struct Actor *)Import_ActorCreate(0x1e9, 0x1980000, 0x280000, 0x1580000));
 
   *slot = object;
   if (object) {

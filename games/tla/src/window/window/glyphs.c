@@ -340,9 +340,11 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 /// in WindowWork.entries. The window's position is read signed.
 // As ☀️'s function of the same name, which passes the VRAM base where this
 // one passes offsetX & 7.
-void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *work,
-                                    s32 offsetX, s32 offsetY) {
-  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
+                                        const struct Window *work,
+                                        s32 offsetX, s32 offsetY) {
+  struct WindowWork *canvas =
+      (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u32 cell;
 
   if (buffer == NULL) {
@@ -368,7 +370,7 @@ void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *work,
 /// skipping the control codes and their arguments; code 3 starts a new line.
 /// With no text, the render work's own entries are drawn, closed with a 0.
 void Text_RenderWideStringInWindow(s16 *text, struct Window *window, s32 x,
-                                   s32 y) {
+                                     s32 y) {
   struct WindowWork *work;
   u16 c;
   s16 start;

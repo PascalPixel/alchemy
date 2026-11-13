@@ -129,8 +129,8 @@ static __inline__ s32 GameFlag_GetByte_(s32 flag) {
   return GameFlag_GetByte(flag);
 }
 
-static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
-                                                           s32 dz) {
+static __inline__ void
+Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
   Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
 
@@ -160,7 +160,8 @@ static __inline__ void Func_02002990_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
   Func_02002990(a, b, c, d, e, f, g);
 }
 
-static __inline__ struct Actor *Func_02002808_(s32 type, s32 x, s32 y, s32 z) {
+static __inline__ struct Actor *Func_02002808_(s32 type, s32 x, s32 y,
+                                                       s32 z) {
   return Import_ActorCreate(type, x, y, z);
 }
 
@@ -170,7 +171,7 @@ static __inline__ void Func_02002838_(s32 a, s32 b, s32 c, s32 d, s32 e,
 }
 
 static __inline__ void Actor_SetSpeedParameters_(s32 id, s32 speed,
-                                                 s32 acceleration) {
+                                                        s32 acceleration) {
   Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
@@ -179,8 +180,8 @@ static __inline__ void Func_02002848_(s32 a, s32 b, s32 c, s32 d, s32 e,
   Func_0802b450(a, b, c, d, e, f);
 }
 
-static __inline__ void Func_02002818_(struct Actor *object, s32 x, s32 y,
-                                      s32 z) {
+static __inline__ void Func_02002818_(struct Actor *object, s32 x,
+                                      s32 y, s32 z) {
   Actor_SetMoveTarget(object, x, y, z);
 }
 

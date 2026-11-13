@@ -84,7 +84,7 @@ void Func_08044348(struct Window *window, const void *resource) {
 s32 Text_MeasureEntry(s32 start, u32 *width, u32 *height, s32 mode);
 
 void Window_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
-                               s32 width, s32 height, u32 field) {
+                                 s32 width, s32 height, u32 field) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   x += (s16)object->x + 1;

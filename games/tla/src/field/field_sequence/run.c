@@ -295,8 +295,8 @@ s32 FieldSequence_Run(void) {
 #ifdef UBFIX
       Djinn_ResolvePending(gMainRoutineWork.pendingDjinnEvent);
 #else
-      ((void (*)(s32, s32))Djinn_ResolvePending)(
-          gMainRoutineWork.pendingDjinnEvent, 1);
+      ((void (*)(s32, s32))Djinn_ResolvePending)(gMainRoutineWork.pendingDjinnEvent,
+                                          1);
 #endif
       gMainRoutineWork.pendingDjinnEvent = 0;
     }

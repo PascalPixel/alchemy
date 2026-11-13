@@ -9,10 +9,7 @@ struct MeshTriangle;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f18df5c): tag struct ModelTexture as struct ModelTexture__f18df5c;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunMeteorBlow moves: 1 of 1545 instructions in
- * tla-ja. */
+/* VIEW(f18df5c): tag struct ModelTexture as struct ModelTexture__f18df5c; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunMeteorBlow moves: 1 of 1545 instructions in tla-ja. */
 struct ModelTexture__f18df5c {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -25,8 +22,7 @@ struct PointPair {
   s32 y;
 };
 
-/* VIEW(f18df5c): tag struct RenderModel as struct RenderModel__f18df5c;
- * render_model.h has another definition. */
+/* VIEW(f18df5c): tag struct RenderModel as struct RenderModel__f18df5c; render_model.h has another definition. */
 struct RenderModel__f18df5c {
   s32 kind;
   s32 unk04;
@@ -48,8 +44,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-                   s32 *world);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -61,11 +56,9 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -84,8 +77,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
-                           s32 count);
+void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -117,7 +109,7 @@ extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_Data0DA;
 extern char ResourceId_Data0C1;
 extern u8 gMapCellBuffer[];
-extern s32 Data_02010018[];  // the shards' variants, 28 bytes apart
+extern s32 Data_02010018[];         // the shards' variants, 28 bytes apart
 extern u16 gData_08197410[]; // gBattleEffect_MoteCells
 extern const struct PointPair Data_08196f20;
 extern const u8 Data_08199e70[];
@@ -142,12 +134,11 @@ void Graphics_LoadGreyRamp(void);
 void Func_0814cca8(void);
 void Func_0815f0a0(s32 palette);
 void Func_08164abc(s32 red, s32 green, s32 blue);
-void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
-                   s32 cellWidth, s32 cellHeight);
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);
+void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows, s32 cellWidth, s32 cellHeight);
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags, u32 mode);
 void SceneTransform_ApplyPosition(const s32 *pos);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
+
 
 /// Meteor Blow.
 /// ★ Named from the game: "Meteor Blow" (message 02130)

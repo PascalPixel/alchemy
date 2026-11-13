@@ -148,8 +148,8 @@ s32 Shop_ConfirmAct(s32 unitId) {
   }
 
   cursorAnchor = (struct ShopCursorAnchor *)WindowSprite_CreateFar(
-      shop->cursorIcon, OUTPUT_SIZE_16X16, (struct RenderInput *)listWindow, 0,
-      0);
+      shop->cursorIcon, OUTPUT_SIZE_16X16, (struct RenderInput *)listWindow,
+      0, 0);
   cursorAnchor->active = 1;
   cursorAnchor->unk00[4] = 0;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);

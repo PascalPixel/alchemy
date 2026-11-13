@@ -1,6 +1,5 @@
 /// @file
-/// The scene code of overlay 0x6a3 that its scene tables belong to, in ROM
-/// order; the rest of the overlay is in jupiter_lighthouse_room_m/.
+/// The scene code of overlay 0x6a3 that its scene tables belong to, in ROM order; the rest of the overlay is in jupiter_lighthouse_room_m/.
 
 #include "types.h"
 #include "battle.h"
@@ -166,7 +165,7 @@ void Func_020000c4(void) {
   Func_020046b4();
   Func_020046a4();
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                    gMainRoutineWork.paletteGlow[1]);
+                gMainRoutineWork.paletteGlow[1]);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
   REG_DISPCNT |= 0x100;
@@ -198,8 +197,7 @@ static __inline__ void Func_020048b4_(s32 id, s32 angle) {
   Actor_ArmCallbackAndRefresh(id, angle);
 }
 
-static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
-                                                   s32 mode) {
+static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH(wrapper): forwarded inline; as plain calls, 2 of 237
    * instructions of Func_020003b8 differ in tla-en. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
@@ -890,7 +888,8 @@ void Func_02000cac(s32 arg) {
   FieldEvent_Wait(10);
   Actor_SetScript(3, gData_02005548);
   I_Func_0200484c(26, PIXELS(665), PIXELS(128), angle);
-  Actor_SetPositionAndFacing(27, PIXELS(641), PIXELS(128), angle);
+  Actor_SetPositionAndFacing(27, PIXELS(641), PIXELS(128),
+                                                 angle);
   Event_PlaySound(78);
   FieldEvent_ShowMessageThenWait(26, 0, 5);
   I_Func_020048cc(0, 0x100, 0);
@@ -1180,19 +1179,23 @@ void Func_02000cac(s32 arg) {
   Actor_SetAnimation(7, 2);
   object = Actor_Get(4);
   if (object != NULL)
-    Actor_SetDestination(7, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
+    Actor_SetDestination(7, ((s16 *)&object->x)[1],
+                              ((s16 *)&object->z)[1]);
   Actor_SetAnimation(6, 2);
   object = Actor_Get(4);
   if (object != NULL)
-    Actor_SetDestination(6, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
+    Actor_SetDestination(6, ((s16 *)&object->x)[1],
+                              ((s16 *)&object->z)[1]);
   Actor_SetAnimation(5, 2);
   object = Actor_Get(4);
   if (object != NULL)
-    Actor_SetDestination(5, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
+    Actor_SetDestination(5, ((s16 *)&object->x)[1],
+                              ((s16 *)&object->z)[1]);
   Actor_SetAnimation(28, 2);
   object = Actor_Get(4);
   if (object != NULL)
-    Actor_SetDestination(28, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
+    Actor_SetDestination(28, ((s16 *)&object->x)[1],
+                              ((s16 *)&object->z)[1]);
   Actor_SetScript(7, gData_0200599c);
   Actor_SetScript(6, gData_0200599c);
   Actor_SetScript(5, gData_0200599c);
@@ -1355,8 +1358,8 @@ s32 Event_ClearInvalidPackedValues();
 
 #define ACTOR_SET_MODE_AND_WAIT(id, mode, frames)                              \
   do {                                                                         \
-    Actor_SetAnimation(id, mode);                                              \
-    FieldEvent_Wait(frames);                                                   \
+    Actor_SetAnimation(id, mode);                                               \
+    FieldEvent_Wait(frames);                                                        \
   } while (0)
 
 // The Japanese form differs and is still on its listing.

@@ -11,6 +11,7 @@ void FieldEffect_AdvanceSpinAngle(struct MotionObject *object) {
 
 // Objects: follow a watched object.
 
+
 /// Halves the distance to the watched object along x, y and z.
 /// obj: object to move.
 void Actor_MoveHalfwayTowardTarget(struct Actor *obj) {
@@ -31,6 +32,7 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *obj) {
   }
 }
 
+
 void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
 
 #if TLA_PATCH_1
@@ -45,11 +47,8 @@ void Event_End(void);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
 void Actor_Jump(s32 id, s32 speed, s32 frames);
-/* VIEW(motes): routine Func_080200c0 as struct Actor *Func_080200c0(s32 kind,
- * s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject
- * *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
-extern struct Actor *Func_080200c0__motes(s32 kind, s32 x, s32 y,
-                                          s32 z) __asm__("Func_080200c0");
+/* VIEW(motes): routine Func_080200c0 as struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
+extern struct Actor *Func_080200c0__motes(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
 void Animation_ApplyChildValuesFar(struct Actor *object, u32 value);
 void *Sprite_ShareVramCacheEntry(void *sprite, void *last);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
@@ -336,11 +335,8 @@ void Djinn_ResolvePending(s32 capture) {
   gMainRoutineWork.pendingDjinnEvent = 0;
 }
 
-/* VIEW(motes): tag struct BattleFxScene as struct BattleFxScene__motes;
- * field_psynergy_work.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:3869: dereferencing pointer to
- * incomplete type. */
+
+/* VIEW(motes): tag struct BattleFxScene as struct BattleFxScene__motes; field_psynergy_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:3869: dereferencing pointer to incomplete type. */
 struct BattleFxScene__motes {
   u8 unk00[0x50];
   struct FieldParticle slots[24];
@@ -367,8 +363,7 @@ void BattleEffect_UpdateAllSlots(void) {
 void BattleEffect_InitializeSlots(void) {
   void *work;
 
-  work =
-      HeapSlot_Alloc(BATTLE_EFFECT_SLOT, sizeof(struct BattleFxScene__motes));
+  work = HeapSlot_Alloc(BATTLE_EFFECT_SLOT, sizeof(struct BattleFxScene__motes));
   Dma_Fill32(0, work, sizeof(struct BattleFxScene__motes));
   Task_Add((s32)BattleEffect_UpdateAllSlots, TASK_PASS_VBLANK);
 }
@@ -394,23 +389,18 @@ void BattleEffect_AdvanceSpinAngle(struct MotionObject *object) {
   object->angle += 0x2000;
 }
 
+
 struct EffectVector {
   s32 x;
   s32 y;
   s32 z;
 };
 
-/* VIEW(motes): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct
- * EffectVector *position); ground_particles has void Camera_WorldToScreen(union
- * FieldCoordinate *position). */
-extern void Camera_WorldToScreen__motes(struct EffectVector *position) __asm__(
-    "Camera_WorldToScreen");
-/* VIEW(motes): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32
- * magnitude, s32 angle, struct EffectVector *position); f0d489c has void
- * Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position). */
-extern void Vector_AddPolarOffset__motes(
-    s32 magnitude, s32 angle,
-    struct EffectVector *position) __asm__("Vector_AddPolarOffset");
+/* VIEW(motes): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct EffectVector *position); ground_particles has void Camera_WorldToScreen(union FieldCoordinate *position). */
+extern void Camera_WorldToScreen__motes(struct EffectVector *position) __asm__("Camera_WorldToScreen");
+/* VIEW(motes): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *position); f0d489c has void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position). */
+extern void Vector_AddPolarOffset__motes(s32 magnitude, s32 angle,
+                           struct EffectVector *position) __asm__("Vector_AddPolarOffset");
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
 /// Field effect sprite callback of a Jupiter Djinni's light particles: each
@@ -463,8 +453,8 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   }
   position.x = particle->originX;
   position.z = particle->originZ;
-  Vector_AddPolarOffset__motes(particle->orbitRadius << 16,
-                               particle->orbitAngle << 11, &position);
+  Vector_AddPolarOffset__motes(particle->orbitRadius << 16, particle->orbitAngle << 11,
+                        &position);
   particle->x = position.x;
   particle->z = position.z;
 }

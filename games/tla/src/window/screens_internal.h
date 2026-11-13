@@ -75,8 +75,9 @@ struct BobPairObject;
 void Func_08043b70(void);
 s32 Func_08043cd8(s32 selectedFile, s32 menuMode);
 void MenuTitle_Bob(struct BobPairObject *object);
-struct WindowSprite *
-RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y);
+struct WindowSprite *RenderResource_CreatePair(s32 group,
+                                               struct RenderInput *input, s32 x,
+                                               s32 y);
 
 // What several parts call, declared once here for all of them.
 extern u32 gVBlankCount;

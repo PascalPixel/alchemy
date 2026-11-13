@@ -54,13 +54,12 @@ s32 Func_0810b3ec(s32 value) {
 // Inn_CheckIn is the inn. It shows the keeper's window and the price, then on
 // yes and enough coins closes the windows, plays the night (Inn_PlaySleep) and
 // greets the party in the morning. The Broken Seal's Inn_CheckIn in
-// games/tbs/src/shop/shop.c, written with this game's calls
-// (Shop_InitializeWork for the cursor work, Func_080380f8 for the keeper's
-// window, Inn_RoomPrice for the room price, MessageArgument_PushFar,
-// Shop_ShowKeeperMessage to show a message, Shop_AskYesNo for the choice,
-// Func_08109188 for the coins, Func_0810824c to clean up) and its work-block
-// offsets; this game has no special-inn flag. Messages from MsgInnWelcome
-// ("Welcome to our inn.").
+// games/tbs/src/shop/shop.c, written with this game's calls (Shop_InitializeWork for
+// the cursor work, Func_080380f8 for the keeper's window, Inn_RoomPrice for the
+// room price, MessageArgument_PushFar, Shop_ShowKeeperMessage to show a message,
+// Shop_AskYesNo for the choice, Func_08109188 for the coins, Func_0810824c to
+// clean up) and its work-block offsets; this game has no special-inn flag.
+// Messages from MsgInnWelcome ("Welcome to our inn.").
 
 // The inn work block, as this function reads it.
 struct InnRuntimeState {

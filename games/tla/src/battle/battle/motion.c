@@ -275,14 +275,12 @@ struct SlotEffectEntry {
 };
 
 void BattleMotion_SpawnSlotEffectAndWait(s32 slot) {
-  struct SlotEffectEntry *entry =
-      (struct SlotEffectEntry *)BattleObject_Get(slot);
+  struct SlotEffectEntry *entry = (struct SlotEffectEntry *)BattleObject_Get(slot);
   u8 *effect;
 
   if (entry->object != NULL) {
     if ((entry->object->kind & 0xf) == 1) {
-      effect =
-          (u8 *)ResourceMetadata_RegisterFar(entry->object->resource, 0x29f);
+      effect = (u8 *)ResourceMetadata_RegisterFar(entry->object->resource, 0x29f);
       if (effect != NULL) {
         Animation_SetWorkEntryFar(effect, 1);
         effect[6] = 3;
@@ -335,8 +333,7 @@ u8 BattleClass_GetEffectHeight(s32 index);
 
 s32 BattleUnit_GetEffectHeight(s32 owner) {
   s32 value = BattleClass_GetEffectHeight(
-                  ((struct SummonOwnerState *)Unit_Get(owner))->summon)
-              << 16;
+      ((struct SummonOwnerState *)Unit_Get(owner))->summon) << 16;
 
   if (value == 0) {
     if (BattleClass_IsSmall(

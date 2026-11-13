@@ -71,6 +71,8 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
   HeapSlot_Release(100);
 }
 
+
+
 // The blitter slots read as what they hold, a drawing routine.
 #define ALTERNATE_BLITTER_SLOT                                                 \
   (((struct {                                                                  \
@@ -93,6 +95,7 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define SPARK_COUNT 64
+
 
 extern char ResourceId_WaveSheet;
 extern char ResourceId_BeamImage;
@@ -385,6 +388,8 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
 
+
+
 extern char ResourceId_GreyCrescentSheet;
 
 void Sound_PlayFar(s32 cue);
@@ -649,6 +654,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   }
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
+
 
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent) {

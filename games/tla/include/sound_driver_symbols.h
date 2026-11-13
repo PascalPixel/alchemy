@@ -36,7 +36,7 @@ enum SoundControl {
   SOUND_SE_END = 700        ///< sounds from here on are music again
 };
 
-/// The music players by their row in gSound_PlayerSlots (sound/players.s), as
+/// The music players by their row in gSound_PlayerSlots (sound/music_player_table.s), as
 /// a song table row names them (SongEntry.slot).
 enum MusicPlayerId {
   MUSIC_PLAYER_JINGLE = 0,    ///< gMPlayInfo_Jingle

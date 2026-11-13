@@ -57,9 +57,6 @@ s32 Scene_Initialize(void) {
   s32 value = 0x209;
 #endif
 
-  /* FAKEMATCH(barrier): an empty asm after the address and the value, so gMainRoutineWork's address loads just before the store; as one assignment, 2
-   * of 32 instructions differ in tla-en. */
-  __asm__("");
   *effect = value;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov683 &&
       (u16)(gMainRoutineWork.entrance - 8) <= 1)

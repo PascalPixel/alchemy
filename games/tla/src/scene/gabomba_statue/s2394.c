@@ -94,10 +94,7 @@ void Actor_MoveToObject(s32 id, s32 target);
 void Func_02000f6c(void);
 
 static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH(pin): the second argument pinned to r1, so the id is set after
-   * it and the third; as calls through a plain forwarding inline, 16 of 521
-   * instructions differ in tla-en. */
-  register s32 a_ asm("r1") = a;
+  s32 a_ = a;
   s32 b_ = b;
 
   Func_080d47b4(id, a_, b_);

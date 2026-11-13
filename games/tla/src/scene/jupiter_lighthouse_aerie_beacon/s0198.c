@@ -749,10 +749,8 @@ L_02009260:
   FieldEvent_Wait_(5);
   ACTOR_SET_MODE_AND_WAIT(27, 3, 20);
   Func_020058d4_(0x201b, 0, 0);
-  /* FAKEMATCH(dead): the byte store kept in a once-only block, whose end
-   * holds the scene id load behind it, as Func_020016e8 does with the same
-   * store; as the plain store, 4 of 691 instructions differ in tla-en. */
-  do {
+  gMainRoutineWork.battleRule24b = 2;
+do {
     gMainRoutineWork.battleRule24b = 2;
   } while (0);
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6a5, 10);
@@ -892,10 +890,8 @@ void Func_02001388(void) {
   if (gMainRoutineWork.sequenceResult == -1) {
     FieldUnit_AddHp(4, -10);
   }
-  /* FAKEMATCH(dead): the statement in a once-only block, whose end holds
-   * the order around it; as the plain statement, 4 of 349 instructions differ
-   * in tla-en. */
-  do {
+  gMainRoutineWork.battleRule24b = 2;
+do {
     gMainRoutineWork.battleRule24b = 2;
   } while (0);
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6a5, 0xb);
@@ -1010,12 +1006,8 @@ void Func_020016e8(void) {
   FieldEvent_Wait(4);
   if (gMainRoutineWork.sequenceResult == -1)
     FieldUnit_AddHp(4, -10);
-  /* FAKEMATCH(dead): the byte store kept in a once-only block, whose end
-   * holds the scene id's load behind it, as Func_02000430 in
-   * shaman_village_cave.c does with the same store; as the
-   * plain store, 4 of 400 instructions
-   * differ in tla-en. */
-  do {
+  gMainRoutineWork.battleRule24b = 2;
+do {
     gMainRoutineWork.battleRule24b = 2;
   } while (0);
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6a5, 12);

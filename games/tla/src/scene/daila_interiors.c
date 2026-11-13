@@ -542,9 +542,6 @@ s32 DailaInteriors_Start(void) {
   s32 *effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
   s32 value = 0x209;
 
-  /* FAKEMATCH(barrier): an empty asm after the address and the value, so gMainRoutineWork's address loads just before the store; as one assignment, 2
-   * of 174 instructions differ in tla-en. */
-  __asm__("");
   *effect = value;
   if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors1) {
     if (gMainRoutineWork.entrance == 7) {

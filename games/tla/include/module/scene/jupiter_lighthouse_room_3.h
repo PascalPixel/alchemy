@@ -8,11 +8,11 @@
 #include "field/cell_target.h"
 #include "module/scene/scene.h"
 
-void Data_02000130(void);
+void JupiterLighthouse_StartMovingPillar(void);
 
-void Func_020001c0(void);
+void JupiterLighthouse_LeaveByCyclone(void);
 
-void Func_020003c4(void);
+void JupiterLighthouse_JumpForward(void);
 
 extern u32 gFieldEffect_ShortLifeScript[];
 extern u32 gFieldEffect_MediumLifeScript[];

@@ -49,8 +49,8 @@ DEFINE_PUSH_TARGET_FIND_SLIDE(PushTarget_FindSlide, PushTarget_FindAhead,
 DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds,
                               gPushLeaderSteps, gPushFootprints)
 
-void Func_02001300(void);
+void PushTarget_UpdatePusher(void);
 
 DEFINE_PUSH_TARGET_PUSH_FILL(PushTarget_PushFill, gPushFootprints,
-                             Func_02001300, Actor_SelectAnimation,
+                             PushTarget_UpdatePusher, Actor_SelectAnimation,
                              gPushLeaderSteps)

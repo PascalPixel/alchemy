@@ -24,18 +24,18 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_02000054(struct Actor *object) {
+void JupiterLighthouse_DrawBlockBelowLedge(struct Actor *object) {
   if (object->x >> 20 == 14 && object->z >> 20 == 12)
     Actor_SetSpritePriorityDirect(object, 2);
 }
 
-void Func_02000070(void) {
+void JupiterLighthouse_PushBlockOffTheLedge(void) {
   struct Actor *object = Actor_Get(10);
   struct PushedBlock block;
   s32 i;
   s32 x;
 
-  object->update = (void (*)(void))Func_02000054;
+  object->update = (void (*)(void))JupiterLighthouse_DrawBlockBelowLedge;
   if (PushTarget_FindSlide(&block))
     PushTarget_PushFill(block);
   if (object->x >> 20 == 16 && object->z >> 20 == 12 &&
@@ -56,11 +56,11 @@ void Func_02000070(void) {
   object->update = 0;
 }
 
-void Data_02000130(void) {}
+void JupiterLighthouse_StartMovingPillar(void) {}
 
 /// Sets flag 0xa04 or 0xa05 when the object stands on cell (20, 36) or
 /// (32, 36), then waits up to 30 frames for it to land and lifts it there.
-void Func_02000134(s32 unused, s32 id) {
+void JupiterLighthouse_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 placed = 0;
   s32 i;
@@ -85,7 +85,7 @@ void Func_02000134(s32 unused, s32 id) {
   }
 }
 
-void Func_020001c0(void) { Import_EventSetExitRequest(12); }
+void JupiterLighthouse_LeaveByCyclone(void) { Import_EventSetExitRequest(12); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -135,10 +135,10 @@ s32 Scene_PrepareMap(void) {
   Func_020023d0(9);
   Func_020023d0(10);
   Func_020023d0(11);
-  Func_02000c78(8);
-  Func_02000c78(9);
-  Func_02000c78(10);
-  Func_02000c78(11);
+  PushTarget_FillFootprint(8);
+  PushTarget_FillFootprint(9);
+  PushTarget_FillFootprint(10);
+  PushTarget_FillFootprint(11);
   if (Event_GetFlag(0x200)) {
     for (i = 0, x = 0xb00000; i <= 3; i++, x += 0x100000) {
       Lift_(0x1000000, x, 0, 0);
@@ -150,7 +150,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Func_020003c4(void) { Field_TryJumpForward(); }
+void JupiterLighthouse_JumpForward(void) { Field_TryJumpForward(); }
 
 #include "shared/scene_set_arrival_flags.h"
 

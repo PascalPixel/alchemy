@@ -22,7 +22,7 @@ struct Actor *Func_02002438(s32 *position, s32 mode);
 /// the point a cell ahead along its facing holds another object
 /// (Func_02002438) whose sprite shape is not in the footprint table, and again
 /// when its own cell test (MapGrid_CheckCollision) is positive.
-void Func_02001300(struct Actor *object) {
+void PushTarget_UpdatePusher(struct Actor *object) {
   s32 position[3];
   struct Actor *other;
   u32 i;

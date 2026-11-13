@@ -30,9 +30,8 @@ void Field_TryJumpForward(void);
 void Func_02002440(s32 id, s32 a);
 void Func_02002460(s32 x, s32 z, s32 a, s32 b);
 void Func_02002468(s32 id);
-void Func_02000054(struct Actor *object);
-void Func_02000404(void);
-void Func_02000c78(s32 id);
+void JupiterLighthouse_DrawBlockBelowLedge(struct Actor *object);
+void PushTarget_FillFootprint(s32 id);
 s32 PushTarget_FindSlide(struct PushedBlock *block);
 void PushTarget_PushFill(struct PushedBlock block);
 

@@ -378,14 +378,8 @@ s32 Message_Decode(s32 script, s32 clear) {
   if (script == -1) {
     start = work->lastMessageStart;
   } else {
-    {
-      u32 size;
-
-      size = (u32)Text_DecodeSymbolCodeSize;
-      Dma_Set((const void *)Text_DecodeSymbol,
-              HeapSlot_Alloc(HEAP_SLOT_MESSAGE_DECODER, size),
-              DMA_COPY32(size >> 2), REG_DMA3);
-    }
+    RamCode_LoadSlot(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbol,
+                     Text_DecodeSymbolCodeSize);
     // The decoder runs from a copy in RAM, one symbol at a time.
     decode = (s32 (*)(struct MessageReader *))
         gWindowWork[HEAP_SLOT_MESSAGE_DECODER - HEAP_SLOT_WINDOW];
@@ -917,14 +911,8 @@ s32 Message_Decode(s32 script, s32 clear) {
   if (script == -1) {
     start = work->lastMessageStart;
   } else {
-    {
-      u32 size;
-
-      size = (u32)Text_DecodeSymbolCodeSize;
-      Dma_Set((const void *)Text_DecodeSymbol,
-              HeapSlot_Alloc(HEAP_SLOT_MESSAGE_DECODER, size),
-              DMA_COPY32(size >> 2), REG_DMA3);
-    }
+    RamCode_LoadSlot(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbol,
+                     Text_DecodeSymbolCodeSize);
     // The decoder runs from a copy in RAM, one symbol at a time.
     decode = (s32 (*)(struct MessageReader *))
         gWindowWork[HEAP_SLOT_MESSAGE_DECODER - HEAP_SLOT_WINDOW];

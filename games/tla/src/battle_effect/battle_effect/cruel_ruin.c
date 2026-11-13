@@ -745,24 +745,6 @@ void Render_DrawModelList__battle_effect(struct Model *model);
 
 #define HI(v) (((s16 *)&(v))[1])
 
-/* VIEW(battle_effect): tag struct ResourceTableEntry as struct
- * ResourceTableEntry__battle_effect; module/tla.h has another definition; tried
- * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/battle_effect/battle_effect.c:3360: structure has no
- * member named `tile'. */
-struct ResourceTableEntry__battle_effect {
-  u16 unk0;
-  u16 tile;
-};
-
-/* VIEW(f13eb70): variable gResourceTableEntries as extern struct
- * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
- * VramBlockCacheEntry gResourceTableEntries[]; tried as the 10 declarations'
- * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
- * in tla-ja: games/tla/src/battle_effect/battle_effect.c:2833: conflicting
- * types for `gResourceTableEntries'. */
-extern struct ResourceTableEntry__battle_effect
-    gResourceTableEntries__f13eb70[] __asm__("gResourceTableEntries");
 extern char ResourceId_Data0B4, ResourceId_Data0C2, ResourceId_Data0C9;
 extern char ResourceId_Data0CA, ResourceId_Data104, ResourceId_Data134;
 extern char ResourceId_CornerRuneASheet, ResourceId_ForestCanopyTiles;
@@ -789,7 +771,7 @@ EffectSprite_Acquire__battle_effect(s32 width, s32 height, u32 shape,
 #define SLOT_ALT 188 // unkb8[1]
 #define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->unkb8[1])
 #define OBJ_TILES(obj)                                                         \
-  (0x06010000 + gResourceTableEntries__f13eb70[(obj)->resource].tile)
+  (0x06010000 + gResourceTableEntries[(obj)->resource].offset)
 // The listing reads the transfer count twice per pass of its wait.
 #define WAIT_TRANSFER(work)                                                    \
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \

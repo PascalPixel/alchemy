@@ -95,14 +95,6 @@ struct FloraWork {
   u16 palette[240];
 };
 
-/* VIEW(f179f18): variable gResourceTableEntries as extern struct
- * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
- * VramBlockCacheEntry gResourceTableEntries[]; tried as the 10 declarations'
- * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
- * in tla-ja: games/tla/src/battle_effect/battle_effect.c:43846: conflicting
- * types for `gResourceTableEntries'. */
-extern struct ResourceTableEntry
-    gResourceTableEntries__f179f18[] __asm__("gResourceTableEntries");
 extern u8 gData_02014000[];
 extern const struct WordPair Data_08196ec8;
 extern u16 gBattleEffect_MoteCells[];
@@ -155,7 +147,7 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
 #define SLOT_ALT 188 // unkb8[1]
 #define w ((struct FloraWork *)petals)
 #define OBJ_TILES(obj)                                                         \
-  (0x06010000 + gResourceTableEntries__f179f18[(obj)->resource].tile)
+  (0x06010000 + gResourceTableEntries[(obj)->resource].offset)
 
 static inline u8 *SheetOf(struct BattleEffectWork *owner) {
   /* FAKEMATCH(wrapper): the sheet's address through this inline; as

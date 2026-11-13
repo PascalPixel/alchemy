@@ -45,11 +45,6 @@ struct SpriteObject__f175f74 {
   u8 unk17;
 };
 
-struct TileSlot {
-  u16 unk0;
-  u16 offset;
-};
-
 struct ModelDesc {
   u32 a : 8;
   u32 b : 8;
@@ -161,7 +156,6 @@ struct RegisterQueue {
 #define SYSTEM_WORK ((struct SystemWork *)Ram_HeapSlots)
 #define REGISTER_QUEUE ((struct RegisterQueue *)&gIoWriteQueue)
 
-#define TILE_SLOTS ((struct TileSlot *)gResourceTableEntries)
 extern u8 gMapCellBuffer[];
 #define SPRITES ((struct SpriteObject__f175f74 **)Ram_MapCellBuffer)
 #define SPRITE_BUFFER gMapCellBuffer
@@ -279,8 +273,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   u8 *source;
   s32 t;
   struct SpriteObject__f175f74 **sprites;
-  struct TileSlot *slots;
-  struct TileSlot *objectSlots;
+  struct VramBlockCacheEntry *slots;
+  struct VramBlockCacheEntry *objectSlots;
   s32 cell;
   s32 phase;
   s32 halfCell;
@@ -341,7 +335,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
 
     work->objects[0] = object;
     object->priority = 3;
-    slots = TILE_SLOTS;
+    slots = gResourceTableEntries;
     Iwram_CopyWords(OBJ_VRAM + slots[object->slot].offset, work->buffer,
                     0x1000);
   }
@@ -676,7 +670,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Iwram_FillWords(PLTT + 0x100, 0x180, 0x7fff7fff);
         source += 0x180;
         Decompress_TaggedLz(source, work->buffer + 0x2400);
-        for (i = 0, objectSlots = TILE_SLOTS; i != 12; i++) {
+        for (i = 0, objectSlots = gResourceTableEntries; i != 12; i++) {
           struct SpriteObject__f175f74 *object =
               EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
 
@@ -693,11 +687,11 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         {
           struct SpriteObject__f175f74 *object =
               EffectSprite_CreateWithTiles(64, 64, 0xc0000000, 0xe000);
-          struct TileSlot *tileSlots;
+          struct VramBlockCacheEntry *tileSlots;
 
           work->objects[12] = object;
           object->priority = 3;
-          tileSlots = TILE_SLOTS;
+          tileSlots = gResourceTableEntries;
           {
             u8 *vram = OBJ_VRAM;
 
@@ -882,7 +876,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             s32 texel = *lowByte | (*highByte << 8);
 
             *(u16 *)(OBJ_VRAM +
-                     (row + TILE_SLOTS[work->objects[13]->slot].offset) +
+                     (row +
+                      gResourceTableEntries[work->objects[13]->slot].offset) +
                      column) = texel;
             column = orderCopy[0x1001] * 2;
             pixel = row + column;
@@ -890,7 +885,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             highByte = high + pixel;
             texel = *lowByte | (*highByte << 8);
             *(u16 *)(OBJ_VRAM +
-                     (row + TILE_SLOTS[work->objects[13]->slot].offset) +
+                     (row +
+                      gResourceTableEntries[work->objects[13]->slot].offset) +
                      column) = texel;
           }
         }
@@ -1845,7 +1841,6 @@ void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
 }
 #undef SYSTEM_WORK
 #undef REGISTER_QUEUE
-#undef TILE_SLOTS
 #undef SPRITES
 #undef SPRITE_BUFFER
 #undef OAM_BUFFER

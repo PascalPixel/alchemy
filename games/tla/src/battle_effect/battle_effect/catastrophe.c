@@ -102,14 +102,6 @@ extern char ResourceId_RedHazeBackdrop;
 extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_TornadoSheet;
 extern char ResourceId_WhiteSpikesTiles;
-/* VIEW(f1843fc): variable gResourceTableEntries as extern struct
- * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
- * VramBlockCacheEntry gResourceTableEntries[]; tried as the 10 declarations'
- * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
- * in tla-ja: games/tla/src/battle_effect/battle_effect.c:51608: conflicting
- * types for `gResourceTableEntries'. */
-extern struct ResourceTableEntry
-    gResourceTableEntries__f1843fc[] __asm__("gResourceTableEntries");
 extern u8 gMapCellBuffer[];
 /* VIEW(f1843fc): variable gData_02014000 as extern u8 gData_02014000[]; f17e698
  * has extern struct EffectStep gData_02014000[]; tried as the rest of the
@@ -201,7 +193,7 @@ void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 +                                                                \
-   gResourceTableEntries__f1843fc[((struct SpriteObject *)(obj))->slot].tile)
+   gResourceTableEntries[((struct SpriteObject *)(obj))->slot].offset)
 #define HALF_HI(v) (((s16 *)&(v))[1])
 
 // Catastrophe: a black moon rises over a burning city, its towers crack and

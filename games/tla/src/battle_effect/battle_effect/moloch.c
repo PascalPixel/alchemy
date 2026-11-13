@@ -593,14 +593,6 @@ void Transform_Pop(void);
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HALF(p, n) (((s16 *)(p))[n])
 
-/* VIEW(summon_effects): tag struct ResourceTableEntry as struct
- * ResourceTableEntry__summon_effects; module/tla.h has another definition; not
- * tried: struct ResourceTableEntry__summon_effects was not found. */
-struct ResourceTableEntry {
-  u16 unk0;
-  u16 tile;
-};
-
 // The spark objects' work, in the map cell buffer at 0x1f40.
 struct IrisSparks {
   s16 life[36]; // high byte: frames left; 0 frees the slot
@@ -678,15 +670,6 @@ struct Spans4 {
 
 extern char ResourceId_SunsetBackdrop, ResourceId_StarfieldFlareBackdrop;
 extern char ResourceId_RobedGoddessTiles, ResourceId_PinkPetalsTiles;
-/* VIEW(summon_effects): variable gResourceTableEntries as struct
- * ResourceTableEntry gResourceTableEntries[]; graphics/vram_tab.h has struct
- * VramBlockCacheEntry gResourceTableEntries[]; tried as the 10 declarations'
- * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
- * in tla-ja: games/tla/src/battle_effect/battle_effect.c:63253: structure has
- * no member named `tile'. */
-extern struct ResourceTableEntry
-    gResourceTableEntries__summon_effects[] __asm__("gResourceTableEntries");
-#define gResourceTableEntries gResourceTableEntries__summon_effects
 extern u8 Data_02010578[];
 extern struct IrisSparks Data_02011f40;
 extern struct IrisScene Data_02012ee0;
@@ -751,7 +734,7 @@ void SceneTransform_ApplyScale(s32 *scale);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj)                                                         \
-  (0x06010000 + gResourceTableEntries[(obj)->resource].tile)
+  (0x06010000 + gResourceTableEntries[(obj)->resource].offset)
 #define SCENE (&Data_02012ee0)
 #define PLTT 0x05000000
 #define STREAK(i, j) (((struct IrisPoint *)Data_02012ef4)[(i) * 10 + (j)])
@@ -1347,7 +1330,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     // The crystal: sixteen sprites, the sparks and the first motes.
     if (frame == 176) {
       u8 *colors;
-      struct ResourceTableEntry *table;
+      struct VramBlockCacheEntry *table;
 
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       work->transferPending = 1;
@@ -1382,7 +1365,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         sparks->tiles[i] = obj->tile;
         sparks->frames[i] = i;
         Dma_Set(work->sheet + i * 128,
-                (void *)(0x06010000 + table[obj->resource].tile), 0x84000020,
+                (void *)(0x06010000 + table[obj->resource].offset), 0x84000020,
                 REG_DMA3);
       }
       for (; i != 36; i++) {

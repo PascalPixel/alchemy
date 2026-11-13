@@ -80,14 +80,6 @@ struct AzulFace {
   u8 unkA[2];
 };
 
-/* VIEW(ability_effects): tag struct ResourceTableEntry as struct
- * ResourceTableEntry__ability_effects; module/tla.h has another definition; not
- * tried: struct ResourceTableEntry__ability_effects was not found. */
-struct ResourceTableEntry {
-  u16 unk0;
-  u16 tile;
-};
-
 // A sprite object as Azul edits it: its tile number in the low ten bits of
 // the halfword at 8, its priority bits in the byte at 9 and its shape at 18.
 struct AzulObject {

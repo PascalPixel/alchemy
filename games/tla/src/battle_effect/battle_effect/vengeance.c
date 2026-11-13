@@ -1289,15 +1289,6 @@ struct SpriteView {
   u8 vramEntry;
 };
 
-/* VIEW(f1811d4): variable gResourceTableEntries as extern struct
- * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
- * VramBlockCacheEntry gResourceTableEntries[]; tried as the 10 declarations'
- * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
- * in tla-ja: games/tla/src/battle_effect/battle_effect.c:50432: conflicting
- * types for `gResourceTableEntries'. */
-extern struct ResourceTableEntry
-    gResourceTableEntries__f1811d4[] __asm__("gResourceTableEntries");
-
 #define EFFECT_STEPS ((struct EffectStep *)(Ram_MapCellBuffer + 0x5000))
 extern u8 Data_02014400[];
 extern u8 Data_02014800[];
@@ -1365,7 +1356,7 @@ void Palette_BrightenBgEntries(s32 red, s32 green, s32 blue);
 void Palette_BrightenSavedBattleBg(s32 r, s32 g, s32 b);
 
 #define OBJ_TILES(obj)                                                         \
-  (0x06010000 + gResourceTableEntries__f1811d4[(obj)->vramEntry].tile)
+  (0x06010000 + gResourceTableEntries[(obj)->vramEntry].offset)
 #define COLOR_RED(c) ((c) & 31)
 #define COLOR_GREEN(c) (((u16)(c) >> 5) & 31)
 #define COLOR_BLUE(c) (((u16)(c) >> 10) & 31)

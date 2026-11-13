@@ -120,7 +120,6 @@
 #define SpriteObject SpriteObject__ability_effects
 #define Texture Texture__ability_effects
 #define Particle Particle__ability_effects
-#define ResourceTableEntry ResourceTableEntry__ability_effects
 
 #include "battle_effect/projectiles.c"
 #include "battle_effect/djinn_attacks.c"
@@ -177,7 +176,6 @@
 #include "battle_effect/trident.c"
 #include "battle_effect/meteor_blow.c"
 
-#undef ResourceTableEntry
 #undef Particle
 #undef Texture
 #undef SpriteObject
@@ -196,7 +194,6 @@
 
 #define Model Model__summon_effects
 #define Texture Texture__summon_effects
-#define ResourceTableEntry ResourceTableEntry__summon_effects
 #define BattleBackgroundId BattleBackgroundId__summon_effects
 #define ModelVertex ModelVertex__summon_effects
 
@@ -206,8 +203,6 @@
 
 #undef ModelVertex
 #undef BattleBackgroundId
-#undef ResourceTableEntry
-#undef gResourceTableEntries
 #undef EffectSprite_CreateWithTiles
 #undef EffectSprite_Acquire
 #undef Texture

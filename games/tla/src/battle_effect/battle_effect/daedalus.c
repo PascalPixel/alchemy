@@ -343,7 +343,6 @@ struct SystemWork__f17e698 {
   ((CopyFunc)(IwramIrqMain + Iwram_CopyWordsOffset))
 #define Iwram_Clear Iwram_ClearWordsEntry
 
-#define VRAM_SLOTS gResourceTableEntries
 #define DECODE_BUFFER Ram_MapCellBuffer
 #define PARTICLES ((Particle *)(Ram_MapCellBuffer + 0x4000))
 /* VIEW(f17e698): variable gInput as extern struct InputState__f17e698 gInput;
@@ -560,8 +559,9 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
               EffectSprite_CreateWithTiles__f17e698(32, 32, 0x80000000, 0xf000);
           work->sprites[j * 9 + i] = obj;
           obj->priority = 1;
-          Iwram_CopyWords((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
-                          &work->frames[(j << 12) + i * 0x200], 0x200);
+          Iwram_CopyWords(
+              (void *)(gResourceTableEntries[obj->vram].offset + 0x06010000),
+              &work->frames[(j << 12) + i * 0x200], 0x200);
         }
         obj = EffectSprite_Acquire__f17e698(32, 32, 0x80000000, 0xf000);
         work->sprites[j * 9 + 8] = obj;
@@ -578,8 +578,9 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         obj = EffectSprite_CreateWithTiles__f17e698(32, 32, 0x80002000, 0);
         obj->priority = 3;
         work->sprites[i + 18] = obj;
-        Iwram_CopyWords((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
-                        DECODE_BUFFER + i * 0x400, 0x400);
+        Iwram_CopyWords(
+            (void *)(gResourceTableEntries[obj->vram].offset + 0x06010000),
+            DECODE_BUFFER + i * 0x400, 0x400);
       }
       obj = EffectSprite_CreateWithTiles__f17e698(32, 64, 0xc000a000, 0);
       // Once-only: the store alone in its block.
@@ -591,8 +592,9 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
        * source; as DECODE_BUFFER + i * 0x400 with no asm, 2 of 3921
        * instructions differ in tla-en. */
       __asm__("" : "=r"(i) : "0"(i));
-      Iwram_CopyWords((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
-                      DECODE_BUFFER + i * 0x400, 0x800);
+      Iwram_CopyWords(
+          (void *)(gResourceTableEntries[obj->vram].offset + 0x06010000),
+          DECODE_BUFFER + i * 0x400, 0x800);
       src = (const u8 *)Resource_GetTableEntry((s32)&ResourceId_MissileTiles);
       Iwram_CopyWords((void *)0x050003c0, src, 32);
       src += 32;
@@ -600,8 +602,9 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       obj = EffectSprite_CreateWithTiles__f17e698(16, 8, 0x4000, 0xe000);
       obj->priority = 1;
       work->sprites[41] = obj;
-      Iwram_CopyWords((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
-                      DECODE_BUFFER, 0x100);
+      Iwram_CopyWords(
+          (void *)(gResourceTableEntries[obj->vram].offset + 0x06010000),
+          DECODE_BUFFER, 0x100);
       /* FAKEMATCH(barrier): an empty asm keeps the call before the loop's
        * hoisted constants; as no asm, 6 of 3921 instructions differ in tla-en.
        */
@@ -1852,7 +1855,6 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
 #undef SYSTEM
 #undef IWRAM_COPY_WORDS_LINKED
 #undef Iwram_Clear
-#undef VRAM_SLOTS
 #undef DECODE_BUFFER
 #undef PARTICLES
 #undef ALCHEMY_TYPES_H

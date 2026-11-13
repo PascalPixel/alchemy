@@ -64,14 +64,6 @@ struct HalfPair {
   u16 y;
 };
 
-/* VIEW(f186dfc): variable gResourceTableEntries as extern struct
- * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
- * VramBlockCacheEntry gResourceTableEntries[]; tried as the 10 declarations'
- * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
- * in tla-ja: games/tla/src/battle_effect/battle_effect.c:53344: conflicting
- * types for `gResourceTableEntries'. */
-extern struct ResourceTableEntry
-    gResourceTableEntries__f186dfc[] __asm__("gResourceTableEntries");
 struct WingVertex {
   s8 x;
   s8 y;
@@ -233,7 +225,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   ((struct FieldSprite **)work->objects)[18] = sprite;
   sprite->blendMode = 1;
   STAMP_TILES(work) =
-      gResourceTableEntries__f186dfc[sprite->vramBlock].tile + 0x06010000;
+      gResourceTableEntries[sprite->vramBlock].offset + 0x06010000;
   {
     u8 *c = work->sheet;
 

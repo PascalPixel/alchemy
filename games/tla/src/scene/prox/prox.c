@@ -657,7 +657,7 @@ test_wait:
   Actor_SetAnimation(11, 4);
   Event_ShowMessage(11, 0);
   Actor_FaceDirectionAndWait(0, FACING_WEST);
-  Prox_MessageOpen(0xa000, 0);
+  Event_OpenMessage(0xa000, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
   result = FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   owner = gMainRoutineWork.currentOwner;
@@ -1164,7 +1164,7 @@ void Func_02001cf0(void) {
   Actor_FaceDirectionAndWait(27, 0x5000);
   Event_ShowMessage(0x401b, 0);
   Actor_FaceDirectionAndWait(0, 0);
-  Prox_MessageOpen(0x4000, 0);
+  Event_OpenMessage(0x4000, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   t144 = FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   if (t144 == 0) {
@@ -1267,14 +1267,10 @@ void Map_SetLayerEntryFlag(u32 layer);
 void Func_020045dc(s32 a);
 void Func_0200461c(s32 a);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }
-
 s32 Scene_Initialize(void) {
   s32 scene;
 
-  if (Flag_Test(0xa3d)) {
+  if (Event_GetFlag(0xa3d)) {
     Event_SetFlag(0x17c);
     Event_SetFlag(0x144);
   }
@@ -1580,7 +1576,7 @@ void Func_02002a8c(void) {
     Event_ShowMessage(0x200b, 0);
     Actor_FaceDirectionAndWait(0, 0);
     Actor_SetAnimation(0, 3);
-    Prox_MessageOpen(0x8000, 0);
+    Event_OpenMessage(0x8000, 0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
@@ -1661,7 +1657,7 @@ void Func_02002a8c(void) {
     Actor_FaceDirection(5, FACING_NORTHWEST, 0);
     Actor_FaceDirection(1, FACING_NORTH, 0);
     Actor_ShowEmote(11, 0x108, 40);
-    Prox_MessageOpen(0xa00b, 0);
+    Event_OpenMessage(0xa00b, 0);
     Actor_FaceDirection(0, 0, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
@@ -1699,7 +1695,7 @@ void Func_02002a8c(void) {
     Event_ShowMessage(0, 0);
     Actor_FaceDirectionAndWait(11, 0xb000);
     Actor_ShowEmote(11, 0x103, 0);
-    Prox_MessageOpen(0xa00b, 0);
+    Event_OpenMessage(0xa00b, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
       Actor_SetAnimationAndWait(11, 4);
@@ -1764,7 +1760,7 @@ void Func_02002a8c(void) {
     Actor_FaceDirectionAndWait(11, 0xb000);
     Event_ShowMessage(0, 0);
     Actor_ShowEmote(11, 0x109, 40);
-    Prox_MessageOpen(0xa00b, 0);
+    Event_OpenMessage(0xa00b, 0);
     Actor_FaceDirection(0, 0, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
@@ -1860,15 +1856,11 @@ extern const s16 gData_02004740__s1cf0[] __asm__("gData_02004740");
 
 DEFINE_FUNC_02002D04(Func_0200385c, gData_02004740__s1cf0, Func_020043c4)
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static inline void FlagSet(s32 flag) { GameFlag_SetBit(flag); }
-
 void Func_020038e8(void) {
   void *work = Ram_HeapSlots->eventWork;
 
   if (FIELD_AT(work, s16, 0xca2) != 0) {
-    FlagSet(0x106);
+    Event_SetFlag(0x106);
     Leader_StopMoving();
     Event_ResolveAllPendingActions();
     Event_ClearFlag(0x106);

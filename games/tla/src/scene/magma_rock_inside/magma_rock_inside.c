@@ -484,12 +484,6 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 /* VIEW(s0e20): routine Func_02000ce4 as void Func_02000ce4(u16 id); the definition has void Func_02000ce4(s16 value); tried as the definition's void Func_02000ce4(s16 value), which the object already declares, Func_02000ed0 moves: 1 of 270 instructions in tla-ja. */
 extern void Func_02000ce4__s0e20(u16 id) __asm__("Func_02000ce4");
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Func_02004e10_(s32 a, s32 b) {
-  FieldCamera_SetSpeed(a, b);
-}
-
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
                                                     s32 z) {
   return (struct Actor *)Import_ActorCreate(kind, x, y, z);
@@ -546,7 +540,7 @@ end:
   flame->speedLimit = 0x20000;
   flame->update = (void (*)(void))Func_02000d1c;
   FieldActor_SetMoveTarget(flame, position[0], position[1], position[2]);
-  Func_02004e10_(0x20000, 0x4000);
+  FieldCamera_SetSpeed(0x20000, 0x4000);
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
   Actor_WaitForMove(flame);
   flame->update = 0;
@@ -584,7 +578,7 @@ hit:
   flame->speedLimit = 0x20000;
   flame->update = (void (*)(void))Func_02000d1c;
   FieldActor_SetMoveTarget(flame, position[0], position[1], position[2]);
-  Func_02004e10_(0x20000, 0x4000);
+  FieldCamera_SetSpeed(0x20000, 0x4000);
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
   Actor_WaitForMove(flame);
   flame->update = 0;
@@ -692,13 +686,6 @@ void Func_020011fc(void) {
 
 extern const s32 gData_02005050[];
 
-static __inline__ void Func_02004cd8_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  /* FAKEMATCH(wrapper): Func_02004cd8_ forwarded inline; as direct calls to
-   * Map_CopyCellPictureIndicesRect, 20 of 537 instructions differ in tla-en. */
-  MapGrid_CopyCellsTo(a, b, c, d, e, f);
-}
-
 void Func_02001350(void) {
   s32 srcX;
   s32 srcZ;
@@ -801,7 +788,7 @@ rise:
   riseX += 0x60000;
   if (i != 8)
     goto rise;
-  Func_02004cd8_(68, 70, srcX, srcZ, 3, 6);
+  MapGrid_CopyCellsTo(68, 70, srcX, srcZ, 3, 6);
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   Event_Wait(30);
@@ -864,7 +851,7 @@ rise:
       *(s32 *)&layer->unk08[4] += 0x8000;
       roomPosition = position;
       roomPosition[2] -= 0x8000;
-      Func_02004cd8_(71, 76, srcX, srcZ - ((t - 47) >> 5) + 8, 3, 1);
+      MapGrid_CopyCellsTo(71, 76, srcX, srcZ - ((t - 47) >> 5) + 8, 3, 1);
     } else if (t == 128) {
       MapGrid_SetShake(-1, -1, 0xe666);
     }
@@ -1298,13 +1285,6 @@ void Func_020023e8(void) {
   Event_End();
 }
 
-static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
-                             s32 destX, s32 destZ) {
-  /* FAKEMATCH(wrapper): CopyCells forwarded inline; as direct calls to
-   * Func_0802b450, 12 of 70 instructions differ in tla-en. */
-  Func_0802b450(srcX, srcZ, width, height, destX, destZ);
-}
-
 void Func_020024ac(void) {
   struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
   s32 x = object->x >> 20;
@@ -1322,7 +1302,7 @@ void Func_020024ac(void) {
   x = last >> 16;
   z = last & 0xffff;
   gData_02006710 = -1;
-  CopyCells(73, 72, Data_020067ec, Data_020067f0, Data_020067f4, Data_020067f8);
+  MapGrid_CopyCellsLayered(73, 72, Data_020067ec, Data_020067f0, Data_020067f4, Data_020067f8);
   if (gMainRoutineWork.scene != (s32)&SceneId_Ov692Room8)
     return;
   work = Ram_HeapSlots->eventWork;
@@ -1365,8 +1345,8 @@ void Func_0200257c(void) {
      * CopyCells, which puts every argument in a register before the stack
      * arguments are stored; as direct calls, 12 of 59 instructions differ in
      * tla-en. */
-    CopyCells(Data_020067f4, Data_020067f8, 1, 2, 73, 72);
-    CopyCells(70, 72, Data_020067ec, Data_020067f0, Data_020067f4,
+    MapGrid_CopyCellsLayered(Data_020067f4, Data_020067f8, 1, 2, 73, 72);
+    MapGrid_CopyCellsLayered(70, 72, Data_020067ec, Data_020067f0, Data_020067f4,
               Data_020067f8);
   }
 }
@@ -1387,8 +1367,8 @@ void Func_02002610(void) {
     Data_020067f8 = z - y;
     /* FAKEMATCH(wrapper): both copies through CopyCells, as in Func_0200257c;
      * as direct calls, 12 of 59 instructions differ in tla-en. */
-    CopyCells(Data_020067f4, Data_020067f8, 1, 2, 73, 72);
-    CopyCells(71, 72, Data_020067ec, Data_020067f0, Data_020067f4,
+    MapGrid_CopyCellsLayered(Data_020067f4, Data_020067f8, 1, 2, 73, 72);
+    MapGrid_CopyCellsLayered(71, 72, Data_020067ec, Data_020067f0, Data_020067f4,
               Data_020067f8);
   }
 }

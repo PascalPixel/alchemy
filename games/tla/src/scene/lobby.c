@@ -168,10 +168,6 @@ s32 Func_02000134(void) {
 
 extern s32 gData_020022bc;
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }
-
 s32 LinkLobby_PromptToParticipate(void) {
   s32 set;
 
@@ -183,7 +179,7 @@ s32 LinkLobby_PromptToParticipate(void) {
     gData_020022bc = 0;
     Event_ClearFlag(0x200);
   }
-  set = Flag_Test(0x200);
+  set = Event_GetFlag(0x200);
   if (set != 0) {
     return set;
   }
@@ -1183,7 +1179,7 @@ s32 Func_02001304(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_FaceActor(actor, gMainRoutineWork.currentOwner, 0);
-  if (!Flag_Test(0x204)) {
+  if (!Event_GetFlag(0x204)) {
     if (Party_CountMembers() == 8)
       message = (s32)MsgUpToThree;
     else if (Party_CountMembers() <= 3)

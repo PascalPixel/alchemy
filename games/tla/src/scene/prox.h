@@ -12,12 +12,4 @@
 
 #define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
 
-static inline void Prox_MessageOpen(s32 actor, s32 flags) {
-  /* FAKEMATCH(wrapper): scene calls reach the main image through one inline
-   * layer; as direct calls to FieldMessage_ShowAtActor, 29 of 936 instructions
-   * of Func_02001cf0 differ in tla-en, 17 of 824 of Func_02000dac and 109 of
-   * 1399 of Func_02002a8c. */
-  FieldMessage_ShowAtActor(actor, flags);
-}
-
 #endif

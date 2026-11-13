@@ -57,13 +57,6 @@ void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
 void Func_02000098(s32 id);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Func_02001060_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  MapGrid_CopyCellAttributes(a, b, c, d, e, f);
-}
-
 void Func_02000098(s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 frames = 60;
@@ -80,7 +73,7 @@ void Func_02000098(s32 id) {
   object->motionFlags = 0;
 }
 
-void Func_020000d4(void) { Func_02001060_(99, 10, 4, 3, 99, 18); }
+void Func_020000d4(void) { MapGrid_CopyCellAttributes(99, 10, 4, 3, 99, 18); }
 
 void Func_020000f0(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
@@ -92,7 +85,7 @@ void Func_020000f0(s32 unused, s32 id) {
     Func_02000098(id);
     MapGrid_CopyCellAttributes(40, 19, 1, 1, x, 19);
   }
-  Func_02001060_(99, 6, 4, 3, 99, 18);
+  MapGrid_CopyCellAttributes(99, 6, 4, 3, 99, 18);
 }
 
 void Func_02000148(void) {
@@ -101,7 +94,7 @@ void Func_02000148(void) {
   Event_SetFlag(0x302);
   object->motionFlags = 0;
   object->priorityFlags = 0;
-  Func_02001060_(8, 42, 1, 1, 6, 42);
+  MapGrid_CopyCellAttributes(8, 42, 1, 1, 6, 42);
 }
 
 void Func_02001188();
@@ -578,12 +571,6 @@ next:
   Event_End();
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void ShamanVillageCave_ObjPlace(s32 id, s32 x, s32 z) {
-  Actor_SetPosition(id, x, z);
-}
-
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
@@ -602,7 +589,7 @@ s32 Scene_Initialize(void) {
     object->x = 0x2680000;
     object->y = 0;
     Actor_SetSingleChildFlags(object, 0);
-    Func_02001060_(40, 19, 1, 1, 38, 19);
+    MapGrid_CopyCellAttributes(40, 19, 1, 1, 38, 19);
   }
   Actor_SetSingleChildFlags(Actor_Get(16), 0);
   Actor_SetAnimation(16, 1);
@@ -613,10 +600,10 @@ s32 Scene_Initialize(void) {
     object->motionFlags = 0;
     object->priorityFlags = 0;
     object->y = 0;
-    Func_02001060_(8, 42, 1, 1, 6, 42);
+    MapGrid_CopyCellAttributes(8, 42, 1, 1, 6, 42);
   }
   if (Event_GetFlag(518))
-    ShamanVillageCave_ObjPlace(17, PIXELS(328), PIXELS(792));
+    Actor_SetPosition(17, PIXELS(328), PIXELS(792));
   Actor_SetSpriteColor(Actor_Get(19), 1);
   Actor_SetSpriteColor(Actor_Get(20), 0);
   Actor_SetSpriteColor(Actor_Get(21), 2);

@@ -1232,13 +1232,6 @@ void Func_020037c8(void) {
 /* VIEW(s1fc4): variable gData_02005dc8 as extern const u8 gData_02005dc8[]; the definition has u32 gData_02005dc8[] = { 22, 15, 0x18000, 22, 16, 0x10000, 39, 5, 4, 0xd80000, 0, 0xa80000, 1, 4, 0xe80000, 0, 0x980000, 1, 4, 0xe80000, 0, ...; tried as the definition's extern s16 gData_02005dc8[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:1370: `gData_02005dc8' undeclared (first use in this function). */
 extern const u8 gData_02005dc8__s1fc4[] __asm__("gData_02005dc8");
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 actor, s32 dx,
-                                                           s32 dz) {
-  Actor_SetDestinationOffset(actor, dx, dz);
-}
-
 void Func_02003900(void) {
   s32 i;
 
@@ -1284,7 +1277,7 @@ void Func_02003900(void) {
   Event_Wait(20);
   Actor_SetSpeed(13, 0x20000, 0x10000);
   Actor_SetModeById(13, 5);
-  Actor_OffsetPositionAndResetMotion_(13, 0, -40);
+  Actor_SetDestinationOffset(13, 0, -40);
   Actor_WaitForMoveById(13);
   Sound_Play(103);
   MapGrid_SetShake(0x20000, 0x40000, 0x10000);

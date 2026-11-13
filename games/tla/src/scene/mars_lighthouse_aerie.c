@@ -1102,10 +1102,6 @@ extern u8 gData_02006004[];
 extern u8 gData_0200602c[];
 extern u8 gData_02006070[];
 
-static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
-  FieldActor_ShowEmote(a0, a1, a2);
-}
-
 void Func_02001f10(void) {
   s32 lastArg, spill;
   s32 owner, actor, owner2, t1;
@@ -1278,7 +1274,7 @@ L_0200a47a:
   FieldActor_SetSpritePriority(22, 2);
   /* FAKEMATCH(wrapper): this call through W_Func_02005714; as Actor_ShowEmote(20,
    * 0x100, 0), 103 of 1038 instructions differ in tla-en (as Call3, 2). */
-  W_Func_02005714(20, 0x100, 0);
+  FieldActor_ShowEmote(20, 0x100, 0);
   Actor_SetSpeed(20, 0x19999, 0xcccc);
   Actor_WalkToAndWait(20, 0x1ea, 0x128);
   Actor_FaceDirection(21, 0xe000, 20);
@@ -1406,10 +1402,6 @@ L_0200a47a:
 
 #include "event_work.h"
 
-static __inline__ void Func_02005714_(s32 actor, s32 a, s32 b) {
-  FieldActor_ShowEmote(actor, a, b);
-}
-
 void Func_0200298c(s32 id) {
   struct Actor *object = Actor_Get(id);
 
@@ -1443,14 +1435,14 @@ void Func_020029ac(void) {
   Actor_FaceDirectionAndWait(2, FACING_NORTHWEST);
   Event_ShowMessage(0x8002, 0);
   Actor_FaceDirection(3, FACING_SOUTHEAST, 20);
-  Func_02005714_(3, 0x109, 0x14);
+  FieldActor_ShowEmote(3, 0x109, 0x14);
   Event_ShowMessage(0x1003, 0);
   Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
   Actor_SetAnimationAndWait(7, 4);
   Event_ShowMessage(0x2007, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(5, FACING_NORTHEAST);
-  Func_02005714_(5, 0x107, 0);
+  FieldActor_ShowEmote(5, 0x107, 0);
   FieldActor_Jump(5, 2, 0xa);
   FieldActor_Jump(5, 4, 0xa);
   Event_ShowMessage(0x8005, 0);
@@ -1463,7 +1455,7 @@ void Func_020029ac(void) {
   Event_ShowMessage(0x8005, 0);
   Actor_SetAnimation(7, 4);
   Event_ShowMessage(0x2007, 0);
-  Func_02005714_(5, 0x109, 0x14);
+  FieldActor_ShowEmote(5, 0x109, 0x14);
   FieldEvent_ShowMessageThenWait(0x8005, 0, 0x28);
   Event_ShowMessage(0x2006, 0);
   Actor_FaceDirectionAndWait(5, FACING_EAST);
@@ -1474,7 +1466,7 @@ void Func_020029ac(void) {
   Actor_MoveToAndWait(5, 460, 288);
   Actor_SetAnimation(5, 0x16);
   Event_ShowMessage(5, 0);
-  Func_02005714_(0x13, 0x109, 0);
+  FieldActor_ShowEmote(0x13, 0x109, 0);
   Event_PlaySound(0x4e);
   FieldCamera_SetSpeed(0x3333, 0x666);
   FieldCamera_MoveTo(PIXELS(512), -1, PIXELS(320), 1);
@@ -1523,7 +1515,7 @@ void Func_020029ac(void) {
   Func_02005734();
   Actor_FaceDirection(6, FACING_SOUTH, 40);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
-  Func_02005714_(6, 0x103, 0x14);
+  FieldActor_ShowEmote(6, 0x103, 0x14);
   Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
   FieldActor_Jump(6, 4, 0xa);
   Event_ShowMessage(0x6006, 0);
@@ -1554,7 +1546,7 @@ void Func_020029ac(void) {
     FieldActor_ShowEmote(actor, second, third);
   }
   Actor_FaceDirectionAndWait(0, FACING_EAST);
-  Func_02005714_(0, 0x109, 0x14);
+  FieldActor_ShowEmote(0, 0x109, 0x14);
   Event_ShowMessage(0x9000, 0);
   Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
   {
@@ -1577,10 +1569,10 @@ void Func_020029ac(void) {
   Actor_SetAnimation(1, 3);
   Event_ShowMessage(1, 0);
   Actor_FaceDirection(6, FACING_NORTHEAST, 0);
-  Func_02005714_(6, 0x109, 0x28);
+  FieldActor_ShowEmote(6, 0x109, 0x28);
   Event_ShowMessage(6, 0);
   Actor_FaceDirection(2, FACING_WEST, 0);
-  Func_02005714_(2, 0x105, 0x28);
+  FieldActor_ShowEmote(2, 0x105, 0x28);
   Event_ShowMessage(0x8002, 0);
   Actor_SetAnimation(7, 3);
   Event_ShowMessage(7, 0);

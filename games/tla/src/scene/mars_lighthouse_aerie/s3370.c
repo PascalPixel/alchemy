@@ -842,7 +842,7 @@ void Func_02004bc4(void) {
   Event_ShowMessage(0x8013, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 480, 348);
-  MarsLighthouseAerie_ObjTurn(19, FACING_NORTHWEST + FACING_STEP);
+  Actor_FaceDirectionAndWait(19, FACING_NORTHWEST + FACING_STEP);
   Event_End();
 }
 
@@ -854,7 +854,7 @@ void Func_02004c2c(void) {
   Event_ShowMessage(0x8013, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 544, 348);
-  MarsLighthouseAerie_ObjTurn(19, FACING_NORTHWEST + FACING_STEP);
+  Actor_FaceDirectionAndWait(19, FACING_NORTHWEST + FACING_STEP);
   Event_End();
 }
 
@@ -935,7 +935,7 @@ void Func_02004da0(void) {
   Actor_FaceDirectionAndWait(2, FACING_WEST);
   Func_02004d50(2);
 #else
-  MarsLighthouseAerie_ObjTurn(2, FACING_WEST);
+  Actor_FaceDirectionAndWait(2, FACING_WEST);
 #endif
   Event_End();
 }
@@ -1042,19 +1042,13 @@ DEFINE_FUNC_020001F8(Func_020050b0, gData_02006cd8, gData_02006cdc,
     Data_02006ce8, gData_02006cec, Data_02006cd4, gData_02006cf0,
     gData_02006ce0, gData_02006cd0, Data_02006ce4)
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Func_0200575c_(s32 a, s32 b) {
-  BattleEffect_ApplyColorToTargetBuffer(a, b);
-}
-
 void Func_020051e0(void) {
   struct MarsLighthouseAerieEventWork *work = Ram_HeapSlots->eventWork;
   s32 saved;
 
   saved = work->screenEffect;
   PaletteFade_ApplyTarget(0x202108, 1);
-  Func_0200575c_(0x10000, 2);
+  PaletteFade_ApplyTarget(0x10000, 2);
   ((struct MarsLighthouseAerieEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

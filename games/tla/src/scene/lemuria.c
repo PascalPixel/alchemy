@@ -90,21 +90,6 @@ extern struct WarpTarget gData_020021dc;
 extern struct WarpTarget gData_020021e4;
 extern struct WarpTarget gData_020021ec;
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
-  Actor_FaceDirection(id, angle, flags);
-}
-
-static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
-  Actor_CenterOnColumn(id, column, offset);
-}
-
-static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
-                                                           s32 dz) {
-  Actor_SetDestinationOffset(id, dx, dz);
-}
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
@@ -119,7 +104,7 @@ void Func_020001bc(void) {
   Actor_SetPosition(12, PIXELS(488), PIXELS(1256));
   Animation_SetIndexAndInitializeObjects(Actor_Get(12), 157);
   Actor_SetAnimation(12, 3);
-  Actor_ArmCallback_(12, FACING_WEST, 0);
+  Actor_FaceDirection(12, FACING_WEST, 0);
 }
 
 void Func_020001f0(const struct WarpTarget *warp, s32 door, s32 mode) {
@@ -134,9 +119,9 @@ void Func_020001f0(const struct WarpTarget *warp, s32 door, s32 mode) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
-    Actor_CenterOnColumn_(id, 2, -8);
+    Actor_CenterAndWalk(id, 2, -8);
   else
-    Actor_OffsetPositionAndResetMotion_(id, 0, -8);
+    Actor_SetDestinationOffset(id, 0, -8);
   FieldEvent_Wait(10);
   FieldEvent_SetExitRequest(door);
   Event_FinishScreenTransition();
@@ -232,12 +217,6 @@ void Func_02000398(void) {
   System_Wait(1);
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Func_02001c2c_(s32 id, s32 x, s32 z) {
-  Actor_SetPosition(id, x, z);
-}
-
 static __inline__ void Func_02001d44_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
   Func_02001d44(a, b, c, d, e, f, g);
@@ -256,7 +235,7 @@ void Func_020004a8(void) {
 
   Func_02001d44_(59, 64, 4, 3, 49, 71, 2);
   if (Event_GetFlag(0xfbb) == 0) {
-    Func_02001c2c_(69, PIXELS(808), PIXELS(1176));
+    Actor_SetPosition(69, PIXELS(808), PIXELS(1176));
     if (leader->x >> 20 == 50 && leader->z >> 20 == 73) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);

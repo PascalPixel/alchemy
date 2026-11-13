@@ -51,19 +51,6 @@ void Sanctum_Run(s32 actor);
 void Inn_CheckIn(s32 slot, s32 actor);
 void Func_020007dc(void);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static inline s32 FlagCheck(s32 flag) {
-  return Event_GetFlag(flag);
-}
-
-static inline void ActorTurn(s32 actor, s32 angle, s32 frames) {
-  Actor_FaceDirection(actor, angle, frames);
-}
-
-static inline void ActorPlace(s32 actor, s32 x, s32 z) {
-  Actor_SetPosition(actor, x, z);
-}
 #include "version.h"
 #include "actor.h"
 #include "field_sprite.h"
@@ -168,7 +155,7 @@ void Func_0200023c(void) {
   Actor_FaceActor(4, 14, 0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors18);
   Event_ShowMessage(14, 0);
-  ActorTurn(14, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(14, FACING_SOUTHEAST, 0);
   Event_End();
 }
 
@@ -259,7 +246,7 @@ void Func_020003c8(void) {
 }
 
 void Func_02000428(void) {
-  if (!FlagCheck(0x211)) {
+  if (!Event_GetFlag(0x211)) {
     Event_SetFlag(0x211);
     FieldEvent_SetMessageId((s32)MsgUhhhnnnUhhhnnn2);
     Actor_WalkByAndWait(14, -12, 0);
@@ -293,7 +280,7 @@ const struct Trigger *Scene_GetEvents(void) {
 
 void Func_02000534(void) {
   if (Event_GetFlag(0x8ab)) {
-    ActorPlace(26, PIXELS(888), PIXELS(8));
+    Actor_SetPosition(26, PIXELS(888), PIXELS(8));
   } else {
     Actor_SetItemIcon(Actor_Get(26), 242);
     Actor_SetSingleChildFlags(Actor_Get(26), 0);
@@ -346,14 +333,14 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room1) {
     event = Ram_HeapSlots->eventWork;
     FIELD_AT(event, u16, 0xd4c) = 3;
-    if (!FlagCheck(0x821)) {
-      ActorPlace(29, 0, 0);
-      ActorPlace(30, 0, 0);
+    if (!Event_GetFlag(0x821)) {
+      Actor_SetPosition(29, 0, 0);
+      Actor_SetPosition(30, 0, 0);
     } else {
       Actor_SetSpriteColor(Actor_Get(29), 3);
       Actor_SetSpriteColor(Actor_Get(30), 5);
     }
-    if (FlagCheck(0x8ab)) {
+    if (Event_GetFlag(0x8ab)) {
       MapGrid_CopyCellsLayered(2, 110, 16, 10, 16, 64);
       MapGrid_CopyCellAttributes(2, 46, 16, 10, 16, 0);
     }
@@ -361,8 +348,8 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == 20)
     Func_02000570();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2) {
-    if (FlagCheck(0x8ab)) {
-      ActorPlace(10, 0, 0);
+    if (Event_GetFlag(0x8ab)) {
+      Actor_SetPosition(10, 0, 0);
     } else {
       Actor_SetSpriteRotationById(10, 0xc000);
       Actor_SetSingleChildFlags(Actor_Get(10), 0);
@@ -373,7 +360,7 @@ s32 Scene_Initialize(void) {
     }
   }
   Func_02000534();
-  if (FlagCheck(0x8ff))
+  if (Event_GetFlag(0x8ff))
     Actor_SetSpriteColor(Actor_Get(33), 2);
   else
     Actor_SetSpriteColor(Actor_Get(28), 2);

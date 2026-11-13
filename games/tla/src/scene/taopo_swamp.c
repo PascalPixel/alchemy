@@ -129,26 +129,14 @@ static __inline__ s32 GameFlag_GetByte_(s32 flag) {
   return GameFlag_GetByte(flag);
 }
 
-static __inline__ void
-Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
-  Actor_SetDestinationOffset(id, dx, dz);
-}
-
+// DEFINE_ macros in shared/routines.h call it by this name.
 static __inline__ void Func_02002840_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   MapGrid_CopyCellAttributes(a, b, c, d, e, f);
 }
 
-static __inline__ void Func_020028d0_(s32 id, s32 x, s32 z) {
-  Actor_SetPosition(id, x, z);
-}
-
 static __inline__ void Func_020028e0_(s32 id, s32 a, s32 b) {
   Actor_JumpDownLedge(id, a, b);
-}
-
-static __inline__ void Func_02002910_(s32 id, s32 a) {
-  Actor_SetAttachedEffect(id, a);
 }
 
 static __inline__ void Func_02002958_(s32 a, s32 b, s32 c) {
@@ -163,26 +151,6 @@ static __inline__ void Func_02002990_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 static __inline__ struct Actor *Func_02002808_(s32 type, s32 x, s32 y,
                                                        s32 z) {
   return Import_ActorCreate(type, x, y, z);
-}
-
-static __inline__ void Func_02002838_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  MapGrid_CopyCells(a, b, c, d, e, f);
-}
-
-static __inline__ void Actor_SetSpeedParameters_(s32 id, s32 speed,
-                                                        s32 acceleration) {
-  Actor_SetSpeed(id, speed, acceleration);
-}
-
-static __inline__ void Func_02002848_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  Func_0802b450(a, b, c, d, e, f);
-}
-
-static __inline__ void Func_02002818_(struct Actor *object, s32 x,
-                                      s32 y, s32 z) {
-  Actor_SetMoveTarget(object, x, y, z);
 }
 
 static __inline__ void Func_020029a8_(s32 a, s32 b, s32 c) {
@@ -250,7 +218,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 void Func_02000104(s32 a, s32 b) { GameFlag_SetBit(b + 0x8d8); }
 
 void Func_02000118(void) {
-  Func_02002840_(50, 16, 1, 2, 47, 16);
+  MapGrid_CopyCellAttributes(50, 16, 1, 2, 47, 16);
   Event_SetFlag(0x220);
 }
 
@@ -347,7 +315,7 @@ void Func_02000334(void) {
 
   Func_02002990_(76, 70, 14, 8, 14, 37, 0);
   if (Event_GetFlag(0xf99) == 0) {
-    Func_020028d0_(64, PIXELS(264), PIXELS(664));
+    Actor_SetPosition(64, PIXELS(264), PIXELS(664));
     if (leader->x >> 20 == 16 && leader->z >> 20 == 41) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
@@ -479,7 +447,7 @@ void Func_0200065c(void) {
   FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 256, 30);
   FieldCamera_MoveTo(PIXELS(408), -1, PIXELS(312), 1);
   Func_02002928();
-  Func_02002910_(8, 257);
+  Actor_SetAttachedEffect(8, 257);
   speed = 0x8000;
   i = 2;
   do {
@@ -543,7 +511,7 @@ void Func_02000810(s32 id) {
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(10);
   }
-  Func_02002840_(22, 8, 1, 1, 26, 8);
+  MapGrid_CopyCellAttributes(22, 8, 1, 1, 26, 8);
 }
 
 void Func_020008d8(s32 id) {
@@ -591,7 +559,7 @@ void Func_020009c0(s32 id) {
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(10);
   }
-  Func_02002840_(1, 1, 1, 1, 25, 27);
+  MapGrid_CopyCellAttributes(1, 1, 1, 1, 25, 27);
 }
 
 void Func_02000a94(s32 id) {
@@ -629,7 +597,7 @@ void Func_02000b58(s32 a, s32 id) {
   Actor_SetAnimation(id, 2);
   Event_SetFlag(0x334);
   Event_ClearFlag(0x335);
-  Func_02002840_(27, 14, 1, 1, 27, 13);
+  MapGrid_CopyCellAttributes(27, 14, 1, 1, 27, 13);
 }
 
 void Func_02000b90(s32 a, s32 id) {
@@ -675,7 +643,7 @@ void Func_02000ca0(void) {
   s32 timer = --gData_0200345c;
   s32 step = timer / 8;
 
-  Func_02002838_(47 - (timer & 1) * 2, 64 - step, 2, step, 29, 15 - step);
+  MapGrid_CopyCells(47 - (timer & 1) * 2, 64 - step, 2, step, 29, 15 - step);
   if (gData_0200345c == 0)
     FieldTask_Remove(Func_02000ca0);
 }
@@ -683,7 +651,7 @@ void Func_02000ca0(void) {
 void Func_02000cec(void) {
   s32 n = --gData_02003460;
 
-  Func_02002838_(50, (n & 1) * 5 + 59, 13, 5, 18, 15);
+  MapGrid_CopyCells(50, (n & 1) * 5 + 59, 13, 5, 18, 15);
   if (gData_02003460 == 0)
     FieldTask_Remove(Func_02000cec);
 }
@@ -823,7 +791,7 @@ void Func_020010c4(s32 a, s32 id) {
   Actor_SetAnimation(id, 2);
   Event_SetFlag(0x340);
   Event_ClearFlag(0x341);
-  Func_02002840_(7, 39, 1, 1, 7, 38);
+  MapGrid_CopyCellAttributes(7, 39, 1, 1, 7, 38);
   Func_02002084(1);
 }
 
@@ -1502,7 +1470,7 @@ void Func_02001eb8(void) {
       gData_020035f0 = 0;
   }
   if (frame != -1)
-    Func_02002848_(45, frame, 3, 3, 76, 61);
+    MapGrid_CopyCellsLayered(45, frame, 3, 3, 76, 61);
 }
 
 extern u8 gMapCellBuffer[];
@@ -1642,7 +1610,7 @@ void Func_020022ac(void) {
     sprite = object->sprite;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Func_02002818_(object, (object->x & 0xfff00000) + 0x80000, object->y,
+    FieldActor_SetMoveTarget(object, (object->x & 0xfff00000) + 0x80000, object->y,
                    (object->z & 0xfff00000) + 0x80000);
     Actor_WaitForMove(object);
     while (sprite->level != 0) {

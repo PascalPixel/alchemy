@@ -847,19 +847,13 @@ struct MarsLighthouseRoomMEventWork1ac {
 
 void Func_020017b4(void);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Func_02003248_(s32 a, s32 b) {
-  BattleEffect_ApplyColorToTargetBuffer(a, b);
-}
-
 void Func_0200183c(void) {
   struct MarsLighthouseRoomMEventWork1ac *work = Ram_HeapSlots->eventWork;
   s32 saved;
 
   saved = work->value1ac;
   PaletteFade_ApplyTarget(0x202108, 1);
-  Func_02003248_(0x10000, 2);
+  PaletteFade_ApplyTarget(0x10000, 2);
   ((struct MarsLighthouseRoomMEventWork1ac *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

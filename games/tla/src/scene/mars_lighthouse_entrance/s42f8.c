@@ -12,10 +12,6 @@
 void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-static __inline__ void Func_02004c50_(s32 a, s32 b, s32 c) {
-  MapGrid_SetShake(a, b, c);
-}
-
 void Func_020042f8(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct EffectOptions options;
@@ -60,8 +56,8 @@ next:
   Event_PlaySound(188);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  Func_02004c50_(0x50000, 0x50000, 0x10000);
-  Func_02004c50_(-1, -1, 0xe666);
+  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
   MapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
@@ -121,19 +117,13 @@ DEFINE_FUNC_020001F8(Func_020047b8, gData_02006884, gData_0200e888,
     Data_02006894, gData_02006898, Data_02006880, gData_0200689c,
     gData_0200e88c, gData_0200687c, gData_02006890)
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Func_02004d58_(s32 a, s32 b) {
-  BattleEffect_ApplyColorToTargetBuffer(a, b);
-}
-
 void Func_020048e8(void) {
   struct MarsLighthouseEntranceEventWork *work = Ram_HeapSlots->eventWork;
   s32 saved;
 
   saved = work->value1ac;
   PaletteFade_ApplyTarget(0x202108, 1);
-  Func_02004d58_(0x10000, 2);
+  PaletteFade_ApplyTarget(0x10000, 2);
   ((struct MarsLighthouseEntranceEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

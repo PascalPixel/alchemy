@@ -102,13 +102,13 @@ void Func_02000170(void) {
   position[0] = object->x;
   position[1] = (object->y + 0x40000) & 0xfff80000;
   position[2] = object->z;
-  Vector_AddPolar(0x100000, angle, position);
+  FieldVector_AddPolarOffset(0x100000, angle, position);
   object = Func_02005680(position, 1);
   if (object != NULL) {
     position[0] = object->x;
     position[1] = object->y;
     position[2] = object->z;
-    Vector_AddPolar(0x100000, angle, position);
+    FieldVector_AddPolarOffset(0x100000, angle, position);
     if (Func_02005680(position, 1) != NULL)
       return;
   }
@@ -191,7 +191,7 @@ void Func_020002ec(void) {
 
   MapGrid_CopyCellAttributes(53, 72, 1, 1, 38, 72);
   MapGrid_CopyCellAttributes(53, 72, 1, 1, 43, 72);
-  Func_020054e8_(53, 8, 1, 1, 47, 8);
+  MapGrid_CopyCellAttributes(53, 8, 1, 1, 47, 8);
   for (id = 10; id <= 12; id++) {
     object = Actor_Get(id);
     x = object->x >> 20;
@@ -318,7 +318,7 @@ void Func_02000670(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x20000, 0x4000);
-  Camera_SetBounds(PIXELS(248), -1, PIXELS(712), 1);
+  FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(712), 1);
   FieldCamera_WaitForArrival();
   System_Wait(20);
   FieldCamera_SetSpeed(0x50000, 0xa000);
@@ -330,7 +330,7 @@ void Func_02000670(void) {
 
 void Func_020006f4(s32 burst) {
   if (!Flag_IsSet(0xa46)) {
-    Func_020054e0_(29, 60, 3, 4, 14, 50);
+    MapGrid_CopyCells(29, 60, 3, 4, 14, 50);
     MapGrid_CopyCellsLayered(93, 60, 3, 4, 78, 50);
     if (burst && !Flag_IsSet(0xa43))
       Func_0200055c(14);
@@ -394,15 +394,15 @@ void Func_020008a0(s32 unused, s32 id) {
 }
 
 void Func_020008bc(void) {
-  Func_020054e0_(17, 24, 3, 1, 17, 13);
-  Func_020054e8_(20, 24, 1, 1, 18, 77);
-  Func_020054e0_(62, 20, 1, 2, 54, 20);
+  MapGrid_CopyCells(17, 24, 3, 1, 17, 13);
+  MapGrid_CopyCellAttributes(20, 24, 1, 1, 18, 77);
+  MapGrid_CopyCells(62, 20, 1, 2, 54, 20);
 }
 
 void Func_02000900(void) {
-  Func_020054e0_(17, 25, 3, 1, 17, 13);
-  Func_020054e8_(20, 25, 1, 1, 18, 77);
-  Func_020054e0_(62, 22, 1, 2, 54, 20);
+  MapGrid_CopyCells(17, 25, 3, 1, 17, 13);
+  MapGrid_CopyCellAttributes(20, 25, 1, 1, 18, 77);
+  MapGrid_CopyCells(62, 22, 1, 2, 54, 20);
 }
 
 void Func_02000944(void) {
@@ -654,9 +654,9 @@ s32 Scene_Initialize(void) {
     if (entrance - 1 <= 1U) {
       Func_02002624(gData_02005bf0, gData_02005bf6, Func_02000514, 88);
       if (Flag_IsSet(0xa42))
-        Func_02005598_(10, 0, 0);
+        Actor_SetPosition(10, 0, 0);
       else
-        Func_02005598_(9, 0, 0);
+        Actor_SetPosition(9, 0, 0);
       if (Flag_IsSet(0xa43))
         Func_020006f4(0);
       if (Flag_IsSet(0xa44))
@@ -684,23 +684,23 @@ s32 Scene_Initialize(void) {
       Flag_Set(0x351);
       Event_Start();
       Event_ResolvePendingActions(0);
-      Camera_SetBounds(-1, -1, -1, 0);
-      Func_02005598_(work->currentOwner, 0, 0);
-      Func_02005598_(17, 0, 0);
+      FieldCamera_MoveTo(-1, -1, -1, 0);
+      Actor_SetPosition(work->currentOwner, 0, 0);
+      Actor_SetPosition(17, 0, 0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Event_Wait(30);
-      Func_02005598_(18, 0, 0);
-      Func_02005598_(17, 0x1080000, 0x2080000);
+      Actor_SetPosition(18, 0, 0);
+      Actor_SetPosition(17, 0x1080000, 0x2080000);
       Event_PlaySound(136);
       Event_Wait(60);
       Flag_Set(0x109);
       return ((s32 (*)())Import_EventSetExitRequest)(3);
     }
     if (Flag_IsSet(0x350)) {
-      Func_02005598_(8, 0x2580000, 0x900000);
-      Func_02005598_(9, 0x2200000, 0xd00000);
-      Func_02005598_(10, 0x2200000, 0xf00000);
+      Actor_SetPosition(8, 0x2580000, 0x900000);
+      Actor_SetPosition(9, 0x2200000, 0xd00000);
+      Actor_SetPosition(10, 0x2200000, 0xf00000);
       Flag_Set(0x220);
       Flag_Set(0x221);
     }
@@ -724,9 +724,9 @@ s32 Scene_Initialize(void) {
       Func_02000c80(12);
     Func_020009ec();
     if (Flag_IsSet(0x350))
-      Func_02005598_(18, 0, 0);
+      Actor_SetPosition(18, 0, 0);
     else
-      Func_02005598_(17, 0, 0);
+      Actor_SetPosition(17, 0, 0);
     if (Flag_IsSet(0xa40))
       Func_02000d80();
     Task_Add(Func_02000e68, 0x480);
@@ -738,13 +738,13 @@ s32 Scene_Initialize(void) {
     Func_020053bc(2);
     Func_0200538c(11, 6);
     if (Flag_IsSet(0x358)) {
-      Func_020054f0_(71, 24, 7, 1, 71, 5);
-      Func_020054e8_(7, 24, 7, 1, 7, 7);
-      Func_020054e8_(7, 88, 7, 1, 7, 71);
-      Func_02005598_(11, 0, 0);
+      MapGrid_CopyCellsLayered(71, 24, 7, 1, 71, 5);
+      MapGrid_CopyCellAttributes(7, 24, 7, 1, 7, 7);
+      MapGrid_CopyCellAttributes(7, 88, 7, 1, 7, 71);
+      Actor_SetPosition(11, 0, 0);
     }
     if (Flag_IsSet(0xa37))
-      Func_02005598_(12, 0x780000, 0x1280000);
+      Actor_SetPosition(12, 0x780000, 0x1280000);
     if (entrance - 14 <= 1U) {
       Func_02002624(gData_02005c2c, gData_02005c32, Func_02001490, 88);
       Func_020027cc(0, 1);
@@ -779,13 +779,13 @@ s32 Scene_Initialize(void) {
     }
     if (!Flag_IsSet(0x109)) {
       if (entrance == 15)
-        Func_02005598_(23, 0x2980000, 0x2c80000);
+        Actor_SetPosition(23, 0x2980000, 0x2c80000);
       if (entrance == 11)
-        Func_02005598_(17, 0x2180000, 0x2280000);
+        Actor_SetPosition(17, 0x2180000, 0x2280000);
     }
     Actor_GetById(16)->motionFlags = 0;
     if (Flag_IsSet(0xa38)) {
-      Func_02005598_(16, 0x3280000, 0x1380000);
+      Actor_SetPosition(16, 0x3280000, 0x1380000);
       Actor_GetById(16)->y = 0;
       Actor_GetById(16)->terrainHeight = 0;
     }
@@ -1068,7 +1068,7 @@ DEFINE_FUNC_02001A80_117(Func_02001dc0)
 #define Camera_SetBounds Camera_SetBounds__s1e20
 #include "shared/mars_lighthouse_entrance_room.h"
 #undef Camera_SetBounds
-/* VIEW(s1e20): static Camera_SetBounds as Camera_SetBounds__s1e20; room.h has static inline void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) { Camera_MoveWithinMapBounds(x, y, z, use_setter); }; not tried: Camera_SetBounds__s1e20 was not found. */
+/* VIEW(s1e20): static Camera_SetBounds as Camera_SetBounds__s1e20; room.h has static inline void FieldCamera_MoveTo(s32 x, s32 y, s32 z, s32 use_setter) { Camera_MoveWithinMapBounds(x, y, z, use_setter); }; not tried: Camera_SetBounds__s1e20 was not found. */
 #undef SceneWork
 /* VIEW(s1e20): tag struct SceneWork as struct SceneWork__s1e20; room.h has another definition; not tried: struct SceneWork__s1e20 was not found. */
 #undef MapLayer

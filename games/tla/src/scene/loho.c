@@ -474,17 +474,11 @@ DEFINE_FUNC_02000C64(Func_02000c64, 65, 1)
 
 DEFINE_FUNC_02000C64(Func_02000c74, 66, 2)
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Func_02001348_(s32 id, s32 x, s32 z) {
-  Actor_SetPosition(id, x, z);
-}
-
 void Func_02000c84(void) {
   Event_SetFlag(0x201);
   Actor_GetById(22)->collisionFlags &= 0xfe;
   if (Event_GetFlag(0xff7) == 0)
-    Func_02001348_(66, PIXELS(520), PIXELS(136));
+    Actor_SetPosition(66, PIXELS(520), PIXELS(136));
 }
 
 const struct Trigger *Scene_GetEvents(void) {
@@ -563,10 +557,6 @@ static __inline__ void Func_020012a0_(const void *data, s32 a, s32 b) {
   MapGrid_AnimateCells(data, a, b);
 }
 
-static __inline__ void Offset_(s32 id, s32 dx, s32 dz) {
-  Actor_SetDestinationOffset(id, dx, dz);
-}
-
 void Func_02000e54(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   s32 i;
@@ -592,7 +582,7 @@ loop:
   Func_020012a0_(gData_02001f14.data, gData_02001f14.a, gData_02001f14.b);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
-  Offset_(gMainRoutineWork.currentOwner, 0, -4);
+  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   Event_PlaySound(123);
   Event_Wait(6);
   Import_EventSetExitRequest(*(s16 *)work);
@@ -616,28 +606,21 @@ void Func_02000eec(void) {
   Actor_SetAnimation(party->currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Event_PlaySound(123);
-  Offset_(gMainRoutineWork.currentOwner, 0, -4);
+  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   Import_EventSetExitRequest(work->returnEntrance);
-}
-
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Func_020012a8_(s32 srcX, s32 srcY, s32 width, s32 height,
-                                      s32 destX, s32 destY) {
-  MapGrid_CopyCellsTo(srcX, srcY, width, height, destX, destY);
 }
 
 void Func_02000f38(void) {
   s32 value = ((struct EventWork154 *)Ram_HeapSlots->eventWork)->returnEntrance;
 
   if (value == 2)
-    Func_02001348_(8, PIXELS(144), PIXELS(224));
+    Actor_SetPosition(8, PIXELS(144), PIXELS(224));
   else
-    Func_02001348_(8, PIXELS(224), PIXELS(224));
+    Actor_SetPosition(8, PIXELS(224), PIXELS(224));
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Event_Wait(10);
   Actor_GetById(4)->actionFlags &= 0xfe;
-  Func_020012a8_(96, 14, 72, 14, 2, 1);
+  MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffset(4, 0, 4);
   Actor_WaitForMoveById(4);
   Actor_SetSingleChildFlags(Actor_GetById(4), 0);

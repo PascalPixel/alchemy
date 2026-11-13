@@ -683,17 +683,6 @@ void Func_02000d88(void) {
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Func_0200432c_(s32 id, s32 x, s32 z) {
-  Actor_SetPosition(id, x, z);
-}
-
-static __inline__ void Func_0200423c_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  MapGrid_CopyCellAttributes(a, b, c, d, e, f);
-}
-
 void Func_02000db8(s32 id) {
   struct Actor *object = Actor_Get(id);
 
@@ -703,13 +692,13 @@ void Func_02000db8(s32 id) {
   object->priorityFlags |= 2;
   object->collisionFlags = 0;
   if (id == 13) {
-    Func_0200432c_(13, 175 << 18, PIXELS(224));
+    Actor_SetPosition(13, 175 << 18, PIXELS(224));
     Actor_SetAnimation(13, 10);
     MapGrid_CopyCellAttributes(39, 22, 2, 1, 43, id);
   } else {
-    Func_0200432c_(14, 165 << 18, PIXELS(216));
+    Actor_SetPosition(14, 165 << 18, PIXELS(216));
     Actor_SetAnimation(14, 9);
-    Func_0200423c_(31, 21, 2, 2, 40, 12);
+    MapGrid_CopyCellAttributes(31, 21, 2, 2, 40, 12);
   }
 }
 

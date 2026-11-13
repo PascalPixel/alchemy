@@ -122,7 +122,7 @@ void Func_020004a8(void) {
 
   if (x == 5 && z == 17) {
     FieldActor_Jump(gMainRoutineWork.currentOwner, 2, 0);
-    SetPosCommit(gMainRoutineWork.currentOwner, 88, 296);
+    Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 88, 296);
   }
   Func_020021a0(5, 70, 9, 7, 5, 43, 1);
   MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
@@ -136,7 +136,7 @@ void Func_0200052c(void) {
   Actor_FaceDirection(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
   Actor_Get(4)->actionFlags &= 0xfe;
-  CopyCells(96, 14, 72, 14, 2, 1);
+  MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffset(4, 0, 4);
   FieldActor_WaitForMoveById(4);
   Actor_SetSingleChildFlags(Actor_Get(4), 0);
@@ -174,7 +174,7 @@ void Func_02000624(void) {
 }
 
 void Func_02000644(void) {
-  CopyCells2(0, 3, 1, 1, 3, 15);
+  MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
   Event_SetFlag(0x230);
 }
 
@@ -334,12 +334,6 @@ extern const u8 gData_02002272[];
 
 void Func_02000e04(void);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Place(s32 id, s32 x, s32 z) {
-  Actor_SetPosition(id, x, z);
-}
-
 s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x100;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room7)
@@ -359,18 +353,18 @@ s32 Scene_Initialize(void) {
 #if TLA_PATCH_1
     if (Event_GetFlag(0x204)) {
       Actor_SetPosition(9, 0, 0);
-      Place(21, PIXELS(184), PIXELS(184));
+      Actor_SetPosition(21, PIXELS(184), PIXELS(184));
       Actor_GetById(21)->motionFlags = 0;
-      CopyCells2(9, 11, 1, 1, 11, 12);
+      MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
     }
 #endif
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room4) {
     if (Event_GetFlag(0x230)) {
-      CopyCells2(0, 3, 1, 1, 3, 15);
+      MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
       Actor_SetAnimation(9, 4);
     }
-    if (Event_GetFlag(0x109) && Flag_Test(0x220)) {
+    if (Event_GetFlag(0x109) && Event_GetFlag(0x220)) {
       Event_ClearFlag(0x220);
       Func_0200125c();
     }
@@ -385,8 +379,8 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
-    if (Flag_Test(0x205)) {
-      CopyCells2(9, 11, 1, 1, 11, 12);
+    if (Event_GetFlag(0x205)) {
+      MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
       MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
       MapGrid_CopyCellsTo(77, 15, 75, 15, 1, 1);
     }
@@ -396,9 +390,9 @@ s32 Scene_PrepareMap(void) {
 #else
     if (Event_GetFlag(0x204)) {
       Actor_SetPosition(9, 0, 0);
-      Place(21, PIXELS(184), PIXELS(184));
+      Actor_SetPosition(21, PIXELS(184), PIXELS(184));
       Actor_GetById(21)->motionFlags = 0;
-      CopyCells2(9, 11, 1, 1, 11, 12);
+      MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
     }
 #endif
   }
@@ -406,7 +400,7 @@ s32 Scene_PrepareMap(void) {
     if (Event_GetFlag(0xa60)) {
       MapGrid_CopyCellsTo(5, 46, 5, 47, 1, 1);
       MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
-      CopyCells2(4, 25, 1, 1, 5, 17);
+      MapGrid_CopyCellAttributes(4, 25, 1, 1, 5, 17);
     }
   }
   return 0;
@@ -443,9 +437,9 @@ loop:
   if (i <= 63)
     goto loop;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room4)
-    CopyCells(33, 30, 23, 14, 1, 2);
+    MapGrid_CopyCellsTo(33, 30, 23, 14, 1, 2);
   else
-    CopyCells(27, 29, 40, 16, 1, 2);
+    MapGrid_CopyCellsTo(27, 29, 40, 16, 1, 2);
   Event_PlaySound(158);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
@@ -564,10 +558,10 @@ void Func_02000f2c(void) {
     }
     Func_0200156c(9);
     Actor_SetPosition(9, 0, 0);
-    Place(21, PIXELS(184), PIXELS(184));
+    Actor_SetPosition(21, PIXELS(184), PIXELS(184));
     Actor_GetById(21)->motionFlags = 0;
     Actor_GetById(21)->y -= 0x400000;
-    CopyCells2(9, 11, 1, 1, 11, 12);
+    MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
     Event_SetFlag(0x204);
   }
 }
@@ -624,13 +618,13 @@ void Func_02000fd0(void) {
       Event_SetFlag(0x205);
     }
     Event_End();
-  } else if (!Flag_Test(0x207) && column == 16 && row == 12) {
+  } else if (!Event_GetFlag(0x207) && column == 16 && row == 12) {
     MapGrid_CopyCellAttributes(17, 12, 1, 1, column, row);
     flags = &object->motionFlags;
     *flags = 3;
     FieldEvent_Wait(30);
     *flags = 0;
-    Flag_Set(0x207);
+    Event_SetFlag(0x207);
     Event_End();
   }
 }
@@ -663,16 +657,16 @@ void Func_0200122c(void) {
 }
 
 void Func_0200125c(void) {
-  if (!Event_GetFlag(0x221) && !Flag_Test(0x220)) {
+  if (!Event_GetFlag(0x221) && !Event_GetFlag(0x220)) {
     MapGrid_CopyCellAttributes(11, 73, 10, 10, 64, 50);
     MapGrid_CopyCellAttributes(42, 73, 10, 10, 64, 60);
-    CopyCells2(42, 11, 10, 4, 11, 75);
+    MapGrid_CopyCellAttributes(42, 11, 10, 4, 11, 75);
     Event_SetFlag(0x220);
   }
 }
 
 void Func_020012c0(void) {
-  if (Flag_Test(0x220)) {
+  if (Event_GetFlag(0x220)) {
     MapGrid_CopyCellAttributes(64, 50, 10, 10, 11, 73);
     MapGrid_CopyCellAttributes(64, 60, 10, 10, 42, 73);
     Event_ClearFlag(0x220);
@@ -728,9 +722,9 @@ void Func_0200138c(void) {
     SINK(32);
     Func_02001620(10);
     FieldEvent_Wait(20);
-  } else if (!Flag_Test(0x205) && column == 16 && row == 15) {
+  } else if (!Event_GetFlag(0x205) && column == 16 && row == 15) {
     object->motionFlags = 0;
-    Flag_Set(0x205);
+    Event_SetFlag(0x205);
     Event_SetFlag(0x221);
     SINK(48);
     Func_02001620(10);

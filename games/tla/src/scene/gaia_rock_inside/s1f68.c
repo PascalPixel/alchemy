@@ -192,7 +192,7 @@ void Func_0200225c(void) {
   partner->velocityY = PIXELS(6);
   Actor_WaitForMoveById(12);
   Event_Wait(45);
-  Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(8, gMainRoutineWork.currentOwner, 0);
   Sound_Play(576);
   Actor_SetModeById(8, 5);
   wait(30);
@@ -207,7 +207,7 @@ void Func_0200225c(void) {
       wait(1);
     }
     Actor_SetSpeed(8, 0x4000, 0xccc);
-    Actor_OffsetPositionAndResetMotion(8, 24, 0);
+    Actor_SetDestinationOffsetById(8, 24, 0);
     MapGrid_CopyCellAttributes(27, 23, 1, 1, 28, 22);
     Map_CopyCellAttributeRect(32, 16, 2, 1, 29, 22);
     i = 0;
@@ -229,8 +229,8 @@ void Func_0200225c(void) {
     Event_Wait(30);
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (leader != NULL)
-      Actor_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
-                                *(s16 *)((u8 *)leader + 18));
+      Actor_SetDestinationById(12, *(s16 *)((u8 *)leader + 10),
+                               *(s16 *)((u8 *)leader + 18));
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(12);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
@@ -253,8 +253,8 @@ void Func_0200225c(void) {
     Event_Wait(30);
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (leader != NULL)
-      Actor_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
-                                *(s16 *)((u8 *)leader + 18));
+      Actor_SetDestinationById(12, *(s16 *)((u8 *)leader + 10),
+                               *(s16 *)((u8 *)leader + 18));
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(12);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
@@ -280,7 +280,7 @@ void Func_020024b8(void) {
   partner->velocityY = PIXELS(6);
   Actor_WaitForMoveById(12);
   Event_Wait(45);
-  Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
   Sound_Play(576);
   Actor_SetModeById(9, 5);
   wait(30);
@@ -317,8 +317,8 @@ void Func_020024b8(void) {
     Event_Wait(30);
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (leader != NULL)
-      Actor_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
-                                *(s16 *)((u8 *)leader + 18));
+      Actor_SetDestinationById(12, *(s16 *)((u8 *)leader + 10),
+                               *(s16 *)((u8 *)leader + 18));
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(12);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
@@ -341,8 +341,8 @@ void Func_020024b8(void) {
     Event_Wait(30);
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (leader != NULL)
-      Actor_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
-                                *(s16 *)((u8 *)leader + 18));
+      Actor_SetDestinationById(12, *(s16 *)((u8 *)leader + 10),
+                               *(s16 *)((u8 *)leader + 18));
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(12);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
@@ -368,7 +368,7 @@ void Func_02002718(void) {
   partner->velocityY = PIXELS(6);
   Actor_WaitForMoveById(14);
   Event_Wait(45);
-  Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(8, gMainRoutineWork.currentOwner, 0);
   Sound_Play(576);
   Actor_SetModeById(8, 5);
   wait(30);
@@ -405,8 +405,8 @@ void Func_02002718(void) {
     Event_Wait(30);
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (leader != NULL)
-      Actor_ResetAndSetPosition(14, *(s16 *)((u8 *)leader + 10),
-                                *(s16 *)((u8 *)leader + 18));
+      Actor_SetDestinationById(14, *(s16 *)((u8 *)leader + 10),
+                               *(s16 *)((u8 *)leader + 18));
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(14);
     Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
@@ -429,8 +429,8 @@ void Func_02002718(void) {
     Event_Wait(30);
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (leader != NULL)
-      Actor_ResetAndSetPosition(14, *(s16 *)((u8 *)leader + 10),
-                                *(s16 *)((u8 *)leader + 18));
+      Actor_SetDestinationById(14, *(s16 *)((u8 *)leader + 10),
+                               *(s16 *)((u8 *)leader + 18));
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(14);
     Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
@@ -520,7 +520,7 @@ void Func_02002ac8(s32 a0, s32 a1) {
   s32 t0;
 
   t0 = Actor_GetById__s2ac8();
-  Actor_SetAngleToward(a0, a1, 0);
+  Actor_FaceActorById(a0, a1, 0);
   if (t0 != 0) {
     t2 = ResourceMetadata_Register(FIELD_AT(t0, s32, 80), 0x185);
     FIELD_AT(t2, u8, 5) = 0;

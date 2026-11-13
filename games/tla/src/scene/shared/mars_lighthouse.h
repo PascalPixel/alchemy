@@ -13,7 +13,7 @@
 /// mars_lighthouse_room_m, mars_lighthouse_star_room.
 #define DEFINE_RIDE_UPDATE_CARRIED(name, id1, call1, call2)                    \
   void name(struct Actor *object) {                                            \
-    struct id1 *work = (struct id1 *)(gData_020023c4 + 0x188);                 \
+    struct id1 *work = (struct id1 *)(gInventorySnapshot + 0x188);                 \
     struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);            \
     struct EventWork *event = Ram_HeapSlots->eventWork;                        \
     s32 dx = object->bounce;                                                   \
@@ -83,7 +83,7 @@
 #define DEFINE_BEAM_START(name, call1)                                         \
   void name(u16 *targets, u16 *stops, s32 a2, s32 a3) {                        \
     struct MarsLighthouseBeam *beam =                                          \
-        (struct MarsLighthouseBeam *)(gData_020023c4 + 0x188);                 \
+        (struct MarsLighthouseBeam *)(gInventorySnapshot + 0x188);                 \
     struct MarsLighthouseBeamTarget *target = beam->targets;                   \
     s32 id;                                                                    \
     s32 i;                                                                     \
@@ -141,7 +141,7 @@
 /// mars_lighthouse_room_f, mars_lighthouse_room_m.
 #define DEFINE_RIDE_UPDATE_LANDING(name, id1, call1, call2)                    \
   void name(struct Actor *object) {                                            \
-    struct id1 *work = (struct id1 *)(gData_020023c4 + 0x188);                 \
+    struct id1 *work = (struct id1 *)(gInventorySnapshot + 0x188);                 \
     struct Actor *other = Actor_Get(gMainRoutineWork.currentOwner);            \
     struct EventWork *event = Ram_HeapSlots->eventWork;                        \
     s32 dx = object->bounce;                                                   \
@@ -219,7 +219,7 @@
       {                                                                        \
         s32 half = (object->timer / 2) & 1;                                    \
                                                                                \
-        Animation_ApplyChildValues(object->watchedObject, half * 7);           \
+        Actor_SetSpriteColorMode(object->watchedObject, half * 7);           \
       }                                                                        \
     } else {                                                                   \
       call1(object->watchedObject, 1);                                         \
@@ -254,7 +254,7 @@
       {                                                                        \
         s32 half = (object->timer / 2) & 1;                                    \
                                                                                \
-        Animation_ApplyChildValues(object->watchedObject, half * 7);           \
+        Actor_SetSpriteColorMode(object->watchedObject, half * 7);           \
       }                                                                        \
     } else {                                                                   \
       call1(object->watchedObject, 1);                                         \
@@ -282,7 +282,7 @@
     count = Party_CountMembers();                                              \
     for (i = 0; i < count; i++)                                                \
       hp[i] = Unit_Get(gMainRoutineWork.activeOwners[i])->hp;                  \
-    BattleParty_ApplyHealthDelta(-10, 0);                                      \
+    Party_AddHp(-10, 0);                                      \
     work->downCount = 0;                                                       \
     work->standingCount = 0;                                                   \
     Actor_SetAttachedEffect(leader, 258);                                      \
@@ -435,7 +435,7 @@
 /// mars_lighthouse_star_room/ride_handle.
 #define DEFINE_RIDE_ADVANCE_COUNTER(name)                                      \
   s32 name(s32 limit) {                                                        \
-    struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);       \
+    struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);       \
                                                                                \
     if (!Event_GetFlag(260)) {                                                 \
       if (++work->counter >= limit)                                            \
@@ -461,7 +461,7 @@
       object->timer = spin;                                                    \
       call2(object, 2);                                                        \
       object->update = (void (*)(void))call3;                                  \
-      Animation_SetStateFlags(object, 1);                                      \
+      Actor_SetBlendMode(object, 1);                                      \
     }                                                                          \
   }
 
@@ -490,7 +490,7 @@
 /// mars_lighthouse_star_room/s2148.
 #define DEFINE_RIDE_IF_ACTIVE(name, call1)                                     \
   s32 name(void) {                                                             \
-    if (((struct RideWork *)(gData_020023c4 + 0x188))->active) {               \
+    if (((struct RideWork *)(gInventorySnapshot + 0x188))->active) {               \
       call1();                                                                 \
       return 1;                                                                \
     }                                                                          \
@@ -502,7 +502,7 @@
 /// mars_lighthouse_star_room/ride_handle.
 #define DEFINE_RIDE_SET_ENTRY(name)                                            \
   void name(s32 index, s32 value) {                                            \
-    struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);       \
+    struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);       \
     struct RideEntry *entry = &work->entries[index];                           \
                                                                                \
     entry->d = (value & 15) << 16;                                             \
@@ -514,7 +514,7 @@
 /// mars_lighthouse_star_room/ride_handle.
 #define DEFINE_RIDE_SET_SLOT(name)                                             \
   void name(u32 index, s32 value) {                                            \
-    struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);       \
+    struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);       \
                                                                                \
     if (index <= 3)                                                            \
       work->slots[index].value = value;                                        \
@@ -530,7 +530,7 @@
     Actor_SetSingleChildFlags(object, 0);                                      \
     call1(object, 2);                                                          \
     Actor_StartScript(object, data1);                                          \
-    Actor_SetSpriteColor(object, 10);                                          \
+    FieldActor_SetSpriteColor(object, 10);                                          \
     object->timer = 0;                                                         \
     object->speedLimit = 0;                                                    \
     object->acceleration = 0;                                                  \
@@ -545,7 +545,7 @@
     Actor_SetSingleChildFlags(object, 0);                                      \
     call1(object, 2);                                                          \
     Actor_StartScript(object, data1);                                          \
-    Actor_SetSpriteColor(object, 10);                                          \
+    FieldActor_SetSpriteColor(object, 10);                                          \
     object->timer = 0;                                                         \
     object->speedLimit = 0;                                                    \
     object->acceleration = 0;                                                  \
@@ -638,7 +638,7 @@
 /// mars_lighthouse_star_room/ride_handle.
 #define DEFINE_RIDE_RELEASE_HANDLE(name, call1)                                \
   void name(void) {                                                            \
-    struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);       \
+    struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);       \
                                                                                \
     call1(work->handle);                                                       \
     work->handle = NULL;                                                       \
@@ -693,10 +693,10 @@
   void name(struct Actor *object) {                                            \
     switch (gFrameCount & 7) {                                                 \
     case 0:                                                                    \
-      Animation_ApplyChildValues(object, n1);                                  \
+      Actor_SetSpriteColorMode(object, n1);                                  \
       break;                                                                   \
     case n2:                                                                   \
-      Animation_ApplyChildValues(object, n3);                                  \
+      Actor_SetSpriteColorMode(object, n3);                                  \
       break;                                                                   \
     }                                                                          \
   }
@@ -743,7 +743,7 @@
     x = startX;                                                                \
     z = startZ;                                                                \
     layer = &actor->terrainId;                                                 \
-    startBehavior = MapGrid_GetCellBehaviorAt(*layer, x, z);                   \
+    startBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, x, z);                   \
     dz = z - actor->z;                                                         \
     dx = x - actor->x;                                                         \
     distance = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz);                    \
@@ -758,7 +758,7 @@
     }                                                                          \
     FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);                   \
     nextBehavior =                                                             \
-        MapGrid_GetCellBehaviorAt(*layer, position->x, position->z);           \
+        FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);           \
     if (nextBehavior == 255 ||                                                 \
         Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >    \
             PIXELS(8)) {                                                       \
@@ -777,7 +777,7 @@
     FieldActor_SetMoveTarget(actor, startX, actor->y, startZ);                 \
     call2(actor, 2);                                                           \
     Actor_SetAnimationSpeed(actor, 48);                                        \
-    Actor_WaitForMove(actor);                                                  \
+    FieldActor_WaitForMove(actor);                                                  \
     actor->update = call3;                                                     \
     goto test;                                                                 \
   body:                                                                        \
@@ -808,7 +808,7 @@
     actor->speedLimit = PIXELS(2);                                             \
     actor->acceleration = 0x1999;                                              \
     FieldActor_SetMoveTarget(actor, next->x, next->y, next->z);                \
-    Actor_WaitForMove(actor);                                                  \
+    FieldActor_WaitForMove(actor);                                                  \
     if (nextBehavior != startBehavior) {                                       \
       goto blocked;                                                            \
     }                                                                          \
@@ -825,7 +825,7 @@
       step = NULL;                                                             \
     }                                                                          \
     next = &probe;                                                             \
-    nextBehavior = MapGrid_GetCellBehaviorAt(*layer, next->x, next->z);        \
+    nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, next->x, next->z);        \
     if (nextBehavior != 255) {                                                 \
       goto body;                                                               \
     }                                                                          \
@@ -833,7 +833,7 @@
     actor->speedLimit = PIXELS(2);                                             \
     actor->acceleration = PIXELS(1);                                           \
     FieldActor_SetMoveTarget(actor, x, actor->y, z);                           \
-    Actor_WaitForMove(actor);                                                  \
+    FieldActor_WaitForMove(actor);                                                  \
     System_Wait(2);                                                            \
     goto top;                                                                  \
                                                                                \
@@ -895,11 +895,11 @@
     position->z = startZ = (actor->z & 0xfff00000) + i;                        \
     x = startX;                                                                \
     z = startZ;                                                                \
-    startBehavior = MapGrid_GetCellBehaviorAt(*(layer = &actor->terrainId),    \
+    startBehavior = FieldMapGrid_GetCellBehaviorAt(*(layer = &actor->terrainId),    \
                                               startX, startZ);                 \
     FieldVector_AddPolarOffset(PIXELS(16), heading, position);                 \
     nextBehavior =                                                             \
-        MapGrid_GetCellBehaviorAt(*layer, position->x, position->z);           \
+        FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);           \
     if (nextBehavior == 255 ||                                                 \
         Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >    \
             i) {                                                               \
@@ -951,7 +951,7 @@
     actor->speedLimit = PIXELS(2);                                             \
     actor->acceleration = 0x1999;                                              \
     FieldActor_SetMoveTarget(actor, next->x, next->y, next->z);                \
-    Actor_WaitForMove(actor);                                                  \
+    FieldActor_WaitForMove(actor);                                                  \
     if (nextBehavior != startBehavior) {                                       \
       goto blocked;                                                            \
     }                                                                          \
@@ -967,7 +967,7 @@
      * differ in tla-en. */                                                    \
     step = NULL;                                                               \
     next = &probe;                                                             \
-    nextBehavior = MapGrid_GetCellBehaviorAt(*layer, next->x, next->z);        \
+    nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, next->x, next->z);        \
     if (nextBehavior != 255) {                                                 \
       goto body;                                                               \
     }                                                                          \
@@ -975,7 +975,7 @@
     actor->speedLimit = PIXELS(2);                                             \
     actor->acceleration = PIXELS(1);                                           \
     FieldActor_SetMoveTarget(actor, x, actor->y, z);                           \
-    Actor_WaitForMove(actor);                                                  \
+    FieldActor_WaitForMove(actor);                                                  \
     System_Wait(2);                                                            \
     goto top;                                                                  \
                                                                                \
@@ -1002,7 +1002,7 @@
     s32 v;                                                                     \
     s32 i;                                                                     \
                                                                                \
-    state = (State *)(gData_020023c4 + 0x188);                                 \
+    state = (State *)(gInventorySnapshot + 0x188);                                 \
     camera = IWRAM->camera;                                                    \
     entry = state->entries;                                                    \
     position = &camera->position;                                              \
@@ -1187,7 +1187,7 @@
       FieldActor_SetMoveTarget(actor, position.x, position.y, position.z);     \
                                                                                \
       work2 = Ram_HeapSlots->eventWork;                                        \
-      other = (struct id1 *)(gData_020023c4 + 0x188);                          \
+      other = (struct id1 *)(gInventorySnapshot + 0x188);                          \
       target = Actor_Get(gMainRoutineWork.currentOwner);                       \
       if (ABS(actor->x - target->x) < 0x140000 &&                              \
           (u32)(actor->y - target->y + 0x7ffff) <= 0x1ffffe &&                 \
@@ -1251,7 +1251,7 @@
         object->scaleX = scale;                                                \
         object->scaleY = object->scaleX;                                       \
         object->bounce = 0x8000;                                               \
-        Animation_ApplyChildValues(object, 1);                                 \
+        Actor_SetSpriteColorMode(object, 1);                                 \
       }                                                                        \
     }                                                                          \
     if (--i >= 0)                                                              \

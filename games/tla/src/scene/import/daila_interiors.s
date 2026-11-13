@@ -13,11 +13,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Import_ActorResetMotion
 	.thumb_func
 Import_ActorResetMotion:
@@ -25,7 +25,7 @@ Import_ActorResetMotion:
 	.global Map_SetLayerEntryFlag
 	.thumb_func
 Map_SetLayerEntryFlag:
-	overlay_veneer Func_080201a0
+	overlay_veneer Map_SetLayerEntryFlagFar
 	.global Map_CopyCellsRect
 	.thumb_func
 Map_CopyCellsRect:
@@ -37,7 +37,7 @@ Actor_SetSingleChildFlags:
 	.global Func_02000cbc
 	.thumb_func
 Func_02000cbc:
-	overlay_veneer Func_08020300
+	overlay_veneer Actor_SetItemIconFar
 	.global FieldMessage_Show
 	.thumb_func
 FieldMessage_Show:
@@ -102,10 +102,10 @@ Event_AskYesNoWithActorAnimation:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Actor_SetPositionAndReset
+	.global Actor_WalkToAndWaitById
 	.thumb_func
-Actor_SetPositionAndReset:
-	overlay_veneer Actor_SetPositionAndResetFar
+Actor_WalkToAndWaitById:
+	overlay_veneer Actor_WalkToAndWaitByIdFar
 	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
@@ -118,10 +118,10 @@ Actor_SetModeById:
 	.thumb_func
 Actor_Jump:
 	overlay_veneer Actor_JumpFar
-	.global Actor_SetAngleToward
+	.global Actor_FaceActorById
 	.thumb_func
-Actor_SetAngleToward:
-	overlay_veneer Actor_SetAngleTowardFar
+Actor_FaceActorById:
+	overlay_veneer Actor_FaceActorByIdFar
 	.global Import_EventSetMessageId
 	.thumb_func
 Import_EventSetMessageId:
@@ -145,15 +145,15 @@ Import_ActorSetSpritePriority:
 	.global Func_02000d94
 	.thumb_func
 Func_02000d94:
-	overlay_veneer Func_080c8210
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global Func_02000d9c
 	.thumb_func
 Func_02000d9c:
-	overlay_veneer Func_080c82e0
-	.global BattleEffect_RunActorRiseAndDescent
+	overlay_veneer Field_TryJumpForwardFar
+	.global ItemDisplay_ShowPicture
 	.thumb_func
-BattleEffect_RunActorRiseAndDescent:
-	overlay_veneer Func_080c83d8
+ItemDisplay_ShowPicture:
+	overlay_veneer ItemDisplay_ShowPictureFar
 	.global Func_02000dac
 	.thumb_func
 Func_02000dac:
@@ -165,7 +165,7 @@ Import_EventResolvePendingActions:
 	.global Func_02000dbc
 	.thumb_func
 Func_02000dbc:
-	overlay_veneer Func_080c8558
+	overlay_veneer FieldYesNo_AskFar
 	.global Func_02000dc4
 	.thumb_func
 Func_02000dc4:
@@ -181,19 +181,19 @@ Party_GetLeaderActor:
 	.global Shop_Run
 	.thumb_func
 Shop_Run:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Sanctum_Run
 	.thumb_func
 Sanctum_Run:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Inn_CheckIn
 	.thumb_func
 Inn_CheckIn:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar
 	.global ItemPicker_RunToDrop
 	.thumb_func
 ItemPicker_RunToDrop:
-	overlay_veneer Func_08108068
+	overlay_veneer ItemPicker_RunToDropFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

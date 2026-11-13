@@ -63,7 +63,7 @@ void Func_02000d78(u16 *list) {
   u8 *shapeGrid = gMapShapeGrid;
 
   if (held == NULL) {
-    s32 id = BattleEffect_FindNearestObject(gMainRoutineWork.currentOwner, 1);
+    s32 id = Field_FindNearbyPsynergyTarget(gMainRoutineWork.currentOwner, 1);
 
     if (id != -1)
       held = Actor_GetById(id);

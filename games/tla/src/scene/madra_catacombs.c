@@ -43,7 +43,7 @@ void Func_0200014c(u16 *list) {
   u8 *grid;
 
   if (held == NULL) {
-    s32 id = BattleEffect_FindNearestObject(gMainRoutineWork.currentOwner, 1);
+    s32 id = Field_FindNearbyPsynergyTarget(gMainRoutineWork.currentOwner, 1);
 
     if (id != -1)
       held = Actor_GetById(id);
@@ -264,10 +264,18 @@ struct EventWork1ac {
 
 void Actor_MoveToObject(s32 id, s32 value);
 void Func_020011b4(void);
-/* VIEW(madra_catacombs): routine Func_020011c4 as void Func_020011c4(const void *data); module/scene/mars_lighthouse_room_m.h has void Func_020011c4(void); tried as the definition's void Func_020011c4(void), which the object already declares, Func_02000dcc moves: 1 of 142 instructions in tla-ja. */
-extern void Func_020011c4__madra_catacombs(const void *data) __asm__("Func_020011c4");
-/* VIEW(madra_catacombs): routine Func_020011dc as void Func_020011dc(const void *data); module/scene/trial_road.h has void Func_020011dc(void); tried as the definition's void Func_020011dc(void), which the object already declares, Func_02000dcc moves: 1 of 142 instructions in tla-ja. */
-extern void Func_020011dc__madra_catacombs(const void *data) __asm__("Func_020011dc");
+/* VIEW(madra_catacombs): routine Func_020011c4 as void Func_020011c4(const void
+ * *data); module/scene/mars_lighthouse_room_m.h has void Func_020011c4(void);
+ * tried as the definition's void Func_020011c4(void), which the object already
+ * declares, Func_02000dcc moves: 1 of 142 instructions in tla-ja. */
+extern void
+Func_020011c4__madra_catacombs(const void *data) __asm__("Func_020011c4");
+/* VIEW(madra_catacombs): routine Func_020011dc as void Func_020011dc(const void
+ * *data); module/scene/trial_road.h has void Func_020011dc(void); tried as the
+ * definition's void Func_020011dc(void), which the object already declares,
+ * Func_02000dcc moves: 1 of 142 instructions in tla-ja. */
+extern void
+Func_020011dc__madra_catacombs(const void *data) __asm__("Func_020011dc");
 void Func_020008d0(struct Actor *object);
 void Func_02000cf4(void);
 
@@ -415,7 +423,7 @@ void Func_02000a88(void) {
   cell = object->x >> 16;
   Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                 object->z);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
   Actor_SetScript(party->currentOwner, gData_0200121c);
   wait(12);
@@ -444,7 +452,7 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     cell = object->x >> 16;
     Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                         object->z);
-    Actor_WaitForMove(object);
+    FieldActor_WaitForMove(object);
     object->facing = FACING_NORTH;
   }
   Actor_SetScript(gMainRoutineWork.currentOwner, gData_0200121c);
@@ -471,7 +479,7 @@ void Func_02000c78(void) { Func_02000b38(92, 29, 92, 31, 1, 2); }
     FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
     Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),    \
                               0);                                              \
-    Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);  \
+    Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);  \
     wait(1);                                                                   \
     Event_StartScreenTransition();                                             \
     Event_WaitTransitionFrames();                                              \
@@ -844,7 +852,8 @@ struct Trigger gMadraCatacombs_Room3Triggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x200, 0},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgFieldCaveFoundByChampa)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFieldWhoDugCave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgFieldWhoDugCave)},
     {TRIGGERS_END},
 };
 
@@ -874,7 +883,8 @@ struct Trigger gMadraCatacombs_Room5Triggers[] = {
     {0xc602, 6, CONDITION_ALWAYS, EVENT(Func_02000c5c)},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 8, CONDITION_ALWAYS, EVENT(Func_02000874)},
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 8, CONDITION_ALWAYS,
+     EVENT(Func_02000874)},
     {TRIGGERS_END},
 };
 

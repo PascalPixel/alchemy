@@ -3,7 +3,7 @@
 
 void Func_02000280(void) {
   GameFlag_SetBit(513);
-  Field_RequestDjinnBattle(8, 52);
+  Event_RequestDjinnBattle(8, 52);
 }
 
 #include "../../field/object/wait_until_idle.c"

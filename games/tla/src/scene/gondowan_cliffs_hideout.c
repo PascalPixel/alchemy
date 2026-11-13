@@ -43,9 +43,9 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgKibomboWarriorsFound);
     Camera_SetSpeedParameters(0x10000, 0x2000);
-    Camera_FollowActor(8, 1);
+    FieldCamera_FollowActor(8, 1);
     FieldCamera_WaitForArrival();
-    Actor_SetAngleToward(ACTOR_WARRIOR_FROM_KIBOMBO, ACTOR_FELIX, 2);
+    Actor_FaceActorById(ACTOR_WARRIOR_FROM_KIBOMBO, ACTOR_FELIX, 2);
     {
       s32 half = 129;
       s32 id = ACTOR_WARRIOR_FROM_KIBOMBO;
@@ -59,18 +59,18 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
     Actor_Jump(ACTOR_WARRIOR_FROM_KIBOMBO, 4, 15);
     // "We've been found!"
     Event_ShowMessageAndWait(ACTOR_WARRIOR_FROM_KIBOMBO, 0);
-    Actor_SetAngleToward(ACTOR_WARRIOR_BLAMING_THE_COLLISION, ACTOR_FELIX, 0);
-    Actor_SetAngleToward(ACTOR_WARRIOR_CLAIMING_TO_CAMP, ACTOR_FELIX, 0);
-    Actor_SetAngleToward(ACTOR_WARRIOR_AWAITING_FRIENDS, ACTOR_FELIX, 0);
+    Actor_FaceActorById(ACTOR_WARRIOR_BLAMING_THE_COLLISION, ACTOR_FELIX, 0);
+    Actor_FaceActorById(ACTOR_WARRIOR_CLAIMING_TO_CAMP, ACTOR_FELIX, 0);
+    Actor_FaceActorById(ACTOR_WARRIOR_AWAITING_FRIENDS, ACTOR_FELIX, 0);
     Actor_Jump(ACTOR_WARRIOR_BLAMING_THE_COLLISION, 2, 15);
     // "You wanna fight, punk?"
     Event_ShowMessageAndWait(ACTOR_WARRIOR_BLAMING_THE_COLLISION, 0);
-    Actor_SetAngleToward(ACTOR_WARRIOR_CLAIMING_TO_CAMP,
-                         ACTOR_WARRIOR_BLAMING_THE_COLLISION, 0);
+    Actor_FaceActorById(ACTOR_WARRIOR_CLAIMING_TO_CAMP,
+                        ACTOR_WARRIOR_BLAMING_THE_COLLISION, 0);
     Motion_SetModeAndWaitAnimation(ACTOR_WARRIOR_CLAIMING_TO_CAMP, 4);
     // "No one said anything about fighting yet!"
     Event_ShowMessageAndWait(ACTOR_WARRIOR_CLAIMING_TO_CAMP, 0);
-    Actor_SetAngleToward(ACTOR_WARRIOR_CLAIMING_TO_CAMP, ACTOR_FELIX, 0);
+    Actor_FaceActorById(ACTOR_WARRIOR_CLAIMING_TO_CAMP, ACTOR_FELIX, 0);
     // "We haven't done anything to you!"
     Event_ShowMessageAndWait(ACTOR_WARRIOR_CLAIMING_TO_CAMP, 0);
     Motion_SetModeAndWaitAnimation(ACTOR_WARRIOR_AWAITING_FRIENDS, 3);

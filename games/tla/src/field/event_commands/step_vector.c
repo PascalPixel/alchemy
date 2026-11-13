@@ -11,7 +11,7 @@
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
 #include "module/system/system.h"
-#include "module/tla.h"
+#include "gamepak/far_call/field.h"
 
 void BattleEffect_StepVector2(s32 *vector, s32 damping, s32 gravity) {
   BattleEffect_IntegrateVector2(vector, damping, gravity);
@@ -383,7 +383,6 @@ struct SparkWork {
 #define SPARK_LIFE 50
 #define PHASE_DONE 999
 
-
 /// An object vanishes in a whirl of sparks: 64 sprites of picture 0x1ea circle
 /// out from it, each spark rising and closing in for 50 frames. Ten frames in
 /// the sparks stop coming and the object spins and widens from nothing back to
@@ -406,9 +405,9 @@ void Func_080eb960(s32 objectId) {
   s32 frame;
   s32 position[3];
 
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
-                        work);
-  entry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
+                      work);
+  entry = VramCache_FindFreeEntry();
   tiles = VramCache_Load(entry, sizeof(work->picture), work);
 
   i = 0;
@@ -512,7 +511,7 @@ void Func_080eb960(s32 objectId) {
     wait(1);
     frame++;
   } while (phase != PHASE_DONE);
-  Resource_ResetEntry(entry);
+  VramCache_FreeEntry(entry);
   HeapSlot_Release(HEAP_SLOT_SPARKS);
 }
 
@@ -530,12 +529,12 @@ void FieldParticle_Update(struct FieldParticle *effect) {
       if (effect->updateMotion != 0)
         FieldParticle_UpdateMotion(effect);
       if (effect->render != 0)
-        BattleEffect_DrawScaledObject(effect);
+        FieldEffect_DrawScaledActor(effect);
     }
   }
 }
 
-void BattleEffect_DrawScaledObject(struct FieldParticle *object) {
+void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
   struct ScaledSprite *sprite;
   s32 offset;
   s32 scale[2];
@@ -653,7 +652,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   volatile u32 zero;
 
   Dma_Fill32Cell(zero, 0, effect, sizeof *effect);
-  object = (struct FieldSprite *)ResourceObject_CreateFar(kind);
+  object = (struct FieldSprite *)Sprite_CreateFar(kind);
   effect->object = object;
   if (object != NULL)
     object->priority = 0;
@@ -676,8 +675,8 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   FieldParticle_SetActorMode(effect, 1);
 }
 
-void BattleEffect_ClearOwnedSlot(struct FieldParticle *slot) {
+void FieldEffect_ClearOwnedSlot(struct FieldParticle *slot) {
   if (slot->object)
-    ResourceObject_ReleaseFar((struct ResourceObjectWork *)slot->object);
+    Sprite_DestroyFar((struct ResourceObjectWork *)slot->object);
   Dma_Fill32(0, slot, sizeof *slot);
 }

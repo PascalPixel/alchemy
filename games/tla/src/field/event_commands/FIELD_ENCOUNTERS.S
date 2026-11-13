@@ -4,8 +4,8 @@
 	.2byte \scene, \entrance, \flag
 	.byte \value0, \value1
 	.endm
-	.global Data_080ee6d4
-Data_080ee6d4:
+	.global gScene_EncounterRules
+gScene_EncounterRules:
 	encounter 14, -1, -1, 17, 0
 	encounter 15, 2, -1, 18, 0
 	encounter 15, 3, -1, 18, 0

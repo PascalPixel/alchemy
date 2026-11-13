@@ -186,7 +186,7 @@ Slots_LowerBanner:
 	.byte 0x13	@ PACKER: left in the buffer by Slots_HigherBanner+0x23b
 	.else
 	.ifdef TLA_EDITION_DE
-	.byte 0x12, 0x40	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.byte 0x12, 0x40	@ PACKER: unused post-stream residue; Decompress_TaggedLz uses decoded RAM and output length; writer unknown
 	.else
 	.ifdef TLA_EDITION_ES
 	.byte 0x90, 0xb8, 0x94	@ PACKER: left in the buffer by Slots_HigherBanner+0x2bd
@@ -238,7 +238,7 @@ Slots_DoubleUpBanner:
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
 	.else
 	.ifdef TLA_EDITION_DE
-	.byte 0x04, 0x00, 0x00	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.byte 0x04, 0x00, 0x00	@ PACKER: unused post-stream residue; Decompress_TaggedLz uses decoded RAM and output length; writer unknown
 	.else
 	.ifdef TLA_EDITION_ES
 	.balign 4, 0xff	@ PACKER: 0xff fill, not an earlier stream's bytes
@@ -289,7 +289,7 @@ Slots_CashOutBanner:
 	.byte 0x80, 0x4e	@ PACKER: left in the buffer by Slots_DoubleUpBanner+0x3a2
 	.else
 	.ifdef TLA_EDITION_ES
-	.byte 0x01, 0x00, 0x00	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.byte 0x01, 0x00, 0x00	@ PACKER: unused post-stream residue; Decompress_TaggedLz uses decoded RAM and output length; writer unknown
 	.else
 	.ifdef TLA_EDITION_IT
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
@@ -421,7 +421,7 @@ Slots_SmallDoubleUpBanner:
 	.byte 0x1d, 0x98	@ PACKER: left in the buffer by Slots_GreenDigits+0x162
 	.else
 	.ifdef TLA_EDITION_FR
-	.byte 0x40	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.byte 0x40	@ PACKER: unused post-stream residue; Decompress_TaggedLz uses decoded RAM and output length; writer unknown
 	.endif
 	.endif
 	.endif
@@ -512,7 +512,7 @@ Slots_TwoPairBanner:
 	.byte 0x04	@ PACKER: left in the buffer by Slots_GreenDigits+0x5e3
 	.else
 	.ifdef TLA_EDITION_EN
-	.byte 0x03, 0x00, 0x00	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.byte 0x03, 0x00, 0x00	@ PACKER: unused post-stream residue; Decompress_TaggedLz uses decoded RAM and output length; writer unknown
 	.endif
 	.endif
 	.endif
@@ -597,7 +597,7 @@ Slots_PerfectBanner:
 	.balign 4, 0xff	@ PACKER: 0xff fill, not an earlier stream's bytes
 	.else
 	.ifdef TLA_EDITION_ES
-	.byte 0x05, 0x08	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.byte 0x05, 0x08	@ PACKER: unused post-stream residue; Decompress_TaggedLz uses decoded RAM and output length; writer unknown
 	.else
 	.ifdef TLA_EDITION_FR
 	.byte 0x02	@ PACKER: left in the buffer by Resource_Data087+0x7ab

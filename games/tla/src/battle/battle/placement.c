@@ -7,8 +7,6 @@
 #include "module/battle/battle.h"
 #include "module/system/system.h"
 
-struct MotionObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-
 /// Resets a battle actor, making its object when it has none: scale 0xe666,
 /// the anchors cleared unless keep is set, no sprite, animation, effect or
 /// state, facing ArcTan2(0, 0) + 0x8000, visible, then the actor object
@@ -20,7 +18,7 @@ void BattleObject_Reset(struct BattleObj *actor, s32 keep) {
   s32 zero;
 
   if (actor->object == 0)
-    object = Func_080200c0(0xf000, 0, 0, 0);
+    object = (struct MotionObject *)Actor_CreateFar(0xf000, 0, 0, 0);
   else
     object = actor->object;
   // The zero in a local of its own, set before the keep test, serves the 0
@@ -51,7 +49,7 @@ void BattleObject_Reset(struct BattleObj *actor, s32 keep) {
   object->unk59 = 3;
   object->motionFlags = 2;
   actor->visible = 1;
-  Actor_StartScriptFar((struct Actor *)object, Data_0812cacc);
+  Actor_StartScriptFar((struct Actor *)object, gBattleObject_EmptyScript);
 }
 
 void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
@@ -67,15 +65,15 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
 
   fixedX = x * 65536;
   fixedZ = y * 65536;
-  object = Func_080200c0(0xf000, fixedX, 0, fixedZ);
+  object = Actor_CreateFar(0xf000, fixedX, 0, fixedZ);
   unit = Unit_Get(unitId);
   palette = 0;
-  registeredSprite = SummonSlot_RegisterActorSprites(unitId);
+  registeredSprite = EnemySprite_LoadIntoSlots(unitId);
 
   if (unit->classIndex == 0) {
-    sprite = BattleClass_GetSprite(unit->enemyId);
+    sprite = BattleSprite_GetSprite(unit->enemyId);
     if (registeredSprite == 0)
-      palette = BattleClass_GetPalette(unit->enemyId);
+      palette = BattleSprite_GetPalette(unit->enemyId);
     else
       sprite = registeredSprite;
   } else {
@@ -407,7 +405,7 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   actor->anchorZ = fixedZ;
   actor->palette = palette;
   actor->resource = sprite;
-  weaponSprite = BattleUnit_LookupWeaponValueByClass(unitId);
+  weaponSprite = BattleUnit_GetWeaponSprite(unitId);
   actor->animation = 0;
   actor->animationEntry = 0;
   actor->effectEntry = 0;
@@ -437,7 +435,7 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
     object->scaleX = 0x10000;
     object->scaleY = 0x10000;
   }
-  Actor_StartScriptFar((struct Actor *)object, Data_0812cacc);
+  Actor_StartScriptFar((struct Actor *)object, gBattleObject_EmptyScript);
 }
 
 void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y) {
@@ -453,8 +451,8 @@ void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y) {
 /// flagged and 38 when not.
 // The Broken Seal's function of the same name, keyed by the enemy id, with
 // nine enemies forward where it names two.
-void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
-                            s32 *zPositions) {
+void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
+                                   s32 *zPositions) {
   s32 totalSpacing = count <= 4 ? 30 : 27;
   s32 z = ((count - 1) * totalSpacing) / 2;
   s32 index;
@@ -470,7 +468,7 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
       spacing = 25;
       if ((u16)(actorIds[index] - 254) > 1) {
         actor = Unit_Get(actorIds[index]);
-        spacing = BattleClass_IsSmall(actor->enemyId) ? 27 : 38;
+        spacing = BattleSprite_IsSmall(actor->enemyId) ? 27 : 38;
         enemy = actor->enemyId;
         if (enemy == 357 || enemy == 348 || enemy == 91 || enemy == 92 ||
             enemy == 93 || enemy == 94 || enemy == 95 || enemy == 96 ||
@@ -485,13 +483,13 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
     if ((u16)(actorIds[index] - 254) > 1) {
       struct BattleUnit *actor = Unit_Get(actorIds[index]);
 
-      spacing = BattleClass_IsSmall(actor->enemyId) ? 27 : 38;
+      spacing = BattleSprite_IsSmall(actor->enemyId) ? 27 : 38;
     }
     z -= spacing / 2;
   }
 }
 
-s32 Enemy_GetFreeSlot(void) {
+s32 Enemy_GetFreeUnitId(void) {
   s32 i;
   s32 id;
 
@@ -529,7 +527,7 @@ void Enemy_Update(void) {
     count++;
   }
   total = last + 1;
-  Summon_LayoutPositions(unitIds, total, x, z);
+  BattlePlacement_LayoutEnemies(unitIds, total, x, z);
   for (i = 0; i < total; i++) {
     s32 id = unitIds[i];
 
@@ -562,7 +560,7 @@ void BattleUnit_RefreshPlacement(void) {
   place = 0;
   stand = 0;
   work = Ram_HeapSlots->battleWork;
-  count = BattleParty_PrepareActiveOwners(ids);
+  count = BattleParty_PrepareMembers(ids);
   count += BattleParty_PrepareReserveOwners(ids + count);
   value = 0xff;
   for (i = 13; i >= 0; i--)
@@ -580,13 +578,12 @@ void BattleUnit_RefreshPlacement(void) {
   for (i = 0; i < 6 && work->enemyIds[i] != 0xff; i++)
     ids[i] = work->enemyIds[i];
   count = i;
-  Summon_LayoutPositions(ids, count, x, z);
+  BattlePlacement_LayoutEnemies(ids, count, x, z);
   for (i = 0; i < count; i++, stand++) {
     s32 id = work->enemyIds[i];
 
     if (id != 0xfe)
-      BattleObject_Make(BattleObject_Get(id), id,
-                        x[stand], z[stand]);
+      BattleObject_Make(BattleObject_Get(id), id, x[stand], z[stand]);
   }
 }
 

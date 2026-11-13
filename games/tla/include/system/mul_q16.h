@@ -30,4 +30,6 @@ static __inline__ s32 MulQ16(s32 left, s32 right) {
   return result;
 }
 
+u32 Math_UnsignedMulHigh(u32 a, u32 b);
+
 #endif

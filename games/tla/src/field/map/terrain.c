@@ -20,13 +20,15 @@
 #include "module/field/field.h"
 #include "module/field/map.h"
 #include "module/system/system.h"
-#include "module/tla.h"
 #include "resource.h"
 #include "sprite_metadata.h"
+#include "module/field/resource_slot.h"
 
-u8 GetWorldMapTerrainBehavior(struct WorldPosition *position,
-                              s32 *terrainKind) {
-  s32 selector = GetWorldMapCollision(position);
+extern u32 Data_02018000[];
+
+u8 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
+                                 s32 *terrainKind) {
+  s32 selector = WorldMap_GetCollision(position);
   s32 x = position->x;
   s32 y;
   s32 flag = 0;
@@ -59,7 +61,7 @@ u8 GetWorldMapTerrainBehavior(struct WorldPosition *position,
   return gWorldMap_TerrainBehaviorTable[flag + selector];
 }
 
-void Map_SetScreenShake(s32 value0, s32 value1, s32 value2) {
+void MapGrid_SetScreenShake(s32 value0, s32 value1, s32 value2) {
   struct MapWork *work;
 
   work = Ram_HeapSlots->mapWork;
@@ -76,7 +78,7 @@ void Map_SetScreenShake(s32 value0, s32 value1, s32 value2) {
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-void Map_WaitForShakeToSettle(void) {
+void MapGrid_WaitForShakeToSettle(void) {
   s32 *work;
   s32 cnt;
 
@@ -101,9 +103,9 @@ done:
   work[3] = 0;
 }
 
-void Func_0802dd08(s32 arg0, s32 arg1) {
+void TileMap_DrawRowsFromRam(s32 arg0, s32 arg1) {
   void (*routine)(s32, s32, u8 *, u8 *);
-  u8 *tiles = gData_0201c000;
+  u8 *tiles = gDecodeBuffer;
 
   RamCode_Load(routine, Render_DrawMapCode, Render_DrawMapCodeSize);
   routine(arg0, arg1, gData_0203c000, tiles + 0x1000);
@@ -120,7 +122,8 @@ static inline void Iwram_TransformVector(const void *vector, s32 *result) {
   Iwram_TransformVectorEntry(vector, result);
 }
 
-void Func_0802dd70(s32 pitchSlope, s32 *position, struct ScanlineRow *row) {
+void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
+                                 struct ScanlineRow *row) {
   s32 vector[3];
   s32 result[3];
   s32 height;
@@ -190,7 +193,7 @@ s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id);
 
 /// The debug sprite viewer, in The Broken Seal's form with this game's
 /// changes; it never returns.
-void Func_0802de8c(void) {
+void SpriteViewer_Run(void) {
   struct SpriteViewerLayer layers[4];
   volatile u32 zero;
   s32 x;
@@ -214,7 +217,7 @@ void Func_0802de8c(void) {
   gDecodeFillByte = 3;
   Dma_Fill32Cell(zero, 0, ring, 4);
   Dma_Fill32Cell(zero, 0, layers, sizeof(layers));
-  spriteId = Func_0802e444(-1, 1);
+  spriteId = SpriteViewer_FindNextSpriteWithPictures(-1, 1);
   for (i = 0; i < 4; i++) {
     layers[i].animationIndex = 1;
     layers[i].priority = 1;
@@ -225,17 +228,17 @@ void Func_0802de8c(void) {
   REG_BLDCNT = 0x3f42;
   *(volatile u16 *)0x05000000 = 0x7c00;
   REG_DISPCNT = 0x1140;
-  Fade_FromBlack(1);
+  ScreenFade_FromBlack(1);
 
 restart:
   Heap_Initialize();
   Task_ResetAll();
   ring = HeapSlot_AllocEwram(36, 160);
   VramCache_Reset();
-  Func_080230e0(2);
-  ResourceSlot_Load(0, gMapCellBuffer, layers[0].spriteId, 0);
+  ActorSystem_Initialize(2);
+  SpritePictureCache_Load(0, gMapCellBuffer, layers[0].spriteId, 0);
   if (Resource_GetMetadataRecordFar(layers[0].spriteId)->drawKind == 20)
-    ResourceSlot_Load(1, Data_02018000, layers[0].spriteId + 1, 0);
+    SpritePictureCache_Load(1, Data_02018000, layers[0].spriteId + 1, 0);
   for (i = 0; i < 10; i++) {
     struct ViewerSprite *sprite;
     s32 part = 0;
@@ -243,7 +246,7 @@ restart:
     if (Resource_GetMetadataRecordFar(layers[0].spriteId)->drawKind == 20 &&
         (i & 1))
       part = 1;
-    sprite = ResourceObject_Create(layers[0].spriteId + part + (part << 12));
+    sprite = Sprite_Create(layers[0].spriteId + part + (part << 12));
     ResourceMetadata_Register(sprite, layers[1].spriteId);
     ResourceMetadata_Register(sprite, layers[2].spriteId);
     ResourceMetadata_Register(sprite, layers[3].spriteId);
@@ -266,7 +269,7 @@ restart:
     }
   }
   SpriteViewer_BuildProbeRing(x, y, ring);
-  Task_Add(Battle_PlaceActorsByFormationKind, 0x480);
+  Task_Add(SpriteViewer_PlaceRing, 0x480);
 
 next:
   wait(1);
@@ -334,12 +337,14 @@ next:
         steps = 10;
       if (gInput.repeat & 0x200) {
         layers[selectedLayer].spriteId =
-            Func_0802e444(layers[selectedLayer].spriteId, -steps);
+            SpriteViewer_FindNextSpriteWithPictures(
+                layers[selectedLayer].spriteId, -steps);
         changed = 1;
       }
       if (gInput.repeat & 0x100) {
         layers[selectedLayer].spriteId =
-            Func_0802e444(layers[selectedLayer].spriteId, steps);
+            SpriteViewer_FindNextSpriteWithPictures(
+                layers[selectedLayer].spriteId, steps);
         changed = 1;
       }
       if (changed == 0)
@@ -425,7 +430,7 @@ next:
     }
     if (gInput.repeat & 4) {
       Task_ResetAll();
-      System_ReturnZero((s32)&ResourceId_Data012, gResource_Data012);
+      Stub_ReturnZero((s32)&ResourceId_Data012, gResource_Data012);
       goto restart;
     }
     if (gInput.pressed & 2) {
@@ -446,7 +451,7 @@ extern const u16 gData_0802f064[];
 /// range, a larger step forward goes to the next stop above value and one back
 /// to the last stop below it (gData_0802f064, ended by 0xffff, from which a
 /// step forward wraps to 0). A delta of 0 returns value unchanged.
-s32 Func_0802e444(s32 value, s32 delta) {
+s32 SpriteViewer_FindNextSpriteWithPictures(s32 value, s32 delta) {
   s32 step;
 
   if (delta != 0) {
@@ -499,7 +504,8 @@ s32 Func_0802e444(s32 value, s32 delta) {
 /// pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a two-part
 /// sprite). B held turns the ring. Called by SpriteViewer_Run when it starts
 /// and while Start moves the ring.
-void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY, struct SpritePlacement *positions) {
+void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
+                                 struct SpritePlacement *positions) {
   struct SpritePlacement *pair;
   s32 angle;
   s32 i;
@@ -677,14 +683,14 @@ void SpriteViewer_SetGridColumnNumber(s32 slot, s32 no) {
 
     count--;
     *(u16 *)entry = no;
-    Animation_InitializeWorkFromMetadata(entry);
+    SpriteAnimation_Reset(entry);
     base += 56;
   } while (count >= 0);
 }
 
 extern struct Vec2 gBattle_FormationPlacementScale;
 
-void Battle_PlaceActorsByFormationKind(void) {
+void SpriteViewer_PlaceRing(void) {
   u8 *actor = Ram_HeapSlots->unk0c[1];
   u32 kind = (*(u8 **)(actor + 40))[4];
   struct Vec2 scale;

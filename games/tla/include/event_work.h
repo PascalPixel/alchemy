@@ -13,9 +13,8 @@ struct PendingEvent {
 void Event_RunMessage(s32 actor, s32 message);
 void Event_ResolveAllPendingActions(void);
 void Event_ResolvePendingActions(s32 skip);
-s32 Event_ExecutePackedAction(u32 action);
-s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode,
-                                 s32 target);
+s32 Field_RunPsynergyEndEvents(u32 action);
+s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target);
 s32 Party_GetLeaderActor(void);
 void Event_ShowMessageAndWait(s32 actor, s32 flags);
 void Event_UpdateDebugSkip(void);

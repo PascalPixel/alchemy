@@ -40,10 +40,12 @@ struct Actor *Whirlwind_SpawnUpper();
 
 void Func_02000054(void) {
   if (gMainRoutineWork.renderMode == 10)
-    MapGrid_SetCellBehavior(0x2200000, 0x1100000, 0, 255);
+    FieldMapGrid_SetCellBehavior(0x2200000, 0x1100000, 0, 255);
 }
 
-void Func_0200007c(void) { Func_080dbdd4(0x2200000, 0x1100000, 0, 6); }
+void Func_0200007c(void) {
+  MapGrid_SetCellBehavior(0x2200000, 0x1100000, 0, 6);
+}
 
 void Func_02000090(s32 id) {
   struct Actor *object;
@@ -68,8 +70,7 @@ void Func_020000e8(s32 id) {
   struct Actor *object;
   struct Actor *motion;
 
-  if (gData_02002618 == 0 &&
-      Actor_Get(gMainRoutineWork.currentOwner)->y > 0) {
+  if (gData_02002618 == 0 && Actor_Get(gMainRoutineWork.currentOwner)->y > 0) {
     object = Actor_Get(8);
     if (id == 50) {
       Actor_SetPosition(8, PIXELS(488), PIXELS(280));

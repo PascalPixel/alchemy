@@ -102,7 +102,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 void Func_020001bc(void) {
   Actor_SetPosition(12, PIXELS(488), PIXELS(1256));
-  Animation_SetIndexAndInitializeObjects(Actor_Get(12), 157);
+  Actor_SetFirstSpriteAnimation(Actor_Get(12), 157);
   Actor_SetAnimation(12, 3);
   Actor_FaceDirection(12, FACING_WEST, 0);
 }
@@ -354,7 +354,7 @@ L_02008694:
   FieldEvent_SetMessageId((s32)&MsgAreYouKids);
   Actor_SetPosition(12, PIXELS(872), PIXELS(880));
   t12 = (s32)Actor_Get(12);
-  Animation_SetIndexAndInitializeObjects(t12, 43);
+  Actor_SetFirstSpriteAnimation(t12, 43);
   Actor_SetAnimation(12, 3);
   Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
@@ -411,7 +411,7 @@ L_02008788:
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(12, 0, 5);
   Actor_WalkByAndWait(12, 32, 0);
-  FieldCamera_FollowActor(4, 1);
+  EventCamera_FollowActor(4, 1);
   Actor_WalkByAndWait(12, 0, -32);
   Event_SetFlag(0x96f);
 L_020088cc:
@@ -693,7 +693,7 @@ void Lemuria_AdmirePalace(s32 id) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgOh2);
-  Animation_SetIndexAndInitializeObjects((s32)Actor_Get(12), 56);
+  Actor_SetFirstSpriteAnimation((s32)Actor_Get(12), 56);
   if (id == 21) {
     Actor_WalkToAndWait(4, 376, 968);
     Actor_FaceDirection(4, FACING_EAST, 0);
@@ -712,7 +712,7 @@ void Lemuria_AdmirePalace(s32 id) {
   FieldActor_WaitForMoveById(12);
   FieldActor_WatchAndSetScript(4, 12);
   Actor_SetSpeed(12, 0x10000, 0x8000);
-  FieldCamera_FollowActor(12, 1);
+  EventCamera_FollowActor(12, 1);
   Actor_WalkToAndWait(12, 464, 952);
   Actor_FaceDirectionAndWait(12, a);
   FieldEvent_Wait(10);
@@ -759,7 +759,7 @@ void Lemuria_KeepLookingAround(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgWhereAreYou);
-  Animation_SetIndexAndInitializeObjects((s32)Actor_Get(12), 56);
+  Actor_SetFirstSpriteAnimation((s32)Actor_Get(12), 56);
   Actor_FaceDirectionAndWait(4, FACING_SOUTH);
   FieldActor_SetSpritePriority(12, 1);
   FieldActor_LaunchFromLeader(12, 0, 16, FACING_NORTH + FACING_STEP);
@@ -797,7 +797,7 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_SetMessageId((s32)MsgThisPlaceIs);
   Actor_SetSpeed(24, 0x10000, 0x8000);
   Actor_SetSpeed(25, 0x10000, 0x8000);
-  Animation_SetIndexAndInitializeObjects((s32)Actor_Get(12), 56);
+  Actor_SetFirstSpriteAnimation((s32)Actor_Get(12), 56);
   Actor_WalkToAndWait(4, 472, 568);
   FieldActor_LaunchFromLeader(12, -16, 0, FACING_NORTH + FACING_STEP);
   Actor_FaceDirection(4, FACING_NORTH, 0);
@@ -895,7 +895,7 @@ void Lemuria_MarvelAtCity(void) {
   FieldActor_WatchAndSetScript(24, 12);
   FieldActor_WatchAndSetScript(25, 12);
   Actor_SetSpeed(12, 0x10000, 0x8000);
-  FieldCamera_FollowActor(12, 1);
+  EventCamera_FollowActor(12, 1);
   Actor_WalkToAndWait(12, 424, 600);
   FieldEvent_Wait(20);
   FieldCamera_MoveTo(PIXELS(400), -1, PIXELS(648), 1);
@@ -909,7 +909,7 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(40);
   Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
   FieldEvent_Wait(40);
-  FieldCamera_FollowActor(12, 1);
+  EventCamera_FollowActor(12, 1);
   Actor_WalkToAndWait(12, 432, 536);
   FieldEvent_Wait(20);
   Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
@@ -928,7 +928,7 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(12, 3);
   FieldEvent_Wait(10);
-  FieldCamera_FollowActor(12, 1);
+  EventCamera_FollowActor(12, 1);
   Actor_WalkToAndWait(12, 456, 568);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(544), 1);
   FieldCamera_WaitForArrival();
@@ -1204,16 +1204,20 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x196a, MSGNO(MsgHowCouldLord)},
     {TRIGGER_TALK, 24, 0x1969, MSGNO(MsgKingHydrosAwaits)},
     {TRIGGER_TALK, 25, 0x1969, MSGNO(MsgHisHighnessThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x1969, MSGNO(MsgTheyAreClearly)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x1969,
+     MSGNO(MsgTheyAreClearly)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x1969, MSGNO(MsgWhatDoesHis)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTheKingIs)},
     {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgTheKingWill)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgHowMuchLongerWill)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgIHadHeard)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
+     MSGNO(MsgHowMuchLongerWill)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
+     MSGNO(MsgIHadHeard)},
     {TRIGGER_TALK, 26, 0x196a, MSGNO(MsgIfYouAnd)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, 0x196a, MSGNO(MsgIKnowWhy)},
     {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgTheSenateHolds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgITrustThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
+     MSGNO(MsgITrustThe)},
     {0xc400, 11, CONDITION_ALWAYS, MSGNO(MsgHouseOfThe)},
     {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgDrinkingFromThis)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTheseTurtlesHave)},

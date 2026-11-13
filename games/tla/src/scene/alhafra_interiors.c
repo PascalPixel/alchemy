@@ -123,7 +123,7 @@ void AlhafraInteriors_MeetAlex(void) {
   FieldEvent_ShowMessageThenWait(0x801f, 0, 0xa);
   Actor_FaceDirection(31, 0xc000, 0);
   FieldEvent_Wait(20);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -449,7 +449,7 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       Actor_SetSpeed(32, 0x10000, 0x8000);
       FieldActor_SetSpritePriority(31, 2);
       FieldActor_SetSpritePriority(32, 2);
-      FieldCamera_FollowActor(32, 1);
+      EventCamera_FollowActor(32, 1);
       Actor_WalkTo(31, 394, 342);
       FieldEvent_Wait(10);
       Actor_WalkTo(32, 450, 346);

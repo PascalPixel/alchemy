@@ -6,11 +6,13 @@
 #include "../field_sequence_internal.h"
 #include "module/field/field.h"
 #include "module/field/field_sequence.h"
-#include "module/tla.h"
+#include "gamepak/far_call/field.h"
+#include "gamepak/far_call/game.h"
+#include "ram_buffer.h"
 
 s32 Func_080caf6c(void) { return 0; }
 
-void BattleEffect_ResetCounters(void) {
+void Field_ClearRequests(void) {
   s16 value;
   struct BattleEffectCounterState *state;
 
@@ -30,7 +32,7 @@ void BattleEffect_ResetCounters(void) {
   state->counters[11] = 0;
 }
 
-s32 BattleEffect_SumCounters(void) {
+s32 Field_CountRequests(void) {
   struct BattleEffectCounterState *state = Ram_HeapSlots->eventWork;
 
   return state->counters[0] + state->counters[1] + state->counters[2] +
@@ -50,9 +52,9 @@ void Func_080cb05c(void) {
     work[0xd39] = 0;
 }
 
-s32 Func_080cb09c(void) {
+s32 Field_GetCollisionAheadOfLeader(void) {
   struct DisplayBlock *block = Ram_HeapSlots->eventWork;
-  struct Actor *object = Func_080cb8e8();
+  struct Actor *object = WorldMap_Unfreeze();
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 position[3];
   u8 *cell;
@@ -83,7 +85,7 @@ s32 Func_080cb09c(void) {
 
 s32 Func_080cb144(void) {
   struct DisplayBlock *block = Ram_HeapSlots->eventWork;
-  struct Actor *object = Func_080cb8e8();
+  struct Actor *object = WorldMap_Unfreeze();
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Vector3 position;
   struct MapCell *cell;
@@ -110,7 +112,7 @@ s32 Func_080cb144(void) {
 
 // The overlay's entry table; entry 11 returns the map's region list.
 
-void UpdateMapRegionAtPosition(s32 positionX, s32 positionY, s32 positionZ) {
+void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   s32 selectedValue;
   struct EventWork *runtime;
   s32 z;
@@ -161,11 +163,11 @@ void UpdateMapRegionAtPosition(s32 positionX, s32 positionY, s32 positionZ) {
 s32 DjinnRecovery_CountDownFar(void);
 void FieldEffect_SetAttached(s32 owner, s32 mode);
 
-void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
+void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   struct StepWork *work = Ram_HeapSlots->eventWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 leaderId = Party_GetLeaderActor();
-  struct Actor *leader = Func_080cb8e8();
+  struct Actor *leader = WorldMap_Unfreeze();
   s16 previousHp[8];
   struct MapCell *tile;
   struct UnitStepView *unit;
@@ -206,7 +208,7 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
   work->previousCell = work->currentCell;
   work->currentCell = tile;
   if (attributes != 0)
-    UpdateMapRegionAtPosition(x, y, z);
+    Field_CheckExitRegions(x, y, z);
   if (event - 1 <= 229)
     work->exit = event;
   if (attributes & 0xe2)
@@ -220,7 +222,8 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
     if (GameFlag_Test(0x167))
       speed <<= 1;
     if (*((s8 *)work + 0x18a) == 3) {
-      work->encounterEnemyGroup = Encounter_RollWorldMap((s32)&leader->x, speed);
+      work->encounterEnemyGroup =
+          Encounter_RollWorldMap((s32)&leader->x, speed);
     } else {
       if (attributes & 4)
         zone = 1;
@@ -235,11 +238,11 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
     if (distance > 0xffff) {
       amount = distance / 0x10000;
       work->walkingDistance = distance & 0xffff;
-      BattleParty_ApplyDrain(amount, 0);
+      Party_AddPp(amount, 0);
       if (DjinnRecovery_CountDownFar())
         Sound_PlayFar(139);
-      Event_ClearValidPackedIds();
-      partyHurt = BattleParty_ApplyStatusDamage();
+      Party_ClearUnusableShortcuts();
+      partyHurt = Party_ApplyPoisonDamage();
     }
 
     if (gPartyStep.hazardMode == 0 && (attributes & 8)) {
@@ -269,7 +272,7 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
   if ((s16)gPartyStep.hazardSteps >= gPartyStep.hazardLimit) {
     amount = gPartyStep.hazardDamage;
     gPartyStep.hazardSteps = 0;
-    BattleParty_ApplyHealthDelta(-(amount & 255), amount & 0x100);
+    Party_AddHp(-(amount & 255), amount & 0x100);
     partyHurt++;
   }
 
@@ -290,7 +293,7 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
   }
 }
 
-void BattleParty_ApplyDrain(s32 amount, s32 unused) {
+void Party_AddPp(s32 amount, s32 unused) {
   s32 targetCount = Party_CountMembersFar();
   s32 i;
 
@@ -298,14 +301,14 @@ void BattleParty_ApplyDrain(s32 amount, s32 unused) {
     Unit_AddPpFar(gMainRoutineWork.activeOwners[i], amount);
 }
 
-void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
+void Party_AddHp(s32 amount, s32 scaled) {
   s32 count;
   s32 i;
   s32 value;
   struct BattleUnit *unit;
   if (amount < 0) {
     BattleEffect_ApplyColorToSourceBuffer(0x1ff, 0);
-    BattleEffect_StartBufferInterpolation(4);
+    PaletteFade_StartInterpolation(4);
     if (amount < -10)
       Sound_PlayFar(134);
     else
@@ -330,7 +333,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
   }
 }
 
-s32 BattleParty_ApplyStatusDamage(void) {
+s32 Party_ApplyPoisonDamage(void) {
   s32 result = 0;
   s32 count = Party_CountMembersFar();
 
@@ -375,7 +378,7 @@ s32 BattleParty_ApplyStatusDamage(void) {
 
   if (result != 0) {
     BattleEffect_ApplyColorToSourceBuffer(0x1ff, 0);
-    BattleEffect_StartBufferInterpolation(4);
+    PaletteFade_StartInterpolation(4);
     Sound_PlayFar(133);
   }
 
@@ -384,8 +387,8 @@ s32 BattleParty_ApplyStatusDamage(void) {
 
 /// In control mode 3, marks the event work busy, shows its object and, when a
 /// fade is pending, starts it at level 80 and waits 2 frames; then calls
-/// Func_08020268.
-void Func_080cb82c(void) {
+/// MapAnimation_StartFar.
+void WorldMap_Freeze(void) {
   struct FxWork *work = HeapSlot_AllocEwram(108, 0xd50);
 
   if (*(u16 *)&work->state == 3) {
@@ -404,7 +407,7 @@ void Func_080cb82c(void) {
       fade->pending = zero;
       wait(2);
     }
-    Func_08020268();
+    MapAnimation_StartFar();
   }
 }
 
@@ -414,11 +417,11 @@ void Func_080cb8a4(void) {
   if (block->mode == 3 && block->pending != 0) {
     block->pending = 0;
     block->object[91] = 0;
-    Func_08020270();
+    WorldMap_LoadAreaGraphicsFar();
   }
 }
 
-void *Func_080cb8e8(void) {
+void *WorldMap_Unfreeze(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   void **event;
 

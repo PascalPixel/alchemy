@@ -30,7 +30,7 @@
 #include "system.h"
 #include "task.h"
 
-void Func_0200033c(void) { Func_080d7788(10, 3, 11); }
+void Func_0200033c(void) { Djinn_JoinParty(10, 3, 11); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -167,7 +167,7 @@ void Func_020006bc(void) {
 }
 
 void Func_02000770(struct Actor *object) {
-  Animation_ApplyChildValues(object, 0);
+  Actor_SetSpriteColorMode(object, 0);
   object->update = 0;
 }
 
@@ -196,7 +196,7 @@ static inline void ApojiiIslands_Flash(s32 strength, s32 mode) {
 }
 
 static inline void ApojiiIslands_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 /// An Apojii Islands scene inside an event: the actor takes Actor_FlickerChild
@@ -227,10 +227,10 @@ void Func_020007a4(s32 unused, s32 id) {
    * instructions differ in tla-en. */
 flash:
   ApojiiIslands_Flash(Random16Far__s07a4() & 0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(15);
+  PaletteFade_StartInterpolation(15);
   wait(10);
   ApojiiIslands_Flash(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(10);
+  PaletteFade_StartInterpolation(10);
   i--;
   wait(10);
   if (i >= 0)
@@ -257,7 +257,7 @@ blend:
    * ApojiiIslands_CamMove, so each builds its own -1; as direct calls, 25 of
    * 188 instructions differ in tla-en. */
   ApojiiIslands_CamMove(PIXELS(360), -1, PIXELS(328), 1);
-  Func_080d47b4(16, 256, 20);
+  Actor_ShowEmoteById(16, 256, 20);
   FieldCamera_WaitForArrival();
   ApojiiIslands_CamMove(PIXELS(440), -1, PIXELS(376), 1);
   FieldCamera_WaitForArrival();
@@ -570,7 +570,7 @@ void Func_020011a8(void) {
       FieldActor_SetMoveTarget(leader, leader->x, leader->y,
                                leader->z + 0x80000);
       Actor_SelectAnimation(leader, 49);
-      Actor_WaitForMove(leader);
+      FieldActor_WaitForMove(leader);
       do {
         System_Wait(1);
       } while (leader->y != leader->terrainHeight);
@@ -695,7 +695,7 @@ void Func_020015f8(void) {
 /// block and no source, then schedules Func_020015f8.
 void Func_020017bc(void) {
   Iwram_ClearWordsEntry(&gData_02002aa0, 0x1004);
-  gData_02002aa0.block = Resource_FindFreeEntry();
+  gData_02002aa0.block = VramCache_FindFreeEntry();
   Vram_Load(gData_02002aa0.block, 0x200, 0);
   FieldTask_AddFrame(Func_020015f8, 0x480);
 }
@@ -784,7 +784,7 @@ void Func_02001ad8(void) {
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 517, REG_DMA3);
   buf = HeapSlot_AllocEwram(56, 0x400);
   Import_ResourceDecodeByteLzInRam(gField_Tiles679, buf);
-  work->vramEntry = Resource_FindFreeEntry();
+  work->vramEntry = VramCache_FindFreeEntry();
   work->tileBase = Vram_Load(work->vramEntry, 0x300, buf);
   HeapSlot_Release(56);
   work->field808 = size;

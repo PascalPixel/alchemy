@@ -7,7 +7,7 @@
 #include "types.h"
 #include "edition.h"
 
-s32 Func_080cc67c(s32);
+s32 Scene_ApplyEntrance(s32);
 s32 Func_080cc7c4(void);
 
 extern const u8 gDebug_PaletteSwatchTiles[];

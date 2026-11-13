@@ -7,13 +7,15 @@
 #include "actor_view.h"
 #include "module/field/field_sequence.h"
 #include "module/field/object.h"
+#include "gamepak/far_call/field.h"
+#include "ram_buffer.h"
 #include "module/tla.h"
 
 /// Picks the sprite a scene placement's character id shows: character 8
 /// becomes 9 on the world map and 11 elsewhere, one more once flag 0x8df is
 /// set.
 // As ☀️'s function of the same name.
-s32 Party_RemapCharacterIdByFlags(s32 character) {
+s32 Party_GetCharacterSprite(s32 character) {
   s32 sprite;
 
   sprite = character;
@@ -74,7 +76,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       if (work->mode != 3 && !GameFlag_IsConditionActive(condition + 80))
         continue;
     }
-    character = Party_RemapCharacterIdByFlags(entry->sprite);
+    character = Party_GetCharacterSprite(entry->sprite);
     object = ObjectTable_Get(index);
     if (object == NULL) {
       if (entry->flags & 2) {
@@ -84,9 +86,9 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
         position[1] = (s32)object;
         position[2] = (s32)object;
         Func_080ca9cc(entry->x, position);
-        object = Func_080200c0(character, position[0], 0, position[2]);
+        object = Actor_CreateFar(character, position[0], 0, position[2]);
       } else {
-        object = Func_080200c0(character, entry->x, entry->y, entry->z);
+        object = Actor_CreateFar(character, entry->x, entry->y, entry->z);
       }
       if (entry->flags & 1) {
         struct Actor *previous = ObjectTable_Get(index - 1);
@@ -99,7 +101,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
           resource = sprite->slot;
           sprite = object->sprite;
           sprite->displayFlags |= 1;
-          Resource_ResetEntry(sprite->slot);
+          VramCache_FreeEntry(sprite->slot);
           sprite->slot = resource;
         }
       }
@@ -260,7 +262,7 @@ void Func_080caa4c(s32 table) {
     object = stand;
   }
 
-  camera = Func_080200c0(0x8000, object->x, object->y, object->z);
+  camera = Actor_CreateFar(0x8000, object->x, object->y, object->z);
   camera->terrainHeight = object->terrainHeight;
   Actor_StartCameraFar(camera, object);
   if (work->controlMode == 3) {
@@ -273,7 +275,7 @@ void Func_080caa4c(s32 table) {
   work->viewCenter = camera;
 }
 
-s32 ObjectTable_FindLastActiveId(void) {
+s32 Actor_FindLastActiveId(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   s32 last = 7;
   s32 i;
@@ -373,7 +375,7 @@ void ObjectTable_Snapshot(void) {
     *indices++ = 255;
 }
 
-void ObjectTable_Restore(void) {
+void Actor_Restore(void) {
   struct Actor *copy = gSnapshotObjects;
   u8 *indices = (u8 *)gSnapshotObjects - 32;
   u8 *frames = (u8 *)&gSnapshotObjects[32];

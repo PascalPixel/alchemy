@@ -39,7 +39,7 @@ void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02002990(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_020029a8(s32 a, s32 b, s32 c);
 void Actor_StartScript(struct Actor *object, const void *data);
-void Animation_SetStateFlags(struct Actor *object, u32 value);
+void Actor_SetBlendMode(struct Actor *object, u32 value);
 
 extern s32 gTaopoSwamp_SteamPuffs;
 extern s32 gTaopoSwamp_PassageRows;
@@ -103,8 +103,8 @@ struct VentWork {
   u16 ids[4];
 };
 
-extern u8 gData_020023c4[];
-#define VENT_WORK ((struct VentWork *)(gData_020023c4 + 0x188))
+extern u8 gInventorySnapshot[];
+#define VENT_WORK ((struct VentWork *)(gInventorySnapshot + 0x188))
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 
 s32 Math_Cosine(s32 angle);
@@ -113,7 +113,7 @@ extern const u8 gData_02002af4[];
 extern s32 gTaopoSwamp_SparkleFrame;
 extern u8 gMapShapeGrid[];
 void Map_CenterOnFollowedPoint(void);
-void DisplayBlend_EnableRunScript(void);
+void BlendScript_Suspend(void);
 void TaopoSwamp_TwinkleStarDust(void);
 void Func_02001ff0(s32 x, s32 z);
 void TaopoSwamp_SaveFirmGround(void);
@@ -148,8 +148,7 @@ static __inline__ void Func_02002990_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
   Func_02002990(a, b, c, d, e, f, g);
 }
 
-static __inline__ struct Actor *Func_02002808_(s32 type, s32 x, s32 y,
-                                                       s32 z) {
+static __inline__ struct Actor *Func_02002808_(s32 type, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(type, x, y, z);
 }
 
@@ -175,7 +174,7 @@ static __inline__ void Func_020029a8_(s32 a, s32 b, s32 c) {
 #include "module/scene/taopo_swamp.h"
 #include "module/tla.h"
 
-void Func_02000038(void) { Func_080d2b4c(8, 11); }
+void Func_02000038(void) { Field_RequestDjinnBattle(8, 11); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -227,7 +226,8 @@ void TaopoSwamp_GrowVine(void) {
 
 extern u8 gData_02002ae8[];
 s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
-void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record, u32 value);
+void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record,
+                                        u32 value);
 void Animation_ApplyChildValue(struct ChildGroup *group, s32 value);
 
 // When actor id stands at x 12, inside an event: the actor drops in place, then
@@ -251,7 +251,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
   actor->y = 0x40000;
   sprite = actor->sprite;
   i = 0;
-do {
+  do {
     ((struct Charge *)sprite)->level = i;
     sprite->nextFrame |= 8;
     sprite->nextFrame &= ~1;
@@ -278,7 +278,7 @@ do {
     }
     System_Wait(3);
     i++;
-} while (i <= 24);
+  } while (i <= 24);
 
   actor->animationKind = 0;
   actor->y = 0;
@@ -327,8 +327,7 @@ void Func_02000334(void) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
-      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0,
-                                                 -16);
+      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -16);
       leader->velocityY = 0x60000;
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
@@ -679,7 +678,7 @@ void TaopoSwamp_PuffSteam(void) {
   object = FieldActor_Create(0x11d, x, 0, z);
   Actor_StartScript(object, gTaopoSwamp_PuffSteamScript);
   Actor_SetSingleChildFlags(object, 0);
-  Animation_SetStateFlags(object, 1);
+  Actor_SetBlendMode(object, 1);
   if (gTaopoSwamp_SteamPuffs == 0)
     FieldTask_Remove(TaopoSwamp_PuffSteam);
 }
@@ -768,7 +767,7 @@ next:
   i--;
   if (i >= 0)
     goto burst;
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   Task_AddFrame(TaopoSwamp_OpenPassage, 0x480);
   System_Wait(40);
   FieldCamera_SetSpeed(0xe666, 0x1ccc);
@@ -1361,7 +1360,7 @@ s32 Scene_Initialize(void) {
         Func_02002114(0);
     }
     if ((u32)(entrance - 4) <= 1)
-      DisplayBlend_EnableRunScript();
+      BlendScript_Suspend();
   }
   return 0;
 }
@@ -1564,7 +1563,7 @@ s32 Scene_Initialize(void) {
         Func_02002114(0);
     }
     if ((u32)(entrance - 4) <= 1)
-      DisplayBlend_EnableRunScript();
+      BlendScript_Suspend();
   }
   return 0;
 }
@@ -1638,7 +1637,7 @@ static __inline__ void Blend_SetAlpha(s32 value) {
 /// The lights go out (fading over 50 frames when asked) and the sparkle starts
 /// in the last chamber.
 void TaopoSwamp_DarkenRoom(s32 fade) {
-  DisplayBlend_EnableRunScript();
+  BlendScript_Suspend();
   if (fade) {
     Blend_SetAlpha(0xe06);
     /* FAKEMATCH(dead): the empty once-only block finishes the blend value
@@ -1746,7 +1745,7 @@ void TaopoSwamp_RiseOnBubble(void) {
     FieldEvent_ResolvePendingActions(0);
     FieldActor_SetMoveTarget(object, (object->x & 0xfff00000) + 0x80000, object->y,
                    (object->z & 0xfff00000) + 0x80000);
-    Actor_WaitForMove(object);
+    FieldActor_WaitForMove(object);
     while (sprite->level != 0) {
       sprite->level--;
       sprite->dirty = 1;
@@ -1811,7 +1810,7 @@ void TaopoSwamp_PuffVent(s32 *position, s32 base) {
     object->timer = angle;
     Func_020024f8(object, 3);
     object->update = (void (*)(void))Func_02002400;
-    Animation_SetStateFlags(object, 1);
+    Actor_SetBlendMode(object, 1);
   }
 }
 
@@ -1824,7 +1823,7 @@ DEFINE_VENTS_UPDATE(TaopoSwamp_UpdateVents, TaopoSwamp_PuffVent)
 
 /// Places a room's vents from its tables and starts their cycle.
 void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
-  struct SwingWork *work = (struct SwingWork *)(gData_020023c4 + 0x188);
+  struct SwingWork *work = (struct SwingWork *)(gInventorySnapshot + 0x188);
   struct SwingPoint *point = work->points;
 
   if (!Event_GetFlag(0x109)) {

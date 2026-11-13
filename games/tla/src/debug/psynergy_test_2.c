@@ -18,12 +18,31 @@
 #include "event_work.h"
 #include "call.h"
 #include "item_icon.h"
-#include "module/debug/debug.h"
-#include "module/debug/psynergy_test_2.h"
+
+struct EventFlags {
+  u8 unk000[0xd36];
+  u8 unkd36;
+  u8 unkd37;
+};
+
 #include "module/scene/kibombo.h"
 #include "module/tla.h"
 #include "particle.h"
 #include "resource.h"
+#include "gamepak/far_call/system.h"
+
+struct Particle;
+
+void Func_020001e0(s32 x, s32 y, s32 z, s32 count);
+
+void Func_0200029c(void);
+void Func_02000358(void);
+
+void Func_020005e8(s32 a, s32 b, s32 c);
+
+void Func_02000600(struct Particle *particle, s32 unk1, s32 step);
+
+void Func_02000560(void *entry, void *destination);
 
 void Func_020005d8(s32 a, s32 b);
 
@@ -37,7 +56,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_02000054(void) { Actor_SetHorizontalPositionWithTerrain(8, 0, 0); }
+void Test_ReceiveFlint(void) {
+  Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+}
 
 void Func_02000064(s32 mode) {
   if (mode == 1)
@@ -46,7 +67,7 @@ void Func_02000064(s32 mode) {
 
 void Func_02000078(void) {}
 
-void Func_0200007c(void) { Actor_SetModeById(9, 3); }
+void Test_ReceiveForge(void) { Actor_SetModeById(9, 3); }
 
 void Func_02000088(s32 mode) {
   if (mode == 1) {
@@ -144,10 +165,10 @@ struct ActorPlacement gActorPlacements[] = {
 struct Trigger gSceneEvents[] = {
     {0, 9, CONDITION_ALWAYS, EVENT(Func_020000d8)},
     {2, 30, CONDITION_ALWAYS, EVENT(Func_020000b8)},
-    {0x2115, 8, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {0x2115, 8, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
     {0x50008615, 8, CONDITION_ALWAYS, EVENT(Func_02000064)},
     {0x8715, 9, CONDITION_ALWAYS, (u32)(Func_02000078)},
-    {0x9815, 9, CONDITION_ALWAYS, EVENT(Func_0200007c)},
+    {0x9815, 9, CONDITION_ALWAYS, EVENT(Test_ReceiveForge)},
     {0x8515, 10, CONDITION_ALWAYS, 0},
     {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_02000088)},
     {TRIGGERS_END},
@@ -158,7 +179,6 @@ struct Spark {
   s32 velocity[3];
   s32 timer;
 };
-
 
 struct SparkWork {
   u8 unk0000[0x500];
@@ -201,7 +221,6 @@ void Func_020001e0(s32 x, s32 y, s32 z, s32 count) {
 
 #include "system/task.h"
 
-
 struct RockWork {
   u8 tiles[0x500];
   struct Rock rocks[64];
@@ -229,7 +248,7 @@ void Func_0200029c(void) {
   struct RockSprite *sprite;
 
   Func_02000560(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
-  entry = Resource_FindFreeEntry();
+  entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;
   work->resource = entry;
@@ -257,7 +276,7 @@ void Func_02000358(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
 
   FieldTask_Remove(Func_0200015c);
-  Resource_ResetEntry(work->resource);
+  VramCache_FreeEntry(work->resource);
   HeapSlot_Release(220);
 }
 

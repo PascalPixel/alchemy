@@ -38,7 +38,7 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Actor_StartScript(effect, gData_02003840[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
-  effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
+  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
@@ -50,7 +50,7 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & 0xffff0000) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
-    Actor_SetSpriteColor(effect, options->palette);
+    FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
     // Read as its low byte: (u8)options->priority orders the loads apart.
@@ -116,12 +116,12 @@ void Func_020006a4(struct Actor *source) {
       (FieldActor_Create(672, source->x, source->y, source->z));
 
   object->motionFlags = 0;
-  Actor_SetSpriteColor(object, BYTE_AT(source, 98));
+  FieldActor_SetSpriteColor(object, BYTE_AT(source, 98));
   Scene_SetActorSpritePriority(object, 2);
   Actor_SelectAnimation(object, 1);
   Actor_SetSingleChildFlags(object, 0);
   Actor_StartScript(object, gData_02003674);
-  Animation_SetStateFlags(object, 1);
+  Actor_SetBlendMode(object, 1);
 }
 
 s32 Func_020006f8(struct Mover *mover) {

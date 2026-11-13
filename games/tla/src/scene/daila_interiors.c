@@ -33,7 +33,7 @@ void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
 static inline s32 Daila_FlagCheck(s32 flag) { return GameFlag_Test(flag); }
 
 static inline void Daila_ObjWalk(s32 actor, s32 x, s32 z) {
-  Actor_SetPositionAndReset(actor, x, z);
+  Actor_WalkToAndWaitById(actor, x, z);
 }
 
 static inline void Daila_ObjPlace(s32 actor, s32 x, s32 z) {
@@ -118,7 +118,7 @@ void Func_020000ac(s32 unused, s32 actor) {
 }
 
 void Func_02000150(s32 unused, s32 actor) {
-  Actor_SetAngleToward(actor, 4, 0);
+  Actor_FaceActorById(actor, 4, 0);
   FieldEvent_Wait(10);
   Func_02000d94(actor, 0x103, 50);
   Actor_Jump(actor, 6, 15);
@@ -418,7 +418,7 @@ struct DailaActor__item {
  * no member named `unk48'. */
 extern struct DailaActor__item *
 Actor_GetById__item(s32 id) __asm__("Actor_GetById");
-void BattleEffect_RunActorRiseAndDescent(struct DailaActor__item *object,
+void ItemDisplay_ShowPicture(struct DailaActor__item *object,
                                          s32 mode);
 void Sound_Play(s32 cue);
 void Import_ActorResetMotion(struct DailaActor__item *object);
@@ -436,7 +436,7 @@ void Func_02000730(void) {
   Import_EventStart();
   Import_EventResolvePendingActions(0);
   if (PartyInventory_FindRoom(item) >= 0) {
-    BattleEffect_RunActorRiseAndDescent(Actor_GetById__item(9), 3);
+    ItemDisplay_ShowPicture(Actor_GetById__item(9), 3);
     Sound_Play(83);
     MessageArgument_Push(item, 2);
     FieldMessage_Show((s32)MsgItemReceived, 1);
@@ -445,7 +445,7 @@ void Func_02000730(void) {
     Actor_SetHorizontalPositionWithTerrain(13, 232 << 16, 194 << 16);
     GameFlag_SetBit(0xa20);
   } else {
-    BattleEffect_RunActorRiseAndDescent(Actor_GetById__item(9), 3);
+    ItemDisplay_ShowPicture(Actor_GetById__item(9), 3);
     Sound_Play(83);
     if (Func_02000878(item, 0) != -1) {
       Actor_SetHorizontalPositionWithTerrain(9, 0, 0);

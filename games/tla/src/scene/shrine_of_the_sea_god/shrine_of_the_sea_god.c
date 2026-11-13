@@ -22,24 +22,48 @@ void Func_02000280(void) {
       GameFlag_SetBit(0x341);
     else if (*state == 5)
       GameFlag_SetBit(0x342);
-    Func_080d2b4c(14, 67);
+    Field_RequestDjinnBattle(14, 67);
   }
 }
 
 // ---- games/tla/src/scene/shrine_of_the_sea_god.c ----
-// The scene code of overlay 0x654 that its scene tables belong to, in ROM order; the rest of the overlay is in shrine_of_the_sea_god/.
+// The scene code of overlay 0x654 that its scene tables belong to, in ROM
+// order; the rest of the overlay is in shrine_of_the_sea_god/.
 
 #include "battle.h"
-/* VIEW(shrine_of_the_sea_god): routine Actor_SetPositionAndResetMotion as void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z); shrine_of_the_sea_god.h has void Actor_SetPositionAndResetMotion(struct ShrineOfTheSeaGodObject *object, s32 x, s32 y, s32 z); tried as the definition's void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z), it does not compile in tla-ja: games/tla/include/actor.h:95: conflicting types for `Actor_SetPositionAndResetMotion'. */
+/* VIEW(shrine_of_the_sea_god): routine Actor_SetPositionAndResetMotion as void
+ * Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
+ * shrine_of_the_sea_god.h has void Actor_SetPositionAndResetMotion(struct
+ * ShrineOfTheSeaGodObject *object, s32 x, s32 y, s32 z); tried as the
+ * definition's void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x,
+ * s32 y, s32 z), it does not compile in tla-ja: games/tla/include/actor.h:95:
+ * conflicting types for `Actor_SetPositionAndResetMotion'. */
 struct Actor;
-extern void Actor_SetPositionAndResetMotion__shrine_of_the_sea_god(struct Actor *object, s32 x, s32 y, s32 z) __asm__("Actor_SetPositionAndResetMotion");
-#define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine Actor_SetSpritePriority as void Actor_SetSpritePriority(u32, s32); shrine_of_the_sea_god.h has void Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile in tla-ja: games/tla/include/actor.h:106: conflicting types for `Actor_SetSpritePriority'. */
-extern void Actor_SetSpritePriority__shrine_of_the_sea_god(u32, s32) __asm__("Actor_SetSpritePriority");
+extern void Actor_SetPositionAndResetMotion__shrine_of_the_sea_god(
+    struct Actor *object, s32 x, s32 y,
+    s32 z) __asm__("Actor_SetPositionAndResetMotion");
+#define Actor_SetPositionAndResetMotion                                        \
+  Actor_SetPositionAndResetMotion__shrine_of_the_sea_god
+/* VIEW(shrine_of_the_sea_god): routine Actor_SetSpritePriority as void
+ * Actor_SetSpritePriority(u32, s32); shrine_of_the_sea_god.h has void
+ * Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's
+ * void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile
+ * in tla-ja: games/tla/include/actor.h:106: conflicting types for
+ * `Actor_SetSpritePriority'. */
+extern void Actor_SetSpritePriority__shrine_of_the_sea_god(u32, s32) __asm__(
+    "Actor_SetSpritePriority");
 #define Actor_SetSpritePriority Actor_SetSpritePriority__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); shrine_of_the_sea_god.h has void Actor_SetSingleChildFlags(struct ShrineOfTheSeaGodObject *object, u32 value); tried as the 35 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/include/field/field.h:25: conflicting types for `Actor_SetSingleChildFlags'. */
-extern void Actor_SetSingleChildFlags__shrine_of_the_sea_god(struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
-#define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__shrine_of_the_sea_god
+/* VIEW(shrine_of_the_sea_god): routine Actor_SetSingleChildFlags as void
+ * Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+ * shrine_of_the_sea_god.h has void Actor_SetSingleChildFlags(struct
+ * ShrineOfTheSeaGodObject *object, u32 value); tried as the 35 declarations'
+ * void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it
+ * does not compile in tla-ja: games/tla/include/field/field.h:25: conflicting
+ * types for `Actor_SetSingleChildFlags'. */
+extern void Actor_SetSingleChildFlags__shrine_of_the_sea_god(
+    struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
+#define Actor_SetSingleChildFlags                                              \
+  Actor_SetSingleChildFlags__shrine_of_the_sea_god
 #include "field.h"
 #undef Actor_SetSingleChildFlags
 #undef Actor_SetSpritePriority
@@ -141,7 +165,8 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 // ---- games/tla/src/scene/shrine_of_the_sea_god/event7.c ----
-// Scene code of overlay 0x654, in ROM order, from event7's offset up to the next object the overlay links.
+// Scene code of overlay 0x654, in ROM order, from event7's offset up to the
+// next object the overlay links.
 
 #include "text/msg_ids.h"
 #include "../shrine_of_the_sea_god.h"
@@ -170,7 +195,7 @@ void ShrineOfTheSeaGod_StartleCompanion(void) {
   Event_ResolvePendingActions(0);
   Actor_Stop(11);
   ShrineOfTheSeaGod_Jump(11, 0x100, 20);
-  Actor_SetAngleToward(11, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(11, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgFieldStartledCompanion);
   Event_ShowMessageAndWait(11, 0);
   Event_ShowMessageAndWait(11, 0);
@@ -194,7 +219,7 @@ void Func_02000568(void) {
   struct ShrineOfTheSeaGodMapLayer *layer2 = &map->layers[2];
   struct ShrineOfTheSeaGodObject *leader =
       Actor_GetById(gMainRoutineWork.currentOwner);
-  struct ShrineOfTheSeaGodObject *camera = Func_080d4568();
+  struct ShrineOfTheSeaGodObject *camera = FieldCamera_GetActor();
   struct ShrineOfTheSeaGodObject *object8 = Actor_GetById(8);
   struct ShrineOfTheSeaGodObject *object9 = Actor_GetById(9);
   struct ShrineOfTheSeaGodObject *object10 = Actor_GetById(10);
@@ -236,8 +261,8 @@ void Func_0200063c(s32 x, s32 y) {
   }
 }
 
-void DisplayBlend_EnableRunScript(void);
-void Map_SetScreenShake(s32 a, s32 b, s32 c);
+void BlendScript_Suspend(void);
+void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 void Import_EventSetExitRequest(s32 value);
 
 /// The Sea God's Tear (item 458) used on the statue on the island, actor 10,
@@ -248,9 +273,9 @@ void ShrineOfTheSeaGod_UseSeaGodsTear(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  DisplayBlend_EnableRunScript();
+  BlendScript_Suspend();
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Camera_MoveWithinMapBounds(248 << 16, -1, 168 << 16, 1);
+  FieldCamera_MoveWithinMapBounds(248 << 16, -1, 168 << 16, 1);
   FieldCamera_WaitForArrival();
   Sound_Play(244);
   Io_Write16(BLEND_ALPHA(1, 16), &REG_BLDALPHA);
@@ -261,7 +286,7 @@ void ShrineOfTheSeaGod_UseSeaGodsTear(void) {
   wait(10);
   Io_Write16(BLEND_ALPHA(4, 16), &REG_BLDALPHA);
   wait(10);
-  Call3((void (*)())Map_SetScreenShake, 0, 0x10000, 0x10000);
+  Call3((void (*)())MapGrid_SetScreenShake, 0, 0x10000, 0x10000);
   ShrineOfTheSeaGod_CopyRect(59, 124, 9, 12, 12, 3);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
@@ -270,7 +295,7 @@ void ShrineOfTheSeaGod_UseSeaGodsTear(void) {
   Actor_SetSpritePriority(10, 1);
   ShrineOfTheSeaGod_CopyRect(46, 51, 6, 56, 18, 25);
   wait(10);
-  Call3((void (*)())Map_SetScreenShake, 0x10000, 0x10000, 0x10000);
+  Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
   Func_0200063c(65, 51);
   Func_0200063c(65, 58);
   Io_Write16(BLEND_ALPHA(5, 15), &REG_BLDALPHA);
@@ -314,7 +339,7 @@ void Func_0200087c(void) {
   struct ShrineOfTheSeaGodMapLayer *layer2 = &map->layers[2];
   struct ShrineOfTheSeaGodObject *leader =
       Actor_GetById(gMainRoutineWork.currentOwner);
-  struct ShrineOfTheSeaGodObject *camera = Func_080d4568();
+  struct ShrineOfTheSeaGodObject *camera = FieldCamera_GetActor();
   struct ShrineOfTheSeaGodObject *object8 = Actor_GetById(8);
   struct ShrineOfTheSeaGodObject *object9 = Actor_GetById(9);
   struct ShrineOfTheSeaGodObject *object10 = Actor_GetById(10);
@@ -359,7 +384,7 @@ loop:
     goto loop;
 }
 
-void Map_WaitForShakeToSettle(void);
+void MapGrid_WaitForShakeToSettle(void);
 
 void Func_02000994(void) {
   struct ShrineOfTheSeaGodMapWork *map =
@@ -369,7 +394,7 @@ void Func_02000994(void) {
   struct ShrineOfTheSeaGodMapLayer *layer2 = &map->layers[2];
   struct ShrineOfTheSeaGodObject *leader =
       Actor_GetById(gMainRoutineWork.currentOwner);
-  struct ShrineOfTheSeaGodObject *ride = Func_080d4568();
+  struct ShrineOfTheSeaGodObject *ride = FieldCamera_GetActor();
   struct ShrineOfTheSeaGodObject *a = Actor_GetById(8);
   struct ShrineOfTheSeaGodObject *b = Actor_GetById(9);
   struct ShrineOfTheSeaGodObject *c = Actor_GetById(10);
@@ -383,7 +408,7 @@ void Func_02000994(void) {
   Actor_SetSpritePriority(8, 1);
   Actor_SetSpritePriority(9, 1);
   Actor_SetSpritePriority(10, 1);
-  DisplayBlend_EnableRunScript();
+  BlendScript_Suspend();
   wait(1);
   ShrineOfTheSeaGod_CopyRect(46, 51, 6, 56, 18, 25);
   ShrineOfTheSeaGod_CopyRect(84, 100, 6, 56, 18, 6);
@@ -404,7 +429,7 @@ void Func_02000994(void) {
       ->screenEffect = 0x209;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call3((void (*)())Map_SetScreenShake, 0x10000, 0x10000, 0x10000);
+  Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
   Sound_Play(245);
   i = 0;
   do {
@@ -438,11 +463,11 @@ void Func_02000994(void) {
   Func_0200094c(65, 58);
   Io_Write16(0xf05, &REG_BLDALPHA);
   Func_0200094c(65, 51);
-  Call3((void (*)())Map_SetScreenShake, 0, 0x10000, 0x10000);
+  Call3((void (*)())MapGrid_SetScreenShake, 0, 0x10000, 0x10000);
   Io_Write16(0x1004, &REG_BLDALPHA);
   wait(10);
   Sound_Play(390);
-  Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
+  Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
   Io_Write16(0x1003, &REG_BLDALPHA);
   wait(10);
   Io_Write16(0x1002, &REG_BLDALPHA);
@@ -453,7 +478,7 @@ void Func_02000994(void) {
   ShrineOfTheSeaGod_CopyRect(103, 51, 6, 56, 18, 25);
   ShrineOfTheSeaGod_CopyRect(46, 108, 9, 12, 12, 3);
   wait(10);
-  Map_WaitForShakeToSettle();
+  MapGrid_WaitForShakeToSettle();
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 0x204;
   Func_02003854(8);
@@ -485,7 +510,7 @@ void Func_02000ce8(void) {
   Event_ResolvePendingActions(0);
   Sound_Play(244);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
-  Camera_MoveWithinMapBounds(172 << 17, -1, 248 << 16, 0);
+  FieldCamera_MoveWithinMapBounds(172 << 17, -1, 248 << 16, 0);
   ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
   wait(1);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
@@ -498,7 +523,7 @@ void Func_02000ce8(void) {
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 515;
   Event_StartScreenTransition();
-  Call3((void (*)())Map_SetScreenShake, 0x10000, 0x10000, 0x10000);
+  Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
   // A goto loop: as a for, while or do loop, loop.c hoists the 0x8000 the
   // bytes rebuild on every pass (differ 64).
   i = 0;
@@ -519,7 +544,7 @@ loop:
     goto loop;
   Sound_Play(288);
   Sound_Play(390);
-  Map_SetScreenShake(0, 0, 0);
+  MapGrid_SetScreenShake(0, 0, 0);
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 521;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
@@ -543,13 +568,13 @@ void Func_02000e38(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
-  Camera_MoveWithinMapBounds(344 << 16, -1, 248 << 16, 1);
+  FieldCamera_MoveWithinMapBounds(344 << 16, -1, 248 << 16, 1);
   ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   object->motionFlags = 0;
   Sound_Play(245);
-  Call3((void (*)())Map_SetScreenShake, 0x10000, 0x10000, 0x10000);
+  Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
   // A goto loop: the bytes reload the step on every pass, and a for loop
   // hoists it (differ 30).
   i = 0;

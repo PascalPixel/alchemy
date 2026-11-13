@@ -50,12 +50,12 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 void Func_0200005c(void) {
   u32 alphaReg = (u32)&REG_BLDALPHA;
 
-  QueueIoWriteDelay2((u32)&REG_BLDCNT,
-                     BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
+  IoWriteQueue_Store16((u32)&REG_BLDCNT,
+                       BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   if ((gFrameCount & 2) && gData_02003dbe == 0) {
-    QueueIoWriteDelay2(alphaReg, gData_02003dbc | 15);
+    IoWriteQueue_Store16(alphaReg, gData_02003dbc | 15);
   } else {
-    QueueIoWriteDelay2(alphaReg, gData_02003dbc | 16);
+    IoWriteQueue_Store16(alphaReg, gData_02003dbc | 16);
   }
 }
 
@@ -175,7 +175,7 @@ void Func_0200020c(s32 stage) {
   gBgScroll[0].x = 0;
   Camera_MoveWithinMapBounds_(gData_02003d20[stage][0] << 16,
                               gData_02003d20[stage][1] << 16, 0);
-  Map_UpdateCurrentTileBlock();
+  WorldMap_UpdateCurrentTileBlock();
   FieldEffect_ScheduleRatioTransition(gData_02003d5c[stage], 1);
   map->yaw = 0x1000;
   map->unk11c = 0xd000;
@@ -209,8 +209,8 @@ void Func_0200020c(s32 stage) {
   if (stage == 4) {
     u8 *frames = buffer + 0x2000;
 
-    Resource_DecodeType01(Data_02002469, buffer);
-    Resource_DecodeType01(Data_0200217c, frames);
+    Decompress_TaggedLz(Data_02002469, buffer);
+    Decompress_TaggedLz(Data_0200217c, frames);
     IO_WRITE_QUEUE_PUSH(0x06000000, (u32)buffer, 0x84000800);
     IO_WRITE_QUEUE_PUSH(0x06002000, (u32)frames, 0x84000140);
     grid = frames;
@@ -282,7 +282,7 @@ void Func_0200020c(s32 stage) {
         Actor_SetPosition(8, (top << 16) + x0,
                                                (left << 16) + z);
       }
-      Animation_SetStateFlags(Actor_GetById(8), 1);
+      Actor_SetBlendMode(Actor_GetById(8), 1);
       Actor_SetAnimation(8, 0);
       Actor_GetById(8)->scaleX = zero;
       Actor_GetById(8)->scaleY = zero;
@@ -440,8 +440,8 @@ void Func_0200020c(s32 stage) {
   }
   Heap_Release(buffer);
   DebugText_Clear();
-  QueueIoWriteDelay2(0x04000052, gData_02003dbc);
-  QueueIoWriteDelay2(0x04000050, 0);
+  IoWriteQueue_Store16(0x04000052, gData_02003dbc);
+  IoWriteQueue_Store16(0x04000050, 0);
   Event_SetFlag(0x101);
 }
 
@@ -584,19 +584,19 @@ extern u16 gData_02003fc0;
 void Func_0200130c(void) {
   u32 alphaRegister = (u32)&REG_BLDALPHA;
 
-  QueueIoWriteDelay2((u32)&REG_BLDCNT,
-                     BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
+  IoWriteQueue_Store16((u32)&REG_BLDCNT,
+                       BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   if (gFrameCount & 2) {
-    QueueIoWriteDelay2(alphaRegister, gData_02003fc0 | 12);
+    IoWriteQueue_Store16(alphaRegister, gData_02003fc0 | 12);
   } else {
-    QueueIoWriteDelay2(alphaRegister, gData_02003fc0 | 16);
+    IoWriteQueue_Store16(alphaRegister, gData_02003fc0 | 16);
   }
 }
 
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH(wrapper): the call forwarded through the inline, which sets the
    * arguments up in their own order: z is shifted before the -1 starts; as
-   * direct Camera_MoveWithinMapBounds calls, 6 of 66 instructions differ in
+   * direct FieldCamera_MoveWithinMapBounds calls, 6 of 66 instructions differ in
    * tla-en. */
   FieldCamera_MoveTo(x, y, z, mode);
 }
@@ -612,7 +612,7 @@ void Func_02001400(s32 mode) {
   u32 level;
 
   /* FAKEMATCH(temporary): the blend level is read into level, a u32 local,
-   * before each QueueIoWriteDelay2 call; as QueueIoWriteDelay2(0x04000052,
+   * before each IoWriteQueue_Store16 call; as IoWriteQueue_Store16(0x04000052,
    * gData_02003fc0), 4 of 593 instructions differ in tla-en. */
   System_Wait(1);
   Event_ClearFlag(0x109);
@@ -627,8 +627,8 @@ void Func_02001400(s32 mode) {
   }
   Func_02002074();
   buffer = Heap_AllocEwram(0x4000);
-  Resource_DecodeType01(gWorldMapPackedTiles, buffer);
-  Resource_DecodeType01(gWorldMapPackedPictures, buffer + 0x1000);
+  Decompress_TaggedLz(gWorldMapPackedTiles, buffer);
+  Decompress_TaggedLz(gWorldMapPackedPictures, buffer + 0x1000);
   IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(gWorldMapPalettes + mode * 32),
                       0x80000010);
   {
@@ -704,8 +704,8 @@ void Func_02001400(s32 mode) {
     FieldTask_Remove(Func_0200130c);
     DebugText_Clear();
     level = gData_02003fc0;
-    QueueIoWriteDelay2(0x04000052, level);
-    QueueIoWriteDelay2(0x04000050, 0);
+    IoWriteQueue_Store16(0x04000052, level);
+    IoWriteQueue_Store16(0x04000050, 0);
   } else {
     gData_02003fc0 = 0xd00;
     FieldEvent_Wait(4);
@@ -718,8 +718,8 @@ void Func_02001400(s32 mode) {
     FieldTask_Remove(Func_0200130c);
     DebugText_Clear();
     level = gData_02003fc0;
-    QueueIoWriteDelay2(0x04000052, level);
-    QueueIoWriteDelay2(0x04000050, 0);
+    IoWriteQueue_Store16(0x04000052, level);
+    IoWriteQueue_Store16(0x04000050, 0);
   }
   Heap_Release(buffer);
   Event_SetFlag(0x101);
@@ -750,8 +750,7 @@ void Func_02001ad0(struct Actor *parent) {
   s32 i;
 
   for (i = 0; i < 2; i++) {
-    child = (FieldActor_Create(271, parent->x, parent->y,
-                                                parent->z));
+    child = (FieldActor_Create(271, parent->x, parent->y, parent->z));
     pair[i] = child;
     if (child != NULL) {
       child->terrainHeight = parent->terrainHeight;
@@ -762,7 +761,7 @@ void Func_02001ad0(struct Actor *parent) {
       if (sprite != NULL) {
         Animation_ApplyChildArgument((struct ActorSpriteView *)sprite, 0);
         sprite->nextFrame = 0;
-        Resource_ResetEntry(sprite->vramBlock);
+        VramCache_FreeEntry(sprite->vramBlock);
         sprite->vramBlock = work->vramBlock;
         /* FAKEMATCH(signature): the sprite written through LinkedSpriteView,
          * which splits the byte at 0x11 and attribute 1's bits 14-15 that

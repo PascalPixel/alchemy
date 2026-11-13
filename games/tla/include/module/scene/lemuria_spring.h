@@ -17,7 +17,7 @@ void Func_0200049c(s32 a0);
 
 s32 Func_02001400();
 
-s32 BattleEffect_StartEffectObject22();
+s32 ItemDisplay_ShowItem();
 
 extern u8 gData_02001746[];
 extern u8 gData_02001749[];

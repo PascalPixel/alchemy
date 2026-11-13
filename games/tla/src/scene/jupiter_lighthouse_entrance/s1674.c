@@ -15,13 +15,12 @@
 #include "module/scene/jupiter_lighthouse_entrance.h"
 #include "module/scene/scene.h"
 
-
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  Map_SetScreenShake(a, b, c);
+  MapGrid_SetScreenShake(a, b, c);
 }
 
 DEFINE_TELEPORTER_DROP_IN_LOWER(Teleporter_DropInLower, Func_02000eac)

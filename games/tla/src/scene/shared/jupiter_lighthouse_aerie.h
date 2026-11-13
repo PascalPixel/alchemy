@@ -24,7 +24,7 @@ extern s32 gData_02003318;
 extern u16 gData_02003340[];
 extern struct CellTarget gData_02003488;
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02000858(s32 mode);
 void Func_02000e80(void);

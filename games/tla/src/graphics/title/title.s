@@ -220,7 +220,7 @@ Resource_Data01D:
 	.endif
 	.endif
 	.ifdef TLA_EDITION_ES
-	.byte 0x00, 0xe0	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.byte 0x00, 0xe0	@ PACKER: unused post-stream residue; Decompress_TaggedLz uses decoded RAM and output length; writer unknown
 	.else
 	.ifdef TLA_EDITION_FR
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes

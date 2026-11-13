@@ -11,9 +11,9 @@
 #define DEFINE_ACTOR_FLICKER(name, call1)                                      \
   void name(struct Actor *object) {                                            \
     if ((gFrameCount & 2) != 0) {                                              \
-      Animation_ApplyChildValues(object, 7);                                   \
+      Actor_SetSpriteColorMode(object, 7);                                   \
     } else {                                                                   \
-      Animation_ApplyChildValues(object, 0);                                   \
+      Actor_SetSpriteColorMode(object, 0);                                   \
     }                                                                          \
     if ((gFrameCount & 15) == 0) {                                             \
       call1(object);                                                           \
@@ -34,7 +34,7 @@
         CameraMove((x << 16) - 0x10000, -1, (z << 16) + 0x10000, 1);           \
         break;                                                                 \
       case 1: {                                                                \
-        Camera_MoveWithinMapBounds((x << 16) + 0x10000, -1,                    \
+        FieldCamera_MoveWithinMapBounds((x << 16) + 0x10000, -1,                    \
                                    (z << 16) - 0x10000, 1);                    \
         break;                                                                 \
       }                                                                        \
@@ -119,7 +119,7 @@
   void name(struct Actor *object, s32 mode) {                                  \
     if (mode == 0) {                                                           \
       object->update = 0;                                                      \
-      Animation_ApplyChildValues(object, 0);                                   \
+      Actor_SetSpriteColorMode(object, 0);                                   \
       Event_PlaySound(390);                                                    \
     } else if (mode == 1) {                                                    \
       object->update = (void (*)(void))call1;                                  \
@@ -134,7 +134,7 @@
 #define DEFINE_ACTOR_CYCLE_CHILD_VALUES(name, data1, data2, call1)             \
   void name(struct Actor *object) {                                            \
     if (gFrameCount & 1) {                                                     \
-      Animation_ApplyChildValues(object, data1[data2]);                        \
+      Actor_SetSpriteColorMode(object, data1[data2]);                        \
       data2 = (data2 + 1) & 3;                                                 \
     }                                                                          \
     if (!(gFrameCount & 3)) {                                                  \
@@ -149,7 +149,7 @@
     u32 frame = gFrameCount;                                                   \
                                                                                \
     if (frame & 1)                                                             \
-      Animation_ApplyChildValues(object, (frame >> 1) % 6);                    \
+      Actor_SetSpriteColorMode(object, (frame >> 1) % 6);                    \
     if ((gFrameCount & 15) == 0)                                               \
       call1(object);                                                           \
   }
@@ -158,8 +158,8 @@
 /// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_GAUGE_INIT(name, data1, data2, data3, data4, call1)             \
   void name(void) {                                                            \
-    Resource_DecodeType01(gWorldMapPackedTilesC, data1);                       \
-    data2 = Resource_FindFreeEntry();                                          \
+    Decompress_TaggedLz(gWorldMapPackedTilesC, data1);                       \
+    data2 = VramCache_FindFreeEntry();                                          \
     Vram_Load(data2, 0x100, 0);                                                \
     data3 = -1;                                                                \
     data4 = 10;                                                                \
@@ -173,15 +173,15 @@
     u32 frame = gFrameCount;                                                   \
                                                                                \
     if (frame & 1)                                                             \
-      Animation_ApplyChildValues(object, (frame >> 1) % 6);                    \
+      Actor_SetSpriteColorMode(object, (frame >> 1) % 6);                    \
   }
 
 /// Takes the gauge down.
 /// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_GAUGE_END(name, data1, data2, data3, call1)                     \
   void name(void) {                                                            \
-    Resource_DecodeType01(gWorldMapPackedTilesC, data1);                       \
-    Resource_ResetEntry(data2);                                                \
+    Decompress_TaggedLz(gWorldMapPackedTilesC, data1);                       \
+    VramCache_FreeEntry(data2);                                                \
     data3 = -1;                                                                \
     FieldTask_Remove(call1);                                                   \
   }

@@ -94,13 +94,12 @@ void Func_02000094(s32 unused, s32 id) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-
 void Func_02000af0(s32 id);
 void Teleporters_Find(s32 a, s32 b, s32 c, s32 d, s32 e);
 
 s32 Scene_Initialize(void) {
-  ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
-      0x204;
+  ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
+      ->screenEffect = 0x204;
   Actor_Get(8)->scaleX = 0xc000;
   Actor_Get(8)->scaleY = 0xc000;
   FieldActor_SetSpritePriority(12, 3);

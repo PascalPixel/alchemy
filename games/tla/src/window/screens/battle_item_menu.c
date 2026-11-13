@@ -19,7 +19,6 @@
 #include "module/battle_effect/battle_effect.h"
 #include "module/field/object.h"
 #include "module/shop/shop.h"
-#include "module/tla.h"
 #include "module/window/screens.h"
 
 #define BATTLE_OK 0x80 ///< flags: usable in battle.
@@ -72,8 +71,11 @@ struct DescriptorEntry {
 
 extern struct DescriptorEntry gData_080eff28[];
 
-/* VIEW(screens): routine Func_0814ea58 as void Func_0814ea58(void *effect, s32 mode); module/battle_effect/battle_effect.h has void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode). */
-extern void Func_0814ea58__screens(void *effect, s32 mode) __asm__("Func_0814ea58");
+/* VIEW(screens): routine Func_0814ea58 as void Func_0814ea58(void *effect, s32
+ * mode); module/battle_effect/battle_effect.h has void Func_0814ea58(struct
+ * BattleEffectArgument *effect, s32 mode). */
+extern void Func_0814ea58__screens(void *effect,
+                                   s32 mode) __asm__("Func_0814ea58");
 
 /// Copies one 4bpp tile of BG character block 0 to another, each given as a
 /// tilemap entry whose palette and flip bits are ignored. The battle lists copy
@@ -228,8 +230,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
             Text_SetColor(4);
           else if (item & ITEM_BROKEN)
             Text_SetColor(2);
-          Text_DrawMessageAsTiles((item & 0x1ff) + (s32)MsgItemName, window,
-                                     16, i * 16);
+          Text_DrawMessageAsTiles((item & 0x1ff) + (s32)MsgItemName, window, 16,
+                                  i * 16);
           Text_SetColor(15);
           sprites[i].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[i]);
         }
@@ -380,9 +382,9 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   Window_Close(messageWindow, 1);
   Window_Close(window, 1);
   wait(1);
-  Resource_ResetEntry(cursorHandle);
+  VramCache_FreeEntry(cursorHandle);
   for (i = 0; i < 5; i++)
-    Resource_ResetEntry(iconSlots[i]);
+    VramCache_FreeEntry(iconSlots[i]);
   wait(1);
   return result;
 }

@@ -1,6 +1,6 @@
 /// @file
-/// Script commands that move the leader by the pad, and the configured keys
-/// checked from a script.
+/// Script commands that move the leader by the pad, on the map and the world
+/// map, and the configured keys checked from a script.
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"
@@ -8,13 +8,18 @@
 #include "module/field/field.h"
 #include "module/field/object.h"
 
-/* VIEW(resource_slot): tag struct WorldCamera as struct WorldCamera__resource_slot; module/tla.h has another definition. */
+/* VIEW(resource_slot): tag struct WorldCamera as struct
+ * WorldCamera__resource_slot; module/tla.h has another definition. */
 struct WorldCamera__resource_slot {
   u8 unk000[0x11e];
   u16 yaw;
 };
 
-/* VIEW(f0279b0): tag struct PlayerSprite as struct PlayerSprite__f0279b0; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:5352: structure has no member named `entry'. */
+/* VIEW(f0279b0): tag struct PlayerSprite as struct PlayerSprite__f0279b0;
+ * resource_slot.c has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/field/resource_slot.c:5352: structure has no member named
+ * `entry'. */
 struct PlayerSprite__f0279b0 {
   u8 unk00[5];
   u8 low05 : 2;
@@ -31,15 +36,19 @@ struct PlayerSprite__f0279b0 {
 };
 
 // The heading of each direction-pad combination, -1 for none.
-extern const s16 gData_0802ec5c[16];
+extern const s16 gWorldMap_KeyHeadings[16];
 
 s32 WorldMap_IsWalkable(struct Actor *object, struct FieldPosition *position);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *, const s32 *);
-/* VIEW(f0279b0): routine Animation_ApplyChildArgument as s32 Animation_ApplyChildArgument(struct PlayerSprite__f0279b0 *, s32); f027064 has s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
-extern s32 Animation_ApplyChildArgument__f0279b0(struct PlayerSprite__f0279b0 *, s32) __asm__("Animation_ApplyChildArgument");
+/* VIEW(f0279b0): routine Animation_ApplyChildArgument as s32
+ * Animation_ApplyChildArgument(struct PlayerSprite__f0279b0 *, s32); f027064
+ * has s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
+extern s32 Animation_ApplyChildArgument__f0279b0(
+    struct PlayerSprite__f0279b0 *,
+    s32) __asm__("Animation_ApplyChildArgument");
 
-s32 Func_080279b0(struct Actor *object) {
+s32 Actor_MoveOnWorldMap(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition leftPosition;
   struct FieldPosition rightPosition;
@@ -73,7 +82,7 @@ s32 Func_080279b0(struct Actor *object) {
     object->acceleration = 0x4000;
   }
 
-  angle = gData_0802ec5c[(gInput.held >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   direction = angle;
   if (direction == 0xffff) {
     collision |= 4;
@@ -88,11 +97,13 @@ s32 Func_080279b0(struct Actor *object) {
       leftPosition.x = object->x;
       leftPosition.y = object->y;
       leftPosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x1555, &leftPosition);
+      Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x1555,
+                                           &leftPosition);
       rightPosition.x = object->x;
       rightPosition.y = object->y;
       rightPosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x1555, &rightPosition);
+      Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x1555,
+                                           &rightPosition);
       if ((WorldMap_IsWalkable(object, &position) |
            WorldMap_IsWalkable(object, &leftPosition) |
            WorldMap_IsWalkable(object, &rightPosition)) != 0) {
@@ -111,11 +122,13 @@ s32 Func_080279b0(struct Actor *object) {
           leftPosition.x = object->x;
           leftPosition.y = object->y;
           leftPosition.z = object->z;
-          Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x1555, &leftPosition);
+          Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x1555,
+                                               &leftPosition);
           rightPosition.x = object->x;
           rightPosition.y = object->y;
           rightPosition.z = object->z;
-          Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x1555, &rightPosition);
+          Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x1555,
+                                               &rightPosition);
           if ((WorldMap_IsWalkable(object, &position) |
                WorldMap_IsWalkable(object, &leftPosition) |
                WorldMap_IsWalkable(object, &rightPosition)) != 0)
@@ -164,14 +177,14 @@ update_object:
                       Iwram_MulQ16(object->velocityZ, object->velocityZ));
     object->velocityX = collision;
     object->velocityZ = collision;
-    Vector_AddPolarOffset__resource_slot(speed, (u16)angle,
-                          (struct FieldPosition *)&object->velocityX);
+    Vector_AddPolarOffset__resource_slot(
+        speed, (u16)angle, (struct FieldPosition *)&object->velocityX);
     if (object->timer != 0)
       object->timer--;
   }
 
   camera = (struct WorldCamera__resource_slot *)Ram_HeapSlots->mapWork;
-  targetCameraYaw = gData_0802eca0[(gInput.held >> 4) & 15];
+  targetCameraYaw = gWorldMap_KeyYaws[(gInput.held >> 4) & 15];
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
   if (yawStep > 0x200)
     yawStep = 0x200;
@@ -183,7 +196,8 @@ update_object:
 
   if (object->animationKind == 1) {
     playerSprite = object->sprite;
-    terrainCollision = GetWorldMapCollision((struct WorldPosition *)&object->x);
+    terrainCollision =
+        WorldMap_GetCollision((struct WorldPosition *)&object->x);
     if (terrainCollision == 9) {
       playerSprite->entry[6] = 1;
       playerSprite->flags = 0;
@@ -192,7 +206,7 @@ update_object:
       playerSprite->flags = 1;
     }
     if (terrainCollision == 6 && object->timer == 0 && collision == 0) {
-      ripple = Func_08023220(0x10d, object->x, object->y, object->z);
+      ripple = Actor_Create(0x10d, object->x, object->y, object->z);
       if (ripple != 0) {
         rippleSprite = ripple->sprite;
         Actor_StartScript(ripple, gData_0802ec94);
@@ -223,7 +237,8 @@ s32 Field_CheckConfiguredKeysAndCount(struct ActorScriptView *interpreter) {
   return 1;
 }
 
-s32 MapGrid_CheckCollision(struct Actor *object, struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct Actor *object,
+                           struct FieldPosition *position);
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
@@ -287,7 +302,7 @@ s32 Func_08027e20(struct Actor *interpreter) {
     object->acceleration = 0x10000;
   }
 
-  angle = gData_0802ec5c[(gInput.held >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   if ((u16)angle == 0xffff) {
     collision |= 4;
     goto counted;
@@ -335,22 +350,26 @@ s32 Func_08027e20(struct Actor *interpreter) {
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset__resource_slot(0x130000, (u16)angle + 0x1000, &testPosition);
+    Vector_AddPolarOffset__resource_slot(0x130000, (u16)angle + 0x1000,
+                                         &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition)) {
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(0x130000, (u16)angle - 0x1000, &testPosition);
+      Vector_AddPolarOffset__resource_slot(0x130000, (u16)angle - 0x1000,
+                                           &testPosition);
       if (!MapGrid_CheckCollision(object, &testPosition)) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset__resource_slot(0x130000, (u16)angle + 0x2000, &testPosition);
+        Vector_AddPolarOffset__resource_slot(0x130000, (u16)angle + 0x2000,
+                                             &testPosition);
         if (!MapGrid_CheckCollision(object, &testPosition)) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
-          Vector_AddPolarOffset__resource_slot(0x130000, (u16)angle - 0x2000, &testPosition);
+          Vector_AddPolarOffset__resource_slot(0x130000, (u16)angle - 0x2000,
+                                               &testPosition);
           if (!MapGrid_CheckCollision(object, &testPosition)) {
             heading = angle;
             goto push_objects;
@@ -383,25 +402,29 @@ s32 Func_08027e20(struct Actor *interpreter) {
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset__resource_slot(0x130000, (u16)heading + 0x1000, &testPosition);
+    Vector_AddPolarOffset__resource_slot(0x130000, (u16)heading + 0x1000,
+                                         &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset__resource_slot(0x130000, (u16)heading - 0x1000, &testPosition);
+    Vector_AddPolarOffset__resource_slot(0x130000, (u16)heading - 0x1000,
+                                         &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset__resource_slot(0x130000, (u16)heading + 0x2000, &testPosition);
+    Vector_AddPolarOffset__resource_slot(0x130000, (u16)heading + 0x2000,
+                                         &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset__resource_slot(0x130000, (u16)heading - 0x2000, &testPosition);
+    Vector_AddPolarOffset__resource_slot(0x130000, (u16)heading - 0x2000,
+                                         &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition))
       goto push_objects;
   }
@@ -436,26 +459,29 @@ push_objects:
       testPosition.z = other->z;
       heading = direction;
       Vector_AddPolarOffset__resource_slot(0x4000, direction, &testPosition);
-      if (!ScriptObject_CheckOverlap(other, &testPosition.x)) {
+      if (!ActorScript_CheckOverlap(other, &testPosition.x)) {
         testPosition.x = other->x;
         testPosition.y = other->y;
         testPosition.z = other->z;
-        Vector_AddPolarOffset__resource_slot(0x150000, direction, &testPosition);
+        Vector_AddPolarOffset__resource_slot(0x150000, direction,
+                                             &testPosition);
         if (!MapGrid_CheckCollision(other, &testPosition)) {
           testPosition.x = other->x;
           testPosition.y = other->y;
           testPosition.z = other->z;
-          Vector_AddPolarOffset__resource_slot(0x150000, direction + 0x1000, &testPosition);
+          Vector_AddPolarOffset__resource_slot(0x150000, direction + 0x1000,
+                                               &testPosition);
           // The same probe is tested twice.
           if (!MapGrid_CheckCollision(other, &testPosition) &&
               !MapGrid_CheckCollision(other, &testPosition)) {
             testPosition.x = other->x;
             testPosition.y = other->y;
             testPosition.z = other->z;
-            Vector_AddPolarOffset__resource_slot(0x150000, direction - 0x1000, &testPosition);
+            Vector_AddPolarOffset__resource_slot(0x150000, direction - 0x1000,
+                                                 &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
-              Vector_AddPolarOffset__resource_slot(0x4000, direction,
-                                    (struct FieldPosition *)&other->x);
+              Vector_AddPolarOffset__resource_slot(
+                  0x4000, direction, (struct FieldPosition *)&other->x);
               other->targetX = 0x80000000;
               other->targetY = 0x80000000;
               other->targetZ = 0x80000000;
@@ -516,8 +542,8 @@ counted:
                       Iwram_MulQ16(object->velocityZ, object->velocityZ));
     object->velocityX = collision;
     object->velocityZ = collision;
-    Vector_AddPolarOffset__resource_slot(speed, (u16)heading,
-                          (struct FieldPosition *)&object->velocityX);
+    Vector_AddPolarOffset__resource_slot(
+        speed, (u16)heading, (struct FieldPosition *)&object->velocityX);
     if (object->timer != 0)
       object->timer--;
     object->actionFlags &= ~1;
@@ -529,9 +555,577 @@ counted:
     object->facing += difference;
   }
   if (object->animationKind == 1)
-    GetWorldMapCollision((struct WorldPosition *)&object->x);
+    WorldMap_GetCollision((struct WorldPosition *)&object->x);
   Field_CheckConfiguredKeys();
   object->step++;
   return 1;
 }
 #undef SAME_CELL
+
+#include "flag_call.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "module/field/resource_slot.h"
+
+/* VIEW(s28534): tag struct PlayerSprite as struct PlayerSprite__s28534;
+ * resource_slot.c has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/field/resource_slot.c:5966: structure has no member named
+ * `objectMode'. */
+struct PlayerSprite__s28534 {
+  u8 unk00[5];
+  u8 low05 : 2;
+  u8 objectMode : 2;
+  u8 high05 : 4;
+  u8 unk06[3];
+  u8 low09 : 2;
+  u8 priority : 2;
+  u8 high09 : 4;
+  u8 unk0a[0x10];
+  u8 flags;
+};
+
+/* VIEW(s28534): tag struct PartyKeys as struct PartyKeys__s28534;
+ * resource_slot.c has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/field/resource_slot.c:5905: structure has no member named
+ * `keys23c'. */
+struct PartyKeys__s28534 {
+  u8 unk000[0x23c];
+  u16 keys23c;
+};
+
+// The heading of each direction-pad combination, -1 for none.
+extern const s16 gWorldMap_KeyHeadings[16];
+
+s32 Func_0802db88(struct Actor *object, struct FieldPosition *position);
+void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
+void Actor_StartScript(struct Actor *, const s32 *);
+/* VIEW(s28534): routine Animation_ApplyChildArgument as s32
+ * Animation_ApplyChildArgument(struct PlayerSprite__s28534 *, s32); f027064 has
+ * s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
+extern s32 Animation_ApplyChildArgument__s28534(
+    struct PlayerSprite__s28534 *, s32) __asm__("Animation_ApplyChildArgument");
+
+/// Script command 0x20, a sibling of Actor_MoveOnWorldMap in The Broken Seal's
+/// later Actor_MoveOnWorldMap layout (one probe ahead, then four probes 22.5
+/// and 45 degrees off it; six retry headings). Records the kind of ground under
+/// the object in the event work (byte 0xd3a), moves at a run, and lets the
+/// shortcut keys post requests 252 and, while byte 0xd39 is set, clear flag
+/// 0x147 and post 253; turns at most 0x400 a step while moving.
+s32 Func_08028534(struct Actor *object) {
+  struct FieldPosition position;
+  struct FieldPosition testPosition;
+  s16 angleOffsets[28];
+  s32 collision;
+  s32 angle;
+  u16 direction;
+  s32 angleIndex;
+  s32 count;
+  s32 difference;
+  s32 terrain;
+  s32 speed;
+  s32 targetCameraYaw;
+  struct WorldCamera__resource_slot *camera;
+  s32 yawStep;
+  struct Actor *ripple;
+  struct PlayerSprite__s28534 *rippleSprite;
+  struct EventWork *work;
+  struct WorldEventWork *worldWork;
+  u32 kind;
+
+  count = 0;
+  terrain = WorldMap_GetCollision((struct WorldPosition *)&object->x);
+  worldWork = Ram_HeapSlots->eventWork;
+  if (terrain >= 1 && terrain <= 3)
+    worldWork->terrainKind = 0;
+  if (terrain >= 5 && terrain <= 6)
+    worldWork->terrainKind = 1;
+  if (terrain == 4)
+    worldWork->terrainKind = 2;
+  if (terrain >= 7 && terrain <= 12)
+    worldWork->terrainKind = 3;
+
+  collision = 0;
+  object->speedLimit = 0x14000;
+  object->acceleration = 0x8000;
+  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
+  direction = angle;
+  if (direction == 0xffff) {
+    collision |= 4;
+  } else {
+    position.x = object->x;
+    position.y = object->y;
+    position.z = object->z;
+    Vector_AddPolarOffset__resource_slot(0x80000, direction, &position);
+    if (gDebugMode == 0 || (gInput.held & 0x200) == 0) {
+      if (Func_0802db88(object, &position) == 0) {
+        testPosition.x = object->x;
+        testPosition.y = object->y;
+        testPosition.z = object->z;
+        Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x1000,
+                                             &testPosition);
+        if (Func_0802db88(object, &testPosition) == 0) {
+          testPosition.x = object->x;
+          testPosition.y = object->y;
+          testPosition.z = object->z;
+          Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x1000,
+                                               &testPosition);
+          if (Func_0802db88(object, &testPosition) == 0) {
+            testPosition.x = object->x;
+            testPosition.y = object->y;
+            testPosition.z = object->z;
+            Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x2000,
+                                                 &testPosition);
+            if (Func_0802db88(object, &testPosition) == 0) {
+              testPosition.x = object->x;
+              testPosition.y = object->y;
+              testPosition.z = object->z;
+              Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x2000,
+                                                   &testPosition);
+              if (Func_0802db88(object, &testPosition) == 0)
+                goto update_object;
+            }
+          }
+        }
+      }
+      angleOffsets[count++] = direction + 0x1000;
+      angleOffsets[count++] = direction - 0x1000;
+      angleOffsets[count++] = direction + 0x2000;
+      angleOffsets[count++] = direction - 0x2000;
+      angleOffsets[count++] = direction + 0x3000;
+      angleOffsets[count++] = direction - 0x3000;
+      for (angleIndex = 0; angleIndex < count; angleIndex++) {
+        direction = angleOffsets[angleIndex];
+        position.x = object->x;
+        position.y = object->y;
+        position.z = object->z;
+        Vector_AddPolarOffset__resource_slot(0x80000, direction, &position);
+        if (Func_0802db88(object, &position) != 0)
+          continue;
+        testPosition.x = object->x;
+        testPosition.y = object->y;
+        testPosition.z = object->z;
+        Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x1000,
+                                             &testPosition);
+        if (Func_0802db88(object, &testPosition) != 0)
+          continue;
+        testPosition.x = object->x;
+        testPosition.y = object->y;
+        testPosition.z = object->z;
+        Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x1000,
+                                             &testPosition);
+        if (Func_0802db88(object, &testPosition) != 0)
+          continue;
+        testPosition.x = object->x;
+        testPosition.y = object->y;
+        testPosition.z = object->z;
+        Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x2000,
+                                             &testPosition);
+        if (Func_0802db88(object, &testPosition) != 0)
+          continue;
+        testPosition.x = object->x;
+        testPosition.y = object->y;
+        testPosition.z = object->z;
+        Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x2000,
+                                             &testPosition);
+        if (Func_0802db88(object, &testPosition) != 0)
+          continue;
+        angle = (s16)direction;
+        goto update_object;
+      }
+      collision |= 1;
+    }
+  }
+
+update_object:
+  work = Ram_HeapSlots->eventWork;
+  if (work != NULL) {
+    if ((collision & 3) != 0)
+      work->blockedSteps++;
+    else
+      work->blockedSteps = 0;
+    work->heldKeys = gInput.held;
+  }
+  if (collision != 0)
+    Actor_SelectAnimation(object, 1);
+  else
+    Actor_SelectAnimation(object, 2);
+
+  if (gInput.pressed & gMainRoutineWork.keys230) {
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 252;
+    collision |= 4;
+  }
+  if (gInput.pressed &
+      ((struct PartyKeys__s28534 *)&gMainRoutineWork)->keys23c) {
+    struct WorldEventWork *keyWork = Ram_HeapSlots->eventWork;
+    if (keyWork->unkd39 != 0) {
+      GameFlag_ClearBit(0x147);
+      ((struct EventWork *)keyWork)->unk16a = 253;
+    }
+  }
+
+  if (collision != 0) {
+    object->targetX = 0x80000000;
+    object->targetY = 0x80000000;
+    object->targetZ = 0x80000000;
+    object->velocityX = 0;
+    object->velocityZ = 0;
+    if ((collision & 3) != 0) {
+      direction = angle;
+      difference = (s16)(direction - object->facing);
+      if (difference > 0x1000)
+        difference = 0x1000;
+      if (difference < -0x1000)
+        difference = -0x1000;
+      object->facing += difference;
+    }
+    object->timer = 0;
+    object->unk66 = 2;
+  } else {
+    Actor_SetMoveTarget(object, position.x, position.y, position.z);
+    speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
+                      Iwram_MulQ16(object->velocityZ, object->velocityZ));
+    object->velocityX = collision;
+    object->velocityZ = collision;
+    direction = angle;
+    Vector_AddPolarOffset__resource_slot(
+        speed, direction, (struct FieldPosition *)&object->velocityX);
+    if (object->timer != 0)
+      object->timer--;
+    object->actionFlags &= ~1;
+    difference = (s16)(direction - object->facing);
+    if (difference > 0x1000)
+      difference = 0x400;
+    if (difference < -0x1000)
+      difference = -0x400;
+    object->facing += difference;
+  }
+
+  camera = (struct WorldCamera__resource_slot *)Ram_HeapSlots->mapWork;
+  targetCameraYaw = gWorldMap_KeyYaws[(gInput.held >> 4) & 15];
+  yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
+  if (yawStep > 0x200)
+    yawStep = 0x200;
+  if (yawStep < -0x200)
+    yawStep = -0x200;
+  if (yawStep > -16 && yawStep < 16)
+    yawStep = targetCameraYaw - camera->yaw;
+  camera->yaw += yawStep;
+
+  kind = object->animationKind;
+  if (kind == 1) {
+    WorldMap_GetCollision((struct WorldPosition *)&object->x);
+    if (object->timer == 0 && collision == 0) {
+      ripple = Actor_Create(0x10d, object->x, object->y, object->z);
+      if (ripple != 0) {
+        rippleSprite = ripple->sprite;
+        Actor_StartScript(ripple, gData_0802ec94);
+        ripple->motionFlags = 0;
+        ripple->terrainId = kind;
+        if (rippleSprite != 0) {
+          Animation_ApplyChildArgument__s28534(rippleSprite, 2);
+          rippleSprite->flags = 0;
+          rippleSprite->objectMode = 0;
+          rippleSprite->priority = 2;
+        }
+        object->timer = 10;
+      }
+    }
+  }
+  Field_CheckConfiguredKeys();
+  object->step++;
+  return 1;
+}
+
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "module/field/resource_slot.h"
+
+/* VIEW(f028aac): tag struct PlayerSprite as struct PlayerSprite__f028aac;
+ * resource_slot.c has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/field/resource_slot.c:6227: structure has no member named
+ * `objectMode'. */
+struct PlayerSprite__f028aac {
+  u8 unk00[5];
+  u8 low05 : 2;
+  u8 objectMode : 2;
+  u8 high05 : 4;
+  u8 unk06[3];
+  u8 low09 : 2;
+  u8 priority : 2;
+  u8 high09 : 4;
+  u8 unk0a[0x10];
+  u8 flags;
+};
+
+/* VIEW(f028aac): tag struct WorldEventWork as struct WorldEventWork__f028aac;
+ * resource_slot.c has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/field/resource_slot.c:6247: structure has no member named
+ * `climbing'. */
+struct WorldEventWork__f028aac {
+  u8 unk000[0xd3a];
+  u8 terrainKind;
+  s8 climbing;
+};
+
+// The heading of each direction-pad combination, -1 for none.
+extern const s16 gWorldMap_KeyHeadings[16];
+
+s32 Func_0802dbd0(struct Actor *object, struct FieldPosition *position);
+void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
+void Actor_StartScript(struct Actor *, const s32 *);
+/* VIEW(f028aac): routine Animation_ApplyChildArgument as s32
+ * Animation_ApplyChildArgument(struct PlayerSprite__f028aac *, s32); f027064
+ * has s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
+extern s32 Animation_ApplyChildArgument__f028aac(
+    struct PlayerSprite__f028aac *,
+    s32) __asm__("Animation_ApplyChildArgument");
+
+s32 Func_08028aac(struct Actor *object) {
+  struct FieldPosition position;
+  struct FieldPosition testPosition;
+  s16 angleOffsets[28];
+  s32 collision;
+  s32 angle;
+  u16 direction;
+  s32 angleIndex;
+  s32 count;
+  s32 difference;
+  s32 terrain;
+  s32 speed;
+  s32 targetCameraYaw;
+  struct WorldCamera__resource_slot *camera;
+  s32 yawStep;
+  struct Actor *ripple;
+  struct PlayerSprite__f028aac *rippleSprite;
+  struct EventWork *work;
+  struct WorldEventWork__f028aac *worldWork;
+  struct Actor *other;
+  u32 kind;
+  struct WorldEventWork__f028aac *flightWork;
+
+  count = 0;
+  terrain = WorldMap_GetCollision((struct WorldPosition *)&object->x);
+  worldWork = Ram_HeapSlots->eventWork;
+  if (terrain >= 1 && terrain <= 3)
+    worldWork->terrainKind = 0;
+  if (terrain >= 5 && terrain <= 6)
+    worldWork->terrainKind = 1;
+  if (terrain == 4)
+    worldWork->terrainKind = 2;
+  if (terrain >= 7 && terrain <= 12)
+    worldWork->terrainKind = 3;
+
+  object->motionFlags = 0;
+  collision = 0;
+  object->speedLimit = object->y / 16 + 0x14000;
+  object->acceleration = 0x8000;
+  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
+  direction = angle;
+  if (direction == 0xffff) {
+    collision |= 4;
+    goto update_object;
+  }
+  position.x = object->x;
+  position.y = object->y;
+  position.z = object->z;
+  Vector_AddPolarOffset__resource_slot(0x80000, direction, &position);
+  if (gDebugMode != 0 && (gInput.held & 0x200) != 0)
+    goto update_object;
+  if (Func_0802dbd0(object, &position) == 0) {
+    testPosition.x = object->x;
+    testPosition.y = object->y;
+    testPosition.z = object->z;
+    Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x1000,
+                                         &testPosition);
+    if (Func_0802dbd0(object, &testPosition) == 0) {
+      testPosition.x = object->x;
+      testPosition.y = object->y;
+      testPosition.z = object->z;
+      Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x1000,
+                                           &testPosition);
+      if (Func_0802dbd0(object, &testPosition) == 0) {
+        testPosition.x = object->x;
+        testPosition.y = object->y;
+        testPosition.z = object->z;
+        Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x2000,
+                                             &testPosition);
+        if (Func_0802dbd0(object, &testPosition) == 0) {
+          testPosition.x = object->x;
+          testPosition.y = object->y;
+          testPosition.z = object->z;
+          Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x2000,
+                                               &testPosition);
+          if (Func_0802dbd0(object, &testPosition) == 0)
+            goto check_objects;
+        }
+      }
+    }
+  }
+  angleOffsets[count++] = direction + 0x1000;
+  angleOffsets[count++] = direction - 0x1000;
+  angleOffsets[count++] = direction + 0x2000;
+  angleOffsets[count++] = direction - 0x2000;
+  angleOffsets[count++] = direction + 0x3000;
+  angleOffsets[count++] = direction - 0x3000;
+  for (angleIndex = 0; angleIndex < count; angleIndex++) {
+    direction = angleOffsets[angleIndex];
+    position.x = object->x;
+    position.y = object->y;
+    position.z = object->z;
+    Vector_AddPolarOffset__resource_slot(0x80000, direction, &position);
+    if (Func_0802dbd0(object, &position) != 0)
+      continue;
+    testPosition.x = object->x;
+    testPosition.y = object->y;
+    testPosition.z = object->z;
+    Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x1000,
+                                         &testPosition);
+    if (Func_0802dbd0(object, &testPosition) != 0)
+      continue;
+    testPosition.x = object->x;
+    testPosition.y = object->y;
+    testPosition.z = object->z;
+    Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x1000,
+                                         &testPosition);
+    if (Func_0802dbd0(object, &testPosition) != 0)
+      continue;
+    testPosition.x = object->x;
+    testPosition.y = object->y;
+    testPosition.z = object->z;
+    Vector_AddPolarOffset__resource_slot(0x80000, direction + 0x2000,
+                                         &testPosition);
+    if (Func_0802dbd0(object, &testPosition) != 0)
+      continue;
+    testPosition.x = object->x;
+    testPosition.y = object->y;
+    testPosition.z = object->z;
+    Vector_AddPolarOffset__resource_slot(0x80000, direction - 0x2000,
+                                         &testPosition);
+    if (Func_0802dbd0(object, &testPosition) != 0)
+      continue;
+    angle = (s16)direction;
+    goto check_objects;
+  }
+  collision |= 1;
+
+check_objects:
+  other = Ram_HeapSlots->scriptObjects;
+  for (angleIndex = 63; angleIndex >= 0; angleIndex -= 1, other++) {
+    if (other->script != NULL && (other->collisionFlags & 1) &&
+        other != object &&
+        Field_CheckSpheresOverlap(&other->x, other->radius, &position.x,
+                                  object->radius) >= 0)
+      collision |= 2;
+  }
+
+update_object:
+  work = Ram_HeapSlots->eventWork;
+  if (work != NULL) {
+    if ((collision & 3) != 0)
+      work->blockedSteps++;
+    else
+      work->blockedSteps = 0;
+    work->heldKeys = gInput.held;
+  }
+  if (object->y >= 0x40000)
+    Actor_SelectAnimation(object, 6);
+  else if (collision != 0)
+    Actor_SelectAnimation(object, 1);
+  else
+    Actor_SelectAnimation(object, 2);
+
+  if (collision != 0) {
+    object->targetX = 0x80000000;
+    object->targetY = 0x80000000;
+    object->targetZ = 0x80000000;
+    object->velocityX = 0;
+    object->velocityZ = 0;
+    if ((collision & 3) != 0) {
+      direction = angle;
+      difference = (s16)(direction - object->facing);
+      if (difference > 0x1000)
+        difference = 0x1000;
+      if (difference < -0x1000)
+        difference = -0x1000;
+      object->facing += difference;
+    }
+    object->timer = 0;
+    object->unk66 = 2;
+  } else {
+    Actor_SetMoveTarget(object, position.x, position.y, position.z);
+    speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
+                      Iwram_MulQ16(object->velocityZ, object->velocityZ));
+    object->velocityX = collision;
+    object->velocityZ = collision;
+    direction = angle;
+    Vector_AddPolarOffset__resource_slot(
+        speed, direction, (struct FieldPosition *)&object->velocityX);
+    if (object->timer != 0)
+      object->timer--;
+    object->actionFlags &= ~1;
+    difference = (s16)(direction - object->facing);
+    if (difference > 0x1000)
+      difference = 0x400;
+    if (difference < -0x1000)
+      difference = -0x400;
+    object->facing += difference;
+  }
+
+  camera = (struct WorldCamera__resource_slot *)Ram_HeapSlots->mapWork;
+  targetCameraYaw = Iwram_MulQ16(gWorldMap_KeyYaws[(gInput.held >> 4) & 15],
+                                 object->y / 4 + 0x10000);
+  yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
+  if (yawStep > 32)
+    yawStep = 32;
+  if (yawStep < -32)
+    yawStep = -32;
+  if (yawStep >= -1 && yawStep <= 1)
+    yawStep = targetCameraYaw - camera->yaw;
+  camera->yaw += yawStep;
+
+  kind = object->animationKind;
+  if (kind == 1) {
+    if (object->y < 0x40000) {
+      if (object->timer == 0 && collision == 0) {
+        ripple = Actor_Create(0x10d, object->x, 0, object->z);
+        if (ripple != 0) {
+          rippleSprite = ripple->sprite;
+          Actor_StartScript(ripple, gData_0802ec94);
+          ripple->motionFlags = 0;
+          ripple->terrainId = kind;
+          if (rippleSprite != 0) {
+            Animation_ApplyChildArgument__f028aac(rippleSprite, 1);
+            rippleSprite->flags = 0;
+            rippleSprite->objectMode = 1;
+            rippleSprite->priority = 2;
+          }
+          object->timer = 10;
+        }
+      }
+    } else {
+      Actor_SetSpriteFlags(object, gFrameCount & kind);
+    }
+  }
+
+  flightWork = Ram_HeapSlots->eventWork;
+  if (gInput.held & (gMainRoutineWork.keys230 | gMainRoutineWork.unk232)) {
+    flightWork->climbing = 1;
+    object->y += 0x2000;
+  } else {
+    object->y -= 0x4000;
+  }
+  if (Func_080ad318() == 0)
+    object->y -= 0x4000;
+  if (object->y <= 0 && flightWork->climbing != 0)
+    ((struct EventWork *)flightWork)->unk16a = 254;
+  if (object->y >= 0xc0000)
+    object->y = 0xc0000;
+  if (object->y <= 0)
+    object->y = 0;
+  object->step++;
+  return 1;
+}

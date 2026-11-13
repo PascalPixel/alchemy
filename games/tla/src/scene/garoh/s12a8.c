@@ -31,7 +31,7 @@ void Func_020012a8(s32 objectId) {
   s32 z;
 
   object = Actor_Get(objectId);
-  params.update = Effect_AdvanceMotion;
+  params.update = FieldEffect_AdvanceMotion;
   // A goto loop: the vector's address is formed after the cosine call on every
   // pass, where a for loop hoists it.
   angleStep = 0;
@@ -114,7 +114,7 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void BlendBack(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
-  Func_0802b450(a0, a1, a2, a3, a4, a5);
+  MapGrid_CopyCellPictureCellsRect(a0, a1, a2, a3, a4, a5);
 }
 
 /// The fourth argument is passed unextended (0xf000), where spawn.c's
@@ -144,8 +144,8 @@ void Func_020013b0(s32 id) {
 #define DEFINE_GAROH_PLAY_EFFECT(name, n1, n2)                                 \
   void name(s32 actor) {                                                       \
     BattleEffect_LoadActionEffectResources(144, 1);                            \
-    BattleEffect_SetupObjectPair(actor, 0);                                    \
-    Field_DispatchTypeHandler(n1);                                             \
+    FieldPsynergy_SetupActorPair(actor, 0);                                    \
+    FieldPsynergy_RunHandler(n1);                                             \
     BlendBack(n2, 5, 3, 3, 19, 5);                                             \
     BattleEffect_StopMainActor();                                              \
     BattleEffect_CleanupSceneObjects();                                        \
@@ -262,7 +262,7 @@ loop1:
   FieldEvent_Wait(20);
   Actor_FaceDirection(8, 0x2000, 0);
   FieldEvent_Wait(20);
-  FieldCamera_FollowActor(8, 1);
+  EventCamera_FollowActor(8, 1);
   Actor_SetAnimation(8, 2);
   x = bird->x;
   z = bird->z;
@@ -529,7 +529,7 @@ loop2:
   if (Event_GetFlag(7)) {
     FOLLOW_LEADER(7);
   }
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Event_End();
 }
 
@@ -616,7 +616,7 @@ void Func_020022f4(void) {
   FieldEvent_Wait(30);
   v5 = ((s32)&gMainRoutineWork);
   v5 = (v5 + 0x214);
-  FieldCamera_FollowActor(*(s32 *)(v5), 1);
+  EventCamera_FollowActor(*(s32 *)(v5), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_ShowEmote(9, 0x102, 30);
@@ -814,7 +814,7 @@ L_0200a8b2:;
   FieldEvent_Wait(10);
   Func_02001454(11);
   Actor_SetPosition(11, 0, 0);
-  FieldCamera_FollowActor(10, 1);
+  EventCamera_FollowActor(10, 1);
   FieldEvent_Wait(20);
   Actor_WalkBy(8, 0, 24);
   Actor_WalkByAndWait(10, 0, 24);
@@ -1446,7 +1446,7 @@ L_0200b83e:;
   Actor_SetPosition(7, 0, 0);
 L_0200b84e:;
   p2 = (s32)&gMainRoutineWork;
-  FieldCamera_FollowActor(*(s32 *)((p2 + 0x214)), 1);
+  EventCamera_FollowActor(*(s32 *)((p2 + 0x214)), 1);
   Func_02001344();
   FieldEvent_SetExitRequest(11);
   Event_End();
@@ -1536,7 +1536,7 @@ L_0200b920:;
   FieldEvent_Wait(20);
   Func_02001454(11);
   Actor_SetPosition(11, 0, 0);
-  FieldCamera_FollowActor(10, 1);
+  EventCamera_FollowActor(10, 1);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(10, 0, 48);
   Actor_FaceDirection(9, 0xe000, 0);
@@ -2268,7 +2268,7 @@ L_0200d0fa:;
   p2 = (s32)&gMainRoutineWork;
   {
     s32 a0 = *(s32 *)((p2 + 0x214));
-    FieldCamera_FollowActor(a0, 1);
+    EventCamera_FollowActor(a0, 1);
   }
   Event_End();
 }

@@ -95,9 +95,9 @@ void Func_02001718(const s32 *from, const s32 *to) {
   work->to[0] = to[0];
   work->to[1] = to[1];
   work->to[2] = to[2];
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs),
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs),
                         work);
-  entry = Resource_FindFreeEntry();
+  entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x400, work);
   work->tile = tile;
   work->vramEntry = entry;
@@ -134,7 +134,7 @@ void Func_0200185c(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
 
   FieldTask_Remove(Func_02001538);
-  Resource_ResetEntry(work->vramEntry);
+  VramCache_FreeEntry(work->vramEntry);
   HeapSlot_Release(220);
 }
 

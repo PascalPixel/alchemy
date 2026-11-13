@@ -169,7 +169,7 @@ s32 Func_080cdac0(s32 animation, s32 selfId, s32 otherId) {
   return distance;
 }
 
-s32 BattleEffect_FindNearestObject(s32 self, s32 effect) {
+s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect) {
   s32 nearest = 9999;
   s32 found = -1;
   s32 i;
@@ -187,8 +187,8 @@ s32 BattleEffect_FindNearestObject(s32 self, s32 effect) {
   return found;
 }
 
-s32 BattleEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
-                                                s32 mode) {
+s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
+                                               s32 mode) {
   s32 object;
   s32 result;
 
@@ -256,7 +256,7 @@ s32 Func_080cdc74(void) {
     return 0;
   terrain = target->terrainId;
   target->terrainId = 2;
-  result = Func_08020210(target, position);
+  result = MapGrid_CheckCollisionFar(target, position);
   target->terrainId = terrain;
   if (result > 0)
     return 0;
@@ -287,7 +287,7 @@ void Func_080cdd80(void) {
   Vector_AddPolarOffset(0x100000, angle, position);
   terrain = target->terrainId;
   target->terrainId = 2;
-  result = Func_08020210(target, position);
+  result = MapGrid_CheckCollisionFar(target, position);
   target->terrainId = terrain;
   if (result <= 0) {
     Actor_SetMode(owner, 8);

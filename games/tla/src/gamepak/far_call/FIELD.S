@@ -4,119 +4,119 @@
 	.global Resource_FarCall003
 Resource_FarCall003:
 	export Resource_GetMetadataRecordFarFar, Resource_GetMetadataRecordFar
-	export ObjectSystem_ConfigureFar, ObjectSystem_Configure
+	export ActorSystem_ConfigureFar, ActorSystem_Configure
 	export Render_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement
 	export Func_08020018, Func_08022318
 	export Func_08020020, Func_0802254c
 	export InitializeAnimationObjectsFar, InitializeAnimationObjects
 	export Animation_ApplyChildArgumentFar, Animation_ApplyChildArgument
-	export Func_08020038, Func_08022b80
-	export ResourceObject_CreateFar, ResourceObject_Create
-	export ResourceObject_ReleaseFar, ResourceObject_Release
-	export Func_08020050, Func_08022010
+	export Sprite_SetAnimationTimersFar, Sprite_SetAnimationTimers
+	export Sprite_CreateFar, Sprite_Create
+	export Sprite_DestroyFar, Sprite_Destroy
+	export Render_PlaceSpritePartPairFar, Render_PlaceSpritePartPair
 	export ResourceMetadata_RegisterFar, ResourceMetadata_Register
-	export ResourceMetadata_UnregisterFar, ResourceMetadata_Unregister
-	export ResourceMetadata_ReleaseSlotFar, ResourceMetadata_ReleaseSlot
-	export ResourceMetadata_ClearRecordFar, ResourceMetadata_ClearRecord
-	export Animation_InitializeWorkFromMetadataFar, Animation_InitializeWorkFromMetadata
-	export Animation_SetWorkEntryFar, Animation_SetWorkEntry
-	export ObjectSystem_InitializeFar, Func_080230e0
+	export Sprite_RemoveAnimationFar, Sprite_RemoveAnimation
+	export Sprite_RemoveAnimationAtFar, Sprite_RemoveAnimationAt
+	export SpriteAnimation_ClearFar, SpriteAnimation_Clear
+	export SpriteAnimation_ResetFar, SpriteAnimation_Reset
+	export SpriteAnimation_StartFar, SpriteAnimation_Start
+	export ActorSystem_InitializeFar, ActorSystem_Initialize
 	export Actor_SetMode, Actor_SelectAnimation
-	export Actor_SetAnimationSpeedFar, Actor_SetAnimationSpeed
+	export Actor_SelectAnimationFar, Actor_SetAnimationSpeed
 	export Actor_SetAnimationAndSpeedFar, Actor_SetAnimationAndSpeed
 	export Actor_StartScriptFar, Actor_StartScript
 	export Func_080200b0, Func_08023524
-	export Actor_FindFreeObjectFar, Actor_FindFreeObject
-	export Func_080200c0, Func_08023220
+	export Actor_FindFreeFar, Actor_FindFree
+	export Actor_CreateFar, Actor_Create
 	export Actor_Destroy, Actor_Release
 	export Actor_SetSpriteRotationFar, Actor_SetSpriteRotation
 	export Actor_StartCameraFar, Actor_StartCamera
-	export Func_080200e0, Actor_StartApproachWatched
+	export Actor_StartApproachWatchedFar, Actor_StartApproachWatched
 	export Actor_SetPositionAndResetMotionFar, Actor_SetPositionAndResetMotion
-	export Map_RenderAnimatedTilePictureFar, Map_RenderAnimatedTilePicture
-	export Map_RenderAnimatedTilePicturesForObjectFar, Map_RenderAnimatedTilePicturesForObject
-	export Map_RenderAllAnimatedTilePicturesFar, Map_RenderAllAnimatedTilePictures
-	export Func_08020108, Func_0802a6b8
-	export Func_08020110, Func_0802b998
-	export Func_08020118, Func_0802af9c
-	export Map_CenterOnFollowedPointFar, Func_0802aa74
-	export Map_UpdateCurrentTileBlockFar, Map_UpdateCurrentTileBlock
-	export WorldMap_LoadGraphicsFar, Func_0802be4c
+	export SpriteDissolve_StepFar, SpriteDissolve_Step
+	export SpriteDissolve_RunFar, SpriteDissolve_Run
+	export SpriteDissolve_RunManyFar, SpriteDissolve_RunMany
+	export MapGrid_LoadMapFar, MapGrid_LoadMap
+	export WorldMap_InitializePerspectiveFar, WorldMap_InitializePerspective
+	export MapGrid_SetCameraCenterFar, MapGrid_SetCameraCenter
+	export Map_CenterOnFollowedPointFar, Map_CenterOnFollowedPoint
+	export WorldMap_UpdateCurrentTileBlockFar, WorldMap_UpdateCurrentTileBlock
+	export WorldMap_LoadGraphicsFar, WorldMap_LoadGraphics
 	export Actor_ResetMotion, Actor_StartIdle
 	export Actor_RefreshSelector, Actor_WaitForCommandEnd
 	export Actor_SetTargetPosition, Actor_SetMoveTarget
-	export Actor_CommitPosition, Script_WaitForEventTimeout
-	export Map_GetScreenRelativePositionFar, Map_GetScreenRelativePosition
-	export WorldMap_UpdateViewFar, Func_0802c240
-	export Map_LoadDefaultCellsAndUpdateBlockFar, Map_LoadDefaultCellsAndUpdateBlock
-	export Map_PlayMapEditFar, Map_PlayMapEdit
-	export Map_CopyCellPictureIndicesRectFar, Map_CopyCellPictureIndicesRect
-	export Func_08020180, Map_ApplySetFlagEdits
-	export Func_08020188, Map_SetFlagAndApplyEdits
-	export Func_08020190, Map_SetFlagAndApplyAttributeEdits
-	export Func_08020198, Map_ClearLayerEntryFlag
-	export Func_080201a0, Map_SetLayerEntryFlag
-	export DisplayBlend_DisableRunScriptFar, DisplayBlend_DisableRunScript
-	export DisplayBlend_EnableRunScriptFar, DisplayBlend_EnableRunScript
-	export DisplayBlend_StartScriptFar, DisplayBlend_StartScript
+	export Actor_CommitPosition, Actor_WaitForMove
+	export MapGrid_GetScreenRelativePositionFar, MapGrid_GetScreenRelativePosition
+	export WorldMap_UpdateViewFar, WorldMap_UpdateView
+	export WorldMap_LoadDefaultCellsAndUpdateBlockFar, WorldMap_LoadDefaultCellsAndUpdateBlock
+	export MapGrid_PlayMapEditFar, MapGrid_PlayMapEdit
+	export MapGrid_CopyCellPictureIndicesRectFar, MapGrid_CopyCellPictureIndicesRect
+	export Map_ApplySetFlagEditsFar, Map_ApplySetFlagEdits
+	export Map_SetFlagAndApplyEditsFar, Map_SetFlagAndApplyEdits
+	export Map_SetFlagAndApplyAttributeEditsFar, Map_SetFlagAndApplyAttributeEdits
+	export Map_ClearLayerEntryFlagFar, Map_ClearLayerEntryFlag
+	export Map_SetLayerEntryFlagFar, Map_SetLayerEntryFlag
+	export BlendScript_ResumeFar, BlendScript_Resume
+	export BlendScript_SuspendFar, BlendScript_Suspend
+	export BlendScript_StartFar, BlendScript_Start
 	export MapGrid_GetTerrainHeightFar, MapGrid_GetTerrainHeight
-	export GetMapCellCollisionFar, GetMapCellCollision
-	export Func_080201d0, MapGrid_GetCellAttributeLowNibble
+	export MapGrid_GetCellBehaviorAtFar, MapGrid_GetCellBehaviorAt
+	export MapGrid_GetCellAttributeLowNibbleFar, MapGrid_GetCellAttributeLowNibble
 	export Func_080201d8, Func_0802d530
 	export Map_CopyCellsRectFar, Map_CopyCellsRect
 	export Map_CopyCellAttributeRectFar, Map_CopyCellAttributeRect
-	export Func_080201f0, Func_0802b450
+	export MapGrid_CopyCellPictureCellsRectFar, MapGrid_CopyCellPictureCellsRect
 	export Func_080201f8, Func_0802b590
-	export Func_08020200, Map_SetWindowCellTile
-	export Func_08020208, Func_0802bdd0
-	export Func_08020210, MapGrid_CheckCollision
-	export Actor_SetSingleChildFlagsFar, Actor_SetChildByteValue
-	export Animation_SetStateFlagsFar, Animation_SetStateFlags
-	export Map_SetScreenShakeFar, Map_SetScreenShake
-	export Func_08020230, Map_WaitForShakeToSettle
-	export Animation_SetIndexAndInitializeObjectsFar, Animation_SetIndexAndInitializeObjects
-	export Func_08020240, Graphics_EnableObjLayerAndCallbacks
-	export Func_08020248, ActorSystem_ResumeProjectionAndHideLayers
+	export WorldMap_SetWindowCellTileFar, WorldMap_SetWindowCellTile
+	export WorldMap_SetWindowCellTileAndDrawFar, WorldMap_SetWindowCellTileAndDraw
+	export MapGrid_CheckCollisionFar, MapGrid_CheckCollision
+	export Actor_SetSingleChildFlagsFar, Actor_SetSpriteFlags
+	export Actor_SetBlendModeFar, Actor_SetBlendMode
+	export MapGrid_SetScreenShakeFar, MapGrid_SetScreenShake
+	export MapGrid_WaitForShakeToSettleFar, MapGrid_WaitForShakeToSettle
+	export Actor_SetFirstSpriteAnimationFar, Actor_SetFirstSpriteAnimation
+	export ActorSystem_SuspendProjectionAndShowSpritesFar, ActorSystem_SuspendProjectionAndShowSprites
+	export ActorSystem_ResumeProjectionAndHideLayersFar, ActorSystem_ResumeProjectionAndHideLayers
 	export Animation_SetDisplayFlagFar, Animation_SetDisplayFlag
-	export Func_08020258, MapGrid_IsWallAt
+	export MapGrid_IsWallAtFar, MapGrid_IsWallAt
 	export Actor_RegisterSpriteMetadataFar, Actor_RegisterSpriteMetadata
-	export Func_08020268, MapAnimation_Start
-	export Func_08020270, Func_0802c9c8
-	export Animation_ApplyChildValuesFar, Animation_ApplyChildValues
+	export MapAnimation_StartFar, MapAnimation_Start
+	export WorldMap_LoadAreaGraphicsFar, WorldMap_LoadAreaGraphics
+	export Actor_SetSpriteColorModeFar, Actor_SetSpriteColorMode
 	export Animation_ApplyChildValuesToRecordFar, Animation_ApplyChildValuesToRecord
 	export Animation_ApplyChildValueToFirstFar, Animation_ApplyChildValueToFirst
 	export Actor_SetSpritePriorityDirectFar, Actor_SetSpritePriorityDirect
-	export ScriptObject_CheckOverlapFar, ScriptObject_CheckOverlap
-	export Func_080202a0, Map_SetShownLayers
-	export ResourceMetadata_SumCommandLengthsFar, ResourceMetadata_SumCommandLengths
-	export GetWorldMapTerrainBehaviorFar, GetWorldMapTerrainBehavior
-	export ResourceSlot_LoadFar, ResourceSlot_Load
-	export SetMapCellCollisionFar, SetMapCellCollision
+	export ActorScript_CheckOverlapFar, ActorScript_CheckOverlap
+	export MapGrid_SetShownLayersFar, MapGrid_SetShownLayers
+	export SpriteAnimation_SumCommandLengthsFar, SpriteAnimation_SumCommandLengths
+	export WorldMap_GetBattleEnvironmentFar, WorldMap_GetBattleEnvironment
+	export SpritePictureCache_LoadFar, SpritePictureCache_Load
+	export MapGrid_SetCellBehaviorAtFar, MapGrid_SetCellBehaviorAt
 	export Animation_ApplyChildValueFar, Animation_ApplyChildValue
 	export SpriteColor_RemapPixelsFar, SpriteColor_RemapPixels
-	export Map_EnableUpdateCallbackFar, Map_EnableUpdateCallback
-	export Map_DisableUpdateCallbackFar, Map_DisableUpdateCallback
-	export ScriptObject_FindOverlappingEntryFar, ScriptObject_FindOverlappingEntry
-	export Func_080202f0, MapGrid_GetTerrainKind
+	export TilesetAnim_SuspendAllFar, TilesetAnim_SuspendAll
+	export TilesetAnim_ResumeAllFar, TilesetAnim_ResumeAll
+	export ActorScript_FindOverlappingEntryFar, ActorScript_FindOverlappingEntry
+	export MapGrid_GetTerrainKindFar, MapGrid_GetTerrainKind
 	export Func_080202f8, Func_08023f94
-	export Func_08020300, Func_0802372c
-	export Func_08020308, MapGrid_CheckCollisionAt
+	export Actor_SetItemIconFar, Actor_SetItemIcon
+	export MapGrid_CheckCollisionAtFar, MapGrid_CheckCollisionAt
 	export MapGrid_GetTerrainHeightAboveFar, MapGrid_GetTerrainHeightAbove
-	export Func_08020318, WorldMap_IsWalkable
+	export WorldMap_IsWalkableFar, WorldMap_IsWalkable
 	export Func_08020320, Func_0802db88
-	export Func_08020328, Map_GetHeaderSize
+	export Map_GetHeaderSizeFar, Map_GetHeaderSize
 	export Func_08020330, Func_080237c8
 	export Animation_WaitForTrackEndFar, Animation_WaitForTrackEnd
 	export Func_08020340, Func_080237e8
 	export Field_CheckSpheresOverlapFar, Field_CheckSpheresOverlap
 	export Func_08020350, Func_0802da88
-	export GetWorldMapCollisionFar, GetWorldMapCollision
+	export WorldMap_GetCollisionFar, WorldMap_GetCollision
 	export Func_08020360, Func_0802d600
 	export Func_08020368, Func_0802d644
 	export Func_08020370, Func_080219cc
-	export Func_08020378, Map_LoadCellsAndShapes
+	export Map_LoadCellsAndShapesFar, Map_LoadCellsAndShapes
 	export VramBlock_Reset93Far, VramBlock_Reset93
-	export Func_08020388, VramBlock_Load93
-	export Func_08020390, Func_0802a650
-	export Func_08020398, Func_0802de8c
+	export VramBlock_Load93Far, VramBlock_Load93
+	export TileMap_ConvertBufferFar, TileMap_ConvertBuffer
+	export SpriteViewer_RunFar, SpriteViewer_Run
 	export Func_080203a0, Func_08026fc8

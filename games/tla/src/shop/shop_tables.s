@@ -15,8 +15,8 @@ gShop_SelectorOffsets:
 gShop_GlyphRowOffsets:
 	.2byte 0xc0, 0x90, 0x80, 0x50, 0x40
 @ A copy of The Broken Seal's sSpecialItemPrices
-	.global Data_0810c38e
-Data_0810c38e:
+	.global sGameTicketCreditCosts
+sGameTicketCreditCosts:
 	.2byte 300, 300, 300, 300, 300
 	.2byte 500, 500, 500, 500, 500
 	.2byte 1000, 1000, 1000, 1000, 1000
@@ -24,21 +24,21 @@ Data_0810c38e:
 	.2byte 4000, 4000, 4000, 4000, 4000
 	.2byte 8000, 8000, 8000, 8000, 8000
 @ Gift items (same as The Broken Seal's gShop_GiftItemIds).
-	.global Data_0810c3ca
-Data_0810c3ca:
+	.global gShop_GiftItemIds
+gShop_GiftItemIds:
 	.2byte 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
 	.2byte 16, 195, 38, 84, 89, 90, 180, 181, 190, 0
 @ Stock (0-terminated), special items, and type for 32 shops; like TBS's sStockTable.
-	.global gData_0810c3f4
-gData_0810c3f4:
+	.global sStockTable
+sStockTable:
 	.incbin "games/tla/src/shop/stock.table"
 @ Material rows: item, type, 8 results and 8 chances totaling 100; item -1 ends.
 	.global gData_0810cc34
 gData_0810cc34:
 	.incbin "games/tla/src/shop/forge.table"
 @ Party action sound effects (same as The Broken Seal's sPartyActionCues).
-	.global Data_0810cf28
-Data_0810cf28:
+	.global sSanctumServiceCues
+sSanctumServiceCues:
 	.byte 0x52, 0x54, 0x58, 0x57
 @ Inn price multipliers (same layout as TBS's sInnPriceMultipliers).
 	.global gData_0810cf2c

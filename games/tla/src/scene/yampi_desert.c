@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x661, in ROM order, from s0b84's offset up to the next object the overlay links.
+/// Scene code of overlay 0x661, in ROM order, from s0b84's offset up to the
+/// next object the overlay links.
 
 // ---- games/tla/src/scene/yampi_desert/s0b84.c ----
 
@@ -20,8 +21,14 @@
 #include "module/tla.h"
 #include "resource.h"
 #include "text/msg_ids.h"
-/* VIEW(s0b84): routine Func_0200388c as void Func_0200388c(const void *script, s32 a, s32 b); the definition has void Func_0200388c(u16 *list, s32 mode, s32 count); tried as the definition's void Func_0200388c(u16 *list, s32 mode, s32 count), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/yampi_desert.c:1695: conflicting types for `Func_0200388c'. */
-extern void Func_0200388c__s0b84(const void *script, s32 a, s32 b) __asm__("Func_0200388c");
+/* VIEW(s0b84): routine Func_0200388c as void Func_0200388c(const void *script,
+ * s32 a, s32 b); the definition has void Func_0200388c(u16 *list, s32 mode, s32
+ * count); tried as the definition's void Func_0200388c(u16 *list, s32 mode, s32
+ * count), which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/yampi_desert.c:1695: conflicting types for
+ * `Func_0200388c'. */
+extern void Func_0200388c__s0b84(const void *script, s32 a,
+                                 s32 b) __asm__("Func_0200388c");
 #define Func_0200388c Func_0200388c__s0b84
 #include "yampi_desert/scene.h"
 #undef Func_0200388c
@@ -65,8 +72,8 @@ void YampiDesert_StirScorpion(void) {
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
   Scene_CamBounds(PIXELS(300), -1, PIXELS(248), 1);
-  Actor_SetPositionAndCommit(16, 254, 248);
-  Actor_SetPositionAndCommit(16, 352, 240);
+  Actor_MoveToAndWaitById(16, 254, 248);
+  Actor_MoveToAndWaitById(16, 352, 240);
   Task_RemoveFar(Func_02002180);
   FieldEvent_Wait(10);
   Task_RemoveFar(Func_02001c5c);
@@ -76,13 +83,13 @@ void YampiDesert_StirScorpion(void) {
   Func_02000b84(0x1600000, 0, 0xf80000);
   Sound_Play(176);
   Actor_GetById(16)->velocityY = 0x60000;
-  Actor_SetPartAttribute(Actor_GetById(16), 0);
+  Actor_SetSpriteColor(Actor_GetById(16), 0);
   Actor_SetSingleChildFlags(Actor_GetById(16), 1);
-  Actor_SetPositionAndCommit(16, 380, 248);
+  Actor_MoveToAndWaitById(16, 380, 248);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Sound_Play(241);
   Scene_SetSpeed(16, 0xcccc, 0x6666);
-  Actor_SetPositionAndReset(16, 428, 248);
+  Actor_WalkToAndWaitById(16, 428, 248);
   Sound_Play(390);
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   GameFlag_SetBit(0x889);
@@ -96,7 +103,7 @@ void YampiDesert_StirScorpionAgain(void) {
   Func_020021d4();
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 21);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
-  Camera_MoveWithinMapBounds(PIXELS(246), -1, PIXELS(616), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(246), -1, PIXELS(616), 1);
   Scene_SetPositionAndCommit(21, 248, 648);
   Scene_SetPositionAndCommit(21, 248, 576);
   Task_RemoveFar(Func_02002180);
@@ -108,9 +115,9 @@ void YampiDesert_StirScorpionAgain(void) {
   Func_02000b84(0xf80000, 0, 0x2400000);
   Sound_Play(176);
   Actor_GetById(21)->velocityY = 0x60000;
-  Actor_SetPartAttribute(Actor_GetById(21), 0);
+  Actor_SetSpriteColor(Actor_GetById(21), 0);
   Actor_SetSingleChildFlags(Actor_GetById(21), 1);
-  Actor_SetPositionAndCommit(21, 256, 560);
+  Actor_MoveToAndWaitById(21, 256, 560);
   FieldEvent_Wait(20);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Sound_Play(241);
@@ -130,9 +137,9 @@ void Func_02000e78(void) {
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
   Scene_CamBounds(PIXELS(232), -1, PIXELS(328), 1);
   Scene_SetPositionAndCommit(21, 232, 328);
-  Camera_MoveWithinMapBounds(PIXELS(232), -1, PIXELS(200), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(232), -1, PIXELS(200), 1);
   Scene_SetPositionAndCommit(21, 232, 280);
-  Actor_SetPositionAndCommit(21, 232, 168);
+  Actor_MoveToAndWaitById(21, 232, 168);
   Task_RemoveFar(Func_02002180);
   Actor_ArmCallback(21, FACING_SOUTH, 0);
   Actor_Stop(gMainRoutineWork.currentOwner);
@@ -141,8 +148,16 @@ void Func_02000e78(void) {
   Event_End();
 }
 
-/* VIEW(yampi_desert): routine Func_02003fc0 as struct Actor *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z); module/scene/gabomba_statue.h has s32 Func_02003fc0(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c, s32 d); tried as the definition's s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction, s32 last, s32 bit), it does not compile in tla-ja: games/tla/src/scene/yampi_desert.c:156: too few arguments to function `Func_02003fc0'. */
-extern struct Actor *Func_02003fc0__yampi_desert(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_02003fc0");
+/* VIEW(yampi_desert): routine Func_02003fc0 as struct Actor *Func_02003fc0(s32
+ * kind, s32 x, s32 y, s32 z); module/scene/gabomba_statue.h has s32
+ * Func_02003fc0(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c, s32 d);
+ * tried as the definition's s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32
+ * endZ, s32 length, s32 direction, s32 last, s32 bit), it does not compile in
+ * tla-ja: games/tla/src/scene/yampi_desert.c:156: too few arguments to function
+ * `Func_02003fc0'. */
+extern struct Actor *
+Func_02003fc0__yampi_desert(s32 kind, s32 x, s32 y,
+                            s32 z) __asm__("Func_02003fc0");
 void Actor_StartScript(struct Actor *object, const void *script);
 
 /// Spawns an object of kind 285 at each of the fifteen cells of
@@ -170,7 +185,7 @@ void Func_02000f24(void) {
       }
     }
   }
-  Map_CopyCellPictureIndicesRect(74, 71, 77, 9, 3, 3);
+  MapGrid_CopyCellPictureIndicesRect(74, 71, 77, 9, 3, 3);
 }
 
 #define OBJ(p) ((struct Actor *)(p))
@@ -210,7 +225,7 @@ loop_3:
   Scene_CamBounds(PIXELS(232), -1, PIXELS(196), 1);
   Func_02004100(gMainRoutineWork.currentOwner, 0x101, 0);
   Scene_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 232, 164);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 232, 164);
   FieldEvent_Wait(20);
   angle = 0x4000;
   Scene_Call4098(21, 232 << 16, 184 << 16, angle);
@@ -220,18 +235,17 @@ loop_3:
   partner->velocityY = 0x60000;
   partner->priorityFlags &= ~2;
   Actor_SetSpritePriority(21, 2);
-  Actor_SetPartAttribute(Actor_GetById(21), 0);
+  Actor_SetSpriteColor(Actor_GetById(21), 0);
   Actor_SetSingleChildFlags(Actor_GetById(21), 1);
   Scene_SetSpeed(21, 0x19999, 0xcccc);
-  Actor_SetPositionAndCommit(21, 216, 184);
+  Actor_MoveToAndWaitById(21, 216, 184);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, angle, 0);
-  Actor_ArmCallbackAndRefresh(21, 0);
+  Actor_FaceDirectionById(21, 0);
   FieldEvent_Wait(20);
   Func_02002ca0();
   Sound_Play(136);
   Func_02000f24();
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   FieldEvent_Wait(20);
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 27);
@@ -248,11 +262,11 @@ step_13:
   i++;
   if (i <= 13)
     goto step_13;
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Sound_Play(153);
   partner->velocityY = 0x80000;
   Actor_SetSingleChildFlags(Actor_GetById(21), 0);
-  Actor_SetPositionAndCommit(21, 232, 168);
+  Actor_MoveToAndWaitById(21, 232, 168);
   FieldEvent_Wait(3);
   Sound_Play(204);
   i = 0;
@@ -278,7 +292,7 @@ void YampiDesert_ScoopCenterPit(s32 mode) {
 
   if (mode == 1) {
     object = Actor_GetById(9);
-    Map_CopyCellPictureIndicesRect(35, 39, 13, 11, 3, 3);
+    MapGrid_CopyCellPictureIndicesRect(35, 39, 13, 11, 3, 3);
     Scene_Call4090(9, PIXELS(232), PIXELS(200));
     height = Map_GetTerrainHeight(0, object->x, object->z);
     object->y = height;
@@ -294,7 +308,8 @@ s32 Func_020012d4(s32 cell) { return cell * 16 + 8; }
   {                                                                            \
     s32 x_ = Func_020012d4(column);                                            \
     s32 z_ = Func_020012d4(row);                                               \
-    Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, x_ << 16, z_ << 16);               \
+    Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,      \
+                                           x_ << 16, z_ << 16);                \
   }
 
 void Func_020012dc(void) {
@@ -305,9 +320,9 @@ void Func_020012dc(void) {
 
   if (object != NULL)
     Scene_Call4090(64, 154 << 18, 222 << 17);
-  Map_CopyCellPictureIndicesRect(82, 82, 15, 40, 5, 6);
+  MapGrid_CopyCellPictureIndicesRect(82, 82, 15, 40, 5, 6);
   Scene_Call4000(82, 82, 5, 6, 15, 40);
-  Map_CopyCellPictureIndicesRect(88, 82, 36, 25, 5, 5);
+  MapGrid_CopyCellPictureIndicesRect(88, 82, 36, 25, 5, 5);
   Scene_Call4000(88, 82, 5, 5, 36, 25);
   if (column == 15) {
     if (row == 41)
@@ -333,7 +348,8 @@ void Func_020012dc(void) {
     struct MainRoutineWork *work = &gMainRoutineWork;                          \
     s32 x = Func_020012d4(column);                                             \
     s32 z = Func_020012d4(row);                                                \
-    Actor_SetHorizontalPositionWithTerrain(work->currentOwner, x << 16, z << 16);                       \
+    Actor_SetHorizontalPositionWithTerrain(work->currentOwner, x << 16,        \
+                                           z << 16);                           \
   }
 
 void Func_020013f8(void) {
@@ -343,9 +359,9 @@ void Func_020013f8(void) {
 
   if (Actor_GetById(64) != NULL)
     Actor_SetHorizontalPositionWithTerrain(64, 0, 0);
-  Map_CopyCellPictureIndicesRect(82, 89, 15, 40, 5, 6);
+  MapGrid_CopyCellPictureIndicesRect(82, 89, 15, 40, 5, 6);
   Scene_Call4000(82, 89, 5, 6, 15, 40);
-  Map_CopyCellPictureIndicesRect(88, 89, 36, 25, 5, 5);
+  MapGrid_CopyCellPictureIndicesRect(88, 89, 36, 25, 5, 5);
   Scene_Call4000(88, 89, 5, 5, 36, 25);
   if (column == 15 && row == 44)
     MOVE_LEADER_TO(15, 43)
@@ -368,7 +384,8 @@ void Func_02001518(void) {
     Scene_Call4090(64, PIXELS(288), PIXELS(240));
     if ((leader->x + 0x80000) >> 20 == (object->x + 0x80000) >> 20 &&
         (leader->z + 0x80000) >> 20 == (object->z + 0x80000) >> 20)
-      Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, PIXELS(288), PIXELS(256));
+      Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
+                                             PIXELS(288), PIXELS(256));
   }
 }
 
@@ -378,7 +395,7 @@ void Func_0200157c(void) {
 }
 
 void Func_02001594(void) {
-  Map_CopyCellPictureIndicesRect(64, 64, 72, 32, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(64, 64, 72, 32, 1, 1);
   Map_CopyCellAttributeRect(64, 64, 1, 1, 8, 32);
   Map_CopyCellAttributeRect(64, 64, 1, 1, 8, 96);
 }
@@ -450,7 +467,7 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Call3((void (*)())Actor_ArmCallback, *owner, 0x8000, 0);
   ((struct Actor *)Func_02004130())->motionFlags = 0;
   Call2((void (*)())Camera_SetSpeedParameters, 0x19999, 0x3333);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0xd40000, 0, 0xd40000, 1);
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, 0xd40000, 0, 0xd40000, 1);
   FieldCamera_WaitForArrival();
   Call2((void (*)())Event_ShowMessageAndWait, 12, 0);
   Call3((void (*)())Actor_ArmCallback, 11, 0, 10);
@@ -469,7 +486,7 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Call3((void (*)())Actor_SetSpeedParameters, 13, 0x10000, 0x8000);
   Call2((void (*)())Actor_SetMovementTypeById, 14, (s32)gData_0200468c);
   Call2((void (*)())Camera_SetSpeedParameters, 0xcccc, 0x1999);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0xf00000, -1, 0x1040000, 1);
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, 0xf00000, -1, 0x1040000, 1);
   FieldCamera_WaitForArrival();
   Call1((void (*)())Actor_Stop, 8);
   Call1((void (*)())Actor_Stop, 9);
@@ -478,7 +495,7 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Call1((void (*)())Actor_Stop, 12);
   Call1((void (*)())Actor_Stop, 13);
   Call2((void (*)())Camera_SetSpeedParameters, 0x26666, 0x4ccc);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0xd40000, -1, 0xd40000, 1);
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, 0xd40000, -1, 0xd40000, 1);
   FieldCamera_WaitForArrival();
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Actor_ArmCallback, 8, 0xd000, 0);
@@ -520,7 +537,8 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
     Call1((void (*)())FieldEvent_Wait, 10);
     Call2((void (*)())Actor_SetMovementTypeById, 12, path);
     Call2((void (*)())Camera_SetSpeedParameters, 0x6666, 0xccc);
-    Call4((void (*)())Camera_MoveWithinMapBounds, 0xf00000, -1, 0x1180000, 1);
+    Call4((void (*)())FieldCamera_MoveWithinMapBounds, 0xf00000, -1, 0x1180000,
+          1);
     Call2((void (*)())Actor_SetMovementTypeById, 8, path);
     Call1((void (*)())FieldEvent_Wait, 10);
     Call2((void (*)())Actor_SetMovementTypeById, 9, path);
@@ -542,29 +560,36 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 13, 0, 0);
   Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 14, 0, 0);
   angle = 0xb000;
-  Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 8, 0x2080000, 0xf20000, angle);
+  Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 8,
+        0x2080000, 0xf20000, angle);
   {
     s32 facing = 0x8000;
 
-    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 9, 0x2150000, 0x10f0000, facing);
+    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 9,
+          0x2150000, 0x10f0000, facing);
   }
   {
     s32 facing = 0x3000;
 
-    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 10, 0x1b30000, 0xe80000, facing);
+    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 10,
+          0x1b30000, 0xe80000, facing);
   }
   {
     s32 facing = 0x5000;
 
-    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 11, 0x1d30000, 0xf80000, facing);
+    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 11,
+          0x1d30000, 0xf80000, facing);
   }
   {
     s32 facing = 0xd000;
 
-    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 12, 0x1ce0000, 0x1540000, facing);
-    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 13, 0x1e20000, 0x1540000, facing);
+    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 12,
+          0x1ce0000, 0x1540000, facing);
+    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 13,
+          0x1e20000, 0x1540000, facing);
   }
-  Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 14, 0x1e90000, 0x1400000, angle);
+  Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 14,
+        0x1e90000, 0x1400000, angle);
   Call2((void (*)())Actor_SetModeById, 8, 1);
   Call2((void (*)())Actor_SetModeById, 9, 1);
   Call2((void (*)())Actor_SetModeById, 10, 1);
@@ -663,7 +688,8 @@ void Func_02001c5c(void) {
 #undef MOVE_LEADER_TO
 
 // ---- games/tla/src/scene/yampi_desert/s1cc4.c ----
-// Scene code of overlay 0x661, in ROM order, from s1cc4's offset up to the next object the overlay links.
+// Scene code of overlay 0x661, in ROM order, from s1cc4's offset up to the next
+// object the overlay links.
 
 #include "input.h"
 #include "frame.h"
@@ -681,8 +707,9 @@ void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
     u32 odd = gFrameCount & 1;
 
     if (odd == 0) {
-      struct Actor *dust = (struct Actor *)Value4(
-          (s32 (*)())Func_02003fc0__yampi_desert, 285, object->x, object->y, object->z);
+      struct Actor *dust =
+          (struct Actor *)Value4((s32 (*)())Func_02003fc0__yampi_desert, 285,
+                                 object->x, object->y, object->z);
 
       if (dust != NULL) {
         struct DustSprite *sprite;
@@ -746,8 +773,8 @@ void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
 #include "fixed_math.h"
 #include "version.h"
 
-void Map_EnableUpdateCallback(void);
-void Map_DisableUpdateCallback(void);
+void TilesetAnim_SuspendAll(void);
+void TilesetAnim_ResumeAll(void);
 
 void Func_02001e58(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -761,7 +788,7 @@ void Func_02001e58(void) {
   if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
       *(s16 *)(work + 0x15e) != 0) {
     Actor_SetAnimationSpeed(leader, 0);
-    Map_EnableUpdateCallback();
+    TilesetAnim_SuspendAll();
     return;
   }
   map = Ram_HeapSlots->mapWork;
@@ -773,13 +800,13 @@ void Func_02001e58(void) {
   ahead = cells + (column + row * 128);
   under = map->layers[1].cells + index;
   Actor_SetAnimationSpeed(leader, 16);
-  Map_DisableUpdateCallback();
+  TilesetAnim_ResumeAll();
   if ((u8)(under->collisionCode - 10) <= 4) {
     if (gMainRoutineWork.renderMode == 5)
       speed = 0;
     else
-      Actor_SetSingleChildFlags(
-          Actor_GetById(gMainRoutineWork.currentOwner), 1);
+      Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                1);
   }
   if (ahead->collisionCode == 255)
     speed = 0;
@@ -985,7 +1012,7 @@ void Func_02002318(void) {
   (*followed)->motionFlags = 3;
   Actor_SetSpritePriority(17, 3);
   Scene_SetSpeed(16, 0x19999, 0xcccc);
-  Actor_SetPartAttribute((struct Actor *)leader, 15);
+  Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(16, 3);
   Func_020040f8(16);
   Actor_GetById(16)->motionFlags = 3;
@@ -1085,7 +1112,7 @@ void Func_020026a0(void) {
   (*followed)->motionFlags = 3;
   Actor_SetSpritePriority(22, 3);
   Scene_SetSpeed(21, 0x19999, 0xcccc);
-  Actor_SetPartAttribute((struct Actor *)leader, 15);
+  Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(21, 3);
   Func_020040f8(21);
   Actor_GetById(21)->motionFlags = 3;
@@ -1196,7 +1223,7 @@ void Func_02002b84(void) {
   Actor_SetSpritePriority(22, 3);
   (*followed)->motionFlags = 3;
   Scene_SetSpeed(21, 0x19999, 0xcccc);
-  Actor_SetPartAttribute((struct Actor *)leader, 15);
+  Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(21, 3);
   Func_020040f8(21);
   Actor_GetById(21)->motionFlags = 3;
@@ -1217,15 +1244,15 @@ void Func_02002b84(void) {
 
 void Func_02002c6c(void) {
   if (*(s16 *)((u8 *)Ram_HeapSlots->effectWork + 0x7c4) != 0)
-    Map_CopyCellPictureIndicesRect(73, 76, 78, 11, 1, 1);
+    MapGrid_CopyCellPictureIndicesRect(73, 76, 78, 11, 1, 1);
 }
 
 void Func_02002ca0(void) {
   BattleEffect_LoadActionEffectResources(136, 1);
   Scene_TaskAdd(Func_02002c6c, 0x480);
-  BattleEffect_SetupObjectPair(21, -1);
+  FieldPsynergy_SetupActorPair(21, -1);
   EventObject_Initialize();
-  Field_DispatchTypeHandler(1);
+  FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   Task_RemoveFar(Func_02002c6c);
   BattleEffect_CleanupSceneObjects();
@@ -1255,12 +1282,12 @@ void Func_02002d6c(struct Actor *object, s32 x, s32 z, s32 mode) {
   party = &gMainRoutineWork;
   *flags = zero;
   Actor_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
-  Actor_SetPositionAndReset(party->currentOwner, x, z);
-  Actor_ArmCallbackAndRefresh(party->currentOwner, 0xc000);
+  Actor_WalkToAndWaitById(party->currentOwner, x, z);
+  Actor_FaceDirectionById(party->currentOwner, 0xc000);
   Actor_SetSingleChildFlags(Actor_GetById(party->currentOwner), 0);
   Actor_SetModeById(party->currentOwner, 13);
   Actor_SetMoveTarget(object, object->x, object->y - 0xa0000, object->z);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   Actor_SetModeById(party->currentOwner, 10);
   Sound_Play(123);
   Event_FinishScreenTransition();
@@ -1298,7 +1325,7 @@ void Func_02002e98(void) {
   Func_02002d6c(Actor_GetById(gMainRoutineWork.currentOwner), 408, 432, 2);
 }
 
-void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
+void Event_SetAfterBattleDestination(s32 scene, s32 entrance);
 void Func_02000b84(s32 x, s32 y, s32 z);
 
 void Func_02002ebc(void) {
@@ -1312,8 +1339,8 @@ void Func_02002ebc(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(78);
-  Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-  Call4(Camera_MoveWithinMapBounds, PIXELS(232), -1, PIXELS(184), 0);
+  Call4(FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
+  Call4(FieldCamera_MoveWithinMapBounds, PIXELS(232), -1, PIXELS(184), 0);
   Map_CenterOnFollowedPoint();
   wait(1);
   Actor_SetSingleChildFlags(Actor_GetById(party->currentOwner), 0);
@@ -1327,7 +1354,8 @@ void Func_02002ebc(void) {
     // built last.
     s32 angle = TRIG_TURN / 4;
 
-    Call4(Actor_SetHorizontalPositionAndAngleWithTerrain, 8, PIXELS(232), PIXELS(148), angle);
+    Call4(Actor_SetHorizontalPositionAndAngleWithTerrain, 8, PIXELS(232),
+          PIXELS(148), angle);
   }
   actor8->motionFlags = 0;
   actor8->y = PIXELS(130);
@@ -1359,9 +1387,9 @@ void Func_02002ebc(void) {
   actor8->velocityY = Q16_ONE * 8;
   actor8->gravity = 0xe666;
   Call3(Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
-  Actor_SetPositionAndCommit(8, 232, 184);
+  Actor_MoveToAndWaitById(8, 232, 184);
   party->battleRule24b = 2;
-  Party_SetFields1eeAnd1f0((s32)&SceneId_Ov661Room10, 2);
+  Event_SetAfterBattleDestination((s32)&SceneId_Ov661Room10, 2);
   Field_RequestBattleFromEncounterTable(10, 0);
 }
 
@@ -1525,10 +1553,10 @@ void Func_02003404(void) {
     Actor_SetHorizontalPositionWithTerrain(20, 328 << 16, 392 << 16);
     if (GameFlag_Test(0x88c)) {
       if (GameFlag_Test(0x8ed)) {
-        Map_CopyCellPictureIndicesRect(68, 77, 13, 9, 3, 3);
+        MapGrid_CopyCellPictureIndicesRect(68, 77, 13, 9, 3, 3);
         Scene_Call4000(68, 77, 3, 3, 13, 9);
       } else {
-        Map_CopyCellPictureIndicesRect(74, 71, 77, 9, 3, 3);
+        MapGrid_CopyCellPictureIndicesRect(74, 71, 77, 9, 3, 3);
         Scene_Call4000(74, 71, 3, 3, 13, 9);
       }
       Scene_Call4000(63, 77, 3, 3, 13, 73);
@@ -1539,7 +1567,8 @@ void Func_02003404(void) {
 }
 
 /// A halfword of gMainRoutineWork that has no field name yet.
-#define MAIN_ROUTINE_WORK_U16(offset) (*(u16 *)((u8 *)&gMainRoutineWork + (offset)))
+#define MAIN_ROUTINE_WORK_U16(offset)                                          \
+  (*(u16 *)((u8 *)&gMainRoutineWork + (offset)))
 
 void Func_020035b8(void) {
   Func_02004180(0);
@@ -1619,7 +1648,7 @@ void Func_0200371c(void) {
       YampiDesert_DropScoopGem();
   }
   if (GameFlag_Test(0x8ed)) {
-    Map_CopyCellPictureIndicesRect(35, 39, 13, 11, 3, 3);
+    MapGrid_CopyCellPictureIndicesRect(35, 39, 13, 11, 3, 3);
     Scene_Call4090(9, 232 << 16, 200 << 16);
   }
   Func_02003da0(0, 240);
@@ -1671,14 +1700,17 @@ loop:
 DEFINE_STATUE_SINK(Func_0200388c, Func_02003910)
 
 // ---- games/tla/src/scene/yampi_desert/s3910.c ----
-// Scene code of overlay 0x661, in ROM order, from s3910's offset up to the next object the overlay links, and the overlay's data.
+// Scene code of overlay 0x661, in ROM order, from s3910's offset up to the next
+// object the overlay links, and the overlay's data.
 
 #include "iwram_call.h"
 
 DEFINE_ACTOR_SET_CELL_OPEN(Func_02003910, Func_020041e0, Func_02003fa8)
 
 /// The whole-pixel half of a 16.16 coordinate.
-/* VIEW(s3910): macro PIXELS as PIXELS__s3910; another part or header has another definition; tried with the definition the rest of the object has, Func_020039b8 moves: 33 of 212 instructions in tla-ja. */
+/* VIEW(s3910): macro PIXELS as PIXELS__s3910; another part or header has
+ * another definition; tried with the definition the rest of the object has,
+ * Func_020039b8 moves: 33 of 212 instructions in tla-ja. */
 #define PIXELS__s3910(v) (((s16 *)&(v))[1])
 
 /// One rising platform and what rides it.
@@ -1711,7 +1743,7 @@ s32 Math_Sine(s32 angle);
 // the platform on its timer, writes its height to the collision and cell maps,
 // and carries its rider with a bob.
 void Func_020039b8(void) {
-  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct RideEntry *entry = work->entries;
   s32 value = work->value;
@@ -1789,7 +1821,7 @@ void Func_020039b8(void) {
 // of height and a bobbing top, up to 80 of them, each an OAM entry queued by
 // Func_02003f88.
 void Func_02003b80(void) {
-  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct RideEntry *entry = work->entries;
   s32 i;
   u32 tile = gResourceTableEntries[work->entry].offset >> 5;
@@ -1850,9 +1882,14 @@ void Func_02003b80(void) {
     z = object->z - viewZ - originY;
     sy = z - y;
     x = (x >> 16) - 8;
-    /* FAKEMATCH(wrapper): forwarded, so -0x20000 is built for the call and again
-     * for the sum; as a direct call, 276 of 252 instructions differ in tla-en. */
-    sy = ((sy + Value2((s32 (*)())Iwram_MulQ16, -0x20000, Math_Sine(entry->phase)) + -0x20000) >> 16) - 4;
+    /* FAKEMATCH(wrapper): forwarded, so -0x20000 is built for the call and
+     * again for the sum; as a direct call, 276 of 252 instructions differ in
+     * tla-en. */
+    sy = ((sy +
+           Value2((s32 (*)())Iwram_MulQ16, -0x20000, Math_Sine(entry->phase)) +
+           -0x20000) >>
+          16) -
+         4;
     depth = ((y + z) >> 16) + 58;
     if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
       continue;
@@ -1870,14 +1907,14 @@ void Func_02003b80(void) {
 
 void Func_02003da0(s32 unused, s32 value) {
   struct YampiDesertRideWork *work =
-      (struct YampiDesertRideWork *)(gData_020023c4 + 0x188);
+      (struct YampiDesertRideWork *)(gInventorySnapshot + 0x188);
   void *buffer;
 
   if (!GameFlag_Test(0x109))
     Call2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
-  Resource_DecodeType01(gField_Tiles64D, buffer);
-  work->entry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(gField_Tiles64D, buffer);
+  work->entry = VramCache_FindFreeEntry();
   VramCache_Load(work->entry, 0x800, buffer);
   Heap_Release(buffer);
   work->block = Heap_AllocEwram(0x3c0);
@@ -1889,7 +1926,7 @@ void Func_02003da0(s32 unused, s32 value) {
 
 struct RideEntry *Func_02003e3c(s32 slot, s32 id, s32 timer, s32 low,
                                 s32 high) {
-  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct RideEntry *entry = &work->entries[slot];
   struct Actor *object = Actor_GetById(id);
   struct Actor *rider;

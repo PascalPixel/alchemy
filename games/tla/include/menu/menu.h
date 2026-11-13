@@ -7,7 +7,7 @@
 #include "types.h"
 #include "edition.h"
 
-extern u8 gCharacterMenu_CursorWidths[];
+extern u8 gStatusScreen_CursorWidths[];
 extern u8 gMenu_ListOrderDefault[];
 extern u8 gMenu_ListOrderMode0[];
 extern u8 gMenu_ListOrderMode1[];
@@ -37,7 +37,7 @@ extern u16 gShop_GlyphRowOffsets[];
 extern u16 gShop_SelectorOffsets[];
 void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 first);
 void Event_FinishScreenTransitionFar(void);
-void Func_080c8368(s32, s32);
+void Scene_TalkToActorFar(s32, s32);
 void BattleEffect_ApplyColorToSourceBufferFar(s32);
 void BattlePalette_StopBlendAndReleaseBufferFar(void);
 void BattleEffect_SetPrimaryBufferValueFar(void);

@@ -35,14 +35,14 @@ void Func_020039f0(s32 *position, s32 base) {
     object->timer = angle;
     Actor_StartScripted(object, 3);
     object->update = (void (*)(void))Func_0200389c;
-    Animation_SetStateFlags(object, 1);
+    Actor_SetBlendMode(object, 1);
   }
 }
 
 DEFINE_VENTS_UPDATE(Vents_Update, Func_020039f0)
 
 void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
-  struct WaterWork *work = (struct WaterWork *)(gData_020023c4 + 0x188);
+  struct WaterWork *work = (struct WaterWork *)(gInventorySnapshot + 0x188);
   struct WaterOutlet *outlet = work->outlets;
 
   if (!Event_GetFlag(0x109)) {

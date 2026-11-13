@@ -27,8 +27,8 @@
 #define NAVIGATION ((struct SummonMenuNavigation *)Ram_HeapSlots->unke4[0])
 #define SUMMON_END 32
 
-void Window_PutGlyph(struct SummonMenuWindow *window, s32 character, s32 x, s32 y,
-                   s32 mode);
+void Window_PutGlyph(struct SummonMenuWindow *window, s32 character, s32 x,
+                     s32 y, s32 mode);
 
 s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   struct SummonMenuOam cursorStorage;
@@ -215,21 +215,21 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
                 break;
             }
             affordable = element == 4;
-            Ability_LoadGlyph(summon->nameMessageId & 0x3fff, 0, &iconSlots[index],
-                              &glyph, 1);
+            Ability_LoadGlyph(summon->nameMessageId & 0x3fff, 0,
+                              &iconSlots[index], &glyph, 1);
             y = index * 2;
             sprites[index].oam.f.tile = glyph;
             if (!affordable)
               Text_SetColor(2);
             Text_DrawMessageAsTiles(SummonDefinition_Get(id)->nameMessageId +
-                                           (s32)MsgAbilityNothing,
-                                       window, 16, index * 16);
+                                        (s32)MsgAbilityNothing,
+                                    window, 16, index * 16);
             for (element = 0; element <= 3; element++) {
               if (summon->djinnRequired[element] != 0) {
                 Window_SetTilemapEntry(window, element + 0x5001,
                                        col * 2 + SUMMON_COST_X, y, 0);
                 Window_PutGlyph(window, summon->djinnRequired[element] + '0',
-                              col * 2 + SUMMON_COST_X + 1, y, 0);
+                                col * 2 + SUMMON_COST_X + 1, y, 0);
                 col++;
               }
             }
@@ -386,8 +386,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
 
   wait(1);
   for (index = 0; index < 4; index++)
-    Resource_ResetEntry(iconSlots[index]);
-  Resource_ResetEntry((u16)cursorHandle);
+    VramCache_FreeEntry(iconSlots[index]);
+  VramCache_FreeEntry((u16)cursorHandle);
   Window_Close(counts, 1);
   Window_Close(description, 1);
   Window_Close(window, 1);

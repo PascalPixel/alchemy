@@ -32,8 +32,9 @@ struct MainRoutineWork {
   /// and entrance stand in for either.
   u16 pair1ee[2];
   u16 pair1f2[2]; ///< the defeat destination (scene, entrance); -1 for none
-  s16 special;    ///< the battle backdrop chosen for the scene or terrain
-  u8 unk1f8[2];   ///< not named by ⚓️ code
+  s16 battleBackground; ///< the battle background chosen for the scene or
+                        ///< terrain
+  u8 unk1f8[2];         ///< not named by ⚓️ code
   s16 map;
   s32 x; ///< the party's position on entering, as ☀️'s gMainRoutineWork
   s32 y;
@@ -110,7 +111,7 @@ struct MainRoutineWork {
   u8 unk284[0x38]; ///< not named by ⚓️ code
   u16 forgeItem;   ///< the item left at the forge (Forge_SetItem)
   /// SceneId_WorldMap after a destination is chosen on the world map, 0xffff
-  /// after cancelling (Func_080ed2a4); not read by name in ⚓️ code.
+  /// after cancelling (WorldPicture_Show); not read by name in ⚓️ code.
   u16 unk2be;
   u8 unk2c0[2]; ///< not named by ⚓️ code
   u8 unk2c2;    ///< 0, 1 or 2, set by the Islet Cave and Contigo scenes

@@ -100,7 +100,7 @@ void Func_020001b4(void) {
   } else {
     Func_02000054(2);
   }
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldEvent_Wait(40);
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(9)));
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
@@ -124,7 +124,7 @@ void Func_02000264(void) {
   } else {
     Func_02000054(3);
   }
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldEvent_Wait(40);
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(9)));
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
@@ -143,11 +143,11 @@ void Func_02000314(s32 unused, s32 actor) {
 
 // Jupiter Lighthouse aerie's two pushed objects: object 13 on cell (6, 12) or
 // object 14 on cell (57, 12) sets its flag (2570, 2571), falls into place
-// (waited on for at most 30 frames), copies cells (Func_0802b450,
-// Map_CopyCellAttributeRect) with sounds 134 and 167 and runs its part
-// (Func_020001b4, Func_02000264); off its cell it only marks the cell it stands
-// on (Func_02002a78). With both flags set, flag 2591 is set. The fall wait is
-// an if around a do-while.
+// (waited on for at most 30 frames), copies cells
+// (MapGrid_CopyCellPictureCellsRect, Map_CopyCellAttributeRect) with sounds 134
+// and 167 and runs its part (Func_020001b4, Func_02000264); off its cell it
+// only marks the cell it stands on (Func_02002a78). With both flags set, flag
+// 2591 is set. The fall wait is an if around a do-while.
 
 void Func_0200032c(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
@@ -345,7 +345,7 @@ DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02002a78, Func_02002b58)
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
                                                    s32 mode) {
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 void Func_02000930(void) {
@@ -399,9 +399,9 @@ void Func_02000930(void) {
     i++;
     System_Wait(1);
   }
-  Actor_WaitForMove(shadow);
+  FieldActor_WaitForMove(shadow);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
   Event_End();
@@ -544,14 +544,14 @@ void Func_02001010(struct Actor *object) {
   *fill = 2;
   switch (phase) {
   case 1:
-    Animation_ApplyChildValues(object, 13);
+    Actor_SetSpriteColorMode(object, 13);
     break;
   case 0:
   case 2:
-    Animation_ApplyChildValues(object, 4);
+    Actor_SetSpriteColorMode(object, 4);
     break;
   case 3:
-    Animation_ApplyChildValues(object, 4);
+    Actor_SetSpriteColorMode(object, 4);
     break;
   }
   (*step)++;
@@ -564,7 +564,7 @@ void Func_0200105c(struct Actor *object) {
 
 void Func_02001070(struct Actor *object) {
   WORD_AT(object, 108) = 0;
-  Animation_ApplyChildValues(object, 4);
+  Actor_SetSpriteColorMode(object, 4);
 }
 
 struct BeamWork {

@@ -23,7 +23,7 @@ struct MagmaRockEventWork {
 };
 
 s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotion();
+void FieldEffect_AdvanceMotion();
 void Map_CenterOnFollowedPoint(void);
 void Func_02003af4(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -53,7 +53,7 @@ void Func_020022ac(void) {
   leader->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
-  options.update = Effect_AdvanceMotion;
+  options.update = FieldEffect_AdvanceMotion;
   options.scaleX = 0xcccc;
   options.scaleY = 0xcccc;
   i = 0;
@@ -75,7 +75,7 @@ loop:
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
@@ -99,7 +99,7 @@ void Func_020024c8(void) {
     object->terrainHeight = height;
     object->y = height;
     object->targetY = PIXELS(-32768);
-    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
+    EventCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
   }
 }
 
@@ -135,7 +135,7 @@ static inline void AttachPart(struct Actor *part, struct Actor *anchor,
   BYTE_AT(part, 98) = order;
   part->watchedObject = anchor;
   part->update = Func_02001528;
-  Actor_SetSpriteColor(part, 3);
+  FieldActor_SetSpriteColor(part, 3);
 }
 
 static inline void BuildParts(struct Actor *anchor) {
@@ -463,14 +463,14 @@ body:
       Event_Start();
       if (!Event_GetFlag(flag)) {
         Event_PlaySound(125);
-        Actor_SetSpriteColor(Actor_GetById(id), 7);
+        FieldActor_SetSpriteColor(Actor_GetById(id), 7);
         wait(2);
         Func_02003a54(target, 0);
-        Actor_SetSpriteColor(Actor_GetById(id), 0);
+        FieldActor_SetSpriteColor(Actor_GetById(id), 0);
         wait(2);
-        Actor_SetSpriteColor(Actor_GetById(id), 7);
+        FieldActor_SetSpriteColor(Actor_GetById(id), 7);
         wait(4);
-        Actor_SetSpriteColor(Actor_GetById(id), 0);
+        FieldActor_SetSpriteColor(Actor_GetById(id), 0);
         Func_020034ac(0);
         Event_SetFlag(flag);
       } else if (!Event_GetFlag(flag + 1)) {
@@ -607,15 +607,15 @@ body:
         Func_02003224(actor8, target);
         wait(1);
         Event_PlaySound(125);
-        Actor_SetSpriteColor(Actor_GetById(8), 7);
+        FieldActor_SetSpriteColor(Actor_GetById(8), 7);
         wait(2);
         Func_02003a54(actor8, 0);
-        ObjectVisual_CopyAttributes(id, 9);
-        Actor_SetSpriteColor(Actor_GetById(8), 0);
+        Actor_CopyGraphics(id, 9);
+        FieldActor_SetSpriteColor(Actor_GetById(8), 0);
         wait(2);
-        Actor_SetSpriteColor(Actor_GetById(8), 7);
+        FieldActor_SetSpriteColor(Actor_GetById(8), 7);
         wait(4);
-        Actor_SetSpriteColor(Actor_GetById(8), 0);
+        FieldActor_SetSpriteColor(Actor_GetById(8), 0);
         Func_020034ac(0);
         Func_02003224(target, actor8);
         wait(1);

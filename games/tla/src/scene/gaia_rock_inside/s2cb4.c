@@ -153,15 +153,15 @@ void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004d00(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const u8 *script);
-void DisplayBlend_DisableRunScript(void);
-void DisplayBlend_EnableRunScript(void);
+void BlendScript_Resume(void);
+void BlendScript_Suspend(void);
 void Actor_SetSpritePriorityDirect();
 void Event_End(void);
 void Func_02004fc4();
 void Func_02004fec();
 void Func_02005004();
 void Actor_SetAnimationSpeed();
-void Animation_ApplyChildValues();
+void Actor_SetSpriteColorMode();
 void Event_FinishScreenTransition(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -189,7 +189,7 @@ s32 Scene_Initialize(void) {
     if (*early == 20) {
       Event_Start();
       C1(Event_ResolvePendingActions, 0);
-      C4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+      C4(FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, work->currentOwner, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0, 0);
@@ -225,8 +225,8 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 15);
         Actor_SetModeById(8, 3);
         C1(Sound_Play, 530);
-        C3(Map_SetScreenShake, 0x20000, 0x20000, 0x10000);
-        C3(Map_SetScreenShake, -1, -1, 0xe666);
+        C3(MapGrid_SetScreenShake, 0x20000, 0x20000, 0x10000);
+        C3(MapGrid_SetScreenShake, -1, -1, 0xe666);
         C1(Event_Wait, 120);
         Actor_SetModeById(8, 1);
         C1(Event_Wait, 60);
@@ -238,7 +238,7 @@ s32 Scene_Initialize(void) {
       C1(GameFlag_SetBit, 0x144);
       if (Test(FLAG_SERPENT_SLAIN)) {
         C2(Actor_SetModeById, 8, 4);
-        C6(Func_0802b450, 85, 72, 5, 2, 30, 19);
+        C6(MapGrid_CopyCellPictureCellsRect, 85, 72, 5, 2, 30, 19);
         C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
         C3(Actor_SetHorizontalPositionWithTerrain, 10, 0, 0);
       }
@@ -296,9 +296,9 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetModeById, 8, 2);
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
-        C4(Camera_MoveWithinMapBounds, 0x1e80000, none, 0x1800000, 1);
+        C4(FieldCamera_MoveWithinMapBounds, 0x1e80000, none, 0x1800000, 1);
         FieldCamera_WaitForArrival();
-        C3(Func_080d47b4, 10, 264, 0);
+        C3(Actor_ShowEmoteById, 10, 264, 0);
         C1(Event_Wait, 40);
         C1(Event_SetMessageId, (s32)MsgFieldAtLastTheSerpentHas);
         C2(Event_ShowMessageAndWait, 10, 0);
@@ -307,7 +307,7 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetModeById, 10, 8);
         C2(Event_ShowMessageAndWait, 0x600a, 0);
         dragon->speedLimit = 0x18000;
-        C3(Actor_ResetAndSetPosition, 10, 488, 328);
+        C3(Actor_SetDestinationById, 10, 488, 328);
         C1(Event_Wait, 5);
         Actor_SetModeById(10, 6);
         C1(Event_Wait, 10);
@@ -317,39 +317,39 @@ s32 Scene_Initialize(void) {
         partner->movementState = 1;
         C2(Actor_SetAnimationSpeed, dragon, 0);
         C2(Actor_SetAnimationSpeed, partner, 0);
-        C2(Animation_ApplyChildValues, dragon, 6);
-        C2(Animation_ApplyChildValues, partner, 6);
+        C2(Actor_SetSpriteColorMode, dragon, 6);
+        C2(Actor_SetSpriteColorMode, partner, 6);
         width = 30;
         height = 19;
-        C6(Func_0802b450, 85, 76, 5, 2, width, height);
+        C6(MapGrid_CopyCellPictureCellsRect, 85, 76, 5, 2, width, height);
         C1(Sound_Play, 572);
         C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
-        C1(BattleEffect_StartBufferInterpolation, 10);
+        C1(PaletteFade_StartInterpolation, 10);
         C1(Event_Wait, 10);
         C2(BattleEffect_ApplyColorToTargetBuffer, 0x10000, 0);
-        C1(BattleEffect_StartBufferInterpolation, 10);
+        C1(PaletteFade_StartInterpolation, 10);
         C1(Event_Wait, 10);
         C1(Event_Wait, 60);
-        C2(Animation_ApplyChildValues, dragon, 0);
-        C2(Animation_ApplyChildValues, partner, 0);
-        C6(Func_0802b450, 85, 74, 5, 2, width, height);
+        C2(Actor_SetSpriteColorMode, dragon, 0);
+        C2(Actor_SetSpriteColorMode, partner, 0);
+        C6(MapGrid_CopyCellPictureCellsRect, 85, 74, 5, 2, width, height);
         dragon->movementState = 0;
         partner->movementState = 0;
         C2(Actor_SetAnimationSpeed, dragon, 16);
         C2(Actor_SetAnimationSpeed, partner, 16);
         mask = 254;
         Actor_GetById(10)->actionFlags &= mask;
-        C3(Actor_ResetAndSetPositionInMode2, 10, 456, 360);
+        C3(Actor_WalkToById, 10, 456, 360);
         fast = 0x40000;
         dragon->velocityY = fast;
         C2(FieldEffect_SetAttached, 10, 258);
         C1(Actor_WaitForMoveById, 10);
-        C3(Func_080d47b4, 10, 257, 20);
+        C3(Actor_ShowEmoteById, 10, 257, 20);
         C1(Event_Wait, 30);
         Actor_SetModeById(10, 8);
         C1(Event_Wait, 10);
         dragon->speedLimit = 0x18000;
-        C3(Actor_ResetAndSetPosition, 10, 488, 328);
+        C3(Actor_SetDestinationById, 10, 488, 328);
         C1(Event_Wait, 14);
         dragon->velocityY = 0x60000;
         Actor_SetModeById(10, 6);
@@ -360,7 +360,7 @@ s32 Scene_Initialize(void) {
           mask &= a->actionFlags;
           a->actionFlags = mask;
         }
-        C3(Actor_ResetAndSetPositionInMode2, 10, 456, 360);
+        C3(Actor_WalkToById, 10, 456, 360);
         dragon->velocityY = fast;
         C2(FieldEffect_SetAttached, 10, 258);
         C1(Actor_WaitForMoveById, 10);
@@ -373,10 +373,10 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetSingleChildFlags, object, 0);
         C2(Actor_StartScript, object, gData_0200539c);
         C2(Actor_SelectAnimation, object, 1);
-        C2(Animation_ApplyChildValues, object, 6);
+        C2(Actor_SetSpriteColorMode, object, 6);
         C3(Actor_Jump, 10, 2, 0);
         C1(Event_Wait, 5);
-        C3(Func_080d47b4, 10, 258, 0);
+        C3(Actor_ShowEmoteById, 10, 258, 0);
         C1(Event_Wait, 55);
         C1(Event_Wait, 5);
         C1(Sound_Play, 136);
@@ -397,7 +397,7 @@ s32 Scene_Initialize(void) {
         C1(Sound_Play, 133);
         object->x = 0;
         object->z = 0;
-        C3(Map_SetScreenShake, fast, fast, 0x10000);
+        C3(MapGrid_SetScreenShake, fast, fast, 0x10000);
         for (i = 0; i < 4; i++) {
           dx = -8;
           if (i > 1)
@@ -413,9 +413,9 @@ s32 Scene_Initialize(void) {
         }
         dragon->velocityY = 0xa0000;
         Actor_GetById(10)->actionFlags &= 254;
-        C3(Actor_ResetAndSetPositionInMode2, 10, 432, 320);
+        C3(Actor_WalkToById, 10, 432, 320);
         C1(Event_Wait, 10);
-        C3(Map_SetScreenShake, -1, -1, 0xe666);
+        C3(MapGrid_SetScreenShake, -1, -1, 0xe666);
         Actor_SetModeById(10, 5);
         C1(Event_Wait, 30);
         C2(FieldCamera_MoveToActorById, 10, 1);
@@ -427,7 +427,7 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetMovementTypeById, 10, movement);
         C1(Event_Wait, 20);
         C2(Event_ShowMessageAndWait, 0x600a, 0);
-        C2(Camera_FollowActor, gMainRoutineWork.currentOwner, 1);
+        C2(FieldCamera_FollowActor, gMainRoutineWork.currentOwner, 1);
         FieldCamera_WaitForArrival();
         C2(Actor_SetSpritePriority, 10, 3);
         C6(Map_CopyCellAttributeRect, 30, 19, 1, 1, 27, 19);
@@ -474,13 +474,13 @@ s32 Scene_Initialize(void) {
       C3(Actor_ArmCallback, 10, 0xc000, 0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      C3(Func_080d47b4, 11, 258, 30);
+      C3(Actor_ShowEmoteById, 11, 258, 30);
       C1(Sound_Play, 530);
       C2(Event_ShowMessageAndWait, 11, 0);
       C1(Sound_Play, 530);
       C2(Event_ShowMessageAndWait, 10, 0);
       Actor_ShowEmote(*owner, 256, 0);
-      C3(Func_080d47b4, 11, 256, 0);
+      C3(Actor_ShowEmoteById, 11, 256, 0);
       C1(Event_Wait, 15);
       C3(Actor_ArmCallback, *owner, 0x4000, 0);
       C3(Actor_ArmCallback, 11, 0x4000, 0);
@@ -488,21 +488,21 @@ s32 Scene_Initialize(void) {
       C2(FieldCamera_MoveToActorById, 10, 1);
       FieldCamera_WaitForArrival();
       C2(Actor_StartRepeatedMotion, 10, 2);
-      C2(Camera_FollowActor, 10, 1);
-      C3(Actor_ResetAndSetPositionInMode2, 10, 488, 376);
+      C2(FieldCamera_FollowActor, 10, 1);
+      C3(Actor_WalkToById, 10, 488, 376);
       C1(Actor_WaitForMoveById, 10);
       C2(Actor_StartRepeatedMotion, 10, 2);
       C1(Event_Wait, 20);
-      C3(Actor_ResetAndSetPositionInMode2, 10, 472, 360);
+      C3(Actor_WalkToById, 10, 472, 360);
       C1(Actor_WaitForMoveById, 10);
-      C3(Actor_SetAngleToward, *owner, 10, 0);
-      C3(Actor_SetAngleToward, 11, 10, 0);
-      C3(Actor_SetAngleToward, 10, 8, 0);
-      C4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+      C3(Actor_FaceActorById, *owner, 10, 0);
+      C3(Actor_FaceActorById, 11, 10, 0);
+      C3(Actor_FaceActorById, 10, 8, 0);
+      C4(FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
       C2(Actor_SetModeById, 10, 8);
       C2(Event_ShowMessageAndWait, 10, 0);
       dragon->speedLimit = 0x18000;
-      C3(Actor_ResetAndSetPosition, 10, 488, 328);
+      C3(Actor_SetDestinationById, 10, 488, 328);
       C1(Event_Wait, 5);
       Actor_SetModeById(10, 6);
       C1(Event_Wait, 10);
@@ -511,53 +511,53 @@ s32 Scene_Initialize(void) {
       C1(Sound_Play, 572);
       dragon->movementState = 1;
       C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
-      C1(BattleEffect_StartBufferInterpolation, 10);
+      C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
       C1(Sound_Play, 530);
       C2(BattleEffect_ApplyColorToTargetBuffer, scale, 0);
-      C1(BattleEffect_StartBufferInterpolation, 10);
+      C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
       C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
-      C1(BattleEffect_StartBufferInterpolation, 10);
+      C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
       C2(BattleEffect_ApplyColorToTargetBuffer, scale, 0);
-      C1(BattleEffect_StartBufferInterpolation, 10);
+      C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
       C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
-      C1(BattleEffect_StartBufferInterpolation, 10);
+      C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 60);
       C2(Actor_SetModeById, 8, 4);
-      C6(Func_0802b450, 85, 72, 5, 2, 30, 19);
+      C6(MapGrid_CopyCellPictureCellsRect, 85, 72, 5, 2, 30, 19);
       dragon->y = -0x200000;
       dragon->velocityY = 0;
       dragon->speedLimit = slow;
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1c80000, 0x1680000);
       C2(Actor_SetModeById, 10, 1);
       C2(BattleEffect_ApplyColorToTargetBuffer, scale, 0);
-      C1(BattleEffect_StartBufferInterpolation, 10);
+      C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
-      C3(Actor_SetAngleToward, 10, *owner, 0);
+      C3(Actor_FaceActorById, 10, *owner, 0);
       C2(Event_ShowMessageAndWait, 10, 0);
       C2(Motion_SetModeAndWaitAnimation, 10, 3);
       C2(Event_ShowMessageAndWait, 10, 0);
       C3(Actor_ArmCallback, 10, 0x4000, 0);
       C2(Actor_SetModeById, 10, 2);
-      C3(Actor_ResetAndSetPositionInMode2, 10, 488, 392);
+      C3(Actor_WalkToById, 10, 488, 392);
       C2(Actor_StartRepeatedMotion, 11, 1);
       C1(Event_Wait, 5);
       C2(Event_ShowMessageAndWait, 11, 0);
       C1(Actor_WaitForMoveById, 10);
       C2(Actor_SetModeById, 10, 0);
-      C3(Actor_SetAngleToward, 10, 11, 0);
+      C3(Actor_FaceActorById, 10, 11, 0);
       C1(Event_Wait, 15);
       C2(Event_ShowMessageAndWait, 10, 0);
       C2(Motion_SetModeAndWaitAnimation, 10, 3);
       C3(Actor_ArmCallback, 10, 0x4000, 0);
       C2(Actor_SetModeById, 10, 2);
-      C3(Actor_ResetAndSetPositionInMode2, 10, 488, 536);
-      C2(Camera_FollowActor, *owner, 1);
-      C3(Actor_SetAngleToward, *owner, 11, 0);
-      C3(Actor_SetAngleToward, 11, *owner, 0);
+      C3(Actor_WalkToById, 10, 488, 536);
+      C2(FieldCamera_FollowActor, *owner, 1);
+      C3(Actor_FaceActorById, *owner, 11, 0);
+      C3(Actor_FaceActorById, 11, *owner, 0);
       C1(Event_Wait, 30);
       C2(Motion_SetModeAndWaitAnimation, 11, 3);
       C2(Actor_SetModeById, 11, 2);
@@ -565,27 +565,27 @@ s32 Scene_Initialize(void) {
         struct Actor *ownerActor = Actor_GetById(*owner);
 
         if (ownerActor != NULL)
-          Actor_ResetAndSetPosition(11, ownerActor->x >> 16,
-                                    ownerActor->z >> 16);
+          Actor_SetDestinationById(11, ownerActor->x >> 16,
+                                   ownerActor->z >> 16);
       }
       C1(Actor_WaitForMoveById, 11);
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
       C1(Actor_WaitForMoveById, 11);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0, 0);
-      C3(Actor_ResetAndSetPositionInMode2, *owner, 488, 376);
+      C3(Actor_WalkToById, *owner, 488, 376);
       C1(Actor_WaitForMoveById, *owner);
-      C3(Map_SetScreenShake, 0x50000, 0x50000, scale);
+      C3(MapGrid_SetScreenShake, 0x50000, 0x50000, scale);
       C1(Sound_Play, 107);
       C1(Event_Wait, 30);
-      C3(Func_080d47b4, *owner, 256, 0);
+      C3(Actor_ShowEmoteById, *owner, 256, 0);
       C1(Event_Wait, 15);
       C3(Actor_ArmCallback, *owner, 0xc000, 0);
       C1(Event_Wait, 15);
       other = Actor_GetById(12);
       alpha = REG_BLDALPHA;
-      C3(Map_SetScreenShake, 0xa0000, 0xa0000, scale);
+      C3(MapGrid_SetScreenShake, 0xa0000, 0xa0000, scale);
       C1(Sound_Play, 107);
-      DisplayBlend_EnableRunScript();
+      BlendScript_Suspend();
       alpha = *(u8 *)&alpha;
       while (alpha != 0) {
         REG_BLDALPHA = alpha | 0x1000;
@@ -612,7 +612,7 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 2);
       }
       C1(GameFlag_SetBit, 0x9ee);
-      C3(Map_SetScreenShake, -1, -1, 0xe666);
+      C3(MapGrid_SetScreenShake, -1, -1, 0xe666);
       object->x = 0;
       object->z = 0;
       C1(Event_Wait, 1);
@@ -627,7 +627,7 @@ s32 Scene_Initialize(void) {
         alpha++;
         C1(wait, 1);
       }
-      DisplayBlend_DisableRunScript();
+      BlendScript_Resume();
       Event_End();
     } else if (*entrance == 11) {
       Event_Start();
@@ -637,7 +637,7 @@ s32 Scene_Initialize(void) {
       {
         s32 *lead = &room->currentOwner;
 
-        C3(Actor_SetAngleToward, 10, *lead, 0);
+        C3(Actor_FaceActorById, 10, *lead, 0);
         Value2((s32 (*)())Actor_SetModeById, *lead, 19);
       }
       Event_StartScreenTransition();
@@ -732,7 +732,7 @@ s32 Scene_Initialize(void) {
       C6(Map_CopyCellAttributeRect, 32, 16, 2, 1, 37, height);
     }
     if (Test(0x9bf)) {
-      C6(Func_0802b450, 61, 0, 3, 3, 37, 26);
+      C6(MapGrid_CopyCellPictureCellsRect, 61, 0, 3, 3, 37, 26);
       C6(Map_CopyCellAttributeRect, 36, 23, 1, 1, 38, 25);
     }
     if (work->entrance == 6) {
@@ -740,7 +740,7 @@ s32 Scene_Initialize(void) {
 
       Event_Start();
       C1(Event_ResolvePendingActions, 0);
-      C4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+      C4(FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, work->currentOwner, 0, 0);
       Event_StartScreenTransition();
@@ -753,7 +753,7 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetSingleChildFlags, other, 0);
         C2(Actor_StartScript, other, gData_020053d8);
         C2(Actor_SelectAnimation, other, 1);
-        C2(Animation_ApplyChildValues, other, 14);
+        C2(Actor_SetSpriteColorMode, other, 14);
         ((u8 *)other->sprite)[9] |= 12;
         other->scaleX = 0x13333;
         other->scaleY = 0x13333;
@@ -799,8 +799,8 @@ s32 Scene_Initialize(void) {
     if (Test(0x9c4)) {
       s32 height = 20;
 
-      C6(Func_0802b450, 117, 20, 7, 8, 104, height);
-      C6(Func_0802b450, 111, 12, 1, 6, 111, height);
+      C6(MapGrid_CopyCellPictureCellsRect, 117, 20, 7, 8, 104, height);
+      C6(MapGrid_CopyCellPictureCellsRect, 111, 12, 1, 6, 111, height);
       C6(Map_CopyCellAttributeRect, 49, 84, 8, 8, 40, 84);
       C3(Actor_SetHorizontalPositionWithTerrain, 15, 0, 0);
     }
@@ -864,8 +864,8 @@ void Func_02004d00(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const u8 *script);
 void Import_ActorDestroy();
-void DisplayBlend_DisableRunScript(void);
-void DisplayBlend_EnableRunScript(void);
+void BlendScript_Resume(void);
+void BlendScript_Suspend(void);
 void Actor_SetSpritePriorityDirect();
 void Event_Start(void);
 void Event_End(void);
@@ -876,7 +876,7 @@ void Func_02004fc4();
 void Func_02004fec();
 void Func_02005004();
 void Actor_SetAnimationSpeed();
-void Animation_ApplyChildValues();
+void Actor_SetSpriteColorMode();
 void Event_FinishScreenTransition(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -901,7 +901,7 @@ s32 Scene_Initialize(void) {
     if (*early == 20) {
       Event_Start();
       C1(Event_ResolvePendingActions, 0);
-      C4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+      C4(FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, work->currentOwner, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0, 0);
@@ -937,8 +937,8 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 15);
         Actor_SetModeById(8, 3);
         C1(Sound_Play, 530);
-        C3(Map_SetScreenShake, 0x20000, 0x20000, 0x10000);
-        C3(Map_SetScreenShake, -1, -1, 0xe666);
+        C3(MapGrid_SetScreenShake, 0x20000, 0x20000, 0x10000);
+        C3(MapGrid_SetScreenShake, -1, -1, 0xe666);
         C1(Event_Wait, 120);
         Actor_SetModeById(8, 1);
         C1(Event_Wait, 60);
@@ -950,7 +950,7 @@ s32 Scene_Initialize(void) {
       C1(GameFlag_SetBit, 0x144);
       if (Test(FLAG_SERPENT_SLAIN)) {
         C2(Actor_SetModeById, 8, 4);
-        C6(Func_0802b450, 85, 72, 5, 2, 30, 19);
+        C6(MapGrid_CopyCellPictureCellsRect, 85, 72, 5, 2, 30, 19);
         C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
         C3(Actor_SetHorizontalPositionWithTerrain, 10, 0, 0);
       }
@@ -1008,9 +1008,9 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetModeById, 8, 2);
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
-        C4(Camera_MoveWithinMapBounds, 0x1e80000, none, 0x1800000, 1);
+        C4(FieldCamera_MoveWithinMapBounds, 0x1e80000, none, 0x1800000, 1);
         FieldCamera_WaitForArrival();
-        C3(Func_080d47b4, 10, 264, 0);
+        C3(Actor_ShowEmoteById, 10, 264, 0);
         C1(Event_Wait, 40);
         C1(Event_SetMessageId, (s32)MsgFieldAtLastTheSerpentHas);
         C2(Event_ShowMessageAndWait, 10, 0);
@@ -1019,7 +1019,7 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetModeById, 10, 8);
         C2(Event_ShowMessageAndWait, 0x600a, 0);
         dragon->speedLimit = 0x18000;
-        C3(Actor_ResetAndSetPosition, 10, 488, 328);
+        C3(Actor_SetDestinationById, 10, 488, 328);
         C1(Event_Wait, 5);
         Actor_SetModeById(10, 6);
         C1(Event_Wait, 10);
@@ -1029,39 +1029,39 @@ s32 Scene_Initialize(void) {
         partner->movementState = 1;
         C2(Actor_SetAnimationSpeed, dragon, 0);
         C2(Actor_SetAnimationSpeed, partner, 0);
-        C2(Animation_ApplyChildValues, dragon, 6);
-        C2(Animation_ApplyChildValues, partner, 6);
+        C2(Actor_SetSpriteColorMode, dragon, 6);
+        C2(Actor_SetSpriteColorMode, partner, 6);
         width = 30;
         height = 19;
-        C6(Func_0802b450, 85, 76, 5, 2, width, height);
+        C6(MapGrid_CopyCellPictureCellsRect, 85, 76, 5, 2, width, height);
         C1(Sound_Play, 572);
         C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
-        C1(BattleEffect_StartBufferInterpolation, 10);
+        C1(PaletteFade_StartInterpolation, 10);
         C1(Event_Wait, 10);
         C2(BattleEffect_ApplyColorToTargetBuffer, 0x10000, 0);
-        C1(BattleEffect_StartBufferInterpolation, 10);
+        C1(PaletteFade_StartInterpolation, 10);
         C1(Event_Wait, 10);
         C1(Event_Wait, 60);
-        C2(Animation_ApplyChildValues, dragon, 0);
-        C2(Animation_ApplyChildValues, partner, 0);
-        C6(Func_0802b450, 85, 74, 5, 2, width, height);
+        C2(Actor_SetSpriteColorMode, dragon, 0);
+        C2(Actor_SetSpriteColorMode, partner, 0);
+        C6(MapGrid_CopyCellPictureCellsRect, 85, 74, 5, 2, width, height);
         dragon->movementState = 0;
         partner->movementState = 0;
         C2(Actor_SetAnimationSpeed, dragon, 16);
         C2(Actor_SetAnimationSpeed, partner, 16);
         mask = 254;
         Actor_GetById(10)->actionFlags &= mask;
-        C3(Actor_ResetAndSetPositionInMode2, 10, 456, 360);
+        C3(Actor_WalkToById, 10, 456, 360);
         fast = 0x40000;
         dragon->velocityY = fast;
         C2(FieldEffect_SetAttached, 10, 258);
         C1(Actor_WaitForMoveById, 10);
-        C3(Func_080d47b4, 10, 257, 20);
+        C3(Actor_ShowEmoteById, 10, 257, 20);
         C1(Event_Wait, 30);
         Actor_SetModeById(10, 8);
         C1(Event_Wait, 10);
         dragon->speedLimit = 0x18000;
-        C3(Actor_ResetAndSetPosition, 10, 488, 328);
+        C3(Actor_SetDestinationById, 10, 488, 328);
         C1(Event_Wait, 14);
         dragon->velocityY = 0x60000;
         Actor_SetModeById(10, 6);
@@ -1072,7 +1072,7 @@ s32 Scene_Initialize(void) {
           mask &= a->actionFlags;
           a->actionFlags = mask;
         }
-        C3(Actor_ResetAndSetPositionInMode2, 10, 456, 360);
+        C3(Actor_WalkToById, 10, 456, 360);
         dragon->velocityY = fast;
         C2(FieldEffect_SetAttached, 10, 258);
         C1(Actor_WaitForMoveById, 10);
@@ -1085,10 +1085,10 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetSingleChildFlags, object, 0);
         C2(Actor_StartScript, object, gData_0200539c);
         C2(Actor_SelectAnimation, object, 1);
-        C2(Animation_ApplyChildValues, object, 6);
+        C2(Actor_SetSpriteColorMode, object, 6);
         C3(Actor_Jump, 10, 2, 0);
         C1(Event_Wait, 5);
-        C3(Func_080d47b4, 10, 258, 0);
+        C3(Actor_ShowEmoteById, 10, 258, 0);
         C1(Event_Wait, 55);
         C1(Event_Wait, 5);
         C1(Sound_Play, 136);
@@ -1109,7 +1109,7 @@ s32 Scene_Initialize(void) {
         C1(Sound_Play, 133);
         object->x = 0;
         object->z = 0;
-        C3(Map_SetScreenShake, fast, fast, 0x10000);
+        C3(MapGrid_SetScreenShake, fast, fast, 0x10000);
         for (i = 0; i < 4; i++) {
           dx = -8;
           if (i > 1)
@@ -1125,9 +1125,9 @@ s32 Scene_Initialize(void) {
         }
         dragon->velocityY = 0xa0000;
         Actor_GetById(10)->actionFlags &= 254;
-        C3(Actor_ResetAndSetPositionInMode2, 10, 432, 320);
+        C3(Actor_WalkToById, 10, 432, 320);
         C1(Event_Wait, 10);
-        C3(Map_SetScreenShake, -1, -1, 0xe666);
+        C3(MapGrid_SetScreenShake, -1, -1, 0xe666);
         Actor_SetModeById(10, 5);
         C1(Event_Wait, 30);
         C2(FieldCamera_MoveToActorById, 10, 1);
@@ -1139,7 +1139,7 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetMovementTypeById, 10, movement);
         C1(Event_Wait, 20);
         C2(Event_ShowMessageAndWait, 0x600a, 0);
-        C2(Camera_FollowActor, gMainRoutineWork.currentOwner, 1);
+        C2(FieldCamera_FollowActor, gMainRoutineWork.currentOwner, 1);
         FieldCamera_WaitForArrival();
         C2(Actor_SetSpritePriority, 10, 3);
         C6(Map_CopyCellAttributeRect, 30, 19, 1, 1, 27, 19);
@@ -1186,13 +1186,13 @@ s32 Scene_Initialize(void) {
       C3(Actor_ArmCallback, 10, 0xc000, 0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      C3(Func_080d47b4, 11, 258, 30);
+      C3(Actor_ShowEmoteById, 11, 258, 30);
       C1(Sound_Play, 530);
       C2(Event_ShowMessageAndWait, 11, 0);
       C1(Sound_Play, 530);
       C2(Event_ShowMessageAndWait, 10, 0);
       Actor_ShowEmote(*owner, 256, 0);
-      C3(Func_080d47b4, 11, 256, 0);
+      C3(Actor_ShowEmoteById, 11, 256, 0);
       C1(Event_Wait, 15);
       C3(Actor_ArmCallback, *owner, 0x4000, 0);
       C3(Actor_ArmCallback, 11, 0x4000, 0);
@@ -1200,21 +1200,21 @@ s32 Scene_Initialize(void) {
       C2(FieldCamera_MoveToActorById, 10, 1);
       FieldCamera_WaitForArrival();
       C2(Actor_StartRepeatedMotion, 10, 2);
-      C2(Camera_FollowActor, 10, 1);
-      C3(Actor_ResetAndSetPositionInMode2, 10, 488, 376);
+      C2(FieldCamera_FollowActor, 10, 1);
+      C3(Actor_WalkToById, 10, 488, 376);
       C1(Actor_WaitForMoveById, 10);
       C2(Actor_StartRepeatedMotion, 10, 2);
       C1(Event_Wait, 20);
-      C3(Actor_ResetAndSetPositionInMode2, 10, 472, 360);
+      C3(Actor_WalkToById, 10, 472, 360);
       C1(Actor_WaitForMoveById, 10);
-      C3(Actor_SetAngleToward, *owner, 10, 0);
-      C3(Actor_SetAngleToward, 11, 10, 0);
-      C3(Actor_SetAngleToward, 10, 8, 0);
-      C4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+      C3(Actor_FaceActorById, *owner, 10, 0);
+      C3(Actor_FaceActorById, 11, 10, 0);
+      C3(Actor_FaceActorById, 10, 8, 0);
+      C4(FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
       C2(Actor_SetModeById, 10, 8);
       C2(Event_ShowMessageAndWait, 10, 0);
       dragon->speedLimit = 0x18000;
-      C3(Actor_ResetAndSetPosition, 10, 488, 328);
+      C3(Actor_SetDestinationById, 10, 488, 328);
       C1(Event_Wait, 5);
       Actor_SetModeById(10, 6);
       C1(Event_Wait, 10);
@@ -1223,53 +1223,53 @@ s32 Scene_Initialize(void) {
       C1(Sound_Play, 572);
       dragon->movementState = 1;
       C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
-      C1(BattleEffect_StartBufferInterpolation, 10);
+      C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
       C1(Sound_Play, 530);
       C2(BattleEffect_ApplyColorToTargetBuffer, scale, 0);
-      C1(BattleEffect_StartBufferInterpolation, 10);
+      C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
       C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
-      C1(BattleEffect_StartBufferInterpolation, 10);
+      C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
       C2(BattleEffect_ApplyColorToTargetBuffer, scale, 0);
-      C1(BattleEffect_StartBufferInterpolation, 10);
+      C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
       C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
-      C1(BattleEffect_StartBufferInterpolation, 10);
+      C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 60);
       C2(Actor_SetModeById, 8, 4);
-      C6(Func_0802b450, 85, 72, 5, 2, 30, 19);
+      C6(MapGrid_CopyCellPictureCellsRect, 85, 72, 5, 2, 30, 19);
       dragon->y = -0x200000;
       dragon->velocityY = 0;
       dragon->speedLimit = slow;
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1c80000, 0x1680000);
       C2(Actor_SetModeById, 10, 1);
       C2(BattleEffect_ApplyColorToTargetBuffer, scale, 0);
-      C1(BattleEffect_StartBufferInterpolation, 10);
+      C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
-      C3(Actor_SetAngleToward, 10, *owner, 0);
+      C3(Actor_FaceActorById, 10, *owner, 0);
       C2(Event_ShowMessageAndWait, 10, 0);
       C2(Motion_SetModeAndWaitAnimation, 10, 3);
       C2(Event_ShowMessageAndWait, 10, 0);
       C3(Actor_ArmCallback, 10, 0x4000, 0);
       C2(Actor_SetModeById, 10, 2);
-      C3(Actor_ResetAndSetPositionInMode2, 10, 488, 392);
+      C3(Actor_WalkToById, 10, 488, 392);
       C2(Actor_StartRepeatedMotion, 11, 1);
       C1(Event_Wait, 5);
       C2(Event_ShowMessageAndWait, 11, 0);
       C1(Actor_WaitForMoveById, 10);
       C2(Actor_SetModeById, 10, 0);
-      C3(Actor_SetAngleToward, 10, 11, 0);
+      C3(Actor_FaceActorById, 10, 11, 0);
       C1(Event_Wait, 15);
       C2(Event_ShowMessageAndWait, 10, 0);
       C2(Motion_SetModeAndWaitAnimation, 10, 3);
       C3(Actor_ArmCallback, 10, 0x4000, 0);
       C2(Actor_SetModeById, 10, 2);
-      C3(Actor_ResetAndSetPositionInMode2, 10, 488, 536);
-      C2(Camera_FollowActor, *owner, 1);
-      C3(Actor_SetAngleToward, *owner, 11, 0);
-      C3(Actor_SetAngleToward, 11, *owner, 0);
+      C3(Actor_WalkToById, 10, 488, 536);
+      C2(FieldCamera_FollowActor, *owner, 1);
+      C3(Actor_FaceActorById, *owner, 11, 0);
+      C3(Actor_FaceActorById, 11, *owner, 0);
       C1(Event_Wait, 30);
       C2(Motion_SetModeAndWaitAnimation, 11, 3);
       C2(Actor_SetModeById, 11, 2);
@@ -1277,27 +1277,27 @@ s32 Scene_Initialize(void) {
         struct Actor *ownerActor = Actor_GetById(*owner);
 
         if (ownerActor != NULL)
-          Actor_ResetAndSetPosition(11, ownerActor->x >> 16,
-                                    ownerActor->z >> 16);
+          Actor_SetDestinationById(11, ownerActor->x >> 16,
+                                   ownerActor->z >> 16);
       }
       C1(Actor_WaitForMoveById, 11);
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
       C1(Actor_WaitForMoveById, 11);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0, 0);
-      C3(Actor_ResetAndSetPositionInMode2, *owner, 488, 376);
+      C3(Actor_WalkToById, *owner, 488, 376);
       C1(Actor_WaitForMoveById, *owner);
-      C3(Map_SetScreenShake, 0x50000, 0x50000, scale);
+      C3(MapGrid_SetScreenShake, 0x50000, 0x50000, scale);
       C1(Sound_Play, 107);
       C1(Event_Wait, 30);
-      C3(Func_080d47b4, *owner, 256, 0);
+      C3(Actor_ShowEmoteById, *owner, 256, 0);
       C1(Event_Wait, 15);
       C3(Actor_ArmCallback, *owner, 0xc000, 0);
       C1(Event_Wait, 15);
       other = Actor_GetById(12);
       alpha = REG_BLDALPHA;
-      C3(Map_SetScreenShake, 0xa0000, 0xa0000, scale);
+      C3(MapGrid_SetScreenShake, 0xa0000, 0xa0000, scale);
       C1(Sound_Play, 107);
-      DisplayBlend_EnableRunScript();
+      BlendScript_Suspend();
       alpha = *(u8 *)&alpha;
       while (alpha != 0) {
         REG_BLDALPHA = alpha | 0x1000;
@@ -1324,7 +1324,7 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 2);
       }
       C1(GameFlag_SetBit, 0x9ee);
-      C3(Map_SetScreenShake, -1, -1, 0xe666);
+      C3(MapGrid_SetScreenShake, -1, -1, 0xe666);
       object->x = 0;
       object->z = 0;
       C1(Event_Wait, 1);
@@ -1339,7 +1339,7 @@ s32 Scene_Initialize(void) {
         alpha++;
         C1(wait, 1);
       }
-      DisplayBlend_DisableRunScript();
+      BlendScript_Resume();
       Event_End();
     } else if (*entrance == 11) {
       Event_Start();
@@ -1349,7 +1349,7 @@ s32 Scene_Initialize(void) {
       {
         s32 *lead = &room->currentOwner;
 
-        C3(Actor_SetAngleToward, 10, *lead, 0);
+        C3(Actor_FaceActorById, 10, *lead, 0);
         Value2((s32 (*)())Actor_SetModeById, *lead, 19);
       }
       Event_StartScreenTransition();
@@ -1445,7 +1445,7 @@ s32 Scene_Initialize(void) {
       C6(Map_CopyCellAttributeRect, 32, 16, 2, 1, 37, height);
     }
     if (Test(0x9bf)) {
-      C6(Func_0802b450, 61, 0, 3, 3, 37, 26);
+      C6(MapGrid_CopyCellPictureCellsRect, 61, 0, 3, 3, 37, 26);
       C6(Map_CopyCellAttributeRect, 36, 23, 1, 1, 38, 25);
     }
     if (work->entrance == 6) {
@@ -1453,7 +1453,7 @@ s32 Scene_Initialize(void) {
 
       Event_Start();
       C1(Event_ResolvePendingActions, 0);
-      C4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+      C4(FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, work->currentOwner, 0, 0);
       Event_StartScreenTransition();
@@ -1466,7 +1466,7 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetSingleChildFlags, other, 0);
         C2(Actor_StartScript, other, gData_020053d8);
         C2(Actor_SelectAnimation, other, 1);
-        C2(Animation_ApplyChildValues, other, 14);
+        C2(Actor_SetSpriteColorMode, other, 14);
         ((u8 *)other->sprite)[9] |= 12;
         other->scaleX = 0x13333;
         other->scaleY = 0x13333;
@@ -1510,8 +1510,8 @@ s32 Scene_Initialize(void) {
     if (Test(0x9c4)) {
       s32 height = 20;
 
-      C6(Func_0802b450, 117, 20, 7, 8, 104, height);
-      C6(Func_0802b450, 111, 12, 1, 6, 111, height);
+      C6(MapGrid_CopyCellPictureCellsRect, 117, 20, 7, 8, 104, height);
+      C6(MapGrid_CopyCellPictureCellsRect, 111, 12, 1, 6, 111, height);
       C6(Map_CopyCellAttributeRect, 49, 84, 8, 8, 40, 84);
       C3(Actor_SetHorizontalPositionWithTerrain, 15, 0, 0);
     }
@@ -1536,7 +1536,7 @@ end:
 void Func_02004274(s32 a0) { Func_0200495c(1, a0); }
 
 void *Unit_Get(s32 owner);
-void DisplayBlend_StartScript(u16 *script);
+void BlendScript_Start(u16 *script);
 void Func_02000aac(void);
 void Func_02000a60(void);
 
@@ -1567,7 +1567,7 @@ s32 Scene_PrepareMap(void) {
         *(volatile u16 *)0x0400000c = control | 1;
       }
       Func_020048a0();
-      stage = (s32 *)(gData_020023c4 + 0x288);
+      stage = (s32 *)(gInventorySnapshot + 0x288);
       if (*stage == 3 && !GameFlag_Test(0x3f6))
         Actor_SetPosition(64, 0x680000, 0x580000);
       if (*stage == 9)
@@ -1585,7 +1585,7 @@ s32 Scene_PrepareMap(void) {
     } else if (gMainRoutineWork.entrance > 8) {
       u8 *layer;
 
-      *(s32 *)(gData_020023c4 + 0x288) = 1;
+      *(s32 *)(gInventorySnapshot + 0x288) = 1;
       layer = map + 376;
       FIELD_AT(layer, u16, 40) = 127;
       FIELD_AT(layer, s32, 24) = 0;
@@ -1609,7 +1609,7 @@ s32 Scene_PrepareMap(void) {
       Map_CenterOnFollowedPoint();
       System_Wait(1);
       Iwram_CopyWords(Ram_MapCollision + 0x1e00, gData_020053e4, 24);
-      DisplayBlend_StartScript((u16 *)(Ram_MapCollision + 0x1e00));
+      BlendScript_Start((u16 *)(Ram_MapCollision + 0x1e00));
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room2) {
     switch (gMainRoutineWork.entrance) {
@@ -1658,7 +1658,7 @@ typedef struct {
   Unk_Cell cells[GRID_WIDTH * GRID_WIDTH];
 } Unk_Grid;
 
-#define gPath ((Unk_Path *)(gData_020023c4 + 0x288))
+#define gPath ((Unk_Path *)(gInventorySnapshot + 0x288))
 
 static __inline__ void *Heap_AllocEwram_(s32 size) {
   /* FAKEMATCH(wrapper): forwarded inline, as scene_call.h describes; as a
@@ -1878,7 +1878,7 @@ restart:
 }
 
 void Func_0200485c(s32 direction) {
-  s32 *state = (s32 *)(gData_020023c4 + 0x288);
+  s32 *state = (s32 *)(gInventorySnapshot + 0x288);
   u8 *row = (u8 *)state + *state * 8;
   s32 next = row[((direction - 1) & 3) + 6];
 
@@ -1903,7 +1903,7 @@ extern s8 gData_020053fc[][2];
 /// with the state's origin plus the layer's cell, a 15 by 10 size and the
 /// layer's cell plus one.
 void Func_020048a0(void) {
-  s32 state = *(s32 *)(gData_020023c4 + 0x288);
+  s32 state = *(s32 *)(gInventorySnapshot + 0x288);
   s8 *origin = gData_020053fc[state];
   struct GaiaRockInsideMapWork *map =
       (struct GaiaRockInsideMapWork *)Ram_HeapSlots->mapWork;
@@ -1926,7 +1926,7 @@ void Func_020048a0(void) {
 }
 
 #define GAIA_ROCK_INSIDE_PATH                                                  \
-  ((struct GaiaRockInsidePath *)(gData_020023c4 + 0x288))
+  ((struct GaiaRockInsidePath *)(gInventorySnapshot + 0x288))
 
 /// The direction from the current node whose link is 251 or the next node:
 /// 0x4000, 0x8000, 0 or 0xc000 for the four links in turn, or -1 if none is.

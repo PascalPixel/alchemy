@@ -9,11 +9,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Map_CenterOnFollowedPoint
 	.thumb_func
 Map_CenterOnFollowedPoint:
@@ -22,22 +22,22 @@ Map_CenterOnFollowedPoint:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Graphics_EnableObjLayerAndCallbacks
+	.global ActorSystem_SuspendProjectionAndShowSprites
 	.thumb_func
-Graphics_EnableObjLayerAndCallbacks:
-	overlay_veneer Func_08020240
+ActorSystem_SuspendProjectionAndShowSprites:
+	overlay_veneer ActorSystem_SuspendProjectionAndShowSpritesFar
 	.global ActorSystem_ResumeProjectionAndHideLayers
 	.thumb_func
 ActorSystem_ResumeProjectionAndHideLayers:
-	overlay_veneer Func_08020248
-	.global Map_SetShownLayers
+	overlay_veneer ActorSystem_ResumeProjectionAndHideLayersFar
+	.global MapGrid_SetShownLayers
 	.thumb_func
-Map_SetShownLayers:
-	overlay_veneer Func_080202a0
-	.global Func_0803ce64
+MapGrid_SetShownLayers:
+	overlay_veneer MapGrid_SetShownLayersFar
+	.global FieldMessage_ShowCentered
 	.thumb_func
-Func_0803ce64:
-	overlay_veneer Func_08038210
+FieldMessage_ShowCentered:
+	overlay_veneer FieldMessage_ShowCenteredFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -78,10 +78,10 @@ Motion_SetModeAndWaitAnimation:
 	.thumb_func
 Motion_SetVarCbAndRefresh:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global Actor_SetAngleToward
+	.global Actor_FaceActorById
 	.thumb_func
-Actor_SetAngleToward:
-	overlay_veneer Actor_SetAngleTowardFar
+Actor_FaceActorById:
+	overlay_veneer Actor_FaceActorByIdFar
 	.global Event_SetMessageId
 	.thumb_func
 Event_SetMessageId:
@@ -93,7 +93,7 @@ FieldMessage_ShowAtActor:
 	.global Event_ShowMessageThenWait
 	.thumb_func
 Event_ShowMessageThenWait:
-	overlay_veneer Func_080c8198
+	overlay_veneer Event_ShowMessageThenWaitFar
 	.global Event_ShowMessageAndWait
 	.thumb_func
 Event_ShowMessageAndWait:
@@ -122,22 +122,22 @@ Event_ResolvePendingActions:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_080d3928
+	.global Actor_SetSpriteRotationById
 	.thumb_func
-Func_080d3928:
-	overlay_veneer Func_080c87a8
+Actor_SetSpriteRotationById:
+	overlay_veneer Actor_SetSpriteRotationByIdFar
 	.global Shop_Run
 	.thumb_func
 Shop_Run:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Sanctum_Run
 	.thumb_func
 Sanctum_Run:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Inn_CheckIn
 	.thumb_func
 Inn_CheckIn:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

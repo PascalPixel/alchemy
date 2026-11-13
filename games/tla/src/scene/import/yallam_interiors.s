@@ -9,11 +9,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
@@ -66,14 +66,14 @@ Actor_GetById:
 	.thumb_func
 Actor_SetSpeedParameters:
 	overlay_veneer Actor_SetSpeedParametersFar
-	.global Actor_ResetAndSetPosition
+	.global Actor_SetDestinationById
 	.thumb_func
-Actor_ResetAndSetPosition:
-	overlay_veneer Actor_ResetAndSetPositionFar
-	.global Actor_ResetAndSetPositionInMode2
+Actor_SetDestinationById:
+	overlay_veneer Actor_SetDestinationByIdFar
+	.global Actor_WalkToById
 	.thumb_func
-Actor_ResetAndSetPositionInMode2:
-	overlay_veneer Actor_ResetAndSetPositionInMode2Far
+Actor_WalkToById:
+	overlay_veneer Actor_WalkToByIdFar
 	.global Actor_WaitForMoveById
 	.thumb_func
 Actor_WaitForMoveById:
@@ -90,10 +90,10 @@ Actor_SetModeById:
 	.thumb_func
 Actor_StartRepeatedMotion:
 	overlay_veneer Actor_StartRepeatedMotionFar
-	.global Actor_SetAngleToward
+	.global Actor_FaceActorById
 	.thumb_func
-Actor_SetAngleToward:
-	overlay_veneer Actor_SetAngleTowardFar
+Actor_FaceActorById:
+	overlay_veneer Actor_FaceActorByIdFar
 	.global Event_SetMessageId
 	.thumb_func
 Event_SetMessageId:
@@ -114,10 +114,10 @@ Actor_ArmCallback:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global BattleEffect_StartEffectObject22
+	.global ItemDisplay_ShowItem
 	.thumb_func
-BattleEffect_StartEffectObject22:
-	overlay_veneer Func_080c83e0
+ItemDisplay_ShowItem:
+	overlay_veneer ItemDisplay_ShowItemFar
 	.global Func_02000a48
 	.thumb_func
 Func_02000a48:
@@ -137,24 +137,24 @@ Func_02000a60:
 	.global Shop_Run
 	.thumb_func
 Shop_Run:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Sanctum_Run
 	.thumb_func
 Sanctum_Run:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Inn_CheckIn
 	.thumb_func
 Inn_CheckIn:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar
 	.global Forge_Run
 	.thumb_func
 Forge_Run:
-	overlay_veneer Func_08108020
+	overlay_veneer Forge_RunFar
 	.global Forge_SetItem
 	.thumb_func
 Forge_SetItem:
-	overlay_veneer Func_08108098
+	overlay_veneer Forge_SetItemFar
 	.global Forge_GetItem
 	.thumb_func
 Forge_GetItem:
-	overlay_veneer Func_081080a0
+	overlay_veneer Forge_GetItemFar

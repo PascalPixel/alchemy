@@ -98,10 +98,10 @@ void Epilogue_LoadNamePanel(void) {
 
   Dma_Set(Data_02000874, (void *)0x050003c0, 0x80000010, REG_DMA3);
   sprite = &gEpilogueNamePanel;
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GreenPanel),
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GreenPanel),
                         buffer);
   slot = &gEpilogueNamePanelEntry;
-  value = Resource_FindFreeEntry();
+  value = VramCache_FindFreeEntry();
   *slot = value;
   tileSlot = &gEpilogueNamePanelTile;
   value = Vram_Load(value, 0x800, buffer);

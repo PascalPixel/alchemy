@@ -46,7 +46,7 @@ DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation,
 
 DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, Func_02000f3c)
 
-void Animation_ApplyChildValues(struct PositionedActor *object, s32 value);
+void Actor_SetSpriteColorMode(struct PositionedActor *object, s32 value);
 
 DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
     JupiterLighthouse_PlaceRaisedActors)

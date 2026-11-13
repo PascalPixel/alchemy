@@ -9,7 +9,7 @@
 
 /// The class series by a character's strongest and second element, read as
 /// [strongest][second]; The Broken Seal's gClass_SeriesByElements.
-const s32 Data_080c6604[4][4] = {
+const s32 gClass_SeriesByElements[4][4] = {
     {1, 3, 4, 5},
     {8, 6, 9, 10},
     {4, 3, 2, 5},
@@ -18,7 +18,7 @@ const s32 Data_080c6604[4][4] = {
 
 /// The elemental power and resistance of each element level, 0 to 15; The
 /// Broken Seal's gElement_PowerResistByLevel.
-const struct ElementLevelBonus Data_080c6644[16] = {
+const struct ElementLevelBonus gElement_PowerResistByLevel[16] = {
     {75, 85},   {80, 90},   {85, 95},   {90, 100},  {95, 105},  {100, 110},
     {105, 115}, {110, 120}, {115, 125}, {120, 130}, {125, 135}, {130, 140},
     {135, 145}, {140, 150}, {145, 160}, {150, 165},
@@ -26,7 +26,7 @@ const struct ElementLevelBonus Data_080c6644[16] = {
 
 /// The 48 enemy element presets, by EnemyDefinition.elementPreset.
 // clang-format off
-const struct EnemyElementPreset gData_080c6684[] = {
+const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
     {
         .first = ELEMENT_NONE,
         .digits = {1, 1, 1, 1},
@@ -532,9 +532,8 @@ const u16 gBattle_Effect91Classes[29] = {
 // The 80 Djinn, 20 of each element in element order. Each name is the
 // English release's (MsgDjinnName plus the Djinni's place).
 
-
 // clang-format off
-const struct DjinnDefinition gDjinn_Definitions[] = {
+const struct DjinnDefinition gDjinn_DefinitionTable[] = {
     // Flint
     {
         .abilityId = 300,

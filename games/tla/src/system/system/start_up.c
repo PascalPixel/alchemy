@@ -8,7 +8,7 @@
 #include "gamepak/far_call/sound.h"
 #include "resource_ids.h"
 
-void Func_0801319c(void) {
+void System_Initialize(void) {
   {
     volatile u16 *dma0 = REG_DMA0;
 
@@ -21,14 +21,14 @@ void Func_0801319c(void) {
   Heap_Initialize();
   System_InstallIwramAndIrqs();
   *(u32 *)&gIoWriteQueue.count = 0;
-  gData_03001110 = 0;
+  gDebugTextEnabled = 0;
   gDebugMode = 0;
   gCpuLoadDisplayEnabled = 0;
   System_CopyBuildStamp();
   Window_LoadGraphics();
   DebugText_Clear();
   REG_DISPCNT = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
-  Irq_SetHandler(0, 1, Func_0801399c);
+  Irq_SetHandler(0, 1, System_VBlankHandler);
   Irq_SetHandler(13, 1, Iwram_Halt);
   Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
   Sound_InitializeFar();
@@ -43,7 +43,7 @@ void Func_0801319c(void) {
   MainRoutine_RunFar(0);
 }
 
-void System_Halt(void) {
+void System_IdleForever(void) {
   volatile struct InputState *input = &gInput;
 
   for (;;) {
@@ -80,17 +80,17 @@ s32 System_GetLanguage(void) {
 }
 #endif
 
-void Func_080132b8(void) {}
+void RuntimeDispatch_ReservedNoOpA(void) {}
 
-void Func_080132bc(void) {}
+void RuntimeDispatch_ReservedNoOpB(void) {}
 
-void Func_080132c0(void) {}
+void RuntimeDispatch_ReservedNoOpC(void) {}
 
-void Func_080132c4(void) {}
+void RuntimeDispatch_ReservedNoOpD(void) {}
 
-void Func_080132c8(void) {}
+void RuntimeDispatch_ReservedNoOpE(void) {}
 
-s32 System_ReturnZero(s32 unused0, const u8 *unused1) { return 0; }
+s32 Stub_ReturnZero(s32 unused0, const u8 *unused1) { return 0; }
 
 /// Copies the build stamp resource (three words) into gBuildStamp and
 /// writes the zero word that ends it. Called at power-up, before the window
@@ -154,12 +154,12 @@ void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
   }
 }
 
-void Resource_LoadCode(u32 index, void *destination) {
+void Overlay_Load(u32 index, void *destination) {
   void (*routine)(void *, s32);
   s32 end;
 
-  end = Resource_DecodeType01((const void *)Resource_GetTableEntry(index),
-                              destination);
+  end = Decompress_TaggedLz((const void *)Resource_GetTableEntry(index),
+                            destination);
   RamCode_Load(routine, Resource_PatchThumbBranchCode,
                Resource_PatchThumbBranchCodeSize);
   routine(destination, end);

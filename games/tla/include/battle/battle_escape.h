@@ -6,7 +6,7 @@
 
 #include "types.h"
 
-s32 BattleEscape_CheckSuccess(void);
-s32 BattleEscape_PlayRun(struct BattleActionRecord *action);
+s32 BattleFlee_CheckSuccess(void);
+s32 BattleFlee_PlayRun(struct BattleActionRecord *action);
 
 #endif

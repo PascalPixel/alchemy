@@ -6,6 +6,8 @@
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/window.h"
 #include "module/shop/shop.h"
+#include "gamepak/far_call/menu.h"
+#include "gamepak/far_call/field.h"
 
 // The Select window is wider outside English and narrower in Japanese, the
 // price window wider in German, French and Italian and narrower in Japanese;
@@ -122,9 +124,9 @@ next_page:
       Sound_PlayFar(126);
       window = Window_CreateFar(HELD_WINDOW_X, 3, HELD_WINDOW_WIDTH, 10, 2);
 #if TLA_PATCH_1
-      Func_080f8040(window, stockCount, held);
+      ItemMenu_DrawItemDetailsWithCountFar(window, stockCount, held);
 #else
-      Func_080f8040(window, heldItem, held);
+      ItemMenu_DrawItemDetailsWithCountFar(window, heldItem, held);
 #endif
       while (gInput.held & 4)
         wait(1);
@@ -134,7 +136,8 @@ next_page:
 #if TLA_PATCH_1
       // Japanese does not redraw the price window here.
       WindowSprite_RedrawSavedRectFar(priceWindow);
-      Shop_DrawItemPrice(priceWindow, stockCount, (u16)heldDefinition->price, 0);
+      Shop_DrawItemPrice(priceWindow, stockCount, (u16)heldDefinition->price,
+                         0);
 #endif
     } else {
       redraw = MenuGrid_MoveCursor(&selectionIndex, stockCount, 7);
@@ -158,7 +161,7 @@ next_page:
   partyWindow = Window_CreateFar(0, 14, 13, 3, 2);
   shop->cursor.anchor->active = 4;
   shop->mode = 12;
-  Func_080f8060(partyWindow, 2, 0);
+  Menu_PlaceOwnerEntryObjectsFar(partyWindow, 2, 0);
   itemWindow = Window_CreateFar(16, 11, 14, 9, 2);
   redraw = 2;
 
@@ -173,7 +176,7 @@ next_page:
       MenuCursor_Place(partyWindow, selectionIndex % 4 * 24 - 12, 0);
       shop->mode = 3;
       if (redraw == 2) {
-        Func_080f8058(selectionIndex / 4 * 4);
+        Menu_CreateOwnerEntryObjectsFar(selectionIndex / 4 * 4);
         wait(1);
       }
       Shop_DrawParty(partyWindow, selectionIndex, shop->selectedItem);
@@ -314,7 +317,8 @@ void Shop_DrawStock(struct RenderInput *window, s32 selected) {
           icon->sentinel = 253;
         }
         // Read unsigned (ldrh), as the buy screen reads the price elsewhere.
-        icon = Shop_CreatePriceSprite((u16)definition->price, window, priceX, 0);
+        icon =
+            Shop_CreatePriceSprite((u16)definition->price, window, priceX, 0);
         icon->sentinel = 251;
       }
     }
@@ -376,11 +380,11 @@ void Shop_DrawItemPrice(s32 window, s32 itemId, s32 price, s32 priceKind) {
   goto draw;
 cannot_buy:
   Text_DrawMessageAsTilesFar__shop((s32)MsgCannotBuyThat, window,
-                                  SHOP_PRICE_LABEL_X, 8);
+                                   SHOP_PRICE_LABEL_X, 8);
   return;
 not_broken:
-  Text_DrawMessageAsTilesFar__shop((s32)MsgNotBroken, window, SHOP_PRICE_LABEL_X,
-                                  8);
+  Text_DrawMessageAsTilesFar__shop((s32)MsgNotBroken, window,
+                                   SHOP_PRICE_LABEL_X, 8);
   return;
 show_price:
   labelMessage = (s32)MsgPrice;
@@ -403,7 +407,7 @@ draw:
   // MsgItemCondition starts a list: "----------", "Processed", "Rusted".
   if (priceKind == 3)
     Text_DrawMessageAsTilesFar__shop(price + (s32)MsgItemCondition, window, 8,
-                                    8);
+                                     8);
   else
     goto show_price;
 }
@@ -550,11 +554,13 @@ void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId) {
     Text_DrawNumberInWindowFar(without[i], 3, window, 32, i * 16);
     if (without[i] != with[i])
       Text_DrawNumberInWindowFar(with[i], 3, window, 72, i * 16);
-    Text_DrawMessageAsTilesFar__shop((s32)MsgShopStatLabel + i, window, 0, i * 16);
+    Text_DrawMessageAsTilesFar__shop((s32)MsgShopStatLabel + i, window, 0,
+                                     i * 16);
     Window_DrawDividerLineFar(window, 0, i * 2 + 2, 13, i * 2 + 2);
   }
   if (replaced != -1)
-    Text_DrawMessageAsTilesFar__shop(replaced + (s32)MsgItemName, window, 0, 48);
+    Text_DrawMessageAsTilesFar__shop(replaced + (s32)MsgItemName, window, 0,
+                                     48);
 }
 
 /// Shows how many of an item the member already carries and draws the
@@ -573,7 +579,8 @@ void Shop_DrawCarriedItem(struct RenderInput *window, s32 unitId, s32 itemId) {
     slot = Inventory_FindFar(unitId, itemId);
     if (slot != -1) {
       quantityOffset = slot * 2 + 216;
-      MessageArgument_PushFar((*(u16 *)(unitBytes + quantityOffset) >> 11) + 1, 5);
+      MessageArgument_PushFar((*(u16 *)(unitBytes + quantityOffset) >> 11) + 1,
+                              5);
       Text_DrawMessageAsTilesFar__shop((s32)MsgYouHave, window, 0, 0);
     } else {
       Text_DrawMessageAsTilesFar__shop((s32)MsgShopNoneInStock, window, 0, 0);
@@ -586,7 +593,7 @@ s32 __udivsi3(s32, s32);
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define QUANTITY_CURSOR_Y 120
-#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                    \
+#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||       \
     (LANGUAGE == LANGUAGE_ITALIAN)
 #define QUANTITY_CURSOR_Y 104
 #else
@@ -704,7 +711,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   count = 0;
   window = Window_CreateFar(QUANTITY_WINDOW_X, 4, QUANTITY_WINDOW_WIDTH, 3, 2);
   if (window != 0) {
-    slot = Resource_FindFreeEntry();
+    slot = VramCache_FindFreeEntry();
     if (slot != 96) {
       VramCache_Load(slot, 0x100, 0);
       WindowSprite_CreateFar(slot, OUTPUT_SIZE_32X8,
@@ -752,12 +759,12 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           // MsgPiece, the counter after the count, written as the message after
           // MsgCoins: the coins label below then shares its literal-pool word.
           Text_DrawMessageAsTilesFar__shop((s32)MsgCoins + 1, window,
-                                        QUANTITY_PIECE_X, 0);
+                                           QUANTITY_PIECE_X, 0);
 #endif
           Text_DrawNumberInWindowFar(price * result, 6, window,
                                      QUANTITY_PRICE_X, 0);
-          Text_DrawMessageAsTilesFar__shop((s32)MsgCoins, window, QUANTITY_COINS_X,
-                                        0);
+          Text_DrawMessageAsTilesFar__shop((s32)MsgCoins, window,
+                                           QUANTITY_COINS_X, 0);
         }
         wait(1);
       }

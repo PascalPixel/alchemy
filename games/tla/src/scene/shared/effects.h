@@ -234,14 +234,14 @@
       leader->motionFlags = flag;                                              \
       Actor_SetPosition(*owner, ((s16 *)&leader->x)[1] << 16,                  \
                         (((s16 *)&leader->z)[1] << 16) - 0x100000);            \
-      Actor_SetSpriteColor(Actor_Get(*owner), 9);                              \
+      FieldActor_SetSpriteColor(Actor_Get(*owner), 9);                              \
       Actor_SetSingleChildFlags(Actor_Get(*owner), 0);                         \
       Event_StartScreenTransition();                                           \
       Event_PlaySound(228);                                                    \
       leader->update = (void (*)(void))call1;                                  \
       Actor_SetSpeed(*owner, 0x6666, 0x3333);                                  \
       Actor_WalkByAndWait(*owner, 0, 8);                                       \
-      Actor_SetSpriteColor(Actor_Get(*owner), 0);                              \
+      FieldActor_SetSpriteColor(Actor_Get(*owner), 0);                              \
       Actor_SetSingleChildFlags(Actor_Get(*owner), 1);                         \
       ((struct FieldSprite *)leader->sprite)->priority = 1;                    \
       offset = 10;                                                             \
@@ -318,7 +318,7 @@
     Actor_SetAnimation(*owner, 2);                                             \
     Actor_SetDestinationOffset(*owner, 0, -8);                                 \
     FieldActor_WaitForMoveById(*owner);                                        \
-    Actor_SetSpriteColor(Actor_Get(*owner), 9);                                \
+    FieldActor_SetSpriteColor(Actor_Get(*owner), 9);                                \
     Actor_SetSingleChildFlags(Actor_Get(*owner), 0);                           \
     leader->update = 0;                                                        \
     Event_FinishScreenTransition();                                            \
@@ -455,7 +455,7 @@
     if (effect != 0) {                                                         \
       sprite = effect->sprite;                                                 \
       Actor_StartScript(effect, data1);                                        \
-      Actor_SetSpriteColor(effect, 1);                                         \
+      FieldActor_SetSpriteColor(effect, 1);                                         \
       effect->motionFlags = 0;                                                 \
       angle = Random16Far() & 0xffff000;                                       \
       effect->angle = angle;                                                   \

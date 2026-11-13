@@ -28,14 +28,14 @@ void Func_02000ff4(struct Actor *object) {
 
   if (object->timer > 528) {
     if (object->timer & 2)
-      Actor_SetSpriteColor(object, 10);
+      FieldActor_SetSpriteColor(object, 10);
     else
-      Actor_SetSpriteColor(object, 0);
+      FieldActor_SetSpriteColor(object, 0);
   } else if (object->timer > 400) {
     if (object->timer & 16)
-      Actor_SetSpriteColor(object, 10);
+      FieldActor_SetSpriteColor(object, 10);
     else
-      Actor_SetSpriteColor(object, 0);
+      FieldActor_SetSpriteColor(object, 0);
   } else {
     object->update = Func_02001738;
     object->timer = 1;
@@ -212,7 +212,7 @@ stop:
   FieldActor_SetMoveTarget(object, position[0], position[1], position[2]);
   FieldCamera_SetSpeed(0x20000, 0x4000);
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   object->update = NULL;
   Actor_Release(object);
   for (i = 0; i != 16; i++) {
@@ -234,7 +234,7 @@ stop:
     System_Wait(1);
   }
   System_Wait(24);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   System_Wait(10);
   return Func_02003af4();
@@ -246,13 +246,13 @@ hit:
   FieldActor_SetMoveTarget(object, position[0], position[1], position[2]);
   FieldCamera_SetSpeed(0x20000, 0x4000);
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   object->update = NULL;
   Actor_Release(object);
   Event_SetFlag(0x2f0);
   Func_02000c08(i);
   Event_ClearFlag(0x2f0);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   System_Wait(10);
   return Func_02003af4();
@@ -270,9 +270,9 @@ void Func_02001444(void) {
   FieldEvent_Wait(10);
   object = work->target;
   object->update = NULL;
-  Actor_SetSpriteColor(object, 7);
+  FieldActor_SetSpriteColor(object, 7);
   FieldEvent_Wait(3);
-  Actor_SetSpriteColor(work->target, 0);
+  FieldActor_SetSpriteColor(work->target, 0);
   FieldEvent_Wait(1);
   Func_020011e4(work->target);
   Func_02003af4();
@@ -314,7 +314,8 @@ void Func_020014bc(s32 mode, s32 cue) {
     Func_02003a54(work->target, 3);
 }
 
-// One of the four parts Func_02001738 builds: rises and falls with its owner's action counter.
+// One of the four parts Func_02001738 builds: rises and falls with its owner's
+// action counter.
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -346,7 +347,8 @@ void Func_02001528(struct Actor *part) {
   }
 }
 
-// The fifth part of Func_02001738's group: follows its owner like the others, throws effect 403 every eighth frame and marks the ground beneath.
+// The fifth part of Func_02001738's group: follows its owner like the others,
+// throws effect 403 every eighth frame and marks the ground beneath.
 #include "system/field_effect.h"
 #include "system/main_routine_work.h"
 
@@ -380,10 +382,12 @@ void Func_020015e4(union FieldObject *object) {
     EFFECT_Y(object) = EFFECT_Y(object) + (watched->timer << 19) + (-34 << 19);
   } else {
     if (watched->timer >= 9 && watched->timer <= 331) {
-      EFFECT_Y(object) = watched->y + (object->effect.unk5a[8] << 20) + 0x180000;
+      EFFECT_Y(object) =
+          watched->y + (object->effect.unk5a[8] << 20) + 0x180000;
     } else if (watched->timer > 332 &&
                watched->timer < (object->effect.unk5a[8] << 1) + 333) {
-      EFFECT_Y(object) = watched->y + (object->effect.unk5a[8] << 20) + 0x180000;
+      EFFECT_Y(object) =
+          watched->y + (object->effect.unk5a[8] << 20) + 0x180000;
       EFFECT_Y(object) -= (watched->timer << 19) - (332 << 19);
     } else if ((object->effect.unk5a[8] << 1) + 333 < watched->timer) {
       object->effect.y = object->actor.terrainHeight;
@@ -419,7 +423,7 @@ void Func_02003c4c(struct Actor *object, s32 a);
 
 struct AnimationEntry;
 
-/// The sprite as ResourceObject_Create fills it, laid out as vram_block_93.c
+/// The sprite as Sprite_Create fills it, laid out as vram_block_93.c
 /// declares it.
 struct ResourceSprite {
   u32 imageAttributes[3];
@@ -451,7 +455,7 @@ void Func_02001738(struct Actor *object) {
 
   if ((gFrameCount & 15) == 0)
     Func_02003c4c(object, 136);
-  Actor_SetSpriteColor(object, 10);
+  FieldActor_SetSpriteColor(object, 10);
   if (object->timer <= 31) {
     u32 phase = gFrameCount & 3;
 
@@ -504,7 +508,7 @@ void Func_02001738(struct Actor *object) {
       part->unk5c[6] = 3 - i;
       part->watchedObject = object;
       part->update = Func_02001528;
-      Actor_SetSpriteColor(part, 3);
+      FieldActor_SetSpriteColor(part, 3);
     }
     {
       struct Actor *part = parts[0];
@@ -520,7 +524,7 @@ void Func_02001738(struct Actor *object) {
       part->unk5c[6] = 3;
       part->watchedObject = object;
       part->update = Func_02001528;
-      Actor_SetSpriteColor(part, 3);
+      FieldActor_SetSpriteColor(part, 3);
     }
     id = 0;
     if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
@@ -546,7 +550,7 @@ void Func_02001738(struct Actor *object) {
     fifthPart->update = Func_020015e4;
     object->timer++;
   } else if (object->timer > 364) {
-    Actor_SetSpriteColor(object, 0);
+    FieldActor_SetSpriteColor(object, 0);
     object->update = NULL;
   }
   // screenStatus read unsigned: as work->screenStatus, 39 of 294 instructions
@@ -642,8 +646,8 @@ void Func_02001be0(void) {
 #include "call.h"
 
 void Actor_SetActionById(s32 id, s32 action);
-/* VIEW(s1c00): routine Func_080d452c as void Func_080d452c(s32 a, s32 b); event.h has s32 Func_080d452c(s32 actorId, s32 pan); tried as the definition's void Func_080d452c(s32 id, s32 use_setter), it does not compile in tla-ja: games/tla/src/scene/magma_rock/s0ff4.c:672: conflicting types for `Func_080d452c'. */
-extern void Func_080d452c__s1c00(s32 a, s32 b) __asm__("Func_080d452c");
+/* VIEW(s1c00): routine FieldCamera_MoveToActor as void FieldCamera_MoveToActor(s32 a, s32 b); event.h has s32 FieldCamera_MoveToActor(s32 actorId, s32 pan); tried as the definition's void FieldCamera_MoveToActor(s32 id, s32 use_setter), it does not compile in tla-ja: games/tla/src/scene/magma_rock/s0ff4.c:672: conflicting types for `FieldCamera_MoveToActor'. */
+extern void Func_080d452c__s1c00(s32 a, s32 b) __asm__("FieldCamera_MoveToActor");
 void FieldCamera_WaitForArrival(void);
 
 void Func_02001c00(void) {
@@ -659,7 +663,7 @@ void Func_02001c00(void) {
   Event_ResolvePendingActions(0);
   Event_SetFlag(0x260);
   Event_PlaySound(133);
-  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 6);
+  FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 6);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 10);
   Actor_SetActionById(gMainRoutineWork.currentOwner, 32);
   opt = &options;
@@ -709,11 +713,11 @@ second:
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
   MapGrid_SetShake(0x50000, 0x80000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Map_WaitForShakeToSettle();
+  MapGrid_WaitForShakeToSettle();
   Func_080d452c__s1c00(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 4);
-  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
   Event_ClearFlag(0x260);
   leader->gravity = 0x10000;

@@ -38,7 +38,8 @@ void Func_02003304(struct Actor *self) {
   FieldVector_AddPolarOffset(PIXELS(32), angle, (struct Vector3 *)position);
   actor->facing = angle;
   actor->motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(actor, position[0], position[1], position[2]);
+  FieldActor_SetPositionAndResetMotion(actor, position[0], position[1],
+                                       position[2]);
   actor->update = Func_02002f80;
   actor->actionFlags = 0;
   actor->speedLimit = 0x80000;
@@ -102,7 +103,7 @@ struct RideWork {
   void *handle;
 };
 
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 extern u16 gData_02004cf0[];
 void Func_020041ec(void *handle);
 void Func_0200236c(struct Actor *object, s32 unused);

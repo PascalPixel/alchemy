@@ -9,11 +9,11 @@
 #include "module/scene/settlements.h"
 #include "palette_snapshots.h"
 
-void Func_02000280(void) { Func_080d7788(10, 1, 14); }
+void Func_02000280(void) { Djinn_JoinParty(10, 1, 14); }
 
-void Func_02000290(void) { Func_080d7788(11, 2, 14); }
+void Func_02000290(void) { Djinn_JoinParty(11, 2, 14); }
 
-void Func_020002a0(void) { Func_080d7788(23, 3, 19); }
+void Func_020002a0(void) { Djinn_JoinParty(23, 3, 19); }
 
 s32 Func_020002b0(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);
@@ -92,7 +92,7 @@ void Func_02000404(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(11, 0, 0);
   Event_SetFlag(0xf5d);
-  BattleEffect_StartEffectObject22(193, 3);
+  ItemDisplay_ShowItem(193, 3);
   mode = 0;
   Party_GiveItem(193, mode);
   Event_End();
@@ -238,7 +238,7 @@ void Func_02000758(s32 x, s32 y, s32 z) {
     object->motionFlags = 0;
     object->timer = 0;
     object->priorityFlags &= 0xfe;
-    Actor_SetSpriteColor(object, 7);
+    FieldActor_SetSpriteColor(object, 7);
     animation = object->sprite;
     animation[9] = (animation[9] & -13) | 4;
     Actor_SetSingleChildFlags(object, 0);
@@ -247,7 +247,7 @@ void Func_02000758(s32 x, s32 y, s32 z) {
     *(s32 *)&object->watchedObject = 60;
     object->update = (void (*)(void))Func_02000714;
     Func_02001fe0(object, 5);
-    Animation_SetStateFlags(object, 1);
+    Actor_SetBlendMode(object, 1);
   }
 }
 
@@ -715,7 +715,7 @@ void Func_0200138c(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_FollowActor(10, 1);
+  EventCamera_FollowActor(10, 1);
   object = Actor_Get(10);
   column = object->x >> 20;
   row = object->z >> 20;

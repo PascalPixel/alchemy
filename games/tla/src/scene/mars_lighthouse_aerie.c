@@ -25,9 +25,9 @@ void Func_02000038(struct Actor *object) {
 
 void Func_02000068(struct Actor *object) {
   if ((gFrameCount >> 1) & 1)
-    Actor_SetSpriteColor(object, 15);
+    FieldActor_SetSpriteColor(object, 15);
   else
-    Actor_SetSpriteColor(object, 0);
+    FieldActor_SetSpriteColor(object, 0);
 }
 
 /// Shrinks the object toward its normal size, and when its timer runs out
@@ -123,7 +123,7 @@ extern const u8 gData_02005ab4[];
 extern const u8 gData_02005ae0[];
 extern const u8 gData_02005b0c[];
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Func_02004ef0(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
 void Func_020004a4(void);
 
@@ -136,7 +136,7 @@ void Func_020001d8(void) {
   for (i = 10; i <= 16; i++) {
     object = Actor_Get(i);
     object->priorityFlags |= 0x80;
-    Animation_ApplyChildValues(object, 5);
+    Actor_SetSpriteColorMode(object, 5);
   }
   if (!Event_GetFlag(0xa3c))
     return;
@@ -147,7 +147,7 @@ void Func_020001d8(void) {
   object = Actor_Get(8);
   object->motionFlags = 4;
   object->y = 0x700000;
-  Animation_ApplyChildValues(object, 5);
+  Actor_SetSpriteColorMode(object, 5);
   Actor_SetSingleChildFlags(object, 0);
   object->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(9, 2);
@@ -156,11 +156,11 @@ void Func_020001d8(void) {
   object->y = 0x700000;
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
-  Animation_ApplyChildValues(object, 5);
+  Actor_SetSpriteColorMode(object, 5);
   Actor_SetSingleChildFlags(object, 0);
   object->priorityFlags |= 0x20;
   object->priorityFlags |= 2;
-  Animation_SetStateFlags(object, 1);
+  Actor_SetBlendMode(object, 1);
   Data_0200eb60 = 0;
   FieldTask_AddFrame(Func_020004a4, 0x480);
 }
@@ -193,7 +193,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(506), PIXELS(280));
     System_Wait(1);
     FieldCamera_MoveTo(-1, -1, -1, 0);
-    FieldCamera_GetActor()->motionFlags = 0;
+    EventCamera_GetActor()->motionFlags = 0;
     FieldCamera_MoveTo(PIXELS(512), PIXELS(96), PIXELS(312), 1);
     Map_CenterOnFollowedPoint();
     System_Wait(1);
@@ -236,14 +236,15 @@ void Func_020004a4(void) {
   u32 phase;
 
   if (anchor != NULL && (phase = Data_0200eb60 & 15) == 0) {
-    object = FieldActor_Create(0x2a0, anchor->x + 0x80000, anchor->y + offset + 0x80000, anchor->z);
+    object = FieldActor_Create(0x2a0, anchor->x + 0x80000,
+                               anchor->y + offset + 0x80000, anchor->z);
     offset = (offset / 0x60000) << 16;
     if (object != NULL) {
       u8 zero;
 
       sprite = object->sprite;
       Actor_StartScript(object, gData_02006ad0);
-      Actor_SetSpriteColor(object, 10);
+      FieldActor_SetSpriteColor(object, 10);
       object->motionFlags = phase;
       {
         /* FAKEMATCH(temporary): the masked value held in a local; as
@@ -352,7 +353,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   t4 = Actor_Get(18);
-  Actor_SetSpriteColor(t4, 15);
+  FieldActor_SetSpriteColor(t4, 15);
   Actor_SetPosition(18, 0x2000000, 0x1140000);
   System_Wait(1);
   FieldActor_SetSpritePriority(6, 1);
@@ -365,7 +366,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Event_ShowMessage(18, 0);
   t16 = gMainRoutineWork.currentOwner;
   Actor_ShowEmote(t16, 0x100, 20);
-  t18 = FieldCamera_GetActor();
+  t18 = EventCamera_GetActor();
   FIELD_AT(t18, u8, 85) = 0;
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(0x2000000, -1, 0x1300000, 1);
@@ -478,7 +479,10 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetAttachedEffect(t120, 0x102);
   t122 = gMainRoutineWork.currentOwner;
   t123 = Actor_Get(t122);
-  { u8 *f = (u8 *)t123 + 90; *f &= 254; }
+  {
+    u8 *f = (u8 *)t123 + 90;
+    *f &= 254;
+  }
   t125 = gMainRoutineWork.currentOwner;
   Actor_SetSpeed(t125, 0x3333, 0x1999);
   t127 = gMainRoutineWork.currentOwner;
@@ -547,7 +551,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Func_02000640(3);
   Func_02000640(2);
   t191 = Actor_Get(18);
-  Actor_SetSpriteColor(t191, 0);
+  FieldActor_SetSpriteColor(t191, 0);
   actor = Actor_Get(18);
   FIELD_AT(actor, u8, 85) = 0;
   t194 = Actor_Get(18);
@@ -868,7 +872,10 @@ L_02009638:
   FieldActor_Jump(t494, 4, 0);
   t496 = work->currentOwner;
   t497 = Actor_Get(t496);
-  { u8 *f = (u8 *)t497 + 90; *f &= 254; }
+  {
+    u8 *f = (u8 *)t497 + 90;
+    *f &= 254;
+  }
   t499 = work->currentOwner;
   Actor_WalkToAndWait(t499, 0x1f8, 0x140);
   FieldEvent_Wait(1);
@@ -899,10 +906,10 @@ L_02009638:
   Event_PlaySound(0x23c);
   Actor_SetSpriteColorById(18, 0);
   t528 = Actor_Get(18);
-  Actor_SetSpriteColor(t528, 7);
+  FieldActor_SetSpriteColor(t528, 7);
   FieldEvent_Wait(20);
   t531 = Actor_Get(18);
-  Actor_SetSpriteColor(t531, 0);
+  FieldActor_SetSpriteColor(t531, 0);
   Actor_FaceDirection(0, 0xc000, 0);
   Actor_FaceDirection(1, 0xc000, 0);
   Actor_FaceDirection(2, 0xc000, 0);
@@ -1034,7 +1041,7 @@ L_02009638:
   MapGrid_SetShake(0x20000, 0x40000, 0x10000);
   FieldEvent_Wait(10);
   MapGrid_SetShake(-1, -1, 0xe666);
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(17, 1);
   Event_PlaySound(148);
@@ -1078,24 +1085,24 @@ L_02009638:
   FieldActor_Jump(19, 4, 10);
   Event_ShowMessage(0x2013, 0);
   FIELD_AT(work, u8, 0x24b) = 2;
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov6aeRoom1, 2);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov6aeRoom1, 2);
   Call2(Field_RequestBattleFromEncounterTable, 102, 1);
   return;
 }
 
 void Func_02001eb0(struct Actor *object) {
   if ((gData_02006b64 >> gData_02006b6c) & 1)
-    Actor_SetSpriteColor(object, 15);
+    FieldActor_SetSpriteColor(object, 15);
   else
-    Actor_SetSpriteColor(object, 0);
+    FieldActor_SetSpriteColor(object, 0);
   gData_02006b64++;
 }
 
 void Func_02001ee4(struct Actor *object) {
   if ((gData_02006b64 >> gData_02006b6c) & 1)
-    Actor_SetSpriteColor(object, 0);
+    FieldActor_SetSpriteColor(object, 0);
   else
-    Actor_SetSpriteColor(object, 15);
+    FieldActor_SetSpriteColor(object, 15);
 }
 
 extern u8 gData_02005f08[];
@@ -1142,9 +1149,9 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   PaletteFade_ApplySource(0, 0);
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(1);
-  Actor_SetSpriteColor((Actor_Get(30)), 15);
-  Actor_SetSpriteColor((Actor_Get(31)), 15);
-  Actor_SetSpriteColor((Actor_Get(32)), 15);
+  FieldActor_SetSpriteColor((Actor_Get(30)), 15);
+  FieldActor_SetSpriteColor((Actor_Get(31)), 15);
+  FieldActor_SetSpriteColor((Actor_Get(32)), 15);
   System_Wait(1);
   FieldActor_SetSpritePriority(21, 1);
   FieldActor_SetSpritePriority(20, 1);
@@ -1198,13 +1205,13 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FIELD_AT((spill), s32, 108) = 0;
   System_Wait(1);
   Event_PlaySound(103);
-  Actor_SetSpriteColor((Actor_Get(30)), 9);
-  Actor_SetSpriteColor((Actor_Get(31)), 9);
-  Actor_SetSpriteColor((Actor_Get(32)), 9);
+  FieldActor_SetSpriteColor((Actor_Get(30)), 9);
+  FieldActor_SetSpriteColor((Actor_Get(31)), 9);
+  FieldActor_SetSpriteColor((Actor_Get(32)), 9);
   FieldEvent_Wait(20);
-  Actor_SetSpriteColor((Actor_Get(30)), 0);
-  Actor_SetSpriteColor((Actor_Get(31)), 0);
-  Actor_SetSpriteColor((Actor_Get(32)), 0);
+  FieldActor_SetSpriteColor((Actor_Get(30)), 0);
+  FieldActor_SetSpriteColor((Actor_Get(31)), 0);
+  FieldActor_SetSpriteColor((Actor_Get(32)), 0);
   FieldEvent_Wait(20);
   t85 = Random16Far();
   FIELD_AT(t1, u8, 98) = (((u32)(((t85 << 2) + t85) << 4) >> 16) + 40);
@@ -1232,7 +1239,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   Actor_FaceDirection(26, 0x4000, 0);
   Actor_FaceDirection(25, 0x4000, 0);
   FieldCamera_SetSpeed(0x19999, 0x3333);
-  FIELD_AT((FieldCamera_GetActor()), u8, 85) = 0;
+  FIELD_AT((EventCamera_GetActor()), u8, 85) = 0;
   FieldCamera_MoveTo(0x2000000, 0x500000, 0x1540000, 1);
   Func_02005734();
   Actor_ShowEmote(19, 0x109, 20);
@@ -1501,7 +1508,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   FieldEvent_Wait(1);
   Actor_Get(1)->actionFlags |= 1;
   FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_GetActor()->motionFlags = 0;
+  EventCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(540), PIXELS(76), PIXELS(340), 1);
   Func_02005734();
   Actor_FaceDirectionAndWait(1, FACING_SOUTH);
@@ -1557,7 +1564,8 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
 
     Event_OpenMessage(0x8000, flags);
   }
-  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+      0) {
     Actor_SetAnimationAndWait(5, 3);
     Event_ShowMessage(0x8005, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
@@ -1613,15 +1621,17 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Party_RemoveMemberRestored(1);
   Actor_Get(20)->collisionFlags |= 8;
   Actor_Get(21)->collisionFlags |= 8;
-  Actor_SetSpriteColor(Actor_Get(28), 0xf);
+  FieldActor_SetSpriteColor(Actor_Get(28), 0xf);
   Actor_SetPosition(28, PIXELS(568), PIXELS(274));
   Actor_Get(17)->motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(Actor_Get(17), PIXELS(492), PIXELS(96), PIXELS(284));
+  FieldActor_SetPositionAndResetMotion(Actor_Get(17), PIXELS(492), PIXELS(96),
+                                       PIXELS(284));
   Actor_Get(29)->motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(Actor_Get(29), PIXELS(510), PIXELS(96), PIXELS(295));
+  FieldActor_SetPositionAndResetMotion(Actor_Get(29), PIXELS(510), PIXELS(96),
+                                       PIXELS(295));
   Actor_Get(30)->motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(Actor_Get(30), PIXELS(540),
-                                  PIXELS(96), PIXELS(300));
+  FieldActor_SetPositionAndResetMotion(Actor_Get(30), PIXELS(540), PIXELS(96),
+                                       PIXELS(300));
   System_Wait(1);
   Event_SetFlag(0x17c);
   Event_SetFlag(0x144);

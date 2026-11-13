@@ -3,12 +3,13 @@
 // Part of system.c.
 
 #include "../system_internal.h"
-#include "module/tla.h"
+#include "mul_q16.h"
+#include "ram_buffer.h"
 #include "resource_ids.h"
 
-void NumberText_FormatHex(u32 value) {
+void String_FormatHex(u32 value) {
   u8 *buffer = gNumberTextBuffer;
-  const u8 *digits = gText_HexDigits;
+  const u8 *digits = gString_HexDigits;
   s32 index = 7;
 
   do {
@@ -23,7 +24,7 @@ void NumberText_FormatHex(u32 value) {
   }
 }
 
-void NumberText_FormatDecimal(s32 value) {
+void String_FormatDecimal(s32 value) {
   s32 negative;
   s32 i;
   s32 q;
@@ -52,20 +53,20 @@ void NumberText_FormatDecimal(s32 value) {
     gNumberTextBuffer[i] = ' ';
 }
 
-void Func_08014aa8(u32 count) {
-  u16 *dst = gData_030011c4;
+void DebugText_PrintBlanks(u32 count) {
+  u16 *dst = gDebugTextCursor;
   u32 i;
 
-  if (gData_03001110 != 0) {
+  if (gDebugTextEnabled != 0) {
     for (i = 0; i < count; i++)
       *dst++ = 0xf000;
-    gData_030011c4 = dst;
+    gDebugTextCursor = dst;
   }
 }
 
 void DebugText_Print(const u8 *src) {
-  if (gData_03001110 != 0) {
-    u32 addr = ((u32)&gData_030011c4);
+  if (gDebugTextEnabled != 0) {
+    u32 addr = ((u32)&gDebugTextCursor);
     u32 c = *src;
     u16 *dst = *(u16 **)addr;
     u32 cnt = 0;
@@ -85,7 +86,7 @@ void DebugText_Print(const u8 *src) {
           break;
         c = *src++;
       } while (c != 0);
-      addr = ((u32)&gData_030011c4);
+      addr = ((u32)&gDebugTextCursor);
     }
     *(u16 **)addr = dst;
   }
@@ -102,7 +103,7 @@ void DebugText_PrintHex(u32 value, s32 digits) {
   if ((n - 1) > 7U) {
     n = 8;
   }
-  NumberText_FormatHex(value);
+  String_FormatHex(value);
   DebugText_Print((const u8 *)(((u32)&gNumberTextHexEnd) - n));
 }
 
@@ -114,7 +115,7 @@ void DebugText_PrintDecimal(s32 value, s32 digits) {
   if ((n - 1) > 9U) {
     n = 10;
   }
-  NumberText_FormatDecimal(value);
+  String_FormatDecimal(value);
   DebugText_Print((const u8 *)(((u32)&gNumberTextDecimalEnd) - n));
 }
 
@@ -122,7 +123,7 @@ void DebugText_PrintDecimal(s32 value, s32 digits) {
 /// and points BG0 at the screen.
 void DebugText_Clear(void) {
   Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 32 * 20 * 2);
-  gData_030011c4 = (u16 *)BG_SCREEN_BLOCK(4);
+  gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(4);
   Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
 }
 
@@ -162,7 +163,7 @@ void Window_LoadGraphics(void) {
           DMA_COPY_HALFWORDS(224), REG_DMA3);
 }
 
-void Palette_LoadBasicObjColors(void) {
+void Palette_LoadBasicSpriteColors(void) {
   Dma_Set((const void *)gSystem_BasicColorPalette, (void *)OBJ_PLTT,
           DMA_COPY_HALFWORDS(224), REG_DMA3);
 }

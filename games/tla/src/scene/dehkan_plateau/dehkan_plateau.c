@@ -32,6 +32,9 @@
 #include "module/tla.h"
 #include "scene_call.h"
 
+extern const u16 gData_02003fd2[];
+extern const struct CellRecord gData_02004066[];
+
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
 extern const u8 gData_02003f80[];
@@ -44,17 +47,11 @@ extern const u8 gData_02003fb8[];
 extern const u8 gData_02003fc0[];
 extern const u8 gData_02003fc4[];
 
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
-void Func_02002180(void);
-void Func_02001804(void);
 
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
 
 void Func_0200118c(void) {
   GameFlag_SetBit(0x209);
-  Func_080d2b4c(16, 47);
+  Field_RequestDjinnBattle(16, 47);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -343,7 +340,7 @@ loop:
            * here, which loads its first halfword before the 1 is built; as    \
            * gData_02003fd2[0], 2 of 56 instructions differ in tla-en. */      \
           dest = data2;                                                        \
-          Map_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);        \
+          MapGrid_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);        \
         }                                                                      \
       } else {                                                                 \
         if (*cell != 0)                                                        \
@@ -385,8 +382,8 @@ void Func_020019b8(void) {
         record = &gData_020041b8[i * 6];
         x = *record++;
         y = *record++;
-        Map_CopyCellPictureIndicesRect(gData_02003fea[0], gData_02003fea[1], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fea[0], gData_02003fea[1],
+                                           x, y, 1, 1);
       }
     } else {
       if (*record != 0)
@@ -440,11 +437,11 @@ void Func_02001a30(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, cellX << 3,
-                             cellZ << 3);
+  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, cellX << 3,
+                          cellZ << 3);
   Actor_SetPositionAndResetMotion(leader, cellX << 19, leader->y, cellZ << 19);
   Event_Wait(4);
-  Func_080d4568()->y += -0x80000;
+  FieldCamera_GetActor()->y += -0x80000;
   next = record + 1;
   if (GameFlag_Test(flag)) {
     s32 x, y, index, toX, toZ;
@@ -456,17 +453,17 @@ void Func_02001a30(void) {
       s16 scene = gMainRoutineWork.scene;
       y = *record++;
       if (scene == SCENE(Ov655Room1))
-        Map_CopyCellPictureIndicesRect(gData_02003fd2[2], gData_02003fd2[3], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fd2[2], gData_02003fd2[3],
+                                           x, y, 1, 1);
       else if (scene == SCENE(Ov655Room2))
-        Map_CopyCellPictureIndicesRect(gData_02003fda[2], gData_02003fda[3], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fda[2], gData_02003fda[3],
+                                           x, y, 1, 1);
       else if (scene == SCENE(Ov655Room3))
-        Map_CopyCellPictureIndicesRect(gData_02003fe2[2], gData_02003fe2[3], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fe2[2], gData_02003fe2[3],
+                                           x, y, 1, 1);
       else if (scene == SCENE(Ov655Room5))
-        Map_CopyCellPictureIndicesRect(gData_02003fea[2], gData_02003fea[3], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fea[2], gData_02003fea[3],
+                                           x, y, 1, 1);
     }
     index = *record++;
     cellX = index * 2;
@@ -478,30 +475,35 @@ void Func_02001a30(void) {
         {
           s32 srcX = gData_02003ff2[cellX], srcY = gData_02003ff2[cellX + 1],
               width = 1, height = 2;
-          Map_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width, height);
+          MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
+                                             height);
         }
       } else if (scene == SCENE(Ov655Room2)) {
         {
           s32 srcX = gData_02004012[cellX], srcY = gData_02004012[cellX + 1],
               width = 1, height = 2;
-          Map_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width, height);
+          MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
+                                             height);
         }
       } else if (scene == SCENE(Ov655Room3)) {
         {
           s32 srcX = gData_02004032[cellX], srcY = gData_02004032[cellX + 1],
               width = 1, height = 2;
-          Map_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width, height);
+          MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
+                                             height);
         }
       } else if (scene == SCENE(Ov655Room5)) {
         if ((n == 0 && GameFlag_Test(0x241)) ||
             (n == 11 && GameFlag_Test(0x24c))) {
           s32 srcX = gData_02004052[8], srcY = gData_02004052[9], width = 1,
               height = 2;
-          Map_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width, height);
+          MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
+                                             height);
         } else {
           s32 srcX = gData_02004052[cellX], srcY = gData_02004052[cellX + 1],
               width = 1, height = 2;
-          Map_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width, height);
+          MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
+                                             height);
         }
       }
     }
@@ -544,17 +546,17 @@ void Func_02001a30(void) {
     {
       s16 scene = gMainRoutineWork.scene;
       if (scene == SCENE(Ov655Room1))
-        Map_CopyCellPictureIndicesRect(gData_02003fd2[0], gData_02003fd2[1], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fd2[0], gData_02003fd2[1],
+                                           x, y, 1, 1);
       else if (scene == SCENE(Ov655Room2))
-        Map_CopyCellPictureIndicesRect(gData_02003fda[0], gData_02003fda[1], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fda[0], gData_02003fda[1],
+                                           x, y, 1, 1);
       else if (scene == SCENE(Ov655Room3))
-        Map_CopyCellPictureIndicesRect(gData_02003fe2[0], gData_02003fe2[1], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fe2[0], gData_02003fe2[1],
+                                           x, y, 1, 1);
       else if (scene == SCENE(Ov655Room5))
-        Map_CopyCellPictureIndicesRect(gData_02003fea[0], gData_02003fea[1], x,
-                                       y, 1, 1);
+        MapGrid_CopyCellPictureIndicesRect(gData_02003fea[0], gData_02003fea[1],
+                                           x, y, 1, 1);
     }
     Event_Wait(12);
     GameFlag_SetBit(flag);
@@ -676,7 +678,7 @@ void Func_02002180(void) {
 }
 
 void Func_020021b4(void) {
-  struct Actor *object = Func_080d4568();
+  struct Actor *object = FieldCamera_GetActor();
   u32 i;
 
   object->y += -0x80000;
@@ -692,9 +694,18 @@ void Func_020021b4(void) {
 // Scene code of overlay 0x655, in ROM order, from events_g's offset up to the
 // next object the overlay links.
 
-void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
+void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
                                     s32 width, s32 height);
 
+void Func_020002f8(const void *data);
+void Func_02000708(const void *data);
+void Func_02002180(void);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
+void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
+                                        s32 destY, s32 width, s32 height);
+void Func_02001804(void);
+extern const u16 gData_02003fd2[];
+extern const struct CellRecord gData_02004066[];
 /* VIEW(events_g): routine Actor_SetHorizontalPositionAndAngleWithTerrain as
  * void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16
  * angle); event.h has void Actor_SetHorizontalPositionAndAngleWithTerrain(s32
@@ -706,21 +717,26 @@ void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
 extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(
     u32 id, s32 x, s32 z,
     s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_WalkToAndWaitById(s32 id, s32 x, s32 z);
+void Actor_Jump(s32 id, s32 a, s32 b);
+void Actor_WatchAndSetScript(s32 id, s32 target);
 /* VIEW(events_g): routine Task_Add as void Task_Add(void(*func) (void), s32
  * priority); task.h has s32 Task_Add(TaskFunc func, s32 order); tried as the
  * definition's s32 Task_Add(TaskFunc func, s32 order), which the object already
  * declares, Func_02002604 moves: 1 of 20 instructions in tla-ja. */
 extern void Task_Add__events_g(void (*func)(void),
                                s32 priority) __asm__("Task_Add");
+void Task_RemoveFar(void (*func)(void));
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
-  Camera_MoveWithinMapBounds(a, b, c, d);
+  FieldCamera_MoveWithinMapBounds(a, b, c, d);
 }
 
 static __inline__ void Actor_MoveTo(s32 id, s32 x, s32 z) {
-  Actor_SetPositionAndReset(id, x, z);
+  Actor_WalkToAndWaitById(id, x, z);
 }
 
 static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
@@ -730,19 +746,19 @@ static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
 void Func_020021e8(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Func_080d4568()->motionFlags = 0;
-  Camera_MoveWithinMapBounds(658 << 16, -1, 164 << 16, 1);
+  FieldCamera_GetActor()->motionFlags = 0;
+  FieldCamera_MoveWithinMapBounds(658 << 16, -1, 164 << 16, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetAngleToward(24, gMainRoutineWork.currentOwner, 0);
-  Func_080d47b4(24, 0x100, 40);
+  Actor_FaceActorById(24, gMainRoutineWork.currentOwner, 0);
+  Actor_ShowEmoteById(24, 0x100, 40);
   Actor_SetSpeed(24, 0x19999, 0xcccc);
   Actor_MoveTo(24, 664, 136);
-  Map_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
   Sound_Play(161);
   Func_020021b4();
   GameFlag_SetBit(0x247);
   Actor_MoveTo(24, 664, 104);
-  Map_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
   Sound_Play(229);
   Func_020021b4();
   Event_Wait(10);
@@ -756,10 +772,10 @@ void Func_020021e8(void) {
 void Func_020022e0(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Camera_MoveWithinMapBounds(245 << 18, -1, 168 << 16, 1);
+  FieldCamera_MoveWithinMapBounds(245 << 18, -1, 168 << 16, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetAngleToward(24, gMainRoutineWork.currentOwner, 0);
-  Func_080d47b4(24, 0x100, 40);
+  Actor_FaceActorById(24, gMainRoutineWork.currentOwner, 0);
+  Actor_ShowEmoteById(24, 0x100, 40);
   Actor_GetById(24)->motionFlags = 0;
   Actor_SetSpritePriority(24, 1);
   Actor_SetSpeed(24, 0x19999, 0xcccc);
@@ -775,17 +791,17 @@ void Func_020022e0(void) {
 void Func_02002390(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Camera_MoveWithinMapBounds(144 << 16, -1, 214 << 15, 1);
+  FieldCamera_MoveWithinMapBounds(144 << 16, -1, 214 << 15, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
-  Func_080d47b4(25, 0x100, 40);
+  Actor_FaceActorById(25, gMainRoutineWork.currentOwner, 0);
+  Actor_ShowEmoteById(25, 0x100, 40);
   Actor_SetSpeed(25, 0x19999, 0xcccc);
-  Actor_SetPositionAndReset(25, 168, 104);
+  Actor_WalkToAndWaitById(25, 168, 104);
   Event_Wait(10);
   Sound_Play(153);
   Actor_GetById(25)->velocityY = 0x80000;
   Actor_SetSingleChildFlags(Actor_GetById(25), 0);
-  Actor_SetPositionAndReset(25, 200, 104);
+  Actor_WalkToAndWaitById(25, 200, 104);
   Actor_SetSingleChildFlags(Actor_GetById(25), 1);
   Actor_MoveTo(25, 294, 104);
   Actor_PlaceFacing(25, 212 << 17, 208 << 15, FACING_SOUTH);
@@ -797,12 +813,12 @@ void Func_02002458(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 25);
-  Func_080d4568()->motionFlags = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   Camera_SetBounds(212 << 17, -1, 208 << 15, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
-  Func_080d47b4(25, 0x100, 20);
-  Camera_MoveWithinMapBounds(212 << 17, -1, 152 << 16, 1);
+  Actor_FaceActorById(25, gMainRoutineWork.currentOwner, 0);
+  Actor_ShowEmoteById(25, 0x100, 20);
+  FieldCamera_MoveWithinMapBounds(212 << 17, -1, 152 << 16, 1);
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_MoveTo(25, 424, 152);
   Actor_ArmCallback(25, FACING_EAST, 20);
@@ -811,7 +827,7 @@ void Func_02002458(void) {
   Actor_MoveTo(25, 456, 168);
   Actor_MoveTo(25, 456, 184);
   GameFlag_SetBit(0x241);
-  Map_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
   Sound_Play(161);
   Func_020021b4();
   Actor_MoveTo(25, 456, 216);
@@ -843,9 +859,9 @@ void Func_02002574(void) {
 void Func_02002604(void) {
   BattleEffect_LoadActionEffectResources(134, 1);
   Task_Add__events_g(Func_02002574, 0x480);
-  BattleEffect_SetupObjectPair(25, 18);
+  FieldPsynergy_SetupActorPair(25, 18);
   EventObject_Initialize();
-  Field_DispatchTypeHandler(1);
+  FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   Task_RemoveFar(Func_02002574);
   BattleEffect_CleanupSceneObjects();

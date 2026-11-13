@@ -11,8 +11,7 @@ void Window_DrawOpened(struct Window *window);
 /// its geometry and is drawn when it arrives; a closing one is erased frame
 /// by frame and cleared when its duration is reached.
 void Window_UpdateZooms(void) {
-  struct WindowWork *state =
-      (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   struct Window *work = state->windows;
   s32 index = 0;
   u8 dirty;
@@ -28,16 +27,16 @@ void Window_UpdateZooms(void) {
     } else if (work->duration != 0) {
       if ((s16)work->frame != work->duration) {
         Window_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
-                                 (s16)work->previousWidth,
-                                 (s16)work->previousHeight);
+                               (s16)work->previousWidth,
+                               (s16)work->previousHeight);
         Window_DrawZoomBorder(work, 1);
         work->frame++;
         dirty = 1;
         state->dirty = dirty;
       } else {
         Window_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
-                                 (s16)work->previousWidth,
-                                 (s16)work->previousHeight);
+                               (s16)work->previousWidth,
+                               (s16)work->previousHeight);
         work->output.head = NULL;
         work->output.tailLink = NULL;
         work->width = 0;
@@ -136,8 +135,7 @@ u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count) {
 u16 *Memory_FillHalfwordsDma(u16 *destination, s32 value, s32 count);
 
 void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
-  struct WindowWork *canvas =
-      (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u16 *cursor = &canvas->tilemap[y][x];
   u32 row;
 
@@ -174,8 +172,7 @@ void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
 }
 
 void Func_0803a1c0(s32 x, s32 y, u32 width, u32 height) {
-  struct WindowWork *canvas =
-      (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u16 *cursor = &canvas->tilemap[y][x];
   u32 row;
 
@@ -199,9 +196,9 @@ void Func_0803a1c0(s32 x, s32 y, u32 width, u32 height) {
   canvas->dirty = 1;
 }
 
-void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 fullWidth) {
-  struct WindowWork *canvas =
-      (struct WindowWork *)Ram_HeapSlots->windowTiles;
+void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
+                               s32 fullWidth) {
+  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u16 *cursor = &canvas->tilemap[y][x];
   u32 row;
   u32 column;
@@ -251,8 +248,7 @@ s32 Window_IsClosed(struct Window *window) {
 }
 
 void Text_ResetStyle(void) {
-  struct WindowWork *state =
-      (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   state->colour = 15;
   state->lineSpacing = 10;
@@ -264,8 +260,7 @@ void Text_ResetStyle(void) {
 void WindowSystem_Update(void);
 
 void WindowSystem_StartFieldUpdate(void) {
-  struct WindowWork *state =
-      (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
   state->glyphSpacing = 9;
@@ -280,8 +275,7 @@ void WindowSystem_Update(void);
 void WindowSystem_UpdateBattle(void);
 
 void WindowSystem_StartBattleUpdate(s32 initialize) {
-  struct WindowWork *state =
-      (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   if (initialize != 0)
     state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
@@ -315,8 +309,7 @@ void BattleMessage_Close(void) {
 }
 
 s32 Message_Decode(s32 message, s32 mode);
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                 s32 style);
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 
 /// Decodes message and starts it in the message window along the bottom of
 /// the screen (tiles 0, 15, 30 by 6), creating the window first if it is not
@@ -386,8 +379,7 @@ s32 Message_OpenDecoded(s32 window, s32 argument) {
     return 0;
   if (window == 0)
     return 0;
-  result = (s32)Message_Start((struct Window *)window, entry, 0,
-                                          0, 0, 1);
+  result = (s32)Message_Start((struct Window *)window, entry, 0, 0, 0, 1);
   if (result == 0)
     return 0;
   return result;
@@ -415,10 +407,8 @@ void Message_SetDecodeFlags(u32 flags) {
 #define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
 
 s32 Message_Decode(s32 key, s32 mode);
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                 s32 attrs);
-struct Window *Message_OpenWindow(s32 message, s32 x, s32 y,
-                                          u32 packed) {
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
+struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   s32 entry;
   u32 height;
   u32 width;
@@ -468,7 +458,7 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y,
 #endif
 
 s32 Party_GetLeaderActorFar(void);
-s32 Func_080c82a8(s32 object, s32 *out);
+s32 Actor_GetScreenPositionFar(s32 object, s32 *out);
 s32 Message_AllTyped(void);
 
 void FieldMessage_Show(s32 no, s32 flags) {
@@ -505,7 +495,7 @@ void FieldMessage_Show(s32 no, s32 flags) {
   } else {
     s32 dy;
 
-    Func_080c82a8(Party_GetLeaderActorFar(), pos);
+    Actor_GetScreenPositionFar(Party_GetLeaderActorFar(), pos);
     dy = pos[1] >> 3;
     if (dy > 9) {
       y = dy - 5;

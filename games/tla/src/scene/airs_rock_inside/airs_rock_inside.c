@@ -15,8 +15,8 @@ extern struct ActorPlacement gData_020069e4[];
 extern struct ActorPlacement gData_02006aec[];
 extern u32 gData_02006bac[];
 
-void Map_EnableUpdateCallback(void);
-void Map_DisableUpdateCallback(void);
+void TilesetAnim_SuspendAll(void);
+void TilesetAnim_ResumeAll(void);
 
 /// On most frames, moves the object to a random spot: x 176 to 431 pixels, y
 /// and z up to 31 and 127 pixels past the leader's. Then it keeps its action as
@@ -59,11 +59,11 @@ void Func_02000550(struct Actor *object) {
   if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
       *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
     Actor_SetAnimationSpeed(object, 0);
-    Map_EnableUpdateCallback();
+    TilesetAnim_SuspendAll();
     return;
   }
   Actor_SetAnimationSpeed(object, 16);
-  Map_DisableUpdateCallback();
+  TilesetAnim_ResumeAll();
   if (BYTE_AT(object, 99) != 0) {
     if ((gFrameCount & 7) == 0)
       BYTE_AT(object, 99)--;
@@ -262,8 +262,8 @@ void Func_02000908(u16 *list) {
 #include "main_routine_work.h"
 #include "input.h"
 
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Camera_FollowActor(s32 id, s32 flag);
+void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
+void FieldCamera_FollowActor(s32 id, s32 flag);
 
 void Func_02000988(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -390,7 +390,7 @@ void Func_02000988(void) {
     leader->velocityY = 0x60000;
     *priority = 33;
     *motion = 3;
-    Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+    Call4((void (*)())FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
     dust = Func_02005ef4();
     dust->speedLimit = 0x80000;
     dust->acceleration = 0x10000;
@@ -403,7 +403,7 @@ void Func_02000988(void) {
     break;
   }
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   GameFlag_ClearBit(0x250);
   wait(10);
@@ -768,8 +768,8 @@ void Func_0200160c(s32 x, s32 y, s32 z) {
 
   Func_02005d5c(object, 1);
   Actor_SetSingleChildFlags(object, 0);
-  Actor_SetPartAttribute(object, 6);
-  Animation_SetStateFlags(object, 1);
+  Actor_SetSpriteColor(object, 6);
+  Actor_SetBlendMode(object, 1);
   object->timer = 27;
   object->motionFlags = 0;
   BYTE_AT(object, 90) = 0;
@@ -848,7 +848,7 @@ void Func_020017f4(struct Actor *object) {
 
 void Func_02002bd0(void);
 void Camera_SetSpeedParameters(s32 a, s32 b);
-void Map_SetScreenShake(s32 a, s32 b, s32 c);
+void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 
 #define TARGET(effect) ((effect)->target)
 
@@ -869,8 +869,8 @@ void Map_SetScreenShake(s32 a, s32 b, s32 c);
 
 /// One shake of the walls (cue 157).
 #define SHAKE()                                                                \
-  (Sound_Play(157), Call3(Map_SetScreenShake, 0x50000, 0x50000, 0x10000),      \
-   Call3(Map_SetScreenShake, -1, -1, 0xe666))
+  (Sound_Play(157), Call3(MapGrid_SetScreenShake, 0x50000, 0x50000, 0x10000),      \
+   Call3(MapGrid_SetScreenShake, -1, -1, 0xe666))
 
 void Func_02001828(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -926,19 +926,19 @@ void Func_02001828(void) {
       Func_02005d5c(spark, 7);
       Actor_StartScript(spark, gData_02005fd8);
       Actor_SetSingleChildFlags(spark, 0);
-      Actor_SetPartAttribute(spark, 2);
+      Actor_SetSpriteColor(spark, 2);
       spark->update = Func_02002bd0;
     }
     if (gFrameCount & 1) {
       gust->scaleX += 655;
       gust->scaleY += 655;
-      Actor_SetPartAttribute(TARGET(effect), 15);
+      Actor_SetSpriteColor(TARGET(effect), 15);
     } else {
-      Actor_SetPartAttribute(TARGET(effect), 4);
+      Actor_SetSpriteColor(TARGET(effect), 4);
     }
     FieldEvent_Wait(1);
   }
-  Actor_SetPartAttribute(TARGET(effect), 0);
+  Actor_SetSpriteColor(TARGET(effect), 0);
   Sound_Play(136);
   cell.x = TARGET(effect)->x >> 20;
   cell.z = TARGET(effect)->z >> 20;
@@ -980,7 +980,7 @@ void Func_02001828(void) {
     gust->acceleration = 0x40000;
     Import_ActorSetTargetPosition(gust, cell.x << 16, gust->y, cell.z << 16);
     Call2((void (*)())Camera_SetSpeedParameters, 0x50000, 0x50000);
-    Call4((void (*)())Camera_MoveWithinMapBounds, x << 16, -1, z << 16, 1);
+    Call4((void (*)())FieldCamera_MoveWithinMapBounds, x << 16, -1, z << 16, 1);
   }
   carried = 0;
   while (Func_02005dec(gust) == 0) {
@@ -1085,8 +1085,8 @@ void Func_02001828(void) {
           GameFlag_SetBit(0x300);
           cell.x = (gust->x >> 20) + 64;
           cell.z = gust->z >> 20;
-          Map_CopyCellPictureIndicesRect(90, 25, cell.x + 1, cell.z, 1, 3);
-          Map_CopyCellPictureIndicesRect(21, 88, 24, 89, 1, 2);
+          MapGrid_CopyCellPictureIndicesRect(90, 25, cell.x + 1, cell.z, 1, 3);
+          MapGrid_CopyCellPictureIndicesRect(21, 88, 24, 89, 1, 2);
           Map_CopyCellAttributeRect(23, 92, 2, 1, 23, 89);
           Map_CopyCellAttributeRect(18, 33, 2, 1, 23, 25);
         } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room7) {
@@ -1094,19 +1094,20 @@ void Func_02001828(void) {
           cell.z = ((gust->z - gust->y) >> 20) + 64;
           if (hit == 0) {
             GameFlag_SetBit(772);
-            Map_CopyCellPictureIndicesRect(39, 82, cell.x, cell.z, 1, 1);
+            MapGrid_CopyCellPictureIndicesRect(39, 82, cell.x, cell.z, 1, 1);
             Map_CopyCellAttributeRect(39, 82, 1, 1, 38, 82);
             Call6(Map_CopyCellAttributeRect, 38, 19, 1, 1, 38, 18);
           } else {
             GameFlag_SetBit(773);
-            Call6(Map_CopyCellPictureIndicesRect, 39, 82, cell.x, cell.z, 1, 1);
+            Call6(MapGrid_CopyCellPictureIndicesRect, 39, 82, cell.x, cell.z, 1,
+                  1);
             Call6(Map_CopyCellAttributeRect, 38, 98, 1, 1, 38, 99);
             Call6(Map_CopyCellAttributeRect, 38, 35, 1, 1, 38, 37);
           }
         } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
           GameFlag_SetBit(774);
           cell.x = gust->x >> 20;
-          Call6(Map_CopyCellPictureIndicesRect, 15, 80, cell.x, 77, 1, 3);
+          Call6(MapGrid_CopyCellPictureIndicesRect, 15, 80, cell.x, 77, 1, 3);
           Call6(Map_CopyCellAttributeRect, 15, 80, 1, 1, 15, 79);
           Call6(Map_CopyCellAttributeRect, 17, 15, 2, 1, 15, 15);
         }
@@ -1132,20 +1133,20 @@ shrink:
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
     if (hit == 5) {
       SHAKE();
-      Call6(Map_CopyCellPictureIndicesRect, 79, 0x40, 29, 85, 5, 7);
+      Call6(MapGrid_CopyCellPictureIndicesRect, 79, 0x40, 29, 85, 5, 7);
       FieldEvent_Wait(30);
       SHAKE();
-      Call6(Map_CopyCellPictureIndicesRect, 69, 0x40, 29, 85, 5, 7);
+      Call6(MapGrid_CopyCellPictureIndicesRect, 69, 0x40, 29, 85, 5, 7);
       Call6(Map_CopyCellAttributeRect, 46, 20, 5, 5, 29, 21);
       Call6(Map_CopyCellAttributeRect, 0x20, 89, 1, 1, 31, 89);
       Call6(Map_CopyCellAttributeRect, 50, 86, 1, 1, 33, 87);
       GameFlag_SetBit(769);
     } else if (hit == 6) {
       SHAKE();
-      Call6(Map_CopyCellPictureIndicesRect, 74, 0x40, 29, 85, 5, 7);
+      Call6(MapGrid_CopyCellPictureIndicesRect, 74, 0x40, 29, 85, 5, 7);
       FieldEvent_Wait(30);
       SHAKE();
-      Call6(Map_CopyCellPictureIndicesRect, 0x40, 0x40, 29, 85, 5, 7);
+      Call6(MapGrid_CopyCellPictureIndicesRect, 0x40, 0x40, 29, 85, 5, 7);
       Call6(Map_CopyCellAttributeRect, 52, 20, 5, 5, 29, 21);
       Call6(Map_CopyCellAttributeRect, 33, 88, 1, 1, 33, 87);
       Call6(Map_CopyCellAttributeRect, 0x30, 88, 1, 1, 31, 89);
@@ -1154,7 +1155,7 @@ shrink:
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
     if (hit == 5) {
       SHAKE();
-      Call6(Map_CopyCellPictureIndicesRect, 79, 0x40, 0x20, 79, 5, 7);
+      Call6(MapGrid_CopyCellPictureIndicesRect, 79, 0x40, 0x20, 79, 5, 7);
       if (Actor_GetById(8)->x >> 19 == 65) {
         velocity.x = Actor_GetById(8)->x + 0xfff80000;
         velocity.y = Actor_GetById(8)->y;
@@ -1168,12 +1169,12 @@ shrink:
         }
         wait(30);
         SHAKE();
-        Call6(Map_CopyCellPictureIndicesRect, 0x40, 0x40, 0x20, 79, 5, 7);
+        Call6(MapGrid_CopyCellPictureIndicesRect, 0x40, 0x40, 0x20, 79, 5, 7);
         Actor_GetById(8)->priorityFlags |= 1;
       } else {
         FieldEvent_Wait(30);
         SHAKE();
-        Call6(Map_CopyCellPictureIndicesRect, 69, 0x40, 0x20, 79, 5, 7);
+        Call6(MapGrid_CopyCellPictureIndicesRect, 69, 0x40, 0x20, 79, 5, 7);
         Call6(Map_CopyCellAttributeRect, 49, 15, 5, 5, 0x20, 15);
         Call6(Map_CopyCellAttributeRect, 33, 82, 1, 1, 34, 82);
         Call6(Map_CopyCellAttributeRect, 52, 81, 1, 1, 36, 81);
@@ -1193,11 +1194,11 @@ shrink:
         }
         wait(20);
       } else {
-        Call6(Map_CopyCellPictureIndicesRect, 79, 0x40, 0x20, 79, 5, 7);
+        Call6(MapGrid_CopyCellPictureIndicesRect, 79, 0x40, 0x20, 79, 5, 7);
         Sound_Play(157);
         FieldEvent_Wait(30);
         SHAKE();
-        Call6(Map_CopyCellPictureIndicesRect, 0x40, 0x40, 0x20, 79, 5, 7);
+        Call6(MapGrid_CopyCellPictureIndicesRect, 0x40, 0x40, 0x20, 79, 5, 7);
         Call6(Map_CopyCellAttributeRect, 49, 21, 5, 5, 0x20, 15);
         Call6(Map_CopyCellAttributeRect, 35, 81, 1, 1, 36, 81);
         Call6(Map_CopyCellAttributeRect, 50, 82, 1, 1, 34, 82);

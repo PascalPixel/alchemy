@@ -281,7 +281,7 @@ struct ArcObject {
   void *callback;
 };
 
-extern const u8 gData_080ed90c[];
+extern const u8 gFieldEffect_ArcSparkTiles[];
 
 void Func_08020340(struct Actor *object);
 

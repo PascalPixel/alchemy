@@ -458,7 +458,7 @@ void Func_0200049c(s32 a0) {
     Actor_SetPosition(0x1d, 0, 0);
     FieldActor_SetAnimation(FIELD_AT(&gMainRoutineWork, s32, 532), 1);
   } else {
-    Call2(BattleEffect_StartEffectObject22, a0, 3);
+    Call2(ItemDisplay_ShowItem, a0, 3);
     Party_GiveItem(a0, 0);
     FieldEvent_Wait(20);
   }
@@ -939,9 +939,17 @@ void LemuriaSpring_UpdateTossSimulation(void) {
 // ---- games/tla/src/scene/lemuria_spring/ride.c ----
 #include "task.h"
 
-/* VIEW(ride): variable gData_02001760 as extern struct SpringRide gData_02001760; lemuria_spring has extern struct SpringTossMotion gData_02001760; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_spring.c:958: `gData_02001760__ride' undeclared (first use in this function). */
+/* VIEW(ride): variable gData_02001760 as extern struct SpringRide
+ * gData_02001760; lemuria_spring has extern struct SpringTossMotion
+ * gData_02001760; tried as the rest of the object declares it, it does not
+ * compile in tla-ja: games/tla/src/scene/lemuria_spring.c:958:
+ * `gData_02001760__ride' undeclared (first use in this function). */
 extern struct SpringRide gData_02001760__ride __asm__("gData_02001760");
-/* VIEW(ride): variable gData_020017c0 as extern struct SpringObstacle__ride gData_020017c0[]; lemuria_spring has extern struct SpringObstacle gData_020017c0[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_spring.c:969: `gData_020017c0__ride' undeclared (first use in this function). */
+/* VIEW(ride): variable gData_020017c0 as extern struct SpringObstacle__ride
+ * gData_020017c0[]; lemuria_spring has extern struct SpringObstacle
+ * gData_020017c0[]; tried as the rest of the object declares it, it does not
+ * compile in tla-ja: games/tla/src/scene/lemuria_spring.c:969:
+ * `gData_020017c0__ride' undeclared (first use in this function). */
 extern struct SpringObstacle gData_020017c0__ride[] __asm__("gData_020017c0");
 
 void LemuriaSpring_UpdateTossSimulation(void);
@@ -1036,9 +1044,9 @@ s32 LemuriaSpring_RunToss(s32 side) {
       LemuriaSpring_SetSpriteStorageKind(8, 1);
     }
   }
-  System_Wait(1);
-  if (gData_02001824 == 1)
-    break;
+    System_Wait(1);
+    if (gData_02001824 == 1)
+      break;
   }
   return gData_02001828;
 }

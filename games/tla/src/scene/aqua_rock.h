@@ -15,14 +15,14 @@
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);
 u8 *ResourceMetadata_Register(void *animation, s32 id);
-void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
+void FieldCamera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-s32 Resource_FindFreeEntry(void);
+s32 VramCache_FindFreeEntry(void);
 
 #include "scene_ids.h"
 
@@ -86,7 +86,7 @@ static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
 }
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
-  Camera_MoveWithinMapBounds(x, a, z, b);
+  FieldCamera_MoveWithinMapBounds(x, a, z, b);
 }
 
 static __inline__ void Func_02002960_(s32 a, s32 b, s32 c, s32 d, s32 e,
@@ -104,7 +104,7 @@ static __inline__ void Func_02002a20_(s32 a, s32 b) {
 }
 
 static __inline__ void Actor_ResetAndSetPosition_(s32 id, s32 x, s32 z) {
-  Actor_ResetAndSetPosition(id, x, z);
+  Actor_SetDestinationById(id, x, z);
 }
 
 static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }

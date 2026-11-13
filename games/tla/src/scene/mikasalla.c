@@ -93,7 +93,11 @@ void Mikasalla_ClimbDownLadder(void);
 extern u8 MsgFieldAreYouLookingForSomeone[];
 #include "event_inline.h"
 
-/* VIEW(mikasalla): tag struct WarpEntry as struct WarpEntry__mikasalla; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mikasalla.c:67: invalid use of undefined type `struct WarpEntry'. */
+/* VIEW(mikasalla): tag struct WarpEntry as struct WarpEntry__mikasalla;
+ * module/scene/scene.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/mikasalla.c:67: invalid use of undefined type `struct
+ * WarpEntry'. */
 struct WarpEntry__mikasalla {
   s32 map;
   u16 x;

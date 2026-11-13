@@ -12,7 +12,7 @@ const u16 *Djinn_GetDefinition(u32 group, u32 index) {
   if (group <= 3 && index <= 19) {
     entry = group * 20 + index;
   }
-  return (const u16 *)&gDjinn_Definitions[entry];
+  return (const u16 *)&gDjinn_DefinitionTable[entry];
 }
 
 /// Gives a newly found Djinni to the party member holding the fewest Djinn who

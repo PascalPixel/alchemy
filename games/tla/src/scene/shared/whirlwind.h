@@ -50,7 +50,7 @@
     actor->motionFlags = 3;                                                    \
     Actor_SetSingleChildFlags(actor, 1);                                       \
     FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
-    shadow = FieldCamera_GetActor();                                           \
+    shadow = EventCamera_GetActor();                                           \
     shadow->speedLimit = 0x80000;                                              \
     shadow->acceleration = 0x10000;                                            \
     shadow->motionFlags = 0;                                                   \
@@ -76,9 +76,9 @@
           break;                                                               \
       } while (actor->velocityY != 0);                                         \
     }                                                                          \
-    Actor_WaitForMove(shadow);                                                 \
+    FieldActor_WaitForMove(shadow);                                                 \
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;              \
-    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);                 \
+    EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);                 \
     work->unkd46 = 1;                                                          \
     work->exit = 0;                                                            \
     Event_End();                                                               \
@@ -123,7 +123,7 @@
     actor->motionFlags = 3;                                                    \
     Actor_SetSingleChildFlags(actor, 1);                                       \
     FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
-    shadow = FieldCamera_GetActor();                                           \
+    shadow = EventCamera_GetActor();                                           \
     shadow->speedLimit = 0x80000;                                              \
     shadow->acceleration = 0x10000;                                            \
     shadow->motionFlags = 0;                                                   \
@@ -141,9 +141,9 @@
       i++;                                                                     \
       System_Wait(1);                                                          \
     }                                                                          \
-    Actor_WaitForMove(shadow);                                                 \
+    FieldActor_WaitForMove(shadow);                                                 \
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;              \
-    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);                 \
+    EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);                 \
     work->unkd46 = 1;                                                          \
     work->exit = 0;                                                            \
     Event_End();                                                               \

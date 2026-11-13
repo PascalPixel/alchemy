@@ -25,10 +25,14 @@
 #include "gamepak/far_call/window.h"
 #include "lucky_wheels_title.h"
 #include "module/field/field.h"
-#include "module/field/lucky_wheels.h"
 #include "module/system/system.h"
 #include "resource_ids.h"
 #include "graphics.h"
+
+void LuckyWheels_Run(void);
+extern const u8 gLuckyWheels_SymbolPrizes[];
+extern const u8 gLuckyWheels_MachineSpriteX[];
+extern const u8 gLuckyWheels_MachineSpriteY[];
 
 /// Blanks the display but for 1D objects, seeds the random state from the
 /// play time, plays sound 709 and runs Lucky Wheels.
@@ -43,7 +47,8 @@ s32 LuckyWheels_Start(void) {
   return 0;
 }
 
-s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 scale, s32 count) {
+s32 LuckyWheels_ScaleRgb555(u16 *source, u16 *destination, s32 scale,
+                            s32 count) {
   s32 remaining;
   u32 red_mask;
   u32 green_mask;
@@ -80,7 +85,7 @@ s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 scale, s32 count) {
 /// Sends the 256x128 8bpp canvas to VRAM 0x06003500 on the frames its transfer
 /// is pending, then clears or fades it; a task, as The Broken
 /// Seal's.
-void BattleStaging_ProcessPendingTileTransfer(void) {
+void LuckyWheels_TransferCanvas(void) {
   struct BattleFxTransferWork *work;
   u8 *buf;
 
@@ -106,7 +111,7 @@ void BattleStaging_ProcessPendingTileTransfer(void) {
   }
 }
 
-void Palette_DarkenSceneStep(void) {
+void Palette_DarkenScreenStep(void) {
   u16 *color;
   s32 i;
 
@@ -380,7 +385,7 @@ extern char MsgSlotsStart[];
 extern char MsgSlotsAllHeld[];
 extern char MsgSlotsCannotPull[];
 
-void Func_081b243c(void) {
+void LuckyWheels_Update(void) {
   struct ReelEffectWork *fx;
   s32 objMode;
   u16 keys;
@@ -514,12 +519,12 @@ void Func_081b243c(void) {
               work->window =
                   Window_CreateFar(LUCKY_WHEELS_ALL_HELD_X, 0,
                                    LUCKY_WHEELS_ALL_HELD_WIDTH, 4, 6);
-              Text_DrawMessageAsTilesFar((s32)MsgSlotsAllHeld, work->window,
-                                            0, 0);
+              Text_DrawMessageAsTilesFar((s32)MsgSlotsAllHeld, work->window, 0,
+                                         0);
               work->phase = 1;
             } else if (work->phase == 1) {
-              Text_DrawMessageAsTilesFar((s32)MsgSlotsCannotPull,
-                                            work->window, 0, 8);
+              Text_DrawMessageAsTilesFar((s32)MsgSlotsCannotPull, work->window,
+                                         0, 8);
               work->phase = 2;
             }
           } else {
@@ -528,7 +533,7 @@ void Func_081b243c(void) {
               work->window = Window_CreateFar(LUCKY_WHEELS_START_X, 0,
                                               LUCKY_WHEELS_START_WIDTH, 3, 6);
               Text_DrawMessageAsTilesFar((s32)MsgSlotsStart, work->window, 0,
-                                            0);
+                                         0);
             }
             work->phase = 3;
           }
@@ -537,8 +542,7 @@ void Func_081b243c(void) {
             Window_CloseFar(work->window, 1);
             work->window = Window_CreateFar(LUCKY_WHEELS_HOLD_X, 0,
                                             LUCKY_WHEELS_HOLD_WIDTH, 3, 6);
-            Text_DrawMessageAsTilesFar((s32)MsgSlotsHold, work->window, 0,
-                                          0);
+            Text_DrawMessageAsTilesFar((s32)MsgSlotsHold, work->window, 0, 0);
           }
           work->phase = 4;
         } else {
@@ -547,7 +551,7 @@ void Func_081b243c(void) {
             work->window = Window_CreateFar(LUCKY_WHEELS_RELEASE_X, 0,
                                             LUCKY_WHEELS_RELEASE_WIDTH, 3, 6);
             Text_DrawMessageAsTilesFar((s32)MsgSlotsRelease, work->window, 0,
-                                          0);
+                                       0);
           }
           work->phase = 5;
         }
@@ -558,22 +562,20 @@ void Func_081b243c(void) {
             work->window = Window_CreateFar(LUCKY_WHEELS_ALL_HELD_X, 0,
                                             LUCKY_WHEELS_ALL_HELD_WIDTH, 3, 6);
             Text_DrawMessageAsTilesFar((s32)MsgSlotsAllHeld, work->window, 0,
-                                          0);
+                                       0);
           } else {
             work->window = Window_CreateFar(LUCKY_WHEELS_START_X, 0,
                                             LUCKY_WHEELS_START_WIDTH, 3, 6);
-            Text_DrawMessageAsTilesFar((s32)MsgSlotsStart, work->window, 0,
-                                          0);
+            Text_DrawMessageAsTilesFar((s32)MsgSlotsStart, work->window, 0, 0);
           }
         } else {
           work->window = Window_CreateFar(LUCKY_WHEELS_HOLD_X, 0,
                                           LUCKY_WHEELS_HOLD_WIDTH, 3, 6);
           if (work->reels[work->cursor].held == 0)
-            Text_DrawMessageAsTilesFar((s32)MsgSlotsHold, work->window, 0,
-                                          0);
+            Text_DrawMessageAsTilesFar((s32)MsgSlotsHold, work->window, 0, 0);
           else
             Text_DrawMessageAsTilesFar((s32)MsgSlotsRelease, work->window, 0,
-                                          0);
+                                       0);
         }
 #endif
       } else {
@@ -602,8 +604,7 @@ void Func_081b243c(void) {
 #if TLA_PATCH_1
       if (work->phase == 0) {
         work->phase = 1;
-        Text_DrawMessageAsTilesFar((s32)MsgSlotsPullLever, work->window, 0,
-                                      8);
+        Text_DrawMessageAsTilesFar((s32)MsgSlotsPullLever, work->window, 0, 8);
       }
 #endif
       if (work->pressed & KEY_A) {
@@ -622,8 +623,7 @@ void Func_081b243c(void) {
       if (work->timer == 4) {
         work->window = Window_CreateFar(LUCKY_WHEELS_STOP_X, 17,
                                         LUCKY_WHEELS_STOP_WIDTH, 3, 6);
-        Text_DrawMessageAsTilesFar((s32)MsgSlotsStopReels, work->window, 0,
-                                      0);
+        Text_DrawMessageAsTilesFar((s32)MsgSlotsStopReels, work->window, 0, 0);
       }
       if (work->timer == 16)
         Sound_PlayFar(306);
@@ -924,7 +924,7 @@ void Func_081b243c(void) {
 /// The slot machine's per-frame tail: while a win shows (state 3) it bounces
 /// the eight title letters, then restarts the HBlank DMA of the scanline
 /// offsets into BLDY and copies the frame's sprites to OAM.
-// Split out of what is ☀️'s LuckyWheels_Update.
+// Split out of what The Broken Seal keeps in LuckyWheels_Update.
 void Func_081b3294(void) {
   struct ReelWork *work;
   struct ReelEffectWork *fx;
@@ -977,9 +977,10 @@ void Func_081b3294(void) {
 
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 
-/// The Broken Seal's LuckyWheels_InitializeTitle on this game's heap slots (the
-/// reel work at 0xb4, the effect work at 0x5c with its particles first).
-void Func_081b336c(void) {
+/// Sets up the bouncing title letters of a win, as The Broken Seal does, on
+/// this game's heap slots (the reel work at 0xb4, the effect work at 0x5c with
+/// its particles first).
+void LuckyWheels_InitializeTitle(void) {
   struct ReelWork *state;
   struct ReelEffectWork *work;
   struct EffectStep *letter;
@@ -1095,12 +1096,12 @@ void LuckyWheels_Run(void) {
       }
     }
   }
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD), sheet);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD),
+                      sheet);
   entry = Resource_GetTableEntry((s32)&ResourceId_SlotsMachinePicture);
   Dma_Set(entry, (void *)0x05000140, 0x84000008, REG_DMA3);
   entry += 32;
-  Resource_DecodeType01(entry, tiles);
+  Decompress_TaggedLz(entry, tiles);
   j = 0;
   for (k = 0; k != 20; k++) {
     for (i = 0; i != 30; i++) {
@@ -1161,15 +1162,15 @@ void LuckyWheels_Run(void) {
     entry = Resource_GetTableEntry((s32)&ResourceId_SlotsIcons);
     Dma_Set(entry, (void *)0x05000200, 0x84000078, REG_DMA3);
     entry += 480;
-    Resource_DecodeType01(entry, tiles);
+    Decompress_TaggedLz(entry, tiles);
     Dma_Set(tiles, (void *)0x06010000, 0x84001b30, REG_DMA3);
     entry = Resource_GetTableEntry((s32)&ResourceId_SlotsJackpotBanner);
     Dma_Set(entry, (void *)0x050003e0, 0x84000008, REG_DMA3);
     entry += 32;
-    Resource_DecodeType01(entry, tiles);
+    Decompress_TaggedLz(entry, tiles);
     Dma_Set(tiles, (void *)JACKPOT_TILES, JACKPOT_COPY, REG_DMA3);
     WindowSystem_InitFieldFar();
-    Func_081b336c();
+    LuckyWheels_InitializeTitle();
 
     for (i = 0; i != 5; i++) {
       struct Reel *reel = &state->reels[i];
@@ -1209,8 +1210,8 @@ void LuckyWheels_Run(void) {
     Dma_Set(canvas, (void *)0x06003500, 0x84002000, REG_DMA3);
     Dma_Set((void *)0x05000000, bgShade, 0x84000080, REG_DMA3);
     Dma_Set((void *)0x05000200, shade, 0x84000080, REG_DMA3);
-    Graphics_ScaleRgb555(shade, (u16 *)0x05000200, 0, 0x100);
-    Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000, 0, 0x100);
+    LuckyWheels_ScaleRgb555(shade, (u16 *)0x05000200, 0, 0x100);
+    LuckyWheels_ScaleRgb555(bgShade, (u16 *)0x05000000, 0, 0x100);
     REG_DISPCNT = 0x3740;
     if (PartyInventory_CountItemFar(228) == 1) {
       struct Window *window = Window_CreateFar(
@@ -1229,14 +1230,14 @@ void LuckyWheels_Run(void) {
       Text_DrawMessageAsTilesFar(message + 1, state->window, 0, 8);
     }
     work->transferPending = 0;
-    Task_Add(Func_081b243c, 0x480);
+    Task_Add(LuckyWheels_Update, 0x480);
     Task_Add(Func_081b3294, 0xc80);
-    Task_Add(BattleStaging_ProcessPendingTileTransfer, 0xc80);
+    Task_Add(LuckyWheels_TransferCanvas, 0xc80);
 
     for (frame = 0; state->state != 10; frame++) {
       if (frame <= 16) {
-        Graphics_ScaleRgb555(shade, (u16 *)0x05000200, frame << 12, 0x100);
-        Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000, frame << 12, 0x100);
+        LuckyWheels_ScaleRgb555(shade, (u16 *)0x05000200, frame << 12, 0x100);
+        LuckyWheels_ScaleRgb555(bgShade, (u16 *)0x05000000, frame << 12, 0x100);
       }
       if (state->state == 3) {
         s32 phase = frame % 80;
@@ -1252,7 +1253,7 @@ void LuckyWheels_Run(void) {
         else
           Palette_StepTowardResource((s32)&ResourceId_JupiterDjinnSheet);
         if (state->timer <= 15)
-          Palette_DarkenSceneStep();
+          Palette_DarkenScreenStep();
         if (state->timer > 16 && (frame & 7) == 0) {
           s32 x = (Random16() & 127) + 56;
           s32 y = (Random16() & 31) + 48;
@@ -1349,16 +1350,16 @@ void LuckyWheels_Run(void) {
     }
 
     for (j = 0; j != 17; j++) {
-      Graphics_ScaleRgb555(shade, (u16 *)0x05000200, 0x10000 - (j << 12),
-                           0x100);
-      Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000, 0x10000 - (j << 12),
-                           0x100);
+      LuckyWheels_ScaleRgb555(shade, (u16 *)0x05000200, 0x10000 - (j << 12),
+                              0x100);
+      LuckyWheels_ScaleRgb555(bgShade, (u16 *)0x05000000, 0x10000 - (j << 12),
+                              0x100);
       wait(1);
     }
     HeapSlot_Release(188);
     HeapSlot_Release(104);
-    Task_Remove(BattleStaging_ProcessPendingTileTransfer);
-    Task_Remove(Func_081b243c);
+    Task_Remove(LuckyWheels_TransferCanvas);
+    Task_Remove(LuckyWheels_Update);
     Task_Remove(Func_081b3294);
     HeapSlot_Release(180);
     HeapSlot_Release(96);

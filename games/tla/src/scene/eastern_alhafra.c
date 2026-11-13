@@ -104,9 +104,9 @@ void Func_02000190(s32 unused, s32 id) {
     x = object->x >> 20;
     z = object->z >> 20;
     if (x == 34 && z == 32 && leaderX == 33)
-      MapGrid_SetCellBehavior(0x2100000, 0x2000000, 2, 255);
+      FieldMapGrid_SetCellBehavior(0x2100000, 0x2000000, 2, 255);
     if (x == 33 && z == 32 && leaderX == 32)
-      MapGrid_SetCellBehavior(0x2000000, 0x2000000, 2, 255);
+      FieldMapGrid_SetCellBehavior(0x2000000, 0x2000000, 2, 255);
   }
 }
 
@@ -116,7 +116,6 @@ void Func_02000190(s32 unused, s32 id) {
 
 extern u8 gData_02005290[];
 
-void Func_0200112c(void);
 s32 Func_02004240(struct DoorPlan *);
 void Func_020044c4(struct DoorPlan);
 /* VIEW(eastern_alhafra): routine Actor_SelectAnimation as s32
@@ -133,6 +132,8 @@ s32 Party_FindOwnerWithAction();
  * Func_020006ec moves: 1 of 25 instructions in tla-ja. */
 extern s32
 Func_02004bb4__eastern_alhafra() __asm__("Field_FindNearbyTalkTarget");
+void Event_Start();
+void Event_End();
 
 void Func_02000200(s32 mode, s32 id) {
   struct Actor *object;
@@ -148,8 +149,8 @@ void Func_02000200(s32 mode, s32 id) {
   hit = 0;
   z = object->z >> 20;
   if (id == 10) {
-    MapGrid_SetCellBehavior(0x2100000, 0x2000000, 2, 0);
-    MapGrid_SetCellBehavior(0x2000000, 0x2000000, 2, 0);
+    FieldMapGrid_SetCellBehavior(0x2100000, 0x2000000, 2, 0);
+    FieldMapGrid_SetCellBehavior(0x2000000, 0x2000000, 2, 0);
   }
   if (x == 31 && z == 32) {
     Event_SetFlag(0x8a0);
@@ -206,15 +207,15 @@ void Func_02000200(s32 mode, s32 id) {
 
 void Func_02000394(s32 unused, s32 id) {
   Func_02000190(unused, id);
-  MapGrid_SetCellBehavior(0x1400000, 0x1d00000, 2, 255);
-  MapGrid_SetCellBehavior(0x1400000, 0x1e00000, 2, 255);
-  MapGrid_SetCellBehavior(0x1400000, 0x1f00000, 2, 255);
-  MapGrid_SetCellBehavior(0x1400000, 0x2000000, 2, 255);
-  MapGrid_SetCellBehavior(0x1600000, 0x1d00000, 2, 255);
-  MapGrid_SetCellBehavior(0x1600000, 0x1e00000, 2, 255);
-  MapGrid_SetCellBehavior(0x1600000, 0x1f00000, 2, 255);
-  MapGrid_SetCellBehavior(0x1600000, 0x2000000, 2, 255);
-  MapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 0);
+  FieldMapGrid_SetCellBehavior(0x1400000, 0x1d00000, 2, 255);
+  FieldMapGrid_SetCellBehavior(0x1400000, 0x1e00000, 2, 255);
+  FieldMapGrid_SetCellBehavior(0x1400000, 0x1f00000, 2, 255);
+  FieldMapGrid_SetCellBehavior(0x1400000, 0x2000000, 2, 255);
+  FieldMapGrid_SetCellBehavior(0x1600000, 0x1d00000, 2, 255);
+  FieldMapGrid_SetCellBehavior(0x1600000, 0x1e00000, 2, 255);
+  FieldMapGrid_SetCellBehavior(0x1600000, 0x1f00000, 2, 255);
+  FieldMapGrid_SetCellBehavior(0x1600000, 0x2000000, 2, 255);
+  FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 0);
 }
 
 void Func_0200042c(s32 mode, s32 id) {
@@ -229,20 +230,20 @@ void Func_0200042c(s32 mode, s32 id) {
   open = 0;
   if (x == 21 && z == 33)
     open = 1;
-  MapGrid_SetCellBehavior(0x1400000, 0x1d00000, 2, 0);
-  MapGrid_SetCellBehavior(0x1400000, 0x1e00000, 2, 0);
-  MapGrid_SetCellBehavior(0x1400000, 0x1f00000, 2, 0);
-  MapGrid_SetCellBehavior(0x1400000, 0x2000000, 2, 0);
-  MapGrid_SetCellBehavior(0x1600000, 0x1d00000, 2, 0);
-  MapGrid_SetCellBehavior(0x1600000, 0x1e00000, 2, 0);
-  MapGrid_SetCellBehavior(0x1600000, 0x1f00000, 2, 0);
-  MapGrid_SetCellBehavior(0x1600000, 0x2000000, 2, 0);
-  MapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 255);
+  FieldMapGrid_SetCellBehavior(0x1400000, 0x1d00000, 2, 0);
+  FieldMapGrid_SetCellBehavior(0x1400000, 0x1e00000, 2, 0);
+  FieldMapGrid_SetCellBehavior(0x1400000, 0x1f00000, 2, 0);
+  FieldMapGrid_SetCellBehavior(0x1400000, 0x2000000, 2, 0);
+  FieldMapGrid_SetCellBehavior(0x1600000, 0x1d00000, 2, 0);
+  FieldMapGrid_SetCellBehavior(0x1600000, 0x1e00000, 2, 0);
+  FieldMapGrid_SetCellBehavior(0x1600000, 0x1f00000, 2, 0);
+  FieldMapGrid_SetCellBehavior(0x1600000, 0x2000000, 2, 0);
+  FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 255);
   if (open)
     FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(560), 1);
   Func_02000200(mode, id);
   if (open)
-    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+    EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
 }
 
 // ---- games/tla/src/scene/eastern_alhafra/s0514.c ----
@@ -251,6 +252,7 @@ void Func_0200042c(s32 mode, s32 id) {
 
 #include "field/field.h"
 
+void Func_0200112c(void);
 /* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct
  * Unk_02004240); eastern_alhafra has void Func_020044c4(struct DoorPlan); tried
  * as the definition's void Func_020044c4(struct PushTarget target), it does not
@@ -270,7 +272,7 @@ void Func_02000514(void) {
   facing =
       (Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (actor16 != NULL && Event_GetFlag(0x8a4) == 0)
-    Func_080dbdd4(actor16->x, actor16->z, 2, 255);
+    MapGrid_SetCellBehavior(actor16->x, actor16->z, 2, 255);
   if (Func_02004240(&unk) != 0) {
     if (Event_GetFlag(0x8a4) == 0 || facing == 0xc000) {
       Func_020044c4__s0514(unk);
@@ -280,12 +282,12 @@ void Func_02000514(void) {
       FieldEvent_ResolvePendingActions(0);
       FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(560), 1);
       Func_020044c4__s0514(unk);
-      Func_080dbdd4(actor15->x - PIXELS(24), actor15->z, 0, 0);
-      Func_080dbdd4(actor15->x + PIXELS(8), actor15->z, 0, 0);
-      Func_080dbdd4(actor15->x - PIXELS(24), actor15->z, 2, 0);
-      Func_080dbdd4(actor15->x - PIXELS(8), actor15->z, 2, 0);
-      Func_080dbdd4(actor15->x + PIXELS(8), actor15->z, 2, 0);
-      Func_080dbdd4(actor15->x + PIXELS(24), actor15->z, 2, 0);
+      MapGrid_SetCellBehavior(actor15->x - PIXELS(24), actor15->z, 0, 0);
+      MapGrid_SetCellBehavior(actor15->x + PIXELS(8), actor15->z, 0, 0);
+      MapGrid_SetCellBehavior(actor15->x - PIXELS(24), actor15->z, 2, 0);
+      MapGrid_SetCellBehavior(actor15->x - PIXELS(8), actor15->z, 2, 0);
+      MapGrid_SetCellBehavior(actor15->x + PIXELS(8), actor15->z, 2, 0);
+      MapGrid_SetCellBehavior(actor15->x + PIXELS(24), actor15->z, 2, 0);
       Actor_SetAnimation(15, 3);
       Actor_SetDestinationOffset(15, 0, 16);
       FieldEvent_Wait(20);
@@ -302,12 +304,12 @@ void Func_02000514(void) {
       Event_PlaySound(240);
       Actor_SetAnimation(15, 8);
       FieldEvent_Wait(60);
-      FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+      EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
       Event_End();
     }
   }
   if (actor16 != NULL && Event_GetFlag(0x8a4) == 0)
-    Func_080dbdd4(actor16->x, actor16->z, 2, 0);
+    MapGrid_SetCellBehavior(actor16->x, actor16->z, 2, 0);
 }
 
 void Func_020006ec(s32 mode) {
@@ -529,11 +531,11 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(27, PIXELS(176), PIXELS(408));
       Actor_SetPosition(29, PIXELS(152), PIXELS(376));
       Actor_FaceDirection(29, FACING_SOUTH, 0);
-      Actor_SetSpriteRotationById(25, 0x4000);
+      FieldActor_SetSpriteRotationById(25, 0x4000);
       Actor_SetSingleChildFlags((s32)Actor_Get(25), 0);
-      Actor_SetSpriteRotationById(27, 0xc000);
+      FieldActor_SetSpriteRotationById(27, 0xc000);
       Actor_SetSingleChildFlags((s32)Actor_Get(27), 0);
-      Actor_SetSpriteRotationById(29, 0x4000);
+      FieldActor_SetSpriteRotationById(29, 0x4000);
       Actor_SetSingleChildFlags((s32)Actor_Get(29), 0);
       Actor_SetAnimation(25, 13);
       Actor_SetAnimation(27, 13);
@@ -558,11 +560,11 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(30, PIXELS(184), PIXELS(616));
     Actor_SetPosition(31, PIXELS(136), PIXELS(600));
     Actor_SetPosition(28, PIXELS(160), PIXELS(584));
-    Actor_SetSpriteRotationById(30, 0x4000);
+    FieldActor_SetSpriteRotationById(30, 0x4000);
     Actor_SetSingleChildFlags(Actor_Get(30), 0);
-    Actor_SetSpriteRotationById(31, 0xc000);
+    FieldActor_SetSpriteRotationById(31, 0xc000);
     Actor_SetSingleChildFlags(Actor_Get(31), 0);
-    Actor_SetSpriteRotationById(28, 0x4000);
+    FieldActor_SetSpriteRotationById(28, 0x4000);
     Actor_SetSingleChildFlags(Actor_Get(28), 0);
     FieldActor_SetSpritePriority(27, 2);
     FieldActor_SetSpritePriority(25, 2);
@@ -570,9 +572,9 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(25, PIXELS(160), PIXELS(392));
     Actor_SetPosition(27, PIXELS(176), PIXELS(408));
     Actor_SetPosition(29, PIXELS(152), PIXELS(376));
-    Actor_SetSpriteRotationById(27, 0xc000);
+    FieldActor_SetSpriteRotationById(27, 0xc000);
     Actor_SetSingleChildFlags(Actor_Get(27), 0);
-    Actor_SetSpriteRotationById(29, 0x4000);
+    FieldActor_SetSpriteRotationById(29, 0x4000);
     Actor_SetSingleChildFlags(Actor_Get(29), 0);
     Actor_FaceDirection(25, 0xd000, 0);
     Actor_FaceDirection(29, FACING_SOUTH, 0);
@@ -655,9 +657,9 @@ void Func_02000fa4(void) {
   FIELD_AT(v_r5, s32, 40) = 0;
   FIELD_AT(v_r5, s32, 12) = -0x40000;
   FIELD_AT(v_r5, s32, 20) = -0x40000;
-  MapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 0);
-  MapGrid_SetCellBehavior(0x1500000, 0x2100000, 0, 0);
-  MapGrid_SetCellBehavior(0x1600000, 0x2100000, 0, 0);
+  FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 0);
+  FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 0, 0);
+  FieldMapGrid_SetCellBehavior(0x1600000, 0x2100000, 0, 0);
 L_02009022:
   t8 = Event_GetFlag(0x8a4);
   if (t8 == 0)
@@ -683,8 +685,8 @@ L_02009052:
   do {
   } while (0);
   FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
-  MapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0,
-                          0);
+  FieldMapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16),
+                               0, 0);
   Func_02004c84(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0, 128);
 L_020090a8:
   t18 = Event_GetFlag(0x8a1);
@@ -701,8 +703,8 @@ L_020090a8:
   do {
   } while (0);
   FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
-  MapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0,
-                          0);
+  FieldMapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16),
+                               0, 0);
   Func_02004c84(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0, 128);
 L_02009100:
   t24 = Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED);
@@ -731,13 +733,13 @@ void Func_0200112c(void) {
   Actor_WalkByAndWait(4, 16, 0);
   Actor_FaceDirection(4, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
-  FieldCamera_MoveToActor(22, 1);
+  EventCamera_MoveToActor(22, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(22, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(22, 0, 10);
-  FieldCamera_MoveToActor(23, 1);
+  EventCamera_MoveToActor(23, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   FieldActor_Jump(23, 6, 15);
@@ -747,18 +749,18 @@ void Func_0200112c(void) {
   Actor_FaceDirection(24, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(25, 0x5000, 0);
   FieldEvent_Wait(20);
-  FieldCamera_MoveToActor(11, 1);
+  EventCamera_MoveToActor(11, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(23, 0, 10);
-  FieldCamera_MoveToActor(24, 1);
+  EventCamera_MoveToActor(24, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(24, 4);
   FieldEvent_ShowMessageThenWait(24, 0, 10);
   Actor_FaceDirection(24, FACING_NORTHEAST, 0);
   FieldEvent_Wait(20);
-  FieldCamera_MoveToActor(25, 1);
+  EventCamera_MoveToActor(25, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_FaceDirection(25, FACING_NORTHEAST, 0);
@@ -769,11 +771,11 @@ void Func_0200112c(void) {
   Actor_FaceDirection(22, FACING_EAST, 0);
   Actor_FaceDirection(23, 0xd000, 0);
   FieldEvent_Wait(20);
-  FieldCamera_MoveToActor(14, 1);
+  EventCamera_MoveToActor(14, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(25, 0, 10);
-  FieldCamera_MoveToActor(22, 1);
+  EventCamera_MoveToActor(22, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_ShowEmote(22, 0x107, 40);
@@ -817,7 +819,7 @@ void Func_0200112c(void) {
   Actor_FaceDirection(24, FACING_NORTH, 0);
   Actor_FaceDirection(25, FACING_NORTHEAST, 0);
   FieldEvent_Wait(20);
-  FieldCamera_MoveToActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_MoveToActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetSpeed(5, 0x13333, 0x9999);
@@ -850,7 +852,7 @@ L_02009504:
 L_02009550:
   FieldActor_WaitForMoveById(26);
   Actor_SetPosition(26, 0, 0);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   Event_End();
   return;
@@ -1020,7 +1022,7 @@ L_02009938:
   FieldEvent_Wait(10);
   goto L_02009a2e;
 L_0200996c:
-  ((s32 (*)())Func_080d47b4)(26, 0x102, 30);
+  ((s32 (*)())Actor_ShowEmoteById)(26, 0x102, 30);
   FieldEvent_ShowMessageThenWait(26, 0, 10);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Actor_FaceDirection(5, FACING_NORTHWEST, 0);
@@ -1029,7 +1031,7 @@ L_0200996c:
   Actor_ShowEmote(26, 0x101, 30);
   Actor_SetAnimationAndWait(26, 4);
   FieldEvent_ShowMessageThenWait(26, 0, 10);
-  ((s32 (*)())Func_080d47b4)(26, 0x109, 30);
+  ((s32 (*)())Actor_ShowEmoteById)(26, 0x109, 30);
   FieldEvent_ShowMessageThenWait(26, 0, 10);
   Actor_FaceDirection(5, FACING_NORTH, 0);
   Actor_FaceDirection(6, 0x4000, 0);
@@ -1167,7 +1169,7 @@ void Func_02001bf4(s32 id) {
 #include "scene_ids.h"
 
 static __inline__ void Func_02004b6c_(s32 actor, s32 a, s32 b) {
-  Func_080d47b4(actor, a, b);
+  Actor_ShowEmoteById(actor, a, b);
 }
 
 static __inline__ void FieldMessage_ShowAtActor_(s32 actor, s32 flags) {
@@ -1276,7 +1278,7 @@ void Func_02001cb0(void) {
   FieldActor_Stop(4);
   Actor_SetPosition(24, 0, 0);
   Actor_SetPosition(23, 0, 0);
-  FieldCamera_FollowActor(4, 1);
+  EventCamera_FollowActor(4, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -1343,7 +1345,7 @@ void Func_02002048(void) {
   Actor_SetScript(28, gData_0200d5d0);
   Actor_SetScript(29, gData_02005620);
   FieldEvent_Wait(20);
-  FieldCamera_FollowActor(25, 1);
+  EventCamera_FollowActor(25, 1);
   Actor_WalkBy(25, 64, 0);
   Actor_WalkByAndWait(27, 64, 0);
   Actor_WalkTo(25, 168, 616);
@@ -1877,7 +1879,7 @@ void Func_02003274(void) {
   Actor_GetById(25)->actionFlags |= 1;
   FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
   Actor_SetPosition(29, PIXELS(168), PIXELS(368));
-  Actor_SetSpriteRotationById(0x1d, 0);
+  FieldActor_SetSpriteRotationById(0x1d, 0);
   Actor_SetSingleChildFlags(Actor_GetById(29), 1);
   Actor_FaceDirection(29, 0x5000, 0);
   FieldActor_Jump(29, 6, 40);
@@ -1925,7 +1927,7 @@ void Func_02003274(void) {
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
   Actor_SetPosition(27, PIXELS(168), PIXELS(424));
-  Actor_SetSpriteRotationById(0x1b, 0);
+  FieldActor_SetSpriteRotationById(0x1b, 0);
   Actor_SetSingleChildFlags(Actor_GetById(27), 1);
   Actor_GetById(27)->facing = 0xb000;
   FieldActor_Jump(27, 6, 40);
@@ -1970,7 +1972,7 @@ void Func_02003274(void) {
   Actor_SetSpeed(28, 0xcccc, 0x6666);
   Actor_SetSpeed(30, 0xcccc, 0x6666);
   Actor_SetSpeed(31, 0xcccc, 0x6666);
-  FieldCamera_FollowActor(25, 1);
+  EventCamera_FollowActor(25, 1);
   Actor_WalkByAndWait(25, -16, 16);
   Actor_WalkByAndWait(25, 0, 16);
   Actor_WalkTo(25, 152, 504);
@@ -2014,17 +2016,17 @@ void Func_02003274(void) {
   Actor_RunRepeatedMotion(28, 2);
   FieldEvent_Wait(20);
   Actor_SetPosition(28, PIXELS(176), PIXELS(592));
-  Actor_SetSpriteRotationById(0x1c, 0);
+  FieldActor_SetSpriteRotationById(0x1c, 0);
   Actor_SetSingleChildFlags(Actor_GetById(28), 1);
   FieldActor_Jump(28, 6, 20);
   Actor_ArmCallback(28, FACING_WEST, 0);
   Actor_SetPosition(31, PIXELS(128), PIXELS(608));
-  Actor_SetSpriteRotationById(0x1f, 0);
+  FieldActor_SetSpriteRotationById(0x1f, 0);
   Actor_SetSingleChildFlags(Actor_GetById(31), 1);
   FieldActor_Jump(31, 6, 20);
   Actor_ArmCallback(31, 0xd000, 0);
   Actor_SetPosition(30, PIXELS(192), PIXELS(616));
-  Actor_SetSpriteRotationById(0x1e, 0);
+  FieldActor_SetSpriteRotationById(0x1e, 0);
   Actor_SetSingleChildFlags(Actor_GetById(30), 1);
   FieldActor_Jump(30, 6, 20);
   Actor_ArmCallback(30, 0xb000, 0);
@@ -2056,7 +2058,7 @@ void Func_02003274(void) {
   Actor_ArmCallback(26, 0x5000, 0);
   FieldActor_RefreshSelectorById(30);
   FieldEvent_Wait(20);
-  FieldCamera_FollowActor(4, 1);
+  EventCamera_FollowActor(4, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   Func_02004b6c_(0x1a, 0x105, 0x32);

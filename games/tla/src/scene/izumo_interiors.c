@@ -59,7 +59,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 void Shop_Run(s32 slot, s32 actor);
 
 static inline void LeaderAnimate(s32 animation, s32 frames) {
-  Func_080d47b4(gMainRoutineWork.currentOwner, animation, frames);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, animation, frames);
 }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
@@ -138,11 +138,11 @@ void IzumoInteriors_AskAfterSusa(void) {
     Event_SetMessageId((s32)MsgSusaSNot);
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(30);
-    Func_080d47b4(8, 265, 0);
+    Actor_ShowEmoteById(8, 265, 0);
     Event_Wait(60);
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(30);
-    Func_080d47b4(8, 261, 0);
+    Actor_ShowEmoteById(8, 261, 0);
     Event_Wait(60);
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(30);
@@ -170,7 +170,7 @@ void IzumoInteriors_TalkToUzume(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
   if (GameFlag_Test(FLAG_UZUME_HAS_THE_DOLL)) {
     Event_SetMessageId((s32)MsgWithThisDancing);
     Event_ShowMessageAndWait(15, 0);
@@ -206,7 +206,7 @@ void IzumoInteriors_AskAboutMtMikage(void) {
 void IzumoInteriors_ReadUzumesMind(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
   if (Event_GetFlag(0x92b)) {
     Event_SetMessageId((s32)MsgTryingAgainWhat);
     Event_ShowMessageAndWait(15, 0);
@@ -215,7 +215,7 @@ void IzumoInteriors_ReadUzumesMind(void) {
     Event_ShowMessageAndWait(15, 0);
     if (GameFlag_Test(0x923)) {
       LeaderAnimate(256, 30);
-      Func_080d47b4(15, 259, 30);
+      Actor_ShowEmoteById(15, 259, 30);
       Event_ShowMessageAndWait(15, 0);
       LeaderAnimate(258, 30);
       Actor_SetModeById(15, 4);
@@ -253,7 +253,7 @@ s32 IzumoInteriors_KushinadaPleads(void) {
     Event_ShowMessageAndWait(17, 0);
   }
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= ~1;
-  Actor_OffsetPositionAndReset(gMainRoutineWork.currentOwner, 0, 16);
+  Actor_WalkByById(gMainRoutineWork.currentOwner, 0, 16);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
   Event_End();
@@ -522,7 +522,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(120);
   Event_ShowMessage(0x800f, 0);
   FieldEvent_Wait(30);
-  FieldCamera_FollowActor(21, 1);
+  EventCamera_FollowActor(21, 1);
   FieldEvent_Wait(120);
   Actor_SetSpeed(21, 0x9999, 0x4ccc);
   Actor_SetSpeedParameters(21, 0x9999, 0x4ccc);
@@ -530,23 +530,23 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_WalkTo(21, 144, 648);
   if (mode == 0) {
     Actor_WalkToAndWait(21, 88, 648);
-    Actor_SetAngleToward(*(s32 *)owner, 21, 0);
-    Actor_SetAngleToward(5, 21, 0);
-    Actor_SetAngleToward(6, 21, 0);
-    Actor_SetAngleToward(7, 21, 0);
-    Actor_SetAngleToward(23, 21, 0);
-    Actor_SetAngleToward(15, 21, 0);
-    Actor_SetAngleToward(20, 21, 0);
-    Actor_SetAngleToward(22, 21, 0);
+    Actor_FaceActorById(*(s32 *)owner, 21, 0);
+    Actor_FaceActorById(5, 21, 0);
+    Actor_FaceActorById(6, 21, 0);
+    Actor_FaceActorById(7, 21, 0);
+    Actor_FaceActorById(23, 21, 0);
+    Actor_FaceActorById(15, 21, 0);
+    Actor_FaceActorById(20, 21, 0);
+    Actor_FaceActorById(22, 21, 0);
     Actor_WalkToAndWait(21, 56, 616);
-    Actor_SetAngleToward(*(s32 *)owner, 21, 0);
-    Actor_SetAngleToward(5, 21, 0);
-    Actor_SetAngleToward(6, 21, 0);
-    Actor_SetAngleToward(7, 21, 0);
-    Actor_SetAngleToward(23, 21, 0);
-    Actor_SetAngleToward(15, 21, 0);
-    Actor_SetAngleToward(20, 21, 0);
-    Actor_SetAngleToward(22, 21, 0);
+    Actor_FaceActorById(*(s32 *)owner, 21, 0);
+    Actor_FaceActorById(5, 21, 0);
+    Actor_FaceActorById(6, 21, 0);
+    Actor_FaceActorById(7, 21, 0);
+    Actor_FaceActorById(23, 21, 0);
+    Actor_FaceActorById(15, 21, 0);
+    Actor_FaceActorById(20, 21, 0);
+    Actor_FaceActorById(22, 21, 0);
     Actor_WalkToAndWait(21, 56, 584);
     Actor_GetById(22)->actionFlags &= ~1;
     Actor_WalkToAndWait(22, 88, 568);
@@ -555,51 +555,51 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Actor_ArmCallback(22, FACING_EAST, 0);
     Actor_SetSpritePriority(21, 1);
     Actor_WalkToAndWait(21, 104, 568);
-    Actor_SetAngleToward(*(s32 *)owner, 21, 0);
-    Actor_SetAngleToward(5, 21, 0);
-    Actor_SetAngleToward(6, 21, 0);
-    Actor_SetAngleToward(7, 21, 0);
-    Actor_SetAngleToward(23, 21, 0);
-    Actor_SetAngleToward(15, 21, 0);
-    Actor_SetAngleToward(20, 21, 0);
-    Actor_SetAngleToward(22, 21, 0);
+    Actor_FaceActorById(*(s32 *)owner, 21, 0);
+    Actor_FaceActorById(5, 21, 0);
+    Actor_FaceActorById(6, 21, 0);
+    Actor_FaceActorById(7, 21, 0);
+    Actor_FaceActorById(23, 21, 0);
+    Actor_FaceActorById(15, 21, 0);
+    Actor_FaceActorById(20, 21, 0);
+    Actor_FaceActorById(22, 21, 0);
     Actor_SetSpritePriority(23, 1);
     Actor_SetSpritePriority(21, 2);
-    Actor_SetPositionAndReset(21, 120, 568);
+    Actor_WalkToAndWaitById(21, 120, 568);
     Actor_SetSpritePriority(21, 3);
     Actor_SetSpritePriority(23, 3);
     Actor_WalkToAndWait(21, 120, 536);
-    Actor_SetAngleToward(*(s32 *)owner, 21, 0);
-    Actor_SetAngleToward(5, 21, 0);
-    Actor_SetAngleToward(6, 21, 0);
-    Actor_SetAngleToward(7, 21, 0);
-    Actor_SetAngleToward(23, 21, 0);
-    Actor_SetAngleToward(15, 21, 0);
-    Actor_SetAngleToward(20, 21, 0);
-    Actor_SetAngleToward(22, 21, 0);
+    Actor_FaceActorById(*(s32 *)owner, 21, 0);
+    Actor_FaceActorById(5, 21, 0);
+    Actor_FaceActorById(6, 21, 0);
+    Actor_FaceActorById(7, 21, 0);
+    Actor_FaceActorById(23, 21, 0);
+    Actor_FaceActorById(15, 21, 0);
+    Actor_FaceActorById(20, 21, 0);
+    Actor_FaceActorById(22, 21, 0);
     Actor_SetModeById(22, 3);
     Actor_WalkToAndWait(22, 56, 584);
     Actor_WalkToAndWait(22, 88, 648);
     Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
   } else {
     Actor_WalkToAndWait(21, 200, 648);
-    Actor_SetAngleToward(*(s32 *)owner, 21, 0);
-    Actor_SetAngleToward(5, 21, 0);
-    Actor_SetAngleToward(6, 21, 0);
-    Actor_SetAngleToward(7, 21, 0);
-    Actor_SetAngleToward(23, 21, 0);
-    Actor_SetAngleToward(15, 21, 0);
-    Actor_SetAngleToward(20, 21, 0);
-    Actor_SetAngleToward(22, 21, 0);
+    Actor_FaceActorById(*(s32 *)owner, 21, 0);
+    Actor_FaceActorById(5, 21, 0);
+    Actor_FaceActorById(6, 21, 0);
+    Actor_FaceActorById(7, 21, 0);
+    Actor_FaceActorById(23, 21, 0);
+    Actor_FaceActorById(15, 21, 0);
+    Actor_FaceActorById(20, 21, 0);
+    Actor_FaceActorById(22, 21, 0);
     Actor_WalkToAndWait(21, 232, 616);
-    Actor_SetAngleToward(*(s32 *)owner, 21, 0);
-    Actor_SetAngleToward(5, 21, 0);
-    Actor_SetAngleToward(6, 21, 0);
-    Actor_SetAngleToward(7, 21, 0);
-    Actor_SetAngleToward(23, 21, 0);
-    Actor_SetAngleToward(15, 21, 0);
-    Actor_SetAngleToward(20, 21, 0);
-    Actor_SetAngleToward(22, 21, 0);
+    Actor_FaceActorById(*(s32 *)owner, 21, 0);
+    Actor_FaceActorById(5, 21, 0);
+    Actor_FaceActorById(6, 21, 0);
+    Actor_FaceActorById(7, 21, 0);
+    Actor_FaceActorById(23, 21, 0);
+    Actor_FaceActorById(15, 21, 0);
+    Actor_FaceActorById(20, 21, 0);
+    Actor_FaceActorById(22, 21, 0);
     Actor_WalkToAndWait(21, 232, 584);
     Actor_GetById(22)->actionFlags &= ~1;
     Actor_WalkToAndWait(22, 200, 568);
@@ -608,28 +608,28 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Actor_FaceDirection(22, FACING_WEST, 0);
     Actor_SetSpritePriority(21, 1);
     Actor_WalkToAndWait(21, 184, 568);
-    Actor_SetAngleToward(*(s32 *)owner, 21, 0);
-    Actor_SetAngleToward(5, 21, 0);
-    Actor_SetAngleToward(6, 21, 0);
-    Actor_SetAngleToward(7, 21, 0);
-    Actor_SetAngleToward(23, 21, 0);
-    Actor_SetAngleToward(15, 21, 0);
-    Actor_SetAngleToward(20, 21, 0);
-    Actor_SetAngleToward(22, 21, 0);
+    Actor_FaceActorById(*(s32 *)owner, 21, 0);
+    Actor_FaceActorById(5, 21, 0);
+    Actor_FaceActorById(6, 21, 0);
+    Actor_FaceActorById(7, 21, 0);
+    Actor_FaceActorById(23, 21, 0);
+    Actor_FaceActorById(15, 21, 0);
+    Actor_FaceActorById(20, 21, 0);
+    Actor_FaceActorById(22, 21, 0);
     Actor_SetSpritePriority(21, 2);
     Actor_SetSpritePriority(6, 1);
-    Actor_SetPositionAndReset(21, 168, 568);
+    Actor_WalkToAndWaitById(21, 168, 568);
     Actor_SetSpritePriority(21, 3);
     Actor_SetSpritePriority(6, 3);
     Actor_WalkToAndWait(21, 168, 536);
-    Actor_SetAngleToward(*(s32 *)owner, 21, 0);
-    Actor_SetAngleToward(5, 21, 0);
-    Actor_SetAngleToward(6, 21, 0);
-    Actor_SetAngleToward(7, 21, 0);
-    Actor_SetAngleToward(23, 21, 0);
-    Actor_SetAngleToward(15, 21, 0);
-    Actor_SetAngleToward(20, 21, 0);
-    Actor_SetAngleToward(22, 21, 0);
+    Actor_FaceActorById(*(s32 *)owner, 21, 0);
+    Actor_FaceActorById(5, 21, 0);
+    Actor_FaceActorById(6, 21, 0);
+    Actor_FaceActorById(7, 21, 0);
+    Actor_FaceActorById(23, 21, 0);
+    Actor_FaceActorById(15, 21, 0);
+    Actor_FaceActorById(20, 21, 0);
+    Actor_FaceActorById(22, 21, 0);
     Actor_SetModeById(22, 3);
     Actor_WalkToAndWait(22, 232, 584);
     Actor_WalkToAndWait(22, 200, 648);
@@ -654,18 +654,18 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_Wait(15);
   Actor_ShowEmote(20, 0x108, 30);
   Event_ShowMessageAndWait(20, 0);
-  Actor_SetAngleToward(21, 20, 0);
+  Actor_FaceActorById(21, 20, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(21, 0);
-  Actor_SetAngleToward(21, *(s32 *)owner, 0);
+  Actor_FaceActorById(21, *(s32 *)owner, 0);
   Event_Wait(60);
-  Actor_SetAngleToward(21, 20, 0);
+  Actor_FaceActorById(21, 20, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(21, 0);
   Actor_TurnToFaceEachOther(15, 20, 0);
   Event_Wait(30);
-  Actor_SetAngleToward(15, *(s32 *)owner, 0);
-  Actor_SetAngleToward(20, *(s32 *)owner, 0);
+  Actor_FaceActorById(15, *(s32 *)owner, 0);
+  Actor_FaceActorById(20, *(s32 *)owner, 0);
   Event_ShowMessageAndWait(15, 0);
   Actor_SetModeById(15, 3);
   Actor_SetModeById(20, 3);
@@ -678,12 +678,12 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_Wait(30);
   Actor_ShowEmote(15, 0x101, 30);
   Event_ShowMessageAndWait(15, 0);
-  Actor_SetAngleToward(21, *(s32 *)owner, 0);
+  Actor_FaceActorById(21, *(s32 *)owner, 0);
   Event_ShowMessageAndWait(21, 0);
-  Actor_SetAngleToward(15, *(s32 *)owner, 0);
-  Actor_SetAngleToward(20, *(s32 *)owner, 0);
+  Actor_FaceActorById(15, *(s32 *)owner, 0);
+  Actor_FaceActorById(20, *(s32 *)owner, 0);
   Event_Wait(30);
-  Func_080d47b4(*(s32 *)owner, 0x102, 30);
+  Actor_ShowEmoteById(*(s32 *)owner, 0x102, 30);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
@@ -701,10 +701,10 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_ShowMessageAndWait(23, 0);
   Actor_ShowEmote(21, 0x101, 30);
   Event_ShowMessageAndWait(21, 0);
-  Actor_SetAngleToward(23, 21, 0);
+  Actor_FaceActorById(23, 21, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
-  Func_080d47b4(20, 0x106, 30);
+  Actor_ShowEmoteById(20, 0x106, 30);
   Event_ShowMessageAndWait(20, 0);
   Actor_ShowEmote(23, 0x108, 30);
   Event_ShowMessageAndWait(23, 0);
@@ -713,20 +713,20 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_ShowMessageAndWait(23, 0);
   Actor_ShowEmote(15, 0x101, 30);
   Event_ShowMessageAndWait(15, 0);
-  Actor_SetAngleToward(7, 23, 0);
+  Actor_FaceActorById(7, 23, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(7, 0);
-  Actor_SetAngleToward(23, 7, 0);
+  Actor_FaceActorById(23, 7, 0);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
-  Func_080d47b4(15, 0x101, 30);
-  Actor_SetAngleToward(23, 15, 0);
-  Actor_SetAngleToward(7, 15, 0);
+  Actor_ShowEmoteById(15, 0x101, 30);
+  Actor_FaceActorById(23, 15, 0);
+  Actor_FaceActorById(7, 15, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(15, 0);
   Actor_ShowEmote(6, 0x108, 30);
   Event_ShowMessageAndWait(6, 0);
-  Func_080d47b4(21, 0x100, 30);
+  Actor_ShowEmoteById(21, 0x100, 30);
   Event_ShowMessageAndWait(21, 0);
   Actor_SetModeById(5, 3);
   Event_Wait(30);
@@ -745,7 +745,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 0) {
     Event_SetMessageId((s32)MsgRegardlessOfYour);
-    Func_080d47b4(15, 0x108, 30);
+    Actor_ShowEmoteById(15, 0x108, 30);
     Event_ShowMessageAndWait(15, 0);
   } else {
     Event_SetMessageId((s32)MsgYouTookPity);
@@ -756,12 +756,12 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_StartRepeatedMotion(23, 1);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
-  Actor_SetAngleToward(15, 23, 0);
-  Func_080d47b4(15, 0x101, 30);
+  Actor_FaceActorById(15, 23, 0);
+  Actor_ShowEmoteById(15, 0x101, 30);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
-  Actor_SetAngleToward(23, 21, 0);
+  Actor_FaceActorById(23, 21, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
   Actor_TurnToFaceEachOther(15, 20, 0);
@@ -778,24 +778,24 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_ShowMessageAndWait(6, 0);
   Actor_ShowEmote(5, 0x108, 30);
   Event_ShowMessageAndWait(5, 0);
-  Func_080d47b4(15, 0x100, 30);
+  Actor_ShowEmoteById(15, 0x100, 30);
   Event_Wait(15);
-  Actor_SetAngleToward(15, 21, 0);
+  Actor_FaceActorById(15, 21, 0);
   Event_ShowMessageAndWait(15, 0);
-  Func_080d47b4(21, 0x108, 30);
+  Actor_ShowEmoteById(21, 0x108, 30);
   Event_ShowMessageAndWait(21, 0);
-  Func_080d47b4(6, 0x106, 30);
+  Actor_ShowEmoteById(6, 0x106, 30);
   owner = (s32)&gMainRoutineWork;
   owner = owner + 532;
-  Actor_SetAngleToward(6, *(s32 *)owner, 0);
+  Actor_FaceActorById(6, *(s32 *)owner, 0);
   Event_OpenMessage(6, 0);
-  Actor_SetAngleToward(5, *(s32 *)owner, 0);
-  Actor_SetAngleToward(6, *(s32 *)owner, 0);
-  Actor_SetAngleToward(7, *(s32 *)owner, 0);
-  Actor_SetAngleToward(23, *(s32 *)owner, 0);
-  Actor_SetAngleToward(15, *(s32 *)owner, 0);
-  Actor_SetAngleToward(20, *(s32 *)owner, 0);
-  Actor_SetAngleToward(21, *(s32 *)owner, 0);
+  Actor_FaceActorById(5, *(s32 *)owner, 0);
+  Actor_FaceActorById(6, *(s32 *)owner, 0);
+  Actor_FaceActorById(7, *(s32 *)owner, 0);
+  Actor_FaceActorById(23, *(s32 *)owner, 0);
+  Actor_FaceActorById(15, *(s32 *)owner, 0);
+  Actor_FaceActorById(20, *(s32 *)owner, 0);
+  Actor_FaceActorById(21, *(s32 *)owner, 0);
   Event_Wait(30);
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 0) {
@@ -811,8 +811,8 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   }
   message = (s32)MsgIDisagree2;
   Event_SetMessageId(message);
-  Actor_SetAngleToward(23, 21, 0);
-  Func_080d47b4(23, 0x101, 30);
+  Actor_FaceActorById(23, 21, 0);
+  Actor_ShowEmoteById(23, 0x101, 30);
   Event_ShowMessageAndWait(23, 0);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
@@ -824,11 +824,11 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetModeById(6, 3);
   Actor_SetModeById(7, 3);
   Event_Wait(30);
-  Actor_SetAngleToward(23, 15, 0);
+  Actor_FaceActorById(23, 15, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
-  Actor_SetAngleToward(15, *(s32 *)owner, 0);
-  Actor_SetAngleToward(23, *(s32 *)owner, 0);
+  Actor_FaceActorById(15, *(s32 *)owner, 0);
+  Actor_FaceActorById(23, *(s32 *)owner, 0);
   Event_Wait(30);
   Event_OpenMessage(23, 0);
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
@@ -852,7 +852,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Event_ShowMessageAndWait(7, 0);
   }
   Event_SetMessageId((s32)MsgAsYouCanSee);
-  Actor_SetAngleToward(23, 15, 0);
+  Actor_FaceActorById(23, 15, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
   Actor_TurnToFaceEachOther(15, 20, 0);
@@ -862,24 +862,24 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_Wait(30);
   party = (s32)&gMainRoutineWork;
   owner = party + 532;
-  Actor_SetAngleToward(15, *(s32 *)owner, 0);
-  Actor_SetAngleToward(20, *(s32 *)owner, 0);
+  Actor_FaceActorById(15, *(s32 *)owner, 0);
+  Actor_FaceActorById(20, *(s32 *)owner, 0);
   Actor_StartRepeatedMotion(21, 1);
   Event_Wait(15);
   Actor_ShowEmote(21, 0x105, 30);
-  Actor_SetAngleToward(23, *(s32 *)owner, 0);
+  Actor_FaceActorById(23, *(s32 *)owner, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
-  Actor_SetAngleToward(*(s32 *)owner, 23, 0);
+  Actor_FaceActorById(*(s32 *)owner, 23, 0);
   Event_Wait(15);
   Actor_SetModeById(*(s32 *)owner, 3);
   Event_Wait(30);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
-  Actor_SetAngleToward(5, 23, 0);
-  Actor_SetAngleToward(6, 23, 0);
-  Actor_SetAngleToward(7, 23, 0);
+  Actor_FaceActorById(5, 23, 0);
+  Actor_FaceActorById(6, 23, 0);
+  Actor_FaceActorById(7, 23, 0);
   Actor_SetModeById(5, 3);
   Actor_SetModeById(6, 3);
   Actor_SetModeById(7, 3);
@@ -887,17 +887,17 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_Wait(30);
   Actor_ShowEmote(15, 0x100, 0);
   Actor_ShowEmote(20, 0x100, 0);
-  Func_080d47b4(21, 0x100, 0);
+  Actor_ShowEmoteById(21, 0x100, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(20, 0);
-  Actor_SetAngleToward(*(s32 *)owner, 15, 0);
-  Actor_SetAngleToward(5, 15, 0);
-  Actor_SetAngleToward(6, 15, 0);
-  Actor_SetAngleToward(7, 15, 0);
-  Actor_SetAngleToward(23, 15, 0);
+  Actor_FaceActorById(*(s32 *)owner, 15, 0);
+  Actor_FaceActorById(5, 15, 0);
+  Actor_FaceActorById(6, 15, 0);
+  Actor_FaceActorById(7, 15, 0);
+  Actor_FaceActorById(23, 15, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
-  Func_080d47b4(15, 0x109, 30);
+  Actor_ShowEmoteById(15, 0x109, 30);
   Event_ShowMessageAndWait(15, 0);
   Actor_SetModeById(5, 3);
   Event_Wait(30);
@@ -905,10 +905,10 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetModeById(20, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(20, 0);
-  Func_080d47b4(6, 0x105, 0);
+  Actor_ShowEmoteById(6, 0x105, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(6, 0);
-  Actor_SetAngleToward(6, 5, 0);
+  Actor_FaceActorById(6, 5, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(6, 0);
   Actor_StartRepeatedMotion(7, 1);
@@ -928,11 +928,11 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetModeById(5, 3);
   Actor_SetModeById(6, 3);
   Event_Wait(30);
-  Actor_SetAngleToward(*(s32 *)owner, 15, 0);
-  Actor_SetAngleToward(5, 15, 0);
-  Actor_SetAngleToward(6, 15, 0);
-  Actor_SetAngleToward(7, 15, 0);
-  Actor_SetAngleToward(23, 15, 0);
+  Actor_FaceActorById(*(s32 *)owner, 15, 0);
+  Actor_FaceActorById(5, 15, 0);
+  Actor_FaceActorById(6, 15, 0);
+  Actor_FaceActorById(7, 15, 0);
+  Actor_FaceActorById(23, 15, 0);
   Actor_SetModeById(15, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(15, 0);
@@ -949,29 +949,26 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetModeById(5, 2);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
-    Actor_ResetAndSetPosition(5, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(5, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(5);
   Actor_SetHorizontalPositionWithTerrain(5, 0, 0);
   Actor_SetModeById(6, 2);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
-    Actor_ResetAndSetPosition(6, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(6, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(6);
   Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
   Actor_SetModeById(7, 2);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
-    Actor_ResetAndSetPosition(7, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(7, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(7);
   Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
   Actor_SetModeById(23, 2);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
-    Actor_ResetAndSetPosition(23, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(23, ((s16 *)&leader->x)[1],
+                             ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(23);
   Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
   GameFlag_SetBit(FLAG_IZUMO_RECOGNIZED_THE_HEROES);
@@ -983,12 +980,12 @@ s32 Func_02001d84(void) { return -1; }
 
 void Func_02001d8c(void) {
   BattleEffect_LoadActionEffectResources(140, 1);
-  BattleEffect_SetupObjectPair(15, -1);
+  FieldPsynergy_SetupActorPair(15, -1);
   FIELD_AT(Ram_HeapSlots->effectWork, HandlerFn, 36) = Func_02001d84;
   FIELD_AT(Ram_HeapSlots->effectWork, u8, 32) = 1;
   EventObject_Initialize();
   Event_Wait(10);
-  Field_DispatchTypeHandler(0);
+  FieldPsynergy_RunHandler(0);
   BattleEffect_StopMainActor();
   BattleEffect_CleanupSceneObjects();
 }
@@ -1014,11 +1011,11 @@ L_02009e3a:
   Event_SetMessageId(((s32)&MsgAhCouldIt + 2));
   Event_ShowMessageAndWait(15, 0);
 L_02009e48:
-  Func_080d47b4(15, 0x109, 60);
+  Actor_ShowEmoteById(15, 0x109, 60);
   Event_SetMessageId((s32)&MsgAgainYouHave);
   Event_ShowMessageAndWait(15, 0);
   Actor_ShowEmote(15, 0x105, 120);
-  Func_080d47b4(15, 0x106, 60);
+  Actor_ShowEmoteById(15, 0x106, 60);
   Event_ShowMessageAndWait(15, 0);
   BattleEffect_StartArcEffect();
   t21 = ((s32)Actor_GetById(15));
@@ -1037,10 +1034,10 @@ L_02009e48:
   BattleEffect_EndArcEffect();
   Event_Wait(30);
   Event_Wait(30);
-  Actor_SetAngleToward(15, 24, 0);
+  Actor_FaceActorById(15, 24, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(15, 0);
-  Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
   Event_Wait(60);
   Event_ShowMessageAndWait(15, 0);
   Event_Wait(30);
@@ -1052,16 +1049,16 @@ L_02009e48:
   Event_Wait(60);
   Actor_Jump(24, 4, 20);
   Event_Wait(60);
-  Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
-  Actor_SetAngleToward(24, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(24, gMainRoutineWork.currentOwner, 0);
   Event_Wait(60);
   Event_ShowMessageAndWait(15, 0);
   Actor_Jump(24, 2, 20);
-  Func_080d7788(24, 2, 11);
+  Djinn_JoinParty(24, 2, 11);
   Event_End();
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(gMainRoutineWork.currentOwner, 15, 0);
+  Actor_FaceActorById(gMainRoutineWork.currentOwner, 15, 0);
   Event_Wait(60);
   Actor_StartRepeatedMotion(15, 2);
   Event_Wait(30);

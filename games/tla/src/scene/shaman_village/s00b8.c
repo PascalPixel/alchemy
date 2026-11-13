@@ -13,8 +13,15 @@
 
 extern const s32 *gData_02004c50[];
 
-/* VIEW(s00b8): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); shaman_village.h has void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32 value); tried as the 35 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/src/scene/shaman_village/shaman_village.h:73: conflicting types for `Actor_SetSingleChildFlags'. */
-extern void Actor_SetSingleChildFlags__s00b8(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
+/* VIEW(s00b8): routine Actor_SetSingleChildFlags as void
+ * Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+ * shaman_village.h has void Actor_SetSingleChildFlags(struct
+ * ShamanVillageObject *object, u32 value); tried as the 35 declarations' void
+ * Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not
+ * compile in tla-ja: games/tla/src/scene/shaman_village/shaman_village.h:73:
+ * conflicting types for `Actor_SetSingleChildFlags'. */
+extern void Actor_SetSingleChildFlags__s00b8(
+    struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
 
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -37,7 +44,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                         gData_02004c50[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags__s00b8(effect, 0);
-  effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
+  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
@@ -50,7 +57,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & 0xffff0000) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
-    Actor_SetSpriteColor(effect, options->palette);
+    FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
     Scene_SetActorSpritePriority(effect, options->priority);
@@ -87,14 +94,20 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 }
 
 // ---- games/tla/src/scene/shaman_village/s0280.c ----
-/* VIEW(s0280): routine Import_ActorSetMode as void Import_ActorSetMode(struct ShamanVillageObject *object, s32 mode); field_event.h has void Import_ActorSetMode(struct Actor *object, s32 mode); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/shaman_village/shaman_village.h:71: conflicting types for `Import_ActorSetMode'. */
+/* VIEW(s0280): routine Import_ActorSetMode as void Import_ActorSetMode(struct
+ * ShamanVillageObject *object, s32 mode); field_event.h has void
+ * Import_ActorSetMode(struct Actor *object, s32 mode); tried as the rest of the
+ * object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/shaman_village/shaman_village.h:71: conflicting types for
+ * `Import_ActorSetMode'. */
 struct ShamanVillageObject;
-extern void Import_ActorSetMode__s0280(struct ShamanVillageObject *object, s32 mode) __asm__("Import_ActorSetMode");
+extern void Import_ActorSetMode__s0280(struct ShamanVillageObject *object,
+                                       s32 mode) __asm__("Import_ActorSetMode");
 #define Import_ActorSetMode Import_ActorSetMode__s0280
 #include "shaman_village.h"
 #undef Import_ActorSetMode
 
-void Func_02000280(void) { Func_080d7788(18, 3, 13); }
+void Func_02000280(void) { Djinn_JoinParty(18, 3, 13); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -108,15 +121,30 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 // ---- games/tla/src/scene/shaman_village/scene_tables.c ----
 #include "battle.h"
-/* VIEW(scene_tables): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); shaman_village.h has void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32 value); tried as the 35 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/include/field/field.h:25: conflicting types for `Actor_SetSingleChildFlags'. */
+/* VIEW(scene_tables): routine Actor_SetSingleChildFlags as void
+ * Actor_SetSingleChildFlags(struct Actor *object, u32 flags); shaman_village.h
+ * has void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32
+ * value); tried as the 35 declarations' void Actor_SetSingleChildFlags(struct
+ * FieldEffect *effect, s32 flags), it does not compile in tla-ja:
+ * games/tla/include/field/field.h:25: conflicting types for
+ * `Actor_SetSingleChildFlags'. */
 struct Actor;
-extern void Actor_SetSingleChildFlags__scene_tables(struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
+extern void Actor_SetSingleChildFlags__scene_tables(
+    struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
 #define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__scene_tables
-/* VIEW(scene_tables): routine Animation_SetStateFlags as void Animation_SetStateFlags(struct Actor *object, u32 value); shaman_village.h has void Animation_SetStateFlags(struct ShamanVillageObject *object, s32 flags); tried as the definition's void Animation_SetStateFlags(struct Actor *object, u32 value), which the object already declares, it does not compile in tla-ja: games/tla/include/field/field.h:58: conflicting types for `Animation_SetStateFlags'. */
-extern void Animation_SetStateFlags__scene_tables(struct Actor *object, u32 value) __asm__("Animation_SetStateFlags");
-#define Animation_SetStateFlags Animation_SetStateFlags__scene_tables
+/* VIEW(scene_tables): routine Actor_SetBlendMode as void
+ * Actor_SetBlendMode(struct Actor *object, u32 value); shaman_village.h
+ * has void Actor_SetBlendMode(struct ShamanVillageObject *object, s32
+ * flags); tried as the definition's void Actor_SetBlendMode(struct Actor
+ * *object, u32 value), which the object already declares, it does not compile
+ * in tla-ja: games/tla/include/field/field.h:58: conflicting types for
+ * `Actor_SetBlendMode'. */
+extern void
+Animation_SetStateFlags__scene_tables(struct Actor *object,
+                                      u32 value) __asm__("Actor_SetBlendMode");
+#define Actor_SetBlendMode Animation_SetStateFlags__scene_tables
 #include "field.h"
-#undef Animation_SetStateFlags
+#undef Actor_SetBlendMode
 #undef Actor_SetSingleChildFlags
 #include "game.h"
 #include "graphics.h"
@@ -213,7 +241,7 @@ void Func_02000420(void) {
 void Func_02000458(struct ShamanVillageObject *object) {
   s32 bit = (((u32)gFrameCount & 3) >> *((u8 *)object + 99)) & 1;
 
-  Actor_SetSpriteColor(object, (u8)(bit * *((u8 *)object + 98)));
+  FieldActor_SetSpriteColor(object, (u8)(bit * *((u8 *)object + 98)));
 }
 
 // ---- games/tla/src/field/field_effect/circle_blink.c ----
@@ -239,7 +267,7 @@ void Effect_CircleAndBlink(struct Actor *object) {
       Iwram_MulQ16(Math_Sine((WORD_AT(object, 48) & 255) << 11), radius);
   object->y += WORD_AT(object, 72);
   WORD_AT(object, 48)++;
-  Actor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
+  FieldActor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
 }
 #undef WORD_AT
 
@@ -348,12 +376,12 @@ row:
       Import_ActorSetMode((struct Actor *)spark, 7);
       Import_ActorSetScript((struct Actor *)spark, gData_02004ae0);
       Actor_SetSingleChildFlags(spark, 0);
-      Actor_SetSpriteColor(spark, 2);
+      FieldActor_SetSpriteColor(spark, 2);
       spark->update = Effect_CircleAndBlink;
     }
     Event_Wait(1);
   }
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(0x10000, 0x2000);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(424), 1);
@@ -489,14 +517,14 @@ fade:
     OBJ14_BYTE(99) = zero;
     wait(30);
     Actor_GetById(14)->update = (void *)zero;
-    Actor_SetSpriteColor(Actor_GetById(14), 6);
-    Map_WaitForShakeToSettle();
+    FieldActor_SetSpriteColor(Actor_GetById(14), 6);
+    MapGrid_WaitForShakeToSettle();
     Event_Wait(60);
     REG_BLDCNT = zero;
   }
   Window_LoadGraphics();
   DebugText_Clear();
-  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+  FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags &= ~32;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
@@ -504,7 +532,7 @@ fade:
   REG_DISPCNT |= DISPCNT_BG2_ON;
   Map_CenterOnFollowedPoint();
   wait(1);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   {
     s32 width = 6;
@@ -845,7 +873,7 @@ void ShamanVillage_TellFortune(void) {
       Event_ShowMessage(17, 0);
       Event_SetFlag(0x301);
     }
-    Party_PlaySavedMusic();
+    Scene_PlayMusic();
   }
   Event_End();
 }
@@ -1187,7 +1215,7 @@ void ShamanVillage_MeetMoapa(void) {
   Event_SetMessageId((s32)MsgShamanMoapaGiveMeRoom);
   Event_ShowMessage(15, 0);
   FieldCamera_SetSpeed(0xcccc, 0x1999);
-  ((struct ShamanVillageObject *)Func_080d4568())->motionFlags = 0;
+  ((struct ShamanVillageObject *)FieldCamera_GetActor())->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(120), 0x320000, PIXELS(224), 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 120, 256);

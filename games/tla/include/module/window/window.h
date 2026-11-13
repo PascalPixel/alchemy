@@ -20,7 +20,7 @@ void WindowSprite_RedrawSavedRect(struct Window *window);
 
 void MessageArgument_ClearAll(void);
 
-extern const u8 gData_0805c9c4[];
+extern const u8 gMenu_AnimatedCursorTiles[];
 
 extern const u8 gOwnerStatus_HpString[];
 extern const u8 gOwnerStatus_SlashString[];
@@ -34,7 +34,7 @@ s32 Text_GetWideStringWidth(u16 *text);
 
 s32 PauseMenu_Choose(s32 initial);
 
-s32 Func_08043690(void);
+s32 Save_ToChosenFile(void);
 
 s32 SettingsMenu_Run(void);
 
@@ -43,7 +43,7 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
 
 s32 Func_0804b8b8(s32 slot);
 
-void Func_08118130(s32 kind, u8 *counts);
+void BattleDjinn_CountStandbyFar(s32 kind, u8 *counts);
 
 void Window_MarkVisibleTextTiles(void);
 
@@ -54,7 +54,7 @@ void WindowSprite_PrepareForRedraw(struct Window *);
 extern s16 gData_020036d8;
 extern s16 gData_02005350;
 
-s32 Func_080432a4(void);
+s32 Save_ScanFileSummaries(void);
 
 extern s32 gKeyState;
 
@@ -64,8 +64,8 @@ s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
 s32 Message_DecodeMode1(s32 message);
 void Func_0803cf6c(s32 message);
 
-void Func_08108030(struct NameCursorMotion *cursor);
-void Func_08108038(struct NameCursorMotion *cursor);
+void MenuCursor_AdvanceFar(struct NameCursorMotion *cursor);
+void MenuCursor_MoveTowardTargetFar(struct NameCursorMotion *cursor);
 
 void Portrait_CloseWindow(s32 id);
 
@@ -77,10 +77,12 @@ void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y);
 
 void MessageArgument_Push(u32 value, u32 kind);
 
-void Func_08043b70(void);
+void FileList_PlacePartySprites(void);
 
 extern const u8 gResource_FixedBlockBTiles[];
 
 void Text_FillCanvasBackground(void);
+
+void PartyStatus_OpenAndWait(void);
 
 #endif

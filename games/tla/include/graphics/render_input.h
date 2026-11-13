@@ -20,8 +20,6 @@ STATIC_ASSERT(sizeof(struct RenderInput) == 0x10);
 STATIC_ASSERT(offsetof(struct RenderInput, width) == 8);
 STATIC_ASSERT(offsetof(struct RenderInput, x) == 12);
 
-void Window_CopyTilemapRegion(const struct RenderInput *window,
-                              const void *source);
 void Window_SetTileAttributeRect(const struct RenderInput *window, s32 x, s32 y,
                                  s32 width, s32 height, u32 field);
 s32 WindowSprite_CreateAbilityIcon(struct RenderInput *window, s32 x, s32 y,

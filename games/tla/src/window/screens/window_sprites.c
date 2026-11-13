@@ -20,7 +20,7 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 flags,
 
   output = WindowSprite_AcquireFree();
   if (output == NULL) {
-    Resource_ResetEntry((u32)slot);
+    VramCache_FreeEntry((u32)slot);
     return NULL;
   }
   x = offsetX + (s16)input->x * 8 + 8;
@@ -63,7 +63,7 @@ struct WindowSprite *WindowSprite_CreateLoaded(s32 arg0, s32 arg1,
   s32 no;
   struct WindowSprite *result;
 
-  no = Resource_FindFreeEntry();
+  no = VramCache_FindFreeEntry();
   result = NULL;
   if (no != 0x60) {
     Icon_CopyResourceToSlot(arg0, arg1, no);
@@ -79,7 +79,7 @@ struct WindowSprite *WindowSprite_CreateWithTransform(s32 arg0,
   s32 unused;
   struct WindowSprite *result;
 
-  count = Resource_FindFreeEntry();
+  count = VramCache_FindFreeEntry();
   if (count == 0x60) {
     return NULL;
   }
@@ -92,8 +92,8 @@ struct WindowSprite *WindowSprite_CreateWithTransform(s32 arg0,
 /// Loads the character entry for the key into the given side, or into a free
 /// one (resource id 999) when the side is 2 or more, and creates its output
 /// with that side's palette (14 + side).
-struct WindowSprite *CreateSideObject(s32 objectKind, s32 position, s32 side,
-                                      s32 arg3, s32 arg4, s32 arg5) {
+struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
+                                     s32 arg3, s32 arg4, s32 arg5) {
   struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   struct WindowSprite *object = 0;
   s32 first;
@@ -187,7 +187,8 @@ void ScanlineWindow_FillSpans(void *dst) {
   } else {
     void (*code)(void *, void *);
 
-    RamCode_Load(code, Tile_BuildCellPicturesCode, Tile_BuildCellPicturesCodeSize);
+    RamCode_Load(code, Tile_BuildCellPicturesCode,
+                 Tile_BuildCellPicturesCodeSize);
     code(dst, scene + 8);
     /* FAKEMATCH(dead): an empty once-only block after the call keeps the second
        argument's add ahead of the first argument's copy; without it, 2 of 50
@@ -198,8 +199,8 @@ void ScanlineWindow_FillSpans(void *dst) {
   }
 }
 
-void BgScreen_FillRect(s32 unused0, s32 unused1, u32 width,
-                                  u32 height, s32 value) {
+void BgScreen_FillRect(s32 unused0, s32 unused1, u32 width, u32 height,
+                       s32 value) {
   u32 row = 0;
   s16 *dst = (s16 *)0x06002000;
 

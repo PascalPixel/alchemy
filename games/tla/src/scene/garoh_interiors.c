@@ -113,7 +113,7 @@ extern struct Trigger gGarohInteriors_HouseMorningTriggers[];
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Map_CenterOnFollowedPoint(void);
-void Graphics_EnableObjLayerAndCallbacks(void);
+void ActorSystem_SuspendProjectionAndShowSprites(void);
 void ActorSystem_ResumeProjectionAndHideLayers(void);
 void Event_End(void);
 void Shop_Run(s32 slot, s32 actor);
@@ -240,7 +240,7 @@ void GarohInteriors_TalkToHealer(void) {
 
   facing = ((Actor_GetById(gMainRoutineWork.currentOwner)->facing) + 0x2000) &
            ~0x3fff;
-  Actor_SetAngleToward(ACTOR_HEALER, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(ACTOR_HEALER, gMainRoutineWork.currentOwner, 0);
   if ((u16)facing == FACING_NORTH) {
     Sanctum_Run(ACTOR_HEALER);
   } else {
@@ -437,9 +437,9 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_DISAPPOINTED_TRAVELERS_BED)->y = 0;
       Actor_GetById(ACTOR_STUBBORN_TRAVELERS_BED)->motionFlags = 0;
       Actor_GetById(ACTOR_STUBBORN_TRAVELERS_BED)->y = 0;
-      Func_080d3928(ACTOR_DISAPPOINTED_TRAVELER, 0xe000);
+      Actor_SetSpriteRotationById(ACTOR_DISAPPOINTED_TRAVELER, 0xe000);
       Actor_SetSingleChildFlags(Actor_GetById(ACTOR_DISAPPOINTED_TRAVELER), 0);
-      Func_080d3928(ACTOR_STUBBORN_TRAVELER, turn);
+      Actor_SetSpriteRotationById(ACTOR_STUBBORN_TRAVELER, turn);
       Actor_SetSingleChildFlags(Actor_GetById(ACTOR_STUBBORN_TRAVELER), 0);
     }
     if (gMainRoutineWork.entrance == 99 &&
@@ -449,7 +449,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Test(FLAG_GAROH_SECRET_SHARED))
     GameFlag_ClearBit(FLAG_GAROH_NIGHT);
   if (GameFlag_Test(FLAG_GAROH_NIGHT))
-    Map_SetShownLayers(0xa00);
+    MapGrid_SetShownLayers(0xa00);
   return 0;
 }
 
@@ -462,10 +462,10 @@ void GarohInteriors_WakeAtInn(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_Wait(30);
-  Graphics_EnableObjLayerAndCallbacks();
+  ActorSystem_SuspendProjectionAndShowSprites();
   Sound_Play(86);
   // "Felix and party stayed the night at the inn."
-  Func_0803ce64((s32)MsgGarohInteriors33, 0, 0);
+  FieldMessage_ShowCentered((s32)MsgGarohInteriors33, 0, 0);
   Event_Wait(20);
   ActorSystem_ResumeProjectionAndHideLayers();
   Map_CenterOnFollowedPoint();

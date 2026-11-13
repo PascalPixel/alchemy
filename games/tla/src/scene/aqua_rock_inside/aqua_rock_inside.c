@@ -15,7 +15,7 @@
 #include "module/tla.h"
 #include "text/msg_ids.h"
 
-void Func_0200033c(void) { Func_080d2b4c(10, 32); }
+void Func_0200033c(void) { Field_RequestDjinnBattle(10, 32); }
 
 #include "battle.h"
 #include "field.h"
@@ -119,7 +119,7 @@ void Func_020004bc(s32 unused, s32 id) {
   s32 objectId = id;
 
   layer = (s32 *)(map + 0x140);
-  Actor_SetSpriteColor(Actor_Get(objectId), 0);
+  FieldActor_SetSpriteColor(Actor_Get(objectId), 0);
   Func_02001e78(objectId);
   Actor_SetAnimation(objectId, 3);
   layer[3] -= 0x200000;
@@ -154,7 +154,7 @@ void Func_02000574(s32 unused, s32 id) {
   s32 i;
 
   layer = (s32 *)(map + 0x140);
-  Actor_SetSpriteColor(Actor_Get(id), 0);
+  FieldActor_SetSpriteColor(Actor_Get(id), 0);
   Func_02001e78(id);
   Actor_SetAnimation(id, 3);
   layer[3] -= 0x200000;
@@ -218,7 +218,7 @@ void Func_02000644(s32 unused, s32 id) {
 
 void Func_02000690(void) {
   Actor_SetAnimation(8, 4);
-  Actor_SetSpriteColor(Actor_Get(8), 6);
+  FieldActor_SetSpriteColor(Actor_Get(8), 6);
   Func_02003d14_(123, 15, 5, 3, 110, 15);
   ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->value16a = 88;
 }
@@ -256,7 +256,7 @@ void Func_020007a8(void) {
   struct Actor *object;
   struct FieldSpriteFlags *sprite;
 
-  Actor_ShowItemIconById(10, 0x1c8);
+  FieldActor_ShowItemIconById(10, 0x1c8);
   object = Actor_Get(20);
   sprite = object->sprite;
   sprite->flag0 = 1;
@@ -319,7 +319,7 @@ cell:
   Event_PlaySound(80);
   Sound_WaitForBgmRestore();
   Event_End();
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   Event_SetFlag(0x95d);
   Event_SetFlag(0x143);
 }
@@ -440,7 +440,7 @@ void Func_02000c28(s32 unused, s32 id) {
   s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x140);
   s32 i;
 
-  Actor_SetSpriteColor(Actor_Get(9), 5);
+  FieldActor_SetSpriteColor(Actor_Get(9), 5);
   Func_02001e78(id);
   Actor_SetAnimation(id, 3);
   layer[3] -= 0x200000;
@@ -567,7 +567,7 @@ void Func_02000e18(s32 value) {
   Func_02003cc4(object, 18);
   Event_PlaySound(215);
   System_Wait(13);
-  Animation_ApplyChildValues(object, 9);
+  Actor_SetSpriteColorMode(object, 9);
   Func_02003cc4(object, 28);
   Event_PlaySound(0x236);
   for (i = 0; i <= 59; i++) {
@@ -614,7 +614,7 @@ void Func_02000ecc(s32 unused, s32 id) {
     i++;
     if (i <= 15)
       goto place;
-    DisplayBlend_EnableRunScript();
+    BlendScript_Suspend();
     // A goto loop too: here a for loop hoists the queue's and the register's
     // addresses (differ 24).
     i = 12;
@@ -626,7 +626,7 @@ void Func_02000ecc(s32 unused, s32 id) {
       goto blend;
     MapGrid_CopyCellAttributes(105, 41, 12, 13, 41, 41);
     MapGrid_CopyCellsLayered(105, 105, 12, 13, 105, 41);
-    DisplayBlend_DisableRunScript();
+    BlendScript_Resume();
     Event_End();
     Event_SetFlag(0x238);
   }
@@ -682,7 +682,7 @@ void Func_020010ec(void) {
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered(MsgCheckedThePsynergy, 1);
   Event_PlaySound(126);
-  BattleParty_ApplyDrain(999, 0);
+  Party_AddPp(999, 0);
   FieldEvent_Wait(10);
   Event_ClearFlag(0x142);
   Message_ShowCentered(MsgCheckedThePsynergy + 1, 1);
@@ -723,7 +723,7 @@ void Func_020011d4(s32 unused, s32 id) {
   s32 i;
 
   layer = (s32 *)(map + 0x140);
-  Actor_SetSpriteColor(Actor_Get(id), 5);
+  FieldActor_SetSpriteColor(Actor_Get(id), 5);
   Func_02001e78(id);
   Actor_SetAnimation(id, 3);
   layer[3] -= 0x200000;
@@ -792,11 +792,11 @@ void Func_02001364(struct Actor *object) {
   child->scaleY = 0x6666;
   child->scaleX = 0x6666;
   child->motionFlags = 0;
-  Actor_SetSpriteColor(child, 2);
+  FieldActor_SetSpriteColor(child, 2);
   Scene_SetActorSpritePriority(child, 1);
   Func_02003cc4(child, 1);
   Actor_SetSingleChildFlags(child, 0);
-  Animation_SetStateFlags(child, 1);
+  Actor_SetBlendMode(child, 1);
   Actor_StartScript(child, gData_02003fd8);
 }
 
@@ -868,13 +868,14 @@ void Func_02001620(s32 firstId, s32 secondId) {
   Sound_Play(78);
   Event_Wait(30);
   FieldCamera_SetSpeed(0x8000, 0x1000);
-  Camera_MoveWithinMapBounds((first->x >> 16) << 16, (first->y >> 16) << 16,
-                             (first->z >> 16) << 16, 1);
+  FieldCamera_MoveWithinMapBounds((first->x >> 16) << 16,
+                                  (first->y >> 16) << 16,
+                                  (first->z >> 16) << 16, 1);
   Sound_Play(141);
   MapGrid_SetShake(0x20000, 0x20000, 0x10000);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   first->motionFlags = 0;
   first->acceleration = 0x3333;
   first->speedLimit = 0x3333;
@@ -893,11 +894,11 @@ burst:
   object->speedLimit = 0x80000;
   object->acceleration = 0x3333;
   object->motionFlags = 0;
-  Actor_SetPartAttribute(object, 2);
+  Actor_SetSpriteColor(object, 2);
   Scene_SetActorSpritePriority(object, 1);
   Func_02003cc4(object, 7);
   Actor_SetSingleChildFlags(object, 0);
-  Animation_SetStateFlags(object, 1);
+  Actor_SetBlendMode(object, 1);
   Actor_StartScript(object, gData_02003fe8);
   REG_BLDALPHA = 0x1004;
   wait(2);
@@ -930,11 +931,11 @@ spiral:
   spark->unk4c = 0x7a0000;
   spark->watchedObject = second;
   ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
-  Actor_SetPartAttribute(spark, 2);
+  Actor_SetSpriteColor(spark, 2);
   Scene_SetActorSpritePriority(spark, 1);
   Func_02003cc4(spark, 7);
   Actor_SetSingleChildFlags(spark, 0);
-  Animation_SetStateFlags(spark, 1);
+  Actor_SetBlendMode(spark, 1);
   FieldVector_AddPolarOffset(spark->unk4c, spark->timer, &spark->x);
   Actor_StartScript(spark, gData_02004004);
   if (i == 3) {
@@ -965,10 +966,10 @@ column:
   riser->watchedObject = second;
   riser->motionFlags = (u16)0;
   riser->priorityFlags = 1;
-  Actor_SetPartAttribute(riser, 2);
+  Actor_SetSpriteColor(riser, 2);
   Func_02003cc4(riser, 7);
   Actor_SetSingleChildFlags(riser, 0);
-  Animation_SetStateFlags(riser, 1);
+  Actor_SetBlendMode(riser, 1);
   Actor_StartScript(riser, gData_02004014);
   i += 2;
   if (i != 32)
@@ -976,21 +977,21 @@ column:
   Sound_Play(220);
   wait(50);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(8);
+  PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(firstId, 0);
   Actor_ConfigureSpriteColor(secondId, 0);
   Sound_Play(574);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(80);
+  PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(firstId, gData_0200407c);
   Actor_SetMovementTypeById(secondId, gData_020040ac);
   second->update = Actor_EmitBubbles;
   wait(120);
   second->update = 0;
   Sound_Play(390);
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   wait(1);
 }
 
@@ -1204,7 +1205,7 @@ void Func_02001f04(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
-  Animation_ApplyChildValues(object, 9);
+  Actor_SetSpriteColorMode(object, 9);
   *flags = 0;
   object->y = 0x500000;
   speed = 0x30000;
@@ -1221,7 +1222,7 @@ fall:
   if (i >= 0)
     goto fall;
   Func_02002bd4(object);
-  Animation_ApplyChildValues(object, 0);
+  Actor_SetSpriteColorMode(object, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
   *flags = saved;
   object->velocityY = 0x80000;
@@ -1270,19 +1271,19 @@ s32 Scene_Initialize(void) {
       Call1((void (*)())Func_02001e78, 8);
       Actor_SetAnimation(8, 3);
     } else {
-      Actor_SetSpriteColor(Actor_GetById(8), 6);
+      FieldActor_SetSpriteColor(Actor_GetById(8), 6);
     }
     if (GameFlag_Test(0x231)) {
       Call1((void (*)())Func_02001e78, 9);
       Actor_SetAnimation(9, 3);
     } else {
-      Actor_SetSpriteColor(Actor_GetById(9), 6);
+      FieldActor_SetSpriteColor(Actor_GetById(9), 6);
     }
   } else if (scene == (s32)&SceneId_Ov67cRoom2) {
     if (GameFlag_Test(0x240)) {
       MapGrid_CopyCellsLayered(118, 15, 5, 32, 110, 15);
       MapGrid_CopyCellAttributes(59, 16, 5, 32, 46, 16);
-      Actor_SetSpriteColor(Actor_GetById(8), 6);
+      FieldActor_SetSpriteColor(Actor_GetById(8), 6);
     } else {
       Call1((void (*)())Func_02001e78, 8);
       Actor_SetAnimation(8, 3);
@@ -1305,12 +1306,12 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(11, 3);
     if ((u32)(entrance - 6) <= 1) {
       if (GameFlag_Test(0x249)) {
-        Actor_SetSpriteColor(Actor_GetById(9), 5);
+        FieldActor_SetSpriteColor(Actor_GetById(9), 5);
         Call1((void (*)())Func_02001e78, 9);
         Actor_SetAnimation(9, 3);
         Func_02000b5c();
       } else {
-        Actor_SetSpriteColor(Actor_GetById(9), 6);
+        FieldActor_SetSpriteColor(Actor_GetById(9), 6);
       }
     }
     Actor_GetById(13)->riseCounter = 1;
@@ -1345,11 +1346,11 @@ s32 Scene_Initialize(void) {
       Func_02001f04();
   } else if (scene == (s32)&SceneId_Ov67cRoom9) {
     if (GameFlag_Test(0x24b)) {
-      Actor_SetSpriteColor(Actor_GetById(9), 5);
+      FieldActor_SetSpriteColor(Actor_GetById(9), 5);
       Func_02001e78(9);
       Actor_SetAnimation(9, 3);
     } else {
-      Actor_SetSpriteColor(Actor_GetById(9), 6);
+      FieldActor_SetSpriteColor(Actor_GetById(9), 6);
     }
     Actor_GetById(10)->riseCounter = 1;
     Actor_GetById(11)->riseCounter = 1;
@@ -1692,7 +1693,7 @@ void Func_02002ca4(void) {
     Actor_SetAttachedEffect(id, 258);
     FieldActor_SetMoveTarget(actor, actor->x, actor->y, actor->z + 0x80000);
     Func_02003cc4(actor, 49);
-    Actor_WaitForMove(actor);
+    FieldActor_WaitForMove(actor);
     do {
       System_Wait(1);
     } while (actor->y != actor->terrainHeight);
@@ -1830,8 +1831,8 @@ void Func_02003278(void) {
 
   Iwram_ClearWordsEntry(&gData_0200536c, 0x604);
   buffer = MemAlloc_(0xc80);
-  Resource_DecodeType01(gData_0200414c, buffer);
-  gData_0200536c.vramEntry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(gData_0200414c, buffer);
+  gData_0200536c.vramEntry = VramCache_FindFreeEntry();
   Vram_Load(gData_0200536c.vramEntry, 0xc80, buffer);
   Heap_Release(buffer);
   priority = 0x41c;
@@ -2018,8 +2019,8 @@ void Func_02003628(void) {
 
   Iwram_ClearWordsEntry(&gData_02005970, 0x3a4);
   buffer = MemAlloc_(0x400);
-  Resource_DecodeType01(gData_02004351, buffer);
-  gData_02005970.vramEntry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(gData_02004351, buffer);
+  gData_02005970.vramEntry = VramCache_FindFreeEntry();
   Vram_Load(gData_02005970.vramEntry, 0x400, buffer);
   Heap_Release(buffer);
   priority = 0x41c;

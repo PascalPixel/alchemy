@@ -40,7 +40,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 #include "event_inline.h"
 s32 Func_02001b1c();
 
-void Func_02000054(void) { Call7(Func_02001b1c, 0x38, 0, 4, 2, 0x46, 0x13, 1); }
+void Func_02000054(void) {
+  Call7(Func_02001b1c, 0x38, 0, 4, 2, 0x46, 0x13, 1);
+}
 
 void Func_02000074(void) { Call7(Func_02001b1c, 0x38, 0, 4, 2, 0x45, 0x16, 1); }
 

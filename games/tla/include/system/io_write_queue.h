@@ -28,25 +28,25 @@ extern struct IoWriteQueue gIoWriteQueue;
 /// Clears the value's bits in the register instead of storing it.
 #define IO_WRITE_CLEAR (8 << 16)
 
-void QueueIoWriteDelay1(u32 address, u32 value);
-void QueueIoWriteDelay2(u32 address, u32 value);
-void QueueIoWriteDelay3(u32 address, u32 value);
-void QueueIoWriteDelay5(u32 address, u32 value);
-void QueueIoWriteDelay6(u32 address, u32 value);
-void QueueIoWriteDelay7(u32 address, u32 value);
-void QueueIoWriteDelay9(u32 address, u32 value);
-void QueueIoWriteDelay10(u32 address, u32 value);
-void QueueIoWriteDelay11(u32 address, u32 value);
+void IoWriteQueue_Store8(u32 address, u32 value);
+void IoWriteQueue_Store16(u32 address, u32 value);
+void IoWriteQueue_Store32(u32 address, u32 value);
+void IoWriteQueue_SetBits8(u32 address, u32 value);
+void IoWriteQueue_SetBits16(u32 address, u32 value);
+void IoWriteQueue_SetBits32(u32 address, u32 value);
+void IoWriteQueue_ClearBits8(u32 address, u32 value);
+void IoWriteQueue_ClearBits16(u32 address, u32 value);
+void IoWriteQueue_ClearBits32(u32 address, u32 value);
 void IoWriteQueue_FlushPending(void);
 
 /// Disables interrupts to enqueue one I/O write; a full 32-entry queue is
 /// ignored. address: destination, value: value to write, control: delay frames
 /// << 16 or a DMA control word.
 // The body is braces alone: as do { } while (0), 15 objects of tla-en differ,
-// the nine writers' among them (2 of 25 instructions in QueueIoWriteDelay1).
+// the nine writers' among them (2 of 25 instructions in IoWriteQueue_Store8).
 // The count is read and written as *&q->count, a pointer to the member: as
 // q->count, the struct store of the new count is scheduled before the first
-// entry word (4 of 25 instructions in QueueIoWriteDelay1 in tla-en).
+// entry word (4 of 25 instructions in IoWriteQueue_Store8 in tla-en).
 #define IO_WRITE_QUEUE_PUSH(address, value, control)                           \
   {                                                                            \
     struct IoWriteQueue *q = &gIoWriteQueue;                                   \

@@ -51,7 +51,7 @@ s32 Func_02000c28(struct Actor *object) {
   return 0;
 }
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 void Func_02000cc8(void) {
   struct Actor *left = Actor_Get(9);
@@ -75,16 +75,16 @@ void Func_02000cc8(void) {
     rider->y += 0x1eb80;
     rider->x += -0x28f40;
     sprite->rotation += 0x800;
-    Animation_ApplyChildValues(Actor_Get(9), 4);
-    Animation_ApplyChildValues(Actor_Get(11), 4);
+    Actor_SetSpriteColorMode(Actor_Get(9), 4);
+    Actor_SetSpriteColorMode(Actor_Get(11), 4);
   }
   if (Event_GetFlag(0xa0b)) {
     right->y += 0x66640;
     rider->y += 0x1eb80;
     rider->x += 0x28f40;
     sprite->rotation -= 0x800;
-    Animation_ApplyChildValues(Actor_Get(10), 4);
-    Animation_ApplyChildValues(Actor_Get(12), 4);
+    Actor_SetSpriteColorMode(Actor_Get(10), 4);
+    Actor_SetSpriteColorMode(Actor_Get(12), 4);
   }
   if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {
     left->y += 0x199900;

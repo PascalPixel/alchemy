@@ -30,14 +30,14 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Resource_DecodeType01
+	.global Decompress_TaggedLz
 	.thumb_func
-Resource_DecodeType01:
-	overlay_veneer Resource_DecodeType01Far
-	.global Resource_FindFreeEntry
+Decompress_TaggedLz:
+	overlay_veneer Decompress_TaggedLzFar
+	.global VramCache_FindFreeEntry
 	.thumb_func
-Resource_FindFreeEntry:
-	overlay_veneer Resource_FindFreeEntryFar
+VramCache_FindFreeEntry:
+	overlay_veneer VramCache_FindFreeEntryFar
 	.global Window_LoadGraphics
 	.thumb_func
 Window_LoadGraphics:
@@ -46,10 +46,10 @@ Window_LoadGraphics:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global Fade_ToBlack
+	.global ScreenFade_ToBlack
 	.thumb_func
-Fade_ToBlack:
-	overlay_veneer Fade_ToBlackFar
+ScreenFade_ToBlack:
+	overlay_veneer ScreenFade_ToBlackFar
 	.global Serial_Initialize
 	.thumb_func
 Serial_Initialize:
@@ -73,11 +73,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Window_Create
 	.thumb_func
 Window_Create:
@@ -127,11 +127,11 @@ FileList_SelectAction:
 	.global IconMenu_ChooseSendOption
 	.thumb_func
 IconMenu_ChooseSendOption:
-	overlay_veneer Func_080381f8
-	.global Func_0803ce64
+	overlay_veneer IconMenu_ChooseSendOptionFar
+	.global FieldMessage_ShowCentered
 	.thumb_func
-Func_0803ce64:
-	overlay_veneer Func_08038210
+FieldMessage_ShowCentered:
+	overlay_veneer FieldMessage_ShowCenteredFar
 	.global WindowSprite_RedrawSavedRect
 	.thumb_func
 WindowSprite_RedrawSavedRect:
@@ -143,27 +143,27 @@ Window_SetTilemapEntry:
 	.global Func_020022d0
 	.thumb_func
 Func_020022d0:
-	overlay_veneer Func_080382c0
+	overlay_veneer Save_ToChosenFileFar
 	.global Save_ChooseAndLoadFile
 	.thumb_func
 Save_ChooseAndLoadFile:
-	overlay_veneer Func_080382c8
+	overlay_veneer Save_ChooseAndLoadFileFar
 	.global Save_CopyFile
 	.thumb_func
 Save_CopyFile:
-	overlay_veneer Func_080382d0
+	overlay_veneer Save_CopyFileFar
 	.global Save_EraseSelectedFile
 	.thumb_func
 Save_EraseSelectedFile:
-	overlay_veneer Func_080382d8
+	overlay_veneer Save_EraseSelectedFileFar
 	.global Func_020022f0
 	.thumb_func
 Func_020022f0:
-	overlay_veneer Func_080382f0
+	overlay_veneer Save_ScanFileSummariesFar
 	.global Func_020022f8
 	.thumb_func
 Func_020022f8:
-	overlay_veneer Func_080382f8
+	overlay_veneer NameEntry_EditMemberNameFar
 	.global Resource_CopyFixedBlockB
 	.thumb_func
 Resource_CopyFixedBlockB:
@@ -172,10 +172,10 @@ Resource_CopyFixedBlockB:
 	.thumb_func
 Resource_CopyFixedBlockA:
 	overlay_veneer Resource_CopyFixedBlockAFar
-	.global Func_0803f9c0
+	.global WindowColor_Apply
 	.thumb_func
-Func_0803f9c0:
-	overlay_veneer Func_08038348
+WindowColor_Apply:
+	overlay_veneer WindowColor_ApplyFar
 	.global YesNoMenu_Run
 	.thumb_func
 YesNoMenu_Run:
@@ -207,7 +207,7 @@ PartyInventory_Add:
 	.global Func_02002350
 	.thumb_func
 Func_02002350:
-	overlay_veneer Func_080ad090
+	overlay_veneer MainRoutineWork_InitializeDefaultsFar
 	.global Party_AddMember
 	.thumb_func
 Party_AddMember:
@@ -241,7 +241,7 @@ BuildStamp_GetTime:
 	.global InventorySnapshot_Restore
 	.thumb_func
 InventorySnapshot_Restore:
-	overlay_veneer Func_080ad2e0
+	overlay_veneer InventorySnapshot_RestoreFar
 	.global Func_02002398
 	.thumb_func
 Func_02002398:
@@ -274,10 +274,10 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_080d295c
+	.global FieldYesNo_Ask
 	.thumb_func
-Func_080d295c:
-	overlay_veneer Func_080c8558
+FieldYesNo_Ask:
+	overlay_veneer FieldYesNo_AskFar
 	.global Func_020023e0
 	.thumb_func
 Func_020023e0:
@@ -285,19 +285,19 @@ Func_020023e0:
 	.global StatusScreen_Run
 	.thumb_func
 StatusScreen_Run:
-	overlay_veneer Func_080f8010
+	overlay_veneer StatusScreen_RunFar
 	.global MenuCursor_Advance
 	.thumb_func
 MenuCursor_Advance:
-	overlay_veneer Func_08108030
+	overlay_veneer MenuCursor_AdvanceFar
 	.global MenuCursor_Set
 	.thumb_func
 MenuCursor_Set:
-	overlay_veneer Func_08108040
+	overlay_veneer MenuCursor_SetFar
 	.global MenuCursor_SetPositionImmediate
 	.thumb_func
 MenuCursor_SetPositionImmediate:
-	overlay_veneer Func_08108048
+	overlay_veneer MenuCursor_SetPositionImmediateFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

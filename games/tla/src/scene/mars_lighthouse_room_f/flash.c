@@ -52,7 +52,7 @@ struct RideWork {
   void *handle;
 };
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Func_020041ec(void *handle);
 void Func_0200236c(struct Actor *object, s32 unused);
 
@@ -102,7 +102,7 @@ s32 Func_0200297c(void) {
     ((s32 (*)(s32, s32))Func_02002800)(-10, 0);
 #endif
     actor = Actor_Get(main->currentOwner);
-    work = (struct Work020023c4 *)(gData_020023c4 + 0x188);
+    work = (struct Work020023c4 *)(gInventorySnapshot + 0x188);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     actor->update = Func_02002954;
@@ -210,7 +210,7 @@ s32 Func_0200297c(void) {
   done:
 #endif
     actor->update = 0;
-    Animation_ApplyChildValues(actor, 0);
+    Actor_SetSpriteColorMode(actor, 0);
   }
   work->unk04 = 0;
 }
@@ -219,7 +219,7 @@ s32 Func_0200297c(void) {
 #endif
 
 void Func_02002b88(void) {
-  if (((struct RideWork *)(gData_020023c4 + 0x188))->active)
+  if (((struct RideWork *)(gInventorySnapshot + 0x188))->active)
     Func_0200297c();
 }
 
@@ -263,7 +263,7 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
 #endif
   FieldCamera_SetSpeed(0x70000, 0xe000);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
-  ride = (struct RideWork *)(gData_020023c4 + 0x188);
+  ride = (struct RideWork *)(gInventorySnapshot + 0x188);
   Flag_Set(0x106);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -286,14 +286,14 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
   }
   FieldEvent_Wait(30);
   leader->update = 0;
-  Animation_ApplyChildValues(leader, 0);
+  Actor_SetSpriteColorMode(leader, 0);
   ride->active = 0;
 }
 
 DEFINE_RIDE_IF_ACTIVE(MarsLighthouseRoomF_ContinueSlide, MarsLighthouseRoomF_SlideOnIce)
 
 s32 Func_02002cfc(void) {
-  return ((struct RideWork *)(gData_020023c4 + 0x188))->active;
+  return ((struct RideWork *)(gInventorySnapshot + 0x188))->active;
 }
 
 #include "iwram_call.h"
@@ -334,9 +334,9 @@ struct Work {
 };
 
 extern u8 gData_02005dbc[];
-s32 Resource_ResetEntry(u32 slot);
+s32 VramCache_FreeEntry(u32 slot);
 
-#define WORK ((struct Work *)(gData_020023c4 + 0x188))
+#define WORK ((struct Work *)(gInventorySnapshot + 0x188))
 
 void Func_02002d08(struct Actor *actor) {
   struct Work *work = WORK;
@@ -385,10 +385,10 @@ void Func_02002d08(struct Actor *actor) {
       object->bounce = Q16_ONE / 2;
       sprite = object->sprite;
       source = work->owner->sprite;
-      Resource_ResetEntry(sprite->vramBlock);
+      VramCache_FreeEntry(sprite->vramBlock);
       sprite->retainCacheEntry = 1;
       sprite->vramBlock = work->vramBlock;
-      ResourceMetadata_ClearRecord(sprite->record);
+      SpriteAnimation_Clear(sprite->record);
       sprite->record = NULL;
       sprite->unk1b = 0;
       sprite->unk14[0] = source->unk14[0];
@@ -417,11 +417,16 @@ void Func_02002f6c(struct Actor *object) {
 #define MapLayer MapLayer__s2f80
 #include "map.h"
 #undef MapLayer
-/* VIEW(s2f80): tag struct MapLayer as struct MapLayer__s2f80; room.h has another definition; not tried: struct MapLayer__s2f80 was not found. */
+/* VIEW(s2f80): tag struct MapLayer as struct MapLayer__s2f80; room.h has
+ * another definition; not tried: struct MapLayer__s2f80 was not found. */
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-/* VIEW(s2f80): tag struct Work020023c4 as struct Work020023c4__s2f80; flash.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/flash.c:591: structure has no member named `unk6c'. */
+/* VIEW(s2f80): tag struct Work020023c4 as struct Work020023c4__s2f80; flash.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_f/flash.c:591: structure has no
+ * member named `unk6c'. */
 struct Work020023c4__s2f80 {
   u8 unk00[4];
   u16 unk04;
@@ -441,7 +446,7 @@ struct WorkEvent {
 s32 Func_020054d8(s32 terrain, s32 x, s32 z);
 void Func_02002d08(struct Actor *actor);
 void Func_02002e8c(s32 x, s32 y, s32 z, s32 speed);
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 
 DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002f80, Work020023c4__s2f80, Func_020054d8,
     Func_02002e8c, Func_02002d08)

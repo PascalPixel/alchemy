@@ -3,9 +3,9 @@
 	.global gParty_PairResolveRules
 gParty_PairResolveRules:
 	.incbin "games/tla/src/field/event_commands/pair_rules.table"
-@ Func_080ca4a8 reads one word at a time; 0 terminates (bit 31 is a marker).
-	.global gData_080ef984
-gData_080ef984:
+@ BattleBackground_SelectForMap reads one word at a time; 0 terminates (bit 31 is a marker).
+	.global gScene_BattleBackgroundRules
+gScene_BattleBackgroundRules:
 	.4byte 0x80000000 + 72, 4, 0x80000000 + 74, 6
 	.4byte 7, 0x80000000 + 73, 8, 0x80000000 + 75
 	.4byte 14, 15, 16, 17

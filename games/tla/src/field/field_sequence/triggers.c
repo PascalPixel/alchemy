@@ -70,7 +70,7 @@ s32 GameFlag_IsConditionActive(s32 condition) {
 /// gMainRoutineWork.renderMode is 2.
 // XXX: what kinds 8 and 9 are; the triggers of the scenes that use them would
 // settle it.
-struct TriggerView *Func_080ccd78(s32 kind, s32 target) {
+struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct TriggerView *trigger = work->triggers;
   s32 flags;
@@ -140,8 +140,11 @@ struct FxGroup {
 
 extern struct DescriptorEntry gData_080eff28[];
 
-/* VIEW(field_sequence): routine Func_0814ea58 as void Func_0814ea58(void *effect, s32 mode); module/battle_effect/battle_effect.h has void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode). */
-extern void Func_0814ea58__field_sequence(void *effect, s32 mode) __asm__("Func_0814ea58");
+/* VIEW(field_sequence): routine Func_0814ea58 as void Func_0814ea58(void
+ * *effect, s32 mode); module/battle_effect/battle_effect.h has void
+ * Func_0814ea58(struct BattleEffectArgument *effect, s32 mode). */
+extern void Func_0814ea58__field_sequence(void *effect,
+                                          s32 mode) __asm__("Func_0814ea58");
 
 /// Unused: runs the loaded overlay's initialize entry; nothing calls it.
 UNUSED void Overlay_CallInitialize(void) { ((s32 (*)(void))gOverlayArea[1])(); }
@@ -150,7 +153,7 @@ UNUSED void Overlay_CallInitialize(void) { ((s32 (*)(void))gOverlayArea[1])(); }
 /// has stopped (gMainRoutineWork.pausedObject), its kind 7 trigger if it has
 /// one, the event for talking to it while it is stopped.
 void *Scene_FindActorTalkTrigger(s32 id) {
-  void *found = Func_080ccd78(0, id);
+  void *found = Scene_FindTrigger(0, id);
   struct MainRoutineWork *party = &gMainRoutineWork;
   void *event;
   s32 stopped;
@@ -158,7 +161,7 @@ void *Scene_FindActorTalkTrigger(s32 id) {
   stopped = party->pausedObject;
   event = found;
   if (stopped == id) {
-    void *alt = Func_080ccd78(7, stopped);
+    void *alt = Scene_FindTrigger(7, stopped);
 
     if (alt != NULL)
       return alt;
@@ -169,7 +172,7 @@ void *Scene_FindActorTalkTrigger(s32 id) {
 s32 BattleEffect_GetFlags(s32 id);
 void Actor_TurnToFaceEachOther(s32 first, s32 second, s32 mode);
 
-s32 Func_080ccec8(s32 id) {
+s32 Scene_TalkToActor(s32 id) {
   struct ActorPlacement *placement;
   s32 result;
   struct Actor *object;
@@ -241,10 +244,9 @@ s32 Func_080ccec8(s32 id) {
       busy = &((u8 *)object)[91];
       *busy = 1;
       if (silent == 0)
-        FieldMessage_ShowFar(
-            found + (s32)&MsgKey0dc4, 1);
-      if (gMainRoutineWork.scene == (s32)&SceneId_VenusLighthouse && noHint == 0 &&
-          !GameFlag_Test(flag)) {
+        FieldMessage_ShowFar(found + (s32)&MsgKey0dc4, 1);
+      if (gMainRoutineWork.scene == (s32)&SceneId_VenusLighthouse &&
+          noHint == 0 && !GameFlag_Test(flag)) {
         MessageArgument_PushFar(contents, 2);
         FieldMessage_ShowFar((s32)&MsgKey15b5, 1);
       }
@@ -261,12 +263,12 @@ s32 Func_080ccec8(s32 id) {
       if (type == 130) {
         struct Actor *trap = ObjectEvent_GetObject(index);
 
-        trap->update = Marker_MoveLeaderAwayFromEmitter;
+        trap->update = ItemDisplay_EmitSparkles;
         ItemDisplay_RaiseAboveLeader(trap);
         Sound_PlayFar(83);
         MessageArgument_PushFar(contents, 5);
         FieldMessage_ShowFar((s32)&MsgKey0e17, 3);
-        BattleParty_ApplyDrain(1999, 0);
+        Party_AddPp(1999, 0);
         PartyStatus_CreateWindowFar(1);
         Sound_PlayFar(126);
         if (Party_CountMembersFar() == 1)
@@ -289,7 +291,7 @@ s32 Func_080ccec8(s32 id) {
         Event_ResolvePendingActions(0);
         Func_080ea14c(index);
         Func_08038340(contents);
-        Func_080ad2f8(contents);
+        Class_GetSeriesFar(contents);
         ObjectEvent_Remove(index);
         if (flag != -1)
           GameFlag_SetBit(flag);
@@ -303,9 +305,9 @@ s32 Func_080ccec8(s32 id) {
           gMainRoutineWork.pendingDjinnEvent = flag | 0x1000;
         if (contents > 7)
           *(u16 *)(work + 356) =
-              Encounter_GetEnemyGroupAtSlot(105, contents - 8);
+              Encounter_GetFormationAtSlot(105, contents - 8);
         else
-          *(u16 *)(work + 356) = Encounter_GetEnemyGroupAtSlot(104, contents);
+          *(u16 *)(work + 356) = Encounter_GetFormationAtSlot(104, contents);
         gMainRoutineWork.battleRule24b = 2;
         BattleEffect_SelectBattleCue(104, contents);
         Sound_PlayFar(gMainRoutineWork.sceneCue);
@@ -323,7 +325,7 @@ s32 Func_080ccec8(s32 id) {
       if (contents & 0x8000) {
         if (type == 131) {
           shown = ObjectEvent_GetObject(index);
-          shown->update = Marker_MoveLeaderAwayFromEmitter;
+          shown->update = ItemDisplay_EmitSparkles;
         } else {
           shown = BattleEffect_StartRandomParticleEmitter(index, 0);
           wait(30);
@@ -353,7 +355,7 @@ s32 Func_080ccec8(s32 id) {
       }
       if (type == 131) {
         shown = ObjectEvent_GetObject(index);
-        shown->update = Marker_MoveLeaderAwayFromEmitter;
+        shown->update = ItemDisplay_EmitSparkles;
       } else {
         shown = BattleEffect_StartRandomParticleEmitter(index, contents);
         wait(30);
@@ -393,8 +395,7 @@ s32 Func_080ccec8(s32 id) {
       result = 0;
       goto done;
     empty:
-      FieldMessage_ShowFar(found + (s32)&MsgKey0def,
-                                             1);
+      FieldMessage_ShowFar(found + (s32)&MsgKey0def, 1);
     done:
       *busy = 0;
       Event_End();
@@ -405,21 +406,21 @@ s32 Func_080ccec8(s32 id) {
 
   if (gMainRoutineWork.pausedObject == id) {
     paused = 1;
-    talk = Func_080ccd78(7, id);
+    talk = Scene_FindTrigger(7, id);
     if (talk == NULL) {
-      talk = Func_080ccd78(0, id);
+      talk = Scene_FindTrigger(0, id);
       busyFlags = 1;
       if (talk == NULL)
         return result;
       if (talk->script >= 0x10000) {
         Event_RunMessage(id, BattleEffect_GetFlags(id) * 2 +
-                                        ((Random16() << 1) >> 16) + (s32)&MsgKey137f);
+                                 ((Random16() << 1) >> 16) + (s32)&MsgKey137f);
         goto resume;
       }
       goto check;
     }
   } else {
-    talk = Func_080ccd78(0, id);
+    talk = Scene_FindTrigger(0, id);
   check:
     if (talk == NULL)
       goto resume;
@@ -428,12 +429,12 @@ s32 Func_080ccec8(s32 id) {
     goto resume;
   if (!paused) {
     ((u8 *)object)[91] = 1;
-    Actor_SetAnimationSpeedFar(object, 0);
+    Actor_SelectAnimationFar(object, 0);
     savedAngle = object->facing;
     if ((u8)placement->talkFacing <= 1 || (s8)placement->talkFacing == 3) {
       leader = Actor_GetById(gMainRoutineWork.currentOwner);
       Actor_SetPositionAndResetMotionFar(leader, leader->x, leader->y,
-                                          leader->z);
+                                         leader->z);
       Actor_TurnToFaceEachOther(id, gMainRoutineWork.currentOwner, 0);
     }
   }
@@ -456,18 +457,19 @@ s32 Func_080ccec8(s32 id) {
       }
     }
     ((u8 *)object)[91] = 0;
-    Actor_SetAnimationSpeedFar(object, 16);
+    Actor_SelectAnimationFar(object, 16);
   }
   result = 0;
 resume:
   if (paused) {
-    BattleEffect_ResumeObject(gMainRoutineWork.pausedObject);
+    FieldPsynergy_ResumeHaltedActor(gMainRoutineWork.pausedObject);
     gMainRoutineWork.pausedObject = -1;
   }
   return result;
 }
 
-/* VIEW(field_sequence): tag struct TouchWork as struct TouchWork__field_sequence; module/field/field.h has another definition. */
+/* VIEW(field_sequence): tag struct TouchWork as struct
+ * TouchWork__field_sequence; module/field/field.h has another definition. */
 struct TouchWork__field_sequence {
   u8 unk000[0x158];
   s16 exit;
@@ -476,7 +478,7 @@ struct TouchWork__field_sequence {
 };
 
 s32 Scene_RunRaisedEvent(s32 id) {
-  u8 *descriptor = (u8 *)Func_080ccd78(6, id);
+  u8 *descriptor = (u8 *)Scene_FindTrigger(6, id);
   s32 result = -1;
 
   if (descriptor != NULL) {
@@ -496,13 +498,13 @@ s32 Scene_RunRaisedEvent(s32 id) {
 /// Runs the touch event (kind 2) of what the leader touched, or else takes its
 /// exit (kind 1): plays the exit's sound (and effect) and records where it
 /// leads. Returns 0 when something ran, -1 when there was nothing.
-// As ☀️'s Scene_RunTouchOrExit.
-s32 Scene_RunTouchOrExit(s32 value) {
+// As ☀️'s Scene_RunStepTriggerOrExit.
+s32 Scene_RunStepTriggerOrExit(s32 value) {
   struct TouchEvent *event;
   s32 handled;
   struct TouchWork__field_sequence *work;
 
-  event = Func_080ccd78(2, value);
+  event = Scene_FindTrigger(2, value);
   handled = -1;
   work = Ram_HeapSlots->eventWork;
   if (event != NULL && event->u.result != 0) {
@@ -516,7 +518,7 @@ s32 Scene_RunTouchOrExit(s32 value) {
       handled = 0;
     }
   } else {
-    event = Func_080ccd78(1, value);
+    event = Scene_FindTrigger(1, value);
     if (event != NULL) {
       switch (event->flags & 0x70) {
       case 0:
@@ -524,11 +526,11 @@ s32 Scene_RunTouchOrExit(s32 value) {
         break;
       case 32:
         Sound_PlayFar(128);
-        ObjectEffect_StartContextEffect26();
+        Exit_StartStairsUp();
         break;
       case 48:
         Sound_PlayFar(129);
-        ObjectEffect_StartContextEffect25();
+        Exit_StartStairsDown();
         break;
       case 80:
         Sound_PlayFar(123);
@@ -543,15 +545,15 @@ s32 Scene_RunTouchOrExit(s32 value) {
 }
 
 /// The field's push and button handler for keys, idle while
-/// gMainRoutineWork.pendingThird is set. After the leader has pushed for more than
-/// 12 frames: key 0x20 on a 0x80 push makes the leader jump
+/// gMainRoutineWork.pendingThird is set. After the leader has pushed for more
+/// than 12 frames: key 0x20 on a 0x80 push makes the leader jump
 /// (Actor_JumpDownLedge(owner, 6, 0)); key 0x80 runs
-/// Func_080d4d08; key 0x40 runs Func_080d50f8 or Func_080d53b8 by the push kind
-/// and clears the push state when it returns 0; key 2 with Func_080cdc74 runs
-/// the nearby talk target's kind 8 event and then the kind 9 event for keys
-/// (messages under 0x10000, otherwise a routine called with keys and the
-/// target). Always returns 0.
-s32 Func_080cd680(s32 keys) {
+/// Field_TryJumpForward; key 0x40 runs Func_080d50f8 or Func_080d53b8 by the
+/// push kind and clears the push state when it returns 0; key 2 with
+/// Func_080cdc74 runs the nearby talk target's kind 8 event and then the kind 9
+/// event for keys (messages under 0x10000, otherwise a routine called with keys
+/// and the target). Always returns 0.
+s32 Field_RunPushCell(s32 keys) {
   struct EventWorkView *work = Ram_HeapSlots->eventWork;
   s32 owner = gMainRoutineWork.currentOwner;
   struct SceneEventEntry *event;
@@ -564,7 +566,7 @@ s32 Func_080cd680(s32 keys) {
     Actor_JumpDownLedge(owner, 6, 0);
     work->blockedSteps = 0;
   }
-  if ((keys & 0x80) && work->blockedSteps > 12 && !Func_080d4d08())
+  if ((keys & 0x80) && work->blockedSteps > 12 && !Field_TryJumpForward())
     work->blockedSteps = 0;
   if ((keys & 0x40) && work->blockedSteps > 12) {
     s32 kind = work->pushKind & 0xf0;
@@ -586,7 +588,7 @@ s32 Func_080cd680(s32 keys) {
   if ((keys & 2) && work->blockedSteps > 12 && Func_080cdc74()) {
     target = Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner);
     if (target != -1) {
-      event = Func_080ccd78(8, target);
+      event = Scene_FindTrigger(8, target);
       if (event != NULL && (result = event->result) != 0) {
         if (result < 0x10000)
           Event_RunMessage(-1, result);
@@ -594,7 +596,7 @@ s32 Func_080cd680(s32 keys) {
           ((void (*)(s32, s32))result)(keys, target);
       }
       Func_080cdd80();
-      event = Func_080ccd78(9, keys);
+      event = Scene_FindTrigger(9, keys);
       if (event != NULL && (result = event->result) != 0) {
         if (result < 0x10000)
           Event_RunMessage(-1, result);
@@ -608,18 +610,19 @@ s32 Func_080cd680(s32 keys) {
 }
 
 // The search command. Collision codes 242 to 247 show their pair of messages
-// from Data_080eff22; otherwise the search event (kind 3) of the cell runs:
-// its "checked the ..." message, then its message or callback, or the
-// matching "found nothing" message. MsgKey0dc4 is the base of the "X
-// checked the Y..." lines, MsgKey0def the base of the "found nothing"
+// from gField_ExamineTriggerMessageOffsets; otherwise the search event (kind 3)
+// of the cell runs: its "checked the ..." message, then its message or
+// callback, or the matching "found nothing" message. MsgKey0dc4 is the base of
+// the "X checked the Y..." lines, MsgKey0def the base of the "found nothing"
 // lines.
 
 /// The search command. Collision codes 242 to 247 show their pair of messages
-/// from Data_080eff22; otherwise the search event (kind 3) of the cell runs:
-/// its "checked the ..." message, then its message or callback, or the matching
-/// "found nothing" message. MsgKey0dc4 is the base of the "X checked the Y..."
-/// lines, MsgKey0def the base of the "found nothing" lines.
-s32 Func_080cd808(s32 id) {
+/// from gField_ExamineTriggerMessageOffsets; otherwise the search event (kind
+/// 3) of the cell runs: its "checked the ..." message, then its message or
+/// callback, or the matching "found nothing" message. MsgKey0dc4 is the base of
+/// the "X checked the Y..." lines, MsgKey0def the base of the "found nothing"
+/// lines.
+s32 Field_ExamineCell(s32 id) {
   struct Trigger *event;
   s32 index;
   s32 kind;
@@ -632,12 +635,12 @@ s32 Func_080cd808(s32 id) {
   if ((u32)index <= 5) {
     Leader_StopMoving();
     // id, no longer needed, holds the pair's message number.
-    id = Data_080eff22[index];
+    id = gField_ExamineTriggerMessageOffsets[index];
     FieldMessage_ShowFar(id + (s32)&MsgKey0dc4, 1);
     FieldMessage_ShowFar(id + (s32)&MsgKey0def, 1);
     return 0;
   }
-  event = Func_080ccd78(3, id);
+  event = Scene_FindTrigger(3, id);
   if (event != NULL) {
     s32 flags = event->control;
 

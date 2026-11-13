@@ -71,7 +71,7 @@ void Func_02000064(s32 unused, s32 id) {
 }
 
 u32 __umodsi3();
-void Animation_ApplyChildValues();
+void Actor_SetSpriteColorMode();
 
 DEFINE_ACTOR_CYCLE_PICTURES(Actor_CyclePictures)
 
@@ -79,7 +79,7 @@ void Func_02000120(struct Actor *object) {
   u32 frameCount = gFrameCount;
 
   if (frameCount & 1)
-    Animation_ApplyChildValues(object, (frameCount >> 1) % 6);
+    Actor_SetSpriteColorMode(object, (frameCount >> 1) % 6);
 }
 
 /* VIEW(jupiter_lighthouse_room_5): routine Math_Cosine as s32 Math_Cosine(u32
@@ -144,7 +144,7 @@ static __inline__ void Bring(s32 id) {
   struct Actor *object;
 
   Actor_SetSpritePriority(id, 2);
-  Actor_SetPartAttribute(Actor_GetById(id), 7);
+  Actor_SetSpriteColor(Actor_GetById(id), 7);
   object = Actor_GetById(id);
   object->motionFlags = 0;
   object->priorityFlags |= 2;
@@ -154,12 +154,12 @@ static __inline__ void Bring(s32 id) {
 }
 
 /// The event when the leader stands on cell (42, 41): sets flag 2560, turns the
-/// leader (Actor_ArmCallbackAndRefresh), plays its hooks and sounds 220 and
+/// leader (Actor_FaceDirectionById), plays its hooks and sounds 220 and
 /// 178, starts the spark ring from above the leader to (680, 0, 574)
 /// (Func_02001718) and a pulse callback (Func_02000294) that quickens over 20
 /// steps, sounds 390 and 144 with the screen shaking, objects 23 and 24 brought
 /// in on their action scripts, flashes, the room's cells copied open
-/// (Func_0802b450) and JupiterLighthouse_LoadPalettes(2); then the callbacks
+/// (MapGrid_CopyCellPictureCellsRect) and JupiterLighthouse_LoadPalettes(2); then the callbacks
 /// stop, objects 13 to 16 rise 2 pixels a frame for 16 frames, take their next
 /// state (Actor_RaiseFromCell) and sound 80 plays.
 void Func_020002b8(void) {
@@ -372,11 +372,11 @@ void Func_02000810(s32 actor, s32 target) {
 
       object->facing = facing + 0x1000;
     }
-    Actor_SetSpriteColor(Actor_Get(target), (i & 4) ? 7 : 0);
+    FieldActor_SetSpriteColor(Actor_Get(target), (i & 4) ? 7 : 0);
     System_Wait(1);
   }
   Actor_Get(target)->facing = 0xc000;
-  Actor_SetSpriteColor(Actor_Get(target), 0);
+  FieldActor_SetSpriteColor(Actor_Get(target), 0);
   Func_02002a18__jupiter_lighthouse_room_5(Actor_Get(actor), 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
@@ -414,7 +414,7 @@ void Func_020008a4(void) {
   Actor_FaceDirectionAndWait(4, FACING_NORTH);
   FieldEvent_Wait(10);
   Actor_SetSingleChildFlags(((void *)Actor_Get(22)), 0);
-  Actor_SetSpriteColor(((void *)Actor_Get(22)), 15);
+  FieldActor_SetSpriteColor(((void *)Actor_Get(22)), 15);
   angle = 0x4000;
   Actor_SetPositionAndFacing(22, PIXELS(64), PIXELS(225), angle);
   Func_02000734();

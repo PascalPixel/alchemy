@@ -9,11 +9,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -42,14 +42,14 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_SetModeById:
 	overlay_veneer Actor_SetModeByIdFar
-	.global Actor_SetAngleToward
+	.global Actor_FaceActorById
 	.thumb_func
-Actor_SetAngleToward:
-	overlay_veneer Actor_SetAngleTowardFar
-	.global Actor_SetPartAttribute
+Actor_FaceActorById:
+	overlay_veneer Actor_FaceActorByIdFar
+	.global Actor_SetSpriteColor
 	.thumb_func
-Actor_SetPartAttribute:
-	overlay_veneer Actor_SetPartAttributeFar
+Actor_SetSpriteColor:
+	overlay_veneer Actor_SetSpriteColorFar
 	.global Event_SetMessageId
 	.thumb_func
 Event_SetMessageId:
@@ -66,10 +66,10 @@ Event_ShowMessageAndWait:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:
@@ -81,12 +81,12 @@ Party_GetLeaderActor:
 	.global Shop_Run
 	.thumb_func
 Shop_Run:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Sanctum_Run
 	.thumb_func
 Sanctum_Run:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Inn_CheckIn
 	.thumb_func
 Inn_CheckIn:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar

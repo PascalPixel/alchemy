@@ -1,6 +1,6 @@
 /// @file
-/// A whole battle, Func_081197f0 (The Broken Seal's Battle_Run), its tutorial
-/// helpers, and the lists of the units in it.
+/// A whole battle, Battle_RunEncounter (The Broken Seal's Battle_Run), its
+/// tutorial helpers, and the lists of the units in it.
 // Part of battle.c.
 
 #include "../battle_internal.h"
@@ -8,6 +8,8 @@
 #include "frame.h"
 #include "gamepak/far_call/window.h"
 #include "module/battle/battle.h"
+#include "gamepak/far_call/battle_effect.h"
+#include "gamepak/far_call/field_sequence.h"
 #include "module/battle/presentation.h"
 #include "module/system/system.h"
 #include "range_falloff.h"
@@ -21,7 +23,7 @@ void Func_081195ec(void) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   s32 i;
 
-  if (Func_0811a24c(1, 0) == 0)
+  if (BattleUnit_ListLiving(1, 0) == 0)
     return;
   count = actorCount = BattleParty_ListActorIds(1, actors);
   reserveCount = BattleParty_PrepareReserveOwners(reserves);
@@ -40,7 +42,7 @@ void Func_081195ec(void) {
     to->anchorX = from->anchorX;
     to->anchorZ = from->anchorZ;
     Actor_SetPositionAndResetMotionFar((void *)object, place->x, place->y,
-                                        place->z);
+                                       place->z);
     gMainRoutineWork.activeOwners[i] = id;
     work->partyUnits[i] = id;
   }
@@ -153,14 +155,17 @@ extern u8 Data_02018000[];
 // The ROM's call here keeps the whole return register, as an s32 return
 // does; system/system/flags.c defines it returning u8.
 s32 GameFlag_GetByte(s32 flag);
-void ObjectSystem_InitializeFar(s32 mode);
+void ActorSystem_InitializeFar(s32 mode);
 void Sound_LoadReverbCode(s32 preset);
 struct BattleSortedUnitEntry;
-/* VIEW(battle): routine Window_CloseFar as void Window_CloseFar(s32 window, s32 mode); gamepak/far_call/window.h has void Window_CloseFar(struct RenderInput *window, s32 mode). */
-extern void Window_CloseFar__battle(s32 window, s32 mode) __asm__("Window_CloseFar");
-void Func_08120060(s32 x, s32 y);
+/* VIEW(battle): routine Window_CloseFar as void Window_CloseFar(s32 window, s32
+ * mode); gamepak/far_call/window.h has void Window_CloseFar(struct RenderInput
+ * *window, s32 mode). */
+extern void Window_CloseFar__battle(s32 window,
+                                    s32 mode) __asm__("Window_CloseFar");
+void BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 
-s32 Func_081197f0(s32 enemyGroup) {
+s32 Battle_RunEncounter(s32 enemyGroup) {
   struct BattleCamera *camera;
   struct EncounterWork *battle;
   struct BattlePresentationTransition *transition;
@@ -193,7 +198,7 @@ s32 Func_081197f0(s32 enemyGroup) {
   *(volatile u16 *)0x04000000 = 1;
   GameFlag_SetBit(0x103);
   GameFlag_SetBit(0x169);
-  Render_ResetTransformState();
+  Transform_Reset();
 
   // The camera's fill in a once-only block keeps its entry's load after the
   // transform reset; as the plain call, 12 of 885 instructions differ in
@@ -210,17 +215,17 @@ s32 Func_081197f0(s32 enemyGroup) {
   do {
     Iwram_FillWordsEntry(Ram_HeapSlots->unk84[4], 12, 0);
   } while (0);
-  battle->background = Event_GetSpecialValueFar();
+  battle->background = BattleBackground_GetSelectedFar();
   HeapSlot_AllocEwram(16, 0xe00);
   HeapSlot_AllocEwram(12, 0x600);
-  ObjectSystem_InitializeFar(4);
+  ActorSystem_InitializeFar(4);
   if (GameFlag_Test(0x16e) != 0)
     WindowSystem_InitBattleFar(1);
   else
     WindowSystem_InitBattleFar(0);
 
   BattleCamera_Create();
-  enemyCount = Func_08127cd4(battle->enemyGroup);
+  enemyCount = BattleFormation_BuildEnemyList(battle->enemyGroup);
 
   if (GameFlag_Test(0x16c) != 0) {
     battle->twoSided = 1;
@@ -252,7 +257,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     for (copyIndex = 0; copyIndex < 0x7c8; copyIndex++)
       *ownerStateDestination++ = Data_02018000[copyIndex];
     enemyCount = GameFlag_GetByte(0x3f0);
-    BattleParty_AssignMemberSlots();
+    BattleParty_AssignOpponentSlots();
     battle->battleType = 0;
   }
   Task_Add(BattleCamera_Update, 0x47f);
@@ -281,8 +286,8 @@ s32 Func_081197f0(s32 enemyGroup) {
   PartyStatus_CreateWindowFar(9);
   Camera_InitializeDefaultTransform();
   BattleObject_Put();
-  Func_081263c4();
-  Func_081263fc(1, battle->background, 0);
+  BattleBackground_Init();
+  BattleBackground_Load(1, battle->background, 0);
   BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
   BattleCamera_SetView(0, 0, 0, 190);
   Party_ReservedNoOp5B14(1);
@@ -301,7 +306,7 @@ s32 Func_081197f0(s32 enemyGroup) {
   } else if (gMainRoutineWork.battleRule24b == 6) {
     battle->encounterMode = 2;
   }
-  Func_08125d74(enemyCount, enemyGroup);
+  BattleTransition_Run(enemyCount, enemyGroup);
   transition->flag = 0;
   gCpuLoadDisplayEnabled = 0;
   Task_Add(Func_0811b9fc, 0x480);
@@ -320,7 +325,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     PartyStatus_DrawFar(battle->partyStatus);
 
     Iwram_ClearWordsEntry(battle->actions, sizeof(battle->actions));
-    Resource_ResetEntry(battle->promptSlot);
+    VramCache_FreeEntry(battle->promptSlot);
     if (GameFlag_Test(0x16a) == 0)
       actionCount = Battle_GatherActions(battle->actions);
     else
@@ -344,7 +349,7 @@ s32 Func_081197f0(s32 enemyGroup) {
       }
       if (enemyGroup == 638)
         goto party_lost;
-      if (Func_0811a24c(1, 0) == 0)
+      if (BattleUnit_ListLiving(1, 0) == 0)
         goto party_lost;
       if (BattleParty_ListLivingUnits(1, 0) == 0)
         break;
@@ -365,12 +370,11 @@ s32 Func_081197f0(s32 enemyGroup) {
         goto won;
       }
       if (battle->pendingUnit != -1 &&
-          Battle_FindTaggedSlotByValue(battle->pendingTag) != -1) {
+          Battle_FindUnitPlace(battle->pendingTag) != -1) {
         battle->actions[i].unitId = battle->pendingUnit;
         battle->actions[i].command = 9;
         battle->actions[i].parameter = 0;
-        battle->actions[i].target =
-            Battle_FindTaggedSlotByValue(battle->pendingTag);
+        battle->actions[i].target = Battle_FindUnitPlace(battle->pendingTag);
         battle->actions[i].range = 1;
         i--;
       }
@@ -424,7 +428,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     wait(1);
     window =
         Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 8, 10, 4, 1);
-    Func_08120060(44, 24);
+    BattleMessage_WaitForAdvanceAt(44, 24);
     Window_CloseFar__battle(window, 1);
     wait(1);
   }
@@ -432,7 +436,7 @@ s32 Func_081197f0(s32 enemyGroup) {
 won:
   scripted = enemyGroup - 74;
 won_scripted:
-  BattleStaging_ClearLinkPayload();
+  Battle_ClearSerialTransferPayload();
   if ((u32)scripted > 1) {
     if (enemyGroup != 80 && GameFlag_Test(0x16e) == 0) {
       if (battle->twoSided != 0)
@@ -452,15 +456,15 @@ won_scripted:
     }
     Sound_PlayFar(78);
   }
-  Fade_ToBlack(30);
-  Fade_Wait();
+  ScreenFade_ToBlack(30);
+  ScreenFade_Wait();
   result = battle->defeated;
   goto finished;
 
 aborted:
   scripted = enemyGroup - 74;
 aborted_scripted:
-  BattleStaging_ClearLinkPayload();
+  Battle_ClearSerialTransferPayload();
   Task_SuspendAll(0);
   *(volatile u16 *)0x04000000 = 1;
   result = battle->defeated;
@@ -468,13 +472,13 @@ aborted_scripted:
   goto finished;
 
 party_lost:
-  BattleStaging_ClearLinkPayload();
+  Battle_ClearSerialTransferPayload();
   scripted = enemyGroup - 74;
   if ((u32)scripted > 1 && enemyGroup != 638) {
     if (enemyGroup != 76) {
       Sound_PlayFar(59);
       MessageArgument_ClearAllFar();
-      if (BattleParty_PrepareActiveOwners(0) == 1)
+      if (BattleParty_PrepareMembers(0) == 1)
         BattleMessage_ShowAndWaitFar((s32)MsgGoesDownInDefeat);
       else
         BattleMessage_ShowAndWaitFar((s32)MsgPartyDefeated);
@@ -482,15 +486,15 @@ party_lost:
     }
     Sound_PlayFar(78);
   }
-  Fade_ToBlack(30);
+  ScreenFade_ToBlack(30);
   result = -1;
-  Fade_Wait();
+  ScreenFade_Wait();
   goto finished;
 
 fled:
   Sound_PlayFar(78);
-  Fade_ToBlack(30);
-  Fade_Wait();
+  ScreenFade_ToBlack(30);
+  ScreenFade_Wait();
   result = 999;
   scripted = enemyGroup - 74;
 
@@ -502,11 +506,11 @@ finished:
   DjinnRecovery_CountDown();
   gMainRoutineWork.battleRule24b = 0;
   Task_Remove(Func_0811b9fc);
-  Func_081263f0();
+  BattleBackground_Free();
   return result;
 }
 
-s32 BattleParty_PrepareActiveOwners(u16 *owners) {
+s32 BattleParty_PrepareMembers(u16 *owners) {
   s32 limit;
   s32 count;
   s32 index;
@@ -608,7 +612,7 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
   }
   if (sideMask & BATTLE_SIDE_PARTY) {
     base = activeMembers;
-    activeCount = BattleParty_PrepareActiveOwners(base);
+    activeCount = BattleParty_PrepareMembers(base);
     if (livingCount < activeCount) {
       member = base;
       remaining = activeCount;
@@ -652,7 +656,7 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
 
 /// As BattleParty_ListLivingUnits, with the reserve owners listed after the
 /// active ones.
-s32 Func_0811a24c(s32 sideMask, u16 *unitIds) {
+s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   u16 members[10];
   u16 *base;
   s32 remaining;
@@ -674,7 +678,7 @@ s32 Func_0811a24c(s32 sideMask, u16 *unitIds) {
   }
   if (sideMask & BATTLE_SIDE_PARTY) {
     base = members;
-    count = BattleParty_PrepareActiveOwners(base);
+    count = BattleParty_PrepareMembers(base);
     count += BattleParty_PrepareReserveOwners(base + count);
     if (livingCount < count) {
       member = base;

@@ -99,7 +99,12 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value) {
 
 #include "input.h"
 
-/* VIEW(s3d80): variable gData_02005ef8 as extern const s16 gData_02005ef8[]; the definition has s32 gData_02005ef8[] = { 0xffff, - 0x8000, (s32) 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000, }; tried as the definition's extern struct Trigger gData_02005ef8[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:160: incompatible types in assignment. */
+/* VIEW(s3d80): variable gData_02005ef8 as extern const s16 gData_02005ef8[];
+ * the definition has s32 gData_02005ef8[] = { 0xffff, - 0x8000, (s32)
+ * 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000, };
+ * tried as the definition's extern struct Trigger gData_02005ef8[], it does not
+ * compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:160:
+ * incompatible types in assignment. */
 extern const s16 gData_02005ef8__s3d80[] __asm__("gData_02005ef8");
 
 DEFINE_ACTOR_STEER_BY_PAD(Func_02004080, gData_02005ef8__s3d80, Func_02005480)
@@ -117,7 +122,12 @@ struct Position {
   s32 z;
 };
 
-/* VIEW(s3d80): variable gData_02005f38 as extern s16 gData_02005f38[]; the definition has s32 gData_02005f38[] = { 0xffff, - 0x8000, 0xc000, (s32) 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the definition's extern s32 gData_02005f38[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:243: `gData_02005f38__s3d80' undeclared (first use in this function). */
+/* VIEW(s3d80): variable gData_02005f38 as extern s16 gData_02005f38[]; the
+ * definition has s32 gData_02005f38[] = { 0xffff, - 0x8000, 0xc000, (s32)
+ * 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the
+ * definition's extern s32 gData_02005f38[], it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:243:
+ * `gData_02005f38__s3d80' undeclared (first use in this function). */
 extern s16 gData_02005f38__s3d80[] __asm__("gData_02005f38");
 
 DEFINE_LEADER_SLIDE_ON_ICE(Func_02004140, Func_0200410c, gData_02005f38__s3d80,
@@ -157,7 +167,12 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_0200470c, Func_0200410c, Func_02005480, Fu
 #include "field_sprite.h"
 
 extern u16 gData_02005f58[];
-/* VIEW(s4700): variable gData_02005f64 as extern s8 gData_02005f64[][4]; the definition has u32 gData_02005f64[] = { 0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8, }; tried as the definition's extern u32 gData_02005f64[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:668: subscripted value is neither array nor pointer. */
+/* VIEW(s4700): variable gData_02005f64 as extern s8 gData_02005f64[][4]; the
+ * definition has u32 gData_02005f64[] = { 0x820f8e0, 0x2008e0f8, 0x20f0e0,
+ * 0x2008e0f8, 0x820f8e0, 0x2008e0f8, }; tried as the definition's extern u32
+ * gData_02005f64[], it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:668: subscripted value is
+ * neither array nor pointer. */
 extern s8 gData_02005f64__s4700[][4] __asm__("gData_02005f64");
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
@@ -187,8 +202,12 @@ s32 Func_02004938(s32 id) {
   j = (u16)i;
   if (j == 6)
     return 0;
-  width = (ABS(gData_02005f64__s4700[j][0]) + ABS(gData_02005f64__s4700[j][2])) >> 4;
-  height = (ABS(gData_02005f64__s4700[j][1]) + ABS(gData_02005f64__s4700[j][3])) >> 4;
+  width =
+      (ABS(gData_02005f64__s4700[j][0]) + ABS(gData_02005f64__s4700[j][2])) >>
+      4;
+  height =
+      (ABS(gData_02005f64__s4700[j][1]) + ABS(gData_02005f64__s4700[j][3])) >>
+      4;
   x = (object->x + (gData_02005f64__s4700[j][0] << 16)) >> 20;
   z = (object->z + (gData_02005f64__s4700[j][1] << 16)) >> 20;
   mapX = *(s32 *)(map + 328) >> 20;
@@ -219,7 +238,12 @@ void Func_02004a44(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value) {
   }
 }
 
-/* VIEW(s4700): variable gData_02005f7c as extern s32 gData_02005f7c[]; the definition has s16 gData_02005f7c[] = { 0, 16, 0, 16, 0, 16, 16, 0, 16, 0, 16, 0, 16, 0, 0, - 16, 0, - 16, 0, - 16, 0, - 16, - 16, 0, - 16, 0, - 16, 0, - 1...; tried as the definition's extern s16 gData_02005f7c[], Func_02004a8c moves: 12 of 171 instructions, Func_02004bf4 moves: 41 of 132 instructions, Func_02004d10 moves: 27 of 304 instructions in tla-ja. */
+/* VIEW(s4700): variable gData_02005f7c as extern s32 gData_02005f7c[]; the
+ * definition has s16 gData_02005f7c[] = { 0, 16, 0, 16, 0, 16, 16, 0, 16, 0,
+ * 16, 0, 16, 0, 0, - 16, 0, - 16, 0, - 16, 0, - 16, - 16, 0, - 16, 0, - 16, 0,
+ * - 1...; tried as the definition's extern s16 gData_02005f7c[], Func_02004a8c
+ * moves: 12 of 171 instructions, Func_02004bf4 moves: 41 of 132 instructions,
+ * Func_02004d10 moves: 27 of 304 instructions in tla-ja. */
 extern s32 gData_02005f7c__s4700[] __asm__("gData_02005f7c");
 
 static inline s32 Func_020054f8_(struct Actor *object, s32 *position) {
@@ -257,7 +281,8 @@ DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Func_02004fc0, Func_02005680, gData_02005f58,
 #define MapLayer MapLayer__s5048
 #include "map.h"
 #undef MapLayer
-/* VIEW(s5048): tag struct MapLayer as struct MapLayer__s5048; room.h has another definition; not tried: struct MapLayer__s5048 was not found. */
+/* VIEW(s5048): tag struct MapLayer as struct MapLayer__s5048; room.h has
+ * another definition; not tried: struct MapLayer__s5048 was not found. */
 #include "field_event.h"
 #include "vram_tab.h"
 

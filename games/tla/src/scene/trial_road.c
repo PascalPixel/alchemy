@@ -14,7 +14,7 @@
 #include "scene_tables.h"
 #include "module/field/object.h"
 
-void Func_02000038(void) { Func_080d2b4c(8, 75); }
+void Func_02000038(void) { Field_RequestDjinnBattle(8, 75); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -95,7 +95,7 @@ void Func_02000138(s32 direction) {
       if (Event_GetFlag(2559) && Func_020000fc(0) == 0)
         Event_SetFlag(901);
       Event_PlaySound(128);
-      ObjectEffect_StartContextEffect26();
+      Exit_StartStairsUp();
       Import_EventSetExitRequest(direction + 4);
     } else {
       Import_EventSetExitRequest(direction);

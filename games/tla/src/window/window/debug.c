@@ -13,7 +13,7 @@ struct ScreenWork {
 void Func_0804098c(void) {
   struct ScreenWork *work = Ram_HeapSlots->unkd0[0];
 
-  Func_08108030((union OptionCursor *)work->panel);
+  MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
 }
 
 void Func_080409a4(void) {
@@ -34,7 +34,7 @@ struct ScreenCursorWork {
 };
 
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
-void Func_08108048(void *cursor, s32 x, s32 y);
+void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
 
 struct RenderInput *Func_080409f0(void) {
   struct ScreenCursorWork *work = Ram_HeapSlots->unkd0[0];
@@ -52,8 +52,8 @@ struct RenderInput *Func_080409f0(void) {
      * the window's loads wait for the address copy; as the plain call with
      * no asm, 4 of 39 instructions differ in tla-en. */
     asm("" : "+r"(window) : "r"(cursor));
-    Func_08108048(&work->cursor, ((s16)window->x << 3) - 4,
-                  ((s16)window->y << 3) + 12);
+    MenuCursor_SetPositionImmediateFar(&work->cursor, ((s16)window->x << 3) - 4,
+                                       ((s16)window->y << 3) + 12);
   }
   return window;
 }
@@ -69,7 +69,7 @@ extern const u8 SoundTest_MusicString[], SoundTest_JingleString[],
 void Func_080409a4(void);
 void Func_080409dc(void);
 struct RenderInput *Func_080409f0(void);
-void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
+void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
 s32 Sound_LoadReverbCode(s32 preset);
 
 /// The debug sound test. Four values (music, jingle, sound effect, sound
@@ -106,8 +106,8 @@ s32 Func_08040a48(void) {
       Text_DrawStringInWindow((u8 *)SoundTest_JingleString, (s32)window, 8, 16);
       Text_DrawStringInWindow((u8 *)SoundTest_SeString, (s32)window, 8, 32);
       Text_DrawStringInWindow((u8 *)SoundTest_FxString, (s32)window, 8, 48);
-      Func_08108040(work + 0x5a4, ((s16)window->x << 3) - 4,
-                    ((s16)window->y << 3) + (cursor << 4) + 12, 3);
+      MenuCursor_SetFar(work + 0x5a4, ((s16)window->x << 3) - 4,
+                        ((s16)window->y << 3) + (cursor << 4) + 12, 3);
     }
     wait(1);
     if (gInput.pressed & 2)
@@ -156,7 +156,7 @@ s32 Func_08040a48(void) {
 void Func_08040c60(void) {
   struct ScreenWork *work = Ram_HeapSlots->unkd0[0];
 
-  Func_08108030((union OptionCursor *)work->panel);
+  MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
 }
 
 void Func_08040c78(void) {
@@ -198,8 +198,8 @@ struct Window *Func_08040cc4(void) {
 void Func_08040c78(void);
 void Func_08040cb0(void);
 struct Window *Func_08040cc4(void);
-void Func_08108048(void *panel, s32 x, s32 y);
-void Func_08108040(void *panel, s32 x, s32 y, s32 frames);
+void MenuCursor_SetPositionImmediateFar(void *panel, s32 x, s32 y);
+void MenuCursor_SetFar(void *panel, s32 x, s32 y, s32 frames);
 
 s32 Func_08040d70(s32 index) {
   struct ScreenWork *work;
@@ -222,9 +222,9 @@ s32 Func_08040d70(s32 index) {
       y = (s16)window->y;
       y = (index * 3 + y) * 8 + 16;
       if (moved == -1)
-        Func_08108048(work->panel, x, y);
+        MenuCursor_SetPositionImmediateFar(work->panel, x, y);
       else
-        Func_08108040(work->panel, x, y, 3);
+        MenuCursor_SetFar(work->panel, x, y, 3);
       moved = 0;
     }
     wait(1);
@@ -350,7 +350,7 @@ void Func_08040ff4(void) {
 void Func_08041004(void) {
   struct ScreenWork *work = Ram_HeapSlots->unkd0[0];
 
-  Func_08108030((union OptionCursor *)work->panel);
+  MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
 }
 
 void Func_0804101c(void) {
@@ -408,8 +408,8 @@ struct RenderInput *Func_08041068(void) {
 
 void Func_0804101c(void);
 void Func_08041054(void);
-void Func_08108048(void *panel, s32 x, s32 y);
-void Func_08108040(void *panel, s32 x, s32 y, s32 frames);
+void MenuCursor_SetPositionImmediateFar(void *panel, s32 x, s32 y);
+void MenuCursor_SetFar(void *panel, s32 x, s32 y, s32 frames);
 
 /// Shows the nine debug warp presets with the cursor on row index, lets Up
 /// and Down move it (wrapping), and returns the row A chooses after running
@@ -435,9 +435,9 @@ s32 DebugWarp_Run(s32 index) {
       x = (s16)window->x * 8 - 4;
       y = ((s16)window->y << 3) + (index << 4) + 12;
       if (moved == -1)
-        Func_08108048(work->panel, x, y);
+        MenuCursor_SetPositionImmediateFar(work->panel, x, y);
       else
-        Func_08108040(work->panel, x, y, 3);
+        MenuCursor_SetFar(work->panel, x, y, 3);
       moved = 0;
     }
     wait(1);
@@ -479,7 +479,7 @@ done:
 void Func_08041204(void) {
   struct ScreenWork *work = Ram_HeapSlots->unkd0[0];
 
-  Func_08108030((union OptionCursor *)work->panel);
+  MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
 }
 
 void Func_0804121c(void) {
@@ -494,15 +494,15 @@ void Func_08041254(void) {
   HeapSlot_Release(208);
 }
 
-extern const u8 gData_0805eb50[];
+extern const u8 gPauseMenu_Icons[];
 
 /// Draws the ability's name; ability 0 draws a dash placeholder.
 void Func_08041268(s32 ability, s32 arg1, s32 arg2, s32 arg3) {
   if (ability != 0)
     Text_DrawMessageAsTiles(ability + (s32)MsgAbilityNothing,
-                               (struct RenderInput *)arg1, arg2, arg3);
+                            (struct RenderInput *)arg1, arg2, arg3);
   else
-    Text_DrawStringInWindow((u8 *)gData_0805eb50, arg1, arg2, arg3);
+    Text_DrawStringInWindow((u8 *)gPauseMenu_Icons, arg1, arg2, arg3);
 }
 
 extern const s16 gData_080aa170[4][9];
@@ -537,8 +537,8 @@ extern const s16 gData_080aa170[4][9];
 
 void Func_0804121c(void);
 void Func_08041254(void);
-void Func_08108048(void *cursor, s32 x, s32 y);
-void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
+void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
+void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
 s32 Party_FindOwnerWithActionFar(s32 action);
 
 /// The debug ability grid, drawn by Func_0804128c: the cursor moves over four
@@ -580,9 +580,9 @@ s32 Func_08041350(void) {
       x = (column * 7 + left) * 8 - 4;
       y = ((s16)window->y << 3) + (row << 4) + 12;
       if (result == -1)
-        Func_08108048(work + 0x5a4, x, y);
+        MenuCursor_SetPositionImmediateFar(work + 0x5a4, x, y);
       else
-        Func_08108040(work + 0x5a4, x, y, 3);
+        MenuCursor_SetFar(work + 0x5a4, x, y, 3);
       result = 0;
     }
     wait(1);

@@ -27,12 +27,12 @@ Resource_FarCall006:
 	export Actor_RefreshSelectorByIdFar, Actor_RefreshSelectorById
 	export Actor_StopFar, Actor_Stop
 	export Actor_SetMovementTypeAndWaitByIdFar, Actor_SetMovementTypeAndWaitById
-	export Actor_ResetAndSetPositionFar, Actor_ResetAndSetPosition
-	export Actor_SetPositionAndCommitFar, Actor_SetPositionAndCommit
-	export Actor_ResetAndSetPositionInMode2Far, Actor_ResetAndSetPositionInMode2
-	export Actor_SetPositionAndResetFar, Actor_SetPositionAndReset
+	export Actor_SetDestinationByIdFar, Actor_SetDestinationById
+	export Actor_MoveToAndWaitByIdFar, Actor_MoveToAndWaitById
+	export Actor_WalkToByIdFar, Actor_WalkToById
+	export Actor_WalkToAndWaitByIdFar, Actor_WalkToAndWaitById
 	export Actor_CenterOnColumnFar, Actor_CenterOnColumn
-	export Actor_OffsetPositionAndResetMotionFar, Actor_OffsetPositionAndResetMotion
+	export Actor_SetDestinationOffsetByIdFar, Actor_SetDestinationOffsetById
 	export Actor_WaitForMoveByIdFar, Actor_WaitForMoveById
 	export Actor_SetHorizontalPositionWithTerrainFar, Actor_SetHorizontalPositionWithTerrain
 	export Actor_SetHorizontalPositionAndAngleWithTerrainFar, Actor_SetHorizontalPositionAndAngleWithTerrain
@@ -46,78 +46,78 @@ Resource_FarCall006:
 	export Actor_StartRepeatedMotionFar, Actor_StartRepeatedMotion
 	export Motion_SetVarCbAndRefreshFar, Motion_SetVarCbAndRefresh
 	export Actor_JumpDownLedgeFar, Actor_JumpDownLedge
-	export Actor_SetAngleTowardFar, Actor_SetAngleToward
+	export Actor_FaceActorByIdFar, Actor_FaceActorById
 	export Actor_TurnToFaceEachOtherFar, Actor_TurnToFaceEachOther
 	export Actor_ConfigureSpriteColorFar, Actor_ConfigureSpriteColor
-	export Actor_SetPartAttributeFar, Actor_SetPartAttribute
-	export Func_080c8178, Actor_SetTargetAndCallback
+	export Actor_SetSpriteColorFar, Actor_SetSpriteColor
+	export Actor_WatchAndStartScriptFar, Actor_WatchAndStartScript
 	export Event_SetMessageIdFar, Event_SetMessageId
 	export FieldMessage_ShowAtActorFar, FieldMessage_ShowAtActor
 	export Func_080c8190, Func_080d3fb0
-	export Func_080c8198, Event_ShowMessageThenWait
+	export Event_ShowMessageThenWaitFar, Event_ShowMessageThenWait
 	export Event_ShowMessageAndWaitFar, Event_ShowMessageAndWait
-	export Func_080c81a8, Event_AskYesNoAndShowResponse
-	export Func_080c81b0, Event_NoOpUpdate
-	export Func_080c81b8, Event_ShowSpeakerMessage
-	export Func_080c81c0, Event_ShowCounter
-	export Event_ShowCounterAtPositionFar, Event_ShowCounterAtPosition
+	export Event_AskYesNoAndShowResponseFar, Event_AskYesNoAndShowResponse
+	export Event_NoOpUpdateFar, Event_NoOpUpdate
+	export Event_ShowSpeakerMessageFar, Event_ShowSpeakerMessage
+	export Event_ShowCounterFar, Event_ShowCounter
+	export Event_ShowMessageAtPositionFar, Event_ShowMessageAtPosition
 	export Actor_ArmCallbackFar, Actor_ArmCallback
-	export Actor_ArmCallbackAndRefreshFar, Actor_ArmCallbackAndRefresh
+	export Actor_FaceDirectionByIdFar, Actor_FaceDirectionById
 	export Actor_ResetTargetAndSetMode1Far, Actor_ResetTargetAndSetMode1
-	export ObjectTable_RunIfActiveFar, ObjectTable_RunIfActive
-	export Battle_ShowPairedUnitWorkAndWaitFar, Battle_ShowPairedUnitWorkAndWait
-	export Message_SetVoiceFromActorFar, Func_080d4330
+	export Actor_ClosePortraitFar, Actor_ClosePortrait
+	export Event_ShowTwoMessagesAndWaitFar, Event_ShowTwoMessagesAndWait
+	export Message_SetVoiceFromActorFar, Message_SetVoiceFromActor
 	export Actor_SetSpritePriorityFar, Actor_SetSpritePriority
 	export Func_080c8208, Func_080d390c
-	export Func_080c8210, Func_080d47b4
-	export Func_080c8218, FieldEffect_SetAttached
-	export ObjectVisual_CopyAttributesFar, ObjectVisual_CopyAttributes
-	export Camera_FollowActorFar, Camera_FollowActor
+	export Actor_ShowEmoteByIdFar, Actor_ShowEmoteById
+	export FieldEffect_SetAttachedFar, FieldEffect_SetAttached
+	export Actor_CopyGraphicsFar, Actor_CopyGraphics
+	export FieldCamera_FollowActorFar, FieldCamera_FollowActor
 	export Camera_SetSpeedParametersFar, Camera_SetSpeedParameters
-	export Camera_MoveWithinMapBoundsFar, Camera_MoveWithinMapBounds
-	export Func_080c8240, FieldCamera_WaitForArrival
-	export Func_080c8248, FieldCamera_MoveToActorById
-	export Func_080c8250, Func_080d452c
-	export Func_080c8258, Func_080d4568
-	export Func_080c8260, MapGrid_SetCameraBounds
+	export FieldCamera_MoveWithinMapBoundsFar, FieldCamera_MoveWithinMapBounds
+	export FieldCamera_WaitForArrivalFar, FieldCamera_WaitForArrival
+	export FieldCamera_MoveToActorByIdFar, FieldCamera_MoveToActorById
+	export FieldCamera_MoveToActorFar, FieldCamera_MoveToActor
+	export FieldCamera_GetActorFar, FieldCamera_GetActor
+	export MapGrid_SetCameraBoundsFar, MapGrid_SetCameraBounds
 	export Event_SetDestinationFar, Event_SetDestination
 	export Event_SetRestartPointFar, Event_SetRestartPoint
 	export Event_SetExitRequestFar, Event_SetExitRequest
 	export Field_RequestBattleFromEncounterTableFar, Field_RequestBattleFromEncounterTable
-	export Func_080c8288, Func_080d2b4c
-	export Party_SetFields1eeAnd1f0Far, Party_SetFields1eeAnd1f0
+	export Field_RequestDjinnBattleFar, Field_RequestDjinnBattle
+	export Event_SetAfterBattleDestinationFar, Event_SetAfterBattleDestination
 	export Party_SetFields1f2And1f4Far, Party_SetFields1f2And1f4
-	export Field_SetDestinationFar, Field_SetDestination
-	export Func_080c82a8, Actor_GetScreenPosition
-	export Actor_GetTriggerTileAheadOfCurrentFar, Func_080cc54c
-	export Func_080c82b8, Party_RemapCharacterIdByFlags
-	export Func_080c82c0, Field_FindNearbyTalkTarget
-	export Func_080c82c8, Func_080dd054
-	export Func_080c82d0, Func_080decb8
-	export BattleEffect_FindNearestObjectFar, BattleEffect_FindNearestObject
-	export Func_080c82e0, Func_080d4d08
+	export Event_LeaveForFar, Event_LeaveFor
+	export Actor_GetScreenPositionFar, Actor_GetScreenPosition
+	export Actor_GetTriggerCellAheadOfCurrentFar, Actor_GetTriggerCellAheadOfCurrent
+	export Party_GetCharacterSpriteFar, Party_GetCharacterSprite
+	export Field_FindNearbyTalkTargetFar, Field_FindNearbyTalkTarget
+	export FieldPsynergy_SteerPushedTargetFar, FieldPsynergy_SteerPushedTarget
+	export FieldPsynergy_StartCloakFar, FieldPsynergy_StartCloak
+	export BattleEffect_FindNearestObjectFar, Field_FindNearbyPsynergyTarget
+	export Field_TryJumpForwardFar, Field_TryJumpForward
 	export Func_080c82e8, Func_080d50f8
 	export Func_080c82f0, Func_080d53b8
 	export Leader_StopMovingFar, Leader_StopMoving
 	export Func_080c8300, Func_080d690c
-	export Func_080c8308, BattleEffect_StartTwelveFrameBlend
-	export Func_080c8310, BattleEffect_SetBlock30ValuesMaxZero
-	export Func_080c8318, BattleEffect_SetBlock30Values12Zero
-	export Func_080c8320, BattleEffect_SetBlock30Values128One
-	export Func_080c8328, BattleEffect_StartBufferBlend
+	export Weather_StartLightningFar, Weather_StartLightning
+	export Weather_StopLightningFar, Weather_StopLightning
+	export Weather_LastLightningFar, Weather_LastLightning
+	export Weather_ResumeLightningFar, Weather_ResumeLightning
+	export Weather_StartLightningFlashFar, Weather_StartLightningFlash
 	export Func_080c8330, Func_080d6b90
-	export Func_080c8338, FieldEffect_InitializeSparkles
-	export Func_080c8340, ScreenTransition_InitializeBattleEffectState
+	export FieldEffect_InitializeSparklesFar, FieldEffect_InitializeSparkles
+	export ScreenTransition_InitializeBattleEffectStateFar, ScreenTransition_InitializeBattleEffectState
 	export ScreenTransition_InitializeStateFar, ScreenTransition_InitializeState
 	export ScreenTransition_StartFar, ScreenTransition_Start
 	export ScreenTransition_FinishFar, ScreenTransition_Finish
-	export Func_080c8360, Map_ClearLayerFlags
-	export Func_080c8368, Func_080ccec8
+	export ScreenTransition_HideBackgroundsFar, ScreenTransition_HideBackgrounds
+	export Scene_TalkToActorFar, Scene_TalkToActor
 	export BattleEffect_InitializeBuffersFar, BattleEffect_InitializeBuffers
 	export BattleEffect_ApplyColorToTargetBufferFar, BattleEffect_ApplyColorToTargetBuffer
 	export BattleEffect_ApplyColorToSourceBufferFar, BattleEffect_ApplyColorToSourceBuffer
 	export BattleEffect_InterpolateBuffersFar, BattleEffect_InterpolateBuffers
-	export BattleEffect_StartBufferInterpolationFar, BattleEffect_StartBufferInterpolation
+	export BattleEffect_StartBufferInterpolationFar, PaletteFade_StartInterpolation
 	export BattlePalette_StopBlendAndReleaseBufferFar, BattlePalette_StopBlendAndReleaseBuffer
 	export BattleEffect_SetPrimaryBufferValueFar, BattleEffect_SetPrimaryBufferValue
 	export Event_StartScreenTransitionFar, Event_StartScreenTransition
@@ -125,9 +125,9 @@ Resource_FarCall006:
 	export Event_WaitTransitionFramesFar, Event_WaitTransitionFrames
 	export DisplayScroll_InitializeHBlankDmaFar, LineScroll_InitWave
 	export DisplayScroll_DisarmHBlankDmaFar, LineScroll_Stop
-	export BattleEffect_PlayCueAndStartEmitterOnTargetFar, BattleEffect_PlayCueAndStartEmitterOnTarget
-	export Func_080c83d8, BattleEffect_RunActorRiseAndDescent
-	export Func_080c83e0, BattleEffect_StartEffectObject22
+	export FieldEffect_PlayCueAndStartEmitterOnTargetFar, FieldEffect_PlayCueAndStartEmitterOnTarget
+	export ItemDisplay_ShowPictureFar, ItemDisplay_ShowPicture
+	export ItemDisplay_ShowItemFar, ItemDisplay_ShowItem
 	export ObjectEvent_GetObjectFar, ObjectEvent_GetObject
 	export ObjectEvent_SetMode4WithCueFar, ObjectEvent_SetMode4WithCue
 	export ObjectEvent_SetMode5WithCueFar, ObjectEvent_SetMode5WithCue
@@ -137,84 +137,84 @@ Resource_FarCall006:
 	export Func_080c8418, Func_080cf050
 	export Actor_SetWideSpriteFar, Actor_SetWideSprite
 	export Actor_ReturnHomeFar, Actor_ReturnHome
-	export Func_080c8430, Func_080cb82c
+	export WorldMap_FreezeFar, WorldMap_Freeze
 	export Func_080c8438, Func_080cb8a4
 	export Func_080c8440, Func_080caa4c
 	export Event_SpawnObjectTableFar, Event_SpawnObjectTable
 	export ObjectTable_DestroyAtIndexFar, Actor_ReleaseAtIndex
 	export ObjectTable_GetFar, ObjectTable_Get
 	export Func_080c8460, Func_080ca9cc
-	export Func_080c8468, BattleEffect_StartFadeOverlay
-	export Func_080c8470, FadeOverlay_Suspend
-	export Func_080c8478, FadeOverlay_Resume
+	export FieldEffect_StartFadeOverlayFar, FieldEffect_StartFadeOverlay
+	export FadeOverlay_SuspendFar, FadeOverlay_Suspend
+	export FadeOverlay_ResumeFar, FadeOverlay_Resume
 	export Func_080c8480, Func_080d1cc0
 	export Func_080c8488, Func_080d1d34
 	export Func_080c8490, Func_080d1d44
-	export Field_DispatchTypeHandlerFar, Field_DispatchTypeHandler
+	export Field_DispatchTypeHandlerFar, FieldPsynergy_RunHandler
 	export BattleEffect_LoadActionEffectResourcesFar, BattleEffect_LoadActionEffectResources
-	export BattleEffect_SetupObjectPairFar, BattleEffect_SetupObjectPair
+	export BattleEffect_SetupObjectPairFar, FieldPsynergy_SetupActorPair
 	export BattleEffect_StopMainActorFar, BattleEffect_StopMainActor
 	export BattleEffect_CleanupSceneObjectsFar, BattleEffect_CleanupSceneObjects
-	export EventObject_InitializeFar, Func_080dc6d8
-	export BattleEffect_InitializeSharedSceneFar, BattleEffect_InitializeSharedScene
-	export BattleEffect_PrepareBufferInterpolationFar, BattleEffect_PrepareBufferInterpolation
+	export EventObject_InitializeFar, EventObject_Initialize
+	export BattleEffect_InitializeSharedSceneFar, FieldPsynergy_FadeToCastColor
+	export BattleEffect_PrepareBufferInterpolationFar, FieldPsynergy_FadeFromCastColor
 	export Event_ResolveAllPendingActionsFar, Event_ResolveAllPendingActions
 	export Event_ResolvePendingActionsFar, Event_ResolvePendingActions
-	export Func_080c84e8, Func_080dc978
-	export Func_080c84f0, BattleEffect_FinishSceneAndReleaseHeapBlock
-	export Func_080c84f8, Palette_FillNumber15Grey
-	export Func_080c8500, Func_080dcadc
+	export FieldPsynergy_StartMindReadWaveFar, FieldPsynergy_StartMindReadWave
+	export FieldPsynergy_StopMindReadWaveFar, FieldPsynergy_StopMindReadWave
+	export FieldPsynergy_GreyMindReadPaletteFar, FieldPsynergy_GreyMindReadPalette
+	export FieldPsynergy_RestoreMindReadPaletteFar, FieldPsynergy_RestoreMindReadPalette
 	export BattleEffect_HasMatchingEvent5Far, BattleEffect_HasMatchingEvent5
 	export BattleEffect_HasTriggerFar, BattleEffect_HasTrigger
-	export Func_080c8518, Sprite_ShareVramCacheEntry
-	export Event_GetSpecialValueFar, Event_GetSpecialValue
-	export BattleEffect_StartItemBreakFar, BattleEffect_StartItemBreak
-	export BattleEffect_SnapScaleToFullFar, BattleEffect_SnapScaleToFull
+	export Sprite_ShareVramCacheEntryFar, Sprite_ShareVramCacheEntry
+	export BattleBackground_GetSelectedFar, BattleBackground_GetSelected
+	export FieldEffect_SpawnMoveHandFar, FieldEffect_SpawnMoveHand
+	export FieldEffect_SnapScaleToFullFar, FieldEffect_SnapScaleToFull
 	export UpdateRisingParticleBurstFar, UpdateRisingParticleBurst
-	export BattleParty_ApplyDrainFar, BattleParty_ApplyDrain
-	export BattleParty_ApplyHealthDeltaFar, BattleParty_ApplyHealthDelta
-	export Func_080c8550, ResourceTable_CountFreeBlocks
-	export Func_080c8558, Func_080d295c
-	export Encounter_GetEnemyGroupAtSlotFar, Encounter_GetEnemyGroupAtSlot
-	export Encounter_GetDjinnEnemyGroupFar, Encounter_GetDjinnEnemyGroup
-	export Party_PlaySavedMusicFar, Party_PlaySavedMusic
-	export Scene_ResolveInteractionResultFar, Scene_ResolveInteractionResult
-	export Func_080c8580, Func_080d7788
+	export Party_AddPpFar, Party_AddPp
+	export Party_AddHpFar, Party_AddHp
+	export ResourceTable_CountFreeBlocksFar, ResourceTable_CountFreeBlocks
+	export FieldYesNo_AskFar, FieldYesNo_Ask
+	export Encounter_GetFormationAtSlotFar, Encounter_GetFormationAtSlot
+	export Encounter_GetDjinnFormationFar, Encounter_GetDjinnFormation
+	export Scene_PlayMusicFar, Scene_PlayMusic
+	export Scene_ChooseMusicFar, Scene_ChooseMusic
+	export Djinn_JoinPartyFar, Djinn_JoinParty
 	export FieldParticle_UpdateFar, FieldParticle_Update
 	export FieldParticle_HasPendingTargetFar, FieldParticle_HasPendingTarget
 	export FieldParticle_SetPositionFar, FieldParticle_SetPosition
 	export FieldParticle_SetActorModeFar, FieldParticle_SetActorMode
 	export FieldParticle_SetCallbackFar, FieldParticle_SetCallback
 	export FieldParticle_InitializeFar, FieldParticle_Initialize
-	export BattleEffect_ClearOwnedSlotFar, BattleEffect_ClearOwnedSlot
+	export FieldEffect_ClearOwnedSlotFar, FieldEffect_ClearOwnedSlot
 	export Camera_WorldToScreenFar, Camera_WorldToScreen
 	export BattleEffect_GetResourceIdFar, Speaker_GetVoice
-	export Event_ClearInvalidPackedValuesFar, Event_ClearValidPackedIds
-	export BattleEffect_InitializeSlotsFar, BattleEffect_InitializeSlots
-	export BattleEffect_ClearActiveSlotsAndScheduleUpdatesFar, BattleEffect_ClearActiveSlotsAndScheduleUpdates
+	export Event_ClearInvalidPackedValuesFar, Party_ClearUnusableShortcuts
+	export FieldEffect_InitializeSlotsFar, FieldEffect_InitializeSlots
+	export FieldEffect_ReleaseSlotsFar, FieldEffect_ReleaseSlots
 	export Motion_LaunchFromFocusedObjectFar, Actor_LaunchFromLeader
-	export Actor_OffsetPositionAndResetFar, Actor_OffsetPositionAndReset
-	export Actor_CommitPositionAndActivateFar, Actor_CommitPositionAndActivate
+	export Actor_WalkByByIdFar, Actor_WalkByById
+	export Actor_WalkByAndWaitByIdFar, Actor_WalkByAndWaitById
 	export Actor_WatchAndSetScriptFar, Actor_WatchAndSetScript
-	export BattleEffect_PauseObjectFar, BattleEffect_PauseObject
-	export BattleEffect_ResumeObjectFar, BattleEffect_ResumeObject
-	export ObjectTable_FindActiveByValueFar, ObjectTable_FindActiveByValue
-	export ObjectTable_ReadActiveValueFar, ObjectTable_ReadActiveValue
+	export BattleEffect_PauseObjectFar, FieldPsynergy_HaltActor
+	export BattleEffect_ResumeObjectFar, FieldPsynergy_ResumeHaltedActor
+	export Actor_FindBySpriteFar, Actor_FindBySprite
+	export Actor_GetSpriteByIdFar, Actor_GetSpriteById
 	export ObjectTable_SnapshotFar, ObjectTable_Snapshot
-	export Func_080c8630, ObjectTable_Restore
-	export Func_080c8638, Func_080d46a4
-	export Func_080c8640, Func_080d4714
-	export Scene_GetAreaNameIndexFar, Scene_GetAreaNameIndex
+	export Actor_RestoreFar, Actor_Restore
+	export WorldMap_StartZoomFar, WorldMap_StartZoom
+	export Event_WaitForZoomTransitionFar, Event_WaitForZoomTransition
+	export Area_GetNameIndexFar, Area_GetNameIndex
 	export Func_080c8650, Func_080d1ee8
 	export Func_080c8658, Func_080d1f0c
 	export Func_080c8660, Func_080d1f18
 	export Func_080c8668, Func_080d1f20
-	export Func_080c8670, Event_WaitTwoSecondsOrPress
+	export Event_WaitTwoSecondsOrPressFar, Event_WaitTwoSecondsOrPress
 	export Func_080c8678, Func_080d20fc
 	export Actor_SetActionCallbackFar, Actor_SetActionCallback
-	export Func_080c8688, Scene_QueueMusic
+	export Scene_QueueMusicFar, Scene_QueueMusic
 	export Event_NoOpFar, Event_NoOp
-	export Func_080c8698, Func_080d2c9c
+	export Scene_PlayQueuedMusicFar, Scene_PlayQueuedMusic
 	export Func_080c86a0, Func_080ca6e4
 	export Func_080c86a8, Func_080d897c
 	export Func_080c86b0, Func_080d8d68
@@ -225,7 +225,7 @@ Resource_FarCall006:
 	export Func_080c86d8, Func_080d9e98
 	export Func_080c86e0, Func_080d9ab0
 	export Func_080c86e8, Func_080d9ad0
-	export Func_080c86f0, FlagEntries_GetTable
+	export FlagEntries_GetTableFar, FlagEntries_GetTable
 	export Func_080c86f8, Func_080ea7c0
 	export Func_080c8700, Func_080ea8d4
 	export Func_080c8708, Func_080eaa14
@@ -248,17 +248,17 @@ Resource_FarCall006:
 	export Func_080c8790, Func_080db0b0
 	export Func_080c8798, Func_080d5d70
 	export Func_080c87a0, Func_080eb960
-	export Func_080c87a8, Func_080d3928
+	export Actor_SetSpriteRotationByIdFar, Actor_SetSpriteRotationById
 	export Func_080c87b0, Func_080d3940
 	export Func_080c87b8, Func_080d3a10
 	export Func_080c87c0, Func_080eaf98
 	export Func_080c87c8, Func_080eb01c
-	export Func_080c87d0, EffectSprite_DrawAtWorldPosition
+	export EffectSprite_DrawAtWorldPositionFar, EffectSprite_DrawAtWorldPosition
 	export BattleEffect_StepVector2Far, BattleEffect_StepVector2
 	export BattleEffect_StepVector3Far, BattleEffect_StepVector3
-	export Func_080c87e8, BattleEffect_GetObjectPriority
-	export Func_080c87f0, BattleEffect_GetObjectDepth
-	export Func_080c87f8, Field_StartColorTransition
+	export BattleEffect_GetObjectPriorityFar, BattleEffect_GetObjectPriority
+	export BattleEffect_GetObjectDepthFar, BattleEffect_GetObjectDepth
+	export Field_StartColorTransitionFar, Field_StartColorTransition
 	export Field_StartPaletteTransitionFar, Field_StartPaletteTransition
 	export BattleEffect_StartArcEffectFar, BattleEffect_StartArcEffect
 	export BattleEffect_EndArcEffectFar, BattleEffect_EndArcEffect
@@ -268,21 +268,21 @@ Resource_FarCall006:
 	export Func_080c8828, Func_080e4244
 	export Func_080c8830, Func_080dbdc8
 	export Func_080c8838, Func_080dbde8
-	export Func_080c8840, Func_080dbdd4
+	export MapGrid_SetCellBehaviorFar, MapGrid_SetCellBehavior
 	export Func_080c8848, Func_080dbdf4
 	export Func_080c8850, Func_080dbe08
 	export Func_080c8858, Func_080dbe44
-	export Func_080c8860, Func_080d3b28
+	export Actor_ShowItemIconByIdFar, Actor_ShowItemIconById
 	export Func_080c8868, Func_080da908
 	export Func_080c8870, Func_080da938
 	export Func_080c8878, Func_080d4ab4
 	export Func_080c8880, Func_080e3698
 	export Func_080c8888, Func_080e37e0
-	export Func_080c8890, BattleEffect_DropObjectAtAnchor
+	export BattleEffect_DropObjectAtAnchorFar, BattleEffect_DropObjectAtAnchor
 	export Func_080c8898, Func_080d2cc4
-	export Func_080c88a0, BattleEffect_FillOverlayTiles
+	export BattleEffect_FillOverlayTilesFar, BattleEffect_FillOverlayTiles
 	export Func_080c88a8, Func_080d1dac
-	export Func_080c88b0, BattleEffect_DrawSpriteAtWorldPosition
+	export BattleEffect_DrawSpriteAtWorldPositionFar, BattleEffect_DrawSpriteAtWorldPosition
 	.global Func_080c88b8
 	.thumb_func
 Func_080c88b8:
@@ -313,10 +313,10 @@ Func_080c88e8:
 	.4byte Func_080e74d8
 	export Func_080c88f0, Func_080d4aa8
 	export Actor_ResetTargetsAndVelocityFar, Actor_ResetTargetsAndVelocity
-	export ObjectEffect_StartContextEffect26Far, ObjectEffect_StartContextEffect26
-	export ObjectEffect_StartContextEffect25Far, ObjectEffect_StartContextEffect25
-	export Func_080c8910, FieldMotes_Start
-	export Func_080c8918, Func_080d6f34
+	export Exit_StartStairsUpFar, Exit_StartStairsUp
+	export Exit_StartStairsDownFar, Exit_StartStairsDown
+	export FieldMotes_StartFar, FieldMotes_Start
+	export Weather_StartRainFar, Weather_StartRain
 	export Func_080c8920, Func_080d7024
 	export Func_080c8928, Func_080ea14c
 	export Func_080c8930, Func_080d2d70
@@ -324,7 +324,7 @@ Func_080c88e8:
 	export Func_080c8940, Func_080ca3f4
 	export Func_080c8948, Func_080e28d4
 	export Func_080c8950, Func_080d072c
-	export Func_080c8958, Func_080d25c8
-	export SceneEvent_FindActiveRecordFar, Func_080ccd78
+	export Party_CheckItemLimitFar, Party_CheckItemLimit
+	export SceneEvent_FindActiveRecordFar, Scene_FindTrigger
 	export Func_080c8968, Func_080d1760
-	export Func_080c8970, BattleEffect_LoadBufferPalette
+	export BattleEffect_LoadBufferPaletteFar, BattleEffect_LoadBufferPalette

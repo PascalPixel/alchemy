@@ -4,7 +4,7 @@
 
 #include "../system_internal.h"
 
-// Fade_Update advances the fade each VBlank.
+// ScreenFade_Update advances the fade each VBlank.
 // BLDY 0 leaves brightness unchanged; 16 produces solid white or black.
 //   gBlendBrighten: 0 fades to black; 1 fades to white.
 //   gBlendLayers: BLDCNT target layers (the four helpers below use 0x3e:
@@ -13,8 +13,8 @@
 /// Steps the screen fade once a VBlank, called from the VBlank handler: sets
 /// BLDCNT to brighten or darken the chosen layers, moves BLDY one step from
 /// the start level to the target level and counts gBlendVBlanksLeft down; at
-/// the end it clears gBlendDuration, which Fade_Wait waits on.
-void Fade_Update(void) {
+/// the end it clears gBlendDuration, which ScreenFade_Wait waits on.
+void ScreenFade_Update(void) {
   if (gBlendDuration != 0) {
     {
       volatile u16 *blendControl;
@@ -64,7 +64,7 @@ void Fade_Update(void) {
 
 /// Fades out to black.
 /// vblanks: fade duration in VBlanks.
-void Fade_ToBlack(s32 vblanks) {
+void ScreenFade_ToBlack(s32 vblanks) {
   gBlendBrighten = 0;
   gBlendLayers = 0x3e;
   gBlendStartLevel = gBlendTargetLevel;
@@ -74,7 +74,7 @@ void Fade_ToBlack(s32 vblanks) {
 }
 
 /// Fades in from black.
-void Fade_FromBlack(s32 vblanks) {
+void ScreenFade_FromBlack(s32 vblanks) {
   gBlendBrighten = 0;
   gBlendLayers = 0x3e;
   gBlendStartLevel = gBlendTargetLevel;
@@ -84,7 +84,7 @@ void Fade_FromBlack(s32 vblanks) {
 }
 
 /// Fades out to white.
-void Fade_ToWhite(s32 vblanks) {
+void ScreenFade_ToWhite(s32 vblanks) {
   gBlendBrighten = 1;
   gBlendLayers = 0x3e;
   gBlendStartLevel = gBlendTargetLevel;
@@ -94,7 +94,7 @@ void Fade_ToWhite(s32 vblanks) {
 }
 
 /// Fades in from white.
-void Fade_FromWhite(s32 vblanks) {
+void ScreenFade_FromWhite(s32 vblanks) {
   gBlendBrighten = 1;
   gBlendLayers = 0x3e;
   gBlendStartLevel = gBlendTargetLevel;
@@ -106,10 +106,10 @@ void Fade_FromWhite(s32 vblanks) {
 /// Configures a fade.
 /// bright: 0 for black; 1 for white.
 /// layer: BLDCNT target layers, in the low six bits.
-/// start: initial brightness; values above 16 use the current target brightness.
-/// target: target brightness.
-/// vblanks: fade duration in VBlanks.
-void Fade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 vblanks) {
+/// start: initial brightness; values above 16 use the current target
+/// brightness. target: target brightness. vblanks: fade duration in VBlanks.
+void ScreenFade_Start(s8 bright, s32 layer, u32 start, s32 target,
+                      s32 vblanks) {
   gBlendBrighten = bright;
   gBlendLayers = layer & 0x3f;
   if (start > 16U) {
@@ -122,7 +122,7 @@ void Fade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 vblanks) {
 }
 
 /// Waits for the fade to finish.
-void Fade_Wait(void) {
+void ScreenFade_Wait(void) {
   if (gBlendDuration != 0) {
     do {
       wait(1);

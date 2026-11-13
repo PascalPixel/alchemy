@@ -70,8 +70,8 @@ static inline s32 *EffectPosition_Coordinates(struct EffectPosition *position) {
 #endif
 }
 
-void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
-                                     s32 gravity);
+void Particle_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
+                                   s32 gravity);
 s32 EffectPosition_ProjectPoint(const void *point,
                                 struct EffectPosition *position);
 void EffectPosition_ProjectScaledBattler(s32 id,

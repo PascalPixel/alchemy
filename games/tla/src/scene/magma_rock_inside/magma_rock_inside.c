@@ -57,9 +57,9 @@ s32 Func_02000538(u32 layer, u32 x, u32 y, u32 width, u32 height, s32 value) {
 // ---- games/tla/src/scene/magma_rock_inside/s0594.c ----
 #include "../magma_rock_inside.h"
 
-void Func_02000594(void) { Func_080d2b4c(15, 56); }
+void Func_02000594(void) { Field_RequestDjinnBattle(15, 56); }
 
-void Func_020005a0(void) { Func_080d7788(17, 2, 19); }
+void Func_020005a0(void) { Djinn_JoinParty(17, 2, 19); }
 
 DEFINE_POSITION_FLAT_DISTANCE(Func_020005b0)
 
@@ -122,7 +122,11 @@ void Func_020007ac(struct Actor *object) {
 void Func_02004c98();
 void Actor_StartScript();
 s32 GameFlag_Test();
-/* VIEW(s0800): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/magma_rock_inside.c:294: too few arguments to function `Actor_GetById'. */
+/* VIEW(s0800): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
+ * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
+ * *Actor_GetById(u32 objectId), which the object already declares, it does not
+ * compile in tla-ja: games/tla/src/scene/magma_rock_inside.c:294: too few
+ * arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s0800() __asm__("Actor_GetById");
 
 void Func_02000800(s32 a0, s32 a1, s32 a2) {
@@ -169,7 +173,8 @@ L_02008870:
 #undef FIELD_AT
 
 // ---- games/tla/src/scene/magma_rock_inside.c ----
-// The scene code of overlay 0x692 that its scene tables belong to, in ROM order; the rest of the overlay is in magma_rock_inside/.
+// The scene code of overlay 0x692 that its scene tables belong to, in ROM
+// order; the rest of the overlay is in magma_rock_inside/.
 
 s32 Func_020005dc(s32 terrain, s32 x, s32 z, s32 height);
 
@@ -355,7 +360,7 @@ void Func_02000ce4(s16 value) {
   BattleEffect_LoadActionEffectResources(151, 1);
   party = &gMainRoutineWork;
   Func_02004e78(party->currentOwner, value);
-  Field_DispatchTypeHandler(1);
+  FieldPsynergy_RunHandler(1);
   Func_02004e80();
   BattleEffect_CleanupSceneObjects();
 }
@@ -484,7 +489,10 @@ extern const s32 gData_0200502c[];
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-/* VIEW(s0e20): routine Func_02000ce4 as void Func_02000ce4(u16 id); the definition has void Func_02000ce4(s16 value); tried as the definition's void Func_02000ce4(s16 value), which the object already declares, Func_02000ed0 moves: 1 of 270 instructions in tla-ja. */
+/* VIEW(s0e20): routine Func_02000ce4 as void Func_02000ce4(u16 id); the
+ * definition has void Func_02000ce4(s16 value); tried as the definition's void
+ * Func_02000ce4(s16 value), which the object already declares, Func_02000ed0
+ * moves: 1 of 270 instructions in tla-ja. */
 extern void Func_02000ce4__s0e20(u16 id) __asm__("Func_02000ce4");
 
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
@@ -545,7 +553,7 @@ end:
   FieldActor_SetMoveTarget(flame, position[0], position[1], position[2]);
   FieldCamera_SetSpeed(0x20000, 0x4000);
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
-  Actor_WaitForMove(flame);
+  FieldActor_WaitForMove(flame);
   flame->update = 0;
   Actor_Release(flame);
   id = 0;
@@ -571,7 +579,7 @@ spark:
     Event_End();
     return;
   }
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   System_Wait(10);
   Event_End();
@@ -583,13 +591,13 @@ hit:
   FieldActor_SetMoveTarget(flame, position[0], position[1], position[2]);
   FieldCamera_SetSpeed(0x20000, 0x4000);
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
-  Actor_WaitForMove(flame);
+  FieldActor_WaitForMove(flame);
   flame->update = 0;
   Actor_Release(flame);
   Event_SetFlag(0x2f0);
   Func_02000ce4__s0e20((u16)id);
   Event_ClearFlag(0x2f0);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   System_Wait(10);
   Event_End();
@@ -608,9 +616,9 @@ void Func_02001148(void) {
   FieldEvent_Wait(10);
   object = work->target;
   object->update = NULL;
-  Actor_SetSpriteColor(object, 7);
+  FieldActor_SetSpriteColor(object, 7);
   FieldEvent_Wait(3);
-  Actor_SetSpriteColor(work->target, 0);
+  FieldActor_SetSpriteColor(work->target, 0);
   FieldEvent_Wait(1);
   Func_02000ed0(work->target);
   Event_End();
@@ -861,7 +869,7 @@ rise:
     wait(1);
     if (t != 160)
       goto frame;
-    MapGrid_WaitForShakeToSettle();
+    FieldMapGrid_WaitForShakeToSettle();
   }
   Event_PlaySound(288);
   Event_PlaySound(136);
@@ -883,7 +891,7 @@ last:
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   MapGrid_CopyCellsTo(68, 64, srcX, srcZ, 3, 6);
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   Event_Wait(30);
   work = &gMainRoutineWork;
   *(s32 *)&layer->unk08[4] = 0;
@@ -1003,7 +1011,7 @@ void Func_02001828(void) {
   rowAbove = i - 1;
   MapGrid_CopyCellsTo(srcX, i, srcX, rowAbove, 3, 4);
   if (open == 0) {
-    MapGrid_WaitForShakeToSettle();
+    FieldMapGrid_WaitForShakeToSettle();
     FieldEvent_Wait(20);
   } else {
     MapGrid_SetShake(0x20000, 0x10000, 0x10000);
@@ -1037,7 +1045,7 @@ void Func_02001828(void) {
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   MapGrid_CopyCellsTo(72, 63, srcX, rowAbove, 3, 4);
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   Event_PlaySound(584);
   {
     s32 bit = 64;
@@ -1163,11 +1171,11 @@ loop:
   if (i != 128)
     goto loop;
   FieldActor_WaitForMoveById(12);
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   Event_PlaySound(288);
   Event_Wait(40);
   Event_SetFlag(2552);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   wait(10);
   Event_End();
@@ -1178,7 +1186,7 @@ void Func_02002128(void) {
 
   *(work + 0xd38) = 1;
   if (!Event_GetFlag(0x304)) {
-    Actor_SetSpriteColor(Actor_Get(22), 15);
+    FieldActor_SetSpriteColor(Actor_Get(22), 15);
     Actor_SetPosition(22, PIXELS(632), PIXELS(312));
     Actor_Get(22)->scaleX = Actor_Get(22)->scaleY = 0x1000;
   }
@@ -1189,7 +1197,7 @@ void Func_02002128(void) {
 #define DEFINE_FUNC_0200217C(name, n1, n2, n3, n4)                             \
   void name(void) {                                                            \
     if (!Event_GetFlag(n1)) {                                                  \
-      Actor_SetSpriteColor(Actor_Get(n2), 15);                                 \
+      FieldActor_SetSpriteColor(Actor_Get(n2), 15);                                 \
       Actor_SetPosition(n2, PIXELS(n3), PIXELS(n4));                           \
       Actor_Get(n2)->scaleX = Actor_Get(n2)->scaleY = 0x1000;                  \
     }                                                                          \
@@ -1207,7 +1215,7 @@ void Func_020021c0(void) {
   s32 i;
 
   object = Actor_GetById(((s8 *)work)[0xd30]);
-  Actor_SetSpriteColor(object, 0);
+  FieldActor_SetSpriteColor(object, 0);
   Event_PlaySound(136);
   i = 0;
   do {
@@ -1279,7 +1287,7 @@ void MagmaRockInside_ExamineEmberStone(void) {
       Event_End();
       return;
     }
-    BattleEffect_StartEffectObject22(460, 3);
+    ItemDisplay_ShowItem(460, 3);
     Actor_SetAnimation(12, 2);
     Event_SetFlag(0x9f9);
   }
@@ -1469,7 +1477,7 @@ void Func_020028ac(void) {
   s32 i;
 
   object = Actor_Get(((s8 *)Ram_HeapSlots->eventWork)[0xd30]);
-  Actor_SetSpriteColor(object, 0);
+  FieldActor_SetSpriteColor(object, 0);
   Event_PlaySound(136);
   i = 0;
   do {
@@ -1529,15 +1537,19 @@ void Func_02002a14(struct Actor *source) {
   object->scaleY = 0x6666;
   object->scaleX = 0x6666;
   object->motionFlags = 0;
-  Actor_SetSpriteColor(object, 10);
+  FieldActor_SetSpriteColor(object, 10);
   Scene_SetActorSpritePriority(object, 1);
   Func_02004c98(object, 1);
   Actor_SetSingleChildFlags(object, 0);
-  Animation_SetStateFlags(object, 1);
+  Actor_SetBlendMode(object, 1);
   Actor_StartScript(object, gData_02005534);
 }
 
-/* VIEW(magma_rock_inside): tag struct Orbiter as struct Orbiter__magma_rock_inside; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/magma_rock_inside.c:1762: structure has no member named `parent'. */
+/* VIEW(magma_rock_inside): tag struct Orbiter as struct
+ * Orbiter__magma_rock_inside; module/scene/scene.h has another definition;
+ * tried with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/scene/magma_rock_inside.c:1762: structure has no member
+ * named `parent'. */
 struct Orbiter__magma_rock_inside {
   u8 unk00[8];
   s32 x;
@@ -1662,7 +1674,7 @@ void Func_02002cd0(s32 a, s32 b) {
   MapGrid_SetShake(0x20000, 0x20000, 0x10000);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   first->motionFlags = 0;
   first->acceleration = 0x3333;
   first->speedLimit = 0x3333;
@@ -1682,11 +1694,11 @@ burst:
   object->speedLimit = 0x80000;
   object->acceleration = 0x3333;
   object->motionFlags = 0;
-  Actor_SetSpriteColor(object, 10);
+  FieldActor_SetSpriteColor(object, 10);
   Scene_SetActorSpritePriority(object, 1);
   Func_02004c98(object, 7);
   Actor_SetSingleChildFlags(object, 0);
-  Animation_SetStateFlags(object, 1);
+  Actor_SetBlendMode(object, 1);
   Actor_StartScript(object, gData_02005544);
   REG_BLDALPHA = 0x1004;
   wait(2);
@@ -1719,11 +1731,11 @@ spiral:
   spark->unk4c = 0x7a0000;
   spark->watchedObject = second;
   ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
-  Actor_SetSpriteColor(spark, 10);
+  FieldActor_SetSpriteColor(spark, 10);
   Scene_SetActorSpritePriority(spark, 1);
   Func_02004c98(spark, 7);
   Actor_SetSingleChildFlags(spark, 0);
-  Animation_SetStateFlags(spark, 1);
+  Actor_SetBlendMode(spark, 1);
   FieldVector_AddPolarOffset(spark->unk4c, spark->timer, &spark->x);
   Actor_StartScript(spark, gData_02005560);
   if (i == 3) {
@@ -1754,10 +1766,10 @@ column:
   riser->watchedObject = second;
   riser->motionFlags = (u16)0;
   riser->priorityFlags = 1;
-  Actor_SetSpriteColor(riser, 10);
+  FieldActor_SetSpriteColor(riser, 10);
   Func_02004c98(riser, 7);
   Actor_SetSingleChildFlags(riser, 0);
-  Animation_SetStateFlags(riser, 1);
+  Actor_SetBlendMode(riser, 1);
   Actor_StartScript(riser, gData_02005570);
   i += 2;
   if (i != 32)
@@ -1765,21 +1777,21 @@ column:
   Event_PlaySound(220);
   wait(50);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(8);
+  PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
   Actor_SetSpriteColorById(a, 0);
   Actor_SetSpriteColorById(b, 0);
   Event_PlaySound(574);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(80);
+  PaletteFade_StartInterpolation(80);
   Actor_SetScript(a, gData_020055d8);
   Actor_SetScript(b, gData_02005608);
   second->update = (void (*)(void))Func_02002c48;
   wait(120);
   second->update = 0;
   Event_PlaySound(390);
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   wait(1);
 }
 
@@ -1839,7 +1851,7 @@ void Func_020030cc(void) {
 #endif
     MapGrid_SetShake(0x50000, 0x70000, 0x10000);
     MapGrid_SetShake(-1, -1, 0xe666);
-    MapGrid_WaitForShakeToSettle();
+    FieldMapGrid_WaitForShakeToSettle();
     Call2(Func_02002cd0, 8, 5);
     Party_LearnAbility(5, 0x9a);
     Event_SetFlag(0x9fa);

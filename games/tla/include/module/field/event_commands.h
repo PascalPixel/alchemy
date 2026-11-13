@@ -189,40 +189,40 @@ extern const s32 Data_080f0874[];
 
 s32 PartyInventory_FindRoomFar(s32 item);
 
-s32 Func_08108068(s32 *member, s32 *slot);
+s32 ItemPicker_RunToDropFar(s32 *member, s32 *slot);
 
-void BattleEffect_AdvanceHueCycle(void);
+void FieldEffect_AdvanceHueCycle(void);
 void BattleEffect_SetCallbackWhenTargetUnset(struct Actor *object);
-void BattleEffect_ApplyFlickerValue(void *object, s32 value);
+void Actor_SetSpritePalette(void *object, s32 value);
 
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               s32 z);
 
-s32 ScriptObject_CheckOverlapFar(struct Actor *object,
-                                 struct Effect04Vector *position);
+s32 ActorScript_CheckOverlapFar(struct Actor *object,
+                                struct Effect04Vector *position);
 
-void Func_080dd754(void);
+void FieldPsynergy_WatchLeaderDistance(void);
 
-void Func_080ddbd8(void);
+void FieldEffect_SpawnBurstParticleField(void);
 
 // Far call to the target classifier Func_080237c8.
 s32 Func_08020330(struct Actor *object);
 
-extern const s32 gData_080f0e60[];
+extern const s32 gFieldEffect_SourceHoldScript[];
 
-struct Actor *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
+struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle);
 
-void BattleEffect_ClearOwnedSlot(struct FieldParticle *slot);
+void FieldEffect_ClearOwnedSlot(struct FieldParticle *slot);
 
-void FieldEffect_RunPly(void);
-void Func_080debd8(void);
+void FieldPsynergy_Ply(void);
+void FieldPsynergy_EndCloak(void);
 
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
-struct Actor *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
+struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle);
 
-void Func_080201f0(s32 toX, s32 toZ, s32 width, s32 height, s32 fromX,
-                   s32 fromZ);
+void MapGrid_CopyCellPictureCellsRectFar(s32 toX, s32 toZ, s32 width,
+                                         s32 height, s32 fromX, s32 fromZ);
 
 void Func_080e2c38(void);
 
@@ -230,20 +230,20 @@ extern char ResourceId_Leaves;
 
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 
-void Func_080e3d04(void);
+void FieldPsynergy_Blaze(void);
 
-void Func_080e4a34(void);
+void FieldPsynergy_Sand(void);
 
-void Func_080e572c(void);
+void FieldPsynergy_Burst(void);
 
-void Func_080e5d5c(void);
+void FieldPsynergy_Pound(void);
 
-void Func_080e68d0(void);
-void Func_080e7844(void);
+void FieldPsynergy_Scoop(void);
+void FieldPsynergy_Parch(void);
 
-void Func_080e9af4(void);
+void FieldPsynergy_Hover(void);
 
-void Func_080e4730(void);
+void FieldPsynergy_EndSand(void);
 
 extern char ResourceId_SparkleFade;
 
@@ -254,23 +254,23 @@ void Func_080ec1d0(s32 *screenX, s32 *screenY);
 
 extern s16 gData_0202a642;
 
-void Func_080e09c0(void);
+void FieldPsynergy_Lash(void);
 
-void BattleEffect_ShrinkObjectScaleUntilHalf(struct Actor *object);
+void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *object);
 
 void Camera_WorldToScreen(struct EffectVector *position);
 
 void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
                                   s32 height);
 
-void Func_080e1f2c(void);
+void FieldPsynergy_Unnamed29(void);
 
 void FieldPsynergy_Halt(void);
 
 void FieldPsynergy_Catch(void);
-void Func_080e0cec(struct FieldParticle *slot);
+void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot);
 
-void FieldEffect_RunWhirlwind(void);
+void FieldPsynergy_Whirlwind(void);
 
 void BattleEffect_StartArcEffect(void);
 
@@ -279,7 +279,7 @@ void BattleEffect_WaitForArcGroups(void);
 void BattleEffect_EndArcEffect(void);
 
 void BattleEffect_CleanupSceneObjects(void);
-void Func_080dc6d8(void);
+void EventObject_Initialize(void);
 
 void Djinn_ResolvePending(s32 shown);
 
@@ -287,7 +287,7 @@ void Func_080e2718(void);
 
 void Djinn_RestoreActorAfterBattle(void);
 
-void FieldEffect_ResumeCloakCheck(void);
+void FieldPsynergy_ResumeCloakCheck(void);
 
 void Func_080e7804(void);
 void Func_080e7238(void);
@@ -296,7 +296,7 @@ void Field_StartEncounterTransition(s32 unused);
 
 void Func_080ea14c(s32 targetId);
 
-void BattleEffect_ResumeObject(s32 id);
+void FieldPsynergy_ResumeHaltedActor(s32 id);
 
 void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle);
 
@@ -310,48 +310,48 @@ void Djinn_RunMarsJoinEffect(s32 actor);
 
 void Djinn_RunJupiterJoinEffect(s32 actor);
 
-void FieldEffect_RunMove(void);
+void FieldPsynergy_Move(void);
 
-void Func_080df6f4(void);
+void FieldPsynergy_Carry(void);
 
-void Func_080de21c(void);
+void FieldPsynergy_Force(void);
 
-void FieldEffect_RunGrowth(void);
+void FieldPsynergy_Growth(void);
 
-void FieldEffect_RunRetreat(void);
+void FieldPsynergy_Retreat(void);
 
-void BattleEffect_RunEffect16(void);
+void FieldPsynergy_Avoid(void);
 
-void Func_080decb8(void);
+void FieldPsynergy_StartCloak(void);
 
-void Func_080dd820(void);
+void FieldPsynergy_Reveal(void);
 
-void Func_080e9090(void);
+void FieldPsynergy_Tremor(void);
 
-void BattleEffect_RunViewSway(void);
+void FieldPsynergy_Grind(void);
 
-void BattleEffect_RunEffect30(void);
+void FieldPsynergy_Teleport(void);
 
-void Func_080e82cc(void);
+void FieldPsynergy_Unnamed28(void);
 
-s32 BattleEffect_FilterObjectIdByFlags(s32 id);
-void BattleEffect_PauseObject(s32 id);
+s32 FieldPsynergy_FilterHaltTarget(s32 id);
+void FieldPsynergy_HaltActor(s32 id);
 
-void Func_080dd950(void);
+void FieldPsynergy_EndReveal(void);
 
-void BattleEffect_SteerLiftedTarget(s32 targetId);
+void FieldPsynergy_SteerLiftedTarget(s32 targetId);
 
-void Func_080dda30(s32 unused);
+void FieldPsynergy_GrowthOnTarget(s32 unused);
 
-void Func_080e0978(s32 value);
+void FieldPsynergy_LashOnTarget(s32 value);
 
-void FieldEvent_ShowStatusMessage(void);
+void FieldPsynergy_ShowAvoidWoreOff(void);
 
-void Func_080e9db4(void);
+void FieldPsynergy_EndHover(void);
 
-void Func_080e87c4(void);
+void FieldPsynergy_EndUnnamed28(void);
 
-void BattleEffect_FinishSceneAndReleaseHeapBlock(void);
+void FieldPsynergy_StopMindReadWave(void);
 
 void Scene_QueueMusic(s32 soundId);
 
@@ -570,9 +570,9 @@ void Func_080dc954(void);
 void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
                            s32 action);
 
-extern const u8 Data_080f1100[];
+extern const u8 gWorldMap_MarkerBlendCycle[];
 
-extern const u16 Data_080f1120[];
+extern const u16 gWorldMap_CursorDirectionAngles[];
 
 extern s32 Data_0202a644;
 extern s32 Data_0202a648;
@@ -581,12 +581,270 @@ extern s16 Data_0202a654[];
 extern s16 Data_0202a656[];
 extern struct WorldMapMarker Data_0202a620;
 
-void Palette_FillNumber15Grey(void);
+void FieldPsynergy_GreyMindReadPalette(void);
 
-void Func_080dcb44(void);
+void FieldPsynergy_UpdateMindReadWave(void);
 
-void Func_080dcadc(void);
+void FieldPsynergy_RestoreMindReadPalette(void);
 
-void BattleEffect_ArmBg0HBlankDma(void);
+void FieldEffect_ArmBg0HBlankDma(void);
+
+struct Actor;
+struct Vec3;
+
+struct WaveFxSprite {
+  u32 unk00[2];
+  u8 unk08;
+  u32 unk09_0 : 2;
+  u32 mode : 2;
+  u32 unk09_4 : 4;
+  u8 unk0a[8];
+  u16 orientation;
+  u8 unk14[6];
+  u8 palette;
+};
+
+struct WaveFxVector {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+struct WaveFxDescriptor {
+  s16 sprite;
+};
+
+struct WaveFxMetadata {
+  u8 unk00[8];
+  s8 boxX;
+};
+
+struct ResourceEntry {
+  u8 unk00[0x10];
+  u8 vramBlock;
+};
+
+struct Effect04Scene {
+  u16 angle;
+  u8 unk02[2];
+  s32 x;
+  s32 y;
+  s32 z;
+  struct Actor *mainObject;
+  struct Actor *child;
+  s16 firstObjectId;
+  s16 secondObjectId;
+  u8 unk1c[4];
+  s8 enabled;
+  u8 unk21[0x13];
+  s8 childOption;
+  s8 childMode;
+  u8 unk36[0x1a];
+  struct FieldParticle slots[24];
+};
+
+struct Effect04Vector {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+struct OrbitingParticleVector {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+struct OrbitingParticleChild {
+  u8 reserved00[35];
+  u8 flags;
+};
+
+// The field event work's Reveal state (eventWork + 0xca4).
+struct RevealEvent {
+  u8 unk000[0xca4];
+  s8 active;   // Reveal is showing
+  u8 markers;  // the nearby markers are up
+  s16 frames;  // how long it lasts
+  s16 centreX; // pixels
+  s16 centreY;
+};
+
+struct BurstParticleVector {
+  s32 values[3];
+};
+
+struct BurstParticleVisual {
+  u8 reserved00[5];
+  u8 flagsALow : 5;
+  u8 flip : 1;
+  u8 flagsAHigh : 2;
+  u8 reserved06;
+  u8 flagsBLow : 6;
+  u8 flagsBHigh : 2;
+  union {
+    struct {
+      u16 shape : 10;
+      u16 unused : 6;
+    } bits;
+    struct {
+      u8 lo;
+      u8 highLow : 4;
+      u8 palette : 4;
+    } bytes;
+  } attributes;
+};
+
+// ⚓️'s sprite keeps its second part 28 bytes in.
+struct BurstParticleVisualGroup {
+  struct BurstParticleVisual primary;
+  u8 reserved0c[16];
+  struct BurstParticleVisual child;
+};
+
+struct BattleEffectScene {
+  u8 reserved00[4];
+  s32 x;
+  s32 y;
+  s32 z;
+  void *mainObject;
+  void *child;
+};
+
+struct EffectChild {
+  u8 reserved00[12];
+  s32 y;
+  u8 reserved10[0x55 - 0x10];
+  u8 flag;
+  u8 reserved56[0x6c - 0x56];
+  void (*callback)(void);
+};
+
+struct EffectTarget {
+  u8 unk00[8];
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+struct RadialBurstEffect {
+  u8 unk00[12];
+  s32 x;
+  s32 z;
+  s32 sourceX;
+  s32 sourceZ;
+  u8 unk1c[4];
+  s32 velocityX;
+  s32 velocityZ;
+  u8 unk28[10];
+  u16 scale;
+  u8 unk34[12];
+  s8 state;
+  u8 unk41;
+  u8 enabled;
+};
+
+struct ImpactVector {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+struct WaveFxScroll {
+  u16 lines[2][162];
+  u8 unk288[2];
+  u8 page;
+  u8 unk28b[9];
+  u8 delay;
+};
+
+struct ItemBreakFragmentPosition {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+struct ItemBreakFragmentSource {
+  u8 reserved00[6];
+  u16 angle; ///< Facing angle (0x10000 is one turn).
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 reserved14[70];
+  u8 flag5a;
+  u8 reserved5b[13];
+  struct ItemBreakFragmentSource *target; ///< Facing target.
+};
+
+struct ItemBreakFragmentObject {
+  u8 reserved00[72];
+  s32 field48; ///< Gravity (same offset as gravity).
+  u8 reserved4c[9];
+  u8 mode55; ///< Same offset as motionFlags.
+  u8 reserved56[8];
+  u16 field5e;
+};
+
+struct Output_08097f80 {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+struct SwayObject {
+  u8 unk00[8];
+  s32 y;
+  u8 unk0c[44];
+  s32 baseY;
+  u8 unk3c[40];
+  s16 phase;
+};
+
+struct OrbitVector {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+struct SparkObject {
+  u8 unk00[8];
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 unk14[4];
+  s32 scaleX;
+  s32 scaleY;
+  u8 unk20[24];
+  s32 anchorX;
+  u8 unk3c[12];
+  s32 gravity;
+  u8 unk4c[9];
+  u8 motionFlags;
+  u8 unk56[8];
+  u16 unk5e;
+  u8 unk60[4];
+  s16 phase;
+  u8 unk66[6];
+  void (*update)(struct SparkObject *);
+};
+
+struct OwnerObject {
+  u8 unk00[8];
+  s32 x;
+  u8 unk0c[4];
+  s32 z;
+  u8 unk14[14];
+  u8 layer;
+};
+
+extern const u8 gData_080f0ef8[];
+
+extern const u8 gData_080f0e58[];
+extern u8 gData_080f0e9c[];
+
+struct Actor *ActorScript_FindOverlappingEntryFar(struct Actor *object,
+                                                  struct Vec3 *position);
+
+extern const u8 gUnused_BattleEffectBytes[];
 
 #endif

@@ -42,7 +42,7 @@ explains how this code works.
   offset in the slot table (`0x9c` and `0xa0`, slots 39 and 40), and their
   files and functions by address (`Func_080d8d40`) until their meaning is
   read.
-- The ground height functions in `map/f02c58c.c` are The Broken Seal's,
+- The ground height functions in `map/tile_animation.c` are The Broken Seal's,
   described under
   [How high a step can go](../../../tbs/src/field/README.md#how-high-a-step-can-go),
   but this game drops the two bends along an axis: the sample tables come

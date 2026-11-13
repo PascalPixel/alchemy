@@ -73,17 +73,22 @@ struct MotionObject {
 typedef s32 (*MotionCommand)(struct MotionObject *object);
 
 extern const MotionCommand gData_0802f204[];
-extern const s32 gData_0802ebc8[];
+extern const s32 gActorScript_CycleTable[];
 
-/* VIEW(f023680): routine ScriptObject_CheckOverlap as s32 ScriptObject_CheckOverlap(struct MotionObject *object, s32 *values); the definition has s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values). */
-extern s32 ScriptObject_CheckOverlap__f023680(struct MotionObject *object, s32 *values) __asm__("ScriptObject_CheckOverlap");
+/* VIEW(f023680): routine ActorScript_CheckOverlap as s32
+ * ActorScript_CheckOverlap(struct MotionObject *object, s32 *values); the
+ * definition has s32 ActorScript_CheckOverlap(struct Actor *object, s32
+ * *values). */
+extern s32 ScriptObject_CheckOverlap__f023680(
+    struct MotionObject *object,
+    s32 *values) __asm__("ActorScript_CheckOverlap");
 
 #define TARGET_UNSET ((s32)0x80000000)
 
 /// A whole-pixel distance squared.
 static __inline__ s32 Object_Square(s32 value) { return value * value; }
 
-void Func_08023f9c(void) {
+void Actor_UpdateAllThumb(void) {
   struct MotionObject *object;
   s32 objectsRemaining;
   s32 x;
@@ -277,7 +282,8 @@ void Func_08023f9c(void) {
             }
           }
           if (!standing)
-            ground = MapGrid_GetTerrainHeight(object->terrainId, velocityX, velocityZ);
+            ground = MapGrid_GetTerrainHeight(object->terrainId, velocityX,
+                                              velocityZ);
           velocityY = ground - object->groundHeight;
           if (ground - y > -0x40000)
             y += velocityY;
@@ -336,10 +342,10 @@ void Func_08023f9c(void) {
 
           if (object->motionFlags & 8)
             object->velocityY =
-                gData_0802ebc8[phase >> 1] * object->gravity / 16;
+                gActorScript_CycleTable[phase >> 1] * object->gravity / 16;
           else
             object->velocityY =
-                gData_0802ebc8[phase >> 1] * object->gravity / 64;
+                gActorScript_CycleTable[phase >> 1] * object->gravity / 64;
           object->bounce++;
         }
       }

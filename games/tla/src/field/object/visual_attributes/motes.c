@@ -11,7 +11,11 @@
   ((void (*)(const void *, void *))Resource_DecodeByteLzInRam)
 
 /// Heap slot 0x74 while the motes run.
-/* VIEW(motes): tag struct MoteWork as struct MoteWork__motes; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:3089: structure has no member named `motes'. */
+/* VIEW(motes): tag struct MoteWork as struct MoteWork__motes;
+ * visual_attributes.c has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/field/object/visual_attributes.c:3089: structure has no member
+ * named `motes'. */
 struct MoteWork__motes {
   s32 vramEntry;
   s32 tileBase;
@@ -19,7 +23,7 @@ struct MoteWork__motes {
   u8 pad808[12];
 };
 
-/// Starts the 64 floating motes (Func_080d6c60): loads their tiles and puts
+/// Starts the 64 floating motes (FieldMotes_Update): loads their tiles and puts
 /// each under the leader with staggered timers, drawn semi-transparent.
 // As ☀️'s function of the same name.
 void FieldMotes_Start(void) {
@@ -46,7 +50,7 @@ void FieldMotes_Start(void) {
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x205, REG_DMA3);
   tiles = HeapSlot_AllocEwram(56, 0x400);
   Resource_DecodeByteLzInRam(gData_080f385e, tiles);
-  work->vramEntry = Resource_FindFreeEntry();
+  work->vramEntry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->vramEntry, 0x300, tiles);
   HeapSlot_Release(56);
   i = 0;
@@ -94,17 +98,17 @@ void FieldMotes_Start(void) {
     reg++;
     *reg = clear;
   } while (0);
-  Task_Add(Func_080d6c60, TASK_PASS_VBLANK);
+  Task_Add(FieldMotes_Update, TASK_PASS_VBLANK);
 }
 
 #undef Resource_DecodeByteLzInRam
 
-/// Starts Func_080d6674's particles: allocates and clears heap slot 0x74,
+/// Starts Weather_UpdateRain's particles: allocates and clears heap slot 0x74,
 /// decodes the particle tiles into VRAM, sets each of the 64 particles' sprite
 /// words and places it on the ground at the map's focus with a timer of
 /// (i & 11) + 1, turns on alpha blending of all layers at 16/16, schedules the
 /// update and, when asked, plays cue 137 (Scene_QueueMusic).
-void Func_080d6f34(s32 withCue) {
+void Weather_StartRain(s32 withCue) {
   struct SparkParticleWork *work = HeapSlot_AllocEwram(116, 0x814);
   struct SparkParticle *particle = work->particles;
   volatile u32 fill;
@@ -123,7 +127,7 @@ void Func_080d6f34(s32 withCue) {
   Dma_Fill32Cell(fill, zero, work, 0x814);
   tiles = HeapSlot_AllocEwram(56, 0x400);
   Resource_DecodeByteLzInRam(Data_080f3901, tiles);
-  work->vramEntry = Resource_FindFreeEntry();
+  work->vramEntry = VramCache_FindFreeEntry();
   work->tile = VramCache_Load(work->vramEntry, 0x300, tiles);
   HeapSlot_Release(56);
   i = 0;
@@ -155,12 +159,12 @@ void Func_080d6f34(s32 withCue) {
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
   Io_Write16(clear, &REG_BLDY);
-  Task_Add(Func_080d6674, TASK_PASS_VBLANK);
+  Task_Add(Weather_UpdateRain, TASK_PASS_VBLANK);
   if (withCue != 0)
     Scene_QueueMusic(137);
 }
 
-void Func_080d7024(void) { Task_Remove(Func_080d6674); }
+void Func_080d7024(void) { Task_Remove(Weather_UpdateRain); }
 
 struct SparkleWork {
   u8 padding00[4];
@@ -170,8 +174,12 @@ struct SparkleWork {
   s32 stopped;
 };
 
-/* VIEW(motes): routine Func_080140d8 as void Func_080140d8(void *entry, s32 priority); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
-extern void Func_080140d8__motes(void *entry, s32 priority) __asm__("Func_080140d8");
+/* VIEW(motes): routine Oam_AddSpriteAtDepthClamped as void
+ * Oam_AddSpriteAtDepthClamped(void *entry, s32 priority); f0d6674 has void
+ * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth). */
+extern void
+Func_080140d8__motes(void *entry,
+                     s32 priority) __asm__("Oam_AddSpriteAtDepthClamped");
 
 void FieldEffect_UpdateSparkles(void) {
   struct SparkleWork *work;
@@ -211,7 +219,7 @@ void FieldEffect_UpdateSparkles(void) {
       cameraZ = camera[1];
       if (GameFlag_Test(0x166) != 0)
         sparkle->timer++;
-      frame = (const u16 *)&gData_080f0b7c[sparkle->timer >> 1];
+      frame = (const u16 *)&gFieldEffect_SparklePictures[sparkle->timer >> 1];
       a = Random16();
       b = Random16();
       x = ((sparkle->posX - cameraX) >> 16) + (((a & 1) + (b & 1)) >> 1);
@@ -306,8 +314,8 @@ void FieldEffect_InitializeSparkles(void) {
               (sizeof(struct DustWork) / 4),
           REG_DMA3);
   buf = HeapSlot_AllocEwram(56, 0x400);
-  Resource_DecodeByteLzInRam(gData_080f38b2, buf);
-  work->vramEntry = Resource_FindFreeEntry();
+  Resource_DecodeByteLzInRam(gFieldEffect_SparkleTiles, buf);
+  work->vramEntry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->vramEntry, 0x200, buf);
   HeapSlot_Release(56);
 
@@ -345,7 +353,7 @@ loop:
   Task_Add(FieldEffect_UpdateSparkles, TASK_PASS_VBLANK);
 }
 
-void BattleEffect_StartTwelveFrameBlend(void) {
+void Weather_StartLightning(void) {
   struct FieldBlendWork *work;
   struct BattleEffectBuffers *buffers;
   volatile u32 zero;
@@ -365,28 +373,28 @@ void BattleEffect_StartTwelveFrameBlend(void) {
   Task_Add(Weather_UpdateLightning, TASK_PASS_VBLANK);
 }
 
-void BattleEffect_SetBlock30ValuesMaxZero(void) {
+void Weather_StopLightning(void) {
   struct FieldBlendWork *state =
       HeapSlot_AllocEwram(120, sizeof(struct FieldBlendWork));
   state->timer = 0x7fff;
   state->enabled = 0;
 }
 
-void BattleEffect_SetBlock30Values12Zero(void) {
+void Weather_LastLightning(void) {
   struct FieldBlendWork *state =
       HeapSlot_AllocEwram(120, sizeof(struct FieldBlendWork));
   state->timer = 12;
   state->enabled = 0;
 }
 
-void BattleEffect_SetBlock30Values128One(void) {
+void Weather_ResumeLightning(void) {
   struct FieldBlendWork *state =
       HeapSlot_AllocEwram(120, sizeof(struct FieldBlendWork));
   state->timer = 128;
   state->enabled = 1;
 }
 
-void BattleEffect_StartBufferBlend(s32 from, s32 to) {
+void Weather_StartLightningFlash(s32 from, s32 to) {
   struct FieldBlendWork *work;
   struct BattleEffectBuffers *buffers;
   volatile u32 zero;

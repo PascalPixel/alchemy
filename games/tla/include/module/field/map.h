@@ -124,9 +124,9 @@ void Func_0802d088(s32 region, s32 gradual);
 
 s32 Func_080c8950(void);
 
-extern u8 gData_0201c000[];
+extern u8 gDecodeBuffer[];
 
-void MapAnimation_Update(void);
+void TilesetAnim_Update(void);
 
 s32 Func_080c8730(s32 layer, s32 unused, s32 value);
 
@@ -135,16 +135,16 @@ s32 Func_080c8720(s32 layer, s32 unused, s32 value);
 extern const u8 Render_DrawMapCode[];
 extern u8 Render_DrawMapCodeSize[];
 
-s32 Func_0802e444(s32 spriteId, s32 direction);
-void Battle_PlaceActorsByFormationKind(void);
+s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction);
+void SpriteViewer_PlaceRing(void);
 extern char ResourceId_Data012;
 extern u8 gData_03001e60[];
 extern struct BattleCells gSpriteObjects;
 
-void DisplayBlend_StartScript(u16 *script);
+void BlendScript_Start(u16 *script);
 s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height);
-void Func_0802c58c(void);
-void DisplayBlend_DisableRunScript(void);
-void DisplayBlend_EnableRunScript(void);
+void WorldMap_PreloadCurrentTileBlock(void);
+void BlendScript_Resume(void);
+void BlendScript_Suspend(void);
 
 #endif

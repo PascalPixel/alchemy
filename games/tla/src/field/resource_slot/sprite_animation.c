@@ -8,18 +8,56 @@
 #include "module/system/system.h"
 #include "module/tla.h"
 
-/* VIEW(resource_slot): routine AnimationObject_Allocate as s32 AnimationObject_Allocate(s32 id); the definition has struct AnimationEntry *AnimationObject_Allocate(s32 id); tried as the definition's struct AnimationEntry *AnimationObject_Allocate(s32 id), which the object already declares, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:482: conflicting types for `AnimationObject_Allocate'. */
-extern s32 AnimationObject_Allocate__resource_slot(s32 id) __asm__("AnimationObject_Allocate");
-#define AnimationObject_Allocate AnimationObject_Allocate__resource_slot
+struct ChildObject {
+  u8 unk00[2];
+  u16 value;
+  u8 unk04[8];
+  s32 active;
+  u8 unk10[5];
+  u8 mode;
+};
+
+/// The sprite as Sprite_Create fills it: the image's three attribute
+/// words, its layout, then the shadow's three words.
+struct ResourceSprite {
+  u32 imageAttributes[3];
+  s32 scale;
+  u8 slot;
+  u8 retainCacheEntry : 1;
+  u8 useOwnScale : 1;
+  u8 unk11 : 6;
+  u16 rotation;
+  u8 width;
+  u8 height;
+  s8 offsetX;
+  s8 offsetY;
+  u8 lastNo;
+  u8 dirty;
+  u8 flags;
+  u8 count;
+  u32 shadowAttributes[3];
+  struct AnimationEntry *entries[4];
+};
+
+/* VIEW(resource_slot): routine SpriteAnimation_Alloc as s32
+ * SpriteAnimation_Alloc(s32 id); the definition has struct AnimationEntry
+ * *SpriteAnimation_Alloc(s32 id); tried as the definition's struct
+ * AnimationEntry *SpriteAnimation_Alloc(s32 id), which the object already
+ * declares, it does not compile in tla-ja:
+ * games/tla/src/field/resource_slot.c:482: conflicting types for
+ * `SpriteAnimation_Alloc'. */
+extern s32 AnimationObject_Allocate__resource_slot(s32 id) __asm__(
+    "SpriteAnimation_Alloc");
+#define SpriteAnimation_Alloc AnimationObject_Allocate__resource_slot
 #include "system.h"
-#undef AnimationObject_Allocate
+#undef SpriteAnimation_Alloc
 #include "types.h"
 #include "resource.h"
 #include "sprite.h"
 #include "sprite_metadata.h"
 #include "ram_buffer.h"
 
-s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
+s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
   struct ObjectSystemWork *work;
   struct ResourceSlot *record;
@@ -54,7 +92,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
     if (entryNumber == number)
       break;
   }
-  size = Resource_DecodeType01(Resource_GetTableEntry(resource), buffer);
+  size = Decompress_TaggedLz(Resource_GetTableEntry(resource), buffer);
 
   offset = buffer;
   for (count = 0; count < 256; count++) {
@@ -98,7 +136,11 @@ s32 Animation_LookupValueByKey(s32 key) {
 // actor_view.h's ActorSpriteView, with the bytes this function writes named
 // from the projection draft's layout (field_sprite.h); its other members as
 // the tree has them.
-/* VIEW(resource_slot): tag struct ActorSpriteView as struct ActorSpriteView__resource_slot; actor_view.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:113: dereferencing pointer to incomplete type. */
+/* VIEW(resource_slot): tag struct ActorSpriteView as struct
+ * ActorSpriteView__resource_slot; actor_view.h has another definition; tried
+ * with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/field/resource_slot.c:113: dereferencing pointer to
+ * incomplete type. */
 struct ActorSpriteView__resource_slot {
   u8 unk00[5];
   u8 unk05Low : 2;
@@ -174,7 +216,7 @@ s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state) {
 
 #include "debug.h"
 
-void Animation_InitializeWorkFromMetadata(struct AnimationEntry *work) {
+void SpriteAnimation_Reset(struct AnimationEntry *work) {
   s32 value;
   s32 z;
   s32 animation;
@@ -239,13 +281,13 @@ s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id) {
   return value;
 }
 
-void ResourceMetadata_Unregister(struct MetadataSlotState *state, s32 handle) {
+void Sprite_RemoveAnimation(struct MetadataSlotState *state, s32 handle) {
   s32 count;
   u32 slot;
   u32 i;
 
   if (state != NULL && handle != 0) {
-    ResourceMetadata_ClearRecord((void *)handle);
+    SpriteAnimation_Clear((void *)handle);
     for (slot = 0; slot <= 3; slot++) {
       if (handle == state->slots[slot])
         break;
@@ -263,7 +305,7 @@ void ResourceMetadata_Unregister(struct MetadataSlotState *state, s32 handle) {
   }
 }
 
-void ResourceMetadata_ReleaseSlot(struct MetadataSlotState *state, u32 no) {
+void Sprite_RemoveAnimationAt(struct MetadataSlotState *state, u32 no) {
   s32 slot;
   s32 count;
   u32 i;
@@ -271,7 +313,7 @@ void ResourceMetadata_ReleaseSlot(struct MetadataSlotState *state, u32 no) {
   if (state != NULL && no <= 3) {
     slot = state->slots[no];
     if (slot != 0) {
-      ResourceMetadata_ClearRecord((void *)slot);
+      SpriteAnimation_Clear((void *)slot);
       state->slots[no] = 0;
       count = 0;
       for (i = no + 1; i <= 3; i++) {
@@ -284,7 +326,7 @@ void ResourceMetadata_ReleaseSlot(struct MetadataSlotState *state, u32 no) {
   }
 }
 
-void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no) {
+void SpriteAnimation_Start(struct AnimationEntry *work, s32 no) {
   s32 hi;
   struct AnimationMetadata *info;
   s32 value;
@@ -361,7 +403,7 @@ struct ChildGroup {
   struct ChildObject *children[1];
 };
 
-s32 Func_08022b80(struct ChildGroup *group, s32 value) {
+s32 Sprite_SetAnimationTimers(struct ChildGroup *group, s32 value) {
   s32 i;
 
   for (i = 0; i < group->count; i++) {
@@ -395,7 +437,7 @@ void Animation_ApplyChildValue(struct ChildGroup *group, s32 value) {
 /// the heap otherwise) and clears them, loads the shadow tiles into VRAM cache
 /// entry 93 and copies the strided tile copier into RAM.
 // As ☀️'s function of the same name.
-void ObjectSystem_Configure(s32 mode) {
+void ActorSystem_Configure(s32 mode) {
   void *sprites;
   void *layers;
   volatile u32 zero;
@@ -411,12 +453,12 @@ void ObjectSystem_Configure(s32 mode) {
     layers = HeapSlot_Alloc(12, ANIMATION_OBJECT_COUNT *
                                     sizeof(struct AnimationEntry));
   }
-  Palette_LoadBasicObjColors();
+  Palette_LoadBasicSpriteColors();
   Dma_Fill32Cell(zero, 0, sprites,
                  ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
   Dma_Fill32Cell(zero, 0, layers,
                  ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
-  VramCache_Load(93, 128, gData_0802e89c);
+  VramCache_Load(93, 128, gActor_ShadowTiles);
   {
     u32 size = (u32)Render_CopyStridedCodeSize;
 
@@ -425,16 +467,16 @@ void ObjectSystem_Configure(s32 mode) {
   }
 }
 
-void VramBlock_Reset93(void) { Resource_ResetEntry(93); }
+void VramBlock_Reset93(void) { VramCache_FreeEntry(93); }
 
 void VramBlock_Load93(void) {
-  const u8 *data = gData_0802e89c;
+  const u8 *data = gActor_ShadowTiles;
   s32 size = 128;
 
   VramCache_Load(93, size, data);
 }
 
-struct AnimationEntry *AnimationObject_Allocate(s32 id) {
+struct AnimationEntry *SpriteAnimation_Alloc(s32 id) {
   struct AnimationMetadata *metadata;
   struct AnimationEntry *entry;
   struct AnimationEntry *found;
@@ -485,7 +527,7 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
 // Resources: clear an animation record.
 
 /// Zeroes one AnimationEntry; does nothing for NULL.
-void ResourceMetadata_ClearRecord(void *dst) {
+void SpriteAnimation_Clear(void *dst) {
   if (dst != 0) {
     volatile u32 zero;
 
@@ -507,13 +549,17 @@ typedef char
 
 #include "vram_tab.h"
 
-/* VIEW(vram_block_93): routine ResourceMetadata_Register as s32 ResourceMetadata_Register(struct ResourceSprite *sprite, s32 id); the definition has s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id). */
-extern s32 ResourceMetadata_Register__vram_block_93(struct ResourceSprite *sprite, s32 id) __asm__("ResourceMetadata_Register");
+/* VIEW(vram_block_93): routine ResourceMetadata_Register as s32
+ * ResourceMetadata_Register(struct ResourceSprite *sprite, s32 id); the
+ * definition has s32 ResourceMetadata_Register(struct MetadataSlotState *state,
+ * s32 id). */
+extern s32 ResourceMetadata_Register__vram_block_93(
+    struct ResourceSprite *sprite, s32 id) __asm__("ResourceMetadata_Register");
 
 /// Creates an animated sprite object for animation id, using one of 64 free
 /// objects and a VRAM cache entry. Returns the object, or NULL on failure.
 // As ☀️'s function of the same name.
-struct ResourceObject *ResourceObject_Create(s32 id) {
+struct ResourceObject *Sprite_Create(s32 id) {
   struct AnimationMetadata *metadata;
   struct ResourceSprite *sprite;
   struct ResourceSprite *freeSprite;
@@ -525,7 +571,7 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
 
   freeSprite = NULL;
   metadata = Resource_GetMetadataRecordFar(id);
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   sprite = Ram_HeapSlots->unk0c[1];
   if (metadata->width == 0)
     return NULL;
@@ -604,18 +650,18 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
 
 /// Releases an object: gives back its VRAM cache entry unless flags bit 0 is
 /// set, releases its four children and zeroes the 56-byte workspace.
-void ResourceObject_Release(struct ResourceObjectWork *work) {
+void Sprite_Destroy(struct ResourceObjectWork *work) {
   volatile u32 zero;
   s32 n;
   void **child;
 
   if (work) {
     if (!(work->flags & 1))
-      Resource_ResetEntry(work->resource);
+      VramCache_FreeEntry(work->resource);
     child = work->children;
     n = 3;
     do {
-      ResourceMetadata_ClearRecord(*child++);
+      SpriteAnimation_Clear(*child++);
     } while (--n >= 0);
     zero = 0;
     Dma_Set(&zero, work,
@@ -630,7 +676,7 @@ void ResourceObject_Release(struct ResourceObjectWork *work) {
 /// Sums the first cnt frame durations of animation id's entry number `no`.
 /// Commands are two bytes (command, value); 254, 241, 253 and 239 end the
 /// list, and the values of commands 245, 255 and those up to 238 count.
-s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt) {
+s32 SpriteAnimation_SumCommandLengths(s32 id, u32 no, s32 cnt) {
   struct AnimationMetadata *info;
   u8 *p;
   u8 op;

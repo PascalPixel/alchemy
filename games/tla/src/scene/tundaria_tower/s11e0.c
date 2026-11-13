@@ -23,7 +23,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    const struct EffectOptions *options);
 
 static inline void TundariaTower_CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 void Func_020011e0(void) {
@@ -48,7 +48,7 @@ void Func_020011e0(void) {
   leader->motionFlags = 3;
   Event_Wait(24);
   options.palette = 7;
-  options.update = (void *)Effect_AdvanceMotion;
+  options.update = (void *)FieldEffect_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
   i = 0;
@@ -71,7 +71,7 @@ void Func_020011e0(void) {
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Map_WaitForShakeToSettle();
+  MapGrid_WaitForShakeToSettle();
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
@@ -168,8 +168,8 @@ s32 Scene_Initialize(void) {
         Call2((void (*)())Scene_SetActorSpritePriority, (s32)object, 1);
         object->motionFlags = 0;
         Actor_SetSingleChildFlags(object, 0);
-        Actor_SetPartAttribute(object, 14);
-        Animation_SetStateFlags(object, 1);
+        Actor_SetSpriteColor(object, 14);
+        Actor_SetBlendMode(object, 1);
       }
       break;
     case 1:
@@ -232,7 +232,10 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/* VIEW(s11e0): variable gInput as extern u32 gInput; input.h has extern struct InputState gInput; tried as the 3 declarations' extern u32 gInput, it does not compile in tla-ja: games/tla/include/system/input.h:37: conflicting types for `gInput'. */
+/* VIEW(s11e0): variable gInput as extern u32 gInput; input.h has extern struct
+ * InputState gInput; tried as the 3 declarations' extern u32 gInput, it does
+ * not compile in tla-ja: games/tla/include/system/input.h:37: conflicting types
+ * for `gInput'. */
 extern u32 gInput__s11e0 __asm__("gInput");
 void Func_02002f80(struct Actor *object, s32 mode);
 
@@ -277,7 +280,11 @@ void Func_02001868(void) {
   }
 }
 
-/* VIEW(events_e): routine Func_020017dc as void Func_020017dc(void); the definition has void Func_020017dc(struct Actor *object); tried as the definition's void Func_020017dc(struct Actor *actor), it does not compile in tla-ja: games/tla/src/scene/tundaria_tower/s11e0.c:355: `Func_020017dc__events_e' undeclared (first use in this function). */
+/* VIEW(events_e): routine Func_020017dc as void Func_020017dc(void); the
+ * definition has void Func_020017dc(struct Actor *object); tried as the
+ * definition's void Func_020017dc(struct Actor *actor), it does not compile in
+ * tla-ja: games/tla/src/scene/tundaria_tower/s11e0.c:355:
+ * `Func_020017dc__events_e' undeclared (first use in this function). */
 extern void Func_020017dc__events_e(void) __asm__("Func_020017dc");
 void Func_02002f80(struct Actor *object, s32 mode);
 
@@ -316,7 +323,7 @@ retry:
   targetZ = z;
   targetX = x;
   layer = &object->terrainId;
-  startCell = GetMapCellCollision(*layer, targetX, targetZ);
+  startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
   dz = targetZ - object->z;
   dx = targetX - object->x;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
@@ -331,7 +338,7 @@ retry:
    * position's address; as no asm, 2 of 304 instructions differ in tla-en. */
   __asm__("" : : : SFP_CLOBBER);
   Vector_AddPolarOffsetFar(0x100000, angle, position);
-  cell = GetMapCellCollision(*layer, p[0], p[2]);
+  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
     object->facing = angle;
@@ -349,7 +356,7 @@ retry:
   Actor_SetMoveTarget(object, x, object->y, z);
   Func_02002f80(object, 2);
   Actor_SetAnimationSpeed(object, 48);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   object->update = Func_020017dc__events_e;
   goto walk;
 walkNext:
@@ -375,7 +382,7 @@ overlap:
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
   Actor_SetMoveTarget(object, q[0], q[1], q[2]);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   if (cell != startCell)
     goto moved;
 walk:
@@ -384,14 +391,14 @@ walk:
   __asm__("" : : : SFP_CLOBBER);
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
   q = position;
-  cell = GetMapCellCollision(*layer, q[0], q[2]);
+  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
   if (cell != 255)
     goto walkNext;
 blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;
   Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   wait(2);
   goto retry;
 moved:

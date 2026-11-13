@@ -13,11 +13,11 @@
 #include "event_inline.h"
 #include "frame.h"
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);
 u8 *ResourceMetadata_Register(void *animation, s32 id);
 void Event_FinishScreenTransition(void);
-s32 Resource_FindFreeEntry(void);
+s32 VramCache_FindFreeEntry(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 #include "map.h"
@@ -82,8 +82,8 @@ struct VentWork {
   u16 ids[4];
 };
 
-extern u8 gData_020023c4[];
-#define VENT_WORK ((struct VentWork *)(gData_020023c4 + 0x188))
+extern u8 gInventorySnapshot[];
+#define VENT_WORK ((struct VentWork *)(gInventorySnapshot + 0x188))
 
 struct VentRow {
   u8 unk00[8];
@@ -110,7 +110,7 @@ struct FieldSpriteFlags {
 };
 
 s32 Math_Cosine(s32 angle);
-void Resource_DecodeType01(const void *source, void *destination);
+void Decompress_TaggedLz(const void *source, void *destination);
 void Func_02003cc4(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Func_02003d54(void);
@@ -119,7 +119,7 @@ void Event_End(void);
 void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
 void Func_02003e54(void);
 void Func_02003e6c(void);
-void BattleParty_ApplyDrain(s32 a, s32 b);
+void Party_AddPp(s32 a, s32 b);
 void Func_02003ecc(s32 a);
 void Func_02002bd4(struct Actor *object);
 s32 Actor_EmitMist(struct Actor *object);
@@ -166,7 +166,7 @@ static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
 }
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
-  Camera_MoveWithinMapBounds(x, a, z, b);
+  FieldCamera_MoveWithinMapBounds(x, a, z, b);
 }
 
 static __inline__ void Func_02003d14_(s32 a, s32 b, s32 c, s32 d, s32 e,
@@ -181,7 +181,7 @@ static __inline__ void Func_02003d1c_(s32 a, s32 b, s32 c, s32 d, s32 e,
 
 static __inline__ void Func_02003d24_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  Func_0802b450(a, b, c, d, e, f);
+  MapGrid_CopyCellPictureCellsRect(a, b, c, d, e, f);
 }
 
 static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }

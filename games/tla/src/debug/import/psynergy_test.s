@@ -14,18 +14,18 @@ wait:
 	.thumb_func
 Math_Sine:
 	overlay_veneer Math_SineFar
-	.global Resource_ResetEntry
+	.global VramCache_FreeEntry
 	.thumb_func
-Resource_ResetEntry:
-	overlay_veneer Resource_ResetEntryFar
+VramCache_FreeEntry:
+	overlay_veneer VramCache_FreeEntryFar
 	.global VramCache_Load
 	.thumb_func
 VramCache_Load:
 	overlay_veneer VramCache_LoadFar
-	.global Resource_FindFreeEntry
+	.global VramCache_FindFreeEntry
 	.thumb_func
-Resource_FindFreeEntry:
-	overlay_veneer Resource_FindFreeEntryFar
+VramCache_FindFreeEntry:
+	overlay_veneer VramCache_FindFreeEntryFar
 	.global Unit_Get
 	.thumb_func
 Unit_Get:
@@ -37,15 +37,15 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
-	overlay_veneer Func_080200c0
+	overlay_veneer Actor_CreateFar
 	.global Map_CopyCellsRect
 	.thumb_func
 Map_CopyCellsRect:
@@ -54,14 +54,14 @@ Map_CopyCellsRect:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Animation_ApplyChildValues
+	.global Actor_SetSpriteColorMode
 	.thumb_func
-Animation_ApplyChildValues:
-	overlay_veneer Animation_ApplyChildValuesFar
-	.global Func_0802372c
+Actor_SetSpriteColorMode:
+	overlay_veneer Actor_SetSpriteColorModeFar
+	.global Actor_SetItemIcon
 	.thumb_func
-Func_0802372c:
-	overlay_veneer Func_08020300
+Actor_SetItemIcon:
+	overlay_veneer Actor_SetItemIconFar
 	.global Window_Close
 	.thumb_func
 Window_Close:
@@ -81,7 +81,7 @@ Message_AllTyped:
 	.global Func_02000dec
 	.thumb_func
 Func_02000dec:
-	overlay_veneer Func_080380f8
+	overlay_veneer Portrait_OpenWindowFar
 	.global Func_02000df4
 	.thumb_func
 Func_02000df4:
@@ -93,7 +93,7 @@ Message_CloseFinishedWindows:
 	.global Func_02000e04
 	.thumb_func
 Func_02000e04:
-	overlay_veneer Func_080382f8
+	overlay_veneer NameEntry_EditMemberNameFar
 	.global Func_02000e0c
 	.thumb_func
 Func_02000e0c:
@@ -142,10 +142,10 @@ Func_02000e5c:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Actor_SetPositionAndReset
+	.global Actor_WalkToAndWaitById
 	.thumb_func
-Actor_SetPositionAndReset:
-	overlay_veneer Actor_SetPositionAndResetFar
+Actor_WalkToAndWaitById:
+	overlay_veneer Actor_WalkToAndWaitByIdFar
 	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
@@ -158,10 +158,10 @@ Actor_SetModeById:
 	.thumb_func
 Actor_Jump:
 	overlay_veneer Actor_JumpFar
-	.global Actor_SetAngleToward
+	.global Actor_FaceActorById
 	.thumb_func
-Actor_SetAngleToward:
-	overlay_veneer Actor_SetAngleTowardFar
+Actor_FaceActorById:
+	overlay_veneer Actor_FaceActorByIdFar
 	.global Event_SetMessageId
 	.thumb_func
 Event_SetMessageId:
@@ -174,10 +174,10 @@ Event_ShowMessageAndWait:
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global Func_02000eb4
 	.thumb_func
 Func_02000eb4:
@@ -213,11 +213,11 @@ Func_02000eec:
 	.global Func_02000ef4
 	.thumb_func
 Func_02000ef4:
-	overlay_veneer Func_080c87e8
+	overlay_veneer BattleEffect_GetObjectPriorityFar
 	.global Func_02000efc
 	.thumb_func
 Func_02000efc:
-	overlay_veneer Func_080c87f0
+	overlay_veneer BattleEffect_GetObjectDepthFar
 	.global Func_02000f04
 	.thumb_func
 Func_02000f04:
@@ -233,19 +233,19 @@ Func_02000f14:
 	.global Func_02000f1c
 	.thumb_func
 Func_02000f1c:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Func_02000f24
 	.thumb_func
 Func_02000f24:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Func_02000f2c
 	.thumb_func
 Func_02000f2c:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar
 	.global Func_02000f34
 	.thumb_func
 Func_02000f34:
-	overlay_veneer Func_08108068
+	overlay_veneer ItemPicker_RunToDropFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

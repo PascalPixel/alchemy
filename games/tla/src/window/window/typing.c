@@ -29,7 +29,7 @@ void Text_ScrollCanvasUp(s32 step) {
 
 s32 Message_Type(struct UiChannelSlot *channel);
 struct Window_0803cbf8;
-void Func_0803cbf8(struct Window_0803cbf8 *window);
+void Window_StepSwellEffect(struct Window_0803cbf8 *window);
 
 void Message_UpdateAll(void) {
   u8 *channel = (u8 *)Ram_HeapSlots->windowTiles + 0x6b8;
@@ -49,7 +49,7 @@ void Message_UpdateAll(void) {
         s32 kind;
 
         if (pending != 0) {
-          Func_0803cbf8((struct Window_0803cbf8 *)channel);
+          Window_StepSwellEffect((struct Window_0803cbf8 *)channel);
         } else {
           kind = Message_Type((struct UiChannelSlot *)channel);
           switch (kind) {
@@ -60,7 +60,7 @@ void Message_UpdateAll(void) {
             u8 *entity = *(u8 **)channel;
 
             Window_Close((struct Window *)entity,
-                            (u16)(*(u16 *)(entity + 0x16) & 2));
+                         (u16)(*(u16 *)(entity + 0x16) & 2));
             *(u16 *)(channel + 0x04) = pending;
             *(u16 *)(channel + 0x06) = pending;
             *(u16 *)(channel + 0x12) = pending;
@@ -81,9 +81,9 @@ void Message_UpdateAll(void) {
 }
 
 extern const u8 gText_SpeedDelays[];
-extern const u8 gData_080aa0df[];
-extern const u8 gText_SpeedSteps[];
-extern const u8 gText_SpeedCueGaps[];
+extern const u8 gMessageSpeed_Delays[];
+extern const u8 gMessageSpeed_Steps[];
+extern const u8 gMessageSpeed_VoiceGaps[];
 
 void Text_ScrollCanvasUp(s32 step);
 void Text_StartCanvasScroll(struct UiChannelSlot *channel);
@@ -106,7 +106,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   // DEAD: the ROM reads the held keys here once and never uses the value.
   u32 keys = *(volatile u32 *)&gInput.held;
-  s32 glyphsLeft = gText_SpeedSteps[TEXT_SPEED];
+  s32 glyphsLeft = gMessageSpeed_Steps[TEXT_SPEED];
   s32 frameVBlanks;
   u32 code;
   u32 nextCode;
@@ -178,7 +178,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 
       case 1:
         if (channel->countdown == 0) {
-          channel->countdown = gData_080aa0df[TEXT_SPEED];
+          channel->countdown = gMessageSpeed_Delays[TEXT_SPEED];
           if (work->mode != 0)
             gInput.pendingPressed = 0;
         }
@@ -237,13 +237,13 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         channel->outline = 0;
         channel->lineSpacing = 10;
         Message_ApplyStyle(channel);
-        Resource_ResetEntry(work->glyphResource);
+        VramCache_FreeEntry(work->glyphResource);
         work->glyphResource = 99;
         break;
 
       case 2:
         if (channel->countdown == 0) {
-          channel->countdown = gData_080aa0df[TEXT_SPEED];
+          channel->countdown = gMessageSpeed_Delays[TEXT_SPEED];
           if (work->mode != 0)
             gInput.pendingPressed = 0;
         }
@@ -314,7 +314,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
     } else {
       pixelX = (channel->x + 128) / 256;
       pixelY = (channel->y + 128) / 256;
-      voiceGap = gText_SpeedCueGaps[TEXT_SPEED];
+      voiceGap = gMessageSpeed_VoiceGaps[TEXT_SPEED];
       nextEntryIndex = channel->entry;
 #if !TLA_PATCH_2
       if (work->mode != 0)

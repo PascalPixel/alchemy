@@ -30,70 +30,70 @@ FarCall_RuntimeTable:
 	export DebugText_PrintFar, DebugText_Print
 	export DebugText_PrintHexFar, DebugText_PrintHex
 	export DebugText_PrintDecimalFar, DebugText_PrintDecimal
-	export Func_08000198, Func_08014aa8
+	export DebugText_PrintBlanksFar, DebugText_PrintBlanks
 	export Resource_DecodeByteLzInRamFar, Resource_DecodeByteLzInRam
-	export Resource_DecodeType01Far, Resource_DecodeType01
+	export Decompress_TaggedLzFar, Decompress_TaggedLz
 	export VramCache_ResetFar, VramCache_Reset
-	export Resource_ResetEntryFar, Resource_ResetEntry
+	export VramCache_FreeEntryFar, VramCache_FreeEntry
 	export VramCache_ReleaseVramFar, VramCache_ReleaseVram
 	export VramCache_LoadFar, VramCache_Load
-	export Resource_FindFreeEntryFar, Resource_FindFreeEntry
+	export VramCache_FindFreeEntryFar, VramCache_FindFreeEntry
 	export DebugText_ClearFar, DebugText_Clear
-	export AffineMatrix_BuildForEffectFar, AffineMatrix_BuildForEffect
-	export Oam_AddSpriteAtDepthFar, Func_080140d8
+	export OamMatrix_AllocFromTransformFar, OamMatrix_AllocFromTransform
+	export Oam_AddSpriteAtDepthFar, Oam_AddSpriteAtDepthClamped
 	export Window_LoadGraphicsFar, Window_LoadGraphics
-	export Palette_LoadBasicObjColorsFar, Palette_LoadBasicObjColors
-	export Render_ResetTransformStateFar, Render_ResetTransformState
-	export SceneTransform_ResetMatrixFar, SceneTransform_ResetMatrix
+	export Palette_LoadBasicSpriteColorsFar, Palette_LoadBasicSpriteColors
+	export Transform_ResetFar, Transform_Reset
+	export Transform_ResetMatrixFar, Transform_ResetMatrix
 	export Transform_PushFar, Transform_Push
 	export Transform_PopFar, Transform_Pop
-	export SceneTransform_ApplyRotationFar, SceneTransform_ApplyRotation
-	export SceneTransform_ApplyPitchFar, SceneTransform_ApplyPitch
-	export SceneTransform_ApplyYawFar, SceneTransform_ApplyYaw
-	export SceneTransform_ApplyRollFar, Func_080150e4
+	export Transform_ApplyRotationFar, Transform_ApplyRotation
+	export Transform_ApplyPitchFar, Transform_ApplyPitch
+	export Transform_ApplyYawFar, Transform_ApplyYaw
+	export Transform_ApplyRollFar, Transform_ApplyRoll
 	export SceneTransform_ApplyPositionFar, SceneTransform_ApplyPosition
-	export SceneTransform_ApplyScaleFar, Func_080151ac
-	export SceneTransform_ApplyRotationTranslationFar, SceneTransform_ApplyRotationTranslation
-	export SceneTransform_ApplyScaledRotationFar, SceneTransform_ApplyScaledRotation
+	export SceneTransform_ApplyScaleFar, SceneTransform_ApplyScale
+	export Transform_ApplyRotationTranslationFar, Transform_ApplyRotationTranslation
+	export Transform_ApplyScaledRotationFar, Transform_ApplyScaledRotation
 	export Transform_SetLookAtFar, Transform_SetLookAt
 	export Render_ProjectPointFar, Render_ProjectPoint
 	export Projection_SetFieldOfViewFar, Projection_SetFieldOfView
 	export Projection_SetFar, Projection_Set
-	export Func_08000280, System_CopyBuildStamp
-	export System_ReturnZeroFar, System_ReturnZero
+	export System_CopyBuildStampFar, System_CopyBuildStamp
+	export Stub_ReturnZeroFar, Stub_ReturnZero
 	export Resource_GetTableEntryFar, Resource_GetTableEntry
 	export Resource_ReservedNoOpFar, Resource_ReservedNoOp
-	export Resource_LoadCodeFar, Resource_LoadCode
-	export Fade_ToBlackFar, Fade_ToBlack
-	export Fade_FromBlackFar, Fade_FromBlack
-	export Fade_ToWhiteFar, Fade_ToWhite
-	export Fade_FromWhiteFar, Fade_FromWhite
-	export Fade_StartFar, Fade_Start
-	export Fade_WaitFar, Fade_Wait
-	export RuntimeDispatch_ReservedNoOpAFar, Func_080132b8
-	export RuntimeDispatch_ReservedNoOpBFar, Func_080132bc
-	export RuntimeDispatch_ReservedNoOpCFar, Func_080132c0
-	export RuntimeDispatch_ReservedNoOpDFar, Func_080132c4
-	export RuntimeDispatch_ReservedNoOpEFar, Func_080132c8
+	export Overlay_LoadFar, Overlay_Load
+	export ScreenFade_ToBlackFar, ScreenFade_ToBlack
+	export ScreenFade_FromBlackFar, ScreenFade_FromBlack
+	export ScreenFade_ToWhiteFar, ScreenFade_ToWhite
+	export ScreenFade_FromWhiteFar, ScreenFade_FromWhite
+	export ScreenFade_StartFar, ScreenFade_Start
+	export ScreenFade_WaitFar, ScreenFade_Wait
+	export RuntimeDispatch_ReservedNoOpAFar, RuntimeDispatch_ReservedNoOpA
+	export RuntimeDispatch_ReservedNoOpBFar, RuntimeDispatch_ReservedNoOpB
+	export RuntimeDispatch_ReservedNoOpCFar, RuntimeDispatch_ReservedNoOpC
+	export RuntimeDispatch_ReservedNoOpDFar, RuntimeDispatch_ReservedNoOpD
+	export RuntimeDispatch_ReservedNoOpEFar, RuntimeDispatch_ReservedNoOpE
 	export Serial_InitializeFar, Serial_Initialize
 	export Serial_PollAndTransferFar, Serial_PollAndTransfer
-	export QueueIoWriteDelay1Far, QueueIoWriteDelay1
-	export QueueIoWriteDelay2Far, QueueIoWriteDelay2
-	export QueueIoWriteDelay3Far, QueueIoWriteDelay3
-	export QueueIoWriteDelay5Far, QueueIoWriteDelay5
-	export QueueIoWriteDelay6Far, QueueIoWriteDelay6
-	export QueueIoWriteDelay7Far, QueueIoWriteDelay7
-	export QueueIoWriteDelay9Far, QueueIoWriteDelay9
-	export QueueIoWriteDelay10Far, QueueIoWriteDelay10
-	export QueueIoWriteDelay11Far, QueueIoWriteDelay11
+	export IoWriteQueue_Store8Far, IoWriteQueue_Store8
+	export IoWriteQueue_Store16Far, IoWriteQueue_Store16
+	export IoWriteQueue_Store32Far, IoWriteQueue_Store32
+	export IoWriteQueue_SetBits8Far, IoWriteQueue_SetBits8
+	export IoWriteQueue_SetBits16Far, IoWriteQueue_SetBits16
+	export IoWriteQueue_SetBits32Far, IoWriteQueue_SetBits32
+	export IoWriteQueue_ClearBits8Far, IoWriteQueue_ClearBits8
+	export IoWriteQueue_ClearBits16Far, IoWriteQueue_ClearBits16
+	export IoWriteQueue_ClearBits32Far, IoWriteQueue_ClearBits32
 	export Input_ResetKeyRepeatFar, Input_ResetKeyRepeat
 	export Transform_ApplyLookAtFar, Transform_ApplyLookAt
 	export Serial_WaitForStatusMaskFar, Serial_WaitForStatusMask
 	export Serial_RemoveIrqHandlersFar, Serial_RemoveIrqHandlers
 	export Sound_LoadReverbCodeFar, Sound_LoadReverbCode
-	export Func_08000380, Serial_StartSend
+	export Serial_StartSendFar, Serial_StartSend
 	export Party_CheckFar, Serial_StartReceive
-	export Func_08000390, Serial_WaitForSend
+	export Serial_WaitForSendFar, Serial_WaitForSend
 	export Serial_WaitForReceiveFar, Serial_WaitForReceive
 	export Serial_WaitForTransfersFar, Serial_WaitForTransfers
 	export Serial_GetActiveTransfersFar, Serial_GetActiveTransfers
@@ -101,14 +101,14 @@ FarCall_RuntimeTable:
 	export Task_SetFlagsFar, Task_SetFlags
 	export Unit_GetFar, Unit_Get
 	export GameFlag_TestFar, GameFlag_Test
-	export GameFlag_SetBitFar, GameFlag_SetBit
-	export GameFlag_ClearBitFar, GameFlag_ClearBit
+	export GameFlag_SetFar, GameFlag_SetBit
+	export GameFlag_ClearFar, GameFlag_ClearBit
 	export GameFlag_ToggleFar, GameFlag_Toggle
 	export GameFlag_GetByteFar, GameFlag_GetByte
 	export GameFlag_SetByteFar, GameFlag_SetByte
 	export GameFlag_IncrementByteFar, GameFlag_IncrementByte
 	export GameFlag_DecrementByteFar, GameFlag_DecrementByte
 	export GameFlag_GetNibbleFar, GameFlag_GetNibble
-	export Func_08000410, GameFlag_SetNibble
+	export GameFlag_SetNibbleFar, GameFlag_SetNibble
 	export Task_FindFar, Task_Find
-	export Func_08000420, VramCache_CountFreeBlocks
+	export VramCache_CountFreeBlocksFar, VramCache_CountFreeBlocks

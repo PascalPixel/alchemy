@@ -70,7 +70,7 @@ void Func_02000328(void) {
   wait(40);
   IsletCave_StopPaletteCycle();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
-  BattleEffect_StartBufferInterpolation(16);
+  PaletteFade_StartInterpolation(16);
   wait(16);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -84,12 +84,12 @@ void Func_02000328(void) {
 #include "text/msg_ids.h"
 
 void Func_020003b0(void) {
-  Func_080d2b4c(15, 12);
+  Field_RequestDjinnBattle(15, 12);
   return;
 }
 
 void Func_020003bc(void) {
-  Func_080d2b4c(9, 37);
+  Field_RequestDjinnBattle(9, 37);
   return;
 }
 
@@ -167,7 +167,7 @@ void Func_020004ac(void) {
   wait(40);
   IsletCave_StopPaletteCycle();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
-  BattleEffect_StartBufferInterpolation(16);
+  PaletteFade_StartInterpolation(16);
   wait(16);
 
   gMainRoutineWork.unk2c2 = 0;
@@ -316,7 +316,7 @@ other:
       dim = 3;
     Func_02000580(0x400 - (dim << 7));
     Func_0200133c();
-    BattleEffect_StartBufferInterpolation(1);
+    PaletteFade_StartInterpolation(1);
     Event_WaitTransitionFrames();
   }
   return 0;
@@ -453,7 +453,7 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
     Actor_SelectAnimation(actor, 3);
   }
   Sound_Play(226);
-  Script_WaitForEventTimeout(leader);
+  Actor_WaitForMove(leader);
   Actor_SelectAnimation(actor, 2);
   Sound_Play(298);
   Event_End();
@@ -631,19 +631,18 @@ void Func_020010ac(void) {
   Event_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
-  BattleEffect_StartBufferInterpolation(0x3c);
+  PaletteFade_StartInterpolation(0x3c);
   Event_Wait(60);
-  FieldMessage_ShowCentered((s32)MsgSummonGuardianOfWind, 0, 2);
+  EventMessage_ShowCentered((s32)MsgSummonGuardianOfWind, 0, 2);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(0x3c);
+  PaletteFade_StartInterpolation(0x3c);
   Event_Wait(60);
   t12 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
   if (t12 != 0) {
-    Actor_ResetAndSetPosition(8, FIELD_AT(t12, s16, 10),
-                              FIELD_AT(t12, s16, 18));
+    Actor_SetDestinationById(8, FIELD_AT(t12, s16, 10), FIELD_AT(t12, s16, 18));
   }
   Event_Wait(20);
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov675Room3, 2);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov675Room3, 2);
   gMainRoutineWork.battleRule24b = 2;
   cue = 0x67;
   /* FAKEMATCH(barrier): the asm on the first argument loads it before the

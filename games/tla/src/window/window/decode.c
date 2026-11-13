@@ -25,7 +25,7 @@ struct ArticleTable {
   u8 *text[ARTICLE_KINDS];
 };
 
-extern const struct ArticleTable gText_ArticleTable;
+extern const struct ArticleTable gArticle_Table;
 #if (LANGUAGE == LANGUAGE_SPANISH)
 extern const struct ArticleTable gText_IndefiniteArticles;
 #endif
@@ -65,7 +65,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   }
   if (articleForm == 1 || (articleForm == 3 && plural == 0)) {
     kind = 0;
-    table = gText_ArticleTable;
+    table = gArticle_Table;
     head = name[0];
     if (head == 29) {
       kind = name[1] - 1;
@@ -184,7 +184,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
       name += 2;
   } else {
     kind = 0;
-    table = gText_ArticleTable;
+    table = gArticle_Table;
 #if (LANGUAGE == LANGUAGE_SPANISH)
     indefiniteTable = gText_IndefiniteArticles;
 #endif
@@ -289,7 +289,7 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 void MessageArgument_ClearAll(void);
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
 struct BattleUnit *Unit_Get(s32 unitId);
-s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);
+s32 Area_GetNameIndexFar(s32 scene, s32 entrance);
 
 #if LANGUAGE != LANGUAGE_JAPANESE
 
@@ -570,7 +570,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case 23:
             Message_DecodeRaw(
-                Scene_GetAreaNameIndexFar(MessageArgument_Lookup(6, clear), 1) +
+                Area_GetNameIndexFar(MessageArgument_Lookup(6, clear), 1) +
                     (s32)MsgDebugAreaName,
                 name, 24);
             p = name;
@@ -1048,7 +1048,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case 23:
             Message_DecodeRaw(
-                Scene_GetAreaNameIndexFar(MessageArgument_Lookup(6, clear), 1) +
+                Area_GetNameIndexFar(MessageArgument_Lookup(6, clear), 1) +
                     (s32)MsgDebugAreaName,
                 name, 24);
             writePosition = Message_AppendArticleName(mode, name, writePosition,

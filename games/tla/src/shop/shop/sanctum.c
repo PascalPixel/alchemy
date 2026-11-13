@@ -6,6 +6,7 @@
 #include "gamepak/far_call/field_sequence.h"
 #include "gamepak/far_call/window.h"
 #include "module/shop/shop.h"
+#include "gamepak/far_call/menu.h"
 #include "module/system/system.h"
 #include "module/tla.h"
 
@@ -49,7 +50,8 @@ s32 Sanctum_CountMembersInNeed(void) {
   eligibleCount = 0;
   serviceKind = shop->partyAction;
   for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
-    if (Sanctum_NeedsService(shop->partyMemberIds[memberIndex], serviceKind) != 0)
+    if (Sanctum_NeedsService(shop->partyMemberIds[memberIndex], serviceKind) !=
+        0)
       eligibleCount++;
   }
   return eligibleCount;
@@ -91,8 +93,8 @@ void Sanctum_ShowKeeperMessage(s32 message) {
   wait(1);
 }
 
-/// As Sanctum_ShowKeeperMessage, with the cursor's anchor object set to state 13 while the
-/// message shows and restored after.
+/// As Sanctum_ShowKeeperMessage, with the cursor's anchor object set to state
+/// 13 while the message shows and restored after.
 // The Broken Seal's Sanctum_ShowKeeperMessageHidingCursor.
 void Sanctum_ShowKeeperMessageHidingCursor(s32 message) {
   struct ShopRuntime *shop;
@@ -119,10 +121,11 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 message) {
 // and the coins window, then offers the party service until the menu is
 // cancelled. The Broken Seal's Sanctum_Run in games/tbs/src/shop/shop.c,
 // written with this game's calls (Shop_InitializeWork for the cursor work,
-// Func_080380f8 for the side-object window, MenuCursor_SetPositionImmediate to
-// place the cursor, Sanctum_ShowKeeperMessage to show a message, Sanctum_CountMembersInNeed to count
-// the downed, Sanctum_RunPartyService for the service, Shop_ReleaseWork to clean up), its
-// work-block offsets and numbered messages.
+// Portrait_OpenWindowFar for the side-object window,
+// MenuCursor_SetPositionImmediate to place the cursor,
+// Sanctum_ShowKeeperMessage to show a message, Sanctum_CountMembersInNeed to
+// count the downed, Sanctum_RunPartyService for the service, Shop_ReleaseWork
+// to clean up), its work-block offsets and numbered messages.
 
 void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
 
@@ -139,7 +142,7 @@ s32 Sanctum_Run(s32 unitId) {
   shop->keeperResource =
       **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar__shop(unitId) + 80) + 40);
 
-  listWindow = Func_080380f8(shop->keeperResource, 0, 0, 0);
+  listWindow = Portrait_OpenWindowFar(shop->keeperResource, 0, 0, 0);
   if (listWindow == 0) {
     listWindow = Window_CreateFar(-5, 0, 5, 5, 2);
     if (listWindow == 0) {
@@ -149,8 +152,8 @@ s32 Sanctum_Run(s32 unitId) {
   }
 
   cursorAnchor = (struct ShopCursorAnchor *)WindowSprite_CreateFar(
-      shop->cursorIcon, OUTPUT_SIZE_16X16, (struct RenderInput *)listWindow,
-      0, 0);
+      shop->cursorIcon, OUTPUT_SIZE_16X16, (struct RenderInput *)listWindow, 0,
+      0);
   cursorAnchor->active = 1;
   cursorAnchor->unk00[4] = 0;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
@@ -257,7 +260,7 @@ s32 Sanctum_RunPartyService(void) {
   listWindow = Window_CreateFar(1, 12, 13, 3, 2);
   shop->cursor.anchor->active = 4;
   shop->mode = redraw;
-  Func_080f8060(listWindow, 2, 0);
+  Menu_PlaceOwnerEntryObjectsFar(listWindow, 2, 0);
 #if SERVICE_PRICE_WINDOW
   priceWindow = Window_CreateFar(SERVICE_PRICE_WINDOW_X, 16,
                                  SERVICE_PRICE_WINDOW_WIDTH, 3, 2);
@@ -290,7 +293,7 @@ loop:
     MenuCursor_Place(listWindow, (memberIndex % 4) * 24 - 12, 0);
     shop->mode = 3;
     if (redraw == 2) {
-      Func_080f8058(memberIndex / 4 * 4);
+      Menu_CreateOwnerEntryObjectsFar(memberIndex / 4 * 4);
       wait(1);
     }
     Sanctum_HighlightMembers(listWindow, memberIndex);
@@ -392,8 +395,8 @@ void Sanctum_ApplyService(s32 id, s32 mode) {
 
 #undef Item_Get
 
-// Sanctum_HighlightMembers draws the sanctum's party page, four members at a time
-// with page arrows: The Broken Seal's Shop_DrawParty
+// Sanctum_HighlightMembers draws the sanctum's party page, four members at a
+// time with page arrows: The Broken Seal's Shop_DrawParty
 // (games/tbs/src/shop/shop.c) shape over a page, each member dimmed when
 // Sanctum_NeedsService refuses the chosen service.
 
@@ -494,12 +497,16 @@ void Sanctum_UpdateBurstSparkle(struct Effect_080b2f4c *effect) {
       *statePointer = result;
   } else if (state == 2) {
     if (FieldParticle_HasPendingTargetFar(effect) == 0)
-      BattleEffect_ClearOwnedSlotFar(effect);
+      FieldEffect_ClearOwnedSlotFar(effect);
   }
 }
 
-/* VIEW(shop): routine Animation_ApplyChildValuesToRecordFar as void Animation_ApplyChildValuesToRecordFar(void *child, u32 value); actor_view.h has void Animation_ApplyChildValuesToRecordFar(struct ActorSpriteView *, u32). */
-extern void Animation_ApplyChildValuesToRecordFar__shop(void *child, u32 value) __asm__("Animation_ApplyChildValuesToRecordFar");
+/* VIEW(shop): routine Animation_ApplyChildValuesToRecordFar as void
+ * Animation_ApplyChildValuesToRecordFar(void *child, u32 value); actor_view.h
+ * has void Animation_ApplyChildValuesToRecordFar(struct ActorSpriteView *,
+ * u32). */
+extern void Animation_ApplyChildValuesToRecordFar__shop(
+    void *child, u32 value) __asm__("Animation_ApplyChildValuesToRecordFar");
 
 void Sanctum_UpdateBurst(void) {
   struct ShopFxWork *work = Ram_HeapSlots->menuRuntime;
@@ -511,7 +518,7 @@ void Sanctum_UpdateBurst(void) {
   selected = work->selected;
   if (selected != -1)
     Animation_ApplyChildValuesToRecordFar__shop(work->children[selected],
-                                          (Random16() * 7) >> 16);
+                                                (Random16() * 7) >> 16);
 }
 
 void Animation_ApplyChildValueFar(s32 object, s32 arg);
@@ -528,7 +535,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   savedCursorMode = shop->cursor.anchor->active;
   shop->burstMember = -1;
   shop->cursor.anchor->active = 13;
-  Sound_PlayFar(Data_0810cf28[shop->action]);
+  Sound_PlayFar(sSanctumServiceCues[shop->action]);
   Shop_SaveAndTintFieldPalette(0x00202108);
   Animation_ApplyChildValueFar(shop->partyMemberIcons[member], 0);
   wait(20);
@@ -547,7 +554,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
                                  Sanctum_UpdateBurstSparkle);
     FieldParticle_SetActorModeFar((struct Effect_080b2f4c *)effect, 7);
     Animation_ApplyChildValuesToRecordFar__shop(effect->object,
-                                          (Random16() * 7) >> 16);
+                                                (Random16() * 7) >> 16);
     effect->scaleY = Q16_ONE * 7 / 10;
     effect->scaleX = Q16_ONE * 7 / 10;
     wait(3);
@@ -573,7 +580,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   wait(20);
   Sound_PlayFar(126);
   shop->burstMember = -1;
-  Animation_ApplyChildValuesToRecordFar__shop(shop->partyMemberIcons[member], 0);
+  Animation_ApplyChildValuesToRecordFar__shop(shop->partyMemberIcons[member],
+                                              0);
   wait(20);
 
   {
@@ -586,7 +594,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
 
       flagEntry += sizeof(struct BurstSprite);
       if (flag != 0) {
-        BattleEffect_ClearOwnedSlotFar((struct Effect_080b2f4c *)effectSlot);
+        FieldEffect_ClearOwnedSlotFar((struct Effect_080b2f4c *)effectSlot);
       }
       effectSlot++;
     }

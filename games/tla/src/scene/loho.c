@@ -163,7 +163,7 @@ L_0200821e:
   Actor_FaceDirectionAndWait(4, 0xc000);
   Event_Wait(30);
   Event_PlaySound(144);
-  Actor_ShowItemIconById(21, 0x1cc);
+  FieldActor_ShowItemIconById(21, 0x1cc);
   Actor_SetPosition(21, 0x1e80000, 0x14a0000);
   Actor_SetDestinationOffset(20, 0, 8);
   Actor_SetSpeed(21, 0x30000, 0x18000);
@@ -176,8 +176,8 @@ L_0200821e:
   table = (struct Unk16 *)Heap_AllocEwram(0x600);
   p = (struct Unk16 *)Heap_Alloc(0x1000);
   t38 = Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion);
-  Resource_DecodeType01(t38, p);
-  entry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(t38, p);
+  entry = VramCache_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x400, p);
   Heap_Release(p);
   p = (struct Unk16 *)&table->unk_0c;
@@ -205,7 +205,7 @@ L_020083b6:
 L_020083c4:
   if (i != 30)
     goto L_020083d4;
-  Fade_ToWhite(90);
+  ScreenFade_ToWhite(90);
   Event_PlaySound(141);
 L_020083d4:
   p = table;
@@ -243,7 +243,7 @@ L_02008474:
   i = (i + 1);
   if (i <= 119)
     goto L_020083b6;
-  Resource_ResetEntry(entry);
+  VramCache_FreeEntry(entry);
   Heap_Release(table);
   FieldCamera_MoveTo(0x1e80000, -1, 0x1860000, 1);
   Actor_SetPositionAndFacing(14, 0xf80000, 0x1e00000, 0);
@@ -251,7 +251,7 @@ L_02008474:
   MapGrid_SetShake(0, 0, 0x10000);
   Event_PlaySound(0x186);
   Event_Wait(180);
-  Fade_FromWhite(120);
+  ScreenFade_FromWhite(120);
   Event_SetMessageId((s32)MsgLoho28);
   Event_Wait(120);
   Actor_RunRepeatedMotion(18, 2);

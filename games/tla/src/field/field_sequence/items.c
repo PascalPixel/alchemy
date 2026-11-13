@@ -14,20 +14,18 @@ void Event_RunMessage(s32 actor, s32 message) {
   Event_End();
 }
 
-void Event_ResolveAllPendingActions(void) {
-  Event_ResolvePendingActions(0);
-}
+void Event_ResolveAllPendingActions(void) { Event_ResolvePendingActions(0); }
 
 void Event_ResolvePendingActions(s32 skip) {
   struct EventWork *state = Ram_HeapSlots->eventWork;
 
   state->actionCounter = 0;
   if (state->pendingFirst != 0 && !(skip & 1))
-    Event_ExecutePackedAction(0x2090);
+    Field_RunPsynergyEndEvents(0x2090);
   if (state->pendingSecond != 0 && !(skip & 2))
-    Event_ExecutePackedAction(0x209b);
+    Field_RunPsynergyEndEvents(0x209b);
   if (gMainRoutineWork.pendingThird != 0 && !(skip & 4))
-    Event_ExecutePackedAction(0x208b);
+    Field_RunPsynergyEndEvents(0x208b);
 }
 
 s32 Party_GetLeaderActor(void) {
@@ -58,7 +56,7 @@ s32 Item_MatchesFilter(s32 filter, s32 item_id) {
 /// Rewritten from The Broken Seal's form: The Lost Age asks
 /// Party_GetLeaderActor for the actor and Item_MatchesFilter for
 /// the trigger's item.
-s32 Event_FindFacingTrigger(s32 source) {
+s32 Field_FindItemTrigger(s32 source) {
   struct FieldStepWork *work = Ram_HeapSlots->eventWork;
   const struct Trigger *trigger = work->triggers;
   s32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
@@ -66,7 +64,7 @@ s32 Event_FindFacingTrigger(s32 source) {
   s32 collision;
 
   source &= 0x1ff;
-  collision = Func_080cb09c();
+  collision = Field_GetCollisionAheadOfLeader();
 
   while (trigger->control != -1) {
     s32 highValue = (s16)(u16)trigger->subject & 0xf000;
@@ -92,7 +90,7 @@ s32 Event_FindFacingTrigger(s32 source) {
   return 0;
 }
 
-s32 Func_080d295c(s32 mode);
+s32 FieldYesNo_Ask(s32 mode);
 
 /// Uses an item on the field. packedItem holds the item (bits 0 to 9) and the
 /// character using it (bits 10 to 13; 15 for the character carrying most of
@@ -158,7 +156,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     }
   }
 
-  event = (struct ItemTrigger *)Event_FindFacingTrigger(itemId);
+  event = (struct ItemTrigger *)Field_FindItemTrigger(itemId);
   if (event != 0 && event->value != 0) {
     GameFlag_ClearBit(0x143);
     GameFlag_ClearBit(0x142);
@@ -193,7 +191,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       if (actionId == 149 && !GameFlag_Test(0x144)) {
         MessageArgument_PushFar(itemId, 2);
         FieldMessage_ShowFar((s32)&MsgUseItemQuestion, 13);
-        i = Func_080d295c(1);
+        i = FieldYesNo_Ask(1);
         Message_CloseFinishedWindowsFar();
         if (i != 0)
           return 0;
@@ -208,7 +206,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       FieldMessage_ShowFar((s32)&MsgActorUsesItem, 1);
       BattleEffect_LoadActionEffectResources(actionId, 0);
       runtime->resolvingAction = 1;
-      BattleEffect_Run();
+      FieldPsynergy_Run();
       runtime->resolvingAction = 0;
       BattleEffect_CleanupSceneObjects();
 
@@ -228,7 +226,7 @@ s32 Func_080ce31c(s32 kind) {
   struct TriggerWork *work = Ram_HeapSlots->eventWork;
   struct TriggerEvent *event = work->events;
   u32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
-  s32 focused = Func_080cb09c();
+  s32 focused = Field_GetCollisionAheadOfLeader();
   s32 special = Func_080cb144();
   s32 best = 9999;
   // Default: -1, though every path below sets it.
@@ -243,7 +241,8 @@ s32 Func_080ce31c(s32 kind) {
     s32 high = event->trigger & 0xf000;
     s16 hasFacing = (u16)event->trigger & 0x800;
     s32 target = (u16)event->trigger & 0xff;
-    s32 eventKind = ((const struct PendingAction *)Ability_Get((u16)flags >> 8))->eventKind;
+    s32 eventKind =
+        ((const struct PendingAction *)Ability_Get((u16)flags >> 8))->eventKind;
 
     if ((event->control & 15) == 5 && eventKind == kind &&
         GameFlag_IsConditionActive(event->condition)) {
@@ -289,7 +288,8 @@ s32 Func_080ce31c(s32 kind) {
   return result;
 }
 
-struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector) {
+struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
+                                               s32 selector) {
   struct TriggerWork *work = Ram_HeapSlots->eventWork;
   struct TriggerEvent *event = work->events;
   u32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
@@ -302,7 +302,8 @@ struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector) {
     s32 high = event->trigger & 0xf000;
     s16 hasFacing = (u16)event->trigger & 0x800;
     s32 target = (u16)event->trigger & 0xff;
-    s32 eventKind = ((const struct PendingAction *)Ability_Get((u16)flags >> 8))->eventKind;
+    s32 eventKind =
+        ((const struct PendingAction *)Ability_Get((u16)flags >> 8))->eventKind;
 
     if ((event->control & 15) == 5 && eventKind == kind &&
         GameFlag_IsConditionActive(event->condition)) {
@@ -338,7 +339,7 @@ struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector) {
   return NULL;
 }
 
-s32 Event_ExecutePackedAction(u32 packed) {
+s32 Field_RunPsynergyEndEvents(u32 packed) {
   s32 action, mode, kind, selector, target;
   struct PendingEvent *first, *second;
 
@@ -346,17 +347,19 @@ s32 Event_ExecutePackedAction(u32 packed) {
   mode = (packed >> 10) & 15;
   kind = Ability_Get(action)->unk04[2];
   selector = Func_080ce31c(kind);
-  first = (struct PendingEvent *)Func_080ce458(0x30000005, kind, selector);
-  second = (struct PendingEvent *)Func_080ce458(0x20000005, kind, selector);
+  first = (struct PendingEvent *)Scene_FindPsynergyTrigger(0x30000005, kind,
+                                                           selector);
+  second = (struct PendingEvent *)Scene_FindPsynergyTrigger(0x20000005, kind,
+                                                            selector);
   target = -1;
   if (first != NULL || second != NULL) {
     if (selector != -1 && (selector & 0x100))
       target = selector & 255;
   }
   BattleEffect_LoadActionEffectResources(action, 0);
-  BattleEffect_SetupObjectPair(Party_GetLeaderActor(), target);
+  FieldPsynergy_SetupActorPair(Party_GetLeaderActor(), target);
   Field_RunPsynergyEvent(first, mode, target);
-  FieldEvent_RunTypeHandler();
+  FieldPsynergy_RunExtraHandler();
   BattleEffect_StopMainActor();
   Field_RunPsynergyEvent(second, mode, target);
   BattleEffect_CleanupSceneObjects();

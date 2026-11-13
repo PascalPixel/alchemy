@@ -52,7 +52,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Actor_StartScript(effect, gData_02005ae4[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
-  effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
+  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
@@ -64,7 +64,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & 0xffff0000) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
-    Actor_SetSpriteColor(effect, options->palette);
+    FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
     Scene_SetActorSpritePriority(effect, options->priority);
@@ -111,7 +111,7 @@ struct Wanderer {
   u16 facingB;
 };
 
-void Func_02000280(void) { Func_080d2b4c(33, 9); }
+void Func_02000280(void) { Field_RequestDjinnBattle(33, 9); }
 s32 Func_0200028c(struct Wanderer *actor) {
   u8 *timer = &actor->timer;
 
@@ -446,7 +446,7 @@ void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
   *flags &= 0x7e;
   Actor_SetSingleChildFlags(object, 0);
   FieldActor_SetMoveTarget(object, object->x + dx, object->y, object->z + dz);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   *flags = saved;
   Func_02005624__gabomba_statue(object, 6);
   Actor_SetSingleChildFlags(object, 1);
@@ -725,7 +725,7 @@ void Func_02000cf0(struct Actor *object) {
   FieldEvent_Wait(15);
   FieldActor_WatchAndSetScript(gMainRoutineWork.currentOwner, 39);
   Actor_ShowEmote(gMainRoutineWork.currentOwner, 257, 30);
-  FieldCamera_FollowActor(39, 1);
+  EventCamera_FollowActor(39, 1);
   FieldEvent_Wait(30);
   Actor_Get(39)->priorityFlags |= 0x20;
   Actor_SetAnimation(39, 1);
@@ -825,18 +825,18 @@ void Func_02000fc0(void) {
   PaletteFade_Interpolate(40);
   System_Wait(80);
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
   Func_02000f6c();
   System_Wait(1);
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(10);
   System_Wait(20);
   Event_PlaySound(130);
-  Actor_SetSpriteColor(Actor_Get(9), 7);
-  Actor_SetSpriteColor(Actor_Get(10), 7);
+  FieldActor_SetSpriteColor(Actor_Get(9), 7);
+  FieldActor_SetSpriteColor(Actor_Get(10), 7);
   System_Wait(8);
-  Actor_SetSpriteColor(Actor_Get(10), 3);
-  Actor_SetSpriteColor(Actor_Get(9), 0);
+  FieldActor_SetSpriteColor(Actor_Get(10), 3);
+  FieldActor_SetSpriteColor(Actor_Get(9), 0);
   System_Wait(8);
   Event_PlaySound(11);
   result = Func_02004d48(11, 1);
@@ -907,7 +907,7 @@ void Func_020011bc(s32 x, s32 z) {
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 13);
   FieldActor_SetMoveTarget(object, x << 16, PIXELS(-12), z << 16);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 10);
   Event_PlaySound(123);
   Event_FinishScreenTransition();
@@ -1064,7 +1064,7 @@ void Func_02001630(void) {
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 13);
   FieldActor_SetMoveTarget(leader, PIXELS(472), 0, PIXELS(156));
-  Actor_WaitForMove(leader);
+  FieldActor_WaitForMove(leader);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 10);
   Event_PlaySound(123);
   Event_FinishScreenTransition();
@@ -1161,7 +1161,7 @@ void Func_020019d0(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_GetActor()->motionFlags = 0;
+  EventCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(0x9999, 0x1333);
   FieldCamera_MoveTo(180 << 17, 0, 248 << 17, 1);
   FieldCamera_WaitForArrival();
@@ -1207,7 +1207,7 @@ void Func_02001ac0(void) {
 
 void Func_02001adc(s32 id) {
   Func_02005784(id);
-  Actor_SetSpriteColor(Actor_Get(id), 15);
+  FieldActor_SetSpriteColor(Actor_Get(id), 15);
   FieldActor_SetSpritePriority(id, 1);
   Actor_Get(id)->priorityFlags |= 2;
 }
@@ -1464,7 +1464,7 @@ extern const u8 gData_0200e88c[];
 extern void
 Func_02005634__find_near(struct Orbiter__find_near *object,
                          const u8 *script) __asm__("Actor_StartScript");
-void Animation_ApplyChildValues(struct Orbiter__find_near *object, s32 value);
+void Actor_SetSpriteColorMode(struct Orbiter__find_near *object, s32 value);
 
 void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
   struct Orbiter__find_near *object =
@@ -1479,7 +1479,7 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
   object->link = target;
   object->phase = angle / 256;
   object->slot = slot;
-  Animation_ApplyChildValues(object, value);
+  Actor_SetSpriteColorMode(object, value);
 }
 #undef DIFF_WITHIN
 #undef MARK

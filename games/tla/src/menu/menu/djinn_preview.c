@@ -236,7 +236,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
             wait(1);
           Window_CloseFar(window, 1);
           Iwram_CopyWordsEntry(work->tilemap, saved, size);
-          Func_08038290();
+          Window_MarkVisibleTextTilesFar();
           work->dirty = 1;
           redraw = 1;
           backdrop->tutorialTimer = 0;
@@ -268,7 +268,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
             wait(1);
           Window_CloseFar(window, 1);
           Iwram_CopyWordsEntry(work->tilemap, saved, size);
-          Func_08038290();
+          Window_MarkVisibleTextTilesFar();
           work->dirty = 1;
           wait(1);
           redraw = 1;
@@ -318,10 +318,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       case 1:
         if (mode == 1)
           previewMode = 4;
-        DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->shownMember[1], page, 0,
-                      previewMode, 0, 0);
-        DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, menu->shownMember[1], page,
-                      0, previewMode, selectedPages[1] + 1, 0);
+        DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->shownMember[1],
+                                  page, 0, previewMode, 0, 0);
+        DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0,
+                                  menu->shownMember[1], page, 0, previewMode,
+                                  selectedPages[1] + 1, 0);
         break;
       case 0:
         if (mode == 1) {
@@ -329,9 +330,10 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           addPairSlot = 0;
         }
         DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairMember[0], page,
-                      addPairSlot, previewMode, page, 1);
-        DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, menu->pairMember[0], page,
-                      addPairSlot, previewMode, selectedPages[0] + 1, 1);
+                                  addPairSlot, previewMode, page, 1);
+        DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0,
+                                  menu->pairMember[0], page, addPairSlot,
+                                  previewMode, selectedPages[0] + 1, 1);
         break;
       }
       work->menuBusy = 0;
@@ -365,8 +367,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       step = 0;
     if (step > 29)
       step = 29;
-    Func_08105350(0, 0xffff4000);
-    Func_08105350(1, 0xffff4000);
+    DjinnFigures_SetSlotPhase(0, 0xffff4000);
+    DjinnFigures_SetSlotPhase(1, 0xffff4000);
     if (mode <= 1) {
       s32 rise;
       s32 slide;
@@ -387,15 +389,15 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       redraw = 0;
       confirmationChoice = Menu_GetModuloOfSum(confirmationChoice, 2);
     }
-    Func_080f8a44(confirmationChoice * 56 + 80, 16);
+    MenuCursor_Position(confirmationChoice * 56 + 80, 16);
     if ((frame & 3) == 0) {
       /* FAKEMATCH(wrapper): the copy forwarded through shared.c's CopyWords
        * inline, so the source loads before the routine and the destination,
        * as the native does; as a direct call, 6 of 1244 instructions differ
        * in tla-en. */
       if ((frame & 4) != 0)
-        CopyWords(gMenu_BackdropBorderTile, Iwram_CopyWordsEntry, (void *)0x060052c0,
-                  32);
+        CopyWords(gMenu_BackdropBorderTile, Iwram_CopyWordsEntry,
+                  (void *)0x060052c0, 32);
       else
         /* FAKEMATCH(wrapper): the fill forwarded through shared.c's FillWords
          * inline, so the routine loads before its arguments; as a direct
@@ -448,8 +450,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     wait(1);
   }
 
-  Func_08105350(0, 0);
-  Func_08105350(1, 0);
+  DjinnFigures_SetSlotPhase(0, 0);
+  DjinnFigures_SetSlotPhase(1, 0);
   Task_Add(Menu_UpdateEntryObjectTransforms, 0x480);
   ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
@@ -535,10 +537,9 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   helpWindowSlot = &menu->helpWindow;
   WindowSprite_RedrawSavedRectFar(*helpWindowSlot);
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-  Text_DrawMessageAsTilesFar((s32)MsgCurrentStatus, menu->statusWindow, 0,
-                                0);
-  Text_DrawMessageAsTilesFar((s32)MsgCurrentStatus + 2, menu->statusWindow,
-                                0, 16);
+  Text_DrawMessageAsTilesFar((s32)MsgCurrentStatus, menu->statusWindow, 0, 0);
+  Text_DrawMessageAsTilesFar((s32)MsgCurrentStatus + 2, menu->statusWindow, 0,
+                             16);
   side = 0;
   while (1) {
     s32 *pageCount;
@@ -560,8 +561,8 @@ s32 DjinnMenu_ShowMemberStatus(void) {
       WindowSprite_PrepareForRedrawFar(menu->window);
       WindowSprite_PrepareForRedrawFar((s32)menu->secondWindow);
       DjinnMenu_DrawStatPreview(menu->window, 0, 0, *pairMember, 0, 0, 3, 0, 1);
-      DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, *pairMember, 0, 0, 3,
-                    selectedPages[0] + 1, 1);
+      DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, *pairMember, 0,
+                                0, 3, selectedPages[0] + 1, 1);
       render->menuBusy = 0;
     }
     if (counts[side] > 1) {

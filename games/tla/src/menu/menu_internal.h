@@ -286,8 +286,8 @@ struct DjinnUnit {
 void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window);
 void Text_DrawStatComparison(const struct BattleUnit *alt,
                              const struct BattleUnit *base, s32 work);
-void Text_DrawMessageAsTilesFar(s32 message, struct RenderInput *window,
-                                   s32 x, s32 y);
+void Text_DrawMessageAsTilesFar(s32 message, struct RenderInput *window, s32 x,
+                                s32 y);
 
 // Tags the parts name in prototypes before the part that defines them.
 struct MenuEntryWindow;
@@ -301,27 +301,27 @@ s32 Inventory_EquipFar(s32 owner, s32 slot);
 void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
 void Window_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void Text_UseExtraTilesFar(s32 flag);
-void Func_08038290(void);
+void Window_MarkVisibleTextTilesFar(void);
 void Menu_CreateOwnerEntryObjects(s32 first);
 void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
-void Func_08038288(s32 mode, s32 id, s32 slot, s32 flags);
+void Resource_LoadByModeIntoSlotFar(s32 mode, s32 id, s32 slot, s32 flags);
 extern u8 MsgShortcutHelp[];
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
 void Link_DrawPageArrowsFar(s32 addr);
 void Menu_UpdateEntryObjectTransforms(void);
 void Input_ResetKeyRepeat(void);
-s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 owner);
+s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 owner);
 void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode);
-s32 BattleEffect_ApplyToTargets(s32 entry, s32 member, s32 target, s32 mode);
+s32 Ability_ApplyToTargets(s32 entry, s32 member, s32 target, s32 mode);
 s32 Ability_PlayUseAnimation(s32 action);
-void Func_081051a8(void);
-void MenuIcon_ReleaseObjects(void);
+void DjinnFigures_InitializeTopRow(void);
+void DjinnFigures_ReleaseTopRow(void);
 void Menu_ResetTwoResourceEntries(void);
 extern u8 gMenu_BackdropBorderTile[];
 void WindowSprite_PrepareForRedrawFar(s32 window);
 s32 Message_AllTypedFar(void);
-void Func_08105350(s32 index, s32 scale);
+void DjinnFigures_SetSlotPhase(s32 index, s32 scale);
 void MenuIcon_SetPosition(s32 slot, s32 x, s32 y);
 void Func_08020018(struct AnimationObject *object,
                    struct SpritePlacement *position, struct SpriteScale *scale,

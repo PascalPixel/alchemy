@@ -185,14 +185,14 @@ body:
       Event_Start();
       if (!GameFlag_Test(flag)) {
         Sound_Play(125);
-        Actor_SetPartAttribute(Actor_GetById(id), 7);
+        Actor_SetSpriteColor(Actor_GetById(id), 7);
         wait(2);
         Actor_SelectAnimation(pillar, 0);
-        Actor_SetPartAttribute(Actor_GetById(id), 0);
+        Actor_SetSpriteColor(Actor_GetById(id), 0);
         wait(2);
-        Actor_SetPartAttribute(Actor_GetById(id), 7);
+        Actor_SetSpriteColor(Actor_GetById(id), 7);
         wait(4);
-        Actor_SetPartAttribute(Actor_GetById(id), 0);
+        Actor_SetSpriteColor(Actor_GetById(id), 0);
         Func_02000974(0);
         GameFlag_SetBit(flag);
       } else if (!GameFlag_Test(flag + 1)) {
@@ -318,7 +318,7 @@ void Func_02000584(u16 *list) {
       // after the cell store.
       *shape = Func_02001528(actor->terrainId, kind, (ground >> 19) + 4);
       if (Event_GetFlag(flag))
-        ObjectVisual_CopyAttributes(id, 9);
+        Actor_CopyGraphics(id, 9);
     }
     list += 2;
   }
@@ -364,15 +364,15 @@ body:
         Func_020006ec(helper, pillar);
         wait(1);
         Sound_Play(125);
-        Actor_SetPartAttribute(Actor_GetById(8), 7);
+        Actor_SetSpriteColor(Actor_GetById(8), 7);
         wait(2);
         Actor_SelectAnimation(helper, 0);
-        ObjectVisual_CopyAttributes(id, 9);
-        Actor_SetPartAttribute(Actor_GetById(8), 0);
+        Actor_CopyGraphics(id, 9);
+        Actor_SetSpriteColor(Actor_GetById(8), 0);
         wait(2);
-        Actor_SetPartAttribute(Actor_GetById(8), 7);
+        Actor_SetSpriteColor(Actor_GetById(8), 7);
         wait(4);
-        Actor_SetPartAttribute(Actor_GetById(8), 0);
+        Actor_SetSpriteColor(Actor_GetById(8), 0);
         Func_02000974(0);
         Func_020006ec(pillar, helper);
         wait(1);

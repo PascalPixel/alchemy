@@ -1,7 +1,7 @@
 	.section .rodata
 @ Three 8x8 glints that Func_080e1678 draws into its 64x64 canvas, the
 @ first two in turn; drawn in the basic colour palette and the ramp from
-@ blue to white that Func_080e1f2c writes to OBJ colours 0xe0 to 0xef
+@ blue to white that FieldPsynergy_Unnamed29 writes to OBJ colours 0xe0 to 0xef
 	.global Data_080eda0c
 Data_080eda0c:
 	.incbin "games/tla/src/field/event_commands/glint.8bpp"
@@ -11,18 +11,18 @@ gEncounter_EnemyGroupTable:
 	.incbin "games/tla/src/field/event_commands/encounter.table"
 	.section .rodata.a
 @ A copy of The Broken Seal's gScreenTransition_NoiseWidths
-	.global Data_080f01c4
-Data_080f01c4:
+	.global gScreenTransition_NoiseWidths
+gScreenTransition_NoiseWidths:
 	.byte 0, 1, 2, 2, 2, 2, 3, 3, 4, 4, 5, 6, 7, 8, 9, 11, 13
 	.byte 16, 18, 22, 26, 30, 36, 43, 51, 60, 72, 85, 101, 120, 143, 170, 202, 240
 @ A copy of The Broken Seal's gScreenTransition_EdgeOffsets
-	.global Data_080f01e6
-Data_080f01e6:
+	.global gScreenTransition_EdgeOffsets
+gScreenTransition_EdgeOffsets:
 	.byte -4, -3, -3, -3, -2, -2, -1, 0, 0, 0, 1, 2, 2, 3, 3, 3
 	.byte 4, 3, 3, 3, 2, 2, 1, 0, 0, 0, -1, -2, -2, -3, -3, -3
 @ A copy of The Broken Seal's gScreenTransition_DitherTable
-	.global gData_080f0206
-gData_080f0206:
+	.global gScreenTransition_DitherTable
+gScreenTransition_DitherTable:
 	.byte 0, 12, 35, 3, 29, 39, 6, 7, 50, 59, 4, 11, 18, 40, 46, 31
 	.byte 16, 42, 47, 51, 20, 23, 43, 32, 8, 52, 17, 41, 54, 15, 63, 24
 	.byte 58, 5, 2, 26, 36, 61, 9, 34, 56, 27, 10, 48, 53, 30, 28, 22
@@ -55,8 +55,8 @@ Data_080f0890:
 	.2byte 0xffff, 0x0000, 0x8000, 0xffff, 0xc000, 0xffff, 0xffff, 0xc000
 	.2byte 0x4000, 0xffff, 0xffff, 0x4000, 0xffff, 0x0000, 0x8000, 0xffff
 @ A copy of The Broken Seal's gDisplayScroll_WaveSine
-	.global Data_080f08b0
-Data_080f08b0:
+	.global gLineScroll_WaveSine
+gLineScroll_WaveSine:
 	.2byte 0, 100, 200, 301, 401, 501, 601, 700
 	.2byte 799, 897, 995, 1092, 1189, 1284, 1379, 1474
 	.2byte 1567, 1659, 1751, 1841, 1930, 2018, 2105, 2191
@@ -90,8 +90,8 @@ Data_080f08b0:
 	.2byte -1567, -1474, -1379, -1284, -1189, -1092, -995, -897
 	.2byte -799, -700, -601, -501, -401, -301, -200, -100
 @ A copy of The Broken Seal's gFieldEffect_GroundParticleFrames
-	.global Data_080f0ab0
-Data_080f0ab0:
+	.global gFieldEffect_GroundParticleFrames
+gFieldEffect_GroundParticleFrames:
 	.2byte -8, -12, 20, 0, 1
 	.2byte -8, -12, 20, 0, 1
 	.2byte -8, -12, 20, 0, 1
@@ -109,7 +109,7 @@ Data_080f0ab0:
 	.2byte 56, -144, 0, 2, 2
 	.2byte 64, -160, 0, 2, 2
 @ {x, y} screen offsets of a ground particle, in pixels, indexed by its
-@ remaining frame count; read by Func_080d6674 (The Broken Seal's
+@ remaining frame count; read by Weather_UpdateRain (The Broken Seal's
 @ FieldEffect_UpdateGroundParticles), which has no such table.
 	.global Data_080f0b50
 Data_080f0b50:
@@ -125,8 +125,8 @@ Data_080f0b50:
 	.2byte -176, -91
 	.2byte -192, -98
 @ A copy of The Broken Seal's gFieldEffect_SparklePictures
-	.global gData_080f0b7c
-gData_080f0b7c:
+	.global gFieldEffect_SparklePictures
+gFieldEffect_SparklePictures:
 	.2byte -2, 12
 	.2byte -4, 12
 	.2byte -6, 12
@@ -217,16 +217,16 @@ gData_080f0e58:
 
 @ The Broken Seal's gBattleEffect_SourceHoldScript: face the link, wait a frame,
 @ loop for ever to the top
-	.global gData_080f0e60
-gData_080f0e60:
+	.global gFieldEffect_SourceHoldScript
+gFieldEffect_SourceHoldScript:
 	.4byte 0x06
 	.4byte 0x00, 1
 	.4byte 0x0d, 0xffff, 0
 
 @ The Broken Seal's gBattleEffect_FragmentScript: sync, set the speed (work
 @ 0x0f) to 0x1000, argument 0, wait 10 frames, free
-	.global gData_080f0e78
-gData_080f0e78:
+	.global gFieldEffect_FragmentScript
+gFieldEffect_FragmentScript:
 	.4byte 0x01
 	.4byte 0x16, 0x0f, 0x1000
 	.4byte 0x27, 0
@@ -244,7 +244,7 @@ gBattleEffect_CyclePatternWords:
 	.2byte 0x4000, 0xffff, 0xffff, 0x4000, 0xffff, 0x0000, 0x8000, 0xffff
 	.section .rodata.c
 @ An 8x8 dot of 256 colours, shaded from its rim (colour 0xe9) to its centre
-@ (0xef), that Func_080e572c loads into VRAM for its 32 particles. Its
+@ (0xef), that FieldPsynergy_Burst loads into VRAM for its 32 particles. Its
 @ callback Func_080e4d9c writes OBJ colours 0xe0 to 0xff, computed from the
 @ sine table, each frame; the picture carries the shared OBJ palette and
 @ those colours of the first frame.

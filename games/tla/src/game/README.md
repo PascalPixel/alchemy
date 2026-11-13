@@ -10,7 +10,7 @@ explains them for The Broken Seal.
 - The tables are C arrays under The Broken Seal's file and struct names
   (`item_table.c`, `ability_table.c`, `class_table.c` and the rest), in the
   order the ROM keeps them. Their globals keep this game's names for now
-  (`gOwner_GrowthRecords` for The Broken Seal's
+  (`gCharacter_DefinitionTable` for The Broken Seal's
   `gCharacter_DefinitionTable`), and a few readers still view a row through
   a struct of their own (`EnemyRecord`, `OwnerGrowthRecord`).
 - An enemy's definition lacks the ten bytes The Broken Seal's keeps before

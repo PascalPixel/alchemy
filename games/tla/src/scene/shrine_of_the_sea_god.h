@@ -69,20 +69,20 @@ void GameFlag_ClearBit(s32 flag);
 void FieldMessage_Show(s32 message, s32 position);
 void Actor_SetSpritePriority(s32 actor, s32 variant);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
 void Actor_SetPositionAndResetMotion(struct ShrineOfTheSeaGodObject *object,
-                                      s32 x, s32 y, s32 z);
+                                     s32 x, s32 y, s32 z);
 void Actor_SetModeById(u32 actorId, s32 animation);
 void Event_Start(void);
 void Event_End(void);
 void Event_ResolvePendingActions(s32 skip);
 void Func_02003aa0(s32 actor);
-void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
+void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 width,
+                                        s32 height, s32 destX, s32 destY);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_080d2b4c(s32 actor, s32 value);
+void Field_RequestDjinnBattle(s32 actor, s32 value);
 void Func_02003b28(void);
 void Func_02003b38(const void *script);
 void Func_02003b40(void);
@@ -93,10 +93,10 @@ void Func_0200142c(struct ShrineOfTheSeaGodObject *object);
 static inline void ShrineOfTheSeaGod_CopyRect(s32 sx, s32 sy, s32 w, s32 h,
                                               s32 dx, s32 dy) {
   /* FAKEMATCH(wrapper): the rectangle copy reaches the main image through one
-   * inline layer; as direct Map_CopyCellPictureIndicesRect calls, 19 of 360
+   * inline layer; as direct MapGrid_CopyCellPictureIndicesRect calls, 19 of 360
    * instructions differ in tla-en (Func_02000994), and 55 in all over the
    * seven callers that change. */
-  Map_CopyCellPictureIndicesRect(sx, sy, w, h, dx, dy);
+  MapGrid_CopyCellPictureIndicesRect(sx, sy, w, h, dx, dy);
 }
 
 static inline void ShrineOfTheSeaGod_BlendStart(s32 a, s32 b, s32 c, s32 d,
@@ -109,27 +109,28 @@ static inline void ShrineOfTheSeaGod_BlendStart(s32 a, s32 b, s32 c, s32 d,
 }
 
 void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z, s32 angle);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
+                                                    s32 angle);
 void Event_SetMessageId(s32 message);
 void Event_ShowMessageThenWait(s32 actor, s32 a, s32 b);
 void Event_ShowMessageAndWait(s32 speaker, s32 flags);
-s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
+s32 Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
 void FieldEffect_SetAttached(s32 actor, s32 emote);
 void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
 void FieldCamera_WaitForArrival(void);
-struct ShrineOfTheSeaGodObject *Func_080d4568(void);
-void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
+struct ShrineOfTheSeaGodObject *FieldCamera_GetActor(void);
+void Actor_SetDestinationById(u32 objectId, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);
 void Actor_Stop(s32 actor);
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void Actor_WatchAndSetScript(s32 actor, s32 target);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
+void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
-void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
+void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
 void Actor_SetSingleChildFlags(struct ShrineOfTheSeaGodObject *object,
-                                        u32 value);
+                               u32 value);
 
 static inline void ShrineOfTheSeaGod_Jump(s32 actor, s32 height, s32 frames) {
   /* FAKEMATCH(pin): the height pinned to r1, so the actor loads after the
@@ -141,7 +142,7 @@ static inline void ShrineOfTheSeaGod_Jump(s32 actor, s32 height, s32 frames) {
    * all over three callers. */
   register s32 f __asm__("r2") = frames;
 
-  Func_080d47b4(actor, h, f);
+  Actor_ShowEmoteById(actor, h, f);
 }
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -152,11 +153,11 @@ static inline void ShrineOfTheSeaGod_ObjSpeed(s32 actor, s32 speed,
 }
 
 static inline void ShrineOfTheSeaGod_ObjWalk(s32 actor, s32 x, s32 z) {
-  Actor_SetPositionAndReset(actor, x, z);
+  Actor_WalkToAndWaitById(actor, x, z);
 }
 
 static inline void ShrineOfTheSeaGod_ObjCommit(s32 actor, s32 x, s32 z) {
-  Actor_SetPositionAndCommit(actor, x, z);
+  Actor_MoveToAndWaitById(actor, x, z);
 }
 
 static inline void ShrineOfTheSeaGod_ObjTurn(s32 actor, s32 angle, s32 frames) {
@@ -178,7 +179,7 @@ static inline void ShrineOfTheSeaGod_CamSpeed(s32 speed, s32 acceleration) {
 }
 
 static inline void ShrineOfTheSeaGod_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void ShrineOfTheSeaGod_MessagePut(s32 speaker, s32 flags) {
@@ -191,16 +192,15 @@ static inline void ShrineOfTheSeaGod_ObjEmote(s32 actor, s32 emote) {
 
 void Task_Add(void (*func)(void), s32 priority);
 
-static inline void ShrineOfTheSeaGod_TaskAdd(void (*func)(void),
-                                             s32 priority) {
+static inline void ShrineOfTheSeaGod_TaskAdd(void (*func)(void), s32 priority) {
   Task_Add(func, priority);
 }
 
-#define SHRINE_OF_THE_SEA_GOD_TASK_ADD_LATE(func, priority)                \
+#define SHRINE_OF_THE_SEA_GOD_TASK_ADD_LATE(func, priority)                    \
   do {                                                                         \
     s32 priority_;                                                             \
     priority_ = (priority);                                                    \
-    Task_Add((func), priority_);                      \
+    Task_Add((func), priority_);                                               \
   } while (0)
 
 static inline s32 ShrineOfTheSeaGod_FlagCheck(s32 flag) {

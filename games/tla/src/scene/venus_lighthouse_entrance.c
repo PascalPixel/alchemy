@@ -66,24 +66,24 @@ void Func_020000c8(s32 actor) {
   {
     s32 a = actor;
     /* FAKEMATCH(pin): the 96 pinned to r1; as
-     * Actor_CommitPositionAndActivate(a, 96, dz), the pin below kept, 2 of 35
+     * Actor_WalkByAndWaitById(a, 96, dz), the pin below kept, 2 of 35
      * instructions differ in tla-en. */
     register s32 dx asm("r1") = 96;
     /* FAKEMATCH(pin): the -96 pinned to r2, the same call's second; as
-     * Actor_CommitPositionAndActivate(actor, 96, -96) with neither pin nor the
+     * Actor_WalkByAndWaitById(actor, 96, -96) with neither pin nor the
      * copy, 23 of 35 instructions differ in tla-en. */
     register s32 dz asm("r2") = -96;
 
-    Actor_CommitPositionAndActivate(a, dx, dz);
+    Actor_WalkByAndWaitById(a, dx, dz);
   }
   {
     /* FAKEMATCH(pin): the arguments pinned in order, so the -96 is negated
-     * after the actor is copied; as Actor_CommitPositionAndActivate(
+     * after the actor is copied; as Actor_WalkByAndWaitById(
      * actor, -96, 96), 2 of 35 instructions differ in tla-en. */
     register s32 a asm("r0") = actor;
     s32 dx = -96;
 
-    Actor_CommitPositionAndActivate(a, dx, 96);
+    Actor_WalkByAndWaitById(a, dx, 96);
   }
   object->update = 0;
   object->priorityFlags = 1;
@@ -230,7 +230,11 @@ void Func_0200030c(void) {
   FieldCamera_WaitForArrival();
 }
 
-/* VIEW(venus_lighthouse_entrance): variable gData_02003040 as extern u8 gData_02003040[]; the definition has u32 gData_02003040[] = { 1, 0, 1, 38, }; tried as the definition's extern s32 gData_02003040[], it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1535: conflicting types for `gData_02003040'. */
+/* VIEW(venus_lighthouse_entrance): variable gData_02003040 as extern u8
+ * gData_02003040[]; the definition has u32 gData_02003040[] = { 1, 0, 1, 38, };
+ * tried as the definition's extern s32 gData_02003040[], it does not compile in
+ * tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1535: conflicting
+ * types for `gData_02003040'. */
 extern u8 gData_02003040__venus_lighthouse_entrance[] __asm__("gData_02003040");
 
 void Func_02000440(void) {
@@ -923,11 +927,12 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   Actor_SetAnimation(8, 2);
   record = (s32)Actor_Get(5);
   if ((s32)record != 0) {
-    Actor_SetDestination(8, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
+    Actor_SetDestination(8, *(s16 *)((s32)record + 10),
+                         *(s16 *)((s32)record + 18));
   }
   FieldActor_WaitForMoveById(8);
   Actor_SetPosition(8, 0, 0);
-  FieldCamera_FollowActor(5, 1);
+  EventCamera_FollowActor(5, 1);
   Event_End();
 }
 
@@ -970,7 +975,8 @@ void VenusLighthouseEntrance_ThiefWaitsForBackup(void) {
   Actor_WalkBy(22, 0x1a, 0);
   FieldEvent_Wait(8);
   Actor_SetAnimation(22, 1);
-  Event_SetAfterBattleDestination((s32)&SceneId_VenusLighthouseEntrance, 0x63);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_VenusLighthouseEntrance,
+                                       0x63);
   Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseEntrance, 0x62);
   gMainRoutineWork.battleRule24b = 2;
   Call2(Field_RequestBattleFromEncounterTable, 9, 0);
@@ -1102,8 +1108,7 @@ void VenusLighthouseEntrance_WakeUp(void) {
   Actor_SetAnimation(8, 2);
   t96 = ((s32)Actor_Get(5));
   if (t96 != 0) {
-    Actor_SetDestination(8, FIELD_AT(t96, s16, 10),
-                              FIELD_AT(t96, s16, 18));
+    Actor_SetDestination(8, FIELD_AT(t96, s16, 10), FIELD_AT(t96, s16, 18));
   }
   FieldActor_WaitForMoveById(8);
   Actor_SetPosition(8, 0, 0);
@@ -1268,7 +1273,8 @@ void Func_02001fd0(void) {
 #undef FIELD_AT
 
 // ---- games/tla/src/scene/venus_lighthouse_entrance/s23a4.c ----
-// Scene code of overlay 0x64d, in ROM order, from s23a4's offset up to the next object the overlay links.
+// Scene code of overlay 0x64d, in ROM order, from s23a4's offset up to the next
+// object the overlay links.
 
 s32 BattleEffect_GetObjectDepth(struct Actor *actor);
 
@@ -1287,7 +1293,7 @@ void Func_020023a4(s32 id) {
   work->y = actor->y;
   work->z = actor->z + 0x20000;
   Func_02002824(gField_Tiles64D, work);
-  resource = Resource_FindFreeEntry();
+  resource = VramCache_FindFreeEntry();
   tile = Vram_Load(resource, 0x800, work);
   work->tile = tile;
   work->tileTop = tile + 32;
@@ -1304,8 +1310,7 @@ void Func_020023a4(s32 id) {
     sprite++;
     state++;
   }
-  effect =
-      (FieldActor_Create(290, actor->x, actor->y, actor->z));
+  effect = (FieldActor_Create(290, actor->x, actor->y, actor->z));
   work->effect = effect;
   Func_0200285c(effect, 1);
   Actor_SetSingleChildFlags(effect, 0);
@@ -1328,7 +1333,7 @@ void Func_020023a4(s32 id) {
   }
   FieldTask_Remove(Func_02001fd0);
   Actor_Release(effect);
-  Resource_ResetEntry(resource);
+  VramCache_FreeEntry(resource);
   HeapSlot_Release(220);
 }
 
@@ -1352,7 +1357,11 @@ void Func_0200258c(void) {
   }
 }
 
-/* VIEW(venus_lighthouse_entrance): tag struct SparkSprite as struct SparkSprite__venus_lighthouse_entrance; module/tla.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1368: structure has no member named `unk1e'. */
+/* VIEW(venus_lighthouse_entrance): tag struct SparkSprite as struct
+ * SparkSprite__venus_lighthouse_entrance; module/tla.h has another definition;
+ * tried with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1368: structure has
+ * no member named `unk1e'. */
 struct SparkSprite__venus_lighthouse_entrance {
   u8 unk00[8];
   u16 tile : 10;
@@ -1395,7 +1404,11 @@ void Func_0200260c(struct Actor *source, s32 x, s32 y, s32 z) {
 
 // ---- games/tla/src/scene/venus_lighthouse_entrance/s26f4.c ----
 
-/* VIEW(s26f4): tag struct SparkSprite as struct SparkSprite__s26f4; venus_lighthouse_entrance.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1423: structure has no member named `unk1e'. */
+/* VIEW(s26f4): tag struct SparkSprite as struct SparkSprite__s26f4;
+ * venus_lighthouse_entrance.c has another definition; tried with the definition
+ * the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/venus_lighthouse_entrance.c:1423: structure has no member
+ * named `unk1e'. */
 struct SparkSprite__s26f4 {
   u8 unk00[4];
   u16 attr0 : 13;
@@ -1410,7 +1423,11 @@ struct SparkSprite__s26f4 {
   u8 unk20[8];
 };
 
-/* VIEW(s26f4): tag struct SparkWork as struct SparkWork__s26f4; venus_lighthouse_entrance.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1420: structure has no member named `resource'. */
+/* VIEW(s26f4): tag struct SparkWork as struct SparkWork__s26f4;
+ * venus_lighthouse_entrance.c has another definition; tried with the definition
+ * the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/venus_lighthouse_entrance.c:1420: structure has no member
+ * named `resource'. */
 struct SparkWork__s26f4 {
   u8 unk0000[0x800];
   struct SparkState states[96];
@@ -1424,10 +1441,12 @@ void Func_020026f4(void) {
   struct SparkWork__s26f4 *work = HeapSlot_AllocFar(220, 0x2188);
   s32 resource;
   s32 tileBase;
-  s32 i; struct SparkState *state; struct SparkSprite__s26f4 *sprite;
+  s32 i;
+  struct SparkState *state;
+  struct SparkSprite__s26f4 *sprite;
 
   Func_02002824(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
-  resource = Resource_FindFreeEntry();
+  resource = VramCache_FindFreeEntry();
   tileBase = Vram_Load(resource, 0x800, work);
   work->tileBase = tileBase;
   work->resource = resource;
@@ -1443,7 +1462,10 @@ void Func_020026f4(void) {
     state++;
     sprite++;
   }
-  { s32 zero = 0; work->unk2180 = zero; }
+  {
+    s32 zero = 0;
+    work->unk2180 = zero;
+  }
   Task_AddFrame(Func_0200258c, (s32)(0x480));
 }
 
@@ -1451,7 +1473,11 @@ void Func_020026f4(void) {
 #include "resource.h"
 #include "heap_release.h"
 
-/* VIEW(sparks): tag struct SparkWork as struct SparkWork__sparks; venus_lighthouse_entrance.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1455: structure has no member named `resource'. */
+/* VIEW(sparks): tag struct SparkWork as struct SparkWork__sparks;
+ * venus_lighthouse_entrance.c has another definition; tried with the definition
+ * the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/venus_lighthouse_entrance.c:1455: structure has no member
+ * named `resource'. */
 struct SparkWork__sparks {
   u8 unk0000[0x2102];
   u16 tileBase;
@@ -1463,7 +1489,7 @@ void VenusLighthouseEntrance_StopSparks(void) {
   struct SparkWork__sparks *work = Ram_HeapSlots->menuRuntime;
 
   FieldTask_Remove(Func_0200258c);
-  Resource_ResetEntry(work->resource);
+  VramCache_FreeEntry(work->resource);
   HeapSlot_Release(220);
 }
 
@@ -1525,7 +1551,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 11, 0x893, EVENT(VenusLighthouseEntrance_ThiefWaitsForBackup)},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(VenusLighthouseEntrance_PointToMeetingSpot)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgUggghICan)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(VenusLighthouseEntrance_RunActorSparkBurst)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS,
+     EVENT(VenusLighthouseEntrance_RunActorSparkBurst)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_020000c8)},
     {TRIGGERS_END},
 };

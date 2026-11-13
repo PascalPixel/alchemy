@@ -47,7 +47,7 @@ void Func_020016d8(void) {
     ship->facing = FACING_WEST;
   }
   Actor_SetPosition(10, PIXELS(186), PIXELS(164));
-  Actor_SetSpriteColor(Actor_Get(10), 15);
+  FieldActor_SetSpriteColor(Actor_Get(10), 15);
   Actor_SetSingleChildFlags(Actor_Get(10), 0);
   System_Wait(1);
   Event_StartScreenTransition();
@@ -191,7 +191,7 @@ void Func_020016d8(void) {
   Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(8, FACING_WEST, 0);
   Actor_SetSingleChildFlags(Actor_Get(10), 1);
-  Actor_SetSpriteColor(Actor_Get(10), 0);
+  FieldActor_SetSpriteColor(Actor_Get(10), 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(10, FACING_EAST, 40);
   Actor_SetAnimation(10, 3);

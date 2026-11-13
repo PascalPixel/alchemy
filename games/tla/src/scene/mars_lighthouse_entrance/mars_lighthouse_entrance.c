@@ -170,7 +170,7 @@ next:
       object->scaleX = scale;
       object->scaleY = scale;
       object->bounce = 0x8000;
-      Animation_ApplyChildValues(object, 1);
+      Actor_SetSpriteColorMode(object, 1);
     }
   }
   if (--i >= 0)
@@ -229,14 +229,14 @@ void MarsLighthouseEntrance_Teleport(void) {
     FieldEvent_ResolvePendingActions(0);
     Func_02004dd0();
     WORD_AT(Actor_Get(gMainRoutineWork.currentOwner), 108) = 0;
-    Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
+    FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
     Func_02004cd8_(gMainRoutineWork.currentOwner, PIXELS(688), PIXELS(360));
     FieldCamera_MoveTo(PIXELS(688), -1, PIXELS(360), 1);
     FieldCamera_WaitForArrival();
     Func_02004dc8();
     FieldEvent_Wait(40);
     Func_02004718();
-    BattleEffect_PrepareBufferInterpolation();
+    FieldPsynergy_FadeFromCastColor();
     System_Wait(10);
     Event_End();
     Flag_Set(0xa36);
@@ -530,7 +530,7 @@ fill:
   *word++ = 0x11111111;
   if (--count >= 0)
     goto fill;
-  gData_020068a2 = Resource_FindFreeEntry();
+  gData_020068a2 = VramCache_FindFreeEntry();
   Vram_Load(gData_020068a2, 0x100, buffer);
   Heap_Release(buffer);
   Task_AddFrame(Func_02000d18, TASK_PASS_VBLANK);
@@ -826,7 +826,12 @@ s32 Func_020022e4();
 s32 Func_0200246c();
 s32 Func_0200248c();
 s32 Func_020045f8();
-/* VIEW(s138c): routine Func_0200196c as extern u8 Func_0200196c[]; the definition has void Func_0200196c(void); tried as the definition's void Func_0200196c(s32 x, s32 z, s32 effect), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1118: `Func_0200196c' undeclared (first use in this function). */
+/* VIEW(s138c): routine Func_0200196c as extern u8 Func_0200196c[]; the
+ * definition has void Func_0200196c(void); tried as the definition's void
+ * Func_0200196c(s32 x, s32 z, s32 effect), which the object already declares,
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_entrance.c:1118: `Func_0200196c'
+ * undeclared (first use in this function). */
 extern u8 Func_0200196c__s138c[] __asm__("Func_0200196c");
 extern u8 gData_02005314[];
 extern u8 gData_020053d8[];
@@ -845,7 +850,11 @@ extern u8 gData_0200586c[];
 extern u8 gData_0200587c[];
 extern u8 gData_020058a8[];
 extern u8 gData_020058d4[];
-/* VIEW(s138c): variable gMainRoutineWork as extern u8 gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried as the 4 declarations' extern u8 gMainRoutineWork[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:919: conflicting types for `gMainRoutineWork'. */
+/* VIEW(s138c): variable gMainRoutineWork as extern u8 gMainRoutineWork[];
+ * main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried
+ * as the 4 declarations' extern u8 gMainRoutineWork[], it does not compile in
+ * tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:919: conflicting types
+ * for `gMainRoutineWork'. */
 extern u8 gMainRoutineWork__s138c[] __asm__("gMainRoutineWork");
 
 s32 Scene_Initialize(void) {
@@ -1136,8 +1145,14 @@ extern const u8 gMarsLighthouseEntrance_Room6Triggers[];
 extern const u8 gMarsLighthouseEntrance_Room7Triggers[];
 extern s16 gData_02006868;
 
-/* VIEW(s1930): routine Func_02002f4c as s32 Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script); s1344 has void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script); tried as the definition's void Func_02002f4c(s32 id, s32 target, s32 kind, s32 a3, const void *script), Func_0200196c moves: 1 of 11 instructions, Func_02001988 moves: 1 of 11 instructions, Func_020019a4 moves: 1 of 12 instructions, 3 more in tla-ja. */
-extern s32 Func_02002f4c__s1930(s32 id, s32 a1, s32 a2, s32 a3, const void *script) __asm__("Func_02002f4c");
+/* VIEW(s1930): routine Func_02002f4c as s32 Func_02002f4c(s32 id, s32 a1, s32
+ * a2, s32 a3, const void *script); s1344 has void Func_02002f4c(s32 id, s32 a1,
+ * s32 a2, s32 a3, const void *script); tried as the definition's void
+ * Func_02002f4c(s32 id, s32 target, s32 kind, s32 a3, const void *script),
+ * Func_0200196c moves: 1 of 11 instructions, Func_02001988 moves: 1 of 11
+ * instructions, Func_020019a4 moves: 1 of 12 instructions, 3 more in tla-ja. */
+extern s32 Func_02002f4c__s1930(s32 id, s32 a1, s32 a2, s32 a3,
+                                const void *script) __asm__("Func_02002f4c");
 void Func_02002c2c(void);
 
 s32 Scene_PrepareMap(void) {
@@ -1148,17 +1163,27 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Func_0200196c(void) { Func_02002f4c__s1930(10, 19, 20, 0, gData_0200547c); }
+void Func_0200196c(void) {
+  Func_02002f4c__s1930(10, 19, 20, 0, gData_0200547c);
+}
 
-void Func_02001988(void) { Func_02002f4c__s1930(12, 19, 20, 0, gData_020054cc); }
+void Func_02001988(void) {
+  Func_02002f4c__s1930(12, 19, 20, 0, gData_020054cc);
+}
 
-void Func_020019a4(void) { Func_02002f4c__s1930(9, 18, 20, 0x4000, gData_02005528); }
+void Func_020019a4(void) {
+  Func_02002f4c__s1930(9, 18, 20, 0x4000, gData_02005528);
+}
 
 void Func_020019c4(void) { Func_02002f4c__s1930(9, 13, 14, 0, gData_02005578); }
 
-void Func_020019e0(void) { Func_02002f4c__s1930(11, 13, 14, 0x4000, gData_020055d4); }
+void Func_020019e0(void) {
+  Func_02002f4c__s1930(11, 13, 14, 0x4000, gData_020055d4);
+}
 
-void Func_02001a00(void) { Func_02002f4c__s1930(13, 21, 22, 0, gData_02005644); }
+void Func_02001a00(void) {
+  Func_02002f4c__s1930(13, 21, 22, 0, gData_02005644);
+}
 
 extern const u8 gData_020056a0[];
 
@@ -1170,13 +1195,21 @@ DEFINE_ACTOR_IS_BESIDE(Func_02001a80)
 
 #include "field/event_work.h"
 
-/* VIEW(s1930): tag struct RideSlot as struct RideSlot__s1930; ride.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1319: structure has no member named `id'. */
+/* VIEW(s1930): tag struct RideSlot as struct RideSlot__s1930; ride.h has
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_entrance.c:1319: structure has no member
+ * named `id'. */
 struct RideSlot__s1930 {
   u16 id;
   u16 blocked;
 };
 
-/* VIEW(s1930): tag struct RideWork as struct RideWork__s1930; ride.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1287: structure has no member named `value68'. */
+/* VIEW(s1930): tag struct RideWork as struct RideWork__s1930; ride.h has
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_entrance.c:1287: structure has no member
+ * named `value68'. */
 struct RideWork__s1930 {
   u8 unk00[4];
   u16 landed;
@@ -1202,7 +1235,11 @@ DEFINE_ACTOR_RESET_SCRIPTED_FOR(Func_02001c44, gData_020056a0)
 DEFINE_RIDE_SPAWN_FRONT(Func_02001c74, Func_02004bd8_, Func_02001c44, 2,
     Func_02001ae0, Func_02004bc0)
 
-/* VIEW(s1c44): tag struct RideSlot as struct RideSlot__s1c44; ride.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1428: structure has no member named `id'. */
+/* VIEW(s1c44): tag struct RideSlot as struct RideSlot__s1c44; ride.h has
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_entrance.c:1428: structure has no member
+ * named `id'. */
 struct RideSlot__s1c44 {
   u16 id;
   u16 blocked;
@@ -1213,7 +1250,11 @@ struct RideDirection {
   u16 unk02;
 };
 
-/* VIEW(s1c44): tag struct RideWork as struct RideWork__s1c44; ride.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1406: structure has no member named `direction'. */
+/* VIEW(s1c44): tag struct RideWork as struct RideWork__s1c44; ride.h has
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_entrance.c:1406: structure has no member
+ * named `direction'. */
 struct RideWork__s1c44 {
   u8 unk00[4];
   u16 landed;
@@ -1256,7 +1297,10 @@ DEFINE_RIDE_SPAWN_SPARK(Func_0200206c, Func_02004bd8_, Func_0200202c,
     Func_02001f90)
 
 // ---- games/tla/src/scene/mars_lighthouse_entrance/s20ec.c ----
-/* VIEW(s20ec): tag struct Actor as struct Actor__s20ec; actor.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1669: structure has no member named `flag5b'. */
+/* VIEW(s20ec): tag struct Actor as struct Actor__s20ec; actor.h has another
+ * definition; tried with the definition the rest of the object has, it does not
+ * compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1669:
+ * structure has no member named `flag5b'. */
 typedef struct Actor__s20ec {
   u8 pad0[8];
   s32 x;
@@ -1285,7 +1329,11 @@ typedef struct State {
   Entry entries[4];
 } State;
 
-/* VIEW(s20ec): routine Func_0200206c as void Func_0200206c(); the parts before it has another declaration; tried as the definition's void Func_0200206c(s32 x, s32 z, s32 effect), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1615: conflicting types for `Func_0200206c'. */
+/* VIEW(s20ec): routine Func_0200206c as void Func_0200206c(); the parts before
+ * it has another declaration; tried as the definition's void Func_0200206c(s32
+ * x, s32 z, s32 effect), it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_entrance.c:1615: conflicting types for
+ * `Func_0200206c'. */
 extern void Func_0200206c__s20ec() __asm__("Func_0200206c");
 
 typedef struct Position {

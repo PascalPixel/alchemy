@@ -33,9 +33,9 @@ struct Work020023c4 {
 void Func_020024c0();
 void Func_02004bc0(struct Actor *actor, s32 a);
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
-void Animation_ApplyChildValues(struct Actor *actor, s32 a);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 void Func_02002614(void);
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 
 #define SHARED_F02002148_NAME Func_0200263c
 #define SHARED_F02002148_ID2 Func_020024c0
@@ -63,7 +63,11 @@ void MarsLighthouseEntrance_ContinueSlide(void) {
 // ---- games/tla/src/scene/mars_lighthouse_entrance/s2860.c ----
 #include "../shared/mars_lighthouse_entrance_room.h"
 
-/* VIEW(s2860): routine Func_020024c0 as s32 Func_020024c0(s32 a, s32 b); s263c has void Func_020024c0(); tried as the definition's void Func_020024c0(void), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:261: too many arguments to function `Func_020024c0'. */
+/* VIEW(s2860): routine Func_020024c0 as s32 Func_020024c0(s32 a, s32 b); s263c
+ * has void Func_020024c0(); tried as the definition's void Func_020024c0(void),
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_entrance/s263c.c:261: too many arguments
+ * to function `Func_020024c0'. */
 extern s32 Func_020024c0__s2860(s32 a, s32 b) __asm__("Func_020024c0");
 void Func_02002614(void);
 
@@ -127,7 +131,7 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   Func_020024c0__s2860(-10, 0);
   FieldCamera_SetSpeed(0x70000, 0xe000);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
-  ride = (struct RideState *)(gData_020023c4 + 0x188);
+  ride = (struct RideState *)(gInventorySnapshot + 0x188);
   Flag_Set(0x106);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -150,7 +154,7 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   }
   FieldEvent_Wait(30);
   leader->update = 0;
-  Animation_ApplyChildValues(leader, 0);
+  Actor_SetSpriteColorMode(leader, 0);
   ride->active = 0;
 }
 
@@ -204,7 +208,7 @@ struct Work {
 
 extern u8 gData_020056d0[];
 
-#define WORK ((struct Work *)(gData_020023c4 + 0x188))
+#define WORK ((struct Work *)(gInventorySnapshot + 0x188))
 
 void Func_020029c8(struct Actor *actor) {
   struct Work *work = WORK;
@@ -249,10 +253,10 @@ void Func_020029c8(struct Actor *actor) {
       object->bounce = 0x8000;
       sprite = object->sprite;
       source = work->owner->sprite;
-      Resource_ResetEntry(sprite->vramBlock);
+      VramCache_FreeEntry(sprite->vramBlock);
       sprite->keepEntry = 1;
       sprite->vramBlock = work->vramBlock;
-      ResourceMetadata_ClearRecord(sprite->record);
+      SpriteAnimation_Clear(sprite->record);
       sprite->record = NULL;
       sprite->unk1b = 0;
       sprite->unk14[0] = source->unk14[0];
@@ -278,7 +282,11 @@ void Func_02002c2c(struct Actor *object) {
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-/* VIEW(s2860): tag struct Work020023c4 as struct Work020023c4__s2860; s263c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:569: structure has no member named `unk6c'. */
+/* VIEW(s2860): tag struct Work020023c4 as struct Work020023c4__s2860; s263c.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_entrance/s263c.c:569: structure has no
+ * member named `unk6c'. */
 struct Work020023c4__s2860 {
   u8 unk00[4];
   u16 unk04;
@@ -382,12 +390,23 @@ DEFINE_LEADER_SLIDE_ON_ICE(Func_020032b8, Func_02003284, gData_02005798,
 // ---- games/tla/src/scene/mars_lighthouse_entrance/s3564.c ----
 extern volatile s16 gData_020068b0;
 extern s16 gData_02005798[];
-/* VIEW(s3564): routine Func_020031f8 as void Func_020031f8(struct Actor *object); s32b8 has void Func_020031f8(void); tried as the definition's void Func_020031f8(struct Actor *object), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:1049: `Func_020031f8__s3564' undeclared (first use in this function). */
+/* VIEW(s3564): routine Func_020031f8 as void Func_020031f8(struct Actor
+ * *object); s32b8 has void Func_020031f8(void); tried as the definition's void
+ * Func_020031f8(struct Actor *object), which the object already declares, it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_entrance/s263c.c:1049:
+ * `Func_020031f8__s3564' undeclared (first use in this function). */
 extern void Func_020031f8__s3564(struct Actor *object) __asm__("Func_020031f8");
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02004bc0(struct Actor *object, s32 mode);
-/* VIEW(s3564): routine Func_02004c78 as s32 Func_02004c78(s32 *a, s32 aRadius, s32 *b, s32 bRadius); s32b8 has s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:1068: `Func_02004c78__s3564' undeclared (first use in this function). */
-extern s32 Func_02004c78__s3564(s32 *a, s32 aRadius, s32 *b, s32 bRadius) __asm__("Func_02004c78");
+/* VIEW(s3564): routine Func_02004c78 as s32 Func_02004c78(s32 *a, s32 aRadius,
+ * s32 *b, s32 bRadius); s32b8 has s32 Func_02004c78(s32 *a, s32 radiusA, struct
+ * Position *b, s32 radiusB); tried as the rest of the object declares it, it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_entrance/s263c.c:1068:
+ * `Func_02004c78__s3564' undeclared (first use in this function). */
+extern s32 Func_02004c78__s3564(s32 *a, s32 aRadius, s32 *b,
+                                s32 bRadius) __asm__("Func_02004c78");
 
 #define SHARED_F02003070_NAME Func_02003564
 #define SHARED_F02003070_ID2 gData_020068b0

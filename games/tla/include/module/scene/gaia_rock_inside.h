@@ -30,7 +30,7 @@ typedef struct {
   u8 unk_7;
 } Unk_Step;
 
-// At gData_020023c4 + 0x288.
+// At gInventorySnapshot + 0x288.
 typedef struct {
   s32 unk_0;
   Unk_Step steps[15];

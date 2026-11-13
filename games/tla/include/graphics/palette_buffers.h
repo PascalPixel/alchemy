@@ -77,13 +77,13 @@ enum PaletteTransform {
   PALETTE_TRANSFORM_SPLIT = 0x800000
 };
 
-void Palette_Transform(u32 mode, u16 *source, u16 *destination, s32 half);
+void PaletteFade_Build(u32 mode, u16 *source, u16 *destination, s32 half);
 
 void PaletteFade_Initialize(void);
 void PaletteFade_Update(void);
 void PaletteFade_SetTarget(s32 index, s32 transform);
 void PaletteFade_SetBackdrop(s32 value);
-void PaletteFade_Start(s32 frames);
+void TitlePaletteFade_Start(s32 frames);
 void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
                                 s32 frames);
 void PaletteFade_Release(void);

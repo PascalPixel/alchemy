@@ -10,6 +10,6 @@ void Forge_Run(s32 actor);
 
 void Forge_SetItem(s32 value);
 
-void BattleEffect_StartEffectObject22(s32 item, s32 mode);
+void ItemDisplay_ShowItem(s32 item, s32 mode);
 
 #endif

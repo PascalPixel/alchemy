@@ -31,7 +31,7 @@ DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Func_02005754, Whirlwind_Upda
 
 DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, Func_02004bd4)
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 static __inline__ void Func_02001c10_(s32 id, s32 x, s32 z) {
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
@@ -61,16 +61,16 @@ void Func_02004644(void) {
     rider->y += 0x1eb80;
     rider->x += -0x28f40;
     sprite->rotation += 0x800;
-    Animation_ApplyChildValues(Actor_GetById(9), 4);
-    Animation_ApplyChildValues(Actor_GetById(11), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(9), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(11), 4);
   }
   if (GameFlag_Test_(0xa0b)) {
     right->y += 0x66640;
     rider->y += 0x1eb80;
     rider->x += 0x28f40;
     sprite->rotation -= 0x800;
-    Animation_ApplyChildValues(Actor_GetById(10), 4);
-    Animation_ApplyChildValues(Actor_GetById(12), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(10), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(12), 4);
   }
   if (GameFlag_Test_(0xa0a) && GameFlag_Test_(0xa0b)) {
     left->y += 0x199900;
@@ -82,7 +82,11 @@ void Func_02004644(void) {
   }
 }
 
-/* VIEW(s44cc): variable gData_02006b70 as s16 gData_02006b70; module/scene/scene.h has u8 gData_02006b70[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s44cc.c:217: `gData_02006b70' has an incomplete type. */
+/* VIEW(s44cc): variable gData_02006b70 as s16 gData_02006b70;
+ * module/scene/scene.h has u8 gData_02006b70[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s44cc.c:217:
+ * `gData_02006b70' has an incomplete type. */
 extern s16 gData_02006b70__s44cc __asm__("gData_02006b70");
 
 void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);

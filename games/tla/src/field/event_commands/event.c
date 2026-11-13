@@ -31,8 +31,7 @@ void Event_Wait(s32 frames) {
 }
 
 void Leader_StopMoving(void) {
-  struct Actor *object =
-      ObjectTable_Get(Party_GetLeaderActor());
+  struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
   object->speedLimit = Q16_ONE;
   object->acceleration = 0x8000;
   object->targetX = 0x80000000;
@@ -73,9 +72,9 @@ void Event_End(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
     if (party->ownerOverride == 0)
-      Camera_FollowActor(party->currentOwner, 1);
+      FieldCamera_FollowActor(party->currentOwner, 1);
     else
-      Camera_FollowActor(8, 1);
+      FieldCamera_FollowActor(8, 1);
     GameFlag_RefreshLureCapFar();
   }
 }
@@ -93,7 +92,7 @@ struct Actor *Event_RunObjectHookAndWait(s32 object) {
 
 void Event_CallWithLastActiveObjectId(s32 event_id) {
   Event_SpawnObjectTable((struct ActorPlacement *)event_id,
-                         ObjectTable_FindLastActiveId());
+                         Actor_FindLastActiveId());
 }
 
 void Event_SetSceneEvents(s32 events) {
@@ -114,7 +113,7 @@ void Event_PrepareTwoObjectsAndApply(s32 first, s32 second) {
   Party_ShowPairJoinedMessageFar(first, second);
 }
 
-s32 Event_ValidatePackedId(u32 packed_id) {
+s32 Party_CheckShortcut(u32 packed_id) {
   s32 group = (packed_id >> 10) & 0xf;
   s32 entry = packed_id & 0x3ff;
 
@@ -127,10 +126,10 @@ s32 Event_ValidatePackedId(u32 packed_id) {
   return 0;
 }
 
-void Event_ClearValidPackedIds(void) {
-  if (Event_ValidatePackedId(gMainRoutineWork.packedEvents[0]))
+void Party_ClearUnusableShortcuts(void) {
+  if (Party_CheckShortcut(gMainRoutineWork.packedEvents[0]))
     gMainRoutineWork.packedEvents[0] = 0;
-  if (Event_ValidatePackedId(gMainRoutineWork.packedEvents[1]))
+  if (Party_CheckShortcut(gMainRoutineWork.packedEvents[1]))
     gMainRoutineWork.packedEvents[1] = 0;
 }
 
@@ -153,7 +152,7 @@ void Party_RemoveMemberRestored(s32 owner) {
   s32 standing;
 
   Party_RemoveMemberFar(owner);
-  Event_ClearValidPackedIds();
+  Party_ClearUnusableShortcuts();
   vitals = Unit_Get(owner);
   // The two copies in a once-only block keep both ahead of the ratio; as the
   // plain stores, 2 of 148 instructions differ in tla-en.
@@ -187,7 +186,7 @@ void Party_RemoveMemberRestored(s32 owner) {
   }
 }
 
-s32 Func_080d25c8(s32 item) {
+s32 Party_CheckItemLimit(s32 item) {
   Party_CountMembersFar();
   if (PartyInventory_FindRoomFar(item) < 0) {
     MessageArgument_PushFar(item, 2);
@@ -227,7 +226,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   retry:
     {
       FieldMessage_ShowFar((s32)&MsgItemDropPrompt, 1);
-      result = Func_08108068(&member, &slot);
+      result = ItemPicker_RunToDropFar(&member, &slot);
       if (result == -1) {
         if (((struct ItemHead *)Item_Get(item))->flags & 8) {
           MessageArgument_PushFar(item, 2);
@@ -236,7 +235,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         }
         MessageArgument_PushFar(item, 2);
         FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 1, 5);
-        result = Func_080d295c(1);
+        result = FieldYesNo_Ask(1);
         Message_CloseFinishedWindowsFar();
         if (result != 0)
           goto retry;
@@ -353,8 +352,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   }
 
   answer = YesNoMenu_RunFar(useBottom, *(s16 *)(work + 0xcb0),
-                                       *(s16 *)(work + 0xcb2),
-                                       *(s16 *)(work + 0xcb4));
+                            *(s16 *)(work + 0xcb2), *(s16 *)(work + 0xcb4));
   if (answer != 0) {
     Actor_SetModeById(actor, 4);
     Window_CloseMatchingIdFar(sprite);
@@ -372,7 +370,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   return answer;
 }
 
-s32 Func_080d295c(s32 a) { return YesNoMenu_RunFar(a, 0, 0, 0); }
+s32 FieldYesNo_Ask(s32 a) { return YesNoMenu_RunFar(a, 0, 0, 0); }
 
 /// Gives the party item from actor: with no room it shows the item, says it
 /// was found and left behind and returns -1; otherwise it adds the item, sets
@@ -380,18 +378,18 @@ s32 Func_080d295c(s32 a) { return YesNoMenu_RunFar(a, 0, 0, 0); }
 s32 Func_080d296c(s32 actor, s32 item, s32 flag) {
   if (PartyInventory_FindRoomFar(item) < 0) {
     Actor_GetById(actor)->scaleX = 0;
-    BattleEffect_StartEffectObject22(item, 3);
+    ItemDisplay_ShowItem(item, 3);
     MessageArgument_PushFar(item, 2);
     FieldMessage_ShowFar((s32)&MsgFoundItem, 1);
     // Four messages on: "But <protagonist>'s party can't carry any more".
     FieldMessage_ShowFar((s32)&MsgFoundItem + 4, 1);
     Actor_GetById(actor)->scaleX = Q16_ONE;
-    Actor_SetAngleToward(gMainRoutineWork.currentOwner, actor, 0);
+    Actor_FaceActorById(gMainRoutineWork.currentOwner, actor, 0);
     Event_Wait(20);
     return -1;
   }
   Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);
-  BattleEffect_StartEffectObject22(item, 3);
+  ItemDisplay_ShowItem(item, 3);
   PartyInventory_GiveItem(item, 0);
   if (flag != -1)
     GameFlag_SetBit(flag);
@@ -400,8 +398,11 @@ s32 Func_080d296c(s32 actor, s32 item, s32 flag) {
 
 // Messages: teach an ability and display the learning message.
 
-/* VIEW(event_commands): routine Unit_LearnPsynergyFar as void Unit_LearnPsynergyFar(void); gamepak/far_call/game.h has void Unit_LearnPsynergyFar(s32 owner, s32 action). */
-extern void Unit_LearnPsynergyFar__event_commands(void) __asm__("Unit_LearnPsynergyFar");
+/* VIEW(event_commands): routine Unit_LearnPsynergyFar as void
+ * Unit_LearnPsynergyFar(void); gamepak/far_call/game.h has void
+ * Unit_LearnPsynergyFar(s32 owner, s32 action). */
+extern void
+Unit_LearnPsynergyFar__event_commands(void) __asm__("Unit_LearnPsynergyFar");
 
 /// Teaches the ability, plays a sound, shows a message and waits for it to
 /// advance.

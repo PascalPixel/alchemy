@@ -33,12 +33,56 @@
 #include "display_scroll.h"
 #include "render_input.h"
 #include "text/msg_ids.h"
-#include "module/menu/menu.h"
-#include "module/system/system.h"
-#include "module/tla.h"
-#include "resource_ids.h"
 
+struct QueuedSprite;
+
+typedef s32 (*PackedDecoder)(const u8 *source, void *destination, u32 fill);
+
+/// One eight-byte OAM entry in the credits' sprite buffer.
+struct DisplayScrollObject {
+  u32 attr01;
+  u32 attr2;
+};
+
+extern s16 Data_02007500;
+extern struct DisplayScrollObject *gDisplayScroll_Objects;
+extern const u32 gDisplayScroll_SlideResources[];
+extern const void *gDisplayScroll_LineTable[];
+
+/// The scrolling picture's state. Func_081a133c, a VBlank task, moves the
+/// scroll toward its target while Func_081a17d0 waits for it to arrive.
+///@{
+extern s16 Data_02007514;           ///< which character block the picture is in
+extern s16 Data_02007516;           ///< frames of the fade-in, to 64
+extern u32 Data_02007518;           ///< the tilemap's scroll, 16.16 pixels
+extern volatile s32 gData_0200751c; ///< the scroll, 16.16 pixels
+extern s16 gData_02007520;          ///< the row the scroll is heading for
+extern s16 Data_02007524;           ///< the most rows a frame moves
+extern u8 *Data_02007528;           ///< the picture's map
+/// The 24 sprites of the picture's border strips.
+extern struct QueuedSprite *gData_0200752c;
 ///@}
+
+void Credits_InitTextSprites(void);
+void Credits_InitTextSpritesAtPage(s32 credits);
+void Func_081a0fb8(void);
+s32 Credits_DrawLine(const u8 *text, s32 slot, s32 align);
+extern const u8 BattleEffect_ExpandCode[];
+extern u8 BattleEffect_ExpandCodeSize[];
+extern const u8 gCredits_GlyphWidths[];
+extern const u8 gDisplayScroll_Font[];
+
+void Func_081a1830(void);
+extern const u8 BattleEffect_Expand2Code[];
+extern u8 BattleEffect_Expand2CodeSize[];
+
+#include "gamepak/far_call/window.h"
+#include "module/system/system.h"
+#include "ram_buffer.h"
+#include "resource_ids.h"
+#include "flag_call.h"
+
+extern u8 gDebugTextEnabled;
 
 /// Fills 30K bytes of 256-colour characters with colour 1 and clears 128
 /// palette colours.
@@ -69,17 +113,21 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alt) {
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 64, REG_DMA3);
 }
 
-/* VIEW(credits): variable gFlash_Handler3 as u16 gFlash_Handler3[]; sound_driver_symbols.h has struct LzPackWork *gFlash_Handler3; tried as the 3 declarations' extern FlashWaitProc gFlash_Handler3, it does not compile in tla-ja: games/tla/src/menu/credits.c:72: parse error before `gFlash_Handler3'. */
+/* VIEW(credits): variable gFlash_Handler3 as u16 gFlash_Handler3[];
+ * sound_driver_symbols.h has struct LzPackWork *gFlash_Handler3; tried as the 3
+ * declarations' extern FlashWaitProc gFlash_Handler3, it does not compile in
+ * tla-ja: games/tla/src/menu/credits.c:72: parse error before
+ * `gFlash_Handler3'. */
 extern u16 gFlash_Handler3__credits[] __asm__("gFlash_Handler3");
 
 /// Loads a backdrop resource (its 128 colours, then its packed tiles) into
 /// one half of BG VRAM and queues its palette for the next VBlank, as The
-/// Broken Seal's Credits_LoadBackground does, but greyed: each channel
+/// Broken Seal does, but greyed: each channel
 /// becomes (2 red + 4 green + blue + 5 * channel) / 16. A zero resource
 /// clears that half instead. The tiles are unpacked by the
 /// BattleEffect_Expand kernel, copied by DMA into a heap block for the call;
 /// the grey colours are built in the EWRAM buffer at gFlash_Handler3.
-void Func_081a052c(u32 resourceId, s32 alternate) {
+void Credits_LoadBackground(u32 resourceId, s32 alternate) {
   const u8 *resourceData;
   u32 paletteDestination;
   u32 paletteOffset;
@@ -128,7 +176,7 @@ void Func_081a052c(u32 resourceId, s32 alternate) {
 
 /// Fills the HBlank word table: 32 words of 0x01ff01ff, 240 rising steps,
 /// 48 more of 0x01ff01ff and 192 zeros.
-void DisplayScroll_BuildHblankWordTable(u32 *table) {
+void Credits_BuildBackgroundTilemap(u32 *table) {
   s32 i;
   u32 value;
   u32 step;
@@ -147,7 +195,7 @@ void DisplayScroll_BuildHblankWordTable(u32 *table) {
     *table++ = 0;
 }
 
-void DisplayScroll_StepPositionEveryFourVBlanks(void) {
+void Credits_ScrollBackgrounds(void) {
   if ((gVBlankCount & 3) == 0) {
     u32 decrement = 0xffff;
 
@@ -160,21 +208,21 @@ void DisplayScroll_StepPositionEveryFourVBlanks(void) {
 /// scroll task and sets up BG2, BG3 and blending; mode 1 cross-fades the slides
 /// until START or the scroll ends, other modes start the scrolling credits
 /// (mode - 2) and wait for their end.
-s32 Func_081a06e0(s32 mode) {
+s32 Credits_Run(s32 mode) {
   s32 slide;
   s32 step;
   s32 frame;
 
   gRenderOamEnabled = 0;
   gCpuLoadDisplayEnabled = 0;
-  gData_03001110 = 0;
+  gDebugTextEnabled = 0;
   Data_02007500 = 0;
   gAutoSleepEnabled = 0;
   Task_ResetAll();
-  Task_Add(DisplayScroll_StepPositionEveryFourVBlanks, TASK_PASS_FRAME);
+  Task_Add(Credits_ScrollBackgrounds, TASK_PASS_FRAME);
   Io_Write16(0x40, &REG_DISPCNT);
-  DisplayScroll_BuildHblankWordTable((u32 *)0x06007800);
-  DisplayScroll_BuildHblankWordTable((u32 *)0x0600f800);
+  Credits_BuildBackgroundTilemap((u32 *)0x06007800);
+  Credits_BuildBackgroundTilemap((u32 *)0x0600f800);
   Graphics_ClearCharacterBlockAndPalette(0);
   Graphics_ClearCharacterBlockAndPalette(1);
   Io_Write16(0x1f8a, &REG_BG2CNT);
@@ -184,12 +232,13 @@ s32 Func_081a06e0(s32 mode) {
 
   if (mode == 1) {
 
-    Func_081a0a70();
+    Credits_InitTextSprites();
     wait(60);
     for (slide = 0;; slide++) {
       s16 *count = &Data_02007500;
 
-      Func_081a052c(gDisplayScroll_SlideResources[slide], (slide & 1) ^ 1);
+      Credits_LoadBackground(gDisplayScroll_SlideResources[slide],
+                             (slide & 1) ^ 1);
       for (step = 1; step <= 16; step++) {
         if (slide & 1) {
           s32 t = 16;
@@ -217,7 +266,7 @@ s32 Func_081a06e0(s32 mode) {
       Data_02007500--;
     }
   } else {
-    Func_081a0e0c(mode - 2);
+    Credits_InitTextSpritesAtPage(mode - 2);
     while (gDisplayScroll_Busy <= 375)
       wait(1);
     Func_081a0fb8();
@@ -271,7 +320,7 @@ void Func_081a08c4(void) {
   }
 }
 
-void DisplayScroll_RenderEnteringLine(void) {
+void Credits_DrawEnteringLine(void) {
   s32 first = (s32)MsgIntroCrawl;
   u32 current;
   s32 line;
@@ -287,7 +336,7 @@ void DisplayScroll_RenderEnteringLine(void) {
   }
 }
 
-void Func_081a0a70(void) {
+void Credits_InitTextSprites(void) {
   /* FAKEMATCH(volatile): the DMA fill word volatile; as a plain u32, 6 of 152
    * instructions differ in tla-en. */
   volatile u32 fill;
@@ -358,9 +407,9 @@ void Func_081a0a70(void) {
   gDisplayScroll_LastPosition = 0;
   gDisplayScroll_Busy = 0;
   Task_Add(Func_081a08c4, TASK_PASS_FRAME);
-  Task_Add(DisplayScroll_RenderEnteringLine, TASK_PASS_VBLANK);
+  Task_Add(Credits_DrawEnteringLine, TASK_PASS_VBLANK);
   for (i = 0; i < 32; i++)
-    DisplayScroll_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
+    Credits_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
 }
 
 // The clear goes through an inline wrapper, as the Broken Seal's iwram_call.h
@@ -414,7 +463,7 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align) {
   return busy;
 }
 
-void Func_081a0cac(void) {
+void Credits_UpdateTextSprites(void) {
   u32 frame = gDisplayScroll_Position;
   u32 fine = frame & 7;
   s32 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
@@ -440,7 +489,7 @@ void Func_081a0cac(void) {
     gDisplayScroll_Position++;
 }
 
-/// A task added by Func_081a0e0c: draws each line entering the
+/// A task added by Credits_InitTextSpritesAtPage: draws each line entering the
 /// credits sixteen rows ahead of the visible top. A line table value of 255
 /// ends the text, and blank rows follow it.
 void Func_081a0d78(void) {
@@ -454,28 +503,27 @@ void Func_081a0d78(void) {
   line = position / 8;
   if (gDisplayScroll_Busy != 0) {
     gDisplayScroll_Busy++;
-    DisplayScroll_DrawLine(gDisplayScroll_LineTable[0],
-                           ((position / 8 + 16) & 31) * 24, 1);
+    Credits_DrawLine(gDisplayScroll_LineTable[0],
+                     ((position / 8 + 16) & 31) * 24, 1);
   } else if (position / 8 != gDisplayScroll_LastPosition / 8) {
     gDisplayScroll_LastPosition = current;
     text = gDisplayScroll_LineTable[line];
     if (text == (const u8 *)255) {
       gDisplayScroll_Busy = 1;
-      DisplayScroll_DrawLine(gDisplayScroll_LineTable[0],
-                             ((line + 16) & 31) * 24, 1);
+      Credits_DrawLine(gDisplayScroll_LineTable[0], ((line + 16) & 31) * 24, 1);
     } else {
-      gDisplayScroll_Busy =
-          DisplayScroll_DrawLine(text, ((line + 16) & 31) * 24, 1);
+      gDisplayScroll_Busy = Credits_DrawLine(text, ((line + 16) & 31) * 24, 1);
     }
   }
 }
 
-/// Starts the scrolling credits at a page, as Func_081a0a70 starts them at the
-/// top: counts the line table's 255 page marks up to the page asked for (at
-/// most 500 lines, stopping at the end mark 0) and sets the scroll there, then
-/// builds the sprite table and its tiles, adds Func_081a0cac and Func_081a0d78
-/// to the task table and draws the first 32 lines blank.
-void Func_081a0e0c(s32 page) {
+/// Starts the scrolling credits at a page, as Credits_InitTextSprites starts
+/// them at the top: counts the line table's 255 page marks up to the page asked
+/// for (at most 500 lines, stopping at the end mark 0) and sets the scroll
+/// there, then builds the sprite table and its tiles, adds
+/// Credits_UpdateTextSprites and Func_081a0d78 to the task table and draws the
+/// first 32 lines blank.
+void Credits_InitTextSpritesAtPage(s32 page) {
   /* FAKEMATCH(volatile): the DMA fill word volatile; as a plain u32, 6 of 178
    * instructions differ in tla-en. */
   volatile u32 fill;
@@ -563,10 +611,10 @@ void Func_081a0e0c(s32 page) {
   }
   gDisplayScroll_LastPosition = 0;
   gDisplayScroll_Busy = 0;
-  Task_Add(Func_081a0cac, TASK_PASS_FRAME);
+  Task_Add(Credits_UpdateTextSprites, TASK_PASS_FRAME);
   Task_Add(Func_081a0d78, TASK_PASS_VBLANK);
   for (i = 0; i < 32; i++)
-    DisplayScroll_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
+    Credits_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
 }
 
 void Func_081a0fb8(void) {
@@ -574,8 +622,8 @@ void Func_081a0fb8(void) {
   u32 *objects;
 
   for (i = 0; i < 32; i++)
-    DisplayScroll_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
-  Task_Remove(Func_081a0cac);
+    Credits_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
+  Task_Remove(Credits_UpdateTextSprites);
   Task_Remove(Func_081a0d78);
   objects = (u32 *)gDisplayScroll_Objects;
   for (i = 0; i != 0x100; i++)
@@ -583,8 +631,7 @@ void Func_081a0fb8(void) {
   Dma_Set(gDisplayScroll_Objects, OAM, DMA_COPY_WORDS(256), REG_DMA3);
 }
 
-
-s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
+s32 Credits_DrawLine(const u8 *text, s32 slot, s32 align) {
   u8 *buf = (u8 *)Heap_AllocEwram(0x900);
   s32 x = 0;
   s32 width = 192;
@@ -619,7 +666,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
   pos = 0;
   while ((c = *p++) != 0) {
     if (c > 31)
-      pos += gDisplayScroll_GlyphWidths[c - 32];
+      pos += gCredits_GlyphWidths[c - 32];
   }
   if (align == 2)
     x = width - pos;
@@ -648,7 +695,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
       }
       w = 1;
       if (c > 31)
-        w = gDisplayScroll_GlyphWidths[glyph];
+        w = gCredits_GlyphWidths[glyph];
       pos += w;
     }
   }
@@ -809,7 +856,7 @@ void Func_081a133c(void) {
 
 void Func_081a150c(void) {
   gCpuLoadDisplayEnabled = 0;
-  gData_03001110 = 0;
+  gDebugTextEnabled = 0;
   gAutoSleepEnabled = 0;
   Task_ResetAll();
   Data_02007518 = 0;
@@ -821,8 +868,8 @@ void Func_081a150c(void) {
   Data_02007514 = 0;
   Task_Add(Func_081a133c, TASK_PASS_VBLANK);
   Io_Write16(0x40, &REG_DISPCNT);
-  DisplayScroll_BuildHblankWordTable((u32 *)0x06007800);
-  DisplayScroll_BuildHblankWordTable((u32 *)0x0600f800);
+  Credits_BuildBackgroundTilemap((u32 *)0x06007800);
+  Credits_BuildBackgroundTilemap((u32 *)0x0600f800);
   Graphics_ClearCharacterBlockAndPalette(0);
   Graphics_ClearCharacterBlockAndPalette(1);
   Io_Write16(0x1f8a, &REG_BG2CNT);
@@ -933,7 +980,7 @@ void Func_081a1810(void) {
   s32 i;
 
   for (i = 0; i < 24; i++)
-    Func_080140d8(entry++, 0);
+    Oam_AddSpriteAtDepthClamped(entry++, 0);
 }
 
 /// Allocates the 24 sprite entries of the scrolling picture's border strips,
@@ -941,7 +988,7 @@ void Func_081a1810(void) {
 /// entries are written as words, as The Broken Seal's Credits_InitTextSprites
 /// writes its strips.
 void Func_081a1830(void) {
-  s32 slot = Resource_FindFreeEntry();
+  s32 slot = VramCache_FindFreeEntry();
   struct QueuedSprite *entries;
   u32 *words;
   s32 tile;
@@ -1057,7 +1104,7 @@ const u32 gDisplayScroll_SlideResources[25] = {
     0
 };
 
-static const u8 sBlankLine[] = "";
+static const u8 sBlankCreditLine[] = "";
 
 /// Ends a section of the credits: the scroll stops on it, and a section's
 /// start is found by counting these marks.
@@ -1082,10 +1129,10 @@ static const u8 sBlankLine[] = "";
 
 /// The staff credits, one line each, ending in 0.
 const void *gDisplayScroll_LineTable[] = {
-    sBlankLine,
+    sBlankCreditLine,
 #if (LANGUAGE == LANGUAGE_JAPANESE)
     "OUGON NO TAIYO STAFF",
-    sBlankLine,
+    sBlankCreditLine,
 #elif (LANGUAGE == LANGUAGE_ENGLISH)
     "GOLDEN SUN: THE LOST AGE",
     "STAFF",
@@ -1094,30 +1141,30 @@ const void *gDisplayScroll_LineTable[] = {
     CREDITS_SUBTITLE,
     "STAFF",
 #endif
-    sBlankLine,
+    sBlankCreditLine,
     "Game Planning",
-    sBlankLine,
+    sBlankCreditLine,
     "Hiroyuki Takahashi",
     "Shugo Takahashi",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Scenario",
-    sBlankLine,
+    sBlankCreditLine,
     "Hiroyuki Takahashi",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Director",
-    sBlankLine,
+    sBlankCreditLine,
     "Shugo Takahashi",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Assistant Director",
-    sBlankLine,
+    sBlankCreditLine,
     "Yusuke Sugimoto",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Game Design",
-    sBlankLine,
+    sBlankCreditLine,
     "Yusuke Sugimoto",
     "Shuji Shimizu",
     "Ayumu Shindo",
@@ -1126,21 +1173,21 @@ const void *gDisplayScroll_LineTable[] = {
     "Masato Kawamura",
     CREDITS_SECTION_END,
     "Programming",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "System ",
-    sBlankLine,
+    sBlankCreditLine,
     "Yasuhiro Taguchi",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Battle",
-    sBlankLine,
+    sBlankCreditLine,
     "Haruki Kodera",
     "Toru Takamatsu",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Field",
-    sBlankLine,
+    sBlankCreditLine,
     "Kaoru Shimada",
     "Hiroyuki Ichikawa",
     "Akiko Sato",
@@ -1150,10 +1197,10 @@ const void *gDisplayScroll_LineTable[] = {
 #else
     "P.E.Jareth Hein",
 #endif
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "User Interface",
-    sBlankLine,
+    sBlankCreditLine,
     "Yutaka Yamamoto",
     CREDITS_SECTION_END,
 #if (LANGUAGE != LANGUAGE_JAPANESE)
@@ -1161,115 +1208,115 @@ const void *gDisplayScroll_LineTable[] = {
 #else
     "Graphic Arts",
 #endif
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Battle Characters",
-    sBlankLine,
+    sBlankCreditLine,
     "Junko Nakamura",
     "Kaori Matsunaga",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Battle Effects",
     "& Faces",
-    sBlankLine,
+    sBlankCreditLine,
     "Junichi Ochiai",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Battle Backgrounds",
-    sBlankLine,
+    sBlankCreditLine,
     "Hiroto Nakashima",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Maps",
-    sBlankLine,
+    sBlankCreditLine,
     "Masayuki Hashimoto",
     "Mitsumasa Muraishi",
     "Mitsuru Fukumoto",
     "Akihito Kimura",
     "Shinichiro Sugimoto",
     "Natsuko Takeuchi",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Map Characters",
-    sBlankLine,
+    sBlankCreditLine,
     "Mieko Koguchi",
     "Kanako Horiguchi",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Graphics Direction",
-    sBlankLine,
+    sBlankCreditLine,
     "Fumihide Aoki",
     CREDITS_SECTION_END,
     "Character Design",
-    sBlankLine,
+    sBlankCreditLine,
     "Shin Yamanouchi",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Monster Design",
-    sBlankLine,
+    sBlankCreditLine,
     "Hiroshi Kajiyama",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Music",
-    sBlankLine,
+    sBlankCreditLine,
     "Motoi Sakuraba",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Sound Effects",
-    sBlankLine,
+    sBlankCreditLine,
     "Hiroyuki Hamada",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Sound Direction",
-    sBlankLine,
+    sBlankCreditLine,
     "Masaaki Uno",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Staff Coordination",
-    sBlankLine,
+    sBlankCreditLine,
     "Akiko Sato",
     "Kenji Numaya",
     CREDITS_SECTION_END,
     "Illustration",
-    sBlankLine,
+    sBlankCreditLine,
     "Shin Yamanouchi",
     "Hiroshi Kajiyama",
     "Masanori Sato",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Graphic Support",
-    sBlankLine,
+    sBlankCreditLine,
     "Yoichi Kotabe",
     "Masanori Sato",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
 #if (LANGUAGE == LANGUAGE_JAPANESE)
     "Artwork Design",
-    sBlankLine,
+    sBlankCreditLine,
     "Nanako Kinoshita",
     "Takashi Maeda",
     "Naoko Okamoto",
     "Shinji Yamamoto",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Public Relations",
-    sBlankLine,
+    sBlankCreditLine,
     "Mitsuaki Hagishima",
     "Asako Haruhana",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
 #endif
     "Coordination",
-    sBlankLine,
+    sBlankCreditLine,
     "Masaaki Uno",
     "Toshiharu Izuno",
     "Kenichi Nishida",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
 #if (LANGUAGE == LANGUAGE_JAPANESE)
     "Special Thanks to",
     "Super Mario Club Staff",
-    sBlankLine,
+    sBlankCreditLine,
     "Yoshihiro Maruyama",
     "Nobuaki Maeda",
     "Tadasumi Ueno",
@@ -1308,104 +1355,104 @@ const void *gDisplayScroll_LineTable[] = {
 #else
     "North American",
     " Localization",
-    sBlankLine,
+    sBlankCreditLine,
     "Translation",
-    sBlankLine,
+    sBlankCreditLine,
     "William Barnes",
     "Reiko Ninomiya",
     "Tim O'Leary",
     "Scot Ritchey",
     "Bill Trinen",
-    sBlankLine,
+    sBlankCreditLine,
     "Writing",
     " & Editing",
-    sBlankLine,
+    sBlankCreditLine,
     "Richard Amtower",
     "Shawn Seavers",
-    sBlankLine,
+    sBlankCreditLine,
     "Localization",
     " Management",
-    sBlankLine,
+    sBlankCreditLine,
     "Leslie Swan",
     "Jeff Miller",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "NOA Product Testing",
     "Michael Kelbaugh",
     "Eric Bush",
     "Todd Buechele",
     "Tim Casey",
     "Jeffrey Storbo",
-    sBlankLine,
+    sBlankCreditLine,
 #if (LANGUAGE != LANGUAGE_ENGLISH)
-    sBlankLine,
+    sBlankCreditLine,
     "European Localization",
-    sBlankLine,
+    sBlankCreditLine,
     "Product Localization",
     "Team",
-    sBlankLine,
+    sBlankCreditLine,
     "Coordination",
     "Andy Fey",
-    sBlankLine,
+    sBlankCreditLine,
     "Translation",
-    sBlankLine,
+    sBlankCreditLine,
     // Each edition names its own translator first.
 #if (LANGUAGE == LANGUAGE_GERMAN)
     "German",
     "Micky Auer",
-    sBlankLine,
+    sBlankCreditLine,
     "Spanish",
     "Carlos Montilla",
     RODRIGUEZ,
-    sBlankLine,
+    sBlankCreditLine,
     "French",
     "Zadia Messerli",
-    sBlankLine,
+    sBlankCreditLine,
     "Italian",
     "Christian Massi",
-    sBlankLine,
+    sBlankCreditLine,
 #elif (LANGUAGE == LANGUAGE_SPANISH)
     "Spanish",
     "Carlos Montilla",
     RODRIGUEZ,
-    sBlankLine,
+    sBlankCreditLine,
     "German",
     "Micky Auer",
-    sBlankLine,
+    sBlankCreditLine,
     "French",
     "Zadia Messerli",
-    sBlankLine,
+    sBlankCreditLine,
     "Italian",
     "Christian Massi",
-    sBlankLine,
+    sBlankCreditLine,
 #elif (LANGUAGE == LANGUAGE_FRENCH)
     "French",
     "Zadia Messerli",
-    sBlankLine,
+    sBlankCreditLine,
     "German",
     "Micky Auer",
-    sBlankLine,
+    sBlankCreditLine,
     "Spanish",
     "Carlos Montilla",
     RODRIGUEZ,
-    sBlankLine,
+    sBlankCreditLine,
     "Italian",
     "Christian Massi",
-    sBlankLine,
+    sBlankCreditLine,
 #else
     "Italian",
     "Christian Massi",
-    sBlankLine,
+    sBlankCreditLine,
     "German",
     "Micky Auer",
-    sBlankLine,
+    sBlankCreditLine,
     "French",
     "Zadia Messerli",
-    sBlankLine,
+    sBlankCreditLine,
     "Spanish",
     "Carlos Montilla",
     RODRIGUEZ,
-    sBlankLine,
+    sBlankCreditLine,
 #endif
     "Validation",
     "& Testing Team",
@@ -1413,33 +1460,33 @@ const void *gDisplayScroll_LineTable[] = {
 #endif
     CREDITS_SECTION_END,
     "Produced by",
-    sBlankLine,
+    sBlankCreditLine,
     "Shinji Hatano",
     "Hiroyuki Takahashi",
     "Shugo Takahashi",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
     "Executive Producer",
-    sBlankLine,
+    sBlankCreditLine,
     "Hiroshi Yamauchi",
-    sBlankLine,
-    sBlankLine,
+    sBlankCreditLine,
+    sBlankCreditLine,
 #if (LANGUAGE != LANGUAGE_JAPANESE)
     "Copyrights of Game, Scenario,",
 #else
     "Copyrights of Game, Scenario",
 #endif
     " and Program reserved by",
-    sBlankLine,
+    sBlankCreditLine,
     "NINTENDO",
     "and",
     "CAMELOT",
-    sBlankLine,
+    sBlankCreditLine,
     "Copyrights of All Characters",
     "and Music reserved by",
-    sBlankLine,
+    sBlankCreditLine,
     "NINTENDO",
-    sBlankLine,
+    sBlankCreditLine,
     CREDITS_SECTION_END,
     0
 };

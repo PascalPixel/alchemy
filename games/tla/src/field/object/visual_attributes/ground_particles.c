@@ -7,7 +7,11 @@
 #include "module/field/field.h"
 #include "module/field/object.h"
 
-/* VIEW(ground_particles): tag struct GroundParticleWork as struct GroundParticleWork__ground_particles; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:2771: structure has no member named `entry'. */
+/* VIEW(ground_particles): tag struct GroundParticleWork as struct
+ * GroundParticleWork__ground_particles; visual_attributes.c has another
+ * definition; tried with the definition the rest of the object has, it does not
+ * compile in tla-ja: games/tla/src/field/object/visual_attributes.c:2771:
+ * structure has no member named `entry'. */
 struct GroundParticleWork__ground_particles {
   s32 entry;
   s32 tileBase;
@@ -30,14 +34,15 @@ void Func_080d690c(void) {
   // The fill's value; as a literal 0 the fill differs.
   u32 zero = 0;
 
-  work = HeapSlot_AllocEwram(116, sizeof(struct GroundParticleWork__ground_particles));
+  work = HeapSlot_AllocEwram(
+      116, sizeof(struct GroundParticleWork__ground_particles));
   leader = Ram_HeapSlots->mapWork->origin;
   Scene_QueueMusic(170);
   particle = work->particles;
   Dma_Fill32(zero, work, sizeof(struct GroundParticleWork__ground_particles));
   words = HeapSlot_AllocEwram(56, 0x400);
-  Resource_DecodeByteLzInRam(gData_080f3798, words);
-  work->entry = Resource_FindFreeEntry();
+  Resource_DecodeByteLzInRam(gFieldEffect_GroundParticleTiles, words);
+  work->entry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, words);
   HeapSlot_Release(56);
   for (i = 0; i < 64; i++) {
@@ -62,10 +67,17 @@ void Func_080d690c(void) {
   Task_Add(Func_080d64f0, TASK_PASS_VBLANK);
 }
 
-/* VIEW(visual_attributes): routine Camera_WorldToScreen as void Camera_WorldToScreen(union FieldCoordinate *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
-extern void Camera_WorldToScreen__visual_attributes(union FieldCoordinate *position) __asm__("Camera_WorldToScreen");
-/* VIEW(ground_particles): routine Func_080140d8 as void Func_080140d8(void *sprite, s32 depth); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
-extern void Func_080140d8__ground_particles(void *sprite, s32 depth) __asm__("Func_080140d8");
+/* VIEW(visual_attributes): routine Camera_WorldToScreen as void
+ * Camera_WorldToScreen(union FieldCoordinate *position);
+ * module/field/event_commands.h has void Camera_WorldToScreen(struct
+ * EffectVector *position). */
+extern void Camera_WorldToScreen__visual_attributes(
+    union FieldCoordinate *position) __asm__("Camera_WorldToScreen");
+/* VIEW(ground_particles): routine Oam_AddSpriteAtDepthClamped as void
+ * Oam_AddSpriteAtDepthClamped(void *sprite, s32 depth); f0d6674 has void
+ * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth). */
+extern void Func_080140d8__ground_particles(void *sprite, s32 depth) __asm__(
+    "Oam_AddSpriteAtDepthClamped");
 
 /// Updates the 64 rising particles: each starts on the ground at a random
 /// point of the strip for 120 frames, drifts right by a random amount each
@@ -138,7 +150,7 @@ void Func_080d6b90(void) {
   Dma_Fill32Cell(fill, zero, work, 0x814);
   tiles = HeapSlot_AllocEwram(56, 0x400);
   Resource_DecodeByteLzInRam(gData_080f385e, tiles);
-  work->vramEntry = Resource_FindFreeEntry();
+  work->vramEntry = VramCache_FindFreeEntry();
   work->tile = VramCache_Load(work->vramEntry, 0x300, tiles);
   HeapSlot_Release(56);
   for (i = 0; i < 64; i++, particle++) {
@@ -167,9 +179,9 @@ struct MoteWork {
   struct MoteParticle particles[64];
 };
 
-/// The Broken Seal's FieldMotes_Update with 64 motes in the heap slot 0x74
+/// The Broken Seal's routine with 64 motes in the heap slot 0x74
 /// workspace, started by FieldMotes_Start.
-void Func_080d6c60(void) {
+void FieldMotes_Update(void) {
   struct MoteWork *work = Ram_HeapSlots->unk70[1];
   struct MapWork *map = Ram_HeapSlots->mapWork;
   u32 spawned = 0;

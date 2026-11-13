@@ -116,7 +116,7 @@ done:
         Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
     leader->velocityY = 0;
     leader->targetY = 0x80000000;
-    Camera_FollowActor(gMainRoutineWork.currentOwner, 0);
+    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
   }
 }
 
@@ -278,7 +278,7 @@ void Func_0200087c(void) {
     object->motionFlags = 3;
     object->bounce = 0;
     wait(1);
-    kind = GetMapCellCollision(2, object->x, object->z);
+    kind = MapGrid_GetCellBehaviorAt(2, object->x, object->z);
     if (kind != 0) {
       object->priorityFlags |= 2;
       *(u16 *)0x4000052 = 0x1000;
@@ -427,7 +427,7 @@ s32 Func_02000c38(struct Actor *object, s16 *position) {
       s32 z = position[5];
       s32 owner = party->currentOwner;
 
-      Actor_SetPositionAndCommit(owner, x, z);
+      Actor_MoveToAndWaitById(owner, x, z);
     }
     Actor_SelectAnimation(object, 6);
     Actor_SetSingleChildFlags(object, 1);
@@ -463,9 +463,9 @@ L_02008d24:
 }
 
 void Func_02000d28(void) {
-  Map_CopyCellPictureIndicesRect(35, 12, 18, 12, 3, 3);
+  MapGrid_CopyCellPictureIndicesRect(35, 12, 18, 12, 3, 3);
   MapGrid_CopyCellAttributes(35, 12, 3, 3, 18, 12);
-  Map_CopyCellPictureIndicesRect(84, 13, 83, 13, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(84, 13, 83, 13, 1, 1);
   return;
 }
 
@@ -480,10 +480,10 @@ void Func_02000d68(void) {
   Event_Wait(10);
   BYTE_AT(Actor_GetById(4), 90) &= ~1;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
-  Actor_OffsetPositionAndResetMotion(4, 0, 4);
+  Actor_SetDestinationOffsetById(4, 0, 4);
   Actor_WaitForMoveById(4);
   Actor_SetSingleChildFlags(Actor_GetById(4), 0);
-  Actor_OffsetPositionAndResetMotion(4, 0, 16);
+  Actor_SetDestinationOffsetById(4, 0, 16);
   Actor_WaitForMoveById(4);
   Actor_SetModeById(4, 13);
   Sound_Play(123);
@@ -493,7 +493,7 @@ void Func_02000d68(void) {
 
 void Func_02000e20(void) {
   Actor_WalkByAndWait(4, 0, -14);
-  Actor_CommitPositionAndActivate(4, 16, 0);
+  Actor_WalkByAndWaitById(4, 16, 0);
   Event_Wait(10);
   Func_02000d68();
   return;
@@ -501,7 +501,7 @@ void Func_02000e20(void) {
 
 void Func_02000e44(void) {
   Actor_WalkByAndWait(4, 0, -14);
-  Actor_CommitPositionAndActivate(4, -16, 0);
+  Actor_WalkByAndWaitById(4, -16, 0);
   Event_Wait(10);
   Func_02000d68();
   return;

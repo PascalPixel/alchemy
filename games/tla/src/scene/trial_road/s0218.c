@@ -20,12 +20,12 @@
   void name(s32 side, s32 phase) {                                             \
     if (side == 0) {                                                           \
       if (phase == 3)                                                          \
-        Func_0802b450(0, 120, 1, 2, n1, phase);                                \
+        MapGrid_CopyCellPictureCellsRect(0, 120, 1, 2, n1, phase);                                \
       MapGrid_CopyCellsLayered(127, 3, 1, 2, n2, 3);                           \
       MapGrid_CopyCellAttributes(n3, 127, 1, 1, n1, 8);                        \
     } else {                                                                   \
       if (phase == 3)                                                          \
-        Func_0802b450(0, 120, 1, 2, n4, phase);                                \
+        MapGrid_CopyCellPictureCellsRect(0, 120, 1, 2, n4, phase);                                \
       MapGrid_CopyCellsLayered(127, 3, 1, 2, n5, 3);                           \
       MapGrid_CopyCellAttributes(n6, 127, 1, 1, n4, 8);                        \
     }                                                                          \
@@ -152,7 +152,11 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   Event_End();
 }
 
-/* VIEW(s0218): tag struct EventWork15a as struct EventWork15a__s0218; module/tla.h has another definition; tried with the definition the rest of the object has, its members read value as flag, it does not compile in tla-ja: games/tla/src/scene/trial_road/s0218.c:171: dereferencing pointer to incomplete type. */
+/* VIEW(s0218): tag struct EventWork15a as struct EventWork15a__s0218;
+ * module/tla.h has another definition; tried with the definition the rest of
+ * the object has, its members read value as flag, it does not compile in
+ * tla-ja: games/tla/src/scene/trial_road/s0218.c:171: dereferencing pointer to
+ * incomplete type. */
 struct EventWork15a__s0218 {
   u8 unk000[0x15a];
   u16 value;
@@ -327,7 +331,7 @@ void Func_0200082c(s32 a, s32 id) {
       struct Actor *object = Actor_GetById(id);
 
       object->update = NULL;
-      Animation_ApplyChildValues(object, 0);
+      Actor_SetSpriteColorMode(object, 0);
       Actor_SetAnimation(id, 6);
       Func_0200070c(id, -16);
       Event_SetFlag(flag);
@@ -532,8 +536,9 @@ void Func_02000ce4(s32 phase) {
     Func_020045ac(gData_02007734, 16);
 }
 
-// Blocks the three cells through an object's cell on layers 0 and 2 (collision code
-// 255): the column above and below it in mode 0, the row beside it otherwise.
+// Blocks the three cells through an object's cell on layers 0 and 2 (collision
+// code 255): the column above and below it in mode 0, the row beside it
+// otherwise.
 #include "map.h"
 
 /// Blocks the three cells through an object's cell on layers 0 and 2 (collision
@@ -653,11 +658,11 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   Event_Wait(6);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x4ccc, 0x3333);
-  Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, dx << 3,
-                                     dz << 3);
+  Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, dx << 3,
+                                 dz << 3);
   Event_Wait(24);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   if (toX <= 17) {
     Func_020057c8(object, 1);
     Sound_Play(298);
@@ -667,7 +672,7 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
     Actor_SetMoveTarget(object, 312 << 16, 0, z);
     Event_Wait(30);
     Func_020057c8(object, 8);
-    Script_WaitForEventTimeout(object);
+    Actor_WaitForMove(object);
     {
       /* FAKEMATCH(pin): the 2 held in r2 while the address takes r3; as
        * object->priorityFlags = 2, 8 of 240 instructions differ in tla-en. */

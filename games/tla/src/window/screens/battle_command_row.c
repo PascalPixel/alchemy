@@ -3,9 +3,16 @@
 // Part of screens.c.
 
 #include "../screens_internal.h"
-#include "module/tla.h"
-#include "module/window/scales.h"
 #include "module/window/screens.h"
+
+extern const u16 gWindowSprite_BounceScales[32];
+
+struct WindowTiles {
+  u8 unk00[3];
+  u8 dirty; ///< bits: one per four tile rows, from bit 1
+  u8 unk04[4];
+  u16 cells[32][32];
+};
 
 s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
   s32 result;
@@ -27,7 +34,8 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #define NAVIGATION ((struct CommandRowNavigation *)Ram_HeapSlots->unke4[0])
 #define WINDOW_WORK ((struct CommandRowWindowWork *)Ram_HeapSlots->windowTiles)
 
-/* VIEW(screens): variable gBgScroll as struct BgScrollPair gBgScroll[]; bg_scroll.h has struct BgScroll gBgScroll[]. */
+/* VIEW(screens): variable gBgScroll as struct BgScrollPair gBgScroll[];
+ * bg_scroll.h has struct BgScroll gBgScroll[]. */
 extern struct BgScrollPair gBgScroll__screens[] __asm__("gBgScroll");
 #include "main_routine_work.h"
 
@@ -111,7 +119,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     if (selectionUi->commandKinds[entryIndex] == -1)
       break;
     BattleCommandRow_LoadIcon(selectionUi, entryIndex,
-                  selectionUi->commandKinds[entryIndex]);
+                              selectionUi->commandKinds[entryIndex]);
   }
   selectionUi->iconCount = entryIndex;
   selectionUi->affine.scaleX = 320;
@@ -205,11 +213,12 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
               (s32)MsgCommandName,
           selectionUi->window, 0, 0);
       selectionUi->drawnIndex = selectionUi->selectedIndex;
-      BattleCommandRow_LoadIcon(selectionUi, selectionUi->selectedIndex,
-                    selectionUi->commandKinds[selectionUi->selectedIndex]);
+      BattleCommandRow_LoadIcon(
+          selectionUi, selectionUi->selectedIndex,
+          selectionUi->commandKinds[selectionUi->selectedIndex]);
     }
     selectionUi->affineIndex =
-        AffineMatrix_BuildForEffect(&selectionUi->affine);
+        OamMatrix_AllocFromTransform(&selectionUi->affine);
     for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++) {
       struct CommandRowIcon *entry = &selectionUi->entries[entryIndex];
 
@@ -253,7 +262,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
                        16)
                 message = Message_ShowAndWait(Func_0804519c() + 9, 15, 8);
               ((u8 *)Ram_HeapSlots->windowTiles)[5] &= ~4;
-              Func_08118128(102, 155);
+              BattleMessage_WaitForAdvanceAtFar(102, 155);
               Window_Close(message, 1);
               navigation->tutorialStep++;
               navigation->tutorialDelay = 45;
@@ -299,7 +308,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
       command = selectionUi->commandKinds[0];
       break;
     }
-    QueueIoWriteDelay2(0x04000000, 0x1741);
+    IoWriteQueue_Store16(0x04000000, 0x1741);
     work->holdTilemapUpload = 0;
     wait(1);
   }
@@ -308,7 +317,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   else
     NAVIGATION->commandSelection[0] = selectionUi->selectedIndex;
   for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++)
-    Resource_ResetEntry(selectionUi->entries[entryIndex].resource);
+    VramCache_FreeEntry(selectionUi->entries[entryIndex].resource);
   work->holdTilemapUpload = 1;
   Window_Close(selectionUi->window, 1);
   {

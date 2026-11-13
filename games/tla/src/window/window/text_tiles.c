@@ -7,7 +7,8 @@
 extern char ResourceId_WindowTiles;
 void *Resource_GetTableEntry(s32 id);
 
-void Func_080415a0(u16 *entry, u16 *mirror, s32 pattern, u8 *remap) {
+void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
+                               u8 *remap) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u8 pixels[128];
   u8 *sheet = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
@@ -120,8 +121,6 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
   attr = work->level << 12;
   Iwram_ClearWords(pens, 16);
-  /* FAKEMATCH(wrapper): both fills forwarded through Text_FillWords; as
-   * Iwram_FillWords called directly, 8 of 428 instructions differ in tla-en. */
   if (attr == 0xF000) {
     pens[1] = gText_ColourPens[work->colour & 15];
     pens[3] = 3;
@@ -353,7 +352,7 @@ void Window_ReservedNoOp(void) {}
 /// Draws a divider from (x1, y1) to (x2, y2), one of which must agree,
 /// joining it to the frame and divider tiles already on the tilemap.
 void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
-                              u32 y2) {
+                            u32 y2) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u16 *cursor;
   u32 pos;
@@ -367,8 +366,7 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
       y1 = y2;
       y2 = pos;
     }
-    Window_ClearTextTilesInRect((s16)win->x + x2, (s16)win->y + y1, 1,
-                                       y2 - y1);
+    Window_ClearTextTilesInRect((s16)win->x + x2, (s16)win->y + y1, 1, y2 - y1);
     cursor = work->tilemap[(s16)win->y + y1] + (s16)win->x + x2;
     for (pos = y1; pos <= y2; pos++) {
       tile = *cursor;
@@ -441,8 +439,7 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
       x1 = x2;
       x2 = pos;
     }
-    Window_ClearTextTilesInRect((s16)win->x + x1, (s16)win->y + y1,
-                                       x2 - x1, 1);
+    Window_ClearTextTilesInRect((s16)win->x + x1, (s16)win->y + y1, x2 - x1, 1);
     cursor = work->tilemap[(s16)win->y + y1] + (s16)win->x + x1;
     for (pos = x1; pos <= x2; pos++) {
       tile = *cursor;
@@ -550,7 +547,7 @@ void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 /// Text_DrawMessage, it decodes from the ring's start. Nothing is drawn
 /// when the place falls outside the tilemap's 32 by 20 entries.
 void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position,
-                                u32 offsetX, u32 offsetY) {
+                             u32 offsetX, u32 offsetY) {
   s32 byteOffset;
   s32 vramAddress;
   u16 *text;
@@ -655,12 +652,11 @@ void Text_DrawNumber(s32 value, s32 width, s32 output, s32 x, s32 y) {
 }
 
 void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work,
-                               s32 x, s32 y) {
+                             s32 x, s32 y) {
   u8 data[16];
   s32 pinned = value;
 
-  Text_DrawStringAtOffset(String_FormatNumber(data, pinned, width), work, x,
-                            y);
+  Text_DrawStringAtOffset(String_FormatNumber(data, pinned, width), work, x, y);
 }
 
 void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y) {
@@ -668,7 +664,7 @@ void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y) {
   s32 pinned = value;
 
   Text_DrawStringInWindow(String_FormatNumber(data, pinned, width), output, x,
-                            y);
+                          y);
 }
 
 #undef TEXT_JAPANESE_FONT

@@ -20,7 +20,7 @@
 #include "module/system/system.h"
 #include "resource.h"
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 DEFINE_ACTOR_FLICKER(Func_02003b38, Func_020039f4)
 
@@ -35,22 +35,24 @@ DEFINE_LEADER_SEARCH(Func_02003bf0, Func_02003bb8, Func_02004b90)
 
 u32 __umodsi3(u32 a, u32 b);
 
-void Func_02003c3c(void) { Func_02003bb8(Actor_GetById(Party_GetLeaderActor()), 0); }
+void Func_02003c3c(void) {
+  Func_02003bb8(Actor_GetById(Party_GetLeaderActor()), 0);
+}
 
 static inline void QueueBlend(u32 address, u32 value) {
   /* FAKEMATCH(wrapper): forwarding through the inline sets the arguments up in
    * their own order: the native finishes the value's orr before the register
    * address's add; as direct calls, 4 of 31 instructions of Func_02003c50
    * differ in tla-en. */
-  QueueIoWriteDelay2(address, value);
+  IoWriteQueue_Store16(address, value);
 }
 
 /// Every other two frames the world map's blend alternates between two
 /// strengths.
 void Func_02003c50(void) {
 
-  QueueIoWriteDelay2((u32)&REG_BLDCNT,
-                     BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
+  IoWriteQueue_Store16((u32)&REG_BLDCNT,
+                       BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   if (gFrameCount & 2)
     QueueBlend((u32)&REG_BLDALPHA, gData_02006e08 | 12);
   else
@@ -96,8 +98,8 @@ void Func_02003d44(s32 mode) {
   }
   Func_02004da8();
   buffer = Heap_AllocEwram(0x4000);
-  Resource_DecodeType01(gWorldMapPackedTiles, buffer);
-  Resource_DecodeType01(gWorldMapPackedPictures, buffer + 0x1000);
+  Decompress_TaggedLz(gWorldMapPackedTiles, buffer);
+  Decompress_TaggedLz(gWorldMapPackedPictures, buffer + 0x1000);
   IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(gWorldMapPalettes + mode * 32),
                       0x80000010);
   IO_WRITE_QUEUE_PUSH(0x06001000, (u32)buffer, 0x84000400);
@@ -157,11 +159,11 @@ void Func_02003d44(s32 mode) {
     FieldTask_Remove(Func_02003c50);
     DebugText_Clear();
     /* FAKEMATCH(temporary): the blend read into blend before each of the two
-     * QueueIoWriteDelay2 calls; as QueueIoWriteDelay2((u32)&REG_BLDALPHA,
+     * IoWriteQueue_Store16 calls; as IoWriteQueue_Store16((u32)&REG_BLDALPHA,
      * gData_02006e08) at both, 2 of 593 instructions differ in tla-en. */
     blend = gData_02006e08;
-    QueueIoWriteDelay2((u32)&REG_BLDALPHA, blend);
-    QueueIoWriteDelay2((u32)&REG_BLDCNT, 0);
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA, blend);
+    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   } else {
     gData_02006e08 = 0xd00;
     FieldEvent_Wait(4);
@@ -174,8 +176,8 @@ void Func_02003d44(s32 mode) {
     FieldTask_Remove(Func_02003c50);
     DebugText_Clear();
     blend = gData_02006e08;
-    QueueIoWriteDelay2((u32)&REG_BLDALPHA, blend);
-    QueueIoWriteDelay2((u32)&REG_BLDCNT, 0);
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA, blend);
+    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   }
   Heap_Release(buffer);
   Event_SetFlag(0x101);
@@ -188,14 +190,14 @@ void Func_020042e0(void) {
   u16 scrollY;
   s32 mode;
 
-  Resource_DecodeType01(gWorldMapPackedTilesB, buffer);
+  Decompress_TaggedLz(gWorldMapPackedTilesB, buffer);
   frames = buffer + 0x2000;
-  Resource_DecodeType01(gWorldMapPackedPicturesB, frames);
+  Decompress_TaggedLz(gWorldMapPackedPicturesB, frames);
   IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)gWorldMapPalettesB, 0x80000010);
   IO_WRITE_QUEUE_PUSH(0x06000000, (u32)buffer, 0x84000400);
   IO_WRITE_QUEUE_PUSH(0x06001000, (u32)frames, 0x84000800);
-  QueueIoWriteDelay2(0x04000050, 0x3f41);
-  QueueIoWriteDelay2(0x04000052, 0x1010);
+  IoWriteQueue_Store16(0x04000050, 0x3f41);
+  IoWriteQueue_Store16(0x04000052, 0x1010);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 352;
   IO_WRITE_QUEUE_PUSH(0x04000008, 0xc200, 0x20000);
@@ -221,7 +223,7 @@ void Func_020042e0(void) {
   mode = 0;
   PaletteFade_ApplyTarget(0x7fff, mode);
   PaletteFade_Interpolate(1);
-  QueueIoWriteDelay2(0x04000052, 0x1000);
+  IoWriteQueue_Store16(0x04000052, 0x1000);
   System_Wait(1);
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(60);
@@ -233,8 +235,8 @@ void Func_020042e0(void) {
   System_Wait(1);
   Window_LoadGraphics();
   DebugText_Clear();
-  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+  FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                         gMainRoutineWork.paletteGlow[1]);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
 }
@@ -259,8 +261,7 @@ void Func_02004634(struct Actor *parent) {
   s32 i;
 
   for (i = 0; i < 2; ++i) {
-    child = (FieldActor_Create(271, parent->x, parent->y,
-                                                parent->z));
+    child = (FieldActor_Create(271, parent->x, parent->y, parent->z));
     pair[i] = child;
     if (child != NULL) {
       child->terrainHeight = parent->terrainHeight;
@@ -271,7 +272,7 @@ void Func_02004634(struct Actor *parent) {
       if (sprite != NULL) {
         Animation_ApplyChildArgument(sprite, 0);
         sprite->nextFrame = 0;
-        Resource_ResetEntry(sprite->vramBlock);
+        VramCache_FreeEntry(sprite->vramBlock);
         sprite->vramBlock = work->vramBlock;
         // A one-bit field: as a byte `|= 1` its zero mask moves the
         // motionFlags address out of r3 (differ 15).
@@ -306,11 +307,23 @@ void Func_02004634(struct Actor *parent) {
 #include "task.h"
 #include "input.h"
 
-/* VIEW(s3b38): variable gData_02006e0c as s16 gData_02006e0c; module/scene/scene.h has u8 gData_02006e0c[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/world_map/s3b38.c:447: `gData_02006e0c' has an incomplete type. */
+/* VIEW(s3b38): variable gData_02006e0c as s16 gData_02006e0c;
+ * module/scene/scene.h has u8 gData_02006e0c[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/world_map/s3b38.c:447: `gData_02006e0c' has an incomplete
+ * type. */
 extern s16 gData_02006e0c__s3b38 __asm__("gData_02006e0c");
-/* VIEW(s3b38): variable gData_02006e0e as s16 gData_02006e0e; module/scene/scene.h has u8 gData_02006e0e[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/world_map/s3b38.c:532: array subscript is not an integer. */
+/* VIEW(s3b38): variable gData_02006e0e as s16 gData_02006e0e;
+ * module/scene/scene.h has u8 gData_02006e0e[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/world_map/s3b38.c:532: array subscript is not an integer.
+ */
 extern s16 gData_02006e0e__s3b38 __asm__("gData_02006e0e");
-/* VIEW(s3b38): variable gData_02006f20 as u8 gData_02006f20[][32]; module/scene/scene.h has u8 gData_02006f20[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/world_map/s3b38.c:492: subscripted value is neither array nor pointer. */
+/* VIEW(s3b38): variable gData_02006f20 as u8 gData_02006f20[][32];
+ * module/scene/scene.h has u8 gData_02006f20[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/world_map/s3b38.c:492: subscripted value is neither array
+ * nor pointer. */
 extern u8 gData_02006f20__s3b38[][32] __asm__("gData_02006f20");
 
 DEFINE_GAUGE_DRAW(Func_02004744, gData_02006e0c__s3b38, Data_02006e20,
@@ -325,7 +338,8 @@ void Func_020048f4(void) {
   s32 screen[3];
   u32 attributes;
 
-  if ((gInput.held & 3) != 0 && Event_GetFlag(0x106) == 0 && leader->y > 0x40000) {
+  if ((gInput.held & 3) != 0 && Event_GetFlag(0x106) == 0 &&
+      leader->y > 0x40000) {
     if (--gData_02006e10 <= 0) {
       Func_02004c08(1);
       gData_02006e10 = 10;

@@ -37,52 +37,52 @@ s32 Event_AskYesNoAndShowResponse(s32 speaker, s32 flags);
 struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetHorizontalPositionWithTerrain(s32 actorId, s32 x, s32 z);
 void Actor_SetSpeedParameters(s32 actorId, s32 speed, s32 acceleration);
-void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
-void Actor_OffsetPositionAndResetMotion(s32 actorId, s32 dx, s32 dz);
-void Actor_ResetAndSetPositionInMode2(s32 actorId, s32 x, s32 z);
-void Actor_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offset);
+void Actor_SetDestinationById(u32 objectId, s32 x, s32 z);
+void Actor_SetDestinationOffsetById(s32 actorId, s32 dx, s32 dz);
+void Actor_WalkToById(s32 actorId, s32 x, s32 z);
+void Actor_WalkByById(u32 objectId, s32 x_offset, s32 z_offset);
 void Actor_ArmCallback(s32 actorId, s32 angle, s32 frames);
-void Actor_SetAngleToward(s32 actorId, s32 target, s32 frames);
-s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
+void Actor_FaceActorById(s32 actorId, s32 target, s32 frames);
+s32 Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
 void FieldEffect_SetAttached(s32 actorId, s32 effect);
 void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 pan);
+void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 pan);
 void FieldCamera_MoveToActorById(s32 actorId, s32 glide);
 void FieldCamera_WaitForArrival(void);
 void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x,
                        s32 dst_y);
 void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                s32 dst_x, s32 dst_y);
-void Map_SetScreenShake(s32 horizontal, s32 vertical, s32 decay);
+void MapGrid_SetScreenShake(s32 horizontal, s32 vertical, s32 decay);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Sound_Play(s32 sound);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-void Map_PlayMapEdit(const void *steps, s32 x, s32 y);
+void MapGrid_PlayMapEdit(const void *steps, s32 x, s32 y);
 void ObjectEvent_PlaceOnGround(s32 object, s32 x, s32 z);
 void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
-void Actor_CommitPositionAndActivate(u32 objectId, s32 x_offset, s32 z_offset);
+void Actor_WalkByAndWaitById(u32 objectId, s32 x_offset, s32 z_offset);
 void Event_ShowMessageThenWait(s32 speaker, s32 flags, s32 frames);
 void Actor_ConfigureSpriteColor(s32 actorId, s32 value);
-void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 dst_x, s32 dst_y,
-                                    s32 width, s32 height);
-void Func_0802b450(s32 sourceX, s32 sourceY, s32 destinationX, s32 destinationY,
-                   s32 width, s32 height);
+void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 dst_x,
+                                        s32 dst_y, s32 width, s32 height);
+void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY,
+                                      s32 destinationX, s32 destinationY,
+                                      s32 width, s32 height);
 void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode);
 void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode);
-void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
-void Actor_SetPositionAndReset(s32 actorId, s32 x, s32 z);
-void Battle_ShowPairedUnitWorkAndWait(s32 speaker, s32 x, s32 y, s32 arg,
-                                      s32 extra, s32 otherSpeaker, s32 otherX,
-                                      s32 otherY, s32 otherArg, s32 otherExtra,
-                                      s32 flags);
+void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
+void Actor_WalkToAndWaitById(s32 actorId, s32 x, s32 z);
+void Event_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
+                                  s32 otherSpeaker, s32 otherX, s32 otherY,
+                                  s32 otherArg, s32 otherExtra, s32 flags);
 void Actor_SetMovementTypeById(s32 actorId, const void *script);
 void Actor_SetMovementTypeAndWaitById(s32 actorId, const void *script);
 void Actor_TurnToFaceEachOther(s32 actorId, s32 other, s32 frames);
 void Actor_SetModeById(u32 actorId, s32 animation);
-void BattleEffect_StartBufferInterpolation(s32 frames);
+void PaletteFade_StartInterpolation(s32 frames);
 void Icon_DrawItem(s32 item);
 s32 Math_Sine(s32 angle);
 void FieldMessage_Show(s32 message, s32 flags);
@@ -90,15 +90,15 @@ s32 PartyInventory_GiveItem(s32 item, s32 flags);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Actor_LaunchFromLeader(s32 actorId, s32 dx, s32 dz, s32 facing);
 void Vector_AddPolarOffsetFar(s32 radius, s32 heading, s32 *probe);
-void SetMapCellCollision(s32 layer, s32 x, s32 y, s32 behavior);
-void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py);
+void MapGrid_SetCellBehaviorAt(s32 layer, s32 x, s32 y, s32 behavior);
+void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py);
 void Message_DecodeRawUnbounded(s32 message, u16 *buffer);
 void MapGrid_SetCameraBounds(s32 minX, s32 minY, s32 maxX, s32 maxY);
 s32 GameFlag_GetByte(s32 flag);
 s32 Party_ListMembers(s16 *owners);
 s32 Unit_AddHp(s32 owner, s32 delta);
 void wait(s32 frames);
-void Actor_ArmCallbackAndRefresh(s32 actorId, s32 angle);
+void Actor_FaceDirectionById(s32 actorId, s32 angle);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z,
                                                     s32 angle);
 void Motion_SetModeAndWaitAnimation(s32 actorId, s32 animation);
@@ -108,36 +108,36 @@ void Actor_SetSpritePriority(u32 actorId, s32 priority);
 void Actor_StartRepeatedMotion(u32 objectId, s32 variant);
 void Actor_WatchAndSetScript(s32 actorId, s32 watchedActorId);
 void Actor_WaitForMoveById(s32 actorId);
-void Camera_FollowActor(s32 id, s32 flag);
+void FieldCamera_FollowActor(s32 id, s32 flag);
 void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
 void Actor_RefreshSelectorById(u32 actorId);
-void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
+void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
 void Actor_Stop(s32 actorId);
 void Import_EventSetExitRequest(s32 countdown);
-void Script_WaitForEventTimeout(struct Actor *actor);
+void Actor_WaitForMove(struct Actor *actor);
 s32 PartyInventory_FindMember(s32 item_id);
-void Func_0803ce64(s32 message, s32 mode, s32 yOffset);
+void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset);
 s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 flags);
-void Party_SetFields1eeAnd1f0(s32 sceneId, s32 entrance);
+void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance);
 void Party_SetFields1f2And1f4(s32 sceneId, s32 entrance);
 void Task_RemoveFar(TaskFunc func);
-void Func_080d7788(s32 slot, s32 element, s32 djinn);
-void Func_080dc978(s32 x, s32 y);
-struct Actor *Func_080d4568(void);
-s32 Func_080d295c(s32 atBottom);
-void Func_080d46a4(s32 zoom, s32 frames);
-void Func_0803f9c0(s32 phase, s32 brightness);
-void Func_080d2b4c(s32 flag, s32 no);
+void Djinn_JoinParty(s32 slot, s32 element, s32 djinn);
+void FieldPsynergy_StartMindReadWave(s32 x, s32 y);
+struct Actor *FieldCamera_GetActor(void);
+s32 FieldYesNo_Ask(s32 atBottom);
+void WorldMap_StartZoom(s32 zoom, s32 frames);
+void WindowColor_Apply(s32 phase, s32 brightness);
+void Field_RequestDjinnBattle(s32 flag, s32 no);
 void Event_PrepareObjectAndApplyValue(s32 unit, s32 announce);
-void Map_WaitForShakeToSettle(void);
-s32 GetMapCellCollision(s32 layer, s32 x, s32 y);
+void MapGrid_WaitForShakeToSettle(void);
+s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y);
 void Actor_SetActionById(s32 actorId, s32 steps);
-void Func_080d3b28(s32 actorId, s32 item);
-void Func_0802372c(struct Actor *actor, s32 item);
-void Func_0802bdd0(s32 x, s32 y, s32 px, s32 py);
-s32 Func_080d452c(s32 actorId, s32 pan);
-void Func_080d3928(s32 actorId, s32 angle);
-s32 Func_080dbdd4(s32 x, s32 z, s32 layer, s32 behavior);
+void Actor_ShowItemIconById(s32 actorId, s32 item);
+void Actor_SetItemIcon(struct Actor *actor, s32 item);
+void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px, s32 py);
+s32 FieldCamera_MoveToActor(s32 actorId, s32 pan);
+void Actor_SetSpriteRotationById(s32 actorId, s32 angle);
+s32 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 behavior);
 
 /// Shows the event's next line of dialogue and waits for the player to read
 /// it.
@@ -177,24 +177,24 @@ static inline void Actor_SetSpeed(s32 actorId, s32 speed, s32 acceleration) {
 /// Moves an actor to a point in the pose it has, without walking; the
 /// event carries on meanwhile.
 static inline void Actor_SetDestination(s32 actorId, s32 x, s32 z) {
-  Actor_ResetAndSetPosition(actorId, x, z);
+  Actor_SetDestinationById(actorId, x, z);
 }
 
 /// Moves an actor some distance from where it stands, without waiting
 /// for it.
 static inline void Actor_SetDestinationOffset(s32 actorId, s32 dx, s32 dz) {
-  Actor_OffsetPositionAndResetMotion(actorId, dx, dz);
+  Actor_SetDestinationOffsetById(actorId, dx, dz);
 }
 
 /// Walks an actor to a point; the event goes on while it walks.
 static inline void Actor_WalkTo(s32 actorId, s32 x, s32 z) {
-  Actor_ResetAndSetPositionInMode2(actorId, x, z);
+  Actor_WalkToById(actorId, x, z);
 }
 
 /// Walks an actor some distance from where it stands, without waiting
 /// for it to get there.
 static inline void Actor_WalkBy(s32 actorId, s32 dx, s32 dz) {
-  Actor_OffsetPositionAndReset(actorId, dx, dz);
+  Actor_WalkByById(actorId, dx, dz);
 }
 
 /// Turns an actor to a direction and holds the event for a few frames.
@@ -204,18 +204,18 @@ static inline void Actor_FaceDirection(s32 actorId, s32 facing, s32 frames) {
 
 /// Has one actor look at another at once, then pauses the event.
 static inline void Actor_FaceActor(s32 actorId, s32 target, s32 frames) {
-  Actor_SetAngleToward(actorId, target, frames);
+  Actor_FaceActorById(actorId, target, frames);
 }
 
 /// Pops an emote bubble up over an actor, then lets frames pass before
 /// the event goes on.
 static inline s32 Actor_ShowEmote(s32 actorId, s32 emote, s32 frames) {
-  return Func_080d47b4(actorId, emote, frames);
+  return Actor_ShowEmoteById(actorId, emote, frames);
 }
 
 /// Actor_ShowEmote, for an event that leaves its result unread.
 static inline void FieldActor_ShowEmote(s32 actorId, s32 emote, s32 frames) {
-  Func_080d47b4(actorId, emote, frames);
+  Actor_ShowEmoteById(actorId, emote, frames);
 }
 
 /// Attaches a field effect to an actor, takes it off, or plays one
@@ -232,7 +232,7 @@ static inline void FieldCamera_SetSpeed(s32 speed, s32 acceleration) {
 /// Pans the camera to a point in the room, or cuts there when pan is 0.
 static inline void FieldCamera_MoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z,
                                       s32 pan) {
-  Camera_MoveWithinMapBounds(fixed_x, fixed_y, fixed_z, pan);
+  FieldCamera_MoveWithinMapBounds(fixed_x, fixed_y, fixed_z, pan);
 }
 
 /// Changes part of the room in place, copying whole cells, picture and
@@ -257,7 +257,7 @@ static inline void MapGrid_CopyCellAttributes(s32 sourceX, s32 sourceY,
 /// Sets shake amplitudes in fixed-point pixels and the per-frame decay factor.
 /// A negative argument keeps that component unchanged; Q16_ONE keeps the shake.
 static inline void MapGrid_SetShake(s32 horizontal, s32 vertical, s32 decay) {
-  Map_SetScreenShake(horizontal, vertical, decay);
+  MapGrid_SetScreenShake(horizontal, vertical, decay);
 }
 
 /// GameFlag_Test, from an event: 1 when the flag is set.
@@ -294,7 +294,7 @@ static inline struct Actor *FieldActor_Create(s32 type, s32 fixed_x,
 /// its last step.
 static inline void MapGrid_AnimateCells(const u16 *steps, s32 destinationX,
                                         s32 destinationY) {
-  Map_PlayMapEdit(steps, destinationX, destinationY);
+  MapGrid_PlayMapEdit(steps, destinationX, destinationY);
 }
 
 /// Moves a treasure spot's actor to a point on the ground.
@@ -311,7 +311,7 @@ static inline void Actor_CenterAndWalk(s32 actorId, s32 priority, s32 dz) {
 
 /// Walks an actor some distance and waits until it is there.
 static inline void Actor_WalkByAndWait(s32 actorId, s32 dx, s32 dz) {
-  Actor_CommitPositionAndActivate(actorId, dx, dz);
+  Actor_WalkByAndWaitById(actorId, dx, dz);
 }
 
 /// Shows a line of dialogue, then pauses before the event goes on.
@@ -331,16 +331,18 @@ static inline void Actor_SetSpriteColorById(s32 actorId, s32 value) {
 static inline void MapGrid_CopyCellsTo(s32 sourceX, s32 sourceY,
                                        s32 destinationX, s32 destinationY,
                                        s32 width, s32 height) {
-  Map_CopyCellPictureIndicesRect(sourceX, sourceY, destinationX, destinationY,
-                                 width, height);
+  MapGrid_CopyCellPictureIndicesRect(sourceX, sourceY, destinationX,
+                                     destinationY, width, height);
 }
 
 /// Changes the pictures of part of the room as MapGrid_CopyCellsTo does,
-/// through Func_0802b450, which keeps each cell's attribute bits.
+/// through MapGrid_CopyCellPictureCellsRect, which keeps each cell's attribute
+/// bits.
 static inline void MapGrid_CopyCellsLayered(s32 sourceX, s32 sourceY,
                                             s32 destinationX, s32 destinationY,
                                             s32 width, s32 height) {
-  Func_0802b450(sourceX, sourceY, destinationX, destinationY, width, height);
+  MapGrid_CopyCellPictureCellsRect(sourceX, sourceY, destinationX, destinationY,
+                                   width, height);
 }
 
 /// Sets the colours the screen shows now, where an event's palette fade starts.
@@ -355,12 +357,12 @@ static inline void PaletteFade_ApplyTarget(s32 value, s32 mode) {
 
 /// Moves an actor to a point in the pose it has and waits for it.
 static inline void Actor_MoveToAndWait(s32 actorId, s32 x, s32 z) {
-  Actor_SetPositionAndCommit(actorId, x, z);
+  Actor_MoveToAndWaitById(actorId, x, z);
 }
 
 /// Walks an actor to a point and waits for it, then stands it still.
 static inline void Actor_WalkToAndWait(s32 actorId, s32 x, s32 z) {
-  Actor_SetPositionAndReset(actorId, x, z);
+  Actor_WalkToAndWaitById(actorId, x, z);
 }
 
 /// Has two actors speak at once, each window placed by the event.
@@ -368,8 +370,8 @@ static inline void
 FieldEvent_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
                                   s32 otherSpeaker, s32 otherX, s32 otherY,
                                   s32 otherArg, s32 otherExtra, s32 flags) {
-  Battle_ShowPairedUnitWorkAndWait(speaker, x, y, arg, extra, otherSpeaker,
-                                   otherX, otherY, otherArg, otherExtra, flags);
+  Event_ShowTwoMessagesAndWait(speaker, x, y, arg, extra, otherSpeaker, otherX,
+                               otherY, otherArg, otherExtra, flags);
 }
 
 /// The field encodes either a movement type or an actor-script address.

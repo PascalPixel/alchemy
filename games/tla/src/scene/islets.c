@@ -315,7 +315,7 @@ void Func_02000568(void) {
     spawned = FieldActor_Create(0x1e9, leader->x, 0x980000, leader->z);
     if (spawned != 0) {
       Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
-      Actor_SetItemIcon(spawned, 0x1c5);
+      FieldActor_SetItemIcon(spawned, 0x1c5);
       Actor_SetSingleChildFlags(spawned, 0);
       spawned->motionFlags = 0;
     }
@@ -339,7 +339,7 @@ void Func_02000568(void) {
 // if flag 513 is set (asked before) the camera moves and object 10 asks again
 // (MsgAreYouGiving); otherwise it notices the item (MsgOhThatRed), the leader
 // steps up and shows it (object type 489, its picture set to the item by
-// Func_0802372c) and object 10 asks. A yes hands the item across step by
+// Actor_SetItemIcon) and object 10 asks. A yes hands the item across step by
 // step, takes item 453 and gives item 454 (object 10 hands it back over the
 // leader's head), sets flag 0xaa3 and counts the answer in the event work's
 // halfword 0x1c4 the first time; a no sets flag 513. Without the item, object
@@ -359,7 +359,7 @@ void Func_02000568(void) {
   {                                                                            \
     Actor_SetSpeed(10, 0xcccc, 0x6666);                                        \
     Actor_WalkToAndWait(10, 0x80, 164);                                        \
-    Actor_ArmCallbackAndRefresh(10, 0x8000);                                   \
+    Actor_FaceDirectionById(10, 0x8000);                                       \
     Event_Wait(20);                                                            \
     Actor_SetSpeed(10, 0x19999, 0xcccc);                                       \
     STEP(10, 108, 168);                                                        \
@@ -368,7 +368,7 @@ void Func_02000568(void) {
     if (given != 0) {                                                          \
       Actor_SetModeById(gMainRoutineWork.currentOwner, 28);                    \
       given->motionFlags = off;                                                \
-      Func_0802372c(given, 454);                                               \
+      Actor_SetItemIcon(given, 454);                                           \
       Event_Wait(20);                                                          \
     }                                                                          \
     STEP(10, 116, 164);                                                        \
@@ -387,11 +387,11 @@ void Func_02000568(void) {
 /// flag 513 is set (asked before) the camera moves and object 10 asks again
 /// (MsgAreYouGiving); otherwise it notices the item (MsgOhThatRed), the leader
 /// steps up and shows it (object type 489, its picture set to the item by
-/// Func_0802372c) and object 10 asks. A yes hands the item across step by step,
-/// takes item 453 and gives item 454 (object 10 hands it back over the leader's
-/// head), sets flag 0xaa3 and counts the answer in the event work's halfword
-/// 0x1c4 the first time; a no sets flag 513. Without the item, object 10 says
-/// MsgYupANice after the trade or MsgIVeBeenFeeling before it.
+/// Actor_SetItemIcon) and object 10 asks. A yes hands the item across step by
+/// step, takes item 453 and gives item 454 (object 10 hands it back over the
+/// leader's head), sets flag 0xaa3 and counts the answer in the event work's
+/// halfword 0x1c4 the first time; a no sets flag 513. Without the item, object
+/// 10 says MsgYupANice after the trade or MsgIVeBeenFeeling before it.
 void Func_020006f4(void) {
   struct Actor *item, *leader, *given;
   const u8 *asked, *noticed;
@@ -409,7 +409,7 @@ void Func_020006f4(void) {
       FieldCamera_MoveTo(-1, -1, -1, 0);
       FieldCamera_SetSpeed(0xcccc, 0x1999);
       FieldCamera_MoveTo(0x8c0000, -1, 0xbe0000, 1);
-      Actor_SetAngleToward(10, gMainRoutineWork.currentOwner, 0);
+      Actor_FaceActorById(10, gMainRoutineWork.currentOwner, 0);
       asked = MsgAreYouGiving;
       Event_SetMessageId(asked);
       Event_ShowMessageAndWait(10, 0);
@@ -421,13 +421,13 @@ void Func_020006f4(void) {
         Actor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
         Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
         Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 98, 168);
-        Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0xc000);
+        Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0xc000);
         Actor_Jump(gMainRoutineWork.currentOwner, 4, 10);
         item = FieldActor_Create(489, 0x680000, 0x180000, 0xa00000);
         // Default: the object handed back is set for real in HAND_BACK.
         given = 0;
         if (item != 0) {
-          Func_0802372c(item, 453);
+          Actor_SetItemIcon(item, 453);
           Actor_SetSingleChildFlags(item, 0);
           item->motionFlags = 0;
           item->unk5c[0] = 1;
@@ -436,13 +436,13 @@ void Func_020006f4(void) {
         Func_02003fbc();
         Actor_Stop(10);
         Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
-        Func_080d47b4(10, 264, 20);
+        Actor_ShowEmoteById(10, 264, 20);
         Event_SetMessageId(asked + 1);
         Event_ShowMessageAndWait(0x800a, 0);
         HAND_BACK(leader, given, 0)
       } else {
         Func_02003fbc();
-        Func_080d47b4(10, 265, 20);
+        Actor_ShowEmoteById(10, 265, 20);
         Event_SetMessageId(asked + 4);
         Event_ShowMessageAndWait(0x800a, 0);
       }
@@ -456,11 +456,11 @@ void Func_020006f4(void) {
       Actor_FaceDirection(10, 0x5000, 0);
       Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 120, 190);
-      Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0);
+      Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0);
       STEP(gMainRoutineWork.currentOwner, 132, 190);
       item = FieldActor_Create(489, 0x8c0000, 0, 0xbe0000);
       if (item != 0) {
-        Func_0802372c(item, 453);
+        Actor_SetItemIcon(item, 453);
         Actor_SetSingleChildFlags(item, 0);
         item->motionFlags = 0;
         zero.v = 0;
@@ -488,22 +488,22 @@ void Func_020006f4(void) {
       Event_SetMessageId(noticed + 3);
       Event_ShowMessageAndWait(10, 0);
       Actor_Stop(10);
-      Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0);
+      Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0);
       Func_02003fc4();
       if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner,
                                                 0) == 0) {
         item = Actor_GetById(gMainRoutineWork.currentOwner);
         Func_02003fbc();
-        Func_080d47b4(10, 264, 20);
+        Actor_ShowEmoteById(10, 264, 20);
         Event_SetMessageId(noticed + 4);
         Event_ShowMessageAndWait(0x800a, 0);
         HAND_BACK(item, item, zero.v)
       } else {
         Func_02003fbc();
-        Func_080d47b4(10, 265, 20);
+        Actor_ShowEmoteById(10, 265, 20);
         Event_SetMessageId(noticed + 7);
         Event_ShowMessageAndWait(0x800a, 0);
-        Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0xc000);
+        Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0xc000);
         Actor_Jump(gMainRoutineWork.currentOwner, 4, 10);
         if (item != 0)
           Import_ActorDestroy(item);
@@ -530,7 +530,7 @@ struct Actor *Func_02000da0(struct Actor *object, s32 value) {
   if (spawned != 0) {
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
     spawned->motionFlags = 0;
-    Actor_SetItemIcon(spawned, value);
+    FieldActor_SetItemIcon(spawned, value);
     Actor_SetSingleChildFlags(spawned, 0);
     spawned->unk5c[0] = 1;
   }
@@ -700,7 +700,7 @@ void Func_0200129c(struct Actor *gift) {
   gift->update = Actor_EmitSmoke;
   Func_02003de4(gift, 2);
   FieldActor_SetMoveTarget(gift, 0x1160000, 0, 0x1c40000);
-  Actor_WaitForMove(gift);
+  FieldActor_WaitForMove(gift);
   Func_02003de4(gift, 1);
   gift->update = 0;
   PartyInventory_Remove(455);
@@ -714,7 +714,7 @@ void Func_0200129c(struct Actor *gift) {
   FieldActor_Jump(gMainRoutineWork.currentOwner, 6, 0);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 296, 452);
   leader->update = Func_02001278;
-  Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
   Actor_SetAnimation(9, 3);
   FieldEvent_Wait(20);
   Event_ShowMessage(9, 0);
@@ -805,7 +805,7 @@ void Func_020014e0(void) {
     } else {
       Event_SetMessageId(MsgIMSoVery);
       Event_ShowMessage(9, 0);
-      Func_080d47b4(gMainRoutineWork.currentOwner, 262, 20);
+      Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 262, 20);
       Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
       leader->update = Actor_EmitSmoke;
       // Default: a is set for real when object 163 is made.
@@ -820,7 +820,7 @@ void Func_020014e0(void) {
       STEP(gMainRoutineWork.currentOwner, 318, 424);
       leader->update = 0;
       Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x4000, 0);
-      Func_080d47b4(9, 256, 20);
+      Actor_ShowEmoteById(9, 256, 20);
       Actor_FaceDirectionAndWait(9, 0xb000);
       other = Actor_GetById(9);
       other->update = Actor_EmitSmoke;
@@ -835,7 +835,7 @@ void Func_020014e0(void) {
         Func_0200129c(a);
       } else {
         Func_02003fbc();
-        Func_080d47b4(9, 265, 0);
+        Actor_ShowEmoteById(9, 265, 0);
         Event_ShowMessage(9, 0);
         Actor_FaceDirection(9, 0x5000, 0);
         Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x8000);
@@ -865,7 +865,8 @@ void Func_020014e0(void) {
       FieldActor_Jump(gMainRoutineWork.currentOwner, 6, 0);
       Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 296, 452);
       leader->update = Func_02001278;
-      Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
+      FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner),
+                                15);
       Actor_SetAnimation(9, 3);
       FieldEvent_Wait(20);
       Event_ShowMessage(9, 0);
@@ -930,7 +931,7 @@ void Func_02001a68(void) {
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 768);
     leader->update = (void (*)(void))Func_02001278;
-    Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
+    FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
     Actor_SetAnimation(9, 3);
     FieldEvent_Wait(20);
     Func_02003fc4();
@@ -1089,7 +1090,7 @@ void Func_02001db0(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   item = Actor_GetById(20);
   item->motionFlags = 0;
-  Actor_SetItemIcon(item, 0x1c4);
+  FieldActor_SetItemIcon(item, 0x1c4);
   FieldActor_SetPositionAndResetMotion(item, leader->x, leader->y + PIXELS(24),
                                        leader->z);
   FieldEvent_Wait(20);
@@ -1127,7 +1128,7 @@ void Func_02001f74(void) {
   System_Wait(1);
   FieldTask_AddFrame(Func_02001f58, 0x480);
   FieldActor_SetMoveTarget(object, PIXELS(132), PIXELS(128), PIXELS(320));
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   FieldTask_Remove(Func_02001f58);
   Actor_SetAnimation(10, 5);
   object->motionFlags = 3;
@@ -1398,7 +1399,7 @@ void Func_0200267c(void) {
   FieldActor_SetMoveTarget(object,
                            ((8 - (object->x >> 16) % 16) << 16) + object->x,
                            object->y, object->z);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
   exit = &work->exit;
   index = *exit;
@@ -1441,7 +1442,7 @@ void Func_02002780(void) {
   FieldActor_SetMoveTarget(object,
                            ((8 - (object->x >> 16) % 16) << 16) + object->x,
                            object->y, object->z);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
   Actor_SetScript(party->currentOwner, gData_02004028);
   System_Wait(12);
@@ -1461,7 +1462,7 @@ void Func_02002830(void) {
   System_Wait(1);
   object->facing = FACING_NORTH;
   owner->update = (void (*)(void))Func_02001278;
-  Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
   Actor_SetAnimation(9, 3);
   System_Wait(1);
   work = Ram_HeapSlots->eventWork;
@@ -1483,7 +1484,7 @@ void Func_02002830(void) {
   Event_ShowMessage(9, 0);
   Actor_SetAnimation(9, 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
-  Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
   FieldActor_Jump(gMainRoutineWork.currentOwner, 6, 0);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 312, 440);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTHWEST);
@@ -1517,7 +1518,7 @@ void Func_020029c4(void) {
   System_Wait(1);
   guide->facing = FACING_SOUTH;
   leader->update = Func_02001278;
-  Actor_SetSpriteColor(((s32)Actor_Get(gMainRoutineWork.currentOwner)), 15);
+  FieldActor_SetSpriteColor(((s32)Actor_Get(gMainRoutineWork.currentOwner)), 15);
   Actor_SetAnimation(9, 3);
   System_Wait(1);
 #if TLA_PATCH_1 /* The Japanese release leaves the transition word. */
@@ -1545,7 +1546,7 @@ void Func_020029c4(void) {
   Event_ShowMessage(9, 0);
   Actor_SetAnimation(9, 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
-  Actor_SetSpriteColor(((s32)Actor_Get(gMainRoutineWork.currentOwner)), 0);
+  FieldActor_SetSpriteColor(((s32)Actor_Get(gMainRoutineWork.currentOwner)), 0);
   FieldActor_Jump(gMainRoutineWork.currentOwner, 6, 0);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 742);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
@@ -1601,7 +1602,7 @@ void Func_02002c38(void) {
     spawned = FieldActor_Create(489, 0x1180000, 0, 0x3480000);
     if (spawned != 0) {
       spawned->motionFlags = 0;
-      Actor_SetItemIcon(spawned, 454);
+      FieldActor_SetItemIcon(spawned, 454);
       Actor_SetSingleChildFlags(spawned, 0);
       spawned->collisionFlags = 9;
       spawned->unk5c[0] = 1;
@@ -1769,14 +1770,14 @@ void Func_020030b4(void) {
     spawned = FieldActor_Create(489, 0x680000, 0x180000, 0xa00000);
     if (spawned != 0) {
       spawned->motionFlags = 0;
-      Actor_SetItemIcon(spawned, 453);
+      FieldActor_SetItemIcon(spawned, 453);
       Actor_SetSingleChildFlags(spawned, 0);
       spawned->unk5c[0] = 1;
     }
     Actor_SetPosition(10, PIXELS(104), PIXELS(204));
   }
   FieldActor_SetSpritePriority(11, 1);
-  Actor_SetSpriteColor(Actor_Get(11), 15);
+  FieldActor_SetSpriteColor(Actor_Get(11), 15);
   Actor_Get(11)->priorityFlags |= 2;
 }
 
@@ -1848,7 +1849,7 @@ struct MapLayerBits {
 };
 
 void Func_02003410(void);
-void PaletteQueue_Add(s32 a, s32 b, s32 c, s32 d);
+void PaletteCycle_Add(s32 a, s32 b, s32 c, s32 d);
 
 void Func_0200329c(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -1869,9 +1870,9 @@ void Func_0200329c(void) {
     /* FAKEMATCH(barrier): the native loads the first argument last; as the
      * plain call, 2 of 145 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2), "+l"(a3));
-    PaletteQueue_Add(a0, a1, a2, a3);
+    PaletteCycle_Add(a0, a1, a2, a3);
   }
-  PaletteQueue_Add(4, 12, 5, 4);
+  PaletteCycle_Add(4, 12, 5, 4);
   if (Event_GetFlag(0xaa5) && (done = Event_GetFlag(265)) == 0) {
     Actor_SetPosition(10, 0x1180000, 0x1d40000);
     Actor_Get(10)->motionFlags = done;
@@ -1929,7 +1930,7 @@ struct MapLayerBits {
 };
 
 void Func_02003410(void);
-s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count);
+s32 PaletteCycle_Add(s16 bank, s16 index, s16 delay, s16 count);
 
 void Func_0200329c(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -1941,8 +1942,8 @@ void Func_0200329c(void) {
   if (gMainRoutineWork.entrance == 2)
     Event_ClearFlag(303);
   Func_02003410();
-  PaletteQueue_Add(3, 12, 5, 4);
-  PaletteQueue_Add(4, 12, 5, 4);
+  PaletteCycle_Add(3, 12, 5, 4);
+  PaletteCycle_Add(4, 12, 5, 4);
   if (Event_GetFlag(0xaa5) && (done = Event_GetFlag(265)) == 0) {
     Actor_SetPosition(10, 0x1180000, 0x1d40000);
     Actor_Get(10)->motionFlags = done;

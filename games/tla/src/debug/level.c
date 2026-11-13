@@ -25,10 +25,48 @@
 #include "battle_unit.h"
 #include "character_ids.h"
 
+extern struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[];
+extern struct ActorPlacement gIncreaseItemAndLevel_FirstNamePlacements[];
+extern struct ActorPlacement gIncreaseItemAndLevel_SecondNamePlacements[];
+extern struct ActorPlacement gIncreaseItemAndLevel_ThirdNamePlacements[];
+extern struct ActorPlacement gIncreaseItemAndLevel_FourthNamePlacements[];
+extern struct Trigger gIncreaseItemAndLevel_NameTriggers[];
+extern struct Trigger gIncreaseItemAndLevel_Triggers[];
+extern char gIncreaseItemAndLevel_LvLabel[];
+extern char gIncreaseItemAndLevel_ItemPrompt[];
+extern char gIncreaseItemAndLevel_ItemHelp[];
+extern char gIncreaseItemAndLevel_ItemFull[];
+void IncreaseItemAndLevel_RunMotionTest(void);
+void IncreaseItemAndLevel_EnableEffectChildMode(void);
+void IncreaseItemAndLevel_OpenIconBrowser(void);
+void IncreaseItemAndLevel_OpenPortraitBrowser(void);
+
 #include "edition.h"
 #include "event_work.h"
-#include "module/debug/debug.h"
-#include "module/debug/level.h"
+
+/// The entrances that open a room of names in place of the debug room: each
+/// has its own actor placements and the triggers of
+/// gIncreaseItemAndLevel_NameTriggers.
+enum {
+  ENTRANCE_NAMES_FOURTH = 96,
+  ENTRANCE_NAMES_THIRD = 97,
+  ENTRANCE_NAMES_SECOND = 98,
+  ENTRANCE_NAMES_FIRST = 99
+};
+
+/// The debug room's actors, numbering the rows of
+/// gIncreaseItemAndLevel_ActorPlacements, as The Broken Seal's.
+enum IncreaseItemAndLevelActorId {
+  ACTOR_ITEM_BROWSER = 8, ///< IncreaseItemAndLevel_SelectItem
+  ACTOR_ICON_BROWSER,     ///< IncreaseItemAndLevel_OpenIconBrowser
+  /// IncreaseItemAndLevel_OpenPortraitBrowser; Force cast at it runs
+  /// IncreaseItemAndLevel_RunMotionTest.
+  ACTOR_PORTRAIT_BROWSER,
+  /// IncreaseItemAndLevel_RunLevelEditor, drawn larger than the others.
+  ACTOR_LEVEL_EDITOR
+};
+
+#include "scene_tables.h"
 #include "module/game/game.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"
@@ -237,7 +275,7 @@ void IncreaseItemAndLevel_SelectItem(void) {
         messageOrDefinitionId = selectedItemId & ITEM_ID_MASK;
         Item_GetDirect(messageOrDefinitionId);
         Text_DrawMessageAsTiles(messageOrDefinitionId + (s32)MsgItemName,
-                                   window, 120, 0);
+                                window, 120, 0);
         Text_DrawMessage(messageOrDefinitionId + (s32)MsgItemPlainName, window,
                          0, 16);
         WindowSprite_RedrawSavedRect(details);

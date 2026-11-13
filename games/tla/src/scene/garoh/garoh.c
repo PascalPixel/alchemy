@@ -336,16 +336,16 @@ void Func_02000808(void) {
 
   void Func_020007a0(s32 id) {
     BattleEffect_LoadActionEffectResources(144, 1);
-    BattleEffect_SetupObjectPair(id, 0);
-    Field_DispatchTypeHandler(1);
+    FieldPsynergy_SetupActorPair(id, 0);
+    FieldPsynergy_RunHandler(1);
     BattleEffect_StopMainActor();
     BattleEffect_CleanupSceneObjects();
   }
 
   void Func_020007d4(s32 id) {
     BattleEffect_LoadActionEffectResources(144, 1);
-    BattleEffect_SetupObjectPair(id, 0);
-    Field_DispatchTypeHandler(3);
+    FieldPsynergy_SetupActorPair(id, 0);
+    FieldPsynergy_RunHandler(3);
     BattleEffect_StopMainActor();
     BattleEffect_CleanupSceneObjects();
   }
@@ -664,7 +664,7 @@ void Func_02000fa4(void) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void CopyRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
-  Map_CopyCellPictureIndicesRect(a0, a1, a2, a3, a4, a5);
+  MapGrid_CopyCellPictureIndicesRect(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void BlendRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {

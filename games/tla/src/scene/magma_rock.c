@@ -15,7 +15,7 @@ struct EventObjects {
   struct Actor *objects[64];
 };
 
-void Func_02000594(void) { Func_080d2b4c(8, 56); }
+void Func_02000594(void) { Field_RequestDjinnBattle(8, 56); }
 
 DEFINE_POSITION_FLAT_DISTANCE(Func_020005a0)
 
@@ -246,7 +246,7 @@ void Func_02000c08(s16 value) {
   BattleEffect_LoadActionEffectResources(151, 1);
   party = &gMainRoutineWork;
   Func_02003bb4(party->currentOwner, value);
-  Field_DispatchTypeHandler(1);
+  FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   BattleEffect_CleanupSceneObjects();
 }
@@ -291,23 +291,23 @@ void Func_02000c40(struct Actor *object) {
                     phase, 0x320001, &params);
     }
     if (gFrameCount & 4)
-      Actor_SetSpriteColor(object, 10);
+      FieldActor_SetSpriteColor(object, 10);
     else
-      Actor_SetSpriteColor(object, 0);
+      FieldActor_SetSpriteColor(object, 0);
   } else if (*timer < 100) {
     if (gFrameCount & 4)
-      Actor_SetSpriteColor(object, 10);
+      FieldActor_SetSpriteColor(object, 10);
     else
-      Actor_SetSpriteColor(object, 0);
+      FieldActor_SetSpriteColor(object, 0);
   } else if (*timer < 140) {
     if (gFrameCount & 2)
-      Actor_SetSpriteColor(object, 10);
+      FieldActor_SetSpriteColor(object, 10);
     else
-      Actor_SetSpriteColor(object, 0);
+      FieldActor_SetSpriteColor(object, 0);
   } else if (*timer < 144) {
-    Actor_SetSpriteColor(object, 7);
+    FieldActor_SetSpriteColor(object, 7);
   } else {
-    Actor_SetSpriteColor(object, 0);
+    FieldActor_SetSpriteColor(object, 0);
     object->update = NULL;
     linked->x = object->x;
     linked->y = object->y;

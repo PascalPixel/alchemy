@@ -22,7 +22,7 @@ const u32 gData_0805c0e8[2] = {0x1999999a, 0x1999999a};
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
 
-const s8 gText_ArticleEmpty[] = "";
+const s8 gArticle_Empty[] = "";
 
 static const s8 sArticleEin[] = "ein ";
 static const s8 sArticleEine[] = "eine ";
@@ -30,15 +30,15 @@ static const s8 sArticleDie[] = "die ";
 static const s8 sArticleDas[] = "das ";
 
 /// The article of each kind
-const s8 *const gText_ArticleTable[8] = {
-    gText_ArticleEmpty,
+const s8 *const gArticle_Table[8] = {
+    gArticle_Empty,
     sArticleEin,
     sArticleEine,
     sArticleDie,
     sArticleDas,
-    gText_ArticleEmpty,
-    gText_ArticleEmpty,
-    gText_ArticleEmpty,
+    gArticle_Empty,
+    gArticle_Empty,
+    gArticle_Empty,
 };
 
 // The counted nouns (gText_NumberWords pairs them {singular, plural}).
@@ -61,12 +61,12 @@ const s8 *const gLocalizedWord_ItemPossessives[4] = {
     sPossessiveDein,
     sPossessiveDeine,
     sPossessiveDein,
-    gText_ArticleEmpty,
+    gArticle_Empty,
 };
 
 #elif (LANGUAGE == LANGUAGE_SPANISH)
 
-const s8 gText_ArticleEmpty[] = "";
+const s8 gArticle_Empty[] = "";
 
 static const s8 sArticleEl[] = "el ";
 static const s8 sArticleLa[] = "la ";
@@ -74,8 +74,8 @@ static const s8 sArticleLos[] = "los ";
 static const s8 sArticleLas[] = "las ";
 
 /// The definite article of each kind
-const s8 *const gText_ArticleTable[5] = {
-    gText_ArticleEmpty,
+const s8 *const gArticle_Table[5] = {
+    gArticle_Empty,
     sArticleEl,
     sArticleLa,
     sArticleLos,
@@ -89,7 +89,7 @@ static const s8 sArticleUnas[] = "unas ";
 
 /// The indefinite article of each kind
 const s8 *const gText_IndefiniteArticles[5] = {
-    gText_ArticleEmpty,
+    gArticle_Empty,
     sArticleUn,
     sArticleUna,
     sArticleUnos,
@@ -116,7 +116,7 @@ const s8 *const gText_DeArticles[2] = {
     sArticleDe,
 };
 
-const s8 gText_ArticleEmpty[] = "";
+const s8 gArticle_Empty[] = "";
 
 static const s8 sArticleLe[] = "le ";
 static const s8 sArticleLa[] = "la ";
@@ -127,8 +127,8 @@ static const s8 sArticleUne[] = "une ";
 static const s8 sArticleDes[] = "des ";
 
 /// The article of each kind
-const s8 *const gText_ArticleTable[8] = {
-    gText_ArticleEmpty,
+const s8 *const gArticle_Table[8] = {
+    gArticle_Empty,
     sArticleLe,
     sArticleLa,
     sArticleL,
@@ -142,7 +142,7 @@ const s8 gLocalizedWord_ItemPronoun[] = "vous ";
 
 #elif (LANGUAGE == LANGUAGE_ITALIAN)
 
-const s8 gText_ArticleEmpty[] = "";
+const s8 gArticle_Empty[] = "";
 
 static const s8 sArticleIl[] = "il ";
 static const s8 sArticleL[] = "l' ";
@@ -156,8 +156,8 @@ static const s8 sArticleUno[] = "uno ";
 static const s8 sArticleUna[] = "una ";
 
 /// The article of each kind
-const s8 *const gText_ArticleTable[11] = {
-    gText_ArticleEmpty,
+const s8 *const gArticle_Table[11] = {
+    gArticle_Empty,
     sArticleIl,
     sArticleL,
     sArticleLa,
@@ -178,12 +178,12 @@ const s8 *const gLocalizedWord_ItemPossessives[4] = {
     sPossessiveIlTuo,
     sPossessiveLaTua,
     sPossessiveIlTuo,
-    gText_ArticleEmpty,
+    gArticle_Empty,
 };
 
 #elif (LANGUAGE == LANGUAGE_ENGLISH)
 
-const s8 gText_ArticleEmpty[] = "";
+const s8 gArticle_Empty[] = "";
 
 static const s8 sArticleA[] = "a ";
 static const s8 sArticleAn[] = "an ";
@@ -191,15 +191,15 @@ static const s8 sArticleSome[] = "some ";
 static const s8 sArticleThe[] = "the ";
 
 /// The article of each kind
-const s8 *const gText_ArticleTable[8] = {
-    gText_ArticleEmpty,
+const s8 *const gArticle_Table[8] = {
+    gArticle_Empty,
     sArticleA,
     sArticleAn,
     sArticleSome,
-    gText_ArticleEmpty,
+    gArticle_Empty,
     sArticleThe,
-    gText_ArticleEmpty,
-    gText_ArticleEmpty,
+    gArticle_Empty,
+    gArticle_Empty,
 };
 
 #endif
@@ -209,7 +209,7 @@ const s8 *const gText_ArticleTable[8] = {
 //--------------------------------------------------------------------------
 
 /// The cursor's rise and fall
-const u8 gUiSprite_CursorBobOffsets[80] = {
+const u8 gWindowSprite_CursorBobOffsets[80] = {
     0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5,
     5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7,
     7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 7, 7,
@@ -218,7 +218,7 @@ const u8 gUiSprite_CursorBobOffsets[80] = {
 };
 
 /// A circle of radius 4
-const s8 gUiSprite_WobbleOffsets[40] = {
+const s8 gWindowSprite_WobbleOffsets[40] = {
     0, 4, 1, 4, 2, 3, 3, 2,
     4, 1, 4, 0, 4, 1, 3, 2,
     2, 3, 1, 4, 0, 4, -1, 4,

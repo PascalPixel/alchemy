@@ -26,7 +26,7 @@ static inline void Contigo_Jump(s32 actor, s32 height, s32 frames) {
   s32 f = frames;
   s32 a = actor;
 
-  Func_080d47b4(a, h, f);
+  Actor_ShowEmoteById(a, h, f);
 }
 
 // The scene's own event inlines: a habit of the whole game written once, as

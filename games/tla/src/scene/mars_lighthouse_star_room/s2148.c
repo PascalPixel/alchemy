@@ -32,9 +32,9 @@ struct Work020023c4 {
 
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 s32 Func_0200428c(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
-void Animation_ApplyChildValues(struct Actor *actor, s32 a);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 void Func_02002120(void);
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 
 #define SHARED_F02002148_NAME Func_02002148
 #define SHARED_F02002148_ID2 Func_02001fcc
@@ -93,15 +93,15 @@ struct RideWork {
 extern u16 gData_02004cf0[];
 
 void Func_02002354(void) {
-  if (((struct RideWork *)(gData_020023c4 + 0x188))->active)
+  if (((struct RideWork *)(gInventorySnapshot + 0x188))->active)
     Func_02002148();
 }
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s236c.c ----
 #include "../mars_lighthouse_star_room.h"
 
-extern u8 gData_020023c4[];
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+extern u8 gInventorySnapshot[];
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 struct RideEvent {
   u8 unk000[0x15a];
@@ -168,7 +168,7 @@ s32 MarsLighthouseStarRoom_SlideOnIce(void) {
 #endif
   FieldCamera_SetSpeed(0x70000, 0xe000);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
-  ride = (struct RideState *)(gData_020023c4 + 0x188);
+  ride = (struct RideState *)(gInventorySnapshot + 0x188);
   Event_SetFlag(0x106);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -191,7 +191,7 @@ s32 MarsLighthouseStarRoom_SlideOnIce(void) {
   }
   FieldEvent_Wait(30);
   leader->update = 0;
-  Animation_ApplyChildValues(leader, 0);
+  Actor_SetSpriteColorMode(leader, 0);
   ride->active = 0;
 }
 
@@ -202,7 +202,7 @@ extern u16 gData_02004cf0[];
 DEFINE_RIDE_IF_ACTIVE(MarsLighthouseStarRoom_ContinueSlide, MarsLighthouseStarRoom_SlideOnIce)
 
 s32 MarsLighthouseStarRoom_IsSliding(void) {
-  return ((struct RideWork *)(gData_020023c4 + 0x188))->active;
+  return ((struct RideWork *)(gInventorySnapshot + 0x188))->active;
 }
 
 #include "iwram_call.h"
@@ -243,7 +243,7 @@ struct Work {
 
 extern u8 gData_02004774[];
 
-#define WORK ((struct Work *)(gData_020023c4 + 0x188))
+#define WORK ((struct Work *)(gInventorySnapshot + 0x188))
 
 void Func_020024d4(struct Actor *actor) {
   struct Work *work = WORK;
@@ -293,10 +293,10 @@ void Func_020024d4(struct Actor *actor) {
       object->bounce = 0x8000;
       sprite = object->sprite;
       source = work->owner->sprite;
-      Resource_ResetEntry(sprite->vramBlock);
+      VramCache_FreeEntry(sprite->vramBlock);
       sprite->keepEntry = 1;
       sprite->vramBlock = work->vramBlock;
-      ResourceMetadata_ClearRecord(sprite->record);
+      SpriteAnimation_Clear(sprite->record);
       sprite->record = NULL;
       sprite->unk1b = 0;
       sprite->unk14[0] = source->unk14[0];
@@ -323,7 +323,11 @@ void Func_02002738(struct Actor *object) {
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-/* VIEW(s236c): tag struct Work020023c4 as struct Work020023c4__s236c; s2148.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room/s2148.c:619: structure has no member named `unk6c'. */
+/* VIEW(s236c): tag struct Work020023c4 as struct Work020023c4__s236c; s2148.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_star_room/s2148.c:619: structure has no
+ * member named `unk6c'. */
 struct Work020023c4__s236c {
   u8 unk00[4];
   u16 unk04;
@@ -377,7 +381,7 @@ DEFINE_ACTOR_LAUNCH_AHEAD(Func_02002ad0, Func_0200274c)
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 DEFINE_ACTOR_POP_UP_SLOW(Func_02002b98, Func_020041cc)
 
@@ -385,7 +389,7 @@ DEFINE_ACTOR_POP_UP(Func_02002c44, Func_020041cc)
 
 #include "macros.h"
 
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 extern u16 gData_02004cf0[];
 
 DEFINE_ACTOR_PARK(Func_02002ce8, Func_02002ad0)
@@ -424,13 +428,23 @@ DEFINE_LEADER_SLIDE_ON_ICE(Func_02002dc4, Func_02002d90, gData_0200483c,
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s3070.c ----
 #include "input.h"
 
-/* VIEW(s3070): variable gData_02004cf0 as extern volatile s16 gData_02004cf0; s2a58 has extern u16 gData_02004cf0[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room/s2148.c:1014: `gData_02004cf0__s3070' undeclared (first use in this function). */
+/* VIEW(s3070): variable gData_02004cf0 as extern volatile s16 gData_02004cf0;
+ * s2a58 has extern u16 gData_02004cf0[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_star_room/s2148.c:1014:
+ * `gData_02004cf0__s3070' undeclared (first use in this function). */
 extern volatile s16 gData_02004cf0__s3070 __asm__("gData_02004cf0");
 extern s16 gData_0200483c[];
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02004284(struct Actor *object);
-/* VIEW(s3070): routine Func_0200428c as s32 Func_0200428c(s32 *a, s32 aRadius, s32 *b, s32 bRadius); s2dc4 has s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room/s2148.c:1093: `Func_0200428c__s3070' undeclared (first use in this function). */
-extern s32 Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b, s32 bRadius) __asm__("Func_0200428c");
+/* VIEW(s3070): routine Func_0200428c as s32 Func_0200428c(s32 *a, s32 aRadius,
+ * s32 *b, s32 bRadius); s2dc4 has s32 Func_0200428c(s32 *a, s32 radiusA, struct
+ * Position *b, s32 radiusB); tried as the rest of the object declares it, it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_star_room/s2148.c:1093:
+ * `Func_0200428c__s3070' undeclared (first use in this function). */
+extern s32 Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b,
+                                s32 bRadius) __asm__("Func_0200428c");
 
 #define SHARED_F02003070_NAME Func_02003070
 #define SHARED_F02003070_ID2 gData_02004cf0__s3070

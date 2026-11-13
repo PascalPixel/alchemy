@@ -6,8 +6,26 @@
 #include "encounter_zone.h"
 #include "gamepak/far_call/game.h"
 #include "module/field/field_sequence.h"
+#include "gamepak/far_call/field.h"
 #include "module/tla.h"
 #include "resource_ids.h"
+
+struct EventWorkView {
+  u8 unk000[0x15a];
+  s16 unk15a;
+  s16 unk15c;
+  s16 unk15e;
+  u8 unk160[4];
+  s16 unk164;
+  s16 unk166;
+  u8 unk168[0x1c];
+  s16 blockedSteps;
+  u16 pushKind;
+  u8 unk188[4];
+  u8 settings[8];
+  s32 unk194;
+  s32 unk198;
+};
 
 void Func_080c9de0(s32 id, s32 variant) {
   const struct FlagEntry *entry = FlagEntries_GetTable();
@@ -33,14 +51,14 @@ s32 Func_080c9e1c(s32 flag) {
   return 1;
 }
 
-void Func_080c9e48(s32 search) {
+void Encounter_SelectMapZones(s32 search) {
   struct EventWorkView *work = Ram_HeapSlots->eventWork;
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
   u8 *out = work->settings;
   u32 first = 0;
   u32 second = 0;
-  const struct SceneMusicEntry *entry = Data_080ee6d4;
+  const struct SceneMusicEntry *entry = gScene_EncounterRules;
   u32 i;
 
   if (search != 0) {
@@ -62,7 +80,7 @@ void Func_080c9e48(s32 search) {
     *out++ = 0;
   work->unk194 = 0;
   work->unk198 = 0x100000;
-  Func_080ca4a8();
+  BattleBackground_SelectForMap();
 }
 
 /// Returns the world map encounter zone for the terrain at position (0 for
@@ -81,7 +99,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
     return 0;
   if (party->renderMode == 7)
     rule = gData_080eef34;
-  behavior = GetWorldMapTerrainBehaviorFar(position, (s32 *)&kind);
+  behavior = WorldMap_GetBattleEnvironmentFar(position, (s32 *)&kind);
   kind %= 20;
   zone = 0;
   for (; rule->kind != -1; rule++) {
@@ -100,7 +118,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
 
 #define ENCOUNTER_STEPS (gMainRoutineWork.encounterSteps)
 
-s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
+s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   struct EncounterWork *work;
   const struct EncounterZone *entry;
   s32 rate;
@@ -171,23 +189,22 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   return sum;
 }
 
-#define BattleEffect_GetResourceGroup                                          \
-  ((s32 (*)(s32))BattleEffect_GetResourceGroup)
+#define Scene_GetArea ((s32 (*)(s32))Scene_GetArea)
 
 s32 Encounter_RollTerrain(u32 index, s32 steps) {
   u8 *table = (u8 *)Ram_HeapSlots->eventWork + 0x18c;
 
-  return Encounter_SelectEnemyGroup(table[index], steps);
+  return Encounter_CountStepsAndSelectFormation(table[index], steps);
 }
 
 /// Chooses a world-map encounter from the terrain zone and step weight.
 s32 Encounter_RollWorldMap(s32 position, s32 steps) {
-  return Encounter_SelectEnemyGroup(
+  return Encounter_CountStepsAndSelectFormation(
       Encounter_ResolveWorldMapZoneAndBackdrop((void *)position), steps);
 }
 
 /// Returns the selected group from a fourteen-halfword encounter row.
-u16 Encounter_GetEnemyGroupAtSlot(s32 zone, s32 slot) {
+u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot) {
   u16 *table;
   s32 byteOffset;
 
@@ -200,19 +217,19 @@ u16 Encounter_GetEnemyGroupAtSlot(s32 zone, s32 slot) {
 }
 
 /// Resolves the Djinni table's zone and slot pair to its enemy group.
-u16 Encounter_GetDjinnEnemyGroup(s32 djinni) {
+u16 Encounter_GetDjinnFormation(s32 djinni) {
   u16 *zoneAndSlot = (u16 *)(gEncounter_AreaEntryTable + djinni * 4);
 
 #ifdef UBFIX
-  return Encounter_GetEnemyGroupAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
+  return Encounter_GetFormationAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
 #else
   // UB: no return statement; the native leaves the called getter's result in
   // r0.
-  Encounter_GetEnemyGroupAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
+  Encounter_GetFormationAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
 #endif
 }
 
-void Scene_ResolveInteractionResult(void) {
+void Scene_ChooseMusic(void) {
   s16 cue = 79;
   s16 scene = gMainRoutineWork.scene;
   s16 entrance = gMainRoutineWork.entrance;
@@ -244,10 +261,10 @@ void Scene_ResolveInteractionResult(void) {
   gMainRoutineWork.cue = cue;
 }
 
-s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance) {
+s32 Area_GetNameIndex(s32 scene, s32 entrance) {
   const struct SceneAreaNameRule *entry = gScene_AreaNameRules;
   s32 areaNameIndex = 0;
-  s32 group = BattleEffect_GetResourceGroup(scene);
+  s32 group = Scene_GetArea(scene);
 
   while (entry->id != -1) {
     if (entry->useSceneId) {
@@ -337,15 +354,17 @@ void Func_080ca3f4(s32 scene, s32 entrance) {
   }
 }
 
-s16 Event_GetSpecialValue(void) { return gMainRoutineWork.special; }
+s16 BattleBackground_GetSelected(void) {
+  return gMainRoutineWork.battleBackground;
+}
 
-/// The Broken Seal's BattleEffect_SetSpecialFromTable, with this game's
-/// dragon hall check after the loop: looks the scene up in gData_080ef984 and
-/// keeps the last marked backdrop before it; with flag 0xa30 set, the second
-/// dragon hall backdrop becomes the first.
-void Func_080ca4a8(void) {
+/// As The Broken Seal's, with this game's dragon hall check after the loop:
+/// looks the scene up in gScene_BattleBackgroundRules and keeps the last marked
+/// backdrop before it; with flag 0xa30 set, the second dragon hall backdrop
+/// becomes the first.
+void BattleBackground_SelectForMap(void) {
   s32 target = gMainRoutineWork.scene;
-  s32 *table = gData_080ef984;
+  s32 *table = gScene_BattleBackgroundRules;
   s32 entry = *table++;
   s32 result; // not initialised: with no marked row before the scene it keeps
               // whatever it held
@@ -360,7 +379,7 @@ void Func_080ca4a8(void) {
   }
   if (result == (s32)&ResourceId_DragonHallBBackdrop && GameFlag_Test(0xa30))
     result = (s32)&ResourceId_DragonHallABackdrop;
-  gMainRoutineWork.special = result;
+  gMainRoutineWork.battleBackground = result;
 }
 
 /// Chooses the battle backdrop for a terrain; the ship deck's is the default.
@@ -393,7 +412,7 @@ void BattleBackground_SelectForEnvironment(s32 behavior) {
     value = (u32)&ResourceId_ShipDeckBackdrop;
     break;
   }
-  gMainRoutineWork.special = value;
+  gMainRoutineWork.battleBackground = value;
 }
 
 s32 Func_080ca5a0(s32 owner) {

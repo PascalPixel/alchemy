@@ -65,7 +65,7 @@ void Func_0200008c(void) {
   Actor_WalkTo(*(s32 *)((u8 *)v5 + 0), 136, 488);
   Event_Wait(10);
   Actor_SetDestination(15, 120, 472);
-  Actor_SetPositionAndCommit(14, 136, 475);
+  Actor_MoveToAndWaitById(14, 136, 475);
   object1 = Actor_GetById(15);
   *(s32 *)((u8 *)object1 + 40) = v6;
   Sound_Play(0x237);
@@ -162,7 +162,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Test(0x900))
     Actor_SetPosition(13, 0x1880000, 0x2880000);
   Actor_GetById(13)->priorityFlags |= 32;
-  Func_080d3b28(15, 457);
+  Actor_ShowItemIconById(15, 457);
   if (!GameFlag_Test(0x901)) {
     if (!GameFlag_Test(0x109)) {
       Actor_GetById(14)->priorityFlags |= 128;
@@ -350,7 +350,7 @@ void Func_020004f4(void) {
   Actor_ArmCallback(8, FACING_EAST, 0);
   Actor_ArmCallback(9, FACING_EAST, 0);
   Actor_ShowEmote(8, 0x100, 0);
-  Func_080d47b4(9, 0x100, 30);
+  Actor_ShowEmoteById(9, 0x100, 30);
   Event_Wait(20);
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_SetSpeed(8, 0x18000, 0xc000);
@@ -363,7 +363,7 @@ void Func_020004f4(void) {
   Actor_FaceDirection(4, FACING_SOUTH, 0);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_FaceDirection(6, FACING_SOUTH, 0);
-  Camera_MoveWithinMapBounds(PIXELS(448), -1, PIXELS(416), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(448), -1, PIXELS(416), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_Jump(9, 6, 15);
@@ -408,7 +408,7 @@ void Func_020004f4(void) {
   Actor_Jump(25, 6, 15);
   Actor_Jump(25, 6, 23);
   FieldEvent_ShowMessageThenWait(0x1019, 0, 10);
-  Func_080d47b4(8, 0x103, 50);
+  Actor_ShowEmoteById(8, 0x103, 50);
   Event_Wait(10);
   Actor_ShowEmote(25, 0x109, 50);
   Event_OpenMessage(0x1019, 0);
@@ -435,9 +435,9 @@ void Func_020004f4(void) {
   Event_Wait(10);
   Event_ShowMessageThenWait(0x1008, 0, 10);
   Actor_WalkBy(8, 0, -16);
-  Actor_OffsetPositionAndReset(9, 0, -16);
+  Actor_WalkByById(9, 0, -16);
   Event_Wait(10);
-  Party_SetFields1eeAnd1f0((s32)&SceneId_Ov669, 99);
+  Event_SetAfterBattleDestination((s32)&SceneId_Ov669, 99);
 
   gMainRoutineWork.battleRule24b = 2;
   Field_RequestBattleFromEncounterTable(10, 1);
@@ -473,25 +473,25 @@ void Func_02000c5c(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWellThatTakes);
   Actor_SetPosition(8, PIXELS(436), PIXELS(416));
-  Actor_SetSpriteRotationById(8, 0x4000);
+  FieldActor_SetSpriteRotationById(8, 0x4000);
   object0 = Actor_GetById(8);
   Actor_SetSingleChildFlags((s32)object0, 0);
   Actor_SetPosition(9, PIXELS(456), PIXELS(432));
-  Actor_SetSpriteRotationById(9, 0x8000);
+  FieldActor_SetSpriteRotationById(9, 0x8000);
   object1 = Actor_GetById(9);
   Actor_SetSingleChildFlags((s32)object1, 0);
   object2 = Actor_GetById(9);
   object2->facing = FACING_SOUTH;
   Actor_SetPosition(22, PIXELS(456), PIXELS(460));
-  Actor_SetSpriteRotationById(22, 0x8000);
+  FieldActor_SetSpriteRotationById(22, 0x8000);
   object3 = Actor_GetById(22);
   Actor_SetSingleChildFlags((s32)object3, 0);
   Actor_SetPosition(23, PIXELS(420), PIXELS(424));
-  Func_080d3928(23, 0xc000);
+  Actor_SetSpriteRotationById(23, 0xc000);
   object4 = Actor_GetById(23);
   Actor_SetSingleChildFlags((s32)object4, 0);
   Actor_SetPosition(24, PIXELS(388), PIXELS(440));
-  Func_080d3928(24, 0x4000);
+  Actor_SetSpriteRotationById(24, 0x4000);
   object5 = Actor_GetById(24);
   Actor_SetSingleChildFlags((s32)object5, 0);
   Actor_SetPosition(25, PIXELS(456), PIXELS(376));
@@ -520,7 +520,7 @@ void Func_02000c5c(void) {
   Actor_SetSpeed(22, 0x10000, 0x8000);
   Actor_SetSpeed(23, 0x10000, 0x8000);
   Actor_SetSpeed(24, 0x10000, 0x8000);
-  Camera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(408), 0);
+  FieldCamera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(408), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
@@ -577,11 +577,11 @@ L_0200903c:
   Actor_ShowEmote(5, 0x100, 0);
   Actor_ShowEmote(6, 0x100, 0);
   Actor_ShowEmote(4, 0x100, 30);
-  Camera_FollowActor(10, 1);
+  FieldCamera_FollowActor(10, 1);
   FieldCamera_WaitForArrival();
   Actor_WalkToAndWait(10, 456, 504);
-  Actor_CommitPositionAndActivate(10, 16, 0);
-  Actor_SetPositionAndReset(10, 472, 424);
+  Actor_WalkByAndWaitById(10, 16, 0);
+  Actor_WalkToAndWaitById(10, 472, 424);
   Event_Wait(10);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(408), 1);
   FieldCamera_WaitForArrival();
@@ -681,7 +681,7 @@ L_0200903c:
   Event_ShowMessageThenWait(10, 0, 10);
   Motion_SetModeAndWaitAnimation(8, 4);
   FieldEvent_ShowMessageThenWait(0x1008, 0, 20);
-  Actor_OffsetPositionAndReset(16, 0, 8);
+  Actor_WalkByById(16, 0, 8);
   Event_ShowMessageThenWait(17, 0, 10);
   result8 = (struct Actor *)Actor_ShowEmote(8, 0x100, 0);
   result8->update = 0;
@@ -769,17 +769,17 @@ L_0200903c:
   Actor_FaceDirection(18, FACING_SOUTH, 0);
   Actor_FaceDirection(19, FACING_SOUTH, 0);
   Event_Wait(20);
-  Camera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(344), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(344), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(30);
   Motion_SetVarCbAndRefresh(25, 2);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(0x1019, 0, 10);
-  Actor_CommitPositionAndActivate(17, 0, 16);
+  Actor_WalkByAndWaitById(17, 0, 16);
   Event_Wait(10);
   Event_ShowMessageThenWait(17, 0, 10);
-  Actor_OffsetPositionAndReset(16, 0, 16);
-  Actor_CommitPositionAndActivate(18, 0, 16);
+  Actor_WalkByById(16, 0, 16);
+  Actor_WalkByAndWaitById(18, 0, 16);
   Actor_SetModeById(16, 1);
   Event_Wait(10);
   FieldEvent_ShowTwoMessagesAndWait(18, 13, 1, 13, 4, 16, 17, 11, 22, 6, 0);
@@ -904,26 +904,26 @@ L_0200903c:
   object10 = Actor_GetById(8);
   Actor_SetPosition(8, ((*(s16 *)((u8 *)object10 + 10) << 16) + 0x140000),
                     ((*(s16 *)((u8 *)object10 + 18) << 16) + 0x80000));
-  Func_080d3928(8, 0);
+  Actor_SetSpriteRotationById(8, 0);
   object11 = Actor_GetById(8);
   Actor_SetSingleChildFlags((s32)object11, 1);
   Actor_FaceDirection(8, FACING_NORTH, 0);
   Actor_Jump(8, 6, 40);
   Motion_SetModeAndWaitAnimation(8, 4);
   Actor_SetPosition(9, PIXELS(456), PIXELS(440));
-  Func_080d3928(9, 0);
+  Actor_SetSpriteRotationById(9, 0);
   object12 = Actor_GetById(9);
   Actor_SetSingleChildFlags((s32)object12, 1);
   Actor_SetPosition(22, PIXELS(456), PIXELS(456));
-  Func_080d3928(22, 0);
+  Actor_SetSpriteRotationById(22, 0);
   object13 = Actor_GetById(22);
   Actor_SetSingleChildFlags((s32)object13, 1);
   Actor_SetPosition(23, PIXELS(424), PIXELS(424));
-  Func_080d3928(23, 0);
+  Actor_SetSpriteRotationById(23, 0);
   object14 = Actor_GetById(23);
   Actor_SetSingleChildFlags((s32)object14, 1);
   Actor_SetPosition(24, PIXELS(408), PIXELS(440));
-  Func_080d3928(24, 0);
+  Actor_SetSpriteRotationById(24, 0);
   object15 = Actor_GetById(24);
   Actor_SetSingleChildFlags((s32)object15, 1);
   Actor_FaceDirection(9, FACING_NORTH, 0);
@@ -953,7 +953,7 @@ L_0200903c:
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(400), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Func_080d47b4(8, 0x105, 40);
+  Actor_ShowEmoteById(8, 0x105, 40);
   Motion_SetVarCbAndRefresh(10, 2);
   Event_Wait(10);
   Actor_FaceDirection(10, FACING_WEST, 0);
@@ -988,7 +988,7 @@ L_0200903c:
   Actor_FaceDirection(10, 0xb000, 0);
   Actor_WalkBy(9, 0, -32);
   Actor_WalkBy(22, 0, -32);
-  Actor_OffsetPositionAndReset(23, 16, 0);
+  Actor_WalkByById(23, 16, 0);
   Actor_WalkByAndWait(24, 16, -16);
   Actor_WalkBy(5, -16, -32);
   Actor_WalkByAndWait(6, -16, -32);
@@ -998,10 +998,10 @@ L_0200903c:
   Actor_ArmCallback(6, FACING_EAST, 0);
   Actor_ArmCallback(25, FACING_EAST, 0);
   Actor_ArmCallback(4, FACING_EAST, 0);
-  Actor_OffsetPositionAndReset(9, 16, 0);
+  Actor_WalkByById(9, 16, 0);
   Actor_WalkBy(22, 0, -16);
-  Actor_OffsetPositionAndReset(23, 16, 0);
-  Actor_OffsetPositionAndReset(24, 16, 0);
+  Actor_WalkByById(23, 16, 0);
+  Actor_WalkByById(24, 16, 0);
   Actor_WalkByAndWait(8, 0, -16);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(384), 1);
   FieldCamera_WaitForArrival();
@@ -1017,19 +1017,19 @@ L_0200903c:
   Actor_FaceDirection(8, FACING_NORTH, 0);
   Event_Wait(20);
   Actor_WalkBy(9, 0, -16);
-  Actor_OffsetPositionAndReset(22, 16, 0);
+  Actor_WalkByById(22, 16, 0);
   Actor_WalkBy(23, 0, -16);
-  Actor_OffsetPositionAndReset(24, 16, 0);
+  Actor_WalkByById(24, 16, 0);
   Actor_WalkByAndWait(8, 0, -16);
   Actor_WalkBy(9, 0, -16);
   Actor_WalkBy(22, 0, -16);
-  Actor_OffsetPositionAndReset(23, 16, 0);
+  Actor_WalkByById(23, 16, 0);
   Actor_WalkBy(24, 0, -16);
   Actor_WalkByAndWait(8, 0, -16);
   Actor_WalkBy(9, 0, -16);
   Actor_WalkBy(22, 0, -16);
   Actor_WalkBy(23, 0, -16);
-  Actor_OffsetPositionAndReset(24, 16, 0);
+  Actor_WalkByById(24, 16, 0);
   Actor_WalkByAndWait(8, 0, -16);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(336), 1);
   FieldCamera_WaitForArrival();
@@ -1079,7 +1079,7 @@ L_0200903c:
   Event_Wait(10);
   object16 = Actor_GetById(17);
   object16->actionFlags &= 254;
-  Actor_SetPositionAndReset(17, 456, 312);
+  Actor_WalkToAndWaitById(17, 456, 312);
   Event_Wait(1);
   object17 = Actor_GetById(17);
   object17->actionFlags |= 1;
@@ -1116,7 +1116,7 @@ L_0200903c:
   Actor_FaceDirection(16, FACING_NORTH, 0);
   Actor_ArmCallback(8, FACING_WEST, 0);
   Event_Wait(20);
-  Camera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(296), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(296), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(19, 2);
@@ -1156,7 +1156,7 @@ L_0200903c:
   Actor_WalkByAndWait(19, -16, 0);
   Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
   Event_Wait(20);
-  Actor_CommitPositionAndActivate(20, 16, 16);
+  Actor_WalkByAndWaitById(20, 16, 16);
   Actor_ArmCallback(20, FACING_EAST, 0);
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(20, 2);
@@ -1176,7 +1176,7 @@ L_0200903c:
   Event_Wait(10);
   Actor_SetMovementTypeById(24, gData_020033c8);
   Event_Wait(75);
-  Actor_CommitPositionAndActivate(20, 16, 0);
+  Actor_WalkByAndWaitById(20, 16, 0);
   Actor_WalkByAndWait(20, 0, -32);
   Actor_WalkByAndWait(20, -32, 0);
   Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
@@ -1192,10 +1192,10 @@ L_0200903c:
   Event_ShowMessageThenWait(16, 0, 10);
   Motion_SetModeAndWaitAnimation(18, 3);
   Event_Wait(10);
-  Actor_CommitPositionAndActivate(16, 16, 0);
+  Actor_WalkByAndWaitById(16, 16, 0);
   Actor_WalkBy(16, 0, -32);
   Actor_WalkByAndWait(18, 0, -16);
-  Actor_CommitPositionAndActivate(18, 16, 0);
+  Actor_WalkByAndWaitById(18, 16, 0);
   Actor_FaceDirection(18, FACING_NORTH, 0);
   Actor_FaceDirection(17, FACING_NORTH, 0);
   Event_Wait(10);
@@ -1203,15 +1203,15 @@ L_0200903c:
   Actor_FaceDirection(16, FACING_SOUTH, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(16, 0, 10);
-  Camera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(320), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(320), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(25, 2);
   Event_Wait(10);
   Actor_FaceDirection(17, FACING_SOUTH, 0);
   Actor_FaceDirection(18, FACING_SOUTH, 0);
-  Actor_OffsetPositionAndReset(4, 16, 0);
-  Actor_CommitPositionAndActivate(25, 16, 0);
+  Actor_WalkByById(4, 16, 0);
+  Actor_WalkByAndWaitById(25, 16, 0);
   Actor_WalkBy(4, 0, -32);
   Actor_WalkByAndWait(25, 0, -32);
   Actor_FaceDirection(6, FACING_NORTH, 0);
@@ -1226,7 +1226,7 @@ L_0200903c:
   Event_Wait(20);
   Actor_ShowEmote(16, 0x108, 30);
   Event_ShowMessageThenWait(16, 0, 10);
-  Func_080d47b4(25, 0x101, 50);
+  Actor_ShowEmoteById(25, 0x101, 50);
   Motion_SetModeAndWaitAnimation(16, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(16, 0, 10);
@@ -1273,7 +1273,7 @@ L_0200903c:
   Actor_FaceDirection(25, FACING_NORTH, 0);
   Actor_ArmCallback(6, FACING_NORTH, 0);
   Event_Wait(40);
-  Actor_CommitPositionAndActivate(17, -32, -8);
+  Actor_WalkByAndWaitById(17, -32, -8);
   Event_Wait(20);
   Actor_FaceDirection(17, FACING_NORTHWEST, 0);
   Event_Wait(30);
@@ -1289,7 +1289,7 @@ L_0200903c:
   Event_Wait(30);
   Actor_ArmCallback(17, FACING_NORTHWEST, 0);
   Event_Wait(30);
-  Actor_CommitPositionAndActivate(17, 16, 16);
+  Actor_WalkByAndWaitById(17, 16, 16);
   Actor_FaceDirection(17, FACING_SOUTH, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(17, 0, 10);
@@ -1357,7 +1357,7 @@ L_0200abc0:
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
   Event_Wait(30);
-  Func_080d47b4(10, 0x100, 50);
+  Actor_ShowEmoteById(10, 0x100, 50);
   Actor_StartRepeatedMotion(10, 3);
   FieldEffect_SetAttached(10, 0x102);
   Event_Wait(40);
@@ -1374,7 +1374,7 @@ L_0200abc0:
   Event_Wait(10);
   Event_ShowMessageThenWait(10, 0, 10);
   Actor_WalkToAndWait(10, 472, 376);
-  Camera_FollowActor(10, 1);
+  FieldCamera_FollowActor(10, 1);
   Actor_ArmCallback(6, FACING_EAST, 0);
   Actor_ArmCallback(5, FACING_EAST, 0);
   Actor_WalkBy(25, -16, -32);
@@ -1450,8 +1450,8 @@ L_0200afe8:
   object20 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object20 == 0)
     goto L_0200b03c;
-  Actor_ResetAndSetPosition(5, *(s16 *)((u8 *)object20 + 10),
-                            *(s16 *)((u8 *)object20 + 18));
+  Actor_SetDestinationById(5, *(s16 *)((u8 *)object20 + 10),
+                           *(s16 *)((u8 *)object20 + 18));
 L_0200b03c:
   Actor_WaitForMoveById(5);
   Actor_SetHorizontalPositionWithTerrain(5, 0, 0);
@@ -1460,8 +1460,8 @@ L_0200b03c:
   object21 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object21 == 0)
     goto L_0200b07a;
-  Actor_ResetAndSetPosition(6, *(s16 *)((u8 *)object21 + 10),
-                            *(s16 *)((u8 *)object21 + 18));
+  Actor_SetDestinationById(6, *(s16 *)((u8 *)object21 + 10),
+                           *(s16 *)((u8 *)object21 + 18));
 L_0200b07a:
   Actor_WaitForMoveById(6);
   Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
@@ -1470,12 +1470,12 @@ L_0200b07a:
   object22 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object22 == 0)
     goto L_0200b0b8;
-  Actor_ResetAndSetPosition(25, *(s16 *)((u8 *)object22 + 10),
-                            *(s16 *)((u8 *)object22 + 18));
+  Actor_SetDestinationById(25, *(s16 *)((u8 *)object22 + 10),
+                           *(s16 *)((u8 *)object22 + 18));
 L_0200b0b8:
   Actor_WaitForMoveById(25);
   Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Event_End();
   return;
 }

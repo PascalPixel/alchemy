@@ -1,5 +1,5 @@
 @ Why assembly: Nintendo MusicPlayer2000 SoundMain entry sets up one stack
-@ frame then bx r3 transfers into SoundDriver_Mixer, which consumes its live
+@ frame then bx r3 transfers into SoundMainRAM, which consumes its live
 @ stack and saved register state and returns for it, a linkage no
 @ procedure-call standard produces.
 .syntax unified
@@ -69,7 +69,7 @@ AlchemyUncredited_081c12f6:
 AlchemyUncreditedEnd_081c12f6:
 	.4byte	0x03007ff0
 	.4byte	0x68736d53
-	.4byte	SoundDriver_Mixer
+	.4byte	SoundMainRAM
 	.4byte	0x04000006
 	.4byte	0x00000350
 	.4byte	0x00000630

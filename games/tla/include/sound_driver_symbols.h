@@ -90,4 +90,7 @@ extern u16 gBgmTempoPitchTarget;
 extern u16 gBgmTempoPitch;
 extern u16 gBgmTempoPitchStep;
 
+/// The BIOS CpuSet service (bios.s).
+void Bios_CpuSet(const void *source, void *destination, u32 control);
+
 #endif

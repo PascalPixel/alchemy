@@ -9,6 +9,7 @@
 #include "module/tla.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"
+#include "gamepak/far_call/field.h"
 
 /// The progress bar's serial callback: advances the stored progress by step
 /// and draws row min(progress, 6) of gWindow_ProgressBarRows.
@@ -49,7 +50,7 @@ struct Window *SaveProgress_Open(u32 kind) {
 
   window = Window_Create(0, 0, 30, 20, 0);
   tiles = Heap_AllocEwram(0x100);
-  Resource_DecodeType01(gWindow_ProgressBarTiles, tiles);
+  Decompress_TaggedLz(gWindow_ProgressBarTiles, tiles);
   Dma_Set(tiles, (void *)0x06001000, DMA_COPY_WORDS(64), REG_DMA3);
   switch (kind) {
   case 0:
@@ -75,7 +76,7 @@ struct Window *SaveProgress_Open(u32 kind) {
 /// Closes the progress screen.
 struct Window *SaveProgress_Close(struct Window *window) {
   wait(10);
-  Func_080c8698();
+  Scene_PlayQueuedMusicFar();
   Sound_SetBgmVolumeTargetFar(0x100, 30);
   Window_Close(window, 0);
   return window;
@@ -89,7 +90,7 @@ struct Window *SaveProgress_Close(struct Window *window) {
     dma[5];                                                                    \
   } while (0)
 
-/// Runs Func_08015ca4 with interrupts masked and all four DMA channels
+/// Runs Save_WritePart with interrupts masked and all four DMA channels
 /// stopped, queueing Func_08042dc4 as the serial command around it, then
 /// restores IE and IME. Func_08042ff0 does the same around
 /// Save_DeletePart.
@@ -116,7 +117,7 @@ s32 Func_08042f10(s32 partId, void *buffer) {
   DMA_STOP(3);
   IRQ_UNLOCK(ime);
   Serial_QueueCommand((u32)Func_08042dc4);
-  result = Func_08015ca4(partId, buffer);
+  result = Save_WritePart(partId, buffer);
   Serial_QueueCommand(0);
   IRQ_LOCK(ime);
   REG_IE = ie;
@@ -128,7 +129,7 @@ s32 Save_DeletePart(s32 partId);
 
 /// Deletes a part of a save file (Save_DeletePart) with interrupts masked and
 /// all four DMA channels stopped, queueing Func_08042dc4 as the serial command
-/// around it, as Func_08042f10 does around Func_08015ca4.
+/// around it, as Func_08042f10 does around Save_WritePart.
 s32 Func_08042ff0(s32 partId) {
   volatile u32 ime;
   volatile u32 ie;
@@ -282,7 +283,7 @@ s32 Save_CountFilesExcludingSent(s32 flag) {
   struct SaveSummary *summary;
   struct SaveWorkspace *work;
 
-  if (Func_0801596c() != 0) {
+  if (Save_InitializeWork() != 0) {
     cnt = -9;
   } else {
     cnt = Save_LoadFileSummaries();
@@ -306,12 +307,12 @@ extern u16 gData_020036d8__screens __asm__("gData_020036d8");
  * module/window/window.h has s16 gData_02005350. */
 extern u16 gData_02005350__screens __asm__("gData_02005350");
 
-s32 Func_080432a4(void) {
+s32 Save_ScanFileSummaries(void) {
   s32 err;
   s32 cnt;
   s32 ret;
 
-  err = Func_0801596c();
+  err = Save_InitializeWork();
   cnt = 0;
   ret = -9;
   if (err == 0) {
@@ -357,7 +358,7 @@ s32 Save_BuildFileSummary(void) {
   s32 i;
   u32 sum = 0;
 
-  summary = (struct SaveSummary *)(gData_02000000 - 16);
+  summary = (struct SaveSummary *)(gSaveBuffer - 16);
   SAVE_GAME_WORDS->buildStamp = BuildStamp_GetTimeFar(0);
   SAVE_GAME_WORDS->playTime = gFrameWaitCount;
   gData_02001000__screens = gFrameWaitCount;
@@ -369,8 +370,8 @@ s32 Save_BuildFileSummary(void) {
     *destination++ = *source++;
   summary->level = owner->level;
   summary->playTime = SAVE_GAME_WORDS->playTime;
-  summary->area = Scene_GetAreaNameIndexFar(gMainRoutineWork.scene,
-                                            gMainRoutineWork.entrance);
+  summary->area =
+      Area_GetNameIndexFar(gMainRoutineWork.scene, gMainRoutineWork.entrance);
   summary->classId = owner->classIndex;
   summary->coins = gMainRoutineWork.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);
@@ -422,10 +423,10 @@ void FieldMessage_Show(s32 message, s32 position);
 s32 Save_WriteFile(s32 file) {
   s32 result = 0;
 
-  if (Func_0801596c() != 0) {
+  if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
-  } else if (Func_08042f10(file, gData_02000000) != 0) {
+  } else if (Func_08042f10(file, gSaveBuffer) != 0) {
     FieldMessage_Show((s32)&MsgSaveFailed, 1);
     result = -3;
   }
@@ -433,7 +434,7 @@ s32 Save_WriteFile(s32 file) {
   return result;
 }
 
-s32 Func_08043534(void) {
+s32 Save_ProcessSelectedFile(void) {
   void *buffer;
   s32 value;
   s32 result;
@@ -442,25 +443,25 @@ s32 Func_08043534(void) {
 
   result = 0;
   buffer = Heap_AllocEwram(0x3000);
-  value = gData_020036d0;
+  value = gSaveSlot;
   if (value != -1) {
-    found = Func_0801596c();
+    found = Save_InitializeWork();
     if (found != 0) {
       FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
       result = -9;
     } else {
       u8 *dst;
 
-      found = Save_ReadPart(gData_020036d0, buffer);
+      found = Save_ReadPart(gSaveSlot, buffer);
       if (found != 0) {
         FieldMessage_Show((s32)&MsgSaveFailed, 1);
         result = -2;
       }
       dst = (u8 *)buffer + (s32)gData_02000504;
-      dst -= (s32)gData_02000000;
+      dst -= (s32)gSaveBuffer;
       Iwram_CopyWordsEntry(dst, gData_02000504, 16);
       token = (s32)SaveProgress_Open(0);
-      found = Func_08042f10(gData_020036d0, buffer);
+      found = Func_08042f10(gSaveSlot, buffer);
       SaveProgress_Close((struct Window *)token);
       if (found != 0) {
         FieldMessage_Show((s32)&MsgSaveFailed, 1);
@@ -481,17 +482,17 @@ s32 Save_ToFile(u32 slot) {
 
   if (slot > 2)
     slot = 2;
-  if (Func_0801596c() != 0) {
+  if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else {
     Save_LoadFileSummaries();
-    gData_020036d0 = slot;
+    gSaveSlot = slot;
     Sound_PlayFar(85);
     FieldMessage_Show((s32)&MsgSaving, 13);
     Save_BuildFileSummary();
     ObjectTable_SnapshotFar();
-    found = Func_08042f10(slot, gData_02000000);
+    found = Func_08042f10(slot, gSaveBuffer);
     while (Message_AllTyped() == 0)
       wait(1);
     Message_CloseFinishedWindows();
@@ -508,19 +509,19 @@ s32 Save_ToFile(u32 slot) {
 
 /// Lets the player choose a file and saves the game to it, asking first before
 /// it writes over a file in use.
-s32 Func_08043690(void) {
+s32 Save_ToChosenFile(void) {
   s32 result = 0;
   s32 slot;
   s32 found;
   s32 token;
   struct SaveWorkspace *work;
 
-  if (Func_0801596c() != 0) {
+  if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else {
     Save_LoadFileSummaries();
-    slot = FileList_SelectFile(gData_020036d0, 0);
+    slot = FileList_SelectFile(gSaveSlot, 0);
     if (slot == -1) {
       result = slot;
     } else {
@@ -535,11 +536,11 @@ s32 Func_08043690(void) {
         }
         Message_CloseFinishedWindows();
       }
-      gData_020036d0 = slot;
+      gSaveSlot = slot;
       token = (s32)SaveProgress_Open(0);
       Save_BuildFileSummary();
       ObjectTable_SnapshotFar();
-      found = Func_08042f10(slot, gData_02000000);
+      found = Func_08042f10(slot, gSaveBuffer);
       SaveProgress_Close((struct Window *)token);
       Message_CloseFinishedWindows();
       if (found != 0) {
@@ -560,22 +561,22 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
   s32 result = 0;
   s32 file;
 
-  if (Func_0801596c() != 0) {
+  if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else {
     Save_LoadFileSummaries();
-    file = FileList_SelectFile(gData_020036d0, mode);
+    file = FileList_SelectFile(gSaveSlot, mode);
     if (file == -1) {
       result = file;
-    } else if (Save_ReadPart(file, gData_02000000) != 0) {
+    } else if (Save_ReadPart(file, gSaveBuffer) != 0) {
       FieldMessage_Show((s32)&MsgLoadFailed, 1);
       result = -2;
     } else {
       gFrameWaitCount = SAVE_GAME_WORDS->playTime;
       gAutoSleepEnabled = gMainRoutineWork.unk244[6];
       gIdleFrameCount = 0;
-      gData_020036d0 = file;
+      gSaveSlot = file;
     }
   }
   Save_ReleaseWork();
@@ -588,7 +589,7 @@ s32 Save_CopyFile(void) {
   s32 value;
   s32 token;
 
-  if (Func_0801596c() != 0) {
+  if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else {
@@ -597,7 +598,7 @@ s32 Save_CopyFile(void) {
     if (value == -1) {
       result = value;
     } else {
-      void *buffer = gData_02000000;
+      void *buffer = gSaveBuffer;
 
       value = Save_ReadPart(value, buffer);
       if (value != 0) {
@@ -639,7 +640,7 @@ s32 Save_EraseSelectedFile(void) {
   s32 token;
   s32 found;
 
-  if (Func_0801596c() != 0) {
+  if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
   } else {
@@ -759,14 +760,14 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
   }
 }
 
-void Func_08043a64(struct RenderInput *origin, s32 x, s32 y,
-                   struct SaveSummary *descriptor) {
+void FileList_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
+                               struct SaveSummary *descriptor) {
   struct ObjectRowWork *state = Ram_HeapSlots->menuRuntime;
   s32 i;
 
   for (i = 0; i < 4 && descriptor->party[i] != -1; i++) {
     struct FieldSprite *object =
-        (struct FieldSprite *)ResourceObject_CreateFar(descriptor->party[i]);
+        (struct FieldSprite *)Sprite_CreateFar(descriptor->party[i]);
 
     if (object != 0) {
       Animation_ApplyChildArgumentFar(object, 1);
@@ -780,7 +781,7 @@ void Func_08043a64(struct RenderInput *origin, s32 x, s32 y,
     state->scale[i] = 0x10000;
   }
 
-  Task_Add(Func_08043b70, TASK_PASS_VBLANK);
+  Task_Add(FileList_PlacePartySprites, TASK_PASS_VBLANK);
 }
 
 void Menu_ClearFirstObjectRowAndScheduleUpdate(void) {
@@ -789,7 +790,7 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void) {
   s32 zero;
   s32 count;
 
-  Task_Remove((s32)Func_08043b70);
+  Task_Remove((s32)FileList_PlacePartySprites);
   zero = 0;
   offset = 248;
   count = 3;
@@ -797,7 +798,7 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void) {
     void *entry = *(void **)(offset + (unsigned int)base);
 
     if (entry != 0) {
-      ResourceObject_ReleaseFar(entry);
+      Sprite_DestroyFar(entry);
       *(s32 *)(offset + (unsigned int)base) = zero;
     }
     count--;
@@ -805,7 +806,7 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void) {
   } while (count >= 0);
 }
 
-void Func_08043b70(void) {
+void FileList_PlacePartySprites(void) {
   struct ObjectRowState *state =
       (struct ObjectRowState *)Ram_HeapSlots->menuRuntime;
   s32 source[2];
@@ -1045,18 +1046,18 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   }
   modePicture =
       MenuTitle_Create(menuMode, (struct RenderInput *)fileList, 72, -24);
-  Func_080f8070();
+  DjinnFigures_InitializeTopRowFar();
   for (i = 0, y = 144; i < 4; i++, y += 24)
-    Func_080f8090(i, y, 128);
-  Func_080f8080(0);
+    MenuIcon_SetPositionFar(i, y, 128);
+  Menu_SetEntryObjectsHiddenFar(0);
   wait(1);
 
   while (1) {
     if (summaryDirty != 0) {
       summaryDirty = 0;
       if (save->summary[selectedFile].level != 0) {
-        Func_0803f9c0(save->summary[selectedFile].paletteGlow,
-                      save->summary[selectedFile].paletteGlowSub);
+        WindowColor_Apply(save->summary[selectedFile].paletteGlow,
+                          save->summary[selectedFile].paletteGlowSub);
         if (summaryWindow == NULL)
           summaryWindow = Window_Create(1, 10, 14, 9, 2);
         FileList_DrawSummary((s32)summaryWindow,
@@ -1065,8 +1066,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
         if (partyWindow == NULL)
           partyWindow = Window_Create(16, 10, 13, 3, 2);
         Menu_ClearFirstObjectRowAndScheduleUpdate();
-        Func_08043a64((struct RenderInput *)partyWindow, 0, 0,
-                      &save->summary[selectedFile]);
+        FileList_ShowPartySprites((struct RenderInput *)partyWindow, 0, 0,
+                                  &save->summary[selectedFile]);
         wait(1);
         if ((s8)save->summary[selectedFile].djinn[0] +
                 (s8)save->summary[selectedFile].djinn[1] +
@@ -1078,15 +1079,16 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
           FileList_DrawDjinnCounts(
               (struct RenderInput *)djinnWindow,
               (struct NumberRow *)&save->summary[selectedFile]);
-          Func_080f8080(1);
+          Menu_SetEntryObjectsHiddenFar(1);
         } else {
-          Func_080f8080(0);
+          Menu_SetEntryObjectsHiddenFar(0);
           Window_Close(djinnWindow, 2);
           djinnWindow = NULL;
         }
       } else {
-        Func_0803f9c0(gMainRoutineWork.unk220[5], gMainRoutineWork.unk220[6]);
-        Func_080f8080(0);
+        WindowColor_Apply(gMainRoutineWork.unk220[5],
+                          gMainRoutineWork.unk220[6]);
+        Menu_SetEntryObjectsHiddenFar(0);
         Menu_ClearFirstObjectRowAndScheduleUpdate();
         Window_Close(djinnWindow, 2);
         Window_Close(partyWindow, 2);
@@ -1136,7 +1138,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       break;
     }
   }
-  Func_080f8078();
+  DjinnFigures_ReleaseTopRowFar();
   Menu_ClearFirstObjectRowAndScheduleUpdate();
   Window_Close(djinnWindow, 2);
   Window_Close(partyWindow, 2);
@@ -1144,7 +1146,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   Window_Close(fileList, 2);
   FileList_StopPulse();
   HeapSlot_Release(220);
-  Func_0803f9c0(gMainRoutineWork.unk220[5], gMainRoutineWork.unk220[6]);
+  WindowColor_Apply(gMainRoutineWork.unk220[5], gMainRoutineWork.unk220[6]);
   wait(1);
 done:
   return result;

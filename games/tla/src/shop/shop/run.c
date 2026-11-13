@@ -6,7 +6,20 @@
 #include "../shop_internal.h"
 #include "gamepak/far_call/window.h"
 #include "module/shop/shop.h"
+#include "gamepak/far_call/menu.h"
+#include "gamepak/far_call/field_sequence.h"
 #include "module/tla.h"
+
+extern char ResourceId_ShopGemTiles;
+
+/// Item menu workspace (known fields only).
+extern char ResourceId_MenuArrowTiles;
+
+extern char ResourceId_MenuSmallDownArrowTiles;
+
+extern char ResourceId_ShopUpArrowTiles;
+
+extern char ResourceId_ShopDownArrowTiles;
 
 /// Lists the current shop's artifacts: every item of the shop's type whose
 /// shared stock counter is above zero, or of any type at a general store.
@@ -41,7 +54,8 @@ s32 Shop_ListAvailableArtifacts(void) {
 /// Advances the hand cursor one frame. Runs every frame as a task while a
 /// counter is open.
 void MenuCursor_Step(void) {
-  MenuCursor_Advance(&((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor);
+  MenuCursor_Advance(
+      &((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor);
 }
 
 /// Allocates and clears the work block in the menu's heap slot, lists the
@@ -59,24 +73,24 @@ void Shop_InitializeWork(void) {
   // The hand cursor's glides take 12 frames until a screen changes it
   work->mode = 12;
   work->partyMemberCount = Party_ListMembersFar(work->partyMemberIds);
-  Palette_CopyObjectBankToBackground14Far();
+  Palette_LoadIconsIntoHighlightFar();
   // Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   work->cursorIcon = slot;
   VramBlock_LoadResource(slot, 128, (s32)&ResourceId_UiIconTiles);
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   work->previousPageIcon = slot;
   VramBlock_LoadResource(slot, 128, (s32)&ResourceId_ShopUpArrowTiles);
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   work->nextPageIcon = slot;
   VramBlock_LoadResource(slot, 128, (s32)&ResourceId_ShopDownArrowTiles);
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   work->gemIcon = slot;
   VramBlock_LoadResource(slot, 128, (s32)&ResourceId_ShopGemTiles);
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   work->statDownIcon = slot;
   VramBlock_LoadResource(slot, 128, (s32)&ResourceId_MenuSmallDownArrowTiles);
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   work->statUpIcon = slot;
   VramBlock_LoadResource(slot, 128, (s32)&ResourceId_MenuArrowTiles);
   Task_Add(MenuCursor_Step, TASK_PASS_VBLANK);
@@ -92,12 +106,12 @@ void Shop_ReleaseWork(void) {
   ItemIconGrid_Release();
   Task_Remove(MenuCursor_Step);
   Message_CloseFinishedWindowsFar();
-  Resource_ResetEntry(state->cursorIcon);
-  Resource_ResetEntry(state->previousPageIcon);
-  Resource_ResetEntry(state->nextPageIcon);
-  Resource_ResetEntry(state->gemIcon);
-  Resource_ResetEntry(state->statUpIcon);
-  Resource_ResetEntry(state->statDownIcon);
+  VramCache_FreeEntry(state->cursorIcon);
+  VramCache_FreeEntry(state->previousPageIcon);
+  VramCache_FreeEntry(state->nextPageIcon);
+  VramCache_FreeEntry(state->gemIcon);
+  VramCache_FreeEntry(state->statUpIcon);
+  VramCache_FreeEntry(state->statDownIcon);
   HeapSlot_Release(220);
 }
 
@@ -124,7 +138,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
       **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar__shop(keeperId) + 80) + 40);
   // The shopkeeper's portrait window, or an empty one off the right edge when
   // there is no portrait.
-  window = Func_080380f8(shop->keeperResource, 0, 0, 0);
+  window = Portrait_OpenWindowFar(shop->keeperResource, 0, 0, 0);
   if (window == 0)
     window = Window_CreateFar(30, 0, 2, 2, 2);
   anchor =
@@ -177,8 +191,9 @@ s32 Shop_OpenDebugShop(void) {
   gMainRoutineWork.counterC = 28;
   // A broken Virtuous Armlet (141), a broken Muramasa (11) and a Bone (231)
   Inventory_EquipFar__shop(GARET,
-                     Inventory_AddItemFar(GARET, INVENTORY_BROKEN | 141));
-  Inventory_EquipFar__shop(ISAAC, Inventory_AddItemFar(ISAAC, INVENTORY_BROKEN | 11));
+                           Inventory_AddItemFar(GARET, INVENTORY_BROKEN | 141));
+  Inventory_EquipFar__shop(ISAAC,
+                           Inventory_AddItemFar(ISAAC, INVENTORY_BROKEN | 11));
   Inventory_AddItemFar(IVAN, 231);
   ((struct BattleUnit *)Unit_Get(MIA))->poison = 1;
   ((struct BattleUnit *)Unit_Get(JENNA))->poison = 1;
@@ -257,7 +272,7 @@ s32 Shop_AskYesNo(s32 choice) {
   u8 saved = (*slot)->active;
 
   Icon_PrepareActorFar(*slot);
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
   choice = YesNoMenu_RunAtFar(6, 5, choice);
 #else

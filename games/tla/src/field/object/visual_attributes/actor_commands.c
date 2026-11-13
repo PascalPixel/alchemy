@@ -31,7 +31,7 @@ void Actor_ArmCallback(s32 objectId, s32 angle, s32 frames) {
   }
 }
 
-void Actor_ArmCallbackAndRefresh(s32 objectId, s32 angle) {
+void Actor_FaceDirectionById(s32 objectId, s32 angle) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -53,7 +53,7 @@ void Actor_SetSpritePriority(u32 objectId, s32 priority) {
   }
 }
 
-void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId) {
+void Actor_CopyGraphics(u32 targetId, u32 sourceId) {
   struct FieldSprite *sprite;
   u8 block;
   u32 tile;
@@ -77,7 +77,7 @@ void Func_080d390c(u32 id) {
   Actor_SetSingleChildFlagsFar(object, 0);
 }
 
-void Func_080d3928(u32 id, s32 rotation) {
+void Actor_SetSpriteRotationById(u32 id, s32 rotation) {
   struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite = object->sprite;
 
@@ -85,8 +85,12 @@ void Func_080d3928(u32 id, s32 rotation) {
     sprite->rotation = rotation;
 }
 
-/* VIEW(visual_attributes): routine Func_08038248 as void Func_08038248(s32 resource, u8 *buffer); module/field/field.h has void Func_08038248(s32 item). */
-extern void Func_08038248__visual_attributes(s32 resource, u8 *buffer) __asm__("Func_08038248");
+/* VIEW(visual_attributes): routine Icon_DrawItemFar as void
+ * Icon_DrawItemFar(s32 resource, u8 *buffer); module/field/field.h has void
+ * Icon_DrawItemFar(s32 item). */
+extern void
+Func_08038248__visual_attributes(s32 resource,
+                                 u8 *buffer) __asm__("Icon_DrawItemFar");
 
 void Func_080d3940(u32 id, u32 angle) {
   s32 position[3];
@@ -98,9 +102,11 @@ void Func_080d3940(u32 id, u32 angle) {
     angle = (angle + 0x2000) & 0xc000;
     position[0] = object->x;
     position[2] = object->z;
-    SetMapCellCollisionFar(object->terrainId, position[0], position[2], 255);
+    MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
+                                 255);
     Vector_AddPolarOffset(0x100000, angle, position);
-    SetMapCellCollisionFar(object->terrainId, position[0], position[2], 255);
+    MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
+                                 255);
     switch (angle) {
     case 0:
       sprite->offsetX -= 3;
@@ -136,9 +142,11 @@ void Func_080d3a10(s32 id, u32 angle, s32 mode) {
   position[0] = object->x;
   angle = (angle + 0x2000) & 0xc000;
   position[2] = object->z;
-  SetMapCellCollisionFar(object->terrainId, position[0], position[2], 255);
+  MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
+                               255);
   Vector_AddPolarOffset(0x100000, angle, position);
-  SetMapCellCollisionFar(object->terrainId, position[0], position[2], 255);
+  MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
+                               255);
   switch (angle) {
   case 0:
     object->x += 0x80000;
@@ -166,10 +174,10 @@ void Func_080d3a10(s32 id, u32 angle, s32 mode) {
   sprite->rotation = angle + 0x4000;
 }
 
-/// Gives an actor's sprite a still picture: resource, drawn by Func_08038248
+/// Gives an actor's sprite a still picture: resource, drawn by Icon_DrawItemFar
 /// into a cleared 128-byte buffer, or a blank one when bit 15 is set, loaded
 /// into the sprite's VRAM block as its tile.
-void Func_080d3b28(u32 id, s32 resource) {
+void Actor_ShowItemIconById(u32 id, s32 resource) {
   struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite;
   u8 *buffer;
@@ -193,7 +201,7 @@ void Func_080d3b28(u32 id, s32 resource) {
       tile = VramCache_Load(sprite->vramBlock, 0x80, buffer);
       HeapSlot_Release(68);
       object->unk5c[0] = kind;
-      ResourceMetadata_ClearRecordFar(sprite->record);
+      SpriteAnimation_ClearFar(sprite->record);
       sprite->record = NULL;
       sprite->unk1b[0] = zero;
       sprite->fullColor = zero;
@@ -210,7 +218,7 @@ void Event_SetMessageId(s32 message) {
   event->messageId = message;
 }
 
-s32 ObjectTable_ReadActiveValue(s32 key) {
+s32 Actor_GetSpriteById(s32 key) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 result = -1;
   struct Actor *object = event->objects[key & 0x0fff];
@@ -220,7 +228,7 @@ s32 ObjectTable_ReadActiveValue(s32 key) {
   return result;
 }
 
-s32 ObjectTable_FindActiveByValue(s32 value) {
+s32 Actor_FindBySprite(s32 value) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 result = -1;
   s32 index = 8;

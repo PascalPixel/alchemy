@@ -275,7 +275,8 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
   cell[0] = (object->x + (gData_02001974[kind * 4] << 16)) >> 20;
   cell[2] = (object->z + (gData_02001974[kind * 4 + 1] << 16)) >> 20;
   w = (ABS(gData_02001974[kind * 4]) + ABS(gData_02001974[kind * 4 + 2])) >> 4;
-  h = (ABS(gData_02001974[kind * 4 + 1]) + ABS(gData_02001974[kind * 4 + 3])) >> 4;
+  h = (ABS(gData_02001974[kind * 4 + 1]) + ABS(gData_02001974[kind * 4 + 3])) >>
+      4;
   Map_FillCellRectByte2(0, cell[0], cell[2], w, h, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 8);
@@ -309,7 +310,7 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
   leader->update = NULL;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   Event_PlaySound(298);
   Event_PlaySound(213);
   Actor_SetPositionAndResetMotion(object, rect.word[0], object->y,
@@ -445,7 +446,7 @@ void Func_02000acc(void) {
   wait(40);
   Func_020008fc();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
-  BattleEffect_StartBufferInterpolation(16);
+  PaletteFade_StartInterpolation(16);
   wait(16);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -504,7 +505,7 @@ DEFINE_ACTOR_SET_CELL_OPEN(Func_02000c44, Func_02001940, Func_02001828)
 
 void Func_02000cec(void) {
   Event_SetFlag(0x271);
-  Field_RequestDjinnBattle(17, 17);
+  Event_RequestDjinnBattle(17, 17);
   return;
 }
 
@@ -764,11 +765,11 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   Event_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   Event_Wait(60);
-  FieldMessage_ShowCentered((s32)MsgIAmThe, 0, 6);
+  EventMessage_ShowCentered((s32)MsgIAmThe, 0, 6);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   leader = ((s32)Actor_GetById(FIELD_AT(&gMainRoutineWork, s32, 0x214)));
   if (leader != 0)

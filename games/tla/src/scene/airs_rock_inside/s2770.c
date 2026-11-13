@@ -124,7 +124,7 @@ DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(Func_02002a14, 63)
 void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-void Map_SetScreenShake(s32 a, s32 b, s32 c);
+void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 
 void Func_02002aa8(s32 x, s32 z) {
   struct EffectOptions options;
@@ -148,8 +148,8 @@ burst:
   i++;
   if (i != 8)
     goto burst;
-  Map_SetScreenShake(0x50000, 0x70000, 0x10000);
-  Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
+  MapGrid_SetScreenShake(0x50000, 0x70000, 0x10000);
+  Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
 }
 
 void Func_02002b58(s32 x, s32 z) {
@@ -212,13 +212,13 @@ void Func_02002c40(struct Actor *object) {
       Iwram_MulQ16(Math_Sine((WORD_AT(object, 48) & 255) << 11), radius);
   object->y += WORD_AT(object, 72);
   WORD_AT(object, 48)++;
-  Actor_SetPartAttribute(object, ((gFrameCount & 2) >> 1) * 9);
+  Actor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
 }
 
 void Func_02002cc0(struct Actor *object) {
   s32 bit = ((gFrameCount & 3) >> BYTE_AT(object, 99)) & 1;
 
-  Actor_SetPartAttribute(object, (u8)(bit * BYTE_AT(object, 98)));
+  Actor_SetSpriteColor(object, (u8)(bit * BYTE_AT(object, 98)));
 }
 
 // ---- games/tla/src/scene/airs_rock_inside/s2cf0.c ----
@@ -231,12 +231,13 @@ void Func_02002cc0(struct Actor *object) {
 
 void BattleEffect_ApplyColorToSourceBuffer(s32 a, s32 b);
 s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
-s32 BattleEffect_StartBufferInterpolation(s32 frames);
-s32 Camera_FollowActor(s32 id, s32 a);
+s32 PaletteFade_StartInterpolation(s32 frames);
+s32 FieldCamera_FollowActor(s32 id, s32 a);
 void Camera_SetSpeedParameters(s32 a, s32 b);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Map_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height, s32 a,
+void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
+void MapGrid_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height, s32 a,
                                     s32 b);
+void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 void Actor_ConfigureSpriteColor(s32 actor, s32 a);
 void Func_02001084(struct Actor *object, s32 a, s32 b);
 
@@ -260,13 +261,13 @@ void Func_02002cf0(void) {
 
     REG_BG0CNT = control;
   } while (0);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                         buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
                         buffer);
   i = 0;
   cell = buffer;
@@ -313,22 +314,22 @@ row:
       Func_02005d5c(spark, 7);
       Actor_StartScript(spark, gData_02005fd8);
       Actor_SetSingleChildFlags(spark, 0);
-      Actor_SetPartAttribute(spark, 2);
+      Actor_SetSpriteColor(spark, 2);
       spark->update = Func_02002c40;
     }
     FieldEvent_Wait(1);
   }
   Call2((void (*)())BattleEffect_ApplyColorToSourceBuffer, 0x10000, 0);
   Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x10003, 0);
-  BattleEffect_StartBufferInterpolation(60);
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  PaletteFade_StartInterpolation(60);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   Call2((void (*)())Camera_SetSpeedParameters, 0x10000, 0x2000);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(312), -1, PIXELS(680),
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, PIXELS(312), -1, PIXELS(680),
         1);
   FieldCamera_WaitForArrival();
   Actor_GetById(11)->update = 0;
-  Actor_SetPartAttribute(Actor_GetById(11), 6);
+  Actor_SetSpriteColor(Actor_GetById(11), 6);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   gBgScroll[0].x = 0xff98;
@@ -337,15 +338,15 @@ row:
   Sound_Play(138);
   Call2((void (*)())BattleEffect_ApplyColorToSourceBuffer, 0x10003, 0);
   Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(1);
+  PaletteFade_StartInterpolation(1);
   wait(1);
   BattleEffect_ApplyColorToSourceBuffer(0x7fff, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
-  BattleEffect_StartBufferInterpolation(8);
+  PaletteFade_StartInterpolation(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
-  Map_CopyCellPictureIndicesRect(64, 78, 18, 105, 3, 3);
-  Map_SetScreenShake(0x50000, 0x70000, 0x10000);
-  Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
+  MapGrid_CopyCellPictureIndicesRect(64, 78, 18, 105, 3, 3);
+  MapGrid_SetScreenShake(0x50000, 0x70000, 0x10000);
+  Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
   i = 0;
 fade:
   REG_BLDALPHA = BLEND_ALPHA(16 - (i >> 1), 16);
@@ -355,11 +356,11 @@ fade:
     goto fade;
   BattleEffect_ApplyColorToSourceBuffer(0x10003, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   wait(30);
   Sound_Play(148);
   Func_02002aa8(0x1380000, 0x2d00000);
-  Call6((void (*)())Map_CopyCellPictureIndicesRect, 64, 78, 18, 105, 3, 5);
+  Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, 64, 78, 18, 105, 3, 5);
   Camera_SetSpeedParameters(0x18000, 0x3000);
   FieldCamera_MoveToActorById(10, 1);
   FieldCamera_WaitForArrival();
@@ -367,11 +368,11 @@ fade:
   Call2((void (*)())Actor_ConfigureSpriteColor, 10, 0x100);
   Func_02002b58(Actor_GetById(10)->x, Actor_GetById(10)->z);
   Actor_ConfigureSpriteColor(10, 0);
-  Actor_SetPartAttribute(Actor_GetById(10), 7);
+  Actor_SetSpriteColor(Actor_GetById(10), 7);
   wait(3);
-  Actor_SetPartAttribute(Actor_GetById(8), 0);
-  Actor_SetPartAttribute(Actor_GetById(9), 0);
-  Actor_SetPartAttribute(Actor_GetById(10), 0);
+  Actor_SetSpriteColor(Actor_GetById(8), 0);
+  Actor_SetSpriteColor(Actor_GetById(9), 0);
+  Actor_SetSpriteColor(Actor_GetById(10), 0);
   wait(40);
   Func_02001084(Actor_GetById(10), 8, 0);
   Window_LoadGraphics();
@@ -387,7 +388,7 @@ fade:
   Event_End();
 }
 
-void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
+void Actor_WalkToById(s32 actor, s32 x, s32 z);
 
 /// When layer 1's cell at the leader's x and z - 1 reads 30, runs the four
 /// steps 65, 66, 67 and 62 and moves the leader to (312, 792).
@@ -403,19 +404,19 @@ void Func_02003170(void) {
   Sound_Play(188);
   width = 1;
   height = 2;
-  Map_CopyCellPictureIndicesRect(65, 76, 19, 92, width, height);
+  MapGrid_CopyCellPictureIndicesRect(65, 76, 19, 92, width, height);
   FieldEvent_Wait(8);
-  Map_CopyCellPictureIndicesRect(66, 76, 19, 92, width, height);
+  MapGrid_CopyCellPictureIndicesRect(66, 76, 19, 92, width, height);
   FieldEvent_Wait(8);
-  Map_CopyCellPictureIndicesRect(67, 76, 19, 92, width, height);
+  MapGrid_CopyCellPictureIndicesRect(67, 76, 19, 92, width, height);
   FieldEvent_Wait(8);
-  Map_CopyCellPictureIndicesRect(62, 76, 19, 92, width, height);
+  MapGrid_CopyCellPictureIndicesRect(62, 76, 19, 92, width, height);
   FieldEvent_Wait(15);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Actor_GetById(gMainRoutineWork.currentOwner)->speedLimit =
       Actor_GetById(gMainRoutineWork.currentOwner)->acceleration = 0x8000;
   Sound_Play(123);
-  Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, 312, 792);
+  Actor_WalkToById(gMainRoutineWork.currentOwner, 312, 792);
   FieldEvent_Wait(5);
   Event_SetExitRequest(15);
   Event_End();
@@ -574,13 +575,13 @@ void Func_02003654(void) {
 
     REG_BG0CNT = control;
   } while (0);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                         buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
                         buffer);
   i = 0;
   cell = buffer;
@@ -627,22 +628,22 @@ row:
       Func_02005d5c(spark, 7);
       Actor_StartScript(spark, gData_02005fd8);
       Actor_SetSingleChildFlags(spark, 0);
-      Actor_SetPartAttribute(spark, 2);
+      Actor_SetSpriteColor(spark, 2);
       spark->update = Func_02002c40;
     }
     FieldEvent_Wait(1);
   }
   Call2((void (*)())BattleEffect_ApplyColorToSourceBuffer, 0x10000, 0);
   Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x10003, 0);
-  BattleEffect_StartBufferInterpolation(60);
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  PaletteFade_StartInterpolation(60);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   Call2((void (*)())Camera_SetSpeedParameters, 0x10000, 0x2000);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(216), -1, PIXELS(224),
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, PIXELS(216), -1, PIXELS(224),
         1);
   FieldCamera_WaitForArrival();
   Actor_GetById(10)->update = 0;
-  Actor_SetPartAttribute(Actor_GetById(10), 6);
+  Actor_SetSpriteColor(Actor_GetById(10), 6);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   gBgScroll[0].x = 0xff98;
@@ -651,15 +652,15 @@ row:
   Sound_Play(138);
   Call2((void (*)())BattleEffect_ApplyColorToSourceBuffer, 0x10003, 0);
   Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(1);
+  PaletteFade_StartInterpolation(1);
   wait(1);
   BattleEffect_ApplyColorToSourceBuffer(0x7fff, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
-  BattleEffect_StartBufferInterpolation(8);
+  PaletteFade_StartInterpolation(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
-  Map_CopyCellPictureIndicesRect(68, 84, 12, 77, 3, 3);
-  Map_SetScreenShake(0x50000, 0x70000, 0x10000);
-  Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
+  MapGrid_CopyCellPictureIndicesRect(68, 84, 12, 77, 3, 3);
+  MapGrid_SetScreenShake(0x50000, 0x70000, 0x10000);
+  Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
   i = 0;
 fade:
   REG_BLDALPHA = BLEND_ALPHA(16 - (i >> 1), 16);
@@ -669,11 +670,11 @@ fade:
     goto fade;
   BattleEffect_ApplyColorToSourceBuffer(0x10003, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   wait(30);
   Sound_Play(148);
   Func_02002aa8(0xd80000, 0x12d0000);
-  Call6((void (*)())Map_CopyCellPictureIndicesRect, 68, 84, 12, 77, 3, 6);
+  Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, 68, 84, 12, 77, 3, 6);
   Camera_SetSpeedParameters(0x18000, 0x3000);
   FieldCamera_MoveToActorById(8, 1);
   FieldCamera_WaitForArrival();
@@ -681,9 +682,9 @@ fade:
   Call2((void (*)())Actor_ConfigureSpriteColor, 8, 0x100);
   Func_02002b58(Actor_GetById(8)->x, Actor_GetById(8)->z + 0x200000);
   Actor_ConfigureSpriteColor(8, 0);
-  Actor_SetPartAttribute(Actor_GetById(8), 7);
+  Actor_SetSpriteColor(Actor_GetById(8), 7);
   wait(3);
-  Actor_SetPartAttribute(Actor_GetById(8), 0);
+  Actor_SetSpriteColor(Actor_GetById(8), 0);
   wait(40);
   Func_02001084(Actor_GetById(8), 8, 0);
   Window_LoadGraphics();
@@ -709,7 +710,7 @@ void Func_02003ac4(void) {
 }
 
 void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration);
-void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
+void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
 
 /// While the leader is no further than z 653, moves the leader to (376, 668)
 /// with bit 0 of its byte 90 cleared for the move.
@@ -724,7 +725,7 @@ void Func_02003b08(void) {
   Sound_Play(186);
   BYTE_AT(Actor_GetById(gMainRoutineWork.currentOwner), 90) &= ~1;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 376, 668);
+  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 376, 668);
   flags = &BYTE_AT(Actor_GetById(gMainRoutineWork.currentOwner), 90);
   *flags = bit | *flags;
   Event_End();
@@ -763,7 +764,7 @@ fadeOut:
     goto fadeOut;
   cellX = x >> 4;
   cellY = (y >> 4) - 1;
-  Call6((void (*)())Map_CopyCellPictureIndicesRect, 65, 1, cellX + 64, cellY, 1,
+  Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, 65, 1, cellX + 64, cellY, 1,
         2);
   Func_0200062c(0, cellX, cellY, 0xff00);
   Import_ActorDestroy(marker);
@@ -828,8 +829,8 @@ extern const u8 gData_02006084[];
   void name(void) {                                                            \
     Map_CopyCellAttributeRect(n1, 17, 1, 1, 8, 19);                            \
     Map_CopyCellAttributeRect(n1, 17, 1, 1, 24, 19);                           \
-    Call6((void (*)())Map_CopyCellPictureIndicesRect, n2, 17, 72, 19, 1, 2);   \
-    Map_CopyCellPictureIndicesRect(n2, 17, 88, 19, 1, 2);                      \
+    Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, n2, 17, 72, 19, 1, 2);   \
+    MapGrid_CopyCellPictureIndicesRect(n2, 17, 88, 19, 1, 2);                      \
   }
 
 DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(Func_02003dd4, 26, 90)
@@ -843,11 +844,11 @@ void Func_02003e7c(struct Actor *source) {
   WORD_AT(object, 28) = 0x6666;
   WORD_AT(object, 24) = 0x6666;
   object->motionFlags = 0;
-  Actor_SetPartAttribute(object, 2);
+  Actor_SetSpriteColor(object, 2);
   Scene_SetActorSpritePriority(object, 1);
   Func_02005d5c(object, 1);
   Actor_SetSingleChildFlags(object, 0);
-  Animation_SetStateFlags(object, 1);
+  Actor_SetBlendMode(object, 1);
   Actor_StartScript(object, gData_02006084);
 }
 
@@ -924,13 +925,14 @@ void Func_02004138(s32 idA, s32 idB) {
   Sound_Play(78);
   FieldEvent_Wait(30);
   Camera_SetSpeedParameters(0x8000, 0x1000);
-  Camera_MoveWithinMapBounds(((s16 *)&a->x)[1] << 16, ((s16 *)&a->y)[1] << 16,
-                             ((s16 *)&a->z)[1] << 16, 1);
+  FieldCamera_MoveWithinMapBounds(((s16 *)&a->x)[1] << 16,
+                                  ((s16 *)&a->y)[1] << 16,
+                                  ((s16 *)&a->z)[1] << 16, 1);
   Sound_Play(141);
-  Call3(Map_SetScreenShake, 0x20000, 0x20000, 0x10000);
+  Call3(MapGrid_SetScreenShake, 0x20000, 0x20000, 0x10000);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   a->motionFlags = 0;
   a->acceleration = 0x3333;
   a->speedLimit = 0x3333;
@@ -950,11 +952,11 @@ first:
     spark->speedLimit = 0x80000;
     spark->acceleration = 0x3333;
     spark->motionFlags = 0;
-    Actor_SetPartAttribute(spark, 2);
+    Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Func_02005d5c(spark, 7);
     Actor_SetSingleChildFlags(spark, 0);
-    Animation_SetStateFlags(spark, 1);
+    Actor_SetBlendMode(spark, 1);
     Actor_StartScript(spark, gData_02006094);
     REG_BLDALPHA = 0x1004;
     wait(2);
@@ -990,11 +992,11 @@ second:
     spark->unk4c = 0x7a0000;
     spark->watchedObject = b;
     ((union SparkView *)spark)->bytes.unk62 = (16 - i) * 8 + 15;
-    Actor_SetPartAttribute(spark, 2);
+    Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Func_02005d5c(spark, 7);
     Actor_SetSingleChildFlags(spark, 0);
-    Animation_SetStateFlags(spark, 1);
+    Actor_SetBlendMode(spark, 1);
     Call3(Vector_AddPolarOffsetFar, spark->unk4c, *angle, (s32)&spark->x);
     Actor_StartScript(spark, gData_020060b0);
     if (i == 3) {
@@ -1031,10 +1033,10 @@ third:
     spark->watchedObject = b;
     spark->motionFlags = 0;
     spark->priorityFlags = 1;
-    Actor_SetPartAttribute(spark, 2);
+    Actor_SetSpriteColor(spark, 2);
     Func_02005d5c(spark, 7);
     Actor_SetSingleChildFlags(spark, 0);
-    Animation_SetStateFlags(spark, 1);
+    Actor_SetBlendMode(spark, 1);
     Actor_StartScript(spark, gData_020060c0);
   }
   i += 2;
@@ -1043,27 +1045,27 @@ third:
   Sound_Play(220);
   wait(50);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(8);
+  PaletteFade_StartInterpolation(8);
   wait(16);
-  Map_SetScreenShake(0, 0, 0);
+  MapGrid_SetScreenShake(0, 0, 0);
   Actor_ConfigureSpriteColor(idA, 0);
   Actor_ConfigureSpriteColor(idB, 0);
   Sound_Play(574);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(80);
+  PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(idA, gData_02006128);
   Actor_SetMovementTypeById(idB, gData_02006158);
   b->update = Actor_EmitBubbles;
   wait(120);
   b->update = 0;
   Sound_Play(390);
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   wait(1);
 }
 
 #include "text/msg_ids.h"
 
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 #include "event_work.h"
 
@@ -1079,7 +1081,7 @@ s32 Actor_MoveToObject();
 s32 Actor_SetHorizontalPositionWithTerrain();
 void Actor_TurnToFaceEachOther(s32 actorId, s32 other, s32 frames);
 void Actor_WaitForMoveById(s32 actorId);
-void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
+void Actor_SetDestinationById(u32 objectId, s32 x, s32 z);
 
 static inline void Call0(void (*f)()) {
   /* FAKEMATCH(wrapper): the call layer without arguments, through which the two
@@ -1107,9 +1109,8 @@ void Func_02004534(void) {
     Call3(Actor_SetSpeedParameters, 6, 0xb333, 0x5999);
     Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
     FieldEvent_Wait(1);
-    Call3(Actor_ResetAndSetPositionInMode2, gMainRoutineWork.currentOwner, 256,
-          136);
-    Actor_ResetAndSetPositionInMode2(6, 272, 136);
+    Call3(Actor_WalkToById, gMainRoutineWork.currentOwner, 256, 136);
+    Actor_WalkToById(6, 272, 136);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Actor_WaitForMoveById(6);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
@@ -1118,7 +1119,7 @@ void Func_02004534(void) {
     Call2(Func_02005eac, 6, 0);
     Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
     FieldEvent_Wait(30);
-    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 256, 152);
+    Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 256, 152);
     Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(20);
     Actor_ArmCallback(6, FACING_SOUTH, 0);
@@ -1127,12 +1128,12 @@ void Func_02004534(void) {
     FieldEvent_Wait(30);
     Call3(Actor_ArmCallback, 6, FACING_NORTH, 0);
     FieldEvent_Wait(20);
-    Call3(Actor_SetPositionAndReset, 6, 264, 137);
+    Call3(Actor_WalkToAndWaitById, 6, 264, 137);
     Actor_ArmCallback(6, FACING_NORTH, 0);
     FieldEvent_Wait(20);
     FieldMessage_Show(MsgCheckedTheTablet + 2, 1);
-    Call3(Map_SetScreenShake, 0x50000, 0x70000, 0x10000);
-    Call3(Map_SetScreenShake, -1, -1, 0xe666);
+    Call3(MapGrid_SetScreenShake, 0x50000, 0x70000, 0x10000);
+    Call3(MapGrid_SetScreenShake, -1, -1, 0xe666);
     /* FAKEMATCH(wrapper): the call through Call0's pointer, which negates the
      * two -1s before it in this order; as a direct call, 2 of 202 instructions
      * differ in tla-en. */
@@ -1149,8 +1150,8 @@ void Func_02004534(void) {
     Actor_SetModeById(6, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != 0)
-      Actor_ResetAndSetPosition(6, FIELD_AT(object, s16, 10),
-                                FIELD_AT(object, s16, 18));
+      Actor_SetDestinationById(6, FIELD_AT(object, s16, 10),
+                               FIELD_AT(object, s16, 18));
     Actor_WaitForMoveById(6);
     Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
     Actor_SetActionCallback(Actor_GetById(8), 9);
@@ -1165,9 +1166,9 @@ void Func_02004740(void) {
     FieldMessage_Show(MsgCheckedTheTablet, 1);
     Event_End();
   } else {
-    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 248, 107);
-    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 248, 136);
-    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 136);
+    Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 248, 107);
+    Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 248, 136);
+    Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 264, 136);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(10);
     Func_02004534();
@@ -1183,8 +1184,8 @@ void Func_02004740(void) {
       FieldMessage_Show(MsgCheckedTheTablet, 1);                               \
       Event_End();                                                             \
     } else {                                                                   \
-      Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, n1, 136);       \
-      Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 136);      \
+      Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, n1, 136);       \
+      Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 264, 136);      \
       Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);       \
       FieldEvent_Wait(10);                                                     \
       Func_02004534();                                                         \
@@ -1335,7 +1336,7 @@ void Func_02004ab8(void) {
     z = 188;
     break;
   }
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, x, z);
+  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, x, z);
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
   Event_End();
 }
@@ -1348,7 +1349,7 @@ void Func_02004bb4(void) {
   message = MsgCheckedThePsynergy;
   FieldMessage_Show(message, 1);
   Sound_Play(126);
-  BattleParty_ApplyDrain(999, 0);
+  Party_AddPp(999, 0);
   FieldEvent_Wait(10);
   GameFlag_ClearBit(322);
   FieldMessage_Show(message + 1, 1);
@@ -1473,7 +1474,7 @@ void Func_02004eb0(void) {
     object->acceleration = object->speedLimit = (i << 12) + 0x8000;
     object->update = Func_02000550;
     Actor_SetSingleChildFlags(object, 0);
-    Actor_SetPartAttribute(object, 2);
+    Actor_SetSpriteColor(object, 2);
     if (i & 1) {
       object->timer = 212;
       object->unk66 = 0;
@@ -1481,7 +1482,7 @@ void Func_02004eb0(void) {
       object->timer = 116;
       object->unk66 = 0;
     }
-    Animation_SetStateFlags(object, 1);
+    Actor_SetBlendMode(object, 1);
     i++;
   } while (i != 8);
 }

@@ -12,7 +12,7 @@
 
 void Func_08118430(void) {
   for (;;)
-    Func_081197f0(0);
+    Battle_RunEncounter(0);
 }
 
 void Func_0811843c(void) {
@@ -27,7 +27,7 @@ void Func_0811843c(void) {
     struct SnapshotUnit *unit = Unit_Get(ids[i]);
 
     snap->listed[i] = 0;
-    if (BattleParty_IsUnitListed(ids[i])) {
+    if (BattleUnit_IsListed(ids[i])) {
       snap->listed[i] = 1;
       if (i > 2) {
         snap->vitals[i].hp = unit->hp > 0 ? unit->hp : 1;
@@ -102,7 +102,7 @@ void Func_081185c4(void) {
   for (i = 0; i <= 4; i++, copies++) {
     struct SnapshotUnit *unit = Unit_Get(Data_0812a16c[i]);
 
-    if (BattleParty_IsUnitListed(Data_0812a16c[i]) && snap->listed[i] != 0) {
+    if (BattleUnit_IsListed(Data_0812a16c[i]) && snap->listed[i] != 0) {
       if (i <= 2) {
         for (j = 0; j < 4; j++)
           unit->tags[j] = snap->tags[i][j];
@@ -168,7 +168,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
     nextDjinn[i] = 0;
 
   for (row = 0;; row++) {
-    owner = gData_0812a174[row].owner;
+    owner = gDebug_ParameterSets[row].owner;
     if ((u32)row > 440) {
       done = 1;
       break;
@@ -187,7 +187,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
       continue;
 
     Party_AddMemberFar(owner);
-    Unit_LevelUpToFar(owner, gData_0812a174[row].level);
+    Unit_LevelUpToFar(owner, gDebug_ParameterSets[row].level);
     state = Unit_Get(owner);
     for (i = 0; i < 4; i++) {
       ((struct OwnerDjinnState *)state)->counts.banks.owned[i] = 0;
@@ -200,11 +200,11 @@ s32 DebugParty_LoadPreset(s32 preset) {
       // it.
       *(u16 *)&((struct OwnerActionState *)state)->actionSlots[i] = 0;
     for (i = 0; i < 2; i++) {
-      if (gData_0812a174[row].actions[i] != 0)
-        Unit_LearnPsynergyFar(owner, gData_0812a174[row].actions[i]);
+      if (gDebug_ParameterSets[row].actions[i] != 0)
+        Unit_LearnPsynergyFar(owner, gDebug_ParameterSets[row].actions[i]);
     }
     for (i = 0; i < 4; i++) {
-      for (j = 0; j < gData_0812a174[row].djinnCounts[i]; j++) {
+      for (j = 0; j < gDebug_ParameterSets[row].djinnCounts[i]; j++) {
         Djinn_GiveFar(owner, i, (nextDjinn[i] + 7) % 18);
         Djinn_SetFar(owner, i, (nextDjinn[i] + 7) % 18);
         nextDjinn[i]++;
@@ -213,9 +213,10 @@ s32 DebugParty_LoadPreset(s32 preset) {
     for (i = 0; i < 16; i++)
       Inventory_RemoveFar(owner, 0);
     for (i = 0; i < 6; i++) {
-      if (gData_0812a174[row].items[i] != 0)
+      if (gDebug_ParameterSets[row].items[i] != 0)
         Inventory_EquipFar(
-            owner, Inventory_AddItemFar(owner, gData_0812a174[row].items[i]));
+            owner,
+            Inventory_AddItemFar(owner, gDebug_ParameterSets[row].items[i]));
     }
     Unit_UpdateClassFar(owner);
   }
@@ -224,11 +225,11 @@ s32 DebugParty_LoadPreset(s32 preset) {
 
 void Func_08118954(void) {}
 
-extern u8 gData_03001110;
+extern u8 gDebugTextEnabled;
 
-void Func_080ad090(void);
+void MainRoutineWork_InitializeDefaultsFar(void);
 
-void Func_08118958(void) {
+void DebugBattle_RunMenu(void) {
   s32 startModeSet = 0;
   s32 down = gInput.held & 0x80;
   s32 encounter;
@@ -238,7 +239,7 @@ void Func_08118958(void) {
   struct MainRoutineWork *m;
   u16 *backdropId;
 
-  Func_080ad090();
+  MainRoutineWork_InitializeDefaultsFar();
 restart:
   Window_LoadGraphics();
   DebugText_Clear();
@@ -282,7 +283,7 @@ restart:
         wait(1);
       }
       if (preset != loadedPreset) {
-        Func_080ad090();
+        MainRoutineWork_InitializeDefaultsFar();
         DebugParty_LoadPreset(preset);
         loadedPreset = preset;
       }
@@ -296,8 +297,8 @@ restart:
       GameFlag_SetBit(354);
       if (startModeSet)
         m->battleRule24b = 5;
-      Func_081197f0(encounter);
-      gData_03001110 = 1;
+      Battle_RunEncounter(encounter);
+      gDebugTextEnabled = 1;
       Window_LoadGraphics();
       DebugText_Clear();
       Task_ResetAll();
@@ -306,6 +307,6 @@ restart:
     }
   }
   GameFlag_SetBit(354);
-  Func_081197f0(69);
+  Battle_RunEncounter(69);
   goto restart;
 }

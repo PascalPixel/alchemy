@@ -18,7 +18,7 @@ extern const u8 gNameEntry_SemivoicedMarkRanges[];
 /// Returns whether `letter` may follow `previous` in a name: any character but
 /// a voicing mark may, and a voicing mark only after a kana in its table of
 /// ranges (pairs of first and last kana, ended by 0).
-s32 Func_08044488(s32 letter, s32 previous) {
+s32 NameEntry_AcceptsMark(s32 letter, s32 previous) {
   const u8 *range;
 
   if (letter < TEXT_MARK_VOICED || letter > TEXT_MARK_SEMIVOICED)
@@ -47,12 +47,14 @@ s32 Func_080444c4(const u8 *name) {
   return count;
 }
 #else
-/// Unused: the Japanese edition's mark test (Func_08044488 there), which
-/// accepts every letter where no letter takes a mark.
+/// Unused: the Japanese edition's mark test (NameEntry_AcceptsMark there),
+/// which accepts every letter where no letter takes a mark.
 UNUSED s32 Window_ReturnOne(void) { return 1; }
 #endif
 
-void Func_08044348(struct Window *window, const void *resource) {
+/// Decompresses the type-01 tilemap resource and copies it over window's
+/// rectangle, into the BG map in VRAM and the window work's mirror of it.
+void Window_CopyTilemapRegion(struct Window *window, const void *resource) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u16 *buffer = Heap_AllocEwram(0x300);
   s32 offset;
@@ -63,7 +65,7 @@ void Func_08044348(struct Window *window, const void *resource) {
   s32 col;
 
   source = buffer;
-  Resource_DecodeType01(resource, buffer);
+  Decompress_TaggedLz(resource, buffer);
   offset = (((s16)window->y << 5) + (s16)window->x) * 2;
   map = (u16 *)((u8 *)work->tilemap + offset);
   vram = (u16 *)(offset + 0x06002000);
@@ -87,7 +89,7 @@ void Func_08044348(struct Window *window, const void *resource) {
 s32 Text_MeasureDecoded(s32 start, u32 *width, u32 *height, s32 mode);
 
 void Window_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
-                                 s32 width, s32 height, u32 field) {
+                               s32 width, s32 height, u32 field) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   x += (s16)object->x + 1;
@@ -129,7 +131,7 @@ void Window_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   s32 slot;
 
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiIconTiles);
   return slot;
 }
@@ -166,7 +168,7 @@ s32 Text_SetString(const u8 *str) {
   return width;
 }
 
-void Text_DrawPaddedLabel(s32 output, u8 *input) {
+void NameEntry_DrawName(s32 output, u8 *input) {
   u8 text[20];
   s32 length = 0;
 
@@ -258,16 +260,18 @@ extern u8 gNameEntry_EndKeyLabel[];
 #endif
 
 void Portrait_OpenWindow(s32 member, s32 x, s32 y, s32 side);
-void Func_08108048(struct NameCursorMotion *cursor, s32 x, s32 y);
-void Func_08108040(struct NameCursorMotion *cursor, s32 x, s32 y, s32 speed);
+void MenuCursor_SetPositionImmediateFar(struct NameCursorMotion *cursor, s32 x,
+                                        s32 y);
+void MenuCursor_SetFar(struct NameCursorMotion *cursor, s32 x, s32 y,
+                       s32 speed);
 
 // The Japanese form enters kana: a dakuten or handakuten joins the kana before
-// it (Func_08044488 refuses a mark that cannot), takes a byte but is no
+// it (NameEntry_AcceptsMark refuses a mark that cannot), takes a byte but is no
 // letter, and goes with it when that kana is removed; Select or the top
 // command key turns to the other kana page. It also returns without waiting
 // for every button to be released, which the later editions added.
 #if LANGUAGE == LANGUAGE_JAPANESE
-s32 Func_08044558(s32 member) {
+s32 NameEntry_EditMemberName(s32 member) {
   struct Window *nameWindow;
   s32 result = 0;
   s32 page = 0;
@@ -290,12 +294,12 @@ s32 Func_08044558(s32 member) {
   u16 *palette;
 
   Window_LoadGraphics();
-  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                    gMainRoutineWork.paletteGlow[1]);
   keyboardWindow = Window_Create(3, 6, 24, NAME_KEYBOARD_HEIGHT, 2);
   nameWindow = Window_Create(8, 3, 8, 3, 2);
   Portrait_OpenWindow(member, 0, 3, 1);
-  Func_08044348(keyboardWindow, gNameEntry_KeyboardTilemap);
+  Window_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
   Window_DrawDividerLine(keyboardWindow, 18, 0, 18, NAME_DIVIDER_BOTTOM);
   render->dirty = textDirty;
   text[0] = result;
@@ -317,7 +321,7 @@ s32 Func_08044558(s32 member) {
   editedName[NAME_MAX_BYTES] = 0;
   Text_DrawString(originalName, (s32)nameWindow, 0, 0);
   keyColumn = NAME_COMMAND_COLUMN;
-  vramSlot = Resource_FindFreeEntry();
+  vramSlot = VramCache_FindFreeEntry();
   keyRow = NAME_FINISH_ROW;
   if (vramSlot <= 95) {
     VramBlock_LoadResourceFar(vramSlot, 128, (s32)&ResourceId_UiIconTiles);
@@ -325,12 +329,13 @@ s32 Func_08044558(s32 member) {
                                  (struct RenderInput *)keyboardWindow, 0, 0);
     keyMotion = &keyCursor.cursor;
     keyCursor.sprite = output;
-    Func_08108048(keyMotion, (s16)keyboardWindow->x * 8 + 140,
-                  (s16)keyboardWindow->y * 8 + NAME_KEY_CURSOR_Y);
+    MenuCursor_SetPositionImmediateFar(
+        keyMotion, (s16)keyboardWindow->x * 8 + 140,
+        (s16)keyboardWindow->y * 8 + NAME_KEY_CURSOR_Y);
   } else {
     keyMotion = &keyCursor.cursor;
   }
-  vramSlot = Resource_FindFreeEntry();
+  vramSlot = VramCache_FindFreeEntry();
   if (vramSlot <= 95) {
     VramBlock_LoadResourceFar(vramSlot, 128,
                               (s32)&ResourceId_UiFixedBlockATiles);
@@ -340,7 +345,7 @@ s32 Func_08044558(s32 member) {
     output->sentinel = 255;
     output->sprite.oam.priority = 0;
     x = 72 + Func_080444c4(editedName) * 10;
-    Func_08108048(&nameCaret.cursor, x, 22);
+    MenuCursor_SetPositionImmediateFar(&nameCaret.cursor, x, 22);
   }
   palette = (u16 *)0x050001c0;
   Dma_Set((void *)0x050001e0, palette, 0x84000008, REG_DMA3);
@@ -362,16 +367,16 @@ s32 Func_08044558(s32 member) {
     Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1, 15);
     if (cursorDirty) {
       cursorDirty = 0;
-      Func_08108040(keyMotion, ((s16)keyboardWindow->x + keyColumn) * 8 - 7,
-                    ((s16)keyboardWindow->y + keyRow) * 8 + 15, 3);
+      MenuCursor_SetFar(keyMotion, ((s16)keyboardWindow->x + keyColumn) * 8 - 7,
+                        ((s16)keyboardWindow->y + keyRow) * 8 + 15, 3);
     }
     if (textDirty) {
       textDirty = 0;
       x = 72 + Func_080444c4(editedName) * 10;
-      Func_08108040(&nameCaret.cursor, x, 22, 3);
+      MenuCursor_SetFar(&nameCaret.cursor, x, 22, 3);
     }
-    Func_08108030(keyMotion);
-    Func_08108038(&nameCaret.cursor);
+    MenuCursor_AdvanceFar(keyMotion);
+    MenuCursor_MoveTowardTargetFar(&nameCaret.cursor);
     {
       u32 frame = (gVBlankCount >> 1) & 7;
 
@@ -453,9 +458,10 @@ s32 Func_08044558(s32 member) {
     turn_page:
       page ^= 1;
       if (page)
-        Func_08044348(keyboardWindow, gNameEntry_AlternateKeyboardTilemap);
+        Window_CopyTilemapRegion(keyboardWindow,
+                                 gNameEntry_AlternateKeyboardTilemap);
       else
-        Func_08044348(keyboardWindow, gNameEntry_KeyboardTilemap);
+        Window_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
       Window_DrawDividerLine(keyboardWindow, 18, 0, 18, NAME_DIVIDER_BOTTOM);
       render->dirty = 1;
       continue;
@@ -525,7 +531,7 @@ s32 Func_08044558(s32 member) {
       if (letterCount == NAME_MAX_LETTERS && !IS_KANA_MARK(letter))
         continue;
       slot = editedName + byteCount;
-      if (!Func_08044488(letter, *end)) {
+      if (!NameEntry_AcceptsMark(letter, *end)) {
         Sound_PlayFar(113);
         continue;
       }
@@ -553,7 +559,7 @@ s32 Func_08044558(s32 member) {
   return result;
 }
 #else
-s32 Func_08044558(s32 member) {
+s32 NameEntry_EditMemberName(s32 member) {
   struct Window *nameWindow;
   s32 result = 0;
   s32 originalLength = 0;
@@ -574,12 +580,12 @@ s32 Func_08044558(s32 member) {
   u16 *palette;
 
   Window_LoadGraphics();
-  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                    gMainRoutineWork.paletteGlow[1]);
   keyboardWindow = Window_Create(3, 6, 24, 9, 2);
   nameWindow = Window_Create(8, 3, NAME_LABEL_WIDTH, 3, 2);
   Portrait_OpenWindow(member, 0, 3, 1);
-  Func_08044348(keyboardWindow, gNameEntry_KeyboardTilemap);
+  Window_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
 #if NAME_KEY_LABELS
   Text_DrawStringInWindow(gNameEntry_DeleteKeyLabel, keyboardWindow, 144, 32);
   Text_DrawStringInWindow(gNameEntry_EndKeyLabel, keyboardWindow, 144, 40);
@@ -601,9 +607,9 @@ s32 Func_08044558(s32 member) {
     }
   }
   editedName[NAME_MAX_BYTES] = 0;
-  Text_DrawPaddedLabel((s32)nameWindow, originalName);
+  NameEntry_DrawName((s32)nameWindow, originalName);
   keyRow = 5;
-  vramSlot = Resource_FindFreeEntry();
+  vramSlot = VramCache_FindFreeEntry();
   keyColumn = NAME_COMMAND_COLUMN;
   if (vramSlot <= 95) {
     VramBlock_LoadResourceFar(vramSlot, 128, (s32)&ResourceId_UiIconTiles);
@@ -611,12 +617,13 @@ s32 Func_08044558(s32 member) {
                                  (struct RenderInput *)keyboardWindow, 0, 0);
     keyMotion = &keyCursor.cursor;
     keyCursor.sprite = output;
-    Func_08108048(keyMotion, (s16)keyboardWindow->x * 8 + 140,
-                  (s16)keyboardWindow->y * 8 + 52);
+    MenuCursor_SetPositionImmediateFar(keyMotion,
+                                       (s16)keyboardWindow->x * 8 + 140,
+                                       (s16)keyboardWindow->y * 8 + 52);
   } else {
     keyMotion = &keyCursor.cursor;
   }
-  vramSlot = Resource_FindFreeEntry();
+  vramSlot = VramCache_FindFreeEntry();
   if (vramSlot <= 95) {
     VramBlock_LoadResourceFar(vramSlot, 128,
                               (s32)&ResourceId_UiFixedBlockATiles);
@@ -625,7 +632,8 @@ s32 Func_08044558(s32 member) {
     nameCaret.sprite = output;
     output->sentinel = 255;
     output->sprite.oam.priority = 0;
-    Func_08108048(&nameCaret.cursor, Text_SetString(editedName) + 70, 22);
+    MenuCursor_SetPositionImmediateFar(&nameCaret.cursor,
+                                       Text_SetString(editedName) + 70, 22);
   }
   palette = (u16 *)0x050001c0;
   Dma_Set((void *)0x050001e0, palette, 0x84000008, REG_DMA3);
@@ -645,15 +653,16 @@ s32 Func_08044558(s32 member) {
     Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1, 15);
     if (cursorDirty) {
       cursorDirty = 0;
-      Func_08108040(keyMotion, ((s16)keyboardWindow->x + keyColumn) * 8 - 7,
-                    ((s16)keyboardWindow->y + keyRow) * 8 + 15, 3);
+      MenuCursor_SetFar(keyMotion, ((s16)keyboardWindow->x + keyColumn) * 8 - 7,
+                        ((s16)keyboardWindow->y + keyRow) * 8 + 15, 3);
     }
     if (textDirty) {
       textDirty = 0;
-      Func_08108040(&nameCaret.cursor, Text_SetString(editedName) + 70, 22, 3);
+      MenuCursor_SetFar(&nameCaret.cursor, Text_SetString(editedName) + 70, 22,
+                        3);
     }
-    Func_08108030(keyMotion);
-    Func_08108038(&nameCaret.cursor);
+    MenuCursor_AdvanceFar(keyMotion);
+    MenuCursor_MoveTowardTargetFar(&nameCaret.cursor);
     {
       u32 frame = (gVBlankCount >> 1) & 7;
 
@@ -722,7 +731,7 @@ s32 Func_08044558(s32 member) {
         letterCount--;
         *--end = 0;
         WindowSprite_PrepareForRedraw(nameWindow);
-        Text_DrawPaddedLabel((s32)nameWindow, editedName);
+        NameEntry_DrawName((s32)nameWindow, editedName);
         textDirty = 1;
         continue;
       }
@@ -737,7 +746,7 @@ s32 Func_08044558(s32 member) {
         if (letterCount == 0) {
           nameCaret.sprite->active = 13;
           WindowSprite_PrepareForRedraw(nameWindow);
-          Text_DrawPaddedLabel((s32)nameWindow, originalName);
+          NameEntry_DrawName((s32)nameWindow, originalName);
           wait(10);
         } else {
           u8 *dst = originalName;
@@ -769,7 +778,7 @@ s32 Func_08044558(s32 member) {
         cursorDirty = 1;
       }
       WindowSprite_PrepareForRedraw(nameWindow);
-      Text_DrawPaddedLabel((s32)nameWindow, editedName);
+      NameEntry_DrawName((s32)nameWindow, editedName);
       textDirty = 1;
     }
   }

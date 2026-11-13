@@ -10,7 +10,7 @@
 #include "module/field/object.h"
 #include "scene_call.h"
 
-s32 Func_080380f8(s32 sprite, s32 zero, s32 x, s32 y);
+s32 Portrait_OpenWindowFar(s32 sprite, s32 zero, s32 x, s32 y);
 
 #define SPEAKER_PORTRAIT_LEFT 0x1000
 #define SPEAKER_PORTRAIT_RIGHT 0x2000
@@ -43,7 +43,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   work = Ram_HeapSlots->eventWork;
   handle = 0;
   portrait = 0;
-  sprite = ObjectTable_ReadActiveValue(localId);
+  sprite = Actor_GetSpriteById(localId);
   extra = 0;
   portraitTop = 0;
   margin = 4;
@@ -173,9 +173,9 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
         handle = Message_OpenWindowFar(message, left, top, (voice << 16) | 1);
     }
     if (win[4] != 0)
-      portrait = Func_080380f8(sprite, 0, column, portraitTop);
+      portrait = Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
     else
-      portrait = Func_080380f8(sprite, 0, column, portraitTop);
+      portrait = Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
     while (!Message_AllTypedFar())
       wait(1);
   }
@@ -201,7 +201,7 @@ void Func_080d3fb0(s32 object, s32 message) {
 
   frames = 0;
   wait(1);
-  id = ObjectTable_ReadActiveValue(object);
+  id = Actor_GetSpriteById(object);
   if (object <= 7) {
     masked = object & 0x0fff;
     if (Scene_FindActorPlacement(masked) == 0)
@@ -219,7 +219,7 @@ void Func_080d3fb0(s32 object, s32 message) {
     }
   }
 
-  Func_080d4330(0x80000000);
+  Message_SetVoiceFromActor(0x80000000);
   wait(1);
 }
 
@@ -285,10 +285,10 @@ void Event_ShowSpeakerMessage(s32 speaker) {
 }
 
 void Event_ShowCounter(s32 a, s32 b, s32 c, s32 d) {
-  Event_ShowCounterAtPosition(a, b, c, d);
+  Event_ShowMessageAtPosition(a, b, c, d);
 }
 
-void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
+void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
   s32 x0 = x;
   struct EventWork *state = Ram_HeapSlots->eventWork;
   s32 py = y;
@@ -322,10 +322,10 @@ void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
 /// If the actor has graphics, ends the window of the speaker its graphics ID
 /// names.
 /// id: actor ID.
-void ObjectTable_RunIfActive(s32 id) {
+void Actor_ClosePortrait(s32 id) {
   s32 no;
 
-  no = ObjectTable_ReadActiveValue(id);
+  no = Actor_GetSpriteById(id);
   if (no != -1)
     Window_CloseMatchingIdFar(no);
 }
@@ -336,20 +336,20 @@ void ObjectTable_RunIfActive(s32 id) {
 /// for the first to finish, checking every delay frames. Waits for A, B, L or
 /// R, then closes both.
 // As ☀️'s function of the same name, which has no delay.
-void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
-                                      s32 firstPortraitX, s32 firstPortraitY,
-                                      s32 second, s32 secondX, s32 secondY,
-                                      s32 secondPortraitX, s32 secondPortraitY,
-                                      s32 delay) {
+void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
+                                  s32 firstPortraitX, s32 firstPortraitY,
+                                  s32 second, s32 secondX, s32 secondY,
+                                  s32 secondPortraitX, s32 secondPortraitY,
+                                  s32 delay) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
-  s32 firstSprite = ObjectTable_ReadActiveValue(first);
-  s32 secondSprite = ObjectTable_ReadActiveValue(second);
+  s32 firstSprite = Actor_GetSpriteById(first);
+  s32 secondSprite = Actor_GetSpriteById(second);
   s32 firstWindow;
   s32 secondWindow;
 
   firstWindow = Message_OpenWindowFar((s16)event->messageId++, firstX, firstY,
                                       Speaker_GetVoice(firstSprite) << 16);
-  Func_080380f8(firstSprite, 0, firstPortraitX, firstPortraitY);
+  Portrait_OpenWindowFar(firstSprite, 0, firstPortraitX, firstPortraitY);
   if (delay != 0) {
     while (!Message_AllTypedFar())
       wait(delay);
@@ -358,7 +358,7 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
   secondWindow =
       Message_OpenWindowFar((s16)event->messageId++, secondX, secondY,
                             Speaker_GetVoice(secondSprite) << 16);
-  Func_080380f8(secondSprite, 0, secondPortraitX, secondPortraitY);
+  Portrait_OpenWindowFar(secondSprite, 0, secondPortraitX, secondPortraitY);
 
   while (!Message_AllTypedFar())
     wait(1);
@@ -385,9 +385,9 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
 // Message_SetVoiceFromActor): the voice sound from its value and the
 // countdown from the event mode's table; 0x80000000 clears both.
 
-extern const u8 gData_080f330c[];
+extern const u8 gMessageSpeed_VoiceRates[];
 
-void Func_080d4330(s32 key) {
+void Message_SetVoiceFromActor(s32 key) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u8 value;
   s32 id;
@@ -396,14 +396,14 @@ void Func_080d4330(s32 key) {
     *(s16 *)&work->speakerVoiceSound = (value = 0);
     *(s16 *)&work->speakerVoiceCountdown = value;
   } else {
-    id = Speaker_GetVoice(ObjectTable_ReadActiveValue(key));
-    value = gData_080f330c[gMainRoutineWork.eventMode];
+    id = Speaker_GetVoice(Actor_GetSpriteById(key));
+    value = gMessageSpeed_VoiceRates[gMainRoutineWork.eventMode];
     *(s16 *)&work->speakerVoiceSound = id;
     *(s16 *)&work->speakerVoiceCountdown = value;
   }
 }
 
-void Camera_FollowActor(s32 id, s32 flag) {
+void FieldCamera_FollowActor(s32 id, s32 flag) {
   struct Actor *obj;
   struct Actor *target;
   struct EventWork *work;

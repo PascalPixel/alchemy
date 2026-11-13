@@ -29,7 +29,7 @@ void Func_02001620(s32 objectId) {
   s32 z;
 
   object = Actor_Get(objectId);
-  params.update = Effect_AdvanceMotion;
+  params.update = FieldEffect_AdvanceMotion;
   for (angleStep = 0; angleStep <= 16; angleStep += 2) {
     angle = angleStep << 12;
     vec.x = Math_Cosine(angle);
@@ -46,7 +46,10 @@ void Func_02001620(s32 objectId) {
 
 void Func_020016a4(void) { GameFlag_SetBit(0x208); }
 
-/* VIEW(s1620): variable gInput as extern u32 gInput; input.h has extern struct InputState gInput; tried as the 3 declarations' extern u32 gInput, it does not compile in tla-ja: games/tla/include/system/input.h:37: conflicting types for `gInput'. */
+/* VIEW(s1620): variable gInput as extern u32 gInput; input.h has extern struct
+ * InputState gInput; tried as the 3 declarations' extern u32 gInput, it does
+ * not compile in tla-ja: games/tla/include/system/input.h:37: conflicting types
+ * for `gInput'. */
 extern u32 gInput__s1620 __asm__("gInput");
 extern const s16 gData_02002276[];
 
@@ -96,7 +99,11 @@ void Func_0200173c(void) {
   }
 }
 
-/* VIEW(s173c): routine Func_020016b0 as void Func_020016b0(void); the definition has void Func_020016b0(struct Actor *object); tried as the definition's void Func_020016b0(void), it does not compile in tla-ja: games/tla/src/scene/settlements.c:96: conflicting types for `Func_020016b0'. */
+/* VIEW(s173c): routine Func_020016b0 as void Func_020016b0(void); the
+ * definition has void Func_020016b0(struct Actor *object); tried as the
+ * definition's void Func_020016b0(void), it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:96: conflicting types for `Func_020016b0'.
+ */
 extern void Func_020016b0__s173c(void) __asm__("Func_020016b0");
 
 void Func_02001770(void) {
@@ -134,7 +141,7 @@ retry:
   targetZ = z;
   targetX = x;
   layer = &object->terrainId;
-  startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
+  startCell = FieldMapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
   dz = targetZ - object->z;
   dx = targetX - object->x;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
@@ -149,7 +156,7 @@ retry:
    * position's address; as no asm, 2 of 304 instructions differ in tla-en. */
   __asm__("" : : : SFP_CLOBBER);
   FieldVector_AddPolarOffset(0x100000, angle, position);
-  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
+  cell = FieldMapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
     object->facing = angle;
@@ -167,7 +174,7 @@ retry:
   FieldActor_SetMoveTarget(object, x, object->y, z);
   Func_02001fe0(object, 2);
   Actor_SetAnimationSpeed(object, 48);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   object->update = Func_020016b0__s173c;
   goto walk;
 walkNext:
@@ -179,8 +186,8 @@ walkNext:
   flags = &entry->collisionFlags;
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius, (s32)position,
-               entry->radius - 2) >= 0)
+    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
+               (s32)position, entry->radius - 2) >= 0)
       goto blocked;
   }
   j++;
@@ -193,20 +200,20 @@ overlap:
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
   FieldActor_SetMoveTarget(object, q[0], q[1], q[2]);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   if (cell != startCell)
     goto moved;
 walk:
   FieldVector_AddPolarOffset(0x100000, angle, position);
   q = position;
-  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
+  cell = FieldMapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
   if (cell != 255)
     goto walkNext;
 blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;
   FieldActor_SetMoveTarget(object, targetX, object->y, targetZ);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   System_Wait(2);
   goto retry;
 moved:

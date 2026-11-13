@@ -7,7 +7,7 @@
 #include "module/scene/scene.h"
 #include "text/msg_ids.h"
 
-void Func_02000280(void) { Func_080d2b4c(11, 27); }
+void Func_02000280(void) { Field_RequestDjinnBattle(11, 27); }
 
 u32 Func_0200028c(struct Actor *object) {
   s32 left;
@@ -20,7 +20,7 @@ s32 Func_020002a0(struct Actor *object) {
   if (object->timer != 0) {
     object->timer--;
   } else {
-    Func_080d47b4((s16)object->unk66, 0x105, 0);
+    Actor_ShowEmoteById((s16)object->unk66, 0x105, 0);
     object->timer = ((Random16Far() * 240) >> 16) + 240;
   }
   return 1;
@@ -144,14 +144,14 @@ void Func_020004a8(void) {
     GameFlag_SetBit(0x230);
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_SetPositionAndReset(4, 104, 252);
+    Actor_WalkToAndWaitById(4, 104, 252);
     Actor_FaceDirection(4, FACING_NORTHWEST, 0);
     FieldActor_LaunchFromLeader(14, -16, -16, FACING_NORTH);
     Actor_WaitForMoveById(14);
     Event_Wait(20);
     Event_SetMessageId((s32)&MsgKandoreanTemple11);
     Event_ShowMessageAndWait(14, 0);
-    Actor_ArmCallbackAndRefresh(14, FACING_SOUTHEAST);
+    Actor_FaceDirectionById(14, FACING_SOUTHEAST);
     Event_Wait(30);
     Actor_SetModeById(14, 3);
     Motion_SetModeAndWaitAnimation(4, 3);
@@ -160,8 +160,8 @@ void Func_020004a8(void) {
     Actor_SetModeById(14, 2);
     object = Actor_GetById(4);
     if (object)
-      Actor_ResetAndSetPosition(14, ((s16 *)&object->x)[1],
-                                ((s16 *)&object->z)[1]);
+      Actor_SetDestinationById(14, ((s16 *)&object->x)[1],
+                               ((s16 *)&object->z)[1]);
     Actor_WaitForMoveById(14);
     Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
     Event_End();
@@ -357,7 +357,7 @@ void Func_02000930(struct Actor *object, s32 priority) {
   Actor_SetSingleChildFlags(object, 0);
   Actor_SelectAnimation(object, 2);
   Actor_StartScript(object, gData_02005494);
-  Actor_SetPartAttribute(object, 9);
+  Actor_SetSpriteColor(object, 9);
   object->timer = 0;
   object->speedLimit = 0;
   object->acceleration = 0;
@@ -377,7 +377,7 @@ void Func_0200098c(s32 *position, s32 value) {
     object->timer = timer;
     Func_02000930(object, 3);
     object->update = (void (*)(void))Func_02000864;
-    Animation_SetStateFlags(object, 1);
+    Actor_SetBlendMode(object, 1);
   }
 }
 
@@ -447,7 +447,7 @@ void Func_02000adc(void) {
     object->timer = timer;
     Func_02000930(object, 1);
     object->update = (void (*)(void))Func_02000a0c;
-    Animation_SetStateFlags(object, 1);
+    Actor_SetBlendMode(object, 1);
   }
 }
 
@@ -473,9 +473,9 @@ void Func_02000bac(s32 id) {
 
 void Func_02000bcc(void) {
   BattleEffect_LoadActionEffectResources(133, 1);
-  BattleEffect_SetupObjectPair(12, 10);
+  FieldPsynergy_SetupActorPair(12, 10);
   EventObject_Initialize();
-  Field_DispatchTypeHandler(1);
+  FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   BattleEffect_CleanupSceneObjects();
 }
@@ -1144,7 +1144,7 @@ void Func_02001d40(void) {
   Event_ResolvePendingActions(0);
   Actor_Stop(9);
   wait(1);
-  Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)&MsgKandoreanTemple02);
   Event_AskYesNoAndShowResponse(9, 0);
   Actor_GetById(9)->facing = FACING_SOUTHEAST + FACING_STEP;
@@ -1158,7 +1158,7 @@ void Func_02001d40(void) {
 void Func_02001db4(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(10, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(10, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)&MsgKandoreanTemple03);
   Event_ShowMessageAndWait(10, 0);
   Actor_GetById(10)->facing = FACING_SOUTH + FACING_STEP;
@@ -1176,12 +1176,12 @@ void Func_02001e0c(void) {
 }
 
 void Func_02001e30(void) {
-  Func_080d47b4(9, 0x100, 0);
+  Actor_ShowEmoteById(9, 0x100, 0);
   Func_02001d40();
 }
 
 void Func_02001e44(void) {
-  Func_080d47b4(10, 0x100, 0);
+  Actor_ShowEmoteById(10, 0x100, 0);
   Func_02001db4();
 }
 
@@ -1212,12 +1212,12 @@ void Func_02001e58(void) {
   party = &gMainRoutineWork;
   *flags = zero;
   Actor_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
-  Actor_SetPositionAndReset(party->currentOwner, 168, 80);
-  Actor_ArmCallbackAndRefresh(party->currentOwner, FACING_NORTH);
+  Actor_WalkToAndWaitById(party->currentOwner, 168, 80);
+  Actor_FaceDirectionById(party->currentOwner, FACING_NORTH);
   Actor_SetSingleChildFlags(Actor_GetById(party->currentOwner), 0);
   Actor_SetModeById(party->currentOwner, 13);
   Actor_SetMoveTarget(leader, PIXELS(168), PIXELS(-12), PIXELS(80));
-  Script_WaitForEventTimeout(leader);
+  Actor_WaitForMove(leader);
   Actor_SetModeById(party->currentOwner, 10);
   Sound_Play(123);
   Event_FinishScreenTransition();
@@ -1226,9 +1226,9 @@ void Func_02001e58(void) {
 }
 
 void Func_02001f3c(void) {
-  Map_CopyCellPictureIndicesRect(39, 39, 24, 38, 2, 2);
+  MapGrid_CopyCellPictureIndicesRect(39, 39, 24, 38, 2, 2);
   wait(10);
-  Map_CopyCellPictureIndicesRect(39, 41, 24, 38, 2, 2);
+  MapGrid_CopyCellPictureIndicesRect(39, 41, 24, 38, 2, 2);
   wait(20);
   GameFlag_SetBit(0x212);
 }
@@ -1238,7 +1238,7 @@ void Func_02001f7c(void) {
   Event_ResolvePendingActions(0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 400, 648);
-  Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_NORTH);
+  Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_NORTH);
   if (GameFlag_Test(0x212) == 0) {
     Sound_Play(188);
     Func_02001f3c();
@@ -1246,7 +1246,7 @@ void Func_02001f7c(void) {
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
-  Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, 400, 640);
+  Actor_WalkToById(gMainRoutineWork.currentOwner, 400, 640);
   Sound_Play(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1259,7 +1259,7 @@ void Func_02002014(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 416, 288);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 416, 288);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 10);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   leader->motionFlags = 0;
@@ -1344,14 +1344,14 @@ void Func_02002248(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Func_080d47b4(gMainRoutineWork.currentOwner, 0x100, 20);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x100, 20);
   Sound_Play(132);
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 10);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 10);
   leader->velocityY = PIXELS(6);
   wait(20);
   while (leader->velocityY != 0)
     wait(1);
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Event_End();
 }
 
@@ -1359,7 +1359,7 @@ void Func_020022c0(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(188);
-  Map_CopyCellPictureIndicesRect(77, 33, 77, 24, 2, 2);
+  MapGrid_CopyCellPictureIndicesRect(77, 33, 77, 24, 2, 2);
   MapGrid_CopyCellAttributes(32, 30, 2, 1, 17, 25);
   wait(10);
   GameFlag_SetBit(0x212);
@@ -1373,7 +1373,7 @@ void Func_02002314(void) {
   GameFlag_SetBit(0x842);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPositionAndReset(4, 89, 237);
+  Actor_WalkToAndWaitById(4, 89, 237);
   Actor_FaceDirection(4, FACING_SOUTHEAST, 0);
   Actor_LaunchFromLeader(14, 16, 16, FACING_NORTHWEST);
   Actor_WaitForMoveById(14);
@@ -1388,8 +1388,8 @@ void Func_02002314(void) {
   Actor_SetModeById(14, 2);
   object = Actor_GetById(4);
   if (object)
-    Actor_ResetAndSetPosition(14, *(s16 *)((u8 *)object + 10),
-                              *(s16 *)((u8 *)object + 18));
+    Actor_SetDestinationById(14, *(s16 *)((u8 *)object + 10),
+                             *(s16 *)((u8 *)object + 18));
   Actor_WaitForMoveById(14);
   Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
   Event_End();
@@ -1402,7 +1402,7 @@ void Func_020023e8(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Func_080d4568()->motionFlags = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   ((void (*)())Actor_ArmCallback)(12, 0);
   Event_SetMessageId((s32)&MsgKandoreanTemple08);
   Event_ShowMessage(0x800c, 0);
@@ -1418,7 +1418,7 @@ void Func_020023e8(void) {
   Event_ShowMessage(0x800c, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, (u16)angle, 10);
   if (gData_020062ac != 0)
-    BattleEffect_RunActorRiseAndDescent(gData_020062ac, 3);
+    ItemDisplay_ShowPicture(gData_020062ac, 3);
   Party_GiveItem(198, 0);
   if (gData_020062ac != 0)
     Import_ActorDestroy(gData_020062ac);
@@ -1474,11 +1474,11 @@ void Func_0200269c(void) {
 void Func_020026cc(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Camera_MoveWithinMapBounds(PIXELS(328), -1, PIXELS(174), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(328), -1, PIXELS(174), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 328, 174);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 328, 174);
   Motion_SetVarCbAndRefresh(11, 2);
   Sound_Play(146);
   Actor_SetModeById(11, 2);
@@ -1489,8 +1489,8 @@ void Func_020026cc(void) {
   Actor_SetModeById(13, 2);
   Actor_GetById(12)->velocityY = PIXELS(6);
   Actor_GetById(13)->velocityY = PIXELS(6);
-  Actor_ResetAndSetPosition(12, 300, 164);
-  Actor_SetPositionAndCommit(13, 356, 164);
+  Actor_SetDestinationById(12, 300, 164);
+  Actor_MoveToAndWaitById(13, 356, 164);
   Event_Wait(40);
   /* FAKEMATCH(dead): an empty once-only block, whose loop note ends the
    * scheduling block before the battle rule is set, so the last position
@@ -1499,7 +1499,7 @@ void Func_020026cc(void) {
   do {
   } while (0);
   gMainRoutineWork.battleRule24b = 2;
-  Party_SetFields1eeAnd1f0((s32)&SceneId_Ov653Room3, 3);
+  Event_SetAfterBattleDestination((s32)&SceneId_Ov653Room3, 3);
   Field_RequestBattleFromEncounterTable(9, 4);
   Event_End();
 }
@@ -1617,7 +1617,7 @@ void Func_02002a84(void) {
       s32 e = 1;
       s32 f = 4;
 
-      Map_CopyCellPictureIndicesRect(41, 0, 20, 0, e, f);
+      MapGrid_CopyCellPictureIndicesRect(41, 0, 20, 0, e, f);
     }
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);

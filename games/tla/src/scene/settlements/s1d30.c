@@ -54,9 +54,9 @@ retry:
   targetX = x;
   targetZ = z;
   layer = &object->terrainId;
-  startCell = MapGrid_GetCellBehaviorAt(*layer, x, z);
+  startCell = FieldMapGrid_GetCellBehaviorAt(*layer, x, z);
   FieldVector_AddPolarOffset(0x100000, angle, p);
-  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
+  cell = FieldMapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
     object->facing = angle;
@@ -84,8 +84,8 @@ walkNext:
   flags = &entry->collisionFlags;
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius, (s32)position,
-               entry->radius - 2) >= 0)
+    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
+               (s32)position, entry->radius - 2) >= 0)
       goto blocked;
   }
   j++;
@@ -98,7 +98,7 @@ overlap:
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
   FieldActor_SetMoveTarget(object, q[0], q[1], q[2]);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   if (cell != startCell)
     goto moved;
 walk:
@@ -107,14 +107,14 @@ walk:
   __asm__("" : : : SFP_CLOBBER);
   FieldVector_AddPolarOffset(0x100000, angle, position);
   q = position;
-  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
+  cell = FieldMapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
   if (cell != 255)
     goto walkNext;
 blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;
   FieldActor_SetMoveTarget(object, targetX, object->y, targetZ);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   System_Wait(2);
   goto retry;
 moved:
@@ -362,8 +362,10 @@ struct Trigger gSettlements_Room1Triggers[] = {
     {0x602, 4, CONDITION_ALWAYS, EVENT(Func_020005cc)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Settlements_WarnOfRiddleOfRock)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSettlements03)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSettlements04)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSettlements06)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgSettlements04)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgSettlements06)},
     {0x50008905, 10, CONDITION_ALWAYS, EVENT(Func_02000488)},
     {0x50008905, 11, CONDITION_ALWAYS, EVENT(Func_020004a8)},
     {TRIGGERS_END},
@@ -372,7 +374,8 @@ struct Trigger gSettlements_Room1Triggers[] = {
 struct Trigger gSettlements_Room2Triggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 1},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements02)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSettlements05)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgSettlements05)},
     {TRIGGERS_END},
 };
 
@@ -386,10 +389,13 @@ struct Trigger gSettlements_Room4Triggers[] = {
     {TRIGGER_STEP, 34, 0x220, EVENT(Func_0200125c)},
     {TRIGGER_STEP, 35, 0x1220, EVENT(Func_020012c0)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements07)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSettlements10)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgSettlements10)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_02000290)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(Func_02001304)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_0200155c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10,
+     CONDITION_ALWAYS, EVENT(Func_02001304)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS,
+     EVENT(Func_0200155c)},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02001304)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_0200155c)},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 9, 0x230, EVENT(Func_02000644)},
@@ -402,8 +408,10 @@ struct Trigger gSettlements_Room5Triggers[] = {
     {49, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements08)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSettlements09)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSettlements11)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSettlements12)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgSettlements11)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgSettlements12)},
     {TRIGGERS_END},
 };
 
@@ -423,8 +431,10 @@ struct Trigger gSettlements_Room8Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements13)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSettlements14)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSettlements15)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSettlements16)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgSettlements15)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgSettlements16)},
     {0x173, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSettlements21))},
     {TRIGGERS_END},
 };
@@ -434,10 +444,13 @@ struct Trigger gSettlements_Room9Triggers[] = {
     {0xc401, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements18)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, EVENT(Func_020002a0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSettlements20)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, 0x204, EVENT(Func_02000ef0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgSettlements20)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9,
+     0x204, EVENT(Func_02000ef0)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x204, EVENT(Func_020011bc)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, 0x205, EVENT(Func_02000ef0)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10,
+     0x205, EVENT(Func_02000ef0)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x205, EVENT(Func_020011c8)},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02000f00)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_020011d4)},
@@ -448,7 +461,8 @@ struct Trigger gSettlements_Room9Triggers[] = {
 struct Trigger gSettlements_Room10Triggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 1},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements17)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSettlements19)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgSettlements19)},
     {TRIGGERS_END},
 };
 

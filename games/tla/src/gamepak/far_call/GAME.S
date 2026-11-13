@@ -24,18 +24,18 @@ Unit_CalculateFar:
 	export Ability_Get, Ability_GetDirect
 	export Unit_LearnPsynergyFar, Unit_LearnPsynergy
 	export Unit_KnowsPsynergyFar, Unit_KnowsPsynergy
-	export Func_080ad090, Func_080addf0
-	export Func_080ad098, Unit_CheckLevelUp
-	export Func_080ad0a0, Party_InitializeCharacters
-	export Func_080ad0a8, Unit_LevelNoOp
-	export Func_080ad0b0, Unit_TryLevelUp
-	export Func_080ad0b8, Game_RestartQuest
+	export MainRoutineWork_InitializeDefaultsFar, MainRoutineWork_InitializeDefaults
+	export Unit_CheckLevelUpFar, Unit_CheckLevelUp
+	export Party_InitializeCharactersFar, Party_InitializeCharacters
+	export Unit_LevelNoOpFar, Unit_LevelNoOp
+	export Unit_TryLevelUpFar, Unit_TryLevelUp
+	export Game_RestartQuestFar, Game_RestartQuest
 	export Unit_AddHpFar, Unit_AddHp
 	export Unit_AddPpFar, Unit_AddPp
 	export Unit_RecalculateGaugesFar, Unit_RecalculateGauges
 	export Unit_SetHpFar, Unit_SetHp
 	export Unit_SetPpFar, Unit_SetPp
-	export BattleUnit_SetFar, Func_080afbec
+	export BattleUnit_SetFar, BattleUnit_Set
 	export Party_CountMembersFar, Party_CountMembers
 	export Party_AddMemberFar, Party_AddMember
 	export Party_ListMembersFar, Party_ListMembers
@@ -71,8 +71,8 @@ Unit_CalculateFar:
 	export Inventory_CountFar, Inventory_Count
 	export PartyInventory_HasSpaceFar, PartyInventory_HasSpace
 	export Unit_GetExperienceForLevelFar, Unit_GetExperienceForLevel
-	export Func_080ad208, Party_RestoreHpPp
-	export Func_080ad210, Party_RestorePpOfLitElements
+	export Party_RestoreHpPpFar, Party_RestoreHpPp
+	export Party_RestorePpOfLitElementsFar, Party_RestorePpOfLitElements
 	export Party_SetLeaderJennaFar, Party_SetLeaderJenna
 	export Party_SetLeaderFelixFar, Party_SetLeaderFelix
 	export Func_080ad228, Func_080ae118
@@ -83,8 +83,8 @@ Unit_CalculateFar:
 	export Party_SumDjinnCountsFar, Party_SumDjinnCounts
 	export Party_AdjustShopCreditFar, Party_AdjustShopCredit
 	export Party_AdjustShopGiftsFar, Party_AdjustShopGifts
-	export Func_080ad268, Inventory_CheckDiscard
-	export Func_080ad270, Inventory_CheckUnequip
+	export Inventory_CheckDiscardFar, Inventory_CheckDiscard
+	export Inventory_CheckUnequipFar, Inventory_CheckUnequip
 	export Inventory_DiscardFar, Inventory_Discard
 	export Battle_IsReviveEffectFar, Battle_IsReviveEffect
 	export Unit_RefreshPsynergyFar, Unit_RefreshPsynergy
@@ -97,11 +97,11 @@ Unit_CalculateFar:
 	export Equipment_GetUnleashRateBonusFar, Equipment_GetUnleashRateBonus
 	export BuildStamp_GetTimeFar, BuildStamp_GetTime
 	export PartyInventory_CountFreeSlotsFar, PartyInventory_CountFreeSlots
-	export Func_080ad2d8, InventorySnapshot_Save
-	export Func_080ad2e0, InventorySnapshot_Restore
+	export InventorySnapshot_SaveFar, InventorySnapshot_Save
+	export InventorySnapshot_RestoreFar, InventorySnapshot_Restore
 	export Party_FindOwnerWithActionFar, Party_FindOwnerWithAction
 	export PartyInventory_FindRoomFar, PartyInventory_FindRoom
-	export Func_080ad2f8, Class_GetSeries
+	export Class_GetSeriesFar, Class_GetSeries
 	export Djinn_ActivateOfferedForPartyFar, Djinn_ActivateOfferedForParty
 	export Func_080ad308, Func_080af0e4
 	export Func_080ad310, Func_080add5c

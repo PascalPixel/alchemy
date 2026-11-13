@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x661, in ROM order, from placements' offset up to the next object the overlay links.
+/// Scene code of overlay 0x661, in ROM order, from placements' offset up to the
+/// next object the overlay links.
 
 #include "scene.h"
 #include "module/scene/yampi_desert.h"
@@ -162,7 +163,7 @@ void YampiDesert_TalkToElderAboutWay(void) {
   Event_ResolvePendingActions(0);
   if (!Scene_FlagTest(0x88f))
     Func_020004e0();
-  Actor_SetAngleToward(12, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(12, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgAsYouCan);
   Event_ShowMessageAndWait(12, 0);
   GameFlag_SetBit(0x88f);
@@ -176,7 +177,7 @@ void YampiDesert_TalkToElder(void) {
   Event_ResolvePendingActions(0);
   if (!Scene_FlagTest(0x88f))
     Func_020004e0();
-  Actor_SetAngleToward(13, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(13, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgThisIsWhere);
   Event_ShowMessageAndWait(13, 0);
   GameFlag_SetBit(0x88f);
@@ -277,8 +278,8 @@ next:
       struct MapCell *cells = map->layers[layer].cells;
       u8 *shapes =
           (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
-      /* FAKEMATCH(pin): the index in r10; as a plain local, 32 of 130 instructions
-       * differ in tla-en. */
+      /* FAKEMATCH(pin): the index in r10; as a plain local, 32 of 130
+       * instructions differ in tla-en. */
       register s32 index asm("r10") = Func_020041e0(object);
       s32 shape = MapGrid_GetTerrainKind(layer, object->x, object->z);
       s32 height = Map_GetTerrainHeight(layer, object->x, object->z);
@@ -383,10 +384,10 @@ void Func_02000a8c(void) {
   Event_ResolvePendingActions(0);
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov661Room4) {
-    Camera_FollowActor(16, 1);
+    FieldCamera_FollowActor(16, 1);
     Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
   } else if (scene == (s32)&SceneId_Ov661Room5) {
-    Camera_FollowActor(21, 1);
+    FieldCamera_FollowActor(21, 1);
     Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 21);
   }
   // Entered at its test, which keeps the test single and the address load

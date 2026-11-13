@@ -494,7 +494,7 @@ done:
   return result;
 }
 
-/// Resets the transfer state, as BattleLink_ResetTransferState does.
+/// Resets the transfer state, as LinkBattle_ResetTransferState does.
 // In The Lost Age's store order.
 static __inline__ void Lobby_ResetTransferState(void) {
   struct SerialTransferState *state;
@@ -506,7 +506,8 @@ static __inline__ void Lobby_ResetTransferState(void) {
   ime = &REG_IME;
   /* FAKEMATCH(dead): the IME exchange in a once-only block, which keeps it
    * before the zero and status constants; as plain statements, the constants
-   * come first, 8 of 62 instructions of LinkLobby_ExchangePartyRecords differ in tla-en. */
+   * come first, 8 of 62 instructions of LinkLobby_ExchangePartyRecords differ
+   * in tla-en. */
   do {
     saved = *ime;
     *ime = (u16)ime;
@@ -693,10 +694,10 @@ s32 LinkLobby_EnterBattle(void) {
     set = Event_GetFlag(0x173);
     scene = (s32)&SceneId_Ov6b5;
     if (set) {
-      Party_SetFields1eeAnd1f0(scene, 8);
+      Event_SetAfterBattleDestination(scene, 8);
       Party_SetFields1f2And1f4(scene, 9);
     } else {
-      Party_SetFields1eeAnd1f0(scene, 10);
+      Event_SetAfterBattleDestination(scene, 10);
       Party_SetFields1f2And1f4(scene, 11);
     }
     gMainRoutineWork.battleRule24b = 4;
@@ -1047,16 +1048,22 @@ void Func_02000fbc(s32 actor) {
 s32 LinkLobby_PartyContains(s32 id);
 void Serial_RemoveIrqHandlers(void);
 void Map_CenterOnFollowedPoint(void);
-void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
-                                    s32 width, s32 height);
+void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
+                                        s32 destY, s32 width, s32 height);
 void MessageArgument_Push(s32 value, s32 digits);
 void Func_020019ec(void);
 void Event_Start(void);
 void Event_End(void);
-/* VIEW(talk): routine Func_080d47b4 as void Func_080d47b4(s32 actor, s32 animation, s32 flags); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/src/scene/lobby.c:1075: conflicting types for `Func_080d47b4'. */
-extern void Func_080d47b4__talk(s32 actor, s32 animation, s32 flags) __asm__("Func_080d47b4");
+/* VIEW(talk): routine Actor_ShowEmoteById as void Actor_ShowEmoteById(s32
+ * actor, s32 animation, s32 flags); event.h has s32 Actor_ShowEmoteById(s32
+ * actorId, s32 emote, s32 frames); tried as the definition's struct
+ * BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32
+ * state), it does not compile in tla-ja: games/tla/src/scene/lobby.c:1075:
+ * conflicting types for `Actor_ShowEmoteById'. */
+extern void Func_080d47b4__talk(s32 actor, s32 animation,
+                                s32 flags) __asm__("Actor_ShowEmoteById");
 s32 Func_02001a84(s32 scene, s32 entrance);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void FieldMessage_Show(s32 no, s32 flags);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -1239,7 +1246,11 @@ next:
   Map_CenterOnFollowedPoint();
 }
 
-/* VIEW(scene_events): tag struct LobbyEventWork as struct LobbyEventWork__scene_events; lobby.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/lobby.c:1315: structure has no member named `startTransition'. */
+/* VIEW(scene_events): tag struct LobbyEventWork as struct
+ * LobbyEventWork__scene_events; lobby.c has another definition; tried with the
+ * definition the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/lobby.c:1315: structure has no member named
+ * `startTransition'. */
 struct LobbyEventWork__scene_events {
   u8 unk000[0x16a];
   s16 raisedTrigger;
@@ -1282,7 +1293,8 @@ s32 LinkLobby_RunRoundResult(void) {
   gMainRoutineWork.packedEvents[1] = 0;
   gData_020022bc = 0;
   gData_020022b8 = 0;
-  ((struct LobbyEventWork__scene_events *)Ram_HeapSlots->eventWork)->startTransition = 0x201;
+  ((struct LobbyEventWork__scene_events *)Ram_HeapSlots->eventWork)
+      ->startTransition = 0x201;
   Sound_LoadReverbCode(2);
   Func_02001414(gMainRoutineWork.linkTallies[6]);
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);

@@ -12,7 +12,11 @@
 
 #define TARGET_UNSET ((s32)0x80000000)
 
-/* VIEW(f02493c): tag struct MotionObject as struct MotionObject__f02493c; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:2499: structure has no member named `terrainHeight'. */
+/* VIEW(f02493c): tag struct MotionObject as struct MotionObject__f02493c;
+ * resource_slot.c has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/field/resource_slot.c:2499: structure has no member named
+ * `terrainHeight'. */
 struct MotionObject__f02493c {
   void *script;
   u16 scriptCursor;
@@ -45,10 +49,14 @@ struct MotionObject__f02493c {
   u8 unk62[0x1e];
 };
 
-/* VIEW(f02493c): routine ObjectList_CollectActive as void ObjectList_CollectActive(void *objects, struct MotionObject__f02493c **out); the definition has void ObjectList_CollectActive(u8 *object, u8 **out). */
-extern void ObjectList_CollectActive__f02493c(void *objects, struct MotionObject__f02493c **out) __asm__("ObjectList_CollectActive");
+/* VIEW(f02493c): routine ObjectList_CollectActive as void
+ * ObjectList_CollectActive(void *objects, struct MotionObject__f02493c **out);
+ * the definition has void ObjectList_CollectActive(u8 *object, u8 **out). */
+extern void ObjectList_CollectActive__f02493c(
+    void *objects,
+    struct MotionObject__f02493c **out) __asm__("ObjectList_CollectActive");
 
-void Func_0802493c(void) {
+void Actor_UpdateAllMotion(void) {
   struct MotionObject__f02493c *list[15];
   struct MotionObject__f02493c **next;
   struct MotionObject__f02493c *object;
@@ -189,7 +197,7 @@ void Func_0802493c(void) {
   }
 }
 
-s32 Script_Wait(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_Wait(struct ScriptInterpreter *interpreter) {
   s16 cursor = interpreter->cursor;
 
   interpreter->lookupResult = interpreter->script[cursor + 1] - 1;
@@ -218,7 +226,7 @@ s32 Script_WaitForArrival(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_InvokeCallback(struct ScriptInterpreter *interpreter) {
   s16 initial = interpreter->cursor;
   ScriptCommand callback = (ScriptCommand)interpreter->script[initial + 1];
 
@@ -229,7 +237,7 @@ s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key) {
+s32 ActorScript_FindLabel(struct ScriptInterpreter *interpreter, u32 key) {
   u32 *entries;
   s32 index;
   s16 *field = &interpreter->lookupResult;
@@ -252,7 +260,7 @@ s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key) {
   return 0;
 }
 
-s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_RepeatOrJump(struct ScriptInterpreter *interpreter) {
   const s32 *arguments;
   s32 repeatLimit;
   s32 jumpKey;
@@ -263,13 +271,13 @@ s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter) {
   repeatLimit = *arguments++;
   jumpKey = *arguments;
   if (repeatLimit == 0xFFFF) {
-    interpreter->cursor = Script_FindLabel(interpreter, jumpKey);
+    interpreter->cursor = ActorScript_FindLabel(interpreter, jumpKey);
   } else {
     repeatCount = &interpreter->repeatCount;
     nextCount = *repeatCount + 1;
     *repeatCount = nextCount;
     if ((s32)(u8)nextCount < (s32)(s16)repeatLimit) {
-      interpreter->cursor = Script_FindLabel(interpreter, jumpKey);
+      interpreter->cursor = ActorScript_FindLabel(interpreter, jumpKey);
     } else {
       *repeatCount = 0;
       interpreter->cursor = interpreter->cursor + 3;
@@ -278,39 +286,39 @@ s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-s32 Script_JumpToLabel(struct ScriptInterpreter *interpreter) {
-  interpreter->cursor = Script_FindLabel(
+s32 ActorScript_JumpToLabel(struct ScriptInterpreter *interpreter) {
+  interpreter->cursor = ActorScript_FindLabel(
       interpreter, interpreter->script[interpreter->cursor + 1]);
   return 1;
 }
 
-u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter) {
+u32 ActorScript_JumpIfTrue(struct ScriptInterpreter *interpreter) {
   s32 index = interpreter->cursor;
   const s32 *table = interpreter->script;
   u32 value = table[index + 1];
 
   if (interpreter->conditionResult != 0) {
-    interpreter->cursor = Script_FindLabel(interpreter, value);
+    interpreter->cursor = ActorScript_FindLabel(interpreter, value);
   } else {
     interpreter->cursor += 2;
   }
   return 1;
 }
 
-u32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter) {
+u32 ActorScript_JumpIfFalse(struct ScriptInterpreter *interpreter) {
   s32 index = interpreter->cursor;
   const s32 *table = interpreter->script;
   u32 value = table[index + 1];
 
   if (interpreter->conditionResult == 0) {
-    interpreter->cursor = Script_FindLabel(interpreter, value);
+    interpreter->cursor = ActorScript_FindLabel(interpreter, value);
   } else {
     interpreter->cursor += 2;
   }
   return 1;
 }
 
-s32 Script_End(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_End(struct ScriptInterpreter *interpreter) {
   s32 result;
 
   interpreter->script = gScript_MainScript;
@@ -318,7 +326,7 @@ s32 Script_End(struct ScriptInterpreter *interpreter) {
   return result;
 }
 
-s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_TestFlag(struct ScriptInterpreter *interpreter) {
   s32 done;
 
   interpreter->conditionResult =
@@ -328,10 +336,11 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
   return done;
 }
 
-/* VIEW(f02493c): routine GameFlag_SetBit as s32 GameFlag_SetBit(s32); flag_call.h has void GameFlag_SetBit(s32 flag). */
+/* VIEW(f02493c): routine GameFlag_SetBit as s32 GameFlag_SetBit(s32);
+ * flag_call.h has void GameFlag_SetBit(s32 flag). */
 extern s32 GameFlag_SetBit__f02493c(s32) __asm__("GameFlag_SetBit");
 
-s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_SetFlagAndTest(struct ScriptInterpreter *interpreter) {
   s32 value;
 
   value = interpreter->script[interpreter->cursor + 1];
@@ -341,7 +350,7 @@ s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-s32 Script_ClearFlagAndTest(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_ClearFlagAndTest(struct ScriptInterpreter *interpreter) {
   s32 value;
 
   value = interpreter->script[interpreter->cursor + 1];
@@ -351,7 +360,7 @@ s32 Script_ClearFlagAndTest(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-s32 Script_ToggleFlag(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_ToggleFlagAndTest(struct ScriptInterpreter *interpreter) {
   s32 value;
 
   value = interpreter->script[interpreter->cursor + 1];
@@ -364,7 +373,7 @@ s32 Script_ToggleFlag(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-s32 Script_SetAnimation(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_SetAnimation(struct ScriptInterpreter *interpreter) {
   Actor_SelectAnimation((struct Actor *)interpreter,
                         interpreter->script[interpreter->cursor + 1]);
   interpreter->cursor += 2;
@@ -378,7 +387,7 @@ s32 Actor_ReleaseAndClear(void *object) {
   return 0;
 }
 
-s32 Script_Nop(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_Nop(struct ScriptInterpreter *interpreter) {
   interpreter->cursor += 2;
   return 1;
 }
@@ -397,7 +406,7 @@ s32 Script_CallWithOperand(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values) {
+s32 ActorScript_CheckOverlap(struct Actor *object, s32 *values) {
   s32 index;
   u8 *flags;
   struct Actor *entry = Ram_HeapSlots->scriptObjects;
@@ -413,8 +422,8 @@ s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values) {
   return 0;
 }
 
-struct Actor *ScriptObject_FindOverlappingEntry(struct Actor *object,
-                                                s32 *values) {
+struct Actor *ActorScript_FindOverlappingEntry(struct Actor *object,
+                                               s32 *values) {
   s32 index;
   u8 *flags;
   struct Actor *entry = Ram_HeapSlots->scriptObjects;
@@ -433,12 +442,19 @@ struct Actor *ScriptObject_FindOverlappingEntry(struct Actor *object,
 
 #include "actor_script_view.h"
 
-/* VIEW(apply_relative_position): routine Actor_SetMoveTarget as void Actor_SetMoveTarget(void *, s32, s32, s32); the definition has void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z). */
-extern void Actor_SetMoveTarget__apply_relative_position(void *, s32, s32, s32) __asm__("Actor_SetMoveTarget");
-/* VIEW(apply_relative_position): routine Actor_SetPositionAndResetMotion as void Actor_SetPositionAndResetMotion(void *, s32, s32, s32); the definition has void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z). */
-extern void Actor_SetPositionAndResetMotion__apply_relative_position(void *, s32, s32, s32) __asm__("Actor_SetPositionAndResetMotion");
+/* VIEW(apply_relative_position): routine Actor_SetMoveTarget as void
+ * Actor_SetMoveTarget(void *, s32, s32, s32); the definition has void
+ * Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z). */
+extern void Actor_SetMoveTarget__apply_relative_position(
+    void *, s32, s32, s32) __asm__("Actor_SetMoveTarget");
+/* VIEW(apply_relative_position): routine Actor_SetPositionAndResetMotion as
+ * void Actor_SetPositionAndResetMotion(void *, s32, s32, s32); the definition
+ * has void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32
+ * z). */
+extern void Actor_SetPositionAndResetMotion__apply_relative_position(
+    void *, s32, s32, s32) __asm__("Actor_SetPositionAndResetMotion");
 
-s32 Func_08024fe0(struct ActorScriptView *object) {
+s32 ActorScript_SetPositionAndResetMotion(struct ActorScriptView *object) {
   const s32 *argument = object->script + (s16)object->scriptCursor + 1;
   s32 x = *argument++;
   s32 y = *argument++;
@@ -458,7 +474,8 @@ s32 Func_08024fe0(struct ActorScriptView *object) {
 s32 Func_08025038(struct ActorScriptView *object) {
   s32 height;
 
-  Actor_SetPositionAndResetMotion__apply_relative_position(object, 0, object->y, 0);
+  Actor_SetPositionAndResetMotion__apply_relative_position(object, 0, object->y,
+                                                           0);
   if (object->flags & 1) {
     height = MapGrid_GetTerrainHeight(object->terrainId, object->x, object->z);
     object->y = object->y - object->terrainHeight + height;
@@ -490,19 +507,19 @@ s32 Func_0802509c(struct ActorScriptView *object) {
   return 1;
 }
 
-s32 Script_ApplyRelativePosition(struct ActorScriptView *object) {
+s32 ActorScript_ApplyRelativePosition(struct ActorScriptView *object) {
   const s32 *cursor = object->script + (s16)object->scriptCursor + 1;
   s32 first = *cursor++;
   s32 second = *cursor++;
   s32 third = *cursor;
 
-  Actor_SetMoveTarget__apply_relative_position(object, object->x + first, object->y + second,
-                       object->z + third);
+  Actor_SetMoveTarget__apply_relative_position(
+      object, object->x + first, object->y + second, object->z + third);
   object->scriptCursor += 4;
   return 1;
 }
 
-s32 Script_StoreAngleToWatchedObject(struct ActorScriptView *object) {
+s32 ActorScript_StoreAngleToWatchedActor(struct ActorScriptView *object) {
   struct ActorScriptView *target;
 
   target = object->watchedObject;
@@ -512,16 +529,17 @@ s32 Script_StoreAngleToWatchedObject(struct ActorScriptView *object) {
   return 1;
 }
 
-s32 Script_ApplyWatchedObjectPosition(struct ActorScriptView *object) {
+s32 ActorScript_ApplyWatchedActorPosition(struct ActorScriptView *object) {
   struct ActorScriptView *target;
 
   target = object->watchedObject;
-  Actor_SetMoveTarget__apply_relative_position(object, target->x, target->y, target->z);
+  Actor_SetMoveTarget__apply_relative_position(object, target->x, target->y,
+                                               target->z);
   object->scriptCursor++;
   return 1;
 }
 
-s32 Script_ApplyLocalOffsetPosition(struct Actor *object) {
+s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *object) {
   s32 offset[3];
 
   Actor_SetMoveTarget(object, object->x + offset[0], object->y + offset[1],
@@ -533,7 +551,7 @@ s32 Script_ApplyLocalOffsetPosition(struct Actor *object) {
 #define TARGET_UNSET ((s32)0x80000000)
 #define DISTANCE(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-s32 Func_08025160(struct Actor *interpreter) {
+s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
   struct Actor *cameraObject = interpreter;
   struct Actor *leader;
   struct MapWork *bounds;
@@ -603,7 +621,7 @@ s32 Func_08025160(struct Actor *interpreter) {
     } else {
       dx = (x - cameraObject->x) / 0x10000;
       /* FAKEMATCH(dead): this dy, overwritten below, as in The Broken Seal's
-       * FieldCamera_FollowLeaderInBounds, which steers register allocation;
+       * twin, which steers register allocation;
        * without it, 129 of 345 instructions differ in tla-en. */
       dy = (y - cameraObject->y) / 0x10000;
       dz = (z - cameraObject->z) / 0x10000;
@@ -754,11 +772,20 @@ s32 Actor_ApproachWatchedActor(struct Actor *object) {
 
 struct ScriptObjectEntry;
 
-/* VIEW(resource_slot): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position); module/system/system.h has void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position). */
-extern void Vector_AddPolarOffset__resource_slot(s32 radius, s32 angle,
-                           struct FieldPosition *position) __asm__("Vector_AddPolarOffset");
-/* VIEW(offset): routine ScriptObject_CheckOverlap as s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *position); the definition has s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values). */
-extern s32 ScriptObject_CheckOverlap__offset(struct ScriptObjectEntry *object, s32 *position) __asm__("ScriptObject_CheckOverlap");
+/* VIEW(resource_slot): routine Vector_AddPolarOffset as void
+ * Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
+ * module/system/system.h has void Vector_AddPolarOffset(s32 radius, s32 angle,
+ * s32 *position). */
+extern void Vector_AddPolarOffset__resource_slot(
+    s32 radius, s32 angle,
+    struct FieldPosition *position) __asm__("Vector_AddPolarOffset");
+/* VIEW(offset): routine ActorScript_CheckOverlap as s32
+ * ActorScript_CheckOverlap(struct ScriptObjectEntry *object, s32 *position);
+ * the definition has s32 ActorScript_CheckOverlap(struct Actor *object, s32
+ * *values). */
+extern s32 ScriptObject_CheckOverlap__offset(
+    struct ScriptObjectEntry *object,
+    s32 *position) __asm__("ActorScript_CheckOverlap");
 
 /// SC_WANDER(base, range, limit), as The Broken Seal's: walks to a random
 /// point base to base + range away within 90 degrees of its heading, that
@@ -794,7 +821,7 @@ retry:
     heading = object->scriptValue + (Random16() >> 2) - (Random16() >> 2);
     Vector_AddPolarOffset__resource_slot(radius, heading, &pos);
     if (ScriptObject_CheckOverlap__offset((struct ScriptObjectEntry *)object,
-                                  (s32 *)&pos) != 0)
+                                          (s32 *)&pos) != 0)
       goto retry;
     if (MapGrid_CheckCollision((struct Actor *)object, &pos) != 0)
       goto retry;
@@ -848,16 +875,16 @@ found:
 
 struct ScriptObjectEntry;
 
-s32 MapGrid_CheckCollision(struct Actor *object, struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct Actor *object,
+                           struct FieldPosition *position);
 
-/// Moves the object to a random spot within its home radius, as The Broken
-/// Seal's ActorScript_WanderNearHome does: up to seven tries at a point a
-/// random distance away in a random turn of its heading, each refused if
-/// anything overlaps it or blocks the path or the cells beside it. An object
-/// outside its home radius (or out of tries) heads back toward home instead.
-/// Operands: the minimum distance, the distance range and the
-/// home radius.
-s32 Func_08025830(struct ActorScriptView *object) {
+/// SC_WANDER_HOME: moves the object to a random spot within its home radius: up
+/// to seven tries at a point a random distance away in a random turn of its
+/// heading, each refused if anything overlaps it or blocks the path or the
+/// cells beside it. An object outside its home radius (or out of tries) heads
+/// back toward home instead. Operands: the minimum distance, the distance range
+/// and the home radius.
+s32 ActorScript_WanderNearHome(struct ActorScriptView *object) {
   struct FieldPosition candidatePosition;
   struct FieldPosition probePosition;
   s32 minimumDistance;
@@ -890,45 +917,53 @@ s32 Func_08025830(struct ActorScriptView *object) {
       candidatePosition.x = object->x;
       candidatePosition.y = object->y;
       candidatePosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(0x80000, heading, &candidatePosition);
+      Vector_AddPolarOffset__resource_slot(0x80000, heading,
+                                           &candidatePosition);
       if (ScriptObject_CheckOverlap__offset((struct ScriptObjectEntry *)object,
-                                    (s32 *)&candidatePosition) != 0)
+                                            (s32 *)&candidatePosition) != 0)
         goto roam;
       candidatePosition.x = object->x;
       candidatePosition.y = object->y;
       candidatePosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(travelDistance, heading, &candidatePosition);
-      if (MapGrid_CheckCollision((struct Actor *)object, &candidatePosition) != 0)
+      Vector_AddPolarOffset__resource_slot(travelDistance, heading,
+                                           &candidatePosition);
+      if (MapGrid_CheckCollision((struct Actor *)object, &candidatePosition) !=
+          0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
       travelDistance += 0x80000;
       probePosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(travelDistance, heading, &probePosition);
+      Vector_AddPolarOffset__resource_slot(travelDistance, heading,
+                                           &probePosition);
       if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
       probePosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(travelDistance, heading + 0x2000, &probePosition);
+      Vector_AddPolarOffset__resource_slot(travelDistance, heading + 0x2000,
+                                           &probePosition);
       if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
       probePosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(travelDistance, heading - 0x2000, &probePosition);
+      Vector_AddPolarOffset__resource_slot(travelDistance, heading - 0x2000,
+                                           &probePosition);
       if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
       probePosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(travelDistance, heading + 0x4000, &probePosition);
+      Vector_AddPolarOffset__resource_slot(travelDistance, heading + 0x4000,
+                                           &probePosition);
       if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
       probePosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(travelDistance, heading - 0x4000, &probePosition);
+      Vector_AddPolarOffset__resource_slot(travelDistance, heading - 0x4000,
+                                           &probePosition);
       if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
       dx = candidatePosition.x / 0x10000 - object->homeX;
@@ -953,12 +988,13 @@ back:
     candidatePosition.z = object->z;
     Vector_AddPolarOffset__resource_slot(0x80000, heading, &candidatePosition);
     if (ScriptObject_CheckOverlap__offset((struct ScriptObjectEntry *)object,
-                                  (s32 *)&candidatePosition) != 0)
+                                          (s32 *)&candidatePosition) != 0)
       goto back;
     candidatePosition.x = object->x;
     candidatePosition.y = object->y;
     candidatePosition.z = object->z;
-    Vector_AddPolarOffset__resource_slot(travelDistance, heading, &candidatePosition);
+    Vector_AddPolarOffset__resource_slot(travelDistance, heading,
+                                         &candidatePosition);
     if (MapGrid_CheckCollision((struct Actor *)object, &candidatePosition) != 0)
       goto back;
     object->flags59 &= ~2;
@@ -970,8 +1006,8 @@ done:
   return 1;
 }
 
-void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation,
-                                s32 value) {
+void ActorScript_SetOrCompareScriptAddress(struct ScriptOperands *state,
+                                           s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -989,8 +1025,8 @@ void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareCursor(struct ScriptOperands *state, s32 operation,
+                                    s32 value) {
   if (operation == 0) {
     state->cursor = value;
   } else if (operation == 1) {
@@ -1000,8 +1036,8 @@ void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation,
   }
 }
 
-void Script_SetOrCompareUnsignedHalfword(struct ScriptOperands *state,
-                                         s32 operation, s32 value) {
+void ActorScript_SetOrCompareFacing(struct ScriptOperands *state, s32 operation,
+                                    s32 value) {
   s32 result;
 
   if (operation == 0) {
@@ -1018,8 +1054,8 @@ void Script_SetOrCompareUnsignedHalfword(struct ScriptOperands *state,
   }
 }
 
-void Script_SetOrCompareX(struct ScriptOperands *state, s32 operation,
-                          s32 value) {
+void ActorScript_SetOrCompareX(struct ScriptOperands *state, s32 operation,
+                               s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1037,8 +1073,8 @@ void Script_SetOrCompareX(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareY(struct ScriptOperands *state, s32 operation,
-                          s32 value) {
+void ActorScript_SetOrCompareY(struct ScriptOperands *state, s32 operation,
+                               s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1056,8 +1092,8 @@ void Script_SetOrCompareY(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareZ(struct ScriptOperands *state, s32 operation,
-                          s32 value) {
+void ActorScript_SetOrCompareZ(struct ScriptOperands *state, s32 operation,
+                               s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1075,8 +1111,8 @@ void Script_SetOrCompareZ(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
+                                    s32 value) {
   s8 result;
   u32 current;
 
@@ -1095,8 +1131,8 @@ void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation,
+                                    s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1114,8 +1150,8 @@ void Script_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation,
+                                    s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1133,8 +1169,8 @@ void Script_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareVelocityX(struct ScriptOperands *state, s32 operation,
-                                  s32 value) {
+void ActorScript_SetOrCompareVelocityX(struct ScriptOperands *state,
+                                       s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1152,8 +1188,8 @@ void Script_SetOrCompareVelocityX(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareVelocityY(struct ScriptOperands *state, s32 operation,
-                                  s32 value) {
+void ActorScript_SetOrCompareVelocityY(struct ScriptOperands *state,
+                                       s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1171,8 +1207,8 @@ void Script_SetOrCompareVelocityY(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareVelocityZ(struct ScriptOperands *state, s32 operation,
-                                  s32 value) {
+void ActorScript_SetOrCompareVelocityZ(struct ScriptOperands *state,
+                                       s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1190,8 +1226,8 @@ void Script_SetOrCompareVelocityZ(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareSpeedLimit(struct ScriptOperands *state, s32 operation,
-                                   s32 value) {
+void ActorScript_SetOrCompareSpeedLimit(struct ScriptOperands *state,
+                                        s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1209,8 +1245,8 @@ void Script_SetOrCompareSpeedLimit(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareAcceleration(struct ScriptOperands *state,
-                                     s32 operation, s32 value) {
+void ActorScript_SetOrCompareAcceleration(struct ScriptOperands *state,
+                                          s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1228,8 +1264,8 @@ void Script_SetOrCompareAcceleration(struct ScriptOperands *state,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareTargetX(struct ScriptOperands *state, s32 operation,
-                                s32 value) {
+void ActorScript_SetOrCompareTargetX(struct ScriptOperands *state,
+                                     s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1247,8 +1283,8 @@ void Script_SetOrCompareTargetX(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareTargetY(struct ScriptOperands *state, s32 operation,
-                                s32 value) {
+void ActorScript_SetOrCompareTargetY(struct ScriptOperands *state,
+                                     s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1266,8 +1302,8 @@ void Script_SetOrCompareTargetY(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareTargetZ(struct ScriptOperands *state, s32 operation,
-                                s32 value) {
+void ActorScript_SetOrCompareTargetZ(struct ScriptOperands *state,
+                                     s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1285,8 +1321,8 @@ void Script_SetOrCompareTargetZ(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareVerticalMotion(struct ScriptOperands *state,
-                                       s32 operation, s32 value) {
+void ActorScript_SetOrCompareVerticalMotion(struct ScriptOperands *state,
+                                            s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1304,8 +1340,8 @@ void Script_SetOrCompareVerticalMotion(struct ScriptOperands *state,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareGravity(struct ScriptOperands *state, s32 operation,
-                                s32 value) {
+void ActorScript_SetOrCompareGravity(struct ScriptOperands *state,
+                                     s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1323,8 +1359,8 @@ void Script_SetOrCompareGravity(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareTerrainHeight(struct ScriptOperands *state,
-                                      s32 operation, s32 value) {
+void ActorScript_SetOrCompareTerrainHeight(struct ScriptOperands *state,
+                                           s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1342,8 +1378,8 @@ void Script_SetOrCompareTerrainHeight(struct ScriptOperands *state,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareWord4c(struct ScriptOperands *state, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareRiseBaseY(struct ScriptOperands *state,
+                                       s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1361,8 +1397,8 @@ void Script_SetOrCompareWord4c(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareAddress50(struct ScriptOperands *state, s32 operation,
-                                  s32 value) {
+void ActorScript_SetOrCompareSprite(struct ScriptOperands *state, s32 operation,
+                                    s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1380,8 +1416,8 @@ void Script_SetOrCompareAddress50(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareByte54(struct ScriptOperands *state, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareSpriteStorageKind(struct ScriptOperands *state,
+                                               s32 operation, s32 value) {
   if (operation == 0) {
     state->byte54 = value;
   } else if (operation == 1) {
@@ -1391,8 +1427,8 @@ void Script_SetOrCompareByte54(struct ScriptOperands *state, s32 operation,
   }
 }
 
-void Script_SetOrCompareMotionFlags(struct ScriptOperands *state, s32 operation,
-                                    s32 value) {
+void ActorScript_SetOrCompareMotionFlags(struct ScriptOperands *state,
+                                         s32 operation, s32 value) {
   if (operation == 0) {
     state->byte55 = value;
   } else if (operation == 1) {
@@ -1402,8 +1438,8 @@ void Script_SetOrCompareMotionFlags(struct ScriptOperands *state, s32 operation,
   }
 }
 
-void Script_SetOrCompareArrivalAxis(struct ScriptOperands *state, s32 operation,
-                                    s32 value) {
+void ActorScript_SetOrCompareArrivalAxis(struct ScriptOperands *state,
+                                         s32 operation, s32 value) {
   if (operation == 0) {
     state->byte56 = value;
   } else if (operation == 1) {
@@ -1413,8 +1449,8 @@ void Script_SetOrCompareArrivalAxis(struct ScriptOperands *state, s32 operation,
   }
 }
 
-void Script_SetOrCompareComparisonResult(struct ScriptOperands *state,
-                                         s32 operation, s32 value) {
+void ActorScript_SetOrCompareComparisonResult(struct ScriptOperands *state,
+                                              s32 operation, s32 value) {
   s32 result;
 
   if (operation == 0) {
@@ -1432,10 +1468,10 @@ void Script_SetOrCompareComparisonResult(struct ScriptOperands *state,
 }
 
 typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
-extern OperandFunc gScript_OperandHandlerTable[];
+extern OperandFunc gActorScript_OperandHandlerTable[];
 
-void Script_SetOrCompareSnapToTarget(struct ScriptOperands *state,
-                                     s32 operation, s32 value) {
+void ActorScript_SetOrCompareSnapToTarget(struct ScriptOperands *state,
+                                          s32 operation, s32 value) {
   if (operation == 0) {
     state->byte58 = value;
   } else if (operation == 1) {
@@ -1445,8 +1481,8 @@ void Script_SetOrCompareSnapToTarget(struct ScriptOperands *state,
   }
 }
 
-void Script_SetOrCompareCollisionFlags(struct ScriptOperands *state,
-                                       s32 operation, s32 value) {
+void ActorScript_SetOrCompareCollisionFlags(struct ScriptOperands *state,
+                                            s32 operation, s32 value) {
   if (operation == 0) {
     state->byte59 = value;
   } else if (operation == 1) {
@@ -1456,8 +1492,8 @@ void Script_SetOrCompareCollisionFlags(struct ScriptOperands *state,
   }
 }
 
-void Script_SetOrCompareSteeringFlags(struct ScriptOperands *state,
-                                      s32 operation, s32 value) {
+void ActorScript_SetOrCompareSteeringFlags(struct ScriptOperands *state,
+                                           s32 operation, s32 value) {
   if (operation == 0) {
     state->byte5a = value;
   } else if (operation == 1) {
@@ -1467,8 +1503,8 @@ void Script_SetOrCompareSteeringFlags(struct ScriptOperands *state,
   }
 }
 
-void Script_SetOrComparePaused(struct ScriptOperands *state, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrComparePaused(struct ScriptOperands *state, s32 operation,
+                                    s32 value) {
   if (operation == 0) {
     state->byte5b = value;
   } else if (operation == 1) {
@@ -1478,8 +1514,8 @@ void Script_SetOrComparePaused(struct ScriptOperands *state, s32 operation,
   }
 }
 
-void Script_SetOrCompareRepeatCount(struct ScriptOperands *work, s32 operation,
-                                    s32 value) {
+void ActorScript_SetOrCompareRepeatCount(struct ScriptOperands *work,
+                                         s32 operation, s32 value) {
   s32 result;
 
   if (operation == 0) {
@@ -1494,8 +1530,8 @@ void Script_SetOrCompareRepeatCount(struct ScriptOperands *work, s32 operation,
   }
 }
 
-void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation,
-                                   s32 value) {
+void ActorScript_SetOrCompareWait(struct ScriptOperands *work, s32 operation,
+                                  s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1513,8 +1549,8 @@ void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation,
   work->comparisonResult = result;
 }
 
-void Script_SetOrCompareSignedHalfword64(struct ScriptOperands *work,
-                                         s32 operation, s32 value) {
+void ActorScript_SetOrCompareTimer(struct ScriptOperands *work, s32 operation,
+                                   s32 value) {
   if (operation == 0) {
     work->signedHalfword64 = value;
   } else if (operation == 1) {
@@ -1524,8 +1560,8 @@ void Script_SetOrCompareSignedHalfword64(struct ScriptOperands *work,
   }
 }
 
-void Script_SetOrCompareSignedHalfword66(struct ScriptOperands *work,
-                                         s32 operation, s32 value) {
+void ActorScript_SetOrCompareUserValue(struct ScriptOperands *work,
+                                       s32 operation, s32 value) {
   if (operation == 0) {
     work->signedHalfword66 = value;
   } else if (operation == 1) {
@@ -1535,8 +1571,8 @@ void Script_SetOrCompareSignedHalfword66(struct ScriptOperands *work,
   }
 }
 
-void Script_SetOrCompareWord68(struct ScriptOperands *work, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareWatchedActor(struct ScriptOperands *work,
+                                          s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1554,8 +1590,8 @@ void Script_SetOrCompareWord68(struct ScriptOperands *work, s32 operation,
   work->comparisonResult = result;
 }
 
-void Script_SetOrCompareUpdateAddress(struct ScriptOperands *work,
-                                      s32 operation, s32 value) {
+void ActorScript_SetOrCompareUpdateAddress(struct ScriptOperands *work,
+                                           s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1573,8 +1609,8 @@ void Script_SetOrCompareUpdateAddress(struct ScriptOperands *work,
   work->comparisonResult = result;
 }
 
-void Script_SetOrCompareByte62(struct ScriptOperands *work, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareRiseCounter(struct ScriptOperands *work,
+                                         s32 operation, s32 value) {
   s32 result;
   if (operation == 0) {
     work->byte62 = value;
@@ -1588,8 +1624,8 @@ void Script_SetOrCompareByte62(struct ScriptOperands *work, s32 operation,
   }
 }
 
-void Script_SetOrCompareByte63(struct ScriptOperands *work, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareRiseEnabled(struct ScriptOperands *work,
+                                         s32 operation, s32 value) {
   s32 result;
   if (operation == 0) {
     work->byte63 = value;
@@ -1603,10 +1639,10 @@ void Script_SetOrCompareByte63(struct ScriptOperands *work, s32 operation,
   }
 }
 
-s32 Script_ApplyOperandSet(struct ScriptOperands *work) {
+s32 ActorScript_ApplyOperandSet(struct ScriptOperands *work) {
   s16 index = work->cursor;
   s32 *entry = (s32 *)work->scriptAddress + index + 1;
-  OperandFunc callback = gScript_OperandHandlerTable[entry[0]];
+  OperandFunc callback = gActorScript_OperandHandlerTable[entry[0]];
 
   if (callback != 0)
     callback(work, 0, entry[1]);
@@ -1614,10 +1650,10 @@ s32 Script_ApplyOperandSet(struct ScriptOperands *work) {
   return 1;
 }
 
-s32 Script_ApplyOperandAdd(struct ScriptOperands *work) {
+s32 ActorScript_ApplyOperandAdd(struct ScriptOperands *work) {
   s16 index = work->cursor;
   s32 *entry = (s32 *)work->scriptAddress + index + 1;
-  OperandFunc callback = gScript_OperandHandlerTable[entry[0]];
+  OperandFunc callback = gActorScript_OperandHandlerTable[entry[0]];
 
   if (callback != 0)
     callback(work, 1, entry[1]);
@@ -1625,10 +1661,10 @@ s32 Script_ApplyOperandAdd(struct ScriptOperands *work) {
   return 1;
 }
 
-s32 Script_ApplyOperandCompare(struct ScriptOperands *work) {
+s32 ActorScript_ApplyOperandCompare(struct ScriptOperands *work) {
   s16 index = work->cursor;
   s32 *entry = (s32 *)work->scriptAddress + index + 1;
-  OperandFunc callback = gScript_OperandHandlerTable[entry[0]];
+  OperandFunc callback = gActorScript_OperandHandlerTable[entry[0]];
 
   if (callback != 0)
     callback(work, 2, entry[1]);
@@ -1646,9 +1682,10 @@ void ScriptObject_SetValue(struct ScriptObject *object, s32 value) {
 #include "event_work.h"
 
 // The heading of each direction-pad combination, -1 for none.
-extern const s16 gData_0802ec5c[16];
+extern const s16 gWorldMap_KeyHeadings[16];
 
-s32 MapGrid_CheckCollisionAbove(struct Actor *object, struct FieldPosition *position);
+s32 MapGrid_CheckCollisionAbove(struct Actor *object,
+                                struct FieldPosition *position);
 void *Unit_Get(s32 owner);
 
 s32 Func_0802632c(struct Actor *object) {
@@ -1678,7 +1715,7 @@ s32 Func_0802632c(struct Actor *object) {
     object->acceleration = 0x2000;
   }
 
-  angle = gData_0802ec5c[(gInput.held >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   if ((u16)angle == 0xffff) {
     collision |= 4;
   } else {
@@ -1694,23 +1731,26 @@ s32 Func_0802632c(struct Actor *object) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle + 0x1000, &testPosition);
+        Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle + 0x1000,
+                                             &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
-          Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle - 0x1000, &testPosition);
+          Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle - 0x1000,
+                                               &testPosition);
           if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
             testPosition.x = object->x;
             testPosition.y = object->y;
             testPosition.z = object->z;
-            Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle + 0x2000, &testPosition);
+            Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle + 0x2000,
+                                                 &testPosition);
             if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
               testPosition.x = object->x;
               testPosition.y = object->y;
               testPosition.z = object->z;
               Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle - 0x2000,
-                                    &testPosition);
+                                                   &testPosition);
               if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
                 heading = angle;
                 goto check_objects;
@@ -1738,25 +1778,29 @@ s32 Func_0802632c(struct Actor *object) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading + 0x1000, &testPosition);
+        Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading + 0x1000,
+                                             &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading - 0x1000, &testPosition);
+        Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading - 0x1000,
+                                             &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading + 0x2000, &testPosition);
+        Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading + 0x2000,
+                                             &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading - 0x2000, &testPosition);
+        Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading - 0x2000,
+                                             &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0)
           goto check_objects;
       }

@@ -21,11 +21,11 @@ GameFlag_Test:
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_SetFar
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
-	overlay_veneer Func_080200c0
+	overlay_veneer Actor_CreateFar
 	.global Map_CopyCellsRect
 	.thumb_func
 Map_CopyCellsRect:
@@ -85,7 +85,7 @@ Text_DrawNumberInWindow:
 	.global Func_02000d00
 	.thumb_func
 Func_02000d00:
-	overlay_veneer Func_080380f8
+	overlay_veneer Portrait_OpenWindowFar
 	.global Func_02000d08
 	.thumb_func
 Func_02000d08:
@@ -101,7 +101,7 @@ WindowSprite_RedrawSavedRect:
 	.global Func_02000d20
 	.thumb_func
 Func_02000d20:
-	overlay_veneer Func_080382f8
+	overlay_veneer NameEntry_EditMemberNameFar
 	.global Func_02000d28
 	.thumb_func
 Func_02000d28:
@@ -191,7 +191,7 @@ Func_02000dc8:
 	.global Func_02000dd0
 	.thumb_func
 Func_02000dd0:
-	overlay_veneer Func_080ad2f8
+	overlay_veneer Class_GetSeriesFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -235,7 +235,7 @@ Func_02000e20:
 	.global Func_02000e28
 	.thumb_func
 Func_02000e28:
-	overlay_veneer Func_080c83e0
+	overlay_veneer ItemDisplay_ShowItemFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:
@@ -247,19 +247,19 @@ ItemMenu_DrawItemDetails:
 	.global Func_02000e40
 	.thumb_func
 Func_02000e40:
-	overlay_veneer Func_08108008
+	overlay_veneer Shop_RunFar
 	.global Func_02000e48
 	.thumb_func
 Func_02000e48:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar
 	.global Func_02000e50
 	.thumb_func
 Func_02000e50:
-	overlay_veneer Func_08108018
+	overlay_veneer Inn_CheckInFar
 	.global Func_02000e58
 	.thumb_func
 Func_02000e58:
-	overlay_veneer Func_08108020
+	overlay_veneer Forge_RunFar
 	.global Func_02000e60
 	.thumb_func
 Func_02000e60:
@@ -267,11 +267,11 @@ Func_02000e60:
 	.global Func_02000e68
 	.thumb_func
 Func_02000e68:
-	overlay_veneer Func_08108098
+	overlay_veneer Forge_SetItemFar
 	.global Func_02000e70
 	.thumb_func
 Func_02000e70:
-	overlay_veneer Func_081080a0
+	overlay_veneer Forge_GetItemFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

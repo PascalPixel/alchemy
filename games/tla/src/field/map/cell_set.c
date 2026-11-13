@@ -5,6 +5,7 @@
 #include "field.h"
 #include "module/field/map.h"
 #include "module/scene/magma_rock.h"
+#include "flag_call.h"
 
 extern u8 gMapCellBuffer[];
 
@@ -151,7 +152,7 @@ static inline void TundariaTower_02002fe8(s32 a0, s32 a1, s32 a2, s32 a3,
 
 static inline void TundariaTower_02002fc0(s32 a0, s32 a1, s32 a2, s32 a3,
                                           s32 a4, s32 a5) {
-  Map_CopyCellPictureIndicesRect(a0, a1, a2, a3, a4, a5);
+  MapGrid_CopyCellPictureIndicesRect(a0, a1, a2, a3, a4, a5);
 }
 
 void Func_02000548(void) {
@@ -290,7 +291,7 @@ void Func_020007dc(s32 step) {
     Func_02000708(&position, 1, 0xcccc);
     break;
   case 3:
-    Map_CopyCellPictureIndicesRect(31, 85, 20, 85, 3, 4);
+    MapGrid_CopyCellPictureIndicesRect(31, 85, 20, 85, 3, 4);
     position.x = 0x15b0000;
     position.y = 0;
     position.z = 0x1780000;
@@ -362,13 +363,13 @@ void Func_02000964(void) {
   Event_ResolvePendingActions(0);
   TundariaTower_FadeFrom(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(2);
+  PaletteFade_StartInterpolation(2);
   Sound_Play(132);
   TundariaTower_SetWork(0x50000, 0x70000, 0x10000);
   TundariaTower_SetWork(-1, -1, 0xe666);
   Event_Wait(2);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(2);
+  PaletteFade_StartInterpolation(2);
   object->actionFlags = 0;
   object->update = 0;
   Actor_SetDestination(8, 424, 536);
@@ -405,8 +406,8 @@ void Func_02000a48(s32 arg0, s32 arg1) {
     object->scaleY = 0x10000;
     GameFlag_SetBit(object->timer);
     Func_02000338(Actor_GetById(effectWork[13]));
-    Map_CopyCellPictureIndicesRect(67, 23, (object->x >> 20) + 64,
-                                   object->z >> 20, 1, 1);
+    MapGrid_CopyCellPictureIndicesRect(67, 23, (object->x >> 20) + 64,
+                                       object->z >> 20, 1, 1);
     object->z = 0;
     object->y = 0;
     object->x = 0;
@@ -422,7 +423,7 @@ void Func_02000b3c(void) {
 
   Func_02003048();
   Event_ResolvePendingActions(0);
-  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   leader->facing = 0x4000;
   Event_Wait(10);
@@ -482,8 +483,8 @@ void Func_02000c64(s32 unused, s32 actorArg) {
           8) != 255) {
     Actor_SetMoveTarget(object, (dx << 20) + object->x, object->y,
                         (dz << 20) + object->z);
-    Camera_FollowActor(actor, 1);
-    Script_WaitForEventTimeout(object);
+    FieldCamera_FollowActor(actor, 1);
+    Actor_WaitForMove(object);
     wait(1);
   }
   object->x = ((object->x >> 19) | 1) << 19;
@@ -532,7 +533,7 @@ void Func_02000de4(void) {
   Func_02002fc8();
   GameFlag_ClearBit(0x212);
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
-    Map_CopyCellPictureIndicesRect(39, 100, 53, 100, 3, 3);
+    MapGrid_CopyCellPictureIndicesRect(39, 100, 53, 100, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 43, 41, 3, 3, 53, 37);
     if (Actor_GetById(gMainRoutineWork.currentOwner)->z >> 20 == 38) {
       s16 angle = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
@@ -550,7 +551,7 @@ void Func_02000e78(void) {
   Func_02002fd0();
   GameFlag_SetBit(0x212);
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
-    Map_CopyCellPictureIndicesRect(43, 100, 53, 100, 3, 3);
+    MapGrid_CopyCellPictureIndicesRect(43, 100, 53, 100, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 43, 37, 3, 3, 53, 37);
     if (Actor_GetById(gMainRoutineWork.currentOwner)->z >> 20 > 38)
       MapCell_SetAttributes(0, 54, 37, 0x1f00);
@@ -566,8 +567,8 @@ void Func_02000f0c(s32 step) {
 
   switch (step) {
   case 1:
-    Map_CopyCellPictureIndicesRect(18, 97, 6, 97, 3, 4);
-    Map_CopyCellPictureIndicesRect(82, 34, 70, 34, 3, 2);
+    MapGrid_CopyCellPictureIndicesRect(18, 97, 6, 97, 3, 4);
+    MapGrid_CopyCellPictureIndicesRect(82, 34, 70, 34, 3, 2);
     Call6((void (*)())Map_CopyCellAttributeRect, 7, 36, 1, 1, 7, 35);
     GameFlag_SetBit(0x94b);
     break;
@@ -594,7 +595,7 @@ void Func_02000fb8(s32 mode, s32 cue) {
     Task_RemoveFar(Func_0200137c);
   }
   if (mode == 1) {
-    Map_CopyCellPictureIndicesRect(13, 26, 13, 16, 3, 3);
+    MapGrid_CopyCellPictureIndicesRect(13, 26, 13, 16, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 13, 26, 3, 3, 13, 16);
     GameFlag_SetBit(0x948);
   }

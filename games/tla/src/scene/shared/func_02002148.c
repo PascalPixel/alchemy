@@ -1,7 +1,10 @@
 /// @file
-/// A routine 3 scenes' overlays each keep a copy of (mars_lighthouse_entrance/s263c, mars_lighthouse_room_m/s2118, mars_lighthouse_star_room/s2148),
-/// included as text where each copy sits after the scene defines
-/// SHARED_F02002148_NAME, SHARED_F02002148_ID2, SHARED_F02002148_ID3, SHARED_F02002148_ID4, SHARED_F02002148_ID5, SHARED_F02002148_ID6, SHARED_F02002148_ID7.
+/// A routine 3 scenes' overlays each keep a copy of
+/// (mars_lighthouse_entrance/s263c, mars_lighthouse_room_m/s2118,
+/// mars_lighthouse_star_room/s2148), included as text where each copy sits
+/// after the scene defines SHARED_F02002148_NAME, SHARED_F02002148_ID2,
+/// SHARED_F02002148_ID3, SHARED_F02002148_ID4, SHARED_F02002148_ID5,
+/// SHARED_F02002148_ID6, SHARED_F02002148_ID7.
 
 void SHARED_F02002148_NAME(void) {
   struct MainRoutineWork *main = &gMainRoutineWork;
@@ -18,7 +21,7 @@ void SHARED_F02002148_NAME(void) {
     ((s32 (*)())SHARED_F02002148_ID2)(-10, 0);
 #endif
     actor = Actor_Get(main->currentOwner);
-    work = (struct Work020023c4 *)(gData_020023c4 + 0x188);
+    work = (struct Work020023c4 *)(gInventorySnapshot + 0x188);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     actor->update = SHARED_F02002148_ID3;
@@ -144,7 +147,7 @@ void SHARED_F02002148_NAME(void) {
   done:
 #endif
     actor->update = 0;
-    Animation_ApplyChildValues(actor, 0);
+    Actor_SetSpriteColorMode(actor, 0);
   }
 #if !TLA_PATCH_1
   /* FAKEMATCH(barrier): an empty asm reading work before the last store; as

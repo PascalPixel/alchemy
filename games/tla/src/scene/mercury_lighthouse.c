@@ -30,9 +30,9 @@
 /// frame.
 s32 MercuryLighthouse_FlickerMote(struct Actor *object) {
   if ((gMercuryLighthouse_MoteFrames >> 1) & 1)
-    Actor_SetSpriteColor(object, 15);
+    FieldActor_SetSpriteColor(object, 15);
   else
-    Actor_SetSpriteColor(object, 7);
+    FieldActor_SetSpriteColor(object, 7);
   return 0;
 }
 
@@ -128,7 +128,7 @@ void MercuryLighthouse_HearVoices(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
+  FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   wait(1);
   gMercuryLighthouse_MoteFrames = 0;
   Task_Add(MercuryLighthouse_SpawnMotes, TASK_PASS_VBLANK);
@@ -141,7 +141,7 @@ void MercuryLighthouse_HearVoices(void) {
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_SetMessageId(MsgImilVoicesDisbeliefReply);
   Event_ShowMessage(3, 0);
-  BattleEffect_FinishSceneAndReleaseHeapBlock();
+  FieldPsynergy_StopMindReadWave();
   Actor_ShowEmote(8, 256, 0);
   Actor_ShowEmote(8, 256, 20);
   Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -153,7 +153,7 @@ void MercuryLighthouse_HearVoices(void) {
   Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(3, 0);
-  BattleEffect_FinishSceneAndReleaseHeapBlock();
+  FieldPsynergy_StopMindReadWave();
   Actor_SetAnimation(9, 3);
   Event_ShowMessage(0x8009, 0);
   Actor_FaceDirectionAndWait(12, FACING_EAST);
@@ -177,40 +177,40 @@ void MercuryLighthouse_HearVoices(void) {
   actor->update = (void (*)(void))MercuryLighthouse_LookAround;
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(3, 0);
-  BattleEffect_FinishSceneAndReleaseHeapBlock();
+  FieldPsynergy_StopMindReadWave();
   Actor_SetAnimation(8, 4);
   Event_ShowMessage(0x8008, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(3, 0);
-  BattleEffect_FinishSceneAndReleaseHeapBlock();
+  FieldPsynergy_StopMindReadWave();
   Event_ShowMessage(0x8009, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(3, 0);
-  BattleEffect_FinishSceneAndReleaseHeapBlock();
+  FieldPsynergy_StopMindReadWave();
   Event_ShowMessage(0x8008, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(3, 0);
-  BattleEffect_FinishSceneAndReleaseHeapBlock();
+  FieldPsynergy_StopMindReadWave();
   Event_ShowMessage(0x8009, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(3, 0);
-  BattleEffect_FinishSceneAndReleaseHeapBlock();
+  FieldPsynergy_StopMindReadWave();
   Actor_SetAnimationAndWait(8, 3);
   Event_ShowMessage(0x8008, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(1, 0);
-  BattleEffect_FinishSceneAndReleaseHeapBlock();
+  FieldPsynergy_StopMindReadWave();
   Actor_Jump(9, 2, 0);
   FieldActor_ShowEmote(9, 263, 20);
   Event_ShowMessage(0x8009, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(3, 0);
-  BattleEffect_FinishSceneAndReleaseHeapBlock();
+  FieldPsynergy_StopMindReadWave();
   Actor_SetAnimationAndWait(8, 3);
   Event_ShowMessage(0x8008, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(6, 0);
-  BattleEffect_FinishSceneAndReleaseHeapBlock();
+  FieldPsynergy_StopMindReadWave();
   Event_Wait(20);
   *(u16 *)BG_PLTT = 0;
   wait(1);
@@ -230,7 +230,7 @@ s32 Scene_Initialize(void) {
     Event_WaitTransitionFrames();
     Event_PlaySound(201);
     BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-    BattleEffect_StartBufferInterpolation(20);
+    PaletteFade_StartInterpolation(20);
     wait(20);
     Import_EventSetExitRequest(9);
   } else {

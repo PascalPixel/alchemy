@@ -1,10 +1,10 @@
 	.section .rodata
 @ A copy of The Broken Seal's gActor_ShadowTiles
-	.global gData_0802e89c
-gData_0802e89c:
+	.global gActor_ShadowTiles
+gActor_ShadowTiles:
 	.incbin "games/tla/src/field/shadow.8bpp"
 
-@ {sprite resource, metadata number}: ResourceSlot_Load finds the number it
+@ {sprite resource, metadata number}: SpritePictureCache_Load finds the number it
 @ is given and decodes that resource. A zero number ends the table.
 	.global gResourceSlot_NumberTable
 gResourceSlot_NumberTable:

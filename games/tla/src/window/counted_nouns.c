@@ -6,7 +6,7 @@
 //--------------------------------------------------------------------------
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
-extern const s8 gText_ArticleEmpty[];
+extern const s8 gArticle_Empty[];
 extern const u8 gText_NumberWord0[];
 extern const u8 gText_NumberWord1[];
 extern const u8 gText_NumberWord2[];
@@ -26,9 +26,9 @@ const u8 *const gText_NumberWords[16] = {
     gText_NumberWord5, gText_NumberWord4, // Runde, Runden
     gText_NumberWord3, gText_NumberWord2, // Ticket, Tickets
     gText_NumberWord1, gText_NumberWord0, // Kampf, Käpfe (as the ROM spells it)
-    (const u8 *)gText_ArticleEmpty, (const u8 *)gText_ArticleEmpty,
-    (const u8 *)gText_ArticleEmpty, (const u8 *)gText_ArticleEmpty,
-    (const u8 *)gText_ArticleEmpty, 0,
+    (const u8 *)gArticle_Empty, (const u8 *)gArticle_Empty,
+    (const u8 *)gArticle_Empty, (const u8 *)gArticle_Empty,
+    (const u8 *)gArticle_Empty, 0,
 };
 // clang-format on
 #endif

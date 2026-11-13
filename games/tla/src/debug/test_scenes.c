@@ -1,5 +1,6 @@
 /// @file
-/// Overlay 0x6b6's scene: its code, then its tables, in the order the ROM has them.
+/// Overlay 0x6b6's scene: its code, then its tables, in the order the ROM has
+/// them.
 
 #include "battle.h"
 #include "field.h"
@@ -12,8 +13,11 @@
 #include "types.h"
 #include "scene_tables.h"
 
+void Test_ReceiveFizz(void);
+
+void Test_ReceiveForge(void);
+
 #include "event_inline.h"
-#include "module/debug/test_scenes.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -25,23 +29,23 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_02000054(void) {
-  Func_080d7788(8, 0, 0);
+void Test_ReceiveFlint(void) {
+  Djinn_JoinParty(8, 0, 0);
   GameFlag_ClearBit(48);
 }
 
-void Func_02000068(void) {
-  Func_080d7788(9, 1, 0);
+void Test_ReceiveFizz(void) {
+  Djinn_JoinParty(9, 1, 0);
   GameFlag_ClearBit(68);
 }
 
-void Func_0200007c(void) {
-  Func_080d7788(10, 2, 0);
+void Test_ReceiveForge(void) {
+  Djinn_JoinParty(10, 2, 0);
   GameFlag_ClearBit(88);
 }
 
-void Func_02000090(void) {
-  Func_080d7788(11, 3, 0);
+void Test_ReceiveGust(void) {
+  Djinn_JoinParty(11, 3, 0);
   GameFlag_ClearBit(108);
 }
 
@@ -51,8 +55,8 @@ s32 Func_020000ac(void) { return 0; }
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_02000054(void);
-void Func_02000090(void);
+void Test_ReceiveFlint(void);
+void Test_ReceiveGust(void);
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},
@@ -69,10 +73,10 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {0, 8, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {0, 9, CONDITION_ALWAYS, EVENT(Func_02000068)},
-    {0, 10, CONDITION_ALWAYS, EVENT(Func_0200007c)},
-    {0, 11, CONDITION_ALWAYS, EVENT(Func_02000090)},
+    {0, 8, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
+    {0, 9, CONDITION_ALWAYS, EVENT(Test_ReceiveFizz)},
+    {0, 10, CONDITION_ALWAYS, EVENT(Test_ReceiveForge)},
+    {0, 11, CONDITION_ALWAYS, EVENT(Test_ReceiveGust)},
     {TRIGGERS_END},
 };
 

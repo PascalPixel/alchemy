@@ -40,7 +40,7 @@ static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
 #include "module/scene/ancient_lemuria.h"
 #include "module/scene/scene.h"
 
-void Func_02000038(void) { Func_080d7788(12, 1, 13); }
+void Func_02000038(void) { Djinn_JoinParty(12, 1, 13); }
 
 void Func_02000048(struct Actor *object) {
   struct FieldSprite *sprite = object->sprite;
@@ -90,7 +90,7 @@ void Func_020000d8(s32 unused, s32 id) {
 /// One hop of object 12 by (dx, dz).
 static inline void Hop(s32 dx, s32 dz) {
   Actor_Jump(12, 5, 0);
-  Actor_CommitPositionAndActivate(12, dx, dz);
+  Actor_WalkByAndWaitById(12, dx, dz);
   Event_Wait(3);
 }
 
@@ -139,9 +139,9 @@ void Func_02000110(void) {
   Actor_SetSpritePriority(12, 1);
   Event_Wait(8);
   Actor_Jump(12, 9, 0);
-  Actor_SetPositionAndReset(12, 120, 200);
+  Actor_WalkToAndWaitById(12, 120, 200);
   Actor_GetById(12)->priorityFlags |= 1;
-  Actor_SetPositionAndReset(12, 136, 200);
+  Actor_WalkToAndWaitById(12, 136, 200);
   Event_Wait(3);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
@@ -245,8 +245,8 @@ void Func_02000534(void) {
     Actor_SetModeById(11, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != NULL)
-      Actor_ResetAndSetPosition(11, *(s16 *)((u8 *)object + 10),
-                                *(s16 *)((u8 *)object + 18));
+      Actor_SetDestinationById(11, *(s16 *)((u8 *)object + 10),
+                               *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(11);
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
     Actor_WalkToAndWait(4, 168, 832);
@@ -328,8 +328,8 @@ s32 Scene_PrepareMap(void) {
   else if (entrance == 5)
     GameFlag_SetBit(0x960);
   if (GameFlag_Test(0x960)) {
-    Func_0802b450(38, 47, 26, 12, 8, 47);
-    Func_0802b450(102, 47, 26, 12, 72, 47);
+    MapGrid_CopyCellPictureCellsRect(38, 47, 26, 12, 8, 47);
+    MapGrid_CopyCellPictureCellsRect(102, 47, 26, 12, 72, 47);
     Map_CopyCellAttributeRect(38, 47, 26, 12, 8, 47);
   }
   return 0;
@@ -368,11 +368,11 @@ void Func_02000838(void) {
   Actor_SetSpeed(4, 0x10000, 0x8000);
   Actor_WalkByAndWait(4, 0, -16);
   Event_Wait(10);
-  Camera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(536), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(536), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_SetSpeed(9, 0xcccc, 0x6666);
-  Actor_CommitPositionAndActivate(9, 24, 0);
+  Actor_WalkByAndWaitById(9, 24, 0);
   Actor_FaceDirection(9, 0x5000, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(9, 2);
@@ -596,7 +596,7 @@ void Func_02000838(void) {
   Actor_FaceDirection(9, 0x3000, 0);
   Actor_FaceDirection(10, 0x5000, 0);
   Event_Wait(30);
-  Camera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(512), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(512), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_ShowEmote(9, 0x109, 30);
@@ -678,9 +678,9 @@ void Func_02000838(void) {
     if (result == 0) {
       Event_Wait(25);
       Actor_FaceDirection(11, 0x5000, 0);
-      Actor_ArmCallbackAndRefresh(7, 0x3000);
+      Actor_FaceDirectionById(7, 0x3000);
       Event_Wait(10);
-      Func_080d47b4(7, 0x102, 50);
+      Actor_ShowEmoteById(7, 0x102, 50);
       Motion_SetVarCbAndRefresh(11, 2);
       Event_Wait(10);
       Event_ShowMessageThenWait(0x200b, 0, 10);
@@ -688,7 +688,7 @@ void Func_02000838(void) {
     } else {
       Event_Wait(35);
       Actor_FaceDirection(11, 0x5000, 0);
-      Actor_ArmCallbackAndRefresh(7, 0x3000);
+      Actor_FaceDirectionById(7, 0x3000);
       Event_Wait(10);
       Actor_ShowEmote(11, 0x103, 40);
       Actor_Jump(11, 6, 15);
@@ -696,7 +696,7 @@ void Func_02000838(void) {
       ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
       Event_ShowMessageThenWait(0x200b, 0, 10);
     }
-    Actor_ArmCallbackAndRefresh(7, FACING_NORTH);
+    Actor_FaceDirectionById(7, FACING_NORTH);
     Event_Wait(10);
   }
   Actor_WalkByAndWait(7, 0, -10);
@@ -719,10 +719,10 @@ void Func_02000838(void) {
   Actor_SetModeById(9, 3);
   Motion_SetModeAndWaitAnimation(10, 3);
   Event_Wait(25);
-  Camera_FollowActor(10, 1);
+  FieldCamera_FollowActor(10, 1);
   Actor_WalkBy(10, 0, -32);
   Event_Wait(10);
-  Actor_CommitPositionAndActivate(9, 16, 0);
+  Actor_WalkByAndWaitById(9, 16, 0);
   Actor_WalkBy(9, 0, -32);
   Actor_WaitForMoveById(10);
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -730,7 +730,7 @@ void Func_02000838(void) {
   Actor_WaitForMoveById(9);
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Event_Wait(30);
-  Camera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(536), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(536), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_WalkByAndWait(11, 0, -10);
@@ -789,16 +789,15 @@ void Func_02000838(void) {
   Actor_SetModeById(7, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_ResetAndSetPosition(7, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(7, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(7);
   Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
   Actor_SetSpeed(11, 0x13333, 0x9999);
   Actor_SetModeById(11, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_ResetAndSetPosition(11, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(11, ((s16 *)&leader->x)[1],
+                             ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(11);
   Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   Event_End();

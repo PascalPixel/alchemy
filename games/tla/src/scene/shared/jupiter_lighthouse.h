@@ -124,8 +124,8 @@
       }                                                                        \
       actor23->x.fixed -= 0x28f40;                                             \
       sprite->rotation += 0x800;                                               \
-      Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(9)), 4); \
-      Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(11)),    \
+      Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(9)), 4); \
+      Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(11)),    \
                                  4);                                           \
     }                                                                          \
     if (Event_GetFlag(0xa0b)) {                                                \
@@ -137,9 +137,9 @@
       }                                                                        \
       actor23->x.fixed += 0x28f40;                                             \
       sprite->rotation -= 0x800;                                               \
-      Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(10)),    \
+      Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(10)),    \
                                  4);                                           \
-      Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(12)),    \
+      Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(12)),    \
                                  4);                                           \
     }                                                                          \
     if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {                        \
@@ -170,8 +170,8 @@
     u8 *buffer = BumpAlloc(0xc00);                                             \
                                                                                \
     Iwram_ClearWordsEntry(data1, 64);                                          \
-    Resource_DecodeType01(gField_CachedTilesA, buffer);                        \
-    data2 = Resource_FindFreeEntry();                                          \
+    Decompress_TaggedLz(gField_CachedTilesA, buffer);                        \
+    data2 = VramCache_FindFreeEntry();                                          \
     VramCache_Load(data2, 0xc00, buffer);                                      \
     Heap_Release(buffer);                                                      \
     Task_Add(call1, TASK_PASS_VBLANK);                                         \
@@ -218,8 +218,8 @@
     u8 *buffer = Heap_Alloc(0xc00);                                            \
                                                                                \
     Iwram_ClearWordsEntry(data1, 64);                                          \
-    Resource_DecodeType01(gField_CachedTilesB, buffer);                        \
-    data2 = Resource_FindFreeEntry();                                          \
+    Decompress_TaggedLz(gField_CachedTilesB, buffer);                        \
+    data2 = VramCache_FindFreeEntry();                                          \
     Vram_Load(data2, 0x800, buffer);                                           \
     Heap_Release(buffer);                                                      \
     Task_AddFrame(call1, TASK_PASS_VBLANK);                                    \
@@ -242,8 +242,8 @@
     u8 *buffer = BumpAlloc(0x800);                                             \
                                                                                \
     Iwram_ClearWordsEntry(data1, 64);                                          \
-    Resource_DecodeType01(gField_CachedTilesC, buffer);                        \
-    data2 = Resource_FindFreeEntry();                                          \
+    Decompress_TaggedLz(gField_CachedTilesC, buffer);                        \
+    data2 = VramCache_FindFreeEntry();                                          \
     Vram_Load(data2, 0x800, buffer);                                           \
     Heap_Release(buffer);                                                      \
     Task_AddFrame(call1, TASK_PASS_VBLANK);                                    \

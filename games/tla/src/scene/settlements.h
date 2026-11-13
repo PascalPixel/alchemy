@@ -44,7 +44,7 @@ void Func_02000e30(void);
 void Func_02000e90(void);
 void Irq_SetHandler(s32 a, s32 b, void (*callback)(void));
 void Event_End(void);
-void BattleEffect_StartEffectObject22(s32 a, s32 b);
+void ItemDisplay_ShowItem(s32 a, s32 b);
 void Func_020021a0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
 extern u32 gData_02002380[];

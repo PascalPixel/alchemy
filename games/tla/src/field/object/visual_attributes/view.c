@@ -37,14 +37,14 @@ void WorldMap_StepZoom(void) {
   (*step)++;
   offset = *from + __divsi3(delta * *step, *duration);
   map->zoom = Iwram_MulQ16(map->farPlane, offset);
-  gData_03001144 = *(u16 *)((u8 *)map + 0x11c) + 1;
+  gScanlinePitch = *(u16 *)((u8 *)map + 0x11c) + 1;
   if (*step == *duration) {
     *duration = 0;
     Task_Remove(WorldMap_StepZoom);
   }
 }
 
-void Func_080d46a4(s32 zoom, s32 frames) {
+void WorldMap_StartZoom(s32 zoom, s32 frames) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 result;
 
@@ -61,7 +61,7 @@ void Func_080d46a4(s32 zoom, s32 frames) {
   Task_Add(WorldMap_StepZoom, TASK_PASS_VBLANK + 20);
 }
 
-void Func_080d4714(void) {
+void Event_WaitForZoomTransition(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 frames;
 
@@ -76,7 +76,7 @@ void Func_080d4714(void) {
   }
 }
 
-s32 BattleEffect_CopyWatchedObjectPosition(struct Actor *object) {
+s32 FieldEffect_CopyWatchedActorPosition(struct Actor *object) {
   struct Actor *link;
 
   link = object->watchedObject;
@@ -95,14 +95,15 @@ s32 BattleEffect_CopyWatchedObjectPosition(struct Actor *object) {
   return 0;
 }
 
-struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-extern const u8 gData_080f3310[];
+struct BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y,
+                                                  s32 z);
+extern const u8 gFieldEffect_WatchedActorScript[];
 
 /// The Broken Seal's BattleEffect_SpawnLinked with this game's object kind
 /// (488): spawns an effect object at object resourceId that follows it,
 /// waits state, and returns the new object.
-struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags,
-                                                s32 state) {
+struct BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags,
+                                                      s32 state) {
   struct BattleEffectResource *resource;
   struct BattleEffectWatchedObject *object;
 
@@ -112,15 +113,16 @@ struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags,
 
   resource = ObjectTable_Get(resourceId);
   if (resource != 0) {
-    object = Func_080200c0(488, resource->x, resource->y, resource->z);
+    object = Actor_CreateFar(488, resource->x, resource->y, resource->z);
 
     if (object != 0) {
-      Actor_StartScriptFar((struct Actor *)object, (u32)gData_080f3310);
+      Actor_StartScriptFar((struct Actor *)object,
+                           (u32)gFieldEffect_WatchedActorScript);
       Actor_SetMode(object, flags & 15);
       object->value55 = 0;
       object->counter = 0;
       object->resourceId = resourceId;
-      object->callback = BattleEffect_CopyWatchedObjectPosition;
+      object->callback = FieldEffect_CopyWatchedActorPosition;
       object->resource = resource;
       object->visual->value26 = 0;
 

@@ -89,7 +89,7 @@ void Func_020044c4(struct PushTarget target) {
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   Event_PlaySound(298);
   Event_PlaySound(213);
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);

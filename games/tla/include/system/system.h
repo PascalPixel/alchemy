@@ -7,7 +7,7 @@
 
 void wait(s32 frames);
 void System_WaitForFrameInterrupt(void);
-void Render_ResetFrame(void);
+void Oam_ResetFrame(void);
 void Bios_SoundBiasOff(void);
 void Bios_SoundBiasOn(void);
 u32 Random16(void);
@@ -51,8 +51,8 @@ s32 Animation_LookupValueByKey(s32 key);
 #ifndef OWN_CountRemainingErasedFlashBytes
 s32 CountRemainingErasedFlashBytes(u8 *ptr);
 #endif
-s32 Map_DisableUpdateCallbackFar(void);
-s32 Map_EnableUpdateCallbackFar(void);
+s32 TilesetAnim_ResumeAllFar(void);
+s32 TilesetAnim_SuspendAllFar(void);
 s32 RunFlashEraseVerifier(u8 *, u8 *);
 void DebugText_Print(const u8 *src);
 #ifndef OWN_StartFlashTimer
@@ -75,7 +75,7 @@ extern u8 gPartyStatusWork[];
 extern u16 gGraphics_ExpandNibbleTable[];
 extern const u8 Resource_PatchThumbBranchCode[];
 s32 _call_via_r3(s32, u8 *, u8, s32);
-s32 AnimationObject_Allocate(s32 id);
+s32 SpriteAnimation_Alloc(s32 id);
 s32 BattleEffect_FindMatchingEvent(s32, s32, void *);
 void BattleMotion_ApplyVariantMotion(s32 id, s32 variant);
 #ifndef OWN_BattleMotion_ApproachTarget
@@ -90,10 +90,10 @@ void LuckyDice_Run(void);
 void Actor_WaitForValue16Far(struct Actor *);
 void Actor_NoOp(void);
 void Actor_SetMotionActionCallback(struct Actor *, s32);
-void Resource_LoadCode(u32 index, void *destination);
+void Overlay_Load(u32 index, void *destination);
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index);
-void ResourceMetadata_ClearRecord(void *destination);
-void NumberText_FormatHex(u32);
+void SpriteAnimation_Clear(void *destination);
+void String_FormatHex(u32);
 
 void Iwram_Halt(void);
 

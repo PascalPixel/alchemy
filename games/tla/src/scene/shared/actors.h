@@ -52,7 +52,7 @@
       t0->motionFlags = 0;                                                     \
       t0->collisionFlags = 8;                                                  \
       Actor_SetSingleChildFlags(t0, 0);                                        \
-      Actor_SetSpriteColor(t0, 0xf);                                           \
+      FieldActor_SetSpriteColor(t0, 0xf);                                           \
       t0->priorityFlags = 0x22 | t0->priorityFlags;                            \
       return t0;                                                               \
     }                                                                          \
@@ -146,7 +146,7 @@
 #define DEFINE_ACTOR_HIDE(name, call1)                                         \
   void name(s32 id) {                                                          \
     call1(id);                                                                 \
-    Actor_SetPartAttribute(Actor_GetById(id), 15);                             \
+    Actor_SetSpriteColor(Actor_GetById(id), 15);                             \
     Actor_SetSpritePriority(id, 1);                                            \
     Actor_GetById(id)->priorityFlags |= 2;                                     \
   }
@@ -166,7 +166,7 @@
       object->velocityY = 0;                                                   \
       gMainRoutineWork.renderMode = 2;                                         \
       object->actionFlags = 1;                                                 \
-      FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);               \
+      EventCamera_FollowActor(gMainRoutineWork.currentOwner, 0);               \
       Map_CenterOnFollowedPoint();                                             \
       System_Wait(1);                                                          \
     }                                                                          \
@@ -327,7 +327,7 @@
       object->motionFlags = 0;                                                 \
       object->collisionFlags = 8;                                              \
       Actor_SetSingleChildFlags(object, 0);                                    \
-      Actor_SetPartAttribute(object, 15);                                      \
+      Actor_SetSpriteColor(object, 15);                                      \
       object->priorityFlags |= n1;                                             \
       return object;                                                           \
     }                                                                          \
@@ -388,9 +388,9 @@
 #define DEFINE_ACTOR_FLICKER_CHILD(name, n1)                                   \
   void name(struct Actor *object) {                                            \
     if (gFrameCount & 2)                                                       \
-      Animation_ApplyChildValues(object, n1);                                  \
+      Actor_SetSpriteColorMode(object, n1);                                  \
     else                                                                       \
-      Animation_ApplyChildValues(object, 0);                                   \
+      Actor_SetSpriteColorMode(object, 0);                                   \
   }
 
 /// Flashes an actor in colour `n1` on the frames its mask picks.
@@ -398,9 +398,9 @@
 #define DEFINE_ACTOR_FLASH_COLOR(name, n1)                                     \
   void name(struct Actor *object) {                                            \
     if (gFrameCount & object->unk5c[7])                                        \
-      Actor_SetSpriteColor(object, n1);                                        \
+      FieldActor_SetSpriteColor(object, n1);                                        \
     else                                                                       \
-      Actor_SetSpriteColor(object, 0);                                         \
+      FieldActor_SetSpriteColor(object, 0);                                         \
   }
 
 /// Turns actor 4, then runs `call1`.

@@ -39,8 +39,8 @@ void LemurianShipDeck_TakeTheTiller(void) {
   FieldCamera_MoveTo(PIXELS(342), PIXELS(48), PIXELS(408), 0);
   System_Wait(1);
   MapGrid_CopyCellsTo(60, 53, 67, 16, 7, 3);
-  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, PIXELS(552), PIXELS(376),
-                FACING_EAST);
+  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, PIXELS(552),
+                             PIXELS(376), FACING_EAST);
   /* FAKEMATCH(temporary): the angle held in a local, so its two-instruction
    * constant is built ahead of the position arguments; as the constant
    * argument, 4 of 405 instructions differ in tla-en. */
@@ -86,7 +86,8 @@ void LemurianShipDeck_TakeTheTiller(void) {
   Actor_ShowEmote(5, 0x108, 20);
   Event_ShowMessage(5, 0);
   Event_OpenMessage(7, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+      0) {
     Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
     Actor_ShowEmote(9, 0x109, 20);
     Event_ShowMessage(9, 0);
@@ -377,7 +378,8 @@ void LemurianShipDeck_SightMenardisShip(void) {
   Event_OpenMessage(9, 0);
   Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
-  answer = FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
+  answer =
+      FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   owner = gMainRoutineWork.currentOwner;
   if (answer == 0) {
     Actor_WaitForAnimationChange(owner);
@@ -415,18 +417,15 @@ void LemurianShipDeck_SightMenardisShip(void) {
     Actor_SetAnimation(9, 2);
     target = Actor_Get(4);
     if (target != NULL)
-      Actor_SetDestination(9, ((s16 *)&target->x)[1],
-                                ((s16 *)&target->z)[1]);
+      Actor_SetDestination(9, ((s16 *)&target->x)[1], ((s16 *)&target->z)[1]);
     Actor_SetAnimation(5, 2);
     target = Actor_Get(4);
     if (target != NULL)
-      Actor_SetDestination(5, ((s16 *)&target->x)[1],
-                                ((s16 *)&target->z)[1]);
+      Actor_SetDestination(5, ((s16 *)&target->x)[1], ((s16 *)&target->z)[1]);
     Actor_SetAnimation(6, 2);
     target = Actor_Get(4);
     if (target != NULL)
-      Actor_SetDestination(6, ((s16 *)&target->x)[1],
-                                ((s16 *)&target->z)[1]);
+      Actor_SetDestination(6, ((s16 *)&target->x)[1], ((s16 *)&target->z)[1]);
   }
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);

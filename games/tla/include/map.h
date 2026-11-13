@@ -43,7 +43,7 @@ struct MapWork {
   /// The followed point, read as x, height and z in 16.16 fixed-point pixels.
   s32 *origin;
   /// Screen shake amplitudes and the factor that scales them each frame;
-  /// Map_SetScreenShake keeps a component given as negative.
+  /// MapGrid_SetScreenShake keeps a component given as negative.
   s32 shakeX, shakeY, shakeDecay;
   u8 *script;
   u16 flags;
@@ -97,7 +97,7 @@ struct WorldPosition {
   s32 y;
 };
 
-s32 GetWorldMapCollision(struct WorldPosition *position);
+s32 WorldMap_GetCollision(struct WorldPosition *position);
 
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 y, u32 width, u32 height,
                            s32 value);

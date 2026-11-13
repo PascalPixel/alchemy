@@ -55,9 +55,9 @@ retry:
   targetX = x;
   targetZ = z;
   layer = &object->terrainId;
-  startCell = GetMapCellCollision(*layer, x, z);
+  startCell = MapGrid_GetCellBehaviorAt(*layer, x, z);
   Vector_AddPolarOffsetFar(0x100000, angle, p);
-  cell = GetMapCellCollision(*layer, p[0], p[2]);
+  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
     object->facing = angle;
@@ -99,7 +99,7 @@ overlap:
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
   Actor_SetMoveTarget(object, q[0], q[1], q[2]);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   if (cell != startCell)
     goto moved;
 walk:
@@ -108,14 +108,14 @@ walk:
   __asm__("" : : : SFP_CLOBBER);
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
   q = position;
-  cell = GetMapCellCollision(*layer, q[0], q[2]);
+  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
   if (cell != 255)
     goto walkNext;
 blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;
   Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   wait(2);
   goto retry;
 moved:
@@ -279,14 +279,14 @@ next:
     Func_02003048();
     if (!GameFlag_Test(flag)) {
       Sound_Play(125);
-      Actor_SetPartAttribute(Actor_GetById(id), 7);
+      Actor_SetSpriteColor(Actor_GetById(id), 7);
       wait(2);
       Func_02002f80(trap, 0);
-      Actor_SetPartAttribute(Actor_GetById(id), 0);
+      Actor_SetSpriteColor(Actor_GetById(id), 0);
       wait(2);
-      Actor_SetPartAttribute(Actor_GetById(id), 7);
+      Actor_SetSpriteColor(Actor_GetById(id), 7);
       wait(4);
-      Actor_SetPartAttribute(Actor_GetById(id), 0);
+      Actor_SetSpriteColor(Actor_GetById(id), 0);
       Func_020029d0(0);
       GameFlag_SetBit(flag);
     } else {
@@ -426,7 +426,7 @@ next:
     cell->attributeB = 128;
     *slot = Func_02003180(object->terrainId, shape, (height >> 19) + 4);
     if (GameFlag_Test(flag))
-      ObjectVisual_CopyAttributes(id, 9);
+      Actor_CopyGraphics(id, 9);
   }
   list += 2;
   if (*list != 0xffff)
@@ -473,15 +473,15 @@ void Func_02002764(const u16 *table) {
       Func_02002748(partner, trap);
       wait(1);
       Sound_Play(125);
-      Actor_SetPartAttribute(Actor_GetById(8), 7);
+      Actor_SetSpriteColor(Actor_GetById(8), 7);
       wait(2);
       Func_02002f80(partner, 0);
-      ObjectVisual_CopyAttributes(id, 9);
-      Actor_SetPartAttribute(Actor_GetById(8), 0);
+      Actor_CopyGraphics(id, 9);
+      Actor_SetSpriteColor(Actor_GetById(8), 0);
       wait(2);
-      Actor_SetPartAttribute(Actor_GetById(8), 7);
+      Actor_SetSpriteColor(Actor_GetById(8), 7);
       wait(4);
-      Actor_SetPartAttribute(Actor_GetById(8), 0);
+      Actor_SetSpriteColor(Actor_GetById(8), 0);
       Func_020029d0(0);
       Func_02002748(trap, partner);
       wait(1);

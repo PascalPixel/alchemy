@@ -31,8 +31,8 @@ struct IconWork {
   s8 active;
 };
 
-s32 Resource_ResetEntry(u32 entry);
-s32 Resource_FindFreeEntry(void);
+s32 VramCache_FreeEntry(u32 entry);
+s32 VramCache_FindFreeEntry(void);
 void Icon_CopyResourceToSlotFar(s32 item, s32 mode, s32 resource);
 void *Unit_Get(s32 owner);
 

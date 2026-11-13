@@ -67,8 +67,9 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
 
   work->first = Actor_Get(a);
   work->second = Actor_Get(b);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade), work);
-  smallEntry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade),
+                      work);
+  smallEntry = VramCache_FindFreeEntry();
   smallTile = Vram_Load(smallEntry, 256, work);
   work->smallTile = smallTile;
   spark = work->sparks;
@@ -83,8 +84,9 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
     *(u16 *)&sprite->depth = 240;
     spark->age = age;
   }
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GoldenTrident), work);
-  largeEntry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GoldenTrident),
+                      work);
+  largeEntry = VramCache_FindFreeEntry();
   {
     /* FAKEMATCH(temporary): sprite also holds the size; as a plain argument, 7
      * of 316 instructions differ in tla-en. */
@@ -134,8 +136,8 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   while (work->step != 999)
     System_Wait(1);
   FieldTask_Remove(Func_02001080);
-  Resource_ResetEntry(largeEntry);
-  Resource_ResetEntry(smallEntry);
+  VramCache_FreeEntry(largeEntry);
+  VramCache_FreeEntry(smallEntry);
   HeapSlot_Release(220);
 }
 

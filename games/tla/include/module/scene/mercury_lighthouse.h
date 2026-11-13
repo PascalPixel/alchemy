@@ -11,6 +11,6 @@ void MercuryLighthouse_HearVoices(void);
 extern s32 gMercuryLighthouse_MoteScript[];
 extern u32 gMercuryLighthouse_MoteFrames;
 
-void BattleEffect_FinishSceneAndReleaseHeapBlock(void);
+void FieldPsynergy_StopMindReadWave(void);
 
 #endif

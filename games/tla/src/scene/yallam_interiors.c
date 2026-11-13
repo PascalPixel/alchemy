@@ -75,7 +75,7 @@ void Event_End(void);
 void Shop_Run(s32 shop, s32 keeper);
 void Sanctum_Run(s32 keeper);
 void Inn_CheckIn(s32 shop, s32 keeper);
-void Field_DispatchTypeHandler(s32 type);
+void FieldPsynergy_RunHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
@@ -403,7 +403,8 @@ void YallamInteriors_TalkToSunshine(void) {
       Event_SetMessageId(message + 1);
       Event_ShowMessage(14, 0);
       Func_02000a60(14, 0xc000);
-      Actor_SetSingleChildFlags(((struct YallamInteriorsObject *)Actor_GetById(14)), 1);
+      Actor_SetSingleChildFlags(
+          ((struct YallamInteriorsObject *)Actor_GetById(14)), 1);
       Actor_SetDestination(gMainRoutineWork.currentOwner, 488, 408);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
@@ -480,7 +481,7 @@ void YallamInteriors_TalkToSunshinesWife(s32 actor) {
     } else {
       Event_SetMessageId(message + 4);
       Event_ShowMessage(actor, 0);
-      BattleEffect_StartEffectObject22(item, 3);
+      ItemDisplay_ShowItem(item, 3);
       Party_GiveItem(item, 0);
       Forge_SetItem(0);
       Party_AdjustCoins(-price);

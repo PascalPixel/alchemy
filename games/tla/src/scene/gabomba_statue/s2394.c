@@ -47,7 +47,7 @@ void Func_02002394(void) {
   actor->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
-  options.update = Effect_AdvanceMotion;
+  options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
   i = 0;
@@ -71,7 +71,7 @@ void Func_02002394(void) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   actor->gravity = 0x10000;
   actor->bounce = 0x4000;
@@ -97,14 +97,14 @@ static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b) {
   s32 a_ = a;
   s32 b_ = b;
 
-  Func_080d47b4(id, a_, b_);
+  Actor_ShowEmoteById(id, a_, b_);
 }
 
 void Func_0200253c(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  FieldCamera_GetActor()->motionFlags = 0;
+  EventCamera_GetActor()->motionFlags = 0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
@@ -207,11 +207,11 @@ void Func_020027cc(void) {
   Actor_FaceDirection(7, FACING_NORTH, 0);
   Actor_FaceDirection(23, FACING_NORTHWEST + FACING_STEP, 60);
   Event_PlaySound(130);
-  Actor_SetSpriteColor(Actor_Get(9), 7);
-  Actor_SetSpriteColor(Actor_Get(10), 7);
+  FieldActor_SetSpriteColor(Actor_Get(9), 7);
+  FieldActor_SetSpriteColor(Actor_Get(10), 7);
   System_Wait(8);
-  Actor_SetSpriteColor(Actor_Get(10), 3);
-  Actor_SetSpriteColor(Actor_Get(9), 0);
+  FieldActor_SetSpriteColor(Actor_Get(10), 3);
+  FieldActor_SetSpriteColor(Actor_Get(9), 0);
   System_Wait(8);
   ((struct Wanderer *)Actor_Get(gMainRoutineWork.currentOwner))->timer =
       (Random16Far() * 40 >> 16) + 10;
@@ -267,7 +267,7 @@ void Func_02002a64(void) {
   Func_0200578c_ArgsFirst(23, 256, 20);
   FieldEvent_SetMessageId(MsgGabombaUnderstandsChannel);
   Event_ShowMessage(23, 0);
-  FieldCamera_GetActor()->motionFlags = 0;
+  EventCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(196 << 17, -1, 146 << 17, 1);
   FieldCamera_WaitForArrival();
@@ -476,7 +476,7 @@ void Func_02002f70(void) {
 void Func_02003338(void) {
   Func_0200533c();
   Actor_MoveToObject(23, gMainRoutineWork.currentOwner);
-  Actor_SetSpriteColor(Actor_Get(23), 15);
+  FieldActor_SetSpriteColor(Actor_Get(23), 15);
   System_Wait(10);
   FieldEvent_SetMessageId(MsgGabombaChannelTiming);
   Event_ShowMessage(23, 0);
@@ -601,16 +601,16 @@ void Func_02003634(void) {
   const u8 *table;
 
   t1 = ((s32)Actor_Get(10));
-  Actor_SetSpriteColor(t1, 3);
+  FieldActor_SetSpriteColor(t1, 3);
   Task_AddFrame((s32)Func_02002074, 0x480);
   t4 = ((s32)Actor_Get(11));
-  Actor_SetSpriteColor(t4, 11);
+  FieldActor_SetSpriteColor(t4, 11);
   t6 = ((s32)Actor_Get(12));
-  Actor_SetSpriteColor(t6, 11);
+  FieldActor_SetSpriteColor(t6, 11);
   t8 = ((s32)Actor_Get(13));
-  Actor_SetSpriteColor(t8, 10);
+  FieldActor_SetSpriteColor(t8, 10);
   t10 = ((s32)Actor_Get(14));
-  Actor_SetSpriteColor(t10, 10);
+  FieldActor_SetSpriteColor(t10, 10);
   t12 = ((s32)Actor_Get(16));
   Actor_SetSingleChildFlags(t12, 0);
   t14 = ((s32)Actor_Get(17));
@@ -756,7 +756,7 @@ void Func_020038ac(void) {
   s32 handle;
 
   Import_ResourceDecodeType01(gField_CachedTilesA, buffer);
-  handle = Resource_FindFreeEntry();
+  handle = VramCache_FindFreeEntry();
   VramCache_Load(handle, 0xc00, buffer);
   state->tileEntry = handle;
   Heap_Release(buffer);
@@ -1467,7 +1467,7 @@ void Func_02004710(void) {
     effect.angle = state->statueOffset;
     effect.scaleX = 0x100;
     effect.scaleY = 0x100;
-    affine = AffineMatrix_BuildForEffect(&effect);
+    affine = OamMatrix_AllocFromTransform(&effect);
   }
   for (id = state->firstId; id < state->endId; id++) {
     struct Actor *piece = Actor_Get(id);
@@ -1870,7 +1870,7 @@ void Func_02004f84(s32 time, u8 *text) {
 }
 
 s32 Func_02005020(s32 time) {
-  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
   s32 second = time % 60;
   s32 volume = 512;
   u8 *ringing = &clock->ringing;
@@ -1900,7 +1900,7 @@ s32 Func_02005020(s32 time) {
 /// scaled affine matrix, and fills five OAM entries, giving the scaled matrix
 /// to the middle digit and to each digit where timer + 60 and timer differ.
 void Func_02005090(void) {
-  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
   u8 *digit = clock->digit;
   u8 *old = clock->tiles;
   u8 *now = clock->digits;
@@ -1925,12 +1925,12 @@ void Func_02005090(void) {
   effect.angle = 0;
   effect.scaleX = 0x200;
   effect.scaleY = 0x200;
-  plain = AffineMatrix_BuildForEffect(&effect);
+  plain = OamMatrix_AllocFromTransform(&effect);
   scale = Func_02005020(*timer);
   effect.angle = 0;
   effect.scaleX = scale;
   effect.scaleY = scale;
-  scaled = AffineMatrix_BuildForEffect(&effect);
+  scaled = OamMatrix_AllocFromTransform(&effect);
   old = clock->old;
   now = clock->now;
   for (i = 0; i <= 4; i++, tile += 2, oam++) {
@@ -1952,7 +1952,7 @@ s32 __modsi3(s32 numerator, s32 denominator);
 
 void Func_02005210(void) {
   u8 *event = Ram_HeapSlots->eventWork;
-  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
 
   if (*(s16 *)(event + 358) == 0 && *(s16 *)(event + 346) == 0 &&
       *(s16 *)(event + 350) == 0 && clock->timer > 0)
@@ -1962,7 +1962,7 @@ void Func_02005210(void) {
 
 void Func_0200525c(void) {
   u8 *event = Ram_HeapSlots->eventWork;
-  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
 
   if (*(s16 *)(event + 358) == 0 && *(s16 *)(event + 346) == 0 &&
       *(s16 *)(event + 350) == 0 && clock->timer > 0)
@@ -1972,7 +1972,7 @@ void Func_0200525c(void) {
 #include "map.h"
 
 void Func_020052a4(s32 mode) {
-  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
   u8 *tiles;
 
   if (!Event_GetFlag(0x109)) {
@@ -1985,7 +1985,7 @@ void Func_020052a4(s32 mode) {
       Resource_GetTableEntry((s32)&ResourceId_ClockDigits), tiles);
   clock->tiles = tiles;
   clock->digits = tiles + 0x2c0;
-  clock->tileEntry = Resource_FindFreeEntry();
+  clock->tileEntry = VramCache_FindFreeEntry();
   Vram_Load(clock->tileEntry, 320, NULL);
   clock->mode = mode;
   if (mode)
@@ -1995,7 +1995,7 @@ void Func_020052a4(s32 mode) {
 }
 
 void Func_0200533c(void) {
-  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
 
   if (clock->mode)
     FieldTask_Remove(Func_02005210);
@@ -2004,7 +2004,7 @@ void Func_0200533c(void) {
 }
 
 void Func_02005364(void) {
-  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
 
   if (clock->mode)
     Task_AddFrame(Func_02005210, TASK_PASS_VBLANK);
@@ -2014,11 +2014,11 @@ void Func_02005364(void) {
 }
 
 s32 Func_020053a0(void) {
-  return ((struct ClockWork *)(gData_020023c4 + 0x288))->timer;
+  return ((struct ClockWork *)(gInventorySnapshot + 0x288))->timer;
 }
 
 void Func_020053ac(void) {
-  ((struct ClockWork *)(gData_020023c4 + 0x288))->timer = 3600;
+  ((struct ClockWork *)(gInventorySnapshot + 0x288))->timer = 3600;
 }
 
 // Layer switch table: three words (id, mode, flag), terminated by 0xffff.

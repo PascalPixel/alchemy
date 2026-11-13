@@ -6,6 +6,7 @@
 #include "menu_list.h"
 #include "module/system/system.h"
 #include "module/window/screens.h"
+#include "module/window/window.h"
 
 void PartyStatus_BuildLayoutBounds(s32 flags) {
   struct UiWindowBounds *state = Ram_HeapSlots->windowLayout;
@@ -16,7 +17,7 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
   s32 left;
 
   if (base[5] != 0) {
-    n = BattleParty_PrepareActiveOwnersFar(0);
+    n = BattleParty_PrepareMembersFar(0);
     height = 3;
   } else {
     n = Party_CountMembersFar();
@@ -148,7 +149,7 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
   u32 result;
 
   if (canvas->menuState == 0) {
-    Dma_Set((const void *)Palette_GetBasicObjColors(),
+    Dma_Set((const void *)Palette_GetBasicSpriteColors(),
             (void *)&BG_PLTT_COLOR(14, 0), 0x80000010, REG_DMA3);
     BG_PLTT_COLOR(14, 14) = BG_PLTT_COLOR(15, 4);
   }
@@ -195,9 +196,12 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
 #define PARTY_STATUS_DJINN_WIDTH 5
 #define PARTY_STATUS_COLUMN_WIDTH 6
 
-/* VIEW(screens): routine Func_08118130 as s32 Func_08118130(s32 a, u8 *counts);
- * module/window/window.h has void Func_08118130(s32 kind, u8 *counts). */
-extern s32 Func_08118130__screens(s32 a, u8 *counts) __asm__("Func_08118130");
+/* VIEW(screens): routine BattleDjinn_CountStandbyFar as s32
+ * BattleDjinn_CountStandbyFar(s32 a, u8 *counts); module/window/window.h
+ * has void BattleDjinn_CountStandbyFar(s32 kind, u8 *counts). */
+extern s32
+Func_08118130__screens(s32 a,
+                       u8 *counts) __asm__("BattleDjinn_CountStandbyFar");
 void Window_DrawBorder(s32 x, s32 y, s32 width, s32 height);
 // Text_DrawPrefixedNumberAtOffset is called with no prototype in scope, as The
 // Broken Seal's screens.c calls it: with one, hp reaches r0 before the call's
@@ -218,7 +222,7 @@ void PartyStatus_Draw(s32 flags) {
   u8 standbyDjinn[4];
 
   if (work->menuState != 0) {
-    count = BattleParty_PrepareActiveOwnersFar(0);
+    count = BattleParty_PrepareMembersFar(0);
     y = -1;
     for (i = 0; i < count; i++) {
       members[i] = battle->partyUnits[i];

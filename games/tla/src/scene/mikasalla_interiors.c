@@ -129,8 +129,8 @@ void MikasallaInteriors_AskBeenToGaroh(s32 actor) {
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors17);
     Event_OpenMessage(actor, 0);
-    if (FieldEvent_AskYesNoWithActorAnimation(
-            FieldParty_GetLeaderActor(), 0) == 0) {
+    if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+        0) {
       FieldEvent_Wait(10);
       FieldEvent_SetMessageId((s32)MsgMikasallaInteriors17 + 1);
     } else {
@@ -187,7 +187,7 @@ s32 Scene_Initialize(void) {
              Event_GetFlag(34))
       Actor_SetPosition(18, 0, 0);
     else
-      Actor_SetSpriteColor(Actor_Get(18), 4);
+      FieldActor_SetSpriteColor(Actor_Get(18), 4);
     return 0;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65ERoom2) {
@@ -221,8 +221,9 @@ void MikasallaInteriors_MeetGalahad(void);
 /// met the party.
 void MikasallaInteriors_TalkToGalahad(void) {
   if (Event_GetFlag(0xa39)) {
-    FieldEvent_SetMessageId(Event_GetFlag(0x340) ? (s32)MsgMikasallaInteriors20
-                                            : (s32)MsgMikasallaInteriors21);
+    FieldEvent_SetMessageId(Event_GetFlag(0x340)
+                                ? (s32)MsgMikasallaInteriors20
+                                : (s32)MsgMikasallaInteriors21);
     Event_ShowMessage(18, 0);
   } else {
     MikasallaInteriors_MeetGalahad();

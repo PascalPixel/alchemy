@@ -14,14 +14,14 @@ extern volatile s16 gData_02003cd0;
 extern s16 gData_020032b2[];
 void Func_020017dc(struct Actor *object);
 void Func_02001868(void);
-s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 z);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
 void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02002f80(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-void Script_WaitForEventTimeout(struct Actor *actor);
+void Actor_WaitForMove(struct Actor *actor);
 s32 Func_02003018(struct Actor *object);
 s32 Func_02003028(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 void wait(s32 frames);
@@ -66,7 +66,7 @@ retry:
   targetZ = z;
   targetX = x;
   layer = &object->terrainId;
-  startCell = GetMapCellCollision(*layer, targetX, targetZ);
+  startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
   dz = targetZ - object->z;
   dx = targetX - object->x;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
@@ -81,7 +81,7 @@ retry:
   /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 2
    * of 347 instructions differ in tla-en. */
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
-  cell = GetMapCellCollision(*layer, p[0], p[2]);
+  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
     object->facing = angle;
@@ -153,14 +153,14 @@ walk:
    * of 347 instructions differ in tla-en. */
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
   q = position;
-  cell = GetMapCellCollision(*layer, q[0], q[2]);
+  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
   if (cell != 255)
     goto walkNext;
 blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;
   Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   wait(2);
   goto retry;
 changed:
@@ -188,7 +188,7 @@ extern volatile s16 gData_02003cd0;
 extern s16 gData_020032b2[];
 void Func_020017dc(struct Actor *object);
 void Func_02001868(void);
-s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 z);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
@@ -236,7 +236,7 @@ retry:
   targetZ = z;
   targetX = x;
   layer = &object->terrainId;
-  startCell = GetMapCellCollision(*layer, targetX, targetZ);
+  startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
   dz = targetZ - object->z;
   dx = targetX - object->x;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
@@ -253,7 +253,7 @@ retry:
    * in tla-ja. */
   __asm__("" : : : SFP_CLOBBER);
   Vector_AddPolarOffsetFar(0x100000, angle, position);
-  cell = GetMapCellCollision(*layer, p[0], p[2]);
+  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
     object->facing = angle;
@@ -271,7 +271,7 @@ retry:
   Actor_SetMoveTarget(object, x, object->y, z);
   Func_02002f80(object, 2);
   Actor_SetAnimationSpeed(object, 48);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   object->update = (void (*)(void))Func_020017dc;
   goto walk;
 walkNext:
@@ -321,14 +321,14 @@ walk:
    * of 332 instructions differ in tla-ja. */
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
   q = position;
-  cell = GetMapCellCollision(*layer, q[0], q[2]);
+  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
   if (cell != 255)
     goto walkNext;
 blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;
   Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   wait(2);
   goto retry;
 changed:

@@ -4,17 +4,18 @@
 #include "types.h"
 
 #define Ram_MapCellBuffer FIXED_ADDRESS((u8 *), 0x02010000, gMapCellBuffer)
-#define Ram_DecodeBuffer FIXED_ADDRESS((u8 *), 0x0201c000, gData_0201c000)
+#define Ram_DecodeBuffer FIXED_ADDRESS((u8 *), 0x0201c000, gDecodeBuffer)
 #define Ram_MapCollision FIXED_ADDRESS((u8 *), 0x0202c000, gMapCollision)
 #define Ram_Data_0202e008 FIXED_ADDRESS((u8 *), 0x0202e008, gData_0202e008)
 #define Ram_BgTileBuffer FIXED_ADDRESS((u8 *), 0x02038000, gData_02038000)
 /// The cell picture table: each cell picture's top two tile entries, then its
-/// bottom two. Func_0802abbc reads it at constant addresses inside its loop; as
-/// the symbol the two table addresses hoist out of the loop.
+/// bottom two. MapGrid_RenderCellPictureRow reads it at constant addresses
+/// inside its loop; as the symbol the two table addresses hoist out of the
+/// loop.
 #define Ram_MapBlocks FIXED_ADDRESS((u8 *), 0x02020000, gMapBlocks)
 #define Ram_MapShapeGrid FIXED_ADDRESS((u8 *), 0x02024000, gMapShapeGrid)
 
-#define Ram_SoundMixer FIXED_ADDRESS((u8 *), 0x03006000, SoundDriver_Mixer)
+#define Ram_SoundMixer FIXED_ADDRESS((u8 *), 0x03006000, SoundMainRAM)
 
 #define Ram_IwramHeapEnd                                                       \
   FIXED_ADDRESS((u8 *), 0x03006fc0, IwramSoundMixWorkspace)
@@ -29,8 +30,8 @@
 /// give.
 #define Ram_WorldMapScroll FIXED_ADDRESS((s32 *), 0x0202a630, Data_0202a630)
 
-/// The world map screen's work. Its setup (Func_080ebf94) reaches it at a
-/// constant address: the work's fields are read again after stores to the
+/// The world map screen's work. Its setup (WorldPicture_Initialize) reaches it
+/// at a constant address: the work's fields are read again after stores to the
 /// screen values whose addresses it passes out, which only a constant gives.
 #define Ram_WorldMapWork                                                       \
   FIXED_ADDRESS((struct WorldMapWork *), 0x0202a000, gWorldMapWork)
@@ -38,8 +39,8 @@
 /// setup points it at the work's cursor.
 #define Ram_WorldMapCursor FIXED_ADDRESS((s32 **), 0x0202a62c, Data_0202a62c)
 /// The shown place name's box on the world map screen (x, y, width, height,
-/// pixels). Func_080ec4d4 reaches the four halfwords from one address by
-/// adding and subtracting their offsets, which only constants give.
+/// pixels). WorldPicture_UpdateMarkers reaches the four halfwords from one
+/// address by adding and subtracting their offsets, which only constants give.
 #define Ram_WorldMapNameBox FIXED_ADDRESS((s16 *), 0x0202a638, Data_0202a638)
 /// The cursor's place when the screen opens (x, then y, 16.16 pixels).
 #define Ram_WorldMapCursorStart                                                \
@@ -92,5 +93,11 @@ struct HeapSlots {
 
 #define Ram_HeapSlots                                                          \
   FIXED_ADDRESS((struct HeapSlots *), 0x03000000, gHeapSlots)
+
+extern u8 gMapShapeGrid[];
+
+extern u32 gMapBlocks[];
+
+extern void (*gVBlankCallback)(void);
 
 #endif

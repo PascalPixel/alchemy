@@ -45,7 +45,7 @@ static inline void SetCollisionCode(s32 x, s32 z, s32 layer, s32 value) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
    * scene layer, so each call keeps its own constants; as a direct call, 12
    * of 47 instructions of Func_02000054 differ in tla-en. */
-  ((u8)Func_080dbdd4(x, z, layer, value));
+  ((u8)MapGrid_SetCellBehavior(x, z, layer, value));
 }
 
 void Func_02000054(void) {
@@ -55,7 +55,7 @@ void Func_02000054(void) {
   Actor_SetPosition(14, PIXELS(504), PIXELS(168));
   if (Event_GetFlag(0xa00)) {
     Actor_RaiseFromCell(14);
-    ((u8)MapGrid_SetCellBehavior(0x1f00000, 0xa00000, 0, 254));
+    ((u8)FieldMapGrid_SetCellBehavior(0x1f00000, 0xa00000, 0, 254));
   }
 }
 
@@ -161,7 +161,7 @@ void Func_02000300(void) {
     object->timer = Random16Far();
     object->unk66 = phase;
     Actor_SetSingleChildFlags(object, 0);
-    Actor_SetSpriteColor(object, 2);
+    FieldActor_SetSpriteColor(object, 2);
     ((struct FieldSprite *)object->sprite)->priority = 1;
     phase += 5;
   }

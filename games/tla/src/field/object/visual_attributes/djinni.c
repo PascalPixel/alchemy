@@ -45,10 +45,13 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *obj) {
 
 struct Actor *Actor_GetById(u32 objectId);
 void Actor_Jump(s32 id, s32 speed, s32 frames);
-/* VIEW(motes): routine Func_080200c0 as struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
-extern struct Actor *Func_080200c0__motes(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
+/* VIEW(motes): routine Actor_CreateFar as struct Actor *Actor_CreateFar(s32
+ * kind, s32 x, s32 y, s32 z); visual_attributes has struct
+ * BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z). */
+extern struct Actor *Func_080200c0__motes(s32 kind, s32 x, s32 y,
+                                          s32 z) __asm__("Actor_CreateFar");
 
-void Func_080d7524(s32 djinniId) {
+void Djinn_RunBattleStartHop(s32 djinniId) {
   struct Actor *djinni;
   struct Actor *leader;
   struct Actor *copy;
@@ -75,7 +78,7 @@ void Func_080d7524(s32 djinniId) {
   Actor_ArmCallback(djinniId, back, 0);
   wait(10);
   djinni->facing = back;
-  Func_080d47b4(djinniId, 0x103, 50);
+  Actor_ShowEmoteById(djinniId, 0x103, 50);
   Actor_GetById(djinniId)->actionFlags &= ~1;
   djinni->motionFlags = 2;
   djinni->update = (void (*)(void))FieldEffect_AdvanceSpinAngle;
@@ -123,7 +126,7 @@ void Func_080d7524(s32 djinniId) {
       copy->update = (void (*)(void))Actor_MoveHalfwayTowardTarget;
       copy->facing = djinni->facing;
       ((struct AnimationObject *)copy->sprite)->image.priority = 0;
-      Animation_ApplyChildValuesFar(copy, tint);
+      Actor_SetSpriteColorModeFar(copy, tint);
       Actor_SetMode(copy, 0);
       Actor_SetSingleChildFlagsFar(copy, 0);
       sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);
@@ -134,7 +137,7 @@ void Func_080d7524(s32 djinniId) {
 
   djinni->speedLimit = 0x4ccc;
   djinni->acceleration = 0x4ccc;
-  Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x100000, dir + 0x8000);
+  Actor_SetTargetPositionFromMagnitudeAngle(djinni, 0x100000, dir + 0x8000);
   Sound_PlayFar(LEAP_SOUND);
   Actor_Jump(djinniId, 6, 5);
   wait(24);
@@ -166,7 +169,7 @@ extern s8 gData_02001000[];
 /// if it found one, the element's join effect plays at the actor (none for
 /// actor -1), the Djinni is added, and the actor's event slot is cleared
 /// (from patch 1; the Japanese release leaves it set).
-void Func_080d7788(s32 actor, s32 element, s32 djinni) {
+void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
   s32 owner;
 
   if (djinni == 19) {
@@ -195,8 +198,8 @@ void Func_080d7788(s32 actor, s32 element, s32 djinni) {
     else if (element == 3)
       Djinn_RunJupiterJoinEffect(actor);
   }
-  Func_080cb82c();
-  Func_08038328(owner, element, djinni);
+  WorldMap_Freeze();
+  Djinn_ShowJoinedMessageFar(owner, element, djinni);
   Func_080cb8a4();
 #if TLA_PATCH_1
   ((struct EventActors *)Ram_HeapSlots->eventWork)->actors[actor] = NULL;
@@ -291,7 +294,7 @@ void Djinn_ResolvePending(s32 shown) {
               (struct MapActor *)Scene_FindActorPlacement(actor);
           if (found != 0 && found->event - 48 == flag - 300) {
             wait(40);
-            Func_080d7788(actor, element, index);
+            Djinn_JoinParty(actor, element, index);
             break;
           }
         }
@@ -301,7 +304,11 @@ void Djinn_ResolvePending(s32 shown) {
   gMainRoutineWork.pendingDjinnEvent = 0;
 }
 
-/* VIEW(motes): tag struct BattleFxScene as struct BattleFxScene__motes; field_psynergy_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:3869: dereferencing pointer to incomplete type. */
+/* VIEW(motes): tag struct BattleFxScene as struct BattleFxScene__motes;
+ * field_psynergy_work.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/field/object/visual_attributes.c:3869: dereferencing pointer to
+ * incomplete type. */
 struct BattleFxScene__motes {
   u8 unk00[0x50];
   struct FieldParticle slots[24];
@@ -310,7 +317,7 @@ struct BattleFxScene__motes {
 
 #define BATTLE_EFFECT_SLOT 224
 
-void BattleEffect_UpdateAllSlots(void) {
+void FieldEffect_UpdateAllSlots(void) {
   struct BattleFxScene__motes *scene;
   struct FieldParticle *slot;
   s32 remainingSlots;
@@ -325,24 +332,25 @@ void BattleEffect_UpdateAllSlots(void) {
   } while (remainingSlots >= 0);
 }
 
-void BattleEffect_InitializeSlots(void) {
+void FieldEffect_InitializeSlots(void) {
   void *work;
 
-  work = HeapSlot_Alloc(BATTLE_EFFECT_SLOT, sizeof(struct BattleFxScene__motes));
+  work =
+      HeapSlot_Alloc(BATTLE_EFFECT_SLOT, sizeof(struct BattleFxScene__motes));
   Dma_Fill32(0, work, sizeof(struct BattleFxScene__motes));
-  Task_Add((s32)BattleEffect_UpdateAllSlots, TASK_PASS_VBLANK);
+  Task_Add((s32)FieldEffect_UpdateAllSlots, TASK_PASS_VBLANK);
 }
 
-void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void) {
+void FieldEffect_ReleaseSlots(void) {
   struct BattleFxScene__motes *scene = Ram_HeapSlots->effectWork;
   struct FieldParticle *slot;
   s32 i;
 
-  Task_Remove((u32)BattleEffect_UpdateAllSlots);
+  Task_Remove((u32)FieldEffect_UpdateAllSlots);
   for (i = 0; i < 24; i++) {
     slot = &scene->slots[i];
     if (slot->active != 0)
-      BattleEffect_ClearOwnedSlot(slot);
+      FieldEffect_ClearOwnedSlot(slot);
   }
   HeapSlot_Release(BATTLE_EFFECT_SLOT);
   wait(1);
@@ -352,11 +360,17 @@ void BattleEffect_AdvanceSpinAngle(struct MotionObject *object) {
   object->angle += 0x2000;
 }
 
-/* VIEW(motes): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct EffectVector *position); ground_particles has void Camera_WorldToScreen(union FieldCoordinate *position). */
-extern void Camera_WorldToScreen__motes(struct EffectVector *position) __asm__("Camera_WorldToScreen");
-/* VIEW(motes): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *position); f0d489c has void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position). */
-extern void Vector_AddPolarOffset__motes(s32 magnitude, s32 angle,
-                           struct EffectVector *position) __asm__("Vector_AddPolarOffset");
+/* VIEW(motes): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct
+ * EffectVector *position); ground_particles has void Camera_WorldToScreen(union
+ * FieldCoordinate *position). */
+extern void Camera_WorldToScreen__motes(struct EffectVector *position) __asm__(
+    "Camera_WorldToScreen");
+/* VIEW(motes): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32
+ * magnitude, s32 angle, struct EffectVector *position); f0d489c has void
+ * Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position). */
+extern void Vector_AddPolarOffset__motes(
+    s32 magnitude, s32 angle,
+    struct EffectVector *position) __asm__("Vector_AddPolarOffset");
 
 /// Field effect sprite callback of a Jupiter Djinni's light particles: each
 /// circles its centre while it widens for 60 frames, circles 40, drifts toward
@@ -404,12 +418,12 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
       particle->state += 1;
     }
   } else if (particle->state == 4) {
-    BattleEffect_ClearOwnedSlot(particle);
+    FieldEffect_ClearOwnedSlot(particle);
   }
   position.x = particle->originX;
   position.z = particle->originZ;
-  Vector_AddPolarOffset__motes(particle->orbitRadius << 16, particle->orbitAngle << 11,
-                        &position);
+  Vector_AddPolarOffset__motes(particle->orbitRadius << 16,
+                               particle->orbitAngle << 11, &position);
   particle->x = position.x;
   particle->z = position.z;
 }

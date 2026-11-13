@@ -18,18 +18,18 @@ Heap_Alloc:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Resource_DecodeType01
+	.global Decompress_TaggedLz
 	.thumb_func
-Resource_DecodeType01:
-	overlay_veneer Resource_DecodeType01Far
+Decompress_TaggedLz:
+	overlay_veneer Decompress_TaggedLzFar
 	.global VramCache_Load
 	.thumb_func
 VramCache_Load:
 	overlay_veneer VramCache_LoadFar
-	.global Resource_FindFreeEntry
+	.global VramCache_FindFreeEntry
 	.thumb_func
-Resource_FindFreeEntry:
-	overlay_veneer Resource_FindFreeEntryFar
+VramCache_FindFreeEntry:
+	overlay_veneer VramCache_FindFreeEntryFar
 	.global DebugText_Clear
 	.thumb_func
 DebugText_Clear:
@@ -45,7 +45,7 @@ Resource_GetTableEntry:
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_ClearFar
 	.global WindowSystem_InitField
 	.thumb_func
 WindowSystem_InitField:
@@ -65,7 +65,7 @@ Message_AllTyped:
 	.global Portrait_OpenWindow
 	.thumb_func
 Portrait_OpenWindow:
-	overlay_veneer Func_080380f8
+	overlay_veneer Portrait_OpenWindowFar
 	.global Text_GetMessageSize
 	.thumb_func
 Text_GetMessageSize:
@@ -105,7 +105,7 @@ Func_0200084c:
 	.global SceneState_SetScrollTarget
 	.thumb_func
 SceneState_SetScrollTarget:
-	overlay_veneer Func_081a0018
+	overlay_veneer SceneState_SetScrollTargetFar
 	.global Func_0200085c
 	.thumb_func
 Func_0200085c:

@@ -4,11 +4,11 @@
 
 #include "../game_internal.h"
 #include "module/game/game.h"
-#include "module/tla.h"
+#include "mul_q16.h"
 
 struct OwnerGrowthRecord;
 
-extern const struct ElementPreset gData_080c6684[];
+extern const struct ElementPreset gEnemy_ElementPresetTable[];
 
 /// Each element's value, ten per digit: an enemy's from the preset its record
 /// names, a character's from its djinn counts plus its growth record's bonus.
@@ -22,7 +22,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
     index = Enemy_GetDefinition(record)[42];
     if (index > 47)
       index = 0;
-    table = gData_080c6684;
+    table = gEnemy_ElementPresetTable;
     preset = &table[index];
     for (i = 0; i <= 3; i++)
       output[i] = preset->digits[i] * 10;
@@ -66,12 +66,12 @@ s32 Enemy_GetAttackElement(void *state) {
 
   if (preset > 47)
     preset = 0;
-  table = gData_080c6684;
+  table = gEnemy_ElementPresetTable;
   offset = preset * sizeof(struct ElementPreset);
   return *(u32 *)((u8 *)table + offset);
 }
 
-extern struct ElementLevelBonus Data_080c6644[16];
+extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
 
 void Unit_CalculateBaseElements(s32 owner,
                                 struct BattleElementStats *destination) {
@@ -87,7 +87,7 @@ void Unit_CalculateBaseElements(s32 owner,
 
     i = 0;
     for (;;) {
-      destination[i] = gData_080c6684[index].values[i];
+      destination[i] = gEnemy_ElementPresetTable[index].values[i];
       i++;
       if (i > 3)
         return;
@@ -109,14 +109,16 @@ void Unit_CalculateBaseElements(s32 owner,
       tens = 0;
 
 #ifdef UBFIX
-    destination[i].power = Data_080c6644[tens].power + ones;
-    destination[i].resistance = Data_080c6644[tens].res + ones;
+    destination[i].power = gElement_PowerResistByLevel[tens].power + ones;
+    destination[i].resistance = gElement_PowerResistByLevel[tens].res + ones;
 #else
     // UB: the stats are stored through an s16 [4][2] view of the four
     // structs, the element pair table's spelling; as destination[i].power
     // and .resistance, 4 of 86 instructions differ in tla-en.
-    ((s16 (*)[2])destination)[i][0] = Data_080c6644[tens].power + ones;
-    ((s16 (*)[2])destination)[i][1] = Data_080c6644[tens].res + ones;
+    ((s16 (*)[2])destination)[i][0] =
+        gElement_PowerResistByLevel[tens].power + ones;
+    ((s16 (*)[2])destination)[i][1] =
+        gElement_PowerResistByLevel[tens].res + ones;
 #endif
   }
 }
@@ -160,7 +162,7 @@ s32 Class_Determine(s32 character, u32 *djinn, s32 item) {
   }
   if (levels[second] <= 9)
     second = primary;
-  series = Data_080c6604[primary][second];
+  series = gClass_SeriesByElements[primary][second];
   if (series == 2 && character == 5)
     series = 13;
   else if (series == 6 && character == 7)
@@ -195,10 +197,9 @@ struct ClassDefinition *Class_GetDefinition(s32 classId) {
 void Unit_UpdateClass(s32 ownerId) {
   struct BattleUnit *owner = Unit_Get(ownerId);
 
-  owner->classIndex = Class_Determine(owner->enemyId, owner->djinnAvailable,
-                                      Inventory_GetEquippedItem(
-                                          (struct OwnerInventoryState *)owner,
-                                          10));
+  owner->classIndex = Class_Determine(
+      owner->enemyId, owner->djinnAvailable,
+      Inventory_GetEquippedItem((struct OwnerInventoryState *)owner, 10));
   Owner_UpdateClassActions(ownerId);
   Unit_CalculateBaseElements(ownerId, owner->baseElement);
 }

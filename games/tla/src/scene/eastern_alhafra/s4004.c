@@ -11,7 +11,6 @@
 #include "module/tla.h"
 #include "resource.h"
 
-
 struct RockWork {
   u8 tiles[0x500];
   struct Rock rocks[64];
@@ -20,7 +19,6 @@ struct RockWork {
   u16 tileBase;
   u16 resource;
 };
-
 
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
@@ -37,7 +35,7 @@ void Func_02004004(void) {
   struct RockSprite *sprite;
 
   Import_ResourceDecodeType01(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
-  entry = Resource_FindFreeEntry();
+  entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;
   work->resource = entry;
@@ -67,7 +65,7 @@ void Func_020040c0(void) {
   struct EasternAlhafraSparkWork *work = Ram_HeapSlots->menuRuntime;
 
   FieldTask_Remove(Particles_UpdateFalling);
-  Resource_ResetEntry(work->resource);
+  VramCache_FreeEntry(work->resource);
   HeapSlot_Release(220);
 }
 

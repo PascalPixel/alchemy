@@ -31,8 +31,7 @@ DEFINE_TELEPORTER_DROP_IN(Func_02003e04, Func_0200363c)
 #include "cell_target.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Func_02003c6c(struct CellTarget *work,
-                   struct CellTargetEntry *entry);
+void Func_02003c6c(struct CellTarget *work, struct CellTargetEntry *entry);
 
 DEFINE_TELEPORTERS_STEP(Func_02003f9c, gData_02004cf4, Func_02003bfc,
     Func_02003c6c)
@@ -338,7 +337,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 90, 0x1a4b, EVENT(MarsLighthouseStarRoom_SlideOnIce)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(Func_02000060)},
     {0x60009a15, 9, CONDITION_ALWAYS, EVENT(Func_02000074)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 9, CONDITION_ALWAYS, (u32)(Func_0200007c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 9,
+     CONDITION_ALWAYS, (u32)(Func_0200007c)},
     {TRIGGER_RAISED, 20, CONDITION_ALWAYS, EVENT(Func_020005b0)},
     {0x50009705, 20, 0x1233, EVENT(MarsLighthouseStarRoom_BurstIce)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(MarsLighthouseStarRoom_HoldWarmHand)},

@@ -15,8 +15,7 @@ struct Actor *Actor_GetById(u32 objectId) {
   return object;
 }
 
-void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit,
-                                     s32 acceleration) {
+void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -89,7 +88,7 @@ void Actor_SetMovementTypeAndWaitById(u32 objectId, s32 action) {
   }
 }
 
-void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z) {
+void Actor_SetDestinationById(u32 objectId, s32 x, s32 z) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -99,7 +98,7 @@ void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z) {
   }
 }
 
-void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z) {
+void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -110,7 +109,7 @@ void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z) {
   }
 }
 
-void Actor_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z) {
+void Actor_WalkToById(u32 objectId, s32 x, s32 z) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -121,7 +120,7 @@ void Actor_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z) {
   }
 }
 
-void Actor_SetPositionAndReset(u32 objectId, s32 x, s32 z) {
+void Actor_WalkToAndWaitById(u32 objectId, s32 x, s32 z) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -157,29 +156,27 @@ void Actor_CenterOnColumn(u32 objectId, s32 action, s32 zOffset) {
     Actor_SetMode(object, 2);
     x = object->x;
     eight = 8;
-    Actor_SetTargetPosition(object, x + ((eight - angleRemainder) << 16), object->y,
-                       object->z);
+    Actor_SetTargetPosition(object, x + ((eight - angleRemainder) << 16),
+                            object->y, object->z);
     Actor_CommitPosition(object);
     Actor_SetSpritePriority(objectId, action);
     Actor_SetTargetPosition(object, object->x, object->y,
-                       object->z + (zOffset << 16));
+                            object->z + (zOffset << 16));
   }
 }
 
-void Actor_OffsetPositionAndResetMotion(u32 objectId, s32 xOffset,
-                                               s32 zOffset) {
+void Actor_SetDestinationOffsetById(u32 objectId, s32 xOffset, s32 zOffset) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
     object->movementState = 0;
     Actor_ResetMotion(object);
     Actor_SetTargetPosition(object, object->x + (xOffset << 16), object->y,
-                       object->z + (zOffset << 16));
+                            object->z + (zOffset << 16));
   }
 }
 
-void Actor_OffsetPositionAndReset(u32 objectId, s32 xOffset,
-                                         s32 zOffset) {
+void Actor_WalkByById(u32 objectId, s32 xOffset, s32 zOffset) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -187,15 +184,14 @@ void Actor_OffsetPositionAndReset(u32 objectId, s32 xOffset,
     Actor_StartScriptFar(object, (u32)gActor_OffsetScript);
     Actor_SetMode(object, 2);
     Actor_SetTargetPosition(object, object->x + (xOffset << 16), object->y,
-                       object->z + (zOffset << 16));
+                            object->z + (zOffset << 16));
   }
 }
 
-void Actor_CommitPositionAndActivate(u32 objectId, s32 xOffset,
-                                            s32 zOffset) {
+void Actor_WalkByAndWaitById(u32 objectId, s32 xOffset, s32 zOffset) {
   struct Actor *object = ObjectTable_Get(objectId);
 
-  Actor_OffsetPositionAndReset(objectId, xOffset, zOffset);
+  Actor_WalkByById(objectId, xOffset, zOffset);
   if (object != NULL) {
     Actor_CommitPosition(object);
     Actor_SetMode(object, 1);
@@ -209,11 +205,11 @@ void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
     Actor_SetSpeedParameters(actorId, 0xcccc, 0x6666);
     Actor_MoveToObject(actorId, gMainRoutineWork.currentOwner);
     Actor_SetPositionAndResetMotionFar(object, object->x, object->y,
-                                        object->z - 0x10000);
+                                       object->z - 0x10000);
     object->movementState = 0;
     Actor_SetMode(object, 2);
-    Actor_OffsetPositionAndResetMotion(actorId, xOffset, zOffset);
-    Actor_StartScriptFar(object, gData_080f32e0);
+    Actor_SetDestinationOffsetById(actorId, xOffset, zOffset);
+    Actor_StartScriptFar(object, gActor_LaunchScript);
     object->timer = action;
   }
 }
@@ -227,9 +223,8 @@ void Actor_WaitForMoveById(u32 objectId) {
   }
 }
 
-#define Actor_SetPositionAndResetMotionFar                                    \
-  ((s32 (*)(struct Actor *, s32, s32,                                  \
-            s32))Actor_SetPositionAndResetMotionFar)
+#define Actor_SetPositionAndResetMotionFar                                     \
+  ((s32 (*)(struct Actor *, s32, s32, s32))Actor_SetPositionAndResetMotionFar)
 
 void Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
   struct Actor *object = ObjectTable_Get(objectId);
@@ -247,8 +242,8 @@ void Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
   }
 }
 
-void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x,
-                                                           s32 z, s16 angle) {
+void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x, s32 z,
+                                                    s16 angle) {
   struct Actor *object = ObjectTable_Get(objectId);
   s32 terrainHeight;
 
@@ -298,19 +293,20 @@ void Actor_SetModeById(u32 objectId, s32 action) {
     Actor_SetMode(object, action);
 }
 
-#define Actor_SetAnimationSpeedFar                                 \
-  ((void (*)(struct Actor *,                                           \
-             s32))Actor_SetAnimationSpeedFar)
+#define Actor_SelectAnimationFar                                               \
+  ((void (*)(struct Actor *, s32))Actor_SelectAnimationFar)
 
 void Actor_SetActionById(u32 objectId, s32 action) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL)
-    Actor_SetAnimationSpeedFar(object, action);
+    Actor_SelectAnimationFar(object, action);
 }
 
 /// ⚓️'s animation group: the number last applied and its entries.
-/* VIEW(event_commands): tag struct AnimationGroup as struct AnimationGroup__event_commands; module/field/field.h has another definition. */
+/* VIEW(event_commands): tag struct AnimationGroup as struct
+ * AnimationGroup__event_commands; module/field/field.h has another definition.
+ */
 struct AnimationGroup__event_commands {
   u8 unk00[0x18];
   u8 lastNo;
@@ -387,7 +383,7 @@ void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant) {
   Actor_RefreshSelectorById(objectId);
 }
 
-void FieldEffect_UpdateParticleLinearMotion(struct Actor *object) {
+void FieldEffect_UpdateDustPuff(struct Actor *object) {
   s32 driftX;
   s32 driftZ;
   s32 pos;
@@ -402,7 +398,7 @@ void FieldEffect_UpdateParticleLinearMotion(struct Actor *object) {
   object->acceleration = driftZ - driftZ / 16;
 }
 
-struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 
 struct ParticleSprite {
   u8 unk00[8];
@@ -415,13 +411,13 @@ struct ParticleSprite {
 
 // Kicks up a dust puff (object 285) where source stands, as ☀️'s
 // FieldEffect_SpawnBurstParticle.
-void Func_080d3378(struct Actor *source, s32 param) {
+void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
   struct Actor *object;
   struct ParticleSprite *child;
   s32 speed;
   s32 rate = -0x1999;
 
-  object = Func_080200c0(285, source->x, source->y, source->z);
+  object = Actor_CreateFar(285, source->x, source->y, source->z);
   if (object != NULL) {
     child = object->sprite;
     switch (Random16() & 1) {
@@ -436,7 +432,7 @@ void Func_080d3378(struct Actor *source, s32 param) {
     }
 
     if (param != 0)
-      Actor_SetPartAttribute(object, param);
+      Actor_SetSpriteColor(object, param);
 
     object->motionFlags = 0;
     speed = Random16() % 10 + 5;
@@ -447,7 +443,7 @@ void Func_080d3378(struct Actor *source, s32 param) {
     object->timer = 0;
     object->priorityFlags |= 2;
     ((u8 *)object)[0x61] = 1;
-    object->update = (void (*)(void))FieldEffect_UpdateParticleLinearMotion;
+    object->update = (void (*)(void))FieldEffect_UpdateDustPuff;
     child->flags = 0;
     child->priority = ((struct ParticleSprite *)source->sprite)->priority;
   }
@@ -491,7 +487,7 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
     object->targetY = object->y;
     wait(1);
     if (particle != -1 && (i & 1))
-      Func_080d3378(object, particle);
+      FieldEffect_SpawnDustPuff(object, particle);
   }
   object->motionFlags = 3;
   object->velocityY = 0x30000;
@@ -514,7 +510,7 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   Event_NoOp();
 }
 
-void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 frames) {
+void Actor_FaceActorById(s32 firstId, s32 secondId, s32 frames) {
   struct ObjectPairPosition *first;
   struct ObjectPairPosition *second;
 
@@ -531,13 +527,13 @@ void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 frames) {
   void *second = ObjectTable_Get(secondId);
 
   if (first != NULL && second != NULL) {
-    FacingObject_TurnPairToFaceEachOther(first, second);
+    Actor_TurnPairToFaceEachOther(first, second);
     Event_Wait(frames);
   }
 }
 
-void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first,
-                                          struct FacingObject *second) {
+void Actor_TurnPairToFaceEachOther(struct FacingObject *first,
+                                   struct FacingObject *second) {
   s32 toward;
   s32 away;
   s32 frame;
@@ -597,7 +593,7 @@ void Actor_ConfigureSpriteColor(s32 objectId, s32 value) {
       return;
     }
     object->update = NULL;
-    Actor_SetPartAttribute(object, value);
+    Actor_SetSpriteColor(object, value);
   }
 }
 
@@ -620,7 +616,7 @@ void Actor_ApplyIndexedChildValue(struct Actor *object) {
   }
 }
 
-void Actor_SetPartAttribute(struct Actor *object, s32 attribute) {
+void Actor_SetSpriteColor(struct Actor *object, s32 attribute) {
   struct ObjectPartList *list;
   struct ObjectPart *part;
   s32 i;
@@ -642,8 +638,8 @@ void Actor_SetPartAttribute(struct Actor *object, s32 attribute) {
 /// distance of 40 pixels (action 40), the target's top speed with twice its
 /// acceleration, to keep up with it, and no collision flags, so it cannot
 /// block the target. The Broken Seal's ObjectEvent_SetTargetAndCallback.
-void Actor_SetTargetAndCallback(u32 objectId, s32 targetId,
-                                 const void *callback) {
+void Actor_WatchAndStartScript(u32 objectId, s32 targetId,
+                               const void *callback) {
   struct Actor *follower = ObjectTable_Get(objectId);
   struct Actor *target = ObjectTable_Get(targetId & 0xff);
 

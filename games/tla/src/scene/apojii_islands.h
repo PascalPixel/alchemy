@@ -14,10 +14,10 @@
 #include "frame.h"
 #include "text/msg_ids.h"
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);
 u8 *ResourceMetadata_Register(void *animation, s32 id);
-s32 Resource_FindFreeEntry(void);
+s32 VramCache_FindFreeEntry(void);
 void Import_TaskSuspendAll(void *callback);
 void Import_TaskResumeAll(void *callback);
 void Irq_SetHandler(s32 a, s32 b, void *callback);
@@ -93,7 +93,7 @@ static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
 }
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
-  Camera_MoveWithinMapBounds(x, a, z, b);
+  FieldCamera_MoveWithinMapBounds(x, a, z, b);
 }
 
 static __inline__ void Func_02001d04_(s32 id, s32 x, s32 z) {

@@ -30,7 +30,7 @@ void Animation_WaitForTrackEnd(struct AnimObject *object) {
   }
 }
 
-void Map_RenderAnimatedTilePicture(u8 *object, u32 position) {
+void SpriteDissolve_Step(u8 *object, u32 position) {
   u16 *destination;
   s32 count;
   u32 row;
@@ -45,7 +45,7 @@ void Map_RenderAnimatedTilePicture(u8 *object, u32 position) {
   row = 0;
 
   if (row < (u32)count) {
-    table = gMap_TileDissolveOrder;
+    table = gSpriteDissolve_PixelOrder;
     highMask = 0xFF00;
     indexMask = 0x3F;
     offsetMask = 0x3E;
@@ -69,21 +69,21 @@ void Map_RenderAnimatedTilePicture(u8 *object, u32 position) {
   }
 }
 
-void Map_RenderAnimatedTilePicturesForObject(u8 *object) {
+void SpriteDissolve_Run(u8 *object) {
   u32 pos;
 
   pos = 0;
   do {
-    Map_RenderAnimatedTilePicture(object, pos);
-    Map_RenderAnimatedTilePicture(object, pos + 1);
-    Map_RenderAnimatedTilePicture(object, pos + 2);
-    Map_RenderAnimatedTilePicture(object, pos + 3);
+    SpriteDissolve_Step(object, pos);
+    SpriteDissolve_Step(object, pos + 1);
+    SpriteDissolve_Step(object, pos + 2);
+    SpriteDissolve_Step(object, pos + 3);
     pos += 4;
     wait(1);
   } while (pos <= 0x7f);
 }
 
-void Map_RenderAllAnimatedTilePictures(u8 **table, s32 cnt) {
+void SpriteDissolve_RunMany(u8 **table, s32 cnt) {
   u8 **top;
   u8 **p;
   s32 n;
@@ -102,11 +102,11 @@ void Map_RenderAllAnimatedTilePictures(u8 **table, s32 cnt) {
       pos3 = pos + 3;
       n = cnt;
       do {
-        Map_RenderAnimatedTilePicture(*p, pos);
-        Map_RenderAnimatedTilePicture(*p, pos1);
-        Map_RenderAnimatedTilePicture(*p, pos2);
+        SpriteDissolve_Step(*p, pos);
+        SpriteDissolve_Step(*p, pos1);
+        SpriteDissolve_Step(*p, pos2);
         n -= 1;
-        Map_RenderAnimatedTilePicture(*p++, pos3);
+        SpriteDissolve_Step(*p++, pos3);
       } while (n != 0);
     }
     wait(1U);
@@ -114,7 +114,7 @@ void Map_RenderAllAnimatedTilePictures(u8 **table, s32 cnt) {
   } while (pos <= 0x7FU);
 }
 
-s32 Map_GetScreenRelativePosition(struct Thing *obj, s32 *out) {
+s32 MapGrid_GetScreenRelativePosition(struct Thing *obj, s32 *out) {
   u8 *state = (u8 *)Ram_HeapSlots->mapWork;
   s32 *org = (s32 *)(state + 228);
   s32 a;
@@ -141,9 +141,9 @@ s32 Map_GetScreenRelativePosition(struct Thing *obj, s32 *out) {
 /// Sets up the map animation work for map mode: its 92-byte work and an 8 KB
 /// buffer, both cleared by DMA from one zero word, and the animation callbacks
 /// (mode 4 runs its own; modes 3 and 4 take ObjectSystem_UpdateCameraFixed at
-/// 0x480, the others Func_0802386c).
+/// 0x480, the others ActorSystem_PlaceSprites).
 // No ☀️ twin found; ☀️'s field.c starts its map animations the same way.
-void Func_080230e0(s32 mode) {
+void ActorSystem_Initialize(s32 mode) {
   struct MapAnimationWork *work;
   void *buffer;
   // The fill word Dma_Fill32Cell reads its zero from, one for both fills.
@@ -151,48 +151,80 @@ void Func_080230e0(s32 mode) {
 
   work = HeapSlot_AllocEwram(24, sizeof(*work));
   buffer = HeapSlot_AllocEwram(20, 0x2000);
-  ObjectSystem_Configure(mode);
+  ActorSystem_Configure(mode);
   Dma_Fill32Cell(zero, 0, buffer, 0x2000);
   Dma_Fill32Cell(zero, 0, work, sizeof(*work));
   if (mode == 4) {
-    Task_Add(Func_0802493c, TASK_PASS_VBLANK + 10);
+    Task_Add(Actor_UpdateAllMotion, TASK_PASS_VBLANK + 10);
   } else {
-    Task_Add(Func_08023f9c, TASK_PASS_VBLANK + 11);
+    Task_Add(Actor_UpdateAllThumb, TASK_PASS_VBLANK + 11);
     Task_Add(Func_080246b8, TASK_PASS_VBLANK + 10);
   }
   if (mode == 3 || mode == 4)
     Task_Add(ObjectSystem_UpdateCameraFixed, TASK_PASS_VBLANK);
   else
-    Task_Add(Func_0802386c, TASK_PASS_VBLANK);
+    Task_Add(ActorSystem_PlaceSprites, TASK_PASS_VBLANK);
   work->unk06 = 15;
   work->unk07 = 0;
 }
 
 /// Two empty functions follow; nothing in the ROM refers to either.
-void Func_0802319c(void) {}
+void ActorSystem_ReservedNoOpA(void) {}
 
-void Func_080231a0(void) {}
+void ActorSystem_ReservedNoOpB(void) {}
 
 // Objects: create and release field objects, and render them each frame.
 
 #include "objdisp.h"
 #include "actor.h"
-/* VIEW(render_animated_tile_picture): routine Animation_ApplyChildArgument as s32 Animation_ApplyChildArgument(struct ActorSpriteView *, s32); the definition has s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags); tried as the definition's s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags), which the object already declares, it does not compile in tla-ja: games/tla/include/actor_view.h:65: conflicting types for `Animation_ApplyChildArgument'. */
+/* VIEW(render_animated_tile_picture): routine Animation_ApplyChildArgument as
+ * s32 Animation_ApplyChildArgument(struct ActorSpriteView *, s32); the
+ * definition has s32 Animation_ApplyChildArgument(struct AnimationGroup *state,
+ * s32 flags); tried as the definition's s32 Animation_ApplyChildArgument(struct
+ * AnimationGroup *state, s32 flags), which the object already declares, it does
+ * not compile in tla-ja: games/tla/include/actor_view.h:65: conflicting types
+ * for `Animation_ApplyChildArgument'. */
 struct ActorSpriteView;
-extern s32 Animation_ApplyChildArgument__render_animated_tile_picture(struct ActorSpriteView *, s32) __asm__("Animation_ApplyChildArgument");
-#define Animation_ApplyChildArgument Animation_ApplyChildArgument__render_animated_tile_picture
-/* VIEW(render_animated_tile_picture): routine Animation_ApplyChildValue as void Animation_ApplyChildValue(struct ActorSpriteView *, s32); the definition has void Animation_ApplyChildValue(struct ChildGroup *group, s32 value); tried as the definition's void Animation_ApplyChildValue(struct ChildGroup *group, s32 value), which the object already declares, it does not compile in tla-ja: games/tla/include/actor_view.h:66: conflicting types for `Animation_ApplyChildValue'. */
+extern s32 Animation_ApplyChildArgument__render_animated_tile_picture(
+    struct ActorSpriteView *, s32) __asm__("Animation_ApplyChildArgument");
+#define Animation_ApplyChildArgument                                           \
+  Animation_ApplyChildArgument__render_animated_tile_picture
+/* VIEW(render_animated_tile_picture): routine Animation_ApplyChildValue as void
+ * Animation_ApplyChildValue(struct ActorSpriteView *, s32); the definition has
+ * void Animation_ApplyChildValue(struct ChildGroup *group, s32 value); tried as
+ * the definition's void Animation_ApplyChildValue(struct ChildGroup *group, s32
+ * value), which the object already declares, it does not compile in tla-ja:
+ * games/tla/include/actor_view.h:66: conflicting types for
+ * `Animation_ApplyChildValue'. */
 struct ActorSpriteView;
-extern void Animation_ApplyChildValue__render_animated_tile_picture(struct ActorSpriteView *, s32) __asm__("Animation_ApplyChildValue");
-#define Animation_ApplyChildValue Animation_ApplyChildValue__render_animated_tile_picture
-/* VIEW(render_animated_tile_picture): routine InitializeAnimationObjects as s32 InitializeAnimationObjects(struct ActorSpriteView *); the definition has s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state); tried as the definition's s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state), which the object already declares, it does not compile in tla-ja: games/tla/include/actor_view.h:67: conflicting types for `InitializeAnimationObjects'. */
+extern void Animation_ApplyChildValue__render_animated_tile_picture(
+    struct ActorSpriteView *, s32) __asm__("Animation_ApplyChildValue");
+#define Animation_ApplyChildValue                                              \
+  Animation_ApplyChildValue__render_animated_tile_picture
+/* VIEW(render_animated_tile_picture): routine InitializeAnimationObjects as s32
+ * InitializeAnimationObjects(struct ActorSpriteView *); the definition has s32
+ * InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state);
+ * tried as the definition's s32 InitializeAnimationObjects(struct
+ * ActorSpriteView__resource_slot *state), which the object already declares, it
+ * does not compile in tla-ja: games/tla/include/actor_view.h:67: conflicting
+ * types for `InitializeAnimationObjects'. */
 struct ActorSpriteView;
-extern s32 InitializeAnimationObjects__render_animated_tile_picture(struct ActorSpriteView *) __asm__("InitializeAnimationObjects");
-#define InitializeAnimationObjects InitializeAnimationObjects__render_animated_tile_picture
-/* VIEW(render_animated_tile_picture): routine ResourceMetadata_Register as s32 ResourceMetadata_Register(struct ActorSpriteView *, s32); the definition has s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id); tried as the definition's s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id), which the object already declares, it does not compile in tla-ja: games/tla/include/actor_view.h:68: conflicting types for `ResourceMetadata_Register'. */
+extern s32 InitializeAnimationObjects__render_animated_tile_picture(
+    struct ActorSpriteView *) __asm__("InitializeAnimationObjects");
+#define InitializeAnimationObjects                                             \
+  InitializeAnimationObjects__render_animated_tile_picture
+/* VIEW(render_animated_tile_picture): routine ResourceMetadata_Register as s32
+ * ResourceMetadata_Register(struct ActorSpriteView *, s32); the definition has
+ * s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id); tried
+ * as the definition's s32 ResourceMetadata_Register(struct MetadataSlotState
+ * *state, s32 id), which the object already declares, it does not compile in
+ * tla-ja: games/tla/include/actor_view.h:68: conflicting types for
+ * `ResourceMetadata_Register'. */
 struct ActorSpriteView;
-extern s32 ResourceMetadata_Register__render_animated_tile_picture(struct ActorSpriteView *, s32) __asm__("ResourceMetadata_Register");
-#define ResourceMetadata_Register ResourceMetadata_Register__render_animated_tile_picture
+extern s32 ResourceMetadata_Register__render_animated_tile_picture(
+    struct ActorSpriteView *, s32) __asm__("ResourceMetadata_Register");
+#define ResourceMetadata_Register                                              \
+  ResourceMetadata_Register__render_animated_tile_picture
 #include "actor_view.h"
 #undef ResourceMetadata_Register
 #undef InitializeAnimationObjects
@@ -205,7 +237,7 @@ extern s32 ResourceMetadata_Register__render_animated_tile_picture(struct ActorS
 
 /// Returns an unused object (one without a script) from the 64 slots, or 0
 /// if none is free.
-void *Actor_FindFreeObject(void) {
+void *Actor_FindFree(void) {
   struct Actor *obj = Ram_HeapSlots->scriptObjects;
   void *ret = 0;
   s32 n = 0;
@@ -232,7 +264,7 @@ void Actor_Release(struct Actor *obj) {
   if (obj) {
     switch (obj->animationKind & 15) {
     case 1: // One graphic.
-      ResourceObject_Release(
+      Sprite_Destroy(
           (struct ResourceObjectWork *)((struct ActorSpriteView *)obj->sprite));
       break;
     case 2: // Up to four graphics.
@@ -242,7 +274,7 @@ void Actor_Release(struct Actor *obj) {
       do {
         struct ResourceObjectWork *res = *child++;
         if (res)
-          ResourceObject_Release(res);
+          Sprite_Destroy(res);
       } while (--n >= 0);
       break;
     }
@@ -255,7 +287,7 @@ void Actor_Release(struct Actor *obj) {
   }
 }
 
-struct Actor *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
+struct Actor *Actor_Create(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *object;
   void *sprite;
   s32 kind;
@@ -264,12 +296,12 @@ struct Actor *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
 
   kind = id / 4096;
   id &= 0xfff;
-  object = Actor_FindFreeObject();
+  object = Actor_FindFree();
   if (object != NULL) {
     object->radius = 16;
     switch (kind) {
     case 0:
-      sprite = ResourceObject_Create(id);
+      sprite = Sprite_Create(id);
       if (sprite != NULL) {
         object->animationKind = 1;
         object->sprite = sprite;
@@ -285,13 +317,13 @@ struct Actor *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
       object->sprite = entry;
       zero = 0;
       Dma_Set(&zero, entry, 0x85000004, REG_DMA3);
-      sprite = ResourceObject_Create(id);
+      sprite = Sprite_Create(id);
       if (sprite != NULL) {
         object->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
         *entry = sprite;
         entry++;
       }
-      sprite = ResourceObject_Create(id + 1);
+      sprite = Sprite_Create(id + 1);
       if (sprite != NULL)
         *entry = sprite;
       break;
@@ -341,8 +373,8 @@ void Actor_SelectAnimation(struct Actor *object, s32 argument) {
   if (object != 0) {
     switch (object->animationKind & 0xf) {
     case 1:
-      Animation_ApplyChildArgument__render_animated_tile_picture(((struct ActorSpriteView *)object->sprite),
-                                   argument);
+      Animation_ApplyChildArgument__render_animated_tile_picture(
+          ((struct ActorSpriteView *)object->sprite), argument);
       break;
     case 2:
       items = ((struct ActorSpriteView **)object->sprite);
@@ -350,7 +382,8 @@ void Actor_SelectAnimation(struct Actor *object, s32 argument) {
       do {
         item = *items++;
         if (item != 0)
-          Animation_ApplyChildArgument__render_animated_tile_picture(item, argument);
+          Animation_ApplyChildArgument__render_animated_tile_picture(item,
+                                                                     argument);
         count--;
       } while (count >= 0);
       break;
@@ -366,8 +399,8 @@ void Actor_SetAnimationSpeed(struct Actor *object, s32 value) {
   if (object != 0) {
     switch (object->animationKind & 0xf) {
     case 1:
-      Animation_ApplyChildValue__render_animated_tile_picture(((struct ActorSpriteView *)object->sprite),
-                                value);
+      Animation_ApplyChildValue__render_animated_tile_picture(
+          ((struct ActorSpriteView *)object->sprite), value);
       return;
     case 2:
       children = ((struct ActorSpriteView **)object->sprite);
@@ -391,17 +424,18 @@ void Actor_SetAnimationAndSpeed(struct Actor *object, s32 argument, s32 value) {
   if (object != 0) {
     switch (object->animationKind & 0xf) {
     case 1:
-      Animation_ApplyChildArgument__render_animated_tile_picture(((struct ActorSpriteView *)object->sprite),
-                                   argument);
-      Animation_ApplyChildValue__render_animated_tile_picture(((struct ActorSpriteView *)object->sprite),
-                                value);
+      Animation_ApplyChildArgument__render_animated_tile_picture(
+          ((struct ActorSpriteView *)object->sprite), argument);
+      Animation_ApplyChildValue__render_animated_tile_picture(
+          ((struct ActorSpriteView *)object->sprite), value);
       break;
     case 2:
       items = ((struct ActorSpriteView **)object->sprite);
       for (count = 3; count >= 0; count--) {
         item = *items++;
         if (item != 0) {
-          Animation_ApplyChildArgument__render_animated_tile_picture(item, argument);
+          Animation_ApplyChildArgument__render_animated_tile_picture(item,
+                                                                     argument);
           Animation_ApplyChildValue__render_animated_tile_picture(item, value);
         }
       }
@@ -415,7 +449,7 @@ void Actor_SetSpriteRotation(struct Actor *object, u32 value) {
     ((struct ActorSpriteView *)object->sprite)->value12 = value;
 }
 
-void Animation_SetIndexAndInitializeObjects(struct Actor *object, s32 index) {
+void Actor_SetFirstSpriteAnimation(struct Actor *object, s32 index) {
   struct ActorSpriteView *child;
 
   if (object != NULL && (object->animationKind & 0xf) == 1) {
@@ -470,17 +504,17 @@ void Func_08023524(struct Actor *object) {
     script = gData_0802f0f8;
     break;
   case 6:
-    script = gData_0802f170;
+    script = gActor_KeyCheckScript;
     break;
   case 7:
-    script = gData_0802f188;
+    script = gActor_KeysScript;
     break;
   case 8:
-    script = gData_0802f1a0;
+    script = gActor_PlayerScript;
     break;
   case 9:
     wait(1);
-    script = gData_0802f1b8;
+    script = gActor_WorldMapScript;
     break;
   case 10:
     script = gData_0802f110;
@@ -527,12 +561,12 @@ void Actor_WaitForCommandEnd(struct Actor *object) {
   }
 }
 
-void Actor_SetChildByteValue(struct Actor *object, u32 value) {
+void Actor_SetSpriteFlags(struct Actor *object, u32 value) {
   if (object != NULL && (object->animationKind & 0xf) == 1)
     ((struct ActorSpriteView *)object->sprite)->value1a = value;
 }
 
-void Animation_SetStateFlags(struct Actor *object, u32 value) {
+void Actor_SetBlendMode(struct Actor *object, u32 value) {
   if (object != NULL && object->animationKind == 1)
     ((struct ActorSpriteView *)object->sprite)->stateFlags = value;
 }
@@ -544,7 +578,7 @@ void Animation_SetDisplayFlag(struct Actor *object, u32 value) {
 
 #include "field_sprite.h"
 
-void Animation_ApplyChildValues(struct Actor *object, u32 value) {
+void Actor_SetSpriteColorMode(struct Actor *object, u32 value) {
   if (object != NULL && object->animationKind == 1)
     Animation_ApplyChildValuesToRecord(
         ((struct ActorSpriteView *)object->sprite), value);
@@ -565,7 +599,8 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority) {
 #include "render_input.h"
 #include "fixed_math.h"
 
-/* VIEW(resource_slot): tag struct IconSprite as struct IconSprite__resource_slot; item_icon.h has another definition. */
+/* VIEW(resource_slot): tag struct IconSprite as struct
+ * IconSprite__resource_slot; item_icon.h has another definition. */
 struct IconSprite__resource_slot {
   u8 unk00[4];
   struct RenderOam oam;
@@ -582,11 +617,11 @@ struct IconSprite__resource_slot {
   u8 unk1b;
 };
 
-/// Shows icon id on its owner's 16 by 16 sprite: Func_08038248 prepares the
+/// Shows icon id on its owner's 16 by 16 sprite: Icon_DrawItemFar prepares the
 /// icon in heap slot 68, whose tiles at +0x400 go to the sprite's VRAM cache
 /// slot, and the sprite is reset to scale 1.0, 16-colour palette 0.
 // No ☀️ twin found.
-void Func_0802372c(struct IconOwner *owner, s32 id) {
+void Actor_SetItemIcon(struct IconOwner *owner, s32 id) {
   struct IconSprite__resource_slot *sprite;
   u8 *buffer;
   s32 tile;
@@ -599,7 +634,7 @@ void Func_0802372c(struct IconOwner *owner, s32 id) {
   if (sprite == 0)
     return;
   buffer = HeapSlot_Alloc(68, 0x608);
-  Func_08038248(id);
+  Icon_DrawItemFar(id);
   tile = VramCache_Load(sprite->vramSlot, 128, buffer + 0x400);
   HeapSlot_Release(68);
   sprite->unk1b = 0;
@@ -627,10 +662,10 @@ void Func_080237e8(u8 *object) {
     Animation_WaitForTrackEnd(*(void **)(object + 0x50));
 }
 
-void Graphics_EnableObjLayerAndCallbacks(void) {
+void ActorSystem_SuspendProjectionAndShowSprites(void) {
   u16 dispcnt;
 
-  Task_SuspendAll(Func_0802386c);
+  Task_SuspendAll(ActorSystem_PlaceSprites);
   Task_SuspendAll(ObjectSystem_UpdateCameraFixed);
   BattleEffect_ApplyColorToTargetBufferFar(0x10000, 1);
   BattleEffect_StartBufferInterpolationFar(1);
@@ -642,7 +677,7 @@ void Graphics_EnableObjLayerAndCallbacks(void) {
 void ActorSystem_ResumeProjectionAndHideLayers(void) {
   u16 dispcnt;
 
-  Task_ResumeAll(Func_0802386c);
+  Task_ResumeAll(ActorSystem_PlaceSprites);
   Task_ResumeAll(ObjectSystem_UpdateCameraFixed);
   dispcnt = REG_DISPCNT;
   REG_DISPCNT = dispcnt & 0xe1ff;
@@ -657,7 +692,7 @@ s32 Actor_ReturnTrue(void) { return 1; }
 
 void Func_08022318(struct PlacedSprite *sprite, struct SpritePlacement *point,
                    s32 *scale, s32 facing, s32 depth);
-void Func_08021a84(struct PlacedSprite *sprite, s32 facing);
+void Sprite_ComposePicture(struct PlacedSprite *sprite, s32 facing);
 
 #define BASE_PRIORITY(map) (((struct MapPriorityWork *)(map))->basePriority)
 // The priority field (bits 15..14) of a cell's word.
@@ -667,7 +702,7 @@ void Func_08021a84(struct PlacedSprite *sprite, s32 facing);
 #define CELL_LAYER(cells, x, z)                                                \
   (((cells)[(((z) >> 20) << 7) + ((x) >> 20)] << 18) >> 30)
 
-void Func_0802386c(void) {
+void ActorSystem_PlaceSprites(void) {
   // Unused: gives the stack frame its 36 bytes, as The Broken Seal's.
   struct CameraPoint unusedPoints[3];
   struct SpritePlacement point;
@@ -766,22 +801,32 @@ void Func_0802386c(void) {
              * instructions differ in tla-en. */
             basePriority = &BASE_PRIORITY(map);
             priority = *basePriority;
-            if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) == object->terrainHeight) {
+            if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==
+                object->terrainHeight) {
               leftPriority = CELL_PRIORITY(cells, probeX, feetZ);
-              height = MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >> 16;
+              height =
+                  MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >>
+                  16;
               rise =
-                  (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >> 16) - 16;
+                  (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >>
+                   16) -
+                  16;
               if (rise > height)
                 height = rise;
               if (height > objectHeight)
                 priority = BASE_PRIORITY(map) + 1;
             }
             probeX += 0xd0000;
-            if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) == object->terrainHeight) {
+            if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==
+                object->terrainHeight) {
               middlePriority = CELL_PRIORITY(cells, probeX, feetZ);
-              height = MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >> 16;
+              height =
+                  MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >>
+                  16;
               rise =
-                  (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >> 16) - 16;
+                  (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >>
+                   16) -
+                  16;
               if (rise > height)
                 height = rise;
               if (height > objectHeight)
@@ -789,17 +834,22 @@ void Func_0802386c(void) {
             }
             probeX -= 0x60000;
             rightPriority = CELL_PRIORITY(cells, probeX, feetZ);
-            height = MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >> 16;
-            rise = (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >> 16) - 16;
+            height =
+                MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >> 16;
+            rise = (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >>
+                    16) -
+                   16;
             if (rise > height)
               height = rise;
             if (height > objectHeight)
               priority = BASE_PRIORITY(map) + 1;
           } else {
-            if (object->terrainHeight == MapGrid_GetTerrainHeight(layer, probeX, feetZ))
+            if (object->terrainHeight ==
+                MapGrid_GetTerrainHeight(layer, probeX, feetZ))
               leftPriority = CELL_PRIORITY(cells, probeX, feetZ);
             probeX += 0xd0000;
-            if (object->terrainHeight == MapGrid_GetTerrainHeight(layer, probeX, feetZ))
+            if (object->terrainHeight ==
+                MapGrid_GetTerrainHeight(layer, probeX, feetZ))
               middlePriority = CELL_PRIORITY(cells, probeX, feetZ);
             probeX -= 0x60000;
             rightPriority = CELL_PRIORITY(cells, probeX, feetZ);
@@ -851,7 +901,7 @@ void Func_0802386c(void) {
         continue;
       }
       if (object->unk5c[0] & 2) {
-        Func_08021a84(sprite, object->facing);
+        Sprite_ComposePicture(sprite, object->facing);
       } else if (!(object->unk5c[0] & 1) && !(sprite->retainCacheEntry & 1)) {
         VramCache_ReleaseVram(sprite->slot);
         sprite->dirty = 1;
@@ -880,7 +930,7 @@ void Func_0802386c(void) {
 void Func_0802254c(void *sprite, s32 *point, const s32 *scale, s32 facing,
                    s32 depth);
 
-s32 ObjectCamera_ReturnTrue(void) { return 1; }
+s32 ActorCamera_ReturnTrue(void) { return 1; }
 
 /// Places an object's sprite (kind 1, unless flag 0x10 hides it) or each of its
 /// group's four sprites (kind 2), turned by angle. While battle commands are
@@ -949,9 +999,9 @@ void ObjectSystem_UpdateCameraFixed(void) {
   angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
   system->used = 0;
   if (GameFlag_Test(363)) {
-    Render_ResetTransformState();
+    Transform_Reset();
     angle += 0xffffe000;
-    Iwram_TransformMatrixEntry(gData_0802eb98);
+    Iwram_TransformMatrixEntry(gCamera_FixedViewMatrix);
     Transform_ApplyLookAt((s32 *)eye, (s32 *)target);
   } else {
     SceneTransform_RewindStack();
@@ -983,21 +1033,21 @@ s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *sc) {
 }
 
 /// Clears byte54 and advances to the next command.
-s32 Script_ClearByte54(struct ScriptInterpreter *sc) {
+s32 ActorScript_HideSprites(struct ScriptInterpreter *sc) {
   sc->byte54 = 0;
   sc->cursor++;
   return 1;
 }
 
 /// Sets byte54 to 1 and advances to the next command.
-s32 Script_SetByte54(struct ScriptInterpreter *sc) {
+s32 ActorScript_ShowSprite(struct ScriptInterpreter *sc) {
   sc->byte54 = 1;
   sc->cursor++;
   return 1;
 }
 
 /// Waits up to 600 frames for a field object's movement target to be unset.
-void Script_WaitForEventTimeout(void *fieldObject) {
+void Actor_WaitForMove(void *fieldObject) {
   s32 waitedFrames;
 
   waitedFrames = 0;

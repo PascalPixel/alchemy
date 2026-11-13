@@ -78,14 +78,14 @@
       Event_Start();                                                           \
       if (!GameFlag_Test(flag)) {                                              \
         Sound_Play(125);                                                       \
-        Actor_SetPartAttribute(Actor_GetById(id), 7);                          \
+        Actor_SetSpriteColor(Actor_GetById(id), 7);                          \
         wait(2);                                                               \
         call3(trap, 0);                                                        \
-        Actor_SetPartAttribute(Actor_GetById(id), 0);                          \
+        Actor_SetSpriteColor(Actor_GetById(id), 0);                          \
         wait(2);                                                               \
-        Actor_SetPartAttribute(Actor_GetById(id), 7);                          \
+        Actor_SetSpriteColor(Actor_GetById(id), 7);                          \
         wait(4);                                                               \
-        Actor_SetPartAttribute(Actor_GetById(id), 0);                          \
+        Actor_SetSpriteColor(Actor_GetById(id), 0);                          \
         call4(0);                                                              \
         GameFlag_SetBit(flag);                                                 \
       } else {                                                                 \
@@ -176,7 +176,7 @@
       cell->attributeB = 128;                                                  \
       *slot = call5(object->terrainId, shape, (height >> 19) + 4);             \
       if (Event_GetFlag(flag))                                                 \
-        ObjectVisual_CopyAttributes(id, 9);                                    \
+        Actor_CopyGraphics(id, 9);                                    \
     }                                                                          \
     list += 2;                                                                 \
     if (*list != 0xffff)                                                       \

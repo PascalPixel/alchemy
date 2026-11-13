@@ -40,11 +40,11 @@ void Func_02000054(void) {
 
   t0 = Actor_Get(gMainRoutineWork.currentOwner);
   if (t0->terrainId == 1) {
-    MapGrid_SetCellBehavior(0x900000, 0x2400000, 2, 0xea);
-    MapGrid_SetCellBehavior(0x1000000, 0x2300000, 2, 0xea);
+    FieldMapGrid_SetCellBehavior(0x900000, 0x2400000, 2, 0xea);
+    FieldMapGrid_SetCellBehavior(0x1000000, 0x2300000, 2, 0xea);
   } else {
-    MapGrid_SetCellBehavior(0x900000, 0x2400000, 2, 0xeb);
-    MapGrid_SetCellBehavior(0x1000000, 0x2300000, 2, 0xeb);
+    FieldMapGrid_SetCellBehavior(0x900000, 0x2400000, 2, 0xeb);
+    FieldMapGrid_SetCellBehavior(0x1000000, 0x2300000, 2, 0xeb);
   }
 }
 
@@ -82,7 +82,7 @@ void Func_020000d0(s32 kind) {
 
     Task_AddFrame(Func_020000b4, priority);
   }
-  FieldCamera_FollowActor(owner, 1);
+  EventCamera_FollowActor(owner, 1);
   for (i = 35; i >= 0; i--) {
     leader->y += -0x10000;
     System_Wait(1);
@@ -143,7 +143,7 @@ void Func_02000230(s32 kind) {
 
     Task_AddFrame(Func_020000b4, priority);
   }
-  FieldCamera_FollowActor(owner, 1);
+  EventCamera_FollowActor(owner, 1);
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
   effect = Actor_Spawn(280, leader->x, leader->y, leader->z);
@@ -266,7 +266,7 @@ static inline void CopyCells(s32 srcX, s32 srcY, s32 width, s32 height,
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
    * scene layer, so each stack argument keeps its own register; as a direct
    * call, 10 of 157 instructions of Func_02000500 differ in tla-en. */
-  Func_0802b450(srcX, srcY, width, height, destX, destY);
+  MapGrid_CopyCellPictureCellsRect(srcX, srcY, width, height, destX, destY);
 }
 
 /// Actor id comes down: once it rests on the terrain (or after 30 frames) cue
@@ -309,7 +309,7 @@ void Func_02000500(s32 unused, s32 id) {
     FieldEvent_Wait(20);
     Event_PlaySound(167);
     MapGrid_CopyCellsLayered(93, 41, 1, 1, 85, 41);
-    MapGrid_SetCellBehavior(168 << 17, 164 << 18, 2, 236);
+    FieldMapGrid_SetCellBehavior(168 << 17, 164 << 18, 2, 236);
   }
 }
 
@@ -334,10 +334,12 @@ void Func_020006dc(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->renderMode == 10)
-    MapGrid_SetCellBehavior(0x1500000, 0x2500000, 0, 255);
+    FieldMapGrid_SetCellBehavior(0x1500000, 0x2500000, 0, 255);
 }
 
-void Func_02000704(void) { Func_080dbdd4(0x1500000, 0x2500000, 0, 4); }
+void Func_02000704(void) {
+  MapGrid_SetCellBehavior(0x1500000, 0x2500000, 0, 4);
+}
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -380,7 +382,7 @@ void Func_020007d0(void) {
     object->timer = Random16Far();
     object->unk66 = phase;
     Actor_SetSingleChildFlags(object, 0);
-    Actor_SetSpriteColor(object, 2);
+    FieldActor_SetSpriteColor(object, 2);
     ((struct FieldSprite *)object->sprite)->priority = 1;
   }
 }
@@ -405,7 +407,7 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellAttributes(28, 39, 1, 1, 20, 39);
     MapGrid_CopyCellsLayered(28, 39, 1, 1, 20, 39);
     MapGrid_CopyCellsLayered(92, 39, 2, 3, 84, 39);
-    MapGrid_SetCellBehavior(168 << 17, 164 << 18, 2, 236);
+    FieldMapGrid_SetCellBehavior(168 << 17, 164 << 18, 2, 236);
   } else {
     LightSprites_InitB();
     Func_020015a0(17, 0);

@@ -45,7 +45,11 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/* VIEW(title): tag struct TitleSprite as struct TitleSprite__title; module/tla.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/title.c:191: invalid use of undefined type `struct TitleSprite'. */
+/* VIEW(title): tag struct TitleSprite as struct TitleSprite__title;
+ * module/tla.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/title.c:191: invalid use of undefined type `struct
+ * TitleSprite'. */
 struct TitleSprite__title {
   u32 attr[3];
 };
@@ -53,7 +57,7 @@ struct TitleSprite__title {
 extern struct TitleSprite__title gData_020006f0[];
 
 s32 Func_020005d4(void);
-void Title_ShowSplashScreen(s32 value);
+void Title_ShowNintendoLogo(s32 value);
 void Func_02000634(s32 value);
 
 /// Runs the title by entrance: at entrance 10 the title is revealed and waits
@@ -80,8 +84,8 @@ s32 Title_Run(void) {
     Event_PlaySound(68);
     Func_0200061c(1);
     Event_PlaySound(78);
-    Fade_ToBlack(60);
-    Fade_Wait();
+    ScreenFade_ToBlack(60);
+    ScreenFade_Wait();
     Event_Wait(240);
     Event_PlaySound(0);
     Event_SetDestination((s32)&SceneId_Title, 2);
@@ -91,15 +95,15 @@ s32 Title_Run(void) {
   if (gMainRoutineWork.entrance == 1) {
     for (;;) {
       Event_PlaySound(0);
-      Title_ShowSplashScreen(0);
+      Title_ShowNintendoLogo(0);
       Func_02000634(0);
       if (Func_020005d4() > 0) {
         Event_PlaySound(40);
         Func_0200063c(1);
         if (Func_02000624(1) == 0) {
           Event_PlaySound(78);
-          Fade_ToBlack(30);
-          Fade_Wait();
+          ScreenFade_ToBlack(30);
+          ScreenFade_Wait();
           /* FAKEMATCH(dead): an empty once-only block keeps the counter's zero
            * after the wait call, where sched2 would fill the call's stall
            * with it; without it, 2 of 155 instructions differ in tla-en. */
@@ -125,21 +129,21 @@ s32 Title_Run(void) {
     if (gMainRoutineWork.entrance == 2) {
       Event_PlaySound(40);
       Func_0200063c(0);
-      WindowColor_Apply(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+      FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
       Party_SetLeaderJenna();
       Event_SetDestination((s32)&SceneId_VenusLighthouse, 99);
     }
     if (gMainRoutineWork.entrance == 3) {
       Event_PlaySound(75);
       Func_02000624(0);
-      WindowColor_Apply(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+      FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
       Party_SetLeaderFelix();
       Event_SetDestination((s32)&SceneId_Ov650, 13);
     }
   }
   Event_PlaySound(78);
-  Fade_ToBlack(30);
-  Fade_Wait();
+  ScreenFade_ToBlack(30);
+  ScreenFade_Wait();
   Event_Wait(60);
   Event_PlaySound(0);
   return 0;
@@ -153,9 +157,9 @@ void Title_LoadSprites(s32 unused) {
 
   buffer = Heap_AllocEwram(0x520);
   if (gTitleVramBlock == -1)
-    gTitleVramBlock = Resource_FindFreeEntry();
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB),
-                        buffer);
+    gTitleVramBlock = VramCache_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB),
+                      buffer);
   Dma_Set(buffer, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_COPY_WORDS(8), REG_DMA3);
   VramCache_Load(gTitleVramBlock, 0x500, buffer + 32);
   dma = (volatile s32 *)REG_DMA3;
@@ -252,7 +256,7 @@ static __inline__ void Decode_(void *source, void *destination) {
    * buffer address a constant of each call, as The Broken Seal's system call
    * layer does; as a direct call, which keeps the address in r5, 17
    * of 94 instructions differ in tla-en. */
-  Resource_DecodeType01(source, destination);
+  Decompress_TaggedLz(source, destination);
 }
 
 /// The title logo: its palette, its tiles decoded and copied to VRAM, a 30 by
@@ -269,7 +273,7 @@ void Title_LoadBackground(void) {
   s32 blankTile;
 
   resourceId = (s32)&ResourceId_LogoOnBlack;
-  Fade_ToBlack(0);
+  ScreenFade_ToBlack(0);
   REG_BG2CNT = 0x681;
   gBgScroll[2].y = 0;
   blankTile = 0x1ff;

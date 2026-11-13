@@ -1,7 +1,10 @@
 /// @file
-/// A routine 4 scenes' overlays each keep a copy of (mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s3d80, mars_lighthouse_star_room/s2148, prox),
-/// included as text where each copy sits after the scene defines
-/// SHARED_F02003070_NAME, SHARED_F02003070_ID2, SHARED_F02003070_ID3, SHARED_F02003070_ID4, SHARED_F02003070_ID5, SHARED_F02003070_ID6, SHARED_F02003070_ID7, SHARED_F02003070_ID8.
+/// A routine 4 scenes' overlays each keep a copy of
+/// (mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s3d80,
+/// mars_lighthouse_star_room/s2148, prox), included as text where each copy
+/// sits after the scene defines SHARED_F02003070_NAME, SHARED_F02003070_ID2,
+/// SHARED_F02003070_ID3, SHARED_F02003070_ID4, SHARED_F02003070_ID5,
+/// SHARED_F02003070_ID6, SHARED_F02003070_ID7, SHARED_F02003070_ID8.
 
 void SHARED_F02003070_NAME(void) {
   struct Actor *object;
@@ -43,7 +46,7 @@ retry:
   targetZ = z;
   targetX = x;
   layer = &object->terrainId;
-  startCell = GetMapCellCollision(*layer, targetX, targetZ);
+  startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
   dz = targetZ - object->z;
   dx = targetX - object->x;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
@@ -60,7 +63,7 @@ retry:
     angle = (angle + 0x2000) & 0xc000;
   }
   FieldVector_AddPolarOffset(0x100000, angle, position);
-  cell = GetMapCellCollision(*layer, p[0], p[2]);
+  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
     object->facing = angle;
@@ -79,7 +82,7 @@ retry:
   SHARED_F02003070_ID5(object, 2);
   Actor_SetAnimationSpeed(object, 48);
 #if !TLA_PATCH_1
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
 #else
   for (i = 0; i <= 179 && SHARED_F02003070_ID6(object) == 0; i++) {
     if (SHARED_F02003070_ID2 != 0)
@@ -106,8 +109,8 @@ overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
     /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
      * call, 2 of 347 instructions differ in tla-en. */
-    if (Value4((s32 (*)())SHARED_F02003070_ID8, (s32)&entry->x, radius, (s32)position,
-               entry->radius - 2) >= 0)
+    if (Value4((s32 (*)())SHARED_F02003070_ID8, (s32)&entry->x, radius,
+               (s32)position, entry->radius - 2) >= 0)
       goto blocked;
   }
   j++;
@@ -126,7 +129,8 @@ next:
   System_Wait(1);
   i++;
 test:
-  if (i <= 179 && SHARED_F02003070_ID6(object) == 0 && SHARED_F02003070_ID2 == 0)
+  if (i <= 179 && SHARED_F02003070_ID6(object) == 0 &&
+      SHARED_F02003070_ID2 == 0)
     goto next;
   if (SHARED_F02003070_ID2 != 0)
     goto end;
@@ -138,14 +142,14 @@ walk:
   __asm__("" : : : SFP_CLOBBER);
   FieldVector_AddPolarOffset(0x100000, angle, position);
   q = position;
-  cell = GetMapCellCollision(*layer, q[0], q[2]);
+  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
   if (cell != 255)
     goto walkNext;
 blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;
   Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   System_Wait(2);
   goto retry;
 changed:

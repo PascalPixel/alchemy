@@ -42,10 +42,10 @@ struct RideWork {
   void *handle;
 };
 
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 
-#define RIDE_WORK ((struct RideWork *)(gData_020023c4 + 0x188))
+#define RIDE_WORK ((struct RideWork *)(gInventorySnapshot + 0x188))
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 #endif

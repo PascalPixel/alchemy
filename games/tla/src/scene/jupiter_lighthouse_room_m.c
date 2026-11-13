@@ -104,13 +104,13 @@ void Func_020000c4(void) {
   REG_DISPCNT &= ~0x100;
   Io_Write16(0x400, &REG_BG0CNT);
   buffer = Heap_Alloc(0x800);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                         buffer);
   Dma_Set(buffer, (void *)(0x06000000), 0x84000200, REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)0x06002000, 0x800);
   buffer = Heap_Alloc(128);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
                         buffer);
   p = buffer;
   for (i = 0; i != 64; i++)
@@ -148,13 +148,13 @@ void Func_020000c4(void) {
   }
   MapGrid_CopyCellsLayered(104, 42, 5, 11, 61, 42);
   MapGrid_CopyCellsLayered(106, 52, 1, 1, 63, 84);
-  MapGrid_SetCellBehavior(130 << 19, 160 << 16, 2, 236);
+  FieldMapGrid_SetCellBehavior(130 << 19, 160 << 16, 2, 236);
   PaletteFade_ApplySource(0x10003, 0);
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(60);
   Window_LoadGraphics();
   DebugText_Clear();
-  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+  FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                     gMainRoutineWork.paletteGlow[1]);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
@@ -189,14 +189,14 @@ static __inline__ void Func_02004774_(s32 x, s32 z, s32 a, s32 b) {
 }
 
 static __inline__ void Func_020048b4_(s32 id, s32 angle) {
-  Actor_ArmCallbackAndRefresh(id, angle);
+  Actor_FaceDirectionById(id, angle);
 }
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
                                                    s32 mode) {
   /* FAKEMATCH(wrapper): forwarded inline; as plain calls, 2 of 237
    * instructions of Func_020003b8 differ in tla-en. */
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 void Func_020003b8(s32 unused, s32 id) {
@@ -320,7 +320,7 @@ void Func_0200060c(void) {
     GameFlag_SetBit(2573);
   if ((u32)(spot - 2) <= 1) {
     FieldCamera_SetSpeed(0x40000, 0x8000);
-    FieldCamera_FollowActor(23, 1);
+    EventCamera_FollowActor(23, 1);
     FieldCamera_WaitForArrival();
     Sound_Play(310);
     object->gravity = 0x8000;
@@ -358,7 +358,7 @@ void Func_0200060c(void) {
   } else if (spot == 1 || spot == 4) {
     FieldActor_SetSpritePriority(23, 1);
     FieldCamera_SetSpeed(0x40000, 0x8000);
-    FieldCamera_FollowActor(23, 1);
+    EventCamera_FollowActor(23, 1);
     FieldCamera_WaitForArrival();
     Sound_Play(310);
     object->gravity = 0x8000;
@@ -375,7 +375,7 @@ void Func_0200060c(void) {
     Event_Wait(10);
   }
   Event_Wait(20);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -395,7 +395,7 @@ void Func_020008c8(void) {
   Event_PlaySound(133);
   MapGrid_CopyCellsLayered(49, 100, 4, 3, 49, 76);
   FieldEvent_Wait(20);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -541,7 +541,7 @@ static __inline__ struct Actor *I_Func_020048cc(s32 actor, s32 emote,
                                                 s32 frames) {
   /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; as
    * direct calls at its 42 sites, 171 of 1568 instructions differ in tla-en. */
-  return (struct Actor *)Func_080d47b4(actor, emote, frames);
+  return (struct Actor *)Actor_ShowEmoteById(actor, emote, frames);
 }
 
 /// The scene in which actor 4 meets 5, 6, 7 and 28 and the group is placed for
@@ -580,7 +580,7 @@ void Func_02000cac(s32 arg) {
   FieldActor_LaunchFromLeader(28, -16, 0, FACING_EAST);
   FieldActor_LaunchFromLeader(6, 16, 24, FACING_WEST);
   FieldActor_LaunchFromLeader(5, -16, 24, FACING_EAST);
-  FieldCamera_FollowActor(5, 1);
+  EventCamera_FollowActor(5, 1);
   FieldActor_WaitForMoveById(5);
   (struct Actor *)Actor_ShowEmote(28, 0x102, 30);
   FieldEvent_ShowMessageThenWait(28, 0, 5);
@@ -978,7 +978,7 @@ void Func_02000cac(s32 arg) {
   FieldEvent_Wait(40);
   Func_02000b48();
   FieldEvent_Wait(200);
-  FieldCamera_FollowActor(4, 1);
+  EventCamera_FollowActor(4, 1);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(28, 2);
   FieldEvent_Wait(5);
@@ -1100,7 +1100,7 @@ void Func_02001c7c(void) {
      * in tla-en. */
     gMainRoutineWork.battleRule24b = 6;
   } while (0);
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov6a3, 77);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov6a3, 77);
   Event_SetDefeatDestination((s32)&SceneId_Ov6a3, 77);
   Party_RemoveMember(4);
   Party_RemoveMember(7);
@@ -1151,7 +1151,7 @@ s32 Inventory_Equip();
 static __inline__ void Walk(s32 id, s32 speed, s32 frames) {
   /* FAKEMATCH(wrapper): the walk forwarded inline, so its constants stay out of
    * CSE; as direct calls, 103 of 1328 instructions differ in tla-en. */
-  ((struct Actor *)Func_080d47b4(id, speed, frames));
+  ((struct Actor *)Actor_ShowEmoteById(id, speed, frames));
 }
 
 void Func_02001ed0(void) {
@@ -1218,11 +1218,11 @@ void Func_02001ed0(void) {
   FieldEvent_Wait(0x14);
   ACTOR_SET_MODE_AND_WAIT(0x1a, 3, 0x14);
   FieldEvent_Wait(0xa);
-  FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_FollowActor(4, 1);
+  EventCamera_GetActor()->motionFlags = 0;
+  EventCamera_FollowActor(4, 1);
   FieldEvent_Wait(0x14);
   FieldActor_LaunchFromLeader(6, 0, 0, 0x4000);
-  FieldCamera_FollowActor(6, 1);
+  EventCamera_FollowActor(6, 1);
   FieldActor_LaunchFromLeader(7, 0x10, 0, 0x4000);
   FieldActor_LaunchFromLeader(0x1c, -16, 0x18, 0x2000);
   FieldActor_LaunchFromLeader(5, -16, 0, 0x2000);
@@ -1263,7 +1263,7 @@ void Func_02001ed0(void) {
   Actor_SetScript(7, (s32)gData_02004ab4);
   Actor_SetScript(6, (s32)gData_02004ae8);
   Actor_SetScript(5, (s32)gData_02004b1c);
-  FieldCamera_FollowActor(4, 1);
+  EventCamera_FollowActor(4, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(0x14);
   Walk(0x1a, 0x107, 0x1e);
@@ -1498,7 +1498,7 @@ void Func_02001ed0(void) {
   Actor_FaceDirection(7, 0xc000, 0);
   Actor_FaceDirection(0x1c, 0xc000, 0);
   FieldEvent_ShowMessageThenWait(7, 0, 5);
-  FieldCamera_FollowActor(6, 1);
+  EventCamera_FollowActor(6, 1);
   Actor_FaceDirectionAndWait(4, 0x4000);
   FieldEvent_Wait(0xa);
   ((struct Actor *)Actor_ShowEmote(4, 0x101, 0x1e));
@@ -1524,7 +1524,7 @@ void Func_02001ed0(void) {
   Actor_SetScript(7, (s32)gData_020059a4);
   FieldActor_RefreshSelectorById(7);
   Party_AddMember(7);
-  FieldCamera_FollowActor(4, 1);
+  EventCamera_FollowActor(4, 1);
   Actor_SetPosition(7, 0, 0);
   FieldEvent_Wait(0x14);
 #if TLA_PATCH_1
@@ -1617,7 +1617,7 @@ s32 Scene_PrepareMap(void) {
     Actor_SetPosition(20, PIXELS(1016), PIXELS(248));
     MapGrid_CopyCellsLayered(104, 42, 5, 11, 61, 42);
     MapGrid_CopyCellsLayered(106, 52, 1, 1, 63, 84);
-    MapGrid_SetCellBehavior(0x4100000, 0xa00000, 2, 236);
+    FieldMapGrid_SetCellBehavior(0x4100000, 0xa00000, 2, 236);
   }
   object->motionFlags = 0;
   {

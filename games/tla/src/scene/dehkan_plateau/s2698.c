@@ -23,17 +23,18 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 #include "scene_call.h"
+extern struct Actor *gData_02004420;
 
 void Actor_StartScript(struct Actor *object, const void *script);
-/* VIEW(s2698): routine Effect_AdvanceMotion as void Effect_AdvanceMotion(struct
+/* VIEW(s2698): routine FieldEffect_AdvanceMotion as void FieldEffect_AdvanceMotion(struct
  * Actor *object); module/field/field_effect.h has void
- * Effect_AdvanceMotion(union FieldObject *object); tried as the definition's
- * void Effect_AdvanceMotion(union FieldObject *object), which the object
+ * FieldEffect_AdvanceMotion(union FieldObject *object); tried as the definition's
+ * void FieldEffect_AdvanceMotion(union FieldObject *object), which the object
  * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau/s2698.c:75: `Effect_AdvanceMotion'
+ * games/tla/src/scene/dehkan_plateau/s2698.c:75: `FieldEffect_AdvanceMotion'
  * undeclared (first use in this function). */
 extern void Effect_AdvanceMotion__s2698(struct Actor *object) __asm__(
-    "Effect_AdvanceMotion");
+    "FieldEffect_AdvanceMotion");
 
 extern const u8 gData_02003f14[];
 
@@ -45,12 +46,12 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
   u32 i;
 
   Sound_Play(125);
-  Actor_SetPartAttribute(Actor_GetById(id), 7);
+  Actor_SetSpriteColor(Actor_GetById(id), 7);
   wait(2);
   Actor_SetModeById(id, 0);
-  Actor_SetPartAttribute(Actor_GetById(id), 7);
+  Actor_SetSpriteColor(Actor_GetById(id), 7);
   wait(4);
-  Actor_SetPartAttribute(Actor_GetById(id), 0);
+  Actor_SetSpriteColor(Actor_GetById(id), 0);
   leader = Actor_GetById(center);
   frame = 0;
   for (i = 0; i <= 7; i++) {
@@ -95,12 +96,12 @@ void Func_020027e0(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 25);
-  Func_080d4568()->motionFlags = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(616), -1, PIXELS(280), 1);
   FieldCamera_WaitForArrival();
-  Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(25, gMainRoutineWork.currentOwner, 0);
   // A direct call: as Call3 the actor id is loaded before the 0x100's shift.
-  Func_080d47b4(25, 0x100, 40);
+  Actor_ShowEmoteById(25, 0x100, 40);
   Actor_SetSpritePriority(25, 1);
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_WalkToAndWait(25, 632, 280);
@@ -120,13 +121,13 @@ void Func_020027e0(void) {
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_WalkToAndWait(25, 712, 280);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
-  Camera_MoveWithinMapBounds(PIXELS(712), -1, PIXELS(136), 1);
-  Map_CopyCellPictureIndicesRect(112, 6, 110, 4, 1, 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(712), -1, PIXELS(136), 1);
+  MapGrid_CopyCellPictureIndicesRect(112, 6, 110, 4, 1, 1);
   Actor_SetSpritePriority(25, 1);
   Actor_WalkToAndWait(25, 712, 200);
-  Actor_SetPositionAndReset(25, 712, 168);
+  Actor_WalkToAndWaitById(25, 712, 168);
   Actor_Stop(gMainRoutineWork.currentOwner);
-  Actor_ArmCallbackAndRefresh(25, FACING_EAST);
+  Actor_FaceDirectionById(25, FACING_EAST);
   Actor_SetSpeedParameters(25, 0x20000, 0x10000);
   Sound_Play(153);
   actor->velocityY = 0x80000;
@@ -134,7 +135,7 @@ void Func_020027e0(void) {
   Actor_WalkToAndWait(25, 744, 168);
   Actor_SetSingleChildFlags(Actor_GetById(25), 1);
   Func_02002698(24, 25, 0x216);
-  Actor_ArmCallbackAndRefresh(25, FACING_NORTH);
+  Actor_FaceDirectionById(25, FACING_NORTH);
   Sound_Play(153);
   actor->velocityY = 0x80000;
   Actor_SetSingleChildFlags(Actor_GetById(25), 0);
@@ -142,7 +143,7 @@ void Func_020027e0(void) {
   Actor_SetSingleChildFlags(Actor_GetById(25), 1);
   Event_Wait(10);
   Actor_WalkToAndWait(25, 744, 72);
-  Map_CopyCellPictureIndicesRect(66, 51, 110, 4, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(66, 51, 110, 4, 1, 1);
   Sound_Play(229);
   Func_020021b4();
   Event_Wait(10);
@@ -165,12 +166,12 @@ void Func_02002a5c(void) {
     Actor_SetHorizontalPositionAndAngleWithTerrain(
         gMainRoutineWork.currentOwner, PIXELS(248), PIXELS(136), facing);
   }
-  Map_CopyCellPictureIndicesRect(65, 64, 15, 8, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(65, 64, 15, 8, 1, 1);
   GameFlag_SetBit(0x245);
   Sound_Play(161);
   Func_020021b4();
-  Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
-  Func_080d47b4(9, 0x100, 20);
+  Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
+  Actor_ShowEmoteById(9, 0x100, 20);
   Func_02002bcc();
   Event_Wait(20);
   leader->facing = FACING_SOUTH;
@@ -196,8 +197,8 @@ void Func_02002a5c(void) {
 void Func_02002b68(void) {
   if (((struct EffectWork7c4 *)Ram_HeapSlots->effectWork)->active != 0) {
     Sound_Play(229);
-    Map_CopyCellPictureIndicesRect(64, 64, 15, 8, 1, 1);
-    Map_CopyCellPictureIndicesRect(64, 66, 15, 72, 1, 2);
+    MapGrid_CopyCellPictureIndicesRect(64, 64, 15, 8, 1, 1);
+    MapGrid_CopyCellPictureIndicesRect(64, 66, 15, 72, 1, 2);
     Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   }
 }
@@ -218,8 +219,9 @@ extern const u8 gData_02003fc4[];
 void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
 void Func_02002180(void);
-void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
+void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
                                     s32 width, s32 height);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_02001804(void);
 
 extern const u16 gData_02003fd2[];
@@ -227,29 +229,35 @@ extern const struct CellRecord gData_02004066[];
 
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
-/* VIEW(s2698): routine BattleEffect_RunActorRiseAndDescent as void
- * BattleEffect_RunActorRiseAndDescent(struct Actor *object, s32 mode);
+/* VIEW(s2698): routine ItemDisplay_ShowPicture as void
+ * ItemDisplay_ShowPicture(struct Actor *object, s32 mode);
  * module/scene/airs_rock_inside.h has void
- * BattleEffect_RunActorRiseAndDescent(void); tried as the definition's void
- * BattleEffect_RunActorRiseAndDescent(void), which the object already declares,
+ * ItemDisplay_ShowPicture(void); tried as the definition's void
+ * ItemDisplay_ShowPicture(void), which the object already declares,
  * Func_02002f9c moves: 1 of 34 instructions in tla-ja. */
 extern void
 Func_02003d40__s2698(struct Actor *object,
-                     s32 mode) __asm__("BattleEffect_RunActorRiseAndDescent");
+                     s32 mode) __asm__("ItemDisplay_ShowPicture");
 
+s32 PartyInventory_GiveItem(s32 item, s32 unused);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_WalkToAndWaitById(s32 id, s32 x, s32 z);
+void Actor_Jump(s32 id, s32 a, s32 b);
+void Actor_WatchAndSetScript(s32 id, s32 target);
 /* VIEW(events_i): routine Task_Add as void Task_Add(void(*func) (void), s32
  * priority); task.h has s32 Task_Add(TaskFunc func, s32 order); tried as the
  * definition's s32 Task_Add(TaskFunc func, s32 order), which the object already
  * declares, Func_02002bcc moves: 1 of 24 instructions in tla-ja. */
 extern void Task_Add__events_i(void (*func)(void),
                                s32 priority) __asm__("Task_Add");
+void Task_RemoveFar(void (*func)(void));
 
 void Func_02002bcc(void) {
   BattleEffect_LoadActionEffectResources(134, 1);
   Task_Add__events_i(Func_02002b68, 0x480);
-  BattleEffect_SetupObjectPair(9, gMainRoutineWork.currentOwner);
+  FieldPsynergy_SetupActorPair(9, gMainRoutineWork.currentOwner);
   EventObject_Initialize();
-  Field_DispatchTypeHandler(1);
+  FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   Task_RemoveFar(Func_02002b68);
   BattleEffect_CleanupSceneObjects();
@@ -267,7 +275,6 @@ void Func_02002bcc(void) {
 void Func_020006ec(struct Actor *object, struct Actor *other);
 void Actor_MoveToObject(s32 id, s32 target);
 
-extern struct Actor *gData_02004420;
 
 void Func_02002c14(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -305,9 +312,9 @@ void Func_02002c14(void) {
   FieldActor_SetMoveTarget(helper, 0x1180000, 0, 0x780000);
   if (gData_02004420 != NULL)
     FieldActor_SetMoveTarget(gData_02004420, 0xf80000, 0, 0x580000);
-  Script_WaitForEventTimeout(leader);
+  Actor_WaitForMove(leader);
   Event_Wait(20);
-  Func_080d47b4(9, 0x103, 0);
+  Actor_ShowEmoteById(9, 0x103, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Actor_ArmCallback(9, 0x8000, 60);
   Actor_WalkToAndWait(9, 296, 104);
@@ -330,10 +337,10 @@ void Func_02002dd4(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
-  Func_080d4568()->motionFlags = 0;
-  Camera_MoveWithinMapBounds(PIXELS(760), PIXELS(32), PIXELS(204), 1);
+  FieldCamera_GetActor()->motionFlags = 0;
+  FieldCamera_MoveWithinMapBounds(PIXELS(760), PIXELS(32), PIXELS(204), 1);
   FieldCamera_WaitForArrival();
-  Actor_SetAngleToward(16, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(16, gMainRoutineWork.currentOwner, 0);
   // Called for its value, which is unused: as Call3 the actor id is loaded
   // before the 0x100's shift.
   Actor_ShowEmote(16, 0x100, 40);
@@ -341,19 +348,19 @@ void Func_02002dd4(void) {
   Sound_Play(153);
   actor->velocityY = 0x80000;
   Actor_SetSingleChildFlags(Actor_GetById(16), 0);
-  Actor_SetPositionAndReset(16, 760, 200);
+  Actor_WalkToAndWaitById(16, 760, 200);
   Actor_SetSingleChildFlags(Actor_GetById(16), 1);
   Event_Wait(20);
   Sound_Play(153);
   actor->velocityY = 0x80000;
   Actor_SetSingleChildFlags(Actor_GetById(16), 0);
-  Actor_SetPositionAndReset(16, 792, 200);
+  Actor_WalkToAndWaitById(16, 792, 200);
   Actor_SetSingleChildFlags(Actor_GetById(16), 1);
   Func_02002698(9, 16, 0x210);
   Sound_Play(153);
   actor->velocityY = 0x80000;
   Actor_SetSingleChildFlags(Actor_GetById(16), 0);
-  Actor_SetPositionAndReset(16, 824, 200);
+  Actor_WalkToAndWaitById(16, 824, 200);
   Actor_SetSingleChildFlags(Actor_GetById(16), 1);
   Event_Wait(20);
   Actor_WatchAndSetScript(16, gMainRoutineWork.currentOwner);
@@ -365,15 +372,15 @@ void Func_02002dd4(void) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_SetAngle(s32 id, s32 angle) {
-  Actor_ArmCallbackAndRefresh(id, angle);
+  Actor_FaceDirectionById(id, angle);
 }
 
 void Func_02002f08(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(16, gMainRoutineWork.currentOwner, 0);
-  Func_080d47b4(16, 0x100, 40);
-  Actor_ArmCallbackAndRefresh(16, FACING_EAST);
+  Actor_FaceActorById(16, gMainRoutineWork.currentOwner, 0);
+  Actor_ShowEmoteById(16, 0x100, 40);
+  Actor_FaceDirectionById(16, FACING_EAST);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(16, 3);
   Actor_SetAngle(16, FACING_WEST);
@@ -479,8 +486,9 @@ void Func_020030e4(void) {
 
 void Func_02000584(const void *data);
 void Func_020018a8(void);
-void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
+void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
                                     s32 width, s32 height);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
 
@@ -524,8 +532,8 @@ void Func_02003164(void) {
     s32 angle = 0x4000;
 
     Actor_PlaceFacing(24, 222 << 18, 168 << 16, angle);
-    Map_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
-    Map_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
+    MapGrid_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
+    MapGrid_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
     GameFlag_SetBit(583);
   }
   if (GameFlag_Test(0x86d) != 0)
@@ -539,6 +547,8 @@ void Func_02003164(void) {
 
 #include "task.h"
 #include "field_effect.h"
+
+extern struct Actor *gData_02004420;
 
 extern const u8 gData_02003fc8[];
 extern s32 gData_02005678;
@@ -621,7 +631,7 @@ void Func_02003284(void) {
     *((u8 *)object + 89) &= ~1;
     GameFlag_SetBit(517);
     GameFlag_SetBit(577);
-    Map_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
+    MapGrid_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
     {
       s32 angle = 0x4000;
 
@@ -695,9 +705,9 @@ void Func_0200369c(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Func_02001fdc();
   if (GameFlag_Test(0x86c) != 0) {
-    Map_CopyCellPictureIndicesRect(3, 8, 30, 33, 1, 1);
-    Map_CopyCellPictureIndicesRect(67, 3, 94, 28, 1, 5);
-    Map_CopyCellPictureIndicesRect(3, 69, 30, 93, 1, 4);
+    MapGrid_CopyCellPictureIndicesRect(3, 8, 30, 33, 1, 1);
+    MapGrid_CopyCellPictureIndicesRect(67, 3, 94, 28, 1, 5);
+    MapGrid_CopyCellPictureIndicesRect(3, 69, 30, 93, 1, 4);
   }
   {
     s32 entrance = *(u16 *)&gMainRoutineWork.entrance;
@@ -777,7 +787,7 @@ loop:
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Map_WaitForShakeToSettle();
+  MapGrid_WaitForShakeToSettle();
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
@@ -845,6 +855,7 @@ void Func_0200390c(void) {
 // ---- games/tla/src/scene/dehkan_plateau/s3a30.c ----
 // Scene code of overlay 0x655, in ROM order, from s3a30's offset up to the next
 // object the overlay links.
+extern struct Actor *gData_02004420;
 
 void Func_02003a30(void) {
   struct Actor **slot = &gData_02004420;

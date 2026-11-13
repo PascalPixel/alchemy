@@ -121,7 +121,7 @@
     leader->update = 0;                                                        \
     leader->speedLimit = speed;                                                \
     leader->acceleration = acceleration;                                       \
-    Actor_WaitForMove(object);                                                 \
+    FieldActor_WaitForMove(object);                                                 \
     Event_PlaySound(298);                                                      \
     Event_PlaySound(213);                                                      \
     FieldActor_SetPositionAndResetMotion(object, target.x, object->y,          \
@@ -209,7 +209,7 @@
     leader->update = 0;                                                        \
     leader->speedLimit = speed;                                                \
     leader->acceleration = acceleration;                                       \
-    Actor_WaitForMove(object);                                                 \
+    FieldActor_WaitForMove(object);                                                 \
     Event_PlaySound(298);                                                      \
     Event_PlaySound(213);                                                      \
     FieldActor_SetPositionAndResetMotion(object, target.x, object->y,          \
@@ -393,7 +393,7 @@
     lead->moveRateX = rate;                                                    \
     lead->moveRateZ = rate;                                                    \
     FieldActor_SetMoveTarget(lead, dst.x, dst.y, dst.z);                       \
-    Actor_WaitForMove(next);                                                   \
+    FieldActor_WaitForMove(next);                                                   \
     Event_NoOp();                                                              \
     next->x.fixed = dst.x;                                                     \
     {                                                                          \

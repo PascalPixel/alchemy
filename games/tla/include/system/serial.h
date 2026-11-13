@@ -124,7 +124,7 @@ void Serial_WaitForSend(void);
 void Serial_WaitForReceive(void);
 void Serial_WaitForTransfers(void);
 s32 Serial_GetActiveTransfers(void);
-void BattleLink_ResetTransferState(void);
+void LinkBattle_ResetTransferState(void);
 void Serial_HandleTransferInterrupt(void);
 void Serial_RemoveIrqHandlers(void);
 u32 Serial_WaitForStatusMask(s32 mask);

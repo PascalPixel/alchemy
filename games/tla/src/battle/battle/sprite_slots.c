@@ -6,6 +6,7 @@
 #include "../battle_internal.h"
 #include "gamepak/far_call/game.h"
 #include "module/battle/battle.h"
+#include "gamepak/far_call/field.h"
 #include "module/battle/presentation.h"
 
 /// Readies every unit's battle graphics, releasing those of departed units,
@@ -19,21 +20,23 @@ void BattleObject_Put(void) {
 
 /// Readies every unit's battle graphics, releasing those of departed units,
 /// and keeps their display modes and motions.
-void BattleParty_ListAllUnitsAndSubmit(void) {
+void BattleUnit_ListAllAndSubmit(void) {
   s16 list[14];
 
   BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
   BattleActor_SpawnObjectsForList(list, 0);
 }
 
-s32 BattleMotion_GetSlotPalette(s32 id) { return BattleObject_Get(id)->palette; }
+s32 BattleMotion_GetSlotPalette(s32 id) {
+  return BattleObject_Get(id)->palette;
+}
 
-s32 Enemy_CheckRoom(s32 arg0) {
+s32 Enemy_HasSpriteRoom(s32 arg0) {
   s32 retval;
   s32 i;
   struct Layout *ptr;
 
-  retval = BattleClass_IsSmall(arg0);
+  retval = BattleSprite_IsSmall(arg0);
   ptr = (struct Layout *)Ram_HeapSlots->battleWork;
   i = 0;
   for (; i < 6; i++) {
@@ -53,12 +56,12 @@ s32 Enemy_CheckRoom(s32 arg0) {
 /// the sprite value below, or 0 when a load fails.
 // The Broken Seal's function of the same name, keyed by the enemy id, with
 // seven two-part sprites.
-s32 SummonSlot_RegisterActorSprites(s32 unit) {
+s32 EnemySprite_LoadIntoSlots(s32 unit) {
   s32 pass;
   struct BattleSpriteSlots *table =
       (struct BattleSpriteSlots *)Ram_HeapSlots->battleWork;
   struct BattleUnit *actor = Unit_Get(unit);
-  s32 singleSlot = BattleClass_IsSmall(actor->enemyId);
+  s32 singleSlot = BattleSprite_IsSmall(actor->enemyId);
   /* FAKEMATCH(temporary): result cleared a halfword at a time, which keeps
    * pass a copy of its register (mov r4, r10); as an s32 set to 0, 2 of 134
    * instructions differ in tla-en. */
@@ -71,7 +74,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unit) {
 
   result.halves[0] = 0;
   result.halves[1] = 0;
-  spriteValue = BattleClass_GetSprite(actor->enemyId);
+  spriteValue = BattleSprite_GetSprite(actor->enemyId);
   pass = result.value;
   do {
     s32 slot;
@@ -96,11 +99,11 @@ s32 SummonSlot_RegisterActorSprites(s32 unit) {
     // differ in tla-en.
     slotBuffers = (s32)Data_02018000;
     {
-      s32 flag = BattleClass_GetPalette(actor->enemyId);
+      s32 flag = BattleSprite_GetPalette(actor->enemyId);
       s32 bufferAddr = (slot << 14) + slotBuffers;
 
-      if (ResourceSlot_LoadFar(slot, (u32 *)bufferAddr, spriteValue + pass,
-                               flag) == 0)
+      if (SpritePictureCache_LoadFar(slot, (u32 *)bufferAddr,
+                                     spriteValue + pass, flag) == 0)
         return 0;
     }
 
@@ -120,14 +123,14 @@ s32 SummonSlot_RegisterActorSprites(s32 unit) {
   return result.value;
 }
 
-void BattleMotion_ReleaseObjectSlotByValue(s32 value) {
+void BattleObject_ReleaseSpriteSlots(s32 value) {
   struct BattleSpriteSlots *work =
       (struct BattleSpriteSlots *)Ram_HeapSlots->battleWork;
   s32 index;
 
   for (index = 0; index <= 5; index++) {
     if (work->spriteSlots[index] == value) {
-      ResourceSlot_LoadFar(index, 0, 0, 0);
+      SpritePictureCache_LoadFar(index, 0, 0, 0);
       work->spriteSlots[index] = 0;
     }
   }
@@ -159,7 +162,7 @@ done:
 }
 
 /// The value of the owner's equipped weapon from its class's table, or 0.
-s32 BattleUnit_LookupWeaponValueByClass(s32 owner) {
+s32 BattleUnit_GetWeaponSprite(s32 owner) {
   struct OwnerInventoryState *unit = Unit_Get(owner);
   s32 slot = Inventory_FindEquippedFar(owner, 1);
   s32 result = 0;
@@ -179,19 +182,19 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 owner) {
       result = gData_081287f0[index];
       break;
     case MIA:
-      result = gData_081287fe[index];
+      result = gBattleUnit_WeaponAnimationsIsaac[index];
       break;
     case JENNA:
-      result = gData_0812880c[index];
+      result = gBattleUnit_WeaponAnimationsGaret[index];
       break;
     case FELIX:
-      result = gData_0812881a[index];
+      result = gBattleUnit_WeaponAnimationsIvan[index];
       break;
     case SHEBA:
-      result = gData_08128828[index];
+      result = gBattleUnit_WeaponAnimationsMia[index];
       break;
     case PIERS:
-      result = gData_08128836[index];
+      result = gBattleUnit_WeaponAnimationsJenna[index];
       break;
     }
   }

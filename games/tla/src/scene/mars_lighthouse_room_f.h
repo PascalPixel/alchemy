@@ -46,7 +46,7 @@ struct PushTarget {
 
 #define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->eventWork)
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 s32 Func_020027ac(s32 index, s32 value);
@@ -61,7 +61,7 @@ void ObjectTable_Snapshot(void);
 struct Actor *Func_02005680(s32 *position, s32 mode);
 void Func_02005688(void);
 void Func_02005480(struct Actor *object, s32 mode);
-void Animation_SetStateFlags(struct Actor *object, u32 value);
+void Actor_SetBlendMode(struct Actor *object, u32 value);
 s32 Math_Cosine(s32 angle);
 
 void Func_020001f4(s32 unused, s32 id);

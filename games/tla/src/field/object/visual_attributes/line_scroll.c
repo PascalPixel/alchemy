@@ -11,7 +11,7 @@
 /// mode, then waits 18 frames. The leader's sprite gains a second part
 /// (metadata 267) for it.
 // As ☀️'s function of the same name.
-void ObjectEffect_PrepareContextEffect(s32 animation) {
+void Exit_PrepareAnimation(s32 animation) {
   u32 zero;
   u8 param;
   struct Actor *object;
@@ -43,17 +43,17 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   wait(18);
 }
 
-void ObjectEffect_StartContextEffect26(void) {
-  ObjectEffect_PrepareContextEffect(0x1A);
+void Exit_StartStairsUp(void) {
+  Exit_PrepareAnimation(0x1A);
   GameFlag_SetBit(0x120);
 }
 
-void ObjectEffect_StartContextEffect25(void) {
-  ObjectEffect_PrepareContextEffect(0x19);
+void Exit_StartStairsDown(void) {
+  Exit_PrepareAnimation(0x19);
   GameFlag_SetBit(0x121);
 }
 
-void ObjectEffect_EndContextEffect(s32 mode) {
+void Entrance_EndArrivalAnimation(s32 mode) {
   s32 zero;
   struct Actor *obj = ObjectTable_Get(gMainRoutineWork.currentOwner);
   struct ContextSprite *ctx = obj->sprite;
@@ -67,7 +67,7 @@ void ObjectEffect_EndContextEffect(s32 mode) {
   Actor_SetMode(obj, mode);
   wait(30);
   ctx->count = 1;
-  ResourceMetadata_ClearRecordFar(ctx->entries[1]);
+  SpriteAnimation_ClearFar(ctx->entries[1]);
   {
     /* FAKEMATCH(pin): the sprite copied into r1 for its two stores, leaving
      * r3 to the zero's copy from sl; as ctx in both stores, 8 of 69
@@ -83,20 +83,20 @@ void ObjectEffect_EndContextEffect(s32 mode) {
   Actor_CommitPosition(obj);
 }
 
-void Camera_MoveWithinMapBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void FieldCamera_MoveWithinMapBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
-s32 ObjectEffect_RunPendingFlagEvent(void) {
+s32 Entrance_PlayArrival(void) {
   s32 result = 0;
   s32 flag = 0x120;
 
   if (GameFlag_Test(flag) != 0) {
-    ObjectEffect_EndContextEffect(24);
+    Entrance_EndArrivalAnimation(24);
     GameFlag_ClearBit(flag);
     result = 1;
   } else {
     flag = 0x121;
     if (GameFlag_Test(flag) != 0) {
-      ObjectEffect_EndContextEffect(23);
+      Entrance_EndArrivalAnimation(23);
       GameFlag_ClearBit(flag);
       result = 2;
     } else {
@@ -109,7 +109,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         id = gMainRoutineWork.currentOwner;
         object = ObjectTable_Get(id);
         object->y += 0x00a00000;
-        Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+        FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
         while (object->y + object->velocityY > object->terrainHeight) {
           wait(1);
         }
@@ -117,7 +117,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         object->y = object->terrainHeight;
         Actor_SetMode(object, 22);
         Event_Wait(15);
-        Camera_FollowActor(id, 1);
+        FieldCamera_FollowActor(id, 1);
         result = 3;
       }
     }
@@ -135,7 +135,7 @@ void Func_080d5fd4(void) {
 
 /// Writes the current page's first entry each frame; HBlank DMA writes the
 /// rest.
-void Func_080d5ff8(void) {
+void LineScroll_ArmDma(void) {
   struct DmaFxPages *work = Ram_HeapSlots->unk84[1];
   u32 *line = work->pages[work->page].lines;
   volatile u32 *dest = (volatile u32 *)&REG_BG1HOFS;
@@ -169,7 +169,7 @@ void Func_080d5ff8(void) {
       REG_DMA0);
 }
 
-void Func_080d607c(void) {
+void LineScroll_BuildPage(void) {
   struct DisplayScrollWork *work = Ram_HeapSlots->unk84[1];
   u8 mode = work->mode;
   s32 x1 = (s16)gBgScroll[1].x;
@@ -208,7 +208,8 @@ void Func_080d607c(void) {
       amplitude = work->ampX;
       for (scanline = 0; scanline != 160; scanline++) {
         wave =
-            Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) / 256;
+            Iwram_MulQ16(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
+            256;
         row[0] = a + wave;
         row[2] = b + wave;
         row[4] = waveX3 + wave;
@@ -232,7 +233,8 @@ void Func_080d607c(void) {
       amplitude = work->ampY;
       for (scanline = 0; scanline != 160; scanline++) {
         wave =
-            Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) / 256;
+            Iwram_MulQ16(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
+            256;
         *row = a + wave;
         row += 2;
         *row = b + wave;
@@ -257,7 +259,8 @@ void Func_080d607c(void) {
       amplitude = work->ampX;
       for (scanline = 0; scanline != 160; scanline++) {
         wave =
-            Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) / 256;
+            Iwram_MulQ16(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
+            256;
         row[0] = x1;
         row[2] = x2;
         row[4] = waveX3 + wave;
@@ -279,7 +282,8 @@ void Func_080d607c(void) {
       amplitude = work->ampY;
       for (scanline = 0; scanline != 160; scanline++) {
         wave =
-            Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) / 256;
+            Iwram_MulQ16(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
+            256;
         row[0] = y1;
         row[2] = y2;
         row[4] = waveY3 + wave;
@@ -318,14 +322,14 @@ void LineScroll_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
   work->unkf1c = ampY;
   work->unkf10 = stepX;
   work->unkf14 = stepY;
-  Task_Add(Func_080d607c, TASK_PASS_VBLANK);
-  Task_Add(Func_080d5ff8, TASK_PASS_FRAME);
+  Task_Add(LineScroll_BuildPage, TASK_PASS_VBLANK);
+  Task_Add(LineScroll_ArmDma, TASK_PASS_FRAME);
 }
 
 /// Stops the line scroll: removes its two tasks and stops DMA 0.
 void LineScroll_Stop(void) {
-  Task_Remove(Func_080d5ff8);
-  Task_Remove(Func_080d607c);
+  Task_Remove(LineScroll_ArmDma);
+  Task_Remove(LineScroll_BuildPage);
   {
     volatile u16 *dma = REG_DMA0;
 
@@ -338,7 +342,8 @@ void LineScroll_Stop(void) {
   }
 }
 
-/* VIEW(visual_attributes): tag struct GroundParticle as struct GroundParticle__visual_attributes; ground_mask.h has another definition. */
+/* VIEW(visual_attributes): tag struct GroundParticle as struct
+ * GroundParticle__visual_attributes; ground_mask.h has another definition. */
 struct GroundParticle__visual_attributes {
   u8 unk00[4];
   u16 y : 8;
@@ -365,8 +370,13 @@ struct GroundParticleWork {
   struct GroundParticle__visual_attributes particles[64];
 };
 
-/* VIEW(visual_attributes): routine Func_080140d8 as void Func_080140d8(struct GroundParticle *sprite, s32 depth); module/system/system.h has void Func_080140d8(void *entry, s32 slot). */
-extern void Func_080140d8__visual_attributes(struct GroundParticle__visual_attributes *sprite, s32 depth) __asm__("Func_080140d8");
+/* VIEW(visual_attributes): routine Oam_AddSpriteAtDepthClamped as void
+ * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth);
+ * module/system/system.h has void Oam_AddSpriteAtDepthClamped(void *entry, s32
+ * slot). */
+extern void Func_080140d8__visual_attributes(
+    struct GroundParticle__visual_attributes *sprite,
+    s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
 
 void Func_080d64f0(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -386,7 +396,7 @@ void Func_080d64f0(void) {
       continue;
     if (GameFlag_Test(358))
       particle->timer++;
-    frame = &Data_080f0ab0[particle->timer * 5];
+    frame = &gFieldEffect_GroundParticleFrames[particle->timer * 5];
     x = (particle->posX - originX) / 0x10000 + *frame++;
     y = (particle->posZ - particle->posY - originZ) / 0x10000 + *frame++;
     if ((u32)(x + 16) < 256 && y >= -32 && y < 160) {

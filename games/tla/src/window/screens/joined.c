@@ -28,7 +28,7 @@ struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
 s32 Message_Start();
 #endif
 
-void Func_08044a58(s32 member, s32 element, s32 djinn) {
+void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 name;
   struct Window *window;
@@ -94,17 +94,17 @@ void Func_08044a58(s32 member, s32 element, s32 djinn) {
 
     Window_Close(window, 2);
     wait(1);
-    Resource_ResetEntry(slot);
+    VramCache_FreeEntry(slot);
   }
 }
 
-s32 Func_08044b80(u32 index) {
+s32 Party_GetMemberPortraitSprite(u32 index) {
   if (index > 8)
     return 0;
   return gCharacter_SpriteTable[index];
 }
 
-void Func_08044b98(s32 member) {
+void Party_ShowJoinedMessage(s32 member) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   struct Window *window = NULL;
   s32 sprite[3];
@@ -116,8 +116,9 @@ void Func_08044b98(s32 member) {
   if (window != NULL) {
     Window_DrawDividerLine(window, 4, 0, 4, 4);
     work->dirty = 1;
-    Icon_LoadWithPalette(Portrait_GetForSpeaker(Func_08044b80(member)),
-                                 0, &slot, &tile, 14, 0);
+    Icon_LoadWithPalette(
+        Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(member)), 0, &slot,
+        &tile, 14, 0);
     // The portrait as a bare OAM entry, pushed at depth 250 each frame: a link
     // word, attributes 0 and 1 (32x32 at x 20, y 12) and attribute 2, its tile
     // with palette 14.
@@ -148,7 +149,7 @@ void Func_08044b98(s32 member) {
              (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
     Window_Close(window, 2);
     wait(1);
-    Resource_ResetEntry(slot);
+    VramCache_FreeEntry(slot);
   }
 }
 
@@ -171,8 +172,9 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 
     work->dirty = 1;
 
-    Icon_LoadWithPalette(Portrait_GetForSpeaker(Func_08044b80(first)),
-                                 0, &handle1, &palette, 14, 0);
+    Icon_LoadWithPalette(
+        Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(first)), 0,
+        &handle1, &palette, 14, 0);
     // The portraits as bare OAM entries, pushed at depth 250 each frame: a
     // link word, attributes 0 and 1 (32x32 at y 12, x 12 and 44) and
     // attribute 2, the tile with palette 14 or 15.
@@ -182,8 +184,9 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     *p = palette | 0xe000;
 
     entry2 = sprite2;
-    Icon_LoadWithPalette(Portrait_GetForSpeaker(Func_08044b80(second)),
-                                 0, &handle2, &palette, 15, 0);
+    Icon_LoadWithPalette(
+        Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(second)), 0,
+        &handle2, &palette, 15, 0);
     p = entry2;
     *p++ = 0;
     *p++ = 0x802c000c;
@@ -221,8 +224,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 
     Window_Close(window, 2);
     wait(1);
-    Resource_ResetEntry(handle1);
-    Resource_ResetEntry(handle2);
+    VramCache_FreeEntry(handle1);
+    VramCache_FreeEntry(handle2);
   }
 }
 
@@ -311,7 +314,7 @@ void Func_08044dc8(s32 summon) {
   while ((gInput.pressed & 0x303) == 0);
   Window_Close(window, 2);
   wait(1);
-  Resource_ResetEntry(resource);
+  VramCache_FreeEntry(resource);
 }
 
 #undef DJINN_JOIN_X

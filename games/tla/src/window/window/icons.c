@@ -4,13 +4,9 @@
 
 #include "../window_internal.h"
 
-s32 Icon_CountItemIcons(void) {
-  return gItemIconsEnd - gItemIcons;
-}
+s32 Icon_CountItemIcons(void) { return gItemIconsEnd - gItemIcons; }
 
-s32 Icon_CountPsynergyIcons(void) {
-  return gPsynergyIconsEnd - gPsynergyIcons;
-}
+s32 Icon_CountPsynergyIcons(void) { return gPsynergyIconsEnd - gPsynergyIcons; }
 
 extern u8 *gIcon_BasePointerTable[];
 extern u8 *gIcon_OverlayPointerTable[];
@@ -18,7 +14,7 @@ extern u8 *gIcon_OverlayPointerTable[];
 void Icon_Decode(GlyphTransfer *work, s32 layer);
 
 void Icon_BuildCommandIconTiles(s32 no0, s32 no1, s32 *slot, s32 *ret,
-                                  s32 flag) {
+                                s32 flag) {
   GlyphTransfer *work;
 
   work = HeapSlot_Alloc(68, sizeof(GlyphTransfer));
@@ -31,7 +27,7 @@ void Icon_BuildCommandIconTiles(s32 no0, s32 no1, s32 *slot, s32 *ret,
   work->height = 2;
   Icon_Decode(work, 1);
   if (flag == 0)
-    *slot = Resource_FindFreeEntry();
+    *slot = VramCache_FindFreeEntry();
   *ret = VramCache_Load(*slot, 0x80, work->tiles);
   HeapSlot_Release(68);
 }
@@ -39,7 +35,7 @@ void Icon_BuildCommandIconTiles(s32 no0, s32 no1, s32 *slot, s32 *ret,
 extern u8 *gIcon_BasePointerTable[];
 
 void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
-                               s32 *tileOut, s32 reuse);
+                             s32 *tileOut, s32 reuse);
 void Icon_Decode(GlyphTransfer *work, s32 overlay);
 s32 Icon_CountItemIcons(void);
 
@@ -50,7 +46,7 @@ u8 *Ability_Get(s32);
 void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                           s32 reuse) {
   Icon_BuildItemIconTiles(*(u16 *)(Ability_Get(action) + 4), withBase, slot,
-                            tile, reuse);
+                          tile, reuse);
 }
 
 /// Builds item icon glyph, over the icon base when withBase is set, and loads
@@ -58,7 +54,7 @@ void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
 /// *tileOut.
 // As ☀️'s function of the same name.
 void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
-                               s32 *tileOut, s32 reuse) {
+                             s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
   s32 overlay;
 
@@ -82,7 +78,7 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   Icon_Decode(work, overlay);
 
   if (reuse == 0)
-    *cacheSlot = Resource_FindFreeEntry();
+    *cacheSlot = VramCache_FindFreeEntry();
 
   *tileOut = VramCache_Load(*cacheSlot, 0x80, work->tiles);
   HeapSlot_Release(68);
@@ -215,15 +211,15 @@ struct BattleActionGlyph {
 extern u8 *gIcon_BasePointerTable[];
 
 void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
-                                  s32 *tileOut, s32 reuse);
+                                s32 *tileOut, s32 reuse);
 void Icon_Decode(GlyphTransfer *work, s32 overlay);
 s32 Icon_CountPsynergyIcons(void);
 
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                        s32 reuse) {
   Icon_BuildAbilityIconTiles(
-      ((struct BattleActionGlyph *)Ability_Get(action))->icon, with_base,
-      slot, tile, reuse);
+      ((struct BattleActionGlyph *)Ability_Get(action))->icon, with_base, slot,
+      tile, reuse);
 }
 
 /// Builds Psynergy icon glyph, over the icon base when withBase is set, and
@@ -231,7 +227,7 @@ void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
 /// in *tileOut.
 // As ☀️'s function of the same name.
 void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
-                                  s32 *tileOut, s32 reuse) {
+                                s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
   s32 overlay;
 
@@ -255,7 +251,7 @@ void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   Icon_Decode(work, overlay);
 
   if (reuse == 0)
-    *cacheSlot = Resource_FindFreeEntry();
+    *cacheSlot = VramCache_FindFreeEntry();
 
   *tileOut = VramCache_Load(*cacheSlot, 0x80, work->tiles);
   HeapSlot_Release(68);
@@ -280,7 +276,7 @@ void Icon_DrawMisc(u32 index) {
 /// This resource stores its palette before the encoded tile payload: 16
 /// colours, 32 bytes. Portraits (Portrait_Create) come through here.
 void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
-                                  s32 palette, s32 reuse) {
+                          s32 palette, s32 reuse) {
   GlyphTransfer *work;
   u16 *table;
   u8 *entry;
@@ -298,7 +294,7 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
   work->height = 4;
   Icon_Decode(work, 0);
   if (reuse == 0)
-    *slot = Resource_FindFreeEntry();
+    *slot = VramCache_FindFreeEntry();
   *tile = VramCache_Load(*slot, 0x200, work->tiles);
   HeapSlot_Release(68);
   Dma_Set(entry, (void *)(0x05000200 + palette * 32), DMA_COPY_HALFWORDS(16),

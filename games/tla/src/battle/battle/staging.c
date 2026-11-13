@@ -5,6 +5,7 @@
 
 #include "../battle_internal.h"
 #include "module/battle/battle.h"
+#include "gamepak/far_call/battle_effect.h"
 #include "module/battle/presentation.h"
 
 s32 Func_0811d79c(s32 kind) {
@@ -30,8 +31,10 @@ s32 Func_0811d79c(s32 kind) {
 
 void Func_0811d7e4(void) {}
 
-/* VIEW(battle): routine Func_0811f4d4 as s32 Func_0811f4d4(); module/battle/presentation.h has s32 Func_0811f4d4(s32 party). */
-extern s32 Func_0811f4d4__battle() __asm__("Func_0811f4d4");
+/* VIEW(battle): routine BattleAI_ChooseRandomTarget as s32
+ * BattleAI_ChooseRandomTarget(); module/battle/presentation.h has s32
+ * BattleAI_ChooseRandomTarget(s32 party). */
+extern s32 Func_0811f4d4__battle() __asm__("BattleAI_ChooseRandomTarget");
 
 void Func_0811d7e8(u16 *source, struct ActionTargets *targets) {
   u16 ids[10];
@@ -47,7 +50,7 @@ void Func_0811d7e8(u16 *source, struct ActionTargets *targets) {
   own = 0;
   if (source[0] <= 7)
     own = 1;
-  own = Battle_GetTaggedSlotValue(Func_0811f4d4__battle(own));
+  own = Battle_GetUnitAtPlace(Func_0811f4d4__battle(own));
   targets->value50 = 2;
   targets->value54 = 14;
   {
@@ -97,7 +100,7 @@ void Func_0811d914(struct ActionTargets *targets) {
   s32 i;
 
   if (targets->side <= 7) {
-    count = BattleParty_PrepareActiveOwners(ids);
+    count = BattleParty_PrepareMembers(ids);
     count += BattleParty_PrepareReserveOwners(&ids[count]);
   } else {
     count = BattleParty_ListActorIds(2, ids);
@@ -127,7 +130,7 @@ void Func_0811d9a4(void) {
   s32 i;
 
   for (i = 0; i < count; i++)
-    ObjMotRst(ids[i]);
+    BattleMotion_ReturnToSpot(ids[i]);
 }
 
 s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
@@ -155,7 +158,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
   view->flag = 0;
   camera = Ram_HeapSlots->cameraWork;
   battle->brightness = 0x10000;
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_SetLookAt__battle(camera->eye, camera->pos);
   {
     s32 param;
@@ -188,7 +191,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
     actingUnit[0] = request->unitId;
     actingUnit[1] = 255;
     BattleHighlight_SetModes(actingUnit, 1);
-    result = Func_0812381c(request, &battle->plan);
+    result = BattleActionRun_Build(request, &battle->plan);
   }
   if (result == 0) {
     switch (battle->plan.outcome) {
@@ -198,19 +201,19 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       BattleStaging_RunActorEntries(&battle->plan, 0);
       break;
     case 2:
-      Func_0811ea0c(&battle->plan, 0);
+      BattleStaging_RunAttack(&battle->plan, 0);
       break;
     case 15:
-      Func_0811ea0c(&battle->plan, 2);
+      BattleStaging_RunAttack(&battle->plan, 2);
       break;
     case 5:
-      Func_0811df70(&battle->plan, 1);
+      BattleStaging_HideField(&battle->plan, 1);
       break;
     case 9:
-      Func_0811df70(&battle->plan, 0);
+      BattleStaging_HideField(&battle->plan, 0);
       break;
     case 14:
-      Func_0811df70(&battle->plan, 3);
+      BattleStaging_HideField(&battle->plan, 3);
       break;
     case 3:
     case 17:
@@ -247,7 +250,8 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
         else
           BattleMessage_ShowAndWaitFar((s32)&MsgAttacksAlly);
       }
-      Func_0811ea0c(&battle->plan, battle->plan.abilityId == 312 ? 32 : 0);
+      BattleStaging_RunAttack(&battle->plan,
+                              battle->plan.abilityId == 312 ? 32 : 0);
       swap = battle->plan.actorId;
       battle->plan.actorId = battle->plan.actorId2;
       battle->plan.actorId2 = swap;
@@ -268,7 +272,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       break;
     }
     case 12:
-      Func_0811df70(&battle->plan, 1);
+      BattleStaging_HideField(&battle->plan, 1);
       if (BattleParty_ListLivingUnits(1, 0) == 0)
         break;
       if (BattleParty_ListLivingUnits(2, 0) == 0)
@@ -277,7 +281,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       BattleStaging_RunPsynergyCast(&battle->plan, 1);
       break;
     case 13:
-      Func_0811df70(&battle->plan, 1);
+      BattleStaging_HideField(&battle->plan, 1);
       Func_0811d914((struct ActionTargets *)&battle->plan);
       BattleStaging_RunPsynergyCast(&battle->plan, 1);
       break;
@@ -303,15 +307,15 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
   Func_0811d9a4();
   request->unitId = 255;
 finish:
-  Func_0812628c(
+  BattleBackground_SetMode(
       2, ((struct DispatchBattleWork *)Ram_HeapSlots->battleWork)->background,
       0);
   Sound_PlayFar(390);
   return fled;
 }
 
-void Func_0811ddd8(struct BattlePlan *plan,
-                   struct BattlePresentationWork *effect) {
+void BattleStaging_BuildTargetList(struct BattlePlan *plan,
+                                   struct BattlePresentationWork *effect) {
   s16 *outputTarget;
   u32 flags;
   s32 livingTargets;
@@ -329,7 +333,7 @@ void Func_0811ddd8(struct BattlePlan *plan,
     inputTarget = plan->targetIds;
     outputTarget = effect->actors;
     do {
-      if (BattleParty_IsUnitListed(*inputTarget) &&
+      if (BattleUnit_IsListed(*inputTarget) &&
           (((struct BattleUnit *)Unit_Get(*inputTarget))->hp != 0 ||
            (plan->presentationFlags & 0x10000))) {
         *outputTarget++ = *inputTarget;
@@ -395,7 +399,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
     event[1] = 0xff;
     BattleMotion_SetupEscapeObject(event[0]);
     wait(8);
-    BattleActor_RemoveFromLists(plan->actorId);
+    BattleObject_RemoveFromLists(plan->actorId);
     BattleObject_MarkForRelease(plan->actorId);
   } else {
     BattleMessage_ShowAndWaitFar((s32)MsgNoEscape);
@@ -406,10 +410,13 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   return completed;
 }
 
-/* VIEW(battle): routine BattlePlayback_WaitForReady as void BattlePlayback_WaitForReady(void); module/battle/battle.h has s32 BattlePlayback_WaitForReady(void). */
-extern void BattlePlayback_WaitForReady__battle(void) __asm__("BattlePlayback_WaitForReady");
+/* VIEW(battle): routine BattlePlayback_WaitForReady as void
+ * BattlePlayback_WaitForReady(void); module/battle/battle.h has s32
+ * BattlePlayback_WaitForReady(void). */
+extern void BattlePlayback_WaitForReady__battle(void) __asm__(
+    "BattlePlayback_WaitForReady");
 
-s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
+s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   u16 units[14];
   struct BattlePresentationWork work;
   u32 actor;
@@ -420,7 +427,7 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
   struct MotionObject *object;
   u16 *list;
 
-  Func_0811ddd8(plan, &work);
+  BattleStaging_BuildTargetList(plan, &work);
   actor = plan->actorId;
   target = plan->targetIds[0];
   if (plan->presentationFlags & 0x8000) {
@@ -464,7 +471,7 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
   }
   if (!(mode & 2)) {
     Sound_PlayFar(154);
-    Func_08127308(work.actor, plan->element, 0, 0);
+    ElementGlow_Play(work.actor, plan->element, 0, 0);
   }
   if (mode & 1)
     BattleHighlight_SetSpriteMode(actor, 1);
@@ -475,12 +482,12 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
 
   if (plan->failure != 0) {
     if (plan->failure == 1) {
-      BattleEvent_Push(0, plan->actorId);
-      BattleEvent_Push(4, (u32)&MsgPsynergyBlocked);
+      BattlePlayback_Push(0, plan->actorId);
+      BattlePlayback_Push(4, (u32)&MsgPsynergyBlocked);
     } else {
-      BattleEvent_Push(4, (u32)&MsgCastLacksPp);
+      BattlePlayback_Push(4, (u32)&MsgCastLacksPp);
     }
-    BattleEvent_DispatchQueued();
+    BattlePlayback_RunAll();
     BattleBackground_RestorePalette();
   } else {
     kept = 0;
@@ -520,13 +527,13 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
     }
     if (plan->presentationFlags & 0x20000)
       work.side ^= 1;
-    Task_Add(BattleEvent_Playback, TASK_PASS_VBLANK);
+    Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
     if (plan->presentationFlags & 0x8000)
       BattleEffect_RunSceneEffectFar((s32 *)&work);
     else if (plan->presentationFlags & 0x4000)
-      Func_08138008(&work);
+      BattleEffect_DispatchByIdRangeFar(&work);
     else
-      Func_08138018(&work);
+      BattleEffect_RunFromTableFar(&work);
     BattlePlayback_WaitForReady__battle();
   }
 
@@ -567,7 +574,7 @@ s32 BattleStaging_RunActorEntries(struct BattlePlan *plan, s32 unused) {
   } else {
     for (i = 0; i < plan->targetCount; i++) {
       BattleTarget_Execute(plan, i);
-      BattleEvent_DispatchQueued();
+      BattlePlayback_RunAll();
     }
   }
   wait(1);

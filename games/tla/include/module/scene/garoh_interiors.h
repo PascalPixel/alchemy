@@ -8,7 +8,7 @@
 
 void GarohInteriors_WakeAtInn(void);
 
-void Map_SetShownLayers(s32 value);
+void MapGrid_SetShownLayers(s32 value);
 
 void Func_0200087c(s32 value);
 

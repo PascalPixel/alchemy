@@ -24,7 +24,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   object = Actor_GetById(id);
   if (object == NULL)
     return;
-  BattleEffect_InitializeSlots();
+  FieldEffect_InitializeSlots();
   scene = Ram_HeapSlots->effectWork;
   Shop_SaveAndTintFieldPaletteFar(0x20118c);
   Sound_PlayFar(173);
@@ -73,7 +73,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   Sound_PlayFar(164);
   wait(100);
   Shop_RestoreFieldPaletteFar();
-  BattleEffect_ClearActiveSlotsAndScheduleUpdates();
+  FieldEffect_ReleaseSlots();
 }
 
 void BattleEffect_SetObjectAlternatingWords(u8 *object) {
@@ -89,7 +89,7 @@ void BattleEffect_SetObjectAlternatingWords(u8 *object) {
   ((struct MotionObject *)object)->scaleY = value;
 }
 
-void BattleEffect_SpinUpAngle(void *obj) {
+void FieldEffect_AdvanceAngleWithRamp(void *obj) {
   u32 step;
 
   step = FIELD_AT_OFFSET(obj, s16 *, 0x64) * 0x50;
@@ -103,7 +103,7 @@ void BattleEffect_SpinUpAngle(void *obj) {
 
 /// Spins an object 1/8 turn and shrinks it by 0x1c0 a frame, destroying it once
 /// its scale falls below 0x3000.
-void BattleEffect_ShrinkObjectAndDestroySlow(void *obj) {
+void FieldEffect_ShrinkActorAndDestroySlow(void *obj) {
   s32 step = 0xFFFFFE40;
   s32 scaleY;
   s32 scale;
@@ -128,7 +128,7 @@ struct BattleFxScene__motes;
 #define gBattleEffect_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
 
-void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
+void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
   struct EffectOwner *owner;
   struct EffectVector position;
   s32 state;
@@ -142,9 +142,9 @@ void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
     position.x = effect->x;
     position.z = effect->z;
     Vector_AddPolarOffset__motes(0x780000,
-                          ((Random16() * 3 << 11) >> 16) -
-                              ((Random16() * 3 << 11) >> 16) + 0xc000,
-                          &position);
+                                 ((Random16() * 3 << 11) >> 16) -
+                                     ((Random16() * 3 << 11) >> 16) + 0xc000,
+                                 &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = 0x50000;
@@ -194,7 +194,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
       effect->state--;
   } else if (state == 5) {
     if (FieldParticle_HasPendingTarget(effect) == 0)
-      BattleEffect_ClearOwnedSlot(effect);
+      FieldEffect_ClearOwnedSlot(effect);
   }
 }
 

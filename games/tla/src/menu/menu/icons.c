@@ -19,12 +19,12 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
   struct ItemMenuBlocks *activeState;
 
   activeState = Ram_HeapSlots->menuRuntime;
-  firstSlot = Resource_FindFreeEntry();
+  firstSlot = VramCache_FindFreeEntry();
   activeState->resourceSlots[0] = (s16)firstSlot;
   if (firstSlot != -1) {
     VramBlock_LoadResourceFar(firstSlot, 0x80, (s32)&ResourceId_ItemMenuTilesA);
   }
-  secondSlot = Resource_FindFreeEntry();
+  secondSlot = VramCache_FindFreeEntry();
   activeState->resourceSlots[1] = (s16)secondSlot;
   if (secondSlot != -1) {
     VramBlock_LoadResourceFar(secondSlot, 0x80,
@@ -35,8 +35,8 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
 void Menu_ResetTwoResourceEntries(void) {
   struct ItemMenuBlocks *state = Ram_HeapSlots->menuRuntime;
 
-  Resource_ResetEntry((u16)state->resourceSlots[0]);
-  Resource_ResetEntry((u16)state->resourceSlots[1]);
+  VramCache_FreeEntry((u16)state->resourceSlots[0]);
+  VramCache_FreeEntry((u16)state->resourceSlots[1]);
 }
 
 s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
@@ -54,10 +54,10 @@ s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
 }
 
 s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
-                                    s32 resourceId) {
+                                  s32 resourceId) {
   s32 slot;
 
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   if (slot != 0x60) {
     Icon_LoadResourceIntoSlot(resourceId, slot);
     WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, x, y);
@@ -68,7 +68,7 @@ s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
 /// menu loaded.
 // The Broken Seal's Icon_CreateStatChangeArrow.
 s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
-                                 s32 variant) {
+                               s32 variant) {
   struct WindowSprite *object;
   u32 resource;
   s32 v = variant;
@@ -276,7 +276,7 @@ struct FigureMenuState {
   u8 unk50b[1];
 };
 
-s32 Func_080c82b8(s32 id);
+s32 Party_GetCharacterSpriteFar(s32 id);
 
 void Func_08104e38(s32 first, s32 second) {
   struct FigureMenuState *menu =
@@ -288,7 +288,7 @@ void Func_08104e38(s32 first, s32 second) {
   for (i = 0; i < 8; i++) {
     figure = menu->entryObjects[i];
     if (figure != NULL) {
-      ResourceObject_ReleaseFar(figure);
+      Sprite_DestroyFar(figure);
       menu->entryObjects[i] = NULL;
       menu->ids[i] = -1;
     }
@@ -299,7 +299,7 @@ void Func_08104e38(s32 first, s32 second) {
       id = second;
     if (id != -1) {
       menu->ids[i] = id;
-      figure = ResourceObject_CreateFar(Func_080c82b8(id));
+      figure = Sprite_CreateFar(Party_GetCharacterSpriteFar(id));
       if (figure != NULL) {
         Animation_ApplyChildArgumentFar(figure, 1);
         figure->image.priority = 0;
@@ -319,7 +319,7 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
   for (i = 0; i < 8; i++) {
     object = menu->objects[i];
     if (object != NULL) {
-      ResourceObject_ReleaseFar(object);
+      Sprite_DestroyFar(object);
       menu->objects[i] = NULL;
       menu->ids[i] = -1;
     }
@@ -327,7 +327,7 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
   menu->count = Party_ListMembersFar(owners);
   for (i = 0; i < 4 && owners[first + i] != 255; i++) {
     menu->ids[i] = owners[first + i];
-    object = ResourceObject_CreateFar(Func_080c82b8(owners[first + i]));
+    object = Sprite_CreateFar(Party_GetCharacterSpriteFar(owners[first + i]));
     if (object != NULL) {
       Animation_ApplyChildArgumentFar(object, 1);
       ((s8 *)object)[9] &= -13;
@@ -371,7 +371,7 @@ void Menu_ReleaseEntryObjects(void) {
     void *object = *objects++;
 
     if (object != NULL)
-      ResourceObject_ReleaseFar(object);
+      Sprite_DestroyFar(object);
   }
   Task_Remove(Menu_UpdateEntryObjectTransforms);
 }
@@ -443,21 +443,21 @@ struct MenuIconWork {
   u8 unkc13[1];
 };
 
-extern s32 gMenuIcon_ResourceIds[];
+extern s32 gDjinnFigures_SpriteIds[];
 
-void Func_081051a8(void) {
+void DjinnFigures_InitializeTopRow(void) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
   s8 *object;
   s32 i;
 
   for (i = 0; i < 4; i++) {
     if (menu->objects[i] != NULL) {
-      ResourceObject_ReleaseFar(menu->objects[i]);
+      Sprite_DestroyFar(menu->objects[i]);
       menu->objects[i] = NULL;
     }
   }
   for (i = 0; i < 4; i++) {
-    object = ResourceObject_CreateFar(gMenuIcon_ResourceIds[i]);
+    object = Sprite_CreateFar(gDjinnFigures_SpriteIds[i]);
     if (object != NULL) {
       Animation_ApplyChildArgumentFar(object, 2);
       object[9] &= -13;
@@ -472,13 +472,13 @@ void Func_081051a8(void) {
   Task_Add(MenuIcon_UpdateTransforms, TASK_PASS_VBLANK);
 }
 
-void MenuIcon_ReleaseObjects(void) {
+void DjinnFigures_ReleaseTopRow(void) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
   s32 i;
 
   for (i = 0; i < 4; i++) {
     if (menu->objects[i] != NULL) {
-      ResourceObject_ReleaseFar(menu->objects[i]);
+      Sprite_DestroyFar(menu->objects[i]);
       menu->objects[i] = NULL;
     }
   }
@@ -490,10 +490,10 @@ void MenuIcon_ReplaceObject(s32 index, s32 kind, s32 animation) {
   s8 *object;
 
   if (menu->objects[index] != NULL) {
-    ResourceObject_ReleaseFar(menu->objects[index]);
+    Sprite_DestroyFar(menu->objects[index]);
     menu->objects[index] = NULL;
   }
-  object = ResourceObject_CreateFar(gMenuIcon_ResourceIds[kind]);
+  object = Sprite_CreateFar(gDjinnFigures_SpriteIds[kind]);
   if (object != NULL) {
     Animation_ApplyChildArgumentFar(object, animation);
     object[9] &= -13;
@@ -517,7 +517,7 @@ void MenuIcon_SetPicture(s32 index, s32 frame) {
     menu->frame[index] = frame;
 }
 
-void Func_08105350(s32 index, s32 scale) {
+void DjinnFigures_SetSlotPhase(s32 index, s32 scale) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
 
   if (menu->objects[index] != NULL)
@@ -553,13 +553,13 @@ void Func_081053a8(void) {
   s32 offset = 0;
 
   for (i = 0; i < 5; i++) {
-    entry = Resource_FindFreeEntry();
+    entry = VramCache_FindFreeEntry();
     if (entry <= 95) {
       u32 *attributes;
 
       // As ids[i] the table and index combine into one walking pointer; the
       // byte offset kept apart is what matches.
-      Func_08038288(8, *(u16 *)(offset + (u32)ids), entry, 0);
+      Resource_LoadByModeIntoSlotFar(8, *(u16 *)(offset + (u32)ids), entry, 0);
       attributes = &slot->attributes;
       *attributes++ = 0x40000000;
       *attributes = 0;
@@ -581,7 +581,7 @@ void MenuIcon_ReleaseSlots(void) {
   Task_Remove(MenuIcon_PushSlots);
   resource = menu->resources;
   for (i = 4; i >= 0; i--)
-    Resource_ResetEntry(*resource++);
+    VramCache_FreeEntry(*resource++);
 }
 
 struct MenuSlotAttr {
@@ -594,9 +594,9 @@ struct MenuSlotAttr {
 void MenuIcon_SetSlot(s32 index, u32 x, s32 mode) {
   u8 *menu = Ram_HeapSlots->menuRuntime;
   /* FAKEMATCH(temporary): the offset as a local of its own, which adds the row
-   * and the field offset before the work pointer, as in the shop's ItemIconGrid_SetPosition;
-   * as a plain field address, (struct MenuSlotAttr *)(menu +
-   * 0xbd0) + index, 6 of 21 instructions differ in tla-en. */
+   * and the field offset before the work pointer, as in the shop's
+   * ItemIconGrid_SetPosition; as a plain field address, (struct MenuSlotAttr
+   * *)(menu + 0xbd0) + index, 6 of 21 instructions differ in tla-en. */
   s32 offset =
       index * sizeof(struct MenuSlotAttr) + 0xbd0; /* slots[index] + 4 */
   struct MenuSlotAttr *slot = (struct MenuSlotAttr *)(menu + offset);
@@ -627,8 +627,7 @@ void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled) {
   for (i = 0; i <= 4; i++) {
     if (enabled[i] != 0) {
       MenuIcon_SetSlot(i, icon_x, icon_y);
-      Text_DrawMessageAsTilesFar((s32)MsgStatusNameDown + i, panel, x + 16,
-                                    y);
+      Text_DrawMessageAsTilesFar((s32)MsgStatusNameDown + i, panel, x + 16, y);
       y += 16;
       icon_y += 16;
       count++;
@@ -640,7 +639,7 @@ void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled) {
     Text_DrawMessageAsTilesFar((s32)MsgStatusNameNormal, panel, x, y);
 }
 
-s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id) {
+s32 StatusScreen_BuildAvailability(u8 *output, s32 requested, s32 id) {
   struct BattleUnit *state;
   s32 i;
   s32 zero;

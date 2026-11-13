@@ -35,8 +35,8 @@ extern u8 gMapCellBuffer[];
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
-void Animation_SetStateFlags(struct Actor *object, u32 value);
+void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
+void Actor_SetBlendMode(struct Actor *object, u32 value);
 struct Actor *Actor_GetById(u32 objectId);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -45,9 +45,10 @@ void FieldEvent_Wait(s32 frames);
 void FieldMessage_Show(const u8 *message, s32 mode);
 void Func_02005d5c(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const u8 *data);
-void Map_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
+                                        s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void BattleParty_ApplyDrain(s32 a, s32 b);
+void Party_AddPp(s32 a, s32 b);
 void Sound_Play(s32 value);
 
 // The cell stampers keep their last cell and the block they copy.

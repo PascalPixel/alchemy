@@ -42,7 +42,7 @@ struct Box {
 
 #define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->eventWork)
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
 s32 Func_0200246c(s32 index, s32 value);
@@ -65,20 +65,19 @@ static inline void Func_02004c28_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
 
 static inline void Func_02004c30_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5) {
-  Func_0802b450(a0, a1, a2, a3, a4, a5);
+  MapGrid_CopyCellPictureCellsRect(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void Func_02004cd8_(s32 id, s32 x, s32 z) {
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
-static inline struct Actor *Func_02004bd8_(s32 kind, s32 x, s32 y,
-                                                   s32 z) {
+static inline struct Actor *Func_02004bd8_(s32 kind, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
 
 static inline void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
-  Camera_MoveWithinMapBounds(x, y, z, use_setter);
+  FieldCamera_MoveWithinMapBounds(x, y, z, use_setter);
 }
 
 #endif

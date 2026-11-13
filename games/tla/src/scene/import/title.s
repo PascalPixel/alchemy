@@ -18,18 +18,18 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Resource_DecodeType01
+	.global Decompress_TaggedLz
 	.thumb_func
-Resource_DecodeType01:
-	overlay_veneer Resource_DecodeType01Far
+Decompress_TaggedLz:
+	overlay_veneer Decompress_TaggedLzFar
 	.global VramCache_Load
 	.thumb_func
 VramCache_Load:
 	overlay_veneer VramCache_LoadFar
-	.global Resource_FindFreeEntry
+	.global VramCache_FindFreeEntry
 	.thumb_func
-Resource_FindFreeEntry:
-	overlay_veneer Resource_FindFreeEntryFar
+VramCache_FindFreeEntry:
+	overlay_veneer VramCache_FindFreeEntryFar
 	.global Func_020005ac
 	.thumb_func
 Func_020005ac:
@@ -42,22 +42,22 @@ Resource_GetTableEntry:
 	.thumb_func
 Resource_ReservedNoOp:
 	overlay_veneer Resource_ReservedNoOpFar
-	.global Fade_ToBlack
+	.global ScreenFade_ToBlack
 	.thumb_func
-Fade_ToBlack:
-	overlay_veneer Fade_ToBlackFar
-	.global Fade_Wait
+ScreenFade_ToBlack:
+	overlay_veneer ScreenFade_ToBlackFar
+	.global ScreenFade_Wait
 	.thumb_func
-Fade_Wait:
-	overlay_veneer Fade_WaitFar
+ScreenFade_Wait:
+	overlay_veneer ScreenFade_WaitFar
 	.global Func_020005d4
 	.thumb_func
 Func_020005d4:
-	overlay_veneer Func_080382f0
-	.global Func_0803f9c0
+	overlay_veneer Save_ScanFileSummariesFar
+	.global WindowColor_Apply
 	.thumb_func
-Func_0803f9c0:
-	overlay_veneer Func_08038348
+WindowColor_Apply:
+	overlay_veneer WindowColor_ApplyFar
 	.global Party_SetLeaderJenna
 	.thumb_func
 Party_SetLeaderJenna:
@@ -94,14 +94,14 @@ Func_0200061c:
 	.thumb_func
 Func_02000624:
 	overlay_veneer Resource_FarCall00B + 1
-	.global Title_ShowSplashScreen
+	.global Title_ShowNintendoLogo
 	.thumb_func
-Title_ShowSplashScreen:
-	overlay_veneer Func_081a6018
+Title_ShowNintendoLogo:
+	overlay_veneer Title_ShowNintendoLogoFar
 	.global Func_02000634
 	.thumb_func
 Func_02000634:
-	overlay_veneer Func_081a6020
+	overlay_veneer Title_ShowCamelotLogoFar
 	.global Func_0200063c
 	.thumb_func
 Func_0200063c:

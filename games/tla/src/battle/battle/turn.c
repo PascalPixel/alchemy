@@ -5,9 +5,10 @@
 
 #include "../battle_internal.h"
 #include "module/battle/battle.h"
+#include "gamepak/far_call/window.h"
 #include "module/battle/presentation.h"
 
-void Camera_ConfigureScene(s32 pos) {
+void BattleCamera_SetCommandView(s32 pos) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
   struct BattlePresentationTransition *secondary =
       Ram_HeapSlots->transitionWork;
@@ -25,10 +26,10 @@ void Camera_ConfigureScene(s32 pos) {
   state->distance = 0x02ee0000;
   state->unk18 = 0;
 
-  Render_ResetTransformState();
+  Transform_Reset();
   SceneTransform_ApplyPosition(&state->pos[0]);
-  SceneTransform_ApplyYaw((s16)state->yaw);
-  SceneTransform_ApplyPitch((s16)state->pitch);
+  Transform_ApplyYaw((s16)state->yaw);
+  Transform_ApplyPitch((s16)state->pitch);
 
   local.x = 0;
   local.y = 0;
@@ -63,7 +64,7 @@ void BattleUnit_ResetGuardLevels(void) {
   }
 }
 
-s32 BattleEscape_CheckSuccess(void) {
+s32 BattleFlee_CheckSuccess(void) {
   s32 escaped;
   s16 livingUnits[14];
   s32 livingCount;
@@ -104,7 +105,7 @@ s32 BattleEscape_CheckSuccess(void) {
 
 s32 Battle_BuildUnitActions(struct BattleActionRecord *entries) {
   void *buffer = Heap_AllocEwram(17);
-  s32 count = Func_080381c0(entries, buffer, 0);
+  s32 count = Battle_CollectPartyCommandsFar(entries, buffer, 0);
   s32 result = -1;
 
   if (count >= 0)
@@ -202,7 +203,7 @@ static inline void BattleAction_Swap(struct BattleActionRecord *a,
 
   // The swap as an inline takes the temporary's address afresh at each copy;
   // written in the sort's loop, 44 of 110 instructions of
-  // BattleQueue_SortByPriority differ in tla-en.
+  // BattleActionOrder_Sort differ in tla-en.
   Iwram_CopyWordsEntry(&temporary, a, sizeof(struct BattleActionRecord));
   Iwram_CopyWordsEntry(a, b, sizeof(struct BattleActionRecord));
   Iwram_CopyWordsEntry(b, &temporary, sizeof(struct BattleActionRecord));
@@ -210,7 +211,7 @@ static inline void BattleAction_Swap(struct BattleActionRecord *a,
 
 /// Sorts the actions by descending priority, after raising the priority of
 /// the Djinn with effects 46, 47, 53, 72, 74, 76, 79 and 88 by 10000.
-void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
+void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
   s32 i;
   s32 j;
   s32 swapped;
@@ -390,7 +391,7 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
   }
 
 fail:
-  BattleLink_ResetTransferState();
+  LinkBattle_ResetTransferState();
   Serial_RemoveIrqHandlers();
   Heap_Release(state);
   return -1;
@@ -475,7 +476,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
   // Flag set while commands are being selected.
   GameFlag_SetBit(363);
   mode = &work->encounterMode;
-  Camera_ConfigureScene(0);
+  BattleCamera_SetCommandView(0);
   BattleMessage_CloseFar();
 
   // Ally commands (unavailable when enemies strike first).
@@ -484,7 +485,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
     if (cnt < 0)
       goto finish;
     // A failed escape gives enemies the same advantage as striking first.
-    if (cnt != 0 && acts[0].command == 99 && BattleEscape_CheckSuccess() == 0)
+    if (cnt != 0 && acts[0].command == 99 && BattleFlee_CheckSuccess() == 0)
       *mode = 2;
   } else {
     cnt = 0;
@@ -507,7 +508,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
   }
 
   // Sort by priority and set guards for Defend (3 and 7) first.
-  BattleQueue_SortByPriority(acts, cnt);
+  BattleActionOrder_Sort(acts, cnt);
   if (cnt > 0) {
     struct BattleActionRecord *act = acts;
 
@@ -531,7 +532,7 @@ finish:
 
 /// Returns the unit ID at a formation position.
 /// slot: low 4 bits are the position; 0x80 selects the enemy formation.
-s16 Battle_GetTaggedSlotValue(s32 slot) {
+s16 Battle_GetUnitAtPlace(s32 slot) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
 
   if ((slot & 0x80) != 0)
@@ -542,7 +543,7 @@ s16 Battle_GetTaggedSlotValue(s32 slot) {
 /// Returns a unit's formation position, or -1 if absent.
 /// Allies use 0x100 | position; enemies use 0x180 | position.
 /// id: unit ID (0-7 allies, all others enemies).
-s32 Battle_FindTaggedSlotByValue(u32 id) {
+s32 Battle_FindUnitPlace(u32 id) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   s32 i;
   s16 unit;

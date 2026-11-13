@@ -68,7 +68,7 @@ void Func_02000328(void) {
   wait(40);
   Contigo_StopPaletteCycle();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
-  BattleEffect_StartBufferInterpolation(16);
+  PaletteFade_StartInterpolation(16);
   wait(16);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;

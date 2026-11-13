@@ -9,7 +9,7 @@
 #define EDITOR_MAP ((u16 *)0x0600205a)
 #define HEX_DIGIT 0xf0e0
 
-void Debug_RunPaletteEditor(void) {
+void PaletteEditor_Run(void) {
   s32 palette = 0;
   s32 channel = 1;
   s32 color = 1;
@@ -23,7 +23,7 @@ void Debug_RunPaletteEditor(void) {
   u32 blue;
   u32 i;
 
-  Resource_DecompressHalfwords(gDebug_PaletteSwatchTiles, (void *)0x06001a00);
+  Decompress_Halfwords(gDebug_PaletteSwatchTiles, (void *)0x06001a00);
 redraw:
   tile = (palette << 12) + 0xd1;
   colors = &PALETTE[palette * 16 + 1];

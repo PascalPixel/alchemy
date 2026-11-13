@@ -64,7 +64,7 @@ void Func_020000b8(s32 actor) {
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(20);
     Actor_WatchAndSetScript(actor, gMainRoutineWork.currentOwner);
-    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 760, 320);
+    Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 760, 320);
     Actor_FaceDirection(14, 0x5000, 0);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
     Event_Wait(10);
@@ -100,7 +100,7 @@ void Func_0200019c(void) {
   Event_SetMessageId((s32)&MsgAlhafraManor18);
   if (*(s16 *)((u8 *)work + 0x166) != 0)
     Actor_ShowEmote(18, 256, 60);
-  Actor_SetAngleToward(18, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(18, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmote(18, 263, 20);
   Event_ShowMessageThenWait(18, 0, 10);
   Motion_SetVarCbAndRefresh(18, 2);
@@ -121,7 +121,7 @@ void Func_02000238(void) {
   if (*(s16 *)((u8 *)work + 0x166) != 0)
     Actor_ShowEmote(8, 256, 30);
   Actor_WatchAndSetScript(8, gMainRoutineWork.currentOwner);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 304, 152);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 304, 152);
   Actor_ArmCallback(8, FACING_EAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Event_Wait(10);
@@ -151,7 +151,7 @@ void Func_02000370(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   if (*(s16 *)((u8 *)work + 0x166) != 0) {
-    Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
     Event_Wait(10);
   }
   GameFlag_SetBit(0x8bc);
@@ -168,7 +168,7 @@ void Func_02000370(void) {
   Actor_ArmCallback(9, 0xd000, 0);
   Event_Wait(30);
   Event_ShowMessageThenWait(9, 0, 10);
-  Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(9, 0, 10);
   Actor_ShowEmote(9, 258, 40);
@@ -228,7 +228,7 @@ s32 Scene_Initialize(void) {
     Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
   }
   if (gMainRoutineWork.entrance == 99) {
-    Camera_MoveWithinMapBounds(152 << 17, cameraY, cameraZ, 0);
+    FieldCamera_MoveWithinMapBounds(152 << 17, cameraY, cameraZ, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -239,7 +239,7 @@ s32 Scene_Initialize(void) {
        * literal, 2 of 128 instructions differ in tla-en. */
       register s32 mode asm("r3") = 1;
 
-      Camera_MoveWithinMapBounds(144 << 16, cameraY, cameraZ, mode);
+      FieldCamera_MoveWithinMapBounds(144 << 16, cameraY, cameraZ, mode);
     }
     goto check;
     do {
@@ -265,8 +265,8 @@ void Func_020015f0(void);
     Actor_SetModeById((id), 2);                                                \
     leader_ = Actor_GetById(gMainRoutineWork.currentOwner);                    \
     if (leader_ != 0)                                                          \
-      Actor_ResetAndSetPosition((id), ((s16 *)&leader_->x)[1],                 \
-                                ((s16 *)&leader_->z)[1]);                      \
+      Actor_SetDestinationById((id), ((s16 *)&leader_->x)[1],                  \
+                               ((s16 *)&leader_->z)[1]);                       \
     Actor_WaitForMoveById((id));                                               \
     Actor_SetHorizontalPositionWithTerrain((id), 0, 0);                        \
   }
@@ -335,7 +335,7 @@ void Func_02000658(void) {
   Event_Wait(40);
   EVENT_WORD(0x1ac) = 0x100;
   PaletteFade_ApplyTarget(0x10002, 0);
-  BattleEffect_StartBufferInterpolation(40);
+  PaletteFade_StartInterpolation(40);
   Event_WaitTransitionFrames();
   Motion_SetModeAndWaitAnimation(9, 3);
   Event_Wait(20);
@@ -370,30 +370,30 @@ void Func_02000658(void) {
   Event_Wait(60);
   Motion_SetModeAndWaitAnimation(9, 3);
   Event_Wait(30);
-  Func_080d47b4(9, 260, 50);
+  Actor_ShowEmoteById(9, 260, 50);
   Motion_SetModeAndWaitAnimation(5, 4);
   Event_Wait(20);
   Actor_ShowEmote(6, 263, 60);
   Actor_Jump(4, 6, 15);
   Actor_Jump(4, 6, 23);
   Event_Wait(15);
-  Func_080d47b4(9, 265, 70);
+  Actor_ShowEmoteById(9, 265, 70);
   Sound_Play(78);
   BattleEffect_ApplyColorToSourceBuffer(0x10002, 0);
   BattleEffect_ApplyColorToTargetBuffer(0, 0);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   Event_WaitTransitionFrames();
   Event_Wait(60);
   PaletteFade_ApplyTarget(0x10000, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   Actor_SetSpeed(9, 0xcccc, 0x6666);
   Actor_SetSpeed(8, 0xcccc, 0x6666);
   Actor_SetSpeed(11, 0x19999, 0xcccc);
   Actor_SetSpeed(12, 0x19999, 0xcccc);
-  Actor_CommitPositionAndActivate(9, 16, 0);
+  Actor_WalkByAndWaitById(9, 16, 0);
   Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
   Event_Wait(20);
   Actor_ShowEmote(9, 259, 30);
@@ -428,27 +428,27 @@ void Func_02000658(void) {
   Actor_ShowEmote(11, 259, 30);
   Event_ShowMessageThenWait(11, 0, 10);
   Sound_Play(49);
-  Func_080d47b4(13, 0x100, 0);
-  Func_080d47b4(4, 0x100, 0);
-  Func_080d47b4(7, 0x100, 0);
-  Func_080d47b4(5, 0x100, 0);
-  Func_080d47b4(6, 0x100, 0);
-  Func_080d47b4(8, 0x100, 0);
-  Func_080d47b4(9, 0x100, 60);
+  Actor_ShowEmoteById(13, 0x100, 0);
+  Actor_ShowEmoteById(4, 0x100, 0);
+  Actor_ShowEmoteById(7, 0x100, 0);
+  Actor_ShowEmoteById(5, 0x100, 0);
+  Actor_ShowEmoteById(6, 0x100, 0);
+  Actor_ShowEmoteById(8, 0x100, 0);
+  Actor_ShowEmoteById(9, 0x100, 60);
   Actor_ShowEmote(9, 258, 30);
   Event_ShowMessageThenWait(9, 0, 10);
   Motion_SetModeAndWaitAnimation(11, 4);
   Event_ShowMessageThenWait(11, 0, 10);
   Actor_ShowEmote(8, 263, 30);
   Event_ShowMessageThenWait(8, 0, 10);
-  Func_080d47b4(11, 258, 50);
+  Actor_ShowEmoteById(11, 258, 50);
   Actor_ArmCallback(11, FACING_EAST, 0);
   Event_Wait(10);
   Event_ShowMessageThenWait(11, 0, 20);
   Actor_SetPosition(12, PIXELS(344), PIXELS(176));
   Actor_WalkByAndWait(12, 0, -16);
   Event_Wait(10);
-  Func_080d47b4(12, 264, 30);
+  Actor_ShowEmoteById(12, 264, 30);
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
@@ -458,7 +458,7 @@ void Func_02000658(void) {
   Actor_ShowEmote(5, 261, 0);
   Actor_ShowEmote(6, 261, 0);
   Actor_ShowEmote(8, 261, 0);
-  Func_080d47b4(9, 261, 60);
+  Actor_ShowEmoteById(9, 261, 60);
   Actor_FaceDirection(12, 0xb000, 0);
   Event_Wait(30);
   Actor_FaceDirection(12, 0xd000, 0);
@@ -467,17 +467,17 @@ void Func_02000658(void) {
   Event_Wait(30);
   Actor_FaceDirection(12, 0xd000, 0);
   Event_Wait(30);
-  Func_080d47b4(12, 257, 30);
+  Actor_ShowEmoteById(12, 257, 30);
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_FaceDirection(11, 0x5000, 0);
   Event_Wait(30);
-  Func_080d47b4(12, 0x100, 50);
+  Actor_ShowEmoteById(12, 0x100, 50);
   Actor_WalkByAndWait(12, 0, -8);
   Event_Wait(10);
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_ShowEmote(9, 259, 30);
   Event_ShowMessageThenWait(9, 0, 10);
-  Func_080d47b4(12, 0x100, 40);
+  Actor_ShowEmoteById(12, 0x100, 40);
   Event_ShowMessageThenWait(12, 0, 10);
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(8, 2);
@@ -499,13 +499,13 @@ void Func_02000658(void) {
   Event_Wait(30);
   Motion_SetModeAndWaitAnimation(12, 3);
   Event_Wait(30);
-  Func_080d47b4(8, 259, 30);
+  Actor_ShowEmoteById(8, 259, 30);
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_Jump(12, 6, 0);
   Actor_Jump(11, 6, 25);
-  Actor_OffsetPositionAndReset(12, 0, 24);
+  Actor_WalkByById(12, 0, 24);
   Actor_WalkByAndWait(11, -16, 16);
-  Actor_OffsetPositionAndReset(11, 0, 24);
+  Actor_WalkByById(11, 0, 24);
   Actor_WaitForMoveById(12);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
   Actor_WaitForMoveById(11);
@@ -527,8 +527,8 @@ void Func_02000658(void) {
   Actor_WatchAndSetScript(7, 9);
   Actor_WatchAndSetScript(5, 9);
   Actor_WatchAndSetScript(6, 9);
-  Actor_CommitPositionAndActivate(9, 16, 0);
-  Actor_CommitPositionAndActivate(9, 0, 50);
+  Actor_WalkByAndWaitById(9, 16, 0);
+  Actor_WalkByAndWaitById(9, 0, 50);
   Actor_WalkByAndWait(9, -32, 4);
   Event_Wait(20);
   Actor_Stop(4);
@@ -536,7 +536,7 @@ void Func_02000658(void) {
   Actor_Stop(7);
   Actor_Stop(5);
   Actor_Stop(6);
-  Func_080d47b4(9, 262, 30);
+  Actor_ShowEmoteById(9, 262, 30);
   FieldEvent_ShowMessageThenWait(0x2009, 0, 10);
   Actor_ArmCallback(9, 0xb000, 0);
   Event_Wait(20);
@@ -547,7 +547,7 @@ void Func_02000658(void) {
   Actor_FaceDirection(7, FACING_NORTHEAST, 0);
   Actor_FaceDirection(13, 0x5000, 0);
   Event_Wait(50);
-  Func_080d47b4(9, 263, 30);
+  Actor_ShowEmoteById(9, 263, 30);
   FieldEvent_ShowMessageThenWait(0x2009, 0, 10);
   Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
@@ -558,7 +558,7 @@ void Func_02000658(void) {
   Motion_SetVarCbAndRefresh(9, 2);
   Event_Wait(10);
   Event_ShowMessageThenWait(0x2009, 0, 10);
-  Actor_CommitPositionAndActivate(8, -32, 0);
+  Actor_WalkByAndWaitById(8, -32, 0);
   Event_Wait(10);
   Actor_Jump(8, 6, 15);
   Actor_Jump(8, 6, 23);
@@ -571,18 +571,18 @@ void Func_02000658(void) {
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_Wait(20);
-  Actor_OffsetPositionAndReset(9, 0, 24);
+  Actor_WalkByById(9, 0, 24);
   Actor_WalkByAndWait(8, -16, 16);
-  Actor_OffsetPositionAndReset(8, 0, 24);
+  Actor_WalkByById(8, 0, 24);
   Actor_WaitForMoveById(9);
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Actor_WaitForMoveById(8);
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
   Event_Wait(30);
-  Party_PlaySavedMusic();
-  Func_080d47b4(7, 265, 30);
+  Scene_PlayMusic();
+  Actor_ShowEmoteById(7, 265, 30);
   Event_ShowMessageThenWait(7, 0, 10);
-  Func_080d47b4(6, 263, 30);
+  Actor_ShowEmoteById(6, 263, 30);
   Event_ShowMessageThenWait(6, 0, 10);
   Actor_ArmCallback(5, FACING_NORTH, 0);
   Event_Wait(20);
@@ -611,7 +611,7 @@ void Func_02000658(void) {
   Actor_FaceDirection(7, FACING_NORTHEAST, 0);
   Actor_ArmCallback(4, FACING_NORTH, 0);
   Event_Wait(30);
-  Func_080d47b4(13, 264, 30);
+  Actor_ShowEmoteById(13, 264, 30);
   FieldEvent_ShowMessageThenWait(0x200d, 0, 10);
   Motion_SetModeAndWaitAnimation(13, 3);
   Event_Wait(10);
@@ -625,7 +625,7 @@ void Func_02000658(void) {
   WALK_TO_LEADER(5);
   WALK_TO_LEADER(6);
   WALK_TO_LEADER(13);
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Event_End();
   EVENT_WORD(0x1b4) = 16;
   EVENT_WORD(0x1ac) = 521;

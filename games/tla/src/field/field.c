@@ -44,7 +44,7 @@ struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 id) {
 /// 0: read two bytes, high then low; zero terminates.
 /// Low 12 bits give distance; high 4 bits + 2 give length, or the next byte +
 /// 18 if those 4 bits are zero. Copy from that distance behind source + 2.
-u8 *Resource_DecompressLz(const u8 *source, u8 *destination) {
+u8 *Decompress_Lz(const u8 *source, u8 *destination) {
   s32 token;
   u32 length;
   u32 sentinel;
@@ -197,7 +197,7 @@ struct LayeredSprite {
   struct AnimationEntry *entries[4];
 };
 
-s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
+s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
   s32 mirrored;
   u32 size;
   struct ObjectSystemColours *system;
@@ -245,7 +245,7 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
       arg = layer->script[layer->pos++];
       switch (picture) {
       case 254:
-        Animation_SetWorkEntry(layer, arg);
+        SpriteAnimation_Start(layer, arg);
         obj->lastNo = arg;
         break;
       case 253:
@@ -297,20 +297,20 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
   select_direction:
     switch (layer->kind) {
     case 1:
-      facing = gData_0802eac4[(dir >> 13) & 7];
+      facing = gAnimationFacing_OnePicture[(dir >> 13) & 7];
       break;
     case 2:
     case 20:
-      facing = gData_0802eadc[(dir >> 13) & 7];
+      facing = gAnimationFacing_FrontBack[(dir >> 13) & 7];
       break;
     case 22:
-      facing = gData_0802ead4[(dir >> 13) & 7];
+      facing = gAnimationFacing_FrontBackSwapped[(dir >> 13) & 7];
       break;
     case 3:
-      facing = gData_0802eae4[(dir >> 12) & 15];
+      facing = gAnimationFacing_ThreePictures[(dir >> 12) & 15];
       break;
     case 5:
-      facing = gData_0802eb04[(dir >> 10) & 63];
+      facing = gAnimationFacing_SixPictures[(dir >> 10) & 63];
       break;
     case 8:
       facing = gData_0802eb44[((dir + 0x1000) >> 13) & 7];
@@ -329,7 +329,7 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
   }
 
   if (obj->flags & 0x20) {
-    if (gData_0802eadc[(dir >> 13) & 7] & 0x80)
+    if (gAnimationFacing_FrontBack[(dir >> 13) & 7] & 0x80)
       mirrored = 1;
   } else if (obj->dirty != 0) {
     size = obj->width * obj->height;
@@ -371,13 +371,13 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
     for (i = 0; i < drawCount; i++) {
       layer = obj->entries[*(u8 *)&drawOrder[i]];
       if (layer->mode == 1) {
-        Resource_DecodeType01(layer->pictures[layer->picture], pixels);
+        Decompress_TaggedLz(layer->pictures[layer->picture], pixels);
       } else if (layer->mode == 3) {
         if (layer->param != 0) {
           unpacked = Heap_Alloc(0x400);
           decodePicture(
-              Resource_DecompressLz(layer->pictures[layer->picture], unpacked),
-              pixels, layer->param);
+              Decompress_Lz(layer->pictures[layer->picture], unpacked), pixels,
+              layer->param);
           Heap_Release(unpacked);
         } else {
           decoded = Iwram_Decompress(layer->pictures[layer->picture], pixels);
@@ -391,11 +391,12 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
 
     if (obj->flags & 14) {
       if (obj->flags & 2) {
-        u32 codeSize = (u32)Data_08021824Size;
+        u32 codeSize = (u32)Grid_DrawOutlineCodeSize;
         OutlineFn outline = Heap_Alloc(codeSize);
         u32 outlineHeight;
 
-        Dma_Set(Data_08021824, outline, 0x84000000 | (codeSize >> 2), REG_DMA3);
+        Dma_Set(Grid_DrawOutlineCode, outline, 0x84000000 | (codeSize >> 2),
+                REG_DMA3);
         {
           /* FAKEMATCH(temporary): the width read into a local before the
            * asm below; as obj->width in the call, 2 of 578 instructions
@@ -479,8 +480,9 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
     heightCopy;                                                                \
   })
 
-void Func_08022010(struct LayeredSprite *sprite, s32 screenX, s32 height,
-                   s32 screenY, s32 groundHeight, s32 *scale) {
+void Render_PlaceSpritePartPair(struct LayeredSprite *sprite, s32 screenX,
+                                s32 height, s32 screenY, s32 groundHeight,
+                                s32 *scale) {
   u32 halfWidth = sprite->width >> 1;
   u32 halfHeight = HEIGHT_COPY(sprite) >> 1;
   s32 marginX = 8;
@@ -554,7 +556,7 @@ void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
   py = *pos++;
   pz = *pos++;
   pw = *pos;
-  flip = Func_08021a84(object, mode);
+  flip = Sprite_ComposePicture(object, mode);
   if (flip == 0 && scaleX == 0x10000 && scaleY == scaleX &&
       object->rotation == 0) {
     affine = 0;
@@ -566,7 +568,7 @@ void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
     effect.scaleY = scaleY >> 8;
     if (flip != 0)
       effect.scaleX = -effect.scaleX;
-    matrix = AffineMatrix_BuildForEffect(&effect);
+    matrix = OamMatrix_AllocFromTransform(&effect);
   }
   if (scaleX > 0x10000 || scaleY > 0x10000) {
     affine = 3;
@@ -581,7 +583,7 @@ void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
     part->affine = 0;
     part->x = (px >> 16) - 8;
     part->y = y;
-    Func_080140d8(part, ((pz + pw) >> 16) + 60);
+    Oam_AddSpriteAtDepthClamped(part, ((pz + pw) >> 16) + 60);
   }
 
   if (scaleX == 0 || scaleY == 0)
@@ -608,7 +610,7 @@ void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
     part->y = y;
     part->affine = affine;
     part->affineIndex = matrix;
-    Func_080140d8(part, ((py + pz) >> 16) + 62);
+    Oam_AddSpriteAtDepthClamped(part, ((py + pz) >> 16) + 62);
   }
 }
 
@@ -654,7 +656,7 @@ void Func_08022318(struct LayeredSprite *object, s32 *pos, s32 *scale, s32 mode,
   py = *pos++;
   pz = *pos++;
   pw = *pos;
-  flip = Func_08021a84(object, mode);
+  flip = Sprite_ComposePicture(object, mode);
   if (flip == 0 && scaleX == 0x10000 && scaleY == scaleX &&
       object->rotation == 0) {
     affine = 0;
@@ -666,7 +668,7 @@ void Func_08022318(struct LayeredSprite *object, s32 *pos, s32 *scale, s32 mode,
     effect.scaleY = scaleY >> 8;
     if (flip != 0)
       effect.scaleX = -effect.scaleX;
-    matrix = AffineMatrix_BuildForEffect(&effect);
+    matrix = OamMatrix_AllocFromTransform(&effect);
   }
   if (scaleX > 0x10000 || scaleY > 0x10000) {
     affine = 3;
@@ -744,7 +746,7 @@ void Func_0802254c(struct LayeredSprite *sprite, s32 *point, s32 *scale,
       if (sprite->useOwnScale)
         z = 0x10000;
       z = Iwram_MulQ16(z, sprite->scale);
-      flip = Func_08021a84(sprite, facing);
+      flip = Sprite_ComposePicture(sprite, facing);
       z >>= 10;
       rounded = ((z + 1) >> 1) << 11;
       scaleX = Iwram_MulQ16(rounded, scale[0]);
@@ -784,9 +786,9 @@ void Func_0802254c(struct LayeredSprite *sprite, s32 *point, s32 *scale,
 
           if (slot <= 0)
             slot = 1;
-          Func_080140d8(sprite, slot);
+          Oam_AddSpriteAtDepthClamped(sprite, slot);
         } else {
-          Func_080140d8(sprite, depth);
+          Oam_AddSpriteAtDepthClamped(sprite, depth);
         }
       }
       if (sprite->flags & 1) {
@@ -805,9 +807,9 @@ void Func_0802254c(struct LayeredSprite *sprite, s32 *point, s32 *scale,
         shadow->affine = affine;
         shadow->affineIndex = matrix;
         if (depth == 0)
-          Func_080140d8(shadow, 0);
+          Oam_AddSpriteAtDepthClamped(shadow, 0);
         else
-          Func_080140d8(shadow, depth);
+          Oam_AddSpriteAtDepthClamped(shadow, depth);
       }
       return;
     }

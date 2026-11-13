@@ -114,8 +114,8 @@ struct EventWork1ac {
   s32 value;
 };
 
-void Map_EnableUpdateCallback(void);
-void Map_DisableUpdateCallback(void);
+void TilesetAnim_SuspendAll(void);
+void TilesetAnim_ResumeAll(void);
 void JupiterLighthouse_LoadPalettes(s32 mode);
 
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
@@ -126,11 +126,11 @@ void Func_020001d8(struct Actor *object) {
   if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
       *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
     Actor_SetAnimationSpeed(object, 0);
-    Map_EnableUpdateCallback();
+    TilesetAnim_SuspendAll();
     return;
   }
   Actor_SetAnimationSpeed(object, 16);
-  Map_DisableUpdateCallback();
+  TilesetAnim_ResumeAll();
   if (OBJECT_BYTE(object, 99) != 0) {
     if ((gFrameCount & 7) == 0)
       OBJECT_BYTE(object, 99)--;
@@ -167,9 +167,9 @@ void Func_02000298(void) {
     object->update = (void (*)(void))Func_020001d8;
     OBJECT_BYTE(object, 99) = i << 3;
     Actor_SetSingleChildFlags(object, 0);
-    Actor_SetSpriteColor(object, 2);
+    FieldActor_SetSpriteColor(object, 2);
     ((struct FieldSprite *)object->sprite)->priority = 1;
-    Animation_SetStateFlags(object, 1);
+    Actor_SetBlendMode(object, 1);
     action = &object->timer;
     timer = (s16 *)&object->unk66;
     next = i + 1;

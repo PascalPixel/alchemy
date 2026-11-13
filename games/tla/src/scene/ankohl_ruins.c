@@ -50,7 +50,7 @@ void Func_02000384(void) {
   FieldEvent_SetExitRequest(13);
 }
 
-// Includes the shared Effect_AdvanceMotion in this scene.
+// Includes the shared FieldEffect_AdvanceMotion in this scene.
 // Neither it nor its caller Func_02000418 exists in the Japanese scene.
 #if TLA_PATCH_1
 #include "../field/field_effect/advance_motion.c"
@@ -98,7 +98,7 @@ void Func_02000418(void) {
   leader->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
-  options.update = Effect_AdvanceMotion;
+  options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
   options.startScaleY = 0xa3d7;
   i = 0;
@@ -120,7 +120,7 @@ loop:
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
@@ -560,7 +560,7 @@ void Func_020011c0(void) {
     Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, zero, 8);
   }
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Func_080d47b4(gMainRoutineWork.currentOwner, 256, 0);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 256, 0);
   FieldEvent_Wait(10);
   AnkohlRuins_CamBounds(-1, -1, -1, 0);
   Event_PlaySound(204);
@@ -684,7 +684,7 @@ fill:
   if (i >= 0)
     goto fill;
   // Spelled through a pointer: a member store shares its zero mask.
-  *(s16 *)&work->tile = Resource_FindFreeEntry();
+  *(s16 *)&work->tile = VramCache_FindFreeEntry();
   Vram_Load(work->tile, 128, tiles);
   Heap_Release(tiles);
   work->unk08 = ((s32 *)layer->unk08)[0];
@@ -1066,7 +1066,7 @@ void Func_020020fc(void) {
       FieldCamera_WaitForArrival();
       Task_AddFrame(Func_02001f7c, TASK_PASS_VBLANK);
       FieldEvent_Wait(40);
-      FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+      EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
       FieldCamera_WaitForArrival();
       MapGrid_CopyCellAttributes(13, 30, 3, 2, 13, z);
       AnkohlRuins_Call2dfc(14, 87, 1, 1, 14, 88);

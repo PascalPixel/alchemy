@@ -2,7 +2,7 @@
 #define ALCHEMY_FAR_CALL_LUCKY_DICE_H
 
 /// @file
-/// What games/tla/src/system/ declares for the files that use it, written once.
+/// The far calls into the lucky dice bank, as the other banks' code calls them.
 
 #include "types.h"
 

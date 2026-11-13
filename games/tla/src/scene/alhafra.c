@@ -53,7 +53,7 @@ void Alhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(158);
-  Map_PlayMapEdit(step->script, step->x, step->z);
+  MapGrid_PlayMapEdit(step->script, step->x, step->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
@@ -217,7 +217,7 @@ void Func_02000288(void) {
   FieldEvent_ShowMessageThenWait(0x18, 0, 0xa);
   Actor_ArmCallback(19, -256, 0);
   Event_Wait(10);
-  Func_080d47b4(0x13, 0x107, 0x1e);
+  Actor_ShowEmoteById(0x13, 0x107, 0x1e);
   FieldEvent_ShowMessageThenWait(0x13, 0, 0xa);
   FieldActor_StartRepeatedMotion(24, 3);
   FieldEffect_SetAttached(0x18, 0x102);
@@ -241,7 +241,7 @@ void Func_020002f8(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra69);
   Event_Wait(10);
-  Actor_SetAngleToward(27, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(27, gMainRoutineWork.currentOwner, 0);
   Event_Wait(10);
   Event_ShowMessageThenWait(0x1b, 0, 0xa);
   Event_ShowMessageThenWait(-1, 0, 0xa);
@@ -305,7 +305,7 @@ void Func_0200047c(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra74);
-  Camera_MoveWithinMapBounds(0x2300000, -1, 0x1f00000, 1);
+  FieldCamera_MoveWithinMapBounds(0x2300000, -1, 0x1f00000, 1);
   Func_02001ccc__alhafra();
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(29, 2);
@@ -317,7 +317,7 @@ void Func_0200047c(void) {
   Actor_SetModeById(29, 5);
   Sound_Play(0x59);
   gMainRoutineWork.currentOwner = 0x1d;
-  BattleEffect_StartEffectObject22(0, 3);
+  ItemDisplay_ShowItem(0, 3);
   gMainRoutineWork.currentOwner = 4;
   Event_Wait(50);
   FieldActor_Jump(28, 6, 15);
@@ -327,9 +327,9 @@ void Func_0200047c(void) {
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(29, 3);
   Event_Wait(20);
-  Func_080d47b4(0x1e, 0x108, 0x1e);
+  Actor_ShowEmoteById(0x1e, 0x108, 0x1e);
   FieldEvent_ShowMessageThenWait(0x1e, 0, 0xa);
-  Func_080d47b4(0x1d, 0x102, 0x28);
+  Actor_ShowEmoteById(0x1d, 0x102, 0x28);
   Actor_FaceDirection(29, 0x4000, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(29, 2);
@@ -354,7 +354,7 @@ void Func_0200047c(void) {
   Actor_SetAnimation(30, 6);
   Actor_FaceDirection(29, 0x4000, 0);
   Actor_FaceDirection(28, 0xc000, 0);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02001ccc__alhafra();
   Event_End();
 }
@@ -671,7 +671,7 @@ void Func_02000aa0(s32 a0) {
      * call with constant arguments, 37 of 1456 instructions differ in tla-en.
      */
     __asm__ volatile("" : "+l"(y), "+l"(z));
-    Func_080d47b4(0x21, y, z);
+    Actor_ShowEmoteById(0x21, y, z);
   }
   Actor_FaceDirection(33, 0x3000, 0);
   Event_Wait(40);
@@ -706,7 +706,7 @@ void Func_02000aa0(s32 a0) {
   Motion_SetVarCbAndRefresh(34, 2);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(0x22, 0, 0xa);
-  Actor_CommitPositionAndActivate(34, 0, -16);
+  Actor_WalkByAndWaitById(34, 0, -16);
   Event_Wait(1);
   Actor_SetModeById(34, 5);
   Event_Wait(60);
@@ -741,7 +741,7 @@ void Func_02000aa0(s32 a0) {
   Actor_SetMovementTypeById(29, (s32)gData_020033a0);
   Event_Wait(20);
   Actor_WalkByAndWait(30, 0, -32);
-  Actor_CommitPositionAndActivate(30, -32, 0);
+  Actor_WalkByAndWaitById(30, -32, 0);
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(30, 2);
   Event_Wait(10);
@@ -796,11 +796,11 @@ void Func_02000aa0(s32 a0) {
   FieldEvent_ShowMessageThenWait(0x20, 0, 0xa);
   Actor_SetModeById(29, 1);
   Event_Wait(10);
-  Func_080d47b4(0x1d, 0x107, 0x1e);
+  Actor_ShowEmoteById(0x1d, 0x107, 0x1e);
   Actor_FaceDirection(29, 0x8000, 0);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
-  FieldCamera_FollowActor(29, 1);
+  EventCamera_FollowActor(29, 1);
   Func_02001ccc__alhafra();
   Actor_WalkToAndWait(29, 488, 808);
   Actor_FaceDirection(31, 0, 0);
@@ -839,7 +839,7 @@ void Func_02000aa0(s32 a0) {
   Actor_ArmCallback(29, 0, 0);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(0x201d, 0, 0xa);
-  Func_080d47b4(0x22, 0x100, 0x28);
+  Actor_ShowEmoteById(0x22, 0x100, 0x28);
   FieldEvent_ShowMessageThenWait(0x22, 0, 0xa);
   Actor_FaceDirection(29, 0x8000, 0);
   Event_Wait(20);
@@ -872,10 +872,10 @@ void Func_02000aa0(s32 a0) {
   Actor_WalkToAndWait(17, 448, 808);
   Actor_WalkByAndWait(30, 8, 0);
   FieldEvent_ShowMessageThenWait(0x101e, 0, 0xa);
-  Func_080d47b4(0x11, 0x101, 0x32);
+  Actor_ShowEmoteById(0x11, 0x101, 0x32);
   Actor_FaceDirection(17, 0x8000, 0);
   Event_Wait(20);
-  Func_080d47b4(0x1e, 0x108, 0x1e);
+  Actor_ShowEmoteById(0x1e, 0x108, 0x1e);
   FieldEvent_ShowMessageThenWait(0x101e, 0, 0xa);
   Motion_SetVarCbAndRefresh(17, 2);
   Event_Wait(10);
@@ -891,7 +891,7 @@ void Func_02000aa0(s32 a0) {
   Actor_SetSpeed(34, 0x8000, 0x4000);
   Actor_SetSpeed(35, 0x8000, 0x4000);
   Actor_SetSpeed(17, 0x8000, 0x4000);
-  FieldCamera_FollowActor(30, 1);
+  EventCamera_FollowActor(30, 1);
   Func_02001ccc__alhafra();
   if (a0 == 0x15) {
     FieldActor_SetSpritePriority(30, 2);
@@ -1006,7 +1006,7 @@ void Func_02000aa0(s32 a0) {
   Actor_SetPosition(34, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(35, 0, 0);
   Event_Wait(15);
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02001ccc__alhafra();
   Event_End();
 }
@@ -1042,20 +1042,20 @@ void Func_02001958(s32 a0) {
   FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
   if (a0 != 1) {
   } else {
-    Actor_CommitPositionAndActivate(25, -8, 0);
+    Actor_WalkByAndWaitById(25, -8, 0);
     Event_Wait(15);
     Actor_StartRepeatedMotion(25, 3);
     FieldEffect_SetAttached(0x19, 0x102);
     Event_Wait(40);
     Actor_GetById(25)->actionFlags &= 0xfe;
-    Actor_SetPositionAndReset(25, 192, 736);
+    Actor_WalkToAndWaitById(25, 192, 736);
     Event_Wait(1);
     Actor_GetById(25)->actionFlags |= 1;
     Event_Wait(10);
     Event_ShowMessageThenWait(0x19, 0, 0xa);
     {
       s32 b = 0x107, c = 0x1e;
-      Func_080d47b4(0x19, b, c);
+      Actor_ShowEmoteById(0x19, b, c);
     }
     Event_OpenMessage(0x19, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
@@ -1083,7 +1083,7 @@ void Func_02001958(s32 a0) {
     Event_Wait(70);
     {
       s32 b = 0x100, c = 0x32;
-      Func_080d47b4(0x19, b, c);
+      Actor_ShowEmoteById(0x19, b, c);
     }
     Event_ShowMessageThenWait(0x19, 0, 0xa);
   }
@@ -1092,8 +1092,8 @@ void Func_02001958(s32 a0) {
   if (a0 == 0) {
     Event_Wait(50);
     Actor_SetPosition(25, 0x1080000, 0x2880000);
-    Actor_CommitPositionAndActivate(25, 0, 32);
-    Actor_CommitPositionAndActivate(25, 150, 0);
+    Actor_WalkByAndWaitById(25, 0, 32);
+    Actor_WalkByAndWaitById(25, 150, 0);
   }
   Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
   Event_End();

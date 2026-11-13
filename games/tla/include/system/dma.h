@@ -4,6 +4,9 @@
 #include "io_reg.h"
 #include "types.h"
 
+/// The BIOS CpuSet service (bios.s).
+void Bios_CpuSet(const void *source, void *destination, u32 control);
+
 /// DMA channel registers (DMAxSAD, DMAxDAD, DMAxCNT).
 struct DmaRegisters {
   u32 source;

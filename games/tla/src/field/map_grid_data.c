@@ -108,33 +108,33 @@ const s32 gBattle_FormationPlacementScale[2] = {
 typedef void (*OperandFunc)(struct ScriptOperands *state, s32 operation,
                             s32 value);
 
-s32 Script_Wait();
+s32 ActorScript_Wait();
 s32 Script_WaitForArrival();
-s32 Func_08024fe0();
+s32 ActorScript_SetPositionAndResetMotion();
 s32 Func_08025038();
 s32 ActorScript_ApplyAbsolutePosition();
-s32 Script_ApplyRelativePosition();
-s32 Script_StoreAngleToWatchedObject();
-s32 Script_ApplyWatchedObjectPosition();
-s32 Script_ApplyLocalOffsetPosition();
+s32 ActorScript_ApplyRelativePosition();
+s32 ActorScript_StoreAngleToWatchedActor();
+s32 ActorScript_ApplyWatchedActorPosition();
+s32 ActorScript_ApplyLocalOffsetPosition();
 s32 Actor_Wander();
-s32 Func_08025830();
+s32 ActorScript_WanderNearHome();
 s32 Actor_ApproachWatchedActor();
-s32 Func_08025160();
-s32 Script_RepeatOrJump();
-s32 Script_JumpToLabel();
-u32 Script_JumpIfTrue();
-u32 Script_JumpIfFalse();
-s32 Script_End();
-s32 Script_TestFlag();
-s32 Script_SetFlagAndTest();
-s32 Script_ClearFlagAndTest();
-s32 Script_ToggleFlag();
-s32 Script_ApplyOperandSet();
-s32 Script_ApplyOperandAdd();
-s32 Script_ApplyOperandCompare();
-s32 Func_08027064();
-s32 Func_080279b0();
+s32 FieldCamera_FollowLeaderInBounds();
+s32 ActorScript_RepeatOrJump();
+s32 ActorScript_JumpToLabel();
+u32 ActorScript_JumpIfTrue();
+u32 ActorScript_JumpIfFalse();
+s32 ActorScript_End();
+s32 ActorScript_TestFlag();
+s32 ActorScript_SetFlagAndTest();
+s32 ActorScript_ClearFlagAndTest();
+s32 ActorScript_ToggleFlagAndTest();
+s32 ActorScript_ApplyOperandSet();
+s32 ActorScript_ApplyOperandAdd();
+s32 ActorScript_ApplyOperandCompare();
+s32 Actor_UpdatePlayerControl();
+s32 Actor_MoveOnWorldMap();
 s32 Actor_MoveByKeys();
 s32 Func_080292fc();
 s32 Func_08029570();
@@ -147,11 +147,11 @@ s32 Func_0802632c();
 s32 Func_080267bc();
 s32 Field_CheckConfiguredKeysAndCount();
 s32 Actor_ReleaseAndClear();
-s32 Script_SetAnimation();
-s32 Script_Nop();
+s32 ActorScript_SetAnimation();
+s32 ActorScript_Nop();
 s32 Script_PlaySound();
 s32 Script_CallWithOperand();
-s32 Script_InvokeCallback();
+s32 ActorScript_InvokeCallback();
 s32 Func_08025428();
 s32 Func_0802509c();
 
@@ -211,25 +211,25 @@ const s32 gData_0802f158[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gData_0802f170[] = {
+const s32 gActor_KeyCheckScript[] = {
     SC_CMD_1F,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gData_0802f188[] = {
+const s32 gActor_KeysScript[] = {
     SC_CMD_20,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gData_0802f1a0[] = {
+const s32 gActor_PlayerScript[] = {
     SC_CMD_21,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gData_0802f1b8[] = {
+const s32 gActor_WorldMapScript[] = {
     SC_CMD_22,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
@@ -253,103 +253,103 @@ const s32 gActorScript_EndScript[] = {
 
 /// The handler of each command. 0x31 to 0x35 repeat SC_END's.
 const ScriptCommandFn gData_0802f204[54] = {
-    Script_Wait,                         // 0x00 SC_WAIT
-    Script_WaitForArrival,               // 0x01 SC_SYNC
-    Func_08024fe0,                       // 0x02 SC_POSITION
-    Func_08025038,                       // 0x03 SC_CMD_03
-    ActorScript_ApplyAbsolutePosition,   // 0x04 SC_MOVE
-    Script_ApplyRelativePosition,        // 0x05 SC_MOVE_BY
-    Script_StoreAngleToWatchedObject,    // 0x06 SC_FACE_WATCHED
-    Script_ApplyWatchedObjectPosition,   // 0x07 SC_MOVE_TO_WATCHED
-    Script_ApplyLocalOffsetPosition,     // 0x08 SC_MOVE_LOCAL
-    Actor_Wander,                       // 0x09 SC_WANDER
-    Func_08025830,                       // 0x0a SC_WANDER_HOME
-    Actor_ApproachWatchedActor,          // 0x0b SC_APPROACH_WATCHED
-    Func_08025160,                       // 0x0c SC_CAMERA
-    Script_RepeatOrJump,                 // 0x0d SC_LOOP
-    Script_JumpToLabel,                  // 0x0e SC_JUMP
-    (ScriptCommandFn)Script_JumpIfTrue,  // 0x0f SC_IF
-    (ScriptCommandFn)Script_JumpIfFalse, // 0x10 SC_IFNOT
-    Script_End,                          // 0x11 SC_END
-    Script_TestFlag,                     // 0x12 SC_FLAG_CHECK
-    Script_SetFlagAndTest,               // 0x13 SC_FLAG_ON
-    Script_ClearFlagAndTest,             // 0x14 SC_FLAG_OFF
-    Script_ToggleFlag,                   // 0x15 SC_FLAG_REV
-    Script_ApplyOperandSet,              // 0x16 SC_SET
-    Script_ApplyOperandAdd,              // 0x17 SC_ADD
-    Script_ApplyOperandCompare,          // 0x18 SC_CMP
-    Func_08027064,                       // 0x19 SC_PLAYER
-    Func_080279b0,                       // 0x1a SC_CMD_1A
-    Actor_MoveByKeys,                    // 0x1b SC_KEYS
-    Func_080292fc,                       // 0x1c SC_CMD_1C
-    Func_08029570,                       // 0x1d SC_CMD_1D
-    Func_080298c0,                       // 0x1e SC_CMD_1E
-    Func_08027e20,                       // 0x1f SC_CMD_1F
-    Func_08028534,                       // 0x20 SC_CMD_20
-    Func_08028aac,                       // 0x21 SC_CMD_21
-    Func_0802a124,                       // 0x22 SC_CMD_22
-    Func_0802632c,                       // 0x23 SC_CMD_23
-    Func_080267bc,                       // 0x24 SC_CMD_24
-    Field_CheckConfiguredKeysAndCount,   // 0x25 SC_CMD_25
-    Actor_ReleaseAndClear,               // 0x26 SC_FREE
-    Script_SetAnimation,                 // 0x27 SC_ARG
-    Script_Nop,                          // 0x28 SC_NOP
-    Script_PlaySound,                    // 0x29 SC_SE
-    Script_CallWithOperand,              // 0x2a SC_CMD_2A
-    Script_JumpToNextOperandPointer,     // 0x2b SC_GOTO
-    Script_ClearByte54,                  // 0x2c SC_B54_OFF
-    Script_SetByte54,                    // 0x2d SC_B54_ON
-    Script_InvokeCallback,               // 0x2e SC_CALL
-    Func_08025428,                       // 0x2f SC_CMD_2F
-    Func_0802509c,                       // 0x30 SC_MOVE_XZ
-    Script_End,                          // 0x31
-    Script_End,                          // 0x32
-    Script_End,                          // 0x33
-    Script_End,                          // 0x34
-    Script_End,                          // 0x35
+    ActorScript_Wait,                         // 0x00 SC_WAIT
+    Script_WaitForArrival,                    // 0x01 SC_SYNC
+    ActorScript_SetPositionAndResetMotion,    // 0x02 SC_POSITION
+    Func_08025038,                            // 0x03 SC_CMD_03
+    ActorScript_ApplyAbsolutePosition,        // 0x04 SC_MOVE
+    ActorScript_ApplyRelativePosition,        // 0x05 SC_MOVE_BY
+    ActorScript_StoreAngleToWatchedActor,     // 0x06 SC_FACE_WATCHED
+    ActorScript_ApplyWatchedActorPosition,    // 0x07 SC_MOVE_TO_WATCHED
+    ActorScript_ApplyLocalOffsetPosition,     // 0x08 SC_MOVE_LOCAL
+    Actor_Wander,                             // 0x09 SC_WANDER
+    ActorScript_WanderNearHome,               // 0x0a SC_WANDER_HOME
+    Actor_ApproachWatchedActor,               // 0x0b SC_APPROACH_WATCHED
+    FieldCamera_FollowLeaderInBounds,         // 0x0c SC_CAMERA
+    ActorScript_RepeatOrJump,                 // 0x0d SC_LOOP
+    ActorScript_JumpToLabel,                  // 0x0e SC_JUMP
+    (ScriptCommandFn)ActorScript_JumpIfTrue,  // 0x0f SC_IF
+    (ScriptCommandFn)ActorScript_JumpIfFalse, // 0x10 SC_IFNOT
+    ActorScript_End,                          // 0x11 SC_END
+    ActorScript_TestFlag,                     // 0x12 SC_FLAG_CHECK
+    ActorScript_SetFlagAndTest,               // 0x13 SC_FLAG_ON
+    ActorScript_ClearFlagAndTest,             // 0x14 SC_FLAG_OFF
+    ActorScript_ToggleFlagAndTest,            // 0x15 SC_FLAG_REV
+    ActorScript_ApplyOperandSet,              // 0x16 SC_SET
+    ActorScript_ApplyOperandAdd,              // 0x17 SC_ADD
+    ActorScript_ApplyOperandCompare,          // 0x18 SC_CMP
+    Actor_UpdatePlayerControl,                // 0x19 SC_PLAYER
+    Actor_MoveOnWorldMap,                     // 0x1a SC_CMD_1A
+    Actor_MoveByKeys,                         // 0x1b SC_KEYS
+    Func_080292fc,                            // 0x1c SC_CMD_1C
+    Func_08029570,                            // 0x1d SC_CMD_1D
+    Func_080298c0,                            // 0x1e SC_CMD_1E
+    Func_08027e20,                            // 0x1f SC_CMD_1F
+    Func_08028534,                            // 0x20 SC_CMD_20
+    Func_08028aac,                            // 0x21 SC_CMD_21
+    Func_0802a124,                            // 0x22 SC_CMD_22
+    Func_0802632c,                            // 0x23 SC_CMD_23
+    Func_080267bc,                            // 0x24 SC_CMD_24
+    Field_CheckConfiguredKeysAndCount,        // 0x25 SC_CMD_25
+    Actor_ReleaseAndClear,                    // 0x26 SC_FREE
+    ActorScript_SetAnimation,                 // 0x27 SC_ARG
+    ActorScript_Nop,                          // 0x28 SC_NOP
+    Script_PlaySound,                         // 0x29 SC_SE
+    Script_CallWithOperand,                   // 0x2a SC_CMD_2A
+    Script_JumpToNextOperandPointer,          // 0x2b SC_GOTO
+    ActorScript_HideSprites,                  // 0x2c SC_B54_OFF
+    ActorScript_ShowSprite,                   // 0x2d SC_B54_ON
+    ActorScript_InvokeCallback,               // 0x2e SC_CALL
+    Func_08025428,                            // 0x2f SC_CMD_2F
+    Func_0802509c,                            // 0x30 SC_MOVE_XZ
+    ActorScript_End,                          // 0x31
+    ActorScript_End,                          // 0x32
+    ActorScript_End,                          // 0x33
+    ActorScript_End,                          // 0x34
+    ActorScript_End,                          // 0x35
 };
 
 /// The handler of each work value (enum ScriptWork in objcmd.h).
-const OperandFunc gScript_OperandHandlerTable[41] = {
-    Script_SetOrCompareAddress,          // 0x00 SW_SCRIPT
-    Script_SetOrCompareCursor,           // 0x01 SW_CURSOR
-    Script_SetOrCompareUnsignedHalfword, // 0x02
-    Script_SetOrCompareUnsignedHalfword, // 0x03 SW_FACING
-    Script_SetOrCompareUnsignedHalfword, // 0x04
-    Script_SetOrCompareX,                // 0x05 SW_X
-    Script_SetOrCompareY,                // 0x06 SW_Y
-    Script_SetOrCompareZ,                // 0x07 SW_Z
-    Script_SetOrCompareRadius,           // 0x08 SW_RADIUS
-    Script_SetOrCompareScaleX,           // 0x09 SW_SCALE_X
-    Script_SetOrCompareScaleY,           // 0x0a SW_SCALE_Y
-    Script_SetOrCompareScaleY,           // 0x0b
-    Script_SetOrCompareVelocityX,        // 0x0c SW_VELOCITY_X
-    Script_SetOrCompareVelocityY,        // 0x0d SW_VELOCITY_Y
-    Script_SetOrCompareVelocityZ,        // 0x0e SW_VELOCITY_Z
-    Script_SetOrCompareSpeedLimit,       // 0x0f SW_SPEED
-    Script_SetOrCompareAcceleration,     // 0x10 SW_ACCEL
-    Script_SetOrCompareTargetX,          // 0x11 SW_TARGET_X
-    Script_SetOrCompareTargetY,          // 0x12 SW_TARGET_Y
-    Script_SetOrCompareTargetZ,          // 0x13 SW_TARGET_Z
-    Script_SetOrCompareVerticalMotion,   // 0x14 SW_BOUNCE
-    Script_SetOrCompareGravity,          // 0x15 SW_GRAVITY
-    Script_SetOrCompareTerrainHeight,    // 0x16 SW_GROUND
-    Script_SetOrCompareWord4c,           // 0x17
-    Script_SetOrCompareAddress50,        // 0x18
-    Script_SetOrCompareByte54,           // 0x19
-    Script_SetOrCompareMotionFlags,      // 0x1a SW_MOTION
-    Script_SetOrCompareArrivalAxis,      // 0x1b SW_ARRIVAL
-    Script_SetOrCompareComparisonResult, // 0x1c SW_RESULT
-    Script_SetOrCompareSnapToTarget,     // 0x1d SW_SNAP
-    Script_SetOrCompareCollisionFlags,   // 0x1e SW_COLLISION
-    Script_SetOrCompareSteeringFlags,    // 0x1f SW_STEERING
-    Script_SetOrComparePaused,           // 0x20 SW_PAUSED
-    Script_SetOrCompareRepeatCount,      // 0x21 SW_REPEAT
-    Script_SetOrCompareHalfword5e,       // 0x22 SW_WAIT
-    Script_SetOrCompareSignedHalfword64, // 0x23
-    Script_SetOrCompareSignedHalfword66, // 0x24
-    Script_SetOrCompareWord68,           // 0x25
-    Script_SetOrCompareUpdateAddress,    // 0x26 SW_HOOK
-    Script_SetOrCompareByte62,           // 0x27
-    Script_SetOrCompareByte63,           // 0x28 SW_BYTE_63
+const OperandFunc gActorScript_OperandHandlerTable[41] = {
+    ActorScript_SetOrCompareScriptAddress,     // 0x00 SW_SCRIPT
+    ActorScript_SetOrCompareCursor,            // 0x01 SW_CURSOR
+    ActorScript_SetOrCompareFacing,            // 0x02
+    ActorScript_SetOrCompareFacing,            // 0x03 SW_FACING
+    ActorScript_SetOrCompareFacing,            // 0x04
+    ActorScript_SetOrCompareX,                 // 0x05 SW_X
+    ActorScript_SetOrCompareY,                 // 0x06 SW_Y
+    ActorScript_SetOrCompareZ,                 // 0x07 SW_Z
+    ActorScript_SetOrCompareRadius,            // 0x08 SW_RADIUS
+    ActorScript_SetOrCompareScaleX,            // 0x09 SW_SCALE_X
+    ActorScript_SetOrCompareScaleY,            // 0x0a SW_SCALE_Y
+    ActorScript_SetOrCompareScaleY,            // 0x0b
+    ActorScript_SetOrCompareVelocityX,         // 0x0c SW_VELOCITY_X
+    ActorScript_SetOrCompareVelocityY,         // 0x0d SW_VELOCITY_Y
+    ActorScript_SetOrCompareVelocityZ,         // 0x0e SW_VELOCITY_Z
+    ActorScript_SetOrCompareSpeedLimit,        // 0x0f SW_SPEED
+    ActorScript_SetOrCompareAcceleration,      // 0x10 SW_ACCEL
+    ActorScript_SetOrCompareTargetX,           // 0x11 SW_TARGET_X
+    ActorScript_SetOrCompareTargetY,           // 0x12 SW_TARGET_Y
+    ActorScript_SetOrCompareTargetZ,           // 0x13 SW_TARGET_Z
+    ActorScript_SetOrCompareVerticalMotion,    // 0x14 SW_BOUNCE
+    ActorScript_SetOrCompareGravity,           // 0x15 SW_GRAVITY
+    ActorScript_SetOrCompareTerrainHeight,     // 0x16 SW_GROUND
+    ActorScript_SetOrCompareRiseBaseY,         // 0x17
+    ActorScript_SetOrCompareSprite,            // 0x18
+    ActorScript_SetOrCompareSpriteStorageKind, // 0x19
+    ActorScript_SetOrCompareMotionFlags,       // 0x1a SW_MOTION
+    ActorScript_SetOrCompareArrivalAxis,       // 0x1b SW_ARRIVAL
+    ActorScript_SetOrCompareComparisonResult,  // 0x1c SW_RESULT
+    ActorScript_SetOrCompareSnapToTarget,      // 0x1d SW_SNAP
+    ActorScript_SetOrCompareCollisionFlags,    // 0x1e SW_COLLISION
+    ActorScript_SetOrCompareSteeringFlags,     // 0x1f SW_STEERING
+    ActorScript_SetOrComparePaused,            // 0x20 SW_PAUSED
+    ActorScript_SetOrCompareRepeatCount,       // 0x21 SW_REPEAT
+    ActorScript_SetOrCompareWait,              // 0x22 SW_WAIT
+    ActorScript_SetOrCompareTimer,             // 0x23
+    ActorScript_SetOrCompareUserValue,         // 0x24
+    ActorScript_SetOrCompareWatchedActor,      // 0x25
+    ActorScript_SetOrCompareUpdateAddress,     // 0x26 SW_HOOK
+    ActorScript_SetOrCompareRiseCounter,       // 0x27
+    ActorScript_SetOrCompareRiseEnabled,       // 0x28 SW_BYTE_63
 };

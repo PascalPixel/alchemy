@@ -10,14 +10,14 @@
 void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
-  event->encounterEnemyGroup = Encounter_GetEnemyGroupAtSlot(row, column);
+  event->encounterEnemyGroup = Encounter_GetFormationAtSlot(row, column);
   if (event->controlMode == 3)
     Encounter_ResolveWorldMapZoneAndBackdrop(
         (u8 *)ObjectTable_Get(Party_GetLeaderActor()) + 8);
   BattleEffect_SelectBattleCue(row, column);
 }
 
-s32 Encounter_GetDjinnEnemyGroup(s32 djinn);
+s32 Encounter_GetDjinnFormation(s32 djinn);
 
 extern s8 gData_02001000[];
 
@@ -27,7 +27,7 @@ extern s8 gData_02001000[];
 /// prepared first; the pending event is 300 + the Djinni id with that flag,
 /// the enemy group is chosen, and on the world map the zone and backdrop come
 /// from the leader's position.
-void Func_080d2b4c(u32 flags, u32 djinn) {
+void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   u8 *work = Ram_HeapSlots->eventWork;
   u32 noPrepare = flags & 0x800;
   u32 group;
@@ -45,16 +45,16 @@ void Func_080d2b4c(u32 flags, u32 djinn) {
   }
   djinn = group * 20 + index;
   if (noPrepare == 0)
-    Func_080d7524(flags);
+    Djinn_RunBattleStartHop(flags);
   gMainRoutineWork.pendingDjinnEvent = (djinn + 300) | noPrepare;
-  *(s16 *)(work + 356) = Encounter_GetDjinnEnemyGroup(djinn);
+  *(s16 *)(work + 356) = Encounter_GetDjinnFormation(djinn);
   if (*(s8 *)(work + 394) == 3)
     Encounter_ResolveWorldMapZoneAndBackdrop(
         &ObjectTable_Get(Party_GetLeaderActor())->x);
   BattleEffect_SelectBattleCue(0, 0);
 }
 
-void Party_SetFields1eeAnd1f0(u16 first, u16 second) {
+void Event_SetAfterBattleDestination(u16 first, u16 second) {
   gMainRoutineWork.pair1ee[0] = first;
   gMainRoutineWork.pair1ee[1] = second;
 }
@@ -64,7 +64,7 @@ void Party_SetFields1f2And1f4(u16 first, u16 second) {
   gMainRoutineWork.pair1f2[1] = second;
 }
 
-void Field_SetDestination(s16 scene, s16 entrance) {
+void Event_LeaveFor(s16 scene, s16 entrance) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
   gMainRoutineWork.scene = scene;
@@ -86,7 +86,7 @@ void Scene_QueueMusic(s32 soundId) {
 
 void Event_NoOp(void) {}
 
-void Func_080d2c9c(void) {
+void Scene_PlayQueuedMusic(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
   if (work != 0) {

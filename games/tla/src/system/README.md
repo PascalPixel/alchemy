@@ -18,14 +18,14 @@ are in [The Lost Age: Game Pak](../gamepak/README.md).
 
 - The code from power-on to the game flags is one object,
   `system.c`, written as parts under `system/` and cut where The Broken
-  Seal's parts are: power-on (`Entry` in `entry.s`, then `Func_0801319c` in
+  Seal's parts are: power-on (`Entry` in `entry.s`, then `System_Initialize` in
   `system/start_up.c`, which enters the main routine), `wait()` and
   `Irq_SetHandler` (`system/frame.c`), the task table (`system/task.c`) and
   saving (`system/save.c`). The link cable (`system/serial.c`) and the
   game flags (`system/flags.c`) are its last parts, and the interrupt
   table (`irq_table.s`) is assembly beside the resident code it calls.
 - The main routine, `MainRoutine_Run`, and the scene changes around it in the
-  ROM, from `Scene_TakeExit` to `Party_PlaySavedMusic`, are one object,
+  ROM, from `Scene_TakeExit` to `Scene_PlayMusic`, are one object,
   `main_routine.c`, as in The Broken Seal. It adds four debug starts and keeps
   background palettes 14 and 15 across three of its sequences.
 - The game flags are kept by ten functions here (`system/flags.c`), where

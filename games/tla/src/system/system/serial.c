@@ -59,7 +59,7 @@ void Serial_Initialize(void) {
   gSerialSendSize = 0;
   gSerialReceiveDest = 0;
   gSerialReceivedSize = 0;
-  BattleLink_ResetTransferState();
+  LinkBattle_ResetTransferState();
   IRQ_UNLOCK(interruptEnable);
 }
 
@@ -449,7 +449,7 @@ s32 Serial_GetActiveTransfers(void) {
   return flags;
 }
 
-void BattleLink_ResetTransferState(void) {
+void LinkBattle_ResetTransferState(void) {
   struct SerialTransferState *state;
   volatile u16 *ime;
   u32 saved;
@@ -577,7 +577,7 @@ void Serial_StepBlockTransfer(void) {
 
 extern u8 gMapCellBuffer[];
 
-void Func_08016bd8(void) {}
+void SerialTest_Delay(void) {}
 
 /// The serial link test: sends the cartridge's first bytes or those at 0x1000
 /// while A or B is held, and receives into the map cell buffer.
@@ -617,7 +617,7 @@ restart:
       delay = 9999;
       do {
         delay--;
-        Func_08016bd8();
+        SerialTest_Delay();
       } while (delay >= 0);
     }
     if (gSerialReceiveDest == 0) {

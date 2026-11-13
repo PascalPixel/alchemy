@@ -46,7 +46,7 @@ extern struct Task gTasks[];
 void Oam_AddSpriteAtDepth(void *entry, s32 priority);
 
 void System_CallWorkEntryWithArgs(s32 arg0, s32 arg1);
-void PaletteQueue_Start(void);
+void PaletteCycle_Start(void);
 
 void Task_ResetAll(void);
 void Task_CopyWords(u32 *destination, u32 *source, u32 byte_count);

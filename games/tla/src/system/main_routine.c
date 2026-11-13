@@ -27,7 +27,8 @@
 #include "gamepak/far_call/lucky_dice.h"
 #include "module/field/field.h"
 #include "module/system/system.h"
-#include "module/tla.h"
+#include "gamepak/far_call/game.h"
+#include "gamepak/far_call/window.h"
 #include "task.h"
 
 extern struct SceneEntries gOverlayArea;
@@ -46,7 +47,8 @@ s32 FieldSequence_Run(s32 entrance);
 #define EXIT_HAS_FLAG 0x10000000
 #define EXIT_TABLE_END 0x1ff
 #define EXIT_KIND_ANY 0xff
-#define EXIT_NONE 999 ///< FieldSequence_Run's result when the scene was not left
+#define EXIT_NONE                                                              \
+  999 ///< FieldSequence_Run's result when the scene was not left
 
 /// Chooses the scene and entrance to go to when the party leaves the current
 /// scene: exitKind is the kind of exit FieldSequence_Run ended on, and the
@@ -171,13 +173,9 @@ void Scene_ReturnFromSequence(s32 result) {
   }
 }
 
-s8 BattleEffect_GetResourceGroup(s32 effectIndex) {
-  return gScenes[effectIndex].group;
-}
+s8 Scene_GetArea(s32 effectIndex) { return gScenes[effectIndex].group; }
 
-s16 Field_GetSceneAttributes(s32 scene) {
-  return gScenes[scene].attributes;
-}
+s16 Field_GetSceneAttributes(s32 scene) { return gScenes[scene].attributes; }
 
 #define RUN_SAVING_PALETTES(call)                                              \
   {                                                                            \
@@ -214,11 +212,12 @@ void MainRoutine_Run(s32 mode) {
     gMainRoutineWork.scene = (s32)&SceneId_Title;
     gMainRoutineWork.entrance = 8;
   } else {
-    Func_080ad090();
+    MainRoutineWork_InitializeDefaultsFar();
     gMainRoutineWork.scene = (s32)&SceneId_Title;
     gMainRoutineWork.entrance = 1;
   }
-  Func_08038348(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+  WindowColor_ApplyFar(gMainRoutineWork.paletteGlow[0],
+                       gMainRoutineWork.paletteGlow[1]);
   VramCache_Reset();
   Task_ResetAll();
   Task_ResetAll();
@@ -262,37 +261,37 @@ void MainRoutine_Run(s32 mode) {
       continue;
     }
 
-    Func_080c9c38(gMainRoutineWork.scene, GameFlag_Test(0x109));
-    Scene_ResolveInteractionResult();
+    Scene_Arrive(gMainRoutineWork.scene, GameFlag_Test(0x109));
+    Scene_ChooseMusic();
     if (!GameFlag_Test(0x109)) {
       if (GameFlag_Test(0x11a) || GameFlag_Test(0x11b))
         GameFlag_ClearBit(0x11a);
       else
-        Party_PlaySavedMusic();
+        Scene_PlayMusic();
     } else if (gMainRoutineWork.returnCue != -1) {
       Sound_PlayFar(gMainRoutineWork.returnCue);
     } else {
-      Party_PlaySavedMusic();
+      Scene_PlayMusic();
     }
     gMainRoutineWork.map = record->mapIndex;
-    BattleEffect_LoadResourceGroup(0);
+    Scene_LoadOverlay(0);
     entrance = FieldSequence_Run(entrance);
     Scene_TakeExit(entrance);
   }
 }
 
-void BattleEffect_LoadResourceGroup(s32 unused) {
+void Scene_LoadOverlay(s32 unused) {
   const struct Scene *table = gScenes;
   s16 scene = gMainRoutineWork.scene;
 
-  Resource_LoadCode(table[scene].resourceId, &gOverlayArea);
+  Overlay_Load(table[scene].resourceId, &gOverlayArea);
 }
 
 #define SCENE_RECORD(id) (&gScenes[id])
 
-/// The Broken Seal's Scene_ResetFlagsOnEnter with this game's flags, and
-/// Func_080c9de0 in place of the group's visited flag.
-void Func_080c9c38(s32 unused, s32 keep) {
+/// As The Broken Seal's, with this game's flags, and Func_080c9de0 in place of
+/// the area's visited flag.
+void Scene_Arrive(s32 unused, s32 keep) {
   s32 group = SCENE_RECORD(gMainRoutineWork.scene)->group;
   s32 flag;
 
@@ -337,7 +336,7 @@ void Func_080c9c38(s32 unused, s32 keep) {
   GameFlag_RefreshLureCapFar();
 }
 
-void Party_PlaySavedMusic(void) { Sound_PlayFar(gMainRoutineWork.cue); }
+void Scene_PlayMusic(void) { Sound_PlayFar(gMainRoutineWork.cue); }
 
 #undef EXIT_SCENE_MASK
 #undef EXIT_ENTRANCE

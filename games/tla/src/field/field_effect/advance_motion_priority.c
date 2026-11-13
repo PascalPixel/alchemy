@@ -15,8 +15,8 @@ struct EffectSpriteAttributes {
   struct EffectSpriteBits bits;
 };
 
-/// Effect_AdvanceMotion, then gives the effect's sprite the leader's sprite
-/// priority, so the effect is drawn at the leader's depth.
+/// FieldEffect_AdvanceMotion, then gives the effect's sprite the leader's
+/// sprite priority, so the effect is drawn at the leader's depth.
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
   s32 velocityX = effect->velocity.x;

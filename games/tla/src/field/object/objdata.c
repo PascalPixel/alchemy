@@ -14,35 +14,35 @@
 
 /// gAnimationFacing_Kind1
 // clang-format off
-const u8 gData_0802eac4[16] = {
+const u8 gAnimationFacing_OnePicture[16] = {
     0x00, 0x00, 0x00, 0x80, 0x80, 0x80, 0x80, 0x00,
     0x80, 0x80, 0x80, 0x00, 0x00, 0x00, 0x00, 0x80,
 };
 
 /// gAnimationFacing_Kind22
-const u8 gData_0802ead4[8] = {
+const u8 gAnimationFacing_FrontBackSwapped[8] = {
     0x80, 0x80, 0x00, 0x00, 0x01, 0x01, 0x81, 0x81,
 };
 
 /// gAnimationFacing_Kind2
-const u8 gData_0802eadc[8] = {
+const u8 gAnimationFacing_FrontBack[8] = {
     0x00, 0x00, 0x80, 0x80, 0x01, 0x01, 0x81, 0x81,
 };
 
 /// gAnimationFacing_Kind3
-const u8 gData_0802eae4[16] = {
+const u8 gAnimationFacing_ThreePictures[16] = {
     0x01, 0x01, 0x00, 0x00, 0x80, 0x80, 0x81, 0x81,
     0x81, 0x81, 0x82, 0x82, 0x02, 0x02, 0x02, 0x01,
 };
 
 /// gAnimationFacing_Kind5: nothing in The Lost Age reads it.
-const u8 gData_0802eaf4[16] = {
+const u8 gAnimationFacing_FivePictures[16] = {
     0x01, 0x00, 0x00, 0x03, 0x03, 0x80, 0x80, 0x81,
     0x81, 0x82, 0x82, 0x04, 0x04, 0x02, 0x02, 0x01,
 };
 
 /// Sixty-four facings, The Lost Age's own.
-const u8 gData_0802eb04[64] = {
+const u8 gAnimationFacing_SixPictures[64] = {
     0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x03, 0x03, 0x03, 0x03,
     0x03, 0x03, 0x03, 0x83, 0x80, 0x80, 0x80, 0x80,
@@ -59,22 +59,22 @@ const u8 gData_0802eb44[8] = {
 };
 
 /// The order a tile's 64 pixels dissolve in.
-const u8 gMap_TileDissolveOrder[64] = {
+const u8 gSpriteDissolve_PixelOrder[64] = {
     4, 63, 12, 10, 44, 5, 1, 60, 46, 41, 3, 23, 29, 55, 51, 15,
     50, 25, 26, 57, 19, 49, 16, 61, 8, 58, 37, 17, 27, 31, 59, 53,
     11, 56, 33, 7, 30, 35, 36, 32, 42, 62, 21, 13, 2, 22, 45, 14,
     6, 48, 52, 9, 43, 28, 0, 40, 24, 34, 20, 47, 54, 39, 38, 18,
 };
 
-const u16 gMap_TileDissolveTail = 0x01ff;
+const u16 gSpriteDissolve_PixelOrderTail = 0x01ff;
 
 /// Two 1.0s (Q16), The Lost Age's own.
 const s32 gData_0802eb90[2] = {
     0x10000, 0x10000,
 };
 
-/// gCamera_FixedViewMatrix (Q16)
-const s32 gData_0802eb98[12] = {
+/// The fixed view matrix (Q16), as The Broken Seal's.
+const s32 gCamera_FixedViewMatrix[12] = {
     0x10000, 0, 0,
     -0xcccc, 0x10000, 0,
     0, 0, 0x10000,
@@ -82,7 +82,7 @@ const s32 gData_0802eb98[12] = {
 };
 
 /// gScriptObject_CycleTable: a triangle wave.
-const s32 gData_0802ebc8[32] = {
+const s32 gActorScript_CycleTable[32] = {
     1, 2, 3, 4, 5, 6, 7, 8,
     7, 6, 5, 4, 3, 2, 1, 0,
     -1, -2, -3, -4, -5, -6, -7, -8,
@@ -94,13 +94,13 @@ const s32 gScript_MainScript[1] = {
     SC_END,
 };
 
-const s16 gScript_MainScriptTail[8] = {
+const s16 gActorScript_EndScriptTail[8] = {
     0x1000, -0x2000, 0x3000, -0x4000, 0x6000, -0x8000, 0x4000, 0x0,
 };
 
 /// gWorldMap_KeyHeadings: the heading for each direction pad state
 /// (0xffff = none).
-const u16 gData_0802ec5c[16] = {
+const u16 gWorldMap_KeyHeadings[16] = {
     0xffff, 0x0000, 0x8000, 0xffff, 0xc000, 0xe000, 0xa000, 0xc000,
     0x4000, 0x2000, 0x6000, 0x4000, 0xffff, 0x0000, 0x8000, 0xffff,
 };
@@ -122,8 +122,8 @@ const s32 gData_0802ec94[] = {
     SC_FREE,
 };
 
-/// gWorldMap_KeyYaws: the turn for each direction pad state.
-const s32 gData_0802eca0[16] = {
+/// The turn for each direction pad state.
+const s32 gWorldMap_KeyYaws[16] = {
     0, -512, 512, 0,
     0, -384, 384, 0,
     0, -384, 384, 0,
@@ -154,7 +154,7 @@ const s32 gData_0802ed28[] = {
 // six tile sets, by resource id.
 //--------------------------------------------------------------------------
 
-const u32 gData_0802ed34[4][9] = {
+const u32 gWorldMap_GraphicsResources[4][9] = {
     {
         (u32)&ResourceId_WorldMapPaletteA,
         (u32)&ResourceId_DefaultMapAnimation,

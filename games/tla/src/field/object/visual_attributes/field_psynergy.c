@@ -17,7 +17,7 @@ void Func_080dbb40(void) {
   if (scene->active != 0) {
     scene->active = 0;
     Task_Remove(BattleEffect_DrawSceneSprite);
-    Resource_ResetEntry(scene->vramSlot);
+    VramCache_FreeEntry(scene->vramSlot);
   }
 }
 
@@ -49,7 +49,7 @@ s32 Func_080dbc04(s32 x, s32 z, s32 layer) {
   if (*(s8 *)(event + 394) == 3)
     return Func_080dbcd8(x, z, layer);
   if (Func_080dbda8(x, z, layer) != 0 || Func_080dbd5c(x, z, layer) != 0 ||
-      Func_080201d0(layer, x, z) != 0)
+      MapGrid_GetCellAttributeLowNibbleFar(layer, x, z) != 0)
     return 0;
   if (Func_080dbcd8(x, z, layer) != 0)
     return 1;
@@ -73,7 +73,7 @@ s32 Func_080dbcd8(s32 x, s32 z, s32 layer) {
     s32 position[3];
 
     SET_VECTOR(position, column, 0, z);
-    column = (u32)(GetWorldMapCollisionFar(position) - 5) <= 1;
+    column = (u32)(WorldMap_GetCollisionFar(position) - 5) <= 1;
   } else {
     s32 code = Func_080dbb78(column, z, 2)->collisionCode;
 
@@ -100,7 +100,7 @@ s32 Func_080dbd5c(s32 x, s32 z, s32 layer) {
     position[1] = 0;
     position[0] = x;
     position[2] = z;
-    collision = GetWorldMapCollisionFar(position);
+    collision = WorldMap_GetCollisionFar(position);
     return (u32)(collision - 2) <= 2;
   }
   return (u8)(Func_080dbb78(x, z, layer)->attributeB & 16);
@@ -122,7 +122,7 @@ u8 Func_080dbdc8(s32 x, s32 z, s32 layer) {
   return Func_080dbb78(x, z, layer)->collisionCode;
 }
 
-u8 Func_080dbdd4(s32 x, s32 z, s32 layer, s32 value) {
+u8 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value) {
   Func_080dbb78(x, z, layer)->collisionCode = value;
   return value;
 }
@@ -223,7 +223,7 @@ struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
   s32 magnitude;
 
   if (object != NULL) {
-    Actor_StartScriptFar(object, gData_080f0e78);
+    Actor_StartScriptFar(object, gFieldEffect_FragmentScript);
     object->speedLimit = Random16() + Q16_ONE;
     object->acceleration = Q16_ONE;
     object->motionFlags = 2;
@@ -231,8 +231,8 @@ struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
     magnitude = Random16();
     magnitude -= Random16();
     object->velocityY = magnitude;
-    Motion_SetTargetPositionFromMagnitudeAngle(
-        object, Random16() * 24 + 0x80000, Random16());
+    Actor_SetTargetPositionFromMagnitudeAngle(object, Random16() * 24 + 0x80000,
+                                              Random16());
   }
   return object;
 }
@@ -271,7 +271,7 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
     if (alt == NULL) {
       *((u8 *)obj + 0x11) = (u8)(*((u8 *)obj + 0x11) | 1);
     } else {
-      Resource_ResetEntry(obj->vramBlock);
+      VramCache_FreeEntry(obj->vramBlock);
       obj->vramBlock = ((struct ResourceSprite *)alt)->vramBlock;
       *((u8 *)obj + 0x11) = (u8)(*((u8 *)obj + 0x11) | 1);
       obj = alt;
@@ -281,11 +281,14 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
   return ret;
 }
 
-#define Actor_SetAnimationSpeedFar                                             \
-  ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
+#define Actor_SelectAnimationFar                                               \
+  ((void (*)(struct Actor *, s32))Actor_SelectAnimationFar)
 
-/* VIEW(depthend): routine Func_080200c0 as struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); f0d8740 has struct CaptureObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
-extern struct Actor *Func_080200c0__depthend(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
+/* VIEW(depthend): routine Actor_CreateFar as struct Actor *Actor_CreateFar(s32
+ * kind, s32 x, s32 y, s32 z); f0d8740 has struct CaptureObject
+ * *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z). */
+extern struct Actor *Func_080200c0__depthend(s32 kind, s32 x, s32 y,
+                                             s32 z) __asm__("Actor_CreateFar");
 
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   struct SpawnScene *scene = Ram_HeapSlots->effectWork;
@@ -324,14 +327,17 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
     if (objectId != *activeObjectId && object != NULL &&
         object != excludedObject) {
       object->movementState = groupMode;
-      Actor_SetAnimationSpeedFar(object, action);
+      Actor_SelectAnimationFar(object, action);
     }
     objectId++;
   } while (objectId <= 0x50);
 }
 
-/* VIEW(depthend): routine BattleEffect_ApplyColorToTargetBuffer as void BattleEffect_ApplyColorToTargetBuffer(s32 colors, s32 mode); f0d6674 has void BattleEffect_ApplyColorToTargetBuffer(void *buffer, s32 mode). */
-extern void BattleEffect_ApplyColorToTargetBuffer__depthend(s32 colors, s32 mode) __asm__("BattleEffect_ApplyColorToTargetBuffer");
+/* VIEW(depthend): routine BattleEffect_ApplyColorToTargetBuffer as void
+ * BattleEffect_ApplyColorToTargetBuffer(s32 colors, s32 mode); f0d6674 has void
+ * BattleEffect_ApplyColorToTargetBuffer(void *buffer, s32 mode). */
+extern void BattleEffect_ApplyColorToTargetBuffer__depthend(
+    s32 colors, s32 mode) __asm__("BattleEffect_ApplyColorToTargetBuffer");
 
 void Field_StartColorTransition(s32 frames, s32 color) {
   u8 *state = Ram_HeapSlots->eventWork;
@@ -344,7 +350,7 @@ void Field_StartColorTransition(s32 frames, s32 color) {
   Dma_Set(buffers->target, buffers->current, DMA_COPY_WORDS(0x2a0), REG_DMA3);
   BattleEffect_ApplyColorToTargetBuffer__depthend(0x200000 | color, 1);
   GameFlag_SetBit(0x108);
-  BattleEffect_StartBufferInterpolation(frames);
+  PaletteFade_StartInterpolation(frames);
 }
 
 void Field_StartPaletteTransition(s32 frames) {
@@ -357,7 +363,7 @@ void Field_StartPaletteTransition(s32 frames) {
   else
     BattleEffect_ApplyColorToTargetBuffer__depthend(colors, 1);
   GameFlag_ClearBit(0x108);
-  BattleEffect_StartBufferInterpolation(frames);
+  PaletteFade_StartInterpolation(frames);
 }
 
 /// Flags 0x148-0x14f each force one tint, the last set one winning.
@@ -368,7 +374,7 @@ void Field_StartPaletteTransition(s32 frames) {
 /// animations, and forced by the tint flags; then fades towards it over eight
 /// frames. The palettes are copied by Field_StartColorTransition.
 // ☀️'s function of the same name also copies the palettes.
-void BattleEffect_InitializeSharedScene(void) {
+void FieldPsynergy_FadeToCastColor(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   s32 tint;
   s32 animation;
@@ -420,7 +426,7 @@ void BattleEffect_InitializeSharedScene(void) {
     tint = 6;
   if (GameFlag_Test(FLAG_TINT_FIRST + 7))
     tint = 7;
-  Field_StartColorTransition(8, gData_080f3954[tint]);
+  Field_StartColorTransition(8, gFieldEffect_TargetColors[tint]);
 }
-#undef Actor_SetAnimationSpeedFar
+#undef Actor_SelectAnimationFar
 #undef FLAG_TINT_FIRST

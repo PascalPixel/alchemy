@@ -53,7 +53,7 @@
     party = &gMainRoutineWork;                                                 \
     if (party->encounterSteps >= work->threshold * 9 / 10) {                   \
       if (Random16Far() < 0x8000) {                                            \
-        Field_RequestDjinnBattle(a, b);                                        \
+        Event_RequestDjinnBattle(a, b);                                        \
         work->bias = 0;                                                        \
       } else {                                                                 \
         party->encounterSteps = work->threshold;                               \
@@ -71,7 +71,7 @@
     if (party->renderMode == 1) {                                              \
       if (party->encounterSteps >= work->threshold * 9 / 10) {                 \
         if (Random16Far() < 0x8000) {                                          \
-          Field_RequestDjinnBattle(a, b);                                      \
+          Event_RequestDjinnBattle(a, b);                                      \
           work->bias = 0;                                                      \
         } else {                                                               \
           party->encounterSteps = work->threshold;                             \
@@ -99,7 +99,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 u32 __umodsi3(u32 a, u32 b);
 
 DEFINE_TILE_SPRITE_RESET(Func_020002a4)
@@ -122,9 +122,9 @@ void WorldMap_UpdateBobbingMarker(struct BobbingMarker *marker) {
   s32 rise;
 
   if (gFrameCount & 2)
-    Animation_ApplyChildValues(marker, 10);
+    Actor_SetSpriteColorMode(marker, 10);
   else
-    Animation_ApplyChildValues(marker, 7);
+    Actor_SetSpriteColorMode(marker, 7);
   if (marker->stopped == 0) {
     angle = &marker->angle;
     marker->x.fixed = 0x27880000;
@@ -310,13 +310,13 @@ void WorldMap_BoardShip(void) {
   leader->terrainHeight = 0x40000;
   Func_02004b48(leader);
   FieldActor_SetMoveTarget(leader, ship->x, 0, ship->z);
-  Actor_WaitForMove(leader);
+  FieldActor_WaitForMove(leader);
   Func_02004b18(leader, 6);
   System_Wait(6);
   leader->terrainHeight = 0;
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
-  Scene_ResolveInteractionResult();
-  Party_PlaySavedMusic();
+  Scene_ChooseMusic();
+  Scene_PlayMusic();
   Event_End();
   *(s16 *)work->unk15c = 0;
 #if TLA_PATCH_1
@@ -330,7 +330,7 @@ void WorldMap_LeaveShip(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *ship = Actor_GetById(8);
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  s32 cell = GetWorldMapCollision(&ship->x);
+  s32 cell = WorldMap_GetCollision(&ship->x);
   s32 position[3];
   s32 shore = 0;
   s32 blocked;
@@ -394,12 +394,12 @@ void WorldMap_LeaveShip(void) {
     leader->motionFlags = flags;
     Func_02004b48(leader);
     FieldActor_SetMoveTarget(leader, position[0], 0, position[2]);
-    Actor_WaitForMove(leader);
+    FieldActor_WaitForMove(leader);
     Func_02004b18(leader, 6);
     System_Wait(6);
     Event_End();
-    Scene_ResolveInteractionResult();
-    Party_PlaySavedMusic();
+    Scene_ChooseMusic();
+    Scene_PlayMusic();
     *(s16 *)work->unk15c = 0;
   }
 }
@@ -462,7 +462,7 @@ void WorldMap_RefuseToRunAway(void) {
       Actor_WalkToAndWait(5, (x << 4) + 24, (z << 4) - 12);
       Actor_FaceDirection(5, southwest, 0);
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner,
-                                  FACING_NORTHEAST);
+                                 FACING_NORTHEAST);
       Func_02004da8();
       FieldEvent_SetMessageId((s32)MsgWeShouldnT);
       Event_ShowMessage(5, 0);
@@ -482,7 +482,7 @@ void WorldMap_RefuseToRunAway(void) {
       Actor_WalkToAndWait(5, x + 24, besideZ);
       Actor_FaceDirection(5, southwest, 0);
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner,
-                                  FACING_NORTHEAST);
+                                 FACING_NORTHEAST);
       Func_02004da8();
       FieldEvent_SetMessageId((s32)MsgYouReNot);
       Event_ShowMessage(5, 0);
@@ -553,7 +553,7 @@ void WorldMap_GazeIntoPond(void) {
       object->y = position[1];
       object->z = position[2];
     }
-    Actor_ShowItemIconById(79, amount);
+    FieldActor_ShowItemIconById(79, amount);
     /* FAKEMATCH(dead): the store and the call in a once-only block; as plain
      * statements, 6 of 129 instructions differ in tla-en. */
     do {
@@ -584,7 +584,7 @@ void Func_02000d4c(void) {
   u8 *animation;
   s32 a, id;
 
-  Actor_ShowItemIconById(19, 0x198);
+  FieldActor_ShowItemIconById(19, 0x198);
   object = Actor_Get(19);
   animation = object->sprite;
   animation[17] |= 1;
@@ -685,7 +685,7 @@ s32 Scene_Initialize(void) {
     break;
   case 72:
     Func_02003d44(2);
-    Actor_SetSpriteColor(Actor_GetById(7), 15);
+    FieldActor_SetSpriteColor(Actor_GetById(7), 15);
     Actor_SetPosition(7, 0x1c6d0000, 0x1c840000);
     wait(1);
     FieldEvent_SetMessageId((s32)MsgIVeHeard);
@@ -728,8 +728,8 @@ void WorldMap_ExplainGivingDjinn(void) {
   Func_02004da8();
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_SetMessageId(Event_GetFlag(0x175) * ((s32)MsgDjinnGiveTutorialB -
-                                          (s32)MsgDjinnGiveTutorialA) +
-                     (s32)MsgAfterBringingA);
+                                                  (s32)MsgDjinnGiveTutorialA) +
+                          (s32)MsgAfterBringingA);
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(30);
   Event_PlaySound(111);
@@ -886,7 +886,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     {
       s32 worldMap = (s32)&SceneId_WorldMap;
 
-      Event_SetAfterBattleDestination(worldMap, 73);
+      FieldEvent_SetAfterBattleDestination(worldMap, 73);
       Party_SetFields1f2And1f4(worldMap, 74);
     }
     Func_02004db0();
@@ -904,7 +904,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
       Actor_SetPositionAndFacing(23, 0x27a80000, 0x25c00000, a3);
     }
     Actor_SetPositionAndFacing(4, 0x27b80000, 0x25b00000, 0xa000);
-    FieldCamera_FollowActor(4, 0);
+    EventCamera_FollowActor(4, 0);
     FieldEffect_ScheduleRatioTransition(0x18ccc, 1);
     Actor_SetAnimation(4, 19);
     Actor_SetSingleChildFlags(Actor_Get(4), 0);
@@ -942,8 +942,9 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetAnimationAndWait(20, 3);
     Event_Wait(10);
     Event_Wait(40);
-    Event_SetDestination(((struct SavedDestination *)&gMainRoutineWork)->scene,
-                  ((struct SavedDestination *)&gMainRoutineWork)->entrance);
+    Event_SetDestination(
+        ((struct SavedDestination *)&gMainRoutineWork)->scene,
+        ((struct SavedDestination *)&gMainRoutineWork)->entrance);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   } else {
     Event_ClearFlag(0xa76);
@@ -954,7 +955,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetPositionAndFacing(22, 0x27c80000, 0x25a00000, eastB);
     Actor_SetPositionAndFacing(23, 0x27b00000, 0x25d00000, westB);
     Actor_SetPositionAndFacing(4, 0x27c00000, 0x25d00000, westB);
-    FieldCamera_FollowActor(4, 0);
+    EventCamera_FollowActor(4, 0);
     FieldEffect_ScheduleRatioTransition(0x18000, 1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -1075,7 +1076,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
 
       if (object != NULL)
         Actor_SetDestination(23, *(s16 *)((u8 *)object + 10),
-                                  *(s16 *)((u8 *)object + 18));
+                             *(s16 *)((u8 *)object + 18));
     }
     Actor_WaitForMoveById(23);
     Actor_SetPosition(23, 0, 0);
@@ -1209,14 +1210,14 @@ void WorldMap_MeetEcho(void) {
     Djinn_Give(owner, 0, 7);
     DjinnRecovery_AddStandby(owner, 0, 7);
     Func_02004da8();
-    Actor_SetAngleToward(owner, 9, 0);
+    Actor_FaceActorById(owner, 9, 0);
     Event_Wait(10);
     FieldActor_ShowEmote(owner, 0x101, 60);
     {
       s32 one = 1;
       *(u16 *)&djinni->unk66 = one;
     }
-    Actor_SetAngleToward(9, owner, 0);
+    Actor_FaceActorById(9, owner, 0);
     wait(16);
     flag = Event_GetFlag(0x175);
     Event_SetMessageId(TUTORIAL_SET_MESSAGE(flag, MsgHey2));
@@ -1243,11 +1244,11 @@ void WorldMap_MeetEcho(void) {
       wait(1);
       i--;
     }
-    Actor_SetAngleToward(9, owner, 0);
-    Actor_SetAngleToward(owner, 9, 0);
+    Actor_FaceActorById(9, owner, 0);
+    Actor_FaceActorById(owner, 9, 0);
     wait(16);
     djinni->update = 0;
-    Animation_ApplyChildValues(djinni, 0);
+    Actor_SetSpriteColorMode(djinni, 0);
     djinni->gravity = 0x10000;
     FieldMessage_ShowAtActor(9, 0);
     if (Event_AskYesNoWithActorAnimation(owner, 0) == 1) {
@@ -1300,8 +1301,8 @@ void WorldMap_MeetEcho(void) {
     }
     Actor_SetModeById(owner, 22);
     Event_ShowMessageAndWait(9, 0);
-    Func_080d47b4(9, 0x102, 30);
-    Actor_SetAngleToward(9, owner, 0);
+    Actor_ShowEmoteById(9, 0x102, 30);
+    Actor_FaceActorById(9, owner, 0);
     Motion_SetVarCbAndRefresh(9, 2);
     Event_ShowMessageAndWait(9, 0);
     Actor_Jump(9, 2, 30);
@@ -1357,8 +1358,8 @@ void WorldMap_MeetEcho(void) {
   FieldActor_SetMoveTarget(djinni, x, 0, z);
   Event_Wait(30);
   Func_02004da8();
-  Actor_SetAngleToward(9, owner, 0);
-  Actor_SetAngleToward(owner, 9, 0);
+  Actor_FaceActorById(9, owner, 0);
+  Actor_FaceActorById(owner, 9, 0);
   Actor_SetModeById(owner, 22);
   Event_SetMessageId(TUTORIAL_MESSAGE(MsgSeeWeDjinn));
   Actor_Jump(9, 2, 20);
@@ -1375,7 +1376,7 @@ void WorldMap_MeetEcho(void) {
   FieldActor_SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
   Event_Wait(30);
   Event_ShowMessageAndWait(9, 0);
-  Actor_SetAngleToward(9, owner, 0);
+  Actor_FaceActorById(9, owner, 0);
   Event_ShowMessageAndWait(9, 0);
   FieldMessage_ShowAtActor(9, 0);
   if (Event_AskYesNoWithActorAnimation(owner, 0) != 1)
@@ -1398,7 +1399,7 @@ refused:
   Actor_Jump(9, 2, 20);
   Actor_Jump(9, 2, 20);
   Event_ShowMessageAndWait(9, 0);
-  Func_080d47b4(9, 0x100, 30);
+  Actor_ShowEmoteById(9, 0x100, 30);
   Event_ShowMessageAndWait(9, 0);
   Event_SetFlag(0x16f);
   Event_SetFlag(0x171);
@@ -1409,8 +1410,8 @@ refused:
   // The constant local: with a plain 0 here, the zero that motionFlags = 2
   // leaves is shared by the first visit's stores of 0 and its reloads take
   // other registers (differ 26).
-  Djinn_JoinParty(9, zero, 7);
-  Party_PlaySavedMusic();
+  FieldDjinn_JoinParty(9, zero, 7);
+  Scene_PlayMusic();
   Event_End();
   Event_ClearFlag(0x16e);
   Event_ClearFlag(0x16f);
@@ -1433,8 +1434,7 @@ void Func_02002594(void) {
 
   x = ((Random16Far() * 40) >> 16) << 16;
   z = ((Random16Far() * 30) >> 16) << 16;
-  obj = (FieldActor_Create(285, x + 0x7b80000, 0,
-                                            z + 0x1c5c0000));
+  obj = (FieldActor_Create(285, x + 0x7b80000, 0, z + 0x1c5c0000));
   if (obj != NULL) {
     sprite = obj->sprite;
     scale = ((Random16Far() << 15) >> 16) + 0x13333;
@@ -1468,12 +1468,12 @@ void Func_02002618(s32 id, s32 dx, s32 dz) {
 }
 
 void Func_02002640(s32 a, s32 b, s32 dx, s32 dz) {
-  WorldMap_SetWindowCellTileAndDraw(a, b, 48, 224);
+  FieldWorldMap_SetWindowCellTileAndDraw(a, b, 48, 224);
   Func_02002618(5, dx, dz);
   Func_02002618(8, dx, dz);
   Func_02002618(9, dx, dz);
   Func_02002618(10, dx, dz);
-  WorldMap_SetWindowCellTileAndDraw(a + 16, b, 64, 224);
+  FieldWorldMap_SetWindowCellTileAndDraw(a + 16, b, 64, 224);
 }
 
 /// ★ Named from the game: "They've done it, ! They've lit the beacon!"
@@ -1557,7 +1557,7 @@ void Func_020028cc(void) {
     return;
   leader = Actor_Get(8);
   obj = FieldActor_Create(285, leader->x - PIXELS(32), leader->y,
-                       leader->z - PIXELS(16));
+                          leader->z - PIXELS(16));
   if (obj == NULL)
     return;
   obj->scaleX = Q16_ONE / 2;
@@ -1578,7 +1578,7 @@ void Func_020028cc(void) {
   spr->priority = ((struct FieldSprite *)leader->sprite)->priority;
   obj->priorityFlags |= 2;
   obj->motionFlags = leader->motionFlags;
-  Actor_SetSpriteColor(obj, 9);
+  FieldActor_SetSpriteColor(obj, 9);
   Func_02004b18(obj, 2);
   Actor_StartScript(obj, gData_02004f10);
 }
@@ -1597,11 +1597,10 @@ void Func_020029a4(void) {
   FieldEffect_ScheduleRatioTransition(0x9999, 1);
   actor->scaleX = 0x13333;
   actor->scaleY = 0x13333;
-  FieldCamera_FollowActor(8, 1);
+  EventCamera_FollowActor(8, 1);
   System_Wait(1);
-  Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
-                                     0);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
+  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_SetSingleChildFlags(Actor_Get(8), 0);
   Actor_SetSpeed(8, 0x6666, 0x3333);
   actor->timer = 0;
@@ -1631,15 +1630,14 @@ void WorldMap_DriftNorthOfContinent(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  WorldMap_SetWindowCellTileAndDraw(64, 176, 304, 240);
-  WorldMap_SetWindowCellTileAndDraw(80, 176, 320, 240);
+  FieldWorldMap_SetWindowCellTileAndDraw(64, 176, 304, 240);
+  FieldWorldMap_SetWindowCellTileAndDraw(80, 176, 320, 240);
   boat->scaleX = 0x13333;
   boat->scaleY = 0x13333;
   FieldCamera_MoveTo(-1, -1, -1, 0);
   System_Wait(1);
-  Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
-                                     0);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
+  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_SetSingleChildFlags(Actor_Get(10), 0);
   Actor_SetSpeed(10, 0x6666, 0x3333);
   boat->timer = 0;
@@ -1687,15 +1685,14 @@ void WorldMap_DriftNorthOfContinent(void) {
   map->unk11c = 0xe000;
   System_Wait(1);
   FieldCamera_MoveTo(0x0e470000, -1, 0x1dd00000, 0);
-  Map_UpdateCurrentTileBlock();
+  WorldMap_UpdateCurrentTileBlock();
   Actor_SetPosition(8, 0x0e6a0000, 0x1dc00000);
   Actor_SetPosition(9, 0x0e3e0000, 0x1dff0000);
   Actor_SetPosition(4, 0x0e550000, 0x1df00000);
   Actor_SetPosition(5, 0x0e490000, 0x1dc50000);
   Actor_SetPosition(6, 0x0e770000, 0x1de30000);
-  Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
-                                     1);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 1);
   System_Wait(1);
   Func_02004da8();
   Actor_SetAttachedEffect(5, 0x102);
@@ -1722,8 +1719,7 @@ void WorldMap_DriftNorthOfContinent(void) {
 /// once a key is held the scene changes to SceneId_Ov667.
 void Func_02002e00(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = 0;
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
@@ -1756,8 +1752,7 @@ void WorldMap_TakeTheTiller(void) {
     FieldEvent_ResolvePendingActions(0);
     scale = Actor_GetById(gMainRoutineWork.currentOwner)->scaleX;
     Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = 0;
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                       0);
+    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_02004da8();
@@ -1921,7 +1916,7 @@ void WorldMap_TakeOff(void) {
   Event_ShowMessage(23, 0);
   FieldEvent_Wait(40);
   Event_ShowMessage(23, 0);
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   Func_02004db0();
   i = 0;
   {
@@ -1941,7 +1936,7 @@ void WorldMap_TakeOff(void) {
 
 s32 Func_02003418(struct Actor *object) {
   if (Random16Far() < 0x4000)
-    Animation_ApplyChildValues(object, Random16Far() * 8 >> 16);
+    Actor_SetSpriteColorMode(object, Random16Far() * 8 >> 16);
   return 0;
 }
 
@@ -1968,9 +1963,8 @@ void Func_0200343c(struct Actor *parent) {
 void Func_02003490(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
-                                     0);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
+  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_Get(gMainRoutineWork.currentOwner)->update = Func_0200343c;
   Actor_Get(gMainRoutineWork.currentOwner)->acceleration = 0x2000;
   Actor_Get(gMainRoutineWork.currentOwner)->speedLimit = 0x20000;

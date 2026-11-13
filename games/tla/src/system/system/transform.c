@@ -3,8 +3,13 @@
 // Part of system.c.
 
 #include "../system_internal.h"
-#include "module/tla.h"
 #include "projection.h"
+
+struct ProjectedPoint {
+  s32 x;
+  s32 y;
+  s32 z;
+};
 
 // gTransform contains twelve s32 values in Q16 (1.0 = 0x10000).
 // Entries 0-8 form the 3x3 rotation; entries 9-11 hold the translation.
@@ -18,7 +23,7 @@
 void Render_EmptyHook(void) {}
 
 /// Allocates the matrix-save storage and sets the current matrix to identity.
-void Render_ResetTransformState(void) {
+void Transform_Reset(void) {
   gTransformStackTop = HeapSlot_AllocEwram(8, sizeof(gTransform));
   gTransformStackDepth = 0;
   CAMELOT_ASM("the fixed-register identity store of transform.h")
@@ -55,14 +60,14 @@ void Transform_Pop(void) {
 }
 
 /// Sets the current matrix to identity.
-void SceneTransform_ResetMatrix(void) {
+void Transform_ResetMatrix(void) {
   CAMELOT_ASM("the fixed-register identity store of transform.h")
   Transform_ResetCurrent();
 }
 
 /// Applies rotations around the X, Y and Z axes.
 /// ang: the three axis angles.
-void SceneTransform_ApplyRotation(s32 *ang) {
+void Transform_ApplyRotation(s32 *ang) {
   s32 sx, cx, sy, cy, sz, cz;
   s32 m[12];
 
@@ -102,7 +107,7 @@ static __inline__ void Render_SetIdentity(void *matrix) {
 }
 
 /// Applies a rotation about the X axis.
-void SceneTransform_ApplyPitch(s32 ang) {
+void Transform_ApplyPitch(s32 ang) {
   s32 m[12];
   s32 sin, cos;
 
@@ -118,7 +123,7 @@ void SceneTransform_ApplyPitch(s32 ang) {
 }
 
 /// Applies a rotation about the Y axis.
-void SceneTransform_ApplyYaw(s32 ang) {
+void Transform_ApplyYaw(s32 ang) {
   s32 m[12];
   s32 sin, cos;
 
@@ -149,7 +154,7 @@ void Func_080150ac(s32 ang) {
 }
 
 /// Applies a rotation about the Z axis.
-void Func_080150e4(s32 ang) {
+void Transform_ApplyRoll(s32 ang) {
   s32 m[12];
   s32 sin, cos;
 
@@ -196,7 +201,7 @@ void SceneTransform_SetPosition(const s32 *pos) {
 }
 
 /// Applies a scale by scale's X, Y and Z factors in Q16.
-void Func_080151ac(const s32 *scale) {
+void SceneTransform_ApplyScale(const s32 *scale) {
   s32 m[12];
 
   CAMELOT_ASM("the fixed-register identity store above")
@@ -208,7 +213,7 @@ void Func_080151ac(const s32 *scale) {
 }
 
 /// Applies a scale by x, y and z in Q16.
-void Func_080151e4(s32 x, s32 y, s32 z) {
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z) {
   s32 m[12];
 
   CAMELOT_ASM("the fixed-register identity store above")
@@ -230,7 +235,7 @@ void Func_0801521c(s32 scale) {
   m[8] = scale;
   Iwram_TransformMatrix(m);
 }
-void SceneTransform_ApplyRotationTranslation(s32 *ang, s32 *pos) {
+void Transform_ApplyRotationTranslation(s32 *ang, s32 *pos) {
   s32 sx, cx, sy, cy, sz, cz;
   s32 m[12];
 
@@ -256,7 +261,7 @@ void SceneTransform_ApplyRotationTranslation(s32 *ang, s32 *pos) {
 
 /// Applies rotation, scaling by row and translation together.
 /// scale: scale factors for rows 1-3 of the rotation matrix.
-void SceneTransform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
+void Transform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
   s32 sx, cx, sy, cy, sz, cz;
   s32 s;
   s32 m[12];

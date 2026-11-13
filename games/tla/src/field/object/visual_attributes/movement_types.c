@@ -7,21 +7,34 @@
 #include "module/system/system.h"
 #include "scene_call.h"
 
-/* VIEW(f0d489c): routine Func_080200c0 as struct LinkedEffectObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
-extern struct LinkedEffectObject *Func_080200c0__f0d489c(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
-/* VIEW(f0d489c): routine Actor_Destroy as void Actor_Destroy(struct LinkedEffectObject *object); battle.h has void Actor_Destroy(struct Actor *object). */
-extern void Actor_Destroy__f0d489c(struct LinkedEffectObject *object) __asm__("Actor_Destroy");
-/* VIEW(f0d489c): routine Actor_IsOutsideAnimation108 as s32 Actor_IsOutsideAnimation108(struct LinkedEffectObject *object); the definition has s32 Actor_IsOutsideAnimation108(struct Actor *object). */
-extern s32 Actor_IsOutsideAnimation108__f0d489c(struct LinkedEffectObject *object) __asm__("Actor_IsOutsideAnimation108");
-/* VIEW(f0d489c): routine BattleEffect_CopyWatchedObjectPosition as void BattleEffect_CopyWatchedObjectPosition(void); the definition has s32 BattleEffect_CopyWatchedObjectPosition(struct Actor *object). */
-extern void BattleEffect_CopyWatchedObjectPosition__f0d489c(void) __asm__("BattleEffect_CopyWatchedObjectPosition");
-extern const u8 gData_080f341c[];
+/* VIEW(f0d489c): routine Actor_CreateFar as struct LinkedEffectObject
+ * *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct
+ * BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z). */
+extern struct LinkedEffectObject *
+Func_080200c0__f0d489c(s32 kind, s32 x, s32 y,
+                       s32 z) __asm__("Actor_CreateFar");
+/* VIEW(f0d489c): routine Actor_Destroy as void Actor_Destroy(struct
+ * LinkedEffectObject *object); battle.h has void Actor_Destroy(struct Actor
+ * *object). */
+extern void Actor_Destroy__f0d489c(struct LinkedEffectObject *object) __asm__(
+    "Actor_Destroy");
+/* VIEW(f0d489c): routine Actor_IsOutsideAnimation108 as s32
+ * Actor_IsOutsideAnimation108(struct LinkedEffectObject *object); the
+ * definition has s32 Actor_IsOutsideAnimation108(struct Actor *object). */
+extern s32 Actor_IsOutsideAnimation108__f0d489c(
+    struct LinkedEffectObject *object) __asm__("Actor_IsOutsideAnimation108");
+/* VIEW(f0d489c): routine FieldEffect_CopyWatchedActorPosition as void
+ * FieldEffect_CopyWatchedActorPosition(void); the definition has s32
+ * FieldEffect_CopyWatchedActorPosition(struct Actor *object). */
+extern void BattleEffect_CopyWatchedObjectPosition__f0d489c(void) __asm__(
+    "FieldEffect_CopyWatchedActorPosition");
+extern const u8 gActor_WaitScript[];
 
 /// The Broken Seal's BattleEffect_ConfigureWatchedObject with this game's
 /// calls: with flags & 3 zero it destroys the object's linked effect;
 /// otherwise (mode 2, or when the linked effect is outside animation 0x108)
 /// it creates effect object 264 at the object and links it, mode 1 keeping it
-/// as the object's resource and mode 2 running gData_080f341c on it.
+/// as the object's resource and mode 2 running gActor_WaitScript on it.
 void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   struct LinkedEffectObject *object = ObjectTable_Get(actorId);
   struct LinkedEffectObject *child;
@@ -35,7 +48,8 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
     return;
 
   if ((flags & 3) != 0) {
-    if ((flags & 3) == 2 || Actor_IsOutsideAnimation108__f0d489c(object->resource)) {
+    if ((flags & 3) == 2 ||
+        Actor_IsOutsideAnimation108__f0d489c(object->resource)) {
       child = Func_080200c0__f0d489c(264, object->x, object->y, object->z);
     }
   } else {
@@ -59,7 +73,7 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
     break;
   case 2:
     Actor_SetMode(child, 2);
-    Actor_StartScriptFar(child, gData_080f341c);
+    Actor_StartScriptFar(child, gActor_WaitScript);
     child->counter = 1;
     break;
   }
@@ -151,7 +165,7 @@ s32 Actor_MoveTowardTarget(struct Actor *object) {
 /// Turns the object toward its facing target, if it has one, by at most
 /// 0x1000 (22.5 degrees).
 /// obj: object to turn.
-s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *obj) {
+s32 Actor_TurnTowardWatchedActor(struct FacingObject *obj) {
   s32 turn;
   u16 old;
   s32 dir;
@@ -178,7 +192,7 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *obj) {
 /// Makes the object watch target and keeps it facing it.
 void Func_080d4aa8(struct Actor *object, struct Actor *target) {
   object->watchedObject = target;
-  object->update = SceneActor_UpdateFacingTowardTarget;
+  object->update = Actor_TurnTowardWatchedActor;
 }
 
 /// Gives the object the party leader's display layer.
@@ -198,38 +212,38 @@ s32 Func_080d4ab4(struct Actor *object) {
 
 struct Actor *Actor_GetById(u32 objectId);
 
-extern const u8 gData_080f34e4[];
-extern const u8 gData_080f3428[];
-extern const u8 gData_080f350c[];
-extern const u8 gData_080f35c8[];
-extern const u8 gData_080f373c[];
-extern const u8 gData_080f3750[];
+extern const u8 gMovementType_StandScript[];
+extern const u8 gMovementType_WanderScript[];
+extern const u8 gMovementType_WanderNearScript[];
+extern const u8 gMovementType_WanderCloseScript[];
+extern const u8 gMovementType_FollowWatchedScript[];
+extern const u8 gMovementType_FaceLeaderScript[];
 extern const u8 gData_080f34e8[];
 extern const u8 gData_080f3614[];
 extern const u8 gData_080f3764[];
-extern const u8 gData_080f3500[];
+extern const u8 gMovementType_ResetActionScript[];
 extern const u8 gData_080f34f4[];
 
 void Actor_SetActionCallback(struct Actor *object, s32 kind) {
   switch (kind) {
   case 1:
-    kind = (s32)gData_080f34e4;
+    kind = (s32)gMovementType_StandScript;
     break;
   case 2:
-    kind = (s32)gData_080f3428;
+    kind = (s32)gMovementType_WanderScript;
     break;
   case 3:
-    kind = (s32)gData_080f350c;
+    kind = (s32)gMovementType_WanderNearScript;
     break;
   case 4:
-    kind = (s32)gData_080f35c8;
+    kind = (s32)gMovementType_WanderCloseScript;
     break;
   case 5:
-    kind = (s32)gData_080f373c;
+    kind = (s32)gMovementType_FollowWatchedScript;
     break;
   case 6:
     object->watchedObject = Actor_GetById(gMainRoutineWork.currentOwner);
-    kind = (s32)gData_080f3750;
+    kind = (s32)gMovementType_FaceLeaderScript;
     break;
   case 7:
     kind = (s32)gData_080f34e8;
@@ -241,7 +255,7 @@ void Actor_SetActionCallback(struct Actor *object, s32 kind) {
     kind = (s32)gData_080f3764;
     break;
   case 10:
-    kind = (s32)gData_080f3500;
+    kind = (s32)gMovementType_ResetActionScript;
     break;
   case 11:
     kind = (s32)gData_080f34f4;
@@ -310,7 +324,8 @@ s32 Func_080d4ccc(struct Actor *object, s32 *position) {
   s8 *event = Ram_HeapSlots->eventWork;
 
   if (map == 0 || event[0x18a] == 3 ||
-      Func_080202f0(object->terrainId, position[0], position[2]) <= 2)
+      MapGrid_GetTerrainKindFar(object->terrainId, position[0], position[2]) <=
+          2)
     return 0;
   return 1;
 }
@@ -324,7 +339,7 @@ extern struct MapCell gMapCellBuffer[];
 /// or 259 with flag 2) dips 2 pixels with the leader. Each jump advances
 /// walking distance, and the leader keeps jumping while it lands on a jump spot
 /// (collision 254). Returns 0 after a jump, -1 when the leader cannot jump.
-s32 Func_080d4d08(void) {
+s32 Field_TryJumpForward(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 result = -1;
   s32 angle = leader->facing;
@@ -353,7 +368,7 @@ again:
   position[1] = leader->y;
   position[2] = (leader->z & 0xfff00000) + 0x80000;
   Vector_AddPolarOffset(0x100000, angle, position);
-  if (Func_08020210(leader, position) == 1)
+  if (MapGrid_CheckCollisionFar(leader, position) == 1)
     return -1;
   position[0] = (leader->x & 0xfff00000) + 0x80000;
   position[1] = leader->y;
@@ -361,7 +376,7 @@ again:
   Vector_AddPolarOffset(0x200000, angle, position);
   canJump = 0;
   if (Func_080d4ccc(leader, position) == 0 &&
-      Func_08020210(leader, position) == 0)
+      MapGrid_CheckCollisionFar(leader, position) == 0)
     canJump = 1;
 
   // A platform 16 pixels below the landing makes it a jump spot.
@@ -436,9 +451,9 @@ again:
     leader->velocityY = 0x40000;
     *flags &= 0x7e;
     Actor_SetSingleChildFlagsFar(leader, spriteFlags & 0xfe);
-    Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner,
-                               ((s16 *)positionWords)[1],
-                               ((s16 *)positionWords)[5]);
+    Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner,
+                            ((s16 *)positionWords)[1],
+                            ((s16 *)positionWords)[5]);
     Actor_SetMode(leader, 6);
     Actor_SetSingleChildFlagsFar(leader, spriteFlags);
 
@@ -482,8 +497,8 @@ again:
     if (work != NULL)
       work->walkingDistance +=
           Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
-    if (GetMapCellCollisionFar(leader->terrainId, position[0], position[2]) ==
-        254) {
+    if (MapGrid_GetCellBehaviorAtFar(leader->terrainId, position[0],
+                                     position[2]) == 254) {
       Actor_SetMode(leader, 1);
       wait(6);
       goto again;
@@ -533,14 +548,15 @@ s32 Func_080d50f8(void) {
     south = cell + 128;
     if (south->collisionCode == 255)
       goto failure;
-    if (MapGrid_GetTerrainHeightFar(leader->terrainId, gridX << 16, gridZ << 16) <=
+    if (MapGrid_GetTerrainHeightFar(leader->terrainId, gridX << 16,
+                                    gridZ << 16) <=
         MapGrid_GetTerrainHeightFar(leader->terrainId, gridX << 16,
-                                (gridZ + 16) << 16))
+                                    (gridZ + 16) << 16))
       goto failure;
     position[0] = leader->x;
     position[1] = leader->y - 0x100000;
     position[2] = leader->z;
-    if (Func_08020258(position) != 0)
+    if (MapGrid_IsWallAtFar(position) != 0)
       goto failure;
     radius = leader->radius - 2;
     position[0] = leader->x;
@@ -556,7 +572,7 @@ s32 Func_080d50f8(void) {
     }
 
     // Step to the middle of the tile, face north and climb down a tile.
-    Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, gridX, gridZ);
+    Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, gridX, gridZ);
     leader->speedLimit = 0x10000;
     Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
     Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
@@ -623,20 +639,21 @@ s32 Func_080d53b8(void) {
     north = cell - 128;
     if (north->collisionCode == 255)
       goto failure;
-    if (MapGrid_GetTerrainHeightFar(leader->terrainId, gridX << 16, gridZ << 16) >=
+    if (MapGrid_GetTerrainHeightFar(leader->terrainId, gridX << 16,
+                                    gridZ << 16) >=
         MapGrid_GetTerrainHeightFar(leader->terrainId, gridX << 16,
-                                (gridZ - 16) << 16))
+                                    (gridZ - 16) << 16))
       goto failure;
     position[0] = leader->x;
     position[1] = leader->y;
     position[2] = leader->z;
-    result = Func_08020258(position);
+    result = MapGrid_IsWallAtFar(position);
     if (result != 0)
       goto failure;
 
     // Step to the middle of the tile, crouch, jump and grab the wall.
     leader->actionFlags = result;
-    Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, gridX, gridZ);
+    Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, gridX, gridZ);
     Actor_SetMode(leader, 6);
     wait(4);
     Actor_SetMode(leader, 7);
@@ -759,7 +776,7 @@ s32 Func_080d5720(void) {
   return 1;
 }
 
-s32 Func_080d57e4(void) {
+s32 Field_ClimbDown(void) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
   struct FieldSprite *sprite = leader->sprite;
   s32 position[3];
@@ -776,8 +793,9 @@ s32 Func_080d57e4(void) {
   position[2] = leader->z;
   Vector_AddPolarOffset(0x100000, angle, position);
   leader->terrainHeight = leader->y - 0x80000;
-  if (Func_080201d0(leader->terrainId, position[0], position[2]) ||
-      Func_08020210(leader, position))
+  if (MapGrid_GetCellAttributeLowNibbleFar(leader->terrainId, position[0],
+                                           position[2]) ||
+      MapGrid_CheckCollisionFar(leader, position))
     return 0;
   leader->facing = angle;
   leader->priorityFlags |= 1;
@@ -878,8 +896,9 @@ s32 Func_080d5aa0(void) {
   position[2] = leader->z;
   Vector_AddPolarOffset(0x100000, angle, position);
   leader->terrainHeight = leader->y - 0x80000;
-  if (Func_080201d0(leader->terrainId, position[0], position[2]) ||
-      Func_08020210(leader, position))
+  if (MapGrid_GetCellAttributeLowNibbleFar(leader->terrainId, position[0],
+                                           position[2]) ||
+      MapGrid_CheckCollisionFar(leader, position))
     return 0;
   leader->facing = angle;
   leader->priorityFlags |= 1;

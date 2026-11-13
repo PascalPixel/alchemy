@@ -13,4 +13,4 @@ Actor_SetSpritePriority:
 	.global Sanctum_Run
 	.thumb_func
 Sanctum_Run:
-	overlay_veneer Func_08108010
+	overlay_veneer Sanctum_RunFar

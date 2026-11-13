@@ -34,7 +34,7 @@ void Func_0200088c();
 void Func_020009b8();
 void Func_02000a78();
 void Actor_StartScript();
-void DisplayBlend_DisableRunScript(void);
+void BlendScript_Resume(void);
 extern u8 gData_020035cc[];
 extern u8 gData_02003620[];
 extern s32 gData_020036fc[][2];
@@ -133,11 +133,11 @@ void Func_02000ac8(void) {
   actor->scaleX = 0x1999;
   Actor_SetSingleChildFlags((s32)actor, 0);
   Actor_StartScript(actor, gData_020035cc);
-  Animation_SetStateFlags(actor, 1);
+  Actor_SetBlendMode(actor, 1);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(60);
-  DisplayBlend_EnableRunScript();
+  BlendScript_Suspend();
   alpha = alpha & 255;
   REG_BLDALPHA = 0x1000;
   t0 = x >> 4;
@@ -154,7 +154,7 @@ void Func_02000ac8(void) {
     if (i != alpha)
       goto fadeIn;
   }
-  DisplayBlend_DisableRunScript();
+  BlendScript_Resume();
   Event_PlaySound(246);
   FieldEvent_Wait(48);
 
@@ -187,7 +187,7 @@ void Func_02000ac8(void) {
   if (count != 18) {
     FieldEvent_Wait(96);
     Actor_StartScript(actor, gData_02003620);
-    DisplayBlend_EnableRunScript();
+    BlendScript_Suspend();
     alpha = REG_BLDALPHA & 255;
     PaletteFade_ApplyTarget(0x10000, 1);
     PaletteFade_Interpolate(60);
@@ -205,7 +205,7 @@ void Func_02000ac8(void) {
           (leader->z + (gData_020036fc[slot][1] << 16)) >> 20, 1, 1);
     }
     MapGrid_CopyCellsTo(64, 0, column + 63, row - 3, 3, 5);
-    DisplayBlend_DisableRunScript();
+    BlendScript_Resume();
     Event_WaitTransitionFrames();
   } else {
     Event_SetFlag((s16)work->room + 0xa55);
@@ -249,7 +249,7 @@ void Func_02000ac8(void) {
 
   Import_ActorDestroy(actor);
   Event_SetFlag(0x200);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(60);
   Event_End();
@@ -386,7 +386,7 @@ void Func_02001398(void) {
                              ((leader->z >> 20) << 20) + 0x80000);
   object->priorityFlags |= 2;
   object->motionFlags = 0;
-  Actor_SetSpriteColor(object, 4);
+  FieldActor_SetSpriteColor(object, 4);
   object->scaleY = 0x16000;
   object->scaleX = 0x16000;
   Scene_SetActorSpritePriority(object, 2);
@@ -447,7 +447,7 @@ void Func_02001518(void) {
   object->acceleration = 0x800;
   Event_PlaySound(198);
   FieldActor_SetMoveTarget(object, object->x, object->y + 0x40000, object->z);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   Scene_SetActorSpritePriority(leader, 1);
   Scene_SetActorSpritePriority(object, 1);
   FieldActor_SetMoveTarget(object, object->x, object->y + 0x800000, object->z);
@@ -462,7 +462,7 @@ void Func_02001614(void) {
   s32 t1;
 
   t0 = Actor_Get(gMainRoutineWork.currentOwner);
-  t1 = MapGrid_GetCellBehaviorAt(2, t0->x, t0->z);
+  t1 = FieldMapGrid_GetCellBehaviorAt(2, t0->x, t0->z);
   if (t1 == 0xe8) {
     t0->terrainId = 2;
   }
@@ -558,7 +558,7 @@ void Func_020017b4(struct Actor *self) {
     dust->x += ((Random16Far() & 15) - 8) << 16;
     dust->y += ((Random16Far() & 31) - 4) << 16;
     dust->motionFlags = 0;
-    Actor_SetSpriteColor(dust, ((u8 *)self)[0x62]);
+    FieldActor_SetSpriteColor(dust, ((u8 *)self)[0x62]);
     Scene_SetActorSpritePriority(dust, 2);
     Actor_SelectAnimation(dust, 1);
     Actor_SetSingleChildFlags(dust, 0);
@@ -571,14 +571,15 @@ void Func_020017b4(struct Actor *self) {
   if (ahead[2] >> 16 > 248)
     return;
   FieldVector_AddPolarOffset(0x70000, 0x8000 - leader->facing, ahead);
-  if (MapGrid_GetCellBehaviorAt(self->terrainId, ahead[0], ahead[2]) == 255)
+  if (FieldMapGrid_GetCellBehaviorAt(self->terrainId, ahead[0], ahead[2]) ==
+      255)
     return;
   {
     s32 x = next[0];
 
     self->x = x;
     self->z = next[1];
-    kind = MapGrid_GetCellBehaviorAt(self->terrainId, x, next[1]);
+    kind = FieldMapGrid_GetCellBehaviorAt(self->terrainId, x, next[1]);
   }
   if (kind == 52) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 201;

@@ -170,7 +170,7 @@ void Func_02000184(void) {
 void Func_0200030c(void) {
   Event_SetFlag(0x205);
   Event_SetFlag(0x206);
-  Field_RequestDjinnBattle(17, 35);
+  Event_RequestDjinnBattle(17, 35);
 }
 
 s32 Func_0200032c(struct Actor *object) {
@@ -235,7 +235,7 @@ void Func_020003cc(void) {
 void Func_02000404(void) {
   s32 angle;
 
-  Actor_ShowItemIconById(22, 0x190);
+  FieldActor_ShowItemIconById(22, 0x190);
   angle = 0xc000;
   Actor_SetPositionAndFacing(22, PIXELS(212), PIXELS(199), angle);
   Event_SetFlag(0xa73);
@@ -361,7 +361,7 @@ void ShamanVillageCave_MeetColossoFans(void) {
   do {
     gMainRoutineWork.battleRule24b = 2;
   } while (0);
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov695, 20);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov695, 20);
   Event_SetDefeatDestination((s32)&SceneId_Ov695, 21);
   Field_RequestBattleFromEncounterTable(102, 2);
 }
@@ -379,7 +379,7 @@ void Func_0200083c(void) {
     do {
     } while (0);
   }
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov695, 20);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov695, 20);
   Event_SetDefeatDestination((s32)&SceneId_Ov695, 21);
   Field_RequestBattleFromEncounterTable(102, 2);
 }
@@ -419,7 +419,7 @@ void ShamanVillageCave_LoseToColossoFans(void) {
   FieldEvent_ShowMessageThenWait(21, 0, 5);
   Actor_ShowEmote(19, 263, 30);
   Event_OpenMessage(19, 0);
-  if (FieldYesNo_Ask(1) == 0) {
+  if (EventYesNo_Ask(1) == 0) {
     Message_CloseFinishedWindows();
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     EVENT_MESSAGE++;
@@ -439,7 +439,7 @@ void ShamanVillageCave_LoseToColossoFans(void) {
   Actor_ShowEmote(18, 261, 1);
   FieldEvent_Wait(20);
   Event_SetDestination((s16)gMainRoutineWork.savedScene,
-                (s16)gMainRoutineWork.savedEntrance);
+                       (s16)gMainRoutineWork.savedEntrance);
 #if TLA_PATCH_1
   Func_02001208(gMainRoutineWork.scene, gMainRoutineWork.entrance);
 #endif
@@ -602,7 +602,7 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(770)) {
     object = Actor_Get(16);
     Actor_SetAnimation(16, 5);
-    Actor_SetSpriteColor(Actor_Get(16), 0);
+    FieldActor_SetSpriteColor(Actor_Get(16), 0);
     object->motionFlags = 0;
     object->priorityFlags = 0;
     object->y = 0;
@@ -610,9 +610,9 @@ s32 Scene_Initialize(void) {
   }
   if (Event_GetFlag(518))
     Actor_SetPosition(17, PIXELS(328), PIXELS(792));
-  Actor_SetSpriteColor(Actor_Get(19), 1);
-  Actor_SetSpriteColor(Actor_Get(20), 0);
-  Actor_SetSpriteColor(Actor_Get(21), 2);
+  FieldActor_SetSpriteColor(Actor_Get(19), 1);
+  FieldActor_SetSpriteColor(Actor_Get(20), 0);
+  FieldActor_SetSpriteColor(Actor_Get(21), 2);
   if ((!Event_GetFlag(265) &&
        (gMainRoutineWork.entrance == 20 || gMainRoutineWork.entrance == 21)) ||
       Event_GetFlag(0xa71)) {

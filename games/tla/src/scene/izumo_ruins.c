@@ -251,7 +251,7 @@ s32 Scene_Initialize(void) {
                                       object->z - object->y);
         object->terrainHeight = height;
         object->y = height;
-        FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
+        EventCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
       }
     }
   }

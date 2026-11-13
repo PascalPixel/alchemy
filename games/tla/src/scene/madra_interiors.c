@@ -331,7 +331,7 @@ void Func_02000570(void) {
 extern u32 gData_020033c8[];
 void FieldCamera_WaitForArrival();
 void BattleEffect_LoadActionEffectResources();
-void BattleEffect_SetupObjectPair();
+void FieldPsynergy_SetupActorPair();
 void BattleEffect_StopMainActor();
 
 /// The rooms' setup: the leader's sprite priority, the two rooms' actors and
@@ -350,8 +350,8 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(29, 0, 0);
       Actor_SetPosition(30, 0, 0);
     } else {
-      Actor_SetSpriteColor(Actor_Get(29), 3);
-      Actor_SetSpriteColor(Actor_Get(30), 5);
+      FieldActor_SetSpriteColor(Actor_Get(29), 3);
+      FieldActor_SetSpriteColor(Actor_Get(30), 5);
     }
     if (Event_GetFlag(0x8ab)) {
       MapGrid_CopyCellsLayered(2, 110, 16, 10, 16, 64);
@@ -374,9 +374,9 @@ s32 Scene_Initialize(void) {
   }
   Func_02000534();
   if (Event_GetFlag(0x8ff))
-    Actor_SetSpriteColor(Actor_Get(33), 2);
+    FieldActor_SetSpriteColor(Actor_Get(33), 2);
   else
-    Actor_SetSpriteColor(Actor_Get(28), 2);
+    FieldActor_SetSpriteColor(Actor_Get(28), 2);
   return 0;
 }
 
@@ -503,7 +503,7 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(7, 0, 16);
   BattleEffect_LoadActionEffectResources(24, 1);
-  BattleEffect_SetupObjectPair(7, 8);
+  FieldPsynergy_SetupActorPair(7, 8);
   EventObject_Initialize();
   Actor_ShowEmote(9, 0x101, 30);
   Actor_FaceActor(9, 7, 0);
@@ -511,7 +511,7 @@ void MadraInteriors_InterrogatePiers(void) {
   object2 = Actor_Get(9);
   Actor_SetSingleChildFlags(object2, 0);
   Actor_SetScript(9, gData_0200349c);
-  Field_DispatchTypeHandler(1);
+  FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   BattleEffect_CleanupSceneObjects();
   FieldEvent_ShowMessageThenWait(11, 0, 10);
@@ -601,7 +601,7 @@ void MadraInteriors_InterrogatePiers(void) {
   Actor_SetSpriteColorById(8, 0);
   Actor_FaceDirection(7, FACING_NORTH, 0);
   Actor_WaitForAnimationChange(8);
-  FieldCamera_FollowActor(4, 1);
+  EventCamera_FollowActor(4, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceEachOther(11, 4, 0);
   Actor_RunRepeatedMotion(11, 2);
@@ -683,9 +683,9 @@ void MadraInteriors_MindReadPiers(void) {
 
 void Func_02000fe0(void) {
   BattleEffect_LoadActionEffectResources(24, 1);
-  BattleEffect_SetupObjectPair(7, 8);
+  FieldPsynergy_SetupActorPair(7, 8);
   EventObject_Initialize();
-  Field_DispatchTypeHandler(1);
+  FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   BattleEffect_CleanupSceneObjects();
   return;

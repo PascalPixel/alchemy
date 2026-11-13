@@ -5,9 +5,10 @@
 
 #include "../battle_internal.h"
 #include "module/battle/battle.h"
+#include "gamepak/far_call/battle_effect.h"
+#include "gamepak/far_call/window.h"
 
-s32 AutoBattle_BuildActions(
-    struct BattleSortedUnitEntry *entries) {
+s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries) {
   struct BattleSortedUnitEntry swap;
   u16 unitIds[14];
   s32 firstCount;
@@ -97,7 +98,7 @@ s32 AutoBattle_RunAction(s16 *action) {
     return -1;
 
   action[5] =
-      BattleTarget_ReplaceDefeated((const struct BattleActionRecord *)action);
+      BattleAbility_ReplaceDefeated((const struct BattleActionRecord *)action);
   transition = Ram_HeapSlots->transitionWork;
   if (action[0] > 4)
     battleMode = -0x2000;
@@ -110,7 +111,7 @@ s32 AutoBattle_RunAction(s16 *action) {
   switch (action[3]) {
   case 99:
     BattleMessage_ShowAndWaitFar((s32)&MsgPartyFlees);
-    if (BattleEscape_PlayRun((struct BattleActionRecord *)action) != 0)
+    if (BattleFlee_PlayRun((struct BattleActionRecord *)action) != 0)
       return 1;
     break;
   case 3:
@@ -148,7 +149,7 @@ s32 BattleObject_IsValidId(u32 objectId) {
   return -1;
 }
 
-s32 BattleEscape_PlayRun(struct BattleActionRecord *action) {
+s32 BattleFlee_PlayRun(struct BattleActionRecord *action) {
   s16 party_members[14];
   s32 party_size;
   s32 animated;
@@ -325,8 +326,8 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   MessageArgument_PushFar(work.actor, 1);
   BattleMessage_ShowAndWaitFar((s32)MsgActorAttacks);
   BattleMotion_ApproachTarget(work.actor, work.actors[0], 13, 0);
-  Actor_SetAnimationSpeedFar(
-      (struct Actor *)BattleObject_Get(work.actor)->object, 16);
+  Actor_SelectAnimationFar((struct Actor *)BattleObject_Get(work.actor)->object,
+                           16);
   BattleObject_Get(work.actors[0]);
 
   work.count = 1;
@@ -337,9 +338,9 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   work.flags = 0;
 
   wait(4);
-  Func_08138008(&work);
-  ObjMotRst(work.actors[0]);
-  ObjMotRst(work.actor);
+  BattleEffect_DispatchByIdRangeFar(&work);
+  BattleMotion_ReturnToSpot(work.actors[0]);
+  BattleMotion_ReturnToSpot(work.actor);
   return 0;
 }
 
@@ -382,7 +383,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
   object = BattleObject_Get(work.actor)->object;
   Actor_SetMode((struct Actor *)object, 3);
-  Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
+  Actor_SelectAnimationFar((struct Actor *)object, 16);
   if ((u16)action->target <= 7) {
     work.side = 1;
     BattleParty_ListLivingUnits(1, (u16 *)work.actors);
@@ -402,15 +403,15 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   }
   work.kind = 0;
   work.variant = 0;
-  Func_08138020(&work);
+  BattleEffect_RunElementPillarFar(&work);
   work.kind = 1;
-  Func_08138020(&work);
+  BattleEffect_RunElementPillarFar(&work);
   work.kind = 2;
-  Func_08138020(&work);
+  BattleEffect_RunElementPillarFar(&work);
   work.kind = 3;
-  Func_08138020(&work);
+  BattleEffect_RunElementPillarFar(&work);
   work.kind = 0;
-  Func_08138018(&work);
+  BattleEffect_RunFromTableFar(&work);
   Actor_SetMode((struct Actor *)object, 1);
   // An empty once-only loop ends CSE's knowledge of work's address, so the
   // return loop's exit test addresses work afresh; without it, 103 of 180
@@ -418,13 +419,13 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   do {
   } while (0);
   for (i = 0; i != work.count; i++)
-    ObjMotRst(work.actors[i]);
-  ObjMotRst(work.actor);
+    BattleMotion_ReturnToSpot(work.actors[i]);
+  BattleMotion_ReturnToSpot(work.actor);
   return 0;
 }
 
 void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
-                                        u8 *context) {
+                            u8 *context) {
   u8 localContext[4];
   struct BattleUnit *character;
   struct BattleObj *slot;
@@ -462,7 +463,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
     MessageArgument_PushFar(unitId, 1);
   }
 
-  BattleMotion_SetMode5AndActivateSlot(unitId);
+  BattleMotion_PlayFall(unitId);
   if (unitId <= 7) {
     if (character->hp <= 0) {
       MessageArgument_PushFar(unitId, 1);
@@ -477,9 +478,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   Actor_SetMode((struct Actor *)slot->object, 1);
 }
 
-s32 Animation_ApplyChildArgumentFar(void *group, s32 flags);
-
-void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
+void BattleMotion_PlayFall(s32 unitId) {
   struct BattleObjectAnimation *animation;
   struct AnimationEntry *entry;
 
@@ -490,12 +489,12 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
     entry->param = 6;
     entry->picture = 0xff;
     wait(4);
-    Map_RenderAnimatedTilePicturesForObjectFar(animation);
+    SpriteDissolve_RunFar(animation);
     BattleObject_MarkForRelease(unitId);
   }
 }
 
-s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action) {
+s32 BattleAbility_ReplaceDefeated(const struct BattleActionRecord *action) {
   s16 livingUnits[14];
   s32 targetId;
   s32 livingCount;

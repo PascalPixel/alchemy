@@ -41,12 +41,13 @@ s32 Inn_QuoteRoomPrice(s32 value) {
 // Inn_CheckIn is the inn. It shows the keeper's window and the price, then on
 // yes and enough coins closes the windows, plays the night (Inn_PlaySleep) and
 // greets the party in the morning. The Broken Seal's Inn_CheckIn in
-// games/tbs/src/shop/shop.c, written with this game's calls (Shop_InitializeWork for
-// the cursor work, Func_080380f8 for the keeper's window, Inn_RoomPrice for the
-// room price, MessageArgument_PushFar, Shop_ShowKeeperMessage to show a message,
-// Shop_AskYesNo for the choice, Shop_DrawMoney for the coins, Shop_ReleaseWork to
-// clean up) and its work-block offsets; this game has no special-inn flag.
-// Messages from MsgInnWelcome ("Welcome to our inn.").
+// games/tbs/src/shop/shop.c, written with this game's calls
+// (Shop_InitializeWork for the cursor work, Portrait_OpenWindowFar for the
+// keeper's window, Inn_RoomPrice for the room price, MessageArgument_PushFar,
+// Shop_ShowKeeperMessage to show a message, Shop_AskYesNo for the choice,
+// Shop_DrawMoney for the coins, Shop_ReleaseWork to clean up) and its
+// work-block offsets; this game has no special-inn flag. Messages from
+// MsgInnWelcome ("Welcome to our inn.").
 
 s32 Inn_CheckIn(s32 mode, s32 objectId) {
   struct InnRuntimeState *state;
@@ -61,7 +62,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
 
   object = Actor_GetByIdFar__shop(objectId);
   state->resourceId = *object->component->resourceId;
-  win = Func_080380f8(state->resourceId, 0, 0, 0);
+  win = Portrait_OpenWindowFar(state->resourceId, 0, 0, 0);
 
   amount = Inn_RoomPrice(mode);
   MessageArgument_PushFar(amount, 5);
@@ -84,7 +85,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
 
     object = Actor_GetByIdFar__shop(objectId);
     state->resourceId = *object->component->resourceId;
-    win = Func_080380f8(state->resourceId, 0, 0, 0);
+    win = Portrait_OpenWindowFar(state->resourceId, 0, 0, 0);
     Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_REST_COMPLETE);
   }
 

@@ -6,7 +6,7 @@
 #include "module/system/system.h"
 #include "version.h"
 #include "gamepak/far_call/game.h"
-#include "module/tla.h"
+#include "gamepak/far_call/battle.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"
 
@@ -51,11 +51,17 @@ extern const u8 gOwnerStatus_KpString[];
 extern const u8 gOwnerStatus_PvString[];
 #endif
 
-/* VIEW(screens): routine BattleActor_SpawnObjectsForListFar as void BattleActor_SpawnObjectsForListFar(u16 *list, s32 count); module/tla.h has void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode). */
-extern void BattleActor_SpawnObjectsForListFar__screens(u16 *list, s32 count) __asm__("BattleActor_SpawnObjectsForListFar");
-void Func_08118148(u16 *list, s32 count, s32 mode);
-/* VIEW(screens): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 member); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId). */
-extern void **GetBattleObjectSlotFar__screens(s32 member) __asm__("GetBattleObjectSlotFar");
+/* VIEW(screens): routine BattleActor_SpawnObjectsForListFar as void
+ * BattleActor_SpawnObjectsForListFar(u16 *list, s32 count); module/tla.h has
+ * void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode). */
+extern void BattleActor_SpawnObjectsForListFar__screens(
+    u16 *list, s32 count) __asm__("BattleActor_SpawnObjectsForListFar");
+void BattleObject_SpawnObjectsForListFar(u16 *list, s32 count, s32 mode);
+/* VIEW(screens): routine GetBattleObjectSlotFar as void
+ * **GetBattleObjectSlotFar(s32 member); motobj.h has struct BattleObj
+ * *GetBattleObjectSlotFar(s32 objectId). */
+extern void **
+GetBattleObjectSlotFar__screens(s32 member) __asm__("GetBattleObjectSlotFar");
 #ifdef MODERN
 // Called with no prototype in scope, as its bytes need; a current GCC gets
 // it here.
@@ -191,7 +197,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     sprite = &nameSprite;
     Func_0804537c(0x060066c0);
     if (redraw != 0)
-      Func_08045528(member, portraitSlot);
+      Portrait_Load(member, portraitSlot);
     sprite->oam.word.attr01 = 0x80000400;
     /* FAKEMATCH(dead): an empty once-only block, so the sprite word is stored
      * straight after its load; as no block, 10 of 3111 instructions differ in
@@ -469,7 +475,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       spawnList[1] = 255;
       ReleaseBattleObjectRecordsFar(shownMember);
       shownMember = member;
-      Func_08118148(spawnList, 1, 0);
+      BattleObject_SpawnObjectsForListFar(spawnList, 1, 0);
       figureShown = 0;
     }
     {
@@ -558,7 +564,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       }
       WindowSprite_RedrawSavedRect(statusWindow);
       Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y, helpWindow->width,
-                    helpWindow->height, 0);
+                                helpWindow->height, 0);
       Text_FillCanvasBackground();
       Text_DrawWideStringAtOffset(itemText, helpWindow, 0, 20);
       if (rowBase != j) {
@@ -571,7 +577,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           else if (item & 0x400)
             Text_SetColor(2);
           Text_DrawMessageAsTiles((item & 0x1ff) + (s32)MsgItemName,
-                                     statusWindow, 32, 64 + j * 16);
+                                  statusWindow, 32, 64 + j * 16);
           Text_SetColor(15);
           iconSprites[j].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);
         }
@@ -621,8 +627,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           SUMMARY_TEXT_COPY((s32)MsgKey0d48, psynergyText,
                             SUMMARY_PSYNERGY_TEXT_LENGTH);
         WindowSprite_RedrawSavedRect(statusWindow);
-        Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y, helpWindow->width,
-                      helpWindow->height, 0);
+        Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y,
+                                  helpWindow->width, helpWindow->height, 0);
         Text_DrawWideStringAtOffset(psynergyText, helpWindow, 0, 20);
         if (rowBase != j) {
           Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
@@ -644,8 +650,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
               Text_SetColor(9);
             tileFlags = 0;
             work->textColor = 5;
-            Text_DrawMessageAsTiles(id + (s32)MsgAbilityNothing,
-                                       statusWindow, 16, 64 + j * 16);
+            Text_DrawMessageAsTiles(id + (s32)MsgAbilityNothing, statusWindow,
+                                    16, 64 + j * 16);
             Text_DrawNumberAtOffset(ability->ppCost, 2, statusWindow, 104,
                                     64 + j * 16);
             Text_SetColor(15);
@@ -685,7 +691,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
       WindowSprite_RedrawSavedRect(statusWindow);
       Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y, helpWindow->width,
-                    helpWindow->height, 0);
+                                helpWindow->height, 0);
       Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
       djinnCount = 0;
       for (element = 0; element <= 3; element++) {
@@ -695,7 +701,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             djinnCount++;
           } else if (unit->djinnOwned[element] & (1 << bit)) {
             struct SummaryRecoveryList *recovery =
-                &((struct SummaryRecovery *)Djinn_GetRecoveryTableFar((u32)member > 7))->list;
+                &((struct SummaryRecovery *)Djinn_GetRecoveryTableFar(
+                      (u32)member > 7))
+                     ->list;
             s32 k;
             s32 value;
 
@@ -759,9 +767,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             Text_SetColor(4);
           else if (shown & 0x10000)
             Text_SetColor(2);
-          Text_DrawMessageAsTiles(((shown & 0xf00) >> 8) * 20 +
-                                         (shown & 0xff) + (s32)MsgDjinnName,
-                                     statusWindow, column * 8 + 8, tileRow * 8);
+          Text_DrawMessageAsTiles(((shown & 0xf00) >> 8) * 20 + (shown & 0xff) +
+                                      (s32)MsgDjinnName,
+                                  statusWindow, column * 8 + 8, tileRow * 8);
 // Spanish and Italian leave a recovering Djinni's turns off the list.
 #if !TLA_PATCH_4
           if (shown & 0x3e0000)
@@ -784,8 +792,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     if (redraw != 0) {
       if (page == 0) {
         WindowSprite_RedrawSavedRect(statusWindow);
-        Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y, helpWindow->width,
-                      helpWindow->height, page);
+        Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y,
+                                  helpWindow->width, helpWindow->height, page);
         Window_DrawDividerLine(statusWindow, 0, 14, 29, 14);
       }
       Text_DrawStringAtOffset(unit->name, statusWindow, 0, 0);
@@ -852,8 +860,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       Text_DrawMessageAsTiles((s32)MsgExp - 7, statusWindow, 136, 40);
       Text_DrawNumberInWindow(unit->luck, 3, statusWindow, SUMMARY_STAT_VALUE_X,
                               40);
-      Text_DrawMessageAsTiles((s32)MsgClassName + unit->classId,
-                                 statusWindow, 0, 48);
+      Text_DrawMessageAsTiles((s32)MsgClassName + unit->classId, statusWindow,
+                              0, 48);
       if (page == 0) {
         if (hasDjinn != 0)
           Text_DrawMessageAsTiles((s32)MsgExp - 1, statusWindow, 0, 72);
@@ -986,8 +994,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       statusCount = i;
       if (statusKinds[0] == 0)
         Text_DrawMessageAsTiles(unit->hp != 0 ? (s32)MsgNormal
-                                                 : (s32)MsgCantFight,
-                                   statusWindow, 112, 0);
+                                              : (s32)MsgCantFight,
+                                statusWindow, 112, 0);
     }
 
     if (page == 0) {
@@ -1148,13 +1156,13 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     s32 *slot = iconSlots;
 
     for (i = 3; i >= 0; i--)
-      Resource_ResetEntry(*slot++);
+      VramCache_FreeEntry(*slot++);
     slot = statusSlots;
     for (i = 10; i >= 0; i--)
-      Resource_ResetEntry(*slot++);
+      VramCache_FreeEntry(*slot++);
   }
-  Resource_ResetEntry(portraitSlot);
-  Resource_ResetEntry(cursorSlot);
+  VramCache_FreeEntry(portraitSlot);
+  VramCache_FreeEntry(cursorSlot);
   wait(1);
 #if TLA_PATCH_1
   Window_MarkVisibleTextTiles();

@@ -84,7 +84,7 @@ void Func_020003f8(s32 unk0, s32 id) {
                   &options);
     Event_PlaySound(154);
     Actor_SetAnimation(id, 3);
-    MapGrid_WaitForShakeToSettle();
+    FieldMapGrid_WaitForShakeToSettle();
     Actor_GetById(15)->priorityFlags |= 2;
     Event_SetFlag(0x884);
   }
@@ -209,7 +209,7 @@ void Func_02000768(void) {
 void Actor_MoveToObject(s32 actor, s32 target);
 
 static inline void GondowanCliffs_Jump(s32 actor, s32 height, s32 frames) {
-  Func_080d47b4(actor, height, frames);
+  Actor_ShowEmoteById(actor, height, frames);
 }
 
 /// The scene that asks where the party intends to go, to help recover the black
@@ -372,7 +372,7 @@ struct RideWork {
 // of the 16 entries it moves the actor on its timer, writes its height to the
 // collision and cell maps, and carries its rider with a bob.
 void Func_02000be4(void) {
-  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct RideEntry *entry = work->entries;
   s32 value = work->value;
@@ -462,13 +462,14 @@ struct SwingWork__s03cc {
 
 void Func_0200119c(u32 *oam, s32 depth);
 
-// Draws the swinging actors' ropes and heads (the 16 records of gData_020023c4
+// Draws the swinging actors' ropes and heads (the 16 records of
+// gInventorySnapshot
 // + 0x188 kept by Func_02001068): for each raised actor, a rope segment every
 // 16 pixels of its height and the bobbing head on top, at most 80 sprites,
 // queued by Func_0200119c.
 void Func_02000dac(void) {
   struct SwingWork__s03cc *work =
-      (struct SwingWork__s03cc *)(gData_020023c4 + 0x188);
+      (struct SwingWork__s03cc *)(gInventorySnapshot + 0x188);
   struct SwingActor *swing = work->actors;
   s32 k;
   u32 tile = gResourceTableEntries[work->entry].offset >> 5;
@@ -555,14 +556,14 @@ void Func_02000dac(void) {
 
 void Func_02000fcc(s32 unused, s32 value) {
   struct GondowanCliffsWork *work =
-      (struct GondowanCliffsWork *)(gData_020023c4 + 0x188);
+      (struct GondowanCliffsWork *)(gInventorySnapshot + 0x188);
   void *buffer;
 
   if (!Event_GetFlag(0x109))
     Call2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
-  Resource_DecodeType01(gField_Tiles64D, buffer);
-  work->entry = Resource_FindFreeEntry();
+  Decompress_TaggedLz(gField_Tiles64D, buffer);
+  work->entry = VramCache_FindFreeEntry();
   Vram_Load(work->entry, 0x800, buffer);
   Heap_Release(buffer);
   work->block = Heap_AllocEwram(0x3c0);
@@ -574,7 +575,7 @@ void Func_02000fcc(s32 unused, s32 value) {
 
 struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
                                 s32 high) {
-  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct RideEntry *entry = &work->entries[slot];
   struct Actor *object = Actor_Get(id);
   struct Actor *rider;

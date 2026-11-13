@@ -1,14 +1,14 @@
 	.section .rodata
-	.global Data_080eff22
-Data_080eff22:
+	.global gField_ExamineTriggerMessageOffsets
+gField_ExamineTriggerMessageOffsets:
 	.byte 2, 3, 13, 8, 30, 31
 @ 8-byte rows searched by ID by Field_GetPsynergyTargetRule; ID -1 terminates.
 	.global gData_080eff28
 gData_080eff28:
 	.incbin "games/tla/src/field/event_commands/descent.table"
 @ Actions passed to Actor_StartScriptFar (lists of words).
-	.global gData_080effd8
-gData_080effd8:
+	.global gFieldEffect_ParticleEmitterScript
+gFieldEffect_ParticleEmitterScript:
 	.4byte 22, 9, 32768, 22
 	.4byte 10, 32768, 0, 2
 	.4byte 22, 9, 49152, 22
@@ -19,8 +19,8 @@ gData_080effd8:
 	.4byte 10, 61440, 0, 2
 	.4byte 22, 9, 65536, 22
 	.4byte 10, 65536, 17
-	.global gData_080f0074
-gData_080f0074:
+	.global gFieldEffect_RisingPulseScript
+gFieldEffect_RisingPulseScript:
 	.4byte 0, 10, 22, 9
 	.4byte 90112, 22, 10, 90112
 	.4byte 0, 2, 22, 9

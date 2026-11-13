@@ -61,13 +61,14 @@ void Func_020015d0(s32 idA, s32 idB) {
   Sound_Play(78);
   Event_Wait(30);
   FieldCamera_SetSpeed(0x8000, 0x1000);
-  Camera_MoveWithinMapBounds(((s16 *)&a->x)[1] << 16, ((s16 *)&a->y)[1] << 16,
-                             ((s16 *)&a->z)[1] << 16, 1);
+  FieldCamera_MoveWithinMapBounds(((s16 *)&a->x)[1] << 16,
+                                  ((s16 *)&a->y)[1] << 16,
+                                  ((s16 *)&a->z)[1] << 16, 1);
   Sound_Play(141);
   MapGrid_SetShake(0x20000, 0x20000, 0x10000);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   a->motionFlags = 0;
   a->acceleration = 0x3333;
   a->speedLimit = 0x3333;
@@ -87,11 +88,11 @@ first:
     spark->speedLimit = 0x80000;
     spark->acceleration = 0x3333;
     spark->motionFlags = 0;
-    Actor_SetPartAttribute(spark, 2);
+    Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
     Actor_SetSingleChildFlags(spark, 0);
-    Animation_SetStateFlags(spark, 1);
+    Actor_SetBlendMode(spark, 1);
     Actor_StartScript(spark, gData_02005218);
     REG_BLDALPHA = 0x1004;
     wait(2);
@@ -119,11 +120,11 @@ second:
     spark->unk4c = 0x7a0000;
     spark->watchedObject = b;
     spark->unk62 = (16 - i) * 8 + 15;
-    Actor_SetPartAttribute(spark, 2);
+    Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
     Actor_SetSingleChildFlags(spark, 0);
-    Animation_SetStateFlags(spark, 1);
+    Actor_SetBlendMode(spark, 1);
     FieldVector_AddPolarOffset(spark->unk4c, *angle, &spark->x);
     Actor_StartScript(spark, gData_02005234);
     if (i == 3) {
@@ -159,10 +160,10 @@ third:
     spark->watchedObject = b;
     spark->motionFlags = 0;
     spark->priorityFlags = 1;
-    Actor_SetPartAttribute(spark, 2);
+    Actor_SetSpriteColor(spark, 2);
     Actor_SelectAnimation(spark, 7);
     Actor_SetSingleChildFlags(spark, 0);
-    Animation_SetStateFlags(spark, 1);
+    Actor_SetBlendMode(spark, 1);
     Actor_StartScript(spark, gData_02005244);
   }
   i += 2;
@@ -171,27 +172,27 @@ third:
   Sound_Play(220);
   wait(50);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(8);
+  PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(idA, 0);
   Actor_ConfigureSpriteColor(idB, 0);
   Sound_Play(574);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(80);
+  PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(idA, gData_020052ac);
   Actor_SetMovementTypeById(idB, gData_020052dc);
   b->update = Actor_EmitBubbles;
   wait(120);
   b->update = 0;
   Sound_Play(390);
-  Party_PlaySavedMusic();
+  Scene_PlayMusic();
   wait(1);
 }
 
 void Actor_MoveToObject(s32 id, s32 target);
-void DisplayBlend_EnableRunScript(void);
-void DisplayBlend_DisableRunScript(void);
+void BlendScript_Suspend(void);
+void BlendScript_Resume(void);
 /* VIEW(s15d0): routine Event_End as s32 Event_End(void); module/scene/scene.h
  * has void Event_End(void); tried as the rest of the object declares it, it
  * does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s15d0.c:277:
@@ -241,8 +242,8 @@ s32 Func_020019cc(void) {
   Message_ShowCentered(message + 2, 1);
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  MapGrid_WaitForShakeToSettle();
-  DisplayBlend_EnableRunScript();
+  FieldMapGrid_WaitForShakeToSettle();
+  BlendScript_Suspend();
   level = REG_BLDALPHA & 0xff;
   while (level != 0) {
     REG_BLDALPHA = level | 0x1000;
@@ -259,7 +260,7 @@ s32 Func_020019cc(void) {
     level++;
     System_Wait(1);
   }
-  DisplayBlend_DisableRunScript();
+  BlendScript_Resume();
   Actor_SetPosition(12, 0, 0);
   Party_LearnAbility(4, 139);
   Event_SetFlag(0x9ba);
@@ -345,7 +346,7 @@ void Func_02001d14(void) {
   FieldEvent_ResolvePendingActions(0);
   MapGrid_SetShake(Q16_ONE * 10, Q16_ONE * 10, Q16_ONE);
   Event_PlaySound(107);
-  DisplayBlend_EnableRunScript();
+  BlendScript_Suspend();
   level &= 0xff;
   while (level != 0) {
     REG_BLDALPHA = level | 0x1000;
@@ -380,7 +381,7 @@ void Func_02001d14(void) {
     level++;
     System_Wait(1);
   }
-  DisplayBlend_DisableRunScript();
+  BlendScript_Resume();
   Func_02004e64__s15d0();
 }
 
@@ -412,7 +413,7 @@ void Func_02001ebc(void) {
     do {
     } while (0);
     scene = (s32)&SceneId_Ov681Room1;
-    Event_SetAfterBattleDestination(scene, 10);
+    FieldEvent_SetAfterBattleDestination(scene, 10);
     if (FieldPartyInventory_FindMember(0x1c3) != -1) {
       if (count == 0)
         Event_SetDefeatDestination(scene, 12);

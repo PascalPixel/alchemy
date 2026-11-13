@@ -41,7 +41,7 @@ s32 Func_081b83c4_Start(void) {
 }
 
 /// Resets the scene camera and its projection, with the camera tilted to 147.
-// The Broken Seal's Camera_ResetSceneDefaults.
+// The Broken Seal's Camera_ResetViewDefaults.
 void Camera_ResetSceneDefaultsB(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
   struct FixedPointPosition local;
@@ -59,10 +59,10 @@ void Camera_ResetSceneDefaultsB(void) {
   gCameraSceneParameters[4] = 0;
   state->unk18 = 0;
 
-  Render_ResetTransformState();
+  Transform_Reset();
   SceneTransform_ApplyPosition(&state->pos[0]);
-  SceneTransform_ApplyYaw((s16)state->yaw);
-  SceneTransform_ApplyPitch((s16)state->pitch);
+  Transform_ApplyYaw((s16)state->yaw);
+  Transform_ApplyPitch((s16)state->pitch);
 
   local.x = 0;
   local.y = 0;
@@ -473,14 +473,14 @@ void Func_081b83c4(void) {
   Dma_Set(resourceAddress, bgPalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
           REG_DMA3);
   resourceAddress += 0x1c0;
-  Resource_DecodeType01(resourceAddress, cellBuffer);
+  Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)0x06004000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_Data087);
   Dma_Set(resourceAddress, spritePalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x30,
           REG_DMA3);
   resourceAddress += 128;
-  Resource_DecodeType01(resourceAddress, cellBuffer);
+  Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)0x06010000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x4c0, REG_DMA3);
   resourceAddress =
@@ -488,7 +488,7 @@ void Func_081b83c4(void) {
   Dma_Set(resourceAddress, spritePalette + 112,
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   resourceAddress += 32;
-  Resource_DecodeType01(resourceAddress, cellBuffer);
+  Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)0x06011300, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
           REG_DMA3);
   resourceAddress =
@@ -496,21 +496,21 @@ void Func_081b83c4(void) {
   Dma_Set(resourceAddress, spritePalette + 96,
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   resourceAddress += 32;
-  Resource_DecodeType01(resourceAddress, cellBuffer);
+  Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)0x06011500,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x100, REG_DMA3);
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsOrangeDigits);
   Dma_Set(resourceAddress, spritePalette + 128,
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   resourceAddress += 32;
-  Resource_DecodeType01(resourceAddress, cellBuffer);
+  Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)0x06011900,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x280, REG_DMA3);
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsTimesSign);
   Dma_Set(resourceAddress, spritePalette + 144,
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   resourceAddress += 32;
-  Resource_DecodeType01(resourceAddress, cellBuffer);
+  Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)0x06012300, (DMA_ENABLE | DMA_32BIT) << 16 | 0x60,
           REG_DMA3);
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsPinkDigits);
@@ -539,7 +539,7 @@ void Func_081b83c4(void) {
   Dma_Set(spritePalette + 176, (void *)0x05000360,
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   resourceAddress += 32;
-  Resource_DecodeType01(resourceAddress, cellBuffer);
+  Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)0x06016600,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x140, REG_DMA3);
   Graphics_ScaleRgb555BufferB(spritePalette, (u16 *)0x05000200, 0, 256);
@@ -599,8 +599,7 @@ void Func_081b83c4(void) {
   WindowSystem_InitFieldFar();
   window = Window_CreateFar(COIN_WINDOW_X, 0, COIN_WINDOW_WIDTH, 3, 6);
   sprites->coinsWindow = window;
-  Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins, window, COIN_TEXT_X,
-                                0);
+  Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins, window, COIN_TEXT_X, 0);
   Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                              (s32)sprites->coinsWindow, 0, 0);
   window = Window_CreateFar(BET_WINDOW_X, 3, BET_WINDOW_WIDTH, 3, 6);
@@ -609,8 +608,8 @@ void Func_081b83c4(void) {
   window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
   sprites->helpWindow = window;
   Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow, window, 0, 0);
-  Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow + 1, sprites->helpWindow,
-                                0, 8);
+  Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow + 1, sprites->helpWindow, 0,
+                             8);
   bet = Party_GetAverageLevelFar() * 10;
 #if !TLA_PATCH_2
   if ((u32)bet > (u32)gMainRoutineWork.coins)
@@ -628,7 +627,7 @@ void Func_081b83c4(void) {
       Graphics_ScaleRgb555BufferB(bgPalette, (u16 *)0x05000000, frame << 12,
                                   256);
     }
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
 
     if (state == 0) {
@@ -682,7 +681,7 @@ void Func_081b83c4(void) {
           sprites->helpWindow = window;
           Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow, window, 0, 0);
           Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow + 1,
-                                        sprites->helpWindow, 0, 8);
+                                     sprites->helpWindow, 0, 8);
           Sound_PlayFar(113);
           state = 0;
         }
@@ -732,7 +731,7 @@ void Func_081b83c4(void) {
 #endif
           Text_DrawMessageAsTilesFar(message, sprites->helpWindow, 0, 0);
           Text_DrawMessageAsTilesFar((s32)&MsgDiceGameChoose,
-                                        sprites->helpWindow, 0, 8);
+                                     sprites->helpWindow, 0, 8);
         }
       }
       if (lower == 0) {
@@ -924,8 +923,7 @@ void Func_081b83c4(void) {
             cashOut = 0;
             window = Window_CreateFar(4, 16, 20, 4, 6);
             sprites->helpWindow = window;
-            Text_DrawMessageAsTilesFar((s32)&MsgDiceGameDoubleUp, window, 0,
-                                          0);
+            Text_DrawMessageAsTilesFar((s32)&MsgDiceGameDoubleUp, window, 0, 0);
           }
           timer = 0;
           slide = 0;
@@ -942,7 +940,7 @@ void Func_081b83c4(void) {
           sprites->helpWindow = window;
           Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow, window, 0, 0);
           Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow + 1,
-                                        sprites->helpWindow, 0, 8);
+                                     sprites->helpWindow, 0, 8);
           slide = 0;
           timer = 0;
           paletteRequest = 1;
@@ -965,8 +963,8 @@ void Func_081b83c4(void) {
         sprites->helpWindow = window;
         Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceWinnings, window, 0, 0);
         Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceWinnings - 1,
-                                      sprites->helpWindow,
-                                      digits * 8 + WINNINGS_LABEL_X, 0);
+                                   sprites->helpWindow,
+                                   digits * 8 + WINNINGS_LABEL_X, 0);
         Text_DrawNumberInWindowFar(winnings, digits, (s32)sprites->helpWindow,
                                    WINNINGS_TEXT_X, 0);
       }
@@ -980,7 +978,7 @@ void Func_081b83c4(void) {
           sprites->helpWindow = window;
           Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow, window, 0, 0);
           Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow + 1,
-                                        sprites->helpWindow, 0, 8);
+                                     sprites->helpWindow, 0, 8);
           slide = 0;
           timer = 0;
           paletteRequest = 1;
@@ -1021,15 +1019,15 @@ void Func_081b83c4(void) {
             sprites->helpWindow = window;
             if (total == 24) {
               lower = 1;
-              Text_DrawMessageAsTilesFar((s32)&MsgDiceGameLowerAgain, window,
-                                            0, 0);
+              Text_DrawMessageAsTilesFar((s32)&MsgDiceGameLowerAgain, window, 0,
+                                         0);
             } else {
               lower = 0;
-              Text_DrawMessageAsTilesFar((s32)&MsgDiceGameHigherAgain,
-                                            window, 0, 0);
+              Text_DrawMessageAsTilesFar((s32)&MsgDiceGameHigherAgain, window,
+                                         0, 0);
             }
             Text_DrawMessageAsTilesFar((s32)&MsgDiceGameChoose,
-                                          sprites->helpWindow, 0, 8);
+                                       sprites->helpWindow, 0, 8);
             slide = 0;
             paletteRequest = 1;
           } else {
@@ -1071,7 +1069,7 @@ void Func_081b83c4(void) {
         Dma_Set(resourceAddress, spritePalette + 192,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         resourceAddress += 32;
-        Resource_DecodeType01(resourceAddress, cellBuffer);
+        Decompress_TaggedLz(resourceAddress, cellBuffer);
         Dma_Set(cellBuffer, (void *)0x06014000,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 0x180, REG_DMA3);
         resourceAddress =
@@ -1081,7 +1079,7 @@ void Func_081b83c4(void) {
         Dma_Set(resourceAddress, spritePalette + 208,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         resourceAddress += 32;
-        Resource_DecodeType01(resourceAddress, cellBuffer);
+        Decompress_TaggedLz(resourceAddress, cellBuffer);
         Dma_Set(cellBuffer, (void *)0x06014600,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 0x180, REG_DMA3);
         resourceAddress =
@@ -1142,7 +1140,7 @@ void Func_081b83c4(void) {
         Dma_Set(resourceAddress, (void *)0x050003a0,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         resourceAddress += 32;
-        Resource_DecodeType01(resourceAddress, cellBuffer);
+        Decompress_TaggedLz(resourceAddress, cellBuffer);
         Dma_Set(cellBuffer, (void *)0x06014000,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 0x400, REG_DMA3);
         resourceAddress =
@@ -1150,7 +1148,7 @@ void Func_081b83c4(void) {
         Dma_Set(resourceAddress, (void *)0x05000380,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         resourceAddress += 32;
-        Resource_DecodeType01(resourceAddress, cellBuffer);
+        Decompress_TaggedLz(resourceAddress, cellBuffer);
         Dma_Set(cellBuffer, (void *)0x06015000,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 0x500, REG_DMA3);
       } else if (paletteRequest == 5) {
@@ -1161,7 +1159,7 @@ void Func_081b83c4(void) {
         Dma_Set(resourceAddress, spritePalette + 224,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         resourceAddress += 32;
-        Resource_DecodeType01(resourceAddress, cellBuffer);
+        Decompress_TaggedLz(resourceAddress, cellBuffer);
         Dma_Set(cellBuffer, (void *)0x06012480,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 0x280, REG_DMA3);
         resourceAddress =
@@ -1171,7 +1169,7 @@ void Func_081b83c4(void) {
         Dma_Set(resourceAddress, spritePalette + 240,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         resourceAddress += 32;
-        Resource_DecodeType01(resourceAddress, cellBuffer);
+        Decompress_TaggedLz(resourceAddress, cellBuffer);
         Dma_Set(cellBuffer, (void *)0x06012e80,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 0x280, REG_DMA3);
       }

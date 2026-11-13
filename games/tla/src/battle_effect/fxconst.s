@@ -25,8 +25,8 @@ Data_08196e0c:
 Data_08196e14:
 	.4byte 0x10000, 0x10000
 @ The Broken Seal's wallHeights in BattleEffect_RunQuake; read by BattleEffect_RunQuake
-	.global Data_08196e1c
-Data_08196e1c:
+	.global gRockWall_Heights
+gRockWall_Heights:
 	.4byte -32, -32, -32, -32
 @ The Broken Seal's points in BattleEffect_RunThor; read by BattleEffect_RunThor
 	.global Data_08196e2c
@@ -45,11 +45,11 @@ gData_08196e4c:
 	.global Data_08196e54
 Data_08196e54:
 	.4byte 0x10000, 0x10000
-@ read by Func_0816442c
+@ read by BattleEffect_PlaceFormationObjects
 	.global gData_08196e5c
 gData_08196e5c:
 	.4byte 0x10000, 0x10000
-@ The Broken Seal's smallScale in BattleEffect_PlaceFormationObjects; read by Func_0816442c
+@ The Broken Seal's smallScale; read by BattleEffect_PlaceFormationObjects
 	.global gData_08196e64
 gData_08196e64:
 	.4byte 0x14000, 0x14000

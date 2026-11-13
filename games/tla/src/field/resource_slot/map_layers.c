@@ -1,16 +1,191 @@
 /// @file
-/// Layered maps: drawing and scrolling, copying cells, and the edits flags
-/// apply.
+/// Layered maps: loading, drawing and scrolling, copying cells, and the edits
+/// flags apply.
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"
+
+#include "io_write.h"
+#include "flag_call.h"
+#include "module/field/field.h"
+#include "module/field/map.h"
+#include "module/field/resource_slot.h"
+#include "module/system/system.h"
+#include "ram_buffer.h"
+
+/* VIEW(f02a6b8): variable gMaps as extern struct LayeredSceneEntry
+ * gMaps[]; f0298c0 has extern const u16 gMaps[][6]. */
+extern struct LayeredSceneEntry gMaps__f02a6b8[] __asm__("gMaps");
+
+/// Loads a layered map, as The Broken Seal does: from
+/// layout index's entry in gMaps it decodes the blocks, the collision
+/// (filled with -1 first, which The Broken Seal does not do), the cells, the
+/// shape grid, the tile animations, the blend script and the script at
+/// 0x0202e000; sets up the three layers from the header, with their cell
+/// positions and shape pointers; loads the palette and tiles unless flag 0x170
+/// says they are already loaded; and starts MapGrid_UpdateLayerScroll.
+s32 MapGrid_LoadMap(s32 index) {
+  struct LayeredSceneEntry *sceneResources;
+  struct MapScrollWork *work;
+  struct LayeredSceneHeader *sceneHeader;
+  struct MapLayerScroll *mapLayer;
+  struct LayeredSceneLayer *layerSource;
+  s32 *viewX;
+  s32 *viewY;
+  s32 layerIndex;
+  u8 *graphicsBuffer;
+  s32 backdrop;
+  u8 *encodedData;
+  s32 displayFlags;
+
+  REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
+                   DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
+  ScreenFade_FromBlack(0);
+  sceneResources = &gMaps__f02a6b8[index];
+  work = HeapSlot_AllocEwram(32, sizeof(struct MapScrollWork));
+  Iwram_ClearWordsEntry(work, sizeof(struct MapScrollWork));
+  sceneHeader = (struct LayeredSceneHeader *)Resource_GetTableEntry(
+      sceneResources->resources[0] + (u32)&ResourceId_Map000);
+  encodedData = (u8 *)sceneHeader + sceneHeader->tiles;
+  TileMap_DecodeStagedBuffer(
+      Decompress_TaggedLz(encodedData, Ram_MapCellBuffer + 1));
+  Dma_Fill32(-1, Ram_MapCollision, 0x2000);
+  encodedData = (u8 *)sceneHeader + sceneHeader->collision;
+  Decompress_TaggedLz(encodedData, Ram_MapCollision);
+  encodedData = (u8 *)sceneHeader + sceneHeader->tilemap;
+  Decompress_TaggedLz(encodedData, Ram_MapCellBuffer);
+  Tilemap_ConvertBuffer();
+  encodedData = (u8 *)sceneHeader + sceneHeader->shapes;
+  Decompress_TaggedLz(encodedData, gMapShapeGrid);
+  if (sceneHeader->animation != 0) {
+    encodedData = (u8 *)sceneHeader + sceneHeader->animation;
+    Decompress_TaggedLz(encodedData, Ram_MapCollision + 0x1000);
+    TilesetAnim_StartAll((const u16 *)(Ram_MapCollision + 0x1000));
+  }
+  if (sceneHeader->blend != 0) {
+    encodedData = (u8 *)sceneHeader + sceneHeader->blend;
+    Decompress_TaggedLz(encodedData, Ram_MapCollision + 0x1e00);
+    BlendScript_Start((u16 *)(Ram_MapCollision + 0x1e00));
+  }
+  encodedData = (u8 *)sceneHeader + sceneHeader->script;
+  Decompress_TaggedLz(encodedData, Ram_MapCollision + 0x2000);
+  work->minX = sceneHeader->origin[0] << 19;
+  work->minY = sceneHeader->origin[1] << 19;
+  work->maxX = sceneHeader->origin[2] << 19;
+  work->maxY = sceneHeader->origin[3] << 19;
+  viewX = &work->viewX;
+  *viewX = 0;
+  viewY = &work->viewY;
+  *viewY = 0;
+  work->enabled[0] = sceneHeader->priority[0];
+  work->enabled[1] = sceneHeader->priority[1];
+  work->enabled[2] = sceneHeader->priority[2];
+  work->unk101 = 2;
+  if (work->maxX == 0)
+    work->maxX = 0x8000000;
+  if (work->maxY == 0)
+    work->maxY = 0x8000000;
+  mapLayer = work->layers;
+  layerSource = sceneHeader->layers;
+  for (layerIndex = 0; layerIndex < 3; layerIndex++) {
+    u32 x = layerSource->x;
+    u32 y = layerSource->y;
+    s32 scaleX;
+    s32 cell;
+    // Set inside the loop, where the original's register allocation needs it.
+    u8 *shapeGrid;
+    u32 maskY;
+
+    mapLayer->offsetX = x << 19;
+    mapLayer->offsetY = y << 19;
+    mapLayer->scaleY = layerSource->scaleY * 4096;
+    mapLayer->speedX = layerSource->speedX * 4096;
+    mapLayer->speedY = layerSource->speedY * 4096;
+    mapLayer->maskX = layerSource->periodX & 127;
+    // Read before the phase stores, which the original makes after it.
+    maskY = layerSource->periodY & 127;
+    mapLayer->phaseX = 0;
+    mapLayer->phaseY = 0;
+    mapLayer->maskY = maskY << 7;
+    x >>= 1;
+    y = (y >> 1) * 128;
+    mapLayer->cellY = y;
+    scaleX = layerSource->scaleX * 4096;
+    cell = y + x;
+    shapeGrid = gMapShapeGrid;
+    mapLayer->cells = (struct MapCell *)Ram_MapCellBuffer + cell;
+    mapLayer->scaleX = scaleX;
+    mapLayer->cellX = x;
+    mapLayer->shapes = shapeGrid + cell;
+    mapLayer->x = Iwram_MulQ16(*viewX, scaleX) + mapLayer->offsetX;
+    mapLayer->y = Iwram_MulQ16(*viewY, mapLayer->scaleY) + mapLayer->offsetY;
+    layerSource++;
+    mapLayer++;
+  }
+  work->flags = DISPCNT_OBJ_ON;
+  if (work->enabled[0] != 0)
+    work->flags = DISPCNT_OBJ_ON | DISPCNT_BG3_ON;
+  if (work->enabled[1] != 0)
+    work->flags |= DISPCNT_BG2_ON;
+  if (work->enabled[2] != 0)
+    work->flags |= DISPCNT_BG1_ON;
+  Io_Write16(work->enabled[0] | BGCNT_CHAR_BASE(sceneHeader->charBase[0]) |
+                 BGCNT_SCREEN_BASE(5),
+             &REG_BG3CNT);
+  Io_Write16(work->enabled[1] | BGCNT_CHAR_BASE(sceneHeader->charBase[1]) |
+                 BGCNT_SCREEN_BASE(6),
+             &REG_BG2CNT);
+  Io_Write16(work->enabled[2] | BGCNT_CHAR_BASE(sceneHeader->charBase[2]) |
+                 BGCNT_SCREEN_BASE(7),
+             &REG_BG1CNT);
+  if (GameFlag_Test(0x170) != 0) {
+    GameFlag_ClearBit(0x170);
+  } else {
+    graphicsBuffer = Heap_Alloc(0x4000);
+    if (graphicsBuffer != NULL) {
+      backdrop = *(s16 *)BG_PLTT;
+      Decompress_TaggedLz(Resource_GetTableEntry(sceneResources->resources[1] +
+                                                 (u32)&ResourceId_Map000),
+                          graphicsBuffer);
+      *(s16 *)graphicsBuffer = backdrop;
+      Iwram_CopyWordsEntry((void *)BG_PLTT, graphicsBuffer, 0x1c0);
+      Resource_DecodeType2(Resource_GetTableEntry(sceneResources->resources[2] +
+                                                  (u32)&ResourceId_Map000),
+                           graphicsBuffer);
+      Iwram_CopyWordsEntry(BG_CHAR_BLOCK(1), graphicsBuffer, 0x4000);
+      Resource_DecodeType2(Resource_GetTableEntry(sceneResources->resources[3] +
+                                                  (u32)&ResourceId_Map000),
+                           graphicsBuffer);
+      Iwram_CopyWordsEntry(BG_CHAR_BLOCK(2), graphicsBuffer, 0x4000);
+      Resource_DecodeType2(Resource_GetTableEntry(sceneResources->resources[4] +
+                                                  (u32)&ResourceId_Map000),
+                           graphicsBuffer);
+      Iwram_CopyWordsEntry(BG_CHAR_BLOCK(3), graphicsBuffer, 0x4000);
+      Resource_DecodeType2(Resource_GetTableEntry(sceneResources->resources[5] +
+                                                  (u32)&ResourceId_Map000),
+                           gData_02028000);
+      Heap_Release(graphicsBuffer);
+    }
+  }
+  displayFlags = 0;
+  REG_MOSAIC = displayFlags;
+  REG_BLDCNT = displayFlags;
+  displayFlags = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
+  // A once-only block: the original builds the task order after this store.
+  do {
+    REG_DISPCNT = displayFlags;
+  } while (0);
+  Task_Add(MapGrid_UpdateLayerScroll, 0x485);
+  return 2;
+}
+
 #include "module/field/field.h"
 #include "module/field/resource_slot.h"
 #include "module/tla.h"
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
-void Func_0802aa74(void) {
+void Map_CenterOnFollowedPoint(void) {
   struct MapWork *work = Ram_HeapSlots->mapWork;
   s32 x = 0;
   s32 height = 0;
@@ -52,16 +227,17 @@ void Func_0802aa74(void) {
       followedPosition[-1] = z;
     }
   }
-  Func_0802af9c(x, z - height);
-  Func_0802ad84();
+  MapGrid_SetCameraCenter(x, z - height);
+  MapGrid_UpdateLayerScroll();
 }
 
 /// Draws a row of 16 cell pictures (32 tiles) of a layer's cells into its BG
 /// map (screen block 5 + layer), starting at tile (tileX, tileY); the BG map
-/// wraps every 32 tiles and the cells wrap at the layer's window. The Broken
-/// Seal's MapGrid_RenderCellPictureRow, with the window. Called by
-/// Func_0802ad84 when a layer scrolls onto a new row of cell pictures.
-void Func_0802abbc(u32 layer, s32 tileX, s32 tileY) {
+/// wraps every 32 tiles and the cells wrap at the layer's window, which The
+/// Broken Seal's routine does not have. Called by
+/// MapGrid_UpdateLayerScroll when a layer scrolls onto a new row of cell
+/// pictures.
+void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
   u32 *cells = (u32 *)Ram_MapCellBuffer;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapLayerWindow *window = (struct MapLayerWindow *)&map->layers[layer];
@@ -171,7 +347,7 @@ void Func_0802ac90(u32 layer, s32 tileX, s32 tileY) {
 
 u32 Random16(void);
 
-void Func_0802ad84(void) {
+void MapGrid_UpdateLayerScroll(void) {
   struct MapWork *work;
   struct MapLayerScroll *layer;
   s32 *origin;
@@ -256,9 +432,9 @@ void Func_0802ad84(void) {
     }
     if ((layer->y ^ baseY) & 0x100000) {
       if (layer->y < baseY)
-        Func_0802abbc(layerIndex, x, y + 20);
+        MapGrid_RenderCellPictureRow(layerIndex, x, y + 20);
       else
-        Func_0802abbc(layerIndex, x, y);
+        MapGrid_RenderCellPictureRow(layerIndex, x, y);
     }
     layer->x = baseX;
     layer->y = baseY;
@@ -283,7 +459,7 @@ static __inline__ void CopyCellPictureToScreen(u32 *cell, u8 *screenMap,
   *(u32 *)(screenTile + 64) = *cellPictureRows;
 }
 
-void Func_0802af9c(s32 x, s32 y) {
+void MapGrid_SetCameraCenter(s32 x, s32 y) {
   u32 layerIndex;
   u8 *screenMap;
   u32 *cells;
@@ -357,8 +533,8 @@ void Func_0802af9c(s32 x, s32 y) {
   }
 }
 
-void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
-                                    u32 width, u32 height) {
+void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
+                                        u32 width, u32 height) {
   u32 *src = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
   u32 *dst = (u32 *)Ram_MapCellBuffer + (dstY * 128 + dstX);
   struct MapLayer *layer = Ram_HeapSlots->mapWork->layers;
@@ -435,7 +611,7 @@ void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
 
 void wait(s32 frames);
 
-void Map_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
+void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   struct MapCopyCommand *copyCommand = (struct MapCopyCommand *)steps;
   u32 sourceX = copyCommand->source;
   u32 endMarker;
@@ -462,8 +638,8 @@ void Map_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
       s32 delay = rectangleArgs[3];
       rectangleArgs += 5;
 
-      Map_CopyCellPictureIndicesRect(sourceX, (u16)sourceY, destinationX,
-                                     destinationY, (u16)width, (u16)height);
+      MapGrid_CopyCellPictureIndicesRect(sourceX, (u16)sourceY, destinationX,
+                                         destinationY, (u16)width, (u16)height);
       copyCommand++;
       wait((u16)delay);
       sourceX = copyCommand->source;
@@ -501,7 +677,7 @@ void Map_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
 /// dstX, dstY: destination top left, in cells.
 void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
                        s32 dstY) {
-  Map_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
+  MapGrid_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
   Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
 }
 
@@ -537,11 +713,15 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-/* VIEW(f02aa74): variable gMapCellBuffer as extern u8 gMapCellBuffer[]; f027064 has extern struct MapCell gMapCellBuffer[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:8266: `gMapCellBuffer__f02aa74' undeclared (first use in this function). */
+/* VIEW(f02aa74): variable gMapCellBuffer as extern u8 gMapCellBuffer[]; f027064
+ * has extern struct MapCell gMapCellBuffer[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/field/resource_slot.c:8266: `gMapCellBuffer__f02aa74'
+ * undeclared (first use in this function). */
 extern u8 gMapCellBuffer__f02aa74[] __asm__("gMapCellBuffer");
 
-void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
-                   s32 dstY) {
+void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
+                                      s32 dstX, s32 dstY) {
   s32 y;
   u32 *src = (u32 *)gMapCellBuffer__f02aa74 + (srcY * 128 + srcX);
   u32 *dst = &((u32 *)gMapCellBuffer__f02aa74)[dstY * 128 + dstX];
@@ -655,7 +835,7 @@ void Func_0802b590(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
   }
 }
 
-void Map_SetShownLayers(u32 v) {
+void MapGrid_SetShownLayers(u32 v) {
   struct MapWork *state = Ram_HeapSlots->mapWork;
   u32 mask = v & 0xe00;
   u32 flags = state->flags;
@@ -684,7 +864,7 @@ next:
     if (entry & 0x1000)
       Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
     else
-      Map_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
+      MapGrid_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
   } else {
     cursor += 6;
   }
@@ -730,7 +910,7 @@ next:
     if (attributes != 0)
       Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
     else
-      Map_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
+      MapGrid_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
   } else {
     cursor += 6;
   }
@@ -740,9 +920,9 @@ next:
 void Map_GetHeaderSize(s32 map, s32 *size) {
   u8 *header;
 
-  // Indexed as gData_0802f380[map][0], the load reads [table, offset].
-  header = Resource_GetTableEntry(
-      *(const u16 *)(map * 12 + (u32)gData_0802f380) + (u32)&ResourceId_Map000);
+  // Indexed as gMaps[map][0], the load reads [table, offset].
+  header = Resource_GetTableEntry(*(const u16 *)(map * 12 + (u32)gMaps) +
+                                  (u32)&ResourceId_Map000);
   size[0] = header[0];
   if (header[2] == 0)
     size[1] = 256;
@@ -758,17 +938,17 @@ void Map_GetHeaderSize(s32 map, s32 *size) {
 void Map_LoadCellsAndShapes(void) {
   u8 *source;
   struct MapHeader *header = Resource_GetTableEntry(
-      *(const u16 *)(gMainRoutineWork.map * 12 + (u32)gData_0802f380) +
+      *(const u16 *)(gMainRoutineWork.map * 12 + (u32)gMaps) +
       (u32)&ResourceId_Map000);
 
   source = (u8 *)header + header->cells;
-  Resource_DecodeType01(source, Ram_MapCellBuffer);
+  Decompress_TaggedLz(source, Ram_MapCellBuffer);
   Tilemap_ConvertBuffer();
   source = (u8 *)header + header->shapes;
-  Resource_DecodeType01(source, gMapShapeGrid);
+  Decompress_TaggedLz(source, gMapShapeGrid);
 }
 
-s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
+s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   struct PerspectiveTiles *perspective =
       (struct PerspectiveTiles *)Ram_HeapSlots->mapWork;
   u32 *tileOffsets = perspective->tiles;

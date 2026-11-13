@@ -70,8 +70,8 @@ void Inn_CheckIn(s32 shop, s32 keeper);
 void Import_ActorSetMode(struct ShamanVillageObject *object, s32 mode);
 void Actor_Release(struct ShamanVillageObject *object);
 void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32 value);
-void Animation_SetStateFlags(struct ShamanVillageObject *object, s32 flags);
-void Field_DispatchTypeHandler(s32 type);
+void Actor_SetBlendMode(struct ShamanVillageObject *object, s32 flags);
+void FieldPsynergy_RunHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void FieldCamera_WaitForArrival(void);
@@ -85,8 +85,9 @@ void Actor_MoveToObject(s32 actor, s32 target);
 void BattleEffect_StartArcEffect(void);
 void BattleEffect_EndArcEffect(void);
 void BattleEffect_WaitForArcGroups(void);
-void BattleEffect_SetObjectUpdateMode(struct ShamanVillageObject *object, s32 value);
-void Party_PlaySavedMusic(void);
+void BattleEffect_SetObjectUpdateMode(struct ShamanVillageObject *object,
+                                      s32 value);
+void Scene_PlayMusic(void);
 void InventorySnapshot_Save(void);
 
 #define SHAMAN_VILLAGE_EMOTE(actor, emote, frames)                             \
@@ -103,7 +104,7 @@ void InventorySnapshot_Save(void);
     /* of 711 instructions differ in tla-en (ShamanVillage_ShowShamansRod). */                \
     register s32 emote_ __asm__("r1") = (emote);                               \
     s32 frames_ = (frames);                                                    \
-    Func_080d47b4((actor), emote_, frames_);                                   \
+    Actor_ShowEmoteById((actor), emote_, frames_);                             \
   }
 
 // ---- this overlay

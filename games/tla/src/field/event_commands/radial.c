@@ -50,8 +50,11 @@
 // The parts, in ROM order.
 #include "module/field/event_commands.h"
 
-/* VIEW(radial): variable gBattleEffect_SharedParticleScript as const u8 gBattleEffect_SharedParticleScript[]; object_effect_scripts.h has const s32 gBattleEffect_SharedParticleScript[]. */
-extern const u8 gBattleEffect_SharedParticleScript__radial[] __asm__("gBattleEffect_SharedParticleScript");
+/* VIEW(radial): variable gBattleEffect_SharedParticleScript as const u8
+ * gBattleEffect_SharedParticleScript[]; object_effect_scripts.h has const s32
+ * gBattleEffect_SharedParticleScript[]. */
+extern const u8 gBattleEffect_SharedParticleScript__radial[] __asm__(
+    "gBattleEffect_SharedParticleScript");
 
 struct OrbitEffect {
   u8 unk00[6];
@@ -70,10 +73,14 @@ struct OrbitEffect {
   void (*update)(struct OrbitEffect *);
 };
 
-/* VIEW(radial): routine Effect_AdvanceMotion as void Effect_AdvanceMotion(struct FieldEffect *effect); module/field/field_effect.h has void Effect_AdvanceMotion(union FieldObject *object). */
-extern void Effect_AdvanceMotion__radial(struct FieldEffect *effect) __asm__("Effect_AdvanceMotion");
+/* VIEW(radial): routine FieldEffect_AdvanceMotion as void
+ * FieldEffect_AdvanceMotion(struct FieldEffect *effect);
+ * module/field/field_effect.h has void FieldEffect_AdvanceMotion(union
+ * FieldObject *object). */
+extern void Effect_AdvanceMotion__radial(struct FieldEffect *effect) __asm__(
+    "FieldEffect_AdvanceMotion");
 
-void BattleEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
+void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
   struct EffectOptions options;
   s32 velocity[3];
   s32 sine;
@@ -91,13 +98,13 @@ void BattleEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
     velocity[1] = 0;
     sine = Trig_Sin(angle);
     velocity[2] = sine;
-    FieldEffect_SpawnResident(origin->x, origin->y, origin->z, velocity[0], velocity[1],
-                  sine, 0x01090001, &options);
+    FieldEffect_SpawnResident(origin->x, origin->y, origin->z, velocity[0],
+                              velocity[1], sine, 0x01090001, &options);
     i++;
   } while (i <= 16);
 }
 
-void BattleEffect_WanderAroundAnchor(struct OrbitEffect *effect) {
+void FieldEffect_WanderAroundAnchor(struct OrbitEffect *effect) {
   s32 radius;
   s32 angle;
   s32 dx;
@@ -123,9 +130,9 @@ void BattleEffect_WanderAroundAnchor(struct OrbitEffect *effect) {
 
 /// Per-frame update of a Whirlwind particle: circles the anchor at 8 pixels,
 /// a sixteenth of a turn a frame; after 121 frames it starts to wander
-/// (BattleEffect_WanderAroundAnchor) with upward speed and gravity. As The
+/// (FieldEffect_WanderAroundAnchor) with upward speed and gravity. As The
 /// Broken Seal's FieldEffect_CircleAnchor.
-void BattleEffect_CircleAnchor(struct OrbitEffect *effect) {
+void FieldEffect_CircleAnchor(struct OrbitEffect *effect) {
   struct OrbitEffect *anchor;
   s32 angle;
   s32 radius;
@@ -141,7 +148,7 @@ void BattleEffect_CircleAnchor(struct OrbitEffect *effect) {
   effect->z = anchor->z + dz;
   effect->angle += 0x800;
   if (++effect->timer == 121) {
-    effect->update = BattleEffect_WanderAroundAnchor;
+    effect->update = FieldEffect_WanderAroundAnchor;
     effect->timer = 0;
     effect->pause = 0;
     effect->speed = 0x1999;
@@ -153,7 +160,7 @@ void BattleEffect_CircleAnchor(struct OrbitEffect *effect) {
 #define Actor_SetPositionAndResetMotionFar                                     \
   ((s32 (*)(void *, s32, s32, s32))Actor_SetPositionAndResetMotionFar)
 
-void BattleEffect_ShrinkObjectScaleUntilHalf(struct Actor *object) {
+void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *object) {
   s32 scale;
 
   scale = object->scaleX - 0x80;
@@ -165,7 +172,7 @@ void BattleEffect_ShrinkObjectScaleUntilHalf(struct Actor *object) {
   }
 }
 
-void FieldEffect_RunWhirlwindOnTarget(void) { FieldEffect_RunWhirlwind(); }
+void FieldPsynergy_WhirlwindOnTarget(void) { FieldPsynergy_Whirlwind(); }
 #undef Actor_SetPositionAndResetMotionFar
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -173,7 +180,8 @@ void FieldEffect_RunWhirlwindOnTarget(void) { FieldEffect_RunWhirlwind(); }
 #include "module/field/radial.h"
 
 // An orbiting mote: radial.c's OrbitEffect.
-/* VIEW(f0dfd00): tag struct OrbitEffect as struct OrbitEffect__f0dfd00; radial.c has another definition. */
+/* VIEW(f0dfd00): tag struct OrbitEffect as struct OrbitEffect__f0dfd00;
+ * radial.c has another definition. */
 struct OrbitEffect__f0dfd00 {
   u8 unk00[6];
   u16 angle;
@@ -191,14 +199,33 @@ struct OrbitEffect__f0dfd00 {
   void (*update)(struct OrbitEffect__f0dfd00 *);
 };
 
-/* VIEW(radial): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p); module/system/system.h has void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position). */
-extern void Vector_AddPolarOffset__radial(s32 magnitude, s32 angle, struct EffectVector *p) __asm__("Vector_AddPolarOffset");
-/* VIEW(f0dfd00): routine BattleEffect_WanderAroundAnchor as void BattleEffect_WanderAroundAnchor(struct OrbitEffect__f0dfd00 *mote); the definition has void BattleEffect_WanderAroundAnchor(struct OrbitEffect *effect). */
-extern void BattleEffect_WanderAroundAnchor__f0dfd00(struct OrbitEffect__f0dfd00 *mote) __asm__("BattleEffect_WanderAroundAnchor");
-/* VIEW(f0dfd00): routine BattleEffect_CircleAnchor as void BattleEffect_CircleAnchor(struct OrbitEffect__f0dfd00 *mote); the definition has void BattleEffect_CircleAnchor(struct OrbitEffect *effect). */
-extern void BattleEffect_CircleAnchor__f0dfd00(struct OrbitEffect__f0dfd00 *mote) __asm__("BattleEffect_CircleAnchor");
-/* VIEW(f0dfd00): routine BattleEffect_AgeAndCueAtEighty as void BattleEffect_AgeAndCueAtEighty(struct Actor *object); the definition has void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object); tried as the definition's void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object), which the object already declares, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:311: `BattleEffect_AgeAndCueAtEighty' undeclared (first use in this function). */
-extern void BattleEffect_AgeAndCueAtEighty__f0dfd00(struct Actor *object) __asm__("BattleEffect_AgeAndCueAtEighty");
+/* VIEW(radial): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32
+ * magnitude, s32 angle, struct EffectVector *p); module/system/system.h has
+ * void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position). */
+extern void Vector_AddPolarOffset__radial(
+    s32 magnitude, s32 angle,
+    struct EffectVector *p) __asm__("Vector_AddPolarOffset");
+/* VIEW(f0dfd00): routine FieldEffect_WanderAroundAnchor as void
+ * FieldEffect_WanderAroundAnchor(struct OrbitEffect__f0dfd00 *mote); the
+ * definition has void FieldEffect_WanderAroundAnchor(struct OrbitEffect
+ * *effect). */
+extern void BattleEffect_WanderAroundAnchor__f0dfd00(
+    struct OrbitEffect__f0dfd00
+        *mote) __asm__("FieldEffect_WanderAroundAnchor");
+/* VIEW(f0dfd00): routine FieldEffect_CircleAnchor as void
+ * FieldEffect_CircleAnchor(struct OrbitEffect__f0dfd00 *mote); the definition
+ * has void FieldEffect_CircleAnchor(struct OrbitEffect *effect). */
+extern void BattleEffect_CircleAnchor__f0dfd00(
+    struct OrbitEffect__f0dfd00 *mote) __asm__("FieldEffect_CircleAnchor");
+/* VIEW(f0dfd00): routine BattleEffect_AgeAndCueAtEighty as void
+ * BattleEffect_AgeAndCueAtEighty(struct Actor *object); the definition has void
+ * BattleEffect_AgeAndCueAtEighty(struct TimedObject *object); tried as the
+ * definition's void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object),
+ * which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial.c:311:
+ * `BattleEffect_AgeAndCueAtEighty' undeclared (first use in this function). */
+extern void BattleEffect_AgeAndCueAtEighty__f0dfd00(
+    struct Actor *object) __asm__("BattleEffect_AgeAndCueAtEighty");
 
 #define ORB_OBJECT 280
 #define MOTE_OBJECT 308
@@ -211,7 +238,7 @@ extern void BattleEffect_AgeAndCueAtEighty__f0dfd00(struct Actor *object) __asm_
 
 // Animation 14: carry an orb from the caster to the scene's position over
 // ten frames, growing it from a quarter size, then play out the kind.
-void FieldEffect_RunWhirlwind(void) {
+void FieldPsynergy_Whirlwind(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct Actor *caster = scene->mainObject;
   struct Actor *target = scene->child;
@@ -249,7 +276,7 @@ void FieldEffect_RunWhirlwind(void) {
   if (orb == 0)
     return;
 
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   Actor_SetMode(orb, 2);
   step = 0;
   do {
@@ -279,7 +306,7 @@ void FieldEffect_RunWhirlwind(void) {
     // higher each, 3 to 8 pixels out, circle it while the target shrinks.
     wait(20);
     if (target != 0)
-      target->update = (void (*)(void))BattleEffect_ShrinkObjectScaleUntilHalf;
+      target->update = (void (*)(void))FieldEffect_ShrinkActorScaleUntilHalf;
     for (i = 0; i <= 15; i++) {
       s32 distance;
 
@@ -289,7 +316,7 @@ void FieldEffect_RunWhirlwind(void) {
       distance = Random16() * 5 + (3 << 16);
       Vector_AddPolarOffset__radial(distance, Random16(), &position);
       mote = (struct OrbitEffect__f0dfd00 *)Actor_Spawn(MOTE_OBJECT, position.x,
-                                               position.y, position.z);
+                                                        position.y, position.z);
       if (mote != 0) {
         mote->update = BattleEffect_CircleAnchor__f0dfd00;
         mote->anchor = orb;
@@ -320,8 +347,8 @@ void FieldEffect_RunWhirlwind(void) {
         distance = Random16() * 5;
         distance += 3 << 16;
         Vector_AddPolarOffset__radial(distance, Random16(), &position);
-        mote = (struct OrbitEffect__f0dfd00 *)Actor_Spawn(MOTE_OBJECT, position.x,
-                                                 position.y, position.z);
+        mote = (struct OrbitEffect__f0dfd00 *)Actor_Spawn(
+            MOTE_OBJECT, position.x, position.y, position.z);
         if (mote != 0) {
           mote->update = BattleEffect_WanderAroundAnchor__f0dfd00;
           mote->timer = 20 + i * -2;
@@ -333,14 +360,14 @@ void FieldEffect_RunWhirlwind(void) {
       }
     }
     BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
-    BattleEffect_PrepareBufferInterpolation();
+    FieldPsynergy_FadeFromCastColor();
     ((struct OrbitEffect__f0dfd00 *)orb)->timer = 0;
     orb->update = (void (*)(void))BattleEffect_AgeAndCueAtEighty__f0dfd00;
     Func_080db0b0(scene->secondObjectId);
     Func_08020340(orb);
     Actor_Destroy(orb);
   }
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
 }
 #undef ORB_OBJECT
 #undef MOTE_OBJECT
@@ -359,8 +386,11 @@ void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object) {
   object->age++;
 }
 
-/* VIEW(age_and_cue): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); f0dfd00 has void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p). */
-extern void Vector_AddPolarOffset__age_and_cue(s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
+/* VIEW(age_and_cue): routine Vector_AddPolarOffset as void
+ * Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); f0dfd00 has void
+ * Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p). */
+extern void Vector_AddPolarOffset__age_and_cue(
+    s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
 
 void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect) {
   struct BattleFxScene *scene;
@@ -377,7 +407,8 @@ top:
     pos.x = effect->originX;
     pos.z = effect->originZ;
     angle = Random16();
-    Vector_AddPolarOffset__age_and_cue(Random16() * 30 + (40 << 16), (u16)angle, &pos);
+    Vector_AddPolarOffset__age_and_cue(Random16() * 30 + (40 << 16), (u16)angle,
+                                       &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->acceleration = 4 << 16;
@@ -406,11 +437,11 @@ top:
     return;
   }
   if (state == 3 && FieldParticle_HasPendingTarget(effect) == 0)
-    BattleEffect_ClearOwnedSlot(effect);
+    FieldEffect_ClearOwnedSlot(effect);
 }
 
 /// Pauses the scene's child (byte 91) and runs the fallback transition.
-void BattleEffect_MarkChildAndRunFallbackTransition(void) {
+void FieldPsynergy_HaltOnTarget(void) {
   (*(u8 **)((u8 *)Ram_HeapSlots->effectWork + 20))[91] = 1;
   FieldPsynergy_Halt();
 }
@@ -433,7 +464,7 @@ void FieldPsynergy_Halt(void) {
   if (obj == 0)
     return;
 
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   from.x = user->x;
   from.y = user->y + (16 << 16);
   from.z = user->z;
@@ -486,19 +517,19 @@ void FieldPsynergy_Halt(void) {
   Actor_Destroy(obj);
   wait(4);
   wait(30);
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
 }
 
-#define Actor_SetAnimationSpeedFar                                             \
-  ((void (*)(void *, s32))Actor_SetAnimationSpeedFar)
+#define Actor_SelectAnimationFar                                               \
+  ((void (*)(void *, s32))Actor_SelectAnimationFar)
 
-void BattleEffect_SetRandomTableValueOnObject(struct ActorView *object) {
+void FieldPsynergy_UpdateHaltedActor(struct ActorView *object) {
   s8 *table = gBattleEffect_RandomChildValues;
   s32 index = Random16();
-  Animation_ApplyChildValuesFar(object, table[(u32)(index * 8) >> 16]);
+  Actor_SetSpriteColorModeFar(object, table[(u32)(index * 8) >> 16]);
 }
 
-void BattleEffect_PauseObject(s32 id) {
+void FieldPsynergy_HaltActor(s32 id) {
   struct ActorView *object;
   struct AnimationEntry *entry;
 
@@ -512,23 +543,23 @@ void BattleEffect_PauseObject(s32 id) {
         gMainRoutineWork.savedByte = entry->param;
       }
     }
-    object->update = BattleEffect_SetRandomTableValueOnObject;
+    object->update = FieldPsynergy_UpdateHaltedActor;
     object->value5b = 1;
-    Actor_SetAnimationSpeedFar(object, 0);
+    Actor_SelectAnimationFar(object, 0);
   }
 }
 
-void BattleEffect_ResumeObject(s32 id) {
+void FieldPsynergy_ResumeHaltedActor(s32 id) {
   struct ActorView *object = ObjectTable_Get(id);
 
   if (object != NULL) {
-    if (object->update == BattleEffect_SetRandomTableValueOnObject) {
+    if (object->update == FieldPsynergy_UpdateHaltedActor) {
       object->update = (void *)gMainRoutineWork.savedCallback;
       gMainRoutineWork.savedCallback = 0;
-      Animation_ApplyChildValuesFar(object, (s8)gMainRoutineWork.savedByte);
+      Actor_SetSpriteColorModeFar(object, (s8)gMainRoutineWork.savedByte);
     }
     object->value5b = 0;
-    Actor_SetAnimationSpeedFar(object, 16);
+    Actor_SelectAnimationFar(object, 16);
   }
 }
 
@@ -539,14 +570,14 @@ s32 BattleEffect_GetFlags();
 /// Returns no target (-1) when the current effect definition's flags are
 /// 0xff, else id.
 /// id: target object ID.
-s32 BattleEffect_FilterObjectIdByFlags(s32 id) {
+s32 FieldPsynergy_FilterHaltTarget(s32 id) {
   if (BattleEffect_GetFlags() == 0xff)
     return -1;
   return id;
 }
 
 /// Runs field effect 13 (FieldPsynergy_Catch) for the request dispatcher.
-void BattleEffect_CallEffect13(void) { FieldPsynergy_Catch(); }
+void FieldPsynergy_CatchOnTarget(void) { FieldPsynergy_Catch(); }
 
 static __inline__ s32 Interpolate(s32 from, s32 to, s32 step) {
   return from + (to - from) * step / 10;
@@ -586,13 +617,13 @@ void FieldPsynergy_Catch(void) {
   object = Actor_Spawn(278, spawn.x, spawn.y, spawn.z);
   if (object == 0)
     return;
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(138);
   object->facing = mainObject->facing;
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
   Actor_SetMode(object, 5);
-  Animation_ApplyChildValuesFar(object, 1);
+  Actor_SetSpriteColorModeFar(object, 1);
   step = 0;
   do {
     s32 scale;
@@ -639,7 +670,7 @@ void FieldPsynergy_Catch(void) {
     step++;
   } while (step < steps);
   Actor_Destroy(object);
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
 }
 
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
@@ -755,7 +786,8 @@ void Func_080e0618(void) {
   work->timer++;
 }
 
-/* VIEW(radial): tag struct EffectSceneWork as struct EffectSceneWork__radial; module/field/event_commands.h has another definition. */
+/* VIEW(radial): tag struct EffectSceneWork as struct EffectSceneWork__radial;
+ * module/field/event_commands.h has another definition. */
 struct EffectSceneWork__radial {
   u8 unk00[0x20];
   u8 failed;
@@ -763,8 +795,8 @@ struct EffectSceneWork__radial {
 
 /// Effect 17 on a target: asks Func_080d9a74 for two results; on failure
 /// marks the effect failed, else stores the target and both in the event work.
-/// Then runs Func_080e09c0.
-void Func_080e0978(s32 value) {
+/// Then runs FieldPsynergy_Lash.
+void FieldPsynergy_LashOnTarget(s32 value) {
   struct EffectSceneState *state = Ram_HeapSlots->eventWork;
   struct EffectSceneWork__radial *work = Ram_HeapSlots->effectWork;
   s32 second;
@@ -781,12 +813,12 @@ void Func_080e0978(s32 value) {
     state->valueD33 = first;
     state->valueD31 = second;
   }
-  Func_080e09c0();
+  FieldPsynergy_Lash();
 }
 
 extern char ResourceId_StarSparkleFade;
 
-void Func_080e09c0(void) {
+void FieldPsynergy_Lash(void) {
   struct ScatterWork *work = HeapSlot_Alloc(92, 0x2114);
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct ScatterEvent *event = Ram_HeapSlots->eventWork;
@@ -803,7 +835,7 @@ void Func_080e09c0(void) {
     scene->y += 0x40000;
     scene->z += 0x40000;
   }
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   object = Actor_Spawn(363, 0, 0, 0);
   if (object != 0) {
     object->facing = caster->facing;
@@ -812,14 +844,14 @@ void Func_080e09c0(void) {
       object->priorityFlags |= 0x20;
     Actor_SetMode(object, 0);
     Sound_PlayFar(138);
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
-                          work);
-    slotA = Resource_FindFreeEntry();
+    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
+                        work);
+    slotA = VramCache_FindFreeEntry();
     tileA = VramCache_Load(slotA, 0x100, work);
     work->tileA = tileA;
-    Resource_DecodeType01(
+    Decompress_TaggedLz(
         Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade), work);
-    slotB = Resource_FindFreeEntry();
+    slotB = VramCache_FindFreeEntry();
     work->tileB = VramCache_Load(slotB, 0x100, work);
 
     particle = work->particles;
@@ -871,15 +903,15 @@ void Func_080e09c0(void) {
       }
       Task_Remove(Func_080e0618);
     }
-    Resource_ResetEntry(slotA);
-    Resource_ResetEntry(slotB);
+    VramCache_FreeEntry(slotA);
+    VramCache_FreeEntry(slotB);
     Actor_Destroy(object);
   }
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(92);
 }
 
-void BattleEffect_AdvanceAngleWithRamp(struct Actor *object) {
+void FieldEffect_UpdateSpinAngle(struct Actor *object) {
   u32 step;
 
   step = object->timer * 0x50;
@@ -891,7 +923,7 @@ void BattleEffect_AdvanceAngleWithRamp(struct Actor *object) {
 /// Per-frame update: spins 1/8 turn a frame as it shrinks, rising a pixel a
 /// frame; released once its scale falls below 0x3000.
 // As ☀️'s FieldEffect_UpdateDescendingObject.
-void BattleEffect_UpdateDescendingObject(struct Actor *obj) {
+void FieldEffect_UpdateRetreatCaster(struct Actor *obj) {
   u32 scale;
   u32 scaleX;
   s32 step = -0x280;
@@ -907,7 +939,7 @@ void BattleEffect_UpdateDescendingObject(struct Actor *obj) {
   }
 }
 
-void Func_080e0cec(struct FieldParticle *slot) {
+void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot) {
   struct LaunchVector pos;
   struct LaunchObject *src;
   s32 state;
@@ -947,7 +979,7 @@ void Func_080e0cec(struct FieldParticle *slot) {
       slot->state--;
   } else if (state == 2) {
     if (FieldParticle_HasPendingTarget(slot) == 0)
-      BattleEffect_ClearOwnedSlot(slot);
+      FieldEffect_ClearOwnedSlot(slot);
   }
 }
 #include "event.h"
@@ -967,19 +999,34 @@ struct SpinScene {
   struct FieldParticle slots[SLOT_MAX];
 };
 
-/* VIEW(launch): routine Animation_ApplyChildValuesFar as void Animation_ApplyChildValuesFar(void *object, s32 value); actor_view.h has void Animation_ApplyChildValuesFar(struct Actor *, u32). */
-extern void Animation_ApplyChildValuesFar__launch(void *object, s32 value) __asm__("Animation_ApplyChildValuesFar");
-/* VIEW(launch): routine Actor_SetSingleChildFlagsFar as void Actor_SetSingleChildFlagsFar(void *object, s32 flags); actor_view.h has void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlagsFar__launch(void *object, s32 flags) __asm__("Actor_SetSingleChildFlagsFar");
-/* VIEW(launch): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct SpinVector *position); age_and_cue has void Camera_WorldToScreen(struct EffectVector *pos). */
-extern void Camera_WorldToScreen__launch(struct SpinVector *position) __asm__("Camera_WorldToScreen");
+/* VIEW(launch): routine Actor_SetSpriteColorModeFar as void
+ * Actor_SetSpriteColorModeFar(void *object, s32 value); actor_view.h has void
+ * Actor_SetSpriteColorModeFar(struct Actor *, u32). */
+extern void Animation_ApplyChildValuesFar__launch(
+    void *object, s32 value) __asm__("Actor_SetSpriteColorModeFar");
+/* VIEW(launch): routine Actor_SetSingleChildFlagsFar as void
+ * Actor_SetSingleChildFlagsFar(void *object, s32 flags); actor_view.h has void
+ * Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlagsFar__launch(
+    void *object, s32 flags) __asm__("Actor_SetSingleChildFlagsFar");
+/* VIEW(launch): routine Camera_WorldToScreen as void
+ * Camera_WorldToScreen(struct SpinVector *position); age_and_cue has void
+ * Camera_WorldToScreen(struct EffectVector *pos). */
+extern void Camera_WorldToScreen__launch(struct SpinVector *position) __asm__(
+    "Camera_WorldToScreen");
 void Actor_ApplyRandomChildValues(struct SpinObject *owner);
-/* VIEW(launch): routine BattleEffect_AdvanceAngleWithRamp as void BattleEffect_AdvanceAngleWithRamp(struct SpinObject *object); the definition has void BattleEffect_AdvanceAngleWithRamp(struct Actor *object). */
-extern void BattleEffect_AdvanceAngleWithRamp__launch(struct SpinObject *object) __asm__("BattleEffect_AdvanceAngleWithRamp");
-/* VIEW(launch): routine BattleEffect_UpdateDescendingObject as void BattleEffect_UpdateDescendingObject(struct SpinObject *obj); the definition has void BattleEffect_UpdateDescendingObject(struct Actor *obj). */
-extern void BattleEffect_UpdateDescendingObject__launch(struct SpinObject *obj) __asm__("BattleEffect_UpdateDescendingObject");
+/* VIEW(launch): routine FieldEffect_UpdateSpinAngle as void
+ * FieldEffect_UpdateSpinAngle(struct SpinObject *object); the definition
+ * has void FieldEffect_UpdateSpinAngle(struct Actor *object). */
+extern void BattleEffect_AdvanceAngleWithRamp__launch(
+    struct SpinObject *object) __asm__("FieldEffect_UpdateSpinAngle");
+/* VIEW(launch): routine FieldEffect_UpdateRetreatCaster as void
+ * FieldEffect_UpdateRetreatCaster(struct SpinObject *obj); the definition
+ * has void FieldEffect_UpdateRetreatCaster(struct Actor *obj). */
+extern void BattleEffect_UpdateDescendingObject__launch(
+    struct SpinObject *obj) __asm__("FieldEffect_UpdateRetreatCaster");
 
-void FieldEffect_RunRetreat(void) {
+void FieldPsynergy_Retreat(void) {
   struct SpinScene *scene = Ram_HeapSlots->effectWork;
   struct SpinObject *obj = scene->mainObject;
   struct SpinVector pos;
@@ -989,8 +1036,8 @@ void FieldEffect_RunRetreat(void) {
   u32 i;
 
   Event_Start();
-  Camera_MoveWithinMapBounds(-1, -1, -1, 0);
-  BattleEffect_InitializeSharedScene();
+  FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
+  FieldPsynergy_FadeToCastColor();
   wait(10);
   Actor_ArmCallback(scene->firstObjectId, 0x4000, 0);
   wait(30);
@@ -1021,7 +1068,7 @@ void FieldEffect_RunRetreat(void) {
     s32 scale;
 
     FieldParticle_Initialize(slot, 0x2a0, pos.x, pos.z);
-    FieldParticle_SetCallback(slot, Func_080e0cec);
+    FieldParticle_SetCallback(slot, FieldEffect_UpdateRadialLaunch);
     FieldParticle_SetActorMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(slot->object, (Random16() * 7) >> 16);
     scale = (Random16() >> 1) + 0x13333;
@@ -1043,13 +1090,13 @@ void FieldEffect_RunRetreat(void) {
     slot++;
   } while (i < SLOT_MAX);
   wait(40);
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
   obj->fall = 0;
   obj->y = obj->floor;
   wait(10);
 }
 
-void BattleEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
+void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
   struct Actor *source;
   s32 y;
   s32 limit;
@@ -1077,7 +1124,7 @@ void BattleEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
   particle->z = source->z + ((0x10000 - scale) * 5) + 0x90000;
 }
 
-void BattleEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
+void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   struct Actor *source;
   s32 y;
   s32 limit;
@@ -1105,10 +1152,10 @@ void BattleEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   particle->z = source->z - ((0x10000 - scale) * 5) + 0x100000;
 }
 
-struct ArcObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+struct ArcObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildArgumentFar(struct ArcSprite *sprite, s32 animation);
 
-void Func_080e1024(struct ArcObject *source) {
+void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
   u8 *work = Ram_HeapSlots->effectWork;
   struct ArcObject *leader = *(struct ArcObject **)(work + 16);
   struct ArcObject *objects[2];
@@ -1118,7 +1165,7 @@ void Func_080e1024(struct ArcObject *source) {
   u8 zero;
 
   for (i = 0; i <= 1; i++) {
-    object = Func_080200c0(271, source->x, source->y + 0x400000, source->z);
+    object = Actor_CreateFar(271, source->x, source->y + 0x400000, source->z);
     objects[i] = object;
     if (object == NULL)
       continue;
@@ -1134,7 +1181,7 @@ void Func_080e1024(struct ArcObject *source) {
       continue;
     Animation_ApplyChildArgumentFar(sprite, 0);
     sprite->animation = zero;
-    Resource_ResetEntry(sprite->resource);
+    VramCache_FreeEntry(sprite->resource);
     sprite->resource = *(u16 *)(work + 0x710);
     sprite->active = 1;
     sprite->attr.half.tile =
@@ -1145,10 +1192,10 @@ void Func_080e1024(struct ArcObject *source) {
     sprite->picture->visible = zero;
   }
   objects[0]->callback =
-      (void *)BattleEffect_UpdateDescendingParticleNegativeArc;
+      (void *)FieldEffect_UpdateDescendingParticleNegativeArc;
   objects[0]->sprite->attr.byte.variant = 0;
   objects[1]->callback =
-      (void *)BattleEffect_UpdateDescendingParticlePositiveArc;
+      (void *)FieldEffect_UpdateDescendingParticlePositiveArc;
   objects[1]->sprite->attr.byte.variant = leader->sprite->attr.byte.variant;
 }
 #include "flag_call.h"
@@ -1157,7 +1204,8 @@ void Func_080e1024(struct ArcObject *source) {
 #include "module/field/radial.h"
 #include "text/msg_ids.h"
 
-/* VIEW(launch): tag struct ArcEffectObject as struct ArcEffectObject__launch; field_psynergy_work.h has another definition. */
+/* VIEW(launch): tag struct ArcEffectObject as struct ArcEffectObject__launch;
+ * field_psynergy_work.h has another definition. */
 struct ArcEffectObject__launch {
   u8 unk00[6];
   u16 angle;
@@ -1170,10 +1218,10 @@ struct ArcEffectObject__launch {
   void (*callback)(struct ArcEffectObject__launch *);
 };
 
-/// The caster during Avoid (BattleEffect_RunEffect16): sheds a pair of falling
+/// The caster during Avoid (FieldPsynergy_Avoid): sheds a pair of falling
 /// arcs every 5 frames (7 in scene Ov64a), and spins in phase 1.
 // As ☀️'s function of the same name.
-void BattleEffect_UpdatePairedArcSpawner(struct ArcEffectObject__launch *caster) {
+void FieldEffect_UpdateAvoidCaster(struct ArcEffectObject__launch *caster) {
   s16 phase;
   s32 elapsedFrames;
   struct MainRoutineWork *party;
@@ -1184,18 +1232,18 @@ void BattleEffect_UpdatePairedArcSpawner(struct ArcEffectObject__launch *caster)
 
   if (party->map == (s32)&SceneId_Ov64a) {
     if (elapsedFrames % 7 == 0)
-      Func_080e1024(caster);
+      FieldEffect_SpawnDescendingArcParticles(caster);
   } else if (elapsedFrames % 5 == 0) {
-    Func_080e1024(caster);
+    FieldEffect_SpawnDescendingArcParticles(caster);
   }
 
   if (phase == 1)
     caster->angle += 0xc00;
 }
 
-void FieldEvent_ShowStatusMessage(void) {
+void FieldPsynergy_ShowAvoidWoreOff(void) {
   gMainRoutineWork.avoidDistance = 0;
-  Func_080cb82c();
+  WorldMap_Freeze();
   if (gMainRoutineWork.avoidByItem == 0) {
     MessageArgument_PushFar(150, 4);
     FieldMessage_ShowFar((s32)&MsgAbilityWoreOff, 1);
@@ -1207,7 +1255,7 @@ void FieldEvent_ShowStatusMessage(void) {
 }
 
 /// Psynergy effect 16: the user spins, rains arc particles, then flashes.
-void BattleEffect_RunEffect16(void) {
+void FieldPsynergy_Avoid(void) {
   struct ArcScene *scene;
   struct ArcEffectObject__launch *object;
   struct ArcGroup *group;
@@ -1225,16 +1273,16 @@ void BattleEffect_RunEffect16(void) {
   entry = group->entries[0];
   angle = object->angle;
   flags = group->flags;
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   scene->arcTileSlot = slot;
   // tiles holds the picture's address, loaded between the slot's two shifts;
   // as the address in the call, 2 of 156 instructions differ in tla-en.
-  tiles = gData_080ed90c;
+  tiles = gFieldEffect_ArcSparkTiles;
   VramCache_Load((s16)slot, 0x100, tiles);
   gMainRoutineWork.avoidDistance = 0x09600000;
   gMainRoutineWork.avoidByItem = GameFlag_Test(0x145);
   Animation_ApplyChildValuesFar__launch(object, 0);
-  object->callback = BattleEffect_UpdatePairedArcSpawner;
+  object->callback = FieldEffect_UpdateAvoidCaster;
   object->phase = 0;
   object->step = 0;
   Sound_PlayFar(140);
@@ -1284,7 +1332,7 @@ void BattleEffect_RunEffect16(void) {
   } while (0);
   wait(1);
 
-  Resource_ResetEntry(scene->arcTileSlot);
+  VramCache_FreeEntry(scene->arcTileSlot);
   FieldMessage_ShowFar((s32)&MsgMonstersAttackLess, 1);
 }
 #include "module/field/object.h"
@@ -1304,9 +1352,9 @@ void BattleEffect_WaitForArcGroups(void) {
 
 void BattleEffect_FlickerObjectAndSpawnArcs(struct Actor *object) {
   if ((gFrameCount & 2) != 0) {
-    Animation_ApplyChildValuesFar(object, 7);
+    Actor_SetSpriteColorModeFar(object, 7);
   } else {
-    Animation_ApplyChildValuesFar(object, 0);
+    Actor_SetSpriteColorModeFar(object, 0);
   }
   if ((gFrameCount & 15) == 0) {
     BattleEffect_SpawnScaledArcObjects(object);
@@ -1315,7 +1363,7 @@ void BattleEffect_FlickerObjectAndSpawnArcs(struct Actor *object) {
 
 void BattleEffect_CycleObjectAndSpawnArcs(struct Actor *object) {
   if (gFrameCount & 1)
-    Animation_ApplyChildValuesFar(object, (gFrameCount >> 1) % 6);
+    Actor_SetSpriteColorModeFar(object, (gFrameCount >> 1) % 6);
   if ((gFrameCount & 15) == 0)
     BattleEffect_SpawnScaledArcObjects(object);
 }
@@ -1323,7 +1371,7 @@ void BattleEffect_CycleObjectAndSpawnArcs(struct Actor *object) {
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode) {
   if (mode == 0) {
     object->update = 0;
-    Animation_ApplyChildValuesFar(object, 0);
+    Actor_SetSpriteColorModeFar(object, 0);
   } else if (mode == 1) {
     object->update = (void (*)(void))BattleEffect_FlickerObjectAndSpawnArcs;
   } else {
@@ -1360,7 +1408,11 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
 #include "module/field/object.h"
 #include "module/field/radial.h"
 
-/* VIEW(f0e150c): tag struct ArcSprite as struct ArcSprite__f0e150c; radial.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:1599: structure has no member named `x'. */
+/* VIEW(f0e150c): tag struct ArcSprite as struct ArcSprite__f0e150c; radial.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial.c:1599: structure has no member
+ * named `x'. */
 struct ArcSprite__f0e150c {
   u8 unk00[12];
   s32 x;
@@ -1372,7 +1424,8 @@ struct ArcSprite__f0e150c {
   u8 unk20[8];
 };
 
-/* VIEW(f0e150c): tag struct ArcWork as struct ArcWork__f0e150c; radial.c has another definition. */
+/* VIEW(f0e150c): tag struct ArcWork as struct ArcWork__f0e150c; radial.c has
+ * another definition. */
 struct ArcWork__f0e150c {
   struct ArcSprite__f0e150c sprites[2][2];
   s16 age[2];
@@ -1381,8 +1434,11 @@ struct ArcWork__f0e150c {
   struct Actor *target;
 };
 
-/* VIEW(f0e150c): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); launch has void Camera_WorldToScreen(struct SpinVector *position). */
-extern void Camera_WorldToScreen__f0e150c(s32 *position) __asm__("Camera_WorldToScreen");
+/* VIEW(f0e150c): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
+ * *position); launch has void Camera_WorldToScreen(struct SpinVector
+ * *position). */
+extern void
+Camera_WorldToScreen__f0e150c(s32 *position) __asm__("Camera_WorldToScreen");
 
 void BattleEffect_UpdateArcEffect(void) {
   struct ArcWork__f0e150c *work = Ram_HeapSlots->block62;
@@ -1429,7 +1485,7 @@ void BattleEffect_UpdateArcEffect(void) {
 void BattleEffect_StartArcEffect(void) {
   struct ArcEffectWork *work = HeapSlot_Alloc(248, sizeof(*work));
 
-  work->resource = Resource_FindFreeEntry();
+  work->resource = VramCache_FindFreeEntry();
   VramCache_Load(work->resource, 0x100, gBattleEffect_ArcTiles);
   work->group = 0;
   work->age[0] = 999;
@@ -1441,13 +1497,18 @@ void BattleEffect_StartArcEffect(void) {
 void BattleEffect_EndArcEffect(void) {
   struct ArcEffectWork *work = Ram_HeapSlots->block62;
 
-  Resource_ResetEntry(work->resource);
+  VramCache_FreeEntry(work->resource);
   Task_Remove((u32)BattleEffect_UpdateArcEffect);
   HeapSlot_Release(248);
 }
 
-/* VIEW(f0e150c): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position); f0dfd00 has void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p). */
-extern void Vector_AddPolarOffset__f0e150c(s32 distance, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
+/* VIEW(f0e150c): routine Vector_AddPolarOffset as void
+ * Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position); f0dfd00 has
+ * void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p).
+ */
+extern void
+Vector_AddPolarOffset__f0e150c(s32 distance, s32 angle,
+                               s32 *position) __asm__("Vector_AddPolarOffset");
 
 #define BOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
@@ -1537,7 +1598,7 @@ again:
     pos[0] = motion->x;
     pos[1] = motion->y;
     pos[2] = motion->z;
-    if (Func_08020210(scene->mainObject, pos) > 0) {
+    if (MapGrid_CheckCollisionFar(scene->mainObject, pos) > 0) {
       work->done = 1;
       work->result = -1;
       work->phase++;
@@ -1725,14 +1786,14 @@ again:
 
 /// Effect 29 cast on a target: runs the effect. Nothing calls it; the
 /// targeted dispatch has no case for animation 29.
-void BattleEffect_CallEffect29(void) { Func_080e1f2c(); }
+void BattleEffect_CallEffect29(void) { FieldPsynergy_Unnamed29(); }
 
 // One moving point: a spark on the canvas (x and y only, counting delay) or
 // a sprite's place in the world.
 
 extern char ResourceId_BowDraw, ResourceId_FlamingArrow;
 
-void Func_080e1f2c(void) {
+void FieldPsynergy_Unnamed29(void) {
   struct BowWork *work = HeapSlot_Alloc(92, sizeof(struct BowWork));
   struct BowScene *scene = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;
@@ -1748,7 +1809,7 @@ void Func_080e1f2c(void) {
   s32 shade;
   s32 i;
 
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   // The spark pointer and the sprite pointer are one variable.
   sprite = (struct EffectSprite *)work->sparks;
   for (i = 0; i < 32; i++) {
@@ -1757,9 +1818,9 @@ void Func_080e1f2c(void) {
   }
 
   work->tiles = HeapSlot_Alloc(96, 0x1800);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_BowDraw),
-                        work->tiles);
-  bowSlot = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_BowDraw),
+                      work->tiles);
+  bowSlot = VramCache_FindFreeEntry();
   tile = VramCache_Load(bowSlot, 0x1800, work->tiles);
   work->bowTile = tile;
   sprite = &work->bow;
@@ -1781,9 +1842,9 @@ void Func_080e1f2c(void) {
   motion->y = 0x100000;
   motion->z = pos[2];
 
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FlamingArrow),
-                        work->tiles);
-  arrowSlot = Resource_FindFreeEntry();
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FlamingArrow),
+                      work->tiles);
+  arrowSlot = VramCache_FindFreeEntry();
   tile = VramCache_Load(arrowSlot, 0x100, work->tiles);
   sprite = &work->arrow;
   Func_080eaf98(sprite, 12, 8, 0x40000000, tile);
@@ -1844,9 +1905,9 @@ void Func_080e1f2c(void) {
   Task_Remove(Func_080e1678);
   if (work->done != 0 && work->result != -1)
     event[0xd30] = work->result;
-  Resource_ResetEntry(arrowSlot);
-  Resource_ResetEntry(bowSlot);
-  BattleEffect_PrepareBufferInterpolation();
+  VramCache_FreeEntry(arrowSlot);
+  VramCache_FreeEntry(bowSlot);
+  FieldPsynergy_FadeFromCastColor();
   BattleEffect_EndCanvasSprite();
   HeapSlot_Release(92);
 }
@@ -1917,8 +1978,12 @@ void Func_080e2264(void) {
 // Runs the field events an effect touched.
 
 s32 Func_080dbdc8(s32 x, s32 z, s32 layer);
-/* VIEW(f0e150c): routine Field_RunPsynergyEvent as void Field_RunPsynergyEvent(s32 event, s32 argument0, s32 argument1); event_work.h has s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target). */
-extern void Field_RunPsynergyEvent__f0e150c(s32 event, s32 argument0, s32 argument1) __asm__("Field_RunPsynergyEvent");
+/* VIEW(f0e150c): routine Field_RunPsynergyEvent as void
+ * Field_RunPsynergyEvent(s32 event, s32 argument0, s32 argument1); event_work.h
+ * has s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32
+ * target). */
+extern void Field_RunPsynergyEvent__f0e150c(
+    s32 event, s32 argument0, s32 argument1) __asm__("Field_RunPsynergyEvent");
 
 // Only for the compiler: see the FAKEMATCH tag in Func_080e249c.
 static inline s32 Index(s32 i) { return i; }
@@ -1964,14 +2029,18 @@ void Func_080e249c(void) {
     /* FAKEMATCH(wrapper): ids[Index(i)], through an inline that returns i,
      * so the id is read before the kind; as ids[i], 18 of 160 instructions
      * differ in tla-en. */
-    s32 event = Func_080ce458(0x50000005, work->kind, ids[Index(i)]);
+    s32 event =
+        Scene_FindPsynergyTrigger(0x50000005, work->kind, ids[Index(i)]);
 
     if (event != 0)
       Field_RunPsynergyEvent__f0e150c(event, work->argument0, work->argument1);
   }
 }
 
-/* VIEW(f0e150c): tag struct MapCell as struct MapCell__f0e150c; map.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:2328: dereferencing pointer to incomplete type. */
+/* VIEW(f0e150c): tag struct MapCell as struct MapCell__f0e150c; map.h has
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:2328:
+ * dereferencing pointer to incomplete type. */
 struct MapCell__f0e150c {
   u8 unk00[2];
   u8 unk02;
@@ -2001,7 +2070,8 @@ void Func_080e25e8(s32 toX, s32 toZ, s32 width, s32 height, s32 originX,
     if (x >= 0 && x < width && z >= 0 && z < height) {
       s32 n;
 
-      Func_080201f0(toX + x, toZ + z, 1, 1, originX + x, originZ + z);
+      MapGrid_CopyCellPictureCellsRectFar(toX + x, toZ + z, 1, 1, originX + x,
+                                          originZ + z);
       Func_080dbb78(cell[i].x << 20, cell[i].z << 20, 2)->unk02 = 0;
       n = gData_02001000.count;
       if (n < 64) {
@@ -2019,13 +2089,24 @@ void Func_080e25e8(s32 toX, s32 toZ, s32 width, s32 height, s32 originX,
 #undef BOW_NEXT_PHASE
 #include "module/field/event_commands.h"
 
-/* VIEW(f0e2718): variable gData_02001000 as extern u8 gData_02001000[]; f0e150c has extern struct TouchCopies gData_02001000; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:2361: incompatible types in initialization. */
+/* VIEW(f0e2718): variable gData_02001000 as extern u8 gData_02001000[]; f0e150c
+ * has extern struct TouchCopies gData_02001000; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial.c:2361: incompatible types in
+ * initialization. */
 extern u8 gData_02001000__f0e2718[] __asm__("gData_02001000");
-/* VIEW(f0e2718): routine Func_080dbb78 as struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer); f0e150c has struct MapCell__f0e150c *Func_080dbb78(s32 x, s32 z, s32 layer); tried as the definition's struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer), it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:2357: conflicting types for `Func_080dbb78'. */
-extern struct MapCell *Func_080dbb78__f0e2718(s32 x, s32 z, s32 layer) __asm__("Func_080dbb78");
+/* VIEW(f0e2718): routine Func_080dbb78 as struct MapCell *Func_080dbb78(s32 x,
+ * s32 z, s32 layer); f0e150c has struct MapCell__f0e150c *Func_080dbb78(s32 x,
+ * s32 z, s32 layer); tried as the definition's struct MapCell
+ * *Func_080dbb78(s32 x, s32 z, s32 layer), it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/radial.c:2357: conflicting types for
+ * `Func_080dbb78'. */
+extern struct MapCell *
+Func_080dbb78__f0e2718(s32 x, s32 z, s32 layer) __asm__("Func_080dbb78");
 
-/// For each entry of the event work's list at 0x174c, calls Func_080201f0 with
-/// its bytes and clears the collision code of the cell at its position.
+/// For each entry of the event work's list at 0x174c, calls
+/// MapGrid_CopyCellPictureCellsRectFar with its bytes and clears the collision
+/// code of the cell at its position.
 void Func_080e2718(void) {
   u8 *base = gData_02001000__f0e2718;
   s32 i;
@@ -2033,7 +2114,9 @@ void Func_080e2718(void) {
   for (i = 0; i < (s8)gData_02001000__f0e2718[0x194c]; i++) {
     u8 *entry = base + 0x174c + i * 8;
 
-    Func_080201f0(entry[0], entry[1], 1, 1, entry[2], entry[3]);
-    Func_080dbb78__f0e2718(entry[4] << 20, entry[5] << 20, 2)->collisionCode = 0;
+    MapGrid_CopyCellPictureCellsRectFar(entry[0], entry[1], 1, 1, entry[2],
+                                        entry[3]);
+    Func_080dbb78__f0e2718(entry[4] << 20, entry[5] << 20, 2)->collisionCode =
+        0;
   }
 }

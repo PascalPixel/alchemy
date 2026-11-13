@@ -32,8 +32,8 @@ typedef s32 (*ScriptCommandFn)();
 
 typedef void (*TargetHook)(struct Actor *, s32 *, s32 *);
 
-/// A sprite's attribute words. They are volatile, as The Broken Seal's
-/// LuckyWheels_Update keeps its OAM shadow; as plain words, the two offset
+/// A sprite's attribute words. They are volatile, as LuckyWheels_Update keeps
+/// its OAM shadow in both games; as plain words, the two offset
 /// counters, the multiply on each pass and the stack slots all differ.
 struct ReelSprite {
   volatile u32 attr01;
@@ -377,14 +377,6 @@ struct ChainObject {
 struct Unk_080db0b0Sprite {
   u8 unk00[18];
   u16 unk12;
-};
-
-/// The Psynergy animations (BattleFxScene.animation) the dispatchers name.
-// The Broken Seal has 1-16; ⚓️ adds 17-30.
-enum FieldPsynergyAnimation {
-  FIELD_FX_PUSH = 1,  ///< pushes the target the way the pad points
-  FIELD_FX_WAVE = 2,  ///< the hue wave from the caster to the target
-  FIELD_FX_PAUSE = 9, ///< stops an object in its tracks
 };
 
 struct CompositeAnimation {
@@ -761,8 +753,8 @@ struct Mote {
   u8 pad1e[2];
 };
 
-/// One of Func_080d6674's particles: its sprite's attribute words, its world
-/// position and its frames left.
+/// One of Weather_UpdateRain's particles: its sprite's attribute words, its
+/// world position and its frames left.
 struct SparkParticle {
   u32 sprite[3];
   s32 posX;
@@ -938,28 +930,28 @@ void Func_080caa4c(s32 table);
 
 void Window_CloseMatchingIdFar(s32 sprite);
 
-extern const s32 gData_080f0ee8[];
+extern const s32 gFieldEffect_HeavyImpactScript[];
 
-extern const s32 gData_080f0e78[];
+extern const s32 gFieldEffect_FragmentScript[];
 
-s32 Func_08020210(struct Actor *object, s32 *position);
+s32 MapGrid_CheckCollisionFar(struct Actor *object, s32 *position);
 
 s32 Field_CheckSpheresOverlapFar(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 
-void Map_SetScreenShakeFar(s32 x, s32 y, s32 decay);
+void MapGrid_SetScreenShakeFar(s32 x, s32 y, s32 decay);
 
 s32 Func_080cda84(s32 id, struct Actor *actor, s32 *position);
 
-u32 Func_080202f0(s32 terrain, s32 x, s32 z);
+u32 MapGrid_GetTerrainKindFar(s32 terrain, s32 x, s32 z);
 
-void Func_080cb82c(void);
+void WorldMap_Freeze(void);
 void Func_080cb8a4(void);
 
 void Event_NoOp(void);
 
 void Actor_ApplyIndexedChildValue(struct Actor *object);
 
-extern u32 Data_03001244;
+extern u32 gScanlineAngle;
 
 extern struct AnimationMetadata gResource_Data012[];
 
@@ -969,55 +961,55 @@ extern u8 Render_DecodePictureCopyEnd[];
 
 extern u8 Render_DecodePictureBlockSize[];
 
-extern const u8 Data_08021824[];
+extern const u8 Grid_DrawOutlineCode[];
 
-extern u8 Data_08021824Size[];
+extern u8 Grid_DrawOutlineCodeSize[];
 
 extern const u8 Data_080209a8[];
 
-void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no);
+void SpriteAnimation_Start(struct AnimationEntry *work, s32 no);
 
-u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
+u8 *Decompress_Lz(const u8 *source, u8 *destination);
 
-s32 Func_080d25c8(s32 item);
+s32 Party_CheckItemLimit(s32 item);
 
-s32 GetWorldMapCollisionFar(s32 *position);
+s32 WorldMap_GetCollisionFar(s32 *position);
 
 extern u8 gData_0202e000[];
 
-void Event_ClearValidPackedIds(void);
+void Party_ClearUnusableShortcuts(void);
 
-void Func_080ca4a8(void);
+void BattleBackground_SelectForMap(void);
 
 s32 Func_080ca9cc(s32 id, s32 *position);
 void ObjectTable_Clear(void);
 
-void BattleParty_ApplyDrain(s32 amount, s32 unused);
-void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled);
-s32 BattleParty_ApplyStatusDamage(void);
-void *Func_080cb8e8(void);
+void Party_AddPp(s32 amount, s32 unused);
+void Party_AddHp(s32 amount, s32 scaled);
+s32 Party_ApplyPoisonDamage(void);
+void *WorldMap_Unfreeze(void);
 
-s32 Func_080cc54c(void);
+s32 Actor_GetTriggerCellAheadOfCurrent(void);
 u32 Stream_ReadU16(u8 **cursor);
 s16 Stream_ReadS16(u8 **cursor);
 void BattleMap_ApplySceneEntranceView(void);
 
-void Debug_RunPaletteEditor(void);
+void PaletteEditor_Run(void);
 
-struct TriggerView *Func_080ccd78(s32 kind, s32 target);
-s32 Func_080ccec8(s32 id);
+struct TriggerView *Scene_FindTrigger(s32 kind, s32 target);
+s32 Scene_TalkToActor(s32 id);
 s32 Scene_RunRaisedEvent(s32 id);
-s32 Scene_RunTouchOrExit(s32 value);
-s32 Func_080cd680(s32 keys);
-s32 Func_080cd808(s32 id);
+s32 Scene_RunStepTriggerOrExit(s32 value);
+s32 Field_RunPushCell(s32 keys);
+s32 Field_ExamineCell(s32 id);
 
 s32 Func_080cdc74(void);
 void Func_080cdd80(void);
 
-s32 Func_080ce61c(u32 code);
+s32 Field_UsePsynergy(u32 code);
 
 s16 *Func_080ceba8(void);
-void Func_080cec34(void);
+void Field_PlaceTreasureSpots(void);
 s32 Actor_GetSpriteShape(u32 objectId);
 void ObjectEvent_SetMode5WithCue(u32 objectId);
 void ObjectEvent_Spring(u32 objectId);
@@ -1027,9 +1019,9 @@ void ObjectEvent_SetMode6WithCue(u32 objectId);
 struct Actor *ObjectEvent_GetObject(u32 objectId);
 void ObjectEvent_Remove(u32 objectId);
 
-void Camera_ResetSceneDefaults(void);
-s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
-                               s32 count);
+void Camera_ResetViewDefaults(void);
+s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
+                                s32 count);
 extern char ResourceId_FarCall00C;
 
 void ColorBuffer_HalveNonzero(u8 *source, u8 *destination, s32 size);
@@ -1048,20 +1040,20 @@ extern char ResourceId_SlotsJackpotBanner;
 
 extern u8 gData_02028000[];
 
-s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
+s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
-void Func_080c8970(void *palette);
+void BattleEffect_LoadBufferPaletteFar(void *palette);
 
 void TilesetAnim_StartAll(const u16 *script);
 extern char ResourceId_DefaultMapCells;
 
-void Map_UpdateCurrentTileBlock(void);
+void WorldMap_UpdateCurrentTileBlock(void);
 
 extern const u16 gData_0802f054[8];
 
-void Func_080230e0(s32 mode);
+void ActorSystem_Initialize(s32 mode);
 
-s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
+s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
 
 void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value);
 void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value);
@@ -1069,101 +1061,101 @@ void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value);
 void SpriteViewer_SetGridColumnNumber(s32 slot, s32 value);
 void SpriteViewer_BuildProbeRing(s32 x, s32 z, struct SpritePlacement *out);
 
-void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation,
-                                s32 value);
-void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation,
+void ActorScript_SetOrCompareScriptAddress(struct ScriptOperands *state,
+                                           s32 operation, s32 value);
+void ActorScript_SetOrCompareCursor(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
+void ActorScript_SetOrCompareFacing(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
+void ActorScript_SetOrCompareX(struct ScriptOperands *state, s32 operation,
                                s32 value);
-void Script_SetOrCompareUnsignedHalfword(struct ScriptOperands *state,
-                                         s32 operation, s32 value);
-void Script_SetOrCompareX(struct ScriptOperands *state, s32 operation,
-                          s32 value);
-void Script_SetOrCompareY(struct ScriptOperands *state, s32 operation,
-                          s32 value);
-void Script_SetOrCompareZ(struct ScriptOperands *state, s32 operation,
-                          s32 value);
-void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
+void ActorScript_SetOrCompareY(struct ScriptOperands *state, s32 operation,
                                s32 value);
-void Script_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation,
+void ActorScript_SetOrCompareZ(struct ScriptOperands *state, s32 operation,
                                s32 value);
-void Script_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation,
-                               s32 value);
-void Script_SetOrCompareVelocityX(struct ScriptOperands *state, s32 operation,
-                                  s32 value);
-void Script_SetOrCompareVelocityY(struct ScriptOperands *state, s32 operation,
-                                  s32 value);
-void Script_SetOrCompareVelocityZ(struct ScriptOperands *state, s32 operation,
-                                  s32 value);
-void Script_SetOrCompareSpeedLimit(struct ScriptOperands *state, s32 operation,
-                                   s32 value);
-void Script_SetOrCompareAcceleration(struct ScriptOperands *state,
-                                     s32 operation, s32 value);
-void Script_SetOrCompareTargetX(struct ScriptOperands *state, s32 operation,
-                                s32 value);
-void Script_SetOrCompareTargetY(struct ScriptOperands *state, s32 operation,
-                                s32 value);
-void Script_SetOrCompareTargetZ(struct ScriptOperands *state, s32 operation,
-                                s32 value);
-void Script_SetOrCompareVerticalMotion(struct ScriptOperands *state,
+void ActorScript_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
+void ActorScript_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
+void ActorScript_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
+void ActorScript_SetOrCompareVelocityX(struct ScriptOperands *state,
                                        s32 operation, s32 value);
-void Script_SetOrCompareGravity(struct ScriptOperands *state, s32 operation,
-                                s32 value);
-void Script_SetOrCompareTerrainHeight(struct ScriptOperands *state,
-                                      s32 operation, s32 value);
-void Script_SetOrCompareWord4c(struct ScriptOperands *state, s32 operation,
-                               s32 value);
-void Script_SetOrCompareAddress50(struct ScriptOperands *state, s32 operation,
-                                  s32 value);
-void Script_SetOrCompareByte54(struct ScriptOperands *state, s32 operation,
-                               s32 value);
-void Script_SetOrCompareMotionFlags(struct ScriptOperands *state, s32 operation,
-                                    s32 value);
-void Script_SetOrCompareArrivalAxis(struct ScriptOperands *state, s32 operation,
-                                    s32 value);
-void Script_SetOrCompareComparisonResult(struct ScriptOperands *state,
-                                         s32 operation, s32 value);
-void Script_SetOrCompareSnapToTarget(struct ScriptOperands *state,
-                                     s32 operation, s32 value);
-void Script_SetOrCompareCollisionFlags(struct ScriptOperands *state,
+void ActorScript_SetOrCompareVelocityY(struct ScriptOperands *state,
                                        s32 operation, s32 value);
-void Script_SetOrCompareSteeringFlags(struct ScriptOperands *state,
-                                      s32 operation, s32 value);
-void Script_SetOrComparePaused(struct ScriptOperands *state, s32 operation,
-                               s32 value);
-void Script_SetOrCompareRepeatCount(struct ScriptOperands *work, s32 operation,
+void ActorScript_SetOrCompareVelocityZ(struct ScriptOperands *state,
+                                       s32 operation, s32 value);
+void ActorScript_SetOrCompareSpeedLimit(struct ScriptOperands *state,
+                                        s32 operation, s32 value);
+void ActorScript_SetOrCompareAcceleration(struct ScriptOperands *state,
+                                          s32 operation, s32 value);
+void ActorScript_SetOrCompareTargetX(struct ScriptOperands *state,
+                                     s32 operation, s32 value);
+void ActorScript_SetOrCompareTargetY(struct ScriptOperands *state,
+                                     s32 operation, s32 value);
+void ActorScript_SetOrCompareTargetZ(struct ScriptOperands *state,
+                                     s32 operation, s32 value);
+void ActorScript_SetOrCompareVerticalMotion(struct ScriptOperands *state,
+                                            s32 operation, s32 value);
+void ActorScript_SetOrCompareGravity(struct ScriptOperands *state,
+                                     s32 operation, s32 value);
+void ActorScript_SetOrCompareTerrainHeight(struct ScriptOperands *state,
+                                           s32 operation, s32 value);
+void ActorScript_SetOrCompareRiseBaseY(struct ScriptOperands *state,
+                                       s32 operation, s32 value);
+void ActorScript_SetOrCompareSprite(struct ScriptOperands *state, s32 operation,
                                     s32 value);
-void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation,
+void ActorScript_SetOrCompareSpriteStorageKind(struct ScriptOperands *state,
+                                               s32 operation, s32 value);
+void ActorScript_SetOrCompareMotionFlags(struct ScriptOperands *state,
+                                         s32 operation, s32 value);
+void ActorScript_SetOrCompareArrivalAxis(struct ScriptOperands *state,
+                                         s32 operation, s32 value);
+void ActorScript_SetOrCompareComparisonResult(struct ScriptOperands *state,
+                                              s32 operation, s32 value);
+void ActorScript_SetOrCompareSnapToTarget(struct ScriptOperands *state,
+                                          s32 operation, s32 value);
+void ActorScript_SetOrCompareCollisionFlags(struct ScriptOperands *state,
+                                            s32 operation, s32 value);
+void ActorScript_SetOrCompareSteeringFlags(struct ScriptOperands *state,
+                                           s32 operation, s32 value);
+void ActorScript_SetOrComparePaused(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
+void ActorScript_SetOrCompareRepeatCount(struct ScriptOperands *work,
+                                         s32 operation, s32 value);
+void ActorScript_SetOrCompareWait(struct ScriptOperands *work, s32 operation,
+                                  s32 value);
+void ActorScript_SetOrCompareTimer(struct ScriptOperands *work, s32 operation,
                                    s32 value);
-void Script_SetOrCompareSignedHalfword64(struct ScriptOperands *work,
+void ActorScript_SetOrCompareUserValue(struct ScriptOperands *work,
+                                       s32 operation, s32 value);
+void ActorScript_SetOrCompareWatchedActor(struct ScriptOperands *work,
+                                          s32 operation, s32 value);
+void ActorScript_SetOrCompareUpdateAddress(struct ScriptOperands *work,
+                                           s32 operation, s32 value);
+void ActorScript_SetOrCompareRiseCounter(struct ScriptOperands *work,
                                          s32 operation, s32 value);
-void Script_SetOrCompareSignedHalfword66(struct ScriptOperands *work,
+void ActorScript_SetOrCompareRiseEnabled(struct ScriptOperands *work,
                                          s32 operation, s32 value);
-void Script_SetOrCompareWord68(struct ScriptOperands *work, s32 operation,
-                               s32 value);
-void Script_SetOrCompareUpdateAddress(struct ScriptOperands *work,
-                                      s32 operation, s32 value);
-void Script_SetOrCompareByte62(struct ScriptOperands *work, s32 operation,
-                               s32 value);
-void Script_SetOrCompareByte63(struct ScriptOperands *work, s32 operation,
-                               s32 value);
 
-void Func_08038248(s32 item);
+void Icon_DrawItemFar(s32 item);
 
 s32 Func_080cec24(s32 value, s32 *out);
 
-void SetMapCellCollisionFar(s32 terrain, s32 x, s32 z, s32 value);
+void MapGrid_SetCellBehaviorAtFar(s32 terrain, s32 x, s32 z, s32 value);
 
-void ResourceMetadata_ClearRecordFar(void *record);
+void SpriteAnimation_ClearFar(void *record);
 
-void Func_08038328(s32 owner, s32 element, s32 djinni);
+void Djinn_ShowJoinedMessageFar(s32 owner, s32 element, s32 djinni);
 
 extern const u8 gData_080f0c04[];
 extern const u8 Data_080f0e00[];
 
-s32 BattleEffect_FindNearestObject(s32 self, s32 effect);
+s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect);
 
-s32 Func_080201d0(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetCellAttributeLowNibbleFar(s32 layer, s32 x, s32 z);
 
-extern const u8 gData_080f3798[];
+extern const u8 gFieldEffect_GroundParticleTiles[];
 extern const u8 gData_080f385e[];
 
 extern u32 gData_080f0bfc[];
@@ -1171,34 +1163,34 @@ extern u32 gData_080f0bfc[];
 void BattleEffect_UpdateDescendingOrbitObject(
     struct DescendingOrbitObject *arg);
 
-extern const s16 Data_080f08b0[];
+extern const s16 gLineScroll_WaveSine[];
 
-extern const s16 Data_080f0ab0[];
+extern const s16 gFieldEffect_GroundParticleFrames[];
 
 extern const u8 Data_080f3901[];
 
-extern const struct SparklePicture gData_080f0b7c[];
+extern const struct SparklePicture gFieldEffect_SparklePictures[];
 
-extern const u8 gData_080f38b2[];
+extern const u8 gFieldEffect_SparkleTiles[];
 
 void Func_080203a0(struct Actor *object, s32 kind);
 
-s32 GetMapCellCollisionFar(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetCellBehaviorAtFar(s32 layer, s32 x, s32 z);
 
-s32 Func_08020258(s32 *position);
+s32 MapGrid_IsWallAtFar(s32 *position);
 
 extern const u16 Data_080f0890[];
 
-extern u32 gData_03001144;
+extern u32 gScanlinePitch;
 
 extern const s16 Data_080f0b50[];
 
-void Func_0802493c(void);
+void Actor_UpdateAllMotion(void);
 
-void Func_08023f9c(void);
+void Actor_UpdateAllThumb(void);
 void Func_080246b8(void);
 
-void Func_0802386c(void);
+void ActorSystem_PlaceSprites(void);
 
 extern const s32 gData_0802f098[];
 extern const s32 gData_0802f0b0[];
@@ -1209,31 +1201,31 @@ extern const s32 gData_0802f110[];
 extern const s32 gData_0802f128[];
 extern const s32 gData_0802f140[];
 extern const s32 gData_0802f158[];
-extern const s32 gData_0802f170[];
-extern const s32 gData_0802f188[];
-extern const s32 gData_0802f1a0[];
-extern const s32 gData_0802f1b8[];
+extern const s32 gActor_KeyCheckScript[];
+extern const s32 gActor_KeysScript[];
+extern const s32 gActor_PlayerScript[];
+extern const s32 gActor_WorldMapScript[];
 extern const s32 gData_0802f1e8[];
 
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
-s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values);
+s32 ActorScript_CheckOverlap(struct Actor *object, s32 *values);
 
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
-struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_Create(s32 kind, s32 x, s32 y, s32 z);
 
 void Func_08026fc8(struct Actor *object, s32 kind);
 s32 Field_CheckConfiguredKeys(void);
 
-void Tilemap_DecodeStagedBuffer(s32 size);
+void TileMap_DecodeStagedBuffer(s32 size);
 void Tilemap_ConvertBuffer(void);
 
-void Func_0802ad84(void);
+void MapGrid_UpdateLayerScroll(void);
 
-void Func_0802c240(void);
-void Func_0802c088(void);
+void WorldMap_UpdateView(void);
+void WorldMap_ApplyAffinePage(void);
 
-void Func_0802af9c(s32 x, s32 y);
+void MapGrid_SetCameraCenter(s32 x, s32 y);
 u32 Map_ReadEditU16(u8 **cursor);
 void Map_ApplyFlagEdits(s32 flag, s32 attributes);
 
@@ -1245,9 +1237,9 @@ void ObjectTable_Snapshot(void);
 
 void Actor_ResetTargetsAndVelocity(u32 objectId);
 
-void Animation_SetIndexAndInitializeObjects(struct Actor *object, s32 index);
+void Actor_SetFirstSpriteAnimation(struct Actor *object, s32 index);
 
-void Scene_ResolveInteractionResult(void);
+void Scene_ChooseMusic(void);
 void Func_080c9de0(s32 id, s32 variant);
 void Func_080ca3f4(s32 scene, s32 entrance);
 

@@ -17,7 +17,7 @@
 
 void Func_0200114c(void);
 
-void Func_02000038(void) { Func_080d2b4c(18, 70); }
+void Func_02000038(void) { Field_RequestDjinnBattle(18, 70); }
 
 #include "battle.h"
 #include "game.h"
@@ -125,7 +125,7 @@ void Func_020001a0(s32 unused, s32 id) {
         other->motionFlags = 0;
         other->speedLimit = 0x10000;
         FieldActor_SetMoveTarget(other, block->x, block->y, block->z);
-        Actor_WaitForMove(other);
+        FieldActor_WaitForMove(other);
         Actor_StartScript(block, gData_02001404);
         Import_ActorResetMotion(other);
         other->x = 0;
@@ -307,7 +307,7 @@ s32 Scene_Initialize(void) {
     } else {
       Actor_SetAttachedEffect(10, 257);
     }
-    Func_080d3b28(17, 231);
+    Actor_ShowItemIconById(17, 231);
     if (GameFlag_Test(0x882))
       Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
     else

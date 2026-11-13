@@ -29,7 +29,7 @@ extern u8 MsgNotThatWay[];
 #include "module/scene/suhalla_gate.h"
 #include "scene_ids.h"
 
-void Func_02000038(void) { Func_080d2b4c(13, 26); }
+void Func_02000038(void) { Field_RequestDjinnBattle(13, 26); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -191,7 +191,7 @@ void SuhallaGate_ThievesSpotParty(void) {
   Event_Wait(30);
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_WalkToAndWait(8, 456, 312);
-  Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate1, 99);
+  Event_SetAfterBattleDestination((s32)&SceneId_SuhallaGate1, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
   gMainRoutineWork.battleRule24b = 2;
   Field_RequestBattleFromEncounterTable(9, 1);
@@ -235,7 +235,7 @@ void SuhallaGate_ThievesAmbushParty(void) {
   Actor_SetAnimationAndWait(13, 3);
   Actor_SetAnimation(14, 3);
   Actor_SetAnimationAndWait(15, 3);
-  Event_SetAfterBattleDestination((s32)&SceneId_SuhallaGate2, 99);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_SuhallaGate2, 99);
   Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseEntrance, 98);
   *((u8 *)work + 0x24b) = 2;
   Field_RequestBattleFromEncounterTable(9, 2);
@@ -251,7 +251,7 @@ void Func_020005e8(void) {
     Actor_SetDestination(8, *(s16 *)((u8 *)owner + 10),
                                      *(s16 *)((u8 *)owner + 18));
   Event_Wait(20);
-  Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate3, 99);
+  Event_SetAfterBattleDestination((s32)&SceneId_SuhallaGate3, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
   gMainRoutineWork.battleRule24b = 2;
   Field_RequestBattleFromEncounterTable(9, 3);
@@ -265,7 +265,7 @@ void Func_02000650(void) {
   Event_Wait(16);
   Actor_FaceActor(gMainRoutineWork.currentOwner, 8, 0);
   FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
-  Camera_FollowActor(8, 1);
+  FieldCamera_FollowActor(8, 1);
   FieldCamera_WaitForArrival();
   Actor_Jump(8, 4, 0);
   Event_Wait(16);
@@ -295,7 +295,7 @@ void Func_0200071c(void) {
   Event_Wait(16);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 488, 440);
   Event_Wait(16);
-  Camera_FollowActor(8, 1);
+  FieldCamera_FollowActor(8, 1);
   FieldCamera_WaitForArrival();
   Actor_Jump(8, 4, 0);
   Event_Wait(16);

@@ -33,13 +33,17 @@
 #include "gamepak/far_call/window.h"
 #include "heap_release.h"
 #include "module/field/field.h"
-#include "module/field/lucky_dice.h"
 #include "module/system/system.h"
 #include "resource.h"
 #include "resource_ids.h"
 #include "task.h"
 #include "text/msg_ids.h"
 #include "transform.h"
+
+extern const u8 gLuckyDice_LabelCounts[];
+extern const u8 gLuckyDice_LabelTiles[];
+extern const u8 gLuckyDice_FaceTiles[];
+extern const s16 gLuckyDice_FaceHeights[];
 
 s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
@@ -50,7 +54,7 @@ s32 LuckyDice_Start(void) {
 
 /// Resets the scene camera and its projection.
 // As The Broken Seal's.
-void Camera_ResetSceneDefaults(void) {
+void Camera_ResetViewDefaults(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
   struct FixedPointPosition local;
   s32 *result;
@@ -67,10 +71,10 @@ void Camera_ResetSceneDefaults(void) {
   gCameraSceneParameters[4] = 0;
   state->unk18 = 0;
 
-  Render_ResetTransformState();
+  Transform_Reset();
   SceneTransform_ApplyPosition(&state->pos[0]);
-  SceneTransform_ApplyYaw((s16)state->yaw);
-  SceneTransform_ApplyPitch((s16)state->pitch);
+  Transform_ApplyYaw((s16)state->yaw);
+  Transform_ApplyPitch((s16)state->pitch);
 
   local.x = 0;
   local.y = 0;
@@ -109,8 +113,8 @@ s16 Math_ScaleByRatio(s16 arg0, s16 arg1) { return (arg0 << 8) / arg1; }
 
 s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 
-s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
-                               s32 count) {
+s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
+                                s32 count) {
   s32 remaining;
   u32 mask_red;
   u32 mask_green;
@@ -293,7 +297,7 @@ void LuckyDice_Run(void) {
   sprites = HeapSlot_AllocEwram(180, 0x614);
   camera = HeapSlot_AllocEwram(48, 76);
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00C);
-  Camera_ResetSceneDefaults();
+  Camera_ResetViewDefaults();
   Task_ResetAll();
   gRenderOamEnabled = 0;
 
@@ -316,9 +320,9 @@ void LuckyDice_Run(void) {
   // The Broken Seal's LuckyDice_Run does; typed calls keep the cell buffer
   // in a register for the transfer after each decode (137 against 108).
 #ifdef UBFIX
-  Resource_DecodeType01((const void *)resourceAddress, Ram_MapCellBuffer);
+  Decompress_TaggedLz((const void *)resourceAddress, Ram_MapCellBuffer);
 #else
-  Call2((void (*)())Resource_DecodeType01, resourceAddress,
+  Call2((void (*)())Decompress_TaggedLz, resourceAddress,
         (s32)Ram_MapCellBuffer);
 #endif
   Dma_Set(Ram_MapCellBuffer, (void *)0x06004000,
@@ -331,15 +335,15 @@ void LuckyDice_Run(void) {
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   resourceAddress += 0x200;
 #ifdef UBFIX
-  Resource_DecodeType01((const void *)resourceAddress, Ram_MapCellBuffer);
+  Decompress_TaggedLz((const void *)resourceAddress, Ram_MapCellBuffer);
 #else
-  Call2((void (*)())Resource_DecodeType01, resourceAddress,
+  Call2((void (*)())Decompress_TaggedLz, resourceAddress,
         (s32)Ram_MapCellBuffer);
 #endif
   Dma_Set(Ram_MapCellBuffer, (void *)0x06010000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x1f00, REG_DMA3);
-  Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, 0, 256);
-  Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, 0, 256);
+  LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, 0, 256);
+  LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, 0, 256);
 
   REG_BG1CNT = 0x686;
   REG_WININ = 0x3737;
@@ -393,7 +397,7 @@ void LuckyDice_Run(void) {
       Window_CreateFar(DICE_COINS_WINDOW_X, 0, DICE_COINS_WINDOW_WIDTH, 3, 6);
   sprites->coinsWindow = window;
   Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins, window,
-                                DICE_COINS_LABEL_X, 0);
+                             DICE_COINS_LABEL_X, 0);
   Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                              (s32)sprites->coinsWindow, 0, 0);
   window =
@@ -402,19 +406,19 @@ void LuckyDice_Run(void) {
   // Throw and Quit: every language's text keeps them ten and eleven messages
   // after the coins label.
   Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 10, window, 0, 0);
-  Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 11,
-                                sprites->helpWindow, 0, 8);
+  Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 11, sprites->helpWindow,
+                             0, 8);
 
   frame = 0;
   for (;;) {
     resetDice = 0;
     if (frame <= 16) {
-      Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, frame << 12,
-                                 256);
-      Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, frame << 12,
-                                 256);
+      LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, frame << 12,
+                                  256);
+      LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, frame << 12,
+                                  256);
     }
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
 
     spriteCount = 0;
@@ -487,8 +491,8 @@ void LuckyDice_Run(void) {
         sprites->winningsWindow = window;
         Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceWinnings, window, 0, 0);
         Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceWinnings - 1,
-                                      sprites->winningsWindow,
-                                      digits * 8 + DICE_WINNINGS_COINS_X, 0);
+                                   sprites->winningsWindow,
+                                   digits * 8 + DICE_WINNINGS_COINS_X, 0);
         Text_DrawNumberInWindowFar(winnings, digits,
                                    (s32)sprites->winningsWindow,
                                    DICE_WINNINGS_NUMBER_X, 0);
@@ -521,10 +525,9 @@ void LuckyDice_Run(void) {
         window = Window_CreateFar(DICE_REOPENED_HELP_WINDOW_X, 16,
                                   DICE_REOPENED_HELP_WINDOW_WIDTH, 4, 6);
         sprites->helpWindow = window;
-        Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 10, window, 0,
-                                      0);
+        Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 10, window, 0, 0);
         Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 11,
-                                      sprites->helpWindow, 0, 8);
+                                   sprites->helpWindow, 0, 8);
         resetDice = 1;
       }
       payoutTimer++;
@@ -881,8 +884,8 @@ void LuckyDice_Run(void) {
 
   for (index = 0; index != 17; index++) {
     scale = 0x10000 - (index << 12);
-    Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, scale, 256);
-    Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, scale, 256);
+    LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, scale, 256);
+    LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, scale, 256);
     wait(1);
   }
   HeapSlot_Release(48);

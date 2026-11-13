@@ -72,7 +72,7 @@ struct RideWork {
   void *handle;
 };
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 #include "main_routine_work.h"
 
 void Func_0200166c(void);
@@ -325,9 +325,9 @@ void Func_020006c8(s32 state) {
     MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 67);
 }
 
-/// Calls Func_0802b450 with (0, 125, 3, 3) for four places, steps
-/// gData_02003a7e through 12 and 8 to 0, then calls it with (0, 122, 3, 3) for
-/// the same places.
+/// Calls MapGrid_CopyCellPictureCellsRect with (0, 125, 3, 3) for four places,
+/// steps gData_02003a7e through 12 and 8 to 0, then calls it with (0, 122, 3,
+/// 3) for the same places.
 void Func_0200080c(void) {
   MapGrid_CopyCellsLayered(0, 125, 3, 3, 17, 67);
   MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 72);
@@ -353,12 +353,12 @@ void Func_0200080c(void) {
   System_Wait(1);
 }
 
-void DisplayBlend_EnableRunScript(void);
+void BlendScript_Suspend(void);
 
 void Func_02000934(s32 entrance) {
   s32 cell = -1;
   s16 *blend;
-  DisplayBlend_EnableRunScript();
+  BlendScript_Suspend();
   blend = &Data_02003a7c;
   if (entrance == 8)
     cell = 20;
@@ -426,7 +426,12 @@ const struct Trigger *Scene_GetEvents(void) {
 #include "call.h"
 
 void Func_0200154c(u16 *slots, u16 *colours, u16 *a, u16 *b);
-/* VIEW(s0b64): routine Func_02002e6c as void Func_02002e6c(void); mars_lighthouse_room_m has void Func_02002e6c(struct Actor *self); tried as the definition's void Func_02002e6c(struct Actor *self), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:490: too few arguments to function `Func_02002e6c'. */
+/* VIEW(s0b64): routine Func_02002e6c as void Func_02002e6c(void);
+ * mars_lighthouse_room_m has void Func_02002e6c(struct Actor *self); tried as
+ * the definition's void Func_02002e6c(struct Actor *self), which the object
+ * already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_m.c:490: too few arguments to
+ * function `Func_02002e6c'. */
 extern void Func_02002e6c__s0b64(void) __asm__("Func_02002e6c");
 
 extern u8 gData_0200338c[];
@@ -452,10 +457,8 @@ s32 Scene_Initialize(void) {
         entrance == 12 || entrance == 14) {
       s32 unset = Event_GetFlag(0xa31);
 
-      if (unset == 0 && Event_GetFlag(0xa32) &&
-          Event_GetFlag(0xa33) &&
-          Event_GetFlag(0xa34) &&
-          Event_GetFlag(0xa35)) {
+      if (unset == 0 && Event_GetFlag(0xa32) && Event_GetFlag(0xa33) &&
+          Event_GetFlag(0xa34) && Event_GetFlag(0xa35)) {
         struct Actor *actor;
 
         Event_Start();
@@ -474,7 +477,7 @@ s32 Scene_Initialize(void) {
         entrance = 0x500021e;
         *(u16 *)entrance = 0x7fff;
         System_Wait(1);
-        FieldMessage_ShowCentered((s32)MsgYouHaveProven, 0, 4);
+        EventMessage_ShowCentered((s32)MsgYouHaveProven, 0, 4);
         PaletteFade_ApplyTarget(0x10000, 0);
         PaletteFade_Interpolate(20);
         System_Wait(20);
@@ -510,7 +513,7 @@ s32 Scene_Initialize(void) {
         Event_SetFlag(0xa31);
         Event_PlaySound(80);
         Sound_WaitForBgmRestore();
-        Party_PlaySavedMusic();
+        Scene_PlayMusic();
         Event_End();
       }
     }
@@ -518,15 +521,24 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/* VIEW(s0b64): routine Func_02000058 as s32 Func_02000058(); the definition has void Func_02000058(s32 id, s32 value); tried as the definition's void Func_02000058(void), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:521: conflicting types for `Func_02000058'. */
+/* VIEW(s0b64): routine Func_02000058 as s32 Func_02000058(); the definition has
+ * void Func_02000058(s32 id, s32 value); tried as the definition's void
+ * Func_02000058(void), it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_m.c:521: conflicting types for
+ * `Func_02000058'. */
 extern s32 Func_02000058__s0b64() __asm__("Func_02000058");
-/* VIEW(mars_lighthouse_room_m): routine Func_02003150 as void Func_02003150(s32 value); module/scene/scene.h has u32 Func_02003150(struct FieldSprite *sprite, u32 frame); tried as the rest of the object declares it, Scene_PrepareMap moves: 8 of 237 instructions in tla-ja. */
-extern void Func_02003150__mars_lighthouse_room_m(s32 value) __asm__("Func_02003150");
+/* VIEW(mars_lighthouse_room_m): routine Func_02003150 as void Func_02003150(s32
+ * value); module/scene/scene.h has u32 Func_02003150(struct FieldSprite
+ * *sprite, u32 frame); tried as the rest of the object declares it,
+ * Scene_PrepareMap moves: 8 of 237 instructions in tla-ja. */
+extern void
+Func_02003150__mars_lighthouse_room_m(s32 value) __asm__("Func_02003150");
 void Func_020032b0(s32 a);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void SetBlend(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
+static __inline__ void SetBlend(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
+                                s32 g) {
   DisplayScroll_InitializeHBlankDma(a, b, c, d, e, f, g);
 }
 
@@ -544,25 +556,25 @@ s32 Scene_PrepareMap(void) {
   if (scene == (s32)&SceneId_Ov6ACRoom6) {
     switch (entrance) {
     case 1:
-      Actor_SetSpriteColor(Actor_Get(8), 1);
+      FieldActor_SetSpriteColor(Actor_Get(8), 1);
       Func_02000058__s0b64(9, 4);
       Func_02003150__mars_lighthouse_room_m(4);
       Func_02003150__mars_lighthouse_room_m(5);
       break;
     case 2:
-      Actor_SetSpriteColor(Actor_Get(8), 3);
+      FieldActor_SetSpriteColor(Actor_Get(8), 3);
       Func_02000058__s0b64(9, 5);
       Func_02003150__mars_lighthouse_room_m(6);
       Func_02003150__mars_lighthouse_room_m(7);
       break;
     case 3:
-      Actor_SetSpriteColor(Actor_Get(8), 0);
+      FieldActor_SetSpriteColor(Actor_Get(8), 0);
       Func_02000058__s0b64(9, 2);
       Func_02003150__mars_lighthouse_room_m(0);
       Func_02003150__mars_lighthouse_room_m(1);
       break;
     case 4:
-      Actor_SetSpriteColor(Actor_Get(8), 4);
+      FieldActor_SetSpriteColor(Actor_Get(8), 4);
       Func_02000058__s0b64(9, 3);
       Func_02003150__mars_lighthouse_room_m(2);
       Func_02003150__mars_lighthouse_room_m(3);
@@ -605,8 +617,8 @@ s32 Scene_PrepareMap(void) {
     // use, and with one name they share one.
     extern char SceneId_Ov6ACRoom3Second __asm__("SceneId_Ov6ACRoom3");
 
-    Func_020031b8(gMainRoutineWork.map +
-                      ((s32)&SceneId_Ov6ACRoom3Second - (s32)&SceneId_Ov6a8Room2),
+    Func_020031b8(gMainRoutineWork.map + ((s32)&SceneId_Ov6ACRoom3Second -
+                                          (s32)&SceneId_Ov6a8Room2),
                   0x5000000);
   }
   return 0;
@@ -623,13 +635,13 @@ void MarsLighthouseRoomM_ReadEarthInscription(void) {
   Event_ResolvePendingActions(0);
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
-  FieldMessage_ShowCentered((s32)MsgMankindWithThe, 0, 0);
+  EventMessage_ShowCentered((s32)MsgMankindWithThe, 0, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   wait(20);
   Event_End();
 }
@@ -643,13 +655,13 @@ void MarsLighthouseRoomM_ReadWaterInscription(void) {
   Event_ResolvePendingActions(0);
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
-  FieldMessage_ShowCentered((s32)MsgFishWithCold, 0, 0);
+  EventMessage_ShowCentered((s32)MsgFishWithCold, 0, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   wait(20);
   Event_End();
 }
@@ -663,13 +675,13 @@ void MarsLighthouseRoomM_ReadFireInscription(void) {
   Event_ResolvePendingActions(0);
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
-  FieldMessage_ShowCentered((s32)MsgDragonsBurningWith, 0, 0);
+  EventMessage_ShowCentered((s32)MsgDragonsBurningWith, 0, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   wait(20);
   Event_End();
 }
@@ -683,13 +695,13 @@ void MarsLighthouseRoomM_ReadWindInscription(void) {
   Event_ResolvePendingActions(0);
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
-  FieldMessage_ShowCentered((s32)MsgBirdOnThe, 0, 0);
+  EventMessage_ShowCentered((s32)MsgBirdOnThe, 0, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   wait(20);
   Event_End();
 }
@@ -750,13 +762,13 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
       FieldEvent_Wait(20);
       PaletteFade_ApplySource(0x10000, 0);
       BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
-      BattleEffect_StartBufferInterpolation(20);
+      PaletteFade_StartInterpolation(20);
       wait(20);
       *color = 0x7fff;
       wait(1);
-      FieldMessage_ShowCentered((s32)MsgIfYouDo, 0, 4);
+      EventMessage_ShowCentered((s32)MsgIfYouDo, 0, 4);
       BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-      BattleEffect_StartBufferInterpolation(20);
+      PaletteFade_StartInterpolation(20);
       wait(20);
       Event_SetFlag(0xa2f);
       Event_End();
@@ -777,13 +789,13 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     FieldEvent_Wait(20);
     PaletteFade_ApplySource(0x10000, 0);
     BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
-    BattleEffect_StartBufferInterpolation(20);
+    PaletteFade_StartInterpolation(20);
     wait(20);
     *color = 0x7fff;
     wait(1);
-    FieldMessage_ShowCentered((s32)MsgYouWhoHold, 0, 4);
+    EventMessage_ShowCentered((s32)MsgYouWhoHold, 0, 4);
     wait(10);
-    FieldMessage_ShowCentered((s32)MsgYouWhoHold + 1, 0, 3);
+    EventMessage_ShowCentered((s32)MsgYouWhoHold + 1, 0, 3);
     FieldCamera_MoveTo(PIXELS(224), PIXELS(88), PIXELS(216), 1);
     Func_02003228();
     FieldEvent_Wait(20);
@@ -791,7 +803,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     Func_0200080c();
     FieldEvent_Wait(20);
     BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-    BattleEffect_StartBufferInterpolation(20);
+    PaletteFade_StartInterpolation(20);
     wait(40);
     Event_SetFlag(0xa2e);
     Event_End();
@@ -827,9 +839,9 @@ DEFINE_FUNC_02001608(Func_02001608, 15, 16)
 
 // ---- games/tla/src/scene/mars_lighthouse_room_m/stop.c ----
 
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 extern u16 gData_02004cf0[];
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Func_02003130(void *handle);
 void Func_020024e4(void);
 s32 MarsLighthouseRoomM_SlideOnIce(void);
@@ -918,13 +930,21 @@ s32 Func_02001928(struct Actor *a, struct Actor *b) {
 #include "shared/mars_lighthouse_entrance_room.h"
 #include "field/event_work.h"
 
-/* VIEW(s1988): tag struct RideSlot as struct RideSlot__s1988; mars_lighthouse_room_m.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1088: structure has no member named `id'. */
+/* VIEW(s1988): tag struct RideSlot as struct RideSlot__s1988;
+ * mars_lighthouse_room_m.c has another definition; tried with the definition
+ * the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_m.c:1088: structure has no member
+ * named `id'. */
 struct RideSlot__s1988 {
   u16 id;
   u16 blocked;
 };
 
-/* VIEW(s1988): tag struct RideWork as struct RideWork__s1988; mars_lighthouse_room_m.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1056: structure has no member named `value68'. */
+/* VIEW(s1988): tag struct RideWork as struct RideWork__s1988;
+ * mars_lighthouse_room_m.c has another definition; tried with the definition
+ * the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_m.c:1056: structure has no member
+ * named `value68'. */
 struct RideWork__s1988 {
   u8 unk00[4];
   u16 landed;
@@ -948,8 +968,10 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
 DEFINE_ACTOR_RESET_SCRIPTED(Func_02001aec, gData_020032d4)
 
-void Func_02001b1c(struct MarsLighthouseRoomMVector *position, s32 value, s32 flag) {
-  struct Actor *object = FieldActor_Create(366, position->x, position->y, position->z);
+void Func_02001b1c(struct MarsLighthouseRoomMVector *position, s32 value,
+                   s32 flag) {
+  struct Actor *object =
+      FieldActor_Create(366, position->x, position->y, position->z);
 
   if (object != 0) {
     object->bounce = 0;
@@ -966,7 +988,11 @@ void Func_02001b1c(struct MarsLighthouseRoomMVector *position, s32 value, s32 fl
 // ---- games/tla/src/scene/mars_lighthouse_room_m/s1b64.c ----
 #include "shared/mars_lighthouse_entrance_room.h"
 
-/* VIEW(s1b64): tag struct RideSlot as struct RideSlot__s1b64; mars_lighthouse_room_m.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1202: structure has no member named `id'. */
+/* VIEW(s1b64): tag struct RideSlot as struct RideSlot__s1b64;
+ * mars_lighthouse_room_m.c has another definition; tried with the definition
+ * the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_m.c:1202: structure has no member
+ * named `id'. */
 struct RideSlot__s1b64 {
   u16 id;
   u16 blocked;
@@ -977,7 +1003,11 @@ struct RideDirection {
   u16 unk02;
 };
 
-/* VIEW(s1b64): tag struct RideWork as struct RideWork__s1b64; mars_lighthouse_room_m.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1180: structure has no member named `direction'. */
+/* VIEW(s1b64): tag struct RideWork as struct RideWork__s1b64;
+ * mars_lighthouse_room_m.c has another definition; tried with the definition
+ * the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_m.c:1180: structure has no member
+ * named `direction'. */
 struct RideWork__s1b64 {
   u8 unk00[4];
   u16 landed;
@@ -990,7 +1020,7 @@ struct RideWork__s1b64 {
   struct RideDirection direction;
 };
 
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 
 s32 Func_020018c4(struct Actor *a, struct Actor *b);
 s32 Func_02001928(struct Actor *a, struct Actor *b);
@@ -1007,7 +1037,8 @@ DEFINE_ACTOR_SETUP_SCRIPTED_PART(Func_02001cc4, gData_020032d4)
 
 void Func_02001d08(struct MarsLighthouseRoomMVector *position, s32 value,
                    s32 flag) {
-  struct Actor *object = FieldActor_Create(366, position->x, position->y, position->z);
+  struct Actor *object =
+      FieldActor_Create(366, position->x, position->y, position->z);
 
   if (object != 0) {
     object->bounce = 0;
@@ -1023,7 +1054,8 @@ void Func_02001d08(struct MarsLighthouseRoomMVector *position, s32 value,
 
 void Func_02001d50(struct MarsLighthouseRoomMVector *position, s32 value,
                    s32 flag) {
-  struct Actor *object = FieldActor_Create(366, position->x, position->y, position->z);
+  struct Actor *object =
+      FieldActor_Create(366, position->x, position->y, position->z);
 
   if (object != 0) {
     object->bounce = 0;
@@ -1039,7 +1071,8 @@ void Func_02001d50(struct MarsLighthouseRoomMVector *position, s32 value,
 
 void Func_02001d98(struct MarsLighthouseRoomMVector *position, s32 value,
                    s32 flag) {
-  struct Actor *object = FieldActor_Create(366, position->x, position->y, position->z);
+  struct Actor *object =
+      FieldActor_Create(366, position->x, position->y, position->z);
 
   if (object != 0) {
     object->bounce = 0;
@@ -1095,8 +1128,8 @@ void Func_02001e38(struct Actor *object) {
 DEFINE_ACTOR_SETUP_SCRIPTED(Func_02001ed4, Func_02003118, gData_020032d4)
 
 void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
-  struct Actor *object =
-      FieldActor_Create(285, position->x, position->y, position->z + 0xfffe0000);
+  struct Actor *object = FieldActor_Create(285, position->x, position->y,
+                                           position->z + 0xfffe0000);
   s32 angle;
 
   if (object != 0) {
@@ -1112,12 +1145,15 @@ void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
     object->timer = angle;
     ((void (*)())Func_02001ed4)(object, 2);
     object->update = Func_02001e38;
-    Animation_SetStateFlags(object, 1);
+    Actor_SetBlendMode(object, 1);
   }
 }
 
 // ---- games/tla/src/scene/mars_lighthouse_room_m/s1f94.c ----
-/* VIEW(s1f94): tag struct Actor as struct Actor__s1f94; actor.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1456: structure has no member named `flag5b'. */
+/* VIEW(s1f94): tag struct Actor as struct Actor__s1f94; actor.h has another
+ * definition; tried with the definition the rest of the object has, it does not
+ * compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1456:
+ * structure has no member named `flag5b'. */
 typedef struct Actor__s1f94 {
   u8 pad0[8];
   s32 x;
@@ -1150,9 +1186,13 @@ void Func_02001b1c();
 void Func_02001d08();
 void Func_02001d50();
 void Func_02001d98();
-/* VIEW(s1f94): routine Func_02001f14 as void Func_02001f14(); the parts before it has another declaration; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1491: too many arguments to function `Func_02001f14'. */
+/* VIEW(s1f94): routine Func_02001f14 as void Func_02001f14(); the parts before
+ * it has another declaration; tried as the rest of the object declares it, it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_m.c:1491: too many arguments to
+ * function `Func_02001f14'. */
 extern void Func_02001f14__s1f94() __asm__("Func_02001f14");
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 
 typedef struct Position {
   s32 x;

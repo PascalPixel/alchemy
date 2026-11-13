@@ -4,7 +4,7 @@
 
 #include "../system_internal.h"
 #include "gamepak/far_call/sound.h"
-#include "module/tla.h"
+#include "ram_buffer.h"
 
 void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
   if (irq <= 13) {
@@ -169,7 +169,7 @@ void wait(s32 frames) {
     gFrameVBlanks = 0;
     System_WaitForFrameInterrupt();
     HeapSlot_Release(80);
-    Render_ResetFrame();
+    Oam_ResetFrame();
     gFrameCount++;
     gFrameWaitCount++;
     Input_UpdateKeyRepeatAndDirection();
@@ -317,7 +317,8 @@ void Input_UpdateKeyRepeatAndDirection(void) {
 
 CAMELOT_ASM("ldmia and stmia of four registers: agscc's block moves stop at "
             "three, so a 16-byte struct copy compiles to 12 and 4")
-static __inline__ void Copy16Bytes(const void *source, volatile void *destination) {
+static __inline__ void Copy16Bytes(const void *source,
+                                   volatile void *destination) {
   register const void *src __asm__("r0") = source;
   register volatile void *dst __asm__("r1") = destination;
   __asm__ volatile("ldmia %0!, {r2, r3, r4, r5}\n\tstmia %1!, {r2, r3, r4, r5}"
@@ -326,7 +327,7 @@ static __inline__ void Copy16Bytes(const void *source, volatile void *destinatio
                    : "r2", "r3", "r4", "r5", "memory");
 }
 
-void Func_0801399c(void) {
+void System_VBlankHandler(void) {
   u32 keys;
   u32 vblankCount;
   void (*hook)(void);
@@ -339,13 +340,13 @@ void Func_0801399c(void) {
     dma0[5];
   }
   if (gSerialExchangeActive != 0) {
-    gLinkStatus = Serial_ExchangePayloads((void *)&gSerialTransfer,
-                                                 gSerialPeerPayloads);
+    gLinkStatus =
+        Serial_ExchangePayloads((void *)&gSerialTransfer, gSerialPeerPayloads);
     Serial_StepBlockTransfer();
   }
   SoundDriver_VSyncRefresh();
   if (gBlendDuration != 0)
-    Fade_Update();
+    ScreenFade_Update();
   if (gFrameRenderPending != 0) {
     gFrameRenderPending = 0;
     if (gOamUsage.used != 0)
@@ -354,9 +355,9 @@ void Func_0801399c(void) {
     Copy16Bytes(gBgScroll, REG_BG0HOFS);
     IoWriteQueue_FlushPending();
   }
-  hook = gData_030011f8;
+  hook = gVBlankCallback;
   if (hook != 0) {
-    gData_030011f8 = 0;
+    gVBlankCallback = 0;
     hook();
   }
   Task_RunPassBeforeVBlankTasks(TASK_PASS_FRAME);
@@ -424,9 +425,9 @@ s32 Sound_LoadReverbCode(s32 preset) {
   return 0;
 }
 
-void Func_08013b38(void) {}
+void Sound_ReservedNoOpA(void) {}
 
-void Func_08013b3c(void) {}
+void Sound_ReservedNoOpB(void) {}
 
 void Input_HandleKeyInterrupt(void) {
   if (gSleepActive == 0) {

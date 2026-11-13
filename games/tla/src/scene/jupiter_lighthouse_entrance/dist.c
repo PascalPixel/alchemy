@@ -60,7 +60,7 @@ s32 Func_0200087c(struct SceneEffectSource *object) {
   return 0;
 }
 
-void Animation_ApplyChildValues(struct PositionedActor *object, s32 value);
+void Actor_SetSpriteColorMode(struct PositionedActor *object, s32 value);
 
 DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
     JupiterLighthouse_PlaceRaisedActors)

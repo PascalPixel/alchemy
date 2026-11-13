@@ -66,14 +66,14 @@ void Func_02000100(void) {
   Actor_SetModeById(8, 2);
   PaletteFade_ApplySource(0x10000, 2);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 2);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
   work = Ram_HeapSlots->eventWork;
-  Func_0803ce64((s16)work->field1c4++, 0, 2);
+  FieldMessage_ShowCentered((s16)work->field1c4++, 0, 2);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 2);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   wait(20);
   Actor_SetModeById(8, 1);
 }
@@ -107,7 +107,7 @@ void Func_02000184(void) {
   PaletteFade_ApplyTarget(0x10000, 2);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 1);
   BattleEffect_ApplyColorToTargetBuffer(0x403108, 1);
-  BattleEffect_StartBufferInterpolation(40);
+  PaletteFade_StartInterpolation(40);
   wait(40);
   Sound_Play(197);
   wait(1);
@@ -124,7 +124,7 @@ void Func_02000184(void) {
   }
   Actor_SetModeById(8, 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 358, 108);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 358, 108);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xe000, 0);
   Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
   wait(1);
@@ -180,7 +180,7 @@ void Func_02000184(void) {
   Event_ShowMessageAndWait(0x200e, 0);
   Actor_SetSpeed(14, 0x19999, 0xcccc);
   Actor_WalkToAndWait(14, 392, 164);
-  Func_080d47b4(14, 264, 0);
+  Actor_ShowEmoteById(14, 264, 0);
   Actor_Jump(14, 6, 20);
   Event_ShowMessageAndWait(0x600e, 0);
   Actor_WalkToAndWait(14, 392, 220);
@@ -208,17 +208,17 @@ void Func_02000184(void) {
    * wait; as OBJ_PLTT_COLOR(0, 15) = 0x7fff after it, 4 of 895 instructions
    * differ in tla-en. */
   color = &OBJ_PLTT_COLOR(0, 15);
-  BattleEffect_StartBufferInterpolation(10);
+  PaletteFade_StartInterpolation(10);
   wait(10);
   *color = 0x7fff;
   wait(1);
-  Func_0803ce64((s16)(*(u16 *)(EVENT_WORK + 0x1c4))++, 0, 2);
+  FieldMessage_ShowCentered((s16)(*(u16 *)(EVENT_WORK + 0x1c4))++, 0, 2);
   PaletteFade_ApplyTarget(0x10000, 2);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   wait(20);
   Actor_SetModeById(8, 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xe000, 0);
-  Func_080d47b4(gMainRoutineWork.currentOwner, 0x100, 40);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x100, 40);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x4000, 0);
   Actor_FaceDirection(9, 0xb000, 20);
   Func_02000100();
@@ -243,7 +243,7 @@ void Func_02000184(void) {
   Actor_FaceDirectionAndWait(9, 0xd000);
   Event_ShowMessageAndWait(9, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xe000, 0);
-  Func_080d47b4(13, 257, 40);
+  Actor_ShowEmoteById(13, 257, 40);
   Func_02000100();
   Event_ShowMessageThenWait(9, 0, 40);
   Func_02000100();
@@ -262,21 +262,21 @@ void Func_02000184(void) {
   Sound_Play(0);
   Sound_Play(220);
   Actor_SetModeById(8, 3);
-  Actor_SetPartAttribute(((s32)Actor_GetById(13)), 7);
+  Actor_SetSpriteColor(((s32)Actor_GetById(13)), 7);
   Actor_SetPosition(13, 0x1a80000, 0x680000);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(40);
+  PaletteFade_StartInterpolation(40);
   wait(40);
   Func_02001094();
   Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
   Event_Wait(1);
   PaletteFade_ApplyTarget(0x10000, 2);
   BattleEffect_ApplyColorToTargetBuffer(0x403108, 1);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   wait(60);
   Func_02000100();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   wait(20);
   gData_02002058->motionFlags = 3;
   Event_Wait(10);
@@ -289,8 +289,8 @@ void Func_02000184(void) {
   Event_ShowMessageAndWait(9, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   Actor_FaceDirection(9, 0xd000, 0);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 392, 104);
-  Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0xc000);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 392, 104);
+  Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0xc000);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
   if (gData_02002058 != 0) {
     leader = OBJECT(gMainRoutineWork.currentOwner);
@@ -298,7 +298,7 @@ void Func_02000184(void) {
     object->motionFlags = 0;
     Actor_SetMoveTarget((s32)object, leader->x, leader->y + 0x240000,
                         leader->z);
-    Script_WaitForEventTimeout((s32)gData_02002058);
+    Actor_WaitForMove((s32)gData_02002058);
   }
   PartyInventory_GiveItem(242, 0);
   if (gData_02002058 != 0)
@@ -316,7 +316,7 @@ void Func_02000184(void) {
     Actor_SetModeById(9, 3);
     Event_ShowMessageAndWait(9, 0);
   }
-  Actor_SetPositionAndReset(9, 376, 124);
+  Actor_WalkToAndWaitById(9, 376, 124);
   Event_Wait(20);
   Event_ShowMessageAndWait(9, 0);
   Actor_FaceDirectionAndWait(9, 0xd000);
@@ -341,7 +341,7 @@ void Func_02000184(void) {
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_0200200c);
   Event_Wait(40);
   BattleEffect_ApplyColorToTargetBuffer(0, 0);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   wait(0x40);
   *(s32 *)(EVENT_WORK + 0x1ac) = 513;
   *(s32 *)(EVENT_WORK + 0x1b4) = 10;
@@ -349,9 +349,9 @@ void Func_02000184(void) {
   Event_WaitTransitionFrames();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   *(s32 *)(EVENT_WORK + 0x1b4) = 1;
-  BattleEffect_StartBufferInterpolation(1);
+  PaletteFade_StartInterpolation(1);
   Func_02001d78();
-  Func_0803ce64(MsgCarriedTheMessage, 0, 3);
+  FieldMessage_ShowCentered(MsgCarriedTheMessage, 0, 3);
   ActorSystem_ResumeProjectionAndHideLayers();
   GameFlag_SetBit(0x8ff);
   GameFlag_ClearBit(0x86b);
@@ -373,7 +373,7 @@ void Func_02000a98(s32 x, s32 z) {
   Event_ResolvePendingActions(0);
   object->motionFlags = 0;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, x, z);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, x, z);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
   Actor_SetSingleChildFlags(((struct GabombaStatueChamberObject *)Actor_GetById(
@@ -381,7 +381,7 @@ void Func_02000a98(s32 x, s32 z) {
                             0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
   Actor_SetMoveTarget(object, x << 16, PIXELS(-12), z << 16);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
   Sound_Play(123);
   Event_FinishScreenTransition();
@@ -414,7 +414,7 @@ void Func_02000b70(void) {
   Func_02000a98(424, 100);
 }
 
-void DisplayBlend_EnableRunScript(void);
+void BlendScript_Suspend(void);
 
 void Func_02000be8(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -424,7 +424,7 @@ void Func_02000be8(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  DisplayBlend_EnableRunScript();
+  BlendScript_Suspend();
   step = 1;
   for (i = 0; i < 352; i++) {
     if (i >= 17 && i < 80) {
@@ -442,7 +442,7 @@ void Func_02000be8(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 328, 184);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 328, 184);
   Event_Wait(20);
   Sound_Play(308);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
@@ -475,11 +475,11 @@ void Func_02000d3c(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  DisplayBlend_EnableRunScript();
+  BlendScript_Suspend();
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 0, -8);
+  Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 0, -8);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0x4000);
+  Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0x4000);
   Sound_Play(308);
   step = 1;
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
@@ -511,7 +511,7 @@ void Func_02000e50(void) { GameFlag_ClearBit(518); }
 void Func_02000e60(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Camera_MoveWithinMapBounds(PIXELS(392), -1, PIXELS(120), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(392), -1, PIXELS(120), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Event_SetMessageId((s32)MsgIHaveFollowed);
@@ -519,7 +519,7 @@ void Func_02000e60(void) {
   Event_ShowMessageAndWait(10, 0);
   Actor_FaceDirectionAndWait(10, FACING_WEST);
   Event_ShowMessageAndWait(10, 0);
-  Actor_ArmCallbackAndRefresh(10, FACING_EAST);
+  Actor_FaceDirectionById(10, FACING_EAST);
   Event_ShowMessageAndWait(10, 0);
   Actor_FaceDirectionAndWait(10, FACING_NORTH + FACING_STEP);
   Motion_SetModeAndWaitAnimation(10, 4);
@@ -575,10 +575,10 @@ DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM(Func_02000f00, 230)
 DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM(Func_02000f88, 242)
 
 void Func_02001010(void) {
-  Map_CopyCellPictureIndicesRect(85, 78, 22, 79, 5, 11);
+  MapGrid_CopyCellPictureIndicesRect(85, 78, 22, 79, 5, 11);
   MapGrid_CopyCellAttributes(85, 78, 5, 11, 22, 15);
   MapGrid_CopyCellsTo(86, 30, 86, 20, 5, 2);
-  Map_CopyCellPictureIndicesRect(86, 30, 84, 22, 9, 2);
+  MapGrid_CopyCellPictureIndicesRect(86, 30, 84, 22, 9, 2);
 }
 
 void Func_02001064(void) {
@@ -587,8 +587,8 @@ void Func_02001064(void) {
 }
 
 void Func_02001094(void) {
-  Map_CopyCellPictureIndicesRect(0, 1, 26, 6, 1, 1);
-  Map_CopyCellPictureIndicesRect(0, 65, 26, 70, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(0, 1, 26, 6, 1, 1);
+  MapGrid_CopyCellPictureIndicesRect(0, 65, 26, 70, 1, 1);
   MapGrid_CopyCellAttributes(0, 2, 3, 3, 25, 5);
 }
 
@@ -653,13 +653,13 @@ void Func_020010d4(void) {
   Actor_SetAttachedEffect(6, 258);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
   Event_ShowMessage(0x4006, 0);
-  Func_080d47b4(5, 265, 20);
+  Actor_ShowEmoteById(5, 265, 20);
   Event_ShowMessageAndWait(5, 0);
   FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), PIXELS(392), 0,
                                        PIXELS(340));
   Sound_Play(78);
   BattleEffect_ApplyColorToTargetBuffer(0x10002, 0);
-  BattleEffect_StartBufferInterpolation(40);
+  PaletteFade_StartInterpolation(40);
   wait(40);
   Actor_SetModeById(9, 2);
   Actor_SetModeById(10, 2);
@@ -682,7 +682,7 @@ void Func_020010d4(void) {
   Event_Wait(10);
   FieldCamera_MoveTo(PIXELS(392), -1, PIXELS(168), 1);
   Actor_SetSpeed(13, 0xcccc, 0x6666);
-  Actor_SetPositionAndCommit(13, 392, 160);
+  Actor_MoveToAndWaitById(13, 392, 160);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(5);
   Actor_Stop(6);
@@ -692,14 +692,14 @@ void Func_020010d4(void) {
   Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
   Event_Wait(20);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(40);
+  PaletteFade_StartInterpolation(40);
   wait(40);
-  Party_PlaySavedMusic();
-  Func_080d47b4(11, 0x100, 40);
+  Scene_PlayMusic();
+  Actor_ShowEmoteById(11, 0x100, 40);
   Event_ShowMessage(0x400b, 0);
-  Func_080d47b4(6, 261, 20);
+  Actor_ShowEmoteById(6, 261, 20);
   Event_ShowMessage(0x4006, 0);
-  Actor_ArmCallbackAndRefresh(5, turnA);
+  Actor_FaceDirectionById(5, turnA);
   Event_ShowMessageAndWait(0x1005, 0);
   Actor_ArmCallback(5, FACING_NORTHWEST, 0);
   Actor_SetSpeed(6, 0xcccc, 0x6666);
@@ -710,7 +710,7 @@ void Func_020010d4(void) {
   Actor_SetModeById(7, 4);
   Event_ShowMessageAndWait(7, 0);
   Event_ShowMessageAndWait(0x4006, 0);
-  Func_080d47b4(11, 0x100, 0);
+  Actor_ShowEmoteById(11, 0x100, 0);
   Event_ShowMessage(0x400b, 0);
   Actor_FaceDirectionAndWait(11, FACING_SOUTHEAST + FACING_STEP);
   Event_ShowMessageAndWait(0x400b, 0);
@@ -731,7 +731,7 @@ void Func_020010d4(void) {
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   Actor_FaceDirection(11, FACING_SOUTHEAST + FACING_STEP, 0);
   Camera_SetSpeedParameters(0x19999, 0x3333);
-  Camera_MoveWithinMapBounds(PIXELS(392), -1, PIXELS(200), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(392), -1, PIXELS(200), 1);
   Actor_SetSpeed(12, 0x13333, 0x9999);
   Actor_WalkToAndWait(12, 404, 220);
   Actor_Jump(12, 4, 10);
@@ -748,9 +748,9 @@ void Func_020010d4(void) {
   }
   Actor_ShowEmote(7, 263, 20);
   Event_ShowMessageAndWait(7, 0);
-  Func_080d47b4(12, 0x100, 40);
+  Actor_ShowEmoteById(12, 0x100, 40);
   Event_ShowMessageAndWait(12, 0);
-  Func_080d47b4(6, 263, 20);
+  Actor_ShowEmoteById(6, 263, 20);
   Event_ShowMessageAndWait(6, 0);
   FieldEffect_SetAttached(12, 258);
   Event_Wait(20);
@@ -762,10 +762,10 @@ void Func_020010d4(void) {
   Motion_SetModeAndWaitAnimation(11, 3);
   Actor_SetModeById(12, 4);
   Event_ShowMessageAndWait(12, 0);
-  Func_080d47b4(5, 261, 20);
+  Actor_ShowEmoteById(5, 261, 20);
   Actor_SetSpeed(5, 0xcccc, 0x6666);
   Actor_WalkToAndWait(5, 420, 228);
-  Actor_ArmCallbackAndRefresh(5, FACING_NORTHWEST);
+  Actor_FaceDirectionById(5, FACING_NORTHWEST);
   Event_Wait(10);
   Actor_SetSpeed(5, 0x19999, 0xcccc);
   Actor_WalkToAndWait(5, 412, 222);
@@ -830,7 +830,7 @@ void Func_02001710(void) {
   FieldEvent_Wait(40);
   Actor_FaceDirection(12, 0xd000, 20);
   Actor_FaceDirectionAndWait(12, 0x5000);
-  Func_080d47b4(12, 0x106, 40);
+  Actor_ShowEmoteById(12, 0x106, 40);
   Actor_FaceDirection(7, 0xc000, 0);
   Actor_FaceDirection(5, 0xc000, 0);
   Actor_FaceDirection(11, 0xd000, 0);
@@ -857,7 +857,7 @@ void Func_02001710(void) {
   System_Wait(1);
   Actor_SetPosition(12, 0, 0);
   System_Wait(1);
-  Func_080d47b4(5, turn, 20);
+  Actor_ShowEmoteById(5, turn, 20);
   Actor_FaceDirection(5, angleC, 0);
   FieldMessage_ShowAtActor(0x4005, 0);
   if (Event_AskYesNoWithActorAnimation(*owner, 0) == 0) {
@@ -971,7 +971,7 @@ void Func_02001ba8(void) {
       s32 blend = 1;
       s32 i;
 
-      DisplayBlend_EnableRunScript();
+      BlendScript_Suspend();
       i = 0;
     loop:
       if (i >= 17 && i <= 79) {

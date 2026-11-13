@@ -116,7 +116,7 @@
       if (--k >= 0)                                                            \
         goto fill;                                                             \
     }                                                                          \
-    table->tile = Resource_FindFreeEntry();                                    \
+    table->tile = VramCache_FindFreeEntry();                                    \
     Vram_Load(table->tile, 0x100, buffer);                                     \
     Heap_Release(buffer);                                                      \
     Task_AddFrame(call1, 0x480);                                               \
@@ -182,13 +182,13 @@
                                                                                \
     x >>= 20;                                                                  \
     z >>= 20;                                                                  \
-    Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, (x << 4) + 8,    \
+    Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, (x << 4) + 8,    \
                                (z << 4) + 8);                                  \
     System_Wait(1);                                                            \
     FieldActor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8),        \
                                          object->y, (z << 20) + PIXELS(8));    \
     FieldEvent_Wait(4);                                                        \
-    FieldCamera_GetActor()->y -= 0x80000;                                      \
+    EventCamera_GetActor()->y -= 0x80000;                                      \
   }
 
 /// On arriving through a teleporter, puts the leader on the cell the flag bytes
@@ -250,7 +250,7 @@
     actor->motionFlags = 3;                                                    \
     FieldEvent_Wait(24);                                                       \
     options.palette = 7;                                                       \
-    options.update = Effect_AdvanceMotion;                                     \
+    options.update = FieldEffect_AdvanceMotion;                                     \
     options.startScaleX = 0xa3d7;                                              \
     options.startScaleY = 0xa3d7;                                              \
     i = 0;                                                                     \
@@ -274,7 +274,7 @@
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);                     \
     MapGrid_SetShake(0x50000, 0x50000, 0x10000);                               \
     MapGrid_SetShake(-1, -1, 0xe666);                                          \
-    MapGrid_WaitForShakeToSettle();                                            \
+    FieldMapGrid_WaitForShakeToSettle();                                            \
     Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);             \
     actor->gravity = 0x10000;                                                  \
     actor->bounce = 0x4000;                                                    \
@@ -449,7 +449,7 @@
       if (--count >= 0)                                                        \
         goto fill;                                                             \
     }                                                                          \
-    table->tile = Resource_FindFreeEntry();                                    \
+    table->tile = VramCache_FindFreeEntry();                                    \
     Vram_Load(table->tile, 0x100, buffer);                                     \
     Heap_Release(buffer);                                                      \
     Task_AddFrame(call1, 0x480);                                               \
@@ -506,7 +506,7 @@
     actor->motionFlags = 3;                                                    \
     FieldEvent_Wait(24);                                                       \
     options.palette = 7;                                                       \
-    options.update = Effect_AdvanceMotion;                                     \
+    options.update = FieldEffect_AdvanceMotion;                                     \
     options.startScaleX = 0xa3d7;                                              \
     options.startScaleY = 0xa3d7;                                              \
     i = 0;                                                                     \
@@ -544,7 +544,7 @@
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);                     \
     SetWorkTriple(0x50000, 0x50000, 0x10000);                                  \
     SetWorkTriple(-1, -1, 0xe666);                                             \
-    MapGrid_WaitForShakeToSettle();                                            \
+    FieldMapGrid_WaitForShakeToSettle();                                            \
     Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);             \
     actor->gravity = 0x10000;                                                  \
     actor->bounce = 0x4000;                                                    \

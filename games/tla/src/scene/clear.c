@@ -49,9 +49,9 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps the buffer address
    * a constant of each call, as ☀️'s system call layer does; as a direct call
-   * the address is kept in r5; as Resource_DecodeType01 called directly, 21 of
+   * the address is kept in r5; as Decompress_TaggedLz called directly, 21 of
    * 103 instructions differ in tla-en (Func_0200005c). */
-  Resource_DecodeType01(source, destination);
+  Decompress_TaggedLz(source, destination);
 }
 
 /// The logo background, as the title's Title_LoadBackground, then the party
@@ -68,7 +68,7 @@ void Func_0200005c(void) {
   s32 blank;
 
   id = (s32)&ResourceId_LogoOnBlack;
-  Fade_ToBlack(0);
+  ScreenFade_ToBlack(0);
   REG_BG2CNT = 0x681;
   gBgScroll[2].y = 0;
   blank = 0x1ff;
@@ -263,7 +263,7 @@ void StatusScreen_Run(void);
 #define COPY_CELLS(to, from)                                                   \
   Value3((s32 (*)())Iwram_CopyWordsEntry, (s32)(to), (s32)(from), 0x3000)
 #define SAVE_CELLS()                                                           \
-  u8 *cells = gData_02000000;                                                  \
+  u8 *cells = gSaveBuffer;                                                     \
                                                                                \
   COPY_CELLS(Ram_MapCellBuffer, cells)
 #define RESTORE_CELLS()                                                        \
@@ -295,7 +295,7 @@ s32 Scene_Initialize(void) {
   ask_save:
     message = (s32)MsgSaveYourAdventure;
     FieldMessage_Show(message, 5);
-    i = Func_080d295c(1);
+    i = FieldYesNo_Ask(1);
     Message_CloseFinishedWindows();
     if (i == 0) {
       FieldMessage_Show(message + 1, 1);
@@ -323,7 +323,7 @@ top:
   if (result < 0 && gDebugMode) {
     gMainRoutineWork.unk244[6] = 1;
     gAutoSleepEnabled = 1;
-    Func_0803ce64((s32)&SceneId_DailaInteriors1, 1, 8);
+    FieldMessage_ShowCentered((s32)&SceneId_DailaInteriors1, 1, 8);
   }
   if (result == 0 && !started) {
     wait(30);
@@ -337,8 +337,8 @@ top:
     result = 0;
   if (result == 0) {
     Func_02002350();
-    Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
-                  gMainRoutineWork.paletteGlow[1]);
+    WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                      gMainRoutineWork.paletteGlow[1]);
     i = 4;
     limit = 5;
   open:
@@ -421,7 +421,7 @@ top:
           {
             struct MainRoutineWork *party = &gMainRoutineWork;
 
-            Func_0803f9c0(party->paletteGlow[0], party->paletteGlow[1]);
+            WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
             RESTORE_CELLS()
             Func_020023a0(MAP_CELL_BACKUP);
             party->unk284[3] = 1;
@@ -455,7 +455,7 @@ top:
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
 
-      Func_0803f9c0(party->paletteGlow[0], party->paletteGlow[1]);
+      WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
       if (PARTY_WORD(party, 0) != BuildStamp_GetTime()) {
         RETURN_TO_SAVED(party)
       } else if (mask = 0x208, (gInput.held & mask) == mask) {
@@ -505,7 +505,7 @@ top:
       party->currentOwner = 4;
       if (Event_GetFlag(0x9ff))
         InventorySnapshot_Restore();
-      Func_0803f9c0(party->paletteGlow[0], party->paletteGlow[1]);
+      WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
       Event_ClearFlag(0x109);
       Event_ClearFlag(0x106);
       party->ownerOverride = 0;
@@ -520,8 +520,8 @@ link:
   result = Save_ChooseAndLoadFile(6);
   if (result == -1)
     goto top;
-  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                    gMainRoutineWork.paletteGlow[1]);
 again:
   result = IconMenu_ChooseSendOption(2);
   if (result == -1)
@@ -644,6 +644,7 @@ void Func_02000a70(s32 cell, u16 *text) {
 #define RECEIVED_FLAGS (Ram_MapCellBuffer + 0x3040)
 #define RECEIVED_UNITS (Ram_MapCellBuffer + 0x3240)
 
+void WindowSprite_PrepareForRedraw(struct Window *work);
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define REQUEST_EDITION 'C'
 #elif (LANGUAGE == LANGUAGE_GERMAN)
@@ -784,7 +785,7 @@ done:
   Unit_Calculate(2);
   Unit_Calculate(3);
   Iwram_CopyWords(RECEIVED_FLAGS, flags, 0xf40);
-  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+  FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                     gMainRoutineWork.paletteGlow[1]);
   return 1;
 }
@@ -847,6 +848,7 @@ extern u8 MsgFieldPasswordKana[];
 
 void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position,
                              u32 offsetX, u32 offsetY);
+s32 Party_RemoveMember(s32 value);
 u16 Func_0200217c(u32 length, u8 *p);
 void Resource_CopyFixedBlockB(void);
 void Resource_CopyFixedBlockA(void);
@@ -962,8 +964,8 @@ s32 Func_02000e44(void) {
   s32 height;
 
   Window_LoadGraphics();
-  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                    gMainRoutineWork.paletteGlow[1]);
   palette = (u16 *)0x050001c0;
   Dma_Set((const void *)0x050001e0, palette, (DMA_ENABLE | DMA_32BIT) << 16 | 8,
           (volatile u32 *)0x040000d4);
@@ -1006,7 +1008,7 @@ s32 Func_02000e44(void) {
     work->shown[i] = 99;
     Iwram_ClearWordsEntry(work->cells[i], 128);
   }
-  entry = Resource_FindFreeEntry();
+  entry = VramCache_FindFreeEntry();
   if (entry <= 95) {
     Resource_CopyFixedBlockB();
     sprite = WindowSprite_Create(entry, OUTPUT_SIZE_16X16,
@@ -1014,7 +1016,7 @@ s32 Func_02000e44(void) {
     Cursor_Attach(&cursorStore, sprite);
     Cursor_Place(&cursorStore, (s16)window->x * 8 - 2, (s16)window->y * 8 + 12);
   }
-  entry = Resource_FindFreeEntry();
+  entry = VramCache_FindFreeEntry();
   if (entry <= 95) {
     Resource_CopyFixedBlockA();
     sprite = WindowSprite_Create(entry, OUTPUT_SIZE_16X16,
@@ -1204,7 +1206,7 @@ s32 Func_02000e44(void) {
             Window_Close(box, 2);
             Window_Close(grid, 2);
             Window_Close(window, 2);
-            Func_0803f9c0(party->paletteGlow[0], party->paletteGlow[1]);
+            WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
             Sound_Play(74);
             System_Wait(6);
             Func_020022f8(0);
@@ -1317,7 +1319,7 @@ void Func_02001804(struct Panel_02001804 *panel, const void *source) {
   s32 row;
   s32 column;
 
-  Resource_DecodeType01(source, work);
+  Decompress_TaggedLz(source, work);
   offset = panel->y * 32 + panel->x;
 
   offset *= 2;

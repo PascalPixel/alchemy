@@ -13,7 +13,7 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void MarsLighthouseStarRoom_SlideOnIce(void);
 
 void Func_02003384(u16 value) { gData_02004cf0[0] = value; }

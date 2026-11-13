@@ -115,7 +115,7 @@ void Func_02001a94(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_SetMoveTarget(object, target[0], 0, target[2]);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   Event_PlaySound(188);
   MapGrid_CopyCellsTo(18, 4, column, 4, 1, 2);
   System_Wait(5);
@@ -200,7 +200,7 @@ extern const struct AnemosInnerSanctumPicture gData_02004410[];
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02003320_(const void *data, s32 a, s32 b) {
-  Map_PlayMapEdit(data, a, b);
+  MapGrid_PlayMapEdit(data, a, b);
 }
 
 /// The scene opening: clears the actors' motion flags, plays the entrance's
@@ -265,7 +265,7 @@ void Func_02001d68(void) {
   object->acceleration = 0x10000;
   object->speedLimit = 0x10000;
   FieldActor_SetMoveTarget(object, object->x, object->y + 0x300000, object->z);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   Event_SetFlag(0x300);
   Event_End();
 }
@@ -282,7 +282,7 @@ void Func_02001df4(void) {
   object->acceleration = 0x10000;
   object->speedLimit = 0x10000;
   FieldActor_SetMoveTarget(object, object->x, object->y + 0x300000, object->z);
-  Actor_WaitForMove(object);
+  FieldActor_WaitForMove(object);
   Event_SetFlag(0x304);
   Event_End();
 }

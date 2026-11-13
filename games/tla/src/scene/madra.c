@@ -166,12 +166,12 @@ void Madra_KarstAsksAboutMenardi(void) {
 }
 
 struct Actor *Actor_GetById(u32 objectId);
-void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void Actor_SetDestinationOffsetById(s32 id, s32 dx, s32 dz);
 void Actor_WaitForMoveById(s32 id);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_WalkToAndWaitById(s32 id, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Map_PlayMapEdit(const void *data, s32 a, s32 b);
+void MapGrid_PlayMapEdit(const void *data, s32 a, s32 b);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 y, s32 z);
 
@@ -275,7 +275,8 @@ void Madra_AskComingThroughSealedHole(void) {
 }
 
 // ---- games/tla/src/scene/madra/s051c.c ----
-// Scene code of overlay 0x658, in ROM order, from s051c's offset up to the next object the overlay links.
+// Scene code of overlay 0x658, in ROM order, from s051c's offset up to the next
+// object the overlay links.
 
 #include "event_work.h"
 #include "field_sprite.h"
@@ -519,19 +520,19 @@ void Madra_AskAboutJenna(void) {
 struct Actor *Actor_GetById(u32 objectId);
 void Actor_WaitForMoveById(s32 id);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_WalkToAndWaitById(s32 id, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
+void Actor_WalkToById(s32 id, s32 x, s32 z);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void Actor_Jump(s32 id, s32 a, s32 b);
 void Actor_LaunchFromLeader(s32 id, s32 a, s32 b, s32 c);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
-void BattleEffect_StartEffectObject22(s32 item, s32 a);
+void ItemDisplay_ShowItem(s32 item, s32 a);
 s32 PartyInventory_GiveItem(s32 item, s32 count);
 void FieldMessage_Show(s32 message, s32 position);
-void Camera_FollowActor(s32 id, s32 mode);
-void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
+void FieldCamera_FollowActor(s32 id, s32 mode);
+void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
 
 /// Actors 24 and 25 talk with 32 and 4, 25 is moved about with its priority
 /// bit cleared and set, and 32 is placed at the current owner before flag
@@ -676,7 +677,7 @@ void Madra_GrantPassageToOsenia(void) {
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Camera_MoveWithinMapBounds(PIXELS(124), -1, PIXELS(420), 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(124), -1, PIXELS(420), 1);
   FieldCamera_WaitForArrival();
   Actor_SetSpeed(33, 0xcccc, 0x6666);
   Actor_SetSpeed(34, 0xcccc, 0x6666);
@@ -730,16 +731,16 @@ void Madra_GrantPassageToOsenia(void) {
   Actor_WalkTo(34, 132, 396);
   Actor_WalkToAndWait(33, 108, 396);
   Actor_WaitForMoveById(34);
-  Actor_SetAngleToward(4, 33, 0);
+  Actor_FaceActorById(4, 33, 0);
   Actor_FaceDirection(34, FACING_NORTH, 0);
   Actor_FaceDirection(33, FACING_NORTH, 0);
   FieldActor_ShowEmote(33, 258, 30);
   Event_ShowMessageThenWait(33, 0, 10);
-  Actor_SetAngleToward(34, 33, 0);
+  Actor_FaceActorById(34, 33, 0);
   Motion_SetModeAndWaitAnimation(34, 3);
   Event_Wait(20);
   Event_ShowMessageThenWait(34, 0, 10);
-  Actor_SetAngleToward(33, 34, 0);
+  Actor_FaceActorById(33, 34, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(33, 2);
   Event_Wait(20);
@@ -765,15 +766,15 @@ void Madra_GrantPassageToOsenia(void) {
   Event_ShowMessageThenWait(33, 0, 10);
   Event_ShowMessageThenWait(33, 0, 10);
   Motion_SetVarCbAndRefresh(34, 2);
-  Actor_SetAngleToward(34, 33, 0);
+  Actor_FaceActorById(34, 33, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(34, 0, 10);
-  Actor_SetAngleToward(33, 34, 0);
+  Actor_FaceActorById(33, 34, 0);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(33, 4);
   Event_Wait(20);
   Event_ShowMessageThenWait(33, 0, 10);
-  Actor_SetAngleToward(33, 4, 0);
+  Actor_FaceActorById(33, 4, 0);
   Event_Wait(30);
   Event_ShowMessageThenWait(33, 0, 10);
   FieldActor_ShowEmote(4, 261, 30);
@@ -790,7 +791,7 @@ void Madra_GrantPassageToOsenia(void) {
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Event_ShowMessageThenWait(33, 0, 10);
   }
-  Actor_SetAngleToward(33, 34, 0);
+  Actor_FaceActorById(33, 34, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(33, 0, 10);
   Motion_SetModeAndWaitAnimation(34, 3);
@@ -807,7 +808,7 @@ void Madra_GrantPassageToOsenia(void) {
   Motion_SetModeAndWaitAnimation(34, 3);
   Event_Wait(20);
   Event_Wait(20);
-  Actor_CommitPositionAndActivate(34, 6, 0);
+  Actor_WalkByAndWaitById(34, 6, 0);
   Actor_WalkToAndWait(34, 164, 316);
   Event_Wait(10);
   Actor_FaceDirectionAndWait(33, FACING_WEST);
@@ -820,7 +821,7 @@ void Madra_GrantPassageToOsenia(void) {
   Motion_SetModeAndWaitAnimation(33, 3);
   Event_Wait(20);
   GameFlag_SetBit(0x913);
-  Actor_CommitPositionAndActivate(33, 30, 0);
+  Actor_WalkByAndWaitById(33, 30, 0);
   Actor_WalkToAndWait(33, 164, 316);
   Event_Wait(20);
   Actor_SetHorizontalPositionWithTerrain(33, 0, 0);
@@ -995,7 +996,7 @@ void Madra_MeetKarst(void) {
   Event_SetMessageId(MsgWait3);
   Event_ShowMessageThenWait(34, 0, 0);
   Actor_WalkToAndWait(4, 150, 280);
-  Actor_OffsetPositionAndReset(4, 16, 0);
+  Actor_WalkByById(4, 16, 0);
   FieldActor_LaunchFromLeader(5, 8, 16, FACING_NORTH);
   FieldActor_LaunchFromLeader(32, 0, 0, FACING_NORTH);
   FieldActor_LaunchFromLeader(6, -8, 16, FACING_NORTH);
@@ -1005,7 +1006,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   MapGrid_AnimateCells(gMadra_Doors[6].data, gMadra_Doors[6].x, gMadra_Doors[6].y);
   Actor_SetHorizontalPositionAndAngleWithTerrain(34, x, z, FACING_SOUTH);
-  Actor_CommitPositionAndActivate(34, 0, 4);
+  Actor_WalkByAndWaitById(34, 0, 4);
   SET_MODE(34, 3);
   /* FAKEMATCH(dead): this wait in a once-only block, which starts its own
    * scheduling region; as a plain call, whose message call then loads its
@@ -1014,10 +1015,10 @@ void Madra_MeetKarst(void) {
     Event_Wait(20);
   } while (0);
   FieldMessage_ShowAtActor(34, 0);
-  Actor_SetAngleToward(32, 4, 0);
-  Actor_SetAngleToward(5, 4, 0);
-  Actor_SetAngleToward(7, 4, 0);
-  Actor_SetAngleToward(6, 4, 0);
+  Actor_FaceActorById(32, 4, 0);
+  Actor_FaceActorById(5, 4, 0);
+  Actor_FaceActorById(7, 4, 0);
+  Actor_FaceActorById(6, 4, 0);
   Actor_ArmCallback(34, FACING_SOUTH, 0);
   Event_Wait(20);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
@@ -1052,10 +1053,10 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   Event_ShowMessageThenWait(34, 0, 0);
   FieldActor_ShowEmote(6, 0x102, 30);
-  Actor_SetAngleToward(6, 5, 0);
+  Actor_FaceActorById(6, 5, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(6, 0);
-  Actor_SetAngleToward(5, 6, 0);
+  Actor_FaceActorById(5, 6, 0);
   Event_Wait(20);
   SET_MODE(5, 4);
   Event_Wait(33);
@@ -1064,10 +1065,10 @@ void Madra_MeetKarst(void) {
   FieldActor_ShowEmote(34, 0x100, 30);
   Event_Wait(20);
   Event_ShowMessageThenWait(34, 0, 0);
-  Actor_CommitPositionAndActivate(34, 16, 8);
+  Actor_WalkByAndWaitById(34, 16, 8);
   Actor_FaceDirection(34, FACING_SOUTH, 0);
   if (PartyInventory_FindRoom(210) >= 0) {
-    BattleEffect_StartEffectObject22(210, 3);
+    ItemDisplay_ShowItem(210, 3);
     PartyInventory_GiveItem(210, 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Actor_ArmCallback(4, FACING_NORTH, 0);
@@ -1080,7 +1081,7 @@ void Madra_MeetKarst(void) {
     FieldMessage_Show((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
     Motion_SetVarCbAndRefresh(34, 2);
     Event_ShowMessageAndWait(34, 0);
-    Actor_CommitPositionAndActivate(34, 16, 0);
+    Actor_WalkByAndWaitById(34, 16, 0);
     MessageArgument_Push(210, 2);
     FieldMessage_Show((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
     Actor_WalkByAndWait(34, -16, 0);
@@ -1119,13 +1120,13 @@ void Madra_MeetKarst(void) {
   FieldActor_ShowEmote(7, 0x101, 0);
   FieldActor_ShowEmote(6, 0x101, 0);
   FieldActor_ShowEmote(32, 0x101, 30);
-  Actor_SetAngleToward(4, 33, 0);
-  Actor_SetAngleToward(7, 33, 0);
-  Actor_SetAngleToward(6, 33, 0);
-  Actor_SetAngleToward(5, 33, 0);
-  Actor_SetAngleToward(32, 33, 0);
+  Actor_FaceActorById(4, 33, 0);
+  Actor_FaceActorById(7, 33, 0);
+  Actor_FaceActorById(6, 33, 0);
+  Actor_FaceActorById(5, 33, 0);
+  Actor_FaceActorById(32, 33, 0);
   Event_Wait(20);
-  Camera_FollowActor(33, 1);
+  FieldCamera_FollowActor(33, 1);
   Event_Wait(60);
   Sound_Play(36);
   FieldActor_ShowEmote(33, 0x107, 30);
@@ -1138,25 +1139,25 @@ void Madra_MeetKarst(void) {
   Motion_SetVarCbAndRefresh(33, 2);
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
-  Actor_SetAngleToward(4, 33, 0);
-  Actor_SetAngleToward(7, 33, 0);
-  Actor_SetAngleToward(6, 33, 0);
-  Actor_SetAngleToward(5, 33, 0);
-  Actor_SetAngleToward(32, 33, 0);
+  Actor_FaceActorById(4, 33, 0);
+  Actor_FaceActorById(7, 33, 0);
+  Actor_FaceActorById(6, 33, 0);
+  Actor_FaceActorById(5, 33, 0);
+  Actor_FaceActorById(32, 33, 0);
   Event_Wait(20);
   Actor_FaceDirectionAndWait(33, FACING_WEST);
-  Actor_ArmCallbackAndRefresh(33, FACING_EAST);
+  Actor_FaceDirectionById(33, FACING_EAST);
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
   FieldActor_ShowEmote(6, 0x102, 30);
-  Actor_SetAngleToward(6, 5, 0);
+  Actor_FaceActorById(6, 5, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(6, 0);
   FieldActor_ShowEmote(5, 0x100, 30);
   Event_ShowMessageAndWait(5, 0);
   FieldActor_ShowEmote(33, 0x107, 30);
   Event_ShowMessageAndWait(33, 0);
-  Actor_SetAngleToward(33, 4, 0);
+  Actor_FaceActorById(33, 4, 0);
   Event_Wait(20);
   FieldMessage_ShowAtActor(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
@@ -1169,8 +1170,8 @@ void Madra_MeetKarst(void) {
     Event_ShowMessageAndWait(33, 0);
     Actor_TurnToFaceEachOther(6, 5, 0);
     Event_Wait(40);
-    Actor_SetAngleToward(6, 33, 0);
-    Actor_SetAngleToward(5, 33, 0);
+    Actor_FaceActorById(6, 33, 0);
+    Actor_FaceActorById(5, 33, 0);
     Event_Wait(40);
     Actor_SetModeById(5, 4);
     SET_MODE(6, 4);
@@ -1183,8 +1184,8 @@ void Madra_MeetKarst(void) {
     Event_ShowMessageAndWait(33, 0);
     Actor_TurnToFaceEachOther(6, 5, 0);
     Event_Wait(40);
-    Actor_SetAngleToward(6, 33, 0);
-    Actor_SetAngleToward(5, 33, 0);
+    Actor_FaceActorById(6, 33, 0);
+    Actor_FaceActorById(5, 33, 0);
     Event_Wait(40);
     Actor_SetModeById(5, 4);
     SET_MODE(6, 4);
@@ -1264,11 +1265,11 @@ void Madra_MeetKarst(void) {
   FieldActor_ShowEmote(4, 0x100, 30);
   FieldActor_ShowEmote(33, 0x101, 30);
   Event_ShowMessageAndWait(33, 0);
-  Actor_ArmCallbackAndRefresh(33, FACING_EAST);
+  Actor_FaceDirectionById(33, FACING_EAST);
   Event_Wait(20);
   Actor_FaceDirectionAndWait(33, FACING_WEST);
   Event_Wait(20);
-  Actor_ArmCallbackAndRefresh(33, FACING_EAST);
+  Actor_FaceDirectionById(33, FACING_EAST);
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
   Actor_ArmCallback(33, FACING_WEST, 0);
@@ -1308,11 +1309,11 @@ void Madra_MeetKarst(void) {
   Event_ShowMessageAndWait(33, 0);
   Sound_Play(78);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Actor_CommitPositionAndActivate(33, 24, 24);
-  Actor_CommitPositionAndActivate(33, 132, 0);
+  Actor_WalkByAndWaitById(33, 24, 24);
+  Actor_WalkByAndWaitById(33, 132, 0);
   Actor_SetHorizontalPositionWithTerrain(33, 0, 0);
-  Party_PlaySavedMusic();
-  Camera_FollowActor(4, 1);
+  Scene_PlayMusic();
+  FieldCamera_FollowActor(4, 1);
   FieldActor_ShowEmote(6, 0x102, 30);
   Event_ShowMessageAndWait(6, 0);
   SET_MODE(5, 3);
@@ -1320,7 +1321,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   Event_ShowMessageAndWait(5, 0);
   FieldActor_ShowEmote(7, 0x101, 30);
-  Actor_SetAngleToward(7, 4, 0);
+  Actor_FaceActorById(7, 4, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(7, 0, 0);
   SET_MODE(32, 3);
@@ -1330,7 +1331,7 @@ void Madra_MeetKarst(void) {
   Motion_SetVarCbAndRefresh(6, 2);
   Event_Wait(20);
   Event_ShowMessageAndWait(6, 0);
-  Actor_SetAngleToward(5, 6, 0);
+  Actor_FaceActorById(5, 6, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(5, 0);
   SET_MODE(32, 3);
@@ -1340,19 +1341,19 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   Event_ShowMessageAndWait(32, 0);
   FieldActor_ShowEmote(7, 0x101, 20);
-  Actor_SetAngleToward(7, 32, 0);
-  Actor_SetAngleToward(4, 32, 0);
-  Actor_SetAngleToward(6, 32, 0);
-  Actor_SetAngleToward(5, 32, 0);
+  Actor_FaceActorById(7, 32, 0);
+  Actor_FaceActorById(4, 32, 0);
+  Actor_FaceActorById(6, 32, 0);
+  Actor_FaceActorById(5, 32, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(7, 0, 0);
-  Actor_SetAngleToward(32, 7, 0);
+  Actor_FaceActorById(32, 7, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(32, 0);
-  Actor_SetAngleToward(6, 5, 0);
+  Actor_FaceActorById(6, 5, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(6, 0);
-  Actor_SetPartAttribute(Actor_GetById(5), 10);
+  Actor_SetSpriteColor(Actor_GetById(5), 10);
   Event_ShowMessageAndWait(5, 0);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Event_Wait(20);
@@ -1363,26 +1364,26 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   Actor_FaceDirectionAndWait(32, FACING_SOUTH);
   Event_ShowMessageAndWait(32, 0);
-  Actor_SetPartAttribute(Actor_GetById(5), 0);
+  Actor_SetSpriteColor(Actor_GetById(5), 0);
   Event_Wait(20);
   FieldActor_ShowEmote(5, 0x100, 30);
-  Actor_SetAngleToward(5, 32, 0);
+  Actor_FaceActorById(5, 32, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(5, 0);
   FieldActor_ShowEmote(6, 0x108, 30);
   Event_ShowMessageAndWait(6, 0);
-  Actor_SetPartAttribute(Actor_GetById(5), 10);
-  Actor_SetAngleToward(5, 6, 0);
+  Actor_SetSpriteColor(Actor_GetById(5), 10);
+  Actor_FaceActorById(5, 6, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(5, 0);
   Motion_SetVarCbAndRefresh(32, 2);
   Event_Wait(20);
   Event_ShowMessageAndWait(32, 0);
-  Actor_SetPartAttribute(Actor_GetById(5), 0);
-  Actor_SetAngleToward(4, 32, 0);
-  Actor_SetAngleToward(5, 32, 0);
-  Actor_SetAngleToward(6, 32, 0);
-  Actor_SetAngleToward(7, 32, 0);
+  Actor_SetSpriteColor(Actor_GetById(5), 0);
+  Actor_FaceActorById(4, 32, 0);
+  Actor_FaceActorById(5, 32, 0);
+  Actor_FaceActorById(6, 32, 0);
+  Actor_FaceActorById(7, 32, 0);
   Event_Wait(40);
   SET_MODE(32, 3);
   Event_Wait(20);
@@ -1410,7 +1411,7 @@ void Madra_MeetKarst(void) {
   SET_MODE(32, 3);
   Event_Wait(20);
   Event_Wait(20);
-  Actor_ArmCallbackAndRefresh(32, FACING_EAST);
+  Actor_FaceDirectionById(32, FACING_EAST);
   Event_ShowMessageAndWait(32, 0);
   SET_MODE(4, 3);
   Event_Wait(20);
@@ -1431,32 +1432,29 @@ void Madra_MeetKarst(void) {
   SET_MODE(32, 2);
   object = Actor_GetById(4);
   if (object != NULL)
-    Actor_ResetAndSetPosition(32, ((s16 *)&object->x)[1],
-                              ((s16 *)&object->z)[1]);
+    Actor_SetDestinationById(32, ((s16 *)&object->x)[1],
+                             ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(32);
   Actor_SetHorizontalPositionWithTerrain(32, 0, 0);
   Actor_SetSpeed(5, 0x00013333, 0x9999);
   SET_MODE(5, 2);
   object = Actor_GetById(4);
   if (object != NULL)
-    Actor_ResetAndSetPosition(5, ((s16 *)&object->x)[1],
-                              ((s16 *)&object->z)[1]);
+    Actor_SetDestinationById(5, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(5);
   Actor_SetHorizontalPositionWithTerrain(5, 0, 0);
   Actor_SetSpeed(6, 0x00013333, 0x9999);
   SET_MODE(6, 2);
   object = Actor_GetById(4);
   if (object != NULL)
-    Actor_ResetAndSetPosition(6, ((s16 *)&object->x)[1],
-                              ((s16 *)&object->z)[1]);
+    Actor_SetDestinationById(6, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(6);
   Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
   Actor_SetSpeed(7, 0x00013333, 0x9999);
   SET_MODE(7, 2);
   object = Actor_GetById(4);
   if (object != NULL)
-    Actor_ResetAndSetPosition(7, ((s16 *)&object->x)[1],
-                              ((s16 *)&object->z)[1]);
+    Actor_SetDestinationById(7, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(7);
   Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
   GameFlag_SetBit(0x980);

@@ -6,7 +6,7 @@ gData_080eedbc:
 	.global gData_080eef34
 gData_080eef34:
 	.incbin "games/tla/src/field/event_commands/world_encounters_2.table"
-@ 80 rows of two arguments for Encounter_GetDjinnEnemyGroup.
+@ 80 rows of two arguments for Encounter_GetDjinnFormation.
 	.global gEncounter_AreaEntryTable
 gEncounter_AreaEntryTable:
 	.incbin "games/tla/src/field/event_commands/encounter_areas.table"

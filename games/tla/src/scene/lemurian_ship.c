@@ -17,7 +17,12 @@
 #include "module/scene/lemurian_ship.h"
 #include "module/scene/scene.h"
 
-/* VIEW(scene_tables): variable gData_0200312c as extern u8 gData_0200312c[]; the definition has s16 gData_0200312c[] = { 0, - 1, 72, 0, 72, 0x4000, 0, - 1, - 1, - 1, - 1, 0, 1, - 1, 72, 0, 72, 0x4000, 0, 8, 16, 248, 256, 0, 2, - 1, 168,...; tried as the definition's extern u32 gData_0200312c[], it does not compile in tla-ja: games/tla/src/scene/lemurian_ship.c:1671: conflicting types for `gData_0200312c'. */
+/* VIEW(scene_tables): variable gData_0200312c as extern u8 gData_0200312c[];
+ * the definition has s16 gData_0200312c[] = { 0, - 1, 72, 0, 72, 0x4000, 0, -
+ * 1, - 1, - 1, - 1, 0, 1, - 1, 72, 0, 72, 0x4000, 0, 8, 16, 248, 256, 0, 2, -
+ * 1, 168,...; tried as the definition's extern u32 gData_0200312c[], it does
+ * not compile in tla-ja: games/tla/src/scene/lemurian_ship.c:1671: conflicting
+ * types for `gData_0200312c'. */
 extern u8 gData_0200312c__scene_tables[] __asm__("gData_0200312c");
 
 u8 *Scene_GetEntrances(void) {
@@ -43,16 +48,33 @@ u8 *Scene_GetRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 // ---- games/tla/src/scene/lemurian_ship/s00b8.c ----
-// Scene code of overlay 0x656, in ROM order, from s00b8's offset up to the next object the overlay links.
+// Scene code of overlay 0x656, in ROM order, from s00b8's offset up to the next
+// object the overlay links.
 
-/* VIEW(s00b8): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct LemurianShipObject *object, u32 value); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); tried as the 35 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/src/scene/lemurian_ship/lemurian_ship.h:72: conflicting types for `Actor_SetSingleChildFlags'. */
+/* VIEW(s00b8): routine Actor_SetSingleChildFlags as void
+ * Actor_SetSingleChildFlags(struct LemurianShipObject *object, u32 value);
+ * field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+ * tried as the 35 declarations' void Actor_SetSingleChildFlags(struct
+ * FieldEffect *effect, s32 flags), it does not compile in tla-ja:
+ * games/tla/src/scene/lemurian_ship/lemurian_ship.h:72: conflicting types for
+ * `Actor_SetSingleChildFlags'. */
 struct LemurianShipObject;
-extern void Actor_SetSingleChildFlags__s00b8(struct LemurianShipObject *object, u32 value) __asm__("Actor_SetSingleChildFlags");
+extern void Actor_SetSingleChildFlags__s00b8(
+    struct LemurianShipObject *object,
+    u32 value) __asm__("Actor_SetSingleChildFlags");
 #define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__s00b8
-/* VIEW(s00b8): routine Animation_SetStateFlags as void Animation_SetStateFlags(struct LemurianShipObject *object, s32 flags); field.h has void Animation_SetStateFlags(struct Actor *object, u32 value); tried as the definition's void Animation_SetStateFlags(struct Actor *object, u32 value), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/lemurian_ship/lemurian_ship.h:73: conflicting types for `Animation_SetStateFlags'. */
+/* VIEW(s00b8): routine Actor_SetBlendMode as void
+ * Actor_SetBlendMode(struct LemurianShipObject *object, s32 flags);
+ * field.h has void Actor_SetBlendMode(struct Actor *object, u32 value);
+ * tried as the definition's void Actor_SetBlendMode(struct Actor *object,
+ * u32 value), which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/lemurian_ship/lemurian_ship.h:73: conflicting types for
+ * `Actor_SetBlendMode'. */
 struct LemurianShipObject;
-extern void Animation_SetStateFlags__s00b8(struct LemurianShipObject *object, s32 flags) __asm__("Animation_SetStateFlags");
-#define Animation_SetStateFlags Animation_SetStateFlags__s00b8
+extern void
+Animation_SetStateFlags__s00b8(struct LemurianShipObject *object,
+                               s32 flags) __asm__("Actor_SetBlendMode");
+#define Actor_SetBlendMode Animation_SetStateFlags__s00b8
 #include "types.h"
 #include "system.h"
 #include "main_routine_work.h"
@@ -120,10 +142,9 @@ void Event_Start(void);
 void Event_End(void);
 void Func_02002dc0(const void *script);
 void Func_02002bf0(struct LemurianShipObject *object, s32 mode);
-void Actor_SetSingleChildFlags(struct LemurianShipObject *object,
-                                        u32 value);
-void Animation_SetStateFlags(struct LemurianShipObject *object, s32 flags);
-void Field_DispatchTypeHandler(s32 type);
+void Actor_SetSingleChildFlags(struct LemurianShipObject *object, u32 value);
+void Actor_SetBlendMode(struct LemurianShipObject *object, s32 flags);
+void FieldPsynergy_RunHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
@@ -132,8 +153,7 @@ void Event_StartScreenTransition(void);
 
 void Actor_MoveToObject(s32 actor, s32 target);
 
-#define LEMURIAN_SHIP_TASK_ADD(func, priority)                                 \
-  Task_Add((func), (priority))
+#define LEMURIAN_SHIP_TASK_ADD(func, priority) Task_Add((func), (priority))
 
 void Map_CenterOnFollowedPoint(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
@@ -161,7 +181,7 @@ void LemurianShip_FindMonstersAboard(void);
 void Actor_StartScript(struct LemurianShipObject *object, const void *script);
 void Func_02002dc8(const void *script);
 extern u32 gData_02003ef8[];
-#undef Animation_SetStateFlags
+#undef Actor_SetBlendMode
 #undef Actor_SetSingleChildFlags
 #include "event_inline.h"
 #include "version.h"
@@ -327,7 +347,7 @@ void Func_02000438(void) {
     x = leader->x;
     cell = x >> 16;
     Actor_SetMoveTarget(leader, ((8 - cell % 16) << 16) + x, leader->y, leader->z);
-    Actor_WaitForMove(leader);
+    FieldActor_WaitForMove(leader);
     leader->facing = 0xc000;
     Actor_SetScript(party->currentOwner,
                                             gData_02002de8);
@@ -524,17 +544,19 @@ void Func_02000870(void) {
       Event_Wait(20);
       MapGrid_SetShake(0, 0, 0);
       MapGrid_CopyCellsTo(68, 68, 50, 64, 3, 3);
-      { s32 two = 2;
-      *state = two;
-      Event_Wait(20);
-      Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x6000, 20);
-      Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
-      Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
-      Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 840, 88);
-      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x8000);
-      Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 9);
-      helper->field48 = 0x10000;
-      helper->field22 = two; }
+      {
+        s32 two = 2;
+        *state = two;
+        Event_Wait(20);
+        Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x6000, 20);
+        Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
+        Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+        Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 840, 88);
+        Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x8000);
+        Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 9);
+        helper->field48 = 0x10000;
+        helper->field22 = two;
+      }
       Actor_Jump(9, 4, 0);
       Actor_MoveToAndWait(9, 832, 74);
       Actor_Jump(9, 4, 0);
@@ -588,7 +610,7 @@ void Func_02000af4(void) {
   void name(s32 id) {                                                          \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    Actor_SetAngleToward(id, gMainRoutineWork.currentOwner, 0);                \
+    Actor_FaceActorById(id, gMainRoutineWork.currentOwner, 0);                \
     Actor_StartRepeatedMotion(id, 2);                                          \
     Actor_SetAttachedEffect(id, 0x102);                                        \
     Event_Wait(20);                                                            \
@@ -640,7 +662,7 @@ void Func_02000d44(void) {
   Actor_RunScriptAndWait(8, gData_02002e9c);
 
   gMainRoutineWork.battleRule24b = 2;
-  Party_SetFields1eeAnd1f0((s32)&SceneId_Ov656Room2, 15);
+  Event_SetAfterBattleDestination((s32)&SceneId_Ov656Room2, 15);
   Field_RequestBattleFromEncounterTable(11, 1);
   Event_SetFlag(0x30f);
 }
@@ -762,11 +784,11 @@ DEFINE_FUNC_020010D8(Func_020010d8, 8, 0x204)
 DEFINE_FUNC_020010D8(Func_020010f8, 9, 0x205)
 
 void Func_02001118(void) {
-  Actor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(10)), 0);
+  FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(10)), 0);
 }
 
 void Func_02001128(void) {
-  Actor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(11)), 0);
+  FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(11)), 0);
 }
 
 /// 2 copies: lemurian_ship, lemurian_ship.
@@ -789,7 +811,7 @@ void Func_02001128(void) {
       wait(1);                                                                 \
     }                                                                          \
     Actor_SetSpritePriority(n1, 2);                                            \
-    Map_CopyCellPictureIndicesRect(4, 123, n4, 69, 1, 1);                      \
+    MapGrid_CopyCellPictureIndicesRect(4, 123, n4, 69, 1, 1);                      \
     MapGrid_CopyCellAttributes(36, 0, 1, 1, n4, 9);                            \
     Sound_Play(188);                                                           \
     MapGrid_CopyCellsTo(7, 124, 31, 64, 3, 2);                                 \
@@ -802,10 +824,12 @@ DEFINE_FUNC_02001138(Func_02001138, 8, 0x202, 0x204, 35)
 
 DEFINE_FUNC_02001138(Func_020011f4, 9, 0x203, 0x205, 29)
 
-/// Places the leader and object 64 304 pixels back along z (Actor_SetHorizontalPositionWithTerrain),
-/// lets the camera follow the leader, starts a blend and sets flag 0x9e4.
+/// Places the leader and object 64 304 pixels back along z
+/// (Actor_SetHorizontalPositionWithTerrain), lets the camera follow the leader,
+/// starts a blend and sets flag 0x9e4.
 void Func_020012b4(void) {
-  struct LemurianShipObject *leader = ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner));
+  struct LemurianShipObject *leader = ((
+      struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner));
   struct LemurianShipObject *object;
 
   Event_Start();
@@ -814,9 +838,9 @@ void Func_020012b4(void) {
   Actor_SetPosition(gMainRoutineWork.currentOwner, leader->x, leader->z + 0xfed00000);
   object = ((struct LemurianShipObject *)Actor_GetById(64));
   Actor_SetPosition(64, object->x, object->z + 0xfed00000);
-  Actor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(64)), 0);
+  FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(64)), 0);
   wait(10);
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 0);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
   wait(1);
   MapGrid_CopyCellAttributes(6, 0, 1, 2, 6, 4);
   Map_CenterOnFollowedPoint();
@@ -948,7 +972,6 @@ void Func_020015c8(void) {
     Actor_StartScript(object, gData_02003ef8);
   }
 }
-
 
 /// The scene that clears the ship and sets its flags.
 /// "How did all these monsters get on board?"
@@ -1377,7 +1400,8 @@ void Func_02001e0c(void) {
 }
 
 void Func_020023f8(void) {
-  struct LemurianShipObject *leader = ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner));
+  struct LemurianShipObject *leader = ((
+      struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner));
 
   Actor_SetSpritePriority(8, leader->sprite->priority);
 }
@@ -1390,7 +1414,8 @@ void Func_0200241c(void) {
 }
 
 void Func_0200245c(s32 id) {
-  struct LemurianShipObject *object = ((struct LemurianShipObject *)Actor_GetById(id));
+  struct LemurianShipObject *object =
+      ((struct LemurianShipObject *)Actor_GetById(id));
 
   ((struct LemurianShipObject *)Actor_GetById(id))->priorityFlags |= 0x20;
   Actor_SetSpritePriority(id, 1);
@@ -1519,7 +1544,7 @@ void Func_02002820(void) {
         PIXELS(-32), PIXELS(392));
     object->height = 0xfff00000;
     Actor_SetSpritePriority(64, 3);
-    Actor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(64)), 1);
+    FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(64)), 1);
     Actor_SetPosition(8, 0, 0);
     Actor_SetPosition(9, 0, 0);
     Actor_SetPosition(10, 0, 0);
@@ -1534,10 +1559,10 @@ void Func_02002820(void) {
 
     Actor_SetPosition(64, marker->x,
                                            marker->z + 0xfed00000);
-    Actor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(64)), 0);
+    FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(64)), 0);
     MapGrid_CopyCellAttributes(6, 0, 1, 2, 6, 4);
     MapGrid_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
-    Camera_FollowActor(gMainRoutineWork.currentOwner, 0);
+    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
     Map_CenterOnFollowedPoint();
     wait(1);
   }
@@ -1560,7 +1585,8 @@ void Func_02002970(void) {
     Event_SetFlag(0x202);
     Event_SetFlag(0x203);
   }
-  Actor_SetSingleChildFlags__s00b8(((struct LemurianShipObject *)Actor_GetById(8)), 0);
+  Actor_SetSingleChildFlags__s00b8(
+      ((struct LemurianShipObject *)Actor_GetById(8)), 0);
   if (Event_GetFlag(0x202)) {
     object = ((struct LemurianShipObject *)Actor_GetById(8));
     MapGrid_CopyCellsTo(35, 68, 35, 69, 1, 1);
@@ -1601,10 +1627,10 @@ void Func_02002970(void) {
   Func_02002db8(gData_02003014);
   FieldTask_AddFrame(Func_02001464, 0x480);
   if (!Event_GetFlag(0x210))
-    Actor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(10)),
+    FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(10)),
                            15);
   if (!Event_GetFlag(0x211))
-    Actor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(11)),
+    FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(11)),
                            15);
   LEMURIAN_SHIP_TASK_ADD(Func_0200155c, 0x480);
 }

@@ -74,13 +74,14 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size,
 void WindowSystem_InitField(void) {
   struct WindowWork *work;
 
-  work = (struct WindowWork *)HeapSlot_AllocEwram(
-      60, sizeof(struct WindowWork));
+  work =
+      (struct WindowWork *)HeapSlot_AllocEwram(60, sizeof(struct WindowWork));
   Iwram_ClearWordsEntry(work, sizeof(struct WindowWork));
   work->dirty = 1;
   work->glyphResource = 99;
   work->level = 15;
-  FillWords(Iwram_FillWordsEntry, work->tilemap, sizeof(work->tilemap), 0xf000f000);
+  FillWords(Iwram_FillWordsEntry, work->tilemap, sizeof(work->tilemap),
+            0xf000f000);
   WindowSprite_InitializeFreeList();
   Portrait_ClearSlots();
   Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_FRAME);
@@ -98,8 +99,8 @@ void WindowSystem_InitBattle(s32 kind) {
     return Iwram_ClearWordsEntry((void *)(0x0600000c + dst * 32), 20);
   }
 
-  work = (struct WindowWork *)HeapSlot_AllocEwram(
-      60, sizeof(struct WindowWork));
+  work =
+      (struct WindowWork *)HeapSlot_AllocEwram(60, sizeof(struct WindowWork));
   Iwram_ClearWordsEntry(work, sizeof(struct WindowWork));
   work->dirty = 1;
   work->glyphResource = 99;
@@ -148,8 +149,7 @@ void WindowSystem_UploadTilemap(void) {
 }
 
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
-  struct WindowWork *canvas =
-      (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u16 *cursor = &canvas->tilemap[y][x];
   s32 tile;
   u32 bottom;
@@ -231,8 +231,7 @@ void Window_DrawOpened(struct Window *window) {
 /// Opens the first free window at x, y with width and height; attrs bits 8,
 /// 32, 64, 128 and 0x100 become window flags, and bit 2 draws it at once
 /// instead of waiting for it to open.
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                 s32 attrs) {
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
   struct Window *slot;
   struct Window *found;
   s32 i;
@@ -296,7 +295,6 @@ void Window_WaitZoom(void *work) {
   }
 }
 
-
 void WindowSprite_PrepareForRedraw(struct Window *work);
 void WindowSprite_RedrawSavedRect(struct Window *window);
 
@@ -316,7 +314,7 @@ void Window_Close(struct Window *work, s32 release) {
 
   if (release != 0) {
     Window_EraseBorderRect((s16)work->x, (s16)work->y, work->width,
-                             work->height);
+                           work->height);
     work->output.head = NULL;
     work->output.tailLink = NULL;
     work->width = zero;
@@ -407,8 +405,8 @@ void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
    * s32, though it returns nothing, so the call sets r0 and the scheduler
    * sets r1 and r2 before r0; as void, 2 of 69 instructions differ in
    * tla-en. */
-  ((s32(*)(s32, s32, u32, u32))Window_ClearTextTilesInRect)(left, top, width,
-                                                            height);
+  ((s32 (*)(s32, s32, u32, u32))Window_ClearTextTilesInRect)(left, top, width,
+                                                             height);
   tiles = work->tilemap[0] + top * 32 + left;
   for (row = 0; row < height; row++) {
     for (left = 0; left < width; left++)
@@ -454,7 +452,7 @@ void WindowSprite_AppendToList(struct WindowSpriteList *list,
 void WindowSprite_Release(struct WindowSprite *entry) {
   WindowSprite_ReleaseFree(entry);
   if ((u8)entry->kind != 0) {
-    Resource_ResetEntry((u8)entry->index);
+    VramCache_FreeEntry((u8)entry->index);
     if ((u8)entry->kind == 2) {
       u8 *dst = (u8 *)Ram_HeapSlots->windowTiles;
       s32 idx = entry->sprite.oam.palette * 2 + UI_PALETTE_OWNER_OFFSET;
@@ -513,8 +511,8 @@ void Text_StartCanvasScroll(struct UiChannelSlot *channel);
 /// its last line (scrolling up once both lines are used) unless keepPosition
 /// is set. Returns the channel, or NULL when all three are busy.
 // As ☀️'s BattleMessage_Continue.
-struct UiChannelSlot *BattleMessage_Continue(struct Window *window,
-                                                s32 entry, s32 keepPosition) {
+struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
+                                             s32 keepPosition) {
   struct UiChannelSlot *slot;
   struct UiChannelSlot *selected;
   u16 *spacing;

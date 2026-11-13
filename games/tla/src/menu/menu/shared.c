@@ -16,7 +16,7 @@ s32 GameFlag_SetBit(s32 flag_no);
 
 void Menu_ResumeFieldTasks(void) {
   Task_ResumeOverlayTasks();
-  Map_DisableUpdateCallbackFar();
+  TilesetAnim_ResumeAllFar();
   GameFlag_ClearBit(0x166);
   GameFlag_ClearBit(0x152);
 }
@@ -24,7 +24,7 @@ void Menu_ResumeFieldTasks(void) {
 s32 Menu_SuspendFieldTasks(void) {
   GameFlag_SetBit(0x152);
   GameFlag_SetBit(0x166);
-  Map_EnableUpdateCallbackFar();
+  TilesetAnim_SuspendAllFar();
   return Task_SuspendOverlayTasks();
 }
 
@@ -147,7 +147,8 @@ static inline void RestoreUnit(struct BattleUnit *unit,
 /// unless mode has STATUS_PANEL_LOWER_ONLY, the portrait it creates replaces
 /// the work's cursor. The equipment panel equips the item on the real unit for
 /// a moment and puts the unit back from a heap copy it frees before returning.
-void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
+void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
+                      s32 mode) {
   s32 created;
   struct ItemDefinition *def;
   u32 item;
@@ -175,26 +176,26 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot, s32 mode)
       Window_ClearInteriorTilesFar(state->statusWindow, 0, 0, 88, 32);
     }
     Text_DrawStringAtOffsetFar(unit->name, (s32)window, STATUS_PANEL_NAME_X, 0);
-    CharacterMenu_BuildAvailability(ailments, 1, owner);
+    StatusScreen_BuildAvailability(ailments, 1, owner);
     ailmentRows = 0;
     if (ailments[1]) {
       Text_DrawMessageAsTilesFar(MESSAGE_POISON_LABEL, window,
-                                    STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
+                                 STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[2]) {
       Text_DrawMessageAsTilesFar(MESSAGE_VENOM_LABEL, window,
-                                    STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
+                                 STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[3]) {
       Text_DrawMessageAsTilesFar(MESSAGE_CURSE_LABEL, window,
-                                    STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
+                                 STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[4]) {
       Text_DrawMessageAsTilesFar(MESSAGE_HAUNT_LABEL, window,
-                                    STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
+                                 STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailmentRows < 2) {
@@ -263,7 +264,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot, s32 mode)
   case STATUS_PANEL_EQUIP + 1:
     if (!Item_CanUnitEquip(owner, item)) {
       Text_DrawMessageAsTilesFar(MESSAGE_CANNOT_EQUIP, window,
-                                    STATUS_PANEL_CANNOT_EQUIP_X, 48);
+                                 STATUS_PANEL_CANNOT_EQUIP_X, 48);
       break;
     }
     backup = Heap_Alloc(sizeof(struct BattleUnit));
@@ -291,14 +292,14 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot, s32 mode)
     }
     if (known) {
       Text_DrawMessageAsTilesFar(psynergy + MESSAGE_ABILITY_NAME, window, 0,
-                                    STATUS_PANEL_LEARN_NAME_Y);
+                                 STATUS_PANEL_LEARN_NAME_Y);
       Text_DrawMessageAsTilesFar(MESSAGE_LEARNED, window, 0,
-                                    STATUS_PANEL_LEARN_NOTE_Y);
+                                 STATUS_PANEL_LEARN_NOTE_Y);
     } else {
       Text_DrawMessageAsTilesFar(psynergy + MESSAGE_ABILITY_NAME, window, 0,
-                                    STATUS_PANEL_LEARN_NAME_Y);
+                                 STATUS_PANEL_LEARN_NAME_Y);
       Text_DrawMessageAsTilesFar(MESSAGE_WILL_LEARN, window, 0,
-                                    STATUS_PANEL_LEARN_NOTE_Y);
+                                 STATUS_PANEL_LEARN_NOTE_Y);
     }
     break;
   }
@@ -441,12 +442,13 @@ void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window) {
 #endif
 }
 
-s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 variant);
+s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
+                               s32 variant);
 
 void Text_DrawStatComparison(const struct BattleUnit *alt,
                              const struct BattleUnit *base, s32 work) {
-  Text_DrawMessageAsTilesFar((s32)MsgPanelStatLabel,
-                                (struct RenderInput *)work, 0, 32);
+  Text_DrawMessageAsTilesFar((s32)MsgPanelStatLabel, (struct RenderInput *)work,
+                             0, 32);
   Text_DrawNumberAtOffsetFar(base->atk, 3, work, 16, 40);
   if (alt->atk != base->atk) {
     Text_DrawNumberAtOffsetFar(alt->atk, 3, work, 64, 40);
@@ -457,7 +459,7 @@ void Text_DrawStatComparison(const struct BattleUnit *alt,
     }
   }
   Text_DrawMessageAsTilesFar((s32)MsgPanelDefenseLabel,
-                                (struct RenderInput *)work, 0, 48);
+                             (struct RenderInput *)work, 0, 48);
   Text_DrawNumberAtOffsetFar(base->def, 3, work, 16, 56);
   if (alt->def != base->def) {
     Text_DrawNumberAtOffsetFar(alt->def, 3, work, 64, 56);
@@ -467,8 +469,8 @@ void Text_DrawStatComparison(const struct BattleUnit *alt,
       Icon_CreateStatChangeArrow(work, 44, 52, 1);
     }
   }
-  Text_DrawMessageAsTilesFar((s32)MsgAgilityLabel,
-                                (struct RenderInput *)work, 0, 64);
+  Text_DrawMessageAsTilesFar((s32)MsgAgilityLabel, (struct RenderInput *)work,
+                             0, 64);
   Text_DrawNumberAtOffsetFar(base->agi, 3, work, 16, 72);
   if (alt->agi != base->agi) {
     Text_DrawNumberAtOffsetFar(alt->agi, 3, work, 64, 72);
@@ -480,12 +482,12 @@ void Text_DrawStatComparison(const struct BattleUnit *alt,
   }
 }
 
-s32 Icon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y) {
+s32 Icon_CreateWithResource(struct RenderInput *window, s32 x, s32 y) {
   s32 slot;
   s32 icon;
 
   icon = 0;
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   if (slot != 0) {
     VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiIconTiles);
     icon = (s32)WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, x, y);
@@ -522,9 +524,9 @@ extern char ResourceId_ShopDownArrowTiles;
 /// Opens the menu's top-left window (13 by 5 tiles) with a divider, puts the
 /// hand cursor in it, hidden, and adds the up and down arrow icons at its right
 /// edge when a VRAM entry is free. Returns the window.
-// The twin of The Broken Seal's MenuCursor_Create, which has no divider or
+// The twin of The Broken Seal's routine, which has no divider or
 // arrows.
-struct RenderInput *Func_080f88d0(struct OwnerMenuState *work) {
+struct RenderInput *MenuCursor_Create(struct OwnerMenuState *work) {
   struct RenderInput *window;
   struct WindowSprite *icon;
   s32 zero = 0;
@@ -535,7 +537,7 @@ struct RenderInput *Func_080f88d0(struct OwnerMenuState *work) {
   Window_UpdateOrCreate((s32 *)&work->auxiliaryWindow, 0, 0, 13, 5, 2);
   window = work->auxiliaryWindow;
   Window_DrawDividerLineFar((s32)window, 0, 3, 12, 3);
-  icon = (struct WindowSprite *)Icon_CreateWithResourceVariant(window, -8, 11);
+  icon = (struct WindowSprite *)Icon_CreateWithResource(window, -8, 11);
   icon->active = 13;
   work->tabIndex[0] = 255;
   work->sideIcon[0] = icon;
@@ -544,14 +546,14 @@ struct RenderInput *Func_080f88d0(struct OwnerMenuState *work) {
   sentinel -= 255;
   work->tabIndex[1] = zero;
   work->sideIcon[1]->sentinel = sentinel;
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   if (slot <= 95) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopUpArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, -4);
     icon->active = 13;
     work->arrows[0] = icon;
   }
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   if (slot <= 95) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopDownArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, 8);
@@ -561,7 +563,7 @@ struct RenderInput *Func_080f88d0(struct OwnerMenuState *work) {
   return window;
 }
 
-void Func_080f89a4(void) {
+void Menu_PlacePartyFigures(void) {
   struct OwnerMenuState *menu =
       (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
   struct SpriteScale scale;
@@ -587,21 +589,21 @@ void Func_080f89a4(void) {
   }
 }
 
-extern u8 gUiMenu_CursorBobX[];
-extern u8 gUiMenu_CursorBobY[];
+extern u8 gMenuCursor_BobX[];
+extern u8 gMenuCursor_BobY[];
 
 #define CURSOR_BOB_STEP() ((gFrameCount >> 1) & 7)
 
 /// Places the hand cursor at (xOffset, yOffset) inside the menu's window,
-/// bobbing; the twin of The Broken Seal's MenuCursor_Position.
-void Func_080f8a44(s32 xOffset, s32 yOffset) {
+/// bobbing; the twin of The Broken Seal's routine.
+void MenuCursor_Position(s32 xOffset, s32 yOffset) {
   struct OwnerMenuState *work =
       (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
   struct WindowSprite *cursor = work->sideIcon[0];
 
-  cursor->sprite.oam.x = cursor->x = gUiMenu_CursorBobX[CURSOR_BOB_STEP()] +
+  cursor->sprite.oam.x = cursor->x = gMenuCursor_BobX[CURSOR_BOB_STEP()] +
                                      xOffset + work->auxiliaryWindow->x * 8 + 8;
-  cursor->sprite.oam.y = cursor->y = gUiMenu_CursorBobY[CURSOR_BOB_STEP()] +
+  cursor->sprite.oam.y = cursor->y = gMenuCursor_BobY[CURSOR_BOB_STEP()] +
                                      yOffset + work->auxiliaryWindow->y * 8 + 8;
 }
 
@@ -662,11 +664,13 @@ void MenuCursor_Slide(s32 x, s32 y) {
   } while (steps != 0);
 }
 
-void PsynergyMenu_RefreshOwnerEntries(s32 x, s32 y, s32 width);
+void PsynergyMenu_RefreshMemberEntries(s32 x, s32 y, s32 width);
 
-void Func_080f8bbc(void) { PsynergyMenu_RefreshOwnerEntries(108, 40, 8); }
+void PsynergyMenu_RefreshMemberEntriesDefault(void) {
+  PsynergyMenu_RefreshMemberEntries(108, 40, 8);
+}
 
-void PsynergyMenu_RefreshOwnerEntries(s32 originX, s32 originY, s32 columns) {
+void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
   struct WindowSprite **slot;
   struct WindowSprite **scan;
   s32 index;
@@ -676,15 +680,15 @@ void PsynergyMenu_RefreshOwnerEntries(s32 originX, s32 originY, s32 columns) {
   scan = slot;
   do {
     if (*scan++ != NULL) {
-      PsynergyMenu_PositionOwnerEntry(slot, index, originX, originY, columns);
+      PsynergyMenu_PositionMemberEntry(slot, index, originX, originY, columns);
     }
     index++;
     slot++;
   } while (index <= 0x1F);
 }
 
-void PsynergyMenu_PositionOwnerEntry(struct WindowSprite **slot, s32 index,
-                                     s32 originX, s32 originY, s32 columns) {
+void PsynergyMenu_PositionMemberEntry(struct WindowSprite **slot, s32 index,
+                                      s32 originX, s32 originY, s32 columns) {
   struct WindowSprite *object;
 
   if (index > 0x1F) {
@@ -751,7 +755,7 @@ void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top, s32 *width,
 /// for A, B or Start and clears it again.
 // As The Broken Seal's ItemMenu_ShowMessage: in Japanese its first
 // form, from patch 1 its TBS_PATCH_1 form less the redraw after the wait.
-void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
+void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
   struct RenderInput *window;
   s32 height;
@@ -804,7 +808,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
 
 void Menu_CopyListOrder(s32 mode, u8 *order);
 
-s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode) {
+s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
   u16 sorted[16];
   u16 items[16];
   u8 order[32];
@@ -1013,8 +1017,8 @@ void Palette_LightenHighlight(s32 paletteNumber) {
 #define PAGE_CAP_LEFT 0xf128
 #define PAGE_CAP_RIGHT 0xf129
 
-void Menu_DrawPageIndicator(s32 window, s32 itemCount, s32 pageSize,
-                            s32 selectedPage, s32 rightEdge) {
+void PagedList_DrawPageNumbers(s32 window, s32 itemCount, s32 pageSize,
+                               s32 selectedPage, s32 rightEdge) {
   s32 pageCount;
   s32 page;
   s32 x;
@@ -1083,7 +1087,7 @@ void Render_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
   }
 }
 
-void Palette_CopyObjectBankToBackground14(void) {
+void Palette_LoadIconsIntoHighlight(void) {
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),
@@ -1117,10 +1121,10 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
   }
 }
 
-void Text_DrawWorkValueWithLabel(s32 work) {
+void Menu_DrawCoins(s32 work) {
   Text_DrawNumberAtOffsetFar(gMainRoutineWork.coins, 7, work, 8, 0);
   Text_DrawMessageAsTilesFar((s32)MsgCoinsLabel, (struct RenderInput *)work,
-                                0x40, 0);
+                             0x40, 0);
 #if (LANGUAGE == LANGUAGE_JAPANESE)
   Window_DrawDividerLineFar(work, 12, 0, 12, 2);
 #endif
@@ -1184,12 +1188,12 @@ void Menu_UpdateCancelSound(void) {
     ;
 }
 
-void Menu_CancelSoundReset(void) {
+void Menu_StartWatchingStart(void) {
   GameFlag_ClearBit(0x150);
   Task_Add((s32)Menu_UpdateCancelSound, TASK_PASS_VBLANK);
 }
 
-void Menu_EnsureCancelSound(void) {
+void Menu_StopWatchingStart(void) {
   if (GameFlag_Test(0x150) == 0) {
     Task_Remove((u32)((s32)Menu_UpdateCancelSound));
   }

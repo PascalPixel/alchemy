@@ -154,10 +154,12 @@ void NaribweInteriors_TalkToFortuneTeller(void) {
   message = MsgIAmA;
   FieldEvent_SetMessageId((s32)message);
   Event_OpenMessage(10, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+      0) {
     FieldEvent_SetMessageId((s32)(message + 2));
     Event_OpenMessage(10, 0);
-    if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+    if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+        0) {
       if ((u32)gMainRoutineWork.coins > 19) {
         NaribweInteriors_ReadFortune();
         Event_End();
@@ -181,7 +183,7 @@ void NaribweInteriors_ReadShiningItem(void);
 
 /// Object 10 steps to (x, 96) without turning, then dances (mode 5).
 #define DANCE_TO(x)                                                            \
-  (Actor_Get(10)->actionFlags &= ~1, Actor_WalkTo(10, x, 96),              \
+  (Actor_Get(10)->actionFlags &= ~1, Actor_WalkTo(10, x, 96),                  \
    Actor_SetAnimation(10, 5))
 
 /// The reading: the party sets one of a member's items on the table and the
@@ -216,7 +218,8 @@ ask:
     refuse = MsgShallIGive;
     FieldEvent_SetMessageId(refuse);
     Event_OpenMessage(10, 0);
-    if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) != 1)
+    if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) !=
+        1)
       goto ask;
     FieldEvent_SetMessageId(refuse + 1);
     Event_ShowMessage(10, 0);
@@ -232,14 +235,16 @@ ask:
   message = MsgAreYouPrepared;
   FieldEvent_SetMessageId(message);
   Event_OpenMessage(10, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) != 1)
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) !=
+      1)
     goto read;
   Actor_SetPosition(18, 0, 0);
   MessageArgument_Push(unitData->items[slot], 2);
   Message_ShowCentered(message + 1, 1);
   FieldEvent_SetMessageId(message + 2);
   Event_OpenMessage(10, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) != 1)
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) !=
+      1)
     goto ask;
   FieldEvent_SetMessageId(message + 3);
   Event_ShowMessage(10, 0);
@@ -798,7 +803,7 @@ s32 Scene_Initialize(void) {
 
   Actor_SetSingleChildFlags(Actor_Get(19), 0);
   Actor_SetSingleChildFlags(Actor_Get(20), 0);
-  Actor_SetSpriteColor(Actor_Get(20), 4);
+  FieldActor_SetSpriteColor(Actor_Get(20), 4);
   return 0;
 }
 

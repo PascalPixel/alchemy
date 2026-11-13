@@ -48,9 +48,9 @@ s32 Func_080cec24(s32 value, s32 *out) {
   return Func_080ca9cc(value, out);
 }
 
-void Func_080d3b28(s32 id, s32 item);
+void Actor_ShowItemIconById(s32 id, s32 item);
 
-void Func_080cec34(void) {
+void Field_PlaceTreasureSpots(void) {
   s16 *rows = Func_080ceba8();
   struct SceneItemWork *work = Ram_HeapSlots->eventWork;
   s32 i;
@@ -89,7 +89,7 @@ void Func_080cec34(void) {
         buried = 1;
         kind = 489;
       }
-      object = Func_080200c0(kind, position[0], position[1], position[2]);
+      object = Actor_CreateFar(kind, position[0], position[1], position[2]);
       if (object != NULL) {
         if (work->mode == 3) {
           object->motionFlags = 2;
@@ -131,7 +131,7 @@ void Func_080cec34(void) {
         object->collisionFlags = 1;
         work->objects[i] = object;
         if (type == 131)
-          Func_080d3b28(i + 64, item);
+          Actor_ShowItemIconById(i + 64, item);
         if (type == 133)
           object->collisionFlags = 0;
       }
@@ -145,7 +145,8 @@ void Func_080cec34(void) {
   } while (!(type & 0x4000));
 }
 
-/* VIEW(field_sequence): tag struct ObjectSprite as struct ObjectSprite__field_sequence; module/field/field.h has another definition. */
+/* VIEW(field_sequence): tag struct ObjectSprite as struct
+ * ObjectSprite__field_sequence; module/field/field.h has another definition. */
 struct ObjectSprite__field_sequence {
   u8 unk00[5];
   u8 attr0High;

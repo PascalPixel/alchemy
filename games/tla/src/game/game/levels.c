@@ -15,7 +15,7 @@ struct AbilityDefinition *Ability_GetDirect(s32 abilityId) {
 
   if (entryIndex > 0x2de)
     entryIndex = 0;
-  return (struct AbilityDefinition *)&gBattleAction_DefinitionTable[entryIndex];
+  return (struct AbilityDefinition *)&gAbilityDefinitions[entryIndex];
 }
 
 s32 Party_FindOwnerWithAction(s32 action) {
@@ -200,7 +200,7 @@ struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,
   return Unit_TryLevelUp(unitId, gains);
 }
 
-extern struct OwnerGrowthRecord gOwner_GrowthRecords[8];
+extern struct OwnerGrowthRecord gCharacter_DefinitionTable[8];
 
 struct OwnerGrowthRecord *Character_GetDefinition(s32 index) {
   s32 stride = sizeof(struct OwnerGrowthRecord);
@@ -210,7 +210,7 @@ struct OwnerGrowthRecord *Character_GetDefinition(s32 index) {
    * before the table's address is loaded from the pool; as no asm, 2 of 5
    * instructions differ in tla-en. */
   asm("" : : "r"(stride));
-  base = (u8 *)gOwner_GrowthRecords;
+  base = (u8 *)gCharacter_DefinitionTable;
   /* FAKEMATCH(barrier): the row width and the table held at an empty asm, so
    * both are live before the row offset is multiplied; as no asm, 2 of 5
    * instructions differ in tla-en. */
@@ -280,7 +280,7 @@ void Party_InitializeCharacters(void) {
 /// Unused: reserved entry; keeps its place in the far-call table.
 void Unit_LevelNoOp(void) {}
 
-extern u32 gOwner_ExperienceThresholds[];
+extern u32 gCharacter_LevelExpTable[];
 
 /// Experience required per level: eight characters, 99 levels each.
 u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
@@ -291,7 +291,7 @@ u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
       return 0;
     }
     if (level <= 99 && state->enemyId <= 7) {
-      u32 *table = gOwner_ExperienceThresholds;
+      u32 *table = gCharacter_LevelExpTable;
       s32 row = state->enemyId * 99 + level;
       s32 offset;
 
@@ -396,9 +396,8 @@ struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains) {
   return 0;
 }
 
-/// Level up one level at a time until the target, recalculating stats each time.
-/// unit: character ID.
-/// lv: target level.
+/// Level up one level at a time until the target, recalculating stats each
+/// time. unit: character ID. lv: target level.
 void Unit_LevelUpTo(s32 unit, s32 lv) {
   u8 res[16]; // Receives struct LevelUpResult (unused).
   s32 cur = ((struct BattleUnit *)Unit_Get(unit))->level;

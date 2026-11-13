@@ -23,8 +23,6 @@ void Func_02005164(struct SpawnObject *object, s32 mode);
 extern u32 gData_0200545c[];
 s32 Func_02001344();
 
-s32 Func_020052bc();
-
 void Func_020004cc(void);
 void Func_02000808(void);
 

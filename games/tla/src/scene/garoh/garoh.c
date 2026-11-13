@@ -195,7 +195,7 @@ loop:
   Event_PlaySound(158);
   index--;
   MapGrid_AnimateCells(gData_02005de0[index].data, gData_02005de0[index].a,
-                 gData_02005de0[index].b);
+                       gData_02005de0[index].b);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   {
@@ -218,7 +218,8 @@ void Func_02000580(s32 actor) {
 
   FieldEvent_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+      0) {
     FieldEvent_Wait(10);
     FieldEvent_SetMessageId(msg + 1);
   } else {
@@ -233,7 +234,8 @@ void Func_020005cc(s32 actor) {
 
   FieldEvent_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+      0) {
     FieldEvent_Wait(10);
     FieldEvent_SetMessageId(msg + 1);
   } else {
@@ -248,7 +250,8 @@ void Func_02000618(s32 actor) {
 
   FieldEvent_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+      0) {
     FieldEvent_Wait(10);
     FieldEvent_SetMessageId(msg + 1);
   } else {
@@ -354,7 +357,7 @@ void Func_02000808(void) {
     speed = 0x4000;
     Actor_SetPositionAndFacing(22, PIXELS(360), PIXELS(199), speed);
     FieldCamera_MoveTo(PIXELS(359), -1, PIXELS(220), 1);
-    Func_020052b4();
+    FieldCamera_WaitForArrival();
     Func_020007a0(22);
     FieldEvent_Wait(30);
     Actor_SetPositionAndFacing(21, PIXELS(360), PIXELS(199), speed);
@@ -531,7 +534,6 @@ void Func_02000be4(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
 
 void Func_02000d30(void) {
   s32 t4;

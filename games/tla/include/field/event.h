@@ -47,6 +47,8 @@ s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 void FieldEffect_SetAttached(s32 actorId, s32 effect);
 void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 pan);
+void FieldCamera_MoveToActorById(s32 actorId, s32 glide);
+void FieldCamera_WaitForArrival(void);
 void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x,
                        s32 dst_y);
 void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,

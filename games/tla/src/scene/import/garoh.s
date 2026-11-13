@@ -206,13 +206,13 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_020052b4
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_020052b4:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
-	.global Func_020052bc
+	.global FieldCamera_MoveToActorById
 	.thumb_func
-Func_020052bc:
+FieldCamera_MoveToActorById:
 	overlay_veneer Func_080c8248
 	.global Import_EventSetExitRequest
 	.thumb_func

@@ -117,7 +117,7 @@ struct WindowSprite *CreateSideObject(s32 objectKind, s32 position, s32 side,
   }
 
   slot = 14 + side;
-  UiGlyph_LoadEntryWithPalette(id, position, &first, &second, slot, 0);
+  Icon_LoadWithPalette(id, position, &first, &second, slot, 0);
   object = WindowSprite_Create(first, OUTPUT_SIZE_32X32,
                                (struct RenderInput *)arg3, arg4, arg5);
   if (object != 0) {
@@ -157,7 +157,7 @@ void Portrait_Reload(u32 slot, s32 key, s32 unused) {
   palette = slot;
   cached = *(u16 *)((u8 *)work + (slot * 2 + offset));
   entry = cached;
-  UiGlyph_LoadEntryWithPalette(id, unused, &entry, &tile, palette + 14, 1);
+  Icon_LoadWithPalette(id, unused, &entry, &tile, palette + 14, 1);
 }
 
 /// Sets active to mode and resets the animation step (animStep) to zero.

@@ -234,7 +234,12 @@ struct WorkspaceWork {
   struct WindowSprite *frame[3][3];
 };
 
-struct RenderInput *Menu_OpenWorkspaceOptions(void) {
+/// Opens the settings menu's window: the labels, the hue and brightness
+/// sliders with their markers, the cursor and the setting icons. Returns the
+/// window. Its sprites belong to the window and go when it closes. A
+/// slider's marker stands option * 60 / count pixels right of
+/// OPTION_SLIDER_X.
+struct RenderInput *SettingsMenu_Open(void) {
   struct WorkspaceWork *work;
   struct RenderInput *win;
   struct WindowSprite *out;
@@ -249,19 +254,19 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
   Window_DrawDividerLine((struct Window *)win, 0, 7, OPTION_DIVIDER_END, 7);
   Window_DrawDividerLine((struct Window *)win, 0, 10, OPTION_DIVIDER_END, 10);
   msg = (s32)&MsgWindowColorLabel;
-  Text_DrawCharacterAtOffset(msg, win, 8, 0);
+  Text_DrawMessageAsTiles(msg, win, 8, 0);
   msg++;
-  Text_DrawCharacterAtOffset(msg, win, 8, 16);
+  Text_DrawMessageAsTiles(msg, win, 8, 16);
 #if (LANGUAGE != LANGUAGE_JAPANESE)
   msg = (s32)&MsgMessageSpeedLabel;
-  Text_DrawCharacterAtOffset(msg, win, 8, 32);
+  Text_DrawMessageAsTiles(msg, win, 8, 32);
   msg++;
-  Text_DrawCharacterAtOffset(msg, win, 32, 40);
+  Text_DrawMessageAsTiles(msg, win, 32, 40);
 #else
-  Text_DrawCharacterAtOffset((s32)&MsgMessageSpeedLabel, win, 8, 40);
+  Text_DrawMessageAsTiles((s32)&MsgMessageSpeedLabel, win, 8, 40);
 #endif
-  Text_DrawCharacterAtOffset((s32)MsgSpeechLabel, win, 8, 64);
-  Text_DrawCharacterAtOffset((s32)MsgAutoSleepLabel, win, 8, 88);
+  Text_DrawMessageAsTiles((s32)MsgSpeechLabel, win, 8, 64);
+  Text_DrawMessageAsTiles((s32)MsgAutoSleepLabel, win, 8, 88);
 
   out = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(), 0x40000000,
                             win, 0, 0);
@@ -388,7 +393,7 @@ extern const u8 gOptionMenu_FirstColorPresets[],
 
 void SettingsMenu_InitializeWork(void);
 void SettingsMenu_Release(void);
-struct RenderInput *Menu_OpenWorkspaceOptions(void);
+struct RenderInput *SettingsMenu_Open(void);
 void Func_0803f9c0(s32 hue, s32 brightness);
 struct WindowSprite *
 RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y);
@@ -422,7 +427,7 @@ s32 SettingsMenu_Run(void) {
   SettingsMenu_InitializeWork();
   work = Ram_HeapSlots->unkd0[0];
   helpWindow = Window_Create(HELP_WINDOW_X, 2, HELP_WINDOW_WIDTH, 3, 2);
-  settingsWindow = Menu_OpenWorkspaceOptions();
+  settingsWindow = SettingsMenu_Open();
   pair = RenderResource_CreatePair(SETTINGS_HEADING, settingsWindow, 64, -48);
   wait(1);
   hue = &work->option[0];
@@ -485,15 +490,15 @@ s32 SettingsMenu_Run(void) {
       x = work->option[2] + (s32)MsgKey113b;
       Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
                                 40, FIRST_CHOICE_RIGHT, 48);
-      Text_DrawCharacterAtOffset(x, settingsWindow, CHOICE_X, 40);
+      Text_DrawMessageAsTiles(x, settingsWindow, CHOICE_X, 40);
       x = work->option[3] + (s32)MsgKey1141;
       Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
                                 64, CHOICE_RIGHT, 72);
-      Text_DrawCharacterAtOffset(x, settingsWindow, CHOICE_X, 64);
+      Text_DrawMessageAsTiles(x, settingsWindow, CHOICE_X, 64);
       x = work->option[4] + (s32)MsgKey1144;
       Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
                                 88, CHOICE_RIGHT, 96);
-      Text_DrawCharacterAtOffset(x, settingsWindow, CHOICE_X, 88);
+      Text_DrawMessageAsTiles(x, settingsWindow, CHOICE_X, 88);
       Func_0803f9c0(*hue, *brightness);
 
       x = (s16)settingsWindow->x * 8;
@@ -590,14 +595,21 @@ void PauseMenu_AnimateCursor(void) {
   WindowSprite_Pulse((void *)work->values[work->page]);
 }
 
-void Func_080405dc(void) {
+/// Allocates the Pause menu's work block and starts its per-frame task.
+/// The Pause menu shares the settings menu's heap slot and cannot run
+/// concurrently: PauseMenu_Choose frees it before
+/// PauseMenu_Run opens the settings menu. The task runs in the
+/// frame pass.
+void PauseMenu_Initialize(void) {
   void *work = HeapSlot_AllocEwram(208, 0x628);
 
   Dma_Fill32(0, work, 0x628);
   Task_Add(PauseMenu_AnimateCursor, TASK_PASS_VBLANK);
 }
 
-void Func_08040614(void) {
+/// Stops the Pause menu's per-frame task and frees its work block.
+/// The task goes first, since it reads the work block.
+void PauseMenu_Release(void) {
   Task_Remove(PauseMenu_AnimateCursor);
   HeapSlot_Release(208);
 }
@@ -697,8 +709,8 @@ struct WorkspaceChoiceScreen {
 extern const s8 gMenu_WorkspaceIcons[];
 
 s32 GameFlag_Test(s32 flag);
-void Func_080405dc(void);
-void Func_08040614(void);
+void PauseMenu_Initialize(void);
+void PauseMenu_Release(void);
 struct RenderInput *PauseMenu_Open(void);
 struct WindowSprite *
 RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y);
@@ -710,7 +722,12 @@ void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
 
 #define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
 
-s32 Func_08040798(s32 initial) {
+/// Runs the Pause menu until the player picks an entry (enum
+/// PauseMenuEntry) or cancels with B or START (-1).
+/// The result counts in the full entry table even when only Change settings is
+/// shown. The menu's window and work block are freed before it returns;
+/// PauseMenu_Run (screens/debug.c) acts on the result.
+s32 PauseMenu_Choose(s32 initial) {
   struct RenderInput *window;
   s32 redraw;
   struct WindowSprite *pair;
@@ -735,7 +752,7 @@ s32 Func_08040798(s32 initial) {
   rows = 3;
   settingsOnly = GameFlag_Test(0x17e);
   first = 0;
-  Func_080405dc();
+  PauseMenu_Initialize();
   work = Ram_HeapSlots->unkd0[0];
   wait(1);
   window = PauseMenu_Open();
@@ -816,7 +833,7 @@ s32 Func_08040798(s32 initial) {
     }
   }
   Window_Close((struct Window *)window, 2);
-  Func_08040614();
+  PauseMenu_Release();
   wait(1);
   if (result >= 0)
     result += first;

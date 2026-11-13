@@ -55,15 +55,15 @@ struct WindowSprite *
 WindowSprite_CreateFromResourceFar(s32 arg0, s32 arg1, struct RenderInput *arg2,
                                    s32 arg3, s32 arg4);
 #endif
-void Resource_ScheduleOwnerReset(void);
+void SelectionMenu_StopDrawing(void);
 void *Text_FormatPlayTime(s32, u8 *);
 void Window_HighlightRectFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Icon_PrepareActor(struct WindowSprite *icon);
 #ifndef OWN_UiTextResource_Initialize
-void UiTextResource_Initialize(struct Actor_0801c0dc *obj, s32 *slot);
+void MenuArrow_Create(struct Actor_0801c0dc *obj, s32 *slot);
 #endif
 #ifndef OWN_UiTextResource_SetPosition
-void UiTextResource_SetPosition(struct Obj *obj, s32 arg1, s32 arg2);
+void MenuArrow_SetPosition(struct Obj *obj, s32 arg1, s32 arg2);
 #endif
 void Window_SetTilemapEntryFar(s32, s32, s32, s32, s32);
 

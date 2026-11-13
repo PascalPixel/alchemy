@@ -277,7 +277,7 @@ void DjinnMenu_ShowCurrentList(void) {
   Sound_PlayFar(112);
   redraw = 1;
   WindowSprite_RedrawSavedRectFar(menu->helpWindow);
-  Text_DrawCharacterAtOffsetFar(MsgButtonReturn, menu->helpWindow, 0, 16);
+  Text_DrawMessageAsTilesFar(MsgButtonReturn, menu->helpWindow, 0, 16);
   Text_DrawMessageFar(MsgCurrentDjinn, menu->helpWindow, -96, 132);
   menu->arrows[0]->active = 13;
   menu->arrows[1]->active = 13;
@@ -303,7 +303,7 @@ void DjinnMenu_ShowCurrentList(void) {
           if (GameFlag_Test(djinn + 48)) {
             Window_SetTilemapEntryFar(window, element + 0x1001,
                                         element * 7 + 1, row + 1, 0);
-            Text_DrawCharacterAtOffsetFar(djinn + MsgDjinnName, window,
+            Text_DrawMessageAsTilesFar(djinn + MsgDjinnName, window,
                                             element * 56 + 16, row * 8 + 8);
           }
         }
@@ -407,12 +407,12 @@ s32 PartyMemberChooser_RunRearrange(void) {
   while (!GameFlag_Test(0x150)) {
     if (redraw) {
       WindowSprite_RedrawSavedRectFar(menu->selectorWindow);
-      Text_DrawCharacterAtOffsetFar(MsgRearrangeHelp, menu->selectorWindow, 0,
+      Text_DrawMessageAsTilesFar(MsgRearrangeHelp, menu->selectorWindow, 0,
                                     0);
       if (GameFlag_Test(55))
-        Text_DrawCharacterAtOffsetFar(MsgDjinnListHelp, menu->selectorWindow, 0,
+        Text_DrawMessageAsTilesFar(MsgDjinnListHelp, menu->selectorWindow, 0,
                                       16);
-      Text_DrawCharacterAtOffsetFar(MsgRearrangeHelp - 3, menu->selectorWindow,
+      Text_DrawMessageAsTilesFar(MsgRearrangeHelp - 3, menu->selectorWindow,
                                     0, 8);
       ownerIndex = (ownerIndex + ownerCount) % ownerCount;
       Unit_Get(menu->ownerIds[ownerIndex]);
@@ -508,9 +508,9 @@ s32 PsynergyMenu_ChooseMember(void) {
 
   Unit_Get(menu->ownerIds[selection]);
   WindowSprite_RedrawSavedRectFar(menu->messageWindow);
-  Text_DrawCharacterAtOffsetFar((s32)MsgChooseCharacter, menu->messageWindow, 0,
+  Text_DrawMessageAsTilesFar((s32)MsgChooseCharacter, menu->messageWindow, 0,
                                 0);
-  Text_DrawCharacterAtOffsetFar((s32)MsgChooseCharacter + 1,
+  Text_DrawMessageAsTilesFar((s32)MsgChooseCharacter + 1,
                                 menu->messageWindow, 0, 16);
   while (1) {
     // PERM
@@ -746,9 +746,9 @@ s32 StatusScreen_SelectCommand(void) {
         if (pane == 0) {
           selected = (selected + limit) % limit;
           if (hasAilments == 0) {
-            Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 1, window, 0,
+            Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 1, window, 0,
                                           -24);
-            Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window,
+            Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, window,
                                           SWITCH_CHARACTER_HELP_X, -24);
           }
         } else {
@@ -1020,13 +1020,13 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
     Window_SetTilemapEntryFar(window, 4, 27, djinnRow, 4);
   }
   if (hasDjinn)
-    Text_DrawCharacterAtOffsetFar(MsgDjinnLabel, window, 64, djinnRow * 8 + 8);
+    Text_DrawMessageAsTilesFar(MsgDjinnLabel, window, 64, djinnRow * 8 + 8);
   if (mode == 1) {
     if (!hasDjinn)
       djinnRow--;
     DRAW_LEVEL_LABEL(gMenu_LvString, window, 64, djinnRow * 8 + 16);
-    Text_DrawCharacterAtOffsetFar(MsgPowerLabel, window, 64, djinnRow * 8 + 24);
-    Text_DrawCharacterAtOffsetFar(MsgPowerLabel + 1, window, 64,
+    Text_DrawMessageAsTilesFar(MsgPowerLabel, window, 64, djinnRow * 8 + 24);
+    Text_DrawMessageAsTilesFar(MsgPowerLabel + 1, window, 64,
                                   djinnRow * 8 + 32);
   }
   for (element = 0; element <= 3; element++) {
@@ -1090,7 +1090,7 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags) {
   if (flags == 0)
     Window_ClearInteriorTilesFar(window, 0, 0, 128, 40);
   Text_DrawStringAtOffsetFar(unit->name, window, 40, 0);
-  Text_DrawCharacterAtOffsetFar(unit->classIndex + (s32)MsgClassName, window,
+  Text_DrawMessageAsTilesFar(unit->classIndex + (s32)MsgClassName, window,
                                   0, 32);
   DRAW_STAT_LABEL(gMenu_LvString, window, 104, 0);
   Text_SetColorFar(15);
@@ -1103,16 +1103,16 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags) {
   Text_DrawNumberInWindowFar(unit->pp, 4, window, 72, 24);
   Text_DrawNumberInWindowFar(unit->maxPp, 4, window, 112, 24);
   Text_DrawStringInWindowFar(gMenu_SlashString, window, 104, 24);
-  Text_DrawCharacterAtOffsetFar((s32)MsgExpLabel, window, 40, 8);
+  Text_DrawMessageAsTilesFar((s32)MsgExpLabel, window, 40, 8);
   Text_DrawNumberInWindowFar(unit->experience, 8, window, 80, 8);
   if (flags == 0) {
     wait(1);
     Window_ClearInteriorTilesFar(window, 144, 0, 224, 40);
   }
-  Text_DrawCharacterAtOffsetFar((s32)MsgExpLabel - 23, window, 152, 0);
-  Text_DrawCharacterAtOffsetFar((s32)MsgExpLabel - 22, window, 152, 8);
-  Text_DrawCharacterAtOffsetFar((s32)MsgExpLabel - 21, window, 152, 16);
-  Text_DrawCharacterAtOffsetFar((s32)MsgExpLabel - 20, window, 152, 24);
+  Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 23, window, 152, 0);
+  Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 22, window, 152, 8);
+  Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 21, window, 152, 16);
+  Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 20, window, 152, 24);
   Text_DrawNumberInWindowFar(unit->atk, STAT_DIGITS, window, STAT_X, 0);
   Text_DrawNumberInWindowFar(unit->def, STAT_DIGITS, window, STAT_X, 8);
   Text_DrawNumberInWindowFar(unit->agi, STAT_DIGITS, window, STAT_X, 16);
@@ -1308,7 +1308,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
             (s32)MsgAbilityDescription,
         (s32)menu->infoWindow, 0, 0);
 #else
-    Text_DrawCharacterAtOffsetFar(
+    Text_DrawMessageAsTilesFar(
         (menu->psynergies[state->selectedIndex] & ACTION_ID_MASK) +
             (s32)MsgAbilityDescription,
         (s32)menu->infoWindow, 0, 0);
@@ -1323,15 +1323,15 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
     // sentence on the line below them.
     if (ability->unk04[2] != 0 ||
         (ability->flags & ACTION_USABLE_IN_FIELD) != 0) {
-      Text_DrawCharacterAtOffsetFar(MSG_USABLE_IN_FIELD, window, 0, USABLE_TOP);
+      Text_DrawMessageAsTilesFar(MSG_USABLE_IN_FIELD, window, 0, USABLE_TOP);
       row = 1;
     }
     if ((ability->flags & ACTION_USABLE_IN_BATTLE) != 0) {
-      Text_DrawCharacterAtOffsetFar(MSG_USABLE_IN_BATTLE, window, 0,
+      Text_DrawMessageAsTilesFar(MSG_USABLE_IN_BATTLE, window, 0,
                                     row * 8 + USABLE_TOP);
       row++;
     }
-    Text_DrawCharacterAtOffsetFar(MSG_CAN_BE_USED, window, 0,
+    Text_DrawMessageAsTilesFar(MSG_CAN_BE_USED, window, 0,
                                   row * 8 + USABLE_TOP);
 #else
     if (ability->unk04[2] != 0 ||
@@ -1342,13 +1342,13 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
       row |= 1;
     }
     if (row == 3) {
-      Text_DrawCharacterAtOffsetFar((s32)MsgUsableAnywhere, window, 0,
+      Text_DrawMessageAsTilesFar((s32)MsgUsableAnywhere, window, 0,
                                     USABLE_TOP);
     } else if (row == 2) {
-      Text_DrawCharacterAtOffsetFar((s32)MsgUsableInField, window, 0,
+      Text_DrawMessageAsTilesFar((s32)MsgUsableInField, window, 0,
                                     USABLE_TOP);
     } else if (row == 1) {
-      Text_DrawCharacterAtOffsetFar((s32)MsgUsableInBattle, window, 0,
+      Text_DrawMessageAsTilesFar((s32)MsgUsableInBattle, window, 0,
                                     USABLE_TOP);
     }
 #endif
@@ -1452,7 +1452,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
   Menu_SetPageIcons(PAGE_ROWS, first, window, PAGE_ICONS_X, PAGE_ICONS_Y);
   Menu_DrawPageIndicator(window, res->entryCount, PAGE_ROWS, res->page, 28);
 
-  Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyChooseTarget + 2, window,
+  Text_DrawMessageAsTilesFar((s32)MsgPsynergyChooseTarget + 2, window,
                                   HEADING_X, 0);
 
   row = 0;
@@ -1468,7 +1468,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
           (*(u16 *)(offset + (s32)menu) & ACT_ID_MASK) + (s32)MsgAbilityNothing;
       y = row * 16 + FIRST_ROW_Y;
 
-      Text_DrawCharacterAtOffsetFar(msg, window, NAME_X, y);
+      Text_DrawMessageAsTilesFar(msg, window, NAME_X, y);
       Text_DrawNumberAtOffsetFar(act->ppCost, 2, window, COST_X, y);
 
       range = act->range;
@@ -1485,12 +1485,12 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
   }
 
   if (menu->psynergyCount == 0) {
-    Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyChooseForR - 1, window, 96,
+    Text_DrawMessageAsTilesFar((s32)MsgPsynergyChooseForR - 1, window, 96,
                                     EMPTY_MESSAGE_Y);
   }
 
   Text_DrawStringAtOffsetFar(owner, window, 40, 0);
-  Text_DrawCharacterAtOffsetFar(
+  Text_DrawMessageAsTilesFar(
       owner[OWNER_CLASS_MSG_OFFSET] + (s32)MsgClassName, window, 0, 32);
   // Spanish and French draw the level label at an offset, as the owner's name.
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
@@ -1546,8 +1546,8 @@ s32 Func_080ffcd4(void) {
   listNeedsRedraw = 1;
   Window_UpdateOrCreate(&menu->infoWindow, 0, 0, 30, 5, 2);
   Menu_SpawnIconEntries(menu, menu->messageWindow);
-  Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 2, window, 0, -24);
-  Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 64, -24);
+  Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 2, window, 0, -24);
+  Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, window, 64, -24);
   Menu_BuildPatternTiles();
   while (!GameFlag_Test(0x150)) {
     if (refresh) {
@@ -1568,8 +1568,8 @@ s32 Func_080ffcd4(void) {
 #if TLA_PATCH_2
       // German, Spanish, French and Italian draw the help again after each
       // page.
-      Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 2, window, 0, -24);
-      Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 64, -24);
+      Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 2, window, 0, -24);
+      Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, window, 64, -24);
 #endif
       refresh = 0;
     }
@@ -1668,7 +1668,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
                                (s32)MsgItemPlainName,
                            menu->infoWindow, 0, 0);
 #else
-    Text_DrawCharacterAtOffsetFar(
+    Text_DrawMessageAsTilesFar(
         (menu->items[state->selectedIndex] & ITEM_ID_MASK) + MsgItemPlainName,
         menu->infoWindow, 0, 0);
 #endif
@@ -1783,14 +1783,14 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct MenuResult *state) {
   Menu_SetPageIcons(PAGE_ROWS, firstEntry, window, PAGE_ICONS_X, 52);
   Menu_DrawPageIndicator(window, state->entryCount, PAGE_ROWS, state->page, 28);
   if (menu->itemCount == 0) {
-    Text_DrawCharacterAtOffsetFar(MsgItemMenuEmpty, window, EMPTY_MESSAGE_X,
+    Text_DrawMessageAsTilesFar(MsgItemMenuEmpty, window, EMPTY_MESSAGE_X,
                                     8);
   } else {
     rowIndex = 0;
     if (rowCount > rowIndex) {
       inventoryEntry = &menu->items[firstEntry];
       do {
-        Text_DrawCharacterAtOffsetFar(
+        Text_DrawMessageAsTilesFar(
             (*inventoryEntry & ITEM_ID_MASK) + MsgItemName, window, ITEM_NAME_X,
             (rowIndex << 4) + 8);
         rowIndex = (u8)(rowIndex + 1);
@@ -1800,8 +1800,8 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct MenuResult *state) {
   }
   Text_DrawStringAtOffsetFar(unit->name, window, 40, 0);
   message = MsgStatLabel;
-  Text_DrawCharacterAtOffsetFar(message, window, 32, 16);
-  Text_DrawCharacterAtOffsetFar(message + 1, window, 32, 24);
+  Text_DrawMessageAsTilesFar(message, window, 32, 16);
+  Text_DrawMessageAsTilesFar(message + 1, window, 32, 24);
   Text_DrawNumberInWindowFar(unit->atk, 3, window, STAT_X, 16);
   Text_DrawNumberInWindowFar(unit->def, 3, window, STAT_X, 24);
   return 1;
@@ -1860,8 +1860,8 @@ s32 ItemMenu_SelectItem(void) {
   owner = Unit_Get(menu->paneOwner[0]);
   Window_UpdateOrCreate(&menu->equipWindow, 0, 10, EQUIP_WINDOW_WIDTH, 10, 2);
   Menu_SpawnIconEntries(menu, menu->messageWindow);
-  Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 3, window, 0, -24);
-  Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 64, -24);
+  Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 3, window, 0, -24);
+  Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, window, 64, -24);
   while (!GameFlag_Test(0x150)) {
     if (refresh) {
       if (refresh == 2) {
@@ -1884,8 +1884,8 @@ s32 ItemMenu_SelectItem(void) {
       }
       ItemMenu_DrawEquipPage(window, 0, &state);
 #if TLA_PATCH_1
-      Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 3, window, 0, -24);
-      Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 64, -24);
+      Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 3, window, 0, -24);
+      Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, window, 64, -24);
 #endif
       refresh = 0;
     }
@@ -1953,10 +1953,10 @@ void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode) {
 
   ItemMenu_PositionCategory();
   ItemMenu_HideAllIcons();
-  Text_DrawCharacterAtOffsetFar(MsgEquipSlotLabels, window, 0, 0);
-  Text_DrawCharacterAtOffsetFar(MsgEquipSlotLabels + 1, window, 0, 32);
-  Text_DrawCharacterAtOffsetFar(MsgEquipSlotLabels + 2, window, 0, 16);
-  Text_DrawCharacterAtOffsetFar(MsgEquipSlotLabels + 3, window, 0, 48);
+  Text_DrawMessageAsTilesFar(MsgEquipSlotLabels, window, 0, 0);
+  Text_DrawMessageAsTilesFar(MsgEquipSlotLabels + 1, window, 0, 32);
+  Text_DrawMessageAsTilesFar(MsgEquipSlotLabels + 2, window, 0, 16);
+  Text_DrawMessageAsTilesFar(MsgEquipSlotLabels + 3, window, 0, 48);
   items = (u8 *)menu->items;
   ItemMenu_DrawEquippedItemNames(window, items);
   if (mode == 0) {
@@ -1978,16 +1978,16 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items) {
       item = items[i] & ITEM_ID_MASK;
       switch (Item_Get(item)->type) {
       case 1:
-        Text_DrawCharacterAtOffsetFar(item + MsgItemName, window, 16, 8);
+        Text_DrawMessageAsTilesFar(item + MsgItemName, window, 16, 8);
         break;
       case 2:
-        Text_DrawCharacterAtOffsetFar(item + MsgItemName, window, 16, 56);
+        Text_DrawMessageAsTilesFar(item + MsgItemName, window, 16, 56);
         break;
       case 3:
-        Text_DrawCharacterAtOffsetFar(item + MsgItemName, window, 16, 40);
+        Text_DrawMessageAsTilesFar(item + MsgItemName, window, 16, 40);
         break;
       case 4:
-        Text_DrawCharacterAtOffsetFar(item + MsgItemName, window, 16, 24);
+        Text_DrawMessageAsTilesFar(item + MsgItemName, window, 16, 24);
         break;
       }
     }

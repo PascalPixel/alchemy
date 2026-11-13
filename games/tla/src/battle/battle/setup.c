@@ -79,9 +79,9 @@ void Func_08118bcc(s32 enemyCount) {
     do {
       MessageArgument_PushFar((u16)*enemy++, 1);
       if (announced == enemyCount - 1)
-        Message_ShowAndWaitCoreFar((s32)MsgLastEnemyAppeared);
+        BattleMessage_ShowAndWaitFar((s32)MsgLastEnemyAppeared);
       else
-        Message_ShowAndWaitCoreFar((s32)MsgEnemyAppeared);
+        BattleMessage_ShowAndWaitFar((s32)MsgEnemyAppeared);
       announced++;
       BattleMessage_WaitForAdvance();
     } while (announced != enemyCount);
@@ -90,11 +90,11 @@ void Func_08118bcc(s32 enemyCount) {
   Window_CloseSharedFar();
   if (battle->encounterMode == 1) {
     MessageArgument_ClearAllFar();
-    Message_ShowAndWaitCoreFar((s32)MsgPartyStrikesFirst);
+    BattleMessage_ShowAndWaitFar((s32)MsgPartyStrikesFirst);
     BattleMessage_WaitForAdvance();
   } else if (battle->encounterMode == 2) {
     MessageArgument_ClearAllFar();
-    Message_ShowAndWaitCoreFar((s32)MsgPartySurprised);
+    BattleMessage_ShowAndWaitFar((s32)MsgPartySurprised);
     BattleMessage_WaitForAdvance();
   }
 }

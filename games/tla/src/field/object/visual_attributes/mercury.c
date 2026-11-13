@@ -45,7 +45,7 @@ struct CaptureResource {
 /* VIEW(f0d8740): routine Actor_GetById as struct CaptureObject__f0d8740 *Actor_GetById(s32 id); mars_join has struct Actor *Actor_GetById(u32 objectId). */
 extern struct CaptureObject__f0d8740 *Actor_GetById__f0d8740(s32 id) __asm__("Actor_GetById");
 void BattleEffect_InitializeSlots(void);
-void Shop_RestoreSceneTilesFar(s32 value);
+void Shop_SaveAndTintFieldPaletteFar(s32 value);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Actor_Jump(s32 id, s32 height, s32 frames);
 /* VIEW(f0d8740): routine Func_080200c0 as struct CaptureObject__f0d8740 *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
@@ -64,7 +64,7 @@ extern void FieldParticle_SetActorMode__f0d8740(void *slot, s32 mode) __asm__("F
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x, s32 z);
 void FieldParticle_SetCallback(struct FieldParticle *effect, EffectCallback callback);
 void FieldParticle_SetActorMode(struct FieldParticle *effect, s32 mode);
-void Shop_InitializeEffectFar(void);
+void Shop_RestoreFieldPaletteFar(void);
 void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
 
 void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
@@ -93,7 +93,7 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
 
   BattleEffect_InitializeSlots();
   effectSlots = Ram_HeapSlots->effectWork;
-  Shop_RestoreSceneTilesFar(0x204084);
+  Shop_SaveAndTintFieldPaletteFar(0x204084);
   wait(30);
   djinni->visible = 0;
   Sound_PlayFar(173);
@@ -187,7 +187,7 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   }
 
   wait(50);
-  Shop_InitializeEffectFar();
+  Shop_RestoreFieldPaletteFar();
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 

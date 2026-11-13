@@ -359,12 +359,12 @@ void Shop_DrawMoney(void) {
 #if LANGUAGE == LANGUAGE_JAPANESE
     // "Coins" (MsgCoins) after the count, two messages before MsgYourCoins.
     message = (s32)MsgYourCoins;
-    Text_DrawCharacterAtOffsetFar(message, window, 0, 0);
+    Text_DrawMessageAsTilesFar(message, window, 0, 0);
     message -= 2;
     Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, (s32)window, 0, 8);
-    Text_DrawCharacterAtOffsetFar(message, window, 48, 8);
+    Text_DrawMessageAsTilesFar(message, window, 48, 8);
 #else
-    Text_DrawCharacterAtOffsetFar((s32)MsgYourCoins, window, 0, 0);
+    Text_DrawMessageAsTilesFar((s32)MsgYourCoins, window, 0, 0);
     Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, (s32)window, 32, 8);
 #endif
   }
@@ -404,23 +404,23 @@ void Shop_DrawItemPrice(s32 window, s32 itemId, s32 price, s32 priceKind) {
     return;
   goto draw;
 cannot_buy:
-  Text_DrawCharacterAtOffsetFar((s32)MsgCannotBuyThat, window,
+  Text_DrawMessageAsTilesFar((s32)MsgCannotBuyThat, window,
                                   SHOP_PRICE_LABEL_X, 8);
   return;
 not_broken:
-  Text_DrawCharacterAtOffsetFar((s32)MsgNotBroken, window, SHOP_PRICE_LABEL_X,
+  Text_DrawMessageAsTilesFar((s32)MsgNotBroken, window, SHOP_PRICE_LABEL_X,
                                   8);
   return;
 show_price:
   labelMessage = (s32)MsgPrice;
-  Text_DrawCharacterAtOffsetFar(labelMessage, window, SHOP_PRICE_LABEL_X, 8);
+  Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_PRICE_LABEL_X, 8);
   labelMessage -= 3;
   Text_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
-  Text_DrawCharacterAtOffsetFar(labelMessage, window, SHOP_PRICE_COINS_X, 8);
+  Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_PRICE_COINS_X, 8);
   return;
 draw:
   WindowSprite_RedrawSavedRectFar(window);
-  Text_DrawCharacterAtOffsetFar(itemId + (s32)MsgItemName, window, 0, 0);
+  Text_DrawMessageAsTilesFar(itemId + (s32)MsgItemName, window, 0, 0);
   if (price == 0) {
     switch (priceKind) {
     case 1:
@@ -430,7 +430,7 @@ draw:
     }
   }
   if (priceKind == 3)
-    Text_DrawCharacterAtOffsetFar(price + (s32)MsgItemCondition, window, 8,
+    Text_DrawMessageAsTilesFar(price + (s32)MsgItemCondition, window, 8,
                                     8);
   else
     goto show_price;
@@ -462,7 +462,7 @@ void Shop_DrawMessage(s32 win, s32 message) {
     wait(1);
 #endif
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-    Text_DrawCharacterAtOffsetFar(message, win, 0, 0);
+    Text_DrawMessageAsTilesFar(message, win, 0, 0);
 #else
     Text_DrawMessageFar(message, win, 0, 0);
 #endif
@@ -590,11 +590,11 @@ void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId) {
     Text_DrawNumberInWindowFar(without[i], 3, window, 32, i * 16);
     if (without[i] != with[i])
       Text_DrawNumberInWindowFar(with[i], 3, window, 72, i * 16);
-    Text_DrawCharacterAtOffsetFar((s32)MsgShopStatLabel + i, window, 0, i * 16);
+    Text_DrawMessageAsTilesFar((s32)MsgShopStatLabel + i, window, 0, i * 16);
     Window_DrawDividerLineFar(window, 0, i * 2 + 2, 13, i * 2 + 2);
   }
   if (replaced != -1)
-    Text_DrawCharacterAtOffsetFar(replaced + (s32)MsgItemName, window, 0, 48);
+    Text_DrawMessageAsTilesFar(replaced + (s32)MsgItemName, window, 0, 48);
 }
 
 s32 Inventory_FindFar(s32 unitId, s32 item_id);
@@ -616,9 +616,9 @@ void Shop_DrawCarriedItem(struct RenderInput *window, s32 unitId, s32 itemId) {
     if (slot != -1) {
       quantityOffset = slot * 2 + 216;
       MessageArgument_PushFar((*(u16 *)(unitBytes + quantityOffset) >> 11) + 1, 5);
-      Text_DrawCharacterAtOffsetFar((s32)MsgYouHave, window, 0, 0);
+      Text_DrawMessageAsTilesFar((s32)MsgYouHave, window, 0, 0);
     } else {
-      Text_DrawCharacterAtOffsetFar((s32)MsgShopNoneInStock, window, 0, 0);
+      Text_DrawMessageAsTilesFar((s32)MsgShopNoneInStock, window, 0, 0);
     }
     ItemIconGrid_ShowInventory(window, 8, 8, unitId);
   }
@@ -801,12 +801,12 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
 #if LANGUAGE == LANGUAGE_JAPANESE
           // MsgPiece, the counter after the count, written as the message after
           // MsgCoins: the coins label below then shares its literal-pool word.
-          Text_DrawCharacterAtOffsetFar((s32)MsgCoins + 1, window,
+          Text_DrawMessageAsTilesFar((s32)MsgCoins + 1, window,
                                         QUANTITY_PIECE_X, 0);
 #endif
           Text_DrawNumberInWindowFar(price * result, 6, window,
                                      QUANTITY_PRICE_X, 0);
-          Text_DrawCharacterAtOffsetFar((s32)MsgCoins, window, QUANTITY_COINS_X,
+          Text_DrawMessageAsTilesFar((s32)MsgCoins, window, QUANTITY_COINS_X,
                                         0);
         }
         wait(1);

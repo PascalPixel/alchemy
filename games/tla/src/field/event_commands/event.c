@@ -47,7 +47,7 @@ void Leader_StopMoving(void) {
 
 void Event_Start(void) {
   struct EventWork *state = Ram_HeapSlots->eventWork;
-  UiTimedNotice_CloseIfActiveFar();
+  AreaNameWindow_HideFar();
   Leader_StopMoving();
   if (state->actionCounter != 0)
     Event_ResolveAllPendingActions();

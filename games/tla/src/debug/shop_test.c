@@ -641,7 +641,7 @@ struct ItemSummary {
 
 void WindowSprite_PrepareForRedraw(void *window);
 void Text_DrawNumberAtOffset(s32 value, s32 digits, void *window, s32 x, s32 y);
-void Text_DrawCharacterAtOffset(s32 message, void *window, s32 x, s32 y);
+void Text_DrawMessageAsTiles(s32 message, void *window, s32 x, s32 y);
 s32 PartyInventory_HasSpace(void);
 s32 PartyInventory_Add(s32 item);
 void ItemMenu_DrawItemDetails(void *window, s32 item);
@@ -675,7 +675,7 @@ void Func_02000848(void) {
       Text_DrawNumberAtOffset(item, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
         Text_DrawStringInWindow(gData_02000e90, window, 0, 32);
-        Text_DrawCharacterAtOffset((s32)(item + MsgItemName), window, 120, 0);
+        Text_DrawMessageAsTiles((s32)(item + MsgItemName), window, 120, 0);
         Text_DrawMessage((s32)(item + MsgItemPlainName), window, 0, 16);
         ItemMenu_DrawItemDetails(details, item);
       } else {

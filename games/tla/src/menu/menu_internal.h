@@ -286,7 +286,7 @@ struct DjinnUnit {
 void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window);
 void Text_DrawStatComparison(const struct BattleUnit *alt,
                              const struct BattleUnit *base, s32 work);
-void Text_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
+void Text_DrawMessageAsTilesFar(s32 message, struct RenderInput *window,
                                    s32 x, s32 y);
 
 // Tags the parts name in prototypes before the part that defines them.

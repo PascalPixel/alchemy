@@ -362,7 +362,7 @@ void Text_UseExtraTiles(s32 alt) {
   }
 }
 
-void Func_08041c50(void) {}
+void Window_ReservedNoOp(void) {}
 
 /// Draws a divider from (x1, y1) to (x2, y2), one of which must agree,
 /// joining it to the frame and divider tiles already on the tilemap.
@@ -524,13 +524,19 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
   }
 }
 
-void Func_08041f70(s32 param) {
+/// Sets the text colour (0 to 15) of drawn text. The menus colour the HP
+/// figures with it (menu/menu/shared.c, screens/party_status.c), and
+/// set TEXT_COLOR_WHITE back after.
+void Text_SetColor(s32 param) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   work->colour = param & 15;
 }
 
-void Func_08041f90(s32 value) {
+/// Sets the text style (WindowWork.outline) of drawn text: 1 outlined, 2 to
+/// 5 a motion of glyph sprites. Reached only through a bare entry of the
+/// window far-call table.
+void Text_SetStyle(s32 value) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   work->outline = value;
@@ -552,7 +558,12 @@ void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
                               arg3);
 }
 
-void Text_DrawCharacterAtOffset(s32 character, struct RenderInput *position,
+/// Decodes a message and draws it as tiles in a window at pixel (offsetX,
+/// offsetY) of its interior. offsetY is rounded down to a tile row; offsetX
+/// picks the tile, and its remainder is where the text starts in it. As
+/// Text_DrawMessage, it decodes from the ring's start. Nothing is drawn
+/// when the place falls outside the tilemap's 32 by 20 entries.
+void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position,
                                 u32 offsetX, u32 offsetY) {
   s32 byteOffset;
   s32 vramAddress;
@@ -644,7 +655,7 @@ void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
   x >>= 3;
   *output = 0;
   y >>= 3;
-  Text_RenderWideStringInWindow((s16 *)buffer, (struct Window *)arg1, x, y);
+  Text_DrawWideStringInWindow((s16 *)buffer, (struct Window *)arg1, x, y);
   Heap_Release(buffer);
 }
 

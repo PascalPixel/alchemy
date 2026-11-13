@@ -158,17 +158,17 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   Window_UpdateOrCreate(&menu->secondWindow, 15, 5, 15, 15, 2);
   WindowSprite_RedrawSavedRectFar(help);
   if (mode == 2) {
-    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareStandby, help, 96, 0);
-    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, help, 96, 16);
+    Text_DrawMessageAsTilesFar((s32)MsgDjinnCompareStandby, help, 96, 0);
+    Text_DrawMessageAsTilesFar((s32)MsgDjinnCompareConfirm, help, 96, 16);
   } else if (mode == 3) {
-    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareSet, help, 96, 0);
-    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, help, 96, 16);
+    Text_DrawMessageAsTilesFar((s32)MsgDjinnCompareSet, help, 96, 0);
+    Text_DrawMessageAsTilesFar((s32)MsgDjinnCompareConfirm, help, 96, 16);
   } else if (mode == 0) {
-    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareTrade, help, 128, 0);
-    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, help, 128, 8);
+    Text_DrawMessageAsTilesFar((s32)MsgDjinnCompareTrade, help, 128, 0);
+    Text_DrawMessageAsTilesFar((s32)MsgDjinnCompareConfirm, help, 128, 8);
   } else {
-    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareGive, help, 128, 0);
-    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, help, 128, 8);
+    Text_DrawMessageAsTilesFar((s32)MsgDjinnCompareGive, help, 128, 0);
+    Text_DrawMessageAsTilesFar((s32)MsgDjinnCompareConfirm, help, 128, 8);
   }
   row = 0;
   entry0 = menu->pairEntries[0];
@@ -291,10 +291,10 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       if (mode <= 1) {
         Window_ClearInteriorTilesFar(help, 128, 16, 224, 24);
         if (page == 1) {
-          Text_DrawCharacterAtOffsetFar((s32)MsgDjinnStatusHelp, help, 128, 16);
+          Text_DrawMessageAsTilesFar((s32)MsgDjinnStatusHelp, help, 128, 16);
         } else {
           MessageArgument_PushFar(menu->shownMember[page != 2], 1);
-          Text_DrawCharacterAtOffsetFar((s32)MsgDjinnPsyHelp, help, 128, 16);
+          Text_DrawMessageAsTilesFar((s32)MsgDjinnPsyHelp, help, 128, 16);
         }
       }
       work->menuBusy = 1;
@@ -535,9 +535,9 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   helpWindowSlot = &menu->helpWindow;
   WindowSprite_RedrawSavedRectFar(*helpWindowSlot);
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-  Text_DrawCharacterAtOffsetFar((s32)MsgCurrentStatus, menu->statusWindow, 0,
+  Text_DrawMessageAsTilesFar((s32)MsgCurrentStatus, menu->statusWindow, 0,
                                 0);
-  Text_DrawCharacterAtOffsetFar((s32)MsgCurrentStatus + 2, menu->statusWindow,
+  Text_DrawMessageAsTilesFar((s32)MsgCurrentStatus + 2, menu->statusWindow,
                                 0, 16);
   side = 0;
   while (1) {

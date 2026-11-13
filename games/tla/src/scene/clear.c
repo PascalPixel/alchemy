@@ -934,7 +934,7 @@ void Window_DrawDividerLine(struct Window *window, s32 x, s32 y, s32 length,
                             s32 mode);
 void Text_DrawStringInWindow(const u8 *text, struct Window *window, s32 x,
                              s32 y);
-void Text_DrawCharacterAtOffset(s32 message, struct Window *window, s32 x,
+void Text_DrawMessageAsTiles(s32 message, struct Window *window, s32 x,
                                 s32 y);
 void WindowSprite_RedrawSavedRect(struct Window *window);
 void Party_RemoveActiveOwner(s32 id);
@@ -991,24 +991,24 @@ static inline void Cursor_Show(struct ShopCursor *cursor, s32 x, s32 y) {
 #define DRAW_TITLE(window)                                                     \
   {                                                                            \
     message = MSGNO(MsgFieldPasswordKana);                                     \
-    Text_DrawCharacterAtOffset(message++, window, 0, 0);                       \
-    Text_DrawCharacterAtOffset(message++, window, 0, 8);                       \
-    Text_DrawCharacterAtOffset(message++, window, 0, 16);                      \
-    Text_DrawCharacterAtOffset(message++, window, 0, 24);                      \
-    Text_DrawCharacterAtOffset(message++, window, 48, 0);                      \
-    Text_DrawCharacterAtOffset(message++, window, 48, 8);                      \
-    Text_DrawCharacterAtOffset(message++, window, 48, 16);                     \
-    Text_DrawCharacterAtOffset(message++, window, 48, 24);                     \
-    Text_DrawCharacterAtOffset(message++, window, 96, 0);                      \
-    Text_DrawCharacterAtOffset(message++, window, 96, 8);                      \
-    Text_DrawCharacterAtOffset(message++, window, 96, 16);                     \
-    Text_DrawCharacterAtOffset(message++, window, 96, 24);                     \
-    Text_DrawCharacterAtOffset(message++, window, 144, 0);                     \
-    Text_DrawCharacterAtOffset(message++, window, 144, 8);                     \
+    Text_DrawMessageAsTiles(message++, window, 0, 0);                       \
+    Text_DrawMessageAsTiles(message++, window, 0, 8);                       \
+    Text_DrawMessageAsTiles(message++, window, 0, 16);                      \
+    Text_DrawMessageAsTiles(message++, window, 0, 24);                      \
+    Text_DrawMessageAsTiles(message++, window, 48, 0);                      \
+    Text_DrawMessageAsTiles(message++, window, 48, 8);                      \
+    Text_DrawMessageAsTiles(message++, window, 48, 16);                     \
+    Text_DrawMessageAsTiles(message++, window, 48, 24);                     \
+    Text_DrawMessageAsTiles(message++, window, 96, 0);                      \
+    Text_DrawMessageAsTiles(message++, window, 96, 8);                      \
+    Text_DrawMessageAsTiles(message++, window, 96, 16);                     \
+    Text_DrawMessageAsTiles(message++, window, 96, 24);                     \
+    Text_DrawMessageAsTiles(message++, window, 144, 0);                     \
+    Text_DrawMessageAsTiles(message++, window, 144, 8);                     \
     Window_DrawDividerLine(window, 24, 0, 24, 5);                              \
-    Text_DrawCharacterAtOffset(message++, window, 192, 0);                     \
-    Text_DrawCharacterAtOffset(message++, window, 192, 8);                     \
-    Text_DrawCharacterAtOffset(message, window, 192, 24);                      \
+    Text_DrawMessageAsTiles(message++, window, 192, 0);                     \
+    Text_DrawMessageAsTiles(message++, window, 192, 8);                     \
+    Text_DrawMessageAsTiles(message, window, 192, 24);                      \
   }
 #else
 /// Draws the password screen's title and key help into the main window.
@@ -1020,9 +1020,9 @@ static inline void Cursor_Show(struct ShopCursor *cursor, s32 x, s32 y) {
     Text_DrawStringInWindow(gData_0200247c, window, 0, 24);                    \
     message = MSGNO(MsgFieldSpace);                                            \
     Window_DrawDividerLine(window, 20, 0, 20, 5);                              \
-    Text_DrawCharacterAtOffset(message++, window, 160, 0);                     \
-    Text_DrawCharacterAtOffset(message++, window, 160, 8);                     \
-    Text_DrawCharacterAtOffset(message, window, 160, 24);                      \
+    Text_DrawMessageAsTiles(message++, window, 160, 0);                     \
+    Text_DrawMessageAsTiles(message++, window, 160, 8);                     \
+    Text_DrawMessageAsTiles(message, window, 160, 24);                      \
   }
 #endif
 
@@ -1278,7 +1278,7 @@ s32 Func_02000e44(void) {
           crc = check;
           if (DECODED_PASSWORD[size2] == (u16)crc >> 8 &&
               DECODED_PASSWORD[action - 1] == (u16)crc % 256) {
-            Text_DrawCharacterAtOffset(MSGNO(MsgFieldPasswordAccepted), box, 0,
+            Text_DrawMessageAsTiles(MSGNO(MsgFieldPasswordAccepted), box, 0,
                                        0);
             Sound_Play(112);
           wait_accepted:
@@ -1310,7 +1310,7 @@ s32 Func_02000e44(void) {
             return 0;
           }
           Sound_Play(113);
-          Text_DrawCharacterAtOffset(MSGNO(MsgFieldInvalidPassword), box, 0, 0);
+          Text_DrawMessageAsTiles(MSGNO(MsgFieldInvalidPassword), box, 0, 0);
         wait_rejected:
           System_Wait(1);
           if (!(gInput.pressed & 1) && !(gInput.pressed & 2))

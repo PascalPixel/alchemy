@@ -27,7 +27,7 @@ void Text_ScrollCanvasUp(s32 step) {
   }
 }
 
-s32 Message_StepScript(struct UiChannelSlot *channel);
+s32 Message_Type(struct UiChannelSlot *channel);
 struct Window_0803cbf8;
 void Func_0803cbf8(struct Window_0803cbf8 *window);
 
@@ -51,7 +51,7 @@ void Message_UpdateAll(void) {
         if (pending != 0) {
           Func_0803cbf8((struct Window_0803cbf8 *)channel);
         } else {
-          kind = Message_StepScript((struct UiChannelSlot *)channel);
+          kind = Message_Type((struct UiChannelSlot *)channel);
           switch (kind) {
           case 8:
             *(u16 *)(*(u8 **)channel + 0x14) = one;
@@ -86,10 +86,10 @@ extern const u8 gText_SpeedSteps[];
 extern const u8 gText_SpeedCueGaps[];
 
 void Text_ScrollCanvasUp(s32 step);
-void Func_08039754(struct UiChannelSlot *channel);
-void Func_0803972c(struct UiChannelSlot *channel);
-s32 Message_CheckCancelByInput(struct UiChannelSlot *channel);
-s32 Message_CheckCancelByModeInput(struct UiChannelSlot *channel);
+void Text_StartCanvasScroll(struct UiChannelSlot *channel);
+void Message_ApplyStyle(struct UiChannelSlot *channel);
+s32 Text_CheckPauseSkipped(struct UiChannelSlot *channel);
+s32 Text_CheckTextDismissed(struct UiChannelSlot *channel);
 void WindowSprite_PrepareForRedraw(struct Window *window);
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 s32 Resource_ResetEntry(u32 slot);
@@ -98,7 +98,13 @@ void Sound_PlayFar(s32 cue);
 #define TEXT_SPEED gMainRoutineWork.eventMode
 #define ENTRY_MASK (UI_TEXT_ENTRY_COUNT - 1)
 
-s32 Message_StepScript(struct UiChannelSlot *channel) {
+/// Types one frame's share of a message's text: runs control codes (new
+/// line, new page, pauses, colours) and draws characters, playing the speaker's
+/// voice blips. Returns a CHANNEL_STEP_ result. The share is the message
+/// speed's glyphs a frame (gMessageSpeed_Steps) outside battle, where a space
+/// or a control code also ends it; in battle it is 8 glyphs, or 13 after a
+/// frame that took two VBlanks or more.
+s32 Message_Type(struct UiChannelSlot *channel) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   // DEAD: the ROM reads the held keys here once and never uses the value.
   u32 keys = *(volatile u32 *)&gInput.held;
@@ -160,7 +166,7 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
         channel->x = channel->startX;
         if (channel->work->flags & 8) {
           if (channel->y >= 13 << 8) {
-            Func_08039754(channel);
+            Text_StartCanvasScroll(channel);
             glyphsLeft = 1;
           } else {
             channel->y += 13 << 8;
@@ -178,12 +184,12 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
           if (work->mode != 0)
             gInput.pendingPressed = 0;
         }
-        if (Message_CheckCancelByModeInput(channel) == 0) {
+        if (Text_CheckTextDismissed(channel) == 0) {
           struct Window *pane = channel->work;
 
           if (pane->width == 0 || pane->height == 0 || work->unk1388 != 0)
             break;
-          Func_0803bde4(pane, 1, pane->width * 4 - 8, pane->height * 8 - 16, 1);
+          Glyph_Draw(pane, 1, pane->width * 4 - 8, pane->height * 8 - 16, 1);
           work->unk1388 = 1;
           break;
         }
@@ -232,7 +238,7 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
         channel->colour = 15;
         channel->outline = 0;
         channel->lineSpacing = 10;
-        Func_0803972c(channel);
+        Message_ApplyStyle(channel);
         Resource_ResetEntry(work->glyphResource);
         work->glyphResource = 99;
         break;
@@ -243,7 +249,7 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
           if (work->mode != 0)
             gInput.pendingPressed = 0;
         }
-        if (Message_CheckCancelByModeInput(channel) != 0)
+        if (Text_CheckTextDismissed(channel) != 0)
           return 9;
         break;
 
@@ -251,14 +257,14 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
         if (channel->countdown == 0)
           channel->countdown = 20;
         work->speakerVoiceCountdown = 0;
-        Message_CheckCancelByInput(channel);
+        Text_CheckPauseSkipped(channel);
         break;
 
       case 6:
         if (channel->countdown == 0)
           channel->countdown = 120;
         work->speakerVoiceCountdown = 0;
-        Message_CheckCancelByInput(channel);
+        Text_CheckPauseSkipped(channel);
         break;
 
       case 4:
@@ -270,26 +276,26 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
       case 8:
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
         channel->colour = work->entries[channel->entry];
-        Func_0803972c(channel);
+        Message_ApplyStyle(channel);
         break;
 
       case 9:
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
         channel->outline = work->entries[channel->entry];
-        Func_0803972c(channel);
+        Message_ApplyStyle(channel);
         break;
 
       case 10:
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
         channel->lineSpacing = work->entries[channel->entry];
-        Func_0803972c(channel);
+        Message_ApplyStyle(channel);
         break;
 
       case 7:
         channel->colour = 15;
         channel->outline = 0;
         channel->lineSpacing = 10;
-        Func_0803972c(channel);
+        Message_ApplyStyle(channel);
         break;
 
       case 15:
@@ -354,7 +360,7 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
 #endif
       if (work->textMode != 0 && channel->unk26 != 0)
         pixelY = (channel->y + 128) / 320 - 3;
-      glyphWidth = Func_0803bde4(channel->work, code, pixelX, pixelY, 0);
+      glyphWidth = Glyph_Draw(channel->work, code, pixelX, pixelY, 0);
       channel->glyphDelay = gText_SpeedDelays[TEXT_SPEED];
       if (glyphWidth == 0)
         return 9;

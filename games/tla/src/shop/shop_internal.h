@@ -165,6 +165,6 @@ void *Actor_GetByIdFar(s32 id);
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
 void ItemMenu_DrawItemDetailsFar(void *window, s32 item);
 void WindowSprite_RedrawSavedRectFar(void *window);
-void Text_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
+void Text_DrawMessageAsTilesFar(s32 message, void *window, s32 x, s32 y);
 
 #endif

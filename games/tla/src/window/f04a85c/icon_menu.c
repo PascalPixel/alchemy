@@ -167,12 +167,12 @@ s32 Func_08045528(s32 portrait, s32 slot);
 void Window_MarkVisibleTextTiles(void);
 /* VIEW(battle_party_commands): routine Window_Create as struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); f04a85c has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); tried as the definition's struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs), which the object already declares, Func_0804bc08 moves: 7 of 1909 instructions in tla-ja. */
 extern struct Window *Window_Create__battle_party_commands(s32 x, s32 y, s32 width, s32 height, s32 flags) __asm__("Window_Create");
-/* VIEW(battle_party_commands): routine Text_DrawCharacterAtOffset as void Text_DrawCharacterAtOffset(s32 message, struct Window *window, s32 x, s32 y); f04a85c has void Text_DrawCharacterAtOffset(s32 message, struct TargetWindow *window, s32 x, s32 y); tried as the definition's void Text_DrawCharacterAtOffset(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY), Func_0804bc08 moves: 7 of 1909 instructions in tla-ja. */
+/* VIEW(battle_party_commands): routine Text_DrawMessageAsTiles as void Text_DrawMessageAsTiles(s32 message, struct Window *window, s32 x, s32 y); f04a85c has void Text_DrawMessageAsTiles(s32 message, struct TargetWindow *window, s32 x, s32 y); tried as the definition's void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY), Func_0804bc08 moves: 7 of 1909 instructions in tla-ja. */
 extern void Text_DrawCharacterAtOffset__battle_party_commands(s32 message, struct Window *window, s32 x,
-                                s32 y) __asm__("Text_DrawCharacterAtOffset");
+                                s32 y) __asm__("Text_DrawMessageAsTiles");
 s32 Func_0804a134(s32 unit, u16 *actions, s32 count);
 s32 Resource_LoadIndexedEntryToBuffer(s32 id, s32 slot);
-void Func_08041f70(s32 color);
+void Text_SetColor(s32 color);
 /* VIEW(battle_party_commands): routine Text_DrawNumberAtOffset as void Text_DrawNumberAtOffset(s32 value, s32 digits, struct Window *window, s32 x, s32 y); text_render.h has void Text_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *work, s32 offsetX, s32 offsetY); tried as the definition's void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work, s32 x, s32 y), Func_0804bc08 moves: 2 of 1909 instructions in tla-ja. */
 extern void Text_DrawNumberAtOffset__battle_party_commands(s32 value, s32 digits, struct Window *window,
                              s32 x, s32 y) __asm__("Text_DrawNumberAtOffset");
@@ -181,7 +181,7 @@ extern void Window_SetTilemapEntry__battle_party_commands(struct Window *window,
                             s32 flags) __asm__("Window_SetTilemapEntry");
 s32 Resource_ResetEntry(u32 slot);
 s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby);
-void Func_0803c274(struct Window *window, s32 character, s32 x, s32 y,
+void Window_PutGlyph(struct Window *window, s32 character, s32 x, s32 y,
                    s32 mode);
 s32 BattleDjinnMenu_Run(s32 member, s32 unused);
 s32 Djinn_IsActiveFar(s32 member, s32 element, s32 index);
@@ -195,8 +195,8 @@ extern u16 *Item_Get__battle_party_commands(s32 item) __asm__("Item_Get");
 s32 Item_ClassifyUseAbility(s32 member, s32 item);
 s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
 u32 Random16(void);
-/* VIEW(battle_party_commands): routine Vram_FillWindowBlockPattern as void Vram_FillWindowBlockPattern(void); countdown has unsigned char Vram_FillWindowBlockPattern(void); tried as the definition's void Vram_FillWindowBlockPattern(void), which the object already declares, Func_0804bc08 moves: 1 of 1909 instructions in tla-ja. */
-extern void Vram_FillWindowBlockPattern__battle_party_commands(void) __asm__("Vram_FillWindowBlockPattern");
+/* VIEW(battle_party_commands): routine Text_FillCanvasBackground as void Text_FillCanvasBackground(void); countdown has unsigned char Text_FillCanvasBackground(void); tried as the definition's void Text_FillCanvasBackground(void), which the object already declares, Func_0804bc08 moves: 1 of 1909 instructions in tla-ja. */
+extern void Vram_FillWindowBlockPattern__battle_party_commands(void) __asm__("Text_FillCanvasBackground");
 /* VIEW(battle_party_commands): routine Message_CopyExpanded as s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity); f04a85c has void Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity), it does not compile in tla-ja: games/tla/src/window/f04a85c.c:1419: conflicting types for `Message_CopyExpanded'. */
 extern s32 Message_CopyExpanded__battle_party_commands(s32 key, u16 *destination, u32 capacity) __asm__("Message_CopyExpanded");
 /* VIEW(battle_party_commands): routine Text_DrawWideStringAtOffset as void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y); f04a85c has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x, s32 y); tried as the definition's void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y), it does not compile in tla-ja: games/tla/src/window/f04a85c.c:1421: conflicting types for `Text_DrawWideStringAtOffset'. */
@@ -592,14 +592,14 @@ s32 Func_0804bc08(struct BattleAction *commands, u16 *actors,
         state->iconShown[1] = 1;
         work->level = 5;
         if (ability->ppCost > unit->pp)
-          Func_08041f70(2);
+          Text_SetColor(2);
         else if (unit->psySeal != 0)
-          Func_08041f70(9);
+          Text_SetColor(9);
         Text_DrawCharacterAtOffset__battle_party_commands(parameter + (s32)MsgAbilityNothing,
                                    commandWindow, 16, 0);
         Text_DrawNumberAtOffset__battle_party_commands(ability->ppCost, 2, commandWindow, 104, 0);
         work->level = 15;
-        Func_08041f70(15);
+        Text_SetColor(15);
         Window_SetTilemapEntry__battle_party_commands(commandWindow, WINDOW_TILE_PP_LABEL, 11, 0, 0);
         Window_SetTilemapEntry__battle_party_commands(commandWindow, WINDOW_TILE_PP_LABEL_END, 12, 0,
                                0);
@@ -668,7 +668,7 @@ s32 Func_0804bc08(struct BattleAction *commands, u16 *actors,
             summon->nameMessageId & 0x3fff, summonIconSlot);
         state->iconShown[1] = 1;
         if (ok == 0)
-          Func_08041f70(2);
+          Text_SetColor(2);
         Text_DrawCharacterAtOffset__battle_party_commands(SummonDefinition_Get(mode)->nameMessageId +
                                        (s32)MsgAbilityNothing,
                                    commandWindow, 16, 0);
@@ -676,7 +676,7 @@ s32 Func_0804bc08(struct BattleAction *commands, u16 *actors,
           if (summon->djinnRequired[j] != 0) {
             Window_SetTilemapEntry__battle_party_commands(commandWindow, j + 0x5001,
                                    n * 2 + SUMMON_COST_X, 0, 0);
-            Func_0803c274(commandWindow, summon->djinnRequired[j] + '0',
+            Window_PutGlyph(commandWindow, summon->djinnRequired[j] + '0',
                           n * 2 + SUMMON_COST_X + 1, 0, 0);
             n++;
           }
@@ -755,11 +755,11 @@ s32 Func_0804bc08(struct BattleAction *commands, u16 *actors,
         }
         commandWindow = Window_Create__battle_party_commands(11, 17, 10, 3, 6);
         COMMAND_ICON_X(state) = 64;
-        Func_08041f70(2);
+        Text_SetColor(2);
         Window_SetTilemapEntry__battle_party_commands(commandWindow, element + 0x5001, 0, 0, 0);
         Text_DrawCharacterAtOffset__battle_party_commands(element * 20 + index + (s32)MsgDjinnName,
                                    commandWindow, 16, 0);
-        Func_08041f70(15);
+        Text_SetColor(15);
         command->range = 1;
         wait(1);
         Sound_PlayFar(112);
@@ -1176,7 +1176,7 @@ redraw:
     resource = work->resourceBase + work->selection;
   else
     resource = work->resourceIds[work->selection] + (s32)MsgCommandName;
-  Text_DrawCharacterAtOffset(resource, work->window, 0, 0);
+  Text_DrawMessageAsTiles(resource, work->window, 0, 0);
   for (;;) {
     wait(1);
     if (gInput.pressed & KEY_A) {
@@ -1263,7 +1263,7 @@ s32 Menu_SelectResource(s32 start, s32 goal) {
     } else {
       resourceId = state->resourceIds[state->selection] + (s32)MsgCommandName;
     }
-    Text_DrawCharacterAtOffset(resourceId, state->work, 0, 0);
+    Text_DrawMessageAsTiles(resourceId, state->work, 0, 0);
 
     cur = state->selection;
     table = gMenu_SelectionStepDelays;
@@ -1426,7 +1426,7 @@ s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1) {
 #endif
   arg1 = Menu_SelectResource(arg0, arg1 - 1);
   Menu_EndResourceSelection();
-  Window_CloseAndRelease();
+  PartyStatus_CloseWithMenu();
   return arg1;
 }
 
@@ -1524,28 +1524,28 @@ void Menu_DrawModeLabel(void) {
     case 0: {
       s32 text = (s32)MsgPasswordLevel;
 
-      Text_DrawCharacterAtOffset(text, state->window, 8, 40);
-      Text_DrawCharacterAtOffset(text + 1, state->window, 8, 48);
-      Text_DrawCharacterAtOffset(text + 2, state->window, 8, 56);
-      Text_DrawCharacterAtOffset(text + 3, state->window, 8, 64);
+      Text_DrawMessageAsTiles(text, state->window, 8, 40);
+      Text_DrawMessageAsTiles(text + 1, state->window, 8, 48);
+      Text_DrawMessageAsTiles(text + 2, state->window, 8, 56);
+      Text_DrawMessageAsTiles(text + 3, state->window, 8, 64);
       text += 4;
-      Text_DrawCharacterAtOffset(text, state->window, 8, 72);
+      Text_DrawMessageAsTiles(text, state->window, 8, 72);
       break;
     }
     case 1: {
       s32 text = (s32)MsgPasswordLevel;
 
-      Text_DrawCharacterAtOffset(text, state->window, 8, 40);
-      Text_DrawCharacterAtOffset(text + 1, state->window, 8, 48);
+      Text_DrawMessageAsTiles(text, state->window, 8, 40);
+      Text_DrawMessageAsTiles(text + 1, state->window, 8, 48);
       text += 2;
-      Text_DrawCharacterAtOffset(text, state->window, 8, 56);
+      Text_DrawMessageAsTiles(text, state->window, 8, 56);
       break;
     }
     case 2: {
       s32 text = (s32)MsgPasswordLevel;
 
-      Text_DrawCharacterAtOffset(text++, state->window, 8, 40);
-      Text_DrawCharacterAtOffset(text, state->window, 8, 48);
+      Text_DrawMessageAsTiles(text++, state->window, 8, 40);
+      Text_DrawMessageAsTiles(text, state->window, 8, 48);
       break;
     }
     }

@@ -33,7 +33,16 @@ s32 Text_DrawGlyphPair(s32 character, u32 *tiles);
 #define GLYPH_Y 0
 #endif
 
-s32 Func_0803bde4(struct Window *window, s32 character, s32 x, s32 y,
+/// Draws a character of a window's text with its top-left corner at pixel
+/// (x, y) of the window's interior and returns how far the text advances. A
+/// text canvas window draws it into the canvas; other windows show it as a
+/// sprite carried by the window. GLYPH_DRAW_PAGE_ARROW shows the next-page
+/// arrow instead.
+/// A sprite glyph takes a window sprite and its four tiles from the glyph
+/// sheet (WindowWork.glyphTiles, four for each sprite); with no sprite free
+/// nothing is drawn and it returns 0. The sprite stays until its window is
+/// cleared or closed.
+s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y,
                   s32 mode) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 width;
@@ -304,7 +313,7 @@ enum {
 /// interior, as ☀️'s Window_PutGlyph; GLYPH_DRAW_PAGE_ARROW instead shows the
 /// next-page arrow sprite on the interior's last tile. In Japanese, a kana mark
 /// goes in the tile above the character before it.
-void Func_0803c274(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
+void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   struct WindowWork *base = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u16 *tilemap = base->tilemap[0];
   struct WindowSprite *out;

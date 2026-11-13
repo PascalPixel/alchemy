@@ -157,7 +157,7 @@ extern u16 gData_0200173c[];
 extern u32 gData_02001700[];
 s32 PartyInventory_CountItem();
 struct Window *Window_Create();
-void Text_DrawCharacterAtOffset();
+void Text_DrawMessageAsTiles();
 void Text_DrawNumberInWindow();
 s32 Menu_SelectCoinsOrMedals();
 void Window_Close();
@@ -230,9 +230,9 @@ prompt:
   Event_OpenMessage(-1, 0);
   window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
   result = (s32)MsgCoins2;
-  Text_DrawCharacterAtOffset(result, window, 0, 0);
+  Text_DrawMessageAsTiles(result, window, 0, 0);
   Text_DrawNumberInWindow(coins, 6, window, COUNT_NUMBER_X, 0);
-  Text_DrawCharacterAtOffset(result + 1, window, 0, 8);
+  Text_DrawMessageAsTiles(result + 1, window, 0, 8);
   Text_DrawNumberInWindow(medals, 6, window, COUNT_NUMBER_X, 8);
   choice = Menu_SelectCoinsOrMedals(choice);
   Window_Close(window, 2);
@@ -264,8 +264,8 @@ full:
 toss:
   window = Window_Create(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
   result = (s32)MsgToss2;
-  Text_DrawCharacterAtOffset(result, window, 0, 0);
-  Text_DrawCharacterAtOffset(result + 1, window, 0, 8);
+  Text_DrawMessageAsTiles(result, window, 0, 0);
+  Text_DrawMessageAsTiles(result + 1, window, 0, 8);
   wait(5);
   Sound_Play(116);
   for (;;) {
@@ -300,12 +300,12 @@ toss:
     Event_OpenMessage(-1, 0);
     window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
     text = (s32)MsgCoins2;
-    Text_DrawCharacterAtOffset(text, window, 0, 0);
+    Text_DrawMessageAsTiles(text, window, 0, 0);
     Text_DrawNumberInWindow(coins, 6, window, COUNT_NUMBER_X, 0);
-    Text_DrawCharacterAtOffset(text + 2, window, 104, 0);
-    Text_DrawCharacterAtOffset(text + 1, window, 0, 8);
+    Text_DrawMessageAsTiles(text + 2, window, 104, 0);
+    Text_DrawMessageAsTiles(text + 1, window, 0, 8);
     Text_DrawNumberInWindow(medals, 6, window, COUNT_NUMBER_X, 8);
-    Text_DrawCharacterAtOffset(text + 2, window, 104, 8);
+    Text_DrawMessageAsTiles(text + 2, window, 104, 8);
     choice = Menu_SelectCoinsOrMedals(choice);
     Window_Close(window, 2);
     Message_CloseFinishedWindows();
@@ -336,8 +336,8 @@ toss:
     }
     window = Window_Create(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
     result = (s32)MsgToss2;
-    Text_DrawCharacterAtOffset(result, window, 0, 0);
-    Text_DrawCharacterAtOffset(result + 1, window, 0, 8);
+    Text_DrawMessageAsTiles(result, window, 0, 0);
+    Text_DrawMessageAsTiles(result + 1, window, 0, 8);
     wait(5);
     Sound_Play(116);
     for (;;) {

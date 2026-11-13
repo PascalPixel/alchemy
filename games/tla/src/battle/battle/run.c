@@ -482,7 +482,7 @@ won_scripted:
                             26);
           MessageArgument_ClearAllFar();
           MessageArgument_PushFar(128, 1);
-          Message_ShowAndWaitCoreFar(battle->defeatState + (s32)MsgDowned);
+          BattleMessage_ShowAndWaitFar(battle->defeatState + (s32)MsgDowned);
           BattleMessage_WaitForAdvance();
         }
       }
@@ -513,9 +513,9 @@ party_lost:
       Sound_PlayFar(59);
       MessageArgument_ClearAllFar();
       if (BattleParty_PrepareActiveOwners(0) == 1)
-        Message_ShowAndWaitCoreFar((s32)MsgGoesDownInDefeat);
+        BattleMessage_ShowAndWaitFar((s32)MsgGoesDownInDefeat);
       else
-        Message_ShowAndWaitCoreFar((s32)MsgPartyDefeated);
+        BattleMessage_ShowAndWaitFar((s32)MsgPartyDefeated);
       BattleMessage_WaitForAdvance();
     }
     Sound_PlayFar(78);

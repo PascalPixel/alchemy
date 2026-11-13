@@ -46,11 +46,11 @@ struct TextObject {
 };
 
 void Event_SetDestinationFar(s16 primary, s16 secondary);
-void UiTextResource_Release(s32 resource);
-/* VIEW(selrow): routine UiTextResource_Initialize as void UiTextResource_Initialize(struct TextObject *object, s32 *resource); menu.h has void UiTextResource_Initialize(struct Actor_0801c0dc *obj, s32 *slot). */
-extern void UiTextResource_Initialize__selrow(struct TextObject *object, s32 *resource) __asm__("UiTextResource_Initialize");
-/* VIEW(selrow): routine UiTextResource_SetPosition as void UiTextResource_SetPosition(struct TextObject *object, s32 x, s32 y); menu.h has void UiTextResource_SetPosition(struct Obj *obj, s32 arg1, s32 arg2). */
-extern void UiTextResource_SetPosition__selrow(struct TextObject *object, s32 x, s32 y) __asm__("UiTextResource_SetPosition");
+void MenuArrow_Release(s32 resource);
+/* VIEW(selrow): routine MenuArrow_Create as void MenuArrow_Create(struct TextObject *object, s32 *resource); menu.h has void MenuArrow_Create(struct Actor_0801c0dc *obj, s32 *slot). */
+extern void UiTextResource_Initialize__selrow(struct TextObject *object, s32 *resource) __asm__("MenuArrow_Create");
+/* VIEW(selrow): routine MenuArrow_SetPosition as void MenuArrow_SetPosition(struct TextObject *object, s32 x, s32 y); menu.h has void MenuArrow_SetPosition(struct Obj *obj, s32 arg1, s32 arg2). */
+extern void UiTextResource_SetPosition__selrow(struct TextObject *object, s32 x, s32 y) __asm__("MenuArrow_SetPosition");
 /* VIEW(selrow): routine Window_Create as struct Work *Window_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer); resource_work has struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style). */
 extern struct Work *Window_Create__selrow(s32 kind, s32 x, s32 y, s32 width, s32 layer) __asm__("Window_Create");
 /* VIEW(selrow): routine Window_Close as void Window_Close(struct Work *work, s32 release); uiflow.h has void Window_Close(struct Window *window, s32 release). */
@@ -86,13 +86,13 @@ s16 Menu_RunSelection(void) {
     result =
         (s16)Menu_HandleSelectionRowInput__selrow(work, primary, &secondary, &mode);
     if (result == -1) {
-      UiTextResource_Release(resource);
+      MenuArrow_Release(resource);
       Window_Close__selrow(work, 2);
       Event_SetDestinationFar(primary, secondary);
       return result;
     }
     if (result == -2) {
-      UiTextResource_Release(resource);
+      MenuArrow_Release(resource);
       Window_Close__selrow(work, 2);
       return result;
     }

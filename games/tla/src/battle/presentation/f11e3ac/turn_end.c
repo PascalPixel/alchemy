@@ -434,7 +434,7 @@ void Func_0812628c(s32 mode, s32 background, s32 value);
   if (test(unitId) != 0) {                                                     \
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));             \
     MessageArgument_PushFar(unitId, 1);                                        \
-    Message_ShowAndWaitCoreFar(message);                                       \
+    BattleMessage_ShowAndWaitFar(message);                                       \
     BattleMessage_WaitForAdvance();                                            \
   }
 
@@ -443,7 +443,7 @@ void Func_0812628c(s32 mode, s32 background, s32 value);
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));             \
     MessageArgument_PushFar(unitId, 1);                                        \
     BattleObject_UpdatePose(unitId);                                           \
-    Message_ShowAndWaitCoreFar(message);                                       \
+    BattleMessage_ShowAndWaitFar(message);                                       \
     BattleMessage_WaitForAdvance();                                            \
   }
 
@@ -563,9 +563,9 @@ void Func_08124e20(void) {
             MessageArgument_PushFar(unitId, 1);
             MessageArgument_PushFar(hpAmount, 5);
             if (unit->hp == unit->maxHp) {
-              Message_ShowAndWaitCoreFar((s32)&MsgHpFull);
+              BattleMessage_ShowAndWaitFar((s32)&MsgHpFull);
             } else {
-              Message_ShowAndWaitCoreFar((s32)&MsgHpRecover);
+              BattleMessage_ShowAndWaitFar((s32)&MsgHpRecover);
             }
             Sound_PlayFar(175);
             BattleMessage_WaitForAdvance();
@@ -579,9 +579,9 @@ void Func_08124e20(void) {
             MessageArgument_PushFar(unitId, 1);
             MessageArgument_PushFar(ppAmount, 5);
             if (unit->pp == unit->maxPp) {
-              Message_ShowAndWaitCoreFar((s32)&MsgPpFull);
+              BattleMessage_ShowAndWaitFar((s32)&MsgPpFull);
             } else {
-              Message_ShowAndWaitCoreFar((s32)&MsgPpRecover);
+              BattleMessage_ShowAndWaitFar((s32)&MsgPpRecover);
             }
             Sound_PlayFar(175);
             BattleMessage_WaitForAdvance();

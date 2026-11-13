@@ -653,13 +653,13 @@ u32 BattleEvent_DispatchQueued(void) {
         break;
       case BATTLE_EVENT_MESSAGE:
         if ((s32)queue->operands[i] >= 0)
-          Message_ShowAndWaitCoreFar(queue->operands[i]);
+          BattleMessage_ShowAndWaitFar(queue->operands[i]);
         BattleMessage_WaitForAdvance();
         MessageArgument_ClearAllFar();
         break;
       case BATTLE_EVENT_MESSAGE_NO_WAIT:
         if ((s32)queue->operands[i] >= 0)
-          Message_ShowAndWaitCoreFar(queue->operands[i]);
+          BattleMessage_ShowAndWaitFar(queue->operands[i]);
         MessageArgument_ClearAllFar();
         break;
       case BATTLE_EVENT_HIT:

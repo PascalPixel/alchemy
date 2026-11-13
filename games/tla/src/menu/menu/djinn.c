@@ -630,7 +630,7 @@ s32 Func_08101a04(u32 entry) {
 void Func_08101a54(s32 window, s32 x, s32 y, s32 entry) {
   s32 element = (entry & 0xe0) / 32;
 
-  Text_DrawCharacterAtOffsetFar(
+  Text_DrawMessageAsTilesFar(
       (s32)MsgDjinnName + element * 20 + (entry & 31), window, x + 8, y);
   Window_SetTilemapEntryFar(window, element + 0x5001, x / 8, y / 8, 0);
   Text_SetColorFar(15);
@@ -661,7 +661,7 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
   owners = Party_CountActiveOwnersFar();
   djinn = Party_SumDjinnCountsFar(-1);
   if (owners != 0 && (djinn - 1) / owners <= 6) {
-    Text_DrawCharacterAtOffsetFar((s32)MsgDjinnUnleashEffectLabel, window, 0,
+    Text_DrawMessageAsTilesFar((s32)MsgDjinnUnleashEffectLabel, window, 0,
                                   80);
     Window_DrawDividerLineFar(window, 0, 10, 28, 10);
   }
@@ -840,9 +840,9 @@ s32 DjinnMenu_ShowHelp(void) {
   wait(1);
   WindowSprite_PrepareForRedrawFar(menu->helpWindow);
   message = (s32)MsgDjinnInfoPrompt;
-  Text_DrawCharacterAtOffsetFar(message, menu->helpWindow, 0, 0);
+  Text_DrawMessageAsTilesFar(message, menu->helpWindow, 0, 0);
   message++;
-  Text_DrawCharacterAtOffsetFar(message, menu->helpWindow, 0, 16);
+  Text_DrawMessageAsTilesFar(message, menu->helpWindow, 0, 16);
   Func_08101c7c(1, 1, 11, 3, 6);
   UiPanel_SetRectPalette(menu->listWindow, 0, 0, 28, 10, 6);
   list = Window_CreateFar(0, 9, 8, 10, 6);
@@ -856,7 +856,7 @@ s32 DjinnMenu_ShowHelp(void) {
        the argument helpIndex * 8, 2 of 289 instructions differ in tla-en. */
     s32 y = helpIndex * 8;
 
-    Text_DrawCharacterAtOffsetFar(helpIndex + listMessage, list, 0, y);
+    Text_DrawMessageAsTilesFar(helpIndex + listMessage, list, 0, y);
     helpIndex++;
   } while (helpIndex <= 6);
   do {
@@ -1083,7 +1083,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
               } else {
                 message = (s32)MsgDjinnTradeAction;
               }
-              Text_DrawCharacterAtOffsetFar(message, listWindow, x, 8);
+              Text_DrawMessageAsTilesFar(message, listWindow, x, 8);
             }
           }
         }
@@ -1131,27 +1131,27 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       unit = Unit_Get(menu->owners[memberColumn]);
       WindowSprite_RedrawSavedRectFar(window);
       Text_DrawStringAtOffsetFar(unit->name, window, 0, 0);
-      Text_DrawCharacterAtOffsetFar(unit->classIndex + (s32)MsgClassName,
+      Text_DrawMessageAsTilesFar(unit->classIndex + (s32)MsgClassName,
                                     window, 0, 8);
       Text_DrawStringAtOffsetFar(gDjinnMenu_TextLevel, window, 48, 0);
       Text_DrawNumberInWindowFar(unit->level, 2, window, 72, 0);
       if (mode == 0)
-        Text_DrawCharacterAtOffsetFar((s32)MsgDjinnCharacterStatus, window, 0,
+        Text_DrawMessageAsTilesFar((s32)MsgDjinnCharacterStatus, window, 0,
                                       16);
       WindowSprite_RedrawSavedRectFar(helpWindow);
       if (mode == 0 && selectedRow != -1) {
         if (groupMode) {
           if (setAll == 0)
-            Text_DrawCharacterAtOffsetFar((s32)MsgDjinnSetAll, helpWindow, 0,
+            Text_DrawMessageAsTilesFar((s32)MsgDjinnSetAll, helpWindow, 0,
                                           0);
           else
-            Text_DrawCharacterAtOffsetFar((s32)MsgDjinnAllStandby, helpWindow,
+            Text_DrawMessageAsTilesFar((s32)MsgDjinnAllStandby, helpWindow,
                                           0, 0);
           if (state == 2)
-            Text_DrawCharacterAtOffsetFar((s32)MsgDjinnRecovering, helpWindow,
+            Text_DrawMessageAsTilesFar((s32)MsgDjinnRecovering, helpWindow,
                                           0, 16);
         } else {
-          Text_DrawCharacterAtOffsetFar((s32)MsgDjinnChoose, helpWindow, 0, 0);
+          Text_DrawMessageAsTilesFar((s32)MsgDjinnChoose, helpWindow, 0, 0);
           switch (state) {
           case 0:
             message = (s32)MsgDjinnChoose + 3;
@@ -1163,7 +1163,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
             message = (s32)MsgDjinnRecovering;
             break;
           }
-          Text_DrawCharacterAtOffsetFar(message, helpWindow, 0, 16);
+          Text_DrawMessageAsTilesFar(message, helpWindow, 0, 16);
         }
       }
 #if TLA_PATCH_1
@@ -1177,21 +1177,21 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         MessageArgument_PushFar(DJINN_ELEMENT(menu->pairEntries[0]) * 20 +
                                     DJINN_NUMBER(menu->pairEntries[0]) + 300,
                                 4);
-        Text_DrawCharacterAtOffsetFar((s32)MsgDjinnOwnerLabel, helpWindow, 8,
+        Text_DrawMessageAsTilesFar((s32)MsgDjinnOwnerLabel, helpWindow, 8,
                                       0);
 #else
         MessageArgument_PushFar(menu->shownMember[0], 1);
-        Text_DrawCharacterAtOffsetFar((s32)MsgDjinnOwnerLabel, helpWindow, 0,
+        Text_DrawMessageAsTilesFar((s32)MsgDjinnOwnerLabel, helpWindow, 0,
                                       0);
         MessageArgument_PushFar(DJINN_ELEMENT(menu->pairEntries[0]) * 20 +
                                     DJINN_NUMBER(menu->pairEntries[0]) + 300,
                                 4);
         Window_SetTilemapEntryFar(
             helpWindow, DJINN_ELEMENT(menu->pairEntries[0]) + 0x5001, 6, 0, 0);
-        Text_DrawCharacterAtOffsetFar((s32)MsgDjinnOwnerLabel + 1, helpWindow,
+        Text_DrawMessageAsTilesFar((s32)MsgDjinnOwnerLabel + 1, helpWindow,
                                       56, 0);
 #endif
-        Text_DrawCharacterAtOffsetFar((s32)MsgDjinnOwnerLabel + 2, helpWindow,
+        Text_DrawMessageAsTilesFar((s32)MsgDjinnOwnerLabel + 2, helpWindow,
                                       0, 8);
       }
 #if TLA_PATCH_1
@@ -1207,7 +1207,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         Text_DrawMessageFar(element * 20 + number + (s32)MsgDjinnEffect,
                             listWindow, 0, 96);
 #else
-        Text_DrawCharacterAtOffsetFar(
+        Text_DrawMessageAsTilesFar(
             element * 20 + number + (s32)MsgDjinnEffect, listWindow, 0, 96);
 #endif
 #if TLA_PATCH_4
@@ -1427,7 +1427,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 #if LANGUAGE == LANGUAGE_JAPANESE
         Text_DrawMessageFar((s32)MsgDjinnNowRecovering, listWindow, 0, 96);
 #else
-        Text_DrawCharacterAtOffsetFar((s32)MsgDjinnNowRecovering, listWindow, 0,
+        Text_DrawMessageAsTilesFar((s32)MsgDjinnNowRecovering, listWindow, 0,
                                       96);
 #endif
         continue;
@@ -1816,13 +1816,13 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId, s32 removeP
                                y * 8 + 16);
     Text_DrawNumberInWindowFar(unit->level, 2, window, x * 8 + 88, y * 8 + 16);
     label = MSG_STAT_LABELS;
-    Text_DrawCharacterAtOffsetFar(label, window, x * 8, y * 8 + 56);
-    Text_DrawCharacterAtOffsetFar(label + 1, window, x * 8, y * 8 + 64);
-    Text_DrawCharacterAtOffsetFar(label + 2, window, x * 8, y * 8 + 72);
-    Text_DrawCharacterAtOffsetFar(label + 3, window, x * 8, y * 8 + 80);
-    Text_DrawCharacterAtOffsetFar(label + 4, window, x * 8, y * 8 + 88);
-    Text_DrawCharacterAtOffsetFar(label + 5, window, x * 8, y * 8 + 96);
-    Text_DrawCharacterAtOffsetFar((s32)MsgClassName + originalUnit->classIndex,
+    Text_DrawMessageAsTilesFar(label, window, x * 8, y * 8 + 56);
+    Text_DrawMessageAsTilesFar(label + 1, window, x * 8, y * 8 + 64);
+    Text_DrawMessageAsTilesFar(label + 2, window, x * 8, y * 8 + 72);
+    Text_DrawMessageAsTilesFar(label + 3, window, x * 8, y * 8 + 80);
+    Text_DrawMessageAsTilesFar(label + 4, window, x * 8, y * 8 + 88);
+    Text_DrawMessageAsTilesFar(label + 5, window, x * 8, y * 8 + 96);
+    Text_DrawMessageAsTilesFar((s32)MsgClassName + originalUnit->classIndex,
                                   window, x * 8, y * 8 + 32);
   }
 
@@ -1833,7 +1833,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId, s32 removeP
       s32 column;
 
       if (originalUnit->classIndex != unit->classIndex) {
-        Text_DrawCharacterAtOffsetFar((s32)MsgClassName + unit->classIndex,
+        Text_DrawMessageAsTilesFar((s32)MsgClassName + unit->classIndex,
                                       window, x * 8, y * 8 + 48);
         Window_SetTilemapEntryFar(window, 0xf296, x + 2, 5, 0);
       }
@@ -1936,7 +1936,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId, s32 removeP
         Text_SetColorFar(2);
       else
         Text_SetColorFar(15);
-      Text_DrawCharacterAtOffsetFar((s32)MsgAbilityNothing +
+      Text_DrawMessageAsTilesFar((s32)MsgAbilityNothing +
                                         (actions[first] & 0x3fff),
                                     window, x * 8 + 16, (y + line * 2) * 8 + 8);
       Text_DrawNumberAtOffsetFar(BattleAction_Get(actions[first])->ppCost, 2,
@@ -1944,7 +1944,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId, s32 removeP
       line++;
     }
     Text_SetColorFar(15);
-    Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window,
+    Text_DrawMessageAsTilesFar((s32)MsgPsynergyPp, window,
                                   x * 8 + PP_HEADING_X, y * 8);
     if (previewMode != 3) {
       s32 lines;
@@ -1952,18 +1952,18 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId, s32 removeP
       lines = 0;
       if (gained) {
         Text_SetColorFar(4);
-        Text_DrawCharacterAtOffsetFar(MSG_PSYNERGY_GAINED, window, x * 8,
+        Text_DrawMessageAsTilesFar(MSG_PSYNERGY_GAINED, window, x * 8,
                                       y * 8 + 88);
         lines = 1;
       }
       if (lost) {
         Text_SetColorFar(2);
-        Text_DrawCharacterAtOffsetFar(MSG_PSYNERGY_LOST, window, x * 8,
+        Text_DrawMessageAsTilesFar(MSG_PSYNERGY_LOST, window, x * 8,
                                       (y + lines) * 8 + 88);
         lines++;
       }
       if (lines == 0)
-        Text_DrawCharacterAtOffsetFar(MSG_NO_CHANGE, window, x * 8, y * 8 + 88);
+        Text_DrawMessageAsTilesFar(MSG_NO_CHANGE, window, x * 8, y * 8 + 88);
       Text_SetColorFar(15);
       Window_DrawDividerLineFar(window, 0, 11, 13, 11);
     }

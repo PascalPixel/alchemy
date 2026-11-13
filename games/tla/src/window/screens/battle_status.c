@@ -687,7 +687,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
 
     unit = Unit_Get(member);
     if (page == 0)
-      Vram_FillWindowBlockPattern();
+      Text_FillCanvasBackground();
 
     if (page == 3) {
       // Items: those the member can use in battle first.
@@ -731,20 +731,20 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       WindowSprite_RedrawSavedRect(statusWindow);
       Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y, helpWindow->width,
                     helpWindow->height, 0);
-      Vram_FillWindowBlockPattern();
+      Text_FillCanvasBackground();
       Text_DrawWideStringAtOffset(itemText, helpWindow, 0, 20);
       if (rowBase != j) {
         Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
         for (j = 0; j <= 3 && (item = entries[rowBase + j]) != 0; j++) {
           Item_Get(item);
-          Func_08041f70(15);
+          Text_SetColor(15);
           if (Item_ClassifyUseAbility(member, item) != 0)
-            Func_08041f70(4);
+            Text_SetColor(4);
           else if (item & 0x400)
-            Func_08041f70(2);
-          Text_DrawCharacterAtOffset((item & 0x1ff) + (s32)MsgItemName,
+            Text_SetColor(2);
+          Text_DrawMessageAsTiles((item & 0x1ff) + (s32)MsgItemName,
                                      statusWindow, 32, 64 + j * 16);
-          Func_08041f70(15);
+          Text_SetColor(15);
           iconSprites[j].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);
         }
         /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the
@@ -784,7 +784,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       row = (s8)(cursor.groupPositions[3] % 4);
       if (rowBase != j || row != shownRow) {
         work->holdTilemapUpload = 1;
-        Vram_FillWindowBlockPattern();
+        Text_FillCanvasBackground();
         if (count != 0)
           SUMMARY_TEXT_COPY((entries[rowBase + row] & 0x3fff) +
                                 (s32)MsgAbilityDescription,
@@ -809,18 +809,18 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             iconSprites[j].oam.f.tile =
                 Resource_LoadIndexedEntryToBuffer(id, iconSlots[j]);
             if (!(ability->flags & 0x80))
-              Func_08041f70(4);
+              Text_SetColor(4);
             else if (ability->ppCost > unit->pp)
-              Func_08041f70(2);
+              Text_SetColor(2);
             else if (unit->psySeal != 0)
-              Func_08041f70(9);
+              Text_SetColor(9);
             tileFlags = 0;
             work->textColor = 5;
-            Text_DrawCharacterAtOffset(id + (s32)MsgAbilityNothing,
+            Text_DrawMessageAsTiles(id + (s32)MsgAbilityNothing,
                                        statusWindow, 16, 64 + j * 16);
             Text_DrawNumberAtOffset(ability->ppCost, 2, statusWindow, 104,
                                     64 + j * 16);
-            Func_08041f70(15);
+            Text_SetColor(15);
             work->textColor = 15;
             if (ability->element != 4)
               Window_SetTilemapEntry(statusWindow, 0x5001 + ability->element,
@@ -914,7 +914,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         SUMMARY_TEXT_COPY((s32)MsgNoDjinn, psynergyText, 32);
       }
       work->holdTilemapUpload = released;
-      Vram_FillWindowBlockPattern();
+      Text_FillCanvasBackground();
       Text_DrawWideStringAtOffset(psynergyText, helpWindow, 0, 20);
       if (rowBase != shownBase) {
         u32 shown;
@@ -931,10 +931,10 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           Window_SetTilemapEntry(statusWindow, ((shown & 0xf00) >> 8) + 0x5001,
                                  column, tileRow, 0);
           if (shown & 0x3e0000)
-            Func_08041f70(4);
+            Text_SetColor(4);
           else if (shown & 0x10000)
-            Func_08041f70(2);
-          Text_DrawCharacterAtOffset(((shown & 0xf00) >> 8) * 20 +
+            Text_SetColor(2);
+          Text_DrawMessageAsTiles(((shown & 0xf00) >> 8) * 20 +
                                          (shown & 0xff) + (s32)MsgDjinnName,
                                      statusWindow, column * 8 + 8, tileRow * 8);
 // Spanish and Italian leave a recovering Djinni's turns off the list.
@@ -943,7 +943,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             Text_DrawNumberAtOffset((shown & 0x3e0000) >> 17, 2, statusWindow,
                                     column * 8 + 40, tileRow * 8);
 #endif
-          Func_08041f70(15);
+          Text_SetColor(15);
         }
       }
       /* FAKEMATCH(dead): a never-true arm, pages 1 and 3's scroll marks
@@ -965,7 +965,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       }
       Text_DrawStringAtOffset(unit->name, statusWindow, 0, 0);
       if (memberIndex > 3)
-        Text_DrawCharacterAtOffset((s32)MsgInTheBack, statusWindow, 40, 16);
+        Text_DrawMessageAsTiles((s32)MsgInTheBack, statusWindow, 40, 16);
 #if TLA_PATCH_2
       // The European editions share one image and choose the level's label,
       // drawing the name again under it, at run time.
@@ -990,7 +990,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       Text_DrawStringAtOffset(gOwnerStatus_LevelString, statusWindow, 56, 0);
       Text_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
 #endif
-      Text_DrawCharacterAtOffset((s32)MsgExp, statusWindow, 0, 8);
+      Text_DrawMessageAsTiles((s32)MsgExp, statusWindow, 0, 8);
       Text_DrawNumberInWindow(unit->experience, 8, statusWindow, 40, 8);
 #if TLA_PATCH_2
       switch (System_GetLanguage()) {
@@ -1015,26 +1015,26 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       Text_DrawNumberInWindow(unit->pp, 4, statusWindow, 56, 32);
       Text_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow, 88, 32);
       Text_DrawNumberInWindow(unit->ppMax, 4, statusWindow, 96, 32);
-      Text_DrawCharacterAtOffset((s32)MsgExp - 10, statusWindow, 136, 16);
+      Text_DrawMessageAsTiles((s32)MsgExp - 10, statusWindow, 136, 16);
       Text_DrawNumberInWindow(unit->atk, 3, statusWindow, SUMMARY_STAT_VALUE_X,
                               16);
-      Text_DrawCharacterAtOffset((s32)MsgExp - 9, statusWindow, 136, 24);
+      Text_DrawMessageAsTiles((s32)MsgExp - 9, statusWindow, 136, 24);
       Text_DrawNumberInWindow(unit->def, 3, statusWindow, SUMMARY_STAT_VALUE_X,
                               24);
-      Text_DrawCharacterAtOffset((s32)MsgExp - 8, statusWindow, 136, 32);
+      Text_DrawMessageAsTiles((s32)MsgExp - 8, statusWindow, 136, 32);
       Text_DrawNumberInWindow(unit->agi, 3, statusWindow, SUMMARY_STAT_VALUE_X,
                               32);
-      Text_DrawCharacterAtOffset((s32)MsgExp - 7, statusWindow, 136, 40);
+      Text_DrawMessageAsTiles((s32)MsgExp - 7, statusWindow, 136, 40);
       Text_DrawNumberInWindow(unit->luck, 3, statusWindow, SUMMARY_STAT_VALUE_X,
                               40);
-      Text_DrawCharacterAtOffset((s32)MsgClassName + unit->classId,
+      Text_DrawMessageAsTiles((s32)MsgClassName + unit->classId,
                                  statusWindow, 0, 48);
       if (page == 0) {
         if (hasDjinn != 0)
-          Text_DrawCharacterAtOffset((s32)MsgExp - 1, statusWindow, 0, 72);
-        Text_DrawCharacterAtOffset((s32)MsgExp - 5, statusWindow, 0, 80);
-        Text_DrawCharacterAtOffset((s32)MsgExp - 4, statusWindow, 0, 88);
-        Text_DrawCharacterAtOffset((s32)MsgExp - 3, statusWindow, 0, 96);
+          Text_DrawMessageAsTiles((s32)MsgExp - 1, statusWindow, 0, 72);
+        Text_DrawMessageAsTiles((s32)MsgExp - 5, statusWindow, 0, 80);
+        Text_DrawMessageAsTiles((s32)MsgExp - 4, statusWindow, 0, 88);
+        Text_DrawMessageAsTiles((s32)MsgExp - 3, statusWindow, 0, 96);
         for (j = 0; j <= 3; j++) {
           s32 pal = 1;
 
@@ -1160,7 +1160,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       }
       statusCount = i;
       if (statusKinds[0] == 0)
-        Text_DrawCharacterAtOffset(unit->hp != 0 ? (s32)MsgNormal
+        Text_DrawMessageAsTiles(unit->hp != 0 ? (s32)MsgNormal
                                                  : (s32)MsgCantFight,
                                    statusWindow, 112, 0);
     }

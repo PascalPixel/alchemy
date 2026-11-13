@@ -23,7 +23,7 @@ void Func_080d82e0(s32 arg) {
 
   BattleEffect_InitializeSlots();
   effectSlots = gEffectWork;
-  Shop_RestoreSceneTilesFar(0x201204);
+  Shop_SaveAndTintFieldPaletteFar(0x201204);
   wait(30);
   djinni->visible = 0;
   Sound_PlayFar(152);
@@ -129,7 +129,7 @@ void Func_080d82e0(s32 arg) {
   }
 
   wait(15);
-  Shop_InitializeEffectFar();
+  Shop_RestoreFieldPaletteFar();
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 

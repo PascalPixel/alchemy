@@ -163,7 +163,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
 struct PlacementTable *Djinn_GetRecoveryTableFar(s32 owner);
 s32 DjinnRecovery_RemoveFar(s32 unitId, s32 element, s32 index);
 void MessageArgument_PushFar(s32, s32);
-void Message_ShowAndWaitCoreFar(s32 messageId);
+void BattleMessage_ShowAndWaitFar(s32 messageId);
 void PartyStatus_DrawFar(s32 mode);
 
 /// The battle sprites' animations (AnimationObject_SelectAnimation numbers)

@@ -454,7 +454,7 @@ void WindowSystem_InitFieldFar(void);
 struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
                                      s32 mode);
 void Window_CloseFar(struct RenderInput *window, s32 mode);
-void Text_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
+void Text_DrawMessageAsTilesFar(s32 message, struct RenderInput *window,
                                    s32 x, s32 y);
 void WindowSprite_PrepareForRedrawFar(struct RenderInput *window);
 void Party_AdjustCoinsFar(s32 amount);
@@ -682,17 +682,17 @@ void Func_081b83c4(void) {
   WindowSystem_InitFieldFar();
   window = Window_CreateFar(COIN_WINDOW_X, 0, COIN_WINDOW_WIDTH, 3, 6);
   sprites->coinsWindow = window;
-  Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, COIN_TEXT_X,
+  Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins, window, COIN_TEXT_X,
                                 0);
   Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                              (s32)sprites->coinsWindow, 0, 0);
   window = Window_CreateFar(BET_WINDOW_X, 3, BET_WINDOW_WIDTH, 3, 6);
   sprites->betWindow = window;
-  Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins - 1, window, 0, 0);
+  Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins - 1, window, 0, 0);
   window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
   sprites->helpWindow = window;
-  Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
-  Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1, sprites->helpWindow,
+  Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow, window, 0, 0);
+  Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow + 1, sprites->helpWindow,
                                 0, 8);
   bet = Party_GetAverageLevelFar() * 10;
 #if !TLA_PATCH_2
@@ -763,8 +763,8 @@ void Func_081b83c4(void) {
           Window_CloseFar(sprites->helpWindow, 1);
           window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
           sprites->helpWindow = window;
-          Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
-          Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
+          Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow, window, 0, 0);
+          Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow + 1,
                                         sprites->helpWindow, 0, 8);
           Sound_PlayFar(113);
           state = 0;
@@ -813,8 +813,8 @@ void Func_081b83c4(void) {
     LANGUAGE == LANGUAGE_ITALIAN
           WindowSprite_PrepareForRedrawFar(sprites->helpWindow);
 #endif
-          Text_DrawCharacterAtOffsetFar(message, sprites->helpWindow, 0, 0);
-          Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameChoose,
+          Text_DrawMessageAsTilesFar(message, sprites->helpWindow, 0, 0);
+          Text_DrawMessageAsTilesFar((s32)&MsgDiceGameChoose,
                                         sprites->helpWindow, 0, 8);
         }
       }
@@ -1007,7 +1007,7 @@ void Func_081b83c4(void) {
             cashOut = 0;
             window = Window_CreateFar(4, 16, 20, 4, 6);
             sprites->helpWindow = window;
-            Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameDoubleUp, window, 0,
+            Text_DrawMessageAsTilesFar((s32)&MsgDiceGameDoubleUp, window, 0,
                                           0);
           }
           timer = 0;
@@ -1023,8 +1023,8 @@ void Func_081b83c4(void) {
           state = 0;
           window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
           sprites->helpWindow = window;
-          Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
-          Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
+          Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow, window, 0, 0);
+          Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow + 1,
                                         sprites->helpWindow, 0, 8);
           slide = 0;
           timer = 0;
@@ -1046,8 +1046,8 @@ void Func_081b83c4(void) {
         window = Window_CreateFar(WINNINGS_WINDOW_X - ((u32)digits >> 1), 16,
                                   digits + WINNINGS_WINDOW_MARGIN, 3, 6);
         sprites->helpWindow = window;
-        Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings, window, 0, 0);
-        Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings - 1,
+        Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceWinnings, window, 0, 0);
+        Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceWinnings - 1,
                                       sprites->helpWindow,
                                       digits * 8 + WINNINGS_LABEL_X, 0);
         Text_DrawNumberInWindowFar(winnings, digits, (s32)sprites->helpWindow,
@@ -1061,8 +1061,8 @@ void Func_081b83c4(void) {
           state = 0;
           window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
           sprites->helpWindow = window;
-          Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
-          Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
+          Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow, window, 0, 0);
+          Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow + 1,
                                         sprites->helpWindow, 0, 8);
           slide = 0;
           timer = 0;
@@ -1104,14 +1104,14 @@ void Func_081b83c4(void) {
             sprites->helpWindow = window;
             if (total == 24) {
               lower = 1;
-              Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameLowerAgain, window,
+              Text_DrawMessageAsTilesFar((s32)&MsgDiceGameLowerAgain, window,
                                             0, 0);
             } else {
               lower = 0;
-              Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameHigherAgain,
+              Text_DrawMessageAsTilesFar((s32)&MsgDiceGameHigherAgain,
                                             window, 0, 0);
             }
-            Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameChoose,
+            Text_DrawMessageAsTilesFar((s32)&MsgDiceGameChoose,
                                           sprites->helpWindow, 0, 8);
             slide = 0;
             paletteRequest = 1;

@@ -907,8 +907,8 @@ void FileList_DrawDjinnCounts(struct RenderInput *win, struct NumberRow *row) {
   ((void (*)(void *, s32, s32, s32))Text_DrawStringAtOffset)
 #define Text_DrawNumberAtOffset                                                \
   ((void (*)(s32, s32, s32, s32, s32))Text_DrawNumberAtOffset)
-#define Text_DrawCharacterAtOffset                                             \
-  ((void (*)(s32, s32, s32, s32))Text_DrawCharacterAtOffset)
+#define Text_DrawMessageAsTiles                                                \
+  ((void (*)(s32, s32, s32, s32))Text_DrawMessageAsTiles)
 
 // Edition-specific x positions of the level and coin labels, in pixels.
 #if (LANGUAGE == LANGUAGE_SPANISH)
@@ -942,16 +942,16 @@ void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec) {
     Text_DrawStringInWindow((u8 *)gStatusMenu_LevelLetterString, win, 72, 0);
 #endif
     Text_DrawNumberAtOffset(rec[28], 2, win, 80, y);
-    Text_DrawCharacterAtOffset(rec[29] + (s32)MsgClassName, win, 0, 16);
+    Text_DrawMessageAsTiles(rec[29] + (s32)MsgClassName, win, 0, 16);
 #if (LANGUAGE == LANGUAGE_JAPANESE)
     y = 32;
     Text_DrawNumberInWindow(*(s32 *)(rec + 36), 6, win, 24, y);
-    Text_DrawCharacterAtOffset((s32)MsgCoins, win, 72, 32);
-    Text_DrawCharacterAtOffset((s32)MsgStatusLabel, win, 0, 48);
+    Text_DrawMessageAsTiles((s32)MsgCoins, win, 72, 32);
+    Text_DrawMessageAsTiles((s32)MsgStatusLabel, win, 0, 48);
     Text_DrawStringInWindow(Text_FormatPlayTime(*(s32 *)(rec + 32), (u8 *)buf),
                             win, 48, 48);
 #else
-    Text_DrawCharacterAtOffset((s32)MsgStatusLabel, win, 0, 32);
+    Text_DrawMessageAsTiles((s32)MsgStatusLabel, win, 0, 32);
     Text_DrawStringInWindow(Text_FormatPlayTime(*(s32 *)(rec + 32), (u8 *)buf),
                             win, 48, 40);
     y = 48;
@@ -959,11 +959,11 @@ void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec) {
 #if (LANGUAGE == LANGUAGE_FRENCH)
     // French uses the singular form for zero or one coin.
     if (*(u32 *)(rec + 36) > 1)
-      Text_DrawCharacterAtOffset((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
+      Text_DrawMessageAsTiles((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
     else
-      Text_DrawCharacterAtOffset((s32)MsgPiece, win, SUMMARY_COINS_X, 48);
+      Text_DrawMessageAsTiles((s32)MsgPiece, win, SUMMARY_COINS_X, 48);
 #else
-    Text_DrawCharacterAtOffset((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
+    Text_DrawMessageAsTiles((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
 #endif
 #endif
   }
@@ -1215,7 +1215,7 @@ done:
 #undef ERASE_CONFIRM_X
 #undef Text_DrawStringAtOffset
 #undef Text_DrawNumberAtOffset
-#undef Text_DrawCharacterAtOffset
+#undef Text_DrawMessageAsTiles
 #undef SUMMARY_LEVEL_X
 #undef SUMMARY_COINS_X
 #undef FILE_LIST_LEADER_X

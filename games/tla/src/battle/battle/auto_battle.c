@@ -125,7 +125,7 @@ s32 AutoBattle_RunAction(s16 *action) {
 
   switch (action[3]) {
   case 99:
-    Message_ShowAndWaitCoreFar((s32)&MsgPartyFlees);
+    BattleMessage_ShowAndWaitFar((s32)&MsgPartyFlees);
     if (BattleEscape_PlayRun((struct BattleActionRecord *)action) != 0)
       return 1;
     break;
@@ -187,7 +187,7 @@ s32 BattleEscape_PlayRun(struct BattleActionRecord *action) {
     wait(22);
     return 1;
   }
-  Message_ShowAndWaitCoreFar((s32)MsgCannotEscape);
+  BattleMessage_ShowAndWaitFar((s32)MsgCannotEscape);
   return 0;
 }
 
@@ -207,7 +207,7 @@ s32 AutoBattle_ShowDefend(s16 *script) {
   }
   MessageArgument_ClearAllFar();
   MessageArgument_PushFar(objectId, 1);
-  Message_ShowAndWaitCoreFar((s32)MsgActorDefends);
+  BattleMessage_ShowAndWaitFar((s32)MsgActorDefends);
   return 0;
 }
 
@@ -341,7 +341,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   Unit_Get(work.actors[0]);
   Random16();
   MessageArgument_PushFar(work.actor, 1);
-  Message_ShowAndWaitCoreFar((s32)MsgActorAttacks);
+  BattleMessage_ShowAndWaitFar((s32)MsgActorAttacks);
   BattleMotion_ApproachTarget(work.actor, work.actors[0], 13, 0);
   Actor_SetAnimationSpeedFar(
       (struct Actor *)BattleObject_Get(work.actor)->object, 16);
@@ -470,16 +470,16 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
 
   if (unitId <= 7) {
     if (showMessage != 0)
-      Message_ShowAndWaitCoreFar((s32)MsgBitterBlow);
+      BattleMessage_ShowAndWaitFar((s32)MsgBitterBlow);
     MessageArgument_PushFar(damage, 5);
     MessageArgument_PushFar(unitId, 1);
-    Message_ShowAndWaitCoreFar((s32)MsgDmgP);
+    BattleMessage_ShowAndWaitFar((s32)MsgDmgP);
   } else {
     if (showMessage != 0)
-      Message_ShowAndWaitCoreFar((s32)MsgCritical);
+      BattleMessage_ShowAndWaitFar((s32)MsgCritical);
     MessageArgument_PushFar(damage, 5);
     MessageArgument_PushFar(unitId, 1);
-    Message_ShowAndWaitCoreFar((s32)MsgDmgE);
+    BattleMessage_ShowAndWaitFar((s32)MsgDmgE);
     MessageArgument_PushFar(unitId, 1);
   }
 
@@ -487,11 +487,11 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   if (unitId <= 7) {
     if (character->hp <= 0) {
       MessageArgument_PushFar(unitId, 1);
-      Message_ShowAndWaitCoreFar((s32)MsgGoesDown);
+      BattleMessage_ShowAndWaitFar((s32)MsgGoesDown);
     }
   } else if (character->hp <= 0) {
     MessageArgument_PushFar(unitId, 1);
-    Message_ShowAndWaitCoreFar((s32)MsgDowned);
+    BattleMessage_ShowAndWaitFar((s32)MsgDowned);
   }
 
   slot = BattleObject_Get(unitId);

@@ -91,7 +91,7 @@ s32 Menu_RunSelectionWithCursorObject(void) {
   cur[1] = win;
   win = Window_Create(1, 0, 28, 20, 2);
   Menu_DrawFlagBitTable(win, page);
-  UiTextResource_Initialize(obj, &res);
+  MenuArrow_Create(obj, &res);
   for (;;) {
     wait(1);
     ret = Menu_HandleFlagGridInput(win, &page, cur);
@@ -99,9 +99,9 @@ s32 Menu_RunSelectionWithCursorObject(void) {
       break; // Close.
     if (ret == 1)
       Menu_DrawFlagBitTable(win, page); // A flag or the page changed.
-    UiTextResource_SetPosition(obj, cur[0] * 8 + 58, cur[1] * 8 + 20);
+    MenuArrow_SetPosition(obj, cur[0] * 8 + 58, cur[1] * 8 + 20);
   }
-  UiTextResource_Release(res);
+  MenuArrow_Release(res);
   Window_Close(win, 2);
   return 0;
 }

@@ -26,10 +26,10 @@ Window_Close:
 	.thumb_func
 Text_DrawMessage:
 	overlay_veneer Text_DrawMessageFar
-	.global Text_DrawCharacterAtOffset
+	.global Text_DrawMessageAsTiles
 	.thumb_func
-Text_DrawCharacterAtOffset:
-	overlay_veneer Text_DrawCharacterAtOffsetFar
+Text_DrawMessageAsTiles:
+	overlay_veneer Text_DrawMessageAsTilesFar
 	.global Text_DrawStringAtOffset
 	.thumb_func
 Text_DrawStringAtOffset:

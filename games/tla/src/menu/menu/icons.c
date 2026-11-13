@@ -627,7 +627,7 @@ void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled) {
   for (i = 0; i <= 4; i++) {
     if (enabled[i] != 0) {
       MenuIcon_SetSlot(i, icon_x, icon_y);
-      Text_DrawCharacterAtOffsetFar((s32)MsgStatusNameDown + i, panel, x + 16,
+      Text_DrawMessageAsTilesFar((s32)MsgStatusNameDown + i, panel, x + 16,
                                     y);
       y += 16;
       icon_y += 16;
@@ -637,7 +637,7 @@ void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled) {
     }
   }
   if (count == 0)
-    Text_DrawCharacterAtOffsetFar((s32)MsgStatusNameNormal, panel, x, y);
+    Text_DrawMessageAsTilesFar((s32)MsgStatusNameNormal, panel, x, y);
 }
 
 s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id) {

@@ -186,7 +186,7 @@ extern u32 gData_02000754[];
 extern u32 gData_0200076c[];
 
 void Text_DrawNumberAtOffset(s32 value, s32 format, void *window, s32 x, s32 y);
-void Text_DrawCharacterAtOffset(s32 character, void *window, s32 x, s32 y);
+void Text_DrawMessageAsTiles(s32 character, void *window, s32 x, s32 y);
 s32 PartyInventory_HasSpace(void);
 s32 PartyInventory_Add(s32 item);
 void ItemMenu_DrawItemDetails(void *window, s32 item);
@@ -229,7 +229,7 @@ void Func_020002cc(void) {
         Text_DrawStringInWindow(gData_02000754, window, 0, 32);
         index = item & 0x1ff;
         Func_020006bc(index);
-        Text_DrawCharacterAtOffset(index + (s32)MsgItemName, window, 120, 0);
+        Text_DrawMessageAsTiles(index + (s32)MsgItemName, window, 120, 0);
         Text_DrawMessage(index + (s32)MsgItemPlainName, window, 0, 16);
         WindowSprite_RedrawSavedRect(details);
         ItemMenu_DrawItemDetails(details, item);

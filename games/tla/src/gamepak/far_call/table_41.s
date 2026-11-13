@@ -43,17 +43,17 @@ Func_08108040:
 	.thumb_func
 Func_08108048:
 	overlay_veneer MenuCursor_SetPositionImmediate
-	.global Shop_FillSelectorFar
+	.global QuantityBar_FillFar
 	.thumb_func
-Shop_FillSelectorFar:
+QuantityBar_FillFar:
 	overlay_veneer QuantityBar_Fill
-	.global Shop_RestoreSceneTilesFar
+	.global Shop_SaveAndTintFieldPaletteFar
 	.thumb_func
-Shop_RestoreSceneTilesFar:
+Shop_SaveAndTintFieldPaletteFar:
 	overlay_veneer Shop_SaveAndTintFieldPalette
-	.global Shop_InitializeEffectFar
+	.global Shop_RestoreFieldPaletteFar
 	.thumb_func
-Shop_InitializeEffectFar:
+Shop_RestoreFieldPaletteFar:
 	overlay_veneer Shop_RestoreFieldPalette
 	.global Func_08108068
 	.thumb_func

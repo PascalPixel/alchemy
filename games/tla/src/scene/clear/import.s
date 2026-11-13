@@ -102,10 +102,10 @@ Window_DrawDividerLine:
 	.thumb_func
 Text_DrawMessage:
 	overlay_veneer Text_DrawMessageFar
-	.global Text_DrawCharacterAtOffset
+	.global Text_DrawMessageAsTiles
 	.thumb_func
-Text_DrawCharacterAtOffset:
-	overlay_veneer Text_DrawCharacterAtOffsetFar
+Text_DrawMessageAsTiles:
+	overlay_veneer Text_DrawMessageAsTilesFar
 	.ifndef TLA_EDITION_JA
 	.global Text_DrawStringInWindow
 	.thumb_func

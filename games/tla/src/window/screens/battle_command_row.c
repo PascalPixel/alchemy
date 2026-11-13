@@ -249,7 +249,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
     }
     if (selectionUi->drawnIndex != selectionUi->selectedIndex) {
       WindowSprite_PrepareForRedraw(selectionUi->window);
-      Text_DrawCharacterAtOffset(
+      Text_DrawMessageAsTiles(
           selectionUi->entries[selectionUi->selectedIndex].kind +
               (s32)MsgCommandName,
           selectionUi->window, 0, 0);

@@ -23,7 +23,7 @@ extern u8 MsgFoundVenusDjinni[];
 s32 Message_DecodeMode1(s32 message);
 // UB: Message_Start is called with five of its six arguments, so the flags it
 // reads are whatever the stack word after the fifth holds (the 0 left there as
-// UiGlyph_LoadEntryWithPalette's last argument); UBFIX declares it whole and
+// Icon_LoadWithPalette's last argument); UBFIX declares it whole and
 // passes 0.
 #ifdef UBFIX
 struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
@@ -58,7 +58,7 @@ void Func_08044a58(s32 member, s32 element, s32 djinn) {
     work->dirty = 1;
 
     id = Portrait_GetForSpeaker(name);
-    UiGlyph_LoadEntryWithPalette(id, zero, &slot, &tile, 14, zero);
+    Icon_LoadWithPalette(id, zero, &slot, &tile, 14, zero);
 
     // The portrait as a bare OAM entry, pushed at depth 250 each frame: a link
     // word, attributes 0 and 1 (32x32 at y 12) and attribute 2, its tile with
@@ -122,7 +122,7 @@ void Func_08044b98(s32 member) {
   if (window != NULL) {
     Window_DrawDividerLine(window, 4, 0, 4, 4);
     work->dirty = 1;
-    UiGlyph_LoadEntryWithPalette(Portrait_GetForSpeaker(Func_08044b80(member)),
+    Icon_LoadWithPalette(Portrait_GetForSpeaker(Func_08044b80(member)),
                                  0, &slot, &tile, 14, 0);
     // The portrait as a bare OAM entry, pushed at depth 250 each frame: a link
     // word, attributes 0 and 1 (32x32 at x 20, y 12) and attribute 2, its tile
@@ -177,7 +177,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 
     work->dirty = 1;
 
-    UiGlyph_LoadEntryWithPalette(Portrait_GetForSpeaker(Func_08044b80(first)),
+    Icon_LoadWithPalette(Portrait_GetForSpeaker(Func_08044b80(first)),
                                  0, &handle1, &palette, 14, 0);
     // The portraits as bare OAM entries, pushed at depth 250 each frame: a
     // link word, attributes 0 and 1 (32x32 at y 12, x 12 and 44) and
@@ -188,7 +188,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     *p = palette | 0xe000;
 
     entry2 = sprite2;
-    UiGlyph_LoadEntryWithPalette(Portrait_GetForSpeaker(Func_08044b80(second)),
+    Icon_LoadWithPalette(Portrait_GetForSpeaker(Func_08044b80(second)),
                                  0, &handle2, &palette, 15, 0);
     p = entry2;
     *p++ = 0;

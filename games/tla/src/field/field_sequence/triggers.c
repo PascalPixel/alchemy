@@ -201,7 +201,7 @@ void Func_080ad2f8(s32 value);
 s32 PartyInventory_AddFar(s32 item);
 s32 BattleEffect_GetFlags(s32 id);
 void Actor_TurnToFaceEachOther(s32 first, s32 second, s32 mode);
-void Window_SetBusyFlagsFar(s32 flags);
+void Message_SetDecodeFlagsFar(s32 flags);
 void BattleEffect_ResumeObject(s32 id);
 
 s32 Func_080ccec8(s32 id) {
@@ -473,7 +473,7 @@ s32 Func_080ccec8(s32 id) {
     }
   }
   if (talk->script < 0x10000) {
-    Window_SetBusyFlagsFar(busyFlags);
+    Message_SetDecodeFlagsFar(busyFlags);
     Event_RunMessage(id, talk->script);
   } else {
     Leader_StopMoving();

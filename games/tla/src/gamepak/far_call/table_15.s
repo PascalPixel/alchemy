@@ -5,15 +5,15 @@
 	.thumb_func
 Func_080381c0:
 	overlay_veneer Func_0804bc08
-	.global Message_ShowAndWaitCoreFar
+	.global BattleMessage_ShowAndWaitFar
 	.thumb_func
-Message_ShowAndWaitCoreFar:
-	overlay_veneer Message_ShowAndWaitCore
+BattleMessage_ShowAndWaitFar:
+	overlay_veneer BattleMessage_ShowAndWait
 	.global Func_080381d0
 	.thumb_func
 Func_080381d0:
-	overlay_veneer Message_Show
+	overlay_veneer BattleMessage_Open
 	.global Func_080381d8
 	.thumb_func
 Func_080381d8:
-	overlay_veneer Func_0803f620
+	overlay_veneer MenuArrow_NoOpCallback4

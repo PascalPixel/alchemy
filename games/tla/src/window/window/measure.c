@@ -4,8 +4,8 @@
 
 #include "../window_internal.h"
 
-void Func_0803bb58(s32 no, u32 *pw, u32 *ph, u16 *spacing);
-void Text_MeasureEntry(s32 no, u32 *pw, u32 *ph, u16 *spacing);
+void Text_MeasureAllPages(s32 no, u32 *pw, u32 *ph, u16 *spacing);
+void Text_MeasureDecoded(s32 no, u32 *pw, u32 *ph, u16 *spacing);
 
 // In the Japanese release, while the window work's mode is set, a measured
 // window is 2 tiles wider and kept off the screen's last column.
@@ -31,9 +31,9 @@ void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
 
   if (!(flags & 2)) {
     if (flags & 1)
-      Func_0803bb58(no, pw, ph, spacing);
+      Text_MeasureAllPages(no, pw, ph, spacing);
     else
-      Text_MeasureEntry(no, pw, ph, spacing);
+      Text_MeasureDecoded(no, pw, ph, spacing);
   }
 
   if (*pw == 0 && *ph == 0)
@@ -83,7 +83,7 @@ void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
 s32 Message_Decode(s32, s32);
 
 void Text_MeasureMessage(s32 no, s32 *x, s32 *y) {
-  Text_MeasureEntry(Message_Decode(no, 0), x, y, 0);
+  Text_MeasureDecoded(Message_Decode(no, 0), x, y, 0);
 }
 
 /// Builds the render entries of message no and fits its window on screen,
@@ -108,7 +108,16 @@ DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSizeAlt, 1)
 void Text_ResetStyle(void);
 s32 GameFlag_Test(s32 flag);
 
-void Text_MeasureEntry(s32 entryIndex, u32 *outWidth, u32 *outHeight,
+/// Measures decoded text from entryIndex to its first page's end: returns the
+/// width of the longest line and the height (15 pixels a line) in pixels. With
+/// spacing set, fills one entry per line with the extra gap between characters,
+/// in 1/256 pixel, that spreads the line to fill the window. spacing, when
+/// non-NULL, has room for four line entries. A page of more than four lines
+/// keeps measuring into the fourth. It sets WindowWork.outline to each
+/// TEXT_OUTLINE operand it passes and leaves it at the last, the style the
+/// next glyphs are drawn in unless the style is reset first (Window_Create
+/// resets it).
+void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                        u16 *spacing) {
   struct WindowWork *work;
   u32 height;
@@ -277,7 +286,17 @@ done:
 
 void Text_ResetStyle(void);
 
-void Func_0803bb58(s32 entryIndex, u32 *outWidth, u32 *outHeight,
+/// Measures decoded text from start over all its pages: the width of the first
+/// page's longest line and the height of its tallest page, in pixels, with each
+/// line's extra character gap in spacing as Text_MeasureDecoded.
+/// The text must fit 16 page-height slots; this routine does not clamp the page
+/// count. Unlike Text_MeasureDecoded it puts no ceiling on the gaps
+/// outside Japanese, and a page break restarts neither the line count nor the
+/// line's width, so the gaps past the first page do not fit their lines; its
+/// one caller, Window_FitOnScreen with flags bit 0, is reached only from
+/// Text_GetMessageSizeAlt, which passes no spacing. It changes
+/// WindowWork.outline as Text_MeasureDecoded does.
+void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                    u16 *spacing) {
   u32 pageHeights[16];
   u16 lineSpacingCounts[4];

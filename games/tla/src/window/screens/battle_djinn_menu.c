@@ -231,7 +231,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
       if (previewPage != 0) {
         Window_Close(messageWindow, 1);
         messageWindow = Window_Create(0, 4, 30, 4, 42);
-        Vram_FillWindowBlockPattern();
+        Text_FillCanvasBackground();
       }
       redraw = 0;
       if (djinnCount != 0) {
@@ -313,10 +313,10 @@ s32 BattleDjinnMenu_Run(s32 member) {
           Window_SetTilemapEntry(
               listWindow, ((encodedDjinn & 0xf00) >> 8) + 0x5001, 0, j * 2, 0);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK)
-            Func_08041f70(4);
+            Text_SetColor(4);
           else if (encodedDjinn & DJINN_ENTRY_STANDBY)
-            Func_08041f70(2);
-          Text_DrawCharacterAtOffset(((encodedDjinn & 0xf00) >> 8) * 20 +
+            Text_SetColor(2);
+          Text_DrawMessageAsTiles(((encodedDjinn & 0xf00) >> 8) * 20 +
                                          (encodedDjinn & 0xff) +
                                          (s32)MsgDjinnName,
                                      listWindow, 8, j * 16);
@@ -325,7 +325,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
                 (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
                     DJINN_ENTRY_RECOVERY_SHIFT,
                 2, listWindow, DJINN_TURNS_X, j * 16);
-          Func_08041f70(15);
+          Text_SetColor(15);
           j++;
           if (j > 4)
             break;
@@ -418,7 +418,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
             break;
           }
         } else if (alreadySelected == 0) {
-          Vram_FillWindowBlockPattern();
+          Text_FillCanvasBackground();
           MessageArgument_ClearAll();
           MessageArgument_Push((turns & DJINN_ENTRY_RECOVERY_MASK) >>
                                    DJINN_ENTRY_RECOVERY_SHIFT,

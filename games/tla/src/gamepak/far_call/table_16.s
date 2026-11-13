@@ -4,11 +4,11 @@
 	.global Func_08038200
 	.thumb_func
 Func_08038200:
-	overlay_veneer UiTimedNotice_Create
-	.global UiTimedNotice_CloseIfActiveFar
+	overlay_veneer AreaNameWindow_Show
+	.global AreaNameWindow_HideFar
 	.thumb_func
-UiTimedNotice_CloseIfActiveFar:
-	overlay_veneer UiTimedNotice_CloseIfActive
+AreaNameWindow_HideFar:
+	overlay_veneer AreaNameWindow_Hide
 	.global Func_08038210
 	.thumb_func
 Func_08038210:

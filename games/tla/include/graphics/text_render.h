@@ -6,8 +6,8 @@
 
 s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x);
 
-void Text_DrawCharacterAtOffset(s32 character, struct RenderInput *work,
-                                u32 offsetX, u32 offsetY);
+void Text_DrawMessageAsTiles(s32 character, struct RenderInput *work,
+                             u32 offsetX, u32 offsetY);
 
 void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
                              s32 offsetY);

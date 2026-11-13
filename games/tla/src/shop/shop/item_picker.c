@@ -391,24 +391,24 @@ void ItemPicker_DrawItem(void *window, s32 unitId, s32 slot) {
   if (window == 0)
     return;
   WindowSprite_RedrawSavedRectFar(window);
-  Text_DrawCharacterAtOffsetFar(item + (s32)MsgItemName, window, 0, 0);
+  Text_DrawMessageAsTilesFar(item + (s32)MsgItemName, window, 0, 0);
   if (shop->itemMode == 0)
     flags = Func_080ad268(unitId, slot);
   else
     flags = Func_080ad270(unitId, slot);
   if (flags & 2) {
-    Text_DrawCharacterAtOffsetFar((s32)MsgCannotDrop, window, SHOP_PRICE_NOTE_X,
+    Text_DrawMessageAsTilesFar((s32)MsgCannotDrop, window, SHOP_PRICE_NOTE_X,
                                   8);
   } else if (flags & 1) {
-    Text_DrawCharacterAtOffsetFar((s32)MsgCannotRemove, window,
+    Text_DrawMessageAsTilesFar((s32)MsgCannotRemove, window,
                                   SHOP_PRICE_NOTE_X, 8);
   } else if (shop->itemMode == 0) {
     price = Shop_SalePrice(unit->inventory[slot]) * quantity;
     message = (s32)MsgPriceHeading;
-    Text_DrawCharacterAtOffsetFar(message, window, 8, 8);
+    Text_DrawMessageAsTilesFar(message, window, 8, 8);
     Text_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
     // Five messages before the price heading: MsgCoins.
-    Text_DrawCharacterAtOffsetFar(message - 5, window, SHOP_PRICE_COINS_X, 8);
+    Text_DrawMessageAsTilesFar(message - 5, window, SHOP_PRICE_COINS_X, 8);
   }
 }
 

@@ -283,9 +283,9 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       if (((battle->plan.actorId ^ battle->plan.targetIds[0]) >> 7) == 0) {
         MessageArgument_PushFar(battle->plan.actorId, 1);
         if (battle->plan.actorId == battle->plan.targetIds[0])
-          Message_ShowAndWaitCoreFar((s32)&MsgStopHittingYourself);
+          BattleMessage_ShowAndWaitFar((s32)&MsgStopHittingYourself);
         else
-          Message_ShowAndWaitCoreFar((s32)&MsgAttacksAlly);
+          BattleMessage_ShowAndWaitFar((s32)&MsgAttacksAlly);
       }
       Func_0811ea0c(&battle->plan, battle->plan.abilityId == 312 ? 32 : 0);
       swap = battle->plan.actorId;
@@ -299,10 +299,10 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       battle->skipPlayback = 1;
       Func_0811f088(&battle->plan, 1);
       battle->skipPlayback = 0;
-      Message_ShowAndWaitCoreFar((s32)&MsgDjinnRecoverFaster);
+      BattleMessage_ShowAndWaitFar((s32)&MsgDjinnRecoverFaster);
       kept = Func_08124cc4(battle->plan.targetIds[0] > 7);
       if (kept == 0)
-        Message_ShowAndWaitCoreFar((s32)(MsgDjinnRecoverFaster + 1));
+        BattleMessage_ShowAndWaitFar((s32)(MsgDjinnRecoverFaster + 1));
       if (kept <= 1)
         BattleMessage_WaitForAdvance();
       break;
@@ -417,7 +417,7 @@ s32 Func_0811de78(struct BattlePlan *plan) {
       partyMode = 1;
 
     if (!partyMode) {
-      Message_ShowAndWaitCoreFar((s32)MsgNoEscape);
+      BattleMessage_ShowAndWaitFar((s32)MsgNoEscape);
       BattleMessage_WaitForAdvance();
     } else {
       s16 unitIds[14];
@@ -444,7 +444,7 @@ s32 Func_0811de78(struct BattlePlan *plan) {
     BattleActor_RemoveFromLists(plan->actorId);
     BattleObject_MarkForRelease(plan->actorId);
   } else {
-    Message_ShowAndWaitCoreFar((s32)MsgNoEscape);
+    BattleMessage_ShowAndWaitFar((s32)MsgNoEscape);
     BattleMessage_WaitForAdvance();
   }
 

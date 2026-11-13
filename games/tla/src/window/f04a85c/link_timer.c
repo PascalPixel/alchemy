@@ -157,7 +157,7 @@ done:
   return;
 }
 
-unsigned char Vram_FillWindowBlockPattern(void);
+unsigned char Text_FillCanvasBackground(void);
 /* VIEW(countdown): routine Text_DrawWideStringAtOffset as void Text_DrawWideStringAtOffset(s16 *, s32, s32, s32); f04a85c has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x, s32 y). */
 extern void Text_DrawWideStringAtOffset__countdown(s16 *, s32, s32, s32) __asm__("Text_DrawWideStringAtOffset");
 
@@ -204,7 +204,7 @@ s32 Message_ShowLocalizedAndWait(void) {
   if (result != 0) {
     attrs = 42;
     work = Window_Create__countdown(0, 7, 30, 4, attrs);
-    Vram_FillWindowBlockPattern();
+    Text_FillCanvasBackground();
     BATTLE_MENU_MESSAGE_COPY((s32)&MsgNoTimeToRun__countdown, buffer,
                              BATTLE_MENU_MESSAGE_CAPACITY);
     Text_DrawWideStringAtOffset__countdown(buffer, work, 0, 4);

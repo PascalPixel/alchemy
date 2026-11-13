@@ -5,7 +5,7 @@
 
 #include "../f04a85c_internal.h"
 
-s32 Func_08040798(s32 selection);
+s32 PauseMenu_Choose(s32 selection);
 s32 Func_08043690(void);
 s32 SettingsMenu_Run(void);
 
@@ -16,7 +16,7 @@ s32 Func_0804e0d0(void) {
   s32 selection = 0;
 
 again:
-  selection = Func_08040798(selection);
+  selection = PauseMenu_Choose(selection);
   if (selection == -1)
     return -1;
   if (selection == 0) {
@@ -195,7 +195,7 @@ extern s16 gPortrait_SpriteMap[];
 struct RenderInput *Portrait_OpenWindow(s32 x, s32 y, s32 width, s32 height);
 /* VIEW(flag_bit_rect): routine WindowSprite_PrepareForRedraw as void WindowSprite_PrepareForRedraw(struct RenderInput *window); resource_work has void WindowSprite_PrepareForRedraw(struct Window *). */
 extern void WindowSprite_PrepareForRedraw__flag_bit_rect(struct RenderInput *window) __asm__("WindowSprite_PrepareForRedraw");
-void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
+void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse);
 
 /// A debug browser of the portraits: left and right step through
@@ -263,9 +263,9 @@ s32 Func_0804e3f4(void) {
       else
         glyph = gPortrait_SpriteMap[(index - count) * 2 + 1] + 128;
       slot = *(u16 *)((u8 *)work + slotOffset);
-      UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, palette, 1);
+      Icon_LoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
       Text_DrawNumberInWindow__flag_bit_rect(index, 2, window, 0, 0);
-      Text_DrawCharacterAtOffset(index + (s32)MsgTestName, window, 24, 0);
+      Text_DrawMessageAsTiles(index + (s32)MsgTestName, window, 24, 0);
     }
     wait(1);
   }

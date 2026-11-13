@@ -558,7 +558,7 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
   PsynergyMenu_RefreshOwnerEntries(0x6c, 0x20, 8);
   PsynergyMenu_DrawPsynergyIcons(psynergies);
   if (menu->psynergyCount == 0) {
-    Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyMenuEmpty,
+    Text_DrawMessageAsTilesFar((s32)MsgPsynergyMenuEmpty,
                                     menu->psynergyWindow, 0, 0x18);
   }
 }
@@ -609,7 +609,7 @@ s32 Func_080fd2e8(s32 browseOnly) {
                                   MsgAbilityDescription,
                               menu->infoWindow, 0, 0);
 #else
-          Text_DrawCharacterAtOffsetFar((menu->paneAction[0] & 0x3fff) +
+          Text_DrawMessageAsTilesFar((menu->paneAction[0] & 0x3fff) +
                                             MsgAbilityDescription,
                                         menu->infoWindow, 0, 0);
 #endif
@@ -709,9 +709,9 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
 
   if (gMainRoutineWork.packedEvents[0] != 0 &&
       gMainRoutineWork.packedEvents[1] != 0)
-    Text_DrawCharacterAtOffsetFar((s32)MsgShortcutSetR + 1, window, 0, -8);
+    Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 1, window, 0, -8);
   else
-    Text_DrawCharacterAtOffsetFar((s32)MsgShortcutSetL - 2, window, 0, -8);
+    Text_DrawMessageAsTilesFar((s32)MsgShortcutSetL - 2, window, 0, -8);
 
   name = &MsgAbilityNothing[gMainRoutineWork.packedEvents[0] & 0x3ff];
   Text_GetMessageSizeFar(name, &left, &top, &width, &height);
@@ -723,14 +723,14 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
 #endif
   if (gMainRoutineWork.packedEvents[0] != 0) {
     MessageArgument_PushFar(gMainRoutineWork.packedEvents[0] & 0x3ff, 4);
-    Text_DrawCharacterAtOffsetFar((s32)MsgShortcutSetR + 4, window, 0, 0);
+    Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 4, window, 0, 0);
 #if TLA_PATCH_2
     if (!wide)
 #endif
       Text_DrawStringAtOffsetFar(
           (s32)Unit_Get(gMainRoutineWork.packedEvents[0] >> 10), window, 80, 0);
   } else {
-    Text_DrawCharacterAtOffsetFar((s32)MsgShortcutSetR + 2, window, 0, 0);
+    Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 2, window, 0, 0);
   }
 
   name = &MsgAbilityNothing[gMainRoutineWork.packedEvents[1] & 0x3ff];
@@ -743,14 +743,14 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
 #endif
   if (gMainRoutineWork.packedEvents[1] != 0) {
     MessageArgument_PushFar(gMainRoutineWork.packedEvents[1] & 0x3ff, 4);
-    Text_DrawCharacterAtOffsetFar((s32)MsgShortcutSetR + 5, window, 0, 8);
+    Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 5, window, 0, 8);
 #if TLA_PATCH_2
     if (!wide)
 #endif
       Text_DrawStringAtOffsetFar(
           (s32)Unit_Get(gMainRoutineWork.packedEvents[1] >> 10), window, 80, 8);
   } else {
-    Text_DrawCharacterAtOffsetFar((s32)MsgShortcutSetR + 3, window, 0, 8);
+    Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 3, window, 0, 8);
   }
   return 1;
 }
@@ -764,25 +764,25 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
 
   if (gMainRoutineWork.packedEvents[0] != 0 &&
       gMainRoutineWork.packedEvents[1] != 0)
-    Text_DrawCharacterAtOffsetFar((s32)MsgShortcutSetR + 1, window, 0, -8);
+    Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 1, window, 0, -8);
   else
-    Text_DrawCharacterAtOffsetFar((s32)MsgShortcutSetL - 2, window, 0, -8);
+    Text_DrawMessageAsTilesFar((s32)MsgShortcutSetL - 2, window, 0, -8);
 
   name = &MsgAbilityNothing[gMainRoutineWork.packedEvents[0] & 0x3ff];
   Text_GetMessageSizeFar(name, &left, &top, &width, &height);
   if (gMainRoutineWork.packedEvents[0] != 0) {
     if (width < 0 || width > COLON_NAME_WIDTH_LIMIT) {
       Text_DrawStringInWindowFar(gMenu_ShortcutLString, window, 0, 0);
-      Text_DrawCharacterAtOffsetFar((s32)name, window, 8, 0);
+      Text_DrawMessageAsTilesFar((s32)name, window, 8, 0);
     } else {
       Text_DrawStringInWindowFar(gMenu_ShortcutLColonString, window, 0, 0);
-      Text_DrawCharacterAtOffsetFar((s32)name, window, 16, 0);
+      Text_DrawMessageAsTilesFar((s32)name, window, 16, 0);
     }
     Text_DrawStringAtOffsetFar(
         (s32)Unit_Get(gMainRoutineWork.packedEvents[0] >> 10), window, 80, 0);
   } else {
     Text_DrawStringInWindowFar(gMenu_ShortcutLColonString, window, 0, 0);
-    Text_DrawCharacterAtOffsetFar((s32)MsgShortcutSetR + 2, window, 24, 0);
+    Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 2, window, 24, 0);
   }
 
   name = &MsgAbilityNothing[gMainRoutineWork.packedEvents[1] & 0x3ff];
@@ -790,16 +790,16 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
   if (gMainRoutineWork.packedEvents[1] != 0) {
     if (width < 0 || width > COLON_NAME_WIDTH_LIMIT) {
       Text_DrawStringInWindowFar(gMenu_ShortcutRString, window, 0, 8);
-      Text_DrawCharacterAtOffsetFar((s32)name, window, 8, 8);
+      Text_DrawMessageAsTilesFar((s32)name, window, 8, 8);
     } else {
       Text_DrawStringInWindowFar(gMenu_ShortcutRColonString, window, 0, 8);
-      Text_DrawCharacterAtOffsetFar((s32)name, window, 16, 8);
+      Text_DrawMessageAsTilesFar((s32)name, window, 16, 8);
     }
     Text_DrawStringAtOffsetFar(
         (s32)Unit_Get(gMainRoutineWork.packedEvents[1] >> 10), window, 80, 8);
   } else {
     Text_DrawStringInWindowFar(gMenu_ShortcutRColonString, window, 0, 8);
-    Text_DrawCharacterAtOffsetFar((s32)MsgShortcutSetR + 3, window, 24, 8);
+    Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 3, window, 24, 8);
   }
   return 1;
 }
@@ -958,7 +958,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work, struct MenuResult *state)
 #if LANGUAGE == LANGUAGE_JAPANESE
       Text_DrawMessageFar(masked, menu->infoWindow, 0, 0);
 #else
-      Text_DrawCharacterAtOffsetFar(masked, menu->infoWindow, 0, 0);
+      Text_DrawMessageAsTilesFar(masked, menu->infoWindow, 0, 0);
 #endif
       // From patch 2 the menu waits a frame after drawing it.
 #if TLA_PATCH_2
@@ -1017,9 +1017,9 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
   Window_DrawDividerLineFar(window, 0, 11, 16, 11);
 
   if (2 & *(u16 *)((u8 *)menu + 0x21c)) {
-    Text_DrawCharacterAtOffsetFar((s32)MsgShortcutSetL - 1, window, 0, 88);
+    Text_DrawMessageAsTilesFar((s32)MsgShortcutSetL - 1, window, 0, 88);
   } else {
-    Text_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp + 2, window,
+    Text_DrawMessageAsTilesFar((s32)MsgArrangeItemsHelp + 2, window,
                                     HELP_X, 88);
   }
 
@@ -1031,7 +1031,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
 
   Menu_SetPageIcons(5, firstEntry, window, PAGE_X, 0x22);
   Menu_DrawPageIndicator(window, state->entryCount, 5, state->page, 15);
-  Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyChooseTarget + 2, window,
+  Text_DrawMessageAsTilesFar((s32)MsgPsynergyChooseTarget + 2, window,
                                   HEADING_X, 0);
 
   row = 0;
@@ -1050,7 +1050,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
         Text_SetColorFar(15);
       }
 
-      Text_DrawCharacterAtOffsetFar(
+      Text_DrawMessageAsTilesFar(
           (0x3fff & *(const u16 *)(cursor + (s32)menu)) +
               (s32)MsgAbilityNothing,
           window, NAME_X, row * 16 + 8);
@@ -1186,7 +1186,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
             shortcutHelp = 1;
             menu->flags |= 2;
             Window_ClearInteriorTilesFar(window, 0, 88, 120, 96);
-            Text_DrawCharacterAtOffsetFar(MsgShortcutHelp, window, 0, 88);
+            Text_DrawMessageAsTilesFar(MsgShortcutHelp, window, 0, 88);
           }
         }
         /* FAKEMATCH(volatile): held read afresh for this test; as plain
@@ -1195,7 +1195,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
           shortcutHelp = 0;
           menu->flags &= ~2;
           Window_ClearInteriorTilesFar(window, 0, 88, 120, 96);
-          Text_DrawCharacterAtOffsetFar(MsgChangeCharacterHelp, window,
+          Text_DrawMessageAsTilesFar(MsgChangeCharacterHelp, window,
                                         CHANGE_HELP_X, 88);
         }
       }

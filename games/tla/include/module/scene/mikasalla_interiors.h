@@ -7,10 +7,10 @@
 #include "types.h"
 #include "scene_tables.h"
 
-extern struct ActorPlacement gData_02000840[];
-extern struct ActorPlacement gData_02000960[];
-extern struct Trigger gData_02000a20[];
-extern struct Trigger gData_02000bac[];
+extern struct ActorPlacement gMikasallaInteriors_InnPlacements[];
+extern struct ActorPlacement gMikasallaInteriors_SanctumPlacements[];
+extern struct Trigger gMikasallaInteriors_InnTriggers[];
+extern struct Trigger gMikasallaInteriors_SanctumTriggers[];
 
 void Shop_Run();
 

@@ -494,8 +494,8 @@ void Madra_MindReadBriggsFan(void) {
   Event_End();
 }
 
-/// "Is there by any chance a girl named Sheba with you?"
-void Madra_AskAboutSheba(void) {
+/// "Is there by any chance a girl named Jenna with you?"
+void Madra_AskAboutJenna(void) {
   s32 flags;
 
   Event_Start();
@@ -1522,7 +1522,7 @@ DEFINE_FUNC_02000544(Func_02002ab0, Madra_ClimbDownLadder)
 void Madra_EnterDoor(void);
 void Madra_KarstAsksAboutMenardi(void);
 void Madra_WorkerBlocksHole(void);
-void Madra_AskAboutSheba(void);
+void Madra_AskAboutJenna(void);
 void Madra_StopPartyAfterRaid(void);
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -1782,7 +1782,7 @@ struct Trigger gMadra_TriggersOnReturn[] = {
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgIDonTThink)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgWeGoTo)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgIHeardTheBoat)},
-    {TRIGGER_TALK, 11, 0x301, EVENT(Madra_AskAboutSheba)},
+    {TRIGGER_TALK, 11, 0x301, EVENT(Madra_AskAboutJenna)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgThoseTravelersLooked)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgIWonderIfThe)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgIDonTKnowWhatWill)},

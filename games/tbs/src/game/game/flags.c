@@ -12,63 +12,82 @@
 /// Returns 1 when `flag` is set. Every bank tests flags through it, as
 /// GameFlag_GetFar, and the events directly or through event.h.
 s32 GameFlag_Get(s32 flag) {
-  return (gGameFlagBytes[GAME_FLAG_BYTE(flag)] & GAME_FLAG_BIT(flag)) != 0;
+  s32 bit = GAME_FLAG_BIT(flag);
+
+  flag = GAME_FLAG_BYTE(flag);
+  return NONZERO(gGameFlagBytes[flag] & bit);
 }
 
 /// Sets `flag` and returns its byte number. Called from every bank, as
 /// GameFlag_SetFar, and by the events directly or through the event
 /// layer.
 s32 GameFlag_Set(s32 flag) {
-  u32 byte = GAME_FLAG_BYTE(flag);
+  s32 bit = GAME_FLAG_BIT(flag);
+  u8 *flags = gGameFlagBytes;
+  flag = GAME_FLAG_BYTE(flag);
 
-  gGameFlagBytes[byte] |= GAME_FLAG_BIT(flag);
-  return byte;
+  flags[flag] |= bit;
+  return flag;
 }
 
 /// Clears `flag`. Called from every bank, as GameFlag_ClearFar, and by the
 /// events directly or through event.h.
 void GameFlag_Clear(s32 flag) {
-  gGameFlagBytes[GAME_FLAG_BYTE(flag)] &= ~GAME_FLAG_BIT(flag);
+  s32 bit = GAME_FLAG_BIT(flag);
+  u8 *flags = gGameFlagBytes;
+  flag = GAME_FLAG_BYTE(flag);
+
+  flags[flag] &= ~bit;
 }
 
 /// Flips `flag` and returns its new value. Only GAME.S's bare veneer reaches
 /// it; nothing calls it by name.
 u32 GameFlag_Toggle(s32 flag) {
-  u32 byte = GAME_FLAG_BYTE(flag);
+  s32 bit = GAME_FLAG_BIT(flag);
+  u8 *flags = gGameFlagBytes;
+  flag = GAME_FLAG_BYTE(flag);
 
-  gGameFlagBytes[byte] ^= GAME_FLAG_BIT(flag);
-  return (gGameFlagBytes[byte] & GAME_FLAG_BIT(flag)) != 0;
+  flags[flag] ^= bit;
+  return NONZERO(flags[flag] & bit);
 }
 
 /// Returns the whole byte `flag` is in, a counter kept among the flags. Called
 /// by the battle encounter code and, through FieldGameFlag_GetByte, by the
 /// Colosso scenes and the Battle Arena.
-s32 GameFlag_GetByte(s32 flag) { return gGameFlagBytes[GAME_FLAG_BYTE(flag)]; }
+s32 GameFlag_GetByte(s32 flag) {
+  flag = GAME_FLAG_BYTE(flag);
+
+  return gGameFlagBytes[flag];
+}
 
 /// Sets the whole byte `flag` is in. Reached through FieldGameFlag_SetByte by
 /// the Colosso maps, the world map and the Battle Arena's win counts.
 void GameFlag_SetByte(s32 flag, s32 value) {
-  gGameFlagBytes[GAME_FLAG_BYTE(flag)] = value;
+  flag = GAME_FLAG_BYTE(flag);
+
+  gGameFlagBytes[flag] = value;
 }
 
 /// Adds 1 to the byte `flag` is in, stopping at 255, and returns it. Only
 /// GAME.S's bare veneer reaches it; nothing calls it by name.
 u8 GameFlag_IncrementByte(s32 flag) {
-  u8 *counter = &gGameFlagBytes[GAME_FLAG_BYTE(flag)];
+  u8 *flags = gGameFlagBytes;
+  flag = GAME_FLAG_BYTE(flag);
 
-  if (*counter < 255)
-    (*counter)++;
-  return *counter;
+  if (flags[flag] < 255)
+    flags[flag]++;
+  return flags[flag];
 }
 
 /// Takes 1 from the byte `flag` is in, stopping at 0, and returns it. Only
 /// GAME.S's bare veneer reaches it; nothing calls it by name.
 u8 GameFlag_DecrementByte(s32 flag) {
-  u8 *counter = &gGameFlagBytes[GAME_FLAG_BYTE(flag)];
+  u8 *flags = gGameFlagBytes;
+  flag = GAME_FLAG_BYTE(flag);
 
-  if (*counter != 0)
-    (*counter)--;
-  return *counter;
+  if (flags[flag] != 0)
+    flags[flag]--;
+  return flags[flag];
 }
 
 /// Returns the four bits `flag` is in, 0 to 15 (bit 2 of the number picks the
@@ -76,15 +95,20 @@ u8 GameFlag_DecrementByte(s32 flag) {
 /// GAME.S's bare veneer reaches it; nothing calls it by name.
 s32 GameFlag_GetNibble(u32 flag) {
   s32 shift = flag & 4;
+  s32 mask = 15 << shift;
+  flag = GAME_FLAG_BYTE(flag);
 
-  return (gGameFlagBytes[GAME_FLAG_BYTE(flag)] >> shift) & 15;
+  return (gGameFlagBytes[flag] & mask) >> shift;
 }
 
 /// Sets the four bits `flag` is in. Only GAME.S's bare veneer reaches it;
 /// nothing calls it by name.
 void GameFlag_SetNibble(s32 flag, s32 value) {
+  s32 nibble = 15;
   s32 shift = flag & 4;
-  u8 *bits = &gGameFlagBytes[GAME_FLAG_BYTE(flag)];
+  s32 mask = nibble << shift;
+  u8 *flags = gGameFlagBytes;
+  flag = GAME_FLAG_BYTE(flag);
 
-  *bits = (*bits & ~(15 << shift)) | ((value & 15) << shift);
+  flags[flag] = (flags[flag] & ~mask) | ((value & nibble) << shift);
 }

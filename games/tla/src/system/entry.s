@@ -19,4 +19,4 @@ Entry:
 	.4byte	0x03007f00
 	.4byte	0x03007fa0
 	.4byte	0x03007ffc
-	.4byte	Func_0801319c
+	.4byte	System_Initialize

@@ -158,7 +158,7 @@ s32 StatusScreen_Run(void) {
 
 void MenuIcon_SetActive(s32 active);
 s32 StatusScreen_SelectCommand(void);
-s32 Func_080ffcd4(void);
+s32 PsynergyMenu_SelectAction(void);
 s32 ItemMenu_SelectItem(void);
 
 /// The Status menu's pages: choose a party member, then their status page, A
@@ -197,7 +197,7 @@ s32 StatusScreen_RunPages(void) {
       break;
     case 2:
       MenuIcon_SetActive(0);
-      result = Func_080ffcd4();
+      result = PsynergyMenu_SelectAction();
       step = 0;
       if (result != -1)
         step = 3;
@@ -1530,7 +1530,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
 #define CURSOR_Y 60
 #endif
 
-s32 Func_080ffcd4(void) {
+s32 PsynergyMenu_SelectAction(void) {
   struct PsynergyMenuState *menu;
   s32 result;
   s32 window;

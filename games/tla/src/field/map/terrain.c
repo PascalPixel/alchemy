@@ -121,7 +121,8 @@ static inline void Iwram_TransformVector(const void *vector, s32 *result) {
   Iwram_TransformVectorEntry(vector, result);
 }
 
-void Func_0802dd70(s32 pitchSlope, s32 *position, struct ScanlineRow *row) {
+void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
+                                 struct ScanlineRow *row) {
   s32 vector[3];
   s32 result[3];
   s32 height;

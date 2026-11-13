@@ -53,15 +53,15 @@ void Func_020041ec(void *handle);
 void Func_0200236c(struct Actor *object, s32 unused);
 
 s32 Func_02002758(s32 index) {
-  return ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->a;
+  return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->a;
 }
 
 void Func_02002768(s32 index, s16 value) {
-  ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->a = value;
+  ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->a = value;
 }
 
 s32 Func_02002778(void) {
-  return ((struct RideWork *)(gData_020023c4 + 0x188))->counter;
+  return ((struct RideWork *)(gInventorySnapshot + 0x188))->counter;
 }
 
 DEFINE_FUNC_02001F50(Func_02002784)
@@ -69,11 +69,11 @@ DEFINE_FUNC_02001F50(Func_02002784)
 DEFINE_FUNC_02001F78(Func_020027ac)
 
 void Func_020027cc(s32 index, s16 value) {
-  ((struct RideWork *)(gData_020023c4 + 0x188))->entries[index].c = value;
+  ((struct RideWork *)(gInventorySnapshot + 0x188))->entries[index].c = value;
 }
 
 s32 Func_020027dc(s32 index) {
-  return ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->b;
+  return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->b;
 }
 
 DEFINE_FUNC_02001FB8(Func_020027ec)

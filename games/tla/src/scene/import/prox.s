@@ -373,7 +373,7 @@ BattleEffect_StepVector3:
 	.global Func_0200461c
 	.thumb_func
 Func_0200461c:
-	overlay_veneer Func_080c8918
+	overlay_veneer Weather_StartRainFar
 	.global Func_02004624
 	.thumb_func
 Func_02004624:

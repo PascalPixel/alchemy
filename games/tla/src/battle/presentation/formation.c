@@ -415,7 +415,7 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
   return choices[(Random16() * count) >> 16];
 }
 
-s32 Func_08127cd4(s32 recordId) {
+s32 BattleFormation_BuildEnemyList(s32 recordId) {
   u16 *enemyClasses;
   struct FormationBattleWork *battle;
   struct BattleFormationRecord *record;

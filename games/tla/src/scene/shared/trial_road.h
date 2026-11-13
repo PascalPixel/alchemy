@@ -32,9 +32,9 @@ struct TrialRoadState {
   s16 field1c;
 };
 
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 
-#define gTrialRoadState ((struct TrialRoadState *)(gData_020023c4 + 0x88))
+#define gTrialRoadState ((struct TrialRoadState *)(gInventorySnapshot + 0x88))
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
@@ -71,8 +71,7 @@ void Func_02005a60(s32 a, s32 b, s32 c);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ struct Actor *Actor_Create(s32 type, s32 x, s32 y,
-                                                      s32 z) {
+static __inline__ struct Actor *Actor_Create(s32 type, s32 x, s32 y, s32 z) {
   return ((struct Actor *)Import_ActorCreate(type, x, y, z));
 }
 

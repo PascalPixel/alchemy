@@ -20,7 +20,7 @@ void WindowSprite_RedrawSavedRect(struct Window *window);
 
 void MessageArgument_ClearAll(void);
 
-extern const u8 gData_0805c9c4[];
+extern const u8 gMenu_AnimatedCursorTiles[];
 
 extern const u8 gOwnerStatus_HpString[];
 extern const u8 gOwnerStatus_SlashString[];
@@ -34,7 +34,7 @@ s32 Text_GetWideStringWidth(u16 *text);
 
 s32 PauseMenu_Choose(s32 initial);
 
-s32 Func_08043690(void);
+s32 Save_ToChosenFile(void);
 
 s32 SettingsMenu_Run(void);
 

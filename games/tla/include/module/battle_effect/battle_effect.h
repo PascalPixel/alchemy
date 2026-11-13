@@ -73,8 +73,9 @@ union BattleBackgroundId {
 // order: Func_08196404 builds additive for 0, max for 1, transparent for 2.
 enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 
-void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
-                   s32 bluePhase); // Graphics_UpdatePhasePalette
+void BattleEffect_UpdatePhasePalette(
+    s32 frame, s32 redPhase, s32 greenPhase,
+    s32 bluePhase); // Graphics_UpdatePhasePalette
 
 extern u16 Data_08197424[]; // flare sizes 1 to 5: cell offsets
 
@@ -265,7 +266,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
 void SummonEffect_RunCanvasMode1(void *action);
 void SummonEffect_RunCanvasMode3(void *action);
 
-void Func_08144628(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
+                                     s32 mode);
 
 void BattleEffect_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA
 
@@ -287,7 +289,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x,
 
 void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
                                   s32 mode);
-void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
+                                  s32 mode);
 
 extern char ResourceId_SheepCardSheet; // directory row 0xe3
 
@@ -472,7 +475,7 @@ extern u8 Data_081982db[];  // ☀️ gBoreas_FallHeights
 extern s32 gDrain_Gravities[];
 extern u8 Data_081982f4[]; // the mote size by mode
 
-void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode);
+void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode);
 
 extern u8 gQuake_Timings[][3];
 

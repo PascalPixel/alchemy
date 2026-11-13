@@ -1,6 +1,6 @@
 	.section .sym_ewram,"aw",%nobits
-	.global gData_02000000
-gData_02000000:
+	.global gSaveBuffer
+gSaveBuffer:
 	.space 0x00000040
 	.global gGameFlagBytes
 gGameFlagBytes:
@@ -68,8 +68,8 @@ gItemCounters:
 	.global gSceneState
 gSceneState:
 	.space 0x00000078
-	.global gData_020023c4
-gData_020023c4:
+	.global gInventorySnapshot
+gInventorySnapshot:
 	.space 0x00000b5c
 	.global gSoundFlags
 gSoundFlags:
@@ -86,8 +86,8 @@ gResourceBlockOwners:
 	.global gTasks
 gTasks:
 	.space 0x000000c0
-	.global gData_020036d0
-gData_020036d0:
+	.global gSaveSlot
+gSaveSlot:
 	.space 0x00000004
 	.global gSerialSendSize
 gSerialSendSize:

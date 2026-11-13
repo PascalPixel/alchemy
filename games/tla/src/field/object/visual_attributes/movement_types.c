@@ -338,7 +338,7 @@ extern struct MapCell gMapCellBuffer[];
 /// or 259 with flag 2) dips 2 pixels with the leader. Each jump advances
 /// walking distance, and the leader keeps jumping while it lands on a jump spot
 /// (collision 254). Returns 0 after a jump, -1 when the leader cannot jump.
-s32 Func_080d4d08(void) {
+s32 Field_TryJumpForward(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 result = -1;
   s32 angle = leader->facing;

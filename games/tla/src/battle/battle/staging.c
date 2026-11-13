@@ -199,19 +199,19 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       BattleStaging_RunActorEntries(&battle->plan, 0);
       break;
     case 2:
-      Func_0811ea0c(&battle->plan, 0);
+      BattleStaging_RunAttack(&battle->plan, 0);
       break;
     case 15:
-      Func_0811ea0c(&battle->plan, 2);
+      BattleStaging_RunAttack(&battle->plan, 2);
       break;
     case 5:
-      Func_0811df70(&battle->plan, 1);
+      BattleStaging_HideField(&battle->plan, 1);
       break;
     case 9:
-      Func_0811df70(&battle->plan, 0);
+      BattleStaging_HideField(&battle->plan, 0);
       break;
     case 14:
-      Func_0811df70(&battle->plan, 3);
+      BattleStaging_HideField(&battle->plan, 3);
       break;
     case 3:
     case 17:
@@ -248,7 +248,8 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
         else
           BattleMessage_ShowAndWaitFar((s32)&MsgAttacksAlly);
       }
-      Func_0811ea0c(&battle->plan, battle->plan.abilityId == 312 ? 32 : 0);
+      BattleStaging_RunAttack(&battle->plan,
+                              battle->plan.abilityId == 312 ? 32 : 0);
       swap = battle->plan.actorId;
       battle->plan.actorId = battle->plan.actorId2;
       battle->plan.actorId2 = swap;
@@ -269,7 +270,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       break;
     }
     case 12:
-      Func_0811df70(&battle->plan, 1);
+      BattleStaging_HideField(&battle->plan, 1);
       if (BattleParty_ListLivingUnits(1, 0) == 0)
         break;
       if (BattleParty_ListLivingUnits(2, 0) == 0)
@@ -278,7 +279,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       BattleStaging_RunPsynergyCast(&battle->plan, 1);
       break;
     case 13:
-      Func_0811df70(&battle->plan, 1);
+      BattleStaging_HideField(&battle->plan, 1);
       Func_0811d914((struct ActionTargets *)&battle->plan);
       BattleStaging_RunPsynergyCast(&battle->plan, 1);
       break;
@@ -413,7 +414,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
 extern void BattlePlayback_WaitForReady__battle(void) __asm__(
     "BattlePlayback_WaitForReady");
 
-s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
+s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   u16 units[14];
   struct BattlePresentationWork work;
   u32 actor;

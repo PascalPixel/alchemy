@@ -1126,7 +1126,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
                              mode == 0 ? 62 : 54);
         MenuIcon_SetPicture(mode, frame);
         if (redraw & 2)
-          Func_08105350(mode, 0);
+          DjinnFigures_SetSlotPhase(mode, 0);
         MenuIcon_ReplaceObject(mode, element, animation);
       }
       window = menu->statusWindow;

@@ -1576,7 +1576,7 @@ s32 Scene_PrepareMap(void) {
         *(volatile u16 *)0x0400000c = control | 1;
       }
       Func_020048a0();
-      stage = (s32 *)(gData_020023c4 + 0x288);
+      stage = (s32 *)(gInventorySnapshot + 0x288);
       if (*stage == 3 && !GameFlag_Test(0x3f6))
         Actor_SetPosition(64, 0x680000, 0x580000);
       if (*stage == 9)
@@ -1594,7 +1594,7 @@ s32 Scene_PrepareMap(void) {
     } else if (gMainRoutineWork.entrance > 8) {
       u8 *layer;
 
-      *(s32 *)(gData_020023c4 + 0x288) = 1;
+      *(s32 *)(gInventorySnapshot + 0x288) = 1;
       layer = map + 376;
       FIELD_AT(layer, u16, 40) = 127;
       FIELD_AT(layer, s32, 24) = 0;
@@ -1667,7 +1667,7 @@ typedef struct {
   Unk_Cell cells[GRID_WIDTH * GRID_WIDTH];
 } Unk_Grid;
 
-#define gPath ((Unk_Path *)(gData_020023c4 + 0x288))
+#define gPath ((Unk_Path *)(gInventorySnapshot + 0x288))
 
 static __inline__ void *Heap_AllocEwram_(s32 size) {
   /* FAKEMATCH(wrapper): forwarded inline, as scene_call.h describes; as a
@@ -1887,7 +1887,7 @@ restart:
 }
 
 void Func_0200485c(s32 direction) {
-  s32 *state = (s32 *)(gData_020023c4 + 0x288);
+  s32 *state = (s32 *)(gInventorySnapshot + 0x288);
   u8 *row = (u8 *)state + *state * 8;
   s32 next = row[((direction - 1) & 3) + 6];
 
@@ -1912,7 +1912,7 @@ extern s8 gData_020053fc[][2];
 /// with the state's origin plus the layer's cell, a 15 by 10 size and the
 /// layer's cell plus one.
 void Func_020048a0(void) {
-  s32 state = *(s32 *)(gData_020023c4 + 0x288);
+  s32 state = *(s32 *)(gInventorySnapshot + 0x288);
   s8 *origin = gData_020053fc[state];
   struct GaiaRockInsideMapWork *map =
       (struct GaiaRockInsideMapWork *)Ram_HeapSlots->mapWork;
@@ -1935,7 +1935,7 @@ void Func_020048a0(void) {
 }
 
 #define GAIA_ROCK_INSIDE_PATH                                                  \
-  ((struct GaiaRockInsidePath *)(gData_020023c4 + 0x288))
+  ((struct GaiaRockInsidePath *)(gInventorySnapshot + 0x288))
 
 /// The direction from the current node whose link is 251 or the next node:
 /// 0x4000, 0x8000, 0 or 0xc000 for the four links in turn, or -1 if none is.

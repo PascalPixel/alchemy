@@ -201,14 +201,14 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
 s32 ScriptObject_CheckOverlapFar(struct Actor *object,
                                  struct Effect04Vector *position);
 
-void Func_080dd754(void);
+void FieldEffect_WatchLeaderDistance(void);
 
-void Func_080ddbd8(void);
+void FieldEffect_SpawnBurstParticleField(void);
 
 // Far call to the target classifier Func_080237c8.
 s32 Func_08020330(struct Actor *object);
 
-extern const s32 gData_080f0e60[];
+extern const s32 gFieldEffect_SourceHoldScript[];
 
 struct Actor *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
 
@@ -268,7 +268,7 @@ void FieldPsynergy_Unnamed29(void);
 void FieldPsynergy_Halt(void);
 
 void FieldPsynergy_Catch(void);
-void Func_080e0cec(struct FieldParticle *slot);
+void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot);
 
 void FieldPsynergy_Whirlwind(void);
 

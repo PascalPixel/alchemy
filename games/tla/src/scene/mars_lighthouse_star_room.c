@@ -405,7 +405,7 @@ void Func_02000714(void) {
   Actor_SetSpriteColor(t14, 7);
   System_Wait(1);
   FieldActor_SetPositionAndResetMotion(v5, FIELD_AT(v5, s32, 8), 0,
-                                  (FIELD_AT(v5, s32, 16) + -0x80000));
+                                       (FIELD_AT(v5, s32, 16) + -0x80000));
   FIELD_AT(v6, u8, 85) = 0;
   FIELD_AT(v6, s32, 24) = 0x4000;
   FIELD_AT(v6, s32, 28) = 0x4000;
@@ -631,7 +631,8 @@ void Func_02000bd8(void) {
     object->motionFlags = 0;
     object->speedLimit = 0x40000;
     object->acceleration = 0x20000;
-    FieldActor_SetMoveTarget(object, leader->x, leader->y + 0x200000, leader->z);
+    FieldActor_SetMoveTarget(object, leader->x, leader->y + 0x200000,
+                             leader->z);
     Actor_WaitForMove(Data_02004cec);
     Event_PlaySound(83);
     PartyInventory_Remove(224);
@@ -875,7 +876,8 @@ L_02008ea2:
   System_Wait(1);
   Event_PlaySound(182);
   slot = &Data_02004cec;
-  object = (struct Actor *)FieldActor_Create(0x1e9, 0x2a80000, 0x80000, 0x930000);
+  object =
+      (struct Actor *)FieldActor_Create(0x1e9, 0x2a80000, 0x80000, 0x930000);
   *slot = object;
   if (object != 0) {
     sprite = object->sprite;
@@ -1057,7 +1059,6 @@ void Func_020013e4(struct Actor *object) {
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 void Animation_SetStateFlags(struct Actor *object, u32 value);
 
-
 void Func_02001424(void) {
   u32 frame = gFrameCount;
   struct Actor *object;
@@ -1147,13 +1148,21 @@ s32 Func_0200158c(struct Actor *a, struct Actor *b) {
 #include "shared/mars_lighthouse_entrance_room.h"
 #include "field/event_work.h"
 
-/* VIEW(s1424): tag struct RideSlot as struct RideSlot__s1424; mars_lighthouse_star_room.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1223: structure has no member named `id'. */
+/* VIEW(s1424): tag struct RideSlot as struct RideSlot__s1424;
+ * mars_lighthouse_star_room.c has another definition; tried with the definition
+ * the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_star_room.c:1223: structure has no member
+ * named `id'. */
 struct RideSlot__s1424 {
   u16 id;
   u16 blocked;
 };
 
-/* VIEW(s1424): tag struct RideWork as struct RideWork__s1424; mars_lighthouse_star_room.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1191: structure has no member named `value68'. */
+/* VIEW(s1424): tag struct RideWork as struct RideWork__s1424;
+ * mars_lighthouse_star_room.c has another definition; tried with the definition
+ * the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_star_room.c:1191: structure has no member
+ * named `value68'. */
 struct RideWork__s1424 {
   u8 unk00[4];
   u16 landed;
@@ -1167,10 +1176,10 @@ struct RideWork__s1424 {
   u16 direction;
 };
 
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 
 DEFINE_FUNC_020015EC(Func_020015ec, RideWork__s1424, Func_02001528,
-    Func_0200158c)
+                     Func_0200158c)
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/spawn.c ----
 extern const u8 gData_02004744[];
@@ -1181,7 +1190,8 @@ void Actor_StartScript(struct Actor *object, const void *script);
 DEFINE_FUNC_02001750(Func_02001750, gData_02004744)
 
 void Func_02001780(s32 *position, s32 speed, s32 flag) {
-  struct Actor *object = FieldActor_Create(366, position[0], position[1], position[2]);
+  struct Actor *object =
+      FieldActor_Create(366, position[0], position[1], position[2]);
 
   if (object != NULL) {
     object->bounce = 0;
@@ -1197,7 +1207,11 @@ void Func_02001780(s32 *position, s32 speed, s32 flag) {
 
 #include "shared/mars_lighthouse_entrance_room.h"
 
-/* VIEW(spawn): tag struct RideSlot as struct RideSlot__spawn; mars_lighthouse_star_room.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1340: structure has no member named `id'. */
+/* VIEW(spawn): tag struct RideSlot as struct RideSlot__spawn;
+ * mars_lighthouse_star_room.c has another definition; tried with the definition
+ * the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_star_room.c:1340: structure has no member
+ * named `id'. */
 struct RideSlot__spawn {
   u16 id;
   u16 blocked;
@@ -1208,7 +1222,11 @@ struct RideDirection {
   u16 unk02;
 };
 
-/* VIEW(spawn): tag struct RideWork as struct RideWork__spawn; mars_lighthouse_star_room.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1318: structure has no member named `direction'. */
+/* VIEW(spawn): tag struct RideWork as struct RideWork__spawn;
+ * mars_lighthouse_star_room.c has another definition; tried with the definition
+ * the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_star_room.c:1318: structure has no member
+ * named `direction'. */
 struct RideWork__spawn {
   u8 unk00[4];
   u16 landed;
@@ -1221,13 +1239,14 @@ struct RideWork__spawn {
   struct RideDirection direction;
 };
 
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 
 s32 Func_02001528(struct Actor *a, struct Actor *b);
 s32 Func_0200158c(struct Actor *a, struct Actor *b);
 
 void Func_020017c8(struct Actor *object) {
-  struct RideWork__spawn *work = (struct RideWork__spawn *)(gData_020023c4 + 0x188);
+  struct RideWork__spawn *work =
+      (struct RideWork__spawn *)(gInventorySnapshot + 0x188);
   struct Actor *other = Actor_Get(gMainRoutineWork.currentOwner);
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 dx = object->bounce;
@@ -1292,7 +1311,8 @@ DEFINE_FUNC_0200196C_97(Func_0200196c, Func_020015ec)
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s19b4.c ----
 
 void Func_020019b4(s32 *position, s32 speed, s32 flag) {
-  struct Actor *object = FieldActor_Create(366, position[0], position[1], position[2]);
+  struct Actor *object =
+      FieldActor_Create(366, position[0], position[1], position[2]);
 
   if (object != NULL) {
     object->bounce = 0;
@@ -1329,8 +1349,14 @@ DEFINE_FUNC_02001B38(Func_02001b38, Func_020041cc, gData_02004744)
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s1b78.c ----
 void Animation_SetStateFlags(struct Actor *object, u32 value);
 void Func_02001a9c();
-/* VIEW(s1b78): routine Func_02001b38 as void Func_02001b38(struct Actor *object, s32 priority); the definition has void Func_02001b38(struct Actor *object); tried as the definition's void Func_02001b38(void), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1504: too many arguments to function `Func_02001b38'. */
-extern void Func_02001b38__s1b78(struct Actor *object, s32 priority) __asm__("Func_02001b38");
+/* VIEW(s1b78): routine Func_02001b38 as void Func_02001b38(struct Actor
+ * *object, s32 priority); the definition has void Func_02001b38(struct Actor
+ * *object); tried as the definition's void Func_02001b38(void), which the
+ * object already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_star_room.c:1504: too many arguments to
+ * function `Func_02001b38'. */
+extern void Func_02001b38__s1b78(struct Actor *object,
+                                 s32 priority) __asm__("Func_02001b38");
 
 void Func_02001b78(s32 *position, s32 base) {
   struct Actor *object =
@@ -1355,7 +1381,10 @@ void Func_02001b78(s32 *position, s32 base) {
 }
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s1bf8.c ----
-/* VIEW(s1bf8): tag struct Actor as struct Actor__s1bf8; actor.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1601: structure has no member named `flag5b'. */
+/* VIEW(s1bf8): tag struct Actor as struct Actor__s1bf8; actor.h has another
+ * definition; tried with the definition the rest of the object has, it does not
+ * compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1601:
+ * structure has no member named `flag5b'. */
 typedef struct Actor__s1bf8 {
   u8 pad0[8];
   s32 x;
@@ -1388,9 +1417,13 @@ void Func_02001780();
 void Func_0200196c();
 void Func_020019b4();
 void Func_020019fc();
-/* VIEW(s1bf8): routine Func_02001b78 as void Func_02001b78(); the parts before it has another declaration; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1636: too many arguments to function `Func_02001b78'. */
+/* VIEW(s1bf8): routine Func_02001b78 as void Func_02001b78(); the parts before
+ * it has another declaration; tried as the rest of the object declares it, it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_star_room.c:1636: too many arguments to
+ * function `Func_02001b78'. */
 extern void Func_02001b78__s1bf8() __asm__("Func_02001b78");
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 
 typedef struct Position {
   s32 x;
@@ -1415,7 +1448,7 @@ typedef struct IwramGlobals {
 #define IWRAM ((IwramGlobals *)Ram_HeapSlots)
 
 DEFINE_FUNC_02001BF8(Func_02001bf8, Func_02001b78__s1bf8, Func_0200196c,
-    Func_020019fc, Func_020019b4, Func_02001780)
+                     Func_020019fc, Func_020019b4, Func_02001780)
 #undef IWRAM
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s1d7c.c ----
@@ -1425,7 +1458,11 @@ struct RideAnimation {
   u8 flag11 : 1;
 };
 
-/* VIEW(s1d7c): tag struct RideWork as struct RideWork__s1d7c; mars_lighthouse_star_room.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1684: structure has no member named `value0c'. */
+/* VIEW(s1d7c): tag struct RideWork as struct RideWork__s1d7c;
+ * mars_lighthouse_star_room.c has another definition; tried with the definition
+ * the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_star_room.c:1684: structure has no member
+ * named `value0c'. */
 struct RideWork__s1d7c {
   u8 unk00[0xc];
   u16 value0c;
@@ -1433,10 +1470,11 @@ struct RideWork__s1d7c {
   struct Actor *handle;
 };
 
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 
 void Func_02001d7c(void) {
-  struct RideWork__s1d7c *work = (struct RideWork__s1d7c *)(gData_020023c4 + 0x188);
+  struct RideWork__s1d7c *work =
+      (struct RideWork__s1d7c *)(gInventorySnapshot + 0x188);
   struct Actor *object;
   struct RideAnimation *animation;
 

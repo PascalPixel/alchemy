@@ -13,8 +13,8 @@ gTasksRunning:
 	.global gBlendVBlanksLeft
 gBlendVBlanksLeft:
 	.space 0x00000004
-	.global gData_03001110
-gData_03001110:
+	.global gDebugTextEnabled
+gDebugTextEnabled:
 	.space 0x00000010
 	.global gBgScroll
 gBgScroll:
@@ -28,8 +28,8 @@ gBlendStartLevel:
 	.global gCpuLoadTimer
 gCpuLoadTimer:
 	.space 0x00000004
-	.global gData_03001144
-gData_03001144:
+	.global gScanlinePitch
+gScanlinePitch:
 	.space 0x0000000c
 	.global gInput
 gInput:
@@ -64,8 +64,8 @@ gRandomState:
 	.global gResetRequested
 gResetRequested:
 	.space 0x00000004
-	.global gData_030011c4
-gData_030011c4:
+	.global gDebugTextCursor
+gDebugTextCursor:
 	.space 0x00000008
 	.global gTransformStackDepth
 gTransformStackDepth:
@@ -133,8 +133,8 @@ gDebugMode:
 	.global gCpuLoadDisplayEnabled
 gCpuLoadDisplayEnabled:
 	.space 0x00000008
-	.global Data_03001244
-Data_03001244:
+	.global gScanlineAngle
+gScanlineAngle:
 	.space 0x00000004
 	.global gOamUsage
 gOamUsage:

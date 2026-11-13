@@ -186,7 +186,7 @@ void Party_RemoveMemberRestored(s32 owner) {
   }
 }
 
-s32 Func_080d25c8(s32 item) {
+s32 Party_CheckItemLimit(s32 item) {
   Party_CountMembersFar();
   if (PartyInventory_FindRoomFar(item) < 0) {
     MessageArgument_PushFar(item, 2);

@@ -289,7 +289,7 @@ Field_RequestDjinnBattle:
 	.global Func_02004d40
 	.thumb_func
 Func_02004d40:
-	overlay_veneer Func_080c82e0
+	overlay_veneer Field_TryJumpForwardFar
 	.global Leader_StopMoving
 	.thumb_func
 Leader_StopMoving:
@@ -365,7 +365,7 @@ Func_02004dd0:
 	.global Func_02004dd8
 	.thumb_func
 Func_02004dd8:
-	overlay_veneer Func_080c8918
+	overlay_veneer Weather_StartRainFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

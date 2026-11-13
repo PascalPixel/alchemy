@@ -172,7 +172,7 @@ void *Scene_FindActorTalkTrigger(s32 id) {
 s32 BattleEffect_GetFlags(s32 id);
 void Actor_TurnToFaceEachOther(s32 first, s32 second, s32 mode);
 
-s32 Func_080ccec8(s32 id) {
+s32 Scene_TalkToActor(s32 id) {
   struct ActorPlacement *placement;
   s32 result;
   struct Actor *object;
@@ -548,11 +548,11 @@ s32 Scene_RunTouchOrExit(s32 value) {
 /// gMainRoutineWork.pendingThird is set. After the leader has pushed for more
 /// than 12 frames: key 0x20 on a 0x80 push makes the leader jump
 /// (Actor_JumpDownLedge(owner, 6, 0)); key 0x80 runs
-/// Func_080d4d08; key 0x40 runs Func_080d50f8 or Func_080d53b8 by the push kind
-/// and clears the push state when it returns 0; key 2 with Func_080cdc74 runs
-/// the nearby talk target's kind 8 event and then the kind 9 event for keys
-/// (messages under 0x10000, otherwise a routine called with keys and the
-/// target). Always returns 0.
+/// Field_TryJumpForward; key 0x40 runs Func_080d50f8 or Func_080d53b8 by the
+/// push kind and clears the push state when it returns 0; key 2 with
+/// Func_080cdc74 runs the nearby talk target's kind 8 event and then the kind 9
+/// event for keys (messages under 0x10000, otherwise a routine called with keys
+/// and the target). Always returns 0.
 s32 Func_080cd680(s32 keys) {
   struct EventWorkView *work = Ram_HeapSlots->eventWork;
   s32 owner = gMainRoutineWork.currentOwner;
@@ -566,7 +566,7 @@ s32 Func_080cd680(s32 keys) {
     Actor_JumpDownLedge(owner, 6, 0);
     work->blockedSteps = 0;
   }
-  if ((keys & 0x80) && work->blockedSteps > 12 && !Func_080d4d08())
+  if ((keys & 0x80) && work->blockedSteps > 12 && !Field_TryJumpForward())
     work->blockedSteps = 0;
   if ((keys & 0x40) && work->blockedSteps > 12) {
     s32 kind = work->pushKind & 0xf0;

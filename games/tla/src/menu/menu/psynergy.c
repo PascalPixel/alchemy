@@ -118,7 +118,7 @@ s32 PsynergyMenu_SetShortcut(s32 kind, s32 id, s32 second);
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
 s32 PsynergyMenu_SelectPartySlot(s32 paneIndex);
-s32 Func_080fd2e8(s32 paneIndex);
+s32 PsynergyMenu_SelectTarget(s32 paneIndex);
 s32 PsynergyMenu_RunList(s32 paneIndex);
 
 /// Runs the Psynergy menu, The Broken Seal's PsynergyMenu_RunSteps: choose a
@@ -228,7 +228,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
     // Choose the member to use it on.
     case PSYNERGY_STEP_TARGET:
       ItemMenu_DrawMessage(0, (s32)MsgPsynergyChooseTarget);
-      chosenTarget = Func_080fd2e8(0);
+      chosenTarget = PsynergyMenu_SelectTarget(0);
       step = PSYNERGY_STEP_APPLY;
       if (chosenTarget == -1) {
         menu->flags |= 1;
@@ -558,7 +558,7 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
   }
 }
 
-s32 Func_080fd2e8(s32 browseOnly) {
+s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
   struct PsynergyMenuState *menu;
   s32 selection;
   s32 count;

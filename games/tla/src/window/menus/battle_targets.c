@@ -33,31 +33,87 @@ extern const u8 gOwnerStatus_PvString[];
 s32 System_GetLanguage(void);
 #endif
 
-/* VIEW(menus): routine VramCache_Reload as s32 VramCache_Reload(s32 entry, const void *tiles); resource.h has s32 VramCache_Reload(s32 slot, s32 source); tried as the definition's s32 VramCache_Reload(s32 no, s32 src), BattleTarget_RunSelection moves: 1 of 1647 instructions in tla-ja. */
-extern s32 VramCache_Reload__menus(s32 entry, const void *tiles) __asm__("VramCache_Reload");
-/* VIEW(menus): routine Unit_Get as struct BattleUnit *Unit_Get(s32 unit); the definition has s32 Func_0804b8b8(s32 slot) { u16 owners[6]; u16 selected[2]; struct BattleWork *battle; s32 count; count = BattleParty_PrepareReserveOwners...; tried as the definition's void *Unit_Get(s32 owner), which the object already declares, it does not compile in tla-ja: games/tla/src/window/menus.c:328: invalid type argument of `->'. */
+/* VIEW(menus): routine VramCache_Reload as s32 VramCache_Reload(s32 entry,
+ * const void *tiles); resource.h has s32 VramCache_Reload(s32 slot, s32
+ * source); tried as the definition's s32 VramCache_Reload(s32 no, s32 src),
+ * BattleTarget_RunSelection moves: 1 of 1647 instructions in tla-ja. */
+extern s32
+VramCache_Reload__menus(s32 entry,
+                        const void *tiles) __asm__("VramCache_Reload");
+/* VIEW(menus): routine Unit_Get as struct BattleUnit *Unit_Get(s32 unit); the
+ * definition has s32 Func_0804b8b8(s32 slot) { u16 owners[6]; u16 selected[2];
+ * struct BattleWork *battle; s32 count; count =
+ * BattleParty_PrepareReserveOwners...; tried as the definition's void
+ * *Unit_Get(s32 owner), which the object already declares, it does not compile
+ * in tla-ja: games/tla/src/window/menus.c:328: invalid type argument of `->'.
+ */
 extern struct BattleUnit *Unit_Get__menus(s32 unit) __asm__("Unit_Get");
-/* VIEW(menus): routine Window_Create as struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); module/window/window.h has struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style). */
-extern struct TargetWindow *Window_Create__menus(s32 x, s32 y, s32 width, s32 height,
-                                   s32 flags) __asm__("Window_Create");
-/* VIEW(menus): routine Oam_AddSpriteAtDepth as s32 Oam_AddSpriteAtDepth(void *sprite, s32 depth); task.h has void Oam_AddSpriteAtDepth(void *entry, s32 priority); tried as the definition's void Oam_AddSpriteAtDepth(void *entry, s32 slot), BattleTarget_RunSelection moves: 2 of 1647 instructions in tla-ja. */
-extern s32 Oam_AddSpriteAtDepth__menus(void *sprite, s32 depth) __asm__("Oam_AddSpriteAtDepth"); // Returns void; see the tag.
-/* VIEW(menus): routine AffineMatrix_BuildForEffect as s32 AffineMatrix_BuildForEffect(struct TargetAffine *affine); affine.h has s32 AffineMatrix_BuildForEffect(struct AffineTransform *source). */
-extern s32 AffineMatrix_BuildForEffect__menus(struct TargetAffine *affine) __asm__("AffineMatrix_BuildForEffect");
-/* VIEW(menus): routine Window_Close as void Window_Close(void *window, s32 mode); uiflow.h has void Window_Close(struct Window *window, s32 release); tried as the definition's void Window_Close(struct Window *work, s32 release), it does not compile in tla-ja: games/tla/include/graphics/uiflow.h:7: conflicting types for `Window_Close'. */
+/* VIEW(menus): routine Window_Create as struct TargetWindow *Window_Create(s32
+ * x, s32 y, s32 width, s32 height, s32 flags); module/window/window.h has
+ * struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style).
+ */
+extern struct TargetWindow *
+Window_Create__menus(s32 x, s32 y, s32 width, s32 height,
+                     s32 flags) __asm__("Window_Create");
+/* VIEW(menus): routine Oam_AddSpriteAtDepth as s32 Oam_AddSpriteAtDepth(void
+ * *sprite, s32 depth); task.h has void Oam_AddSpriteAtDepth(void *entry, s32
+ * priority); tried as the definition's void Oam_AddSpriteAtDepth(void *entry,
+ * s32 slot), BattleTarget_RunSelection moves: 2 of 1647 instructions in tla-ja.
+ */
+extern s32 Oam_AddSpriteAtDepth__menus(void *sprite, s32 depth) __asm__(
+    "Oam_AddSpriteAtDepth"); // Returns void; see the tag.
+/* VIEW(menus): routine AffineMatrix_BuildForEffect as s32
+ * AffineMatrix_BuildForEffect(struct TargetAffine *affine); affine.h has s32
+ * AffineMatrix_BuildForEffect(struct AffineTransform *source). */
+extern s32 AffineMatrix_BuildForEffect__menus(
+    struct TargetAffine *affine) __asm__("AffineMatrix_BuildForEffect");
+/* VIEW(menus): routine Window_Close as void Window_Close(void *window, s32
+ * mode); uiflow.h has void Window_Close(struct Window *window, s32 release);
+ * tried as the definition's void Window_Close(struct Window *work, s32
+ * release), it does not compile in tla-ja:
+ * games/tla/include/graphics/uiflow.h:7: conflicting types for `Window_Close'.
+ */
 extern void Window_Close__menus(void *window, s32 mode) __asm__("Window_Close");
-/* VIEW(menus): routine Text_DrawStringAtOffset as void Text_DrawStringAtOffset(const u8 *text, struct TargetWindow *window, s32 x, s32 y); text_render.h has void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX, s32 offsetY); tried as the definition's void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX, s32 offsetY), which the object already declares, BattleTarget_RunSelection moves: 8 of 1647 instructions in tla-ja. */
-extern void Text_DrawStringAtOffset__menus(const u8 *text, struct TargetWindow *window, s32 x,
-                             s32 y) __asm__("Text_DrawStringAtOffset");
-/* VIEW(menus): routine Text_DrawNumberInWindow as void Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window, s32 x, s32 y); module/window/window.h has void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y). */
-extern void Text_DrawNumberInWindow__menus(s32 value, s32 digits, struct TargetWindow *window,
-                             s32 x, s32 y) __asm__("Text_DrawNumberInWindow");
-/* VIEW(menus): routine Text_DrawMessageAsTiles as void Text_DrawMessageAsTiles(s32 message, struct TargetWindow *window, s32 x, s32 y); text_render.h has void Text_DrawMessageAsTiles(s32 character, struct RenderInput *work, u32 offsetX, u32 offsetY); tried as the definition's void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY), it does not compile in tla-ja: games/tla/include/graphics/text_render.h:10: conflicting types for `Text_DrawMessageAsTiles'. */
-extern void Text_DrawCharacterAtOffset__menus(s32 message, struct TargetWindow *window, s32 x,
-                                s32 y) __asm__("Text_DrawMessageAsTiles");
-/* VIEW(menus): routine Message_CopyExpanded as void Message_CopyExpanded(s32 message, u16 *text, s32 capacity); module/window/window.h has s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity). */
-extern void Message_CopyExpanded__menus(s32 message, u16 *text, s32 capacity) __asm__("Message_CopyExpanded");
-/* VIEW(menus): routine Text_ClearCanvas as void Text_ClearCanvas(void); graphics.h has s32 Text_ClearCanvas(void); tried as the definition's s32 Text_ClearCanvas(void), which the object already declares, BattleTarget_RunSelection moves: 1 of 1647 instructions in tla-ja. */
+/* VIEW(menus): routine Text_DrawStringAtOffset as void
+ * Text_DrawStringAtOffset(const u8 *text, struct TargetWindow *window, s32 x,
+ * s32 y); text_render.h has void Text_DrawStringAtOffset(u8 *text, struct
+ * RenderInput *work, s32 offsetX, s32 offsetY); tried as the definition's void
+ * Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX, s32
+ * offsetY), which the object already declares, BattleTarget_RunSelection moves:
+ * 8 of 1647 instructions in tla-ja. */
+extern void
+Text_DrawStringAtOffset__menus(const u8 *text, struct TargetWindow *window,
+                               s32 x, s32 y) __asm__("Text_DrawStringAtOffset");
+/* VIEW(menus): routine Text_DrawNumberInWindow as void
+ * Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window,
+ * s32 x, s32 y); module/window/window.h has void Text_DrawNumberInWindow(s32
+ * value, s32 width, s32 output, s32 x, s32 y). */
+extern void
+Text_DrawNumberInWindow__menus(s32 value, s32 digits,
+                               struct TargetWindow *window, s32 x,
+                               s32 y) __asm__("Text_DrawNumberInWindow");
+/* VIEW(menus): routine Text_DrawMessageAsTiles as void
+ * Text_DrawMessageAsTiles(s32 message, struct TargetWindow *window, s32 x, s32
+ * y); text_render.h has void Text_DrawMessageAsTiles(s32 character, struct
+ * RenderInput *work, u32 offsetX, u32 offsetY); tried as the definition's void
+ * Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32
+ * offsetX, u32 offsetY), it does not compile in tla-ja:
+ * games/tla/include/graphics/text_render.h:10: conflicting types for
+ * `Text_DrawMessageAsTiles'. */
+extern void
+Text_DrawCharacterAtOffset__menus(s32 message, struct TargetWindow *window,
+                                  s32 x,
+                                  s32 y) __asm__("Text_DrawMessageAsTiles");
+/* VIEW(menus): routine Message_CopyExpanded as void Message_CopyExpanded(s32
+ * message, u16 *text, s32 capacity); module/window/window.h has s32
+ * Message_CopyExpanded(s32 key, u16 *destination, u32 capacity). */
+extern void
+Message_CopyExpanded__menus(s32 message, u16 *text,
+                            s32 capacity) __asm__("Message_CopyExpanded");
+/* VIEW(menus): routine Text_ClearCanvas as void Text_ClearCanvas(void);
+ * graphics.h has s32 Text_ClearCanvas(void); tried as the definition's s32
+ * Text_ClearCanvas(void), which the object already declares,
+ * BattleTarget_RunSelection moves: 1 of 1647 instructions in tla-ja. */
 extern void Vram_ClearWindowBlock__menus(void) __asm__("Text_ClearCanvas");
 void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x,
                                  s32 y);
@@ -278,8 +334,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       ((u32 *)firstSprite)[1] = 0x40002000;
       ((u32 *)firstSprite)[2] = 0;
     } while (0);
-    firstSprite->tile = VramCache_Reload__menus(
-        cursorSlot, ((gFrameCount >> 2) & 31) * 256 + gData_0805c9c4);
+    firstSprite->tile =
+        VramCache_Reload__menus(cursorSlot, ((gFrameCount >> 2) & 31) * 256 +
+                                                gMenu_AnimatedCursorTiles);
     TARGET_BOB(selectedPosition.y);
     y = selectedPosition.y;
     if (cursorTracks[0].flags & 1) {
@@ -382,12 +439,12 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
 #else
             TARGET_HELP_COLUMN(4, 4, 22);
-            conditionWindow =
-                Window_Create__menus(helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
+            conditionWindow = Window_Create__menus(
+                helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
 #endif
             Text_SetColor(2);
-            Text_DrawCharacterAtOffset__menus((s32)MsgSetDjinni, conditionWindow, 0,
-                                       0);
+            Text_DrawCharacterAtOffset__menus((s32)MsgSetDjinni,
+                                              conditionWindow, 0, 0);
             Text_SetColor(15);
             break;
           case 1:
@@ -396,45 +453,47 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #if TLA_PATCH_2
             switch (System_GetLanguage()) {
             case CARTRIDGE_LANGUAGE_GERMAN:
-              Text_DrawStringAtOffset__menus(gOwnerStatus_KpString, conditionWindow, 0,
-                                      0);
+              Text_DrawStringAtOffset__menus(gOwnerStatus_KpString,
+                                             conditionWindow, 0, 0);
               break;
             case CARTRIDGE_LANGUAGE_FRENCH:
             case CARTRIDGE_LANGUAGE_SPANISH:
-              Text_DrawStringAtOffset__menus(gOwnerStatus_PvString, conditionWindow, 0,
-                                      0);
+              Text_DrawStringAtOffset__menus(gOwnerStatus_PvString,
+                                             conditionWindow, 0, 0);
               break;
             case CARTRIDGE_LANGUAGE_ITALIAN:
-              Text_DrawStringAtOffset__menus(gOwnerStatus_HpString, conditionWindow, 0,
-                                      0);
+              Text_DrawStringAtOffset__menus(gOwnerStatus_HpString,
+                                             conditionWindow, 0, 0);
               break;
             }
 #else
-            Text_DrawStringAtOffset__menus(gOwnerStatus_HpString, conditionWindow, 0,
-                                    0);
+            Text_DrawStringAtOffset__menus(gOwnerStatus_HpString,
+                                           conditionWindow, 0, 0);
 #endif
             Text_DrawNumberInWindow__menus(unit->hp, 4, conditionWindow, 16, 0);
-            Text_DrawStringAtOffset__menus(gOwnerStatus_SlashString, conditionWindow,
-                                    48, 0);
-            Text_DrawNumberInWindow__menus(unit->maxHp, 4, conditionWindow, 56, 0);
+            Text_DrawStringAtOffset__menus(gOwnerStatus_SlashString,
+                                           conditionWindow, 48, 0);
+            Text_DrawNumberInWindow__menus(unit->maxHp, 4, conditionWindow, 56,
+                                           0);
             break;
           case 2:
             TARGET_HELP_COLUMN(7, 6, 17);
             conditionWindow = Window_Create__menus(helpColumn, 8, 13, 3, 6);
-            Text_DrawStringAtOffset__menus(gOwnerStatus_PpString, conditionWindow, 0,
-                                    0);
+            Text_DrawStringAtOffset__menus(gOwnerStatus_PpString,
+                                           conditionWindow, 0, 0);
             Text_DrawNumberInWindow__menus(unit->pp, 4, conditionWindow, 16, 0);
-            Text_DrawStringAtOffset__menus(gOwnerStatus_SlashString, conditionWindow,
-                                    48, 0);
-            Text_DrawNumberInWindow__menus(unit->maxPp, 4, conditionWindow, 56, 0);
+            Text_DrawStringAtOffset__menus(gOwnerStatus_SlashString,
+                                           conditionWindow, 48, 0);
+            Text_DrawNumberInWindow__menus(unit->maxPp, 4, conditionWindow, 56,
+                                           0);
             break;
           case 5:
             TARGET_HELP_COLUMN(7, 5, 18);
             conditionWindow = Window_Create__menus(helpColumn, 8, 12, 3, 6);
             if (unit->hp != 0)
               goto no_condition;
-            Text_DrawCharacterAtOffset__menus((s32)MsgEffectDowned, conditionWindow, 0,
-                                       0);
+            Text_DrawCharacterAtOffset__menus((s32)MsgEffectDowned,
+                                              conditionWindow, 0, 0);
             break;
           case 3:
             TARGET_HELP_COLUMN(7, 5, 18);
@@ -442,7 +501,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             if (unit->poison == 0)
               goto no_condition;
             Text_DrawCharacterAtOffset__menus((s32)MsgEffectCurePoison,
-                                       conditionWindow, 0, 0);
+                                              conditionWindow, 0, 0);
             break;
           case 4: {
             count = 0;
@@ -465,27 +524,27 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             count = 0;
             if (unit->delusion != 0) {
               Text_DrawCharacterAtOffset__menus((s32)MsgRemoveDelusion,
-                                         conditionWindow, 0, 0);
+                                                conditionWindow, 0, 0);
               count = 1;
             }
             if (unit->stun != 0) {
-              Text_DrawCharacterAtOffset__menus((s32)MsgRemoveStun, conditionWindow, 0,
-                                         count * 8);
+              Text_DrawCharacterAtOffset__menus((s32)MsgRemoveStun,
+                                                conditionWindow, 0, count * 8);
               count++;
             }
             if (unit->sleep != 0) {
-              Text_DrawCharacterAtOffset__menus((s32)MsgWakeFromSleep, conditionWindow,
-                                         0, count * 8);
+              Text_DrawCharacterAtOffset__menus((s32)MsgWakeFromSleep,
+                                                conditionWindow, 0, count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
               Text_DrawCharacterAtOffset__menus((s32)MsgBreakPsynergySeal,
-                                         conditionWindow, 0, count * 8);
+                                                conditionWindow, 0, count * 8);
               count++;
             }
             if (unit->grimReaper != 0) {
               Text_DrawCharacterAtOffset__menus((s32)MsgDispelGrimReaper,
-                                         conditionWindow, 0, count * 8);
+                                                conditionWindow, 0, count * 8);
               count++;
             }
             if (count == 0)
@@ -529,37 +588,37 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             count = 0;
             if (unit->poison != 0) {
               Text_DrawCharacterAtOffset__menus((s32)MsgEffectCurePoison,
-                                         conditionWindow, 0, 0);
+                                                conditionWindow, 0, 0);
               count = 1;
             }
             if (unit->delusion != 0) {
               Text_DrawCharacterAtOffset__menus((s32)MsgRemoveDelusion,
-                                         conditionWindow, 0, count * 8);
+                                                conditionWindow, 0, count * 8);
               count++;
             }
             if (unit->stun != 0) {
-              Text_DrawCharacterAtOffset__menus((s32)MsgRemoveStun, conditionWindow, 0,
-                                         count * 8);
+              Text_DrawCharacterAtOffset__menus((s32)MsgRemoveStun,
+                                                conditionWindow, 0, count * 8);
               count++;
             }
             if (unit->sleep != 0) {
-              Text_DrawCharacterAtOffset__menus((s32)MsgWakeFromSleep, conditionWindow,
-                                         0, count * 8);
+              Text_DrawCharacterAtOffset__menus((s32)MsgWakeFromSleep,
+                                                conditionWindow, 0, count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
               Text_DrawCharacterAtOffset__menus((s32)MsgBreakPsynergySeal,
-                                         conditionWindow, 0, count * 8);
+                                                conditionWindow, 0, count * 8);
               count++;
             }
             if (unit->grimReaper != 0) {
               Text_DrawCharacterAtOffset__menus((s32)MsgDispelGrimReaper,
-                                         conditionWindow, 0, count * 8);
+                                                conditionWindow, 0, count * 8);
               count++;
             }
             if (unit->haunt != 0) {
               Text_DrawCharacterAtOffset__menus((s32)MsgDispelEvilSpirit,
-                                         conditionWindow, 0, count * 8);
+                                                conditionWindow, 0, count * 8);
               count++;
             }
             if (count != 0)
@@ -567,8 +626,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
           no_condition:
             Text_SetColor(2);
-            Text_DrawCharacterAtOffset__menus((s32)MsgEffectNone, conditionWindow, 0,
-                                       0);
+            Text_DrawCharacterAtOffset__menus((s32)MsgEffectNone,
+                                              conditionWindow, 0, 0);
             Text_SetColor(15);
             break;
           }

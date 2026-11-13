@@ -37,7 +37,7 @@ void WorldMap_StepZoom(void) {
   (*step)++;
   offset = *from + __divsi3(delta * *step, *duration);
   map->zoom = Iwram_MulQ16(map->farPlane, offset);
-  gData_03001144 = *(u16 *)((u8 *)map + 0x11c) + 1;
+  gScanlinePitch = *(u16 *)((u8 *)map + 0x11c) + 1;
   if (*step == *duration) {
     *duration = 0;
     Task_Remove(WorldMap_StepZoom);

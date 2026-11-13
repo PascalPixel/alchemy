@@ -149,7 +149,7 @@ Func_02000d94:
 	.global Func_02000d9c
 	.thumb_func
 Func_02000d9c:
-	overlay_veneer Func_080c82e0
+	overlay_veneer Field_TryJumpForwardFar
 	.global Func_02000da4
 	.thumb_func
 Func_02000da4:

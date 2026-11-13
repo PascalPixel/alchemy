@@ -254,16 +254,18 @@ void BattleEffect_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
 }
 
 /// Abilities: Demon Night (kind 50).
-DEFINE_EFFECT_KIND(BattleEffect_RunDemonNight, Func_08144628, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunDemonNight, BattleEffect_RunGatheringLights,
+                   0)
 
 /// Abilities: Rumble (kind 308).
-DEFINE_EFFECT_KIND(BattleEffect_RunRumble, Func_08144628, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunRumble, BattleEffect_RunGatheringLights, 1)
 
 /// Abilities: Haunting (kind 351).
-DEFINE_EFFECT_KIND(BattleEffect_RunHaunting, Func_08144628, 2)
+DEFINE_EFFECT_KIND(BattleEffect_RunHaunting, BattleEffect_RunGatheringLights, 2)
 
 /// Abilities: Thorny Grave (kind 127).
-DEFINE_EFFECT_KIND(BattleEffect_RunThornyGrave, Func_08144628, 3)
+DEFINE_EFFECT_KIND(BattleEffect_RunThornyGrave, BattleEffect_RunGatheringLights,
+                   3)
 
 #define MOTES_PER_TARGET 128
 #define MOTE_CELL (20 * 32)
@@ -274,7 +276,8 @@ DEFINE_EFFECT_KIND(BattleEffect_RunThornyGrave, Func_08144628, 3)
 // once it has crossed it. The background sways sideways, swelling and dying
 // away over the effect. In mode 3 every mote that arrives also pushes its
 // target back.
-void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
+                                     s32 mode) {
   struct EffectPosition pos;
   DrawRectangle draw[2];
   struct BattleEffectWork *work;

@@ -137,7 +137,7 @@ extern u8 gWorkspace_RangeDash[];
 
 void BattleSummon_UpdateAvailabilityFar(void);
 
-s32 Func_08045528(s32 portrait, s32 slot);
+s32 Portrait_Load(s32 portrait, s32 slot);
 
 void Camera_ConfigureSceneFar(s32 mode);
 

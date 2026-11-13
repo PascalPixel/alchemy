@@ -128,7 +128,8 @@ extern char ResourceId_MercuryDjinnSheet;
 
 void BattleEffect_StepPaletteToResource(s32 resource);
 void Func_08164b2c(s32 red, s32 green, s32 blue);
-void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase, s32 bluePhase);
+void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
+                                     s32 bluePhase);
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
 
@@ -463,7 +464,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         y = y - twice + 88;
       }
       draw[0](canvas, FIGURE(work), x, y, 20, 40);
-      Func_081496c8(frame, 0xaaab, 0x5555, 0);
+      BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     } else if (mode == 2 || mode == 7) {
       struct EffectPosition target;
 

@@ -372,7 +372,7 @@ struct RideWork {
 // of the 16 entries it moves the actor on its timer, writes its height to the
 // collision and cell maps, and carries its rider with a bob.
 void Func_02000be4(void) {
-  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct RideEntry *entry = work->entries;
   s32 value = work->value;
@@ -462,13 +462,14 @@ struct SwingWork__s03cc {
 
 void Func_0200119c(u32 *oam, s32 depth);
 
-// Draws the swinging actors' ropes and heads (the 16 records of gData_020023c4
+// Draws the swinging actors' ropes and heads (the 16 records of
+// gInventorySnapshot
 // + 0x188 kept by Func_02001068): for each raised actor, a rope segment every
 // 16 pixels of its height and the bobbing head on top, at most 80 sprites,
 // queued by Func_0200119c.
 void Func_02000dac(void) {
   struct SwingWork__s03cc *work =
-      (struct SwingWork__s03cc *)(gData_020023c4 + 0x188);
+      (struct SwingWork__s03cc *)(gInventorySnapshot + 0x188);
   struct SwingActor *swing = work->actors;
   s32 k;
   u32 tile = gResourceTableEntries[work->entry].offset >> 5;
@@ -555,7 +556,7 @@ void Func_02000dac(void) {
 
 void Func_02000fcc(s32 unused, s32 value) {
   struct GondowanCliffsWork *work =
-      (struct GondowanCliffsWork *)(gData_020023c4 + 0x188);
+      (struct GondowanCliffsWork *)(gInventorySnapshot + 0x188);
   void *buffer;
 
   if (!Event_GetFlag(0x109))
@@ -574,7 +575,7 @@ void Func_02000fcc(s32 unused, s32 value) {
 
 struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
                                 s32 high) {
-  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct RideEntry *entry = &work->entries[slot];
   struct Actor *object = Actor_Get(id);
   struct Actor *rider;

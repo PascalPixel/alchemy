@@ -95,7 +95,7 @@ Resource_FarCall006:
 	export FieldPsynergy_SteerPushedTargetFar, FieldPsynergy_SteerPushedTarget
 	export FieldPsynergy_StartCloakFar, FieldPsynergy_StartCloak
 	export BattleEffect_FindNearestObjectFar, Field_FindNearbyPsynergyTarget
-	export Func_080c82e0, Func_080d4d08
+	export Field_TryJumpForwardFar, Field_TryJumpForward
 	export Func_080c82e8, Func_080d50f8
 	export Func_080c82f0, Func_080d53b8
 	export Leader_StopMovingFar, Leader_StopMoving
@@ -112,7 +112,7 @@ Resource_FarCall006:
 	export ScreenTransition_StartFar, ScreenTransition_Start
 	export ScreenTransition_FinishFar, ScreenTransition_Finish
 	export Map_ClearLayerFlagsFar, Map_ClearLayerFlags
-	export Func_080c8368, Func_080ccec8
+	export Scene_TalkToActorFar, Scene_TalkToActor
 	export BattleEffect_InitializeBuffersFar, BattleEffect_InitializeBuffers
 	export BattleEffect_ApplyColorToTargetBufferFar, BattleEffect_ApplyColorToTargetBuffer
 	export BattleEffect_ApplyColorToSourceBufferFar, BattleEffect_ApplyColorToSourceBuffer
@@ -316,7 +316,7 @@ Func_080c88e8:
 	export ObjectEffect_StartContextEffect26Far, ObjectEffect_StartContextEffect26
 	export ObjectEffect_StartContextEffect25Far, ObjectEffect_StartContextEffect25
 	export FieldMotes_StartFar, FieldMotes_Start
-	export Func_080c8918, Func_080d6f34
+	export Weather_StartRainFar, Weather_StartRain
 	export Func_080c8920, Func_080d7024
 	export Func_080c8928, Func_080ea14c
 	export Func_080c8930, Func_080d2d70
@@ -324,7 +324,7 @@ Func_080c88e8:
 	export Func_080c8940, Func_080ca3f4
 	export Func_080c8948, Func_080e28d4
 	export Func_080c8950, Func_080d072c
-	export Func_080c8958, Func_080d25c8
+	export Party_CheckItemLimitFar, Party_CheckItemLimit
 	export SceneEvent_FindActiveRecordFar, Func_080ccd78
 	export Func_080c8968, Func_080d1760
 	export BattleEffect_LoadBufferPaletteFar, BattleEffect_LoadBufferPalette

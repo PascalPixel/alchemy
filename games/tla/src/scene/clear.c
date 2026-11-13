@@ -264,7 +264,7 @@ s32 Party_AddMember(s32 value);
 #define COPY_CELLS(to, from)                                                   \
   Value3((s32 (*)())Iwram_CopyWordsEntry, (s32)(to), (s32)(from), 0x3000)
 #define SAVE_CELLS()                                                           \
-  u8 *cells = gData_02000000;                                                  \
+  u8 *cells = gSaveBuffer;                                                     \
                                                                                \
   COPY_CELLS(Ram_MapCellBuffer, cells)
 #define RESTORE_CELLS()                                                        \

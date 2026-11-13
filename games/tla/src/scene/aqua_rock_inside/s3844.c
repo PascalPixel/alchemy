@@ -42,7 +42,7 @@ void Func_020039f0(s32 *position, s32 base) {
 DEFINE_FUNC_020025D4(Func_02003a70, Func_020039f0)
 
 void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
-  struct WaterWork *work = (struct WaterWork *)(gData_020023c4 + 0x188);
+  struct WaterWork *work = (struct WaterWork *)(gInventorySnapshot + 0x188);
   struct WaterOutlet *outlet = work->outlets;
 
   if (!Event_GetFlag(0x109)) {

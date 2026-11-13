@@ -289,7 +289,7 @@ Func_020055f8:
 	.global Func_02005600
 	.thumb_func
 Func_02005600:
-	overlay_veneer Func_080c82e0
+	overlay_veneer Field_TryJumpForwardFar
 	.global Leader_StopMoving
 	.thumb_func
 Leader_StopMoving:

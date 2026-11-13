@@ -289,7 +289,7 @@ Field_RequestDjinnBattle:
 	.global Func_02004e38
 	.thumb_func
 Func_02004e38:
-	overlay_veneer Func_080c82e0
+	overlay_veneer Field_TryJumpForwardFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
 BattleEffect_ApplyColorToTargetBuffer:

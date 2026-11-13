@@ -269,7 +269,7 @@ Field_RequestDjinnBattle:
 	.global Func_020030f8
 	.thumb_func
 Func_020030f8:
-	overlay_veneer Func_080c82e0
+	overlay_veneer Field_TryJumpForwardFar
 	.global Func_02003100
 	.thumb_func
 Func_02003100:

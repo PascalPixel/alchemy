@@ -89,7 +89,7 @@ struct Window *SaveProgress_Close(struct Window *window) {
     dma[5];                                                                    \
   } while (0)
 
-/// Runs Func_08015ca4 with interrupts masked and all four DMA channels
+/// Runs Save_WritePart with interrupts masked and all four DMA channels
 /// stopped, queueing Func_08042dc4 as the serial command around it, then
 /// restores IE and IME. Func_08042ff0 does the same around
 /// Save_DeletePart.
@@ -116,7 +116,7 @@ s32 Func_08042f10(s32 partId, void *buffer) {
   DMA_STOP(3);
   IRQ_UNLOCK(ime);
   Serial_QueueCommand((u32)Func_08042dc4);
-  result = Func_08015ca4(partId, buffer);
+  result = Save_WritePart(partId, buffer);
   Serial_QueueCommand(0);
   IRQ_LOCK(ime);
   REG_IE = ie;
@@ -128,7 +128,7 @@ s32 Save_DeletePart(s32 partId);
 
 /// Deletes a part of a save file (Save_DeletePart) with interrupts masked and
 /// all four DMA channels stopped, queueing Func_08042dc4 as the serial command
-/// around it, as Func_08042f10 does around Func_08015ca4.
+/// around it, as Func_08042f10 does around Save_WritePart.
 s32 Func_08042ff0(s32 partId) {
   volatile u32 ime;
   volatile u32 ie;
@@ -357,7 +357,7 @@ s32 Save_BuildFileSummary(void) {
   s32 i;
   u32 sum = 0;
 
-  summary = (struct SaveSummary *)(gData_02000000 - 16);
+  summary = (struct SaveSummary *)(gSaveBuffer - 16);
   SAVE_GAME_WORDS->buildStamp = BuildStamp_GetTimeFar(0);
   SAVE_GAME_WORDS->playTime = gFrameWaitCount;
   gData_02001000__screens = gFrameWaitCount;
@@ -425,7 +425,7 @@ s32 Save_WriteFile(s32 file) {
   if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
     result = -9;
-  } else if (Func_08042f10(file, gData_02000000) != 0) {
+  } else if (Func_08042f10(file, gSaveBuffer) != 0) {
     FieldMessage_Show((s32)&MsgSaveFailed, 1);
     result = -3;
   }
@@ -442,7 +442,7 @@ s32 Func_08043534(void) {
 
   result = 0;
   buffer = Heap_AllocEwram(0x3000);
-  value = gData_020036d0;
+  value = gSaveSlot;
   if (value != -1) {
     found = Save_InitializeWork();
     if (found != 0) {
@@ -451,16 +451,16 @@ s32 Func_08043534(void) {
     } else {
       u8 *dst;
 
-      found = Save_ReadPart(gData_020036d0, buffer);
+      found = Save_ReadPart(gSaveSlot, buffer);
       if (found != 0) {
         FieldMessage_Show((s32)&MsgSaveFailed, 1);
         result = -2;
       }
       dst = (u8 *)buffer + (s32)gData_02000504;
-      dst -= (s32)gData_02000000;
+      dst -= (s32)gSaveBuffer;
       Iwram_CopyWordsEntry(dst, gData_02000504, 16);
       token = (s32)SaveProgress_Open(0);
-      found = Func_08042f10(gData_020036d0, buffer);
+      found = Func_08042f10(gSaveSlot, buffer);
       SaveProgress_Close((struct Window *)token);
       if (found != 0) {
         FieldMessage_Show((s32)&MsgSaveFailed, 1);
@@ -486,12 +486,12 @@ s32 Save_ToFile(u32 slot) {
     result = -9;
   } else {
     Save_LoadFileSummaries();
-    gData_020036d0 = slot;
+    gSaveSlot = slot;
     Sound_PlayFar(85);
     FieldMessage_Show((s32)&MsgSaving, 13);
     Save_BuildFileSummary();
     ObjectTable_SnapshotFar();
-    found = Func_08042f10(slot, gData_02000000);
+    found = Func_08042f10(slot, gSaveBuffer);
     while (Message_AllTyped() == 0)
       wait(1);
     Message_CloseFinishedWindows();
@@ -508,7 +508,7 @@ s32 Save_ToFile(u32 slot) {
 
 /// Lets the player choose a file and saves the game to it, asking first before
 /// it writes over a file in use.
-s32 Func_08043690(void) {
+s32 Save_ToChosenFile(void) {
   s32 result = 0;
   s32 slot;
   s32 found;
@@ -520,7 +520,7 @@ s32 Func_08043690(void) {
     result = -9;
   } else {
     Save_LoadFileSummaries();
-    slot = FileList_SelectFile(gData_020036d0, 0);
+    slot = FileList_SelectFile(gSaveSlot, 0);
     if (slot == -1) {
       result = slot;
     } else {
@@ -535,11 +535,11 @@ s32 Func_08043690(void) {
         }
         Message_CloseFinishedWindows();
       }
-      gData_020036d0 = slot;
+      gSaveSlot = slot;
       token = (s32)SaveProgress_Open(0);
       Save_BuildFileSummary();
       ObjectTable_SnapshotFar();
-      found = Func_08042f10(slot, gData_02000000);
+      found = Func_08042f10(slot, gSaveBuffer);
       SaveProgress_Close((struct Window *)token);
       Message_CloseFinishedWindows();
       if (found != 0) {
@@ -565,17 +565,17 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
     result = -9;
   } else {
     Save_LoadFileSummaries();
-    file = FileList_SelectFile(gData_020036d0, mode);
+    file = FileList_SelectFile(gSaveSlot, mode);
     if (file == -1) {
       result = file;
-    } else if (Save_ReadPart(file, gData_02000000) != 0) {
+    } else if (Save_ReadPart(file, gSaveBuffer) != 0) {
       FieldMessage_Show((s32)&MsgLoadFailed, 1);
       result = -2;
     } else {
       gFrameWaitCount = SAVE_GAME_WORDS->playTime;
       gAutoSleepEnabled = gMainRoutineWork.unk244[6];
       gIdleFrameCount = 0;
-      gData_020036d0 = file;
+      gSaveSlot = file;
     }
   }
   Save_ReleaseWork();
@@ -597,7 +597,7 @@ s32 Save_CopyFile(void) {
     if (value == -1) {
       result = value;
     } else {
-      void *buffer = gData_02000000;
+      void *buffer = gSaveBuffer;
 
       value = Save_ReadPart(value, buffer);
       if (value != 0) {

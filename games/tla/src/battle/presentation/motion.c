@@ -309,7 +309,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
 extern s32 BattleClass_GetAttackHop__presentation(s32 classId) __asm__(
     "BattleClass_GetAttackHop");
 
-s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
+s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
   void *object;
   struct AttackAnimation *animation;

@@ -932,7 +932,7 @@ void Window_CloseMatchingIdFar(s32 sprite);
 
 extern const s32 gData_080f0ee8[];
 
-extern const s32 gData_080f0e78[];
+extern const s32 gFieldEffect_FragmentScript[];
 
 s32 MapGrid_CheckCollisionFar(struct Actor *object, s32 *position);
 
@@ -951,7 +951,7 @@ void Event_NoOp(void);
 
 void Actor_ApplyIndexedChildValue(struct Actor *object);
 
-extern u32 Data_03001244;
+extern u32 gScanlineAngle;
 
 extern struct AnimationMetadata gResource_Data012[];
 
@@ -971,7 +971,7 @@ void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no);
 
 u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
 
-s32 Func_080d25c8(s32 item);
+s32 Party_CheckItemLimit(s32 item);
 
 s32 GetWorldMapCollisionFar(s32 *position);
 
@@ -997,7 +997,7 @@ void BattleMap_ApplySceneEntranceView(void);
 void Debug_RunPaletteEditor(void);
 
 struct TriggerView *Func_080ccd78(s32 kind, s32 target);
-s32 Func_080ccec8(s32 id);
+s32 Scene_TalkToActor(s32 id);
 s32 Scene_RunRaisedEvent(s32 id);
 s32 Scene_RunTouchOrExit(s32 value);
 s32 Func_080cd680(s32 keys);
@@ -1006,7 +1006,7 @@ s32 Func_080cd808(s32 id);
 s32 Func_080cdc74(void);
 void Func_080cdd80(void);
 
-s32 Func_080ce61c(u32 code);
+s32 Field_UsePsynergy(u32 code);
 
 s16 *Func_080ceba8(void);
 void Func_080cec34(void);
@@ -1181,7 +1181,7 @@ s32 MapGrid_IsWallAtFar(s32 *position);
 
 extern const u16 Data_080f0890[];
 
-extern u32 gData_03001144;
+extern u32 gScanlinePitch;
 
 extern const s16 Data_080f0b50[];
 
@@ -1190,7 +1190,7 @@ void Func_0802493c(void);
 void Func_08023f9c(void);
 void Func_080246b8(void);
 
-void Func_0802386c(void);
+void ActorSystem_PlaceSprites(void);
 
 extern const s32 gData_0802f098[];
 extern const s32 gData_0802f0b0[];
@@ -1220,7 +1220,7 @@ s32 Field_CheckConfiguredKeys(void);
 void Tilemap_DecodeStagedBuffer(s32 size);
 void Tilemap_ConvertBuffer(void);
 
-void Func_0802ad84(void);
+void MapGrid_UpdateLayerScroll(void);
 
 void WorldMap_UpdateView(void);
 void Func_0802c088(void);

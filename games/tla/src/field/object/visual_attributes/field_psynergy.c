@@ -223,7 +223,7 @@ struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
   s32 magnitude;
 
   if (object != NULL) {
-    Actor_StartScriptFar(object, gData_080f0e78);
+    Actor_StartScriptFar(object, gFieldEffect_FragmentScript);
     object->speedLimit = Random16() + Q16_ONE;
     object->acceleration = Q16_ONE;
     object->motionFlags = 2;

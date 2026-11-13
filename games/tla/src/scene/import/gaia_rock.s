@@ -129,7 +129,7 @@ Func_02000ed4:
 	.global Func_02000edc
 	.thumb_func
 Func_02000edc:
-	overlay_veneer Func_080c8368
+	overlay_veneer Scene_TalkToActorFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:

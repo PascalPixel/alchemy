@@ -523,7 +523,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
 // A Djinn rides a swarm of sparks from the caster to the first target: 32
 // sparks spin around it in four planes while it travels, then it hovers
 // over the targets while puffs of sparkle gather on each in turn.
-void Func_0814b350(struct BattleEffectArgument *effect) {
+void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 member;

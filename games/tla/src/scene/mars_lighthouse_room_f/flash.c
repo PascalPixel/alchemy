@@ -65,7 +65,12 @@ DEFINE_FUNC_020012BC(Func_02002954, 10, 4, 0)
 #include "vector3.h"
 #include "fixed_math.h"
 
-/* VIEW(flash): routine Func_020054f8 as s32 Func_020054f8(struct Actor *actor); module/scene/mars_lighthouse_room_f.h has s32 Func_020054f8(struct Actor *object, s32 *position); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/flash.c:132: too few arguments to function `Func_020054f8'. */
+/* VIEW(flash): routine Func_020054f8 as s32 Func_020054f8(struct Actor *actor);
+ * module/scene/mars_lighthouse_room_f.h has s32 Func_020054f8(struct Actor
+ * *object, s32 *position); tried as the rest of the object declares it, it does
+ * not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_f/flash.c:132: too few arguments to
+ * function `Func_020054f8'. */
 extern s32 Func_020054f8__flash(struct Actor *actor) __asm__("Func_020054f8");
 
 #if TLA_PATCH_1
@@ -102,7 +107,7 @@ s32 Func_0200297c(void) {
     ((s32 (*)(s32, s32))Func_02002800)(-10, 0);
 #endif
     actor = Actor_Get(main->currentOwner);
-    work = (struct Work020023c4 *)(gData_020023c4 + 0x188);
+    work = (struct Work020023c4 *)(gInventorySnapshot + 0x188);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     actor->update = Func_02002954;
@@ -219,7 +224,7 @@ s32 Func_0200297c(void) {
 #endif
 
 void Func_02002b88(void) {
-  if (((struct RideWork *)(gData_020023c4 + 0x188))->active)
+  if (((struct RideWork *)(gInventorySnapshot + 0x188))->active)
     Func_0200297c();
 }
 
@@ -261,7 +266,7 @@ s32 Func_02002ba0(void) {
 #endif
   FieldCamera_SetSpeed(0x70000, 0xe000);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
-  ride = (struct RideWork *)(gData_020023c4 + 0x188);
+  ride = (struct RideWork *)(gInventorySnapshot + 0x188);
   Flag_Set(0x106);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -291,7 +296,7 @@ s32 Func_02002ba0(void) {
 DEFINE_FUNC_020024AC(Func_02002ce0, Func_02002ba0)
 
 s32 Func_02002cfc(void) {
-  return ((struct RideWork *)(gData_020023c4 + 0x188))->active;
+  return ((struct RideWork *)(gInventorySnapshot + 0x188))->active;
 }
 
 #include "iwram_call.h"
@@ -334,7 +339,7 @@ struct Work {
 extern u8 gData_02005dbc[];
 s32 Resource_ResetEntry(u32 slot);
 
-#define WORK ((struct Work *)(gData_020023c4 + 0x188))
+#define WORK ((struct Work *)(gInventorySnapshot + 0x188))
 
 void Func_02002d08(struct Actor *actor) {
   struct Work *work = WORK;
@@ -415,11 +420,16 @@ void Func_02002f6c(struct Actor *object) {
 #define MapLayer MapLayer__s2f80
 #include "map.h"
 #undef MapLayer
-/* VIEW(s2f80): tag struct MapLayer as struct MapLayer__s2f80; room.h has another definition; not tried: struct MapLayer__s2f80 was not found. */
+/* VIEW(s2f80): tag struct MapLayer as struct MapLayer__s2f80; room.h has
+ * another definition; not tried: struct MapLayer__s2f80 was not found. */
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-/* VIEW(s2f80): tag struct Work020023c4 as struct Work020023c4__s2f80; flash.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/flash.c:591: structure has no member named `unk6c'. */
+/* VIEW(s2f80): tag struct Work020023c4 as struct Work020023c4__s2f80; flash.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_f/flash.c:591: structure has no
+ * member named `unk6c'. */
 struct Work020023c4__s2f80 {
   u8 unk00[4];
   u16 unk04;
@@ -439,8 +449,8 @@ struct WorkEvent {
 s32 Func_020054d8(s32 terrain, s32 x, s32 z);
 void Func_02002d08(struct Actor *actor);
 void Func_02002e8c(s32 x, s32 y, s32 z, s32 speed);
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 
 DEFINE_FUNC_0200274C(Func_02002f80, Work020023c4__s2f80, Func_020054d8,
-    Func_02002e8c, Func_02002d08)
+                     Func_02002e8c, Func_02002d08)
 #undef ABS

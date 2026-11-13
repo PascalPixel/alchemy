@@ -1787,40 +1787,40 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
 
 /// Abilities: Impact, High Impact, Demon Spear, Angel Spear (kind 26); Forge
 /// (kind 210); Kindle (kind 223); kind 46 is used by no ability.
-DEFINE_EFFECT_KIND(BattleEffect_RunImpact, Func_0814fab8, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunImpact, BattleEffect_RunStatBoost, 0)
 
 /// Abilities: Guard, Protect, Guardian, Protector (kind 28); Corona (kind 211).
-DEFINE_EFFECT_KIND(BattleEffect_RunGuard, Func_0814fab8, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunGuard, BattleEffect_RunStatBoost, 1)
 
 /// Abilities: Iron (kind 220).
-DEFINE_EFFECT_KIND(BattleEffect_RunIron, Func_0814fab8, 6)
+DEFINE_EFFECT_KIND(BattleEffect_RunIron, BattleEffect_RunStatBoost, 6)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunStatBoostMode7, Func_0814fab8, 7)
+DEFINE_EFFECT_KIND(BattleEffect_RunStatBoostMode7, BattleEffect_RunStatBoost, 7)
 
 /// Abilities: Ward, Resist, Magic Shell, Magic Shield (kind 30); Breeze (kind
 /// 215).
-DEFINE_EFFECT_KIND(BattleEffect_RunWard, Func_0814fab8, 2)
+DEFINE_EFFECT_KIND(BattleEffect_RunWard, BattleEffect_RunStatBoost, 2)
 
 /// Abilities: Steam (kind 221).
-DEFINE_EFFECT_KIND(BattleEffect_RunSteam, Func_0814fab8, 11)
+DEFINE_EFFECT_KIND(BattleEffect_RunSteam, BattleEffect_RunStatBoost, 11)
 
 /// Abilities: Granite (kind 200).
-DEFINE_EFFECT_KIND(BattleEffect_RunGranite, Func_0814fab8, 3)
+DEFINE_EFFECT_KIND(BattleEffect_RunGranite, BattleEffect_RunStatBoost, 3)
 
 /// Abilities: Flash (kind 213).
-DEFINE_EFFECT_KIND(BattleEffect_RunFlash, Func_0814fab8, 5)
+DEFINE_EFFECT_KIND(BattleEffect_RunFlash, BattleEffect_RunStatBoost, 5)
 
 /// Abilities: Shade (kind 222).
-DEFINE_EFFECT_KIND(BattleEffect_RunShade, Func_0814fab8, 8)
+DEFINE_EFFECT_KIND(BattleEffect_RunShade, BattleEffect_RunStatBoost, 8)
 
 /// Abilities: Guard Aura (kind 460).
-DEFINE_EFFECT_KIND(BattleEffect_RunGuardAura, Func_0814fab8, 12)
+DEFINE_EFFECT_KIND(BattleEffect_RunGuardAura, BattleEffect_RunStatBoost, 12)
 
 /// Abilities: Zephyr (kind 216).
-DEFINE_EFFECT_KIND(BattleEffect_RunZephyr, Func_0814fab8, 4)
+DEFINE_EFFECT_KIND(BattleEffect_RunZephyr, BattleEffect_RunStatBoost, 4)
 
 /// Abilities: Coal (kind 224).
-DEFINE_EFFECT_KIND(BattleEffect_RunCoal, Func_0814fab8, 9)
+DEFINE_EFFECT_KIND(BattleEffect_RunCoal, BattleEffect_RunStatBoost, 9)
 
 /// Effect kind 182: the stat boost's mode 10 (a burst with no gathering
 /// lights), with no prelude Djinni and the fade step cleared.
@@ -1830,7 +1830,7 @@ void BattleEffect_RunStatBoostMode10(struct BattleEffectArgument *effect) {
 
   work->fadeStep = 0;
   effect->prelude = 0;
-  Func_0814fab8(effect, 10);
+  BattleEffect_RunStatBoost(effect, 10);
 }
 
 // The two blitters' heap slots, byte offsets into Ram_HeapSlots (The Broken
@@ -1848,8 +1848,8 @@ void BattleEffect_RunStatBoostMode10(struct BattleEffectArgument *effect) {
 
 static inline CopyWordsFn CopyWordsRoutine(void) {
   /* FAKEMATCH(wrapper): the routine fetched through this inline; as direct
-   * calls to Iwram_CopyWords, 4 of 1146 instructions of Func_0814fab8 differ in
-   * tla-en. */
+   * calls to Iwram_CopyWords, 4 of 1146 instructions of
+   * BattleEffect_RunStatBoost differ in tla-en. */
   return Iwram_CopyWordsEntry;
 }
 
@@ -1863,7 +1863,7 @@ static inline CopyWordsFn CopyWordsRoutine(void) {
 // frame and close in two pixels a frame; from frame 52 of a target its
 // burst plays, six pictures four frames apart, and from frame 80 the
 // mode's picture.
-void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
+void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw[2];

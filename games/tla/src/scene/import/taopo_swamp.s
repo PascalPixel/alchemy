@@ -226,7 +226,7 @@ Field_RequestDjinnBattle:
 	.global Func_02002948
 	.thumb_func
 Func_02002948:
-	overlay_veneer Func_080c82e0
+	overlay_veneer Field_TryJumpForwardFar
 	.endif
 	.global Actor_SetWideSprite
 	.thumb_func

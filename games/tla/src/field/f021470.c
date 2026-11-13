@@ -32,7 +32,8 @@ struct FarCallRuntimeTrigView {
   struct FarCallTrigVeneer cos;
 };
 
-/* VIEW(f021470): tag struct Vector3 as struct Vector3__f021470; vector3.h has another definition. */
+/* VIEW(f021470): tag struct Vector3 as struct Vector3__f021470; vector3.h has
+ * another definition. */
 struct Vector3__f021470 {
   s32 x;
   s32 y;
@@ -59,12 +60,13 @@ struct BgAffine {
 
 extern const struct FarCallRuntimeTrigView FarCall_RuntimeTable;
 extern s32 Data_030011ec;
-extern u32 Data_03001244;
+extern u32 gScanlineAngle;
 
 s32 Func_080216f0(s32 x, s32 y);
 
-void Func_08021470(struct Vector3__f021470 *eye, struct Vector3__f021470 *target,
-                   struct ScanVertex *line, struct BgAffine *affine) {
+void Func_08021470(struct Vector3__f021470 *eye,
+                   struct Vector3__f021470 *target, struct ScanVertex *line,
+                   struct BgAffine *affine) {
   u32 angle;
   s32 originX;
   s32 originZ;
@@ -102,8 +104,8 @@ void Func_08021470(struct Vector3__f021470 *eye, struct Vector3__f021470 *target
   }
   originX = MulQ16(target->x, 0x8000);
   originZ = MulQ16(target->z, 0x8000);
-  if (angle != Data_03001244) {
-    Data_03001244 = angle;
+  if (angle != gScanlineAngle) {
+    gScanlineAngle = angle;
     sinYaw = table->sin.target(angle);
     cosYaw = table->cos.target(angle);
     negativeSinYaw = -sinYaw;

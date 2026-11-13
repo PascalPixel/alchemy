@@ -1003,9 +1003,9 @@ struct ElementSession {
 };
 
 s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen);
-void Func_08138020(struct BattlePresentationWork *launch);
+void BattleEffect_RunElementPillarFar(struct BattlePresentationWork *launch);
 void BattleEffect_RunElementBurstFar(struct BattlePresentationWork *launch);
-void Func_08138038(s32 mode);
+void BattleEffect_StartElementStreaksFar(s32 mode);
 void BattleEffect_EndElementStreaksFar(void);
 
 // Plays a unit's element effect in one of four ways: 0, the star field
@@ -1056,7 +1056,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
     }
     ElementGlow_End(kind);
   } else if (mode == 1) {
-    Func_08138038(kind);
+    BattleEffect_StartElementStreaksFar(kind);
     for (frame = 0; frame < 40; frame++) {
       BattleMotion_ProjectScaledPosition(unit, (s32 *)&position2);
       origin[0] = (64 - position2.x) << 8;
@@ -1074,7 +1074,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
     launch.firstTarget = unit;
     launch.count = 1;
     launch.initialValue = 1;
-    Func_08138020(&launch);
+    BattleEffect_RunElementPillarFar(&launch);
   } else {
     launch2.flags = 0;
     launch2.kind = kind;
@@ -1089,7 +1089,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
 }
 
 /// Puts the background's palette back undarkened, at level 0.
-/// Called by Func_0811df70 and BattleStaging_RunPsynergyCast.
+/// Called by BattleStaging_HideField and BattleStaging_RunPsynergyCast.
 void BattleBackground_RestorePalette(void) {
   BattleBackground_SetPaletteLevel(0, 0);
 }

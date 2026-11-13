@@ -143,7 +143,7 @@ Window_SetTilemapEntry:
 	.global Func_020022d0
 	.thumb_func
 Func_020022d0:
-	overlay_veneer Func_080382c0
+	overlay_veneer Save_ToChosenFileFar
 	.global Func_020022d8
 	.thumb_func
 Func_020022d8:

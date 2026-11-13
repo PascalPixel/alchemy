@@ -43,7 +43,7 @@ void Func_080db0b0(s32 id);
 
 s32 Func_080dbda8(s32 x, s32 z, s32 layer);
 
-void Func_080d7524(s32 djinniId);
+void Djinn_RunBattleStartHop(s32 djinniId);
 
 extern const u8 gData_0802eac4[16];
 extern const u8 gData_0802ead4[8];
@@ -61,7 +61,7 @@ void ObjectEffect_StartContextEffect25(void);
 void ObjectEffect_StartContextEffect26(void);
 void Func_080d5fd4(void);
 
-s32 Func_080d4d08(void);
+s32 Field_TryJumpForward(void);
 s32 Func_080d50f8(void);
 s32 Func_080d53b8(void);
 

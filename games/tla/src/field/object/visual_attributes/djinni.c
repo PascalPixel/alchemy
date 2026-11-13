@@ -51,7 +51,7 @@ void Actor_Jump(s32 id, s32 speed, s32 frames);
 extern struct Actor *Func_080200c0__motes(s32 kind, s32 x, s32 y,
                                           s32 z) __asm__("Func_080200c0");
 
-void Func_080d7524(s32 djinniId) {
+void Djinn_RunBattleStartHop(s32 djinniId) {
   struct Actor *djinni;
   struct Actor *leader;
   struct Actor *copy;

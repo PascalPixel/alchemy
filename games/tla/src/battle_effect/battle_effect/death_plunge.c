@@ -642,7 +642,7 @@ void BattleEffect_DimBackgroundStep(void) {
 // Raises the light-streak backdrop in colour set kind (yellow, crystal,
 // ember, violet or dust).
 
-void Func_0813fa88(s32 kind) {
+void BattleEffect_StartElementStreaks(s32 kind) {
   struct StreakSceneWork *work;
   void *canvas;
   struct BattleWork *battle;
@@ -691,7 +691,8 @@ void Func_0813fa88(s32 kind) {
     }
   }
   /* FAKEMATCH(wrapper): the clears through ClearWords; as a direct call to
-   * Iwram_ClearWords, 14 of 280 instructions of Func_0813fa88 differ in tla-en.
+   * Iwram_ClearWords, 14 of 280 instructions of
+   * BattleEffect_StartElementStreaks differ in tla-en.
    */
   Iwram_ClearWords(canvas, 0x4000);
   Iwram_ClearWords((void *)0x06004000, 0x4000);

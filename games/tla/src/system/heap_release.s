@@ -4,7 +4,7 @@
 @ Why Irq_StopOnGamePakRemoved is assembly:
 @ it has a reachable exit with no return or interworking branch: when
 @ (IE & IF & 0x2000) is zero, its final bne falls straight into the Thumb
-@ Func_0801319c, the next object's first routine, while the CPU is still in
+@ System_Initialize, the next object's first routine, while the CPU is still in
 @ ARM mode. Neither a procedure return nor a tail call can have this linkage.
 @ Heap_Release, as HeapSlot_Release (heap_slot_release.s) before it:
 @ hand-written, scratching r4 for the 0x03000000 base. The ARM after it is

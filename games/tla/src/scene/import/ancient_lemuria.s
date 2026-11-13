@@ -165,7 +165,7 @@ Import_EventSetExitRequest:
 	.global Func_020019f4
 	.thumb_func
 Func_020019f4:
-	overlay_veneer Func_080c82e0
+	overlay_veneer Field_TryJumpForwardFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:

@@ -108,7 +108,7 @@ void FieldMotes_Start(void) {
 /// words and places it on the ground at the map's focus with a timer of
 /// (i & 11) + 1, turns on alpha blending of all layers at 16/16, schedules the
 /// update and, when asked, plays cue 137 (Scene_QueueMusic).
-void Func_080d6f34(s32 withCue) {
+void Weather_StartRain(s32 withCue) {
   struct SparkParticleWork *work = HeapSlot_AllocEwram(116, 0x814);
   struct SparkParticle *particle = work->particles;
   volatile u32 fill;

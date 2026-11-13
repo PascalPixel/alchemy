@@ -938,7 +938,7 @@ void BattleEffect_UpdateDescendingObject(struct Actor *obj) {
   }
 }
 
-void Func_080e0cec(struct FieldParticle *slot) {
+void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot) {
   struct LaunchVector pos;
   struct LaunchObject *src;
   s32 state;
@@ -1067,7 +1067,7 @@ void FieldPsynergy_Retreat(void) {
     s32 scale;
 
     FieldParticle_Initialize(slot, 0x2a0, pos.x, pos.z);
-    FieldParticle_SetCallback(slot, Func_080e0cec);
+    FieldParticle_SetCallback(slot, FieldEffect_UpdateRadialLaunch);
     FieldParticle_SetActorMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(slot->object, (Random16() * 7) >> 16);
     scale = (Random16() >> 1) + 0x13333;

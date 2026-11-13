@@ -382,7 +382,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
     return;
   FieldPsynergy_FadeToCastColor();
   user->watchedObject = target;
-  Actor_StartScriptFar(user, gData_080f0e60);
+  Actor_StartScriptFar(user, gFieldEffect_SourceHoldScript);
   pusher = BattleEffect_StartItemBreak(user);
   if (pusher == NULL) {
     FieldPsynergy_FadeFromCastColor();
@@ -613,7 +613,7 @@ void FieldPsynergy_Move(void) {
   UpdateRisingParticleBurst(object);
 }
 
-extern const s32 gData_080f0e78[];
+extern const s32 gFieldEffect_FragmentScript[];
 
 /* VIEW(item_break): routine Actor_Spawn as struct Actor *Actor_Spawn(s32 kind,
  * s32 x, s32 y, s32 z); hue has extern struct ItemBreakFragmentObject
@@ -660,7 +660,7 @@ void *BattleEffect_StartItemBreak(void *object) {
     child = Actor_Spawn__item_break(673, source->x, source->y + (16 << 16),
                                     source->z);
     if (child != 0) {
-      Actor_StartScriptFar(child, gData_080f0e78);
+      Actor_StartScriptFar(child, gFieldEffect_FragmentScript);
       speed = Random16() + Q16_ONE;
       child->acceleration = 1 << 16;
       child->speedLimit = speed;
@@ -724,7 +724,7 @@ void UpdateRisingParticleBurst(void *object) {
       // each use differs.
       s32 unit = 0x10000;
 
-      Actor_StartScriptFar(child, gData_080f0e78);
+      Actor_StartScriptFar(child, gFieldEffect_FragmentScript);
       speed = Random16();
       child->acceleration = unit;
       child->speedLimit = speed + unit;
@@ -751,10 +751,10 @@ loop:
     goto loop;
 }
 
-/// The Broken Seal's FieldEffect_WatchLeaderDistance with this game's
-/// offsets: counts the timer down and, once the leader is 60 pixels from the
-/// centre or the timer has run out, requests the effect's end.
-void Func_080dd754(void) {
+/// As The Broken Seal's, with this game's offsets: counts the timer down and,
+/// once the leader is 60 pixels from the centre or the timer has run out,
+/// requests the effect's end.
+void FieldEffect_WatchLeaderDistance(void) {
   u8 *work;
   struct Actor *actor;
   s16 *timer;
@@ -849,7 +849,7 @@ void FieldPsynergy_Reveal(void) {
     frame++;
   } while (frame <= 18);
   if ((s8)scene->mode == 0)
-    Task_Add(Func_080dd754, 0x480);
+    Task_Add(FieldEffect_WatchLeaderDistance, 0x480);
 }
 
 void FieldPsynergy_EndReveal(void) {
@@ -860,7 +860,7 @@ void FieldPsynergy_EndReveal(void) {
 
   if (event->active != 0) {
     Sound_PlayFar(167);
-    Task_Remove(Func_080dd754);
+    Task_Remove(FieldEffect_WatchLeaderDistance);
     event->active = 0;
     event->frames = 0;
     BattleEffect_RunBusyWaitDelay__f0dd820(0);
@@ -915,7 +915,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
   if (target == 0)
     return;
 
-  Func_080ddbd8();
+  FieldEffect_SpawnBurstParticleField();
   if (Func_08020330(target) == TARGET_KIND_SCATTERS)
     kind = 1;
   if (Func_08020330(target) == TARGET_KIND_STAYS)
@@ -966,7 +966,7 @@ void FieldPsynergy_Growth(void) {
   struct BurstParticleVector *p;
   s32 entryCount;
 
-  Func_080ddbd8();
+  FieldEffect_SpawnBurstParticleField();
   Sound_PlayFar(134);
   p = &position;
   entryCount = 4;
@@ -992,7 +992,7 @@ void FieldPsynergy_Growth(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-void Func_080ddbd8(void) {
+void FieldEffect_SpawnBurstParticleField(void) {
   struct BattleFxScene *work;
   struct Actor *user;
   s32 pos[3];
@@ -1083,7 +1083,7 @@ void FieldPsynergy_LiftOnTarget(void) {
 
   FieldPsynergy_FadeToCastColor();
   *(void **)((u8 *)mainObject + 0x68) = child;
-  Actor_StartScriptFar(mainObject, gData_080f0e60);
+  Actor_StartScriptFar(mainObject, gFieldEffect_SourceHoldScript);
 
   x = scene->x;
   position[0] = x;
@@ -1123,7 +1123,7 @@ void FieldPsynergy_LiftOnTarget(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-extern const s32 gData_080f0e78[];
+extern const s32 gFieldEffect_FragmentScript[];
 
 void FieldPsynergy_Lift(void) {
   struct BattleFxScene *work;
@@ -1159,7 +1159,7 @@ void FieldPsynergy_Lift(void) {
     pos.z = work->z;
     obj = Actor_Spawn__f0dd820(673, pos.x, pos.y, pos.z);
     if (obj != 0) {
-      Actor_StartScriptFar(obj, gData_080f0e78);
+      Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);
       obj->speedLimit = Random16() + 0x20000;
       obj->acceleration = 0x20000;
       obj->motionFlags = 0;
@@ -1226,7 +1226,7 @@ extern void Camera_WorldToScreen__f0dcb44(struct EffectPosition *value) __asm__(
 extern void BattleEffect_ClearOwnedSlot__f0dd820(
     struct RadialBurstEffect *effect) __asm__("BattleEffect_ClearOwnedSlot");
 
-void Func_080de060(struct RadialBurstEffect *effect) {
+void FieldEffect_UpdateRadialBurst(struct RadialBurstEffect *effect) {
   struct EffectWork *work = Ram_HeapSlots->effectWork;
   struct EffectPosition value;
   s32 state;
@@ -1297,7 +1297,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *src) {
   for (i = 0; i < 12; i++) {
     frag = Actor_Spawn__f0dd820(673, pos.x, pos.y, pos.z);
     if (frag != NULL) {
-      Actor_StartScriptFar(frag, gData_080f0e78);
+      Actor_StartScriptFar(frag, gFieldEffect_FragmentScript);
       frag->speedLimit = Random16() + (1 << 16);
       frag->acceleration = 1 << 16;
       frag->motionFlags = 0;
@@ -1351,11 +1351,11 @@ extern struct ResourceEntry *Sprite_ShareVramCacheEntry__f0dcb44(
 extern s32 Func_08020210__f0de21c(
     struct Actor *object,
     struct Effect04Vector *position) __asm__("MapGrid_CheckCollisionFar");
-/* VIEW(f0de21c): routine Func_080de060 as void Func_080de060(struct
- * FieldParticle *slot); the definition has void Func_080de060(struct
- * RadialBurstEffect *effect). */
-extern void
-Func_080de060__f0de21c(struct FieldParticle *slot) __asm__("Func_080de060");
+/* VIEW(f0de21c): routine FieldEffect_UpdateRadialBurst as void
+ * FieldEffect_UpdateRadialBurst(struct FieldParticle *slot); the definition has
+ * void FieldEffect_UpdateRadialBurst(struct RadialBurstEffect *effect). */
+extern void Func_080de060__f0de21c(struct FieldParticle *slot) __asm__(
+    "FieldEffect_UpdateRadialBurst");
 
 // Twelve sparks burst over the user, two frames apart; a ball grows in
 // front of it and flies off with three trailing copies, and the target is
@@ -1707,7 +1707,7 @@ void BattleEffect_UpdateShrinkingOrbitObject(struct Actor *object) {
   }
 }
 
-void Func_080de8d0(struct SparkObject *obj) {
+void FieldEffect_RunSparkEmitter(struct SparkObject *obj) {
   struct BattleFxScene *scene;
   s16 *phase;
   struct SparkObject *spark;
@@ -1812,7 +1812,7 @@ void FieldPsynergy_Ply(void) {
   Animation_ApplyChildValuesFar(object, 0);
   Sound_PlayFar(84);
   if (object != 0) {
-    target->update = (void (*)(void))Func_080de8d0;
+    target->update = (void (*)(void))FieldEffect_RunSparkEmitter;
     target->timer = 0;
     if (scene->enabled != 0)
       wait(128);

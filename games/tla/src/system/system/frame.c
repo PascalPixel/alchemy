@@ -327,7 +327,7 @@ static __inline__ void Copy16Bytes(const void *source,
                    : "r2", "r3", "r4", "r5", "memory");
 }
 
-void Func_0801399c(void) {
+void System_VBlankHandler(void) {
   u32 keys;
   u32 vblankCount;
   void (*hook)(void);

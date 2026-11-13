@@ -55,13 +55,17 @@ void Func_0200236c(void);
 DEFINE_FUNC_02001DD0(Func_02001dd0, Func_020041ec)
 
 void Func_02001de4(s16 value) {
-  ((struct RideWork *)(gData_020023c4 + 0x188))->value0e = value;
+  ((struct RideWork *)(gInventorySnapshot + 0x188))->value0e = value;
 }
 
 #include "io_reg.h"
 #include "field.h"
 
-/* VIEW(ride_handle): tag struct MarsLighthouseBeam as struct MarsLighthouseBeam__ride_handle; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room/ride_handle.c:135: structure has no member named `stopCount'. */
+/* VIEW(ride_handle): tag struct MarsLighthouseBeam as struct
+ * MarsLighthouseBeam__ride_handle; module/scene/scene.h has another definition;
+ * tried with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/scene/mars_lighthouse_star_room/ride_handle.c:135:
+ * structure has no member named `stopCount'. */
 struct MarsLighthouseBeam__ride_handle {
   u8 unk00[10];
   u16 unk0a;
@@ -74,7 +78,7 @@ struct MarsLighthouseBeam__ride_handle {
 
 void Func_02001df0(u16 *targets, u16 *stops, s32 a2, s32 a3) {
   struct MarsLighthouseBeam__ride_handle *beam =
-      (struct MarsLighthouseBeam__ride_handle *)(gData_020023c4 + 0x188);
+      (struct MarsLighthouseBeam__ride_handle *)(gInventorySnapshot + 0x188);
   struct MarsLighthouseBeamTarget *target = beam->targets;
   s32 id;
   s32 i;
@@ -174,15 +178,15 @@ void Func_02001df0(u16 *targets, u16 *stops, s32 a2, s32 a3) {
 }
 
 s32 Func_02001f24(s32 index) {
-  return ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->a;
+  return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->a;
 }
 
 void Func_02001f34(s32 index, s16 value) {
-  ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->a = value;
+  ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->a = value;
 }
 
 s32 Func_02001f44(void) {
-  return ((struct RideWork *)(gData_020023c4 + 0x188))->counter;
+  return ((struct RideWork *)(gInventorySnapshot + 0x188))->counter;
 }
 
 DEFINE_FUNC_02001F50(Func_02001f50)
@@ -190,11 +194,11 @@ DEFINE_FUNC_02001F50(Func_02001f50)
 DEFINE_FUNC_02001F78(Func_02001f78)
 
 void Func_02001f98(s32 index, s16 value) {
-  ((struct RideWork *)(gData_020023c4 + 0x188))->entries[index].c = value;
+  ((struct RideWork *)(gInventorySnapshot + 0x188))->entries[index].c = value;
 }
 
 s32 Func_02001fa8(s32 index) {
-  return ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->b;
+  return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->b;
 }
 
 DEFINE_FUNC_02001FB8(Func_02001fb8)

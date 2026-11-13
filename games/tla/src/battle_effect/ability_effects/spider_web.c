@@ -1019,13 +1019,17 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   }
 }
 
-void Func_0815c970(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Poison Beat (kind 382).
-void BattleEffect_RunPoisonBeat(void *object) { Func_0815c970(object, 0); }
+void BattleEffect_RunPoisonBeat(void *object) {
+  BattleEffect_RunSwirlSwipe(object, 0);
+}
 
 /// Abilities: Spinning Beat (kind 383).
-void BattleEffect_RunSpinningBeat(void *object) { Func_0815c970(object, 1); }
+void BattleEffect_RunSpinningBeat(void *object) {
+  BattleEffect_RunSwirlSwipe(object, 1);
+}
 
 // Byte offset of the blitter slot in gHeapSlots (unk64[1]).
 #define HEAP_BLITTER 104
@@ -1041,7 +1045,7 @@ extern const u8 gSpiderWeb_CellWidths[];
 extern const s8 gData_081986ec[];
 extern const u8 gSpiderWeb_CellHeights[];
 
-void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   struct HeapSlots *slots;
   struct BattleEffectWork *work;
   void *canvas;

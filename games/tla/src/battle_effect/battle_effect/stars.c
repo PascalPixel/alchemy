@@ -260,7 +260,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   size = DOT_SIZE;
   ring = (struct EffectStep *)gMapCellBuffer;
   for (frame = 0; frame != 128; frame++) {
-    Func_081496c8(frame, 0xaaab, 0x5555, 0);
+    BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     if (frame == 96)
       BattlePlayback_StartFar(134);
     for (i = 0; i != STAR_COUNT; i++) {

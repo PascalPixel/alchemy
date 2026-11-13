@@ -367,8 +367,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       step = 0;
     if (step > 29)
       step = 29;
-    Func_08105350(0, 0xffff4000);
-    Func_08105350(1, 0xffff4000);
+    DjinnFigures_SetSlotPhase(0, 0xffff4000);
+    DjinnFigures_SetSlotPhase(1, 0xffff4000);
     if (mode <= 1) {
       s32 rise;
       s32 slide;
@@ -450,8 +450,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     wait(1);
   }
 
-  Func_08105350(0, 0);
-  Func_08105350(1, 0);
+  DjinnFigures_SetSlotPhase(0, 0);
+  DjinnFigures_SetSlotPhase(1, 0);
   Task_Add(Menu_UpdateEntryObjectTransforms, 0x480);
   ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);

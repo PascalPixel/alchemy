@@ -401,13 +401,13 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   }
   work.kind = 0;
   work.variant = 0;
-  Func_08138020(&work);
+  BattleEffect_RunElementPillarFar(&work);
   work.kind = 1;
-  Func_08138020(&work);
+  BattleEffect_RunElementPillarFar(&work);
   work.kind = 2;
-  Func_08138020(&work);
+  BattleEffect_RunElementPillarFar(&work);
   work.kind = 3;
-  Func_08138020(&work);
+  BattleEffect_RunElementPillarFar(&work);
   work.kind = 0;
   BattleEffect_RunTableEffectFar(&work);
   Actor_SetMode((struct Actor *)object, 1);

@@ -249,7 +249,7 @@ Field_FindNearbyPsynergyTarget:
 	.global Func_02003d20
 	.thumb_func
 Func_02003d20:
-	overlay_veneer Func_080c82e0
+	overlay_veneer Field_TryJumpForwardFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:

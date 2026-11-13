@@ -136,7 +136,7 @@ typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
 // it here.
 void Unit_RefreshPsynergyFar(s32 unit);
 #endif
-void Func_080fae8c(s32 member, s32 slot, s32 mode, s32 target);
+void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target);
 #if TLA_PATCH_2
 void Func_08104484(void);
 #endif
@@ -289,7 +289,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_DrawItemHead();
       Text_DrawMessageAsTilesFar((s32)MsgUseOnWhom, menu->questionWindow, 16,
                                  16);
-      if (Func_080fa870(0) != -1) {
+      if (ItemMenu_SelectTarget(0) != -1) {
         command = 0;
         if (ItemMenu_IsSpecial(menu->selectedItems[0] & 0x1ff) != 0) {
           command = 8;
@@ -323,11 +323,11 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_DrawItemHead();
       Text_DrawMessageAsTilesFar((s32)MsgGiveToWhom, menu->questionWindow, 16,
                                  16);
-      n = Func_080fa870(1);
+      n = ItemMenu_SelectTarget(1);
       state = 4;
       if (n == -1) {
-        Func_080fae8c(menu->sideMember[0], menu->selectedSlots[0], 0,
-                      menu->sideMember[0]);
+        ItemMenu_DrawEquipPreview(menu->sideMember[0], menu->selectedSlots[0],
+                                  0, menu->sideMember[0]);
         state = 9;
       }
       break;
@@ -471,8 +471,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         if (result == 1) {
           InventoryMenu_ShowModalMessage((s32)MsgGiven, 15, 14);
         } else {
-          Func_080fae8c(menu->sideMember[1], menu->selectedSlots[1], 0,
-                        menu->sideMember[1]);
+          ItemMenu_DrawEquipPreview(menu->sideMember[1], menu->selectedSlots[1],
+                                    0, menu->sideMember[1]);
           InventoryMenu_ShowModalMessage((s32)MsgEquippedIt, 15, 14);
           item = Item_Get(menu->selectedItems[0]);
           if ((item->flags & 1) != 0) {
@@ -587,8 +587,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           ItemMenu_SetItemWindowRow5();
           ItemMenu_RefreshOwner(menu->sideMember[1], 1);
           if (result == 0) {
-            Func_080fae8c(menu->sideMember[1], menu->selectedSlots[1], 0,
-                          menu->sideMember[1]);
+            ItemMenu_DrawEquipPreview(menu->sideMember[1],
+                                      menu->selectedSlots[1], 0,
+                                      menu->sideMember[1]);
             InventoryMenu_ShowModalMessage((s32)MsgEquippedIt, 15, 14);
             item = Item_Get(menu->selectedItems[0]);
             if ((item->flags & 1) != 0) {
@@ -630,8 +631,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           ItemMenu_CollectItems(Unit_Get(menu->sideMember[0]), menu->items, 0);
       ItemMenu_DrawIcons(menu->items, 0);
       wait(1);
-      Func_080fae8c(menu->sideMember[0], menu->selectedSlots[0], 0,
-                    menu->sideMember[0]);
+      ItemMenu_DrawEquipPreview(menu->sideMember[0], menu->selectedSlots[0], 0,
+                                menu->sideMember[0]);
       WindowSprite_ClearListFar(menu->infoWindow);
       InventoryMenu_ShowModalMessage((s32)MsgEquippedIt, 15, 8);
       item = Item_Get(menu->selectedItems[0]);
@@ -655,8 +656,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_DrawIcons(menu->items, 0);
       wait(1);
       menu->equipPreview = 1;
-      Func_080fae8c(menu->sideMember[0], menu->selectedSlots[0], 0,
-                    menu->sideMember[0]);
+      ItemMenu_DrawEquipPreview(menu->sideMember[0], menu->selectedSlots[0], 0,
+                                menu->sideMember[0]);
       menu->equipPreview = 0;
       WindowSprite_ClearListFar(menu->infoWindow);
       InventoryMenu_ShowModalMessage((s32)MsgRemoved, ITEM_MODAL_REMOVED_X, 8);
@@ -668,8 +669,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       menu->sideIcons[0]->active = 13;
       ItemMenu_ShowDetails(menu->selectedItems[0]);
       WindowSprite_RedrawSavedRectFar((struct Window *)menu->statusWindow);
-      Func_080fae8c(menu->sideMember[0], menu->selectedSlots[0], 0,
-                    menu->sideMember[0]);
+      ItemMenu_DrawEquipPreview(menu->sideMember[0], menu->selectedSlots[0], 0,
+                                menu->sideMember[0]);
       menu->sideIcons[0]->active = 1;
       state = 9;
       break;
@@ -906,7 +907,7 @@ extern const u8 gItemMenu_ArrangeKeysString[];
 extern const u8 gItemMenu_EquipmentKeyString[];
 #endif
 
-void Func_080fa84c(s32 owner);
+void ItemMenu_OpenCategory(s32 owner);
 
 void ItemMenu_RefreshOwner(s32 owner, s32 mode);
 
@@ -973,7 +974,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
       if (showEquipment) {
         menu->itemCount = ItemMenu_CollectItems(Unit_Get(ownerIds[selection]),
                                                 menu->items, 0);
-        Func_080fa84c(ownerIds[selection]);
+        ItemMenu_OpenCategory(ownerIds[selection]);
         StatusPanel_Draw(window, ownerIds[selection], 0, 8);
       } else {
         ItemMenu_RefreshOwner(ownerIds[selection], 0);
@@ -1025,7 +1026,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   return result;
 }
 
-void Func_080fa84c(s32 category) {
+void ItemMenu_OpenCategory(s32 category) {
   u8 *menu = Ram_HeapSlots->menuRuntime;
 
   ItemMenu_PositionCategory();
@@ -1109,7 +1110,7 @@ s32 ItemMenu_IsSpecial(s32 item);
 
 void Func_080fac58(void);
 
-s32 Func_080fa870(s32 mode) {
+s32 ItemMenu_SelectTarget(s32 mode) {
   struct TargetMenu *menu = Ram_HeapSlots->menuRuntime;
   s32 selection = menu->paneIndex[1];
   void *window = menu->itemWindow;
@@ -1173,8 +1174,8 @@ s32 Func_080fa870(s32 mode) {
           }
           Text_DrawMessageAsTilesFar(label, window, labelX, 72);
         }
-        Func_080fae8c(menu->paneOwner[0], menu->selectedSlots[0], 0,
-                      menu->ownerIds[selection]);
+        ItemMenu_DrawEquipPreview(menu->paneOwner[0], menu->selectedSlots[0], 0,
+                                  menu->ownerIds[selection]);
       }
       if (mode == 0) {
         if (ItemMenu_IsSpecial(menu->selectedItems[0] & 0x1ff))
@@ -1442,7 +1443,7 @@ struct PreviewItem {
   u8 type;
 };
 
-void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
+void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   struct PreviewMenu *menu = Ram_HeapSlots->menuRuntime;
   s32 style = 0;
   struct PreviewUnit *unit = Unit_Get(owner);
@@ -1709,14 +1710,14 @@ s32 ItemMenu_ChooseCommand(void) {
       Func_080fac58();
       if (commandIndex > 2) {
         menu->equipPreview = 1;
-        Func_080fae8c(menu->paneOwner[0], menu->selectedSlots[0], 0,
-                      menu->paneOwner[0]);
+        ItemMenu_DrawEquipPreview(menu->paneOwner[0], menu->selectedSlots[0], 0,
+                                  menu->paneOwner[0]);
         if (commandIndex == ITEM_COMMAND_GIVE)
           Task_Add(Func_080fabe0, 0x480);
       } else if (commandIndex != 0) {
         menu->equipPreview = 0;
-        Func_080fae8c(menu->paneOwner[0], menu->selectedSlots[0], 0,
-                      menu->paneOwner[0]);
+        ItemMenu_DrawEquipPreview(menu->paneOwner[0], menu->selectedSlots[0], 0,
+                                  menu->paneOwner[0]);
       } else {
         StatusPanel_Draw(menu->statusWindow, menu->paneOwner[0], 0, 0);
       }
@@ -2758,7 +2759,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
 
   slot = menu->selectedSlots[1];
   member = menu->paneOwner[1];
-  Func_080fae8c(member, slot, 0, member);
+  ItemMenu_DrawEquipPreview(member, slot, 0, member);
   /* FAKEMATCH(temporary): the unit size held in size for the allocation and
    * both copies; as 332 at each, 6 of 179 instructions differ in tla-en. */
   size = 332;
@@ -3088,8 +3089,8 @@ s32 ItemMenu_RunList(s32 pane) {
         }
         ItemMenu_DrawItemDetailPage(window, work, &state);
         menu->selectedItems[pane] = menu->items[state.selectedIndex];
-        Func_080fae8c(menu->paneOwner[pane], state.selectedIndex, 0,
-                      menu->paneOwner[pane]);
+        ItemMenu_DrawEquipPreview(menu->paneOwner[pane], state.selectedIndex, 0,
+                                  menu->paneOwner[pane]);
         if (menu->items[state.selectedIndex] != 0) {
           icon = menu->entryIcons[state.selectedIndex];
           icon->state = 9;

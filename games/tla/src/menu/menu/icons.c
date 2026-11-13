@@ -518,7 +518,7 @@ void MenuIcon_SetPicture(s32 index, s32 frame) {
     menu->frame[index] = frame;
 }
 
-void Func_08105350(s32 index, s32 scale) {
+void DjinnFigures_SetSlotPhase(s32 index, s32 scale) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
 
   if (menu->objects[index] != NULL)

@@ -200,7 +200,7 @@ struct Window_0803cbf8 {
   u16 timer;
 };
 
-void Func_0803cbf8(struct Window_0803cbf8 *window) {
+void Window_StepSwellEffect(struct Window_0803cbf8 *window) {
   if (window->rect->state == 4) {
     if (window->timer == 10)
       Func_0803cba8(&window->rect, 0x300);

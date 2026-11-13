@@ -8,7 +8,7 @@
 
 struct OwnerGrowthRecord;
 
-extern const struct ElementPreset gData_080c6684[];
+extern const struct ElementPreset gEnemy_ElementPresetTable[];
 
 /// Each element's value, ten per digit: an enemy's from the preset its record
 /// names, a character's from its djinn counts plus its growth record's bonus.
@@ -22,7 +22,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
     index = Enemy_GetDefinition(record)[42];
     if (index > 47)
       index = 0;
-    table = gData_080c6684;
+    table = gEnemy_ElementPresetTable;
     preset = &table[index];
     for (i = 0; i <= 3; i++)
       output[i] = preset->digits[i] * 10;
@@ -66,7 +66,7 @@ s32 Enemy_GetAttackElement(void *state) {
 
   if (preset > 47)
     preset = 0;
-  table = gData_080c6684;
+  table = gEnemy_ElementPresetTable;
   offset = preset * sizeof(struct ElementPreset);
   return *(u32 *)((u8 *)table + offset);
 }
@@ -87,7 +87,7 @@ void Unit_CalculateBaseElements(s32 owner,
 
     i = 0;
     for (;;) {
-      destination[i] = gData_080c6684[index].values[i];
+      destination[i] = gEnemy_ElementPresetTable[index].values[i];
       i++;
       if (i > 3)
         return;

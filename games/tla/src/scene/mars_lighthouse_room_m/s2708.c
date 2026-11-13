@@ -70,7 +70,7 @@ s32 Func_02002708(void) {
   Func_02002368(-10, 0);
   FieldCamera_SetSpeed(0x70000, 0xe000);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
-  ride = (struct RideState *)(gData_020023c4 + 0x188);
+  ride = (struct RideState *)(gInventorySnapshot + 0x188);
   Event_SetFlag(0x106);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -151,7 +151,7 @@ void Func_020032a8(void);
 DEFINE_FUNC_020024AC(Func_02002848, Func_02002708)
 
 s32 Func_02002864(void) {
-  return ((struct RideWork *)(gData_020023c4 + 0x188))->active;
+  return ((struct RideWork *)(gInventorySnapshot + 0x188))->active;
 }
 
 #include "iwram_call.h"
@@ -191,7 +191,7 @@ struct Work {
   struct Actor *owner;
 };
 
-#define WORK ((struct Work *)(gData_020023c4 + 0x188))
+#define WORK ((struct Work *)(gInventorySnapshot + 0x188))
 
 void Func_02002870(struct Actor *actor) {
   struct Work *work = WORK;
@@ -384,7 +384,7 @@ void Func_02002ae8(struct Actor *actor) {
     FieldActor_SetMoveTarget(actor, position.x, position.y, position.z);
 
     work2 = Ram_HeapSlots->eventWork;
-    other = (struct Work020023c4 *)(gData_020023c4 + 0x188);
+    other = (struct Work020023c4 *)(gInventorySnapshot + 0x188);
     target = Actor_Get(gMainRoutineWork.currentOwner);
     if (ABS(actor->x - target->x) < 0x140000 &&
         (u32)(actor->y - target->y + 0x7ffff) <= 0x1ffffe &&

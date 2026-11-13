@@ -377,7 +377,7 @@ Func_020057cc:
 	.global Func_020057d4
 	.thumb_func
 Func_020057d4:
-	overlay_veneer Func_080c8918
+	overlay_veneer Weather_StartRainFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

@@ -218,7 +218,7 @@ void Func_08125d68(void) {
 
 #define DMA3 ((volatile u32 *)0x040000d4)
 
-void Func_08125d74(s32 arg, s32 kind) {
+void BattleTransition_Run(s32 arg, s32 kind) {
   struct BattlePresentationWork work;
   u16 owners[14];
   u16 shown[14];

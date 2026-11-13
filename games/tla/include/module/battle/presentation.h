@@ -14,12 +14,12 @@ struct BattlePlan;
 
 u32 BattleParty_IsUnitListed(u32 id);
 
-s32 Func_08127cd4(s32 recordId);
+s32 BattleFormation_BuildEnemyList(s32 recordId);
 
 void Func_081263c4(void);
 void BattleBackground_Load(s32 mode, s32 resource, s32 level);
 
-void Func_08125d74(s32 arg, s32 kind);
+void BattleTransition_Run(s32 arg, s32 kind);
 
 void Func_08124cc0(void);
 
@@ -30,7 +30,7 @@ s32 BattleClass_GetPalette(s32 index);
 
 s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan);
 
-s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode);
+s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode);
 
 s32 Func_08124cc4(s32 side);
 

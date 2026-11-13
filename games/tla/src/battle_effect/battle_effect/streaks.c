@@ -256,13 +256,19 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
 }
 
 /// Abilities: Sleep Star (kind 349).
-void BattleEffect_RunSleepStar(void *object) { Func_0813cb34(object, 1); }
+void BattleEffect_RunSleepStar(void *object) {
+  BattleEffect_RunMoteFountain(object, 1);
+}
 
 /// Abilities: Soothing Star (kind 344).
-void BattleEffect_RunSoothingStar(void *object) { Func_0813cb34(object, 0); }
+void BattleEffect_RunSoothingStar(void *object) {
+  BattleEffect_RunMoteFountain(object, 0);
+}
 
 /// Abilities: Slaver (kind 395).
-void BattleEffect_RunSlaver(void *object) { Func_0813cb34(object, 2); }
+void BattleEffect_RunSlaver(void *object) {
+  BattleEffect_RunMoteFountain(object, 2);
+}
 
 // The motes live in the map cell buffer.
 #define EFFECT_STEPS ((struct EffectStep *)Ram_MapCellBuffer)
@@ -285,7 +291,8 @@ void BattleEffect_RunSlaver(void *object) { Func_0813cb34(object, 2); }
 // on the ground for 96 frames, and then Impair's canvas effect runs on the
 // targets.
 
-void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
+                                  s32 mode) {
   s32 point[3];
   struct EffectPosition position;
   struct BattleEffectWork *work;

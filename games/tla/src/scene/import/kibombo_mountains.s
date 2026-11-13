@@ -157,7 +157,7 @@ Field_RequestDjinnBattle:
 	.global Func_0200114c
 	.thumb_func
 Func_0200114c:
-	overlay_veneer Func_080c82e0
+	overlay_veneer Field_TryJumpForwardFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:

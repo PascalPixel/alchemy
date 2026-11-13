@@ -360,7 +360,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     return;
   FieldPsynergy_FadeToCastColor();
   source->linked = target;
-  Actor_StartScriptFar((struct Actor *)source, (u32)gData_080f0e60);
+  Actor_StartScriptFar((struct Actor *)source,
+                       (u32)gFieldEffect_SourceHoldScript);
   /* FAKEMATCH(temporary): p holds &position everywhere but the steering
      loop's first part, which gives the shards loop's 19 r8 and its 0x20000
      r9; as position used directly, 10 of 551 instructions differ in tla-en. */
@@ -506,7 +507,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       object = Actor_Spawn(0x2a1, p->x, p->y, p->z);
       *walk++ = object;
       if (object != NULL) {
-        Actor_StartScriptFar((struct Actor *)object, (u32)gData_080f0e78);
+        Actor_StartScriptFar((struct Actor *)object,
+                             (u32)gFieldEffect_FragmentScript);
         object->speed = Random16() + 0x20000;
         object->lift = 0x20000;
         object->flag = 0;

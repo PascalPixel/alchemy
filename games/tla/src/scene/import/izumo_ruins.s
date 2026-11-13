@@ -121,7 +121,7 @@ Camera_FollowActor:
 	.global Func_020014d8
 	.thumb_func
 Func_020014d8:
-	overlay_veneer Func_080c82e0
+	overlay_veneer Field_TryJumpForwardFar
 	.global Func_020014e0
 	.thumb_func
 Func_020014e0:

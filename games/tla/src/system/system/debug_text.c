@@ -54,19 +54,19 @@ void NumberText_FormatDecimal(s32 value) {
 }
 
 void Func_08014aa8(u32 count) {
-  u16 *dst = gData_030011c4;
+  u16 *dst = gDebugTextCursor;
   u32 i;
 
-  if (gData_03001110 != 0) {
+  if (gDebugTextEnabled != 0) {
     for (i = 0; i < count; i++)
       *dst++ = 0xf000;
-    gData_030011c4 = dst;
+    gDebugTextCursor = dst;
   }
 }
 
 void DebugText_Print(const u8 *src) {
-  if (gData_03001110 != 0) {
-    u32 addr = ((u32)&gData_030011c4);
+  if (gDebugTextEnabled != 0) {
+    u32 addr = ((u32)&gDebugTextCursor);
     u32 c = *src;
     u16 *dst = *(u16 **)addr;
     u32 cnt = 0;
@@ -86,7 +86,7 @@ void DebugText_Print(const u8 *src) {
           break;
         c = *src++;
       } while (c != 0);
-      addr = ((u32)&gData_030011c4);
+      addr = ((u32)&gDebugTextCursor);
     }
     *(u16 **)addr = dst;
   }
@@ -123,7 +123,7 @@ void DebugText_PrintDecimal(s32 value, s32 digits) {
 /// and points BG0 at the screen.
 void DebugText_Clear(void) {
   Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 32 * 20 * 2);
-  gData_030011c4 = (u16 *)BG_SCREEN_BLOCK(4);
+  gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(4);
   Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
 }
 

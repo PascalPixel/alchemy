@@ -25,8 +25,9 @@ s32 Func_080b106c(s32 id) {
 s32 Func_080b106c(s32 item);
 #endif
 
-/* VIEW(game): variable gData_020023c4 as u16 gData_020023c4[]; module/tla.h has u8 gData_020023c4[]. */
-extern u16 gData_020023c4__game[] __asm__("gData_020023c4");
+/* VIEW(game): variable gInventorySnapshot as u16 gInventorySnapshot[];
+ * module/tla.h has u8 gInventorySnapshot[]. */
+extern u16 gData_020023c4__game[] __asm__("gInventorySnapshot");
 
 // XXX: what this snapshot puts aside and when; the twin of The Broken Seal's
 // Colosso snapshot, its callers in this game would settle it.

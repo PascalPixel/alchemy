@@ -224,7 +224,7 @@ s32 FieldSequence_Run(void) {
     }
     if (gMainRoutineWork.tally25c != 0) {
       Func_080cb82c();
-      if (Func_080d25c8(gMainRoutineWork.tally25c) == 0) {
+      if (Party_CheckItemLimit(gMainRoutineWork.tally25c) == 0) {
         // UB: called with a second argument (0) its definition does not take.
 #ifdef UBFIX
         PartyInventory_GiveItem(gMainRoutineWork.tally25c);
@@ -410,7 +410,7 @@ s32 FieldSequence_Run(void) {
         work->menu = 0;
       } else if (work->talk != 0) {
         Func_080cb82c();
-        Func_080ccec8(work->talk & 0x3fff);
+        Scene_TalkToActor(work->talk & 0x3fff);
         Func_080cb8a4();
         work->talk = 0;
       } else if (work->searchCell != 0) {
@@ -426,7 +426,7 @@ s32 FieldSequence_Run(void) {
           if (TLA_PATCH_1)
             wait(1);
         }
-        Func_080ce61c(work->psynergy);
+        Field_UsePsynergy(work->psynergy);
         if (packed == 0)
           Func_080cb8a4();
         work->psynergy = 0;

@@ -285,7 +285,7 @@ Import_EventSetExitRequest:
 	.global Func_02005bcc
 	.thumb_func
 Func_02005bcc:
-	overlay_veneer Func_080c82e0
+	overlay_veneer Field_TryJumpForwardFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
 BattleEffect_ApplyColorToTargetBuffer:

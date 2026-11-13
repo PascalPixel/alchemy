@@ -109,7 +109,7 @@ void BattleEffect_LoadResourceGroup(s32 unused);
 
 extern const u8 gText_HexDigits[];
 
-extern u16 *gData_030011c4;
+extern u16 *gDebugTextCursor;
 
 extern const u8 Resource_DecodeHalfwordLzCode[];
 extern u8 Resource_DecompressHalfwordsCodeSize[];
@@ -146,7 +146,7 @@ extern const u8 Cartridge_Restart[];
 
 void System_CopyBuildStamp(void);
 
-void Func_0801399c(void);
+void System_VBlankHandler(void);
 
 extern const u32 Math_DotProductQ16Code[];
 
@@ -154,7 +154,7 @@ s32 System_GetLanguage(void);
 
 void Serial_QueueCommand(u32 command);
 
-s32 Func_08015ca4(s32 partId, void *source);
+s32 Save_WritePart(s32 partId, void *source);
 s32 Save_InitializeWork(void);
 s32 Save_LoadFileSummaries(void);
 void Save_ReleaseWork(void);

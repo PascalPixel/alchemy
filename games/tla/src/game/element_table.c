@@ -26,7 +26,7 @@ const struct ElementLevelBonus Data_080c6644[16] = {
 
 /// The 48 enemy element presets, by EnemyDefinition.elementPreset.
 // clang-format off
-const struct EnemyElementPreset gData_080c6684[] = {
+const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
     {
         .first = ELEMENT_NONE,
         .digits = {1, 1, 1, 1},
@@ -531,7 +531,6 @@ const u16 gBattle_Effect91Classes[29] = {
 // ---- games/tla/src/game/djinn_table.c ----
 // The 80 Djinn, 20 of each element in element order. Each name is the
 // English release's (MsgDjinnName plus the Djinni's place).
-
 
 // clang-format off
 const struct DjinnDefinition gDjinn_Definitions[] = {

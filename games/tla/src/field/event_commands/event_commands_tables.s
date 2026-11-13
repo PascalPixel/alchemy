@@ -217,16 +217,16 @@ gData_080f0e58:
 
 @ The Broken Seal's gBattleEffect_SourceHoldScript: face the link, wait a frame,
 @ loop for ever to the top
-	.global gData_080f0e60
-gData_080f0e60:
+	.global gFieldEffect_SourceHoldScript
+gFieldEffect_SourceHoldScript:
 	.4byte 0x06
 	.4byte 0x00, 1
 	.4byte 0x0d, 0xffff, 0
 
 @ The Broken Seal's gBattleEffect_FragmentScript: sync, set the speed (work
 @ 0x0f) to 0x1000, argument 0, wait 10 frames, free
-	.global gData_080f0e78
-gData_080f0e78:
+	.global gFieldEffect_FragmentScript
+gFieldEffect_FragmentScript:
 	.4byte 0x01
 	.4byte 0x16, 0x0f, 0x1000
 	.4byte 0x27, 0

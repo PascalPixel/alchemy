@@ -117,7 +117,7 @@ Import_EventSetExitRequest:
 	.global Func_02000d18
 	.thumb_func
 Func_02000d18:
-	overlay_veneer Func_080c82e0
+	overlay_veneer Field_TryJumpForwardFar
 	.global Import_EventFinishScreenTransition
 	.thumb_func
 Import_EventFinishScreenTransition:

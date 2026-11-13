@@ -225,7 +225,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
 
 void Func_08118954(void) {}
 
-extern u8 gData_03001110;
+extern u8 gDebugTextEnabled;
 
 void Func_080ad090(void);
 
@@ -298,7 +298,7 @@ restart:
       if (startModeSet)
         m->battleRule24b = 5;
       Battle_RunEncounter(encounter);
-      gData_03001110 = 1;
+      gDebugTextEnabled = 1;
       Window_LoadGraphics();
       DebugText_Clear();
       Task_ResetAll();

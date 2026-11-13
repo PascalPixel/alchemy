@@ -48,7 +48,7 @@ struct MarsLighthouseRoomMRideWork {
   struct Actor *handle;
 };
 
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 extern char SceneId_Ov6ACRoom1;
 extern char SceneId_Ov6ACRoom2;
 extern char SceneId_Ov6ACRoom3;

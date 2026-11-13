@@ -860,7 +860,7 @@
 /// mars_lighthouse_room_m, mars_lighthouse_star_room.
 #define DEFINE_FUNC_020015EC(name, id1, call1, call2)                          \
   void name(struct Actor *object) {                                            \
-    struct id1 *work = (struct id1 *)(gData_020023c4 + 0x188);                 \
+    struct id1 *work = (struct id1 *)(gInventorySnapshot + 0x188);             \
     struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);            \
     struct EventWork *event = Ram_HeapSlots->eventWork;                        \
     s32 dx = object->bounce;                                                   \
@@ -992,7 +992,7 @@
 #define DEFINE_FUNC_0200218C(name, call1)                                      \
   void name(u16 *targets, u16 *stops, s32 a2, s32 a3) {                        \
     struct MarsLighthouseBeam *beam =                                          \
-        (struct MarsLighthouseBeam *)(gData_020023c4 + 0x188);                 \
+        (struct MarsLighthouseBeam *)(gInventorySnapshot + 0x188);             \
     struct MarsLighthouseBeamTarget *target = beam->targets;                   \
     s32 id;                                                                    \
     s32 i;                                                                     \
@@ -1049,7 +1049,7 @@
 /// mars_lighthouse_room_f, mars_lighthouse_room_m.
 #define DEFINE_FUNC_02001B64(name, id1, call1, call2)                          \
   void name(struct Actor *object) {                                            \
-    struct id1 *work = (struct id1 *)(gData_020023c4 + 0x188);                 \
+    struct id1 *work = (struct id1 *)(gInventorySnapshot + 0x188);             \
     struct Actor *other = Actor_Get(gMainRoutineWork.currentOwner);            \
     struct EventWork *event = Ram_HeapSlots->eventWork;                        \
     s32 dx = object->bounce;                                                   \
@@ -2762,7 +2762,7 @@
 /// mars_lighthouse_star_room/ride_handle.
 #define DEFINE_FUNC_02001F50(name)                                             \
   s32 name(s32 limit) {                                                        \
-    struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);       \
+    struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);   \
                                                                                \
     if (!Event_GetFlag(260)) {                                                 \
       if (++work->counter >= limit)                                            \
@@ -2941,7 +2941,7 @@
 /// mars_lighthouse_star_room/s2148.
 #define DEFINE_FUNC_020024AC(name, call1)                                      \
   s32 name(void) {                                                             \
-    if (((struct RideWork *)(gData_020023c4 + 0x188))->active) {               \
+    if (((struct RideWork *)(gInventorySnapshot + 0x188))->active) {           \
       call1();                                                                 \
       return 1;                                                                \
     }                                                                          \
@@ -2952,7 +2952,7 @@
 /// mars_lighthouse_star_room/ride_handle.
 #define DEFINE_FUNC_02001F78(name)                                             \
   void name(s32 index, s32 value) {                                            \
-    struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);       \
+    struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);   \
     struct RideEntry *entry = &work->entries[index];                           \
                                                                                \
     entry->d = (value & 15) << 16;                                             \
@@ -3074,7 +3074,7 @@
 /// mars_lighthouse_star_room/ride_handle.
 #define DEFINE_FUNC_02001FB8(name)                                             \
   void name(u32 index, s32 value) {                                            \
-    struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);       \
+    struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);   \
                                                                                \
     if (index <= 3)                                                            \
       work->slots[index].value = value;                                        \
@@ -3408,7 +3408,7 @@
 /// mars_lighthouse_star_room/ride_handle.
 #define DEFINE_FUNC_02001DD0(name, call1)                                      \
   void name(void) {                                                            \
-    struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);       \
+    struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);   \
                                                                                \
     call1(work->handle);                                                       \
     work->handle = NULL;                                                       \
@@ -5312,7 +5312,7 @@
     s32 v;                                                                     \
     s32 i;                                                                     \
                                                                                \
-    state = (State *)(gData_020023c4 + 0x188);                                 \
+    state = (State *)(gInventorySnapshot + 0x188);                             \
     camera = IWRAM->camera;                                                    \
     entry = state->entries;                                                    \
     position = &camera->position;                                              \
@@ -5496,7 +5496,7 @@
       FieldActor_SetMoveTarget(actor, position.x, position.y, position.z);     \
                                                                                \
       work2 = Ram_HeapSlots->eventWork;                                        \
-      other = (struct id1 *)(gData_020023c4 + 0x188);                          \
+      other = (struct id1 *)(gInventorySnapshot + 0x188);                      \
       target = Actor_Get(gMainRoutineWork.currentOwner);                       \
       if (ABS(actor->x - target->x) < 0x140000 &&                              \
           (u32)(actor->y - target->y + 0x7ffff) <= 0x1ffffe &&                 \

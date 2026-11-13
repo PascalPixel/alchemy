@@ -1879,7 +1879,7 @@ void Func_02004f84(s32 time, u8 *text) {
 }
 
 s32 Func_02005020(s32 time) {
-  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
   s32 second = time % 60;
   s32 volume = 512;
   u8 *ringing = &clock->ringing;
@@ -1909,7 +1909,7 @@ s32 Func_02005020(s32 time) {
 /// scaled affine matrix, and fills five OAM entries, giving the scaled matrix
 /// to the middle digit and to each digit where timer + 60 and timer differ.
 void Func_02005090(void) {
-  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
   u8 *digit = clock->digit;
   u8 *old = clock->tiles;
   u8 *now = clock->digits;
@@ -1961,7 +1961,7 @@ s32 __modsi3(s32 numerator, s32 denominator);
 
 void Func_02005210(void) {
   u8 *event = Ram_HeapSlots->eventWork;
-  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
 
   if (*(s16 *)(event + 358) == 0 && *(s16 *)(event + 346) == 0 &&
       *(s16 *)(event + 350) == 0 && clock->timer > 0)
@@ -1971,7 +1971,7 @@ void Func_02005210(void) {
 
 void Func_0200525c(void) {
   u8 *event = Ram_HeapSlots->eventWork;
-  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
 
   if (*(s16 *)(event + 358) == 0 && *(s16 *)(event + 346) == 0 &&
       *(s16 *)(event + 350) == 0 && clock->timer > 0)
@@ -1981,7 +1981,7 @@ void Func_0200525c(void) {
 #include "map.h"
 
 void Func_020052a4(s32 mode) {
-  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
   u8 *tiles;
 
   if (!Event_GetFlag(0x109)) {
@@ -2003,7 +2003,7 @@ void Func_020052a4(s32 mode) {
 }
 
 void Func_0200533c(void) {
-  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
 
   if (clock->mode)
     FieldTask_Remove(Func_02005210);
@@ -2012,7 +2012,7 @@ void Func_0200533c(void) {
 }
 
 void Func_02005364(void) {
-  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
 
   if (clock->mode)
     Task_AddFrame(Func_02005210, TASK_PASS_VBLANK);
@@ -2022,11 +2022,11 @@ void Func_02005364(void) {
 }
 
 s32 Func_020053a0(void) {
-  return ((struct ClockWork *)(gData_020023c4 + 0x288))->timer;
+  return ((struct ClockWork *)(gInventorySnapshot + 0x288))->timer;
 }
 
 void Func_020053ac(void) {
-  ((struct ClockWork *)(gData_020023c4 + 0x288))->timer = 3600;
+  ((struct ClockWork *)(gInventorySnapshot + 0x288))->timer = 3600;
 }
 
 // Layer switch table: three words (id, mode, flag), terminated by 0xffff.

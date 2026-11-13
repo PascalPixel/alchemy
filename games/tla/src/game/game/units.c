@@ -12,7 +12,7 @@
 
 extern u16 gData_02003860;
 
-extern s16 gData_020036d0;
+extern s16 gSaveSlot;
 
 struct OwnerStats {
   u8 unk000[0x10];
@@ -706,7 +706,7 @@ void Func_080addf0(void) {
    * instructions differ in tla-en. */
   gMainRoutineWork.unk244[6] = gAutoSleepEnabled;
   gIdleFrameCount = 0;
-  gData_020036d0 = -1;
+  gSaveSlot = -1;
   gMainRoutineWork.unk284[2] = gData_02003860;
   gMainRoutineWork.unk13d[0] = 4;
   gMainRoutineWork.unk13d[1] = 4;

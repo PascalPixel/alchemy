@@ -647,7 +647,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
 // frames and out from frame 104; from frame 24 to 84 the target flashes and
 // the screen shakes every 4 frames, with a sound every 8.
 
-void Func_0813e114(struct BattleEffectArgument *effect) {
+void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
   struct EffectPosition pos;
   BlitterPair draw;
   struct BattleEffectWork *work;
@@ -792,7 +792,7 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
 // effect->variant + 1, from 1 to 4, the flecks' size. At frame 16 the first
 // target flashes; the last 6 frames fade out.
 
-void Func_0813e3d0(struct BattleEffectArgument *effect) {
+void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
   struct EffectPosition ground;
   struct EffectPosition pos;
   s32 point[3];

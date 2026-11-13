@@ -8,7 +8,7 @@
 #include "gamepak/far_call/sound.h"
 #include "resource_ids.h"
 
-void Func_0801319c(void) {
+void System_Initialize(void) {
   {
     volatile u16 *dma0 = REG_DMA0;
 
@@ -21,14 +21,14 @@ void Func_0801319c(void) {
   Heap_Initialize();
   System_InstallIwramAndIrqs();
   *(u32 *)&gIoWriteQueue.count = 0;
-  gData_03001110 = 0;
+  gDebugTextEnabled = 0;
   gDebugMode = 0;
   gCpuLoadDisplayEnabled = 0;
   System_CopyBuildStamp();
   Window_LoadGraphics();
   DebugText_Clear();
   REG_DISPCNT = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
-  Irq_SetHandler(0, 1, Func_0801399c);
+  Irq_SetHandler(0, 1, System_VBlankHandler);
   Irq_SetHandler(13, 1, Iwram_Halt);
   Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
   Sound_InitializeFar();

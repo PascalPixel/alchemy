@@ -401,7 +401,7 @@ Func_02004d68:
 	.global Func_02004d70
 	.thumb_func
 Func_02004d70:
-	overlay_veneer Func_080c8368
+	overlay_veneer Scene_TalkToActorFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
 BattleEffect_ApplyColorToTargetBuffer:

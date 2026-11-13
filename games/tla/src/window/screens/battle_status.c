@@ -197,7 +197,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     sprite = &nameSprite;
     Func_0804537c(0x060066c0);
     if (redraw != 0)
-      Func_08045528(member, portraitSlot);
+      Portrait_Load(member, portraitSlot);
     sprite->oam.word.attr01 = 0x80000400;
     /* FAKEMATCH(dead): an empty once-only block, so the sprite word is stored
      * straight after its load; as no block, 10 of 3111 instructions differ in

@@ -76,7 +76,7 @@ struct EnemyDefinition {
   ///@}
   u16 items[4];      ///< items the enemy carries, 0 for none
   u8 counts[4];      ///< how many of each item it carries
-  u8 elementPreset;  ///< row of gData_080c6684
+  u8 elementPreset;  ///< row of gEnemy_ElementPresetTable
   s8 targetStrategy; ///< whom a single-target attack favours
   s8 actionStrategy; ///< how the action is chosen from abilities
   u8 itemActions;    ///< one bit per place in abilities: use an item instead
@@ -95,8 +95,9 @@ STATIC_ASSERT(offsetof(struct EnemyDefinition, abilities) == 0x2e);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, coins) == 0x42);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, experience) == 0x48);
 
-/// An enemy's element preset in gData_080c6684: the element it attacks with,
-/// its level in each element, and its base power and resistance in each.
+/// An enemy's element preset in gEnemy_ElementPresetTable: the element it
+/// attacks with, its level in each element, and its base power and resistance
+/// in each.
 struct EnemyElementPreset {
   s32 first;    ///< the element it attacks with (enum Element)
   u8 digits[4]; ///< its level in each element, in tens

@@ -141,7 +141,7 @@ s32 Map_GetScreenRelativePosition(struct Thing *obj, s32 *out) {
 /// Sets up the map animation work for map mode: its 92-byte work and an 8 KB
 /// buffer, both cleared by DMA from one zero word, and the animation callbacks
 /// (mode 4 runs its own; modes 3 and 4 take ObjectSystem_UpdateCameraFixed at
-/// 0x480, the others Func_0802386c).
+/// 0x480, the others ActorSystem_PlaceSprites).
 // No ☀️ twin found; ☀️'s field.c starts its map animations the same way.
 void ObjectSystem_Initialize(s32 mode) {
   struct MapAnimationWork *work;
@@ -163,7 +163,7 @@ void ObjectSystem_Initialize(s32 mode) {
   if (mode == 3 || mode == 4)
     Task_Add(ObjectSystem_UpdateCameraFixed, TASK_PASS_VBLANK);
   else
-    Task_Add(Func_0802386c, TASK_PASS_VBLANK);
+    Task_Add(ActorSystem_PlaceSprites, TASK_PASS_VBLANK);
   work->unk06 = 15;
   work->unk07 = 0;
 }
@@ -665,7 +665,7 @@ void Func_080237e8(u8 *object) {
 void Graphics_EnableObjLayerAndCallbacks(void) {
   u16 dispcnt;
 
-  Task_SuspendAll(Func_0802386c);
+  Task_SuspendAll(ActorSystem_PlaceSprites);
   Task_SuspendAll(ObjectSystem_UpdateCameraFixed);
   BattleEffect_ApplyColorToTargetBufferFar(0x10000, 1);
   BattleEffect_StartBufferInterpolationFar(1);
@@ -677,7 +677,7 @@ void Graphics_EnableObjLayerAndCallbacks(void) {
 void ActorSystem_ResumeProjectionAndHideLayers(void) {
   u16 dispcnt;
 
-  Task_ResumeAll(Func_0802386c);
+  Task_ResumeAll(ActorSystem_PlaceSprites);
   Task_ResumeAll(ObjectSystem_UpdateCameraFixed);
   dispcnt = REG_DISPCNT;
   REG_DISPCNT = dispcnt & 0xe1ff;
@@ -702,7 +702,7 @@ void Func_08021a84(struct PlacedSprite *sprite, s32 facing);
 #define CELL_LAYER(cells, x, z)                                                \
   (((cells)[(((z) >> 20) << 7) + ((x) >> 20)] << 18) >> 30)
 
-void Func_0802386c(void) {
+void ActorSystem_PlaceSprites(void) {
   // Unused: gives the stack frame its 36 bytes, as The Broken Seal's.
   struct CameraPoint unusedPoints[3];
   struct SpritePlacement point;

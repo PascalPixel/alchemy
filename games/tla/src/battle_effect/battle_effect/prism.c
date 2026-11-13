@@ -150,7 +150,8 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
 #undef SPARK_COUNT
 #undef GROUND_Y
 
-void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase, s32 bluePhase) {
+void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
+                                     s32 bluePhase) {
   u16 palette[64];
   s32 phase;
   s32 redOffset;

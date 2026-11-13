@@ -129,7 +129,7 @@ Field_RequestDjinnBattle:
 	.global Func_02001234
 	.thumb_func
 Func_02001234:
-	overlay_veneer Func_080c8368
+	overlay_veneer Scene_TalkToActorFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
 BattleEffect_ApplyColorToTargetBuffer:

@@ -27,8 +27,8 @@ void MenuTitle_Load(s32 groupIndex, s32 resourceIndex) {
   }
 }
 
-struct WindowSprite *
-MenuTitle_Create(s32 group, struct RenderInput *input, s32 x, s32 y) {
+struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
+                                      s32 x, s32 y) {
   s32 index;
   struct WindowSprite *first;
   struct WindowSprite *second;
@@ -86,8 +86,8 @@ void CommandIcon_Load(s32 index, s32 value, s32 flag) {
 /// when no VRAM slot is free. The settings menu's icons come through here
 /// (window/settings_menu.c).
 struct WindowSprite *CommandIcon_Create(s32 arg0, s32 arg1,
-                                                      struct RenderInput *arg2,
-                                                      s32 arg3, s32 arg4) {
+                                        struct RenderInput *arg2, s32 arg3,
+                                        s32 arg4) {
   s32 index;
   struct WindowSprite *entity;
 
@@ -175,10 +175,9 @@ int Window_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3,
   s32 tile_offset = arg3 * 2;
   s32 tile = tile_offset + 0xF315;
 
-  Window_SetTilemapEntry((struct Window *)arg0, 0x400 | tile, arg1, arg2,
-                           0);
-  Window_SetTilemapEntry((struct Window *)arg0, tile_offset + 0xF314,
-                           arg1 + 1, arg2, 0);
+  Window_SetTilemapEntry((struct Window *)arg0, 0x400 | tile, arg1, arg2, 0);
+  Window_SetTilemapEntry((struct Window *)arg0, tile_offset + 0xF314, arg1 + 1,
+                         arg2, 0);
   Window_SetTilemapEntry((struct Window *)arg0, tile, arg1 + 2, arg2, 0);
 }
 
@@ -346,13 +345,12 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
   return ret;
 }
 
-s32 Func_08045528(u32 entry, s32 slot) {
+s32 Portrait_Load(u32 entry, s32 slot) {
   s32 tile;
 
   if (entry > 7)
     entry = 0;
-  Icon_LoadWithPalette(Portrait_GetForSpeaker(entry), 0, &slot,
-                               &tile, 14, 1);
+  Icon_LoadWithPalette(Portrait_GetForSpeaker(entry), 0, &slot, &tile, 14, 1);
   return tile;
 }
 
@@ -376,7 +374,7 @@ void Func_08045564(u8 *work) {
   Heap_Release(routine);
 }
 
-#define Text_DrawStringAtOffset                                              \
+#define Text_DrawStringAtOffset                                                \
   ((void (*)(u8 *, s32, s32, s32))Text_DrawStringAtOffset)
 
 /// Opens a 6x4 window at the upper left, draws its label and returns its
@@ -407,8 +405,7 @@ s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1) {
   return ret;
 }
 
-void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
-                              s32 tile) {
+void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile) {
   GlyphTransfer *decoded;
   u8 *font;
   u8 *remapped;
@@ -493,9 +490,9 @@ void CommandRow_PutBg1InFront(void) {
   REG_BG1CNT = value;
 }
 
-/// Clears BG0's vertical scroll (REG_BG0VOFS) and installs CommandRow_PutBg1InFront,
-/// which clears BG1's priority bits, as the VCount handler at line 136.
-/// Nothing calls it.
+/// Clears BG0's vertical scroll (REG_BG0VOFS) and installs
+/// CommandRow_PutBg1InFront, which clears BG1's priority bits, as the VCount
+/// handler at line 136. Nothing calls it.
 UNUSED void Graphics_InstallBg1VCountHandler(void) {
   Io_Write16(0, &REG_BG0VOFS);
   Irq_SetHandler(2, 136, CommandRow_PutBg1InFront);

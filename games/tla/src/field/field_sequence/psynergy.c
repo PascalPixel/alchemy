@@ -10,7 +10,7 @@
   (MessageArgument_PushFar((user), 1), MessageArgument_PushFar((ability), 4),  \
    FieldMessage_ShowFar((s32)&(message), 1))
 
-s32 Func_080ce61c(u32 code) {
+s32 Field_UsePsynergy(u32 code) {
   u8 *event = Ram_HeapSlots->eventWork;
   s32 abilityId = code & 0x3ff;
   struct PendingEvent *before;

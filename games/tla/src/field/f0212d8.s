@@ -1,7 +1,7 @@
 @ Why assembly: Func_080212d8 is a Thumb entry whose bx pc switches to the ARM
 @ code of Func_080212dc that follows, a mode switch inside a function; its
 @ halfword after bx pc is never run. Func_080212dc, an ARM copy of the
-@ perspective map's scanline table builder (Func_0802dd70 is the Thumb one),
+@ perspective map's scanline table builder (WorldMap_BuildScanlineTable is the Thumb one),
 @ calls IwramSqrt and IwramTransformVector by bl through two 8-byte far-call
 @ veneers placed after its literal pool, and two of its smull take free
 @ registers for their high halves (r2/r1 and r2/r0) and shift them back, which

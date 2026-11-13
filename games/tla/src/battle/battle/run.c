@@ -223,7 +223,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     WindowSystem_InitBattleFar(0);
 
   BattleCamera_Create();
-  enemyCount = Func_08127cd4(battle->enemyGroup);
+  enemyCount = BattleFormation_BuildEnemyList(battle->enemyGroup);
 
   if (GameFlag_Test(0x16c) != 0) {
     battle->twoSided = 1;
@@ -304,7 +304,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   } else if (gMainRoutineWork.battleRule24b == 6) {
     battle->encounterMode = 2;
   }
-  Func_08125d74(enemyCount, enemyGroup);
+  BattleTransition_Run(enemyCount, enemyGroup);
   transition->flag = 0;
   gCpuLoadDisplayEnabled = 0;
   Task_Add(Func_0811b9fc, 0x480);

@@ -251,16 +251,16 @@ s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
 s32 Func_02000df4(s32 *member, s32 *slot);
 
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 
 extern s8 gData_02001000[];
 
 s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
-extern u8 gData_03001110;
+extern u8 gDebugTextEnabled;
 extern u32 Data_02018000[];
-extern s16 gData_020036d0;
+extern s16 gSaveSlot;
 extern u16 gData_02003860;
-extern u8 gData_02000000[];
+extern u8 gSaveBuffer[];
 extern u16 gData_02003a74[];
 
 extern s32 gData_020017b0;

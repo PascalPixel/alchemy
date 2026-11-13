@@ -36,10 +36,11 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
     (void)((volatile struct InputState *)&gInput)->held;
 }
 
-void Func_0815f16c(struct BattleEffectArgument *effect, s32 index);
+void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
+                                   s32 index);
 void BattleEffect_RunCanvasModeByCount(struct BattleEffectArgument *effect);
-void Func_0815e9f4(struct BattleEffectArgument *effect);
-void Func_0815e3ac(struct BattleEffectArgument *effect);
+void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect);
+void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect);
 
 void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
   struct BattleFxWorkTail *work;
@@ -55,13 +56,13 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
   kind = effect->kind;
   value = kind - 100;
   if ((u32)value <= 100) {
-    Func_0815f16c(effect, value);
+    BattleEffect_RunCastingImpact(effect, value);
   } else if (kind == 210 || kind == 10) {
     BattleEffect_RunCanvasModeByCount(effect);
   } else if (kind > 199) {
-    Func_0815e9f4(effect);
+    BattleEffect_RunCriticalHit(effect);
   } else {
-    Func_0815e3ac(effect);
+    BattleEffect_RunAttackSlash(effect);
   }
   HeapSlot_Release(96);
   HeapSlot_Release(92);
@@ -133,7 +134,7 @@ void BattlePlayback_StartFar(s32 hitCue);
 // An actor's recoil motion, through a far call.
 void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);
 
-void Func_0815e3ac(struct BattleEffectArgument *effect) {
+void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
   struct EffectPosition pos;
   struct EffectPosition anchor;
   struct EffectPosition point;
@@ -388,7 +389,7 @@ void SceneTransform_ApplyYaw(s32 angle);
 // The roll step of the scene transform.
 void SceneTransform_ApplyRoll(s32 angle);
 
-void Func_0815e9f4(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
   struct EffectPosition pos;
   struct EffectPosition anchor;
   struct EffectPosition point;

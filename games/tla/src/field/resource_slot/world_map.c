@@ -29,7 +29,7 @@ extern u32 Render_ResetTransformState__f02b998(void) __asm__(
  * SceneTransform_ApplyPosition(const s32 *pos). */
 extern void SceneTransform_ApplyPosition__resource_slot(void *position) __asm__(
     "SceneTransform_ApplyPosition");
-void Func_0802dd70(s32 ratio, s32 *position, void *affineWork);
+void WorldMap_BuildScanlineTable(s32 ratio, s32 *position, void *affineWork);
 
 void Func_0802b998(void) {
   /* FAKEMATCH(signature): Render_ResetTransformState declared returning u32;
@@ -112,10 +112,11 @@ void Func_0802b998(void) {
   Render_ResetTransformState__f02b998();
   Transform_SetLookAt((s32 *)camera, cameraPosition);
   RamCode_LoadSlot(104, Data_0802146c, Data_0802146cSize);
-  Func_0802dd70(Iwram_RatioMulQ14(Trig_Cos(view->pitch), Trig_Sin(view->pitch)),
-                cameraPosition, affineWork);
-  Data_03001244 = 0;
-  gData_03001144 = view->pitch;
+  WorldMap_BuildScanlineTable(
+      Iwram_RatioMulQ14(Trig_Cos(view->pitch), Trig_Sin(view->pitch)),
+      cameraPosition, affineWork);
+  gScanlineAngle = 0;
+  gScanlinePitch = view->pitch;
   ((void (*)(void *, s32 *, void *, void *))Ram_HeapSlots->unk64[1])(
       camera, cameraPosition, affineWork,
       affinePages + (gFrameCount & 1) * 0x1400);
@@ -453,7 +454,7 @@ void Map_RenderPaletteMappedColumn(u32 tileColumn) {
 }
 
 u32 Random16(void);
-void Func_0802dd70(s32 ratio, s32 *position, void *affineWork);
+void WorldMap_BuildScanlineTable(s32 ratio, s32 *position, void *affineWork);
 
 void WorldMap_UpdateView(void) {
   u8 *camera = Ram_HeapSlots->cameraWork;
@@ -538,13 +539,14 @@ void WorldMap_UpdateView(void) {
   }
   Render_ResetTransformState();
   Transform_SetLookAt((s32 *)camera, cameraPosition);
-  if (gData_03001144 != view->pitch) {
+  if (gScanlinePitch != view->pitch) {
     s32 cosine = Trig_Cos(view->pitch);
     s32 sine = Trig_Sin(view->pitch);
 
-    Func_0802dd70(Iwram_RatioMulQ14(cosine, sine), cameraPosition, affineWork);
-    Data_03001244 = 0;
-    gData_03001144 = view->pitch;
+    WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(cosine, sine), cameraPosition,
+                                affineWork);
+    gScanlineAngle = 0;
+    gScanlinePitch = view->pitch;
   }
   ((void (*)(void *, s32 *, void *, void *))Ram_HeapSlots->unk64[1])(
       camera, cameraPosition, affineWork,

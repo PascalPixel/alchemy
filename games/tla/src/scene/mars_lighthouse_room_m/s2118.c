@@ -11,7 +11,7 @@
 
 void Func_02002118(void) {
   struct MarsLighthouseRoomMRideWork *work =
-      (struct MarsLighthouseRoomMRideWork *)(gData_020023c4 + 0x188);
+      (struct MarsLighthouseRoomMRideWork *)(gInventorySnapshot + 0x188);
   struct Actor *object;
   struct MarsLighthouseRoomMAnimation *animation;
 
@@ -73,7 +73,7 @@ void Animation_ApplyChildValues(struct Actor *object, s32 value);
 DEFINE_FUNC_02001DD0(Func_0200216c, Func_02003130)
 
 void Func_02002180(s16 value) {
-  ((struct RideWork *)(gData_020023c4 + 0x188))->value0e = value;
+  ((struct RideWork *)(gInventorySnapshot + 0x188))->value0e = value;
 }
 
 #include "io_reg.h"
@@ -82,15 +82,15 @@ void Func_02002180(s16 value) {
 DEFINE_FUNC_0200218C(Func_0200218c, Func_02001f94)
 
 s32 Func_020022c0(s32 index) {
-  return ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->a;
+  return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->a;
 }
 
 void Func_020022d0(s32 index, s16 value) {
-  ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->a = value;
+  ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->a = value;
 }
 
 s32 Func_020022e0(void) {
-  return ((struct RideWork *)(gData_020023c4 + 0x188))->counter;
+  return ((struct RideWork *)(gInventorySnapshot + 0x188))->counter;
 }
 
 DEFINE_FUNC_02001F50(Func_020022ec)
@@ -98,11 +98,11 @@ DEFINE_FUNC_02001F50(Func_020022ec)
 DEFINE_FUNC_02001F78(Func_02002314)
 
 void Func_02002334(s32 index, s16 value) {
-  ((struct RideWork *)(gData_020023c4 + 0x188))->entries[index].c = value;
+  ((struct RideWork *)(gInventorySnapshot + 0x188))->entries[index].c = value;
 }
 
 s32 Func_02002344(s32 index) {
-  return ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->b;
+  return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->b;
 }
 
 DEFINE_FUNC_02001FB8(Func_02002354)
@@ -132,8 +132,15 @@ DEFINE_FUNC_020012BC(Func_020024bc, 10, 4, 0)
 #include "fixed_math.h"
 
 s32 Func_02003168(s32 terrain, s32 x, s32 z);
-/* VIEW(s2118): routine Func_02003180 as s32 Func_02003180(struct Actor *actor, struct Vector3 *position); module/scene/scene.h has s32 Func_02003180(s32 layer, s32 shape, s32 height); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m/s2118.c:292: too few arguments to function `Func_02003180'. */
-extern s32 Func_02003180__s2118(struct Actor *actor, struct Vector3 *position) __asm__("Func_02003180");
+/* VIEW(s2118): routine Func_02003180 as s32 Func_02003180(struct Actor *actor,
+ * struct Vector3 *position); module/scene/scene.h has s32 Func_02003180(s32
+ * layer, s32 shape, s32 height); tried as the rest of the object declares it,
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_m/s2118.c:292: too few arguments to
+ * function `Func_02003180'. */
+extern s32
+Func_02003180__s2118(struct Actor *actor,
+                     struct Vector3 *position) __asm__("Func_02003180");
 
 #define SHARED_F02002148_NAME Func_020024e4
 #define SHARED_F02002148_ID2 Func_02002368
@@ -152,6 +159,6 @@ extern s32 Func_02003180__s2118(struct Actor *actor, struct Vector3 *position) _
 #undef SHARED_F02002148_ID7
 
 void Func_020026f0(void) {
-  if (((struct RideWork *)(gData_020023c4 + 0x188))->active)
+  if (((struct RideWork *)(gInventorySnapshot + 0x188))->active)
     Func_020024e4();
 }

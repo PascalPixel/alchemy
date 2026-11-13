@@ -47,7 +47,7 @@ void FieldPsynergy_Carry(void) {
     pos.z = work->z;
     obj = Actor_Spawn(673, pos.x, pos.y, pos.z);
     if (obj != 0) {
-      Actor_StartScriptFar(obj, gData_080f0e78);
+      Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);
       obj->speedLimit = Random16() + 0x20000;
       obj->acceleration = 0x20000;
       obj->motionFlags = 0;

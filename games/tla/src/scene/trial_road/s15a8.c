@@ -1402,7 +1402,7 @@ void Func_02003900(void) {
   Import_EventSetExitRequest(10);
 }
 
-// Updates the sixteen movers at gData_020023c4 + 0x188 each frame: at its
+// Updates the sixteen movers at gInventorySnapshot + 0x188 each frame: at its
 // upAt and downAt phases a mover calls Sound_Play (206 or 395) and moves by
 // 4 or -8 a frame until it reaches its high or low offset; its phase counts
 // round its period unless flag 260 is set. Each mover's shape, collision
@@ -1436,15 +1436,15 @@ struct TrialRoadMovers {
   struct TrialRoadMover__s1fc4 movers[16];
 };
 
-/// Updates the sixteen movers at gData_020023c4 + 0x188 each frame: at its upAt
-/// and downAt phases a mover calls Sound_Play (206 or 395) and moves by 4 or -8
-/// a frame until it reaches its high or low offset; its phase counts round its
-/// period unless flag 260 is set. Each mover's shape, collision height and cell
-/// attribute byte follow its actor and offset, and its marker actor is placed
-/// over it, bobbing on a sine while the offset is not 0.
+/// Updates the sixteen movers at gInventorySnapshot + 0x188 each frame: at its
+/// upAt and downAt phases a mover calls Sound_Play (206 or 395) and moves by 4
+/// or -8 a frame until it reaches its high or low offset; its phase counts
+/// round its period unless flag 260 is set. Each mover's shape, collision
+/// height and cell attribute byte follow its actor and offset, and its marker
+/// actor is placed over it, bobbing on a sine while the offset is not 0.
 void Func_02003da0(void) {
   struct TrialRoadMovers *work =
-      (struct TrialRoadMovers *)(gData_020023c4 + 0x188);
+      (struct TrialRoadMovers *)(gInventorySnapshot + 0x188);
   struct TrialRoadMover__s1fc4 *mover = work->movers;
   struct TrialRoadMapWork *map = Ram_HeapSlots->mapWork;
   s32 shape = work->shape;
@@ -1561,7 +1561,7 @@ struct TrialRoadMovers__s3f68 {
 /// Queues the Trial Road movers' sprites.
 void Func_02003f68(void) {
   struct TrialRoadMovers__s3f68 *base =
-      (struct TrialRoadMovers__s3f68 *)(gData_020023c4 + 0x188);
+      (struct TrialRoadMovers__s3f68 *)(gInventorySnapshot + 0x188);
   struct TrialRoadMover__s3f68 *mover = base->movers;
   s32 i;
   s32 tile;
@@ -1659,7 +1659,7 @@ static __inline__ void *Pool_Alloc(s32 size) { return Heap_AllocEwram(size); }
 
 void Func_02004188(s32 a, s32 b) {
   struct TrialRoadGauge *gauge =
-      (struct TrialRoadGauge *)(gData_020023c4 + 0x188);
+      (struct TrialRoadGauge *)(gInventorySnapshot + 0x188);
   void *buffer;
 
   if (!GameFlag_Test(0x109))
@@ -1702,7 +1702,7 @@ struct RideWork {
 
 struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low,
                                 s32 high) {
-  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct RideEntry *entry = &work->entries[slot];
   struct Actor *object = Actor_GetById(id);
   struct Actor *rider;

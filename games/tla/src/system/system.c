@@ -9,8 +9,9 @@
 /// ROM. Camelot's own files are not recoverable: the ROM shows one object, and
 /// these parts are ours, cut where The Broken Seal's are. Where to start:
 ///
-///   Power-up        start_up.c: Func_0801319c
-///   Frames          frame.c: wait(), Func_0801399c (the VBlank handler),
+///   Power-up        start_up.c: System_Initialize
+///   Frames          frame.c: wait(), System_VBlankHandler (the VBlank
+///   handler),
 ///                   Irq_SetHandler
 ///                   task.c: Task_Add
 ///   Screen          screen_fade.c: Fade_Start; oam.c: Oam_AddSpriteAtDepth;

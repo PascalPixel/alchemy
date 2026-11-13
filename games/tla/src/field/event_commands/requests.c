@@ -45,7 +45,7 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   }
   djinn = group * 20 + index;
   if (noPrepare == 0)
-    Func_080d7524(flags);
+    Djinn_RunBattleStartHop(flags);
   gMainRoutineWork.pendingDjinnEvent = (djinn + 300) | noPrepare;
   *(s16 *)(work + 356) = Encounter_GetDjinnEnemyGroup(djinn);
   if (*(s8 *)(work + 394) == 3)

@@ -135,7 +135,7 @@ void Func_080d5fd4(void) {
 
 /// Writes the current page's first entry each frame; HBlank DMA writes the
 /// rest.
-void Func_080d5ff8(void) {
+void LineScroll_ArmDma(void) {
   struct DmaFxPages *work = Ram_HeapSlots->unk84[1];
   u32 *line = work->pages[work->page].lines;
   volatile u32 *dest = (volatile u32 *)&REG_BG1HOFS;
@@ -319,12 +319,12 @@ void LineScroll_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
   work->unkf10 = stepX;
   work->unkf14 = stepY;
   Task_Add(Func_080d607c, TASK_PASS_VBLANK);
-  Task_Add(Func_080d5ff8, TASK_PASS_FRAME);
+  Task_Add(LineScroll_ArmDma, TASK_PASS_FRAME);
 }
 
 /// Stops the line scroll: removes its two tasks and stops DMA 0.
 void LineScroll_Stop(void) {
-  Task_Remove(Func_080d5ff8);
+  Task_Remove(LineScroll_ArmDma);
   Task_Remove(Func_080d607c);
   {
     volatile u16 *dma = REG_DMA0;
@@ -338,7 +338,8 @@ void LineScroll_Stop(void) {
   }
 }
 
-/* VIEW(visual_attributes): tag struct GroundParticle as struct GroundParticle__visual_attributes; ground_mask.h has another definition. */
+/* VIEW(visual_attributes): tag struct GroundParticle as struct
+ * GroundParticle__visual_attributes; ground_mask.h has another definition. */
 struct GroundParticle__visual_attributes {
   u8 unk00[4];
   u16 y : 8;
@@ -365,8 +366,12 @@ struct GroundParticleWork {
   struct GroundParticle__visual_attributes particles[64];
 };
 
-/* VIEW(visual_attributes): routine Func_080140d8 as void Func_080140d8(struct GroundParticle *sprite, s32 depth); module/system/system.h has void Func_080140d8(void *entry, s32 slot). */
-extern void Func_080140d8__visual_attributes(struct GroundParticle__visual_attributes *sprite, s32 depth) __asm__("Func_080140d8");
+/* VIEW(visual_attributes): routine Func_080140d8 as void Func_080140d8(struct
+ * GroundParticle *sprite, s32 depth); module/system/system.h has void
+ * Func_080140d8(void *entry, s32 slot). */
+extern void Func_080140d8__visual_attributes(
+    struct GroundParticle__visual_attributes *sprite,
+    s32 depth) __asm__("Func_080140d8");
 
 void Func_080d64f0(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;

@@ -82,11 +82,11 @@ gStatChange_ShardWidths:
 	.global gStatChange_ShardHeights
 gStatChange_ShardHeights:
 	.byte 12, 12, 13, 8, 9, 8, 7, 12, 10, 4, 5, 5
-@ The Broken Seal's gCondemn_PanelX; read by Func_0815f16c and Func_0818ad40
+@ The Broken Seal's gCondemn_PanelX; read by BattleEffect_RunCastingImpact and Func_0818ad40
 	.global gData_0819750c
 gData_0819750c:
 	.byte 10, 30, 0, 0, 0, 6, 52, 60, 0, 0, 0, 0, 0, 0
-@ read by Func_0815f16c and Func_0818ad40
+@ read by BattleEffect_RunCastingImpact and Func_0818ad40
 	.global gData_0819751a
 gData_0819751a:
 	.byte 0, 20, 2, 2, 34, 64, 68
@@ -303,7 +303,7 @@ Data_081977f0:
 	.global Data_081977f4
 Data_081977f4:
 	.byte 3, 4, 5, 6
-@ The Broken Seal's table of this name; read by BattleEffect_RunPrism and Func_0815f16c
+@ The Broken Seal's table of this name; read by BattleEffect_RunPrism and BattleEffect_RunCastingImpact
 	.global gPrism_ShardStarts
 gPrism_ShardStarts:
 	.byte 32, 60, 33, 82, 49, 94, 41, 89, 49, 76, 32, 99, 54, 69, 34, 82
@@ -322,7 +322,7 @@ gData_08197826:
 gData_08197834:
 	.4byte 0, 70, 170, 247, 429, 597
 	.4byte 751, 1359, 1899, 2451, 2907, 3347
-@ read by Func_08144628
+@ read by BattleEffect_RunGatheringLights
 	.global Data_08197864
 Data_08197864:
 	.byte 16, 88, 8, 72, 12, 80, 16, 88
@@ -1505,23 +1505,23 @@ Data_08198686:
 Data_081986aa:
 	.byte 100, 60, 64, -6, -6, 112, 44, -64, -6, 4, 96, 28, 64, -6, -5, 112
 	.byte 80, -64, -6, 4, 104, 32, 64, -6, 5, 102, 68, -64, -6, 4
-@ The Broken Seal's table of this name; read by Func_0815c970
+@ The Broken Seal's table of this name; read by BattleEffect_RunSwirlSwipe
 	.global gSpiderWeb_CellWidths
 gSpiderWeb_CellWidths:
 	.byte 40, 112, 112, 112, 88, 64
-@ The Broken Seal's table of this name; read by Func_0815c970
+@ The Broken Seal's table of this name; read by BattleEffect_RunSwirlSwipe
 	.global gSpiderWeb_CellHeights
 gSpiderWeb_CellHeights:
 	.byte 56, 80, 64, 64, 80, 88
-@ The Broken Seal's gSpiderWeb_Cells; read by Func_0815c970
+@ The Broken Seal's gSpiderWeb_Cells; read by BattleEffect_RunSwirlSwipe
 	.global gSpiderWeb_Cells
 gSpiderWeb_Cells:
 	.2byte 0, 2240, 11200, 18368, 0, 7040
-@ The Broken Seal's table of this name; read by Func_0815c970
+@ The Broken Seal's table of this name; read by BattleEffect_RunSwirlSwipe
 	.global gSpiderWeb_CellX
 gSpiderWeb_CellX:
 	.byte 72, 0, 0, 0, 32, 64, 16, 16, 16, 16, 8, 0
-@ read by Func_0815c970
+@ read by BattleEffect_RunSwirlSwipe
 	.global gData_081986ec
 gData_081986ec:
 	.byte 0, 4, 24, -6, -20, -28
@@ -1572,124 +1572,124 @@ Data_08198850:
 	.global Data_08198858
 Data_08198858:
 	.byte 10, 0, 32, 45, 45, 5, 36, 5
-@ The Broken Seal's gTargetStrike_Widths; read by Func_0815e3ac
+@ The Broken Seal's gTargetStrike_Widths; read by BattleEffect_RunAttackSlash
 	.global Data_08198860
 Data_08198860:
 	.byte 38, 54, 71, 74, 77, 65
-@ The Broken Seal's gTargetStrike_Heights; read by Func_0815e3ac
+@ The Broken Seal's gTargetStrike_Heights; read by BattleEffect_RunAttackSlash
 	.global Data_08198866
 Data_08198866:
 	.byte 7, 9, 11, 13, 13, 11
-@ The Broken Seal's gBeam_Cells; read by Func_0815e3ac
+@ The Broken Seal's gBeam_Cells; read by BattleEffect_RunAttackSlash
 	.global gBeam_Cells
 gBeam_Cells:
 	.2byte 0, 266, 752, 1533, 2495, 3496
-@ The Broken Seal's gTargetStrike_Reach; read by Func_0815e3ac
+@ The Broken Seal's gTargetStrike_Reach; read by BattleEffect_RunAttackSlash
 	.global Data_08198878
 Data_08198878:
 	.byte 58, 42, 25, 13, 5, 0
-@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_0815f16c
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by BattleEffect_RunCastingImpact
 	.global gData_0819887e
 gData_0819887e:
 	.byte 0, 4, 8, 12
-@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_0815f16c
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by BattleEffect_RunCastingImpact
 	.global gData_08198882
 gData_08198882:
 	.byte 0, 4, 8, 12
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_08198886
 gData_08198886:
 	.byte 0, 1, 2, 3
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_0819888a
 gData_0819888a:
 	.2byte 8448, 8712, 11462, 16646, 16646, 24351, 24351, 28201
 	.2byte 28201, 28201
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_0819889e
 gData_0819889e:
 	.2byte 24, 55, 64, 115, 115, 70, 70, 22
 	.2byte 22, 22
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_081988b2
 gData_081988b2:
 	.2byte 11, 50, 81, 67, 67, 55, 55, 29
 	.2byte 29, 29
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_081988c6
 gData_081988c6:
 	.2byte 58, 19, 0, 6, 6, 50, 50, 100
 	.2byte 100, 100
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_081988da
 gData_081988da:
 	.2byte 17, 19, 24, 44, 44, 42, 42, 37
 	.2byte 37, 37
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_081988ee
 gData_081988ee:
 	.2byte 5700, 7128, 10414, 14089, 19152, 23148, 26752
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_081988fc
 gData_081988fc:
 	.2byte 42, 62, 75, 83, 54, 68, 37
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_0819890a
 gData_0819890a:
 	.2byte 34, 53, 49, 61, 74, 53, 28
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_08198918
 gData_08198918:
 	.2byte 85, 65, 50, 19, 0, 0, 58
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_08198926
 gData_08198926:
 	.2byte 62, 66, 78, 41, 19, 0, 5
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_08198934
 gData_08198934:
 	.2byte 27788, 28464, 29724
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_0819893a
 gData_0819893a:
 	.byte 26, 35, 52
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_0819893d
 gData_0819893d:
 	.byte 26, 36, 48
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_08198940
 gData_08198940:
 	.byte 37, 104, 19, 81, 20, 47
-@ The Broken Seal's gProjectileVolley_PelletOffsets; read by Func_0815f16c
+@ The Broken Seal's gProjectileVolley_PelletOffsets; read by BattleEffect_RunCastingImpact
 	.global gData_08198946
 gData_08198946:
 	.2byte 2308, 2372, 2436, 2500
-@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_0815f16c
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by BattleEffect_RunCastingImpact
 	.global gData_0819894e
 gData_0819894e:
 	.byte 0, 4, 8, 12
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_08198952
 gData_08198952:
 	.byte 0, 2, 9, 10
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_08198956
 gData_08198956:
 	.byte 5, 8, 10, 8
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_0819895a
 gData_0819895a:
 	.byte 32, 16, 24, 32
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_0819895e
 gData_0819895e:
 	.byte 0, 4, 9, 10
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_08198962
 gData_08198962:
 	.byte 3, 4, 3, 5
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_08198966
 gData_08198966:
 	.byte 3, 4, 5, 6
@@ -1997,7 +1997,7 @@ Data_08198c64:
 	.global gData_08198c67
 gData_08198c67:
 	.byte 16, 60, 108, 0, 0
-@ read by Func_0815f16c and Func_08181ed4
+@ read by BattleEffect_RunCastingImpact and Func_08181ed4
 	.global gData_08198c6c
 gData_08198c6c:
 	.4byte 0x20f800, 1505302, 63519, 15398934
@@ -2015,7 +2015,7 @@ Data_08198cac:
 	.4byte 2079, 15992861, 15337494, 14878732
 	.4byte 0xe10800, 14878963, 15337705, 15993058
 	.4byte 2272, 854242, 1509609, 1968371
-@ read by Func_0815f16c
+@ read by BattleEffect_RunCastingImpact
 	.global gData_08198d2c
 gData_08198d2c:
 	.2byte 2305, 8, 31, 3871, 3840, 0, 256, 8

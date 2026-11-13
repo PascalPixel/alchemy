@@ -153,7 +153,7 @@ Func_02000d0c:
 	.global Func_02000d14
 	.thumb_func
 Func_02000d14:
-	overlay_veneer Func_080c82e0
+	overlay_veneer Field_TryJumpForwardFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
 BattleEffect_ApplyColorToTargetBuffer:

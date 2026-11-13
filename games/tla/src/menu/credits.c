@@ -38,7 +38,7 @@
 #include "ram_buffer.h"
 #include "resource_ids.h"
 
-extern u8 gData_03001110;
+extern u8 gDebugTextEnabled;
 
 ///@}
 
@@ -166,14 +166,14 @@ void DisplayScroll_StepPositionEveryFourVBlanks(void) {
 /// scroll task and sets up BG2, BG3 and blending; mode 1 cross-fades the slides
 /// until START or the scroll ends, other modes start the scrolling credits
 /// (mode - 2) and wait for their end.
-s32 Func_081a06e0(s32 mode) {
+s32 Credits_Run(s32 mode) {
   s32 slide;
   s32 step;
   s32 frame;
 
   gRenderOamEnabled = 0;
   gCpuLoadDisplayEnabled = 0;
-  gData_03001110 = 0;
+  gDebugTextEnabled = 0;
   Data_02007500 = 0;
   gAutoSleepEnabled = 0;
   Task_ResetAll();
@@ -815,7 +815,7 @@ void Func_081a133c(void) {
 
 void Func_081a150c(void) {
   gCpuLoadDisplayEnabled = 0;
-  gData_03001110 = 0;
+  gDebugTextEnabled = 0;
   gAutoSleepEnabled = 0;
   Task_ResetAll();
   Data_02007518 = 0;

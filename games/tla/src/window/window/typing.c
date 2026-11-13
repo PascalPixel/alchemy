@@ -29,7 +29,7 @@ void Text_ScrollCanvasUp(s32 step) {
 
 s32 Message_Type(struct UiChannelSlot *channel);
 struct Window_0803cbf8;
-void Func_0803cbf8(struct Window_0803cbf8 *window);
+void Window_StepSwellEffect(struct Window_0803cbf8 *window);
 
 void Message_UpdateAll(void) {
   u8 *channel = (u8 *)Ram_HeapSlots->windowTiles + 0x6b8;
@@ -49,7 +49,7 @@ void Message_UpdateAll(void) {
         s32 kind;
 
         if (pending != 0) {
-          Func_0803cbf8((struct Window_0803cbf8 *)channel);
+          Window_StepSwellEffect((struct Window_0803cbf8 *)channel);
         } else {
           kind = Message_Type((struct UiChannelSlot *)channel);
           switch (kind) {
@@ -60,7 +60,7 @@ void Message_UpdateAll(void) {
             u8 *entity = *(u8 **)channel;
 
             Window_Close((struct Window *)entity,
-                            (u16)(*(u16 *)(entity + 0x16) & 2));
+                         (u16)(*(u16 *)(entity + 0x16) & 2));
             *(u16 *)(channel + 0x04) = pending;
             *(u16 *)(channel + 0x06) = pending;
             *(u16 *)(channel + 0x12) = pending;

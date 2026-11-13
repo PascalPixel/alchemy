@@ -24,7 +24,7 @@ extern struct LayeredSceneEntry
 /// shape grid, the tile animations, the blend script and the script at
 /// 0x0202e000; sets up the three layers from the header, with their cell
 /// positions and shape pointers; loads the palette and tiles unless flag 0x170
-/// says they are already loaded; and starts Func_0802ad84.
+/// says they are already loaded; and starts MapGrid_UpdateLayerScroll.
 s32 MapGrid_LoadMap(s32 index) {
   struct LayeredSceneEntry *sceneResources;
   struct MapScrollWork *work;
@@ -177,7 +177,7 @@ s32 MapGrid_LoadMap(s32 index) {
   do {
     REG_DISPCNT = displayFlags;
   } while (0);
-  Task_Add(Func_0802ad84, 0x485);
+  Task_Add(MapGrid_UpdateLayerScroll, 0x485);
   return 2;
 }
 
@@ -230,14 +230,15 @@ void Map_CenterOnFollowedPoint(void) {
     }
   }
   Func_0802af9c(x, z - height);
-  Func_0802ad84();
+  MapGrid_UpdateLayerScroll();
 }
 
 /// Draws a row of 16 cell pictures (32 tiles) of a layer's cells into its BG
 /// map (screen block 5 + layer), starting at tile (tileX, tileY); the BG map
 /// wraps every 32 tiles and the cells wrap at the layer's window, which The
 /// Broken Seal's routine does not have. Called by
-/// Func_0802ad84 when a layer scrolls onto a new row of cell pictures.
+/// MapGrid_UpdateLayerScroll when a layer scrolls onto a new row of cell
+/// pictures.
 void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
   u32 *cells = (u32 *)Ram_MapCellBuffer;
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -348,7 +349,7 @@ void Func_0802ac90(u32 layer, s32 tileX, s32 tileY) {
 
 u32 Random16(void);
 
-void Func_0802ad84(void) {
+void MapGrid_UpdateLayerScroll(void) {
   struct MapWork *work;
   struct MapLayerScroll *layer;
   s32 *origin;

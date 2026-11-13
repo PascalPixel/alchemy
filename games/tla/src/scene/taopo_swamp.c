@@ -97,8 +97,8 @@ struct VentWork {
   u16 ids[4];
 };
 
-extern u8 gData_020023c4[];
-#define VENT_WORK ((struct VentWork *)(gData_020023c4 + 0x188))
+extern u8 gInventorySnapshot[];
+#define VENT_WORK ((struct VentWork *)(gInventorySnapshot + 0x188))
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 
 s32 Math_Cosine(s32 angle);
@@ -1721,7 +1721,7 @@ DEFINE_FUNC_020025D4(Func_020025d4, Func_02002554)
 #include "system/io_reg.h"
 
 void Func_02002614(u16 *points, u16 *values, s32 arg) {
-  struct SwingWork *work = (struct SwingWork *)(gData_020023c4 + 0x188);
+  struct SwingWork *work = (struct SwingWork *)(gInventorySnapshot + 0x188);
   struct SwingPoint *point = work->points;
 
   if (!Event_GetFlag(0x109)) {

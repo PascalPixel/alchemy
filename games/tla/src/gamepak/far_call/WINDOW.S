@@ -91,7 +91,7 @@ Resource_FarCall004:
 	export Icon_BuildItemIconTilesFar, Icon_BuildItemIconTiles
 	export Icon_BuildAbilityIconTilesFar, Icon_BuildAbilityIconTiles
 	export WindowSprite_CreateLoadedFar, WindowSprite_CreateLoaded
-	export Func_080382c0, Func_08043690
+	export Save_ToChosenFileFar, Save_ToChosenFile
 	export Save_ChooseAndLoadFileFar, Save_ChooseAndLoadFile
 	export Save_CopyFileFar, Save_CopyFile
 	export Save_EraseSelectedFileFar, Save_EraseSelectedFile

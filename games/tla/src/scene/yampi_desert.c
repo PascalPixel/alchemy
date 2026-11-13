@@ -1730,7 +1730,7 @@ s32 Math_Sine(s32 angle);
 // the platform on its timer, writes its height to the collision and cell maps,
 // and carries its rider with a bob.
 void Func_020039b8(void) {
-  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct RideEntry *entry = work->entries;
   s32 value = work->value;
@@ -1808,7 +1808,7 @@ void Func_020039b8(void) {
 // of height and a bobbing top, up to 80 of them, each an OAM entry queued by
 // Func_02003f88.
 void Func_02003b80(void) {
-  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct RideEntry *entry = work->entries;
   s32 i;
   u32 tile = gResourceTableEntries[work->entry].offset >> 5;
@@ -1894,7 +1894,7 @@ void Func_02003b80(void) {
 
 void Func_02003da0(s32 unused, s32 value) {
   struct YampiDesertRideWork *work =
-      (struct YampiDesertRideWork *)(gData_020023c4 + 0x188);
+      (struct YampiDesertRideWork *)(gInventorySnapshot + 0x188);
   void *buffer;
 
   if (!GameFlag_Test(0x109))
@@ -1913,7 +1913,7 @@ void Func_02003da0(s32 unused, s32 value) {
 
 struct RideEntry *Func_02003e3c(s32 slot, s32 id, s32 timer, s32 low,
                                 s32 high) {
-  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct RideEntry *entry = &work->entries[slot];
   struct Actor *object = Actor_GetById(id);
   struct Actor *rider;

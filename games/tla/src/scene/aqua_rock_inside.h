@@ -85,8 +85,8 @@ struct VentWork {
   u16 ids[4];
 };
 
-extern u8 gData_020023c4[];
-#define VENT_WORK ((struct VentWork *)(gData_020023c4 + 0x188))
+extern u8 gInventorySnapshot[];
+#define VENT_WORK ((struct VentWork *)(gInventorySnapshot + 0x188))
 
 struct VentRow {
   u8 unk00[8];

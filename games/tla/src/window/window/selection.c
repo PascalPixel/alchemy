@@ -84,7 +84,7 @@ struct GlyphWork {
   u8 unk3ba[42];
 };
 
-extern const u8 gData_0805c9c4[];
+extern const u8 gMenu_AnimatedCursorTiles[];
 
 /// Allocates and resets the selection screen (heap slot 72): the row of icons
 /// the player picks from, with arrows at each end and a pointing hand over the
@@ -123,7 +123,7 @@ void SelectionMenu_Create(void) {
   work->rows[1].index.cursor = 0;
   work->rows[0].state = 0;
   work->rows[1].state = 0;
-  table = gData_0805c9c4;
+  table = gMenu_AnimatedCursorTiles;
   work->slot = Resource_FindFreeEntry();
   work->tile = VramCache_Load(work->slot, 256, table);
   work->field2e2 = 0;
@@ -462,7 +462,7 @@ void SelectionMenu_Draw(void) {
     node = node->next;
   }
   if (cursor->kind != 0) {
-    cnt = (s32)gData_0805c9c4;
+    cnt = (s32)gMenu_AnimatedCursorTiles;
     {
       void *src = (void *)(cnt + (((gVBlankCount >> 2) & 15) << 8));
 
@@ -530,7 +530,7 @@ struct MenuSelection {
   u8 unk68[0x27a];
   u16 mode;
 };
-extern u8 gData_0805c5c4[], gData_0805c1c4[];
+extern u8 gMenu_CursorActorTiles[], gMenu_CursorLeftActorTiles[];
 
 void SelectionMenu_DrawArrow(struct MenuSelection *state, s32 index) {
   u32 frame = (gVBlankCount >> 2) & 7;
@@ -544,11 +544,11 @@ void SelectionMenu_DrawArrow(struct MenuSelection *state, s32 index) {
   entry->x = state->nodes[index].x;
   entry->y = state->nodes[index].y;
   if (index != 0) {
-    frames = gData_0805c5c4;
+    frames = gMenu_CursorActorTiles;
     if (state->nodes[1].offset != 0)
       entry->x = entry->x + state->nodes[1].offset;
   } else {
-    frames = gData_0805c1c4;
+    frames = gMenu_CursorLeftActorTiles;
     if (state->nodes[0].offset != 0)
       entry->x = entry->x - state->nodes[0].offset;
   }
@@ -686,8 +686,8 @@ void Menu_SetupSelectionBothSides(void) {
   SelectionMenu_SetupArrow(menu, 1);
 }
 
-extern u8 gData_0805c5c4[];
-extern u8 gData_0805c1c4[];
+extern u8 gMenu_CursorActorTiles[];
+extern u8 gMenu_CursorLeftActorTiles[];
 
 /// Sets up the left (side 0) or right (1) arrow of the selection row, shown
 /// when there are entries beyond that end. The first call takes the arrow's
@@ -699,7 +699,7 @@ void SelectionMenu_SetupArrow(struct SelectionScreen *state, s32 side) {
 
   state->records[side].kind = 0;
   if (side != 0) {
-    u8 *right = gData_0805c5c4;
+    u8 *right = gMenu_CursorActorTiles;
 
     count = state->count;
     if (state->top != 0)
@@ -711,7 +711,7 @@ void SelectionMenu_SetupArrow(struct SelectionScreen *state, s32 side) {
     arrowTiles = right;
     state->records[1].x = state->baseX + 16 * (count - 1) + 17;
   } else {
-    arrowTiles = gData_0805c1c4;
+    arrowTiles = gMenu_CursorLeftActorTiles;
     state->records[0].x = state->baseX - 9;
     if (state->top != 0)
       state->records[0].kind = 1;
@@ -1558,7 +1558,7 @@ struct MenuSprite {
 /// The caller owns the cache slot and releases it through
 /// MenuArrow_Release.
 void MenuArrow_Create(struct MenuSprite *object, s32 *slot) {
-  const void *data = gData_0805c5c4;
+  const void *data = gMenu_CursorActorTiles;
   s32 value = Resource_FindFreeEntry();
 
   *slot = value;

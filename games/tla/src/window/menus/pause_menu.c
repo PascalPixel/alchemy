@@ -27,7 +27,7 @@ again:
       FieldMessage_Show((s32)MsgNoPlaceForThat, 1);
       goto again;
     }
-    if (Func_08043690() == -1)
+    if (Save_ToChosenFile() == -1)
       goto again;
   } else if (selection == 1) {
     FieldMessage_Show((s32)MsgSleepMode, 1);
@@ -80,15 +80,26 @@ void Render_SetTilemapFlagBitRect(const struct Window *object, s32 x, s32 y,
   }
 }
 
-/* VIEW(flag_bit_rect): routine Window_Create as struct RenderInput *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style); selrow has struct Work *Window_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer). */
-extern struct RenderInput *Window_Create__flag_bit_rect(s32 x, s32 y, s32 width, s32 height,
-                                  s32 style) __asm__("Window_Create");
-/* VIEW(flag_bit_rect): routine Text_DrawStringInWindow as void Text_DrawStringInWindow(u8 *text, struct RenderInput *window, u32 x, u32 y); handle_selection_row_input has void Text_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y). */
-extern void Text_DrawStringInWindow__flag_bit_rect(u8 *text, struct RenderInput *window, u32 x,
-                             u32 y) __asm__("Text_DrawStringInWindow");
-/* VIEW(flag_bit_rect): routine Text_DrawNumberInWindow as void Text_DrawNumberInWindow(s32 value, s32 width, struct RenderInput *window, s32 x, s32 y); menus has void Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window, s32 x, s32 y). */
-extern void Text_DrawNumberInWindow__flag_bit_rect(s32 value, s32 width, struct RenderInput *window,
-                             s32 x, s32 y) __asm__("Text_DrawNumberInWindow");
+/* VIEW(flag_bit_rect): routine Window_Create as struct RenderInput
+ * *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style); selrow has
+ * struct Work *Window_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer). */
+extern struct RenderInput *
+Window_Create__flag_bit_rect(s32 x, s32 y, s32 width, s32 height,
+                             s32 style) __asm__("Window_Create");
+/* VIEW(flag_bit_rect): routine Text_DrawStringInWindow as void
+ * Text_DrawStringInWindow(u8 *text, struct RenderInput *window, u32 x, u32 y);
+ * handle_selection_row_input has void Text_DrawStringInWindow(s32 text, s32
+ * window, s32 x, s32 y). */
+extern void Text_DrawStringInWindow__flag_bit_rect(
+    u8 *text, struct RenderInput *window, u32 x,
+    u32 y) __asm__("Text_DrawStringInWindow");
+/* VIEW(flag_bit_rect): routine Text_DrawNumberInWindow as void
+ * Text_DrawNumberInWindow(s32 value, s32 width, struct RenderInput *window, s32
+ * x, s32 y); menus has void Text_DrawNumberInWindow(s32 value, s32 digits,
+ * struct TargetWindow *window, s32 x, s32 y). */
+extern void Text_DrawNumberInWindow__flag_bit_rect(
+    s32 value, s32 width, struct RenderInput *window, s32 x,
+    s32 y) __asm__("Text_DrawNumberInWindow");
 void Icon_BuildItemIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile,
                              s32 reuse);
 void Icon_BuildMiscIconTiles(s32 pattern, s32 unused, s32 slot);
@@ -147,16 +158,21 @@ s32 DebugBrowser_Icons(void) {
       Window_Close(window, 2);
       window = Window_Create__flag_bit_rect(10, 0, 18, 12, 2);
       if (mode == 0)
-        Text_DrawStringInWindow__flag_bit_rect(gWorkspace_ItemTitle, window, 0, 0);
+        Text_DrawStringInWindow__flag_bit_rect(gWorkspace_ItemTitle, window, 0,
+                                               0);
       else if (mode == 1)
-        Text_DrawStringInWindow__flag_bit_rect(gWorkspace_EnergyTitle, window, 0, 0);
+        Text_DrawStringInWindow__flag_bit_rect(gWorkspace_EnergyTitle, window,
+                                               0, 0);
       else
-        Text_DrawStringInWindow__flag_bit_rect(gWorkspace_StatusTitle, window, 0, 0);
-      Text_DrawStringInWindow__flag_bit_rect(gWorkspace_PageLabel, window, 0, 8);
+        Text_DrawStringInWindow__flag_bit_rect(gWorkspace_StatusTitle, window,
+                                               0, 0);
+      Text_DrawStringInWindow__flag_bit_rect(gWorkspace_PageLabel, window, 0,
+                                             8);
       Text_DrawNumberInWindow__flag_bit_rect(page, 0, window, 40, 8);
       base = page << 5;
       Text_DrawNumberInWindow__flag_bit_rect(base, 3, window, 64, 8);
-      Text_DrawStringInWindow__flag_bit_rect(gWorkspace_RangeDash, window, 88, 8);
+      Text_DrawStringInWindow__flag_bit_rect(gWorkspace_RangeDash, window, 88,
+                                             8);
       Text_DrawNumberInWindow__flag_bit_rect(base + 31, 3, window, 96, 8);
       for (i = 0; i <= 31; i++) {
         slot = -1;
@@ -187,8 +203,11 @@ extern s16 gPortrait_CharacterMap[];
 extern s16 gPortrait_SpriteMap[];
 
 struct RenderInput *Portrait_OpenWindow(s32 x, s32 y, s32 width, s32 height);
-/* VIEW(flag_bit_rect): routine WindowSprite_PrepareForRedraw as void WindowSprite_PrepareForRedraw(struct RenderInput *window); resource_work has void WindowSprite_PrepareForRedraw(struct Window *). */
-extern void WindowSprite_PrepareForRedraw__flag_bit_rect(struct RenderInput *window) __asm__("WindowSprite_PrepareForRedraw");
+/* VIEW(flag_bit_rect): routine WindowSprite_PrepareForRedraw as void
+ * WindowSprite_PrepareForRedraw(struct RenderInput *window); resource_work has
+ * void WindowSprite_PrepareForRedraw(struct Window *). */
+extern void WindowSprite_PrepareForRedraw__flag_bit_rect(
+    struct RenderInput *window) __asm__("WindowSprite_PrepareForRedraw");
 
 /// A debug browser of the portraits: left and right step through
 /// gPortrait_CharacterMap and then gPortrait_SpriteMap, L and R by ten, each

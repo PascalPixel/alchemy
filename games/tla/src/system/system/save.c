@@ -151,7 +151,7 @@ s32 Save_ReadSector(s32 index) {
   return (u16)Save_ChecksumSector() - header.checksum;
 }
 
-s32 Func_08015ca4(s32 partId, void *source) {
+s32 Save_WritePart(s32 partId, void *source) {
   struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
   struct SaveSectorHeader header;
   volatile u32 zero;

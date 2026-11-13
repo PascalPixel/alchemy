@@ -448,7 +448,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite = &navigation->icons[2];
         iconSprite->oam.word.attr01 = 0x80000400;
         iconSprite->oam.word.attr23 = 0;
-        iconSprite->oam.f.tile = Func_08045528(unit->enemyId, smallIconSlot);
+        iconSprite->oam.f.tile = Portrait_Load(unit->enemyId, smallIconSlot);
         iconSprite->oam.f.x = ACTOR_ICON_X;
         iconSprite->oam.f.y = 0x80;
         iconSprite->oam.f.palette = 14;

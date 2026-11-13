@@ -818,7 +818,7 @@ DEFINE_FUNC_02001608(Func_02001608, 15, 16)
 
 // ---- games/tla/src/scene/mars_lighthouse_room_m/stop.c ----
 
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 extern u16 gData_02004cf0[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Func_02003130(void *handle);
@@ -1007,7 +1007,7 @@ struct RideWork__s1b64 {
   struct RideDirection direction;
 };
 
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 
 s32 Func_020018c4(struct Actor *a, struct Actor *b);
 s32 Func_02001928(struct Actor *a, struct Actor *b);
@@ -1179,7 +1179,7 @@ void Func_02001d98();
  * games/tla/src/scene/mars_lighthouse_room_m.c:1491: too many arguments to
  * function `Func_02001f14'. */
 extern void Func_02001f14__s1f94() __asm__("Func_02001f14");
-extern u8 gData_020023c4[];
+extern u8 gInventorySnapshot[];
 
 typedef struct Position {
   s32 x;

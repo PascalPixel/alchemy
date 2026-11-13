@@ -234,7 +234,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *);
 
 void BattleEffect_DispatchByIdRangeFar(struct BattlePresentationWork *work);
 void BattleEffect_RunTableEffectFar(struct BattlePresentationWork *work);
-void Func_08138020(struct BattlePresentationWork *work);
+void BattleEffect_RunElementPillarFar(struct BattlePresentationWork *work);
 
 s32 Battle_RunEncounter(s32 enemyGroup);
 
@@ -306,7 +306,7 @@ extern const u16 gData_0812881a[];
 extern const u16 gData_08128828[];
 extern const u16 gData_08128836[];
 
-s32 Func_0811df70(struct BattlePlan *plan, s32 mode);
+s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode);
 
 s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode);
 s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,

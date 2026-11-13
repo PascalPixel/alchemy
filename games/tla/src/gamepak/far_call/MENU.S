@@ -23,4 +23,4 @@ Resource_FarCall007:
 	export MenuIcon_ReplaceObjectFar, MenuIcon_ReplaceObject
 	export MenuIcon_SetPositionFar, MenuIcon_SetPosition
 	export MenuIcon_SetPictureFar, MenuIcon_SetPicture
-	export Func_080f80a0, Func_08105350
+	export DjinnFigures_SetSlotPhaseFar, DjinnFigures_SetSlotPhase

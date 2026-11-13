@@ -197,7 +197,7 @@ Party_SetFields1f2And1f4:
 	.global Func_020011c0
 	.thumb_func
 Func_020011c0:
-	overlay_veneer Func_080c82e0
+	overlay_veneer Field_TryJumpForwardFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:

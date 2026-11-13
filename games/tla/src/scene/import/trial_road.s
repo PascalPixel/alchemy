@@ -353,7 +353,7 @@ Func_020059b8:
 	.global Func_020059c0
 	.thumb_func
 Func_020059c0:
-	overlay_veneer Func_080c82e0
+	overlay_veneer Field_TryJumpForwardFar
 	.global Func_020059c8
 	.thumb_func
 Func_020059c8:

@@ -22,7 +22,11 @@
 void Func_02004d9c(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-/* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s07f4.c:43: structure has no member named `layer'. */
+/* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4;
+ * module/scene/scene.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/gaia_rock_inside/s07f4.c:43: structure has no member
+ * named `layer'. */
 struct DustSprite__s07f4 {
   u8 unk00[9];
   u8 unused09 : 2;
@@ -175,7 +179,7 @@ void Func_02000af8(s32 unused, u32 id) {
   s32 *state;
 
   direction = Func_02004904();
-  state = (s32 *)(gData_020023c4 + 0x288);
+  state = (s32 *)(gInventorySnapshot + 0x288);
   object->collisionFlags = 0;
   Func_02004d9c(object, ((direction & 0xc000) >> 14) + 2);
   if (direction & 0x4000)
@@ -384,12 +388,17 @@ void Func_02000fac(void) {
 #undef FIELD_AT
 
 // ---- games/tla/src/scene/gaia_rock_inside/s1048.c ----
-// Scene code of overlay 0x681, in ROM order, from s1048's offset up to the next object the overlay links.
+// Scene code of overlay 0x681, in ROM order, from s1048's offset up to the next
+// object the overlay links.
 
 #include "text/msg_ids.h"
 
 extern s32 gData_0200559c[];
-/* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4 has extern struct Actor gData_0200646c; tried as the definition's extern struct ActorPlacement gData_0200646c[], it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s07f4.c:392: conflicting types for `gData_0200646c'. */
+/* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4
+ * has extern struct Actor gData_0200646c; tried as the definition's extern
+ * struct ActorPlacement gData_0200646c[], it does not compile in tla-ja:
+ * games/tla/src/scene/gaia_rock_inside/s07f4.c:392: conflicting types for
+ * `gData_0200646c'. */
 extern s32 gData_0200646c__s1048[] __asm__("gData_0200646c");
 
 /// Object 10 turns to the leader, talks and walks to its place while the camera
@@ -470,7 +479,8 @@ void Func_020011c8(void) {
 }
 
 // ---- games/tla/src/scene/gaia_rock_inside/s12ac.c ----
-// Scene code of overlay 0x681, in ROM order, from s12ac's offset up to the next object the overlay links.
+// Scene code of overlay 0x681, in ROM order, from s12ac's offset up to the next
+// object the overlay links.
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -502,7 +512,9 @@ void Func_020012ac(void) {
   Func_02004e64();
 }
 
-/* VIEW(s12ac): routine Actor_StartScript as s32 Actor_StartScript(); s07f4 has void Actor_StartScript(struct Actor *object, const s32 *script); not tried: Actor_StartScript's bound declaration was not found. */
+/* VIEW(s12ac): routine Actor_StartScript as s32 Actor_StartScript(); s07f4 has
+ * void Actor_StartScript(struct Actor *object, const s32 *script); not tried:
+ * Actor_StartScript's bound declaration was not found. */
 extern s32 Func_02004dac__s12ac() __asm__("Actor_StartScript");
 extern u8 gData_02005208[];
 
@@ -524,7 +536,8 @@ void Func_02001314(s32 a0) {
 #undef FIELD_AT
 
 // ---- games/tla/src/scene/gaia_rock_inside/s136c.c ----
-// Scene code of overlay 0x681, in ROM order, from s136c's offset up to the next object the overlay links.
+// Scene code of overlay 0x681, in ROM order, from s136c's offset up to the next
+// object the overlay links.
 
 #include "frame.h"
 #include "system/field_effect.h"

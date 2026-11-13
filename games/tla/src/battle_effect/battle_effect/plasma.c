@@ -72,7 +72,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != count * 8 - count + 42; frame++) {
     // The strongest variant pans the camera over the first 64 frames.
     if (effect->variant == 2 && frame <= 63) {
-      struct CameraWork *camera = Ram_HeapSlots->cameraWork;
+      struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
       s32 speed;
 
       if (frame <= 55)
@@ -80,9 +80,9 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
       else
         speed = 704 - frame * 8;
       if (effect->side == 1)
-        camera->scroll -= speed;
+        camera->yaw -= speed;
       else
-        camera->scroll += speed;
+        camera->yaw += speed;
     }
     if (frame == 24)
       BattlePlayback_StartFar(134);
@@ -302,15 +302,15 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != GROUP_COUNT * 8 + 40; frame++) {
-    struct CameraWork *camera = Ram_HeapSlots->cameraWork;
+    struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     // The strongest variant pans the camera; the next one wipes the canvas
     // at frame 4.
     if (effect->variant == 2 && frame <= 51) {
       if (effect->side == 0)
-        camera->scroll += 256;
+        camera->yaw += 256;
       else
-        camera->scroll -= 256;
+        camera->yaw -= 256;
     }
     if (effect->variant == 3 && frame == 4)
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);

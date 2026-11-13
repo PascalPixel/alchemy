@@ -206,7 +206,7 @@ s32 FieldSequence_Run(void) {
          * offset 0x2c0 is built afresh, not added to the scene's 0x2be in r0;
          * without it, 21 of 1300 instructions differ in tla-en. */
         asm("" : : : "r0");
-        if ((value = Func_080c9e1c(ARRIVAL.entrance)) & 16)
+        if ((value = FlagEntries_GetValue(ARRIVAL.entrance)) & 16)
         clearOwner:
           gMainRoutineWork.ownerOverride = zero;
         else if (value & 32)

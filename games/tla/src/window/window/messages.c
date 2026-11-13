@@ -726,8 +726,8 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 /* VIEW(window): routine Portrait_Create as s32 Portrait_Create(s32 id, s32
  * kind, s32 slot, struct Window *window, s32 x, s32 y); window/screens has
  * struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
- * s32 arg3, s32 arg4, s32 arg5) {; not tried: Portrait_Create's declaration
- * holds a FAKEMATCH tag. */
+ * s32 arg3, s32 arg4, s32 arg5) {; tried with no declaration of its own, it
+ * does not compile with a current GCC (make modern): conflicting types. */
 s32 Portrait_Create__window(s32 id, s32 kind, s32 slot, struct Window *window,
                             s32 x, s32 y) __asm__("Portrait_Create");
 #define Portrait_Create Portrait_Create__window

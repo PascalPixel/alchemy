@@ -62,6 +62,24 @@
 #include "battle/battle_event.h"
 #include "module/battle/battle.h"
 #include "module/system/system.h"
+#include "system/io_write_queue.h"
+#include "game/item.h"
+#include "field_event.h"
+#include "game/character.h"
+#include "battle/battle_status_icon.h"
+#include "system/io_write.h"
+#include "system/frame.h"
+#include "battle/range_falloff.h"
+#include "battle/battle_effect.h"
+#include "graphics/vram_tab.h"
+#include "battle/b5_context.h"
+#include "game/owner_value.h"
+#include "bg_scroll.h"
+#include "system/irq.h"
+#include "system/ram_code.h"
+#include "system/transform.h"
+#include "field/effect_step.h"
+#include "battle_formation.h"
 
 // Far calls the parts make, each passing its own view of the record:
 // ResourceMetadata_Register and SpriteAnimation_Start (field.c, resource_slot/)
@@ -314,5 +332,8 @@ extern const u16 gBattleUnit_WeaponAnimationsMia[];
 extern const u16 gBattleUnit_WeaponAnimationsJenna[];
 
 extern struct BattlePresentationTransition *gTransitionWork;
+
+u32 BattleSprite_GetAttackHop(u32 index);
+s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 
 #endif

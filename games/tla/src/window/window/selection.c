@@ -890,10 +890,6 @@ UNUSED void Menu_MoveSelectionForward(struct SelectionScrollScreen *screen) {
 }
 
 extern struct SelectionScrollScreen *gResQueueWork;
-/* VIEW(window): variable gKeyState as u32 gKeyState; module/window/window.h has
- * s32 gKeyState; not tried: gKeyState's declaration holds a FAKEMATCH tag. */
-extern u32 gKeyState__window __asm__("gKeyState");
-#define gKeyState gKeyState__window
 extern volatile u32 gKeysRepeat;
 
 void Menu_MoveSelectionBackward(struct SelectionScrollScreen *screen) {

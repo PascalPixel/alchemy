@@ -40,20 +40,6 @@ struct CaptureObject__f0d8740 {
   void *callback;
 };
 
-/* VIEW(f0d8740): routine Actor_CreateFar as struct CaptureObject__f0d8740
- * *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct
- * BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
- * not tried: Actor_CreateFar's bound declaration was not found. */
-extern struct CaptureObject__f0d8740 *
-Func_080200c0__f0d8740(s32 kind, s32 x, s32 y,
-                       s32 z) __asm__("Actor_CreateFar");
-/* VIEW(f0d8740): routine Actor_ReleaseFar as void Actor_ReleaseFar(struct
- * CaptureObject__f0d8740 *object); battle.h has void Actor_ReleaseFar(struct
- * Actor *object); not tried: Actor_ReleaseFar's bound declaration was not
- * found. */
-extern void Actor_Destroy__f0d8740(
-    struct CaptureObject__f0d8740 *object) __asm__("Actor_ReleaseFar");
-
 void Djinn_RunMercuryJoinEffect(s32 arg) {
   struct CaptureObject__f0d8740 *djinni;
   struct CaptureObject__f0d8740 *copy;
@@ -101,7 +87,7 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   previous = djinni;
   cursor = copies;
   for (remaining = 7; remaining >= 0; remaining--) {
-    copy = Func_080200c0__f0d8740(kind, djinni->x, djinni->y, djinni->z);
+    copy = Actor_CreateFar(kind, djinni->x, djinni->y, djinni->z);
     *cursor++ = copy;
     if (copy != NULL) {
       copy->scaleY = 0xf000;
@@ -127,10 +113,10 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
     djinni->y += 0x80000;
     wait(1);
   }
-  Actor_Destroy__f0d8740(djinni);
+  Actor_ReleaseFar(djinni);
   list = copies;
   for (remaining = 7; remaining >= 0; remaining--)
-    Actor_Destroy__f0d8740(*list++);
+    Actor_ReleaseFar(*list++);
   if (resourceId != 96)
     VramCache_FreeEntry(resourceId);
   wait(10);
@@ -187,10 +173,10 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
 /// Allocates the ropes' work, loads their node picture and starts Rope_Draw
 /// and Rope_Update. A scene with ropes to lash calls it first.
 void Rope_Initialize(void) {
-  struct Work9c *work = HeapSlot_AllocEwram(156, sizeof(struct Work9c));
+  struct RopeWork *work = HeapSlot_AllocEwram(156, sizeof(struct RopeWork));
   void *buffer = Heap_Alloc(0x100);
 
-  Dma_Fill32(0, work, sizeof(struct Work9c));
+  Dma_Fill32(0, work, sizeof(struct RopeWork));
   work->vramEntry = VramCache_FindFreeEntry();
   Decompress_TaggedLz(gRope_Tiles, buffer);
   VramCache_Load(work->vramEntry, 0x100, buffer);
@@ -199,34 +185,14 @@ void Rope_Initialize(void) {
   Heap_Release(buffer);
 }
 
-struct ChainWork {
-  u8 unk000[8];
-  s32 vramEntry;
-  struct ChainSlot slots[8];
-};
-
-/* VIEW(f0d8740): routine OamMatrix_AllocFromTransform as s32
- * OamMatrix_AllocFromTransform(struct ChainTransform *source); affine.h has s32
- * OamMatrix_AllocFromTransform(struct AffineTransform *source); not tried:
- * OamMatrix_AllocFromTransform's bound declaration was not found. */
-extern s32 AffineMatrix_BuildForEffect__f0d8740(
-    struct ChainTransform *source) __asm__("OamMatrix_AllocFromTransform");
-/* VIEW(f0d8740): routine Oam_AddSpriteAtDepthClamped as void
- * Oam_AddSpriteAtDepthClamped(void *entry, s32 slot); f0d6674 has void
- * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth); not
- * tried: Oam_AddSpriteAtDepthClamped's bound declaration was not found. */
-extern void
-Func_080140d8__f0d8740(void *entry,
-                       s32 slot) __asm__("Oam_AddSpriteAtDepthClamped");
-
 /// The heap slot 0x9c work's per-frame callback (Rope_Initialize schedules it).
 /// For each of the eight slots it draws a sprite at the midpoint of each pair
 /// of neighbouring nodes in the slot's chain, 4 pixels up, turned along the
 /// pair and given the slot's priority, culled to the screen and sorted into the
 /// OAM buckets by depth; the chain's first node takes the last angle.
 void Rope_Draw(void) {
-  struct ChainWork *work = Ram_HeapSlots->unk84[6];
-  struct ChainSlot *slot = work->slots;
+  struct RopeWork *work = ROPE_WORK;
+  struct RopeSlot *slot = work->slots;
   s32 i;
   s32 prevX = 0;
   s32 prevY = 0;
@@ -238,8 +204,8 @@ void Rope_Draw(void) {
   s32 viewX = view[0] & 0xffff0000;
   s32 viewZ = view[1] & 0xffff0000;
   s32 originY = map->origin[1];
-  struct ChainTransform transform;
-  struct ChainNode *node;
+  struct AffineTransform transform;
+  struct RopeNode *node;
   u32 angle;
 
   for (i = 7; i >= 0; i--, slot++) {
@@ -281,12 +247,11 @@ void Rope_Draw(void) {
             transform.scaleX = 0x100;
             transform.scaleY = 0x100;
             node->sprite.affine = 1;
-            node->sprite.affineIndex =
-                AffineMatrix_BuildForEffect__f0d8740(&transform);
+            node->sprite.affineIndex = OamMatrix_AllocFromTransform(&transform);
           }
           node->sprite.priority = priority;
           node->angle = angle;
-          Func_080140d8__f0d8740(sprite, prevY);
+          Oam_AddSpriteAtDepthClamped(sprite, prevY);
         }
       }
       prevX = x;
@@ -303,19 +268,14 @@ void Rope_Draw(void) {
   }
 }
 
-struct SwingWork {
-  u8 unk000[12];
-  struct SwingSlot slots[8];
-};
-
 /// The ropes' per-frame task: unless flag 260 is set, prompts to step onto a
 /// tied rope when the leader stands at one of its ends (0xfc85), or while on
 /// one (render mode 3, 0xfc86); then swings each swinging rope, its amplitude
 /// decaying by 0.95 a frame until it settles.
 void Rope_Update(void) {
   struct SwingEvent *event = Ram_HeapSlots->eventWork;
-  struct SwingWork *work = Ram_HeapSlots->unk84[6];
-  struct SwingSlot *slot;
+  struct RopeWork *work = ROPE_WORK;
+  struct RopeSlot *slot;
   s32 i = 0;
 
   if (!GameFlag_Get(260) && event->timer > 12) {
@@ -324,10 +284,10 @@ void Rope_Update(void) {
 
       if (target != -1) {
         for (i = 0; i < 8; i++)
-          if (work->slots[i].id == target || work->slots[i].value == target)
+          if (work->slots[i].first == target || work->slots[i].second == target)
             break;
         if (i < 8 &&
-            Rope_IsLeaderAtEnd(work->slots[i].id, work->slots[i].value))
+            Rope_IsLeaderAtEnd(work->slots[i].first, work->slots[i].second))
           event->prompt = 0xfc85;
       }
     } else if (gMainRoutineWork.renderMode == 3) {
@@ -336,30 +296,30 @@ void Rope_Update(void) {
   }
   slot = work->slots;
   for (i = 0; i < 8; i++, slot++) {
-    if (slot->active != 0) {
+    if (slot->swinging != 0) {
       s32 swing = Iwram_MulQ16(Trig_Sin(slot->phase), slot->amplitude);
 
       slot->phase += 0x1000;
       slot->amplitude = Iwram_MulQ16(slot->amplitude, 0xf333);
       if (slot->amplitude <= 0x1998) {
         slot->amplitude = 0;
-        slot->active = 0;
+        slot->swinging = 0;
       }
-      Rope_SwingBetween(i, slot->id, slot->value, swing);
+      Rope_SwingBetween(i, slot->first, slot->second, swing);
     }
   }
 }
 
 /// Returns the first unused of the ropes' 128 nodes, or NULL.
-struct Work9cItem *Rope_AllocNode(void) {
-  struct Work9c *work = WORK_9C;
-  struct Work9cItem *item = work->items;
+struct RopeNode *Rope_AllocNode(void) {
+  struct RopeWork *work = ROPE_WORK;
+  struct RopeNode *node = work->nodes;
   s32 index;
 
   for (index = 0; index <= 127; index++) {
-    if (item->used == 0)
-      return item;
-    item++;
+    if (node->kind == 0)
+      return node;
+    node++;
   }
   return NULL;
 }
@@ -367,21 +327,21 @@ struct Work9cItem *Rope_AllocNode(void) {
 /// Lays rope index tied between posts id and other and shows both posts tied
 /// (animation 2).
 void Rope_Tie(s32 index, s32 id, s32 other) {
-  struct Work9c *work = WORK_9C;
+  struct RopeWork *work = ROPE_WORK;
   s32 priority = 2;
   struct Actor *first = ObjectTable_Get(id);
   struct Actor *second = ObjectTable_Get(other);
 
   if (first != NULL && second != NULL) {
-    struct Work9cSlot *slot;
+    struct RopeSlot *slot;
     s32 lift;
 
     if (first->animationKind == 1)
       priority = ((struct FieldSprite *)first->sprite)->priority;
     slot = &work->slots[index];
-    slot->id = id;
-    slot->value = other;
-    *(s16 *)slot->unk06 = priority;
+    slot->first = id;
+    slot->second = other;
+    slot->priority = priority;
     lift = 128;
     /* FAKEMATCH(barrier): an empty asm on lift keeps its 128 built after the
      * priority's store and ahead of the coordinates' loads; without it, 10
@@ -398,7 +358,7 @@ void Rope_Tie(s32 index, s32 id, s32 other) {
 /// Builds rope index's nodes on the line between two points, one for each 6
 /// pixels, bowed by a half sine; marks it tied and swinging and sets its flag.
 s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
-  struct RopeWork *work = Ram_HeapSlots->unk84[6];
+  struct RopeWork *work = ROPE_WORK;
   s32 result = 0;
   s32 dx = x2 - x1;
   s32 sx = dx >> 8;
@@ -424,7 +384,7 @@ s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
   angle = ArcTan2(sx, sy);
   sin = Trig_Sin(angle);
   cos = Trig_Cos(angle);
-  slot->count = count;
+  slot->segments = count;
   for (i = 0; i <= count; i++) {
     s32 bow;
 
@@ -447,7 +407,7 @@ s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
   }
   *link = NULL;
   slot->state = 1;
-  slot->active = 1;
+  slot->swinging = 1;
   slot->amplitude = 0x10000;
   slot->phase = 0x4000;
   if (slot->flag != 0)

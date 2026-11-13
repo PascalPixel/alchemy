@@ -44,7 +44,9 @@ void WorldMap_MarkPlaceVisited(s32 id, s32 variant) {
   }
 }
 
-s32 Func_080c9e1c(s32 flag) {
+/// Returns the value of the flag entry whose flag is flag, or 1 when there is
+/// none or its value is 0.
+s32 FlagEntries_GetValue(s32 flag) {
   const struct FlagEntry *entry = FlagEntries_GetTable();
 
   while (entry->flag != 0) {

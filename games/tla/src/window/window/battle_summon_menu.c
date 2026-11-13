@@ -1,0 +1,401 @@
+/// @file
+/// The battle summon menu.
+// Part of window.c.
+
+#include "../window_internal.h"
+#include "gamepak/far_call/game.h"
+#include "module/window/screens.h"
+
+// Where the Japanese layout differs: the summon list's window and its Djinn
+// costs, in tiles. The Japanese edition decodes a summon's description
+// (Message_DecodeRaw) into at most 32 halfwords; the others copy its text
+// (Message_CopyExpanded) into at most 52.
+#if LANGUAGE != LANGUAGE_JAPANESE
+#define SUMMON_MENU_WINDOW_X 13
+#define SUMMON_MENU_WINDOW_WIDTH 17
+#define SUMMON_COST_X 11
+#define BATTLE_MENU_MESSAGE_CAPACITY 52
+#define BATTLE_MENU_MESSAGE_COPY Message_CopyExpanded
+#else
+#define SUMMON_MENU_WINDOW_X 14
+#define SUMMON_MENU_WINDOW_WIDTH 16
+#define SUMMON_COST_X 10
+#define BATTLE_MENU_MESSAGE_CAPACITY 32
+#define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
+#endif
+
+#define NAVIGATION ((struct SummonMenuNavigation *)Ram_HeapSlots->unke4[0])
+#define SUMMON_END 32
+
+s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
+  struct SummonMenuOam cursorStorage;
+  struct SummonMenuSprite sprites[4];
+  u8 learnedSummons[33];
+  u8 orderedSummons[33];
+  u16 text[64];
+  s32 iconSlots[4];
+  u8 visibleSummons[4];
+  s32 glyph;
+  s32 count;
+  struct SummonMenuWindow *window;
+  struct SummonMenuWork *work;
+  s32 drawnRow;
+  s32 drawnFirstEntry;
+  s32 selectedRow;
+  s32 firstEntry;
+  s32 cursorHandle;
+  struct SummonMenuWindow *description;
+  struct SummonMenuWindow *counts;
+  s32 mask;
+  s32 preferredRow;
+  struct {
+    s32 x, y;
+  } cursorPosition;
+  const struct SummonDefinition *summon;
+  struct SummonMenuNavigation *navigation;
+  struct SummonMenuSprite *sprite;
+  struct SummonMenuOam *cur;
+  s32 orderedCount;
+  s32 id;
+  s32 tile;
+  s32 affordable;
+  s32 pressed;
+  s32 repeated;
+  s32 result;
+  s32 index;
+
+  work = (struct SummonMenuWork *)Ram_HeapSlots->windowTiles;
+  drawnRow = -1;
+  drawnFirstEntry = -1;
+  cursorHandle = (s16)VramCache_AllocEntry(128);
+  description = Window_Create(0, 4, 30, 4, 42);
+  counts = Window_Create(20, 8, 10, 3, 6);
+  mask = 0;
+  do {
+    firstEntry = NAVIGATION->page;
+    selectedRow = NAVIGATION->row;
+    preferredRow = NAVIGATION->preferredRow;
+  } while (0);
+  window =
+      Window_Create(SUMMON_MENU_WINDOW_X, 11, SUMMON_MENU_WINDOW_WIDTH, 9, 6);
+
+  for (index = 0; index < 4; index++) {
+    s32 y;
+    // t holds the attribute zero, then is reused for the window's y; as plain
+    // stores, 2 of 984 instructions differ in tla-en.
+    u32 t = 0;
+
+    y = index * 2;
+    /* FAKEMATCH(dead): an empty once-only block after the row, which keeps it
+     * and the zero ahead of the stores; without it, 6 of 984 instructions
+     * differ in tla-en. */
+    do {
+    } while (0);
+    sprite = &sprites[index];
+    sprites[index].oam.word.attr01 = 0x40000000;
+    sprites[index].oam.word.attr23 = t;
+    sprite->oam.f.x = window->x * 8 + 8;
+    t = window->y;
+    sprite->oam.f.y = (y + t) * 8 + 4;
+  }
+  for (index = 0; index < 4; index++) {
+    s32 slot = VramCache_AllocEntry(128);
+
+    iconSlots[index] = slot;
+    sprites[index].oam.f.tile = VramCache_Reload(slot, (const void *)-1);
+  }
+
+  count = Summon_ListLearnedFar(learnedSummons);
+  // The first scan's exit inside a block that runs once leaves the outer loop's
+  // select block in place; as a plain block, 226 of 984 instructions differ in
+  // tla-en.
+  do {
+    s32 i;
+
+    orderedCount = 0;
+    for (i = count - 1; i >= 0; i--) {
+      const struct SummonDefinition *definition;
+      s32 n;
+      s32 k;
+
+      k = learnedSummons[i];
+      definition = SummonDefinition_Get(k);
+      for (n = 0; n <= 3; n++) {
+        if (definition->djinnRequired[n] > standby[n])
+          break;
+      }
+      if (n == 4) {
+        orderedSummons[orderedCount] = k;
+        learnedSummons[i] = SUMMON_END;
+        orderedCount++;
+      }
+    }
+  } while (0);
+  {
+    s32 i;
+    s32 k;
+
+    for (i = 0; i < count; i++) {
+      k = learnedSummons[i];
+      if (k != SUMMON_END)
+        orderedSummons[orderedCount++] = k;
+    }
+  }
+  orderedSummons[orderedCount] = SUMMON_END;
+
+  for (;;) {
+    /* FAKEMATCH(temporary): cur holds &cursorStorage; as cursorStorage used
+     * directly, 277 of 984 instructions differ in tla-en. */
+    cur = &cursorStorage;
+
+    if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
+      work->holdTilemapUpload = 1;
+      {
+        s32 x = window->x + 1;
+        /* FAKEMATCH(barrier): an empty asm on x, which issues its add after the
+         * other arguments; as x inside the call, 2 of 984 instructions differ
+         * in tla-en. */
+        asm("" : "=r"(x) : "0"(x));
+        Window_HighlightRect(x, window->y + drawnRow * 2 + 1, window->width - 2,
+                             1, 15);
+      }
+      Text_FillCanvasBackground();
+      {
+        const struct SummonDefinition *definition;
+        s32 element;
+
+        definition =
+            SummonDefinition_Get(orderedSummons[firstEntry + selectedRow]);
+        BATTLE_MENU_MESSAGE_COPY(definition->nameMessageId +
+                                     (s32)MsgAbilityDescription,
+                                 text, BATTLE_MENU_MESSAGE_CAPACITY);
+        Text_DrawWideStringAtOffset(text, description, 0, 4);
+        drawnRow = selectedRow;
+        mask = 0;
+        for (element = 0; element <= 3; element++) {
+          if (definition->djinnRequired[element] != 0)
+            mask |= 1 << element;
+        }
+      }
+
+      if (firstEntry != drawnFirstEntry) {
+        // The redraw in a once-only block keeps the element loop's zero ahead
+        // of the loads after the call; as a plain call, 2 of 984 instructions
+        // differ in tla-en.
+        do {
+          WindowSprite_RedrawSavedRect(window);
+        } while (0);
+        {
+          s32 element;
+
+          for (element = 0; element <= 3; element++) {
+            Window_SetTilemapEntry(counts, element + 0x5001, element * 2, 0, 0);
+            if (standby[element] > 9)
+              tile = standby[element] + 0xf196;
+            else
+              tile = (standby[element] + '0') | 0xf000;
+            Window_SetTilemapEntry(counts, tile, element * 2 + 1, 0, 0);
+          }
+        }
+        {
+          s32 element;
+          s32 col;
+          s32 y;
+
+          index = 0;
+          if ((id = orderedSummons[firstEntry + index]) != SUMMON_END) {
+          next:
+            summon = SummonDefinition_Get(id);
+            col = 0;
+            for (element = 0; element <= 3; element++) {
+              if (summon->djinnRequired[element] > standby[element])
+                break;
+            }
+            affordable = element == 4;
+            Ability_LoadGlyph(summon->nameMessageId & 0x3fff, 0,
+                              &iconSlots[index], &glyph, 1);
+            y = index * 2;
+            sprites[index].oam.f.tile = glyph;
+            if (!affordable)
+              Text_SetColor(2);
+            Text_DrawMessageAsTiles(SummonDefinition_Get(id)->nameMessageId +
+                                        (s32)MsgAbilityNothing,
+                                    window, 16, index * 16);
+            for (element = 0; element <= 3; element++) {
+              if (summon->djinnRequired[element] != 0) {
+                Window_SetTilemapEntry(window, element + 0x5001,
+                                       col * 2 + SUMMON_COST_X, y, 0);
+                Window_PutGlyph(window, summon->djinnRequired[element] + '0',
+                                col * 2 + SUMMON_COST_X + 1, y, 0);
+                col++;
+              }
+            }
+            Text_SetColor(15);
+            visibleSummons[index++] = 1;
+            if (index <= 3 &&
+                (id = orderedSummons[firstEntry + index]) != SUMMON_END)
+              goto next;
+          }
+          while (index <= 3)
+            visibleSummons[index++] = 0;
+        }
+        drawnFirstEntry = firstEntry;
+      }
+
+      if (count > 4) {
+        for (index = 0; index < (count + 3) / 4; index++) {
+          tile = index + 0xf301;
+          if (index == firstEntry / 4)
+            tile = index + 0xf30b;
+          Window_SetTilemapEntry(
+              window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
+        }
+      }
+      Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
+                           window->width - 2, 1, 14);
+      work->dirty = 1;
+      work->holdTilemapUpload = 0;
+    }
+
+    for (index = 0; index <= 3; index++) {
+      if (visibleSummons[index] != 0)
+        Oam_AddSpriteAtDepth(&sprites[index], 240);
+    }
+
+    cursorPosition.x = window->x * 8 - 2;
+    cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
+    ((u32 *)cur)[1] = 0x40000000;
+    ((u32 *)cur)[2] = 0;
+    cur->tile = VramCache_Reload((u16)cursorHandle, gResource_FixedBlockBTiles);
+    cur->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
+    cur->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
+    sprite = (struct SummonMenuSprite *)&cursorStorage;
+    Oam_AddSpriteAtDepth(sprite, 242);
+
+    {
+      s32 element, tile, blink;
+
+      blink = gFrameCount & 8;
+      for (element = 0; element <= 3; element++) {
+        tile = 15 - (blink != 0);
+        if ((1 << element & mask) == 0)
+          tile = 15;
+        Window_HighlightRect(counts->x + element * 2 + 1, counts->y + 1, 2, 1,
+                             tile);
+      }
+    }
+
+    if (count > 4) {
+      for (index = 0; index < (count + 3) / 4; index++) {
+        tile = index + 0xf301;
+        if ((gFrameCount & 15) <= 11 && index == firstEntry / 4)
+          tile = index + 0xf30b;
+        Window_SetTilemapEntry(
+            window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
+      }
+      Window_SetTilemapEntry(window, 0xf334,
+                             window->width - (count + 3) / 4 - 3, -1, 0);
+      Window_SetTilemapEntry(window, 0xf335, window->width - 2, -1, 0);
+      do {
+        work->dirty |= 2 << ((u32)(window->y - 1) >> 2);
+      } while (0);
+    }
+
+    do {
+      NAVIGATION->page = firstEntry;
+      NAVIGATION->row = selectedRow;
+      NAVIGATION->preferredRow = preferredRow;
+    } while (0);
+    navigation = NAVIGATION;
+    pressed = gInput.pressed;
+    repeated = gInput.repeat;
+    if (navigation->tutorialStep != 0) {
+      repeated = 0;
+      pressed = 0;
+      if (navigation->tutorialDelay == 0) {
+        navigation->tutorialDelay = 120;
+        repeated = 1;
+        pressed = 1;
+      } else {
+        navigation->tutorialDelay--;
+      }
+    }
+    if (pressed & 1) {
+      result = orderedSummons[firstEntry + selectedRow];
+      break;
+    }
+    if (NAVIGATION->timer == 0 || (pressed & 2)) {
+      Sound_PlayFar(113);
+      result = -1;
+      break;
+    }
+    if (repeated & 0x80) {
+      Sound_PlayFar(111);
+      selectedRow++;
+      if (selectedRow == 4 || firstEntry + selectedRow == count)
+        selectedRow = 0;
+      preferredRow = selectedRow;
+    } else if (repeated & 0x40) {
+      Sound_PlayFar(111);
+      selectedRow--;
+      if (selectedRow < 0) {
+        if (firstEntry == (count - 1) / 4 * 4)
+          selectedRow = count - firstEntry - 1;
+        else
+          selectedRow = 3;
+      }
+      preferredRow = selectedRow;
+    } else if (repeated & 0x10) {
+      Sound_PlayFar(111);
+      Input_ResetKeyRepeat();
+      if (firstEntry + 4 >= count) {
+        if (firstEntry != 0) {
+          firstEntry = 0;
+          selectedRow = preferredRow;
+        }
+      } else {
+        firstEntry += 4;
+        selectedRow = preferredRow;
+        if (firstEntry == (count - 1) / 4 * 4) {
+          selectedRow = count - firstEntry - 1;
+          if (selectedRow > preferredRow)
+            selectedRow = preferredRow;
+        }
+      }
+    } else if (repeated & 0x20) {
+      Sound_PlayFar(111);
+      Input_ResetKeyRepeat();
+      if (firstEntry != 0) {
+        firstEntry -= 4;
+        selectedRow = preferredRow;
+      } else {
+        firstEntry = (count - 1) / 4 * 4;
+        selectedRow = preferredRow;
+        if (firstEntry != 0) {
+          selectedRow = count - firstEntry - 1;
+          if (selectedRow > preferredRow)
+            selectedRow = preferredRow;
+        }
+      }
+    }
+    wait(1);
+  }
+
+  wait(1);
+  for (index = 0; index < 4; index++)
+    VramCache_FreeEntry(iconSlots[index]);
+  VramCache_FreeEntry((u16)cursorHandle);
+  Window_Close(counts, 1);
+  Window_Close(description, 1);
+  Window_Close(window, 1);
+  wait(1);
+  return result;
+}
+
+#undef SUMMON_MENU_WINDOW_X
+#undef SUMMON_MENU_WINDOW_WIDTH
+#undef SUMMON_COST_X
+#undef BATTLE_MENU_MESSAGE_CAPACITY
+#undef BATTLE_MENU_MESSAGE_COPY
+#undef NAVIGATION
+#undef SUMMON_END

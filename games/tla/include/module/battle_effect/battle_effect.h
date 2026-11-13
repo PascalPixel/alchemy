@@ -42,11 +42,6 @@ struct FxSlot {
 };
 
 // The camera work, as far as this effect reads it.
-struct CameraWork {
-  u8 unk00[0x36];
-  u16 scroll;
-};
-
 struct Point2D {
   s32 x;
   s32 y;
@@ -206,7 +201,8 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
                                   s32 mode);
 extern char ResourceId_SheepCardSheet; // directory row 0xe3
 void BattleEffect_GetTargetsMidpoint(struct EffectPosition *midpoint);
-void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
+                                   s32 mode);
 void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
                                   s32 mode);
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
@@ -224,11 +220,6 @@ typedef struct {
   s32 reserved18[3];
   s16 values[1];
 } BattleEffectIndexWindow;
-struct EffectCamera {
-  s32 eye[3];
-  s32 pos[3];
-};
-
 // BattleEffect_RunDjinniEntrance's packed argument: the Djinni's element, the
 // side, and whether the Djinni stands at the anchor.
 enum { DJINNI_VENUS, DJINNI_MERCURY, DJINNI_MARS, DJINNI_JUPITER };

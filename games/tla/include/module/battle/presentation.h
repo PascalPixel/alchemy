@@ -2,8 +2,9 @@
 #define ALCHEMY_MODULE_BATTLE_PRESENTATION_H
 
 /// @file
-/// What the battle object's presentation parts (games/tla/src/battle/
-/// presentation/) declare for the files that use them, written once.
+/// What the battle object's later parts (games/tla/src/battle/battle/, from
+/// motion_graphics.c to spoils.c) declare for the files that use them,
+/// written once.
 
 #include "types.h"
 #include "battle/battle_action.h"

@@ -38,12 +38,6 @@ s32 BattleUnit_GetPartyAttackEffect(s32 characterId) {
 /// Broken Seal.
 void Battle_TurnStartNoOp(void) {}
 
-/* VIEW(battle): routine BattleAI_ChooseRandomTarget as s32
- * BattleAI_ChooseRandomTarget(); module/battle/presentation.h has s32
- * BattleAI_ChooseRandomTarget(s32 party); not tried:
- * BattleAI_ChooseRandomTarget's bound declaration was not found. */
-extern s32 Func_0811f4d4__battle() __asm__("BattleAI_ChooseRandomTarget");
-
 /// The plan of an extra action queued for the turn's end (command 10): ability
 /// 403, Daedalus, from a random unit of the queuing side against every unit
 /// of the other, staged as a summon (0x8000 | 26).
@@ -62,7 +56,7 @@ void BattleStaging_PlanDaedalus(u16 *source, struct ActionTargets *targets) {
   own = 0;
   if (source[0] <= 7)
     own = 1;
-  own = Battle_GetUnitAtPlace(Func_0811f4d4__battle(own));
+  own = Battle_GetUnitAtPlace(BattleAI_ChooseRandomTarget(own));
   targets->value50 = 2;
   targets->value54 = 14;
   {

@@ -146,7 +146,7 @@ struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
                                                s32 selector);
 void FieldPsynergy_Cyclone(void);
 void BattleObject_SpawnObjectsForList(s16 *list, s32 refresh, s32 spawn);
-void Func_0818f620(struct BattleEffectArgument *effect, u32 mode);
+void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect, u32 mode);
 void GameFlag_ClearFar(s32 flag);
 void GameFlag_SetFar(s32 flag);
 s32 SpriteDissolve_RunFar(void *object);

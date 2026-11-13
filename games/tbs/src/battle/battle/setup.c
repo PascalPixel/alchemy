@@ -19,18 +19,10 @@
 /// transform state, and through BattleCamera_SetRange the background's affine
 /// page.
 void BattleCamera_Update(void) {
-  // UB: indexing past scalar gBattleCamera reaches other heap slots.
-#ifdef UBFIX
   struct BattleCamera *camera = gBattleCamera;
   struct BattleBackgroundWork *view =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleWork *battle = gBattleWork;
-#else
-  struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  struct BattleBackgroundWork *view =
-      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
-#endif
   struct FixedPointPosition eyeOffset;
   s32 *focus;
   s16 delta;

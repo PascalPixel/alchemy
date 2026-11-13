@@ -256,9 +256,6 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   s32 n;
   u32 kept;
   struct Actor *object;
-  // UB: indexing past scalar gBattleWork reaches another heap slot.
-#ifndef UBFIX
-#endif
 
   // The camera: a staged battle effect turns to the acting unit's side over 60
   // frames (an enemy's to YAW_BEHIND_ENEMIES); otherwise the acting side's
@@ -269,11 +266,7 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   if (plan->battleEffect & EFFECT_SUMMON) {
     struct BattleBackgroundWork *view;
     s32 yaw;
-#ifdef UBFIX
     view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-#else
-    view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-#endif
     yaw = YAW_PARTY_ACTION;
     if (actor > ALLY_MAX)
       yaw = YAW_BEHIND_ENEMIES;
@@ -282,11 +275,7 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   } else {
     struct BattleBackgroundWork *view;
     s32 yaw;
-#ifdef UBFIX
     view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-#else
-    view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-#endif
     yaw = YAW_ENEMY_ACTION;
     if (actor <= ALLY_MAX)
       yaw = YAW_PARTY_ACTION;

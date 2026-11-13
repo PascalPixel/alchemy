@@ -128,16 +128,8 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
 /// frames. Called before sanctum and Djinn capture effects and Altmiller's wall
 /// burst; Shop_RestoreFieldPalette restores the saved colours afterward.
 void Shop_SaveAndTintFieldPalette(s32 layer) {
-  // UB: slot 32 lies past scalar gFieldWork.
-#ifdef UBFIX
   struct PaletteFade *paletteBuffers = gPaletteFadeWork;
   u8 *eventBytes = (u8 *)gFieldWork;
-#else
-  u32 *workCells = (u32 *)&gFieldWork;
-  struct PaletteFade *paletteBuffers =
-      (struct PaletteFade *)workCells[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_FIELD];
-  u8 *eventBytes = (u8 *)workCells[0];
-#endif
   u16 *savedPalette = paletteBuffers->target;
 
   Dma_Set(savedPalette, eventBytes + 0x236, DMA_COPY_WORDS(336), REG_DMA3);

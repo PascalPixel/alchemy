@@ -59,16 +59,9 @@ void Palette_UpdatePulseBrightness(void) {
 /// task leaves the background alone), gProjection and the background's
 /// affine page.
 void BattleCamera_SetCommandView(s32 verticalOffset) {
-  // UB: indexing past scalar gBattleCamera reaches another heap slot.
-#ifdef UBFIX
   struct BattleCamera *camera = gBattleCamera;
   struct BattleBackgroundWork *view =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-#else
-  struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  struct BattleBackgroundWork *view =
-      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-#endif
   struct FixedPointPosition eyeOffset;
   u32 result;
 

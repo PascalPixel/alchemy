@@ -4,14 +4,6 @@
 
 #include "../battle_internal.h"
 
-// Native-only view retained for the measured target-picker form below.
-#ifndef UBFIX
-/// BattleWork's unit lists, read as one array of halfwords.
-struct BattleWorkUnitListView {
-  s16 items[64]; ///< BattleWork from its start; each list at its offset / 2
-};
-#endif
-
 /// Picks a random place: with requireLivingUnit, a party member still
 /// standing; otherwise any enemy place in use. Returns its place code, or 0
 /// when there is none.
@@ -20,12 +12,8 @@ struct BattleWorkUnitListView {
 /// requireLivingUnit set for a party unit. Takes one Random16 roll when any
 /// position qualifies.
 s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
-
   u16 positions[6];
   s32 count;
-
-  // UB: the view treats distinct BattleWork members as one array.
-#ifdef UBFIX
   s16 *unitIds;
   s32 unitId;
   s32 place;
@@ -42,65 +30,6 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
       continue;
     positions[count++] = place | sideTag;
   }
-#else
-  struct BattleWorkUnitListView *order;
-  s16 *entry;
-  u16 *cursor;
-  s32 value;
-  s32 index;
-  s32 slot;
-  s32 tail;
-  s32 offset;
-
-  count = 0;
-  order = (struct BattleWorkUnitListView *)gBattleWork;
-
-  // The party's places whose unit is still standing; then, in the else
-  // branch, the enemies' places in use, whether standing or not. Each walk
-  // indexes order from its list's offset in BattleWork, in halfwords.
-  if (requireLivingUnit != 0) {
-    index = 0;
-    slot = (u32)&((struct BattleWork *)0)->partyUnits / sizeof(s16);
-    if (order->items[slot] != BATTLE_UNIT_LIST_END) {
-      entry = order->items;
-      // The walk leaves by a break, so its loop's end note lies just before
-      // the else branch. As a do-while loop the else branch follows a bare
-      // barrier, CSE follows the requireLivingUnit test into it knowing count
-      // is 0, and 33 of 89 instructions differ in tbs-en.
-      for (;;) {
-        value = entry[slot];
-        if (value != BATTLE_UNIT_REMOVED) {
-          if (Unit_GetFar(value)->hp != 0) {
-            positions[count] = index | PLACE_PARTY;
-            count++;
-          }
-        }
-        slot++;
-        index++;
-        if (entry[slot] == BATTLE_UNIT_LIST_END)
-          break;
-      }
-    }
-  } else {
-    index = 0;
-    slot = (u32)&((struct BattleWork *)0)->enemyIds / sizeof(s16) - 1;
-    tail = (u32)&((struct BattleWork *)0)->enemyIds / sizeof(s16) - 1;
-    offset = tail * 2;
-    entry = (order->items + 1);
-    if (*(s16 *)((char *)entry + offset) != BATTLE_UNIT_LIST_END) {
-      cursor = entry;
-      do {
-        if ((s16)cursor[slot] != BATTLE_UNIT_REMOVED) {
-          positions[count] = index | PLACE_ENEMY;
-          count++;
-        }
-        slot++;
-        tail++;
-        index++;
-      } while (entry[tail] != BATTLE_UNIT_LIST_END);
-    }
-  }
-#endif
 
   if (count == 0)
     return 0;

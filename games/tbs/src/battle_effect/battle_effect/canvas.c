@@ -579,18 +579,10 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
 /// sets gBgScroll[1].y to 32 and the background view's secondMode to
 /// BATTLE_BACKGROUND_NONE; clears the canvas and character block 1.
 void BattleEffect_SetupCanvasTileMap(void) {
-  // UB: indexing past gBattleWork reaches the heap slots after it.
-#ifdef UBFIX
   void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   struct BattleWork *screen = gBattleWork;
   struct BattleBackgroundWork *layer =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-#else
-  u8 **cells = (u8 **)&gBattleWork;
-  void *canvas = cells[31];
-  struct BattleWork *screen = (struct BattleWork *)cells[0];
-  struct BattleBackgroundWork *layer = (struct BattleBackgroundWork *)cells[35];
-#endif
   s32 row;
   s32 column;
   s32 byteOffset;

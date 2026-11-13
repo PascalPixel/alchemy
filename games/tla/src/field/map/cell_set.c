@@ -306,9 +306,7 @@ void Func_02000840(struct Actor *object) {
 
   if (phase == 0) {
     {
-      /* FAKEMATCH(temporary): a local holding the mask builds it before the
-       * random draw; as Random16Far() & 15, 7 of 46 instructions differ in
-       * tla-en. */
+      // The mask, named where it is declared, is built before the draw.
       s32 mask = 15;
 
       dx = mask & Random16Far();

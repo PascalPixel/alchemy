@@ -24,7 +24,7 @@
 
 void Func_02004ee0(s16 *cells);
 void Func_02004ee8(void);
-void Func_02004e78(s32 owner, u16 value);
+void Import_FieldPsynergySetupActorPair(s32 owner, u16 value);
 void Func_02004f28(struct Actor *object, s32 sound);
 extern s32 Data_020067ec;
 extern s32 Data_020067f0;
@@ -368,7 +368,7 @@ void Func_02000ce4(s16 value) {
 
   BattleEffect_LoadActionEffectResources(151, 1);
   party = &gMainRoutineWork;
-  Func_02004e78(party->currentOwner, value);
+  Import_FieldPsynergySetupActorPair(party->currentOwner, value);
   FieldPsynergy_RunHandler(1);
   Import_BattleEffectStopMainActor();
   BattleEffect_CleanupSceneObjects();

@@ -198,9 +198,9 @@ Actor_SetSpritePriorityDirect:
 	.thumb_func
 Func_02004284:
 	overlay_veneer Func_080202f8
-	.global Func_0200428c
+	.global Import_FieldCheckSpheresOverlap
 	.thumb_func
-Func_0200428c:
+Import_FieldCheckSpheresOverlap:
 	overlay_veneer Field_CheckSpheresOverlapFar
 	.global TileMap_ConvertBuffer
 	.thumb_func

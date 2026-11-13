@@ -23,7 +23,7 @@
 extern u8 gData_02006f20[];
 extern u8 gData_02006e0e[];
 extern u8 gData_02006e0c[];
-void Func_02004da8(void);
+void Import_WorldMapFreeze(void);
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
@@ -101,7 +101,7 @@ void Func_02003d44(s32 mode) {
     MapGrid_SetShake(0x20000, 0x30000, 0x10000);
     Event_PlaySound(141);
   }
-  Func_02004da8();
+  Import_WorldMapFreeze();
   buffer = Heap_AllocEwram(0x4000);
   Decompress_TaggedLz(gWorldMapPackedTiles, buffer);
   Decompress_TaggedLz(gWorldMapPackedPictures, buffer + 0x1000);

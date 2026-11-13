@@ -38,9 +38,9 @@ HeapSlot_AllocFar:
 	.thumb_func
 HeapSlot_Release:
 	overlay_veneer HeapSlot_ReleaseFar
-	.global Func_02002824
+	.global Import_DecompressTaggedLz
 	.thumb_func
-Func_02002824:
+Import_DecompressTaggedLz:
 	overlay_veneer Decompress_TaggedLzFar
 	.global VramCache_FreeEntry
 	.thumb_func
@@ -66,9 +66,9 @@ GameFlag_Test:
 	.thumb_func
 GameFlag_SetBit:
 	overlay_veneer GameFlag_SetBitFar
-	.global Func_0200285c
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_0200285c:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
@@ -226,9 +226,9 @@ FieldCamera_WaitForArrival:
 	.thumb_func
 FieldCamera_MoveToActorById:
 	overlay_veneer FieldCamera_MoveToActorByIdFar
-	.global Func_0200299c
+	.global Import_EventSetDestination
 	.thumb_func
-Func_0200299c:
+Import_EventSetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Field_RequestBattleFromEncounterTable
 	.thumb_func

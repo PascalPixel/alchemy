@@ -22,10 +22,10 @@
 #include "resource.h"
 #include "text/msg_ids.h"
 
-void Func_02004100(s32 actor, s32 a, s32 b);
-s32 Func_02004130();
-void Func_02003fa8(struct Actor *object, s32 mode);
-void Func_02003f88(u32 *oam, s32 depth);
+void Import_ActorShowEmoteById(s32 actor, s32 a, s32 b);
+s32 Import_FieldCameraGetActor();
+void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
+void Oam_AddSpriteAtDepthClamped(u32 *oam, s32 depth);
 /* VIEW(s0b84): routine Func_0200388c as void Func_0200388c(const void *script,
  * s32 a, s32 b); the definition has void Func_0200388c(u16 *list, s32 mode, s32
  * count); tried as the definition's void Func_0200388c(u16 *list, s32 mode, s32
@@ -185,7 +185,7 @@ void Func_02000f24(void) {
         object->speedLimit = 0x12000;
         object->acceleration = 0x8000;
         Actor_SetSingleChildFlags((struct Actor *)object, 0);
-        Func_02003fa8((struct Actor *)object, 1);
+        Import_ActorSelectAnimation((struct Actor *)object, 1);
         Actor_StartScript(object, gData_02005828);
       }
     }
@@ -228,7 +228,7 @@ loop_3:
   Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
   FieldEvent_Wait(20);
   Scene_CamBounds(PIXELS(232), -1, PIXELS(196), 1);
-  Func_02004100(gMainRoutineWork.currentOwner, 0x101, 0);
+  Import_ActorShowEmoteById(gMainRoutineWork.currentOwner, 0x101, 0);
   Scene_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 232, 164);
   FieldEvent_Wait(20);
@@ -455,7 +455,7 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Call1((void (*)())Event_SetMessageId, (s32)MsgHeyLookUp);
   Call1((void (*)())Actor_Stop, 9);
   Call1((void (*)())wait, 1);
-  Value3((s32 (*)())Func_02004100, 9, 0x100, 0);
+  Value3((s32 (*)())Import_ActorShowEmoteById, 9, 0x100, 0);
   Call3((void (*)())Actor_ArmCallback, 9, 0, 20);
   Call2((void (*)())Event_ShowMessageAndWait, 9, 0);
   Call1((void (*)())Actor_Stop, 8);
@@ -468,9 +468,9 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Call3((void (*)())Actor_ArmCallback, 14, 0xd000, 0);
   owner = (s32 *)&gMainRoutineWork;
   owner += 133;
-  Call3((void (*)())Func_02004100, *owner, 0x100, 0);
+  Call3((void (*)())Import_ActorShowEmoteById, *owner, 0x100, 0);
   Call3((void (*)())Actor_ArmCallback, *owner, 0x8000, 0);
-  ((struct Actor *)Func_02004130())->motionFlags = 0;
+  ((struct Actor *)Import_FieldCameraGetActor())->motionFlags = 0;
   Call2((void (*)())Camera_SetSpeedParameters, 0x19999, 0x3333);
   Call4((void (*)())FieldCamera_MoveWithinMapBounds, 0xd40000, 0, 0xd40000, 1);
   FieldCamera_WaitForArrival();
@@ -514,8 +514,8 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Call2((void (*)())Event_ShowMessageAndWait, 10, 0);
   Call3((void (*)())Actor_ArmCallback, 8, 0x8000, 0);
   Call3((void (*)())Actor_ArmCallback, 9, 0x8000, 0);
-  Value3((s32 (*)())Func_02004100, 8, 0x102, 0);
-  Func_02004100(9, 0x102, 80);
+  Value3((s32 (*)())Import_ActorShowEmoteById, 8, 0x102, 0);
+  Import_ActorShowEmoteById(9, 0x102, 80);
   Call2((void (*)())Event_ShowMessageAndWait, 14, 0);
   Call3((void (*)())Actor_ArmCallback, 8, 0xd000, 0);
   Call3((void (*)())Actor_ArmCallback, 10, 0x3000, 0);
@@ -722,7 +722,7 @@ void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
         dust->motionFlags = odd;
         dust->collisionFlags = odd;
         Actor_SetSingleChildFlags(dust, 0);
-        Func_02003fa8(dust, 1);
+        Import_ActorSelectAnimation(dust, 1);
         Actor_StartScript(dust, gData_020042f0);
         sprite = dust->sprite;
         sprite->mode = 1;
@@ -1710,7 +1710,7 @@ DEFINE_STATUE_SINK(Func_0200388c, Func_02003910)
 
 #include "iwram_call.h"
 
-DEFINE_ACTOR_SET_CELL_OPEN(Func_02003910, Func_020041e0, Func_02003fa8)
+DEFINE_ACTOR_SET_CELL_OPEN(Func_02003910, Func_020041e0, Import_ActorSelectAnimation)
 
 /// The whole-pixel half of a 16.16 coordinate.
 /* VIEW(s3910): macro PIXELS as PIXELS__s3910; another part or header has
@@ -1824,7 +1824,7 @@ void Func_020039b8(void) {
 
 // Draws the rising platforms' columns as sprites, one 16-pixel piece per step
 // of height and a bobbing top, up to 80 of them, each an OAM entry queued by
-// Func_02003f88.
+// Oam_AddSpriteAtDepthClamped.
 void Func_02003b80(void) {
   struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct RideEntry *entry = work->entries;
@@ -1872,7 +1872,7 @@ void Func_02003b80(void) {
     *p++ = 0;
     *p++ = sy | x << 16 | 0x40002000;
     *p = (tile + frame) | 0x800;
-    Func_02003f88(oam, depth);
+    Oam_AddSpriteAtDepthClamped(oam, depth);
     oam += 3;
     count++;
   next:
@@ -1904,7 +1904,7 @@ void Func_02003b80(void) {
     *p++ = 0;
     *p++ = sy | x << 16 | 0x40002000;
     *p = (tile + frame - 32) | 0x800;
-    Func_02003f88(oam, depth);
+    Oam_AddSpriteAtDepthClamped(oam, depth);
     oam += 3;
     count++;
   }

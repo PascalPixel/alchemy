@@ -31,7 +31,7 @@ extern struct SpringTossMotion gData_02001760;
 extern struct SpringObstacle gData_020017c0[];
 extern s32 gData_02001824;
 extern s32 gData_02001828;
-void Func_020012e8(struct Actor *object, s32 mode);
+void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 extern s32 gData_02001820;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -599,9 +599,9 @@ void LemuriaSpring_UpdateTossSimulation(void) {
       if (toss->velocity.y != 0) {
         toss->velocity.y = 0;
         if (gData_020017b0 == 1) {
-          Func_020012e8(Actor_GetById(17), 1);
+          Import_ActorSelectAnimation(Actor_GetById(17), 1);
         } else {
-          Func_020012e8(Actor_GetById(12), 1);
+          Import_ActorSelectAnimation(Actor_GetById(12), 1);
         }
       }
 
@@ -631,12 +631,12 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         }
         if (toss->velocity.x == 0 && toss->velocity.z == 0) {
           if (gData_020017b0 == 1) {
-            Func_020012e8(Actor_GetById(17), 2);
+            Import_ActorSelectAnimation(Actor_GetById(17), 2);
             LemuriaSpring_SetSpriteStorageKind(15, 0);
             LemuriaSpring_SetSpriteStorageKind(14, 0);
             LemuriaSpring_SetSpriteStorageKind(13, 0);
           } else {
-            Func_020012e8(Actor_GetById(12), 2);
+            Import_ActorSelectAnimation(Actor_GetById(12), 2);
             LemuriaSpring_SetSpriteStorageKind(10, 0);
             LemuriaSpring_SetSpriteStorageKind(9, 0);
             LemuriaSpring_SetSpriteStorageKind(8, 0);
@@ -761,15 +761,15 @@ void LemuriaSpring_UpdateTossSimulation(void) {
       }
       if (obstacle->reactionFrames > 0) {
         if (index == 0) {
-          Func_020012e8(Actor_GetById(18), 3);
+          Import_ActorSelectAnimation(Actor_GetById(18), 3);
         } else {
-          Func_020012e8(Actor_GetById(19), 3);
+          Import_ActorSelectAnimation(Actor_GetById(19), 3);
         }
       } else {
         if (index == 0) {
-          Func_020012e8(Actor_GetById(18), 1);
+          Import_ActorSelectAnimation(Actor_GetById(18), 1);
         } else {
-          Func_020012e8(Actor_GetById(19), 1);
+          Import_ActorSelectAnimation(Actor_GetById(19), 1);
         }
         if (obstacle->pauseOrPhase == 0) {
           s32 pos;
@@ -806,9 +806,9 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         motionStep = motionStep * 3;
       }
       if (obstacle->reactionFrames > 0) {
-        Func_020012e8(Actor_GetById(20), 3);
+        Import_ActorSelectAnimation(Actor_GetById(20), 3);
       } else {
-        Func_020012e8(Actor_GetById(20), 2);
+        Import_ActorSelectAnimation(Actor_GetById(20), 2);
         obstacle->position.x = Math_Sine(obstacle->heading) * 48 + 0x700000;
         obstacle->position.z = Math_Cosine(obstacle->heading) * 40 + 0x480000;
         /* FAKEMATCH(temporary): the new heading held in cycleFrame, the local
@@ -829,14 +829,14 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         motionStep = motionStep * 3;
       }
       if (obstacle->reactionFrames > 0) {
-        Func_020012e8(Actor_GetById(21), 3);
+        Import_ActorSelectAnimation(Actor_GetById(21), 3);
       } else if (cycleFrame <= 383) {
         obstacle->position.x = Math_Sine(obstacle->heading) * 52 + 0x700000;
         obstacle->position.z = Math_Cosine(obstacle->heading) * 24 + 0x480000;
         obstacle->heading = obstacle->heading + motionStep;
-        Func_020012e8(Actor_GetById(21), 2);
+        Import_ActorSelectAnimation(Actor_GetById(21), 2);
       } else {
-        Func_020012e8(Actor_GetById(21), 3);
+        Import_ActorSelectAnimation(Actor_GetById(21), 3);
       }
       obstacle->pauseOrPhase = obstacle->pauseOrPhase + 1;
     }
@@ -918,18 +918,18 @@ void LemuriaSpring_UpdateTossSimulation(void) {
     LemuriaSpring_SetActorAppearance(15, &toss->trail[1].x, 0, 0, 16);
     LemuriaSpring_SetActorAppearance(14, &toss->trail[2].x, 0, 0, 16);
     LemuriaSpring_SetActorAppearance(13, &toss->trail[3].x, 0, 0, 16);
-    Func_020012e8(Actor_GetById(15), 4);
-    Func_020012e8(Actor_GetById(14), 4);
-    Func_020012e8(Actor_GetById(13), 4);
+    Import_ActorSelectAnimation(Actor_GetById(15), 4);
+    Import_ActorSelectAnimation(Actor_GetById(14), 4);
+    Import_ActorSelectAnimation(Actor_GetById(13), 4);
   } else {
     LemuriaSpring_SetActorAppearance(12, &toss->trail[0].x, 0, 0, 16);
     LemuriaSpring_SetActorAppearance(11, &toss->shadow.x, 0, 0, 16);
     LemuriaSpring_SetActorAppearance(10, &toss->trail[1].x, 0, 0, 16);
     LemuriaSpring_SetActorAppearance(9, &toss->trail[2].x, 0, 0, 16);
     LemuriaSpring_SetActorAppearance(8, &toss->trail[3].x, 0, 0, 16);
-    Func_020012e8(Actor_GetById(10), 4);
-    Func_020012e8(Actor_GetById(9), 4);
-    Func_020012e8(Actor_GetById(8), 4);
+    Import_ActorSelectAnimation(Actor_GetById(10), 4);
+    Import_ActorSelectAnimation(Actor_GetById(9), 4);
+    Import_ActorSelectAnimation(Actor_GetById(8), 4);
   }
 
   if (toss->launchFrame != -1) {
@@ -1006,8 +1006,8 @@ void LemuriaSpring_InitializeTossSimulation(void) {
   ride->velocity.z = 0;
   ride->frames = 0;
 
-  Func_020012e8(Actor_Get(20), 2);
-  Func_020012e8(Actor_Get(21), 2);
+  Import_ActorSelectAnimation(Actor_Get(20), 2);
+  Import_ActorSelectAnimation(Actor_Get(21), 2);
 
   Task_AddFrame((TaskFunc)LemuriaSpring_UpdateTossSimulation, TASK_PASS_VBLANK + 3);
 }
@@ -1038,14 +1038,14 @@ s32 LemuriaSpring_RunToss(s32 side) {
     ride->trail[0].z = 0x980000;
     ride->frames = 300;
     if (gData_020017b0 == 1) {
-      Func_020012e8(Actor_Get(16), 3);
-      Func_020012e8(Actor_Get(17), 0);
+      Import_ActorSelectAnimation(Actor_Get(16), 3);
+      Import_ActorSelectAnimation(Actor_Get(17), 0);
       LemuriaSpring_SetSpriteStorageKind(15, 1);
       LemuriaSpring_SetSpriteStorageKind(14, 1);
       LemuriaSpring_SetSpriteStorageKind(13, 1);
     } else {
-      Func_020012e8(Actor_Get(11), 3);
-      Func_020012e8(Actor_Get(12), 0);
+      Import_ActorSelectAnimation(Actor_Get(11), 3);
+      Import_ActorSelectAnimation(Actor_Get(12), 0);
       LemuriaSpring_SetSpriteStorageKind(10, 1);
       LemuriaSpring_SetSpriteStorageKind(9, 1);
       LemuriaSpring_SetSpriteStorageKind(8, 1);

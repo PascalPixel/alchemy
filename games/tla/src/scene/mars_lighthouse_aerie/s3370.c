@@ -19,9 +19,9 @@
 #include "system.h"
 #include "text/msg_ids.h"
 
-void Func_020057b4(void);
+void BattleEffect_GetObjectPriority(void);
 void Func_02004ec0(void);
-void Func_02005734();
+void Import_FieldCameraWaitForArrival();
 void Func_020057c4(void);
 
 extern s32 gData_02005b54[];
@@ -175,7 +175,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   FieldCamera_SetSpeed(0x19999, 0x3333);
   A(((s32)FieldCamera_GetActor()))->motionFlags = 0;
   FieldCamera_MoveTo(0x2000000, 0x600000, 0x1380000, 1);
-  Func_02005734();
+  Import_FieldCameraWaitForArrival();
   System_Wait(1);
   *(u16 *)0x4000052 = 0xc08;
   *(u16 *)0x4000050 = 0x3f10;
@@ -538,7 +538,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_FaceDirection(2, 0x6000, 0);
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(0x2000000, -1, 0x1400000, 1);
-  Func_02005734();
+  Import_FieldCameraWaitForArrival();
   Actor_FaceDirectionAndWait(19, 0xd000);
   Actor_SetAnimation(19, 3);
   Event_ShowMessage(19, 0);
@@ -666,7 +666,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   FieldEvent_Wait(20);
   FieldCamera_SetSpeed(0x19999, 0x3333);
   FieldCamera_MoveTo(0x2000000, -1, 0x1200000, 1);
-  Func_02005734();
+  Import_FieldCameraWaitForArrival();
   FieldTask_Remove((s32)Func_020004a4);
   Event_PlaySound(140);
   t184 = Actor_Get(8);
@@ -1190,12 +1190,12 @@ struct SparkleWork__s53e4 {
   struct Actor *object;
 };
 
-/* VIEW(s3370): routine Func_020057b4 as s32 Func_020057b4(struct Actor
- * *object); module/scene/scene.h has void Func_020057b4(void); tried as the
+/* VIEW(s3370): routine BattleEffect_GetObjectPriority as s32 BattleEffect_GetObjectPriority(struct Actor
+ * *object); module/scene/scene.h has void BattleEffect_GetObjectPriority(void); tried as the
  * rest of the object declares it, it does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1294: too many arguments to
- * function `Func_020057b4'. */
-extern s32 Func_020057b4__s3370(struct Actor *object) __asm__("Func_020057b4");
+ * function `BattleEffect_GetObjectPriority'. */
+extern s32 Func_020057b4__s3370(struct Actor *object) __asm__("BattleEffect_GetObjectPriority");
 
 void Func_020053e4(struct Actor *object, struct SparkleWork__s53e4 *work) {
   struct SparkleSprite__s53e4 *sprite;

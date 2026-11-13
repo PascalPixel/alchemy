@@ -26,7 +26,7 @@
 #include "scene_ids.h"
 #include "resource.h"
 
-s32 Func_02001268();
+s32 Oam_AddSpriteAtDepthClamped();
 
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
 
@@ -231,7 +231,7 @@ L_02008430:
   t49 = (u16)(((value >> 2) * 4 + tiles) & 0x3ff);
   t50 = p->sprite.halves[2];
   p->sprite.halves[2] = (t50 & -0x400) | t49;
-  Func_02001268(p, 100);
+  Oam_AddSpriteAtDepthClamped(p, 100);
 L_02008452:
   p->unk_0c += 1;
   if (p->unk_0c <= 31)

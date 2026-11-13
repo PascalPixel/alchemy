@@ -12,7 +12,7 @@
 #include "module/scene/sea_of_time.h"
 
 s32 Func_02001f9c(struct Actor *actor);
-void Func_02001f4c(struct Actor *object, s32 value);
+void Actor_SelectAnimation(struct Actor *object, s32 value);
 extern u16 Data_02002580[160];
 
 s32 Func_0200033c(struct Actor *object) {
@@ -867,7 +867,7 @@ next:
   // The object's per-frame hook, struct Actor's update.
   *(void (**)(struct Actor *))((u8 *)object + 0x6c) = Func_020010a8;
   Event_Wait(60);
-  Func_02001f4c(object, 1);
+  Actor_SelectAnimation(object, 1);
   Event_Wait(40);
   gMainRoutineWork.battleRule24b = 2;
   Event_SetAfterBattleDestination((s32)&SceneId_Ov687Room2, 4);

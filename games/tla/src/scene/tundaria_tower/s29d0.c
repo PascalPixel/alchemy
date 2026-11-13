@@ -17,7 +17,7 @@
 #include "particle.h"
 
 s32 Func_02003180(s32 layer, s32 shape, s32 height);
-u32 Func_02003150(struct FieldSprite *sprite, u32 frame);
+u32 Import_SpriteShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
 
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
@@ -38,7 +38,7 @@ void Func_020029d0(s32 spread) {
           285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
     }
     if (effect != 0) {
-      frame = Func_02003150(effect->sprite, frame);
+      frame = Import_SpriteShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
@@ -79,7 +79,7 @@ void Func_02002b04(void) {
       if (effect != NULL) {
         s32 angle;
 
-        state = Func_02003150(effect->sprite, state);
+        state = Import_SpriteShareVramCacheEntry(effect->sprite, state);
         zero = 0;
         effect->motionFlags = zero;
         effect->collisionFlags = zero;

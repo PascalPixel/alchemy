@@ -194,9 +194,9 @@ Import_FieldCheckSpheresOverlap:
 	.thumb_func
 Func_02005540:
 	overlay_veneer Func_08020360
-	.global Func_02005548
+	.global TileMap_ConvertBuffer
 	.thumb_func
-Func_02005548:
+TileMap_ConvertBuffer:
 	overlay_veneer TileMap_ConvertBufferFar
 	.global Party_CountMembers
 	.thumb_func

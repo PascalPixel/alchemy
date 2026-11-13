@@ -122,9 +122,9 @@ MapGrid_WaitForShakeToSettle:
 	.thumb_func
 Actor_SetSpriteColorMode:
 	overlay_veneer Actor_SetSpriteColorModeFar
-	.global Func_020055dc
+	.global TileMap_ConvertBuffer
 	.thumb_func
-Func_020055dc:
+TileMap_ConvertBuffer:
 	overlay_veneer TileMap_ConvertBufferFar
 	.global FieldMessage_Show
 	.thumb_func
@@ -138,9 +138,9 @@ Icon_DrawItem:
 	.thumb_func
 PartyInventory_Remove:
 	overlay_veneer PartyInventory_RemoveFar
-	.global Func_020055fc
+	.global Party_RestoreHpPp
 	.thumb_func
-Func_020055fc:
+Party_RestoreHpPp:
 	overlay_veneer Party_RestoreHpPpFar
 	.global Event_Wait
 	.thumb_func
@@ -294,9 +294,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 FieldCamera_MoveWithinMapBounds:
 	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
-	.global Func_02005734
+	.global Import_FieldCameraWaitForArrival
 	.thumb_func
-Func_02005734:
+Import_FieldCameraWaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global FieldCamera_GetActor
 	.thumb_func
@@ -358,9 +358,9 @@ Func_020057a4:
 	.thumb_func
 Func_020057ac:
 	overlay_veneer Func_080c87c8
-	.global Func_020057b4
+	.global BattleEffect_GetObjectPriority
 	.thumb_func
-Func_020057b4:
+BattleEffect_GetObjectPriority:
 	overlay_veneer BattleEffect_GetObjectPriorityFar
 	.global Func_020057bc
 	.thumb_func
@@ -374,9 +374,9 @@ Func_020057c4:
 	.thumb_func
 Func_020057cc:
 	overlay_veneer Func_080c88e8
-	.global Func_020057d4
+	.global Weather_StartRain
 	.thumb_func
-Func_020057d4:
+Weather_StartRain:
 	overlay_veneer Weather_StartRainFar
 	.global Sound_Play
 	.thumb_func

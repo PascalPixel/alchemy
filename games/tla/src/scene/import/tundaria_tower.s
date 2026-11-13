@@ -310,9 +310,9 @@ Import_EventResolveAllPendingActions:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02003150
+	.global Import_SpriteShareVramCacheEntry
 	.thumb_func
-Func_02003150:
+Import_SpriteShareVramCacheEntry:
 	overlay_veneer Sprite_ShareVramCacheEntryFar
 	.global Actor_WatchAndSetScript
 	.thumb_func

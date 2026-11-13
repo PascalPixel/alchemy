@@ -154,9 +154,9 @@ MapGrid_SetScreenShake:
 	.thumb_func
 Actor_SetSpriteColorMode:
 	overlay_veneer Actor_SetSpriteColorModeFar
-	.global Func_02004b88
+	.global WorldMap_IsWalkable
 	.thumb_func
-Func_02004b88:
+WorldMap_IsWalkable:
 	overlay_veneer WorldMap_IsWalkableFar
 	.global Func_02004b90
 	.thumb_func
@@ -210,9 +210,9 @@ Djinn_Give:
 	.thumb_func
 DjinnRecovery_AddStandby:
 	overlay_veneer DjinnRecovery_AddStandbyFar
-	.global Func_02004bf8
+	.global Party_RestoreHpPp
 	.thumb_func
-Func_02004bf8:
+Party_RestoreHpPp:
 	overlay_veneer Party_RestoreHpPpFar
 	.global Func_02004c00
 	.thumb_func
@@ -366,9 +366,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 FieldCamera_MoveWithinMapBounds:
 	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
-	.global Func_02004d30
+	.global Import_FieldCameraWaitForArrival
 	.thumb_func
-Func_02004d30:
+Import_FieldCameraWaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Event_SetDestination
 	.thumb_func
@@ -394,13 +394,13 @@ Event_SetAfterBattleDestination:
 	.thumb_func
 Party_SetFields1f2And1f4:
 	overlay_veneer Party_SetFields1f2And1f4Far
-	.global Func_02004d68
+	.global Field_FindNearbyTalkTarget
 	.thumb_func
-Func_02004d68:
+Field_FindNearbyTalkTarget:
 	overlay_veneer Field_FindNearbyTalkTargetFar
-	.global Func_02004d70
+	.global Import_SceneTalkToActor
 	.thumb_func
-Func_02004d70:
+Import_SceneTalkToActor:
 	overlay_veneer Scene_TalkToActorFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
@@ -426,9 +426,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02004da8
+	.global Import_WorldMapFreeze
 	.thumb_func
-Func_02004da8:
+Import_WorldMapFreeze:
 	overlay_veneer WorldMap_FreezeFar
 	.global Func_02004db0
 	.thumb_func
@@ -470,9 +470,9 @@ Actor_WatchAndSetScript:
 	.thumb_func
 WorldMap_StartZoom:
 	overlay_veneer WorldMap_StartZoomFar
-	.global Func_02004e00
+	.global Event_WaitForZoomTransition
 	.thumb_func
-Func_02004e00:
+Event_WaitForZoomTransition:
 	overlay_veneer Event_WaitForZoomTransitionFar
 	.global FlagEntries_GetTable
 	.thumb_func
@@ -490,9 +490,9 @@ Actor_ShowItemIconById:
 	.thumb_func
 SceneEvent_FindActiveRecord:
 	overlay_veneer Scene_FindTriggerFar
-	.global Func_02004e28
+	.global DjinnMenu_Run
 	.thumb_func
-Func_02004e28:
+DjinnMenu_Run:
 	overlay_veneer DjinnMenu_RunFar
 	.global Sound_Play
 	.thumb_func

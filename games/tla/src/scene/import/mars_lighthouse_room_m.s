@@ -74,9 +74,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Actor_CreateFar
-	.global Func_02003130
+	.global Actor_Release
 	.thumb_func
-Func_02003130:
+Actor_Release:
 	overlay_veneer Actor_ReleaseFar
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
@@ -90,9 +90,9 @@ Actor_SetMoveTarget:
 	.thumb_func
 MapGrid_CopyCellPictureIndicesRect:
 	overlay_veneer MapGrid_CopyCellPictureIndicesRectFar
-	.global Func_02003150
+	.global Map_ClearLayerEntryFlag
 	.thumb_func
-Func_02003150:
+Map_ClearLayerEntryFlag:
 	overlay_veneer Map_ClearLayerEntryFlagFar
 	.global BlendScript_Suspend
 	.thumb_func
@@ -114,9 +114,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 MapGrid_CopyCellPictureCellsRect:
 	overlay_veneer MapGrid_CopyCellPictureCellsRectFar
-	.global Func_02003180
+	.global MapGrid_CheckCollision
 	.thumb_func
-Func_02003180:
+MapGrid_CheckCollision:
 	overlay_veneer MapGrid_CheckCollisionFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -144,9 +144,9 @@ Actor_SetSpritePriorityDirect:
 Import_FieldCheckSpheresOverlap:
 	overlay_veneer Field_CheckSpheresOverlapFar
 	.endif
-	.global Func_020031b8
+	.global TileMap_ConvertBuffer
 	.thumb_func
-Func_020031b8:
+TileMap_ConvertBuffer:
 	overlay_veneer TileMap_ConvertBufferFar
 	.global FieldMessage_ShowCentered
 	.thumb_func
@@ -200,13 +200,13 @@ Camera_SetSpeedParameters:
 	.thumb_func
 FieldCamera_MoveWithinMapBounds:
 	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
-	.global Func_02003228
+	.global Import_FieldCameraWaitForArrival
 	.thumb_func
-Func_02003228:
+Import_FieldCameraWaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
-	.global Func_02003230
+	.global Import_FieldCameraMoveToActorById
 	.thumb_func
-Func_02003230:
+Import_FieldCameraMoveToActorById:
 	overlay_veneer FieldCamera_MoveToActorByIdFar
 	.global Import_EventSetExitRequest
 	.thumb_func

@@ -25,9 +25,9 @@
 #include "text/msg_ids.h"
 
 extern u16 gData_02004cf0[];
-void Func_02003130(void *handle);
-void Func_02003230(s32 a, s32 b);
-void Func_02003228(void);
+void Actor_Release(void *handle);
+void Import_FieldCameraMoveToActorById(s32 a, s32 b);
+void Import_FieldCameraWaitForArrival(void);
 void Func_020032a8(void);
 extern u16 Data_020039bc[];
 extern volatile u16 Data_020039dc[];
@@ -37,8 +37,8 @@ extern s16 Data_02003a7c;
 extern s16 gData_02003a7e;
 extern s16 gData_02003a80;
 extern s16 gData_02003a82;
-void Func_020031b8(s32 scene, s32 a1);
-u32 Func_02003150(struct FieldSprite *sprite, u32 frame);
+void TileMap_ConvertBuffer(s32 scene, s32 a1);
+u32 Map_ClearLayerEntryFlag(struct FieldSprite *sprite, u32 frame);
 
 void Func_02003278(void);
 
@@ -179,8 +179,8 @@ void Func_020002e8(void) {
 }
 
 void Func_020002fc(void) {
-  Func_02003230(10, 1);
-  Func_02003228();
+  Import_FieldCameraMoveToActorById(10, 1);
+  Import_FieldCameraWaitForArrival();
 }
 
 void Func_0200030c(void) {
@@ -485,7 +485,7 @@ s32 Scene_Initialize(void) {
         Event_PlaySound(78);
         FieldCamera_SetSpeed(0x20000, 0x4000);
         FieldCamera_MoveTo(0xe00000, 0x400000, 0xd80000, 1);
-        Func_02003228();
+        Import_FieldCameraWaitForArrival();
         FieldEvent_Wait(20);
         PaletteFade_ApplySource(0x10000, 0);
         PaletteFade_ApplyTarget(0x10003, 0);
@@ -500,7 +500,7 @@ s32 Scene_Initialize(void) {
         System_Wait(20);
         FieldCamera_SetSpeed(0x10000, 0x2000);
         FieldCamera_MoveTo(0xe00000, 0x100000, 0xd80000, 1);
-        Func_02003228();
+        Import_FieldCameraWaitForArrival();
         FieldEvent_Wait(40);
         actor = Actor_Get(16);
         actor->motionFlags = unset;
@@ -544,12 +544,12 @@ s32 Scene_Initialize(void) {
  * games/tla/src/scene/mars_lighthouse_room_m.c:521: conflicting types for
  * `Func_02000058'. */
 extern s32 Func_02000058__s0b64() __asm__("Func_02000058");
-/* VIEW(mars_lighthouse_room_m): routine Func_02003150 as void Func_02003150(s32
- * value); module/scene/scene.h has u32 Func_02003150(struct FieldSprite
+/* VIEW(mars_lighthouse_room_m): routine Map_ClearLayerEntryFlag as void Map_ClearLayerEntryFlag(s32
+ * value); module/scene/scene.h has u32 Map_ClearLayerEntryFlag(struct FieldSprite
  * *sprite, u32 frame); tried as the rest of the object declares it,
  * Scene_PrepareMap moves: 8 of 237 instructions in tla-ja. */
 extern void
-Func_02003150__mars_lighthouse_room_m(s32 value) __asm__("Func_02003150");
+Func_02003150__mars_lighthouse_room_m(s32 value) __asm__("Map_ClearLayerEntryFlag");
 void Weather_StartRain(s32 a);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -634,7 +634,7 @@ s32 Scene_PrepareMap(void) {
     // use, and with one name they share one.
     extern char SceneId_Ov6ACRoom3Second __asm__("SceneId_Ov6ACRoom3");
 
-    Func_020031b8(gMainRoutineWork.map + ((s32)&SceneId_Ov6ACRoom3Second -
+    TileMap_ConvertBuffer(gMainRoutineWork.map + ((s32)&SceneId_Ov6ACRoom3Second -
                                           (s32)&SceneId_Ov6a8Room2),
                   0x5000000);
   }
@@ -775,7 +775,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
       Event_ResolvePendingActions(0);
       FieldCamera_SetSpeed(0x20000, 0x4000);
       FieldCamera_MoveTo(PIXELS(224), PIXELS(64), PIXELS(216), 1);
-      Func_02003228();
+      Import_FieldCameraWaitForArrival();
       FieldEvent_Wait(20);
       PaletteFade_ApplySource(0x10000, 0);
       BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
@@ -802,7 +802,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     Event_ResolvePendingActions(0);
     FieldCamera_SetSpeed(0x20000, 0x4000);
     FieldCamera_MoveTo(PIXELS(224), PIXELS(64), PIXELS(216), 1);
-    Func_02003228();
+    Import_FieldCameraWaitForArrival();
     FieldEvent_Wait(20);
     PaletteFade_ApplySource(0x10000, 0);
     BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
@@ -814,7 +814,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     wait(10);
     EventMessage_ShowCentered((s32)MsgYouWhoHold + 1, 0, 3);
     FieldCamera_MoveTo(PIXELS(224), PIXELS(88), PIXELS(216), 1);
-    Func_02003228();
+    Import_FieldCameraWaitForArrival();
     FieldEvent_Wait(20);
     Event_PlaySound(560);
     Func_0200080c();
@@ -859,14 +859,14 @@ DEFINE_FUNC_02001608(Func_02001608, 15, 16)
 extern u8 gInventorySnapshot[];
 extern u16 gData_02004cf0[];
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
-void Func_02003130(void *handle);
+void Actor_Release(void *handle);
 void Func_020024e4(void);
 s32 MarsLighthouseRoomM_SlideOnIce(void);
 void Func_02002e6c(struct Actor *self);
 
 void Func_02003118(struct Actor *object, s32 value);
-void Func_02003230(s32 a, s32 b);
-void Func_02003228(void);
+void Import_FieldCameraMoveToActorById(s32 a, s32 b);
+void Import_FieldCameraWaitForArrival(void);
 void Func_02001608(void);
 void Func_020032a8(void);
 void Func_0200166c(void);

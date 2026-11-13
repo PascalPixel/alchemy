@@ -14,7 +14,7 @@
 #include "module/tla.h"
 
 extern u16 gData_02004cf0[];
-s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
+s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void MarsLighthouseStarRoom_SlideOnIce(void);
@@ -34,6 +34,6 @@ struct Position {
 
 
 DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003390, Func_02002d90, Import_ActorSelectAnimation, Func_02002d04,
-    Func_0200428c)
+    Import_FieldCheckSpheresOverlap)
 
 #include "../../field/object/set_sprite_priority.c"

@@ -13,12 +13,12 @@
 #include "module/field/event_commands.h"
 
 extern u32 Data_0200eb60;
-void Func_020055dc(s32 scene, s32 a1);
-void Func_02005734();
+void TileMap_ConvertBuffer(s32 scene, s32 a1);
+void Import_FieldCameraWaitForArrival();
 extern u8 gData_02006c20[];
 extern u8 gData_02006b70[];
-void Func_020055fc();
-void Func_020057d4(struct Actor *object);
+void Party_RestoreHpPp();
+void Weather_StartRain(struct Actor *object);
 
 void Func_02000038(struct Actor *object) {
   u8 *timer = &object->unk5c[6];
@@ -224,8 +224,8 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.entrance == 1 && Event_GetFlag(0xa3d) == 0)
-    Func_020057d4(1);
-  Func_020055dc(gMainRoutineWork.map +
+    Weather_StartRain(1);
+  TileMap_ConvertBuffer(gMainRoutineWork.map +
                     ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
                 0x5000000);
   return 0;
@@ -567,11 +567,11 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldEvent_Wait(20);
   FieldCamera_SetSpeed(0x4cccc, 0x9999);
   FieldCamera_MoveTo(0x2000000, -1, 0xd80000, 1);
-  Func_02005734();
+  Import_FieldCameraWaitForArrival();
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(1, 0, 20);
   FieldCamera_MoveTo(0x2000000, -1, 0x1300000, 1);
-  Func_02005734();
+  Import_FieldCameraWaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetAttachedEffect(0, 0x102);
   t206 = gMainRoutineWork.currentOwner;
@@ -1249,7 +1249,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FieldCamera_SetSpeed(0x19999, 0x3333);
   FIELD_AT((EventCamera_GetActor()), u8, 85) = 0;
   FieldCamera_MoveTo(0x2000000, 0x500000, 0x1540000, 1);
-  Func_02005734();
+  Import_FieldCameraWaitForArrival();
   Actor_ShowEmote(19, 0x109, 20);
   Event_ShowMessage(19, 0);
   Event_PlaySound(8);
@@ -1315,7 +1315,7 @@ L_0200a47a:
   FIELD_AT(t170, u8, 90) |= 1;
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(0x2000000, 0x600000, 0x1400000, 1);
-  Func_02005734();
+  Import_FieldCameraWaitForArrival();
   Actor_FaceDirection(21, 0, 40);
   Actor_FaceDirection(21, 0xe000, 20);
   Actor_FaceDirectionAndWait(21, 0);
@@ -1488,7 +1488,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Event_PlaySound(0x4e);
   FieldCamera_SetSpeed(0x3333, 0x666);
   FieldCamera_MoveTo(PIXELS(512), -1, PIXELS(320), 1);
-  Func_02005734();
+  Import_FieldCameraWaitForArrival();
   Event_ShowMessage(0x2013, 0);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
@@ -1518,7 +1518,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   EventCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(540), PIXELS(76), PIXELS(340), 1);
-  Func_02005734();
+  Import_FieldCameraWaitForArrival();
   Actor_FaceDirectionAndWait(1, FACING_SOUTH);
   Actor_WalkToAndWait(1, 542, 340);
   FieldActor_Jump(1, 2, 0xa);
@@ -1530,7 +1530,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Event_ShowMessage(0x5001, 0);
   FieldCamera_SetSpeed(0x4cccc, 0x9999);
   FieldCamera_MoveTo(PIXELS(478), PIXELS(96), PIXELS(312), 1);
-  Func_02005734();
+  Import_FieldCameraWaitForArrival();
   Actor_FaceDirection(6, FACING_SOUTH, 40);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
   FieldActor_ShowEmote(6, 0x103, 0x14);
@@ -1538,7 +1538,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   FieldActor_Jump(6, 4, 0xa);
   Event_ShowMessage(0x6006, 0);
   FieldCamera_MoveTo(PIXELS(480), -1, PIXELS(276), 1);
-  Func_02005734();
+  Import_FieldCameraWaitForArrival();
   Actor_FaceDirection(7, FACING_NORTHEAST, 20);
   Actor_FaceDirection(7, FACING_NORTHWEST, 20);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
@@ -1619,7 +1619,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   Event_SetFlag(0x202);
   MapGrid_CopyCellAttributes(0x27, 0x28, 0x12, 0x10, 0x17, 0xa);
-  Func_020055fc(1);
+  Party_RestoreHpPp(1);
   Party_RemoveMemberRestored(7);
   Party_RemoveMemberRestored(5);
   Party_RemoveMemberRestored(6);

@@ -174,7 +174,7 @@ static __inline__ void Func_020029a8_(s32 a, s32 b, s32 c) {
 #include "module/scene/taopo_swamp.h"
 #include "module/tla.h"
 
-s32 Func_02002850(struct Actor *object, struct Vector3 *position);
+s32 MapGrid_CheckCollision(struct Actor *object, struct Vector3 *position);
 void Func_02002960(s32 a);
 void Func_02002988(s32 a, s32 flag, s32 b, s32 c);
 
@@ -448,7 +448,7 @@ test:
   position.x = leader->x;
   position.y = leader->y;
   position.z = leader->z + 0x80000;
-  result = Func_02002850(leader, &position);
+  result = MapGrid_CheckCollision(leader, &position);
   if (result <= 0)
     goto sink;
 }

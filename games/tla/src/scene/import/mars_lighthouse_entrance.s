@@ -194,9 +194,9 @@ Func_02004c78:
 	.thumb_func
 Func_02004c80:
 	overlay_veneer Func_08020360
-	.global Func_02004c88
+	.global TileMap_ConvertBuffer
 	.thumb_func
-Func_02004c88:
+TileMap_ConvertBuffer:
 	overlay_veneer TileMap_ConvertBufferFar
 	.global FieldMessage_Show
 	.thumb_func
@@ -362,9 +362,9 @@ Func_02004dc8:
 	.thumb_func
 Func_02004dd0:
 	overlay_veneer Func_080c88e8
-	.global Func_02004dd8
+	.global Weather_StartRain
 	.thumb_func
-Func_02004dd8:
+Weather_StartRain:
 	overlay_veneer Weather_StartRainFar
 	.global Sound_Play
 	.thumb_func

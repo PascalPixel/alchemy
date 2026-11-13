@@ -28,12 +28,12 @@
 #include "module/game/game.h"
 #include "text/msg_ids.h"
 
-s32 Func_0200299c();
+s32 Import_EventSetDestination();
 s32 Func_02002a04();
-void Func_02002824(void *source, void *destination);
+void Import_DecompressTaggedLz(void *source, void *destination);
 void Func_02002a0c(struct GlowSprite *sprite, s32 width, s32 height, s32 attr,
                    s32 tile);
-void Func_0200285c(struct Actor *actor, s32 mode);
+void Actor_SelectAnimation(struct Actor *actor, s32 mode);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -170,7 +170,7 @@ s32 Scene_Initialize(void) {
     Party_RemoveMember(4);
     Party_RemoveMember(6);
     Party_RemoveMember(7);
-    Func_0200299c((s32)&SceneId_VenusLighthouseEntrance, 1);
+    Import_EventSetDestination((s32)&SceneId_VenusLighthouseEntrance, 1);
   }
   t33 = Event_GetFlag(0x893);
   if (t33 == 0) {
@@ -1299,7 +1299,7 @@ void Func_020023a4(s32 id) {
   work->x = actor->x;
   work->y = actor->y;
   work->z = actor->z + 0x20000;
-  Func_02002824(gField_Tiles64D, work);
+  Import_DecompressTaggedLz(gField_Tiles64D, work);
   resource = VramCache_FindFreeEntry();
   tile = Vram_Load(resource, 0x800, work);
   work->tile = tile;
@@ -1319,7 +1319,7 @@ void Func_020023a4(s32 id) {
   }
   effect = (FieldActor_Create(290, actor->x, actor->y, actor->z));
   work->effect = effect;
-  Func_0200285c(effect, 1);
+  Actor_SelectAnimation(effect, 1);
   Actor_SetSingleChildFlags(effect, 0);
   effect->priorityFlags = 2;
   Actor_SetSingleChildFlags(actor, 0);
@@ -1452,7 +1452,7 @@ void Func_020026f4(void) {
   struct SparkState *state;
   struct SparkSprite__s26f4 *sprite;
 
-  Func_02002824(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
+  Import_DecompressTaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
   resource = VramCache_FindFreeEntry();
   tileBase = Vram_Load(resource, 0x800, work);
   work->tileBase = tileBase;

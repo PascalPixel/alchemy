@@ -335,7 +335,7 @@ extern s16 gData_02006868;
 extern s16 gData_020068a0;
 extern u16 gData_020068a2;
 
-void Func_02004c88(s32 scene, s32 a1);
+void TileMap_ConvertBuffer(s32 scene, s32 a1);
 
 DEFINE_ACTOR_ATTACH(Func_02002f4c, Func_02004bc0, Func_02002c2c)
 

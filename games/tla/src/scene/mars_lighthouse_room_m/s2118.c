@@ -9,8 +9,8 @@
 #include "module/scene/mars_lighthouse_room_m.h"
 #include "module/scene/scene.h"
 
-void Func_02003130(void *handle);
-s32 Func_02003180(s32 layer, s32 shape, s32 height);
+void Actor_Release(void *handle);
+s32 MapGrid_CheckCollision(s32 layer, s32 shape, s32 height);
 
 void Func_02002118(void) {
   struct MarsLighthouseRoomMRideWork *work =
@@ -73,7 +73,7 @@ struct RideWork {
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 #include "main_routine_work.h"
 
-DEFINE_RIDE_RELEASE_HANDLE(Func_0200216c, Func_02003130)
+DEFINE_RIDE_RELEASE_HANDLE(Func_0200216c, Actor_Release)
 
 void Func_02002180(s16 value) {
   ((struct RideWork *)(gInventorySnapshot + 0x188))->value0e = value;
@@ -135,15 +135,15 @@ DEFINE_ACTOR_BLINK(Func_020024bc, 10, 4, 0)
 #include "fixed_math.h"
 
 s32 Func_02003168(s32 terrain, s32 x, s32 z);
-/* VIEW(s2118): routine Func_02003180 as s32 Func_02003180(struct Actor *actor,
- * struct Vector3 *position); module/scene/scene.h has s32 Func_02003180(s32
+/* VIEW(s2118): routine MapGrid_CheckCollision as s32 MapGrid_CheckCollision(struct Actor *actor,
+ * struct Vector3 *position); module/scene/scene.h has s32 MapGrid_CheckCollision(s32
  * layer, s32 shape, s32 height); tried as the rest of the object declares it,
  * it does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_room_m/s2118.c:292: too few arguments to
- * function `Func_02003180'. */
+ * function `MapGrid_CheckCollision'. */
 extern s32
 Func_02003180__s2118(struct Actor *actor,
-                     struct Vector3 *position) __asm__("Func_02003180");
+                     struct Vector3 *position) __asm__("MapGrid_CheckCollision");
 
 #define SHARED_F02002148_NAME Func_020024e4
 #define SHARED_F02002148_ID2 Func_02002368

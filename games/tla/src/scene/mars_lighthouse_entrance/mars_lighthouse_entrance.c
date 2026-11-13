@@ -25,9 +25,9 @@ void Func_02004dd0(void);
 extern u16 gData_020068a2;
 extern u32 Data_020068a4[3];
 extern s16 gData_020068a0;
-void Func_02004c88(s32 scene, s32 a1);
+void TileMap_ConvertBuffer(s32 scene, s32 a1);
 s32 Func_02004d88();
-s32 Func_02004dd8();
+s32 Weather_StartRain();
 extern u8 Data_02006878[];
 
 s32 Func_0200012c();
@@ -886,7 +886,7 @@ s32 Scene_Initialize(void) {
   v_r8 = t0;
   if (v_r8 != (s32)&SceneId_Ov6aaRoom1)
     goto L_020093dc;
-  Call1((void (*)())Func_02004dd8, 1);
+  Call1((void (*)())Weather_StartRain, 1);
   goto L_020098be;
 L_020093dc:
   if (v_r8 != (s32)&SceneId_Ov6aaRoom2)
@@ -1168,7 +1168,7 @@ void Func_02002c2c(void);
 
 s32 Scene_PrepareMap(void) {
   if (Flag_IsSet(0xa30))
-    Func_02004c88(gMainRoutineWork.map +
+    TileMap_ConvertBuffer(gMainRoutineWork.map +
                       ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
                   0x5000000);
   return 0;

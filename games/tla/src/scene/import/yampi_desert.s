@@ -66,9 +66,9 @@ VramCache_Load:
 	.thumb_func
 VramCache_FindFreeEntry:
 	overlay_veneer VramCache_FindFreeEntryFar
-	.global Func_02003f88
+	.global Oam_AddSpriteAtDepthClamped
 	.thumb_func
-Func_02003f88:
+Oam_AddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global GameFlag_Test
 	.thumb_func
@@ -82,9 +82,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_02003fa8
+	.global Import_ActorSelectAnimation
 	.thumb_func
-Func_02003fa8:
+Import_ActorSelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_SetAnimationSpeed
 	.thumb_func
@@ -254,9 +254,9 @@ Actor_SetSpritePriority:
 	.thumb_func
 Func_020040f8:
 	overlay_veneer Func_080c8208
-	.global Func_02004100
+	.global Import_ActorShowEmoteById
 	.thumb_func
-Func_02004100:
+Import_ActorShowEmoteById:
 	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
@@ -278,9 +278,9 @@ FieldCamera_MoveWithinMapBounds:
 	.thumb_func
 FieldCamera_WaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
-	.global Func_02004130
+	.global Import_FieldCameraGetActor
 	.thumb_func
-Func_02004130:
+Import_FieldCameraGetActor:
 	overlay_veneer FieldCamera_GetActorFar
 	.global Func_02004138
 	.thumb_func

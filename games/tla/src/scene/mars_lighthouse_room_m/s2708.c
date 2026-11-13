@@ -141,11 +141,11 @@ struct RideWork {
 };
 
 extern u16 gData_02004cf0[];
-void Func_02003130(void *handle);
+void Actor_Release(void *handle);
 #include "main_routine_work.h"
 
-void Func_02003230(s32 a, s32 b);
-void Func_02003228(void);
+void Import_FieldCameraMoveToActorById(s32 a, s32 b);
+void Import_FieldCameraWaitForArrival(void);
 void Func_020032a8(void);
 
 DEFINE_RIDE_IF_ACTIVE(MarsLighthouseRoomM_ContinueSlide, MarsLighthouseRoomM_SlideOnIce)

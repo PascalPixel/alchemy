@@ -32,7 +32,7 @@ void Func_02005670(void);
 void Func_02005678(s32 a0, s32 a1, s32 a2);
 void Func_020056b0(s32 id);
 void Func_020056b8(s32 id);
-void Func_02005548(s32 scene, s32 a1);
+void TileMap_ConvertBuffer(s32 scene, s32 a1);
 extern u16 gData_02007088[];
 extern u16 gData_0200708c[];
 void Func_02005540();
@@ -854,7 +854,7 @@ s32 Scene_PrepareMap(void) {
 
   party = &gMainRoutineWork;
   if (Event_GetFlag(flag))
-    Func_02005548(party->map +
+    TileMap_ConvertBuffer(party->map +
                       ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
                   0x5000000);
   return 0;

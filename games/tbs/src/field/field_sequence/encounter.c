@@ -327,24 +327,24 @@ void BattleBackground_SelectForEnvironment(s32 behavior) {
 
   switch (behavior - 1) {
   case BATTLE_ENVIRONMENT_GRASSLAND - 1:
-    backdrop = (u32)&ResourceId_GrasslandBackdrop;
+    backdrop = (u32)RESOURCE_GRASSLAND_BACKDROP;
     break;
   case BATTLE_ENVIRONMENT_FOREST - 1:
-    backdrop = (u32)&ResourceId_ForestBackdrop;
+    backdrop = (u32)RESOURCE_FOREST_BACKDROP;
     break;
   case BATTLE_ENVIRONMENT_DESERT - 1:
-    backdrop = (u32)&ResourceId_DesertBackdrop;
+    backdrop = (u32)RESOURCE_DESERT_BACKDROP;
     break;
   case BATTLE_ENVIRONMENT_BEACH - 1:
   case BATTLE_ENVIRONMENT_SHALLOWS - 1:
-    backdrop = (u32)&ResourceId_BeachBackdrop;
+    backdrop = (u32)RESOURCE_BEACH_BACKDROP;
     break;
   case BATTLE_ENVIRONMENT_SNOWFIELD - 1:
   case BATTLE_ENVIRONMENT_SNOW_FOREST - 1:
-    backdrop = (u32)&ResourceId_SnowfieldBackdrop;
+    backdrop = (u32)RESOURCE_SNOWFIELD_BACKDROP;
     break;
   default:
-    backdrop = (u32)&ResourceId_SolSanctumBackdrop;
+    backdrop = (u32)RESOURCE_SOL_SANCTUM_BACKDROP;
     break;
   }
   gMainRoutineWork.battleBackground = backdrop;

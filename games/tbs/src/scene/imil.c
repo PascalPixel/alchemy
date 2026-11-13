@@ -253,7 +253,7 @@ static s32 Imil_UpdateShiver(struct Actor *actor) {
 
 /// Imil is two scenes: the village, and its houses and Sanctum.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_IceRooms) {
+  if (gMainRoutineWork.next == SCENE_ICE_ROOMS) {
     return gImil_RoomEntrances;
   }
   return gImil_TownEntrances;
@@ -267,7 +267,7 @@ const u32 *Scene_GetExits(void) { return gImil_Exits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *script;
 
-  if (gMainRoutineWork.next == ((s32)&SceneId_IceRooms)) {
+  if (gMainRoutineWork.next == (SCENE_ICE_ROOMS)) {
     script = gImil_RoomActorPlacements;
     Scene_AssignViewFlags(script);
     if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
@@ -297,7 +297,7 @@ static void Imil_StartIceSlide(void) { Imil_RunIceSlide(); }
 /// The village's, or the houses' and the Sanctum's, conversations and
 /// Psynergy targets.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_IceRooms) {
+  if (gMainRoutineWork.next == SCENE_ICE_ROOMS) {
     return gImil_RoomTriggers;
   }
   return gImil_TownTriggers;
@@ -754,7 +754,7 @@ s32 Scene_Initialize(void) {
   struct Actor *leader;
   s32 entrance;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_Imil) {
+  if (gMainRoutineWork.next == SCENE_IMIL) {
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Actor_SetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
@@ -775,7 +775,7 @@ s32 Scene_Initialize(void) {
         gMainRoutineWork.entrance == IMIL_FROM_IMIL_FALLS_CAVE) {
       Imil_ArriveFromFallsCave();
     }
-  } else if (gMainRoutineWork.next == (s32)&SceneId_IceRooms) {
+  } else if (gMainRoutineWork.next == SCENE_ICE_ROOMS) {
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     entrance = gMainRoutineWork.entrance;

@@ -41,8 +41,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   work->transferMode = CANVAS_COPY_AND_FADE;
@@ -182,8 +181,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
                       COMPOSITE_TRANSPARENT);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   blit = draw;
-  Resource_LoadAndDecompress((s32)&ResourceId_SwordSlashSheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_SWORD_SLASH_SHEET, work->sheet, 1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Projection_ScaledUnit(work->args->targets[0], &screenPosition);
   REG_BG2X = (64 - screenPosition.x) << 8;
@@ -331,20 +329,20 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   work->fadeStep = 0;
   REG_BLDALPHA = BLEND_ALPHA(12, 16);
   REG_BG2PA = Q_8_8(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work->sheet, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_ICE_TILE_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
   switch (work->args->kind) {
   case ELEMENT_VENUS:
-    palette = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteA);
+    palette = Resource_GetTableEntry(RESOURCE_YELLOW_PALETTE_A);
     break;
   case ELEMENT_MERCURY:
-    palette = Resource_GetTableEntry((s32)&ResourceId_IceTileSheet);
+    palette = Resource_GetTableEntry(RESOURCE_ICE_TILE_SHEET);
     break;
   case ELEMENT_MARS:
-    palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteA);
+    palette = Resource_GetTableEntry(RESOURCE_RED_PALETTE_A);
     break;
   default:
-    palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteA);
+    palette = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_A);
     break;
   }
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
@@ -523,8 +521,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_TileAnimationMask,
-                             work->imageStorage, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_TILE_ANIMATION_MASK, work->imageStorage,
+                             1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
@@ -712,8 +710,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
     }
 
     if (frame == 51) {
-      Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet,
-                                 1, 0);
+      Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 0);
       for (i = 1; i != 64; i++) {
         s32 v;
 
@@ -809,21 +806,20 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   work->fadeStep = 0;
   REG_BLDALPHA = BLEND_ALPHA(12, 16);
   REG_BG2PA = Q_8_8(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_CyanSparkSheet, work->sheet, 1,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_CYAN_SPARK_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
   switch (work->args->kind) {
   case ELEMENT_VENUS:
-    palette = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteA);
+    palette = Resource_GetTableEntry(RESOURCE_YELLOW_PALETTE_A);
     break;
   case ELEMENT_MERCURY:
-    palette = Resource_GetTableEntry((s32)&ResourceId_IceTileSheet);
+    palette = Resource_GetTableEntry(RESOURCE_ICE_TILE_SHEET);
     break;
   case ELEMENT_MARS:
-    palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteA);
+    palette = Resource_GetTableEntry(RESOURCE_RED_PALETTE_A);
     break;
   default:
-    palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteA);
+    palette = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_A);
     break;
   }
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
@@ -979,20 +975,20 @@ void BattleEffect_StartElementStreaks(s32 element) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   switch (element) {
   case ELEMENT_VENUS:
-    id = (s32)&ResourceId_YellowPaletteB;
+    id = RESOURCE_YELLOW_PALETTE_B;
     break;
   case ELEMENT_MERCURY:
-    id = (s32)&ResourceId_CrystalSheet;
+    id = RESOURCE_CRYSTAL_SHEET;
     break;
   case ELEMENT_MARS:
-    id = (s32)&ResourceId_EmberStreakSheet;
+    id = RESOURCE_EMBER_STREAK_SHEET;
     break;
   case ELEMENT_JUPITER:
-    id = (s32)&ResourceId_VioletPaletteD;
+    id = RESOURCE_VIOLET_PALETTE_D;
     break;
   case ELEMENT_NONE:
   default:
-    id = (s32)&ResourceId_DustPuffSheet;
+    id = RESOURCE_DUST_PUFF_SHEET;
     break;
   }
   palette = Resource_GetTableEntry(id);

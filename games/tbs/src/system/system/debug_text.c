@@ -148,8 +148,8 @@ void DebugText_Clear(void) {
 /// palettes.
 void Window_LoadGraphics(void) {
   // 2048 words: 8 KB, 256 tiles of 4 bits a pixel
-  Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
-          BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
+  Dma_Set(Resource_GetTableEntry(RESOURCE_WINDOW_TILES), BG_CHAR_BLOCK(0),
+          DMA_COPY_WORDS(2048), REG_DMA3);
   Dma_Set(gWindow_Palette, (void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   Io_Write16(0, &PLTT_BACKDROP);

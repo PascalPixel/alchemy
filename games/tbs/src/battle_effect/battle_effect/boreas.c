@@ -66,8 +66,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240); // an empty window
-  Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sparkleSheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_ICE_BLOCK_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, sparkleSheet, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -78,7 +78,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           (s32)&ResourceId_VioletSkyBackdrop, 0);
+                           RESOURCE_VIOLET_SKY_BACKDROP, 0);
   BattleEffect_SpawnObjects(9, SPRITE_BOREAS, 1);
   EFFECT_SHOW_WIDE_CANVAS(16);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);

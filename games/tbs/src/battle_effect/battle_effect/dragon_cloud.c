@@ -52,8 +52,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetB, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_B, work->sheet, 1, 1);
   // Darker copies of the trail picture, for the trail's tail.
   for (i = 1; i != 20; i++) {
     for (j = 0; j != DRAGON_CLOUD_TRAIL_PICTURE_BYTES; j++) {
@@ -68,11 +67,11 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       }
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET,
                              &work->sheet[DRAGON_CLOUD_PUFF_PICTURES], 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             Ram_MapGridCellBuffer, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, Ram_MapGridCellBuffer,
+                             1, 0);
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -114,7 +113,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     puff->y = (Trig_Cos(j) * 16 >> 16) + 40;
     puff->variant = -(i * 2);
   }
-  path = Resource_GetTableEntry((s32)&ResourceId_DualStreamPath);
+  path = Resource_GetTableEntry(RESOURCE_DUAL_STREAM_PATH);
 
   for (frame = 0; frame != DRAGON_CLOUD_FRAMES; frame++) {
     struct BattleCamera *camera = gBattleCamera;

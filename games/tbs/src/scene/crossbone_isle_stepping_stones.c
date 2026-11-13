@@ -595,19 +595,19 @@ CrossboneIsleSteppingStones_SetChildValueFromTimer(struct Actor *actor) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_CrossboneIsleSteppingStones) {
+  if (sceneId == SCENE_CROSSBONE_ISLE_STEPPING_STONES) {
     return gCrossboneIsleSteppingStonesEntrances;
   }
-  if (sceneId == (s32)&SceneId_CrossboneIsleIcePillars) {
+  if (sceneId == SCENE_CROSSBONE_ISLE_ICE_PILLARS) {
     return gCrossboneIsleIcePillarsEntrances;
   }
-  if (sceneId == (s32)&SceneId_CrossboneIsleFloodgate) {
+  if (sceneId == SCENE_CROSSBONE_ISLE_FLOODGATE) {
     return gCrossboneIsleFloodgateEntrances;
   }
-  if (sceneId == (s32)&SceneId_CrossboneIsleStackedPillars) {
+  if (sceneId == SCENE_CROSSBONE_ISLE_STACKED_PILLARS) {
     return gCrossboneIsleStackedPillarsEntrances;
   }
-  if (sceneId == (s32)&SceneId_CrossboneIsleDragonStatue) {
+  if (sceneId == SCENE_CROSSBONE_ISLE_DRAGON_STATUE) {
     return gCrossboneIsleDragonStatueEntrances;
   }
   return gCrossboneIsleSteppingStonesEntrancesOther;
@@ -621,16 +621,16 @@ const u32 *Scene_GetExits(void) { return gCrossboneIsleSteppingStonesExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_CrossboneIsleSteppingStones) {
+  if (sceneId == SCENE_CROSSBONE_ISLE_STEPPING_STONES) {
     return gCrossboneIsleSteppingStonesActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_CrossboneIsleIcePillars) {
+  if (sceneId == SCENE_CROSSBONE_ISLE_ICE_PILLARS) {
     return gCrossboneIsleIcePillarsActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_CrossboneIsleFloodgate) {
+  if (sceneId == SCENE_CROSSBONE_ISLE_FLOODGATE) {
     return gCrossboneIsleFloodgateActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_CrossboneIsleDragonStatue) {
+  if (sceneId == SCENE_CROSSBONE_ISLE_DRAGON_STATUE) {
     return gCrossboneIsleDragonStatueActorPlacements;
   }
   return gCrossboneIsleSteppingStonesActorPlacementsOther;
@@ -1392,19 +1392,19 @@ static void CrossboneIsleSteppingStones_PushSinkingPillar(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_CrossboneIsleSteppingStones) {
+  if (sceneId == SCENE_CROSSBONE_ISLE_STEPPING_STONES) {
     return gCrossboneIsleSteppingStonesTriggers;
   }
-  if (sceneId == (s32)&SceneId_CrossboneIsleIcePillars) {
+  if (sceneId == SCENE_CROSSBONE_ISLE_ICE_PILLARS) {
     return gCrossboneIsleIcePillarsTriggers;
   }
-  if (sceneId == (s32)&SceneId_CrossboneIsleFloodgate) {
+  if (sceneId == SCENE_CROSSBONE_ISLE_FLOODGATE) {
     return gCrossboneIsleFloodgateTriggers;
   }
-  if (sceneId == (s32)&SceneId_CrossboneIsleStackedPillars) {
+  if (sceneId == SCENE_CROSSBONE_ISLE_STACKED_PILLARS) {
     return gCrossboneIsleStackedPillarsTriggers;
   }
-  if (sceneId == (s32)&SceneId_CrossboneIsleDragonStatue) {
+  if (sceneId == SCENE_CROSSBONE_ISLE_DRAGON_STATUE) {
     return gCrossboneIsleDragonStatueTriggers;
   }
   return gCrossboneIsleSteppingStonesTriggersOther;
@@ -1487,13 +1487,13 @@ s32 Scene_Initialize(void) {
   s32 z;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  if (gMainRoutineWork.next == (s32)&SceneId_CrossboneIsleIcePillars) {
+  if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_ICE_PILLARS) {
     Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR);
     Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 1);
     Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 2);
     Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 3);
     Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 4);
-  } else if (gMainRoutineWork.next == (s32)&SceneId_CrossboneIsleFloodgate) {
+  } else if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_FLOODGATE) {
     MapGrid_CopyCells(32, 0, 64, 32, 0, 64);
     Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);
     Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
@@ -1511,8 +1511,7 @@ s32 Scene_Initialize(void) {
       CrossboneIsleSteppingStones_DrawFloatingLogs();
       MapGrid_CopyCellAttributes(24, 3, 1, 1, 24, 8);
     }
-  } else if (gMainRoutineWork.next ==
-             (s32)&SceneId_CrossboneIsleStackedPillars) {
+  } else if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_STACKED_PILLARS) {
     Actor_CreateConfigured(584, 0, 200, SPRITE_CRATE);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Actor_Get(ACTOR_PARTY_LEADER)->riseCounter = 1;
@@ -1552,7 +1551,7 @@ s32 Scene_Initialize(void) {
         }
       }
     }
-  } else if (gMainRoutineWork.next == (s32)&SceneId_CrossboneIsleDragonStatue) {
+  } else if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_DRAGON_STATUE) {
     Actor_SetAnimation(ACTOR_SINKING_BOULDER, 2);
     Actor_SetSpriteColorById(ACTOR_SINKING_BOULDER, SPRITE_COLOR_GREY);
     Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);

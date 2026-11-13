@@ -151,7 +151,7 @@ static void FileScreen_LoadBackground(void) {
   struct BgScroll *scroll;
   s32 blankTile = LOGO_BLANK_TILE;
 
-  resourceId = (s32)&ResourceId_GoldenSunLogo;
+  resourceId = RESOURCE_GOLDEN_SUN_LOGO;
   ScreenFade_ToBlack(0);
   REG_BG2CNT = LOGO_BGCNT;
   gBgScroll[2].y = 0;
@@ -348,7 +348,7 @@ static s32 FileScreen_GetSaveRecoveryBlockMask(void) {
   if (gMainRoutineWork.sceneType == SCENE_TYPE_TOWN) {
     return 0;
   }
-  mapDifference = gMainRoutineWork.next ^ (s32)&SceneId_WorldMap;
+  mapDifference = gMainRoutineWork.next ^ SCENE_WORLD_MAP;
   return -((u32)(-mapDifference | mapDifference) >> 31);
 }
 
@@ -428,7 +428,7 @@ s32 FileScreen_Run(void) {
     Event_FinishScreenTransition();
     Sound_Play(SOUND_FADE_OUT_BGM);
     Event_Wait(300);
-    Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_FILE_SCREEN);
+    Event_SetDestination(SCENE_WORLD_MAP, WORLD_MAP_FROM_FILE_SCREEN);
     return 0;
   }
   gSleepDisabled = 0;
@@ -489,7 +489,7 @@ menu_top:;
       }
     }
     Party_StartChildhood();
-    gMainRoutineWork.next = (s32)&SceneId_CottageRoomsB;
+    gMainRoutineWork.next = SCENE_COTTAGE_ROOMS_B;
     gMainRoutineWork.entrance = COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST;
     goto leave;
   }
@@ -577,8 +577,7 @@ menu_top:;
     GameFlag_Clear(FLAG_MENU_OPEN);
     GameFlag_Set(FLAG_IN_BATTLE_ARENA);
     gSleepDisabled = 1;
-    Event_SetDestination((s32)&SceneId_BattleArena,
-                         BATTLE_ARENA_FROM_FILE_SCREEN);
+    Event_SetDestination(SCENE_BATTLE_ARENA, BATTLE_ARENA_FROM_FILE_SCREEN);
     goto leave;
   } else {
     if (result != 5) {

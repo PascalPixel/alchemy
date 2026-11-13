@@ -152,10 +152,10 @@ s32 gSolSanctumEntrance_RumbleTimer __attribute__((section(".bss")));
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_SolEntrance) {
+  if (sceneId == SCENE_SOL_ENTRANCE) {
     return gSolEntrance_Entrances;
   }
-  if (sceneId == (s32)&SceneId_SolSanctumReliefs) {
+  if (sceneId == SCENE_SOL_SANCTUM_RELIEFS) {
     return gSolSanctumReliefs_Entrances;
   }
   return gSolSanctumEntrance_FallbackEntrances;
@@ -171,7 +171,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 firstStatueRoomEntrance =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_SolSanctumReliefs) {
+  if (gMainRoutineWork.next == SCENE_SOL_SANCTUM_RELIEFS) {
     if (gMainRoutineWork.entrance >= firstStatueRoomEntrance) {
       if (gMainRoutineWork.entrance >
           SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM) {
@@ -187,7 +187,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     Scene_AssignViewFlags(table);
     return table;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_SolEntrance) {
+  if (gMainRoutineWork.next == SCENE_SOL_ENTRANCE) {
     return gSolEntrance_ActorPlacements;
   }
   return gSolSanctumEntrance_FallbackActorPlacements;
@@ -199,10 +199,10 @@ const struct Trigger *Scene_GetTriggers(void) {
   s32 firstStatueRoomEntrance =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_SolEntrance) {
+  if (gMainRoutineWork.next == SCENE_SOL_ENTRANCE) {
     return gSolEntrance_Triggers;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_SolSanctumReliefs) {
+  if (gMainRoutineWork.next == SCENE_SOL_SANCTUM_RELIEFS) {
     if (gMainRoutineWork.entrance >= firstStatueRoomEntrance) {
       if (gMainRoutineWork.entrance >
           SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM) {
@@ -559,9 +559,9 @@ static void SolSanctumEntrance_PushStatue(void) {
 s32 Scene_Initialize(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_SolEntrance) {
+  if (sceneId == SCENE_SOL_ENTRANCE) {
     SolSanctumEntrance_ApplyEntryState();
-  } else if (sceneId == (s32)&SceneId_SolSanctumReliefs) {
+  } else if (sceneId == SCENE_SOL_SANCTUM_RELIEFS) {
     SolSanctumEntrance_RestoreInteriorState();
   }
   return 0;
@@ -621,7 +621,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     break;
 
   case SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE:
-    gMainRoutineWork.retreatScene = (s32)&SceneId_SolSanctumReliefs;
+    gMainRoutineWork.retreatScene = SCENE_SOL_SANCTUM_RELIEFS;
     gMainRoutineWork.retreatEntrance = SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE;
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ENTERED) == 0)
       SolSanctumEntrance_IntroduceSanctum();

@@ -332,13 +332,13 @@ static void LunpaFortress_RestoreToadonpaDoors(void);
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_LunpaFortressGroundFloor) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_GROUND_FLOOR) {
     return gLunpaFortressGroundFloorEntrances;
   }
-  if (sceneId == (s32)&SceneId_LunpaFortressUpperFloor) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_UPPER_FLOOR) {
     return gLunpaFortressUpperFloorEntrances;
   }
-  if (sceneId == (s32)&SceneId_LunpaFortressCave) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_CAVE) {
     return gLunpaFortressCaveEntrances;
   }
   return gLunpaFortressEntrancesOther;
@@ -349,11 +349,11 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_LunpaFortressUpperFloor) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_UPPER_FLOOR) {
     return gLunpaFortressUpperFloorExits;
   }
-  if (sceneId == (s32)&SceneId_LunpaFortressCave ||
-      sceneId == (s32)&SceneId_LunpaFortressToadonpa) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_CAVE ||
+      sceneId == SCENE_LUNPA_FORTRESS_TOADONPA) {
     return gLunpaFortressCaveAndToadonpaExits;
   }
   return gLunpaFortressExitsOther;
@@ -364,19 +364,19 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   // Unused: this overlay never runs for West Lunpa Cave, which has its own.
-  if (sceneId == (s32)&SceneId_WestLunpaCave) {
+  if (sceneId == SCENE_WEST_LUNPA_CAVE) {
     return gLunpaFortressUnusedWestLunpaCaveActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_LunpaFortressCave) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_CAVE) {
     return gLunpaFortressCaveActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_LunpaFortressUpperFloor) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_UPPER_FLOOR) {
     return gLunpaFortressUpperFloorActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_LunpaFortressGroundFloor) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_GROUND_FLOOR) {
     return gLunpaFortressGroundFloorActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_LunpaFortressToadonpa) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_TOADONPA) {
     return gLunpaFortressToadonpaActorPlacements;
   }
   return gLunpaFortressActorPlacementsOther;
@@ -386,13 +386,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_LunpaFortressGroundFloor) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_GROUND_FLOOR) {
     return gLunpaFortressGroundFloorTriggers;
   }
-  if (sceneId == (s32)&SceneId_LunpaFortressUpperFloor) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_UPPER_FLOOR) {
     return gLunpaFortressUpperFloorTriggers;
   }
-  if (sceneId == (s32)&SceneId_LunpaFortressCave) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_CAVE) {
     return gLunpaFortressCaveTriggers;
   }
   return gLunpaFortressTriggersOther;
@@ -1426,7 +1426,7 @@ static void LunpaFortress_FightThreeGuards(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   Event_SetAfterBattleDestination(
-      (s32)&SceneId_LunpaFortressUpperFloor,
+      SCENE_LUNPA_FORTRESS_UPPER_FLOOR,
       LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_AFTER_BATTLE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 3);
@@ -1764,7 +1764,7 @@ static void LunpaFortress_FindHammet(void) {
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Event_Wait(1);
     Battle_SetType(BATTLE_TYPE_SCRIPTED);
-    Event_SetAfterBattleDestination((s32)&SceneId_LunpaFortressToadonpa,
+    Event_SetAfterBattleDestination(SCENE_LUNPA_FORTRESS_TOADONPA,
                                     LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE);
     Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 4);
   } else {
@@ -1989,7 +1989,7 @@ static void LunpaFortress_FindHammet(void) {
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Event_Wait(1);
     Battle_SetType(BATTLE_TYPE_SCRIPTED);
-    Event_SetAfterBattleDestination((s32)&SceneId_LunpaFortressToadonpa,
+    Event_SetAfterBattleDestination(SCENE_LUNPA_FORTRESS_TOADONPA,
                                     LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE);
     Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 4);
   }
@@ -3151,15 +3151,15 @@ s32 Scene_Initialize(void) {
   struct Actor *mapActor;
 
   gLunpaFortressRandomPick = Random_Below(7);
-  if (gMainRoutineWork.next == (s32)&SceneId_LunpaFortressGroundFloor) {
+  if (gMainRoutineWork.next == SCENE_LUNPA_FORTRESS_GROUND_FLOOR) {
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     LunpaFortress_InitializeGroundFloor();
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_LunpaFortressUpperFloor)
+  if (gMainRoutineWork.next == SCENE_LUNPA_FORTRESS_UPPER_FLOOR)
     LunpaFortress_InitializeUpperFloor();
-  if (gMainRoutineWork.next == (s32)&SceneId_LunpaFortressCave)
+  if (gMainRoutineWork.next == SCENE_LUNPA_FORTRESS_CAVE)
     LunpaFortress_InitializeCave();
-  if (gMainRoutineWork.next == (s32)&SceneId_LunpaFortressToadonpa) {
+  if (gMainRoutineWork.next == SCENE_LUNPA_FORTRESS_TOADONPA) {
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_TOADONPA_HAMMET), 0);

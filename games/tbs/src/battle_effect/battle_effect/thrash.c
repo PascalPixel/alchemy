@@ -65,20 +65,20 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   REG_BLDCNT = 0;
 
   if (mode == FLASHING_STRIKE_UNUSED) {
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work->imageStorage,
-                               1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskF,
-                               Ram_MapGridCellBuffer, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_E, work->imageStorage, 1,
+                               0);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_F, Ram_MapGridCellBuffer, 1,
+                               1);
   } else if (mode == FLASHING_STRIKE_QUICK_STRIKE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskC, work->imageStorage,
-                               1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskD,
-                               Ram_MapGridCellBuffer, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_C, work->imageStorage, 1,
+                               0);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_D, Ram_MapGridCellBuffer, 1,
+                               1);
   } else {
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskA, work->imageStorage,
-                               1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB,
-                               Ram_MapGridCellBuffer, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_A, work->imageStorage, 1,
+                               0);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_B, Ram_MapGridCellBuffer, 1,
+                               1);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 

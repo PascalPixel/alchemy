@@ -268,13 +268,13 @@ const u32 *Scene_GetExits(void) { return gAltmillerCave_Exits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_AltmillerCaveBabi) {
+  if (sceneId == SCENE_ALTMILLER_CAVE_BABI) {
     return gAltmillerCave_BabiActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_AltmillerCaveSquall) {
+  if (sceneId == SCENE_ALTMILLER_CAVE_SQUALL) {
     return gAltmillerCave_SquallActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_AltmillerCaveDraught) {
+  if (sceneId == SCENE_ALTMILLER_CAVE_DRAUGHT) {
     return gAltmillerCave_DraughtActorPlacements;
   }
   return gAltmillerCave_ActorPlacementsOther;
@@ -381,10 +381,10 @@ static void AltmillerCave_InitializeDarkness(void) {
 /// Reveal's light starts. AltmillerCaveEntrance is lit and
 /// AltmillerCaveDraught's rocks show their colors.
 static void AltmillerCave_StartReveal(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveEntrance) {
+  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_ENTRANCE) {
     Io_Write16(BLEND_ALPHA(0, 16), &REG_BLDALPHA);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
+  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
     Actor_SetSpriteColorById(ACTOR_BLUE_ROCK, COLOR_BLUE);
     Actor_SetSpriteColorById(ACTOR_GREEN_ROCK, COLOR_GREEN);
     Actor_SetSpriteColorById(ACTOR_WHITE_ROCK, COLOR_WHITE);
@@ -403,7 +403,7 @@ static void AltmillerCave_EndReveal(void) {
     AltmillerCave_InitializeDarkness();
     effectWork->childOption = 1;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
+  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
     Actor_SetSpriteColorById(ACTOR_BLUE_ROCK, COLOR_NONE);
     Actor_SetSpriteColorById(ACTOR_GREEN_ROCK, COLOR_NONE);
     Actor_SetSpriteColorById(ACTOR_WHITE_ROCK, COLOR_NONE);
@@ -1925,19 +1925,19 @@ static void AltmillerCave_BabiCallsPartyBack(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_AltmillerCaveBabi) {
+  if (sceneId == SCENE_ALTMILLER_CAVE_BABI) {
     return gAltmillerCave_BabiTriggers;
   }
-  if (sceneId == (s32)&SceneId_AltmillerCaveVialChest) {
+  if (sceneId == SCENE_ALTMILLER_CAVE_VIAL_CHEST) {
     return gAltmillerCave_VialChestTriggers;
   }
-  if (sceneId == (s32)&SceneId_AltmillerCaveSquall) {
+  if (sceneId == SCENE_ALTMILLER_CAVE_SQUALL) {
     return gAltmillerCave_SquallTriggers;
   }
-  if (sceneId == (s32)&SceneId_AltmillerCaveCookieChest) {
+  if (sceneId == SCENE_ALTMILLER_CAVE_COOKIE_CHEST) {
     return gAltmillerCave_CookieChestTriggers;
   }
-  if (sceneId == (s32)&SceneId_AltmillerCaveDraught) {
+  if (sceneId == SCENE_ALTMILLER_CAVE_DRAUGHT) {
     return gAltmillerCave_DraughtTriggers;
   }
   return gAltmillerCave_TriggersOther;
@@ -1966,30 +1966,30 @@ s32 Scene_Initialize(void) {
   s32 i;
 
   if (gMainRoutineWork.entrance == 0) {
-    if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveBabi) {
+    if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_BABI) {
       gMainRoutineWork.entrance =
           ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE;
     }
-    if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveVialChest) {
+    if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_VIAL_CHEST) {
       gMainRoutineWork.entrance =
           ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI;
     }
-    if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveSquall) {
+    if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_SQUALL) {
       gMainRoutineWork.entrance =
           ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_VIAL_CHEST;
     }
-    if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveCookieChest) {
+    if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_COOKIE_CHEST) {
       gMainRoutineWork.entrance =
           ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_SQUALL;
     }
-    if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
+    if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
       gMainRoutineWork.entrance =
           ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST;
     }
   }
   GameFlag_Set(FLAG_ALTMILLER_CAVE_DARK);
   Event_ClearFlag(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
-  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveEntrance) {
+  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_ENTRANCE) {
     if (gMainRoutineWork.entrance == ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         CAVE_STATE(CAVE_DARKNESS) = 0;
@@ -2004,7 +2004,7 @@ s32 Scene_Initialize(void) {
       GameFlag_Set(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveBabi) {
+  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_BABI) {
     if (GameFlag_Get(FLAG_BABI_SAVED)) {
       Actor_SetPosition(ACTOR_INVISIBLE_BABI, 0, 0);
     } else {
@@ -2014,7 +2014,7 @@ s32 Scene_Initialize(void) {
       actor->sprite->rotation = TRIG_TURN / 4;
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveSquall) {
+  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_SQUALL) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     if (GameFlag_Get(FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN)) {
@@ -2033,7 +2033,7 @@ s32 Scene_Initialize(void) {
     }
 #endif
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
+  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     Actor_Get(ACTOR_FIRST_OBSTACLE)->update = AltmillerCave_MatchLeaderPriority;

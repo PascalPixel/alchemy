@@ -97,8 +97,8 @@
 /// party has been to another area.
 #define FLAG_LAMA_TEMPLE_PSYNERGY_STONE FLAG_AREA_TEMP_50
 
-#define MAP_ALPINE_CROSSING ((s32)&SceneId_AlpineCrossing)
-#define MAP_LAMA_TEMPLE ((s32)&SceneId_LamaTemple)
+#define MAP_ALPINE_CROSSING (SCENE_ALPINE_CROSSING)
+#define MAP_LAMA_TEMPLE (SCENE_LAMA_TEMPLE)
 
 /// Lama Temple's actors. Garet, Ivan and Mia are placed in their own party
 /// slots for Hama's farewell. The others count from ACTOR_FIRST_PLACED.

@@ -73,7 +73,7 @@ s32 Title_Run(void) {
           break;
       } while (gKeysPressed == 0);
     }
-    Event_SetDestination((s32)&SceneId_Title, TITLE_AFTER_RUN);
+    Event_SetDestination(SCENE_TITLE, TITLE_AFTER_RUN);
     return 0;
   }
   if (gMainRoutineWork.entrance == TITLE_FROM_LEMURIAN_SHIP) {
@@ -86,14 +86,14 @@ s32 Title_Run(void) {
     ScreenFade_Wait();
     Event_Wait(240);
     Sound_Play(MUS_SILENCE);
-    Event_SetDestination((s32)&SceneId_FileScreen, FILE_SCREEN_FROM_TITLE);
+    Event_SetDestination(SCENE_FILE_SCREEN, FILE_SCREEN_FROM_TITLE);
     return 0;
   }
   // The stub does nothing with its argument (system/system/start_up.c), the
   // far-call bank the logo and intro calls below go through.
   // XXX (no evidence): what the call once did; the stub is empty in every
   // edition, so only an earlier build of the game would show.
-  Stub_NoOpHook((s32)&ResourceId_TitleFarCalls);
+  Stub_NoOpHook(RESOURCE_TITLE_FAR_CALLS);
   if (gMainRoutineWork.entrance == TITLE_AFTER_RUN) {
     for (;;) {
       Sound_Play(MUS_SILENCE);
@@ -122,13 +122,13 @@ s32 Title_Run(void) {
       }
       break;
     }
-    Event_SetDestination((s32)&SceneId_FileScreen, FILE_SCREEN_FROM_SANCTUM);
+    Event_SetDestination(SCENE_FILE_SCREEN, FILE_SCREEN_FROM_SANCTUM);
   } else {
     // The intro without its prompt holds the title five seconds.
     Sound_Play(MUS_TITLE_AFTER_PROLOGUE);
     Title_ShowIntro(0);
     Party_EndChildhood();
-    Event_SetDestination((s32)&SceneId_Vale, VALE_FROM_TITLE);
+    Event_SetDestination(SCENE_VALE, VALE_FROM_TITLE);
     Sound_Play(SOUND_FADE_OUT_BGM);
   }
   Sound_Play(SOUND_FADE_OUT_BGM);
@@ -148,7 +148,7 @@ static void Title_LoadSprites(s32 unused) {
   u8 *encodedGraphics;
 
   decodedSprites = Heap_AllocEwram(240 * 160);
-  encodedGraphics = Resource_GetTableEntry((s32)&ResourceId_IntroTilesB);
+  encodedGraphics = Resource_GetTableEntry(RESOURCE_INTRO_TILES_B);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = VramCache_FindFreeEntry();
   // The resource opens with 224 colours of palette (112 words)
@@ -167,7 +167,7 @@ static void Title_LoadSprites(s32 unused) {
   decodedSprites = Heap_AllocEwram(32 + 40 * TILE_SIZE_4BPP);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = VramCache_FindFreeEntry();
-  FieldDecompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB),
+  FieldDecompress_TaggedLz(Resource_GetTableEntry(RESOURCE_INTRO_TILES_B),
                            decodedSprites);
   Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(15, 0),
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
@@ -303,7 +303,7 @@ static void Title_LoadBackground(void) {
   struct ScrollPair *bgScroll;
   s32 blankTile = LOGO_BLANK_TILE;
 
-  resourceId = (s32)&ResourceId_GoldenSunLogo;
+  resourceId = RESOURCE_GOLDEN_SUN_LOGO;
   ScreenFade_ToBlack(0);
   REG_BG2CNT = LOGO_BGCNT;
   gBgScroll[2].y = 0;

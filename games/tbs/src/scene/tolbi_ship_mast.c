@@ -350,17 +350,17 @@ s32 Scene_Initialize(void) {
     }
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK:
-    gMainRoutineWork.restartScene = (s32)&SceneId_ShipRooms;
+    gMainRoutineWork.restartScene = SCENE_SHIP_ROOMS;
     gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_RunAvastEvent();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK:
-    gMainRoutineWork.restartScene = (s32)&SceneId_ShipRooms;
+    gMainRoutineWork.restartScene = SCENE_SHIP_ROOMS;
     gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_ShowMonsters();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK:
-    gMainRoutineWork.restartScene = (s32)&SceneId_ShipRooms;
+    gMainRoutineWork.restartScene = SCENE_SHIP_ROOMS;
     gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_RunMonsterLanding();
     break;
@@ -808,7 +808,7 @@ static void TolbiShipMast_AnnounceLand(void) {
   Event_WaitTransitionFrames();
   // The rowing balance picks where the ship comes in: exactly 11 takes
   // TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, off course to the island.
-  gMainRoutineWork.restartScene = (s32)&SceneId_ShipRooms;
+  gMainRoutineWork.restartScene = SCENE_SHIP_ROOMS;
   gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK;
   if (TolbiShipMast_GetRowingBalance() == 11) {
     Import_EventSetExitRequest(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE);

@@ -67,11 +67,11 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   draw[1] = (DrawRectangle)HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS,
                                           HEAP_SLOT_RAM_CODE_2);
 
-  resource = Resource_GetTableEntry((s32)&ResourceId_WhirlwindSheet);
+  resource = Resource_GetTableEntry(RESOURCE_WHIRLWIND_SHEET);
   Iwram_CopyWords((void *)BG_PLTT, resource, 128);
   resource += 128;
   Decompress_TaggedLz(resource, work->sheet);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       graphics);
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -243,13 +243,13 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       s32 angle;
 
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               (s32)&ResourceId_VioletSkyBackdrop, 0);
+                               RESOURCE_VIOLET_SKY_BACKDROP, 0);
       BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
-                                  (s32)&ResourceId_VioletSkyBackdrop, 8);
+                                  RESOURCE_VIOLET_SKY_BACKDROP, 8);
       BattleEffect_SelectLivingTargets(work->args);
       BattleEffect_SpawnObjects(9, SPRITE_PROCNE, 2);
 
-      resource = Resource_GetTableEntry((s32)&ResourceId_VioletCometSheet);
+      resource = Resource_GetTableEntry(RESOURCE_VIOLET_COMET_SHEET);
       Iwram_CopyWords((void *)BG_PLTT, resource, 128);
       resource += 128;
       Decompress_TaggedLz(resource, work->sheet + PROCNE_COMETS);

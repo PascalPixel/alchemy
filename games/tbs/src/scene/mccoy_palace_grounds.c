@@ -117,7 +117,7 @@ const u32 *Scene_GetExits(void) { return gMcCoyPalaceGroundsExits; }
 
 /// The people outside McCoy's Palace.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_McCoyPalaceGrounds) {
+  if (gMainRoutineWork.next == SCENE_MC_COY_PALACE_GROUNDS) {
     if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0)
       gMcCoyPalaceGroundsActorPlacements[ACTOR_EAST_GUARD - ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
@@ -145,7 +145,7 @@ static void McCoyPalaceGrounds_SearchWell(void) {
 
 /// What the party can talk to, search and catch outside McCoy's Palace.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_McCoyPalaceGrounds) {
+  if (gMainRoutineWork.next == SCENE_MC_COY_PALACE_GROUNDS) {
     return gMcCoyPalaceGroundsTriggers;
   }
   return gMcCoyPalaceGroundsNoTriggers;
@@ -308,7 +308,7 @@ s32 Scene_Initialize(void) {
   actor->priorityFlags = 0;
   actor->sprite->image.priority = 1;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_McCoyPalaceGrounds) {
+  if (gMainRoutineWork.next == SCENE_MC_COY_PALACE_GROUNDS) {
     McCoyPalaceGrounds_RestoreStory();
   }
 

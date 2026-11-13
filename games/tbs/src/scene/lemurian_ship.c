@@ -529,7 +529,7 @@ static void LemurianShip_SetSail(void) {
   Event_WaitTransitionFrames();
   Event_Wait(30);
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
-  Event_SetDestination((s32)&SceneId_Title, TITLE_FROM_LEMURIAN_SHIP);
+  Event_SetDestination(SCENE_TITLE, TITLE_FROM_LEMURIAN_SHIP);
 }
 
 /// The water's ripple, this scene's view of the line scroll's work

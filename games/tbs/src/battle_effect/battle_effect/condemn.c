@@ -54,12 +54,12 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
+  sheet = Resource_GetTableEntry(RESOURCE_COUNTER_REVEAL_SHEET);
   Iwram_CopyWords((void *)BG_PLTT, sheet, 128);
   sheet = sheet + 128;
   Decompress_TaggedLz(sheet, work->sheet);
   cells = Ram_MapGridCellBuffer;
-  sheet = Resource_GetTableEntry((s32)&ResourceId_RedCrescentSheetA);
+  sheet = Resource_GetTableEntry(RESOURCE_RED_CRESCENT_SHEET_A);
   sheet = sheet + 128;
   Decompress_TaggedLz(sheet, cells);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,

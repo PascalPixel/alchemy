@@ -547,9 +547,9 @@ static void ColosseumAzartMatch_ReachArena(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         base - approach + 1);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  Event_SetAfterBattleDestination((s32)&SceneId_ColosseumAzartMatch,
+  Event_SetAfterBattleDestination(SCENE_COLOSSEUM_AZART_MATCH,
                                   COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON);
-  Event_SetDefeatDestination((s32)&SceneId_ColosseumAzartMatch,
+  Event_SetDefeatDestination(SCENE_COLOSSEUM_AZART_MATCH,
                              COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST);
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 }
@@ -705,7 +705,7 @@ s32 Scene_Initialize(void) {
     Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
-    Colosso_StartOpponent((s32)&ResourceId_OpponentPathA);
+    Colosso_StartOpponent(RESOURCE_OPPONENT_PATH_A);
     break;
   case COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST:
     Task_AddFrame(Colosso_RaiseTakePlaceOnPsynergy, TASK_PASS_FRAME);

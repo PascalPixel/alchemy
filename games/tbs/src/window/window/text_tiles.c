@@ -17,7 +17,7 @@ UNUSED void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
                                       u8 *remap) {
   struct WindowWork *work = WINDOW_WORK;
   u8 pixels[128];
-  u8 *sheet = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
+  u8 *sheet = Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
   u32 tile = *(u8 *)entry;
   u8 *src;
   u8 *dst;
@@ -105,7 +105,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
 
   work = WINDOW_WORK;
   canvas = Heap_Alloc(2048);
-  glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
+  glyphs = Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
   paletteBits = work->textPalette << 12;
   Iwram_ClearWords(pens, 16);
   // pens maps a font pixel, 1 or 3 (the font's two shades), to a colour; 0

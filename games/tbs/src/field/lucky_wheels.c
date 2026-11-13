@@ -1073,7 +1073,7 @@ void LuckyWheels_Run(void) {
                               sizeof(struct LuckyWheelsWork));
   tiles = Ram_MapGridCellBuffer;
   save = (struct LuckyWheelsWonPrizesView *)((u8 *)&gMainRoutineWork + 12);
-  Stub_NoOpHook((s32)&ResourceId_BattleEffectFarCalls);
+  Stub_NoOpHook(RESOURCE_BATTLE_EFFECT_FAR_CALLS);
   save->wonPrizes[0] = -1;
   state->repeat = 0;
   state->bet = 1;
@@ -1094,9 +1094,9 @@ void LuckyWheels_Run(void) {
       }
     }
   }
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_D),
                       sheet);
-  entry = Resource_GetTableEntry((s32)&ResourceId_LuckyWheelsMachinePicture);
+  entry = Resource_GetTableEntry(RESOURCE_LUCKY_WHEELS_MACHINE_PICTURE);
   Dma_Set(entry, (void *)&BG_PLTT_COLOR(10, 0), DMA_COPY_WORDS(8), REG_DMA3);
   entry += 32;
   Decompress_TaggedLz(entry, tiles);
@@ -1157,17 +1157,17 @@ void LuckyWheels_Run(void) {
     state->spins = 0;
     work->frame = 0;
     state->timer = 0;
-    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet),
+    Dma_Set(Resource_GetTableEntry(RESOURCE_JUPITER_DJINN_SHEET),
             (void *)BG_PLTT, DMA_COPY_WORDS(32), REG_DMA3);
     // The paylines' two greens, colours 64 and 65 on the canvas.
     BG_PLTT_COLOR(4, 0) = RGB(11, 28, 11);
     BG_PLTT_COLOR(4, 1) = RGB(22, 31, 22);
-    entry = Resource_GetTableEntry((s32)&ResourceId_LuckyWheelsIcons);
+    entry = Resource_GetTableEntry(RESOURCE_LUCKY_WHEELS_ICONS);
     Dma_Set(entry, (void *)OBJ_PLTT, DMA_COPY_WORDS(480 / 4), REG_DMA3);
     entry += 480;
     Decompress_TaggedLz(entry, tiles);
     Dma_Set(tiles, (void *)OBJ_VRAM0, DMA_COPY_WORDS(6960), REG_DMA3);
-    entry = Resource_GetTableEntry((s32)&ResourceId_LuckyWheelsJackpot);
+    entry = Resource_GetTableEntry(RESOURCE_LUCKY_WHEELS_JACKPOT);
     Dma_Set(entry, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_COPY_WORDS(8), REG_DMA3);
     entry += 32;
     Decompress_TaggedLz(entry, tiles);
@@ -1253,15 +1253,15 @@ void LuckyWheels_Run(void) {
         s32 phase = frame % 80;
 
         if (phase <= 15)
-          Palette_StepTowardResource((s32)&ResourceId_MercuryDjinnSheet);
+          Palette_StepTowardResource(RESOURCE_MERCURY_DJINN_SHEET);
         else if (phase <= 31)
-          Palette_StepTowardResource((s32)&ResourceId_VenusDjinnSheet);
+          Palette_StepTowardResource(RESOURCE_VENUS_DJINN_SHEET);
         else if (phase <= 47)
-          Palette_StepTowardResource((s32)&ResourceId_EmberStreakSheet);
+          Palette_StepTowardResource(RESOURCE_EMBER_STREAK_SHEET);
         else if (phase <= 63)
-          Palette_StepTowardResource((s32)&ResourceId_LimePalette);
+          Palette_StepTowardResource(RESOURCE_LIME_PALETTE);
         else
-          Palette_StepTowardResource((s32)&ResourceId_JupiterDjinnSheet);
+          Palette_StepTowardResource(RESOURCE_JUPITER_DJINN_SHEET);
         if (state->timer <= 15)
           Palette_DarkenScreenStep();
         if (state->timer > 16 && (frame & 7) == 0) {

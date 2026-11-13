@@ -54,12 +54,11 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
                         COMPOSITE_TRANSPARENT);
     draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_MagentaTailSheet,
-                             Ram_MapGridCellBuffer, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_MAGENTA_SWIRL_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_MAGENTA_TAIL_SHEET, Ram_MapGridCellBuffer,
+                             1, 0);
   if (mode == SWIRL_SWIPE_POISON_BEAT) {
-    void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
+    void *palette = Resource_GetTableEntry(RESOURCE_LIME_PALETTE);
     Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -141,8 +140,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
                         &last);
   first.x += (last.x - first.x) / 2;
   REG_BG2X = (64 - first.x) << 8;
-  Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_SPIDER_WEB_SHEET, work->sheet, 1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Sound_PlayFar(SE_CRACK);
   for (frame = 0; frame != SPIDER_WEB_FRAMES; frame++) {

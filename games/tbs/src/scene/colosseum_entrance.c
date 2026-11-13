@@ -264,10 +264,10 @@ enum {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Colosseum) {
+  if (sceneId == SCENE_COLOSSEUM) {
     return gColosseumEntrances;
   }
-  if (sceneId == (s32)&SceneId_ColosseumEntrance) {
+  if (sceneId == SCENE_COLOSSEUM_ENTRANCE) {
     return gColosseumEntranceEntrances;
   }
   return gColosseumEntranceEntrancesOther;
@@ -282,7 +282,7 @@ const u32 *Scene_GetExits(void) { return gColosseumEntranceExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   const struct ActorPlacement *table;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_Colosseum) {
+  if (gMainRoutineWork.next == SCENE_COLOSSEUM) {
     switch (gMainRoutineWork.entrance) {
     case COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST:
     case COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS:
@@ -314,7 +314,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
       table = gColosseumActorPlacements;
       break;
     }
-  } else if (gMainRoutineWork.next == (s32)&SceneId_ColosseumEntrance) {
+  } else if (gMainRoutineWork.next == SCENE_COLOSSEUM_ENTRANCE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       table = gColosseumEntranceActorPlacementsAfterColosso;
     } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
@@ -331,17 +331,17 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_ColosseumTunnel) {
+  if (sceneId == SCENE_COLOSSEUM_TUNNEL) {
     return gColosseumTunnelTriggers;
   }
-  if (sceneId == (s32)&SceneId_Colosseum) {
+  if (sceneId == SCENE_COLOSSEUM) {
     if (gMainRoutineWork.entrance ==
         COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST) {
       return gColosseumTriggersFromColosseumAzartMatchWest;
     }
     return gColosseumTriggers;
   }
-  if (sceneId == (s32)&SceneId_ColosseumEntrance) {
+  if (sceneId == SCENE_COLOSSEUM_ENTRANCE) {
     return gColosseumEntranceTriggers;
   }
   return gColosseumEntranceTriggersOther;
@@ -1227,9 +1227,9 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
 s32 Scene_Initialize(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Colosseum) {
+  if (sceneId == SCENE_COLOSSEUM) {
     ColosseumEntrance_ApplyArrivalState();
-  } else if (sceneId == (s32)&SceneId_ColosseumEntrance) {
+  } else if (sceneId == SCENE_COLOSSEUM_ENTRANCE) {
     ColosseumEntrance_UpdateEntranceCells();
   }
   return 0;

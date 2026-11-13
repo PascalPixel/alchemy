@@ -886,19 +886,19 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_ENTRY) {
     return gVenusLighthouseEntryEntrances;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseFirstFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_FIRST_FLOOR) {
     return gVenusLighthouseFirstFloorEntrances;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseSecondFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_SECOND_FLOOR) {
     return gVenusLighthouseSecondFloorEntrances;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_THIRD_FLOOR) {
     return gVenusLighthouseThirdFloorEntrances;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseFourthFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_FOURTH_FLOOR) {
     return gVenusLighthouseFourthFloorEntrances;
   }
   return gVenusLighthouseEntrancesOther;
@@ -916,30 +916,30 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId;
 
   sceneId = gMainRoutineWork.next;
-  if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_ENTRY) {
     return gVenusLighthouseEntryActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseGroundFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_GROUND_FLOOR) {
     placements = gVenusLighthouseGroundFloorActorPlacements;
     Scene_AssignViewFlags(placements);
     return placements;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseFirstFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_FIRST_FLOOR) {
     placements = gVenusLighthouseFirstFloorActorPlacements;
     Scene_AssignViewFlags(placements);
     return placements;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseSecondFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_SECOND_FLOOR) {
     placements = gVenusLighthouseSecondFloorActorPlacements;
     Scene_AssignViewFlags(placements);
     return placements;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_THIRD_FLOOR) {
     placements = gVenusLighthouseThirdFloorActorPlacements;
     Scene_AssignViewFlags(placements);
     return placements;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseFourthFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_FOURTH_FLOOR) {
     placements = gVenusLighthouseFourthFloorActorPlacements;
     Scene_AssignViewFlags(placements);
     return placements;
@@ -2323,22 +2323,22 @@ static void VenusLighthouse_EnterRisingPassage(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_ENTRY) {
     return gVenusLighthouseEntryTriggers;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseGroundFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_GROUND_FLOOR) {
     return gVenusLighthouseGroundFloorTriggers;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseFirstFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_FIRST_FLOOR) {
     return gVenusLighthouseFirstFloorTriggers;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseSecondFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_SECOND_FLOOR) {
     return gVenusLighthouseSecondFloorTriggers;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_THIRD_FLOOR) {
     return gVenusLighthouseThirdFloorTriggers;
   }
-  if (sceneId == (s32)&SceneId_VenusLighthouseFourthFloor) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_FOURTH_FLOOR) {
     return gVenusLighthouseFourthFloorTriggers;
   }
   return gVenusLighthouseGroundFloorTriggers;
@@ -2385,7 +2385,7 @@ s32 Scene_Initialize(void) {
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_LIT);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   sceneId = gMainRoutineWork.next;
-  if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
+  if (sceneId == SCENE_VENUS_LIGHTHOUSE_ENTRY) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (!GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD))
       VenusLighthouse_LayDownHurtActor(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK);
@@ -2399,7 +2399,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpritePriority(ACTOR_SOLDIER_OPENED_DOOR, 2);
     VenusLighthouse_LayDownHurtActor(ACTOR_SOLDIER_HEADED_FOR_BABI);
     VenusLighthouse_LayDownHurtActor(ACTOR_SOLDIER_COLOSSO_VICTORS);
-  } else if (sceneId == (s32)&SceneId_VenusLighthouseGroundFloor) {
+  } else if (sceneId == SCENE_VENUS_LIGHTHOUSE_GROUND_FLOOR) {
     switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_ENTRY:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_FROM_RELIEFS:
@@ -2447,7 +2447,7 @@ s32 Scene_Initialize(void) {
       }
       break;
     }
-  } else if (sceneId == (s32)&SceneId_VenusLighthouseFirstFloor) {
+  } else if (sceneId == SCENE_VENUS_LIGHTHOUSE_FIRST_FLOOR) {
     switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_GROUND_FLOOR:
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -2517,7 +2517,7 @@ s32 Scene_Initialize(void) {
       Scene_QueueMusic(SE_AMBIENT_WATER);
       break;
     }
-  } else if (sceneId == (s32)&SceneId_VenusLighthouseSecondFloor) {
+  } else if (sceneId == SCENE_VENUS_LIGHTHOUSE_SECOND_FLOOR) {
     switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_FROM_PILLAR_PIT:
       VenusLighthouse_ArriveThroughSparkPassage();
@@ -2587,7 +2587,7 @@ s32 Scene_Initialize(void) {
       Scene_QueueMusic(SE_AMBIENT_WATER);
       break;
     }
-  } else if (sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
+  } else if (sceneId == SCENE_VENUS_LIGHTHOUSE_THIRD_FLOOR) {
     switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST:
       VenusLighthouse_AnimateWestTileWave();
@@ -2679,7 +2679,7 @@ s32 Scene_Initialize(void) {
       Scene_QueueMusic(SE_AMBIENT_WATER);
       break;
     }
-  } else if (sceneId == (s32)&SceneId_VenusLighthouseFourthFloor) {
+  } else if (sceneId == SCENE_VENUS_LIGHTHOUSE_FOURTH_FLOOR) {
     switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_FROM_WALL_SWITCHES:
@@ -3355,7 +3355,7 @@ static s32 VenusLighthouse_RouteLight(struct Actor *light) {
       Actor_StartScript(light, gVenusLightGoesOut);
       return 0;
     }
-    if (gMainRoutineWork.next == (s32)&SceneId_VenusLighthouseThirdFloor) {
+    if (gMainRoutineWork.next == SCENE_VENUS_LIGHTHOUSE_THIRD_FLOOR) {
       for (socket = 0;
            socket <= 3 &&
            !(FIELD_CELL(light->x.fixed) == gVenusThirdFloorSockets[socket].x &&

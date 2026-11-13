@@ -47,14 +47,14 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_MemberBurstImage),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_MEMBER_BURST_IMAGE),
                       work);
   if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
-    paletteId = (s32)&ResourceId_PinkBurstSheet;
+    paletteId = RESOURCE_PINK_BURST_SHEET;
   else if (mode == GATHERING_LIGHTS_RUMBLE)
-    paletteId = (s32)&ResourceId_MarsDjinnSheet;
+    paletteId = RESOURCE_MARS_DJINN_SHEET;
   else
-    paletteId = (s32)&ResourceId_MercuryDjinnSheet;
+    paletteId = RESOURCE_MERCURY_DJINN_SHEET;
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(paletteId), 128);
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
 

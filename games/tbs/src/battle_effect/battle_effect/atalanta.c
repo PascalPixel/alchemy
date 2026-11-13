@@ -85,11 +85,11 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->args);
   BattleEffect_SpawnObjects(9, SPRITE_ATALANTA, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SLASH_SHEET, work->sheet, 1, 1);
   Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_LimePalette), 128);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  path = Resource_GetTableEntry((s32)&ResourceId_StagedParticlePath);
+                  Resource_GetTableEntry(RESOURCE_LIME_PALETTE), 128);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  path = Resource_GetTableEntry(RESOURCE_STAGED_PARTICLE_PATH);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
@@ -100,7 +100,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   wait(1);
   // The violet sky scrolls.
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           (s32)&ResourceId_VioletSkyBackdrop, 0);
+                           RESOURCE_VIOLET_SKY_BACKDROP, 0);
   work->scrollTimer = 0;
   work->scrollInterval = 4;
   work->scrollStepX = -1;
@@ -259,8 +259,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     Sprite_DestroyFar(work->sprites[i]);
   REG_BG2PA = Q_8_8(0.5);
   REG_DISPCNT = EFFECT_DISPCNT;
-  Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
-                             Ram_MapGridCellBuffer, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, Ram_MapGridCellBuffer,
+                             1, 0);
   for (i = 0; i != 32; i++) {
     struct Particle *shaft = &work->particles[i];
     s32 member = i % 6;

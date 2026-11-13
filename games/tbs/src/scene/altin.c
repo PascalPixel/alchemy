@@ -84,8 +84,8 @@
 #define ALTIN_COOK_LAST_POT_X 380
 #endif
 
-#define MAP_ALTIN_VILLAGE ((s32)&SceneId_Altin)
-#define MAP_ALTIN_HOUSES ((s32)&SceneId_CottageRoomsD)
+#define MAP_ALTIN_VILLAGE (SCENE_ALTIN)
+#define MAP_ALTIN_HOUSES (SCENE_COTTAGE_ROOMS_D)
 
 /// The village's actors, numbering the rows of gAltin_ActorPlacements.
 ///

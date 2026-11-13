@@ -184,7 +184,7 @@ s32 Scene_Initialize(void) {
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == (s32)&SceneId_MercuryLighthouseAerie) {
+  if (gMainRoutineWork.next == SCENE_MERCURY_LIGHTHOUSE_AERIE) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     Task_AddFrame(MercuryLighthouseAerie_FlickerBeacon, TASK_PASS_FRAME);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
@@ -902,7 +902,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
   Actor_WalkToAndWait(ACTOR_SATUROS, 336, 216);
-  Event_SetAfterBattleDestination((s32)&SceneId_MercuryLighthouseAerie, 2);
+  Event_SetAfterBattleDestination(SCENE_MERCURY_LIGHTHOUSE_AERIE, 2);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   // Saturos: ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2.
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,

@@ -335,13 +335,13 @@ static inline void MogallForest_ApePointsTheWay(s32 guideId) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_MogallForestSign) {
+  if (scene == SCENE_MOGALL_FOREST_SIGN) {
     return gMogallForestSign_Entrances;
   }
-  if (scene == (s32)&SceneId_MogallForestQuartz) {
+  if (scene == SCENE_MOGALL_FOREST_QUARTZ) {
     return gMogallForestQuartz_Entrances;
   }
-  if (scene == (s32)&SceneId_MogallForestKillerApe) {
+  if (scene == SCENE_MOGALL_FOREST_KILLER_APE) {
     return gMogallForestKillerApe_Entrances;
   }
   return gMogallForestSidePaths_Entrances;
@@ -355,13 +355,13 @@ const u32 *Scene_GetExits(void) { return gMogallForest_Exits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_MogallForestSign) {
+  if (scene == SCENE_MOGALL_FOREST_SIGN) {
     return gMogallForestSign_ActorPlacements;
   }
-  if (scene == (s32)&SceneId_MogallForestQuartz) {
+  if (scene == SCENE_MOGALL_FOREST_QUARTZ) {
     return gMogallForestQuartz_ActorPlacements;
   }
-  if (scene == (s32)&SceneId_MogallForestKillerApe) {
+  if (scene == SCENE_MOGALL_FOREST_KILLER_APE) {
     return gMogallForestKillerApe_ActorPlacements;
   }
   return gMogallForestSidePaths_ActorPlacements;
@@ -1196,7 +1196,7 @@ static void MogallForest_KillerApeAttacks(void) {
   Event_Wait(10);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Event_SetAfterBattleDestination(
-      (s32)&SceneId_MogallForestKillerApe,
+      SCENE_MOGALL_FOREST_KILLER_APE,
       MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 1);
@@ -1206,13 +1206,13 @@ static void MogallForest_KillerApeAttacks(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_MogallForestSign) {
+  if (scene == SCENE_MOGALL_FOREST_SIGN) {
     return gMogallForestSign_Triggers;
   }
-  if (scene == (s32)&SceneId_MogallForestQuartz) {
+  if (scene == SCENE_MOGALL_FOREST_QUARTZ) {
     return gMogallForestQuartz_Triggers;
   }
-  if (scene == (s32)&SceneId_MogallForestKillerApe) {
+  if (scene == SCENE_MOGALL_FOREST_KILLER_APE) {
     return gMogallForestKillerApe_Triggers;
   }
   return gMogallForestSidePaths_Triggers;
@@ -1229,7 +1229,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   sceneId = gMainRoutineWork.next;
-  if (sceneId == (s32)&SceneId_MogallForestSign) {
+  if (sceneId == SCENE_MOGALL_FOREST_SIGN) {
     entrance = gMainRoutineWork.entrance;
     switch (entrance) {
     case MOGALL_FOREST_SIGN_FROM_WORLD_MAP:
@@ -1309,7 +1309,7 @@ s32 Scene_Initialize(void) {
           ACTOR_PRIORITY_UNDERFOOT;
       break;
     }
-  } else if (sceneId == (s32)&SceneId_MogallForestQuartz) {
+  } else if (sceneId == SCENE_MOGALL_FOREST_QUARTZ) {
     entrance = gMainRoutineWork.entrance;
     switch (entrance) {
     case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH:
@@ -1371,7 +1371,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_SECOND_AREA_SOUTH_APE_STUMP, 424, 480);
       break;
     }
-  } else if (sceneId == (s32)&SceneId_MogallForestKillerApe) {
+  } else if (sceneId == SCENE_MOGALL_FOREST_KILLER_APE) {
     entrance = gMainRoutineWork.entrance;
     switch (entrance) {
     case MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_WEST:

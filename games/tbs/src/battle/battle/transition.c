@@ -321,7 +321,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       s32 start = 0;
 
       // The enemies alone take part in the shattering opening.
-      battle->background = (u32)&ResourceId_VenusLighthouseAerieStormBackdrop;
+      battle->background = (u32)RESOURCE_VENUS_LIGHTHOUSE_AERIE_STORM_BACKDROP;
       work.effect.targetCount =
           BattleUnit_ListIds(BATTLE_SIDE_MASK_ENEMIES, work.effect.targets);
       work.effect.targets[work.effect.targetCount] = BATTLE_UNIT_LIST_END;

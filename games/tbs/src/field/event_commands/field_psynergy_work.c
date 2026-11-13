@@ -37,9 +37,9 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   effectWork->savedShakeX = grid->shakeX;
   effectWork->savedShakeY = grid->shakeY;
   effectWork->savedShakeDecay = grid->shakeDecay;
-  if (gMainRoutineWork.mapId == (s32)&SceneId_MercuryLighthouseEntrance)
+  if (gMainRoutineWork.mapId == SCENE_MERCURY_LIGHTHOUSE_ENTRANCE)
     effectWork->lit = 1;
-  if (gMainRoutineWork.mapId == (s32)&SceneId_MercuryLighthouseMiddle)
+  if (gMainRoutineWork.mapId == SCENE_MERCURY_LIGHTHOUSE_MIDDLE)
     effectWork->lit = 1;
   FieldPsynergy_SetupActorPair(gMainRoutineWork.leaderActorId, -1);
   // Every field Psynergy but Reveal itself pauses Reveal's countdown (running

@@ -1289,7 +1289,7 @@ void SelectionMenu_LoadLargeIcon(void) {
   transfer = &state->records[SELECTION_RECORD_LARGE_ICON];
   resourceId = selected->base;
   // The resource starts with a halfword offset per command icon.
-  table = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+  table = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
   {
     u8 **tiles = &buffer->encoded;
     resource = table + *(u16 *)(table + selected->base * 2);

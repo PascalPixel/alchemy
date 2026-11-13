@@ -46,11 +46,10 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   Actor_SelectAnimationFar(user, POSE_LEAP);
   Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL * 3);
 
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameBladeSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+  Resource_LoadAndDecompress(RESOURCE_FLAME_BLADE_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              work->sheet + RAGNAROK_FLASH_PICTURES, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
 
   // Flashes and sparks for three columns, though only two strike: the third's
   // random draws are still taken.
@@ -137,7 +136,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     }
 
     if (frame > 16) {
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
+      BattleEffect_StepPaletteToResource(RESOURCE_BLAST_SHEET);
     }
 
     // The two columns of light strike, with flashes and then sparks.

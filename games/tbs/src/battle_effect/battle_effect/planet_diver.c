@@ -44,9 +44,9 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
   sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       sprites);
-  palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
+  palette = Resource_GetTableEntry(RESOURCE_FLASH_BURST_SHEET);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
@@ -103,7 +103,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_WHOOSH);
     }
     if (frame == 16) {
-      palette = Resource_GetTableEntry((s32)&ResourceId_FlameballSheet);
+      palette = Resource_GetTableEntry(RESOURCE_FLAMEBALL_SHEET);
       Iwram_CopyWords((void *)BG_PLTT, palette, 128);
       palette += 128;
       Decompress_TaggedLz(palette, work->sheet);
@@ -208,11 +208,11 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  palette = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
+  palette = Resource_GetTableEntry(RESOURCE_SKULL_SHEET);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
-  palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+  palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
@@ -319,7 +319,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0);
-  palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
+  palette = Resource_GetTableEntry(RESOURCE_SPIRAL_SHEET);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   Decompress_TaggedLz((u8 *)palette + 128, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,

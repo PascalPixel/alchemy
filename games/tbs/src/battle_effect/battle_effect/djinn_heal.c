@@ -34,9 +34,9 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
-                             work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET, work->sheet, 1,
+                             1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   /* FAKEMATCH(temporary): draw stands in for callbacks; as callbacks used
    * directly, 10 of 747 instructions differ in tbs-en. */
   BattleEffect_FetchRectangleBlitters(work->args->side ^ 1, draw = callbacks);
@@ -133,7 +133,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
                  ((Random16() & 0xff) - 127) << 15);
     spark->variant = 0;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, sheet, 0, 0);
   for (frame = 0; frame != work->args->targetCount * 8 + 72; frame++) {
     struct BattleCamera *camera = gBattleCamera;
     EFFECT_VIEW_FROM_CAMERA(camera);

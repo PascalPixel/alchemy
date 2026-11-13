@@ -265,7 +265,7 @@ static void TunnelRuins_UpdateTrackedActor(void) {
   effectWork = gFadeOverlayWork;
   depthLimit = 0;
   // Each tracked entrance measures depth in eight-pixel steps.
-  if (gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsGreatStatue) {
+  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
     switch (gMainRoutineWork.entrance) {
     case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_STATUE:
     case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_COLUMNS_NORTH:
@@ -437,17 +437,17 @@ static void TunnelRuins_HopDownStep(void) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_TunnelRuinsGreatStatue) {
+  if (sceneId == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
     return gTunnelRuinsGreatStatueEntrances;
   }
-  if (sceneId == (s32)&SceneId_TunnelRuinsLadyStatues) {
+  if (sceneId == SCENE_TUNNEL_RUINS_LADY_STATUES) {
     return gTunnelRuinsLadyStatuesEntrances;
   }
   return gTunnelRuinsEntrancesOther;
 }
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsLadyStatues) {
+  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_LADY_STATUES) {
     return gTunnelRuinsLadyStatuesRegions;
   }
   return 0;
@@ -460,7 +460,7 @@ const u32 *Scene_GetExits(void) { return gTunnelRuinsExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *table;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsGreatStatue) {
+  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
     table = gTunnelRuinsGreatStatueActorPlacements;
   } else {
     table = gTunnelRuinsActorPlacementsOther;
@@ -1198,7 +1198,7 @@ static void TunnelRuins_SearchLockedDoor(void) {
 /// The triggers of TunnelRuinsGreatStatue, or of TunnelRuinsLadyStatues and
 /// any other scene.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsGreatStatue) {
+  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
     return gTunnelRuinsGreatStatueTriggers;
   }
   return gTunnelRuinsTriggersOther;
@@ -1289,14 +1289,14 @@ static void TunnelRuins_MarkPushPillarCells(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsGreatStatue ||
-      gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsLadyStatues) {
+  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_GREAT_STATUE ||
+      gMainRoutineWork.next == SCENE_TUNNEL_RUINS_LADY_STATUES) {
     FieldEffect_StartFadeOverlay(0);
     gMainRoutineWork.retreatEntrance =
         TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR;
-    gMainRoutineWork.retreatScene = (s32)&SceneId_TunnelRuinsGreatStatue;
+    gMainRoutineWork.retreatScene = SCENE_TUNNEL_RUINS_GREAT_STATUE;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsGreatStatue) {
+  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
     switch (gMainRoutineWork.entrance) {
     case TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR:
     case TUNNEL_RUINS_GREAT_STATUE_STATUE_FROM_FIRST_PILLARS:
@@ -1434,7 +1434,7 @@ s32 Scene_Initialize(void) {
     case TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH:
       gMainRoutineWork.retreatEntrance =
           BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE;
-      gMainRoutineWork.retreatScene = (s32)&SceneId_BabiLighthouseEntry;
+      gMainRoutineWork.retreatScene = SCENE_BABI_LIGHTHOUSE_ENTRY;
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       Actor_SetSpriteColorById(ACTOR_EAST_PILLAR_A, SPRITE_COLOR_GREY);
       Actor_SetSpriteColorById(ACTOR_EAST_PILLAR_B, SPRITE_COLOR_GREY);

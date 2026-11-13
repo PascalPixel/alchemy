@@ -187,13 +187,13 @@ enum VaultCaveMouthActorId {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_VaultCavePassage) {
+  if (sceneId == SCENE_VAULT_CAVE_PASSAGE) {
     return gVaultCavePassage_Entrances;
   }
-  if (sceneId == (s32)&SceneId_VaultCaveVambrace) {
+  if (sceneId == SCENE_VAULT_CAVE_VAMBRACE) {
     return gVaultCaveVambrace_Entrances;
   }
-  if (sceneId == (s32)&SceneId_VaultCaveMouth) {
+  if (sceneId == SCENE_VAULT_CAVE_MOUTH) {
     return gVaultCaveMouth_Entrances;
   }
   return gVaultCave_FallbackEntrances;
@@ -207,13 +207,13 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_VaultCavePassage) {
+  if (sceneId == SCENE_VAULT_CAVE_PASSAGE) {
     return gVaultCavePassage_Exits;
   }
-  if (sceneId == (s32)&SceneId_VaultCaveVambrace) {
+  if (sceneId == SCENE_VAULT_CAVE_VAMBRACE) {
     return gVaultCaveVambrace_Exits;
   }
-  if (sceneId == (s32)&SceneId_VaultCaveMouth) {
+  if (sceneId == SCENE_VAULT_CAVE_MOUTH) {
     return gVaultCaveMouth_Exits;
   }
   return gVaultCave_FallbackExits;
@@ -223,13 +223,13 @@ const u32 *Scene_GetExits(void) {
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_VaultCavePassage) {
+  if (sceneId == SCENE_VAULT_CAVE_PASSAGE) {
     return gVaultCavePassage_ActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_VaultCaveVambrace) {
+  if (sceneId == SCENE_VAULT_CAVE_VAMBRACE) {
     return gVaultCaveVambrace_ActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_VaultCaveMouth) {
+  if (sceneId == SCENE_VAULT_CAVE_MOUTH) {
     return gVaultCaveMouth_ActorPlacements;
   }
   return gVaultCave_FallbackActorPlacements;
@@ -342,13 +342,13 @@ static void VaultCave_ShowLockedDoor(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_VaultCavePassage) {
+  if (sceneId == SCENE_VAULT_CAVE_PASSAGE) {
     return gVaultCavePassage_Triggers;
   }
-  if (sceneId == (s32)&SceneId_VaultCaveVambrace) {
+  if (sceneId == SCENE_VAULT_CAVE_VAMBRACE) {
     return gVaultCaveVambrace_Triggers;
   }
-  if (sceneId == (s32)&SceneId_VaultCaveMouth) {
+  if (sceneId == SCENE_VAULT_CAVE_MOUTH) {
     return gVaultCaveMouth_Triggers;
   }
   return gVaultCave_FallbackTriggers;
@@ -858,7 +858,7 @@ static void VaultCave_StartTimedFalls(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == (s32)&SceneId_VaultCavePassage) {
+  if (gMainRoutineWork.next == SCENE_VAULT_CAVE_PASSAGE) {
     switch (gMainRoutineWork.entrance) {
     case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_WEST:
     case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST:
@@ -882,7 +882,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_VaultCaveVambrace) {
+  if (gMainRoutineWork.next == SCENE_VAULT_CAVE_VAMBRACE) {
     if (GameFlag_Get(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY) == 0) {
       Actor_Get(ACTOR_IVY)->scaleY = 3 * Q16_ONE / 2;
     }
@@ -946,7 +946,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SOUTHERN_PILLAR), 0);
     Actor_Get(ACTOR_SOUTHERN_PILLAR)->collisionFlags = ACTOR_SOLID;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_VaultCaveMouth) {
+  if (gMainRoutineWork.next == SCENE_VAULT_CAVE_MOUTH) {
     Actor_SetAnimation(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH,
                        FLAME_PILLAR_ANIMATION_BURNING);
     if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
@@ -984,7 +984,7 @@ s32 Scene_Initialize(void) {
   // Retreat always returns to the foot of SceneId_VaultCavePassage's ladder
   // from Vault.
   gMainRoutineWork.retreatEntrance = VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT;
-  gMainRoutineWork.retreatScene = (s32)&SceneId_VaultCavePassage;
+  gMainRoutineWork.retreatScene = SCENE_VAULT_CAVE_PASSAGE;
   return 0;
 }
 

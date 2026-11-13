@@ -136,10 +136,10 @@ static void StuccoRoomsA_ApplyRoomState(void);
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_StuccoRoomsA) {
+  if (sceneId == SCENE_STUCCO_ROOMS_A) {
     return gStuccoRoomsA_HouseEntrances;
   }
-  if (sceneId == (s32)&SceneId_KalaySanctum) {
+  if (sceneId == SCENE_KALAY_SANCTUM) {
     return gStuccoRoomsA_SanctumEntrances;
   }
   return gStuccoRoomsA_NoEntrances;
@@ -153,7 +153,7 @@ const u32 *Scene_GetExits(void) { return gStuccoRoomsA_Exits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_StuccoRoomsA) {
+  if (sceneId == SCENE_STUCCO_ROOMS_A) {
     s32 entrance = gMainRoutineWork.entrance;
     struct ActorPlacement *table;
 
@@ -175,7 +175,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     Scene_AssignViewFlags(table);
     return table;
   }
-  if (sceneId == (s32)&SceneId_KalaySanctum) {
+  if (sceneId == SCENE_KALAY_SANCTUM) {
     return gStuccoRoomsA_SanctumActorPlacements;
   }
   return gStuccoRoomsA_NoActorPlacements;
@@ -186,7 +186,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_StuccoRoomsA) {
+  if (sceneId == SCENE_STUCCO_ROOMS_A) {
     s32 entrance = gMainRoutineWork.entrance;
 
     switch (entrance) {
@@ -203,7 +203,7 @@ const struct Trigger *Scene_GetTriggers(void) {
       return gStuccoRoomsA_HouseTriggers;
     }
   }
-  if (sceneId == (s32)&SceneId_KalaySanctum) {
+  if (sceneId == SCENE_KALAY_SANCTUM) {
     return gStuccoRoomsA_SanctumTriggers;
   }
   return gStuccoRoomsA_NoTriggers;
@@ -340,7 +340,7 @@ static void StuccoRoomsA_OpenDoorAndExit(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if (gMainRoutineWork.next == (s32)&SceneId_StuccoRoomsA) {
+  if (gMainRoutineWork.next == SCENE_STUCCO_ROOMS_A) {
     StuccoRoomsA_ApplyRoomState();
   }
   return 0;

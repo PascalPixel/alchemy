@@ -1165,7 +1165,7 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   Actor_RunScriptAndWait(ACTOR_SHEBA, gVenusLighthouseAerie_StepBackWestAction);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   {
-    s32 actorId = (s32)&SceneId_VenusLighthouseAerie;
+    s32 actorId = SCENE_VENUS_LIGHTHOUSE_AERIE;
 
     Event_SetAfterBattleDestination(actorId,
                                     VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE);
@@ -1759,9 +1759,9 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   VenusLighthouseAerie_FlashScreen();
   Event_Wait(20);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  Event_SetAfterBattleDestination((s32)&SceneId_VenusLighthouseAerie,
+  Event_SetAfterBattleDestination(SCENE_VENUS_LIGHTHOUSE_AERIE,
                                   VENUS_LIGHTHOUSE_AERIE_AFTER_SECOND_BATTLE);
-  Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseAerie,
+  Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_AERIE,
                              VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 0);
   Party_RestorePpOfLitElements();
@@ -2449,8 +2449,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Event_Wait(30);
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
   Actor_Snapshot();
-  Event_SetDestination((s32)&SceneId_WorldMap,
-                       WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT);
+  Event_SetDestination(SCENE_WORLD_MAP, WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT);
   white = RGB(31, 31, 31);
 
   PLTT_BACKDROP = white;

@@ -26,7 +26,7 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_STAR_DOT_SHEET, work->sheet, 1, 1);
   BattleEffect_FetchRectangleBlitters(work->args->side ^ 1, draw);
   for (i = 0; i != 256; i++) {
     star = &PARTICLES[i];
@@ -117,7 +117,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  skulls = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
+  skulls = Resource_GetTableEntry(RESOURCE_SKULL_SHEET);
   Iwram_CopyWords((void *)BG_PLTT, skulls, 128);
   Decompress_TaggedLz(skulls + 128, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -208,10 +208,10 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage,
+  Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_TARGET_BURST_IMAGE,
                              work->sheet + TARGET_BURST_PICTURES, 0, 0);
-  palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+  palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);

@@ -64,7 +64,7 @@ void MenuTitle_Bob(struct WindowSprite *obj) {
 void CommandIcon_Load(s32 icon, s32 slot, s32 remap) {
   s32 size = 1024;
   void *buffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, size);
-  u16 *offsetTable = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+  u16 *offsetTable = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
 
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
     Decompress_ByteLz((void *)((u32)offsetTable + offsetTable[icon]), buffer);
@@ -416,7 +416,7 @@ struct Window *Link_CreateCountdownLabelWindow(void) {
 s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
   GlyphTransfer *buffer =
       HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
-  u16 *offsetTable = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+  u16 *offsetTable = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
   u8 **encoded = &buffer->encoded;
   void *target = (void *)((u32)offsetTable + offsetTable[icon]);
   s32 result;
@@ -441,7 +441,7 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
   u32 index;
 
   decoded = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*decoded));
-  font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
+  font = Resource_GetTableEntry((u32)RESOURCE_COMMAND_ICONS);
   decoded->encoded = font + ((u16 *)font)[glyph];
   Decompress_ByteLz(decoded->encoded, decoded);
   remapped = Heap_Alloc(32 * 32);

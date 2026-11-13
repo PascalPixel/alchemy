@@ -93,10 +93,10 @@ const s32 *gFieldEffect_DurationScripts[] = {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Lunpa) {
+  if (sceneId == SCENE_LUNPA) {
     return gLunpaEntrances;
   }
-  if (sceneId == (s32)&SceneId_LunpaFortressGates) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_GATES) {
     return gGateEntrances;
   }
   return gLunpaEntrances;
@@ -107,10 +107,10 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Lunpa) {
+  if (sceneId == SCENE_LUNPA) {
     return gLunpaExits;
   }
-  if (sceneId == (s32)&SceneId_LunpaFortressGates) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_GATES) {
     return gGateExits;
   }
   return gLunpaExits;
@@ -120,10 +120,10 @@ const u32 *Scene_GetExits(void) {
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Lunpa) {
+  if (sceneId == SCENE_LUNPA) {
     return gLunpaActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_LunpaFortressGates) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_GATES) {
     return gGateActorPlacements;
   }
   return gLunpaActorPlacements;
@@ -259,12 +259,11 @@ static void Lunpa_SearchWell(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_LunpaFortressGates) {
+  if (sceneId == SCENE_LUNPA_FORTRESS_GATES) {
     GameFlag_Get(FLAG_DODONPA_LOCKED_UP);
     return gGateTriggers;
   }
-  if (sceneId == (s32)&SceneId_Lunpa &&
-      GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
+  if (sceneId == SCENE_LUNPA && GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     return gLunpaReopenedTriggers;
   }
   return gLunpaSealedTriggers;
@@ -884,7 +883,7 @@ static void Lunpa_LeaderSneaksOut(void) {
 s32 Scene_Initialize(void) {
   struct Actor *puddle;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_Lunpa) {
+  if (gMainRoutineWork.next == SCENE_LUNPA) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Lunpa_HideSecrets();
     if (GameFlag_Get(FLAG_LUNPA_NUT_CAUGHT) == 0) {
@@ -896,7 +895,7 @@ s32 Scene_Initialize(void) {
     }
     GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_LunpaFortressGates) {
+  if (gMainRoutineWork.next == SCENE_LUNPA_FORTRESS_GATES) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gMainRoutineWork.retreatEntrance = GATE_RETREAT_ENTRANCE;
     if (gMainRoutineWork.entrance == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&

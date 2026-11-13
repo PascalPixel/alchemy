@@ -167,13 +167,13 @@ static s32 BilibinCave_ClearScriptedActorSpriteFlags(struct Actor *actor) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
+  if (sceneId == SCENE_BILIBIN_CAVE_ENTRANCE) {
     return gBilibinCaveEntranceEntrances;
   }
-  if (sceneId == (s32)&SceneId_BilibinCaveRapier) {
+  if (sceneId == SCENE_BILIBIN_CAVE_RAPIER) {
     return gBilibinCaveRapierEntrances;
   }
-  if (sceneId == (s32)&SceneId_BilibinCaveIce) {
+  if (sceneId == SCENE_BILIBIN_CAVE_ICE) {
     return gBilibinCaveIceEntrances;
   }
   return gBilibinCaveEntrancesOther;
@@ -186,13 +186,13 @@ const u32 *Scene_GetExits(void) { return gBilibinCaveExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
+  if (sceneId == SCENE_BILIBIN_CAVE_ENTRANCE) {
     return gBilibinCaveEntranceActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_BilibinCaveRapier) {
+  if (sceneId == SCENE_BILIBIN_CAVE_RAPIER) {
     return gBilibinCaveRapierActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_BilibinCaveIce) {
+  if (sceneId == SCENE_BILIBIN_CAVE_ICE) {
     return gBilibinCaveIceActorPlacements;
   }
   return gBilibinCaveActorPlacementsOther;
@@ -201,13 +201,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
+  if (sceneId == SCENE_BILIBIN_CAVE_ENTRANCE) {
     return gBilibinCaveEntranceTriggers;
   }
-  if (sceneId == (s32)&SceneId_BilibinCaveRapier) {
+  if (sceneId == SCENE_BILIBIN_CAVE_RAPIER) {
     return gBilibinCaveRapierTriggers;
   }
-  if (sceneId == (s32)&SceneId_BilibinCaveIce) {
+  if (sceneId == SCENE_BILIBIN_CAVE_ICE) {
     return gBilibinCaveIceTriggers;
   }
   return gBilibinCaveTriggersOther;
@@ -377,11 +377,11 @@ static void BilibinCave_StopFootprints(void) {
 s32 Scene_Initialize(void) {
   s16 variant = gMainRoutineWork.next;
 
-  if (variant == (s32)&SceneId_BilibinCaveEntrance) {
+  if (variant == SCENE_BILIBIN_CAVE_ENTRANCE) {
     BilibinCave_RestoreEntrance();
-  } else if (variant == (s32)&SceneId_BilibinCaveRapier) {
+  } else if (variant == SCENE_BILIBIN_CAVE_RAPIER) {
     BilibinCave_RestoreRapierRoom();
-  } else if (variant == (s32)&SceneId_BilibinCaveIce) {
+  } else if (variant == SCENE_BILIBIN_CAVE_ICE) {
     BilibinCave_RestoreIceRoom();
   }
   return 0;

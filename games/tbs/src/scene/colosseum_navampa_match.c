@@ -844,9 +844,9 @@ static void ColosseumNavampaMatch_ReachArena(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         last - place + 1);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  Event_SetAfterBattleDestination((s32)&SceneId_ColosseumNavampaMatch,
+  Event_SetAfterBattleDestination(SCENE_COLOSSEUM_NAVAMPA_MATCH,
                                   COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON);
-  Event_SetDefeatDestination((s32)&SceneId_ColosseumNavampaMatch,
+  Event_SetDefeatDestination(SCENE_COLOSSEUM_NAVAMPA_MATCH,
                              COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST);
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 }
@@ -1056,7 +1056,7 @@ s32 Scene_Initialize(void) {
     Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
-    Colosso_StartOpponent((s32)&ResourceId_OpponentPathC);
+    Colosso_StartOpponent(RESOURCE_OPPONENT_PATH_C);
     break;
 
   case COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH:

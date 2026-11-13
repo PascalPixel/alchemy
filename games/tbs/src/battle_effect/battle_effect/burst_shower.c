@@ -117,18 +117,17 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   }
 
-  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
   if (mode == BURST_SHOWER_MODE_LIGHTNING) {
-    Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetA,
+    Resource_LoadAndDecompress(RESOURCE_VIOLET_LIGHTNING_SHEET_A,
                                (work->sheet + BURST_SHOWER_PICTURES), 1, 1);
   } else if (mode == BURST_SHOWER_MODE_FACES) {
-    Resource_LoadAndDecompress((s32)&ResourceId_DemonFaceSheet,
+    Resource_LoadAndDecompress(RESOURCE_DEMON_FACE_SHEET,
                                (work->sheet + BURST_SHOWER_PICTURES), 1, 1);
   } else {
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+    Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                                (work->sheet + BURST_SHOWER_PICTURES), 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
     // The grey mode: a ramp of greys, with blending off.
     if (mode == BURST_SHOWER_MODE_GREY) {
       for (i = 0, color = (u16 *)BG_PLTT; i != 64; i++) {
@@ -140,20 +139,20 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     } else {
       switch (mode) {
       case BURST_SHOWER_MODE_FLASH:
-        paletteId = (s32)&ResourceId_FlashBurstSheet;
+        paletteId = RESOURCE_FLASH_BURST_SHEET;
         break;
       case BURST_SHOWER_MODE_ICE:
-        paletteId = (s32)&ResourceId_IceBlockSheet;
+        paletteId = RESOURCE_ICE_BLOCK_SHEET;
         break;
       case BURST_SHOWER_MODE_SPRAY:
-        paletteId = (s32)&ResourceId_WaterSpraySheet;
+        paletteId = RESOURCE_WATER_SPRAY_SHEET;
         break;
       case BURST_SHOWER_MODE_PINK:
-        paletteId = (s32)&ResourceId_PinkPalette;
+        paletteId = RESOURCE_PINK_PALETTE;
         break;
       case BURST_SHOWER_MODE_DJINNI:
       default:
-        paletteId = (s32)&ResourceId_MarsDjinnSheet;
+        paletteId = RESOURCE_MARS_DJINN_SHEET;
         break;
       }
       Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(paletteId), 128);

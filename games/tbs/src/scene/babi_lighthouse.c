@@ -263,13 +263,13 @@ static void BabiLighthouse_FallToExit(s32 exit) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_BabiLighthouseEntry) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_ENTRY) {
     return gBabiLighthouse_EntryEntrances;
   }
-  if (sceneId == (s32)&SceneId_BabiLighthouseLuff) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_LUFF) {
     return gBabiLighthouse_LuffEntrances;
   }
-  if (sceneId == (s32)&SceneId_BabiLighthouseStoneDoor) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_STONE_DOOR) {
     return gBabiLighthouse_StoneDoorEntrances;
   }
   return gBabiLighthouse_RoadEntrances;
@@ -278,7 +278,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 /// Only the Entry has regions. They are the three spots that drop into the
 /// Tunnel Ruins.
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_BabiLighthouseEntry) {
+  if (gMainRoutineWork.next == SCENE_BABI_LIGHTHOUSE_ENTRY) {
     return gBabiLighthouse_EntryRegions;
   }
   return 0;
@@ -290,13 +290,13 @@ const u32 *BabiLighthouse_GetExits(void) { return gBabiLighthouse_Exits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_BabiLighthouseEntry) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_ENTRY) {
     return gBabiLighthouse_EntryActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_BabiLighthouseLuff) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_LUFF) {
     return gBabiLighthouse_LuffActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_BabiLighthouseStoneDoor) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_STONE_DOOR) {
     return gBabiLighthouse_StoneDoorActorPlacements;
   }
   return gBabiLighthouse_RoadActorPlacements;
@@ -1195,13 +1195,13 @@ static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_BabiLighthouseEntry) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_ENTRY) {
     return gBabiLighthouse_EntryTriggers;
   }
-  if (sceneId == (s32)&SceneId_BabiLighthouseLuff) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_LUFF) {
     return gBabiLighthouse_LuffTriggers;
   }
-  if (sceneId == (s32)&SceneId_BabiLighthouseStoneDoor) {
+  if (sceneId == SCENE_BABI_LIGHTHOUSE_STONE_DOOR) {
     return gBabiLighthouse_StoneDoorTriggers;
   }
   return gBabiLighthouse_RoadTriggers;
@@ -1285,13 +1285,13 @@ s32 BabiLighthouse_SetupMap(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   state = &gMainRoutineWork;
   sceneId = state->next;
-  if (sceneId != (s32)&SceneId_RoadToBabiLighthouse) {
+  if (sceneId != SCENE_ROAD_TO_BABI_LIGHTHOUSE) {
     state->retreatEntrance = 1;
-    state->retreatScene = (s32)&SceneId_BabiLighthouseEntry;
+    state->retreatScene = SCENE_BABI_LIGHTHOUSE_ENTRY;
     mapCopy = state->next;
   }
   // The road: the moved pillar's cell behavior where it stands.
-  if (sceneId == (s32)&SceneId_RoadToBabiLighthouse) {
+  if (sceneId == SCENE_ROAD_TO_BABI_LIGHTHOUSE) {
     placedActor = Actor_Get(ACTOR_ROAD_PILLAR);
     x = FIELD_CELL(placedActor->x.fixed);
     if (x == 20) {
@@ -1300,7 +1300,7 @@ s32 BabiLighthouse_SetupMap(void) {
         MapGrid_CopyCellAttributes(38, 12, 1, 1, x, z);
       }
     }
-  } else if (mapCopy == (s32)&SceneId_BabiLighthouseEntry) {
+  } else if (mapCopy == SCENE_BABI_LIGHTHOUSE_ENTRY) {
     Actor_SetSpriteColorById(ACTOR_LEFT_PILLAR, SPRITE_COLOR_GREY);
     Actor_SetSpriteColorById(ACTOR_RIGHT_PILLAR, SPRITE_COLOR_GREY);
 #if TBS_PATCH_2
@@ -1357,7 +1357,7 @@ s32 BabiLighthouse_SetupMap(void) {
     placedActor->sprite->flags = 0;
     placedActor->sprite->rotation = TRIG_TURN / 2;
     Actor_SetAnimation(ACTOR_FALLEN_MAN_SCORCHED_GROUND, ANIM_STILL);
-  } else if (mapCopy == (s32)&SceneId_BabiLighthouseLuff) {
+  } else if (mapCopy == SCENE_BABI_LIGHTHOUSE_LUFF) {
     // Match the arrival effect and fall to the entrance used in this
     // room.
     switch (state->entrance) {
@@ -1397,7 +1397,7 @@ s32 BabiLighthouse_SetupMap(void) {
       }
       break;
     }
-  } else if (sceneId == (s32)&SceneId_BabiLighthouseStoneDoor) {
+  } else if (sceneId == SCENE_BABI_LIGHTHOUSE_STONE_DOOR) {
     Actor_Get(ACTOR_LEFT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_Get(ACTOR_RIGHT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_SetSpeed(ACTOR_LEFT_DOOR, 1);

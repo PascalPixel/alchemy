@@ -39,9 +39,9 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_ADDITIVE);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
-  Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
+  Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
                              work->sheet + RAY_PICTURES, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   if (work->args->variant == EFFECT_VARIANT_STRONGEST) {
     if (work->args->side == EFFECT_SIDE_PARTY)
       REG_BG2X = -(16 << 8);

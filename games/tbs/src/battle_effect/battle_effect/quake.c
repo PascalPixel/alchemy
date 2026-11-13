@@ -56,7 +56,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   // The canvas at its own width, opaque: the pillars hide what is behind them.
   REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet,
+  Resource_LoadAndDecompress(RESOURCE_ROCK_WALL_SHEET,
                              work->sheet + QUAKE_WALL_PICTURE, 1, 1);
 
   // Cut the strip of ground that caps each pillar from the battle background.

@@ -79,12 +79,10 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   gProjection.centerY = 240;
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           (s32)&ResourceId_DuskCloudsBackdrop, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, particleSheet,
-                             0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
+                           RESOURCE_DUSK_CLOUDS_BACKDROP, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, particleSheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_WATER_SPRAY_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
                              work->sheet + NEPTUNE_FLARE_SHEET, 0, 0);
   EFFECT_SHOW_WIDE_CANVAS(16);
   windowEdgeStep = 1;
@@ -434,8 +432,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     Projection_ScaledUnit(work->args->targets[i], &targetPosition);
     work->particles[i].x = targetPosition.x / 2;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_FLAME_SHEET, work->sheet, 1, 1);
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

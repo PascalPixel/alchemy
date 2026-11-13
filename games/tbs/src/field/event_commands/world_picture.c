@@ -398,7 +398,7 @@ void WorldPicture_Show(s32 picture) {
   struct FieldWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   struct ActorSystemWork *menu = HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM);
-  s32 resource = (s32)&ResourceId_WorldMapPicture;
+  s32 resource = RESOURCE_WORLD_MAP_PICTURE;
   struct TilesetAnim *layer;
   u8 savedFlags[sizeof(gridState->animations) /
                 sizeof(gridState->animations[0])];

@@ -242,22 +242,22 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   Iwram_ClearWords(gHeapSlots[HEAP_SLOT_BATTLE_CANVAS], 128 * 128);
   // The sheet's 128 bytes of colours, then its pictures; then the
   // element's own colours over them.
-  graphics = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
+  graphics = Resource_GetTableEntry(RESOURCE_BLUE_RING_SHEET);
   Iwram_CopyWords(BG_PLTT, graphics, 128);
   graphics += 128;
   Decompress_TaggedLz(graphics, work);
   switch (element) {
   case ELEMENT_VENUS:
-    graphics = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteB);
+    graphics = Resource_GetTableEntry(RESOURCE_YELLOW_PALETTE_B);
     break;
   case ELEMENT_MERCURY:
-    graphics = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
+    graphics = Resource_GetTableEntry(RESOURCE_BLUE_RING_SHEET);
     break;
   case ELEMENT_MARS:
-    graphics = Resource_GetTableEntry((s32)&ResourceId_RedPaletteC);
+    graphics = Resource_GetTableEntry(RESOURCE_RED_PALETTE_C);
     break;
   default:
-    graphics = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteD);
+    graphics = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_D);
     break;
   }
   Dma_Set(graphics, BG_PLTT, DMA_COPY_WORDS(32), REG_DMA3);

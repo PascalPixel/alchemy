@@ -180,11 +180,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     BattleEffect_SpawnObjects(1, SPRITE_METEOR, 3);
   }
   // The starfield.
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetB, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_SHEET_B, work->sheet, 1, 1);
   if (mode == PARTICLE_STREAMS_OUTER_SPACE)
     Iwram_CopyWords(colors,
-                    Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
-                    128);
+                    Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET), 128);
   fill = CANVAS_FILL_WORD(1);
   Dma_Set((void *)&fill, Ram_MapGridCellBuffer, DMA_FILL_WORDS(256 * 128 / 4),
           REG_DMA3);
@@ -467,7 +466,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, work->sheet, 1, 0);
   for (i = 0; i != 32; i++) {
     struct Particle *mote = &work->particles[i];
 

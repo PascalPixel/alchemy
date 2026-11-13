@@ -586,7 +586,7 @@ static s32 ShipRooms_LayFlat(struct Actor *work) {
 }
 
 const struct SceneEntrance *ShipRooms_SelectEntrances(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_ShipRooms) {
+  if (gMainRoutineWork.next == SCENE_SHIP_ROOMS) {
     return gShipRooms_Entrances;
   }
   return gShipRooms_EntrancesOther;
@@ -1377,20 +1377,17 @@ static void ShipRooms_FightRowingDeckMonsters(void) {
   GameFlag_Clear(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) == 0) {
     Event_SetAfterBattleDestination(
-        (s32)&SceneId_ShipRooms,
-        SHIP_ROOMS_ROWING_DECK_AFTER_FIRST_ATTACK_BATTLE);
+        SCENE_SHIP_ROOMS, SHIP_ROOMS_ROWING_DECK_AFTER_FIRST_ATTACK_BATTLE);
     Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 0);
   } else {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) == 0) {
       Event_SetAfterBattleDestination(
-          (s32)&SceneId_ShipRooms,
-          SHIP_ROOMS_ROWING_DECK_AFTER_SECOND_ATTACK_BATTLE);
+          SCENE_SHIP_ROOMS, SHIP_ROOMS_ROWING_DECK_AFTER_SECOND_ATTACK_BATTLE);
       Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 1);
     } else {
       if (GameFlag_Get(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) == 0) {
         Event_SetAfterBattleDestination(
-            (s32)&SceneId_ShipRooms,
-            SHIP_ROOMS_ROWING_DECK_AFTER_THIRD_ATTACK_BATTLE);
+            SCENE_SHIP_ROOMS, SHIP_ROOMS_ROWING_DECK_AFTER_THIRD_ATTACK_BATTLE);
         Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 2);
       }
     }

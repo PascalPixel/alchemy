@@ -467,7 +467,7 @@ void GameFlag_RefreshLureCap(void) {
 /// and the file list compares saves with.
 u32 BuildStamp_GetTime(void) {
   // The stamp is six ASCII digits, hhmmss.
-  const u8 *digits = Resource_GetTableEntry((s32)&ResourceId_BuildStamp);
+  const u8 *digits = Resource_GetTableEntry(RESOURCE_BUILD_STAMP);
   s32 hours;
   s32 minutes;
   s32 seconds;

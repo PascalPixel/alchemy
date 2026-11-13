@@ -163,7 +163,7 @@ const u32 *Scene_GetExits(void) { return gMcCoyPalaceExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *placements;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_McCoyPalace) {
+  if (gMainRoutineWork.next == SCENE_MC_COY_PALACE) {
     placements = gMcCoyPalaceActorPlacements;
     Scene_AssignViewFlags(placements);
 
@@ -189,7 +189,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// What the party can talk to and search in the palace.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_McCoyPalace) {
+  if (gMainRoutineWork.next == SCENE_MC_COY_PALACE) {
     return gMcCoyPalaceTriggers;
   }
   return gMcCoyPalaceNoTriggers;

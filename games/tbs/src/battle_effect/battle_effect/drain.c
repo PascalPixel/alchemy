@@ -27,9 +27,9 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
+                  Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET), 128);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -139,11 +139,11 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
     alternate = 1;
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry(alternate == 0
-                                             ? (s32)&ResourceId_IceBlockSheet
-                                             : (s32)&ResourceId_BlastSheet),
+                                             ? RESOURCE_ICE_BLOCK_SHEET
+                                             : RESOURCE_BLAST_SHEET),
                   128);
 
   // The motes fly out of each target's body.

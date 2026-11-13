@@ -316,13 +316,13 @@ static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_MercuryLighthouseExterior) {
+  if (scene == SCENE_MERCURY_LIGHTHOUSE_EXTERIOR) {
     return gMercuryLighthouseExteriorEntrances;
   }
-  if (scene == (s32)&SceneId_MercuryLighthouseUpper) {
+  if (scene == SCENE_MERCURY_LIGHTHOUSE_UPPER) {
     return gMercuryLighthouseUpperEntrances;
   }
-  if (scene == (s32)&SceneId_MercuryLighthouseMiddle) {
+  if (scene == SCENE_MERCURY_LIGHTHOUSE_MIDDLE) {
     return gMercuryLighthouseMiddleEntrances;
   }
   return gMercuryLighthouseEntrancesOther;
@@ -337,16 +337,16 @@ const u32 *Scene_GetExits(void) { return gMercuryLighthouse_Exits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_MercuryLighthouseLower) {
+  if (scene == SCENE_MERCURY_LIGHTHOUSE_LOWER) {
     return gMercuryLighthouseLowerActorPlacements;
   }
-  if (scene == (s32)&SceneId_MercuryLighthouseMiddle) {
+  if (scene == SCENE_MERCURY_LIGHTHOUSE_MIDDLE) {
     return gMercuryLighthouseMiddleActorPlacements;
   }
-  if (scene == (s32)&SceneId_MercuryLighthouseUpper) {
+  if (scene == SCENE_MERCURY_LIGHTHOUSE_UPPER) {
     return gMercuryLighthouseUpperActorPlacements;
   }
-  if (scene == (s32)&SceneId_MercuryLighthouseExterior) {
+  if (scene == SCENE_MERCURY_LIGHTHOUSE_EXTERIOR) {
     return gMercuryLighthouseExteriorActorPlacements;
   }
   return gMercuryLighthouseActorPlacementsOther;
@@ -393,13 +393,13 @@ static void MercuryLighthouse_InspectBlockedPassage(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_MercuryLighthouseLower) {
+  if (scene == SCENE_MERCURY_LIGHTHOUSE_LOWER) {
     return gMercuryLighthouseLowerTriggers;
   }
-  if (scene == (s32)&SceneId_MercuryLighthouseMiddle) {
+  if (scene == SCENE_MERCURY_LIGHTHOUSE_MIDDLE) {
     return gMercuryLighthouseMiddleTriggers;
   }
-  if (scene == (s32)&SceneId_MercuryLighthouseUpper) {
+  if (scene == SCENE_MERCURY_LIGHTHOUSE_UPPER) {
     return gMercuryLighthouseUpperTriggers;
   }
   return gMercuryLighthouseTriggersOther;
@@ -1963,7 +1963,7 @@ static void MercuryLighthouse_FillHermesWaterBottle(void) {
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE).
 static void MercuryLighthouse_EnterRisingPassage(void) {
   Event_Start();
-  if (gMainRoutineWork.next == (s32)&SceneId_MercuryLighthouseLower) {
+  if (gMainRoutineWork.next == SCENE_MERCURY_LIGHTHOUSE_LOWER) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 472, 600);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
     FieldCamera_MoveTo(464, CAMERA_KEEP, 656, 1);
@@ -2162,7 +2162,7 @@ s32 Scene_Initialize(void) {
 
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gMainRoutineWork.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
-  gMainRoutineWork.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
+  gMainRoutineWork.retreatScene = SCENE_MERCURY_LIGHTHOUSE_EXTERIOR;
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Io_Write16(BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND, &REG_BLDCNT);
@@ -2176,7 +2176,7 @@ s32 Scene_Initialize(void) {
     Task_AddFrame(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);
   else
     MercuryLighthouse_ClearPalette();
-  if (gMainRoutineWork.next == (s32)&SceneId_MercuryLighthouseLower) {
+  if (gMainRoutineWork.next == SCENE_MERCURY_LIGHTHOUSE_LOWER) {
     // Entrance pillars, the channel puzzle and Mia's rescue share this overlay.
     switch (gMainRoutineWork.entrance) {
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST:
@@ -2235,7 +2235,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_MercuryLighthouseMiddle) {
+  if (gMainRoutineWork.next == SCENE_MERCURY_LIGHTHOUSE_MIDDLE) {
     switch (gMainRoutineWork.entrance) {
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_SOUTH:
     case MERCURY_LIGHTHOUSE_MIDDLE_PIPES_FROM_GATE:
@@ -2302,7 +2302,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_MercuryLighthouseUpper) {
+  if (gMainRoutineWork.next == SCENE_MERCURY_LIGHTHOUSE_UPPER) {
     switch (gMainRoutineWork.entrance) {
     case MERCURY_LIGHTHOUSE_UPPER_ROW_STATUES_FROM_GATE:
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST:
@@ -2471,7 +2471,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_MercuryLighthouseExterior) {
+  if (gMainRoutineWork.next == SCENE_MERCURY_LIGHTHOUSE_EXTERIOR) {
     // This scene contains Mia's entrance, the lift and the healing fountain.
     switch (gMainRoutineWork.entrance) {
     case MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_PATH:

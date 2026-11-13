@@ -131,7 +131,7 @@ void System_CopyBuildStamp(void) {
   const void *stamp;
   struct BuildStampCopy *copy;
 
-  stamp = Resource_GetTableEntry((u32)&ResourceId_BuildStamp);
+  stamp = Resource_GetTableEntry((u32)RESOURCE_BUILD_STAMP);
   copy = (struct BuildStampCopy *)gBuildStamp;
   Dma_Set(stamp, copy, DMA_COPY_WORDS(3), REG_DMA3);
   copy->terminator = 0;

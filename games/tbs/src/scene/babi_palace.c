@@ -261,7 +261,7 @@ static inline void BabiPalace_RestorePartyAndInventory(void) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_BabiPalaceEntrance) {
+  if (gMainRoutineWork.next == SCENE_BABI_PALACE_ENTRANCE) {
     return gBabiPalace_OutsideEntrances;
   }
   return gBabiPalace_Entrances;
@@ -278,7 +278,7 @@ const u32 *BabiPalace_GetExits(void) { return gBabiPalace_Exits; }
 /// Returns the actor placements for the scene and the story, which is before
 /// Babi's rescue, during the finals or after Colosso.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_BabiPalaceEntrance) {
+  if (gMainRoutineWork.next == SCENE_BABI_PALACE_ENTRANCE) {
     return gBabiPalace_OutsideActorPlacements;
   }
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
@@ -2573,7 +2573,7 @@ static void BabiPalace_ExamineWell(void) {
 /// Returns the triggers for the scene and the story, as for the actor
 /// placements.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_BabiPalaceEntrance) {
+  if (gMainRoutineWork.next == SCENE_BABI_PALACE_ENTRANCE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gBabiPalace_OutsideTriggersAfterColosso;
     }
@@ -2609,7 +2609,7 @@ s32 BabiPalace_ApplyEntryState(void) {
     GameFlag_Set(FLAG_BABI_SAVED);
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }
-  if (gMainRoutineWork.next != (s32)&SceneId_BabiPalaceEntrance) {
+  if (gMainRoutineWork.next != SCENE_BABI_PALACE_ENTRANCE) {
     if (gMainRoutineWork.entrance == BABI_PALACE_FROM_COTTAGE_ROOMS_B) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     }

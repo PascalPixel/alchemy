@@ -781,9 +781,9 @@ static void ColosseumSatrageMatch_ReachArena(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         resultBase - opponentFinishedFirst + 1);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  Event_SetAfterBattleDestination((s32)&SceneId_ColosseumSatrageMatch,
+  Event_SetAfterBattleDestination(SCENE_COLOSSEUM_SATRAGE_MATCH,
                                   COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON);
-  Event_SetDefeatDestination((s32)&SceneId_ColosseumSatrageMatch,
+  Event_SetDefeatDestination(SCENE_COLOSSEUM_SATRAGE_MATCH,
                              COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST);
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 }
@@ -979,7 +979,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
-    ColosseumSatrageMatch_StartOpponentPath((s32)&ResourceId_OpponentPathB);
+    ColosseumSatrageMatch_StartOpponentPath(RESOURCE_OPPONENT_PATH_B);
     break;
   case COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST:
     Task_AddFrame(Colosso_RaiseTakePlaceOnPsynergy, TASK_PASS_FRAME);

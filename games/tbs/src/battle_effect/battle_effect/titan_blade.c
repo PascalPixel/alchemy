@@ -60,13 +60,12 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   blitters[1] =
       HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_RAM_CODE_2);
 
-  Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet,
+  Resource_LoadAndDecompress(RESOURCE_SWORD_SHEET,
                              work->sheet + TITAN_BLADE_SWORD_PICTURE, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+  Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_A, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              work->sheet + TITAN_BLADE_FLASH_PICTURES, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -106,10 +105,10 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   for (frame = 0; frame != TITAN_BLADE_FRAMES; frame++) {
     // The palette fades: the dust and sparks turn from gold to pink and violet.
     if (frame >= 25 && frame <= 47) {
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
+      BattleEffect_StepPaletteToResource(RESOURCE_BLAST_SHEET);
     }
     if (frame > 56) {
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_LightningBoltSheet);
+      BattleEffect_StepPaletteToResource(RESOURCE_LIGHTNING_BOLT_SHEET);
     }
 
     if (frame == 8) {

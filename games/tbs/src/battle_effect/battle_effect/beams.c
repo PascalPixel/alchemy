@@ -88,35 +88,32 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   }
   wait(1);
   if (kind == BEAM_WAVE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_WAVE_SHEET, work->sheet, 1, 1);
   } else if (kind == BEAM_IMAGE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_BeamImage, work->sheet, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_BEAM_IMAGE, work->sheet, 0, 0);
   } else {
     switch (kind) {
     case BEAM_PLAIN_ATTACK:
     case BEAM_ARC_A:
     case BEAM_ARC_A_INVERTED:
-      Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work->sheet, 1,
-                                 1);
+      Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_A, work->sheet, 1, 1);
       break;
     case BEAM_ARC_B:
-      Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1,
-                                 1);
+      Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, work->sheet, 1, 1);
       break;
     }
   }
   if (work->args->user > PIERS)
-    Iwram_CopyWords(
-        (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
+    Iwram_CopyWords((void *)BG_PLTT,
+                    Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
+                    128);
   else
     Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_CrescentSheet),
-                    128);
+                    Resource_GetTableEntry(RESOURCE_CRESCENT_SHEET), 128);
   wait(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet,
-                             Ram_MapGridCellBuffer, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, Ram_MapGridCellBuffer,
+                             1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
@@ -299,21 +296,21 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                         work->args->firstTarget, 130);
   wait(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_StarBurstSheet,
-                             work->imageStorage, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_STAR_BURST_SHEET, work->imageStorage, 1,
+                             0);
   BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                         work->args->firstTarget, 130);
   wait(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_CrescentSheet,
-                             Ram_MapGridCellBuffer, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_CRESCENT_SHEET, Ram_MapGridCellBuffer, 1,
+                             1);
   if (work->args->user > PIERS)
-    Iwram_CopyWords(
-        (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
+    Iwram_CopyWords((void *)BG_PLTT,
+                    Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
+                    128);
   BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                         work->args->firstTarget, 130);
   wait(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
   BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                         work->args->firstTarget, 130);
   wait(1);

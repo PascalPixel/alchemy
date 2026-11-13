@@ -226,13 +226,13 @@ static void KalayTolbiDocks_GroundJoins(void) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_KalayDocks) {
+  if (sceneId == SCENE_KALAY_DOCKS) {
     return gKalayTolbiDocks_KalayEntrances;
   }
-  if (sceneId == (s32)&SceneId_TolbiDocks) {
+  if (sceneId == SCENE_TOLBI_DOCKS) {
     return gKalayTolbiDocks_TolbiEntrances;
   }
-  if (sceneId == (s32)&SceneId_CottageRoomsE) {
+  if (sceneId == SCENE_COTTAGE_ROOMS_E) {
     return gKalayTolbiDocks_RoomEntrances;
   }
   return gKalayTolbiDocks_NoEntrances;
@@ -250,21 +250,21 @@ const u32 *Scene_GetExits(void) { return gKalayTolbiDocks_Exits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_KalayDocks) {
+  if (sceneId == SCENE_KALAY_DOCKS) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gKalayTolbiDocks_KalayActorPlacementsShipGone;
     }
     return gKalayTolbiDocks_KalayActorPlacements;
   }
 
-  if (sceneId == (s32)&SceneId_TolbiDocks) {
+  if (sceneId == SCENE_TOLBI_DOCKS) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_TolbiActorPlacementsStranded;
     }
     return gKalayTolbiDocks_TolbiActorPlacements;
   }
 
-  if (sceneId == (s32)&SceneId_CottageRoomsE) {
+  if (sceneId == SCENE_COTTAGE_ROOMS_E) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_RoomActorPlacementsStranded;
     }
@@ -294,21 +294,21 @@ static void KalayTolbiDocks_GreetArrivals(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_KalayDocks) {
+  if (sceneId == SCENE_KALAY_DOCKS) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gKalayTolbiDocks_KalayTriggersShipGone;
     }
     return gKalayTolbiDocks_KalayTriggers;
   }
 
-  if (sceneId == (s32)&SceneId_TolbiDocks) {
+  if (sceneId == SCENE_TOLBI_DOCKS) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_TolbiTriggersStranded;
     }
     return gKalayTolbiDocks_TolbiTriggers;
   }
 
-  if (sceneId == (s32)&SceneId_CottageRoomsE) {
+  if (sceneId == SCENE_COTTAGE_ROOMS_E) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_RoomTriggersStranded;
     }
@@ -615,11 +615,11 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Sound_Play(SE_DOOR_OPEN);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
-  if (gMainRoutineWork.next == (s32)&SceneId_KalayDocks) {
+  if (gMainRoutineWork.next == SCENE_KALAY_DOCKS) {
     Actor_WalkTo(ACTOR_PARTY_LEADER, 304, 1392);
     MapGrid_AnimateCells(gKalayTolbiDocks_KalayDoorCells, 78, 86);
   } else {
-    if (gMainRoutineWork.next == (s32)&SceneId_TolbiDocks) {
+    if (gMainRoutineWork.next == SCENE_TOLBI_DOCKS) {
       Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 192);
       MapGrid_AnimateCells(gKalayTolbiDocks_TolbiDoorCells, 74, 9);
     }
@@ -638,11 +638,11 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO) {
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_KalayDocks) {
+  if (gMainRoutineWork.next == SCENE_KALAY_DOCKS) {
     KalayTolbiDocks_PrepareKalayDocks();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_TolbiDocks) {
+  } else if (gMainRoutineWork.next == SCENE_TOLBI_DOCKS) {
     KalayTolbiDocks_PrepareTolbiDocks();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_CottageRoomsE) {
+  } else if (gMainRoutineWork.next == SCENE_COTTAGE_ROOMS_E) {
     KalayTolbiDocks_PrepareRoom();
   }
   return 0;

@@ -288,37 +288,37 @@ static s32 AltinPeak_FlyDebris(struct Actor *actor) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_AltinPeakFirstWaterBeast) {
+  if (sceneId == SCENE_ALTIN_PEAK_FIRST_WATER_BEAST) {
     return gAltinPeak_FirstWaterBeastEntrances;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakRailTunnel) {
+  if (sceneId == SCENE_ALTIN_PEAK_RAIL_TUNNEL) {
     return gAltinPeak_RailTunnelEntrances;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakSecondWaterBeast) {
+  if (sceneId == SCENE_ALTIN_PEAK_SECOND_WATER_BEAST) {
     return gAltinPeak_SecondWaterBeastEntrances;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakSouthEntrance) {
+  if (sceneId == SCENE_ALTIN_PEAK_SOUTH_ENTRANCE) {
     return gAltinPeak_SouthEntranceEntrances;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakThirdWaterBeast) {
+  if (sceneId == SCENE_ALTIN_PEAK_THIRD_WATER_BEAST) {
     return gAltinPeak_ThirdWaterBeastEntrances;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakPool) {
+  if (sceneId == SCENE_ALTIN_PEAK_POOL) {
     return gAltinPeak_PoolEntrances;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakSpritz) {
+  if (sceneId == SCENE_ALTIN_PEAK_SPRITZ) {
     return gAltinPeak_SpritzEntrances;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakJunction) {
+  if (sceneId == SCENE_ALTIN_PEAK_JUNCTION) {
     return gAltinPeak_JunctionEntrances;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakFallingRocks) {
+  if (sceneId == SCENE_ALTIN_PEAK_FALLING_ROCKS) {
     return gAltinPeak_FallingRocksEntrances;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakHydrosStatue) {
+  if (sceneId == SCENE_ALTIN_PEAK_HYDROS_STATUE) {
     return gAltinPeak_HydrosStatueEntrances;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakWestExit) {
+  if (sceneId == SCENE_ALTIN_PEAK_WEST_EXIT) {
     return gAltinPeak_WestExitEntrances;
   }
   return gAltinPeak_EntrancesOther;
@@ -328,10 +328,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_AltinPeakFallingRocks) {
+  if (sceneId == SCENE_ALTIN_PEAK_FALLING_ROCKS) {
     return gAltinPeak_FallingRocksRegions;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakHydrosStatue) {
+  if (sceneId == SCENE_ALTIN_PEAK_HYDROS_STATUE) {
     return gAltinPeak_HydrosStatueRegions;
   }
   return 0;
@@ -343,31 +343,31 @@ const u32 *Scene_GetExits(void) { return gAltinPeak_Exits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_AltinPeakFirstWaterBeast) {
+  if (sceneId == SCENE_ALTIN_PEAK_FIRST_WATER_BEAST) {
     return gAltinPeak_FirstWaterBeastActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakSecondWaterBeast) {
+  if (sceneId == SCENE_ALTIN_PEAK_SECOND_WATER_BEAST) {
     return gAltinPeak_SecondWaterBeastActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakThirdWaterBeast) {
+  if (sceneId == SCENE_ALTIN_PEAK_THIRD_WATER_BEAST) {
     return gAltinPeak_ThirdWaterBeastActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakPool) {
+  if (sceneId == SCENE_ALTIN_PEAK_POOL) {
     return gAltinPeak_PoolActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakSpritz) {
+  if (sceneId == SCENE_ALTIN_PEAK_SPRITZ) {
     return gAltinPeak_SpritzActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakJunction) {
+  if (sceneId == SCENE_ALTIN_PEAK_JUNCTION) {
     return gAltinPeak_JunctionActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakFallingRocks) {
+  if (sceneId == SCENE_ALTIN_PEAK_FALLING_ROCKS) {
     return gAltinPeak_FallingRocksActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakHydrosStatue) {
+  if (sceneId == SCENE_ALTIN_PEAK_HYDROS_STATUE) {
     return gAltinPeak_HydrosStatueActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_AltinPeakWestExit) {
+  if (sceneId == SCENE_ALTIN_PEAK_WEST_EXIT) {
     return gAltinPeak_WestExitActorPlacements;
   }
   return gAltinPeak_ActorPlacementsOther;
@@ -411,7 +411,7 @@ static void AltinPeak_RideCart(s32 log) {
 /// The party fights the first water beast.
 static void AltinPeak_FightFirstWaterBeast(void) {
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  Event_SetAfterBattleDestination((s32)&SceneId_AltinPeakFirstWaterBeast,
+  Event_SetAfterBattleDestination(SCENE_ALTIN_PEAK_FIRST_WATER_BEAST,
                                   ENTRANCE_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
@@ -421,7 +421,7 @@ static void AltinPeak_FightFirstWaterBeast(void) {
 /// one's does, from its own room.
 static void AltinPeak_FightSecondWaterBeast(void) {
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  Event_SetAfterBattleDestination((s32)&SceneId_AltinPeakSecondWaterBeast,
+  Event_SetAfterBattleDestination(SCENE_ALTIN_PEAK_SECOND_WATER_BEAST,
                                   ENTRANCE_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
@@ -431,7 +431,7 @@ static void AltinPeak_FightSecondWaterBeast(void) {
 /// one's does, from its own room.
 static void AltinPeak_FightThirdWaterBeast(void) {
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  Event_SetAfterBattleDestination((s32)&SceneId_AltinPeakThirdWaterBeast,
+  Event_SetAfterBattleDestination(SCENE_ALTIN_PEAK_THIRD_WATER_BEAST,
                                   ENTRANCE_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
@@ -1076,31 +1076,31 @@ static void AltinPeak_ReadFallingRockSign(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   const struct Trigger *table;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakFirstWaterBeast) {
+  if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_FIRST_WATER_BEAST) {
     if (GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
       table = gAltinPeak_FirstWaterBeastTriggersDrained;
     } else {
       table = gAltinPeak_FirstWaterBeastTriggers;
     }
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakRailTunnel) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_RAIL_TUNNEL) {
     table = gAltinPeak_RailTunnelTriggers;
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakSecondWaterBeast) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_SECOND_WATER_BEAST) {
     table = gAltinPeak_SecondWaterBeastTriggers;
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakSouthEntrance) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_SOUTH_ENTRANCE) {
     table = gAltinPeak_SouthEntranceTriggers;
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakThirdWaterBeast) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_THIRD_WATER_BEAST) {
     table = gAltinPeak_ThirdWaterBeastTriggers;
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakPool) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_POOL) {
     table = gAltinPeak_PoolTriggers;
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakSpritz) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_SPRITZ) {
     table = gAltinPeak_SpritzTriggers;
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakJunction) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_JUNCTION) {
     table = gAltinPeak_JunctionTriggers;
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakFallingRocks) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_FALLING_ROCKS) {
     table = gAltinPeak_FallingRocksTriggers;
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakHydrosStatue) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_HYDROS_STATUE) {
     table = gAltinPeak_HydrosStatueTriggers;
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakWestExit) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_WEST_EXIT) {
     table = gAltinPeak_WestExitTriggers;
   } else {
     table = gAltinPeak_TriggersOther;
@@ -1364,23 +1364,23 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakFirstWaterBeast) {
+  if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_FIRST_WATER_BEAST) {
     AltinPeak_RestoreFirstWaterBeastRoom();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakSecondWaterBeast) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_SECOND_WATER_BEAST) {
     AltinPeak_RestoreSecondWaterBeastRoom();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakSouthEntrance) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_SOUTH_ENTRANCE) {
     AltinPeak_RestoreSouthEntranceRoom();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakThirdWaterBeast) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_THIRD_WATER_BEAST) {
     AltinPeak_RestoreThirdWaterBeastRoom();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakPool) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_POOL) {
     AltinPeak_RestorePoolRoom();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakSpritz) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_SPRITZ) {
     AltinPeak_RestoreSpritzRoom();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakFallingRocks) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_FALLING_ROCKS) {
     AltinPeak_RestoreFallingRocksRoom();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakHydrosStatue) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_HYDROS_STATUE) {
     AltinPeak_RestoreHydrosStatueRoom();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_AltinPeakWestExit) {
+  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_WEST_EXIT) {
     AltinPeak_RestoreWestExitRoom();
   }
   return 0;
@@ -1941,7 +1941,7 @@ static void AltinPeak_StartHydrosBattle(void) {
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_WaitForMoveById(ACTOR_STATUE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  Event_SetAfterBattleDestination((s32)&SceneId_AltinPeakHydrosStatue,
+  Event_SetAfterBattleDestination(SCENE_ALTIN_PEAK_HYDROS_STATUE,
                                   ENTRANCE_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 3);

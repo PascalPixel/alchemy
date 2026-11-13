@@ -733,11 +733,11 @@ s32 Scene_Initialize(void) {
   }
   if (routine->entrance == WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE_MERCURY);
-    Event_SetDestination((s32)&SceneId_MercuryLighthouseAerie,
+    Event_SetDestination(SCENE_MERCURY_LIGHTHOUSE_AERIE,
                          MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
   } else if (routine->entrance == WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE_VENUS);
-    Event_SetDestination((s32)&SceneId_VenusLighthouseAerie,
+    Event_SetDestination(SCENE_VENUS_LIGHTHOUSE_AERIE,
                          VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
   } else if (routine->entrance == WORLD_MAP_AFTER_BLACK_ORB_DEFEAT) {
     Event_Start();
@@ -1776,7 +1776,7 @@ static void WorldMap_RunBlackOrbEvent(void) {
   Event_Wait(20);
   GameFlag_Set(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER);
   GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
-  gMainRoutineWork.restartScene = (s32)&SceneId_WorldMap;
+  gMainRoutineWork.restartScene = SCENE_WORLD_MAP;
   gMainRoutineWork.restartEntrance = WORLD_MAP_AFTER_BLACK_ORB_DEFEAT;
   Event_End();
 }
@@ -2158,7 +2158,7 @@ static void WorldMap_ShowEndingEvent(void) {
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   wait(120);
-  Event_SetDestination((s32)&SceneId_Title, TITLE_FROM_WORLD_MAP);
+  Event_SetDestination(SCENE_TITLE, TITLE_FROM_WORLD_MAP);
 }
 
 /// The look back before Sheba's fall, with the view settling on Venus
@@ -2486,7 +2486,7 @@ static void WorldMap_StormDropsParty(void) {
   Event_WaitTransitionFrames();
   Event_End();
   GameFlag_Set(FLAG_ARRIVE_FALLING);
-  Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_SUHALLA);
+  Event_SetDestination(SCENE_WORLD_MAP, WORLD_MAP_FROM_SUHALLA);
 }
 
 /// Run each frame of the lighthouse transition.

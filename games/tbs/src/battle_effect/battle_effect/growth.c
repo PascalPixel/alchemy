@@ -91,10 +91,9 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   if (mode == GROWING_COLUMNS_PILLARS) {
-    Resource_LoadAndDecompress((s32)&ResourceId_GreenPillarSheet, work->sheet,
-                               1, 1);
+    Resource_LoadAndDecompress(RESOURCE_GREEN_PILLAR_SHEET, work->sheet, 1, 1);
   } else {
-    Resource_LoadAndDecompress((s32)&ResourceId_VineSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_VINE_SHEET, work->sheet, 1, 1);
   }
   if (work->args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -(112 << 8); // 112 pixels right
@@ -304,8 +303,7 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_GreenVineSheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_GREEN_VINE_SHEET, work->sheet, 1, 1);
 
   // Centre the vines between the first and last targets.
   Projection_ScaledUnit(work->args->targets[0], &first);
@@ -387,7 +385,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_THORN_SHEET, work->sheet, 1, 1);
   if (work->args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -(112 << 8); // 112 pixels right
   }

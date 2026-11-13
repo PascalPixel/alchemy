@@ -68,14 +68,14 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
 
-  palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
+  palette = Resource_GetTableEntry(RESOURCE_EARTH_WALL_SHEET);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
-  palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+  palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   if (mode == MIRRORED_WALL_RECOVERY) {
-    palette = Resource_GetTableEntry((s32)&ResourceId_FireballSheet);
+    palette = Resource_GetTableEntry(RESOURCE_FIREBALL_SHEET);
     Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   }
 

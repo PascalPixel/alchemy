@@ -284,7 +284,7 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
   u32 index;
 
   work = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
-  offsets = Resource_GetTableEntry((s32)&ResourceId_Icons);
+  offsets = Resource_GetTableEntry(RESOURCE_ICONS);
   // A number below 128 is the entry itself; the other speakers' portraits,
   // numbered from 128 (Portrait_GetForSpeaker), are entries 16 on.
   if (icon <= 127)

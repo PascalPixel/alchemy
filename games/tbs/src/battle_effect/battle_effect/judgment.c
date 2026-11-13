@@ -129,7 +129,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   gProjection.centerY = 240;
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           (s32)&ResourceId_VioletSkyBackdrop, 0);
+                           RESOURCE_VIOLET_SKY_BACKDROP, 0);
   view->busy = 1;
   gBgScroll[1].x = 0;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
@@ -138,13 +138,12 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   zoom = px(8);
   minimumDepth = 0xffff;
   maximumDepth = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageB,
+  Resource_LoadAndDecompress(RESOURCE_PINK_BURST_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_OVERLAY_IMAGE_B,
                              work->sheet + JUDGMENT_SHEET_BURST, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
                              work->sheet + JUDGMENT_SHEET_TORNADO, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, ramp, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, ramp, 0, 0);
 
   for (i = 0; i != 8; i++) {
     u8 *src = ramp;
@@ -156,8 +155,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   }
 
   Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet),
-                  128);
+                  Resource_GetTableEntry(RESOURCE_BLUE_CRESCENT_SHEET), 128);
 
   for (i = 0; i != 128; i++) {
     PARTICLES[i].x = (Random16() & 15) + 72;
@@ -408,7 +406,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet,
+  Resource_LoadAndDecompress(RESOURCE_BLUE_CRESCENT_SHEET,
                              work->sheet + JUDGMENT_SHEET_FLARE_A, 1, 1);
 
   {
@@ -426,7 +424,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   work->fadeFrames = 0;
   work->fadeStep = 0;
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           (s32)&ResourceId_AerialViewBackdrop, 0);
+                           RESOURCE_AERIAL_VIEW_BACKDROP, 0);
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = -(60 << 8);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -470,7 +468,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         frame = 150;
         IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_16);
         IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, IO_WRITE_32);
-        Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
+        Resource_LoadAndDecompress(RESOURCE_EXPLOSION_SHEET,
                                    work->sheet + JUDGMENT_SHEET_EXPLOSION, 1,
                                    0);
       } else if (frame >= 155 && frame < 214) {
@@ -485,9 +483,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, IO_WRITE_32);
       fill = 0;
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
-      Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
+      Resource_LoadAndDecompress(RESOURCE_EXPLOSION_SHEET,
                                  work->sheet + JUDGMENT_SHEET_EXPLOSION, 1, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageA,
+      Resource_LoadAndDecompress(RESOURCE_OVERLAY_IMAGE_A,
                                  work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 0,
                                  0);
     }
@@ -509,7 +507,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     // battle's copy with every channel 7 levels darker.
     if (frame == 70) {
       BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
-                                  (s32)&ResourceId_AerialViewBackdrop, 7);
+                                  RESOURCE_AERIAL_VIEW_BACKDROP, 7);
     }
 
     // The beach: the rings restart, four a frame.
@@ -523,8 +521,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
       fill = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
-      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               (s32)&ResourceId_BeachBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, RESOURCE_BEACH_BACKDROP,
+                               0);
     }
 
     // The forest.
@@ -534,7 +532,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       fill = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               (s32)&ResourceId_ForestBackdrop, 0);
+                               RESOURCE_FOREST_BACKDROP, 0);
       for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
         particle = &work->particles[i];
         particle->x = px((Random16() & 63) + 32);

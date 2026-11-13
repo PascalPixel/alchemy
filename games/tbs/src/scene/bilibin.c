@@ -229,13 +229,13 @@ struct BilibinRippleTimer gBilibin_RippleTimer;
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Bilibin) {
+  if (sceneId == SCENE_BILIBIN) {
     return gBilibinEntrances;
   }
-  if (sceneId == (s32)&SceneId_BilibinBarricade) {
+  if (sceneId == SCENE_BILIBIN_BARRICADE) {
     return gBilibinBarricadeEntrances;
   }
-  if (sceneId == (s32)&SceneId_BilibinTreasury) {
+  if (sceneId == SCENE_BILIBIN_TREASURY) {
     return gBilibinTreasuryEntrances;
   }
   return (const struct SceneEntrance *)gBilibinEntrancesOther;
@@ -243,7 +243,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 /// Only the Bilibin Treasury has exit regions.
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_BilibinTreasury) {
+  if (gMainRoutineWork.next == SCENE_BILIBIN_TREASURY) {
     return (const struct SceneExitRegion *)gBilibinTreasuryRegions;
   }
   return 0;
@@ -263,13 +263,13 @@ static void Bilibin_GustJoins(void) {
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Bilibin) {
+  if (sceneId == SCENE_BILIBIN) {
     return gBilibinActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_BilibinBarricade) {
+  if (sceneId == SCENE_BILIBIN_BARRICADE) {
     return gBilibinBarricadeActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_BilibinTreasury) {
+  if (sceneId == SCENE_BILIBIN_TREASURY) {
     return gBilibinTreasuryActorPlacements;
   }
   return gBilibinActorPlacementsOther;
@@ -287,13 +287,13 @@ static void Bilibin_InspectWell(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Bilibin) {
+  if (sceneId == SCENE_BILIBIN) {
     return gBilibinTriggers;
   }
-  if (sceneId == (s32)&SceneId_BilibinBarricade) {
+  if (sceneId == SCENE_BILIBIN_BARRICADE) {
     return gBilibinBarricadeTriggers;
   }
-  if (sceneId == (s32)&SceneId_BilibinTreasury) {
+  if (sceneId == SCENE_BILIBIN_TREASURY) {
     return gBilibinTreasuryTriggers;
   }
   return gBilibinTriggersOther;
@@ -615,12 +615,12 @@ static void Bilibin_JillGivesHardNut(void) {
 /// Bilibin Treasury.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (gMainRoutineWork.next == (s32)&SceneId_Bilibin) {
+  if (gMainRoutineWork.next == SCENE_BILIBIN) {
     Bilibin_RestoreVillageActors();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_BilibinBarricade) {
+  } else if (gMainRoutineWork.next == SCENE_BILIBIN_BARRICADE) {
     Bilibin_RestoreRiverActors();
     Task_AddFrame(Bilibin_UpdateWadingRipples, TASK_PASS_FRAME);
-  } else if (gMainRoutineWork.next == (s32)&SceneId_BilibinTreasury) {
+  } else if (gMainRoutineWork.next == SCENE_BILIBIN_TREASURY) {
     Bilibin_SetUpTreasury();
   }
   return 0;
@@ -855,11 +855,11 @@ static void Bilibin_PushStatueOrCrates(void) {
       Actor_SelectAnimation(leader, ANIM_STAND);
       // Each scene derives its cell behaviors from this same moved
       // actor.
-      if (gMainRoutineWork.next == (s32)&SceneId_BilibinBarricade)
+      if (gMainRoutineWork.next == SCENE_BILIBIN_BARRICADE)
         Bilibin_UpdateCratesCells();
-      else if (gMainRoutineWork.next == (s32)&SceneId_Bilibin)
+      else if (gMainRoutineWork.next == SCENE_BILIBIN)
         Bilibin_UpdateVillageStatueCells();
-      else if (gMainRoutineWork.next == (s32)&SceneId_BilibinTreasury)
+      else if (gMainRoutineWork.next == SCENE_BILIBIN_TREASURY)
         Bilibin_UpdateTreasuryStatueCells();
     }
   }

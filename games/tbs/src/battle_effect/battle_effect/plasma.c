@@ -47,11 +47,11 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
-  Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
-                             1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_LIGHTNING_PILLAR_SHEET, work->sheet, 1,
+                             1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   if (work->args->variant != EFFECT_VARIANT_STRONGEST) {
-    void *palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteB);
+    void *palette = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_B);
     Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   }
 
@@ -222,17 +222,14 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   if (mode == SPARK_GROUPS_DYNAMITE) {
     Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                    128);
+                    Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B), 128);
   } else if (mode == SPARK_GROUPS_RISING) {
     Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
-                    128);
+                    Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET), 128);
   }
   sparks = PARTICLES;
 

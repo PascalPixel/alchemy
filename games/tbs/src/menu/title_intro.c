@@ -188,14 +188,14 @@ void Title_LoadIntroBackgrounds(void) {
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_TITLE_INTRO);
   REG_DISPCNT = 0;
-  resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsA);
+  resourceData = Resource_GetTableEntry(RESOURCE_INTRO_GRAPHICS_A);
   Dma_Set(resourceData, (void *)OBJ_PLTT, DMA_COPY_WORDS(128), REG_DMA3);
   OBJ_PLTT[0] = 0;
   resourceData += 512;
   Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0, DMA_COPY_HALFWORDS(3840),
           REG_DMA3);
-  resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsC);
+  resourceData = Resource_GetTableEntry(RESOURCE_INTRO_GRAPHICS_C);
   Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(128), REG_DMA3);
   BG_PLTT[0] = 0;
   resourceData += 512;
@@ -409,7 +409,7 @@ s32 Title_ShowIntro(s32 prompt) {
       REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
       REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
       gBgScroll[2].y = 0;
-      resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsB);
+      resourceData = Resource_GetTableEntry(RESOURCE_INTRO_GRAPHICS_B);
       Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(120), REG_DMA3);
       BG_PLTT[0] = 0;
       resourceData += 512;
@@ -524,7 +524,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
 
   Sound_PlayFar(SE_CHIME);
   gOamCopyEnabled = 1;
-  resourceId = (s32)&ResourceId_NintendoLogo;
+  resourceId = RESOURCE_NINTENDO_LOGO;
   Task_ResetAll();
   ScreenFade_ToBlack(1);
   DebugText_Clear();
@@ -610,7 +610,7 @@ s32 Title_ShowCamelotLogo(void) {
 
   gOamCopyEnabled = 1;
   result = 0;
-  resourceId = (s32)&ResourceId_CamelotLogo;
+  resourceId = RESOURCE_CAMELOT_LOGO;
   Task_ResetAll();
   ScreenFade_ToBlack(1);
   DebugText_Clear();

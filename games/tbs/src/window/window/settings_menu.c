@@ -271,19 +271,17 @@ void SettingsMenu_AnimateCursors(void) {
   MenuCursor_MoveTowardTargetFar(&work->marker[1].cursor);
 
   if (selectedOption == 0) {
-    cursorResource =
-        (work->cursorFrame & 7) + (s32)&ResourceId_MenuCursorPictures;
+    cursorResource = (work->cursorFrame & 7) + RESOURCE_MENU_CURSOR_PICTURES;
   } else {
-    cursorResource = (s32)&ResourceId_MenuCursorPictures;
+    cursorResource = RESOURCE_MENU_CURSOR_PICTURES;
   }
   VramCache_Load((u8)work->marker[0].sprite->index, 256,
                  Resource_GetTableEntry(cursorResource));
 
   if (selectedOption == 1) {
-    markerResource =
-        (work->cursorFrame & 7) + (s32)&ResourceId_MenuCursorPictures;
+    markerResource = (work->cursorFrame & 7) + RESOURCE_MENU_CURSOR_PICTURES;
   } else {
-    markerResource = (s32)&ResourceId_MenuCursorPictures;
+    markerResource = RESOURCE_MENU_CURSOR_PICTURES;
   }
   VramCache_Load((u8)work->marker[1].sprite->index, 256,
                  Resource_GetTableEntry(markerResource));

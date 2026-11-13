@@ -56,7 +56,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, work->sheet, 1, 0);
   // Smoke Bomb's colours are a ramp of greys; Blast takes the fire streak's.
   if (mode == ERUPTION_SMOKE_BOMB) {
     for (i = 0; i != 64; i++) {
@@ -67,8 +67,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     variant = EFFECT_VARIANT_STRONGER;
   } else {
     Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_FireStreakSheet),
-                    128);
+                    Resource_GetTableEntry(RESOURCE_FIRE_STREAK_SHEET), 128);
     variant = work->args->variant;
   }
 

@@ -115,10 +115,9 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                                    work->args->side, DJINNI_ANCHOR_OVER_USER,
                                    &screenX, &screenY);
 
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
 
-  Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1,
-                             0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, work->sheet, 1, 0);
   for (row = 0; row != 288; row++) {
     for (col = 0; col != 40; col++) {
       s32 src = row * 40 + col;
@@ -128,25 +127,22 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     }
   }
   if (gFlurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS_AND_WAVES)
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work->sheet, 1,
-                               1);
+    Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_A, work->sheet, 1, 1);
   else
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1,
-                               1);
-  Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, FLURRY_WAVE_PICTURES,
-                             1, 0);
+    Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_WAVE_SHEET, FLURRY_WAVE_PICTURES, 1, 0);
   switch (gFlurry_Styles[mode][FLURRY_PALETTE]) {
   case FLURRY_PALETTE_MARS_DJINNI:
-    paletteId = (s32)&ResourceId_MarsDjinnSheet;
+    paletteId = RESOURCE_MARS_DJINN_SHEET;
     break;
   case FLURRY_PALETTE_LIME:
-    paletteId = (s32)&ResourceId_LimePalette;
+    paletteId = RESOURCE_LIME_PALETTE;
     break;
   case FLURRY_PALETTE_BLUE_ARC:
-    paletteId = (s32)&ResourceId_BlueArcSheetB;
+    paletteId = RESOURCE_BLUE_ARC_SHEET_B;
     break;
   default:
-    paletteId = (s32)&ResourceId_EmberStreakSheet;
+    paletteId = RESOURCE_EMBER_STREAK_SHEET;
     break;
   }
   palette = Resource_GetTableEntry(paletteId);

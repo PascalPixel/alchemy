@@ -38,7 +38,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
 
     font = NULL;
     if (gBattleMessageWork->window == window) {
-      font = Resource_GetTableEntry((s32)&ResourceId_SmallFont);
+      font = Resource_GetTableEntry(RESOURCE_SMALL_FONT);
       width = 3;
       if (character == ' ')
         goto done;
@@ -48,13 +48,13 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     width = 4;
 #else
     if (gBattleMessageWork->window == window) {
-      Resource_GetTableEntry((s32)&ResourceId_SmallFont);
-      Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
+      Resource_GetTableEntry(RESOURCE_SMALL_FONT);
+      Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
       width = 3;
       if (character == ' ')
         goto done;
     }
-    font = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
+    font = Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
     width = 4;
 #endif
     if (character != ' ') {

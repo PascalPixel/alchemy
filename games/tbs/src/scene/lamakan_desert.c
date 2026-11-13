@@ -209,16 +209,16 @@ static UNREAD_RESULT LamakanDesert_LeaderSpraySand(struct Actor *actor) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_LamakanDesertEast) {
+  if (sceneId == SCENE_LAMAKAN_DESERT_EAST) {
     return gLamakanDesertEastEntrances;
   }
-  if (sceneId == (s32)&SceneId_LamakanDesertSmog) {
+  if (sceneId == SCENE_LAMAKAN_DESERT_SMOG) {
     return gLamakanDesertSmogEntrances;
   }
-  if (sceneId == (s32)&SceneId_LamakanDesertManticore) {
+  if (sceneId == SCENE_LAMAKAN_DESERT_MANTICORE) {
     return gLamakanDesertManticoreEntrances;
   }
-  if (sceneId == (s32)&SceneId_LamakanDesertCave) {
+  if (sceneId == SCENE_LAMAKAN_DESERT_CAVE) {
     return gLamakanDesertCaveEntrances;
   }
   return gLamakanDesertEntrancesOther;
@@ -231,7 +231,7 @@ const u32 *Scene_GetExits(void) { return gLamakanDesertExits; }
 
 /// The pits, the Manticore and Smog of each scene.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertManticore) {
+  if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
     if (gMainRoutineWork.entrance ==
         LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE) {
       GameFlag_Set(FLAG_LAMAKAN_MANTICORE_BEATEN);
@@ -244,13 +244,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 #endif
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertEast) {
+  if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_EAST) {
     return gLamakanDesertEastActorPlacements;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertSmog) {
+  if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_SMOG) {
     return gLamakanDesertSmogActorPlacements;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertManticore) {
+  if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
     return gLamakanDesertManticoreActorPlacements;
   }
   return gLamakanDesertActorPlacementsOther;
@@ -278,7 +278,7 @@ static UNREAD_RESULT Reveal_HideSecrets(void) {
   s32 markerId;
 
   GameFlag_Clear(FLAG_SECRETS_REVEALED);
-  if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertEast) {
+  if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_EAST) {
     HIDE_SECRET(22, 7);
     HIDE_SECRET(8, 10);
     HIDE_SECRET(23, 21);
@@ -286,7 +286,7 @@ static UNREAD_RESULT Reveal_HideSecrets(void) {
     HIDE_SECRET(16, 42);
     HIDE_SECRET(36, 44);
     HIDE_SECRET(14, 55);
-  } else if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertSmog) {
+  } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_SMOG) {
     HIDE_SECRET(42, 5);
     HIDE_SECRET(20, 11);
     HIDE_SECRET_SOUTH_ROW(20, 11);
@@ -305,7 +305,7 @@ static UNREAD_RESULT Reveal_HideSecrets(void) {
     HIDE_SECRET(6, 46);
     HIDE_SECRET(27, 55);
     HIDE_SECRET(43, 56);
-  } else if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertManticore) {
+  } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
     MapGrid_CopyCellsLayered(69, 99, 4, 2, 8, 16);
     MapGrid_CopyCellsLayered(69, 99, 4, 2, 6, 20);
     MapGrid_CopyCellsLayered(69, 99, 4, 2, 10, 23);
@@ -330,7 +330,7 @@ static UNREAD_RESULT Reveal_HideSecrets(void) {
     TreasureSpot_SetActorPosition(markerId, 0, 0);
     markerId = markerId + 1;
   } while (markerId <= 107);
-  if (gMainRoutineWork.next != (s32)&SceneId_LamakanDesertCave) {
+  if (gMainRoutineWork.next != SCENE_LAMAKAN_DESERT_CAVE) {
     LineScroll_StartWave(0, Q16_ONE * 4, Q16_ONE, Q16_ONE / 8, Q16_ONE,
                          Q16_ONE / 2, Q16_ONE / 4);
   }
@@ -342,7 +342,7 @@ static UNREAD_RESULT Reveal_ShowSecrets(void) {
 
   GameFlag_Clear(FLAG_DESERT_EVENT_RUNNING);
   GameFlag_Set(FLAG_SECRETS_REVEALED);
-  if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertEast) {
+  if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_EAST) {
     SHOW_SECRET(0, 22, 7);
     SHOW_SECRET(1, 8, 10);
     SHOW_SECRET(2, 23, 21);
@@ -351,7 +351,7 @@ static UNREAD_RESULT Reveal_ShowSecrets(void) {
     SHOW_SECRET(4, 36, 44);
     SHOW_SECRET(5, 14, 55);
     Actor_SetPosition(ACTOR_FIRST_PIT, 400, 364);
-  } else if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertSmog) {
+  } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_SMOG) {
     SHOW_SECRET(0, 42, 5);
     SHOW_SECRET(1, 20, 11);
     SHOW_SECRET_SOUTH_ROWS(1, 20, 11);
@@ -375,7 +375,7 @@ static UNREAD_RESULT Reveal_ShowSecrets(void) {
     Actor_SetPosition(ACTOR_FIRST_PIT + 2, 144, 380);
     Actor_SetPosition(ACTOR_LAST_PIT, 576, 716);
     Actor_SetPosition(ACTOR_SMOG, 648, 408);
-  } else if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertManticore) {
+  } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
     MapGrid_CopyCells(64, 124, 4, 4, 8, 14);
     MapGrid_CopyCells(68, 124, 4, 4, 6, 18);
     MapGrid_CopyCellAttributes(68, 124, 4, 1, 6, 20);
@@ -395,7 +395,7 @@ static UNREAD_RESULT Reveal_ShowSecrets(void) {
     TreasureSpot_SetPosition(i, -1, -1);
   }
   TreasureSpot_MoveLeaderAway();
-  if (gMainRoutineWork.next != (s32)&SceneId_LamakanDesertCave) {
+  if (gMainRoutineWork.next != SCENE_LAMAKAN_DESERT_CAVE) {
     LineScroll_Stop();
   }
 }
@@ -406,7 +406,7 @@ static UNREAD_RESULT Reveal_ShowSecrets(void) {
 static void LamakanDesert_FightManticore(void) {
   Actor_RunRepeatedMotion(ACTOR_MANTICORE, 2);
   Event_SetAfterBattleDestination(
-      (s32)&SceneId_LamakanDesertManticore,
+      SCENE_LAMAKAN_DESERT_MANTICORE,
       LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(
@@ -523,10 +523,10 @@ static void LamakanDesert_BatheInOasis(void) {
   best = px(240);
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
   HeatGauge_SetHeld(1);
-  if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertEast) {
+  if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_EAST) {
     count = 3;
     oases = gLamakanDesertEast_Oases;
-  } else if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertSmog) {
+  } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_SMOG) {
     count = 5;
     oases = gLamakanDesertSmog_Oases;
   } else {
@@ -897,18 +897,18 @@ s32 Scene_Initialize(void) {
   gMainRoutineWork.hazardLimit = 600;
   gMainRoutineWork.hazardMode = HAZARD_COUNT_ON_CELLS;
   gMainRoutineWork.hazardDamage = HAZARD_DAMAGE_PERCENT | 25;
-  if (gMainRoutineWork.next != (s32)&SceneId_LamakanDesertCave) {
+  if (gMainRoutineWork.next != SCENE_LAMAKAN_DESERT_CAVE) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     HeatGauge_Start();
     Task_AddFrame(HeatGauge_RaiseQuarterTriggers, TASK_PASS_FRAME);
-    if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertEast) {
+    if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_EAST) {
       SAVE_SECRET(0, 22, 7);
       SAVE_SECRET(1, 8, 10);
       SAVE_SECRET(2, 23, 21);
       SAVE_SECRET(3, 16, 42);
       SAVE_SECRET(4, 36, 44);
       SAVE_SECRET(5, 14, 55);
-    } else if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertSmog) {
+    } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_SMOG) {
       SAVE_SECRET(0, 42, 5);
       SAVE_SECRET(1, 20, 11);
       SAVE_SECRET(2, 14, 12);
@@ -923,7 +923,7 @@ s32 Scene_Initialize(void) {
       SAVE_SECRET(11, 6, 46);
       SAVE_SECRET(12, 27, 55);
       SAVE_SECRET(13, 43, 56);
-    } else if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertManticore) {
+    } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
       Scene_QueueMusic(SE_AMBIENT_WIND);
       MapGrid_CopyCells(8, 14, 4, 4, 64, 124);
       MapGrid_CopyCells(6, 18, 4, 4, 68, 124);

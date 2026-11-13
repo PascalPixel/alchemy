@@ -293,7 +293,7 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
 void CommandIcon_LoadIntoSlot(s32 slot, s32 index) {
   s32 size = 1024;
   void *buffer = Heap_Alloc(size);
-  u16 *offsetTable = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+  u16 *offsetTable = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
 
   Decompress_ByteLz((void *)((u32)offsetTable + offsetTable[index]), buffer);
   VramCache_Load(slot, size, buffer);

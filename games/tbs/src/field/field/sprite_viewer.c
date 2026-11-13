@@ -369,10 +369,9 @@ next:
     if ((*repeatedKeys & KEY_SELECT) != 0) {
       Task_ResetAll();
       if ((*heldKeys & KEY_B) != 0) {
-        Stub_ReturnZero((s32)&ResourceId_ResourceFarCalls,
-                        FarCall_ResourceTable);
+        Stub_ReturnZero(RESOURCE_RESOURCE_FAR_CALLS, FarCall_ResourceTable);
       } else {
-        Stub_ReturnZero((s32)&ResourceId_ResourceFarCallsAlternate,
+        Stub_ReturnZero(RESOURCE_RESOURCE_FAR_CALLS_ALTERNATE,
                         FarCall_ResourceTable);
       }
       goto restart;

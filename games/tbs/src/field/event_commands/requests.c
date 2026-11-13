@@ -11,7 +11,7 @@ void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot) {
   work->encounter = Encounter_GetFormationAtSlot(zone, slot);
   if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
     gMainRoutineWork.battleBackground =
-        (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
+        RESOURCE_VENUS_LIGHTHOUSE_AERIE_STORM_BACKDROP;
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
 

@@ -190,13 +190,13 @@ UNUSED static void CrossboneIsleKeys_UnusedNoOpA(void) {}
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 selector = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_CrossboneIsleKeys) {
+  if (selector == SCENE_CROSSBONE_ISLE_KEYS) {
     return gCrossboneIsleKeysRoomEntrances;
   }
-  if (selector == (s32)&SceneId_CrossboneIsleStatues) {
+  if (selector == SCENE_CROSSBONE_ISLE_STATUES) {
     return gCrossboneIsleStatuesEntrances;
   }
-  if (selector == (s32)&SceneId_CrossboneIsleBane) {
+  if (selector == SCENE_CROSSBONE_ISLE_BANE) {
     return gCrossboneIsleBaneEntrances;
   }
   return gCrossboneIsleKeysEntrancesOther;
@@ -209,13 +209,13 @@ const u32 *Scene_GetExits(void) { return gCrossboneIsleKeysExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 selector = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_CrossboneIsleKeys) {
+  if (selector == SCENE_CROSSBONE_ISLE_KEYS) {
     return gCrossboneIsleKeysRoomActorPlacements;
   }
-  if (selector == (s32)&SceneId_CrossboneIsleStatues) {
+  if (selector == SCENE_CROSSBONE_ISLE_STATUES) {
     return gCrossboneIsleStatuesActorPlacements;
   }
-  if (selector == (s32)&SceneId_CrossboneIsleBane) {
+  if (selector == SCENE_CROSSBONE_ISLE_BANE) {
     return gCrossboneIsleBaneActorPlacements;
   }
   return gCrossboneIsleKeysActorPlacementsOther;
@@ -401,13 +401,13 @@ static void CrossboneIsleKeys_HaltBane(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 selector = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_CrossboneIsleKeys) {
+  if (selector == SCENE_CROSSBONE_ISLE_KEYS) {
     return gCrossboneIsleKeysRoomTriggers;
   }
-  if (selector == (s32)&SceneId_CrossboneIsleStatues) {
+  if (selector == SCENE_CROSSBONE_ISLE_STATUES) {
     return gCrossboneIsleStatuesTriggers;
   }
-  if (selector == (s32)&SceneId_CrossboneIsleBane) {
+  if (selector == SCENE_CROSSBONE_ISLE_BANE) {
     return gCrossboneIsleBaneTriggers;
   }
   return gCrossboneIsleKeysTriggersOther;
@@ -1193,13 +1193,13 @@ static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == (s32)&SceneId_CrossboneIsleKeys) {
+  if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_KEYS) {
     CrossboneIsleKeys_InitializeKeys();
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_CrossboneIsleStatues) {
+  if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_STATUES) {
     CrossboneIsleKeys_InitializeStatues();
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_CrossboneIsleBane) {
+  if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_BANE) {
     CrossboneIsleKeys_InitializeBane();
   }
   return 0;

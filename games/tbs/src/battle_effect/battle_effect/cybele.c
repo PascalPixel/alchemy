@@ -64,8 +64,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
   EFFECT_START_NARROW_CANVAS(0);
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_THORN_VINE_SHEET, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -389,9 +388,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
     if (frame == 302) {
       EFFECT_RELEASE_BLITTERS();
-      Resource_LoadAndDecompress((s32)&ResourceId_YellowRingSheet, work->sheet,
-                                 1, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
+      Resource_LoadAndDecompress(RESOURCE_YELLOW_RING_SHEET, work->sheet, 1, 0);
+      Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET,
                                  work->sheet + CYBELE_BLAST_PICTURES, 1, 1);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);

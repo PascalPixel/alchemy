@@ -119,36 +119,34 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   count = 16;
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet, 1, 1);
   if (mode == TARGET_MOTES_TAINT) {
-    palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
+    palette = Resource_GetTableEntry(RESOURCE_LIME_PALETTE);
   } else if (mode == TARGET_MOTES_PINK_SMOKE) {
-    palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+    palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
   } else if (mode == TARGET_MOTES_DELUDE) {
-    palette = Resource_GetTableEntry((s32)&ResourceId_CyanPalette);
+    palette = Resource_GetTableEntry(RESOURCE_CYAN_PALETTE);
   } else if (mode == TARGET_MOTES_PARALYZE) {
-    palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
+    palette = Resource_GetTableEntry(RESOURCE_BLAST_SHEET);
   } else if (mode == TARGET_MOTES_HEARTRENDER) {
-    palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+    palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
   } else if (mode == TARGET_MOTES_MYSTIC_FLAME) {
-    Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet, 1,
-                               0);
-    palette = Resource_GetTableEntry((s32)&ResourceId_GlowOrbSheet);
+    Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET, work->sheet, 1, 0);
+    palette = Resource_GetTableEntry(RESOURCE_GLOW_ORB_SHEET);
   } else if (mode == TARGET_MOTES_DEMON_FIRE) {
     count = 24;
-    Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet, 1,
-                               0);
-    palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+    Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET, work->sheet, 1, 0);
+    palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
   } else {
     count = 32;
-    Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 0);
-    palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
+    Resource_LoadAndDecompress(RESOURCE_VORTEX_SHEET, work->sheet, 1, 0);
+    palette = Resource_GetTableEntry(RESOURCE_VORTEX_SHEET);
   }
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   if (mode == TARGET_MOTES_HEARTRENDER)
-    Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_HEART_SHEET, work->sheet, 1, 1);
   if (mode == TARGET_MOTES_PARALYZE)
-    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
+    Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
                                work->sheet + TARGET_MOTES_GLINT_PICTURES, 1, 0);
 
   for (i = 0; i != TARGET_MOTES; i++) {
@@ -339,7 +337,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0);
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SHEEP_SHEET, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   drawUpright = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -441,8 +439,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_COLUMN_SHEET, work->sheet, 1, 1);
   if (work->args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -(112 << 8);
   }

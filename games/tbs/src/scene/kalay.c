@@ -326,22 +326,22 @@ static s32 Kalay_UpdateTouristFidget(struct Actor *actor) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Kalay) {
+  if (sceneId == SCENE_KALAY) {
     return gKalay_TownEntrances;
   }
-  if (sceneId == (s32)&SceneId_HammetPalaceGrounds) {
+  if (sceneId == SCENE_HAMMET_PALACE_GROUNDS) {
     return gKalay_HammetPalaceEntrances;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelEntrance) {
+  if (sceneId == SCENE_KALAY_TUNNEL_ENTRANCE) {
     return gKalay_TunnelEntranceEntrances;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelCave) {
+  if (sceneId == SCENE_KALAY_TUNNEL_CAVE) {
     return gKalay_TunnelCaveEntrances;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelPassage) {
+  if (sceneId == SCENE_KALAY_TUNNEL_PASSAGE) {
     return gKalay_TunnelPassageEntrances;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelTreasureRoom) {
+  if (sceneId == SCENE_KALAY_TUNNEL_TREASURE_ROOM) {
     return gKalay_TunnelEntrances;
   }
   return gKalay_NoEntrances;
@@ -357,16 +357,16 @@ const u32 *Scene_GetExits(void) { return gKalay_Exits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Kalay) {
+  if (sceneId == SCENE_KALAY) {
     return gKalay_TownActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_HammetPalaceGrounds) {
+  if (sceneId == SCENE_HAMMET_PALACE_GROUNDS) {
     return gKalay_HammetPalaceActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelEntrance) {
+  if (sceneId == SCENE_KALAY_TUNNEL_ENTRANCE) {
     return gKalay_TunnelEntranceActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelTreasureRoom) {
+  if (sceneId == SCENE_KALAY_TUNNEL_TREASURE_ROOM) {
     return gKalay_TunnelActorPlacements;
   }
   return gKalay_NoActorPlacements;
@@ -391,22 +391,22 @@ static void Kalay_CatchTunnelEntranceNut(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Kalay) {
+  if (sceneId == SCENE_KALAY) {
     return gKalay_TownTriggers;
   }
-  if (sceneId == (s32)&SceneId_HammetPalaceGrounds) {
+  if (sceneId == SCENE_HAMMET_PALACE_GROUNDS) {
     return gKalay_HammetPalaceTriggers;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelEntrance) {
+  if (sceneId == SCENE_KALAY_TUNNEL_ENTRANCE) {
     return gKalay_TunnelEntranceTriggers;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelCave) {
+  if (sceneId == SCENE_KALAY_TUNNEL_CAVE) {
     return gKalay_TunnelCaveTriggers;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelPassage) {
+  if (sceneId == SCENE_KALAY_TUNNEL_PASSAGE) {
     return gKalay_TunnelPassageTriggers;
   }
-  if (sceneId == (s32)&SceneId_KalayTunnelTreasureRoom) {
+  if (sceneId == SCENE_KALAY_TUNNEL_TREASURE_ROOM) {
     return gKalay_TunnelTriggers;
   }
   return gKalay_NoTriggers;
@@ -1131,15 +1131,15 @@ s32 Scene_Initialize(void) {
 
   GameFlag_Set(FLAG_KALAY_REACHED);
   sceneId = gMainRoutineWork.next;
-  if (sceneId == (s32)&SceneId_Kalay) {
+  if (sceneId == SCENE_KALAY) {
     Kalay_PrepareTown();
-  } else if (sceneId == (s32)&SceneId_HammetPalaceGrounds) {
+  } else if (sceneId == SCENE_HAMMET_PALACE_GROUNDS) {
     Kalay_PrepareHammetPalace();
-  } else if (sceneId == (s32)&SceneId_KalayTunnelEntrance) {
+  } else if (sceneId == SCENE_KALAY_TUNNEL_ENTRANCE) {
     Kalay_PrepareTunnelEntrance();
-  } else if (sceneId == (s32)&SceneId_KalayTunnelPassage) {
+  } else if (sceneId == SCENE_KALAY_TUNNEL_PASSAGE) {
     Kalay_PrepareTunnelPassage();
-  } else if (sceneId == (s32)&SceneId_KalayTunnelTreasureRoom) {
+  } else if (sceneId == SCENE_KALAY_TUNNEL_TREASURE_ROOM) {
     Kalay_PrepareTunnelTreasureRoom();
   }
   return 0;

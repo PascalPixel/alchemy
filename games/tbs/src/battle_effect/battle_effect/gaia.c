@@ -61,10 +61,10 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   }
   REG_BG2X = gGaia_Bg2Shifts[work->args->side][work->args->variant] << 8;
 
-  Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet,
-                             Ram_MapGridCellBuffer, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_EARTH_WALL_SHEET, Ram_MapGridCellBuffer,
+                             1, 0);
   Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA), 128);
+                  Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_A), 128);
   color = &BG_PLTT[1];
   for (i = 0; i != 63; i++) {
     s32 entry = *color;
@@ -107,7 +107,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     for (k = 0; k != gGaia_FlameWidths[i] * gGaia_FlameHeights[i]; k++)
       work->sheet[sheetIndex++] = *src++;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
 
   for (i = 0; i != 11; i++) {
     struct Sprite *rock = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);

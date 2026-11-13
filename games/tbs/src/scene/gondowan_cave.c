@@ -141,13 +141,13 @@ static void GondowanCave_RunSpinningLeap(s32 actorId);
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_GondowanPassage) {
+  if (sceneId == SCENE_GONDOWAN_PASSAGE) {
     return gGondowanPassageEntrances;
   }
-  if (sceneId == (s32)&SceneId_GondowanCaveRiver) {
+  if (sceneId == SCENE_GONDOWAN_CAVE_RIVER) {
     return gGondowanCaveRiverEntrances;
   }
-  if (sceneId == (s32)&SceneId_GondowanCave) {
+  if (sceneId == SCENE_GONDOWAN_CAVE) {
     return gGondowanCaveEntrances;
   }
   return gGondowanCaveEntrancesOther;
@@ -163,16 +163,16 @@ const u32 *Scene_GetExits(void) { return gGondowanCaveExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_GondowanPassage) {
+  if (sceneId == SCENE_GONDOWAN_PASSAGE) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gGondowanPassageActorPlacementsWithIodem;
     }
     return gGondowanPassageActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_GondowanCaveRiver) {
+  if (sceneId == SCENE_GONDOWAN_CAVE_RIVER) {
     return gGondowanCaveRiverActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_GondowanCave) {
+  if (sceneId == SCENE_GONDOWAN_CAVE) {
     return gGondowanCaveActorPlacements;
   }
   return gGondowanCaveActorPlacementsOther;
@@ -183,16 +183,16 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_GondowanPassage) {
+  if (sceneId == SCENE_GONDOWAN_PASSAGE) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gGondowanPassageTriggersWithIodem;
     }
     return gGondowanPassageTriggers;
   }
-  if (sceneId == (s32)&SceneId_GondowanCaveRiver) {
+  if (sceneId == SCENE_GONDOWAN_CAVE_RIVER) {
     return gGondowanCaveRiverTriggers;
   }
-  if (sceneId == (s32)&SceneId_GondowanCave) {
+  if (sceneId == SCENE_GONDOWAN_CAVE) {
     return gGondowanCaveTriggers;
   }
   return gGondowanCaveTriggersOther;
@@ -229,7 +229,7 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
       Event_ClearFlag(FLAG_IODEM_FOLLOWING_PARTY);
       Actor_WaitForMoveById(ACTOR_IODEM);
       Actor_SetAnimation(ACTOR_IODEM, ANIM_STAND);
-      gMainRoutineWork.restartScene = (s32)&SceneId_StuccoRoomsB;
+      gMainRoutineWork.restartScene = SCENE_STUCCO_ROOMS_B;
       gMainRoutineWork.restartEntrance = STUCCO_ROOMS_B_SANCTUM_NORTH;
     } else {
       // "Then we should continue on our way to the lighthouse." He rejoins
@@ -476,13 +476,13 @@ static void GondowanCave_LiftBoulder(void) {
 
 /// Sets up the scene as the party enters.
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GondowanPassage) {
+  if (gMainRoutineWork.next == SCENE_GONDOWAN_PASSAGE) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
       Actor_SetPosition(ACTOR_IODEM, 0, 0);
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_GondowanCave) {
+  if (gMainRoutineWork.next == SCENE_GONDOWAN_CAVE) {
     // XXX (no evidence): why this arrival changes the drop's cell; the
     // change has no effect that play shows.
     if (gMainRoutineWork.entrance == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {

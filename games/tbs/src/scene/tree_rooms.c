@@ -283,7 +283,7 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
                     destinationRow);
   Sound_Play(SE_CURSE_FALL);
   Event_Start();
-  Event_SetDestination((s32)&SceneId_TreeRooms, entrance);
+  Event_SetDestination(SCENE_TREE_ROOMS, entrance);
   Actor_SetAnimation(leaderActorId, ANIM_LEADER_WALK_BACKWARDS);
   Actor_SetSpriteFlags(Actor_Get(leaderActorId), 0);
   Actor_SetAttachedEffect(leaderActorId,
@@ -499,7 +499,7 @@ static void TreeRooms_FightTret(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   gFieldWork->transitionFrames = 64;
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  Event_SetAfterBattleDestination((s32)&SceneId_TreeRooms,
+  Event_SetAfterBattleDestination(SCENE_TREE_ROOMS,
                                   TREE_ROOMS_AFTER_FIGHT_TRET);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
                                         0);
@@ -804,7 +804,7 @@ s32 TreeRooms_EnterRoom(void) {
     actor->groundHeight = -px(160);
     actor->gravity = px(1) / 2;
     Sound_Play(SE_DUST_PUFF);
-    Event_SetDestination((s32)&SceneId_TreeRooms, entrance - 10);
+    Event_SetDestination(SCENE_TREE_ROOMS, entrance - 10);
     Event_Wait(20);
     actor->layer = 2;
     Actor_SetSpritePriority(leaderActorId, 3);

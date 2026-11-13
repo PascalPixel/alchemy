@@ -77,11 +77,11 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
-  Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesC,
+  Resource_LoadAndDecompress(RESOURCE_LIGHT_FAN_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_LIGHT_FAN_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_C,
                              work->sheet + THOR_SPRITE_PICTURES, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
 
   {
     s32 offset;
@@ -112,7 +112,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   work->transferMode = CANVAS_COPY;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           (s32)&ResourceId_DuskCloudsBackdrop, 0);
+                           RESOURCE_DUSK_CLOUDS_BACKDROP, 0);
   gProjection.centerY = 240;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   REG_BG2PA = Q_8_8(0.5);
@@ -310,15 +310,15 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   BattleEffect_SetupBlendedDisplay();
   BattleEffect_SelectLivingTargets(work->args);
   BattleEffect_SpawnObjects(9, SPRITE_THOR, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
-                             Ram_MapGridCellBuffer, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
-                             1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_VioletMoteSheet,
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, Ram_MapGridCellBuffer, 1,
+                             0);
+  Resource_LoadAndDecompress(RESOURCE_LIGHTNING_PILLAR_SHEET, work->sheet, 1,
+                             1);
+  Resource_LoadAndDecompress(RESOURCE_VIOLET_MOTE_SHEET,
                              work->sheet + THOR_MOTE_PICTURE, 1, 0);
   Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_CrystalSheet), 128);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesB, sprites, 0, 0);
+                  Resource_GetTableEntry(RESOURCE_CRYSTAL_SHEET), 128);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_B, sprites, 0, 0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   {
     s32 thorX;
@@ -350,7 +350,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     for (frame = 0; frame != 192; frame++) {
       s32 stormFrame;
       if (frame == 20) {
-        Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetB,
+        Resource_LoadAndDecompress(RESOURCE_VIOLET_LIGHTNING_SHEET_B,
                                    work->sheet, 1, 0);
       }
       stormFrame = frame - 80;

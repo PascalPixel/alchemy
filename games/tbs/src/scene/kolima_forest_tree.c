@@ -756,7 +756,7 @@ s32 Scene_Initialize(void) {
   Actor_SetSpriteColorById(ACTOR_TRETS_WRATHFUL_SIDE, SPRITE_COLOR_HIDDEN);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  gMainRoutineWork.retreatScene = (s32)&SceneId_KolimaForestEntrance;
+  gMainRoutineWork.retreatScene = SCENE_KOLIMA_FOREST_ENTRANCE;
   gMainRoutineWork.retreatEntrance = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
   if (!GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED))
     KolimaPalette_Curse(3);

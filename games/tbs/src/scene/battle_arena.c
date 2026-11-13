@@ -900,14 +900,14 @@ static s32 BattleArena_EnterBattle(void) {
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     }
     if (GameFlag_Get(FLAG_MONSTER_BATTLE)) {
-      Event_SetAfterBattleDestination((s32)&SceneId_BattleArena,
+      Event_SetAfterBattleDestination(SCENE_BATTLE_ARENA,
                                       BATTLE_ARENA_AFTER_MONSTER_WIN);
-      Event_SetDefeatDestination((s32)&SceneId_BattleArena,
+      Event_SetDefeatDestination(SCENE_BATTLE_ARENA,
                                  BATTLE_ARENA_AFTER_MONSTER_LOSS);
     } else {
-      Event_SetAfterBattleDestination((s32)&SceneId_BattleArena,
+      Event_SetAfterBattleDestination(SCENE_BATTLE_ARENA,
                                       BATTLE_ARENA_AFTER_LINK_WIN);
-      Event_SetDefeatDestination((s32)&SceneId_BattleArena,
+      Event_SetDefeatDestination(SCENE_BATTLE_ARENA,
                                  BATTLE_ARENA_AFTER_LINK_LOSS);
     }
     // Publish EXEC only after the battle and return destinations are ready.
@@ -1234,7 +1234,7 @@ static s32 BattleArena_TalkByProgress(s32 actorId) {
 static s32 BattleArena_LeaveArena(void) {
   Serial_RemoveIrqHandlers();
   Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
-  Event_SetDestination((s32)&SceneId_FileScreen, FILE_SCREEN_FROM_SANCTUM);
+  Event_SetDestination(SCENE_FILE_SCREEN, FILE_SCREEN_FROM_SANCTUM);
 #ifdef UBFIX
   return 0;
 #endif

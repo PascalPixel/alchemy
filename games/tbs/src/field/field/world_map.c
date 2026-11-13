@@ -123,11 +123,9 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   perspective->limitX = px(8160);
   perspective->limitY = px(8160);
   perspective->script = NULL;
-  perspective->tiles =
-      Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
-  Decompress_TaggedLz(
-      Resource_GetTableEntry((s32)&ResourceId_DefaultTileAnimation),
-      Ram_MapGridShapes + 0x1000);
+  perspective->tiles = Resource_GetTableEntry(RESOURCE_PERSPECTIVE_DATA_A);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_TILE_ANIMATION),
+                      Ram_MapGridShapes + 0x1000);
   TilesetAnim_StartAll((const u16 *)(Ram_MapGridShapes + 0x1000));
   Io_Write16Inline(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                        BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN |
@@ -135,10 +133,10 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
                    &REG_BLDCNT);
   Io_Write16Inline(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
   REG_BLDY = 0;
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultGridCells),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_GRID_CELLS),
                       Ram_MapGridCellBuffer);
   Decompress_TaggedLz(
-      Resource_GetTableEntry((s32)&ResourceId_DefaultCellPictureAttributes),
+      Resource_GetTableEntry(RESOURCE_DEFAULT_CELL_PICTURE_ATTRIBUTES),
       Ram_MapGridShapes);
   // The ground is BG3 and BG2, two 512-pixel affine layers that wrap (char
   // blocks 2 and 3, screen blocks 8 and 10); BG1 is a plain layer on screen
@@ -703,7 +701,7 @@ void WorldMap_LoadAreaGraphics(void) {
   perspective->windowTop = 0;
   perspective->windowBottom = 159;
   wait(1);
-  Decompress_TaggedLz(Resource_GetTableEntry((u32)&ResourceId_DefaultGridCells),
+  Decompress_TaggedLz(Resource_GetTableEntry((u32)RESOURCE_DEFAULT_GRID_CELLS),
                       decodeBuffer);
   WorldMap_UpdateCurrentTileBlock();
   perspective->animationActive = 0;
@@ -719,7 +717,7 @@ void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
   perspective->windowTop = 0;
   perspective->windowBottom = 159;
   wait(1);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultGridCells),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_GRID_CELLS),
                       gMapGridCellBuffer);
   WorldMap_UpdateCurrentTileBlock();
   Task_ResumeAll(TilesetAnim_Update);

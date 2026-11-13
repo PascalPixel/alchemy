@@ -187,41 +187,39 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // Setup: the pictures.
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, pictures, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, work, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, pictures, 1, 0);
   BattleEffect_PackTileRows(pictures, work->sheet + CASTING_IMPACT_ORB_PICTURES,
                             40, 288);
   if (mode == CASTING_IMPACT_IMPACT_SCORCH ||
       mode == CASTING_IMPACT_IMPACT_BARRAGE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, pictures, 1,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, pictures, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_BAD_OMEN) {
-    Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet, pictures, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_SKULL_SHEET, pictures, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_SQUALL ||
              mode == CASTING_IMPACT_IMPACT_STUN_VOLTAGE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, pictures, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
+    Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, pictures, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
                                pictures + GLINT_SET_BYTES, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
-    Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, pictures, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET, pictures, 1, 1);
   } else if (mode == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_RockSpireSheet, pictures, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_ROCK_SPIRE_SHEET, pictures, 1, 1);
   } else if (mode == CASTING_IMPACT_IMPACT_AQUA_SOCK) {
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, pictures, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_BLUE_FLAME_SHEET, pictures, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_CYCLONE_SLASH) {
-    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, pictures, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, pictures, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_FROST_BITE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, pictures, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_ICE_CHIP_SHEET, pictures, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_BROIL) {
-    Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, pictures, 1,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, pictures, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_FORCIBLE_ARM ||
              mode == CASTING_IMPACT_IMPACT_TRUNCHEON_FIST) {
-    Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetA, pictures, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_FLAME_SHEET_A, pictures, 1, 0);
   } else if (mode != CASTING_IMPACT_IMPACT_MORTAL_DANGER &&
              mode != CASTING_IMPACT_IMPACT_ASURA) {
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, pictures, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, pictures, 1, 0);
   }
   // The Djinni of the impact's element.
   switch (mode) {
@@ -235,7 +233,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   case CASTING_IMPACT_IMPACT_BAD_OMEN:
   case CASTING_IMPACT_IMPACT_LIFE_NOURISH:
   case CASTING_IMPACT_IMPACT_FORCIBLE_ARM:
-    Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
+    Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET,
                                pictures + CASTING_IMPACT_DJINNI_PICTURE, 1, 1);
     break;
   case CASTING_IMPACT_IMPACT_MIST:
@@ -245,7 +243,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   case CASTING_IMPACT_IMPACT_UNUSED_GATHERING:
   case CASTING_IMPACT_IMPACT_LIFE_LEECH:
   case CASTING_IMPACT_IMPACT_PSY_LEECH:
-    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
+    Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET,
                                pictures + CASTING_IMPACT_DJINNI_PICTURE, 1, 1);
     break;
   case CASTING_IMPACT_IMPACT_FEVER:
@@ -258,7 +256,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   case CASTING_IMPACT_IMPACT_ACID_BATH:
   case CASTING_IMPACT_IMPACT_TRUNCHEON_FIST:
   case CASTING_IMPACT_IMPACT_SEVERE_BLOW:
-    Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
+    Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET,
                                pictures + CASTING_IMPACT_DJINNI_PICTURE, 1, 1);
     break;
   case CASTING_IMPACT_IMPACT_SMOG:
@@ -270,7 +268,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   case CASTING_IMPACT_IMPACT_CYCLONE_SLASH:
   case CASTING_IMPACT_IMPACT_PSYPHON_SEAL:
   case CASTING_IMPACT_IMPACT_ASURA:
-    Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
+    Resource_LoadAndDecompress(RESOURCE_JUPITER_DJINN_SMALL_SHEET,
                                pictures + CASTING_IMPACT_DJINNI_PICTURE, 1, 1);
     break;
   // Unused: impact mode 100, which this game never dispatches
@@ -278,7 +276,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   // dispatcher reaches it, and its twin of this routine loads the same Mercury
   // sheet for it.
   case EFFECT_RANGE_CASTING_IMPACT:
-    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
+    Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET,
                                pictures + CASTING_IMPACT_DJINNI_PICTURE, 1, 1);
     break;
   }
@@ -481,16 +479,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   // Mortal Danger and Asura replace the caster's overlay and the impact's
   // pictures.
   if (mode == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
-    Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetA, pictures, 1,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_COUNTER_REVEAL_SHEET, work, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_RED_CRESCENT_SHEET_A, pictures, 1, 0);
     REG_BLDALPHA = BLEND_ALPHA(16, 14);
   }
   if (mode == CASTING_IMPACT_IMPACT_ASURA) {
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeastSheet,
-                               work->imageStorage, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetB, pictures, 1,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_BLUE_BEAST_SHEET, work->imageStorage, 1,
+                               1);
+    Resource_LoadAndDecompress(RESOURCE_RED_CRESCENT_SHEET_B, pictures, 1, 0);
     REG_BLDALPHA = BLEND_ALPHA(16, 14);
   }
   // The impact's own particles fly out from the target.
@@ -610,51 +606,51 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     // Step the background palette towards the impact's colours.
     switch (mode) {
     case CASTING_IMPACT_IMPACT_FORCIBLE_ARM:
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_FlameSheetA);
+      BattleEffect_StepPaletteToResource(RESOURCE_FLAME_SHEET_A);
       break;
     case CASTING_IMPACT_IMPACT_AQUA_SOCK:
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_BlueFlameSheet);
+      BattleEffect_StepPaletteToResource(RESOURCE_BLUE_FLAME_SHEET);
       break;
     case CASTING_IMPACT_IMPACT_PSYPHON_SEAL:
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_RuneSheet);
+      BattleEffect_StepPaletteToResource(RESOURCE_RUNE_SHEET);
       break;
     case CASTING_IMPACT_IMPACT_TERRA_STRIKE:
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_RockSpireSheet);
+      BattleEffect_StepPaletteToResource(RESOURCE_ROCK_SPIRE_SHEET);
       break;
     case CASTING_IMPACT_IMPACT_BANE:
     case CASTING_IMPACT_IMPACT_DEADLY_POISON:
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_MarsDjinnSheet);
+      BattleEffect_StepPaletteToResource(RESOURCE_MARS_DJINN_SHEET);
       break;
     case CASTING_IMPACT_IMPACT_BAD_OMEN:
     case CASTING_IMPACT_IMPACT_LIFE_NOURISH:
     case CASTING_IMPACT_IMPACT_ACID_BATH:
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_PinkBurstSheet);
+      BattleEffect_StepPaletteToResource(RESOURCE_PINK_BURST_SHEET);
       break;
     case CASTING_IMPACT_IMPACT_LIFE_LEECH:
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_IceBlockSheet);
+      BattleEffect_StepPaletteToResource(RESOURCE_ICE_BLOCK_SHEET);
       break;
     case CASTING_IMPACT_IMPACT_PSY_LEECH:
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
+      BattleEffect_StepPaletteToResource(RESOURCE_BLAST_SHEET);
       break;
     case CASTING_IMPACT_IMPACT_MIST:
     case CASTING_IMPACT_IMPACT_MURK:
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_TanPalette);
+      BattleEffect_StepPaletteToResource(RESOURCE_TAN_PALETTE);
       break;
     case CASTING_IMPACT_IMPACT_SMOG:
     case CASTING_IMPACT_IMPACT_BLINDING_SMOG:
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
+      BattleEffect_StepPaletteToResource(RESOURCE_CYAN_PALETTE);
       break;
     case CASTING_IMPACT_IMPACT_FEVER:
     case CASTING_IMPACT_IMPACT_BROIL:
     case CASTING_IMPACT_IMPACT_HEAT_MIRAGE:
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_EmberStreakSheet);
+      BattleEffect_StepPaletteToResource(RESOURCE_EMBER_STREAK_SHEET);
       break;
     case CASTING_IMPACT_IMPACT_POISON_CLOUD:
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_LimePalette);
+      BattleEffect_StepPaletteToResource(RESOURCE_LIME_PALETTE);
       break;
     case CASTING_IMPACT_IMPACT_SCORCH:
     case CASTING_IMPACT_IMPACT_BARRAGE:
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_FlashBurstSheet);
+      BattleEffect_StepPaletteToResource(RESOURCE_FLASH_BURST_SHEET);
       break;
     }
     // The orb flashes over the target and sparks scatter.

@@ -202,7 +202,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 }
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_TimberRoomsB) {
+  if (gMainRoutineWork.next == SCENE_TIMBER_ROOMS_B) {
     return gTimberRoomsB_Regions;
   }
   return gTimberRoomsC_Regions;
@@ -212,7 +212,7 @@ const u32 *Scene_GetExits(void) { return gTimberRoomsBC_Exits; }
 
 /// The people of each scene.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_TimberRoomsC) {
+  if (gMainRoutineWork.next == SCENE_TIMBER_ROOMS_C) {
     // Faran's house and the inn.
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gTimberRoomsC_ActorPlacementsAfterLighthouse;
@@ -395,7 +395,7 @@ static void TimberRoomsBC_TalkToIodem(void) {
 /// What the party can talk to, touch and search in each scene, before and
 /// after Venus Lighthouse.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_TimberRoomsC) {
+  if (gMainRoutineWork.next == SCENE_TIMBER_ROOMS_C) {
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gTimberRoomsC_TriggersAfterLighthouse;
     }
@@ -822,7 +822,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   sceneId = gMainRoutineWork.next;
-  if (sceneId == (s32)&SceneId_TimberRoomsB) {
+  if (sceneId == SCENE_TIMBER_ROOMS_B) {
     // Each shopkeeper is drawn under the counter's top, and counts as nearer
     // to talk to (ACTOR_NEAR_TALK) so that the leader reaches it across the
     // counter.
@@ -845,7 +845,7 @@ s32 Scene_Initialize(void) {
       gMainRoutineWork.restartEntrance = entrance;
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_TimberRoomsC) {
+  if (gMainRoutineWork.next == SCENE_TIMBER_ROOMS_C) {
     actor = Actor_Get(ACTOR_INNKEEPER);
     actor->collisionFlags |= ACTOR_NEAR_TALK;
     actor->priorityFlags = 0;

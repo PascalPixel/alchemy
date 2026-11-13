@@ -101,28 +101,28 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
+  palette = Resource_GetTableEntry(RESOURCE_GOLD_SHELL_SHEET);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
-  palette = Resource_GetTableEntry((s32)&ResourceId_SmokeSheet);
+  palette = Resource_GetTableEntry(RESOURCE_SMOKE_SHEET);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet + LOBBED_SHELLS_SMOKE_PICTURES);
   if (mode == LOBBED_SHELLS_BONE_CHILLER)
-    palette = Resource_GetTableEntry((s32)&ResourceId_BluePalette);
+    palette = Resource_GetTableEntry(RESOURCE_BLUE_PALETTE);
   else if (mode == LOBBED_SHELLS_STICKY_GOO)
-    palette = Resource_GetTableEntry((s32)&ResourceId_SpiderWebSheet);
+    palette = Resource_GetTableEntry(RESOURCE_SPIDER_WEB_SHEET);
   else if (mode == LOBBED_SHELLS_STICKY_POISON)
-    palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
+    palette = Resource_GetTableEntry(RESOURCE_LIME_PALETTE);
   else if (mode == LOBBED_SHELLS_ROTTEN_BLOOD)
-    palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
+    palette = Resource_GetTableEntry(RESOURCE_GREEN_PALETTE);
   else if (mode == LOBBED_SHELLS_MAD_SPATTER)
-    palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
+    palette = Resource_GetTableEntry(RESOURCE_GOLD_SHELL_SHEET);
   else if (mode == LOBBED_SHELLS_POISON_INK)
-    palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+    palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
   else
-    palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
+    palette = Resource_GetTableEntry(RESOURCE_GREEN_PALETTE);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 
   // Each target's shell starts at the user.

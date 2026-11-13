@@ -30,8 +30,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   BattleEffect_RunDjinniEntrance(args, ELEMENT_MERCURY, work->args->side,
                                  DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
-  Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_WATER_SPRAY_SHEET, work->sheet, 1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Projection_Unit(work->args->targets[0], &origin);
 
@@ -57,9 +56,9 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     // The chips and the Djinni load on frame 1, so on frame 0 the prelude draws
     // whatever the sheet holds.
     if (frame == 1) {
-      Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet,
+      Resource_LoadAndDecompress(RESOURCE_ICE_CHIP_SHEET,
                                  work->sheet + HAIL_CHIP_PICTURES, 1, 1);
-      Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
+      Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET,
                                  work->sheet + HAIL_DJINNI_PICTURE, 1, 0);
     }
 
@@ -175,8 +174,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
+  Resource_LoadAndDecompress(RESOURCE_PORTAL_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET,
                              work->sheet + GROUND_DJINNI_PICTURE, 1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   user = GetBattleObjectSlotFar(work->args->user)->actor;
@@ -195,7 +194,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   }
   for (frame = 0; frame != 96; frame++) {
     if (frame > 16)
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_PortalSheet);
+      BattleEffect_StepPaletteToResource(RESOURCE_PORTAL_SHEET);
     // The Djinni circles above the user, then rises away.
     if (work->args->prelude == 1) {
       s32 angle = frame << 11;

@@ -136,38 +136,36 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, particleSheet,
-                             0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, particleSheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
   if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_SLASH)
-    Resource_LoadAndDecompress((s32)&ResourceId_BeamImage, work->sheet + 3200,
-                               0, 0);
+    Resource_LoadAndDecompress(RESOURCE_BEAM_IMAGE, work->sheet + 3200, 0, 0);
   else
-    Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage,
-                               work->sheet + 3200, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_TWELVE_MODE_IMAGE, work->sheet + 3200,
+                               0, 0);
   switch (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COLOR)) {
   case STRIKE_COLOR_BLUE:
-    resource = (s32)&ResourceId_BlueBeamSheet;
+    resource = RESOURCE_BLUE_BEAM_SHEET;
     break;
   case STRIKE_COLOR_LIME:
-    resource = (s32)&ResourceId_LimePalette;
+    resource = RESOURCE_LIME_PALETTE;
     break;
   case STRIKE_COLOR_PINK:
-    resource = (s32)&ResourceId_PinkPalette;
+    resource = RESOURCE_PINK_PALETTE;
     break;
   case STRIKE_COLOR_EMBER:
-    resource = (s32)&ResourceId_EmberStreakSheet;
+    resource = RESOURCE_EMBER_STREAK_SHEET;
     break;
   case STRIKE_COLOR_MARS:
-    resource = (s32)&ResourceId_MarsDjinnSheet;
+    resource = RESOURCE_MARS_DJINN_SHEET;
     break;
   case STRIKE_COLOR_LIGHTNING:
   default:
-    resource = (s32)&ResourceId_LightningBoltSheet;
+    resource = RESOURCE_LIGHTNING_BOLT_SHEET;
     break;
   }
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
-  Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
+  Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET,
                              work->sheet + TARGET_STRIKE_SMOKE_PICTURES, 1, 0);
 
   /* LEFTOVER(template): a per-target loop whose count is 1, the first target

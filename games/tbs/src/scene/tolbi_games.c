@@ -257,7 +257,7 @@ const u32 *Scene_GetExits(void) { return gTolbiSpring_Exits; }
 /// Selects the actors of Tolbi Spring or of the Lucky Dice and Lucky
 /// Wheels rooms.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_TolbiSpring) {
+  if (gMainRoutineWork.next == SCENE_TOLBI_SPRING) {
     return gTolbiSpringActorPlacements;
   }
   return gTolbiSpringActorPlacementsOther;
@@ -334,7 +334,7 @@ static void TolbiSpring_TalkToWheelsAttendant(void) {
 /// Selects the triggers of Tolbi Spring or of the Lucky Dice and Lucky Wheels
 /// rooms.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_TolbiSpring) {
+  if (gMainRoutineWork.next == SCENE_TOLBI_SPRING) {
     return gTolbiSpringTriggers;
   }
   return gTolbiSpringTriggersOther;
@@ -347,7 +347,7 @@ s32 Scene_Initialize(void) {
   s32 prizeIndex;
   s32 item;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_TolbiSpring) {
+  if (gMainRoutineWork.next == SCENE_TOLBI_SPRING) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
                &REG_BLDCNT);
@@ -605,7 +605,7 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   // "Step right up and enjoy yourself."
   Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
   Event_LeaveFor(SEQUENCE_SLOTS, 0);
-  Event_SetAfterBattleDestination((s32)&SceneId_StuccoRoomsC,
+  Event_SetAfterBattleDestination(SCENE_STUCCO_ROOMS_C,
                                   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS);
 }
 
@@ -637,7 +637,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
     Event_Wait(20);
     Event_LeaveFor(SEQUENCE_DICE, 0);
-    Event_SetAfterBattleDestination((s32)&SceneId_StuccoRoomsC,
+    Event_SetAfterBattleDestination(SCENE_STUCCO_ROOMS_C,
                                     STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE);
   } else {
     gFieldWork->message++;

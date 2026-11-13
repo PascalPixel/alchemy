@@ -187,7 +187,7 @@ s32 FieldSequence_Run(s32 entrance) {
           } else if (work->raisedTrigger ==
                      FIELD_RAISED_TRIGGER_WORLD_PICTURE) {
             Leader_StopMoving();
-            WorldPicture_Show((s32)&ResourceId_WorldMapPicture);
+            WorldPicture_Show(RESOURCE_WORLD_MAP_PICTURE);
           } else if (work->raisedTrigger ==
                      FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM) {
             Leader_StopMoving();

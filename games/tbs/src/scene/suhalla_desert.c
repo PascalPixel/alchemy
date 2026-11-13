@@ -207,13 +207,13 @@ static s32 SuhallaDesert_ToggleActorActive(struct Actor *actor) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_SuhallaDesertNorth) {
+  if (scene == SCENE_SUHALLA_DESERT_NORTH) {
     return gSuhallaDesertNorthEntrances;
   }
-  if (scene == (s32)&SceneId_SuhallaDesertSouth) {
+  if (scene == SCENE_SUHALLA_DESERT_SOUTH) {
     return gSuhallaDesertSouthEntrances;
   }
-  if (scene == (s32)&SceneId_SuhallaDesertCaves) {
+  if (scene == SCENE_SUHALLA_DESERT_CAVES) {
     return gSuhallaDesertCavesEntrances;
   }
   return gSuhallaDesertEntrancesOther;
@@ -228,13 +228,13 @@ const u32 *Scene_GetExits(void) { return gSuhallaDesertExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_SuhallaDesertNorth) {
+  if (scene == SCENE_SUHALLA_DESERT_NORTH) {
     return gSuhallaDesertNorthActorPlacements;
   }
-  if (scene == (s32)&SceneId_SuhallaDesertSouth) {
+  if (scene == SCENE_SUHALLA_DESERT_SOUTH) {
     return gSuhallaDesertSouthActorPlacements;
   }
-  if (scene == (s32)&SceneId_SuhallaDesertCaves) {
+  if (scene == SCENE_SUHALLA_DESERT_CAVES) {
     return gSuhallaDesertCavesActorPlacements;
   }
   return gSuhallaDesertActorPlacementsOther;
@@ -589,11 +589,11 @@ static void SuhallaDesert_DouseStorm(s32 unused, s32 stormId) {
     gFieldWork->raisedTrigger = 0;
   }
   GameFlag_Clear(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM);
-  if (gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertNorth) {
+  if (gMainRoutineWork.next == SCENE_SUHALLA_DESERT_NORTH) {
     GameFlag_Set((stormId + FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED -
                   ACTOR_FIRST_SANDSTORM));
   } else {
-    if (gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertSouth) {
+    if (gMainRoutineWork.next == SCENE_SUHALLA_DESERT_SOUTH) {
       GameFlag_Set((stormId + FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED -
                     ACTOR_FIRST_SANDSTORM));
     }
@@ -601,7 +601,7 @@ static void SuhallaDesert_DouseStorm(s32 unused, s32 stormId) {
   FieldGameFlag_SetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT, 0);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  if (gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertSouth) {
+  if (gMainRoutineWork.next == SCENE_SUHALLA_DESERT_SOUTH) {
     if (stormId == ACTOR_FOURTH_SANDSTORM) {
       Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
     } else {
@@ -652,13 +652,13 @@ static void SuhallaDesert_StormCarriesPartyAway(void) {
   Event_WaitTransitionFrames();
   Event_End();
   GameFlag_Set(FLAG_ARRIVE_FALLING);
-  if (gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertSouth &&
+  if (gMainRoutineWork.next == SCENE_SUHALLA_DESERT_SOUTH &&
       FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM) ==
           ACTOR_FOURTH_SANDSTORM) {
-    Event_SetDestination((s32)&SceneId_WorldMap,
+    Event_SetDestination(SCENE_WORLD_MAP,
                          WORLD_MAP_FROM_SUHALLA_DESERT_SANDSTORM);
   } else {
-    Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_SUHALLA);
+    Event_SetDestination(SCENE_WORLD_MAP, WORLD_MAP_FROM_SUHALLA);
   }
 }
 
@@ -683,7 +683,7 @@ static void SuhallaDesert_RevealEnds(void) {
 static s32 SuhallaDesert_RevealEnds(void) {
   s32 removalResult;
 #endif
-  if (gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertSouth) {
+  if (gMainRoutineWork.next == SCENE_SUHALLA_DESERT_SOUTH) {
     Actor_Get(ACTOR_REVEALED_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_Get(ACTOR_REVEALED_PILLAR)->motionFlags =
         ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -706,7 +706,7 @@ static s32 SuhallaDesert_RevealEnds(void) {
 
 /// Reveal shows a hidden stone pillar in the desert's south.
 static UNREAD_RESULT SuhallaDesert_RevealStarts(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertSouth) {
+  if (gMainRoutineWork.next == SCENE_SUHALLA_DESERT_SOUTH) {
     Actor_Get(ACTOR_REVEALED_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_Get(ACTOR_REVEALED_PILLAR)->motionFlags = 0;
     Actor_SetPosition(ACTOR_REVEALED_PILLAR, 248, 712);
@@ -725,7 +725,7 @@ static UNREAD_RESULT SuhallaDesert_RevealStarts(void) {
 /// The third scene's exits, or the storms, Iodem, treasure and Reveal of the
 /// first two.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertCaves) {
+  if (gMainRoutineWork.next == SCENE_SUHALLA_DESERT_CAVES) {
     return gSuhallaDesertCavesTriggers;
   }
   return gSuhallaDesertTriggersOther;
@@ -742,14 +742,14 @@ s32 Scene_Initialize(void) {
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_AIRBORNE;
     Task_AddFrame(SuhallaDesert_UpdateCaptureTimer, TASK_PASS_FRAME);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertNorth ||
-      gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertSouth) {
+  if (gMainRoutineWork.next == SCENE_SUHALLA_DESERT_NORTH ||
+      gMainRoutineWork.next == SCENE_SUHALLA_DESERT_SOUTH) {
     sSuhallaDesertSavedColor = SUHALLA_REVEAL_PALETTE_COLOR;
     SuhallaDesert_RevealEnds();
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertNorth) {
+  if (gMainRoutineWork.next == SCENE_SUHALLA_DESERT_NORTH) {
     SuhallaDesert_SetUpFirstMapStorms();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertSouth) {
+  } else if (gMainRoutineWork.next == SCENE_SUHALLA_DESERT_SOUTH) {
     SuhallaDesert_SetUpSecondMapStorms();
   } else {
     Sound_Play(SE_STOP_ACTION_SE);

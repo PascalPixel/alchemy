@@ -11,19 +11,19 @@
 /// animations copy their pictures from.
 u32 gWorldMap_GraphicsResources[2][6] = {
     {
-        (u32)&ResourceId_WorldMapPaletteA,
-        (u32)&ResourceId_WorldMapTilesA,
-        (u32)&ResourceId_WorldMapTilesB,
-        (u32)&ResourceId_WorldMapTilesC,
-        (u32)&ResourceId_WorldMapTilesD,
-        (u32)&ResourceId_WorldMapTilesE,
+        (u32)RESOURCE_WORLD_MAP_PALETTE_A,
+        (u32)RESOURCE_WORLD_MAP_TILES_A,
+        (u32)RESOURCE_WORLD_MAP_TILES_B,
+        (u32)RESOURCE_WORLD_MAP_TILES_C,
+        (u32)RESOURCE_WORLD_MAP_TILES_D,
+        (u32)RESOURCE_WORLD_MAP_TILES_E,
     },
     {
-        (u32)&ResourceId_WorldMapPaletteB,
-        (u32)&ResourceId_WorldMapTilesF,
-        (u32)&ResourceId_WorldMapTilesG,
-        (u32)&ResourceId_WorldMapTilesH,
-        (u32)&ResourceId_WorldMapTilesI,
-        (u32)&ResourceId_WorldMapTilesJ,
+        (u32)RESOURCE_WORLD_MAP_PALETTE_B,
+        (u32)RESOURCE_WORLD_MAP_TILES_F,
+        (u32)RESOURCE_WORLD_MAP_TILES_G,
+        (u32)RESOURCE_WORLD_MAP_TILES_H,
+        (u32)RESOURCE_WORLD_MAP_TILES_I,
+        (u32)RESOURCE_WORLD_MAP_TILES_J,
     },
 };

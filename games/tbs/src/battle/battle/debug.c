@@ -266,7 +266,7 @@ restart:
       if (gKeysHeld & KEY_DOWN)
         GameFlag_SetFar(FLAG_LINK_BATTLE);
       Unit_CalculateFar(ISAAC);
-      gMainRoutineWork.battleBackground = (s32)&ResourceId_SuhallaGateBackdrop;
+      gMainRoutineWork.battleBackground = RESOURCE_SUHALLA_GATE_BACKDROP;
       if (encounter == DJINN_TUTORIAL_ENCOUNTER)
         GameFlag_SetFar(FLAG_DJINN_LESSON);
       GameFlag_SetFar(FLAG_DEBUG_BATTLE);

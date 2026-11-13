@@ -114,51 +114,49 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   }
   REG_BG2PA = Q_8_8(0.8); // 1.25 times the width
 
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
                              work->sheet + STAT_BOOST_FLARES, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet,
+  Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET,
                              work->sheet + STAT_BOOST_BURST, 1, 1);
   if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH) {
-    Resource_LoadAndDecompress((s32)&ResourceId_VioletStreakSheet,
+    Resource_LoadAndDecompress(RESOURCE_VIOLET_STREAK_SHEET,
                                work->sheet + STAT_BOOST_PICTURE, 1, 1);
     if (mode == STAT_BOOST_GRANITE)
       Iwram_CopyWords((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet),
-                      128);
+                      Resource_GetTableEntry(RESOURCE_VENUS_DJINN_SHEET), 128);
     else
       Iwram_CopyWords((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
-                      128);
+                      Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET), 128);
   } else if (mode == STAT_BOOST_ZEPHYR) {
-    Resource_LoadAndDecompress((s32)&ResourceId_WispSheet,
+    Resource_LoadAndDecompress(RESOURCE_WISP_SHEET,
                                work->sheet + STAT_BOOST_PICTURE, 1, 1);
   } else {
     void *palette;
 
     if (mode == STAT_BOOST_IMPACT)
-      Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet,
+      Resource_LoadAndDecompress(RESOURCE_DAGGER_SHEET,
                                  work->sheet + STAT_BOOST_PICTURE, 1, 0);
     else
-      Resource_LoadAndDecompress((s32)&ResourceId_ShieldSheet,
+      Resource_LoadAndDecompress(RESOURCE_SHIELD_SHEET,
                                  work->sheet + STAT_BOOST_PICTURE, 1, 0);
     if (mode == STAT_BOOST_IMPACT)
-      palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+      palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
     else if (mode == STAT_BOOST_WARD || mode == STAT_BOOST_ZEPHYR)
-      palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
+      palette = Resource_GetTableEntry(RESOURCE_JUPITER_DJINN_SHEET);
     else if (mode == STAT_BOOST_GUARD)
-      palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+      palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
     else
-      palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+      palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
     Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   }
   if (mode == STAT_BOOST_GRANITE)
-    Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
+    Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SHEET,
                                work->sheet + STAT_BOOST_DJINNI, 1, 0);
   else if (mode == STAT_BOOST_WARD || mode == STAT_BOOST_ZEPHYR)
-    Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSheet,
+    Resource_LoadAndDecompress(RESOURCE_JUPITER_DJINN_SHEET,
                                work->sheet + STAT_BOOST_DJINNI, 1, 0);
   else
-    Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSheet,
+    Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SHEET,
                                work->sheet + STAT_BOOST_DJINNI, 1, 0);
 
   for (i = 0; i != 512; i++) {
@@ -398,17 +396,17 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0);
   if (mode == STAT_REDUCTION_DULL)
-    Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_DAGGER_SHEET, work->sheet, 1, 1);
   else
-    Resource_LoadAndDecompress((s32)&ResourceId_ShieldSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_SHIELD_SHEET, work->sheet, 1, 1);
   if (mode == STAT_REDUCTION_DULL)
-    paletteId = (s32)&ResourceId_PinkBurstSheet;
+    paletteId = RESOURCE_PINK_BURST_SHEET;
   else if (mode == STAT_REDUCTION_IMPAIR)
-    paletteId = (s32)&ResourceId_GlowOrbSheet;
+    paletteId = RESOURCE_GLOW_ORB_SHEET;
   else
-    paletteId = (s32)&ResourceId_PinkBurstSheet;
+    paletteId = RESOURCE_PINK_BURST_SHEET;
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(paletteId), 128);
-  Resource_LoadAndDecompress((s32)&ResourceId_PaletteRampImage,
+  Resource_LoadAndDecompress(RESOURCE_PALETTE_RAMP_IMAGE,
                              work->sheet + STAT_REDUCTION_SHARD_PICTURES, 0, 0);
 
   for (i = 1; i != 8; i++) {

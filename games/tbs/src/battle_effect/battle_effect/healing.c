@@ -130,32 +130,31 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     doubleWidth = 1;
   }
 
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, work->sheet, 0, 0);
   if (mode <= HEALING_MODE_WISH || mode == HEALING_MODE_CURE_POISON ||
       mode == HEALING_MODE_RESTORE || mode == HEALING_MODE_TONIC) {
     if (work->args->variant == EFFECT_VARIANT_BASIC)
-      resource = Resource_GetTableEntry((s32)&ResourceId_IceShardSheet);
+      resource = Resource_GetTableEntry(RESOURCE_ICE_SHARD_SHEET);
     else
-      resource = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
+      resource = Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET);
   } else if (mode == HEALING_MODE_PSY_CRYSTAL) {
-    resource = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+    resource = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
   } else {
-    resource = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
+    resource = Resource_GetTableEntry(RESOURCE_BLAST_SHEET);
   }
   Iwram_CopyWords((void *)BG_PLTT, resource, 128);
 
   if (doubleWidth == 0) {
     if (mode == HEALING_MODE_PSY_CRYSTAL)
-      resource = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+      resource = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
     else
-      resource = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet);
+      resource = Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SHEET);
   } else {
     if (mode == HEALING_MODE_PSY_CRYSTAL)
-      resource = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet);
+      resource = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET);
     else
-      resource =
-          Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet);
+      resource = Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SMALL_SHEET);
   }
   resource += 128;
   Decompress_TaggedLz(resource, work->sheet + HEALING_DJINNI_PICTURE);

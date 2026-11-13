@@ -33,12 +33,9 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   burstPixels = Ram_MapGridCellBuffer;
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireBurstSheet, burstPixels, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, particleSheet,
-                             0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_BURST_SHEET, burstPixels, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, particleSheet, 0, 0);
   BattleMotion_ApproachTargetFar(work->args->user, work->args->targets[0], 4,
                                  0);
   wait(1);

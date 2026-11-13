@@ -357,7 +357,7 @@ static void MercuryLighthouseEntrance_FightLizardMan(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   Event_SetAfterBattleDestination(
-      (s32)&SceneId_MercuryLighthouseEntrance,
+      SCENE_MERCURY_LIGHTHOUSE_ENTRANCE,
       MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   // The second slot of the encounter zone of Tret Tree's and Mercury
@@ -388,7 +388,7 @@ s32 Scene_Initialize(void) {
       (struct MercuryLighthouseLights *)gSceneLocalState);
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gMainRoutineWork.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
-  gMainRoutineWork.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
+  gMainRoutineWork.retreatScene = SCENE_MERCURY_LIGHTHOUSE_EXTERIOR;
   FieldEffect_StartFadeOverlay(0);
   if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     Task_AddFrame(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);

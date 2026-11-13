@@ -211,13 +211,13 @@ static UNREAD_RESULT ValeCave_FaceActorTowardLeader(struct Actor *actor) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_ValeCaveMouth) {
+  if (sceneId == SCENE_VALE_CAVE_MOUTH) {
     return gValeCave_MouthEntrances;
   }
-  if (sceneId == (s32)&SceneId_ValeCaveKite) {
+  if (sceneId == SCENE_VALE_CAVE_KITE) {
     return gValeCave_KiteEntrances;
   }
-  if (sceneId == (s32)&SceneId_ValeCaveLogs) {
+  if (sceneId == SCENE_VALE_CAVE_LOGS) {
     return gValeCave_LogsEntrances;
   }
   return gValeCave_EntrancesOther;
@@ -233,13 +233,13 @@ const u32 *Scene_GetExits(void) { return gValeCave_Exits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_ValeCaveMouth) {
+  if (sceneId == SCENE_VALE_CAVE_MOUTH) {
     return gValeCave_MouthActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_ValeCaveKite) {
+  if (sceneId == SCENE_VALE_CAVE_KITE) {
     return gValeCave_KiteActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_ValeCaveLogs) {
+  if (sceneId == SCENE_VALE_CAVE_LOGS) {
     return gValeCave_LogsActorPlacements;
   }
   return gValeCave_MouthActorPlacements;
@@ -600,13 +600,13 @@ static void ValeCave_PushLogNorth(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_ValeCaveMouth) {
+  if (sceneId == SCENE_VALE_CAVE_MOUTH) {
     return gValeCave_MouthTriggers;
   }
-  if (sceneId == (s32)&SceneId_ValeCaveKite) {
+  if (sceneId == SCENE_VALE_CAVE_KITE) {
     return gValeCave_KiteTriggers;
   }
-  if (sceneId == (s32)&SceneId_ValeCaveLogs) {
+  if (sceneId == SCENE_VALE_CAVE_LOGS) {
     return gValeCave_LogsTriggers;
   }
   return gValeCave_TriggersOther;
@@ -617,7 +617,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == (s32)&SceneId_ValeCaveMouth) {
+  if (gMainRoutineWork.next == SCENE_VALE_CAVE_MOUTH) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     wait(1);
     Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_FIRST_LOG, 3);
@@ -695,7 +695,7 @@ static void ValeCave_ApplyEntryState(void) {
   s32 southLogOnSouthernRow;
 
   // Each room reuses the temporary flags for its own puzzle state.
-  if (gMainRoutineWork.next == (s32)&SceneId_ValeCaveKite) {
+  if (gMainRoutineWork.next == SCENE_VALE_CAVE_KITE) {
     switch (gMainRoutineWork.entrance) {
     case VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH:
     case VALE_CAVE_KITE_WEST_FROM_EAST:
@@ -750,7 +750,7 @@ static void ValeCave_ApplyEntryState(void) {
       }
       break;
     }
-  } else if (gMainRoutineWork.next == (s32)&SceneId_ValeCaveLogs) {
+  } else if (gMainRoutineWork.next == SCENE_VALE_CAVE_LOGS) {
     switch (gMainRoutineWork.entrance) {
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST:
     case VALE_CAVE_LOGS_NORTH_FROM_SOUTH:

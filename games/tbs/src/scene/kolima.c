@@ -232,10 +232,10 @@ static s32 Kolima_UpdateFallingDebris(struct Actor *debris) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_KolimaBridge) {
+  if (sceneId == SCENE_KOLIMA_BRIDGE) {
     return gKolimaBridgeEntrances;
   }
-  if (sceneId == (s32)&SceneId_KolimaTunnel) {
+  if (sceneId == SCENE_KOLIMA_TUNNEL) {
     return gKolimaTunnelEntrances;
   }
   return gKolimaEntrances;
@@ -244,7 +244,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 /// Only Kolima Tunnel has regions: its two ways out,
 /// KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA.
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_KolimaTunnel) {
+  if (gMainRoutineWork.next == SCENE_KOLIMA_TUNNEL) {
     return gKolimaTunnelRegions;
   }
   return 0;
@@ -259,13 +259,13 @@ const u32 *Scene_GetExits(void) { return gKolimaExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_Kolima) {
+  if (sceneId == SCENE_KOLIMA) {
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
       Kolima_InitializeCursedVillagers(gKolimaActorPlacements);
     }
     return gKolimaActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_KolimaBridge) {
+  if (sceneId == SCENE_KOLIMA_BRIDGE) {
     return gKolimaBridgeActorPlacements;
   }
   return gKolimaTunnelActorPlacements;
@@ -297,7 +297,7 @@ static void Kolima_GraniteJoins(void) {
 /// Selects Kolima Bridge's triggers, or the table Kolima and Kolima Tunnel
 /// share.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_KolimaBridge) {
+  if (gMainRoutineWork.next == SCENE_KOLIMA_BRIDGE) {
     return gKolimaBridgeTriggers;
   }
   return gKolimaTriggers;
@@ -450,12 +450,12 @@ s32 Scene_Initialize(void) {
 
   sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_KolimaBridge) {
+  if (sceneId == SCENE_KOLIMA_BRIDGE) {
     Kolima_RestoreBridgeState();
     return 0;
   }
 
-  if (sceneId == (s32)&SceneId_KolimaTunnel) {
+  if (sceneId == SCENE_KOLIMA_TUNNEL) {
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     return 0;

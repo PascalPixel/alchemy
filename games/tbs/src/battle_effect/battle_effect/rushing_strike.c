@@ -105,24 +105,22 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1,
-                             0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, work->sheet, 1, 0);
   BattleEffect_PackTileRows(work->sheet, (u8 *)cells, 40, 288);
-  Resource_LoadAndDecompress((s32)&ResourceId_BlueBurstSheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_BURST_SHEET, work->sheet, 1, 1);
   switch (mode) {
   case RUSHING_STRIKE_BONE_CHARGE:
-    paletteId = (s32)&ResourceId_FirePillarSheetB;
+    paletteId = RESOURCE_FIRE_PILLAR_SHEET_B;
     break;
   case RUSHING_STRIKE_BRUTE_FORCE:
-    paletteId = (s32)&ResourceId_IceBlockSheet;
+    paletteId = RESOURCE_ICE_BLOCK_SHEET;
     break;
   case RUSHING_STRIKE_ONSLAUGHT:
-    paletteId = (s32)&ResourceId_PinkBurstSheet;
+    paletteId = RESOURCE_PINK_BURST_SHEET;
     break;
   default:
-    paletteId = (s32)&ResourceId_BlastSheet;
+    paletteId = RESOURCE_BLAST_SHEET;
     break;
   }
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(paletteId), 128);

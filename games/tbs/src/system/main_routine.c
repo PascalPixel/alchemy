@@ -201,14 +201,14 @@ void MainRoutine_Run(s32 mode) {
   // Read once: both debug starts test the same value.
   debug = gDebugMode;
   if (debug && mode == GAME_START_DEBUG_VALE) {
-    gMainRoutineWork.next = (s32)&SceneId_ValePlaza;
+    gMainRoutineWork.next = SCENE_VALE_PLAZA;
     gMainRoutineWork.entrance = mode;
   } else if (debug && mode == GAME_START_DEBUG_FILE_SCREEN) {
-    gMainRoutineWork.next = (s32)&SceneId_FileScreen;
+    gMainRoutineWork.next = SCENE_FILE_SCREEN;
     gMainRoutineWork.entrance = FILE_SCREEN_FROM_SANCTUM;
   } else {
     MainRoutineWork_InitializeDefaultsFar();
-    gMainRoutineWork.next = (s32)&SceneId_Title;
+    gMainRoutineWork.next = SCENE_TITLE;
     gMainRoutineWork.entrance = TITLE_AFTER_RUN;
   }
   // The window colours from the options: hue, then brightness.

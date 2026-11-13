@@ -329,7 +329,7 @@ void LuckyDice_Run(void) {
   diceWork = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof(*diceWork));
   sprites = HeapSlot_AllocEwram(HEAP_SLOT_LUCKY_DICE_SPRITES, 1560);
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(*camera));
-  Stub_NoOpHook((s32)&ResourceId_BattleEffectFarCalls);
+  Stub_NoOpHook(RESOURCE_BATTLE_EFFECT_FAR_CALLS);
   Camera_ResetViewDefaults();
   Task_ResetAll();
   gOamCopyEnabled = 0;
@@ -344,8 +344,7 @@ void LuckyDice_Run(void) {
     }
   }
 
-  resourceAddress =
-      (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceBoard);
+  resourceAddress = (s32)Resource_GetTableEntry(RESOURCE_LUCKY_DICE_BOARD);
   Dma_Set((void *)resourceAddress, (void *)BG_PLTT, DMA_COPY_WORDS(112),
           REG_DMA3);
   Dma_Set((void *)BG_PLTT, bgPalette, DMA_COPY_WORDS(128), REG_DMA3);
@@ -356,8 +355,7 @@ void LuckyDice_Run(void) {
                            Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer, BG_SCREEN_BLOCK(8), DMA_COPY_WORDS(9600),
           REG_DMA3);
-  resourceAddress =
-      (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
+  resourceAddress = (s32)Resource_GetTableEntry(RESOURCE_LUCKY_DICE_SPRITES);
   Dma_Set((void *)resourceAddress, spritePalette, DMA_COPY_WORDS(128),
           REG_DMA3);
   Dma_Set((void *)resourceAddress, (void *)OBJ_PLTT, DMA_COPY_WORDS(128),

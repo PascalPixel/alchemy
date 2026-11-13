@@ -36,14 +36,14 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
 
-  palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
+  palette = Resource_GetTableEntry(RESOURCE_WATER_SPRAY_SHEET);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
-  palette = Resource_GetTableEntry((s32)&ResourceId_FirePillarSheetA);
+  palette = Resource_GetTableEntry(RESOURCE_FIRE_PILLAR_SHEET_A);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet + NEREID_COLUMN_PICTURE);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       graphics);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   {

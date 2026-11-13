@@ -517,7 +517,7 @@ s32 Scene_Initialize(void) {
   entrance = gMainRoutineWork.entrance;
   if (entrance == ROOM_GATE_TO_SUHALLA) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-    gMainRoutineWork.restartScene = (s32)&SceneId_RockRooms;
+    gMainRoutineWork.restartScene = SCENE_ROCK_ROOMS;
     gMainRoutineWork.restartEntrance = entrance;
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_WEAPON_COUNTER), 0);

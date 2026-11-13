@@ -1776,12 +1776,11 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_WalkTo(ACTOR_IVAN, 248, 564);
   Actor_WalkTo(ACTOR_MIA, 248, 564);
   Event_Wait(20);
-  gMainRoutineWork.restartScene = (s32)&SceneId_ShipRooms;
+  gMainRoutineWork.restartScene = SCENE_SHIP_ROOMS;
   gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Event_SetAfterBattleDestination(
-      (s32)&SceneId_TolbiShipDeck,
-      TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE);
+      SCENE_TOLBI_SHIP_DECK, TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 3);
   Event_End();
 }

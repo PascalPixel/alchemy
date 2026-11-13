@@ -1323,7 +1323,7 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   GameFlag_Set(FLAG_VAULT_THIEVES_ATTACKED);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  base = (s32)&SceneId_LogRoomsA;
+  base = SCENE_LOG_ROOMS_A;
   Event_SetAfterBattleDestination(base,
                                   LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED);
   Event_SetDefeatDestination(base, LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES);
@@ -2125,9 +2125,9 @@ static void LogRoomsA_ConfrontThievesAgain(void) {
   Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  Event_SetAfterBattleDestination((s32)&SceneId_LogRoomsA,
+  Event_SetAfterBattleDestination(SCENE_LOG_ROOMS_A,
                                   LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED);
-  Event_SetDefeatDestination((s32)&SceneId_LogRoomsA,
+  Event_SetDefeatDestination(SCENE_LOG_ROOMS_A,
                              LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 5);

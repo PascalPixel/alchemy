@@ -209,25 +209,25 @@ static void FuchinFallsCave_FightZephyr(void) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_ImilFallsCave) {
+  if (sceneId == SCENE_IMIL_FALLS_CAVE) {
     return gImilFuchinFalls_ImilFallsCaveEntrances;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveEntrance) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ENTRANCE) {
     return gImilFuchinFalls_EntranceEntrances;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveZephyr) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
     return gImilFuchinFalls_ZephyrRoomEntrances;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveDragonsEye) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE) {
     return gImilFuchinFalls_DragonsEyeRoomEntrances;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveArcticBlade) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ARCTIC_BLADE) {
     return gImilFuchinFalls_ArcticBladeRoomEntrances;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveOrbOfForce) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ORB_OF_FORCE) {
     return gImilFuchinFalls_KiRoomEntrances;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveDragonStatue) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGON_STATUE) {
     return gImilFuchinFalls_DragonRoomEntrances;
   }
   return gImilFuchinFalls_NoEntrances;
@@ -241,22 +241,22 @@ const u32 *Scene_GetExits(void) { return gImilFuchinFalls_Exits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_ImilFallsCave) {
+  if (sceneId == SCENE_IMIL_FALLS_CAVE) {
     return gImilFuchinFalls_ImilFallsCaveActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveEntrance) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ENTRANCE) {
     return gImilFuchinFalls_EntranceActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveZephyr) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
     return gImilFuchinFalls_ZephyrRoomActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveDragonsEye) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE) {
     return gImilFuchinFalls_DragonsEyeRoomActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveArcticBlade) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ARCTIC_BLADE) {
     return gImilFuchinFalls_ArcticBladeRoomActorPlacements;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveDragonStatue) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGON_STATUE) {
     return gImilFuchinFalls_DragonRoomActorPlacements;
   }
   return gImilFuchinFalls_NoActorPlacements;
@@ -1008,25 +1008,25 @@ static struct Actor *FuchinFallsCave_CreateForegroundActor(s32 x, s32 y, s32 z,
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
-  if (sceneId == (s32)&SceneId_ImilFallsCave) {
+  if (sceneId == SCENE_IMIL_FALLS_CAVE) {
     return gImilFuchinFalls_ImilFallsCaveTriggers;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveEntrance) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ENTRANCE) {
     return gImilFuchinFalls_EntranceTriggers;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveZephyr) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
     return gImilFuchinFalls_ZephyrRoomTriggers;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveDragonsEye) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE) {
     return gImilFuchinFalls_DragonsEyeRoomTriggers;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveArcticBlade) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ARCTIC_BLADE) {
     return gImilFuchinFalls_ArcticBladeRoomTriggers;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveOrbOfForce) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_ORB_OF_FORCE) {
     return gImilFuchinFalls_KiRoomTriggers;
   }
-  if (sceneId == (s32)&SceneId_FuchinFallsCaveDragonStatue) {
+  if (sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGON_STATUE) {
     return gImilFuchinFalls_DragonRoomTriggers;
   }
   return gImilFuchinFalls_NoTriggers;
@@ -1278,7 +1278,7 @@ static void FuchinFallsCave_StopLightFollowingLeader(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 &&
-      gMainRoutineWork.next == (s32)&SceneId_ImilFallsCave) {
+      gMainRoutineWork.next == SCENE_IMIL_FALLS_CAVE) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     Imil_WalkTowardFever();
   } else {
@@ -1303,7 +1303,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
   struct FadeOverlayWork *work;
 
   ImilFuchinFalls_RebuildLogRoom();
-  if (gMainRoutineWork.next == (s32)&SceneId_FuchinFallsCaveDragonsEye) {
+  if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE) {
     if (!GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND) &&
         gMainRoutineWork.entrance ==
             FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_FROM_LOGS) {
@@ -1313,8 +1313,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
       FuchinFallsCave_CreateForegroundActor(px(156), 0, px(452), SPRITE_CRATE);
       FuchinFallsCave_CreateForegroundActor(px(188), 0, px(452), SPRITE_CRATE);
     }
-  } else if (gMainRoutineWork.next ==
-             (s32)&SceneId_FuchinFallsCaveDragonStatue) {
+  } else if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_DRAGON_STATUE) {
     // Default: NULL unless the arrival from the south half's middle takes the
     // fade overlay.
     work = NULL;
@@ -1361,19 +1360,18 @@ static void ImilFuchinFalls_PrepareRoom(void) {
 /// Restores the cell behavior templates for the current log room of Fuchin
 /// Falls Cave.
 static void ImilFuchinFalls_RebuildLogRoom(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_FuchinFallsCaveEntrance) {
+  if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_ENTRANCE) {
     MapGrid_CopyCellAttributes(8, 29, 15, 5, 8, 42);
     FuchinFallsCave_RebuildEntranceLogs();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_FuchinFallsCaveZephyr) {
+  } else if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
     MapGrid_CopyCellAttributes(12, 8, 10, 18, 0, 28);
     FuchinFallsCave_RebuildZephyrRoomLogs();
-  } else if (gMainRoutineWork.next == (s32)&SceneId_FuchinFallsCaveDragonsEye &&
+  } else if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE &&
              gMainRoutineWork.entrance !=
                  FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_FROM_LOGS) {
     MapGrid_CopyCellAttributes(12, 21, 9, 16, 12, 3);
     FuchinFallsCave_RebuildDragonsEyeRoomLogs();
-  } else if (gMainRoutineWork.next ==
-             (s32)&SceneId_FuchinFallsCaveArcticBlade) {
+  } else if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_ARCTIC_BLADE) {
     if (gMainRoutineWork.entrance ==
             FUCHIN_FALLS_CAVE_ARCTIC_BLADE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE ||
         gMainRoutineWork.entrance ==
@@ -1390,14 +1388,14 @@ static void ImilFuchinFalls_RebuildLogRoom(void) {
 static void ImilFuchinFalls_HopOnTrigger(void) {
   s32 trigger = gFieldWork->stepTrigger;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_FuchinFallsCaveZephyr) {
+  if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
     if (trigger == 17) {
       ImilFuchinFalls_HopBy(0, -32);
     } else {
       ImilFuchinFalls_HopBy(-32, 0);
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_FuchinFallsCaveDragonsEye &&
+  if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE &&
       trigger == 25 &&
       GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE)) {
     ImilFuchinFalls_HopBy(0, 32);

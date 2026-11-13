@@ -286,23 +286,14 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 static void CrossboneIsleKeys_HaltPursuer(void) {}
 
 // Turn the Djinni toward the party leader each frame.
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 38 to 36 bytes in tbs-en.
-#ifdef UBFIX
-static void CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *updated) {
-#else
-static s32 CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *updated) {
-#endif
+static UNREAD_RESULT
+CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *updated) {
   struct Actor *actor = updated;
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   actor->facing = ArcTan2(leader->z.fixed - actor->z.fixed,
                           leader->x.fixed - actor->x.fixed);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// In CrossboneIsleBane, the first time the party comes near
@@ -439,12 +430,8 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
     Actor_SetAttachedEffect(ACTOR_BANE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
     djinni = Actor_Get(ACTOR_BANE);
-#ifdef UBFIX
-    djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
-#else
     djinni->update =
         (void (*)(struct Actor *))CrossboneIsleKeys_FaceBaneTowardLeader;
-#endif
     Event_End();
   }
 }
@@ -1464,12 +1451,8 @@ static void CrossboneIsleKeys_InitializeBane(void) {
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
       Actor_SetPosition(ACTOR_BANE, 856, 824);
       djinni = Actor_Get(ACTOR_BANE);
-#ifdef UBFIX
-      djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
-#else
       djinni->update =
           (void (*)(struct Actor *))CrossboneIsleKeys_FaceBaneTowardLeader;
-#endif
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0) {
       Actor_SetPosition(ACTOR_BANE, 888, 664);
       djinni = Actor_Get(ACTOR_BANE);

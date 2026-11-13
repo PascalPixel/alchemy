@@ -167,11 +167,7 @@ static void Vale_CycleOpeningPillarPalette(void);
 static void Vale_CycleFirstBoardPalette(void);
 static void Vale_CycleSecondBoardPalette(void);
 static void Vale_CycleThirdBoardPalette(void);
-#ifdef UBFIX
-static void Vale_HaveGuardWatchTheLeader(struct Actor *actor);
-#else
-static s32 Vale_HaveGuardWatchTheLeader(struct Actor *actor);
-#endif
+static UNREAD_RESULT Vale_HaveGuardWatchTheLeader(struct Actor *actor);
 static void Vale_TrailSparkles(struct Actor *actor);
 static void Vale_VanishMoveHand(struct Actor *emitter);
 static void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
@@ -951,11 +947,7 @@ static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   // No: "Well, I'll overlook it this time... But I've got my eye on..."
   Event_AskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
   actor = Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH);
-#ifdef UBFIX
-  actor->update = Vale_HaveGuardWatchTheLeader;
-#else
   actor->update = (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
-#endif
   Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardPatrol);
   GameFlag_Set(FLAG_VALE_WARNED_AGAINST_MT_ALEPH);
   Event_End();
@@ -1006,11 +998,7 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
   // No: "Well, I'll overlook it this time... But I've got my eye on..."
   Event_AskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
   actor = Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH);
-#ifdef UBFIX
-  actor->update = Vale_HaveGuardWatchTheLeader;
-#else
   actor->update = (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
-#endif
   Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardPatrol);
   Event_End();
 }
@@ -3168,27 +3156,13 @@ static s32 Vale_TestFacing(struct Actor *actor, struct Actor *target, s32 range,
 
 /// The update routine of the man guarding Mt. Aleph. While he walks, he stops
 /// when the leader comes within 18 pixels in front of him (Vale_TestFacing).
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 48 to 44 bytes in tbs-en.
-#ifdef UBFIX
-static void Vale_HaveGuardWatchTheLeader(struct Actor *updated) {
-#else
-static s32 Vale_HaveGuardWatchTheLeader(struct Actor *updated) {
-#endif
+static UNREAD_RESULT Vale_HaveGuardWatchTheLeader(struct Actor *updated) {
   struct Actor *guard = updated;
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (guard->targetX == ACTOR_NO_TARGET && guard->targetZ == ACTOR_NO_TARGET)
-#ifdef UBFIX
-    return;
-#else
-    return 0;
-#endif
+    RETURN_UNREAD(0);
   Vale_TestFacing(guard, leader, 18, 0);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// The Move hand's update routine in the opening. Each frame it sheds a sparkle

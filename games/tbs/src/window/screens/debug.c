@@ -9,11 +9,7 @@
 /// TASK_PASS_FRAME is a task priority, not a number of frames to wait.
 /// Nothing in the game calls it.
 UNUSED void DebugSceneSelect_Schedule(void) {
-#ifdef UBFIX
-  Task_Add(DebugSceneSelect_Run, TASK_PASS_FRAME);
-#else
   Task_Add((TaskFunc)DebugSceneSelect_Run, TASK_PASS_FRAME);
-#endif
 }
 
 /// Draws the debug scene and entrance numbers with their scene code and area
@@ -73,20 +69,12 @@ s16 DebugSceneSelect_Run(void) {
       MenuArrow_Release(cursorSlot);
       Window_Close(window, 2);
       Event_SetDestinationFar(sceneId, entrance);
-#ifdef UBFIX
-      return;
-#else
-      return result;
-#endif
+      RETURN_UNREAD(result);
     }
     if (result == -2) {
       MenuArrow_Release(cursorSlot);
       Window_Close(window, 2);
-#ifdef UBFIX
-      return;
-#else
-      return result;
-#endif
+      RETURN_UNREAD(result);
     }
 
     MenuArrow_SetPosition(&cursor, MENU_TEXT_X,

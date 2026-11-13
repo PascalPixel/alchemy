@@ -165,11 +165,7 @@ static s32 PushedActor_StopBlockedMotion(struct Actor *actor) {
 
     do {
       if (kind == *kinds++) {
-#ifdef UBFIX
-        return;
-#else
-        return 0;
-#endif
+        RETURN_UNREAD(0);
       }
       i++;
     } while (i <= 5);
@@ -424,12 +420,8 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
     }
   }
 
-#ifdef UBFIX
-  Actor_GetById(ACTOR_PARTY_LEADER)->update = PushedActor_StopBlockedMotion;
-#else
   Actor_GetById(ACTOR_PARTY_LEADER)->update =
       (void (*)(struct Actor *))PushedActor_StopBlockedMotion;
-#endif
   Event_Wait(4);
   if ((u32)(direction - 6) <= 7)
     Actor_SelectAnimation(actor, 3);

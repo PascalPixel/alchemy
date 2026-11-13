@@ -235,15 +235,8 @@ static s32 Actor_DrawBehindScenery(struct Actor *interpreter) {
   return 0;
 }
 
-// Update routine that turns the party leader toward Feizhi while she runs
-// past.
-// UB: update routines return void. Plain void removes the native zero result
-// and changes its return instructions (three in tbs-en).
-#ifdef UBFIX
-static void AlpineCrossing_LeaderFaceFeizhi(struct Actor *updated) {
-#else
-static s32 AlpineCrossing_LeaderFaceFeizhi(struct Actor *updated) {
-#endif
+// Update routine that turns the party leader toward Feizhi while she runs past.
+static UNREAD_RESULT AlpineCrossing_LeaderFaceFeizhi(struct Actor *updated) {
   struct Actor *leader = (struct Actor *)updated;
   struct Actor *feizhi;
 
@@ -938,16 +931,10 @@ static void AlpineCrossing_HidePath(void) {
   Event_Wait(1);
 }
 
-// Update routine of the frozen pillar: it draws under the party leader
-// while the leader stands higher than its top, so the leader can climb onto
-// it, and over the leader otherwise.
-// UB: this update routine has no result. Plain void changes the native return
-// from pop {r1}; bx r1 to pop {r0}; bx r0 (tbs-en).
-#ifdef UBFIX
-static void Pillar_SortAgainstLeader(struct Actor *updated) {
-#else
-static s32 Pillar_SortAgainstLeader(struct Actor *updated) {
-#endif
+// Update routine of the frozen pillar: it draws under the party leader while
+// the leader stands higher than its top, so the leader can climb onto it, and
+// over the leader otherwise. bx r1 to pop {r0};
+static UNREAD_RESULT Pillar_SortAgainstLeader(struct Actor *updated) {
   struct Actor *pillar = (struct Actor *)updated;
   if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > pillar->y.fixed) {
     pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -984,12 +971,8 @@ static void AlpineCrossing_FreezePuddle(void) {
       (u8)~ACTOR_PRIORITY_UNDERFOOT;
   Actor_Get(ACTOR_WATER_FOR_FROST)->collisionFlags &= (u8)~ACTOR_PUSHABLE;
   Actor_Get(ACTOR_WATER_FOR_FROST)->motionFlags = 0;
-#ifdef UBFIX
-  Actor_Get(ACTOR_WATER_FOR_FROST)->update = Pillar_SortAgainstLeader;
-#else
   Actor_Get(ACTOR_WATER_FOR_FROST)->update =
       (void (*)(struct Actor *))Pillar_SortAgainstLeader;
-#endif
 
   MapGrid_CopyCellAttributes(55, 16, 1, 1, 56, 18);
   MapGrid_CopyCellAttributes(55, 16, 1, 1, 20, 18);

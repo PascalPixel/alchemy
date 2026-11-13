@@ -234,11 +234,7 @@ enum {
   ACTOR_LADY_STATUE_SOUTH
 };
 
-#ifdef UBFIX
-static void TunnelRuins_RideStoneBelow(struct Actor *actor);
-#else
-static s32 TunnelRuins_RideStoneBelow(struct Actor *actor);
-#endif
+static UNREAD_RESULT TunnelRuins_RideStoneBelow(struct Actor *actor);
 static void TunnelRuins_UpdateFirstPillarCells(void);
 static void TunnelRuins_UpdateSecondPillarCells(void);
 static void TunnelRuins_UpdateSmallPillarCells(void);
@@ -376,15 +372,9 @@ static void TunnelRuins_UpdateTrackedActor(void) {
 
 #include "shared/actor_depth.h"
 
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 156 to 152 bytes in tbs-en.
 // While Douse rains on a pillar: its two frames alternate, and every fourth
 // frame a small splash appears on its top.
-#ifdef UBFIX
-static void TunnelRuins_SplashDousedPillar(struct Actor *updated) {
-#else
-static s32 TunnelRuins_SplashDousedPillar(struct Actor *updated) {
-#endif
+static UNREAD_RESULT TunnelRuins_SplashDousedPillar(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   struct EffectOptions options;
   s32 x;
@@ -395,11 +385,7 @@ static s32 TunnelRuins_SplashDousedPillar(struct Actor *updated) {
   else
     Actor_SelectAnimation(actor, 2);
   if (gFrameCount & 3)
-#ifdef UBFIX
-    return;
-#else
-    return 0;
-#endif
+    RETURN_UNREAD(0);
   options.startScaleX = 3 * Q16_ONE / 10;
   options.startScaleY = 3 * Q16_ONE / 10;
   options.palette = 5;
@@ -409,23 +395,14 @@ static s32 TunnelRuins_SplashDousedPillar(struct Actor *updated) {
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
                         EFFECT_SCRIPT_MEDIUM,
                     &options);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void removes its zero result; its aligned extent stays 80 bytes.
 // Once the Douse pillar is soaked, its Frost target stays 32 pixels below the
-// pillar while the pillar is in row 10 and the leader is above 48 pixels
-// down; otherwise the target is put away at the map's origin.
-#ifdef UBFIX
-static void TunnelRuins_FrostTargetFollowsPillar(struct Actor *updated) {
-#else
-static s32 TunnelRuins_FrostTargetFollowsPillar(struct Actor *updated) {
-#endif
+// pillar while the pillar is in row 10 and the leader is above 48 pixels down;
+// otherwise the target is put away at the map's origin.
+static UNREAD_RESULT
+TunnelRuins_FrostTargetFollowsPillar(struct Actor *updated) {
   struct Actor *frostTarget = (struct Actor *)updated;
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -439,11 +416,7 @@ static s32 TunnelRuins_FrostTargetFollowsPillar(struct Actor *updated) {
     frostTarget->y.fixed = 0;
     frostTarget->z.fixed = 0;
   }
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Waits up to 60 frames for landing, then stops vertical motion at the
@@ -1003,12 +976,8 @@ static void TunnelRuins_DouseStartsOnPillar(void) {
   Actor_SetScript(ACTOR_DOUSE_PILLAR, gTunnelRuins_DouseSplashScript);
   GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED);
   frostTarget = Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET);
-#ifdef UBFIX
-  frostTarget->update = TunnelRuins_FrostTargetFollowsPillar;
-#else
   frostTarget->update =
       (void (*)(struct Actor *))TunnelRuins_FrostTargetFollowsPillar;
-#endif
 }
 
 /// Frost on the pillar's hidden target raises a pillar of ice where it stands.
@@ -1047,25 +1016,15 @@ static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
   Event_End();
 }
 
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 34 to 32 bytes in tbs-en.
 // A carved stone set on the balance rides 16 pixels above what it rests on,
 // whose actor its timer holds.
-#ifdef UBFIX
-static void TunnelRuins_RideStoneBelow(struct Actor *updated) {
-#else
-static s32 TunnelRuins_RideStoneBelow(struct Actor *updated) {
-#endif
+static UNREAD_RESULT TunnelRuins_RideStoneBelow(struct Actor *updated) {
   struct Actor *supportedActor = (struct Actor *)updated;
   s16 *supportingActorId = &supportedActor->timer;
   struct Actor *supportingActor = Actor_Get(*supportingActorId);
 
   supportedActor->y.fixed = supportingActor->y.fixed + px(16);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// The balance platforms move to the heights their weights give them (their
@@ -1228,13 +1187,8 @@ static void TunnelRuins_SetStoneOnBalance(void) {
         (Actor_Get(ACTOR_BALANCE_WEST)->timer)--;
         Actor_Get(ACTOR_BALANCE_EAST)->timer++;
       }
-#ifdef UBFIX
-      Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->update =
-          TunnelRuins_RideStoneBelow;
-#else
       Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->update =
           (void (*)(struct Actor *))TunnelRuins_RideStoneBelow;
-#endif
       TunnelRuins_SettleBalance(40);
       Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->priorityFlags |=
           ACTOR_PRIORITY_UNDERFOOT;

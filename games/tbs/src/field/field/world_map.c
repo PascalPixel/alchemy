@@ -102,8 +102,6 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   return 1;
 }
 
-// UB: no value is returned, and field_sequence.c ignores it; as void, the
-// epilogue changes.
 /// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
 /// camera work, the projection, the per-scanline ground plane routine in RAM
 /// (Transform_UpdateVertices) and its first frame, and the per-frame view and
@@ -116,11 +114,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
 /// and tileset animations; writes the blend, BG and affine registers and
 /// REG_DISPCNT (DISPCNT_MODE_2); and adds WorldMap_UpdateView and
 /// WorldMap_ApplyAffinePage as tasks.
-#ifdef UBFIX
-void WorldMap_InitializePerspective(void) {
-#else
-s32 WorldMap_InitializePerspective(void) {
-#endif
+UNREAD_RESULT WorldMap_InitializePerspective(void) {
   struct WorldMapView *perspective;
   struct BattleCamera *camera;
   struct WorldMapAffineWork *affineWork;

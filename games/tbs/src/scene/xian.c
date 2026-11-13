@@ -276,23 +276,13 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
 }
 
 // Ask the carrier to move after the leader blocks her route for two seconds.
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 154 to 150 bytes in tbs-en.
-#ifdef UBFIX
-static void Xian_WatchWaterCarrierPath(struct Actor *updated) {
-#else
-static s32 Xian_WatchWaterCarrierPath(struct Actor *updated) {
-#endif
+static UNREAD_RESULT Xian_WatchWaterCarrierPath(struct Actor *updated) {
   struct Actor *self = (struct Actor *)updated;
   struct Actor *leader;
   s32 near = 0;
 
   if (self->targetX == ACTOR_NO_TARGET && self->targetZ == ACTOR_NO_TARGET)
-#ifdef UBFIX
-    return;
-#else
-    return 0;
-#endif
+    RETURN_UNREAD(0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if ((u32)(FIELD_CELL(leader->x.fixed) - 17) <= 1 &&
       FIELD_CELL(leader->z.fixed) == 14 && self->x.fixed >> 20 <= 19 &&
@@ -309,11 +299,7 @@ static s32 Xian_WatchWaterCarrierPath(struct Actor *updated) {
     self->riseCounter = 0;
   }
   Xian_UpdateCarrierTracking(self, leader, 18, near);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 // Keep the native callback representation beside its modern signature choice.

@@ -10,16 +10,9 @@
 
 // Writes `value` into `out` as String_FormatDecimal's eleven-character,
 // right-aligned decimal text, widened to halfwords for
-// Text_DrawWideStringInWindow: out + 7 is its last four characters,
-// out + 8 its last three. `out` needs room for 14 halfwords.
-// It is declared to return s32 but returns no value, and no caller reads one;
-// UBFIX makes it void, which changes its epilogue and the argument setup of
-// three calls in BattleDjinnMenu_ShowChangePreview.
-#ifdef UBFIX
-void String_FormatNumberToHalfwords(s16 *out, s32 value) {
-#else
-s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
-#endif
+// Text_DrawWideStringInWindow: out + 7 is its last four characters, out + 8 its
+// last three. `out` needs room for 14 halfwords.
+UNREAD_RESULT String_FormatNumberToHalfwords(s16 *out, s32 value) {
   s16 *destination;
   s32 remaining;
   u8 *source;
@@ -93,19 +86,11 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
   return count;
 }
 
-// Loads the icon of ability `abilityId` into the first free VRAM cache slot
-// and shows it as a 16x16 sprite at pixel (x, y) inside `window`, whose
-// sprite list then owns the slot. Does nothing when the cache is full.
-// It is declared to return s32 but returns no value, and no caller reads one;
-// UBFIX makes it void, which changes the register its epilogue returns
-// through.
-#ifdef UBFIX
-void WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
-                                    s32 abilityId) {
-#else
-s32 WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
-                                   s32 abilityId) {
-#endif
+// Loads the icon of ability `abilityId` into the first free VRAM cache slot and
+// shows it as a 16x16 sprite at pixel (x, y) inside `window`, whose sprite list
+// then owns the slot. Does nothing when the cache is full.
+UNREAD_RESULT WindowSprite_CreateAbilityIcon(struct Window *window, s32 x,
+                                             s32 y, s32 abilityId) {
   s32 iconSlot;
 
   iconSlot = VramCache_FindFreeEntry();

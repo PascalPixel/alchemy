@@ -30,11 +30,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Sound_Play(SE_SPARKLING_PASSAGE);
-#ifdef UBFIX
-    actor->update = MercuryLighthouse_TrailSparks;
-#else
     actor->update = (void (*)(struct Actor *))MercuryLighthouse_TrailSparks;
-#endif
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.4);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
     Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);

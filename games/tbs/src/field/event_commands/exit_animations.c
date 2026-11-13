@@ -48,18 +48,12 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
 
 UNUSED void Exit_NoOp(void) {}
 
-// UB: no value is returned, and field_sequence.c ignores it; as void, the
-// epilogue changes.
 /// Starts the transition into a random battle: plays the scene's battle music
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
 /// fading it to black over 16 frames. Called by FieldSequence_Run when it
 /// handles work->encounter; clears work->transitionActive once the screen is
 /// closed.
-#ifdef UBFIX
-void Field_StartEncounterTransition(s32 unused) {
-#else
-s32 Field_StartEncounterTransition(s32 unused) {
-#endif
+UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
   struct FieldWork *work = gFieldWork;
   s32 i;
   s32 level;

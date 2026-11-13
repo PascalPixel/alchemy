@@ -13,11 +13,7 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
   struct Actor *v = Actor_GetById(ACTOR_PARTY_LEADER);
   Event_Start();
   Sound_Play(SE_SPARKLING_PASSAGE);
-#ifdef UBFIX
-  v->update = MercuryLighthouse_TrailSparks;
-#else
   v->update = (void (*)(struct Actor *))MercuryLighthouse_TrailSparks;
-#endif
   v->speedLimit = px(1) / 5;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER, 0, -6);

@@ -147,19 +147,13 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
 
 // Recolours the five bar tiles at (x, y) in `window` to show a bar `length`
 // pixels long (0-40). The bar tiles are drawn in colour 14 with a colour 1
-// shadow; each pixel left of the length becomes colour 8 (shadow 13), the
-// rest colour 2 (shadow 12). Only the bottom row of each tile changes for an
-// empty bar, the bottom three otherwise. Outside battle it first loads the
-// basic colours into HIGHLIGHT_PALETTE, its TEXT_BACKGROUND_COLOR taken from
+// shadow; each pixel left of the length becomes colour 8 (shadow 13), the rest
+// colour 2 (shadow 12). Only the bottom row of each tile changes for an empty
+// bar, the bottom three otherwise. Outside battle it first loads the basic
+// colours into HIGHLIGHT_PALETTE, its TEXT_BACKGROUND_COLOR taken from
 // WINDOW_BACKGROUND_COLOR.
-// It is declared to return s32 but returns no value, and no caller reads one;
-// UBFIX makes it void, which changes the register its epilogue returns
-// through.
-#ifdef UBFIX
-void PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length) {
-#else
-s32 PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length) {
-#endif
+UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
+                                   s32 length) {
   s32 i;
   struct WindowWork *work = WINDOW_WORK;
   s32 fullLength = length;

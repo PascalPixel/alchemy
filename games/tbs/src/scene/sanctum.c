@@ -213,11 +213,7 @@ static s32 Sanctum_FaceActorNamedByTimer(struct Actor *updated) {
   target = Actor_Get((s16)actor->timer);
   actor->facing = ArcTan2(target->z.fixed - actor->z.fixed,
                           target->x.fixed - actor->x.fixed);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Returns the entrances, shared by all six places.
@@ -602,11 +598,7 @@ static s32 Sanctum_MatchLeaderPriority(struct Actor *updated) {
       Actor_Get(ACTOR_PARTY_LEADER)->sprite->image.priority;
   actor->sprite->shadow.priority =
       Actor_Get(ACTOR_PARTY_LEADER)->sprite->image.priority;
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Has Isaac, Garet, Dora, the Mayor and the two healers nod, waiting for the
@@ -1204,12 +1196,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Event_Wait(20);
     Actor_Get(ACTOR_EAST_HEALER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-#ifdef UBFIX
-    Actor_Get(ACTOR_EAST_HEALER)->update = Sanctum_MatchLeaderPriority;
-#else
     Actor_Get(ACTOR_EAST_HEALER)->update =
         (void (*)(struct Actor *))Sanctum_MatchLeaderPriority;
-#endif
   }
   Event_End();
 }
@@ -1882,19 +1870,11 @@ static void Sanctum_ReenactSolSanctum(void) {
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(10);
   Actor_Get(ACTOR_HEALER)->timer = GARET;
-#ifdef UBFIX
-  Actor_Get(ACTOR_HEALER)->update = Sanctum_FaceActorNamedByTimer;
-#else
   Actor_Get(ACTOR_HEALER)->update =
       (void (*)(struct Actor *))Sanctum_FaceActorNamedByTimer;
-#endif
   Actor_Get(ACTOR_GARETS_GRANDFATHER)->timer = GARET;
-#ifdef UBFIX
-  Actor_Get(ACTOR_GARETS_GRANDFATHER)->update = Sanctum_FaceActorNamedByTimer;
-#else
   Actor_Get(ACTOR_GARETS_GRANDFATHER)->update =
       (void (*)(struct Actor *))Sanctum_FaceActorNamedByTimer;
-#endif
   Actor_WalkToAndWait(ACTOR_GARET, 196, 180);
   Actor_WalkToAndWait(ACTOR_GARET, 184, 184);
   Actor_WalkToAndWait(ACTOR_GARET, 180, 180);

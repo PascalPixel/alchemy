@@ -223,13 +223,7 @@ static void LamakanDesert_TalkToSmog(void) {
 
 // The update a leader pulled into an Ant Lion's pit runs: sand sounds every 8
 // frames and a spray of sand every 16.
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 104 to 100 bytes in tbs-en.
-#ifdef UBFIX
-static void LamakanDesert_LeaderSpraySand(struct Actor *updated) {
-#else
-static s32 LamakanDesert_LeaderSpraySand(struct Actor *updated) {
-#endif
+static UNREAD_RESULT LamakanDesert_LeaderSpraySand(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   struct EffectOptions params;
   s32 phase;
@@ -239,11 +233,7 @@ static s32 LamakanDesert_LeaderSpraySand(struct Actor *updated) {
   }
   phase = gFrameCount & 15;
   if (phase != 0) {
-#ifdef UBFIX
-    return;
-#else
-    return 0;
-#endif
+    RETURN_UNREAD(0);
   }
   params.startScaleX = 4 * Q16_ONE / 5;
   params.startScaleY = 4 * Q16_ONE / 5;
@@ -251,11 +241,7 @@ static s32 LamakanDesert_LeaderSpraySand(struct Actor *updated) {
   FieldEffect_Spawn(
       actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase, phase,
       EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | EFFECT_SCRIPT_MEDIUM, &params);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Where the party can enter each of the four scenes.
@@ -846,11 +832,7 @@ static void LamakanDesert_FallIntoPit(void) {
   Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER, 24);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.1);
   record = Actor_Get(ACTOR_PARTY_LEADER);
-#ifdef UBFIX
-  record->update = LamakanDesert_LeaderSpraySand;
-#else
   record->update = (void (*)(struct Actor *))LamakanDesert_LeaderSpraySand;
-#endif
   record = Actor_Get(best);
   if (record != 0) {
     Actor_SetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel,

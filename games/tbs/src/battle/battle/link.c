@@ -105,11 +105,7 @@ s32 LinkBattle_ReceiveParty(void) {
 /// unit given the id the opponent knows it by. Records that id of
 /// each party member in gBattleWork->opponentSlots (0xff for none). Nothing in
 /// the source calls it.
-#ifdef UBFIX
-void LinkBattle_SendParty(void) {
-#else
-s32 LinkBattle_SendParty(void) {
-#endif
+UNREAD_RESULT LinkBattle_SendParty(void) {
   u8 *buffer;
   struct BattleWork *battle;
   s32 j;
@@ -376,11 +372,7 @@ s32 LinkBattle_SyncTurn(void) {
 /// by (FIRST_ENEMY_UNIT plus their place in the party), in
 /// gBattleWork->opponentSlots. Called by Battle_Run as a link battle
 /// is set up.
-#ifdef UBFIX
-void BattleParty_AssignOpponentSlots(void) {
-#else
-s32 BattleParty_AssignOpponentSlots(void) {
-#endif
+UNREAD_RESULT BattleParty_AssignOpponentSlots(void) {
   u16 activeMembers[8];
   struct BattleWork *battleState = gBattleWork;
   s32 partySize = BattleParty_PrepareMembers(activeMembers);

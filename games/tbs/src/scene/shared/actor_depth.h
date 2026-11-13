@@ -8,15 +8,7 @@
 // (ACTOR_PRIORITY_UNDERFOOT) unless the leader is north of it and no higher
 // than its height plus their distance and 4 pixels, that is, behind it rather
 // than on it.
-//
-// UB: update routines return void. In tbs-en venus_lighthouse, plain
-// void differs in 7 bytes (extent 70 to 68 bytes). Keep the
-// unused native result in matching builds.
-#ifdef UBFIX
-static void Actor_SetFlagBitByRelativeDepth(struct Actor *updated) {
-#else
-static s32 Actor_SetFlagBitByRelativeDepth(struct Actor *updated) {
-#endif
+static UNREAD_RESULT Actor_SetFlagBitByRelativeDepth(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   struct Actor *ref;
   u8 *fp;
@@ -36,11 +28,7 @@ static s32 Actor_SetFlagBitByRelativeDepth(struct Actor *updated) {
       *fp = flag;
     }
   }
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Unless actor first is south of actor second, swaps their

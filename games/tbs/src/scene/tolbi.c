@@ -143,18 +143,11 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
   return stopped;
 }
 
-// The update of the two children running their loop. Each stops when
-// it runs up behind the other, and otherwise when the party leader is in its
-// way. While the party talks to someone or Mind Read shows thoughts (the range
-// widens to 26 pixels), the child being talked to stops whatever the
-// direction.
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void removes its zero result; its aligned extent stays 152 bytes.
-#ifdef UBFIX
-static void Tolbi_UpdateKid(struct Actor *updated) {
-#else
-static s32 Tolbi_UpdateKid(struct Actor *updated) {
-#endif
+// The update of the two children running their loop. Each stops when it runs up
+// behind the other, and otherwise when the party leader is in its way. While
+// the party talks to someone or Mind Read shows thoughts (the range widens to
+// 26 pixels), the child being talked to stops whatever the direction.
+static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
   struct Actor *self = updated;
   u8 **workAreas = gWindowWork;
   struct WindowWork *ui = (struct WindowWork *)workAreas[0];
@@ -172,11 +165,7 @@ static s32 Tolbi_UpdateKid(struct Actor *updated) {
     other = Actor_Get(ACTOR_TOLBI_OLDER_BROTHER);
   }
   if (Tolbi_KidStopForTarget(self, other, 32, 0) != 0) {
-#ifdef UBFIX
-    return;
-#else
-    return 0;
-#endif
+    RETURN_UNREAD(0);
   }
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -189,11 +178,7 @@ static s32 Tolbi_UpdateKid(struct Actor *updated) {
   }
 
   Tolbi_KidStopForTarget(self, leader, range, force);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 const struct SceneEntrance *Tolbi_GetEntrances(void) { return gTolbiEntrances; }
@@ -507,11 +492,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   Actor_SetPosition(ACTOR_TOLBI_OLDER_BROTHER, 352, 352);
   Actor_SetScript(ACTOR_TOLBI_OLDER_BROTHER, gTolbiOlderBrotherRun);
   actor = Actor_Get(ACTOR_TOLBI_OLDER_BROTHER);
-#ifdef UBFIX
-  kidUpdate = Tolbi_UpdateKid;
-#else
   kidUpdate = (void (*)(struct Actor *))Tolbi_UpdateKid;
-#endif
   actor->timer = KID_CHASES_YOUNGER;
   actor->update = kidUpdate;
   clearFlags = 0;

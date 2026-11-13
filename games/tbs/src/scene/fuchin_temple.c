@@ -248,15 +248,8 @@ FuchinTemple_ClearScriptedActorSpriteFlags(struct Actor *interpreter) {
   return 0;
 }
 
-// Keep an actor facing the party leader while the conversation is
-// staged.
-// UB: update routines return void. The native produces an unused zero result;
-// plain void changes five instructions in the English build.
-#ifdef UBFIX
-static void FuchinTemple_FaceLeader(struct Actor *updated) {
-#else
-static s32 FuchinTemple_FaceLeader(struct Actor *updated) {
-#endif
+// Keep an actor facing the party leader while the conversation is staged.
+static UNREAD_RESULT FuchinTemple_FaceLeader(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   struct Actor *player = Actor_Get(ACTOR_PARTY_LEADER);
   actor->facing = ArcTan2(player->z.fixed - actor->z.fixed,

@@ -89,14 +89,9 @@ s32 DebugParameterSet_LoadFar(s32 set);
 /// Readies the sprite of every unit in the battle and sets its display mode and
 /// motion afresh (BattleObject_Put), as after a call for help.
 void BattleObject_PutFar(void);
-#ifdef UBFIX
 /// Shows the bobbing cursor at (x, y), in screen pixels, and waits for
 /// KEY_ADVANCE; the battle command row waits on it.
-void BattleMessage_WaitForAdvanceAtFar(s32 x, s32 y);
-#else
-/// Declared s32 as the original is, though it returns no value.
-s32 BattleMessage_WaitForAdvanceAtFar(s32 x, s32 y);
-#endif
+UNREAD_RESULT BattleMessage_WaitForAdvanceAtFar(s32 x, s32 y);
 /// Counts the standby Djinn of the units that fight on a unit's side, with each
 /// element's count in `counts` if it's not null, for the Summon command.
 s32 BattleDjinn_CountStandbyFar(u32 unitId, u8 *counts);

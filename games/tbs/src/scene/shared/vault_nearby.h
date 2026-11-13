@@ -13,15 +13,7 @@
 // leader is within 18 pixels in front of it. While the window work's word at
 // 376 or the render mode is set the range is 26 pixels, and a villager being
 // talked to stops whichever way it faces.
-//
-// UB: update routines return void. In tbs-en vault_revisit, plain
-// void differs in 13 bytes of the 152-byte function. Keep the unused
-// native result in matching builds.
-#ifdef UBFIX
-static void Vault_UpdateWalkingVillager(struct Actor *actor) {
-#else
-static s32 Vault_UpdateWalkingVillager(struct Actor *actor) {
-#endif
+static UNREAD_RESULT Vault_UpdateWalkingVillager(struct Actor *actor) {
   struct Actor *self = (struct Actor *)actor;
   u8 **globals = gWindowWork;
   u8 *windowWork = globals[0];
@@ -38,11 +30,7 @@ static s32 Vault_UpdateWalkingVillager(struct Actor *actor) {
     partner = Actor_GetById(ACTOR_BOY_ROUND_THE_WELL);
   }
   if (Vault_StopIfFacingNear(self, partner, 32, 0) != 0) {
-#ifdef UBFIX
-    return;
-#else
-    return 0;
-#endif
+    RETURN_UNREAD(0);
   }
 
   player = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -56,9 +44,5 @@ static s32 Vault_UpdateWalkingVillager(struct Actor *actor) {
   }
 
   Vault_StopIfFacingNear(self, player, range, force);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }

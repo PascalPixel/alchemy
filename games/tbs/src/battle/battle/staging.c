@@ -127,13 +127,8 @@ finish:
 /// RunPlainAttack, RunItem and RunPsynergyCast. Writes args' prelude (0), kind,
 /// variant, user, targets, firstTarget, targetCount and range (1); the caller
 /// sets its side.
-#ifdef UBFIX
-void BattleStaging_BuildTargetList(struct BattleActionRun *plan,
-                                   struct BattleEffectParams *args) {
-#else
-s32 BattleStaging_BuildTargetList(struct BattleActionRun *plan,
-                                  struct BattleEffectParams *args) {
-#endif
+UNREAD_RESULT BattleStaging_BuildTargetList(struct BattleActionRun *plan,
+                                            struct BattleEffectParams *args) {
   s16 *outputTarget;
   u32 flags;
   s32 livingTargets;
@@ -428,11 +423,8 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
 /// Called by BattleStaging_DispatchAction for STAGING_MESSAGES, an
 /// action with no battle effect: each target's BattleAbility_ApplyToTarget is
 /// played at once by BattlePlayback_RunAll.
-#ifdef UBFIX
-void BattleStaging_RunActorEntries(struct BattleActionRun *plan, s32 unused) {
-#else
-s32 BattleStaging_RunActorEntries(struct BattleActionRun *plan, s32 unused) {
-#endif
+UNREAD_RESULT BattleStaging_RunActorEntries(struct BattleActionRun *plan,
+                                            s32 unused) {
   s32 targetIndex;
 
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
@@ -829,11 +821,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
 /// Called by BattleMotion_FlashHit and BattlePlayback_Run (a hit's flashes
 /// and a unit's redraw), with the flash's colour or the unit's own
 /// (BattleObject_GetPalette).
-#ifdef UBFIX
-void BattleObject_SetColorMode(struct Actor *actor, s32 colorMode) {
-#else
-s32 BattleObject_SetColorMode(struct Actor *actor, s32 colorMode) {
-#endif
+UNREAD_RESULT BattleObject_SetColorMode(struct Actor *actor, s32 colorMode) {
   s32 recordIndex = 0;
   s32 childIndex;
   s32 entryCount;

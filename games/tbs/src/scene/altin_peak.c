@@ -341,14 +341,8 @@ static void AltinPeak_TalkToDjinni(void) {
 #include "shared/actor_facing.h"
 
 // Update routine of AltinPeakFallingRocks's boulder shadow: it stays under the
-// boulder, on the ground 12 pixels down, while the boulder bounces. UB: update
-// routines return void. Plain void removes the native zero result and changes
-// its return (three instructions in tbs-en).
-#ifdef UBFIX
-static void AltinPeak_ShadowFollowBoulder(struct Actor *updated) {
-#else
-static s32 AltinPeak_ShadowFollowBoulder(struct Actor *updated) {
-#endif
+// boulder, on the ground 12 pixels down, while the boulder bounces.
+static UNREAD_RESULT AltinPeak_ShadowFollowBoulder(struct Actor *updated) {
   struct Actor *follower = (struct Actor *)updated;
   struct Actor *actor = Actor_Get(ACTOR_FALLING_BOULDER);
 

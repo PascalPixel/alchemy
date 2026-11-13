@@ -263,24 +263,14 @@ static void ValeCave_WaitForActorLanding(struct Actor *actor) {
 ///
 /// Kite's update routine once it has run behind the ledge, set by
 /// ValeCave_KiteRunsBehindLedge and again by ValeCave_ApplyEntryState.
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 38 to 36 bytes in tbs-en.
-#ifdef UBFIX
-static void ValeCave_FaceActorTowardLeader(struct Actor *updated) {
-#else
-static s32 ValeCave_FaceActorTowardLeader(struct Actor *updated) {
-#endif
+static UNREAD_RESULT ValeCave_FaceActorTowardLeader(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 distanceZ = leader->z.fixed - actor->z.fixed;
   s32 distanceX = leader->x.fixed - actor->x.fixed;
 
   actor->facing = ArcTan2(distanceZ, distanceX);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 #ifdef UBFIX

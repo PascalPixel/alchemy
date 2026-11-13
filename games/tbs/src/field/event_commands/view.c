@@ -19,16 +19,10 @@ void MapGrid_SetCameraBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
   grid->maxY = maxY;
 }
 
-// Task: moves the zoom one step from its previous value toward
-// its target, and removes itself on the last step. It waits while the camera
-// is paused.
-// The task runner calls void(void). Plain void changes the native return from
-// pop {r1}; bx r1 to pop {r0}; bx r0 (two instructions in tbs-en).
-#ifdef UBFIX
-void WorldMap_StepZoom(void) {
-#else
-s32 WorldMap_StepZoom(void) {
-#endif
+// Task: moves the zoom one step from its previous value toward its target, and
+// removes itself on the last step. It waits while the camera is paused. bx r1
+// to pop {r0};
+UNREAD_RESULT WorldMap_StepZoom(void) {
   struct WorldMapView *perspective = gMapGridWork[0];
   s32 *from; // the zoom the transition starts from
   s32 delta;
@@ -49,11 +43,7 @@ s32 WorldMap_StepZoom(void) {
   gScanlinePitch = perspective->pitch + 1;
   if (perspective->zoomTransitionStep == perspective->zoomTransitionFrames) {
     perspective->zoomTransitionFrames = 0;
-#ifdef UBFIX
-    Task_Remove(WorldMap_StepZoom);
-#else
     Task_Remove((TaskFunc)WorldMap_StepZoom);
-#endif
   }
 }
 
@@ -76,11 +66,7 @@ void WorldMap_StartZoom(s32 zoom, s32 frames) {
   perspective->zoom = inverse;
   perspective->zoomTransitionFrames = frames;
   perspective->zoomTransitionStep = 0;
-#ifdef UBFIX
-  Task_Add(WorldMap_StepZoom, TASK_PASS_FRAME + 20);
-#else
   Task_Add((TaskFunc)WorldMap_StepZoom, TASK_PASS_FRAME + 20);
-#endif
 }
 
 /// Waits for a zoom transition to end (on the World Map only, at most 300
@@ -102,16 +88,10 @@ void Event_WaitForZoomTransition(void) {
   }
 }
 
-// Per-frame update of a riding actor: keeps it on the actor it rides
-// (its watched actor), raised by the actor's sprite height (its
-// metadata's boxX) and 8 pixels. Its work holds the actor's id. Its
-// caller ignores the result. Plain void removes the native zero result and
-// changes its return register (three instructions in tbs-en).
-#ifdef UBFIX
-void FieldEffect_CopyWatchedActorPosition(struct Actor *updated) {
-#else
-s32 FieldEffect_CopyWatchedActorPosition(struct Actor *updated) {
-#endif
+// Per-frame update of a riding actor: keeps it on the actor it rides (its
+// watched actor), raised by the actor's sprite height (its metadata's boxX) and
+// 8 pixels. Its work holds the actor's id.
+UNREAD_RESULT FieldEffect_CopyWatchedActorPosition(struct Actor *updated) {
   void *self = (void *)updated;
   struct Actor *actor = self;
   struct Actor *host;
@@ -252,12 +232,8 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
 
   effect->userValue = actorId;
   effect->motionFlags = 0;
-#ifdef UBFIX
-  effect->update = FieldEffect_CopyWatchedActorPosition;
-#else
   effect->update =
       (void (*)(struct Actor *))FieldEffect_CopyWatchedActorPosition;
-#endif
   visual = effect->sprite;
   visual->flags = 0;
   effect->watchedActor = actor;

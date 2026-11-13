@@ -163,16 +163,11 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 
 #include "shared/vault_nearby.h"
 
-// The woman wanting the roof fixed walks about looking for the man who
-// should be fixing it and stops to face
-// the leader when near, or while a conversation holds the field.
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 108 to 104 bytes in tbs-en.
-#ifdef UBFIX
-static void Vault_UpdateRoofComplainerProximity(struct Actor *updated) {
-#else
-static s32 Vault_UpdateRoofComplainerProximity(struct Actor *updated) {
-#endif
+// The woman wanting the roof fixed walks about looking for the man who should
+// be fixing it and stops to face the leader when near, or while a conversation
+// holds the field.
+static UNREAD_RESULT
+Vault_UpdateRoofComplainerProximity(struct Actor *updated) {
   struct Actor *entity = (struct Actor *)updated;
   struct WindowWork *work = (struct WindowWork *)gWindowWork[0];
   u8 *workspace = gWindowWork[12];
@@ -181,11 +176,7 @@ static s32 Vault_UpdateRoofComplainerProximity(struct Actor *updated) {
   struct Actor *leader;
 
   if (entity->targetX == ACTOR_NO_TARGET)
-#ifdef UBFIX
-    return;
-#else
-    return 0;
-#endif
+    RETURN_UNREAD(0);
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (*(s16 *)(workspace + 376) != 0 || work->mindRead != 0) {
@@ -193,11 +184,7 @@ static s32 Vault_UpdateRoofComplainerProximity(struct Actor *updated) {
     flag = 1;
   }
   Vault_StopIfFacingNear(entity, leader, selector, flag);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -891,18 +878,10 @@ s32 Scene_Initialize(void) {
   Actor_CreateConfigured(128, 0, 420, SPRITE_CRATE);
   actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
   actor->timer = 1;
-#ifdef UBFIX
-  actor->update = Vault_UpdateWalkingVillager;
-#else
   actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
-#endif
   actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
   actor->timer = 0;
-#ifdef UBFIX
-  actor->update = Vault_UpdateWalkingVillager;
-#else
   actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
-#endif
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
     Actor_SetPosition(ACTOR_VAULT_DOG, 216, 392);
   }
@@ -910,12 +889,8 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     if ((suspectsMindRead & 1) != 0) {
       actor = Actor_Get(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED);
-#ifdef UBFIX
-      actor->update = Vault_UpdateRoofComplainerProximity;
-#else
       actor->update =
           (void (*)(struct Actor *))Vault_UpdateRoofComplainerProximity;
-#endif
     }
   }
   // Back through the gates while Ivan waits in Vault: "Welcome back, you two!

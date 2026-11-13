@@ -179,17 +179,11 @@ static s32 MercuryLighthouseEntrance_PlayStepSound(struct Actor *interpreter) {
   return 0;
 }
 
-// Mia's update while she waits by the Lizard Man: she turns to watch the
-// leader while the leader is north of 184 pixels, and looks back north at
-// the doorway otherwise.
-// UB: the field updater invokes a void update routine. Plain void removes the
-// zero result and changes the native return register (three instructions in
-// EN).
-#ifdef UBFIX
-static void MercuryLighthouseEntrance_MiaWatchesLeader(struct Actor *updated) {
-#else
-static s32 MercuryLighthouseEntrance_MiaWatchesLeader(struct Actor *updated) {
-#endif
+// Mia's update while she waits by the Lizard Man: she turns to watch the leader
+// while the leader is north of 184 pixels, and looks back north at the doorway
+// otherwise.
+static UNREAD_RESULT
+MercuryLighthouseEntrance_MiaWatchesLeader(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 

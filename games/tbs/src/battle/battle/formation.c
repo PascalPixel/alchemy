@@ -216,11 +216,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 /// stats at UNIT_STAT_MAX and power at UNIT_ELEMENT_MAX. Changes the unit's
 /// base stats and level and works out its stats again (Unit_Calculate). Called
 /// by BattleFormation_BuildEnemyList for each enemy of a monster battle.
-#ifdef UBFIX
-void BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
-#else
-s32 BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
-#endif
+UNREAD_RESULT BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
   struct BattleBaseStats *base;
   struct Unit *unit;
   s32 value;
@@ -339,11 +335,7 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
 /// Does nothing for a unit that is not an enemy, a class not listed or one
 /// with no letters given. Clears the letter's bit in
 /// BattleWork.nameLetterMasks. Called by BattleObject_RemoveFromLists.
-#ifdef UBFIX
-void BattleEnemy_ReleaseNameLetter(s32 unitId) {
-#else
-s32 BattleEnemy_ReleaseNameLetter(s32 unitId) {
-#endif
+UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
   struct Unit *unit;
   s32 count = battle->enemyKindCount;
@@ -382,11 +374,7 @@ s32 BattleEnemy_ReleaseNameLetter(s32 unitId) {
 /// Called by BattleFormation_BuildEnemyList and BattleAbility_ApplyToTarget
 /// when BattleEnemy_ClaimNameLetter's result has ENEMY_LETTER_FIRST_TOO set.
 /// Writes Unit.name.
-#ifdef UBFIX
-void BattleEnemy_LetterFirstOfKind(s32 classId) {
-#else
-s32 BattleEnemy_LetterFirstOfKind(s32 classId) {
-#endif
+UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 classId) {
   struct Unit *unit;
   s32 enemyIndex;
   s32 nameIndex;

@@ -348,11 +348,7 @@ s32 Enemy_GetFreeUnitId(void) {
 /// Lays the enemies out again and moves each one's battle object anchor to its
 /// new place. Called by BattleAbility_ApplyToTarget after an enemy joins.
 /// Writes the anchorX and anchorZ of every enemy's battle object.
-#ifdef UBFIX
-void BattlePlacement_RelayoutEnemies(void) {
-#else
-s32 BattlePlacement_RelayoutEnemies(void) {
-#endif
+UNREAD_RESULT BattlePlacement_RelayoutEnemies(void) {
   struct BattleWork *battle = gBattleWork;
   u16 unitIds[UNIT_MAX];
   s32 xPositions[ENEMY_BATTLE_SIZE];

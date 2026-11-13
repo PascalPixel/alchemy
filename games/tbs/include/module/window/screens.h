@@ -34,11 +34,8 @@ void BgScreen_FillRect(s32 unused0, s32 unused1, u32 width, u32 height,
 void PartyStatus_BuildLayoutBounds(s32 flags);
 void PartyStatus_CreateWindow(s32 flags);
 void Window_DrawColumnBorders(struct Window *window, u32 flags);
-#ifdef UBFIX
-void PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length);
-#else
-s32 PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length);
-#endif
+UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
+                                   s32 length);
 void PartyStatus_Draw(s32 flags);
 void PartyStatus_Close(void);
 void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
@@ -105,15 +102,9 @@ struct GlyphPalette;
 struct PsynergyEntry;
 struct BattleCommandRowWork;
 
-#ifdef UBFIX
-void Menu_BuildLocalizedPatternTiles(void);
-void Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y,
-                                s32 pattern, s32 unused);
-#else
-s32 Menu_BuildLocalizedPatternTiles(void);
-int Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y, s32 pattern,
-                               s32 unused);
-#endif
+UNREAD_RESULT Menu_BuildLocalizedPatternTiles(void);
+UNREAD_RESULT Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y,
+                                         s32 pattern, s32 unused);
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift);
 void Link_DrawPageArrows(s32 offset);
@@ -137,21 +128,12 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y);
 s32 BattleCommandRow_Run(s32 mode);
 void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt);
 s32 PartyStatus_HighlightMembers(u16 *ids);
-#ifdef UBFIX
-void String_FormatNumberToHalfwords(s16 *out, s32 value);
-#else
-s32 String_FormatNumberToHalfwords(s16 *out, s32 value);
-#endif
+UNREAD_RESULT String_FormatNumberToHalfwords(s16 *out, s32 value);
 s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
                                      const struct PsynergyEntry *newGrid,
                                      u16 *out, s32 *gained, s32 *lost);
-#ifdef UBFIX
-void WindowSprite_CreateAbilityIcon(struct Window *input, s32 x, s32 y,
-                                    s32 ability);
-#else
-s32 WindowSprite_CreateAbilityIcon(struct Window *input, s32 x, s32 y,
-                                   s32 ability);
-#endif
+UNREAD_RESULT WindowSprite_CreateAbilityIcon(struct Window *input, s32 x, s32 y,
+                                             s32 ability);
 struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
                                                  s32 code, s32 page,
                                                  s32 *pageCount);

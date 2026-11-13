@@ -28,11 +28,7 @@ struct BattleAIState {
 /// Unit.aiActionIndex. Returns nothing.
 /// @param retry 0 when the turn is built: only a guard is settled now (it
 /// must raise before anyone acts); 1 when the enemy acts: the rest
-#ifdef UBFIX
-void BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
-#else
-s32 BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
-#endif
+UNREAD_RESULT BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
   u32 selection;
   struct BattleAIState *selectionMemory;
   struct EnemyDefinition *enemy;

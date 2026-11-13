@@ -968,11 +968,7 @@ CrossboneIsleSteppingStones_UpdateActorPriority(struct Actor *updated) {
   if (gFieldWork->castStarted == 1) {
     actor->sprite->image.priority = leader->sprite->image.priority;
     actor->collisionFlags |= ACTOR_SOLID;
-#ifdef UBFIX
-    return;
-#else
-    return 0;
-#endif
+    RETURN_UNREAD(0);
   }
   hit = CrossboneIsleSteppingStones_SyncPriorityIfBehind(actor, leader);
   for (id = ACTOR_FIRST_PILLAR; id <= ACTOR_FIRST_PILLAR + 3; id++) {
@@ -1000,11 +996,7 @@ CrossboneIsleSteppingStones_UpdateActorPriority(struct Actor *updated) {
   if (hit == 0) {
     actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   }
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Sorts the four pillars by height and depth, carrying their saved cell state
@@ -1250,11 +1242,7 @@ CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(struct Actor *updated) {
       actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
 
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Remembers the frozen puddle, installs its priority update routine, and
@@ -1383,11 +1371,7 @@ CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *updated) {
   s32 scale;
 
   if (phase != 0)
-#ifdef UBFIX
-    return;
-#else
-    return 0;
-#endif
+    RETURN_UNREAD(0);
 
   options.palette = 7;
   options.startScaleX = 7 * Q16_ONE / 10;
@@ -1402,11 +1386,7 @@ CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *updated) {
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
                         EFFECT_SCRIPT_MEDIUM,
                     &options);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Frost ends on the third puddle in CrossboneIsleDragonStatue: it freezes,
@@ -1575,12 +1555,8 @@ static void CrossboneIsleSteppingStones_InitializePillarPriority(s32 id) {
 
   actor->layer = 2;
   actor->motionFlags = 0;
-#ifdef UBFIX
-  actor->update = CrossboneIsleSteppingStones_UpdateActorPriority;
-#else
   actor->update =
       (void (*)(struct Actor *))CrossboneIsleSteppingStones_UpdateActorPriority;
-#endif
 }
 
 /// Matches the leader's draw priority to a nearby pillar in front.

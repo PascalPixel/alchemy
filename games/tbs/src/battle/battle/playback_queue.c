@@ -14,11 +14,7 @@
 /// equipment bonuses, ready, immobile and challenge; Unit_CalculateFar then
 /// recomputes its stats, and BattleUnit_BuildStatusFlags its battle object's
 /// status flags.
-#ifdef UBFIX
-void BattleUnit_ClearStatuses(s32 unitId) {
-#else
-s32 BattleUnit_ClearStatuses(s32 unitId) {
-#endif
+UNREAD_RESULT BattleUnit_ClearStatuses(s32 unitId) {
   struct Unit *unit;
   s32 element;
 
@@ -68,11 +64,7 @@ s32 BattleUnit_ClearStatuses(s32 unitId) {
 /// message window first. Takes a 128-byte VRAM cache entry for the arrow's
 /// tiles and frees it; each frame queues the WINOUT writes, sets REG_BLDALPHA
 /// and pushes the arrow sprite.
-#ifdef UBFIX
-void BattleMessage_WaitForAdvance(void) {
-#else
-s32 BattleMessage_WaitForAdvance(void) {
-#endif
+UNREAD_RESULT BattleMessage_WaitForAdvance(void) {
   struct AdvanceArrowSprite *prompt;
   struct AdvanceArrowSprite promptStorage;
   s32 frame;
@@ -129,11 +121,7 @@ s32 BattleMessage_WaitForAdvance(void) {
 /// first; takes a 128-byte VRAM cache entry for the cursor's tiles and frees
 /// it, and each frame queues the WINOUT writes, sets REG_BLDALPHA and pushes
 /// the cursor sprite.
-#ifdef UBFIX
-void BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
-#else
-s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
-#endif
+UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   struct MenuPoint position;
   s32 pointerTiles;
   struct CursorSprite promptStorage;
@@ -179,11 +167,7 @@ void BattlePlayback_MarkMessage(void) { gBattleMessageWork->marked = 1; }
 /// BattleAbility_ApplyToTarget queues for a self-destructing unit, from
 /// BattlePlayback_RunAll and BattlePlayback_Run. A party unit is left as
 /// it is. Releases the battle object's actor, then clears its actor and active.
-#ifdef UBFIX
-void BattleObject_DestroyTemporaryObject(s32 unitId) {
-#else
-s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
-#endif
+UNREAD_RESULT BattleObject_DestroyTemporaryObject(s32 unitId) {
   struct Unit *enemy;
   struct BattleObject *slot;
 

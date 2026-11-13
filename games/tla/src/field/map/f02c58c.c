@@ -3,6 +3,7 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "map.h"
+#include "actor.h"
 #include "heap_release.h"
 #include "resource.h"
 #include "graphics.h"
@@ -1074,9 +1075,8 @@ s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
 }
 
 /// As MapGrid_CheckCollisionAt for the point position (16.16 pixels, read as
-/// its whole-pixel halves) on the object's layer (the byte at 34), against the
-/// object's height (the word at 20).
-s32 MapGrid_CheckCollision(u8 *object, s16 *position) {
+/// its whole-pixel halves) on the actor's layer, against its ground height.
+s32 MapGrid_CheckCollision(struct Actor *actor, s16 *position) {
   s32 x = position[1];
   s32 z = position[5];
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -1091,9 +1091,9 @@ s32 MapGrid_CheckCollision(u8 *object, s16 *position) {
     return 0;
   if (*(s8 *)(event + 0x18a) == 3)
     return 0;
-  if (object[34] <= 2) {
-    cells = (u8 *)map->layers[object[34]].cells;
-    shapes = map->layers[object[34]].terrainIds;
+  if (actor->terrainId <= 2) {
+    cells = (u8 *)map->layers[actor->terrainId].cells;
+    shapes = map->layers[actor->terrainId].terrainIds;
   } else {
     cells = gMapCellBuffer;
     shapes = gMapShapeGrid;
@@ -1105,7 +1105,7 @@ s32 MapGrid_CheckCollision(u8 *object, s16 *position) {
     return 2;
   code = Ram_MapCollision + *shapes * 4;
   rise = gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
-         *(s32 *)(object + 20);
+         actor->terrainHeight;
   if (rise > 8 << 16)
     return 1;
   if (rise < -(12 << 16))
@@ -1113,10 +1113,10 @@ s32 MapGrid_CheckCollision(u8 *object, s16 *position) {
   return 0;
 }
 
-/// As MapGrid_CheckCollision, against the object's word at 12 and with no -1: 2
+/// As MapGrid_CheckCollision, against the actor's height and with no -1: 2
 /// when the cell has no tile, 1 when the ground rises more than 8 pixels above
 /// it, else 0.
-s32 MapGrid_CheckCollisionAbove(u8 *object, s16 *position) {
+s32 MapGrid_CheckCollisionAbove(struct Actor *actor, s16 *position) {
   s32 x = position[1];
   s32 z = position[5];
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -1130,9 +1130,9 @@ s32 MapGrid_CheckCollisionAbove(u8 *object, s16 *position) {
     return 0;
   if (*(s8 *)(event + 0x18a) == 3)
     return 0;
-  if (object[34] <= 2) {
-    cells = (u8 *)map->layers[object[34]].cells;
-    shapes = map->layers[object[34]].terrainIds;
+  if (actor->terrainId <= 2) {
+    cells = (u8 *)map->layers[actor->terrainId].cells;
+    shapes = map->layers[actor->terrainId].terrainIds;
   } else {
     cells = gMapCellBuffer;
     shapes = gMapShapeGrid;
@@ -1144,7 +1144,7 @@ s32 MapGrid_CheckCollisionAbove(u8 *object, s16 *position) {
     return 2;
   code = Ram_MapCollision + *shapes * 4;
   if (gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
-          *(s32 *)(object + 12) >
+          actor->y >
       8 << 16)
     return 1;
   return 0;

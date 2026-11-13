@@ -373,7 +373,7 @@ s32 Scene_Initialize(void) {
   if (state->entrance == 90) {
     Event_SetFlag(0x90a);
     state->ownerOverride = 1;
-    Event_SetDestination((s32)&SceneId_Ov6a7Room1, 4);
+    Event_SetDestination((s32)&SceneId_NorthernReaches, 4);
   }
   RisingParticles_Start();
   return 0;
@@ -522,7 +522,12 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_SCENE_EXITS_5(268, 60, 4, 61)
+u32 gSceneExits[] = {
+    SCENE_EXITS(NorthernReaches),
+    SCENE_EXIT_UNLESS(1, WorldMap, 60, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, WorldMap, 61, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
+};
 
 struct ActorPlacement gActorPlacements[] = {
     {8, CONDITION_ALWAYS, (s32)gNorthernReaches_ShipAtRest, PIXELS(120), 0,

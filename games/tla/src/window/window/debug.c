@@ -257,7 +257,7 @@ done:
   return index;
 }
 
-extern char SceneId_Ov69dRoom1;
+extern char SceneId_JupiterLighthouseRoom4;
 
 /* VIEW(window): routine Event_SetDestinationFar as void
  * Event_SetDestinationFar(s32 scene, s32 entrance);
@@ -288,7 +288,7 @@ extern char SceneId_MarsLighthouseStarRoom1;
 void DebugWarp_Jupiter(void) {
   Inventory_AddItemFar(4, 243);
   Inventory_AddItemFar(4, 244);
-  Event_SetDestinationFar((s32)&SceneId_Ov69dRoom1, 4);
+  Event_SetDestinationFar((s32)&SceneId_JupiterLighthouseRoom4, 4);
 }
 
 void DebugWarp_Arafura2(void) {

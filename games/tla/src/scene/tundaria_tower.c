@@ -153,9 +153,9 @@ extern u32 gData_020033d0[];
 extern u32 gData_020033f0[];
 
 const struct ActorPlacement *Func_02000488(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower6)
     return (const struct ActorPlacement *)gData_020033d0;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom7)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower7)
     return (const struct ActorPlacement *)gData_020033f0;
   return 0;
 }
@@ -170,17 +170,17 @@ extern struct ActorPlacement gData_02003708[];
 extern struct ActorPlacement gData_020037c8[];
 
 const struct Trigger *Func_020004c8(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower2)
     return (const struct Trigger *)gData_02003618;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower3)
     return (const struct Trigger *)gData_02003648;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower4)
     return (const struct Trigger *)gData_02003660;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower5)
     return (const struct Trigger *)gData_02003690;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower6)
     return (const struct Trigger *)gData_02003708;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom7)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower7)
     return (const struct Trigger *)gData_020037c8;
   return (const struct Trigger *)gData_02003618;
 }
@@ -479,13 +479,13 @@ void Func_02000bfc(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  if (party->scene == (s32)&SceneId_Ov68fRoom6) {
+  if (party->scene == (s32)&SceneId_TundariaTower6) {
     struct Actor *object;
 
     Actor_LiftTargetBlock(gData_02003264);
     object = *(struct Actor **)((u8 *)work + 0xcbc);
     object->timer = ((object->x >> 20) << 8) | ((object->z >> 20) & 0xff);
-  } else if (party->scene == (s32)&SceneId_Ov68fRoom7) {
+  } else if (party->scene == (s32)&SceneId_TundariaTower7) {
     Actor_LiftTargetBlock(gData_0200326e);
   }
 }
@@ -547,7 +547,7 @@ void Func_02000d2c(void) {
     object->terrainId = 0;
   }
   Actor_PlaceMovedBlock();
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom6) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower6) {
     /* FAKEMATCH(temporary): the copy makes each column test reload X. */
     struct Actor *o = object;
 
@@ -638,19 +638,19 @@ void Func_02000fb8(s32 mode, s32 cue) {
 }
 
 const struct Trigger *Func_02001044(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower1)
     return gData_020037f8;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower2)
     return gData_0200381c;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower3)
     return gData_0200393c;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower4)
     return gData_020039e4;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower5)
     return gData_02003a5c;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower6)
     return gData_02003b28;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom7)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower7)
     return gData_02003c90;
   return gData_0200381c;
 }
@@ -850,8 +850,8 @@ s32 Scene_Initialize(void) {
   ((struct TundariaTowerEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       0x204;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov68fRoom1) {
-  } else if (scene == (s32)&SceneId_Ov68fRoom2) {
+  if (scene == (s32)&SceneId_TundariaTower1) {
+  } else if (scene == (s32)&SceneId_TundariaTower2) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
@@ -886,7 +886,7 @@ s32 Scene_Initialize(void) {
       }
       break;
     }
-  } else if (scene == (s32)&SceneId_Ov68fRoom4) {
+  } else if (scene == (s32)&SceneId_TundariaTower4) {
     switch (gMainRoutineWork.entrance) {
     case 6:
     case 7:
@@ -905,9 +905,9 @@ s32 Scene_Initialize(void) {
         Func_020011e0();
       break;
     }
-  } else if (scene == (s32)&SceneId_Ov68fRoom5) {
+  } else if (scene == (s32)&SceneId_TundariaTower5) {
     Func_02000404(gData_02003340);
-  } else if (scene == (s32)&SceneId_Ov68fRoom6) {
+  } else if (scene == (s32)&SceneId_TundariaTower6) {
     switch (gMainRoutineWork.entrance) {
     case 3:
       object = FieldActor_Create(0x11e, PIXELS(472), 0, PIXELS(200));
@@ -964,7 +964,7 @@ s32 Scene_Initialize(void) {
         Func_020011e0();
       break;
     }
-  } else if (scene == (s32)&SceneId_Ov68fRoom7) {
+  } else if (scene == (s32)&SceneId_TundariaTower7) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     if (GameFlag_Get(0x948)) {
       MapGrid_CopyCellsTo(13, 26, 13, 16, 3, 3);
@@ -1727,74 +1727,74 @@ u32 gData_020033f0[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(206),
-    SCENE_EXIT_IF(1, 2, 46, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 207, 1, EXIT_FLAG_NONE),
-    SCENE_EXITS(207),
-    SCENE_EXIT_IF(1, 206, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 207, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(3, 207, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(4, 207, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(5, 211, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(6, 207, 16, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(7, 207, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(8, 207, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(9, 207, 18, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(10, 208, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(11, 207, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(12, 211, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(13, 207, 15, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(14, 207, 17, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(15, 207, 13, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(16, 207, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(17, 207, 14, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(18, 207, 9, EXIT_FLAG_NONE),
-    SCENE_EXITS(208),
-    SCENE_EXIT_IF(1, 208, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 208, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(3, 208, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(4, 208, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(5, 209, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(6, 208, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(7, 208, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(8, 208, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(9, 207, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(10, 208, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(11, 208, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(12, 208, 8, EXIT_FLAG_NONE),
-    SCENE_EXITS(209),
-    SCENE_EXIT_IF(1, 210, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 208, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(3, 210, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(4, 210, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(5, 209, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(6, 209, 5, EXIT_FLAG_NONE),
-    SCENE_EXITS(210),
-    SCENE_EXIT_IF(1, 210, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 209, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(3, 210, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(4, 210, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(5, 209, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(6, 209, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(7, 211, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(8, 210, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(9, 211, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(10, 211, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(11, 209, 7, EXIT_FLAG_NONE),
-    SCENE_EXITS(211),
-    SCENE_EXIT_IF(1, 210, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 210, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(3, 212, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(4, 207, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(5, 207, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(6, 212, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(7, 211, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(8, 211, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(9, 210, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(10, 211, 10, EXIT_FLAG_NONE),
-    SCENE_EXITS(212),
-    SCENE_EXIT_IF(1, 211, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 211, 3, EXIT_FLAG_NONE),
+    SCENE_EXITS(TundariaTower1),
+    SCENE_EXIT_UNLESS(1, WorldMap, 46, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, TundariaTower2, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(TundariaTower2),
+    SCENE_EXIT_UNLESS(1, TundariaTower1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, TundariaTower2, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, TundariaTower2, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, TundariaTower2, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, TundariaTower6, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, TundariaTower2, 16, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, TundariaTower2, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, TundariaTower2, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, TundariaTower2, 18, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, TundariaTower3, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, TundariaTower2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, TundariaTower6, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(13, TundariaTower2, 15, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(14, TundariaTower2, 17, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(15, TundariaTower2, 13, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(16, TundariaTower2, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(17, TundariaTower2, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(18, TundariaTower2, 9, EXIT_FLAG_NONE),
+    SCENE_EXITS(TundariaTower3),
+    SCENE_EXIT_UNLESS(1, TundariaTower3, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, TundariaTower3, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, TundariaTower3, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, TundariaTower3, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, TundariaTower4, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, TundariaTower3, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, TundariaTower3, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, TundariaTower3, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, TundariaTower2, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, TundariaTower3, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, TundariaTower3, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, TundariaTower3, 8, EXIT_FLAG_NONE),
+    SCENE_EXITS(TundariaTower4),
+    SCENE_EXIT_UNLESS(1, TundariaTower5, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, TundariaTower3, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, TundariaTower5, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, TundariaTower5, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, TundariaTower4, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, TundariaTower4, 5, EXIT_FLAG_NONE),
+    SCENE_EXITS(TundariaTower5),
+    SCENE_EXIT_UNLESS(1, TundariaTower5, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, TundariaTower4, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, TundariaTower5, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, TundariaTower5, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, TundariaTower4, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, TundariaTower4, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, TundariaTower6, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, TundariaTower5, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, TundariaTower6, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, TundariaTower6, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, TundariaTower4, 7, EXIT_FLAG_NONE),
+    SCENE_EXITS(TundariaTower6),
+    SCENE_EXIT_UNLESS(1, TundariaTower5, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, TundariaTower5, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, TundariaTower7, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, TundariaTower2, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, TundariaTower2, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, TundariaTower7, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, TundariaTower6, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, TundariaTower6, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, TundariaTower5, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, TundariaTower6, 10, EXIT_FLAG_NONE),
+    SCENE_EXITS(TundariaTower7),
+    SCENE_EXIT_UNLESS(1, TundariaTower6, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, TundariaTower6, 3, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

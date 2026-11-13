@@ -468,19 +468,19 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(64),
-    SCENE_EXIT_IF(1, 59, 1, -1),
-    SCENE_EXIT_IF(3, 59, 3, -1),
-    SCENE_EXIT_IF(4, 59, 4, -1),
-    SCENE_EXIT_IF(5, 59, 5, -1),
-    SCENE_EXIT_IF(6, 62, 7, -1),
-    SCENE_EXIT_IF(7, 62, 8, -1),
-    SCENE_EXITS(65),
-    SCENE_EXIT_IF(3, 62, 5, -1),
-    SCENE_EXIT_IF(4, 59, 2, -1),
-    SCENE_EXIT_IF(5, 62, 6, -1),
-    SCENE_EXITS(66),
-    SCENE_EXIT_IF(2, 59, 6, -1),
+    SCENE_EXITS(GarohInteriors1),
+    SCENE_EXIT_UNLESS(1, Garoh1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Garoh1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Garoh1, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Garoh1, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Garoh4, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, Garoh4, 8, EXIT_FLAG_NONE),
+    SCENE_EXITS(GarohInteriors2),
+    SCENE_EXIT_UNLESS(3, Garoh4, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Garoh1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Garoh4, 6, EXIT_FLAG_NONE),
+    SCENE_EXITS(GarohInteriors3),
+    SCENE_EXIT_UNLESS(2, Garoh1, 6, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

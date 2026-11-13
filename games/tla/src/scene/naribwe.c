@@ -383,7 +383,17 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_SCENE_EXITS_4(105, 106, 2, 23, 24)
+u32 gSceneExits[] = {                                                        
+      SCENE_EXITS(Naribwe),                                                         
+      SCENE_EXIT_UNLESS(1, NaribweInteriors, 1, EXIT_FLAG_NONE),                                 
+      SCENE_EXIT_UNLESS(2, NaribweInteriors, 2, EXIT_FLAG_NONE),                                 
+      SCENE_EXIT_UNLESS(3, NaribweInteriors, 3, EXIT_FLAG_NONE),                                 
+      SCENE_EXIT_UNLESS(4, NaribweInteriors, 4, EXIT_FLAG_NONE),                                 
+      SCENE_EXIT_UNLESS(5, NaribweInteriors, 5, EXIT_FLAG_NONE),                                 
+      SCENE_EXIT_UNLESS(6, WorldMap, 23, EXIT_FLAG_NONE),                                
+      SCENE_EXIT_UNLESS(7, WorldMap, 24, EXIT_FLAG_NONE),                                
+      SCENE_EXITS_END,                                                         
+  };
 
 DEFINE_NARIBWE_PLACEMENTS(gNaribwe_Placements)
 

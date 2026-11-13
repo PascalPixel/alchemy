@@ -362,14 +362,15 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-extern char SceneId_Ov6ACRoom3;
+extern char SceneId_MarsLighthouseRoomM3;
 void TileMap_ConvertBuffer(s32 scene, s32 a1);
 
 s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(0xa30))
-    TileMap_ConvertBuffer(gMainRoutineWork.map +
-                              ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Prox2),
-                          0x5000000);
+    TileMap_ConvertBuffer(
+        gMainRoutineWork.map +
+            ((s32)&SceneId_MarsLighthouseRoomM3 - (s32)&SceneId_Prox2),
+        0x5000000);
   if (gMainRoutineWork.entrance == 20)
     Event_SetFlag(0xa4b);
   return 0;
@@ -772,7 +773,7 @@ void MarsLighthouseStarRoom_ExamineStatue(void) {
   Event_End();
 }
 
-extern char SceneId_Ov6ACRoom3;
+extern char SceneId_MarsLighthouseRoomM3;
 extern char SceneId_Naribwe;
 
 void Scene_PlayMusic(void);
@@ -847,9 +848,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
-  TileMap_ConvertBuffer(gMainRoutineWork.map +
-                            ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Prox2),
-                        screen);
+  TileMap_ConvertBuffer(
+      gMainRoutineWork.map +
+          ((s32)&SceneId_MarsLighthouseRoomM3 - (s32)&SceneId_Prox2),
+      screen);
   zero = 0;
   *screen = zero;
   PaletteFade_ApplyTarget(0x10000, 0);
@@ -1026,9 +1028,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
-  TileMap_ConvertBuffer(gMainRoutineWork.map +
-                            ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Prox2),
-                        screen);
+  TileMap_ConvertBuffer(
+      gMainRoutineWork.map +
+          ((s32)&SceneId_MarsLighthouseRoomM3 - (s32)&SceneId_Prox2),
+      screen);
   *screen = 0;
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(120);
@@ -2396,9 +2399,15 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(286),      SCENE_EXIT(1, 286, 2), SCENE_EXIT(2, 286, 1),
-    SCENE_EXIT(3, 286, 4), SCENE_EXIT(4, 286, 3), SCENE_EXIT(5, 285, 5),
-    SCENE_EXIT(6, 284, 6), SCENE_EXIT(7, 285, 7), SCENE_EXIT(8, 284, 8),
+    SCENE_EXITS(MarsLighthouseStarRoom1),
+    SCENE_EXIT(1, MarsLighthouseStarRoom1, 2),
+    SCENE_EXIT(2, MarsLighthouseStarRoom1, 1),
+    SCENE_EXIT(3, MarsLighthouseStarRoom1, 4),
+    SCENE_EXIT(4, MarsLighthouseStarRoom1, 3),
+    SCENE_EXIT(5, MarsLighthouseEntrance7, 5),
+    SCENE_EXIT(6, MarsLighthouseEntrance6, 6),
+    SCENE_EXIT(7, MarsLighthouseEntrance7, 7),
+    SCENE_EXIT(8, MarsLighthouseEntrance6, 8),
     SCENE_EXITS_END,
 };
 

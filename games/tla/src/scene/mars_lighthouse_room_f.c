@@ -304,13 +304,13 @@ s32 Func_0200004c(struct Actor *object) {
 }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseRoomF4)
     return gMarsLighthouseRoomF_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseRoomF2)
     return gMarsLighthouseRoomF_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseRoomF1)
     return gMarsLighthouseRoomF_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseRoomF3)
     return gMarsLighthouseRoomF_Room3Placements;
   return gMarsLighthouseRoomF_Placements;
 }
@@ -877,13 +877,13 @@ void Func_02000df8(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseRoomF4)
     return gMarsLighthouseRoomF_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseRoomF2)
     return gMarsLighthouseRoomF_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseRoomF1)
     return gMarsLighthouseRoomF_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseRoomF3)
     return gMarsLighthouseRoomF_Room3Triggers;
   return gMarsLighthouseRoomF_Triggers;
 }
@@ -925,7 +925,7 @@ s32 Scene_Initialize(void) {
   value = 516;
   Flag_Set(FLAG_MARS_LIGHTHOUSE_LIT);
   Func_020025b0();
-  if (scene == (s32)&SceneId_Ov6adRoom1) {
+  if (scene == (s32)&SceneId_MarsLighthouseRoomF1) {
     FieldEffect_StartBlankOverlay(0);
     ((struct SceneWork *)heap->eventWork)->unk1ac = value;
     if (entrance - 1 <= 1U) {
@@ -950,7 +950,7 @@ s32 Scene_Initialize(void) {
       Func_02004938(16);
       Func_020003b4();
     }
-  } else if (scene == (s32)&SceneId_Ov6adRoom2) {
+  } else if (scene == (s32)&SceneId_MarsLighthouseRoomF2) {
     FieldEffect_StartBlankOverlay(0);
     ((struct SceneWork *)heap->eventWork)->unk1ac = value;
     Beam_Start(gData_02005c14, gData_02005c26, Func_02001468, 88);
@@ -1007,7 +1007,7 @@ s32 Scene_Initialize(void) {
     if (Flag_IsSet(0xa40))
       Func_02000d80();
     Task_Add(Func_02000e68, 0x480);
-  } else if (scene == (s32)&SceneId_Ov6adRoom3) {
+  } else if (scene == (s32)&SceneId_MarsLighthouseRoomF3) {
     FieldEffect_StartBlankOverlay(0);
     ((struct SceneWork *)heap->eventWork)->unk1ac = value;
     JupiterLighthouse_LoadPalettesZero(1);
@@ -1038,7 +1038,7 @@ s32 Scene_Initialize(void) {
       if (entrance == 16 && !Flag_IsSet(FLAG_KEEP_PARTY_POSITION))
         CrackedTile_DropIn();
     }
-  } else if (scene == (s32)&SceneId_Ov6adRoom4) {
+  } else if (scene == (s32)&SceneId_MarsLighthouseRoomF4) {
     FieldEffect_StartBlankOverlay(0);
     ((struct SceneWork *)heap->eventWork)->unk1ac = value;
     Tightrope_Initialize();
@@ -1084,9 +1084,9 @@ s32 Scene_PrepareMap(void) {
 
   party = &gMainRoutineWork;
   if (Event_GetFlag(flag))
-    TileMap_ConvertBuffer(party->map +
-                              ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Prox2),
-                          0x5000000);
+    TileMap_ConvertBuffer(
+        party->map + ((s32)&SceneId_MarsLighthouseRoomM3 - (s32)&SceneId_Prox2),
+        0x5000000);
   return 0;
 }
 
@@ -2777,21 +2777,51 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 };
 
 LATE_DATA u32 gSceneExits[] = {
-    SCENE_EXITS(292),        SCENE_EXIT(1, 290, 2),   SCENE_EXIT(2, 292, 3),
-    SCENE_EXIT(3, 292, 2),   SCENE_EXIT(4, 296, 3),   SCENE_EXITS(293),
-    SCENE_EXIT(1, 288, 2),   SCENE_EXIT(2, 293, 3),   SCENE_EXIT(3, 293, 2),
-    SCENE_EXIT(4, 293, 5),   SCENE_EXIT(5, 293, 4),   SCENE_EXIT(6, 293, 7),
-    SCENE_EXIT(7, 293, 6),   SCENE_EXIT(8, 296, 2),   SCENE_EXIT(9, 293, 9),
-    SCENE_EXITS(294),        SCENE_EXIT(1, 289, 2),   SCENE_EXIT(2, 294, 3),
-    SCENE_EXIT(3, 294, 2),   SCENE_EXIT(4, 294, 5),   SCENE_EXIT(5, 294, 4),
-    SCENE_EXIT(6, 294, 6),   SCENE_EXIT(7, 294, 7),   SCENE_EXIT(8, 294, 9),
-    SCENE_EXIT(9, 294, 8),   SCENE_EXIT(10, 294, 10), SCENE_EXIT(11, 294, 12),
-    SCENE_EXIT(12, 294, 11), SCENE_EXIT(13, 294, 14), SCENE_EXIT(14, 294, 13),
-    SCENE_EXIT(15, 296, 4),  SCENE_EXIT(16, 294, 16), SCENE_EXITS(295),
-    SCENE_EXIT(1, 291, 2),   SCENE_EXIT(6, 295, 7),   SCENE_EXIT(7, 295, 6),
-    SCENE_EXIT(8, 295, 9),   SCENE_EXIT(9, 295, 8),   SCENE_EXIT(10, 295, 11),
-    SCENE_EXIT(11, 295, 10), SCENE_EXIT(12, 295, 13), SCENE_EXIT(13, 295, 12),
-    SCENE_EXIT(14, 295, 15), SCENE_EXIT(15, 295, 14), SCENE_EXIT(5, 296, 1),
+    SCENE_EXITS(MarsLighthouseRoomF1),
+    SCENE_EXIT(1, MarsLighthouseRoomM4, 2),
+    SCENE_EXIT(2, MarsLighthouseRoomF1, 3),
+    SCENE_EXIT(3, MarsLighthouseRoomF1, 2),
+    SCENE_EXIT(4, MarsLighthouseRoomM6, 3),
+    SCENE_EXITS(MarsLighthouseRoomF2),
+    SCENE_EXIT(1, MarsLighthouseRoomM2, 2),
+    SCENE_EXIT(2, MarsLighthouseRoomF2, 3),
+    SCENE_EXIT(3, MarsLighthouseRoomF2, 2),
+    SCENE_EXIT(4, MarsLighthouseRoomF2, 5),
+    SCENE_EXIT(5, MarsLighthouseRoomF2, 4),
+    SCENE_EXIT(6, MarsLighthouseRoomF2, 7),
+    SCENE_EXIT(7, MarsLighthouseRoomF2, 6),
+    SCENE_EXIT(8, MarsLighthouseRoomM6, 2),
+    SCENE_EXIT(9, MarsLighthouseRoomF2, 9),
+    SCENE_EXITS(MarsLighthouseRoomF3),
+    SCENE_EXIT(1, MarsLighthouseRoomM3, 2),
+    SCENE_EXIT(2, MarsLighthouseRoomF3, 3),
+    SCENE_EXIT(3, MarsLighthouseRoomF3, 2),
+    SCENE_EXIT(4, MarsLighthouseRoomF3, 5),
+    SCENE_EXIT(5, MarsLighthouseRoomF3, 4),
+    SCENE_EXIT(6, MarsLighthouseRoomF3, 6),
+    SCENE_EXIT(7, MarsLighthouseRoomF3, 7),
+    SCENE_EXIT(8, MarsLighthouseRoomF3, 9),
+    SCENE_EXIT(9, MarsLighthouseRoomF3, 8),
+    SCENE_EXIT(10, MarsLighthouseRoomF3, 10),
+    SCENE_EXIT(11, MarsLighthouseRoomF3, 12),
+    SCENE_EXIT(12, MarsLighthouseRoomF3, 11),
+    SCENE_EXIT(13, MarsLighthouseRoomF3, 14),
+    SCENE_EXIT(14, MarsLighthouseRoomF3, 13),
+    SCENE_EXIT(15, MarsLighthouseRoomM6, 4),
+    SCENE_EXIT(16, MarsLighthouseRoomF3, 16),
+    SCENE_EXITS(MarsLighthouseRoomF4),
+    SCENE_EXIT(1, MarsLighthouseRoomM5, 2),
+    SCENE_EXIT(6, MarsLighthouseRoomF4, 7),
+    SCENE_EXIT(7, MarsLighthouseRoomF4, 6),
+    SCENE_EXIT(8, MarsLighthouseRoomF4, 9),
+    SCENE_EXIT(9, MarsLighthouseRoomF4, 8),
+    SCENE_EXIT(10, MarsLighthouseRoomF4, 11),
+    SCENE_EXIT(11, MarsLighthouseRoomF4, 10),
+    SCENE_EXIT(12, MarsLighthouseRoomF4, 13),
+    SCENE_EXIT(13, MarsLighthouseRoomF4, 12),
+    SCENE_EXIT(14, MarsLighthouseRoomF4, 15),
+    SCENE_EXIT(15, MarsLighthouseRoomF4, 14),
+    SCENE_EXIT(5, MarsLighthouseRoomM6, 1),
     SCENE_EXITS_END,
 };
 

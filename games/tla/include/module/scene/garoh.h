@@ -57,10 +57,10 @@ extern s16 gData_02005dc8[];
 void Func_0200132c(void);
 
 extern u16 Data_02006340[];
-extern char SceneId_Ov65FRoom1;
-extern char SceneId_Ov65FRoom2;
-extern char SceneId_Ov65FRoom3;
-extern char SceneId_Ov65FRoom4;
-extern char SceneId_Ov65FRoom5;
+extern char SceneId_Garoh1;
+extern char SceneId_Garoh2;
+extern char SceneId_Garoh3;
+extern char SceneId_Garoh4;
+extern char SceneId_Garoh5;
 
 #endif

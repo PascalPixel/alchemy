@@ -973,7 +973,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
 
   limit = particle->terrainHeight + 0xA0000;
   source = particle->watchedObject;
-  if (party->map == (s32)&SceneId_Ov64a)
+  if (party->map == (s32)&SceneId_Clear)
     limit = particle->terrainHeight + 0x40000;
 
   y = particle->y;
@@ -1001,7 +1001,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
 
   limit = particle->terrainHeight + 0xA0000;
   source = particle->watchedObject;
-  if (party->map == (s32)&SceneId_Ov64a)
+  if (party->map == (s32)&SceneId_Clear)
     limit = particle->terrainHeight + 0x40000;
 
   y = particle->y;
@@ -1078,7 +1078,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
 #include "text/msg_ids.h"
 
 /// The caster during Avoid (FieldPsynergy_Avoid): sheds a pair of falling
-/// arcs every 5 frames (7 in scene Ov64a), and spins in phase 1.
+/// arcs every 5 frames (7 in scene Clear), and spins in phase 1.
 // As ☀️'s function of the same name.
 void FieldEffect_UpdateAvoidCaster(struct ArcEffectObject *caster) {
   s16 phase;
@@ -1089,7 +1089,7 @@ void FieldEffect_UpdateAvoidCaster(struct ArcEffectObject *caster) {
   elapsedFrames = (s16)caster->step++;
   party = &gMainRoutineWork;
 
-  if (party->map == (s32)&SceneId_Ov64a) {
+  if (party->map == (s32)&SceneId_Clear) {
     if (elapsedFrames % 7 == 0)
       FieldEffect_SpawnDescendingArcParticles(caster);
   } else if (elapsedFrames % 5 == 0) {

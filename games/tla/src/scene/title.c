@@ -139,7 +139,7 @@ s32 Title_Run(void) {
       }
       break;
     }
-    Event_SetDestination((s32)&SceneId_Ov64a, 1);
+    Event_SetDestination((s32)&SceneId_Clear, 1);
   } else {
     if (gMainRoutineWork.entrance == 2) {
       Event_PlaySound(MUS_040);

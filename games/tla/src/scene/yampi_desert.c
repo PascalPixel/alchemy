@@ -281,7 +281,7 @@ extern s16 gYampiDesert_Room11Regions[];
 void YampiDesert_FightBlitz(void) { Field_RequestDjinnBattle(19, 68); }
 
 const u8 *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room11)
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesert11)
     return gYampiDesert_Room11Entrances;
   return gYampiDesert_Entrances;
 }
@@ -289,9 +289,9 @@ const u8 *Scene_GetEntrances(void) {
 const u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov661Room10)
+  if (scene == (s32)&SceneId_YampiDesert10)
     return gYampiDesert_Room10Regions;
-  if (scene == (s32)&SceneId_Ov661Room11)
+  if (scene == (s32)&SceneId_YampiDesert11)
     return gYampiDesert_Room11Regions;
   return 0;
 }
@@ -314,24 +314,24 @@ extern struct ActorPlacement gYampiDesert_Room12Placements[];
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov661Room1)
+  if (scene == (s32)&SceneId_YampiDesert1)
     return gYampiDesert_Room1Placements;
-  if (scene == (s32)&SceneId_Ov661Room2) {
+  if (scene == (s32)&SceneId_YampiDesert2) {
     if (GameFlag_Get(0x8f0))
       return gYampiDesert_Room2PlacementsAfterMeeting;
     return gYampiDesert_Room2Placements;
   }
-  if (scene == (s32)&SceneId_Ov661Room3)
+  if (scene == (s32)&SceneId_YampiDesert3)
     return gYampiDesert_Room3Placements;
-  if (scene == (s32)&SceneId_Ov661Room4)
+  if (scene == (s32)&SceneId_YampiDesert4)
     return gYampiDesert_Room4Placements;
-  if (scene == (s32)&SceneId_Ov661Room5)
+  if (scene == (s32)&SceneId_YampiDesert5)
     return gYampiDesert_Room5Placements;
-  if (scene == (s32)&SceneId_Ov661Room8)
+  if (scene == (s32)&SceneId_YampiDesert8)
     return gYampiDesert_Room8Placements;
-  if (scene == (s32)&SceneId_Ov661Room10)
+  if (scene == (s32)&SceneId_YampiDesert10)
     return gYampiDesert_Room10Placements;
-  if (scene == (s32)&SceneId_Ov661Room12)
+  if (scene == (s32)&SceneId_YampiDesert12)
     return gYampiDesert_Room12Placements;
   return gYampiDesert_Placements;
 }
@@ -357,29 +357,29 @@ extern struct Trigger gYampiDesert_Room12Triggers[];
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov661Room1)
+  if (scene == (s32)&SceneId_YampiDesert1)
     return gYampiDesert_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov661Room2)
+  if (scene == (s32)&SceneId_YampiDesert2)
     return gYampiDesert_Room2Triggers;
-  if (scene == (s32)&SceneId_Ov661Room3)
+  if (scene == (s32)&SceneId_YampiDesert3)
     return gYampiDesert_Room3Triggers;
-  if (scene == (s32)&SceneId_Ov661Room4)
+  if (scene == (s32)&SceneId_YampiDesert4)
     return gYampiDesert_Room4Triggers;
-  if (scene == (s32)&SceneId_Ov661Room5)
+  if (scene == (s32)&SceneId_YampiDesert5)
     return gYampiDesert_Room5Triggers;
-  if (scene == (s32)&SceneId_Ov661Room6)
+  if (scene == (s32)&SceneId_YampiDesert6)
     return gYampiDesert_Room6Triggers;
-  if (scene == (s32)&SceneId_Ov661Room7)
+  if (scene == (s32)&SceneId_YampiDesert7)
     return gYampiDesert_Room7Triggers;
-  if (scene == (s32)&SceneId_Ov661Room8)
+  if (scene == (s32)&SceneId_YampiDesert8)
     return gYampiDesert_Room8Triggers;
-  if (scene == (s32)&SceneId_Ov661Room9)
+  if (scene == (s32)&SceneId_YampiDesert9)
     return gYampiDesert_Room9Triggers;
-  if (scene == (s32)&SceneId_Ov661Room10)
+  if (scene == (s32)&SceneId_YampiDesert10)
     return gYampiDesert_Room10Triggers;
-  if (scene == (s32)&SceneId_Ov661Room11)
+  if (scene == (s32)&SceneId_YampiDesert11)
     return gYampiDesert_Room11Triggers;
-  if (scene == (s32)&SceneId_Ov661Room12)
+  if (scene == (s32)&SceneId_YampiDesert12)
     return gYampiDesert_Room12Triggers;
   return gYampiDesert_Triggers;
 }
@@ -469,11 +469,11 @@ void YampiDesert_StepOntoStakeTops(void) {
   u16 *list = NULL;
   u8 *grid = gMapShapeGrid;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesert3)
     list = gYampiDesert_Room3Stakes;
-  else if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room4)
+  else if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesert4)
     list = gYampiDesert_Room4Stakes;
-  else if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room5)
+  else if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesert5)
     list = gYampiDesert_Room5Stakes;
   if (list == NULL)
     return;
@@ -507,11 +507,11 @@ void YampiDesert_StepOffStakeTops(void) {
   u16 *list = NULL;
   u8 *grid = gMapShapeGrid;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesert3)
     list = gYampiDesert_Room3Stakes;
-  else if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room4)
+  else if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesert4)
     list = gYampiDesert_Room4Stakes;
-  else if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room5)
+  else if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesert5)
     list = gYampiDesert_Room5Stakes;
   if (list == NULL)
     return;
@@ -598,13 +598,13 @@ void YampiDesert_CastSand(void) {
 
   Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 2;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov661Room1)
+  if (scene == (s32)&SceneId_YampiDesert1)
     YampiDesert_BlockPoundedStakes((u16 *)gYampiDesert_Room1Stakes);
-  else if (scene == (s32)&SceneId_Ov661Room3)
+  else if (scene == (s32)&SceneId_YampiDesert3)
     YampiDesert_BlockPoundedStakes((u16 *)gYampiDesert_Room3Stakes);
-  else if (scene == (s32)&SceneId_Ov661Room4)
+  else if (scene == (s32)&SceneId_YampiDesert4)
     YampiDesert_BlockPoundedStakes((u16 *)gYampiDesert_Room4Stakes);
-  else if (scene == (s32)&SceneId_Ov661Room5)
+  else if (scene == (s32)&SceneId_YampiDesert5)
     YampiDesert_BlockPoundedStakes((u16 *)gYampiDesert_Room5Stakes);
 }
 
@@ -614,13 +614,13 @@ void YampiDesert_EndSand(void) {
 
   leader->terrainId = 0;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov661Room1)
+  if (scene == (s32)&SceneId_YampiDesert1)
     YampiDesert_UnblockStakes((u16 *)gYampiDesert_Room1Stakes);
-  else if (scene == (s32)&SceneId_Ov661Room3)
+  else if (scene == (s32)&SceneId_YampiDesert3)
     YampiDesert_UnblockStakes((u16 *)gYampiDesert_Room3Stakes);
-  else if (scene == (s32)&SceneId_Ov661Room4)
+  else if (scene == (s32)&SceneId_YampiDesert4)
     YampiDesert_UnblockStakes((u16 *)gYampiDesert_Room4Stakes);
-  else if (scene == (s32)&SceneId_Ov661Room5)
+  else if (scene == (s32)&SceneId_YampiDesert5)
     YampiDesert_UnblockStakes((u16 *)gYampiDesert_Room5Stakes);
 }
 
@@ -630,10 +630,10 @@ void YampiDesert_WatchScorpionStop(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov661Room4) {
+  if (scene == (s32)&SceneId_YampiDesert4) {
     FieldCamera_FollowActor(16, 1);
     Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
-  } else if (scene == (s32)&SceneId_Ov661Room5) {
+  } else if (scene == (s32)&SceneId_YampiDesert5) {
     FieldCamera_FollowActor(21, 1);
     Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 21);
   }
@@ -1037,9 +1037,9 @@ void YampiDesert_ScoopLadderPit(s32 mode) {
 void YampiDesert_SetSlideActorsShown(s32 show) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov661Room8)
+  if (scene == (s32)&SceneId_YampiDesert8)
     YampiDesert_SetActorsHidden(show, 11, 2);
-  else if (scene == (s32)&SceneId_Ov661Room12)
+  else if (scene == (s32)&SceneId_YampiDesert12)
     YampiDesert_SetActorsHidden(show, 9, 7);
 }
 
@@ -1307,9 +1307,9 @@ void YampiDesert_RippleFollowsScorpion(void) {
       gYampiDesert_RaisedEvent;
   if (gYampiDesert_SandRipple != 0) {
     scene = gMainRoutineWork.scene;
-    if (scene == (s32)&SceneId_Ov661Room4)
+    if (scene == (s32)&SceneId_YampiDesert4)
       object = Actor_GetById(16);
-    else if (scene == (s32)&SceneId_Ov661Room5)
+    else if (scene == (s32)&SceneId_YampiDesert5)
       object = Actor_GetById(21);
     else
       return;
@@ -1477,7 +1477,7 @@ void YampiDesert_TrackUpperLevel(void) {
     gMainRoutineWork.unk2c3 = 1;
   else
     gMainRoutineWork.unk2c3 = 0;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room3) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesert3) {
     Actor_SetSpritePriority(18,
                             ((struct FieldSprite *)leader->sprite)->priority);
     x = leader->x;
@@ -2012,7 +2012,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   Call3(Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
   Actor_MoveToAndWaitById(8, 232, 184);
   party->battleRule24b = 2;
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov661Room10, 2);
+  Event_SetAfterBattleDestination((s32)&SceneId_YampiDesert10, 2);
   Field_RequestBattleFromEncounterTable(10, 0);
 }
 
@@ -2024,27 +2024,27 @@ s32 Scene_Initialize(void) {
   YampiDesert_ClearRaisedEvent();
   gYampiDesert_SandRipple = 0;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov661Room1)
+  if (scene == (s32)&SceneId_YampiDesert1)
     YampiDesert_SetUpRoom1();
-  else if (scene == (s32)&SceneId_Ov661Room2)
+  else if (scene == (s32)&SceneId_YampiDesert2)
     YampiDesert_SetUpRoom2();
-  else if (scene == (s32)&SceneId_Ov661Room3)
+  else if (scene == (s32)&SceneId_YampiDesert3)
     YampiDesert_SetUpRoom3();
-  else if (scene == (s32)&SceneId_Ov661Room4)
+  else if (scene == (s32)&SceneId_YampiDesert4)
     YampiDesert_SetUpRoom4();
-  else if (scene == (s32)&SceneId_Ov661Room5)
+  else if (scene == (s32)&SceneId_YampiDesert5)
     YampiDesert_SetUpRoom5();
-  else if (scene == (s32)&SceneId_Ov661Room6)
+  else if (scene == (s32)&SceneId_YampiDesert6)
     YampiDesert_SetUpRoom6();
-  else if (scene == (s32)&SceneId_Ov661Room8)
+  else if (scene == (s32)&SceneId_YampiDesert8)
     YampiDesert_SetUpRoom8();
-  else if (scene == (s32)&SceneId_Ov661Room9)
+  else if (scene == (s32)&SceneId_YampiDesert9)
     YampiDesert_SetUpRoom9();
-  else if (scene == (s32)&SceneId_Ov661Room10)
+  else if (scene == (s32)&SceneId_YampiDesert10)
     YampiDesert_SetUpRoom10();
-  else if (scene == (s32)&SceneId_Ov661Room11)
+  else if (scene == (s32)&SceneId_YampiDesert11)
     YampiDesert_SetUpRoom11();
-  else if (scene == (s32)&SceneId_Ov661Room12)
+  else if (scene == (s32)&SceneId_YampiDesert12)
     YampiDesert_SetUpRoom12();
   return 0;
 }
@@ -2227,15 +2227,15 @@ void YampiDesert_SetUpRoom8(void) {
 #if TLA_PATCH_1
   else if (gMainRoutineWork.entrance == 4) {
     if (GameFlag_Get(0xa29)) {
-      scene = (s32)&SceneId_Ov661Room1;
+      scene = (s32)&SceneId_YampiDesert1;
       MAIN_ROUTINE_WORK_U16(0x260) = scene;
       Scene_StoreU16(&MAIN_ROUTINE_WORK_U16(0x262), 1);
     } else if (GameFlag_Get(0xa2a)) {
-      scene = (s32)&SceneId_Ov661Room8;
+      scene = (s32)&SceneId_YampiDesert8;
       MAIN_ROUTINE_WORK_U16(0x260) = scene;
       Scene_StoreU16(&MAIN_ROUTINE_WORK_U16(0x262), 2);
     } else if (GameFlag_Get(0xa2b)) {
-      scene = (s32)&SceneId_Ov661Room9;
+      scene = (s32)&SceneId_YampiDesert9;
       MAIN_ROUTINE_WORK_U16(0x260) = scene;
       Scene_StoreU16(&MAIN_ROUTINE_WORK_U16(0x262), 2);
     }
@@ -2734,52 +2734,52 @@ LATE_DATA s16 gYampiDesert_Room11Regions[] = {
 };
 
 LATE_DATA u32 gSceneExits[] = {
-    SCENE_EXITS(67),
-    SCENE_EXIT(1, 2, 17),
-    SCENE_EXIT(2, 68, 1),
-    SCENE_EXITS(68),
-    SCENE_EXIT(1, 67, 2),
-    SCENE_EXIT(2, 72, 1),
-    SCENE_EXIT(3, 77, 1),
-    SCENE_EXIT(4, 69, 1),
-    SCENE_EXIT(5, 77, 3),
-    SCENE_EXITS(69),
-    SCENE_EXIT(1, 68, 4),
-    SCENE_EXIT(2, 70, 1),
-    SCENE_EXITS(70),
-    SCENE_EXIT(1, 69, 2),
-    SCENE_EXIT(2, 70, 3),
-    SCENE_EXIT(3, 70, 2),
-    SCENE_EXIT(4, 71, 1),
-    SCENE_EXITS(71),
-    SCENE_EXIT(1, 70, 4),
-    SCENE_EXIT(2, 71, 3),
-    SCENE_EXIT(3, 71, 2),
-    SCENE_EXIT(4, 76, 1),
-    SCENE_EXITS(72),
-    SCENE_EXIT(1, 68, 2),
-    SCENE_EXIT(2, 78, 1),
-    SCENE_EXITS(73),
-    SCENE_EXIT(1, 78, 2),
-    SCENE_EXIT(2, 74, 1),
-    SCENE_EXITS(74),
-    SCENE_EXIT(1, 73, 2),
-    SCENE_EXIT(2, 2, 18),
-    SCENE_EXIT(3, 75, 1),
-    SCENE_EXIT(4, 79, 1),
-    SCENE_EXITS(75),
-    SCENE_EXIT(1, 74, 3),
-    SCENE_EXIT(2, 2, 19),
-    SCENE_EXITS(76),
-    SCENE_EXIT(1, 71, 4),
-    SCENE_EXITS(77),
-    SCENE_EXIT(1, 68, 3),
-    SCENE_EXIT(2, 77, 4),
-    SCENE_EXIT(3, 68, 5),
-    SCENE_EXIT(4, 77, 2),
-    SCENE_EXITS(78),
-    SCENE_EXIT(1, 72, 2),
-    SCENE_EXIT(2, 73, 1),
+    SCENE_EXITS(YampiDesert1),
+    SCENE_EXIT(1, WorldMap, 17),
+    SCENE_EXIT(2, YampiDesert2, 1),
+    SCENE_EXITS(YampiDesert2),
+    SCENE_EXIT(1, YampiDesert1, 2),
+    SCENE_EXIT(2, YampiDesert6, 1),
+    SCENE_EXIT(3, YampiDesert11, 1),
+    SCENE_EXIT(4, YampiDesert3, 1),
+    SCENE_EXIT(5, YampiDesert11, 3),
+    SCENE_EXITS(YampiDesert3),
+    SCENE_EXIT(1, YampiDesert2, 4),
+    SCENE_EXIT(2, YampiDesert4, 1),
+    SCENE_EXITS(YampiDesert4),
+    SCENE_EXIT(1, YampiDesert3, 2),
+    SCENE_EXIT(2, YampiDesert4, 3),
+    SCENE_EXIT(3, YampiDesert4, 2),
+    SCENE_EXIT(4, YampiDesert5, 1),
+    SCENE_EXITS(YampiDesert5),
+    SCENE_EXIT(1, YampiDesert4, 4),
+    SCENE_EXIT(2, YampiDesert5, 3),
+    SCENE_EXIT(3, YampiDesert5, 2),
+    SCENE_EXIT(4, YampiDesert10, 1),
+    SCENE_EXITS(YampiDesert6),
+    SCENE_EXIT(1, YampiDesert2, 2),
+    SCENE_EXIT(2, YampiDesert12, 1),
+    SCENE_EXITS(YampiDesert7),
+    SCENE_EXIT(1, YampiDesert12, 2),
+    SCENE_EXIT(2, YampiDesert8, 1),
+    SCENE_EXITS(YampiDesert8),
+    SCENE_EXIT(1, YampiDesert7, 2),
+    SCENE_EXIT(2, WorldMap, 18),
+    SCENE_EXIT(3, YampiDesert9, 1),
+    SCENE_EXIT(4, YampiDesertCave1, 1),
+    SCENE_EXITS(YampiDesert9),
+    SCENE_EXIT(1, YampiDesert8, 3),
+    SCENE_EXIT(2, WorldMap, 19),
+    SCENE_EXITS(YampiDesert10),
+    SCENE_EXIT(1, YampiDesert5, 4),
+    SCENE_EXITS(YampiDesert11),
+    SCENE_EXIT(1, YampiDesert2, 3),
+    SCENE_EXIT(2, YampiDesert11, 4),
+    SCENE_EXIT(3, YampiDesert2, 5),
+    SCENE_EXIT(4, YampiDesert11, 2),
+    SCENE_EXITS(YampiDesert12),
+    SCENE_EXIT(1, YampiDesert6, 2),
+    SCENE_EXIT(2, YampiDesert7, 1),
     SCENE_EXITS_END,
 };
 

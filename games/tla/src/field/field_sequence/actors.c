@@ -22,7 +22,7 @@ s32 Party_GetCharacterSprite(s32 character) {
   if (sprite <= 8) {
     if (sprite == 8) {
       sprite = 9;
-      if (gMainRoutineWork.map != (s32)&SceneId_Ov64a)
+      if (gMainRoutineWork.map != (s32)&SceneId_Clear)
         sprite = 11;
       if (GameFlag_Get(0x8df))
         sprite++;

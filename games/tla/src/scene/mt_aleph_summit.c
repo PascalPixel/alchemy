@@ -49,7 +49,7 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
-extern char SceneId_Ov6b3;
+extern char SceneId_Epilogue;
 
 void FieldCamera_WaitForArrival(void);
 
@@ -357,7 +357,7 @@ s32 Scene_Initialize(void) {
   Actor_SetPosition(4, 0, 0);
   mode = gMainRoutineWork.entrance;
   if (mode == 10) {
-    Event_SetDestination((s32)&SceneId_Ov64c, 72);
+    Event_SetDestination((s32)&SceneId_StaffCredit, 72);
   } else if (mode == 2) {
     FieldCamera_MoveTo(256, CAMERA_KEEP, 128, 0);
     FieldCamera_SetSpeed(1);
@@ -441,7 +441,7 @@ s32 Scene_Initialize(void) {
     i++;
     if (i != 20)
       goto L4;
-    Event_SetDestination((s32)&SceneId_Ov64c, 1);
+    Event_SetDestination((s32)&SceneId_StaffCredit, 1);
   } else if (mode == 3) {
     slots = Ram_HeapSlots;
     block = slots->block32;
@@ -779,7 +779,7 @@ s32 Scene_Initialize(void) {
     PaletteFade_ApplyTarget(0, 0);
     PaletteFade_Interpolate(120);
     System_Wait(300);
-    Event_SetDestination((s32)&SceneId_Ov6b3, 1);
+    Event_SetDestination((s32)&SceneId_Epilogue, 1);
   } else {
     ((struct EventWorkView__s0478 *)Ram_HeapSlots->eventWork)->unk1ac = 0;
     Event_StartScreenTransition();
@@ -795,7 +795,7 @@ s32 Scene_Initialize(void) {
         Actor_SetAnimation(8, 12);
       }
     }
-    Event_SetDestination((s32)&SceneId_Ov64c, 0);
+    Event_SetDestination((s32)&SceneId_StaffCredit, 0);
   }
   Heap_Release(buffer);
   return 0;

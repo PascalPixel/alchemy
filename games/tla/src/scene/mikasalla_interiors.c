@@ -44,7 +44,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65ERoom2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MikasallaInteriors2)
     return gMikasallaInteriors_SanctumPlacements;
   return gMikasallaInteriors_InnPlacements;
 }
@@ -74,7 +74,7 @@ s32 MikasallaInteriors_MindReadIslanderComplaints(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65ERoom2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MikasallaInteriors2)
     return gMikasallaInteriors_SanctumTriggers;
   return gMikasallaInteriors_InnTriggers;
 }
@@ -195,7 +195,7 @@ void MikasallaInteriors_TalkAboutFarShores(s32 actor) {
 s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65ERoom1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_MikasallaInteriors1) {
     if (gMainRoutineWork.entrance == 5)
       MikasallaInteriors_FadeInAndClearFlag();
     else if (!Event_GetFlag(0x821) ||
@@ -206,7 +206,7 @@ s32 Scene_Initialize(void) {
       FieldActor_SetSpriteColor(Actor_Get(18), 4);
     return 0;
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65ERoom2) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_MikasallaInteriors2) {
     s32 entrance = gMainRoutineWork.entrance;
 
     if (entrance == 1) {
@@ -296,16 +296,16 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(57),
-    SCENE_EXIT_IF(1, 55, 1, -1),
-    SCENE_EXIT_IF(2, 55, 2, -1),
-    SCENE_EXIT_IF(3, 55, 3, -1),
-    SCENE_EXIT_IF(4, 55, 4, -1),
-    SCENE_EXIT_IF(5, 132, 2, -1),
-    SCENE_EXITS(58),
-    SCENE_EXIT_IF(1, 55, 5, -1),
-    SCENE_EXIT_IF(5, 154, 9, -1),
-    SCENE_EXIT_IF(4, 139, 8, -1),
+    SCENE_EXITS(MikasallaInteriors1),
+    SCENE_EXIT_UNLESS(1, Mikasalla1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Mikasalla1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Mikasalla1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Mikasalla1, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Islets2, 2, EXIT_FLAG_NONE),
+    SCENE_EXITS(MikasallaInteriors2),
+    SCENE_EXIT_UNLESS(1, Mikasalla1, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, ApojiiIslands1, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Yallam1, 8, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

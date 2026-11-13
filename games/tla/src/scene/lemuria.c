@@ -1036,18 +1036,18 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(202),
-    SCENE_EXIT_IF(1, 203, 1, -1),
-    SCENE_EXIT_IF(2, 203, 2, -1),
-    SCENE_EXIT_IF(3, 203, 3, -1),
-    SCENE_EXIT_IF(4, 201, 3, -1),
-    SCENE_EXIT_IF(5, 205, 1, -1),
-    SCENE_EXIT_IF(12, 203, 12, -1),
-    SCENE_EXIT_IF(15, 203, 15, -1),
-    SCENE_EXIT_IF(16, 203, 16, -1),
-    SCENE_EXIT_IF(11, 204, 1, -1),
-    SCENE_EXIT_IF(10, 204, 10, -1),
-    SCENE_EXIT_IF(17, 204, 17, -1),
+    SCENE_EXITS(Lemuria),
+    SCENE_EXIT_UNLESS(1, LemuriaInteriors, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, LemuriaInteriors, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, LemuriaInteriors, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, AncientLemuria, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, LemuriaSpring, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, LemuriaInteriors, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(15, LemuriaInteriors, 15, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(16, LemuriaInteriors, 16, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, LemuriaPalace, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, LemuriaPalace, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(17, LemuriaPalace, 17, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

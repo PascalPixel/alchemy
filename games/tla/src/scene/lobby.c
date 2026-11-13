@@ -570,7 +570,7 @@ void Map_SetLayerEntryFlag(s32 layer);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 struct Window *Message_OpenWindow(const u8 *message, s32 x, s32 y, s32 flags);
 
-extern char SceneId_Ov6b5;
+extern char SceneId_Lobby;
 
 // Touching the lobby counter: waits for the opponent, walks the lead to the
 // arena door, swaps party records and starts the link battle.
@@ -682,7 +682,7 @@ s32 LinkLobby_EnterBattle(void) {
     /* FAKEMATCH(temporary): the flag test's result kept while the scene symbol
      * is loaded once for both branches. */
     set = Event_GetFlag(FLAG_MONSTER_BATTLE);
-    scene = (s32)&SceneId_Ov6b5;
+    scene = (s32)&SceneId_Lobby;
     if (set) {
       Event_SetAfterBattleDestination(scene, 8);
       Party_SetFields1f2And1f4(scene, 9);
@@ -1096,7 +1096,7 @@ s32 LinkLobby_LeaveArena(void) {
   Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
   /* FAKEMATCH(dead): the return in a once-only block. */
   do {
-    return Import_EventSetDestination((s32)&SceneId_Ov64a, 1);
+    return Import_EventSetDestination((s32)&SceneId_Clear, 1);
   } while (0);
 }
 

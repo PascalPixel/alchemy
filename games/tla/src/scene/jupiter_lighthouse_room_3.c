@@ -655,18 +655,18 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 };
 
 LATE_DATA u32 gSceneExits[] = {
-    SCENE_EXITS(256),
-    SCENE_EXIT(1, 263, 1),
-    SCENE_EXIT(2, 257, 2),
-    SCENE_EXIT(3, 263, 3),
-    SCENE_EXIT(4, 263, 4),
-    SCENE_EXIT(6, 255, 6),
-    SCENE_EXIT(7, 255, 7),
-    SCENE_EXIT(8, 255, 8),
-    SCENE_EXIT(9, 255, 9),
-    SCENE_EXIT(10, 255, 10),
-    SCENE_EXIT(11, 255, 11),
-    SCENE_EXIT(12, 257, 12),
+    SCENE_EXITS(JupiterLighthouseRoom3),
+    SCENE_EXIT(1, JupiterLighthouseRoomM, 1),
+    SCENE_EXIT(2, JupiterLighthouseRoom4, 2),
+    SCENE_EXIT(3, JupiterLighthouseRoomM, 3),
+    SCENE_EXIT(4, JupiterLighthouseRoomM, 4),
+    SCENE_EXIT(6, JupiterLighthouseRoom2, 6),
+    SCENE_EXIT(7, JupiterLighthouseRoom2, 7),
+    SCENE_EXIT(8, JupiterLighthouseRoom2, 8),
+    SCENE_EXIT(9, JupiterLighthouseRoom2, 9),
+    SCENE_EXIT(10, JupiterLighthouseRoom2, 10),
+    SCENE_EXIT(11, JupiterLighthouseRoom2, 11),
+    SCENE_EXIT(12, JupiterLighthouseRoom4, 12),
     SCENE_EXITS_END,
 };
 

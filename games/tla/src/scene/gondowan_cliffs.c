@@ -741,13 +741,13 @@ LATE_DATA struct ActorPlacement gGondowanCliffs_PassEntrances[] = {
 };
 
 LATE_DATA u32 gSceneExits[] = {
-    SCENE_EXITS(102),
-    SCENE_EXIT_IF(1, 2, 21, -1),
-    SCENE_EXIT_IF(2, 2, 22, -1),
-    SCENE_EXIT_IF(3, 104, 1, -1),
-    SCENE_EXITS(103),
-    SCENE_EXIT_IF(1, 2, 85, -1),
-    SCENE_EXIT_IF(2, 2, 86, -1),
+    SCENE_EXITS(GondowanCliffs),
+    SCENE_EXIT_UNLESS(1, WorldMap, 21, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, WorldMap, 22, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, GondowanCliffsHideout, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(GondowanCliffsPass),
+    SCENE_EXIT_UNLESS(1, WorldMap, 85, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, WorldMap, 86, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

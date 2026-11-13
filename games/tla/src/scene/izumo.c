@@ -621,16 +621,16 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(171),
-    SCENE_EXIT_IF(1, 2, 38, -1),
-    SCENE_EXIT_IF(2, 170, 1, -1),
-    SCENE_EXIT_IF(3, 170, 2, -1),
-    SCENE_EXIT_IF(4, 170, 3, -1),
-    SCENE_EXIT_IF(5, 170, 4, -1),
-    SCENE_EXIT_IF(6, 170, 5, -1),
-    SCENE_EXIT_IF(7, 170, 6, -1),
-    SCENE_EXIT_IF(8, 170, 7, -1),
-    SCENE_EXIT_IF(10, 172, 1, -1),
+    SCENE_EXITS(Izumo),
+    SCENE_EXIT_UNLESS(1, WorldMap, 38, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, IzumoInteriors, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, IzumoInteriors, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, IzumoInteriors, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, IzumoInteriors, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, IzumoInteriors, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, IzumoInteriors, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, IzumoInteriors, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, IzumoRuinsFirstRoom, 1, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

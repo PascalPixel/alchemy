@@ -184,11 +184,11 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov679Room1)
+  if (scene == (s32)&SceneId_ApojiiIslands1)
     return gApojiiIslands_Room1Placements;
-  if (scene == (s32)&SceneId_Ov679Room3)
+  if (scene == (s32)&SceneId_ApojiiIslands3)
     return gApojiiIslands_Room3Placements;
-  if (scene == (s32)&SceneId_Ov679Room2)
+  if (scene == (s32)&SceneId_ApojiiIslands2)
     return gApojiiIslands_Room2Placements;
   return gApojiiIslands_Placements;
 }
@@ -509,11 +509,11 @@ void Func_02000d74(void) {
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov679Room1)
+  if (scene == (s32)&SceneId_ApojiiIslands1)
     return gApojiiIslands_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov679Room3)
+  if (scene == (s32)&SceneId_ApojiiIslands3)
     return gApojiiIslands_Room3Triggers;
-  if (scene == (s32)&SceneId_Ov679Room2)
+  if (scene == (s32)&SceneId_ApojiiIslands2)
     return gApojiiIslands_Room2Triggers;
   return gApojiiIslands_Triggers;
 }
@@ -599,13 +599,13 @@ s32 Scene_Initialize(void) {
   *effect = 0x202;
   party = &gMainRoutineWork;
   scene = party->scene;
-  if (scene == (s32)&SceneId_Ov679Room2) {
+  if (scene == (s32)&SceneId_ApojiiIslands2) {
     ApojiiIslands_InitializeRoom2();
-  } else if (scene == (s32)&SceneId_Ov679Room1) {
+  } else if (scene == (s32)&SceneId_ApojiiIslands1) {
     FieldTask_AddFrame(Func_02000540, 0x480);
     if (Event_GetFlag(0x95e))
       Func_02000974();
-  } else if (scene == (s32)&SceneId_Ov679Room3) {
+  } else if (scene == (s32)&SceneId_ApojiiIslands3) {
     *effect = 0x100;
     if (party->entrance == 6)
       Func_020010b4();
@@ -667,7 +667,7 @@ void Func_020011a8(void) {
   s32 position[3];
   s32 result;
 
-  if (gMainRoutineWork.scene != (s32)&SceneId_Ov67bRoom1 ||
+  if (gMainRoutineWork.scene != (s32)&SceneId_AquaRock1 ||
       leader->terrainHeight != 0) {
     position[0] = leader->x;
     position[1] = leader->y;
@@ -1025,30 +1025,30 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(154),
-    SCENE_EXIT_IF(1, 2, 36, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 155, 1, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(3, 155, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(4, 156, 1, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(5, 156, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(6, 156, 3, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(7, 156, 4, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(8, 156, 5, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(9, 58, 5, CONDITION_ALWAYS),
-    SCENE_EXIT(77, 2, 78),
-    SCENE_EXITS(156),
-    SCENE_EXIT_IF(1, 154, 4, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 154, 5, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(3, 154, 6, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(4, 154, 7, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(5, 154, 8, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(6, 135, 2, CONDITION_ALWAYS),
-    SCENE_EXITS(155),
-    SCENE_EXIT_IF(1, 154, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 154, 3, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(3, 157, 3, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(4, 157, 4, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(5, 157, 5, CONDITION_ALWAYS),
+    SCENE_EXITS(ApojiiIslands1),
+    SCENE_EXIT_UNLESS(1, WorldMap, 36, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, ApojiiIslands2, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, ApojiiIslands2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, ApojiiIslands3, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, ApojiiIslands3, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, ApojiiIslands3, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, ApojiiIslands3, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, ApojiiIslands3, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, MikasallaInteriors2, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT(77, WorldMap, 78),
+    SCENE_EXITS(ApojiiIslands3),
+    SCENE_EXIT_UNLESS(1, ApojiiIslands1, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, ApojiiIslands1, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, ApojiiIslands1, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, ApojiiIslands1, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, ApojiiIslands1, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Islets5, 2, EXIT_FLAG_NONE),
+    SCENE_EXITS(ApojiiIslands2),
+    SCENE_EXIT_UNLESS(1, ApojiiIslands1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, ApojiiIslands1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, ApojiiIslandsCave, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, ApojiiIslandsCave, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, ApojiiIslandsCave, 5, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

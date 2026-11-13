@@ -90,7 +90,7 @@ s32 FieldSequence_Run(void) {
   gMainRoutineWork.unk2c3 = 0;
   Task_ResetAll();
   Djinn_ResolvePending(0);
-  if (gMainRoutineWork.map == (s32)&SceneId_Ov64a) {
+  if (gMainRoutineWork.map == (s32)&SceneId_Clear) {
     WorldMap_InitializePerspectiveFar();
     gMainRoutineWork.unk244[0] = 1;
     mode = 3;

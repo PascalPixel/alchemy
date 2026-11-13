@@ -899,7 +899,7 @@ void Func_02001250(void) {
   Teleport_PlaySparks();
 
   gMainRoutineWork.unk2c2 = 2;
-  Event_SetDestination((s32)&SceneId_Ov6B0Room1, 99);
+  Event_SetDestination((s32)&SceneId_AnemosInnerSanctum1, 99);
   Event_Wait(40);
   Contigo_StopPaletteCycle();
 }
@@ -2616,37 +2616,37 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(236),
-    SCENE_EXIT(1, 2, 54),
-    SCENE_EXIT(2, 237, 1),
-    SCENE_EXIT(3, 237, 2),
-    SCENE_EXIT(4, 238, 10),
-    SCENE_EXIT(5, 237, 7),
-    SCENE_EXIT(6, 238, 8),
-    SCENE_EXIT(7, 238, 9),
-    SCENE_EXIT(8, 237, 5),
-    SCENE_EXIT(9, 237, 6),
-    SCENE_EXIT(10, 237, 3),
-    SCENE_EXIT(11, 237, 4),
-    SCENE_EXIT(12, 239, 21),
-    SCENE_EXITS(239),
-    SCENE_EXIT(21, 236, 12),
-    SCENE_EXIT(22, 308, 3),
-    SCENE_EXIT(23, 308, 1),
-    SCENE_EXIT(24, 308, 4),
-    SCENE_EXITS(237),
-    SCENE_EXIT(1, 236, 2),
-    SCENE_EXIT(2, 236, 3),
-    SCENE_EXIT(3, 236, 10),
-    SCENE_EXIT(4, 236, 11),
-    SCENE_EXIT(5, 236, 8),
-    SCENE_EXIT(6, 236, 9),
-    SCENE_EXIT(7, 236, 5),
-    SCENE_EXIT(21, 235, 3),
-    SCENE_EXITS(238),
-    SCENE_EXIT(8, 236, 6),
-    SCENE_EXIT(9, 236, 7),
-    SCENE_EXIT(10, 236, 4),
+    SCENE_EXITS(Contigo1),
+    SCENE_EXIT(1, WorldMap, 54),
+    SCENE_EXIT(2, Contigo2, 1),
+    SCENE_EXIT(3, Contigo2, 2),
+    SCENE_EXIT(4, Contigo3, 10),
+    SCENE_EXIT(5, Contigo2, 7),
+    SCENE_EXIT(6, Contigo3, 8),
+    SCENE_EXIT(7, Contigo3, 9),
+    SCENE_EXIT(8, Contigo2, 5),
+    SCENE_EXIT(9, Contigo2, 6),
+    SCENE_EXIT(10, Contigo2, 3),
+    SCENE_EXIT(11, Contigo2, 4),
+    SCENE_EXIT(12, Contigo4, 21),
+    SCENE_EXITS(Contigo4),
+    SCENE_EXIT(21, Contigo1, 12),
+    SCENE_EXIT(22, AnemosInnerSanctumEntrance, 3),
+    SCENE_EXIT(23, AnemosInnerSanctumEntrance, 1),
+    SCENE_EXIT(24, AnemosInnerSanctumEntrance, 4),
+    SCENE_EXITS(Contigo2),
+    SCENE_EXIT(1, Contigo1, 2),
+    SCENE_EXIT(2, Contigo1, 3),
+    SCENE_EXIT(3, Contigo1, 10),
+    SCENE_EXIT(4, Contigo1, 11),
+    SCENE_EXIT(5, Contigo1, 8),
+    SCENE_EXIT(6, Contigo1, 9),
+    SCENE_EXIT(7, Contigo1, 5),
+    SCENE_EXIT(21, AttekaInlet2, 3),
+    SCENE_EXITS(Contigo3),
+    SCENE_EXIT(8, Contigo1, 6),
+    SCENE_EXIT(9, Contigo1, 7),
+    SCENE_EXIT(10, Contigo1, 4),
     SCENE_EXITS_END,
 };
 

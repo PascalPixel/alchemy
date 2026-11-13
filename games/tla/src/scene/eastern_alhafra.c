@@ -2487,9 +2487,9 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(98),
-    SCENE_EXIT_IF(1, 95, 11, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 99, 1, CONDITION_ALWAYS),
+    SCENE_EXITS(EasternAlhafra1),
+    SCENE_EXIT_UNLESS(1, Alhafra1, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, EasternAlhafraShip, 1, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

@@ -1230,14 +1230,14 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(170),
-    SCENE_EXIT_IF(1, 171, 2, -1),
-    SCENE_EXIT_IF(2, 171, 3, -1),
-    SCENE_EXIT_IF(3, 171, 4, -1),
-    SCENE_EXIT_IF(4, 171, 5, -1),
-    SCENE_EXIT_IF(5, 171, 6, -1),
-    SCENE_EXIT_IF(6, 171, 7, -1),
-    SCENE_EXIT_IF(7, 171, 8, -1),
+    SCENE_EXITS(IzumoInteriors),
+    SCENE_EXIT_UNLESS(1, Izumo, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Izumo, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Izumo, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Izumo, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Izumo, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Izumo, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, Izumo, 8, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

@@ -350,10 +350,12 @@ static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 
 void Func_02000624(void) {
   Map_CopyCells(34, 26, 5, 4, 2, 10, 0);
-  Event_SetDestination((s32)&SceneId_Ov6b8Room1, 6);
+  Event_SetDestination((s32)&SceneId_PsynergyTest, 6);
 }
 
-void Func_02000650(void) { Event_SetDestination((s32)&SceneId_Ov6b8Room1, 8); }
+void Func_02000650(void) {
+  Event_SetDestination((s32)&SceneId_PsynergyTest, 8);
+}
 
 /* VIEW(psynergy_test): variable gData_020017b0 as u8 gData_020017b0[];
  * module/tla.h has s32 gData_020017b0; tried as the rest of the object declares
@@ -678,8 +680,8 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(322),
-    SCENE_EXIT(20, 322, 2),
+    SCENE_EXITS(PsynergyTest),
+    SCENE_EXIT(20, PsynergyTest, 2),
     SCENE_EXITS_END,
 };
 

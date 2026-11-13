@@ -919,15 +919,15 @@ u32 gIzumoRuins_SecondRoomRegions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(172),
-    SCENE_EXIT_IF(1, 171, 10, -1),
-    SCENE_EXIT_IF(2, 172, 3, -1),
-    SCENE_EXIT_IF(3, 172, 2, -1),
-    SCENE_EXIT_IF(4, 173, 1, -1),
-    SCENE_EXITS(173),
-    SCENE_EXIT_IF(1, 172, 4, -1),
-    SCENE_EXIT_IF(2, 173, 3, -1),
-    SCENE_EXIT_IF(3, 173, 2, -1),
+    SCENE_EXITS(IzumoRuinsFirstRoom),
+    SCENE_EXIT_UNLESS(1, Izumo, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, IzumoRuinsFirstRoom, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, IzumoRuinsFirstRoom, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, IzumoRuinsSecondRoom, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(IzumoRuinsSecondRoom),
+    SCENE_EXIT_UNLESS(1, IzumoRuinsFirstRoom, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, IzumoRuinsSecondRoom, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, IzumoRuinsSecondRoom, 2, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

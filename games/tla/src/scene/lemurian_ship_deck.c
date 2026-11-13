@@ -1115,14 +1115,14 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(43),
-    SCENE_EXIT(1, 40, 1),
-    SCENE_EXIT(1, 2, 68),
-    SCENE_EXIT(2, 2, 8),
-    SCENE_EXITS(42),
-    SCENE_EXIT(1, 2, 42),
-    SCENE_EXIT(2, 2, 8),
-    SCENE_EXIT(10, 2, 71),
+    SCENE_EXITS(LemurianShipDeck2),
+    SCENE_EXIT(1, LemurianShip1, 1),
+    SCENE_EXIT(1, WorldMap, 68),
+    SCENE_EXIT(2, WorldMap, 8),
+    SCENE_EXITS(LemurianShipDeck1),
+    SCENE_EXIT(1, WorldMap, 42),
+    SCENE_EXIT(2, WorldMap, 8),
+    SCENE_EXIT(10, WorldMap, 71),
     SCENE_EXITS_END,
 };
 

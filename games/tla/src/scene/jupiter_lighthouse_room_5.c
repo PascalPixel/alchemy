@@ -1136,7 +1136,12 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_SCENE_EXITS_6(258, 257, 2, 258, 3, 2, 263, 258, 8, 258, 7, 259)
+u32 gSceneExits[] = {                                                        
+      SCENE_EXITS(JupiterLighthouseRoom5),         SCENE_EXIT(1, JupiterLighthouseRoom4, 1),    SCENE_EXIT(2, JupiterLighthouseRoom5, 3), 
+      SCENE_EXIT(3, JupiterLighthouseRoom5, 2),  SCENE_EXIT(5, JupiterLighthouseRoomM, 5),    SCENE_EXIT(6, JupiterLighthouseRoomM, 6),  
+      SCENE_EXIT(7, JupiterLighthouseRoom5, 8),   SCENE_EXIT(8, JupiterLighthouseRoom5, 7), SCENE_EXIT(9, JupiterLighthouseRoom6, 9), 
+      SCENE_EXIT(10, JupiterLighthouseRoom6, 10), SCENE_EXITS_END,                                
+  };
 
 struct ActorPlacement gActorPlacements[] = {
     {341, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(608), FACING_SOUTHWEST, 2, 0},

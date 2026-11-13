@@ -141,7 +141,12 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_SCENE_EXITS_5(54, 12, 2, 13)
+u32 gSceneExits[] = {
+    SCENE_EXITS(OseniaCliffs),
+    SCENE_EXIT_UNLESS(1, WorldMap, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, WorldMap, 13, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
+};
 
 struct ActorPlacement gActorPlacements[] = {
     {192, 0x8ff, 1, PIXELS(200), 0, PIXELS(226), FACING_EAST, 1, 0},

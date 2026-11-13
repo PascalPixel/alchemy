@@ -232,9 +232,9 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov67bRoom1)
+  if (scene == (s32)&SceneId_AquaRock1)
     return gData_02002e30;
-  if (scene == (s32)&SceneId_Ov67bRoom2)
+  if (scene == (s32)&SceneId_AquaRock2)
     return gData_02002e60;
   return 0;
 }
@@ -306,9 +306,9 @@ s32 Func_02000478(struct Actor *object) {
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov67bRoom1)
+  if (scene == (s32)&SceneId_AquaRock1)
     return gAquaRock_Room1Placements;
-  if (scene == (s32)&SceneId_Ov67bRoom2)
+  if (scene == (s32)&SceneId_AquaRock2)
     return gAquaRock_Room2Placements;
   return gAquaRock_Placements;
 }
@@ -620,7 +620,7 @@ void Func_02000d80(void) {
     owner = gMainRoutineWork.currentOwner;
     carried = work->object;
     leader = Actor_GetById(owner);
-    if (gMainRoutineWork.scene == (s32)&SceneId_Ov67bRoom1 &&
+    if (gMainRoutineWork.scene == (s32)&SceneId_AquaRock1 &&
         leader->terrainHeight == 0)
       return;
     ahead.x = leader->x;
@@ -648,7 +648,7 @@ void Func_02000d80(void) {
     ahead.z = leader->z - 0x80000;
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0) {
-      if (gMainRoutineWork.scene != (s32)&SceneId_Ov67bRoom1)
+      if (gMainRoutineWork.scene != (s32)&SceneId_AquaRock1)
         return;
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -835,9 +835,9 @@ void Func_02001224(s32 unused, s32 id) {
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov67bRoom1)
+  if (scene == (s32)&SceneId_AquaRock1)
     return gAquaRock_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov67bRoom2)
+  if (scene == (s32)&SceneId_AquaRock2)
     return gAquaRock_Room2Triggers;
   return gAquaRock_Triggers;
 }
@@ -1018,11 +1018,11 @@ s32 Scene_Initialize(void) {
   s16 *entrance;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
-  gMainRoutineWork.retreatScene = (s32)&SceneId_Ov67bRoom1;
+  gMainRoutineWork.retreatScene = (s32)&SceneId_AquaRock1;
   gMainRoutineWork.retreatEntrance = 1;
   map->mode = 1;
   Scene_QueueMusic(SE_170);
-  if (scene == (s32)&SceneId_Ov67bRoom1) {
+  if (scene == (s32)&SceneId_AquaRock1) {
     Actor_SetSpriteColor(Actor_GetById(8), 4);
     Actor_SetSpriteColor(Actor_GetById(9), 4);
     Actor_SetSpriteColor(Actor_GetById(10), 4);
@@ -1099,7 +1099,7 @@ s32 Scene_Initialize(void) {
     Func_02000844();
     if (gMainRoutineWork.entrance == 4)
       Func_02002158();
-  } else if (scene == (s32)&SceneId_Ov67bRoom2) {
+  } else if (scene == (s32)&SceneId_AquaRock2) {
     Actor_SetSpriteFlags(Actor_GetById(14), 0);
     if (GameFlag_Get(FLAG_SCENE_TEMP_21))
       Call6(Map_CopyCellAttributeRect, 42, 32, 1, 1, 44, 32);
@@ -1198,7 +1198,7 @@ void Func_02001e00(void) {
     anchor = work->object;
   }
   leader = Actor_GetById(owner);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov67bRoom1 &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_AquaRock1 &&
       leader->terrainHeight == 0)
     return;
   position[0] = leader->x;
@@ -1706,20 +1706,20 @@ LATE_DATA s16 gData_02002e60[] = {
 };
 
 LATE_DATA u32 gSceneExits[] = {
-    SCENE_EXITS(158),
-    SCENE_EXIT(1, 2, 37),
-    SCENE_EXIT(2, 159, 2),
-    SCENE_EXIT(3, 159, 3),
-    SCENE_EXIT(4, 163, 1),
-    SCENE_EXIT(6, 159, 6),
-    SCENE_EXIT(77, 154, 1),
-    SCENE_EXITS(159),
-    SCENE_EXIT(1, 165, 13),
-    SCENE_EXIT(2, 158, 2),
-    SCENE_EXIT(3, 158, 3),
-    SCENE_EXIT(4, 159, 5),
-    SCENE_EXIT(5, 159, 4),
-    SCENE_EXIT(7, 158, 7),
+    SCENE_EXITS(AquaRock1),
+    SCENE_EXIT(1, WorldMap, 37),
+    SCENE_EXIT(2, AquaRock2, 2),
+    SCENE_EXIT(3, AquaRock2, 3),
+    SCENE_EXIT(4, AquaRockInside4, 1),
+    SCENE_EXIT(6, AquaRock2, 6),
+    SCENE_EXIT(77, ApojiiIslands1, 1),
+    SCENE_EXITS(AquaRock2),
+    SCENE_EXIT(1, AquaRockInside6, 13),
+    SCENE_EXIT(2, AquaRock1, 2),
+    SCENE_EXIT(3, AquaRock1, 3),
+    SCENE_EXIT(4, AquaRock2, 5),
+    SCENE_EXIT(5, AquaRock2, 4),
+    SCENE_EXIT(7, AquaRock1, 7),
     SCENE_EXITS_END,
 };
 

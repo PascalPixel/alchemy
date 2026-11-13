@@ -1188,7 +1188,7 @@ extern u8 gField_CachedTilesC[];
 // reached by calls for.
 extern char SceneId_LemuriaEntrance;
 
-extern char SceneId_Ov6A6Room2;
+extern char SceneId_Loho2;
 
 extern char SceneId_MadraCatacombs1;
 extern char SceneId_MadraCatacombs2;
@@ -1201,7 +1201,7 @@ void Func_02001e80(s32 value);
 
 // The cell stampers keep their last cell and the block they copy.
 
-extern char SceneId_Ov6ACRoom3;
+extern char SceneId_MarsLighthouseRoomM3;
 
 extern char SceneId_MarsLighthouseEntrance1;
 extern char SceneId_MarsLighthouseEntrance2;
@@ -1211,19 +1211,19 @@ extern char SceneId_MarsLighthouseEntrance5;
 extern char SceneId_MarsLighthouseEntrance6;
 extern char SceneId_MarsLighthouseEntrance7;
 
-extern char SceneId_Ov6adRoom1;
-extern char SceneId_Ov6adRoom2;
-extern char SceneId_Ov6adRoom3;
-extern char SceneId_Ov6adRoom4;
+extern char SceneId_MarsLighthouseRoomF1;
+extern char SceneId_MarsLighthouseRoomF2;
+extern char SceneId_MarsLighthouseRoomF3;
+extern char SceneId_MarsLighthouseRoomF4;
 
-extern char SceneId_Ov6ACRoom6;
-extern char SceneId_Ov6ACRoom1;
+extern char SceneId_MarsLighthouseRoomM6;
+extern char SceneId_MarsLighthouseRoomM1;
 
 void LineScroll_InitWave(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
-extern char SceneId_Ov64c;
+extern char SceneId_StaffCredit;
 
-extern char SceneId_Ov6a7Room1;
+extern char SceneId_NorthernReaches;
 extern char ResourceId_FieldEffectIceShard;
 
 extern char ResourceId_FarCall00A;
@@ -1279,6 +1279,6 @@ struct FieldPart {
   s16 kind;
 };
 
-extern char SceneId_Ov6b5;
+extern char SceneId_Lobby;
 
 #endif

@@ -136,7 +136,7 @@ void Func_02000118(void) { Import_EventSetExitRequest(4); }
 void Func_02000124(void) { Import_EventSetExitRequest(6); }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_JupiterLighthouseBasement2)
     return gJupiterLighthouseBasement_Room2Triggers;
   return gJupiterLighthouseBasement_Triggers;
 }
@@ -238,7 +238,7 @@ void Func_02000298(void) {
 
 s32 Scene_Initialize(void) {
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_JupiterLighthouseBasement1) {
     JupiterLighthouse_LoadPalettes(1);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
         gMainRoutineWork.entrance == 4)
@@ -247,7 +247,7 @@ s32 Scene_Initialize(void) {
         gMainRoutineWork.entrance == 6)
       Actor_DepartInRing(gMainRoutineWork.currentOwner);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room2) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_JupiterLighthouseBasement2) {
     *(volatile u16 *)0x04000052 = 0x1008;
     *(volatile u16 *)0x04000050 = 0x3f10;
     Func_02000298();
@@ -602,14 +602,14 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(252),
-    SCENE_EXIT(1, 253, 1),
-    SCENE_EXIT(2, 252, 3),
-    SCENE_EXIT(3, 252, 2),
-    SCENE_EXIT(4, 251, 4),
-    SCENE_EXIT(6, 254, 6),
-    SCENE_EXITS(253),
-    SCENE_EXIT(1, 252, 1),
+    SCENE_EXITS(JupiterLighthouseBasement1),
+    SCENE_EXIT(1, JupiterLighthouseBasement2, 1),
+    SCENE_EXIT(2, JupiterLighthouseBasement1, 3),
+    SCENE_EXIT(3, JupiterLighthouseBasement1, 2),
+    SCENE_EXIT(4, JupiterLighthouseEntrance, 4),
+    SCENE_EXIT(6, JupiterLighthouseRoom1, 6),
+    SCENE_EXITS(JupiterLighthouseBasement2),
+    SCENE_EXIT(1, JupiterLighthouseBasement1, 1),
     SCENE_EXITS_END,
 };
 

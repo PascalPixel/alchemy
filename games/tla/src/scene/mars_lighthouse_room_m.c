@@ -229,12 +229,12 @@ struct MarsLighthouseRoomMRideWork {
 };
 
 extern u8 gInventorySnapshot[];
-extern char SceneId_Ov6ACRoom1;
-extern char SceneId_Ov6ACRoom2;
-extern char SceneId_Ov6ACRoom3;
-extern char SceneId_Ov6ACRoom4;
-extern char SceneId_Ov6ACRoom5;
-extern char SceneId_Ov6ACRoom6;
+extern char SceneId_MarsLighthouseRoomM1;
+extern char SceneId_MarsLighthouseRoomM2;
+extern char SceneId_MarsLighthouseRoomM3;
+extern char SceneId_MarsLighthouseRoomM4;
+extern char SceneId_MarsLighthouseRoomM5;
+extern char SceneId_MarsLighthouseRoomM6;
 
 void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *script);
@@ -282,9 +282,9 @@ void Event_WaitTransitionFrames(void);
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov6ACRoom6)
+  if (scene == (s32)&SceneId_MarsLighthouseRoomM6)
     return gMarsLighthouseRoomM_Room6Placements;
-  if (scene == (s32)&SceneId_Ov6ACRoom1)
+  if (scene == (s32)&SceneId_MarsLighthouseRoomM1)
     return gMarsLighthouseRoomM_Room1Placements;
   return gMarsLighthouseRoomM_Placements;
 }
@@ -590,12 +590,14 @@ void Func_02000abc(void) {
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov6ACRoom6)
+  if (scene == (s32)&SceneId_MarsLighthouseRoomM6)
     return gMarsLighthouseRoomM_Room6Triggers;
-  if (scene == (s32)&SceneId_Ov6ACRoom1)
+  if (scene == (s32)&SceneId_MarsLighthouseRoomM1)
     return gMarsLighthouseRoomM_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov6ACRoom2 || scene == (s32)&SceneId_Ov6ACRoom3 ||
-      scene == (s32)&SceneId_Ov6ACRoom4 || scene == (s32)&SceneId_Ov6ACRoom5)
+  if (scene == (s32)&SceneId_MarsLighthouseRoomM2 ||
+      scene == (s32)&SceneId_MarsLighthouseRoomM3 ||
+      scene == (s32)&SceneId_MarsLighthouseRoomM4 ||
+      scene == (s32)&SceneId_MarsLighthouseRoomM5)
     return gMarsLighthouseRoomM_Room5Triggers;
   return gMarsLighthouseRoomM_Triggers;
 }
@@ -622,7 +624,8 @@ s32 Scene_Initialize(void) {
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
   Call4((void (*)())Palette_SetColorsFade, (s32)gData_0200338c,
         (s32)gData_0200339c, (s32)gData_020033c8, (s32)gData_020033f4);
-  if (scene != (s32)&SceneId_Ov6ACRoom6 && scene == (s32)&SceneId_Ov6ACRoom1) {
+  if (scene != (s32)&SceneId_MarsLighthouseRoomM6 &&
+      scene == (s32)&SceneId_MarsLighthouseRoomM1) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x204;
     if ((u32)(entrance - 1) <= 1 || entrance == 8 || entrance == 10 ||
@@ -717,13 +720,15 @@ s32 Scene_PrepareMap(void) {
   s32 entrance = gMainRoutineWork.entrance;
   struct Actor *object;
 
-  if (scene == (s32)&SceneId_Ov6ACRoom6 || scene == (s32)&SceneId_Ov6ACRoom2 ||
-      scene == (s32)&SceneId_Ov6ACRoom3 || scene == (s32)&SceneId_Ov6ACRoom4 ||
-      scene == (s32)&SceneId_Ov6ACRoom5) {
+  if (scene == (s32)&SceneId_MarsLighthouseRoomM6 ||
+      scene == (s32)&SceneId_MarsLighthouseRoomM2 ||
+      scene == (s32)&SceneId_MarsLighthouseRoomM3 ||
+      scene == (s32)&SceneId_MarsLighthouseRoomM4 ||
+      scene == (s32)&SceneId_MarsLighthouseRoomM5) {
     Weather_StartRain(1);
     SetBlend(1, 0x10000, 0x40000, 0x20000, 0x10000, 0x8000, 0x4000);
   }
-  if (scene == (s32)&SceneId_Ov6ACRoom6) {
+  if (scene == (s32)&SceneId_MarsLighthouseRoomM6) {
     switch (entrance) {
     case 1:
       FieldActor_SetSpriteColor(Actor_Get(8), 1);
@@ -754,7 +759,7 @@ s32 Scene_PrepareMap(void) {
     object->motionFlags = 0;
     object->z = 0x680000;
     FieldTask_AddFrame(Func_020000c0, 0x480);
-  } else if (scene == (s32)&SceneId_Ov6ACRoom1) {
+  } else if (scene == (s32)&SceneId_MarsLighthouseRoomM1) {
     if (entrance == 1 || entrance == 2 || entrance == 8 || entrance == 10 ||
         entrance == 12 || entrance == 14) {
       Func_02002118();
@@ -783,11 +788,12 @@ s32 Scene_PrepareMap(void) {
     }
   }
   if (Event_GetFlag(0xa30)) {
-    extern char SceneId_Ov6ACRoom3Second __asm__("SceneId_Ov6ACRoom3");
+    extern char SceneId_MarsLighthouseRoomM3Second __asm__(
+        "SceneId_MarsLighthouseRoomM3");
 
     TileMap_ConvertBuffer(
         gMainRoutineWork.map +
-            ((s32)&SceneId_Ov6ACRoom3Second - (s32)&SceneId_Prox2),
+            ((s32)&SceneId_MarsLighthouseRoomM3Second - (s32)&SceneId_Prox2),
         0x5000000);
   }
   return 0;
@@ -1781,38 +1787,38 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(296),
-    SCENE_EXIT(1, 295, 5),
-    SCENE_EXIT(2, 293, 8),
-    SCENE_EXIT(3, 292, 4),
-    SCENE_EXIT(4, 294, 15),
-    SCENE_EXITS(287),
-    SCENE_EXIT(1, 297, 1),
-    SCENE_EXIT(2, 280, 2),
-    SCENE_EXIT(3, 291, 1),
-    SCENE_EXIT(4, 288, 1),
-    SCENE_EXIT(5, 290, 1),
-    SCENE_EXIT(6, 289, 1),
-    SCENE_EXIT(7, 287, 8),
-    SCENE_EXIT(8, 287, 7),
-    SCENE_EXIT(9, 287, 10),
-    SCENE_EXIT(10, 287, 9),
-    SCENE_EXIT(11, 287, 12),
-    SCENE_EXIT(12, 287, 11),
-    SCENE_EXIT(13, 287, 14),
-    SCENE_EXIT(14, 287, 13),
-    SCENE_EXITS(288),
-    SCENE_EXIT(1, 287, 4),
-    SCENE_EXIT(2, 293, 1),
-    SCENE_EXITS(289),
-    SCENE_EXIT(1, 287, 6),
-    SCENE_EXIT(2, 294, 1),
-    SCENE_EXITS(290),
-    SCENE_EXIT(1, 287, 5),
-    SCENE_EXIT(2, 292, 1),
-    SCENE_EXITS(291),
-    SCENE_EXIT(1, 287, 3),
-    SCENE_EXIT(2, 295, 1),
+    SCENE_EXITS(MarsLighthouseRoomM6),
+    SCENE_EXIT(1, MarsLighthouseRoomF4, 5),
+    SCENE_EXIT(2, MarsLighthouseRoomF2, 8),
+    SCENE_EXIT(3, MarsLighthouseRoomF1, 4),
+    SCENE_EXIT(4, MarsLighthouseRoomF3, 15),
+    SCENE_EXITS(MarsLighthouseRoomM1),
+    SCENE_EXIT(1, MarsLighthouseAerie1, 1),
+    SCENE_EXIT(2, MarsLighthouseEntrance2, 2),
+    SCENE_EXIT(3, MarsLighthouseRoomM5, 1),
+    SCENE_EXIT(4, MarsLighthouseRoomM2, 1),
+    SCENE_EXIT(5, MarsLighthouseRoomM4, 1),
+    SCENE_EXIT(6, MarsLighthouseRoomM3, 1),
+    SCENE_EXIT(7, MarsLighthouseRoomM1, 8),
+    SCENE_EXIT(8, MarsLighthouseRoomM1, 7),
+    SCENE_EXIT(9, MarsLighthouseRoomM1, 10),
+    SCENE_EXIT(10, MarsLighthouseRoomM1, 9),
+    SCENE_EXIT(11, MarsLighthouseRoomM1, 12),
+    SCENE_EXIT(12, MarsLighthouseRoomM1, 11),
+    SCENE_EXIT(13, MarsLighthouseRoomM1, 14),
+    SCENE_EXIT(14, MarsLighthouseRoomM1, 13),
+    SCENE_EXITS(MarsLighthouseRoomM2),
+    SCENE_EXIT(1, MarsLighthouseRoomM1, 4),
+    SCENE_EXIT(2, MarsLighthouseRoomF2, 1),
+    SCENE_EXITS(MarsLighthouseRoomM3),
+    SCENE_EXIT(1, MarsLighthouseRoomM1, 6),
+    SCENE_EXIT(2, MarsLighthouseRoomF3, 1),
+    SCENE_EXITS(MarsLighthouseRoomM4),
+    SCENE_EXIT(1, MarsLighthouseRoomM1, 5),
+    SCENE_EXIT(2, MarsLighthouseRoomF1, 1),
+    SCENE_EXITS(MarsLighthouseRoomM5),
+    SCENE_EXIT(1, MarsLighthouseRoomM1, 3),
+    SCENE_EXIT(2, MarsLighthouseRoomF4, 1),
     SCENE_EXITS_END,
 };
 

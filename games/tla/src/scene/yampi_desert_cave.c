@@ -902,13 +902,13 @@ s32 Scene_Initialize(void) {
     }
     if (gMainRoutineWork.entrance == 1) {
       if (Event_GetFlag(0xa29)) {
-        gMainRoutineWork.retreatScene = (s32)&SceneId_Ov661Room1;
+        gMainRoutineWork.retreatScene = (s32)&SceneId_YampiDesert1;
         gMainRoutineWork.retreatEntrance = 1;
       } else if (Event_GetFlag(0xa2a)) {
-        gMainRoutineWork.retreatScene = (s32)&SceneId_Ov661Room8;
+        gMainRoutineWork.retreatScene = (s32)&SceneId_YampiDesert8;
         gMainRoutineWork.retreatEntrance = 2;
       } else if (Event_GetFlag(0xa2b)) {
-        gMainRoutineWork.retreatScene = (s32)&SceneId_Ov661Room9;
+        gMainRoutineWork.retreatScene = (s32)&SceneId_YampiDesert9;
         gMainRoutineWork.retreatEntrance = 2;
       }
     }
@@ -1040,36 +1040,36 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(79),
-    SCENE_EXIT(1, 74, 4),
-    SCENE_EXIT(2, 81, 1),
-    SCENE_EXIT(3, 79, 6),
-    SCENE_EXIT(4, 79, 5),
-    SCENE_EXIT(5, 79, 4),
-    SCENE_EXIT(6, 79, 3),
-    SCENE_EXIT(7, 81, 8),
-    SCENE_EXIT(8, 80, 1),
-    SCENE_EXITS(80),
-    SCENE_EXIT(1, 79, 8),
-    SCENE_EXIT(2, 80, 17),
-    SCENE_EXIT(14, 81, 13),
-    SCENE_EXIT(15, 81, 12),
-    SCENE_EXIT(16, 81, 11),
-    SCENE_EXIT(17, 80, 2),
-    SCENE_EXITS(81),
-    SCENE_EXIT(1, 79, 2),
-    SCENE_EXIT(2, 81, 3),
-    SCENE_EXIT(3, 81, 2),
-    SCENE_EXIT(4, 81, 7),
-    SCENE_EXIT(5, 81, 6),
-    SCENE_EXIT(6, 81, 5),
-    SCENE_EXIT(7, 81, 4),
-    SCENE_EXIT(8, 79, 7),
-    SCENE_EXIT(9, 81, 10),
-    SCENE_EXIT(10, 81, 9),
-    SCENE_EXIT(11, 80, 16),
-    SCENE_EXIT(12, 80, 15),
-    SCENE_EXIT(13, 80, 14),
+    SCENE_EXITS(YampiDesertCave1),
+    SCENE_EXIT(1, YampiDesert8, 4),
+    SCENE_EXIT(2, YampiDesertCave3, 1),
+    SCENE_EXIT(3, YampiDesertCave1, 6),
+    SCENE_EXIT(4, YampiDesertCave1, 5),
+    SCENE_EXIT(5, YampiDesertCave1, 4),
+    SCENE_EXIT(6, YampiDesertCave1, 3),
+    SCENE_EXIT(7, YampiDesertCave3, 8),
+    SCENE_EXIT(8, YampiDesertCave2, 1),
+    SCENE_EXITS(YampiDesertCave2),
+    SCENE_EXIT(1, YampiDesertCave1, 8),
+    SCENE_EXIT(2, YampiDesertCave2, 17),
+    SCENE_EXIT(14, YampiDesertCave3, 13),
+    SCENE_EXIT(15, YampiDesertCave3, 12),
+    SCENE_EXIT(16, YampiDesertCave3, 11),
+    SCENE_EXIT(17, YampiDesertCave2, 2),
+    SCENE_EXITS(YampiDesertCave3),
+    SCENE_EXIT(1, YampiDesertCave1, 2),
+    SCENE_EXIT(2, YampiDesertCave3, 3),
+    SCENE_EXIT(3, YampiDesertCave3, 2),
+    SCENE_EXIT(4, YampiDesertCave3, 7),
+    SCENE_EXIT(5, YampiDesertCave3, 6),
+    SCENE_EXIT(6, YampiDesertCave3, 5),
+    SCENE_EXIT(7, YampiDesertCave3, 4),
+    SCENE_EXIT(8, YampiDesertCave1, 7),
+    SCENE_EXIT(9, YampiDesertCave3, 10),
+    SCENE_EXIT(10, YampiDesertCave3, 9),
+    SCENE_EXIT(11, YampiDesertCave2, 16),
+    SCENE_EXIT(12, YampiDesertCave2, 15),
+    SCENE_EXIT(13, YampiDesertCave2, 14),
     SCENE_EXITS_END,
 };
 

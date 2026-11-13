@@ -812,11 +812,11 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(201),
-    SCENE_EXIT_IF(1, 201, 4, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 200, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(3, 202, 4, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(4, 201, 1, CONDITION_ALWAYS),
+    SCENE_EXITS(AncientLemuria),
+    SCENE_EXIT_UNLESS(1, AncientLemuria, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, LemuriaDock, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Lemuria, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, AncientLemuria, 1, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

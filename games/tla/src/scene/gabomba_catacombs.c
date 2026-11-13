@@ -476,7 +476,7 @@ const struct Trigger *Scene_GetEvents(void) {
 #define CATACOMBS_SCREEN_EFFECT 516
 #endif
 
-extern char SceneId_Ov671Room7, SceneId_GabombaStatueChamber1;
+extern char SceneId_GabombaStatue7, SceneId_GabombaStatueChamber1;
 void FieldEffect_StartBlankOverlay(s32 a);
 
 s32 Scene_Initialize(void) {
@@ -489,7 +489,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs1 &&
       (entrance = gMainRoutineWork.entrance) == 1) {
     if (GameFlag_Get(0xa27)) {
-      gMainRoutineWork.retreatScene = (s32)&SceneId_Ov671Room7;
+      gMainRoutineWork.retreatScene = (s32)&SceneId_GabombaStatue7;
       gMainRoutineWork.retreatEntrance = entrance;
     } else if (GameFlag_Get(0xa28)) {
       gMainRoutineWork.retreatScene = (s32)&SceneId_GabombaStatueChamber1;
@@ -550,23 +550,23 @@ u32 gData_02001310[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(126),
-    SCENE_EXIT(1, 124, 2),
-    SCENE_EXIT(2, 127, 1),
-    SCENE_EXIT(3, 127, 3),
-    SCENE_EXIT(4, 127, 4),
-    SCENE_EXIT(5, 127, 5),
-    SCENE_EXITS(127),
-    SCENE_EXIT(1, 126, 2),
-    SCENE_EXIT(2, 128, 1),
-    SCENE_EXITS(128),
-    SCENE_EXIT(1, 127, 2),
-    SCENE_EXIT(2, 130, 1),
-    SCENE_EXITS(129),
-    SCENE_EXIT(1, 130, 2),
-    SCENE_EXITS(130),
-    SCENE_EXIT(1, 128, 2),
-    SCENE_EXIT(2, 129, 1),
+    SCENE_EXITS(GabombaCatacombs1),
+    SCENE_EXIT(1, GabombaStatueChamber3, 2),
+    SCENE_EXIT(2, GabombaCatacombs2, 1),
+    SCENE_EXIT(3, GabombaCatacombs2, 3),
+    SCENE_EXIT(4, GabombaCatacombs2, 4),
+    SCENE_EXIT(5, GabombaCatacombs2, 5),
+    SCENE_EXITS(GabombaCatacombs2),
+    SCENE_EXIT(1, GabombaCatacombs1, 2),
+    SCENE_EXIT(2, GabombaCatacombs3, 1),
+    SCENE_EXITS(GabombaCatacombs3),
+    SCENE_EXIT(1, GabombaCatacombs2, 2),
+    SCENE_EXIT(2, GabombaCatacombs5, 1),
+    SCENE_EXITS(GabombaCatacombs4),
+    SCENE_EXIT(1, GabombaCatacombs5, 2),
+    SCENE_EXITS(GabombaCatacombs5),
+    SCENE_EXIT(1, GabombaCatacombs3, 2),
+    SCENE_EXIT(2, GabombaCatacombs4, 1),
     SCENE_EXITS_END,
 };
 

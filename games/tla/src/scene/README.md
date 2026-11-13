@@ -62,7 +62,7 @@ An [exit](../../glossary.md#exit) is a way out, by number. The exit table
 turns the number into a scene and an entrance:
 
 ```c
-SCENE_EXIT(2, 40, 3),
+SCENE_EXIT(2, LemurianShip1, 3),
 ```
 
 Rows can carry conditions here too, which is how one path leads to several
@@ -70,12 +70,12 @@ places at different points in the story. The Lemurian Ship's first way out
 leads to three, one after another:
 
 ```c
-SCENE_EXIT_IF(1, 43, 1, 0x907),
-SCENE_EXIT_IF(1, 200, 3, 0x9b4),
-SCENE_EXIT_IF(1, 234, 4, -1),
+SCENE_EXIT_UNLESS(1, LemurianShipDeck2, 1, 0x907),
+SCENE_EXIT_UNLESS(1, LemuriaDock, 3, 0x9b4),
+SCENE_EXIT_UNLESS(1, AttekaInlet1, 4, EXIT_FLAG_NONE),
 ```
 
-The last row's -1 is new in The Lost Age: `Scene_TakeExit` takes that exit
+The last row's EXIT_FLAG_NONE, a flag word of -1, is new in The Lost Age: `Scene_TakeExit` takes that exit
 whatever the flags hold, so the chain always ends somewhere.
 
 ### Who stands where
@@ -183,7 +183,7 @@ on which of its scenes is running.
 ## The Title, the File Screen and the Battle Arena
 
 Three scenes are not places. The Title (`title.c`), the File Screen
-(`clear.c`, `SceneId_Ov64a`, the row after the Title's) and the Battle
+(`clear.c`, `SceneId_Clear`, the row after the Title's) and the Battle
 Arena's lobby (`lobby.c`), where a link battle is arranged, are each in the
 scene table with an overlay of its own, and the game runs them exactly as
 it runs Daila.

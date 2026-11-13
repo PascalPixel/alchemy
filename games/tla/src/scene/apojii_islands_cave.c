@@ -69,7 +69,15 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_SCENE_EXITS(157, 157, 2, 157, 1, 155, 3, 4, 155, 5)
+u32 gSceneExits[] = {
+    SCENE_EXITS(ApojiiIslandsCave),
+    SCENE_EXIT_UNLESS(1, ApojiiIslandsCave, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, ApojiiIslandsCave, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, ApojiiIslands2, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, ApojiiIslands2, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, ApojiiIslands2, 5, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
+};
 
 struct ActorPlacement gActorPlacements[] = {
     {307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FIRST_FOLIAGE),

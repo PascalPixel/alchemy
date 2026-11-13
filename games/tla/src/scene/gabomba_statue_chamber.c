@@ -1010,8 +1010,8 @@ void GabombaStatueChamber_InitializeRoom2(void) {
 /// Gives actors 15 to 32 action variant 2, runs Actor_DisableById for actor 8
 /// and grounds it, then Func_02001094 with actor 10 placed when flag 0x8ff is
 /// set, else Func_02000f88; arriving by entrance 2 it sets the retreat to
-/// Ov671Room7's entrance 1 (flag 0xa27) or Ov672Room1's entrance 3 (flag
-/// 0xa28).
+/// GabombaStatue7's entrance 1 (flag 0xa27) or GabombaStatueChamber1's entrance
+/// 3 (flag 0xa28).
 void GabombaStatueChamber_InitializeRoom3(void) {
   u32 i;
   char *scene;
@@ -1031,7 +1031,7 @@ void GabombaStatueChamber_InitializeRoom3(void) {
     if (GameFlag_Get(0xa27)) {
       /* FAKEMATCH(temporary): the scene id through a local, which issues its
        * literal load first. */
-      scene = &SceneId_Ov671Room7;
+      scene = &SceneId_GabombaStatue7;
       gMainRoutineWork.retreatScene = (s32)scene;
       gMainRoutineWork.retreatEntrance = 1;
     } else if (GameFlag_Get(0xa28)) {
@@ -1114,19 +1114,19 @@ u32 gData_0200a08c[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(120),
-    SCENE_EXIT_IF(1, 119, 2, -1),
-    SCENE_EXIT_IF(2, 121, 1, -1),
-    SCENE_EXIT_IF(3, 111, 4, 0x86b),
-    SCENE_EXIT_IF(3, 114, 4, -1),
-    SCENE_EXIT_IF(4, 122, 1, -1),
-    SCENE_EXITS(122),
-    SCENE_EXIT(1, 120, 4),
-    SCENE_EXIT(2, 124, 1),
-    SCENE_EXITS(124),
-    SCENE_EXIT(1, 122, 2),
-    SCENE_EXIT(2, 126, 1),
-    SCENE_EXIT(3, 112, 9),
+    SCENE_EXITS(GabombaStatueChamber1),
+    SCENE_EXIT_UNLESS(1, GabombaStatue5, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, GabombaStatue6, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Kibombo2, 4, 0x86b),
+    SCENE_EXIT_UNLESS(3, Kibombo5, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, GabombaStatueChamber2, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(GabombaStatueChamber2),
+    SCENE_EXIT(1, GabombaStatueChamber1, 4),
+    SCENE_EXIT(2, GabombaStatueChamber3, 1),
+    SCENE_EXITS(GabombaStatueChamber3),
+    SCENE_EXIT(1, GabombaStatueChamber2, 2),
+    SCENE_EXIT(2, GabombaCatacombs1, 1),
+    SCENE_EXIT(3, Kibombo3, 9),
     SCENE_EXITS_END,
 };
 

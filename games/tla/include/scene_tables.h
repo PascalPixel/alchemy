@@ -6,6 +6,7 @@
 /// placements and triggers, as The Broken Seal's scene_tables.h has them.
 
 #include "fixed_math.h"
+#include "scene_ids.h"
 #include "types.h"
 #include "system/main_routine_work.h"
 
@@ -69,15 +70,25 @@ struct SceneEntrance {
   s16 unused2;
 };
 
-/// Exits: the current scene number, followed by each exit's destination.
-#define SCENE_EXITS(scene) ((u32)(scene))
+/// An exit table's header word: the scene whose exits follow, named by its
+/// name (`SCENE_EXITS(Alhafra1)`). The table is read by Scene_TakeExit as the
+/// scene ends, with the exit kind it ended on.
+#define SCENE_EXITS(scene) ((u32)&SceneId_##scene)
+/// One exit: exit kind `exit` leads to `entrance` of the scene `scene`.
+/// Kind 0xff matches any exit; kind 0 or the next header sends the party to
+/// the first exit's scene. The fields are added rather than ORed so the scene
+/// can be its SceneId_ symbol, which the linker fills in; they never overlap.
+/// bits: 27..20 exit kind | 19..12 entrance | 11..0 scene
 #define SCENE_EXIT(exit, scene, entrance)                                      \
-  ((u32)(exit) << 20 | (u32)(entrance) << 12 | (u32)(scene))
-#define SCENE_EXIT_IF(exit, scene, entrance, flag)                             \
-  (SCENE_EXIT(exit, scene, entrance) | 0x10000000), (u32)(flag)
+  (((u32)(exit) << 20) + ((u32)(entrance) << 12) + (u32)&SceneId_##scene)
+/// An exit with a flag word after it (bit 28): the exit is taken unless `flag`
+/// is set, and when it is set the search goes on to the next exit.
+#define SCENE_EXIT_UNLESS(exit, scene, entrance, flag)                         \
+  (SCENE_EXIT(exit, scene, entrance) + 0x10000000), (u32)(flag)
 /// An exit's flag word of -1 stands for no flag: Scene_TakeExit takes the
-/// exit whatever the flags hold.
+/// exit whatever the flags hold, so a chain of exits always ends somewhere.
 #define EXIT_FLAG_NONE 0xffffffff
+/// The last header word: it ends the last scene's exits and the table.
 #define SCENE_EXITS_END 0x1ff
 
 /// Actor placements.

@@ -105,7 +105,7 @@ extern LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[];
 extern struct ActorPlacement gAnemosInnerSanctumEntrance_Room1Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctumEntrance)
     return gAnemosInnerSanctumEntrance_Room1Placements;
   return gAnemosInnerSanctumEntrance_Placements;
 }
@@ -298,7 +298,7 @@ extern struct Trigger gAnemosInnerSanctumEntrance_Triggers[];
 extern struct Trigger gAnemosInnerSanctumEntrance_Room1Triggers[];
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctumEntrance)
     return gAnemosInnerSanctumEntrance_Room1Triggers;
   return gAnemosInnerSanctumEntrance_Triggers;
 }
@@ -326,7 +326,7 @@ s32 Scene_Initialize(void) {
   /* FAKEMATCH(barrier): an empty asm after the address and the value. */
   __asm__("");
   *route = value;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctumEntrance) {
     Func_02000b18();
     Func_02000bd4(2);
     SetObjectValue(9, 0);
@@ -536,10 +536,18 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA DEFINE_G_SCENE_EXITS(308, 239, 23, 303, 1, 239, 22, 24, 306, 5)
+LATE_DATA u32 gSceneExits[] = {
+    SCENE_EXITS(AnemosInnerSanctumEntrance),
+    SCENE_EXIT_UNLESS(1, Contigo4, 23, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AnemosInnerSanctum1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Contigo4, 22, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Contigo4, 24, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, AnemosInnerSanctum4, 5, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
+};
 
-    LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[] = {
-        {SCENE_TABLE_END},
+LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[] = {
+    {SCENE_TABLE_END},
 };
 
 LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Room1Placements[] =

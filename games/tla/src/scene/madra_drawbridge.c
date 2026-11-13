@@ -139,9 +139,9 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(53),
-    SCENE_EXIT_IF(1, 2, 10, -1),
-    SCENE_EXIT_IF(2, 2, 11, -1),
+    SCENE_EXITS(MadraDrawbridge),
+    SCENE_EXIT_UNLESS(1, WorldMap, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, WorldMap, 11, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

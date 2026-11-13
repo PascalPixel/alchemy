@@ -571,10 +571,18 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(234),      SCENE_EXIT(1, 40, 1),  SCENE_EXIT(2, 235, 1),
-    SCENE_EXIT(3, 235, 5), SCENE_EXIT(4, 2, 52),  SCENE_EXITS(235),
-    SCENE_EXIT(1, 234, 2), SCENE_EXIT(2, 2, 53),  SCENE_EXIT(3, 237, 21),
-    SCENE_EXIT(4, 235, 4), SCENE_EXIT(5, 234, 3), SCENE_EXIT(6, 2, 53),
+    SCENE_EXITS(AttekaInlet1),
+    SCENE_EXIT(1, LemurianShip1, 1),
+    SCENE_EXIT(2, AttekaInlet2, 1),
+    SCENE_EXIT(3, AttekaInlet2, 5),
+    SCENE_EXIT(4, WorldMap, 52),
+    SCENE_EXITS(AttekaInlet2),
+    SCENE_EXIT(1, AttekaInlet1, 2),
+    SCENE_EXIT(2, WorldMap, 53),
+    SCENE_EXIT(3, Contigo2, 21),
+    SCENE_EXIT(4, AttekaInlet2, 4),
+    SCENE_EXIT(5, AttekaInlet1, 3),
+    SCENE_EXIT(6, WorldMap, 53),
     SCENE_EXITS_END,
 };
 

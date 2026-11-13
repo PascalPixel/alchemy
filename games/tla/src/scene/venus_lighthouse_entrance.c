@@ -1535,9 +1535,9 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(4),
-    SCENE_EXIT(1, 6, 5),
-    SCENE_EXIT(2, 5, 1),
+    SCENE_EXITS(VenusLighthouseEntrance),
+    SCENE_EXIT(1, SuhallaGate1, 5),
+    SCENE_EXIT(2, VenusLighthouse, 1),
     SCENE_EXITS_END,
 };
 

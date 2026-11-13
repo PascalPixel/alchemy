@@ -933,8 +933,9 @@ void Func_02000cd0(void) {
   do {
     gMainRoutineWork.battleRule24b = 2;
   } while (0);
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov6a5, 10);
-  Event_SetDefeatDestination((s32)&SceneId_Ov6a5, 10);
+  FieldEvent_SetAfterBattleDestination(
+      (s32)&SceneId_JupiterLighthouseAerieBeacon, 10);
+  Event_SetDefeatDestination((s32)&SceneId_JupiterLighthouseAerieBeacon, 10);
   GameFlag_SetBit_(0x11b);
   Func_0200593c_(13, 5);
   return;
@@ -1070,8 +1071,9 @@ void Func_02001388(void) {
   do {
     gMainRoutineWork.battleRule24b = 2;
   } while (0);
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov6a5, 11);
-  Event_SetDefeatDestination((s32)&SceneId_Ov6a5, 11);
+  FieldEvent_SetAfterBattleDestination(
+      (s32)&SceneId_JupiterLighthouseAerieBeacon, 11);
+  Event_SetDefeatDestination((s32)&SceneId_JupiterLighthouseAerieBeacon, 11);
   Call2(Field_RequestBattleFromEncounterTable, 0xd, 6);
 }
 
@@ -1174,8 +1176,9 @@ void Func_020016e8(void) {
   do {
     gMainRoutineWork.battleRule24b = 2;
   } while (0);
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov6a5, 12);
-  Event_SetDefeatDestination((s32)&SceneId_Ov6a5, 13);
+  FieldEvent_SetAfterBattleDestination(
+      (s32)&SceneId_JupiterLighthouseAerieBeacon, 12);
+  Event_SetDefeatDestination((s32)&SceneId_JupiterLighthouseAerieBeacon, 13);
   Event_ClearFlag(0x11b);
   Field_RequestBattleFromEncounterTable(13, 7);
 }
@@ -3009,13 +3012,13 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 };
 
 LATE_DATA u32 gSceneExits[] = {
-    SCENE_EXITS(265),
-    SCENE_EXIT(1, 251, 5),
-    SCENE_EXIT(2, 2, 72),
-    SCENE_EXIT(11, 259, 1),
-    SCENE_EXIT(12, 259, 2),
-    SCENE_EXIT(13, 259, 3),
-    SCENE_EXIT(14, 262, 4),
+    SCENE_EXITS(JupiterLighthouseAerieBeacon),
+    SCENE_EXIT(1, JupiterLighthouseEntrance, 5),
+    SCENE_EXIT(2, WorldMap, 72),
+    SCENE_EXIT(11, JupiterLighthouseRoom6, 1),
+    SCENE_EXIT(12, JupiterLighthouseRoom6, 2),
+    SCENE_EXIT(13, JupiterLighthouseRoom6, 3),
+    SCENE_EXIT(14, JupiterLighthouseRoom9, 4),
     SCENE_EXITS_END,
 };
 

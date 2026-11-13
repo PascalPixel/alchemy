@@ -146,17 +146,17 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   work->savedShakeDecay = map->shakeDecay;
   if (gMainRoutineWork.map == (s32)&SceneId_GabombaCatacombs5)
     work->lit = 1;
-  if (gMainRoutineWork.map == (s32)&SceneId_Ov68fRoom1)
+  if (gMainRoutineWork.map == (s32)&SceneId_TundariaTower1)
     *((u8 *)work + 0x41) = 1;
-  if (gMainRoutineWork.map == (s32)&SceneId_Ov68fRoom2)
+  if (gMainRoutineWork.map == (s32)&SceneId_TundariaTower2)
     *((u8 *)work + 0x41) = 1;
-  if (gMainRoutineWork.map == (s32)&SceneId_Ov68fRoom7)
+  if (gMainRoutineWork.map == (s32)&SceneId_TundariaTower7)
     *((u8 *)work + 0x41) = 1;
-  if (gMainRoutineWork.map == (s32)&SceneId_Ov6a4)
+  if (gMainRoutineWork.map == (s32)&SceneId_JupiterLighthouseAerie)
     *((u8 *)work + 0x41) = 1;
-  if (gMainRoutineWork.map == (s32)&SceneId_Ov6a5)
+  if (gMainRoutineWork.map == (s32)&SceneId_JupiterLighthouseAerieBeacon)
     *((u8 *)work + 0x41) = 1;
-  if (gMainRoutineWork.map == (s32)&SceneId_Ov6A6Room1)
+  if (gMainRoutineWork.map == (s32)&SceneId_Loho1)
     *((u8 *)work + 0x41) = 1;
   FieldPsynergy_SetupActorPair(gMainRoutineWork.currentOwner, -1);
   if (work->animation != 8)

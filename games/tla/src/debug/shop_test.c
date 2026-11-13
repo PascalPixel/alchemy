@@ -353,8 +353,8 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(322),
-    SCENE_EXIT(20, 322, 2),
+    SCENE_EXITS(PsynergyTest),
+    SCENE_EXIT(20, PsynergyTest, 2),
     SCENE_EXITS_END,
 };
 

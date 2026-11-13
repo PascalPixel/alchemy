@@ -269,8 +269,11 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(309),      SCENE_EXIT(2, 309, 2), SCENE_EXIT(3, 297, 5),
-    SCENE_EXIT(9, 309, 2), SCENE_EXITS_END,
+    SCENE_EXITS(MercuryLighthouse),
+    SCENE_EXIT(2, MercuryLighthouse, 2),
+    SCENE_EXIT(3, MarsLighthouseAerie1, 5),
+    SCENE_EXIT(9, MercuryLighthouse, 2),
+    SCENE_EXITS_END,
 };
 
 // clang-format off

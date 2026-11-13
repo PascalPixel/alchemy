@@ -204,7 +204,7 @@ void MainRoutine_Run(s32 mode) {
     gMainRoutineWork.scene = (s32)&SceneId_VenusLighthouseEntrance;
     gMainRoutineWork.entrance = 10;
   } else if (gDebugMode && mode == 2) {
-    gMainRoutineWork.scene = (s32)&SceneId_Ov64a;
+    gMainRoutineWork.scene = (s32)&SceneId_Clear;
     gMainRoutineWork.entrance = 1;
   } else if (gDebugMode && mode == 3) {
     gMainRoutineWork.scene = (s32)&SceneId_MtAlephSummit;

@@ -671,17 +671,6 @@
       SC_WAIT(n3), SC_END,                                                     \
   };
 
-#define DEFINE_G_SCENE_EXITS(n1, n2, n3, n4, n5, n6, n7, n8, n9, n10)          \
-  u32 gSceneExits[] = {                                                        \
-      SCENE_EXITS(n1),                                                         \
-      SCENE_EXIT_IF(1, n2, n3, CONDITION_ALWAYS),                              \
-      SCENE_EXIT_IF(2, n4, n5, CONDITION_ALWAYS),                              \
-      SCENE_EXIT_IF(3, n6, n7, CONDITION_ALWAYS),                              \
-      SCENE_EXIT_IF(4, n6, n8, CONDITION_ALWAYS),                              \
-      SCENE_EXIT_IF(5, n9, n10, CONDITION_ALWAYS),                             \
-      SCENE_EXITS_END,                                                         \
-  };
-
 #define DEFINE_G_DATA_0200064C(name, data1, n1, data2, n2)                     \
   s32 name[] = {                                                               \
       (s32)data1,                                                              \
@@ -743,21 +732,6 @@
   u32 name[] = {                                                               \
       39, 2,  4, n1, 0, n2, 1,        4, n3, 0, n4, 1, 4,  n5, 0,      n6, 1,  \
       4,  n7, 0, n8, 1, 4,  0xf80000, 0, n9, 1, 39, 1, 22, 3,  0xd000, 17,     \
-  };
-
-#define DEFINE_G_SCENE_EXITS_2(n1, n2, n3, n4, n5, n6, n7, n8, n9)             \
-  u32 gSceneExits[] = {                                                        \
-      SCENE_EXITS(n1),       SCENE_EXIT(1, n2, n3), SCENE_EXIT(2, n4, n5),     \
-      SCENE_EXIT(3, n6, n7), SCENE_EXIT(4, n8, n9), SCENE_EXITS_END,           \
-  };
-
-#define DEFINE_G_SCENE_EXITS_3(n1, n2, n3, n4, n5, n6, n7, n8, n9, n10)        \
-  u32 gSceneExits[] = {                                                        \
-      SCENE_EXITS(n1),         SCENE_EXIT(1, n2, 1),   SCENE_EXIT(2, n1, 3),   \
-      SCENE_EXIT(3, n1, 2),    SCENE_EXIT(4, n1, 5),   SCENE_EXIT(5, n1, 4),   \
-      SCENE_EXIT(6, n3, n4),   SCENE_EXIT(7, n3, n5),  SCENE_EXIT(8, n6, 8),   \
-      SCENE_EXIT(9, n3, n7),   SCENE_EXIT(10, n3, n8), SCENE_EXIT(11, n3, n9), \
-      SCENE_EXIT(12, n10, 11), SCENE_EXITS_END,                                \
   };
 
 #define DEFINE_G_DATA_020057D0(name, n1, n2, n3)                               \
@@ -889,19 +863,6 @@
       SC_LOOP(SC_FOREVER, SC_TOP),                                             \
   };
 
-#define DEFINE_G_SCENE_EXITS_4(n1, n2, n3, n4, n5)                             \
-  u32 gSceneExits[] = {                                                        \
-      SCENE_EXITS(n1),                                                         \
-      SCENE_EXIT_IF(1, n2, 1, EXIT_FLAG_NONE),                                 \
-      SCENE_EXIT_IF(2, n2, 2, EXIT_FLAG_NONE),                                 \
-      SCENE_EXIT_IF(3, n2, 3, EXIT_FLAG_NONE),                                 \
-      SCENE_EXIT_IF(4, n2, 4, EXIT_FLAG_NONE),                                 \
-      SCENE_EXIT_IF(5, n2, 5, EXIT_FLAG_NONE),                                 \
-      SCENE_EXIT_IF(6, n3, n4, EXIT_FLAG_NONE),                                \
-      SCENE_EXIT_IF(7, n3, n5, EXIT_FLAG_NONE),                                \
-      SCENE_EXITS_END,                                                         \
-  };
-
 #define DEFINE_G_DATA_020013D8(name, n1, n2, n3, n4, n5, n6, n7, n8, n9)       \
   struct ActorPlacement name[] = {                                             \
       {n1, CONDITION_ALWAYS, 1, n2, 0, 0, FACING_SOUTH, 2, n3},                \
@@ -1009,14 +970,6 @@
       SC_END,                                                                  \
   };
 
-#define DEFINE_G_SCENE_EXITS_5(n1, n2, n3, n4)                                 \
-  u32 gSceneExits[] = {                                                        \
-      SCENE_EXITS(n1),                                                         \
-      SCENE_EXIT_IF(1, 2, n2, EXIT_FLAG_NONE),                                 \
-      SCENE_EXIT_IF(n3, 2, n4, EXIT_FLAG_NONE),                                \
-      SCENE_EXITS_END,                                                         \
-  };
-
 #define DEFINE_G_DATA_02001330(name, n1, n2, n3, n4, n5, n6, n7, n8)           \
   struct ActorPlacement name[] = {                                             \
       {n1, CONDITION_ALWAYS, 1, PIXELS(n2), 0, PIXELS(n3), FACING_SOUTH, 2,    \
@@ -1049,15 +1002,6 @@
       0x190a01a4, 1,  0x1d00000, 0, 0x1080000, 0x20000,                        \
       0xffff0038, 1,  0,         0, 0,         0x4000,                         \
       0xffff,     0,  0,         0, 0,         0,                              \
-  };
-
-#define DEFINE_G_SCENE_EXITS_6(n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11,   \
-                               n12)                                            \
-  u32 gSceneExits[] = {                                                        \
-      SCENE_EXITS(n1),         SCENE_EXIT(1, n2, 1),    SCENE_EXIT(n3, n4, 3), \
-      SCENE_EXIT(n5, n4, n6),  SCENE_EXIT(5, n7, 5),    SCENE_EXIT(6, n7, 6),  \
-      SCENE_EXIT(7, n8, n9),   SCENE_EXIT(8, n10, n11), SCENE_EXIT(9, n12, 9), \
-      SCENE_EXIT(10, n12, 10), SCENE_EXITS_END,                                \
   };
 
 #endif

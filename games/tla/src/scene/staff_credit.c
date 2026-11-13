@@ -483,31 +483,31 @@ s32 Scene_Initialize(void) {
   case 1:
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(3);
-    Event_SetDestination((s32)&SceneId_Ov64c, 2);
+    Event_SetDestination((s32)&SceneId_StaffCredit, 2);
     break;
   case 2:
     Func_0200020c(0);
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(4);
-    Event_SetDestination((s32)&SceneId_Ov64c, 3);
+    Event_SetDestination((s32)&SceneId_StaffCredit, 3);
     break;
   case 3:
     Func_0200020c(1);
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(5);
-    Event_SetDestination((s32)&SceneId_Ov64c, 4);
+    Event_SetDestination((s32)&SceneId_StaffCredit, 4);
     break;
   case 4:
     Func_0200020c(2);
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(6);
-    Event_SetDestination((s32)&SceneId_Ov64c, 5);
+    Event_SetDestination((s32)&SceneId_StaffCredit, 5);
     break;
   case 5:
     Func_0200020c(3);
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(7);
-    Event_SetDestination((s32)&SceneId_Ov64c, 6);
+    Event_SetDestination((s32)&SceneId_StaffCredit, 6);
     break;
   case 6:
     Func_0200020c(4);

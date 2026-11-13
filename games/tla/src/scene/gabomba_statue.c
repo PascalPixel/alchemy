@@ -183,17 +183,17 @@ extern u32 gData_02005eec[];
 const u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov671Room7)
+  if (scene == (s32)&SceneId_GabombaStatue7)
     return gData_02005dfc;
-  if (scene == (s32)&SceneId_Ov671Room1)
+  if (scene == (s32)&SceneId_GabombaStatue1)
     return gData_02005e2c;
-  if (scene == (s32)&SceneId_Ov671Room2)
+  if (scene == (s32)&SceneId_GabombaStatue2)
     return gData_02005e4c;
-  if (scene == (s32)&SceneId_Ov671Room3)
+  if (scene == (s32)&SceneId_GabombaStatue3)
     return gData_02005e8c;
-  if (scene == (s32)&SceneId_Ov671Room4)
+  if (scene == (s32)&SceneId_GabombaStatue4)
     return gData_02005ecc;
-  if (scene == (s32)&SceneId_Ov671Room5)
+  if (scene == (s32)&SceneId_GabombaStatue5)
     return gData_02005eec;
   return NULL;
 }
@@ -315,19 +315,19 @@ const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
   const u8 *table = gGabombaStatue_Placements;
 
-  if (scene == (s32)&SceneId_Ov671Room1)
+  if (scene == (s32)&SceneId_GabombaStatue1)
     table = gGabombaStatue_Room1Placements;
-  else if (scene == (s32)&SceneId_Ov671Room2)
+  else if (scene == (s32)&SceneId_GabombaStatue2)
     table = gGabombaStatue_Room2Placements;
-  else if (scene == (s32)&SceneId_Ov671Room3)
+  else if (scene == (s32)&SceneId_GabombaStatue3)
     table = gGabombaStatue_Room3Placements;
-  else if (scene == (s32)&SceneId_Ov671Room4)
+  else if (scene == (s32)&SceneId_GabombaStatue4)
     table = gGabombaStatue_Room4Placements;
-  else if (scene == (s32)&SceneId_Ov671Room5)
+  else if (scene == (s32)&SceneId_GabombaStatue5)
     table = gGabombaStatue_Room5Placements;
-  else if (scene == (s32)&SceneId_Ov671Room6)
+  else if (scene == (s32)&SceneId_GabombaStatue6)
     table = gGabombaStatue_Room6Placements;
-  else if (scene == (s32)&SceneId_Ov671Room7)
+  else if (scene == (s32)&SceneId_GabombaStatue7)
     table = gGabombaStatue_Room7Placements;
   return table;
 }
@@ -607,9 +607,9 @@ void Func_02000a20(struct Actor *object) {
 // Moves the controlled character with the moving platforms (Func_020005b4 finds
 // the one under it, 360 forward and 361 back): it stays within 2 pixels of the
 // platform's x and is carried along z by the speed in gData_02005af0; past 20
-// pixels from the platform it steps off (Func_020006ac). In Ov671Room4 at cell
-// (28, 15) or (30, 15) it ends the ride (Func_02000a20) and runs exit 5 or 6
-// (Import_EventSetExitRequest).
+// pixels from the platform it steps off (Func_020006ac). In GabombaStatue4 at
+// cell (28, 15) or (30, 15) it ends the ride (Func_02000a20) and runs exit 5 or
+// 6 (Import_EventSetExitRequest).
 void Func_02000ad4(void) {
   struct Actor *actor, *platform;
   s32 speed, d, sign, x, z, platformZ, offset;
@@ -660,7 +660,7 @@ void Func_02000ad4(void) {
     }
     Func_020006ac(actor, 0, (sign * 3) << 18, 0x20000);
   }
-  if (gMainRoutineWork.scene != (s32)&SceneId_Ov671Room4)
+  if (gMainRoutineWork.scene != (s32)&SceneId_GabombaStatue4)
     return;
   x = actor->x >> 20;
   if (actor->z >> 20 != 15)
@@ -873,19 +873,19 @@ const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
   const u8 *table = gGabombaStatue_Triggers;
 
-  if (scene == (s32)&SceneId_Ov671Room1)
+  if (scene == (s32)&SceneId_GabombaStatue1)
     table = gGabombaStatue_Room1Triggers;
-  else if (scene == (s32)&SceneId_Ov671Room2)
+  else if (scene == (s32)&SceneId_GabombaStatue2)
     table = gGabombaStatue_Room2Triggers;
-  else if (scene == (s32)&SceneId_Ov671Room3)
+  else if (scene == (s32)&SceneId_GabombaStatue3)
     table = gGabombaStatue_Room3Triggers;
-  else if (scene == (s32)&SceneId_Ov671Room4)
+  else if (scene == (s32)&SceneId_GabombaStatue4)
     table = gGabombaStatue_Room4Triggers;
-  else if (scene == (s32)&SceneId_Ov671Room5)
+  else if (scene == (s32)&SceneId_GabombaStatue5)
     table = gGabombaStatue_Room5Triggers;
-  else if (scene == (s32)&SceneId_Ov671Room6)
+  else if (scene == (s32)&SceneId_GabombaStatue6)
     table = gGabombaStatue_Room6Triggers;
-  else if (scene == (s32)&SceneId_Ov671Room7)
+  else if (scene == (s32)&SceneId_GabombaStatue7)
     table = gGabombaStatue_Room7Triggers;
   return table;
 }
@@ -1110,9 +1110,9 @@ DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(Func_02001864, 440, 248)
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(Func_020018a8, 440, 184)
 
 void GabombaStatue_SetActorsHidden(s32 show) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaStatue1)
     Actors_SetHidden(show, 8, 1);
-  else if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room2)
+  else if (gMainRoutineWork.scene == (s32)&SceneId_GabombaStatue2)
     Actors_SetHidden(show, 29, 2);
 }
 
@@ -1397,7 +1397,7 @@ void Func_020020f0(s32 direction) {
 
   gData_02005af0 = direction;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov671Room2) {
+  if (scene == (s32)&SceneId_GabombaStatue2) {
     Func_020020b0(14, direction, 0);
     Func_020020b0(21, direction, 1);
     Func_020020b0(26, direction, 2);
@@ -1407,29 +1407,29 @@ void Func_020020f0(s32 direction) {
       MapGrid_CopyCellAttributes(23, 21, 1, 3, 23, 9);
     else if (direction == -1)
       MapGrid_CopyCellAttributes(24, 21, 1, 3, 23, 9);
-  } else if (scene == (s32)&SceneId_Ov671Room3) {
+  } else if (scene == (s32)&SceneId_GabombaStatue3) {
     Func_020020b0(8, direction, 0);
     Func_020020b0(15, direction, 1);
     Func_020020b0(20, direction, 2);
     Func_020020b0(25, direction, 3);
     Func_020020b0(29, direction, 4);
-  } else if (scene == (s32)&SceneId_Ov671Room4) {
+  } else if (scene == (s32)&SceneId_GabombaStatue4) {
     Func_020020b0(8, direction, 0);
     Func_020020b0(21, direction, 1);
     Func_020020b0(29, direction, 2);
     Func_020020b0(35, direction, 3);
     Func_020020b0(38, direction, 4);
-  } else if (scene == (s32)&SceneId_Ov671Room5) {
+  } else if (scene == (s32)&SceneId_GabombaStatue5) {
     Func_020020b0(10, direction, 0);
     Func_020020b0(12, direction, 1);
     if (direction == 0)
       MapGrid_CopyCellAttributes(34, 12, 1, 3, 27, 12);
     else if (direction == -1)
       MapGrid_CopyCellAttributes(35, 12, 1, 3, 27, 12);
-  } else if (scene == (s32)&SceneId_Ov671Room6) {
+  } else if (scene == (s32)&SceneId_GabombaStatue6) {
     Actor_SetAnimation(13, 5);
     Actor_SetSpriteFlags(Actor_Get(13), 0);
-  } else if (scene == (s32)&SceneId_Ov671Room7) {
+  } else if (scene == (s32)&SceneId_GabombaStatue7) {
     Func_020020b0(8, direction, 0);
     Func_020020b0(9, direction, 1);
     Func_020020b0(10, direction, 2);
@@ -1952,7 +1952,7 @@ s32 Scene_Initialize(void) {
   s16 scene;
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 521;
-  if (gMainRoutineWork.scene != (s32)&SceneId_Ov671Room1) {
+  if (gMainRoutineWork.scene != (s32)&SceneId_GabombaStatue1) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_03))
       Func_020020f0(0);
     else if (Event_GetFlag(0x8cd))
@@ -1963,25 +1963,25 @@ s32 Scene_Initialize(void) {
   }
   Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |= 0x20;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov671Room1) {
+  if (scene == (s32)&SceneId_GabombaStatue1) {
     GabombaStatue_InitializeRoom1();
-  } else if (scene == (s32)&SceneId_Ov671Room2) {
+  } else if (scene == (s32)&SceneId_GabombaStatue2) {
     MapGrid_CopyCellAttributes(15, 68, 8, 3, 15, 4);
     GabombaStatue_InitializeRoom2();
-  } else if (scene == (s32)&SceneId_Ov671Room3) {
+  } else if (scene == (s32)&SceneId_GabombaStatue3) {
     GabombaStatue_InitializeRoom3();
-  } else if (scene == (s32)&SceneId_Ov671Room5) {
+  } else if (scene == (s32)&SceneId_GabombaStatue5) {
     GabombaStatue_InitializeRoom5();
-  } else if (scene == (s32)&SceneId_Ov671Room6) {
+  } else if (scene == (s32)&SceneId_GabombaStatue6) {
     GabombaStatue_InitializeRoom6();
-  } else if (scene == (s32)&SceneId_Ov671Room7) {
+  } else if (scene == (s32)&SceneId_GabombaStatue7) {
     GabombaStatue_InitializeRoom7();
   }
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room7 &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaStatue7 &&
       gMainRoutineWork.entrance == 1 &&
       !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Event_ClearFlag(0x8cd);
@@ -3700,46 +3700,46 @@ LATE_DATA u32 gData_02005eec[] = {
 };
 
 LATE_DATA u32 gSceneExits[] = {
-    SCENE_EXITS(123),
-    SCENE_EXIT_IF(1, 111, 3, 0x86b),
-    SCENE_EXIT_IF(1, 114, 3, -1),
-    SCENE_EXIT_IF(2, 115, 1, -1),
-    SCENE_EXITS(115),
-    SCENE_EXIT(1, 123, 2),
-    SCENE_EXIT(2, 116, 1),
-    SCENE_EXITS(116),
-    SCENE_EXIT(1, 115, 2),
-    SCENE_EXIT(2, 117, 1),
-    SCENE_EXIT(3, 117, 2),
-    SCENE_EXIT(4, 117, 3),
-    SCENE_EXITS(117),
-    SCENE_EXIT(1, 116, 2),
-    SCENE_EXIT(2, 116, 3),
-    SCENE_EXIT(3, 116, 4),
-    SCENE_EXIT(4, 118, 1),
-    SCENE_EXIT(5, 118, 2),
-    SCENE_EXIT(6, 118, 3),
-    SCENE_EXITS(118),
-    SCENE_EXIT(1, 117, 4),
-    SCENE_EXIT(2, 117, 5),
-    SCENE_EXIT(3, 117, 6),
-    SCENE_EXIT(4, 119, 1),
-    SCENE_EXIT(5, 117, 7),
-    SCENE_EXIT(6, 117, 8),
-    SCENE_EXITS(119),
-    SCENE_EXIT(1, 118, 4),
-    SCENE_EXIT(2, 120, 1),
-    SCENE_EXITS(121),
-    SCENE_EXIT(1, 120, 2),
-    SCENE_EXIT(10, 125, 10),
-    SCENE_EXIT(11, 125, 11),
-    SCENE_EXIT(12, 114, 11),
-    SCENE_EXIT(13, 114, 12),
-    SCENE_EXIT(14, 114, 13),
-    SCENE_EXIT(15, 114, 14),
-    SCENE_EXIT(16, 114, 15),
-    SCENE_EXIT(17, 125, 10),
-    SCENE_EXIT(18, 120, 6),
+    SCENE_EXITS(GabombaStatue7),
+    SCENE_EXIT_UNLESS(1, Kibombo2, 3, 0x86b),
+    SCENE_EXIT_UNLESS(1, Kibombo5, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, GabombaStatue1, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(GabombaStatue1),
+    SCENE_EXIT(1, GabombaStatue7, 2),
+    SCENE_EXIT(2, GabombaStatue2, 1),
+    SCENE_EXITS(GabombaStatue2),
+    SCENE_EXIT(1, GabombaStatue1, 2),
+    SCENE_EXIT(2, GabombaStatue3, 1),
+    SCENE_EXIT(3, GabombaStatue3, 2),
+    SCENE_EXIT(4, GabombaStatue3, 3),
+    SCENE_EXITS(GabombaStatue3),
+    SCENE_EXIT(1, GabombaStatue2, 2),
+    SCENE_EXIT(2, GabombaStatue2, 3),
+    SCENE_EXIT(3, GabombaStatue2, 4),
+    SCENE_EXIT(4, GabombaStatue4, 1),
+    SCENE_EXIT(5, GabombaStatue4, 2),
+    SCENE_EXIT(6, GabombaStatue4, 3),
+    SCENE_EXITS(GabombaStatue4),
+    SCENE_EXIT(1, GabombaStatue3, 4),
+    SCENE_EXIT(2, GabombaStatue3, 5),
+    SCENE_EXIT(3, GabombaStatue3, 6),
+    SCENE_EXIT(4, GabombaStatue5, 1),
+    SCENE_EXIT(5, GabombaStatue3, 7),
+    SCENE_EXIT(6, GabombaStatue3, 8),
+    SCENE_EXITS(GabombaStatue5),
+    SCENE_EXIT(1, GabombaStatue4, 4),
+    SCENE_EXIT(2, GabombaStatueChamber1, 1),
+    SCENE_EXITS(GabombaStatue6),
+    SCENE_EXIT(1, GabombaStatueChamber1, 2),
+    SCENE_EXIT(10, Kibombo6, 10),
+    SCENE_EXIT(11, Kibombo6, 11),
+    SCENE_EXIT(12, Kibombo5, 11),
+    SCENE_EXIT(13, Kibombo5, 12),
+    SCENE_EXIT(14, Kibombo5, 13),
+    SCENE_EXIT(15, Kibombo5, 14),
+    SCENE_EXIT(16, Kibombo5, 15),
+    SCENE_EXIT(17, Kibombo6, 10),
+    SCENE_EXIT(18, GabombaStatueChamber1, 6),
     SCENE_EXITS_END,
 };
 

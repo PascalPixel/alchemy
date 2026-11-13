@@ -292,9 +292,10 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.entrance == 1 && Event_GetFlag(0xa3d) == 0)
     Weather_StartRain(1);
-  TileMap_ConvertBuffer(gMainRoutineWork.map +
-                            ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Prox2),
-                        0x5000000);
+  TileMap_ConvertBuffer(
+      gMainRoutineWork.map +
+          ((s32)&SceneId_MarsLighthouseRoomM3 - (s32)&SceneId_Prox2),
+      0x5000000);
   return 0;
 }
 
@@ -3091,7 +3092,10 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_SCENE_EXITS_2(297, 287, 1, 297, 3, 309, 2, 272, 20)
+u32 gSceneExits[] = {                                                        
+      SCENE_EXITS(MarsLighthouseAerie1),       SCENE_EXIT(1, MarsLighthouseRoomM1, 1), SCENE_EXIT(2, MarsLighthouseAerie1, 3),     
+      SCENE_EXIT(3, MercuryLighthouse, 2), SCENE_EXIT(4, Prox4, 20), SCENE_EXITS_END,           
+  };
 
 s16 gMarsLighthouseAerie_Placements[] = {
     489, -1, 1, 0, 0, 0, 0, 0,

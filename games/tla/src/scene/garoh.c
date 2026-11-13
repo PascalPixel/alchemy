@@ -177,18 +177,18 @@ extern struct MapGridCellAnimation gData_02005de0[];
 const void *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov65FRoom1) {
+  if (scene == (s32)&SceneId_Garoh1) {
     if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
       return gData_02005874;
     return gGaroh_Room1Placements;
   }
-  if (scene == (s32)&SceneId_Ov65FRoom2)
+  if (scene == (s32)&SceneId_Garoh2)
     return gGaroh_Room2Placements;
-  if (scene == (s32)&SceneId_Ov65FRoom3)
+  if (scene == (s32)&SceneId_Garoh3)
     return gGaroh_Room3Placements;
-  if (scene == (s32)&SceneId_Ov65FRoom4)
+  if (scene == (s32)&SceneId_Garoh4)
     return gGaroh_Room4Placements;
-  if (scene == (s32)&SceneId_Ov65FRoom5)
+  if (scene == (s32)&SceneId_Garoh5)
     return gGaroh_Room5Placements;
   return gGaroh_Placements;
 }
@@ -443,18 +443,18 @@ void Func_020009a4(void) {
 const void *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov65FRoom1) {
+  if (scene == (s32)&SceneId_Garoh1) {
     if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
       return gData_02005f78;
     return gGaroh_Room1Triggers;
   }
-  if (scene == (s32)&SceneId_Ov65FRoom2)
+  if (scene == (s32)&SceneId_Garoh2)
     return gGaroh_Room2Triggers;
-  if (scene == (s32)&SceneId_Ov65FRoom3)
+  if (scene == (s32)&SceneId_Garoh3)
     return gGaroh_Room3Triggers;
-  if (scene == (s32)&SceneId_Ov65FRoom4)
+  if (scene == (s32)&SceneId_Garoh4)
     return gGaroh_Room4Triggers;
-  if (scene == (s32)&SceneId_Ov65FRoom5)
+  if (scene == (s32)&SceneId_Garoh5)
     return gGaroh_Room5Triggers;
   return gGaroh_Triggers;
 }
@@ -472,9 +472,9 @@ void Garoh_InitializeRoom2(void);
 s32 Scene_Initialize(void) {
   struct EventWork *work;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65FRoom4) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Garoh4) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov65FRoom5) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_Garoh5) {
     FieldActor_SetSpritePriority(13, 1);
     FieldActor_SetSpritePriority(14, 1);
     if (Event_GetFlag(0x91f)) {
@@ -495,12 +495,12 @@ s32 Scene_Initialize(void) {
     }
   } else {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
-    if (gMainRoutineWork.scene == (s32)&SceneId_Ov65FRoom1) {
+    if (gMainRoutineWork.scene == (s32)&SceneId_Garoh1) {
       Event_SetFlag(0x919);
       Func_02000be4();
-    } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov65FRoom2) {
+    } else if (gMainRoutineWork.scene == (s32)&SceneId_Garoh2) {
       Garoh_InitializeRoom2();
-    } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov65FRoom3) {
+    } else if (gMainRoutineWork.scene == (s32)&SceneId_Garoh3) {
       Func_02000e00();
       if (Event_GetFlag(0x919)) {
         gMainRoutineWork.savedScene = (s32)&SceneId_GarohInteriors3;
@@ -2923,47 +2923,47 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(59),
-    SCENE_EXIT_IF(1, 64, 1, -1),
-    SCENE_EXIT_IF(2, 65, 4, -1),
-    SCENE_EXIT_IF(3, 64, 3, -1),
-    SCENE_EXIT_IF(4, 64, 4, -1),
-    SCENE_EXIT_IF(5, 64, 5, -1),
-    SCENE_EXIT_IF(6, 66, 2, -1),
-    SCENE_EXIT_IF(7, 62, 4, -1),
-    SCENE_EXIT_IF(8, 62, 1, -1),
-    SCENE_EXIT_IF(9, 62, 11, -1),
-    SCENE_EXIT_IF(10, 60, 2, -1),
-    SCENE_EXIT_IF(11, 60, 3, -1),
-    SCENE_EXIT_IF(12, 63, 1, -1),
-    SCENE_EXITS(60),
-    SCENE_EXIT_IF(1, 61, 2, -1),
-    SCENE_EXIT_IF(2, 59, 10, -1),
-    SCENE_EXIT_IF(3, 59, 11, -1),
-    SCENE_EXITS(61),
-    SCENE_EXIT_IF(1, 2, 15, -1),
-    SCENE_EXIT_IF(2, 60, 1, -1),
-    SCENE_EXITS(62),
-    SCENE_EXIT_IF(1, 59, 8, -1),
-    SCENE_EXIT_IF(2, 62, 3, -1),
-    SCENE_EXIT_IF(3, 62, 2, -1),
-    SCENE_EXIT_IF(4, 59, 7, -1),
-    SCENE_EXIT_IF(5, 65, 3, -1),
-    SCENE_EXIT_IF(6, 65, 5, -1),
-    SCENE_EXIT_IF(7, 64, 6, -1),
-    SCENE_EXIT_IF(8, 64, 7, -1),
-    SCENE_EXIT_IF(9, 62, 10, -1),
-    SCENE_EXIT_IF(10, 62, 9, -1),
-    SCENE_EXIT_IF(11, 59, 9, -1),
-    SCENE_EXITS(63),
-    SCENE_EXIT_IF(1, 59, 12, -1),
-    SCENE_EXIT_IF(2, 63, 4, -1),
-    SCENE_EXIT_IF(3, 63, 5, -1),
-    SCENE_EXIT_IF(4, 63, 2, -1),
-    SCENE_EXIT_IF(5, 63, 3, -1),
-    SCENE_EXIT_IF(6, 63, 7, -1),
-    SCENE_EXIT_IF(7, 63, 6, -1),
-    SCENE_EXIT_IF(11, 64, 99, -1),
+    SCENE_EXITS(Garoh1),
+    SCENE_EXIT_UNLESS(1, GarohInteriors1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, GarohInteriors2, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, GarohInteriors1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, GarohInteriors1, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, GarohInteriors1, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, GarohInteriors3, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, Garoh4, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, Garoh4, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, Garoh4, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, Garoh2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, Garoh2, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, Garoh5, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(Garoh2),
+    SCENE_EXIT_UNLESS(1, Garoh3, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Garoh1, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Garoh1, 11, EXIT_FLAG_NONE),
+    SCENE_EXITS(Garoh3),
+    SCENE_EXIT_UNLESS(1, WorldMap, 15, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Garoh2, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(Garoh4),
+    SCENE_EXIT_UNLESS(1, Garoh1, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Garoh4, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Garoh4, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Garoh1, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, GarohInteriors2, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, GarohInteriors2, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, GarohInteriors1, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, GarohInteriors1, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, Garoh4, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, Garoh4, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, Garoh1, 9, EXIT_FLAG_NONE),
+    SCENE_EXITS(Garoh5),
+    SCENE_EXIT_UNLESS(1, Garoh1, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Garoh5, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Garoh5, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Garoh5, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Garoh5, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Garoh5, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, Garoh5, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, GarohInteriors1, 99, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

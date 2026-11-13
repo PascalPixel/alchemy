@@ -1503,7 +1503,15 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_SCENE_EXITS(99, 98, 2, 99, 3, 99, 2, 5, 99, 4)
+u32 gSceneExits[] = {                                                        
+      SCENE_EXITS(EasternAlhafraShip),                                                         
+      SCENE_EXIT_UNLESS(1, EasternAlhafra1, 2, EXIT_FLAG_NONE),                              
+      SCENE_EXIT_UNLESS(2, EasternAlhafraShip, 3, EXIT_FLAG_NONE),                              
+      SCENE_EXIT_UNLESS(3, EasternAlhafraShip, 2, EXIT_FLAG_NONE),                              
+      SCENE_EXIT_UNLESS(4, EasternAlhafraShip, 5, EXIT_FLAG_NONE),                              
+      SCENE_EXIT_UNLESS(5, EasternAlhafraShip, 4, EXIT_FLAG_NONE),                             
+      SCENE_EXITS_END,                                                         
+  };
 
 s16 gEasternAlhafraShip_ActorPlacements[] = {
     16, -1, 1, 0, 0, 360, 0, 0,

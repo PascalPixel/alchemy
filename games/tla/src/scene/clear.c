@@ -552,7 +552,7 @@ top:
       Event_ClearFlag(FLAG_MENU_OPEN);
       party->ownerOverride = 0;
       gSleepDisabled = 1;
-      Event_SetDestination((s32)&SceneId_Ov6b5, 1);
+      Event_SetDestination((s32)&SceneId_Lobby, 1);
     }
     goto finish;
   }

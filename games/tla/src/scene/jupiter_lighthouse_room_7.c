@@ -1120,7 +1120,13 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA DEFINE_G_SCENE_EXITS_3(260, 262, 260, 7, 6, 263, 10, 9, 12, 260)
+LATE_DATA u32 gSceneExits[] = {                                                        
+      SCENE_EXITS(JupiterLighthouseRoom7),         SCENE_EXIT(1, JupiterLighthouseRoom9, 1),   SCENE_EXIT(2, JupiterLighthouseRoom7, 3),   
+      SCENE_EXIT(3, JupiterLighthouseRoom7, 2),    SCENE_EXIT(4, JupiterLighthouseRoom7, 5),   SCENE_EXIT(5, JupiterLighthouseRoom7, 4),   
+      SCENE_EXIT(6, JupiterLighthouseRoom7, 7),   SCENE_EXIT(7, JupiterLighthouseRoom7, 6),  SCENE_EXIT(8, JupiterLighthouseRoomM, 8),   
+      SCENE_EXIT(9, JupiterLighthouseRoom7, 10),   SCENE_EXIT(10, JupiterLighthouseRoom7, 9), SCENE_EXIT(11, JupiterLighthouseRoom7, 12), 
+      SCENE_EXIT(12, JupiterLighthouseRoom7, 11), SCENE_EXITS_END,                                
+  };
 
 LATE_DATA struct ActorPlacement gActorPlacements[] = {
     {340, CONDITION_ALWAYS, 1, PIXELS(564), 0, PIXELS(712), FACING_SOUTHWEST, 2, 0},

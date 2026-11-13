@@ -75,13 +75,13 @@ s32 TrialRoad_SettleOnGround(struct Actor *object) {
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 pattern = gTrialRoadState->pattern;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TrialRoad1)
     return gTrialRoad_Room1Placements[pattern & 7];
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TrialRoad3)
     return gTrialRoad_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TrialRoad4)
     return gTrialRoad_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TrialRoad2)
     return gTrialRoad_Room2Placements;
   return gTrialRoad_Placements;
 }
@@ -1337,8 +1337,8 @@ void TrialRoad_ChallengeMoapa(void) {
   party->battleRule24b = 2;
   do {
   } while (0);
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov697Room2, 4);
-  Party_SetFields1f2And1f4((s32)&SceneId_Ov697Room2, 5);
+  Event_SetAfterBattleDestination((s32)&SceneId_TrialRoad2, 4);
+  Party_SetFields1f2And1f4((s32)&SceneId_TrialRoad2, 5);
   Field_RequestBattleFromEncounterTable(13, 4 - count);
 }
 
@@ -1363,13 +1363,13 @@ extern s32 gTrialRoad_Room1Triggers[];
 const struct Trigger *Scene_GetEvents(void) {
   s32 pattern = gTrialRoadState->pattern;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TrialRoad1)
     return gTrialRoad_Room1Triggers[pattern & 7];
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TrialRoad3)
     return gTrialRoad_Room3Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TrialRoad4)
     return gTrialRoad_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_TrialRoad2)
     return gTrialRoad_Room2Triggers;
   return gTrialRoad_Triggers;
 }
@@ -1744,7 +1744,7 @@ s32 Scene_Initialize(void) {
 
   if (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 344) != 0)
     return 0;
-  if (scene == (s32)&SceneId_Ov697Room1) {
+  if (scene == (s32)&SceneId_TrialRoad1) {
     if (entrance <= 7) {
       Event_SetFlag(FLAG_RETREAT_BLOCKED);
       Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
@@ -1753,11 +1753,11 @@ s32 Scene_Initialize(void) {
       TrialRoad_ShowTraps();
     }
   }
-  if (scene == (s32)&SceneId_Ov697Room3)
+  if (scene == (s32)&SceneId_TrialRoad3)
     TrialRoad_SetUpCave();
-  if (scene == (s32)&SceneId_Ov697Room4)
+  if (scene == (s32)&SceneId_TrialRoad4)
     TrialRoad_SetUpPoolRoom();
-  if (scene == (s32)&SceneId_Ov697Room2) {
+  if (scene == (s32)&SceneId_TrialRoad2) {
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
     TrialRoad_SetUpPeak();
   }
@@ -1900,7 +1900,7 @@ s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
 
-  if (scene == (s32)&SceneId_Ov697Room1) {
+  if (scene == (s32)&SceneId_TrialRoad1) {
     struct MapWork *map = Ram_HeapSlots->mapWork;
     struct TrialRoadState *state = gTrialRoadState;
     struct Actor *leader;
@@ -1929,7 +1929,7 @@ s32 Scene_PrepareMap(void) {
       TrialRoad_PlayRivalRecording((s32)gTrialRoad_RivalRecordings[value & 7]);
       state->pattern = state->order[state->stage[0] * 2 + state->mirrored];
       n = entrance % 10;
-      Event_SetDestination((s32)&SceneId_Ov697Room1, n);
+      Event_SetDestination((s32)&SceneId_TrialRoad1, n);
     } else if ((u32)(entrance - 33) <= 1) {
       if (!GameFlag_Get(FLAG_AREA_TEMP_80)) {
         unit = Unit_Get(gMainRoutineWork.currentOwner);
@@ -1960,7 +1960,7 @@ s32 Scene_PrepareMap(void) {
       TrialRoad_PlayRivalRecording((s32)gTrialRoad_RivalRecordings[value & 7]);
       state->pattern = state->order[state->stage[0] * 2 + state->mirrored];
       n = entrance % 10;
-      Event_SetDestination((s32)&SceneId_Ov697Room1, n);
+      Event_SetDestination((s32)&SceneId_TrialRoad1, n);
     } else if (entrance == 50) {
       unit = Unit_Get(gMainRoutineWork.currentOwner);
       Iwram_ClearWordsEntry(state, 32);
@@ -1974,7 +1974,7 @@ s32 Scene_PrepareMap(void) {
       state->leaderBest = 0;
       state->rivalBest = 0;
       state->pattern = state->order[0];
-      Event_SetDestination((s32)&SceneId_Ov697Room1, 55);
+      Event_SetDestination((s32)&SceneId_TrialRoad1, 55);
     } else {
       s32 *viewX = &map->viewX;
       s32 *viewZ = &map->viewZ;
@@ -2098,9 +2098,9 @@ s32 Scene_PrepareMap(void) {
         }
       }
     }
-  } else if (scene == (s32)&SceneId_Ov697Room3) {
-  } else if (scene == (s32)&SceneId_Ov697Room4) {
-  } else if (scene == (s32)&SceneId_Ov697Room2 && GameFlag_Get(2559) &&
+  } else if (scene == (s32)&SceneId_TrialRoad3) {
+  } else if (scene == (s32)&SceneId_TrialRoad4) {
+  } else if (scene == (s32)&SceneId_TrialRoad2 && GameFlag_Get(2559) &&
              !GameFlag_Get(FLAG_AREA_TEMP_85)) {
     if (gTrialRoadState->mirrored != 0)
       MapGrid_CopyCellsLayered(26, 79, 1, 2, 13, 79);
@@ -3768,30 +3768,30 @@ LAST_DATA struct SceneEntrance gSceneEntrances[] = {
 };
 
 LAST_DATA u32 gSceneExits[] = {
-    SCENE_EXITS(247),
-    SCENE_EXIT(1, 247, 3),
-    SCENE_EXIT(2, 247, 4),
-    SCENE_EXIT(3, 247, 1),
-    SCENE_EXIT(4, 247, 2),
-    SCENE_EXIT(5, 241, 1),
-    SCENE_EXIT(6, 241, 2),
-    SCENE_EXIT(7, 248, 1),
-    SCENE_EXIT(8, 248, 2),
-    SCENE_EXIT(9, 241, 9),
-    SCENE_EXIT(10, 241, 11),
-    SCENE_EXITS(249),
-    SCENE_EXIT(1, 249, 2),
-    SCENE_EXIT(2, 249, 1),
-    SCENE_EXIT(3, 248, 3),
-    SCENE_EXIT(4, 250, 1),
-    SCENE_EXITS(250),
-    SCENE_EXIT(1, 249, 4),
-    SCENE_EXITS(248),
-    SCENE_EXIT(1, 247, 33),
-    SCENE_EXIT(2, 247, 34),
-    SCENE_EXIT(3, 249, 3),
-    SCENE_EXIT(4, 244, 30),
-    SCENE_EXIT(5, 244, 31),
+    SCENE_EXITS(TrialRoad1),
+    SCENE_EXIT(1, TrialRoad1, 3),
+    SCENE_EXIT(2, TrialRoad1, 4),
+    SCENE_EXIT(3, TrialRoad1, 1),
+    SCENE_EXIT(4, TrialRoad1, 2),
+    SCENE_EXIT(5, ShamanVillage1, 1),
+    SCENE_EXIT(6, ShamanVillage1, 2),
+    SCENE_EXIT(7, TrialRoad2, 1),
+    SCENE_EXIT(8, TrialRoad2, 2),
+    SCENE_EXIT(9, ShamanVillage1, 9),
+    SCENE_EXIT(10, ShamanVillage1, 11),
+    SCENE_EXITS(TrialRoad3),
+    SCENE_EXIT(1, TrialRoad3, 2),
+    SCENE_EXIT(2, TrialRoad3, 1),
+    SCENE_EXIT(3, TrialRoad2, 3),
+    SCENE_EXIT(4, TrialRoad4, 1),
+    SCENE_EXITS(TrialRoad4),
+    SCENE_EXIT(1, TrialRoad3, 4),
+    SCENE_EXITS(TrialRoad2),
+    SCENE_EXIT(1, TrialRoad1, 33),
+    SCENE_EXIT(2, TrialRoad1, 34),
+    SCENE_EXIT(3, TrialRoad3, 3),
+    SCENE_EXIT(4, ShamanVillage4, 30),
+    SCENE_EXIT(5, ShamanVillage4, 31),
     SCENE_EXITS_END,
 };
 

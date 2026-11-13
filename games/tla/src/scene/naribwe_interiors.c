@@ -833,7 +833,17 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_SCENE_EXITS_4(106, 105, 106, 7, 6)
+u32 gSceneExits[] = {
+    SCENE_EXITS(NaribweInteriors),
+    SCENE_EXIT_UNLESS(1, Naribwe, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Naribwe, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Naribwe, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Naribwe, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Naribwe, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, NaribweInteriors, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, NaribweInteriors, 6, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
+};
 
 struct ActorPlacement gActorPlacements[] = {
     {115, CONDITION_ALWAYS, 2, PIXELS(120), 0, PIXELS(104), FACING_SOUTHWEST, 1,

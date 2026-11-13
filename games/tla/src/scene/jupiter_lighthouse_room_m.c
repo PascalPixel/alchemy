@@ -1132,8 +1132,9 @@ void Func_02001c7c(void) {
      * CSE's block. */
     gMainRoutineWork.battleRule24b = 6;
   } while (0);
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov6a3, 77);
-  Event_SetDefeatDestination((s32)&SceneId_Ov6a3, 77);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_JupiterLighthouseRoomM,
+                                       77);
+  Event_SetDefeatDestination((s32)&SceneId_JupiterLighthouseRoomM, 77);
   Party_RemoveMember(4);
   Party_RemoveMember(7);
   Party_RemoveMember(5);
@@ -1995,7 +1996,12 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA DEFINE_G_SCENE_EXITS_6(263, 256, 3, 256, 4, 4, 258, 261, 7, 260, 8, 257)
+LATE_DATA u32 gSceneExits[] = {                                                        
+      SCENE_EXITS(JupiterLighthouseRoomM),         SCENE_EXIT(1, JupiterLighthouseRoom3, 1),    SCENE_EXIT(3, JupiterLighthouseRoom3, 3), 
+      SCENE_EXIT(4, JupiterLighthouseRoom3, 4),  SCENE_EXIT(5, JupiterLighthouseRoom5, 5),    SCENE_EXIT(6, JupiterLighthouseRoom5, 6),  
+      SCENE_EXIT(7, JupiterLighthouseRoom8, 7),   SCENE_EXIT(8, JupiterLighthouseRoom7, 8), SCENE_EXIT(9, JupiterLighthouseRoom4, 9), 
+      SCENE_EXIT(10, JupiterLighthouseRoom4, 10), SCENE_EXITS_END,                                
+  };
 
 LATE_DATA struct ActorPlacement gActorPlacements[] = {
     {373, CONDITION_ALWAYS, 1, PIXELS(24), 0, PIXELS(280), FACING_SOUTH, 2, 0},

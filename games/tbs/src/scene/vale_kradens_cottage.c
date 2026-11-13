@@ -162,9 +162,7 @@ const struct ActorPlacement *ValeKradensCottage_GetActorPlacements(void) {
   return gValeKradensCottage_ActorPlacements;
 }
 
-/// Selects the events for the current visit to Vale. They are the ones for
-/// after Kalay (FLAG_KALAY_REACHED), for the stormy night (FLAG_VALE_STORM), or
-/// else for the day the story begins.
+/// Selects the events for the current visit to Vale.
 const struct Trigger *ValeKradensCottage_GetTriggers(void) {
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     return gValeKradensCottage_TriggersAfterKalay;

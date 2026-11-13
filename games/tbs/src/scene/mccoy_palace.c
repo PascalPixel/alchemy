@@ -229,8 +229,6 @@ static void McCoyPalace_TalkToWomanInMiladysNightgown(void) {
 
 /// McCoy's Palace, after the reward: the old man praises the party the first
 /// time, then warns of the holy tree.
-/// "You are a fine warrior." After, "It's very reckless for such young
-/// warriors to face the holy tree..."
 static void McCoyPalace_TalkToOldManPraisingTheWarriors(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinFineWarrior);
@@ -277,9 +275,7 @@ static void McCoyPalace_TalkToSoldierShowingTheReward(void) {
 }
 
 /// McCoy's Palace, after the reward: Mind Read on the old man shows two
-/// thoughts. "Sometimes, we need children to remind us of our own
-/// responsibilities." Then "You looked very courageous walking toward
-/// Kolima."
+/// thoughts.
 static void McCoyPalace_ReadOldMansThoughtsOnTheWarriors(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinSometimesWeNeedChildrenRemind);
@@ -414,8 +410,6 @@ static void McCoyPalace_SearchWaterOfLifeChest(void) {
 }
 
 /// The chest opens and gives its item.
-/// With no room for it, the chest closes again and the reward is still to
-/// choose.
 static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
                                     s32 chestFlag) {
   s32 emitterHandle;
@@ -441,8 +435,7 @@ static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
 }
 
 /// McCoy's Palace, step trigger 51, leaving the treasure room without a reward:
-/// the captain walks the leader back. "Please take your reward before your
-/// depart!"
+/// the captain walks the leader back.
 static void McCoyPalace_CaptainAsksPartyToChoose(void) {
   if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) == 0) {
     if (GameFlag_Get(FLAG_REWARD_OFFERED) != 0) {
@@ -463,8 +456,7 @@ static void McCoyPalace_CaptainAsksPartyToChoose(void) {
 }
 
 /// McCoy's Palace, step trigger 50, leaving the treasure room with a reward:
-/// the captain sees the party off. "You are always welcome in the palace of
-/// Lord McCoy."
+/// the captain sees the party off.
 static void McCoyPalace_CaptainSeesPartyOff(void) {
   if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     Event_Start();

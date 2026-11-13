@@ -281,7 +281,6 @@ static void ColosseumSatrageMatch_PushWallPillar(void) {
 /// Move on a stone pillar in the Mini-Maze, and each push, keeps where the
 /// pillars stand.
 static void ColosseumSatrageMatch_MoveMiniMazePillar(void) {
-
   struct Actor *obstacle;
   s32 column;
 
@@ -396,7 +395,6 @@ static void ColosseumSatrageMatch_JumpWestFromLedge(void) {
 /// Moves a riding log and its pusher to aligned cell centers.
 static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
                                                    s32 offsetZ) {
-
   struct Actor *pusher;
   struct Actor *log;
   s32 destinationX;
@@ -798,7 +796,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Back from the battle, Isaac and Satrage stand in the arena as the result is
 /// shown.
 static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
-
   Actor_ReleaseById(ACTOR_PRIZE_A);
   Actor_ReleaseById(ACTOR_PRIZE_B);
   Party_RestoreHpPp(1);

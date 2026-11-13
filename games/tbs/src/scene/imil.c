@@ -382,7 +382,6 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
 /// The old man in the old couple's house moans for help, and his wife hurries
 /// to fetch Mia (FLAG_IMIL_MIA_SENT_FOR).
 static void Imil_TalkToOldMan(void) {
-
   struct Actor *oldMan;
   struct Actor *oldWoman;
 
@@ -1473,7 +1472,6 @@ static void Imil_TurnSlidingActor(struct Actor *updated) {
 
 /// The leader slides along Imil's ice until something stops him.
 static void Imil_RunIceSlide(void) {
-
   struct Actor *subject;
   struct FieldPosition probe;
   s32 heading;

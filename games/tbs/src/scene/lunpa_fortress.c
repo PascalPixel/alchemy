@@ -591,9 +591,8 @@ static void LunpaFortress_UnlockGroundFloorDoor(void) {
   }
 }
 
-/// Lunpa Fortress, every scene: searching a cell door without the Cell Key,
-/// it stays shut.
-/// "The door is tightly locked."
+/// Lunpa Fortress, every scene: searching a cell door without the Cell Key, it
+/// stays shut.
 static void LunpaFortress_SearchLockedDoor(void) {
   if (PartyInventory_FindMember(ITEM_CELL_KEY) == -1) {
     FieldMessage_Show(MsgFieldDoorTightlyLocked, 1);
@@ -825,9 +824,7 @@ static s32 LunpaFortress_IsLeaderPassingPatrollingGuard(void) {
 
 /// Every frame in LunpaFortressUpperFloor: the patrol in the east hall, as
 /// LunpaFortress_UpdatePairedGuardDetection.
-/// Seeing the leader, it raises RAISED_HALL_PATROL_SPOTTED.
 static void LunpaFortress_UpdateHallGuardDetection(void) {
-
   struct Actor *guard = Actor_Get(ACTOR_UPPER_FLOOR_HALL_PATROL);
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
@@ -899,9 +896,7 @@ static s32 LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone(void) {
 
 /// Every frame in LunpaFortressGroundFloor: the patrolling guard, as
 /// LunpaFortress_UpdatePairedGuardDetection.
-/// Seeing the leader, it raises RAISED_GROUND_FLOOR_PATROL_SPOTTED.
 static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
-
   struct Actor *guard = Actor_Get(ACTOR_GROUND_FLOOR_PATROL_GUARD);
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
@@ -966,7 +961,6 @@ static s32 LunpaFortress_IsLeaderOutsideUpperHall(void) {
 /// Every frame in LunpaFortressGroundFloor's upper hall: the guard who sees the
 /// uncloaked leader raises RAISED_UPPER_HALL_SPOTTED.
 static void LunpaFortress_CheckUpperHallGuard(void) {
-
   struct FieldWork *work;
 
   work = gFieldWork;
@@ -997,7 +991,6 @@ static void LunpaFortress_UpperHallGuardThrowsPartyOut(void) {
 /// or main passage: the guard who sees the uncloaked leader raises
 /// RAISED_ENTRANCE_GUARD_SPOTTED, once.
 static void LunpaFortress_CheckEntranceGuard(void) {
-
   struct FieldWork *work = gFieldWork;
 
   if (LunpaFortress_CanGuardSeeLeader(ACTOR_GROUND_FLOOR_ENTRANCE_GUARD) != 0 &&
@@ -1014,7 +1007,6 @@ static void LunpaFortress_CheckEntranceGuard(void) {
 /// or main passage: either sentry who sees the uncloaked leader raises
 /// RAISED_SENTRIES_SPOTTED, once for both.
 static void LunpaFortress_CheckFirstEntranceSentry(void) {
-
   struct FieldWork *work;
 
   work = gFieldWork;
@@ -1032,7 +1024,6 @@ static void LunpaFortress_CheckFirstEntranceSentry(void) {
 
 /// The second sentry, as the first.
 static void LunpaFortress_CheckSecondEntranceSentry(void) {
-
   struct FieldWork *work;
 
   work = gFieldWork;
@@ -1155,7 +1146,6 @@ static s32 LunpaFortress_IsGuardNearViewCenter(s32 actorId) {
 /// Every frame in LunpaFortressGroundFloor: walking into the second cell door's
 /// column with the Cell Key unlocks it.
 static void LunpaFortress_CheckGroundFloorDoorApproach(void) {
-
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (GameFlag_Get(GROUND_FLOOR_DOOR_FLAG + 1) == 0) {
@@ -1175,7 +1165,6 @@ static void LunpaFortress_CheckGroundFloorDoorApproach(void) {
 /// Every frame in LunpaFortressUpperFloor: walking east or west into the first
 /// cell door's column with the Cell Key unlocks it.
 static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
-
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (GameFlag_Get(UPPER_FLOOR_DOOR_FLAG) == 0) {
@@ -1260,7 +1249,6 @@ static void LunpaFortress_GuardThrowsPartyOut(s32 actorId) {
 /// A guard faces the leader with one of four challenges, chosen at random
 /// when the scene was entered.
 static void LunpaFortress_GuardChallengesParty(s32 actorId) {
-
   Actor_FaceActor(actorId, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, actorId, 0);
   switch (gLunpaFortressRandomPick & 3) {
@@ -1366,7 +1354,6 @@ static void LunpaFortress_ActOutScoundrelDialogue(s32 actorId) {
 /// LunpaFortressUpperFloor, step trigger 33: walking up to the west guard, he
 /// challenges the party to a battle with a Brigand, and is gone after it.
 static void LunpaFortress_FightWestGuard(void) {
-
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Sound_Play(SE_MENU_CANCEL);
   Actor_ShowEmote(ACTOR_UPPER_FLOOR_WEST_GUARD,
@@ -1384,7 +1371,6 @@ static void LunpaFortress_FightWestGuard(void) {
 /// LunpaFortressUpperFloor, step trigger 30: walking up to the hall guard, he
 /// challenges the party to a battle with a Brigand, and is gone after it.
 static void LunpaFortress_FightHallGuard(void) {
-
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Sound_Play(SE_MENU_CANCEL);
   Actor_ShowEmote(ACTOR_UPPER_FLOOR_HALL_GUARD,
@@ -1493,7 +1479,6 @@ static void LunpaFortress_PlaceThreeBeatenGuards(void) {
 /// LunpaFortressUpperFloor, step trigger 32: walking up to the east guard, he
 /// challenges the party to a battle with a Brigand, and is gone after it.
 static void LunpaFortress_FightEastGuard(void) {
-
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Sound_Play(SE_MENU_CANCEL);
   Actor_ShowEmote(ACTOR_UPPER_FLOOR_EAST_GUARD,
@@ -1595,8 +1580,7 @@ LunpaFortress_FlipHiddenSwitch(s32 cellX, s32 cellY,
 }
 
 /// LunpaFortressCave, examine trigger 52 once uncovered: searching the first
-/// switch while Reveal shows it flips it, and its passage opens. "You flipped
-/// the switch."
+/// switch while Reveal shows it flips it, and its passage opens.
 static void LunpaFortress_FlipFirstSwitch(void) {
   if (gFieldWork->revealActive != 0) {
     if (Event_GetFlag(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED) == 0) {
@@ -1611,8 +1595,7 @@ static void LunpaFortress_FlipFirstSwitch(void) {
 }
 
 /// LunpaFortressCave, examine trigger 51 once uncovered: searching the second
-/// switch while Reveal shows it flips it, and its passage opens. "You flipped
-/// the switch."
+/// switch while Reveal shows it flips it, and its passage opens.
 static void LunpaFortress_FlipSecondSwitch(void) {
   if (gFieldWork->revealActive != 0) {
     if (Event_GetFlag(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED) == 0) {
@@ -2789,10 +2772,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
 }
 
 /// LunpaFortressGroundFloor: Mind Read on the second sentry reads his thoughts.
-/// He has one of eight thoughts, chosen at random when the scene was entered.
-/// In one he looks around first.
 static void LunpaFortress_ReadSentrysThoughts(void) {
-
   switch (gLunpaFortressRandomPick) {
   case 0:
     Event_SetMessageId(MsgLunpaHammetGreatMerchant);
@@ -2849,7 +2829,6 @@ static void LunpaFortress_ReadSentrysThoughts(void) {
 /// LunpaFortressGroundFloor: the second sentry looks around, hearing someone he
 /// cannot see.
 static void LunpaFortress_TalkToSentry(void) {
-
   s32 messageBase;
 
   Actor_ShowEmote(ACTOR_GROUND_FLOOR_SECOND_SENTRY,
@@ -3159,10 +3138,7 @@ static void LunpaFortress_TalkToStartledOldMan(void) {
 }
 
 /// LunpaFortressGroundFloor: Mind Read on the startled resident.
-/// Once they have promised, a thought about Hammet. Before, Mind Read stops
-/// and they talk instead.
 static void LunpaFortress_ReadStartledResidentsThoughts(void) {
-
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_OLD_MAN_PROMISED_SILENCE)) {
     Event_SetMessageId(MsgLunpaMaybeMerchantReason);
     // "Maybe that merchant is the reason they've closed off the..."
@@ -3180,7 +3156,6 @@ static void UNUSED LunpaFortress_DoNothingF(void) {}
 
 /// LunpaFortressToadonpa, after Donpa's judgment: Dodonpa behind bars begs his
 /// father's forgiveness.
-/// With the Cell Key, a further line shows.
 static void LunpaFortress_TalkToJailedDodonpa(void) {
   s32 pleaMessage = MsgLunpaWrongTurnOver;
 

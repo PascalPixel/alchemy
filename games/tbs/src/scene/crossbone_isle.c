@@ -293,7 +293,6 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 actorId) {
 
 /// Stepping on step trigger 10 on the Pirate Ship: Deadbeard attacks.
 static void CrossboneIsle_FightDeadbeard(void) {
-
   Event_Start();
   Event_SetAfterBattleDestination(gMainRoutineWork.next, ENTRANCE_AFTER_BATTLE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);

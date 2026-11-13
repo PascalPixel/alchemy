@@ -241,9 +241,7 @@ const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void) {
 const struct SceneExitRegion *KalayTolbiDocks_GetRegions(void) { return NULL; }
 
 /// The exits of the three scenes, each scene's after its header word (an exit
-/// of kind 0). Both docks lead to the World Map, onto the ship
-/// (SceneId_TolbiShipDeck) and into their rooms (SceneId_CottageRoomsE), which
-/// lead back to their docks.
+/// of kind 0).
 const u32 *KalayTolbiDocks_GetExits(void) { return gKalayTolbiDocks_Exits; }
 
 /// Each scene's people before the crossing, once the ship has crossed and not
@@ -324,8 +322,6 @@ const struct Trigger *KalayTolbiDocks_GetTriggers(void) {
 }
 
 /// At Kalay Docks, a young man asks whether the party wants to go to Tolbi.
-/// Told yes, he says that past Silk Road's end the way is across the Karagol
-/// Sea. Told no, he suggests a long look around the ship.
 static void KalayTolbiDocks_AskAboutTolbiCrossing(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayWantGoToTolbi);
@@ -336,10 +332,7 @@ static void KalayTolbiDocks_AskAboutTolbiCrossing(void) {
   Event_End();
 }
 
-/// At Kalay Docks, a woman asks whether the party is taking the ship. If it is,
-/// she asks it to tell her daughter in Tolbi that the tickets were too
-/// expensive for the daughter's mother to come (sets
-/// FLAG_KALAY_DOCKS_CARRYING_MESSAGE). Afterwards she repeats the message.
+/// At Kalay Docks, a woman asks whether the party is taking the ship.
 static void KalayTolbiDocks_TalkToWomanWithAMessage(void) {
   Event_Start();
   if (Event_GetFlag(FLAG_KALAY_DOCKS_CARRYING_MESSAGE) == 0) {
@@ -388,9 +381,7 @@ static void KalayTolbiDocks_RemindBoardShip(void) {
 }
 
 /// At Kalay Docks, the ticket taker at the ship's plank asks for the party's
-/// tickets when it faces him from the east. With one bought he steps aside,
-/// takes it (sets FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) and lets the party
-/// aboard.
+/// tickets when it faces him from the east.
 static void KalayTolbiDocks_TalkToTicketTaker(void) {
   s32 ticketHolder;
   s32 ticketSlot;
@@ -548,9 +539,7 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
 }
 
 /// At Tolbi Docks, a man on the docks has heard the party was attacked by a
-/// monster on the crossing, and asks whether that is true. Told it was nothing,
-/// he will not believe they fought the monsters alone, for Kaja killed the
-/// Kraken.
+/// monster on the crossing, and asks whether that is true.
 static void KalayTolbiDocks_AskAboutRoughCrossing(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayHearScaryTrip);
@@ -572,9 +561,7 @@ static void KalayTolbiDocks_AskAboutSeasickTourists(void) {
   Event_End();
 }
 
-/// At Tolbi Docks, the daughter looks for her parents among the passengers. If
-/// the party carries the message from her parents she asks for it and thanks
-/// them once it is given. Otherwise she turns back to the sea.
+/// At Tolbi Docks, the daughter looks for her parents among the passengers.
 static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
   Event_Start();
   if (Event_GetFlag(FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED) != 0) {
@@ -622,9 +609,7 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
 }
 
 /// At Kalay Docks or Tolbi Docks, walking north into the door (step trigger 10)
-/// of the building beside them opens it, and the leader walks in. He goes by
-/// TOLBI_DOCKS_TO_COTTAGE_ROOMS_E, which in Kalay Docks is
-/// KALAY_DOCKS_TO_COTTAGE_ROOMS_E by the same number.
+/// of the building beside them opens it, and the leader walks in.
 static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Event_Start();
   Sound_Play(SE_DOOR_OPEN);
@@ -648,9 +633,7 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
 /// FLAG_COLOSSO_OVER. The debug scene selector reaches it.
 enum { KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO = 90 };
 
-/// Prepares whichever of the three scenes is entered. Arriving by
-/// KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO sets FLAG_COLOSSO_OVER, which
-/// leaves the tour's passengers stranded on the Tolbi Docks.
+/// Prepares whichever of the three scenes is entered.
 s32 KalayTolbiDocks_Initialize(void) {
   if (gMainRoutineWork.entrance == KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO) {
     GameFlag_Set(FLAG_COLOSSO_OVER);
@@ -666,9 +649,7 @@ s32 KalayTolbiDocks_Initialize(void) {
 }
 
 /// On the first arrival at Kalay Docks from the World Map, Garet runs to see
-/// the Karagol. Coming back off the ship clears the shore leave, and once the
-/// tour's group has left Kalay the ticket taker stands at the ship's plank
-/// until the party goes ashore.
+/// the Karagol.
 static void KalayTolbiDocks_PrepareKalayDocks(void) {
   if (gMainRoutineWork.entrance == KALAY_DOCKS_FROM_WORLD_MAP_SOUTH) {
     if (Event_GetFlag(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL) == 0) {
@@ -689,10 +670,7 @@ static void KalayTolbiDocks_PrepareKalayDocks(void) {
   }
 }
 
-/// On Tolbi Docks the two stacks of crates settle into the pier's cells. The
-/// passenger who met the party stays beside the ship, and after the
-/// confrontation the guide, the bodyguard and the two passengers keep where it
-/// left them, the angry one still lying on the ground.
+/// On Tolbi Docks the two stacks of crates settle into the pier's cells.
 static void KalayTolbiDocks_PrepareTolbiDocks(void) {
   struct Actor *actor;
 
@@ -775,8 +753,7 @@ static void KalayTolbiDocks_SettleCrates(s32 actorId) {
 }
 
 /// At Kalay Docks, on the first entry from the World Map, Garet runs to the
-/// edge of the docks and marvels at the sea. "Incredible! So this is the ocean
-/// Kraden was talking about!"
+/// edge of the docks and marvels at the sea.
 static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   struct Actor *actor;
 

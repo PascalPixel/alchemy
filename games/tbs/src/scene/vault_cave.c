@@ -329,9 +329,7 @@ static void VaultCave_PushPillarAhead(void) {
   Actor_SelectAnimation(leader, ANIM_STAND);
 }
 
-/// Whirlwind blows the ivy away. It is cast on ACTOR_IVY in the puddle room
-/// of SceneId_VaultCaveVambrace. The ivy stays gone for as long as the party
-/// stays in the cave, because FLAG_VAULT_CAVE_IVY_BLOWN_AWAY is an area flag.
+/// Whirlwind blows the ivy away.
 static void VaultCave_UseWhirlwind(void) {
   GameFlag_Set(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY);
 }
@@ -392,8 +390,6 @@ static inline void VaultCave_CompleteSouthernSwitch(void) {
 }
 
 /// In VaultCaveVambrace's southern room, the party pushes the southern pillar.
-/// Once it rests on its switch, the puzzle chime plays and the switch opens
-/// the way.
 static void VaultCave_PushSouthernPillar(void) {
   if (Event_GetFlag(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
     VaultCave_PushPillarAhead();
@@ -479,15 +475,12 @@ static void VaultCave_MoveNorthernPillar(void) {
 }
 
 /// Frost freezes the upper western puddle.
-/// The puddle is in VaultCaveVambrace's puddle room. Freezing it changes its
-/// map cell, and arriving again re-freezes every puddle whose flag is set.
 static void VaultCave_FreezeWestUpperPuddle(void) {
   struct Actor *target = Actor_Get(ACTOR_WEST_UPPER_PUDDLE);
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 23, 32);
 
   if (target != 0) {
-
     Actor_Get(ACTOR_WEST_UPPER_PUDDLE)->motionFlags = 0;
     target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
@@ -503,7 +496,6 @@ static void VaultCave_FreezeWestLowerPuddle(void) {
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 23, 34);
 
   if (target != 0) {
-
     Actor_Get(ACTOR_WEST_LOWER_PUDDLE)->motionFlags = 0;
     target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
@@ -518,7 +510,6 @@ static void VaultCave_FreezeInnerWestLowerPuddle(void) {
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 24, 34);
 
   if (target != 0) {
-
     Actor_Get(ACTOR_INNER_WEST_LOWER_PUDDLE)->motionFlags = 0;
     target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }

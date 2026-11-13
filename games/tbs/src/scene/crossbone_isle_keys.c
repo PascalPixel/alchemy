@@ -683,7 +683,6 @@ static void CrossboneIsleKeys_DodgeSecondPursuer(void) {
 
 /// Moves a pursuer to the leader column and remembers its last column.
 static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
-
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / px(16);
   s32 row = leader->z.fixed / px(16);
@@ -930,21 +929,18 @@ static void CrossboneIsleKeys_RestoreFirstPillarTerrain(void) {
 
 /// Restores support under the first pillar at the eastern cell.
 static void CrossboneIsleKeys_RestoreEastUnderfootCell(void) {
-
   MapGrid_CopyCellAttributes(58, 41, 1, 1, 42, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /// Restores support under the first pillar at the middle cell.
 static void CrossboneIsleKeys_RestoreMiddleUnderfootCell(void) {
-
   MapGrid_CopyCellAttributes(44, 42, 1, 1, 41, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /// Restores support under the first pillar at the western cell.
 static void CrossboneIsleKeys_RestoreWestUnderfootCell(void) {
-
   MapGrid_CopyCellAttributes(39, 42, 1, 1, 40, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
@@ -1036,21 +1032,18 @@ static void CrossboneIsleKeys_PushSecondPillar(void) {
 
 /// Restores the terrain at both ends of the third pillar row.
 static void CrossboneIsleKeys_RestoreThirdPillarTerrain(void) {
-
   MapGrid_CopyCellAttributes(38, 56, 1, 1, 38, 55);
   MapGrid_CopyCellAttributes(42, 56, 1, 1, 42, 55);
 }
 
 /// Restores the third pillar support at the western end.
 static void CrossboneIsleKeys_RestoreThirdPillarWestCell(void) {
-
   MapGrid_CopyCellAttributes(40, 54, 1, 1, 38, 55);
   Actor_Get(ACTOR_THIRD_PILLAR)->motionFlags = 0;
 }
 
 /// Restores the third pillar support at the eastern end.
 static void CrossboneIsleKeys_RestoreThirdPillarEastCell(void) {
-
   MapGrid_CopyCellAttributes(40, 54, 1, 1, 42, 55);
   Actor_Get(ACTOR_THIRD_PILLAR)->motionFlags = 0;
 }
@@ -1101,7 +1094,6 @@ static void CrossboneIsleKeys_TouchThirdPillar(void) {
 
 /// Clears the support row before repainting the fourth and fifth pillars.
 static void CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain(void) {
-
   MapGrid_CopyCellAttributes(48, 55, 1, 1, 49, 55);
   MapGrid_CopyCellAttributes(48, 55, 1, 1, 50, 55);
   MapGrid_CopyCellAttributes(48, 55, 1, 1, 51, 55);

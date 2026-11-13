@@ -155,15 +155,11 @@ static inline void LogRoomsB_FaceAndSpeak(s32 actorId, s32 message) {
 }
 
 /// The wife thought she saw the cat paw the gemstone on the table.
-/// Then the treasure was gone. She's in the house at
-/// LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST.
 static void LogRoomsB_WifeSawCatTakeGem(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_GEM_OWNERS_WIFE, MsgVaultThoughtSawCatGetUp);
 }
 
 /// The boy doubts the thieves were from Lunpa after all.
-/// He points out Dodonpa's henchmen never attacked. He's in the house at
-/// LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTH.
 static void LogRoomsB_BoyDoubtsThievesWereFromLunpa(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_BOY, MsgVaultDodonpasHenchmenNeverAttackedUs);
 }
@@ -277,8 +273,6 @@ static void LogRoomsB_ReadMindAndWelcomeIsaacBack(void) {
 #include "shared/vault_bone.h"
 
 /// Across the counter the weapon shop opens.
-/// From elsewhere the merchant talks of a river of fire on the other side of
-/// Mt. Aleph.
 static void LogRoomsB_TalkToWeaponMerchant(void) {
   u32 leaderFacing;
 
@@ -335,8 +329,6 @@ static void LogRoomsB_TalkToItemMerchant(void) {
 }
 
 /// Across the counter the inn opens.
-/// From elsewhere the innkeeper complains that no one comes, what with the
-/// volcano.
 static void LogRoomsB_TalkToInnkeeper(void) {
   u32 leaderFacing;
 
@@ -355,8 +347,6 @@ static void LogRoomsB_TalkToInnkeeper(void) {
 }
 
 /// Mind Read on the girl at the inn shows what is on her mind.
-/// She is hungry while cooking or, once a Bone was given, wonders whether
-/// "he" has a calcium deficiency.
 static void LogRoomsB_ReadBoneGiverMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_BONE_RECEIVED) == 0) {

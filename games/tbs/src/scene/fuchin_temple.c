@@ -269,7 +269,6 @@ static void FuchinTemple_YoungManFromKolimaAsksAboutBridge(void) {
 /// (FuchinTempleGrounds): he speaks of the one seeking enlightenment, with up
 /// to two more questions.
 static void FuchinTemple_BoyMonkSpeaksOfNyunpa(void) {
-
   Event_Start();
   if (GameFlag_Get(FLAG_NYUNPA_ENLIGHTENED) != 0) {
     Event_SetMessageId(MsgXianNowHeTrulyBeyondWorlds);
@@ -1218,7 +1217,6 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
 /// Talking to Feh in his school in Xian after the party declined: he asks again
 /// to see Isaac's Chi.
 static void FuchinTemple_FehAsksToSeeChi(void) {
-
   Event_Start();
   Event_SetMessageId(MsgXianWarriorWillShowMeYour);
   // "Warrior, will you show me your Chi?"

@@ -38,14 +38,7 @@ struct ColossoRaceWork {
 
 STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 0x7170);
 
-/// The opponent's task. PATH_RECORDER_PLAY plays the path back: each
-/// frame the opponent steps to the next point (mirrored across the finish when
-/// asked), turning by at most a sixteenth of a turn, and stands once still for
-/// three frames. At the path's end the opponent walks to the finish, beside the
-/// first finisher's item actor or the second's, and sets
-/// FLAG_SCENE_TEMP_11 (a racer has finished). PATH_RECORDER_RECORD records the
-/// actor's own path instead, up to COLOSSO_PATH_HALFWORDS - 2 halfwords, then
-/// plays it back with the opponent.
+/// The opponent's task.
 static void Colosso_UpdatePathOpponent(void) {
   struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
   struct PathRecorder *rec = (struct PathRecorder *)gSceneLocalState;

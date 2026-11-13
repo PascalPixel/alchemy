@@ -324,7 +324,6 @@ static void Altin_AskAboutHydros(void) {
 
 /// An old woman in Altin's village.
 static void Altin_TalkToThirstyOldWoman(void) {
-
   struct Actor *beast;
   struct Actor *leader;
 
@@ -370,7 +369,6 @@ static void Altin_TalkToThirstyOldWoman(void) {
 /// An old man asks whether the party really found ruins deep in the mine. He's
 /// in Altin's village once the hydros statues are beaten.
 static void Altin_AskAboutRuins(void) {
-
   Event_Start();
   Event_SetMessageId(MsgAltinTrueFoundAncientRuinsIn);
   // "Is it true you found ancient ruins in the deepest part of..."
@@ -382,7 +380,6 @@ static void Altin_AskAboutRuins(void) {
 
 /// A woman asks whether the party is who the girl from Xian was looking for.
 static void CottageRoomsD_AskAboutXianGirl(void) {
-
   Event_Start();
   Event_SetMessageId(MsgAltinGirlFromXianWasAsking);
   // "A girl from Xian was asking questions about young warriors...."
@@ -394,7 +391,6 @@ static void CottageRoomsD_AskAboutXianGirl(void) {
 
 /// An old man points the party to the bottom of the mine.
 static void CottageRoomsD_AskAboutWayWest(void) {
-
   Event_Start();
   Event_SetMessageId(MsgAltinTryingFindYourWayWest);
   // "Are you trying to find your way west through the mountains?"
@@ -406,7 +402,6 @@ static void CottageRoomsD_AskAboutWayWest(void) {
 
 /// A little girl thanks the leader with a kiss.
 static void CottageRoomsD_AskAboutMonsters(void) {
-
   Event_Start();
   Event_SetMessageId(MsgAltinDefeatedThoseMonstersDidnt);
   // "You defeated those monsters, didn't you?"
@@ -419,7 +414,6 @@ static void CottageRoomsD_AskAboutMonsters(void) {
 /// A man at the inn asks whether the remaining beasts are deep below. He's
 /// staying at Altin's inn once the hydros statues are beaten.
 static void CottageRoomsD_AskAboutMineBeasts(void) {
-
   Event_Start();
   Event_SetMessageId(MsgAltinThereFewBeastsInMine);
   // "There are a few beasts in the mine still, but they're down..."
@@ -442,7 +436,6 @@ static s32 Altin_LeaderFacesCounter(void) {
 /// Altin's weapon merchant waits in the inn until the water drains, and cannot
 /// sell.
 static void CottageRoomsD_TalkToWeaponMerchant(void) {
-
   if (GameFlag_Get(FLAG_ALTIN_WATER_DRAINED) == 0) {
     Event_Start();
     Event_SetMessageId(MsgAltinDoWantWeapons);
@@ -471,7 +464,6 @@ static void CottageRoomsD_TalkToWeaponMerchant(void) {
 
 /// Altin's armor merchant speaks in either scene.
 static void Altin_TalkToArmorMerchant(void) {
-
   if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_TWICE) == 0) {
     Event_Start();
     Event_SetMessageId(MsgAltinMyStoreSubmergedWantSell);

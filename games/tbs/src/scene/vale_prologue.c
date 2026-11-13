@@ -220,9 +220,7 @@ enum StormNightAreaFlag {
 static s32 sShakeDone;
 static s32 sShakeShift;
 
-/// The step of gValePrologue_LookAroundScript. The actor faces a random way
-/// every 20 to 39 frames, as everyone looks about once the Boulder has gone
-/// by.
+/// The step of gValePrologue_LookAroundScript.
 static s32 ValePrologue_RerollHeadingOnCountdown(struct Actor *actor) {
   s32 timer = actor->timer;
   s32 countdown = (s16)timer;
@@ -251,9 +249,6 @@ static s32 ValePrologue_RerollHeadingOnCountdown(struct Actor *actor) {
 #define FLAG_VALE_ON_BRIDGE FLAG_SCENE_TEMP_10
 
 /// Returns where the party appears.
-/// VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA is where Dora and Isaac
-/// come out of the door of their house, from SceneId_CottageRoomsB's
-/// COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA.
 const struct SceneEntrance *ValePrologue_GetEntrances(void) {
   return gValePrologue_Entrances;
 }
@@ -342,10 +337,7 @@ static void ValePrologue_LeaveToCottageRoomsAEast(void) {
   Vale_RequestBackdropExit(VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_EAST);
 }
 
-/// A stout man runs out of a house and shoves Isaac. In Vale on the stormy
-/// night, this is Isaac's first time at the door of
-/// VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_SOUTH. Afterwards the door opens as
-/// usual. "Huh? Isaac?"
+/// A stout man runs out of a house and shoves Isaac.
 static void ValePrologue_LeaveToCottageRoomsA(void) {
   if (Event_GetFlag(FLAG_VALE_SHOVING_MANS_DOOR_OPEN) == 0) {
     Sound_Play(SE_DOOR_OPEN);
@@ -635,8 +627,7 @@ s32 ValePrologue_Initialize(void) {
 }
 
 /// In Vale on the stormy night, Dora comes out into the storm with Isaac to
-/// Kyle, and the two send Isaac on to the plaza while they go to help. "Kyle...
-/// Will they be able to stop the Boulder?"
+/// Kyle, and the two send Isaac on to the plaza while they go to help.
 static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   s32 message;
 
@@ -1027,9 +1018,8 @@ static void ValePrologue_ApplyFourthRockCollision(void) {
   MapGrid_CopyCellAttributes(28, 22, 1, 1, 27, 72);
 }
 
-/// Stops the leader at the door of VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_SOUTH
-/// for the first conversation of the night. A stout man runs out of the door,
-/// knocks Isaac back and runs off to the plaza. "Huh? Isaac?"
+/// Stops the leader at the door of VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_SOUTH for
+/// the first conversation of the night.
 static void ValePrologue_BumpIntoShovingMan(void) {
   s32 message;
 
@@ -1124,8 +1114,7 @@ static void ValePrologue_TalkToGaret(void) {
 }
 
 /// Garet asks the question the caller chose and, on either answer, drops his
-/// chest and joins the party. A yes has him agree to forget his things. A no
-/// has him decide a rock would cost him chest and life alike.
+/// chest and joins the party.
 static void ValePrologue_GaretLeavesHisChest(void) {
   s32 agreedToLeaveBelongings;
 
@@ -1272,9 +1261,6 @@ static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y) {
 }
 
 /// The Boulder slips toward the village and the elders tell the boys to run.
-/// In Vale on the stormy night, the elders hold the Boulder with their
-/// Psynergy as it slips.
-/// "Ahhh! The Boulder! It's falling!"
 static void ValePrologue_WatchBoulderFall(void) {
   u32 i;
   struct Actor *movingActor;
@@ -1451,10 +1437,7 @@ static void ValePrologue_WatchBoulderFall(void) {
   }
 }
 
-/// Sets the animation parameter of each entry of a one-sprite actor. The
-/// value is mode - 1, or for mode 0 a value from gValePrologue_FrameModes by
-/// the frame count. Only ValePrologue_FlashBoulderMapAnimationEntries calls
-/// it.
+/// Sets the animation parameter of each entry of a one-sprite actor.
 static void ValePrologue_SetActorFrameMode(struct Actor *actor, s32 mode) {
   if ((actor->spriteStorageKind & 0xf) == 1) {
     struct Sprite *animation = actor->sprite;
@@ -1496,10 +1479,7 @@ UNUSED static void ValePrologue_FlashBoulderMapAnimationEntries(void) {
   }
 }
 
-/// Jenna cries out for Felix as her family tries to save him at the river. In
-/// Vale on the stormy night, her brother Felix has fallen in and clings on as
-/// Kyle and her parents try to save him. "Oh no! My brother!" The rope will not
-/// reach and no one has Psynergy left, so they send for help.
+/// Jenna cries out for Felix as her family tries to save him at the river.
 static void ValePrologue_WatchAttemptToSaveFelix(void) {
   const s32 *pulseScript;
 
@@ -1743,9 +1723,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Event_End();
 }
 
-/// Dora and Jenna run through the house by the river. Dora goes north for
-/// help and sends Jenna to the plaza, then asks Isaac and Garet to help. A
-/// yes sends them after Jenna, a no to the plaza all the same.
+/// Dora and Jenna run through the house by the river.
 static void ValePrologue_DoraGoesForHelp(void) {
   struct Actor *villager;
   s32 random;
@@ -1886,9 +1864,7 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Scene_WalkIntoLeader(ACTOR_GARET_CHILD);
 }
 
-/// Kyle tells Isaac and Garet to find help for Felix. In Vale on the stormy
-/// night, at the river, he tells them they don't have enough Psynergy to save
-/// Felix.
+/// Kyle tells Isaac and Garet to find help for Felix.
 static void ValePrologue_TalkAboutSavingFelix(void) {
   const s32 *pulseScript;
 
@@ -1926,11 +1902,7 @@ static void ValePrologue_TalkAboutSavingFelix(void) {
   Event_End();
 }
 
-/// The Boulder sweeps Felix, his parents and Kyle away. In Vale on the stormy
-/// night, Jenna comes back to the river with Isaac, Garet and the man whose
-/// Psynergy is restored ("Mom! Dad! We're back!"). As Dora calls everyone
-/// down to save Felix, the Boulder comes down the river and sweeps away Felix,
-/// his parents and Kyle.
+/// The Boulder sweeps Felix, his parents and Kyle away.
 static void ValePrologue_BoulderSweepsThemAway(void) {
   struct Actor *leader;
   struct Actor *actor;
@@ -2405,10 +2377,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Weather_ResumeLightning();
 }
 
-/// A lightning flash that freezes the picture. It holds the rain
-/// (FLAG_WEATHER_HELD) and pauses the map's tileset animations 0 to 5,
-/// shows the event in PALETTE_TINT_WARM for two seconds, fades it to
-/// black, then lets the rain and the animations run again.
+/// A lightning flash that freezes the picture.
 static void ValePrologue_FlashLightning(void) {
   wait(20);
   Event_SetFlag(FLAG_WEATHER_HELD);
@@ -2434,11 +2403,8 @@ static void ValePrologue_FlashLightning(void) {
   TilesetAnim_Resume(5);
 }
 
-/// The task that keeps ACTOR_BOULDER_SHADOW on the Boulder as it comes
-/// down the river. The shadow swells or shrinks by the step of
-/// gValePrologue_BoulderRollsDownriver the Boulder is on (its work value)
-/// and shows on odd frames only. The map shakes as the step's timer counts
-/// down.
+/// The task that keeps ACTOR_BOULDER_SHADOW on the Boulder as it comes down the
+/// river.
 static void ValePrologue_UpdateBoulderShadow(void) {
   struct Actor *source;
   struct Actor *shadow;
@@ -2509,9 +2475,7 @@ static void ValePrologue_FlickerBoulderShadow(void) {
   }
 }
 
-/// An exhausted strongman tries to go for help and can't move. In Vale on the
-/// stormy night, after the Boulder, the strongman who came to help tries to go
-/// for help himself. "I can't move..."
+/// An exhausted strongman tries to go for help and can't move.
 static void ValePrologue_StrongmanTriesToGoForHelp(void) {
   struct Actor *villager;
   struct Actor *leader;
@@ -2674,9 +2638,7 @@ static void ValePrologue_FightFourthMonster(void) {
 }
 
 /// An elder calling up Psynergy, for 40 frames once the camera reaches the
-/// Boulder. The sprite shows palette 7 for two frames in four, and a pair of
-/// Psynergy rings rises and falls every 16 frames plus 8 for each step of
-/// sShakeShift.
+/// Boulder.
 static void ValePrologue_FlashPaletteAndSpawnEffects(struct Actor *actor) {
   s32 spawnInterval;
 

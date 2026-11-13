@@ -6,9 +6,7 @@
 #include "sounds.h"
 #include "flags.h"
 
-/// The scene opens in the window transition over 16 frames. Once Mt. Aleph has
-/// erupted (FLAG_SOL_SANCTUM_ERUPTED), the rooms rumble (SE_RUMBLE), the map
-/// shakes without end and sparkles start.
+/// The scene opens in the window transition over 16 frames.
 s32 SolSanctumRooms_Initialize(void) {
   struct FieldWork *work;
 

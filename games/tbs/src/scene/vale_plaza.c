@@ -423,9 +423,7 @@ static void ValePlaza_RecallThreeYearsAgo(void) {
   Event_End();
 }
 
-/// A small boy asks whether the travelers went to meet the mayor. He has fair
-/// hair, and asks it in Vale on the day the story begins, about the travelers
-/// who stopped by.
+/// A small boy asks whether the travelers went to meet the mayor.
 static void ValePlaza_AskAboutTheTravelers(void) {
   Event_Start();
   Event_SetMessageId(MsgValeDidTheTravelersMeetThe);
@@ -438,8 +436,7 @@ static void ValePlaza_AskAboutTheTravelers(void) {
 }
 
 /// In Vale before the party sets out, a strongman shows Isaac his Psynergy and
-/// shakes the ground. Later he asks whether they worry about crossing the land
-/// so few.
+/// shakes the ground.
 static void ValePlaza_DemonstratePsynergy(void) {
   u32 i;
   s32 message;
@@ -512,8 +509,6 @@ static void ValePlaza_DemonstratePsynergy(void) {
 }
 
 /// An old man with a cane asks Isaac a question that changes with the story.
-/// In Vale he answers Isaac about Psynergy on the stormy night, asks about the
-/// Wise One after the party has left, and about the journey after Kalay.
 static void ValePlaza_AskAboutJourney(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
@@ -545,9 +540,7 @@ static void ValePlaza_AskAboutJourney(void) {
   Event_End();
 }
 
-/// An old man shows Isaac the Psynergy Stone that fell on his hut. In Vale
-/// after the party has left, the old man whose hut it is points out the large
-/// stone, and the camera looks at it.
+/// An old man shows Isaac the Psynergy Stone that fell on his hut.
 ///
 /// Reached by talking to ACTOR_HUT_OWNER after the party has left Vale. In a
 /// play-through ValePlaza_Initialize has hidden him by then (a BUG). So only
@@ -620,9 +613,7 @@ static void ValePlaza_BoyLiftsSmallRock(void) {
   Event_End();
 }
 
-/// A little girl tells Isaac which way Jenna went. In Vale on the stormy night,
-/// once he has been sent back to the river, she tells him to help Felix
-/// instead.
+/// A little girl tells Isaac which way Jenna went.
 static void ValePlaza_TalkAboutHelping(void) {
   Event_Start();
   Actor_FaceEachOther(ACTOR_STORM_GIRL_WHO_SAW_JENNA, ACTOR_PARTY_LEADER, 10);
@@ -652,9 +643,7 @@ static void ValePlaza_WelcomeIsaacHome(void) {
   Event_End();
 }
 
-/// The old man searching the ground says the Psynergy Stone is gone. In Vale
-/// back from Kalay, he stops and tells Isaac the stone that fell on his roof
-/// has gone.
+/// The old man searching the ground says the Psynergy Stone is gone.
 static void ValePlaza_PsynergyStoneIsGone(void) {
   struct Actor *actor = Actor_Get(ACTOR_AFTER_KALAY_HUT_OWNER);
   Event_Start();
@@ -754,9 +743,8 @@ static void ValePlaza_OpenSoutheastDoor(void) {
   Vale_RequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH);
 }
 
-/// In Vale on the stormy night, leaves by the west passage, back to the
-/// storm's scene. Stepping on cell behavior 9 takes VALE_PLAZA_TO_VALE, to
-/// the storm's VALE_PROLOGUE_FROM_VALE_PLAZA.
+/// In Vale on the stormy night, leaves by the west passage, back to the storm's
+/// scene.
 static void ValePlaza_LeaveThroughWestPassage(void) {
   Sound_Play(SE_MAP_EXIT);
   Vale_RequestBackdropExit(VALE_PLAZA_TO_VALE);
@@ -787,9 +775,6 @@ static void ValePlaza_BlowAwayThirdIvy(void) {
 }
 
 /// Arriving in this part of Vale sets the scene up for the time of the story.
-/// It hides the ivy Whirlwind has blown away, runs the three debug entrances
-/// (the strangers' departure and two presets), and sets up the storm, the
-/// farewell or the village after Kalay.
 s32 ValePlaza_Initialize(void) {
   struct Actor *actor;
   s32 flag;
@@ -909,11 +894,7 @@ s32 ValePlaza_Initialize(void) {
 
 #include "shared/walk_into_leader.h"
 
-/// The mayor sends help to the elders and the boys back to the river. In Vale's
-/// plaza on the stormy night, Garet's grandfather, the mayor, sends two
-/// strongmen to aid the elders holding back the Boulder. Then he sends Isaac
-/// and Garet back to the river to show Jenna and a man whose Psynergy is
-/// restored the way. "Go aid the elders!"
+/// The mayor sends help to the elders and the boys back to the river.
 static void ValePlaza_SentToAidElders(void) {
   s32 skipReply = 0;
 
@@ -1752,9 +1733,7 @@ static void ValePlaza_FlashPsynergyPalette(struct Actor *actor) {
   }
 }
 
-/// A villager using Psynergy. He steps through colour modes
-/// SPRITE_COLOR_NORMAL to SPRITE_COLOR_BRG in turn, the sprite and its five
-/// swaps of colour channels, with a pair of sparks every 16 frames.
+/// A villager using Psynergy.
 static void ValePlaza_CyclePsynergyPaletteAndSpawnEffects(struct Actor *actor) {
   if ((gFrameCount & 1) != 0) {
     s32 palette = Math_RemainderUnsigned(gFrameCount >> 1, 6);

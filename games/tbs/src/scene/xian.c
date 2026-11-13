@@ -685,8 +685,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
 }
 
 /// Raised in Xian when the leader has stood in the water carrier's way for two
-/// seconds. Both walk to the start of her route, the leader turns west, and
-/// she sets off again.
+/// seconds.
 static void Xian_MoveAsideForWaterCarrier(void) {
   struct Actor *carrier;
 

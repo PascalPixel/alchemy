@@ -476,7 +476,6 @@ static void GondowanCave_LiftBoulder(void) {
 
 /// Sets up the scene as the party enters.
 s32 Scene_Initialize(void) {
-
   if (gMainRoutineWork.next == (s32)&SceneId_GondowanPassage) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0) {

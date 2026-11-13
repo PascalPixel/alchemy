@@ -65,10 +65,7 @@ const struct ActorPlacement *KolimaForestCliff_GetActorPlacements(void) {
 }
 
 /// In Kolima Forest (SceneId_KolimaForestCliff), walking into a log rolls it
-/// ahead until something stops it. The river log, stopped at the bank (cell
-/// column 12), tips over with a splash and floats in the water. Its cells
-/// become ground the party can cross (sets
-/// FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER).
+/// ahead until something stops it.
 static void KolimaForestCliff_PushLog(void) {
   struct PushedActorProbe result;
 
@@ -100,9 +97,7 @@ const struct Trigger *KolimaForestCliff_GetTriggers(void) {
   return gKolimaForestCliffTriggers;
 }
 
-/// Sets up the logs and the forest's colours on entry. A log already in the
-/// river floats there again, the logs mark the cells they cover, and the forest
-/// keeps its cursed colours until the curse is lifted.
+/// Sets up the logs and the forest's colours on entry.
 s32 KolimaForestCliff_Initialize(void) {
   struct FieldWork *work = gFieldWork;
 

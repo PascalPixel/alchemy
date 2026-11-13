@@ -186,7 +186,6 @@ static void Lalivero_WomanAsksIfLeaving(s32 actorId) {
 /// told to let you in if you showed up...") lets the party through and steps
 /// aside (sets FLAG_LALIVERO_WHARF_OPEN).
 static void Lalivero_WharfGuardLetsPartyThrough(void) {
-
   GameFlag_Set(FLAG_LALIVERO_WHARF_OPEN);
   Event_SetMessageId(MsgLaliveroWasToldLetInIf);
   // "I was told to let you in if you showed up... The door is open."
@@ -197,9 +196,7 @@ static void Lalivero_WharfGuardLetsPartyThrough(void) {
   Event_Wait(10);
 }
 
-/// The leader walks through one of Lalivero's doors. As the leader walks into a
-/// doorway, the door (or the Sanctum's gate) swings open, the leader steps in
-/// and the exit of the touched step trigger is taken.
+/// The leader walks through one of Lalivero's doors.
 static void Lalivero_EnterDoor(void) {
   s32 door = gFieldWork->stepTrigger;
   s32 x = gLaliveroDoorCells[door][0];
@@ -449,8 +446,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
 }
 
 /// In Lalivero, at step trigger 50 after Venus Lighthouse, Garet stops the
-/// leader, for Iodem asked them to wait. This plays until Iodem has spoken
-/// (FLAG_IODEM_FAREWELL_SEEN).
+/// leader, for Iodem asked them to wait.
 static void Lalivero_IodemGivesBlackOrb(void) {
   struct Actor *leader;
 

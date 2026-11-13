@@ -45,11 +45,7 @@ struct SolSanctumRingList {
   u16 count;
 };
 
-/// A task, the lights' work in HEAP_SLOT_SOL_SANCTUM_LIGHTS. Every
-/// third frame each light grows to its largest scale and shrinks to a tenth; at
-/// the smallest it vanishes for 24 steps while its drift carries on, and comes
-/// back where the drift has taken it. Its drift is a random speed on each axis,
-/// as its tables allow, turned into a sine swing.
+/// A task, the lights' work in HEAP_SLOT_SOL_SANCTUM_LIGHTS.
 static void SolSanctum_UpdateRing(void) {
   struct SolSanctumRingList *list = HeapSlot_AllocEwram(
       HEAP_SLOT_SOL_SANCTUM_LIGHTS, sizeof(struct SolSanctumRingList));

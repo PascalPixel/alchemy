@@ -146,7 +146,6 @@ enum { ANIM_DROP_BURST = 1 };
 /// A drop of spray rises and wobbles for its timer, then bursts into a ring
 /// of spray and is released 20 frames later by gSprayFallScript.
 static void LemurianShip_SprayUpdate(struct Actor *drop) {
-
   if (drop->timer != 0) {
     s32 drift;
 

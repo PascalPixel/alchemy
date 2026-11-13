@@ -482,9 +482,7 @@ const struct SceneExitRegion *WorldMap_GetRegions(void) { return NULL; }
 
 const u32 *WorldMap_GetExits(void) { return gWorldMapExits; }
 
-/// Kolima Bridge's actor script (gWorldMapKolimaBridgeScript). It turns with
-/// the map and shows the drawbridge let down once FLAG_KOLIMA_BRIDGE_LOWERED is
-/// set.
+/// Kolima Bridge's actor script (gWorldMapKolimaBridgeScript).
 static s32 WorldMap_SetUpKolimaBridge(struct Actor *actor) {
   WorldMap_AlignToMap(actor);
   if (GameFlag_Get(FLAG_KOLIMA_BRIDGE_LOWERED) != 0) {
@@ -528,9 +526,7 @@ static s32 WorldMap_SetUpStorm(struct Actor *actor) {
   return 0;
 }
 
-/// Called each frame by the storm's actor script (gWorldMapStormScript). It
-/// hides the storm on odd frames, and WorldMap_UpdateAreaContacts shows it
-/// again on the next, so it flickers.
+/// Called each frame by the storm's actor script (gWorldMapStormScript).
 static s32 WorldMap_BlinkActorSprite(struct Actor *actor) {
   if ((actor->spriteStorageKind & 1) && (gFrameCount & 1))
     actor->spriteStorageKind ^= 1;
@@ -626,18 +622,14 @@ static void WorldMap_EnterKolimaBridge(void) {
                          WORLD_MAP_TO_KOLIMA_BRIDGE_EAST);
 }
 
-/// As WorldMap_EnterKolimaBridge, for Kalay Docks. From the north the exit is
-/// WORLD_MAP_TO_KALAY_DOCKS_NORTH, and from the south
-/// WORLD_MAP_TO_KALAY_DOCKS_EAST.
+/// As WorldMap_EnterKolimaBridge, for Kalay Docks.
 static void WorldMap_EnterKalayDocks(void) {
   WorldMap_SelectExitByZ(STEP_TRIGGER_AREA(ACTOR_TO_KALAY_DOCKS),
                          WORLD_MAP_TO_KALAY_DOCKS_NORTH,
                          WORLD_MAP_TO_KALAY_DOCKS_EAST);
 }
 
-/// As WorldMap_EnterKolimaBridge, for Gondowan Passage. From the north the
-/// exit is WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST, and from the south
-/// WORLD_MAP_TO_GONDOWAN_PASSAGE_WEST.
+/// As WorldMap_EnterKolimaBridge, for Gondowan Passage.
 static void WorldMap_EnterGondowanPassage(void) {
   WorldMap_SelectExitByZ(STEP_TRIGGER_AREA(ACTOR_TO_GONDOWAN_PASSAGE),
                          WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST,
@@ -1319,23 +1311,17 @@ static inline void WorldMap_SailCrossingLeg(s32 exit) {
   Event_End();
 }
 
-/// A leg of the Tolbi-bound Ship's crossing. WORLD_MAP_TO_TOLBI_SHIP_MAST_
-/// SECOND_ATTACK leads up to the lookout on the mast for the second monster
-/// attack (TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK).
+/// A leg of the Tolbi-bound Ship's crossing.
 static void WorldMap_SailToSecondMonsterAttack(void) {
   WorldMap_SailCrossingLeg(WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK);
 }
 
-/// A leg of the Tolbi-bound Ship's crossing. WORLD_MAP_TO_TOLBI_SHIP_MAST_
-/// THIRD_ATTACK leads up to the lookout on the mast for the third monster
-/// attack (TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK).
+/// A leg of the Tolbi-bound Ship's crossing.
 static void WorldMap_SailToThirdMonsterAttack(void) {
   WorldMap_SailCrossingLeg(WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK);
 }
 
-/// A leg of the Tolbi-bound Ship's crossing. WORLD_MAP_TO_SHIP_ROOMS
-/// leads back down to the rowing deck as the Kraken comes aboard
-/// (SHIP_ROOMS_FROM_WORLD_MAP).
+/// A leg of the Tolbi-bound Ship's crossing.
 static void WorldMap_SailToKraken(void) {
   WorldMap_SailCrossingLeg(WORLD_MAP_TO_SHIP_ROOMS);
 }
@@ -1852,8 +1838,7 @@ static void WorldMap_TalkAboutBlackOrb(void) {
 }
 
 /// Walking back into Gateway Cave with the Black Orb unused makes Iodem call
-/// the leader back to the coast. "Isaac, where you going? I said to use the
-/// Orb on Babi's ship!"
+/// the leader back to the coast.
 static void WorldMap_IodemCallsIsaacBack(void) {
   Event_Start();
   WorldMap_Freeze();
@@ -2206,9 +2191,7 @@ static void WorldMap_ShakeVenusLighthouse(void) {
   Event_End();
 }
 
-/// Run each frame while Venus Lighthouse shakes. It puffs up dust at a random
-/// spot in the QUAKE_DUST box, and every third frame moves the camera a pixel
-/// to one of four points around the lighthouse.
+/// Run each frame while Venus Lighthouse shakes.
 static void WorldMap_UpdateLighthouseQuake(void) {
   u32 x = Random_Below(QUAKE_DUST_WIDTH);
   u32 z = Random_Below(QUAKE_DUST_DEPTH);
@@ -2358,8 +2341,7 @@ static void WorldMap_SpawnIslandWake(void) {
 }
 
 /// Before the ending, the island Jenna and Kraden are adrift on drifts east
-/// with its wake under warm colours. Then the map fades to white and leads
-/// into their event (WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT).
+/// with its wake under warm colours.
 static void WorldMap_ShowIslandDrifting(void) {
   struct Actor *actor;
   struct Actor *spriteActor;
@@ -2507,9 +2489,7 @@ static void WorldMap_StormDropsParty(void) {
   Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_SUHALLA);
 }
 
-/// Run each frame of the lighthouse transition. It blends BG0, where the
-/// transition is drawn, over everything. BG0's own weight flickers between 12
-/// and 16 every two frames, and the rest's comes from gWorldMapBlend.
+/// Run each frame of the lighthouse transition.
 static void WorldMap_UpdateTransitionBlend(void) {
   IoWriteQueue_Store16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);

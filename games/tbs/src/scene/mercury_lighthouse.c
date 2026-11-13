@@ -476,7 +476,6 @@ static void MercuryLighthouse_PushChannelPipes(void) {
                                                FACING_WEST);
         GameFlag_Set(FLAG_PIPE_1_JOINED);
       } else {
-
         MapGrid_CopyCellsTo(117, 9, 104, 7, 1, 1);
         MapGrid_CopyCellsTo(119, 8, 109, 11, 1, 1);
         MapGrid_CopyCellsTo(118, 8, 104, 13, 1, 1);
@@ -495,7 +494,6 @@ static void MercuryLighthouse_PushChannelPipes(void) {
         }
         GameFlag_Set(FLAG_PIPE_2_JOINED);
       } else {
-
         MapGrid_CopyCellsTo(119, 8, 109, 11, 1, 1);
         if (GameFlag_Get(FLAG_PIPE_1_JOINED)) {
           MapGrid_CopyCellsTo(119, 9, 109, 11, 1, 1);
@@ -1305,16 +1303,13 @@ static void MercuryLighthouse_ChangeCellForGapStatue(void) {
   if (column == 28) {
     GameFlag_Set(FLAG_PASSAGE_STATUE_MOVED);
     {
-
       MapGrid_CopyCellAttributes(29, 20, 1, 1, 31, 20);
     }
   }
   Event_End();
 }
 
-/// Rotates the selected palette range once every eight frames. It writes the
-/// saved first color at the end before shifting, preserving the palette access
-/// order.
+/// Rotates the selected palette range once every eight frames.
 static inline void MercuryLighthouse_RotatePaletteRange(u16 *colors,
                                                         u32 colorCount) {
   u32 colorIndex;
@@ -1652,7 +1647,6 @@ static void MercuryLighthouse_FadePaletteToBlack(void) {
 
 /// Raises an actor into the passage with sparks for 96 frames, moving it every
 /// two frames.
-/// Each move is about 0.1 pixel longer than the last.
 static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
   struct EffectOptions options;
   struct Actor *actor;
@@ -1913,9 +1907,8 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   }
 }
 
-/// MercuryLighthouseExterior, searching cell behavior 42 shows the
-/// fountain's sign. "Fountain of Healing / Water of Hermes: It brings
-/// rejuvenation to all that lives."
+/// MercuryLighthouseExterior, searching cell behavior 42 shows the fountain's
+/// sign.
 static void MercuryLighthouse_ReadHermesFountainInscription(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -2585,8 +2578,7 @@ s32 MercuryLighthouse_Initialize(void) {
 }
 
 /// MercuryLighthouseLower, Move on the statue blocking Mia, before she has
-/// joined: once it stands at column 48, Mia thanks the party. "You've saved me
-/// again, haven't you!"
+/// joined: once it stands at column 48, Mia thanks the party.
 static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   s32 firstMessage;
   s32 pillarColumn;

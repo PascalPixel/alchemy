@@ -239,10 +239,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTreeRoomsEntrances;
 }
 
-/// Returns the three exit regions 28 to 36 pixels up. They lead up to the
-/// second floor (TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR), up to the fourth
-/// (TREE_ROOMS_THIRD_FLOOR_TO_FOURTH_FLOOR) and back from Tret
-/// (TREE_ROOMS_TRET_TO_ENTRANCE).
+/// Returns the three exit regions 28 to 36 pixels up.
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return gTreeRoomsRegions;
 }
@@ -300,7 +297,6 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   actor->layer = 2;
   Actor_SetSpritePriority(leaderActorId, 3);
   for (spinFrame = COCOON_FALL_SPIN_FRAMES - 1; spinFrame >= 0; spinFrame--) {
-
     actor->facing += 2 * FACING_STEP;
     wait(1);
   }
@@ -1076,9 +1072,7 @@ static void TreeRooms_CastReveal(void) {
 
 #include "shared/field_effect_advance.h"
 
-/// Entrance 10, at the end of the fall from cocoon 50. The leader drops in from
-/// 130 pixels up in front of Tret and lands in a ring of dust, and the map
-/// shakes.
+/// Entrance 10, at the end of the fall from cocoon 50.
 static void TreeRooms_RunLandingDustEvent(void) {
   struct EffectOptions options;
   struct FieldPosition velocity;

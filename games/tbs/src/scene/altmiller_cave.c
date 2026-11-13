@@ -435,9 +435,7 @@ static void AltmillerCave_StartRetreat(void) {
   }
 }
 
-/// Runs after Move on AltmillerCaveSquall's pillar. In its cell at (30, 20) the
-/// pillar settles and opens the way beside it (remembered in TBS_PATCH_1 and
-/// later).
+/// Runs after Move on AltmillerCaveSquall's pillar.
 static void AltmillerCave_UpdateMovedObstacle(void) {
   struct Actor *actor = Actor_Get(ACTOR_SQUALL_ROOM_PILLAR);
 
@@ -2102,9 +2100,7 @@ s32 AltmillerCave_Initialize(void) {
   return 0;
 }
 
-/// Update routine of a piece of the burst wall. It flies off to a random point
-/// 120 pixels away, with a crash every fourth frame as they start, and each
-/// time it lands picks another.
+/// Update routine of a piece of the burst wall.
 static void AltmillerCave_UpdateWallFragment(struct FieldParticle *fragment) {
   s32 position[3];
 

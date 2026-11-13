@@ -308,10 +308,8 @@ static void BabiPalace_AskAboutSoldiers(s32 actorId) {
 }
 
 /// The attendant leads the party to the beds when spoken to before Babi's
-/// rescue. "We have just enough extra beds in this room for everybody. Please
-/// follow me."
+/// rescue.
 static void BabiPalace_ShowBeds(s32 actorId) {
-
   struct Actor *leader;
   s16 roundedFacing;
   s32 facingOrMessage;
@@ -2478,8 +2476,6 @@ static void BabiPalace_LeaveThroughAnimatedDoor(void) {
 }
 
 /// A guard outside the palace during the finals passes on Babi's word.
-/// "You're Isaac, aren't you? Babi left word that he would be waiting for you
-/// at the colosseum."
 static void BabiPalace_PassOnBabisWord(void) {
   s32 question;
   GameFlag_Set(FLAG_BABI_PALACE_GUARD_GAVE_WORD);

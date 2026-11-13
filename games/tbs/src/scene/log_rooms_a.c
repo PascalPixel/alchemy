@@ -513,8 +513,6 @@ static void LogRoomsA_TalkToItemMerchant(void) {
 }
 
 /// The wife of the man with the sparkling rock talks about their rocks.
-/// She wishes their rocks were gems, or, after the thieves are jailed, is glad
-/// they were caught before stealing the gem.
 static void LogRoomsA_TalkAboutRocks(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -527,9 +525,6 @@ static void LogRoomsA_TalkAboutRocks(void) {
 }
 
 /// Grandpa in the item shop talks about missing things.
-/// After the thieves are jailed, he says instead that they hid the treasure in
-/// the loft and more in the cemetery.
-/// "Is it just me, or am I missing something?"
 static void LogRoomsA_TalkAboutMissingThings(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
@@ -850,7 +845,6 @@ static void LogRoomsA_ReadBoneGiverMind(void) {
 /// At the mayor's in Vault, talking to Ivan: the first time, he reads Isaac's
 /// mind, admits his strange powers and learns they are called Psynergy.
 static void LogRoomsA_MeetIvan(void) {
-
   struct Actor *actor;
 
   Event_Start();
@@ -954,7 +948,6 @@ static void LogRoomsA_MeetIvan(void) {
 
 /// Ivan thanks them, they exchange names, and he shows Isaac and Garet Mind
 /// Read.
-/// Then he joins the party.
 static void LogRoomsA_IvanJoinsRodSearch(void) {
   s32 message;
 
@@ -1357,8 +1350,6 @@ static void LogRoomsA_ClimbToLoft(void) {
 }
 
 /// Leaving the inn's loft, the party hears the tied-up villager groan.
-/// It hears him when it leaves before the thieves are confronted.
-/// "Uhnn... Uhnn..."
 static void LogRoomsA_LeaveLoft(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 744, 408);
@@ -1377,7 +1368,6 @@ static void LogRoomsA_LeaveLoft(void) {
 /// In the guests' room at Vault's inn, the two suspects spot "that weird kid"
 /// with the party and run from him. "What do you want?"
 static void LogRoomsA_ApproachSuspects(void) {
-
   struct Actor *suspectedLeader;
   struct Actor *suspectedThief;
 
@@ -1882,7 +1872,6 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   switch (gMainRoutineWork.entrance) {
   case LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST: {
-
     // The gem owner's house: he stands on the floor.
     Actor_Get(ACTOR_GEM_OWNER)->motionFlags = 0;
     Actor_Get(ACTOR_GEM_OWNER)->y.fixed = 0;
@@ -2091,7 +2080,6 @@ static void LogRoomsA_LoseToThieves(void) {
 /// Arranges the loft confrontation and restarts the thieves' battle. "They
 /// won't go away, will they? They're back!"
 static void LogRoomsA_ConfrontThievesAgain(void) {
-
   // The thieves stand over the tied-up villager as the party comes up.
   Actor_SetPosition(ACTOR_THIEF_LEADER, 792, 416);
   Actor_SetPosition(ACTOR_FIRST_THIEF, 800, 400);
@@ -2995,9 +2983,8 @@ static s32 LogRoomsA_IsWithinCellOfStop(s32 x, s32 z, s32 id) {
   return 0;
 }
 
-/// Reserves a full cell around the leader and half a cell around each
-/// actor following a route. Testing destinations as well as current positions
-/// prevents two actors choosing the same stop while still walking.
+/// Reserves a full cell around the leader and half a cell around each actor
+/// following a route.
 static s32 LogRoomsA_CheckStopOccupancy(struct LogRoomsAStop *stop) {
   s32 x;
   s32 z;

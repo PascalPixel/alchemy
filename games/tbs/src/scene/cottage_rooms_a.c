@@ -150,7 +150,6 @@ static void CottageRoomsA_SpawnSleepZ(void);
 
 /// Moves and grows a Z drifting up from Garet's sleeping grandfather.
 static s32 CottageRoomsA_AdvanceSleepZ(struct Actor *actor) {
-
   actor->x.fixed += (s16)actor->timer * 256;
   actor->y.fixed += (s16)actor->userValue * 256;
   actor->scaleX += Q16_ONE / 40;

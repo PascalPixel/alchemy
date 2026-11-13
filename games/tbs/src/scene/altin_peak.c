@@ -372,9 +372,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAltinPeak_ActorPlacementsOther;
 }
 
-/// Talking to a mine cart makes the party leader jump into it. Once the leader
-/// has landed in it, the cart rolls away along its rails with the leader riding
-/// it.
+/// Talking to a mine cart makes the party leader jump into it.
 static void AltinPeak_RideCart(s32 log) {
   struct Actor *logActor;
   struct Actor *leader;
@@ -1517,7 +1515,6 @@ static void AltinPeak_RestoreSouthEntranceRoom(void) {
 
 /// Sets up AltinPeakThirdWaterBeast.
 static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
-
   if (GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
     ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~DISPCNT_BG1_ON;
     Actor_SetPosition(ACTOR_THIRD_WATER_BEAST, 0, 0);
@@ -1705,11 +1702,8 @@ static void AltinPeak_RestoreHydrosStatueRoom(void) {
   }
 }
 
-/// Sets up AltinPeakWestExit. Arriving by
-/// ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM the pillar stands at its pushed
-/// place.
+/// Sets up AltinPeakWestExit.
 static void AltinPeak_RestoreWestExitRoom(void) {
-
   Actor_SetSpriteFlags(Actor_Get(ACTOR_WEST_EXIT_ROOM_PILLAR), 0);
   if (gMainRoutineWork.entrance ==
       ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM) {
@@ -1851,8 +1845,7 @@ static void AltinPeak_BeastFreezesSecondPuddle(void) {
 }
 
 /// Back from AltinPeakFirstWaterBeast's beast battle, the beast is gone and the
-/// party finds the Frost Jewel. The camera pans to the water and the first
-/// drain runs.
+/// party finds the Frost Jewel.
 static void AltinPeak_AwardFrostJewelAndDrain(void) {
   struct Actor *leader;
 
@@ -1882,8 +1875,7 @@ static void AltinPeak_AwardFrostJewelAndDrain(void) {
 }
 
 /// Back from AltinPeakSecondWaterBeast's beast battle, the beast is gone and
-/// the mine cart waits at (328, 424). The switch is back in its first position,
-/// and the second drain runs.
+/// the mine cart waits at (328, 424).
 static void AltinPeak_DrainAfterSecondBeast(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_SECOND_WATER_BEAST, 0, 0);

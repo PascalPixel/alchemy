@@ -165,8 +165,7 @@ static void WestLunpaCave_GateDrawPropped(void) {
 }
 
 /// In West Lunpa Cave, Frost on the puddle under the gate freezes it into a
-/// pillar that props the gate open. If the gate was down, the player sees it
-/// rise and hears the puzzle solved.
+/// pillar that props the gate open.
 static void WestLunpaCave_FreezeGatePuddle(void) {
   struct Actor *pillar;
 
@@ -216,8 +215,6 @@ static void WestLunpaCave_GateLower(void) {
 }
 
 /// In West Lunpa Cave, searching the lowering switch makes the leader flip it.
-/// The gate comes down, unless it is down already or a frozen pillar props it
-/// open. "flipped the switch."
 static void WestLunpaCave_FlipLoweringSwitch(void) {
   if (Event_GetFlag(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED) == 0) {
     if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) == 0) {
@@ -246,8 +243,6 @@ static void WestLunpaCave_GateRaise(void) {
 }
 
 /// In West Lunpa Cave, searching the raising switch makes the leader flip it.
-/// The gate goes up, unless it is up already or propped open. "flipped the
-/// switch."
 static void WestLunpaCave_FlipRaisingSwitch(void) {
   if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) == 0) {
     if (Event_GetFlag(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) == 0) {

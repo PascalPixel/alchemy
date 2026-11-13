@@ -316,8 +316,6 @@ static void Bilibin_ReadWarehouseSign(void) {
 }
 
 /// The Gang of Three's trees at the Bilibin Barricade look like people.
-/// Talking to one, standing or pushed down, or to the actor that answers
-/// for the fallen one, says so. `There is a tree that looks like a person.`
 static void Bilibin_InspectHumanShapedTree(void) {
   Event_Start();
   FieldMessage_Show(MsgBilibinThereTreeLooksLikePerson, 1);
@@ -395,7 +393,6 @@ static void Bilibin_AskAboutImil(void) {
 /// Walking into one of Bilibin's doors opens it. Everyone stops, the door opens
 /// and the leader walks through it.
 static void Bilibin_OpenDoorAndLeave(void) {
-
   u32 actorSlot;
   struct Actor *actor;
   s32 exitIndex;
@@ -615,8 +612,7 @@ static void Bilibin_JillGivesHardNut(void) {
 }
 
 /// Sets up the scene being entered, Bilibin, the Bilibin Barricade or the
-/// Bilibin Treasury. It sets up its actors by story flags, its cell behaviors
-/// and its opening transition.
+/// Bilibin Treasury.
 s32 Bilibin_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gMainRoutineWork.next == (s32)&SceneId_Bilibin) {
@@ -632,7 +628,6 @@ s32 Bilibin_Initialize(void) {
 
 /// Sets up Bilibin.
 static void Bilibin_RestoreVillageActors(void) {
-
   s16 entrance;
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
@@ -795,9 +790,7 @@ static void Bilibin_UpdateCratesCells(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, cratesColumn, cratesRow);
 }
 
-/// Sets up the Bilibin Treasury. It sets its statue's cells, and the leader
-/// arriving by BILIBIN_TREASURY_UPPER_FROM_LOWER or
-/// BILIBIN_TREASURY_FROM_BILIBIN_NORTH starts 16 pixels above the floor.
+/// Sets up the Bilibin Treasury.
 static void Bilibin_SetUpTreasury(void) {
   struct Actor *leader;
 
@@ -872,9 +865,7 @@ static void Bilibin_PushStatueOrCrates(void) {
   }
 }
 
-/// Runs every frame at the Bilibin Barricade. While whoever the player controls
-/// wades in the river, west of x 142 and under 8 pixels up, a ripple spreads
-/// from their feet every 30 frames.
+/// Runs every frame at the Bilibin Barricade.
 static void Bilibin_UpdateWadingRipples(void) {
   struct Actor *actor;
 

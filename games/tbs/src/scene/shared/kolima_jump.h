@@ -55,9 +55,7 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
   return 0;
 }
 
-/// Step trigger 11, walking east: hop 30 pixels east of the leader. The
-/// patched editions hop from the centre of the moving character's cell, 40
-/// pixels.
+/// Step trigger 11, walking east: hop 30 pixels east of the leader.
 static void KolimaForest_HopEast(void) {
   struct FieldPosition target;
 #if !TBS_PATCH_1

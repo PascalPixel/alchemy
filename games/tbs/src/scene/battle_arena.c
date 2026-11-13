@@ -380,8 +380,7 @@ static UNREAD_RESULT BattleArena_PollPeerReady(void) {
 u32 gBattleArenaCallFrames;
 
 /// LOBBY_EVENT_PROMPT: the attendant asks the player into the circle once both
-/// consoles agree, and again after 300 calls. The line is "If you want to
-/// participate, please step into the circle!".
+/// consoles agree, and again after 300 calls.
 ///
 /// Returns the flag's value when FLAG_BATTLE_ARENA_ENTERING_BATTLE or
 /// FLAG_BATTLE_ARENA_ATTENDANT_ASKED is set and nothing is shown. The path that
@@ -1201,7 +1200,6 @@ static s32 BattleArena_TalkByProgress(s32 actorId) {
   Event_Start();
   Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
   if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED)) {
-
     // Isaac's flag is tested and the result dropped; messageBase first holds
     // whether the speaker fought (FLAG_BATTLE_ARENA_IN_PARTY_FIRST + actor id).
     Event_GetFlag(FLAG_BATTLE_ARENA_IN_PARTY_FIRST);

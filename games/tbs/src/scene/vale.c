@@ -493,8 +493,7 @@ static void Vale_ReactToAnotherTremor(void) {
 }
 
 /// A burly grey-haired man asks about the lack of travellers since the
-/// eruption. He (ACTOR_MAN_MISSING_TRAVELERS) is in Vale back from Kalay, and
-/// the talk sets area flag FLAG_VALE_ASKED_ABOUT_TRAVELERS.
+/// eruption.
 static void Vale_AskAboutTheLackOfTravelers(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_MAN_MISSING_TRAVELERS, 2);
@@ -583,8 +582,7 @@ static void Vale_EnterCottageRoomsA(void) {
 }
 
 /// At the door of Isaac's house in Vale (cell behavior 8), Dora will not open
-/// after the party has left and before Kalay. "My Isaac would keep his
-/// promise... Go away."
+/// after the party has left and before Kalay.
 static void Vale_EnterIsaacsHouse(void) {
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0 &&
       GameFlag_Get(FLAG_KALAY_REACHED) == 0) {
@@ -598,7 +596,6 @@ static void Vale_EnterIsaacsHouse(void) {
       // "He promised not to return until he fulfills his mission. My..."
       Event_ShowMessage(ACTOR_DORA, 0);
     } else {
-
       gFieldWork->message += 2;
       Event_Wait(40);
       Event_ShowMessage(ACTOR_DORA, 0);
@@ -751,8 +748,6 @@ static void Vale_TurnBackFromThePuppies(void) {
 }
 
 /// Cell behavior 100 in Vale is at the foot of the ladder beside Isaac's house.
-/// Walking north into it climbs the leader up onto the roof, whose cells change
-/// so it can be walked (FLAG_VALE_ON_ROOF set while there).
 static void Vale_ClimbLadderOntoRoof(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
@@ -763,8 +758,6 @@ static void Vale_ClimbLadderOntoRoof(void) {
 }
 
 /// Cell behavior 101 in Vale is at the top of the ladder beside Isaac's house.
-/// Walking south into it climbs the leader back down, and the roof's cells are
-/// put back (FLAG_VALE_ON_ROOF cleared).
 static void Vale_ClimbDownFromRoof(void) {
   Event_Start();
   Vale_ClimbDownRoofLadder(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB_DOWN_FROM_TOP,
@@ -3048,10 +3041,7 @@ static void Vale_PushPillar(void) {
   Vale_MovePillarBelowCliff();
 }
 
-/// Records where the pillar now stands and blocks its cell. After Move or a
-/// push, it records the pillar's column in FLAG_VALE_PILLAR_IN_WEST_COLUMN,
-/// _IN_MIDDLE_COLUMN and _IN_EAST_COLUMN and blocks the cell the pillar now
-/// stands on.
+/// Records where the pillar now stands and blocks its cell.
 static void Vale_MovePillarBelowCliff(void) {
   struct Actor *actor;
   s32 column;
@@ -3141,9 +3131,7 @@ static void Vale_FlashActorAndSpawnEffects(struct Actor *actor) {
     WorldMap_CreateAttachedEffects(actor);
 }
 
-/// Someone using Psynergy. They go through colour modes SPRITE_COLOR_NORMAL to
-/// SPRITE_COLOR_BRG (0 to 5), the sprite and its five swaps of colour channels,
-/// in turn, with sparks every 16 frames.
+/// Someone using Psynergy.
 static void Vale_CycleActorPaletteAndSpawnEffects(struct Actor *actor) {
   if ((gFrameCount & 1) != 0)
     Actor_SetColorMode(actor, (gFrameCount >> 1) % 6);

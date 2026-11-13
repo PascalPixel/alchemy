@@ -443,7 +443,6 @@ static void CottageRoomsB_ExitToValePrologueEast(void) {
 
 /// Sets up these rooms for the stormy night or the story's villagers.
 s32 CottageRoomsB_Initialize(void) {
-
   if (gMainRoutineWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     gFieldWork->transition =

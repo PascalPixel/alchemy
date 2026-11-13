@@ -303,8 +303,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// After Move on one of the pillars at the Babi Lighthouse Entry, or a push, a
-/// leader left standing on a pillar's ledge cell jumps off it. The pillars'
-/// cells are redrawn.
+/// leader left standing on a pillar's ledge cell jumps off it.
 static void BabiLighthouse_JumpFromLedge(void) {
   struct Actor *leader;
 
@@ -348,8 +347,7 @@ static void BabiLighthouse_PushLedgePillar(void) {
 }
 
 /// Walking south off the ledge at the Babi Lighthouse Entry pushes the pillar
-/// below on the leader's side, if it stands at the ledge's foot. Otherwise the
-/// leader climbs down.
+/// below on the leader's side, if it stands at the ledge's foot.
 static void BabiLighthouse_PushLedgePillarOrClimbDown(void) {
   struct Actor *pillar = Actor_Get(ACTOR_RIGHT_PILLAR);
 
@@ -402,8 +400,7 @@ static void BabiLighthouse_DropFromEastRoomPit(void) {
 }
 
 /// Walking south into the southwest pit of BabiLighthouseLuff's west room
-/// places the pit mask and a capped pillar by it. The leader jumps in and drops
-/// into the east room.
+/// places the pit mask and a capped pillar by it.
 static void BabiLighthouse_DropFromWestRoomSouthwestPit(void) {
   Event_Start();
   Actor_Prepare(143, 0, 290, PIT_MASK);
@@ -1087,7 +1084,6 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
   Event_Start();
   if (work->revealActive != 0) {
     if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
-
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
       Sound_Play(SE_SWITCH);
       MapGrid_CopyCellsLayered(35, 78, 1, 2, 17, 78);
@@ -1214,7 +1210,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Growth on the sprout at the Babi Lighthouse Entry grows it into a vine the
 /// party can climb.
 static void BabiLighthouse_OpenGrowthPassage(void) {
-
   MapGrid_CopyCellAttributes(82, 7, 1, 2, 18, 7);
   wait(1);
   GameFlag_Set(FLAG_GROWTH_PASSAGE_OPEN);
@@ -1246,8 +1241,7 @@ static void BabiLighthouse_RedrawLedgePillarCells(void) {
 
 #if TBS_PATCH_2
 /// Update routine of the pillars at the Babi Lighthouse Entry (TBS_PATCH_2 and
-/// later). Each is drawn in front of the leader when nearer the screen, and on
-/// its layer otherwise.
+/// later).
 static void BabiLighthouse_MatchLeaderPriority(struct Actor *updated) {
   struct Sprite *sprite;
   struct Actor *actor;

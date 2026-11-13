@@ -356,7 +356,6 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
 /// Growth on the sprout at the Bilibin Cave Entrance, until it has grown, grows
 /// it into a vine.
 static void BilibinCave_GrowPlant(void) {
-
   MapGrid_CopyCellAttributes(31, 0, 1, 1, 8, 13);
   GameFlag_Set(FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN);
 }
@@ -393,7 +392,6 @@ s32 BilibinCave_Initialize(void) {
 /// cell.
 static void BilibinCave_RestoreEntrance(void) {
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN) != 0) {
-
     MapGrid_CopyCellAttributes(31, 0, 1, 1, 8, 13);
     Actor_SetAnimation(ACTOR_SPROUT, 0);
   }
@@ -401,7 +399,6 @@ static void BilibinCave_RestoreEntrance(void) {
 
 /// Sets up Bilibin Cave's SceneId_BilibinCaveRapier.
 static void BilibinCave_RestoreRapierRoom(void) {
-
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 

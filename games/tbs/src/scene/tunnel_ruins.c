@@ -839,7 +839,6 @@ static UNREAD_RESULT TunnelRuins_RideStoneBelow(struct Actor *supportedActor) {
 
 /// The balance platforms move to the heights their weights give them (their
 /// timers index gTunnelRuins_BalanceHeights), with sounds unless frames is 0.
-/// Whatever then stands less than 30 pixels down can be walked on.
 static void TunnelRuins_SettleBalance(s32 frames) {
   u32 i;
 

@@ -132,7 +132,6 @@ static void HammetPalace_HammetsHomecoming(void);
 
 /// Advances within the current conversation's consecutive message block.
 static __inline__ void HammetPalace_AdvanceMessage(s32 amount) {
-
   gFieldWork->message += amount;
 }
 
@@ -197,7 +196,6 @@ static void HammetPalace_AskWhetherSilkTradeHasEnded(void) {
 
 /// Layana scolds Isaac for sneaking into Lunpa.
 static void HammetPalace_LayanaScoldsLunpaVisit(void) {
-
   Event_Start();
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_SetMessageId(MsgKalayIsaacSneakedIntoLunpaThats);
@@ -219,7 +217,6 @@ static void HammetPalace_LayanaScoldsLunpaVisit(void) {
 /// Walking north into a door of Hammet Palace (step triggers 2, 3, 4 and 14):
 /// it opens, and the leader walks through it to the next room.
 static void HammetPalace_LeaveThroughDoor(void) {
-
   struct FieldWork *work;
 
   work = gFieldWork;
@@ -315,7 +312,6 @@ static void HammetPalace_SetUpEntrance(void) {
 /// Ivan's report in Hammet Palace, when the guards at the door bring the party
 /// to Layana: she had hoped Hammet came back with him.
 static void HammetPalace_IvanReportsToLayana(void) {
-
   struct FieldWork *work;
   s32 advanceAfterReply;
   const s32 *partyScript;
@@ -840,7 +836,6 @@ static void HammetPalace_FacePartyNorth(s32 waitFrames) {
 /// Hammet's homecoming in Hammet Palace, the first time the party walks into
 /// Layana's room once he is free.
 static void HammetPalace_HammetsHomecoming(void) {
-
   struct Actor *leader;
   struct FieldWork *work;
   s32 answeredYes;

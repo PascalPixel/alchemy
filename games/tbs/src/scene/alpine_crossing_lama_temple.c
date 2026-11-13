@@ -178,9 +178,8 @@ enum { DOOR_X = 67, DOOR_Y = 6 };
 /// The map object that draws the passage behind the mossy rock.
 enum { TREASURE_SPOT_PASSAGE = 100 };
 
-/// Draws the actor behind the background, on sprite priority 3 with
-/// automatic priority off. The first worker from Xian at the Alpine Crossing
-/// runs it from his actor placement.
+/// Draws the actor behind the background, on sprite priority 3 with automatic
+/// priority off.
 static s32 Actor_DrawBehindScenery(struct Actor *actor) {
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->sprite->image.priority = 3;
@@ -222,7 +221,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// A monk in Lama Temple, until Hsu is freed, asks whether the party comes from
 /// the east.
 static void LamaTemple_TalkToMonkAskingAboutTheEast(void) {
-
   Event_Start();
   Event_SetMessageId(MsgMountainYoungWarriorsDoComeFrom);
   // "Young warriors, do you come from the east?"
@@ -267,9 +265,7 @@ static void LamaTemple_TalkToChiMonk(void) {
   Event_End();
 }
 
-/// The door of Hama's room slides open for the party leader. Walking north into
-/// it in Lama Temple slides it open and walks the leader through, into the room
-/// (LAMA_TEMPLE_TO_LACQUER_ROOMS_A_HAMAS_ROOM).
+/// The door of Hama's room slides open for the party leader.
 static void LamaTemple_EnterHamasRoom(void) {
   Sound_Play(SE_THUMP);
   MapGrid_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
@@ -509,7 +505,6 @@ static void LamaTemple_RunHamasFarewell(void) {
 
 /// Searching the writing on a wall in Lama Temple reads its hint toward Reveal.
 static void LamaTemple_ReadWallWriting(void) {
-
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MsgMountainHeWhoHasPowerSee, 1);
@@ -518,7 +513,6 @@ static void LamaTemple_ReadWallWriting(void) {
 
 /// Puts Lama Temple's mossy rock back when Reveal wears off, and on entry.
 static void LamaTemple_ShowFalseWall(void) {
-
   MapGrid_CopyCellAttributes(85, 9, 1, 1, 21, 9);
   TreasureSpot_SetActorPosition(TREASURE_SPOT_PASSAGE, 0, 0);
   Actor_SetPosition(ACTOR_PASSAGE_ROCK, 344, 152);
@@ -533,7 +527,6 @@ static void LamaTemple_RevealPassage(void) {
 
 /// The traveling healer in Lama Temple offers the Sanctum's services.
 static void LamaTemple_TalkToHealer(void) {
-
   u32 heading = Actor_Get(ACTOR_PARTY_LEADER)->facing;
 
   Event_Start();
@@ -679,7 +672,6 @@ static void AlpineCrossing_HamaReachesHsu(void) {
 /// Lift on the boulder at the Alpine Crossing makes it float, until Hsu is
 /// freed.
 static void AlpineCrossing_LiftBoulder(void) {
-
   Event_Start();
   Actor_SetAttachedEffect(ACTOR_HAMA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -852,8 +844,6 @@ static UNREAD_RESULT Pillar_SortAgainstLeader(struct Actor *pillar) {
 }
 
 /// Puts the rising pillar in front when the leader stands north of the puddle.
-/// As Frost reaches the puddle at the Alpine Crossing, a leader standing north
-/// of it sees the pillar rise in front of the background.
 static void AlpineCrossing_PrepareFrost(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *puddle = Actor_Get(ACTOR_WATER_FOR_FROST);

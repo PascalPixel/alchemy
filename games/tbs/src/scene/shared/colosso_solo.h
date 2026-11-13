@@ -78,10 +78,8 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
   }
 }
 
-/// Makes the character the only party member, the one the player moves and
-/// the camera follows, with full HP and PP and no poison. The gauges are the
-/// battle's (1 << 14 full; a character with any HP or PP left shows at
-/// least 1).
+/// Makes the character the only party member, the one the player moves and the
+/// camera follows, with full HP and PP and no poison.
 void Colosso_ControlCharacterAlone(s32 id) {
   struct Unit *unit;
   s32 v;
@@ -219,10 +217,7 @@ static void Colosso_TakePlaceForMatch(void) {
 }
 
 /// A stage's guide, talking to a friend who looks around alone, asks whether
-/// they are done cheering. "Huh? Are you done cheering?" On "Yeah", "Then
-/// please wait here until the match begins.": the friend's cell becomes their
-/// place, and the next friend looks around, or, after Mia, the party leaves by
-/// the way to the race. On "Nope", "Then cheer as best you can!"
+/// they are done cheering.
 void Colosso_AskDoneCheering(s32 id) {
   struct FieldWork *work;
   s32 slot;
@@ -271,11 +266,7 @@ void Colosso_AskDoneCheering(s32 id) {
   Event_End();
 }
 
-/// The guide where the stages start. Once the friends have all gone to cheer
-/// (Isaac is the party), "Isaac, did you get a good look around?": on yes the
-/// guide steps aside, Isaac walks past and the party leaves for the Colosseum.
-/// Otherwise "Wait, shouldn't you decide where the best place to cheer for
-/// Isaac is?"
+/// The guide where the stages start.
 static void Colosso_AskReadyToRace(s32 actorId) {
   struct Actor *actor;
   s32 x;
@@ -359,8 +350,7 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
 }
 
 /// A stage's guide, after describing the stage, names it again: the copy of
-/// that line after it in the text. "This is stage N of the first finals
-/// match." (or the second or third)
+/// that line after it in the text.
 void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
   s32 sceneId;
   s32 message;
@@ -378,15 +368,8 @@ void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
   Event_ShowMessageAndWait(speaker, 0);
 }
 
-/// The guide at a stage, with the reply
-/// Colosso_GreetAtStage returned: offer a friend's
-/// cheering at the stage. With Isaac alone, "All right, do your best!"; with
-/// the stage taken, "Unfortunately, we have a full house."; otherwise "Would
-/// you like a friend to cheer for you here?" (taken as yes for
-/// COLOSSO_GUIDE_CHEER) and a choice of party member. The friend chosen is
-/// led to the stage and leaves the party, and their cell is kept. With
-/// COLOSSO_GUIDE_NOTHING, no or no choice: "If you know who you want to cheer
-/// you on, please let me know!"
+/// The guide at a stage, with the reply Colosso_GreetAtStage returned: offer a
+/// friend's cheering at the stage.
 void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
   struct Actor *actor;
   struct Actor *leader;

@@ -103,9 +103,7 @@ static s32 KolimaForestEntrance_FlashHitPsynergyFields(struct Actor *actor) {
   return 1;
 }
 
-/// Each frame, a ground sparkle's timer runs on at random. The sparkle shows
-/// its bright frame (7) while the timer is past 1000, its dim one (10) before.
-/// At 1200 the timer starts over.
+/// Each frame, a ground sparkle's timer runs on at random.
 static s32 KolimaForestEntrance_TwinkleGroundSparkle(struct Actor *actor) {
   s16 *counter = &actor->timer;
   *counter = (*counter + (Random_Below(100)));
@@ -143,10 +141,7 @@ const struct ActorPlacement *KolimaForestEntrance_GetActorPlacements(void) {
 }
 
 /// In Kolima Forest (SceneId_KolimaForestEntrance), walking into a log rolls it
-/// ahead until something stops it. The river log, stopped at the bank (cell
-/// column 20), tips over with a splash and floats in the water. Its cells
-/// become ground the party can cross (sets
-/// FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER).
+/// ahead until something stops it.
 static void KolimaForestEntrance_PushLog(void) {
   struct PushedActorProbe res;
   Event_Start();
@@ -180,8 +175,7 @@ const struct Trigger *KolimaForestEntrance_GetTriggers(void) {
 }
 
 /// On entry a log already in the river floats there again and the logs mark the
-/// cells they cover. From the World Map, before the curse has been seen, the
-/// party sees it fall. Once the curse is lifted the ground sparkles are gone.
+/// cells they cover.
 s32 KolimaForestEntrance_Initialize(void) {
   Scene_RedrawActorFootprint(ACTOR_RIVER_LOG);
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER) != 0) {

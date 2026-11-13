@@ -849,7 +849,6 @@ static void MogallForest_ThirdArea_JumpWest(void) {
   position.z = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed;
 
   if (MogallForest_TryJumpLeaderTo(&position) != 0) {
-
     Event_Start();
 
     leader->motionFlags = 0;

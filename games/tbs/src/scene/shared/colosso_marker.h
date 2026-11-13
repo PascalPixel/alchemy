@@ -134,7 +134,6 @@ void Actor_ResetMotionFields(s32 actorId) {
 
 /// Loads the pointer's picture into a free VRAM block, once.
 static void Colosso_EnsureMarkerSlot(void) {
-
   if (gColosso_MarkerSlot == -1) {
     gColosso_MarkerSlot = Resource_LoadFixedBlockBIntoFreeSlot();
   }
@@ -228,7 +227,6 @@ void Colosso_MovePointer(u32 x, u32 y, u32 duration) {
 
 /// Hides the pointer and frees its VRAM block.
 void Colosso_HidePointer(void) {
-
   Task_Remove(Colosso_UpdateMarker);
   VramCache_FreeEntry(gColosso_MarkerSlot);
   gColosso_MarkerSlot = -1;

@@ -461,7 +461,6 @@ static void CrossboneIsleSteppingStones_ShrinkPillar(s32 index) {
 /// Unused: spawns a particle near the leader once every four frames; nothing
 /// calls it.
 UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
-
   struct Actor *leader;
   s32 cycleFrame;
   s32 x;

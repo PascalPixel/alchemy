@@ -171,10 +171,7 @@ const struct Trigger *KolimaForestTree_GetTriggers(void) {
 }
 
 /// In Kolima Forest (SceneId_KolimaForestTree), the first time the party talks
-/// to Laurel (ACTOR_LAUREL_STAND_IN), she asks who the party is. She recognises
-/// the ones who resisted Tret's glamour and senses a great warmth in them, but
-/// says they are too late to rescue Tret. She tells them to leave before the
-/// forest is destroyed (sets FLAG_MET_LAUREL).
+/// to Laurel (ACTOR_LAUREL_STAND_IN), she asks who the party is.
 static void KolimaForestTree_TalkToLaurel(void) {
   Event_Start();
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_OPEN_EYES);
@@ -263,9 +260,7 @@ static void KolimaForestTree_TalkToTret(void) {
 }
 
 /// In Kolima Forest (SceneId_KolimaForestTree), Mind Read on Laurel hears her
-/// thoughts. Before the curse is lifted, the healing waters of Mercury
-/// Lighthouse might save Tret, but its fountain has dried up. Afterwards, it
-/// must be horrible beyond the river.
+/// thoughts.
 static void KolimaForestTree_ReadLaurelThoughts(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
@@ -278,8 +273,7 @@ static void KolimaForestTree_ReadLaurelThoughts(void) {
 }
 
 /// In Kolima Forest (SceneId_KolimaForestTree), Mind Read on Tret hears his
-/// thoughts. Before the curse is lifted they are "People of Kolima... Forgive
-/// me..." Afterwards they are a plea to be careful beyond the river.
+/// thoughts.
 static void KolimaForestTree_ReadTretThoughts(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
@@ -307,9 +301,7 @@ static void KolimaForestTree_UseHermesWater(void) {
   Event_End();
 }
 
-/// Tret's wrathful side repels Hermes' Water. Sparks gather, the leader is
-/// thrown back and lands, and the voice says "I control Tret's heart! I shall
-/// not let you do anything to him!"
+/// Tret's wrathful side repels Hermes' Water.
 static void KolimaForestTree_RejectHermesWater(void) {
   struct Actor *leader;
 
@@ -750,10 +742,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaForestTree_ReplaceInventoryItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);
 }
 
-/// Sets up Tret, Laurel and the forest's colours on entry. Tret, Laurel and the
-/// wrathful side stand 28 pixels up, and nothing passes through them. Retreat
-/// is set to the forest's way in. The forest takes its cursed colours until the
-/// curse is lifted.
+/// Sets up Tret, Laurel and the forest's colours on entry.
 s32 KolimaForestTree_Initialize(void) {
   struct Actor *tretBlank;
   struct Actor *tretsWrathfulSide;

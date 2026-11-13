@@ -463,8 +463,7 @@ enum {
 #include "shared/actor_step.h"
 
 /// Pushing a pillar moves the pillar ahead of the leader one cell on with him,
-/// leaning into it (ANIM_PUSH). It moves when the cell beyond is free, nothing
-/// stands on the pillar, and it is no statue (SW_VENUS_IMMOVABLE).
+/// leaning into it (ANIM_PUSH).
 static void VenusLighthouse_PushAdjacentPillar(void) {
   struct FieldPosition targetPosition;
   struct Actor *leader;
@@ -629,9 +628,7 @@ VenusLighthouse_EmitPassageSparkTrail(struct Actor *actor) {
 }
 
 /// Walking north into a sparkling passage, on VenusLighthouseSecondFloor or
-/// VenusLighthouseThirdFloor, dissolves the leader in sparks. He leaves by
-/// the exit of the passage's own number, coming out at its far end
-/// (VenusLighthouse_ArriveThroughSparkPassage).
+/// VenusLighthouseThirdFloor, dissolves the leader in sparks.
 static void VenusLighthouse_EnterSparklingPassage(void) {
   struct Actor *leader;
   struct FieldWork *work;
@@ -686,9 +683,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
   }
 }
 
-/// Makes the leader the actor the fade overlay follows. The overlay (struct
-/// FadeOverlayWork) is two translucent marks beside him wherever the ground
-/// beside him rises above his floor.
+/// Makes the leader the actor the fade overlay follows.
 static void VenusLighthouse_EnterCappedPillarRows(void) {
   gFadeOverlayWork->actor = Actor_Get(ACTOR_PARTY_LEADER);
 }
@@ -915,9 +910,7 @@ const struct SceneExitRegion *VenusLighthouse_GetRegions(void) { return 0; }
 /// Returns the packed exits shared by the six scenes.
 const u32 *VenusLighthouse_GetExits(void) { return gVenusLighthouseExits; }
 
-/// Selects the scene's actor placements. Inside the lighthouse,
-/// Scene_AssignViewFlags first gives each row with condition 0 whether it
-/// lies inside the view bounds, so only the room entered is populated.
+/// Selects the scene's actor placements.
 const struct ActorPlacement *VenusLighthouse_GetActorPlacements(void) {
   struct ActorPlacement *placements;
   s16 sceneId;
@@ -994,8 +987,6 @@ static void VenusLighthouse_HearOfTheAttack(void) {
 }
 
 /// A scholar who has waited so long to see inside can't move for the pain.
-/// Talking to the scholar at Venus Lighthouse Entry plays it. It's the inside
-/// of Venus Lighthouse the scholar has waited to see.
 static void VenusLighthouse_TalkToWaitingScholar(void) {
   Event_Start();
   Event_SetMessageId(MsgVenusIveWaitedLongSeeIts);
@@ -1008,8 +999,7 @@ static void VenusLighthouse_TalkToWaitingScholar(void) {
 }
 
 /// In VenusLighthouseGroundFloor, Carry lifts the pillar Move could not push
-/// past the wall. Once it is set down beyond, it stays there
-/// (FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED).
+/// past the wall.
 static void VenusLighthouse_CarryPillarPastWall(void) {
   struct Actor *pillar;
 
@@ -1084,7 +1074,6 @@ static void VenusLighthouse_RevealPath(void) {
 
 /// In VenusLighthouseGroundFloor, the leader walks off the ledge
 /// (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_LEDGE) before the floor switch is held down.
-/// He jumps down to the floor below and shakes his head.
 static void VenusLighthouse_JumpDown(void) {
   struct Actor *leader;
   s32 landingQuarterZ;
@@ -1312,9 +1301,6 @@ static void VenusLighthouse_StepOnFloorSwitch(void) {
 }
 
 /// In VenusLighthouseGroundFloor, the scholar by the door tells what he saw.
-/// He explored once it opened, until Kraden and the others appeared and did
-/// something to the statue that lit up the floor. The camera looks at the
-/// door.
 static void VenusLighthouse_TalkToScholarByDoor(void) {
   struct FieldWork *work;
 
@@ -1337,8 +1323,7 @@ static void VenusLighthouse_TalkToScholarByDoor(void) {
 }
 
 /// In VenusLighthouseFirstFloor, the leader steps onto the hole in the floor
-/// (cell behavior 35). He looks down, falls through and lands in the room
-/// below (VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM_HOLE).
+/// (cell behavior 35).
 static void VenusLighthouse_FallThroughFloor(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -1392,8 +1377,6 @@ static void VenusLighthouse_FallThroughFloor(void) {
 }
 
 /// In VenusLighthouseFirstFloor, Move shifts one of the three capped pillars.
-/// The floor under each pillar is solid again and the nearer pillar draws in
-/// front.
 static void VenusLighthouse_MoveCappedPillar(void) {
   u32 pillarIndex;
   struct Actor *pillar;
@@ -1508,9 +1491,7 @@ static void VenusLighthouse_ReleaseFallenCarryPillar(struct Actor *pillar) {
   }
 }
 
-/// In VenusLighthouseFirstFloor, Carry lifts one of the two pillars by the
-/// gap. Set down in its place it stays fixed. Dropped into the gap it falls
-/// through the floor.
+/// In VenusLighthouseFirstFloor, Carry lifts one of the two pillars by the gap.
 static void VenusLighthouse_CarryPillarAcrossGap(void) {
   struct Actor *pillar;
 
@@ -1611,9 +1592,7 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
 #define VENUS_GATE_PILLAR_SOCKET_COLUMN 46
 #define VENUS_GATE_PILLAR_SOCKET_ROW 45
 
-/// In VenusLighthouseSecondFloor, Move pushes the pillar before the gate. In
-/// its socket it sinks in and the gate opens, the first time only
-/// (FLAG_VENUS_LIGHTHOUSE_GATE_OPEN).
+/// In VenusLighthouseSecondFloor, Move pushes the pillar before the gate.
 static void VenusLighthouse_MoveGatePillar(void) {
   s32 row;
   s32 column;
@@ -1676,8 +1655,7 @@ static void VenusLighthouse_MoveGatePillar(void) {
 }
 
 /// In VenusLighthouseSecondFloor, the leader walks into the gap or the pillar
-/// before the gate. He jumps the gap, else pushes the pillar, which may sink
-/// into its socket.
+/// before the gate.
 static void VenusLighthouse_JumpOrPushGatePillar(void) {
   Event_Start();
   if (VenusLighthouse_JumpAcrossGap() == 0) {
@@ -1688,9 +1666,7 @@ static void VenusLighthouse_JumpOrPushGatePillar(void) {
   VenusLighthouse_MoveGatePillar();
 }
 
-/// In VenusLighthouseThirdFloor, Move pushes one of the three pillars. A
-/// pillar on a free socket sinks in, and with all three sunk the gate opens
-/// (FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN).
+/// In VenusLighthouseThirdFloor, Move pushes one of the three pillars.
 static void VenusLighthouse_MoveSwitchPillar(void) {
   struct Actor *occlusionEffect = 0;
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1813,8 +1789,7 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
 }
 
 /// In VenusLighthouseThirdFloor, the leader walks into the gap or one of the
-/// three pillars. He jumps the gap, else pushes the pillar, which may sink
-/// into a socket.
+/// three pillars.
 static void VenusLighthouse_JumpOrPushSwitchPillar(void) {
   Event_Start();
   if (VenusLighthouse_JumpAcrossGap() == 0) {
@@ -1927,9 +1902,7 @@ static __inline__ void Actor_CopyPosition(struct Actor *destination,
   destination->z.fixed = source->z.fixed;
 }
 
-/// In VenusLighthouseFourthFloor, Carry lifts one of the four floating
-/// pillars. It settles where it is set down (FLAG_SCENE_TEMP_00 plus its
-/// number) and the platforms under the pillars rise or sink to their weight.
+/// In VenusLighthouseFourthFloor, Carry lifts one of the four floating pillars.
 static void VenusLighthouse_CarryFloatingPillar(void) {
   struct Actor savedPosition;
   struct Actor *firstPassageEffect = NULL;
@@ -2165,8 +2138,7 @@ static void VenusLighthouse_StepOnEastWallSwitch(void) {
 }
 
 /// In VenusLighthouseFourthFloor, Move pushes one of the four pillars in the
-/// pillar room. On a free socket it sinks in, and with all four sunk the gate
-/// opens (FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN).
+/// pillar room.
 static void VenusLighthouse_MoveSocketPillar(void) {
   struct Actor *occlusionEffect;
   struct Actor *pillar;
@@ -2319,8 +2291,7 @@ static void VenusLighthouse_MoveSocketPillar(void) {
 }
 
 /// In VenusLighthouseFourthFloor, the leader walks into the gap or a
-/// pillar-room pillar. He jumps the gap, else pushes the pillar, which may
-/// sink into a socket.
+/// pillar-room pillar.
 static void VenusLighthouse_JumpOrPushSocketPillar(void) {
   Event_Start();
   if (VenusLighthouse_JumpAcrossGap() == 0) {
@@ -2333,11 +2304,7 @@ static void VenusLighthouse_JumpOrPushSocketPillar(void) {
 }
 
 /// In VenusLighthouseFourthFloor, the leader walks south into the passage
-/// (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_RISING_PASSAGE). He rises out of the room
-/// to the floor above
-/// (VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES_RISING,
-/// where VenusLighthouse_RaiseLeaderWithSpray lands him on
-/// ACTOR_RISING_PLATFORM).
+/// (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_RISING_PASSAGE).
 static void VenusLighthouse_EnterRisingPassage(void) {
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);

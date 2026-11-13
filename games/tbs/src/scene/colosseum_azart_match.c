@@ -258,7 +258,6 @@ static void ColosseumAzartMatch_WaitForBridgeOpening(void) {
 
 /// Move on a rock in the Rock Challenge, and each push, settles the rocks.
 static void ColosseumAzartMatch_SettleRocks(void) {
-
   struct Actor *actor;
   s32 blocked;
 
@@ -291,7 +290,6 @@ static void ColosseumAzartMatch_SettleRocks(void) {
 
 /// Walking into a rock in the Rock Challenge pushes it one cell.
 static void ColosseumAzartMatch_PushRock(void) {
-
   Colosso_PushActorAhead();
   ColosseumAzartMatch_SettleRocks();
 }
@@ -561,7 +559,6 @@ static void ColosseumAzartMatch_ReachArena(void) {
 /// Walking into something in the Rock Challenge (step trigger 90) pushes a
 /// rock, and checks anything else.
 static void ColosseumAzartMatch_PushRockOrCheckAhead(void) {
-
   if (Colosso_FindActorAhead() == 0) {
     Field_TryJumpForward();
   } else {
@@ -576,7 +573,6 @@ const struct Trigger *ColosseumAzartMatch_GetTriggers(void) {
 /// Back from the battle, Isaac and Azart stand in the arena as the result is
 /// shown.
 static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
-
   Actor_ReleaseById(ACTOR_PRIZE_A);
   Actor_ReleaseById(ACTOR_PRIZE_B);
   Party_RestoreHpPp(1);

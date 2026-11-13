@@ -124,9 +124,7 @@ static void KolimaForestFloodgate_MarkShortLogCells(void) {
   }
 }
 
-/// Draws the river at its level and sets each log to match. High water floats
-/// the logs 26 pixels up over their own cells, and low water lays them on the
-/// riverbed.
+/// Draws the river at its level and sets each log to match.
 static void KolimaForestFloodgate_DrawWaterLevel(void) {
   struct Actor *piece;
   struct FloodgateLog *record = gKolimaForestFloodgateRecords;
@@ -324,7 +322,6 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
 /// In Kolima Forest (SceneId_KolimaForestFloodgate), walking west into the
 /// short log makes the leader shove it west to x 72.
 static void KolimaForestFloodgate_PushShortLogWest(void) {
-
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(6);
@@ -351,7 +348,6 @@ static void KolimaForestFloodgate_PushShortLogWest(void) {
 /// In Kolima Forest (SceneId_KolimaForestFloodgate), walking east into the
 /// short log makes the leader shove it east to x 104.
 static void KolimaForestFloodgate_PushShortLogEast(void) {
-
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(6);
@@ -375,10 +371,7 @@ static void KolimaForestFloodgate_PushShortLogEast(void) {
   Event_End();
 }
 
-/// Sets up the logs and the river's level on entry. The logs come back from
-/// gSceneLocalState, or on a first visit from the defaults with the water high.
-/// The logs are made and the river is drawn at its level. The forest keeps its
-/// cursed colours until the curse is lifted.
+/// Sets up the logs and the river's level on entry.
 s32 KolimaForestFloodgate_Initialize(void) {
   struct Actor *actor;
 

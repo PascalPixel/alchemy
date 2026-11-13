@@ -231,10 +231,7 @@ const struct SceneExitRegion *LamakanDesert_GetRegions(void) { return 0; }
 /// All four desert scenes share the packed exit table.
 const u32 *LamakanDesert_GetExits(void) { return gLamakanDesertExits; }
 
-/// The pits, the Manticore and Smog of each scene. Arriving at
-/// LamakanDesertManticore's LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE, the
-/// way back from the Manticore's battle, marks it beaten. In the patched
-/// editions it also sets FLAG_KALAY_REACHED.
+/// The pits, the Manticore and Smog of each scene.
 const struct ActorPlacement *LamakanDesert_GetActorPlacements(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertManticore) {
     if (gMainRoutineWork.entrance ==
@@ -261,9 +258,7 @@ const struct ActorPlacement *LamakanDesert_GetActorPlacements(void) {
   return gLamakanDesertActorPlacementsOther;
 }
 
-/// In Lamakan Desert, step trigger 9 takes LAMAKAN_DESERT_CAVE_TO_WORLD_MAP. If
-/// Master Hsu is still trapped, he is rescued without the party (see the file
-/// comment).
+/// In Lamakan Desert, step trigger 9 takes LAMAKAN_DESERT_CAVE_TO_WORLD_MAP.
 static void LamakanDesert_LeaveForTheWorldMap(void) {
   Event_Start();
   if (Event_GetFlag(FLAG_HSU_RESCUED) == 0) {
@@ -282,10 +277,7 @@ const struct Trigger *LamakanDesert_GetTriggers(void) {
   return gLamakanDesertTriggers;
 }
 
-/// Reveal wears off, and the desert's secrets sink under the sand again. It
-/// also runs on every entry to Lamakan Desert. The pits, the Manticore and Smog
-/// vanish under the sand (cells 70, 68 or 69, 99 over the saved patches), the
-/// chests and Psynergy Stones hide and the heat haze shimmers.
+/// Reveal wears off, and the desert's secrets sink under the sand again.
 static UNREAD_RESULT Reveal_HideSecrets(void) {
   s32 markerId;
 
@@ -348,9 +340,7 @@ static UNREAD_RESULT Reveal_HideSecrets(void) {
   }
 }
 
-/// Casting Reveal uncovers what the desert's sand hides. In Lamakan Desert, the
-/// saved patches of sand come back, the pits, the Manticore and Smog stand
-/// where they are, the chests and Psynergy Stones show and the haze stops.
+/// Casting Reveal uncovers what the desert's sand hides.
 static UNREAD_RESULT Reveal_ShowSecrets(void) {
   s32 i;
 
@@ -427,10 +417,7 @@ static void LamakanDesert_FightManticore(void) {
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 5);
 }
 
-/// Garet, Ivan or Mia complains about the heat. In Lamakan Desert this is
-/// raised as LAMAKAN_DESERT_RAISED_HEAT_QUARTER to _THREE_QUARTERS as the heat
-/// gauge passes a quarter, a half and three quarters. The one who speaks is
-/// picked at random (three tries for one who has not spoken yet).
+/// Garet, Ivan or Mia complains about the heat.
 static void LamakanDesert_ComplainAboutHeat(s32 mark) {
   s32 tries;
   s32 quarter;
@@ -779,8 +766,7 @@ static void LamakanDesert_FallIntoPit(void) {
 }
 
 /// In Lamakan Desert, on a slope of sand (CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE),
-/// the sand carries the leader south 1.5 pixels a frame. At a ledge the leader
-/// hops down 8 pixels.
+/// the sand carries the leader south 1.5 pixels a frame.
 static void LamakanDesert_SlideDownDune(void) {
   struct Actor *center;
   s32 id;
@@ -853,8 +839,7 @@ static void LamakanDesert_SlideDownDune(void) {
 }
 
 /// In Lamakan Desert, at step trigger 40 in LamakanDesertManticore, the leader
-/// stops and backs away as the Manticore rises out of the sand. This plays
-/// until the Manticore is beaten.
+/// stops and backs away as the Manticore rises out of the sand.
 static void LamakanDesert_MeetManticore(void) {
   struct FieldWork *work = gFieldWork;
   struct FieldPosition backward;
@@ -911,10 +896,8 @@ static void LamakanDesert_MeetManticore(void) {
 }
 
 /// Entering Lamakan Desert starts the heat gauge (600 steps) on all but
-/// LamakanDesertCave. The patches Reveal uncovers are saved to the spare cells
-/// at 64, 126 or 64, 124, and the secrets are hidden.
+/// LamakanDesertCave.
 s32 LamakanDesert_Initialize(void) {
-
   gMainRoutineWork.hazardLimit = 600;
   gMainRoutineWork.hazardMode = HAZARD_COUNT_ON_CELLS;
   gMainRoutineWork.hazardDamage = HAZARD_DAMAGE_PERCENT | 25;
@@ -966,9 +949,7 @@ static UNUSED void LamakanDesert_UnusedWalkManticore(void) {
 }
 
 /// Every frame: draws the heat gauge down the screen's left edge, 8 pixels
-/// further out while held. It slides off to the left while
-/// FLAG_FIELD_HANDLING_REQUESTS is set, its bar shrinks as the heat
-/// grows, and its colors turn redder (flickering greener past 60 of 120).
+/// further out while held.
 static void HeatGauge_Draw(void) {
   u8 *buffer;
   s32 tile;

@@ -80,8 +80,7 @@ static void KolimaForestGlade_PushLog(void) {
 #include "shared/catch_nut.h"
 
 /// In Kolima Forest (SceneId_KolimaForestGlade), Catch on the floating Nut
-/// makes it vanish, and the party finds a Nut. This works until
-/// FLAG_KOLIMA_FOREST_NUT_CAUGHT.
+/// makes it vanish, and the party finds a Nut.
 static void KolimaForestGlade_CatchNut(void) {
   Scene_CatchNut(ACTOR_NUT, FLAG_KOLIMA_FOREST_NUT_CAUGHT);
 }
@@ -91,11 +90,8 @@ const struct Trigger *KolimaForestGlade_GetTriggers(void) {
   return gKolimaForestGlade_Triggers;
 }
 
-/// Sets up the floating Nut and the logs on entry. The Nut floats until it is
-/// caught, the logs mark the cells they cover, and the forest keeps its cursed
-/// colours until the curse is lifted.
+/// Sets up the floating Nut and the logs on entry.
 s32 KolimaForestGlade_Initialize(void) {
-
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {

@@ -163,9 +163,7 @@ static s32 Kolima_ApplyPendingPose(struct Actor *actor) {
   return 1;
 }
 
-/// Each frame of a sparkle on Kolima's ground, its timer runs on at random. It
-/// shows its bright frame (7) past 1000 and its dim one (10) before. At 1200
-/// the timer starts over.
+/// Each frame of a sparkle on Kolima's ground, its timer runs on at random.
 static s32 Kolima_UpdateTimedAppearance(struct Actor *actor) {
   s32 randomValue = Random_Next();
   s32 scaledRandom = randomValue * 100;
@@ -253,9 +251,7 @@ const struct SceneExitRegion *Kolima_GetRegions(void) {
 }
 
 /// The exits of all three scenes, each scene's after its header word (an exit
-/// of kind 0). Kolima's lead to the World Map, the houses (SceneId_LogRoomsC)
-/// and Kolima Tunnel, Kolima Bridge's to the World Map, and Kolima Tunnel's to
-/// a house and the village.
+/// of kind 0).
 const u32 *Kolima_GetExits(void) { return gKolimaExits; }
 
 /// Selects the people of Kolima or Kolima Bridge. Kolima Tunnel has none. In
@@ -276,9 +272,7 @@ const struct ActorPlacement *Kolima_GetActorPlacements(void) {
 }
 
 /// In Kolima, once the curse is lifted, talking to the healer (ACTOR_HEALER)
-/// across his counter (facing north) opens the Sanctum's services. From any
-/// other side he asks whether the holy tree's rage was the only cause of the
-/// curse, and either answer agrees that something changed when the gems fell.
+/// across his counter (facing north) opens the Sanctum's services.
 static void Kolima_TalkToHealer(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 facing = leader->facing;
@@ -321,8 +315,7 @@ static void Kolima_WalkThroughExit(s32 exitNumber) {
 }
 
 /// In Kolima, walking into one of the five doorways leads into the houses and
-/// shops. Their step triggers are the numbers of the exits they take
-/// (KOLIMA_TO_INN to KOLIMA_TO_HOUSE_NORTH).
+/// shops.
 static void Kolima_EnterDoor(void) {
   struct FieldWork *work = gFieldWork;
   s32 x = 0;
@@ -362,8 +355,7 @@ static void Kolima_EnterDoor(void) {
 }
 
 /// At Kolima Bridge, the first time the party steps up to it, the villager
-/// beside it (ACTOR_BRIDGE_VILLAGER) asks whether they are going to cross. At
-/// the leader's nod he says "Go right ahead!" and hops aside to the post.
+/// beside it (ACTOR_BRIDGE_VILLAGER) asks whether they are going to cross.
 static void Kolima_LowerBridge(void) {
   u32 debrisIndex;
 

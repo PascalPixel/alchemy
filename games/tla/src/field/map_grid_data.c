@@ -111,7 +111,7 @@ typedef void (*OperandFunc)(struct ScriptOperands *state, s32 operation,
 s32 ActorScript_Wait();
 s32 Script_WaitForArrival();
 s32 ActorScript_SetPositionAndResetMotion();
-s32 Func_08025038();
+s32 ActorScript_ResetToOrigin();
 s32 ActorScript_ApplyAbsolutePosition();
 s32 ActorScript_ApplyRelativePosition();
 s32 ActorScript_StoreAngleToWatchedActor();
@@ -256,7 +256,7 @@ const ScriptCommandFn gData_0802f204[54] = {
     ActorScript_Wait,                         // 0x00 SC_WAIT
     Script_WaitForArrival,                    // 0x01 SC_SYNC
     ActorScript_SetPositionAndResetMotion,    // 0x02 SC_POSITION
-    Func_08025038,                            // 0x03 SC_CMD_03
+    ActorScript_ResetToOrigin,                // 0x03 SC_CMD_03
     ActorScript_ApplyAbsolutePosition,        // 0x04 SC_MOVE
     ActorScript_ApplyRelativePosition,        // 0x05 SC_MOVE_BY
     ActorScript_StoreAngleToWatchedActor,     // 0x06 SC_FACE_WATCHED

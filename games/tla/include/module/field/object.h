@@ -33,7 +33,7 @@ s32 BattleEffect_GetObjectPriority(struct Actor *object);
 s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer);
 void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
-s32 Func_080dbd5c(s32 x, s32 z, s32 layer);
+s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer);
 
 s32 Rope_FindById(s32 id, s32 *value, s32 *index);
 

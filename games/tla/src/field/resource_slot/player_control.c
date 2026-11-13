@@ -412,7 +412,10 @@ s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
   return -1;
 }
 
-void Func_08026fc8(struct Actor *object, s32 mode) {
+/// A splash at the feet of an actor wading through water (cell attribute 16):
+/// sprite 14 started on its splash script, its sound every other step; mode is
+/// the map's ground effect kind, and kind 2 takes another picture.
+void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
   struct Actor *created;
   struct Child *sprite;
 
@@ -804,7 +807,7 @@ counted:
         sprite->flags = ((u8)oldFlags | 4) & ~1;
       }
       if (object->timer == 0 && collision == 0 && !onObject) {
-        Func_08026fc8(object, (u32)(map->groundEffects << 28) >> 30);
+        Actor_SpawnWaterSplash(object, (u32)(map->groundEffects << 28) >> 30);
         if (movementAnimation == 5)
           object->timer = 8;
         else

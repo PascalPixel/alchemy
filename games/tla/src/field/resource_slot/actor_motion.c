@@ -435,7 +435,10 @@ void Actor_UpdateAllThumb(void) {
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-void Func_080246b8(void) {
+/// Task: each actor riding another (priority flag 64, its carrier at offset
+/// 0x7c) moves with its carrier's last step (the carrier's words at 0x70,
+/// 0x74 and 0x78), and one standing on it is set on its top, 16 pixels up.
+void Actor_MoveWithCarriers(void) {
   struct Actor *object = Ram_HeapSlots->scriptObjects;
   s32 i;
 

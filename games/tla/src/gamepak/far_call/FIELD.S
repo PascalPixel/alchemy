@@ -66,7 +66,7 @@ Resource_FarCall003:
 	export Map_CopyCellsRectFar, Map_CopyCellsRect
 	export Map_CopyCellAttributeRectFar, Map_CopyCellAttributeRect
 	export MapGrid_CopyCellPictureCellsRectFar, MapGrid_CopyCellPictureCellsRect
-	export Func_080201f8, Func_0802b590
+	export Func_080201f8, Map_CopyRawCellsRect
 	export WorldMap_SetWindowCellTileFar, WorldMap_SetWindowCellTile
 	export WorldMap_SetWindowCellTileAndDrawFar, WorldMap_SetWindowCellTileAndDraw
 	export MapGrid_CheckCollisionFar, MapGrid_CheckCollision
@@ -119,4 +119,4 @@ Resource_FarCall003:
 	export VramBlock_Load93Far, VramBlock_Load93
 	export TileMap_ConvertBufferFar, TileMap_ConvertBuffer
 	export SpriteViewer_RunFar, SpriteViewer_Run
-	export Func_080203a0, Func_08026fc8
+	export Actor_SpawnWaterSplashFar, Actor_SpawnWaterSplash

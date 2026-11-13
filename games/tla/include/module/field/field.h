@@ -1176,7 +1176,7 @@ extern const struct SparklePicture gFieldEffect_SparklePictures[];
 
 extern const u8 gFieldEffect_SparkleTiles[];
 
-void Func_080203a0(struct Actor *object, s32 kind);
+void Actor_SpawnWaterSplashFar(struct Actor *object, s32 kind);
 
 s32 MapGrid_GetCellBehaviorAtFar(s32 layer, s32 x, s32 z);
 
@@ -1191,7 +1191,7 @@ extern const s16 Data_080f0b50[];
 void Actor_UpdateAllMotion(void);
 
 void Actor_UpdateAllThumb(void);
-void Func_080246b8(void);
+void Actor_MoveWithCarriers(void);
 
 void ActorSystem_PlaceSprites(void);
 
@@ -1217,7 +1217,7 @@ s32 ActorScript_CheckOverlap(struct Actor *object, s32 *values);
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
 struct Actor *Actor_Create(s32 kind, s32 x, s32 y, s32 z);
 
-void Func_08026fc8(struct Actor *object, s32 kind);
+void Actor_SpawnWaterSplash(struct Actor *object, s32 kind);
 s32 Field_CheckConfiguredKeys(void);
 
 void TileMap_DecodeStagedBuffer(s32 size);

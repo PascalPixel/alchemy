@@ -470,7 +470,7 @@ again:
         cells = map->layers[leader->terrainId & 3].cells;
       cells += cellX + (cellZ << 7);
       if (cells->attributeB & 16)
-        Func_080203a0(leader, (u32)(attr << 28) >> 30);
+        Actor_SpawnWaterSplashFar(leader, (u32)(attr << 28) >> 30);
     }
 
     // A platform underfoot dips 2 pixels with the leader and comes back up.

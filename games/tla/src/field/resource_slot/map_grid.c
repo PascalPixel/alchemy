@@ -36,12 +36,13 @@ void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 extern s32 Animation_ApplyChildArgument__f0298c0(
     struct PlayerSprite__f0298c0 *,
     s32) __asm__("Animation_ApplyChildArgument");
-/* VIEW(f0298c0): routine Func_08029810 as void Func_08029810(void); the
- * definition has void Func_08029810(struct Actor *object). */
-extern void Func_08029810__f0298c0(void) __asm__("Func_08029810");
-/* VIEW(f0298c0): routine Func_08029838 as s32 Func_08029838(struct Actor
- * *actor); the definition has s32 Func_08029838(s32 arg). */
-extern s32 Func_08029838__f0298c0(struct Actor *actor) __asm__("Func_08029838");
+/* VIEW(f0298c0): routine Sand_JitterGrain as void Sand_JitterGrain(void); the
+ * definition has void Sand_JitterGrain(struct Actor *object). */
+extern void Func_08029810__f0298c0(void) __asm__("Sand_JitterGrain");
+/* VIEW(f0298c0): routine Sand_CheckEndKeys as s32 Sand_CheckEndKeys(struct
+ * Actor *actor); the definition has s32 Sand_CheckEndKeys(s32 arg). */
+extern s32
+Func_08029838__f0298c0(struct Actor *actor) __asm__("Sand_CheckEndKeys");
 
 /// Script command 0x1e (control mode 5): the leader turned to sand by the Sand
 /// Psynergy, moved by the direction pad on a field map.

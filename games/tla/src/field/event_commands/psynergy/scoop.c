@@ -1011,7 +1011,7 @@ struct ObjectAnimation__f0e6400 {
 
 extern char ResourceId_GlowDisc, ResourceId_WhitePuff;
 
-s32 Func_080dbd5c(s32 x, s32 z, s32 layer);
+s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer);
 s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing);
 void BattleEffect_ApplyColorToTargetBuffer(s32 packed, s32 mode);
 void MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value);
@@ -1089,7 +1089,7 @@ void FieldPsynergy_Parch(void) {
     result = 0;
     // DEAD: pending is already NULL; the ROM stores it again.
     pending = NULL;
-  } else if (Func_080dbd5c(pos[0], pos[2], caster->terrainId) != 0) {
+  } else if (MapGrid_IsWaterCell(pos[0], pos[2], caster->terrainId) != 0) {
     pending = Scene_FindPsynergyTrigger(
         0x50000005, scene->fieldKind,
         MapGrid_GetCellBehavior(pos[0], pos[2], caster->terrainId));

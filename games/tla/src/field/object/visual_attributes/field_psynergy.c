@@ -46,7 +46,8 @@ s32 Func_080dbc04(s32 x, s32 z, s32 layer) {
 
   if (*(s8 *)(event + 394) == 3)
     return MapGrid_IsSandCell(x, z, layer);
-  if (Func_080dbda8(x, z, layer) != 0 || Func_080dbd5c(x, z, layer) != 0 ||
+  if (Func_080dbda8(x, z, layer) != 0 ||
+      MapGrid_IsWaterCell(x, z, layer) != 0 ||
       MapGrid_GetCellAttributeLowNibbleFar(layer, x, z) != 0)
     return 0;
   if (MapGrid_IsSandCell(x, z, layer) != 0)
@@ -97,7 +98,9 @@ u8 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer) {
   return MapGrid_GetCellAt(x, z, layer)->attributeB & 0x40;
 }
 
-s32 Func_080dbd5c(s32 x, s32 z, s32 layer) {
+/// Whether the cell at (x, z) is water: attribute bit 16, or on the world map
+/// collision 2 to 4.
+s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer) {
   u8 *event = Ram_HeapSlots->eventWork;
 
   if (*(s8 *)(event + 394) == 3) {

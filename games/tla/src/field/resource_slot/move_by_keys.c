@@ -417,7 +417,9 @@ s32 Actor_CrossTightrope(struct Actor *object) {
 
 #define HALF_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
 
-void Func_08029810(struct Actor *object) {
+/// Update of a grain the Sand leaves as the leader moves: it turns and
+/// jitters sideways at random.
+void Sand_JitterGrain(struct Actor *object) {
   u32 first;
   u32 second;
   s32 x;
@@ -435,7 +437,7 @@ void Func_08029810(struct Actor *object) {
 /// When one of three party key sets is pressed: plays cue 113 if the far call
 /// accepts the argument, else posts event request 0x208b and returns 1 while
 /// flag 0x146 is clear.
-s32 Func_08029838(s32 arg) {
+s32 Sand_CheckEndKeys(s32 arg) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   /* FAKEMATCH(pin): pressed held in r0, the register the early zero is
    * returned in, so the argument moves to r6; as a plain local, which takes r6

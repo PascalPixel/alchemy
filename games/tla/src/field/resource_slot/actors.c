@@ -158,7 +158,7 @@ void ActorSystem_Initialize(s32 mode) {
     Task_Add(Actor_UpdateAllMotion, TASK_PASS_VBLANK + 10);
   } else {
     Task_Add(Actor_UpdateAllThumb, TASK_PASS_VBLANK + 11);
-    Task_Add(Func_080246b8, TASK_PASS_VBLANK + 10);
+    Task_Add(Actor_MoveWithCarriers, TASK_PASS_VBLANK + 10);
   }
   if (mode == 3 || mode == 4)
     Task_Add(ObjectSystem_UpdateCameraFixed, TASK_PASS_VBLANK);

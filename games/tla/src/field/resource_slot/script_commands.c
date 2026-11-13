@@ -471,7 +471,9 @@ s32 ActorScript_SetPositionAndResetMotion(struct ActorScriptView *object) {
   return 1;
 }
 
-s32 Func_08025038(struct ActorScriptView *object) {
+/// Script command 0x03: puts the object at x and z 0, keeping its height,
+/// with no destination or speed; with flag 1 it then follows the ground there.
+s32 ActorScript_ResetToOrigin(struct ActorScriptView *object) {
   s32 height;
 
   Actor_SetPositionAndResetMotion__apply_relative_position(object, 0, object->y,

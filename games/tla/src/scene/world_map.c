@@ -925,10 +925,6 @@ void Func_020012bc(s32 entrance) {
 
       asm volatile("" : "+l"(a1));
       a2 = 0;
-      /* FAKEMATCH(barrier): the asm on the 0, the same call's second; as the
-       * plain Call3, with the asm above, 2 of 946 instructions differ in
-       * tla-en. */
-      asm volatile("" : "+l"(a2));
       Actor_ArmCallback(23, a1, a2);
     }
     Event_Wait(5);
@@ -970,10 +966,6 @@ void Func_020012bc(s32 entrance) {
        * tla-en. */
       asm volatile("" : "+l"(a2));
       a1 <<= 1;
-      /* FAKEMATCH(barrier): the asm on the shifted emote, the same call's
-       * third; as the plain Value3, with the other two, 2 of 946 instructions
-       * differ in tla-en. */
-      asm volatile("" : "+l"(a1));
       Actor_ShowEmote(4, a1, a2);
     }
     Actor_SetAnimationAndWait(20, 3);

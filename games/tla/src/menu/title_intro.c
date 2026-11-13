@@ -898,18 +898,12 @@ s32 Func_081a729c(s32 prompt) {
   {
     u8 *cells = Ram_MapCellBuffer;
 
-    /* FAKEMATCH(barrier): holds the address's load ahead of the offset; as
-     * the pin alone, 2 of 254 instructions differ in tla-en. */
-    __asm__ __volatile__("" : "+l"(cells));
     Resource_DecodeType01(data + 0x1c0, cells);
     Dma_Set(cells, (void *)0x06006800, DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
   }
   {
     u16 *start = (u16 *)0x06003000;
 
-    /* FAKEMATCH(barrier): holds r3 until the address is loaded; as the pin
-     * alone, 2 of 254 instructions differ in tla-en. */
-    __asm__("" : "+l"(start) : : "r3");
     tilemap = start;
   }
   tile = 0x1a0;
@@ -1013,9 +1007,6 @@ column:
      * of 254 instructions differ in tla-en. */
     register u16 zero asm("r2") = 0;
 
-    /* FAKEMATCH(barrier): holds r3 until the zero is loaded; as the pin
-     * alone, 2 of 254 instructions differ in tla-en. */
-    __asm__("" : "+l"(zero) : : "r3");
     REG_BLDCNT = zero;
     REG_BLDALPHA = zero;
   }
@@ -1062,9 +1053,6 @@ s32 Title_ShowSplashScreen(s32 mode) {
     register u16 control asm("r3") =
         BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
 
-    /* FAKEMATCH(barrier): holds r2 until the control word is loaded; as the
-     * pin alone, 2 of 192 instructions differ in tla-en. */
-    __asm__("" : "+l"(control) : : "r2");
     REG_BG2CNT = control;
   }
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
@@ -1075,18 +1063,12 @@ s32 Title_ShowSplashScreen(s32 mode) {
   {
     u8 *cells = Ram_MapCellBuffer;
 
-    /* FAKEMATCH(barrier): holds the address's load ahead of the offset; as
-     * the pin alone, 2 of 192 instructions differ in tla-en. */
-    __asm__ __volatile__("" : "+l"(cells));
     Resource_DecodeType01(data + 448, cells);
     Dma_Set(cells, (void *)0x06004000, DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
   }
   {
     u16 *start = (u16 *)0x06003000;
 
-    /* FAKEMATCH(barrier): holds r3 until the address is loaded; as the pin
-     * alone, 2 of 192 instructions differ in tla-en. */
-    __asm__("" : "+l"(start) : : "r3");
     map = start;
   }
   tile = 256;

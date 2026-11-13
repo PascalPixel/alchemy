@@ -896,11 +896,6 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
       s32 y = 4;
       s32 flags = 2;
 
-      /* FAKEMATCH(barrier): an empty asm on x, y and flags, so the three are
-       * set before the message loads; as Message_OpenWindowFar(
-       * (s32)MsgBecameCursed, 8, 4, 2), 2 of 106 instructions differ in
-       * tla-en. */
-      asm volatile("" : "+l"(x), "+l"(y), "+l"(flags));
       Message_OpenWindowFar((s32)MsgBecameCursed, x, y, flags);
     }
     while (Message_AllTypedFar() == 0)

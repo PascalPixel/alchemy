@@ -57,7 +57,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
       Actor_StartScript(obj, gMercuryLighthouse_PillarScript);
       obj->watchedActor = actor;
       obj->motionFlags = ACTOR_FLOATS;
-      obj->y.fixed += -px(1) / 2;
+      obj->y.fixed -= px(1) / 2;
       if (animation != NULL) {
         Sprite_StartAnimation(animation, 6 - st->levels);
         animation->flags = 0;

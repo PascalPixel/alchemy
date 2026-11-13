@@ -967,7 +967,7 @@ enum { STONE_DOOR_WEST = 0, STONE_DOOR_SOUTH = 1, STONE_DOOR_NORTH = 2 };
 #define DOOR_ROOM_PIPE_PUSHED_ROW 38
 
 /// Chooses the random speed component used by stone-door particles.
-static __inline__ s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
+static inline s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
   u32 drift = Random_Next();
 
   return ((drift << 3) >> 16) * (px(1) / 5);

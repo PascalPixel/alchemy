@@ -550,8 +550,7 @@ struct RippleScrollWork {
 };
 
 /// One line's ripple offset.
-static __inline__ s32 LemurianShip_WaveOffset(s32 angle, s32 amplitude,
-                                              u16 base) {
+static inline s32 LemurianShip_WaveOffset(s32 angle, s32 amplitude, u16 base) {
   return (u16)(Iwram_MulQ16(gRippleSine[(angle >> 16) & 0xff], amplitude) /
                256) +
          base;
@@ -712,9 +711,9 @@ s32 LemurianShip_SetupMap(void) {
   {
     struct MapGridLayerScroll *layer = grid->layers + 1;
 
-    layer->offsetY += -px(90);
+    layer->offsetY -= px(90);
     layer = grid->layers + 2;
-    layer->offsetY += -px(90);
+    layer->offsetY -= px(90);
   }
   MapGrid_CenterOnFollowedPoint();
   Ripple_Start();

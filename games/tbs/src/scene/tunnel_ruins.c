@@ -183,7 +183,7 @@ static s32 TunnelRuins_RefreshActorAfterShrinking(struct Actor *actor) {
 
 /// Later patches land at the cell's centre. The base release uses the target
 /// pixel.
-static __inline__ s32 TunnelRuins_GetLandingPixel(s32 coordinate) {
+static inline s32 TunnelRuins_GetLandingPixel(s32 coordinate) {
 #if TBS_PATCH_1
   return ((coordinate >> 20) << 4) + 8;
 #else
@@ -587,8 +587,8 @@ static void TunnelRuins_HopNorthBySmallPillars(void) {
 
 /// Draws one picture of the passage's impact and starts a decaying vertical
 /// shake.
-static __inline__ void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
-                                                         s32 column, s32 row) {
+static inline void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
+                                                     s32 column, s32 row) {
   Sound_Play(SE_THUMP);
   MapGrid_CopyCellsTo(sourceColumn, 8, column, row, 1, 3);
   MapGrid_SetShake(0, 5, 1);

@@ -448,8 +448,8 @@ static void CrossboneIsleSteppingStones_ShrinkPillar(s32 index) {
     if (elapsedFrames > 31)
       return;
     wait(1);
-    actor->scaleY += -Q16_ONE / 10;
-    actor->y.fixed += -px(4) / 5;
+    actor->scaleY -= Q16_ONE / 10;
+    actor->y.fixed -= px(4) / 5;
     elapsedFrames++;
     if (actor->scaleY <= Q16_ONE / 10 - 1) {
       actor->scaleY = Q16_ONE / 10;
@@ -698,7 +698,7 @@ static void CrossboneIsleSteppingStones_JitterBackgroundScroll(void) {
 }
 
 /// Waits until the DMA channel clears its enable bit.
-static __inline__ void Dma_Wait(volatile u32 *dma) {
+static inline void Dma_Wait(volatile u32 *dma) {
   while (dma[2] & ((u32)DMA_ENABLE << 16))
     ;
 }

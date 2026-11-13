@@ -274,7 +274,7 @@ static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z);
 static void Kalay_UpdateNutOrbit(void);
 
 /// Clears the flag a guide's script sets when it is done.
-static __inline__ void Kalay_ClearScriptDone(struct Actor *actor) {
+static inline void Kalay_ClearScriptDone(struct Actor *actor) {
   s32 completed = 0;
 
   actor->timer = completed;
@@ -561,7 +561,7 @@ static void Kalay_OpenDoorAndExit(void) {
 }
 
 /// The palace door opens in two frames.
-static __inline__ void Kalay_AnimatePalaceDoor(void) {
+static inline void Kalay_AnimatePalaceDoor(void) {
   Sound_Play(SE_THUMP);
   MapGrid_CopyCellsTo(36, 23, 43, 12, 2, 2);
   wait(5);

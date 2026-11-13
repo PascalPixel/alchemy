@@ -379,9 +379,8 @@ s32 FileScreen_Run(void) {
   s32 pageCount;
   s32 encodedSize;
   struct Window *pageWindow;
-  s32 wrappedPage;
   s32 glyphColumn;
-  s32 windowHandle;
+  struct Window *linkWindow;
   s32 passwordColumn;
   s32 tileValue;
   s32 limit;
@@ -403,14 +402,14 @@ s32 FileScreen_Run(void) {
   blendStarted = 0;
   FileScreen_LoadBackground();
   Task_AddFrame(FileScreen_CheckButtonCodes, TASK_PASS_FRAME);
-  gFieldWork->transition = blendStarted;
+  gFieldWork->transition = 0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   // FILE_SCREEN_FROM_TITLE, after the credits (Title_Run): save the cleared
   // game, then WORLD_MAP_FROM_FILE_SCREEN. Cancelling the file choice asks
   // again.
   if (gMainRoutineWork.entrance == FILE_SCREEN_FROM_TITLE) {
-  L_ask:
+  ask_to_save:
     FieldMessage_Show(MsgSaveAdventureQuestion,
                       FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
     index = FieldYesNo_Ask(1);
@@ -422,7 +421,7 @@ s32 FileScreen_Run(void) {
       gMainRoutineWork.sendFlag = 1;
       index = Save_ToChosenFile();
       if (index == -1) {
-        goto L_ask;
+        goto ask_to_save;
       }
     }
     Event_Wait(60);
@@ -432,7 +431,7 @@ s32 FileScreen_Run(void) {
     Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_FILE_SCREEN);
     return 0;
   }
-  gSleepDisabled = blendStarted;
+  gSleepDisabled = 0;
 menu_top:;
   result = Save_ScanFileSummaries();
   // No backup memory: in debug mode, say so and turn idle sleep on.
@@ -600,14 +599,14 @@ menu_top:;
     // Link transfer waits for the other game's edition-specific greeting in
     // the partner's payload (struct SaveLinkGreeting); B gives up.
     if (result == TRANSFER_METHOD_CABLE) {
-      result = (s32)Window_Create(FILE_SCREEN_LINK_WINDOW_X, 5,
-                                  FILE_SCREEN_LINK_WINDOW_WIDTH, 8,
-                                  WINDOW_FLAG_INSTANT);
+      linkWindow =
+          Window_Create(FILE_SCREEN_LINK_WINDOW_X, 5,
+                        FILE_SCREEN_LINK_WINDOW_WIDTH, 8, WINDOW_FLAG_INSTANT);
       linkMessage = MsgClearSaveLabel;
 
-      Text_DrawMessage(linkMessage, (struct Window *)result, 0, 4);
-      Text_DrawMessage(linkMessage + 1, (struct Window *)result, 0, 16);
-      Text_DrawMessage(linkMessage + 3, (struct Window *)result, 0, 36);
+      Text_DrawMessage(linkMessage, linkWindow, 0, 4);
+      Text_DrawMessage(linkMessage + 1, linkWindow, 0, 16);
+      Text_DrawMessage(linkMessage + 3, linkWindow, 0, 36);
       Serial_Initialize();
       wait(10);
       {
@@ -653,15 +652,15 @@ menu_top:;
         }
         wait(1);
       }
-      Window_Close((struct Window *)result, 2);
+      Window_Close(linkWindow, 2);
       if (index == 0) {
         goto link_select;
       }
-      result = (s32)Window_Create(FILE_SCREEN_LINK_ERROR_WINDOW_X, 10,
-                                  FILE_SCREEN_LINK_ERROR_WINDOW_WIDTH, 4,
-                                  WINDOW_FLAG_INSTANT);
+      linkWindow = Window_Create(FILE_SCREEN_LINK_ERROR_WINDOW_X, 10,
+                                 FILE_SCREEN_LINK_ERROR_WINDOW_WIDTH, 4,
+                                 WINDOW_FLAG_INSTANT);
 
-      Text_DrawMessage(MsgClearSendingData, (struct Window *)result, 0, 4);
+      Text_DrawMessage(MsgClearSendingData, linkWindow, 0, 4);
       wait(10);
       Serial_StartSend(gSaveBuffer, 4100);
       wait(10);
@@ -685,24 +684,22 @@ menu_top:;
           wait(1);
         }
         if (linkConnectionOk == 0) {
-          WindowSprite_PrepareForRedraw((struct Window *)result);
-          Text_DrawMessage(MsgClearCommunicationError, (struct Window *)result,
-                           0, 4);
-          limit = KEY_A;
+          WindowSprite_PrepareForRedraw(linkWindow);
+          Text_DrawMessage(MsgClearCommunicationError, linkWindow, 0, 4);
           do {
             wait(1);
-          } while ((gKeysPressed & limit) == 0);
+          } while ((gKeysPressed & KEY_A) == 0);
         }
         wait(10);
         Serial_RemoveIrqHandlers();
         wait(10);
       }
 #if TBS_PATCH_4
-      Window_Close((struct Window *)result, 2);
+      Window_Close(linkWindow, 2);
       wait(1);
 #else
-      WindowSprite_PrepareForRedraw((struct Window *)result);
-      Window_Close((struct Window *)result, 2);
+      WindowSprite_PrepareForRedraw(linkWindow);
+      Window_Close(linkWindow, 2);
 #endif
       goto menu_top;
     }
@@ -727,30 +724,26 @@ menu_top:;
         encodedSize += 2;
         encodedSize = FileScreen_EncodePassword(data, encodedSize, password);
       }
-      result = 2;
       Window_LoadGraphics();
-      pageWindow = Window_Create(5, 4, 20, 12, result);
+      pageWindow = Window_Create(5, 4, 20, 12, WINDOW_FLAG_INSTANT);
       pageIndex = 0;
-      pageCount = ((encodedSize / PASSWORD_SYMBOLS_PER_PAGE) + 1);
-      windowHandle =
-          (s32)Window_Create(FILE_SCREEN_HELP_WINDOW_X, 0,
-                             FILE_SCREEN_HELP_WINDOW_WIDTH, 4, result);
+      pageCount = encodedSize / PASSWORD_SYMBOLS_PER_PAGE + 1;
+      headingWindow =
+          Window_Create(FILE_SCREEN_HELP_WINDOW_X, 0,
+                        FILE_SCREEN_HELP_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
       passwordHeadingMessage = MsgClearPasswordLabel;
-      headingWindow = (struct Window *)windowHandle;
       Text_DrawMessage(passwordHeadingMessage, headingWindow, 6, 4);
       index = 1;
       // The help line below: B alone for one page, with Left and Right for
       // more (the two messages before MsgClearPasswordLabel).
       if (pageCount == 1) {
-        windowHandle = (s32)Window_Create(5, 16, 20, 3, result);
-        helpWindow = (struct Window *)windowHandle;
+        helpWindow = Window_Create(5, 16, 20, 3, WINDOW_FLAG_INSTANT);
         Text_DrawMessageAsTiles(passwordHeadingMessage - 2, helpWindow,
                                 FILE_SCREEN_PAGE_LABEL_X, 0);
       } else {
-        windowHandle =
-            (s32)Window_Create(FILE_SCREEN_MESSAGE_WINDOW_X, 16,
-                               FILE_SCREEN_MESSAGE_WINDOW_WIDTH, 3, result);
-        helpWindow = (struct Window *)windowHandle;
+        helpWindow = Window_Create(FILE_SCREEN_MESSAGE_WINDOW_X, 16,
+                                   FILE_SCREEN_MESSAGE_WINDOW_WIDTH, 3,
+                                   WINDOW_FLAG_INSTANT);
         Text_DrawMessageAsTiles(passwordHeadingMessage - 1, helpWindow, 0, 0);
       }
       Graphics_ExpandVramTilesByColorTable(
@@ -782,24 +775,16 @@ menu_top:;
             goto menu_top;
           }
           Sound_Play(SE_MENU_CURSOR_MOVE);
-        } else {
+        } else if ((gKeysPressed & KEY_LEFT) != 0 && pageCount > 1) {
           // Left and Right turn the page, wrapping round.
-          if ((gKeysPressed & KEY_LEFT) != 0 && pageCount > 1) {
-            Sound_Play(SE_MENU_CURSOR_MOVE);
-            wrappedPage = pageIndex + pageCount;
-            wrappedPage--;
-          } else if ((gKeysPressed & KEY_RIGHT) != 0 && pageCount > 1) {
-            Sound_Play(SE_MENU_CURSOR_MOVE);
-            wrappedPage = pageIndex + pageCount;
-            wrappedPage++;
-          } else {
-            goto keys_done;
-          }
-          wrappedPage = wrappedPage % pageCount;
+          Sound_Play(SE_MENU_CURSOR_MOVE);
+          pageIndex = (pageIndex + pageCount - 1) % pageCount;
           index = 1;
-          pageIndex = wrappedPage;
+        } else if ((gKeysPressed & KEY_RIGHT) != 0 && pageCount > 1) {
+          Sound_Play(SE_MENU_CURSOR_MOVE);
+          pageIndex = (pageIndex + pageCount + 1) % pageCount;
+          index = 1;
         }
-      keys_done:;
         if (index == 1) {
           WindowSprite_PrepareForRedraw(pageWindow);
           index = 0;
@@ -815,6 +800,8 @@ menu_top:;
           if (pageCount > 1) {
             index = 0;
             if (pageCount != 0) {
+              /* FAKEMATCH(temporary): result holds the 0 the entries take; as 0
+               * at the call, 36 of 920 instructions differ in tbs-en. */
               result = 0;
               do {
                 tileValue = index + WINDOW_TILE(769);
@@ -826,11 +813,11 @@ menu_top:;
                 index++;
               } while (index != pageCount);
             }
-            Window_SetTilemapEntry(pageWindow, PAGE_ARROW_LEFT,
-                                   (17 - (s32)pageCount), -1, 0);
+            Window_SetTilemapEntry(pageWindow, PAGE_ARROW_LEFT, 17 - pageCount,
+                                   -1, 0);
             Window_SetTilemapEntry(pageWindow, PAGE_ARROW_RIGHT, 18, -1, 0);
             Window_MarkTilemapRow((struct WindowWork *)gWindowWork[0],
-                                  ((struct Window *)pageWindow)->y);
+                                  pageWindow->y);
           }
           // Each page holds 50 symbols in five rows, split into two groups.
           // Rows are 16 pixels apart; the second five of a row sit 10 pixels

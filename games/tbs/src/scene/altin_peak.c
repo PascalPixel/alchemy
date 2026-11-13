@@ -890,7 +890,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   MapGrid_SetShake(4, 2, 1);
   Event_Wait(20);
   rock->x.fixed += px(14);
-  rock->y.fixed += -px(8);
+  rock->y.fixed -= px(8);
   rock->sprite->rotation = TRIG_TURN * 3 / 4;
   Sound_Play(SE_TREMOR);
   MapGrid_SetShake(1, 1, 1);
@@ -1147,8 +1147,7 @@ static void AltinPeak_UpdateBeastHops(struct Actor *updated) {
 
 /// The beast lands with a splash, shaking the screen by amplitude pixels for
 /// holdFrames.
-static __inline__ void AltinPeak_PlayLandingShake(s32 amplitude,
-                                                  s32 holdFrames) {
+static inline void AltinPeak_PlayLandingShake(s32 amplitude, s32 holdFrames) {
   Sound_Play(SE_SPLASH);
   MapGrid_SetShakeFixed(px(amplitude), 0, Q16_ONE);
   Event_Wait(holdFrames);
@@ -1646,7 +1645,7 @@ static void AltinPeak_RestoreFallingRocksRoom(void) {
   Actor_Get(ACTOR_FALLING_ROCK_SIGN)->y.fixed = -px(28);
   if (Event_GetFlag(FLAG_ALTIN_PEAK_BOULDER_FALLEN)) {
     actor->x.fixed += px(14);
-    actor->y.fixed += -px(8);
+    actor->y.fixed -= px(8);
     actor->sprite->rotation = TRIG_TURN * 3 / 4;
   }
   // The cells AltinPeak_RunBoulderChase copies as it sets the flag, redrawn on

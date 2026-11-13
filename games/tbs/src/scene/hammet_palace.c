@@ -131,7 +131,7 @@ static void HammetPalace_FacePartyNorth(s32 waitFrames);
 static void HammetPalace_HammetsHomecoming(void);
 
 /// Advances within the current conversation's consecutive message block.
-static __inline__ void HammetPalace_AdvanceMessage(s32 amount) {
+static inline void HammetPalace_AdvanceMessage(s32 amount) {
   gFieldWork->message += amount;
 }
 

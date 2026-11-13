@@ -168,7 +168,7 @@ struct Actor;
 #include "shared/field_effect_spawn.h"
 
 /// Advances through the current dialogue's consecutive messages.
-static __inline__ void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {
+static inline void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {
   gFieldWork->message += amount;
 }
 

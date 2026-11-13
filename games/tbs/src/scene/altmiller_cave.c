@@ -785,7 +785,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
 }
 
 /// The party turns north, toward Babi.
-static __inline__ void AltmillerCave_FacePartyNorth(void) {
+static inline void AltmillerCave_FacePartyNorth(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
@@ -1953,7 +1953,7 @@ static void AltmillerCave_MatchLeaderPriority(struct Actor *actor) {
 }
 
 /// Redraws the three obstacles' cells where they stand.
-static __inline__ void AltmillerCave_RedrawObstacleFootprints(void) {
+static inline void AltmillerCave_RedrawObstacleFootprints(void) {
   Scene_RedrawActorFootprint(ACTOR_FIRST_OBSTACLE);
   Scene_RedrawActorFootprint(ACTOR_FIRST_OBSTACLE + 1);
   Scene_RedrawActorFootprint(ACTOR_FIRST_OBSTACLE + 2);

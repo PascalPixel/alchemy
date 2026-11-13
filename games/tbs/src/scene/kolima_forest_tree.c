@@ -367,7 +367,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
 }
 
 /// Gives all four companions the same nod, waiting on Ivan's animation.
-static __inline__ void KolimaForestTree_NodTogether(void) {
+static inline void KolimaForestTree_NodTogether(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
@@ -375,7 +375,7 @@ static __inline__ void KolimaForestTree_NodTogether(void) {
 }
 
 /// Turns the companions together and pauses after the final facing change.
-static __inline__ void KolimaForestTree_FaceParty(s32 facing, s32 waitFrames) {
+static inline void KolimaForestTree_FaceParty(s32 facing, s32 waitFrames) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, facing, 0);
   Actor_FaceDirection(ACTOR_GARET, facing, 0);
   Actor_FaceDirection(ACTOR_MIA, facing, 0);
@@ -843,8 +843,8 @@ static void KolimaForestTree_UpdateHealingPalette(void) {
 }
 
 /// Alternates two faces twice, ending on the first.
-static __inline__ void
-KolimaForestTree_AlternateFaces(s32 actorId, s32 firstFace, s32 secondFace) {
+static inline void KolimaForestTree_AlternateFaces(s32 actorId, s32 firstFace,
+                                                   s32 secondFace) {
   Actor_SetAnimation(actorId, firstFace);
   wait(6);
   Actor_SetAnimation(actorId, secondFace);

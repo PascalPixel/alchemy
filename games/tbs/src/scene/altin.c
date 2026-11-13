@@ -638,7 +638,7 @@ static void Altin_BeastHop(struct Actor *actor) {
   }
   if (beast->velocityY == 0) {
     Actor_SelectAnimation(beast, 1);
-    beast->y.fixed += -px(3) / 2;
+    beast->y.fixed -= px(3) / 2;
     if (beast->y.fixed < beast->groundHeight) {
       if (((struct FieldEffect *)actor)->countdown != 0) {
         Sound_Play(SE_SPLASH);
@@ -834,9 +834,9 @@ static void Altin_SprayDrift(struct Actor *spray) {
   spray->x.fixed +=
       WATER_SPRAY_LATERAL_STEP(spray->timer, (s16)((s32)(Random_Below(2)) - 1));
   if (spray->timer <= 3) {
-    spray->z.fixed += -(Random_Below((px(1) / 2))) - px(1);
+    spray->z.fixed -= Random_Below(px(1) / 2) + px(1);
     spray->scaleX += 3 * Q16_ONE / 20;
-    spray->scaleY += -Q16_ONE / 25;
+    spray->scaleY -= Q16_ONE / 25;
   } else {
     spray->z.fixed += px(2);
     spray->scaleX += 3 * Q16_ONE / 100;

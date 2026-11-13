@@ -1865,7 +1865,7 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
 }
 
 /// Tests whether all three movement targets are unset.
-static __inline__ s32 Actor_IsParked(struct Actor *actor) {
+static inline s32 Actor_IsParked(struct Actor *actor) {
   if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX &&
       actor->targetZ == actor->targetY) {
     return 1;

@@ -71,7 +71,7 @@ enum ColossoLetteringShape {
   COLOSSO_SHAPE_GO = 4      ///< Go!: one 64x32 piece, or two 32x16 in French
 };
 
-static __inline__ void Dma_Wait(volatile u32 *dma) {
+static inline void Dma_Wait(volatile u32 *dma) {
   while (dma[2] & DMA_ENABLE << 16)
     ;
 }

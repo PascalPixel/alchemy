@@ -2023,9 +2023,9 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
 }
 
 /// Places an actor and its targets at once, x doubling as its height.
-static __inline__ void ValePrologue_PlaceActor(struct Actor *actor,
-                                               s32 horizontalPosition,
-                                               s32 groundPosition) {
+static inline void ValePrologue_PlaceActor(struct Actor *actor,
+                                           s32 horizontalPosition,
+                                           s32 groundPosition) {
   actor->x.fixed = horizontalPosition;
   actor->y.fixed = horizontalPosition;
   actor->targetX = horizontalPosition;
@@ -2036,8 +2036,7 @@ static __inline__ void ValePrologue_PlaceActor(struct Actor *actor,
 
 /// One crash of the Boulder coming down, made of a shake of shakeAmplitude
 /// pixels, SE_CRASH and a wait.
-static __inline__ void ValePrologue_PlayImpactBeat(s32 shakeAmplitude,
-                                                   s32 frames) {
+static inline void ValePrologue_PlayImpactBeat(s32 shakeAmplitude, s32 frames) {
   MapGrid_SetShakeFixed(px(shakeAmplitude), px(shakeAmplitude), Q16_ONE);
   Sound_Play(SE_CRASH);
   Event_Wait(frames);

@@ -485,7 +485,7 @@ static void McCoyPalace_CaptainSeesPartyOff(void) {
 }
 
 /// The four reward chests stand in a row.
-static __inline__ void McCoyPalace_PositionRewardChests(void) {
+static inline void McCoyPalace_PositionRewardChests(void) {
   Actor_SetPosition(ACTOR_VIAL_CHEST, 616, 728);
   Actor_SetPosition(ACTOR_POTION_CHEST, 632, 728);
   Actor_SetPosition(ACTOR_PSY_CRYSTAL_CHEST, 648, 728);
@@ -493,7 +493,7 @@ static __inline__ void McCoyPalace_PositionRewardChests(void) {
 }
 
 /// The cells before the chest row can be walked on.
-static __inline__ void McCoyPalace_OpenRewardChestRow(void) {
+static inline void McCoyPalace_OpenRewardChestRow(void) {
   MapGrid_CopyCellAttributes(38, 55, 4, 1, 38, 45);
   MapGrid_CopyCellAttributes(42, 55, 4, 1, 38, 46);
 }
@@ -573,7 +573,7 @@ s32 Scene_Initialize(void) {
 }
 
 /// Garet, Ivan and Mia get ready to walk up to McCoy.
-static __inline__ void McCoyPalace_PrepareCompanionApproach(void) {
+static inline void McCoyPalace_PrepareCompanionApproach(void) {
   Actor_SetSpeed(ACTOR_GARET, 0.6);
   Actor_SetSpeed(ACTOR_IVAN, 0.6);
   Actor_SetSpeed(ACTOR_MIA, 1);

@@ -1180,7 +1180,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   for (counter = 0; counter < 20; counter++) {
     trialEffect->y.fixed += px(3) / 5;
     wait(4);
-    trialEffect->y.fixed += -px(3) / 10;
+    trialEffect->y.fixed -= px(3) / 10;
     wait(4);
   }
   Actor_SetAnimation(ACTOR_FIRST_FLAG_BEARER, FLAG_BEARER_ANIMATION_WHITE_FLAG);

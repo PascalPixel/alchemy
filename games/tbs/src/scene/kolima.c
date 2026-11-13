@@ -506,8 +506,8 @@ s32 Kolima_Initialize(void) {
 
 /// Shows one of the domes of Psynergy on its frames, even or odd, and lifts it
 /// 500 pixels out of sight on the others.
-static __inline__ void Kolima_SetProtectiveFieldHeight(s32 actorId,
-                                                       s32 visibleOnOddFrames) {
+static inline void Kolima_SetProtectiveFieldHeight(s32 actorId,
+                                                   s32 visibleOnOddFrames) {
   struct Actor *actor = Actor_Get(actorId);
   if (actor != NULL) {
     actor->motionFlags = 0;
@@ -530,7 +530,7 @@ static void Kolima_AlternateProtectiveFieldHeights(void) {
 #include "shared/mind_read.h"
 
 /// Gives the four companions the same nod, waiting on the final actor.
-static __inline__ void Kolima_NodTogether(void) {
+static inline void Kolima_NodTogether(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);

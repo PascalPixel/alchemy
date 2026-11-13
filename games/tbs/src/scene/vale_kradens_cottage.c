@@ -174,21 +174,21 @@ const struct Trigger *ValeKradensCottage_GetTriggers(void) {
 }
 
 /// Finishes the party's nod together before the next line of dialogue.
-static __inline__ void ValeKradensCottage_NodTogether(void) {
+static inline void ValeKradensCottage_NodTogether(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
 }
 
 /// Turns all three party members toward the strangers.
-static __inline__ void ValeKradensCottage_FacePartySouth(void) {
+static inline void ValeKradensCottage_FacePartySouth(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
 }
 
 /// Starts a companion walking back to Isaac's current pixel position.
-static __inline__ void ValeKradensCottage_WalkTowardLeader(s32 companionId) {
+static inline void ValeKradensCottage_WalkTowardLeader(s32 companionId) {
   Actor_SetAnimation(companionId, ANIM_WALK);
   Scene_WalkTowardLeader(companionId);
 }

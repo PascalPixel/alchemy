@@ -674,9 +674,9 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
 }
 
 /// Selects the hardware blend targets for the storm.
-static __inline__ void SetBlendTarget(u32 value) { REG_BLDCNT = value; }
+static inline void SetBlendTarget(u32 value) { REG_BLDCNT = value; }
 
-static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
+static inline void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 
 /// Outside the house in Vale on the stormy night, Kyle calls to Isaac and Dora
 /// to hurry, and they run to the plaza.

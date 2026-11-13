@@ -165,12 +165,12 @@ enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
 #define FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER FLAG_SCENE_TEMP_20
 
 /// Publishes the next raised-event trigger.
-static __inline__ void MapLocalState_StoreStep(s16 *field, s32 step) {
+static inline void MapLocalState_StoreStep(s16 *field, s32 step) {
   *field = step;
 }
 
 /// Lifts the first pillar and clears the terrain beneath its column.
-static __inline__ void LiftPillar(s32 column, u8 motionFlags) {
+static inline void LiftPillar(s32 column, u8 motionFlags) {
   MapGrid_CopyCellAttributes(61, 36, 1, 1, column, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->motionFlags = motionFlags;
   Actor_Get(ACTOR_FIRST_PILLAR)->y.fixed = px(32);

@@ -37,11 +37,11 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     *flags = ret;
     Actor_SetAnimation(ACTOR_FIRST_PLACED + 2, 7);
-    actor->y.fixed += -px(1);
-    actor->groundHeight += -px(1);
+    actor->y.fixed -= px(1);
+    actor->groundHeight -= px(1);
     wait(2);
-    actor->y.fixed += -px(1);
-    actor->groundHeight += -px(1);
+    actor->y.fixed -= px(1);
+    actor->groundHeight -= px(1);
     wait(10);
     actor->y.fixed += px(1);
     actor->groundHeight += px(1);

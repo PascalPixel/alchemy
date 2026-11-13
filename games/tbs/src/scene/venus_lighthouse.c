@@ -387,7 +387,7 @@ enum VenusTrack {
 #define VENUS_COLOR_MARK(mode) (VENUS_COLOR_MARK_TAG << 4 | (mode))
 enum { VENUS_COLOR_MARK_TAG = 0x212 };
 
-static __inline__ void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
+static inline void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
 
 /// Sets up a passage effect's motion, collision and child value.
 static void VenusLighthouse_ConfigurePassageEffect(struct Actor *actor,
@@ -1885,8 +1885,7 @@ static void VenusLighthouse_StackFloatingPillar(s32 pillarId) {
 }
 
 /// Stops a floating pillar and resets its vertical motion and timer.
-static __inline__ void FloatingPillar_Settle(struct Actor *pillar,
-                                             s32 resetValue) {
+static inline void FloatingPillar_Settle(struct Actor *pillar, s32 resetValue) {
   pillar->targetY = ACTOR_NO_TARGET;
   pillar->groundHeight = resetValue;
   pillar->velocityY = resetValue;
@@ -1895,8 +1894,8 @@ static __inline__ void FloatingPillar_Settle(struct Actor *pillar,
 }
 
 /// Copies all three fixed-point position components without changing motion.
-static __inline__ void Actor_CopyPosition(struct Actor *destination,
-                                          struct Actor *source) {
+static inline void Actor_CopyPosition(struct Actor *destination,
+                                      struct Actor *source) {
   destination->x.fixed = source->x.fixed;
   destination->y.fixed = source->y.fixed;
   destination->z.fixed = source->z.fixed;
@@ -2972,7 +2971,7 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
 }
 
 /// Chooses the particle scales and spin used by the tile-wave animations.
-static __inline__ void
+static inline void
 VenusLighthouse_RubbleSetScaleAndSpin(struct EffectOptions *options) {
   options->startScaleX = (Random_Below(2)) * (Q16_ONE * 3 / 10) + 0x17ffc;
   options->startScaleY = (Random_Below(2)) * (Q16_ONE * 3 / 10) + 0x17ffc;

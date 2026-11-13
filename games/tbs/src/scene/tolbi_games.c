@@ -241,9 +241,9 @@ struct SpringObstacle {
   s16 hitCooldownFrames;
 };
 
-static __inline__ void Io_SetBlendControl(s32 value) { REG_BLDCNT = value; }
+static inline void Io_SetBlendControl(s32 value) { REG_BLDCNT = value; }
 
-static __inline__ void Io_SetBlendAlpha(s32 value) { REG_BLDALPHA = value; }
+static inline void Io_SetBlendAlpha(s32 value) { REG_BLDALPHA = value; }
 
 const struct SceneEntrance *TolbiSpring_GetEntrances(void) {
   return gTolbiSpring_Entrances;

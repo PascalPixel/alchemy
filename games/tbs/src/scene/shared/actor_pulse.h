@@ -14,7 +14,7 @@ static s32 Scene_SquashAndStretch(struct Actor *state) {
     break;
   case 4:
     state->scaleX += Q16_ONE / 8;
-    state->scaleY += -Q16_ONE / 16;
+    state->scaleY -= Q16_ONE / 16;
     break;
   case 2:
     state->scaleX += Q16_ONE / 16;

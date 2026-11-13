@@ -313,8 +313,8 @@ static void ColosseumNavampaMatch_RideMovingSidewalk(void) {
   s32 z = actor->z.part.pixel;
 
   if (z >= 183 && z <= 186) {
-    subject->x.fixed += -(px(4) / 5);
-    actor->x.fixed += -(px(4) / 5);
+    subject->x.fixed -= px(4) / 5;
+    actor->x.fixed -= px(4) / 5;
   }
 }
 

@@ -226,8 +226,8 @@ enum BabiPalaceCellBehavior {
   /// The cells beside Iodem, while Babi is missing
   /// (BabiPalace_HearSoldiersReport).
   CELL_BEHAVIOR_BABI_PALACE_BESIDE_IODEM = 60,
-  CELL_BEHAVIOR_BABI_PALACE_BEDS =
-      70, ///< the big bedroom's four beds, searched to sleep
+  /// The big bedroom's four beds, searched to sleep.
+  CELL_BEHAVIOR_BABI_PALACE_BEDS = 70,
   /// The well outside the palace.
   CELL_BEHAVIOR_BABI_PALACE_WELL = 90
 };
@@ -242,7 +242,7 @@ static inline void BabiPalace_CloseDoors(void) {
 
 /// After a night in the palace's beds, the party's HP and PP are full, Garet,
 /// Ivan and Mia rejoin, and the inventory Colosso held is returned.
-static __inline__ void BabiPalace_RestorePartyAndInventory(void) {
+static inline void BabiPalace_RestorePartyAndInventory(void) {
   s16 members[8];
   struct Unit *state;
   s32 memberCount;
@@ -326,6 +326,9 @@ static void BabiPalace_ShowBeds(s32 actorId) {
     // "We have just enough extra beds in this room for everybody...."
     Event_ShowMessage(actorId, 0);
     Event_Wait(10);
+    /* FAKEMATCH(temporary): the facing compared as a shifted word; as
+     * roundedFacing == FACING_SOUTH, the routine is 2 instructions shorter in
+     * tbs-en. */
     facingBits = roundedFacing << 16;
     facingOrMessage = FACING_SOUTH;
     if (facingBits == (FACING_SOUTH << 16)) {
@@ -580,9 +583,9 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->z.fixed += -px(3);
+  leader->z.fixed -= px(3);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->targetZ += -px(3);
+  leader->targetZ -= px(3);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_SITTING_UP);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);

@@ -224,7 +224,7 @@ static void Imil_RunIceSlide(void);
 static s32 Imil_UpdateShiver(struct Actor *actor) {
   switch (actor->timer) {
   case 6:
-    actor->scaleX += -Q16_ONE / 4;
+    actor->scaleX -= Q16_ONE / 4;
     actor->scaleY += Q16_ONE / 8;
     break;
   case 4:
@@ -233,11 +233,11 @@ static s32 Imil_UpdateShiver(struct Actor *actor) {
     break;
   case 2:
     actor->scaleX += Q16_ONE / 16;
-    actor->scaleY += -Q16_ONE / 32;
+    actor->scaleY -= Q16_ONE / 32;
     break;
   case 0:
     actor->scaleX += Q16_ONE / 16;
-    actor->scaleY += -Q16_ONE / 32;
+    actor->scaleY -= Q16_ONE / 32;
     if ((s16)actor->userValue != 0) {
       actor->timer = (u32)Random_Next() % 40 + 40;
     } else {

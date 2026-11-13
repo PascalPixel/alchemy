@@ -1544,9 +1544,8 @@ static void LunpaFortress_OpenIvyPassage(void) {
 }
 
 /// A switch flips in two frames, then its passage opens.
-static __inline__ void
-LunpaFortress_FlipHiddenSwitch(s32 cellX, s32 cellY,
-                               void (*openPassage)(void)) {
+static inline void LunpaFortress_FlipHiddenSwitch(s32 cellX, s32 cellY,
+                                                  void (*openPassage)(void)) {
   MapGrid_CopyCells(6, 77, 1, 2, cellX, cellY);
   Event_Wait(5);
   MapGrid_CopyCells(7, 77, 1, 2, cellX, cellY);

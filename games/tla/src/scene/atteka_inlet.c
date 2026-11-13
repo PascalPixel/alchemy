@@ -591,9 +591,20 @@ struct ActorPlacement gAttekaInlet_ActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_020011AC(gAttekaInlet_HarbourActorPlacements, 0x980000, 0x1280000,
-                       0x500000, 0x1300000, 0xd00000, 0x1180000, 1, 0xb80000,
-                       0xe00000, 0x14000)
+u32 gAttekaInlet_HarbourActorPlacements[] = {
+    0xffff014d, 7, 0x580000,  0, 0x1780000, 0x24000,
+    0xffff014d, 7, 0xd80000,  0, 0x1480000, 0x1024000,
+    0xffff014d, 7, 0xa80000,  0, 0xb80000,  0x1024000,
+    0xffff014d, 7, 0x1e80000, 0, 0x1980000, 0x1024000,
+    0xffff014d, 7, 0x2280000, 0, 0x1a80000, 0x1024000,
+    0xffff0073, 1, 0x980000,  0, 0x1280000, 0x12000,
+    0xffff0073, 1, 0x500000,  0, 0x1300000, 0x1c000,
+    0xffff0074, 1, 0xd00000,  0, 0x1180000, 0x18000,
+    0xffff006a, 1, 0xb80000,  0, 0xe00000,  0x14000,
+    0x190a01a4, 1, 0x1d00000, 0, 0x1080000, 0x20000,
+    0xffff0038, 1, 0,         0, 0,         0x4000,
+    0xffff,     0, 0,         0, 0,         0,
+};
 
 struct ActorPlacement gAttekaInlet_HarbourActorPlacementsOnceWinged[] = {
     ACTOR_PLACEMENT(333, CONDITION_ALWAYS, 7, 88, 0, 376, FACING_SOUTH,
@@ -634,9 +645,20 @@ struct ActorPlacement gAttekaInlet_HarbourActorPlacementsOnceWinged[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_020011AC(gAttekaInlet_HarbourActorPlacementsOnceFlown, 0xa20000,
-                       0x12c0000, 0x6f0000, 0x1470000, 0, 0, 3, 0xcc0000,
-                       0xcc0000, 0x4000)
+u32 gAttekaInlet_HarbourActorPlacementsOnceFlown[] = {
+    0xffff014d, 7, 0x580000,  0, 0x1780000, 0x24000,
+    0xffff014d, 7, 0xd80000,  0, 0x1480000, 0x1024000,
+    0xffff014d, 7, 0xa80000,  0, 0xb80000,  0x1024000,
+    0xffff014d, 7, 0x1e80000, 0, 0x1980000, 0x1024000,
+    0xffff014d, 7, 0x2280000, 0, 0x1a80000, 0x1024000,
+    0xffff0073, 1, 0xa20000,  0, 0x12c0000, 0x12000,
+    0xffff0073, 1, 0x6f0000,  0, 0x1470000, 0x1c000,
+    0xffff0074, 1, 0,         0, 0,         0x18000,
+    0xffff006a, 3, 0xcc0000,  0, 0xcc0000,  0x4000,
+    0x190a01a4, 1, 0x1d00000, 0, 0x1080000, 0x20000,
+    0xffff0038, 1, 0,         0, 0,         0x4000,
+    0xffff,     0, 0,         0, 0,         0,
+};
 
 struct ActorPlacement gAttekaInlet_ShoreActorPlacementsOnceWinged[] = {
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 264, 0,

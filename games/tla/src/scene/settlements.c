@@ -1122,7 +1122,12 @@ s16 gSettlements_WallCrate[] = {
     10, -1,
 };
 
-DEFINE_G_DATA_02002276(gSettlements_SlideAngles)
+s16 gSettlements_SlideAngles[] = {                                                               
+      -1,     0,      0x8000, -1,     0xc000, 0xe000, 0xa000, 0xc000,          
+      0x4000, 0x2000, 0x6000, 0x4000, -1,     0,      0x8000, -1,              
+      -1,     0,      0x8000, -1,     0xc000, -1,     -1,     0xc000,          
+      0x4000, -1,     -1,     0x4000, -1,     0,      0x8000, -1,              
+  };
 
 s16 gSettlements_SlideAnglesByKey[] = {
     -1, 0, 0x8000, -1, 0xc000, 0, 0x8000, 0xc000,

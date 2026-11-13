@@ -2003,7 +2003,12 @@ s32 gData_02003574[] = {
     0, 20, 38, 17,
 };
 
-DEFINE_G_DATA_02003584(gData_02003584, Func_02000660, 38, 17)
+s32 gData_02003584[] = {                                                               
+      46,                                                                      
+      (s32)Func_02000660,                                                              
+      38,                                                                      
+      17,                                                                      
+  };
 
 s32 gData_02003594[] = {
     0x80010000, 23, 9, 0xffffe667, 23, 10,
@@ -2114,7 +2119,10 @@ s16 gData_02003888[] = {
     5, 21, 31, 31, 31, -1,
 };
 
-DEFINE_G_DATA_020013B4(gData_020038b4, 94, 89, 90, 91, 92, 93)
+u16 gData_020038b4[] = {                                                               
+      94, 89, 90, 91, 92, 93, 93, 94, 89, 90, 91, 92, 92, 93, 94, 89, 90, 91,  
+      91, 92, 93, 94, 89, 90, 90, 91, 92, 93, 94, 89, 89, 90, 91, 92, 93, 94,  
+  };
 
 s32 gData_020038fc[] = {
     46,
@@ -2223,8 +2231,10 @@ struct ActorPlacement gAnemosInnerSanctum_Room3Placements[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_02003C88(gAnemosInnerSanctum_Room4Placements, 0xffff01b0, gData_020038fc, 3, 0x202c000,
-    7, 4, 0xffff0110, 5, 0x202c000)
+s32 gAnemosInnerSanctum_Room4Placements[] = {                                                               
+      (s32)0xffff01b0, (s32)gData_020038fc, 3, 0, 0, 0x202c000, (s32)0xffff0110, 7, 4, 0, 0, 0x202c000,    
+      (s32)0xffff0110, 7,         5, 0, 0, 0x202c000, 0xffff,          0,  0,  0, 0, 0,     
+  };
 
 struct ActorPlacement gAnemosInnerSanctum_Room5Placements[] = {
     {431, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_NORTH, 2, 2},

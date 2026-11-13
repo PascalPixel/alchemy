@@ -3127,11 +3127,27 @@ u32 gData_02005ca4[] = {
     1, 3, 0, 1, 38,
 };
 
-DEFINE_G_DATA_0200121C(gData_02005cd0)
+s32 gData_02005cd0[] = {                                                               
+      SC_SET(SW_MOTION, 0),                                                    
+      SC_ADD(SW_Z, -0x8000),                                                   
+      SC_ADD(SW_SCALE_X, -1024),                                               
+      SC_ADD(SW_SCALE_Y, -1024),                                               
+      SC_WAIT(1),                                                              
+      SC_LOOP(24, SC_TOP),                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_02002FCC(gData_02005d18, 98, 408, 1)
+u32 gData_02005d18[] = {                                                               
+      SC_ARG(2),   SC_MOVE(PIXELS(98), 0, PIXELS(408)),                         
+      SC_SYNC,     SC_ARG(1),                                                  
+      SC_WAIT(1), SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),              
+      SC_WAIT(1), SC_END,                                                     
+  };
 
-DEFINE_G_DATA_02003534(gData_02005d5c, 80, 376, 1)
+u32 gData_02005d5c[] = {                                                               
+      SC_ARG(2),   SC_MOVE(PIXELS(80), 0, PIXELS(376)), SC_SYNC,     SC_ARG(1), 
+      SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
+  };
 
 s32 gData_02005da0[] = {
     SC_ARG(2),
@@ -3176,13 +3192,26 @@ u32 gData_02005e88[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_02002F1C(gData_02005eec, 88, 372)
+u32 gData_02005eec[] =                                                                 
+      {                                                                        
+          SC_ARG(2), SC_MOVE(PIXELS(88), 0, PIXELS(372)), SC_SYNC, SC_ARG(1),   
+          SC_END,                                                              
+  };
 
-DEFINE_G_DATA_02003534(gData_02005f14, 48, 384, 1)
+u32 gData_02005f14[] = {                                                               
+      SC_ARG(2),   SC_MOVE(PIXELS(48), 0, PIXELS(384)), SC_SYNC,     SC_ARG(1), 
+      SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
+  };
 
-DEFINE_G_DATA_02003534(gData_02005f58, 48, 360, 1)
+u32 gData_02005f58[] = {                                                               
+      SC_ARG(2),   SC_MOVE(PIXELS(48), 0, PIXELS(360)), SC_SYNC,     SC_ARG(1), 
+      SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
+  };
 
-DEFINE_G_DATA_02003534(gData_02005f9c, 36, 372, 1)
+u32 gData_02005f9c[] = {                                                               
+      SC_ARG(2),   SC_MOVE(PIXELS(36), 0, PIXELS(372)), SC_SYNC,     SC_ARG(1), 
+      SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
+  };
 
 u32 gData_02005fe0[] = {
     39, 2, 4, 0x380000, 0, 0x1740000,
@@ -3190,13 +3219,35 @@ u32 gData_02005fe0[] = {
     17,
 };
 
-DEFINE_G_DATA_02002F88(gData_02006014, 298, 200, 1)
+u32 gData_02006014[] =                                                                 
+      {                                                                        
+          SC_ARG(2),   SC_MOVE(PIXELS(298), 0, PIXELS(200)),                     
+          SC_SYNC,     SC_ARG(1),                                              
+          SC_WAIT(1), SC_SET(SW_FACING, FACING_NORTHWEST),                    
+          SC_WAIT(1), SC_END,                                                 
+  };
 
-DEFINE_G_DATA_02002F88(gData_02006058, 308, 188, 1)
+u32 gData_02006058[] =                                                                 
+      {                                                                        
+          SC_ARG(2),   SC_MOVE(PIXELS(308), 0, PIXELS(188)),                     
+          SC_SYNC,     SC_ARG(1),                                              
+          SC_WAIT(1), SC_SET(SW_FACING, FACING_NORTHWEST),                    
+          SC_WAIT(1), SC_END,                                                 
+  };
 
-DEFINE_G_DATA_02002F88(gData_0200609c, 298, 176, 1)
+u32 gData_0200609c[] =                                                                 
+      {                                                                        
+          SC_ARG(2),   SC_MOVE(PIXELS(298), 0, PIXELS(176)),                     
+          SC_SYNC,     SC_ARG(1),                                              
+          SC_WAIT(1), SC_SET(SW_FACING, FACING_NORTHWEST),                    
+          SC_WAIT(1), SC_END,                                                 
+  };
 
-DEFINE_G_DATA_02002F1C(gData_020060e0, 222, 184)
+u32 gData_020060e0[] =                                                                 
+      {                                                                        
+          SC_ARG(2), SC_MOVE(PIXELS(222), 0, PIXELS(184)), SC_SYNC, SC_ARG(1),   
+          SC_END,                                                              
+  };
 
 u32 gData_02006108[] = {
     39, 2, 4, 0x11c0000, 0, 0xbc0000,

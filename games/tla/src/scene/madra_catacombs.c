@@ -693,7 +693,15 @@ void MadraCatacombs_SetUpTabletRoom(void) {
 }
 
 // clang-format off
-DEFINE_G_DATA_0200121C(gMadraCatacombs_WalkIntoDoorway)
+s32 gMadraCatacombs_WalkIntoDoorway[] = {                                                               
+      SC_SET(SW_MOTION, 0),                                                    
+      SC_ADD(SW_Z, -0x8000),                                                   
+      SC_ADD(SW_SCALE_X, -1024),                                               
+      SC_ADD(SW_SCALE_Y, -1024),                                               
+      SC_WAIT(1),                                                              
+      SC_LOOP(24, SC_TOP),                                                     
+      SC_END,                                                                  
+  };
 
 u32 gMadraCatacombs_FlameFlaresUp[] = {
     SC_SET(SW_SCALE_X, 0x1000),

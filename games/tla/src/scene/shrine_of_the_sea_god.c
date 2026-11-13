@@ -2399,7 +2399,15 @@ struct ActorPlacement gShrineOfTheSeaGod_Room7Placements[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_02001330(gShrineOfTheSeaGod_Room8Placements, 297, 160, 202, 176, 298, 1, 320, 218)
+struct ActorPlacement gShrineOfTheSeaGod_Room8Placements[] = {                                             
+      {297, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(202), FACING_SOUTH, 2,    
+       0},                                                                     
+      {297, CONDITION_ALWAYS, 1, PIXELS(176), 0, PIXELS(298), FACING_SOUTH, 2,    
+       1},                                                                    
+      {297, CONDITION_ALWAYS, 1, PIXELS(320), 0, PIXELS(218), FACING_SOUTH, 2,    
+       1},                                                                    
+      {SCENE_TABLE_END},                                                       
+  };
 
 struct Trigger gShrineOfTheSeaGod_Triggers[] = {
     {TRIGGER_TABLE_END},

@@ -1112,11 +1112,26 @@ void Func_02000054(void);
 void Func_020002b8(void);
 
 // clang-format off
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+u32 gFieldEffect_ShortScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+u32 gFieldEffect_MediumScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+u32 gFieldEffect_LongScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
 u32 gData_02002f70[] = {
     SC_ADD(SW_SCALE_X, 0x1000),
@@ -1125,7 +1140,12 @@ u32 gData_02002f70[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_02002F94(gData_02002f94, 960, 140)
+s32 gData_02002f94[] = {                                                               
+      SC_ADD(SW_SCALE_X, -960),                                                 
+      SC_WAIT(1),                                                              
+      SC_LOOP(140, SC_TOP),                                                     
+      SC_END,                                                                  
+  };
 
 s16 gData_02002fb8[] = {
     17, 18, 19, -1,
@@ -1167,7 +1187,18 @@ struct ActorPlacement gActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_02003214(gOrbScript)
+u32 gOrbScript[] = {                                                               
+      SC_SET(SW_SCALE_X, 0xcccc),                                              
+      SC_SET(SW_SCALE_Y, 0xcccc),                                              
+      SC_ARG(1),                                                               
+      SC_LABEL(1),                                                             
+      SC_ADD(SW_Y, PIXELS(1)),                                                 
+      SC_WAIT(1),                                                              
+      SC_LOOP(16, SC_TO(1)),                                                   
+      SC_POSITION(0, 0, 0),                                                    
+      SC_WAIT(1),                                                              
+      SC_FREE,                                                                 
+  };
 
 u32 gData_02003274[] = {
     0,

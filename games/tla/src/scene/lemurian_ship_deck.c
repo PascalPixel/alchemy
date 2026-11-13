@@ -1088,7 +1088,13 @@ u32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_0200218C(gLemurianShipDeck_FirstCrewLooksAround, 30, 50, 10, 70)
+u32 gLemurianShipDeck_FirstCrewLooksAround[] = {                                                               
+      SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(30),                        
+      SC_SET(SW_FACING, FACING_SOUTHWEST), SC_WAIT(50),                        
+      SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(10),                        
+      SC_SET(SW_FACING, FACING_SOUTHEAST), SC_WAIT(70),                        
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+  };
 
 u32 gLemurianShipDeck_SecondCrewLooksAround[] = {
     SC_SET(SW_FACING, FACING_EAST),

@@ -2819,13 +2819,35 @@ void MagmaRockInside_OpenStairs(void);
 extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+u32 gFieldEffect_ShortScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+u32 gFieldEffect_MediumScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+u32 gFieldEffect_LongScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
+s32 gPushLeaderSteps[] = {                                                               
+      PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),                  
+      PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),                  
+      PUSH_STEP(0, 16),  PUSH_STEP(-16, 0), PUSH_STEP(-16, 0),                 
+      PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),                 
+      PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16),                 
+      PUSH_STEP(16, 0),                                                        
+  };
 
 u32 gMagmaRockInside_EmberScript[] = {
     39, 2, 0, 18, 3, 0,
@@ -2837,9 +2859,24 @@ u32 gMagmaRockInside_FlameEmberScript[] = {
     1, 38, 17,
 };
 
-DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath1, 776, 680, 744, 680, 744, 632, 776, 632)
+s16 gMagmaRockInside_PlatformPath1[] = {                                                               
+      4, 0,  0, 776, 0, 16, 0, 680, 1,  0,  4,  0,  0, 744, 0,  16,               
+      0, 680, 1, 0,  4, 0,  0, 744, 0,  16, 0,  632, 1, 0,  4,  0,                
+      0, 776, 0, 16, 0, 632, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
+  };
 
-DEFINE_G_DATA_020050D4(gMagmaRockInside_PlatformPath2, 216, 568, 216, 584, 136, 584, 136, 568)
+u32 gMagmaRockInside_PlatformPath2[] = {                                                               
+      SC_MOVE(PIXELS(216), PIXELS(16), PIXELS(568)),                             
+      SC_SYNC,                                                                 
+      SC_MOVE(PIXELS(216), PIXELS(16), PIXELS(584)),                             
+      SC_SYNC,                                                                 
+      SC_MOVE(PIXELS(136), PIXELS(16), PIXELS(584)),                             
+      SC_SYNC,                                                                 
+      SC_MOVE(PIXELS(136), PIXELS(16), PIXELS(568)),                             
+      SC_SYNC,                                                                 
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+      SC_END,                                                                  
+  };
 
 u16 gMagmaRockInside_PlatformPath3[] = {
     4, 0, 0, 600, 0, 16, 0, 664,
@@ -2851,23 +2888,66 @@ u16 gMagmaRockInside_PlatformPath3[] = {
     1, 0, 17, 0,
 };
 
-DEFINE_G_DATA_020050D4(gMagmaRockInside_PlatformPath4, 184, 232, 280, 232, 280, 264, 184, 264)
+u32 gMagmaRockInside_PlatformPath4[] = {                                                               
+      SC_MOVE(PIXELS(184), PIXELS(16), PIXELS(232)),                             
+      SC_SYNC,                                                                 
+      SC_MOVE(PIXELS(280), PIXELS(16), PIXELS(232)),                             
+      SC_SYNC,                                                                 
+      SC_MOVE(PIXELS(280), PIXELS(16), PIXELS(264)),                             
+      SC_SYNC,                                                                 
+      SC_MOVE(PIXELS(184), PIXELS(16), PIXELS(264)),                             
+      SC_SYNC,                                                                 
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath5, 472, 296, 424, 296, 424, 264, 472, 264)
+s16 gMagmaRockInside_PlatformPath5[] = {                                                               
+      4, 0,  0, 472, 0, 16, 0, 296, 1,  0,  4,  0,  0, 424, 0,  16,               
+      0, 296, 1, 0,  4, 0,  0, 424, 0,  16, 0,  264, 1, 0,  4,  0,                
+      0, 472, 0, 16, 0, 264, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
+  };
 
-DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath6, 216, 600, 280, 600, 280, 664, 216, 664)
+s16 gMagmaRockInside_PlatformPath6[] = {                                                               
+      4, 0,  0, 216, 0, 16, 0, 600, 1,  0,  4,  0,  0, 280, 0,  16,               
+      0, 600, 1, 0,  4, 0,  0, 280, 0,  16, 0,  664, 1, 0,  4,  0,                
+      0, 216, 0, 16, 0, 664, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
+  };
 
-DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath7, 312, 664, 376, 664, 376, 600, 312, 600)
+s16 gMagmaRockInside_PlatformPath7[] = {                                                               
+      4, 0,  0, 312, 0, 16, 0, 664, 1,  0,  4,  0,  0, 376, 0,  16,               
+      0, 664, 1, 0,  4, 0,  0, 376, 0,  16, 0,  600, 1, 0,  4,  0,                
+      0, 312, 0, 16, 0, 600, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
+  };
 
-DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath8, 440, 600, 504, 600, 504, 664, 440, 664)
+s16 gMagmaRockInside_PlatformPath8[] = {                                                               
+      4, 0,  0, 440, 0, 16, 0, 600, 1,  0,  4,  0,  0, 504, 0,  16,               
+      0, 600, 1, 0,  4, 0,  0, 504, 0,  16, 0,  664, 1, 0,  4,  0,                
+      0, 440, 0, 16, 0, 664, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
+  };
 
-DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath9, 536, 664, 600, 664, 600, 600, 536, 600)
+s16 gMagmaRockInside_PlatformPath9[] = {                                                               
+      4, 0,  0, 536, 0, 16, 0, 664, 1,  0,  4,  0,  0, 600, 0,  16,               
+      0, 664, 1, 0,  4, 0,  0, 600, 0,  16, 0,  600, 1, 0,  4,  0,                
+      0, 536, 0, 16, 0, 600, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
+  };
 
-DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath10, 376, 264, 376, 232, 408, 232, 408, 264)
+s16 gMagmaRockInside_PlatformPath10[] = {                                                               
+      4, 0,  0, 376, 0, 16, 0, 264, 1,  0,  4,  0,  0, 376, 0,  16,               
+      0, 232, 1, 0,  4, 0,  0, 408, 0,  16, 0,  232, 1, 0,  4,  0,                
+      0, 408, 0, 16, 0, 264, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
+  };
 
-DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath11, 216, 680, 280, 680, 280, 712, 216, 712)
+s16 gMagmaRockInside_PlatformPath11[] = {                                                               
+      4, 0,  0, 216, 0, 16, 0, 680, 1,  0,  4,  0,  0, 280, 0,  16,               
+      0, 680, 1, 0,  4, 0,  0, 280, 0,  16, 0,  712, 1, 0,  4,  0,                
+      0, 216, 0, 16, 0, 712, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
+  };
 
-DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath12, 376, 680, 312, 680, 312, 712, 376, 712)
+s16 gMagmaRockInside_PlatformPath12[] = {                                                               
+      4, 0,  0, 376, 0, 16, 0, 680, 1,  0,  4,  0,  0, 312, 0,  16,               
+      0, 680, 1, 0,  4, 0,  0, 312, 0,  16, 0,  712, 1, 0,  4,  0,                
+      0, 376, 0, 16, 0, 712, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
+  };
 
 s16 gMagmaRockInside_Room2Pillars[] = {
     15, -1,
@@ -2902,7 +2982,12 @@ u32 gMagmaRockInside_FlameScript[] = {
     0, 6, 38, 17,
 };
 
-DEFINE_G_DATA_02005218(gMagmaRockInside_TorchScript)
+u32 gMagmaRockInside_TorchScript[] = {                                                               
+      SC_MOVE_BY(0, PIXELS(160), 0),                                           
+      SC_SYNC,                                                                 
+      SC_FREE,                                                                 
+      SC_END,                                                                  
+  };
 
 s32 gMagmaRockInside_SparkScript[] = {
     SC_CALL(MagmaRockInside_OrbitParent),
@@ -2912,20 +2997,49 @@ s32 gMagmaRockInside_SparkScript[] = {
 
 s32 MagmaRockInside_DriftForSteps(struct Actor *object);
 
-DEFINE_G_DATA_02005244(gMagmaRockInside_OrbitScript, Orbit_Update, Actor_AimAtWatched,
-    MagmaRockInside_DriftForSteps)
+s32 gMagmaRockInside_OrbitScript[] = {                                                               
+      SC_CALL(Orbit_Update), SC_CALL(Actor_AimAtWatched), SC_CALL(MagmaRockInside_DriftForSteps), SC_FREE, SC_END,         
+  };
 
-DEFINE_G_DATA_02005264(gMagmaRockInside_BlazeCasterScript, 24)
+u32 gMagmaRockInside_BlazeCasterScript[] = {                                                               
+      SC_MOVE_BY(0, PIXELS(24), 0),                                            
+      SC_SYNC,                                                                 
+      SC_SET(SW_MOTION, 4),                                                    
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_02005264(gMagmaRockInside_BlazeWatcherScript, 16)
+u32 gMagmaRockInside_BlazeWatcherScript[] = {                                                               
+      SC_MOVE_BY(0, PIXELS(16), 0),                                            
+      SC_SYNC,                                                                 
+      SC_SET(SW_MOTION, 4),                                                    
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeCasterReturnScript, 24, 0)
+s32 gMagmaRockInside_BlazeCasterReturnScript[] = {                                                               
+      SC_SET(SW_MOTION, 0),                                                    
+      SC_MOVE_BY(0, PIXELS(-24), 0),                                           
+      SC_SYNC,                                                                 
+      SC_SET(SW_MOTION, 0),                                                   
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeWatcherReturnScript, 16, 3)
+s32 gMagmaRockInside_BlazeWatcherReturnScript[] = {                                                               
+      SC_SET(SW_MOTION, 0),                                                    
+      SC_MOVE_BY(0, PIXELS(-16), 0),                                           
+      SC_SYNC,                                                                 
+      SC_SET(SW_MOTION, 3),                                                   
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_02001540(gMagmaRockInside_RubbleScript, 33)
+u32 gMagmaRockInside_RubbleScript[] = {                                                               
+      SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
+      SC_FREE,                                                                 
+  };
 
-DEFINE_G_DATA_02001540(gMagmaRockInside_DustScript, 44)
+u32 gMagmaRockInside_DustScript[] = {                                                               
+      SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
+      SC_FREE,                                                                 
+  };
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

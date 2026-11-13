@@ -1541,7 +1541,15 @@ void Func_02002b98(void) {
 #include "text/msg_ids.h"
 
 // clang-format off
-DEFINE_G_DATA_0200121C(gData_02002de8)
+s32 gData_02002de8[] = {                                                               
+      SC_SET(SW_MOTION, 0),                                                    
+      SC_ADD(SW_Z, -0x8000),                                                   
+      SC_ADD(SW_SCALE_X, -1024),                                               
+      SC_ADD(SW_SCALE_Y, -1024),                                               
+      SC_WAIT(1),                                                              
+      SC_LOOP(24, SC_TOP),                                                     
+      SC_END,                                                                  
+  };
 
 s32 gData_02002e30[] = {
     23, 9, -512, 23, 10, -1024,
@@ -1573,13 +1581,34 @@ s32 gData_02002e9c[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_02002F1C(gData_02002f1c, 808, 168)
+u32 gData_02002f1c[] =                                                                 
+      {                                                                        
+          SC_ARG(2), SC_MOVE(PIXELS(808), 0, PIXELS(168)), SC_SYNC, SC_ARG(1),   
+          SC_END,                                                              
+  };
 
-DEFINE_G_DATA_02002F44(gData_02002f44, 784, 196)
+u32 gData_02002f44[] =                                                                 
+      {                                                                        
+          SC_ARG(2),   SC_MOVE(PIXELS(784), 0, PIXELS(196)),                     
+          SC_SYNC,     SC_ARG(1),                                              
+          SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHEAST),                    
+          SC_WAIT(10), SC_END,                                                 
+  };
 
-DEFINE_G_DATA_02002F88(gData_02002f88, 832, 196, 10)
+u32 gData_02002f88[] =                                                                 
+      {                                                                        
+          SC_ARG(2),   SC_MOVE(PIXELS(832), 0, PIXELS(196)),                     
+          SC_SYNC,     SC_ARG(1),                                              
+          SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHWEST),                    
+          SC_WAIT(10), SC_END,                                                 
+  };
 
-DEFINE_G_DATA_02002FCC(gData_02002fcc, 792, 216, 10)
+u32 gData_02002fcc[] = {                                                               
+      SC_ARG(2),   SC_MOVE(PIXELS(792), 0, PIXELS(216)),                         
+      SC_SYNC,     SC_ARG(1),                                                  
+      SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),              
+      SC_WAIT(10), SC_END,                                                     
+  };
 
 s16 gData_02003010[] = {
     8, -1,
@@ -1705,7 +1734,15 @@ struct ActorPlacement gLemurianShip_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_02003398(gData_02003398, 248, 104, 424, 0, 104, 536, 1)
+struct ActorPlacement gData_02003398[] = {                                             
+      {248, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(424), FACING_SOUTH, 0,   
+       0},                                                                     
+      {248, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(536), FACING_SOUTH, 0,   
+       0},                                                                     
+      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},               
+      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},               
+      {SCENE_TABLE_END},                                                       
+  };
 
 struct ActorPlacement gData_0200b410[] = {
     ACTOR_PLACEMENT(287, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 120, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -1759,9 +1796,23 @@ struct ActorPlacement gData_02003710[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_02003398(gData_020037d0, 314, 584, 168, 2, 472, 152, 7)
+struct ActorPlacement gData_020037d0[] = {                                             
+      {314, CONDITION_ALWAYS, 1, PIXELS(584), 0, PIXELS(168), FACING_SOUTH, 2,   
+       0},                                                                     
+      {314, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(152), FACING_SOUTH, 2,   
+       0},                                                                     
+      {290, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},               
+      {290, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},               
+      {SCENE_TABLE_END},                                                       
+  };
 
-DEFINE_G_DATA_02003690(gData_02003848, 7, 0, 0, 6, 5, 0, 56, 0)
+struct ActorPlacement gData_02003848[] = {                                             
+      {7, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
+      {6, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
+      {5, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
+      {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
+      {SCENE_TABLE_END},                                                       
+  };
 
 s16 gData_020038c0[] = {
     0, 126, 1, 2, 2, 1, 126, 1,

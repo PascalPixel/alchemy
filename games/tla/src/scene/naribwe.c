@@ -375,8 +375,12 @@ s16 gNaribwe_DoorOpening[] = {
     8, 42, 1, 2, 6, -1,
 };
 
-DEFINE_G_DATA_0200064C(gNaribwe_Doors, gNaribwe_DoorOpening, 0x330012, gNaribwe_DoorOpening,
-    0x220015)
+s32 gNaribwe_Doors[] = {                                                               
+      (s32)gNaribwe_DoorOpening,                                                              
+      0x330012,                                                                      
+      (s32)gNaribwe_DoorOpening,                                                              
+      0x220015,                                                                      
+  };
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 224, 0, 190, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

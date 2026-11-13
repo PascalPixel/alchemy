@@ -2840,9 +2840,13 @@ LATE_DATA u32 gData_02006bc8[] = {
     38,
 };
 
-LATE_DATA DEFINE_G_DATA_02003584(gWorldMap_PlacedActorScript, Func_020035e0, 17,
-                                 0)
+LATE_DATA s32 gWorldMap_PlacedActorScript[] = {
+    46,
+    (s32)Func_020035e0,
+    17,
+    0,
+};
 
-    LATE_DATA u32 gData_02006be4[] = {
-        0,
+LATE_DATA u32 gData_02006be4[] = {
+    0,
 };

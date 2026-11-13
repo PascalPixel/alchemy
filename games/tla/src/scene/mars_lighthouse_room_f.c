@@ -2498,9 +2498,33 @@ s32 gData_020056c8[] = {
 };
 
 // clang-format off
-DEFINE_G_DATA_020056D4(gData_020056d4, 680, 760)
+u32 gData_020056d4[] = {                                                               
+      SC_SET(SW_STEERING, 0),                                                  
+      SC_SET(SW_MOTION, 2),                                                    
+      SC_SET(SW_SPEED, 0x8000),                                                
+      SC_SET(SW_ACCEL, 0x800),                                                 
+      SC_MOVE(PIXELS(680), 0, PIXELS(304)),                                     
+      SC_SYNC,                                                                 
+      SC_WAIT(20),                                                             
+      SC_MOVE(PIXELS(760), 0, PIXELS(304)),                                     
+      SC_SYNC,                                                                 
+      SC_WAIT(20),                                                             
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+  };
 
-DEFINE_G_DATA_020056D4(gData_02005748, 584, 664)
+u32 gData_02005748[] = {                                                               
+      SC_SET(SW_STEERING, 0),                                                  
+      SC_SET(SW_MOTION, 2),                                                    
+      SC_SET(SW_SPEED, 0x8000),                                                
+      SC_SET(SW_ACCEL, 0x800),                                                 
+      SC_MOVE(PIXELS(584), 0, PIXELS(304)),                                     
+      SC_SYNC,                                                                 
+      SC_WAIT(20),                                                             
+      SC_MOVE(PIXELS(664), 0, PIXELS(304)),                                     
+      SC_SYNC,                                                                 
+      SC_WAIT(20),                                                             
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+  };
 
 u32 gData_020057bc[] = {
     SC_SET(SW_STEERING, 0),
@@ -2576,7 +2600,15 @@ u32 gData_0200593c[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-DEFINE_G_DATA_02004FF0(gData_02005a3c, 2)
+u32 gData_02005a3c[] = {                                                               
+      SC_SET(SW_STEERING, 0),                                                  
+      SC_SET(SW_MOTION, 2),                                                   
+      SC_SET(SW_Y, PIXELS(32)),                                                
+      SC_SET(SW_GROUND, PIXELS(32)),                                           
+      SC_SET(SW_SPEED, 0x8000),                                                
+      SC_SET(SW_ACCEL, 0x800),                                                 
+      SC_END,                                                                  
+  };
 
 u32 gData_02005a88[] = {
     SC_SET(SW_STEERING, 0),
@@ -2677,16 +2709,28 @@ u16 gData_02005c6e[] = {
     22, 0, 0,
 };
 
-DEFINE_G_DATA_020054CC(gData_02005c84, Actor_PopUp, 0xf80000, 0x200000,
-    0x2a00000, 0x160000, 0xf80000, 0x2b00000, Func_020006f4, Actor_Park)
+s32 gData_02005c84[] = {                                                               
+      46, (s32)Actor_PopUp, 4,  0xf80000, 0x200000, 0x2a00000, 1,  4,          0xf80000, 0x160000,         0x2a00000, 1,   
+      4,  0xf80000,         0x160000, 0x2b00000, 1,  22, 37, (s32)Func_020006f4, 46, (s32)Actor_Park, 17,      
+  };
 
-DEFINE_G_DATA_020054CC(gData_02005ce0, Actor_PopUp, 0xb80000, 0x400000,
-    0x2300000, 0x360000, 0xb80000, 0x2400000, Func_02000d80, Actor_Park)
+s32 gData_02005ce0[] = {                                                               
+      46, (s32)Actor_PopUp, 4,  0xb80000, 0x400000, 0x2300000, 1,  4,          0xb80000, 0x360000,         0x2300000, 1,   
+      4,  0xb80000,         0x360000, 0x2400000, 1,  22, 37, (s32)Func_02000d80, 46, (s32)Actor_Park, 17,      
+  };
 
-DEFINE_G_DATA_0200547C(gData_02005d3c, Actor_PopUp, 872, 128, 22, 872, 144,
-    Actor_Park)
+s32 gData_02005d3c[] = {                                                               
+      SC_CALL(Actor_PopUp), SC_MOVE(PIXELS(872), PIXELS(32), PIXELS(128)),             
+      SC_SYNC,        SC_MOVE(PIXELS(872), PIXELS(22), PIXELS(128)),             
+      SC_SYNC,        SC_MOVE(PIXELS(872), PIXELS(22), PIXELS(144)),             
+      SC_SYNC,        SC_CALL(Actor_Park),                                          
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_02001540(gData_02005d8c, 30)
+u32 gData_02005d8c[] = {                                                               
+      SC_WAIT(30), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
+      SC_FREE,                                                                 
+  };
 
 u32 gData_02005dbc[] = {
     0, 20, 0x80010000, 22, 25, 0,
@@ -2700,11 +2744,26 @@ u32 gData_02005e00[] = {
     1, 13, 10, 0xc0010000, 38,
 };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+u32 gFieldEffect_ShortScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+u32 gFieldEffect_MediumScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+u32 gFieldEffect_LongScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
 s16 gData_02005ef8[] = {
     -1, 0, -32768, -1, -16384, -8192, -24576, -16384, 16384, 8192, 24576, 16384,
@@ -2730,7 +2789,14 @@ s8 gData_02005f64[][4] = {
     {-8, -32, 8, 32},  {-32, -8, 32, 8},  {-8, -32, 8, 32},
 };
 
-DEFINE_PUSH_LEADER_STEPS(gData_02005f7c)
+s32 gData_02005f7c[] = {                                                               
+      PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),                  
+      PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),                  
+      PUSH_STEP(0, 16),  PUSH_STEP(-16, 0), PUSH_STEP(-16, 0),                 
+      PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),                 
+      PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16),                 
+      PUSH_STEP(16, 0),                                                        
+  };
 // clang-format on
 
 #undef SLIDE_FROM_EDGE
@@ -2885,7 +2951,21 @@ LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room3Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA DEFINE_G_DATA_02004EB8(gData_02006980, 80, 216, 512, 152)
+LATE_DATA u32 gData_02006980[] = {                                                               
+      SC_SET(SW_STEERING, 0),                                                  
+      SC_SET(SW_MOTION, 2),                                                    
+      SC_SET(SW_Y, PIXELS(80)),                                                
+      SC_SET(SW_GROUND, PIXELS(80)),                                           
+      SC_SET(SW_SPEED, 0x8000),                                                
+      SC_SET(SW_ACCEL, 0x800),                                                 
+      SC_MOVE(PIXELS(216), 0, PIXELS(512)),                                      
+      SC_SYNC,                                                                 
+      SC_WAIT(20),                                                             
+      SC_MOVE(PIXELS(152), 0, PIXELS(512)),                                      
+      SC_SYNC,                                                                 
+      SC_WAIT(20),                                                             
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+  };
 
 LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room2Placements[] = {
     ACTOR_PLACEMENT(294, CONDITION_ALWAYS, 7, 568, 0, 144, FACING_SOUTH, TALK_FACING_KEEP, 0),

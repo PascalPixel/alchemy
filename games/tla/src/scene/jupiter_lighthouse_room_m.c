@@ -1969,22 +1969,49 @@ u32 gData_02004a90[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_02004AB4(gData_02004ab4, 699)
+u32 gData_02004ab4[] = {                                                               
+      SC_SYNC,    SC_MOVE_XZ(PIXELS(699), PIXELS(170)), SC_SYNC,                
+      SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTHEAST), SC_ARG(1),              
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_02004AB4(gData_02004ae8, 679)
+u32 gData_02004ae8[] = {                                                               
+      SC_SYNC,    SC_MOVE_XZ(PIXELS(679), PIXELS(170)), SC_SYNC,                
+      SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTHEAST), SC_ARG(1),              
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_02004AB4(gData_02004b1c, 659)
+u32 gData_02004b1c[] = {                                                               
+      SC_SYNC,    SC_MOVE_XZ(PIXELS(659), PIXELS(170)), SC_SYNC,                
+      SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTHEAST), SC_ARG(1),              
+      SC_END,                                                                  
+  };
 // clang-format on
 
 extern u32 gFieldEffect_LongScript[];
 extern s32 gData_02005078[];
 
 // clang-format off
-LATE_DATA DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+LATE_DATA u32 gFieldEffect_ShortScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-LATE_DATA DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+LATE_DATA u32 gFieldEffect_MediumScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-LATE_DATA DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+LATE_DATA u32 gFieldEffect_LongScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
 LATE_DATA s32 gData_02005078[] = {
     SC_CALL(Func_02000038),
@@ -2140,7 +2167,13 @@ LATE_DATA u32 gData_0200569c[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-LATE_DATA DEFINE_G_DATA_0200218C(gData_020056ec, 20, 20, 20, 20)
+LATE_DATA u32 gData_020056ec[] = {                                                               
+      SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(20),                        
+      SC_SET(SW_FACING, FACING_SOUTHWEST), SC_WAIT(20),                        
+      SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(20),                        
+      SC_SET(SW_FACING, FACING_SOUTHEAST), SC_WAIT(20),                        
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+  };
 
 LATE_DATA u32 gData_02005748[] = {
     SC_ARG(5),
@@ -2164,13 +2197,41 @@ LATE_DATA u32 gData_0200578c[] = {
     SC_END,
 };
 
-LATE_DATA DEFINE_G_DATA_020057D0(gData_020057d0, 2, 740, 312)
+LATE_DATA u32 gData_020057d0[] = {                                                               
+      SC_ARG(2),                                                              
+      SC_MOVE_XZ(PIXELS(740), PIXELS(312)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),                           
+      SC_END,                                                                  
+  };
 
-LATE_DATA DEFINE_G_DATA_02005800(gData_02005800, 2, 900)
+LATE_DATA u32 gData_02005800[] = {                                                               
+      SC_ARG(2),                                                              
+      SC_MOVE_XZ(PIXELS(900), PIXELS(312)),                                     
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),                       
+      SC_END,                                                                  
+  };
 
-LATE_DATA DEFINE_G_DATA_020057D0(gData_0200d830, 5, 724, 312)
+LATE_DATA u32 gData_0200d830[] = {                                                               
+      SC_ARG(5),                                                              
+      SC_MOVE_XZ(PIXELS(724), PIXELS(312)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),                           
+      SC_END,                                                                  
+  };
 
-LATE_DATA DEFINE_G_DATA_02005800(gData_02005860, 5, 916)
+LATE_DATA u32 gData_02005860[] = {                                                               
+      SC_ARG(5),                                                              
+      SC_MOVE_XZ(PIXELS(916), PIXELS(312)),                                     
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),                       
+      SC_END,                                                                  
+  };
 
 LATE_DATA u32 gData_02005890[] = {
     SC_ARG(5),
@@ -2196,7 +2257,14 @@ LATE_DATA u32 gData_020058d8[] = {
     SC_END,
 };
 
-LATE_DATA DEFINE_G_DATA_020057D0(gData_02005920, 5, 708, 328)
+LATE_DATA u32 gData_02005920[] = {                                                               
+      SC_ARG(5),                                                              
+      SC_MOVE_XZ(PIXELS(708), PIXELS(328)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),                           
+      SC_END,                                                                  
+  };
 
 LATE_DATA u32 gData_02005950[] = {
     SC_ARG(5),

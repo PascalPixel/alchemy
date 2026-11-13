@@ -3030,11 +3030,26 @@ void KandoreanTemple_ReceiveLash(void);
 extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+u32 gFieldEffect_ShortScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+u32 gFieldEffect_MediumScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+u32 gFieldEffect_LongScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
 s32 gKandoreanTemple_SteamScript[] = {
     0,
@@ -3107,7 +3122,12 @@ u32 gKandoreanTemple_PoiWalksOutScript[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_02002FCC(gKandoreanTemple_StudentWalksAsideScript, 440, 392, 1)
+u32 gKandoreanTemple_StudentWalksAsideScript[] = {                                                               
+      SC_ARG(2),   SC_MOVE(PIXELS(440), 0, PIXELS(392)),                         
+      SC_SYNC,     SC_ARG(1),                                                  
+      SC_WAIT(1), SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),              
+      SC_WAIT(1), SC_END,                                                     
+  };
 
 u32 gKandoreanTemple_StudentWalksAwayScript[] = {
     SC_ARG(2),
@@ -3210,7 +3230,18 @@ struct ActorPlacement gKandoreanTemple_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_020057C0(gKandoreanTemple_LiftRoomPlacements, 407, 1, 2, 3, 4, 272, 5, 351)
+struct ActorPlacement gKandoreanTemple_LiftRoomPlacements[] = {                                             
+      {407, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},                
+      {407, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_SOUTH, 2, 3},                
+      {407, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_SOUTH, 2, 3},                
+      {407, CONDITION_ALWAYS, 1, 4, 0, 0, FACING_SOUTH, 2, 3},                
+      {272, CONDITION_ALWAYS, 1, 5, 0, 0, FACING_SOUTH, 2, 2},                
+      {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                  
+      {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                  
+      {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                  
+      {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                  
+      {SCENE_TABLE_END},                                                       
+  };
 
 struct ActorPlacement gKandoreanTemple_ChestbeaterRoomPlacements[] = {
     {368, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},

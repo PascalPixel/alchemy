@@ -1170,8 +1170,12 @@ s16 gLemuriaPalace_DoorOpening[] = {
     4, 54, 2, 2, 6, -1,
 };
 
-DEFINE_G_DATA_0200064C(gLemuriaPalace_Doors, gLemuriaPalace_DoorOpening, 0x170005, gLemuriaPalace_DoorOpening,
-    0x17001e)
+s32 gLemuriaPalace_Doors[] = {                                                               
+      (s32)gLemuriaPalace_DoorOpening,                                                              
+      0x170005,                                                                      
+      (s32)gLemuriaPalace_DoorOpening,                                                              
+      0x17001e,                                                                      
+  };
 
 s32 gLemuriaPalace_InnerDoor[] = {
     (s32)gLemuriaPalace_DoorOpening,

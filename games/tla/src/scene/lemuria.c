@@ -1026,9 +1026,37 @@ void Lemuria_TakeLeaderLayer(void) { Actor_TakeLeaderLayer(); }
 extern s16 gLemuria_ThirdDoorOpening[];
 
 // clang-format off
-DEFINE_G_DATA_02001D84(gLemuria_FirstWalkerPaces, 40, 952, 904, 88)
+u32 gLemuria_FirstWalkerPaces[] = {                                                               
+      SC_ARG(2),                                                               
+      SC_SET(SW_SPEED, 0x10000),                                               
+      SC_SET(SW_ACCEL, 0x10000),                                               
+      SC_LABEL(1),                                                             
+      SC_MOVE(PIXELS(40), 0, PIXELS(952)),                                      
+      SC_SYNC,                                                                 
+      SC_MOVE(PIXELS(40), 0, PIXELS(904)),                                      
+      SC_SYNC,                                                                 
+      SC_MOVE(PIXELS(88), 0, PIXELS(904)),                                      
+      SC_SYNC,                                                                 
+      SC_MOVE(PIXELS(88), 0, PIXELS(952)),                                      
+      SC_SYNC,                                                                 
+      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
+  };
 
-DEFINE_G_DATA_02001D84(gLemuria_SecondWalkerPaces, 88, 904, 952, 40)
+u32 gLemuria_SecondWalkerPaces[] = {                                                               
+      SC_ARG(2),                                                               
+      SC_SET(SW_SPEED, 0x10000),                                               
+      SC_SET(SW_ACCEL, 0x10000),                                               
+      SC_LABEL(1),                                                             
+      SC_MOVE(PIXELS(88), 0, PIXELS(904)),                                      
+      SC_SYNC,                                                                 
+      SC_MOVE(PIXELS(88), 0, PIXELS(952)),                                      
+      SC_SYNC,                                                                 
+      SC_MOVE(PIXELS(40), 0, PIXELS(952)),                                      
+      SC_SYNC,                                                                 
+      SC_MOVE(PIXELS(40), 0, PIXELS(904)),                                      
+      SC_SYNC,                                                                 
+      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
+  };
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 460, 0, 550, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

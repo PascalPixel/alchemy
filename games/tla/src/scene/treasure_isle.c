@@ -651,7 +651,15 @@ u32 gTreasureIsle_PostStill[] = {
     39, 1, 0, 1, 17,
 };
 
-DEFINE_G_DATA_02001330(gTreasureIsle_Placements, 272, 280, 440, 344, 440, 0, 424, 344)
+struct ActorPlacement gTreasureIsle_Placements[] = {                                             
+      {272, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(440), FACING_SOUTH, 2,    
+       0},                                                                     
+      {272, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(440), FACING_SOUTH, 2,    
+       0},                                                                    
+      {272, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(344), FACING_SOUTH, 2,    
+       0},                                                                    
+      {SCENE_TABLE_END},                                                       
+  };
 
 struct ActorPlacement gTreasureIsle_Room2Placements[] = {
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, 600, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),

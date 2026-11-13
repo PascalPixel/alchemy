@@ -2560,7 +2560,15 @@ u32 gData_02004004[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_0200121C(gData_02004028)
+s32 gData_02004028[] = {                                                               
+      SC_SET(SW_MOTION, 0),                                                    
+      SC_ADD(SW_Z, -0x8000),                                                   
+      SC_ADD(SW_SCALE_X, -1024),                                               
+      SC_ADD(SW_SCALE_Y, -1024),                                               
+      SC_WAIT(1),                                                              
+      SC_LOOP(24, SC_TOP),                                                     
+      SC_END,                                                                  
+  };
 
 u16 gData_02004070[] = {
     258, 259, 293, 294, 332, 331,
@@ -2571,7 +2579,14 @@ s8 gPushFootprints[][4] = {
     {-32, -8, 32, 8}, {-8, -32, 8, 32},
 };
 
-DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
+s32 gPushLeaderSteps[] = {                                                               
+      PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),                  
+      PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),                  
+      PUSH_STEP(0, 16),  PUSH_STEP(-16, 0), PUSH_STEP(-16, 0),                 
+      PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),                 
+      PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16),                 
+      PUSH_STEP(16, 0),                                                        
+  };
 
 u32 gData_020040d4[] = {
 #if !TLA_PATCH_1
@@ -2693,13 +2708,43 @@ u32 gSmokeScript[] = {
     0, 15, 3, 0, 1, 38,
 };
 
-DEFINE_G_DATA_02004508(gData_02004508, 686, 768, 152, 768)
+u32 gData_02004508[] = {                                                               
+      SC_MOVE(PIXELS(248), 0, PIXELS(686)),                                     
+      SC_SYNC,                                                                 
+      SC_MOVE(PIXELS(248), 0, PIXELS(768)),                                     
+      SC_SYNC,                                                                 
+      SC_MOVE(PIXELS(152), 0, PIXELS(768)),                                      
+      SC_SYNC,                                                                 
+      SC_SET(SW_BYTE_63, 1),                                                   
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_020033C8(gData_02004554, 248, 686, 768, 176, 777)
+u32 gData_02004554[] = {                                                               
+      SC_ARG(2), SC_MOVE(PIXELS(248), 0, PIXELS(686)),                           
+      SC_SYNC,   SC_MOVE(PIXELS(248), 0, PIXELS(768)),                           
+      SC_SYNC,   SC_MOVE(PIXELS(176), 0, PIXELS(777)),                           
+      SC_SYNC,   SC_ARG(1),                                                    
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_02004508(gData_020045a4, 768, 686, 248, 584)
+u32 gData_020045a4[] = {                                                               
+      SC_MOVE(PIXELS(248), 0, PIXELS(768)),                                     
+      SC_SYNC,                                                                 
+      SC_MOVE(PIXELS(248), 0, PIXELS(686)),                                     
+      SC_SYNC,                                                                 
+      SC_MOVE(PIXELS(248), 0, PIXELS(584)),                                      
+      SC_SYNC,                                                                 
+      SC_SET(SW_BYTE_63, 1),                                                   
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_020033C8(gData_020045f0, 248, 768, 686, 240, 600)
+u32 gData_020045f0[] = {                                                               
+      SC_ARG(2), SC_MOVE(PIXELS(248), 0, PIXELS(768)),                           
+      SC_SYNC,   SC_MOVE(PIXELS(248), 0, PIXELS(686)),                           
+      SC_SYNC,   SC_MOVE(PIXELS(240), 0, PIXELS(600)),                           
+      SC_SYNC,   SC_ARG(1),                                                    
+      SC_END,                                                                  
+  };
 
 u32 gData_02004640[] = {
     39, 2, 4, 0xb80000, 0, 0x3a80000,
@@ -2718,8 +2763,12 @@ s16 gData_020046ba[] = {
     -1,
 };
 
-DEFINE_G_DATA_0200064C(gData_020046bc, gData_020046ba, 0x400040, gData_020046a4,
-    0xa0052)
+s32 gData_020046bc[] = {                                                               
+      (s32)gData_020046ba,                                                              
+      0x400040,                                                                      
+      (s32)gData_020046a4,                                                              
+      0xa0052,                                                                      
+  };
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 208, 0, 800, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

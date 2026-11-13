@@ -1418,17 +1418,27 @@ u32 gAlhafra_PasserbyWalksOffScript[] = {
     39, 1, 17,
 };
 
-DEFINE_G_DATA_02003434(gAlhafra_PasserbyLeadsFromCell21Script, 0x1b80000, 0x3200000, 0x1980000,
-    0x2f80000, 0x2f80000, 0x1980000, 0xf80000, 0x2a80000, 0xf80000, 0x2780000)
+u32 gAlhafra_PasserbyLeadsFromCell21Script[] = {                                                               
+      39,        2, 4,  0x1b80000, 0,   0x3200000, 1,  4,         0x1980000, 0, 0x2f80000,     1,  4,      
+      0x1980000, 0, 0x2f80000, 1,  4,   0x1980000, 0,  0x2a80000, 1,  4, 0xf80000,     0,  0x2a80000,     
+      1,         4, 0xf80000, 0,  0x2780000, 1,  39, 1,         22, 3, 0xd000, 17,         
+  };
 
-DEFINE_G_DATA_020034CC(gAlhafra_MayorFollowsFromCell21Script, 0x1a80000, 0x3180000, 0x1980000,
-    0x2f80000, 0x1980000, 0x2a80000, 0xf80000, 0x2a80000, 0x2980000)
+u32 gAlhafra_MayorFollowsFromCell21Script[] = {                                                               
+      39, 2,  4, 0x1a80000, 0, 0x3180000, 1,        4, 0x1980000, 0, 0x2f80000, 1, 4,  0x1980000, 0,      0x2a80000, 1,  
+      4,  0xf80000, 0, 0x2a80000, 1, 4,  0xf80000, 0, 0x2980000, 1, 39, 1, 22, 3,  0xd000, 17,     
+  };
 
-DEFINE_G_DATA_02003434(gAlhafra_OfficialFollowsFromCell21Script, 0x1b80000, 0x3280000, 0x1b80000,
-    0x3200000, 0x2f80000, 0x1980000, 0x1080000, 0x2a80000, 0x1080000, 0x2980000)
+u32 gAlhafra_OfficialFollowsFromCell21Script[] = {                                                               
+      39,        2, 4,  0x1b80000, 0,   0x3280000, 1,  4,         0x1b80000, 0, 0x3200000,     1,  4,      
+      0x1980000, 0, 0x2f80000, 1,  4,   0x1980000, 0,  0x2a80000, 1,  4, 0x1080000,     0,  0x2a80000,     
+      1,         4, 0x1080000, 0,  0x2980000, 1,  39, 1,         22, 3, 0xd000, 17,         
+  };
 
-DEFINE_G_DATA_020034CC(gAlhafra_FirstMadranFollowsFromCell21Script, 0x1b80000, 0x3280000, 0x1b80000,
-    0x3200000, 0x1980000, 0x2f80000, 0x1980000, 0x2a80000, 0x2a80000)
+u32 gAlhafra_FirstMadranFollowsFromCell21Script[] = {                                                               
+      39, 2,  4, 0x1b80000, 0, 0x3280000, 1,        4, 0x1b80000, 0, 0x3200000, 1, 4,  0x1980000, 0,      0x2f80000, 1,  
+      4,  0x1980000, 0, 0x2a80000, 1, 4,  0xf80000, 0, 0x2a80000, 1, 39, 1, 22, 3,  0xd000, 17,     
+  };
 
 u32 gAlhafra_FirstSoldierFollowsFromCell21Script[] = {
     39, 2, 4, 0x1980000, 0, 0x2f80000,
@@ -1437,8 +1447,10 @@ u32 gAlhafra_FirstSoldierFollowsFromCell21Script[] = {
     1, 22, 3, 0xd000, 17,
 };
 
-DEFINE_G_DATA_020034CC(gAlhafra_ElderFollowsFromCell21Script, 0x1980000, 0x2f80000, 0x1980000,
-    0x2a80000, 0x1180000, 0x2a80000, 0x1180000, 0x2b80000, 0x2b80000)
+u32 gAlhafra_ElderFollowsFromCell21Script[] = {                                                               
+      39, 2,  4, 0x1980000, 0, 0x2f80000, 1,        4, 0x1980000, 0, 0x2a80000, 1, 4,  0x1180000, 0,      0x2a80000, 1,  
+      4,  0x1180000, 0, 0x2b80000, 1, 4,  0xf80000, 0, 0x2b80000, 1, 39, 1, 22, 3,  0xd000, 17,     
+  };
 
 u32 gAlhafra_SecondSoldierFollowsFromCell21Script[] = {
     39, 2, 5, 0x100000, 0, 0,
@@ -1451,8 +1463,11 @@ u32 gAlhafra_SecondSoldierFollowsFromCell21Script[] = {
     17,
 };
 
-DEFINE_G_DATA_02003434(gAlhafra_SecondMadranFollowsFromCell21Script, 0x1980000, 0x2f80000, 0x1980000,
-    0x2f80000, 0x2a80000, 0x1180000, 0x1180000, 0x2b80000, 0x1000000, 0x2c80000)
+u32 gAlhafra_SecondMadranFollowsFromCell21Script[] = {                                                               
+      39,        2, 4,  0x1980000, 0,   0x2f80000, 1,  4,         0x1980000, 0, 0x2f80000,     1,  4,      
+      0x1980000, 0, 0x2a80000, 1,  4,   0x1180000, 0,  0x2a80000, 1,  4, 0x1180000,     0,  0x2b80000,     
+      1,         4, 0x1000000, 0,  0x2c80000, 1,  39, 1,         22, 3, 0xd000, 17,         
+  };
 
 s32 gAlhafra_PasserbyLeadsFromCell20Script[] = {
     39, 2, 5, 0, 0, -0x100000,

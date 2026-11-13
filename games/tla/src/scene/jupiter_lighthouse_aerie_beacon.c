@@ -2908,9 +2908,19 @@ s32 gData_02005a20[] = {
 #undef CrackedTile_FallEvent
 
 // clang-format off
-LATE_DATA DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+LATE_DATA u32 gFieldEffect_ShortScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-LATE_DATA DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+LATE_DATA u32 gFieldEffect_MediumScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
 LATE_DATA s32 gData_02005f10[] = {
     SC_WAIT(1),
@@ -2961,9 +2971,83 @@ LATE_DATA u32 gData_02005ff8[] = {
     SC_END,
 };
 
-LATE_DATA DEFINE_G_DATA_02006088(gData_02006088, 409, 376, 344, 312, 278)
+LATE_DATA s32 gData_02006088[] = {                                                               
+      SC_ARG(2),                                                               
+      SC_SET(SW_SPEED, 0x38000),                                               
+      SC_SET(SW_ACCEL, 0x10000),                                               
+      SC_MOVE(PIXELS(409), PIXELS(32), PIXELS(312)),                            
+      SC_SYNC,                                                                 
+      SC_WAIT(10),                                                             
+      SC_MOVE(PIXELS(376), PIXELS(32), PIXELS(312)),                            
+      SC_SET(SW_MOTION, 2),                                                    
+      SC_SET(SW_VELOCITY_Y, PIXELS(5)),                                        
+      SC_CALL(Func_02000038),                                                  
+      SC_SYNC,                                                                 
+      SC_CALL(Func_02000050),                                                  
+      SC_WAIT(20),                                                             
+      SC_MOVE(PIXELS(344), PIXELS(32), PIXELS(312)),                            
+      SC_SET(SW_MOTION, 2),                                                    
+      SC_SET(SW_VELOCITY_Y, PIXELS(5)),                                        
+      SC_WAIT(10),                                                             
+      SC_CALL(Func_02000038),                                                  
+      SC_SYNC,                                                                 
+      SC_CALL(Func_02000050),                                                  
+      SC_WAIT(20),                                                             
+      SC_MOVE(PIXELS(312), PIXELS(32), PIXELS(312)),                            
+      SC_SET(SW_MOTION, 2),                                                    
+      SC_SET(SW_VELOCITY_Y, PIXELS(5)),                                        
+      SC_CALL(Func_02000038),                                                  
+      SC_SYNC,                                                                 
+      SC_CALL(Func_02000050),                                                  
+      SC_WAIT(20),                                                             
+      SC_MOVE(PIXELS(312), PIXELS(32), PIXELS(278)),                             
+      SC_SET(SW_MOTION, 2),                                                    
+      SC_SET(SW_VELOCITY_Y, PIXELS(5)),                                        
+      SC_CALL(Func_02000038),                                                  
+      SC_SYNC,                                                                 
+      SC_CALL(Func_02000050),                                                  
+      SC_ARG(1),                                                               
+      SC_END,                                                                  
+  };
 
-LATE_DATA DEFINE_G_DATA_02006088(gData_020061e0, 616, 648, 681, 712, 264)
+LATE_DATA s32 gData_020061e0[] = {                                                               
+      SC_ARG(2),                                                               
+      SC_SET(SW_SPEED, 0x38000),                                               
+      SC_SET(SW_ACCEL, 0x10000),                                               
+      SC_MOVE(PIXELS(616), PIXELS(32), PIXELS(312)),                            
+      SC_SYNC,                                                                 
+      SC_WAIT(10),                                                             
+      SC_MOVE(PIXELS(648), PIXELS(32), PIXELS(312)),                            
+      SC_SET(SW_MOTION, 2),                                                    
+      SC_SET(SW_VELOCITY_Y, PIXELS(5)),                                        
+      SC_CALL(Func_02000038),                                                  
+      SC_SYNC,                                                                 
+      SC_CALL(Func_02000050),                                                  
+      SC_WAIT(20),                                                             
+      SC_MOVE(PIXELS(681), PIXELS(32), PIXELS(312)),                            
+      SC_SET(SW_MOTION, 2),                                                    
+      SC_SET(SW_VELOCITY_Y, PIXELS(5)),                                        
+      SC_WAIT(10),                                                             
+      SC_CALL(Func_02000038),                                                  
+      SC_SYNC,                                                                 
+      SC_CALL(Func_02000050),                                                  
+      SC_WAIT(20),                                                             
+      SC_MOVE(PIXELS(712), PIXELS(32), PIXELS(312)),                            
+      SC_SET(SW_MOTION, 2),                                                    
+      SC_SET(SW_VELOCITY_Y, PIXELS(5)),                                        
+      SC_CALL(Func_02000038),                                                  
+      SC_SYNC,                                                                 
+      SC_CALL(Func_02000050),                                                  
+      SC_WAIT(20),                                                             
+      SC_MOVE(PIXELS(712), PIXELS(32), PIXELS(264)),                             
+      SC_SET(SW_MOTION, 2),                                                    
+      SC_SET(SW_VELOCITY_Y, PIXELS(5)),                                        
+      SC_CALL(Func_02000038),                                                  
+      SC_SYNC,                                                                 
+      SC_CALL(Func_02000050),                                                  
+      SC_ARG(1),                                                               
+      SC_END,                                                                  
+  };
 
 LATE_DATA s32 gData_02006338[] = {
     SC_ADD(SW_SCALE_X, 0x1000),
@@ -2992,7 +3076,17 @@ LATE_DATA s32 gData_02006338[] = {
     SC_END,
 };
 
-LATE_DATA DEFINE_G_DATA_02005B54(gData_0200641c)
+LATE_DATA s32 gData_0200641c[] = {                                                               
+      SC_LABEL(1),                                                             
+      SC_ADD(SW_SCALE_X, -1536),                                               
+      SC_WAIT(1),                                                              
+      SC_LOOP(4, SC_TO(1)),                                                    
+      SC_LABEL(2),                                                             
+      SC_ADD(SW_SCALE_X, 0x600),                                               
+      SC_WAIT(1),                                                              
+      SC_LOOP(4, SC_TO(2)),                                                    
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+  };
 
 LATE_DATA s32 gData_02006470[] = {
     SC_SET(SW_SCALE_X, 0xcccc),

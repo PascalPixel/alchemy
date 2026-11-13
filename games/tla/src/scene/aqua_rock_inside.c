@@ -2508,10 +2508,16 @@ u32 gData_02003fe8[] = {
     17,
 };
 
-DEFINE_G_DATA_02003584(gData_02004004, Orbiter_Spiral, 38, 17)
+s32 gData_02004004[] = {                                                               
+      46,                                                                      
+      (s32)Orbiter_Spiral,                                                              
+      38,                                                                      
+      17,                                                                      
+  };
 
-DEFINE_G_DATA_02004014(gData_02004014, Orbit_Update, Actor_AimAtWatched,
-    Actor_StepToWatched)
+s32 gData_02004014[] = {                                                               
+      46, (s32)Orbit_Update, 46, (s32)Actor_AimAtWatched, 46, (s32)Actor_StepToWatched, 38, 17,                  
+  };
 
 u32 gData_02004034[] = {
     5, 0, 0x180000, 0, 1, 22,

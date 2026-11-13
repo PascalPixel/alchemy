@@ -286,9 +286,51 @@ void MikasallaInteriors_MeetGalahad(void) {
 // clang-format off
 /// Two women pace the inn: the explorer's widow, whose father-in-law and husband
 /// explored, and the wife of the man who keeps trying to climb Air's Rock.
-DEFINE_G_DATA_02000654(gMikasallaInteriors_ExplorersWidowPaces, 600, 616)
+u32 gMikasallaInteriors_ExplorersWidowPaces[] = {                                                               
+      SC_SET(SW_COLLISION, 129),                                               
+      SC_SET(SW_ACCEL, 0x1999),                                                
+      SC_SET(SW_SPEED, 0x4ccc),                                                
+      SC_LABEL(1),                                                             
+      SC_ARG(2),                                                               
+      SC_MOVE(PIXELS(600), 0, PIXELS(88)),                                      
+      SC_SYNC,                                                                 
+      SC_WAIT(20),                                                             
+      SC_ARG(1),                                                               
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_WAIT(20),                                                             
+      SC_ARG(2),                                                               
+      SC_MOVE(PIXELS(616), 0, PIXELS(104)),                                     
+      SC_SYNC,                                                                 
+      SC_WAIT(20),                                                             
+      SC_ARG(1),                                                               
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_WAIT(20),                                                             
+      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_02000654(gMikasallaInteriors_ClimbersWifePaces, 360, 376)
+u32 gMikasallaInteriors_ClimbersWifePaces[] = {                                                               
+      SC_SET(SW_COLLISION, 129),                                               
+      SC_SET(SW_ACCEL, 0x1999),                                                
+      SC_SET(SW_SPEED, 0x4ccc),                                                
+      SC_LABEL(1),                                                             
+      SC_ARG(2),                                                               
+      SC_MOVE(PIXELS(360), 0, PIXELS(88)),                                      
+      SC_SYNC,                                                                 
+      SC_WAIT(20),                                                             
+      SC_ARG(1),                                                               
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_WAIT(20),                                                             
+      SC_ARG(2),                                                               
+      SC_MOVE(PIXELS(376), 0, PIXELS(104)),                                     
+      SC_SYNC,                                                                 
+      SC_WAIT(20),                                                             
+      SC_ARG(1),                                                               
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_WAIT(20),                                                             
+      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
+      SC_END,                                                                  
+  };
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

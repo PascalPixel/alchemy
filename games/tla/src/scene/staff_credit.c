@@ -958,9 +958,13 @@ LATE_DATA s8 gData_02003d9c[][2] = {
     {22, -4}, {8, -8}, {2, -28}, {14, 12}, {8, 8}, {0, 0},
 };
 
-LATE_DATA DEFINE_G_DATA_02003584(gWorldMap_PlacedActorScript, TileSprite_Reset,
-                                 17, 0)
+LATE_DATA s32 gWorldMap_PlacedActorScript[] = {
+    46,
+    (s32)TileSprite_Reset,
+    17,
+    0,
+};
 
-    LATE_DATA u32 gData_02003db8[] = {
-        0,
+LATE_DATA u32 gData_02003db8[] = {
+    0,
 };

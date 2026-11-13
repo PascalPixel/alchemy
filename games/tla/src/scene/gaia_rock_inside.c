@@ -4125,11 +4125,26 @@ extern u32 gData_02005528[];
 extern u32 gData_02005a30[];
 
 // clang-format off
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+u32 gFieldEffect_ShortScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+u32 gFieldEffect_MediumScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+u32 gFieldEffect_LongScript[] = {                                                               
+      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
+      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
+      SC_WAIT(1), SC_FREE,                                                     
+      SC_END,                                                                  
+  };
 
 u32 gData_020050d0[] = {
     0, 230, 22, 38, 0, 3,
@@ -4141,9 +4156,27 @@ u32 gData_020050f4[] = {
     0, 1, 38,
 };
 
-DEFINE_G_DATA_02005118(gData_02005118, 2, 4)
+s32 gData_02005118[] = {                                                               
+      SC_MOVE_BY(0, 0, PIXELS(2)),                                            
+      SC_SYNC,                                                                 
+      SC_MOVE_BY(0, 0, PIXELS(-4)),                                           
+      SC_SYNC,                                                                 
+      SC_MOVE_BY(0, 0, PIXELS(2)),                                            
+      SC_SYNC,                                                                 
+      SC_WAIT(2),                                                              
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+  };
 
-DEFINE_G_DATA_02005118(gData_02005168, 4, 8)
+s32 gData_02005168[] = {                                                               
+      SC_MOVE_BY(0, 0, PIXELS(4)),                                            
+      SC_SYNC,                                                                 
+      SC_MOVE_BY(0, 0, PIXELS(-8)),                                           
+      SC_SYNC,                                                                 
+      SC_MOVE_BY(0, 0, PIXELS(4)),                                            
+      SC_SYNC,                                                                 
+      SC_WAIT(2),                                                              
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+  };
 
 u32 gData_020051b8[] = {
     SC_MOVE(PIXELS(744), 0, PIXELS(432)),
@@ -4162,7 +4195,12 @@ u32 gData_02005208[] = {
     0, 6, 38, 17,
 };
 
-DEFINE_G_DATA_02005218(gData_02005218)
+u32 gData_02005218[] = {                                                               
+      SC_MOVE_BY(0, PIXELS(160), 0),                                           
+      SC_SYNC,                                                                 
+      SC_FREE,                                                                 
+      SC_END,                                                                  
+  };
 
 s32 gData_02005234[] = {
     SC_CALL(Orbiter_Spiral),
@@ -4170,16 +4208,39 @@ s32 gData_02005234[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_02005244(gData_02005244, Orbit_Update, Actor_AimAtWatched,
-    Actor_StepToWatched)
+s32 gData_02005244[] = {                                                               
+      SC_CALL(Orbit_Update), SC_CALL(Actor_AimAtWatched), SC_CALL(Actor_StepToWatched), SC_FREE, SC_END,         
+  };
 
-DEFINE_G_DATA_02005264(gData_02005264, 24)
+u32 gData_02005264[] = {                                                               
+      SC_MOVE_BY(0, PIXELS(24), 0),                                            
+      SC_SYNC,                                                                 
+      SC_SET(SW_MOTION, 4),                                                    
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_02005264(gData_02005288, 16)
+u32 gData_02005288[] = {                                                               
+      SC_MOVE_BY(0, PIXELS(16), 0),                                            
+      SC_SYNC,                                                                 
+      SC_SET(SW_MOTION, 4),                                                    
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_020052AC(gData_020052ac, 24, 0)
+s32 gData_020052ac[] = {                                                               
+      SC_SET(SW_MOTION, 0),                                                    
+      SC_MOVE_BY(0, PIXELS(-24), 0),                                           
+      SC_SYNC,                                                                 
+      SC_SET(SW_MOTION, 0),                                                   
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_020052AC(gData_020052dc, 16, 3)
+s32 gData_020052dc[] = {                                                               
+      SC_SET(SW_MOTION, 0),                                                    
+      SC_MOVE_BY(0, PIXELS(-16), 0),                                           
+      SC_SYNC,                                                                 
+      SC_SET(SW_MOTION, 3),                                                   
+      SC_END,                                                                  
+  };
 
 s16 gData_0200530c[][2] = {{0, 0}, {113, 47}, {115, 47}, {115, 45}, {117, 45}, {119, 45}, {119, 47}, {121, 47}, {117, 49}, {119, 49}, {119, 51}, {121, 51}};
 
@@ -4338,9 +4399,31 @@ s32 gData_02005610[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_020056C4(gData_020056c4, 424, 344)
+s32 gData_020056c4[] = {                                                               
+      SC_SET(SW_SPEED, 0x20000),                                               
+      SC_MOVE(PIXELS(424), 0, PIXELS(344)),                                      
+      SC_SET(SW_VELOCITY_Y, PIXELS(8)),                                        
+      SC_SYNC,                                                                 
+      SC_CALL(Func_020007f4),                                                  
+      SC_WAIT(2),                                                              
+      SC_POSITION(0, 0, 0),                                                    
+      SC_LABEL(1),                                                             
+      SC_WAIT(1),                                                              
+      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
+  };
 
-DEFINE_G_DATA_020056C4(gData_02005728, 512, 384)
+s32 gData_02005728[] = {                                                               
+      SC_SET(SW_SPEED, 0x20000),                                               
+      SC_MOVE(PIXELS(512), 0, PIXELS(384)),                                      
+      SC_SET(SW_VELOCITY_Y, PIXELS(8)),                                        
+      SC_SYNC,                                                                 
+      SC_CALL(Func_020007f4),                                                  
+      SC_WAIT(2),                                                              
+      SC_POSITION(0, 0, 0),                                                    
+      SC_LABEL(1),                                                             
+      SC_WAIT(1),                                                              
+      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
+  };
 
 s32 gData_0200578c[] = {
     SC_SET(SW_SPEED, 0x10000),
@@ -4434,7 +4517,18 @@ struct ActorPlacement gGaiaRockInside_Room3Placements[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_020057C0(gGaiaRockInside_Room4Placements, 320, 0, 0, 0, 0, 320, 0, 320)
+struct ActorPlacement gGaiaRockInside_Room4Placements[] = {                                             
+      {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
+      {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
+      {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
+      {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
+      {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
+      {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                  
+      {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                  
+      {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                  
+      {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                  
+      {SCENE_TABLE_END},                                                       
+  };
 
 struct ActorPlacement gGaiaRockInside_Room5Placements[] = {
     ACTOR_PLACEMENT(388, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 400, 0, 368, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -4604,7 +4698,47 @@ u32 gData_02006290[] = {
     1, 13, 10, 0xc0010000, 38,
 };
 
-DEFINE_G_DATA_020016CC(gData_020062d4)
+s32 gData_020062d4[] = {                                                               
+      SC_ADD(SW_SCALE_X, 0x8000),                                              
+      SC_ADD(SW_SCALE_Y, 0x8000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, -0x4000),                                             
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x2000),                                             
+      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x2000),                                             
+      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_WAIT(4),                                                              
+      SC_ADD(SW_SCALE_X, 0x8000),                                              
+      SC_ADD(SW_SCALE_Y, 0x8000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, -0x4000),                                             
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x2000),                                             
+      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x2000),                                             
+      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_WAIT(4),                                                              
+      SC_ADD(SW_SCALE_X, 0x8000),                                              
+      SC_ADD(SW_SCALE_Y, 0x8000),                                              
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x4000),                                             
+      SC_ADD(SW_SCALE_Y, -0x4000),                                             
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x2000),                                             
+      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_WAIT(2),                                                              
+      SC_ADD(SW_SCALE_X, -0x2000),                                             
+      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_WAIT(4),                                                              
+      SC_WAIT(20),                                                             
+      SC_LOOP(3, SC_TOP),                                                      
+      SC_END,                                                                  
+  };
 // clang-format on
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE

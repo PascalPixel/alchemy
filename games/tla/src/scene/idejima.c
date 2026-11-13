@@ -1587,9 +1587,19 @@ void Idejima_PlaceTheSleepers(void) {
 }
 
 // clang-format off
-DEFINE_G_DATA_0200200C(gIdejima_KradenToTheShipScript, 216, 172, 264, 164)
+u32 gIdejima_KradenToTheShipScript[] = {                                                               
+      SC_ARG(2), SC_MOVE(PIXELS(216), 0, PIXELS(172)),                           
+      SC_SYNC,   SC_MOVE(PIXELS(264), 0, PIXELS(164)),                           
+      SC_SYNC,   SC_ARG(1),                                                    
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_0200200C(gIdejima_JennaToTheShipScript, 216, 182, 242, 164)
+u32 gIdejima_JennaToTheShipScript[] = {                                                               
+      SC_ARG(2), SC_MOVE(PIXELS(216), 0, PIXELS(182)),                           
+      SC_SYNC,   SC_MOVE(PIXELS(242), 0, PIXELS(164)),                           
+      SC_SYNC,   SC_ARG(1),                                                    
+      SC_END,                                                                  
+  };
 
 u32 gIdejima_AlexLeadsTheWayScript[] = {
     SC_ARG(2),
@@ -1627,15 +1637,32 @@ u32 gIdejima_JennaFollowsAlexScript[] = {
     0, 1, 22, 35, 1, 17,
 };
 
-DEFINE_G_DATA_02002F1C(gIdejima_KradenRunsToFelixScript, 420, 200)
+u32 gIdejima_KradenRunsToFelixScript[] =                                                                 
+      {                                                                        
+          SC_ARG(2), SC_MOVE(PIXELS(420), 0, PIXELS(200)), SC_SYNC, SC_ARG(1),   
+          SC_END,                                                              
+  };
 
-DEFINE_G_DATA_02002F1C(gIdejima_JennaRunsToFelixScript, 408, 232)
+u32 gIdejima_JennaRunsToFelixScript[] =                                                                 
+      {                                                                        
+          SC_ARG(2), SC_MOVE(PIXELS(408), 0, PIXELS(232)), SC_SYNC, SC_ARG(1),   
+          SC_END,                                                              
+  };
 
-DEFINE_G_DATA_02003534(gIdejima_JennaToTheShoreScript, 424, 200, 1)
+u32 gIdejima_JennaToTheShoreScript[] = {                                                               
+      SC_ARG(2),   SC_MOVE(PIXELS(424), 0, PIXELS(200)), SC_SYNC,     SC_ARG(1), 
+      SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
+  };
 
-DEFINE_G_DATA_02003534(gIdejima_ShebaToTheShoreScript, 408, 228, 1)
+u32 gIdejima_ShebaToTheShoreScript[] = {                                                               
+      SC_ARG(2),   SC_MOVE(PIXELS(408), 0, PIXELS(228)), SC_SYNC,     SC_ARG(1), 
+      SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
+  };
 
-DEFINE_G_DATA_02003534(gIdejima_KradenToTheShoreScript, 400, 214, 1)
+u32 gIdejima_KradenToTheShoreScript[] = {                                                               
+      SC_ARG(2),   SC_MOVE(PIXELS(400), 0, PIXELS(214)), SC_SYNC,     SC_ARG(1), 
+      SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
+  };
 
 u32 gIdejima_FelixToTheShoreScript[] = {
     39, 2, 4, 0x19c0000, 0, 0xf80000,

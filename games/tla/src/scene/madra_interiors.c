@@ -1153,9 +1153,41 @@ u32 gMadraInteriors_OldManWalksToBackRoom[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_02001FC4(gMadraInteriors_WifeComesBack, 109)
+u32 gMadraInteriors_WifeComesBack[] = {                                                               
+      SC_ARG(2),                                                               
+      SC_POSITION(PIXELS(327), 0, PIXELS(71)),                                 
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_MOVE(PIXELS(352), 0, PIXELS(72)),                                     
+      SC_SYNC,                                                                 
+      SC_MOVE_XZ(PIXELS(373), PIXELS(109)),                                     
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_WAIT(10),                                                             
+      SC_SET(SW_FACING, FACING_SOUTHWEST),                                     
+      SC_WAIT(10),                                                             
+      SC_SET(SW_FACING, FACING_WEST),                                          
+      SC_WAIT(10),                                                             
+      SC_END,                                                                  
+  };
 
-DEFINE_G_DATA_02001FC4(gMadraInteriors_OldManComesBack, 97)
+u32 gMadraInteriors_OldManComesBack[] = {                                                               
+      SC_ARG(2),                                                               
+      SC_POSITION(PIXELS(327), 0, PIXELS(71)),                                 
+      SC_SET(SW_FACING, FACING_EAST),                                          
+      SC_MOVE(PIXELS(352), 0, PIXELS(72)),                                     
+      SC_SYNC,                                                                 
+      SC_MOVE_XZ(PIXELS(373), PIXELS(97)),                                     
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_SET(SW_FACING, FACING_NORTH),                                         
+      SC_WAIT(10),                                                             
+      SC_SET(SW_FACING, FACING_SOUTHWEST),                                     
+      SC_WAIT(10),                                                             
+      SC_SET(SW_FACING, FACING_WEST),                                          
+      SC_WAIT(10),                                                             
+      SC_END,                                                                  
+  };
 
 u32 gMadraInteriors_CharFollows[] = {
     SC_ARG(2),
@@ -1538,7 +1570,13 @@ struct Trigger gMadraInteriors_TriggersOnReturn[] = {
 };
 
 /// The interrogators walk out of the jail once Piers has been questioned.
-DEFINE_G_DATA_020033C8(gMadraInteriors_InterrogatorsLeave, 408, 872, 904, 408, 920)
+u32 gMadraInteriors_InterrogatorsLeave[] = {                                                               
+      SC_ARG(2), SC_MOVE(PIXELS(408), 0, PIXELS(872)),                           
+      SC_SYNC,   SC_MOVE(PIXELS(408), 0, PIXELS(904)),                           
+      SC_SYNC,   SC_MOVE(PIXELS(408), 0, PIXELS(920)),                           
+      SC_SYNC,   SC_ARG(1),                                                    
+      SC_END,                                                                  
+  };
 
 /// The interrogator topples over, a quarter turn in eight frames.
 s32 gMadraInteriors_InterrogatorTopples[] = {

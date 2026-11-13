@@ -691,11 +691,15 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 // clang-format off
-DEFINE_G_DATA_0200116C(gDailaInteriorsExits, 0x1010100a, 0x1020200a, 0x1030300a,
-    0x1040400a, 0x1050500a, 0x1060600a, 0x1010700a)
+s32 gDailaInteriorsExits[] = {                                                               
+      11, 0x1010100a, -1, 0x1020200a,         -1, 0x1030300a, -1, 0x1040400a, -1,  0x1050500a,                         
+      -1, 0x1060600a, -1, 0x10703085, -1, 12, 0x1010700a, -1, 511,                             
+  };
 
-DEFINE_G_DATA_0200116C(gDailaInteriorsExitsOnceTaviIsRescued, 0x1010100d, 0x1020200d, 0x1030300d,
-    0x1040400d, 0x1050500d, 0x1060600d, 0x1010700d)
+s32 gDailaInteriorsExitsOnceTaviIsRescued[] = {                                                               
+      11, 0x1010100d, -1, 0x1020200d,         -1, 0x1030300d, -1, 0x1040400d, -1,  0x1050500d,                         
+      -1, 0x1060600d, -1, 0x10703085, -1, 12, 0x1010700d, -1, 511,                             
+  };
 
 struct ActorPlacement gDailaInteriors1Placements[] = {
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),

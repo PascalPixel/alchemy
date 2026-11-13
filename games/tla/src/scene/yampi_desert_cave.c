@@ -1009,7 +1009,14 @@ s8 gYampiDesertCave_LogFootprints[] = {
     -32, -8, 32, 8, -8, -32, 8, 32,
 };
 
-DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
+s32 gPushLeaderSteps[] = {                                                               
+      PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),                  
+      PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),                  
+      PUSH_STEP(0, 16),  PUSH_STEP(-16, 0), PUSH_STEP(-16, 0),                 
+      PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),                 
+      PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16),                 
+      PUSH_STEP(16, 0),                                                        
+  };
 
 s16 gYampiDesertCave_RipplePath[] = {
     101, 39, 0, 0, 97, 35, 0, 0,
@@ -1032,7 +1039,10 @@ u16 gYampiDesertCave_MarkColorsDim[] = {
     5, 21, 31, 31, 31, -1,
 };
 
-DEFINE_G_DATA_020013B4(gYampiDesertCave_MarkCycle, 14, 9, 10, 11, 12, 13)
+u16 gYampiDesertCave_MarkCycle[] = {                                                               
+      14, 9, 10, 11, 12, 13, 13, 14, 9, 10, 11, 12, 12, 13, 14, 9, 10, 11,  
+      11, 12, 13, 14, 9, 10, 10, 11, 12, 13, 14, 9, 9, 10, 11, 12, 13, 14,  
+  };
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

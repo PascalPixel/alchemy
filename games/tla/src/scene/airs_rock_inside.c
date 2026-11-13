@@ -3436,10 +3436,16 @@ u32 gData_02006094[] = {
     17,
 };
 
-DEFINE_G_DATA_02003584(gData_020060b0, Func_02003ed4, 38, 17)
+s32 gData_020060b0[] = {                                                               
+      46,                                                                      
+      (s32)Func_02003ed4,                                                              
+      38,                                                                      
+      17,                                                                      
+  };
 
-DEFINE_G_DATA_02004014(gData_020060c0, Orbit_Update, Actor_AimAtWatched,
-    Actor_StepToWatched)
+s32 gData_020060c0[] = {                                                               
+      46, (s32)Orbit_Update, 46, (s32)Actor_AimAtWatched, 46, (s32)Actor_StepToWatched, 38, 17,                  
+  };
 
 u32 gData_020060e0[] = {
     5, 0, 0x180000, 0, 1, 22,
@@ -3670,8 +3676,10 @@ struct ActorPlacement gAirsRockInside_Room8Placements[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_02003C88(gAirsRockInside_Room9Placements, 0xffff0145, gData_020061f8, 1, 0x2024000,
-                       1, 2, 0xffff0179, 3, 0x2020000)
+s32 gAirsRockInside_Room9Placements[] = {                                                               
+      (s32)0xffff0145, (s32)gData_020061f8, 1, 0, 0, 0x2024000, (s32)0xffff0110, 1, 2, 0, 0, 0x2024000,    
+      (s32)0xffff0179, 1,         3, 0, 0, 0x2020000, 0xffff,          0,  0,  0, 0, 0,     
+  };
 
 s32 gData_02006c0c = -1;
 

@@ -1451,8 +1451,12 @@ s16 gChampa_DoorEdit[] = {
 };
 // clang-format on
 
-DEFINE_G_DATA_0200064C(gChampa_Doors, gChampa_DoorEdit, 0x9001d,
-                       gChampa_NoDoorEdit, 0)
+s32 gChampa_Doors[] = {
+    (s32)gChampa_DoorEdit,
+    0x9001d,
+    (s32)gChampa_NoDoorEdit,
+    0,
+};
 
 struct Trigger gChampa_Triggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,

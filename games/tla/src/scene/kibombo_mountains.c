@@ -704,7 +704,30 @@ u32 gData_020012ac[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-DEFINE_G_DATA_02001334(gData_02001334, 856, 584, 792)
+u32 gData_02001334[] = {                                                               
+      SC_SET(SW_SPEED, 0x8000),                                                
+      SC_SET(SW_ACCEL, 0x1999),                                                
+      SC_SET(SW_COLLISION, 129),                                               
+      SC_ARG(2),                                                               
+      SC_MOVE(PIXELS(856), 0, PIXELS(584)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_WAIT(3),                                                              
+      SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),                       
+      SC_WAIT(30),                                                             
+      SC_ARG(4),                                                               
+      SC_WAIT(90),                                                             
+      SC_ARG(2),                                                               
+      SC_MOVE(PIXELS(792), 0, PIXELS(584)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_WAIT(3),                                                              
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(30),                                                             
+      SC_ARG(4),                                                               
+      SC_WAIT(90),                                                             
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+  };
 
 s32 gData_02001404[] = {
     SC_CALL(Actor_Bob),
@@ -775,9 +798,55 @@ struct ActorPlacement gKibomboMountains_Room1Placements[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_02001334(gData_02001728, 184, 296, 248)
+u32 gData_02001728[] = {                                                               
+      SC_SET(SW_SPEED, 0x8000),                                                
+      SC_SET(SW_ACCEL, 0x1999),                                                
+      SC_SET(SW_COLLISION, 129),                                               
+      SC_ARG(2),                                                               
+      SC_MOVE(PIXELS(184), 0, PIXELS(296)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_WAIT(3),                                                              
+      SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),                       
+      SC_WAIT(30),                                                             
+      SC_ARG(4),                                                               
+      SC_WAIT(90),                                                             
+      SC_ARG(2),                                                               
+      SC_MOVE(PIXELS(248), 0, PIXELS(296)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_WAIT(3),                                                              
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(30),                                                             
+      SC_ARG(4),                                                               
+      SC_WAIT(90),                                                             
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+  };
 
-DEFINE_G_DATA_02001334(gData_020017f8, 248, 448, 264)
+u32 gData_020017f8[] = {                                                               
+      SC_SET(SW_SPEED, 0x8000),                                                
+      SC_SET(SW_ACCEL, 0x1999),                                                
+      SC_SET(SW_COLLISION, 129),                                               
+      SC_ARG(2),                                                               
+      SC_MOVE(PIXELS(248), 0, PIXELS(448)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_WAIT(3),                                                              
+      SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),                       
+      SC_WAIT(30),                                                             
+      SC_ARG(4),                                                               
+      SC_WAIT(90),                                                             
+      SC_ARG(2),                                                               
+      SC_MOVE(PIXELS(264), 0, PIXELS(448)),                                      
+      SC_SYNC,                                                                 
+      SC_ARG(1),                                                               
+      SC_WAIT(3),                                                              
+      SC_SET(SW_FACING, FACING_SOUTH),                                         
+      SC_WAIT(30),                                                             
+      SC_ARG(4),                                                               
+      SC_WAIT(90),                                                             
+      SC_LOOP(SC_FOREVER, SC_TOP),                                             
+  };
 
 struct ActorPlacement gKibomboMountains_Room2Placements[] = {
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),

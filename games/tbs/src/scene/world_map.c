@@ -1043,7 +1043,7 @@ enum {
 /// trade reopens (FLAG_DODONPA_LOCKED_UP) and until the wagon has left. It
 /// sets FLAG_BUNZAS_WAGON_LEFT.
 static void WorldMap_BoardBunzasWagon(void) {
-  struct Actor *record;
+  struct Actor *actor;
 
   Event_Start();
   Event_StartScreenTransition();
@@ -1066,28 +1066,27 @@ static void WorldMap_BoardBunzasWagon(void) {
   Actor_SetPosition(ACTOR_WAGON, 5880, 1208);
   Event_Wait(60);
   Actor_SetAnimation(ACTOR_HAMMET, ANIM_WALK);
-  record = Actor_Get(ACTOR_WAGON);
-  if (record != 0) {
-    Actor_SetDestination(ACTOR_HAMMET, record->x.part.pixel,
-                         record->z.part.pixel);
+  actor = Actor_Get(ACTOR_WAGON);
+  if (actor != 0) {
+    Actor_SetDestination(ACTOR_HAMMET, actor->x.part.pixel,
+                         actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_HAMMET);
   Actor_SetPosition(ACTOR_HAMMET, 0, 0);
   Event_Wait(60);
   Actor_SetAnimation(ACTOR_BUNZA, ANIM_WALK);
-  record = Actor_Get(ACTOR_WAGON);
-  if (record != 0) {
-    Actor_SetDestination(ACTOR_BUNZA, record->x.part.pixel,
-                         record->z.part.pixel);
+  actor = Actor_Get(ACTOR_WAGON);
+  if (actor != 0) {
+    Actor_SetDestination(ACTOR_BUNZA, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_BUNZA);
   Actor_SetPosition(ACTOR_BUNZA, 0, 0);
   Event_Wait(60);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  record = Actor_Get(ACTOR_WAGON);
-  if (record != 0) {
-    Actor_SetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel,
-                         record->z.part.pixel);
+  actor = Actor_Get(ACTOR_WAGON);
+  if (actor != 0) {
+    Actor_SetDestination(ACTOR_PARTY_LEADER, actor->x.part.pixel,
+                         actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -2720,7 +2719,7 @@ static void WorldMap_UpdateStormTimer(void) {
 static void WorldMap_CatchInStorm(s32 targetActorId) {
   s32 alreadyTraveling;
   struct Actor *actor;
-  struct Actor *record;
+  struct Actor *storm;
   s32 id;
 
   id = gMainRoutineWork.leaderActorId;
@@ -2731,9 +2730,9 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
     Actor_SetAttachedEffect(id,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
     Actor_SetAnimation(id, ANIM_LEADER_LOOK_AROUND);
-    record = Actor_Get(targetActorId);
-    if (record != 0) {
-      Actor_SetDestination(id, record->x.part.pixel, record->z.part.pixel);
+    storm = Actor_Get(targetActorId);
+    if (storm != 0) {
+      Actor_SetDestination(id, storm->x.part.pixel, storm->z.part.pixel);
     }
     Actor_WaitForMoveById(id);
     Sound_Play(SE_SANDSTORM);
@@ -2843,14 +2842,14 @@ static void WorldMap_UpdateTransitionBlend(void) {
 /// it moves the camera a pixel diagonally from the leader.
 static void WorldMap_JitterTransitionCamera(void) {
 
-  struct Actor *record;
+  struct Actor *actor;
   s32 sx;
   s32 sy;
   u32 mode;
 
-  record = Actor_Get(gMainRoutineWork.leaderActorId);
-  sx = record->x.part.pixel;
-  sy = record->z.part.pixel;
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  sx = actor->x.part.pixel;
+  sy = actor->z.part.pixel;
   if (gFrameCount % 3 == 0) {
     mode = (u32)(Random_Next() << 2) >> 16;
     switch (mode) {

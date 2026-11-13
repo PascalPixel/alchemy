@@ -1006,7 +1006,7 @@ s32 ValeKradensCottage_Initialize(void) {
     Actor_SetPosition(ACTOR_SATUROS, 0, 0);
     Actor_SetPosition(ACTOR_MENARDI, 0, 0);
     Actor_SetPosition(ACTOR_JENNA, 0, 0);
-    Actor_Get(ACTOR_FENCE_BOULDER)->collisionFlags |= 8;
+    Actor_Get(ACTOR_FENCE_BOULDER)->collisionFlags |= ACTOR_NOT_TARGETED;
     Actor_SetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 83, 265);
     Actor_WalkToAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 83, 273);
     Actor_SetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, 5);

@@ -2522,7 +2522,7 @@ static void ShipRooms_SetUpCaptainsQuarters(void) {
     Actor_SetSpeed(ACTOR_QUARTERS_KAJA, 0.8);
     actor->userValue = done;
     actor->riseEnabled = 0;
-    actor->collisionFlags |= 128;
+    actor->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
     actor->update = ShipRooms_PaceCaptainsQuarters;
     other = Actor_Get(ACTOR_QUARTERS_CAPTAIN);
     other->riseCounter = 0;
@@ -2654,7 +2654,7 @@ static void ShipRooms_SetOarCollision(void) {
        actorId++) {
     struct Actor *actor = Actor_Get(actorId);
     u32 flags = actor->collisionFlags;
-    actor->collisionFlags = flags | 0x08;
+    actor->collisionFlags = flags | ACTOR_NOT_TARGETED;
   }
 }
 

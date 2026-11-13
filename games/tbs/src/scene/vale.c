@@ -760,7 +760,6 @@ static void Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor(void) {
 static void Vale_HaveJennaStopTheAlephDetour(void) {
   struct Actor *leader;
   struct Actor *jenna;
-  struct Actor *actor;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   jenna = Actor_Get(ACTOR_JENNA);
@@ -1733,7 +1732,7 @@ s32 Vale_Initialize(void) {
 /// Sets area flag FLAG_VALE_GARET_MET_SISTER. "Ah! It's been a while... You're
 /// back?" ("Sis...").
 static void Vale_GaretMeetsHisSister(void) {
-  struct Actor *record;
+  struct Actor *actor;
   s32 msg;
 
   Event_Start();
@@ -1752,9 +1751,9 @@ static void Vale_GaretMeetsHisSister(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARETS_SISTER_AFTER_KALAY, FACING_SOUTH_SOUTHEAST,
                       0);
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  if (record != 0) {
-    Actor_SetPositionFixed(ACTOR_GARET, record->x.fixed, record->z.fixed);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
+  if (actor != 0) {
+    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 402, 608);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
@@ -1817,10 +1816,9 @@ static void Vale_GaretMeetsHisSister(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_GARETS_SISTER_AFTER_KALAY, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  if (record != 0) {
-    Actor_SetDestination(ACTOR_GARET, record->x.part.pixel,
-                         record->z.part.pixel);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
+  if (actor != 0) {
+    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
@@ -1834,15 +1832,15 @@ static void Vale_GaretMeetsHisSister(void) {
 /// Sets area flag FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY. "WHATEVER YOU DO,
 /// you must protect the family while I'm gone."
 static void Vale_GaretAsksToProtectFamily(void) {
-  struct Actor *record;
+  struct Actor *actor;
 
   Event_Start();
   FieldCamera_MoveTo(357, CAMERA_KEEP, 738, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 367, 745);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  if (record != 0) {
-    Actor_SetPositionFixed(ACTOR_GARET, record->x.fixed, record->z.fixed);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
+  if (actor != 0) {
+    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 346, 745);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
@@ -1917,10 +1915,9 @@ static void Vale_GaretAsksToProtectFamily(void) {
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  if (record != 0) {
-    Actor_SetDestination(ACTOR_GARET, record->x.part.pixel,
-                         record->z.part.pixel);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
+  if (actor != 0) {
+    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
@@ -2406,7 +2403,6 @@ static void Vale_RoofMended(void) {
   struct Actor *actor;
   u32 i;
   struct Actor *turned;
-  struct Actor *record;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
@@ -2955,9 +2951,9 @@ static void Vale_RoofMended(void) {
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_Wait(60);
   actor = Actor_Get(ACTOR_GARET);
-  actor->steeringFlags |= 1;
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
   actor = Actor_Get(ACTOR_JENNA);
-  actor->steeringFlags |= 1;
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_JENNA, 1);
@@ -2981,7 +2977,7 @@ static void Vale_RoofMended(void) {
                            ANIM_LEADER_CLIMB, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_Get(ACTOR_DORA)->steeringFlags |= 1;
+  Actor_Get(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
   Vale_ClimbDownRoofLadder(ACTOR_DORA, DORA_ANIMATION_CLIMB_OVER_TOP,
                            DORA_ANIMATION_CLIMB, 0);
   Actor_WalkToAndWait(ACTOR_DORA, 373, 887);

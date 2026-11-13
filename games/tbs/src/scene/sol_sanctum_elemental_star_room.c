@@ -1247,23 +1247,23 @@ static void SolSanctumElementalStarRoom_LineUpCaptors(void) {
   Actor_SetPosition(ACTOR_FELIX, 471, 306);
   actor = Actor_Get(ACTOR_JENNA);
   actor->watchedActor = leader;
-  actor->steeringFlags |= 1;
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_StartScript(actor, gSolSanctumElementalStarRoom_AngleScript);
   actor = Actor_Get(ACTOR_KRADEN);
   actor->watchedActor = leader;
-  actor->steeringFlags |= 1;
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_StartScript(actor, gSolSanctumElementalStarRoom_AngleScript);
   actor = Actor_Get(ACTOR_MENARDI);
   actor->watchedActor = leader;
-  actor->steeringFlags |= 1;
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_StartScript(actor, gSolSanctumElementalStarRoom_AngleScript);
   actor = Actor_Get(ACTOR_SATUROS);
   actor->watchedActor = leader;
-  actor->steeringFlags |= 1;
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_StartScript(actor, gSolSanctumElementalStarRoom_AngleScript);
   alex = Actor_Get(ACTOR_ALEX);
   alex->watchedActor = leader;
-  alex->steeringFlags |= 1;
+  alex->steeringFlags |= ACTOR_FACES_MOTION;
   alex->scaleX = Q16_ONE;
   alex->scaleY = Q16_ONE;
   alex->motionFlags = Actor_Get(ACTOR_MENARDI)->motionFlags;
@@ -1271,7 +1271,7 @@ static void SolSanctumElementalStarRoom_LineUpCaptors(void) {
   Actor_StartScript(alex, gSolSanctumElementalStarRoom_AngleScript);
   actor = Actor_Get(ACTOR_FELIX);
   actor->watchedActor = leader;
-  actor->steeringFlags |= 1;
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_StartScript(actor, gSolSanctumElementalStarRoom_AngleScript);
   Event_End();
 }

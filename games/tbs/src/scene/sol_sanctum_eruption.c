@@ -508,7 +508,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Event_ShowMessageThenWait(ACTOR_FELIX, 0, 30);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   Event_Wait(20);
-  actor->steeringFlags |= 1;
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetSpeed(ACTOR_MENARDI, 1);
   Actor_WalkToAndWait(ACTOR_MENARDI, 475, 332);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHWEST, 20);

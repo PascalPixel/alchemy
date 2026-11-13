@@ -1066,8 +1066,9 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_NORTHERN_PILLAR), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH), 0);
-    Actor_Get(ACTOR_NORTHERN_PILLAR)->collisionFlags |= 0x80;
-    Actor_Get(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags |= 0x80;
+    Actor_Get(ACTOR_NORTHERN_PILLAR)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
+    Actor_Get(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags |=
+        ACTOR_BLOCKED_BY_SOLID;
     switch (gMainRoutineWork.entrance) {
     case VAULT_CAVE_MOUTH_NORTH_FROM_SOUTH:
     case VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH:

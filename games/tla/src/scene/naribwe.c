@@ -4,6 +4,7 @@
 /// shows the stone that hides the Unicorn Ring.
 
 #include "types.h"
+#include "text/msg_ids.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
@@ -42,61 +43,6 @@ extern struct Trigger gNaribwe_TriggersOnReturn[];
  * this function). */
 extern const struct WarpEntry gNaribwe_Doors__first[] __asm__("gNaribwe_Doors");
 #define gNaribwe_Doors gNaribwe_Doors__first
-
-/* VIEW(first): routine MsgNaribwe02 as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:106: `MsgNaribwe02' undeclared
- * (first use in this function). */
-extern u8 MsgNaribwe02__first __asm__("MsgNaribwe02");
-#define MsgNaribwe02 MsgNaribwe02__first
-/* VIEW(first): routine MsgNaribwe03 as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:117: `MsgNaribwe03' undeclared
- * (first use in this function). */
-extern u8 MsgNaribwe03__first __asm__("MsgNaribwe03");
-#define MsgNaribwe03 MsgNaribwe03__first
-/* VIEW(first): routine MsgNaribwe07 as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:127: `MsgNaribwe07' undeclared
- * (first use in this function). */
-extern u8 MsgNaribwe07__first __asm__("MsgNaribwe07");
-#define MsgNaribwe07 MsgNaribwe07__first
-/* VIEW(first): routine MsgNaribwe08 as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:138: `MsgNaribwe08' undeclared
- * (first use in this function). */
-extern u8 MsgNaribwe08__first __asm__("MsgNaribwe08");
-#define MsgNaribwe08 MsgNaribwe08__first
-/* VIEW(first): routine MsgNaribwe09 as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:145: `MsgNaribwe09' undeclared
- * (first use in this function). */
-extern u8 MsgNaribwe09__first __asm__("MsgNaribwe09");
-#define MsgNaribwe09 MsgNaribwe09__first
-/* VIEW(first): routine MsgNaribwe21 as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:169: `MsgNaribwe21' undeclared
- * (first use in this function). */
-extern u8 MsgNaribwe21__first __asm__("MsgNaribwe21");
-#define MsgNaribwe21 MsgNaribwe21__first
-/* VIEW(first): routine MsgNaribwe43 as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:182: `MsgNaribwe43' undeclared
- * (first use in this function). */
-extern u8 MsgNaribwe43__first __asm__("MsgNaribwe43");
-#define MsgNaribwe43 MsgNaribwe43__first
-/* VIEW(first): routine MsgNaribwe23 as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:197: `MsgNaribwe23' undeclared
- * (first use in this function). */
-extern u8 MsgNaribwe23__first __asm__("MsgNaribwe23");
-#define MsgNaribwe23 MsgNaribwe23__first
-/* VIEW(first): routine MsgNaribwe45 as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:210: `MsgNaribwe45' undeclared
- * (first use in this function). */
-extern u8 MsgNaribwe45__first __asm__("MsgNaribwe45");
-#define MsgNaribwe45 MsgNaribwe45__first
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -137,7 +83,7 @@ void Naribwe_AskAboutKibomboExpedition(void) {
   s32 msg;
 
   if (Event_GetFlag(0x85d) == 0) {
-    msg = (s32)&MsgNaribwe02;
+    msg = (s32)MsgNaribwe02;
     Event_SetMessageId(msg);
     Event_OpenMessage(14, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
@@ -148,7 +94,7 @@ void Naribwe_AskAboutKibomboExpedition(void) {
     }
     Event_ShowMessage(14, 0);
   } else {
-    Event_SetMessageId((s32)&MsgNaribwe03);
+    Event_SetMessageId((s32)MsgNaribwe03);
     Event_ShowMessage(14, 0);
   }
 }
@@ -158,7 +104,7 @@ void Naribwe_AskWhereFrom(void) {
   s32 msg;
 
   if (Event_GetFlag(0x85e) == 0) {
-    msg = (s32)&MsgNaribwe07;
+    msg = (s32)MsgNaribwe07;
     Event_SetMessageId(msg);
     Event_OpenMessage(18, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
@@ -169,14 +115,14 @@ void Naribwe_AskWhereFrom(void) {
     }
     Event_ShowMessage(18, 0);
   } else {
-    Event_SetMessageId((s32)&MsgNaribwe08);
+    Event_SetMessageId((s32)MsgNaribwe08);
     Event_ShowMessage(14, 0);
   }
 }
 
 /// "You don't plan on going to Kibombo, do you, mister?"
 void Naribwe_AskGoingToKibombo(void) {
-  s32 msg = (s32)&MsgNaribwe09;
+  s32 msg = (s32)MsgNaribwe09;
 
   Event_SetMessageId(msg);
   Event_OpenMessage(19, 0);
@@ -200,7 +146,7 @@ void Naribwe_PraiseFortuneTeller(s32 actor) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)&MsgNaribwe21);
+  Event_SetMessageId((s32)MsgNaribwe21);
   Event_ShowMessage(actor, 0);
   Event_End();
 }
@@ -213,7 +159,7 @@ void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)&MsgNaribwe43);
+  Event_SetMessageId((s32)MsgNaribwe43);
   Event_ShowMessage(actor, 0);
   Event_End();
 }
@@ -228,7 +174,7 @@ void Naribwe_TalkToPilgrim(s32 actor) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)&MsgNaribwe23);
+  Event_SetMessageId((s32)MsgNaribwe23);
   Event_ShowMessage(26, 0);
   Event_End();
 }
@@ -241,7 +187,7 @@ void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)&MsgNaribwe45);
+  Event_SetMessageId((s32)MsgNaribwe45);
   Event_ShowMessage(26, 0);
   Event_End();
 }
@@ -331,15 +277,6 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 #undef gNaribwe_Doors
-#undef MsgNaribwe02
-#undef MsgNaribwe03
-#undef MsgNaribwe07
-#undef MsgNaribwe08
-#undef MsgNaribwe09
-#undef MsgNaribwe21
-#undef MsgNaribwe43
-#undef MsgNaribwe23
-#undef MsgNaribwe45
 // @file
 // Naribwe's data: its scripts, door, placements and triggers.
 

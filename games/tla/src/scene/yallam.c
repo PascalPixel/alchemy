@@ -5,6 +5,7 @@
 /// pushes down to reach the Masamune.
 
 #include "types.h"
+#include "text/msg_ids.h"
 #include "actor.h"
 #include "field/field.h"
 #include "module/scene/scene.h"
@@ -1860,12 +1861,6 @@ void Yallam_StartWatchers(void) {
 #undef BYTE_AT
 #undef EVENT_WORK
 #undef FIELD_AT
-#undef MsgDoYouWant
-#undef MsgRunningAroundIn
-#undef MsgThereSALot
-#undef MsgThereSAGame
-#undef MsgIOnceHeard
-#undef MsgHereLetMe
 #include "text/msg_ids.h"
 
 void Yallam_EnterDoor(void);

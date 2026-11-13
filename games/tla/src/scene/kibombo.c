@@ -13,16 +13,7 @@
 
 #include "shared/actors.h"
 #include "types.h"
-struct KibomboObject;
-/* VIEW(kibombo): routine Import_ActorCreate as kibombo.h declares it;
- * field_event.h, which a helper below includes, has another; tried as the rest
- * of the object declares it, it does not compile in tla-ja:
- * games/tla/include/field_event.h:56: conflicting types for
- * `Import_ActorCreate'. */
-struct KibomboObject *
-Import_ActorCreate__kibombo(s32 type, s32 x, s32 y,
-                            s32 z) __asm__("Import_ActorCreate");
-#define Import_ActorCreate Import_ActorCreate__kibombo
+struct Actor;
 #include "kibombo.h"
 #include "event_work.h"
 #include "gamepak/far_call/system.h"
@@ -30,14 +21,14 @@ Import_ActorCreate__kibombo(s32 type, s32 x, s32 y,
 #include "module/scene/kibombo.h"
 #include "graphics/resource.h"
 
-s32 Func_02000038(struct KibomboObject *object) {
-  object->sprite->rotation += 0x600;
+s32 Func_02000038(struct Actor *object) {
+  ((struct FieldSprite *)object->sprite)->rotation += 0x600;
   return 0;
 }
 
-s32 Func_02000048(struct KibomboObject *object) {
-  object->field44 = object->x;
-  object->field48 = object->y;
+s32 Func_02000048(struct Actor *object) {
+  object->bounce = object->x;
+  object->gravity = object->y;
   return 0;
 }
 
@@ -45,10 +36,10 @@ extern s16 gData_0200635c[];
 
 struct KibomboWork90 {
   u8 unk00[0x18];
-  struct KibomboObject *leader;
+  struct Actor *leader;
 };
 
-s32 Func_02000054(struct KibomboObject *object) {
+s32 Func_02000054(struct Actor *object) {
   if (gFrameCount & 1) {
     s32 dx;
     s32 dy;
@@ -58,24 +49,24 @@ s32 Func_02000054(struct KibomboObject *object) {
     dx += ((Random16() * 3) >> 16) << 16;
     dy += ((Random16() * 3) >> 16) << 16;
 
-    Actor_SetPositionAndResetMotion(object, object->field44 + dx,
-                                    object->field48 + dy, object->z);
+    Actor_SetPositionAndResetMotion(object, object->bounce + dx,
+                                    object->gravity + dy, object->z);
   }
   return 1;
 }
 
-void Func_020000a0(struct KibomboObject *object) {
+void Func_020000a0(struct Actor *object) {
   if (gFrameCount & 2)
     Actor_SetSpriteColor(object, 10);
   else
     Actor_SetSpriteColor(object, 0);
 }
 
-s32 Func_020000c4(struct KibomboObject *object) {
-  if (object->timer != 0) {
-    object->timer--;
+s32 Func_020000c4(struct Actor *object) {
+  if (object->riseCounter != 0) {
+    object->riseCounter--;
   } else {
-    object->timer = ((Random16() * 10) >> 16) + 10;
+    object->riseCounter = ((Random16() * 10) >> 16) + 10;
     object->facing = Random16();
   }
   return 1;
@@ -86,59 +77,7 @@ s32 Func_020000c4(struct KibomboObject *object) {
 // order; the rest of the overlay is in kibombo/.
 
 #include "battle/battle.h"
-/* VIEW(kibombo): routine Actor_SetPositionAndResetMotion as void
- * Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
- * kibombo.h has void Actor_SetPositionAndResetMotion(struct KibomboObject
- * *object, s32 x, s32 y, s32 z); tried as the definition's void
- * Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z), it
- * does not compile in tla-ja: games/tla/include/actor.h:95: conflicting types
- * for `Actor_SetPositionAndResetMotion'. */
-struct Actor;
-extern void Actor_SetPositionAndResetMotion__kibombo(
-    struct Actor *object, s32 x, s32 y,
-    s32 z) __asm__("Actor_SetPositionAndResetMotion");
-#define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion__kibombo
-/* VIEW(kibombo): routine Actor_SetSpritePriority as void
- * Actor_SetSpritePriority(u32, s32); kibombo.h has void
- * Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's
- * void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile
- * in tla-ja: games/tla/include/actor.h:106: conflicting types for
- * `Actor_SetSpritePriority'. */
-extern void
-Actor_SetSpritePriority__kibombo(u32, s32) __asm__("Actor_SetSpritePriority");
-#define Actor_SetSpritePriority Actor_SetSpritePriority__kibombo
-/* VIEW(kibombo): routine Actor_SetSpriteFlags as void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags); kibombo.h has void
- * Actor_SetSpriteFlags(struct KibomboObject *object, u32 value); not tried:
- * Actor_SetSpriteFlags's bound declaration was not found. */
-struct Actor;
-extern void
-Actor_SetSingleChildFlags__kibombo(struct Actor *object,
-                                   u32 flags) __asm__("Actor_SetSpriteFlags");
-#define Actor_SetSpriteFlags Actor_SetSingleChildFlags__kibombo
-/* VIEW(kibombo): routine Actor_SetBlendMode as void Actor_SetBlendMode(struct
- * Actor *object, u32 value); kibombo.h has void Actor_SetBlendMode(struct
- * KibomboObject *object, s32 flags); not tried: Actor_SetBlendMode's bound
- * declaration was not found. */
-struct Actor;
-extern void
-Animation_SetStateFlags__kibombo(struct Actor *object,
-                                 u32 value) __asm__("Actor_SetBlendMode");
-#define Actor_SetBlendMode Animation_SetStateFlags__kibombo
-/* VIEW(kibombo): routine Actor_SetSpriteColor as void
- * Actor_SetSpriteColor(struct Actor *object, s32 attribute); kibombo.h has void
- * Actor_SetSpriteColor(struct KibomboObject *object, s32 value); not tried:
- * Actor_SetSpriteColor's bound declaration was not found. */
-struct Actor;
-extern void
-Actor_SetPartAttribute__kibombo(struct Actor *object,
-                                s32 attribute) __asm__("Actor_SetSpriteColor");
-#define Actor_SetSpriteColor Actor_SetPartAttribute__kibombo
 #include "field/field.h"
-#undef Actor_SetBlendMode
-#undef Actor_SetSpriteFlags
-#undef Actor_SetSpritePriority
-#undef Actor_SetPositionAndResetMotion
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "lib.h"
@@ -374,7 +313,7 @@ void Actors_SetHidden(s32 show, s32 first, u32 count) {
   u32 i;
 
   for (i = 0; i < count; i++) {
-    struct KibomboObject *actor = Actor_GetById(first + i);
+    struct Actor *actor = Actor_GetById(first + i);
 
     if (show)
       actor->priorityFlags &= ~0x10;
@@ -441,7 +380,7 @@ void Func_02000728(s32 mode) {
 }
 
 void Func_02000734(void) {
-  struct KibomboObject *object = Actor_GetById(11);
+  struct Actor *object = Actor_GetById(11);
 
   if (object->x >> 20 == 6 && object->z >> 20 == 18) {
     Event_Start();
@@ -587,7 +526,7 @@ void Func_02000b2c(void) {
 }
 
 void Kibombo_PiersThanksParty(void) {
-  struct KibomboObject *leader;
+  struct Actor *leader;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -751,7 +690,9 @@ void Kibombo_PiersRefusesToLeave(void) {
   Event_ResolvePendingActions(0);
   Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
   Actor_SetSpritePriority(
-      7, Actor_GetById(gMainRoutineWork.currentOwner)->sprite->priority);
+      7, ((struct FieldSprite *)Actor_GetById(gMainRoutineWork.currentOwner)
+              ->sprite)
+             ->priority);
   wait(1);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Kibombo_ObjSpeed(7, 0x19999, 0xcccc);
@@ -779,97 +720,7 @@ void Kibombo_PiersRefusesToLeave(void) {
 #include "system/ram_buffer.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
-/* VIEW(s1318): routine Task_Add as s32 Task_Add(TaskFunc func, s32 order);
- * kibombo.h has void Task_Add(void(*func) (void), s32 priority); tried as the
- * definition's s32 Task_Add(TaskFunc func, s32 order), which the object already
- * declares, it does not compile in tla-ja: games/tla/include/system/task.h:55:
- * conflicting types for `Task_Add'. */
-#define Task_Add Task_Add__s1318
-/* VIEW(s1318): routine Actor_GetById as struct Actor *Actor_GetById(u32
- * objectId); kibombo.h has struct KibomboObject *Actor_GetById(s32 id); tried
- * as the definition's struct Actor *Actor_GetById(u32 objectId), which the
- * object already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:60: conflicting types for `Actor_GetById'. */
-struct Actor;
-extern struct Actor *
-Actor_GetById__s1318(u32 objectId) __asm__("Actor_GetById");
-#define Actor_GetById Actor_GetById__s1318
-/* VIEW(s1318): routine Actor_SetMoveTarget as void Actor_SetMoveTarget(struct
- * Actor *actor, s32 x, s32 y, s32 z); kibombo.h has void
- * Actor_SetMoveTarget(struct KibomboObject *object, s32 x, s32 y, s32 z); tried
- * as the definition's void Actor_SetMoveTarget(struct Actor *object, s32 x, s32
- * y, s32 z), it does not compile in tla-ja: games/tla/include/field/event.h:84:
- * conflicting types for `Actor_SetMoveTarget'. */
-struct Actor;
-extern void Actor_SetMoveTarget__s1318(struct Actor *actor, s32 x, s32 y,
-                                       s32 z) __asm__("Actor_SetMoveTarget");
-#define Actor_SetMoveTarget Actor_SetMoveTarget__s1318
-/* VIEW(s1318): routine Import_ActorCreate as struct Actor
- * *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z); kibombo.h has struct
- * KibomboObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z); tried as
- * the rest of the object declares it, it does not compile in tla-ja:
- * games/tla/include/field/event.h:85: conflicting types for
- * `Import_ActorCreate__kibombo'. */
-struct Actor;
-extern struct Actor *
-Import_ActorCreate__s1318(s32 type, s32 x, s32 y,
-                          s32 z) __asm__("Import_ActorCreate");
-#define Import_ActorCreate Import_ActorCreate__s1318
-/* VIEW(s1318): routine Actor_SetSpritePriority as void
- * Actor_SetSpritePriority(u32 actorId, s32 priority); kibombo.h has void
- * Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's
- * void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile
- * in tla-ja: games/tla/include/field/event.h:130: conflicting types for
- * `Actor_SetSpritePriority'. */
-extern void
-Actor_SetSpritePriority__s1318(u32 actorId,
-                               s32 priority) __asm__("Actor_SetSpritePriority");
-#define Actor_SetSpritePriority Actor_SetSpritePriority__s1318
-/* VIEW(s1318): routine Actor_SetPositionAndResetMotion as void
- * Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
- * kibombo.h has void Actor_SetPositionAndResetMotion(struct KibomboObject
- * *object, s32 x, s32 y, s32 z); tried as the definition's void
- * Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z), it
- * does not compile in tla-ja: games/tla/include/field/event.h:135: conflicting
- * types for `Actor_SetPositionAndResetMotion'. */
-struct Actor;
-extern void Actor_SetPositionAndResetMotion__s1318(
-    struct Actor *object, s32 x, s32 y,
-    s32 z) __asm__("Actor_SetPositionAndResetMotion");
-#define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion__s1318
-/* VIEW(s1318): routine Actor_SetSpriteColor as void Actor_SetSpriteColor(struct
- * Actor *object, s32 attribute); kibombo.h has void Actor_SetSpriteColor(struct
- * KibomboObject *object, s32 value); not tried: Actor_SetSpriteColor's bound
- * declaration was not found. */
-struct Actor;
-extern void
-Actor_SetPartAttribute__s1318(struct Actor *object,
-                              s32 attribute) __asm__("Actor_SetSpriteColor");
-#define Actor_SetSpriteColor Actor_SetPartAttribute__s1318
-/* VIEW(s1318): routine Actor_WaitForMove as void Actor_WaitForMove(struct Actor
- * *actor); kibombo.h has void Actor_WaitForMove(struct KibomboObject *object);
- * not tried: Actor_WaitForMove's bound declaration was not found. */
-struct Actor;
-extern void Script_WaitForEventTimeout__s1318(struct Actor *actor) __asm__(
-    "Actor_WaitForMove");
-#define Actor_WaitForMove Script_WaitForEventTimeout__s1318
-/* VIEW(s1318): routine FieldCamera_GetActor as struct Actor
- * *FieldCamera_GetActor(void); kibombo.h has struct KibomboObject
- * *FieldCamera_GetActor(void); not tried: FieldCamera_GetActor's bound
- * declaration was not found. */
-extern struct Actor *Func_080d4568__s1318(void) __asm__("FieldCamera_GetActor");
-#define FieldCamera_GetActor Func_080d4568__s1318
 #include "field/event_inline.h"
-#undef FieldCamera_GetActor
-#undef Actor_WaitForMove
-#undef Actor_SetPositionAndResetMotion
-#undef Actor_SetSpritePriority
-#undef Import_ActorCreate
-#define Import_ActorCreate Import_ActorCreate__kibombo
-#undef Actor_SetMoveTarget
-#undef Actor_GetById
-#undef Task_Add
-extern s32 Task_Add__s1318(TaskFunc func, s32 order) __asm__("Task_Add");
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
@@ -890,7 +741,7 @@ void Func_02001318(void) {
   Event_SetMessageId(MsgBlank7);
   Event_ShowMessage(0x2007, 0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  ((struct Actor *)((s32)Func_080d4568__s1318()))->motionFlags = 0;
+  ((struct Actor *)((s32)FieldCamera_GetActor()))->motionFlags = 0;
   FieldCamera_SetSpeed(0x33333, 0x6666);
   FieldCamera_MoveTo(PIXELS(96), -1, PIXELS(340), 1);
   FieldCamera_WaitForArrival();
@@ -1234,7 +1085,7 @@ void Kibombo_DeadEndByTheStatue(void) {
   Event_SetMessageId(MsgItSADead);
   Event_ShowMessageAndWait(0x8007, 0);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
-  ((struct Actor *)((s32)Func_080d4568__s1318()))->motionFlags = done;
+  ((struct Actor *)((s32)FieldCamera_GetActor()))->motionFlags = done;
   FieldCamera_MoveTo(PIXELS(200), -1, PIXELS(180), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
@@ -1286,10 +1137,10 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_WatchAndSetScript(6, 26);
   Actor_WatchAndSetScript(7, 26);
   Event_Wait(20);
-  Actor_GetById__s1318(26)->actionFlags &= ~1;
+  Actor_GetById(26)->actionFlags &= ~1;
   Actor_WalkToAndWaitById(26, 248, 188);
   Event_Wait(1);
-  Actor_GetById__s1318(26)->actionFlags |= 1;
+  Actor_GetById(26)->actionFlags |= 1;
   Event_Wait(20);
   Actor_SetModeById(26, 7);
   Event_Wait(20);
@@ -1311,10 +1162,10 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 280, 188);
   Actor_SetModeById(26, 1);
   Event_Wait(10);
-  Actor_GetById__s1318(26)->actionFlags &= ~1;
+  Actor_GetById(26)->actionFlags &= ~1;
   Actor_WalkToAndWaitById(26, 238, 188);
   Event_Wait(1);
-  Actor_GetById__s1318(26)->actionFlags |= 1;
+  Actor_GetById(26)->actionFlags |= 1;
   FieldMessage_ShowAtActor(26, 0);
   Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 257, 0);
   Actor_FaceDirection(5, FACING_WEST, 0);
@@ -1568,9 +1419,9 @@ void Func_02002d64(void) {
 }
 
 void Func_02002de0(void) {
-  struct KibomboObject **slot = &gData_02007950;
+  struct Actor **slot = &gData_02007950;
   s32 zero = 0;
-  struct KibomboObject *object =
+  struct Actor *object =
       Import_ActorCreate(0x1e9, 0x1090000, 0x240000, 0x1580000);
 
   *slot = object;
@@ -1582,7 +1433,7 @@ void Func_02002de0(void) {
     sprite->palette = 0;
     sprite->priority = 1;
     object->motionFlags = zero;
-    object->field5c = 1;
+    object->unk5c[0] = 1;
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
     buffer = HeapSlot_Alloc(68, 0x608);
@@ -1593,7 +1444,7 @@ void Func_02002de0(void) {
 }
 
 void Func_02002e60(void) {
-  struct KibomboObject *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   if (leader->y > 0x100000) {
     Actor_SetHorizontalPositionWithTerrain(29, 0, 0);
@@ -1606,14 +1457,13 @@ void Func_02002e60(void) {
 
 void Func_02002eb0(void) {
   if (gData_02007950 != 0) {
-    struct KibomboObject *object = Actor_GetById(27);
+    struct Actor *object = Actor_GetById(27);
 
     Actor_SetPositionAndResetMotion(gData_02007950, object->x,
                                     object->y + PIXELS(12), object->z);
   }
 }
 
-#undef Import_ActorCreate
 #include "../field/field_effect/advance_motion.c"
 
 #undef DEFINE_KIBOMBO_WOBBLE
@@ -1624,8 +1474,6 @@ void Func_02002eb0(void) {
 #undef EVENT_WORK
 #undef Actor_SetPositionAndResetMotion
 #undef Actor_SetSpritePriority
-#undef Task_Add
-#undef Actor_GetById
 #undef Actor_SetMoveTarget
 #undef Import_ActorCreate
 #undef Actor_SetSpritePriority
@@ -1645,59 +1493,59 @@ void Func_02002eb0(void) {
 #include "module/scene/scene.h"
 #include "module/field/field_effect.h"
 
-void Actor_StartScript(struct KibomboObject *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 extern u32 gData_02005ca4[];
 
 void Func_02002f34(void) {
   s32 phase = gFrameCount & 3;
 
   if (phase == 0) {
-    struct KibomboObject *object =
+    struct Actor *object =
         Import_ActorCreate(0x16e, 0x1080000, 0x200000, 0x13c0000);
     s32 value;
 
     if (object != 0) {
-      object->field44 = Trig_Cos(((Random16() << 13) >> 16) + 0x3000);
-      object->field48 = 0x10000;
-      object->field4c = 0x40000 - (u16)Random16();
+      object->bounce = Trig_Cos(((Random16() << 13) >> 16) + 0x3000);
+      object->gravity = 0x10000;
+      object->unk4c = 0x40000 - (u16)Random16();
       value = (u16)Random16() + 0xffff8000;
-      object->field64 = value;
+      object->timer = value;
       object->motionFlags = 0;
       Actor_SetSpriteFlags(object, 0);
       Actor_SelectAnimation(object, 2);
       Actor_StartScript(object, gData_02005ca4);
-      object->sprite->priority = 1;
-      object->field64 = 0;
-      *(s32 *)&object->unk2c[4] = 0;
-      *(s32 *)&object->unk2c[8] = 0;
-      object->update = FieldEffect_AdvanceMotion;
+      ((struct FieldSprite *)object->sprite)->priority = 1;
+      object->timer = 0;
+      object->speedLimit = 0;
+      object->acceleration = 0;
+      object->update = (void (*)(void))FieldEffect_AdvanceMotion;
     }
   }
 }
 
-void Func_02002fec(struct KibomboObject *object) {
-  object->x += object->field64 << 8;
+void Func_02002fec(struct Actor *object) {
+  object->x += object->timer << 8;
 
   object->y += 0x8000;
 
   object->scaleX += 0x51e;
   object->scaleY += 0x51e;
-  object->field64 += 2;
-  if (--object->field68 == 0)
+  object->timer += 2;
+  if (--*(s32 *)&object->watchedObject == 0)
     Actor_Release(object);
 }
 
 void Func_02003030(void) {
   if ((gFrameCount & 63) == 0) {
-    struct KibomboObject *object =
+    struct Actor *object =
         Import_ActorCreate(0x11d, 0x580000, 0x100000, 0x13a0000);
     u8 *part;
     s32 mask;
 
     if (object != 0) {
-      object->field5c = 2;
+      object->unk5c[0] = 2;
       object->motionFlags = 0;
-      object->field64 = 0;
+      object->timer = 0;
       object->priorityFlags &= ~1;
       mask = 13;
       part = (u8 *)object->sprite;
@@ -1705,40 +1553,40 @@ void Func_02003030(void) {
       Actor_SetSpriteFlags(object, 0);
       object->scaleX = 0x8000;
       object->scaleY = 0x8000;
-      object->field68 = 60;
-      object->update = Func_02002fec;
+      *(s32 *)&object->watchedObject = 60;
+      object->update = (void (*)(void))Func_02002fec;
       Actor_SelectAnimation(object, 5);
       Actor_SetBlendMode(object, 1);
     }
   }
 }
 
-void Func_020030b8(struct KibomboObject *object) {
-  if (object->field64 != 0) {
-    object->field64--;
+void Func_020030b8(struct Actor *object) {
+  if (object->timer != 0) {
+    object->timer--;
   } else {
-    object->field64 = ((Random16() * 10) >> 16) + 10;
-    if (object->field66 != 0) {
+    object->timer = ((Random16() * 10) >> 16) + 10;
+    if (object->unk66 != 0) {
       object->scaleX = 0x18000;
-      object->field66 = 0;
+      object->unk66 = 0;
     } else {
       object->scaleX = 0xfffe8000;
-      object->field66 = 1;
+      object->unk66 = 1;
     }
   }
 }
 
 void Func_02003104(s32 x, s32 y, s32 z) {
-  struct KibomboObject *object = Import_ActorCreate(0x106, x, y, z);
+  struct Actor *object = Import_ActorCreate(0x106, x, y, z);
   struct FieldSprite *sprite;
 
   if (object != 0) {
     object->motionFlags = 0;
     object->priorityFlags &= ~1;
     object->scaleY = 0x20000;
-    object->field64 = ((Random16() * 10) >> 16) + 10;
-    object->field66 = 0;
-    object->update = Func_020030b8;
+    object->timer = ((Random16() * 10) >> 16) + 10;
+    object->unk66 = 0;
+    object->update = (void (*)(void))Func_020030b8;
     sprite = object->sprite;
     sprite->priority = 1;
     Actor_SetSpriteFlags(object, 0);
@@ -1787,7 +1635,7 @@ void Func_0200324c(void) {
 
   for (i = 0; i <= 1; i++) {
     s32 id = i + 15;
-    struct KibomboObject *object = Actor_GetById(id);
+    struct Actor *object = Actor_GetById(id);
 
     Actor_Hide(id);
     zero = 0;
@@ -1803,7 +1651,7 @@ void Func_02003288(void) {
 
   for (i = 0; i <= 1; i++) {
     s32 id = i + 26;
-    struct KibomboObject *object = Actor_GetById(id);
+    struct Actor *object = Actor_GetById(id);
 
     Actor_Hide(id);
     object->motionFlags = 0;
@@ -1837,32 +1685,7 @@ void Func_020032e0(void) {
 #include "actor.h"
 #include "field_sprite.h"
 #include "system/vector3.h"
-/* VIEW(s3308): routine Actor_SetSpriteColor as void Actor_SetSpriteColor(struct
- * Actor *object, s32 attribute); kibombo.h has void Actor_SetSpriteColor(struct
- * KibomboObject *object, s32 value); not tried: Actor_SetSpriteColor's bound
- * declaration was not found. */
-struct Actor;
-extern void
-Actor_SetPartAttribute__s3308(struct Actor *object,
-                              s32 attribute) __asm__("Actor_SetSpriteColor");
-#define Actor_SetSpriteColor Actor_SetPartAttribute__s3308
-/* VIEW(s3308): routine Actor_WaitForMove as void Actor_WaitForMove(struct Actor
- * *actor); kibombo.h has void Actor_WaitForMove(struct KibomboObject *object);
- * not tried: Actor_WaitForMove's bound declaration was not found. */
-struct Actor;
-extern void Script_WaitForEventTimeout__s3308(struct Actor *actor) __asm__(
-    "Actor_WaitForMove");
-#define Actor_WaitForMove Script_WaitForEventTimeout__s3308
-/* VIEW(s3308): routine FieldCamera_GetActor as struct Actor
- * *FieldCamera_GetActor(void); kibombo.h has struct KibomboObject
- * *FieldCamera_GetActor(void); not tried: FieldCamera_GetActor's bound
- * declaration was not found. */
-struct Actor;
-extern struct Actor *Func_080d4568__s3308(void) __asm__("FieldCamera_GetActor");
-#define FieldCamera_GetActor Func_080d4568__s3308
 #include "field/event_inline.h"
-#undef FieldCamera_GetActor
-#undef Actor_WaitForMove
 
 s32 VramCache_FreeEntry(u32 slot);
 
@@ -1976,8 +1799,8 @@ void Func_02003308(struct Actor *actor) {
 // object the overlay links.
 
 void Func_02003504(void) {
-  struct KibomboObject *center = Actor_GetById(17);
-  struct KibomboObject *spark;
+  struct Actor *center = Actor_GetById(17);
+  struct Actor *spark;
   s32 previous = 0;
   u32 i;
   u32 angle;
@@ -2003,17 +1826,17 @@ void Func_02003504(void) {
     if (spark != 0) {
       previous = Sprite_ShareVramCacheEntry(spark->sprite, previous);
       spark->motionFlags = 0;
-      spark->sprite->priority = 1;
+      ((struct FieldSprite *)spark->sprite)->priority = 1;
       Actor_SetSpriteFlags(spark, 0);
       Actor_SelectAnimation(spark, 1);
-      spark->field64 = 0;
-      spark->field4c = 0;
-      spark->field66 = angle / 360;
       spark->timer = 0;
+      spark->unk4c = 0;
+      spark->unk66 = angle / 360;
+      spark->riseCounter = 0;
       spark->targetX = center->x;
       spark->targetY = center->y + 0x180000;
       spark->targetZ = center->z;
-      spark->update = Func_02003308;
+      spark->update = (void (*)(void))Func_02003308;
     }
     angle += 0x160000;
     i++;
@@ -2103,9 +1926,16 @@ void Func_020037e4(void) {
   }
 }
 
+/* VIEW(kibombo): routine Task_Add as void Task_Add(void (*func)(void), s32
+ * order), as this routine calls it; task.h has s32 Task_Add(TaskFunc func, s32
+ * order); called through the definition's s32, 2 of 31 instructions move in
+ * every edition. */
+extern void Task_AddVoid__kibombo(void (*func)(void),
+                                  s32 order) __asm__("Task_Add");
+
 void Func_0200384c(void) {
   BattleEffect_LoadActionEffectResources(136, 1);
-  Task_Add(Func_020037e4, 0x480);
+  Task_AddVoid__kibombo(Func_020037e4, 0x480);
   FieldPsynergy_SetupActorPair(gMainRoutineWork.currentOwner, -1);
   EventObject_Initialize();
   FieldPsynergy_RunHandler(1);
@@ -2147,7 +1977,7 @@ void Kibombo_LeaveRoomFading(void) {
 
 void Func_02003948(void) {
   struct KibomboEventWork *work = Ram_HeapSlots->eventWork;
-  struct KibomboObject *leader;
+  struct Actor *leader;
   s32 x;
   s32 px;
 
@@ -2175,7 +2005,7 @@ void Func_02003948(void) {
 void Func_02003a08(s32 x, s32 z) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct KibomboEventWork *work = Ram_HeapSlots->eventWork;
-  struct KibomboObject *leader = Actor_GetById(party->currentOwner);
+  struct Actor *leader = Actor_GetById(party->currentOwner);
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2197,7 +2027,7 @@ void Func_02003a08(s32 x, s32 z) {
 #include "system/input.h"
 
 void Func_02003ac8(void) {
-  struct KibomboObject *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
 
@@ -2210,8 +2040,7 @@ void Func_02003ac8(void) {
 
 #define DEFINE_KIBOMBO_STEP_WHEN_HELD(name, n1, n2, n3, n4, n5, n6, n7)        \
   void name(void) {                                                            \
-    struct KibomboObject *leader =                                             \
-        Actor_GetById(gMainRoutineWork.currentOwner);                          \
+    struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);       \
     s32 x = leader->x >> 20;                                                   \
     s32 z = leader->z >> 20;                                                   \
                                                                                \
@@ -2319,7 +2148,7 @@ void Func_02003c84(void) {
 }
 
 void Kibombo_CeremonyBegins(void) {
-  struct KibomboObject *leader;
+  struct Actor *leader;
 
   Kibombo_CamMove(-1, -1, -1, 0);
   FieldCamera_GetActor()->motionFlags = 0;
@@ -2451,8 +2280,8 @@ void Kibombo_PresentOrbToGabomba(void) {
 }
 
 void Kibombo_GabombaNotPleased(void) {
-  struct KibomboObject **slot;
-  struct KibomboObject *object;
+  struct Actor **slot;
+  struct Actor *object;
   s32 y;
 
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
@@ -2633,8 +2462,8 @@ void Func_020045d0(void) {
 }
 
 void Kibombo_GabombaStillNotPleased(void) {
-  struct KibomboObject **slot;
-  struct KibomboObject *object;
+  struct Actor **slot;
+  struct Actor *object;
 
   Func_02004524();
   Sound_Play(161);
@@ -2697,8 +2526,8 @@ void Kibombo_GabombaResponds(void) {
   Actor_SetSpriteColor(Actor_GetById(12), 7);
   Actor_SetSpriteColor(Actor_GetById(13), 7);
   wait(8);
-  Actor_GetById(12)->update = Func_020000a0;
-  Actor_GetById(13)->update = Func_020000a0;
+  Actor_GetById(12)->update = (void (*)(void))Func_020000a0;
+  Actor_GetById(13)->update = (void (*)(void))Func_020000a0;
   Actor_ShowEmoteById(17, 0x100, 20);
   Event_SetMessageId((s32)MsgLookTheGreat);
   Event_ShowMessageThenWait(17, 0, 20);
@@ -2715,7 +2544,7 @@ void Kibombo_GabombaResponds(void) {
 }
 
 void Kibombo_GabombaRespondsToGift(void) {
-  struct KibomboObject *object;
+  struct Actor *object;
   u32 i;
 
   object = Actor_GetById(14);
@@ -2747,10 +2576,12 @@ void Kibombo_GabombaRespondsToGift(void) {
   }
   Sound_Play(0x12a);
   if (gData_02007950 != 0) {
-    gData_02007950->motionFlags = 0;
+    struct Actor *gift = gData_02007950;
+
+    gift->motionFlags = 0;
     // As a while loop, which moves the global's address out of the loop, 24
     // of 288 instructions differ in tla-en.
-    if (gData_02007950->y > 0x240000) {
+    if (gift->y > 0x240000) {
     lower:
       gData_02007950->y -= 0x8000;
       wait(1);
@@ -2817,7 +2648,7 @@ void Kibombo_GabombaRespondsToGift(void) {
 
 void Kibombo_CeremonyEnds(void) {
   struct KibomboEventWork *work;
-  struct KibomboObject *leader;
+  struct Actor *leader;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2955,27 +2786,7 @@ void Kibombo_InitializeRoom1(void) {
 // ---- games/tla/src/scene/kibombo/s516c.c ----
 // Kibombo's setup.
 #include "system/main_routine_work.h"
-/* VIEW(s516c): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
- * Actor *object, u32 flags); kibombo.h has void Actor_SetSpriteFlags(struct
- * KibomboObject *object, u32 value); not tried: Actor_SetSpriteFlags's bound
- * declaration was not found. */
-struct Actor;
-extern void
-Actor_SetSingleChildFlags__s516c(struct Actor *object,
-                                 u32 flags) __asm__("Actor_SetSpriteFlags");
-#define Actor_SetSpriteFlags Actor_SetSingleChildFlags__s516c
-/* VIEW(s516c): routine Actor_SetBlendMode as void Actor_SetBlendMode(struct
- * Actor *object, u32 value); kibombo.h has void Actor_SetBlendMode(struct
- * KibomboObject *object, s32 flags); not tried: Actor_SetBlendMode's bound
- * declaration was not found. */
-struct Actor;
-extern void
-Animation_SetStateFlags__s516c(struct Actor *object,
-                               u32 value) __asm__("Actor_SetBlendMode");
-#define Actor_SetBlendMode Animation_SetStateFlags__s516c
 #include "field/field.h"
-#undef Actor_SetBlendMode
-#undef Actor_SetSpriteFlags
 
 void *Unit_Get(s32 owner);
 
@@ -3013,7 +2824,7 @@ void Kibombo_InitializeRoom4(void) {
     actor->motionFlags = done;
     actor->y = PIXELS(42);
     actor->z += PIXELS(-42);
-    Actor_SetSingleChildFlags__s516c(Actor_GetById(11), 0);
+    Actor_SetSpriteFlags(Actor_GetById(11), 0);
     Actor_SetSpritePriority(11, 1);
     if (gMainRoutineWork.entrance == 19 && GameFlag_Get(7)) {
       unit = Unit_Get(7);
@@ -3050,12 +2861,12 @@ void Kibombo_InitializeRoom4(void) {
   gData_02007948[2] = *(u16 *)&BG_PLTT_COLOR(6, 7);
   gData_02007948[3] = *(u16 *)&BG_PLTT_COLOR(7, 7);
   Func_020050ac();
-  Actor_SetSingleChildFlags__s516c(Actor_GetById(30), 0);
-  Actor_SetSingleChildFlags__s516c(Actor_GetById(31), 0);
-  Actor_SetSingleChildFlags__s516c(Actor_GetById(32), 0);
-  Actor_SetSingleChildFlags__s516c(Actor_GetById(33), 0);
-  Actor_SetSingleChildFlags__s516c(Actor_GetById(34), 0);
-  Actor_SetSingleChildFlags__s516c(Actor_GetById(35), 0);
+  Actor_SetSpriteFlags(Actor_GetById(30), 0);
+  Actor_SetSpriteFlags(Actor_GetById(31), 0);
+  Actor_SetSpriteFlags(Actor_GetById(32), 0);
+  Actor_SetSpriteFlags(Actor_GetById(33), 0);
+  Actor_SetSpriteFlags(Actor_GetById(34), 0);
+  Actor_SetSpriteFlags(Actor_GetById(35), 0);
   GameFlag_Set(0x209);
   actor = Actor_GetById(29);
   actor->motionFlags = 0;
@@ -3211,7 +3022,7 @@ void Kibombo_InitializeRoom5(void) {
   Event_WaitTransitionFrames();
   Task_Add(Func_02002ccc, 0x480);
   for (i = 0; i <= 7; i++) {
-    u8 *field = &Actor_GetById(i + 18)->field5c;
+    u8 *field = &Actor_GetById(i + 18)->unk5c[0];
     s32 value = 2;
 
     *field = value;
@@ -3274,7 +3085,7 @@ void Kibombo_InitializeRoom6(void) {
 void Actor_FallOverById(s32 actor, s32 angle);
 
 void Kibombo_InitializeRoom3(void) {
-  struct KibomboObject *object;
+  struct Actor *object;
 
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Func_02003288();
@@ -3303,7 +3114,7 @@ void Kibombo_InitializeRoom3(void) {
 #endif
   Actor_FallOverById(16, 0);
   object = Actor_GetById(16);
-  object->sprite->rotation = 0;
+  ((struct FieldSprite *)object->sprite)->rotation = 0;
   object->scaleX = Q16_ONE;
   object->scaleY = Q16_ONE;
   object->x += PIXELS(14);
@@ -4064,8 +3875,6 @@ struct Trigger gKibombo_Room3Triggers[] = {
 #undef Actor_SetBlendMode
 #undef Actor_SetPositionAndResetMotion
 #undef Actor_SetSpritePriority
-#undef Task_Add
-#undef Actor_GetById
 #undef Actor_SetMoveTarget
 #undef Import_ActorCreate
 #undef Actor_SetSpritePriority

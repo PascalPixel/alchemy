@@ -80,7 +80,7 @@ struct Actor {
   /// The parameter its action script reads (a follow distance or an angle to
   /// face).
   s16 timer;
-  u16 unk66;
+  s16 unk66;
   /// The object its action script follows or faces.
   struct Actor *watchedObject;
   void (*update)(void); ///< the object's per-frame hook

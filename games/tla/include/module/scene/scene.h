@@ -193,13 +193,15 @@ struct AnkohlRuinsSpriteWork {
   struct AnkohlRuinsSprite sprites[8];
 };
 
-struct AnkohlRuinsWaterRow {
+/// A block of cells the sand fills in Ankohl Ruins once its level reaches
+/// `level`: `width` by `height` cells from (`x`, `z`).
+struct AnkohlRuinsSandRow {
   u8 level;
   u8 width;
   u8 height;
   u8 x;
   u8 z;
-  u8 unk05[3];
+  u8 unused[3];
 };
 
 struct ActorTail {
@@ -339,24 +341,9 @@ struct ContigoEventWork {
   s32 value1ac;
 };
 
-struct DailaActor {
-  u8 unk00[6];
-  u16 facing;
-};
-
 struct DailaEventWork {
   u8 unk000[0x1c4];
   s16 message;
-};
-
-struct DailaStartActor {
-  u8 unk00[0x18];
-  s32 speed18;
-  s32 speed1c;
-  u8 unk20[3];
-  u8 priorityFlags;
-  u8 unk24[0x35];
-  u8 collisionFlags;
 };
 
 struct DailaMapWork {
@@ -503,12 +490,6 @@ struct GabombaStatueChamberMapWork {
   struct GabombaStatueChamberLayer layers[3];
 };
 
-struct GarohPicture {
-  const void *data;
-  u16 a;
-  u16 b;
-};
-
 struct GarohEventWork {
   u8 unk000[0xca4];
   s8 fadeLock;
@@ -539,11 +520,6 @@ struct FadePalette {
 struct IsletCaveEventWork {
   u8 unk000[0x1ac];
   s32 value1ac;
-};
-
-struct IsletCaveEntry {
-  s32 value;
-  u16 position[2];
 };
 
 struct TrapEntry {
@@ -1225,8 +1201,6 @@ void Func_02001e80(s32 value);
 
 // The cell stampers keep their last cell and the block they copy.
 
-void Func_02004c98(struct Actor *object, s32 a);
-
 extern char SceneId_Ov6ACRoom3;
 
 extern char SceneId_Ov6aaRoom1;
@@ -1237,14 +1211,10 @@ extern char SceneId_Ov6aaRoom5;
 extern char SceneId_Ov6aaRoom6;
 extern char SceneId_Ov6aaRoom7;
 
-void Func_02004bc0(struct Actor *object, s32 value);
-
 extern char SceneId_Ov6adRoom1;
 extern char SceneId_Ov6adRoom2;
 extern char SceneId_Ov6adRoom3;
 extern char SceneId_Ov6adRoom4;
-
-void Func_02005480(struct Actor *object, s32 mode);
 
 extern char SceneId_Ov6ACRoom6;
 extern char SceneId_Ov6ACRoom1;
@@ -1268,8 +1238,6 @@ extern char SceneId_SuhallaGate1;
 
 extern char SceneId_Ov650;
 extern char ResourceId_FarCall00B;
-
-extern u8 gData_02006c08[];
 
 extern char SceneId_Ov676Room1;
 extern char SceneId_Ov676Room2;

@@ -34,8 +34,6 @@
 #include "module/system/system.h"
 #include "resource_ids.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 extern s16 gTitleVramBlock;
 
 void Credits_Run(s32 value);
@@ -65,7 +63,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 /* VIEW(title): tag struct TitleSprite as struct TitleSprite__title;
  * module/tla.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/scene/title.c:183: invalid use of undefined type `struct
+ * games/tla/src/scene/title.c:194: invalid use of undefined type `struct
  * TitleSprite'. */
 struct TitleSprite__title {
   u32 attr[3];

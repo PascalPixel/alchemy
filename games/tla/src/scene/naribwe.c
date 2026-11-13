@@ -4,6 +4,7 @@
 /// shows the stone that hides the Unicorn Ring.
 
 #include "types.h"
+#include "text/msg_ids.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
@@ -30,70 +31,18 @@ void Shop_Run(s32 a, s32 b);
 void Sanctum_Run(s32 a);
 void Naribwe_HideStone(void);
 
-/* VIEW(first): routine gNaribwe_Placements as this part declared it; the joined
- * file has another. */
-extern const u8 gNaribwe_Placements__first[] __asm__("gNaribwe_Placements");
-#define gNaribwe_Placements gNaribwe_Placements__first
-/* VIEW(first): routine gNaribwe_Entrance10Placements as this part declared it;
- * the joined file has another. */
-extern const u8 gNaribwe_Entrance10Placements__first[] __asm__(
-    "gNaribwe_Entrance10Placements");
-#define gNaribwe_Entrance10Placements gNaribwe_Entrance10Placements__first
-/* VIEW(first): routine gNaribwe_PlacementsOnReturn as this part declared it;
- * the joined file has another. */
-extern const u8
-    gNaribwe_PlacementsOnReturn__first[] __asm__("gNaribwe_PlacementsOnReturn");
-#define gNaribwe_PlacementsOnReturn gNaribwe_PlacementsOnReturn__first
-/* VIEW(first): routine gNaribwe_Triggers as this part declared it; the joined
- * file has another. */
-extern const u8 gNaribwe_Triggers__first[] __asm__("gNaribwe_Triggers");
-#define gNaribwe_Triggers gNaribwe_Triggers__first
-/* VIEW(first): routine gNaribwe_TriggersOnReturn as this part declared it; the
- * joined file has another. */
-extern const u8
-    gNaribwe_TriggersOnReturn__first[] __asm__("gNaribwe_TriggersOnReturn");
-#define gNaribwe_TriggersOnReturn gNaribwe_TriggersOnReturn__first
+extern struct ActorPlacement gNaribwe_Placements[];
+extern struct ActorPlacement gNaribwe_Entrance10Placements[];
+extern struct ActorPlacement gNaribwe_PlacementsOnReturn[];
+extern struct Trigger gNaribwe_Triggers[];
+extern struct Trigger gNaribwe_TriggersOnReturn[];
 /* VIEW(first): routine gNaribwe_Doors as this part declared it; the joined file
- * has another. */
+ * has another; tried as the one declaration extern const struct WarpEntry
+ * gNaribwe_Doors[], it does not compile in tla-ja:
+ * games/tla/src/scene/naribwe.c:211: `gNaribwe_Doors' undeclared (first use in
+ * this function). */
 extern const struct WarpEntry gNaribwe_Doors__first[] __asm__("gNaribwe_Doors");
 #define gNaribwe_Doors gNaribwe_Doors__first
-
-/* VIEW(first): routine MsgNaribwe02 as this part declared it; the joined file
- * has another. */
-extern u8 MsgNaribwe02__first __asm__("MsgNaribwe02");
-#define MsgNaribwe02 MsgNaribwe02__first
-/* VIEW(first): routine MsgNaribwe03 as this part declared it; the joined file
- * has another. */
-extern u8 MsgNaribwe03__first __asm__("MsgNaribwe03");
-#define MsgNaribwe03 MsgNaribwe03__first
-/* VIEW(first): routine MsgNaribwe07 as this part declared it; the joined file
- * has another. */
-extern u8 MsgNaribwe07__first __asm__("MsgNaribwe07");
-#define MsgNaribwe07 MsgNaribwe07__first
-/* VIEW(first): routine MsgNaribwe08 as this part declared it; the joined file
- * has another. */
-extern u8 MsgNaribwe08__first __asm__("MsgNaribwe08");
-#define MsgNaribwe08 MsgNaribwe08__first
-/* VIEW(first): routine MsgNaribwe09 as this part declared it; the joined file
- * has another. */
-extern u8 MsgNaribwe09__first __asm__("MsgNaribwe09");
-#define MsgNaribwe09 MsgNaribwe09__first
-/* VIEW(first): routine MsgNaribwe21 as this part declared it; the joined file
- * has another. */
-extern u8 MsgNaribwe21__first __asm__("MsgNaribwe21");
-#define MsgNaribwe21 MsgNaribwe21__first
-/* VIEW(first): routine MsgNaribwe43 as this part declared it; the joined file
- * has another. */
-extern u8 MsgNaribwe43__first __asm__("MsgNaribwe43");
-#define MsgNaribwe43 MsgNaribwe43__first
-/* VIEW(first): routine MsgNaribwe23 as this part declared it; the joined file
- * has another. */
-extern u8 MsgNaribwe23__first __asm__("MsgNaribwe23");
-#define MsgNaribwe23 MsgNaribwe23__first
-/* VIEW(first): routine MsgNaribwe45 as this part declared it; the joined file
- * has another. */
-extern u8 MsgNaribwe45__first __asm__("MsgNaribwe45");
-#define MsgNaribwe45 MsgNaribwe45__first
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -121,7 +70,7 @@ void Naribwe_PrepareBlaze(void) {
     *flag = 0;
 }
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (Event_GetFlag(0x8ff))
     return gNaribwe_TriggersOnReturn;
   return gNaribwe_Triggers;
@@ -134,7 +83,7 @@ void Naribwe_AskAboutKibomboExpedition(void) {
   s32 msg;
 
   if (Event_GetFlag(0x85d) == 0) {
-    msg = (s32)&MsgNaribwe02;
+    msg = (s32)MsgNaribwe02;
     Event_SetMessageId(msg);
     Event_OpenMessage(14, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
@@ -145,7 +94,7 @@ void Naribwe_AskAboutKibomboExpedition(void) {
     }
     Event_ShowMessage(14, 0);
   } else {
-    Event_SetMessageId((s32)&MsgNaribwe03);
+    Event_SetMessageId((s32)MsgNaribwe03);
     Event_ShowMessage(14, 0);
   }
 }
@@ -155,7 +104,7 @@ void Naribwe_AskWhereFrom(void) {
   s32 msg;
 
   if (Event_GetFlag(0x85e) == 0) {
-    msg = (s32)&MsgNaribwe07;
+    msg = (s32)MsgNaribwe07;
     Event_SetMessageId(msg);
     Event_OpenMessage(18, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
@@ -166,14 +115,14 @@ void Naribwe_AskWhereFrom(void) {
     }
     Event_ShowMessage(18, 0);
   } else {
-    Event_SetMessageId((s32)&MsgNaribwe08);
+    Event_SetMessageId((s32)MsgNaribwe08);
     Event_ShowMessage(14, 0);
   }
 }
 
 /// "You don't plan on going to Kibombo, do you, mister?"
 void Naribwe_AskGoingToKibombo(void) {
-  s32 msg = (s32)&MsgNaribwe09;
+  s32 msg = (s32)MsgNaribwe09;
 
   Event_SetMessageId(msg);
   Event_OpenMessage(19, 0);
@@ -197,7 +146,7 @@ void Naribwe_PraiseFortuneTeller(s32 actor) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)&MsgNaribwe21);
+  Event_SetMessageId((s32)MsgNaribwe21);
   Event_ShowMessage(actor, 0);
   Event_End();
 }
@@ -210,7 +159,7 @@ void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)&MsgNaribwe43);
+  Event_SetMessageId((s32)MsgNaribwe43);
   Event_ShowMessage(actor, 0);
   Event_End();
 }
@@ -225,7 +174,7 @@ void Naribwe_TalkToPilgrim(s32 actor) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)&MsgNaribwe23);
+  Event_SetMessageId((s32)MsgNaribwe23);
   Event_ShowMessage(26, 0);
   Event_End();
 }
@@ -238,7 +187,7 @@ void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)&MsgNaribwe45);
+  Event_SetMessageId((s32)MsgNaribwe45);
   Event_ShowMessage(26, 0);
   Event_End();
 }
@@ -327,27 +276,11 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#undef gNaribwe_Placements
-#undef gNaribwe_Entrance10Placements
-#undef gNaribwe_PlacementsOnReturn
-#undef gNaribwe_Triggers
-#undef gNaribwe_TriggersOnReturn
 #undef gNaribwe_Doors
-#undef MsgNaribwe02
-#undef MsgNaribwe03
-#undef MsgNaribwe07
-#undef MsgNaribwe08
-#undef MsgNaribwe09
-#undef MsgNaribwe21
-#undef MsgNaribwe43
-#undef MsgNaribwe23
-#undef MsgNaribwe45
 // @file
 // Naribwe's data: its scripts, door, placements and triggers.
 
 #include "text/msg_ids.h"
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 void Naribwe_PrepareBlaze(void);
 void Naribwe_AskAboutKibomboExpedition(void);
@@ -368,26 +301,6 @@ extern u32 gNaribwe_FlameRises[];
 extern u32 gNaribwe_IvyAnimation[];
 extern s16 gNaribwe_DoorOpening[];
 
-/* VIEW(data): routine Naribwe_PraiseFortuneTeller as this part declared it; the
- * joined file has another. */
-void Naribwe_PraiseFortuneTeller__data(void) __asm__(
-    "Naribwe_PraiseFortuneTeller");
-#define Naribwe_PraiseFortuneTeller Naribwe_PraiseFortuneTeller__data
-/* VIEW(data): routine Naribwe_PraiseFortuneTellerOnReturn as this part declared
- * it; the joined file has another. */
-void Naribwe_PraiseFortuneTellerOnReturn__data(void) __asm__(
-    "Naribwe_PraiseFortuneTellerOnReturn");
-#define Naribwe_PraiseFortuneTellerOnReturn                                    \
-  Naribwe_PraiseFortuneTellerOnReturn__data
-/* VIEW(data): routine Naribwe_TalkToPilgrim as this part declared it; the
- * joined file has another. */
-void Naribwe_TalkToPilgrim__data(void) __asm__("Naribwe_TalkToPilgrim");
-#define Naribwe_TalkToPilgrim Naribwe_TalkToPilgrim__data
-/* VIEW(data): routine Naribwe_TalkToPilgrimOnReturn as this part declared it;
- * the joined file has another. */
-void Naribwe_TalkToPilgrimOnReturn__data(void) __asm__(
-    "Naribwe_TalkToPilgrimOnReturn");
-#define Naribwe_TalkToPilgrimOnReturn Naribwe_TalkToPilgrimOnReturn__data
 void Naribwe_HideStone(void);
 
 // The village's placements, the same before and after the return with Piers.
@@ -594,7 +507,4 @@ struct Trigger gNaribwe_TriggersOnReturn[] = {
      CONDITION_ALWAYS, EVENT(Naribwe_HideStone)},
     {TRIGGER_TABLE_END},
 };
-#undef Naribwe_PraiseFortuneTeller
 #undef Naribwe_PraiseFortuneTellerOnReturn
-#undef Naribwe_TalkToPilgrim
-#undef Naribwe_TalkToPilgrimOnReturn

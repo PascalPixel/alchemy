@@ -26,8 +26,6 @@
 #include "version.h"
 #include "text/msg_ids.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 extern u32 gShamanVillageCave_GladiatorLeaves[];
 
 extern s32 gShamanVillageCave_GladiatorFollowsOut[];

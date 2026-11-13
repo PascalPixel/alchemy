@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x6a3, in ROM order.
-
 #include "shared/whirlwind.h"
 #include "shared/jupiter_lighthouse.h"
 #include "shared/actors.h"
@@ -57,8 +55,6 @@ void Leader_CenterInCell(void);
 #include "module/field/field_effect.h"
 #include "objcmd.h"
 #include "macros.h"
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 struct CellTarget;
 struct CellTargetEntry;
@@ -152,23 +148,11 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 extern s32 gWhirlwindRiding;
 
-/* VIEW(jupiter_lighthouse_room_m): routine Whirlwind_SpawnUpper as void
- * Whirlwind_SpawnUpper(); scene/jupiter_lighthouse_room_m/s3474 has
- * DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper,
- * Import_ActorSelectAnimation, Whirlwind_Update__s3474, FieldEffect_Spawn)
- * DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, FieldEffect_Spawn)
- * DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
- * JupiterLighthouse_PlaceRaisedActors) extern s16 gLightSpritesLarge; tried as
- * the one declaration struct GustObject *Whirlwind_SpawnUpper(), it does not
- * compile in tla-ja (make modern): games/tla/include/field/field.h:25:41: note:
- * expected 'struct Actor *' but argument is of type 's32' {aka 'int'}. */
-void Whirlwind_SpawnUpper__jupiter_lighthouse_room_m() __asm__(
-    "Whirlwind_SpawnUpper");
-#define Whirlwind_SpawnUpper Whirlwind_SpawnUpper__jupiter_lighthouse_room_m
+struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source);
 
 void Func_02000060(void) {
   if (gWhirlwindRiding == 0) {
-    Whirlwind_SpawnUpper(Actor_Get(24));
+    Whirlwind_SpawnUpper((struct GustObject *)Actor_Get(24));
     gWhirlwindRiding = 1;
   }
 }
@@ -183,32 +167,13 @@ void Func_02000080(void) {
       party->renderMode = 12;
       WORD_AT(object, 48) = 0;
       WORD_AT(object, 52) = 0;
-      Whirlwind_SpawnUpper(Actor_Get(25));
+      Whirlwind_SpawnUpper((struct GustObject *)Actor_Get(25));
       gWhirlwindRiding = 1;
     }
   }
 }
 
-/* VIEW(jupiter_lighthouse_room_m): variable gBgScroll as s16 gBgScroll[];
- * bg_scroll.h has struct BgScroll gBgScroll[]; tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:125: incompatible types in
- * assignment. */
-extern s16 gBgScroll__jupiter_lighthouse_room_m[] __asm__("gBgScroll");
-
-/* VIEW(jupiter_lighthouse_room_m): routine Actor_EmitRisingSparks as void
- * Actor_EmitRisingSparks(void); scene/jupiter_lighthouse_room_m/s3474 has
- * DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, FieldEffect_Spawn)
- * DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
- * JupiterLighthouse_PlaceRaisedActors) extern s16 gLightSpritesLarge; tried as
- * the definition's DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn,
- * Actor_SelectAnimation, Whirlwind_Update, FieldEffect_Spawn) UNUSED s32
- * Actor_EmitRisingSparks(struct..., it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:141: `Actor_EmitRisingSparks'
- * undeclared (first use in this function). */
-void Actor_EmitRisingSparks__jupiter_lighthouse_room_m(void) __asm__(
-    "Actor_EmitRisingSparks");
-#define Actor_EmitRisingSparks Actor_EmitRisingSparks__jupiter_lighthouse_room_m
+s32 Actor_EmitRisingSparks(struct Actor *object);
 
 void Func_020000c4(void) {
 
@@ -243,8 +208,8 @@ void Func_020000c4(void) {
   Heap_Release(buffer);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f41;
-  gBgScroll__jupiter_lighthouse_room_m[0] = -104;
-  gBgScroll__jupiter_lighthouse_room_m[1] = 16;
+  gBgScroll[0].x = -104;
+  gBgScroll[0].y = 16;
   System_Wait(30);
   PaletteFade_ApplySource(0x10003, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);
@@ -279,29 +244,23 @@ void Func_020000c4(void) {
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
   REG_DISPCNT |= 0x100;
-  gBgScroll__jupiter_lighthouse_room_m[0] = 0;
-  gBgScroll__jupiter_lighthouse_room_m[1] = 0;
+  gBgScroll[0].x = 0;
+  gBgScroll[0].y = 0;
   System_Wait(1);
   gCpuLoadDisplayEnabled = 1;
   MapGrid_SetShake(0, 0, 0);
 }
 
-/* VIEW(jupiter_lighthouse_room_m): routine MapGrid_SetCellHeight as void
- * MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
- * module/scene/eastern_alhafra.h has void MapGrid_SetCellHeight(struct Actor
- * *object); not tried: MapGrid_SetCellHeight's bound declaration was not found.
- */
-extern void Func_02004774__jupiter_lighthouse_room_m(
-    s32 x, s32 z, s32 a, s32 b) __asm__("MapGrid_SetCellHeight");
+extern void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 
 void Func_0200039c(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Call4(Func_02004774__jupiter_lighthouse_room_m, object->x, object->z, 0, -8);
+  Call4(MapGrid_SetCellHeight, object->x, object->z, 0, -8);
 }
 
 static __inline__ void Func_02004774_(s32 x, s32 z, s32 a, s32 b) {
-  Func_02004774__jupiter_lighthouse_room_m(x, z, a, b);
+  MapGrid_SetCellHeight(x, z, a, b);
 }
 
 static __inline__ void Func_020048b4_(s32 id, s32 angle) {
@@ -599,22 +558,10 @@ s32 Func_02000b38(u8 *object) {
   return 0;
 }
 
-/* VIEW(first): routine gData_0200558c as this part declared it; the joined file
- * has another. */
-extern u32 gData_0200558c__first[] __asm__("gData_0200558c");
-#define gData_0200558c gData_0200558c__first
-/* VIEW(first): routine gData_020055ec as this part declared it; the joined file
- * has another. */
-extern u32 gData_020055ec__first[] __asm__("gData_020055ec");
-#define gData_020055ec gData_020055ec__first
-/* VIEW(first): routine gData_02005644 as this part declared it; the joined file
- * has another. */
-extern u32 gData_02005644__first[] __asm__("gData_02005644");
-#define gData_02005644 gData_02005644__first
-/* VIEW(first): routine gData_0200569c as this part declared it; the joined file
- * has another. */
-extern u32 gData_0200569c__first[] __asm__("gData_0200569c");
-#define gData_0200569c gData_0200569c__first
+extern u32 gData_0200558c[];
+extern u32 gData_020055ec[];
+extern u32 gData_02005644[];
+extern u32 gData_0200569c[];
 
 /// Places an actor at (x, z), in pixels, facing a direction.
 #define PLACE(id, x, z, facing)                                                \
@@ -659,16 +606,10 @@ void Func_02000c08(void) {
 }
 
 extern u32 gData_02005748[];
-/* VIEW(first): routine gData_0200578c as this part declared it; the joined file
- * has another. */
-extern u32 gData_0200578c__first[] __asm__("gData_0200578c");
-#define gData_0200578c gData_0200578c__first
+extern u32 gData_0200578c[];
 extern u32 gData_02005860[];
 extern u32 gData_02005890[];
-/* VIEW(first): routine gData_02005950 as this part declared it; the joined file
- * has another. */
-extern u32 gData_02005950__first[] __asm__("gData_02005950");
-#define gData_02005950 gData_02005950__first
+extern u32 gData_02005950[];
 extern u32 gData_020049dc[];
 
 static __inline__ struct Actor *I_Func_020048cc(s32 actor, s32 emote,
@@ -1754,27 +1695,20 @@ s32 Scene_PrepareMap(void) {
     /* FAKEMATCH(barrier): the last call's zero is built before the position
      * loads; as a plain 0 argument, 2 of 62 instructions differ in tla-en. */
     __asm__("" : : "r"(zero));
-    Func_02004774__jupiter_lighthouse_room_m(object->x, object->z, zero, -6);
+    MapGrid_SetCellHeight(object->x, object->z, zero, -6);
   }
   return 0;
 }
 
 #include "shared/scene_set_arrival_flags.c"
 
-/* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
- * the joined file has another. */
-extern s32
-    gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
-#define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
+extern s32 gPaletteCyclePausesInEvents;
 
 void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
 }
 
-/* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
- * file has another. */
-extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
-#define gPaletteCycleFrame gPaletteCycleFrame__first
+extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
@@ -1790,18 +1724,14 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         PaletteCycle_Step,
                                         gPaletteCycleUnlitColors)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell,
-                             Func_02004774__jupiter_lighthouse_room_m,
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
                              MapGrid_SetAttributeBAt)
 
 DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-/* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined
- * file has another. */
-extern const s32 gWhirlwindEndScript__first[] __asm__("gWhirlwindEndScript");
-#define gWhirlwindEndScript gWhirlwindEndScript__first
+extern s32 gWhirlwindEndScript[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
@@ -1809,20 +1739,11 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
                         Position_FlatDistance, gWhirlwindEndScript,
                         gWhirlwindRiding)
 
-#undef Whirlwind_SpawnUpper
-#undef Actor_EmitRisingSparks
-// ---- scene/jupiter_lighthouse_room_m/s3474.c ----
-
-/// Scene code of overlay 0x6a3, in ROM order.
-
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Whirlwind_Update(struct Actor *self);
-/* VIEW(s3474): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another. */
-void FieldEffect_Spawn__s3474(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__s3474
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Import_ActorSelectAnimation,
                              Whirlwind_Update, FieldEffect_Spawn)
@@ -1876,28 +1797,9 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef PLACE
 #undef EVENT_WORK
 #undef ACTOR_SET_MODE_AND_WAIT
-#undef Whirlwind_SpawnUpper
-#undef Actor_EmitRisingSparks
-#undef gData_0200558c
-#undef gData_020055ec
-#undef gData_02005644
-#undef gData_0200569c
-#undef gData_0200578c
-#undef gData_02005950
-#undef gPaletteCyclePausesInEvents
-#undef gPaletteCycleFrame
-#undef gWhirlwindEndScript
-#undef FieldEffect_Spawn
 // @file
-// Scene code of overlay 0x6a3, in ROM order.
-
 extern const s32 *gFieldEffect_DurationScripts[];
 
-/* VIEW(s3b7c): routine Actor_StartScript as this part declared it; the joined
- * file has another. */
-void Actor_StartScript__s3b7c(struct FieldEffect *effect,
-                              const s32 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__s3b7c
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -1987,10 +1889,6 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
-// ---- scene/jupiter_lighthouse_room_m/s41ac.c ----
-
-// Scene code of overlay 0x6a3, in ROM order.
-
 struct CellTargetEntry;
 
 /* VIEW(s41ac): tag struct CellTarget as struct CellTarget__s41ac; cell_target.h
@@ -2014,8 +1912,8 @@ struct CellTarget__s41ac {
  * CellTarget *table, struct CellTargetEntry *entry); tried as the definition's
  * DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell) void
  * CrackedTile_Fall(struct PushEvent *event), it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m/s3b7c.c:146: conflicting types
- * for `CrackedTile_Fall'. */
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:1908: conflicting types for
+ * `CrackedTile_Fall'. */
 void CrackedTile_Fall__s41ac(
     struct CellTarget__s41ac *table,
     struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
@@ -2033,14 +1931,9 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s41ac,
 #undef Actor_StartScript
 #undef CrackedTile_Fall
 // @file
-// Scene code of overlay 0x6a3, in ROM order.
-
-/* VIEW(s4344): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another. */
-void FieldEffect_Spawn__s4344(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__s4344
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   FieldCamera_MoveWithinMapBounds(x, y, z, mode);
@@ -2123,33 +2016,6 @@ DEFINE_G_DATA_02004AB4(gData_02004ae8, 679)
 
 DEFINE_G_DATA_02004AB4(gData_02004b1c, 659)
 // clang-format on
-
-#undef FieldEffect_Spawn
-
-/* VIEW(data): routine Func_02000038 as this part declared it; the joined file
- * has another. */
-void Func_02000038__data(void) __asm__("Func_02000038");
-#define Func_02000038 Func_02000038__data
-/* VIEW(data): routine Func_0200039c as this part declared it; the joined file
- * has another. */
-void Func_0200039c__data(void) __asm__("Func_0200039c");
-#define Func_0200039c Func_0200039c__data
-/* VIEW(data): routine Func_020003b8 as this part declared it; the joined file
- * has another. */
-void Func_020003b8__data(void) __asm__("Func_020003b8");
-#define Func_020003b8 Func_020003b8__data
-/* VIEW(data): routine Func_02000970 as this part declared it; the joined file
- * has another. */
-void Func_02000970__data(void) __asm__("Func_02000970");
-#define Func_02000970 Func_02000970__data
-/* VIEW(data): routine Func_02000ad0 as this part declared it; the joined file
- * has another. */
-void Func_02000ad0__data(void) __asm__("Func_02000ad0");
-#define Func_02000ad0 Func_02000ad0__data
-/* VIEW(data): routine Func_02000b38 as this part declared it; the joined file
- * has another. */
-void Func_02000b38__data(void) __asm__("Func_02000b38");
-#define Func_02000b38 Func_02000b38__data
 
 extern u32 gFieldEffect_LongScript[];
 extern s32 gData_02005078[];
@@ -2258,7 +2124,7 @@ LATE_DATA u32 gData_02005548[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-LATE_DATA s32 gData_0200558c[] = {
+LATE_DATA u32 gData_0200558c[] = {
     SC_ARG(2),
     SC_CALL(Func_02000b38),
     SC_SYNC,
@@ -2272,7 +2138,7 @@ LATE_DATA s32 gData_0200558c[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-LATE_DATA s32 gData_020055ec[] = {
+LATE_DATA u32 gData_020055ec[] = {
     SC_ARG(2),
     SC_CALL(Func_02000b38),
     SC_SYNC,
@@ -2285,7 +2151,7 @@ LATE_DATA s32 gData_020055ec[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-LATE_DATA s32 gData_02005644[] = {
+LATE_DATA u32 gData_02005644[] = {
     SC_CALL(Func_02000b38),
     SC_MOVE_XZ(PIXELS(731), PIXELS(213)),
     SC_ARG(2),
@@ -2298,7 +2164,7 @@ LATE_DATA s32 gData_02005644[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-LATE_DATA s32 gData_0200569c[] = {
+LATE_DATA u32 gData_0200569c[] = {
     SC_ARG(2),
     SC_CALL(Func_02000b38),
     SC_MOVE_XZ(PIXELS(731), PIXELS(232)),
@@ -2323,7 +2189,7 @@ LATE_DATA u32 gData_02005748[] = {
     SC_END,
 };
 
-LATE_DATA s32 gData_0200578c[] = {
+LATE_DATA u32 gData_0200578c[] = {
     SC_ARG(5),
     SC_MOVE_BY(PIXELS(-8), 0, PIXELS(32)),
     SC_SYNC,
@@ -2368,7 +2234,7 @@ LATE_DATA u32 gData_020058d8[] = {
 
 LATE_DATA DEFINE_G_DATA_020057D0(gData_02005920, 5, 708, 328)
 
-LATE_DATA s32 gData_02005950[] = {
+LATE_DATA u32 gData_02005950[] = {
     SC_ARG(5),
     SC_MOVE_BY(PIXELS(-8), 0, 0),
     SC_SYNC,
@@ -2405,15 +2271,11 @@ LATE_DATA u32 gData_02005a00[] = {
     SC_FREE,
 };
 
-LATE_DATA s32 gPaletteCycleFrame[] = {
-    -1,
-};
+LATE_DATA s32 gPaletteCycleFrame = -1;
 
-LATE_DATA u32 gPaletteCyclePausesInEvents[] = {
-    1,
-};
+LATE_DATA s32 gPaletteCyclePausesInEvents = 1;
 
-LATE_DATA u32 gWhirlwindEndScript[] = {
+LATE_DATA s32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on
@@ -2423,9 +2285,3 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,
 };
-#undef Func_02000038
-#undef Func_0200039c
-#undef Func_020003b8
-#undef Func_02000970
-#undef Func_02000ad0
-#undef Func_02000b38

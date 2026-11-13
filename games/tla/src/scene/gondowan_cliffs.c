@@ -48,16 +48,8 @@
 #include "graphics/vram_tab.h"
 #include "macros.h"
 
-/* VIEW(first): routine gGondowanCliffs_Entrances as this part declared it; the
- * joined file has another. */
-extern const u8
-    gGondowanCliffs_Entrances__first[] __asm__("gGondowanCliffs_Entrances");
-#define gGondowanCliffs_Entrances gGondowanCliffs_Entrances__first
-/* VIEW(first): routine gGondowanCliffs_PassEntrances as this part declared it;
- * the joined file has another. */
-extern const u8 gGondowanCliffs_PassEntrances__first[] __asm__(
-    "gGondowanCliffs_PassEntrances");
-#define gGondowanCliffs_PassEntrances gGondowanCliffs_PassEntrances__first
+extern s16 gGondowanCliffs_Entrances[];
+extern struct ActorPlacement gGondowanCliffs_PassEntrances[];
 
 DEFINE_TILE_SPRITE_RESET(TileSprite_Reset)
 
@@ -73,19 +65,10 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(first): routine gGondowanCliffs_ActorPlacements as this part declared
- * it; the joined file has another. */
-extern const u8 gGondowanCliffs_ActorPlacements__first[] __asm__(
-    "gGondowanCliffs_ActorPlacements");
-#define gGondowanCliffs_ActorPlacements gGondowanCliffs_ActorPlacements__first
-/* VIEW(first): routine gGondowanCliffs_PassActorPlacements as this part
- * declared it; the joined file has another. */
-extern const u8 gGondowanCliffs_PassActorPlacements__first[] __asm__(
-    "gGondowanCliffs_PassActorPlacements");
-#define gGondowanCliffs_PassActorPlacements                                    \
-  gGondowanCliffs_PassActorPlacements__first
+extern struct ActorPlacement gGondowanCliffs_ActorPlacements[];
+extern struct ActorPlacement gGondowanCliffs_PassActorPlacements[];
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_GondowanCliffsPass)
     return gGondowanCliffs_PassActorPlacements;
   return gGondowanCliffs_ActorPlacements;
@@ -107,9 +90,6 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 
 #include "../field/field_effect/move.c"
 
-#undef gGondowanCliffs_Entrances
-#undef gGondowanCliffs_PassEntrances
-#undef gGondowanCliffs_ActorPlacements
 #undef gGondowanCliffs_PassActorPlacements
 // @file
 // The Gondowan Cliffs' events and set-up, and the geysers Scoop digs up out of
@@ -302,23 +282,15 @@ void GondowanCliffs_TalkToDog(void) {
   }
 }
 
-/* VIEW(effect_spawn): routine gGondowanCliffs_PassTriggers as this part
- * declared it; the joined file has another. */
-extern const u8 gGondowanCliffs_PassTriggers__effect_spawn[] __asm__(
-    "gGondowanCliffs_PassTriggers");
-#define gGondowanCliffs_PassTriggers gGondowanCliffs_PassTriggers__effect_spawn
-/* VIEW(effect_spawn): routine gGondowanCliffs_Triggers as this part declared
- * it; the joined file has another. */
-extern const u8 gGondowanCliffs_Triggers__effect_spawn[] __asm__(
-    "gGondowanCliffs_Triggers");
-#define gGondowanCliffs_Triggers gGondowanCliffs_Triggers__effect_spawn
+extern struct Trigger gGondowanCliffs_PassTriggers[];
+extern struct Trigger gGondowanCliffs_Triggers[];
 
 void GondowanCliffs_GrindTheRock(s32 unused, s32 id) {
   Actor_SetPosition(id, 0, 0);
   Event_SetFlag(FLAG_GONDOWAN_CLIFFS_ROCK_GROUND);
 }
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_GondowanCliffsPass)
     return gGondowanCliffs_PassTriggers;
   return gGondowanCliffs_Triggers;
@@ -481,11 +453,7 @@ done:
   return 0;
 }
 
-/* VIEW(effect_spawn): routine gGondowanCliffs_MapRects as this part declared
- * it; the joined file has another. */
-extern const u8 gGondowanCliffs_MapRects__effect_spawn[] __asm__(
-    "gGondowanCliffs_MapRects");
-#define gGondowanCliffs_MapRects gGondowanCliffs_MapRects__effect_spawn
+extern s32 gGondowanCliffs_MapRects[];
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_GondowanCliffs)
@@ -734,9 +702,6 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
 #undef FLAG_SECOND_PUDDLE_FROZEN
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
-#undef gGondowanCliffs_PassTriggers
-#undef gGondowanCliffs_Triggers
-#undef gGondowanCliffs_MapRects
 
 // @file
 // The Gondowan Cliffs' tables, which the scene's getters return.
@@ -751,43 +716,9 @@ void GondowanCliffs_FreezeSecondPuddle(void);
 void GondowanCliffs_BlowAwayFoliage(void);
 extern s32 gGondowanCliffs_ResetTileSpriteScript[];
 
-/* VIEW(data): routine TileSprite_Reset as this part declared it; the joined
- * file has another. */
-void TileSprite_Reset__data(void) __asm__("TileSprite_Reset");
-#define TileSprite_Reset TileSprite_Reset__data
 void GondowanCliffs_FightKindle(void);
-/* VIEW(data): routine GondowanCliffs_PushPillarIntoWater as this part declared
- * it; the joined file has another. */
-void GondowanCliffs_PushPillarIntoWater__data(void) __asm__(
-    "GondowanCliffs_PushPillarIntoWater");
-#define GondowanCliffs_PushPillarIntoWater                                     \
-  GondowanCliffs_PushPillarIntoWater__data
 void GondowanCliffs_FreezeFirstPuddle(void);
-/* VIEW(data): routine GondowanCliffs_ScoopUpGeyser as this part declared it;
- * the joined file has another. */
-void GondowanCliffs_ScoopUpGeyser__data(void) __asm__(
-    "GondowanCliffs_ScoopUpGeyser");
-#define GondowanCliffs_ScoopUpGeyser GondowanCliffs_ScoopUpGeyser__data
 void GondowanCliffs_TalkToDog(void);
-/* VIEW(data): routine GondowanCliffs_GrindTheRock as this part declared it; the
- * joined file has another. */
-void GondowanCliffs_GrindTheRock__data(void) __asm__(
-    "GondowanCliffs_GrindTheRock");
-#define GondowanCliffs_GrindTheRock GondowanCliffs_GrindTheRock__data
-
-/* VIEW(data): routine gFieldEffect_ShortScript as this part declared it; the
- * joined file has another. */
-extern u8 gFieldEffect_ShortScript__data[] __asm__("gFieldEffect_ShortScript");
-#define gFieldEffect_ShortScript gFieldEffect_ShortScript__data
-/* VIEW(data): routine gFieldEffect_MediumScript as this part declared it; the
- * joined file has another. */
-extern u8
-    gFieldEffect_MediumScript__data[] __asm__("gFieldEffect_MediumScript");
-#define gFieldEffect_MediumScript gFieldEffect_MediumScript__data
-/* VIEW(data): routine gFieldEffect_LongScript as this part declared it; the
- * joined file has another. */
-extern u8 gFieldEffect_LongScript__data[] __asm__("gFieldEffect_LongScript");
-#define gFieldEffect_LongScript gFieldEffect_LongScript__data
 
 LATE_DATA s32 gGondowanCliffs_ResetTileSpriteScript[] = {
     SC_CALL(TileSprite_Reset),
@@ -890,10 +821,4 @@ LATE_DATA s32 gGondowanCliffs_MapRects[] = {
     0x2000200, 0x3600400, 0x600, 0x1601000, -1, -1,
 };
 // clang-format on
-#undef TileSprite_Reset
 #undef GondowanCliffs_PushPillarIntoWater
-#undef GondowanCliffs_ScoopUpGeyser
-#undef GondowanCliffs_GrindTheRock
-#undef gFieldEffect_ShortScript
-#undef gFieldEffect_MediumScript
-#undef gFieldEffect_LongScript

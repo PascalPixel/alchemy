@@ -15,8 +15,8 @@
 #include "../field/field_effect/spawn.c"
 
 /* VIEW(placements): routines Statue_Sink and PartyInventory_GiveItem as
- * yampi_desert/scene.h declares them; the joined file defines and declares
- * them otherwise. */
+ * yampi_desert/scene.h declares them; the joined file defines and declares them
+ * otherwise. */
 void Statue_Sink__placements(const void *script, s32 a,
                              s32 b) __asm__("Statue_Sink");
 void PartyInventory_GiveItem__placements(s32 item, s32 flags) __asm__(
@@ -38,11 +38,11 @@ struct SceneEventWork {
   s32 screenEffect;
 };
 
-extern const u8 gYampiDesert_Room1Stakes[];
-extern const u8 gYampiDesert_Room3Stakes[];
-extern const u8 gYampiDesert_Room4Stakes[];
-extern const u8 gYampiDesert_Room5Stakes[];
-extern const u8 gYampiDesert_Room12Stakes[];
+extern s16 gYampiDesert_Room1Stakes[];
+extern s16 gYampiDesert_Room3Stakes[];
+extern s16 gYampiDesert_Room4Stakes[];
+extern s16 gYampiDesert_Room5Stakes[];
+extern s32 gYampiDesert_Room12Stakes[];
 extern s32 gYampiDesert_RaisedEvent;
 
 struct Actor *Actor_GetById(u32 objectId);
@@ -203,8 +203,6 @@ static inline void Scene_SetPositionAndReset(s32 id, s32 x, s32 z) {
 #include "system/iwram_call.h"
 #include "macros.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 void YampiDesert_RippleFollowsScorpion(void);
 
 extern u32 gYampiDesert_SandCloudCells[];
@@ -275,26 +273,10 @@ void Icon_DrawItem(s32 item);
 void FieldEffect_SetAttached(s32 actor, s32 a);
 void FieldCamera_WaitForArrival();
 
-/* VIEW(first): routine gYampiDesert_Entrances as this part declared it; the
- * joined file has another. */
-extern const u8
-    gYampiDesert_Entrances__first[] __asm__("gYampiDesert_Entrances");
-#define gYampiDesert_Entrances gYampiDesert_Entrances__first
-/* VIEW(first): routine gYampiDesert_Room11Entrances as this part declared it;
- * the joined file has another. */
-extern const u8 gYampiDesert_Room11Entrances__first[] __asm__(
-    "gYampiDesert_Room11Entrances");
-#define gYampiDesert_Room11Entrances gYampiDesert_Room11Entrances__first
-/* VIEW(first): routine gYampiDesert_Room10Regions as this part declared it; the
- * joined file has another. */
-extern const u8
-    gYampiDesert_Room10Regions__first[] __asm__("gYampiDesert_Room10Regions");
-#define gYampiDesert_Room10Regions gYampiDesert_Room10Regions__first
-/* VIEW(first): routine gYampiDesert_Room11Regions as this part declared it; the
- * joined file has another. */
-extern const u8
-    gYampiDesert_Room11Regions__first[] __asm__("gYampiDesert_Room11Regions");
-#define gYampiDesert_Room11Regions gYampiDesert_Room11Regions__first
+extern struct SceneEntrance gYampiDesert_Entrances[];
+extern struct SceneEntrance gYampiDesert_Room11Entrances[];
+extern u32 gYampiDesert_Room10Regions[];
+extern s16 gYampiDesert_Room11Regions[];
 
 void YampiDesert_FightBlitz(void) { Field_RequestDjinnBattle(19, 68); }
 
@@ -318,59 +300,18 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "text/msg_ids.h"
 
-/* VIEW(first): routine gYampiDesert_Placements as this part declared it; the
- * joined file has another. */
-extern const u8
-    gYampiDesert_Placements__first[] __asm__("gYampiDesert_Placements");
-#define gYampiDesert_Placements gYampiDesert_Placements__first
-/* VIEW(first): routine gYampiDesert_Room1Placements as this part declared it;
- * the joined file has another. */
-extern const u8 gYampiDesert_Room1Placements__first[] __asm__(
-    "gYampiDesert_Room1Placements");
-#define gYampiDesert_Room1Placements gYampiDesert_Room1Placements__first
-/* VIEW(first): routine gYampiDesert_Room2Placements as this part declared it;
- * the joined file has another. */
-extern const u8 gYampiDesert_Room2Placements__first[] __asm__(
-    "gYampiDesert_Room2Placements");
-#define gYampiDesert_Room2Placements gYampiDesert_Room2Placements__first
-/* VIEW(first): routine gYampiDesert_Room2PlacementsAfterMeeting as this part
- * declared it; the joined file has another. */
-extern const u8 gYampiDesert_Room2PlacementsAfterMeeting__first[] __asm__(
-    "gYampiDesert_Room2PlacementsAfterMeeting");
-#define gYampiDesert_Room2PlacementsAfterMeeting                               \
-  gYampiDesert_Room2PlacementsAfterMeeting__first
-/* VIEW(first): routine gYampiDesert_Room3Placements as this part declared it;
- * the joined file has another. */
-extern const u8 gYampiDesert_Room3Placements__first[] __asm__(
-    "gYampiDesert_Room3Placements");
-#define gYampiDesert_Room3Placements gYampiDesert_Room3Placements__first
-/* VIEW(first): routine gYampiDesert_Room4Placements as this part declared it;
- * the joined file has another. */
-extern const u8 gYampiDesert_Room4Placements__first[] __asm__(
-    "gYampiDesert_Room4Placements");
-#define gYampiDesert_Room4Placements gYampiDesert_Room4Placements__first
-/* VIEW(first): routine gYampiDesert_Room5Placements as this part declared it;
- * the joined file has another. */
-extern const u8 gYampiDesert_Room5Placements__first[] __asm__(
-    "gYampiDesert_Room5Placements");
-#define gYampiDesert_Room5Placements gYampiDesert_Room5Placements__first
-/* VIEW(first): routine gYampiDesert_Room8Placements as this part declared it;
- * the joined file has another. */
-extern const u8 gYampiDesert_Room8Placements__first[] __asm__(
-    "gYampiDesert_Room8Placements");
-#define gYampiDesert_Room8Placements gYampiDesert_Room8Placements__first
-/* VIEW(first): routine gYampiDesert_Room10Placements as this part declared it;
- * the joined file has another. */
-extern const u8 gYampiDesert_Room10Placements__first[] __asm__(
-    "gYampiDesert_Room10Placements");
-#define gYampiDesert_Room10Placements gYampiDesert_Room10Placements__first
-/* VIEW(first): routine gYampiDesert_Room12Placements as this part declared it;
- * the joined file has another. */
-extern const u8 gYampiDesert_Room12Placements__first[] __asm__(
-    "gYampiDesert_Room12Placements");
-#define gYampiDesert_Room12Placements gYampiDesert_Room12Placements__first
+extern struct ActorPlacement gYampiDesert_Placements[];
+extern struct ActorPlacement gYampiDesert_Room1Placements[];
+extern struct ActorPlacement gYampiDesert_Room2Placements[];
+extern struct ActorPlacement gYampiDesert_Room2PlacementsAfterMeeting[];
+extern struct ActorPlacement gYampiDesert_Room3Placements[];
+extern struct ActorPlacement gYampiDesert_Room4Placements[];
+extern struct ActorPlacement gYampiDesert_Room5Placements[];
+extern struct ActorPlacement gYampiDesert_Room8Placements[];
+extern struct ActorPlacement gYampiDesert_Room10Placements[];
+extern struct ActorPlacement gYampiDesert_Room12Placements[];
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov661Room1)
@@ -397,74 +338,23 @@ const u8 *Scene_GetPlacements(void) {
 
 void YampiDesert_ScoopTreasurePit(s32 a) { Scene_Call4178(a, 64, 0x302); }
 
-/* VIEW(first): routine gYampiDesert_Triggers as this part declared it; the
- * joined file has another. */
-extern const u8 gYampiDesert_Triggers__first[] __asm__("gYampiDesert_Triggers");
-#define gYampiDesert_Triggers gYampiDesert_Triggers__first
-/* VIEW(first): routine gYampiDesert_Room1Triggers as this part declared it; the
- * joined file has another. */
-extern const u8
-    gYampiDesert_Room1Triggers__first[] __asm__("gYampiDesert_Room1Triggers");
-#define gYampiDesert_Room1Triggers gYampiDesert_Room1Triggers__first
-/* VIEW(first): routine gYampiDesert_Room2Triggers as this part declared it; the
- * joined file has another. */
-extern const u8
-    gYampiDesert_Room2Triggers__first[] __asm__("gYampiDesert_Room2Triggers");
-#define gYampiDesert_Room2Triggers gYampiDesert_Room2Triggers__first
-/* VIEW(first): routine gYampiDesert_Room3Triggers as this part declared it; the
- * joined file has another. */
-extern const u8
-    gYampiDesert_Room3Triggers__first[] __asm__("gYampiDesert_Room3Triggers");
-#define gYampiDesert_Room3Triggers gYampiDesert_Room3Triggers__first
-/* VIEW(first): routine gYampiDesert_Room4Triggers as this part declared it; the
- * joined file has another. */
-extern const u8
-    gYampiDesert_Room4Triggers__first[] __asm__("gYampiDesert_Room4Triggers");
-#define gYampiDesert_Room4Triggers gYampiDesert_Room4Triggers__first
-/* VIEW(first): routine gYampiDesert_Room5Triggers as this part declared it; the
- * joined file has another. */
-extern const u8
-    gYampiDesert_Room5Triggers__first[] __asm__("gYampiDesert_Room5Triggers");
-#define gYampiDesert_Room5Triggers gYampiDesert_Room5Triggers__first
-/* VIEW(first): routine gYampiDesert_Room6Triggers as this part declared it; the
- * joined file has another. */
-extern const u8
-    gYampiDesert_Room6Triggers__first[] __asm__("gYampiDesert_Room6Triggers");
-#define gYampiDesert_Room6Triggers gYampiDesert_Room6Triggers__first
-/* VIEW(first): routine gYampiDesert_Room7Triggers as this part declared it; the
- * joined file has another. */
-extern const u8
-    gYampiDesert_Room7Triggers__first[] __asm__("gYampiDesert_Room7Triggers");
-#define gYampiDesert_Room7Triggers gYampiDesert_Room7Triggers__first
-/* VIEW(first): routine gYampiDesert_Room8Triggers as this part declared it; the
- * joined file has another. */
-extern const u8
-    gYampiDesert_Room8Triggers__first[] __asm__("gYampiDesert_Room8Triggers");
-#define gYampiDesert_Room8Triggers gYampiDesert_Room8Triggers__first
-/* VIEW(first): routine gYampiDesert_Room9Triggers as this part declared it; the
- * joined file has another. */
-extern const u8
-    gYampiDesert_Room9Triggers__first[] __asm__("gYampiDesert_Room9Triggers");
-#define gYampiDesert_Room9Triggers gYampiDesert_Room9Triggers__first
-/* VIEW(first): routine gYampiDesert_Room10Triggers as this part declared it;
- * the joined file has another. */
-extern const u8
-    gYampiDesert_Room10Triggers__first[] __asm__("gYampiDesert_Room10Triggers");
-#define gYampiDesert_Room10Triggers gYampiDesert_Room10Triggers__first
-/* VIEW(first): routine gYampiDesert_Room11Triggers as this part declared it;
- * the joined file has another. */
-extern const u8
-    gYampiDesert_Room11Triggers__first[] __asm__("gYampiDesert_Room11Triggers");
-#define gYampiDesert_Room11Triggers gYampiDesert_Room11Triggers__first
-/* VIEW(first): routine gYampiDesert_Room12Triggers as this part declared it;
- * the joined file has another. */
-extern const u8
-    gYampiDesert_Room12Triggers__first[] __asm__("gYampiDesert_Room12Triggers");
-#define gYampiDesert_Room12Triggers gYampiDesert_Room12Triggers__first
+extern struct Trigger gYampiDesert_Triggers[];
+extern struct Trigger gYampiDesert_Room1Triggers[];
+extern struct Trigger gYampiDesert_Room2Triggers[];
+extern struct Trigger gYampiDesert_Room3Triggers[];
+extern struct Trigger gYampiDesert_Room4Triggers[];
+extern struct Trigger gYampiDesert_Room5Triggers[];
+extern struct Trigger gYampiDesert_Room6Triggers[];
+extern struct Trigger gYampiDesert_Room7Triggers[];
+extern struct Trigger gYampiDesert_Room8Triggers[];
+extern struct Trigger gYampiDesert_Room9Triggers[];
+extern struct Trigger gYampiDesert_Room10Triggers[];
+extern struct Trigger gYampiDesert_Room11Triggers[];
+extern struct Trigger gYampiDesert_Room12Triggers[];
 
 /// Returns the current room's table.
 // As ☀️'s Scene_GetEntrances picks one.
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov661Room1)
@@ -781,33 +671,7 @@ void YampiDesert_WatchScorpionStop(void) {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef DEFINE_POUND_STAKE_STOPPING_SCORPION
-#undef gYampiDesert_Entrances
-#undef gYampiDesert_Room11Entrances
-#undef gYampiDesert_Room10Regions
-#undef gYampiDesert_Room11Regions
-#undef gYampiDesert_Placements
-#undef gYampiDesert_Room1Placements
-#undef gYampiDesert_Room2Placements
 #undef gYampiDesert_Room2PlacementsAfterMeeting
-#undef gYampiDesert_Room3Placements
-#undef gYampiDesert_Room4Placements
-#undef gYampiDesert_Room5Placements
-#undef gYampiDesert_Room8Placements
-#undef gYampiDesert_Room10Placements
-#undef gYampiDesert_Room12Placements
-#undef gYampiDesert_Triggers
-#undef gYampiDesert_Room1Triggers
-#undef gYampiDesert_Room2Triggers
-#undef gYampiDesert_Room3Triggers
-#undef gYampiDesert_Room4Triggers
-#undef gYampiDesert_Room5Triggers
-#undef gYampiDesert_Room6Triggers
-#undef gYampiDesert_Room7Triggers
-#undef gYampiDesert_Room8Triggers
-#undef gYampiDesert_Room9Triggers
-#undef gYampiDesert_Room10Triggers
-#undef gYampiDesert_Room11Triggers
-#undef gYampiDesert_Room12Triggers
 // @file
 // The Yampi Desert, between Osenia's south and Alhafra: twelve rooms of sand.
 // Pound sinks its wooden stakes and Sand lets the party slip under them; a
@@ -820,26 +684,8 @@ void YampiDesert_WatchScorpionStop(void) {
 
 #include "text/msg_ids.h"
 
-/* VIEW(yampi_desert): routine Actor_ShowEmoteById as this part declared it; the
- * joined file has another. */
-void Actor_ShowEmoteById__yampi_desert(s32 actor, s32 a,
-                                       s32 b) __asm__("Actor_ShowEmoteById");
-#define Actor_ShowEmoteById Actor_ShowEmoteById__yampi_desert
-/* VIEW(yampi_desert): routine FieldCamera_GetActor as this part declared it;
- * the joined file has another. */
-s32 FieldCamera_GetActor__yampi_desert() __asm__("FieldCamera_GetActor");
-#define FieldCamera_GetActor FieldCamera_GetActor__yampi_desert
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Oam_AddSpriteAtDepthClamped(u32 *oam, s32 depth);
-/* VIEW(s0b84): routine Statue_Sink as void Statue_Sink(const void *script, s32
- * a, s32 b); the definition has void Statue_Sink(u16 *list, s32 mode, s32
- * count); tried as the rest of the object declares it, it does not compile in
- * tla-ja: games/tla/src/scene/yampi_desert.c:1694: conflicting types for
- * `Statue_Sink'. */
-extern void Statue_Sink__s0b84(const void *script, s32 a,
-                               s32 b) __asm__("Statue_Sink");
-#define Statue_Sink Statue_Sink__s0b84
-#undef Statue_Sink
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -1223,46 +1069,23 @@ void YampiDesert_HideSlideActors(void) {
 
 DEFINE_ACTORS_SET_HIDDEN(YampiDesert_SetActorsHidden)
 
-/* VIEW(yampi_desert): routine Actor_Jump as this part declared it; the joined
- * file has another. */
-s32 Actor_Jump__yampi_desert() __asm__("Actor_Jump");
-#define Actor_Jump Actor_Jump__yampi_desert
-/* VIEW(yampi_desert): routine Motion_SetModeAndWaitAnimation as this part
- * declared it; the joined file has another. */
-s32 Motion_SetModeAndWaitAnimation__yampi_desert() __asm__(
-    "Motion_SetModeAndWaitAnimation");
-#define Motion_SetModeAndWaitAnimation                                         \
-  Motion_SetModeAndWaitAnimation__yampi_desert
-
-/* VIEW(yampi_desert): routine Actor_SetMovementTypeById as this part declared
- * it; the joined file has another. */
-s32 Actor_SetMovementTypeById__yampi_desert() __asm__(
-    "Actor_SetMovementTypeById");
-#define Actor_SetMovementTypeById Actor_SetMovementTypeById__yampi_desert
-
-/* VIEW(yampi_desert): routine Actor_SetMovementTypeAndWaitById as this part
- * declared it; the joined file has another. */
-s32 Actor_SetMovementTypeAndWaitById__yampi_desert() __asm__(
-    "Actor_SetMovementTypeAndWaitById");
-#define Actor_SetMovementTypeAndWaitById                                       \
-  Actor_SetMovementTypeAndWaitById__yampi_desert
-
 /* VIEW(yampi_desert): routine gYampiDesert_FinderRunsAhead as this part
- * declared it; the joined file has another. */
+ * declared it; the joined file has another; tried as the definition's extern
+ * LATE_DATA u32 gYampiDesert_FinderRunsAhead[], it does not compile in tla-ja:
+ * games/tla/src/scene/yampi_desert.c:1119: `gYampiDesert_FinderRunsAhead'
+ * undeclared (first use in this function). */
 extern u8 gYampiDesert_FinderRunsAhead__yampi_desert[] __asm__(
     "gYampiDesert_FinderRunsAhead");
 #define gYampiDesert_FinderRunsAhead gYampiDesert_FinderRunsAhead__yampi_desert
 /* VIEW(yampi_desert): routine gYampiDesert_TravelersFollow as this part
- * declared it; the joined file has another. */
+ * declared it; the joined file has another; tried as the definition's extern
+ * LATE_DATA u32 gYampiDesert_TravelersFollow[], it does not compile in tla-ja:
+ * games/tla/src/scene/yampi_desert.c:1169: `gYampiDesert_TravelersFollow'
+ * undeclared (first use in this function). */
 extern u8 gYampiDesert_TravelersFollow__yampi_desert[] __asm__(
     "gYampiDesert_TravelersFollow");
 #define gYampiDesert_TravelersFollow gYampiDesert_TravelersFollow__yampi_desert
-/* VIEW(yampi_desert): routine gYampiDesert_LastTravelersFollow as this part
- * declared it; the joined file has another. */
-extern u8 gYampiDesert_LastTravelersFollow__yampi_desert[] __asm__(
-    "gYampiDesert_LastTravelersFollow");
-#define gYampiDesert_LastTravelersFollow                                       \
-  gYampiDesert_LastTravelersFollow__yampi_desert
+extern u32 gYampiDesert_LastTravelersFollow[];
 
 // ★ Named from the game: "Hey! Look! Up there!" (MsgHeyLookUp)
 void YampiDesert_SeeTravelersAbove(s32 p0) {
@@ -2819,12 +2642,8 @@ u32 gYampiDesert_SlideDust[] = {
 #undef ARRIVE_OR
 #undef MAIN_ROUTINE_WORK_U16
 #undef PIXELS__s3910
-#undef Actor_ShowEmoteById
-#undef FieldCamera_GetActor
 #undef Statue_Sink
-#undef Actor_Jump
 #undef Motion_SetModeAndWaitAnimation
-#undef Actor_SetMovementTypeById
 #undef Actor_SetMovementTypeAndWaitById
 #undef gYampiDesert_FinderRunsAhead
 #undef gYampiDesert_TravelersFollow
@@ -2837,70 +2656,11 @@ u32 gYampiDesert_SlideDust[] = {
 #include "text/msg_ids.h"
 
 void YampiDesert_FightBlitz(void);
-/* VIEW(data2): routine YampiDesert_ScoopTreasurePit as this part declared it;
- * the joined file has another. */
-void YampiDesert_ScoopTreasurePit__data2(void) __asm__(
-    "YampiDesert_ScoopTreasurePit");
-#define YampiDesert_ScoopTreasurePit YampiDesert_ScoopTreasurePit__data2
 void YampiDesert_TalkToTraveler(void);
 void YampiDesert_TalkToElderAboutWay(void);
-/* VIEW(data2): routine YampiDesert_PoundRoom1Stake as this part declared it;
- * the joined file has another. */
-void YampiDesert_PoundRoom1Stake__data2(void) __asm__(
-    "YampiDesert_PoundRoom1Stake");
-#define YampiDesert_PoundRoom1Stake YampiDesert_PoundRoom1Stake__data2
-/* VIEW(data2): routine YampiDesert_PoundRoom3Stake as this part declared it;
- * the joined file has another. */
-void YampiDesert_PoundRoom3Stake__data2(void) __asm__(
-    "YampiDesert_PoundRoom3Stake");
-#define YampiDesert_PoundRoom3Stake YampiDesert_PoundRoom3Stake__data2
-/* VIEW(data2): routine YampiDesert_PoundRoom4Stake as this part declared it;
- * the joined file has another. */
-void YampiDesert_PoundRoom4Stake__data2(void) __asm__(
-    "YampiDesert_PoundRoom4Stake");
-#define YampiDesert_PoundRoom4Stake YampiDesert_PoundRoom4Stake__data2
-/* VIEW(data2): routine YampiDesert_PoundRoom12Stake as this part declared it;
- * the joined file has another. */
-void YampiDesert_PoundRoom12Stake__data2(void) __asm__(
-    "YampiDesert_PoundRoom12Stake");
-#define YampiDesert_PoundRoom12Stake YampiDesert_PoundRoom12Stake__data2
-/* VIEW(data2): routine YampiDesert_PoundRoom5Stake as this part declared it;
- * the joined file has another. */
-void YampiDesert_PoundRoom5Stake__data2(void) __asm__(
-    "YampiDesert_PoundRoom5Stake");
-#define YampiDesert_PoundRoom5Stake YampiDesert_PoundRoom5Stake__data2
 void YampiDesert_StepOntoStakeTops(void);
-/* VIEW(data2): routine YampiDesert_ScoopCenterPit as this part declared it; the
- * joined file has another. */
-void YampiDesert_ScoopCenterPit__data2(void) __asm__(
-    "YampiDesert_ScoopCenterPit");
-#define YampiDesert_ScoopCenterPit YampiDesert_ScoopCenterPit__data2
 void YampiDesert_HideMedalSpot(void);
-/* VIEW(data2): routine YampiDesert_ScoopLadderPit as this part declared it; the
- * joined file has another. */
-void YampiDesert_ScoopLadderPit__data2(void) __asm__(
-    "YampiDesert_ScoopLadderPit");
-#define YampiDesert_ScoopLadderPit YampiDesert_ScoopLadderPit__data2
 void YampiDesert_HideSlideActors(void);
-/* VIEW(data2): routine YampiDesert_SeeTravelersAbove as this part declared it;
- * the joined file has another. */
-void YampiDesert_SeeTravelersAbove__data2(void) __asm__(
-    "YampiDesert_SeeTravelersAbove");
-#define YampiDesert_SeeTravelersAbove YampiDesert_SeeTravelersAbove__data2
-
-/* VIEW(data2): routine gFieldEffect_ShortScript as this part declared it; the
- * joined file has another. */
-extern u8 gFieldEffect_ShortScript__data2[] __asm__("gFieldEffect_ShortScript");
-#define gFieldEffect_ShortScript gFieldEffect_ShortScript__data2
-/* VIEW(data2): routine gFieldEffect_MediumScript as this part declared it; the
- * joined file has another. */
-extern u8
-    gFieldEffect_MediumScript__data2[] __asm__("gFieldEffect_MediumScript");
-#define gFieldEffect_MediumScript gFieldEffect_MediumScript__data2
-/* VIEW(data2): routine gFieldEffect_LongScript as this part declared it; the
- * joined file has another. */
-extern u8 gFieldEffect_LongScript__data2[] __asm__("gFieldEffect_LongScript");
-#define gFieldEffect_LongScript gFieldEffect_LongScript__data2
 
 LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,
@@ -2943,15 +2703,13 @@ LATE_DATA u32 gYampiDesert_LastTravelersFollow[] = {
     1, 17,
 };
 
-/* VIEW(data2): variable gYampiDesert_Room1Stakes as this part defines it; a header the joined file includes has another. */
-LATE_DATA s16 gYampiDesert_Room1Stakes__data2[] __asm__("gYampiDesert_Room1Stakes") = {
+LATE_DATA s16 gYampiDesert_Room1Stakes[] = {
     8, 0, 512, 9, 0, 513, 10, 0,
     514, 11, 0, 515, 12, 0, 516, 13,
     0, 517, -1,
 };
 
-/* VIEW(data2): variable gYampiDesert_Room3Stakes as this part defines it; a header the joined file includes has another. */
-LATE_DATA s16 gYampiDesert_Room3Stakes__data2[] __asm__("gYampiDesert_Room3Stakes") = {
+LATE_DATA s16 gYampiDesert_Room3Stakes[] = {
     8, 0, 512, 9, 0, 513, 10, 0,
     514, 11, 0, 515, 12, 0, 516, 13,
     0, 517, 14, 0, 518, 15, 0, 519,
@@ -2959,32 +2717,23 @@ LATE_DATA s16 gYampiDesert_Room3Stakes__data2[] __asm__("gYampiDesert_Room3Stake
     522, -1,
 };
 
-/* VIEW(data2): variable gYampiDesert_Room4Stakes as this part defines it; a header the joined file includes has another. */
-LATE_DATA s16 gYampiDesert_Room4Stakes__data2[] __asm__("gYampiDesert_Room4Stakes") = {
+LATE_DATA s16 gYampiDesert_Room4Stakes[] = {
     8, 0, 512, 9, 0, 513, 10, 0,
     514, 11, 0, 515, -1,
 };
 
-/* VIEW(data2): variable gYampiDesert_Room5Stakes as this part defines it; a header the joined file includes has another. */
-LATE_DATA s16 gYampiDesert_Room5Stakes__data2[] __asm__("gYampiDesert_Room5Stakes") = {
+LATE_DATA s16 gYampiDesert_Room5Stakes[] = {
     8, 0, 512, 9, 0, 513, 10, 0,
     514, -1,
 };
 
-/* VIEW(data2): variable gYampiDesert_Room12Stakes as this part defines it; a header the joined file includes has another. */
-LATE_DATA s32 gYampiDesert_Room12Stakes__data2[] __asm__("gYampiDesert_Room12Stakes") = {
+LATE_DATA s32 gYampiDesert_Room12Stakes[] = {
     8, -0xfe00,
 };
 
-/* VIEW(data2): variable gYampiDesert_RaisedEvent as this part defines it; a header the joined file includes has another. */
-LATE_DATA u32 gYampiDesert_RaisedEvent__data2[] __asm__("gYampiDesert_RaisedEvent") = {
-    0,
-};
+LATE_DATA s32 gYampiDesert_RaisedEvent = 0;
 
-/* VIEW(data2): variable gYampiDesert_SandRipple as this part defines it; a header the joined file includes has another. */
-LATE_DATA u32 gYampiDesert_SandRipple__data2[] __asm__("gYampiDesert_SandRipple") = {
-    0,
-};
+LATE_DATA struct Actor *gYampiDesert_SandRipple = NULL;
 
 LATE_DATA struct SceneEntrance gYampiDesert_Entrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -3360,15 +3109,3 @@ LATE_DATA u32 gYampiDesert_SandCloudDrifts[] = {
     1, 38,
 };
 // clang-format on
-#undef YampiDesert_ScoopTreasurePit
-#undef YampiDesert_PoundRoom1Stake
-#undef YampiDesert_PoundRoom3Stake
-#undef YampiDesert_PoundRoom4Stake
-#undef YampiDesert_PoundRoom12Stake
-#undef YampiDesert_PoundRoom5Stake
-#undef YampiDesert_ScoopCenterPit
-#undef YampiDesert_ScoopLadderPit
-#undef YampiDesert_SeeTravelersAbove
-#undef gFieldEffect_ShortScript
-#undef gFieldEffect_MediumScript
-#undef gFieldEffect_LongScript

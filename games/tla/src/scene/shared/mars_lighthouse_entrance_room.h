@@ -49,7 +49,6 @@ s32 Func_0200246c(s32 index, s32 value);
 s32 Func_0200249c(s32 index);
 void Actor_StartScript(struct Actor *object, const void *script);
 void ObjectTable_Snapshot(void);
-void Func_02004bc0(struct Actor *object, s32 a1);
 s32 Trig_Cos(s32 angle);
 
 void Func_02001e1c(struct Actor *object, s32 part);

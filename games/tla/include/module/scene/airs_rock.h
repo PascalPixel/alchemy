@@ -31,12 +31,12 @@ s32 Func_02000348(u32 layer, s32 x, s32 y);
 
 extern s16 gData_02003e84[];
 extern s16 gData_02003ec4[];
-extern struct ActorPlacement gData_020040ec[];
-extern struct ActorPlacement gData_02004194[];
-extern struct ActorPlacement gData_02004314[];
-extern struct Trigger gData_020043d4[];
-extern struct Trigger gData_020044d0[];
-extern struct Trigger gData_0200459c[];
+extern struct ActorPlacement gAirsRock_Room1Placements[];
+extern struct ActorPlacement gAirsRock_Room2Placements[];
+extern struct ActorPlacement gAirsRock_Placements[];
+extern struct Trigger gAirsRock_Room1Triggers[];
+extern struct Trigger gAirsRock_Room2Triggers[];
+extern struct Trigger gAirsRock_Triggers[];
 
 void Func_020024b0(void);
 void Func_0200257c(void);

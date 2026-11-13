@@ -342,7 +342,6 @@ void AlhafranCave_SetUpCave(void) {
 }
 
 void FieldEffect_StartBlankOverlay(s32 value);
-void Rope_Initialize(void);
 void EffectSprite_InitFromSlot94(const void *data, s32 a, s32 b, s32 c);
 
 /// The rooms' setup: sprite priorities, the scene callback, actors 12 to 14,

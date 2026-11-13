@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x64c, in ROM order.
-
 #include "shared/actors.h"
 #include "shared/flight.h"
 #include "battle/battle.h"
@@ -158,42 +156,15 @@ void Func_02000138(u8 *grid, s32 count, s32 scale) {
   } while (i != count - 1);
 }
 
-/* VIEW(first): routine gData_02003d20 as this part declared it; the joined file
- * has another. */
-extern s16 gData_02003d20__first[][2] __asm__("gData_02003d20");
-#define gData_02003d20 gData_02003d20__first
-/* VIEW(first): routine gData_02003d34 as this part declared it; the joined file
- * has another. */
-extern s16 gData_02003d34__first[][2] __asm__("gData_02003d34");
-#define gData_02003d34 gData_02003d34__first
-/* VIEW(first): routine gData_02003d48 as this part declared it; the joined file
- * has another. */
-extern s16 gData_02003d48__first[][2] __asm__("gData_02003d48");
-#define gData_02003d48 gData_02003d48__first
-/* VIEW(first): routine gData_02003d5c as this part declared it; the joined file
- * has another. */
-extern s32 gData_02003d5c__first[] __asm__("gData_02003d5c");
-#define gData_02003d5c gData_02003d5c__first
-/* VIEW(first): routine gData_02003d70 as this part declared it; the joined file
- * has another. */
-extern s32 gData_02003d70__first[] __asm__("gData_02003d70");
-#define gData_02003d70 gData_02003d70__first
-/* VIEW(first): routine gData_02003d84 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02003d84__first[] __asm__("gData_02003d84");
-#define gData_02003d84 gData_02003d84__first
-/* VIEW(first): routine gData_02003d88 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02003d88__first[] __asm__("gData_02003d88");
-#define gData_02003d88 gData_02003d88__first
-/* VIEW(first): routine gData_02003d8e as this part declared it; the joined file
- * has another. */
-extern u16 gData_02003d8e__first[] __asm__("gData_02003d8e");
-#define gData_02003d8e gData_02003d8e__first
-/* VIEW(first): routine gData_02003d9c as this part declared it; the joined file
- * has another. */
-extern s8 gData_02003d9c__first[][2] __asm__("gData_02003d9c");
-#define gData_02003d9c gData_02003d9c__first
+extern s16 gData_02003d20[][2];
+extern s16 gData_02003d34[][2];
+extern s16 gData_02003d48[][2];
+extern s32 gData_02003d5c[];
+extern s32 gData_02003d70[];
+extern u8 gData_02003d84[];
+extern u8 gData_02003d88[];
+extern u16 gData_02003d8e[];
+extern s8 gData_02003d9c[][2];
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
   FieldCamera_MoveTo(x, -1, z, mode);
@@ -492,7 +463,7 @@ void Func_0200020c(s32 stage) {
   Event_SetFlag(0x101);
 }
 
-void Func_0200101c(void);
+void WorldMap_StartPlacedActors(void);
 
 /// Chooses where the credits go next by the entrance they were entered from:
 /// entrances 0 to 5 run resource FarCall00A with 2 to 7 and continue, 2 to 6
@@ -507,7 +478,7 @@ s32 Scene_Initialize(void) {
   System_Wait(1);
   FieldCamera_SetSpeed(0x80000, 0x10000);
   Event_ClearFlag(0x12f);
-  Func_0200101c();
+  WorldMap_StartPlacedActors();
   switch (gMainRoutineWork.entrance) {
   case 0:
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
@@ -555,77 +526,29 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 DEFINE_TILE_SPRITE_RESET(TileSprite_Reset)
 
-/// The two countdown choices the world map (overlay 64b) also has, under this
-/// overlay's names.
-#define Func_02003600 Func_02000cbc
-#define Func_02003654 Func_02000d10
-#define Func_02004e30 Sound_Play
-#define gData_02006c08 gData_02003dc0
-#include "shared/world_map_s3600.c"
+#include "shared/world_map_objects.c"
 
-/// The world map's placed objects (overlay 64b), shown and hidden as the view
-/// moves, under this overlay's names.
-
-#define Func_020036a8 Func_02000d64
-#define Func_02004e08 FlagEntries_GetTable
-#define Func_02004e10 Party_GetLeaderActor
-#define Func_02004b30 Import_ActorCreate
-#define Func_02004b20 Actor_StartScript
-#define Func_02004b18 Import_ActorSelectAnimation
-#define Func_02004b38 Actor_Release
-#define gData_02006bd4 gData_02003da8
-#include "shared/world_map_s36a8.c"
-
-/// The blend queue and the cell table reset the world map (overlay 64b) also
-/// has, under this overlay's names.
-#define Func_020038e4 Func_02000fa0
-#define Func_02003960 Func_0200101c
-#include "shared/world_map_s3960.c"
-
-s32 Func_02001044(s32 x, s32 z) { return x / 0x100000 + (z / 0x100000) * 128; }
-
-s32 Func_02001064(struct Actor *object) {
-  struct Actor *anchor = object->watchedObject;
-  s32 frame;
-  s32 scale;
-
-  object->timer++;
-  frame = object->timer;
-  if (frame > 31)
-    return 0;
-  scale = Iwram_MulQ16(Math_Sin(frame << 10), 0x14000);
-  object->scaleX = scale;
-  object->scaleY = scale;
-  object->x = anchor->x;
-  object->y += 0x10000;
-  object->z = anchor->z;
-  return 1;
-}
-
-/// The spark pair and the random particle the world map (overlay 64b) also
-/// has, under this overlay's names.
-#define Func_020039f4 Func_020010b0
-#define Func_02003aac Func_02001168
-#define gData_02004f90 gData_02002e74
-#define gData_02004f9c gData_02002e80
-#include "shared/world_map_s39f4.c"
-
-DEFINE_ACTOR_FLICKER(Func_020011f4, Func_020010b0)
+DEFINE_ACTOR_FLICKER(Func_020011f4, WorldMap_SpawnSparkPair)
 
 /* VIEW(first): routine gData_02003db8 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA
+ * DEFINE_G_DATA_02003584(gWorldMap_PlacedActorScript, TileSprite_Reset, 17, 0)
+ * LATE_DATA u32 gData_02003db8[], it does not compile in tla-ja:
+ * games/tla/src/scene/staff_credit.c:529: `gData_02003db8' undeclared (first
+ * use in this function). */
 extern s32 gData_02003db8__first __asm__("gData_02003db8");
 #define gData_02003db8 gData_02003db8__first
 
-DEFINE_ACTOR_CYCLE_CHILD_VALUES(Func_0200122c, gData_02002eac, gData_02003db8,
-                                Func_02001168)
+DEFINE_ACTOR_CYCLE_CHILD_VALUES(Actor_CycleChildValues, gData_02002eac,
+                                gData_02003db8, WorldMap_SpawnParticle)
 
-DEFINE_ACTOR_SET_FLIGHT_MODE(Func_02001274, Func_020011f4, Func_0200122c)
+DEFINE_ACTOR_SET_FLIGHT_MODE(Actor_SetFlightMode, Func_020011f4,
+                             Actor_CycleChildValues)
 
-DEFINE_LEADER_SEARCH(Func_020012ac, Func_02001274, WorldMap_GetBlockPlace)
+DEFINE_LEADER_SEARCH(Leader_Search, Actor_SetFlightMode, WorldMap_GetBlockPlace)
 
 void Func_020012f8(void) {
-  Func_02001274(Actor_Get(FieldParty_GetLeaderActor()), 0);
+  Actor_SetFlightMode(Actor_Get(FieldParty_GetLeaderActor()), 0);
 }
 
 extern u16 gData_02003fc0;
@@ -777,13 +700,13 @@ void Func_02001400(s32 mode) {
 
 DEFINE_ACTOR_FLICKER(Func_0200199c, Func_02001ad0)
 
-DEFINE_ACTOR_ANIMATE_AND_EMIT(Func_020019d4, Func_02001ad0)
+DEFINE_ACTOR_ANIMATE_AND_EMIT(Actor_AnimateAndEmit, Func_02001ad0)
 
-DEFINE_ACTOR_ANIMATE(Func_02001a0c)
+DEFINE_ACTOR_ANIMATE(Actor_Animate)
 
-DEFINE_ACTOR_GROW_UP(Func_02001a34, Actor_Release)
+DEFINE_ACTOR_GROW_UP(Actor_GrowUp, Actor_Release)
 
-DEFINE_ACTOR_GROW_DOWN(Func_02001a80, Actor_Release)
+DEFINE_ACTOR_GROW_DOWN(Actor_GrowDown, Actor_Release)
 
 void Func_02001ad0(struct Actor *parent) {
   struct Actor *pair[2];
@@ -824,7 +747,7 @@ void Func_02001ad0(struct Actor *parent) {
     struct Actor *p = pair[0];
     struct FieldSprite *sp = p->sprite;
 
-    p->update = (void *)Func_02001a80;
+    p->update = (void *)Actor_GrowDown;
     sp->priority = 1;
   }
   {
@@ -832,7 +755,7 @@ void Func_02001ad0(struct Actor *parent) {
     struct FieldSprite *sp = p->sprite;
 
     sp->priority = 1;
-    p->update = (void *)Func_02001a34;
+    p->update = (void *)Actor_GrowUp;
     p->priorityFlags = 2;
   }
 }
@@ -840,7 +763,7 @@ void Func_02001ad0(struct Actor *parent) {
 extern s16 gData_02003fc4;
 extern u8 gData_02003fd8[][32];
 
-DEFINE_GAUGE_DRAW(Func_02001be0, gData_02003fc4, gData_02003fd8, gData_020040d8,
+DEFINE_GAUGE_DRAW(Gauge_Draw, gData_02003fc4, gData_02003fd8, gData_020040d8,
                   gData_02003fc6)
 
 extern u32 gInput;
@@ -861,7 +784,7 @@ void Func_02001d90(void) {
       gData_02003fc8 = 10;
     }
   }
-  Func_02001be0(Party_GetPpRatio());
+  Gauge_Draw(Party_GetPpRatio());
   attributes = 0x80004000;
   Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x), (s32)(screen));
   {
@@ -875,20 +798,20 @@ void Func_02001d90(void) {
   Oam_AddSpriteAtDepthClamped(Data_02003fcc, 255);
 }
 
-DEFINE_GAUGE_INIT(Func_02001e58, gData_020040d8, gData_02003fc6, gData_02003fc4,
+DEFINE_GAUGE_INIT(Gauge_Init, gData_020040d8, gData_02003fc6, gData_02003fc4,
                   gData_02003fc8, Func_02001d90)
 
-DEFINE_GAUGE_END(Func_02001eb8, gData_020040d8, gData_02003fc6, gData_02003fc4,
+DEFINE_GAUGE_END(Gauge_End, gData_020040d8, gData_02003fc6, gData_02003fc4,
                  Func_02001d90)
 
-s32 gData_02002e74[] = {
+s32 gWorldMap_SparkScript[] = {
     46,
-    (s32)Func_02001064,
+    (s32)WorldMap_RiseFromAnchor,
     38,
 };
 
 // clang-format off
-u32 gData_02002e80[] = {
+u32 gWorldMap_ParticleScript[] = {
     0, 39, 22, 5, 0, 22,
     7, 0, 0, 1, 38,
 };
@@ -898,40 +821,8 @@ u32 gData_02002eac[] = {
 };
 // clang-format on
 
-#undef Func_02003600
-#undef Func_02003654
-#undef Func_02004e30
-#undef gData_02006c08
-#undef Func_020036a8
-#undef Func_02004e08
-#undef Func_02004e10
-#undef Func_02004b30
-#undef Func_02004b20
-#undef Func_02004b18
-#undef Func_02004b38
-#undef gData_02006bd4
-#undef Func_020038e4
-#undef Func_02003960
-#undef Func_020039f4
-#undef Func_02003aac
-#undef gData_02004f90
-#undef gData_02004f9c
 #undef PUSH_PICTURE
-#undef gData_02003d20
-#undef gData_02003d34
-#undef gData_02003d48
-#undef gData_02003d5c
-#undef gData_02003d70
-#undef gData_02003d84
-#undef gData_02003d88
-#undef gData_02003d8e
-#undef gData_02003d9c
 #undef gData_02003db8
-
-/* VIEW(data): routine TileSprite_Reset as this part declared it; the joined
- * file has another. */
-void TileSprite_Reset__data(void) __asm__("TileSprite_Reset");
-#define TileSprite_Reset TileSprite_Reset__data
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 9850, 0, 9748, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -1039,49 +930,46 @@ LATE_DATA struct Trigger gSceneEvents[] = {
 };
 
 // clang-format off
-LATE_DATA u32 gData_02003d20[] = {
-    0x6f6243c, 0xc412a02, 0x187c27b0, 0x1ca62033, 0x13ec22de,
+LATE_DATA s16 gData_02003d20[][2] = {
+    {9276, 1782}, {10754, 3137}, {10160, 6268}, {8243, 7334}, {8926, 5100},
 };
 
-LATE_DATA u32 gData_02003d34[] = {
-    0x30e233c, 0x10bc2775, 0x1c6627c3, 0x1c891c57, 0x13ec2649,
+LATE_DATA s16 gData_02003d34[][2] = {
+    {9020, 782}, {10101, 4284}, {10179, 7270}, {7255, 7305}, {9801, 5100},
 };
 
-LATE_DATA u32 gData_02003d48[] = {
-    0xa0d2562, 0x121f2f93, 0x1c952217, 0x1aad2617, 0x14642617,
+LATE_DATA s16 gData_02003d48[][2] = {
+    {9570, 2573}, {12179, 4639}, {8727, 7317}, {9751, 6829}, {9751, 5220},
 };
 
-LATE_DATA u32 gData_02003d5c[] = {
+LATE_DATA s32 gData_02003d5c[] = {
     0x8000, 0xcccc, 0x18000, 0x9999, 0xe666,
 };
 
-LATE_DATA u32 gData_02003d70[] = {
+LATE_DATA s32 gData_02003d70[] = {
     0x10000, 0xcccc, 0xb333, 0x14ccc, 0x9999,
 };
 
-LATE_DATA u32 gData_02003d84[] = {
-    0x7e78aa82,
+LATE_DATA u8 gData_02003d84[] = {
+    130, 170, 120, 126,
 };
 
-LATE_DATA u16 gData_02003d88[] = {
-    0x6c6b, 0x6c40, 0x6c6c,
+LATE_DATA u8 gData_02003d88[] = {
+    107, 108, 64, 108, 108, 108,
 };
 
-LATE_DATA u8 gData_02003d8e[] = {
-    0, 14, 0, 13, 0, 12, 0, 11,
-    0, 10, 0, 9, 0, 8,
+LATE_DATA u16 gData_02003d8e[] = {
+    0xe00, 0xd00, 0xc00, 0xb00, 0xa00, 0x900, 0x800,
 };
 // clang-format on
 
-LATE_DATA u32 gData_02003d9c[] = {
-    0xf808fc16,
-    0xc0ee402,
-    0x808,
+LATE_DATA s8 gData_02003d9c[][2] = {
+    {22, -4}, {8, -8}, {2, -28}, {14, 12}, {8, 8}, {0, 0},
 };
 
-LATE_DATA DEFINE_G_DATA_02003584(gData_02003da8, TileSprite_Reset, 17, 0)
+LATE_DATA DEFINE_G_DATA_02003584(gWorldMap_PlacedActorScript, TileSprite_Reset,
+                                 17, 0)
 
     LATE_DATA u32 gData_02003db8[] = {
         0,
 };
-#undef TileSprite_Reset

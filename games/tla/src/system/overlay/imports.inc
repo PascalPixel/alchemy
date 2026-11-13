@@ -63,8 +63,6 @@
 	export GameFlag_Get, GameFlag_GetFar
 	export GameFlag_Set, GameFlag_SetFar
 	export GameFlag_Clear, GameFlag_ClearFar
-	export Func_02004c98, Actor_SelectAnimationFar
-	export Func_02003ba0, Actor_SelectAnimationFar
 	export WindowSystem_InitField, WindowSystem_InitFieldFar
 	export Task_Find, Task_FindFar
 	export Sprite_SetAnimationTimers, Sprite_SetAnimationTimersFar
@@ -73,8 +71,6 @@
 	export Import_ActorStartScript, Actor_StartScriptFar
 	export GameFlag_SetByte, GameFlag_SetByteFar
 	export SpriteAnimation_Clear, SpriteAnimation_ClearFar
-	export Func_02005480, Actor_SelectAnimationFar
-	export Func_02004bc0, Actor_SelectAnimationFar
 	export Animation_ApplyChildArgument, Animation_ApplyChildArgumentFar
 	export ResourceMetadata_Register, ResourceMetadata_RegisterFar
 	export Import_ActorSelectAnimation, Actor_SelectAnimationFar
@@ -132,7 +128,6 @@
 	export MapGrid_GetTerrainKind, MapGrid_GetTerrainKindFar
 	export Actor_HasArrived, Actor_HasArrivedFar
 	export Import_FieldCheckSpheresOverlap, Field_CheckSpheresOverlapFar
-	export Func_02004c78, Field_CheckSpheresOverlapFar
 	export Actor_SetItemIcon, Actor_SetItemIconFar
 	export Window_Close, Window_CloseFar
 	export Field_CheckSpheresOverlap, Field_CheckSpheresOverlapFar
@@ -360,7 +355,6 @@
 	export FieldYesNo_Ask, FieldYesNo_AskFar
 	export FieldPsynergy_StartMindReadWave, FieldPsynergy_StartMindReadWaveFar
 	export FieldEffect_SpawnMoveHand, FieldEffect_SpawnMoveHandFar
-	export Func_02005794, FieldPsynergy_StopMindReadWaveFar
 	export FieldPsynergy_StopMindReadWave, FieldPsynergy_StopMindReadWaveFar
 	export FieldPsynergy_GreyMindReadPalette, FieldPsynergy_GreyMindReadPaletteFar
 	export FieldEffect_SnapScaleToFull, FieldEffect_SnapScaleToFullFar
@@ -370,7 +364,6 @@
 	export UpdateRisingParticleBurst, UpdateRisingParticleBurstFar
 	export Djinn_JoinParty, Djinn_JoinPartyFar
 	export Camera_WorldToScreen, Camera_WorldToScreenFar
-	export Func_020057a4, EffectSprite_InitFar
 	export Func_02002b28, HangingVine_PlaceFar
 	export Event_ClearInvalidPackedValues, Party_ClearUnusableShortcutsFar
 	export Actor_LaunchFromLeader, Actor_LaunchFromLeaderFar

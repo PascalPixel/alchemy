@@ -27,8 +27,6 @@
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect/spawn.c"
 
-// ---- scene/kandorean_temple/kandorean_temple.c ----
-
 /// The Kandorean Temple's rooms: their tables' getters, the steam, vents and
 /// lifts.
 
@@ -169,8 +167,6 @@ static __inline__ void Func_020053a8_(s32 a, s32 b, s32 c, s32 d) {
 #include "event_work.h"
 #include "module/field/field_effect.h"
 #include "objcmd.h"
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 struct MapWork17 {
   s32 *origin;
@@ -333,37 +329,11 @@ u32 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(kandorean_temple): routine gKandoreanTemple_Placements as this part
- * declared it; the joined file has another. */
-extern u32 gKandoreanTemple_Placements__kandorean_temple[] __asm__(
-    "gKandoreanTemple_Placements");
-#define gKandoreanTemple_Placements                                            \
-  gKandoreanTemple_Placements__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_LiftRoomPlacements as this
- * part declared it; the joined file has another. */
-extern u32 gKandoreanTemple_LiftRoomPlacements__kandorean_temple[] __asm__(
-    "gKandoreanTemple_LiftRoomPlacements");
-#define gKandoreanTemple_LiftRoomPlacements                                    \
-  gKandoreanTemple_LiftRoomPlacements__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_ChestbeaterRoomPlacements as
- * this part declared it; the joined file has another. */
-extern u32
-    gKandoreanTemple_ChestbeaterRoomPlacements__kandorean_temple[] __asm__(
-        "gKandoreanTemple_ChestbeaterRoomPlacements");
-#define gKandoreanTemple_ChestbeaterRoomPlacements                             \
-  gKandoreanTemple_ChestbeaterRoomPlacements__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_VentRoomPlacements as this
- * part declared it; the joined file has another. */
-extern u32 gKandoreanTemple_VentRoomPlacements__kandorean_temple[] __asm__(
-    "gKandoreanTemple_VentRoomPlacements");
-#define gKandoreanTemple_VentRoomPlacements                                    \
-  gKandoreanTemple_VentRoomPlacements__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_FogRoomPlacements as this
- * part declared it; the joined file has another. */
-extern u32 gKandoreanTemple_FogRoomPlacements__kandorean_temple[] __asm__(
-    "gKandoreanTemple_FogRoomPlacements");
-#define gKandoreanTemple_FogRoomPlacements                                     \
-  gKandoreanTemple_FogRoomPlacements__kandorean_temple
+extern struct ActorPlacement gKandoreanTemple_Placements[];
+extern struct ActorPlacement gKandoreanTemple_LiftRoomPlacements[];
+extern struct ActorPlacement gKandoreanTemple_ChestbeaterRoomPlacements[];
+extern struct ActorPlacement gKandoreanTemple_VentRoomPlacements[];
+extern struct ActorPlacement gKandoreanTemple_FogRoomPlacements[];
 
 void *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -427,59 +397,15 @@ void KandoreanTemple_KradenSuspectsTheWall(void) {
   }
 }
 
-/* VIEW(kandorean_temple): routine gKandoreanTemple_Events as this part declared
- * it; the joined file has another. */
-extern s32 gKandoreanTemple_Events__kandorean_temple[] __asm__(
-    "gKandoreanTemple_Events");
-#define gKandoreanTemple_Events gKandoreanTemple_Events__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_LiftRoomEvents as this part
- * declared it; the joined file has another. */
-extern s32 gKandoreanTemple_LiftRoomEvents__kandorean_temple[] __asm__(
-    "gKandoreanTemple_LiftRoomEvents");
-#define gKandoreanTemple_LiftRoomEvents                                        \
-  gKandoreanTemple_LiftRoomEvents__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_ChestbeaterRoomEvents as
- * this part declared it; the joined file has another. */
-extern s32 gKandoreanTemple_ChestbeaterRoomEvents__kandorean_temple[] __asm__(
-    "gKandoreanTemple_ChestbeaterRoomEvents");
-#define gKandoreanTemple_ChestbeaterRoomEvents                                 \
-  gKandoreanTemple_ChestbeaterRoomEvents__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_VentRoomEvents as this part
- * declared it; the joined file has another. */
-extern s32 gKandoreanTemple_VentRoomEvents__kandorean_temple[] __asm__(
-    "gKandoreanTemple_VentRoomEvents");
-#define gKandoreanTemple_VentRoomEvents                                        \
-  gKandoreanTemple_VentRoomEvents__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_Room5Events as this part
- * declared it; the joined file has another. */
-extern s32 gKandoreanTemple_Room5Events__kandorean_temple[] __asm__(
-    "gKandoreanTemple_Room5Events");
-#define gKandoreanTemple_Room5Events                                           \
-  gKandoreanTemple_Room5Events__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_Room6Events as this part
- * declared it; the joined file has another. */
-extern s32 gKandoreanTemple_Room6Events__kandorean_temple[] __asm__(
-    "gKandoreanTemple_Room6Events");
-#define gKandoreanTemple_Room6Events                                           \
-  gKandoreanTemple_Room6Events__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_FogRoomEvents as this part
- * declared it; the joined file has another. */
-extern s32 gKandoreanTemple_FogRoomEvents__kandorean_temple[] __asm__(
-    "gKandoreanTemple_FogRoomEvents");
-#define gKandoreanTemple_FogRoomEvents                                         \
-  gKandoreanTemple_FogRoomEvents__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_GateEvents as this part
- * declared it; the joined file has another. */
-extern s32 gKandoreanTemple_GateEvents__kandorean_temple[] __asm__(
-    "gKandoreanTemple_GateEvents");
-#define gKandoreanTemple_GateEvents                                            \
-  gKandoreanTemple_GateEvents__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_PoisHallEvents as this part
- * declared it; the joined file has another. */
-extern s32 gKandoreanTemple_PoisHallEvents__kandorean_temple[] __asm__(
-    "gKandoreanTemple_PoisHallEvents");
-#define gKandoreanTemple_PoisHallEvents                                        \
-  gKandoreanTemple_PoisHallEvents__kandorean_temple
+extern struct Trigger gKandoreanTemple_Events[];
+extern struct Trigger gKandoreanTemple_LiftRoomEvents[];
+extern struct Trigger gKandoreanTemple_ChestbeaterRoomEvents[];
+extern struct Trigger gKandoreanTemple_VentRoomEvents[];
+extern struct Trigger gKandoreanTemple_Room5Events[];
+extern struct Trigger gKandoreanTemple_Room6Events[];
+extern struct Trigger gKandoreanTemple_FogRoomEvents[];
+extern struct Trigger gKandoreanTemple_GateEvents[];
+extern struct Trigger gKandoreanTemple_PoisHallEvents[];
 
 void *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -568,7 +494,7 @@ void KandoreanTemple_PushThroughTheSteam(void) {
  * EventWork1cc__kandorean_temple; module/tla.h has another definition; tried
  * with the definition the rest of the object has, its members read focus as
  * object, it does not compile in tla-ja:
- * games/tla/src/scene/kandorean_temple.c:298: dereferencing pointer to
+ * games/tla/src/scene/kandorean_temple.c:497: dereferencing pointer to
  * incomplete type. */
 struct EventWork1cc__kandorean_temple {
   u8 unk000[0x1cc];
@@ -1394,7 +1320,7 @@ void KandoreanTemple_WatchLifts(void) {
 /* VIEW(kandorean_temple): tag struct MapCell as struct
  * MapCell__kandorean_temple; map.h has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/kandorean_temple.c:1135: arithmetic on pointer to an
+ * games/tla/src/scene/kandorean_temple.c:1334: arithmetic on pointer to an
  * incomplete type. */
 struct MapCell__kandorean_temple {
   u8 unk0[2];
@@ -1959,37 +1885,32 @@ void KandoreanTemple_RiseOnLeftVent();
 void KandoreanTemple_RiseOnRightVent();
 
 void KandoreanTemple_StartVentRoom(void) {
-  s32 t1, t2, t9, t19, t21, t39, t44, p_r3;
+  s32 t2, t9, p_r3;
 
-  t1 = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
-  if (t1 == 0)
-    goto L_0200acd2;
-  t2 = ((s32)Actor_GetById(9));
-  FieldActor_SetPositionAndResetMotion(t2, PIXELS(216), 0, PIXELS(216));
-  Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
-  t9 = ((s32)Actor_GetById(10));
-  Actor_SetPositionAndResetMotion(t9, PIXELS(376), 0, PIXELS(248));
-  Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
-  GameFlag_Clear(0x20e);
-  GameFlag_Clear(0x20c);
-  GameFlag_Clear(0x20d);
-L_0200acd2:
-  t19 = GameFlag_Get(0x300);
-  if (t19 == 0)
-    goto L_0200acee;
-  Actor_SetPosition(8, PIXELS(216), PIXELS(216));
-  goto L_0200ad0a;
-L_0200acee:
-  t21 = GameFlag_Get(0x301);
-  if (t21 == 0)
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+    t2 = ((s32)Actor_GetById(9));
+    FieldActor_SetPositionAndResetMotion(t2, PIXELS(216), 0, PIXELS(216));
+    Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
+    t9 = ((s32)Actor_GetById(10));
+    Actor_SetPositionAndResetMotion(t9, PIXELS(376), 0, PIXELS(248));
+    Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
+    GameFlag_Clear(0x20e);
+    GameFlag_Clear(0x20c);
+    GameFlag_Clear(0x20d);
+  }
+  if (GameFlag_Get(0x300)) {
+    Actor_SetPosition(8, PIXELS(216), PIXELS(216));
+    goto L_0200ad0a;
+  }
+  if (!GameFlag_Get(0x301))
     goto L_0200ad0a;
   Actor_SetPosition(8, PIXELS(376), PIXELS(248));
 L_0200ad0a:
@@ -2013,8 +1934,7 @@ L_0200ad0a:
   KandoreanTemple_PrepareLiftBase(19);
   KandoreanTemple_PrepareLiftBase(20);
   Actor_PlaceBlocks(gKandoreanTemple_PillarActors);
-  t39 = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
-  if (t39 != 0)
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     goto L_0200adda;
   if (gMainRoutineWork.entrance != 3) {
     p_r3 = gMainRoutineWork.entrance;
@@ -2033,8 +1953,7 @@ L_0200adda:
   gKandoreanTemple_RightBobPhase = 0;
   Task_AddFrame(KandoreanTemple_RunLeftVent, 0x480);
   Task_Add((s32)KandoreanTemple_RunRightVent, 0x480);
-  t44 = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
-  if (t44 != 0)
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     goto L_0200ae24;
   if (gMainRoutineWork.entrance != 5)
     goto L_0200ae24;
@@ -2055,11 +1974,8 @@ L_0200ae24:
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef gKandoreanTemple_Placements
-#undef gKandoreanTemple_LiftRoomPlacements
-#undef gKandoreanTemple_ChestbeaterRoomPlacements
 #undef gKandoreanTemple_VentRoomPlacements
 #undef gKandoreanTemple_FogRoomPlacements
-#undef gKandoreanTemple_Events
 #undef gKandoreanTemple_LiftRoomEvents
 #undef gKandoreanTemple_ChestbeaterRoomEvents
 #undef gKandoreanTemple_VentRoomEvents
@@ -3128,29 +3044,6 @@ void KandoreanTemple_LowerTheLadder(void) {
 }
 
 void KandoreanTemple_FightFog(void);
-/* VIEW(events): routine KandoreanTemple_CountDownSteam as this part declared
- * it; the joined file has another. */
-void KandoreanTemple_CountDownSteam__events(void) __asm__(
-    "KandoreanTemple_CountDownSteam");
-#define KandoreanTemple_CountDownSteam KandoreanTemple_CountDownSteam__events
-/* VIEW(events): routine KandoreanTemple_MeditateRestlessly as this part
- * declared it; the joined file has another. */
-void KandoreanTemple_MeditateRestlessly__events(void) __asm__(
-    "KandoreanTemple_MeditateRestlessly");
-#define KandoreanTemple_MeditateRestlessly                                     \
-  KandoreanTemple_MeditateRestlessly__events
-/* VIEW(events): routine KandoreanTemple_LevitateStudentBob as this part
- * declared it; the joined file has another. */
-void KandoreanTemple_LevitateStudentBob__events(void) __asm__(
-    "KandoreanTemple_LevitateStudentBob");
-#define KandoreanTemple_LevitateStudentBob                                     \
-  KandoreanTemple_LevitateStudentBob__events
-/* VIEW(events): routine KandoreanTemple_PlaceLevitatingStudent as this part
- * declared it; the joined file has another. */
-void KandoreanTemple_PlaceLevitatingStudent__events(void) __asm__(
-    "KandoreanTemple_PlaceLevitatingStudent");
-#define KandoreanTemple_PlaceLevitatingStudent                                 \
-  KandoreanTemple_PlaceLevitatingStudent__events
 void KandoreanTemple_StartMovingPillar(void);
 void KandoreanTemple_ReceiveLash(void);
 
@@ -3571,7 +3464,6 @@ struct Trigger gKandoreanTemple_PoisHallEvents[] = {
     {TRIGGER_TABLE_END},
 };
 // clang-format on
-#undef KandoreanTemple_CountDownSteam
 #undef KandoreanTemple_MeditateRestlessly
 #undef KandoreanTemple_LevitateStudentBob
 #undef KandoreanTemple_PlaceLevitatingStudent

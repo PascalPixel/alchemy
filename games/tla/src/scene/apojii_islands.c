@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x679, in ROM order.
-
 #include "shared/actors.h"
 #include "types.h"
 #include "system/system.h"
@@ -39,7 +37,7 @@ void Func_02000974(void);
 void Scroll_HBlank(void);
 void Layer_TrackScroll(void);
 void Scroll_StartHBlank(void);
-void Func_02001054(void);
+void ApojiiIslands_InitializeRoom2(void);
 void Func_020010b4(void);
 void Func_020010d8(struct Actor *object);
 s32 Actor_EmitMist(struct Actor *object);
@@ -141,8 +139,6 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #include "../field/field_effect/move.c"
 
 // @file
-// Scene code of overlay 0x679, in ROM order.
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -151,24 +147,16 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
-// ---- scene/apojii_islands/apojii_islands.c ----
-
-// Scene code of overlay 0x679, in ROM order.
-
-// ---- games/tla/src/scene/apojii_islands.c ----
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
-extern struct ActorPlacement gData_02002200[];
-extern struct ActorPlacement gData_02002218[];
-extern struct ActorPlacement gData_02002320[];
-extern struct ActorPlacement gData_02002458[];
+extern struct ActorPlacement gApojiiIslands_Placements[];
+extern struct ActorPlacement gApojiiIslands_Room1Placements[];
+extern struct ActorPlacement gApojiiIslands_Room3Placements[];
+extern struct ActorPlacement gApojiiIslands_Room2Placements[];
 extern s32 gData_020024cc[];
 
-extern struct Trigger gData_020024b8[];
-extern struct Trigger gData_020024d0[];
-extern struct Trigger gData_02002698[];
-extern struct Trigger gData_0200280c[];
+extern struct Trigger gApojiiIslands_Triggers[];
+extern struct Trigger gApojiiIslands_Room1Triggers[];
+extern struct Trigger gApojiiIslands_Room3Triggers[];
+extern struct Trigger gApojiiIslands_Room2Triggers[];
 void Func_020003b0(void);
 void Func_020003cc(void);
 void Func_020006a8(void);
@@ -198,12 +186,12 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov679Room1)
-    return gData_02002218;
+    return gApojiiIslands_Room1Placements;
   if (scene == (s32)&SceneId_Ov679Room3)
-    return gData_02002320;
+    return gApojiiIslands_Room3Placements;
   if (scene == (s32)&SceneId_Ov679Room2)
-    return gData_02002458;
-  return gData_02002200;
+    return gApojiiIslands_Room2Placements;
+  return gApojiiIslands_Placements;
 }
 
 void Func_020003b0(void) {
@@ -214,12 +202,7 @@ void Func_020003cc(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->terrainId = 0;
 }
 
-/* VIEW(apojii_islands): variable gData_020024c4 as extern s32 gData_020024c4;
- * the definition has s32 gData_020024c4[] = { - 1, }; tried as the definition's
- * extern s32 gData_020024c4[], it does not compile in tla-ja:
- * games/tla/src/scene/apojii_islands/apojii_islands.c:95: `gData_020024c4' has
- * an incomplete type. */
-extern s32 gData_020024c4__apojii_islands __asm__("gData_020024c4");
+extern s32 gData_020024c4;
 extern u16 Data_02002958[];
 extern u16 Data_02002978[];
 extern u16 gData_02002998[];
@@ -234,15 +217,15 @@ void Func_020003e8(void) {
     return;
   if (*(s8 *)(work + 0xca4) != 0)
     return;
-  if (gData_020024c4__apojii_islands == -1) {
+  if (gData_020024c4 == -1) {
     Call3((void (*)())Iwram_CopyWordsEntry, Data_02002958, (void *)0x05000060,
           32);
     Iwram_CopyWordsEntry(Data_02002978, Data_02002958, 32);
     Iwram_CopyWordsEntry(gData_02002998, (void *)0x05000080, 32);
     Iwram_CopyWordsEntry(gData_020029b8, gData_02002998, 32);
-    gData_020024c4__apojii_islands = 0;
+    gData_020024c4 = 0;
   }
-  phase = gData_020024c4__apojii_islands / 8 % 4;
+  phase = gData_020024c4 / 8 % 4;
   k = 0;
   firstCopy = Data_02002978;
   secondCopy = gData_020029b8;
@@ -253,15 +236,10 @@ void Func_020003e8(void) {
   }
   IO_WRITE_QUEUE_PUSH(0x05000060, (u32)firstCopy, 0x84000008);
   IO_WRITE_QUEUE_PUSH(0x05000080, (u32)secondCopy, 0x84000008);
-  gData_020024c4__apojii_islands++;
+  gData_020024c4++;
 }
 
-/* VIEW(apojii_islands): variable gData_020024c8 as extern s32 gData_020024c8;
- * the definition has s32 gData_020024c8[] = { - 1, }; tried as the definition's
- * extern s32 gData_020024c8[], it does not compile in tla-ja:
- * games/tla/src/scene/apojii_islands/apojii_islands.c:132: `gData_020024c8' has
- * an incomplete type. */
-extern s32 gData_020024c8__apojii_islands __asm__("gData_020024c8");
+extern s32 gData_020024c8;
 extern u16 Data_020029d8[];
 extern u16 Data_020029f8[];
 extern u16 Data_02002a18[];
@@ -276,14 +254,14 @@ void Func_02000540(void) {
   busy = *(s8 *)(work + 0xca4);
   if (busy != 0)
     return;
-  if (gData_020024c8__apojii_islands == -1) {
+  if (gData_020024c8 == -1) {
     Call3((void (*)())Iwram_CopyWordsEntry, (s32)Data_020029d8, 0x05000060, 32);
     Iwram_CopyWordsEntry(Data_020029f8, Data_020029d8, 32);
     Iwram_CopyWordsEntry(Data_02002a18, (void *)0x050001a0, 32);
     Iwram_CopyWordsEntry(Data_02002a38, Data_02002a18, 32);
-    gData_020024c8__apojii_islands = busy;
+    gData_020024c8 = busy;
   }
-  phase = gData_020024c8__apojii_islands / 8 % 4;
+  phase = gData_020024c8 / 8 % 4;
   for (k = 0; k <= 3; k++) {
     /* FAKEMATCH(dead): the phase and the first colour in a once-only block,
      * whose end holds the order around it; as plain statements, 6 of 152
@@ -296,7 +274,7 @@ void Func_02000540(void) {
   }
   IO_WRITE_QUEUE_PUSH(0x05000060, (u32)Data_020029f8, 0x84000008);
   IO_WRITE_QUEUE_PUSH(0x050001a0, (u32)Data_02002a38, 0x84000008);
-  gData_020024c8__apojii_islands++;
+  gData_020024c8++;
 }
 
 void Func_02000694(void) {
@@ -335,19 +313,12 @@ void Func_02000770(struct Actor *object) {
 
 DEFINE_ACTOR_FLICKER_CHILD(Actor_FlickerChild, 7)
 
-// ---- games/tla/src/scene/apojii_islands/s07a4.c ----
-
-/* VIEW(s07a4): routine Random16 as u16 Random16(void); system.h has u32
- * Random16(void); tried as the definition's u32 Random16(void), which the
- * object already declares, Func_020007a4 moves: 1 of 188 instructions in
- * tla-ja. */
-extern u16 Random16__s07a4(void) __asm__("Random16");
 /* VIEW(s07a4): routine BattleEffect_ApplyColorToTargetBuffer as s32
  * BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b); event.h has void
  * BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode); tried as the
  * definition's void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode),
- * which the object already declares, Func_020007a4 moves: 1 of 188 instructions
- * in tla-ja. */
+ * which the object already declares, Actor_FlickerChild (gone) moves: 13 of 13
+ * instructions in tla-ja. */
 extern s32 BattleEffect_ApplyColorToTargetBuffer__s07a4(s32 a, s32 b) __asm__(
     "BattleEffect_ApplyColorToTargetBuffer");
 
@@ -386,7 +357,7 @@ void Func_020007a4(s32 unused, s32 id) {
    * returning s32, though its target returns nothing; as void, 2 of 188
    * instructions differ in tla-en. */
 flash:
-  ApojiiIslands_Flash(Random16__s07a4() & 0x7fff, 0);
+  ApojiiIslands_Flash(Random16() & 0x7fff, 0);
   PaletteFade_StartInterpolation(15);
   wait(10);
   ApojiiIslands_Flash(0x10000, 0);
@@ -424,10 +395,6 @@ blend:
   ApojiiIslands_CamMove(PIXELS(472), -1, PIXELS(408), 1);
   Import_EventSetExitRequest(77);
 }
-
-// ---- games/tla/src/scene/apojii_islands/events_d.c ----
-// Scene code of overlay 0x679, in ROM order, from events_d's offset up to the
-// next object the overlay links.
 
 void Func_02000974(void) {
   Event_Start();
@@ -548,12 +515,12 @@ const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov679Room1)
-    return gData_020024d0;
+    return gApojiiIslands_Room1Triggers;
   if (scene == (s32)&SceneId_Ov679Room3)
-    return gData_02002698;
+    return gApojiiIslands_Room3Triggers;
   if (scene == (s32)&SceneId_Ov679Room2)
-    return gData_0200280c;
-  return gData_020024b8;
+    return gApojiiIslands_Room2Triggers;
+  return gApojiiIslands_Triggers;
 }
 
 void ApojiiIslands_TalkToInnkeeper(s32 actor) {
@@ -639,7 +606,7 @@ s32 Scene_Initialize(void) {
   party = &gMainRoutineWork;
   scene = party->scene;
   if (scene == (s32)&SceneId_Ov679Room2) {
-    Func_02001054();
+    ApojiiIslands_InitializeRoom2();
   } else if (scene == (s32)&SceneId_Ov679Room1) {
     FieldTask_AddFrame(Func_02000540, 0x480);
     if (Event_GetFlag(0x95e))
@@ -654,7 +621,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_02001054(void) {
+void ApojiiIslands_InitializeRoom2(void) {
   Task_AddFrame(Func_020003e8, TASK_PASS_VBLANK);
   Rope_Initialize();
   Rope_Place(0, 0x200, 8, 9);
@@ -695,10 +662,6 @@ void Func_020010d8(struct Actor *object) {
     }
   }
 }
-
-// ---- games/tla/src/scene/apojii_islands/events_h.c ----
-// Scene code of overlay 0x679, in ROM order, from events_h's offset up to the
-// next object the overlay links.
 
 DEFINE_ACTOR_EMIT_WATER_DROP(Actor_EmitWaterDrop, gWaterDropScript)
 
@@ -1099,11 +1062,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02002200[] = {
+struct ActorPlacement gApojiiIslands_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002218[] = {
+struct ActorPlacement gApojiiIslands_Room1Placements[] = {
     {115, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(168), FACING_NORTHWEST, 1, 0},
     {116, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(88), FACING_NORTHEAST, 3, 0},
     {114, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(312), FACING_NORTHEAST, 1, 0},
@@ -1117,7 +1080,7 @@ struct ActorPlacement gData_02002218[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002320[] = {
+struct ActorPlacement gApojiiIslands_Room3Placements[] = {
     {116, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(152), FACING_EAST, 1, 0},
     {136, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(104), FACING_SOUTHEAST, 2, 0},
     {114, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(104), FACING_SOUTHEAST, 1, 0},
@@ -1133,30 +1096,26 @@ struct ActorPlacement gData_02002320[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002458[] = {
+struct ActorPlacement gApojiiIslands_Room2Placements[] = {
     {407, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(280), FACING_NORTH, 2, 0},
     {407, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(280), FACING_NORTH, 2, 0},
     {246, 0x77, 1, PIXELS(376), 0, PIXELS(200), FACING_WEST, 0, 0},
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_020024b8[] = {
+struct Trigger gApojiiIslands_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gData_020024c4[] = {
-    -1,
-};
+s32 gData_020024c4 = -1;
 
-s32 gData_020024c8[] = {
-    -1,
-};
+s32 gData_020024c8 = -1;
 
 s32 gData_020024cc[] = {
     -1,
 };
 
-struct Trigger gData_020024d0[] = {
+struct Trigger gApojiiIslands_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1197,7 +1156,7 @@ struct Trigger gData_020024d0[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02002698[] = {
+struct Trigger gApojiiIslands_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1231,7 +1190,7 @@ struct Trigger gData_02002698[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_0200280c[] = {
+struct Trigger gApojiiIslands_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},

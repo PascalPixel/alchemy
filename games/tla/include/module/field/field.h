@@ -291,25 +291,6 @@ struct ContextEffect {
   u8 param;
 };
 
-struct LinkAnimation {
-  u8 unk00[9];
-  u8 unused09 : 2;
-  u8 layer : 2;
-};
-
-struct LinkEnds {
-  s16 first;
-  s16 second;
-  s16 unk04;
-  s16 layer;
-};
-
-struct LinkEntry {
-  u8 unk00[12];
-  struct LinkEnds ends;
-  u8 unk14[12];
-};
-
 struct WobbleEvent {
   u8 unk000[362];
   u16 cue;
@@ -317,46 +298,42 @@ struct WobbleEvent {
   s16 counter;
 };
 
-struct LineNode {
-  struct LineNode *next;
+/// One node of a tightrope (Tightrope_Initialize's work): a point on the rope,
+/// and the sprite Tightrope_Draw puts between it and the next node.
+struct TightropeNode {
+  struct TightropeNode *next;
   s32 x;
   s32 y;
   s32 z;
-  u8 kind;
-  u8 slot;
-};
-
-struct LineSlot {
-  s16 first;
-  s16 second;
-  s32 direction;
-  s32 amplitude;
-  u8 unk0c[4];
-  s32 angle;
-  s32 active;
-  struct LineNode *head;
-};
-
-struct LineWork {
-  u8 unk00[12];
-  struct LineSlot slots[8];
-};
-
-struct TileEffectWork {
-  s32 vramEntry;
-  u8 unk04[0x10e0];
-};
-
-struct ChainLink {
-  struct ChainLink *next;
-  s32 x;
-  s32 y;
-  s32 z;
-  u16 angle;
-  s8 kind; ///< 0 or 1: not drawn; else its picture, from 2
-  u8 unk13;
+  s8 kind; ///< 0 while free; 1 a node the leader can step onto; 2 coiled
+  s8 slot; ///< the tightrope's index plus one while it is thrown, else 0
+  u8 unk12[2];
   struct AnimationSpritePart sprite;
 };
+
+/// One of the eight tightropes: the two posts it runs between and its wobble.
+struct TightropeSlot {
+  s16 first;
+  s16 second;
+  u32 direction; ///< the sprites' turn, along the tightrope
+  s32 amplitude; ///< the wobble's size, decaying each frame
+  u8 unk0c[4];
+  s32 phase;
+  s32 wobbling;
+  struct TightropeNode *head;
+};
+
+/// The tightropes' work, heap slot 160.
+struct TightropeWork {
+  struct Actor
+      *recoilFrom; ///< the posts Tightrope_Untie gives Tightrope_Recoil
+  struct Actor *recoilTo;
+  s32 vramEntry; ///< the nodes' picture
+  struct TightropeSlot slots[8];
+  struct TightropeNode nodes[128];
+};
+
+#define TIGHTROPE_WORK ((struct TightropeWork *)Ram_HeapSlots->unk84[7])
 
 struct ChainObject {
   u8 unk00[8];
@@ -659,80 +636,50 @@ struct CaptureResource {
   u8 id;
 };
 
-struct ChainTransform {
-  u32 scaleX : 16;
-  u32 scaleY : 16;
-  u32 angle : 16;
-  u32 unk06 : 16;
-};
-
-struct ChainNode {
-  struct ChainNode *next;
+/// One node of a rope Lash throws and ties (Rope_Initialize's work): a point on
+/// the rope, and the sprite Rope_Draw puts between it and the next node.
+struct RopeNode {
+  struct RopeNode *next;
   s32 x;
   s32 y;
   s32 z;
-  u16 angle;
-  s8 used;
-  u8 unk13;
+  u16 angle; ///< the sprite's turn, along the rope
+  s8 kind;   ///< 0 while free; 1 a node the leader can step onto; 2 coiled
+  s8 slot;   ///< the rope's index plus one while it is thrown, else 0
   struct AnimationSpritePart sprite;
 };
 
-struct ChainSlot {
-  s16 id;
-  s16 value;
-  s16 depth;
-  s16 priority;
-  s16 flag;
-  s16 state;
-  u8 unk0c[16];
-  struct ChainNode *head;
-};
-
-struct SwingSlot {
-  s16 id;
-  s16 value;
-  u8 unk04[8];
+/// One of the eight ropes: the two posts it runs between and its swing.
+struct RopeSlot {
+  s16 first;    ///< the post it coils at
+  s16 second;   ///< the post it is tied to
+  s16 segments; ///< its nodes, less one
+  s16 priority; ///< the sprites', the first post's
+  s16 flag;     ///< set while the rope is tied
+  s16 state;    ///< 1 once thrown or tied
   s32 amplitude;
   u8 unk10[4];
   s32 phase;
-  s32 active;
-  u8 unk1c[4];
+  s32 swinging;
+  struct RopeNode *head;
 };
+
+/// The ropes' work, heap slot 156.
+struct RopeWork {
+  struct Actor *recoilFrom; ///< the posts Rope_Untie gives Rope_Recoil
+  struct Actor *recoilTo;
+  s32 vramEntry; ///< the nodes' picture
+  struct RopeSlot slots[8];
+  struct RopeNode nodes[128];
+};
+
+#define ROPE_WORK ((struct RopeWork *)Ram_HeapSlots->unk84[6])
 
 struct SwingEvent {
   u8 unk000[362];
   s16 prompt;
   u8 unk16c[24];
   s16 timer;
-};
-
-struct RopeNode {
-  struct RopeNode *next;
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk10[2];
-  u8 kind;
-  u8 slot;
-};
-
-struct RopeSlot {
-  s16 id;
-  s16 value;
-  s16 count;
-  u8 unk06[2];
-  s16 flag;
-  s16 state;
-  s32 amplitude;
-  u8 unk10[4];
-  s32 phase;
-  s32 active;
-  struct RopeNode *head;
-};
-
-struct RopeWork {
-  u8 unk000[12];
-  struct RopeSlot slots[8];
 };
 
 union MoteWord {
@@ -860,13 +807,6 @@ struct JumpEventWork {
 struct ClimbSprite {
   u8 unk00[26];
   u8 flags;
-};
-
-struct Work9cItemPosition {
-  u8 unk00[4];
-  s32 x;
-  s32 y;
-  s32 z;
 };
 
 struct GrabSave {

@@ -3,8 +3,6 @@
 
 #include "../field/field_effect/move.c"
 /// @file
-/// The scene code of overlay 0x6a8, in ROM order.
-
 #include "types.h"
 #include "system/main_routine_work.h"
 #include "field_sprite.h"
@@ -46,11 +44,11 @@
 
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-extern s32 gData_020047a0[];
+extern s32 gFieldEffect_DurationScripts[];
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
-void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options) {
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
   struct FieldEffect *party =
       ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner));
   struct FieldEffect *effect;
@@ -67,7 +65,8 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect, gData_020047a0[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect,
+                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
@@ -96,7 +95,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 targetX;
     s32 count;
 
-    script = gData_020047a0[flags & EFFECT_SCRIPT_MASK];
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     targetX = options->targetScaleX;
     count = script[3];
     if (start != 0) {
@@ -134,10 +133,6 @@ void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }
 
 #undef FIELD_AT
 
-// ---- scene/prox/prox.c ----
-
-/// Scene code of overlay 0x6a8, in ROM order.
-
 #ifndef TLA_PROX_LOCAL_H
 #define TLA_PROX_LOCAL_H
 
@@ -154,13 +149,11 @@ void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }
 
 #endif
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 extern s16 gData_02004b2c[];
 extern u32 gProx_Room2Placements[];
-extern s16 gData_02004d9c[];
+extern s16 gProx_Room3Placements[];
 extern s32 gData_02004f04[];
-extern u32 gData_02005444[];
+extern u32 gProx_Room5Placements[];
 extern u32 gData_020054a4[];
 extern u32 gProx_Room6Placements[];
 extern struct Trigger gProx_Triggers[];
@@ -177,7 +170,7 @@ extern s32 gProx_EnterDoorScript[];
 
 void Func_020027e4(void);
 
-void Func_02002878(void);
+void Prox_InitializeRoom3(void);
 
 void Func_020029c8(void);
 
@@ -231,7 +224,7 @@ void Func_02001b28(void);
 void Func_02001b60(void);
 void Func_02001b7c(void);
 void Prox_SayFarewell(void);
-void Func_0200391c(void);
+void Leader_SlideOnIce(void);
 extern u32 gData_02004644[];
 extern u32 gData_02004680[];
 
@@ -355,19 +348,14 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(prox): variable gData_02004b14 as extern struct ActorPlacement
- * gData_02004b14[]; the definition has u32 gData_02004b14[] = { 0xffff, 0, 0,
- * 0, 0, 0, }; tried as the definition's extern struct Trigger gData_02004b14[],
- * it does not compile in tla-ja: games/tla/src/scene/prox.c:2310: conflicting
- * types for `gData_02004b14'. */
-extern struct ActorPlacement gData_02004b14__prox[] __asm__("gData_02004b14");
+extern u32 gData_02004b14[];
 extern u32 gData_0200506c[];
 /* VIEW(prox): variable gData_0200521c as extern struct ActorPlacement
  * gData_0200521c[]; the definition has s16 gData_0200521c[] = { 175, - 1, 3, 0,
  * 0, 104, 0, 0, 0, 196, 0x8000, 0, 172, - 1, 1, 0, 0, 128, 0, 0, 0, 106,
  * 0xb000, 1, 178, - 1, 1, 0, 0...; tried as the definition's extern s16
  * gData_0200521c[], it does not compile in tla-ja:
- * games/tla/src/scene/prox.c:291: request for member `talkFacing' in something
+ * games/tla/src/scene/prox.c:371: request for member `talkFacing' in something
  * not a structure or union. */
 extern struct ActorPlacement gData_0200521c__prox[] __asm__("gData_0200521c");
 
@@ -383,7 +371,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   if (scene == (s32)&SceneId_Ov6a8Room3) {
     if (Event_GetFlag(0xa3d))
       return gData_02004f04;
-    return gData_02004d9c;
+    return gProx_Room3Placements;
   }
   if (scene == (s32)&SceneId_Ov6a8Room4) {
     if (Event_GetFlag(0xa3d)) {
@@ -396,11 +384,11 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   if (scene == (s32)&SceneId_Ov6a8Room5) {
     if (Event_GetFlag(0xa3d))
       return gData_020054a4;
-    return gData_02005444;
+    return gProx_Room5Placements;
   }
   if (scene == (s32)&SceneId_Ov6a8Room6)
     return gProx_Room6Placements;
-  return gData_02004b14__prox;
+  return gData_02004b14;
 }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -414,13 +402,7 @@ s32 Actor_ReturnHome();
 
 void Func_02000588(s32 a0) { Call3(Actor_ReturnHome, a0, 0x40, 0x300); }
 
-/* VIEW(prox): variable gData_02005a20 as extern const u8 gData_02005a20[]; the
- * definition has struct Trigger gData_02005a20[] = { { 1, 1, CONDITION_ALWAYS,
- * 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 1, 4,
- * CON...; tried as the definition's extern u32 gData_02005a20[], it does not
- * compile in tla-ja: games/tla/src/scene/prox.c:2590: conflicting types for
- * `gData_02005a20'. */
-extern const u8 gData_02005a20__prox[] __asm__("gData_02005a20");
+extern struct Trigger gData_02005a20[];
 
 const u8 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -432,7 +414,7 @@ const u8 *Scene_GetEvents(void) {
   if (scene == (s32)&SceneId_Ov6a8Room3)
     return gProx_Room3Triggers;
   if (scene == (s32)&SceneId_Ov6a8Room4)
-    return gData_02005a20__prox;
+    return gData_02005a20;
   if (scene == (s32)&SceneId_Ov6a8Room5)
     return gProx_Room5Triggers;
   if (scene == (s32)&SceneId_Ov6a8Room6)
@@ -456,17 +438,13 @@ DEFINE_LEADER_IS_FACING_NORTH(Leader_IsFacingNorth)
 /// ★ Named from the game: ", your parents have gone away... They were very
 /// worried about you." (MsgProx56)
 void Prox_TalkAboutParents(void) {
-  s32 t0;
-  s32 t4;
 
-  t0 = Leader_IsFacingNorth();
-  if (t0 != 0) {
+  if (Leader_IsFacingNorth()) {
     Inn_CheckIn(0xe, 0x16);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    t4 = Event_GetFlag(0xa3d);
-    if (t4 != 0) {
+    if (Event_GetFlag(0xa3d)) {
       FieldEvent_SetMessageId((s32)MsgProx135);
     } else {
       FieldEvent_SetMessageId((s32)MsgProx56);
@@ -481,17 +459,13 @@ s32 Shop_Run();
 /// ★ Named from the game: "You go away for a little while, and you come back a
 /// strong and mighty warrior!" (MsgProx53)
 void Prox_PraiseReturnedWarrior(void) {
-  s32 t0;
-  s32 t4;
 
-  t0 = Leader_IsFacingNorth();
-  if (t0 != 0) {
+  if (Leader_IsFacingNorth()) {
     Shop_Run(0x1f, 0xa);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    t4 = Event_GetFlag(0xa3d);
-    if (t4 != 0) {
+    if (Event_GetFlag(0xa3d)) {
       FieldEvent_SetMessageId((s32)MsgProx132);
     } else {
       FieldEvent_SetMessageId((s32)MsgProx53);
@@ -506,17 +480,13 @@ s32 Sanctum_Run();
 /// ★ Named from the game: "Now that the lighthouse has been lit, I fear for
 /// what will happen to Weyard." (MsgProx139)
 void Prox_FearForWeyard(void) {
-  s32 t0;
-  s32 t4;
 
-  t0 = Leader_IsFacingNorth();
-  if (t0 != 0) {
+  if (Leader_IsFacingNorth()) {
     Sanctum_Run(8);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    t4 = Event_GetFlag(0xa3d);
-    if (t4 != 0) {
+    if (Event_GetFlag(0xa3d)) {
       FieldEvent_SetMessageId((s32)MsgProx139);
     } else {
       FieldEvent_SetMessageId((s32)MsgProx60);
@@ -1182,23 +1152,21 @@ void Func_02001b7c(void) {
 }
 
 void Func_02001c24(s32 a0) {
-  s32 t0;
+  struct Actor *object;
 
-  t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
+  object = Actor_Get(gMainRoutineWork.currentOwner);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (a0 != 0) {
     Actor_SetSpriteFlags(((s32)Actor_Get(gMainRoutineWork.currentOwner)), 0);
-    FieldActor_SetPositionAndResetMotion(t0, (FIELD_AT(t0, s32, 8) + -65536),
-                                         FIELD_AT(t0, s32, 12),
-                                         (FIELD_AT(t0, s32, 16) + -393216));
+    FieldActor_SetPositionAndResetMotion(object, (object->x + -65536),
+                                         object->y, (object->z + -393216));
     System_Wait(1);
     Event_StartScreenTransition();
     Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 0x17);
   } else {
-    FieldActor_SetPositionAndResetMotion(t0, (FIELD_AT(t0, s32, 8) + 0x10000),
-                                         FIELD_AT(t0, s32, 12),
-                                         (FIELD_AT(t0, s32, 16) + -393216));
+    FieldActor_SetPositionAndResetMotion(object, (object->x + 0x10000),
+                                         object->y, (object->z + -393216));
     System_Wait(1);
     Event_StartScreenTransition();
     Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 0x18);
@@ -1227,7 +1195,6 @@ s32 Func_0200446c();
 
 /// ★ Named from the game: "Thank you, . And you, too, and Kraden." (MsgProx80)
 void Prox_GiveThanksForBeacon(void) {
-  s32 t83;
   s32 t144;
   s32 t159;
   s32 t202;
@@ -1327,8 +1294,8 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_ShowEmote(0, 0x108, 0);
   Event_OpenMessage(0x4000, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  t83 = FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
-  if (t83 == 0) {
+  if (!FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner,
+                                             0)) {
     Actor_SetAnimationAndWait(26, 3);
     Event_ShowMessage(26, 0);
     EVENT_WORK->messageId++;
@@ -1544,7 +1511,7 @@ s32 Scene_Initialize(void) {
         Actor_SetWideSprite(64, 1);
       Func_020027e4();
     } else if (scene == (s32)&SceneId_Ov6a8Room3) {
-      Func_02002878();
+      Prox_InitializeRoom3();
     }
     if (Event_GetFlag(0x201)) {
       BattleEffect_ApplyColorToTargetBuffer(0x10004, 1);
@@ -1575,13 +1542,9 @@ void Func_0200279c(s32 actor, s32 x, s32 z, s32 frames) {
 }
 
 void Func_020027e4(void) {
-  s32 t0;
-  s32 t1;
 
-  t0 = Event_GetFlag(0xa3d);
-  if (t0 != 0) {
-    t1 = Event_GetFlag(0x109);
-    if (t1 == 0) {
+  if (Event_GetFlag(0xa3d)) {
+    if (!Event_GetFlag(0x109)) {
       Func_0200279c(0x10, 0x218, 0x168, 0);
       Func_0200279c(0x11, 0x218, 0x1a8, 1);
       Func_0200279c(0x12, 0x244, 0x1a4, 2);
@@ -1596,49 +1559,35 @@ void Func_020027e4(void) {
   FieldActor_SetSpriteColor(((s32)Actor_Get(20)), 0xf);
 }
 
-void Func_02002878(void) {
-  s32 t9;
-  s32 t3;
-  s32 t4;
-  s32 t6;
-  s32 t8;
-  s32 t11;
-  s32 t16;
-  s32 t20;
+void Prox_InitializeRoom3(void) {
+  struct Actor *object;
 
   FieldActor_SetSpritePriority(19, 1);
   FieldActor_SetSpriteColor(((s32)Actor_Get(19)), 0xf);
-  t3 = Event_GetFlag(0xa3d);
-  if (t3 == 0) {
-    t4 = Event_GetFlag(0x9c0);
-    if (t4 == 0) {
+  if (!Event_GetFlag(0xa3d)) {
+    if (!Event_GetFlag(0x9c0)) {
       Actor_SetPosition(8, 0, 0);
     }
-    t6 = Event_GetFlag(0x200);
-    if (t6 != 0) {
+    if (Event_GetFlag(0x200)) {
       MapGrid_CopyCellsTo(0x59, 0, 0x4d, 0x10, 1, 2);
     }
-    t8 = Event_GetFlag(0x9c1);
-    if (t8 != 0) {
-      t9 = ((s32)Actor_Get(10));
-      FIELD_AT(t9, u16, 6) = 0xb000;
+    if (Event_GetFlag(0x9c1)) {
+      object = Actor_Get(10);
+      object->facing = 0xb000;
       System_Wait(1);
     }
   }
-  t11 = Event_GetFlag(0xa3d);
-  if (t11 != 0) {
+  if (Event_GetFlag(0xa3d)) {
     MapGrid_CopyCellsTo(0x48, 3, 0x45, 3, 3, 3);
     MapGrid_CopyCellsTo(0x30, 0x24, 0x45, 8, 3, 2);
     MapGrid_CopyCellAttributes(0x48, 0xd, 1, 3, 0x46, 0x14);
     Actor_SetPosition(20, 0, 0);
   } else {
-    t16 = Event_GetFlag(0xa2d);
-    if (t16 != 0) {
+    if (Event_GetFlag(0xa2d)) {
       MapGrid_CopyCellsTo(0x48, 3, 0x45, 3, 3, 3);
       MapGrid_CopyCellsTo(0x30, 0x24, 0x45, 8, 3, 2);
       MapGrid_CopyCellAttributes(0x48, 0xd, 1, 3, 0x46, 0x14);
-      t20 = Event_GetFlag(0x40);
-      if (t20 == 0) {
+      if (!Event_GetFlag(0x40)) {
         Actor_SetPosition(20, 0, 0);
       }
     }
@@ -1646,21 +1595,20 @@ void Func_02002878(void) {
 }
 
 void Func_020029a4(void) {
-  s32 t0;
+  struct Actor *object;
 
-  t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
+  object = Actor_Get(gMainRoutineWork.currentOwner);
   FieldActor_SetSpritePriority(
-      16, ((u32)(FIELD_AT(FIELD_AT(t0, s32, 80), u8, 9) << 28) >> 30));
+      16,
+      ((u32)(FIELD_AT(FIELD_AT((u8 *)object, s32, 80), u8, 9) << 28) >> 30));
 }
 
 void Func_020029c8(void) {
-  s32 t2;
 
   FieldEffect_StartBlankOverlay(0);
   Task_AddFrame((s32)Func_020029a4, 0x480);
   if (gMainRoutineWork.entrance == 0x14) {
-    t2 = Event_GetFlag(0x9c5);
-    if (t2 == 0) {
+    if (!Event_GetFlag(0x9c5)) {
       Prox_GiveThanksForBeacon();
     }
   }
@@ -1698,27 +1646,11 @@ void Func_02002a38(void) {
 }
 
 s32 Actor_MoveToObject();
-/* VIEW(s1cf0): variable gData_02005ee8 as extern u8 gData_02005ee8[]; the
- * definition has u32 gData_02005ee8[] = { 39, 2, 4, 0x780000, 0, 0xc40000, 1,
- * 39, 1, 0, 10, 22, 3, 0x4000, 0, 10, 17, }; tried as the definition's extern
- * struct Trigger gData_02005ee8[], it does not compile in tla-ja:
- * games/tla/src/scene/prox.c:2701: conflicting types for `gData_02005ee8'. */
-extern u8 gData_02005ee8__s1cf0[] __asm__("gData_02005ee8");
-/* VIEW(s1cf0): variable gData_02006038 as extern u8 gData_02006038[]; the
- * definition has u32 gData_02006038[] = { 39, 2, 4, 0x980000, 0, 0xf80000, 1,
- * 4, 0x980000, 0, 0x15c0000, 1, 39, 1, 0, 1, 3, 0, 1, 17, }; tried as the
- * definition's extern struct Trigger gData_02006038[], it does not compile in
- * tla-ja: games/tla/src/scene/prox.c:2732: conflicting types for
- * `gData_02006038'. */
-extern u8 gData_02006038__s1cf0[] __asm__("gData_02006038");
+extern u32 gData_02005ee8[];
+extern u32 gData_02006038[];
 extern u32 gData_02006088[];
 extern u32 gData_020060fc[];
-/* VIEW(s1cf0): variable gData_02006268 as extern u8 gData_02006268[]; the
- * definition has u32 gData_02006268[] = { 39, 2, 4, 0x980000, 0, 0x15c0000, 1,
- * 39, 1, 0, 1, 3, 0, 1, 17, }; tried as the definition's extern s16
- * gData_02006268[], it does not compile in tla-ja:
- * games/tla/src/scene/prox.c:2777: conflicting types for `gData_02006268'. */
-extern u8 gData_02006268__s1cf0[] __asm__("gData_02006268");
+extern u32 gData_02006268[];
 
 /// ★ Named from the game: "What took you so long? Mom and Dad are tired of
 /// waiting for you..." (MsgProx153)
@@ -1747,7 +1679,7 @@ void Prox_SayFarewell(void) {
     System_Wait(1);
     Actor_SetSpeed(0, 0xcccc, 0x6666);
     Actor_SetSpeed(11, 0xcccc, 0x6666);
-    Actor_SetScript(0, (s32)gData_02005ee8__s1cf0);
+    Actor_SetScript(0, (s32)gData_02005ee8);
     Actor_RunScriptAndWait(11, (s32)gData_02005f2c);
     Actor_SetAnimationAndWait(9, 3);
     Event_ShowMessage(9, 0);
@@ -1871,12 +1803,12 @@ void Prox_SayFarewell(void) {
     Actor_SetScript(10, (s32)gData_02005fac);
     FieldEvent_Wait(10);
     Actor_SetScript(8, (s32)gData_02005fe8);
-    Actor_SetScript(3, (s32)gData_02006038__s1cf0);
+    Actor_SetScript(3, (s32)gData_02006038);
     FieldEvent_Wait(10);
     Actor_SetScript(6, gData_02005fe8);
     Actor_SetScript(7, (s32)gData_02005fe8);
     FieldEvent_Wait(10);
-    Actor_SetScript(2, gData_02006038__s1cf0);
+    Actor_SetScript(2, gData_02006038);
     Actor_SetScript(1, (s32)gData_02006088);
     FieldEvent_Wait(30);
     Actor_SetScript(5, (s32)gData_020060cc);
@@ -1983,7 +1915,7 @@ void Prox_SayFarewell(void) {
     Actor_SetSpeed(5, 0x19999, 0xcccc);
     Actor_SetSpeed(1, 0x19999, 0xcccc);
     Actor_SetScript(5, (s32)gData_0200622c);
-    Actor_RunScriptAndWait(1, (s32)gData_02006268__s1cf0);
+    Actor_RunScriptAndWait(1, (s32)gData_02006268);
     FieldEvent_Wait(20);
     Actor_FaceDirectionAndWait(11, 0xb000);
     Actor_SetAnimation(11, 3);
@@ -2087,14 +2019,9 @@ void Prox_SayFarewell(void) {
 }
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-/* VIEW(s1cf0): variable gData_02004740 as extern const s16 gData_02004740[];
- * the definition has s32 gData_02004740[] = { 0xffff, - 0x8000, (s32)
- * 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000,
- * 0xffff, - 0x8000, -...; tried as the definition's extern s32
- * gData_02004740[], Func_0200385c moves: 7 of 60 instructions in tla-ja. */
-extern const s16 gData_02004740__s1cf0[] __asm__("gData_02004740");
+extern s16 gData_02004740[];
 
-DEFINE_ACTOR_STEER_BY_PAD(Func_0200385c, gData_02004740__s1cf0,
+DEFINE_ACTOR_STEER_BY_PAD(Actor_SteerByPad, gData_02004740,
                           Actor_SelectAnimation)
 
 void Func_020038e8(void) {
@@ -2120,38 +2047,33 @@ struct Position {
 
 void Actor_SelectAnimation(struct Actor *actor, s32 mode);
 s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
-/* VIEW(s391c): variable gData_02004780 as extern s16 gData_02004780[]; the
- * definition has s32 gData_02004780[] = { 0xffff, - 0x8000, 0xc000, (s32)
- * 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the
- * definition's extern s32 gData_02004780[], Func_0200391c moves: 4 of 302
- * instructions, Func_02003bc8 moves: 1 of 330 instructions in tla-ja. */
-extern s16 gData_02004780__s391c[] __asm__("gData_02004780");
+extern s16 gData_02004780[];
 
-DEFINE_LEADER_SLIDE_ON_ICE(Func_0200391c, Func_020038e8, gData_02004780__s391c,
-                           Actor_SelectAnimation, Func_0200385c,
+DEFINE_LEADER_SLIDE_ON_ICE(Leader_SlideOnIce, Func_020038e8, gData_02004780,
+                           Actor_SelectAnimation, Actor_SteerByPad,
                            Field_CheckSpheresOverlap)
 
-extern volatile s16 gData_020062a4;
+extern volatile s16 gProx_SlideStopped;
 
 s32 Actor_HasArrived(struct Actor *object);
 
-#define SHARED_F02003070_NAME Func_02003bc8
-#define SHARED_F02003070_ID2 gData_020062a4
-#define SHARED_F02003070_ID3 Func_020038e8
-#define SHARED_F02003070_ID4 gData_02004780__s391c
-#define SHARED_F02003070_ID5 Actor_SelectAnimation
-#define SHARED_F02003070_ID6 Actor_HasArrived
-#define SHARED_F02003070_ID7 Func_0200385c
-#define SHARED_F02003070_ID8 Field_CheckSpheresOverlap
-#include "shared/func_02003070.c"
-#undef SHARED_F02003070_NAME
-#undef SHARED_F02003070_ID2
-#undef SHARED_F02003070_ID3
-#undef SHARED_F02003070_ID4
-#undef SHARED_F02003070_ID5
-#undef SHARED_F02003070_ID6
-#undef SHARED_F02003070_ID7
-#undef SHARED_F02003070_ID8
+#define SLIDE_FROM_EDGE Leader_SlideOnIceFromEdge
+#define SLIDE_STOPPED gProx_SlideStopped
+#define SLIDE_STOP_LEADER Func_020038e8
+#define SLIDE_ANGLES gData_02004780
+#define SLIDE_SET_ANIMATION Actor_SelectAnimation
+#define SLIDE_HAS_ARRIVED Actor_HasArrived
+#define SLIDE_KEEP_SLIDING Actor_SteerByPad
+#define SLIDE_SPHERES_OVERLAP Field_CheckSpheresOverlap
+#include "shared/slide_on_ice_from_edge.c"
+#undef SLIDE_FROM_EDGE
+#undef SLIDE_STOPPED
+#undef SLIDE_STOP_LEADER
+#undef SLIDE_ANGLES
+#undef SLIDE_SET_ANIMATION
+#undef SLIDE_HAS_ARRIVED
+#undef SLIDE_KEEP_SLIDING
+#undef SLIDE_SPHERES_OVERLAP
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -2160,10 +2082,10 @@ s32 Actor_HasArrived(struct Actor *object);
    } *)(base))                                                                 \
        ->v)
 
-void Func_02003edc(s32 a0) { gData_020062a4 = a0; }
+void Leader_SetSlideStopped(s32 a0) { gProx_SlideStopped = a0; }
 
-DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003ee8, Func_020038e8,
-                                 Actor_SelectAnimation, Func_0200385c,
+DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Func_020038e8,
+                                 Actor_SelectAnimation, Actor_SteerByPad,
                                  Field_CheckSpheresOverlap)
 
 struct ParticleSprite {
@@ -2229,7 +2151,7 @@ extern char ResourceId_FallingRock;
 
 /* VIEW(s4254): tag struct RockSprite as struct RockSprite__s4254; prox.c has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/scene/prox.c:2140: structure has no
+ * does not compile in tla-ja: games/tla/src/scene/prox.c:2168: structure has no
  * member named `unk05_5'. */
 struct RockSprite__s4254 {
   u8 unk00[5];
@@ -2327,18 +2249,11 @@ s32 gProx_EnterDoorScript[] = {
     0, 1, 13, 24, 0, 17,
 };
 
-s32 gData_02004740[] = {
-    0xffff, -0x8000, (s32)0xe000c000, (s32)0xc000a000, 0x20004000, 0x40006000,
-    0xffff, -0x8000, 0xffff, -0x8000, -0x4000, (s32)0xc000ffff,
-    -0xc000, 0x4000ffff, 0xffff, -0x8000,
-};
+s16 gData_02004740[] = {-1, 0, -32768, -1, -16384, -8192, -24576, -16384, 16384, 8192, 24576, 16384, -1, 0, -32768, -1, -1, 0, -32768, -1, -16384, -1, -1, -16384, 16384, -1, -1, 16384, -1, 0, -32768, -1};
 
-s32 gData_02004780[] = {
-    0xffff, -0x8000, 0xc000, (s32)0xc0008000, 0x4000, 0x40008000,
-    0xffff, -0x8000,
-};
+s16 gData_02004780[] = {-1, 0, -32768, -1, -16384, 0, -32768, -16384, 16384, 0, -32768, 16384, -1, 0, -32768, -1};
 
-s32 gData_020047a0[] = {
+s32 gFieldEffect_DurationScripts[] = {
     (s32)gData_02004644,
     (s32)gData_02004680,
     (s32)gData_020046bc,
@@ -2461,7 +2376,7 @@ u32 gProx_Room2Placements[] = {
     0xffff, 0, 0, 0, 0, 0,
 };
 
-s16 gData_02004d9c[] = {
+s16 gProx_Room3Placements[] = {
     175, -1, 1, 0, 0, 540, 0, 0,
     0, 388, 0xb000, 3, 172, -1, 1, 0,
     0, 568, 0, 0, 0, 388, 0xb000, 1,
@@ -2564,7 +2479,7 @@ s16 gData_0200521c[] = {
     0, 0, 0, 0,
 };
 
-u32 gData_02005444[] = {
+u32 gProx_Room5Placements[] = {
     0xffff00ae, 1, 0x2740000, 0, 0xc80000, 0x15000,
     0xffff00ae, 1, 0x1740000, 0, 0x3280000, 0x3b000,
     0xffff00b0, 1, 0x1720000, 0, 0x2e40000, 0x15000,
@@ -2656,7 +2571,7 @@ struct Trigger gProx_Room3Triggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_02001b60)},
     {TRIGGER_STEP, 9, 0xa2d, EVENT(Func_020015d0)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_0200391c)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Leader_SlideOnIce)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_BEFORE_CAST), 255, CONDITION_ALWAYS, EVENT(Func_020017e4)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_AFTER_CAST), 255, CONDITION_ALWAYS, EVENT(Func_02001800)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 8, CONDITION_ALWAYS, EVENT(Func_02001770)},

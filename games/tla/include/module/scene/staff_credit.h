@@ -15,11 +15,11 @@ void Func_0200200c(s32 value);
 
 void Func_02001f7c(u32 *oam, s32 priority);
 
-void Func_020036a8(void);
+void WorldMap_UpdatePlacedActors(void);
 
-void Func_02003960(void);
+void WorldMap_StartPlacedActors(void);
 
-void Func_020039f4(struct Actor *object);
-void Func_02003aac(struct Actor *object);
+void WorldMap_SpawnSparkPair(struct Actor *object);
+void WorldMap_SpawnParticle(struct Actor *object);
 
 #endif

@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x672, in ROM order.
-
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -30,15 +28,13 @@
 #include "objcmd.h"
 #include "text/msg_ids.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 void Func_02001094(void);
 
 void Func_02000ef0();
-void Func_02001b14(void);
-void Func_02001ba8(void);
+void GabombaStatueChamber_InitializeRoom1(void);
+void GabombaStatueChamber_InitializeRoom2(void);
 
-void Func_02001c44(void);
+void GabombaStatueChamber_InitializeRoom3(void);
 
 void Func_02000be8(void);
 void Func_02000184(void);
@@ -62,7 +58,7 @@ u8 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov672Room1)
@@ -72,7 +68,7 @@ u8 *Scene_GetPlacements(void) {
   return gData_02002458;
 }
 
-u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov672Room1)
@@ -106,25 +102,15 @@ void Func_02000100(void) {
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
 /* VIEW(first): routine gData_02002058 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_02002058[], it does
+ * not compile in tla-ja: games/tla/src/scene/gabomba_statue_chamber.c:129:
+ * `gData_02002058' undeclared (first use in this function). */
 extern struct Actor *gData_02002058__first __asm__("gData_02002058");
 #define gData_02002058 gData_02002058__first
-/* VIEW(first): routine gData_02001f78 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02001f78__first[] __asm__("gData_02001f78");
-#define gData_02001f78 gData_02001f78__first
-/* VIEW(first): routine gData_02001f9c as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02001f9c__first[] __asm__("gData_02001f9c");
-#define gData_02001f9c gData_02001f9c__first
-/* VIEW(first): routine gData_02001fe4 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02001fe4__first[] __asm__("gData_02001fe4");
-#define gData_02001fe4 gData_02001fe4__first
-/* VIEW(first): routine gData_0200200c as this part declared it; the joined file
- * has another. */
-extern const u8 gData_0200200c__first[] __asm__("gData_0200200c");
-#define gData_0200200c gData_0200200c__first
+extern u32 gData_02001f78[];
+extern s32 gData_02001f9c[];
+extern u32 gData_02001fe4[];
+extern u32 gData_0200200c[];
 #define OBJECT(id) (Actor_Get((id)))
 void ActorSystem_ResumeProjectionAndHideLayers(void);
 
@@ -565,9 +551,6 @@ void Func_02000ef0(struct Actor *object) { object->x = Actor_GetById(8)->x; }
 #undef EVENT_WORK
 #undef OBJECT
 
-// Scene code of overlay 0x672, in ROM order, from s0f00's offset up to the next
-// object the overlay links.
-
 #define DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM(name, n1)                      \
   void name(void) {                                                            \
     struct GabombaStatueChamberObject *leader =                                \
@@ -627,10 +610,7 @@ void Func_02001094(void) {
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
-/* VIEW(first): routine gData_02001f18 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02001f18__first[] __asm__("gData_02001f18");
-#define gData_02001f18 gData_02001f18__first
+extern u32 gData_02001f18[];
 
 /// Places the party around the statue object (its sprite reloaded with item
 /// 242's picture), raises and moves the statue while the camera follows, has
@@ -814,10 +794,7 @@ void Func_020010d4(void) {
   Import_EventSetExitRequest(2);
 }
 
-/* VIEW(first): routine gData_02001f4c as this part declared it; the joined file
- * has another. */
-extern u8 gData_02001f4c__first[] __asm__("gData_02001f4c");
-#define gData_02001f4c gData_02001f4c__first
+extern u32 gData_02001f4c[];
 
 void Func_02001710(void) {
   s32 *owner;
@@ -950,17 +927,17 @@ s32 Scene_Initialize(void) {
       ->priorityFlags |= 0x20;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov672Room1)
-    Func_02001b14();
+    GabombaStatueChamber_InitializeRoom1();
   else if (scene == (s32)&SceneId_Ov672Room2)
-    Func_02001ba8();
+    GabombaStatueChamber_InitializeRoom2();
   else if (scene == (s32)&SceneId_Ov672Room3)
-    Func_02001c44();
+    GabombaStatueChamber_InitializeRoom3();
   return 0;
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_02001b14(void) {
+void GabombaStatueChamber_InitializeRoom1(void) {
   Actor_DisableById(8);
   Actor_DisableById(9);
   Actor_DisableById(10);
@@ -994,7 +971,7 @@ void Func_02001b14(void) {
   }
 }
 
-void Func_02001ba8(void) {
+void GabombaStatueChamber_InitializeRoom2(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     if (GameFlag_Get(519)) {
       struct GabombaStatueChamberMapWork *map =
@@ -1032,7 +1009,7 @@ void Func_02001ba8(void) {
 /// set, else Func_02000f88; arriving by entrance 2 it sets the retreat to
 /// Ov671Room7's entrance 1 (flag 0xa27) or Ov672Room1's entrance 3 (flag
 /// 0xa28).
-void Func_02001c44(void) {
+void GabombaStatueChamber_InitializeRoom3(void) {
   u32 i;
   char *scene;
 
@@ -1071,12 +1048,6 @@ void Func_02001c44(void) {
 #undef OBJECT
 #undef DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM
 #undef gData_02002058
-#undef gData_02001f78
-#undef gData_02001f9c
-#undef gData_02001fe4
-#undef gData_0200200c
-#undef gData_02001f18
-#undef gData_02001f4c
 #include "text/msg_ids.h"
 
 void Func_02000e50(void);
@@ -1136,8 +1107,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-/* VIEW(data): variable gData_0200a08c as this part defines it; a header the joined file includes has another. */
-u32 gData_0200a08c__data[] __asm__("gData_0200a08c") = {
+u32 gData_0200a08c[] = {
     0x1001d0, 0x1e00090, 0xa00020, 0x2ffff, 0xffff, 0,
     0, 0,
 };
@@ -1159,8 +1129,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-/* VIEW(data): variable gData_020020f8 as this part defines it; a header the joined file includes has another. */
-struct ActorPlacement gData_020020f8__data[] __asm__("gData_020020f8") = {
+struct ActorPlacement gData_020020f8[] = {
     {375, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(152), FACING_SOUTH, 2, 0},
     {361, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(256), FACING_EAST, 2, 0},
     {361, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(256), FACING_EAST, 2, 1},
@@ -1173,8 +1142,7 @@ struct ActorPlacement gData_020020f8__data[] __asm__("gData_020020f8") = {
     {SCENE_TABLE_END},
 };
 
-/* VIEW(data): variable gData_020021e8 as this part defines it; a header the joined file includes has another. */
-struct ActorPlacement gData_020021e8__data[] __asm__("gData_020021e8") = {
+struct ActorPlacement gData_020021e8[] = {
     {375, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(88), FACING_SOUTH, 2, 0},
     {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
     {26, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(136), FACING_NORTH + FACING_STEP, 2, 0},
@@ -1203,24 +1171,19 @@ struct ActorPlacement gData_020021e8__data[] __asm__("gData_020021e8") = {
     {SCENE_TABLE_END},
 };
 
-/* VIEW(data): variable gData_02002458 as this part defines it; a header the joined file includes has another. */
-struct ActorPlacement gData_02002458__data[] __asm__("gData_02002458") = {
+struct ActorPlacement gData_02002458[] = {
     {SCENE_TABLE_END},
 };
 // clang-format on
 
-/* VIEW(data): variable gData_02002470 as this part defines it; a header the
- * joined file includes has another. */
-struct Trigger gData_02002470__data[] __asm__("gData_02002470") = {
+struct Trigger gData_02002470[] = {
     {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000b60)},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_TABLE_END},
 };
 
-/* VIEW(data): variable gData_020024a0 as this part defines it; a header the
- * joined file includes has another. */
-struct Trigger gData_020024a0__data[] __asm__("gData_020024a0") = {
+struct Trigger gData_020024a0[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 3, 0x206, EVENT(Func_02000d3c)},
@@ -1228,9 +1191,7 @@ struct Trigger gData_020024a0__data[] __asm__("gData_020024a0") = {
     {TRIGGER_TABLE_END},
 };
 
-/* VIEW(data): variable gData_020024dc as this part defines it; a header the
- * joined file includes has another. */
-struct Trigger gData_020024dc__data[] __asm__("gData_020024dc") = {
+struct Trigger gData_020024dc[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x202, 2, CONDITION_ALWAYS, EVENT(Func_02000b70)},
     {TRIGGER_STEP, 10, 0x8fe, EVENT(Func_02000e60)},
@@ -1241,8 +1202,6 @@ struct Trigger gData_020024dc__data[] __asm__("gData_020024dc") = {
     {TRIGGER_TABLE_END},
 };
 
-/* VIEW(data): variable gData_02002530 as this part defines it; a header the
- * joined file includes has another. */
-struct Trigger gData_02002530__data[] __asm__("gData_02002530") = {
+struct Trigger gData_02002530[] = {
     {TRIGGER_TABLE_END},
 };

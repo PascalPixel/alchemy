@@ -1,5 +1,8 @@
 /// @file
-/// The scene code of overlay 0x6ad, in ROM order.
+/// The Mars Lighthouse rooms of this overlay below the aerie: floors of ice
+/// the leader slides across (MarsLighthouseRoomF_SlideOnIce), the platforms
+/// that carry the party (Ride_UpdateCarried), cracked floors it drops through
+/// (CrackedTile_Crack) and pushable statues (PushTarget_Push).
 
 #include "shared/whirlwind.h"
 #include "shared/jupiter_lighthouse.h"
@@ -70,10 +73,10 @@ struct PushTarget {
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
-s32 Func_020027ac(s32 index, s32 value);
+s32 Ride_SetEntry(s32 index, s32 value);
 s32 Func_020027dc(s32 index);
 s32 PushTarget_FindSlide(struct PushTarget *target);
-void Func_02004d10(struct PushTarget target);
+void PushTarget_Push(struct PushTarget target);
 void Actor_StartScript(struct Actor *object, const void *script);
 void FieldCamera_WaitForArrival(void);
 s32 Field_FindNearbyTalkTarget(s32 id);
@@ -81,12 +84,12 @@ void Field_TryJumpForward(void);
 void ObjectTable_Snapshot(void);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 void Leader_PushObjectAhead(void);
-void Func_02005480(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 s32 Trig_Cos(s32 angle);
 
 void Func_020001f4(s32 unused, s32 id);
-void Func_0200215c(struct Actor *object, s32 part);
+void Actor_SetupScriptedPart(struct Actor *object, s32 part);
 void Func_020002ec(void);
 void Func_020003b4(void);
 void Func_0200055c(s32 id);
@@ -128,8 +131,6 @@ static inline struct Actor *Func_02005498_(s32 kind, s32 x, s32 y, s32 z) {
 #include "system/task.h"
 #include "objcmd.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 struct EffectOptions;
 struct LightOam;
 
@@ -150,7 +151,7 @@ extern s16 gData_02005f18[];
 
 void Func_02000cb8(s32 id);
 
-void Func_02004700(s32 value);
+void Leader_SetSlideStopped(s32 value);
 
 void Func_020025b0(void);
 
@@ -158,13 +159,13 @@ void Func_02002604(void);
 
 void Func_020027cc(s32 index, s16 value);
 
-void Func_02003d80(void);
+void CrackedTile_DropIn(void);
 
 s32 Func_02004938(s32 id);
 
 void LightSprites_InitB(void);
 
-void Func_0200538c(s32 id, s32 value);
+void LightSprites_Add(s32 id, s32 value);
 
 void Func_020053bc(s32 value);
 
@@ -172,17 +173,17 @@ void Func_02001468(void);
 
 void Func_02001490(void);
 
-void Func_02001894(struct Actor *self);
+void Whirlwind_Update(struct Actor *self);
 
-void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
-s32 Func_02001d5c(struct Actor *a, struct Actor *b);
-s32 Func_02001dc0(struct Actor *a, struct Actor *b);
-void Func_02001e20(struct Actor *object);
+s32 Actor_IsTouching(struct Actor *a, struct Actor *b);
+s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
+void Ride_UpdateCarried(struct Actor *object);
 
-void Func_02001ffc(struct Actor *object);
+void Ride_UpdateLanding(struct Actor *object);
 
 void Func_02001fb4();
 void Func_020021a0();
@@ -190,7 +191,7 @@ void Func_020021a0();
 void Func_020021e8();
 
 void Func_02002230();
-void Func_0200242c(void);
+void Beam_DrawTargets(void);
 void Func_020000bc(void);
 
 void Func_02000168(void);
@@ -231,27 +232,25 @@ void Func_02000b40(void);
 
 s32 MarsLighthouseRoomF_SlideOnIce(void);
 
-void Func_02004140(void);
+void Leader_SlideOnIce(void);
 
 extern u32 gData_02006980[];
 
-void Func_02002800(void);
+void Party_TakeFallDamage(void);
 
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
-
-extern struct WarpWork gData_020070a8;
 
 void Leader_CenterInCell(void);
 
 s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct Position *b,
                                     s32 radiusB);
 
-extern volatile s16 gData_020074c8;
+extern volatile s16 gMarsLighthouseRoomF_SlideStopped;
 
 s32 Actor_HasArrived(struct Actor *object);
 
-void Func_0200410c(void);
-void Func_02004080(struct Actor *object);
+void Leader_StopIfPending(void);
+void Actor_SteerByPad(struct Actor *object);
 void Func_02004a44(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 
@@ -292,42 +291,18 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(first): routine gMarsLighthouseRoomF_Placements as this part declared
- * it; the joined file has another. */
-extern const u8 gMarsLighthouseRoomF_Placements__first[] __asm__(
-    "gMarsLighthouseRoomF_Placements");
-#define gMarsLighthouseRoomF_Placements gMarsLighthouseRoomF_Placements__first
-/* VIEW(first): routine gMarsLighthouseRoomF_Room4Placements as this part
- * declared it; the joined file has another. */
-extern const u8 gMarsLighthouseRoomF_Room4Placements__first[] __asm__(
-    "gMarsLighthouseRoomF_Room4Placements");
-#define gMarsLighthouseRoomF_Room4Placements                                   \
-  gMarsLighthouseRoomF_Room4Placements__first
-/* VIEW(first): routine gMarsLighthouseRoomF_Room1Placements as this part
- * declared it; the joined file has another. */
-extern const u8 gMarsLighthouseRoomF_Room1Placements__first[] __asm__(
-    "gMarsLighthouseRoomF_Room1Placements");
-#define gMarsLighthouseRoomF_Room1Placements                                   \
-  gMarsLighthouseRoomF_Room1Placements__first
-/* VIEW(first): routine gMarsLighthouseRoomF_Room3Placements as this part
- * declared it; the joined file has another. */
-extern const u8 gMarsLighthouseRoomF_Room3Placements__first[] __asm__(
-    "gMarsLighthouseRoomF_Room3Placements");
-#define gMarsLighthouseRoomF_Room3Placements                                   \
-  gMarsLighthouseRoomF_Room3Placements__first
-/* VIEW(first): routine gMarsLighthouseRoomF_Room2Placements as this part
- * declared it; the joined file has another. */
-extern const u8 gMarsLighthouseRoomF_Room2Placements__first[] __asm__(
-    "gMarsLighthouseRoomF_Room2Placements");
-#define gMarsLighthouseRoomF_Room2Placements                                   \
-  gMarsLighthouseRoomF_Room2Placements__first
+extern struct ActorPlacement gMarsLighthouseRoomF_Placements[];
+extern struct ActorPlacement gMarsLighthouseRoomF_Room4Placements[];
+extern struct ActorPlacement gMarsLighthouseRoomF_Room1Placements[];
+extern struct ActorPlacement gMarsLighthouseRoomF_Room3Placements[];
+extern struct ActorPlacement gMarsLighthouseRoomF_Room2Placements[];
 
 s32 Func_0200004c(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
   return 0;
 }
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom4)
     return gMarsLighthouseRoomF_Room4Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom2)
@@ -500,18 +475,18 @@ void Func_020002ec(void) {
 
 void Func_020003b4(void) {
   if (Actor_Get(15)->z >> 20 == 14) {
-    Func_020027ac(0, 65);
-    Func_020027ac(2, 19);
+    Ride_SetEntry(0, 65);
+    Ride_SetEntry(2, 19);
   } else {
-    Func_020027ac(0, 17);
-    Func_020027ac(2, 67);
+    Ride_SetEntry(0, 17);
+    Ride_SetEntry(2, 67);
   }
   if (Actor_Get(16)->x >> 20 == 6) {
-    Func_020027ac(1, 65);
-    Func_020027ac(3, 3);
+    Ride_SetEntry(1, 65);
+    Ride_SetEntry(3, 3);
   } else {
-    Func_020027ac(1, 49);
-    Func_020027ac(3, 67);
+    Ride_SetEntry(1, 49);
+    Ride_SetEntry(3, 67);
   }
 }
 
@@ -519,7 +494,7 @@ void Func_02000418(void) {
   struct PushTarget box;
 
   if (PushTarget_FindSlide(&box)) {
-    Func_02004d10(box);
+    PushTarget_Push(box);
     Func_020003b4();
   }
 }
@@ -541,7 +516,7 @@ DEFINE_FUNC_02000444(Func_020004bc, 14, 78, 0xa46)
 
 void Func_020004f8(void) {
   Event_PlaySound(0x248);
-  Func_020027ac(0, 3);
+  Ride_SetEntry(0, 3);
   Event_SetFlag(0x220);
 }
 
@@ -556,14 +531,8 @@ void Func_02000514(void) {
 
 void Func_02000554(void) { Func_02001448(); }
 
-/* VIEW(first): routine gData_02005b68 as this part declared it; the joined file
- * has another. */
-extern const u32 gData_02005b68__first[] __asm__("gData_02005b68");
-#define gData_02005b68 gData_02005b68__first
-/* VIEW(first): routine gData_02005bac as this part declared it; the joined file
- * has another. */
-extern const u32 gData_02005bac__first[] __asm__("gData_02005bac");
-#define gData_02005bac gData_02005bac__first
+extern u32 gData_02005b68[];
+extern u32 gData_02005bac[];
 
 void Func_0200055c(s32 id) {
   struct Actor *origin = Actor_Get(id);
@@ -729,20 +698,20 @@ step:
 }
 
 void Func_020009ec(void) {
-  Func_020027ac(2, 65);
-  Func_020027ac(1, 65);
-  Func_020027ac(0, 65);
+  Ride_SetEntry(2, 65);
+  Ride_SetEntry(1, 65);
+  Ride_SetEntry(0, 65);
   Flag_Clear(0x350);
   if (Actor_Get(10)->z >> 20 != 15 && Actor_Get(9)->z >> 20 != 15) {
-    Func_020027ac(1, 33);
+    Ride_SetEntry(1, 33);
     return;
   }
   if (Actor_Get(9)->z >> 20 != 13) {
-    Func_020027ac(0, 17);
+    Ride_SetEntry(0, 17);
     return;
   }
   if (Actor_Get(8)->x >> 20 != 37) {
-    Func_020027ac(2, 49);
+    Ride_SetEntry(2, 49);
     return;
   }
   Flag_Set(0x350);
@@ -756,7 +725,7 @@ void Func_020009ec(void) {
 }
 
 void Func_02000aac(void) {
-  Func_020027ac(3, 3);
+  Ride_SetEntry(3, 3);
   FieldCamera_SetSpeed(0x10000, 0x2000);
   FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(560), 1);
 }
@@ -782,7 +751,7 @@ void Func_02000b40(void) {
   struct PushTarget box;
 
   if (PushTarget_FindSlide(&box)) {
-    Func_02004d10(box);
+    PushTarget_Push(box);
     Func_020009ec();
     if (Func_020027dc(0) != 64 && Flag_IsSet(0x221)) {
       struct Actor *object = Actor_Get(12);
@@ -834,37 +803,12 @@ void Func_02000b40(void) {
   }
 }
 
-/* VIEW(first): routine gMarsLighthouseRoomF_Triggers as this part declared it;
- * the joined file has another. */
-extern const u8 gMarsLighthouseRoomF_Triggers__first[] __asm__(
-    "gMarsLighthouseRoomF_Triggers");
-#define gMarsLighthouseRoomF_Triggers gMarsLighthouseRoomF_Triggers__first
-/* VIEW(first): routine gMarsLighthouseRoomF_Room4Triggers as this part declared
- * it; the joined file has another. */
-extern const u8 gMarsLighthouseRoomF_Room4Triggers__first[] __asm__(
-    "gMarsLighthouseRoomF_Room4Triggers");
-#define gMarsLighthouseRoomF_Room4Triggers                                     \
-  gMarsLighthouseRoomF_Room4Triggers__first
-/* VIEW(first): routine gMarsLighthouseRoomF_Room1Triggers as this part declared
- * it; the joined file has another. */
-extern const u8 gMarsLighthouseRoomF_Room1Triggers__first[] __asm__(
-    "gMarsLighthouseRoomF_Room1Triggers");
-#define gMarsLighthouseRoomF_Room1Triggers                                     \
-  gMarsLighthouseRoomF_Room1Triggers__first
-/* VIEW(first): routine gMarsLighthouseRoomF_Room3Triggers as this part declared
- * it; the joined file has another. */
-extern const u8 gMarsLighthouseRoomF_Room3Triggers__first[] __asm__(
-    "gMarsLighthouseRoomF_Room3Triggers");
-#define gMarsLighthouseRoomF_Room3Triggers                                     \
-  gMarsLighthouseRoomF_Room3Triggers__first
-/* VIEW(first): routine gMarsLighthouseRoomF_Room2Triggers as this part declared
- * it; the joined file has another. */
-extern const u8 gMarsLighthouseRoomF_Room2Triggers__first[] __asm__(
-    "gMarsLighthouseRoomF_Room2Triggers");
-#define gMarsLighthouseRoomF_Room2Triggers                                     \
-  gMarsLighthouseRoomF_Room2Triggers__first
-#define MarsLighthouseRoomF_ContinueSlide MarsLighthouseRoomF_ContinueSlide
-void Func_020043ec(void);
+extern struct Trigger gMarsLighthouseRoomF_Triggers[];
+extern struct Trigger gMarsLighthouseRoomF_Room4Triggers[];
+extern struct Trigger gMarsLighthouseRoomF_Room1Triggers[];
+extern struct Trigger gMarsLighthouseRoomF_Room3Triggers[];
+extern struct Trigger gMarsLighthouseRoomF_Room2Triggers[];
+void Leader_SlideOnIceFromEdge(void);
 
 void Func_02000c80(s32 id) {
   struct Actor *object = Actor_Get(id);
@@ -927,11 +871,11 @@ void Func_02000d80(void) {
 }
 
 void Func_02000df8(void) {
-  Func_020043ec();
+  Leader_SlideOnIceFromEdge();
   MarsLighthouseRoomF_ContinueSlide();
 }
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom4)
     return gMarsLighthouseRoomF_Room4Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom2)
@@ -945,66 +889,24 @@ const u8 *Scene_GetEvents(void) {
 
 void Func_02000e68(void) {
   if (Func_02002cfc())
-    Func_02004700(1);
+    Leader_SetSlideStopped(1);
 }
 
 void JupiterLighthouse_LoadPalettesZero(s32 mode);
-/* VIEW(first): routine gData_02005bf0 as this part declared it; the joined file
- * has another. */
-extern const u16 gData_02005bf0__first[] __asm__("gData_02005bf0");
-#define gData_02005bf0 gData_02005bf0__first
-/* VIEW(first): routine gData_02005bf6 as this part declared it; the joined file
- * has another. */
-extern const u16 gData_02005bf6__first[] __asm__("gData_02005bf6");
-#define gData_02005bf6 gData_02005bf6__first
-/* VIEW(first): routine gData_02005bfc as this part declared it; the joined file
- * has another. */
-extern const u16 gData_02005bfc__first[] __asm__("gData_02005bfc");
-#define gData_02005bfc gData_02005bfc__first
-/* VIEW(first): routine gData_02005c0e as this part declared it; the joined file
- * has another. */
-extern const u16 gData_02005c0e__first[] __asm__("gData_02005c0e");
-#define gData_02005c0e gData_02005c0e__first
-/* VIEW(first): routine gData_02005c14 as this part declared it; the joined file
- * has another. */
-extern const u16 gData_02005c14__first[] __asm__("gData_02005c14");
-#define gData_02005c14 gData_02005c14__first
-/* VIEW(first): routine gData_02005c26 as this part declared it; the joined file
- * has another. */
-extern const u16 gData_02005c26__first[] __asm__("gData_02005c26");
-#define gData_02005c26 gData_02005c26__first
-/* VIEW(first): routine gData_02005c2c as this part declared it; the joined file
- * has another. */
-extern const u16 gData_02005c2c__first[] __asm__("gData_02005c2c");
-#define gData_02005c2c gData_02005c2c__first
-/* VIEW(first): routine gData_02005c32 as this part declared it; the joined file
- * has another. */
-extern const u16 gData_02005c32__first[] __asm__("gData_02005c32");
-#define gData_02005c32 gData_02005c32__first
-/* VIEW(first): routine gData_02005c38 as this part declared it; the joined file
- * has another. */
-extern const u16 gData_02005c38__first[] __asm__("gData_02005c38");
-#define gData_02005c38 gData_02005c38__first
-/* VIEW(first): routine gData_02005c46 as this part declared it; the joined file
- * has another. */
-extern const u16 gData_02005c46__first[] __asm__("gData_02005c46");
-#define gData_02005c46 gData_02005c46__first
-/* VIEW(first): routine gData_02005c4c as this part declared it; the joined file
- * has another. */
-extern const u16 gData_02005c4c__first[] __asm__("gData_02005c4c");
-#define gData_02005c4c gData_02005c4c__first
-/* VIEW(first): routine gData_02005c5a as this part declared it; the joined file
- * has another. */
-extern const u16 gData_02005c5a__first[] __asm__("gData_02005c5a");
-#define gData_02005c5a gData_02005c5a__first
-/* VIEW(first): routine gData_02005c60 as this part declared it; the joined file
- * has another. */
-extern const u16 gData_02005c60__first[] __asm__("gData_02005c60");
-#define gData_02005c60 gData_02005c60__first
-/* VIEW(first): routine gData_02005c6e as this part declared it; the joined file
- * has another. */
-extern const u16 gData_02005c6e__first[] __asm__("gData_02005c6e");
-#define gData_02005c6e gData_02005c6e__first
+extern u16 gData_02005bf0[];
+extern u16 gData_02005bf6[];
+extern u16 gData_02005bfc[];
+extern u16 gData_02005c0e[];
+extern u16 gData_02005c14[];
+extern u16 gData_02005c26[];
+extern u16 gData_02005c2c[];
+extern u16 gData_02005c32[];
+extern u16 gData_02005c38[];
+extern u16 gData_02005c46[];
+extern u16 gData_02005c4c[];
+extern u16 gData_02005c5a[];
+extern u16 gData_02005c60[];
+extern u16 gData_02005c6e[];
 
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *work = &gMainRoutineWork;
@@ -1027,7 +929,7 @@ s32 Scene_Initialize(void) {
     FieldEffect_StartBlankOverlay(0);
     ((struct SceneWork *)heap->eventWork)->unk1ac = value;
     if (entrance - 1 <= 1U) {
-      Func_02002624(gData_02005bf0, gData_02005bf6, Func_02000514, 88);
+      Beam_Start(gData_02005bf0, gData_02005bf6, Func_02000514, 88);
       if (Flag_IsSet(0xa42))
         Actor_SetPosition(10, 0, 0);
       else
@@ -1041,7 +943,7 @@ s32 Scene_Initialize(void) {
       if (Flag_IsSet(0xa46))
         Func_020004bc(1, 0);
     } else {
-      Func_02002624(gData_02005bfc, gData_02005c0e, 0, 88);
+      Beam_Start(gData_02005bfc, gData_02005c0e, 0, 88);
       Actor_DisableById(15);
       Actor_DisableById(16);
       Func_02004938(15);
@@ -1051,7 +953,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_Ov6adRoom2) {
     FieldEffect_StartBlankOverlay(0);
     ((struct SceneWork *)heap->eventWork)->unk1ac = value;
-    Func_02002624(gData_02005c14, gData_02005c26, Func_02001468, 88);
+    Beam_Start(gData_02005c14, gData_02005c26, Func_02001468, 88);
     Func_020027cc(3, 1);
     if (entrance == 2)
       Func_02002604();
@@ -1111,7 +1013,7 @@ s32 Scene_Initialize(void) {
     JupiterLighthouse_LoadPalettesZero(1);
     LightSprites_InitB();
     Func_020053bc(2);
-    Func_0200538c(11, 6);
+    LightSprites_Add(11, 6);
     if (Flag_IsSet(0x358)) {
       MapGrid_CopyCellsLayered(71, 24, 7, 1, 71, 5);
       MapGrid_CopyCellAttributes(7, 24, 7, 1, 7, 7);
@@ -1121,10 +1023,10 @@ s32 Scene_Initialize(void) {
     if (Flag_IsSet(0xa37))
       Actor_SetPosition(12, 0x780000, 0x1280000);
     if (entrance - 14 <= 1U) {
-      Func_02002624(gData_02005c2c, gData_02005c32, Func_02001490, 88);
+      Beam_Start(gData_02005c2c, gData_02005c32, Func_02001490, 88);
       Func_020027cc(0, 1);
     } else {
-      Func_02002624(gData_02005c38, gData_02005c46, 0, 88);
+      Beam_Start(gData_02005c38, gData_02005c46, 0, 88);
     }
     if (!Flag_IsSet(0x109)) {
       if (entrance == 2 || entrance == 4 || entrance == 6 || entrance == 7 ||
@@ -1134,7 +1036,7 @@ s32 Scene_Initialize(void) {
           entrance == 14)
         Actor_ArriveInRing(gMainRoutineWork.currentOwner);
       if (entrance == 16 && !Flag_IsSet(0x109))
-        Func_02003d80();
+        CrackedTile_DropIn();
     }
   } else if (scene == (s32)&SceneId_Ov6adRoom4) {
     FieldEffect_StartBlankOverlay(0);
@@ -1144,13 +1046,13 @@ s32 Scene_Initialize(void) {
     BYTE_AT(Actor_GetById(8), 98) = 1;
     BYTE_AT(Actor_GetById(9), 98) = 1;
     if (entrance - 5 <= 1U || entrance == 8) {
-      Func_02002624(gData_02005c4c, gData_02005c5a, 0, 88);
+      Beam_Start(gData_02005c4c, gData_02005c5a, 0, 88);
 #if TLA_PATCH_1
       Func_020002ec();
 #endif
     } else if (entrance == 11 || entrance == 13 || entrance == 14 ||
                entrance == 1 || entrance == 15) {
-      Func_02002624(gData_02005c60, gData_02005c6e, 0, 88);
+      Beam_Start(gData_02005c60, gData_02005c6e, 0, 88);
     }
     if (!Flag_IsSet(0x109)) {
       if (entrance == 15)
@@ -1172,18 +1074,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/* VIEW(first): routine gData_02005c84 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02005c84__first[] __asm__("gData_02005c84");
-#define gData_02005c84 gData_02005c84__first
-/* VIEW(first): routine gData_02005ce0 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02005ce0__first[] __asm__("gData_02005ce0");
-#define gData_02005ce0 gData_02005ce0__first
-/* VIEW(first): routine gData_02005d3c as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02005d3c__first[] __asm__("gData_02005d3c");
-#define gData_02005d3c gData_02005d3c__first
+extern s32 gData_02005c84[];
+extern s32 gData_02005ce0[];
+extern s32 gData_02005d3c[];
 
 s32 Scene_PrepareMap(void) {
   struct MainRoutineWork *party;
@@ -1197,37 +1090,31 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Func_02001448(void) { Func_0200328c(11, 12, 13, 0x4000, gData_02005c84); }
+void Func_02001448(void) { Actor_Attach(11, 12, 13, 0x4000, gData_02005c84); }
 
 void Func_02001468(void) {
-  Func_0200328c(19, 21, 22, 0x4000, gData_02005ce0);
-  Func_020027ac(3, 131);
+  Actor_Attach(19, 21, 22, 0x4000, gData_02005ce0);
+  Ride_SetEntry(3, 131);
 }
 
-void Func_02001490(void) { Func_0200328c(14, 15, 16, 0x4000, gData_02005d3c); }
+void Func_02001490(void) { Actor_Attach(14, 15, 16, 0x4000, gData_02005d3c); }
 
 #include "shared/scene_set_arrival_flags.c"
 
-/* VIEW(first): routine gData_02007040 as this part declared it; the joined file
- * has another. */
-extern s32 gData_02007040__first __asm__("gData_02007040");
-#define gData_02007040 gData_02007040__first
+extern s32 gData_02007040;
 
 void Func_020014dc(s32 value) { gData_02007040 = value; }
 
-/* VIEW(first): routine gData_0200703c as this part declared it; the joined file
- * has another. */
-extern s32 gData_0200703c__first __asm__("gData_0200703c");
-#define gData_0200703c gData_0200703c__first
+extern s32 gData_0200703c;
 extern u16 gData_02007068[];
 
-DEFINE_PALETTE_CYCLE_STEP(Func_020014e8, gData_0200703c, gData_02007040,
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gData_0200703c, gData_02007040,
                           gData_02007068)
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(JupiterLighthouse_LoadPalettesZero,
                                              gData_02007040, gData_02007068,
                                              gData_02007088, gData_0200703c,
-                                             Func_020014e8, gData_0200708c)
+                                             PaletteCycle_Step, gData_0200708c)
 
 #include "field/event_inline.h"
 
@@ -1237,7 +1124,7 @@ DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
 /* VIEW(s167c): tag struct EventWork as struct EventWork__s167c; event_work.h
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:916: structure has no member
+ * games/tla/src/scene/mars_lighthouse_room_f.c:1140: structure has no member
  * named `unk_d46'. */
 struct EventWork__s167c {
   u8 unk_00[0x154];
@@ -1323,12 +1210,9 @@ void Func_0200167c(void) {
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-/* VIEW(first): routine gData_02007044 as this part declared it; the joined file
- * has another. */
-extern const s32 gData_02007044__first[] __asm__("gData_02007044");
-#define gData_02007044 gData_02007044__first
+extern s32 gData_02007044[];
 
-DEFINE_WHIRLWIND_UPDATE(Func_02001894, MapGrid_GetCellBehavior,
+DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
                         Position_FlatDistance, gData_02007044, Data_02007064)
 
 static __inline__ s32 MulQ16(s32 a, s32 b) {
@@ -1347,7 +1231,7 @@ struct GustObject *Func_02001a54(struct GustObject *source) {
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
   object = (struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                   position.z);
-  Func_02005480(object, 2);
+  Actor_SelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
@@ -1355,16 +1239,16 @@ struct GustObject *Func_02001a54(struct GustObject *source) {
   object->unk64 = 0;
   object->unk62 = 0;
   object->unk63 = 0;
-  object->update = Func_02001894;
+  object->update = Whirlwind_Update;
   object->speedLimit = 0x18000;
   options.priority = 1;
   options.palette = 7;
-  Func_020035b8(position.x, source->y, position.z - 0x60000, 0, 0, 0, 0x30000,
-                &options);
+  FieldEffect_Spawn(position.x, source->y, position.z - 0x60000, 0, 0, 0,
+                    0x30000, &options);
   return object;
 }
 
-DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, Func_020035b8)
+DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, FieldEffect_Spawn)
 
 void Func_02001bcc(void) {
   struct PositionedActor *actor9 = Actor_GetById(9);
@@ -1423,9 +1307,9 @@ void Func_02001bcc(void) {
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
-DEFINE_ACTOR_IS_TOUCHING(Func_02001d5c)
+DEFINE_ACTOR_IS_TOUCHING(Actor_IsTouching)
 
-DEFINE_ACTOR_IS_BESIDE(Func_02001dc0)
+DEFINE_ACTOR_IS_BESIDE(Actor_IsBeside)
 
 #define MapLayer MapLayer__s1e20
 #define SceneWork SceneWork__s1e20
@@ -1461,18 +1345,15 @@ struct RideWork {
   u16 direction;
 };
 
-DEFINE_RIDE_UPDATE_CARRIED(Func_02001e20, RideWork, Func_02001d5c,
-                           Func_02001dc0)
+DEFINE_RIDE_UPDATE_CARRIED(Ride_UpdateCarried, RideWork, Actor_IsTouching,
+                           Actor_IsBeside)
 
-/* VIEW(first): routine gData_02005d8c as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02005d8c__first[] __asm__("gData_02005d8c");
-#define gData_02005d8c gData_02005d8c__first
+extern u32 gData_02005d8c[];
 
-DEFINE_ACTOR_RESET_SCRIPTED_FOR(Func_02001f84, gData_02005d8c)
+DEFINE_ACTOR_RESET_SCRIPTED_FOR(Actor_ResetScriptedFor, gData_02005d8c)
 
-DEFINE_RIDE_SPAWN_FRONT(Func_02001fb4, Func_02005498_, Func_02001f84, 2,
-                        Func_02001e20, Func_02005480)
+DEFINE_RIDE_SPAWN_FRONT(Func_02001fb4, Func_02005498_, Actor_ResetScriptedFor,
+                        2, Ride_UpdateCarried, Actor_SelectAnimation)
 
 struct RideDirection {
   u16 unk00;
@@ -1482,7 +1363,7 @@ struct RideDirection {
 /* VIEW(s1ffc): tag struct RideWork as struct RideWork__s1ffc;
  * mars_lighthouse_room_f.c has another definition; tried with the definition
  * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1142: request for member `unk02'
+ * games/tla/src/scene/mars_lighthouse_room_f.c:1356: request for member `unk02'
  * in something not a structure or union. */
 struct RideWork__s1ffc {
   u8 unk00[4];
@@ -1496,39 +1377,40 @@ struct RideWork__s1ffc {
   struct RideDirection direction;
 };
 
-DEFINE_RIDE_UPDATE_LANDING(Func_02001ffc, RideWork__s1ffc, Func_02001d5c,
-                           Func_02001dc0)
+DEFINE_RIDE_UPDATE_LANDING(Ride_UpdateLanding, RideWork__s1ffc,
+                           Actor_IsTouching, Actor_IsBeside)
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
-void Func_020022d0(struct Actor *object);
+void Ride_UpdateDrift(struct Actor *object);
 
 /// Stops the object and sets its sprite part, then restarts its script at
 /// gData_02005d8c; Func_02001e1c of the Mars Lighthouse entrance is the same
 /// function.
-DEFINE_ACTOR_SETUP_SCRIPTED_PART(Func_0200215c, gData_02005d8c)
+DEFINE_ACTOR_SETUP_SCRIPTED_PART(Actor_SetupScriptedPart, gData_02005d8c)
 
-DEFINE_RIDE_SPAWN_BACK(Func_020021a0, Func_02005498_, Func_0200215c,
-                       Func_02001e20, Func_02005480)
+DEFINE_RIDE_SPAWN_BACK(Func_020021a0, Func_02005498_, Actor_SetupScriptedPart,
+                       Ride_UpdateCarried, Actor_SelectAnimation)
 
-DEFINE_RIDE_SPAWN_FRONT(Func_020021e8, Func_02005498_, Func_0200215c, 3,
-                        Func_02001ffc, Func_02005480)
+DEFINE_RIDE_SPAWN_FRONT(Func_020021e8, Func_02005498_, Actor_SetupScriptedPart,
+                        3, Ride_UpdateLanding, Actor_SelectAnimation)
 
-DEFINE_RIDE_SPAWN_BACK(Func_02002230, Func_02005498_, Func_0200215c,
-                       Func_02001ffc, Func_02005480)
+DEFINE_RIDE_SPAWN_BACK(Func_02002230, Func_02005498_, Actor_SetupScriptedPart,
+                       Ride_UpdateLanding, Actor_SelectAnimation)
 
-DEFINE_ACTOR_IS_ABOVE(Func_02002278)
+DEFINE_ACTOR_IS_ABOVE(Actor_IsAbove)
 
-DEFINE_RIDE_UPDATE_DRIFT(Func_020022d0, Func_02002278)
+DEFINE_RIDE_UPDATE_DRIFT(Ride_UpdateDrift, Actor_IsAbove)
 
-DEFINE_ACTOR_SETUP_SCRIPTED_FOR(Func_0200236c, Func_02005480, gData_02005d8c)
+DEFINE_ACTOR_SETUP_SCRIPTED_FOR(Actor_SetupScriptedFor, Actor_SelectAnimation,
+                                gData_02005d8c)
 
-DEFINE_RIDE_SPAWN_SPARK(Func_020023ac, Func_02005498_, Func_0200236c,
-                        Func_020022d0)
+DEFINE_RIDE_SPAWN_SPARK(Ride_SpawnSpark, Func_02005498_, Actor_SetupScriptedFor,
+                        Ride_UpdateDrift)
 
 /* VIEW(s242c): tag struct Actor as struct Actor__s242c; actor.h has another
  * definition; tried with the definition the rest of the object has, it does not
- * compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:1232:
+ * compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:1445:
  * structure has no member named `flag5b'. */
 typedef struct Actor__s242c {
   u8 pad0[8];
@@ -1558,12 +1440,10 @@ typedef struct State {
   Entry entries[4];
 } State;
 
-/* VIEW(s242c): routine Func_020023ac as void Func_020023ac(); the parts before
- * it has another declaration; tried as the one declaration void
- * Func_020023ac(), it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1239: too many arguments to
- * function `Func_020023ac'. */
-extern void Func_020023ac__s242c() __asm__("Func_020023ac");
+/* VIEW(s242c): routine Ride_SpawnSpark as void Ride_SpawnSpark(); the parts
+ * before it has another declaration; not tried: Ride_SpawnSpark's bound
+ * declaration was not found. */
+extern void Func_020023ac__s242c() __asm__("Ride_SpawnSpark");
 
 typedef struct Position {
   s32 x;
@@ -1587,7 +1467,7 @@ typedef struct IwramGlobals {
 
 #define IWRAM ((IwramGlobals *)Ram_HeapSlots)
 
-DEFINE_BEAM_DRAW_TARGETS(Func_0200242c, Func_020023ac__s242c, Func_020021a0,
+DEFINE_BEAM_DRAW_TARGETS(Beam_DrawTargets, Func_020023ac__s242c, Func_020021a0,
                          Func_02002230, Func_020021e8, Func_02001fb4)
 #undef IWRAM
 
@@ -1601,7 +1481,7 @@ void Func_020025b0(void) {
     Iwram_ClearWordsEntry(work, 116);
   object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
   object->unk5c[0] = 2;
-  Func_02005480(object, 1);
+  Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;
   work->value0c = animation->value10;
@@ -1630,7 +1510,7 @@ struct RideRow {
 /* VIEW(s25b0): tag struct RideWork as struct RideWork__s25b0;
  * mars_lighthouse_room_f.c has another definition; tried with the definition
  * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1286: structure has no member
+ * games/tla/src/scene/mars_lighthouse_room_f.c:1499: structure has no member
  * named `handle'. */
 struct RideWork__s25b0 {
   s32 counter;
@@ -1644,7 +1524,7 @@ struct RideWork__s25b0 {
   void *handle;
 };
 
-void Func_0200236c(struct Actor *object, s32 unused);
+void Actor_SetupScriptedFor(struct Actor *object, s32 unused);
 
 void Func_02002604(void) {
   struct RideWork__s25b0 *work =
@@ -1658,17 +1538,13 @@ void Func_02002618(s16 value) {
   ((struct RideWork__s25b0 *)(gInventorySnapshot + 0x188))->value0e = value;
 }
 
-DEFINE_BEAM_START(Func_02002624, Func_0200242c)
+DEFINE_BEAM_START(Beam_Start, Beam_DrawTargets)
 
 #undef MarsLighthouseRoomF_ContinueSlide
-// ---- scene/mars_lighthouse_room_f/ride.c ----
-
-/// Scene code of overlay 0x6ad, in ROM order.
-
 /* VIEW(ride): tag struct RideSlot as struct RideSlot__ride;
  * scene/mars_lighthouse_room_f has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1324: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_room_f.c:1522: redefinition of `struct
  * RideSlot'. */
 #define RideSlot RideSlot__ride
 struct RideSlot {
@@ -1679,7 +1555,7 @@ struct RideSlot {
 /* VIEW(ride): tag struct RideWork as struct RideWork__ride;
  * scene/mars_lighthouse_room_f has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1331: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_room_f.c:1529: redefinition of `struct
  * RideWork'. */
 #define RideWork RideWork__ride
 struct RideWork {
@@ -1709,16 +1585,14 @@ s32 Func_02002778(void) {
   return ((struct RideWork *)(gInventorySnapshot + 0x188))->counter;
 }
 
-DEFINE_RIDE_ADVANCE_COUNTER(Func_02002784)
+DEFINE_RIDE_ADVANCE_COUNTER(Ride_AdvanceCounter)
 
-/* VIEW(ride): routine Func_020027ac as void Func_020027ac(s32 index, s32
- * value); scene/mars_lighthouse_room_f.h has s32 Func_020027ac(s32 index, s32
- * value); tried as the rest of the object declares it, it does not compile in
- * tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:1361: conflicting types
- * for `Func_020027ac'. */
-void Func_020027ac__ride(s32 index, s32 value) __asm__("Func_020027ac");
-#define Func_020027ac Func_020027ac__ride
-DEFINE_RIDE_SET_ENTRY(Func_020027ac)
+/* VIEW(ride): routine Ride_SetEntry as void Ride_SetEntry(s32 index, s32
+ * value); scene/mars_lighthouse_room_f.h has s32 Ride_SetEntry(s32 index, s32
+ * value); not tried: Ride_SetEntry's bound declaration was not found. */
+void Func_020027ac__ride(s32 index, s32 value) __asm__("Ride_SetEntry");
+#define Ride_SetEntry Func_020027ac__ride
+DEFINE_RIDE_SET_ENTRY(Ride_SetEntry)
 
 void Func_020027cc(s32 index, s16 value) {
   ((struct RideWork *)(gInventorySnapshot + 0x188))->entries[index].c = value;
@@ -1728,7 +1602,7 @@ s32 Func_020027dc(s32 index) {
   return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->b;
 }
 
-DEFINE_RIDE_SET_SLOT(Func_020027ec)
+DEFINE_RIDE_SET_SLOT(Ride_SetSlot)
 
 struct MarsLighthouseEventWork {
   u8 unk000[0x16a];
@@ -1739,26 +1613,25 @@ struct MarsLighthouseEventWork {
 };
 
 /* VIEW(ride): routine Unit_Get as this part declared it; the joined file has
- * another. */
+ * another; tried as the definition's void *Unit_Get(s32 owner), which the
+ * object already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_f.c:1584: request for member `hp' in
+ * something not a structure or union. */
 struct BattleUnit *Unit_Get__ride(s32 owner) __asm__("Unit_Get");
 #define Unit_Get Unit_Get__ride
 
-DEFINE_PARTY_TAKE_FALL_DAMAGE(Func_02002800)
+DEFINE_PARTY_TAKE_FALL_DAMAGE(Party_TakeFallDamage)
 
 #include "../field/field_effect/advance_spin.c"
 
 #undef RideSlot
 #undef RideWork
-#undef Func_020027ac
-
-// ---- scene/mars_lighthouse_room_f/flash.c ----
-
-/// Scene code of overlay 0x6ad, in ROM order.
+#undef Ride_SetEntry
 
 /* VIEW(flash): tag struct RideSlot as struct RideSlot__flash;
  * scene/mars_lighthouse_room_f has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1416: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_room_f.c:1595: redefinition of `struct
  * RideSlot'. */
 #define RideSlot RideSlot__flash
 struct RideSlot {
@@ -1769,7 +1642,7 @@ struct RideSlot {
 /* VIEW(flash): tag struct RideWork as struct RideWork__flash;
  * scene/mars_lighthouse_room_f has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1423: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_room_f.c:1602: redefinition of `struct
  * RideWork'. */
 #define RideWork RideWork__flash
 struct RideWork {
@@ -1785,15 +1658,15 @@ struct RideWork {
   void *handle;
 };
 
-DEFINE_ACTOR_BLINK(Func_02002954, 10, 4, 0)
+DEFINE_ACTOR_BLINK(Actor_Blink, 10, 4, 0)
 
 /* VIEW(flash): routine MapGrid_CheckCollision as s32
- * MapGrid_CheckCollision(struct Actor *actor);
- * module/scene/mars_lighthouse_room_f.h has s32 MapGrid_CheckCollision(struct
- * Actor *object, s32 *position); not tried: MapGrid_CheckCollision's bound
- * declaration was not found. */
-extern s32
-Func_020054f8__flash(struct Actor *actor) __asm__("MapGrid_CheckCollision");
+ * MapGrid_CheckCollision(struct Actor *object); the definition has s32
+ * MapGrid_CheckCollision(struct Actor *object, s32 *position); this part passes
+ * only the actor, and the bytes set no second argument; not tried:
+ * MapGrid_CheckCollision's bound declaration was not found. */
+extern s32 MapGrid_CheckCollisionOfActor(struct Actor *actor) __asm__(
+    "MapGrid_CheckCollision");
 
 #if TLA_PATCH_1
 void Func_0200297c(void) {
@@ -1821,20 +1694,20 @@ s32 Func_0200297c(void) {
   if (main->renderMode == 0) {
     struct Actor *actor;
 
-    // UB: Func_02002800 takes no arguments and returns nothing; the bytes call
-    // it with two through an int-returning type.
+    // UB: Party_TakeFallDamage takes no arguments and returns nothing; the
+    // bytes call it with two through an int-returning type.
 #ifdef UBFIX
-    Func_02002800();
+    Party_TakeFallDamage();
 #else
-    ((s32 (*)(s32, s32))Func_02002800)(-10, 0);
+    ((s32 (*)(s32, s32))Party_TakeFallDamage)(-10, 0);
 #endif
     actor = Actor_Get(main->currentOwner);
     work = (struct Work020023c4 *)(gInventorySnapshot + 0x188);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    actor->update = Func_02002954;
+    actor->update = Actor_Blink;
     actor->facing = TRIG_TURN / 4;
-    Func_02005480(actor, 49);
+    Actor_SelectAnimation(actor, 49);
     for (;;) {
       if (MapGrid_GetCellAttributeLowNibbleOrBump(actor->terrainId, actor->x,
                                                   actor->z) == 7) {
@@ -1854,7 +1727,7 @@ s32 Func_0200297c(void) {
           position.x = actor->x + (work->unk68 << 19);
           position.y = actor->y;
           position.z = actor->z + (work->unk6a << 19);
-          if (Func_020054f8__flash(actor) != 0) {
+          if (MapGrid_CheckCollisionOfActor(actor) != 0) {
             actor->velocityX = 0;
             actor->velocityZ = 0;
             break;
@@ -1877,7 +1750,7 @@ s32 Func_0200297c(void) {
         position.x = actor->x + (work->unk68 << 19);
         position.y = actor->y;
         position.z = actor->z + (work->unk6a << 19);
-        result = Func_020054f8__flash(actor);
+        result = MapGrid_CheckCollisionOfActor(actor);
         if (result > 0)
           break;
         if (result < 0) {
@@ -1977,15 +1850,15 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
   *(u16 *)&event->unk15c[2] = 0;
   *(u16 *)&event->unk15c[0] = 0;
   event->encounterEnemyGroup = 0;
-  // UB: Func_02002800 takes no arguments and returns nothing; the bytes call
-  // it with two through an int-returning type.
+  // UB: Party_TakeFallDamage takes no arguments and returns nothing; the bytes
+  // call it with two through an int-returning type.
 #ifdef UBFIX
-  Func_02002800();
+  Party_TakeFallDamage();
 #else
   /* FAKEMATCH(wrapper): called through a cast to the int-returning
-   * two-argument type, which sets r1 before negating r0; as Func_02002800(),
-   * 3 of 138 instructions differ in tla-en. */
-  ((s32 (*)(s32, s32))Func_02002800)(-10, 0);
+   * two-argument type, which sets r1 before negating r0; as
+   * Party_TakeFallDamage(), 3 of 138 instructions differ in tla-en. */
+  ((s32 (*)(s32, s32))Party_TakeFallDamage)(-10, 0);
 #endif
   FieldCamera_SetSpeed(0x70000, 0xe000);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1994,9 +1867,9 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Flag_Clear(0x106);
-  leader->update = (void (*)(void))Func_02002954;
+  leader->update = (void (*)(void))Actor_Blink;
   leader->facing = 0x4000;
-  Func_02005480(leader, 49);
+  Actor_SelectAnimation(leader, 49);
   while (ride->unk6c->timer == 0) {
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z) != 7) {
       leader->x += ((s32 *)ride->unk6c->unk70)[0];
@@ -2057,10 +1930,7 @@ struct Work {
   struct Actor *owner;
 };
 
-/* VIEW(flash): routine gData_02005dbc as this part declared it; the joined file
- * has another. */
-extern u8 gData_02005dbc__flash[] __asm__("gData_02005dbc");
-#define gData_02005dbc gData_02005dbc__flash
+extern u32 gData_02005dbc[];
 s32 VramCache_FreeEntry(u32 slot);
 
 #define WORK ((struct Work *)(gInventorySnapshot + 0x188))
@@ -2128,14 +1998,11 @@ void Func_02002d08(struct Actor *actor) {
   }
 }
 
-/* VIEW(flash): routine gData_02005e00 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02005e00__flash[] __asm__("gData_02005e00");
-#define gData_02005e00 gData_02005e00__flash
+extern u32 gData_02005e00[];
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about
 /// speed plus 0x14000 with a random spread, at a random angle and size.
-DEFINE_EMBERS_SPAWN(Func_02002e8c, gData_02005e00)
+DEFINE_EMBERS_SPAWN(Embers_Spawn, gData_02005e00)
 
 void Func_02002f6c(struct Actor *object) {
   object->movementState = Event_GetFlag(260);
@@ -2172,33 +2039,29 @@ struct WorkEvent {
 
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
 void Func_02002d08(struct Actor *actor);
-void Func_02002e8c(s32 x, s32 y, s32 z, s32 speed);
+void Embers_Spawn(s32 x, s32 y, s32 z, s32 speed);
 extern u8 gInventorySnapshot[];
 
-DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002f80, Work020023c4__s2f80,
+DEFINE_ACTOR_ROLL_AND_CRUMBLE(Actor_RollAndCrumble, Work020023c4__s2f80,
                               MapGrid_GetCellAttributeLowNibbleOrBump,
-                              Func_02002e8c, Func_02002d08)
+                              Embers_Spawn, Func_02002d08)
 #undef ABS
 
 #undef RideSlot
 #undef RideWork
-// ---- scene/mars_lighthouse_room_f/s328c.c ----
-
-/// Scene code of overlay 0x6ad, in ROM order.
-
 void Func_02002f6c(struct Actor *object);
 
-DEFINE_ACTOR_ATTACH(Func_0200328c, Func_02005480, Func_02002f6c)
+DEFINE_ACTOR_ATTACH(Actor_Attach, Actor_SelectAnimation, Func_02002f6c)
 
 #include "field/event_inline.h"
 
-void Func_02002f80(struct Actor *actor);
+void Actor_RollAndCrumble(struct Actor *actor);
 
 /// Sets up the actor whose id self keeps in byte 0x62: places it 32 pixels out
 /// from self, 12 pixels up, along self's angle (unk66), faces it that way,
-/// gives it Func_02002f80 as its update hook and its speed, clears its scale
-/// and action, has it watch what self watches, and calls Event_PlaySound(104).
-/// The twin of overlay 6ac's Func_02002e6c.
+/// gives it Actor_RollAndCrumble as its update hook and its speed, clears its
+/// scale and action, has it watch what self watches, and calls
+/// Event_PlaySound(104). The twin of overlay 6ac's Func_02002e6c.
 void Func_02003304(struct Actor *self) {
   struct Actor *actor = Actor_Get(((u8 *)self)[0x62]);
   s32 angle = (s16)self->unk66;
@@ -2215,7 +2078,7 @@ void Func_02003304(struct Actor *self) {
   actor->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(actor, position[0], position[1],
                                        position[2]);
-  actor->update = Func_02002f80;
+  actor->update = Actor_RollAndCrumble;
   actor->actionFlags = 0;
   actor->speedLimit = 0x80000;
   actor->acceleration = 0x2000;
@@ -2233,14 +2096,14 @@ void Func_02003304(struct Actor *self) {
 
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 
-DEFINE_ACTOR_POP_UP_SLOW(Func_020033cc, Func_02005480)
+DEFINE_ACTOR_POP_UP_SLOW(Actor_PopUpSlow, Actor_SelectAnimation)
 
-DEFINE_ACTOR_POP_UP(Func_02003478, Func_02005480)
+DEFINE_ACTOR_POP_UP(Actor_PopUp, Actor_SelectAnimation)
 
 /* VIEW(s328c): tag struct RideSlot as struct RideSlot__s328c;
  * scene/mars_lighthouse_room_f has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1908: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_room_f.c:2052: redefinition of `struct
  * RideSlot'. */
 #define RideSlot RideSlot__s328c
 struct RideSlot {
@@ -2251,7 +2114,7 @@ struct RideSlot {
 /* VIEW(s328c): tag struct RideWork as struct RideWork__s328c;
  * scene/mars_lighthouse_room_f has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1915: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_room_f.c:2059: redefinition of `struct
  * RideWork'. */
 #define RideWork RideWork__s328c
 struct RideWork {
@@ -2270,9 +2133,9 @@ struct RideWork {
 extern u8 gInventorySnapshot[];
 extern u16 gData_02004cf0[];
 void Func_020041ec(void *handle);
-void Func_0200236c(struct Actor *object, s32 unused);
+void Actor_SetupScriptedFor(struct Actor *object, s32 unused);
 
-DEFINE_ACTOR_PARK(Func_0200351c, Func_02003304)
+DEFINE_ACTOR_PARK(Actor_Park, Func_02003304)
 
 #include "../field/object/set_sprite_priority.c"
 
@@ -2287,66 +2150,26 @@ DEFINE_ACTOR_PARK(Func_0200351c, Func_02003304)
 #undef position
 #undef WORK
 #undef ABS
-#undef gMarsLighthouseRoomF_Placements
-#undef gMarsLighthouseRoomF_Room4Placements
-#undef gMarsLighthouseRoomF_Room1Placements
-#undef gMarsLighthouseRoomF_Room3Placements
-#undef gMarsLighthouseRoomF_Room2Placements
-#undef gData_02005b68
-#undef gData_02005bac
-#undef gMarsLighthouseRoomF_Triggers
-#undef gMarsLighthouseRoomF_Room4Triggers
-#undef gMarsLighthouseRoomF_Room1Triggers
-#undef gMarsLighthouseRoomF_Room3Triggers
-#undef gMarsLighthouseRoomF_Room2Triggers
-#undef gData_02005bf0
-#undef gData_02005bf6
-#undef gData_02005bfc
-#undef gData_02005c0e
-#undef gData_02005c14
-#undef gData_02005c26
-#undef gData_02005c2c
-#undef gData_02005c32
-#undef gData_02005c38
-#undef gData_02005c46
-#undef gData_02005c4c
-#undef gData_02005c5a
-#undef gData_02005c60
-#undef gData_02005c6e
-#undef gData_02005c84
-#undef gData_02005ce0
-#undef gData_02005d3c
-#undef gData_02007040
-#undef gData_0200703c
-#undef gData_02007044
 #undef MapLayer
 #undef SceneWork
 #undef Camera_SetBounds
-#undef gData_02005d8c
 #undef RideSlot
 #undef RideWork
-#undef Func_020027ac
+#undef Ride_SetEntry
 #undef Unit_Get
 #undef RideSlot
 #undef RideWork
-#undef gData_02005dbc
-#undef gData_02005e00
 #undef MapLayer
 #undef RideSlot
 #undef RideWork
 // @file
-// Scene code of overlay 0x6ad, in ROM order.
-
 #include "field/event_inline.h"
 
 void Actor_StartScript(struct Actor *object, const void *script);
-/* VIEW(s35b8): routine gData_02007058 as this part declared it; the joined file
- * has another. */
-extern const s32 *gData_02007058__s35b8[] __asm__("gData_02007058");
-#define gData_02007058 gData_02007058__s35b8
-void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options) {
+extern s32 gFieldEffect_DurationScripts[];
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
   struct FieldEffect *party =
       (struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
@@ -2362,8 +2185,9 @@ void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_02005480(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect, gData_02007058[flags & EFFECT_SCRIPT_MASK]);
+  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_StartScript(effect,
+                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
@@ -2392,7 +2216,7 @@ void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 targetX;
     s32 count;
 
-    script = gData_02007058[flags & EFFECT_SCRIPT_MASK];
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     targetX = options->targetScaleX;
     count = script[3];
     if (start != 0) {
@@ -2404,7 +2228,7 @@ void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_02005480(effect, 1);
+    Actor_SelectAnimation(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
@@ -2415,15 +2239,14 @@ void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-/* VIEW(s35b8): variable gData_020070a8 as cell_sprite.c reads it; the scene's
- * module header has another type. */
-extern struct CellTarget gData_020070a8__s35b8 __asm__("gData_020070a8");
-#define CELL_TABLE gData_020070a8__s35b8
+extern struct CellTarget gData_020070a8;
+#define CELL_TABLE gData_020070a8
 #define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
-DEFINE_CRACKED_TILES_FIND(Func_020038ac, gData_020070a8, CrackedTiles_Update)
+DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gData_020070a8,
+                          CrackedTiles_Update)
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 
@@ -2442,13 +2265,7 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef gData_02007058
-/* VIEW(s3d80): tag struct Position as this part has it; the joined file has
- * another. */
-#define Position Position__s3d80
 // @file
-// Scene code of overlay 0x6ad, in ROM order.
-
 #include "field/event_inline.h"
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
@@ -2459,17 +2276,12 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   MapGrid_SetShake(a, b, c);
 }
 
-DEFINE_CRACKED_TILE_DROP_IN(Func_02003d80, Func_020035b8)
+DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
 
 void GameFlag_SetByte(s32 flag, s32 value);
-/* VIEW(s3d80): routine CrackedTile_Crack as this part declared it; the joined
- * file has another. */
-void CrackedTile_Crack__s3d80(
-    struct WarpWork *work,
-    struct WarpEntry *entry) __asm__("CrackedTile_Crack");
-#define CrackedTile_Crack CrackedTile_Crack__s3d80
 /* VIEW(s3d80): routine CrackedTile_FallEvent as this part declared it; the
- * joined file has another. */
+ * joined file has another; not tried: CrackedTile_FallEvent's declaration holds
+ * a FAKEMATCH tag. */
 void CrackedTile_FallEvent__s3d80(
     struct WarpWork *work,
     struct WarpEntry *entry) __asm__("CrackedTile_FallEvent");
@@ -2528,75 +2340,53 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value) {
     other->x = object->x;
     other->z = object->z;
     Map_CenterOnFollowedPoint();
-    Func_02003d80();
+    CrackedTile_DropIn();
     WORD_AT(Ram_HeapSlots->eventWork, 428) = value;
   }
 }
 
-/* VIEW(s3d80): variable gData_02005ef8 as extern const s16 gData_02005ef8[];
- * the definition has s32 gData_02005ef8[] = { 0xffff, - 0x8000, (s32)
- * 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000, };
- * tried as the definition's extern
- * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_02005e44, 22)
- * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_02005e80, 44)
- * DEFINE_FIELD_EFFECT_D..., it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:101: initializer element
- * is not constant. */
-extern const s16 gData_02005ef8__s3d80[] __asm__("gData_02005ef8");
+extern s16 gData_02005ef8[];
 
-DEFINE_ACTOR_STEER_BY_PAD(Func_02004080, gData_02005ef8__s3d80, Func_02005480)
+DEFINE_ACTOR_STEER_BY_PAD(Actor_SteerByPad, gData_02005ef8,
+                          Actor_SelectAnimation)
 
-DEFINE_LEADER_STOP_IF_PENDING(Func_0200410c)
+DEFINE_LEADER_STOP_IF_PENDING(Leader_StopIfPending)
 
 // A point on the map: 16.16 fixed-point pixels.
-struct Position {
-  s32 x;
-  s32 y;
-  s32 z;
-};
+extern s16 gData_02005f38[];
 
-/* VIEW(s3d80): variable gData_02005f38 as extern s16 gData_02005f38[]; the
- * definition has s32 gData_02005f38[] = { 0xffff, - 0x8000, 0xc000, (s32)
- * 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the
- * definition's extern s32 gData_02005f38[], Func_02004140 moves: 4 of 302
- * instructions, Func_020043ec moves: 1 of 330 instructions in tla-ja. */
-extern s16 gData_02005f38__s3d80[] __asm__("gData_02005f38");
+DEFINE_LEADER_SLIDE_ON_ICE(Leader_SlideOnIce, Leader_StopIfPending,
+                           gData_02005f38, Actor_SelectAnimation,
+                           Actor_SteerByPad, Import_FieldCheckSpheresOverlap)
 
-DEFINE_LEADER_SLIDE_ON_ICE(Func_02004140, Func_0200410c, gData_02005f38__s3d80,
-                           Func_02005480, Func_02004080,
-                           Import_FieldCheckSpheresOverlap)
+#define SLIDE_FROM_EDGE Leader_SlideOnIceFromEdge
+#define SLIDE_STOPPED gMarsLighthouseRoomF_SlideStopped
+#define SLIDE_STOP_LEADER Leader_StopIfPending
+#define SLIDE_ANGLES gData_02005f38
+#define SLIDE_SET_ANIMATION Actor_SelectAnimation
+#define SLIDE_HAS_ARRIVED Actor_HasArrived
+#define SLIDE_KEEP_SLIDING Actor_SteerByPad
+#define SLIDE_SPHERES_OVERLAP Import_FieldCheckSpheresOverlap
+#include "shared/slide_on_ice_from_edge.c"
+#undef SLIDE_FROM_EDGE
+#undef SLIDE_STOPPED
+#undef SLIDE_STOP_LEADER
+#undef SLIDE_ANGLES
+#undef SLIDE_SET_ANIMATION
+#undef SLIDE_HAS_ARRIVED
+#undef SLIDE_KEEP_SLIDING
+#undef SLIDE_SPHERES_OVERLAP
 
-#define SHARED_F02003070_NAME Func_020043ec
-#define SHARED_F02003070_ID2 gData_020074c8
-#define SHARED_F02003070_ID3 Func_0200410c
-#define SHARED_F02003070_ID4 gData_02005f38__s3d80
-#define SHARED_F02003070_ID5 Func_02005480
-#define SHARED_F02003070_ID6 Actor_HasArrived
-#define SHARED_F02003070_ID7 Func_02004080
-#define SHARED_F02003070_ID8 Import_FieldCheckSpheresOverlap
-#include "shared/func_02003070.c"
-#undef SHARED_F02003070_NAME
-#undef SHARED_F02003070_ID2
-#undef SHARED_F02003070_ID3
-#undef SHARED_F02003070_ID4
-#undef SHARED_F02003070_ID5
-#undef SHARED_F02003070_ID6
-#undef SHARED_F02003070_ID7
-#undef SHARED_F02003070_ID8
+void Leader_SetSlideStopped(s32 value) {
+  gMarsLighthouseRoomF_SlideStopped = value;
+}
 
-void Func_02004700(s32 value) { gData_020074c8 = value; }
-
-DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_0200470c, Func_0200410c, Func_02005480,
-                                 Func_02004080, Import_FieldCheckSpheresOverlap)
+DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Leader_StopIfPending,
+                                 Actor_SelectAnimation, Actor_SteerByPad,
+                                 Import_FieldCheckSpheresOverlap)
 
 extern u16 gData_02005f58[];
-/* VIEW(s4700): variable gData_02005f64 as extern s8 gData_02005f64[][4]; the
- * definition has u32 gData_02005f64[] = { 0x820f8e0, 0x2008e0f8, 0x20f0e0,
- * 0x2008e0f8, 0x820f8e0, 0x2008e0f8, }; tried as the definition's extern u32
- * gData_02005f64[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:188: subscripted value is
- * neither array nor pointer. */
-extern s8 gData_02005f64__s4700[][4] __asm__("gData_02005f64");
+extern s8 gData_02005f64[][4];
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -2625,14 +2415,10 @@ s32 Func_02004938(s32 id) {
   j = (u16)i;
   if (j == 6)
     return 0;
-  width =
-      (ABS(gData_02005f64__s4700[j][0]) + ABS(gData_02005f64__s4700[j][2])) >>
-      4;
-  height =
-      (ABS(gData_02005f64__s4700[j][1]) + ABS(gData_02005f64__s4700[j][3])) >>
-      4;
-  x = (object->x + (gData_02005f64__s4700[j][0] << 16)) >> 20;
-  z = (object->z + (gData_02005f64__s4700[j][1] << 16)) >> 20;
+  width = (ABS(gData_02005f64[j][0]) + ABS(gData_02005f64[j][2])) >> 4;
+  height = (ABS(gData_02005f64[j][1]) + ABS(gData_02005f64[j][3])) >> 4;
+  x = (object->x + (gData_02005f64[j][0] << 16)) >> 20;
+  z = (object->z + (gData_02005f64[j][1] << 16)) >> 20;
   mapX = *(s32 *)(map + 328) >> 20;
   i = mapX;
   mapZ = *(s32 *)(map + 332) >> 20;
@@ -2672,20 +2458,20 @@ static inline s32 Func_020054f8_(struct Actor *object, s32 *position) {
 // (MapGrid_CheckCollision returns 2). Leaves the object's resting place in
 // target and returns 1, or 0 when nothing is pushed or it cannot move at all.
 DEFINE_PUSH_TARGET_FIND_SLIDE(PushTarget_FindSlide, PushTarget_FindAhead,
-                              gData_02005f64__s4700, gData_02005f7c,
-                              Func_020054f8_)
+                              gData_02005f64, gData_02005f7c, Func_020054f8_)
 
 #undef PIXELS
 // The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
 
 DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gData_02005f58,
-                              gData_02005f7c, gData_02005f64__s4700)
+                              gData_02005f7c, gData_02005f64)
 
 #undef PIXELS
 
-DEFINE_PUSH_TARGET_PUSH(Func_02004d10, gData_02005f64__s4700, Func_02004a44,
-                        Actor_StopAtPushTarget, Func_02005480, gData_02005f7c)
+DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gData_02005f64, Func_02004a44,
+                        Actor_StopAtPushTarget, Actor_SelectAnimation,
+                        gData_02005f7c)
 
 DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Actor_FindAtCell,
                                  gData_02005f58, MapGrid_CheckCollision)
@@ -2724,26 +2510,9 @@ DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_020074d0, gData_020074cc,
                             LightSprites_Draw, gData_020074ce, gData_020075d0,
                             gData_020075d2)
 
-DEFINE_LIGHT_SPRITES_ADD(Func_0200538c, gData_020074ce, gData_020074d0)
+DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gData_020074ce, gData_020074d0)
 
 void Func_020053bc(s32 value) { gData_020075d2 = value; }
-
-/* VIEW(s3d80): routine Func_0200004c as this part declared it; the joined file
- * has another. */
-void Func_0200004c__s3d80(void) __asm__("Func_0200004c");
-#define Func_0200004c Func_0200004c__s3d80
-/* VIEW(s3d80): routine Func_020006f4 as this part declared it; the joined file
- * has another. */
-void Func_020006f4__s3d80(void) __asm__("Func_020006f4");
-#define Func_020006f4 Func_020006f4__s3d80
-/* VIEW(s3d80): routine Func_02003478 as this part declared it; the joined file
- * has another. */
-void Func_02003478__s3d80(void) __asm__("Func_02003478");
-#define Func_02003478 Func_02003478__s3d80
-/* VIEW(s3d80): routine Func_0200351c as this part declared it; the joined file
- * has another. */
-void Func_0200351c__s3d80(void) __asm__("Func_0200351c");
-#define Func_0200351c Func_0200351c__s3d80
 
 s32 gData_020056c8[] = {
     SC_CALL(Func_0200004c),
@@ -2930,14 +2699,14 @@ u16 gData_02005c6e[] = {
     22, 0, 0,
 };
 
-DEFINE_G_DATA_020054CC(gData_02005c84, Func_02003478, 0xf80000, 0x200000,
-    0x2a00000, 0x160000, 0xf80000, 0x2b00000, Func_020006f4, Func_0200351c)
+DEFINE_G_DATA_020054CC(gData_02005c84, Actor_PopUp, 0xf80000, 0x200000,
+    0x2a00000, 0x160000, 0xf80000, 0x2b00000, Func_020006f4, Actor_Park)
 
-DEFINE_G_DATA_020054CC(gData_02005ce0, Func_02003478, 0xb80000, 0x400000,
-    0x2300000, 0x360000, 0xb80000, 0x2400000, Func_02000d80, Func_0200351c)
+DEFINE_G_DATA_020054CC(gData_02005ce0, Actor_PopUp, 0xb80000, 0x400000,
+    0x2300000, 0x360000, 0xb80000, 0x2400000, Func_02000d80, Actor_Park)
 
-DEFINE_G_DATA_0200547C(gData_02005d3c, Func_02003478, 872, 128, 22, 872, 144,
-    Func_0200351c)
+DEFINE_G_DATA_0200547C(gData_02005d3c, Actor_PopUp, 872, 128, 22, 872, 144,
+    Actor_Park)
 
 DEFINE_G_DATA_02001540(gData_02005d8c, 30)
 
@@ -2953,15 +2722,15 @@ u32 gData_02005e00[] = {
     1, 13, 10, 0xc0010000, 38,
 };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_02005e44, 22)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_02005e80, 44)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_02005ebc, 126)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
 
-s32 gData_02005ef8[] = {
-    0xffff, -0x8000, (s32)0xe000c000, (s32)0xc000a000, 0x20004000, 0x40006000,
-    0xffff, -0x8000,
+s16 gData_02005ef8[] = {
+    -1, 0, -32768, -1, -16384, -8192, -24576, -16384, 16384, 8192, 24576, 16384,
+    -1, 0, -32768, -1,
 };
 
 s16 gData_02005f18[] = {
@@ -2969,69 +2738,45 @@ s16 gData_02005f18[] = {
     0x4000, -1, -1, 0x4000, -1, 0, -0x8000, -1,
 };
 
-s32 gData_02005f38[] = {
-    0xffff, -0x8000, 0xc000, (s32)0xc0008000, 0x4000, 0x40008000,
-    0xffff, -0x8000,
+s16 gData_02005f38[] = {
+    -1, 0, -32768, -1, -16384, 0, -32768, -16384, 16384, 0, -32768, 16384, -1,
+    0, -32768, -1,
 };
 
 u16 gData_02005f58[] = {
     258, 259, 293, 294, 332, 331,
 };
 
-u32 gData_02005f64[] = {
-    0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
+s8 gData_02005f64[][4] = {
+    {-32, -8, 32, 8},  {-8, -32, 8, 32}, {-32, -16, 32, 0},
+    {-8, -32, 8, 32},  {-32, -8, 32, 8},  {-8, -32, 8, 32},
 };
 
 DEFINE_PUSH_LEADER_STEPS(gData_02005f7c)
 // clang-format on
 
-#undef SHARED_F02003070_NAME
-#undef SHARED_F02003070_ID2
-#undef SHARED_F02003070_ID3
-#undef SHARED_F02003070_ID4
-#undef SHARED_F02003070_ID5
-#undef SHARED_F02003070_ID6
-#undef SHARED_F02003070_ID7
-#undef SHARED_F02003070_ID8
+#undef SLIDE_FROM_EDGE
+#undef SLIDE_STOPPED
+#undef SLIDE_STOP_LEADER
+#undef SLIDE_ANGLES
+#undef SLIDE_SET_ANIMATION
+#undef SLIDE_HAS_ARRIVED
+#undef SLIDE_KEEP_SLIDING
+#undef SLIDE_SPHERES_OVERLAP
 #undef ABS
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
-#undef CrackedTile_Crack
 #undef CrackedTile_FallEvent
 #undef MapLayer
-#undef Func_0200004c
-#undef Func_020006f4
-#undef Func_02003478
-#undef Func_0200351c
-#undef Position
 
 /* VIEW(data): routine Func_02001010 as module/scene/airs_rock.h declares it;
- * the joined file has another. */
+ * the joined file has another; not tried: Func_02001010's declaration holds a
+ * FAKEMATCH tag. */
 void Func_02001010__data(void) __asm__("Func_02001010");
 #define Func_02001010 Func_02001010__data
 #include "module/scene/airs_rock.h"
 
 void Func_020000d0(void);
-/* VIEW(data): routine Func_020001f4 as this part declared it; the joined file
- * has another. */
-void Func_020001f4__data(void) __asm__("Func_020001f4");
-#define Func_020001f4 Func_020001f4__data
-/* VIEW(data): routine Func_02000248 as this part declared it; the joined file
- * has another. */
-void Func_02000248__data(void) __asm__("Func_02000248");
-#define Func_02000248 Func_02000248__data
-/* VIEW(data): routine Func_0200025c as this part declared it; the joined file
- * has another. */
-void Func_0200025c__data(void) __asm__("Func_0200025c");
-#define Func_0200025c Func_0200025c__data
-/* VIEW(data): routine Func_02000280 as this part declared it; the joined file
- * has another. */
-void Func_02000280__data(void) __asm__("Func_02000280");
-#define Func_02000280 Func_02000280__data
-/* VIEW(data): routine Func_020002b8 as this part declared it; the joined file
- * has another. */
-void Func_020002b8__data(void) __asm__("Func_020002b8");
-#define Func_020002b8 Func_020002b8__data
 void Func_020002ec(void);
 // Func_020002ec is from patch 1; the Japanese table contains 0.
 #if !TLA_PATCH_1
@@ -3039,97 +2784,14 @@ void Func_020002ec(void);
 #else
 #define MARS_LIGHTHOUSE_ROOM_F_FUNC_020002EC ((s32)Func_020002ec)
 #endif
-/* VIEW(data): routine Func_02000444 as this part declared it; the joined file
- * has another. */
-void Func_02000444__data(void) __asm__("Func_02000444");
-#define Func_02000444 Func_02000444__data
-/* VIEW(data): routine Func_02000480 as this part declared it; the joined file
- * has another. */
-void Func_02000480__data(void) __asm__("Func_02000480");
-#define Func_02000480 Func_02000480__data
-/* VIEW(data): routine Func_020004bc as this part declared it; the joined file
- * has another. */
-void Func_020004bc__data(void) __asm__("Func_020004bc");
-#define Func_020004bc Func_020004bc__data
 void Func_02000670(void);
 void Func_02000778(void);
 void Func_02000784(void);
 void Func_0200079c(void);
 void Func_020007b4(void);
 void Func_020007cc(void);
-/* VIEW(data): routine Func_020007f0 as this part declared it; the joined file
- * has another. */
-void Func_020007f0__data(void) __asm__("Func_020007f0");
-#define Func_020007f0 Func_020007f0__data
-/* VIEW(data): routine Func_020008a0 as this part declared it; the joined file
- * has another. */
-void Func_020008a0__data(void) __asm__("Func_020008a0");
-#define Func_020008a0 Func_020008a0__data
 void Func_02000900(void);
 void Func_02000aac(void);
-/* VIEW(data): routine Func_02000cf4 as this part declared it; the joined file
- * has another. */
-void Func_02000cf4__data(void) __asm__("Func_02000cf4");
-#define Func_02000cf4 Func_02000cf4__data
-/* VIEW(data): routine Func_02000d38 as this part declared it; the joined file
- * has another. */
-void Func_02000d38__data(void) __asm__("Func_02000d38");
-#define Func_02000d38 Func_02000d38__data
-/* VIEW(data): routine Func_0200297c as this part declared it; the joined file
- * has another. */
-void Func_0200297c__data(void) __asm__("Func_0200297c");
-#define Func_0200297c Func_0200297c__data
-/* VIEW(data): routine MarsLighthouseRoomF_ContinueSlide as this part declared
- * it; the joined file has another. */
-void MarsLighthouseRoomF_ContinueSlide__data(void) __asm__(
-    "MarsLighthouseRoomF_ContinueSlide");
-#define MarsLighthouseRoomF_ContinueSlide                                      \
-  MarsLighthouseRoomF_ContinueSlide__data
-
-/* VIEW(data): routine gData_020056c8 as this part declared it; the joined file
- * has another. */
-extern u8 gData_020056c8__data[] __asm__("gData_020056c8");
-#define gData_020056c8 gData_020056c8__data
-/* VIEW(data): routine gData_020056d4 as this part declared it; the joined file
- * has another. */
-extern u8 gData_020056d4__data[] __asm__("gData_020056d4");
-#define gData_020056d4 gData_020056d4__data
-/* VIEW(data): routine gData_02005748 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02005748__data[] __asm__("gData_02005748");
-#define gData_02005748 gData_02005748__data
-/* VIEW(data): routine gData_020057bc as this part declared it; the joined file
- * has another. */
-extern u8 gData_020057bc__data[] __asm__("gData_020057bc");
-#define gData_020057bc gData_020057bc__data
-/* VIEW(data): routine gData_02005890 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02005890__data[] __asm__("gData_02005890");
-#define gData_02005890 gData_02005890__data
-/* VIEW(data): routine gData_0200593c as this part declared it; the joined file
- * has another. */
-extern u8 gData_0200593c__data[] __asm__("gData_0200593c");
-#define gData_0200593c gData_0200593c__data
-/* VIEW(data): routine gData_02005a3c as this part declared it; the joined file
- * has another. */
-extern u8 gData_02005a3c__data[] __asm__("gData_02005a3c");
-#define gData_02005a3c gData_02005a3c__data
-/* VIEW(data): routine gData_02005a88 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02005a88__data[] __asm__("gData_02005a88");
-#define gData_02005a88 gData_02005a88__data
-/* VIEW(data): routine gData_02005e44 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02005e44__data[] __asm__("gData_02005e44");
-#define gData_02005e44 gData_02005e44__data
-/* VIEW(data): routine gData_02005e80 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02005e80__data[] __asm__("gData_02005e80");
-#define gData_02005e80 gData_02005e80__data
-/* VIEW(data): routine gData_02005ebc as this part declared it; the joined file
- * has another. */
-extern u8 gData_02005ebc__data[] __asm__("gData_02005ebc");
-#define gData_02005ebc gData_02005ebc__data
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},
@@ -3339,7 +3001,7 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_Room2Triggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {0x51, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_02004140)},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Leader_SlideOnIce)},
     {0x202, 33, CONDITION_ALWAYS, EVENT(Func_02000b40)},
     {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(Func_02002b88)},
     {TRIGGER_STEP, 88, CONDITION_ALWAYS, EVENT(Func_0200297c)},
@@ -3351,47 +3013,19 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA s32 gData_0200703c[] = {
-    -1,
-};
+LATE_DATA s32 gData_0200703c = -1;
 
-LATE_DATA u32 gData_02007040[] = {
-    1,
-};
+LATE_DATA s32 gData_02007040 = 1;
 
-LATE_DATA u32 gData_02007044[] = {
+LATE_DATA s32 gData_02007044[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on
 
-LATE_DATA s32 gData_02007058[] = {
-    (s32)gData_02005e44,
-    (s32)gData_02005e80,
-    (s32)gData_02005ebc,
+LATE_DATA s32 gFieldEffect_DurationScripts[] = {
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };
-#undef Func_020001f4
-#undef Func_02000248
-#undef Func_0200025c
-#undef Func_02000280
-#undef Func_020002b8
-#undef Func_02000444
-#undef Func_02000480
-#undef Func_020004bc
-#undef Func_020007f0
-#undef Func_020008a0
-#undef Func_02000cf4
-#undef Func_02000d38
 #undef MarsLighthouseRoomF_ContinueSlide
-#undef gData_020056c8
-#undef gData_020056d4
-#undef gData_02005748
-#undef gData_020057bc
-#undef gData_02005890
-#undef gData_0200593c
-#undef gData_02005a3c
-#undef gData_02005a88
-#undef gData_02005e44
-#undef gData_02005e80
-#undef gData_02005ebc
 #undef Func_02001010
-#undef Func_0200297c

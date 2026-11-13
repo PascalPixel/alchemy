@@ -1,8 +1,4 @@
 /// @file
-/// The scene code of overlay 0x685, in ROM order.
-
-// ---- games/tla/src/scene/champa_cliff_caves.c ----
-
 #include "field/event_inline.h"
 #include "types.h"
 #include "flags.h"
@@ -52,7 +48,10 @@ struct RiseObject {
 };
 
 /* VIEW(champa_cliff_caves): routine gData_02003d10 as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern LATE_DATA s32
+ * gData_02003d10[], it does not compile in tla-ja:
+ * games/tla/src/scene/champa_cliff_caves.c:202: `gData_02003d10' undeclared
+ * (first use in this function). */
 extern const struct WarpTarget
     gData_02003d10__champa_cliff_caves __asm__("gData_02003d10");
 #define gData_02003d10 gData_02003d10__champa_cliff_caves
@@ -77,8 +76,6 @@ static __inline__ void Func_02003534_(s32 actor, s32 angle) {
   Actor_FaceDirectionById(actor, angle);
 }
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 extern struct ActorPlacement gData_0200375c[];
 extern struct ActorPlacement gData_020037a4[];
 extern struct ActorPlacement gData_020038ac[];
@@ -87,9 +84,9 @@ extern struct ActorPlacement gData_02003984[];
 extern struct ActorPlacement gData_02003aec[];
 extern struct ActorPlacement gData_02003b94[];
 extern struct ActorPlacement gData_02003c0c[];
-extern struct Trigger gData_02003e7c[];
-extern struct Trigger gData_02003ffc[];
-extern struct Trigger gData_02004104[];
+extern struct Trigger gChampaCliffCaves_Room2Triggers[];
+extern struct Trigger gChampaCliffCaves_Room3Triggers[];
+extern struct Trigger gChampaCliffCaves_Room4Triggers[];
 
 void Func_02001774(void);
 void Func_02001868(void);
@@ -142,14 +139,8 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gData_0200381c[];
 extern struct ActorPlacement gData_02003864[];
-/* VIEW(champa_cliff_caves): routine gData_020039cc as this part declared it;
- * the joined file has another. */
-extern u32 gData_020039cc__champa_cliff_caves[] __asm__("gData_020039cc");
-#define gData_020039cc gData_020039cc__champa_cliff_caves
-/* VIEW(champa_cliff_caves): routine gData_02003c84 as this part declared it;
- * the joined file has another. */
-extern u32 gData_02003c84__champa_cliff_caves[] __asm__("gData_02003c84");
-#define gData_02003c84 gData_02003c84__champa_cliff_caves
+extern s16 gData_020039cc[];
+extern s16 gData_02003c84[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene;
@@ -220,7 +211,10 @@ void Func_020001f4(s32 door) {
 }
 
 /* VIEW(champa_cliff_caves): routine gData_02003d18 as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern LATE_DATA s32
+ * gData_02003d18[], it does not compile in tla-ja:
+ * games/tla/src/scene/champa_cliff_caves.c:248: `gData_02003d18' undeclared
+ * (first use in this function). */
 extern const struct WarpTarget
     gData_02003d18__champa_cliff_caves __asm__("gData_02003d18");
 #define gData_02003d18 gData_02003d18__champa_cliff_caves
@@ -320,7 +314,7 @@ void Func_020003ec(void) {
                                            PIXELS(664), PIXELS(280));
 }
 
-extern struct Trigger gData_02003d20[];
+extern struct Trigger gChampaCliffCaves_Room1Triggers[];
 
 void Func_02000464(s32 a) { Event_PickUpItem(a, 326, 0x978); }
 
@@ -328,14 +322,14 @@ const struct Trigger *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov685Room1)
-    return gData_02003d20;
+    return gChampaCliffCaves_Room1Triggers;
   if (scene == (s32)&SceneId_Ov685Room2)
-    return gData_02003e7c;
+    return gChampaCliffCaves_Room2Triggers;
   if (scene == (s32)&SceneId_Ov685Room3)
-    return gData_02003ffc;
+    return gChampaCliffCaves_Room3Triggers;
   if (scene == (s32)&SceneId_Ov685Room4)
-    return gData_02004104;
-  return gData_02003d20;
+    return gChampaCliffCaves_Room4Triggers;
+  return gChampaCliffCaves_Room1Triggers;
 }
 
 s32 Scene_Initialize(void) {
@@ -526,7 +520,6 @@ void Func_02000978(s32 actor) {
   Event_End();
 }
 
-// ---- games/tla/src/scene/champa_cliff_caves/s0a34.c ----
 #include "text/msg_ids.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -536,13 +529,7 @@ void Func_02000978(s32 actor) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(s0a34): variable gData_02003634 as extern const struct ThrowAnimations
- * gData_02003634; the definition has u32 gData_02003634[] = { 439, 440, 441, };
- * tried as the definition's extern u32 gData_02003634[], it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:550: incompatible types in
- * assignment. */
-extern const struct ThrowAnimations
-    gData_02003634__s0a34 __asm__("gData_02003634");
+extern struct ThrowAnimations gData_02003634;
 void Actor_ShowItemIconById(s32 id, s32 animation);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 
@@ -606,7 +593,7 @@ void Func_02000a34(s32 value) {
   for (i = 0; i <= 2; i++) {
     struct ThrowAnimations animations;
     s32 landing[3];
-    animations = gData_02003634__s0a34;
+    animations = gData_02003634;
     Actor_SetModeById(8, 9);
     Event_Wait(3);
     Actor_ShowItemIconById(10, animations.animations[i]);
@@ -993,7 +980,7 @@ void Func_0200115c(void) {
 /* VIEW(s0a34): tag struct EventTransition as struct EventTransition__s0a34;
  * champa_cliff_caves.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:965: structure has no member named
+ * games/tla/src/scene/champa_cliff_caves.c:999: structure has no member named
  * `frames'. */
 struct EventTransition__s0a34 {
   u8 unk000[0x1ac];
@@ -1036,22 +1023,10 @@ void Func_02001774(void) {
                        (s16)gMainRoutineWork.savedEntrance);
 }
 
-/* VIEW(s0a34): routine gData_020041e8 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_020041e8__s0a34[] __asm__("gData_020041e8");
-#define gData_020041e8 gData_020041e8__s0a34
-/* VIEW(s0a34): routine gData_02004254 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02004254__s0a34[] __asm__("gData_02004254");
-#define gData_02004254 gData_02004254__s0a34
-/* VIEW(s0a34): routine gData_0200432c as this part declared it; the joined file
- * has another. */
-extern const u8 gData_0200432c__s0a34[] __asm__("gData_0200432c");
-#define gData_0200432c gData_0200432c__s0a34
-/* VIEW(s0a34): routine gData_020042d4 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_020042d4__s0a34[] __asm__("gData_020042d4");
-#define gData_020042d4 gData_020042d4__s0a34
+extern u32 gData_020041e8[];
+extern u32 gData_02004254[];
+extern u32 gData_0200432c[];
+extern u32 gData_020042d4[];
 
 /// The scene that opens with MsgMySalamanderYou: persons 8 and 11 talk and
 /// move with the party through three yes-or-no answers (each counted in the
@@ -1542,21 +1517,6 @@ void Func_02001868(void) {
   Event_End();
 }
 
-/* VIEW(champa_cliff_caves): routine Decompress_TaggedLz as void
- * Decompress_TaggedLz(void *entry, void *destination); resource.h has s32
- * Decompress_TaggedLz(const void *source, void *destination); not tried:
- * Decompress_TaggedLz's bound declaration was not found. */
-extern void Resource_DecodeType01__champa_cliff_caves(
-    void *entry, void *destination) __asm__("Decompress_TaggedLz");
-/* VIEW(champa_cliff_caves): routine Camera_WorldToScreen as void
- * Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void
- * Camera_WorldToScreen(struct EffectVector *position); tried as the
- * definition's void Camera_WorldToScreen(struct EffectVector *position), which
- * the object already declares, Func_02002de4 moves: 2 of 175 instructions in
- * tla-ja. */
-extern void Camera_WorldToScreen__champa_cliff_caves(s32 *position) __asm__(
-    "Camera_WorldToScreen");
-
 static __inline__ void Place(void *a, s32 b, s32 c, u32 d, s32 e) {
   /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 181
    * instructions differ in tla-en. */
@@ -1586,7 +1546,7 @@ void Func_020029f8(s32 id, s32 mode) {
   Actor_SetSpriteFlags(object, 0);
   Dma_Set(Field_Palette685, (void *)0x050003e0, 0x80000010,
           (volatile u32 *)0x040000d4);
-  Resource_DecodeType01__champa_cliff_caves(
+  Decompress_TaggedLz(
       Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion), work);
   slot = VramCache_FindFreeEntry();
   tile = Vram_Load(slot, 0x400, work);
@@ -1599,7 +1559,7 @@ void Func_020029f8(s32 id, s32 mode) {
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
-  Camera_WorldToScreen__champa_cliff_caves(position);
+  Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->z = z = position[2];
   if (mode == 1) {
@@ -1653,8 +1613,7 @@ void Func_02002c88(void) {
   s32 entry;
   s32 vram;
 
-  Resource_DecodeType01__champa_cliff_caves(
-      Resource_GetTableEntry((s32)&ResourceId_GlowDisc), work);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GlowDisc), work);
   i = 0;
   tile = work->tiles;
 next:
@@ -1678,12 +1637,10 @@ next:
   work->field1068.value = 0;
 }
 
-// ---- games/tla/src/scene/champa_cliff_caves/s2d34.c ----
-
 /* VIEW(s2d34): tag struct ChampaCliffCavesWork as struct
  * ChampaCliffCavesWork__s2d34; champa_cliff_caves.c has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1654: request for member
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1658: request for member
  * `value' in something not a structure or union. */
 struct ChampaCliffCavesWork__s2d34 {
   u8 tiles[0x1000];
@@ -1715,8 +1672,8 @@ void Func_02002d34(void) {
   s32 entry;
   s32 vram;
 
-  Resource_DecodeType01__champa_cliff_caves(
-      Resource_GetTableEntry((s32)&ResourceId_FireColumn), work);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FireColumn),
+                      work);
   i = 0;
   tile = work->tiles;
 next:
@@ -1744,7 +1701,7 @@ next:
 /* VIEW(champa_cliff_caves): tag struct GlowSprite as struct
  * GlowSprite__champa_cliff_caves; module/scene/scene.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1731: structure has no
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1735: structure has no
  * member named `x'. */
 struct GlowSprite__champa_cliff_caves {
   u8 unk_0[12];
@@ -1803,7 +1760,7 @@ loop:
   position[1] = work->position[1];
   position[2] = work->position[2];
   sprite = &work->sprites[0];
-  Camera_WorldToScreen__champa_cliff_caves(position);
+  Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->z = position[2];
   sprite->scale = work->scale;
@@ -1813,7 +1770,7 @@ loop:
   position[1] = work->position[1];
   position[2] = work->position[2];
   sprite = &work->sprites[1];
-  Camera_WorldToScreen__champa_cliff_caves(position);
+  Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->z = position[2];
   sprite->scale = work->scale2;
@@ -1927,12 +1884,10 @@ void Func_02003078(void) {
 }
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/champa_cliff_caves/s3164.c ----
-
 /* VIEW(s3164): tag struct ChampaCliffCavesWork as struct
  * ChampaCliffCavesWork__s3164; champa_cliff_caves.c has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1894: invalid operands to
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1895: invalid operands to
  * binary +. */
 struct ChampaCliffCavesWork__s3164 {
   u8 tiles[0x1000];
@@ -1989,8 +1944,6 @@ void Func_02003164(const struct Vec3 *origin) {
     wait(1);
   } while (state != 999);
 }
-
-// ---- games/tla/src/scene/champa_cliff_caves/s320c.c ----
 
 void Func_0200320c(void) {
   struct ChampaCliffCavesWork *work =
@@ -2077,11 +2030,7 @@ void Func_020032a4(void) {
   HeapSlot_Release(220);
 }
 
-u32 gData_02003634[] = {
-    439,
-    440,
-    441,
-};
+struct ThrowAnimations gData_02003634 = {{439, 440, 441}};
 #undef FIELD_AT
 
 #undef FIELD_AT
@@ -2092,40 +2041,9 @@ u32 gData_02003634[] = {
 #undef WORD_AT
 #undef FIELD_AT
 #undef gData_02003d10
-#undef gData_020039cc
-#undef gData_02003c84
 #undef gData_02003d18
-#undef gData_020041e8
-#undef gData_02004254
-#undef gData_0200432c
-#undef gData_020042d4
 
 #include "text/msg_ids.h"
-
-/* VIEW(data): routine Func_020001f4 as this part declared it; the joined file
- * has another. */
-void Func_020001f4__data(void) __asm__("Func_020001f4");
-#define Func_020001f4 Func_020001f4__data
-/* VIEW(data): routine Func_02000304 as this part declared it; the joined file
- * has another. */
-void Func_02000304__data(void) __asm__("Func_02000304");
-#define Func_02000304 Func_02000304__data
-/* VIEW(data): routine Func_02000350 as this part declared it; the joined file
- * has another. */
-void Func_02000350__data(void) __asm__("Func_02000350");
-#define Func_02000350 Func_02000350__data
-/* VIEW(data): routine Func_0200038c as this part declared it; the joined file
- * has another. */
-void Func_0200038c__data(void) __asm__("Func_0200038c");
-#define Func_0200038c Func_0200038c__data
-/* VIEW(data): routine Func_02000464 as this part declared it; the joined file
- * has another. */
-void Func_02000464__data(void) __asm__("Func_02000464");
-#define Func_02000464 Func_02000464__data
-/* VIEW(data): routine Func_02000f48 as this part declared it; the joined file
- * has another. */
-void Func_02000f48__data(void) __asm__("Func_02000f48");
-#define Func_02000f48 Func_02000f48__data
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 440, 0, 520, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -2430,7 +2348,7 @@ LATE_DATA s32 gData_02003d18[] = {
     0x58000b,
 };
 
-LATE_DATA struct Trigger gData_02003d20[] = {
+LATE_DATA struct Trigger gChampaCliffCaves_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2476,7 +2394,7 @@ LATE_DATA struct Trigger gData_02003d20[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02003e7c[] = {
+LATE_DATA struct Trigger gChampaCliffCaves_Room2Triggers[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
@@ -2527,7 +2445,7 @@ LATE_DATA struct Trigger gData_02003e7c[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02003ffc[] = {
+LATE_DATA struct Trigger gChampaCliffCaves_Room3Triggers[] = {
     {0xc602, 15, IF_FLAG_SET(0x97e), EVENT(Func_020001f4)},
     {0x31, 14, CONDITION_ALWAYS, 14},
     {0xc602, 15, CONDITION_ALWAYS, EVENT(Func_02000208)},
@@ -2560,7 +2478,7 @@ LATE_DATA struct Trigger gData_02003ffc[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02004104[] = {
+LATE_DATA struct Trigger gChampaCliffCaves_Room4Triggers[] = {
     {0x31, 21, CONDITION_ALWAYS, 21},
     {TRIGGER_EXIT, 22, CONDITION_ALWAYS, 22},
     {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
@@ -2615,9 +2533,3 @@ LATE_DATA u32 gData_0200432c[] = {
     0xe60000,  1, 39, 1,         0, 1,         17,
 };
 // clang-format on
-#undef Func_020001f4
-#undef Func_02000304
-#undef Func_02000350
-#undef Func_0200038c
-#undef Func_02000464
-#undef Func_02000f48

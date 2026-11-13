@@ -24,8 +24,8 @@ struct AnkohlRuinsEventWork {
 };
 
 void Func_02000b30(s32 id, s32 cue);
-void Func_0200160c(void);
-void Func_020019a0(void);
+void AnkohlRuins_RaiseFirstSand(void);
+void AnkohlRuins_RaiseSecondSand(void);
 void Func_02001f7c(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -107,44 +107,15 @@ struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
-// ---- scene/ankohl_ruins.c ----
-
-// The scene code of overlay 0x686 that its scene tables belong to, in ROM
-// order; the rest of the overlay is in ankohl_ruins/.
-
-extern struct AnkohlRuinsSpriteWork Data_02004030;
+extern struct AnkohlRuinsSpriteWork gAnkohlRuins_Sand;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-/* VIEW(ankohl_ruins): variable gData_02003780 as s16 gData_02003780;
- * scene/ankohl_ruins/s2438 has u16 gData_02003780[] = {; tried as the
- * definition's extern u16 gData_02003780[], it does not compile in tla-ja:
- * games/tla/src/scene/ankohl_ruins.c:975: `gData_02003780' has an incomplete
- * type. */
-extern s16 gData_02003780__ankohl_ruins __asm__("gData_02003780");
-/* VIEW(ankohl_ruins): variable gData_02003782 as s16 gData_02003782;
- * scene/ankohl_ruins/s2438 has u16 gData_02003782[] = {; tried as the
- * definition's extern u16 gData_02003782[], it does not compile in tla-ja:
- * games/tla/src/scene/ankohl_ruins.c:785: wrong type argument to increment. */
-extern s16 gData_02003782__ankohl_ruins __asm__("gData_02003782");
-/* VIEW(ankohl_ruins): variable gData_02003784 as s16 gData_02003784;
- * scene/ankohl_ruins/s2438 has u32 gData_02003784[] = {; tried as the
- * definition's extern u32 gData_02003784[], it does not compile in tla-ja:
- * games/tla/src/scene/ankohl_ruins.c:977: `gData_02003784' has an incomplete
- * type. */
-extern s16 gData_02003784__ankohl_ruins __asm__("gData_02003784");
-/* VIEW(ankohl_ruins): variable gData_02003788 as s32 gData_02003788;
- * scene/ankohl_ruins/s2438 has u32 gData_02003788[] = {; tried as the
- * definition's extern u32 gData_02003788[], it does not compile in tla-ja:
- * games/tla/src/scene/ankohl_ruins.c:978: `gData_02003788' has an incomplete
- * type. */
-extern s32 gData_02003788__ankohl_ruins __asm__("gData_02003788");
-/* VIEW(ankohl_ruins): variable gData_0200378c as s32 gData_0200378c;
- * scene/ankohl_ruins/s2438 has u32 gData_0200378c[] = {; tried as the
- * definition's extern u32 gData_0200378c[], it does not compile in tla-ja:
- * games/tla/src/scene/ankohl_ruins.c:979: `gData_0200378c' has an incomplete
- * type. */
-extern s32 gData_0200378c__ankohl_ruins __asm__("gData_0200378c");
+extern s16 gAnkohlRuins_SandStepDelay;
+extern s16 gAnkohlRuins_SandTimer;
+extern s16 gAnkohlRuins_SandTime;
+extern s32 gAnkohlRuins_SandStep;
+extern s32 gAnkohlRuins_SandRoom;
 
 extern u32 gData_0200307c[];
 extern u32 gData_0200309c[];
@@ -257,31 +228,31 @@ s32 Func_020005c0(struct Actor *object) {
   return 0;
 }
 
-extern struct ActorPlacement gData_020032a0[];
-extern struct ActorPlacement gData_020032b8[];
-extern struct ActorPlacement gData_020034f8[];
-extern struct ActorPlacement gData_02003570[];
-extern struct ActorPlacement gData_020035d0[];
-extern struct ActorPlacement gData_02003708[];
-extern struct ActorPlacement gData_02003750[];
-extern struct ActorPlacement gData_02003768[];
+extern struct ActorPlacement gAnkohlRuins_Placements[];
+extern struct ActorPlacement gAnkohlRuins_Room1Placements[];
+extern struct ActorPlacement gAnkohlRuins_Room2Placements[];
+extern struct ActorPlacement gAnkohlRuins_Room3Placements[];
+extern struct ActorPlacement gAnkohlRuins_Room4Placements[];
+extern struct ActorPlacement gAnkohlRuins_Room5Placements[];
+extern struct ActorPlacement gAnkohlRuins_Room6Placements[];
+extern struct ActorPlacement gAnkohlRuins_Room8Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)
-    return gData_020032b8;
+    return gAnkohlRuins_Room1Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room2)
-    return gData_020034f8;
+    return gAnkohlRuins_Room2Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room3)
-    return gData_02003570;
+    return gAnkohlRuins_Room3Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4)
-    return gData_020035d0;
+    return gAnkohlRuins_Room4Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5)
-    return gData_02003708;
+    return gAnkohlRuins_Room5Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room6)
-    return gData_02003750;
+    return gAnkohlRuins_Room6Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room8)
-    return gData_02003768;
-  return gData_020032a0;
+    return gAnkohlRuins_Room8Placements;
+  return gAnkohlRuins_Placements;
 }
 
 void Func_02000698(void) {
@@ -700,12 +671,12 @@ void Func_02001264(s32 a, s32 id) {
 // 0x200000: each moves by the level as its kind says, is placed relative to
 // the view and is drawn when it is on screen. Then sets a word in map layer 1
 // to the level plus a base.
-void Func_020012c4(void) {
+void AnkohlRuins_DrawSand(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 *view = &map->viewX;
   s32 viewX = view[0] & 0xffff0000;
   s32 viewZ = view[1] & 0xffff0000;
-  struct AnkohlRuinsSpriteWork *work = &Data_02004030;
+  struct AnkohlRuinsSpriteWork *work = &gAnkohlRuins_Sand;
   s32 *origin = map->origin;
   // Unused: gives the stack frame its 4 bytes; the original stores it there
   // and never reads it.
@@ -772,8 +743,8 @@ void Func_020012c4(void) {
   }
 }
 
-void Func_02001420(void) {
-  struct AnkohlRuinsSpriteWork *work = &Data_02004030;
+void AnkohlRuins_InitSand(s32 unused) {
+  struct AnkohlRuinsSpriteWork *work = &gAnkohlRuins_Sand;
   u32 *tiles = Heap_Alloc(128);
   u32 *pixel = tiles;
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[1];
@@ -802,7 +773,7 @@ fill:
     REG_WINOUT = winout;
   } while (0);
   REG_DISPCNT |= 0x8000;
-  Task_AddFrame(Func_020012c4, 0x480);
+  Task_AddFrame(AnkohlRuins_DrawSand, 0x480);
   if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2) {
     sprite->x = 0x280000;
     sprite->kind = 1;
@@ -860,14 +831,14 @@ fill:
   }
 }
 
-void Func_020015ac(void) {
+void AnkohlRuins_CountSandTime(void) {
   struct AnkohlRuinsEventWork *work =
       (struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork;
 
   if (Event_GetFlag(0x104) == 0) {
-    if (++gData_02003782__ankohl_ruins >= gData_02003784__ankohl_ruins) {
-      FieldTask_Remove(Func_020015ac);
-      if (gData_0200378c__ankohl_ruins == 1)
+    if (++gAnkohlRuins_SandTimer >= gAnkohlRuins_SandTime) {
+      FieldTask_Remove(AnkohlRuins_CountSandTime);
+      if (gAnkohlRuins_SandRoom == 1)
         work->alarm = 68;
       else
         work->alarm = 69;
@@ -875,18 +846,12 @@ void Func_020015ac(void) {
   }
 }
 
-/* VIEW(ankohl_ruins): variable gData_02002fa8 as struct AnkohlRuinsWaterRow
- * gData_02002fa8[]; scene/ankohl_ruins/s2438 has u32 gData_02002fa8[] = {;
- * tried as the definition's extern u32 gData_02002fa8[], it does not compile in
- * tla-ja: games/tla/src/scene/ankohl_ruins.c:851: request for member `level' in
- * something not a structure or union. */
-extern struct AnkohlRuinsWaterRow
-    gData_02002fa8__ankohl_ruins[] __asm__("gData_02002fa8");
+extern struct AnkohlRuinsSandRow gAnkohlRuins_FirstSandRows[];
 
-void Func_0200160c(void) {
+void AnkohlRuins_RaiseFirstSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
-  struct AnkohlRuinsSpriteWork *work = &Data_02004030;
+  struct AnkohlRuinsSpriteWork *work = &gAnkohlRuins_Sand;
   s16 i;
   s16 j;
   s16 m;
@@ -904,13 +869,13 @@ void Func_0200160c(void) {
   for (i = 0; i <= 15; i++) {
     struct MapCell *cells;
 
-    for (j = 0; j < gData_02003780__ankohl_ruins; j++)
+    for (j = 0; j < gAnkohlRuins_SandStepDelay; j++)
       FieldEvent_Wait(1);
-    work->level += gData_02003788__ankohl_ruins;
+    work->level += gAnkohlRuins_SandStep;
     cells = map->layers[2].cells;
     cells += leader->x / 0x100000 + ((leader->z / 0x100000) << 7);
     if (cells->collisionCode == 232) {
-      leader->y += gData_02003788__ankohl_ruins;
+      leader->y += gAnkohlRuins_SandStep;
       leader->terrainHeight = leader->y;
     }
     FieldEvent_Wait(1);
@@ -926,8 +891,8 @@ void Func_0200160c(void) {
   FieldEvent_Wait(5);
   leader->motionFlags = 3;
   if (work->level < 0x200000) {
-    gData_02003782__ankohl_ruins = 0;
-    Task_AddFrame(Func_020015ac, 0x480);
+    gAnkohlRuins_SandTimer = 0;
+    Task_AddFrame(AnkohlRuins_CountSandTime, 0x480);
   } else {
     MapGrid_CopyCellsLayered(69, 6, 1, 2, 68, 5);
     Event_SetFlag(0x204);
@@ -936,16 +901,16 @@ void Func_0200160c(void) {
   AnkohlRuins_Call2df4(18, 66, 3, 1, 7, 66);
   AnkohlRuins_Call2df4(18, 1, 3, 5, 7, 1);
   i = work->level >> 19;
-  for (row = 0; gData_02002fa8__ankohl_ruins[row].level != 99; row++) {
-    if (i >= gData_02002fa8__ankohl_ruins[row].level) {
-      for (m = 0; m < gData_02002fa8__ankohl_ruins[row].height; m++) {
-        for (n = 0; n < gData_02002fa8__ankohl_ruins[row].width; n++) {
+  for (row = 0; gAnkohlRuins_FirstSandRows[row].level != 99; row++) {
+    if (i >= gAnkohlRuins_FirstSandRows[row].level) {
+      for (m = 0; m < gAnkohlRuins_FirstSandRows[row].height; m++) {
+        for (n = 0; n < gAnkohlRuins_FirstSandRows[row].width; n++) {
           AnkohlRuins_Call2dfc(21, 14 - i, 1, 1,
-                               gData_02002fa8__ankohl_ruins[row].x + n,
-                               gData_02002fa8__ankohl_ruins[row].z + m);
+                               gAnkohlRuins_FirstSandRows[row].x + n,
+                               gAnkohlRuins_FirstSandRows[row].z + m);
           AnkohlRuins_Call2dfc(25, 14 - i, 1, 1,
-                               gData_02002fa8__ankohl_ruins[row].x + n,
-                               gData_02002fa8__ankohl_ruins[row].z + m + 64);
+                               gAnkohlRuins_FirstSandRows[row].x + n,
+                               gAnkohlRuins_FirstSandRows[row].z + m + 64);
         }
       }
     }
@@ -962,18 +927,12 @@ void Func_0200160c(void) {
     AnkohlRuins_Call2dfc(18, 8, 1, 1, 11, 5);
 }
 
-/* VIEW(ankohl_ruins): variable gData_02002ff0 as struct AnkohlRuinsWaterRow
- * gData_02002ff0[]; scene/ankohl_ruins/s2438 has u32 gData_02002ff0[] = {;
- * tried as the definition's extern u32 gData_02002ff0[], it does not compile in
- * tla-ja: games/tla/src/scene/ankohl_ruins.c:935: request for member `level' in
- * something not a structure or union. */
-extern struct AnkohlRuinsWaterRow
-    gData_02002ff0__ankohl_ruins[] __asm__("gData_02002ff0");
+extern struct AnkohlRuinsSandRow gAnkohlRuins_SecondSandRows[];
 
-void Func_020019a0(void) {
+void AnkohlRuins_RaiseSecondSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
-  struct AnkohlRuinsSpriteWork *work = &Data_02004030;
+  struct AnkohlRuinsSpriteWork *work = &gAnkohlRuins_Sand;
   s32 level;
   s16 i;
   s16 j;
@@ -992,13 +951,13 @@ void Func_020019a0(void) {
   for (i = 0; i <= 15; i++) {
     struct MapCell *cells;
 
-    for (j = 0; j < gData_02003780__ankohl_ruins; j++)
+    for (j = 0; j < gAnkohlRuins_SandStepDelay; j++)
       FieldEvent_Wait(1);
-    work->level += gData_02003788__ankohl_ruins;
+    work->level += gAnkohlRuins_SandStep;
     cells = map->layers[2].cells;
     cells += leader->x / 0x100000 + ((leader->z / 0x100000) << 7);
     if (cells->collisionCode == 232) {
-      leader->y += gData_02003788__ankohl_ruins;
+      leader->y += gAnkohlRuins_SandStep;
       leader->terrainHeight = leader->y;
     }
     FieldEvent_Wait(1);
@@ -1014,8 +973,8 @@ void Func_020019a0(void) {
   FieldEvent_Wait(5);
   leader->motionFlags = 3;
   if (work->level < 0x200000) {
-    gData_02003782__ankohl_ruins = 0;
-    Task_AddFrame(Func_020015ac, 0x480);
+    gAnkohlRuins_SandTimer = 0;
+    Task_AddFrame(AnkohlRuins_CountSandTime, 0x480);
   } else {
     MapGrid_CopyCellsLayered(69, 24, 1, 4, 68, 23);
     Event_SetFlag(0x204);
@@ -1024,16 +983,16 @@ void Func_020019a0(void) {
   AnkohlRuins_Call2df4(18, 66, 3, 1, 7, 84);
   AnkohlRuins_Call2df4(18, 1, 3, 5, 7, 19);
   i = work->level >> 19;
-  for (row = 0; gData_02002ff0__ankohl_ruins[row].level != 99; row++) {
-    if (i >= gData_02002ff0__ankohl_ruins[row].level) {
-      for (m = 0; m < gData_02002ff0__ankohl_ruins[row].height; m++) {
-        for (n = 0; n < gData_02002ff0__ankohl_ruins[row].width; n++) {
+  for (row = 0; gAnkohlRuins_SecondSandRows[row].level != 99; row++) {
+    if (i >= gAnkohlRuins_SecondSandRows[row].level) {
+      for (m = 0; m < gAnkohlRuins_SecondSandRows[row].height; m++) {
+        for (n = 0; n < gAnkohlRuins_SecondSandRows[row].width; n++) {
           AnkohlRuins_Call2dfc(21, 14 - i, 1, 1,
-                               gData_02002ff0__ankohl_ruins[row].x + n,
-                               gData_02002ff0__ankohl_ruins[row].z + m);
+                               gAnkohlRuins_SecondSandRows[row].x + n,
+                               gAnkohlRuins_SecondSandRows[row].z + m);
           AnkohlRuins_Call2dfc(25, 14 - i, 1, 1,
-                               gData_02002ff0__ankohl_ruins[row].x + n,
-                               gData_02002ff0__ankohl_ruins[row].z + m + 64);
+                               gAnkohlRuins_SecondSandRows[row].x + n,
+                               gAnkohlRuins_SecondSandRows[row].z + m + 64);
         }
       }
     }
@@ -1050,7 +1009,7 @@ void Func_020019a0(void) {
     AnkohlRuins_Call2dfc(18, 7, 1, 1, 4, 23);
 }
 
-void Func_02001d34(void) {
+void AnkohlRuins_PressFirstSandSwitch(void) {
   s32 done = AnkohlRuins_FlagCheck(0x202);
 
   if (done == 0) {
@@ -1061,13 +1020,13 @@ void Func_02001d34(void) {
     MapGrid_CopyCells(18, 66, 3, 1, 7, 66);
     AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
     FieldEvent_Wait(15);
-    gData_02003780__ankohl_ruins = 7;
-    gData_02003782__ankohl_ruins = done;
-    gData_02003784__ankohl_ruins = 200;
-    gData_02003788__ankohl_ruins = 0x8000;
-    gData_0200378c__ankohl_ruins = 1;
+    gAnkohlRuins_SandStepDelay = 7;
+    gAnkohlRuins_SandTimer = done;
+    gAnkohlRuins_SandTime = 200;
+    gAnkohlRuins_SandStep = 0x8000;
+    gAnkohlRuins_SandRoom = 1;
     Event_SetFlag(381);
-    Func_0200160c();
+    AnkohlRuins_RaiseFirstSand();
     Event_SetFlag(0x202);
   }
 }
@@ -1090,7 +1049,7 @@ void Func_02001d34(void) {
 
 DEFINE_ANKOHL_RUINS_OPEN_ONCE(Func_02001ddc, 0x9e2, 14, 65, 15, 5)
 
-void Func_02001e54(void) {
+void AnkohlRuins_PressSecondSandSwitch(void) {
   s32 done = AnkohlRuins_FlagCheck(0x203);
 
   if (done == 0) {
@@ -1101,13 +1060,13 @@ void Func_02001e54(void) {
     AnkohlRuins_Call2df4(18, 66, 3, 1, 7, 84);
     AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
     FieldEvent_Wait(15);
-    gData_02003780__ankohl_ruins = 3;
-    gData_02003782__ankohl_ruins = done;
-    gData_02003784__ankohl_ruins = 100;
-    gData_02003788__ankohl_ruins = 0x8000;
-    gData_0200378c__ankohl_ruins = 2;
+    gAnkohlRuins_SandStepDelay = 3;
+    gAnkohlRuins_SandTimer = done;
+    gAnkohlRuins_SandTime = 100;
+    gAnkohlRuins_SandStep = 0x8000;
+    gAnkohlRuins_SandRoom = 2;
     Event_SetFlag(381);
-    Func_020019a0();
+    AnkohlRuins_RaiseSecondSand();
     Event_SetFlag(0x203);
   }
 }
@@ -1213,14 +1172,14 @@ void Func_020021d4(void) {
   }
 }
 
-extern struct Trigger gData_02003790[];
-extern struct Trigger gData_020037b4[];
-extern struct Trigger gData_02003a78[];
-extern struct Trigger gData_02003b98[];
-extern struct Trigger gData_02003c94[];
-extern struct Trigger gData_02003e38[];
-extern struct Trigger gData_02003f4c[];
-extern struct Trigger gData_02004018[];
+extern struct Trigger gAnkohlRuins_Triggers[];
+extern struct Trigger gAnkohlRuins_Room1Triggers[];
+extern struct Trigger gAnkohlRuins_Room2Triggers[];
+extern struct Trigger gAnkohlRuins_Room3Triggers[];
+extern struct Trigger gAnkohlRuins_Room4Triggers[];
+extern struct Trigger gAnkohlRuins_Room5Triggers[];
+extern struct Trigger gAnkohlRuins_Room6Triggers[];
+extern struct Trigger gAnkohlRuins_Room8Triggers[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1266,23 +1225,23 @@ void Func_02002328(void) { GameFlag_Clear(0x205); }
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)
-    return gData_020037b4;
+    return gAnkohlRuins_Room1Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room2)
-    return gData_02003a78;
+    return gAnkohlRuins_Room2Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room3)
-    return gData_02003b98;
+    return gAnkohlRuins_Room3Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4)
-    return gData_02003c94;
+    return gAnkohlRuins_Room4Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5)
-    return gData_02003e38;
+    return gAnkohlRuins_Room5Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room6)
-    return gData_02003f4c;
+    return gAnkohlRuins_Room6Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room8)
-    return gData_02004018;
-  return gData_02003790;
+    return gAnkohlRuins_Room8Triggers;
+  return gAnkohlRuins_Triggers;
 }
 
-void Func_020023d0(struct Actor *object) {
+void AnkohlRuins_RaiseDust(struct Actor *object) {
   struct EffectOptions params;
   u32 phase = gFrameCount & 7;
   s32 dx;
@@ -1302,15 +1261,11 @@ void Func_020023d0(struct Actor *object) {
   }
 }
 
-// ---- scene/ankohl_ruins/s2438.c ----
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 void Func_020006b4(void);
 void Func_020011c0(void);
-void Func_02001d34(void);
+void AnkohlRuins_PressFirstSandSwitch(void);
 void Func_02001ddc(void);
-void Func_02001e54(void);
+void AnkohlRuins_PressSecondSandSwitch(void);
 void Func_02001f04(void);
 void Func_020020fc(void);
 void Func_020021d4(void);
@@ -1338,39 +1293,10 @@ struct AnkohlRuinsSpriteWork;
 #include "system/ram_buffer.h"
 #include "text/msg_ids.h"
 
-struct AnkohlRuinsFloatWork {
-  s16 unk00;
-  s16 tile;
-  s32 level;
-  s32 unk08;
-  s32 unk0c;
-};
-
-/* VIEW(s2438): variable Data_02004030 as struct AnkohlRuinsFloatWork
- * Data_02004030; scene/ankohl_ruins has struct AnkohlRuinsSpriteWork
- * Data_02004030; tried as the 2 declarations' extern struct
- * AnkohlRuinsFloatWork Data_02004030, it does not compile in tla-en:
- * games/tla/src/scene/ankohl_ruins.c:1240: conflicting types for
- * `Data_02004030'. */
-extern struct AnkohlRuinsFloatWork
-    Data_02004030__s2438 __asm__("Data_02004030");
 void Func_020010f4(void);
-/* VIEW(s2438): routine Func_020023d0 as void Func_020023d0(void);
- * scene/ankohl_ruins has void Func_020023d0(struct Actor *object) {; tried as
- * the definition's void Func_020023d0(struct Actor *object), which the object
- * already declares, it does not compile in tla-en:
- * games/tla/src/scene/ankohl_ruins.c:1499: `Func_020023d0__s2438' undeclared
- * (first use in this function). */
-void Func_020023d0__s2438(void) __asm__("Func_020023d0");
 void FieldEffect_StartBlankOverlay();
 void Func_02000418(void);
 void Event_StartScreenTransition(void);
-/* VIEW(s2438): routine Func_02001420 as void Func_02001420(s32 a0);
- * scene/ankohl_ruins has void Func_02001420(void) {; tried as the definition's
- * void Func_02001420(struct Actor *object, s16 timer, u8 value), it does not
- * compile in tla-en: games/tla/src/scene/ankohl_ruins.c:1249: conflicting types
- * for `Func_02001420'. */
-void Func_02001420__s2438(s32 a0) __asm__("Func_02001420");
 void Map_CenterOnFollowedPoint(void);
 
 s32 Scene_Initialize(s32 a0) {
@@ -1559,7 +1485,7 @@ s32 Scene_Initialize(s32 a0) {
     s16 *entrance = &work->entrance;
 
     if (work->entrance <= 4)
-      Func_02001420__s2438(a0);
+      AnkohlRuins_InitSand(a0);
     if (GameFlag_Get(0x9e2)) {
       s32 x = 14;
 
@@ -1575,9 +1501,9 @@ s32 Scene_Initialize(s32 a0) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && GameFlag_Get(0x204)) {
       s32 level = 0x200000;
 
-      Data_02004030__s2438.level = level;
+      gAnkohlRuins_Sand.level = level;
       // Read through this struct so the load stays behind the store above.
-      if ((u16)(((struct AnkohlRuinsFloatWork *)entrance)->unk00 - 1) <= 1) {
+      if ((u16)(((struct AnkohlRuinsSpriteWork *)entrance)->unk00 - 1) <= 1) {
         s32 z;
         s32 x;
 
@@ -1621,7 +1547,7 @@ s32 Scene_Initialize(s32 a0) {
       object->motionFlags = 0;
       object->terrainHeight = 0x480000;
       object->y = 0x480000;
-      object->update = Func_020023d0__s2438;
+      object->update = (void (*)(void))AnkohlRuins_RaiseDust;
     }
   }
   return 0;
@@ -1639,22 +1565,10 @@ s32 Scene_Initialize(s32 a0) {
 #include "system/ram_buffer.h"
 #include "text/msg_ids.h"
 
-struct AnkohlRuinsFloatWork {
-  s16 unk00;
-  s16 tile;
-  s32 level;
-  s32 unk08;
-  s32 unk0c;
-};
-
-extern struct AnkohlRuinsFloatWork
-    Data_02004030__s2438 __asm__("Data_02004030");
 void Func_020010f4(void);
-void Func_020023d0__s2438(void) __asm__("Func_020023d0");
 void FieldEffect_StartBlankOverlay();
 void Event_Start(void);
 void Event_StartScreenTransition(void);
-void Func_02001420__s2438(s32 a0) __asm__("Func_02001420");
 void Map_CenterOnFollowedPoint(void);
 
 s32 Scene_Initialize(s32 a0) {
@@ -1836,7 +1750,7 @@ s32 Scene_Initialize(s32 a0) {
     s16 *entrance = &work->entrance;
 
     if (work->entrance <= 4)
-      Func_02001420__s2438(a0);
+      AnkohlRuins_InitSand(a0);
     if (GameFlag_Get(0x9e2)) {
       s32 x = 14;
 
@@ -1852,9 +1766,9 @@ s32 Scene_Initialize(s32 a0) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && GameFlag_Get(0x204)) {
       s32 level = 0x200000;
 
-      Data_02004030__s2438.level = level;
+      gAnkohlRuins_Sand.level = level;
       // Read through this struct so the load stays behind the store above.
-      if ((u16)(((struct AnkohlRuinsFloatWork *)entrance)->unk00 - 1) <= 1) {
+      if ((u16)(((struct AnkohlRuinsSpriteWork *)entrance)->unk00 - 1) <= 1) {
         s32 z;
         s32 x;
 
@@ -1898,7 +1812,7 @@ s32 Scene_Initialize(s32 a0) {
       object->motionFlags = 0;
       object->terrainHeight = 0x480000;
       object->y = 0x480000;
-      object->update = Func_020023d0__s2438;
+      object->update = (void (*)(void))AnkohlRuins_RaiseDust;
     }
   }
   return 0;
@@ -1910,8 +1824,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_02000384(void);
 void Func_02000698(void);
-void Func_0200160c(void);
-void Func_020019a0(void);
+void AnkohlRuins_RaiseFirstSand(void);
+void AnkohlRuins_RaiseSecondSand(void);
 void Func_020022e0(void);
 
 // clang-format off
@@ -1933,17 +1847,17 @@ u32 gData_02002f6c[] = {
     1, 38, 17,
 };
 
-u32 gData_02002fa8[] = {
-    0x1040f00, 8, 0x4030300, 5, 0x7020600, 6,
-    0xa010100, 5, 0xc010100, 5, 0xb010102, 5,
-    0x1010f02, 12, 0x1010f04, 13, 99, 0,
+struct AnkohlRuinsSandRow gAnkohlRuins_FirstSandRows[] = {
+    {0, 15, 4, 1, 8},  {0, 3, 3, 4, 5},   {0, 6, 2, 7, 6},
+    {0, 1, 1, 10, 5},  {0, 1, 1, 12, 5},  {2, 1, 1, 11, 5},
+    {2, 15, 1, 1, 12}, {4, 15, 1, 1, 13}, {99},
 };
 
-u32 gData_02002ff0[] = {
-    0x1020f00, 28, 0x4020c00, 26, 0x4020800, 24,
-    0x5010200, 23, 0xa010200, 23, 0xf010100, 25,
-    0x4010102, 23, 0x1010f02, 30, 0x1010f04, 31,
-    99, 0,
+struct AnkohlRuinsSandRow gAnkohlRuins_SecondSandRows[] = {
+    {0, 15, 2, 1, 28}, {0, 12, 2, 4, 26}, {0, 8, 2, 4, 24},
+    {0, 2, 1, 5, 23},  {0, 2, 1, 10, 23}, {0, 1, 1, 15, 25},
+    {2, 1, 1, 4, 23},  {2, 15, 1, 1, 30}, {4, 15, 1, 1, 31},
+    {99},
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {
@@ -2094,11 +2008,11 @@ u32 gData_02003290[] = {
     22, 30, 0, 17,
 };
 
-struct ActorPlacement gData_020032a0[] = {
+struct ActorPlacement gAnkohlRuins_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020032b8[] = {
+struct ActorPlacement gAnkohlRuins_Room1Placements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(88), FACING_SOUTH, 2, 0},
     {489, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
     {392, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(488), FACING_SOUTH, 2, 0},
@@ -2125,7 +2039,7 @@ struct ActorPlacement gData_020032b8[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020034f8[] = {
+struct ActorPlacement gAnkohlRuins_Room2Placements[] = {
     {391, CONDITION_ALWAYS, (s32)gData_02003280, PIXELS(120), 0, PIXELS(88), FACING_SOUTH, 2, 0},
     {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(472), 0, PIXELS(776), FACING_SOUTH, 2, 0},
     {307, CONDITION_ALWAYS, (s32)gData_02003268, PIXELS(520), 0, PIXELS(776), FACING_SOUTH, 2, 0},
@@ -2133,14 +2047,14 @@ struct ActorPlacement gData_020034f8[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02003570[] = {
+struct ActorPlacement gAnkohlRuins_Room3Placements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(104), FACING_SOUTH, 2, 0},
     {390, CONDITION_ALWAYS, (s32)gData_02003290, PIXELS(232), 0, PIXELS(392), FACING_SOUTH, 2, 0},
     {393, CONDITION_ALWAYS, (s32)gData_02003280, PIXELS(296), 0, PIXELS(392), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020035d0[] = {
+struct ActorPlacement gAnkohlRuins_Room4Placements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(776), FACING_SOUTH, 2, 0},
     {391, CONDITION_ALWAYS, (s32)gData_02003280, PIXELS(104), 0, PIXELS(760), FACING_SOUTH, 2, 0},
     {393, CONDITION_ALWAYS, (s32)gData_02003280, 0, 0, 0, FACING_SOUTH, 2, 0},
@@ -2156,47 +2070,37 @@ struct ActorPlacement gData_020035d0[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02003708[] = {
+struct ActorPlacement gAnkohlRuins_Room5Placements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(312), FACING_SOUTH, 2, 0},
     {393, CONDITION_ALWAYS, (s32)gData_02003280, PIXELS(440), 0, PIXELS(584), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02003750[] = {
+struct ActorPlacement gAnkohlRuins_Room6Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02003768[] = {
+struct ActorPlacement gAnkohlRuins_Room8Placements[] = {
     {SCENE_TABLE_END},
 };
 
-u16 gData_02003780[] = {
-    10,
-};
+s16 gAnkohlRuins_SandStepDelay = 10;
 
-u16 gData_02003782[] = {
-    0,
-};
+s16 gAnkohlRuins_SandTimer = 0;
 
-u32 gData_02003784[] = {
-    0,
-};
+s16 gAnkohlRuins_SandTime = 0;
 
-u32 gData_02003788[] = {
-    0x8000,
-};
+s32 gAnkohlRuins_SandStep = 0x8000;
 
-u32 gData_0200378c[] = {
-    0,
-};
+s32 gAnkohlRuins_SandRoom = 0;
 
-struct Trigger gData_02003790[] = {
+struct Trigger gAnkohlRuins_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020037b4[] = {
+struct Trigger gAnkohlRuins_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2258,7 +2162,7 @@ struct Trigger gData_020037b4[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02003a78[] = {
+struct Trigger gAnkohlRuins_Room2Triggers[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {0x31, 3, CONDITION_ALWAYS, 3},
@@ -2285,7 +2189,7 @@ struct Trigger gData_02003a78[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02003b98[] = {
+struct Trigger gAnkohlRuins_Room3Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2309,7 +2213,7 @@ struct Trigger gData_02003b98[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02003c94[] = {
+struct Trigger gAnkohlRuins_Room4Triggers[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2347,7 +2251,7 @@ struct Trigger gData_02003c94[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02003e38[] = {
+struct Trigger gAnkohlRuins_Room5Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x31, 3, CONDITION_ALWAYS, 3},
@@ -2373,19 +2277,19 @@ struct Trigger gData_02003e38[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02003f4c[] = {
+struct Trigger gAnkohlRuins_Room6Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
     {0x21, 28, CONDITION_ALWAYS, 28},
-    {TRIGGER_STEP, 40, 0x202, EVENT(Func_02001d34)},
+    {TRIGGER_STEP, 40, 0x202, EVENT(AnkohlRuins_PressFirstSandSwitch)},
     {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(Func_02001ddc)},
-    {TRIGGER_STEP, 42, 0x203, EVENT(Func_02001e54)},
+    {TRIGGER_STEP, 42, 0x203, EVENT(AnkohlRuins_PressSecondSandSwitch)},
     {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(Func_02001f04)},
-    {TRIGGER_RAISED, 68, CONDITION_ALWAYS, EVENT(Func_0200160c)},
-    {TRIGGER_RAISED, 69, CONDITION_ALWAYS, EVENT(Func_020019a0)},
+    {TRIGGER_RAISED, 68, CONDITION_ALWAYS, EVENT(AnkohlRuins_RaiseFirstSand)},
+    {TRIGGER_RAISED, 69, CONDITION_ALWAYS, EVENT(AnkohlRuins_RaiseSecondSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_02002318)},
@@ -2393,7 +2297,7 @@ struct Trigger gData_02003f4c[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02004018[] = {
+struct Trigger gAnkohlRuins_Room8Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 #undef EFFECT_SPAWN

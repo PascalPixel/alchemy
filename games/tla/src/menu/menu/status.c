@@ -106,10 +106,6 @@ s32 StatusScreen_Run(void) {
   *page = 0;
   state->partyCount = Party_ListMembersFar(state->ownerIds);
   StatusScreen_Initialize(0, 3, 0, 7);
-  /* FAKEMATCH(wrapper): the copies forwarded through item.c's CopyWords_
-   * inline, which keeps each call's own constants; as direct Iwram_CopyWords
-   * calls, 48 of 216 instructions differ in tla-en, CSE keeping 0x05000000 in
-   * a saved register. */
   Iwram_CopyWords(palette, (void *)BG_PLTT, 64);
   Iwram_CopyWords(tiles, (void *)0x06004000, 0x2800);
   Palette_LightenHighlight(14);

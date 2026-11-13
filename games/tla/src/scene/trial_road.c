@@ -54,30 +54,11 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(first): routine gTrialRoad_Placements as this part declared it; the
- * joined file has another. */
-extern const u8 gTrialRoad_Placements__first[] __asm__("gTrialRoad_Placements");
-#define gTrialRoad_Placements gTrialRoad_Placements__first
-/* VIEW(first): routine gTrialRoad_Room3Placements as this part declared it; the
- * joined file has another. */
-extern const u8
-    gTrialRoad_Room3Placements__first[] __asm__("gTrialRoad_Room3Placements");
-#define gTrialRoad_Room3Placements gTrialRoad_Room3Placements__first
-/* VIEW(first): routine gTrialRoad_Room4Placements as this part declared it; the
- * joined file has another. */
-extern const u8
-    gTrialRoad_Room4Placements__first[] __asm__("gTrialRoad_Room4Placements");
-#define gTrialRoad_Room4Placements gTrialRoad_Room4Placements__first
-/* VIEW(first): routine gTrialRoad_Room2Placements as this part declared it; the
- * joined file has another. */
-extern const u8
-    gTrialRoad_Room2Placements__first[] __asm__("gTrialRoad_Room2Placements");
-#define gTrialRoad_Room2Placements gTrialRoad_Room2Placements__first
-/* VIEW(first): routine gTrialRoad_Room1Placements as this part declared it; the
- * joined file has another. */
-extern const u8 *const
-    gTrialRoad_Room1Placements__first[] __asm__("gTrialRoad_Room1Placements");
-#define gTrialRoad_Room1Placements gTrialRoad_Room1Placements__first
+extern struct ActorPlacement gTrialRoad_Placements[];
+extern struct ActorPlacement gTrialRoad_Room3Placements[];
+extern struct ActorPlacement gTrialRoad_Room4Placements[];
+extern struct ActorPlacement gTrialRoad_Room2Placements[];
+extern s32 gTrialRoad_Room1Placements[];
 
 s32 TrialRoad_SettleOnGround(struct Actor *object) {
   s32 height = Map_GetTerrainHeight(0, object->x, object->z) + 0x20000;
@@ -90,7 +71,7 @@ s32 TrialRoad_SettleOnGround(struct Actor *object) {
   return 0;
 }
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 pattern = gTrialRoadState->pattern;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room1)
@@ -160,14 +141,10 @@ void TrialRoad_TakeStairs(s32 direction) {
   }
 }
 
-// ---- scene/trial_road/s0218.c ----
-
 /// Trial Road's stage puzzles: the stairs, chests and doors, and the pillars,
 /// torches, logs, spouts and sand the eight rooms are built from.
 
 #include "text/msg_ids.h"
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct Actor;
 struct FieldSprite;
@@ -563,9 +540,9 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
 
 /* VIEW(s0218): tag struct EventWork15a as struct EventWork15a__s0218;
  * module/tla.h has another definition; tried with the definition the rest of
- * the object has, its members read value as flag, it does not compile in
- * tla-ja: games/tla/src/scene/trial_road.c:288: dereferencing pointer to
- * incomplete type. */
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/trial_road.c:559: structure has no member named `value'.
+ */
 struct EventWork15a__s0218 {
   u8 unk000[0x15a];
   u16 value;
@@ -630,11 +607,7 @@ s32 TrialRoad_FollowPillar(struct Actor *object) {
   return 1;
 }
 
-/* VIEW(s0218): routine gTrialRoad_PillarTopScript as this part declared it; the
- * joined file has another. */
-extern const u8
-    gTrialRoad_PillarTopScript__s0218[] __asm__("gTrialRoad_PillarTopScript");
-#define gTrialRoad_PillarTopScript gTrialRoad_PillarTopScript__s0218
+extern s32 gTrialRoad_PillarTopScript[];
 
 void TrialRoad_AddPillarTop(s32 id) {
   struct Actor *owner = Actor_GetById(id);
@@ -800,7 +773,10 @@ void TrialRoad_BlowBushOffPoundPillar(void) {
 }
 
 /* VIEW(s0218): routine gTrialRoad_PoundPartners as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern u32
+ * gTrialRoad_PoundPartners[], it does not compile in tla-ja:
+ * games/tla/src/scene/trial_road.c:783: `gTrialRoad_PoundPartners' undeclared
+ * (first use in this function). */
 extern const s8
     gTrialRoad_PoundPartners__s0218[4] __asm__("gTrialRoad_PoundPartners");
 #define gTrialRoad_PoundPartners gTrialRoad_PoundPartners__s0218
@@ -1197,12 +1173,6 @@ void TrialRoad_RevealVine(void) {
 #undef DEFINE_TRIAL_ROAD_OPEN_DOOR
 #undef FIELD_AT
 #undef DEFINE_TRIAL_ROAD_ON_FOOT
-#undef gTrialRoad_Placements
-#undef gTrialRoad_Room3Placements
-#undef gTrialRoad_Room4Placements
-#undef gTrialRoad_Room2Placements
-#undef gTrialRoad_Room1Placements
-#undef gTrialRoad_PillarTopScript
 #undef gTrialRoad_PoundPartners
 // @file
 // Trial Road's effect spawner and the sand stage's stream.
@@ -1308,8 +1278,6 @@ void TrialRoad_DriftWithStream(void) {
                     velocity[2], 0x1000001, &options);
 }
 
-// ---- scene/trial_road/s15a8.c ----
-
 // Trial Road's rooms set up, the rival Moapa's race, the peak, the
 // fountains and crumbling pillars, the race's progress display and the tables.
 
@@ -1390,32 +1358,13 @@ void TrialRoad_SetSummitPillar(s32 a, s32 id) {
   }
 }
 
-/* VIEW(s15a8): routine gTrialRoad_Triggers as this part declared it; the joined
- * file has another. */
-extern const u8 gTrialRoad_Triggers__s15a8[] __asm__("gTrialRoad_Triggers");
-#define gTrialRoad_Triggers gTrialRoad_Triggers__s15a8
-/* VIEW(s15a8): routine gTrialRoad_Room3Triggers as this part declared it; the
- * joined file has another. */
-extern const u8
-    gTrialRoad_Room3Triggers__s15a8[] __asm__("gTrialRoad_Room3Triggers");
-#define gTrialRoad_Room3Triggers gTrialRoad_Room3Triggers__s15a8
-/* VIEW(s15a8): routine gTrialRoad_Room4Triggers as this part declared it; the
- * joined file has another. */
-extern const u8
-    gTrialRoad_Room4Triggers__s15a8[] __asm__("gTrialRoad_Room4Triggers");
-#define gTrialRoad_Room4Triggers gTrialRoad_Room4Triggers__s15a8
-/* VIEW(s15a8): routine gTrialRoad_Room2Triggers as this part declared it; the
- * joined file has another. */
-extern const u8
-    gTrialRoad_Room2Triggers__s15a8[] __asm__("gTrialRoad_Room2Triggers");
-#define gTrialRoad_Room2Triggers gTrialRoad_Room2Triggers__s15a8
-/* VIEW(s15a8): routine gTrialRoad_Room1Triggers as this part declared it; the
- * joined file has another. */
-extern const u8 *const
-    gTrialRoad_Room1Triggers__s15a8[] __asm__("gTrialRoad_Room1Triggers");
-#define gTrialRoad_Room1Triggers gTrialRoad_Room1Triggers__s15a8
+extern struct Trigger gTrialRoad_Triggers[];
+extern struct Trigger gTrialRoad_Room3Triggers[];
+extern struct Trigger gTrialRoad_Room4Triggers[];
+extern struct Trigger gTrialRoad_Room2Triggers[];
+extern s32 gTrialRoad_Room1Triggers[];
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s32 pattern = gTrialRoadState->pattern;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room1)
@@ -1686,7 +1635,10 @@ void TrialRoad_GaspFlees(void) {
 }
 
 /* VIEW(s15a8): routine gTrialRoad_PaletteCycleRunning as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern LAST_DATA u32
+ * gTrialRoad_PaletteCycleRunning[], it does not compile in tla-ja:
+ * games/tla/src/scene/trial_road.c:1651: `gTrialRoad_PaletteCycleRunning'
+ * undeclared (first use in this function). */
 extern s32 gTrialRoad_PaletteCycleRunning__s15a8 __asm__(
     "gTrialRoad_PaletteCycleRunning");
 #define gTrialRoad_PaletteCycleRunning gTrialRoad_PaletteCycleRunning__s15a8
@@ -1716,7 +1668,10 @@ void TrialRoad_SetPaletteCycleRunning(s32 value) {
 }
 
 /* VIEW(s15a8): routine gTrialRoad_PaletteCycleFrame as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern LAST_DATA s32
+ * gTrialRoad_PaletteCycleFrame[], it does not compile in tla-ja:
+ * games/tla/src/scene/trial_road.c:1661: `gTrialRoad_PaletteCycleFrame'
+ * undeclared (first use in this function). */
 extern s32
     gTrialRoad_PaletteCycleFrame__s15a8 __asm__("gTrialRoad_PaletteCycleFrame");
 #define gTrialRoad_PaletteCycleFrame gTrialRoad_PaletteCycleFrame__s15a8
@@ -1785,8 +1740,8 @@ void TrialRoad_SetUpPeak(void) {
  * (*gTrialRoad_StageSetUps[])(void); called through the void type, the call's
  * result register moves 2 of 84 instructions of Scene_Initialize in tla-en;
  * tried as the rest of the object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/trial_road/s129c.c:604: `gTrialRoad_StageSetUps'
- * undeclared (first use in this function). */
+ * games/tla/src/scene/trial_road.c:1734: `gTrialRoad_StageSetUps' undeclared
+ * (first use in this function). */
 extern s32 (*const gTrialRoad_StageSetUps__s1fc4[])(void) __asm__(
     "gTrialRoad_StageSetUps");
 
@@ -3166,11 +3121,7 @@ void TrialRoad_DriftRubble(union FieldObject *object) {
   to->bits = bits;
 }
 
-/* VIEW(s15a8): routine gTrialRoad_RubbleScript as this part declared it; the
- * joined file has another. */
-extern const s32
-    gTrialRoad_RubbleScript__s15a8[] __asm__("gTrialRoad_RubbleScript");
-#define gTrialRoad_RubbleScript gTrialRoad_RubbleScript__s15a8
+extern s32 gTrialRoad_RubbleScript[];
 
 void TrialRoad_SpawnRubble(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -3213,11 +3164,7 @@ void TrialRoad_SpawnRubble(s32 spread) {
   } while (i <= 7);
 }
 
-/* VIEW(s15a8): routine gTrialRoad_DustScript as this part declared it; the
- * joined file has another. */
-extern const s32
-    gTrialRoad_DustScript__s15a8[] __asm__("gTrialRoad_DustScript");
-#define gTrialRoad_DustScript gTrialRoad_DustScript__s15a8
+extern s32 gTrialRoad_DustScript[];
 
 void TrialRoad_SpawnDustRing(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -3263,10 +3210,7 @@ void TrialRoad_SetLeaderCellShape(s32 a, s32 b) {
   TrialRoad_SetActorCellShape(a, b, gMainRoutineWork.currentOwner);
 }
 
-/* VIEW(s15a8): routine gTrialRoad_HexDigits as this part declared it; the
- * joined file has another. */
-extern const u8 gTrialRoad_HexDigits__s15a8[] __asm__("gTrialRoad_HexDigits");
-#define gTrialRoad_HexDigits gTrialRoad_HexDigits__s15a8
+extern u32 gTrialRoad_HexDigits[];
 
 // Writes value as eight hexadecimal digits and a terminating null.
 UNUSED void String_WriteU32AsHex(u8 *buf, u32 value) {
@@ -3473,7 +3417,7 @@ void TrialRoad_MoveRival(void) {
 /* VIEW(s51a0): tag struct TrialRoadLinkWork as struct TrialRoadLinkWork__s51a0;
  * s15a8.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/scene/trial_road/s129c.c:2341: structure has no member named
+ * games/tla/src/scene/trial_road.c:3454: structure has no member named
  * `vramEntry'. */
 struct TrialRoadLinkWork__s51a0 {
   u32 oam[54];
@@ -3696,15 +3640,6 @@ s32 TrialRoad_RivalIsWaiting(void) {
 
 void TrialRoad_DoNothing(void) {}
 
-/* VIEW(s15a8): routine TrialRoad_SettleOnGround as this part declared it; the
- * joined file has another. */
-void TrialRoad_SettleOnGround__s15a8(void) __asm__("TrialRoad_SettleOnGround");
-#define TrialRoad_SettleOnGround TrialRoad_SettleOnGround__s15a8
-/* VIEW(s15a8): routine TrialRoad_FollowPillar as this part declared it; the
- * joined file has another. */
-void TrialRoad_FollowPillar__s15a8(void) __asm__("TrialRoad_FollowPillar");
-#define TrialRoad_FollowPillar TrialRoad_FollowPillar__s15a8
-
 s32 gTrialRoad_SettleScript[] = {
     46,
     (s32)TrialRoad_SettleOnGround,
@@ -3846,144 +3781,28 @@ u32 gTrialRoad_RightKnightLeavesScript[] = {
 #undef FIELD_AT
 #undef SET_LAYER
 #undef MARKER
-#undef gTrialRoad_Triggers
-#undef gTrialRoad_Room3Triggers
-#undef gTrialRoad_Room4Triggers
-#undef gTrialRoad_Room2Triggers
-#undef gTrialRoad_Room1Triggers
 #undef gTrialRoad_PaletteCycleRunning
 #undef gTrialRoad_PaletteCycleFrame
-#undef gTrialRoad_RubbleScript
-#undef gTrialRoad_DustScript
-#undef gTrialRoad_HexDigits
-#undef TrialRoad_SettleOnGround
-#undef TrialRoad_FollowPillar
 
 // clang-format off
-LATE_DATA u32 gTrialRoad_RubbleScript[] = {
+LATE_DATA s32 gTrialRoad_RubbleScript[] = {
     0, 33, 22, 38, 0, 2,
     0, 0, 0, 0, 1, 38,
 };
 
-LATE_DATA u32 gTrialRoad_DustScript[] = {
+LATE_DATA s32 gTrialRoad_DustScript[] = {
     0, 44, 22, 38, 0, 2,
     0, 0, 0, 0, 1, 38,
 };
 // clang-format on
 
 void TrialRoad_FightGasp(void);
-/* VIEW(data_2): routine TrialRoad_TakeStairs as this part declared it; the
- * joined file has another. */
-void TrialRoad_TakeStairs__data_2(void) __asm__("TrialRoad_TakeStairs");
-#define TrialRoad_TakeStairs TrialRoad_TakeStairs__data_2
-/* VIEW(data_2): routine TrialRoad_OfferToGiveUp as this part declared it; the
- * joined file has another. */
-void TrialRoad_OfferToGiveUp__data_2(void) __asm__("TrialRoad_OfferToGiveUp");
-#define TrialRoad_OfferToGiveUp TrialRoad_OfferToGiveUp__data_2
 void TrialRoad_OpenChests(void);
-/* VIEW(data_2): routine TrialRoad_PutItemInChest as this part declared it; the
- * joined file has another. */
-void TrialRoad_PutItemInChest__data_2(void) __asm__("TrialRoad_PutItemInChest");
-#define TrialRoad_PutItemInChest TrialRoad_PutItemInChest__data_2
-/* VIEW(data_2): routine TrialRoad_ExamineChest as this part declared it; the
- * joined file has another. */
-void TrialRoad_ExamineChest__data_2(void) __asm__("TrialRoad_ExamineChest");
-#define TrialRoad_ExamineChest TrialRoad_ExamineChest__data_2
-/* VIEW(data_2): routine TrialRoad_UnblockMovedPillar as this part declared it;
- * the joined file has another. */
-void TrialRoad_UnblockMovedPillar__data_2(void) __asm__(
-    "TrialRoad_UnblockMovedPillar");
-#define TrialRoad_UnblockMovedPillar TrialRoad_UnblockMovedPillar__data_2
-/* VIEW(data_2): routine TrialRoad_BlockMovedPillar as this part declared it;
- * the joined file has another. */
-void TrialRoad_BlockMovedPillar__data_2(void) __asm__(
-    "TrialRoad_BlockMovedPillar");
-#define TrialRoad_BlockMovedPillar TrialRoad_BlockMovedPillar__data_2
 void TrialRoad_JumpForward(void);
-/* VIEW(data_2): routine TrialRoad_UnblockTorch as this part declared it; the
- * joined file has another. */
-void TrialRoad_UnblockTorch__data_2(void) __asm__("TrialRoad_UnblockTorch");
-#define TrialRoad_UnblockTorch TrialRoad_UnblockTorch__data_2
-/* VIEW(data_2): routine TrialRoad_MeltIceBesideTorch as this part declared it;
- * the joined file has another. */
-void TrialRoad_MeltIceBesideTorch__data_2(void) __asm__(
-    "TrialRoad_MeltIceBesideTorch");
-#define TrialRoad_MeltIceBesideTorch TrialRoad_MeltIceBesideTorch__data_2
-/* VIEW(data_2): routine TrialRoad_FreezePuddle as this part declared it; the
- * joined file has another. */
-void TrialRoad_FreezePuddle__data_2(void) __asm__("TrialRoad_FreezePuddle");
-#define TrialRoad_FreezePuddle TrialRoad_FreezePuddle__data_2
-/* VIEW(data_2): routine TrialRoad_BlowBushOffPillar as this part declared it;
- * the joined file has another. */
-void TrialRoad_BlowBushOffPillar__data_2(void) __asm__(
-    "TrialRoad_BlowBushOffPillar");
-#define TrialRoad_BlowBushOffPillar TrialRoad_BlowBushOffPillar__data_2
 void TrialRoad_BlowBushOffPoundPillar(void);
-/* VIEW(data_2): routine TrialRoad_PoundPillar18 as this part declared it; the
- * joined file has another. */
-void TrialRoad_PoundPillar18__data_2(void) __asm__("TrialRoad_PoundPillar18");
-#define TrialRoad_PoundPillar18 TrialRoad_PoundPillar18__data_2
-/* VIEW(data_2): routine TrialRoad_PoundPillar19 as this part declared it; the
- * joined file has another. */
-void TrialRoad_PoundPillar19__data_2(void) __asm__("TrialRoad_PoundPillar19");
-#define TrialRoad_PoundPillar19 TrialRoad_PoundPillar19__data_2
-/* VIEW(data_2): routine TrialRoad_PoundPillar20 as this part declared it; the
- * joined file has another. */
-void TrialRoad_PoundPillar20__data_2(void) __asm__("TrialRoad_PoundPillar20");
-#define TrialRoad_PoundPillar20 TrialRoad_PoundPillar20__data_2
-/* VIEW(data_2): routine TrialRoad_PoundPillar21 as this part declared it; the
- * joined file has another. */
-void TrialRoad_PoundPillar21__data_2(void) __asm__("TrialRoad_PoundPillar21");
-#define TrialRoad_PoundPillar21 TrialRoad_PoundPillar21__data_2
-/* VIEW(data_2): routine TrialRoad_CrumblePillar15 as this part declared it; the
- * joined file has another. */
-void TrialRoad_CrumblePillar15__data_2(void) __asm__(
-    "TrialRoad_CrumblePillar15");
-#define TrialRoad_CrumblePillar15 TrialRoad_CrumblePillar15__data_2
-/* VIEW(data_2): routine TrialRoad_CrumblePillar16 as this part declared it; the
- * joined file has another. */
-void TrialRoad_CrumblePillar16__data_2(void) __asm__(
-    "TrialRoad_CrumblePillar16");
-#define TrialRoad_CrumblePillar16 TrialRoad_CrumblePillar16__data_2
-/* VIEW(data_2): routine TrialRoad_UncoverSpout16 as this part declared it; the
- * joined file has another. */
-void TrialRoad_UncoverSpout16__data_2(void) __asm__("TrialRoad_UncoverSpout16");
-#define TrialRoad_UncoverSpout16 TrialRoad_UncoverSpout16__data_2
-/* VIEW(data_2): routine TrialRoad_UncoverSpout17 as this part declared it; the
- * joined file has another. */
-void TrialRoad_UncoverSpout17__data_2(void) __asm__("TrialRoad_UncoverSpout17");
-#define TrialRoad_UncoverSpout17 TrialRoad_UncoverSpout17__data_2
-/* VIEW(data_2): routine TrialRoad_UncoverSpout18 as this part declared it; the
- * joined file has another. */
-void TrialRoad_UncoverSpout18__data_2(void) __asm__("TrialRoad_UncoverSpout18");
-#define TrialRoad_UncoverSpout18 TrialRoad_UncoverSpout18__data_2
 void TrialRoad_StandOnBlock(void);
 void TrialRoad_OpenSummitGate(s32 sound);
-/* VIEW(data_2): routine TrialRoad_SetSummitPillar as this part declared it; the
- * joined file has another. */
-void TrialRoad_SetSummitPillar__data_2(void) __asm__(
-    "TrialRoad_SetSummitPillar");
-#define TrialRoad_SetSummitPillar TrialRoad_SetSummitPillar__data_2
 void TrialRoad_StepPastChests(void);
-
-/* VIEW(data_2): routine gTrialRoad_SettleScript as this part declared it; the
- * joined file has another. */
-extern u8 gTrialRoad_SettleScript__data_2[] __asm__("gTrialRoad_SettleScript");
-#define gTrialRoad_SettleScript gTrialRoad_SettleScript__data_2
-/* VIEW(data_2): routine gFieldEffect_ShortScript as this part declared it; the
- * joined file has another. */
-extern u8
-    gFieldEffect_ShortScript__data_2[] __asm__("gFieldEffect_ShortScript");
-#define gFieldEffect_ShortScript gFieldEffect_ShortScript__data_2
-/* VIEW(data_2): routine gFieldEffect_MediumScript as this part declared it; the
- * joined file has another. */
-extern u8
-    gFieldEffect_MediumScript__data_2[] __asm__("gFieldEffect_MediumScript");
-#define gFieldEffect_MediumScript gFieldEffect_MediumScript__data_2
-/* VIEW(data_2): routine gFieldEffect_LongScript as this part declared it; the
- * joined file has another. */
-extern u8 gFieldEffect_LongScript__data_2[] __asm__("gFieldEffect_LongScript");
-#define gFieldEffect_LongScript gFieldEffect_LongScript__data_2
 
 // clang-format off
 LAST_DATA u32 gTrialRoad_HexDigits[] = {
@@ -4570,27 +4389,3 @@ LAST_DATA s32 gTrialRoad_PaletteCycleFrame[] = {
 LAST_DATA u32 gTrialRoad_PaletteCycleRunning[] = {
     1,
 };
-#undef TrialRoad_TakeStairs
-#undef TrialRoad_OfferToGiveUp
-#undef TrialRoad_PutItemInChest
-#undef TrialRoad_ExamineChest
-#undef TrialRoad_UnblockMovedPillar
-#undef TrialRoad_BlockMovedPillar
-#undef TrialRoad_UnblockTorch
-#undef TrialRoad_MeltIceBesideTorch
-#undef TrialRoad_FreezePuddle
-#undef TrialRoad_BlowBushOffPillar
-#undef TrialRoad_PoundPillar18
-#undef TrialRoad_PoundPillar19
-#undef TrialRoad_PoundPillar20
-#undef TrialRoad_PoundPillar21
-#undef TrialRoad_CrumblePillar15
-#undef TrialRoad_CrumblePillar16
-#undef TrialRoad_UncoverSpout16
-#undef TrialRoad_UncoverSpout17
-#undef TrialRoad_UncoverSpout18
-#undef TrialRoad_SetSummitPillar
-#undef gTrialRoad_SettleScript
-#undef gFieldEffect_ShortScript
-#undef gFieldEffect_MediumScript
-#undef gFieldEffect_LongScript

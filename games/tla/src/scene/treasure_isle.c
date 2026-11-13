@@ -51,14 +51,10 @@ DEFINE_SCENE_CREATE_ACTOR(TreasureIsle_CreateActor)
 
 #undef EFFECT_SPAWN
 
-// ---- scene/treasure_isle/treasure_isle.c ----
-
 // Treasure Isle, the dungeon in the north-east of the world: buttons that
 // raise spiky rocks Grind breaks, pillars Move pushes onto switches, rocks
 // Lift raises, Gale the Jupiter Djinni, a Venus Djinni, and the guardian of
 // water.
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct TreasureIsleCell;
 
@@ -465,8 +461,8 @@ void TreasureIsle_CycleWaterColors(void) {
 /* VIEW(s0cf4): tag struct TreasureIsleEventWork as struct
  * TreasureIsleEventWork__s0cf4; treasure_isle.c has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/treasure_isle/treasure_isle.c:415: structure has
- * no member named `route'. */
+ * tla-ja: games/tla/src/scene/treasure_isle.c:469: structure has no member
+ * named `route'. */
 struct TreasureIsleEventWork__s0cf4 {
   u8 unk000[0x1ac];
   s32 route;

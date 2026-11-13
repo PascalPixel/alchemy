@@ -1,5 +1,9 @@
 /// @file
-/// The scene code of overlay 0x66f, in ROM order.
+/// The Kibombo Mountains, the pass the Kibombo warriors guard on the way to
+/// their village, in the rooms of this overlay: crates the party pushes and
+/// vines it climbs while it keeps out of the guards' sight, a guard who sees
+/// it sending it back, a guard dog and its bone, and the Jupiter Djinni Waft
+/// (KibomboMountains_FightWaft).
 
 #include "flags.h"
 #include "shared/map_cells.h"
@@ -28,8 +32,6 @@
 #include "version.h"
 #include "shared/tables.h"
 #include "objcmd.h"
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 void Func_02000da8(s32 value);
 void Func_02000e28(s32 value);
@@ -75,7 +77,7 @@ void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 
 void Field_TryJumpForward(void);
 
-void Func_02000038(void) { Field_RequestDjinnBattle(18, 70); }
+void KibomboMountains_FightWaft(void) { Field_RequestDjinnBattle(18, 70); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -85,27 +87,18 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 DEFINE_ACTOR_BOB(Actor_Bob)
 
-/* VIEW(first): routine gData_02001294 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02001294__first[] __asm__("gData_02001294");
-#define gData_02001294 gData_02001294__first
-/* VIEW(first): routine gData_020015f0 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_020015f0__first[] __asm__("gData_020015f0");
-#define gData_020015f0 gData_020015f0__first
-/* VIEW(first): routine gData_020018c8 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_020018c8__first[] __asm__("gData_020018c8");
-#define gData_020018c8 gData_020018c8__first
+extern struct ActorPlacement gKibomboMountains_Placements[];
+extern struct ActorPlacement gKibomboMountains_Room1Placements[];
+extern struct ActorPlacement gKibomboMountains_Room2Placements[];
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov66fRoom1)
-    return gData_020015f0;
+    return gKibomboMountains_Room1Placements;
   if (scene == (s32)&SceneId_Ov66fRoom2)
-    return gData_020018c8;
-  return gData_02001294;
+    return gKibomboMountains_Room2Placements;
+  return gKibomboMountains_Placements;
 }
 
 DEFINE_PILLAR_SET_MOVED(Pillar_SetMoved, 11, 24, 32, 22, 0x221)
@@ -123,10 +116,7 @@ void Func_02000190(s32 unused, s32 id) {
     FieldActor_SetSpritePriority(15, 1);
 }
 
-/* VIEW(first): routine gData_02001404 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02001404__first[] __asm__("gData_02001404");
-#define gData_02001404 gData_02001404__first
+extern s32 gData_02001404[];
 
 void Actor_StartScript(struct Actor *object, const u8 *script);
 void Actor_StartIdle(struct Actor *object);
@@ -290,33 +280,21 @@ void Func_0200051c(s32 unused, s32 cell) {
   }
 }
 
-/* VIEW(first): routine gData_02001ad8 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02001ad8__first[] __asm__("gData_02001ad8");
-#define gData_02001ad8 gData_02001ad8__first
-/* VIEW(first): routine gData_02001ae4 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02001ae4__first[] __asm__("gData_02001ae4");
-#define gData_02001ae4 gData_02001ae4__first
-/* VIEW(first): routine gData_02001c58 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02001c58__first[] __asm__("gData_02001c58");
-#define gData_02001c58 gData_02001c58__first
-/* VIEW(first): routine gData_02001db4 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02001db4__first[] __asm__("gData_02001db4");
-#define gData_02001db4 gData_02001db4__first
+extern struct Trigger gKibomboMountains_Triggers[];
+extern struct Trigger gKibomboMountains_Room1Triggers[];
+extern struct Trigger gKibomboMountains_Room2Triggers[];
+extern s16 gKibomboMountains_Room3Triggers[];
 
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov66fRoom1)
-    return gData_02001ae4;
+    return gKibomboMountains_Room1Triggers;
   if (scene == (s32)&SceneId_Ov66fRoom2)
-    return gData_02001c58;
+    return gKibomboMountains_Room2Triggers;
   if (scene == (s32)&SceneId_Ov66fRoom3)
-    return gData_02001db4;
-  return gData_02001ad8;
+    return gKibomboMountains_Room3Triggers;
+  return gKibomboMountains_Triggers;
 }
 
 void Func_02000af0(void);
@@ -646,40 +624,12 @@ void Func_02000ff4(void) {
 }
 
 #undef EVENT_WORK_VALUE
-#undef gData_02001294
-#undef gData_020015f0
-#undef gData_020018c8
-#undef gData_02001404
-#undef gData_02001ad8
-#undef gData_02001ae4
-#undef gData_02001c58
-#undef gData_02001db4
 #include "text/msg_ids.h"
 
-void Func_02000038(void);
-/* VIEW(data): routine Actor_Bob as this part declared it; the joined file has
- * another. */
-void Actor_Bob__data(void) __asm__("Actor_Bob");
-#define Actor_Bob Actor_Bob__data
+void KibomboMountains_FightWaft(void);
 void Pillar_SetMoved(void);
 void Func_02000124(void);
-/* VIEW(data): routine Func_02000190 as this part declared it; the joined file
- * has another. */
-void Func_02000190__data(void) __asm__("Func_02000190");
-#define Func_02000190 Func_02000190__data
-/* VIEW(data): routine Func_020001a0 as this part declared it; the joined file
- * has another. */
-void Func_020001a0__data(void) __asm__("Func_020001a0");
-#define Func_020001a0 Func_020001a0__data
 void Func_02000428(void);
-/* VIEW(data): routine Func_020004b0 as this part declared it; the joined file
- * has another. */
-void Func_020004b0__data(void) __asm__("Func_020004b0");
-#define Func_020004b0 Func_020004b0__data
-/* VIEW(data): routine Func_0200051c as this part declared it; the joined file
- * has another. */
-void Func_0200051c__data(void) __asm__("Func_0200051c");
-#define Func_0200051c Func_0200051c__data
 void Func_02000f9c(void);
 
 extern u32 gData_02001728[];
@@ -725,7 +675,7 @@ u32 gData_02001284[] = {
     SC_END,
 };
 
-struct ActorPlacement gData_02001294[] = {
+struct ActorPlacement gKibomboMountains_Placements[] = {
     {SCENE_TABLE_END},
 };
 
@@ -801,7 +751,7 @@ u32 gData_02001410[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct ActorPlacement gData_020015f0[] = {
+struct ActorPlacement gKibomboMountains_Room1Placements[] = {
     {83, 0x8ff, (s32)gData_020012ac, PIXELS(616), 0, PIXELS(328), FACING_NORTH, 2, 0},
     {83, 0x8ff, (s32)gData_02001334, PIXELS(824), 0, PIXELS(584), FACING_NORTH, 2, 0},
     {189, 0x8ff, (s32)gData_02001410, PIXELS(760), 0, PIXELS(488), FACING_SOUTH, 2, 0},
@@ -821,7 +771,7 @@ DEFINE_G_DATA_02001334(gData_02001728, 184, 296, 248)
 
 DEFINE_G_DATA_02001334(gData_020017f8, 248, 448, 264)
 
-struct ActorPlacement gData_020018c8[] = {
+struct ActorPlacement gKibomboMountains_Room2Placements[] = {
     {407, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(200), FACING_NORTH, 2, 0},
     {407, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(200), FACING_NORTH, 2, 0},
     {83, 0x8ff, (s32)gData_02001728, PIXELS(200), 0, PIXELS(296), FACING_SOUTH, 2, 0},
@@ -846,11 +796,11 @@ struct ActorPlacement gData_020018c8[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_02001ad8[] = {
+struct Trigger gKibomboMountains_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02001ae4[] = {
+struct Trigger gKibomboMountains_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -872,7 +822,7 @@ struct Trigger gData_02001ae4[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgThisRockIs)},
     {TRIGGER_TALK, 15, IF_FLAG_SET(0x200), MSGNO(MsgHeyWhoS)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(0x200), MSGNO(MsgItSDark)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000038)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(KibomboMountains_FightWaft)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x221, EVENT(Pillar_SetMoved)},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 12, 0x222, EVENT(Func_02000124)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, EVENT(Func_02000428)},
@@ -884,7 +834,7 @@ struct Trigger gData_02001ae4[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02001c58[] = {
+struct Trigger gKibomboMountains_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -916,14 +866,9 @@ struct Trigger gData_02001c58[] = {
     {TRIGGER_TABLE_END},
 };
 
-s16 gData_02001db4[] = {
+s16 gKibomboMountains_Room3Triggers[] = {
     1, 0, 1, -1, 1, 0, 1, 0,
     2, -1, 2, 0, 1, 0, 3, -1,
     3, 0, -1, -1, 0, 0, 0, 0,
 };
 // clang-format on
-#undef Actor_Bob
-#undef Func_02000190
-#undef Func_020001a0
-#undef Func_020004b0
-#undef Func_0200051c

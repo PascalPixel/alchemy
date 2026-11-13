@@ -509,17 +509,7 @@ s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 void Leader_SetCellShapeAt(s32 a, s32 b);
 u32 Sprite_ShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
 
-/* VIEW(rubble): routine gIzumoRuins_RubbleSprayScript as this part declared it;
- * the joined file has another. */
-extern const s32 gIzumoRuins_RubbleSprayScript__rubble[] __asm__(
-    "gIzumoRuins_RubbleSprayScript");
-#define gIzumoRuins_RubbleSprayScript gIzumoRuins_RubbleSprayScript__rubble
-
-/* VIEW(rubble): routine Actor_StartScript as this part declared it; the joined
- * file has another. */
-void Actor_StartScript__rubble(struct FieldEffect *effect,
-                               const s32 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__rubble
+extern u32 gIzumoRuins_RubbleSprayScript[];
 
 void Rubble_Spray(s32 spread) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -562,11 +552,7 @@ void Rubble_Spray(s32 spread) {
   } while (i <= 7);
 }
 
-/* VIEW(rubble): routine gIzumoRuins_RubbleBurstScript as this part declared it;
- * the joined file has another. */
-extern const s32 gIzumoRuins_RubbleBurstScript__rubble[] __asm__(
-    "gIzumoRuins_RubbleBurstScript");
-#define gIzumoRuins_RubbleBurstScript gIzumoRuins_RubbleBurstScript__rubble
+extern u32 gIzumoRuins_RubbleBurstScript[];
 
 void Rubble_Burst(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -618,9 +604,6 @@ void Leader_SetCellShapeAt(s32 a, s32 b) {
 
 #include "../field/field_effect/move.c"
 
-#undef gIzumoRuins_RubbleSprayScript
-#undef Actor_StartScript
-#undef gIzumoRuins_RubbleBurstScript
 // @file
 // The Izumo Ruins, under the stone circle of Izumo, in two rooms that share
 // this overlay (SceneId_IzumoRuinsFirstRoom, SceneId_IzumoRuinsSecondRoom).
@@ -801,10 +784,9 @@ void IzumoRuins_SinkIntoSand(void) {
   object0 = Actor_Get(gMainRoutineWork.currentOwner);
   result1 = Value3((s32 (*)())MapGrid_GetCellWord, 2, (object0->x >> 20),
                    (object0->z >> 20));
-  if ((result1 >> 8) != 232)
-    goto L_020091b2;
-  object0->terrainId = 2;
-L_020091b2:
+  if (!((result1 >> 8) != 232)) {
+    object0->terrainId = 2;
+  }
   return;
 }
 

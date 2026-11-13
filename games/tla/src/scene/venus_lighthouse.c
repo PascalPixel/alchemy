@@ -74,7 +74,6 @@ struct Actor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z,
 #include "../field/field_effect/move.c"
 
 #undef Actor_SetSpriteFlags
-#undef Actor_SetSpriteColor
 
 extern void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
@@ -157,8 +156,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "../field/object/find_in_cell.c"
 
-// ---- scene/venus_lighthouse.c ----
-
 // The Venus Lighthouse, as the prologue opens on it: Felix moves a statue
 // with Psynergy and goes on alone, and Jenna and Kraden, doubting they should
 // leave, meet Alex and set off for Idejima. This file holds the scene's entry
@@ -239,13 +236,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 #undef FieldActor_SetSpriteColor
 
-// ---- scene/venus_lighthouse/floor.c ----
-
 // The Venus Lighthouse's floor events and data: Felix moving the statue and
 // leaving Jenna and Kraden, their talk of leaving, the floor switch, the
 // statue that repels the leader, the reliefs and the paths Reveal shows.
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 struct VenusActor {
   u8 unk00[6];
@@ -308,25 +301,11 @@ extern s32 gVenusLighthouse_LeaderFlashes[];
  * id); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the
  * definition's struct Actor *Actor_GetById(u32 objectId), which the object
  * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse.c:271: invalid type argument of `->'. */
+ * games/tla/src/scene/venus_lighthouse.c:337: invalid type argument of `->'. */
 extern struct VenusActor *Actor_GetById__floor(s32 id) __asm__("Actor_GetById");
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
-/* VIEW(floor): routine Actor_RefreshSelectorById as void
- * Actor_RefreshSelectorById(s32 actor); actor.h has void
- * Actor_RefreshSelectorById(u32); tried as the definition's void
- * Actor_RefreshSelectorById(u32 objectId), VenusLighthouse_RepelLeader moves: 1
- * of 85 instructions in tla-ja. */
-extern void Actor_RefreshSelectorById__floor(s32 actor) __asm__(
-    "Actor_RefreshSelectorById");
-/* VIEW(floor): routine Actor_SetSpriteColor as void Actor_SetSpriteColor(struct
- * VenusActor *object, s32 value); event.h has void Actor_SetSpriteColor(struct
- * Actor *object, s32 attribute); not tried: Actor_SetSpriteColor's bound
- * declaration was not found. */
-extern void
-Actor_SetPartAttribute__floor(struct VenusActor *object,
-                              s32 value) __asm__("Actor_SetSpriteColor");
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
@@ -337,22 +316,11 @@ void Actor_WaitForMove(struct Actor *actor);
  * actorId, s32 emote, s32 frames); tried as the definition's struct
  * BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32
  * state), it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse.c:238: conflicting types for
+ * games/tla/src/scene/venus_lighthouse.c:310: conflicting types for
  * `Actor_ShowEmoteById'. */
 extern void
 Actor_ShowEmoteById__floor(s32 actor, s32 height,
                            s32 frames) __asm__("Actor_ShowEmoteById");
-/* VIEW(floor): routine VenusLighthouse_EmitRisingParticles as s32
- * VenusLighthouse_EmitRisingParticles(struct VenusActor *object);
- * scene/venus_lighthouse has s32 VenusLighthouse_EmitRisingParticles(struct
- * SceneEffectSource *actor) {; tried as the definition's s32
- * VenusLighthouse_EmitRisingParticles(struct SceneEffectSource *actor), which
- * the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse.c:278:
- * `VenusLighthouse_EmitRisingParticles__floor' undeclared (first use in this
- * function). */
-s32 VenusLighthouse_EmitRisingParticles__floor(
-    struct VenusActor *object) __asm__("VenusLighthouse_EmitRisingParticles");
 
 // Until the statue has sunk (flag 0x200), stepping by it throws the leader
 // back in a flash of sparks.
@@ -364,8 +332,8 @@ void VenusLighthouse_RepelLeader(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetMovementTypeById(leader, gVenusLighthouse_LeaderFlashes);
-  Actor_RefreshSelectorById__floor(leader);
-  Actor_SetPartAttribute__floor(Actor_GetById__floor(leader), 6);
+  Actor_RefreshSelectorById(leader);
+  Actor_SetSpriteColor(Actor_GetById__floor(leader), 6);
   {
     /* FAKEMATCH(pin): the leader pinned to r0, so it is copied there before the
      * acceleration is built, as the native does; as
@@ -388,11 +356,11 @@ void VenusLighthouse_RepelLeader(void) {
   Event_Wait(1);
   Actor_GetById__floor(leader)->selectFlags |= 1;
   Event_Wait(20);
-  Actor_SetPartAttribute__floor(actor, 0);
-  actor->update = VenusLighthouse_EmitRisingParticles__floor;
+  Actor_SetSpriteColor(actor, 0);
+  actor->update = VenusLighthouse_EmitRisingParticles;
   Actor_ShowEmoteById__floor(leader, 258, 60);
   Motion_SetModeAndWaitAnimation(leader, 4);
-  Actor_SetPartAttribute__floor(Actor_GetById__floor(leader), 0);
+  Actor_SetSpriteColor(Actor_GetById__floor(leader), 0);
   Motion_SetModeAndWaitAnimation(leader, 4);
 
   /* FAKEMATCH(dead): an empty once-only block, so the null callback is built
@@ -538,7 +506,7 @@ void VenusLighthouse_FelixMovesStatue(void) {
 /* VIEW(floor): tag struct AerieEventWork as struct AerieEventWork__floor;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse.c:447: structure has no member named
+ * games/tla/src/scene/venus_lighthouse.c:501: structure has no member named
  * `mode'. */
 struct AerieEventWork__floor {
   u8 unk000[0x1ac];
@@ -1306,6 +1274,5 @@ struct Trigger gSceneEvents[] = {
      CONDITION_ALWAYS, EVENT(VenusLighthouse_HidePaths)},
     {TRIGGER_TABLE_END},
 };
-#undef Actor_SetSpriteColor
 #undef FieldActor_SetSpriteColor
 #undef Actor_SetSpriteFlags

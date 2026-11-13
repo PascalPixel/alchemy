@@ -11,23 +11,23 @@ struct Actor;
 struct CellTarget;
 struct CellTargetEntry;
 
-void Func_02002148(void);
-void Func_02002ad0(struct Actor *object);
+void Leader_KnockBack(void);
+void Actor_LaunchAhead(struct Actor *object);
 
 void Func_020014f4(void);
 
-void Func_02001bf8(void);
+void Beam_DrawTargets(void);
 
-void Func_02001fcc(void);
+void Party_TakeFallDamage(void);
 
-void Func_0200274c(struct Actor *actor);
+void Actor_RollAndCrumble(struct Actor *actor);
 
 void Func_02002d90(void);
-void Func_02002d04(struct Actor *object);
+void Actor_SteerByPad(struct Actor *object);
 
 extern struct CellTarget gData_02004cf4;
 
-void Func_02003bfc(struct CellTarget *table, struct CellTargetEntry *entry);
+void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 void Func_02000060(void);
 

@@ -3,18 +3,12 @@
 
 #include "../field/field_effect/move.c"
 /// @file
-/// The scene code of overlay 0x654, in ROM order.
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect/spawn.c"
-
-// ---- scene/shrine_of_the_sea_god/shrine_of_the_sea_god.c ----
-
-/// Scene code of overlay 0x654, in ROM order.
 
 #include "types.h"
 #include "system/main_routine_work.h"
@@ -82,24 +76,11 @@ s32 GameFlag_Get(s32 flag);
 void GameFlag_Set(s32 flag);
 void GameFlag_Clear(s32 flag);
 void FieldMessage_Show(s32 message, s32 position);
-/* VIEW(shrine_header): routine Actor_SetSpritePriority as void
- * Actor_SetSpritePriority(s32 actor, s32 variant); actor.h has another
- * declaration. */
-void Actor_SetSpritePriority__shrine_header(s32 actor, s32 variant) __asm__(
-    "Actor_SetSpritePriority");
-#define Actor_SetSpritePriority Actor_SetSpritePriority__shrine_header
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
-/* VIEW(shrine_header): routine Actor_SetPositionAndResetMotion as void
- * Actor_SetPositionAndResetMotion(struct ShrineOfTheSeaGodObject *object, s32
- * x, s32 y, s32 z); actor.h has another declaration. */
-void Actor_SetPositionAndResetMotion__shrine_header(
-    struct ShrineOfTheSeaGodObject *object, s32 x, s32 y,
-    s32 z) __asm__("Actor_SetPositionAndResetMotion");
-#define Actor_SetPositionAndResetMotion                                        \
-  Actor_SetPositionAndResetMotion__shrine_header
+void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z);
 void Actor_SetModeById(u32 actorId, s32 animation);
 void Event_Start(void);
 void Event_End(void);
@@ -129,8 +110,8 @@ static inline void ShrineOfTheSeaGod_BlendStart(s32 a, s32 b, s32 c, s32 d,
                                                 s32 e, s32 f) {
   /* FAKEMATCH(wrapper): the blend start reaches the main image through one
    * inline layer; as direct Map_CopyCellAttributeRect calls, 12 of 153
-   * instructions differ in tla-en (Func_0200338c), and 48 in all over the
-   * ten callers that change. */
+   * instructions differ in tla-en (ShrineOfTheSeaGod_InitializeRoom5), and 48
+   * in all over the ten callers that change. */
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
@@ -155,7 +136,7 @@ void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
-void Actor_SetSpriteFlags(struct ShrineOfTheSeaGodObject *object, u32 value);
+void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
 static inline void ShrineOfTheSeaGod_Jump(s32 actor, s32 height, s32 frames) {
   /* FAKEMATCH(pin): the height pinned to r1, so the actor loads after the
@@ -283,38 +264,13 @@ void Func_02000280(void) {
   }
 }
 
-// The scene code of overlay 0x654 that its scene tables belong to, in ROM
-// order; the rest of the overlay is in shrine_of_the_sea_god/.
-
 struct Actor;
-#define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion
-/* VIEW(shrine_of_the_sea_god): routine Actor_SetSpriteFlags as void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags);
- * shrine_of_the_sea_god.h has void Actor_SetSpriteFlags(struct
- * ShrineOfTheSeaGodObject *object, u32 value); not tried:
- * Actor_SetSpriteFlags's bound declaration was not found. */
-extern void Actor_SetSingleChildFlags__shrine_of_the_sea_god(
-    struct Actor *object, u32 flags) __asm__("Actor_SetSpriteFlags");
-#define Actor_SetSpriteFlags Actor_SetSingleChildFlags__shrine_of_the_sea_god
 #include "field/field.h"
-#undef Actor_SetSpriteFlags
 #undef Actor_SetPositionAndResetMotion
 
-/* VIEW(shrine_of_the_sea_god): routine gData_02003df4 as this part declared it;
- * the joined file has another. */
-extern const u8
-    gData_02003df4__shrine_of_the_sea_god[] __asm__("gData_02003df4");
-#define gData_02003df4 gData_02003df4__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gData_02003e14 as this part declared it;
- * the joined file has another. */
-extern const u8
-    gData_02003e14__shrine_of_the_sea_god[] __asm__("gData_02003e14");
-#define gData_02003e14 gData_02003e14__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gData_02003e44 as this part declared it;
- * the joined file has another. */
-extern const u8
-    gData_02003e44__shrine_of_the_sea_god[] __asm__("gData_02003e44");
-#define gData_02003e44 gData_02003e44__shrine_of_the_sea_god
+extern u32 gData_02003df4[];
+extern s16 gData_02003e14[];
+extern u32 gData_02003e44[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -330,137 +286,25 @@ const struct SceneRegion *Scene_GetRegions(void) {
   return 0;
 }
 
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Placements as this
- * part declared it; the joined file has another. */
-extern const u8 gShrineOfTheSeaGod_Placements__shrine_of_the_sea_god[] __asm__(
-    "gShrineOfTheSeaGod_Placements");
-#define gShrineOfTheSeaGod_Placements                                          \
-  gShrineOfTheSeaGod_Placements__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room1Placements as
- * this part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room1Placements__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room1Placements");
-#define gShrineOfTheSeaGod_Room1Placements                                     \
-  gShrineOfTheSeaGod_Room1Placements__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room2Placements as
- * this part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room2Placements__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room2Placements");
-#define gShrineOfTheSeaGod_Room2Placements                                     \
-  gShrineOfTheSeaGod_Room2Placements__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room3Placements as
- * this part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room3Placements__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room3Placements");
-#define gShrineOfTheSeaGod_Room3Placements                                     \
-  gShrineOfTheSeaGod_Room3Placements__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room4Placements as
- * this part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room4Placements__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room4Placements");
-#define gShrineOfTheSeaGod_Room4Placements                                     \
-  gShrineOfTheSeaGod_Room4Placements__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room5Placements as
- * this part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room5Placements__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room5Placements");
-#define gShrineOfTheSeaGod_Room5Placements                                     \
-  gShrineOfTheSeaGod_Room5Placements__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room6Placements as
- * this part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room6Placements__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room6Placements");
-#define gShrineOfTheSeaGod_Room6Placements                                     \
-  gShrineOfTheSeaGod_Room6Placements__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room7Placements as
- * this part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room7Placements__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room7Placements");
-#define gShrineOfTheSeaGod_Room7Placements                                     \
-  gShrineOfTheSeaGod_Room7Placements__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room8Placements as
- * this part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room8Placements__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room8Placements");
-#define gShrineOfTheSeaGod_Room8Placements                                     \
-  gShrineOfTheSeaGod_Room8Placements__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Triggers as this part
- * declared it; the joined file has another. */
-extern const u8 gShrineOfTheSeaGod_Triggers__shrine_of_the_sea_god[] __asm__(
-    "gShrineOfTheSeaGod_Triggers");
-#define gShrineOfTheSeaGod_Triggers                                            \
-  gShrineOfTheSeaGod_Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room1Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room1Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room1Triggers");
-#define gShrineOfTheSeaGod_Room1Triggers                                       \
-  gShrineOfTheSeaGod_Room1Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room2Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room2Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room2Triggers");
-#define gShrineOfTheSeaGod_Room2Triggers                                       \
-  gShrineOfTheSeaGod_Room2Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room3Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room3Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room3Triggers");
-#define gShrineOfTheSeaGod_Room3Triggers                                       \
-  gShrineOfTheSeaGod_Room3Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room4Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room4Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room4Triggers");
-#define gShrineOfTheSeaGod_Room4Triggers                                       \
-  gShrineOfTheSeaGod_Room4Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room5Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room5Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room5Triggers");
-#define gShrineOfTheSeaGod_Room5Triggers                                       \
-  gShrineOfTheSeaGod_Room5Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room6Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room6Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room6Triggers");
-#define gShrineOfTheSeaGod_Room6Triggers                                       \
-  gShrineOfTheSeaGod_Room6Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room7Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room7Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room7Triggers");
-#define gShrineOfTheSeaGod_Room7Triggers                                       \
-  gShrineOfTheSeaGod_Room7Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room8Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room8Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room8Triggers");
-#define gShrineOfTheSeaGod_Room8Triggers                                       \
-  gShrineOfTheSeaGod_Room8Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room9Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room9Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room9Triggers");
-#define gShrineOfTheSeaGod_Room9Triggers                                       \
-  gShrineOfTheSeaGod_Room9Triggers__shrine_of_the_sea_god
+extern struct ActorPlacement gShrineOfTheSeaGod_Placements[];
+extern struct ActorPlacement gShrineOfTheSeaGod_Room1Placements[];
+extern struct ActorPlacement gShrineOfTheSeaGod_Room2Placements[];
+extern struct ActorPlacement gShrineOfTheSeaGod_Room3Placements[];
+extern struct ActorPlacement gShrineOfTheSeaGod_Room4Placements[];
+extern struct ActorPlacement gShrineOfTheSeaGod_Room5Placements[];
+extern struct ActorPlacement gShrineOfTheSeaGod_Room6Placements[];
+extern struct ActorPlacement gShrineOfTheSeaGod_Room7Placements[];
+extern struct ActorPlacement gShrineOfTheSeaGod_Room8Placements[];
+extern struct Trigger gShrineOfTheSeaGod_Triggers[];
+extern struct Trigger gShrineOfTheSeaGod_Room1Triggers[];
+extern struct Trigger gShrineOfTheSeaGod_Room2Triggers[];
+extern struct Trigger gShrineOfTheSeaGod_Room3Triggers[];
+extern struct Trigger gShrineOfTheSeaGod_Room4Triggers[];
+extern struct Trigger gShrineOfTheSeaGod_Room5Triggers[];
+extern struct Trigger gShrineOfTheSeaGod_Room6Triggers[];
+extern struct Trigger gShrineOfTheSeaGod_Room7Triggers[];
+extern struct Trigger gShrineOfTheSeaGod_Room8Triggers[];
+extern struct Trigger gShrineOfTheSeaGod_Room9Triggers[];
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -490,35 +334,31 @@ const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod1)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room1Triggers;
+    return gShrineOfTheSeaGod_Room1Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod2)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room2Triggers;
+    return gShrineOfTheSeaGod_Room2Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod3)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room3Triggers;
+    return gShrineOfTheSeaGod_Room3Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod4)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room4Triggers;
+    return gShrineOfTheSeaGod_Room4Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod5)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room5Triggers;
+    return gShrineOfTheSeaGod_Room5Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod6)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room6Triggers;
+    return gShrineOfTheSeaGod_Room6Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod7)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room7Triggers;
+    return gShrineOfTheSeaGod_Room7Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod8)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room8Triggers;
+    return gShrineOfTheSeaGod_Room8Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod9)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room9Triggers;
-  return (const struct Trigger *)gShrineOfTheSeaGod_Triggers;
+    return gShrineOfTheSeaGod_Room9Triggers;
+  return gShrineOfTheSeaGod_Triggers;
 }
 
 // next object the overlay links.
 
 #include "text/msg_ids.h"
 
-/* VIEW(shrine_of_the_sea_god): routine gData_02003c10 as this part declared it;
- * the joined file has another. */
-extern const u8
-    gData_02003c10__shrine_of_the_sea_god[] __asm__("gData_02003c10");
-#define gData_02003c10 gData_02003c10__shrine_of_the_sea_god
+extern u32 gData_02003c10[];
 
 /// ★ Named from the game: "This statue looks a lot like the one in Daila's
 /// Sanctum." (MsgFieldStatueLikeDailaShrine)
@@ -833,11 +673,7 @@ void Func_02000994(void) {
   Event_End();
 }
 
-/* VIEW(shrine_of_the_sea_god): routine gData_02003cbc as this part declared it;
- * the joined file has another. */
-extern const u8
-    gData_02003cbc__shrine_of_the_sea_god[] __asm__("gData_02003cbc");
-#define gData_02003cbc gData_02003cbc__shrine_of_the_sea_god
+extern s16 gData_02003cbc[];
 
 /// The leader is placed at y -50 and map layer 1 moved by -50; then both move
 /// by 0x8000 in y a frame for 100 frames as a screen transition starts.
@@ -1122,17 +958,11 @@ void Func_020012b4(void) {
 #include "../field/field_effect/advance_motion.c"
 
 #undef Actor_SetPositionAndResetMotion
-#define Actor_SetPositionAndResetMotion                                        \
-  Actor_SetPositionAndResetMotion__shrine_header
-#undef Actor_SetSpriteFlags
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
-#undef gData_02003df4
-#undef gData_02003e14
-#undef gData_02003e44
 #undef gShrineOfTheSeaGod_Placements
 #undef gShrineOfTheSeaGod_Room1Placements
 #undef gShrineOfTheSeaGod_Room2Placements
@@ -1141,8 +971,6 @@ void Func_020012b4(void) {
 #undef gShrineOfTheSeaGod_Room5Placements
 #undef gShrineOfTheSeaGod_Room6Placements
 #undef gShrineOfTheSeaGod_Room7Placements
-#undef gShrineOfTheSeaGod_Room8Placements
-#undef gShrineOfTheSeaGod_Triggers
 #undef gShrineOfTheSeaGod_Room1Triggers
 #undef gShrineOfTheSeaGod_Room2Triggers
 #undef gShrineOfTheSeaGod_Room3Triggers
@@ -1152,11 +980,7 @@ void Func_020012b4(void) {
 #undef gShrineOfTheSeaGod_Room7Triggers
 #undef gShrineOfTheSeaGod_Room8Triggers
 #undef gShrineOfTheSeaGod_Room9Triggers
-#undef gData_02003c10
-#undef gData_02003cbc
 // @file
-// Scene code of overlay 0x654, in ROM order.
-
 #include "text/msg_ids.h"
 
 extern u32 gData_02004a18[];
@@ -1457,10 +1281,7 @@ void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
   Event_End();
 }
 
-/* VIEW(s1340): routine gData_02003c58 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003c58__s1340[] __asm__("gData_02003c58");
-#define gData_02003c58 gData_02003c58__s1340
+extern u32 gData_02003c58[];
 
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Actor_FaceDirectionById(s32 actor, s32 angle);
@@ -1968,25 +1789,10 @@ void Func_02002d50(void) {
   }
 }
 
-/* VIEW(s1340): routine gData_02003cc0 as this part declared it; the joined file
- * has another. */
-extern const struct ShrineOfTheSeaGodSpot
-    gData_02003cc0__s1340[] __asm__("gData_02003cc0");
-#define gData_02003cc0 gData_02003cc0__s1340
-/* VIEW(s1340): routine gData_02003cbc as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003cbc__s1340[] __asm__("gData_02003cbc");
-#define gData_02003cbc gData_02003cbc__s1340
-/* VIEW(s1340): routine gData_02003c10 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003c10__s1340[] __asm__("gData_02003c10");
-#define gData_02003c10 gData_02003c10__s1340
+extern s16 gData_02003cc0[];
+extern s16 gData_02003cbc[];
+extern u32 gData_02003c10[];
 
-/* VIEW(s1340): routine Actor_SetSpriteColor as this part declared it; the
- * joined file has another. */
-void Actor_SetSpriteColor__s1340(struct ShrineOfTheSeaGodObject *object,
-                                 s32 value) __asm__("Actor_SetSpriteColor");
-#define Actor_SetSpriteColor Actor_SetSpriteColor__s1340
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 void Actor_PlaceBlocks(const void *script);
 void Func_02001128(void);
@@ -2012,25 +1818,25 @@ s32 Scene_Initialize(void) {
       ->screenEffect = 0x204;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod1)
-    Func_02003094();
+    ShrineOfTheSeaGod_InitializeRoom1();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod2)
-    Func_02003134();
+    ShrineOfTheSeaGod_InitializeRoom2();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod3)
-    Func_0200320c();
+    ShrineOfTheSeaGod_InitializeRoom3();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod4)
-    Func_02003354();
+    ShrineOfTheSeaGod_InitializeRoom4();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod5)
-    Func_0200338c();
+    ShrineOfTheSeaGod_InitializeRoom5();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod6)
-    Func_02003504();
+    ShrineOfTheSeaGod_InitializeRoom6();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod7)
-    Func_02003598();
+    ShrineOfTheSeaGod_InitializeRoom7();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod8)
-    Func_02003740();
+    ShrineOfTheSeaGod_InitializeRoom8();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod9)
-    Func_0200377c();
+    ShrineOfTheSeaGod_InitializeRoom9();
   else if (scene == (s32)&SceneId_ShrineOfTheSeaGod11)
-    Func_0200380c();
+    ShrineOfTheSeaGod_InitializeRoom11();
   return 0;
 }
 
@@ -2047,7 +1853,7 @@ DEFINE_ACTOR_HIDE(Actor_Hide, Actor_DisableById)
 
 DEFINE_SCENE_RUN_UNLESS_FLAG(Scene_RunUnlessFlag, 0x208, Func_0200123c)
 
-DEFINE_ACTORS_FOR_RANGE(Func_0200300c, 2, Actor_Hide, 9, Scene_RunUnlessFlag)
+DEFINE_ACTORS_FOR_RANGE(Actors_ForRange, 2, Actor_Hide, 9, Scene_RunUnlessFlag)
 
 void Func_02003024(void) {
   const struct ShrineOfTheSeaGodSpot *spot = gData_02003cc0;
@@ -2072,7 +1878,7 @@ void Func_02003024(void) {
   }
 }
 
-void Func_02003094(void) {
+void ShrineOfTheSeaGod_InitializeRoom1(void) {
   struct ShrineOfTheSeaGodMapWork *map =
       (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
 
@@ -2104,7 +1910,7 @@ void Func_020030fc(void) {
     object->collisionFlags &= ~8;
 }
 
-void Func_02003134(void) {
+void ShrineOfTheSeaGod_InitializeRoom2(void) {
 
   Func_02002f88(10)->y = -0x100000;
   Actor_SetSpritePriority(10, 3);
@@ -2130,7 +1936,7 @@ void Func_02003134(void) {
   SHRINE_OF_THE_SEA_GOD_TASK_ADD_LATE(Func_020030fc, 0x480);
 }
 
-void Func_0200320c(void) {
+void ShrineOfTheSeaGod_InitializeRoom3(void) {
   struct ShrineOfTheSeaGodObject *block;
 
   Func_02002f88(9);
@@ -2168,7 +1974,7 @@ void Func_0200320c(void) {
   wait(1);
 }
 
-void Func_02003354(void) {
+void ShrineOfTheSeaGod_InitializeRoom4(void) {
   struct ShrineOfTheSeaGodMapWork *map =
       (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
 
@@ -2183,7 +1989,7 @@ void Func_02003354(void) {
   }
 }
 
-void Func_0200338c(void) {
+void ShrineOfTheSeaGod_InitializeRoom5(void) {
   struct ShrineOfTheSeaGodObject *object = Func_02002f88(13);
   u8 *flags = &object->priorityFlags;
 
@@ -2226,7 +2032,7 @@ void Func_0200338c(void) {
   }
 }
 
-void Func_02003504(void) {
+void ShrineOfTheSeaGod_InitializeRoom6(void) {
   s32 open;
 
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
@@ -2242,13 +2048,13 @@ void Func_02003504(void) {
     Actor_SetSpritePriority(8, 1);
     Actor_GetById(8)->motionFlags = open;
   }
-  Func_0200300c();
+  Actors_ForRange();
 }
 
 // The Shrine of the Sea God's prepare step: sets up actors 8 to 24 and,
 // for each of flags 0x231 and 0x232 that is set, copies its opened tiles
 // and places actor 15 or 16 where it rests.
-void Func_02003598(void) {
+void ShrineOfTheSeaGod_InitializeRoom7(void) {
   struct ShrineOfTheSeaGodObject *object;
   struct ShrineOfTheSeaGodObject *lastObject;
 
@@ -2300,7 +2106,7 @@ void Func_02003598(void) {
   object->motionFlags = 0;
 }
 
-void Func_02003740(void) {
+void ShrineOfTheSeaGod_InitializeRoom8(void) {
   Func_02003854(8);
   Func_02003854(9);
   Func_02003854(10);
@@ -2308,7 +2114,7 @@ void Func_02003740(void) {
     Func_02000994();
 }
 
-void Func_0200377c(void) {
+void ShrineOfTheSeaGod_InitializeRoom9(void) {
   if (gMainRoutineWork.entrance == 1 && GameFlag_Get(265) == 0)
     Func_02000ce8();
 }
@@ -2333,7 +2139,7 @@ void Func_020037a4(struct ShrineOfTheSeaGodObject *object) {
   }
 }
 
-void Func_0200380c(void) {
+void ShrineOfTheSeaGod_InitializeRoom11(void) {
   struct ShrineOfTheSeaGodObject *object = Actor_GetById(64);
   struct ShrineOfTheSeaGodMapWork *map =
       (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
@@ -2384,11 +2190,6 @@ s32 Scene_PrepareMap(void) {
 #undef DEFINE_FUNC_02002830
 #undef DEFINE_FUNC_0200291C
 #undef DEFINE_FUNC_02002B50
-#undef gData_02003c58
-#undef gData_02003cc0
-#undef gData_02003cbc
-#undef gData_02003c10
-#undef Actor_SetSpriteColor
 #include "text/msg_ids.h"
 
 void Func_02000280(void);

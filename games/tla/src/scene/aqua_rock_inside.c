@@ -1,5 +1,11 @@
 /// @file
-/// The scene code of overlay 0x67c, in ROM order.
+/// Aqua Rock's inside, the island south of the Apojii Islands, in the rooms of
+/// this overlay: rapids and falls the party runs against or rides, vents that
+/// blow until a pillar is Moved over them (Vent_Puff), Moai that lower
+/// the water, puddles to Frost, Water Stones to Douse and a tightrope. At its
+/// heart Piers reads the tablet and learns Parch
+/// (AquaRockInside_ReadParchTablet); the Mercury Djinni Steam waits in one of
+/// its rooms (AquaRockInside_FightSteam).
 
 #include "shared/actors.h"
 #include "types.h"
@@ -129,7 +135,7 @@ void Event_NoOp(void);
 void Func_020006d0(void);
 s32 Func_02000b24(s32 id, s32 value);
 void Func_02000b5c(void);
-void Func_02001a1c(void);
+void AquaRockInside_ReadParchTablet(void);
 void Func_02001e78(s32 id);
 void Func_020030f4(void);
 void Func_02003460(s32 value);
@@ -153,7 +159,7 @@ extern u32 gData_0200411c[];
 extern u32 gWaterDropScript[];
 extern const u8 gData_0200414c[];
 extern const u8 gData_02004351[];
-extern const u8 gData_020044c8[];
+extern u32 gData_020044c8[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -231,8 +237,6 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #include "../field/field_effect/move.c"
 
 // @file
-// Scene code of overlay 0x67c, in ROM order.
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -240,14 +244,6 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
-
-// ---- scene/aqua_rock_inside/aqua_rock_inside.c ----
-
-// Scene code of overlay 0x67c, in ROM order.
-
-// ---- games/tla/src/scene/aqua_rock_inside.c ----
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct Actor;
 
@@ -285,7 +281,7 @@ void Func_02000690(void);
 
 void Func_0200071c(void);
 void Func_020007d4(void);
-void Func_02000a24(void);
+void AquaRockInside_CheckColumn(void);
 
 void Func_02000a98(void);
 
@@ -296,10 +292,10 @@ void Func_02000bd4(void);
 void Func_02000de4(void);
 
 void Func_02001060(void);
-void Func_020010ec(void);
+void AquaRockInside_CheckPsynergyStone(void);
 void Func_02001170(void);
 void Func_02001328(void);
-void Func_02001c68(void);
+void AquaRockInside_WalkToParchTablet(void);
 void Func_02001cd8(void);
 void Func_02001d40(void);
 void Func_02002ca4(void);
@@ -312,7 +308,7 @@ void Tightrope_Place();
 
 extern u8 Data_0202c001[];
 
-void Func_0200033c(void) { Field_RequestDjinnBattle(10, 32); }
+void AquaRockInside_FightSteam(void) { Field_RequestDjinnBattle(10, 32); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -320,75 +316,42 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(aqua_rock_inside): routine gData_02004688 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02004688__aqua_rock_inside[] __asm__("gData_02004688");
-#define gData_02004688 gData_02004688__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_020046a0 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_020046a0__aqua_rock_inside[] __asm__("gData_020046a0");
-#define gData_020046a0 gData_020046a0__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004748 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02004748__aqua_rock_inside[] __asm__("gData_02004748");
-#define gData_02004748 gData_02004748__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_020047a8 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_020047a8__aqua_rock_inside[] __asm__("gData_020047a8");
-#define gData_020047a8 gData_020047a8__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004808 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02004808__aqua_rock_inside[] __asm__("gData_02004808");
-#define gData_02004808 gData_02004808__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_020048c8 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_020048c8__aqua_rock_inside[] __asm__("gData_020048c8");
-#define gData_020048c8 gData_020048c8__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004910 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02004910__aqua_rock_inside[] __asm__("gData_02004910");
-#define gData_02004910 gData_02004910__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_020049e8 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_020049e8__aqua_rock_inside[] __asm__("gData_020049e8");
-#define gData_020049e8 gData_020049e8__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004a00 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02004a00__aqua_rock_inside[] __asm__("gData_02004a00");
-#define gData_02004a00 gData_02004a00__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004a48 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02004a48__aqua_rock_inside[] __asm__("gData_02004a48");
-#define gData_02004a48 gData_02004a48__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004b98 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02004b98__aqua_rock_inside[] __asm__("gData_02004b98");
-#define gData_02004b98 gData_02004b98__aqua_rock_inside
+extern struct ActorPlacement gAquaRockInside_Placements[];
+extern struct ActorPlacement gAquaRockInside_Room1Placements[];
+extern struct ActorPlacement gAquaRockInside_Room2Placements[];
+extern struct ActorPlacement gAquaRockInside_Room3Placements[];
+extern struct ActorPlacement gAquaRockInside_Room4Placements[];
+extern struct ActorPlacement gAquaRockInside_Room5Placements[];
+extern struct ActorPlacement gAquaRockInside_Room6Placements[];
+extern struct ActorPlacement gAquaRockInside_Room7Placements[];
+extern struct ActorPlacement gAquaRockInside_Room8Placements[];
+extern struct ActorPlacement gAquaRockInside_Room9Placements[];
+extern struct ActorPlacement gAquaRockInside_Room10Placements[];
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67cRoom1)
-    return gData_020046a0;
+    return gAquaRockInside_Room1Placements;
   if (scene == (s32)&SceneId_Ov67cRoom2)
-    return gData_02004748;
+    return gAquaRockInside_Room2Placements;
   if (scene == (s32)&SceneId_Ov67cRoom3)
-    return gData_020047a8;
+    return gAquaRockInside_Room3Placements;
   if (scene == (s32)&SceneId_Ov67cRoom4)
-    return gData_02004808;
+    return gAquaRockInside_Room4Placements;
   if (scene == (s32)&SceneId_Ov67cRoom5)
-    return gData_020048c8;
+    return gAquaRockInside_Room5Placements;
   if (scene == (s32)&SceneId_Ov67cRoom6)
-    return gData_02004910;
+    return gAquaRockInside_Room6Placements;
   if (scene == (s32)&SceneId_Ov67cRoom7)
-    return gData_020049e8;
+    return gAquaRockInside_Room7Placements;
   if (scene == (s32)&SceneId_Ov67cRoom8)
-    return gData_02004a00;
+    return gAquaRockInside_Room8Placements;
   if (scene == (s32)&SceneId_Ov67cRoom9)
-    return gData_02004a48;
+    return gAquaRockInside_Room9Placements;
   if (scene == (s32)&SceneId_Ov67cRoom10)
-    return gData_02004b98;
-  return gData_02004688;
+    return gAquaRockInside_Room10Placements;
+  return gAquaRockInside_Placements;
 }
 
 // When object 10 reaches row 12, or object 11 column 51, stops its motion,
@@ -579,13 +542,7 @@ void Func_020007a8(void) {
   object->y = 0x180000;
 }
 
-/* VIEW(aqua_rock_inside): variable gData_02003fb8 as const u8 gData_02003fb8[];
- * scene/aqua_rock_inside/s3844 has u32 gData_02003fb8[] = {; tried as the
- * definition's extern u32 gData_02003fb8[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:319: `gData_02003fb8'
- * undeclared (first use in this function). */
-extern const u8 gData_02003fb8__aqua_rock_inside[] __asm__("gData_02003fb8");
-#define gData_02003fb8 gData_02003fb8__aqua_rock_inside
+extern u8 gData_02003fb8[];
 
 void Func_020007d4(void) {
   s32 priority;
@@ -669,7 +626,7 @@ void Func_02000958(s32 value) {
   FieldEvent_SetExitRequest(value);
 }
 
-void Func_02000a24(void) {
+void AquaRockInside_CheckColumn(void) {
   s32 seen;
   const u8 *message;
 
@@ -785,15 +742,11 @@ void Func_02000ca8(void) {
 }
 
 #undef gData_02003fb8
-// ---- games/tla/src/scene/aqua_rock_inside/s0cc8.c ----
-// Scene code of overlay 0x67c, in ROM order, from s0cc8's offset up to the next
-// object the overlay links.
-
 /* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before
  * it has another declaration; tried as the definition's void
  * Func_02000ca8(void), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:523: too
- * many arguments to function `Func_02000ca8'. */
+ * in tla-ja: games/tla/src/scene/aqua_rock_inside.c:775: too many arguments to
+ * function `Func_02000ca8'. */
 extern void Func_02000ca8__s0cc8() __asm__("Func_02000ca8");
 
 void Func_02000cc8(s32 trigger) {
@@ -994,7 +947,7 @@ void Func_020010d0(struct Actor *object) {
   }
 }
 
-void Func_020010ec(void) {
+void AquaRockInside_CheckPsynergyStone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered(MsgCheckedThePsynergy, 1);
@@ -1117,10 +1070,6 @@ void Func_02001364(struct Actor *object) {
   Actor_StartScript(child, gData_02003fd8);
 }
 
-// ---- games/tla/src/scene/aqua_rock_inside/s13bc.c ----
-// Scene code of overlay 0x67c, in ROM order, from s13bc's offset up to the next
-// object the overlay links.
-
 // Steps an orbiting object around its anchor: turns it by half its speed, puts
 // it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
 // countdown runs out returns 0, else, unless its radius is down to 2 pixels,
@@ -1146,10 +1095,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 #undef BYTE_AT
 
-// ---- games/tla/src/scene/aqua_rock_inside/s1620.c ----
-// Scene code of overlay 0x67c, in ROM order, from s1620's offset up to the
-// next object the overlay links.
-
 union ActorView {
   struct Actor actor;
   struct {
@@ -1160,25 +1105,9 @@ union ActorView {
 };
 extern u32 gData_02004034[];
 extern u32 gData_02003fe8[];
-/* VIEW(s1620): variable gData_02004004 as const u8 gData_02004004[];
- * scene/aqua_rock_inside/s3844 has DEFINE_G_DATA_02003584(gData_02004004,
- * Orbiter_Spiral, 38, 17) DEFINE_G_DATA_02004014(gData_02004014, Orbit_Update,
- * Actor_AimAtWatched, Actor_StepToWatched) u32 gData_02004034[] = {; tried as
- * the definition's extern u32 gData_02004004[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:970: `gData_02004004'
- * undeclared (first use in this function). */
-extern const u8 gData_02004004__s1620[] __asm__("gData_02004004");
-#define gData_02004004 gData_02004004__s1620
+extern s32 gData_02004004[];
 extern u32 gData_02004058[];
-/* VIEW(s1620): variable gData_02004014 as const u8 gData_02004014[];
- * scene/aqua_rock_inside/s3844 has DEFINE_G_DATA_02004014(gData_02004014,
- * Orbit_Update, Actor_AimAtWatched, Actor_StepToWatched) u32 gData_02004034[] =
- * {; tried as the one declaration extern const u8 gData_02004014[], it does not
- * compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:1003:
- * `gData_02004014' undeclared (first use in this function). */
-extern const u8 gData_02004014__s1620[] __asm__("gData_02004014");
-#define gData_02004014 gData_02004014__s1620
+extern s32 gData_02004014[];
 extern s32 gData_0200407c[];
 extern s32 gData_020040ac[];
 
@@ -1335,18 +1264,16 @@ column:
 
 void Actor_MoveToObject();
 
-void Func_02001a1c(void) {
-  s32 t4, t59;
+void AquaRockInside_ReadParchTablet(void) {
+  struct Actor *object;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered((s32)&MsgCheckedTheTabletIt, 1);
-  t4 = Event_GetFlag(0x9ae);
-  if (t4 == 0)
-    goto L_02009a46;
-  Event_End();
-  goto L_02009c56;
-L_02009a46:
+  if (Event_GetFlag(0x9ae)) {
+    Event_End();
+    goto L_02009c56;
+  }
   FieldEvent_SetMessageId((s32)&MsgCheckedTheTabletIt);
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), s16, 0) =
       (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
@@ -1377,7 +1304,7 @@ L_02009a46:
   FieldEvent_Wait(20);
   Message_ShowCentered(((s32)&MsgCheckedTheTabletIt + 2), 1);
   Func_02001620(14, 7);
-  Party_LearnAbility(7, 138);
+  Party_LearnAbility(PIERS, ABILITY_PARCH);
   Event_SetFlag(0x9ae);
   Event_PlaySound(107);
   FieldEvent_Wait(30);
@@ -1402,18 +1329,18 @@ L_02009a46:
   FieldEvent_Wait(20);
   Actor_SetSpeed(7, 0x13333, 0x9999);
   Actor_SetAnimation(7, 2);
-  t59 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
-  if (t59 == 0)
-    goto L_02009c42;
-  Actor_SetDestination(7, FIELD_AT(t59, s16, 10), FIELD_AT(t59, s16, 18));
-L_02009c42:
+  object = Actor_Get(gMainRoutineWork.currentOwner);
+  if (object != 0) {
+    Actor_SetDestination(7, FIELD_AT((u8 *)object, s16, 10),
+                         FIELD_AT((u8 *)object, s16, 18));
+  }
   FieldActor_WaitForMoveById(7);
   Actor_SetPosition(7, 0, 0);
   Event_End();
 L_02009c56:
 }
 
-void Func_02001c68(void) {
+void AquaRockInside_WalkToParchTablet(void) {
   if (Event_GetFlag(0x9ae)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -1425,7 +1352,7 @@ void Func_02001c68(void) {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 184);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(10);
-    Func_02001a1c();
+    AquaRockInside_ReadParchTablet();
   }
 }
 
@@ -1441,7 +1368,7 @@ void Func_02001c68(void) {
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 184);            \
       Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);     \
       FieldEvent_Wait(10);                                                     \
-      Func_02001a1c();                                                         \
+      AquaRockInside_ReadParchTablet();                                        \
     }                                                                          \
   }
 
@@ -1449,75 +1376,42 @@ DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(Func_02001cd8, 280)
 
 DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(Func_02001d40, 248)
 
-/* VIEW(s1620): routine gData_02004c70 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02004c70__s1620[] __asm__("gData_02004c70");
-#define gData_02004c70 gData_02004c70__s1620
-/* VIEW(s1620): routine gData_02004c7c as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02004c7c__s1620[] __asm__("gData_02004c7c");
-#define gData_02004c7c gData_02004c7c__s1620
-/* VIEW(s1620): routine gData_02004d88 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02004d88__s1620[] __asm__("gData_02004d88");
-#define gData_02004d88 gData_02004d88__s1620
-/* VIEW(s1620): routine gData_02004e48 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02004e48__s1620[] __asm__("gData_02004e48");
-#define gData_02004e48 gData_02004e48__s1620
-/* VIEW(s1620): routine gData_02004ed8 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02004ed8__s1620[] __asm__("gData_02004ed8");
-#define gData_02004ed8 gData_02004ed8__s1620
-/* VIEW(s1620): routine gData_02004fb0 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02004fb0__s1620[] __asm__("gData_02004fb0");
-#define gData_02004fb0 gData_02004fb0__s1620
-/* VIEW(s1620): routine gData_0200507c as this part declared it; the joined file
- * has another. */
-extern const u8 gData_0200507c__s1620[] __asm__("gData_0200507c");
-#define gData_0200507c gData_0200507c__s1620
-/* VIEW(s1620): routine gData_020051b4 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_020051b4__s1620[] __asm__("gData_020051b4");
-#define gData_020051b4 gData_020051b4__s1620
-/* VIEW(s1620): routine gData_020051fc as this part declared it; the joined file
- * has another. */
-extern const u8 gData_020051fc__s1620[] __asm__("gData_020051fc");
-#define gData_020051fc gData_020051fc__s1620
-/* VIEW(s1620): routine gData_02005268 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02005268__s1620[] __asm__("gData_02005268");
-#define gData_02005268 gData_02005268__s1620
-/* VIEW(s1620): routine gData_020052f8 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_020052f8__s1620[] __asm__("gData_020052f8");
-#define gData_020052f8 gData_020052f8__s1620
+extern struct Trigger gAquaRockInside_Triggers[];
+extern struct Trigger gAquaRockInside_Room1Triggers[];
+extern struct Trigger gAquaRockInside_Room2Triggers[];
+extern struct Trigger gAquaRockInside_Room3Triggers[];
+extern struct Trigger gAquaRockInside_Room4Triggers[];
+extern struct Trigger gAquaRockInside_Room5Triggers[];
+extern struct Trigger gAquaRockInside_Room6Triggers[];
+extern struct Trigger gAquaRockInside_Room7Triggers[];
+extern s16 gAquaRockInside_Room8Triggers[];
+extern struct Trigger gAquaRockInside_Room9Triggers[];
+extern struct Trigger gAquaRockInside_Room10Triggers[];
 
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67cRoom1)
-    return gData_02004c7c;
+    return gAquaRockInside_Room1Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom2)
-    return gData_02004d88;
+    return gAquaRockInside_Room2Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom3)
-    return gData_02004e48;
+    return gAquaRockInside_Room3Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom4)
-    return gData_02004ed8;
+    return gAquaRockInside_Room4Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom5)
-    return gData_02004fb0;
+    return gAquaRockInside_Room5Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom6)
-    return gData_0200507c;
+    return gAquaRockInside_Room6Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom7)
-    return gData_020051b4;
+    return gAquaRockInside_Room7Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom8)
-    return gData_020051fc;
+    return gAquaRockInside_Room8Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom9)
-    return gData_02005268;
+    return gAquaRockInside_Room9Triggers;
   if (scene == (s32)&SceneId_Ov67cRoom10)
-    return gData_020052f8;
-  return gData_02004c70;
+    return gAquaRockInside_Room10Triggers;
+  return gAquaRockInside_Triggers;
 }
 
 void Func_02001e78(s32 id) {
@@ -2390,10 +2284,7 @@ s32 Func_02003688(s32 x, s32 y, s32 z, s32 kind) {
   entry->direction = kind;
 }
 
-/* VIEW(s1620): routine gData_0200534c as this part declared it; the joined file
- * has another. */
-extern const s8 gData_0200534c__s1620[] __asm__("gData_0200534c");
-#define gData_0200534c gData_0200534c__s1620
+extern s8 gData_0200534c[];
 
 // Advances Aqua Rock's two water streams one cell along the map: each stream
 // follows the turn its cell's kind gives, leaves a splash on every open cell
@@ -2486,12 +2377,6 @@ s32 Func_020036b8(s32 first, s32 target) {
 #undef BG1_SET_PRIORITY_1
 #undef LAYER_S32
 
-#undef gData_02004004
-#undef gData_02004014
-// ---- scene/aqua_rock_inside/s3844.c ----
-
-// Scene code of overlay 0x67c, in ROM order.
-
 #define VENT_TOUCHING Func_02003844
 #define VENT_BOUNCE Func_0200389c
 #include "../field/object/vent_bounce.c"
@@ -2528,8 +2413,8 @@ DEFINE_VENTS_UPDATE(Vents_Update, Vent_Puff)
  * const u8 *b, void (*handler)(void)); tried as the definition's void
  * Func_02003ab0(const u16 *spots, const u16 *levels, void(*handler) (void)),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:2227: conflicting
- * types for `Func_02003ab0'. */
+ * games/tla/src/scene/aqua_rock_inside.c:2404: conflicting types for
+ * `Func_02003ab0'. */
 void Func_02003ab0__s3844(const u16 *spots, const u16 *levels,
                           void (*handler)(void)) __asm__("Func_02003ab0");
 #define Func_02003ab0 Func_02003ab0__s3844
@@ -2613,20 +2498,6 @@ void Func_02003c00(s32 index, s32 value) {
 
 DEFINE_VENTS_SET_ID(Vents_SetId)
 
-/* VIEW(s3844): routine Orbiter_Spiral as void Orbiter_Spiral(void);
- * games/tla/src/scene/aqua_rock_inside/s13bc has
- * DEFINE_ORBITER_SPIRAL(Orbiter_Spiral, Func_02001364) // Moves around in a
- * circle. DEFINE_ORBIT_UPDATE(Orbit_Update) #define BYTE_AT(base, offset) (*(u8
- * *)((u8 *)(base) + (offset))) DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
- * DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched) #include
- * "system/field_effect.h" void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32
- * velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct
- * EffectOptions *options); tried as the one declaration
- * DEFINE_VENTS_SET_ID(Vents_SetId) void Orbiter_Spiral(void), Vents_SetId
- * (gone) moves: 10 of 10 instructions in tla-ja. */
-void Orbiter_Spiral__s3844(void) __asm__("Orbiter_Spiral");
-#define Orbiter_Spiral Orbiter_Spiral__s3844
-
 // clang-format off
 u32 gData_02003f04[] = {
     0, 1, 13, 22, 0, 0,
@@ -2646,10 +2517,7 @@ u32 gData_02003f7c[] = {
     1, 38, 17,
 };
 
-u32 gData_02003fb8[] = {
-    0x424b4243, 0x425b4253, 0x426b4263, 0x51434273, 0x5153514b, 0x5163515b,
-    0x5173516b, 0x604b6043,
-};
+u8 gData_02003fb8[] = {67, 66, 75, 66, 83, 66, 91, 66, 99, 66, 107, 66, 115, 66, 67, 81, 75, 81, 83, 81, 91, 81, 99, 81, 107, 81, 115, 81, 67, 96, 75, 96};
 
 u32 gData_02003fd8[] = {
     0, 6, 38, 17,
@@ -2716,7 +2584,6 @@ u32 gWaterDropScript[] = {
 // clang-format on
 
 #undef Func_02003ab0
-#undef Orbiter_Spiral
 #undef VENT_TOUCHING
 #undef VENT_BOUNCE
 #undef EFFECT_SPAWN
@@ -2730,112 +2597,16 @@ u32 gWaterDropScript[] = {
 #undef BG1_SET_PRIORITY_1
 #undef LAYER_S32
 #undef BYTE_AT
-#undef gData_02004688
-#undef gData_020046a0
-#undef gData_02004748
-#undef gData_020047a8
-#undef gData_02004808
-#undef gData_020048c8
-#undef gData_02004910
-#undef gData_020049e8
-#undef gData_02004a00
-#undef gData_02004a48
-#undef gData_02004b98
 #undef gData_02003fb8
-#undef gData_02004004
-#undef gData_02004014
-#undef gData_02004c70
-#undef gData_02004c7c
-#undef gData_02004d88
-#undef gData_02004e48
-#undef gData_02004ed8
-#undef gData_02004fb0
-#undef gData_0200507c
-#undef gData_020051b4
-#undef gData_020051fc
-#undef gData_02005268
-#undef gData_020052f8
-#undef gData_0200534c
 #undef Func_02003ab0
-#undef Orbiter_Spiral
 
-void Func_0200033c(void);
-/* VIEW(data): routine Func_0200042c as this part declared it; the joined file
- * has another. */
-void Func_0200042c__data(void) __asm__("Func_0200042c");
-#define Func_0200042c Func_0200042c__data
-/* VIEW(data): routine Func_020004bc as this part declared it; the joined file
- * has another. */
-void Func_020004bc__data(void) __asm__("Func_020004bc");
-#define Func_020004bc Func_020004bc__data
-/* VIEW(data): routine Func_02000574 as this part declared it; the joined file
- * has another. */
-void Func_02000574__data(void) __asm__("Func_02000574");
-#define Func_02000574 Func_02000574__data
+void AquaRockInside_FightSteam(void);
 void Func_020005f8(void);
-/* VIEW(data): routine Func_02000644 as this part declared it; the joined file
- * has another. */
-void Func_02000644__data(void) __asm__("Func_02000644");
-#define Func_02000644 Func_02000644__data
-/* VIEW(data): routine Func_02000958 as this part declared it; the joined file
- * has another. */
-void Func_02000958__data(void) __asm__("Func_02000958");
-#define Func_02000958 Func_02000958__data
 void Func_02000b84(void);
-/* VIEW(data): routine Func_02000c28 as this part declared it; the joined file
- * has another. */
-void Func_02000c28__data(void) __asm__("Func_02000c28");
-#define Func_02000c28 Func_02000c28__data
-/* VIEW(data): routine Func_02000cc8 as this part declared it; the joined file
- * has another. */
-void Func_02000cc8__data(void) __asm__("Func_02000cc8");
-#define Func_02000cc8 Func_02000cc8__data
-/* VIEW(data): routine Func_02000e18 as this part declared it; the joined file
- * has another. */
-void Func_02000e18__data(void) __asm__("Func_02000e18");
-#define Func_02000e18 Func_02000e18__data
-/* VIEW(data): routine Func_02000ecc as this part declared it; the joined file
- * has another. */
-void Func_02000ecc__data(void) __asm__("Func_02000ecc");
-#define Func_02000ecc Func_02000ecc__data
-/* VIEW(data): routine Func_0200101c as this part declared it; the joined file
- * has another. */
-void Func_0200101c__data(void) __asm__("Func_0200101c");
-#define Func_0200101c Func_0200101c__data
-/* VIEW(data): routine Func_02001138 as this part declared it; the joined file
- * has another. */
-void Func_02001138__data(void) __asm__("Func_02001138");
-#define Func_02001138 Func_02001138__data
-/* VIEW(data): routine Func_020011d4 as this part declared it; the joined file
- * has another. */
-void Func_020011d4__data(void) __asm__("Func_020011d4");
-#define Func_020011d4 Func_020011d4__data
-void Func_02001a1c(void);
-/* VIEW(data): routine Leader_SinkAway as this part declared it; the joined file
- * has another. */
-void Leader_SinkAway__data(void) __asm__("Leader_SinkAway");
-#define Leader_SinkAway Leader_SinkAway__data
-
-/* VIEW(data): variable Data_020005f4 as this part declared it; the scene
- * defines it as a routine. */
-extern u8 Data_020005f4__data[] __asm__("Data_020005f4");
-#define Data_020005f4 Data_020005f4__data
-/* VIEW(data): routine gData_02003f04 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02003f04__data[] __asm__("gData_02003f04");
-#define gData_02003f04 gData_02003f04__data
-/* VIEW(data): routine gData_02003f40 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02003f40__data[] __asm__("gData_02003f40");
-#define gData_02003f40 gData_02003f40__data
-/* VIEW(data): routine gData_02003f7c as this part declared it; the joined file
- * has another. */
-extern u8 gData_02003f7c__data[] __asm__("gData_02003f7c");
-#define gData_02003f7c gData_02003f7c__data
+void AquaRockInside_ReadParchTablet(void);
 
 // clang-format off
-/* VIEW(data): variable gData_020044c8 as this part defines it; a header the joined file includes has another. */
-LATE_DATA u32 gData_020044c8__data[] __asm__("gData_020044c8") = {
+LATE_DATA u32 gData_020044c8[] = {
     0, 44, 22, 38, 0, 2,
     0, 0, 0, 0, 1, 38,
 };
@@ -2939,11 +2710,11 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-LATE_DATA struct ActorPlacement gData_02004688[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_020046a0[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room1Placements[] = {
     {380, CONDITION_ALWAYS, 1, PIXELS(808), 0, PIXELS(679), FACING_SOUTH, 2, 0},
     {380, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(551), FACING_SOUTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(248), FACING_SOUTH, 2, 0},
@@ -2953,21 +2724,21 @@ LATE_DATA struct ActorPlacement gData_020046a0[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02004748[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room2Placements[] = {
     {380, CONDITION_ALWAYS, 1, PIXELS(776), 0, PIXELS(247), FACING_SOUTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(616), 0, PIXELS(152), FACING_SOUTH, 2, 0},
     {244, 0x50, 1, PIXELS(776), 0, PIXELS(264), FACING_SOUTH, 0, 0},
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_020047a8[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room3Placements[] = {
     {383, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(264), FACING_SOUTH, 2, 0},
     {489, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(672), FACING_SOUTH, 2, 0},
     {489, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(672), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02004808[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room4Placements[] = {
     {383, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(680), FACING_SOUTH, 2, 0},
     {380, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(647), FACING_SOUTH, 2, 0},
     {380, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(87), FACING_SOUTH, 2, 0},
@@ -2978,13 +2749,13 @@ LATE_DATA struct ActorPlacement gData_02004808[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_020048c8[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room5Placements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(360), FACING_SOUTH, 2, 0},
     {383, CONDITION_ALWAYS, 1, PIXELS(760), 0, PIXELS(552), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02004910[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room6Placements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(776), 0, PIXELS(648), FACING_SOUTH, 2, 0},
     {380, CONDITION_ALWAYS, 1, PIXELS(792), 0, PIXELS(631), FACING_SOUTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(552), FACING_SOUTH, 2, 0},
@@ -2996,17 +2767,17 @@ LATE_DATA struct ActorPlacement gData_02004910[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_020049e8[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room7Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02004a00[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room8Placements[] = {
     {407, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(328), FACING_NORTH, 2, 0},
     {407, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(328), FACING_NORTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02004a48[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room9Placements[] = {
     {383, CONDITION_ALWAYS, 1, PIXELS(616), 0, PIXELS(264), FACING_SOUTH, 2, 0},
     {380, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(231), FACING_SOUTH, 2, 0},
     {312, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(296), FACING_SOUTH, 2, 0},
@@ -3023,7 +2794,7 @@ LATE_DATA struct ActorPlacement gData_02004a48[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02004b98[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_Room10Placements[] = {
     {312, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(248), FACING_SOUTH, 2, 0},
     {312, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(248), FACING_SOUTH, 2, 1},
     {312, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(312), FACING_SOUTH, 2, 1},
@@ -3035,11 +2806,11 @@ LATE_DATA struct ActorPlacement gData_02004b98[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02004c70[] = {
+LATE_DATA struct Trigger gAquaRockInside_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02004c7c[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room1Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -3064,12 +2835,9 @@ LATE_DATA struct Trigger gData_02004c7c[] = {
     {TRIGGER_TABLE_END},
 };
 
-/* VIEW(data): variable gData_02004d84 as this part defines it; a header the joined file includes has another. */
-LATE_DATA u32 gData_02004d84__data[] __asm__("gData_02004d84") = {
-    256,
-};
+LATE_DATA s32 gData_02004d84 = 256;
 
-LATE_DATA struct Trigger gData_02004d88[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -3080,7 +2848,7 @@ LATE_DATA struct Trigger gData_02004d88[] = {
     {0x51, 8, CONDITION_ALWAYS, 8},
     {0x51, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(Func_02002ca4)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_0200033c)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(AquaRockInside_FightSteam)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x95c, EVENT(Func_02000644)},
     {0x9, 0, CONDITION_ALWAYS, EVENT(Func_02000644)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 88, 0x240, EVENT(Func_02000690)},
@@ -3088,7 +2856,7 @@ LATE_DATA struct Trigger gData_02004d88[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02004e48[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room3Triggers[] = {
     {0x51, 1, CONDITION_ALWAYS, 1},
     {0x51, 2, CONDITION_ALWAYS, 2},
     {0xa02, 3, CONDITION_ALWAYS, EVENT(Func_02000958)},
@@ -3097,13 +2865,13 @@ LATE_DATA struct Trigger gData_02004e48[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {0xc402, 7, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000a24)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(AquaRockInside_CheckColumn)},
     {0x1c814, 9, 0x95d, EVENT(Func_020007d4)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa66, EVENT(Func_02000a98)},
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02004ed8[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x51, 2, CONDITION_ALWAYS, 2},
     {0x21, 3, CONDITION_ALWAYS, 3},
@@ -3124,7 +2892,7 @@ LATE_DATA struct Trigger gData_02004ed8[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02004fb0[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room5Triggers[] = {
     {0x51, 1, CONDITION_ALWAYS, 1},
     {0x51, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -3144,7 +2912,7 @@ LATE_DATA struct Trigger gData_02004fb0[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_0200507c[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room6Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3173,16 +2941,16 @@ LATE_DATA struct Trigger gData_0200507c[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_020051b4[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room7Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {0x21, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(Func_020010ec)},
+    {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(AquaRockInside_CheckPsynergyStone)},
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA s16 gData_020051fc[] = {
+LATE_DATA s16 gAquaRockInside_Room8Triggers[] = {
     49, 0, 1, -1, 1, 0, 49, 0,
     2, -1, 2, 0, 49, 0, 3, -1,
     3, 0, 33, 0, 4, -1, 4, 0,
@@ -3192,7 +2960,7 @@ LATE_DATA s16 gData_020051fc[] = {
     -1, -1, 0, 0, 0, 0,
 };
 
-LATE_DATA struct Trigger gData_02005268[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room9Triggers[] = {
     {0x51, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -3207,35 +2975,20 @@ LATE_DATA struct Trigger gData_02005268[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_020052f8[] = {
+LATE_DATA struct Trigger gAquaRockInside_Room10Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc403, 30, CONDITION_ALWAYS, EVENT(Func_02001a1c)},
-    {0x4403, 30, CONDITION_ALWAYS, EVENT(Func_02001c68)},
+    {0xc403, 30, CONDITION_ALWAYS, EVENT(AquaRockInside_ReadParchTablet)},
+    {0x4403, 30, CONDITION_ALWAYS, EVENT(AquaRockInside_WalkToParchTablet)},
     {0x8403, 30, CONDITION_ALWAYS, EVENT(Func_02001cd8)},
     {0x403, 30, CONDITION_ALWAYS, EVENT(Func_02001d40)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 40, IF_FLAG_SET(0x349), EVENT(Func_02001328)},
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA u32 gData_0200534c[] = {
-    0x8000808, 0x80108ff, 0xff080008, 0x8080801, 0x1000808, 0x808ff08,
-    0x8080008, 0x8ff0108,
+LATE_DATA s8 gData_0200534c[] = {
+    8, 8, 0, 8, -1, 8, 1, 8,
+    8, 0, 8, -1, 1, 8, 8, 8,
+    8, 8, 0, 1, 8, -1, 8, 8,
+    8, 0, 8, 8, 8, 1, -1, 8,
 };
 // clang-format on
-#undef Func_0200042c
-#undef Func_020004bc
-#undef Func_02000574
-#undef Func_02000644
-#undef Func_02000958
-#undef Func_02000c28
-#undef Func_02000cc8
-#undef Func_02000e18
-#undef Func_02000ecc
-#undef Func_0200101c
-#undef Func_02001138
-#undef Func_020011d4
-#undef Leader_SinkAway
-#undef gData_02003f04
-#undef gData_02003f40
-#undef gData_02003f7c
-#undef Data_020005f4

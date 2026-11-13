@@ -1263,20 +1263,10 @@ void BattleEffect_BuildCanvasTilemap(void) {
 
 /// Writes the window, display and blend registers, all at once.
 void BattleEffect_ApplyWindowBlendRegisters(void) {
-  /* FAKEMATCH(pin): the work pointer kept in r2, so the registers' address
-   * takes r1; as a plain local, 31 of 55 instructions differ in tla-en. */
-  register struct BattleFxWork *work asm("r2") =
+  struct BattleFxWork *work =
       (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
 
-  {
-    u32 value = work->win0h;
-
-    /* FAKEMATCH(barrier): an empty asm through the first value loads it before
-     * the register's address is built; without it, 14 of 55 instructions
-     * differ in tla-en. */
-    __asm__ volatile("" : "+l"(value));
-    REG_WIN0H = value;
-  }
+  REG_WIN0H = work->win0h;
   REG_WIN0V = work->win0v;
   REG_WIN1H = work->win1h;
   REG_WIN1V = work->win1v;
@@ -1319,10 +1309,6 @@ void Display_ApplyBg2Reference(void) {
       (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
   u32 hold;
 
-  /* FAKEMATCH(barrier): an empty asm sets hold, which keeps r1 until the
-   * first value is read, so the offset takes r0; without hold and its asm,
-   * 8 of 20 instructions differ in tla-en. */
-  __asm__ volatile("" : "=l"(hold));
   {
     u32 value = work->bg2x;
 

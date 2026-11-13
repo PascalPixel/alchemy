@@ -27,8 +27,6 @@
 #include "event_work.h"
 #include "objcmd.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 extern s32 gMadraInteriors_InterrogatorLifted[];
 extern s32 gMadraInteriors_InterrogatorTopples[];
 void MadraInteriors_SayGoodbyeAgain(void);

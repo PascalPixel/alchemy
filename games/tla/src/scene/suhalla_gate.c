@@ -38,8 +38,6 @@ extern u8 MsgMyThatWas[];
 extern u8 MsgNotThatWay[];
 #include "text/msg_ids.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 extern struct SceneEntrance gSuhallaGate_Entrances[];
 extern struct SceneEntrance gSuhallaGate_Room2Entrances[];
 extern struct SceneEntrance gSuhallaGate_Room3Entrances[];

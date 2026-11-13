@@ -95,10 +95,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 extern s32 gPaletteCyclePausesInEvents;
-/* VIEW(first): routine CrackedTiles_Step as this part declared it; the joined
- * file defines it otherwise. */
-s32 CrackedTiles_Step__first(s32 value) __asm__("CrackedTiles_Step");
-#define CrackedTiles_Step CrackedTiles_Step__first
 void JupiterLighthouse_CloseDoor(void);
 void JupiterLighthouse_LoadPalettes(s32 value);
 
@@ -145,11 +141,6 @@ extern s32 gPaletteCycleFrame;
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
 s32 __modsi3();
-/* VIEW(first): routine CrackedTiles_Find as this part declared it; the joined
- * file defines it otherwise. */
-void CrackedTiles_Find__first(s32 a, s32 b, s32 c, s32 d,
-                              s32 e) __asm__("CrackedTiles_Find");
-#define CrackedTiles_Find CrackedTiles_Find__first
 
 s32 Scene_Initialize(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -225,12 +216,9 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
                         Position_FlatDistance, gWhirlwindEndScript,
                         gWhirlwindRiding)
 
-/* VIEW(first): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another. */
-void FieldEffect_Spawn__first(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__first
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Import_ActorSelectAnimation,
                        Whirlwind_Update, FieldEffect_Spawn)
@@ -241,12 +229,6 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
     JupiterLighthouse_PlaceRaisedActors)
 
 extern struct Actor *gLightSpriteActors[];
-
-/* VIEW(first): routine Oam_AddSpriteAtDepthClamped as this part declared it;
- * the joined file has another. */
-void Oam_AddSpriteAtDepthClamped__first(
-    struct LightOam *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
-#define Oam_AddSpriteAtDepthClamped Oam_AddSpriteAtDepthClamped__first
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
@@ -378,21 +360,11 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #include "../field/field_effect/move.c"
 
 #undef FLAG_DOOR_BUTTON_HELD
-#undef FieldEffect_Spawn
-#undef Oam_AddSpriteAtDepthClamped
-#undef CrackedTiles_Find
-#undef CrackedTiles_Step
 // @file
 // The hall below Jupiter Lighthouse's aerie: its copy of the effect spawner,
 // and the cracked tiles, found, cracked and fallen through.
 
 extern const s32 *gFieldEffect_DurationScripts[];
-
-/* VIEW(cracked_tiles): routine Actor_StartScript as this part declared it; the
- * joined file has another. */
-void Actor_StartScript__cracked_tiles(
-    struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__cracked_tiles
 
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
@@ -508,7 +480,6 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s158c,
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
 // @file
 // The hall below Jupiter Lighthouse's aerie: the cracked tiles' steps and
 // landings.
@@ -520,30 +491,15 @@ extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 void JupiterLighthouse_FinishMovingBlock(void);
 
-/* VIEW(cracked_tile_steps): routine FieldEffect_Spawn as this part declared it;
- * the joined file has another. */
-void FieldEffect_Spawn__cracked_tile_steps(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__cracked_tile_steps
-
 DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
 
 extern struct CellTarget gCrackedTiles;
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void CrackedTile_Crack(struct CellTarget *work, struct CellTargetEntry *entry);
-/* VIEW(cracked_tile_steps): routine CrackedTile_Fall as this part declared it;
- * the joined file has another. */
-void CrackedTile_Fall__cracked_tile_steps(
-    struct CellTarget *work,
-    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
-#define CrackedTile_Fall CrackedTile_Fall__cracked_tile_steps
 
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
                           CrackedTile_Fall)
 
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropIn)
-#undef FieldEffect_Spawn
-#undef CrackedTile_Fall

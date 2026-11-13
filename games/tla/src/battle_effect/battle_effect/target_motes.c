@@ -766,17 +766,17 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
 
 /// Abilities: Balm (kind 230).
 void BattleEffect_RunBalm(struct BattleEffectArgument *effect) {
-  Func_0814b9e8(effect, 0);
+  BattleEffect_RunTumblingQuads(effect, 0);
 }
 
 /// Abilities: Tinder (kind 231).
 void BattleEffect_RunTinder(struct BattleEffectArgument *effect) {
-  Func_0814b9e8(effect, 1);
+  BattleEffect_RunTumblingQuads(effect, 1);
 }
 
 /// Abilities: Phoenix, Regen Dance (kind 436).
 void BattleEffect_RunPhoenix(struct BattleEffectArgument *effect) {
-  Func_0814b9e8(effect, 2);
+  BattleEffect_RunTumblingQuads(effect, 2);
 }
 #undef SLOT_BLITTER
 #undef BLITTER

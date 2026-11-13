@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x674, in ROM order.
-
 #include "flags.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
@@ -33,8 +31,6 @@
 #include "objcmd.h"
 #include "module/scene/mars_lighthouse_entrance.h"
 #include "module/scene/shrine_of_the_sea_god.h"
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct Actor;
 
@@ -150,16 +146,13 @@ void Func_020034ec(void);
 void Func_02001cac(void);
 void Func_02001cfc(void);
 
-/* VIEW(first): routine gSmokeScript as this part declared it; the joined file
- * has another. */
-extern const u8 gSmokeScript__first[] __asm__("gSmokeScript");
-#define gSmokeScript gSmokeScript__first
-extern struct Trigger gData_02004b14[];
-extern struct Trigger gData_02004b20[];
-extern struct Trigger gData_02004bb0[];
-extern struct Trigger gData_02004ca0[];
-extern struct Trigger gData_02004d84[];
-extern struct Trigger gData_02004e5c[];
+extern u32 gSmokeScript[];
+extern struct Trigger gIslets_Triggers[];
+extern struct Trigger gIslets_Room1Triggers[];
+extern struct Trigger gIslets_Room2Triggers[];
+extern struct Trigger gIslets_Room3Triggers[];
+extern struct Trigger gIslets_Room4Triggers[];
+extern struct Trigger gIslets_Room5Triggers[];
 extern u16 gSceneState[];
 extern char SceneId_Ov674Room1;
 extern char SceneId_Ov674Room2;
@@ -167,11 +160,11 @@ extern char SceneId_Ov674Room3;
 extern char SceneId_Ov674Room4;
 extern char SceneId_Ov674Room5;
 
-void Func_02002c38(void);
-void Func_02002f1c(void);
-void Func_020030b4(void);
-void Func_02003164(void);
-void Func_0200329c(void);
+void Islets_InitializeRoom1(void);
+void Islets_InitializeRoom2(void);
+void Islets_InitializeRoom3(void);
+void Islets_InitializeRoom4(void);
+void Islets_InitializeRoom5(void);
 
 struct IsletsMapFlags {
   u8 unk00[0x17];
@@ -196,22 +189,21 @@ struct PushTarget {
   void (*callback)(void);
 };
 
-extern struct ActorPlacement gData_02004754[];
-extern struct ActorPlacement gData_0200476c[];
-extern struct ActorPlacement gData_020047e4[];
-extern struct ActorPlacement gData_0200494c[];
-extern struct ActorPlacement gData_020049c4[];
-extern struct ActorPlacement gData_02004a84[];
+extern struct ActorPlacement gIslets_Placements[];
+extern struct ActorPlacement gIslets_Room1Placements[];
+extern struct ActorPlacement gIslets_Room2Placements[];
+extern struct ActorPlacement gIslets_Room3Placements[];
+extern struct ActorPlacement gIslets_Room4Placements[];
+extern struct ActorPlacement gIslets_Room5Placements[];
 extern s32 gData_02005190;
 extern s32 gData_02005194;
 extern s32 gData_02005198;
 extern s32 gData_0200519c;
-/* VIEW(first): routine gData_02004028 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02004028__first[] __asm__("gData_02004028");
-#define gData_02004028 gData_02004028__first
+extern s32 gData_02004028[];
 /* VIEW(first): routine gData_020046bc as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_020046bc[], it does
+ * not compile in tla-ja: games/tla/src/scene/islets.c:1569: `gData_020046bc'
+ * undeclared (first use in this function). */
 extern const struct IsletsExit
     gData_020046bc__first[] __asm__("gData_020046bc");
 #define gData_020046bc gData_020046bc__first
@@ -239,19 +231,19 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov674Room1)
-    return gData_0200476c;
+    return gIslets_Room1Placements;
   if (scene == (s32)&SceneId_Ov674Room2)
-    return gData_020047e4;
+    return gIslets_Room2Placements;
   if (scene == (s32)&SceneId_Ov674Room3)
-    return gData_0200494c;
+    return gIslets_Room3Placements;
   if (scene == (s32)&SceneId_Ov674Room4)
-    return gData_020049c4;
+    return gIslets_Room4Placements;
   if (scene == (s32)&SceneId_Ov674Room5) {
     if (Event_GetFlag(0xaa5))
-      gData_02004a84[1].talkFacing = 1;
-    return gData_02004a84;
+      gIslets_Room5Placements[1].talkFacing = 1;
+    return gIslets_Room5Placements;
   }
-  return gData_02004754;
+  return gIslets_Placements;
 }
 
 void Func_020000d8(void) {
@@ -283,16 +275,16 @@ const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov674Room1)
-    return gData_02004b20;
+    return gIslets_Room1Triggers;
   if (scene == (s32)&SceneId_Ov674Room2)
-    return gData_02004bb0;
+    return gIslets_Room2Triggers;
   if (scene == (s32)&SceneId_Ov674Room3)
-    return gData_02004ca0;
+    return gIslets_Room3Triggers;
   if (scene == (s32)&SceneId_Ov674Room4)
-    return gData_02004d84;
+    return gIslets_Room4Triggers;
   if (scene == (s32)&SceneId_Ov674Room5)
-    return gData_02004e5c;
-  return gData_02004b14;
+    return gIslets_Room5Triggers;
+  return gIslets_Triggers;
 }
 
 #include "text/msg_ids.h"
@@ -304,27 +296,23 @@ void Func_02000210(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa2);
-  if (result0 == 0)
-    goto L_02008260;
-  result1 = Event_GetFlag(0x200);
-  if (result1 == 0)
-    goto L_02008250;
-  Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
-  FieldEvent_SetMessageId((s32)MsgPenPenPen);
-  goto L_02008256;
-L_02008250:
-  FieldEvent_SetMessageId((s32)MsgPenPen2);
-L_02008256:
-  Event_ShowMessage(9, 0);
-  goto L_02008294;
-L_02008260:
-  FieldActor_Stop(9);
-  System_Wait(1);
-  Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
-  FieldEvent_SetMessageId((s32)MsgPenPen3);
-  Event_ShowMessage(9, 0);
-  FieldActor_WatchAndSetScript(9, 19);
-L_02008294:
+  if (result0 != 0) {
+    result1 = Event_GetFlag(0x200);
+    if (result1 != 0) {
+      Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
+      FieldEvent_SetMessageId((s32)MsgPenPenPen);
+    } else {
+      FieldEvent_SetMessageId((s32)MsgPenPen2);
+    }
+    Event_ShowMessage(9, 0);
+  } else {
+    FieldActor_Stop(9);
+    System_Wait(1);
+    Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
+    FieldEvent_SetMessageId((s32)MsgPenPen3);
+    Event_ShowMessage(9, 0);
+    FieldActor_WatchAndSetScript(9, 19);
+  }
   Event_End();
   return;
 }
@@ -336,22 +324,18 @@ void Func_020002ac(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa2);
-  if (result0 == 0)
-    goto L_020082ea;
-  result1 = Event_GetFlag(0x200);
-  if (result1 == 0)
-    goto L_020082da;
-  FieldEvent_SetMessageId((s32)MsgThereIsNothing);
-  goto L_020082e0;
-L_020082da:
-  FieldEvent_SetMessageId((s32)MsgIMSoHappy);
-L_020082e0:
-  Event_ShowMessage(9, 0);
-  goto L_020082f8;
-L_020082ea:
-  FieldEvent_SetMessageId((s32)MsgMyDarlingPengulina);
-  Event_ShowMessage(9, 0);
-L_020082f8:
+  if (result0 != 0) {
+    result1 = Event_GetFlag(0x200);
+    if (result1 != 0) {
+      FieldEvent_SetMessageId((s32)MsgThereIsNothing);
+    } else {
+      FieldEvent_SetMessageId((s32)MsgIMSoHappy);
+    }
+    Event_ShowMessage(9, 0);
+  } else {
+    FieldEvent_SetMessageId((s32)MsgMyDarlingPengulina);
+    Event_ShowMessage(9, 0);
+  }
   Event_End();
   return;
 }
@@ -363,23 +347,19 @@ void Func_0200030c(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa2);
-  if (result0 == 0)
-    goto L_0200835c;
-  result1 = Event_GetFlag(0x200);
-  if (result1 == 0)
-    goto L_0200834c;
-  Actor_FaceActor(19, gMainRoutineWork.currentOwner, 0);
-  FieldEvent_SetMessageId((s32)MsgPenPenPehnnnn);
-  goto L_02008352;
-L_0200834c:
-  FieldEvent_SetMessageId((s32)MsgPenPen2);
-L_02008352:
-  Event_ShowMessage(19, 0);
-  goto L_0200836a;
-L_0200835c:
-  FieldEvent_SetMessageId((s32)MsgPenPenPehnnn);
-  Event_ShowMessage(19, 0);
-L_0200836a:
+  if (result0 != 0) {
+    result1 = Event_GetFlag(0x200);
+    if (result1 != 0) {
+      Actor_FaceActor(19, gMainRoutineWork.currentOwner, 0);
+      FieldEvent_SetMessageId((s32)MsgPenPenPehnnnn);
+    } else {
+      FieldEvent_SetMessageId((s32)MsgPenPen2);
+    }
+    Event_ShowMessage(19, 0);
+  } else {
+    FieldEvent_SetMessageId((s32)MsgPenPenPehnnn);
+    Event_ShowMessage(19, 0);
+  }
   Event_End();
   return;
 }
@@ -391,22 +371,18 @@ void Func_02000380(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa2);
-  if (result0 == 0)
-    goto L_020083be;
-  result1 = Event_GetFlag(0x200);
-  if (result1 == 0)
-    goto L_020083ae;
-  FieldEvent_SetMessageId((s32)MsgPengusIsPretty);
-  goto L_020083b4;
-L_020083ae:
-  FieldEvent_SetMessageId((s32)MsgIMSoGlad);
-L_020083b4:
-  Event_ShowMessage(19, 0);
-  goto L_020083cc;
-L_020083be:
-  FieldEvent_SetMessageId((s32)MsgOhhMyLeg);
-  Event_ShowMessage(19, 0);
-L_020083cc:
+  if (result0 != 0) {
+    result1 = Event_GetFlag(0x200);
+    if (result1 != 0) {
+      FieldEvent_SetMessageId((s32)MsgPengusIsPretty);
+    } else {
+      FieldEvent_SetMessageId((s32)MsgIMSoGlad);
+    }
+    Event_ShowMessage(19, 0);
+  } else {
+    FieldEvent_SetMessageId((s32)MsgOhhMyLeg);
+    Event_ShowMessage(19, 0);
+  }
   return;
 }
 
@@ -416,17 +392,15 @@ void Islets_TalkToHealer(void) {
   s32 result0;
 
   result0 = Leader_IsFacingNorth();
-  if (result0 == 0)
-    goto L_0200841e;
-  Sanctum_Run(21);
-  goto L_0200843a;
-L_0200841e:
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgIAmHere);
-  Event_ShowMessage(21, 0);
-  Event_End();
-L_0200843a:
+  if (result0 != 0) {
+    Sanctum_Run(21);
+  } else {
+    Event_Start();
+    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_SetMessageId((s32)MsgIAmHere);
+    Event_ShowMessage(21, 0);
+    Event_End();
+  }
   return;
 }
 
@@ -436,20 +410,19 @@ void Func_02000440(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0x214);
-  if (result0 != 0)
-    goto L_020084b6;
-  FieldEvent_SetMessageId((s32)MsgWeLikeThis);
-  Event_ShowMessage(8, 0);
-  Actor_SetAttachedEffect(9, 0x102);
-  Actor_FaceDirection(9, FACING_WEST, 0);
-  Event_ShowMessage(9, 0);
-  Actor_FaceDirectionAndWait(8, FACING_EAST);
-  FieldActor_Jump(9, 4, 10);
-  Event_ShowMessage(9, 0);
-  Actor_SetAttachedEffect(9, 0x102);
-  FieldEvent_Wait(20);
-  Event_SetFlag(0x214);
-L_020084b6:
+  if (result0 == 0) {
+    FieldEvent_SetMessageId((s32)MsgWeLikeThis);
+    Event_ShowMessage(8, 0);
+    Actor_SetAttachedEffect(9, 0x102);
+    Actor_FaceDirection(9, FACING_WEST, 0);
+    Event_ShowMessage(9, 0);
+    Actor_FaceDirectionAndWait(8, FACING_EAST);
+    FieldActor_Jump(9, 4, 10);
+    Event_ShowMessage(9, 0);
+    Actor_SetAttachedEffect(9, 0x102);
+    FieldEvent_Wait(20);
+    Event_SetFlag(0x214);
+  }
   Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgLookWeRe);
   Event_ShowMessage(8, 0);
@@ -474,10 +447,9 @@ void Func_02000520(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa4);
-  if (result0 == 0)
-    goto L_0200854a;
-  FieldActor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
-L_0200854a:
+  if (result0 != 0) {
+    FieldActor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
+  }
   FieldEvent_SetMessageId((s32)MsgChirpChirp2);
   Event_ShowMessage(10, 0);
   Event_End();
@@ -744,14 +716,8 @@ struct Actor *Func_02000da0(struct Actor *object, s32 value) {
 
 DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Actor_SelectAnimation, gSmokeScript)
 
-/* VIEW(first): routine gData_020043f8 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_020043f8__first[] __asm__("gData_020043f8");
-#define gData_020043f8 gData_020043f8__first
-/* VIEW(first): routine gData_02004300 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02004300__first[] __asm__("gData_02004300");
-#define gData_02004300 gData_02004300__first
+extern s32 gData_020043f8[];
+extern s32 gData_02004300[];
 
 #define STEP(actor, x, z)                                                      \
   (Actor_GetById(actor)->actionFlags &= ~1, Actor_WalkToAndWait(actor, x, z),  \
@@ -882,7 +848,9 @@ void Func_02001278(struct Actor *object) {
 #endif
 
 /* VIEW(first): routine gData_02004004 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_02004004[], it does
+ * not compile in tla-ja: games/tla/src/scene/islets.c:851: `gData_02004004'
+ * undeclared (first use in this function). */
 extern struct ActionScript gData_02004004__first __asm__("gData_02004004");
 #define gData_02004004 gData_02004004__first
 
@@ -1111,14 +1079,8 @@ void Func_020014e0(void) {
   Event_End();
 }
 
-/* VIEW(first): routine gData_020045a4 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_020045a4__first[] __asm__("gData_020045a4");
-#define gData_020045a4 gData_020045a4__first
-/* VIEW(first): routine gData_020045f0 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_020045f0__first[] __asm__("gData_020045f0");
-#define gData_020045f0 gData_020045f0__first
+extern u32 gData_020045a4[];
+extern u32 gData_020045f0[];
 
 void Func_02001a68(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1207,17 +1169,12 @@ void Func_02001c4c(void) {
   }
 }
 
-/* VIEW(scene_tables): variable gData_02004f04 as u8 gData_02004f04;
- * module/scene/prox.h has s32 gData_02004f04[]; tried as the definition's
- * extern s32 gData_02004f04[], which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/islets.c:1105:
- * `gData_02004f04__scene_tables' undeclared (first use in this function). */
-extern u8 gData_02004f04__scene_tables __asm__("gData_02004f04");
+extern u8 gData_02004f04;
 extern s16 gData_02004f10[2][160];
 
 /// Applies BG1 horizontal line scrolling with HBlank DMA.
 void Func_02001cac(void) {
-  s16 *lines = gData_02004f10[gData_02004f04__scene_tables];
+  s16 *lines = gData_02004f10[gData_02004f04];
   s32 first = lines[0];
   volatile u16 *scroll;
   volatile u16 *dma;
@@ -1240,7 +1197,7 @@ void Func_02001cac(void) {
 
 void Func_02001cfc(void) {
   s16 *layer = (s16 *)&Ram_HeapSlots->mapWork->layers[2];
-  s16 *lines = gData_02004f10[gData_02004f04__scene_tables ^ 1];
+  s16 *lines = gData_02004f10[gData_02004f04 ^ 1];
   s32 v[2];
   s32 *count = &v[1];
   s32 value;
@@ -1257,7 +1214,7 @@ void Func_02001cfc(void) {
     value += *count % 3;
     *lines++ = value - 1;
   }
-  gData_02004f04__scene_tables ^= 1;
+  gData_02004f04 ^= 1;
 }
 
 void Func_02001d90(void) {
@@ -1713,14 +1670,8 @@ void Func_02002830(void) {
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 #define OBJECT(id) ((struct Actor *)((s32)Actor_Get((id))))
 
-/* VIEW(first): routine gData_02004508 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02004508__first[] __asm__("gData_02004508");
-#define gData_02004508 gData_02004508__first
-/* VIEW(first): routine gData_02004554 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02004554__first[] __asm__("gData_02004554");
-#define gData_02004554 gData_02004554__first
+extern u32 gData_02004508[];
+extern u32 gData_02004554[];
 
 /// The Islets' arrival by entrance 4: actor 9 joins the leader and actor 10
 /// is placed, the screen fades in, both run their action scripts
@@ -1787,15 +1738,15 @@ s32 Scene_Initialize(void) {
   work->field1ac = 0x100;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov674Room1)
-    Func_02002c38();
+    Islets_InitializeRoom1();
   else if (scene == (s32)&SceneId_Ov674Room2)
-    Func_02002f1c();
+    Islets_InitializeRoom2();
   else if (scene == (s32)&SceneId_Ov674Room3)
-    Func_020030b4();
+    Islets_InitializeRoom3();
   else if (scene == (s32)&SceneId_Ov674Room4)
-    Func_02003164();
+    Islets_InitializeRoom4();
   else if (scene == (s32)&SceneId_Ov674Room5)
-    Func_0200329c();
+    Islets_InitializeRoom5();
   return 0;
 }
 
@@ -1809,7 +1760,7 @@ void Func_02002bd8(void) {
   }
 }
 
-void Func_02002c38(void) {
+void Islets_InitializeRoom1(void) {
   struct IsletsMapFlags *map = (struct IsletsMapFlags *)Ram_HeapSlots->mapWork;
   struct Actor *spawned;
 
@@ -1921,13 +1872,10 @@ void Func_02002d7c(void) {
   } while (--*owed != 0);
 }
 
-/* VIEW(first): routine gData_02004274 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02004274__first[] __asm__("gData_02004274");
-#define gData_02004274 gData_02004274__first
+extern u32 gData_02004274[];
 
 /// The room's setup: flags, the objects' places and the scene state.
-void Func_02002f1c(void) {
+void Islets_InitializeRoom2(void) {
   struct Actor *object;
   struct Actor *other;
   u16 *state;
@@ -1983,7 +1931,7 @@ void Func_02002f1c(void) {
   }
 }
 
-void Func_020030b4(void) {
+void Islets_InitializeRoom3(void) {
   struct Actor *spawned;
 
   if (gMainRoutineWork.entrance == 3)
@@ -2008,7 +1956,7 @@ void Func_020030b4(void) {
 // A room's setup.
 
 /// Sets up the room's actors and map work.
-void Func_02003164(void) {
+void Islets_InitializeRoom4(void) {
   struct IsletsMapWork *map = (struct IsletsMapWork *)Ram_HeapSlots->mapWork;
   struct Actor *object = Actor_Get(10);
   struct Actor *last;
@@ -2077,11 +2025,12 @@ void Func_02003410(void);
  * s32 c, s32 d); graphics/palette_snapshots.h has s32 PaletteCycle_Add(s16
  * bank, s16 index, s16 delay, s16 count); tried as the definition's s32
  * PaletteCycle_Add(s16 bank, s16 index, s16 delay, s16 count), which the object
- * already declares, Func_0200329c moves: 2 of 145 instructions in tla-en. */
+ * already declares, Islets_InitializeRoom5 moves: 2 of 145 instructions in
+ * tla-en. */
 void PaletteCycle_Add__islets(s32 a, s32 b, s32 c,
                               s32 d) __asm__("PaletteCycle_Add");
 
-void Func_0200329c(void) {
+void Islets_InitializeRoom5(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 done;
 
@@ -2164,7 +2113,7 @@ void Func_02003410(void);
 s32 PaletteCycle_Add__islets(s16 bank, s16 index, s16 delay,
                              s16 count) __asm__("PaletteCycle_Add");
 
-void Func_0200329c(void) {
+void Islets_InitializeRoom5(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 done;
 
@@ -2226,10 +2175,6 @@ void Func_0200329c(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-// ---- scene/islets/s3410.c ----
-
-/// Scene code of overlay 0x674, in ROM order.
-
 void Func_02003410(void) {
   struct PaletteSnapshotWork *queue;
   struct PaletteSnapshot *entry;
@@ -2288,7 +2233,7 @@ void Func_020034ec(void) {
 /* VIEW(s3410): tag struct PaletteCycleWork as struct PaletteCycleWork__s3410;
  * palette_snapshots.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/islets.c:2186: structure has no member named `count'. */
+ * games/tla/src/scene/islets.c:2230: structure has no member named `count'. */
 struct PaletteCycleWork__s3410 {
   struct PaletteCycle entries[4];
   u16 count;
@@ -2361,10 +2306,7 @@ void Func_0200367c(void) {
 // layers there is filled with 255 (Func_02003790). Returns 1, or 0 for a shape
 // with no footprint. The twin of overlay 668's Func_020040ec.
 
-/* VIEW(s3410): routine gPushFootprints as this part declared it; the joined
- * file has another. */
-extern s8 gPushFootprints__s3410[][4] __asm__("gPushFootprints");
-#define gPushFootprints gPushFootprints__s3410
+extern s8 gPushFootprints[][4];
 
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
@@ -2570,10 +2512,6 @@ DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gPushFootprints, Func_02003790,
                         Actor_StopAtPushTarget, Actor_SelectAnimation,
                         gPushLeaderSteps)
 
-// ---- scene/islets/s3d0c.c ----
-
-/// Scene code of overlay 0x674, in ROM order.
-
 void Actor_StopAtPushTarget(struct Actor *object) {
   struct Vector3 position;
   struct Actor *hit;
@@ -2618,18 +2556,8 @@ void Actor_StopAtPushTarget(struct Actor *object) {
 #undef EVENT_S16
 #undef HI
 #undef ABS
-#undef gSmokeScript
-#undef gData_02004028
 #undef gData_020046bc
-#undef gData_020043f8
-#undef gData_02004300
 #undef gData_02004004
-#undef gData_020045a4
-#undef gData_020045f0
-#undef gData_02004508
-#undef gData_02004554
-#undef gData_02004274
-#undef gPushFootprints
 #include "text/msg_ids.h"
 
 void Func_0200030c(void);
@@ -2656,8 +2584,9 @@ u16 gData_02004070[] = {
     258, 259, 293, 294, 332, 331,
 };
 
-u32 gPushFootprints[] = {
-    0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
+s8 gPushFootprints[][4] = {
+    {-32, -8, 32, 8}, {-8, -32, 8, 32}, {-32, -16, 32, 0}, {-8, -32, 8, 32},
+    {-32, -8, 32, 8}, {-8, -32, 8, 32},
 };
 
 DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
@@ -2840,11 +2769,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02004754[] = {
+struct ActorPlacement gIslets_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_0200476c[] = {
+struct ActorPlacement gIslets_Room1Placements[] = {
     {73, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(744), FACING_WEST, 1, 0},
     {77, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(920), FACING_NORTHWEST, 2, 0},
     {77, CONDITION_ALWAYS, (s32)gData_02004640, PIXELS(88), 0, PIXELS(936), FACING_EAST, 1, 0},
@@ -2852,7 +2781,7 @@ struct ActorPlacement gData_0200476c[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020047e4[] = {
+struct ActorPlacement gIslets_Room2Placements[] = {
     {71, CONDITION_ALWAYS, (s32)gData_020040d4, PIXELS(376), 0, PIXELS(184), FACING_SOUTH, 0, 0},
     {399, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(184), FACING_SOUTH, 2, 0},
     {258, CONDITION_ALWAYS, 7, PIXELS(176), 0, PIXELS(140), FACING_SOUTH, 2, 0},
@@ -2870,7 +2799,7 @@ struct ActorPlacement gData_020047e4[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_0200494c[] = {
+struct ActorPlacement gIslets_Room3Placements[] = {
     {71, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(248), FACING_SOUTH, 0, 0},
     {73, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(184), FACING_SOUTHEAST, 1, 0},
     {80, CONDITION_ALWAYS, 1, PIXELS(132), 0, PIXELS(176), FACING_WEST, 1, 0},
@@ -2878,7 +2807,7 @@ struct ActorPlacement gData_0200494c[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020049c4[] = {
+struct ActorPlacement gIslets_Room4Placements[] = {
     {187, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(296), FACING_NORTH, 1, 0},
     {187, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(280), FACING_SOUTH, 1, 0},
     {405, CONDITION_ALWAYS, (s32)gData_02004198, PIXELS(360), 0, PIXELS(312), FACING_SOUTH, 1, 0},
@@ -2889,7 +2818,7 @@ struct ActorPlacement gData_020049c4[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004a84[] = {
+struct ActorPlacement gIslets_Room5Placements[] = {
     {75, CONDITION_ALWAYS, 2, PIXELS(168), 0, PIXELS(296), FACING_SOUTH, 2, 0},
     {162, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(440), FACING_SOUTH, 0, 0},
     {163, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
@@ -2899,11 +2828,11 @@ struct ActorPlacement gData_02004a84[] = {
 };
 // clang-format on
 
-struct Trigger gData_02004b14[] = {
+struct Trigger gIslets_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02004b20[] = {
+struct Trigger gIslets_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02002780)},
     {0x602, 16, CONDITION_ALWAYS, EVENT(Func_0200367c)},
@@ -2922,7 +2851,7 @@ struct Trigger gData_02004b20[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02004bb0[] = {
+struct Trigger gIslets_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_0200267c)},
     {0x4602, 10, CONDITION_ALWAYS, EVENT(Func_0200208c)},
@@ -2951,7 +2880,7 @@ struct Trigger gData_02004bb0[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02004ca0[] = {
+struct Trigger gIslets_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2986,7 +2915,7 @@ struct Trigger gData_02004ca0[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02004d84[] = {
+struct Trigger gIslets_Room4Triggers[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {0xce01, 11, CONDITION_ALWAYS, 11},
     {0x4602, 21, 0x212, EVENT(Func_02002430)},
@@ -3012,7 +2941,7 @@ struct Trigger gData_02004d84[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02004e5c[] = {
+struct Trigger gIslets_Room5Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_0200274c)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_0200274c)},
     {0x31, 5, CONDITION_ALWAYS, 5},

@@ -12,10 +12,7 @@
 /// data/jupiter_lighthouse_room_3.c, which the overlay links after the field's
 /// cached pictures.
 
-/* VIEW(first): routine Random16 as this part calls it, undeclared (an int
- * routine); system.h, which a later part includes, has another. */
-int Random16__first() __asm__("Random16");
-#define Random16 Random16__first
+#include "system/system.h"
 #include "flags.h"
 #include "shared/whirlwind.h"
 #include "shared/tables.h"
@@ -110,15 +107,8 @@ extern s16 gLightSpritePriority;
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void PaletteCycle_StepAt(void);
 
-/* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
- * file has another. */
-extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
-#define gPaletteCycleFrame gPaletteCycleFrame__first
-/* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
- * the joined file has another. */
-extern s32
-    gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
-#define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
+extern s32 gPaletteCycleFrame;
+extern s32 gPaletteCyclePausesInEvents;
 extern const u16 gPaletteCycleColors[];
 extern const u16 gPaletteCycleUnlitPalette[];
 extern const u16 gPaletteCycleUnlitColors[];
@@ -293,10 +283,7 @@ s32 Position_FlatDistance(s32 *a, s32 *b) {
   return Iwram_Sqrt(dxsq + dzsq);
 }
 
-/* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined
- * file has another. */
-extern const s32 gWhirlwindEndScript__first[] __asm__("gWhirlwindEndScript");
-#define gWhirlwindEndScript gWhirlwindEndScript__first
+extern s32 gWhirlwindEndScript[];
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
@@ -305,12 +292,9 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
                               Position_FlatDistance, gWhirlwindEndScript,
                               gWhirlwindRiding)
 
-/* VIEW(first): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another. */
-void FieldEffect_Spawn__first(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__first
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation,
                        Whirlwind_UpdateLower, FieldEffect_Spawn)
@@ -449,12 +433,6 @@ void PushTarget_UpdatePusher(struct Actor *object) {
 
 extern s16 gLightSpriteTile;
 
-/* VIEW(first): routine Oam_AddSpriteAtDepthClamped as this part declared it;
- * the joined file has another. */
-void Oam_AddSpriteAtDepthClamped__first(
-    struct LightOam *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
-#define Oam_AddSpriteAtDepthClamped Oam_AddSpriteAtDepthClamped__first
-
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
@@ -513,12 +491,6 @@ DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
-#undef gPaletteCycleFrame
-#undef gPaletteCyclePausesInEvents
-#undef gWhirlwindEndScript
-#undef FieldEffect_Spawn
-#undef Oam_AddSpriteAtDepthClamped
-#undef Random16
 // @file
 // The room of gaps and logs in Jupiter Lighthouse: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.
@@ -530,17 +502,6 @@ extern struct CellTarget gCrackedTiles;
 void CrackedTiles_Update(void);
 
 extern const s32 *gFieldEffect_DurationScripts[];
-
-/* VIEW(cracked_tiles): routine Actor_SelectAnimation as this part declared it;
- * the joined file has another. */
-void Actor_SelectAnimation__cracked_tiles(
-    struct FieldEffect *effect, s32 mode) __asm__("Actor_SelectAnimation");
-#define Actor_SelectAnimation Actor_SelectAnimation__cracked_tiles
-/* VIEW(cracked_tiles): routine Actor_StartScript as this part declared it; the
- * joined file has another. */
-void Actor_StartScript__cracked_tiles(
-    struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__cracked_tiles
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -635,8 +596,6 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_SelectAnimation
-#undef Actor_StartScript
 // @file
 // The room of gaps and logs in Jupiter Lighthouse: the cracked tiles' steps
 // and the fall to the floor below.
@@ -650,13 +609,6 @@ extern u16 gPushKinds[];
 // The cells CrackedTiles_Step watches, and the cell it copies over the one the
 // leader steps on.
 extern struct CellTarget gCrackedTiles;
-
-/* VIEW(cracked_tile_steps): routine FieldEffect_Spawn as this part declared it;
- * the joined file has another. */
-void FieldEffect_Spawn__cracked_tile_steps(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__cracked_tile_steps
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   FieldCamera_MoveWithinMapBounds(x, y, z, mode);
@@ -681,7 +633,6 @@ DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropIn)
 
-#undef FieldEffect_Spawn
 #undef CrackedTile_FallEvent
 
 // @file
@@ -696,12 +647,6 @@ extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
 void JupiterLighthouse_PushLogOffTheLedge(void);
-/* VIEW(data_3): routine JupiterLighthouse_FinishMovingPillar as this part
- * declared it; the joined file has another. */
-void JupiterLighthouse_FinishMovingPillar__data_3(void) __asm__(
-    "JupiterLighthouse_FinishMovingPillar");
-#define JupiterLighthouse_FinishMovingPillar                                   \
-  JupiterLighthouse_FinishMovingPillar__data_3
 
 // clang-format off
 LATE_DATA DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
@@ -773,15 +718,11 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA s32 gPaletteCycleFrame[] = {
-    -1,
-};
+LATE_DATA s32 gPaletteCycleFrame = -1;
 
-LATE_DATA u32 gPaletteCyclePausesInEvents[] = {
-    1,
-};
+LATE_DATA s32 gPaletteCyclePausesInEvents = 1;
 
-LATE_DATA u32 gWhirlwindEndScript[] = {
+LATE_DATA s32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on

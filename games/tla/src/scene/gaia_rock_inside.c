@@ -1,5 +1,12 @@
 /// @file
-/// The scene code of overlay 0x681, in ROM order.
+/// Gaia Rock's inside, the rooms of this overlay near Izumo: the party places
+/// the doll on the altar by the entrance and on the altars deeper in
+/// (GaiaRockInside_PlaceDollOnFirstAltar to
+/// GaiaRockInside_PlaceDollOnRoom5Altar), each one weakening the Serpent, and
+/// clears overgrowth and cobwebs with Cyclone. In the Serpent's lair Susa
+/// fights to save Kushinada (GaiaRockInside_MeetSusa); examining the Serpent
+/// starts the battle with it (GaiaRockInside_ChallengeSerpent). Felix reads
+/// the rock's tablet and learns Sand (GaiaRockInside_ReadSandTablet).
 
 #include "shared/actors.h"
 #include "types.h"
@@ -48,8 +55,6 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #include "../field/field_effect/move.c"
 
 // @file
-// Scene code of overlay 0x681, in ROM order.
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -59,12 +64,6 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #include "../field/field_effect/spawn.c"
 
 #undef EFFECT_SPAWN
-
-// ---- scene/gaia_rock_inside/gaia_rock_inside.c ----
-
-// Scene code of overlay 0x681, in ROM order.
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct Actor;
 
@@ -175,11 +174,11 @@ extern char SceneId_Ov681Room2;
 extern char SceneId_Ov681Room3;
 extern char SceneId_Ov681Room4;
 
-extern struct ActorPlacement gData_02005970[];
-extern struct ActorPlacement gData_020059a0[];
-extern struct ActorPlacement gData_02005afc[];
-extern struct ActorPlacement gData_02005b8c[];
-extern struct ActorPlacement gData_02005c7c[];
+extern struct ActorPlacement gGaiaRockInside_Placements[];
+extern struct ActorPlacement gGaiaRockInside_LairPlacements[];
+extern struct ActorPlacement gGaiaRockInside_Room3Placements[];
+extern struct ActorPlacement gGaiaRockInside_Room4Placements[];
+extern struct ActorPlacement gGaiaRockInside_Room5Placements[];
 extern s32 gData_02005d6c[];
 
 void Cyclone_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
@@ -231,24 +230,24 @@ void Func_02000cf8(void);
 
 void Func_02000d18(void);
 
-void Func_02000edc(void);
+void GaiaRockInside_SusaSaysMoveAside(void);
 
-void Func_02001048(void);
-void Func_020011c8(void);
-void Func_020012ac(void);
+void GaiaRockInside_MeetSusa(void);
+void GaiaRockInside_TalkToSusa(void);
+void GaiaRockInside_ReadSusasMind(void);
 
 void Func_02001d14(void);
-void Func_02001ebc(void);
+void GaiaRockInside_ChallengeSerpent(void);
 
 void Leader_SetLayerByte(void);
 
 void Func_02001f84(void);
 void Func_02001fa0(void);
-void Func_02001fd8(void);
-void Func_02002020(void);
-void Func_0200225c(void);
-void Func_020024b8(void);
-void Func_02002718(void);
+void GaiaRockInside_CheckAltar(void);
+void GaiaRockInside_PlaceDollOnFirstAltar(void);
+void GaiaRockInside_PlaceDollOnWestAltar(void);
+void GaiaRockInside_PlaceDollOnEastAltar(void);
+void GaiaRockInside_PlaceDollOnRoom5Altar(void);
 
 void Func_02002a14(void);
 
@@ -294,9 +293,10 @@ void Func_0200036c(void) {
 #endif
 
 /* VIEW(gaia_rock_inside): routine Event_End as s32 Event_End(void);
- * module/scene/scene.h has void Event_End(void); not tried: Event_End's bound
- * declaration was not found. */
-extern s32 Func_02004e64__gaia_rock_inside(void) __asm__("Event_End");
+ * module/scene/scene.h has void Event_End(void); two events return its value,
+ * which the bytes need; not tried: Event_End's bound declaration was not found.
+ */
+extern s32 Event_EndWithResult(void) __asm__("Event_End");
 
 // The Japanese edition has no form of this function here.
 #if TLA_PATCH_1
@@ -366,7 +366,7 @@ loop:
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  return Func_02004e64__gaia_rock_inside();
+  return Event_EndWithResult();
 }
 #endif
 
@@ -389,22 +389,15 @@ s32 Func_020005dc(void) {
 }
 
 s32 Func_020005f8(void) {
-  struct Actor *t0;
+  struct Actor *object;
 
-  t0 = Actor_Get(9);
-  FIELD_AT(t0->sprite, u16, 18) = (FIELD_AT(t0->sprite, u16, 18) + 0x300);
+  object = Actor_Get(9);
+  FIELD_AT(object->sprite, u16, 18) =
+      (FIELD_AT(object->sprite, u16, 18) + 0x300);
   return 0;
 }
 
 extern u32 gData_020050d0[];
-
-/* VIEW(gaia_rock_inside): routine Actor_StartScript as void
- * Actor_StartScript(struct Actor *object, const u8 *script); actor_view.h has
- * void Actor_StartScript(struct Actor *, const s32 *); not tried:
- * Actor_StartScript's bound declaration was not found. */
-void Actor_StartScript__gaia_rock_inside(
-    struct Actor *object, const u8 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__gaia_rock_inside
 
 s32 Func_02000610(void) {
   struct FieldSprite *sprite = Actor_Get(9)->sprite;
@@ -471,12 +464,12 @@ s32 Func_020006f8(void) {
 }
 
 s32 Func_02000718(void) {
-  s32 t0;
+  struct Actor *object;
 
-  t0 = ((s32)Actor_Get(9));
-  Actor_StartScript(t0, (s32)gData_020055c0);
-  FIELD_AT(t0, s32, 8) = 0x1d80000;
-  Actor_SetAnimationSpeed(t0, 0x10);
+  object = Actor_Get(9);
+  Actor_StartScript(object, (s32)gData_020055c0);
+  object->x = 0x1d80000;
+  Actor_SetAnimationSpeed(object, 0x10);
   Actor_SetAttachedEffect(0xa, 0x102);
   return 0;
 }
@@ -493,30 +486,15 @@ s32 Func_02000748(void) {
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-#undef Actor_StartScript
 #undef FIELD_AT
 
-// ---- scene/gaia_rock_inside/s07f4.c ----
-
-// Scene code of overlay 0x681, in ROM order.
-
-// ---- games/tla/src/scene/gaia_rock_inside/s07f4.c ----
-
 #include "text/msg_ids.h"
-
-/* VIEW(s07f4): routine Actor_StartScript as void Actor_StartScript(struct Actor
- * *object, const s32 *script); scene/gaia_rock_inside/gaia_rock_inside has void
- * Actor_StartScript(struct Actor *object, const u8 *script); not tried:
- * Actor_StartScript's bound declaration was not found. */
-void Actor_StartScript__s07f4(struct Actor *object,
-                              const s32 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__s07f4
 
 /* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:333: structure has no
- * member named `layer'. */
+ * games/tla/src/scene/gaia_rock_inside.c:508: structure has no member named
+ * `layer'. */
 struct DustSprite__s07f4 {
   u8 unk00[9];
   u8 unused09 : 2;
@@ -609,30 +587,24 @@ void Func_02000900(struct Counted *object) {
   }
 }
 
-extern struct ActorPlacement gData_02005a54[];
+extern struct ActorPlacement gGaiaRockInside_Room2Placements[];
 
-/* VIEW(s07f4): variable gData_02005ee4 as s32 gData_02005ee4;
- * scene/gaia_rock_inside/s4d00 has u32 gData_02005ee4[] = {; tried as the
- * definition's extern u32 gData_02005ee4[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:439: `gData_02005ee4'
- * undeclared (first use in this function). */
-extern s32 gData_02005ee4__s07f4 __asm__("gData_02005ee4");
-#define gData_02005ee4 gData_02005ee4__s07f4
+extern s32 gData_02005ee4;
 extern s32 gData_02005e28[];
 
 // Return the table for the current room.
 const void *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room2)
-    return gData_02005a54;
+    return gGaiaRockInside_Room2Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room3)
-    return gData_02005afc;
+    return gGaiaRockInside_Room3Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room4)
-    return gData_02005b8c;
+    return gGaiaRockInside_Room4Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room5)
-    return gData_02005c7c;
+    return gGaiaRockInside_Room5Placements;
   if (gMainRoutineWork.entrance > 8)
-    return gData_020059a0;
-  return gData_02005970;
+    return gGaiaRockInside_LairPlacements;
+  return gGaiaRockInside_Placements;
 }
 
 void Func_02000a60(struct Actor *object) {
@@ -756,8 +728,8 @@ void Func_02000cf8(void) { Func_02004ff4_(18, 17, 0, 3, 3, 31, 0); }
 /* VIEW(s07f4): variable gData_020051d8 as const struct CellPoint
  * gData_020051d8[12]; scene/gaia_rock_inside/s4d00 has u16 gData_020051d8[] =
  * {; tried as the definition's extern u16 gData_020051d8[], it does not compile
- * in tla-ja: games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:571:
- * `gData_020051d8' undeclared (first use in this function). */
+ * in tla-ja: games/tla/src/scene/gaia_rock_inside.c:736: `gData_020051d8'
+ * undeclared (first use in this function). */
 extern const struct CellPoint
     gData_020051d8__s07f4[12] __asm__("gData_020051d8");
 #define gData_020051d8 gData_020051d8__s07f4
@@ -817,7 +789,7 @@ void Func_02000d18(void) {
   FieldEvent_SetExitRequest(9);
 }
 
-void Func_02000edc(void) {
+void GaiaRockInside_SusaSaysMoveAside(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgGaiaRockInside05);
@@ -882,26 +854,21 @@ void Func_02000fac(void) {
 #undef FIELD_AT
 
 #undef FIELD_AT
-#undef Actor_StartScript
 #undef gData_020051d8
 #undef gData_02005ee4
-// ---- games/tla/src/scene/gaia_rock_inside/s1048.c ----
-// Scene code of overlay 0x681, in ROM order, from s1048's offset up to the next
-// object the overlay links.
-
 #include "text/msg_ids.h"
 
 /* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4
  * has extern struct Actor gData_0200646c; tried as the one declaration extern
  * s32 gData_0200646c[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:693: conflicting
- * types for `gData_0200646c'. */
+ * games/tla/src/scene/gaia_rock_inside.c:850: conflicting types for
+ * `gData_0200646c'. */
 extern s32 gData_0200646c__s1048[] __asm__("gData_0200646c");
 
 // Object 10 turns to the leader, talks and walks to its place while the camera
 // follows; flag 0x9de is set, and object 9's script decides whether two
 // words of gData_0200646c are copied into place.
-void Func_02001048(void) {
+void GaiaRockInside_MeetSusa(void) {
   struct Actor *object = Actor_Get(9);
 
   Event_Start();
@@ -948,7 +915,7 @@ void Func_02001048(void) {
 // Talking to object 10 while its byte at 0x60 is at most 2: once flag 0x9ac is
 // set it says one of two lines, by whether any of flags 0x9bc to 0x9bf is set;
 // before that it turns to the leader and speaks.
-void Func_020011c8(void) {
+void GaiaRockInside_TalkToSusa(void) {
   if (*((u8 *)Actor_Get(10) + 96) > 2)
     return;
   Event_Start();
@@ -975,10 +942,6 @@ void Func_020011c8(void) {
   Event_End();
 }
 
-// ---- games/tla/src/scene/gaia_rock_inside/s12ac.c ----
-// Scene code of overlay 0x681, in ROM order, from s12ac's offset up to the next
-// object the overlay links.
-
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -986,8 +949,8 @@ void Func_020011c8(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_020012ac(void) {
-  struct Actor *t5;
+void GaiaRockInside_ReadSusasMind(void) {
+  struct Actor *object;
   s32 t2;
 
   Event_Start();
@@ -997,8 +960,8 @@ void Func_020012ac(void) {
     FieldEvent_SetMessageId((s32)MsgGaiaRockInside07);
     Event_ShowMessage(0xa, 0);
   } else {
-    t5 = Actor_Get(9);
-    if (t5->script == (s32)gData_02005610) {
+    object = Actor_Get(9);
+    if (object->script == (s32)gData_02005610) {
       FieldActor_RefreshSelectorById(9);
     }
     Func_02000f00();
@@ -1009,10 +972,6 @@ void Func_020012ac(void) {
   Event_End();
 }
 
-/* VIEW(s12ac): routine Actor_StartScript as s32 Actor_StartScript(); s07f4 has
- * void Actor_StartScript(struct Actor *object, const s32 *script); not tried:
- * Actor_StartScript's bound declaration was not found. */
-extern s32 Func_02004dac__s12ac() __asm__("Actor_StartScript");
 extern u32 gData_02005208[];
 
 void Func_02001314(s32 a0) {
@@ -1028,13 +987,9 @@ void Func_02001314(s32 a0) {
   Actor_SelectAnimation(t0, 1);
   Actor_SetSpriteFlags(t0, 0);
   Actor_SetBlendMode(t0, 1);
-  Func_02004dac__s12ac(t0, (s32)gData_02005208);
+  Actor_StartScript(t0, (s32)gData_02005208);
 }
 #undef FIELD_AT
-
-// ---- games/tla/src/scene/gaia_rock_inside/s136c.c ----
-// Scene code of overlay 0x681, in ROM order, from s136c's offset up to the next
-// object the overlay links.
 
 // Steps an orbiting object around its anchor: turns it by half its speed, puts
 // it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
@@ -1077,10 +1032,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 #undef BYTE_AT
 
-// ---- scene/gaia_rock_inside/s15d0.c ----
-
-// Scene code of overlay 0x681, in ROM order.
-
 #include "text/msg_ids.h"
 
 struct Spark {
@@ -1107,70 +1058,13 @@ struct Spark {
   struct Actor *watchedObject;
 };
 
-/* VIEW(s15d0): variable gData_02005264 as const u8 gData_02005264[];
- * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_02005264(gData_02005264, 24)
- * DEFINE_G_DATA_02005264(gData_02005288, 16)
- * DEFINE_G_DATA_020052AC(gData_020052ac, 24, 0)
- * DEFINE_G_DATA_020052AC(gData_020052dc, 16, 3) u16 gData_0200530c[] = {; tried
- * as the one declaration extern const u8 gData_02005264[], it does not compile
- * in tla-ja: games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:976:
- * `gData_02005264' undeclared (first use in this function). */
-extern const u8 gData_02005264__s15d0[] __asm__("gData_02005264");
-#define gData_02005264 gData_02005264__s15d0
-/* VIEW(s15d0): variable gData_02005218 as const u8 gData_02005218[];
- * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_02005218(gData_02005218) s32
- * gData_02005234[] = {; tried as the one declaration extern const u8
- * gData_02005218[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:997: `gData_02005218'
- * undeclared (first use in this function). */
-extern const u8 gData_02005218__s15d0[] __asm__("gData_02005218");
-#define gData_02005218 gData_02005218__s15d0
+extern u32 gData_02005264[];
+extern u32 gData_02005218[];
 extern s32 gData_02005234[];
-/* VIEW(s15d0): variable gData_02005288 as const u8 gData_02005288[];
- * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_02005264(gData_02005288, 16)
- * DEFINE_G_DATA_020052AC(gData_020052ac, 24, 0)
- * DEFINE_G_DATA_020052AC(gData_020052dc, 16, 3) u16 gData_0200530c[] = {; tried
- * as the one declaration extern const u8 gData_02005288[], it does not compile
- * in tla-ja: games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1040:
- * `gData_02005288' undeclared (first use in this function). */
-extern const u8 gData_02005288__s15d0[] __asm__("gData_02005288");
-#define gData_02005288 gData_02005288__s15d0
-/* VIEW(s15d0): variable gData_02005244 as const u8 gData_02005244[];
- * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_02005244(gData_02005244,
- * Orbit_Update, Actor_AimAtWatched, Actor_StepToWatched)
- * DEFINE_G_DATA_02005264(gData_02005264, 24)
- * DEFINE_G_DATA_02005264(gData_02005288, 16)
- * DEFINE_G_DATA_020052AC(gData_020052ac, 24, 0)
- * DEFINE_G_DATA_020052AC(gData_020052dc, 16, 3) u16 gData_0200530c[] = {; tried
- * as the one declaration extern const u8 gData_02005244[], it does not compile
- * in tla-ja: games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1068:
- * `gData_02005244' undeclared (first use in this function). */
-extern const u8 gData_02005244__s15d0[] __asm__("gData_02005244");
-#define gData_02005244 gData_02005244__s15d0
-/* VIEW(s15d0): variable gData_020052ac as const u8 gData_020052ac[];
- * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_020052AC(gData_020052ac, 24,
- * 0) DEFINE_G_DATA_020052AC(gData_020052dc, 16, 3) u16 gData_0200530c[] = {;
- * tried as the one declaration extern const u8 gData_020052ac[], it does not
- * compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1084:
- * `gData_020052ac' undeclared (first use in this function). */
-extern const u8 gData_020052ac__s15d0[] __asm__("gData_020052ac");
-#define gData_020052ac gData_020052ac__s15d0
-/* VIEW(s15d0): variable gData_020052dc as const u8 gData_020052dc[];
- * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_020052AC(gData_020052dc, 16,
- * 3) u16 gData_0200530c[] = {; tried as the one declaration extern const u8
- * gData_020052dc[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1085:
- * `gData_020052dc' undeclared (first use in this function). */
-extern const u8 gData_020052dc__s15d0[] __asm__("gData_020052dc");
-#define gData_020052dc gData_020052dc__s15d0
-/* VIEW(s15d0): routine Actor_StartScript as void Actor_StartScript(void
- * *object, const u8 *script); scene/gaia_rock_inside/gaia_rock_inside has void
- * Actor_StartScript(struct Actor *object, const u8 *script); not tried:
- * Actor_StartScript's bound declaration was not found. */
-void Actor_StartScript__s15d0(void *object,
-                              const u8 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__s15d0
+extern u32 gData_02005288[];
+extern s32 gData_02005244[];
+extern s32 gData_020052ac[];
+extern s32 gData_020052dc[];
 
 void Func_020015d0(s32 idA, s32 idB) {
   struct Actor *a = Actor_GetById(idA);
@@ -1316,15 +1210,11 @@ third:
 void Actor_MoveToObject(s32 id, s32 target);
 void BlendScript_Suspend(void);
 void BlendScript_Resume(void);
-/* VIEW(s15d0): routine Event_End as s32 Event_End(void); module/scene/scene.h
- * has void Event_End(void); not tried: Event_End's bound declaration was not
- * found. */
-extern s32 Func_02004e64__s15d0(void) __asm__("Event_End");
 
 // The party meets person 11 on the ledge: they talk, the ground shakes, the
 // screen blends out and back while the ledge changes, the party gains the item
 // and person 11 joins the leader (flag 0x9ba).
-s32 Func_020019cc(void) {
+s32 GaiaRockInside_ReadSandTablet(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   /* FAKEMATCH(volatile): the blend level rereads through its slot; as a plain
    * local, 112 of 250 instructions differ in tla-en. */
@@ -1384,7 +1274,7 @@ s32 Func_020019cc(void) {
   }
   BlendScript_Resume();
   Actor_SetPosition(12, 0, 0);
-  Party_LearnAbility(4, 139);
+  Party_LearnAbility(FELIX, ABILITY_SAND);
   Event_SetFlag(0x9ba);
   Actor_SetSpeed(11, 0x13333, 0x9999);
   Actor_SetAnimation(11, 2);
@@ -1397,7 +1287,7 @@ s32 Func_020019cc(void) {
   FieldActor_WaitForMoveById(11);
   Actor_SetPosition(11, 0, 0);
   FieldEvent_Wait(20);
-  return Func_02004e64__s15d0();
+  return Event_EndWithResult();
 }
 
 void Effect_AdvanceMotionLocal(union FieldObject *object) {
@@ -1505,7 +1395,7 @@ void Func_02001d14(void) {
     System_Wait(1);
   }
   BlendScript_Resume();
-  Func_02004e64__s15d0();
+  Event_End();
 }
 
 // Leaving Gaia Rock: after FLAG_SERPENT_SLAIN a message; otherwise sets the
@@ -1514,7 +1404,7 @@ void Func_02001d14(void) {
 // s32: as u16 the scene symbol loads through ldrh and the pools break up.
 #include "text/msg_ids.h"
 
-void Func_02001ebc(void) {
+void GaiaRockInside_ChallengeSerpent(void) {
   s32 count;
 
   if (Event_GetFlag(FLAG_SERPENT_SLAIN)) {
@@ -1547,19 +1437,6 @@ void Func_02001ebc(void) {
   }
 }
 
-#undef Actor_StartScript
-#undef gData_02005218
-#undef gData_02005244
-#undef gData_02005264
-#undef gData_02005288
-#undef gData_020052ac
-#undef gData_020052dc
-// ---- scene/gaia_rock_inside/s1f68.c ----
-
-// Scene code of overlay 0x681, in ROM order.
-
-// ---- games/tla/src/scene/gaia_rock_inside/s1f68.c ----
-
 #include "text/msg_ids.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -1574,19 +1451,19 @@ DEFINE_LEADER_SET_LAYER_BYTE(Leader_SetLayerByte, 2)
 DEFINE_LEADER_SET_LAYER_BYTE(Func_02001f84, 0)
 
 void Func_02001fa0(void) {
-  struct Actor *t0;
+  struct Actor *object;
 
-  t0 = Actor_Get(66);
-  t0->x = 0x2280000;
-  t0->z = 0x1280000;
-  t0->y = -1966080;
-  t0->terrainHeight = -2097152;
+  object = Actor_Get(66);
+  object->x = 0x2280000;
+  object->z = 0x1280000;
+  object->y = -1966080;
+  object->terrainHeight = -2097152;
   Event_ClearFlag(0x142);
   Scene_TalkToActor(0x1042);
 }
 
 // Examines the altar.
-void Func_02001fd8(void) {
+void GaiaRockInside_CheckAltar(void) {
   const u8 *message = MsgCheckedTheAltar;
   const u8 *next;
   s32 owner;
@@ -1607,26 +1484,26 @@ void Func_02001fd8(void) {
 #include "text/msg_ids.h"
 void Actor_MoveToObject(s32 id, s32 target);
 
-void Func_02002020(void) {
+void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   s32 t1, t2, t26, t27, t28, t34, t35, t37, t38, t43, t44, t50, v_r5, v_r6,
       v_r7, v_r8;
-  struct Actor *v_r10;
+  struct Actor *object;
 
   t1 = ((s32)Actor_Get(8));
   v_r7 = t1;
   t2 = ((s32)Actor_Get(9));
   v_r8 = t2;
-  v_r10 = Actor_Get(13);
+  object = Actor_Get(13);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered((s32)&MsgGaiaRockInside01, 1);
   Event_PlaySound(193);
-  Actor_SetSpritePriorityDirect(v_r10, 1);
+  Actor_SetSpritePriorityDirect(object, 1);
   v_r5 = (s32)&gMainRoutineWork;
   v_r5 = (v_r5 + 0x214);
   Actor_MoveToObject(13, FIELD_AT(v_r5, s32, 0));
   Actor_SetDestination(13, 496, 712);
-  v_r10->velocityY = 0x60000;
+  object->velocityY = 0x60000;
   FieldActor_WaitForMoveById(13);
   FieldEvent_Wait(45);
   Actor_FaceActor(8, FIELD_AT(v_r5, s32, 0), 0);
@@ -1700,11 +1577,10 @@ L_0200a1f8:
   Actor_SetAnimation(9, 4);
   FieldEvent_Wait(30);
   t50 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
-  if (t50 == 0)
-    goto L_0200a22e;
-  Actor_SetDestination(13, FIELD_AT(t50, s16, 10), FIELD_AT(t50, s16, 18));
-L_0200a22e:
-  v_r10->velocityY = 0x60000;
+  if (t50 != 0) {
+    Actor_SetDestination(13, FIELD_AT(t50, s16, 10), FIELD_AT(t50, s16, 18));
+  }
+  object->velocityY = 0x60000;
   FieldActor_WaitForMoveById(13);
   Actor_SetPosition(13, 0, 0);
   Event_End();
@@ -1714,7 +1590,7 @@ L_0200a22e:
 // 14: the first object shakes with random vertical speeds, and while the flag
 // of its event (0x9bd, 0x9be, 0x9bc) is clear it moves, two map copies open
 // the way and the partner returns to the leader.
-void Func_0200225c(void) {
+void GaiaRockInside_PlaceDollOnWestAltar(void) {
   struct Actor *object;
   struct Actor *partner;
   struct Actor *leader;
@@ -1802,7 +1678,7 @@ void Func_0200225c(void) {
   }
 }
 
-void Func_020024b8(void) {
+void GaiaRockInside_PlaceDollOnEastAltar(void) {
   struct Actor *object;
   struct Actor *partner;
   struct Actor *leader;
@@ -1890,7 +1766,7 @@ void Func_020024b8(void) {
   }
 }
 
-void Func_02002718(void) {
+void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
   struct Actor *object;
   struct Actor *partner;
   struct Actor *leader;
@@ -1978,15 +1854,7 @@ void Func_02002718(void) {
   }
 }
 
-/* VIEW(s1f68): variable gData_0200530c as const s16 gData_0200530c[][2];
- * scene/gaia_rock_inside/s4d00 has u16 gData_0200530c[] = {; tried as the
- * definition's extern DEFINE_G_DATA_02005244(gData_02005244, Orbit_Update,
- * Actor_AimAtWatched, Actor_StepToWatched)
- * DEFINE_G_DATA_02005264(gData_02005264, ..., it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1790:
- * `gData_0200530c' undeclared (first use in this function). */
-extern const s16 gData_0200530c__s1f68[][2] __asm__("gData_0200530c");
-#define gData_0200530c gData_0200530c__s1f68
+extern s16 gData_0200530c[][2];
 
 // Records which of eleven listed cells persons 10 and 11 stand on, as the two
 // halves of the byte flag 0x210.
@@ -2020,35 +1888,33 @@ void Func_02002a24(void) { Func_02004af0(0xc, 0x304); }
 void Func_02002a34(void) { Func_02004af0(0xd, 0x305); }
 
 extern char SceneId_Ov681Room5;
-extern struct Trigger gData_02005ee8[];
-extern struct Trigger gData_02005f30[];
+extern struct Trigger gGaiaRockInside_Triggers[];
+extern struct Trigger gGaiaRockInside_LairTriggers[];
 extern struct Trigger gData_02005fcc[];
-extern struct Trigger gData_02006038[];
-extern s32 gData_020060f8[];
-extern struct Trigger gData_02006164[];
-extern struct Trigger gData_020061a0[];
+extern struct Trigger gGaiaRockInside_Room2Triggers[];
+extern struct Trigger gGaiaRockInside_Room3Triggers[];
+extern struct Trigger gGaiaRockInside_Room4Triggers[];
+extern struct Trigger gGaiaRockInside_Room5Triggers[];
 
 // Returns the current room's table.
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room2)
-    return gData_02006038;
+    return gGaiaRockInside_Room2Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room3)
-    return gData_020060f8;
+    return gGaiaRockInside_Room3Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room4)
-    return gData_02006164;
+    return gGaiaRockInside_Room4Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room5)
-    return gData_020061a0;
+    return gGaiaRockInside_Room5Triggers;
   if (gMainRoutineWork.entrance == 9)
-    return gData_02005f30;
+    return gGaiaRockInside_LairTriggers;
   if (gMainRoutineWork.entrance > 9)
     return gData_02005fcc;
-  return gData_02005ee8;
+  return gGaiaRockInside_Triggers;
 }
 #undef FIELD_AT
 
 #undef FIELD_AT
-#undef gData_0200530c
-// ---- games/tla/src/scene/gaia_rock_inside/s2ac8.c ----
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -2059,8 +1925,7 @@ const u8 *Scene_GetEvents(void) {
 /* VIEW(s2ac8): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
  * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
  * *Actor_GetById(u32 objectId), which the object already declares, it does not
- * compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1873: too few
+ * compile in tla-ja: games/tla/src/scene/gaia_rock_inside.c:1915: too few
  * arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s2ac8() __asm__("Actor_GetById");
 
@@ -2080,7 +1945,6 @@ void Func_02002ac8(s32 a0, s32 a1) {
 }
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/gaia_rock_inside/s2b04.c ----
 void Func_02002b04(u32 id, s8 mode) {
   struct Actor *object = Actor_Get(id);
 
@@ -2094,7 +1958,6 @@ void Func_02002b04(u32 id, s8 mode) {
   Actor_SetAnimation(id, mode);
 }
 
-// ---- games/tla/src/scene/gaia_rock_inside/s2b58.c ----
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -2105,8 +1968,7 @@ void Func_02002b04(u32 id, s8 mode) {
 /* VIEW(s2b58): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
  * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
  * *Actor_GetById(u32 objectId), which the object already declares, it does not
- * compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1914: too few
+ * compile in tla-ja: games/tla/src/scene/gaia_rock_inside.c:1953: too few
  * arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s2b58() __asm__("Actor_GetById");
 
@@ -2121,7 +1983,6 @@ void Func_02002b58(s32 a0, s32 a1, s32 a2) {
 }
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/gaia_rock_inside/s2b8c.c ----
 // The frame callback of the room where persons 8 to 16 sway: all of them
 // stop while flag 0x106 is set or the event work holds them; otherwise, once
 // per pending step, at frame 60 of every 240 they lean one way and at frame
@@ -2178,27 +2039,16 @@ step:
     goto step;
 }
 
-// ---- scene/gaia_rock_inside/s2cb4.c ----
-
-// Scene code of overlay 0x681, in ROM order.
-
 // Starts the room where persons 8 to 16 sway: unless flag 265 is set, clears
 // the sway state and places each person, then starts the sway's task.
 /* VIEW(s2cb4): variable gSceneState as u16 gSceneState[];
  * games/tla/src/scene/gaia_rock_inside/s2b8c has struct SwayState gSceneState;
  * tried as the 3 declarations' extern struct SceneState gSceneState, it does
- * not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:2005: incompatible
- * types in initialization. */
+ * not compile in tla-ja: games/tla/src/scene/gaia_rock_inside.c:2026:
+ * incompatible types in initialization. */
 extern u16 gSceneState__s2cb4[] __asm__("gSceneState");
 #define gSceneState gSceneState__s2cb4
-/* VIEW(s2cb4): variable gData_0200533c as const s16 gData_0200533c[][2];
- * scene/gaia_rock_inside/s4d00 has u32 gData_0200533c[] = {; tried as the
- * definition's extern u32 gData_0200533c[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:2016:
- * `gData_0200533c' undeclared (first use in this function). */
-extern const s16 gData_0200533c__s2cb4[][2] __asm__("gData_0200533c");
-#define gData_0200533c gData_0200533c__s2cb4
+extern s16 gData_0200533c[][2];
 
 // Starts the room where persons 8 to 16 sway: unless flag 265 is set, clears
 // the sway state and places each person, then starts the sway's task.
@@ -2316,43 +2166,10 @@ struct GaiaRockInsideSceneWork {
   s32 screenEffect;
 };
 
-/* VIEW(s2cb4): variable gData_0200530c as s16 gData_0200530c[][2];
- * games/tla/src/scene/gaia_rock_inside/s1f68 has const s16 gData_0200530c[][2];
- * tried as the definition's extern DEFINE_G_DATA_02005244(gData_02005244,
- * Orbit_Update, Actor_AimAtWatched, Actor_StepToWatched)
- * DEFINE_G_DATA_02005264(gData_02005264, ..., it does not compile in tla-en:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:2712:
- * `gData_0200530c' undeclared (first use in this function). */
-extern s16 gData_0200530c__s2cb4[][2] __asm__("gData_0200530c");
-#define gData_0200530c gData_0200530c__s2cb4
-/* VIEW(s2cb4): variable gData_02005360 as u8 gData_02005360[];
- * scene/gaia_rock_inside/s4d00 has u32 gData_02005360[] = {; tried as the
- * definition's extern u32 gData_02005360[], it does not compile in tla-en:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:2382:
- * `gData_02005360' undeclared (first use in this function). */
-extern u8 gData_02005360__s2cb4[] __asm__("gData_02005360");
-#define gData_02005360 gData_02005360__s2cb4
-/* VIEW(s2cb4): variable gData_0200539c as u8 gData_0200539c[];
- * scene/gaia_rock_inside/s4d00 has u32 gData_0200539c[] = {; tried as the
- * definition's extern u32 gData_0200539c[], it does not compile in tla-en:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:2371:
- * `gData_0200539c' undeclared (first use in this function). */
-extern u8 gData_0200539c__s2cb4[] __asm__("gData_0200539c");
-#define gData_0200539c gData_0200539c__s2cb4
-/* VIEW(s2cb4): variable gData_020053d8 as u8 gData_020053d8[];
- * scene/gaia_rock_inside/s4d00 has u32 gData_020053d8[] = {; tried as the
- * definition's extern u32 gData_020053d8[], it does not compile in tla-en:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:2751:
- * `gData_020053d8' undeclared (first use in this function). */
-extern u8 gData_020053d8__s2cb4[] __asm__("gData_020053d8");
-#define gData_020053d8 gData_020053d8__s2cb4
-/* VIEW(s2cb4): variable gData_0200578c as u8 gData_0200578c[];
- * scene/gaia_rock_inside/s4d00 has s32 gData_0200578c[] = {; tried as the
- * definition's extern s32 gData_0200578c[], it does not compile in tla-en:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:2437:
- * `gData_0200578c' undeclared (first use in this function). */
-extern u8 gData_0200578c__s2cb4[] __asm__("gData_0200578c");
-#define gData_0200578c gData_0200578c__s2cb4
+extern u32 gData_02005360[];
+extern u32 gData_0200539c[];
+extern u32 gData_020053d8[];
+extern s32 gData_0200578c[];
 
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
 s32 __modsi3(s32 numerator, s32 denominator);
@@ -2361,13 +2178,6 @@ void Func_02001c9c(void);
 void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004d00(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-/* VIEW(s2cb4): routine Actor_StartScript as void Actor_StartScript(struct Actor
- * *object, const u8 *script); actor_view.h has void Actor_StartScript(struct
- * Actor *, const s32 *); not tried: Actor_StartScript's bound declaration was
- * not found. */
-void Actor_StartScript__s2cb4(struct Actor *object,
-                              const u8 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__s2cb4
 void BlendScript_Resume(void);
 void BlendScript_Suspend(void);
 void Actor_SetSpritePriorityDirect();
@@ -3059,43 +2869,10 @@ extern char SceneId_Ov681Room2;
 extern char SceneId_Ov681Room3;
 extern char SceneId_Ov681Room4;
 extern char SceneId_Ov681Room5;
-/* VIEW(s2cb4): variable gData_0200530c as s16 gData_0200530c[][2];
- * scene/gaia_rock_inside/s4d00 has u16 gData_0200530c[] = {; tried as the
- * definition's extern DEFINE_G_DATA_02005244(gData_02005244, Orbit_Update,
- * Actor_AimAtWatched, Actor_StepToWatched)
- * DEFINE_G_DATA_02005264(gData_02005264, ..., it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:3452:
- * `gData_0200530c' undeclared (first use in this function). */
-extern s16 gData_0200530c__s2cb4[][2] __asm__("gData_0200530c");
-#define gData_0200530c gData_0200530c__s2cb4
-/* VIEW(s2cb4): variable gData_02005360 as u8 gData_02005360[];
- * scene/gaia_rock_inside/s4d00 has u32 gData_02005360[] = {; tried as the
- * definition's extern u32 gData_02005360[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:3105:
- * `gData_02005360' undeclared (first use in this function). */
-extern u8 gData_02005360__s2cb4[] __asm__("gData_02005360");
-#define gData_02005360 gData_02005360__s2cb4
-/* VIEW(s2cb4): variable gData_0200539c as u8 gData_0200539c[];
- * scene/gaia_rock_inside/s4d00 has u32 gData_0200539c[] = {; tried as the
- * definition's extern u32 gData_0200539c[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:3094:
- * `gData_0200539c' undeclared (first use in this function). */
-extern u8 gData_0200539c__s2cb4[] __asm__("gData_0200539c");
-#define gData_0200539c gData_0200539c__s2cb4
-/* VIEW(s2cb4): variable gData_020053d8 as u8 gData_020053d8[];
- * scene/gaia_rock_inside/s4d00 has u32 gData_020053d8[] = {; tried as the
- * definition's extern u32 gData_020053d8[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:3475:
- * `gData_020053d8' undeclared (first use in this function). */
-extern u8 gData_020053d8__s2cb4[] __asm__("gData_020053d8");
-#define gData_020053d8 gData_020053d8__s2cb4
-/* VIEW(s2cb4): variable gData_0200578c as u8 gData_0200578c[];
- * scene/gaia_rock_inside/s4d00 has s32 gData_0200578c[] = {; tried as the
- * definition's extern s32 gData_0200578c[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:3160:
- * `gData_0200578c' undeclared (first use in this function). */
-extern u8 gData_0200578c__s2cb4[] __asm__("gData_0200578c");
-#define gData_0200578c gData_0200578c__s2cb4
+extern u32 gData_02005360[];
+extern u32 gData_0200539c[];
+extern u32 gData_020053d8[];
+extern s32 gData_0200578c[];
 
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
 s32 __modsi3(s32 numerator, s32 denominator);
@@ -3104,13 +2881,6 @@ void Func_02001c9c(void);
 void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004d00(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-/* VIEW(s2cb4): routine Actor_StartScript as void Actor_StartScript(struct Actor
- * *object, const u8 *script); actor_view.h has void Actor_StartScript(struct
- * Actor *, const s32 *); not tried: Actor_StartScript's bound declaration was
- * not found. */
-void Actor_StartScript__s2cb4(struct Actor *object,
-                              const u8 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__s2cb4
 void Actor_Release();
 void BlendScript_Resume(void);
 void BlendScript_Suspend(void);
@@ -4153,13 +3923,7 @@ void Func_0200485c(s32 direction) {
   Event_PlaySound(123);
 }
 
-/* VIEW(s2cb4): variable gData_020053fc as s8 gData_020053fc[][2];
- * scene/gaia_rock_inside/s4d00 has u32 gData_020053fc[] = {; tried as the
- * definition's extern u32 gData_020053fc[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:3912:
- * `gData_020053fc' undeclared (first use in this function). */
-extern s8 gData_020053fc__s2cb4[][2] __asm__("gData_020053fc");
-#define gData_020053fc gData_020053fc__s2cb4
+extern s8 gData_020053fc[][2];
 
 // From the third state on, for each of the two map layers:
 // Map_CopyRawCellsRect with the state's origin plus the layer's cell, a 15 by
@@ -4271,20 +4035,7 @@ void Func_02004a5c(s32 id, s32 x, s32 y, s32 z) {
   Actor_SetSpriteFlags(object, 0);
 }
 
-/* VIEW(s2cb4): variable gData_020062d4 as const u8 gData_020062d4[];
- * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_020016CC(gData_020062d4) //
- * clang-format on #undef Func_020049e4 #undef Func_020005dc #undef
- * Func_020005f8 #undef Func_02000610 #undef Func_02000678 #undef Func_020006e0
- * #undef Func_020006f8 #undef Func_02000718 #undef Func_02000748 #undef
- * Func_020007f4 #undef Func_020008b4 #undef Func_02000900 #undef Func_02000af8
- * #undef Orbiter_Spiral #undef Orbit_Update #undef Actor_AimAtWatched #undef
- * Actor_StepToWatched #undef Func_020019cc #undef Func_02002974 #undef
- * Func_0200485c; tried as the one declaration extern const u8 gData_020062d4[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:4049:
- * `gData_020062d4' undeclared (first use in this function). */
-extern const u8 gData_020062d4__s2cb4[] __asm__("gData_020062d4");
-#define gData_020062d4 gData_020062d4__s2cb4
+extern s32 gData_020062d4[];
 extern u32 gData_02006290[];
 
 void Func_02004af0(s32 id, s32 flag) {
@@ -4373,21 +4124,8 @@ burst:
 }
 
 #undef gSceneState
-#undef gData_0200530c
-#undef Actor_StartScript
 #undef Func_02000aac
 #undef Func_02000a60
-#undef gData_0200533c
-#undef gData_02005360
-#undef gData_0200539c
-#undef gData_020053d8
-#undef gData_020053fc
-#undef gData_0200578c
-#undef gData_020062d4
-
-// ---- scene/gaia_rock_inside/s4d00.c ----
-
-// Scene code of overlay 0x681, in ROM order.
 
 void Func_02004d00(void) {
   Task_AddFrame((s32)Func_020049e4, TASK_PASS_VBLANK);
@@ -4458,16 +4196,9 @@ DEFINE_G_DATA_020052AC(gData_020052ac, 24, 0)
 
 DEFINE_G_DATA_020052AC(gData_020052dc, 16, 3)
 
-u16 gData_0200530c[] = {
-    0, 0, 113, 47, 115, 47, 115, 45,
-    117, 45, 119, 45, 119, 47, 121, 47,
-    117, 49, 119, 49, 119, 51, 121, 51,
-};
+s16 gData_0200530c[][2] = {{0, 0}, {113, 47}, {115, 47}, {115, 45}, {117, 45}, {119, 45}, {119, 47}, {121, 47}, {117, 49}, {119, 49}, {119, 51}, {121, 51}};
 
-u32 gData_0200533c[] = {
-    0x33002d, 0x35001f, 0x39001f, 0x3b0027, 0x3b0029, 0x3f002b,
-    0x3f002d, 0x450023, 0x450025,
-};
+s16 gData_0200533c[][2] = {{45, 51}, {31, 53}, {31, 57}, {39, 59}, {41, 59}, {43, 63}, {45, 63}, {35, 69}, {37, 69}};
 
 u32 gData_02005360[] = {
     0, 1, 13, 44, 0, 0, 1, 2, 0, 0, 0, 0, 1, 38, 17,
@@ -4485,10 +4216,7 @@ u32 gData_020053e4[] = {
     0x10043f42, 0x1006001e, 0x1008001e, 0x1006001e, 0xfe00001e, 0xffff,
 };
 
-u32 gData_020053fc[] = {
-    0x1010000, 0x1210111, 0xc310131, 0x22311731, 0x2d212d31, 0x2d012d11,
-    0x17012201, 0xc01,
-};
+s8 gData_020053fc[][2] = {{0, 0}, {1, 1}, {17, 1}, {33, 1}, {49, 1}, {49, 12}, {49, 23}, {49, 34}, {49, 45}, {33, 45}, {17, 45}, {1, 45}, {1, 34}, {1, 23}, {1, 12}, {0, 0}};
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,
@@ -4681,12 +4409,12 @@ s32 gData_0200578c[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-struct ActorPlacement gData_02005970[] = {
+struct ActorPlacement gGaiaRockInside_Placements[] = {
     {394, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(104), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020059a0[] = {
+struct ActorPlacement gGaiaRockInside_LairPlacements[] = {
     {148, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(328), FACING_SOUTH, 2, 0},
     {398, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
     {29, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(456), FACING_SOUTH, 2, 0},
@@ -4702,7 +4430,7 @@ u32 gData_02005a30[] = {
     SC_END,
 };
 
-struct ActorPlacement gData_02005a54[] = {
+struct ActorPlacement gGaiaRockInside_Room2Placements[] = {
     {388, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(688), FACING_SOUTH, 2, 0},
     {388, CONDITION_ALWAYS, 1, PIXELS(584), 0, PIXELS(688), FACING_SOUTH, 2, 0},
     {273, CONDITION_ALWAYS, (s32)gData_02005a30, PIXELS(920), 0, PIXELS(360), FACING_SOUTH, 2, 0},
@@ -4712,7 +4440,7 @@ struct ActorPlacement gData_02005a54[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005afc[] = {
+struct ActorPlacement gGaiaRockInside_Room3Placements[] = {
     {388, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(352), FACING_SOUTH, 2, 0},
     {388, CONDITION_ALWAYS, 1, PIXELS(584), 0, PIXELS(352), FACING_SOUTH, 2, 0},
     {385, CONDITION_ALWAYS, 1, PIXELS(528), 0, PIXELS(384), FACING_SOUTH, 2, 0},
@@ -4721,9 +4449,9 @@ struct ActorPlacement gData_02005afc[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_020057C0(gData_02005b8c, 320, 0, 0, 0, 0, 320, 0, 320)
+DEFINE_G_DATA_020057C0(gGaiaRockInside_Room4Placements, 320, 0, 0, 0, 0, 320, 0, 320)
 
-struct ActorPlacement gData_02005c7c[] = {
+struct ActorPlacement gGaiaRockInside_Room5Placements[] = {
     {388, CONDITION_ALWAYS, 1, PIXELS(400), 0, PIXELS(368), FACING_SOUTH, 2, 0},
     {385, CONDITION_ALWAYS, 1, PIXELS(336), 0, PIXELS(408), FACING_SOUTH, 2, 0},
     {372, CONDITION_ALWAYS, 1, PIXELS(680), 0, PIXELS(648), FACING_SOUTH, 2, 0},
@@ -4784,11 +4512,9 @@ s32 gData_02005e28[] = {
     SC_END,
 };
 
-u32 gData_02005ee4[] = {
-    0,
-};
+s32 gData_02005ee4 = 0;
 
-struct Trigger gData_02005ee8[] = {
+struct Trigger gGaiaRockInside_Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_0200485c)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_0200485c)},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Func_0200485c)},
@@ -4797,16 +4523,16 @@ struct Trigger gData_02005ee8[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02005f30[] = {
-    {TRIGGER_RAISED, 42, CONDITION_ALWAYS, EVENT(Func_02000edc)},
+struct Trigger gGaiaRockInside_LairTriggers[] = {
+    {TRIGGER_RAISED, 42, CONDITION_ALWAYS, EVENT(GaiaRockInside_SusaSaysMoveAside)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_STEP, 40, 0x9de, EVENT(Func_02001048)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_020011c8)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, EVENT(Func_020012ac)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_020019cc)},
+    {TRIGGER_STEP, 40, 0x9de, EVENT(GaiaRockInside_MeetSusa)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(GaiaRockInside_TalkToSusa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, EVENT(GaiaRockInside_ReadSusasMind)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(GaiaRockInside_ReadSandTablet)},
     {0x53, 50, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInside11))},
-    {TRIGGER_EXAMINE, 55, CONDITION_ALWAYS, EVENT(Func_02001ebc)},
-    {TRIGGER_EXAMINE, 56, CONDITION_ALWAYS, EVENT(Func_02001ebc)},
+    {TRIGGER_EXAMINE, 55, CONDITION_ALWAYS, EVENT(GaiaRockInside_ChallengeSerpent)},
+    {TRIGGER_EXAMINE, 56, CONDITION_ALWAYS, EVENT(GaiaRockInside_ChallengeSerpent)},
     {0x53, 77, 0xe41, EVENT(Func_02001fa0)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Leader_SetLayerByte)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02001f84)},
@@ -4816,7 +4542,7 @@ struct Trigger gData_02005f30[] = {
 struct Trigger gData_02005fcc[] = {
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_STEP, 42, CONDITION_ALWAYS, EVENT(Func_02001d14)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_020019cc)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(GaiaRockInside_ReadSandTablet)},
     {0x53, 50, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInside11))},
     {TRIGGER_EXAMINE, 55, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInside08))},
     {0x53, 77, 0xe41, EVENT(Func_02001fa0)},
@@ -4825,7 +4551,7 @@ struct Trigger gData_02005fcc[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02006038[] = {
+struct Trigger gGaiaRockInside_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -4836,45 +4562,27 @@ struct Trigger gData_02006038[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {0x21, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_02001fd8)},
-    {0x1c314, 0x40c, CONDITION_ALWAYS, EVENT(Func_02002020)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(GaiaRockInside_CheckAltar)},
+    {0x1c314, 0x40c, CONDITION_ALWAYS, EVENT(GaiaRockInside_PlaceDollOnFirstAltar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_02002974)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT(Func_02002974)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02002974)},
     {TRIGGER_TABLE_END},
 };
 
-s32 gData_020060f8[] = {
-    1,
-    (s32)0xffff0001,
-    1,
-    33,
-    (s32)0xffff0002,
-    2,
-    1,
-    (s32)0xffff0003,
-    3,
-    0,
-    (s32)0xffff000a,
-    (s32)Func_02001fd8,
-    0x1c314,
-    (s32)0xffff040a,
-    (s32)Func_0200225c,
-    0,
-    (s32)0xffff000b,
-    (s32)Func_02001fd8,
-    0x1c314,
-    (s32)0xffff040b,
-    (s32)Func_020024b8,
-    0x50008905,
-    (s32)0xffff0014,
-    (s32)Func_02000b6c,
-    0x50008905,
-    0xffff,
-    0,
+struct Trigger gGaiaRockInside_Room3Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {0x21, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(GaiaRockInside_CheckAltar)},
+    {0x1c314, 0x40a, CONDITION_ALWAYS, EVENT(GaiaRockInside_PlaceDollOnWestAltar)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(GaiaRockInside_CheckAltar)},
+    {0x1c314, 0x40b, CONDITION_ALWAYS, EVENT(GaiaRockInside_PlaceDollOnEastAltar)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 20, CONDITION_ALWAYS, EVENT(Func_02000b6c)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), -1, 0, 0},
 };
 
-struct Trigger gData_02006164[] = {
+struct Trigger gGaiaRockInside_Room4Triggers[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -4882,7 +4590,7 @@ struct Trigger gData_02006164[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020061a0[] = {
+struct Trigger gGaiaRockInside_Room5Triggers[] = {
     {0xce01, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0xce01, 3, CONDITION_ALWAYS, 3},
@@ -4894,8 +4602,8 @@ struct Trigger gData_020061a0[] = {
     {TRIGGER_STEP, 30, 0x303, EVENT(Func_02002a14)},
     {TRIGGER_STEP, 31, 0x304, EVENT(Func_02002a24)},
     {TRIGGER_STEP, 32, 0x305, EVENT(Func_02002a34)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02001fd8)},
-    {0x1c314, 0x409, CONDITION_ALWAYS, EVENT(Func_02002718)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(GaiaRockInside_CheckAltar)},
+    {0x1c314, 0x409, CONDITION_ALWAYS, EVENT(GaiaRockInside_PlaceDollOnRoom5Altar)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40, CONDITION_ALWAYS, EVENT(Func_02000cd8)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41, CONDITION_ALWAYS, EVENT(Func_02000cf8)},
@@ -4936,33 +4644,8 @@ DEFINE_G_DATA_020016CC(gData_020062d4)
 #undef AT
 #undef AT_ADDRESS
 #undef GAIA_ROCK_INSIDE_PATH
-#undef Actor_StartScript
-#undef Actor_StartScript
 #undef gData_02005ee4
 #undef gData_020051d8
-#undef gData_02005264
-#undef gData_02005218
-#undef gData_02005288
-#undef gData_02005244
-#undef gData_020052ac
-#undef gData_020052dc
-#undef Actor_StartScript
-#undef gData_0200530c
 #undef gSceneState
-#undef gData_0200533c
-#undef gData_0200530c
-#undef gData_02005360
-#undef gData_0200539c
-#undef gData_020053d8
-#undef gData_0200578c
-#undef Actor_StartScript
-#undef gData_0200530c
-#undef gData_02005360
-#undef gData_0200539c
-#undef gData_020053d8
-#undef gData_0200578c
-#undef Actor_StartScript
 #undef Func_02000aac
 #undef Func_02000a60
-#undef gData_020053fc
-#undef gData_020062d4

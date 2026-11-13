@@ -1,5 +1,8 @@
 /// @file
-/// The scene code of overlay 0x675, in ROM order.
+/// The Islet Cave, in the rooms of this overlay: logs the party rides across
+/// its water (IsletCave_RideLog), the Venus Djinni Meld and the Mercury Djinni
+/// Serac at the end of their rides (IsletCave_FightMeld, IsletCave_FightSerac),
+/// and the cycling colours of its water (IsletCave_StartSlowPaletteCycle).
 
 #include "shared/actors.h"
 #include "shared/effects.h"
@@ -28,8 +31,6 @@
 #include "shared/tables.h"
 #include "objcmd.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 void Func_02000328(void);
 
 s32 List_CountEntries(u16 *list);
@@ -38,9 +39,9 @@ void PaletteCycle_Fade(void);
 
 void Func_020008c8(void);
 
-void Func_020003b0(void);
+void IsletCave_FightMeld(void);
 
-void Func_020003bc(void);
+void IsletCave_FightSerac(void);
 
 void Func_02000508(void);
 
@@ -156,12 +157,12 @@ void Func_02000328(void) {
 
 #include "text/msg_ids.h"
 
-void Func_020003b0(void) {
+void IsletCave_FightMeld(void) {
   Field_RequestDjinnBattle(15, 12);
   return;
 }
 
-void Func_020003bc(void) {
+void IsletCave_FightSerac(void) {
   Field_RequestDjinnBattle(9, 37);
   return;
 }
@@ -192,49 +193,31 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(first): routine gData_02001548 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02001548__first[] __asm__("gData_02001548");
-#define gData_02001548 gData_02001548__first
-/* VIEW(first): routine gData_02001668 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02001668__first[] __asm__("gData_02001668");
-#define gData_02001668 gData_02001668__first
-/* VIEW(first): routine gData_02001740 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02001740__first[] __asm__("gData_02001740");
-#define gData_02001740 gData_02001740__first
-/* VIEW(first): routine gData_02001788 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02001788__first[] __asm__("gData_02001788");
-#define gData_02001788 gData_02001788__first
-/* VIEW(first): routine gData_02001914 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02001914__first[] __asm__("gData_02001914");
-#define gData_02001914 gData_02001914__first
-/* VIEW(first): routine gData_020019b0 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_020019b0__first[] __asm__("gData_020019b0");
-#define gData_020019b0 gData_020019b0__first
+extern struct ActorPlacement gIsletCave_Placements[];
+extern struct ActorPlacement gIsletCave_Room1Placements[];
+extern struct ActorPlacement gIsletCave_Room2Placements[];
+extern struct Trigger gIsletCave_Triggers[];
+extern struct Trigger gIsletCave_Room2Triggers[];
+extern struct Trigger gIsletCave_Room3Triggers[];
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov675Room1)
-    return gData_02001668;
+    return gIsletCave_Room1Placements;
   if (scene == (s32)&SceneId_Ov675Room2)
-    return gData_02001740;
-  return gData_02001548;
+    return gIsletCave_Room2Placements;
+  return gIsletCave_Placements;
 }
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov675Room2)
-    return gData_02001914;
+    return gIsletCave_Room2Triggers;
   if (scene == (s32)&SceneId_Ov675Room3)
-    return gData_020019b0;
-  return gData_02001788;
+    return gIsletCave_Room3Triggers;
+  return gIsletCave_Triggers;
 }
 
 void Func_020004ac(void) {
@@ -304,11 +287,7 @@ void Func_02000580(s32 scale) {
   } while (i < count);
 }
 
-/* VIEW(first): routine gData_020019ec as this part declared it; the joined file
- * has another. */
-extern const struct IsletCaveEntry
-    gData_020019ec__first[] __asm__("gData_020019ec");
-#define gData_020019ec gData_020019ec__first
+extern struct MapGridCellAnimation gData_020019ec[];
 
 void Func_020005fc(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -334,16 +313,16 @@ loop:
   Sound_Play(158);
   index >>= 1;
   {
-    s32 x = gData_020019ec[index].position[0];
-    /* FAKEMATCH(temporary): position[0] read first and position[1] read
-     * through a pointer from a separate byte offset; as
-     * gData_020019ec[index].position[1] in the call, 4 of 63 instructions
+    s32 x = gData_020019ec[index].x;
+    /* FAKEMATCH(temporary): x read first and y read through a pointer
+     * to x from a separate byte offset; as
+     * gData_020019ec[index].y in the call, 4 of 63 instructions
      * differ in tla-en. */
-    u32 offset = index * sizeof(struct IsletCaveEntry) +
-                 offsetof(struct IsletCaveEntry, position);
+    u32 offset = index * sizeof(struct MapGridCellAnimation) +
+                 offsetof(struct MapGridCellAnimation, x);
     const u16 *position = (const u16 *)((const u8 *)gData_020019ec + offset);
 
-    MapGrid_AnimateCells(gData_020019ec[index].value, x, position[1]);
+    MapGrid_AnimateCells(gData_020019ec[index].steps, x, position[1]);
   }
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
@@ -355,19 +334,11 @@ loop:
   Event_End();
 }
 
-/* VIEW(first): variables gData_0200134c, gData_0200135c and gData_02001388 as
- * this part declared them; the joined file has others. */
-extern u16 gData_0200134c__first[] __asm__("gData_0200134c");
-extern u16 gData_0200135c__first[] __asm__("gData_0200135c");
-extern u16 gData_02001388__first[] __asm__("gData_02001388");
+extern u16 gData_0200134c[];
+extern u16 gData_0200135c[];
+extern u16 gData_02001388[];
 extern u16 gData_020013b4[];
-#define gData_0200134c gData_0200134c__first
-#define gData_0200135c gData_0200135c__first
-#define gData_02001388 gData_02001388__first
-/* VIEW(first): routine gData_02001454 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02001454__first[] __asm__("gData_02001454");
-#define gData_02001454 gData_02001454__first
+extern s32 gData_02001454[];
 
 s32 Scene_Initialize(void) {
   s32 scene, dim;
@@ -501,7 +472,7 @@ void Func_020009ec(void) {
 /* VIEW(islet_cave): tag struct FieldActor as struct FieldActor__islet_cave;
  * field_event.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/scene/islet_cave.c:424: dereferencing pointer to incomplete
+ * games/tla/src/scene/islet_cave.c:486: dereferencing pointer to incomplete
  * type. */
 struct FieldActor__islet_cave {
   u8 unk00[8];
@@ -696,17 +667,9 @@ void Func_02001034(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(islet_cave): routine Field_RequestBattleFromEncounterTable as s32
- * Field_RequestBattleFromEncounterTable(); module/field/event_commands.h has
- * void Field_RequestBattleFromEncounterTable(s32 row, s32 column); tried as the
- * definition's void Field_RequestBattleFromEncounterTable(s32 row, s32 column),
- * which the object already declares, Func_020010ac moves: 1 of 64 instructions
- * in tla-ja. */
-extern s32 Field_RequestBattleFromEncounterTable__islet_cave() __asm__(
-    "Field_RequestBattleFromEncounterTable");
-
 void Func_020010ac(void) {
-  s32 t12, cue;
+  s32 cue;
+  struct Actor *object;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -720,9 +683,10 @@ void Func_020010ac(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   PaletteFade_StartInterpolation(0x3c);
   Event_Wait(60);
-  t12 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
-  if (t12 != 0) {
-    Actor_SetDestinationById(8, FIELD_AT(t12, s16, 10), FIELD_AT(t12, s16, 18));
+  object = Actor_GetById(gMainRoutineWork.currentOwner);
+  if (object != 0) {
+    Actor_SetDestinationById(8, FIELD_AT((u8 *)object, s16, 10),
+                             FIELD_AT((u8 *)object, s16, 18));
   }
   Event_Wait(20);
   FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov675Room3, 2);
@@ -732,7 +696,7 @@ void Func_020010ac(void) {
    * second, as the native does; as Field_RequestBattleFromEncounterTable(0x67,
    * 2), 2 of 64 instructions differ in tla-en. */
   __asm__ volatile("" : "+r"(cue));
-  Field_RequestBattleFromEncounterTable__islet_cave(cue, 2);
+  Field_RequestBattleFromEncounterTable(cue, 2);
   Event_End();
 }
 
@@ -755,45 +719,16 @@ void Func_0200115c(void) {
 #undef DEFINE_ISLET_CAVE_ARRIVE_AT
 #undef DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS
 #undef FIELD_AT
-#undef gData_02001548
-#undef gData_02001668
-#undef gData_02001740
-#undef gData_02001788
-#undef gData_02001914
-#undef gData_020019b0
-#undef gData_020019ec
-#undef gData_0200134c
-#undef gData_0200135c
-#undef gData_02001388
-#undef gData_02001454
 
-/* VIEW(data): routine Func_020003c8 as this part declared it; the joined file
- * has another. */
-void Func_020003c8__data(void) __asm__("Func_020003c8");
-#define Func_020003c8 Func_020003c8__data
-/* VIEW(data): routine Func_020003d4 as this part declared it; the joined file
- * has another. */
-void Func_020003d4__data(void) __asm__("Func_020003d4");
-#define Func_020003d4 Func_020003d4__data
 void Func_02000b4c(void);
 void Func_02000cf0(void);
 
 // clang-format off
-s16 gData_0200134c[] = {
-    9, 10, 11, 12, 13, 14, 15, -1,
-};
+u16 gData_0200134c[] = {9, 10, 11, 12, 13, 14, 15, 65535};
 
-s16 gData_0200135c[] = {
-    23, 25, 22, 23, 25, 22, 23, 25,
-    22, 23, 25, 22, 23, 25, 22, 23,
-    25, 22, 23, 25, 22, -1,
-};
+u16 gData_0200135c[] = {23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 65535};
 
-s16 gData_02001388[] = {
-    30, 27, 31, 22, 21, 31, 20, 18,
-    31, 13, 11, 27, 11, 8, 24, 8,
-    5, 21, 31, 31, 31, -1,
-};
+u16 gData_02001388[] = {30, 27, 31, 22, 21, 31, 20, 18, 31, 13, 11, 27, 11, 8, 24, 8, 5, 21, 31, 31, 31, 65535};
 
 DEFINE_G_DATA_020013B4(gData_020013b4, 14, 9, 10, 11, 12, 13)
 
@@ -850,7 +785,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02001548[] = {
+struct ActorPlacement gIsletCave_Placements[] = {
     {170, 0x9cf, (s32)gData_020013fc, PIXELS(184), 0, PIXELS(184), FACING_SOUTH, 2, 0},
     {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(152), 0, PIXELS(144), FACING_NORTH, 2, 0},
     {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(216), 0, PIXELS(144), FACING_NORTH, 2, 1},
@@ -865,7 +800,7 @@ struct ActorPlacement gData_02001548[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02001668[] = {
+struct ActorPlacement gIsletCave_Room1Placements[] = {
     {298, CONDITION_ALWAYS, 7, PIXELS(168), 0, PIXELS(504), FACING_SOUTH, 2, 0},
     {298, CONDITION_ALWAYS, 7, PIXELS(344), 0, PIXELS(232), FACING_SOUTH, 2, 0},
     {298, CONDITION_ALWAYS, 7, PIXELS(776), 0, PIXELS(152), FACING_SOUTH, 2, 0},
@@ -877,13 +812,13 @@ struct ActorPlacement gData_02001668[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02001740[] = {
+struct ActorPlacement gIsletCave_Room2Placements[] = {
     {252, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(184), FACING_SOUTH, 2, 0},
     {244, 0x55, 1, PIXELS(336), 0, PIXELS(184), FACING_SOUTH, 0, 0},
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_02001788[] = {
+struct Trigger gIsletCave_Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {0x21, 3, CONDITION_ALWAYS, 3},
@@ -913,13 +848,13 @@ struct Trigger gData_02001788[] = {
     {TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(Func_020009d4)},
     {TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(Func_020009e0)},
     {TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(Func_020009ec)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_020003b0)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(IsletCave_FightMeld)},
     {0x9c05, 50, CONDITION_ALWAYS, EVENT(Func_02000508)},
     {0x9c05, 51, CONDITION_ALWAYS, EVENT(Func_02000544)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02001914[] = {
+struct Trigger gIsletCave_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
@@ -931,11 +866,11 @@ struct Trigger gData_02001914[] = {
     {0xc602, 8, CONDITION_ALWAYS, EVENT(Func_020005fc)},
     {0xc602, 10, CONDITION_ALWAYS, EVENT(Func_020005fc)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 8, 0x230, EVENT(Func_0200115c)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_020003bc)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(IsletCave_FightSerac)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020019b0[] = {
+struct Trigger gIsletCave_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_STEP, 10, 0x9cf, EVENT(Func_020010ac)},
     {TRIGGER_TABLE_END},
@@ -947,10 +882,7 @@ s16 gData_020019d4[] = {
 };
 // clang-format on
 
-s32 gData_020019ec[] = {
-    (s32)gData_020019d4, 0x40048, (s32)gData_020019d4, 0x40054,
-    (s32)gData_020019d4, 0x40060, (s32)gData_020019d4, 0x4006b,
-    (s32)gData_020019d4, 0x40076,
+struct MapGridCellAnimation gData_020019ec[] = {
+    {gData_020019d4, 72, 4},  {gData_020019d4, 84, 4},  {gData_020019d4, 96, 4},
+    {gData_020019d4, 107, 4}, {gData_020019d4, 118, 4},
 };
-#undef Func_020003c8
-#undef Func_020003d4

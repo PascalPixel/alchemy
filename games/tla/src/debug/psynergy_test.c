@@ -75,12 +75,6 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object);
 #include "module/window/window.h"
 
 void NameEntry_EditMemberName(s32);
-/* VIEW(psynergy_test): routine MessageArgument_Push as void
- * MessageArgument_Push(s32, s32); module/tla.h has s32 MessageArgument_Push(s32
- * *member, s32 *slot); not tried: MessageArgument_Push's bound declaration was
- * not found. */
-extern void Func_02000df4__psynergy_test(s32,
-                                         s32) __asm__("MessageArgument_Push");
 void Shop_Run(s32, s32);
 void TileCopies_CopyTouchedCells(s32, s32, s32, s32, s32, s32, s32);
 void Message_OpenWindow(s32, s32, s32, s32);
@@ -121,9 +115,9 @@ void MenuTest_BrowseMessageRange(s32 message, s32 count) {
 
   window = Portrait_OpenWindow(206, 0, 0, 0);
   for (i = 0; i < count; i++) {
-    Func_02000df4__psynergy_test(1, 1);
-    Func_02000df4__psynergy_test(5, 2);
-    Func_02000df4__psynergy_test(0x1e240, 5);
+    MessageArgument_Push(1, 1);
+    MessageArgument_Push(5, 2);
+    MessageArgument_Push(0x1e240, 5);
     MenuTest_ShowMessageAndWait(message);
     goto check;
   wait:
@@ -819,7 +813,7 @@ struct Trigger gSceneEvents[] = {
 /* VIEW(s0c4c): tag struct SparkleSprite as struct SparkleSprite__s0c4c;
  * psynergy_test.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/debug/psynergy_test.c:852: structure has no member named
+ * games/tla/src/debug/psynergy_test.c:849: structure has no member named
  * `flag'. */
 struct SparkleSprite__s0c4c {
   u8 unk00[5];
@@ -837,7 +831,7 @@ struct SparkleSprite__s0c4c {
 /* VIEW(s0c4c): tag struct SparkleWork as struct SparkleWork__s0c4c;
  * psynergy_test.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/debug/psynergy_test.c:842: incompatible types in assignment. */
+ * games/tla/src/debug/psynergy_test.c:839: incompatible types in assignment. */
 struct SparkleWork__s0c4c {
   struct SparkleSprite__s0c4c sprites[4];
   u16 unka0;

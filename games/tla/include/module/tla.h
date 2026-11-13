@@ -39,11 +39,6 @@ struct CounterBits {
   u8 rest : 7;
 };
 
-struct ResourceTableEntry {
-  u16 unk0;
-  u16 offset; ///< in bytes; its tile is offset / 32
-};
-
 struct ParticleSprite {
   u8 unk0[8];
   u16 attr;

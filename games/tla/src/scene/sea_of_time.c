@@ -1,3 +1,11 @@
+/// @file
+/// The Sea of Time, the open water before Lemuria: its waves roll in cycles
+/// (SeaOfTime_StartWaves, SeaOfTime_TrackWaves), currents carry the ship
+/// (SeaOfTime_RideCurrent) or sweep it back (SeaOfTime_SweptBack), and a
+/// whirlpool draws it down (SeaOfTime_SinkIntoWhirlpool). The ship's Grind
+/// clears the rocks in its channel one by one (SeaOfTime_GrindFirstRock to
+/// SeaOfTime_GrindLastRock) until it crosses to Lemuria
+/// (SeaOfTime_CrossToLemuria).
 
 #include "../field/object/set_sprite_priority.c"
 
@@ -95,14 +103,10 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 34)
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
-// ---- scene/sea_of_time.c ----
-
 // The Sea of Time, east of Lemuria: currents and swirls that carry the ship
 // round and sweep it back to the entrance, the laps and waves Yepp's songs
 // tell the way by, and rocks Grind breaks; the rest of the overlay is in
 // sea_of_time/.
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 // The Sea of Time's frame callback: rotates two runs of the background palette,
 // pulses the red of colour 15 (or steps it with the alarm), copies the palette
@@ -116,7 +120,7 @@ struct EventWork_02001650 {
 };
 
 extern struct ActorPlacement gSeaOfTime_Room2Placements[];
-extern u32 gSeaOfTime_LapStamp[];
+extern u32 gSeaOfTime_LapStamp;
 
 void SeaOfTime_TrackWaves(void);
 
@@ -190,8 +194,8 @@ extern struct ActorPlacement gSeaOfTime_Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room2)
-    return (const struct ActorPlacement *)gSeaOfTime_Room2Placements;
-  return (const struct ActorPlacement *)gSeaOfTime_Placements;
+    return gSeaOfTime_Room2Placements;
+  return gSeaOfTime_Placements;
 }
 
 void SeaOfTime_CircleSwirl(void) {
@@ -462,39 +466,11 @@ void SeaOfTime_FollowChannel(void) {
 
 #include "text/msg_ids.h"
 
-/* VIEW(sea_of_time): variable gSeaOfTime_LapCount as extern u16
- * gSeaOfTime_LapCount; the definition has u16 gSeaOfTime_LapCount[] = { 0, };
- * tried as the definition's extern u16 gSeaOfTime_LapCount[], it does not
- * compile in tla-ja: games/tla/src/scene/sea_of_time.c:402:
- * `gSeaOfTime_LapCount' has an incomplete type. */
-extern u16 gSeaOfTime_LapCount__sea_of_time __asm__("gSeaOfTime_LapCount");
-/* VIEW(sea_of_time): variable gSeaOfTime_LapTurn as extern s16
- * gSeaOfTime_LapTurn; the definition has u32 gSeaOfTime_LapTurn[] = { 0, };
- * tried as the definition's extern u32 gSeaOfTime_LapTurn[], it does not
- * compile in tla-ja: games/tla/src/scene/sea_of_time.c:403:
- * `gSeaOfTime_LapTurn' has an incomplete type. */
-extern s16 gSeaOfTime_LapTurn__sea_of_time __asm__("gSeaOfTime_LapTurn");
-/* VIEW(sea_of_time): variable gSeaOfTime_LastLapCell as extern u16
- * gSeaOfTime_LastLapCell; the definition has u16 gSeaOfTime_LastLapCell[] = {
- * 0, }; tried as the definition's extern u16 gSeaOfTime_LastLapCell[], it does
- * not compile in tla-ja: games/tla/src/scene/sea_of_time.c:437:
- * `gSeaOfTime_LastLapCell' has an incomplete type. */
-extern u16
-    gSeaOfTime_LastLapCell__sea_of_time __asm__("gSeaOfTime_LastLapCell");
-/* VIEW(sea_of_time): variable gSeaOfTime_LapSpots as extern struct Spots
- * gSeaOfTime_LapSpots; the definition has u16 gSeaOfTime_LapSpots[] = { 0, 672,
- * 0, 704, 0, 896, 0, 320, 0, 512, 0, 192, 0, 320, 0, 416, 0, 320, 0, 832, 0,
- * 96, 0, 160, }; tried as the definition's extern u16 gSeaOfTime_LapSpots[], it
- * does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:441: invalid
- * initializer. */
-extern struct Spots
-    gSeaOfTime_LapSpots__sea_of_time __asm__("gSeaOfTime_LapSpots");
-/* VIEW(sea_of_time): variable gSeaOfTime_LapsNeeded as extern u8
- * gSeaOfTime_LapsNeeded[]; the definition has u32 gSeaOfTime_LapsNeeded[] = {
- * 0x18101810, 0x1810, }; tried as the definition's extern u32
- * gSeaOfTime_LapsNeeded[], SeaOfTime_CountLaps moves: 5 of 188 instructions in
- * tla-ja. */
-extern u8 gSeaOfTime_LapsNeeded__sea_of_time[] __asm__("gSeaOfTime_LapsNeeded");
+extern u16 gSeaOfTime_LapCount;
+extern s16 gSeaOfTime_LapTurn;
+extern u16 gSeaOfTime_LastLapCell;
+extern struct Spots gSeaOfTime_LapSpots;
+extern u8 gSeaOfTime_LapsNeeded[];
 
 // Tracks actor 8 around the ring of cells: counts steps made in one direction,
 // spawning an effect every fourth frame once past 3, and rewards a full count.
@@ -514,15 +490,15 @@ void SeaOfTime_CountLaps(void) {
   stamp = &gSeaOfTime_LapStamp;
 
   if (*frame - *stamp > 50) {
-    gSeaOfTime_LapCount__sea_of_time = 0;
-    gSeaOfTime_LapTurn__sea_of_time = 0;
+    gSeaOfTime_LapCount = 0;
+    gSeaOfTime_LapTurn = 0;
   }
-  last = gSeaOfTime_LastLapCell__sea_of_time;
+  last = gSeaOfTime_LastLapCell;
   now = *(s16 *)(work + 340);
   nowRaw = *(u16 *)(work + 340);
   if (last != now) {
     // Each read below takes its own expression: the native reloads for each.
-    s16 *delta = (s16 *)&gSeaOfTime_LapTurn__sea_of_time;
+    s16 *delta = &gSeaOfTime_LapTurn;
     s32 raw;
     s32 diff;
     u16 *count;
@@ -541,7 +517,7 @@ void SeaOfTime_CountLaps(void) {
     diff = last - now;
     raw = *(u16 *)delta;
     step = (s16)raw;
-    count = &gSeaOfTime_LapCount__sea_of_time;
+    count = &gSeaOfTime_LapCount;
     if (diff == step || now - last == step * 7) {
       (*count)++;
       *stamp = *frame;
@@ -550,11 +526,11 @@ void SeaOfTime_CountLaps(void) {
       *delta = 0;
     }
   }
-  gSeaOfTime_LastLapCell__sea_of_time = *(u16 *)(work + 340);
-  if (gSeaOfTime_LapCount__sea_of_time > 3) {
+  gSeaOfTime_LastLapCell = *(u16 *)(work + 340);
+  if (gSeaOfTime_LapCount > 3) {
     phase = gFrameCount & 3;
     if (phase == 0) {
-      struct Spots spots = gSeaOfTime_LapSpots__sea_of_time;
+      struct Spots spots = gSeaOfTime_LapSpots;
       struct EffectOptions params;
       u32 z;
       u32 x;
@@ -573,13 +549,12 @@ void SeaOfTime_CountLaps(void) {
                         0x120001, p);
     }
   }
-  if (gSeaOfTime_LapCount__sea_of_time ==
-      gSeaOfTime_LapsNeeded__sea_of_time[(u16)index]) {
+  if (gSeaOfTime_LapCount == gSeaOfTime_LapsNeeded[(u16)index]) {
     s32 zero = 0;
 
     ((struct EventWork687 *)work)->unk16a = 200;
-    gSeaOfTime_LapCount__sea_of_time = zero;
-    gSeaOfTime_LapTurn__sea_of_time = zero;
+    gSeaOfTime_LapCount = zero;
+    gSeaOfTime_LapTurn = zero;
   }
 }
 
@@ -598,11 +573,8 @@ void SeaOfTime_TrackWaves(void) {
 
 extern u32 gSeaOfTime_WaveState;
 /* VIEW(s0c94): routine Event_End as s32 Event_End(void); sea_of_time.h has void
- * Event_End(void); tried as the definition's void Event_End(void), which the
- * object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/sea_of_time.c:542: void value not ignored as it ought to
- * be. */
-extern s32 Event_End__s0c94(void) __asm__("Event_End");
+ * Event_End(void); not tried: Event_End's bound declaration was not found. */
+extern s32 Event_EndWithResult(void) __asm__("Event_End");
 
 // Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per
 // channel every 10 frames, then hands the rest of the event to
@@ -658,7 +630,7 @@ s32 SeaOfTime_StartWaves(void) {
   gSeaOfTime_WaveState = 360;
   gSeaOfTime_WaveStartFrame = frame;
   Task_Add(SeaOfTime_TrackWaves, 0x480);
-  return Event_End__s0c94();
+  return Event_EndWithResult();
 }
 
 extern struct SavedColors gSeaOfTime_SavedColors;
@@ -726,7 +698,7 @@ fade:
   /* FAKEMATCH(signature): typed to return s32, passing on Event_End's,
    * though its target Event_End returns nothing; as void, 6 of 150 instructions
    * differ in tla-en. */
-  return Event_End__s0c94();
+  return Event_EndWithResult();
 }
 
 // next object the overlay links.
@@ -1387,15 +1359,16 @@ u32 gFieldEffect_LongScript[] = {
     1, 38, 17,
 };
 
-u32 gSeaOfTime_LapsNeeded[] = {
-    0x18101810, 0x1810,
-};
+u8 gSeaOfTime_LapsNeeded[] = {16, 24, 16, 24, 16, 24};
 
-u16 gSeaOfTime_LapSpots[] = {
-    0, 672, 0, 704, 0, 896, 0, 320,
-    0, 512, 0, 192, 0, 320, 0, 416,
-    0, 320, 0, 832, 0, 96, 0, 160,
-};
+struct Spots gSeaOfTime_LapSpots = {{
+    {PIXELS(672), PIXELS(704)},
+    {PIXELS(896), PIXELS(320)},
+    {PIXELS(512), PIXELS(192)},
+    {PIXELS(320), PIXELS(416)},
+    {PIXELS(320), PIXELS(832)},
+    {PIXELS(96), PIXELS(160)},
+}};
 // clang-format on
 
 const s32 *gFieldEffect_DurationScripts[] = {
@@ -1447,21 +1420,13 @@ struct ActorPlacement gSeaOfTime_Room2Placements[] = {
     {SCENE_TABLE_END},
 };
 
-u16 gSeaOfTime_LastLapCell[] = {
-    0,
-};
+u16 gSeaOfTime_LastLapCell = 0;
 
-u16 gSeaOfTime_LapCount[] = {
-    0,
-};
+u16 gSeaOfTime_LapCount = 0;
 
-u32 gSeaOfTime_LapTurn[] = {
-    0,
-};
+s16 gSeaOfTime_LapTurn = 0;
 
-u32 gSeaOfTime_LapStamp[] = {
-    0,
-};
+u32 gSeaOfTime_LapStamp = 0;
 
 volatile u32 gSeaOfTime_WaveStartFrame = 0;
 

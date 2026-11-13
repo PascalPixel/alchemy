@@ -119,8 +119,6 @@ void Shop_Run(s32 slot, s32 actor);
 void Sanctum_Run(s32 id);
 void Inn_CheckIn(s32 slot, s32 actor);
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 void GarohInteriors_WakeAtInn(void);
 
 void MapGrid_SetShownLayers(s32 value);

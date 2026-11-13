@@ -53,8 +53,6 @@ void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode);
 void LemuriaDock_CyclePalette(void);
 void Event_End(void);
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 extern s16 gLemuriaDock_HouseDoorOpening[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }

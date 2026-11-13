@@ -11,7 +11,7 @@
 struct Actor;
 struct FieldParticle;
 struct ParticleEmitter;
-struct WorkA4Slot;
+struct HangingVineSlot;
 
 s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer);
 u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
@@ -116,6 +116,11 @@ void Rope_Tie(s32 index, s32 a1, s32 a2);
 
 void Rope_Coil(s32 index, s32 a1, s32 a2);
 
+void Rope_Initialize(void);
+s32 Rope_GetState(s32 index);
+void Rope_Place(s32 index, s32 flag, s32 a2, s32 a3);
+void HangingVine_Place(s32 id, s32 force);
+
 void Tightrope_Draw(void);
 void Tightrope_Update(void);
 
@@ -133,7 +138,7 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
 void HangingVine_Draw(void);
 
 void HangingVine_Update(void);
-struct WorkA4Slot *HangingVine_FindSlot(s32 id);
+struct HangingVineSlot *HangingVine_FindSlot(s32 id);
 
 void BattleEffect_DrawSceneSprite(void);
 

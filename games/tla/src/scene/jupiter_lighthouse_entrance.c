@@ -228,12 +228,6 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
 extern s16 gLightSpriteTile;
 extern u32 gLightSpriteActors[];
 
-/* VIEW(first): routine Oam_AddSpriteAtDepthClamped as this part declared it;
- * the joined file has another. */
-void Oam_AddSpriteAtDepthClamped__first(
-    struct LightOam *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
-#define Oam_AddSpriteAtDepthClamped Oam_AddSpriteAtDepthClamped__first
-
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
                           gLightSpriteCount, gLightSpriteActors,
                           gLightSpritesLarge, gLightSpritePriority,
@@ -325,18 +319,12 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 #include "../field/field_effect/move.c"
 
-#undef Oam_AddSpriteAtDepthClamped
 // @file
 // The grounds before Jupiter Lighthouse's gates: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-/* VIEW(cracked_tiles): routine Actor_StartScript as this part declared it; the
- * joined file has another. */
-void Actor_StartScript__cracked_tiles(
-    struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__cracked_tiles
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -488,7 +476,6 @@ void CrackedTile_Fall(struct CellTarget__s14dc *table,
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
 // @file
 // The grounds before Jupiter Lighthouse's gates: the cracked tiles' steps and
 // landings.

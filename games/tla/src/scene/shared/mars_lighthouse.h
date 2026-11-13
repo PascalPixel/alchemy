@@ -643,7 +643,7 @@
 /// The leader slides cell by cell over ice until something stops it.
 #define DEFINE_LEADER_SLIDE_ON_ICE(name, call1, data1, call2, call3, call4)    \
   void name(void) {                                                            \
-    struct Position probe;                                                     \
+    struct Vector3 probe;                                                      \
     s32 startBehavior;                                                         \
     s32 x;                                                                     \
     s32 z;                                                                     \
@@ -652,8 +652,8 @@
     u8 *layer;                                                                 \
     s32 radius;                                                                \
     struct Actor *actor;                                                       \
-    struct Position *position;                                                 \
-    struct Position *next;                                                     \
+    struct Vector3 *position;                                                  \
+    struct Vector3 *next;                                                      \
     s32 heading;                                                               \
     s32 nextBehavior;                                                          \
     s32 distance;                                                              \
@@ -751,7 +751,7 @@
     }                                                                          \
   test:                                                                        \
     {                                                                          \
-      struct Position *step;                                                   \
+      struct Vector3 *step;                                                    \
                                                                                \
       step = &probe;                                                           \
       FieldVector_AddPolarOffset(PIXELS(16), heading, step);                   \
@@ -786,24 +786,24 @@
 /// Leader_SlideOnIce in the direction the leader faces.
 #define DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(name, call1, call2, call3, call4)     \
   void name(void) {                                                            \
-    struct Position probe;                                                     \
+    struct Vector3 probe;                                                      \
     s32 heading;                                                               \
     s32 startBehavior;                                                         \
     s32 x;                                                                     \
     s32 z;                                                                     \
     s32 radius;                                                                \
     struct Actor *actor;                                                       \
-    struct Position *next;                                                     \
+    struct Vector3 *next;                                                      \
     s32 nextBehavior;                                                          \
     u8 *layer;                                                                 \
     struct Actor *other;                                                       \
-    struct Position *position;                                                 \
+    struct Vector3 *position;                                                  \
     u8 *flags;                                                                 \
     s32 i;                                                                     \
     s32 cell;                                                                  \
     s32 angle;                                                                 \
     s32 zero;                                                                  \
-    struct Position *step;                                                     \
+    struct Vector3 *step;                                                      \
     s32 startX;                                                                \
     s32 startZ;                                                                \
                                                                                \

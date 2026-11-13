@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x64b, in ROM order.
-
 #include "shared/actors.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -48,8 +46,6 @@
 #include "shared/tables.h"
 #include "text/msg_ids.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 struct Actor;
 
 /// FieldSprite's byte 0x11 read as its bits.
@@ -66,13 +62,13 @@ struct WorldMapOam {
 
 void Func_020048f4(void);
 
-void Func_02003654(s32 a, s32 b, s32 c);
+void WorldMap_SetCountdownByZ(s32 a, s32 b, s32 c);
 
-void Func_02003bb8(struct Actor *object, s32 mode);
+void Actor_SetFlightMode(struct Actor *object, s32 mode);
 
-void Func_020049bc(void);
+void Gauge_Init(void);
 void Func_02003c3c(void);
-void Func_02004a1c(void);
+void Gauge_End(void);
 
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 
@@ -304,30 +300,15 @@ s32 Func_020003b4(struct Actor *object) {
   return 0;
 }
 
-/* VIEW(first): routine gData_02006338 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02006338__first[] __asm__("gData_02006338");
-#define gData_02006338 gData_02006338__first
-/* VIEW(first): routine gData_02006500 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02006500__first[] __asm__("gData_02006500");
-#define gData_02006500 gData_02006500__first
-/* VIEW(first): routine gData_02006598 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02006598__first[] __asm__("gData_02006598");
-#define gData_02006598 gData_02006598__first
-/* VIEW(first): routine gData_02006700 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02006700__first[] __asm__("gData_02006700");
-#define gData_02006700 gData_02006700__first
-/* VIEW(first): routine gData_02006790 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02006790__first[] __asm__("gData_02006790");
-#define gData_02006790 gData_02006790__first
+extern struct ActorPlacement gData_02006338[];
+extern struct ActorPlacement gData_02006500[];
+extern struct ActorPlacement gData_02006598[];
+extern struct ActorPlacement gData_02006700[];
+extern struct ActorPlacement gData_02006790[];
 
-void Func_02003bf0(void);
+void Leader_Search(void);
 
-u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   switch (gMainRoutineWork.entrance) {
   case 64:
     return gData_02006500;
@@ -356,7 +337,7 @@ void WorldMap_SetUpFlyingShip(void) {
   }
   if (Actor_Get(FieldParty_GetLeaderActor()) != NULL)
     Actor_StartRenderModeScript();
-  Func_02003bf0();
+  Leader_Search();
   if (Event_GetFlag(0x147))
     work[3387] = 0;
   else
@@ -365,7 +346,7 @@ void WorldMap_SetUpFlyingShip(void) {
     Message_CloseFinishedWindows();
     WorldMap_ReloadPendingAreaGraphics();
   }
-  Func_020049bc();
+  Gauge_Init();
   {
     s32 zero;
 
@@ -393,7 +374,7 @@ void WorldMap_SetUpShip(void) {
 
   gMainRoutineWork.renderMode = 7;
   Func_02003c3c();
-  Func_02004a1c();
+  Gauge_End();
   Actor_SetSpriteFlags(Actor_Get(8), 0);
   count = Party_CountMembers();
   pp = 0;
@@ -733,18 +714,15 @@ void Func_02000d4c(void) {
   Event_SetFlag(0xa77);
 }
 
-void Func_02000d98(s32 id) { Func_02003654(id, 63, 62); }
+void Func_02000d98(s32 id) { WorldMap_SetCountdownByZ(id, 63, 62); }
 
-void Func_02000da4(s32 id) { Func_02003654(id, 34, 33); }
+void Func_02000da4(s32 id) { WorldMap_SetCountdownByZ(id, 34, 33); }
 
-void Func_02000db0(s32 id) { Func_02003654(id, 3, 2); }
+void Func_02000db0(s32 id) { WorldMap_SetCountdownByZ(id, 3, 2); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/* VIEW(first): routine gData_0200632c as this part declared it; the joined file
- * has another. */
-extern u8 gData_0200632c__first[] __asm__("gData_0200632c");
-#define gData_0200632c gData_0200632c__first
+extern s32 gData_0200632c[];
 
 s32 Scene_Initialize(void) {
   struct EventWork *work;
@@ -768,7 +746,7 @@ s32 Scene_Initialize(void) {
   wait(1);
   FieldCamera_SetSpeed(0x80000, 0x10000);
   GameFlag_Clear(0x12f);
-  Func_02003960();
+  WorldMap_StartPlacedActors();
   if (GameFlag_Get(0x90f))
     Field_SetWorldMapWindowCellTile(0, 240, 336, 288);
   if (GameFlag_Get(0xa21)) {
@@ -1559,10 +1537,7 @@ refused:
   Event_ClearFlag(0x171);
 }
 
-/* VIEW(first): routine gData_02006bc8 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02006bc8__first[] __asm__("gData_02006bc8");
-#define gData_02006bc8 gData_02006bc8__first
+extern u32 gData_02006bc8[];
 
 /// Spawns object 285 at a random spot with a random scale and starts its
 /// script.
@@ -2128,86 +2103,29 @@ void Func_02003490(void) {
 DEFINE_TILE_SPRITE_RESET(Func_020035e0)
 
 #undef Actor_SetSpriteColorMode
-// ---- scene/world_map/s3600.c ----
+#include "shared/world_map_objects.c"
 
-/* VIEW(s3600): variable gData_02006c08 as struct Actor *gData_02006c08[];
- * module/scene/scene.h has u8 gData_02006c08[]. The three parts after see it so
- * too; tried as the rest of the object declares it, it does not compile in
- * tla-ja: games/tla/src/scene/shared/world_map_s3600.c:8: conflicting types for
- * `gData_02006c08'. */
-extern struct Actor *gData_02006c08__s3600[] __asm__("gData_02006c08");
-#define gData_02006c08 gData_02006c08__s3600
-
-/// Scene code of overlay 0x64b, in ROM order.
-
-#include "shared/world_map_s3600.c"
-
-// ---- scene/world_map/s36a8.c ----
-
-/// Scene code of overlay 0x64b, in ROM order.
-
-#include "shared/world_map_s36a8.c"
-
-// ---- scene/world_map/s3960.c ----
-
-/// Scene code of overlay 0x64b, in ROM order.
-
-#include "shared/world_map_s3960.c"
-
-#undef gData_02006c08
-
-// ---- scene/world_map/cell_index.c ----
-
-/// Scene code of overlay 0x64b, in ROM order.
-
-s32 Func_02003988(s32 x, s32 z) { return x / 0x100000 + (z / 0x100000) * 128; }
-
-s32 Func_020039a8(struct Actor *object) {
-  struct Actor *parent = object->watchedObject;
-  s32 step = ++object->timer;
-  s32 scale;
-
-  if (step > 31)
-    return 0;
-  scale = Iwram_MulQ16(Math_Sin(step << 10), 0x14000);
-  object->scaleX = scale;
-  object->scaleY = scale;
-  object->x = parent->x;
-  object->y += 0x10000;
-  object->z = parent->z;
-  return 1;
-}
-
-// ---- scene/world_map/s39f4.c ----
-
-/// Scene code of overlay 0x64b, in ROM order.
-
-#include "shared/world_map_s39f4.c"
-
-// ---- scene/world_map/s3b38.c ----
-
-/// Scene code of overlay 0x64b, in ROM order.
-
-extern u8 gData_02006f20[];
-extern u8 gData_02006e0e[];
-extern u8 gData_02006e0c[];
-
-DEFINE_ACTOR_FLICKER(Func_02003b38, Func_020039f4)
+DEFINE_ACTOR_FLICKER(Func_02003b38, WorldMap_SpawnSparkPair)
 
 /* VIEW(s3b38): routine gData_02006be4 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA
+ * DEFINE_G_DATA_02003584(gWorldMap_PlacedActorScript, Func_020035e0, 17, 0)
+ * LATE_DATA u32 gData_02006be4[], it does not compile in tla-ja:
+ * games/tla/src/scene/world_map.c:2101: `gData_02006be4' undeclared (first use
+ * in this function). */
 extern s32 gData_02006be4__s3b38 __asm__("gData_02006be4");
 #define gData_02006be4 gData_02006be4__s3b38
 
-DEFINE_ACTOR_CYCLE_CHILD_VALUES(Func_02003b70, gData_02004fc8, gData_02006be4,
-                                Func_02003aac)
+DEFINE_ACTOR_CYCLE_CHILD_VALUES(Actor_CycleChildValues, gData_02004fc8,
+                                gData_02006be4, WorldMap_SpawnParticle)
 
-DEFINE_ACTOR_SET_FLIGHT_MODE(Func_02003bb8, Func_02003b38, Func_02003b70)
+DEFINE_ACTOR_SET_FLIGHT_MODE(Actor_SetFlightMode, Func_02003b38,
+                             Actor_CycleChildValues)
 
-DEFINE_LEADER_SEARCH(Func_02003bf0, Func_02003bb8, WorldMap_GetBlockPlace)
+DEFINE_LEADER_SEARCH(Leader_Search, Actor_SetFlightMode, WorldMap_GetBlockPlace)
 
 void Func_02003c3c(void) {
-  Func_02003bb8(Actor_GetById(Party_GetLeaderActor()), 0);
+  Actor_SetFlightMode(Actor_GetById(Party_GetLeaderActor()), 0);
 }
 
 static inline void QueueBlend(u32 address, u32 value) {
@@ -2407,25 +2325,13 @@ void Func_020042e0(void) {
 
 DEFINE_ACTOR_FLICKER(Func_02004500, Func_02004634)
 
-DEFINE_ACTOR_ANIMATE_AND_EMIT(Func_02004538, Func_02004634)
+DEFINE_ACTOR_ANIMATE_AND_EMIT(Actor_AnimateAndEmit, Func_02004634)
 
-DEFINE_ACTOR_ANIMATE(Func_02004570)
+DEFINE_ACTOR_ANIMATE(Actor_Animate)
 
-DEFINE_ACTOR_GROW_UP(Func_02004598, Actor_Release)
+DEFINE_ACTOR_GROW_UP(Actor_GrowUp, Actor_Release)
 
-DEFINE_ACTOR_GROW_DOWN(Func_020045e4, Actor_Release)
-
-/* VIEW(s3b38): routine Animation_ApplyChildArgument as s32
- * Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
- * actor_view.h has s32 Animation_ApplyChildArgument(struct ActorSpriteView *,
- * s32); tried as the definition's s32 Animation_ApplyChildArgument(struct
- * AnimationGroup *state, s32 flags), it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2358: `Func_020045e4' undeclared (first use
- * in this function). */
-s32 Animation_ApplyChildArgument__s3b38(
-    struct AnimationGroup *state,
-    s32 flags) __asm__("Animation_ApplyChildArgument");
-#define Animation_ApplyChildArgument Animation_ApplyChildArgument__s3b38
+DEFINE_ACTOR_GROW_DOWN(Actor_GrowDown, Actor_Release)
 
 void Func_02004634(struct Actor *parent) {
   struct Actor *pair[2];
@@ -2464,7 +2370,7 @@ void Func_02004634(struct Actor *parent) {
     struct Actor *p = pair[0];
     struct FieldSprite *sp = p->sprite;
 
-    p->update = (void *)Func_020045e4;
+    p->update = (void *)Actor_GrowDown;
     sp->priority = 1;
   }
   {
@@ -2472,38 +2378,23 @@ void Func_02004634(struct Actor *parent) {
     struct FieldSprite *sp = p->sprite;
 
     sp->priority = 1;
-    p->update = (void *)Func_02004598;
+    p->update = (void *)Actor_GrowUp;
     p->priorityFlags = 2;
   }
 }
 
-/* VIEW(s3b38): variable gData_02006e0c as s16 gData_02006e0c;
- * module/scene/scene.h has u8 gData_02006e0c[]; tried as the one declaration
- * extern s16 gData_02006e0c, it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2390: conflicting types for `gData_02006e0c'.
- */
-extern s16 gData_02006e0c__s3b38 __asm__("gData_02006e0c");
-/* VIEW(s3b38): variable gData_02006e0e as s16 gData_02006e0e;
- * module/scene/scene.h has u8 gData_02006e0e[]; tried as the one declaration
- * extern s16 gData_02006e0e, it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2392: conflicting types for `gData_02006e0e'.
- */
-extern s16 gData_02006e0e__s3b38 __asm__("gData_02006e0e");
-/* VIEW(s3b38): variable gData_02006f20 as u8 gData_02006f20[][32];
- * module/scene/scene.h has u8 gData_02006f20[]; tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2396: `gData_02006f20__s3b38' undeclared
- * (first use in this function). */
-extern u8 gData_02006f20__s3b38[][32] __asm__("gData_02006f20");
+extern s16 gData_02006e0c;
+extern s16 gData_02006e0e;
+extern u8 gData_02006f20[][32];
 
-DEFINE_GAUGE_DRAW(Func_02004744, gData_02006e0c__s3b38, Data_02006e20,
-                  gData_02006f20__s3b38, gData_02006e0e__s3b38)
+DEFINE_GAUGE_DRAW(Gauge_Draw, gData_02006e0c, Data_02006e20, gData_02006f20,
+                  gData_02006e0e)
 
 // The world map cursor: counts down while A or B is held, redraws the gauge and
 // queues its sprite over the leader.
 void Func_020048f4(void) {
   u32 *oam = Data_02006e14;
-  s32 tile = gResourceTableEntries[gData_02006e0e__s3b38].offset >> 5;
+  s32 tile = gResourceTableEntries[gData_02006e0e].offset >> 5;
   struct Actor *leader = Actor_Get(FieldParty_GetLeaderActor());
   s32 screen[3];
   u32 attributes;
@@ -2515,7 +2406,7 @@ void Func_020048f4(void) {
       gData_02006e10 = 10;
     }
   }
-  Func_02004744(Party_GetPpRatio());
+  Gauge_Draw(Party_GetPpRatio());
   attributes = 0x80004000;
   Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x), (s32)(screen));
   {
@@ -2529,19 +2420,11 @@ void Func_020048f4(void) {
   Oam_AddSpriteAtDepthClamped(Data_02006e14, 255);
 }
 
-DEFINE_GAUGE_INIT(Func_020049bc, gData_02006f20__s3b38, gData_02006e0e__s3b38,
-                  gData_02006e0c__s3b38, gData_02006e10, Func_020048f4)
+DEFINE_GAUGE_INIT(Gauge_Init, gData_02006f20, gData_02006e0e, gData_02006e0c,
+                  gData_02006e10, Func_020048f4)
 
-DEFINE_GAUGE_END(Func_02004a1c, gData_02006f20__s3b38, gData_02006e0e__s3b38,
-                 gData_02006e0c__s3b38, Func_020048f4)
-
-/* VIEW(s3b38): routine Func_02003418 as void Func_02003418(void);
- * scene/world_map has s32 Func_02003418(struct Actor *object) {; tried as the
- * definition's s32 Func_02003418(struct Actor *object), which the object
- * already declares, Func_020049bc (gone) moves: 26 of 26 instructions in
- * tla-ja. */
-void Func_02003418__s3b38(void) __asm__("Func_02003418");
-#define Func_02003418 Func_02003418__s3b38
+DEFINE_GAUGE_END(Gauge_End, gData_02006f20, gData_02006e0e, gData_02006e0c,
+                 Func_020048f4)
 
 // clang-format off
 u32 gData_02004e38[] = {
@@ -2584,13 +2467,13 @@ s32 gData_02004f70[] = {
     38,
 };
 
-s32 gData_02004f90[] = {
+s32 gWorldMap_SparkScript[] = {
     46,
-    (s32)Func_020039a8,
+    (s32)WorldMap_RiseFromAnchor,
     38,
 };
 
-u32 gData_02004f9c[] = {
+u32 gWorldMap_ParticleScript[] = {
     0, 39, 22, 5, 0, 22,
     7, 0, 0, 1, 38,
 };
@@ -2600,65 +2483,17 @@ u32 gData_02004fc8[] = {
 };
 // clang-format on
 
-#undef Animation_ApplyChildArgument
-#undef Func_02003418
 #undef PUSH_PICTURE
 #undef WORLD_MAP_TRY_ENCOUNTER
 #undef ARM_WEST
 #undef TUTORIAL_SET_MESSAGE
 #undef TUTORIAL_MESSAGE
 #undef Actor_SetSpriteColorMode
-#undef gData_02006338
-#undef gData_02006500
-#undef gData_02006598
-#undef gData_02006700
-#undef gData_02006790
-#undef gData_0200632c
-#undef gData_02006bc8
-#undef gData_02006c08
 #undef gData_02006be4
-#undef Animation_ApplyChildArgument
-#undef Func_02003418
 
 void Func_02000038(void);
-/* VIEW(data): routine TileSprite_Reset as this part declared it; the joined
- * file has another. */
-void TileSprite_Reset__data(void) __asm__("TileSprite_Reset");
-#define TileSprite_Reset TileSprite_Reset__data
-/* VIEW(data): routine Func_02000388 as this part declared it; the joined file
- * has another. */
-void Func_02000388__data(void) __asm__("Func_02000388");
-#define Func_02000388 Func_02000388__data
-/* VIEW(data): routine Func_020003a8 as this part declared it; the joined file
- * has another. */
-void Func_020003a8__data(void) __asm__("Func_020003a8");
-#define Func_020003a8 Func_020003a8__data
-/* VIEW(data): routine Func_020003b4 as this part declared it; the joined file
- * has another. */
-void Func_020003b4__data(void) __asm__("Func_020003b4");
-#define Func_020003b4 Func_020003b4__data
 void WorldMap_BoardShip(void);
 void WorldMap_LeaveShip(void);
-/* VIEW(data): routine Func_02000d98 as this part declared it; the joined file
- * has another. */
-void Func_02000d98__data(void) __asm__("Func_02000d98");
-#define Func_02000d98 Func_02000d98__data
-/* VIEW(data): routine Func_02000da4 as this part declared it; the joined file
- * has another. */
-void Func_02000da4__data(void) __asm__("Func_02000da4");
-#define Func_02000da4 Func_02000da4__data
-/* VIEW(data): routine Func_02000db0 as this part declared it; the joined file
- * has another. */
-void Func_02000db0__data(void) __asm__("Func_02000db0");
-#define Func_02000db0 Func_02000db0__data
-/* VIEW(data): routine Func_020035e0 as this part declared it; the joined file
- * has another. */
-void Func_020035e0__data(void) __asm__("Func_020035e0");
-#define Func_020035e0 Func_020035e0__data
-/* VIEW(data): routine StoryActor_Initialize as this part declared it; the
- * joined file has another. */
-void StoryActor_Initialize__data(void) __asm__("StoryActor_Initialize");
-#define StoryActor_Initialize StoryActor_Initialize__data
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 9850, 0, 9748, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -3035,17 +2870,9 @@ LATE_DATA u32 gData_02006bc8[] = {
     38,
 };
 
-LATE_DATA DEFINE_G_DATA_02003584(gData_02006bd4, Func_020035e0, 17, 0)
+LATE_DATA DEFINE_G_DATA_02003584(gWorldMap_PlacedActorScript, Func_020035e0, 17,
+                                 0)
 
     LATE_DATA u32 gData_02006be4[] = {
         0,
 };
-#undef TileSprite_Reset
-#undef Func_02000388
-#undef Func_020003a8
-#undef Func_020003b4
-#undef Func_02000d98
-#undef Func_02000da4
-#undef Func_02000db0
-#undef Func_020035e0
-#undef StoryActor_Initialize

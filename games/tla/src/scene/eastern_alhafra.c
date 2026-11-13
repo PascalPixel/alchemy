@@ -1,8 +1,4 @@
 /// @file
-/// The scene code of overlay 0x668, in ROM order.
-
-// ---- games/tla/src/scene/eastern_alhafra.c ----
-
 #include "shared/effects.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -39,8 +35,6 @@
 #include "shared/map_cells.h"
 #include "module/field/field.h"
 #include "field_event.h"
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 struct Actor;
 struct RockSprite;
@@ -123,18 +117,9 @@ void Rope_Initialize(void);
 void Tightrope_Initialize(void);
 void MapGrid_SetAttributeBAt();
 
-/* VIEW(eastern_alhafra): routine gData_02004d0c as this part declared it; the
- * joined file has another. */
-extern u8 gData_02004d0c__eastern_alhafra[] __asm__("gData_02004d0c");
-#define gData_02004d0c gData_02004d0c__eastern_alhafra
-/* VIEW(eastern_alhafra): routine gData_02004dbc as this part declared it; the
- * joined file has another. */
-extern u8 gData_02004dbc__eastern_alhafra[] __asm__("gData_02004dbc");
-#define gData_02004dbc gData_02004dbc__eastern_alhafra
-/* VIEW(eastern_alhafra): routine gData_02004fe4 as this part declared it; the
- * joined file has another. */
-extern u8 gData_02004fe4__eastern_alhafra[] __asm__("gData_02004fe4");
-#define gData_02004fe4 gData_02004fe4__eastern_alhafra
+extern s16 gData_02004d0c[];
+extern s16 gEasternAlhafra_Placements[];
+extern s16 gData_02004fe4[];
 
 s32 Actor_HasArrived();
 
@@ -147,7 +132,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 void *Scene_GetPlacements(void) {
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     return gData_02004fe4;
-  return gData_02004dbc;
+  return gEasternAlhafra_Placements;
 }
 
 void Func_0200006c(s32 mode, s32 id) {
@@ -221,23 +206,9 @@ void Func_02000190(s32 unused, s32 id) {
 
 #include "text/msg_ids.h"
 
-/* VIEW(eastern_alhafra): routine gData_02005290 as this part declared it; the
- * joined file has another. */
-extern u8 gData_02005290__eastern_alhafra[] __asm__("gData_02005290");
-#define gData_02005290 gData_02005290__eastern_alhafra
+extern s32 gData_02005290[];
 
-/* VIEW(eastern_alhafra): routine Actor_SelectAnimation as s32
- * Actor_SelectAnimation(); module/scene/scene.h has void
- * Actor_SelectAnimation(struct Actor *object, s32 mode); not tried:
- * Actor_SelectAnimation's bound declaration was not found. */
-extern s32 Func_02004a0c__eastern_alhafra() __asm__("Actor_SelectAnimation");
 s32 Party_FindOwnerWithAction();
-/* VIEW(eastern_alhafra): routine Field_FindNearbyTalkTarget as s32
- * Field_FindNearbyTalkTarget(); module/scene/airs_rock_inside.h has void
- * Field_FindNearbyTalkTarget(void); not tried: Field_FindNearbyTalkTarget's
- * bound declaration was not found. */
-extern s32
-Func_02004bb4__eastern_alhafra() __asm__("Field_FindNearbyTalkTarget");
 void Event_Start();
 void Event_End();
 
@@ -288,13 +259,13 @@ void Func_02000200(s32 mode, s32 id) {
     Event_PlaySound(240);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
-    Func_02004a0c__eastern_alhafra(object, 4);
+    Actor_SelectAnimation(object, 4);
     i = 0;
   create:
     spark = (FieldActor_Create(276, object->x, object->y, object->z));
     sparks[i] = spark;
     spark->scaleX = 0xa666;
-    Func_02004a0c__eastern_alhafra(spark, 1);
+    Actor_SelectAnimation(spark, 1);
     Actor_SetSpriteFlags(spark, 0);
     Event_PlaySound(154);
     System_Wait(5);
@@ -349,10 +320,6 @@ void Func_0200042c(s32 mode, s32 id) {
   if (open)
     EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
 }
-
-// ---- games/tla/src/scene/eastern_alhafra/s0514.c ----
-// Scene code of overlay 0x668, in ROM order, from s0514's offset up to the next
-// object the overlay links.
 
 void Func_0200112c(void);
 /* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct
@@ -417,7 +384,7 @@ void Func_02000514(void) {
 void Func_020006ec(s32 mode) {
   s32 tile;
 
-  tile = Func_02004bb4__eastern_alhafra(gMainRoutineWork.currentOwner);
+  tile = Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner);
   if (tile == 16) {
     Func_02000394(mode, 16);
     if (Leader_CanPushObjectAhead() != 0)
@@ -545,10 +512,7 @@ check:
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/* VIEW(s0514): routine gData_020054f0 as this part declared it; the joined file
- * has another. */
-extern u8 gData_020054f0__s0514[] __asm__("gData_020054f0");
-#define gData_020054f0 gData_020054f0__s0514
+extern u8 gData_020054f0[];
 
 // BG1's wave: each frame the finished table of scanline offsets is handed to
 // an HBlank DMA, while the other table is filled for the next frame.
@@ -594,15 +558,7 @@ void Func_02000af8(void) {
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 #define OBJECT(id) (Actor_Get((id)))
 
-/* VIEW(eastern_alhafra): routine Rope_Place as void Rope_Place();
- * module/scene/mars_lighthouse_aerie.h has void Rope_Place(void); not tried:
- * Rope_Place's bound declaration was not found. */
-extern void Func_02004c2c__eastern_alhafra() __asm__("Rope_Place");
 void Func_020047fc();
-/* VIEW(eastern_alhafra): routine Tightrope_Settle as void Tightrope_Settle();
- * module/scene/mars_lighthouse_aerie.h has void Tightrope_Settle(void); not
- * tried: Tightrope_Settle's bound declaration was not found. */
-extern void Func_02004c94__eastern_alhafra() __asm__("Tightrope_Settle");
 
 s32 Scene_Initialize(void) {
   struct Actor *object;
@@ -683,7 +639,7 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(0x8a6) == 0)
     Func_020040ec(15);
   Rope_Initialize();
-  Func_02004c2c__eastern_alhafra(0, 0x8a3, 8, 9);
+  Rope_Place(0, 0x8a3, 8, 9);
   OBJECT(8)->priorityFlags |= 32;
   OBJECT(9)->priorityFlags |= 32;
   Tightrope_Initialize();
@@ -705,7 +661,7 @@ s32 Scene_Initialize(void) {
     object->motionFlags = flag;
     object->y = 0x100000;
     Tightrope_Place(1, 18, 19);
-    Func_02004c94__eastern_alhafra(1);
+    Tightrope_Settle(1);
     object = OBJECT(20);
     object->collisionFlags |= 8;
     object = OBJECT(21);
@@ -737,77 +693,58 @@ s32 Scene_PrepareMap(void) { return 0; }
        ->v)
 
 void Func_02000fa4(void) {
-  s32 t1, t2, t8, t10, t12, t13, t18, t19, t24, v_r5;
+  struct Actor *object;
 
-  t1 = Event_GetFlag(0x8a6);
-  if (t1 == 0)
-    goto L_02009022;
-  t2 = ((s32)Actor_Get(15));
-  v_r5 = t2;
-  Actor_SetPosition(15, PIXELS(336), PIXELS(536));
-  Actor_SetAnimation(15, 4);
-  FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
-  FIELD_AT(v_r5, u8, 85) = 2;
-  FIELD_AT(v_r5, s32, 40) = 0;
-  FIELD_AT(v_r5, s32, 12) = -0x40000;
-  FIELD_AT(v_r5, s32, 20) = -0x40000;
-  FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 0, 0);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x2100000, 0, 0);
-L_02009022:
-  t8 = Event_GetFlag(0x8a4);
-  if (t8 == 0)
-    goto L_0200903a;
-  Actor_SetPosition(16, 0, 0);
-L_0200903a:
-  t10 = Event_GetFlag(0x8a5);
-  if (t10 == 0)
-    goto L_02009052;
-  Actor_SetPosition(17, 0, 0);
-L_02009052:
-  t12 = Event_GetFlag(0x8a0);
-  if (t12 == 0)
-    goto L_020090a8;
-  t13 = ((s32)Actor_Get(10));
-  v_r5 = t13;
-  Actor_SetPosition(10, PIXELS(504), PIXELS(520));
-  Actor_SetAnimation(10, 2);
-  FIELD_AT(v_r5, u8, 89) = 0;
-  /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
-   * as the listing orders it; without it, 4 of 168 instructions differ in
-   * tla-en. */
-  do {
-  } while (0);
-  FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
-  FieldMapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16),
-                               0, 0);
-  MapGrid_SetAttributeBAt(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0,
-                          128);
-L_020090a8:
-  t18 = Event_GetFlag(0x8a1);
-  if (t18 == 0)
-    goto L_02009100;
-  t19 = ((s32)Actor_Get(11));
-  v_r5 = t19;
-  Actor_SetPosition(11, PIXELS(408), PIXELS(536));
-  Actor_SetAnimation(11, 2);
-  FIELD_AT(v_r5, u8, 89) = 0;
-  /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
-   * as the listing orders it; without it, 4 of 168 instructions differ in
-   * tla-en. */
-  do {
-  } while (0);
-  FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
-  FieldMapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16),
-                               0, 0);
-  MapGrid_SetAttributeBAt(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0,
-                          128);
-L_02009100:
-  t24 = Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED);
-  if (t24 == 0)
-    goto L_02009122;
-  MapGrid_CopyCells(32, 24, 2, 2, 30, 24);
-L_02009122:
+  if (Event_GetFlag(0x8a6)) {
+    object = Actor_Get(15);
+    Actor_SetPosition(15, PIXELS(336), PIXELS(536));
+    Actor_SetAnimation(15, 4);
+    object->priorityFlags |= 2;
+    object->motionFlags = 2;
+    object->velocityY = 0;
+    object->y = -0x40000;
+    object->terrainHeight = -0x40000;
+    FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 0);
+    FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 0, 0);
+    FieldMapGrid_SetCellBehavior(0x1600000, 0x2100000, 0, 0);
+  }
+  if (Event_GetFlag(0x8a4)) {
+    Actor_SetPosition(16, 0, 0);
+  }
+  if (Event_GetFlag(0x8a5)) {
+    Actor_SetPosition(17, 0, 0);
+  }
+  if (Event_GetFlag(0x8a0)) {
+    object = Actor_Get(10);
+    Actor_SetPosition(10, PIXELS(504), PIXELS(520));
+    Actor_SetAnimation(10, 2);
+    object->collisionFlags = 0;
+    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
+     * as the listing orders it; without it, 4 of 168 instructions differ in
+     * tla-en. */
+    do {
+    } while (0);
+    object->priorityFlags |= 2;
+    FieldMapGrid_SetCellBehavior(object->x, object->z, 0, 0);
+    MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
+  }
+  if (Event_GetFlag(0x8a1)) {
+    object = Actor_Get(11);
+    Actor_SetPosition(11, PIXELS(408), PIXELS(536));
+    Actor_SetAnimation(11, 2);
+    object->collisionFlags = 0;
+    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
+     * as the listing orders it; without it, 4 of 168 instructions differ in
+     * tla-en. */
+    do {
+    } while (0);
+    object->priorityFlags |= 2;
+    FieldMapGrid_SetCellBehavior(object->x, object->z, 0, 0);
+    MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
+  }
+  if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
+    MapGrid_CopyCells(32, 24, 2, 2, 30, 24);
+  }
 }
 
 void Func_0200112c(void) {
@@ -919,31 +856,28 @@ void Func_0200112c(void) {
   Actor_SetSpeed(5, 0x13333, 0x9999);
   Actor_SetAnimation(5, 2);
   object0 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object0 == 0)
-    goto L_020094c6;
-  Actor_SetDestination(5, *(s16 *)((u8 *)object0 + 10),
-                       *(s16 *)((u8 *)object0 + 18));
-L_020094c6:
+  if (object0 != 0) {
+    Actor_SetDestination(5, *(s16 *)((u8 *)object0 + 10),
+                         *(s16 *)((u8 *)object0 + 18));
+  }
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
   Actor_SetSpeed(6, 0x13333, 0x9999);
   Actor_SetAnimation(6, 2);
   object1 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object1 == 0)
-    goto L_02009504;
-  Actor_SetDestination(6, *(s16 *)((u8 *)object1 + 10),
-                       *(s16 *)((u8 *)object1 + 18));
-L_02009504:
+  if (object1 != 0) {
+    Actor_SetDestination(6, *(s16 *)((u8 *)object1 + 10),
+                         *(s16 *)((u8 *)object1 + 18));
+  }
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
   Actor_SetSpeed(26, 0x13333, 0x9999);
   Actor_SetAnimation(26, 2);
   object2 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object2 == 0)
-    goto L_02009550;
-  Actor_SetDestination(26, *(s16 *)((u8 *)object2 + 10),
-                       *(s16 *)((u8 *)object2 + 18));
-L_02009550:
+  if (object2 != 0) {
+    Actor_SetDestination(26, *(s16 *)((u8 *)object2 + 10),
+                         *(s16 *)((u8 *)object2 + 18));
+  }
   FieldActor_WaitForMoveById(26);
   Actor_SetPosition(26, 0, 0);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
@@ -963,15 +897,13 @@ void Func_02001574(void) {
   struct Actor *object7;
 
   result0 = Event_GetFlag(FLAG_BRIGGS_CAUGHT);
-  if (result0 != 0)
-    goto L_02009586;
-  goto L_020097dc;
-L_02009586:
+  if (result0 == 0) {
+    goto L_020097dc;
+  }
   result1 = Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED);
-  if (result1 == 0)
-    goto L_02009596;
-  goto L_020097dc;
-L_02009596:
+  if (result1 != 0) {
+    goto L_020097dc;
+  }
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgYouDoPlan);
@@ -981,10 +913,9 @@ L_02009596:
   FieldActor_LaunchFromLeader(5, 16, 0, 0x8000);
   FieldActor_LaunchFromLeader(6, 16, -16, 0x6000);
   result2 = Event_GetFlag(7);
-  if (result2 == 0)
-    goto L_02009604;
-  FieldActor_LaunchFromLeader(7, 8, 16, 0xc000);
-L_02009604:
+  if (result2 != 0) {
+    FieldActor_LaunchFromLeader(7, 8, 16, 0xc000);
+  }
   FieldActor_WaitForMoveById(6);
   Actor_FaceDirection(4, FACING_EAST, 0);
   FieldEvent_Wait(20);
@@ -1008,47 +939,42 @@ L_02009604:
   Actor_ShowEmote(26, 0x106, 30);
   FieldEvent_ShowMessageThenWait(26, 0, 10);
   result3 = Event_GetFlag(7);
-  if (result3 == 0)
-    goto L_02009716;
-  Actor_SetSpeed(7, 0x13333, 0x9999);
-  Actor_SetAnimation(7, 2);
-  object4 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object4 == 0)
-    goto L_02009706;
-  Actor_SetDestination(7, *(s16 *)((u8 *)object4 + 10),
-                       *(s16 *)((u8 *)object4 + 18));
-L_02009706:
-  FieldActor_WaitForMoveById(7);
-  Actor_SetPosition(7, 0, 0);
-L_02009716:
+  if (result3 != 0) {
+    Actor_SetSpeed(7, 0x13333, 0x9999);
+    Actor_SetAnimation(7, 2);
+    object4 = Actor_GetById(gMainRoutineWork.currentOwner);
+    if (object4 != 0) {
+      Actor_SetDestination(7, *(s16 *)((u8 *)object4 + 10),
+                           *(s16 *)((u8 *)object4 + 18));
+    }
+    FieldActor_WaitForMoveById(7);
+    Actor_SetPosition(7, 0, 0);
+  }
   Actor_SetSpeed(5, 0x13333, 0x9999);
   Actor_SetAnimation(5, 2);
   object5 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object5 == 0)
-    goto L_0200974c;
-  Actor_SetDestination(5, *(s16 *)((u8 *)object5 + 10),
-                       *(s16 *)((u8 *)object5 + 18));
-L_0200974c:
+  if (object5 != 0) {
+    Actor_SetDestination(5, *(s16 *)((u8 *)object5 + 10),
+                         *(s16 *)((u8 *)object5 + 18));
+  }
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
   Actor_SetSpeed(6, 0x13333, 0x9999);
   Actor_SetAnimation(6, 2);
   object6 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object6 == 0)
-    goto L_0200978a;
-  Actor_SetDestination(6, *(s16 *)((u8 *)object6 + 10),
-                       *(s16 *)((u8 *)object6 + 18));
-L_0200978a:
+  if (object6 != 0) {
+    Actor_SetDestination(6, *(s16 *)((u8 *)object6 + 10),
+                         *(s16 *)((u8 *)object6 + 18));
+  }
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
   Actor_SetSpeed(26, 0x13333, 0x9999);
   Actor_SetAnimation(26, 2);
   object7 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object7 == 0)
-    goto L_020097c8;
-  Actor_SetDestination(26, *(s16 *)((u8 *)object7 + 10),
-                       *(s16 *)((u8 *)object7 + 18));
-L_020097c8:
+  if (object7 != 0) {
+    Actor_SetDestination(26, *(s16 *)((u8 *)object7 + 10),
+                         *(s16 *)((u8 *)object7 + 18));
+  }
   FieldActor_WaitForMoveById(26);
   Actor_SetPosition(26, 0, 0);
   Event_End();
@@ -1074,10 +1000,9 @@ void Func_020017ec(void) {
   FieldActor_LaunchFromLeader(5, 16, 0, 0x8000);
   FieldActor_LaunchFromLeader(6, 16, -16, 0x6000);
   result0 = Event_GetFlag(7);
-  if (result0 == 0)
-    goto L_02009850;
-  FieldActor_LaunchFromLeader(7, 8, 16, 0xc000);
-L_02009850:
+  if (result0 != 0) {
+    FieldActor_LaunchFromLeader(7, 8, 16, 0xc000);
+  }
   FieldActor_WaitForMoveById(6);
   Actor_FaceDirection(4, 0xc000, 0);
   FieldEvent_Wait(20);
@@ -1085,57 +1010,53 @@ L_02009850:
   FieldEvent_Wait(10);
   Event_OpenMessage(26, 0);
   result1 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (result1 != 0)
-    goto L_020098ea;
-  FieldEvent_Wait(20);
-  Actor_ShowEmote(6, 0x100, 30);
-  FieldEvent_ShowMessageThenWait(6, 0, 10);
-  Actor_FaceDirection(4, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
-  FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(5, 4);
-  FieldEvent_ShowMessageThenWait(5, 0, 10);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
-  goto L_02009938;
-L_020098ea:
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
-  FieldEvent_Wait(40);
-  Actor_SetAnimationAndWait(6, 3);
-  Actor_FaceDirection(4, FACING_NORTHEAST, 0);
-  FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(6, 0, 10);
-  Actor_SetAnimationAndWait(5, 4);
-  FieldEvent_ShowMessageThenWait(5, 0, 10);
-L_02009938:
+  if (result1 == 0) {
+    FieldEvent_Wait(20);
+    Actor_ShowEmote(6, 0x100, 30);
+    FieldEvent_ShowMessageThenWait(6, 0, 10);
+    Actor_FaceDirection(4, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(5, FACING_NORTH, 0);
+    FieldEvent_Wait(10);
+    Actor_SetAnimationAndWait(5, 4);
+    FieldEvent_ShowMessageThenWait(5, 0, 10);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
+  } else {
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
+    FieldEvent_Wait(40);
+    Actor_SetAnimationAndWait(6, 3);
+    Actor_FaceDirection(4, FACING_NORTHEAST, 0);
+    FieldEvent_Wait(20);
+    FieldEvent_ShowMessageThenWait(6, 0, 10);
+    Actor_SetAnimationAndWait(5, 4);
+    FieldEvent_ShowMessageThenWait(5, 0, 10);
+  }
   result2 = ((s32 (*)())GameFlag_Get)(7);
-  if (result2 == 0)
-    goto L_0200996c;
-  Actor_FaceDirection(4, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_NORTHWEST, 0);
-  Actor_FaceDirectionAndWait(6, 0x8000);
-  FieldEvent_Wait(10);
-  goto L_02009a2e;
-L_0200996c:
-  ((s32 (*)())Actor_ShowEmoteById)(26, 0x102, 30);
-  FieldEvent_ShowMessageThenWait(26, 0, 10);
-  Actor_FaceDirection(4, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(6, 0x8000, 0);
-  FieldEvent_Wait(30);
-  Actor_ShowEmote(26, 0x101, 30);
-  Actor_SetAnimationAndWait(26, 4);
-  FieldEvent_ShowMessageThenWait(26, 0, 10);
-  ((s32 (*)())Actor_ShowEmoteById)(26, 0x109, 30);
-  FieldEvent_ShowMessageThenWait(26, 0, 10);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
-  Actor_FaceDirection(6, 0x4000, 0);
-  FieldEvent_Wait(40);
-  Actor_FaceDirection(5, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(6, 0x8000, 0);
-  FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(26, 4);
-  FieldEvent_ShowMessageThenWait(26, 0, 10);
-L_02009a2e:
+  if (result2 != 0) {
+    Actor_FaceDirection(4, FACING_NORTH, 0);
+    Actor_FaceDirection(5, FACING_NORTHWEST, 0);
+    Actor_FaceDirectionAndWait(6, 0x8000);
+    FieldEvent_Wait(10);
+  } else {
+    ((s32 (*)())Actor_ShowEmoteById)(26, 0x102, 30);
+    FieldEvent_ShowMessageThenWait(26, 0, 10);
+    Actor_FaceDirection(4, FACING_NORTH, 0);
+    Actor_FaceDirection(5, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(6, 0x8000, 0);
+    FieldEvent_Wait(30);
+    Actor_ShowEmote(26, 0x101, 30);
+    Actor_SetAnimationAndWait(26, 4);
+    FieldEvent_ShowMessageThenWait(26, 0, 10);
+    ((s32 (*)())Actor_ShowEmoteById)(26, 0x109, 30);
+    FieldEvent_ShowMessageThenWait(26, 0, 10);
+    Actor_FaceDirection(5, FACING_NORTH, 0);
+    Actor_FaceDirection(6, 0x4000, 0);
+    FieldEvent_Wait(40);
+    Actor_FaceDirection(5, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(6, 0x8000, 0);
+    FieldEvent_Wait(10);
+    Actor_SetAnimationAndWait(26, 4);
+    FieldEvent_ShowMessageThenWait(26, 0, 10);
+  }
   FieldEvent_SetMessageId((s32)MsgSoIThink);
   Actor_SetAnimationAndWait(26, 3);
   FieldEvent_Wait(10);
@@ -1146,57 +1067,49 @@ L_02009a2e:
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(10);
   result3 = Event_GetFlag(7);
-  if (result3 == 0)
-    goto L_02009ac2;
-  Actor_SetSpeed(7, 0x13333, 0x9999);
-  Actor_SetAnimation(7, 2);
-  object4 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object4 == 0)
-    goto L_02009ab2;
-  Actor_SetDestination(7, *(s16 *)((u8 *)object4 + 10),
-                       *(s16 *)((u8 *)object4 + 18));
-L_02009ab2:
-  FieldActor_WaitForMoveById(7);
-  Actor_SetPosition(7, 0, 0);
-L_02009ac2:
+  if (result3 != 0) {
+    Actor_SetSpeed(7, 0x13333, 0x9999);
+    Actor_SetAnimation(7, 2);
+    object4 = Actor_GetById(gMainRoutineWork.currentOwner);
+    if (object4 != 0) {
+      Actor_SetDestination(7, *(s16 *)((u8 *)object4 + 10),
+                           *(s16 *)((u8 *)object4 + 18));
+    }
+    FieldActor_WaitForMoveById(7);
+    Actor_SetPosition(7, 0, 0);
+  }
   Actor_SetSpeed(5, 0x13333, 0x9999);
   Actor_SetAnimation(5, 2);
   object5 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object5 == 0)
-    goto L_02009af8;
-  Actor_SetDestination(5, *(s16 *)((u8 *)object5 + 10),
-                       *(s16 *)((u8 *)object5 + 18));
-L_02009af8:
+  if (object5 != 0) {
+    Actor_SetDestination(5, *(s16 *)((u8 *)object5 + 10),
+                         *(s16 *)((u8 *)object5 + 18));
+  }
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
   Actor_SetSpeed(6, 0x13333, 0x9999);
   Actor_SetAnimation(6, 2);
   object6 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object6 == 0)
-    goto L_02009b36;
-  Actor_SetDestination(6, *(s16 *)((u8 *)object6 + 10),
-                       *(s16 *)((u8 *)object6 + 18));
-L_02009b36:
+  if (object6 != 0) {
+    Actor_SetDestination(6, *(s16 *)((u8 *)object6 + 10),
+                         *(s16 *)((u8 *)object6 + 18));
+  }
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
   Actor_SetSpeed(26, 0x13333, 0x9999);
   Actor_SetAnimation(26, 2);
   object7 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object7 == 0)
-    goto L_02009b74;
-  Actor_SetDestination(26, *(s16 *)((u8 *)object7 + 10),
-                       *(s16 *)((u8 *)object7 + 18));
-L_02009b74:
+  if (object7 != 0) {
+    Actor_SetDestination(26, *(s16 *)((u8 *)object7 + 10),
+                         *(s16 *)((u8 *)object7 + 18));
+  }
   FieldActor_WaitForMoveById(26);
   Actor_SetPosition(26, 0, 0);
   Event_End();
   return;
 }
 
-/* VIEW(s0514): routine gData_020056d4 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_020056d4__s0514[] __asm__("gData_020056d4");
-#define gData_020056d4 gData_020056d4__s0514
+extern u32 gData_020056d4[];
 
 void Actor_StartScript(struct SpawnObject *object, const void *script);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority);
@@ -1210,7 +1123,7 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
   object = ((struct SpawnObject *)FieldActor_Create(0x1e8, x, y, z));
   if (object != 0) {
     sprite = object->sprite;
-    Func_02004a0c__eastern_alhafra(object, 1);
+    Actor_SelectAnimation(object, 1);
     Actor_StartScript(object, gData_020056d4);
     Actor_SetSpritePriorityDirect(object, 1);
     object->motionFlags = 0;
@@ -1229,10 +1142,6 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 #undef EVENT_WORK
 #undef OBJECT
 #undef FIELD_AT
-
-// ---- games/tla/src/scene/eastern_alhafra/s1bf4.c ----
-// Scene code of overlay 0x668, in ROM order, from s1bf4's offset up to the next
-// object the overlay links.
 
 /* VIEW(s1bf4): routine Func_02001b9c as s32 Func_02001b9c(s32 x, s32 y, s32 z,
  * s32 rotation, s32 timer); the definition has void Func_02001b9c(s32 x, s32 y,
@@ -2231,10 +2140,6 @@ struct RockWork {
 /// thrown up and out along it.
 DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 
-// ---- scene/eastern_alhafra/s4004.c ----
-
-/// Scene code of overlay 0x668, in ROM order.
-
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
    * instructions differ in tla-en. */
@@ -2288,10 +2193,7 @@ void Func_020040c0(void) {
 // layers there is filled with 255. Returns 1, or 0 for a shape with no
 // footprint.
 
-/* VIEW(s4004): routine gPushFootprints as this part declared it; the joined
- * file has another. */
-extern s8 gPushFootprints__s4004[][4] __asm__("gPushFootprints");
-#define gPushFootprints gPushFootprints__s4004
+extern s8 gPushFootprints[][4];
 
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
@@ -2343,10 +2245,7 @@ s32 Func_020040ec(s32 id) {
 
 #include "../field/map/cellfill.c"
 
-/* VIEW(s4004): routine gPushDirectionSteps as this part declared it; the joined
- * file has another. */
-extern s32 gPushDirectionSteps__s4004[] __asm__("gPushDirectionSteps");
-#define gPushDirectionSteps gPushDirectionSteps__s4004
+extern s32 gPushDirectionSteps[];
 
 static __inline__ s32 CallFunc_02004a64(struct Actor *actor,
                                         struct Vector3 *cell) {
@@ -2422,10 +2321,6 @@ s32 Func_02004240(struct PushState *push) {
 DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds,
                               gPushDirectionSteps, gPushFootprints)
 
-// ---- scene/eastern_alhafra/s44c4.c ----
-
-/// Scene code of overlay 0x668, in ROM order.
-
 struct PushTarget {
   s32 x; ///< 16.16 fixed-point pixels
   s32 y;
@@ -2434,13 +2329,6 @@ struct PushTarget {
   s32 id;
   void (*callback)(void);
 };
-
-/* VIEW(s44c4): variable gPushFootprints as s8 gPushFootprints[];
- * scene/eastern_alhafra/s4004 has s8 gPushFootprints[][4]; tried as the
- * definition's extern u32 gPushFootprints[], it does not compile in tla-ja:
- * games/tla/src/scene/eastern_alhafra.c:2348: conflicting types for
- * `gPushFootprints'. */
-extern s8 gPushFootprints__s44c4[] __asm__("gPushFootprints");
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -2465,14 +2353,13 @@ void Func_020044c4(struct PushTarget target) {
   acceleration = leader->acceleration;
   from[0] = object->x;
   from[2] = object->z;
-  cell[0] = (object->x + (gPushFootprints__s44c4[footprint * 4] << 16)) >> 20;
-  cell[2] =
-      (object->z + (gPushFootprints__s44c4[footprint * 4 + 1] << 16)) >> 20;
-  width = (ABS(gPushFootprints__s44c4[footprint * 4]) +
-           ABS(gPushFootprints__s44c4[footprint * 4 + 2])) >>
+  cell[0] = (object->x + (gPushFootprints[footprint][0] << 16)) >> 20;
+  cell[2] = (object->z + (gPushFootprints[footprint][1] << 16)) >> 20;
+  width = (ABS(gPushFootprints[footprint][0]) +
+           ABS(gPushFootprints[footprint][2])) >>
           4;
-  height = (ABS(gPushFootprints__s44c4[footprint * 4 + 1]) +
-            ABS(gPushFootprints__s44c4[footprint * 4 + 3])) >>
+  height = (ABS(gPushFootprints[footprint][1]) +
+            ABS(gPushFootprints[footprint][3])) >>
            4;
   Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
@@ -2511,8 +2398,8 @@ void Func_020044c4(struct PushTarget target) {
   Event_PlaySound(213);
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
   Actor_SelectAnimation(object, 1);
-  target.x = target.x + (gPushFootprints__s44c4[footprint * 4] << 16);
-  target.z = target.z + (gPushFootprints__s44c4[footprint * 4 + 1] << 16);
+  target.x = target.x + (gPushFootprints[footprint][0] << 16);
+  target.z = target.z + (gPushFootprints[footprint][1] << 16);
   target.x >>= 20;
   target.z >>= 20;
   originX = *(s32 *)(map + 328) >> 20;
@@ -2521,8 +2408,8 @@ void Func_020044c4(struct PushTarget target) {
                              originX + target.x, originZ + target.z);
   Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
   Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
-  cell[0] = (from[0] + (gPushFootprints__s44c4[footprint * 4] << 16)) >> 20;
-  cell[2] = (from[2] + (gPushFootprints__s44c4[footprint * 4 + 1] << 16)) >> 20;
+  cell[0] = (from[0] + (gPushFootprints[footprint][0] << 16)) >> 20;
+  cell[2] = (from[2] + (gPushFootprints[footprint][1] << 16)) >> 20;
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
@@ -2575,48 +2462,8 @@ DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
 #undef FIELD_AT
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
-#undef gData_02004d0c
-#undef gData_02004dbc
-#undef gData_02004fe4
-#undef gData_02005290
-#undef gData_020054f0
-#undef gData_020056d4
-#undef gPushFootprints
-#undef gPushDirectionSteps
 #include "text/msg_ids.h"
 
-/* VIEW(data): routine Func_0200006c as this part declared it; the joined file
- * has another. */
-void Func_0200006c__data(void) __asm__("Func_0200006c");
-#define Func_0200006c Func_0200006c__data
-/* VIEW(data): routine Func_020000c8 as this part declared it; the joined file
- * has another. */
-void Func_020000c8__data(void) __asm__("Func_020000c8");
-#define Func_020000c8 Func_020000c8__data
-/* VIEW(data): routine Func_02000190 as this part declared it; the joined file
- * has another. */
-void Func_02000190__data(void) __asm__("Func_02000190");
-#define Func_02000190 Func_02000190__data
-/* VIEW(data): routine Func_02000200 as this part declared it; the joined file
- * has another. */
-void Func_02000200__data(void) __asm__("Func_02000200");
-#define Func_02000200 Func_02000200__data
-/* VIEW(data): routine Func_02000394 as this part declared it; the joined file
- * has another. */
-void Func_02000394__data(void) __asm__("Func_02000394");
-#define Func_02000394 Func_02000394__data
-/* VIEW(data): routine Func_0200042c as this part declared it; the joined file
- * has another. */
-void Func_0200042c__data(void) __asm__("Func_0200042c");
-#define Func_0200042c Func_0200042c__data
-/* VIEW(data): routine Func_020006ec as this part declared it; the joined file
- * has another. */
-void Func_020006ec__data(void) __asm__("Func_020006ec");
-#define Func_020006ec Func_020006ec__data
-/* VIEW(data): routine Func_02000940 as this part declared it; the joined file
- * has another. */
-void Func_02000940__data(void) __asm__("Func_02000940");
-#define Func_02000940 Func_02000940__data
 void Func_02000958(void);
 
 // clang-format off
@@ -2624,16 +2471,15 @@ u16 gPushKinds[] = {
     258, 259, 293, 294, 332, 331,
 };
 
-u32 gPushFootprints[] = {
-    0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
+s8 gPushFootprints[][4] = {
+    {-32, -8, 32, 8},  {-8, -32, 8, 32}, {-32, -16, 32, 0},
+    {-8, -32, 8, 32},  {-32, -8, 32, 8},  {-8, -32, 8, 32},
 };
 
-s16 gPushDirectionSteps[] = {
-    0, 16, 0, 16, 0, 16, 16, 0,
-    16, 0, 16, 0, 16, 0, 0, -16,
-    0, -16, 0, -16, 0, -16, -16, 0,
-    -16, 0, -16, 0, -16, 0, 0, 16,
-    10, -1,
+s32 gPushDirectionSteps[] = {
+    0x100000, 0x100000, 0x100000, 0x10, 0x10, 0x10,
+    0x10, 0xfff00000, 0xfff00000, 0xfff00000, 0xfff00000, 0xfff0,
+    0xfff0, 0xfff0, 0xfff0, 0x100000, 0xffff000a,
 };
 
 s16 gData_02004d0c[] = {
@@ -2656,7 +2502,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-s16 gData_02004dbc[] = {
+s16 gEasternAlhafra_Placements[] = {
     407, -1, 1, 0, 0, 280, 0, 0,
     0, 232, FACING_SOUTH, 2, 407, -1, 1, 0,
     0, 376, 0, 0, 0, 232, FACING_SOUTH, 258,
@@ -2801,7 +2647,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gData_020054f0[] = {
+u8 gData_020054f0[] = {
     0,
 };
 
@@ -2847,11 +2693,3 @@ s32 gData_02005670[] = {
 u32 gData_020056d4[] = {
     38,
 };
-#undef Func_0200006c
-#undef Func_020000c8
-#undef Func_02000190
-#undef Func_02000200
-#undef Func_02000394
-#undef Func_0200042c
-#undef Func_020006ec
-#undef Func_02000940

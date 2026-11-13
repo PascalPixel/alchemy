@@ -51,7 +51,7 @@ void Weather_UpdateRain(void) {
       particle->tile = work->tile;
       particle->shape = 1;
       particle->size = 2;
-      Func_080140d8__visual_attributes(particle, 240);
+      Oam_AddSpriteAtDepthClamped(particle, 240);
     }
     if (particle->timer == 0) {
       s32 *focus = *(s32 **)map;

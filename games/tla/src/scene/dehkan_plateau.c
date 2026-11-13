@@ -1,5 +1,15 @@
 /// @file
-/// The scene code of overlay 0x655, in ROM order.
+/// The Dehkan Plateau, the cliffs and caves of Indra between Daila and the East
+/// Indra Shore, in seven rooms that share this overlay. Its floors are cracked:
+/// the first step on a crack opens it, the next drops the leader through to the
+/// cave below (DehkanPlateau_StepOnCrack), and each room puts back the cracks
+/// its flags remember (DehkanPlateau_RestoreRoom1Cracks). Grey pillars crumble
+/// once stood on (CrumblingPillars_Step), and the Mars Djinni Cannon runs ahead
+/// of the party room by room, cracking floors, crumbling pillars and casting
+/// Pound (DehkanPlateau_CannonCrumblesPillars), until a fall lands the leader
+/// beside it and it drops the Pound Cube (DehkanPlateau_CannonDropsPoundCube);
+/// cornered at last behind a cone the party Pounds flat, it fights
+/// (DehkanPlateau_FightCannon).
 
 #include "types.h"
 #include "system/system.h"
@@ -118,26 +128,26 @@ void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer) {
     object->priorityFlags = bits;
     switch (mode) {
     case 0:
-      Func_02003ba0(object, 2);
+      Actor_SelectAnimation(object, 2);
       break;
     case 1:
-      Func_02003ba0(object, 4);
+      Actor_SelectAnimation(object, 4);
       break;
     case 2:
-      Func_02003ba0(object, 6);
+      Actor_SelectAnimation(object, 6);
       break;
     }
   } else {
     cell->collisionCode = 255;
     switch (mode) {
     case 0:
-      Func_02003ba0(object, 1);
+      Actor_SelectAnimation(object, 1);
       break;
     case 1:
-      Func_02003ba0(object, 3);
+      Actor_SelectAnimation(object, 3);
       break;
     case 2:
-      Func_02003ba0(object, 5);
+      Actor_SelectAnimation(object, 5);
       break;
     }
   }
@@ -175,7 +185,7 @@ void CrumblingPillars_Place(const void *data) {
         *shapeCell = MapCollision_FindOrAddTag(object->terrainId, shape,
                                                (terrainHeight >> 19) + 4);
         if (GameFlag_Get(flag))
-          Func_02003ba0(object, 0);
+          Actor_SelectAnimation(object, 0);
       }
       list += 2;
     } while (list[0] != 0xffff);
@@ -217,7 +227,7 @@ void CrumblingPillars_Step(u16 *list) {
         Sound_Play(125);
         Actor_SetSpriteColor(Actor_GetById(id), 7);
         wait(2);
-        Func_02003ba0(target, 0);
+        Actor_SelectAnimation(target, 0);
         Actor_SetSpriteColor(Actor_GetById(id), 0);
         wait(2);
         Actor_SetSpriteColor(Actor_GetById(id), 7);
@@ -235,7 +245,7 @@ void CrumblingPillars_Step(u16 *list) {
           MapGrid_SetShake(0x10000, 0x40000, 0x10000);
           Rubble_Spray(0);
           wait(8);
-          Func_02003ba0(target, 2);
+          Actor_SelectAnimation(target, 2);
           Leader_SetCellShapeAt(-2, target->terrainId);
           Rubble_Spray(1);
           wait(16);
@@ -284,7 +294,7 @@ loop:
     MapGrid_SetShake(0x10000, 0x40000, 0x10000);
     Rubble_Spray(0);
     wait(8);
-    Func_02003ba0(object, 2);
+    Actor_SelectAnimation(object, 2);
     Actor_SetCellShape(-4, object->terrainId, id);
     Rubble_Spray(1);
     wait(16);
@@ -305,63 +315,10 @@ test:
     goto loop;
 }
 
-/* VIEW(first): routine gData_02003f44 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003f44__first[] __asm__("gData_02003f44");
-#define gData_02003f44 gData_02003f44__first
-/* VIEW(first): routine gData_02003f52 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003f52__first[] __asm__("gData_02003f52");
-#define gData_02003f52 gData_02003f52__first
-/* VIEW(first): routine gData_02003f80 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003f80__first[] __asm__("gData_02003f80");
-#define gData_02003f80 gData_02003f80__first
-/* VIEW(first): routine gData_02003f92 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003f92__first[] __asm__("gData_02003f92");
-#define gData_02003f92 gData_02003f92__first
-/* VIEW(first): routine gData_02003f98 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003f98__first[] __asm__("gData_02003f98");
-#define gData_02003f98 gData_02003f98__first
-/* VIEW(first): routine gData_02003fa0 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003fa0__first[] __asm__("gData_02003fa0");
-#define gData_02003fa0 gData_02003fa0__first
-/* VIEW(first): routine gData_02003fa8 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003fa8__first[] __asm__("gData_02003fa8");
-#define gData_02003fa8 gData_02003fa8__first
-/* VIEW(first): routine gData_02003fb0 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003fb0__first[] __asm__("gData_02003fb0");
-#define gData_02003fb0 gData_02003fb0__first
-/* VIEW(first): routine gData_02003fb8 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003fb8__first[] __asm__("gData_02003fb8");
-#define gData_02003fb8 gData_02003fb8__first
-/* VIEW(first): routine gData_02003fc0 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003fc0__first[] __asm__("gData_02003fc0");
-#define gData_02003fc0 gData_02003fc0__first
-/* VIEW(first): routine gData_02003fc4 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003fc4__first[] __asm__("gData_02003fc4");
-#define gData_02003fc4 gData_02003fc4__first
+extern s16 gData_02003f44[];
 
 void Func_02002180(void);
 void Func_02001804(void);
-
-/* VIEW(first): routine gData_02003fd2 as this part declared it; the joined file
- * has another. */
-extern const u16 gData_02003fd2__first[] __asm__("gData_02003fd2");
-#define gData_02003fd2 gData_02003fd2__first
-/* VIEW(first): routine gData_02004066 as this part declared it; the joined file
- * has another. */
-extern const struct CellRecord
-    gData_02004066__first[] __asm__("gData_02004066");
-#define gData_02004066 gData_02004066__first
 
 void CrumblingPillar_Prepare(s32 id) {
   Actor_GetById(id)->unk5c[0] = 3;
@@ -464,13 +421,13 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
       flag = list[1];
       Event_Start();
       if (GameFlag_Get(flag) == 0) {
-        Func_02003ba0(helper, 1);
+        Actor_SelectAnimation(helper, 1);
         Actor_TakePlaceOf(helper, target);
         wait(1);
         Sound_Play(125);
         Actor_SetSpriteColor(Actor_GetById(8), 7);
         wait(2);
-        Func_02003ba0(helper, 0);
+        Actor_SelectAnimation(helper, 0);
         Actor_CopyGraphics(id, 9);
         Actor_SetSpriteColor(Actor_GetById(8), 0);
         wait(2);
@@ -486,7 +443,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
         s32 result = GameFlag_Get(done);
 
         if (result == 0) {
-          Func_02003ba0(helper, 0);
+          Actor_SelectAnimation(helper, 0);
           Actor_TakePlaceOf(helper, target);
           wait(1);
           leader->motionFlags = result;
@@ -494,7 +451,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
           MapGrid_SetShake(0x10000, 0x40000, 0x10000);
           Rubble_Spray(0);
           wait(8);
-          Func_02003ba0(helper, 2);
+          Actor_SelectAnimation(helper, 2);
           Leader_SetCellShapeAt(-2, target->terrainId);
           Rubble_Spray(1);
           wait(16);
@@ -523,10 +480,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-/* VIEW(first): routine gData_02003e00 as this part declared it; the joined file
- * has another. */
-extern const s32 gData_02003e00__first[] __asm__("gData_02003e00");
-#define gData_02003e00 gData_02003e00__first
+extern s32 gData_02003e00[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
@@ -552,7 +506,7 @@ void Rubble_Spray(s32 spread) {
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
-      Func_02003ba0(effect, 2);
+      Actor_SelectAnimation(effect, 2);
       Actor_StartScript(effect, gData_02003e00);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
@@ -573,10 +527,7 @@ void Rubble_Spray(s32 spread) {
   } while (i <= 7);
 }
 
-/* VIEW(first): routine gData_02003e30 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003e30__first[] __asm__("gData_02003e30");
-#define gData_02003e30 gData_02003e30__first
+extern u32 gData_02003e30[];
 
 void Rubble_Burst(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -598,7 +549,7 @@ void Rubble_Burst(void) {
       object->motionFlags = 0;
       object->collisionFlags = 0;
       Actor_SetSpriteFlags(object, 0);
-      Func_02003ba0(object, 2);
+      Actor_SelectAnimation(object, 2);
       Actor_StartScript(object, gData_02003e30);
       effect->velocityX = Trig_Cos(i << 12);
       effect->velocityY = 0;
@@ -684,97 +635,33 @@ DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
 #include "../field/field_effect/move.c"
 
 #undef HELD_OBJECT
-#undef gData_02003f44
-#undef gData_02003f52
-#undef gData_02003f80
-#undef gData_02003f92
-#undef gData_02003f98
-#undef gData_02003fa0
-#undef gData_02003fa8
-#undef gData_02003fb0
-#undef gData_02003fb8
-#undef gData_02003fc0
-#undef gData_02003fc4
-#undef gData_02003fd2
-#undef gData_02004066
-#undef gData_02003e00
-#undef gData_02003e30
 // @file
-// Scene code of overlay 0x655, in ROM order.
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
-#define EFFECT_SET_MODE Func_02003ba0
+#define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect/spawn.c"
 
 #undef EFFECT_SET_SCRIPT
 
-// ---- scene/dehkan_plateau/dehkan_plateau.c ----
-
-// Scene code of overlay 0x655, in ROM order.
-
-// ---- games/tla/src/scene/dehkan_plateau.c ----
-
 void Actor_DisableById(s32 id);
 
-/* VIEW(dehkan_plateau): routine gData_02003fd2 as this part declared it; the
- * joined file has another. */
-extern const u16 gData_02003fd2__dehkan_plateau[] __asm__("gData_02003fd2");
-#define gData_02003fd2 gData_02003fd2__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02004066 as this part declared it; the
- * joined file has another. */
-extern const struct CellRecord
-    gData_02004066__dehkan_plateau[] __asm__("gData_02004066");
-#define gData_02004066 gData_02004066__dehkan_plateau
+extern u16 gDehkanPlateau_Room1CrackPictures[];
+extern u16 gDehkanPlateau_Room1Cracks[][6];
 
-/* VIEW(dehkan_plateau): routine gData_02003f44 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02003f44__dehkan_plateau[] __asm__("gData_02003f44");
-#define gData_02003f44 gData_02003f44__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003f52 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02003f52__dehkan_plateau[] __asm__("gData_02003f52");
-#define gData_02003f52 gData_02003f52__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003f80 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02003f80__dehkan_plateau[] __asm__("gData_02003f80");
-#define gData_02003f80 gData_02003f80__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003f92 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02003f92__dehkan_plateau[] __asm__("gData_02003f92");
-#define gData_02003f92 gData_02003f92__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003f98 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02003f98__dehkan_plateau[] __asm__("gData_02003f98");
-#define gData_02003f98 gData_02003f98__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003fa0 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02003fa0__dehkan_plateau[] __asm__("gData_02003fa0");
-#define gData_02003fa0 gData_02003fa0__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003fa8 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02003fa8__dehkan_plateau[] __asm__("gData_02003fa8");
-#define gData_02003fa8 gData_02003fa8__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003fb0 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02003fb0__dehkan_plateau[] __asm__("gData_02003fb0");
-#define gData_02003fb0 gData_02003fb0__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003fb8 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02003fb8__dehkan_plateau[] __asm__("gData_02003fb8");
-#define gData_02003fb8 gData_02003fb8__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003fc0 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02003fc0__dehkan_plateau[] __asm__("gData_02003fc0");
-#define gData_02003fc0 gData_02003fc0__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003fc4 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02003fc4__dehkan_plateau[] __asm__("gData_02003fc4");
-#define gData_02003fc4 gData_02003fc4__dehkan_plateau
+extern s16 gData_02003f52[];
+extern s16 gData_02003f80[];
+extern s16 gData_02003f92[];
+extern s16 gData_02003f98[];
+extern s16 gData_02003fa0[];
+extern s16 gData_02003fa8[];
+extern s16 gData_02003fb0[];
+extern s16 gData_02003fb8[];
+extern s16 gData_02003fc0[];
+extern s16 gData_02003fc4[];
 
-void Func_0200118c(void) {
+void DehkanPlateau_FightCannon(void) {
   GameFlag_Set(0x209);
   Field_RequestDjinnBattle(16, 47);
 }
@@ -785,97 +672,55 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(dehkan_plateau): routine gData_020045e0 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_020045e0__dehkan_plateau[] __asm__("gData_020045e0");
-#define gData_020045e0 gData_020045e0__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_020045f8 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_020045f8__dehkan_plateau[] __asm__("gData_020045f8");
-#define gData_020045f8 gData_020045f8__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_020047d8 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_020047d8__dehkan_plateau[] __asm__("gData_020047d8");
-#define gData_020047d8 gData_020047d8__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02004ac0 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02004ac0__dehkan_plateau[] __asm__("gData_02004ac0");
-#define gData_02004ac0 gData_02004ac0__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02004d78 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02004d78__dehkan_plateau[] __asm__("gData_02004d78");
-#define gData_02004d78 gData_02004d78__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02004dd8 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02004dd8__dehkan_plateau[] __asm__("gData_02004dd8");
-#define gData_02004dd8 gData_02004dd8__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02004e20 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02004e20__dehkan_plateau[] __asm__("gData_02004e20");
-#define gData_02004e20 gData_02004e20__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02004f10 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02004f10__dehkan_plateau[] __asm__("gData_02004f10");
-#define gData_02004f10 gData_02004f10__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02004f1c as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02004f1c__dehkan_plateau[] __asm__("gData_02004f1c");
-#define gData_02004f1c gData_02004f1c__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02005078 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02005078__dehkan_plateau[] __asm__("gData_02005078");
-#define gData_02005078 gData_02005078__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_020051bc as this part declared it; the
- * joined file has another. */
-extern const u8 gData_020051bc__dehkan_plateau[] __asm__("gData_020051bc");
-#define gData_020051bc gData_020051bc__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_020053b4 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_020053b4__dehkan_plateau[] __asm__("gData_020053b4");
-#define gData_020053b4 gData_020053b4__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02005450 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02005450__dehkan_plateau[] __asm__("gData_02005450");
-#define gData_02005450 gData_02005450__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_020055b8 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_020055b8__dehkan_plateau[] __asm__("gData_020055b8");
-#define gData_020055b8 gData_020055b8__dehkan_plateau
+extern struct ActorPlacement gDehkanPlateau_Placements[];
+extern s16 gDehkanPlateau_Room1Placements[];
+extern struct ActorPlacement gDehkanPlateau_Room2Placements[];
+extern struct ActorPlacement gDehkanPlateau_Room3Placements[];
+extern struct ActorPlacement gDehkanPlateau_Room4Placements[];
+extern struct ActorPlacement gDehkanPlateau_Room5Placements[];
+extern struct ActorPlacement gDehkanPlateau_Room6Placements[];
+extern struct Trigger gDehkanPlateau_Triggers[];
+extern struct Trigger gDehkanPlateau_Room1Triggers[];
+extern struct Trigger gDehkanPlateau_Room2Triggers[];
+extern struct Trigger gDehkanPlateau_Room3Triggers[];
+extern struct Trigger gDehkanPlateau_Room4Triggers[];
+extern struct Trigger gDehkanPlateau_Room5Triggers[];
+extern struct Trigger gDehkanPlateau_Room6Triggers[];
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov655Room1)
-    return gData_020045f8;
+    return gDehkanPlateau_Room1Placements;
   if (scene == (s32)&SceneId_Ov655Room2)
-    return gData_020047d8;
+    return gDehkanPlateau_Room2Placements;
   if (scene == (s32)&SceneId_Ov655Room3)
-    return gData_02004ac0;
+    return gDehkanPlateau_Room3Placements;
   if (scene == (s32)&SceneId_Ov655Room4)
-    return gData_02004d78;
+    return gDehkanPlateau_Room4Placements;
   if (scene == (s32)&SceneId_Ov655Room5)
-    return gData_02004dd8;
+    return gDehkanPlateau_Room5Placements;
   if (scene == (s32)&SceneId_Ov655Room6)
-    return gData_02004e20;
-  return gData_020045e0;
+    return gDehkanPlateau_Room6Placements;
+  return gDehkanPlateau_Placements;
 }
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov655Room1)
-    return gData_02004f1c;
+    return gDehkanPlateau_Room1Triggers;
   if (scene == (s32)&SceneId_Ov655Room2)
-    return gData_02005078;
+    return gDehkanPlateau_Room2Triggers;
   if (scene == (s32)&SceneId_Ov655Room3)
-    return gData_020051bc;
+    return gDehkanPlateau_Room3Triggers;
   if (scene == (s32)&SceneId_Ov655Room4)
-    return gData_020053b4;
+    return gDehkanPlateau_Room4Triggers;
   if (scene == (s32)&SceneId_Ov655Room5)
-    return gData_02005450;
+    return gDehkanPlateau_Room5Triggers;
   if (scene == (s32)&SceneId_Ov655Room6)
-    return gData_020055b8;
-  return gData_02004f10;
+    return gDehkanPlateau_Room6Triggers;
+  return gDehkanPlateau_Triggers;
 }
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -940,7 +785,7 @@ void Func_02001444(void) {
 
 void Actors_SetHidden(s32 show, s32 first, u32 count);
 
-void Func_02001474(s32 show) {
+void DehkanPlateau_SetActorsHidden(s32 show) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov655Room1)
@@ -955,13 +800,13 @@ void Func_02001474(s32 show) {
     Actors_SetHidden(show, 10, 6);
 }
 
-void Func_020014ec(void) {
-  Func_02001474(1);
+void DehkanPlateau_HideActors(void) {
+  DehkanPlateau_SetActorsHidden(1);
   GameFlag_Set(0x200);
 }
 
-void Func_02001500(void) {
-  Func_02001474(0);
+void DehkanPlateau_ShowActors(void) {
+  DehkanPlateau_SetActorsHidden(0);
   GameFlag_Clear(0x200);
 }
 
@@ -1087,7 +932,7 @@ loop:
 
 #define DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(name, data1, n1, data2)            \
   void name(void) {                                                            \
-    const u16 *cell = &data1[0].present;                                       \
+    const u16 *cell = &data1[0][0];                                            \
     s32 flag = 0x240;                                                          \
     u32 i;                                                                     \
     const u16 *dest;                                                           \
@@ -1098,12 +943,13 @@ loop:
           s32 x;                                                               \
           s32 y;                                                               \
                                                                                \
-          cell = &data1[i].x;                                                  \
+          cell = &data1[i][1];                                                 \
           x = *cell++;                                                         \
           y = *cell++;                                                         \
           /* FAKEMATCH(temporary): the destination table through a local set   \
            * here, which loads its first halfword before the 1 is built; as    \
-           * gData_02003fd2[0], 2 of 56 instructions differ in tla-en. */      \
+           * gDehkanPlateau_Room1CrackPictures[0], 2 of 56 instructions differ \
+           * in tla-en. */                                                     \
           dest = data2;                                                        \
           MapGrid_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);    \
         }                                                                      \
@@ -1118,37 +964,26 @@ loop:
       Func_02001804();                                                         \
   }
 
-DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_02001820, gData_02004066, 13,
-                                    gData_02003fd2)
+DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(DehkanPlateau_RestoreRoom1Cracks,
+                                    gDehkanPlateau_Room1Cracks, 13,
+                                    gDehkanPlateau_Room1CrackPictures)
 
-/* VIEW(dehkan_plateau): routine gData_02003fda as this part declared it; the
- * joined file has another. */
-extern const u16 gData_02003fda__dehkan_plateau[] __asm__("gData_02003fda");
-#define gData_02003fda gData_02003fda__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_0200410e as this part declared it; the
- * joined file has another. */
-extern const struct CellRecord
-    gData_0200410e__dehkan_plateau[] __asm__("gData_0200410e");
-#define gData_0200410e gData_0200410e__dehkan_plateau
+extern u16 gDehkanPlateau_Room2CrackPictures[];
+extern u16 gDehkanPlateau_Room2Cracks[][6];
 
-DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_020018a8, gData_0200410e, 7,
-                                    gData_02003fda)
+DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(DehkanPlateau_RestoreRoom2Cracks,
+                                    gDehkanPlateau_Room2Cracks, 7,
+                                    gDehkanPlateau_Room2CrackPictures)
 
-/* VIEW(dehkan_plateau): routine gData_02003fe2 as this part declared it; the
- * joined file has another. */
-extern const u16 gData_02003fe2__dehkan_plateau[] __asm__("gData_02003fe2");
-#define gData_02003fe2 gData_02003fe2__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_0200416e as this part declared it; the
- * joined file has another. */
-extern const struct CellRecord
-    gData_0200416e__dehkan_plateau[] __asm__("gData_0200416e");
-#define gData_0200416e gData_0200416e__dehkan_plateau
+extern u16 gDehkanPlateau_Room3CrackPictures[];
+extern u16 gDehkanPlateau_Room3Cracks[][6];
 
-DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_02001930, gData_0200416e, 5,
-                                    gData_02003fe2)
+DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(DehkanPlateau_RestoreRoom3Cracks,
+                                    gDehkanPlateau_Room3Cracks, 5,
+                                    gDehkanPlateau_Room3CrackPictures)
 
-void Func_020019b8(void) {
-  u16 *record = gData_020041b6;
+void DehkanPlateau_RestoreRoom5Cracks(void) {
+  u16 *record = &gDehkanPlateau_Room5Cracks[0][0];
   s32 flag = 0x240;
   u32 i;
 
@@ -1158,10 +993,11 @@ void Func_020019b8(void) {
         s32 x;
         s32 y;
 
-        record = &gData_020041b8[i * 6];
+        record = &gDehkanPlateau_Room5Cracks[i][1];
         x = *record++;
         y = *record++;
-        MapGrid_CopyCellPictureIndicesRect(gData_02003fea[0], gData_02003fea[1],
+        MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room5CrackPictures[0],
+                                           gDehkanPlateau_Room5CrackPictures[1],
                                            x, y, 1, 1);
       }
     } else {
@@ -1175,18 +1011,20 @@ void Func_020019b8(void) {
 void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
 void Actor_MoveToObject(s32 id, s32 target);
 
-/* VIEW(dehkan_plateau): routine gData_02004420 as this part declared it; the
- * joined file has another. */
-extern struct Actor *gData_02004420__dehkan_plateau __asm__("gData_02004420");
-#define gData_02004420 gData_02004420__dehkan_plateau
-extern s32 gData_02005678;
+/* VIEW(dehkan_plateau): routine gDehkanPlateau_PoundCube as this part declared
+ * it; the joined file has another; not tried: gDehkanPlateau_PoundCube's bound
+ * declaration was not found. */
+extern struct Actor *
+    gData_02004420__dehkan_plateau __asm__("gDehkanPlateau_PoundCube");
+#define gDehkanPlateau_PoundCube gData_02004420__dehkan_plateau
+extern s32 gDehkanPlateau_CrackZ;
 
 #define SCENE(name) ((s32)&SceneId_##name)
 
 // Steps onto a listed cell in rooms 1, 2, 3 and 5 (SceneId_Ov655Room1 to
 // Room5): either falls through to exit work->exit or opens the cell and sets
 // its flag. cellX is reused for the doubled index and the fall's frame count.
-void Func_02001a30(void) {
+void DehkanPlateau_StepOnCrack(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 cellX = ((leader->x >> 20) << 1) + 1;
@@ -1197,21 +1035,21 @@ void Func_02001a30(void) {
   if (gMainRoutineWork.scene == SCENE(Ov655Room1)) {
     n = work->exit - 11;
     flag = work->exit + 0x235;
-    record = &gData_02004068[n * 6];
+    record = &gDehkanPlateau_Room1Cracks[n][1];
   } else if (gMainRoutineWork.scene == SCENE(Ov655Room2)) {
     n = work->exit - 14;
     flag = work->exit + 0x232;
-    record = &gData_02004110[n * 6];
+    record = &gDehkanPlateau_Room2Cracks[n][1];
   } else if (gMainRoutineWork.scene == SCENE(Ov655Room3)) {
     n = work->exit - 12;
     flag = work->exit + 0x234;
-    record = &gData_02004170[n * 6];
+    record = &gDehkanPlateau_Room3Cracks[n][1];
   } else if (gMainRoutineWork.scene == SCENE(Ov655Room5)) {
     n = work->exit - 18;
     flag = work->exit + 0x22e;
-    record = &gData_020041b8[n * 6];
+    record = &gDehkanPlateau_Room5Cracks[n][1];
     if (GameFlag_Get(0x33a))
-      gData_020041b8[26] = 3;
+      gDehkanPlateau_Room5Cracks[4][3] = 3;
   } else {
     return;
   }
@@ -1234,16 +1072,20 @@ void Func_02001a30(void) {
       s16 scene = gMainRoutineWork.scene;
       y = *record++;
       if (scene == SCENE(Ov655Room1))
-        MapGrid_CopyCellPictureIndicesRect(gData_02003fd2[2], gData_02003fd2[3],
+        MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room1CrackPictures[2],
+                                           gDehkanPlateau_Room1CrackPictures[3],
                                            x, y, 1, 1);
       else if (scene == SCENE(Ov655Room2))
-        MapGrid_CopyCellPictureIndicesRect(gData_02003fda[2], gData_02003fda[3],
+        MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room2CrackPictures[2],
+                                           gDehkanPlateau_Room2CrackPictures[3],
                                            x, y, 1, 1);
       else if (scene == SCENE(Ov655Room3))
-        MapGrid_CopyCellPictureIndicesRect(gData_02003fe2[2], gData_02003fe2[3],
+        MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room3CrackPictures[2],
+                                           gDehkanPlateau_Room3CrackPictures[3],
                                            x, y, 1, 1);
       else if (scene == SCENE(Ov655Room5))
-        MapGrid_CopyCellPictureIndicesRect(gData_02003fea[2], gData_02003fea[3],
+        MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room5CrackPictures[2],
+                                           gDehkanPlateau_Room5CrackPictures[3],
                                            x, y, 1, 1);
     }
     index = *record++;
@@ -1254,35 +1096,39 @@ void Func_02001a30(void) {
       s16 scene = gMainRoutineWork.scene;
       if (scene == SCENE(Ov655Room1)) {
         {
-          s32 srcX = gData_02003ff2[cellX], srcY = gData_02003ff2[cellX + 1],
-              width = 1, height = 2;
+          s32 srcX = gDehkanPlateau_Room1HolePictures[cellX],
+              srcY = gDehkanPlateau_Room1HolePictures[cellX + 1], width = 1,
+              height = 2;
           MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
                                              height);
         }
       } else if (scene == SCENE(Ov655Room2)) {
         {
-          s32 srcX = gData_02004012[cellX], srcY = gData_02004012[cellX + 1],
-              width = 1, height = 2;
+          s32 srcX = gDehkanPlateau_Room2HolePictures[cellX],
+              srcY = gDehkanPlateau_Room2HolePictures[cellX + 1], width = 1,
+              height = 2;
           MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
                                              height);
         }
       } else if (scene == SCENE(Ov655Room3)) {
         {
-          s32 srcX = gData_02004032[cellX], srcY = gData_02004032[cellX + 1],
-              width = 1, height = 2;
+          s32 srcX = gDehkanPlateau_Room3HolePictures[cellX],
+              srcY = gDehkanPlateau_Room3HolePictures[cellX + 1], width = 1,
+              height = 2;
           MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
                                              height);
         }
       } else if (scene == SCENE(Ov655Room5)) {
         if ((n == 0 && GameFlag_Get(0x241)) ||
             (n == 11 && GameFlag_Get(0x24c))) {
-          s32 srcX = gData_02004052[8], srcY = gData_02004052[9], width = 1,
-              height = 2;
+          s32 srcX = gDehkanPlateau_Room5HolePictures[8],
+              srcY = gDehkanPlateau_Room5HolePictures[9], width = 1, height = 2;
           MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
                                              height);
         } else {
-          s32 srcX = gData_02004052[cellX], srcY = gData_02004052[cellX + 1],
-              width = 1, height = 2;
+          s32 srcX = gDehkanPlateau_Room5HolePictures[cellX],
+              srcY = gDehkanPlateau_Room5HolePictures[cellX + 1], width = 1,
+              height = 2;
           MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
                                              height);
         }
@@ -1299,8 +1145,9 @@ void Func_02001a30(void) {
       } else if (scene == SCENE(Ov655Room2) || scene == SCENE(Ov655Room3)) {
         Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
       } else if (scene == SCENE(Ov655Room5)) {
-        if (gData_02004420 != NULL)
-          ((struct FieldSprite *)gData_02004420->sprite)->priority = 3;
+        if (gDehkanPlateau_PoundCube != NULL)
+          ((struct FieldSprite *)gDehkanPlateau_PoundCube->sprite)->priority =
+              3;
         Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
       }
     }
@@ -1327,16 +1174,20 @@ void Func_02001a30(void) {
     {
       s16 scene = gMainRoutineWork.scene;
       if (scene == SCENE(Ov655Room1))
-        MapGrid_CopyCellPictureIndicesRect(gData_02003fd2[0], gData_02003fd2[1],
+        MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room1CrackPictures[0],
+                                           gDehkanPlateau_Room1CrackPictures[1],
                                            x, y, 1, 1);
       else if (scene == SCENE(Ov655Room2))
-        MapGrid_CopyCellPictureIndicesRect(gData_02003fda[0], gData_02003fda[1],
+        MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room2CrackPictures[0],
+                                           gDehkanPlateau_Room2CrackPictures[1],
                                            x, y, 1, 1);
       else if (scene == SCENE(Ov655Room3))
-        MapGrid_CopyCellPictureIndicesRect(gData_02003fe2[0], gData_02003fe2[1],
+        MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room3CrackPictures[0],
+                                           gDehkanPlateau_Room3CrackPictures[1],
                                            x, y, 1, 1);
       else if (scene == SCENE(Ov655Room5))
-        MapGrid_CopyCellPictureIndicesRect(gData_02003fea[0], gData_02003fea[1],
+        MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room5CrackPictures[0],
+                                           gDehkanPlateau_Room5CrackPictures[1],
                                            x, y, 1, 1);
     }
     Event_Wait(12);
@@ -1345,8 +1196,8 @@ void Func_02001a30(void) {
     {
       s16 scene = gMainRoutineWork.scene;
       if (scene == SCENE(Ov655Room5) || scene == SCENE(Ov655Room3)) {
-        gData_0200567c = leader->x >> 20;
-        gData_02005678 = leader->z >> 20;
+        gDehkanPlateau_CrackX = leader->x >> 20;
+        gDehkanPlateau_CrackZ = leader->z >> 20;
       }
     }
     Event_End();
@@ -1357,13 +1208,13 @@ void Func_02001a30(void) {
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 
-void Func_02001ee8(void) {
+void DehkanPlateau_ForgetCrackOnLeaving(void) {
   struct Actor *object;
 
   if (Flag_Test(0x201) != 0) {
     object = Actor_GetById(gMainRoutineWork.currentOwner);
-    if (gData_0200567c != (object->x >> 20) ||
-        gData_02005678 != (object->z >> 20))
+    if (gDehkanPlateau_CrackX != (object->x >> 20) ||
+        gDehkanPlateau_CrackZ != (object->z >> 20))
       GameFlag_Clear(0x201);
   }
 }
@@ -1373,24 +1224,33 @@ DEFINE_ACTOR_HIDE(Actor_Hide, Actor_DisableById)
 void Scene_RunUnlessFlag(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
     if (GameFlag_Get(0x200) == 0)
-      Func_02001500();
+      DehkanPlateau_ShowActors();
   } else {
     GameFlag_Set(0x200);
   }
 }
 
-DEFINE_ACTORS_FOR_RANGE(Func_02001f94, 13, Actor_Hide, 13, Scene_RunUnlessFlag)
+DEFINE_ACTORS_FOR_RANGE(DehkanPlateau_HideRoom1Actors, 13, Actor_Hide, 13,
+                        Scene_RunUnlessFlag)
 
-DEFINE_ACTORS_FOR_RANGE(Func_02001fac, 12, Actor_Hide, 25, Scene_RunUnlessFlag)
+DEFINE_ACTORS_FOR_RANGE(DehkanPlateau_HideRoom2Actors, 12, Actor_Hide, 25,
+                        Scene_RunUnlessFlag)
 
-DEFINE_ACTORS_FOR_RANGE(Func_02001fc4, 9, Actor_Hide, 26, Scene_RunUnlessFlag)
+DEFINE_ACTORS_FOR_RANGE(DehkanPlateau_HideRoom3Actors, 9, Actor_Hide, 26,
+                        Scene_RunUnlessFlag)
 
-DEFINE_ACTORS_FOR_RANGE(Func_02001fdc, 2, Actor_Hide, 8, Scene_RunUnlessFlag)
+DEFINE_ACTORS_FOR_RANGE(DehkanPlateau_HideRoom4Actors, 2, Actor_Hide, 8,
+                        Scene_RunUnlessFlag)
 
-DEFINE_ACTORS_FOR_RANGE(Func_02001ff4, 5, Actor_Hide, 10, Scene_RunUnlessFlag)
+DEFINE_ACTORS_FOR_RANGE(DehkanPlateau_HideRoom6Actors, 5, Actor_Hide, 10,
+                        Scene_RunUnlessFlag)
 
 /* VIEW(dehkan_plateau): routine HeldActor_RaiseCell as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the one declaration
+ * DEFINE_ACTORS_FOR_RANGE(DehkanPlateau_HideRoom1Actors, 13, Actor_Hide, 13,
+ * Scene_RunUnlessFlag) DEFINE_ACTORS_FOR_RANGE(DehkanPlateau_HideRo..., it does
+ * not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:1236: too many
+ * arguments to function `HeldActor_RaiseCell'. */
 void HeldActor_RaiseCell__dehkan_plateau(struct Actor *object) __asm__(
     "HeldActor_RaiseCell");
 #define HeldActor_RaiseCell HeldActor_RaiseCell__dehkan_plateau
@@ -1424,14 +1284,7 @@ void Func_0200200c(struct Actor *object) {
   }
 }
 
-/* VIEW(dehkan_plateau): routine Func_02000d78 as this part declared it; the
- * joined file has another. */
-void Func_02000d78__dehkan_plateau(const void *data) __asm__("Func_02000d78");
-#define Func_02000d78 Func_02000d78__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003fc8 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02003fc8__dehkan_plateau[] __asm__("gData_02003fc8");
-#define gData_02003fc8 gData_02003fc8__dehkan_plateau
+extern s16 gData_02003fc8[];
 
 DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Leader_CanPushObjectAhead,
                          Field_FindNearbyTalkTarget, Func_02000d78,
@@ -1468,7 +1321,7 @@ void Func_02002180(void) {
   }
 }
 
-void Func_020021b4(void) {
+void DehkanPlateau_JoltCamera(void) {
   struct Actor *object = FieldCamera_GetActor();
   u32 i;
 
@@ -1481,24 +1334,9 @@ void Func_020021b4(void) {
 }
 #undef SCENE
 
-// ---- games/tla/src/scene/dehkan_plateau/events_g.c ----
-// Scene code of overlay 0x655, in ROM order, from events_g's offset up to the
-// next object the overlay links.
-
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 
-/* VIEW(events_g): routine CrumblingPillars_Step as this part declared it; the
- * joined file has another. */
-void CrumblingPillars_Step__events_g(const void *data) __asm__(
-    "CrumblingPillars_Step");
-#define CrumblingPillars_Step CrumblingPillars_Step__events_g
-/* VIEW(events_g): routine CrumblingPillars_StepWithStandIn as this part
- * declared it; the joined file has another. */
-void CrumblingPillars_StepWithStandIn__events_g(const void *data) __asm__(
-    "CrumblingPillars_StepWithStandIn");
-#define CrumblingPillars_StepWithStandIn                                       \
-  CrumblingPillars_StepWithStandIn__events_g
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
@@ -1508,8 +1346,8 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
  * actorId, s32 x, s32 z, s32 angle); tried as the definition's void
  * Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x, s32 z,
  * s16 angle), it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau/dehkan_plateau.c:720: conflicting types
- * for `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
+ * games/tla/src/scene/dehkan_plateau.c:1336: conflicting types for
+ * `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
 extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(
     u32 id, s32 x, s32 z,
     s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
@@ -1520,7 +1358,8 @@ void Actor_WatchAndSetScript(s32 id, s32 target);
 /* VIEW(events_g): routine Task_Add as void Task_Add(void(*func) (void), s32
  * priority); task.h has s32 Task_Add(TaskFunc func, s32 order); tried as the
  * definition's s32 Task_Add(TaskFunc func, s32 order), which the object already
- * declares, Func_02002604 moves: 1 of 20 instructions in tla-ja. */
+ * declares, DehkanPlateau_CannonCastsPound moves: 1 of 20 instructions in
+ * tla-ja. */
 extern void Task_Add__events_g(void (*func)(void),
                                s32 priority) __asm__("Task_Add");
 
@@ -1538,7 +1377,7 @@ static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
   Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(id, x, z, angle);
 }
 
-void Func_020021e8(void) {
+void DehkanPlateau_CannonFleesOverCracks(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_GetActor()->motionFlags = 0;
@@ -1550,12 +1389,12 @@ void Func_020021e8(void) {
   Actor_MoveTo(24, 664, 136);
   MapGrid_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
   Sound_Play(161);
-  Func_020021b4();
+  DehkanPlateau_JoltCamera();
   GameFlag_Set(0x247);
   Actor_MoveTo(24, 664, 104);
   MapGrid_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
   Sound_Play(229);
-  Func_020021b4();
+  DehkanPlateau_JoltCamera();
   Event_Wait(10);
   Actor_Jump(24, 6, 16);
   Actor_PlaceFacing(24, 222 << 18, 168 << 16, FACING_SOUTH);
@@ -1564,7 +1403,7 @@ void Func_020021e8(void) {
   Event_End();
 }
 
-void Func_020022e0(void) {
+void DehkanPlateau_CannonFleesEast(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveWithinMapBounds(245 << 18, -1, 168 << 16, 1);
@@ -1583,7 +1422,7 @@ void Func_020022e0(void) {
   Event_End();
 }
 
-void Func_02002390(void) {
+void DehkanPlateau_CannonLeapsAway(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveWithinMapBounds(144 << 16, -1, 214 << 15, 1);
@@ -1604,7 +1443,7 @@ void Func_02002390(void) {
   Event_End();
 }
 
-void Func_02002458(void) {
+void DehkanPlateau_CannonPoundsPillar(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 25);
@@ -1617,14 +1456,14 @@ void Func_02002458(void) {
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_MoveTo(25, 424, 152);
   Actor_ArmCallback(25, FACING_EAST, 20);
-  Func_02002604();
+  DehkanPlateau_CannonCastsPound();
   Actor_MoveTo(25, 440, 152);
   Actor_MoveTo(25, 456, 168);
   Actor_MoveTo(25, 456, 184);
   GameFlag_Set(0x241);
   MapGrid_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
   Sound_Play(161);
-  Func_020021b4();
+  DehkanPlateau_JoltCamera();
   Actor_MoveTo(25, 456, 216);
   Actor_MoveTo(25, 584, 216);
   Actor_PlaceFacing(25, 154 << 18, 140 << 17, FACING_SOUTH);
@@ -1635,7 +1474,7 @@ void Func_02002458(void) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 
-void Func_02002574(void) {
+void DehkanPlateau_SinkPoundedPillar(void) {
   struct EffectWork7c4 *work = Ram_HeapSlots->effectWork;
   struct Actor *object = Actor_GetById(18);
 
@@ -1651,14 +1490,14 @@ void Func_02002574(void) {
   }
 }
 
-void Func_02002604(void) {
+void DehkanPlateau_CannonCastsPound(void) {
   BattleEffect_LoadActionEffectResources(134, 1);
-  Task_Add__events_g(Func_02002574, 0x480);
+  Task_Add__events_g(DehkanPlateau_SinkPoundedPillar, 0x480);
   FieldPsynergy_SetupActorPair(25, 18);
   EventObject_Initialize();
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
-  Task_Remove(Func_02002574);
+  Task_Remove(DehkanPlateau_SinkPoundedPillar);
   BattleEffect_CleanupSceneObjects();
 }
 
@@ -1671,70 +1510,25 @@ void Func_02002604(void) {
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
-#undef gData_02003fd2
-#undef gData_02004066
-#undef gData_02003f44
-#undef gData_02003f52
-#undef gData_02003f80
-#undef gData_02003f92
-#undef gData_02003f98
-#undef gData_02003fa0
-#undef gData_02003fa8
-#undef gData_02003fb0
-#undef gData_02003fb8
-#undef gData_02003fc0
-#undef gData_02003fc4
-#undef gData_020045e0
-#undef gData_020045f8
-#undef gData_020047d8
-#undef gData_02004ac0
-#undef gData_02004d78
-#undef gData_02004dd8
-#undef gData_02004e20
-#undef gData_02004f10
-#undef gData_02004f1c
-#undef gData_02005078
-#undef gData_020051bc
-#undef gData_020053b4
-#undef gData_02005450
-#undef gData_020055b8
-#undef gData_02003fda
-#undef gData_0200410e
-#undef gData_02003fe2
-#undef gData_0200416e
-#undef gData_02004420
+#undef gDehkanPlateau_PoundCube
 #undef HeldActor_RaiseCell
 #undef Func_02000d78
-#undef gData_02003fc8
-#undef CrumblingPillars_Step
 #undef CrumblingPillars_StepWithStandIn
 // @file
-// Scene code of overlay 0x655, in ROM order.
-
-// ---- games/tla/src/scene/dehkan_plateau/s2698.c ----
-
 void Actor_DisableById(s32 id);
-/* VIEW(s2698): routine gData_02004420 as this part declared it; the joined file
- * has another. */
-extern struct Actor *gData_02004420__s2698 __asm__("gData_02004420");
-#define gData_02004420 gData_02004420__s2698
+/* VIEW(s2698): routine gDehkanPlateau_PoundCube as this part declared it; the
+ * joined file has another; not tried: gDehkanPlateau_PoundCube's bound
+ * declaration was not found. */
+extern struct Actor *gData_02004420__s2698 __asm__("gDehkanPlateau_PoundCube");
+#define gDehkanPlateau_PoundCube gData_02004420__s2698
 
 void Actor_StartScript(struct Actor *object, const void *script);
-/* VIEW(s2698): routine FieldEffect_AdvanceMotion as void
- * FieldEffect_AdvanceMotion(struct Actor *object); module/field/field_effect.h
- * has void FieldEffect_AdvanceMotion(union FieldObject *object); not tried:
- * FieldEffect_AdvanceMotion's bound declaration was not found. */
-extern void Effect_AdvanceMotion__s2698(struct Actor *object) __asm__(
-    "FieldEffect_AdvanceMotion");
 
-/* VIEW(s2698): routine gData_02003f14 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003f14__s2698[] __asm__("gData_02003f14");
-#define gData_02003f14 gData_02003f14__s2698
+extern u32 gDehkanPlateau_DustScript[];
 
 // Flashes actor id, then raises eight puffs over actor center, then sets
 // flag and waits 20 frames.
-void Func_02002698(s32 id, s32 center, s32 flag) {
+void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
   struct Actor *leader;
   s32 frame;
   u32 i;
@@ -1764,8 +1558,8 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
       object->motionFlags = 0;
       object->collisionFlags = 0;
       Actor_SetSpriteFlags(object, 0);
-      Func_02003ba0(object, 2);
-      Actor_StartScript(object, gData_02003f14);
+      Actor_SelectAnimation(object, 2);
+      Actor_StartScript(object, gDehkanPlateau_DustScript);
       object->scaleX = 0xb333;
       object->scaleY = 0xb333;
       effect->sprite->priority = 1;
@@ -1775,14 +1569,14 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
       effect->spin = (((u32)Random16() << 9) >> 16) - 256;
       effect->scaleRateX = -(Q16_ONE / 32);
       effect->scaleRateY = -(Q16_ONE * 3 / 128);
-      effect->update = Effect_AdvanceMotion__s2698;
+      effect->update = FieldEffect_AdvanceMotion;
     }
   }
   GameFlag_Set(flag);
   Event_Wait(20);
 }
 
-void Func_020027e0(void) {
+void DehkanPlateau_CannonCrumblesPillars(void) {
   struct Actor *actor;
 
   actor = Actor_GetById(25);
@@ -1804,7 +1598,7 @@ void Func_020027e0(void) {
   Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWait(25, 664, 280);
   Actor_SetSpriteFlags(Actor_GetById(25), 1);
-  Func_02002698(21, 25, 0x210);
+  DehkanPlateau_CrumblePillar(21, 25, 0x210);
   Sound_Play(153);
   actor->velocityY = 0x80000;
   Actor_SetSpriteFlags(Actor_GetById(25), 0);
@@ -1827,7 +1621,7 @@ void Func_020027e0(void) {
   Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWait(25, 744, 168);
   Actor_SetSpriteFlags(Actor_GetById(25), 1);
-  Func_02002698(24, 25, 0x216);
+  DehkanPlateau_CrumblePillar(24, 25, 0x216);
   Actor_FaceDirectionById(25, FACING_NORTH);
   Sound_Play(153);
   actor->velocityY = 0x80000;
@@ -1838,7 +1632,7 @@ void Func_020027e0(void) {
   Actor_WalkToAndWait(25, 744, 72);
   MapGrid_CopyCellPictureIndicesRect(66, 51, 110, 4, 1, 1);
   Sound_Play(229);
-  Func_020021b4();
+  DehkanPlateau_JoltCamera();
   Event_Wait(10);
   Actor_Jump(25, 6, 16);
   Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
@@ -1847,7 +1641,7 @@ void Func_020027e0(void) {
   Event_End();
 }
 
-void Func_02002a5c(void) {
+void DehkanPlateau_CannonPoundsLeaderThrough(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   u32 i;
 
@@ -1862,10 +1656,10 @@ void Func_02002a5c(void) {
   MapGrid_CopyCellPictureIndicesRect(65, 64, 15, 8, 1, 1);
   GameFlag_Set(0x245);
   Sound_Play(161);
-  Func_020021b4();
+  DehkanPlateau_JoltCamera();
   Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(9, 0x100, 20);
-  Func_02002bcc();
+  DehkanPlateau_CannonCastsPoundOnLeader();
   Event_Wait(20);
   leader->facing = FACING_SOUTH;
   leader->motionFlags = 0;
@@ -1887,7 +1681,7 @@ void Func_02002a5c(void) {
   Import_EventSetExitRequest(23);
 }
 
-void Func_02002b68(void) {
+void DehkanPlateau_PoundLeaderThrough(void) {
   if (((struct EffectWork7c4 *)Ram_HeapSlots->effectWork)->active != 0) {
     Sound_Play(229);
     MapGrid_CopyCellPictureIndicesRect(64, 64, 15, 8, 1, 1);
@@ -1896,87 +1690,24 @@ void Func_02002b68(void) {
   }
 }
 
-/* VIEW(events_i): routine gData_02003f44 as this part declared it; the joined
- * file has another. */
-// ---- games/tla/src/scene/dehkan_plateau/events_i.c ----
-extern const u8 gData_02003f44__events_i[] __asm__("gData_02003f44");
-#define gData_02003f44 gData_02003f44__events_i
-/* VIEW(events_i): routine gData_02003f52 as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02003f52__events_i[] __asm__("gData_02003f52");
-#define gData_02003f52 gData_02003f52__events_i
-/* VIEW(events_i): routine gData_02003f80 as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02003f80__events_i[] __asm__("gData_02003f80");
-#define gData_02003f80 gData_02003f80__events_i
-/* VIEW(events_i): routine gData_02003f92 as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02003f92__events_i[] __asm__("gData_02003f92");
-#define gData_02003f92 gData_02003f92__events_i
-/* VIEW(events_i): routine gData_02003f98 as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02003f98__events_i[] __asm__("gData_02003f98");
-#define gData_02003f98 gData_02003f98__events_i
-/* VIEW(events_i): routine gData_02003fa0 as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02003fa0__events_i[] __asm__("gData_02003fa0");
-#define gData_02003fa0 gData_02003fa0__events_i
-/* VIEW(events_i): routine gData_02003fa8 as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02003fa8__events_i[] __asm__("gData_02003fa8");
-#define gData_02003fa8 gData_02003fa8__events_i
-/* VIEW(events_i): routine gData_02003fb0 as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02003fb0__events_i[] __asm__("gData_02003fb0");
-#define gData_02003fb0 gData_02003fb0__events_i
-/* VIEW(events_i): routine gData_02003fb8 as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02003fb8__events_i[] __asm__("gData_02003fb8");
-#define gData_02003fb8 gData_02003fb8__events_i
-/* VIEW(events_i): routine gData_02003fc0 as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02003fc0__events_i[] __asm__("gData_02003fc0");
-#define gData_02003fc0 gData_02003fc0__events_i
-/* VIEW(events_i): routine gData_02003fc4 as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02003fc4__events_i[] __asm__("gData_02003fc4");
-#define gData_02003fc4 gData_02003fc4__events_i
+extern s16 gData_02003f52[];
+extern s16 gData_02003f80[];
+extern s16 gData_02003f92[];
+extern s16 gData_02003f98[];
+extern s16 gData_02003fa0[];
+extern s16 gData_02003fb0[];
+extern s16 gData_02003fb8[];
+extern s16 gData_02003fc0[];
+extern s16 gData_02003fc4[];
 
-/* VIEW(events_i): routine CrumblingPillars_Step as this part declared it; the
- * joined file has another. */
-void CrumblingPillars_Step__events_i(const void *data) __asm__(
-    "CrumblingPillars_Step");
-#define CrumblingPillars_Step CrumblingPillars_Step__events_i
-/* VIEW(events_i): routine CrumblingPillars_StepWithStandIn as this part
- * declared it; the joined file has another. */
-void CrumblingPillars_StepWithStandIn__events_i(const void *data) __asm__(
-    "CrumblingPillars_StepWithStandIn");
-#define CrumblingPillars_StepWithStandIn                                       \
-  CrumblingPillars_StepWithStandIn__events_i
 void Func_02002180(void);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_02001804(void);
 
-/* VIEW(events_i): routine gData_02003fd2 as this part declared it; the joined
- * file has another. */
-extern const u16 gData_02003fd2__events_i[] __asm__("gData_02003fd2");
-#define gData_02003fd2 gData_02003fd2__events_i
-/* VIEW(events_i): routine gData_02004066 as this part declared it; the joined
- * file has another. */
-extern const struct CellRecord
-    gData_02004066__events_i[] __asm__("gData_02004066");
-#define gData_02004066 gData_02004066__events_i
-
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
-/* VIEW(s2698): routine ItemDisplay_ShowPicture as void
- * ItemDisplay_ShowPicture(struct Actor *object, s32 mode);
- * module/scene/airs_rock_inside.h has void ItemDisplay_ShowPicture(void); not
- * tried: ItemDisplay_ShowPicture's bound declaration was not found. */
-extern void Func_02003d40__s2698(struct Actor *object,
-                                 s32 mode) __asm__("ItemDisplay_ShowPicture");
 
 s32 PartyInventory_GiveItem(s32 item, s32 unused);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
@@ -1986,29 +1717,26 @@ void Actor_WatchAndSetScript(s32 id, s32 target);
 /* VIEW(events_i): routine Task_Add as void Task_Add(void(*func) (void), s32
  * priority); task.h has s32 Task_Add(TaskFunc func, s32 order); tried as the
  * definition's s32 Task_Add(TaskFunc func, s32 order), which the object already
- * declares, Func_02002bcc moves: 1 of 24 instructions in tla-ja. */
+ * declares, DehkanPlateau_CannonCastsPoundOnLeader moves: 1 of 24 instructions
+ * in tla-ja. */
 extern void Task_Add__events_i(void (*func)(void),
                                s32 priority) __asm__("Task_Add");
 
-void Func_02002bcc(void) {
+void DehkanPlateau_CannonCastsPoundOnLeader(void) {
   BattleEffect_LoadActionEffectResources(134, 1);
-  Task_Add__events_i(Func_02002b68, 0x480);
+  Task_Add__events_i(DehkanPlateau_PoundLeaderThrough, 0x480);
   FieldPsynergy_SetupActorPair(9, gMainRoutineWork.currentOwner);
   EventObject_Initialize();
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
-  Task_Remove(Func_02002b68);
+  Task_Remove(DehkanPlateau_PoundLeaderThrough);
   BattleEffect_CleanupSceneObjects();
 }
-
-// ---- games/tla/src/scene/dehkan_plateau/s2c14.c ----
-// Scene code of overlay 0x655, in ROM order, from s2c14's offset up to the next
-// object the overlay links.
 
 void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
 void Actor_MoveToObject(s32 id, s32 target);
 
-void Func_02002c14(void) {
+void DehkanPlateau_CannonDropsPoundCube(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *helper = Actor_GetById(9);
 
@@ -2028,13 +1756,14 @@ void Func_02002c14(void) {
   leader->motionFlags = 3;
   Event_Wait(24);
   Sound_Play(176);
-  Func_020021b4();
-  if (gData_02004420 != NULL) {
-    FieldActor_SetPositionAndResetMotion(gData_02004420, 0xf80000, 0, 0x780000);
+  DehkanPlateau_JoltCamera();
+  if (gDehkanPlateau_PoundCube != NULL) {
+    FieldActor_SetPositionAndResetMotion(gDehkanPlateau_PoundCube, 0xf80000, 0,
+                                         0x780000);
     wait(1);
-    gData_02004420->speedLimit = 0x19999;
-    gData_02004420->acceleration = 0x19999;
-    gData_02004420->velocityY = 0x80000;
+    gDehkanPlateau_PoundCube->speedLimit = 0x19999;
+    gDehkanPlateau_PoundCube->acceleration = 0x19999;
+    gDehkanPlateau_PoundCube->velocityY = 0x80000;
   }
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   Actor_SetSpeed(9, 0x19999, 0xcccc);
@@ -2042,8 +1771,8 @@ void Func_02002c14(void) {
   helper->velocityY = 0x60000;
   FieldActor_SetMoveTarget(leader, 0xd80000, 0, 0x780000);
   FieldActor_SetMoveTarget(helper, 0x1180000, 0, 0x780000);
-  if (gData_02004420 != NULL)
-    FieldActor_SetMoveTarget(gData_02004420, 0xf80000, 0, 0x580000);
+  if (gDehkanPlateau_PoundCube != NULL)
+    FieldActor_SetMoveTarget(gDehkanPlateau_PoundCube, 0xf80000, 0, 0x580000);
   Actor_WaitForMove(leader);
   Event_Wait(20);
   Actor_ShowEmoteById(9, 0x103, 0);
@@ -2053,8 +1782,8 @@ void Func_02002c14(void) {
   Actor_WalkToAndWait(9, 296, 80);
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Event_Wait(20);
-  if (gData_02004420 != NULL) {
-    gData_02004420->motionFlags = 0;
+  if (gDehkanPlateau_PoundCube != NULL) {
+    gDehkanPlateau_PoundCube->motionFlags = 0;
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 15, 5);
     wait(1);
   }
@@ -2062,7 +1791,7 @@ void Func_02002c14(void) {
   Event_End();
 }
 
-void Func_02002dd4(void) {
+void DehkanPlateau_CannonCrumblesLastPillar(void) {
   struct Actor *actor;
 
   actor = Actor_GetById(16);
@@ -2088,7 +1817,7 @@ void Func_02002dd4(void) {
   Actor_SetSpriteFlags(Actor_GetById(16), 0);
   Actor_WalkToAndWaitById(16, 792, 200);
   Actor_SetSpriteFlags(Actor_GetById(16), 1);
-  Func_02002698(9, 16, 0x210);
+  DehkanPlateau_CrumblePillar(9, 16, 0x210);
   Sound_Play(153);
   actor->velocityY = 0x80000;
   Actor_SetSpriteFlags(Actor_GetById(16), 0);
@@ -2107,7 +1836,7 @@ static __inline__ void Actor_SetAngle(s32 id, s32 angle) {
   Actor_FaceDirectionById(id, angle);
 }
 
-void Func_02002f08(void) {
+void DehkanPlateau_CannonCornered(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_FaceActorById(16, gMainRoutineWork.currentOwner, 0);
@@ -2122,28 +1851,28 @@ void Func_02002f08(void) {
   Event_End();
 }
 
-void Func_02002f74(void) {
+void DehkanPlateau_MeetCannon(void) {
   if (GameFlag_Get(0x207) != 0)
-    Func_02002f08();
+    DehkanPlateau_CannonCornered();
   else
-    Func_02002dd4();
+    DehkanPlateau_CannonCrumblesLastPillar();
   GameFlag_Set(0x209);
 }
 
-void Func_02002f9c(void) {
+void DehkanPlateau_TakePoundCube(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (gData_02004420 != 0)
-    Func_02003d40__s2698(gData_02004420, 3);
+  if (gDehkanPlateau_PoundCube != 0)
+    ItemDisplay_ShowPicture(gDehkanPlateau_PoundCube, 3);
   PartyInventory_GiveItem(199, 0);
-  if (gData_02004420 != 0)
-    Actor_Release(gData_02004420);
+  if (gDehkanPlateau_PoundCube != 0)
+    Actor_Release(gDehkanPlateau_PoundCube);
   Map_CopyAttributes(1, 0, 1, 1, 15, 5);
   GameFlag_Set(0x878);
   Event_End();
 }
 
-void Func_02002ff4(void) {
+void DehkanPlateau_LeaveRoom(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
   Event_Start();
@@ -2160,22 +1889,24 @@ s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov655Room1)
-    Func_020030e4();
+    DehkanPlateau_InitializeRoom1();
   else if (scene == (s32)&SceneId_Ov655Room2)
-    Func_02003164();
+    DehkanPlateau_InitializeRoom2();
   else if (scene == (s32)&SceneId_Ov655Room3)
-    Func_02003284();
+    DehkanPlateau_InitializeRoom3();
   else if (scene == (s32)&SceneId_Ov655Room4)
-    Func_0200369c();
+    DehkanPlateau_InitializeRoom4();
   else if (scene == (s32)&SceneId_Ov655Room5)
-    Func_0200390c();
+    DehkanPlateau_InitializeRoom5();
   else if (scene == (s32)&SceneId_Ov655Room6)
-    Func_02003aa0();
+    DehkanPlateau_InitializeRoom6();
   return 0;
 }
 
 /* VIEW(s2698): routine Func_020030c0 as this part defines it; a header the
- * joined file includes has another. */
+ * joined file includes has another; tried as the rest of the object declares
+ * it, it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:1882:
+ * conflicting types for `Func_020030c0'. */
 void Func_020030c0__s2698(void) __asm__("Func_020030c0");
 void Func_020030c0__s2698(void) {
   Actor_SetSpritePriority(64, ((struct AnimationFacing *)Actor_GetById(
@@ -2187,13 +1918,9 @@ void Func_020030c0__s2698(void) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 
-/* VIEW(s2c14): routine Pillars_Place as this part declared it; the joined file
- * has another. */
-void Pillars_Place__s2c14(const void *data) __asm__("Pillars_Place");
-#define Pillars_Place Pillars_Place__s2c14
-void Func_02001820(void);
+void DehkanPlateau_RestoreRoom1Cracks(void);
 
-void Func_020030e4(void) {
+void DehkanPlateau_InitializeRoom1(void) {
   CrumblingPillars_Place(gData_02003f44);
   Actor_SetSpritePriority(8, 3);
   Pillars_Place(gData_02003f98);
@@ -2204,8 +1931,8 @@ void Func_020030e4(void) {
                                     130 << 18);
     wait(10);
   }
-  Func_02001820();
-  Func_02001f94();
+  DehkanPlateau_RestoreRoom1Cracks();
+  DehkanPlateau_HideRoom1Actors();
   {
     s32 priority = 0x480;
 
@@ -2213,15 +1940,7 @@ void Func_020030e4(void) {
   }
 }
 
-// ---- games/tla/src/scene/dehkan_plateau/s3164.c ----
-
-/* VIEW(s3164): routine CrumblingPillars_PlaceWithStandIns as this part declared
- * it; the joined file has another. */
-void CrumblingPillars_PlaceWithStandIns__s3164(const void *data) __asm__(
-    "CrumblingPillars_PlaceWithStandIns");
-#define CrumblingPillars_PlaceWithStandIns                                     \
-  CrumblingPillars_PlaceWithStandIns__s3164
-void Func_020018a8(void);
+void DehkanPlateau_RestoreRoom2Cracks(void);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
@@ -2236,14 +1955,16 @@ static __inline__ void Actor_PlaceAndResetMotion(struct Actor *object, s32 x,
   Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 /* VIEW(s2698): routine Actor_PlaceFacing as this part has it; dehkan_plateau
- * has its own. */
+ * has its own; tried as the rest of the object declares it, it does not compile
+ * in tla-ja: games/tla/src/scene/dehkan_plateau.c:1931: redefinition of
+ * `Actor_PlaceFacing'. */
 #define Actor_PlaceFacing Actor_PlaceFacing__s2698
 
 static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
 }
 
-void Func_02003164(void) {
+void DehkanPlateau_InitializeRoom2(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
     if (gMainRoutineWork.entrance == 5) {
@@ -2261,7 +1982,7 @@ void Func_02003164(void) {
   } else {
     Actor_PlaceBlocks(gData_02003fc0);
   }
-  Func_020018a8();
+  DehkanPlateau_RestoreRoom2Cracks();
   if (GameFlag_Get(0x86c) != 0) {
     s32 angle = 0x4000;
 
@@ -2272,32 +1993,22 @@ void Func_02003164(void) {
   }
   if (GameFlag_Get(0x86d) != 0)
     Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
-  Func_02001fac();
+  DehkanPlateau_HideRoom2Actors();
 }
 
-// ---- games/tla/src/scene/dehkan_plateau/s3284.c ----
-// Scene code of overlay 0x655, in ROM order, from s3284's offset up to the next
-// object the overlay links.
+extern s16 gData_02003fc8[];
+extern s32 gDehkanPlateau_CrackZ;
 
-/* VIEW(s3284): routine gData_02003fc8 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003fc8__s3284[] __asm__("gData_02003fc8");
-#define gData_02003fc8 gData_02003fc8__s3284
-extern s32 gData_02005678;
-
-/* VIEW(s3284): routine Pillars_Raise as this part declared it; the joined file
- * has another. */
-void Pillars_Raise__s3284(const void *data) __asm__("Pillars_Raise");
-#define Pillars_Raise Pillars_Raise__s3284
-void Func_02001ee8(void);
+void DehkanPlateau_ForgetCrackOnLeaving(void);
 /* VIEW(s3284): routine Actor_GetCellIndex as s32 Actor_GetCellIndex(void);
  * s2c14 has s32 Actor_GetCellIndex(struct Actor *object); not tried:
  * Actor_GetCellIndex's bound declaration was not found. */
 extern s32 Func_02003db0__s3284(void) __asm__("Actor_GetCellIndex");
 
-// The room entry written in the scene layer of Func_02003164 and Func_0200390c:
-// sets actors' variants, links, cells and flags for the room.
-void Func_02003284(void) {
+// The room entry written in the scene layer of DehkanPlateau_InitializeRoom2
+// and DehkanPlateau_InitializeRoom5: sets actors' variants, links, cells and
+// flags for the room.
+void DehkanPlateau_InitializeRoom3(void) {
   struct Actor *object;
   s32 zero, value;
 
@@ -2349,7 +2060,7 @@ void Func_02003284(void) {
   }
   Actor_SetSpritePriority(14, 1);
   Actor_SetSpritePriority(15, 1);
-  Func_02001930();
+  DehkanPlateau_RestoreRoom3Cracks();
   if (GameFlag_Get(0x86e) != 0) {
     s32 angle = 0x4000;
 
@@ -2378,22 +2089,19 @@ void Func_02003284(void) {
   }
   CrumblingPillars_Place(gData_02003f80);
   Func_020013b0();
-  Func_02001fc4();
+  DehkanPlateau_HideRoom3Actors();
   {
     struct Actor *last = Actor_GetById(27);
 
     *((u8 *)last + 85) = zero;
     last->y = zero;
   }
-  gData_0200567c = zero;
-  gData_02005678 = zero;
-  Task_Add(Func_02001ee8, TASK_PASS_VBLANK);
+  gDehkanPlateau_CrackX = zero;
+  gDehkanPlateau_CrackZ = zero;
+  Task_Add(DehkanPlateau_ForgetCrackOnLeaving, TASK_PASS_VBLANK);
 }
 
-/* VIEW(s3284): routine gData_02004276 as this part declared it; the joined file
- * has another. */
-extern const u16 gData_02004276__s3284[] __asm__("gData_02004276");
-#define gData_02004276 gData_02004276__s3284
+extern u16 gData_02004276[];
 
 #define DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(name, n1, n2, n3, n4, n5, n6)      \
   void name(void) {                                                            \
@@ -2435,10 +2143,10 @@ DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(Func_0200353c, 3, 8, 67, 3, 66, 69)
 
 DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(Func_020035ec, 13, 5, 77, 0, 65, 65)
 
-void Func_0200369c(void) {
+void DehkanPlateau_InitializeRoom4(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-  Func_02001fdc();
+  DehkanPlateau_HideRoom4Actors();
   if (GameFlag_Get(0x86c) != 0) {
     MapGrid_CopyCellPictureIndicesRect(3, 8, 30, 33, 1, 1);
     MapGrid_CopyCellPictureIndicesRect(67, 3, 94, 28, 1, 5);
@@ -2488,7 +2196,7 @@ void Func_02003764(void) {
   Event_Wait(24);
   opts = &options;
   opts->palette = 7;
-  opts->update = Effect_AdvanceMotion__s2698;
+  opts->update = FieldEffect_AdvanceMotion;
   opts->startScaleX = 0xa3d7;
   opts->startScaleY = 0xa3d7;
   opts = &options;
@@ -2532,9 +2240,7 @@ loop:
   Event_End();
 }
 
-// ---- games/tla/src/scene/dehkan_plateau/s390c.c ----
-
-void Func_0200390c(void) {
+void DehkanPlateau_InitializeRoom5(void) {
   struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 entrance;
 
@@ -2544,14 +2250,15 @@ void Func_0200390c(void) {
     Func_02003a30();
     if (GameFlag_Get(0x871) != 0) {
       Map_CopyAttributes(0, 0, 1, 1, 15, 5);
-      if (gData_02004420 != NULL) {
-        Actor_PlaceAndResetMotion(gData_02004420, 248 << 16, 0, 176 << 15);
+      if (gDehkanPlateau_PoundCube != NULL) {
+        Actor_PlaceAndResetMotion(gDehkanPlateau_PoundCube, 248 << 16, 0,
+                                  176 << 15);
         wait(1);
       }
     }
   }
   Pillars_Place(gData_02003fb0);
-  Func_020019b8();
+  DehkanPlateau_RestoreRoom5Cracks();
   entrance = gMainRoutineWork.entrance;
   if (entrance > 10) {
     Func_02001804();
@@ -2563,22 +2270,18 @@ void Func_0200390c(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (gMainRoutineWork.entrance > 16) {
       if (gMainRoutineWork.entrance == 37 && GameFlag_Get(0x871) == 0)
-        Func_02002c14();
+        DehkanPlateau_CannonDropsPoundCube();
       else
         Func_02003764();
     }
   }
-  gData_0200567c = 0;
-  gData_02005678 = 0;
-  Task_Add(Func_02001ee8, TASK_PASS_VBLANK);
+  gDehkanPlateau_CrackX = 0;
+  gDehkanPlateau_CrackZ = 0;
+  Task_Add(DehkanPlateau_ForgetCrackOnLeaving, TASK_PASS_VBLANK);
 }
 
-// ---- games/tla/src/scene/dehkan_plateau/s3a30.c ----
-// Scene code of overlay 0x655, in ROM order, from s3a30's offset up to the next
-// object the overlay links.
-
 void Func_02003a30(void) {
-  struct Actor **slot = &gData_02004420;
+  struct Actor **slot = &gDehkanPlateau_PoundCube;
   s32 zero = 0;
   struct Actor *object = ((struct Actor *)Import_ActorCreate(489, 0, 0, 0));
 
@@ -2600,7 +2303,7 @@ void Func_02003a30(void) {
   }
 }
 
-void Func_02003aa0(void) {
+void DehkanPlateau_InitializeRoom6(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   if (GameFlag_Get(95) != 0)
@@ -2611,7 +2314,7 @@ void Func_02003aa0(void) {
     Func_02002140();
     wait(10);
   }
-  Func_02001ff4();
+  DehkanPlateau_HideRoom6Actors();
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (gMainRoutineWork.entrance > 5) {
       if (gMainRoutineWork.entrance <= 39)
@@ -2623,59 +2326,23 @@ void Func_02003aa0(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 #undef DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG
-#undef gData_02004420
-#undef gData_02003f14
-#undef gData_02003f44
-#undef gData_02003f52
-#undef gData_02003f80
-#undef gData_02003f92
-#undef gData_02003f98
-#undef gData_02003fa0
-#undef gData_02003fa8
-#undef gData_02003fb0
-#undef gData_02003fb8
-#undef gData_02003fc0
-#undef gData_02003fc4
+#undef gDehkanPlateau_PoundCube
 #undef CrumblingPillars_Step
 #undef CrumblingPillars_StepWithStandIn
-#undef gData_02003fd2
-#undef gData_02004066
 #undef Pillars_Place
 #undef CrumblingPillars_PlaceWithStandIns
-#undef gData_02003fc8
 #undef Pillars_Raise
-#undef gData_02004276
 #undef Actor_PlaceFacing
 
-/* VIEW(data): routine Func_02001554 as this part declared it; the joined file
- * has another. */
-void Func_02001554__data(void) __asm__("Func_02001554");
-#define Func_02001554 Func_02001554__data
-/* VIEW(data): routine Func_02001568 as this part declared it; the joined file
- * has another. */
-void Func_02001568__data(void) __asm__("Func_02001568");
-#define Func_02001568 Func_02001568__data
-/* VIEW(data): routine Func_0200157c as this part declared it; the joined file
- * has another. */
-void Func_0200157c__data(void) __asm__("Func_0200157c");
-#define Func_0200157c Func_0200157c__data
-/* VIEW(data): routine Func_02001590 as this part declared it; the joined file
- * has another. */
-void Func_02001590__data(void) __asm__("Func_02001590");
-#define Func_02001590 Func_02001590__data
-/* VIEW(data): routine Func_020015a4 as this part declared it; the joined file
- * has another. */
-void Func_020015a4__data(void) __asm__("Func_020015a4");
-#define Func_020015a4 Func_020015a4__data
 void Func_020016b0(void);
 void Func_02001788(void);
 void Func_02002180(void);
-void Func_020022e0(void);
+void DehkanPlateau_CannonFleesEast(void);
 
 extern u32 gData_02003ed8[];
 
 // clang-format off
-u32 gData_02003e00[] = {
+s32 gData_02003e00[] = {
     0, 33, 22, 38, 0, 2,
     0, 0, 0, 0, 1, 38,
 };
@@ -2703,7 +2370,7 @@ u32 gData_02003ed8[] = {
     1, 38, 17,
 };
 
-u32 gData_02003f14[] = {
+u32 gDehkanPlateau_DustScript[] = {
     0, 33, 22, 38, 0, 3,
     0, 1, 38,
 };
@@ -2765,102 +2432,96 @@ s16 gData_02003fc8[] = {
     14, 15, 16, 17, -1,
 };
 
-u16 gData_02003fd2[] = {
+u16 gDehkanPlateau_Room1CrackPictures[] = {
     4, 33, 5, 33,
 };
 
-u16 gData_02003fda[] = {
+u16 gDehkanPlateau_Room2CrackPictures[] = {
     68, 33, 69, 33,
 };
 
-u16 gData_02003fe2[] = {
+u16 gDehkanPlateau_Room3CrackPictures[] = {
     69, 51, 70, 51,
 };
 
-u16 gData_02003fea[] = {
+u16 gDehkanPlateau_Room5CrackPictures[] = {
     65, 64, 64, 64,
 };
 
-u16 gData_02003ff2[] = {
+u16 gDehkanPlateau_Room1HolePictures[] = {
     1, 36, 2, 36, 3, 36, 4, 36,
     5, 36, 6, 36, 7, 36, 8, 36,
 };
 
-u16 gData_02004012[] = {
+u16 gDehkanPlateau_Room2HolePictures[] = {
     65, 36, 66, 36, 67, 36, 68, 36,
     69, 36, 70, 36, 71, 36, 72, 36,
 };
 
-u16 gData_02004032[] = {
+u16 gDehkanPlateau_Room3HolePictures[] = {
     66, 54, 67, 54, 68, 54, 69, 54,
     70, 54, 71, 54, 72, 54, 73, 54,
 };
 
-u16 gData_02004052[] = {
+u16 gDehkanPlateau_Room5HolePictures[] = {
     64, 66, 65, 66, 66, 66, 67, 66,
     68, 66,
 };
 
-u16 gData_02004066[] = {
-    0,
+u16 gDehkanPlateau_Room1Cracks[][6] = {
+    {0, 76, 12, 0, 76, 48},
+    {0, 77, 13, 0, 77, 49},
+    {1, 79, 12, 0, 79, 48},
+    {0, 79, 14, 1, 79, 50},
+    {0, 81, 12, 0, 81, 48},
+    {0, 118, 17, 4, 118, 53},
+    {1, 119, 16, 0, 119, 52},
+    {0, 119, 18, 7, 119, 54},
+    {1, 120, 12, 7, 120, 48},
+    {0, 120, 14, 7, 120, 50},
+    {0, 120, 17, 2, 120, 53},
+    {0, 122, 12, 7, 122, 48},
+    {1, 122, 16, 0, 122, 52},
+    {0, 122, 18, 5, 122, 54},
 };
 
-u16 gData_02004068[] = {
-    76, 12, 0, 76, 48, 0, 77, 13,
-    0, 77, 49, 1, 79, 12, 0, 79,
-    48, 0, 79, 14, 1, 79, 50, 0,
-    81, 12, 0, 81, 48, 0, 118, 17,
-    4, 118, 53, 1, 119, 16, 0, 119,
-    52, 0, 119, 18, 7, 119, 54, 1,
-    120, 12, 7, 120, 48, 0, 120, 14,
-    7, 120, 50, 0, 120, 17, 2, 120,
-    53, 0, 122, 12, 7, 122, 48, 1,
-    122, 16, 0, 122, 52, 0, 122, 18,
-    5, 122, 54,
+u16 gDehkanPlateau_Room2Cracks[][6] = {
+    {1, 105, 4, 0, 41, 36},
+    {0, 109, 17, 0, 45, 49},
+    {0, 110, 19, 3, 46, 51},
+    {0, 111, 17, 3, 47, 49},
+    {0, 112, 21, 0, 48, 53},
+    {0, 113, 20, 3, 49, 52},
+    {0, 114, 18, 0, 50, 50},
+    {0, 105, 6, 0, 41, 38},
 };
 
-u16 gData_0200410e[] = {
-    1,
+u16 gDehkanPlateau_Room3Cracks[][6] = {
+    {1, 91, 11, 0, 27, 43},
+    {0, 92, 11, 0, 28, 43},
+    {1, 93, 9, 0, 29, 41},
+    {1, 93, 12, 0, 29, 44},
+    {1, 109, 7, 0, 45, 39},
+    {1, 112, 6, 0, 48, 38},
 };
 
-u16 gData_02004110[] = {
-    105, 4, 0, 41, 36, 0, 109, 17,
-    0, 45, 49, 0, 110, 19, 3, 46,
-    51, 0, 111, 17, 3, 47, 49, 0,
-    112, 21, 0, 48, 53, 0, 113, 20,
-    3, 49, 52, 0, 114, 18, 0, 50,
-    50, 0, 105, 6, 0, 41, 38,
-};
-
-u16 gData_0200416e[] = {
-    1,
-};
-
-u16 gData_02004170[] = {
-    91, 11, 0, 27, 43, 0, 92, 11,
-    0, 28, 43, 1, 93, 9, 0, 29,
-    41, 1, 93, 12, 0, 29, 44, 1,
-    109, 7, 0, 45, 39, 1, 112, 6,
-    0, 48, 38,
-};
-
-u16 gData_020041b6[] = {
-    1,
-};
-
-u16 gData_020041b8[] = {
-    13, 8, 2, 13, 72, 0, 13, 9,
-    0, 13, 73, 0, 13, 11, 1, 13,
-    75, 0, 13, 6, 0, 13, 70, 1,
-    15, 6, 0, 15, 70, 0, 15, 8,
-    0, 15, 72, 0, 15, 10, 1, 15,
-    74, 1, 14, 10, 0, 14, 74, 0,
-    14, 12, 0, 14, 76, 1, 15, 12,
-    0, 15, 76, 0, 16, 6, 0, 16,
-    70, 1, 16, 8, 2, 16, 72, 0,
-    16, 9, 0, 16, 73, 0, 16, 11,
-    0, 16, 75, 1, 18, 9, 0, 18,
-    73, 0, 18, 11, 0, 18, 75,
+u16 gDehkanPlateau_Room5Cracks[][6] = {
+    {1, 13, 8, 2, 13, 72},
+    {0, 13, 9, 0, 13, 73},
+    {0, 13, 11, 1, 13, 75},
+    {0, 13, 6, 0, 13, 70},
+    {1, 15, 6, 0, 15, 70},
+    {0, 15, 8, 0, 15, 72},
+    {0, 15, 10, 1, 15, 74},
+    {1, 14, 10, 0, 14, 74},
+    {0, 14, 12, 0, 14, 76},
+    {1, 15, 12, 0, 15, 76},
+    {0, 16, 6, 0, 16, 70},
+    {1, 16, 8, 2, 16, 72},
+    {0, 16, 9, 0, 16, 73},
+    {0, 16, 11, 0, 16, 75},
+    {1, 18, 9, 0, 18, 73},
+    {0, 18, 11, 0, 18, 75},
 };
 
 u16 gData_02004276[] = {
@@ -2893,7 +2554,7 @@ u16 gData_02004276[] = {
     0, 0, 0, 0, 0,
 };
 
-u32 gData_02004420[] = {
+u32 gDehkanPlateau_PoundCube[] = {
     0,
 };
 
@@ -3004,11 +2665,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_020045e0[] = {
+struct ActorPlacement gDehkanPlateau_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gData_020045f8[] = {
+s16 gDehkanPlateau_Room1Placements[] = {
     409, -1, 1, 0, 0, 632, 0, 0,
     0, 232, FACING_SOUTH, 2, 409, -1, 1, 0,
     0, 616, 0, 0, 0, 280, FACING_SOUTH, 2,
@@ -3041,7 +2702,7 @@ s16 gData_020045f8[] = {
     0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-struct ActorPlacement gData_020047d8[] = {
+struct ActorPlacement gDehkanPlateau_Room2Placements[] = {
     {409, CONDITION_ALWAYS, 1, PIXELS(10), 0, PIXELS(10), FACING_SOUTH, 2, 0},
     {409, CONDITION_ALWAYS, 1, PIXELS(10), 0, PIXELS(10), FACING_SOUTH, 2, 0},
     {409, CONDITION_ALWAYS, 1, PIXELS(10), 0, PIXELS(10), FACING_SOUTH, 2, 0},
@@ -3075,7 +2736,7 @@ struct ActorPlacement gData_020047d8[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004ac0[] = {
+struct ActorPlacement gDehkanPlateau_Room3Placements[] = {
     {407, CONDITION_ALWAYS, 1, 0x1, 0, 0, FACING_SOUTH, 2, 2},
     {407, CONDITION_ALWAYS, 1, 0x2, 0, 0, FACING_SOUTH, 2, 3},
     {407, CONDITION_ALWAYS, 1, 0x3, 0, 0, FACING_SOUTH, 2, 3},
@@ -3107,20 +2768,20 @@ struct ActorPlacement gData_02004ac0[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004d78[] = {
+struct ActorPlacement gDehkanPlateau_Room4Placements[] = {
     {337, CONDITION_ALWAYS, 1, PIXELS(760), 0, PIXELS(232), FACING_SOUTH, 2, 0},
     {337, CONDITION_ALWAYS, 1, PIXELS(760), 0, PIXELS(216), FACING_SOUTH, 2, 1},
     {337, CONDITION_ALWAYS, 1, PIXELS(776), 0, PIXELS(216), FACING_SOUTH, 2, 1},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004dd8[] = {
+struct ActorPlacement gDehkanPlateau_Room5Placements[] = {
     {406, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(536), FACING_SOUTH, 2, 0},
     {245, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(120), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004e20[] = {
+struct ActorPlacement gDehkanPlateau_Room6Placements[] = {
     {406, CONDITION_ALWAYS, 1, PIXELS(760), 0, PIXELS(200), FACING_SOUTH, 2, 0},
     {409, CONDITION_ALWAYS, 1, PIXELS(792), 0, PIXELS(200), FACING_SOUTH, 2, 0},
     {337, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(264), FACING_SOUTH, 2, 0},
@@ -3133,13 +2794,13 @@ struct ActorPlacement gData_02004e20[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_02004f10[] = {
+struct Trigger gDehkanPlateau_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02004f1c[] = {
+struct Trigger gDehkanPlateau_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_02002ff4)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(DehkanPlateau_LeaveRoom)},
     {0x31, 3, CONDITION_ALWAYS, 3},
     {0x31, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
@@ -3149,35 +2810,35 @@ struct Trigger gData_02004f1c[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, 5), 11, 0x203, EVENT(Func_02001554)},
     {0x9, 0, 0x301, EVENT(Func_020015e0)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x301, EVENT(Func_020015e0)},
-    {TRIGGER_STEP, 6, 0x200, EVENT(Func_020014ec)},
-    {TRIGGER_STEP, 7, IF_FLAG_SET(0x200), EVENT(Func_02001500)},
+    {TRIGGER_STEP, 6, 0x200, EVENT(DehkanPlateau_HideActors)},
+    {TRIGGER_STEP, 7, IF_FLAG_SET(0x200), EVENT(DehkanPlateau_ShowActors)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_020017f4)},
-    {TRIGGER_STEP, 11, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 12, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 13, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 14, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 15, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 16, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 17, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 18, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 19, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 20, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 21, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 22, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 23, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 24, 0x201, EVENT(Func_02001a30)},
+    {TRIGGER_STEP, 11, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 12, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 13, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 14, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 15, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 16, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 17, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 18, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 19, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 20, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 21, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 22, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 23, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 24, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02005078[] = {
+struct Trigger gDehkanPlateau_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Func_02002ff4)},
+    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(DehkanPlateau_LeaveRoom)},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 6},
-    {TRIGGER_STEP, 30, 0x86c, EVENT(Func_020021e8)},
-    {TRIGGER_STEP, 31, 0x86d, EVENT(Func_020022e0)},
+    {TRIGGER_STEP, 30, 0x86c, EVENT(DehkanPlateau_CannonFleesOverCracks)},
+    {TRIGGER_STEP, 31, 0x86d, EVENT(DehkanPlateau_CannonFleesEast)},
     {0x8602, 8, CONDITION_ALWAYS, EVENT(Func_02001368)},
     {0x202, 9, CONDITION_ALWAYS, EVENT(Func_02001368)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, 5), 22, 0x204, EVENT(Func_02001568)},
@@ -3185,21 +2846,21 @@ struct Trigger gData_02005078[] = {
     {0x9, 0, 0x840, EVENT(Func_02001640)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 23, 0x840, EVENT(Func_02001630)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 23, 0x840, EVENT(Func_02001640)},
-    {TRIGGER_STEP, 6, 0x200, EVENT(Func_020014ec)},
-    {TRIGGER_STEP, 7, IF_FLAG_SET(0x200), EVENT(Func_02001500)},
+    {TRIGGER_STEP, 6, 0x200, EVENT(DehkanPlateau_HideActors)},
+    {TRIGGER_STEP, 7, IF_FLAG_SET(0x200), EVENT(DehkanPlateau_ShowActors)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_020017f4)},
-    {TRIGGER_STEP, 14, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 15, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 16, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 17, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 18, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 19, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 20, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 21, 0x201, EVENT(Func_02001a30)},
+    {TRIGGER_STEP, 14, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 15, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 16, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 17, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 18, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 19, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 20, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 21, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020051bc[] = {
+struct Trigger gDehkanPlateau_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {0x31, 3, CONDITION_ALWAYS, 3},
@@ -3208,9 +2869,9 @@ struct Trigger gData_020051bc[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 24, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 25, CONDITION_ALWAYS, 8},
-    {TRIGGER_STEP, 30, 0x86e, EVENT(Func_02002390)},
-    {TRIGGER_STEP, 31, 0x86f, EVENT(Func_02002458)},
-    {TRIGGER_STEP, 32, 0x870, EVENT(Func_020027e0)},
+    {TRIGGER_STEP, 30, 0x86e, EVENT(DehkanPlateau_CannonLeapsAway)},
+    {TRIGGER_STEP, 31, 0x86f, EVENT(DehkanPlateau_CannonPoundsPillar)},
+    {TRIGGER_STEP, 32, 0x870, EVENT(DehkanPlateau_CannonCrumblesPillars)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 12, 0x208, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, 5), 18, 0x205, EVENT(Func_0200157c)},
     {0x8, 0, CONDITION_ALWAYS, EVENT(Func_020016a0)},
@@ -3233,18 +2894,18 @@ struct Trigger gData_020051bc[] = {
     {0x8602, 11, CONDITION_ALWAYS, EVENT(Func_020013fc)},
     {0x602, 26, CONDITION_ALWAYS, EVENT(Func_020013fc)},
     {0x4602, 27, CONDITION_ALWAYS, EVENT(Func_020013fc)},
-    {TRIGGER_STEP, 7, 0x200, EVENT(Func_020014ec)},
-    {TRIGGER_STEP, 8, IF_FLAG_SET(0x200), EVENT(Func_02001500)},
-    {TRIGGER_STEP, 12, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 13, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 14, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 15, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 16, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 17, 0x201, EVENT(Func_02001a30)},
+    {TRIGGER_STEP, 7, 0x200, EVENT(DehkanPlateau_HideActors)},
+    {TRIGGER_STEP, 8, IF_FLAG_SET(0x200), EVENT(DehkanPlateau_ShowActors)},
+    {TRIGGER_STEP, 12, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 13, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 14, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 15, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 16, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 17, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020053b4[] = {
+struct Trigger gDehkanPlateau_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {0x21, 3, CONDITION_ALWAYS, 3},
@@ -3255,12 +2916,12 @@ struct Trigger gData_020053b4[] = {
     {TRIGGER_EXIT, 41, CONDITION_ALWAYS, 41},
     {TRIGGER_EXIT, 42, CONDITION_ALWAYS, 42},
     {TRIGGER_EXIT, 43, CONDITION_ALWAYS, 43},
-    {TRIGGER_STEP, 8, 0x200, EVENT(Func_020014ec)},
-    {TRIGGER_STEP, 9, IF_FLAG_SET(0x200), EVENT(Func_02001500)},
+    {TRIGGER_STEP, 8, 0x200, EVENT(DehkanPlateau_HideActors)},
+    {TRIGGER_STEP, 9, IF_FLAG_SET(0x200), EVENT(DehkanPlateau_ShowActors)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02005450[] = {
+struct Trigger gDehkanPlateau_Room5Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {0x31, 3, CONDITION_ALWAYS, 3},
@@ -3271,29 +2932,29 @@ struct Trigger gData_02005450[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_STEP, 23, 0x871, EVENT(Func_02002a5c)},
+    {TRIGGER_STEP, 23, 0x871, EVENT(DehkanPlateau_CannonPoundsLeaderThrough)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, 5), 8, 0x206, EVENT(Func_02001590)},
-    {TRIGGER_EXAMINE, 12, 0x878, EVENT(Func_02002f9c)},
-    {TRIGGER_STEP, 18, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 19, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 20, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 21, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 22, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 23, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 24, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 25, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 26, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 27, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 28, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 29, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 30, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 31, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 32, 0x201, EVENT(Func_02001a30)},
-    {TRIGGER_STEP, 33, 0x201, EVENT(Func_02001a30)},
+    {TRIGGER_EXAMINE, 12, 0x878, EVENT(DehkanPlateau_TakePoundCube)},
+    {TRIGGER_STEP, 18, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 19, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 20, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 21, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 22, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 23, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 24, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 25, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 26, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 27, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 28, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 29, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 30, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 31, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 32, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
+    {TRIGGER_STEP, 33, 0x201, EVENT(DehkanPlateau_StepOnCrack)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020055b8[] = {
+struct Trigger gDehkanPlateau_Room6Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {0x21, 3, CONDITION_ALWAYS, 3},
@@ -3305,14 +2966,9 @@ struct Trigger gData_020055b8[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, 5), 8, 0x207, EVENT(Func_020015a4)},
     {TRIGGER_STEP, 9, 0x202, EVENT(Func_02002140)},
     {TRIGGER_STEP, 10, IF_FLAG_SET(0x202), EVENT(Func_02002180)},
-    {TRIGGER_STEP, 5, 0x200, EVENT(Func_020014ec)},
-    {TRIGGER_STEP, 6, IF_FLAG_SET(0x200), EVENT(Func_02001500)},
-    {TRIGGER_STEP, 11, 0x209, EVENT(Func_02002f74)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_0200118c)},
+    {TRIGGER_STEP, 5, 0x200, EVENT(DehkanPlateau_HideActors)},
+    {TRIGGER_STEP, 6, IF_FLAG_SET(0x200), EVENT(DehkanPlateau_ShowActors)},
+    {TRIGGER_STEP, 11, 0x209, EVENT(DehkanPlateau_MeetCannon)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(DehkanPlateau_FightCannon)},
     {TRIGGER_TABLE_END},
 };
-#undef Func_02001554
-#undef Func_02001568
-#undef Func_0200157c
-#undef Func_02001590
-#undef Func_020015a4

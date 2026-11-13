@@ -32,8 +32,6 @@
 #include "system/iwram_call.h"
 #include "system/heap_release.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 struct Actor;
 struct GlowSprite;
 struct GlowState;
@@ -164,10 +162,6 @@ void VenusLighthouseEntrance_WakeUp(void);
 s32 Scene_Initialize(void) {
   s32 t37;
   s32 t0;
-  s32 t7;
-  s32 t10;
-  s32 t21;
-  s32 t33;
 
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x100;
   t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
@@ -178,13 +172,11 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(11, 1);
   FieldActor_SetSpritePriority(14, 2);
   FieldActor_SetSpritePriority(19, 2);
-  t7 = Event_GetFlag(0x892);
-  if (t7 != 0) {
+  if (Event_GetFlag(0x892)) {
     Actor_SetPosition(10, 0, 0);
     Actor_SetPosition(11, 0, 0);
   }
-  t10 = Event_GetFlag(0x890);
-  if (t10 != 0) {
+  if (Event_GetFlag(0x890)) {
     Actor_SetPosition(12, 0, 0);
     Actor_SetPosition(13, 0, 0);
     Actor_SetPosition(14, 0, 0);
@@ -197,8 +189,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(21, 0, 0);
   }
   if (gMainRoutineWork.entrance == 9) {
-    t21 = Event_GetFlag(0x891);
-    if (t21 == 0) {
+    if (!Event_GetFlag(0x891)) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       VenusLighthouseEntrance_BirdsLand();
@@ -221,8 +212,7 @@ s32 Scene_Initialize(void) {
     Party_RemoveMember(7);
     Event_SetDestination((s32)&SceneId_VenusLighthouseEntrance, 1);
   }
-  t33 = Event_GetFlag(0x893);
-  if (t33 == 0) {
+  if (!Event_GetFlag(0x893)) {
     Actor_SetAnimation(22, 5);
     FieldActor_SetSpritePriority(22, 1);
   } else {
@@ -1039,7 +1029,7 @@ void VenusLighthouseEntrance_ThiefWaitsForBackup(void) {
 
 /// "Not that way, Jenna! The meeting spot is west of here."
 void VenusLighthouseEntrance_PointToMeetingSpot(void) {
-  s32 t7;
+  struct Actor *object;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1048,9 +1038,10 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void) {
   FieldActor_WaitForMoveById(8);
   FieldEvent_ShowMessageThenWait(0x2008, 0, 0xa);
   Actor_SetAnimation(8, 2);
-  t7 = ((s32)Actor_Get(5));
-  if (t7 != 0) {
-    Actor_SetDestination(8, FIELD_AT(t7, s16, 10), FIELD_AT(t7, s16, 18));
+  object = Actor_Get(5);
+  if (object != 0) {
+    Actor_SetDestination(8, FIELD_AT((u8 *)object, s16, 10),
+                         FIELD_AT((u8 *)object, s16, 18));
   }
   FieldActor_WaitForMoveById(8);
   Actor_SetPosition(8, 0, 0);
@@ -1061,7 +1052,7 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void) {
 
 /// ★ Named from the game: " ... Are... Are you all right?" (MsgAreAreYou)
 void VenusLighthouseEntrance_WakeUp(void) {
-  s32 t96;
+  struct Actor *object;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1158,9 +1149,10 @@ void VenusLighthouseEntrance_WakeUp(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(8, 0x13333, 0x9999);
   Actor_SetAnimation(8, 2);
-  t96 = ((s32)Actor_Get(5));
-  if (t96 != 0) {
-    Actor_SetDestination(8, FIELD_AT(t96, s16, 10), FIELD_AT(t96, s16, 18));
+  object = Actor_Get(5);
+  if (object != 0) {
+    Actor_SetDestination(8, FIELD_AT((u8 *)object, s16, 10),
+                         FIELD_AT((u8 *)object, s16, 18));
   }
   FieldActor_WaitForMoveById(8);
   Actor_SetPosition(8, 0, 0);
@@ -1412,7 +1404,7 @@ void VenusLighthouseEntrance_UpdateDust(void) {
 /* VIEW(venus_lighthouse_entrance): tag struct SparkSprite as struct
  * SparkSprite__venus_lighthouse_entrance; module/tla.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1405: structure has
+ * tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1422: structure has
  * no member named `unk1e'. */
 struct SparkSprite__venus_lighthouse_entrance {
   u8 unk00[8];
@@ -1458,7 +1450,7 @@ void VenusLighthouseEntrance_EmitDust(struct Actor *source, s32 x, s32 y,
 /* VIEW(s26f4): tag struct SparkSprite as struct SparkSprite__s26f4;
  * venus_lighthouse_entrance.c has another definition; tried with the definition
  * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse_entrance.c:1460: structure has no member
+ * games/tla/src/scene/venus_lighthouse_entrance.c:1477: structure has no member
  * named `unk1e'. */
 struct SparkSprite__s26f4 {
   u8 unk00[4];
@@ -1477,7 +1469,7 @@ struct SparkSprite__s26f4 {
 /* VIEW(s26f4): tag struct SparkWork as struct SparkWork__s26f4;
  * venus_lighthouse_entrance.c has another definition; tried with the definition
  * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse_entrance.c:1457: structure has no member
+ * games/tla/src/scene/venus_lighthouse_entrance.c:1474: structure has no member
  * named `resource'. */
 struct SparkWork__s26f4 {
   u8 unk0000[0x800];
@@ -1523,7 +1515,7 @@ void VenusLighthouseEntrance_StartDust(void) {
 /* VIEW(sparks): tag struct SparkWork as struct SparkWork__sparks;
  * venus_lighthouse_entrance.c has another definition; tried with the definition
  * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse_entrance.c:1494: structure has no member
+ * games/tla/src/scene/venus_lighthouse_entrance.c:1508: structure has no member
  * named `resource'. */
 struct SparkWork__sparks {
   u8 unk0000[0x2102];

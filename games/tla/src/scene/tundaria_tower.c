@@ -20,6 +20,7 @@
 #include "module/scene/magma_rock.h"
 #include "flag_call.h"
 #include "shared/tundaria_tower.h"
+#include "shared/mars_lighthouse.h"
 #include "field_event.h"
 #include "battle/battle.h"
 #include "game/game.h"
@@ -147,14 +148,8 @@ loop:
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-/* VIEW(first): routine gData_020033d0 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_020033d0__first[] __asm__("gData_020033d0");
-#define gData_020033d0 gData_020033d0__first
-/* VIEW(first): routine gData_020033f0 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_020033f0__first[] __asm__("gData_020033f0");
-#define gData_020033f0 gData_020033f0__first
+extern u32 gData_020033d0[];
+extern u32 gData_020033f0[];
 
 const struct ActorPlacement *Func_02000488(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom6)
@@ -166,30 +161,12 @@ const struct ActorPlacement *Func_02000488(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(first): routine gData_02003618 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003618__first[] __asm__("gData_02003618");
-#define gData_02003618 gData_02003618__first
-/* VIEW(first): routine gData_02003648 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003648__first[] __asm__("gData_02003648");
-#define gData_02003648 gData_02003648__first
-/* VIEW(first): routine gData_02003660 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003660__first[] __asm__("gData_02003660");
-#define gData_02003660 gData_02003660__first
-/* VIEW(first): routine gData_02003690 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003690__first[] __asm__("gData_02003690");
-#define gData_02003690 gData_02003690__first
-/* VIEW(first): routine gData_02003708 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003708__first[] __asm__("gData_02003708");
-#define gData_02003708 gData_02003708__first
-/* VIEW(first): routine gData_020037c8 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_020037c8__first[] __asm__("gData_020037c8");
-#define gData_020037c8 gData_020037c8__first
+extern struct ActorPlacement gData_02003618[];
+extern struct ActorPlacement gData_02003648[];
+extern struct ActorPlacement gData_02003660[];
+extern struct ActorPlacement gData_02003690[];
+extern struct ActorPlacement gData_02003708[];
+extern struct ActorPlacement gData_020037c8[];
 
 const struct Trigger *Func_020004c8(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom2)
@@ -407,12 +384,9 @@ void Func_02000920(void) {
   Event_End();
 }
 
-void Func_0200095c(void) { Func_0200189c(); }
+void Func_0200095c(void) { TundariaTower_SlideOnIce(); }
 
-/* VIEW(first): routine gData_02003370 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02003370__first[] __asm__("gData_02003370");
-#define gData_02003370 gData_02003370__first
+extern u32 gData_02003370[];
 
 /// Actor 8 is placed and given its script while the screen flashes, and three
 /// map cells change.
@@ -718,16 +692,6 @@ void Func_020010d4(struct Actor *object) {
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef gData_020033d0
-#undef gData_020033f0
-#undef gData_02003618
-#undef gData_02003648
-#undef gData_02003660
-#undef gData_02003690
-#undef gData_02003708
-#undef gData_020037c8
-#undef gData_02003370
-// ---- games/tla/src/scene/tundaria_tower/s11e0.c ----
 /* VIEW(events_f): routines Func_020010d4, Func_02000404, Func_020007dc,
  * Func_02000f0c and Func_02000fb8 as module/scene/tundaria_tower.h declares
  * them; the scene before defines them otherwise. */
@@ -742,8 +706,6 @@ void Func_02000fb8__events_f(void) __asm__("Func_02000fb8");
 #define Func_02000f0c Func_02000f0c__events_f
 #define Func_02000fb8 Func_02000fb8__events_f
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 struct Actor;
 struct Particle;
 struct ParticleSprite;
@@ -754,11 +716,11 @@ struct TundariaTowerEventWork {
   s32 screenEffect;
 };
 
-void Func_02001868(void);
+void TundariaTower_StopLeader(void);
 
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
-void Func_02002184(s32 id, u32 kind, s32 flag, s32 layer);
+void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 s32 Actor_GetCellIndex(struct Actor *object);
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
@@ -780,8 +742,8 @@ void Func_02000548(void);
 void Func_0200058c(void);
 void Func_02000404(const u8 *data);
 
-extern s16 gData_02003272[];
-extern s16 gData_020032b2[];
+extern s16 gTundariaTower_SlideAngles[];
+extern s16 gTundariaTower_SlideAnglesByKey[];
 
 extern u32 gData_020032d4[];
 
@@ -1016,41 +978,12 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/* VIEW(s11e0): variable gInput as extern u32 gInput; input.h has extern struct
- * InputState gInput; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/scene/tundaria_tower/events_f.c:249:
- * `gInput' undeclared (first use in this function). */
-extern u32 gInput__s11e0 __asm__("gInput");
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
-void Func_020017dc(struct Actor *object) {
-  s32 angle;
-  s32 turn;
+DEFINE_ACTOR_STEER_BY_PAD(TundariaTower_KeepSliding, gTundariaTower_SlideAngles,
+                          Actor_SelectAnimation)
 
-  if (object->timer != 0) {
-    object->timer--;
-    return;
-  }
-  *(u8 *)((u8 *)object + 0x5a) = 0;
-  if (GameFlag_Get(0x106))
-    angle = -1;
-  else
-    angle = gData_02003272[(gInput__s11e0 >> 4) & 15];
-  if (angle == -1) {
-    Actor_SelectAnimation(object, 9);
-    return;
-  }
-  turn = (s16)(angle - object->facing);
-  if (turn > 0x1000)
-    turn = 0x1000;
-  if (turn < -0x1000)
-    turn = -0x1000;
-  object->facing += turn;
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-}
-
-void Func_02001868(void) {
+void TundariaTower_StopLeader(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   if (work->actionCounter != 0) {
@@ -1061,606 +994,50 @@ void Func_02001868(void) {
   }
 }
 
-/* VIEW(events_e): routine Func_020017dc as void Func_020017dc(void); the
- * definition has void Func_020017dc(struct Actor *object); tried as the
- * definition's void Func_020017dc(struct Actor *object), which the object
- * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/tundaria_tower/events_f.c:350: `Func_020017dc__events_e'
- * undeclared (first use in this function). */
-extern void Func_020017dc__events_e(void) __asm__("Func_020017dc");
+DEFINE_LEADER_SLIDE_ON_ICE(TundariaTower_SlideOnIce, TundariaTower_StopLeader,
+                           gTundariaTower_SlideAnglesByKey,
+                           Actor_SelectAnimation, TundariaTower_KeepSliding,
+                           Field_CheckSpheresOverlap)
 
-void Func_0200189c(void) {
-  struct Actor *object;
-  s32 startCell;
-  s32 targetX;
-  s32 targetZ;
-  s32 x;
-  s32 z;
-  u8 *layer;
-  s32 radius;
-  s32 position[3];
-  s32 dx, dz;
-  s32 cell;
-  s16 angle;
-  s32 j;
-  struct Actor *entry;
-  u8 *flags;
-  s32 *p;
-  s32 *q;
-
-  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-retry:
-  Func_02001868();
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x8000;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
-  object->velocityX = 0;
-  object->velocityZ = 0;
-  p = position;
-  p[0] = x = (object->x & 0xfff00000) + 0x80000;
-  p[1] = object->y;
-  p[2] = z = (object->z & 0xfff00000) + 0x80000;
-  targetZ = z;
-  targetX = x;
-  layer = &object->terrainId;
-  startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
-  dz = targetZ - object->z;
-  dx = targetX - object->x;
-  if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
-    angle = gData_020032b2[(gInput.held >> 4) & 15];
-    if ((u16)angle == 0xffff)
-      return;
-  } else {
-    angle = ArcTan2(targetZ - object->z, targetX - object->x);
-    angle = (angle + 0x2000) & 0xc000;
-  }
-  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse's hoist of the
-   * position's address; as no asm, 2 of 304 instructions differ in tla-en. */
-  __asm__("" : : : SFP_CLOBBER);
-  Vector_AddPolarOffset(0x100000, angle, position);
-  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
-  if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->facing = angle;
-    object->velocityX = 0;
-    object->velocityZ = 0;
-    object->x = x;
-    object->z = z;
-    goto end;
-  }
-  p[0] = x;
-  p[2] = z;
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  object->timer = 0;
-  Actor_SetMoveTarget(object, x, object->y, z);
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-  Actor_WaitForMove(object);
-  object->update = Func_020017dc__events_e;
-  goto walk;
-walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
-    goto blocked;
-  radius = object->radius - 2;
-  entry = Ram_HeapSlots->scriptObjects;
-  j = 0;
-  flags = &entry->collisionFlags;
-overlap:
-  if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
-               (s32)position, entry->radius - 2) >= 0)
-      goto blocked;
-  }
-  j++;
-  flags += sizeof(*entry);
-  entry++;
-  if (j <= 63)
-    goto overlap;
-  targetX = q[0];
-  targetZ = q[2];
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  Actor_SetMoveTarget(object, q[0], q[1], q[2]);
-  Actor_WaitForMove(object);
-  if (cell != startCell)
-    goto moved;
-walk:
-  /* FAKEMATCH(barrier): as the one above; as no asm, 126 of 304 instructions
-   * differ in tla-en. */
-  __asm__("" : : : SFP_CLOBBER);
-  Call3((void (*)())Vector_AddPolarOffset, 0x100000, angle, (s32)position);
-  q = position;
-  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
-  if (cell != 255)
-    goto walkNext;
-blocked:
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x10000;
-  Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  Actor_WaitForMove(object);
-  wait(2);
-  goto retry;
-moved:
-  wait(10);
-end:
-  object->update = NULL;
-  object->actionFlags |= 1;
-  object->acceleration = 0x4000;
-  Actor_SelectAnimation(object, 1);
-}
-
-// ---- scene/tundaria_tower/s1b48.c ----
-
-#if TLA_PATCH_1
-
-#include "types.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "system/iwram_call.h"
-#include "system/input.h"
-#include "call.h"
-
-/* VIEW(s1b48): variable gData_02003cd0 as volatile s16 gData_02003cd0;
- * scene/shared/tundaria_tower.h has u16 gData_02003cd0; tried as the 2
- * declarations' extern volatile s16 gData_02003cd0, it does not compile in
- * tla-en: games/tla/src/scene/tundaria_tower/events_f.c:419: conflicting types
- * for `gData_02003cd0'. */
-extern volatile s16 gData_02003cd0__s1b48 __asm__("gData_02003cd0");
-extern s16 gData_020032b2[];
-void Func_020017dc(struct Actor *object);
-void Func_02001868(void);
-s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 z);
-void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *vector);
+extern s16 gTundariaTower_SlideAnglesByKey[];
+void TundariaTower_KeepSliding(struct Actor *object);
+void TundariaTower_StopLeader(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 ArcTan2(s32 y, s32 x);
-void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-void Actor_WaitForMove(struct Actor *actor);
 s32 Actor_HasArrived(struct Actor *object);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
-void wait(s32 frames);
 
-void Func_02001b48(void) {
-  struct Actor *object;
-  s32 startCell;
-  s32 targetX;
-  s32 targetZ;
-  s32 x;
-  s32 z;
-  u8 *layer;
-  s32 radius;
-  s32 position[3];
-  s32 dx, dz;
-  s32 cell;
-  s16 angle;
-  s32 i;
-  s32 j;
-  struct Actor *entry;
-  u8 *flags;
-  s32 *q;
-  s32 *p;
-
-  /* FAKEMATCH(volatile): gData_02003cd0 read as a volatile s16, reread after
-   * each test and for lsls #16; as a plain u16, 54 of 347 instructions differ
-   * in tla-en. */
-  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  gData_02003cd0__s1b48 = 0;
-retry:
-  Func_02001868();
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x8000;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
-  object->velocityX = 0;
-  object->velocityZ = 0;
-  p = position;
-  p[0] = x = (object->x & 0xfff00000) + 0x80000;
-  p[1] = object->y;
-  p[2] = z = (object->z & 0xfff00000) + 0x80000;
-  targetZ = z;
-  targetX = x;
-  layer = &object->terrainId;
-  startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
-  dz = targetZ - object->z;
-  dx = targetX - object->x;
-  if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
-    angle = gData_020032b2[(gInput.held >> 4) & 15];
-    // -1 for no direction, tested as its halfword.
-    if ((u16)angle == 0xffff)
-      goto end;
-  } else {
-    angle = ArcTan2(targetZ - object->z, targetX - object->x);
-    angle = (angle + 0x2000) & 0xc000;
-  }
-  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 2
-   * of 347 instructions differ in tla-en. */
-  Call3((void (*)())Vector_AddPolarOffset, 0x100000, angle, (s32)position);
-  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
-  if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->facing = angle;
-    object->velocityX = 0;
-    object->velocityZ = 0;
-    object->x = x;
-    object->z = z;
-    goto end;
-  }
-  p[0] = x;
-  p[2] = z;
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  object->timer = 0;
-  Actor_SetMoveTarget(object, x, object->y, z);
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-  for (i = 0; i <= 179 && Actor_HasArrived(object) == 0; i++) {
-    if (gData_02003cd0__s1b48 != 0)
-      goto end;
-    wait(1);
-  }
-  object->update = (void (*)(void))Func_020017dc;
-  goto walk;
-walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
-    goto blocked;
-  if (gData_02003cd0__s1b48 != 0)
-    goto end;
-  radius = object->radius - 2;
-  entry = Ram_HeapSlots->scriptObjects;
-  j = 0;
-  flags = &entry->collisionFlags;
-overlap:
-  if (entry->script != NULL && (1 & *flags) && entry != object) {
-    /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
-     * call, 2 of 347 instructions differ in tla-en. */
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
-               (s32)position, entry->radius - 2) >= 0)
-      goto blocked;
-  }
-  j++;
-  flags += sizeof(*entry);
-  entry++;
-  if (j <= 63)
-    goto overlap;
-  targetX = q[0];
-  targetZ = q[2];
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  Actor_SetMoveTarget(object, q[0], q[1], q[2]);
-  i = 0;
-  goto test;
-next:
-  wait(1);
-  i++;
-test:
-  if (i <= 179 && Actor_HasArrived(object) == 0 && gData_02003cd0__s1b48 == 0)
-    goto next;
-  if (gData_02003cd0__s1b48 != 0)
-    goto end;
-  if (cell != startCell)
-    goto changed;
-walk:
-  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
-   * position's address; as no asm, 94 of 347 instructions differ in tla-en. */
-  __asm__("" : : : SFP_CLOBBER);
-  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
-   * of 347 instructions differ in tla-en. */
-  Call3((void (*)())Vector_AddPolarOffset, 0x100000, angle, (s32)position);
-  q = position;
-  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
-  if (cell != 255)
-    goto walkNext;
-blocked:
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x10000;
-  Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  Actor_WaitForMove(object);
-  wait(2);
-  goto retry;
-changed:
-  wait(10);
-end:
-  object->update = NULL;
-  object->actionFlags |= 1;
-  object->acceleration = 0x4000;
-  Actor_SelectAnimation(object, 1);
-}
-
-#else
-
-// The Japanese release's older form.
-
-#include "types.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "system/iwram_call.h"
-#include "system/input.h"
-#include "call.h"
-
-extern volatile s16 gData_02003cd0__s1b48 __asm__("gData_02003cd0");
-extern s16 gData_020032b2[];
-void Func_020017dc(struct Actor *object);
-void Func_02001868(void);
-s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 z);
-void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *vector);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 ArcTan2(s32 y, s32 x);
-void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-s32 Actor_HasArrived(struct Actor *object);
-s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
-void wait(s32 frames);
-
-void Func_02001b48(void) {
-  struct Actor *object;
-  s32 startCell;
-  s32 targetX;
-  s32 targetZ;
-  s32 x;
-  s32 z;
-  u8 *layer;
-  s32 radius;
-  s32 position[3];
-  s32 dx, dz;
-  s32 cell;
-  s16 angle;
-  s32 i;
-  s32 j;
-  struct Actor *entry;
-  u8 *flags;
-  s32 *q;
-  s32 *p;
-
-  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  gData_02003cd0__s1b48 = 0;
-retry:
-  Func_02001868();
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x8000;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
-  object->velocityX = 0;
-  object->velocityZ = 0;
-  p = position;
-  p[0] = x = (object->x & 0xfff00000) + 0x80000;
-  p[1] = object->y;
-  p[2] = z = (object->z & 0xfff00000) + 0x80000;
-  targetZ = z;
-  targetX = x;
-  layer = &object->terrainId;
-  startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
-  dz = targetZ - object->z;
-  dx = targetX - object->x;
-  if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
-    angle = gData_020032b2[(gInput.held >> 4) & 15];
-    // -1 for no direction, tested as its halfword.
-    if ((u16)angle == 0xffff)
-      return;
-  } else {
-    angle = ArcTan2(targetZ - object->z, targetX - object->x);
-    angle = (angle + 0x2000) & 0xc000;
-  }
-  /* FAKEMATCH(barrier): an empty asm clobbering sfp keeps the first step's
-   * position address from reusing p; as no asm, 2 of 332 instructions differ
-   * in tla-ja. */
-  __asm__("" : : : SFP_CLOBBER);
-  Vector_AddPolarOffset(0x100000, angle, position);
-  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
-  if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->facing = angle;
-    object->velocityX = 0;
-    object->velocityZ = 0;
-    object->x = x;
-    object->z = z;
-    goto end;
-  }
-  p[0] = x;
-  p[2] = z;
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  object->timer = 0;
-  Actor_SetMoveTarget(object, x, object->y, z);
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-  Actor_WaitForMove(object);
-  object->update = (void (*)(void))Func_020017dc;
-  goto walk;
-walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
-    goto blocked;
-  if (gData_02003cd0__s1b48 != 0)
-    goto blocked;
-  radius = object->radius - 2;
-  entry = Ram_HeapSlots->scriptObjects;
-  j = 0;
-  flags = &entry->collisionFlags;
-overlap:
-  if (entry->script != NULL && (1 & *flags) && entry != object) {
-    /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
-     * call, 2 of 332 instructions differ in tla-ja. */
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
-               (s32)position, entry->radius - 2) >= 0)
-      goto blocked;
-  }
-  j++;
-  flags += sizeof(*entry);
-  entry++;
-  if (j <= 63)
-    goto overlap;
-  targetX = q[0];
-  targetZ = q[2];
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  i = 0;
-  Actor_SetMoveTarget(object, q[0], q[1], q[2]);
-  goto test;
-next:
-  wait(1);
-  i++;
-test:
-  if (i <= 179 && Actor_HasArrived(object) == 0 && gData_02003cd0__s1b48 == 0)
-    goto next;
-  if (gData_02003cd0__s1b48 != 0)
-    goto end;
-  if (cell != startCell)
-    goto changed;
-walk:
-  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
-   * position's address; as no asm, 128 of 332 instructions differ in tla-ja. */
-  __asm__("" : : : SFP_CLOBBER);
-  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
-   * of 332 instructions differ in tla-ja. */
-  Call3((void (*)())Vector_AddPolarOffset, 0x100000, angle, (s32)position);
-  q = position;
-  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
-  if (cell != 255)
-    goto walkNext;
-blocked:
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x10000;
-  Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  Actor_WaitForMove(object);
-  wait(2);
-  goto retry;
-changed:
-  wait(10);
-end:
-  object->update = NULL;
-  object->actionFlags |= 1;
-  object->acceleration = 0x4000;
-  Actor_SelectAnimation(object, 1);
-}
-
-#endif
-
-// ---- scene/tundaria_tower/events_f.c ----
+#define SLIDE_FROM_EDGE TundariaTower_SlideOnIceFromEdge
+#define SLIDE_STOPPED gTundariaTower_SlideStopped
+#define SLIDE_STOP_LEADER TundariaTower_StopLeader
+#define SLIDE_ANGLES gTundariaTower_SlideAnglesByKey
+#define SLIDE_SET_ANIMATION Actor_SelectAnimation
+#define SLIDE_HAS_ARRIVED Actor_HasArrived
+#define SLIDE_KEEP_SLIDING TundariaTower_KeepSliding
+#define SLIDE_SPHERES_OVERLAP Field_CheckSpheresOverlap
+#include "shared/slide_on_ice_from_edge.c"
+#undef SLIDE_FROM_EDGE
+#undef SLIDE_STOPPED
+#undef SLIDE_STOP_LEADER
+#undef SLIDE_ANGLES
+#undef SLIDE_SET_ANIMATION
+#undef SLIDE_HAS_ARRIVED
+#undef SLIDE_KEEP_SLIDING
+#undef SLIDE_SPHERES_OVERLAP
 
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
-void Func_02001e5c(s32 value) { gData_02003cd0 = value; }
+void TundariaTower_SetSlideStopped(s32 value) {
+  gTundariaTower_SlideStopped = value;
+}
 
-/* VIEW(events_f): routine Func_020017dc as void Func_020017dc(void);
- * games/tla/src/scene/tundaria_tower/s11e0 has void Func_020017dc(struct Actor
- * *object) {; tried as the definition's void Func_020017dc(struct Actor
- * *object), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/tundaria_tower/events_f.c:831: `Func_020017dc__events_f'
- * undeclared (first use in this function). */
-void Func_020017dc__events_f(void) __asm__("Func_020017dc");
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
-void Func_02001e68(void) {
-  struct Actor *object;
-  s16 angle;
-  s32 startCell;
-  s32 targetX;
-  s32 targetZ;
-  s32 radius;
-  s32 position[3];
-  s32 *p;
-  s32 x;
-  s32 z;
-  u8 *layer;
-  s32 cell;
-  s32 *q;
-  struct Actor *entry;
-  s32 j;
-  u8 *flags;
-
-  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  angle = (object->facing + 0x2000) & 0xc000;
-retry:
-  Func_02001868();
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x8000;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
-  object->velocityX = 0;
-  object->velocityZ = 0;
-  p = position;
-  p[0] = x = (object->x & 0xfff00000) + 0x80000;
-  p[1] = object->y;
-  p[2] = z = (object->z & 0xfff00000) + 0x80000;
-  targetX = x;
-  targetZ = z;
-  layer = &object->terrainId;
-  startCell = MapGrid_GetCellBehaviorAt(*layer, x, z);
-  Vector_AddPolarOffset(0x100000, angle, p);
-  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
-  if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->facing = angle;
-    object->velocityX = 0;
-    object->velocityZ = 0;
-    object->x = x;
-    object->z = z;
-    goto end;
-  }
-  p[0] = x;
-  p[2] = z;
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  object->timer = 0;
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-  object->update = Func_020017dc__events_f;
-  goto walk;
-walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
-    goto blocked;
-  radius = object->radius - 2;
-  entry = Ram_HeapSlots->scriptObjects;
-  j = 0;
-  flags = &entry->collisionFlags;
-overlap:
-  if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
-               (s32)position, entry->radius - 2) >= 0)
-      goto blocked;
-  }
-  j++;
-  flags += sizeof(*entry);
-  entry++;
-  if (j <= 63)
-    goto overlap;
-  targetX = q[0];
-  targetZ = q[2];
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  Actor_SetMoveTarget(object, q[0], q[1], q[2]);
-  Actor_WaitForMove(object);
-  if (cell != startCell)
-    goto moved;
-walk:
-  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
-   * position's address; as no asm, 43 of 246 instructions differ in tla-en. */
-  __asm__("" : : : SFP_CLOBBER);
-  Call3((void (*)())Vector_AddPolarOffset, 0x100000, angle, (s32)position);
-  q = position;
-  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
-  if (cell != 255)
-    goto walkNext;
-blocked:
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x10000;
-  Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  Actor_WaitForMove(object);
-  wait(2);
-  goto retry;
-moved:
-  wait(10);
-end:
-  object->update = NULL;
-  object->actionFlags |= 1;
-  object->acceleration = 0x4000;
-  Actor_SelectAnimation(object, 1);
-}
+DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(TundariaTower_SlideOnIceFacing,
+                                 TundariaTower_StopLeader,
+                                 Actor_SelectAnimation,
+                                 TundariaTower_KeepSliding,
+                                 Field_CheckSpheresOverlap)
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -1681,7 +1058,7 @@ loop:
 
   object->collisionFlags &= 0xfe;
   Actor_SetSpriteFlags(object, 0);
-  Func_02002184(id, (u16)x, (u16)z, BYTE_AT(object, 34));
+  Actor_SetCellOpen(id, (u16)x, (u16)z, BYTE_AT(object, 34));
   row += 3;
   if (row[0] != 0xffff)
     goto loop;
@@ -1711,7 +1088,7 @@ top:
         object->scaleY -= 0x1f00;
       if (mode == 1) {
         GameFlag_Set(flag);
-        Func_02002184(id, a, flag, object->terrainId);
+        Actor_SetCellOpen(id, a, flag, object->terrainId);
         object->scaleY = 0x10000;
       }
       return;
@@ -1722,7 +1099,7 @@ top:
     goto top;
 }
 
-DEFINE_ACTOR_SET_CELL_OPEN(Func_02002184, Actor_GetCellIndex,
+DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
                            Actor_SelectAnimation)
 
 // On entering, sets each listed pillar from its two flags (pushed: moved to its
@@ -1879,7 +1256,7 @@ loop:
     Func_020029d0(0);
     wait(8);
     Actor_SelectAnimation(object, 2);
-    Func_02002c1c(-4, object->terrainId, id);
+    Actor_SetCellShape(-4, object->terrainId, id);
     Func_020029d0(1);
     wait(16);
     TundariaTower_SetWork(-1, -1, 0xe666);
@@ -2062,8 +1439,6 @@ void Func_02002764(const u16 *table) {
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-// ---- scene/tundaria_tower/s29d0.c ----
-
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 void *Sprite_ShareVramCacheEntry(void *src, void *alt);
 
@@ -2151,11 +1526,11 @@ void Func_02002b04(void) {
   }
 }
 
-DEFINE_ACTOR_SET_CELL_SHAPE(Func_02002c1c, MapGrid_GetTerrainKind,
+DEFINE_ACTOR_SET_CELL_SHAPE(Actor_SetCellShape, MapGrid_GetTerrainKind,
                             MapCollision_FindOrAddTag)
 
 void Func_02002ca8(s32 a, s32 b) {
-  Func_02002c1c(a, b, gMainRoutineWork.currentOwner);
+  Actor_SetCellShape(a, b, gMainRoutineWork.currentOwner);
 }
 
 void Func_02002cc0(void) {
@@ -2188,9 +1563,8 @@ next:
 // A falling rock's sprite.
 /* VIEW(s29d0): tag struct RockSprite as struct RockSprite__s29d0; module/tla.h
  * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/scene/tundaria_tower/events_f.c:1477: structure has no member
- * named `blend'. */
+ * it does not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:1601:
+ * structure has no member named `blend'. */
 struct RockSprite__s29d0 {
   u8 unk00[5];
   u8 unk05_0 : 5;
@@ -2223,17 +1597,6 @@ DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 // The falling rocks' setup, and Func_02002ebc, which stops their task and
 // frees their picture and heap slot.
 
-/* VIEW(s29d0): routine EffectSprite_Init as void EffectSprite_Init(struct
- * RockSprite__s29d0 *sprite, s32 width, s32 height, u32 attr, s32 tile);
- * effect_sprite.h has void EffectSprite_Init(struct EffectSprite *sprite, s32
- * pivotX, s32 pivotY, u32 attributes, s32 tile); tried as the definition's void
- * EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY, u32
- * attributes, s32 tile), which the object already declares, Rocks_Spawn (gone)
- * moves: 88 of 88 instructions in tla-ja. */
-void EffectSprite_Init__s29d0(struct RockSprite__s29d0 *sprite, s32 width,
-                              s32 height, u32 attr,
-                              s32 tile) __asm__("EffectSprite_Init");
-
 // The falling rocks' setup: loads their picture, sets up 64 small sprites,
 // marks each rock idle and starts the task that spawns them.
 void Func_02002e00(void) {
@@ -2253,7 +1616,7 @@ void Func_02002e00(void) {
   rock = work->rocks;
   sprite = work->sprites;
   for (i = 63; i >= 0; i--) {
-    EffectSprite_Init__s29d0(sprite, 8, 8, 0x40000000, tile);
+    EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
     sprite->blend = 1;
     sprite->palette = 0;
     sprite->priority = 0;
@@ -2283,10 +1646,6 @@ void Func_020005d0(void);
 void Func_020008a8(void);
 void Func_02000b3c(void);
 void Func_02000bfc(void);
-/* VIEW(s29d0): routine Func_02000c64 as this part declared it; the joined file
- * has another. */
-void Func_02000c64__s29d0(void) __asm__("Func_02000c64");
-#define Func_02000c64 Func_02000c64__s29d0
 
 // clang-format off
 u32 gData_020031b0[] = {
@@ -2315,9 +1674,9 @@ s16 gData_0200326e[] = {
     8, -1,
 };
 
-DEFINE_G_DATA_02002276(gData_02003272)
+DEFINE_G_DATA_02002276(gTundariaTower_SlideAngles)
 
-s16 gData_020032b2[] = {
+s16 gTundariaTower_SlideAnglesByKey[] = {
     -1, 0, 0x8000, -1, 0xc000, 0, 0x8000, 0xc000,
     0x4000, 0, 0x8000, 0x4000, -1, 0, 0x8000, -1,
     0,
@@ -2618,7 +1977,6 @@ struct Trigger gData_02003c90[] = {
 #undef EFFECT_SCRIPTS
 #undef FIELD_AT
 #undef BYTE_AT
-#undef Func_02000c64
 #undef Func_020010d4
 #undef Func_02000404
 #undef Func_020007dc

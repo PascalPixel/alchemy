@@ -66,6 +66,17 @@ static inline s32 Iwram_CopyWords(void *destination, const void *source,
   return Iwram_CopyWordsEntry(destination, source, size);
 }
 
+/// Iwram_FillWords as a statement of its own, the call in a once-only block,
+/// which keeps the fill's entry and destination loaded ahead of its size. The
+/// name is ours: twelve fills in the battle, its effects and the field's
+/// Psynergy are written so, among them the battle camera's and the
+/// transition's curtain tiles, which The Broken Seal fills by DMA with its
+/// Dma_Fill32Cell block.
+#define IWRAM_FILL_WORDS(destination, size, value)                             \
+  do {                                                                         \
+    Iwram_FillWords(destination, size, value);                                 \
+  } while (0)
+
 /// Iwram_CopyWords's offset from IwramIrqMain, for the callers that reach it
 /// from the linked IWRAM code rather than at its fixed address.
 #define Iwram_CopyWordsOffset FIXED_OFFSET(0x630, IwramCopyWords, IwramIrqMain)

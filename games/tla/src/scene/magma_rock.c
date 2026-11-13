@@ -81,16 +81,12 @@ struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
 
 #undef EFFECT_SPAWN
 
-// ---- scene/magma_rock/s03b4.c ----
-
 extern s32 gPushLeaderSteps[];
 
 DEFINE_BLOCK_PUSH_ONTO(MagmaRock_PushBlockOnto, gPushLeaderSteps,
                        MapGrid_CheckCollision, Actor_SelectAnimation)
 
 #include "../field/map/cell_fill_byte.c"
-
-// ---- scene/magma_rock.c ----
 
 // Magma Rock's outside, the volcano north of Loho the party climbs to its
 // summit: the Moai statues Burst wakes, which fire magma rocks or lift the
@@ -192,20 +188,9 @@ void MagmaRock_SettleBlocks(u16 *ids) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-/* VIEW(magma_rock): routine gMagmaRock_Regions as this part declared it; the
- * joined file has another. */
-extern const u8 gMagmaRock_Regions__magma_rock[] __asm__("gMagmaRock_Regions");
-#define gMagmaRock_Regions gMagmaRock_Regions__magma_rock
-/* VIEW(magma_rock): routine gMagmaRock_Room2Regions as this part declared it;
- * the joined file has another. */
-extern const u8
-    gMagmaRock_Room2Regions__magma_rock[] __asm__("gMagmaRock_Room2Regions");
-#define gMagmaRock_Room2Regions gMagmaRock_Room2Regions__magma_rock
-/* VIEW(magma_rock): routine gMagmaRock_Room3Regions as this part declared it;
- * the joined file has another. */
-extern const u8
-    gMagmaRock_Room3Regions__magma_rock[] __asm__("gMagmaRock_Room3Regions");
-#define gMagmaRock_Room3Regions gMagmaRock_Room3Regions__magma_rock
+extern s16 gMagmaRock_Regions[];
+extern s16 gMagmaRock_Room2Regions[];
+extern s16 gMagmaRock_Room3Regions[];
 
 const struct SceneEntrance *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2)
@@ -217,53 +202,26 @@ const struct SceneEntrance *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(magma_rock): routine gMagmaRock_Placements as this part declared it; the
- * joined file has another. */
-extern const u8
-    gMagmaRock_Placements__magma_rock[] __asm__("gMagmaRock_Placements");
-#define gMagmaRock_Placements gMagmaRock_Placements__magma_rock
-/* VIEW(magma_rock): routine gMagmaRock_Room2LowerPlacements as this part
- * declared it; the joined file has another. */
-extern const u8 gMagmaRock_Room2LowerPlacements__magma_rock[] __asm__(
-    "gMagmaRock_Room2LowerPlacements");
-#define gMagmaRock_Room2LowerPlacements                                        \
-  gMagmaRock_Room2LowerPlacements__magma_rock
-/* VIEW(magma_rock): routine gMagmaRock_Room2MiddlePlacements as this part
- * declared it; the joined file has another. */
-extern const u8 gMagmaRock_Room2MiddlePlacements__magma_rock[] __asm__(
-    "gMagmaRock_Room2MiddlePlacements");
-#define gMagmaRock_Room2MiddlePlacements                                       \
-  gMagmaRock_Room2MiddlePlacements__magma_rock
-/* VIEW(magma_rock): routine gMagmaRock_Room2UpperPlacements as this part
- * declared it; the joined file has another. */
-extern const u8 gMagmaRock_Room2UpperPlacements__magma_rock[] __asm__(
-    "gMagmaRock_Room2UpperPlacements");
-#define gMagmaRock_Room2UpperPlacements                                        \
-  gMagmaRock_Room2UpperPlacements__magma_rock
-/* VIEW(magma_rock): routine gMagmaRock_Room2TopPlacements as this part declared
- * it; the joined file has another. */
-extern const u8 gMagmaRock_Room2TopPlacements__magma_rock[] __asm__(
-    "gMagmaRock_Room2TopPlacements");
-#define gMagmaRock_Room2TopPlacements gMagmaRock_Room2TopPlacements__magma_rock
-/* VIEW(magma_rock): routine gMagmaRock_Room3Placements as this part declared
- * it; the joined file has another. */
-extern const u8 gMagmaRock_Room3Placements__magma_rock[] __asm__(
-    "gMagmaRock_Room3Placements");
-#define gMagmaRock_Room3Placements gMagmaRock_Room3Placements__magma_rock
+extern struct ActorPlacement gMagmaRock_Placements[];
+extern struct ActorPlacement gMagmaRock_Room2LowerPlacements[];
+extern struct ActorPlacement gMagmaRock_Room2MiddlePlacements[];
+extern struct ActorPlacement gMagmaRock_Room2UpperPlacements[];
+extern struct ActorPlacement gMagmaRock_Room2TopPlacements[];
+extern struct ActorPlacement gMagmaRock_Room3Placements[];
 
-const struct Trigger *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
     if (gMainRoutineWork.entrance <= 3)
-      return (const struct Trigger *)gMagmaRock_Room2LowerPlacements;
+      return gMagmaRock_Room2LowerPlacements;
     if (gMainRoutineWork.entrance <= 8)
-      return (const struct Trigger *)gMagmaRock_Room2MiddlePlacements;
+      return gMagmaRock_Room2MiddlePlacements;
     if (gMainRoutineWork.entrance <= 12)
-      return (const struct Trigger *)gMagmaRock_Room2UpperPlacements;
-    return (const struct Trigger *)gMagmaRock_Room2TopPlacements;
+      return gMagmaRock_Room2UpperPlacements;
+    return gMagmaRock_Room2TopPlacements;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room3)
-    return (const struct Trigger *)gMagmaRock_Room3Placements;
-  return (const struct Trigger *)gMagmaRock_Placements;
+    return gMagmaRock_Room3Placements;
+  return gMagmaRock_Placements;
 }
 
 void Actor_LiftTargetBlock(s16 *table);
@@ -375,11 +333,7 @@ struct MagmaRockEffectParams {
   u8 unk20[8];
 };
 
-/* VIEW(magma_rock): routine gMagmaRock_FlameEmberScript as this part declared
- * it; the joined file has another. */
-extern const u8 gMagmaRock_FlameEmberScript__magma_rock[] __asm__(
-    "gMagmaRock_FlameEmberScript");
-#define gMagmaRock_FlameEmberScript gMagmaRock_FlameEmberScript__magma_rock
+extern u32 gMagmaRock_FlameEmberScript[];
 
 void MagmaRock_ThrowEmbers(struct Actor *object) {
   struct Actor *linked = object->watchedObject;
@@ -567,15 +521,13 @@ void MagmaRock_PlaceVolley(u16 id, s16 first, s16 side) {
 
 DEFINE_ACTOR_FLASH_COLOR(MagmaRock_FlashStatue, 10)
 
-// ---- scene/magma_rock/s0ff4.c ----
-
 // Magma Rock's statues: the magma they fire, the flame columns that lift the
 // leader, the cracked columns, slides, pillars, vines and the final blast.
 
 /* VIEW(s0ff4): tag struct MagmaRockEventWork as struct
  * MagmaRockEventWork__s0ff4; scene/magma_rock has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/magma_rock.c:513: redefinition of `struct
+ * tla-ja: games/tla/src/scene/magma_rock.c:527: redefinition of `struct
  * MagmaRockEventWork'. */
 #define MagmaRockEventWork MagmaRockEventWork__s0ff4
 struct MagmaRockEventWork {
@@ -878,7 +830,7 @@ void MagmaRock_BurstStatue(s32 mode, s32 cue) {
 /* VIEW(s0ff4): tag union Position as union Position__s0ff4;
  * module/scene/scene.h has struct Position; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock.c:820: `Position' defined as wrong kind of
+ * games/tla/src/scene/magma_rock.c:823: `Position' defined as wrong kind of
  * tag. */
 #define Position Position__s0ff4
 // A 16.16 position word, read whole or by halves.
@@ -915,7 +867,7 @@ void MagmaRock_RaiseFlamePart(struct Actor *part) {
 /* VIEW(s0ff4): tag struct MagmaRockEffectConfig as struct
  * MagmaRockEffectConfig__s0ff4; scene/magma_rock has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/magma_rock.c:854: redefinition of `struct
+ * tla-ja: games/tla/src/scene/magma_rock.c:855: redefinition of `struct
  * MagmaRockEffectConfig'. */
 #define MagmaRockEffectConfig MagmaRockEffectConfig__s0ff4
 struct MagmaRockEffectConfig {
@@ -952,7 +904,7 @@ struct MagmaRockEffectConfig {
  * blocks the cells ahead of and behind it on a /// cell with attribute bit 6.
  * void MagmaRock_SettleBlocks(u16 *ids) {; tried as the rest of the object
  * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock.c:1231: conflicting types for
+ * games/tla/src/scene/magma_rock.c:1224: conflicting types for
  * `MagmaRock_SetCellShape'. */
 void MagmaRock_SetCellShape__s0ff4(s32 layer, s32 x, s32 z, s32 height) __asm__(
     "MagmaRock_SetCellShape");
@@ -1213,12 +1165,6 @@ void MagmaRock_SlideDown(void) {
   Event_SetFlag(0x2f8);
 }
 
-/* VIEW(s0ff4): routine MagmaRock_StepOnCrumblingPillar as this part declared
- * it; the joined file has another. */
-void MagmaRock_StepOnCrumblingPillar__s0ff4(const u8 *data) __asm__(
-    "MagmaRock_StepOnCrumblingPillar");
-#define MagmaRock_StepOnCrumblingPillar MagmaRock_StepOnCrumblingPillar__s0ff4
-
 void MagmaRock_ResolveBeforeBurst(void) { Event_ResolvePendingActions(0); }
 
 void MagmaRock_CheckCrumblingPillars(void) {
@@ -1476,49 +1422,26 @@ void MagmaRock_BlastOpenWall(s32 mode, s32 cue) {
     MagmaRock_EndFallingRocks();
 }
 
-/* VIEW(s0ff4): routine gMagmaRock_Triggers as this part declared it; the joined
- * file has another. */
-extern const u8 gMagmaRock_Triggers__s0ff4[] __asm__("gMagmaRock_Triggers");
-#define gMagmaRock_Triggers gMagmaRock_Triggers__s0ff4
-/* VIEW(s0ff4): routine gMagmaRock_Room2LowerTriggers as this part declared it;
- * the joined file has another. */
-extern const u8 gMagmaRock_Room2LowerTriggers__s0ff4[] __asm__(
-    "gMagmaRock_Room2LowerTriggers");
-#define gMagmaRock_Room2LowerTriggers gMagmaRock_Room2LowerTriggers__s0ff4
-/* VIEW(s0ff4): routine gMagmaRock_Room2MiddleTriggers as this part declared it;
- * the joined file has another. */
-extern const u8 gMagmaRock_Room2MiddleTriggers__s0ff4[] __asm__(
-    "gMagmaRock_Room2MiddleTriggers");
-#define gMagmaRock_Room2MiddleTriggers gMagmaRock_Room2MiddleTriggers__s0ff4
-/* VIEW(s0ff4): routine gMagmaRock_Room2UpperTriggers as this part declared it;
- * the joined file has another. */
-extern const u8 gMagmaRock_Room2UpperTriggers__s0ff4[] __asm__(
-    "gMagmaRock_Room2UpperTriggers");
-#define gMagmaRock_Room2UpperTriggers gMagmaRock_Room2UpperTriggers__s0ff4
-/* VIEW(s0ff4): routine gMagmaRock_Room2TopTriggers as this part declared it;
- * the joined file has another. */
-extern const u8
-    gMagmaRock_Room2TopTriggers__s0ff4[] __asm__("gMagmaRock_Room2TopTriggers");
-#define gMagmaRock_Room2TopTriggers gMagmaRock_Room2TopTriggers__s0ff4
-/* VIEW(s0ff4): routine gMagmaRock_Room3Triggers as this part declared it; the
- * joined file has another. */
-extern const u8
-    gMagmaRock_Room3Triggers__s0ff4[] __asm__("gMagmaRock_Room3Triggers");
-#define gMagmaRock_Room3Triggers gMagmaRock_Room3Triggers__s0ff4
+extern struct Trigger gMagmaRock_Triggers[];
+extern struct Trigger gMagmaRock_Room2LowerTriggers[];
+extern struct Trigger gMagmaRock_Room2MiddleTriggers[];
+extern struct Trigger gMagmaRock_Room2UpperTriggers[];
+extern struct Trigger gMagmaRock_Room2TopTriggers[];
+extern struct Trigger gMagmaRock_Room3Triggers[];
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
     if (gMainRoutineWork.entrance <= 3)
-      return (const struct Trigger *)gMagmaRock_Room2LowerTriggers;
+      return gMagmaRock_Room2LowerTriggers;
     if (gMainRoutineWork.entrance <= 8)
-      return (const struct Trigger *)gMagmaRock_Room2MiddleTriggers;
+      return gMagmaRock_Room2MiddleTriggers;
     if (gMainRoutineWork.entrance <= 12)
-      return (const struct Trigger *)gMagmaRock_Room2UpperTriggers;
-    return (const struct Trigger *)gMagmaRock_Room2TopTriggers;
+      return gMagmaRock_Room2UpperTriggers;
+    return gMagmaRock_Room2TopTriggers;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room3)
-    return (const struct Trigger *)gMagmaRock_Room3Triggers;
-  return (const struct Trigger *)gMagmaRock_Triggers;
+    return gMagmaRock_Room3Triggers;
+  return gMagmaRock_Triggers;
 }
 #undef BYTE_AT
 
@@ -1544,30 +1467,18 @@ const struct Trigger *Scene_GetEvents(void) {
 #undef TLA_MAGMA_ROCK_H
 #undef BYTE_AT
 #undef HALF_AT
-#undef gMagmaRock_Regions
-#undef gMagmaRock_Room2Regions
-#undef gMagmaRock_Room3Regions
-#undef gMagmaRock_Placements
 #undef gMagmaRock_Room2LowerPlacements
 #undef gMagmaRock_Room2MiddlePlacements
 #undef gMagmaRock_Room2UpperPlacements
-#undef gMagmaRock_Room2TopPlacements
-#undef gMagmaRock_Room3Placements
-#undef gMagmaRock_FlameEmberScript
 #undef MagmaRockEventWork
 #undef MagmaRock_PlayBurst
 #undef Position
 #undef MagmaRockEffectConfig
 #undef MagmaRock_SetCellShape
-#undef MagmaRock_StepOnCrumblingPillar
-#undef gMagmaRock_Triggers
-#undef gMagmaRock_Room2LowerTriggers
-#undef gMagmaRock_Room2MiddleTriggers
-#undef gMagmaRock_Room2UpperTriggers
-#undef gMagmaRock_Room2TopTriggers
-#undef gMagmaRock_Room3Triggers
 /* VIEW(s22ac): tag struct MagmaRockEventWork as this part has it; the joined
- * file has another. */
+ * file has another; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja: games/tla/src/scene/magma_rock.c:1441:
+ * redefinition of `struct MagmaRockEventWork'. */
 #define MagmaRockEventWork MagmaRockEventWork__s22ac
 // @file
 // Magma Rock's rooms set up, the leader launched and landed, and the
@@ -1581,16 +1492,6 @@ struct MagmaRockEventWork {
 s32 Trig_Cos(s32 angle);
 void FieldEffect_AdvanceMotion();
 void Map_CenterOnFollowedPoint(void);
-/* VIEW(s22ac): routine Func_02003af4 as this part declared it; the joined file
- * has another. */
-void Func_02003af4__s22ac(void) __asm__("Func_02003af4");
-#define Func_02003af4 Func_02003af4__s22ac
-/* VIEW(s22ac): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another. */
-void FieldEffect_Spawn__s22ac(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct MagmaRockEffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__s22ac
 
 void MagmaRock_LaunchLeader(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1689,15 +1590,6 @@ struct LayeredSprite {
   struct AnimationEntry *entries[4];
 };
 
-/* VIEW(s22ac): routine MagmaRock_RaiseFlameTop as this part declared it; the
- * joined file has another. */
-void MagmaRock_RaiseFlameTop__s22ac(void) __asm__("MagmaRock_RaiseFlameTop");
-#define MagmaRock_RaiseFlameTop MagmaRock_RaiseFlameTop__s22ac
-/* VIEW(s22ac): routine MagmaRock_RaiseFlamePart as this part declared it; the
- * joined file has another. */
-void MagmaRock_RaiseFlamePart__s22ac(void) __asm__("MagmaRock_RaiseFlamePart");
-#define MagmaRock_RaiseFlamePart MagmaRock_RaiseFlamePart__s22ac
-
 static inline void AttachPart(struct Actor *part, struct Actor *anchor,
                               u8 order) {
   BYTE_AT(part, 98) = order;
@@ -1746,15 +1638,9 @@ void MagmaRock_RebuildFlameParts(u16 id) {
   BuildParts(Actor_Get(id)->watchedObject);
 }
 
-/* VIEW(s22ac): routine MagmaRock_RaiseActorCells as this part declared it; the
- * joined file has another. */
-s32 MagmaRock_RaiseActorCells__s22ac() __asm__("MagmaRock_RaiseActorCells");
-#define MagmaRock_RaiseActorCells MagmaRock_RaiseActorCells__s22ac
-/* VIEW(s22ac): routine Blocks_MarkCells as this part declared it; the joined
- * file has another. */
-s32 Blocks_MarkCells__s22ac() __asm__("Blocks_MarkCells");
-#define Blocks_MarkCells Blocks_MarkCells__s22ac
 void MagmaRock_SettleBlocks();
+/// The overlay's import veneer to Rope_PlaceFar.
+void Func_02003bfc();
 
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *work;
@@ -1999,11 +1885,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 extern u8 gMapShapeGrid[];
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-/* VIEW(s22ac): routine MapCollision_FindOrAddTag as this part declared it; the
- * joined file has another. */
-u8 MapCollision_FindOrAddTag__s22ac(s32 layer, s32 shape, s32 height) __asm__(
-    "MapCollision_FindOrAddTag");
-#define MapCollision_FindOrAddTag MapCollision_FindOrAddTag__s22ac
 
 DEFINE_PILLARS_RESTORE_RAISED(MagmaRock_RestoreCrumblingPillars,
                               Actor_GetCellIndex, MapGrid_GetTerrainKind,
@@ -2239,8 +2120,6 @@ test:
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-// ---- scene/magma_rock/s34ac.c ----
-
 // Magma Rock's rubble and falling rocks, and its tables.
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
@@ -2330,27 +2209,10 @@ void MagmaRock_SpawnDustRing(void) {
 
 s32 MapGrid_GetTerrainKind(s32 terrainId, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-/* VIEW(s34ac): routine MapCollision_FindOrAddTag as s32
- * MapCollision_FindOrAddTag(s32 terrainId, s32 value, s32 height);
- * scene/magma_rock/s22ac has u8 MapCollision_FindOrAddTag(s32 layer, s32 shape,
- * s32 height); tried as the definition's s32 MapCollision_FindOrAddTag(s32
- * unused, s32 key, s32 value), which the object already declares,
- * MagmaRock_SetActorCellShape moves: 1 of 60 instructions in tla-ja. */
-s32 MapCollision_FindOrAddTag__s34ac(
-    s32 terrainId, s32 value, s32 height) __asm__("MapCollision_FindOrAddTag");
 
 DEFINE_ACTOR_SET_CELL_SHAPE_AT(MagmaRock_SetActorCellShape,
                                MapGrid_GetTerrainKind,
-                               MapCollision_FindOrAddTag__s34ac)
-
-/* VIEW(s34ac): routine MagmaRock_StepOnCrumblingPillar as void
- * MagmaRock_StepOnCrumblingPillar(const u8 *data); scene/magma_rock/s22ac has
- * void MagmaRock_StepOnCrumblingPillar(u16 *list) {; tried as the definition's
- * void MagmaRock_StepOnCrumblingPillar(u16 *list), which the object already
- * declares, MagmaRock_SetActorCellShape (gone) moves: 60 of 60 instructions in
- * tla-ja. */
-void MagmaRock_StepOnCrumblingPillar__s34ac(const u8 *data) __asm__(
-    "MagmaRock_StepOnCrumblingPillar");
+                               MapCollision_FindOrAddTag)
 
 void MagmaRock_SetLeaderCellShape(s32 a, s32 b) {
   MagmaRock_SetActorCellShape(a, b, gMainRoutineWork.currentOwner);
@@ -2444,12 +2306,6 @@ struct RockWork {
 };
 
 void Import_DecompressTaggedLz(void *entry, void *destination);
-/* VIEW(s34ac): routine EffectSprite_Init as this part declared it; the joined
- * file has another. */
-void EffectSprite_Init__s34ac(struct RockSprite *sprite, s32 width, s32 height,
-                              u32 attributes,
-                              s32 tile) __asm__("EffectSprite_Init");
-#define EffectSprite_Init EffectSprite_Init__s34ac
 
 void MagmaRock_StartFallingRocks(void) {
   struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
@@ -2492,39 +2348,6 @@ void MagmaRock_EndFallingRocks(void) {
 }
 
 void MagmaRock_UnblockMovedPillar(void);
-/* VIEW(s34ac): routine MagmaRock_BlockMovedPillar as this part declared it; the
- * joined file has another. */
-void MagmaRock_BlockMovedPillar__s34ac(void) __asm__(
-    "MagmaRock_BlockMovedPillar");
-#define MagmaRock_BlockMovedPillar MagmaRock_BlockMovedPillar__s34ac
-/* VIEW(s34ac): routine MagmaRock_TargetStatue as this part declared it; the
- * joined file has another. */
-void MagmaRock_TargetStatue__s34ac(void) __asm__("MagmaRock_TargetStatue");
-#define MagmaRock_TargetStatue MagmaRock_TargetStatue__s34ac
-/* VIEW(s34ac): routine MagmaRock_BurstColumn1 as this part declared it; the
- * joined file has another. */
-void MagmaRock_BurstColumn1__s34ac(void) __asm__("MagmaRock_BurstColumn1");
-#define MagmaRock_BurstColumn1 MagmaRock_BurstColumn1__s34ac
-/* VIEW(s34ac): routine MagmaRock_BurstColumn2 as this part declared it; the
- * joined file has another. */
-void MagmaRock_BurstColumn2__s34ac(void) __asm__("MagmaRock_BurstColumn2");
-#define MagmaRock_BurstColumn2 MagmaRock_BurstColumn2__s34ac
-/* VIEW(s34ac): routine MagmaRock_BurstColumn3 as this part declared it; the
- * joined file has another. */
-void MagmaRock_BurstColumn3__s34ac(void) __asm__("MagmaRock_BurstColumn3");
-#define MagmaRock_BurstColumn3 MagmaRock_BurstColumn3__s34ac
-/* VIEW(s34ac): routine MagmaRock_BurstColumn4 as this part declared it; the
- * joined file has another. */
-void MagmaRock_BurstColumn4__s34ac(void) __asm__("MagmaRock_BurstColumn4");
-#define MagmaRock_BurstColumn4 MagmaRock_BurstColumn4__s34ac
-/* VIEW(s34ac): routine MagmaRock_BurstColumn5 as this part declared it; the
- * joined file has another. */
-void MagmaRock_BurstColumn5__s34ac(void) __asm__("MagmaRock_BurstColumn5");
-#define MagmaRock_BurstColumn5 MagmaRock_BurstColumn5__s34ac
-/* VIEW(s34ac): routine MagmaRock_BlastOpenWall as this part declared it; the
- * joined file has another. */
-void MagmaRock_BlastOpenWall__s34ac(void) __asm__("MagmaRock_BlastOpenWall");
-#define MagmaRock_BlastOpenWall MagmaRock_BlastOpenWall__s34ac
 
 // clang-format off
 DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
@@ -2921,14 +2744,4 @@ struct Trigger gMagmaRock_Room3Triggers[] = {
 #undef MagmaRock_RaiseFlamePart
 #undef MagmaRock_RaiseActorCells
 #undef Blocks_MarkCells
-#undef MapCollision_FindOrAddTag
-#undef EffectSprite_Init
-#undef MagmaRock_BlockMovedPillar
-#undef MagmaRock_TargetStatue
-#undef MagmaRock_BurstColumn1
-#undef MagmaRock_BurstColumn2
-#undef MagmaRock_BurstColumn3
-#undef MagmaRock_BurstColumn4
-#undef MagmaRock_BurstColumn5
-#undef MagmaRock_BlastOpenWall
 #undef MagmaRockEventWork

@@ -1,11 +1,16 @@
+/// @file
+/// The Gabomba Statue above Kibombo, in the seven rooms of this overlay: halls
+/// of pinions and cogs the party rides and hops across, stopped by Lashing a
+/// rope (GabombaStatue_LashRope) and turned the other way by Pounding the two
+/// cone pillars beside a flashing cog (GabombaStatue_PoundConePillar). From
+/// inside, the party hears the offering made below
+/// (GabombaStatue_HearTheOffering), and works out that the channel must bring
+/// two magical charges to the statue in the middle at once
+/// (GabombaStatue_FocusEnergies to GabombaStatue_FixTheChannel).
 
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/field_effect/move.c"
-/// @file
-/// The scene code of overlay 0x671, in ROM order.
-
-// ---- games/tla/src/scene/gabomba_statue.c ----
 
 #include "flags.h"
 #include "field/field.h"
@@ -53,13 +58,6 @@
 
 extern u8 Data_0202c001[];
 
-/* VIEW(gabomba_statue): routine Actor_SelectAnimation as void
- * Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
- * module/scene/scene.h has void Actor_SelectAnimation(struct Actor *object, s32
- * mode); not tried: Actor_SelectAnimation's bound declaration was not found. */
-extern void
-Func_02005624__gabomba_statue(struct FieldEffect *effect,
-                              s32 mode) __asm__("Actor_SelectAnimation");
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -81,7 +79,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_02005624__gabomba_statue(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect,
                     gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
@@ -124,7 +122,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_02005624__gabomba_statue(effect, 1);
+    Actor_SelectAnimation(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
@@ -145,7 +143,7 @@ struct Wanderer {
   u16 facingB;
 };
 
-void Func_02000280(void) { Field_RequestDjinnBattle(33, 9); }
+void GabombaStatue_FightSteel(void) { Field_RequestDjinnBattle(33, 9); }
 s32 Func_0200028c(struct Wanderer *actor) {
   u8 *timer = &actor->timer;
 
@@ -176,30 +174,12 @@ s32 Func_0200028c(struct Wanderer *actor) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-/* VIEW(gabomba_statue): routine gData_02005dfc as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02005dfc__gabomba_statue[] __asm__("gData_02005dfc");
-#define gData_02005dfc gData_02005dfc__gabomba_statue
-/* VIEW(gabomba_statue): routine gData_02005e2c as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02005e2c__gabomba_statue[] __asm__("gData_02005e2c");
-#define gData_02005e2c gData_02005e2c__gabomba_statue
-/* VIEW(gabomba_statue): routine gData_02005e4c as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02005e4c__gabomba_statue[] __asm__("gData_02005e4c");
-#define gData_02005e4c gData_02005e4c__gabomba_statue
-/* VIEW(gabomba_statue): routine gData_02005e8c as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02005e8c__gabomba_statue[] __asm__("gData_02005e8c");
-#define gData_02005e8c gData_02005e8c__gabomba_statue
-/* VIEW(gabomba_statue): routine gData_02005ecc as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02005ecc__gabomba_statue[] __asm__("gData_02005ecc");
-#define gData_02005ecc gData_02005ecc__gabomba_statue
-/* VIEW(gabomba_statue): routine gData_02005eec as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02005eec__gabomba_statue[] __asm__("gData_02005eec");
-#define gData_02005eec gData_02005eec__gabomba_statue
+extern s16 gData_02005dfc[];
+extern u32 gData_02005e2c[];
+extern s16 gData_02005e4c[];
+extern s16 gData_02005e8c[];
+extern u32 gData_02005ecc[];
+extern u32 gData_02005eec[];
 
 const u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -232,7 +212,7 @@ s32 Func_02000364(struct Actor *actor) {
 /* VIEW(gabomba_statue): tag struct Orbiter as struct Orbiter__gabomba_statue;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:201: structure has no member named
+ * games/tla/src/scene/gabomba_statue.c:218: structure has no member named
  * `phase'. */
 struct Orbiter__gabomba_statue {
   u8 unk00[6];
@@ -250,10 +230,7 @@ struct Orbiter__gabomba_statue {
   void *link;
 };
 
-/* VIEW(gabomba_statue): routine gData_02005af0 as this part declared it; the
- * joined file has another. */
-extern s32 gData_02005af0__gabomba_statue __asm__("gData_02005af0");
-#define gData_02005af0 gData_02005af0__gabomba_statue
+extern s32 gData_02005af0;
 s32 __divsi3(s32 numerator, s32 denominator);
 
 void Func_02000398(struct Orbiter__gabomba_statue *actor, s32 *x, s32 *z) {
@@ -308,16 +285,7 @@ struct IoReg16 {
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
 extern struct SceneState gSceneState;
-/* VIEW(gabomba_statue): routine gData_02005940 as this part declared it; the
- * joined file has another. */
-extern const s8 gData_02005940__gabomba_statue[] __asm__("gData_02005940");
-#define gData_02005940 gData_02005940__gabomba_statue
-
-/* VIEW(gabomba_statue): routine Func_02004380 as this part declared it; the
- * joined file has another. */
-void Func_02004380__gabomba_statue(s32 x, s32 z,
-                                   s32 a) __asm__("Func_02004380");
-#define Func_02004380 Func_02004380__gabomba_statue
+extern s8 gData_02005940[];
 
 s32 Func_0200047c(struct Actor *object) {
   struct Actor *owner = object->watchedObject;
@@ -335,70 +303,42 @@ s32 Func_0200047c(struct Actor *object) {
   return 1;
 }
 
-/* VIEW(gabomba_statue): routine gData_02006b20 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02006b20__gabomba_statue[] __asm__("gData_02006b20");
-#define gData_02006b20 gData_02006b20__gabomba_statue
-/* VIEW(gabomba_statue): routine gData_02005fd4 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02005fd4__gabomba_statue[] __asm__("gData_02005fd4");
-#define gData_02005fd4 gData_02005fd4__gabomba_statue
-/* VIEW(gabomba_statue): routine gData_02006004 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02006004__gabomba_statue[] __asm__("gData_02006004");
-#define gData_02006004 gData_02006004__gabomba_statue
-/* VIEW(gabomba_statue): routine gData_02006244 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02006244__gabomba_statue[] __asm__("gData_02006244");
-#define gData_02006244 gData_02006244__gabomba_statue
-/* VIEW(gabomba_statue): routine gData_020064cc as this part declared it; the
- * joined file has another. */
-extern const u8 gData_020064cc__gabomba_statue[] __asm__("gData_020064cc");
-#define gData_020064cc gData_020064cc__gabomba_statue
-/* VIEW(gabomba_statue): routine gData_020067e4 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_020067e4__gabomba_statue[] __asm__("gData_020067e4");
-#define gData_020067e4 gData_020067e4__gabomba_statue
-/* VIEW(gabomba_statue): routine gData_02006898 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02006898__gabomba_statue[] __asm__("gData_02006898");
-#define gData_02006898 gData_02006898__gabomba_statue
-/* VIEW(gabomba_statue): routine gData_02006a90 as this part declared it; the
- * joined file has another. */
-extern const u8 gData_02006a90__gabomba_statue[] __asm__("gData_02006a90");
-#define gData_02006a90 gData_02006a90__gabomba_statue
+extern struct ActorPlacement gGabombaStatue_Placements[];
+extern struct ActorPlacement gGabombaStatue_Room1Placements[];
+extern struct ActorPlacement gGabombaStatue_Room2Placements[];
+extern s16 gGabombaStatue_Room3Placements[];
+extern s16 gGabombaStatue_Room4Placements[];
+extern s16 gGabombaStatue_Room5Placements[];
+extern struct ActorPlacement gGabombaStatue_Room6Placements[];
+extern s16 gGabombaStatue_Room7Placements[];
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
-  const u8 *table = gData_02006b20;
+  const u8 *table = gGabombaStatue_Placements;
 
   if (scene == (s32)&SceneId_Ov671Room1)
-    table = gData_02005fd4;
+    table = gGabombaStatue_Room1Placements;
   else if (scene == (s32)&SceneId_Ov671Room2)
-    table = gData_02006004;
+    table = gGabombaStatue_Room2Placements;
   else if (scene == (s32)&SceneId_Ov671Room3)
-    table = gData_02006244;
+    table = gGabombaStatue_Room3Placements;
   else if (scene == (s32)&SceneId_Ov671Room4)
-    table = gData_020064cc;
+    table = gGabombaStatue_Room4Placements;
   else if (scene == (s32)&SceneId_Ov671Room5)
-    table = gData_020067e4;
+    table = gGabombaStatue_Room5Placements;
   else if (scene == (s32)&SceneId_Ov671Room6)
-    table = gData_02006898;
+    table = gGabombaStatue_Room6Placements;
   else if (scene == (s32)&SceneId_Ov671Room7)
-    table = gData_02006a90;
+    table = gGabombaStatue_Room7Placements;
   return table;
 }
 #undef REG_BLDALPHA
 #undef OBJECT_BYTE
 
-// ---- games/tla/src/scene/gabomba_statue/find_near.c ----
-// Scene code of overlay 0x671, in ROM order, from find_near's offset up to the
-// next object the overlay links.
-
 /* VIEW(find_near): tag struct Orbiter as struct Orbiter__find_near;
  * gabomba_statue.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:351: structure has no member named
+ * games/tla/src/scene/gabomba_statue.c:357: structure has no member named
  * `phase'. */
 struct Orbiter__find_near {
   u8 unk00[6];
@@ -420,15 +360,12 @@ struct Orbiter__find_near {
   struct Orbiter__find_near *link;
 };
 
-/* VIEW(find_near): routine gData_02006b38 as this part declared it; the joined
- * file has another. */
-extern const s8 gData_02006b38__find_near[] __asm__("gData_02006b38");
-#define gData_02006b38 gData_02006b38__find_near
+extern s8 gData_02006b38[];
 
 #define DIFF_WITHIN(a, b, limit)                                               \
   ((a) - (b) >= 0 ? (a) - (b) <= (limit) : (b) - (a) <= (limit))
 
-void Func_02000550(void) {
+void GabombaStatue_LashRope(void) {
   struct Orbiter__find_near *actor =
       ((struct Orbiter__find_near *)Actor_Get(9));
   u16 zero = 0;
@@ -504,10 +441,10 @@ void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
 
   Import_LeaderStopMoving(object);
   saved = *flags;
-  Func_02005624__gabomba_statue(object, 6);
+  Actor_SelectAnimation(object, 6);
   System_Wait(6);
   Event_PlaySound(152);
-  Func_02005624__gabomba_statue(object, 7);
+  Actor_SelectAnimation(object, 7);
   object->speedLimit = 0x30000;
   object->acceleration = 0x20000;
   object->velocityY = velocity;
@@ -516,7 +453,7 @@ void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
   FieldActor_SetMoveTarget(object, object->x + dx, object->y, object->z + dz);
   FieldActor_WaitForMove(object);
   *flags = saved;
-  Func_02005624__gabomba_statue(object, 6);
+  Actor_SelectAnimation(object, 6);
   Actor_SetSpriteFlags(object, 1);
   System_Wait(3);
 }
@@ -869,7 +806,7 @@ void Func_02000f6c(void) {
   Func_020022d0(14, 10, 10, 0xc000);
 }
 
-void Func_02000fc0(void) {
+void GabombaStatue_HearTheOffering(void) {
   s32 result;
 
   Event_SetFlag(0x205);
@@ -924,57 +861,33 @@ void Func_02000fc0(void) {
   }
 }
 
-/* VIEW(find_near): routine gData_02006e9c as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02006e9c__find_near[] __asm__("gData_02006e9c");
-#define gData_02006e9c gData_02006e9c__find_near
-/* VIEW(find_near): routine gData_02006b54 as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02006b54__find_near[] __asm__("gData_02006b54");
-#define gData_02006b54 gData_02006b54__find_near
-/* VIEW(find_near): routine gData_02006b6c as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02006b6c__find_near[] __asm__("gData_02006b6c");
-#define gData_02006b6c gData_02006b6c__find_near
-/* VIEW(find_near): routine gData_02006bd8 as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02006bd8__find_near[] __asm__("gData_02006bd8");
-#define gData_02006bd8 gData_02006bd8__find_near
-/* VIEW(find_near): routine gData_02006c80 as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02006c80__find_near[] __asm__("gData_02006c80");
-#define gData_02006c80 gData_02006c80__find_near
-/* VIEW(find_near): routine gData_02006d1c as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02006d1c__find_near[] __asm__("gData_02006d1c");
-#define gData_02006d1c gData_02006d1c__find_near
-/* VIEW(find_near): routine gData_02006db8 as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02006db8__find_near[] __asm__("gData_02006db8");
-#define gData_02006db8 gData_02006db8__find_near
-/* VIEW(find_near): routine gData_02006e78 as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02006e78__find_near[] __asm__("gData_02006e78");
-#define gData_02006e78 gData_02006e78__find_near
+extern struct Trigger gGabombaStatue_Triggers[];
+extern struct Trigger gGabombaStatue_Room1Triggers[];
+extern struct Trigger gGabombaStatue_Room2Triggers[];
+extern struct Trigger gGabombaStatue_Room3Triggers[];
+extern struct Trigger gGabombaStatue_Room4Triggers[];
+extern struct Trigger gGabombaStatue_Room5Triggers[];
+extern struct Trigger gGabombaStatue_Room6Triggers[];
+extern struct Trigger gGabombaStatue_Room7Triggers[];
 
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
-  const u8 *table = gData_02006e9c;
+  const u8 *table = gGabombaStatue_Triggers;
 
   if (scene == (s32)&SceneId_Ov671Room1)
-    table = gData_02006b54;
+    table = gGabombaStatue_Room1Triggers;
   else if (scene == (s32)&SceneId_Ov671Room2)
-    table = gData_02006b6c;
+    table = gGabombaStatue_Room2Triggers;
   else if (scene == (s32)&SceneId_Ov671Room3)
-    table = gData_02006bd8;
+    table = gGabombaStatue_Room3Triggers;
   else if (scene == (s32)&SceneId_Ov671Room4)
-    table = gData_02006c80;
+    table = gGabombaStatue_Room4Triggers;
   else if (scene == (s32)&SceneId_Ov671Room5)
-    table = gData_02006d1c;
+    table = gGabombaStatue_Room5Triggers;
   else if (scene == (s32)&SceneId_Ov671Room6)
-    table = gData_02006db8;
+    table = gGabombaStatue_Room6Triggers;
   else if (scene == (s32)&SceneId_Ov671Room7)
-    table = gData_02006e78;
+    table = gGabombaStatue_Room7Triggers;
   return table;
 }
 
@@ -1199,34 +1112,26 @@ DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(Func_02001864, 440, 248)
 
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(Func_020018a8, 440, 184)
 
-void Func_020018ec(s32 show) {
+void GabombaStatue_SetActorsHidden(s32 show) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room1)
-    Func_02001950(show, 8, 1);
+    Actors_SetHidden(show, 8, 1);
   else if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room2)
-    Func_02001950(show, 29, 2);
+    Actors_SetHidden(show, 29, 2);
 }
 
-/* VIEW(find_near): routine gData_02005d7c as this part declared it; the joined
- * file has another. */
-extern const u8 gData_02005d7c__find_near[] __asm__("gData_02005d7c");
-#define gData_02005d7c gData_02005d7c__find_near
-/* VIEW(find_near): routine Statue_Sink as this part declared it; the joined
- * file has another. */
-void Statue_Sink__find_near(const u8 *data, s32 a,
-                            s32 b) __asm__("Statue_Sink");
-#define Statue_Sink Statue_Sink__find_near
+extern s16 gData_02005d7c[];
 
-void Func_02001928(void) {
-  Func_020018ec(1);
+void GabombaStatue_HideActors(void) {
+  GabombaStatue_SetActorsHidden(1);
   Event_SetFlag(512);
 }
 
-void Func_0200193c(void) {
-  Func_020018ec(0);
+void GabombaStatue_ShowActors(void) {
+  GabombaStatue_SetActorsHidden(0);
   Event_ClearFlag(512);
 }
 
-void Func_02001950(s32 show, s32 first, u32 count) {
+void Actors_SetHidden(s32 show, s32 first, u32 count) {
   u32 i;
 
   for (i = 0; i < count; i++) {
@@ -1239,7 +1144,7 @@ void Func_02001950(s32 show, s32 first, u32 count) {
   }
 }
 
-void Func_02001990(s32 a, s32 b) {
+void GabombaStatue_PoundConePillar(s32 a, s32 b) {
   Statue_Sink(gData_02005d7c, a, b);
   if (Event_GetFlag(0x8ce) && Event_GetFlag(0x8cf))
     ((struct GateEventWork *)Ram_HeapSlots->eventWork)->gateTimer = 200;
@@ -1269,10 +1174,6 @@ void Func_020019d0(void) {
   Event_End();
 }
 
-/* VIEW(find_near): routine Func_020043a4 as this part declared it; the joined
- * file has another. */
-void Func_020043a4__find_near(s32 value) __asm__("Func_020043a4");
-#define Func_020043a4 Func_020043a4__find_near
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Func_02001a6c(s32 value) {
   Func_020043a4(value);
@@ -1287,7 +1188,7 @@ void Func_02001a8c(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(20);
   Event_PlaySound(214);
-  Func_02005624__gabomba_statue(object, 5);
+  Actor_SelectAnimation(object, 5);
   object->scaleY = 0x10000;
   Event_End();
 }
@@ -1307,7 +1208,7 @@ void Func_02001adc(s32 id) {
 void Func_02001b0c(void) {
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     if (!Event_GetFlag(512))
-      Func_0200193c();
+      GabombaStatue_ShowActors();
   } else {
     Event_SetFlag(512);
   }
@@ -1489,7 +1390,7 @@ void Func_020020b0(s32 id, s32 direction, s32 value) {
   struct Actor *object = Actor_Get(id);
   void *animation = object->sprite;
 
-  Func_02005624__gabomba_statue(object, gData_02005940[(direction + 1) & 3]);
+  Actor_SelectAnimation(object, gData_02005940[(direction + 1) & 3]);
   object->unk5c[0] = 2;
   Sprite_SetAnimationTimers(animation, value);
 }
@@ -1544,18 +1445,8 @@ void Func_020020f0(s32 direction) {
   }
 }
 
-/* VIEW(find_near): routine gData_0200e88c as this part declared it; the joined
- * file has another. */
-extern const u8 gData_0200e88c__find_near[] __asm__("gData_0200e88c");
-#define gData_0200e88c gData_0200e88c__find_near
+extern s32 gData_0200e88c[];
 
-/* VIEW(find_near): routine Actor_StartScript as void Actor_StartScript(struct
- * Orbiter__find_near *object, const u8 *script); gabomba_statue has extern void
- * Actor_StartScript(struct FieldEffect *effect, const s32 *script); not tried:
- * Actor_StartScript's bound declaration was not found. */
-extern void
-Func_02005634__find_near(struct Orbiter__find_near *object,
-                         const u8 *script) __asm__("Actor_StartScript");
 void Actor_SetSpriteColorMode(struct Orbiter__find_near *object, s32 value);
 
 void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
@@ -1564,8 +1455,8 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
   struct Orbiter__find_near *target =
       ((struct Orbiter__find_near *)Actor_Get(targetId));
 
-  Func_02005624__gabomba_statue(object, 0);
-  Func_02005634__find_near(object, gData_0200e88c);
+  Actor_SelectAnimation(object, 0);
+  Actor_StartScript(object, gData_0200e88c);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->link = target;
@@ -1588,52 +1479,11 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
 #undef REG_BLDALPHA
 #undef REG_BLDALPHA
 #undef OBJECT_BYTE
-#undef gData_02005dfc
-#undef gData_02005e2c
-#undef gData_02005e4c
-#undef gData_02005e8c
-#undef gData_02005ecc
-#undef gData_02005eec
-#undef gData_02005af0
-#undef gData_02005940
-#undef Func_02004380
-#undef gData_02006b20
-#undef gData_02005fd4
-#undef gData_02006004
-#undef gData_02006244
-#undef gData_020064cc
-#undef gData_020067e4
-#undef gData_02006898
-#undef gData_02006a90
-#undef gData_02006b38
-#undef gData_02006e9c
-#undef gData_02006b54
-#undef gData_02006b6c
-#undef gData_02006bd8
-#undef gData_02006c80
-#undef gData_02006d1c
-#undef gData_02006db8
-#undef gData_02006e78
-#undef gData_02005d7c
-#undef Statue_Sink
-#undef Func_020043a4
-#undef gData_0200e88c
 /* VIEW(s2394): tags Wanderer and SceneState as this part has them; the scene
  * before has its own. */
 #define Wanderer Wanderer__s2394
 #define SceneState SceneState__s2394
 // @file
-// Scene code of overlay 0x671, in ROM order.
-
-// ---- games/tla/src/scene/gabomba_statue/s2394.c ----
-
-/* VIEW(s2394): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another. */
-void FieldEffect_Spawn__s2394(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__s2394
-
 void Func_02002394(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   u32 i;
@@ -1707,7 +1557,7 @@ static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b) {
   Actor_ShowEmoteById(id, a_, b_);
 }
 
-void Func_0200253c(void) {
+void GabombaStatue_FocusEnergies(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -1840,13 +1690,10 @@ void Func_020027cc(void) {
   FieldEvent_SetExitRequest(12);
 }
 
-/* VIEW(s2394): routine gData_02005d7c as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02005d7c__s2394[] __asm__("gData_02005d7c");
-#define gData_02005d7c gData_02005d7c__s2394
+extern s16 gData_02005d7c[];
 extern u32 gData_02005d8c[];
 
-void Func_02002a64(void) {
+void GabombaStatue_SeeHowItWorks(void) {
   s32 north;
   s32 cue = 0x6007;
 
@@ -1979,7 +1826,7 @@ void Func_02002a64(void) {
   FieldEvent_SetExitRequest(13);
 }
 
-void Func_02002f70(void) {
+void GabombaStatue_SawEnergyFlow(void) {
   s32 index = Func_02003604();
   s32 x;
   s32 z;
@@ -2081,7 +1928,7 @@ void Func_02002f70(void) {
   FieldEvent_SetExitRequest(18);
 }
 
-void Func_02003338(void) {
+void GabombaStatue_FixTheChannel(void) {
   Func_0200533c();
   Actor_MoveToObject(23, gMainRoutineWork.currentOwner);
   FieldActor_SetSpriteColor(Actor_Get(23), 15);
@@ -2116,18 +1963,18 @@ s32 Scene_Initialize(void) {
   Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |= 0x20;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov671Room1) {
-    Func_020034ec();
+    GabombaStatue_InitializeRoom1();
   } else if (scene == (s32)&SceneId_Ov671Room2) {
     MapGrid_CopyCellAttributes(15, 68, 8, 3, 15, 4);
-    Func_020034f4();
+    GabombaStatue_InitializeRoom2();
   } else if (scene == (s32)&SceneId_Ov671Room3) {
-    Func_0200359c();
+    GabombaStatue_InitializeRoom3();
   } else if (scene == (s32)&SceneId_Ov671Room5) {
-    Func_020035f0();
+    GabombaStatue_InitializeRoom5();
   } else if (scene == (s32)&SceneId_Ov671Room6) {
-    Func_02003634();
+    GabombaStatue_InitializeRoom6();
   } else if (scene == (s32)&SceneId_Ov671Room7) {
-    Func_02003868();
+    GabombaStatue_InitializeRoom7();
   }
   return 0;
 }
@@ -2143,7 +1990,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Func_020034ec(void) { Func_02001b38(); }
+void GabombaStatue_InitializeRoom1(void) { Func_02001b38(); }
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -2151,7 +1998,7 @@ static __inline__ void Exit_Set(s32 index, s32 flag, s32 a, s32 b) {
   Func_0200583c(index, flag, a, b);
 }
 
-void Func_020034f4(void) {
+void GabombaStatue_InitializeRoom2(void) {
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1) {
     Actor_SetScript(27, gData_02005944);
     Actor_SetScript(28, gData_02005944);
@@ -2166,7 +2013,7 @@ void Func_020034f4(void) {
   Func_02001b68();
 }
 
-void Func_0200359c(void) {
+void GabombaStatue_InitializeRoom3(void) {
   Rope_Initialize();
   Func_0200583c(0, 513, 31, 32);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
@@ -2179,7 +2026,7 @@ void Func_0200359c(void) {
   }
 }
 
-void Func_020035f0(void) {
+void GabombaStatue_InitializeRoom5(void) {
   Rope_Initialize();
   ((s32 (*)(s32, s32, s32))Func_0200582c)(0, 8, 9);
 }
@@ -2202,7 +2049,7 @@ s32 Func_02003604(void) {
        ->v)
 void Func_02001ac0();
 
-void Func_02003634(void) {
+void GabombaStatue_InitializeRoom6(void) {
   s32 t1, t4, t6, t8, t10, t12, t14, t16, t18, t20, t22, t24, t26, t27, t29,
       t30, t42, t43, t46, t50, t53, t59, t60, p_r3, v_r5;
   const u8 *table;
@@ -2238,7 +2085,7 @@ void Func_02003634(void) {
   t27 = Event_GetFlag(0x8fd);
   if (t27 != 0)
     goto L_0200b6f2;
-  Func_02002f70();
+  GabombaStatue_SawEnergyFlow();
   goto L_0200b856;
 L_0200b6f2:
   t29 = Event_GetFlag(0x8fc);
@@ -2283,12 +2130,12 @@ L_0200b7c0:
     p_r3 = gMainRoutineWork.entrance;
     goto L_0200b7dc;
   }
-  Func_0200253c();
+  GabombaStatue_FocusEnergies();
   goto L_0200b7e4;
 L_0200b7dc:
   if (p_r3 != 3)
     goto L_0200b7e4;
-  Func_02002a64();
+  GabombaStatue_SeeHowItWorks();
 L_0200b7e4:
   t53 = Event_GetFlag(0x8fc);
   if (t53 == 0)
@@ -2306,7 +2153,7 @@ L_0200b7e4:
   t60 = Event_GetFlag(0x9ec);
   if (t60 != 0)
     goto L_0200b84a;
-  Func_02003338();
+  GabombaStatue_FixTheChannel();
 L_0200b84a:
   Event_ClearFlag(0x12f);
   Event_End();
@@ -2343,7 +2190,7 @@ struct SceneState {
 extern struct SceneState gSceneState__s2394 __asm__("gSceneState");
 #define gSceneState gSceneState__s2394
 
-void Func_02003868(void) {
+void GabombaStatue_InitializeRoom7(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   if (gMainRoutineWork.entrance == 1) {
     Event_SetFlag(0xa27);
@@ -2423,8 +2270,8 @@ void Func_02003974(void) {
  * turn); the definition has u8 Func_02004380(s32 x, s32 z, s32 direction);
  * tried as the definition's u8 Func_02004380(s32 x, s32 z, s32 direction),
  * which the object already declares, it does not compile in tla-ja (make
- * modern): games/tla/include/field/event_inline.h:171:48: note: expected 's32'
- * {aka 'int'} but argument is of type 'u8 *' {aka 'unsigned char *'}. */
+ * modern): games/tla/include/module/field/field.h:1157:42: note: expected
+ * 'struct Actor *' but argument is of type 'struct FieldEffect *'. */
 extern s32 Func_02004380__s2394(s32 col, s32 row,
                                 s32 turn) __asm__("Func_02004380");
 
@@ -2665,14 +2512,8 @@ turn_next:
 
 extern u8 Data_02006fc8[], Data_02006fe8[], Data_02007008[], Data_02007028[],
     Data_02007048[], gData_02007068[];
-/* VIEW(s2394): routine gData_02005ac0 as this part declared it; the joined file
- * has another. */
-extern s8 gData_02005ac0__s2394[] __asm__("gData_02005ac0");
-#define gData_02005ac0 gData_02005ac0__s2394
-/* VIEW(s2394): routine gData_02005ac8 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02005ac8__s2394[] __asm__("gData_02005ac8");
-#define gData_02005ac8 gData_02005ac8__s2394
+extern s8 gData_02005ac0[];
+extern u8 gData_02005ac8[];
 // Lays a random path of `length` cells across the Gabomba Statue grid
 // (gSceneState, 11 by 8 cells of four bytes) from (x0, z0) to (endX, endZ),
 // backtracking through per-step stacks (Data_02006fc8 to gData_02007068:
@@ -2797,14 +2638,8 @@ done:
   return 0;
 }
 
-/* VIEW(s2394): routine gData_02005ad4 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02005ad4__s2394[] __asm__("gData_02005ad4");
-#define gData_02005ad4 gData_02005ad4__s2394
-/* VIEW(s2394): routine gData_02006ea8 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_02006ea8__s2394[] __asm__("gData_02006ea8");
-#define gData_02006ea8 gData_02006ea8__s2394
+extern u8 gData_02005ad4[];
+extern u8 gData_02006ea8[];
 s32 Func_02004224(s32 row, s32 column, s32 direction) {
   s32 value = gData_02005ad4[row * 4 + column];
 
@@ -2905,8 +2740,6 @@ nextColumn:
   state->endId = id;
 }
 #undef FIELD_AT
-
-// ---- games/tla/src/scene/gabomba_statue/puzzle_turn.c ----
 
 u8 Func_02004380(s32 x, s32 z, s32 direction) {
   s32 i;
@@ -3134,18 +2967,19 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
 }
 
 /* VIEW(puzzle_turn): routine gData_02006f38 as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA s32
+ * gData_02006f38[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:2982: `gData_02006f38__puzzle_turn'
+ * undeclared (first use in this function). */
 /* VIEW(puzzle_turn): routine gData_02006ec0 as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA u32
+ * gData_02006ec0[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:3104: `gData_02006ec0' undeclared (first
+ * use in this function). */
 extern const u8 gData_02006f38__puzzle_turn[] __asm__("gData_02006f38");
 extern const u8 gData_02006ec0__puzzle_turn[] __asm__("gData_02006ec0");
 #define gData_02006ec0 gData_02006ec0__puzzle_turn
 #define gData_02006f38 gData_02006f38__puzzle_turn
-/* VIEW(puzzle_turn): routine Actor_StartScript as this part declared it; the
- * joined file has another. */
-void Actor_StartScript__puzzle_turn(
-    struct Actor *object, const u8 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__puzzle_turn
 
 void Func_02004938(struct Actor *ball, s32 step) {
   s16 *colp = (s16 *)((u8 *)ball + 100);
@@ -3317,16 +3151,12 @@ done:
   }
 }
 
-// ---- games/tla/src/scene/gabomba_statue/s4d48.c ----
-// Scene code of overlay 0x671, in ROM order, from s4d48's offset up to the next
-// object the overlay links.
-
 /* VIEW(s4d48): routine Func_02004938 as void Func_02004938(); the parts before
  * it has another declaration; tried as the definition's void
  * Func_02004938(struct Actor *ball, s32 step), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue/s2394.c:1753: too many arguments to
- * function `Func_02004938'. */
+ * games/tla/src/scene/gabomba_statue.c:3178: too many arguments to function
+ * `Func_02004938'. */
 extern void Func_02004938__s4d48() __asm__("Func_02004938");
 
 s32 Func_02004d48(s32 first, s32 check) {
@@ -3714,9 +3544,11 @@ u32 gData_02005910[] = {
 };
 // clang-format on
 
-u16 gData_02005940[] = {
-    259,
+s8 gData_02005940[] = {
+    3,
+    1,
     2,
+    0,
 };
 
 u32 gData_02005944[] = {
@@ -3725,90 +3557,18 @@ u32 gData_02005944[] = {
 
 #undef FIELD_AT
 #undef FieldEffect_Spawn
-#undef gData_02005d7c
-#undef gData_02005ac0
-#undef gData_02005ac8
-#undef gData_02005ad4
-#undef gData_02006ea8
 #undef gData_02006ec0
 #undef gData_02006f38
-#undef Actor_StartScript
 #undef Wanderer
 #undef SceneState
 #undef gSceneState
 
-void Func_02000280(void);
-/* VIEW(data): routine Func_0200028c as this part declared it; the joined file
- * has another. */
-void Func_0200028c__data(void) __asm__("Func_0200028c");
-#define Func_0200028c Func_0200028c__data
-/* VIEW(data): routine Func_02000364 as this part declared it; the joined file
- * has another. */
-void Func_02000364__data(void) __asm__("Func_02000364");
-#define Func_02000364 Func_02000364__data
-/* VIEW(data): routine Func_02000408 as this part declared it; the joined file
- * has another. */
-void Func_02000408__data(void) __asm__("Func_02000408");
-#define Func_02000408 Func_02000408__data
-/* VIEW(data): routine Func_0200047c as this part declared it; the joined file
- * has another. */
-void Func_0200047c__data(void) __asm__("Func_0200047c");
-#define Func_0200047c Func_0200047c__data
-void Func_02000550(void);
+void GabombaStatue_FightSteel(void);
+void GabombaStatue_LashRope(void);
 void Func_02000784(void);
-/* VIEW(data): routine Func_02000cf0 as this part declared it; the joined file
- * has another. */
-void Func_02000cf0__data(void) __asm__("Func_02000cf0");
-#define Func_02000cf0 Func_02000cf0__data
 void Func_020013bc(void);
 void Func_02001564(void);
-/* VIEW(data): routine Func_02001728 as this part declared it; the joined file
- * has another. */
-void Func_02001728__data(void) __asm__("Func_02001728");
-#define Func_02001728 Func_02001728__data
-/* VIEW(data): routine Func_020017dc as this part declared it; the joined file
- * has another. */
-void Func_020017dc__data(void) __asm__("Func_020017dc");
-#define Func_020017dc Func_020017dc__data
-/* VIEW(data): routine Func_02001820 as this part declared it; the joined file
- * has another. */
-void Func_02001820__data(void) __asm__("Func_02001820");
-#define Func_02001820 Func_02001820__data
-/* VIEW(data): routine Func_02001864 as this part declared it; the joined file
- * has another. */
-void Func_02001864__data(void) __asm__("Func_02001864");
-#define Func_02001864 Func_02001864__data
-/* VIEW(data): routine Func_020018a8 as this part declared it; the joined file
- * has another. */
-void Func_020018a8__data(void) __asm__("Func_020018a8");
-#define Func_020018a8 Func_020018a8__data
-/* VIEW(data): routine Func_02001990 as this part declared it; the joined file
- * has another. */
-void Func_02001990__data(void) __asm__("Func_02001990");
-#define Func_02001990 Func_02001990__data
-/* VIEW(data): routine Func_02001a6c as this part declared it; the joined file
- * has another. */
-void Func_02001a6c__data(void) __asm__("Func_02001a6c");
-#define Func_02001a6c Func_02001a6c__data
 void Func_02001a8c(void);
-/* VIEW(data): routine Func_020043ec as this part declared it; the joined file
- * has another. */
-void Func_020043ec__data(void) __asm__("Func_020043ec");
-#define Func_020043ec Func_020043ec__data
-
-/* VIEW(data): routine gFieldEffect_ShortScript as this part declared it; the
- * joined file has another. */
-extern u8 gFieldEffect_ShortScript__data[] __asm__("gFieldEffect_ShortScript");
-#define gFieldEffect_ShortScript gFieldEffect_ShortScript__data
-/* VIEW(data): routine gFieldEffect_MediumScript as this part declared it; the
- * joined file has another. */
-extern u8
-    gFieldEffect_MediumScript__data[] __asm__("gFieldEffect_MediumScript");
-#define gFieldEffect_MediumScript gFieldEffect_MediumScript__data
-/* VIEW(data): routine gFieldEffect_LongScript as this part declared it; the
- * joined file has another. */
-extern u8 gFieldEffect_LongScript__data[] __asm__("gFieldEffect_LongScript");
-#define gFieldEffect_LongScript gFieldEffect_LongScript__data
 
 // clang-format off
 LATE_DATA u8 gData_02005aac[] = {
@@ -3816,16 +3576,18 @@ LATE_DATA u8 gData_02005aac[] = {
     6, 5, 7, 6, 4, 9, 9, 8, 8, 10,
 };
 
-LATE_DATA u32 gData_02005ac0[] = {
-    266, 0xff01,
+LATE_DATA s8 gData_02005ac0[] = {
+    10, 1, 0, 0, 1, -1, 0, 0,
 };
 
-LATE_DATA u32 gData_02005ac8[] = {
-    0x50a00ff, 0xc06030f, 0xf0f0f09,
+LATE_DATA u8 gData_02005ac8[] = {
+    255, 0, 10, 5, 15, 3, 6, 12,
+    9, 15, 15, 15,
 };
 
-LATE_DATA u32 gData_02005ad4[] = {
-    0x60a0502, 0xa060107, 0x702040a, 0x1050a04,
+LATE_DATA u8 gData_02005ad4[] = {
+    2, 5, 10, 6, 7, 1, 6, 10,
+    10, 4, 2, 7, 4, 10, 5, 1,
 };
 
 LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
@@ -3834,9 +3596,7 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-LATE_DATA u32 gData_02005af0[] = {
-    0,
-};
+LATE_DATA s32 gData_02005af0 = 0;
 
 LATE_DATA DEFINE_G_DATA_02002F1C(gData_02005af4, 472, 184)
 
@@ -4008,12 +3768,12 @@ LATE_DATA s32 gData_02005fc8[] = {
     SC_END,
 };
 
-LATE_DATA struct ActorPlacement gData_02005fd4[] = {
+LATE_DATA struct ActorPlacement gGabombaStatue_Room1Placements[] = {
     {337, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(248), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02006004[] = {
+LATE_DATA struct ActorPlacement gGabombaStatue_Room2Placements[] = {
     {407, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(88), FACING_EAST, 2, 0},
     {407, CONDITION_ALWAYS, (s32)gData_02005fc8, PIXELS(328), 0, PIXELS(88), FACING_EAST, 2, 0},
     {407, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(152), FACING_EAST, 2, 0},
@@ -4040,7 +3800,7 @@ LATE_DATA struct ActorPlacement gData_02006004[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA s16 gData_02006244[] = {
+LATE_DATA s16 gGabombaStatue_Room3Placements[] = {
     358, -1, 1, 0, 0, 56, 0, 0,
     0, 168, 0, 2, 358, -1, 1, 0,
     0, 152, 0, 0, 0, 152, 0x8000, 258,
@@ -4084,7 +3844,7 @@ LATE_DATA s16 gData_02006244[] = {
     0, 0, 0, 0,
 };
 
-LATE_DATA s16 gData_020064cc[] = {
+LATE_DATA s16 gGabombaStatue_Room4Placements[] = {
     358, -1, 1, 0, 0, 56, 0, 0,
     0, 152, 0, 2, 358, -1, 1, 0,
     0, 40, 0, 0, 0, 184, 0x8000, 258,
@@ -4137,7 +3897,7 @@ LATE_DATA s16 gData_020064cc[] = {
     0, 0, 0, 0,
 };
 
-LATE_DATA s16 gData_020067e4[] = {
+LATE_DATA s16 gGabombaStatue_Room5Placements[] = {
     407, -1, 1, 0, 0, 312, 0, 0,
     0, 232, 0, 2, 407, -1, 1, 0,
     0, 360, 0, 0, 0, 232, 0, 2,
@@ -4156,7 +3916,7 @@ LATE_DATA s32 gData_0200e88c[] = {
     SC_END,
 };
 
-LATE_DATA struct ActorPlacement gData_02006898[] = {
+LATE_DATA struct ActorPlacement gGabombaStatue_Room6Placements[] = {
     {376, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(232), FACING_SOUTH, 2, 0},
     {374, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(296), FACING_SOUTH, 2, 0},
     {374, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(296), FACING_SOUTH, 2, 0},
@@ -4180,7 +3940,7 @@ LATE_DATA struct ActorPlacement gData_02006898[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA s16 gData_02006a90[] = {
+LATE_DATA s16 gGabombaStatue_Room7Placements[] = {
     362, -1, 1, 0, 0, 616, 0, 0,
     0, 288, 0, 2, 362, -1, 1, 0,
     0, 616, 0, 0, 0, 336, 0, 258,
@@ -4192,33 +3952,35 @@ LATE_DATA s16 gData_02006a90[] = {
     0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-LATE_DATA struct ActorPlacement gData_02006b20[] = {
+LATE_DATA struct ActorPlacement gGabombaStatue_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA s32 gData_02006b38[] = {
-    0x10101, -0x10000, 255, 257, 0xffff, 0xff0001,
-    0,
+LATE_DATA s8 gData_02006b38[] = {
+    1, 1, 1, 0, 0, 0, -1, -1,
+    -1, 0, 0, 0, 1, 1, 0, 0,
+    -1, -1, 0, 0, 1, 0, -1, 0,
+    0, 0, 0, 0,
 };
 
-LATE_DATA struct Trigger gData_02006b54[] = {
+LATE_DATA struct Trigger gGabombaStatue_Room1Triggers[] = {
     {0x202, 1, CONDITION_ALWAYS, EVENT(Func_02001284)},
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02006b6c[] = {
+LATE_DATA struct Trigger gGabombaStatue_Room2Triggers[] = {
     {0x202, 1, CONDITION_ALWAYS, EVENT(Func_020012ec)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_020017dc)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Func_02001820)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x201, EVENT(Func_02000550)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x201, EVENT(GabombaStatue_LashRope)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 10, 0x202, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 12, 0x8ce, EVENT(Func_02001990)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, 0x8cf, EVENT(Func_02001990)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 12, 0x8ce, EVENT(GabombaStatue_PoundConePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, 0x8cf, EVENT(GabombaStatue_PoundConePillar)},
     {TRIGGER_RAISED, 200, 0x8cd, EVENT(Func_020019d0)},
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02006bd8[] = {
+LATE_DATA struct Trigger gGabombaStatue_Room3Triggers[] = {
     {0x202, 1, CONDITION_ALWAYS, EVENT(Func_02001364)},
     {0x202, 2, CONDITION_ALWAYS, EVENT(Func_020013bc)},
     {0x202, 3, CONDITION_ALWAYS, EVENT(Func_02001430)},
@@ -4231,11 +3993,11 @@ LATE_DATA struct Trigger gData_02006bd8[] = {
     {0xc602, 84, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
     {0x4602, 84, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 31, 0x201, 0},
-    {TRIGGER_TALK, 33, IF_FLAG_SET(0x204), EVENT(Func_02000280)},
+    {TRIGGER_TALK, 33, IF_FLAG_SET(0x204), EVENT(GabombaStatue_FightSteel)},
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02006c80[] = {
+LATE_DATA struct Trigger gGabombaStatue_Room4Triggers[] = {
     {0x202, 1, CONDITION_ALWAYS, EVENT(Func_02001498)},
     {0x202, 2, CONDITION_ALWAYS, EVENT(Func_02001500)},
     {0x202, 3, CONDITION_ALWAYS, EVENT(Func_02001564)},
@@ -4251,7 +4013,7 @@ LATE_DATA struct Trigger gData_02006c80[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02006d1c[] = {
+LATE_DATA struct Trigger gGabombaStatue_Room5Triggers[] = {
     {0x202, 1, CONDITION_ALWAYS, EVENT(Func_020015b8)},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(Func_02000740)},
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(Func_02000784)},
@@ -4267,13 +4029,13 @@ LATE_DATA struct Trigger gData_02006d1c[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02006db8[] = {
+LATE_DATA struct Trigger gGabombaStatue_Room6Triggers[] = {
     {0x202, 1, CONDITION_ALWAYS, EVENT(Func_02001630)},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(Func_020045d8)},
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(Func_02004530)},
     {TRIGGER_STEP, 82, CONDITION_ALWAYS, EVENT(Func_020046c8)},
     {TRIGGER_STEP, 83, CONDITION_ALWAYS, EVENT(Func_02004620)},
-    {TRIGGER_RAISED, 201, 0x205, EVENT(Func_02000fc0)},
+    {TRIGGER_RAISED, 201, 0x205, EVENT(GabombaStatue_HearTheOffering)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 15, 0x8fb, EVENT(Func_02001a6c)},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Func_02001a8c)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, CONDITION_ALWAYS, EVENT(Func_020043ec)},
@@ -4286,18 +4048,20 @@ LATE_DATA struct Trigger gData_02006db8[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02006e78[] = {
+LATE_DATA struct Trigger gGabombaStatue_Room7Triggers[] = {
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_02001728)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Func_0200176c)},
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02006e9c[] = {
+LATE_DATA struct Trigger gGabombaStatue_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA u32 gData_02006ea8[] = {
-    0x2020000, 0x3030101, 0x6040507, 0x4060705, 0x8080909, 0xb0b0a0a,
+LATE_DATA u8 gData_02006ea8[] = {
+    0, 0, 2, 2, 1, 1, 3, 3,
+    7, 5, 4, 6, 5, 7, 6, 4,
+    9, 9, 8, 8, 10, 10, 11, 11,
 };
 
 LATE_DATA u32 gData_02006ec0[] = {
@@ -4332,19 +4096,3 @@ LATE_DATA s32 gData_02006f38[] = {
     SC_END,
 };
 // clang-format on
-#undef Func_0200028c
-#undef Func_02000364
-#undef Func_02000408
-#undef Func_0200047c
-#undef Func_02000cf0
-#undef Func_02001728
-#undef Func_020017dc
-#undef Func_02001820
-#undef Func_02001864
-#undef Func_020018a8
-#undef Func_02001990
-#undef Func_02001a6c
-#undef Func_020043ec
-#undef gFieldEffect_ShortScript
-#undef gFieldEffect_MediumScript
-#undef gFieldEffect_LongScript

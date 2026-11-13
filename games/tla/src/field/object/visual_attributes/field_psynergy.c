@@ -318,20 +318,13 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
 #define Actor_SetAnimationSpeedFar                                             \
   ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
-/* VIEW(depthend): routine Actor_CreateFar as struct Actor *Actor_CreateFar(s32
- * kind, s32 x, s32 y, s32 z); f0d8740 has struct CaptureObject
- * *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z); not tried: Actor_CreateFar's
- * bound declaration was not found. */
-extern struct Actor *Func_080200c0__depthend(s32 kind, s32 x, s32 y,
-                                             s32 z) __asm__("Actor_CreateFar");
-
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   struct SpawnScene *scene = Ram_HeapSlots->effectWork;
   struct Actor *object;
   u8 *part;
   s32 mask;
 
-  object = Func_080200c0__depthend(kind, x, y, z);
+  object = Actor_CreateFar(kind, x, y, z);
   if (object != NULL) {
     if (object->animationKind == 0) {
       Actor_ReleaseFar(object);

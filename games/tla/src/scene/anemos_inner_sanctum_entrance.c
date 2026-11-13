@@ -69,12 +69,6 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
-// ---- scene/anemos_inner_sanctum_entrance.c ----
-
-// ---- games/tla/src/scene/anemos_inner_sanctum_entrance/hide.c ----
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 extern s32 gData_02000e20[];
 extern s32 gData_02000e5c[];
 extern s32 gData_02000ea4[];
@@ -90,8 +84,6 @@ struct Actor;
 
 extern s16 gData_02001cde;
 extern struct Actor *gLightSpriteActors[];
-extern u16 gData_02001de2;
-extern u16 gData_02001de4;
 extern s16 gLightSpriteTile;
 extern s16 gData_02001de0;
 
@@ -108,13 +100,13 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct ActorPlacement gData_020019dc[];
-extern struct ActorPlacement gData_020019f4[];
+extern LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[];
+extern struct ActorPlacement gAnemosInnerSanctumEntrance_Room1Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1)
-    return gData_020019f4;
-  return gData_020019dc;
+    return gAnemosInnerSanctumEntrance_Room1Placements;
+  return gAnemosInnerSanctumEntrance_Placements;
 }
 
 void Func_02000388(void) {
@@ -180,17 +172,13 @@ void Func_020004b4(struct Actor *object) {
     Actor_SetSpriteFlags(object, 0);
 }
 
-/* VIEW(hide): variable gData_02000ee0 as extern const s8 gData_02000ee0[]; the
- * definition has u32 gData_02000ee0[] = { 0x1c0b1b0b, 0x1c0c1b0c, 0x1c0d1b0d,
- * }; tried as the definition's extern u32 gData_02000ee0[], Func_020004e4
- * moves: 1 of 32 instructions in tla-ja. */
-extern const s8 gData_02000ee0__hide[] __asm__("gData_02000ee0");
+extern s8 gData_02000ee0[];
 
 void Func_020004e4(s32 a, s32 b) {
   s32 i;
 
-  const s8 *x = gData_02000ee0__hide;
-  const s8 *z = gData_02000ee0__hide + 1;
+  const s8 *x = gData_02000ee0;
+  const s8 *z = gData_02000ee0 + 1;
 
   for (i = 9; i <= 14; i++) {
     struct Actor *object = Actor_GetById(i);
@@ -227,8 +215,6 @@ void Func_02000534(s32 a) {
       Field_TryJumpForward();
   }
 }
-
-// ---- games/tla/src/scene/anemos_inner_sanctum_entrance/s0588.c ----
 
 void Func_02000588(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -307,13 +293,13 @@ land:
 
 void Func_02000710(void) {}
 
-extern struct Trigger gData_02001c1c[];
-extern struct Trigger gData_02001c28[];
+extern struct Trigger gAnemosInnerSanctumEntrance_Triggers[];
+extern struct Trigger gAnemosInnerSanctumEntrance_Room1Triggers[];
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1)
-    return gData_02001c28;
-  return gData_02001c1c;
+    return gAnemosInnerSanctumEntrance_Room1Triggers;
+  return gAnemosInnerSanctumEntrance_Triggers;
 }
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -378,15 +364,8 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 extern struct LightOam gData_02001d20[];
-/* VIEW(s0588): variable gData_02001de2 as extern s16 gData_02001de2; hide has
- * extern u16 gData_02001de2; tried as the rest of the object declares it,
- * LightSprites_Draw moves: 149 of 260 instructions, LightSprites_InitA moves: 0
- * of 36 instructions, Func_02000b18 moves: 0 of 39 instructions in tla-ja. */
-extern s16 gData_02001de2__s0588 __asm__("gData_02001de2");
-/* VIEW(s0588): variable gData_02001de4 as extern s16 gData_02001de4; hide has
- * extern u16 gData_02001de4; tried as the rest of the object declares it,
- * LightSprites_Draw moves: 2 of 260 instructions in tla-ja. */
-extern s16 gData_02001de4__s0588 __asm__("gData_02001de4");
+extern s16 gData_02001de2;
+extern s16 gData_02001de4;
 
 void LightSprites_Draw(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -400,7 +379,7 @@ void LightSprites_Draw(void) {
   tile = gResourceTableEntries[gLightSpriteTile].offset >> 5;
   viewY = map->origin[1];
   oam = gData_02001d20;
-  picture = gData_02001de4__s0588 * ((gFrameCount >> 2) % 5 * 32 + 32);
+  picture = gData_02001de4 * ((gFrameCount >> 2) % 5 * 32 + 32);
 
   for (i = 0; i < gData_02001cde; i++) {
     struct Actor *actor = gLightSpriteActors[i];
@@ -428,10 +407,10 @@ void LightSprites_Draw(void) {
         *word++ = 0;
         *word++ = oy | (ox << 16) | (frame & 0x80) << 21 | 0x40002000;
         *word = (tile + picture + (frame & 7) * 8) | 0x800;
-        if (gData_02001de2__s0588 == -1)
+        if (gData_02001de2 == -1)
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else
-          oam->priority = gData_02001de2__s0588;
+          oam->priority = gData_02001de2;
         Oam_AddSpriteAtDepthClamped(oam, depth);
         oam++;
       } else {
@@ -448,10 +427,10 @@ void LightSprites_Draw(void) {
         *word++ = 0;
         *word++ = oy | (ox << 16) | 0xc000a000;
         *word = (tile + frame * 8) | 0x800;
-        if (gData_02001de2__s0588 == -1)
+        if (gData_02001de2 == -1)
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else
-          oam->priority = gData_02001de2__s0588;
+          oam->priority = gData_02001de2;
         Oam_AddSpriteAtDepthClamped(oam, depth);
         oam++;
       }
@@ -465,7 +444,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw, gData_02001cde,
-                            gData_02001de0, gData_02001de2__s0588)
+                            gData_02001de0, gData_02001de2)
 
 void Func_02000b18(void) {
   u8 *buffer = BumpAlloc(0x1800);
@@ -478,8 +457,8 @@ void Func_02000b18(void) {
   Task_Add(LightSprites_Draw, TASK_PASS_VBLANK);
   gData_02001cde = 0;
   gData_02001de0 = 0;
-  gData_02001de2__s0588 = -1;
-  gData_02001de4__s0588 = 0;
+  gData_02001de2 = -1;
+  gData_02001de4 = 0;
 }
 
 void Func_02000ba4(s32 id, s32 value) {
@@ -492,9 +471,9 @@ void Func_02000ba4(s32 id, s32 value) {
   }
 }
 
-void Func_02000bd4(u16 value) { gData_02001de2__s0588 = value; }
+void Func_02000bd4(u16 value) { gData_02001de2 = value; }
 
-void Func_02000be0(u16 value) { gData_02001de4__s0588 = value; }
+void Func_02000be0(u16 value) { gData_02001de4 = value; }
 
 // clang-format off
 u32 gData_02000d6c[] = {
@@ -534,11 +513,7 @@ s32 gData_02000ea4[] = {
 };
 // clang-format on
 
-u32 gData_02000ee0[] = {
-    0x1c0b1b0b,
-    0x1c0c1b0c,
-    0x1c0d1b0d,
-};
+s8 gData_02000ee0[] = {11, 27, 11, 28, 12, 27, 12, 28, 13, 27, 13, 28};
 
 s8 gData_02000eec[] = {
     12, 14, 9, 11, 13, 10,
@@ -550,32 +525,6 @@ s8 gData_02000eec[] = {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
-
-/* VIEW(data2): routine Func_0200033c as this part declared it; the joined file
- * has another. */
-void Func_0200033c__data2(void) __asm__("Func_0200033c");
-#define Func_0200033c Func_0200033c__data2
-/* VIEW(data2): routine Func_020004e4 as this part declared it; the joined file
- * has another. */
-void Func_020004e4__data2(void) __asm__("Func_020004e4");
-#define Func_020004e4 Func_020004e4__data2
-/* VIEW(data2): routine Func_02000534 as this part declared it; the joined file
- * has another. */
-void Func_02000534__data2(void) __asm__("Func_02000534");
-#define Func_02000534 Func_02000534__data2
-
-/* VIEW(data2): routine gData_02000d6c as this part declared it; the joined file
- * has another. */
-extern u8 gData_02000d6c__data2[] __asm__("gData_02000d6c");
-#define gData_02000d6c gData_02000d6c__data2
-/* VIEW(data2): routine gData_02000da8 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02000da8__data2[] __asm__("gData_02000da8");
-#define gData_02000da8 gData_02000da8__data2
-/* VIEW(data2): routine gData_02000de4 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02000de4__data2[] __asm__("gData_02000de4");
-#define gData_02000de4 gData_02000de4__data2
 
 LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gData_02000d6c,
@@ -596,55 +545,62 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 
 LATE_DATA DEFINE_G_SCENE_EXITS(308, 239, 23, 303, 1, 239, 22, 24, 306, 5)
 
-    LATE_DATA struct ActorPlacement gData_020019dc[] = {
+    LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[] = {
         {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_020019f4[] = {
-    {180, 0xa9f, 1, PIXELS(200), 0, PIXELS(104), FACING_EAST, 1, 0},
-    {430, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(424), FACING_EAST, 1, 0},
-    {430, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(456), FACING_EAST, 1, 1},
-    {430, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(472), FACING_EAST, 1, 1},
-    {430, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(424), FACING_EAST, 1, 1},
-    {430, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(456), FACING_EAST, 1, 1},
-    {430, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(472), FACING_EAST, 1, 1},
-    {303, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(152), 0, PIXELS(168),
-     FACING_WEST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(152), 0, PIXELS(216),
-     FACING_WEST, 1, 1},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(248), 0, PIXELS(168),
-     FACING_EAST, 1, 1},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(248), 0, PIXELS(216),
-     FACING_EAST, 1, 1},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(696), 0, PIXELS(240),
-     FACING_WEST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(744), 0, PIXELS(240),
-     FACING_EAST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0, PIXELS(232),
-     FACING_WEST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0, PIXELS(288),
-     FACING_WEST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0, PIXELS(232),
-     FACING_EAST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0, PIXELS(288),
-     FACING_EAST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0, PIXELS(712),
-     FACING_WEST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0, PIXELS(768),
-     FACING_WEST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0, PIXELS(712),
-     FACING_EAST, 1, 0},
-    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0, PIXELS(768),
-     FACING_EAST, 1, 0},
-    {SCENE_TABLE_END},
+LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Room1Placements[] =
+    {
+        {180, 0xa9f, 1, PIXELS(200), 0, PIXELS(104), FACING_EAST, 1, 0},
+        {430, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(424), FACING_EAST, 1,
+         0},
+        {430, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(456), FACING_EAST, 1,
+         1},
+        {430, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(472), FACING_EAST, 1,
+         1},
+        {430, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(424), FACING_EAST, 1,
+         1},
+        {430, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(456), FACING_EAST, 1,
+         1},
+        {430, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(472), FACING_EAST, 1,
+         1},
+        {303, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(152), 0,
+         PIXELS(168), FACING_WEST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(152), 0,
+         PIXELS(216), FACING_WEST, 1, 1},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(248), 0,
+         PIXELS(168), FACING_EAST, 1, 1},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(248), 0,
+         PIXELS(216), FACING_EAST, 1, 1},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(696), 0,
+         PIXELS(240), FACING_WEST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(744), 0,
+         PIXELS(240), FACING_EAST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0,
+         PIXELS(232), FACING_WEST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0,
+         PIXELS(288), FACING_WEST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0,
+         PIXELS(232), FACING_EAST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0,
+         PIXELS(288), FACING_EAST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0,
+         PIXELS(712), FACING_WEST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0,
+         PIXELS(768), FACING_WEST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0,
+         PIXELS(712), FACING_EAST, 1, 0},
+        {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0,
+         PIXELS(768), FACING_EAST, 1, 0},
+        {SCENE_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02001c1c[] = {
+LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02001c28[] = {
+LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -662,9 +618,3 @@ LATE_DATA struct Trigger gData_02001c28[] = {
      IF_FLAG_SET(0x200), EVENT(Func_02000588)},
     {TRIGGER_TABLE_END},
 };
-#undef Func_0200033c
-#undef Func_020004e4
-#undef Func_02000534
-#undef gData_02000d6c
-#undef gData_02000da8
-#undef gData_02000de4

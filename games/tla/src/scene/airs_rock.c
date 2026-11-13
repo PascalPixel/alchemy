@@ -1,5 +1,7 @@
 /// @file
-/// The scene code of overlay 0x663, in ROM order.
+/// Air's Rock's slopes, outside the rock in Osenia, in the rooms of this
+/// overlay: the Wind Stones Whirlwind strengthens, the walls and ledges of the
+/// climb, and the way into the rock itself (airs_rock_inside.c).
 
 #include "shared/actors.h"
 #include "types.h"
@@ -47,8 +49,6 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #include "../field/field_effect/move.c"
 
 // @file
-// Scene code of overlay 0x663, in ROM order.
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -101,10 +101,6 @@ s32 Func_02000384(u32 layer, s32 x, s32 y, s32 value) {
 #include "../field/object/wait_until_idle.c"
 
 #undef EFFECT_SET_SCRIPT
-
-// ---- scene/airs_rock/airs_rock.c ----
-
-// Scene code of overlay 0x663, in ROM order.
 
 // For each id of a list ended by 0xffff: clears the object's mark and, on a
 // cell with attribute bit 6, blocks the cells ahead of and behind it and sets
@@ -159,10 +155,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov663Room1)
-    return gData_020040ec;
+    return gAirsRock_Room1Placements;
   if (scene == (s32)&SceneId_Ov663Room2)
-    return gData_02004194;
-  return gData_02004314;
+    return gAirsRock_Room2Placements;
+  return gAirsRock_Placements;
 }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -200,12 +196,12 @@ void Func_02000568(void) {
 }
 
 void Func_020005ec(void) {
-  struct Actor *t0;
+  struct Actor *object;
 
-  t0 = Actor_Get(10);
+  object = Actor_Get(10);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if ((t0->x >> 20) == 0x1f) {
+  if ((object->x >> 20) == 0x1f) {
     Event_SetFlag(0x310);
   } else {
     Event_ClearFlag(0x310);
@@ -243,12 +239,12 @@ void Func_02000620(void) {
 }
 
 void Func_020006d4(void) {
-  struct Actor *t0;
+  struct Actor *object;
 
-  t0 = Actor_Get(13);
+  object = Actor_Get(13);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if ((t0->x >> 19) == 0x17) {
+  if ((object->x >> 19) == 0x17) {
     Event_SetFlag(0x879);
   }
   Event_End();
@@ -292,10 +288,10 @@ const struct Trigger *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov663Room1)
-    return gData_020043d4;
+    return gAirsRock_Room1Triggers;
   if (scene == (s32)&SceneId_Ov663Room2)
-    return gData_020044d0;
-  return gData_0200459c;
+    return gAirsRock_Room2Triggers;
+  return gAirsRock_Triggers;
 }
 
 void Func_02000824(void) { Event_ResolvePendingActions(0); }
@@ -349,17 +345,8 @@ void Func_0200092c(struct Actor *object) {
 
 // The Whirlwind gust in Air's Rock.
 
-/* VIEW(airs_rock): routine gData_02004674 as this part declared it; the joined
- * file has another. */
-extern s16 gData_02004674__airs_rock[][4] __asm__("gData_02004674");
-#define gData_02004674 gData_02004674__airs_rock
+extern s16 gData_02004674[][4];
 void Actor_StartScript(struct Actor *object, const s32 *script);
-/* VIEW(airs_rock): routine Actor_HasArrived as s32 Actor_HasArrived(struct
- * Actor *object); module/scene/scene.h has void Actor_HasArrived(struct Actor
- * *object, const void *script); not tried: Actor_HasArrived's bound declaration
- * was not found. */
-extern s32
-Func_02003ba8__airs_rock(struct Actor *object) __asm__("Actor_HasArrived");
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
@@ -456,7 +443,7 @@ void Func_0200095c(void) {
   Actor_SetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
   FieldCamera_SetSpeed(0x50000, 0x50000);
   FieldCamera_MoveTo((s32)(newX << 16), (s32)(-1), (s32)(newZ << 16), (s32)(1));
-  while (Func_02003ba8__airs_rock(gust) == 0) {
+  while (Actor_HasArrived(gust) == 0) {
     if ((gFrameCount & 1) == 0) {
       leaves.priority = 1;
       leaves.type = 674;
@@ -480,7 +467,7 @@ void Func_0200095c(void) {
     Actor_SetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
     Sound_Play(235);
     hit -= 30;
-    while (Func_02003ba8__airs_rock(gust) == 0) {
+    while (Actor_HasArrived(gust) == 0) {
       if ((gFrameCount & 1) == 0) {
         dust.priority = 1;
         dust.startScaleX = dust.startScaleY = (Random16() & 0xffff) + 0x10000;
@@ -900,14 +887,8 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 DEFINE_POSITION_DISTANCE_ABOVE(Position_DistanceAbove)
 
-/* VIEW(airs_rock): routine gData_02003de0 as this part declared it; the joined
- * file has another. */
-extern u8 gData_02003de0__airs_rock[] __asm__("gData_02003de0");
-#define gData_02003de0 gData_02003de0__airs_rock
-/* VIEW(airs_rock): routine gData_02003dcc as this part declared it; the joined
- * file has another. */
-extern u8 gData_02003dcc__airs_rock[] __asm__("gData_02003dcc");
-#define gData_02003dcc gData_02003dcc__airs_rock
+extern u32 gData_02003de0[];
+extern u32 gData_02003dcc[];
 
 void Func_02001908(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1090,10 +1071,7 @@ void Func_02001da8(void) {
   Event_End();
 }
 
-/* VIEW(airs_rock): routine gData_02003dfc as this part declared it; the joined
- * file has another. */
-extern u8 gData_02003dfc__airs_rock[] __asm__("gData_02003dfc");
-#define gData_02003dfc gData_02003dfc__airs_rock
+extern s32 gData_02003dfc[];
 
 void Func_02001dc4(s32 x, s32 z) {
   struct Actor *first, *rock;
@@ -1527,10 +1505,7 @@ void Func_020026b8(void) {
   Event_End();
 }
 
-/* VIEW(airs_rock): routine gData_02004698 as this part declared it; the joined
- * file has another. */
-extern s32 gData_02004698__airs_rock __asm__("gData_02004698");
-#define gData_02004698 gData_02004698__airs_rock
+extern s32 gData_02004698;
 
 void Func_02002b88(void) {
   struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
@@ -1875,16 +1850,7 @@ s32 Scene_PrepareMap(void) {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
-#undef gData_02004674
-#undef gData_02003de0
-#undef gData_02003dcc
-#undef gData_02003dfc
-#undef gData_02004698
 
-/* VIEW(data): routine Func_0200033c as this part declared it; the joined file
- * has another. */
-void Func_0200033c__data(void) __asm__("Func_0200033c");
-#define Func_0200033c Func_0200033c__data
 void Func_02000620(void);
 
 // clang-format off
@@ -2020,7 +1986,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_020040ec[] = {
+struct ActorPlacement gAirsRock_Room1Placements[] = {
     {382, CONDITION_ALWAYS, 7, PIXELS(328), 0, PIXELS(184), FACING_SOUTH, 2, 0},
     {325, CONDITION_ALWAYS, (s32)gData_02003dac, PIXELS(920), 0, PIXELS(200), FACING_SOUTH, 2, 0},
     {325, CONDITION_ALWAYS, (s32)gData_02003dac, PIXELS(104), 0, PIXELS(760), FACING_SOUTH, 2, 0},
@@ -2030,7 +1996,7 @@ struct ActorPlacement gData_020040ec[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004194[] = {
+struct ActorPlacement gAirsRock_Room2Placements[] = {
     {377, CONDITION_ALWAYS, 1, 0x1, 0, 0, FACING_EAST, 2, 2},
     {377, CONDITION_ALWAYS, 1, 0x2, 0, 0, FACING_EAST, 2, 2},
     {377, CONDITION_ALWAYS, 1, 0x3, 0, 0, FACING_WEST, 2, 2},
@@ -2049,7 +2015,7 @@ struct ActorPlacement gData_02004194[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004314[] = {
+struct ActorPlacement gAirsRock_Placements[] = {
     {377, CONDITION_ALWAYS, 7, PIXELS(536), 0, PIXELS(904), FACING_NORTH, 2, 0},
     {377, CONDITION_ALWAYS, 7, PIXELS(712), 0, PIXELS(904), FACING_NORTH, 2, 1},
     {272, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(872), FACING_NORTH, 2, 0},
@@ -2060,7 +2026,7 @@ struct ActorPlacement gData_02004314[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_020043d4[] = {
+struct Trigger gAirsRock_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXAMINE, 20, CONDITION_ALWAYS, EVENT(Func_02000548)},
     {0x80004e15, 8, 0x858, EVENT(Func_02000824)},
@@ -2084,7 +2050,7 @@ struct Trigger gData_020043d4[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020044d0[] = {
+struct Trigger gAirsRock_Room2Triggers[] = {
     {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000568)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 9},
     {0x8, 0, CONDITION_ALWAYS, EVENT(Func_02001ca4)},
@@ -2104,7 +2070,7 @@ struct Trigger gData_020044d0[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_0200459c[] = {
+struct Trigger gAirsRock_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2125,9 +2091,8 @@ struct Trigger gData_0200459c[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gData_02004674[] = {
-    64, 64, 64, 64, 64, 64,
-    64, 64,
+s16 gData_02004674[][4] = {
+    {64, 0, 64, 0}, {64, 0, 64, 0}, {64, 0, 64, 0}, {64, 0, 64, 0},
 };
 // clang-format on
 
@@ -2137,7 +2102,4 @@ s8 gData_02004695 = 1;
 s8 gData_02004696 = 6;
 s8 gData_02004697 = 1;
 
-s32 gData_02004698[] = {
-    -1,
-};
-#undef Func_0200033c
+s32 gData_02004698 = -1;

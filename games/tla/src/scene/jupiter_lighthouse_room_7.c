@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x6a0, in ROM order.
-
 #include "flags.h"
 #include "shared/whirlwind.h"
 #include "shared/jupiter_lighthouse.h"
@@ -66,17 +64,9 @@ void Leader_CenterInCell(void);
 #include "shared/tables.h"
 #include "objcmd.h"
 
-/* VIEW(first): routine gData_020031c4 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_020031c4__first[] __asm__("gData_020031c4");
-#define gData_020031c4 gData_020031c4__first
-/* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
- * the joined file has another. */
-extern s32
-    gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
-#define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
+extern s16 gData_020031c4[];
+extern s32 gPaletteCyclePausesInEvents;
 extern s16 gLightSpriteCount;
-extern u16 gLightSpritePriority;
 void JupiterLighthouse_OpenDoor(s32 value);
 void JupiterLighthouse_CloseDoor(void);
 void JupiterLighthouse_CheckBlockOnCell(void);
@@ -84,7 +74,7 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
 void Field_TryJumpForward(void);
 
-void Func_02000038(void) { Field_RequestDjinnBattle(21, 74); }
+void JupiterLighthouse_FightWhorl(void) { Field_RequestDjinnBattle(21, 74); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -126,11 +116,12 @@ void Func_02000184(void) {
        ->v)
 
 s32 Func_02000194(void) {
-  s32 t1, t2, t3, t5, t7, t9, t11, t13, v5, v6, v7, v8;
+  s32 v5, v6, v7;
+  struct Actor *v8;
+  struct Actor *t2;
 
-  t1 = ((s32)Actor_Get(18));
-  v5 = t1;
-  t2 = ((s32)Actor_Get(19));
+  v5 = Actor_Get(18);
+  t2 = Actor_Get(19);
   v7 = 1;
   v6 = (FIELD_AT(v5, s32, 8) >> 20);
   v8 = t2;
@@ -140,8 +131,7 @@ s32 Func_02000194(void) {
     goto L_020081d6;
   if (v5 != 15)
     goto L_020081d6;
-  t3 = Event_GetFlag(0xa11);
-  if (t3 != 0)
+  if (Event_GetFlag(0xa11))
     goto L_020081d6;
   Event_SetFlag(0xa10);
   v7 = 0;
@@ -150,8 +140,7 @@ L_020081d6:
     goto L_020081f8;
   if (v5 != 16)
     goto L_020081f8;
-  t5 = Event_GetFlag(0xa13);
-  if (t5 != 0)
+  if (Event_GetFlag(0xa13))
     goto L_020081f8;
   Event_SetFlag(0xa12);
   v7 = 2;
@@ -160,20 +149,18 @@ L_020081f8:
     goto L_0200821a;
   if (v5 != 10)
     goto L_0200821a;
-  t7 = Event_GetFlag(0xa15);
-  if (t7 != 0)
+  if (Event_GetFlag(0xa15))
     goto L_0200821a;
   Event_SetFlag(0xa14);
   v7 = 4;
 L_0200821a:
-  v6 = (FIELD_AT(v8, s32, 8) >> 20);
-  v5 = (FIELD_AT(v8, s32, 16) >> 20);
+  v6 = (v8->x >> 20);
+  v5 = (v8->z >> 20);
   if (v6 != 35)
     goto L_02008244;
   if (v5 != 15)
     goto L_02008244;
-  t9 = Event_GetFlag(0xa10);
-  if (t9 != 0)
+  if (Event_GetFlag(0xa10))
     goto L_02008244;
   Event_SetFlag(0xa11);
   v7 = 1;
@@ -182,8 +169,7 @@ L_02008244:
     goto L_02008266;
   if (v5 != 16)
     goto L_02008266;
-  t11 = Event_GetFlag(0xa12);
-  if (t11 != 0)
+  if (Event_GetFlag(0xa12))
     goto L_02008266;
   Event_SetFlag(0xa13);
   v7 = 3;
@@ -192,8 +178,7 @@ L_02008266:
     goto L_02008288;
   if (v5 != 10)
     goto L_02008288;
-  t13 = Event_GetFlag(0xa14);
-  if (t13 != 0)
+  if (Event_GetFlag(0xa14))
     goto L_02008288;
   Event_SetFlag(0xa15);
   v7 = 5;
@@ -613,16 +598,14 @@ L_02008e6e:
   FIELD_AT(t3, s32, 28) = 0xc000;
   Actors_SetCellsOpen((s32)&gData_020031c4);
   t5 = Event_GetFlag(0xa1b);
-  if (t5 == 0)
-    goto L_02008eaa;
-  Actor_SetPosition(16, PIXELS(136), PIXELS(600));
-  JupiterLighthouse_OpenDoor(0);
-L_02008eaa:
+  if (t5 != 0) {
+    Actor_SetPosition(16, PIXELS(136), PIXELS(600));
+    JupiterLighthouse_OpenDoor(0);
+  }
   t8 = Event_GetFlag(0x202);
-  if (t8 == 0)
-    goto L_02008ebe;
-  JupiterLighthouse_OpenDoor(0);
-L_02008ebe:
+  if (t8 != 0) {
+    JupiterLighthouse_OpenDoor(0);
+  }
   LightSprites_InitB();
   LightSprites_SetPriority(2);
   LightSprites_AddCounted(18, 2);
@@ -723,10 +706,7 @@ void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
 }
 
-/* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
- * file has another. */
-extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
-#define gPaletteCycleFrame gPaletteCycleFrame__first
+extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
@@ -758,10 +738,7 @@ DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-/* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined
- * file has another. */
-extern const s32 gWhirlwindEndScript__first[] __asm__("gWhirlwindEndScript");
-#define gWhirlwindEndScript gWhirlwindEndScript__first
+extern s32 gWhirlwindEndScript[];
 extern s32 gWhirlwindRiding;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
@@ -771,12 +748,6 @@ void Actor_StartScript(struct Actor *object, const s32 *script);
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
                         Position_FlatDistance, gWhirlwindEndScript,
                         gWhirlwindRiding)
-
-// ---- scene/jupiter_lighthouse_room_7/s16d4.c ----
-
-/// Scene code of overlay 0x6a0, in ROM order.
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 struct CellTarget;
 struct CellTargetEntry;
@@ -826,12 +797,9 @@ void Field_TryJumpForward(void);
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Whirlwind_Update(struct Actor *self);
-/* VIEW(s16d4): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another. */
-void FieldEffect_Spawn__s16d4(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__s16d4
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation, Whirlwind_Update,
                        FieldEffect_Spawn)
@@ -884,12 +852,7 @@ DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
                            Actor_SelectAnimation)
 
 extern u32 gLightSpriteActors[];
-/* VIEW(s16d4): variable gLightSpritePriority as s16 gLightSpritePriority;
- * scene/jupiter_lighthouse_room_7 has u16 gLightSpritePriority; tried as the
- * rest of the object declares it, LightSprites_Draw moves: 99 of 200
- * instructions, LightSprites_InitA moves: 0 of 36 instructions,
- * LightSprites_InitB moves: 0 of 36 instructions, 1 more in tla-ja. */
-extern s16 gLightSpritePriority__s16d4 __asm__("gLightSpritePriority");
+extern s16 gLightSpritePriority;
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
@@ -899,7 +862,7 @@ s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 /// picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
                           gLightSpriteCount, gLightSpriteActors,
-                          gLightSpritesLarge, gLightSpritePriority__s16d4,
+                          gLightSpritesLarge, gLightSpritePriority,
                           BattleEffect_GetObjectPriority,
                           Oam_AddSpriteAtDepthClamped)
 
@@ -910,50 +873,31 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority__s16d4)
+                            gLightSpritePriority)
 
 DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority__s16d4)
+                            gLightSpritePriority)
 
 DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority__s16d4)
+                            gLightSpritePriority)
 
 DEFINE_LIGHT_SPRITES_ADD_COUNTED(LightSprites_AddCounted, gLightSpriteActors,
                                  gLightSpriteCount)
 
-void LightSprites_SetPriority(u16 value) {
-  gLightSpritePriority__s16d4 = value;
-}
+void LightSprites_SetPriority(u16 value) { gLightSpritePriority = value; }
 
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/field_effect/move.c"
 
 #undef FIELD_AT
-#undef gData_020031c4
-#undef gPaletteCyclePausesInEvents
-#undef gPaletteCycleFrame
-#undef gWhirlwindEndScript
-#undef FieldEffect_Spawn
 // @file
-// Scene code of overlay 0x6a0, in ROM order.
-
 extern const s32 *gFieldEffect_DurationScripts[];
 
-/* VIEW(s1f74): routine Actor_SelectAnimation as this part declared it; the
- * joined file has another. */
-void Actor_SelectAnimation__s1f74(struct FieldEffect *effect,
-                                  s32 mode) __asm__("Actor_SelectAnimation");
-#define Actor_SelectAnimation Actor_SelectAnimation__s1f74
-/* VIEW(s1f74): routine Actor_StartScript as this part declared it; the joined
- * file has another. */
-void Actor_StartScript__s1f74(struct FieldEffect *effect,
-                              const s32 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__s1f74
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -1031,7 +975,11 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_TABLE gCrackedTiles
 #define CELL_SPRITE_DRAW CrackedTiles_Update
 /* VIEW(s1f74): routine Oam_AddSpriteAtDepthClamped as cell_sprite.c declares
- * it; the joined file has another. */
+ * it; the joined file has another; tried as the definition's void
+ * Oam_AddSpriteAtDepthClamped(void *entry, s32 slot), which the object already
+ * declares, it does not compile in tla-ja:
+ * games/tla/src/field/map/cell_sprite.c:20: conflicting types for
+ * `Oam_AddSpriteAtDepthClamped'. */
 void Oam_AddSpriteAtDepthClamped__s1f74(void *entry, s32 priority) __asm__(
     "Oam_AddSpriteAtDepthClamped");
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped__s1f74
@@ -1046,10 +994,6 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
-
-// ---- scene/jupiter_lighthouse_room_7/s25a4.c ----
-
-// Scene code of overlay 0x6a0, in ROM order.
 
 struct CellTargetEntry;
 
@@ -1084,14 +1028,9 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s25a4, CellTarget__s25a4,
 #undef Actor_SelectAnimation
 #undef Actor_StartScript
 // @file
-// Scene code of overlay 0x6a0, in ROM order.
-
-/* VIEW(s273c): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another. */
-void FieldEffect_Spawn__s273c(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__s273c
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 void CrackedTile_DropIn(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1166,31 +1105,14 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropIn)
 
 // clang-format off
-/* VIEW(s273c): variable gData_02002c64 as this part defines it; a header the joined file includes has another. */
-s16 gData_02002c64__s273c[] __asm__("gData_02002c64") = {
-    8, 16, 10, 16, 11, 16, 12, 16,
-    14, 16, 15, 16, 10, 18, 12, 18,
-    13, 18, 8, 20, 10, 20, 13, 20,
-    15, 20, -1, 0,
+s16 gData_02002c64[][2] = {
+    {8, 16}, {10, 16}, {11, 16}, {12, 16}, {14, 16}, {15, 16}, {10, 18},
+    {12, 18}, {13, 18}, {8, 20},  {10, 20}, {13, 20}, {15, 20}, {-1, 0},
 };
 // clang-format on
 
-#undef FieldEffect_Spawn
-
-void Func_02000038(void);
+void JupiterLighthouse_FightWhorl(void);
 void JupiterLighthouse_StepOnButton(void);
-/* VIEW(data_7): routine Func_02000778 as this part declared it; the joined file
- * has another. */
-void Func_02000778__data_7(void) __asm__("Func_02000778");
-#define Func_02000778 Func_02000778__data_7
-/* VIEW(data_7): routine Func_020007a4 as this part declared it; the joined file
- * has another. */
-void Func_020007a4__data_7(void) __asm__("Func_020007a4");
-#define Func_020007a4 Func_020007a4__data_7
-/* VIEW(data_7): routine Func_020009e4 as this part declared it; the joined file
- * has another. */
-void Func_020009e4__data_7(void) __asm__("Func_020009e4");
-#define Func_020009e4 Func_020009e4__data_7
 void Func_02000e20(void);
 
 // clang-format off
@@ -1249,7 +1171,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {0xc602, 41, CONDITION_ALWAYS, EVENT(Func_02000cec)},
     {0x602, 42, CONDITION_ALWAYS, EVENT(Func_02000cec)},
     {0x4602, 43, CONDITION_ALWAYS, EVENT(Func_02000cec)},
-    {0xc400, 21, CONDITION_ALWAYS, EVENT(Func_02000038)},
+    {0xc400, 21, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FightWhorl)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, CONDITION_ALWAYS, EVENT(Func_02000778)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT(Func_020007a4)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(Func_02000778)},
@@ -1273,15 +1195,11 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA s32 gPaletteCycleFrame[] = {
-    -1,
-};
+LATE_DATA s32 gPaletteCycleFrame = -1;
 
-LATE_DATA u32 gPaletteCyclePausesInEvents[] = {
-    1,
-};
+LATE_DATA s32 gPaletteCyclePausesInEvents = 1;
 
-LATE_DATA u32 gWhirlwindEndScript[] = {
+LATE_DATA s32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on
@@ -1291,6 +1209,3 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,
 };
-#undef Func_02000778
-#undef Func_020007a4
-#undef Func_020009e4

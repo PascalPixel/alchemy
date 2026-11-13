@@ -56,6 +56,29 @@
 #include "macros.h"
 #include "graphics/oam.h"
 #include "flag_call.h"
+#include "graphics/vram_tab.h"
+#include "stddef.h"
+#include "battle_work.h"
+#include "system/irq_lock.h"
+#include "battle/battle_side.h"
+#include "battle/b5_context.h"
+#include "system/save.h"
+#include "owner_state.h"
+#include "field_sprite.h"
+#include "battle/battle_summon.h"
+#include "system/irq.h"
+#include "system/io_write_queue.h"
+#include "battle/battle_system.h"
+#include "field/event.h"
+#include "module/system/system.h"
+#include "module/window/screens.h"
+#include "module/window/window.h"
+#include "actor.h"
+#include "battle/battle_action.h"
+#include "menu/resource_menu.h"
+#include "graphics/display_transition.h"
+#include "scene_call.h"
+#include "field/sprite.h"
 
 // The window object's functions its parts call before their definitions, or
 // with declarations of their own that disagree.
@@ -72,5 +95,7 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2, u32 y2);
 void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y);
 void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y);
+s16 DebugSceneSelect_Run(void);
+s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode);
 
 #endif

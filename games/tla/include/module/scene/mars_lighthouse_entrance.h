@@ -38,11 +38,11 @@ struct MarsLighthouseEntranceEventWork {
   s32 value1ac;
 };
 
-void Func_0200263c(void);
+void Leader_KnockBack(void);
 
 void Func_02001c74();
 
-s32 Func_02000168(u32 layer, s32 x, s32 y, s32 value);
+s32 MapCell_Swap(u32 layer, s32 x, s32 y, s32 value);
 
 void Func_02000798(void);
 
@@ -59,39 +59,37 @@ void Func_02000fe0(const struct MapCell *cell);
 
 void Func_020012e4(struct Actor *object);
 
-void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
+void Actor_Attach(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 
-void Func_02003564(void);
+void Leader_SlideOnIceFromEdge(void);
 
 s32 Func_020029a0(void);
 
-void Func_02003884(void);
+void Leader_SlideOnIceAhead(void);
 
 void Func_02000d18(void);
 
 s32 Func_020029bc(void);
 
-void Func_02003878(s32 value);
+void Leader_SetSlideStopped(s32 value);
 
 void Func_02000414(s32 value);
 
 void Func_02001988(void);
 void Func_020019a4(void);
 
-s32 Func_02001a1c(struct Actor *a, struct Actor *b);
+s32 Actor_IsTouching(struct Actor *a, struct Actor *b);
 
-s32 Func_02001a80(struct Actor *a, struct Actor *b);
+s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
 void Func_02001e60();
 void Func_02001ea8();
 void Func_02001ef0();
 
-void Func_02002c40(struct Actor *actor);
-
-s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
+void Actor_RollAndCrumble(struct Actor *actor);
 
 extern struct CellTarget Data_020068b4;
 
-void Func_020040f0(struct CellTarget *table, struct CellTargetEntry *entry);
+void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 extern u16 *Data_02006894;
 extern u16 *Data_02006880;
@@ -103,9 +101,9 @@ extern u16 gData_02006884;
 extern u16 gData_0200689c;
 extern u16 gData_0200e888;
 
-s32 Func_02004794(u16 *list);
-void Func_020047b8(void);
-void Func_02004a60(s32 id, u32 kind, s32 flag, s32 layer);
+s32 List_CountEntries(u16 *list);
+void PaletteCycle_Fade(void);
+void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 s32 Func_02004db8(struct Actor *object);
 
@@ -150,9 +148,9 @@ void Func_02000fa4(void);
 void Func_02000fd4(void);
 
 int MarsLighthouseEntrance_SlideOnIce(void);
-void Func_020032b8(void);
+void Leader_SlideOnIce(void);
 
-void Func_02003284(void);
+void Leader_StopIfPending(void);
 
 void Func_02000b24(void);
 

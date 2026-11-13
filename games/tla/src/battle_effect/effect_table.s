@@ -2773,27 +2773,27 @@ Data_08199e24:
 	.global Data_08199e54
 Data_08199e54:
 	.byte 0, 4, 8, 12
-@ read by Func_0818d5a8
+@ read by BattleEffect_RunLeapingStrike
 	.global Data_08199e58
 Data_08199e58:
 	.byte 0, 4, 8, 9
-@ read by Func_0818d5a8
+@ read by BattleEffect_RunLeapingStrike
 	.global Data_08199e5c
 Data_08199e5c:
 	.byte 9, 8, 9, 3
-@ read by Func_0818d5a8
+@ read by BattleEffect_RunLeapingStrike
 	.global Data_08199e60
 Data_08199e60:
 	.byte 32, 32, 32, 32
-@ read by Func_0818d5a8
+@ read by BattleEffect_RunLeapingStrike
 	.global Data_08199e64
 Data_08199e64:
 	.byte 0, 4, 12, 19
-@ read by Func_0818d5a8
+@ read by BattleEffect_RunLeapingStrike
 	.global Data_08199e68
 Data_08199e68:
 	.byte 7, 8, 7, 8
-@ read by Func_0818d5a8
+@ read by BattleEffect_RunLeapingStrike
 	.global Data_08199e6c
 Data_08199e6c:
 	.byte 32, 16, 16, 24
@@ -2845,7 +2845,7 @@ Data_08199eb4:
 	.global Data_08199ebc
 Data_08199ebc:
 	.byte 40, 56, 70, 48, 64, 80, 58, 64, 72
-@ read by Func_0818f620
+@ read by BattleEffect_RunCanvasBurst
 	.global Data_08199ec5
 Data_08199ec5:
 	.byte 5, 5, 4, 3, 2, 1, 0

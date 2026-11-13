@@ -391,18 +391,15 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     }
     MenuCursor_Position(confirmationChoice * 56 + 80, 16);
     if ((frame & 3) == 0) {
-      /* FAKEMATCH(wrapper): the copy forwarded through shared.c's CopyWords
-       * inline, so the source loads before the routine and the destination,
-       * as the native does; as a direct call, 6 of 1244 instructions differ
-       * in tla-en. */
-      if ((frame & 4) != 0)
-        CopyWords(gMenu_BackdropBorderTile, Iwram_CopyWordsEntry,
-                  (void *)0x060052c0, 32);
-      else
-        /* FAKEMATCH(wrapper): the fill forwarded through shared.c's FillWords
-         * inline, so the routine loads before its arguments; as a direct
-         * call, 4 of 1244 instructions differ in tla-en. */
-        FillWords(Iwram_FillWordsEntry, (void *)0x060052c0, 32, 0x44444444);
+      void *tile;
+      u32 fill = 0x44444444;
+
+      tile = (void *)0x060052c0;
+      if ((frame & 4) != 0) {
+        Iwram_CopyWords(tile, gMenu_BackdropBorderTile, 32);
+      } else {
+        Iwram_FillWords(tile, 32, fill);
+      }
     }
 
     if ((pressed & 1) != 0) {

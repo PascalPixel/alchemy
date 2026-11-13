@@ -140,15 +140,6 @@ struct FxGroup {
 
 extern struct DescriptorEntry gData_080eff28[];
 
-/* VIEW(field_sequence): routine BattleEffect_RunDrainMotes as void
- * BattleEffect_RunDrainMotes(void *effect, s32 mode);
- * module/battle_effect/battle_effect.h has void
- * BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode);
- * not tried: BattleEffect_RunDrainMotes's bound declaration was not found. */
-extern void
-Func_0814ea58__field_sequence(void *effect,
-                              s32 mode) __asm__("BattleEffect_RunDrainMotes");
-
 /// Unused: runs the loaded overlay's initialize entry; nothing calls it.
 UNUSED void Overlay_CallInitialize(void) { ((s32 (*)(void))gOverlayArea[1])(); }
 

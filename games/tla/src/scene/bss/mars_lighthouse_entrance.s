@@ -40,8 +40,8 @@ gData_020068a2:
 	.global Data_020068a4
 Data_020068a4:
 	.space 0x0000000c
-	.global gData_020068b0
-gData_020068b0:
+	.global gMarsLighthouseEntrance_SlideStopped
+gMarsLighthouseEntrance_SlideStopped:
 	.space 0x00000004
 	.global Data_020068b4
 Data_020068b4:

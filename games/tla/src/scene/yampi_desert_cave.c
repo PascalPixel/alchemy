@@ -36,8 +36,6 @@
 #include "version.h"
 #include "shared/tables.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 struct Actor;
 
 extern u16 gYampiDesertCave_LogSprites[];
@@ -75,11 +73,7 @@ extern u16 *gYampiDesertCave_MarkDimColors;
 extern u16 *gYampiDesertCave_MarkCycleSlots;
 void Actor_DisableById(s32 id);
 
-/* VIEW(first): routine gYampiDesertCave_LogFootprints as this part declared it;
- * the joined file has another. */
-extern s8 gYampiDesertCave_LogFootprints__first[] __asm__(
-    "gYampiDesertCave_LogFootprints");
-#define gYampiDesertCave_LogFootprints gYampiDesertCave_LogFootprints__first
+extern s8 gYampiDesertCave_LogFootprints[];
 
 /// Makes a log's cells solid where it lies: its footprint's cells take the
 /// raised layers' attributes and block the ground; returns 0 for an actor that
@@ -297,41 +291,13 @@ extern u16 gYampiDesertCave_MarkPeriod;
 extern u16 *gYampiDesertCave_MarkSlots;
 extern u16 gYampiDesertCave_MarkCount;
 extern u16 gYampiDesertCave_MarkCycleIndex;
-/* VIEW(first): routine gYampiDesertCave_Placements as this part declared it;
- * the joined file has another. */
-extern u32
-    gYampiDesertCave_Placements__first[] __asm__("gYampiDesertCave_Placements");
-#define gYampiDesertCave_Placements gYampiDesertCave_Placements__first
-/* VIEW(first): routine gYampiDesertCave_Room2Placements as this part declared
- * it; the joined file has another. */
-extern s32 gYampiDesertCave_Room2Placements__first[] __asm__(
-    "gYampiDesertCave_Room2Placements");
-#define gYampiDesertCave_Room2Placements gYampiDesertCave_Room2Placements__first
-/* VIEW(first): routine gYampiDesertCave_Room3Placements as this part declared
- * it; the joined file has another. */
-extern s32 gYampiDesertCave_Room3Placements__first[] __asm__(
-    "gYampiDesertCave_Room3Placements");
-#define gYampiDesertCave_Room3Placements gYampiDesertCave_Room3Placements__first
-/* VIEW(first): routine gYampiDesertCave_Room3Stakes as this part declared it;
- * the joined file has another. */
-extern const u8 gYampiDesertCave_Room3Stakes__first[] __asm__(
-    "gYampiDesertCave_Room3Stakes");
-#define gYampiDesertCave_Room3Stakes gYampiDesertCave_Room3Stakes__first
-/* VIEW(first): routine gYampiDesertCave_Triggers as this part declared it; the
- * joined file has another. */
-extern const u8
-    gYampiDesertCave_Triggers__first[] __asm__("gYampiDesertCave_Triggers");
-#define gYampiDesertCave_Triggers gYampiDesertCave_Triggers__first
-/* VIEW(first): routine gYampiDesertCave_Room2Triggers as this part declared it;
- * the joined file has another. */
-extern const u8 gYampiDesertCave_Room2Triggers__first[] __asm__(
-    "gYampiDesertCave_Room2Triggers");
-#define gYampiDesertCave_Room2Triggers gYampiDesertCave_Room2Triggers__first
-/* VIEW(first): routine gYampiDesertCave_Room3Triggers as this part declared it;
- * the joined file has another. */
-extern const u8 gYampiDesertCave_Room3Triggers__first[] __asm__(
-    "gYampiDesertCave_Room3Triggers");
-#define gYampiDesertCave_Room3Triggers gYampiDesertCave_Room3Triggers__first
+extern struct ActorPlacement gYampiDesertCave_Placements[];
+extern struct ActorPlacement gYampiDesertCave_Room2Placements[];
+extern struct ActorPlacement gYampiDesertCave_Room3Placements[];
+extern u32 gYampiDesertCave_Room3Stakes[];
+extern struct Trigger gYampiDesertCave_Triggers[];
+extern struct Trigger gYampiDesertCave_Room2Triggers[];
+extern struct Trigger gYampiDesertCave_Room3Triggers[];
 
 s32 YampiDesertCave_FindLogSlide(s32 *position);
 /// The leader pushes a log to where YampiDesertCave_FindLogSlide stopped it,
@@ -633,11 +599,11 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-u32 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2)
-    return (u32 *)gYampiDesertCave_Room2Placements;
+    return gYampiDesertCave_Room2Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3)
-    return (u32 *)gYampiDesertCave_Room3Placements;
+    return gYampiDesertCave_Room3Placements;
   return gYampiDesertCave_Placements;
 }
 
@@ -790,11 +756,7 @@ void YampiDesertCave_PoundStake(s32 a, s32 b) {
   MapGrid_CopyCellAttributes(47, 12, 1, 1, 46, 12);
 }
 
-/* VIEW(first): routine gYampiDesertCave_RipplePath as this part declared it;
- * the joined file has another. */
-extern const s16
-    gYampiDesertCave_RipplePath__first[] __asm__("gYampiDesertCave_RipplePath");
-#define gYampiDesertCave_RipplePath gYampiDesertCave_RipplePath__first
+extern s16 gYampiDesertCave_RipplePath[];
 
 static __inline__ s32 GameFlag_GetByte_(s32 flag) {
   return ((s32)GameFlag_GetByte(flag));
@@ -873,7 +835,7 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
 /// Valukar, the guardian, speaks, and its battle begins; afterwards the party
 /// leaves for overlay 664's fourth room.
 void YampiDesertCave_MeetGuardianOfFire(void) {
-  s32 leader;
+  struct Actor *leader;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -887,10 +849,10 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
-  leader = ((s32)Actor_GetById(FIELD_AT(&gMainRoutineWork, s32, 0x214)));
+  leader = Actor_GetById(FIELD_AT(&gMainRoutineWork, s32, 0x214));
   if (leader != 0)
-    Actor_SetDestination(9, FIELD_AT(leader, s16, 10),
-                         FIELD_AT(leader, s16, 18));
+    Actor_SetDestination(9, FIELD_AT((u8 *)leader, s16, 10),
+                         FIELD_AT((u8 *)leader, s16, 18));
   Event_Wait(20);
   /* FAKEMATCH(dead): a once-only block around the first two stores keeps the
    * call's first argument ahead of the scene store's address, where without it
@@ -908,7 +870,7 @@ void YampiDesertCave_ScoopTreasure(s32 a) {
   YampiDesertCave_Call1920(a, 64, 0x302);
 }
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2)
     return gYampiDesertCave_Room2Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3)
@@ -920,22 +882,9 @@ const u8 *Scene_GetEvents(void) {
 // room's palette cycle and Retreat destination, the third room's background
 // priorities, and in each room the objects its flags place.
 
-/* VIEW(first): routine gYampiDesertCave_MarkPaletteSlots as this part declared
- * it; the joined file has another. */
-extern u16 gYampiDesertCave_MarkPaletteSlots__first[] __asm__(
-    "gYampiDesertCave_MarkPaletteSlots");
-#define gYampiDesertCave_MarkPaletteSlots                                      \
-  gYampiDesertCave_MarkPaletteSlots__first
-/* VIEW(first): routine gYampiDesertCave_MarkColorsLit as this part declared it;
- * the joined file has another. */
-extern u16 gYampiDesertCave_MarkColorsLit__first[] __asm__(
-    "gYampiDesertCave_MarkColorsLit");
-#define gYampiDesertCave_MarkColorsLit gYampiDesertCave_MarkColorsLit__first
-/* VIEW(first): routine gYampiDesertCave_MarkColorsDim as this part declared it;
- * the joined file has another. */
-extern u16 gYampiDesertCave_MarkColorsDim__first[] __asm__(
-    "gYampiDesertCave_MarkColorsDim");
-#define gYampiDesertCave_MarkColorsDim gYampiDesertCave_MarkColorsDim__first
+extern s16 gYampiDesertCave_MarkPaletteSlots[];
+extern u16 gYampiDesertCave_MarkColorsLit[];
+extern u16 gYampiDesertCave_MarkColorsDim[];
 
 void Actor_SetWideSprite(s32 id, s32 wide);
 
@@ -1053,85 +1002,39 @@ s32 Scene_PrepareMap(void) { return 0; }
 #undef DEFINE_TELEPORT_FROM_MARK
 #undef DEFINE_BURST_PILLAR
 #undef FIELD_AT
-#undef gYampiDesertCave_LogFootprints
-#undef gYampiDesertCave_Placements
-#undef gYampiDesertCave_Room2Placements
-#undef gYampiDesertCave_Room3Placements
-#undef gYampiDesertCave_Room3Stakes
-#undef gYampiDesertCave_Triggers
-#undef gYampiDesertCave_Room2Triggers
-#undef gYampiDesertCave_Room3Triggers
-#undef gYampiDesertCave_RipplePath
 #undef gYampiDesertCave_MarkPaletteSlots
-#undef gYampiDesertCave_MarkColorsLit
-#undef gYampiDesertCave_MarkColorsDim
 
-/* VIEW(data): routine YampiDesertCave_BurstRoom1Pillar as this part declared
- * it; the joined file has another. */
-void YampiDesertCave_BurstRoom1Pillar__data(void) __asm__(
-    "YampiDesertCave_BurstRoom1Pillar");
-#define YampiDesertCave_BurstRoom1Pillar YampiDesertCave_BurstRoom1Pillar__data
-/* VIEW(data): routine YampiDesertCave_BurstRoom3Pillar as this part declared
- * it; the joined file has another. */
-void YampiDesertCave_BurstRoom3Pillar__data(void) __asm__(
-    "YampiDesertCave_BurstRoom3Pillar");
-#define YampiDesertCave_BurstRoom3Pillar YampiDesertCave_BurstRoom3Pillar__data
-/* VIEW(data): routine YampiDesertCave_StartMovingPillar as this part declared
- * it; the joined file has another. */
-void YampiDesertCave_StartMovingPillar__data(void) __asm__(
-    "YampiDesertCave_StartMovingPillar");
-#define YampiDesertCave_StartMovingPillar                                      \
-  YampiDesertCave_StartMovingPillar__data
-/* VIEW(data): routine YampiDesertCave_FinishMovingPillar as this part declared
- * it; the joined file has another. */
-void YampiDesertCave_FinishMovingPillar__data(void) __asm__(
-    "YampiDesertCave_FinishMovingPillar");
-#define YampiDesertCave_FinishMovingPillar                                     \
-  YampiDesertCave_FinishMovingPillar__data
-/* VIEW(data): routine YampiDesertCave_PoundStake as this part declared it; the
- * joined file has another. */
-void YampiDesertCave_PoundStake__data(void) __asm__(
-    "YampiDesertCave_PoundStake");
-#define YampiDesertCave_PoundStake YampiDesertCave_PoundStake__data
-/* VIEW(data): routine YampiDesertCave_ScoopDjinni as this part declared it; the
- * joined file has another. */
-void YampiDesertCave_ScoopDjinni__data(void) __asm__(
-    "YampiDesertCave_ScoopDjinni");
-#define YampiDesertCave_ScoopDjinni YampiDesertCave_ScoopDjinni__data
 void YampiDesertCave_MeetGuardianOfFire(void);
-/* VIEW(data): routine YampiDesertCave_ScoopTreasure as this part declared it;
- * the joined file has another. */
-void YampiDesertCave_ScoopTreasure__data(void) __asm__(
-    "YampiDesertCave_ScoopTreasure");
-#define YampiDesertCave_ScoopTreasure YampiDesertCave_ScoopTreasure__data
 
 // clang-format off
 u16 gYampiDesertCave_LogSprites[] = {
     258, 259, 293, 294, 332, 331,
 };
 
-u32 gYampiDesertCave_LogFootprints[] = {
-    0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
+s8 gYampiDesertCave_LogFootprints[] = {
+    -32, -8, 32, 8, -8, -32, 8, 32,
+    -32, -16, 32, 0, -8, -32, 8, 32,
+    -32, -8, 32, 8, -8, -32, 8, 32,
 };
 
 DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 
-u32 gYampiDesertCave_RipplePath[] = {
-    0x270065, 0, 0x230061, 0, 0x250063, 0,
-    0x21005f, 0,
+s16 gYampiDesertCave_RipplePath[] = {
+    101, 39, 0, 0, 97, 35, 0, 0,
+    99, 37, 0, 0, 95, 33, 0, 0,
 };
 
 s16 gYampiDesertCave_MarkPaletteSlots[] = {
     9, 10, 11, 12, 13, 14, 15, -1,
 };
 
-s16 gYampiDesertCave_MarkColorsLit[] = {
+u16 gYampiDesertCave_MarkColorsLit[] = {
     23, 25, 22, 23, 25, 22, 23, 25,
     22, 23, 25, 22, 23, 25, 22, 23,
     25, 22, 23, 25, 22, -1,
 };
 
-s16 gYampiDesertCave_MarkColorsDim[] = {
+u16 gYampiDesertCave_MarkColorsDim[] = {
     30, 27, 31, 22, 21, 31, 20, 18,
     31, 13, 11, 27, 11, 8, 24, 8,
     5, 21, 31, 31, 31, -1,
@@ -1303,10 +1206,5 @@ struct Trigger gYampiDesertCave_Room3Triggers[] = {
      IF_FLAG_SET(0x270), EVENT(YampiDesertCave_ScoopDjinni)},
     {TRIGGER_TABLE_END},
 };
-#undef YampiDesertCave_BurstRoom1Pillar
-#undef YampiDesertCave_BurstRoom3Pillar
 #undef YampiDesertCave_StartMovingPillar
 #undef YampiDesertCave_FinishMovingPillar
-#undef YampiDesertCave_PoundStake
-#undef YampiDesertCave_ScoopDjinni
-#undef YampiDesertCave_ScoopTreasure

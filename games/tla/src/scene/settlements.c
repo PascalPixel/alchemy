@@ -22,6 +22,7 @@
 
 #include "shared/actors.h"
 #include "shared/effects.h"
+#include "shared/mars_lighthouse.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -38,7 +39,6 @@ extern u8 MsgSettlements01[];
 #include "system/frame.h"
 
 extern s16 gSettlements_FallsObjects[];
-extern u16 gSettlements_SlideStopped;
 
 void Settlements_SpawnSmoke(s32 x, s32 y, s32 z);
 void Settlements_CycleWaterColors(void);
@@ -113,8 +113,6 @@ static __inline__ void Window(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
 #include "call.h"
 #include "system/input.h"
 #include "shared/tables.h"
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 extern s16 gSettlements_SlideAnglesByKey[];
 
@@ -272,52 +270,17 @@ u32 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(first): routine gSettlements_Placements as this part declared it; the
- * joined file has another. */
-extern u8 gSettlements_Placements__first[] __asm__("gSettlements_Placements");
-#define gSettlements_Placements gSettlements_Placements__first
-/* VIEW(first): routine gSettlements_Room1Placements as this part declared it;
- * the joined file has another. */
-extern u8 gSettlements_Room1Placements__first[] __asm__(
-    "gSettlements_Room1Placements");
-#define gSettlements_Room1Placements gSettlements_Room1Placements__first
-/* VIEW(first): routine gSettlements_Room2Placements as this part declared it;
- * the joined file has another. */
-extern u8 gSettlements_Room2Placements__first[] __asm__(
-    "gSettlements_Room2Placements");
-#define gSettlements_Room2Placements gSettlements_Room2Placements__first
-/* VIEW(first): routine gSettlements_Room4Placements as this part declared it;
- * the joined file has another. */
-extern u8 gSettlements_Room4Placements__first[] __asm__(
-    "gSettlements_Room4Placements");
-#define gSettlements_Room4Placements gSettlements_Room4Placements__first
-/* VIEW(first): routine gSettlements_Room5Placements as this part declared it;
- * the joined file has another. */
-extern u8 gSettlements_Room5Placements__first[] __asm__(
-    "gSettlements_Room5Placements");
-#define gSettlements_Room5Placements gSettlements_Room5Placements__first
-/* VIEW(first): routine gSettlements_Room9Placements as this part declared it;
- * the joined file has another. */
-extern u8 gSettlements_Room9Placements__first[] __asm__(
-    "gSettlements_Room9Placements");
-#define gSettlements_Room9Placements gSettlements_Room9Placements__first
-/* VIEW(first): routine gSettlements_Room10Placements as this part declared it;
- * the joined file has another. */
-extern u8 gSettlements_Room10Placements__first[] __asm__(
-    "gSettlements_Room10Placements");
-#define gSettlements_Room10Placements gSettlements_Room10Placements__first
-/* VIEW(first): routine gSettlements_Room7Placements as this part declared it;
- * the joined file has another. */
-extern u8 gSettlements_Room7Placements__first[] __asm__(
-    "gSettlements_Room7Placements");
-#define gSettlements_Room7Placements gSettlements_Room7Placements__first
-/* VIEW(first): routine gSettlements_Room8Placements as this part declared it;
- * the joined file has another. */
-extern u8 gSettlements_Room8Placements__first[] __asm__(
-    "gSettlements_Room8Placements");
-#define gSettlements_Room8Placements gSettlements_Room8Placements__first
+extern struct ActorPlacement gSettlements_Placements[];
+extern struct ActorPlacement gSettlements_Room1Placements[];
+extern struct ActorPlacement gSettlements_Room2Placements[];
+extern struct ActorPlacement gSettlements_Room4Placements[];
+extern struct ActorPlacement gSettlements_Room5Placements[];
+extern struct ActorPlacement gSettlements_Room9Placements[];
+extern struct ActorPlacement gSettlements_Room10Placements[];
+extern struct ActorPlacement gSettlements_Room7Placements[];
+extern struct ActorPlacement gSettlements_Room8Placements[];
 
-u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov690Room1)
@@ -435,52 +398,17 @@ void Settlements_GrowVine(void) {
   Event_SetFlag(0x230);
 }
 
-/* VIEW(first): routine gSettlements_Triggers as this part declared it; the
- * joined file has another. */
-extern u8 gSettlements_Triggers__first[] __asm__("gSettlements_Triggers");
-#define gSettlements_Triggers gSettlements_Triggers__first
-/* VIEW(first): routine gSettlements_Room1Triggers as this part declared it; the
- * joined file has another. */
-extern u8
-    gSettlements_Room1Triggers__first[] __asm__("gSettlements_Room1Triggers");
-#define gSettlements_Room1Triggers gSettlements_Room1Triggers__first
-/* VIEW(first): routine gSettlements_Room2Triggers as this part declared it; the
- * joined file has another. */
-extern u8
-    gSettlements_Room2Triggers__first[] __asm__("gSettlements_Room2Triggers");
-#define gSettlements_Room2Triggers gSettlements_Room2Triggers__first
-/* VIEW(first): routine gSettlements_Room4Triggers as this part declared it; the
- * joined file has another. */
-extern u8
-    gSettlements_Room4Triggers__first[] __asm__("gSettlements_Room4Triggers");
-#define gSettlements_Room4Triggers gSettlements_Room4Triggers__first
-/* VIEW(first): routine gSettlements_Room5Triggers as this part declared it; the
- * joined file has another. */
-extern u8
-    gSettlements_Room5Triggers__first[] __asm__("gSettlements_Room5Triggers");
-#define gSettlements_Room5Triggers gSettlements_Room5Triggers__first
-/* VIEW(first): routine gSettlements_Room7Triggers as this part declared it; the
- * joined file has another. */
-extern u8
-    gSettlements_Room7Triggers__first[] __asm__("gSettlements_Room7Triggers");
-#define gSettlements_Room7Triggers gSettlements_Room7Triggers__first
-/* VIEW(first): routine gSettlements_Room8Triggers as this part declared it; the
- * joined file has another. */
-extern u8
-    gSettlements_Room8Triggers__first[] __asm__("gSettlements_Room8Triggers");
-#define gSettlements_Room8Triggers gSettlements_Room8Triggers__first
-/* VIEW(first): routine gSettlements_Room9Triggers as this part declared it; the
- * joined file has another. */
-extern u8
-    gSettlements_Room9Triggers__first[] __asm__("gSettlements_Room9Triggers");
-#define gSettlements_Room9Triggers gSettlements_Room9Triggers__first
-/* VIEW(first): routine gSettlements_Room10Triggers as this part declared it;
- * the joined file has another. */
-extern u8
-    gSettlements_Room10Triggers__first[] __asm__("gSettlements_Room10Triggers");
-#define gSettlements_Room10Triggers gSettlements_Room10Triggers__first
+extern struct Trigger gSettlements_Triggers[];
+extern struct Trigger gSettlements_Room1Triggers[];
+extern struct Trigger gSettlements_Room2Triggers[];
+extern struct Trigger gSettlements_Room4Triggers[];
+extern struct Trigger gSettlements_Room5Triggers[];
+extern struct Trigger gSettlements_Room7Triggers[];
+extern struct Trigger gSettlements_Room8Triggers[];
+extern struct Trigger gSettlements_Room9Triggers[];
+extern struct Trigger gSettlements_Room10Triggers[];
 
-u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov690Room1)
@@ -622,11 +550,7 @@ void Settlements_SetUpKaltIsland(void) {
   actor->state = 0;
 }
 
-/* VIEW(first): routine gSettlements_WallCrate as this part declared it; the
- * joined file has another. */
-extern const u8
-    gSettlements_WallCrate__first[] __asm__("gSettlements_WallCrate");
-#define gSettlements_WallCrate gSettlements_WallCrate__first
+extern s16 gSettlements_WallCrate[];
 
 void Settlements_StartWaterfall(void);
 
@@ -746,11 +670,7 @@ void Settlements_LashRope(void) {
   Event_SetFlag(0x203);
 }
 
-/* VIEW(first): routine gSettlements_WaterColorFrame as this part declared it;
- * the joined file has another. */
-extern s32
-    gSettlements_WaterColorFrame__first __asm__("gSettlements_WaterColorFrame");
-#define gSettlements_WaterColorFrame gSettlements_WaterColorFrame__first
+extern s32 gSettlements_WaterColorFrame;
 
 void Settlements_CycleWaterColors(void) {
   struct PaletteCycleWork *work =
@@ -983,11 +903,7 @@ void Settlements_UnblockCrate(void) {
   }
 }
 
-/* VIEW(first): routine gSettlements_CrateDropScript as this part declared it;
- * the joined file has another. */
-extern const u8 gSettlements_CrateDropScript__first[] __asm__(
-    "gSettlements_CrateDropScript");
-#define gSettlements_CrateDropScript gSettlements_CrateDropScript__first
+extern s32 gSettlements_CrateDropScript[];
 
 #define SINK(frames)                                                           \
   i = (frames);                                                                \
@@ -1055,11 +971,7 @@ void Settlements_BlockCrate(void) {
   Settlements_DropCrate();
 }
 
-/* VIEW(first): routine gSettlements_SmokeScript as this part declared it; the
- * joined file has another. */
-extern const u8
-    gSettlements_SmokeScript__first[] __asm__("gSettlements_SmokeScript");
-#define gSettlements_SmokeScript gSettlements_SmokeScript__first
+extern u32 gSettlements_SmokeScript[];
 
 void Settlements_SplashCrate(s32 id) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
@@ -1088,32 +1000,7 @@ void Settlements_SplashCrate(s32 id) {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef SINK
-#undef gSettlements_Placements
-#undef gSettlements_Room1Placements
-#undef gSettlements_Room2Placements
-#undef gSettlements_Room4Placements
-#undef gSettlements_Room5Placements
-#undef gSettlements_Room9Placements
-#undef gSettlements_Room10Placements
-#undef gSettlements_Room7Placements
-#undef gSettlements_Room8Placements
-#undef gSettlements_Triggers
-#undef gSettlements_Room1Triggers
-#undef gSettlements_Room2Triggers
-#undef gSettlements_Room4Triggers
-#undef gSettlements_Room5Triggers
-#undef gSettlements_Room7Triggers
-#undef gSettlements_Room8Triggers
-#undef gSettlements_Room9Triggers
-#undef gSettlements_Room10Triggers
-#undef gSettlements_WallCrate
-#undef gSettlements_WaterColorFrame
-#undef gSettlements_CrateDropScript
-#undef gSettlements_SmokeScript
 // @file
-// The settlements' events, continued; settlements.c says which places these
-// are.
-
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
@@ -1145,48 +1032,10 @@ void Settlements_SpawnSplashRing(s32 objectId) {
 
 void Settlements_LiftBoulder(void) { GameFlag_Set(0x208); }
 
-/* VIEW(s1620): variable gInput as extern u32 gInput; input.h has extern struct
- * InputState gInput; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/scene/settlements/settlements.c:66: `gInput'
- * undeclared (first use in this function). */
-extern u32 gInput__s1620 __asm__("gInput");
-/* VIEW(settlements): variable gSettlements_SlideAngles as const s16
- * gSettlements_SlideAngles[]; scene/settlements/s1d30 has
- * DEFINE_G_DATA_02002276(gSettlements_SlideAngles) s16
- * gSettlements_SlideAnglesByKey[] = {; tried as the one declaration extern
- * const s16 gSettlements_SlideAngles[], it does not compile in tla-ja:
- * games/tla/src/scene/settlements/settlements.c:64: `gSettlements_SlideAngles'
- * undeclared (first use in this function). */
-extern const s16
-    gSettlements_SlideAngles__settlements[] __asm__("gSettlements_SlideAngles");
-#define gSettlements_SlideAngles gSettlements_SlideAngles__settlements
+extern s16 gSettlements_SlideAngles[];
 
-void Settlements_KeepSliding(struct Actor *object) {
-  s32 angle;
-  s32 turn;
-
-  if (object->timer != 0) {
-    object->timer--;
-    return;
-  }
-  *(u8 *)((u8 *)object + 0x5a) = 0;
-  if (Event_GetFlag(0x106))
-    angle = -1;
-  else
-    angle = gSettlements_SlideAngles[(gInput__s1620 >> 4) & 15];
-  if (angle == -1) {
-    Actor_SelectAnimation(object, 9);
-    return;
-  }
-  turn = (s16)(angle - object->facing);
-  if (turn > 0x1000)
-    turn = 0x1000;
-  if (turn < -0x1000)
-    turn = -0x1000;
-  object->facing += turn;
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-}
+DEFINE_ACTOR_STEER_BY_PAD(Settlements_KeepSliding, gSettlements_SlideAngles,
+                          Actor_SelectAnimation)
 
 void Settlements_StopLeader(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -1199,619 +1048,55 @@ void Settlements_StopLeader(void) {
   }
 }
 
-/* VIEW(s173c): routine Settlements_KeepSliding as void
- * Settlements_KeepSliding(void); the definition has void
- * Settlements_KeepSliding(struct Actor *object); tried as the definition's void
- * Settlements_KeepSliding(struct Actor *object), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/scene/settlements/settlements.c:171:
- * `Settlements_KeepSliding__s173c' undeclared (first use in this function). */
-extern void
-Settlements_KeepSliding__s173c(void) __asm__("Settlements_KeepSliding");
+extern s16 gSettlements_SlideAnglesByKey[];
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
+s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
-void Settlements_SlideOnIce(void) {
-  struct Actor *object;
-  s32 startCell;
-  s32 targetX;
-  s32 targetZ;
-  s32 x;
-  s32 z;
-  u8 *layer;
-  s32 radius;
-  s32 position[3];
-  s32 dx, dz;
-  s32 cell;
-  s16 angle;
-  s32 j;
-  struct Actor *entry;
-  u8 *flags;
-  s32 *p;
-  s32 *q;
+DEFINE_LEADER_SLIDE_ON_ICE(Settlements_SlideOnIce, Settlements_StopLeader,
+                           gSettlements_SlideAnglesByKey, Actor_SelectAnimation,
+                           Settlements_KeepSliding, Field_CheckSpheresOverlap)
 
-  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-retry:
-  Settlements_StopLeader();
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x8000;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
-  object->velocityX = 0;
-  object->velocityZ = 0;
-  p = position;
-  p[0] = x = (object->x & 0xfff00000) + 0x80000;
-  p[1] = object->y;
-  p[2] = z = (object->z & 0xfff00000) + 0x80000;
-  targetZ = z;
-  targetX = x;
-  layer = &object->terrainId;
-  startCell = FieldMapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
-  dz = targetZ - object->z;
-  dx = targetX - object->x;
-  if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
-    angle = gSettlements_SlideAnglesByKey[(gInput.held >> 4) & 15];
-    if ((u16)angle == 0xffff)
-      return;
-  } else {
-    angle = ArcTan2(targetZ - object->z, targetX - object->x);
-    angle = (angle + 0x2000) & 0xc000;
-  }
-  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse's hoist of the
-   * position's address; as no asm, 2 of 304 instructions differ in tla-en. */
-  __asm__("" : : : SFP_CLOBBER);
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  cell = FieldMapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
-  if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->facing = angle;
-    object->velocityX = 0;
-    object->velocityZ = 0;
-    object->x = x;
-    object->z = z;
-    goto end;
-  }
-  p[0] = x;
-  p[2] = z;
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  object->timer = 0;
-  FieldActor_SetMoveTarget(object, x, object->y, z);
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-  FieldActor_WaitForMove(object);
-  object->update = Settlements_KeepSliding__s173c;
-  goto walk;
-walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
-    goto blocked;
-  radius = object->radius - 2;
-  entry = Ram_HeapSlots->scriptObjects;
-  j = 0;
-  flags = &entry->collisionFlags;
-overlap:
-  if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
-               (s32)position, entry->radius - 2) >= 0)
-      goto blocked;
-  }
-  j++;
-  flags += sizeof(*entry);
-  entry++;
-  if (j <= 63)
-    goto overlap;
-  targetX = q[0];
-  targetZ = q[2];
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  FieldActor_SetMoveTarget(object, q[0], q[1], q[2]);
-  FieldActor_WaitForMove(object);
-  if (cell != startCell)
-    goto moved;
-walk:
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  q = position;
-  cell = FieldMapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
-  if (cell != 255)
-    goto walkNext;
-blocked:
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x10000;
-  FieldActor_SetMoveTarget(object, targetX, object->y, targetZ);
-  FieldActor_WaitForMove(object);
-  System_Wait(2);
-  goto retry;
-moved:
-  System_Wait(10);
-end:
-  object->update = NULL;
-  object->actionFlags |= 1;
-  object->acceleration = 0x4000;
-  Actor_SelectAnimation(object, 1);
-}
+extern volatile s16 gSettlements_SlideStopped;
 
-#undef gSettlements_SlideAngles
-// ---- scene/settlements/s1a1c.c ----
-
-// The settlements' events, continued; settlements.c says which places these
-// are.
-
-#if TLA_PATCH_1
-
-#include "types.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "system/iwram_call.h"
-#include "system/input.h"
-#include "call.h"
-
-/* VIEW(s1a1c): variable gSettlements_SlideStopped as volatile s16
- * gSettlements_SlideStopped; scene/settlements.h has u16
- * gSettlements_SlideStopped; tried as the 2 declarations' extern volatile s16
- * gSettlements_SlideStopped, it does not compile in tla-en:
- * games/tla/src/scene/settlements/settlements.c:243: conflicting types for
- * `gSettlements_SlideStopped'. */
-extern volatile s16
-    gSettlements_SlideStopped__s1a1c __asm__("gSettlements_SlideStopped");
 extern s16 gSettlements_SlideAnglesByKey[];
 void Settlements_KeepSliding(struct Actor *object);
 void Settlements_StopLeader(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 ArcTan2(s32 y, s32 x);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Actor_HasArrived(struct Actor *object);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
-void Settlements_SlideOnIceFromEdge(void) {
-  struct Actor *object;
-  s32 startCell;
-  s32 targetX;
-  s32 targetZ;
-  s32 x;
-  s32 z;
-  u8 *layer;
-  s32 radius;
-  s32 position[3];
-  s32 dx, dz;
-  s32 cell;
-  s16 angle;
-  s32 i;
-  s32 j;
-  struct Actor *entry;
-  u8 *flags;
-  s32 *q;
-  s32 *p;
-
-  /* FAKEMATCH(volatile): gSettlements_SlideStopped read as a volatile s16,
-   * reread after each test and for lsls #16; as a plain u16, 54 of 347
-   * instructions differ in tla-en. */
-  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  gSettlements_SlideStopped__s1a1c = 0;
-retry:
-  Settlements_StopLeader();
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x8000;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
-  object->velocityX = 0;
-  object->velocityZ = 0;
-  p = position;
-  p[0] = x = (object->x & 0xfff00000) + 0x80000;
-  p[1] = object->y;
-  p[2] = z = (object->z & 0xfff00000) + 0x80000;
-  targetZ = z;
-  targetX = x;
-  layer = &object->terrainId;
-  startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
-  dz = targetZ - object->z;
-  dx = targetX - object->x;
-  if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
-    angle = gSettlements_SlideAnglesByKey[(gInput.held >> 4) & 15];
-    // -1 for no direction, tested as its halfword.
-    if ((u16)angle == 0xffff)
-      goto end;
-  } else {
-    angle = ArcTan2(targetZ - object->z, targetX - object->x);
-    angle = (angle + 0x2000) & 0xc000;
-  }
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
-  if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->facing = angle;
-    object->velocityX = 0;
-    object->velocityZ = 0;
-    object->x = x;
-    object->z = z;
-    goto end;
-  }
-  p[0] = x;
-  p[2] = z;
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  object->timer = 0;
-  Actor_SetMoveTarget(object, x, object->y, z);
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-  for (i = 0; i <= 179 && Actor_HasArrived(object) == 0; i++) {
-    if (gSettlements_SlideStopped__s1a1c != 0)
-      goto end;
-    System_Wait(1);
-  }
-  object->update = (void (*)(void))Settlements_KeepSliding;
-  goto walk;
-walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
-    goto blocked;
-  if (gSettlements_SlideStopped__s1a1c != 0)
-    goto end;
-  radius = object->radius - 2;
-  entry = Ram_HeapSlots->scriptObjects;
-  j = 0;
-  flags = &entry->collisionFlags;
-overlap:
-  if (entry->script != NULL && (1 & *flags) && entry != object) {
-    /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
-     * call, 2 of 347 instructions differ in tla-en. */
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
-               (s32)position, entry->radius - 2) >= 0)
-      goto blocked;
-  }
-  j++;
-  flags += sizeof(*entry);
-  entry++;
-  if (j <= 63)
-    goto overlap;
-  targetX = q[0];
-  targetZ = q[2];
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  Actor_SetMoveTarget(object, q[0], q[1], q[2]);
-  i = 0;
-  goto test;
-next:
-  System_Wait(1);
-  i++;
-test:
-  if (i <= 179 && Actor_HasArrived(object) == 0 &&
-      gSettlements_SlideStopped__s1a1c == 0)
-    goto next;
-  if (gSettlements_SlideStopped__s1a1c != 0)
-    goto end;
-  if (cell != startCell)
-    goto changed;
-walk:
-  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
-   * position's address; as no asm, 94 of 347 instructions differ in tla-en. */
-  __asm__("" : : : SFP_CLOBBER);
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  q = position;
-  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
-  if (cell != 255)
-    goto walkNext;
-blocked:
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x10000;
-  Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  FieldActor_WaitForMove(object);
-  System_Wait(2);
-  goto retry;
-changed:
-  System_Wait(10);
-end:
-  object->update = NULL;
-  object->actionFlags |= 1;
-  object->acceleration = 0x4000;
-  Actor_SelectAnimation(object, 1);
-}
-
-#else
-
-// The Japanese release's older form.
-
-#include "types.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "system/iwram_call.h"
-#include "system/input.h"
-#include "call.h"
-
-extern volatile s16
-    gSettlements_SlideStopped__s1a1c __asm__("gSettlements_SlideStopped");
-extern s16 gSettlements_SlideAnglesByKey[];
-void Settlements_KeepSliding(struct Actor *object);
-void Settlements_StopLeader(void);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 ArcTan2(s32 y, s32 x);
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-s32 Actor_HasArrived(struct Actor *object);
-s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
-
-void Settlements_SlideOnIceFromEdge(void) {
-  struct Actor *object;
-  s32 startCell;
-  s32 targetX;
-  s32 targetZ;
-  s32 x;
-  s32 z;
-  u8 *layer;
-  s32 radius;
-  s32 position[3];
-  s32 dx, dz;
-  s32 cell;
-  s16 angle;
-  s32 i;
-  s32 j;
-  struct Actor *entry;
-  u8 *flags;
-  s32 *q;
-  s32 *p;
-
-  // gSettlements_SlideStopped is read as a volatile s16: it is reread after
-  // each test.
-  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  gSettlements_SlideStopped__s1a1c = 0;
-retry:
-  Settlements_StopLeader();
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x8000;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
-  object->velocityX = 0;
-  object->velocityZ = 0;
-  p = position;
-  p[0] = x = (object->x & 0xfff00000) + 0x80000;
-  p[1] = object->y;
-  p[2] = z = (object->z & 0xfff00000) + 0x80000;
-  targetZ = z;
-  targetX = x;
-  layer = &object->terrainId;
-  startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
-  dz = targetZ - object->z;
-  dx = targetX - object->x;
-  if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
-    angle = gSettlements_SlideAnglesByKey[(gInput.held >> 4) & 15];
-    // -1 for no direction, tested as its halfword.
-    if ((u16)angle == 0xffff)
-      return;
-  } else {
-    angle = ArcTan2(targetZ - object->z, targetX - object->x);
-    angle = (angle + 0x2000) & 0xc000;
-  }
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
-  if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->facing = angle;
-    object->velocityX = 0;
-    object->velocityZ = 0;
-    object->x = x;
-    object->z = z;
-    goto end;
-  }
-  p[0] = x;
-  p[2] = z;
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  object->timer = 0;
-  Actor_SetMoveTarget(object, x, object->y, z);
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-  FieldActor_WaitForMove(object);
-  object->update = (void (*)(void))Settlements_KeepSliding;
-  goto walk;
-walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
-    goto blocked;
-  if (gSettlements_SlideStopped__s1a1c != 0)
-    goto blocked;
-  radius = object->radius - 2;
-  entry = Ram_HeapSlots->scriptObjects;
-  j = 0;
-  flags = &entry->collisionFlags;
-overlap:
-  if (entry->script != NULL && (1 & *flags) && entry != object) {
-    /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
-     * call, 2 of 332 instructions differ in tla-ja. */
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
-               (s32)position, entry->radius - 2) >= 0)
-      goto blocked;
-  }
-  j++;
-  flags += sizeof(*entry);
-  entry++;
-  if (j <= 63)
-    goto overlap;
-  targetX = q[0];
-  targetZ = q[2];
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  Actor_SetMoveTarget(object, q[0], q[1], q[2]);
-  i = 0;
-  goto test;
-next:
-  System_Wait(1);
-  i++;
-test:
-  if (i <= 179 && Actor_HasArrived(object) == 0 &&
-      gSettlements_SlideStopped__s1a1c == 0)
-    goto next;
-  if (gSettlements_SlideStopped__s1a1c != 0)
-    goto end;
-  if (cell != startCell)
-    goto changed;
-walk:
-  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
-   * position's address; as no asm, 90 of 332 instructions differ in tla-ja. */
-  __asm__("" : : : SFP_CLOBBER);
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  q = position;
-  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
-  if (cell != 255)
-    goto walkNext;
-blocked:
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x10000;
-  Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  FieldActor_WaitForMove(object);
-  System_Wait(2);
-  goto retry;
-changed:
-  System_Wait(10);
-end:
-  object->update = NULL;
-  object->actionFlags |= 1;
-  object->acceleration = 0x4000;
-  Actor_SelectAnimation(object, 1);
-}
-
-#endif
-
-// ---- scene/settlements/s1d30.c ----
-
-// The settlements' events, continued; settlements.c says which places these
-// are.
+#define SLIDE_FROM_EDGE Settlements_SlideOnIceFromEdge
+#define SLIDE_STOPPED gSettlements_SlideStopped
+#define SLIDE_STOP_LEADER Settlements_StopLeader
+#define SLIDE_ANGLES gSettlements_SlideAnglesByKey
+#define SLIDE_SET_ANIMATION Actor_SelectAnimation
+#define SLIDE_HAS_ARRIVED Actor_HasArrived
+#define SLIDE_KEEP_SLIDING Settlements_KeepSliding
+#define SLIDE_SPHERES_OVERLAP Field_CheckSpheresOverlap
+#include "shared/slide_on_ice_from_edge.c"
+#undef SLIDE_FROM_EDGE
+#undef SLIDE_STOPPED
+#undef SLIDE_STOP_LEADER
+#undef SLIDE_ANGLES
+#undef SLIDE_SET_ANIMATION
+#undef SLIDE_HAS_ARRIVED
+#undef SLIDE_KEEP_SLIDING
+#undef SLIDE_SPHERES_OVERLAP
 
 void Settlements_SetSlideStopped(s32 value) {
   gSettlements_SlideStopped = value;
 }
 
-/* VIEW(s1d30): routine Settlements_KeepSliding as void
- * Settlements_KeepSliding(void); scene/settlements/settlements has void
- * Settlements_KeepSliding(struct Actor *object) {; tried as the definition's
- * void Settlements_KeepSliding(struct Actor *object), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/scene/settlements/settlements.c:641:
- * `Settlements_KeepSliding__s1d30' undeclared (first use in this function). */
-void Settlements_KeepSliding__s1d30(void) __asm__("Settlements_KeepSliding");
-
-void Settlements_SlideOnIceFacing(void) {
-  struct Actor *object;
-  s16 angle;
-  s32 startCell;
-  s32 targetX;
-  s32 targetZ;
-  s32 radius;
-  s32 position[3];
-  s32 *p;
-  s32 x;
-  s32 z;
-  u8 *layer;
-  s32 cell;
-  s32 *q;
-  struct Actor *entry;
-  s32 j;
-  u8 *flags;
-
-  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  angle = (object->facing + 0x2000) & 0xc000;
-retry:
-  Settlements_StopLeader();
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x8000;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
-  object->velocityX = 0;
-  object->velocityZ = 0;
-  p = position;
-  p[0] = x = (object->x & 0xfff00000) + 0x80000;
-  p[1] = object->y;
-  p[2] = z = (object->z & 0xfff00000) + 0x80000;
-  targetX = x;
-  targetZ = z;
-  layer = &object->terrainId;
-  startCell = FieldMapGrid_GetCellBehaviorAt(*layer, x, z);
-  FieldVector_AddPolarOffset(0x100000, angle, p);
-  cell = FieldMapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
-  if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->facing = angle;
-    object->velocityX = 0;
-    object->velocityZ = 0;
-    object->x = x;
-    object->z = z;
-    goto end;
-  }
-  p[0] = x;
-  p[2] = z;
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  object->timer = 0;
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-  object->update = Settlements_KeepSliding__s1d30;
-  goto walk;
-walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
-    goto blocked;
-  radius = object->radius - 2;
-  entry = Ram_HeapSlots->scriptObjects;
-  j = 0;
-  flags = &entry->collisionFlags;
-overlap:
-  if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
-               (s32)position, entry->radius - 2) >= 0)
-      goto blocked;
-  }
-  j++;
-  flags += sizeof(*entry);
-  entry++;
-  if (j <= 63)
-    goto overlap;
-  targetX = q[0];
-  targetZ = q[2];
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  FieldActor_SetMoveTarget(object, q[0], q[1], q[2]);
-  FieldActor_WaitForMove(object);
-  if (cell != startCell)
-    goto moved;
-walk:
-  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
-   * position's address; as no asm, 43 of 246 instructions differ in tla-en. */
-  __asm__("" : : : SFP_CLOBBER);
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  q = position;
-  cell = FieldMapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
-  if (cell != 255)
-    goto walkNext;
-blocked:
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x10000;
-  FieldActor_SetMoveTarget(object, targetX, object->y, targetZ);
-  FieldActor_WaitForMove(object);
-  System_Wait(2);
-  goto retry;
-moved:
-  System_Wait(10);
-end:
-  object->update = NULL;
-  object->actionFlags |= 1;
-  object->acceleration = 0x4000;
-  Actor_SelectAnimation(object, 1);
-}
+DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Settlements_SlideOnIceFacing,
+                                 Settlements_StopLeader, Actor_SelectAnimation,
+                                 Settlements_KeepSliding,
+                                 Field_CheckSpheresOverlap)
 
 #include "text/msg_ids.h"
 
 void Settlements_MeetGel(void);
 void Settlements_MeetLostJupiterDjinni(void);
-/* VIEW(s1d30): routine Settlements_ClearSpriteFlags as this part declared it;
- * the joined file has another. */
-void Settlements_ClearSpriteFlags__s1d30(void) __asm__(
-    "Settlements_ClearSpriteFlags");
-#define Settlements_ClearSpriteFlags Settlements_ClearSpriteFlags__s1d30
-/* VIEW(s1d30): routine Actor_Bob as this part declared it; the joined file has
- * another. */
-void Actor_Bob__s1d30(void) __asm__("Actor_Bob");
-#define Actor_Bob Actor_Bob__s1d30
-/* VIEW(s1d30): routine Settlements_WarnOfRiddleOfRock as this part declared it;
- * the joined file has another. */
-void Settlements_WarnOfRiddleOfRock__s1d30(void) __asm__(
-    "Settlements_WarnOfRiddleOfRock");
-#define Settlements_WarnOfRiddleOfRock Settlements_WarnOfRiddleOfRock__s1d30
 void Settlements_EnterDoor4(void);
 void Settlements_GrowVine(void);
 void Settlements_EnterCave(void);
@@ -2149,10 +1434,4 @@ struct Trigger gSettlements_Room10Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gSettlements_WaterColorFrame[] = {
-    -1,
-};
-#undef gSettlements_SlideAngles
-#undef Settlements_ClearSpriteFlags
-#undef Actor_Bob
-#undef Settlements_WarnOfRiddleOfRock
+s32 gSettlements_WaterColorFrame = -1;

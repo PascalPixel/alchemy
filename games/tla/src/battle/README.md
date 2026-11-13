@@ -160,6 +160,9 @@ is switched from one to the other partway down the screen as it is drawn.
   actions without the command menu.
 - `LinkBattle_SyncTurn` and its neighbours are a battle against another
   console: the parties exchanged and the handshake after every action.
-- The bank's C is two objects, written as parts cut where The Broken
-  Seal's are. Its tables are the assembly rows of `battle_tables.s`, the
+- The bank's C is one object, as The Broken Seal's is:
+  [`battle.c`](battle.c) includes its parts from [`battle/`](battle) in ROM
+  order, cut where The Broken Seal's are (`setup.c`, `turn.c`,
+  `staging.c`, `spoils.c`), with what they share in `battle_internal.h`.
+  Its tables are the assembly rows of `battle_tables.s`, the
   debug battles' `gDebug_ParameterSets` among them.

@@ -10,22 +10,6 @@
 #include "module/field/object.h"
 #include "module/system/system.h"
 
-/* VIEW(f0daecc): tag struct ChainSlot as struct ChainSlot__f0daecc;
- * visual_attributes.c has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:6354: structure has no member
- * named `root'. */
-struct ChainSlot__f0daecc {
-  s16 objectId;
-  u8 unk02[2];
-  s32 swing;
-  s32 spacing;
-  u8 unk0c[4];
-  s32 phase;
-  s32 active;
-  struct ChainLink *root;
-};
-
 struct Actor *Actor_GetById(u32 objectId);
 
 #define CELL_MASK 0xfff00000 // 16-pixel cells
@@ -36,9 +20,9 @@ struct Actor *Actor_GetById(u32 objectId);
 void HangingVine_Hang(s32 objectId, s32 grow) {
   struct ChainObject *object;
   struct MapWork *map;
-  struct ChainSlot__f0daecc *slot;
-  struct ChainLink *link;
-  struct ChainLink **tail;
+  struct HangingVineSlot *slot;
+  struct HangingVineLink *link;
+  struct HangingVineLink **tail;
   struct MapCell *cells;
   struct MapCell *cell;
   s32 i;
@@ -132,7 +116,7 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   slot->active = 1;
   slot->phase = 0;
   slot->swing = 0x100;
-  slot->objectId = objectId;
+  slot->id = objectId;
   slot->spacing = 14 << 16;
 }
 
@@ -150,9 +134,9 @@ void HangingVine_Swing(s32 id) {
   struct Actor *anchor = Actor_GetById(id);
   /* FAKEMATCH(wrapper): the slot read through a one-member union, which may
    * alias every store, so its reads stay after the stores before them; as
-   * struct WorkA4Slot *, 12 of 378 instructions differ in tla-en. */
+   * struct HangingVineSlot *, 12 of 378 instructions differ in tla-en. */
   union {
-    struct WorkA4Slot s;
+    struct HangingVineSlot s;
   } *slot;
   struct Unk_080db0b0Sprite *sprite;
   s32 swing;

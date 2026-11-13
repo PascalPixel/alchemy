@@ -217,21 +217,12 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   GameFlag_Set(0x169);
   Transform_Reset();
 
-  // The camera's fill in a once-only block keeps its entry's load after the
-  // transform reset; as the plain call, 12 of 885 instructions differ in
-  // tla-en.
-  do {
-    Iwram_FillWordsEntry(camera, sizeof(struct BattleCamera), 0);
-  } while (0);
+  IWRAM_FILL_WORDS(camera, sizeof(struct BattleCamera), 0);
   Iwram_FillWordsEntry(battle, sizeof(struct EncounterWork), 0);
   battle->promptSlot = -1;
   battle->enemyGroup = enemyGroup;
   HeapSlot_AllocEwram(148, 12);
-  // The slot's fill in a once-only block keeps its address after the
-  // allocation; as the plain call, 6 of 885 instructions differ in tla-en.
-  do {
-    Iwram_FillWordsEntry(Ram_HeapSlots->unk84[4], 12, 0);
-  } while (0);
+  IWRAM_FILL_WORDS(Ram_HeapSlots->unk84[4], 12, 0);
   battle->background = BattleBackground_GetSelectedFar();
   HeapSlot_AllocEwram(16, 0xe00);
   HeapSlot_AllocEwram(12, 0x600);

@@ -1,5 +1,9 @@
 /// @file
-/// The scene code of overlay 0x694, in ROM order.
+/// Contigo, the village below Jupiter Lighthouse, in the rooms of this
+/// overlay: its shops, inn and Sanctum (Contigo_TalkToWeaponMerchant,
+/// Contigo_TalkToInnkeeper, Contigo_TalkToHealer), the bushes where Scoop
+/// finds the Venus Djinni Salt, and the cycling colours of its water
+/// (Contigo_StartSlowPaletteCycle).
 
 #include "shared/effects.h"
 #include "types.h"
@@ -71,17 +75,15 @@ static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
 #include "version.h"
 #include "system/vector3.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
-extern s32 gData_0200474c[];
-extern struct ActorPlacement gData_02004c88[];
-extern struct ActorPlacement gData_02004d90[];
+extern s32 gFieldEffect_DurationScripts[];
+extern struct ActorPlacement gContigo_Room1Placements[];
+extern struct ActorPlacement gContigo_Room4Placements[];
 extern struct ActorPlacement gData_02005018[];
 extern s16 gData_02005228[];
-extern struct ActorPlacement gData_02005318[];
-extern struct ActorPlacement gData_02005390[];
-extern struct Trigger gData_020054ec[];
-extern struct Trigger gData_02005a44[];
+extern struct ActorPlacement gContigo_Room2Placements[];
+extern struct ActorPlacement gContigo_Room3Placements[];
+extern struct Trigger gContigo_Room1Triggers[];
+extern struct Trigger gContigo_Room2Triggers[];
 extern struct Trigger gData_02005e70[];
 
 void Contigo_StartSlowPaletteCycle(void);
@@ -91,10 +93,10 @@ void Contigo_StopPaletteCycle(void);
 extern u32 gData_02004630[];
 extern s32 gData_0200466c[];
 extern u32 gData_02004b18[];
-void Func_02003720(void);
-void Func_02003880(void);
-void Func_020039d4(void);
-void Func_02003a8c(void);
+void Contigo_InitializeRoom1(void);
+void Contigo_InitializeRoom4(void);
+void Contigo_InitializeRoom2(void);
+void Contigo_InitializeRoom3(void);
 extern s16 gData_0200469c[];
 extern s16 gData_020046ac[];
 extern s16 gData_020046d8[];
@@ -251,36 +253,17 @@ void Func_02000328(void) {
 #include "../field/field_effect/move.c"
 
 /* VIEW(contigo): tag struct TalkActor as this part has it; the joined file has
- * another. */
+ * another; tried with the definition the rest of the object has, it does not
+ * compile in tla-ja: games/tla/src/scene/contigo.c:819: redefinition of `struct
+ * TalkActor'. */
 #define TalkActor TalkActor__contigo
 /* VIEW(contigo): tag struct ContigoEventWork as this part has it; the joined
- * file has another. */
+ * file has another; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja: games/tla/src/scene/contigo.c:2104: redefinition
+ * of `struct ContigoEventWork'. */
 #define ContigoEventWork ContigoEventWork__contigo
 // @file
-// Scene code of overlay 0x694, in ROM order.
-
-// ---- games/tla/src/scene/contigo.c ----
-/* VIEW(contigo): routine Func_02003e54 as void Func_02003e54(struct
- * ContigoObject *object, const void *effect); the definition has void
- * Func_02003e54(struct Actor *object, struct SparkleWork *work); tried as the
- * definition's void Func_02003e54(struct Actor *object, struct
- * SparkleWork__s3e54 *work), which the object already declares, Func_02001d50
- * moves: 2 of 1701 instructions in tla-ja. */
-struct ContigoObject;
-extern void Func_02003e54__contigo(struct ContigoObject *object,
-                                   const void *effect) __asm__("Func_02003e54");
-#define Func_02003e54 Func_02003e54__contigo
-/* VIEW(contigo): routine Func_02003f54 as void Func_02003f54(struct
- * ContigoObject *object); the definition has void Func_02003f54(struct
- * ContigoObject__s3e54 *object); tried as the definition's void
- * Func_02003f54(struct ContigoObject__s3e54 *object), which the object already
- * declares, Func_02001d50 moves: 2 of 1701 instructions in tla-ja. */
-struct ContigoObject;
-extern void
-Func_02003f54__contigo(struct ContigoObject *object) __asm__("Func_02003f54");
-#define Func_02003f54 Func_02003f54__contigo
 #undef Func_02003f54
-#undef Func_02003e54
 #include "text/msg_ids.h"
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
@@ -302,7 +285,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect, gData_0200474c[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect,
+                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
@@ -331,7 +315,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 target;
     s32 frames;
 
-    script = gData_0200474c[flags & EFFECT_SCRIPT_MASK];
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     target = options->targetScaleX;
     frames = script[3];
     if ((flags & EFFECT_USE_START_SCALE) != 0) {
@@ -422,48 +406,48 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct ActorPlacement gData_02004c70[];
+extern struct ActorPlacement gContigo_Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov694Room1)
-    return gData_02004c88;
+    return gContigo_Room1Placements;
   if (scene == (s32)&SceneId_Ov694Room4)
-    return gData_02004d90;
+    return gContigo_Room4Placements;
   if (scene == (s32)&SceneId_Ov694Room2) {
     if (gMainRoutineWork.entrance == 4) {
       if (GameFlag_Get(0x9b2) != 0)
-        return gData_02005318;
+        return gContigo_Room2Placements;
       if (GameFlag_Get(0xa21) != 0 && GameFlag_Get(0x9d0) == 0)
         return gData_02005228;
     }
     return gData_02005018;
   }
   if (scene == (s32)&SceneId_Ov694Room3)
-    return gData_02005390;
-  return gData_02004c70;
+    return gContigo_Room3Placements;
+  return gContigo_Placements;
 }
 
-extern struct Trigger gData_020054e0[];
-extern struct Trigger gData_02005870[];
-extern struct Trigger gData_02005ed0[];
+extern struct Trigger gContigo_Triggers[];
+extern struct Trigger gContigo_Room4Triggers[];
+extern struct Trigger gContigo_Room3Triggers[];
 
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov694Room1)
-    return gData_020054ec;
+    return gContigo_Room1Triggers;
   if (scene == (s32)&SceneId_Ov694Room4)
-    return gData_02005870;
+    return gContigo_Room4Triggers;
   if (scene == (s32)&SceneId_Ov694Room2) {
     if (gMainRoutineWork.entrance == 4)
       return gData_02005e70;
-    return gData_02005a44;
+    return gContigo_Room2Triggers;
   }
   if (scene == (s32)&SceneId_Ov694Room3)
-    return gData_02005ed0;
-  return gData_020054e0;
+    return gContigo_Room3Triggers;
+  return gContigo_Triggers;
 }
 
 void Func_020008ec(void) {
@@ -1118,15 +1102,7 @@ void Func_020017f4(void) {
   Actor_SetModeById(33, 0);
 }
 
-/* VIEW(contigo): routine MessageArgument_Push as void MessageArgument_Push(s32
- * value, s32 digits); module/window/window.h has void MessageArgument_Push(u32
- * value, u32 kind); tried as the definition's void MessageArgument_Push(u32
- * value, u32 kind), which the object already declares, Func_02001938 moves: 2
- * of 105 instructions, Func_02001abc moves: 2 of 72 instructions, Func_02003a8c
- * moves: 5 of 220 instructions in tla-ja. */
-extern void
-MessageArgument_Push__contigo(s32 value,
-                              s32 digits) __asm__("MessageArgument_Push");
+extern void MessageArgument_Push(s32 value, s32 digits);
 void Event_LeaveFor(s32 scene, s32 entrance);
 
 // The lucky wheels attendant: checks the game tickets and free item slots,
@@ -1146,7 +1122,7 @@ void Func_02001938(s32 spoken) {
       return;
     }
     Event_SetMessageId(message + 2);
-    MessageArgument_Push__contigo(tickets, 5);
+    MessageArgument_Push(tickets, 5);
     FieldMessage_ShowAtActor(18, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         1) {
@@ -1233,7 +1209,7 @@ void Func_02001abc(void) {
     return;
   }
   Event_SetMessageId((s32)MsgContigo01);
-  MessageArgument_Push__contigo(price, 5);
+  MessageArgument_Push(price, 5);
   FieldMessage_ShowAtActor(14, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     /* FAKEMATCH(pin): the scene state's address pinned to r3, so that it
@@ -1333,43 +1309,11 @@ void Func_02001d38(void) {
   Import_EventSetExitRequest(24);
 }
 
-/* VIEW(contigo): variable gData_020048a0 as extern const u8 gData_020048a0[];
- * the definition has u32 gData_020048a0[] = { 39, 2, 4, 0xa40000, 0, 0x1680000,
- * 1, 39, 1, 0, 10, 22, 3, 0xa000, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as
- * the definition's extern DEFINE_G_DATA_02002634(gData_02004758, 0x1520000,
- * 0x34c0000, 0x13e0000, 0x1300000, 0x3680000, 0x1400000, 0x3740000, 0x1500000,
- * 0x1600..., it does not compile in tla-ja:
- * games/tla/src/scene/contigo/contigo.c:1141: `gData_020048a0__contigo'
- * undeclared (first use in this function). */
-extern const u8 gData_020048a0__contigo[] __asm__("gData_020048a0");
-/* VIEW(contigo): variable gData_020048f8 as extern const u8 gData_020048f8[];
- * the definition has u32 gData_020048f8[] = { 39, 2, 4, 0xbe0000, 0, 0x1600000,
- * 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's
- * extern u32 gData_020048f8[], it does not compile in tla-ja:
- * games/tla/src/scene/contigo/contigo.c:1144: `gData_020048f8__contigo'
- * undeclared (first use in this function). */
-extern const u8 gData_020048f8__contigo[] __asm__("gData_020048f8");
-/* VIEW(contigo): variable gData_0200493c as extern const u8 gData_0200493c[];
- * the definition has u32 gData_0200493c[] = { 39, 2, 4, 0xbe0000, 0, 0x1860000,
- * 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's
- * extern u32 gData_0200493c[], it does not compile in tla-ja:
- * games/tla/src/scene/contigo/contigo.c:1143: `gData_0200493c__contigo'
- * undeclared (first use in this function). */
-extern const u8 gData_0200493c__contigo[] __asm__("gData_0200493c");
-/* VIEW(contigo): variable gData_02004980 as extern const u8 gData_02004980[];
- * the definition has u32 gData_02004980[] = { 39, 2, 4, 0xb60000, 0, 0x1700000,
- * 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's
- * extern u32 gData_02004980[], which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/contigo/contigo.c:1141:
- * `gData_02004980__contigo' undeclared (first use in this function). */
-extern const u8 gData_02004980__contigo[] __asm__("gData_02004980");
-/* VIEW(contigo): variable gData_020049c4 as extern const u8 gData_020049c4[];
- * the definition has u32 gData_020049c4[] = { 39, 2, 4, 0xa00000, 0, 0x17e0000,
- * 1, 39, 1, 0, 1, 3, 0, 1, 17, 39, 2, 0, 10, 13, 0xffff, 0, }; tried as the
- * definition's extern u32 gData_020049c4[], it does not compile in tla-ja:
- * games/tla/src/scene/contigo/contigo.c:1546: `gData_020049c4__contigo'
- * undeclared (first use in this function). */
-extern const u8 gData_020049c4__contigo[] __asm__("gData_020049c4");
+extern u32 gData_020048a0[];
+extern u32 gData_020048f8[];
+extern u32 gData_0200493c[];
+extern u32 gData_02004980[];
+extern u32 gData_020049c4[];
 extern const u8 gData_02006030[];
 
 // The reunion scene. It opens with "Glad you kept your promise".
@@ -1406,10 +1350,10 @@ void Func_02001d50(void) {
   Actor_SetSpeed(7, 0xcccc, 0x6666);
   Actor_SetSpeed(9, 0xcccc, 0x6666);
   Actor_SetSpeed(6, 0xcccc, 0x6666);
-  Actor_SetMovementTypeById(5, gData_020048a0__contigo);
-  Actor_SetMovementTypeById(9, gData_02004980__contigo);
-  Actor_SetMovementTypeById(6, gData_0200493c__contigo);
-  Actor_SetMovementTypeAndWaitById(7, gData_020048f8__contigo);
+  Actor_SetMovementTypeById(5, gData_020048a0);
+  Actor_SetMovementTypeById(9, gData_02004980);
+  Actor_SetMovementTypeById(6, gData_0200493c);
+  Actor_SetMovementTypeAndWaitById(7, gData_020048f8);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(1);
   Actor_Stop(3);
@@ -1701,16 +1645,16 @@ void Func_02001d50(void) {
   Actor_SetModeById(8, 4);
   Event_ShowMessageAndWait(8, 0);
   Event_ShowMessageThenWait(5, 0, 10);
-  Func_02003e54__contigo(object, gData_02006030);
+  Func_02003e54(object, gData_02006030);
   Event_Wait(80);
-  Func_02003f54__contigo(object);
+  Func_02003f54(object);
   Motion_SetModeAndWaitAnimation(8, 4);
   Event_ShowMessageAndWait(8, 0);
   Actor_SetAttachedEffect(7, 258);
   Event_ShowMessageThenWait(7, 0, 10);
-  Func_02003e54__contigo(object, gData_02006030);
+  Func_02003e54(object, gData_02006030);
   Event_Wait(80);
-  Func_02003f54__contigo(object);
+  Func_02003f54(object);
   Actor_FaceDirectionAndWait(8, 0xd000);
   Actor_SetModeById(8, 4);
   Event_ShowMessageAndWait(8, 0);
@@ -1811,14 +1755,14 @@ void Func_02001d50(void) {
   Actor_SetModeById(5, 3);
   Actor_SetModeById(6, 3);
   Motion_SetModeAndWaitAnimation(7, 3);
-  Actor_SetMovementTypeById(0, gData_020049c4__contigo);
-  Actor_SetMovementTypeById(1, gData_020049c4__contigo);
-  Actor_SetMovementTypeById(3, gData_020049c4__contigo);
-  Actor_SetMovementTypeById(2, gData_020049c4__contigo);
-  Actor_SetMovementTypeById(9, gData_020049c4__contigo);
-  Actor_SetMovementTypeById(5, gData_020049c4__contigo);
-  Actor_SetMovementTypeById(6, gData_020049c4__contigo);
-  Actor_SetMovementTypeAndWaitById(7, gData_020049c4__contigo);
+  Actor_SetMovementTypeById(0, gData_020049c4);
+  Actor_SetMovementTypeById(1, gData_020049c4);
+  Actor_SetMovementTypeById(3, gData_020049c4);
+  Actor_SetMovementTypeById(2, gData_020049c4);
+  Actor_SetMovementTypeById(9, gData_020049c4);
+  Actor_SetMovementTypeById(5, gData_020049c4);
+  Actor_SetMovementTypeById(6, gData_020049c4);
+  Actor_SetMovementTypeAndWaitById(7, gData_020049c4);
   Party_AddIsaacsParty();
   GameFlag_Set(2512);
   Event_End();
@@ -2046,13 +1990,13 @@ s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov694Room1)
-    Func_02003720();
+    Contigo_InitializeRoom1();
   else if (scene == (s32)&SceneId_Ov694Room4)
-    Func_02003880();
+    Contigo_InitializeRoom4();
   else if (scene == (s32)&SceneId_Ov694Room2)
-    Func_020039d4();
+    Contigo_InitializeRoom2();
   else if (scene == (s32)&SceneId_Ov694Room3)
-    Func_02003a8c();
+    Contigo_InitializeRoom3();
   return 0;
 }
 
@@ -2067,11 +2011,6 @@ void Func_020036f0(void) {
   }
 }
 
-/* VIEW(contigo): routine Palette_SetColors as this part declared it; the joined
- * file has another. */
-void Palette_SetColors__contigo(const u8 *a, const u8 *b, const u8 *c,
-                                const u8 *d) __asm__("Palette_SetColors");
-#define Palette_SetColors Palette_SetColors__contigo
 void Map_CenterOnFollowedPoint(void);
 
 // Schedules Func_020036f0 and gives objects 14 and 15 their flag bytes and
@@ -2080,7 +2019,7 @@ void Map_CenterOnFollowedPoint(void);
 // 0x9e6, sets flag 0x200 on entrances 1 to 4 unless flag 0x109 is set, and
 // while flag 0x200 is set has the camera follow the leader; it ends with
 // Palette_SetColors.
-void Func_02003720(void) {
+void Contigo_InitializeRoom1(void) {
   struct Actor *object = Actor_GetById(14);
   s32 zero;
 
@@ -2131,7 +2070,7 @@ void Func_02003720(void) {
                     gData_02004704);
 }
 
-void Func_02003880(void) {
+void Contigo_InitializeRoom4(void) {
   Func_02001c44(18);
   if (GameFlag_Get(0xa21) != 0) {
     MapGrid_CopyCellAttributes(44, 40, 8, 3, 44, 36);
@@ -2175,7 +2114,7 @@ struct ContigoEventWork {
   s32 value1ac;
 };
 
-void Func_020039d4(void) {
+void Contigo_InitializeRoom2(void) {
   ((struct ContigoEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x209;
   if (gMainRoutineWork.entrance == 4) {
     if (GameFlag_Get(0xa21) != 0 && GameFlag_Get(0x9d0) == 0)
@@ -2223,7 +2162,7 @@ struct ContigoPrizes {
 
 void ItemDisplay_ShowItem(s32 item, s32 count);
 
-void Func_02003a8c(void) {
+void Contigo_InitializeRoom3(void) {
   s32 diff;
   s8 *list;
   s8 *prize;
@@ -2257,12 +2196,12 @@ void Func_02003a8c(void) {
         Sound_Play(91);
       Event_Wait(20);
       Event_SetMessageId(MSG_COINS_WON);
-      MessageArgument_Push__contigo(diff, 5);
+      MessageArgument_Push(diff, 5);
       Event_ShowMessageAndWait(14, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
       Event_SetMessageId(MSG_COINS_LOST);
-      MessageArgument_Push__contigo(-diff, 5);
+      MessageArgument_Push(-diff, 5);
       Event_ShowMessageAndWait(14, 0);
     }
     Event_End();
@@ -2281,12 +2220,12 @@ void Func_02003a8c(void) {
         Sound_Play(91);
       Event_Wait(20);
       Event_SetMessageId(MSG_COINS_WON);
-      MessageArgument_Push__contigo(diff, 5);
+      MessageArgument_Push(diff, 5);
       Event_ShowMessageAndWait(14, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
       Event_SetMessageId(MSG_COINS_LOST);
-      MessageArgument_Push__contigo(-diff, 5);
+      MessageArgument_Push(-diff, 5);
       Event_ShowMessageAndWait(14, 0);
     }
     Event_End();
@@ -2313,7 +2252,7 @@ void Func_02003a8c(void) {
         else
           Event_SetMessageId(MSG_NEXT_PRIZE);
         item = Func_02001a60(*prize);
-        MessageArgument_Push__contigo(item, 2);
+        MessageArgument_Push(item, 2);
         Event_ShowMessageAndWait(18, 0);
         ItemDisplay_ShowItem(item, 3);
         PartyInventory_GiveItem(item, 0);
@@ -2428,20 +2367,13 @@ void Func_02003cd8(struct Actor *object) {
 #undef MSG_NEXT_PRIZE
 #undef MSG_COME_AGAIN
 
-// ---- games/tla/src/scene/contigo/s3e54.c ----
 // The sparkle's setup, Func_02003f54, which sets byte 0x62 of an object, and
 // the overlay's data.
-
-struct ResourceTableEntry {
-  u16 unk0;
-  u16 offset; ///< in bytes; its tile is offset / 32
-};
 
 /* VIEW(s3e54): tag struct SparkleSprite as struct SparkleSprite__s3e54;
  * contigo.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/scene/contigo/contigo.c:2203: structure has no member named
- * `blend'. */
+ * games/tla/src/scene/contigo.c:2405: structure has no member named `blend'. */
 struct SparkleSprite__s3e54 {
   u8 unk00[5];
   u8 unk05_0 : 5;
@@ -2456,7 +2388,7 @@ struct SparkleSprite__s3e54 {
 
 /* VIEW(s3e54): tag struct SparkleWork as struct SparkleWork__s3e54; contigo.c
  * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja: games/tla/src/scene/contigo/contigo.c:2195:
+ * it does not compile in tla-ja: games/tla/src/scene/contigo.c:2397:
  * incompatible types in assignment. */
 struct SparkleWork__s3e54 {
   struct SparkleSprite__s3e54 sprites[4];
@@ -2500,8 +2432,7 @@ void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work) {
 /* VIEW(s3e54): tag struct ContigoObject as struct ContigoObject__s3e54;
  * contigo.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/scene/contigo/contigo.c:2224: structure has no member named
- * `unk62'. */
+ * games/tla/src/scene/contigo.c:2426: structure has no member named `unk62'. */
 struct ContigoObject__s3e54 {
   u8 unk00[0x62];
   u8 unk62;
@@ -2590,7 +2521,7 @@ s16 gData_020046d8[] = {
 
 DEFINE_G_DATA_020013B4(gData_02004704, 94, 89, 90, 91, 92, 93)
 
-s32 gData_0200474c[] = {
+s32 gFieldEffect_DurationScripts[] = {
     (s32)gData_0200457c,
     (s32)gData_020045b8,
     (s32)gData_020045f4,
@@ -2727,11 +2658,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02004c70[] = {
+struct ActorPlacement gContigo_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004c88[] = {
+struct ActorPlacement gContigo_Room1Placements[] = {
     {115, CONDITION_ALWAYS, 3, PIXELS(340), 0, PIXELS(936), FACING_SOUTH, 0, 0},
     {116, CONDITION_ALWAYS, 3, PIXELS(88), 0, PIXELS(942), FACING_NORTH, 0, 0},
     {114, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(808), FACING_EAST, 0, 0},
@@ -2745,7 +2676,7 @@ struct ActorPlacement gData_02004c88[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02004d90[] = {
+struct ActorPlacement gContigo_Room4Placements[] = {
     {115, CONDITION_ALWAYS, 3, PIXELS(846), 0, PIXELS(660), FACING_SOUTH, 0, 0},
     {116, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(616), FACING_NORTH + FACING_STEP, 1, 0},
     {79, CONDITION_ALWAYS, 1, PIXELS(686), 0, PIXELS(756), FACING_SOUTH + FACING_STEP, 1, 0},
@@ -2818,7 +2749,7 @@ s16 gData_02005228[] = {
     0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-struct ActorPlacement gData_02005318[] = {
+struct ActorPlacement gContigo_Room2Placements[] = {
     {59, CONDITION_ALWAYS, 1, PIXELS(158), 0, PIXELS(352), FACING_SOUTH, 3, 0},
     {2, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
     {0, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
@@ -2826,7 +2757,7 @@ struct ActorPlacement gData_02005318[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005390[] = {
+struct ActorPlacement gContigo_Room3Placements[] = {
     {236, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(840), FACING_SOUTHEAST + FACING_STEP, 0, 0},
     {236, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(840), FACING_SOUTH + FACING_STEP, 0, 0},
     {114, CONDITION_ALWAYS, 1, PIXELS(92), 0, PIXELS(902), FACING_NORTH + FACING_STEP, 1, 0},
@@ -2843,11 +2774,11 @@ struct ActorPlacement gData_02005390[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_020054e0[] = {
+struct Trigger gContigo_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020054ec[] = {
+struct Trigger gContigo_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xce01, 2, CONDITION_ALWAYS, 2},
     {0xce01, 3, CONDITION_ALWAYS, 3},
@@ -2925,7 +2856,7 @@ struct Trigger gData_020054ec[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02005870[] = {
+struct Trigger gContigo_Room4Triggers[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 21},
     {0xc602, 13, CONDITION_ALWAYS, EVENT(Func_02001d08)},
     {0xce01, 14, CONDITION_ALWAYS, 23},
@@ -2967,7 +2898,7 @@ struct Trigger gData_02005870[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02005a44[] = {
+struct Trigger gContigo_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3070,7 +3001,7 @@ struct Trigger gData_02005e70[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02005ed0[] = {
+struct Trigger gContigo_Room3Triggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
@@ -3106,7 +3037,6 @@ struct Trigger gData_02005ed0[] = {
 #undef MSG_NEXT_PRIZE
 #undef MSG_COME_AGAIN
 #undef Func_02003e54
-#undef Func_02003f54
 #undef Palette_SetColors
 #undef ContigoEventWork
 #undef TalkActor

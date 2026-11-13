@@ -6,8 +6,6 @@
 /// Bread down from a crate (EasternAlhafraShip_ShakeDownTheBread) and Move
 /// pushes a crate across the deck.
 
-// ---- games/tla/src/scene/eastern_alhafra_ship.c ----
-
 #include "shared/tables.h"
 #include "shared/effects.h"
 #include "battle/battle.h"
@@ -223,10 +221,6 @@ void EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
     sprite->rotation = value;
   }
 }
-
-// ---- games/tla/src/scene/eastern_alhafra_ship/s0438.c ----
-// Scene code of overlay 0x669, in ROM order, from s0438's offset up to the next
-// object the overlay links, and the overlay's data.
 
 /* VIEW(s0438): routine EasternAlhafraShip_SpawnNote as s32
  * EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s32 rotation, s32 timer);
@@ -562,21 +556,19 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(10);
   Event_OpenMessage(8, 0);
   result6 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (result6 != 0)
-    goto L_0200900c;
-  Event_Wait(30);
-  Motion_SetModeAndWaitAnimation(6, 3);
-  Event_Wait(10);
-  Event_ShowMessageThenWait(6, 0, 10);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-  goto L_0200903c;
-L_0200900c:
-  Event_Wait(40);
-  Motion_SetVarCbAndRefresh(6, 2);
-  Event_Wait(10);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-  Event_ShowMessageThenWait(6, 0, 10);
-L_0200903c:
+  if (result6 == 0) {
+    Event_Wait(30);
+    Motion_SetModeAndWaitAnimation(6, 3);
+    Event_Wait(10);
+    Event_ShowMessageThenWait(6, 0, 10);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+  } else {
+    Event_Wait(40);
+    Motion_SetVarCbAndRefresh(6, 2);
+    Event_Wait(10);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    Event_ShowMessageThenWait(6, 0, 10);
+  }
   Motion_SetVarCbAndRefresh(25, 2);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(0x1019, 0, 10);
@@ -1313,27 +1305,25 @@ L_0200903c:
   Event_Wait(10);
   Event_OpenMessage(25, 0);
   result18 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (result18 != 0)
-    goto L_0200ab7a;
-  Event_Wait(30);
-  Motion_SetModeAndWaitAnimation(25, 3);
-  Event_Wait(10);
-  Actor_ArmCallback(25, 0xb000, 0);
-  Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(17, 4);
-  Event_ShowMessageThenWait(17, 0, 10);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-  goto L_0200abc0;
-L_0200ab7a:
-  Event_Wait(40);
-  Func_020032a0();
-  Actor_ArmCallback(25, 0xb000, 0);
-  Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(17, 3);
-  Event_Wait(20);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-  Event_ShowMessageThenWait(17, 0, 10);
-L_0200abc0:
+  if (result18 == 0) {
+    Event_Wait(30);
+    Motion_SetModeAndWaitAnimation(25, 3);
+    Event_Wait(10);
+    Actor_ArmCallback(25, 0xb000, 0);
+    Event_Wait(20);
+    Motion_SetModeAndWaitAnimation(17, 4);
+    Event_ShowMessageThenWait(17, 0, 10);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+  } else {
+    Event_Wait(40);
+    Func_020032a0();
+    Actor_ArmCallback(25, 0xb000, 0);
+    Event_Wait(20);
+    Motion_SetModeAndWaitAnimation(17, 3);
+    Event_Wait(20);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    Event_ShowMessageThenWait(17, 0, 10);
+  }
   Actor_ShowEmote(17, 0x109, 30);
   Event_ShowMessageThenWait(17, 0, 10);
   Actor_EmitNotes(17);
@@ -1435,20 +1425,18 @@ L_0200abc0:
   Event_OpenMessage(6, 0);
   Actor_FaceDirection(4, FACING_NORTHEAST, 0);
   result19 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (result19 != 0)
-    goto L_0200afbe;
-  Event_Wait(30);
-  Motion_SetModeAndWaitAnimation(6, 3);
-  Event_Wait(20);
-  Event_ShowMessageThenWait(5, 0, 10);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-  goto L_0200afe8;
-L_0200afbe:
-  Event_Wait(40);
-  Motion_SetModeAndWaitAnimation(5, 4);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-  Event_ShowMessageThenWait(5, 0, 10);
-L_0200afe8:
+  if (result19 == 0) {
+    Event_Wait(30);
+    Motion_SetModeAndWaitAnimation(6, 3);
+    Event_Wait(20);
+    Event_ShowMessageThenWait(5, 0, 10);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+  } else {
+    Event_Wait(40);
+    Motion_SetModeAndWaitAnimation(5, 4);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    Event_ShowMessageThenWait(5, 0, 10);
+  }
   Actor_SetModeById(25, 3);
   Actor_SetModeById(6, 3);
   Motion_SetModeAndWaitAnimation(4, 3);
@@ -1456,31 +1444,28 @@ L_0200afe8:
   Actor_SetSpeed(5, 0x13333, 0x9999);
   Actor_SetModeById(5, 2);
   object20 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object20 == 0)
-    goto L_0200b03c;
-  Actor_SetDestinationById(5, *(s16 *)((u8 *)object20 + 10),
-                           *(s16 *)((u8 *)object20 + 18));
-L_0200b03c:
+  if (object20 != 0) {
+    Actor_SetDestinationById(5, *(s16 *)((u8 *)object20 + 10),
+                             *(s16 *)((u8 *)object20 + 18));
+  }
   Actor_WaitForMoveById(5);
   Actor_SetHorizontalPositionWithTerrain(5, 0, 0);
   Actor_SetSpeed(6, 0x13333, 0x9999);
   Actor_SetModeById(6, 2);
   object21 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object21 == 0)
-    goto L_0200b07a;
-  Actor_SetDestinationById(6, *(s16 *)((u8 *)object21 + 10),
-                           *(s16 *)((u8 *)object21 + 18));
-L_0200b07a:
+  if (object21 != 0) {
+    Actor_SetDestinationById(6, *(s16 *)((u8 *)object21 + 10),
+                             *(s16 *)((u8 *)object21 + 18));
+  }
   Actor_WaitForMoveById(6);
   Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
   Actor_SetSpeed(25, 0x13333, 0x9999);
   Actor_SetModeById(25, 2);
   object22 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object22 == 0)
-    goto L_0200b0b8;
-  Actor_SetDestinationById(25, *(s16 *)((u8 *)object22 + 10),
-                           *(s16 *)((u8 *)object22 + 18));
-L_0200b0b8:
+  if (object22 != 0) {
+    Actor_SetDestinationById(25, *(s16 *)((u8 *)object22 + 10),
+                             *(s16 *)((u8 *)object22 + 18));
+  }
   Actor_WaitForMoveById(25);
   Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);

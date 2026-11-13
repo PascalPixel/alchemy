@@ -363,12 +363,9 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
                         Position_FlatDistance, gWhirlwindEndScript,
                         gWhirlwindRiding)
 
-/* VIEW(first): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another. */
-void FieldEffect_Spawn__first(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__first
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation, Whirlwind_Update,
                        FieldEffect_Spawn)
@@ -450,11 +447,6 @@ UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
 extern struct Actor *gLightSpriteActors[];
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
-/* VIEW(first): routine Oam_AddSpriteAtDepthClamped as this part declared it;
- * the joined file has another. */
-void Oam_AddSpriteAtDepthClamped__first(
-    struct LightOam *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
-#define Oam_AddSpriteAtDepthClamped Oam_AddSpriteAtDepthClamped__first
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
@@ -587,8 +579,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #undef FLAG_RED_DOOR_OPENED
 #undef FLAG_BLUE_DOOR_OPENED
 #undef FLAG_BRIDGE_BLOCK_RAISED
-#undef FieldEffect_Spawn
-#undef Oam_AddSpriteAtDepthClamped
 // @file
 // The room of grey blocks and locked doors in Jupiter Lighthouse: its copy of
 // the effect spawner, and the cracked tiles, found, cracked and fallen
@@ -602,11 +592,6 @@ void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-/* VIEW(cracked_tiles): routine Actor_StartScript as this part declared it; the
- * joined file has another. */
-extern void Actor_StartScript__cracked_tiles(
-    struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__cracked_tiles
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -736,7 +721,6 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1888,
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
 // @file
 // The room of grey blocks and locked doors in Jupiter Lighthouse: the cracked
 // tiles' steps and the fall to the floor below.
@@ -751,22 +735,9 @@ void JupiterLighthouse_LeaveBySecondCyclone(void);
 void JupiterLighthouse_TryLockedDoor(void);
 extern u32 gFieldEffect_LongScript[];
 
-/* VIEW(cracked_tile_steps): routine FieldEffect_Spawn as this part declared it;
- * the joined file has another. */
-void FieldEffect_Spawn__cracked_tile_steps(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__cracked_tile_steps
-
 DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
 
 void GameFlag_SetByte(s32 flag, s32 value);
-/* VIEW(cracked_tile_steps): routine CrackedTile_Fall as this part declared it;
- * the joined file has another. */
-void CrackedTile_Fall__cracked_tile_steps(
-    struct CellTarget *puzzle,
-    struct CellTargetEntry *tile) __asm__("CrackedTile_Fall");
-#define CrackedTile_Fall CrackedTile_Fall__cracked_tile_steps
 
 s32 CrackedTiles_Step(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -818,5 +789,3 @@ void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = value;
   }
 }
-#undef FieldEffect_Spawn
-#undef CrackedTile_Fall

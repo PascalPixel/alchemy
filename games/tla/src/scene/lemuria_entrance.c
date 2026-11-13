@@ -24,8 +24,6 @@
 #include "graphics/uiflow.h"
 #include "objcmd.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 extern u32 gLemuriaEntrance_ShipSailsOut[];
 void LemuriaEntrance_ShowPortraitLine(s32 kind, s32 frames);
 

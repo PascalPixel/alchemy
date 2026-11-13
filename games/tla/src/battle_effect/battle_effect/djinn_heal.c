@@ -39,7 +39,9 @@ void Render_DrawModelList__battle_effect(struct Model *model);
 // target, rise), three frames apart, for 64 frames; with a prelude a Djinn
 // circles over the canvas and a fan of light lines spreads from it. At
 // frame 56 every target flashes.
-void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
+// Balm, Tinder and Phoenix run it with modes 0, 1 and 2.
+void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
+                                   s32 mode) {
   s32 anchor[3];
   s32 size[3];
   struct EffectPosition pos;
@@ -640,28 +642,21 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-struct ShakeWork {
-  u8 unk0000[54];
-  u16 offset;
-  u8 unk0038[0x7774];
-  s32 amount;
-  s32 phase;
-};
-
 /// A task: turns the camera by the effect's delta, the whole
 /// delta on phase 1 and half of it on the frames in between.
 void BattleCamera_ApplyPhasedDelta(void) {
-  struct ShakeWork *work = (struct ShakeWork *)Ram_HeapSlots->battleFxWork[0];
-  struct ShakeWork *camera = Ram_HeapSlots->cameraWork;
+  struct BattleFxWork *work =
+      (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
-  if (work->phase == 1) {
-    camera->offset += work->amount;
-    work->phase = 0;
+  if (work->cameraPhase == 1) {
+    camera->yaw += work->cameraDelta;
+    work->cameraPhase = 0;
   } else {
-    camera->offset += work->amount / 2;
-    if (work->phase == 2)
-      work->phase = 0;
+    camera->yaw += work->cameraDelta / 2;
+    if (work->cameraPhase == 2)
+      work->cameraPhase = 0;
     else
-      work->phase = 2;
+      work->cameraPhase = 2;
   }
 }

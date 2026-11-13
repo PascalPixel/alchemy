@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x6a5, in ROM order.
-
 #include "types.h"
 #include "field/event_inline.h"
 #include "battle/battle.h"
@@ -111,13 +109,7 @@ void Func_020000ec(struct Actor *self) {
 
 #undef BYTE_AT
 // @file
-// Scene code of overlay 0x6a5, in ROM order.
-
-// ---- games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c ----
-
 #include "text/msg_ids.h"
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct CellTarget;
 struct CellTargetEntry;
@@ -237,10 +229,6 @@ void MapGrid_SetCellHeight(void);
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
 void Actor_StartScript(struct Actor *object, const void *script);
-/* VIEW(s0198): routine Func_020000ec as this part declared it; the joined file
- * has another. */
-void Func_020000ec__s0198(void) __asm__("Func_020000ec");
-#define Func_020000ec Func_020000ec__s0198
 
 static inline void Event_PlayCue(s32 cue) { Sound_Play(cue); }
 
@@ -370,20 +358,11 @@ void Func_02000198(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(s0198): routine Event_End as s32 Event_End();
- * module/scene/jupiter_lighthouse_aerie_beacon.h has void Event_End(void); not
- * tried: Event_End's bound declaration was not found. */
-extern s32 Func_0200581c__s0198() __asm__("Event_End");
-
 void Func_0200045c(void) {
-  s32 t0;
-  s32 t2;
 
-  t0 = Event_GetFlag(0xa23);
-  if (t0 != 0) {
+  if (Event_GetFlag(0xa23)) {
     Event_SetFlag(0x200);
-    t2 = Event_GetFlag(0xa21);
-    if (t2 == 0) {
+    if (!Event_GetFlag(0xa21)) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       FieldEvent_SetMessageId((s32)MsgYouReLate);
@@ -398,20 +377,12 @@ void Func_0200045c(void) {
       } while (0);
       FieldEvent_Wait(20);
       Event_ShowMessage(0x1b, 0);
-      Func_0200581c__s0198();
+      Event_End();
     }
   }
 }
 
-/* VIEW(s0198): routine gData_020068b0 as this part declared it; the joined file
- * has another. */
-extern const u8 gData_020068b0__s0198[] __asm__("gData_020068b0");
-#define gData_020068b0 gData_020068b0__s0198
-
-/* VIEW(s0198): routine Func_02000090 as this part declared it; the joined file
- * has another. */
-void Func_02000090__s0198(void) __asm__("Func_02000090");
-#define Func_02000090 Func_02000090__s0198
+extern s32 gData_020068b0[];
 
 // Every third frame, or every frame once flag 0x201 is set, spawns a particle
 // at a random height above object 31 that circles it (Func_02000090).
@@ -495,10 +466,7 @@ void Func_020005b8(void) {
 s32 Actor_MoveToObject();
 s32 PartyInventory_Remove(s32 item_id);
 
-/* VIEW(s0198): routine gData_02006338 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02006338__s0198[] __asm__("gData_02006338");
-#define gData_02006338 gData_02006338__s0198
+extern s32 gData_02006338[];
 
 void Func_0200065c(void) {
   s32 answer, state;
@@ -699,7 +667,7 @@ void Func_0200065c(void) {
       Event_SetFlag(0x11a);
       FieldEvent_SetExitRequest(2);
     }
-    Func_0200581c__s0198();
+    Event_End();
   }
 }
 
@@ -792,8 +760,8 @@ static __inline__ void Func_0200593c_(s32 a, s32 b) {
   } while (0)
 
 void Func_02000cd0(void) {
-  s32 t2, t4, t75, t77, t78, t79, t80;
-  s32 t101, t102, t135, t139, t140, t143, t144;
+  s32 t2, t4, t77, t78, t79, t80;
+  s32 t101, t102, t139, t140, t143, t144;
   s32 slot;
   s32 facing;
 
@@ -869,20 +837,17 @@ void Func_02000cd0(void) {
   Motion_SetVarCbAndRefresh_(28, 2);
   FieldEvent_Wait_(5);
   FieldMessage_ShowAtActor_(0x101c, 0);
-  t75 = Event_AskYesNoWithActorAnimation_(4, 0);
-  if (t75 != 0)
-    goto L_02008fc4;
-  Func_020058d4_(0x101c, 0, 0);
-  t77 = (s32)Ram_HeapSlots->eventWork;
-  t78 = FIELD_AT(t77, u16, 452);
-  FIELD_AT(t77, u16, 452) = (t78 + 1);
-  goto L_02008fe0;
-L_02008fc4:
-  t79 = (s32)Ram_HeapSlots->eventWork;
-  t80 = FIELD_AT(t79, u16, 452);
-  FIELD_AT(t79, u16, 452) = (t80 + 1);
-  Func_020058d4_(0x101c, 0, 0);
-L_02008fe0:
+  if (!Event_AskYesNoWithActorAnimation_(4, 0)) {
+    Func_020058d4_(0x101c, 0, 0);
+    t77 = (s32)Ram_HeapSlots->eventWork;
+    t78 = FIELD_AT(t77, u16, 452);
+    FIELD_AT(t77, u16, 452) = (t78 + 1);
+  } else {
+    t79 = (s32)Ram_HeapSlots->eventWork;
+    t80 = FIELD_AT(t79, u16, 452);
+    FIELD_AT(t79, u16, 452) = (t80 + 1);
+    Func_020058d4_(0x101c, 0, 0);
+  }
   Func_020058fc_(7, 0x100, 0);
   ((void *)Actor_ShowEmote(4, 0x100, 30));
   Actor_ArmCallback_(7, 0x8000, 0);
@@ -935,22 +900,19 @@ L_02008fe0:
   ((void *)Actor_ShowEmote(28, 0x108, 30));
   Actor_ArmCallback_(28, 0xb000, 0);
   Event_OpenMessage(28, 0);
-  t135 = Event_AskYesNoWithActorAnimation_(4, 0);
-  if (t135 != 0)
-    goto L_02009236;
-  ACTOR_SET_MODE_AND_WAIT(28, 3, 20);
-  Func_020058d4_(28, 0, 0);
-  t139 = (s32)Ram_HeapSlots->eventWork;
-  t140 = FIELD_AT(t139, u16, 452);
-  FIELD_AT(t139, u16, 452) = (t140 + 1);
-  goto L_02009260;
-L_02009236:
-  ACTOR_SET_MODE_AND_WAIT(28, 3, 20);
-  t143 = (s32)Ram_HeapSlots->eventWork;
-  t144 = FIELD_AT(t143, u16, 452);
-  FIELD_AT(t143, u16, 452) = (t144 + 1);
-  Func_020058d4_(28, 0, 0);
-L_02009260:
+  if (!Event_AskYesNoWithActorAnimation_(4, 0)) {
+    ACTOR_SET_MODE_AND_WAIT(28, 3, 20);
+    Func_020058d4_(28, 0, 0);
+    t139 = (s32)Ram_HeapSlots->eventWork;
+    t140 = FIELD_AT(t139, u16, 452);
+    FIELD_AT(t139, u16, 452) = (t140 + 1);
+  } else {
+    ACTOR_SET_MODE_AND_WAIT(28, 3, 20);
+    t143 = (s32)Ram_HeapSlots->eventWork;
+    t144 = FIELD_AT(t143, u16, 452);
+    FIELD_AT(t143, u16, 452) = (t144 + 1);
+    Func_020058d4_(28, 0, 0);
+  }
   Motion_SetVarCbAndRefresh_(7, 2);
   FieldEvent_Wait_(5);
   Func_020058d4_(7, 0, 0);
@@ -1241,20 +1203,20 @@ void Func_02001ac4(s32 a0, s32 a1) {
   Actor_SetAnimation(a1, 1);
 }
 
-/* VIEW(s0198): routine gData_02005ff0 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02005ff0__s0198[] __asm__("gData_02005ff0");
-#define gData_02005ff0 gData_02005ff0__s0198
-/* VIEW(s0198): routine gData_02005ff8 as this part declared it; the joined file
- * has another. */
-extern u8 gData_02005ff8__s0198[] __asm__("gData_02005ff8");
-#define gData_02005ff8 gData_02005ff8__s0198
+extern u32 gData_02005ff0[];
+extern u32 gData_02005ff8[];
 /* VIEW(s0198): routine gData_02006088 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_02006088[], it does
+ * not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:1361: `gData_02006088'
+ * undeclared (first use in this function). */
 extern u8 gData_02006088__s0198[] __asm__("gData_02006088");
 #define gData_02006088 gData_02006088__s0198
 /* VIEW(s0198): routine gData_020061e0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the one declaration extern u8 gData_020061e0[], it does
+ * not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:1578: `gData_020061e0'
+ * undeclared (first use in this function). */
 extern u8 gData_020061e0__s0198[] __asm__("gData_020061e0");
 #define gData_020061e0 gData_020061e0__s0198
 
@@ -1263,7 +1225,7 @@ void Func_02001bc4(void) {
   s32 slow;
   s32 mid;
   struct Actor *actor;
-  s32 two, v_r5, t302, t310, t311, t438;
+  s32 two, v_r5, t310, t311, t438;
 
   void Func_02001b04(s32 clearStatus) {
     s32 count;
@@ -1562,48 +1524,42 @@ void Func_02001bc4(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(0, fast);
   Actor_FaceDirectionAndWait(4, slow);
-  t302 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (t302 != 0)
-    goto L_0200a678;
-  ACTOR_SET_MODE_AND_WAIT(0, 3, 20);
-  FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0, 0, 0);
-  goto L_0200a6fe;
-L_0200a678:
-  Actor_ShowEmote(0, 0x107, 30);
-  ACTOR_SET_MODE_AND_WAIT(5, 4, 33);
-  t310 = (s32)Ram_HeapSlots->eventWork;
-  t311 = FIELD_AT(t310, u16, 452);
-  FIELD_AT(t310, u16, 452) = (t311 + 2);
-  Actor_FaceDirectionAndWait(5, 0x8000);
-  FieldEvent_ShowMessageThenWait(5, 0, 0);
-  Actor_FaceDirectionAndWait(5, 0x4000);
-  FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(5, 2);
-  FieldEvent_Wait(5);
-  FieldEvent_ShowMessageThenWait(5, 0, 0);
-  ACTOR_SET_MODE_AND_WAIT(0, 3, 20);
-  FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0, 0, 0);
-L_0200a6fe:
+  if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
+    ACTOR_SET_MODE_AND_WAIT(0, 3, 20);
+    FieldEvent_Wait(10);
+    FieldEvent_ShowMessageThenWait(0, 0, 0);
+  } else {
+    Actor_ShowEmote(0, 0x107, 30);
+    ACTOR_SET_MODE_AND_WAIT(5, 4, 33);
+    t310 = (s32)Ram_HeapSlots->eventWork;
+    t311 = FIELD_AT(t310, u16, 452);
+    FIELD_AT(t310, u16, 452) = (t311 + 2);
+    Actor_FaceDirectionAndWait(5, 0x8000);
+    FieldEvent_ShowMessageThenWait(5, 0, 0);
+    Actor_FaceDirectionAndWait(5, 0x4000);
+    FieldEvent_Wait(10);
+    Actor_RunRepeatedMotion(5, 2);
+    FieldEvent_Wait(5);
+    FieldEvent_ShowMessageThenWait(5, 0, 0);
+    ACTOR_SET_MODE_AND_WAIT(0, 3, 20);
+    FieldEvent_Wait(10);
+    FieldEvent_ShowMessageThenWait(0, 0, 0);
+  }
   Actor_SetAnimation(2, 2);
   actor = Actor_Get(0);
-  if (actor == 0)
-    goto L_0200a71e;
-  Actor_SetDestination(2, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
-L_0200a71e:
+  if (actor != 0) {
+    Actor_SetDestination(2, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
+  }
   Actor_SetAnimation(3, 2);
   actor = Actor_Get(0);
-  if (actor == 0)
-    goto L_0200a73e;
-  Actor_SetDestination(3, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
-L_0200a73e:
+  if (actor != 0) {
+    Actor_SetDestination(3, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
+  }
   Actor_SetAnimation(1, 2);
   actor = Actor_Get(0);
-  if (actor == 0)
-    goto L_0200a75e;
-  Actor_SetDestination(1, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
-L_0200a75e:
+  if (actor != 0) {
+    Actor_SetDestination(1, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
+  }
   Actor_SetScript(2, (s32)gData_02005ff0);
   Actor_SetScript(3, (s32)gData_02005ff0);
   Actor_SetScript(1, (s32)gData_02005ff0);
@@ -1663,28 +1619,25 @@ L_0200a75e:
   actor = Actor_Get(4);
   two = 2;
   v_r5 = (s32)gData_02005ff0;
-  if (actor == 0)
-    goto L_0200a980;
-  Actor_SetDestination(7, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
-L_0200a980:
+  if (actor != 0) {
+    Actor_SetDestination(7, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
+  }
   Actor_SetAnimation(6, 2);
   actor = Actor_Get(4);
-  if (actor == 0)
-    goto L_0200a9a0;
-  Actor_SetDestination(6, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
-L_0200a9a0:
+  if (actor != 0) {
+    Actor_SetDestination(6, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
+  }
   Actor_SetAnimation(5, 2);
   actor = Actor_Get(4);
-  if (actor == 0)
-    goto L_0200a9c0;
-  Actor_SetDestination(5, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
-L_0200a9c0:
+  if (actor != 0) {
+    Actor_SetDestination(5, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
+  }
   Actor_SetAnimation(30, 2);
   actor = Actor_Get(4);
-  if (actor == 0)
-    goto L_0200a9e0;
-  Actor_SetDestination(30, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
-L_0200a9e0:
+  if (actor != 0) {
+    Actor_SetDestination(30, FIELD_AT(actor, s16, 10),
+                         FIELD_AT(actor, s16, 18));
+  }
   Actor_SetScript(7, v_r5);
   Actor_SetScript(6, v_r5);
   Actor_SetScript(5, v_r5);
@@ -1713,7 +1666,7 @@ L_0200a9e0:
   Event_WaitTransitionFrames();
   Func_02001b04(0);
   FieldEvent_SetExitRequest(1);
-  Func_0200581c__s0198();
+  Event_End();
   return;
 }
 
@@ -1756,7 +1709,6 @@ void Func_02002ae4(void) {
   s32 t11;
   s32 t12;
   s32 t13;
-  s32 t67;
   s32 t166;
   s32 t167;
   s32 t168;
@@ -1764,7 +1716,6 @@ void Func_02002ae4(void) {
   s32 t184;
   s32 t185;
   s32 t186;
-  s32 t269;
   s32 t292;
   s32 t295;
   s32 t298;
@@ -1857,8 +1808,7 @@ void Func_02002ae4(void) {
   Actor_FaceDirection(6, 0x6000, 0);
   Actor_FaceDirectionAndWait(5, 0x8000);
   Actor_FaceDirection(4, 0x8000, 0);
-  t67 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (t67 == 0) {
+  if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     FieldEvent_ShowMessageThenWait(0x1d, 0, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
         (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
@@ -2065,8 +2015,7 @@ void Func_02002ae4(void) {
   Actor_FaceDirectionAndWait(0, 0xc000);
   FieldEvent_Wait(0x1e);
   Actor_FaceDirectionAndWait(4, 0x4000);
-  t269 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (t269 == 0) {
+  if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     SET_MODE_AND_WAIT(0, 3, 0x14);
     FieldEvent_Wait(0xa);
     FieldEvent_ShowMessageThenWait(0, 0, 0);
@@ -2210,7 +2159,7 @@ void Func_02002ae4(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(1);
-  Func_0200581c__s0198();
+  Event_End();
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
@@ -2244,8 +2193,8 @@ struct SceneWork {
 /* VIEW(s0198): tag struct FieldWork as struct FieldWork__s0198; field_work.h
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2045:
- * dereferencing pointer to incomplete type. */
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2205: dereferencing
+ * pointer to incomplete type. */
 struct FieldWork__s0198 {
   u8 pad0[0x178];
   struct SceneWork unk_178;
@@ -2254,26 +2203,11 @@ struct Iwram {
   u8 pad0[32];
   struct FieldWork__s0198 *field;
 };
-/* VIEW(s0198): routine gData_020059fc as this part declared it; the joined file
- * has another. */
-extern s32 gData_020059fc__s0198[] __asm__("gData_020059fc");
-#define gData_020059fc gData_020059fc__s0198
-/* VIEW(s0198): routine gData_02005a0c as this part declared it; the joined file
- * has another. */
-extern s32 gData_02005a0c__s0198[] __asm__("gData_02005a0c");
-#define gData_02005a0c gData_02005a0c__s0198
-/* VIEW(s0198): routine gData_02005a14 as this part declared it; the joined file
- * has another. */
-extern s32 gData_02005a14__s0198[] __asm__("gData_02005a14");
-#define gData_02005a14 gData_02005a14__s0198
-/* VIEW(s0198): routine gData_02005a1c as this part declared it; the joined file
- * has another. */
-extern s32 gData_02005a1c__s0198[] __asm__("gData_02005a1c");
-#define gData_02005a1c gData_02005a1c__s0198
-/* VIEW(s0198): routine gData_020069dc as this part declared it; the joined file
- * has another. */
-extern s32 gData_020069dc__s0198[] __asm__("gData_020069dc");
-#define gData_020069dc gData_020069dc__s0198
+extern s32 gData_020059fc[];
+extern s32 gData_02005a0c[];
+extern s32 gData_02005a14[];
+extern s32 gData_02005a1c[];
+extern s32 gData_020069dc[];
 
 void Func_02003a6c(s32 mode) {
   s32 speed;
@@ -2364,17 +2298,14 @@ void Func_02003a6c(s32 mode) {
 /* VIEW(s0198): tag struct HeapSlotWords as struct HeapSlotWords__s0198;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2132: structure
- * has no member named `map'. */
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2292: structure has no
+ * member named `map'. */
 struct HeapSlotWords__s0198 {
   s32 unk00[8];
   u8 *map;
 };
 
-/* VIEW(s0198): routine gData_02005a20 as this part declared it; the joined file
- * has another. */
-extern s32 gData_02005a20__s0198[] __asm__("gData_02005a20");
-#define gData_02005a20 gData_02005a20__s0198
+extern s32 gData_02005a20[];
 
 void Func_02003c58(s32 mode) {
   struct ScrollWork *work =
@@ -2432,8 +2363,6 @@ s32 Scene_Initialize(void) {
   s32 t6;
   s32 t7;
   s32 t8;
-  s32 t9;
-  s32 t25;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
   Call2(HangingVine_Place, 0xf, 1);
@@ -2452,8 +2381,7 @@ s32 Scene_Initialize(void) {
   FIELD_AT((t7 + 0x23), u8, 0) = (FIELD_AT((t7 + 0x23), u8, 0) | 0x80);
   t8 = Actor_Get(22);
   FIELD_AT((t8 + 0x23), u8, 0) = (0x80 | FIELD_AT((t8 + 0x23), u8, 0));
-  t9 = Event_GetFlag(0xa21);
-  if (t9 == 0) {
+  if (!Event_GetFlag(0xa21)) {
     Func_02004644();
   } else {
     t11 = Actor_Get(24);
@@ -2485,8 +2413,7 @@ s32 Scene_Initialize(void) {
           if (gMainRoutineWork.entrance == 0xd) {
             Func_02001bc4();
           } else {
-            t25 = Event_GetFlag(0xa21);
-            if (t25 != 0) {
+            if (Event_GetFlag(0xa21)) {
               Actor_SetPosition(27, 0, 0);
               Actor_SetPosition(28, 0, 0);
             }
@@ -2509,18 +2436,17 @@ s32 Scene_PrepareMap(void) {
 #undef SET_MODE_AND_WAIT
 
 /* VIEW(s3f54): routine gPaletteCyclePausesInEvents as this part declared it;
- * the joined file has another. */
-// ---- games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s3f54.c ----
+ * the joined file has another; tried as the definition's extern s32
+ * gPaletteCyclePausesInEvents, it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2423:
+ * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
 extern s32
     gPaletteCyclePausesInEvents__s3f54 __asm__("gPaletteCyclePausesInEvents");
 #define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__s3f54
 
 void Func_02003f54(s32 a0) { gPaletteCyclePausesInEvents = a0; }
 
-/* VIEW(s3f54): routine gPaletteCycleFrame as this part declared it; the joined
- * file has another. */
-extern s32 gPaletteCycleFrame__s3f54 __asm__("gPaletteCycleFrame");
-#define gPaletteCycleFrame gPaletteCycleFrame__s3f54
+extern s32 gPaletteCycleFrame;
 
 // Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
@@ -2610,22 +2536,12 @@ void Func_020040f4(void) {
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_0200581c__s0198();
+  Event_End();
 }
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-/* VIEW(s3f54): routine Actor_StartScript as void Actor_StartScript(struct
- * Object6a5 *object, const void *script); s0198 has void
- * Actor_StartScript(struct Actor *object, const void *script); not tried:
- * Actor_StartScript's bound declaration was not found. */
-extern void
-Func_02005764__s3f54(struct Object6a5 *object,
-                     const void *script) __asm__("Actor_StartScript");
-/* VIEW(s3f54): routine gData_020069fc as this part declared it; the joined file
- * has another. */
-extern u8 gData_020069fc__s3f54[] __asm__("gData_020069fc");
-#define gData_020069fc gData_020069fc__s3f54
+extern u32 gData_020069fc[];
 
 void Whirlwind_Update(struct Object6a5 *object) {
   struct EventWork6a5 *work = Ram_HeapSlots->eventWork;
@@ -2686,24 +2602,15 @@ void Whirlwind_Update(struct Object6a5 *object) {
   }
   object->unk63 = 0;
   object->update = 0;
-  Func_02005764__s3f54(object, gData_020069fc);
+  Actor_StartScript(object, gData_020069fc);
   Event_PlaySound(228);
   Data_02006a28 = 0;
 }
 
-// ---- scene/jupiter_lighthouse_aerie_beacon/s44cc.c ----
-
-// Scene code of overlay 0x6a5, in ROM order.
-
-extern u8 gLightSpritesLarge[];
-
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
-/* VIEW(s44cc): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another. */
-void FieldEffect_Spawn__s44cc(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__s44cc
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Actor_SelectAnimation,
                              Whirlwind_Update, FieldEffect_Spawn)
@@ -2761,18 +2668,7 @@ void Func_02004644(void) {
   }
 }
 
-/* VIEW(s44cc): variable gLightSpritesLarge as s16 gLightSpritesLarge;
- * module/scene/scene.h has u8 gLightSpritesLarge[]; tried as the rest of the
- * object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2552:
- * `gLightSpritesLarge' has an incomplete type. */
-extern s16 gLightSpritesLarge__s44cc __asm__("gLightSpritesLarge");
-
-/* VIEW(s44cc): routine Oam_AddSpriteAtDepthClamped as this part declared it;
- * the joined file has another. */
-void Oam_AddSpriteAtDepthClamped__s44cc(
-    struct LightOam *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
-#define Oam_AddSpriteAtDepthClamped Oam_AddSpriteAtDepthClamped__s44cc
+extern s16 gLightSpritesLarge;
 
 // Queues the lit actors' sprites: for each listed actor with a position,
 // projects it from the map's view, skips it off screen, and writes a 16 by 16
@@ -2780,7 +2676,7 @@ void Oam_AddSpriteAtDepthClamped__s44cc(
 // picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
                           gLightSpriteCount, gLightSpriteActors,
-                          gLightSpritesLarge__s44cc, gLightSpritePriority,
+                          gLightSpritesLarge, gLightSpritePriority,
                           BattleEffect_GetObjectPriority,
                           Oam_AddSpriteAtDepthClamped)
 
@@ -2790,17 +2686,17 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge__s44cc,
+                            gLightSpriteCount, gLightSpritesLarge,
                             gLightSpritePriority)
 
 DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge__s44cc,
+                            gLightSpriteCount, gLightSpritesLarge,
                             gLightSpritePriority)
 
 DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge__s44cc,
+                            gLightSpriteCount, gLightSpritesLarge,
                             gLightSpritePriority)
 
 DEFINE_LIGHT_SPRITES_ADD_COUNTED(LightSprites_AddCounted, gLightSpriteActors,
@@ -2817,33 +2713,11 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef ACTOR_SET_MODE_AND_WAIT
 #undef SET_MODE_AND_WAIT
 #undef Func_020000ec
-#undef gData_020068b0
 #undef Func_02000090
-#undef gData_02006338
-#undef gData_02005ff0
-#undef gData_02005ff8
 #undef gData_02006088
 #undef gData_020061e0
-#undef gData_020059fc
-#undef gData_02005a0c
-#undef gData_02005a14
-#undef gData_02005a1c
-#undef gData_020069dc
-#undef gData_02005a20
 #undef gPaletteCyclePausesInEvents
-#undef gPaletteCycleFrame
-#undef gData_020069fc
-#undef FieldEffect_Spawn
-#undef Oam_AddSpriteAtDepthClamped
 // @file
-// Scene code of overlay 0x6a5, in ROM order.
-
-/* VIEW(s4bd4): routine Actor_StartScript as this part declared it; the joined
- * file has another. */
-extern void
-Actor_StartScript__s4bd4(struct FieldEffect *effect,
-                         const s32 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__s4bd4
 extern const s32 *gFieldEffect_DurationScripts[];
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -2942,16 +2816,10 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
 // @file
-// Scene code of overlay 0x6a5, in ROM order.
-
-/* VIEW(s539c): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another. */
-void FieldEffect_Spawn__s539c(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__s539c
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
   FieldCamera_MoveWithinMapBounds(x, y, z, use_setter);
@@ -3010,7 +2878,10 @@ void CrackedTile_DropIn(void) {
 
 void GameFlag_SetByte(s32 flag, s32 value);
 /* VIEW(s539c): routine CrackedTile_FallEvent as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the one declaration void
+ * CrackedTile_FallEvent(), it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2860: too many
+ * arguments to function `CrackedTile_FallEvent'. */
 void CrackedTile_FallEvent__s539c(
     struct CellTarget *work,
     struct CellTargetEntry *entry) __asm__("CrackedTile_FallEvent");
@@ -3023,40 +2894,30 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropIn)
 
 // clang-format off
-u32 gData_020059fc[] = {
+s32 gData_020059fc[] = {
     29, 27, 28, 64,
 };
 // clang-format on
 
-u32 gData_02005a0c[] = {
+s32 gData_02005a0c[] = {
     0,
     64,
 };
 
-u32 gData_02005a14[] = {
+s32 gData_02005a14[] = {
     4,
     64,
 };
 
-u32 gData_02005a1c[] = {
+s32 gData_02005a1c[] = {
     64,
 };
 
-u32 gData_02005a20[] = {
+s32 gData_02005a20[] = {
     64,
 };
 
-#undef FieldEffect_Spawn
 #undef CrackedTile_FallEvent
-
-/* VIEW(data): routine Func_02000038 as this part declared it; the joined file
- * has another. */
-void Func_02000038__data(void) __asm__("Func_02000038");
-#define Func_02000038 Func_02000038__data
-/* VIEW(data): routine Func_02000050 as this part declared it; the joined file
- * has another. */
-void Func_02000050__data(void) __asm__("Func_02000050");
-#define Func_02000050 Func_02000050__data
 
 // clang-format off
 LATE_DATA DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
@@ -3249,13 +3110,11 @@ LATE_DATA struct Trigger gSceneEvents[] = {
 };
 
 // clang-format off
-LATE_DATA u32 gData_020069dc[] = {
+LATE_DATA s32 gData_020069dc[] = {
     17, 18, 19, 20, 21, 22,
 };
 
-LATE_DATA s32 gPaletteCycleFrame[] = {
-    -1,
-};
+LATE_DATA s32 gPaletteCycleFrame = -1;
 
 LATE_DATA u32 gPaletteCyclePausesInEvents[] = {
     1,
@@ -3271,5 +3130,3 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gData_02005f10,
 };
-#undef Func_02000038
-#undef Func_02000050

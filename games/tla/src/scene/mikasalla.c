@@ -27,8 +27,6 @@
 #include "field/event_inline.h"
 #include "objcmd.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 extern s16 gMikasalla_TunnelRegions[];
 extern struct ActorPlacement gMikasalla_VillagePlacements[];
 extern struct ActorPlacement gMikasalla_TunnelPlacements[];
@@ -89,7 +87,7 @@ s16 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-void *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65dRoom1)
@@ -106,7 +104,7 @@ extern u8 MsgFieldAreYouLookingForSomeone[];
 /* VIEW(mikasalla): tag struct WarpEntry as struct WarpEntry__mikasalla;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mikasalla.c:121: invalid use of undefined type `struct
+ * games/tla/src/scene/mikasalla.c:129: invalid use of undefined type `struct
  * WarpEntry'. */
 struct WarpEntry__mikasalla {
   s32 map;
@@ -158,7 +156,7 @@ void Mikasalla_EnterDoor(void) {
 /// without a fight.
 void Mikasalla_MeetSpark(void) { Djinn_JoinParty(ACTOR_SPARK, 2, 8); }
 
-struct Trigger *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65dRoom2)

@@ -91,12 +91,12 @@ s32 Item_ReturnTrue(void) { return 1; }
 /// otherwise. The hue wraps in a byte (0 back is 255), not at the option
 /// screen's 24 hues.
 UNUSED void SettingsMenu_StepWindowHue(s32 keys) {
-  u8 hue = gMainRoutineWork.windowColor[0];
+  u8 hue = gMainRoutineWork.windowHue;
   if (keys & KEY_LEFT)
     hue += 0xff;
   else
     hue += 1;
-  gMainRoutineWork.windowColor[0] = hue;
+  gMainRoutineWork.windowHue = hue;
 }
 
 /// A Psynergy the debug shortcut picker lists: its party member and the

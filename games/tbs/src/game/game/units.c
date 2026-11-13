@@ -601,8 +601,8 @@ void MainRoutineWork_InitializeDefaults(void) {
   gMainRoutineWork.messageSpeed = 1;
   gMainRoutineWork.speech = 1;
   gMainRoutineWork.unusedAfterSpeech = 1;
-  gMainRoutineWork.windowColor[0] = 0;
-  gMainRoutineWork.windowColor[1] = 8;
+  gMainRoutineWork.windowHue = 0;
+  gMainRoutineWork.windowBrightness = 8;
   gMainRoutineWork.buildStamp = 0;
   gMainRoutineWork.startStamp = BuildStamp_GetTime();
   gPlayTimeFrames = 0;

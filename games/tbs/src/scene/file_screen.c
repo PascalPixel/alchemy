@@ -534,8 +534,8 @@ menu_top:;
     // Isaac alone, with the first code to Mia, with the second to Sheba. B on
     // the first name goes back to the menu.
     MainRoutineWork_InitializeDefaults();
-    WindowColor_Apply(gMainRoutineWork.windowColor[0],
-                      gMainRoutineWork.windowColor[1]);
+    WindowColor_Apply(gMainRoutineWork.windowHue,
+                      gMainRoutineWork.windowBrightness);
     v5 = 1;
     v7 = 0;
     for (;;) {
@@ -577,7 +577,7 @@ menu_top:;
     }
     Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
     state = &gMainRoutineWork;
-    WindowColor_Apply(state->windowColor[0], state->windowColor[1]);
+    WindowColor_Apply(state->windowHue, state->windowBrightness);
     if (state->buildStamp != BuildStamp_GetTime()) {
       state->next = state->restartScene;
       state->entrance = state->restartEntrance;
@@ -648,8 +648,8 @@ menu_top:;
       Party_AddMember(IVAN);
       Party_AddMember(MIA);
     }
-    WindowColor_Apply(gMainRoutineWork.windowColor[0],
-                      gMainRoutineWork.windowColor[1]);
+    WindowColor_Apply(gMainRoutineWork.windowHue,
+                      gMainRoutineWork.windowBrightness);
     GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
     GameFlag_Clear(FLAG_MENU_OPEN);
     GameFlag_Set(FLAG_IN_BATTLE_ARENA);
@@ -667,8 +667,8 @@ menu_top:;
     if (v6 == -1) {
       goto menu_top;
     }
-    WindowColor_Apply(gMainRoutineWork.windowColor[0],
-                      gMainRoutineWork.windowColor[1]);
+    WindowColor_Apply(gMainRoutineWork.windowHue,
+                      gMainRoutineWork.windowBrightness);
   link_select:;
     v6 = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_TRANSFER_METHOD);
     if (v6 == -1) {

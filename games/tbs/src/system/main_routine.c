@@ -306,8 +306,8 @@ void MainRoutine_Run(s32 mode) {
     gMainRoutineWork.entrance = TITLE_AFTER_RUN;
   }
   // The window colours from the options: hue, then brightness.
-  WindowColor_ApplyFar(gMainRoutineWork.windowColor[0],
-                       gMainRoutineWork.windowColor[1]);
+  WindowColor_ApplyFar(gMainRoutineWork.windowHue,
+                       gMainRoutineWork.windowBrightness);
   VramCache_Reset();
   Task_ResetAll();
   Task_ResetAll();

@@ -199,6 +199,8 @@ enum DisplayControl {
 #define RGB_RED(color) ((color) & 0x1f)
 #define RGB_GREEN(color) (((color) >> 5) & 0x1f)
 #define RGB_BLUE(color) (((color) >> 10) & 0x1f)
+/// A colour channel's brightest level.
+#define RGB_LEVEL_MAX 31
 
 /// The start of the 32 KB of IWRAM, the CPU's fast internal work memory, as
 /// pret names it.

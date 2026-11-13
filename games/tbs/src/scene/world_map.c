@@ -2337,8 +2337,8 @@ u16 gWorldMapBlend;
 ///
 /// Called by WorldMap_Initialize at WORLD_MAP_JENNA_AND_KRADEN_ADRIFT.
 static void WorldMap_ShowEndingEvent(void) {
-  WindowColor_Apply(gMainRoutineWork.windowColor[0],
-                    gMainRoutineWork.windowColor[1]);
+  WindowColor_Apply(gMainRoutineWork.windowHue,
+                    gMainRoutineWork.windowBrightness);
   Event_Start();
   WorldMap_StartZoom(Q16_ONE, 300);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);

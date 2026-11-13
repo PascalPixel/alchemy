@@ -61,28 +61,16 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
 /// and 3. Called with screen block 7 by BattleBackground_Load and
 /// BattleBackground_SetMode.
 void Graphics_BuildSequentialTileTable(void *tilemap) {
-  s32 *destination = tilemap;
-  u32 packedIndices;
-  s32 wordIndex;
+  u32 *words = tilemap;
+  s32 i;
 
-  // Four tile numbers to a word.
-  packedIndices = 0x03020100;
-  wordIndex = 0;
-  do {
-    wordIndex += 1;
-    *destination++ = packedIndices;
-    packedIndices += 0x04040404U;
-  } while (wordIndex >= 0 && wordIndex <= 63);
-
-  packedIndices = 0x03020100;
-  wordIndex = 0;
-  do {
-    wordIndex += 1;
-    *destination++ = packedIndices;
-    packedIndices += 0x04040404U;
-  } while (wordIndex >= 0 && wordIndex <= 55);
-
-  Iwram_FillWords(destination, 544, -1);
+  // An affine map takes a byte a tile, written four to a word, as VRAM
+  // takes no byte writes.
+  for (i = 0; i < 64; i++)
+    words[i] = 0x03020100 + i * 0x04040404;
+  for (i = 0; i < 56; i++)
+    words[64 + i] = 0x03020100 + i * 0x04040404;
+  Iwram_FillWords(words + 120, 544, -1);
 }
 
 /// Builds BG1's flat map of the same picture: rows 0 to 3 0xffff, rows 4 and
@@ -92,23 +80,14 @@ void Graphics_BuildSequentialTileTable(void *tilemap) {
 /// 31 (BATTLE_BG1CNT) by BattleBackground_Load and
 /// BattleBackground_SetMode.
 void BattleTransition_BuildTilemap(void *tilemap) {
-  s32 *destination = tilemap;
-  s32 entry;
-  u32 index;
+  u16 *entries = tilemap;
+  s32 i;
 
-  // Iwram_FillWords counts bytes; the pointer steps in words.
-  Iwram_FillWords(destination, 256, -1);
-  destination += 64;
-  Iwram_FillWords(destination, 128, 0x03ff03ff);
-  entry = (0x0201 << 16) | 0x0200;
-  destination += 32;
-  index = 0;
-  do {
-    index++;
-    *destination++ = entry;
-    entry += 0x00020002;
-  } while (index <= 239);
-  Iwram_FillWords(destination, 640, 0x03ff03ff);
+  Iwram_FillWords(entries, 4 * 64, -1);
+  Iwram_FillWords(entries + 4 * 32, 2 * 64, 0x03ff03ff);
+  for (i = 0; i < 15 * 32; i++)
+    entries[6 * 32 + i] = 512 + i;
+  Iwram_FillWords(entries + 21 * 32, 640, 0x03ff03ff);
 }
 
 /// Shows the zoomed background's finished page each VBlank while the
@@ -119,20 +98,19 @@ void BattleTransition_BuildTilemap(void *tilemap) {
 /// BattleBackground_SetMode; BattleCamera_SetRange builds the
 /// pages.
 void BattleBackground_ShowZoomedPage(void) {
+  struct BattleBackgroundWork *view =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleAffineHdma *scanlines;
   u16 *line;
 
-  if (((struct BattleBackgroundWork *)HEAP_SLOT_BLOCK(
-           HEAP_SLOT_BATTLE_BACKGROUND))
-          ->mode == BATTLE_BACKGROUND_ZOOMED) {
-    scanlines = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SCANLINES);
-    line = scanlines->lines[scanlines->page];
-    Io_Write16(line[0], &REG_BG2CNT);
-    Dma_Set(line + 1, (void *)&REG_BG2CNT, DMA_HBLANK_HALFWORD_PER_LINE,
-            &REG_DMA0SAD);
-    Dma_Set(&scanlines->affine, (void *)&REG_BG2PA, DMA_COPY_WORDS(4),
-            REG_DMA3);
-  }
+  if (view->mode != BATTLE_BACKGROUND_ZOOMED)
+    return;
+  scanlines = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SCANLINES);
+  line = scanlines->lines[scanlines->page];
+  Io_Write16(line[0], &REG_BG2CNT);
+  Dma_Set(line + 1, (void *)&REG_BG2CNT, DMA_HBLANK_HALFWORD_PER_LINE,
+          &REG_DMA0SAD);
+  Dma_Set(&scanlines->affine, (void *)&REG_BG2PA, DMA_COPY_WORDS(4), REG_DMA3);
 }
 
 // Nothing in this game calls it, adds it as a task or holds its address.
@@ -157,33 +135,20 @@ void BattleTransition_UploadTileVariant(void) {
 /// (HEAP_SLOT_BATTLE_ENTRY_TIMER), and writes gBgScroll[0].y and the camera's
 /// yaw.
 void BattleTransition_AdvanceTimer(void) {
-  s32 scroll;
-  struct BattleCamera *camera;
-  u32 *timer;
-  struct BgScroll *offset;
-  u32 frame;
-  u32 next;
+  u32 frame = *gBattleEntryTimer;
+  s32 scroll = 52 - (s32)frame;
 
-  timer = *(u32 **)Ram_BattleEntryTimer;
-  frame = *timer;
-  camera = *(struct BattleCamera **)Ram_CameraWork;
-  scroll = 52 - frame;
-  if (scroll > 32)
-    scroll = 32;
-  offset = (struct BgScroll *)Ram_BgScroll;
-  if (scroll < 0)
-    scroll = 0;
-  offset->y = scroll;
+  CLAMP(scroll, 0, 32);
+  gBgScroll[0].y = scroll;
   // 360 a frame from 44928 reaches 73728, a turn past YAW_PARTY_ACTION, at
   // frame 80.
-  if (frame <= 80U)
-    camera->yaw = 45 * frame * 8 + 44928;
-  next = (*timer = *timer + 1);
-  if (next <= 80U) {
-    BattleCamera_SetView(0, 0, 0, 180 - next);
-    return;
-  }
-  BattleCamera_SetView(0, 0, 0, 100);
+  if (frame <= 80)
+    gBattleCamera->yaw = frame * 360 + 44928;
+  frame = ++*gBattleEntryTimer;
+  if (frame <= 80)
+    BattleCamera_SetView(0, 0, 0, 180 - frame);
+  else
+    BattleCamera_SetView(0, 0, 0, 100);
 }
 
 /// Draws the curtain opening on BG1 as it stands at the current frame: over 80
@@ -194,48 +159,23 @@ void BattleTransition_AdvanceTimer(void) {
 /// which BattleTransition_AdvanceTimer counts in the frame pass; writes BG1's
 /// map in screen block 12.
 void BattleTransition_DrawRows(void) {
-  u32 column;
-  s32 transitionFrame;
-  s32 alignedFrame;
-  s32 tileEntry;
-  u32 tileRow;
-  u16 *tilemap;
+  s32 frame = *gBattleEntryTimer;
+  u16 *map = (u16 *)BG_SCREEN_BLOCK(12);
+  s32 entry;
+  s32 row;
+  s32 column;
 
-  transitionFrame = *gBattleEntryTimer;
-  if (transitionFrame >= 0 && transitionFrame <= 79) {
-    tileEntry = (7 & transitionFrame) + TRANSITION_CURTAIN_ENTRY(1);
-    // transitionFrame / 8 as signed division rounds it; the frame is never
-    // negative here.
-    if (transitionFrame >= 0) {
-      alignedFrame = transitionFrame;
-    } else {
-      alignedFrame = transitionFrame + 7;
-    }
-    tileRow = 13 - (alignedFrame >> 3);
-    column = 0;
-    tilemap = (u16 *)(BG_SCREEN_BLOCK(12) + (tileRow << 6));
-    do {
-      column++;
-      *tilemap = tileEntry;
-      tilemap++;
-    } while (column != 32);
-
-    // The lower half: the same tile flipped vertically.
-    tileEntry |= TILE_VFLIP;
-    alignedFrame = transitionFrame;
-    if (transitionFrame < 0) {
-      alignedFrame += 7;
-    }
-    tileRow = (alignedFrame >> 3) + 13;
-    if (tileRow <= 20) {
-      column = 0;
-      tilemap = (u16 *)(BG_SCREEN_BLOCK(12) + (tileRow << 6));
-      do {
-        column++;
-        *tilemap = tileEntry;
-        tilemap++;
-      } while (column != 32);
-    }
+  if (frame < 0 || frame > 79)
+    return;
+  // The upper half moves up from row 13, the lower half, flipped, down.
+  entry = (frame & 7) + TRANSITION_CURTAIN_ENTRY(1);
+  row = 13 - frame / 8;
+  for (column = 0; column < 32; column++)
+    map[row * 32 + column] = entry;
+  row = 13 + frame / 8;
+  if (row <= 20) {
+    for (column = 0; column < 32; column++)
+      map[row * 32 + column] = entry | TILE_VFLIP;
   }
 }
 
@@ -243,12 +183,7 @@ void BattleTransition_DrawRows(void) {
 /// interrupt fires on.
 /// Installed by BattleTransition_Run as the VCount interrupt's
 /// handler at line 32, while gBgScroll[0].y holds BG0 scrolled.
-void BattleTransition_ClearBg0Vofs(void) {
-  // The 0 is a local's, as in Battle_ClearBg0Vofs.
-  u32 scroll = 0;
-
-  REG_BG0VOFS = scroll;
-}
+void BattleTransition_ClearBg0Vofs(void) { REG_BG0VOFS = 0; }
 
 /// Opens a battle: the curtain opening, or for the Fusion Dragon the storm
 /// on the Venus Lighthouse aerie; then announces the enemies and leaves the

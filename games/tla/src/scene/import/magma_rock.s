@@ -74,9 +74,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_02003a54
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02003a54:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
@@ -230,9 +230,9 @@ Import_EventSetExitRequest:
 	.thumb_func
 Field_RequestDjinnBattle:
 	overlay_veneer Field_RequestDjinnBattleFar
-	.global Func_02003b8c
+	.global Field_TryJumpForward
 	.thumb_func
-Func_02003b8c:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global Event_StartScreenTransition
 	.thumb_func

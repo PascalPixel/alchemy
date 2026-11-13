@@ -7,9 +7,9 @@
 #include "module/scene/scene.h"
 #include "scene.h"
 
-extern s32 gData_02003d10[];
+extern s32 gMagmaRock_BlockPushes[];
 
-DEFINE_BLOCK_PUSH_ONTO(Func_020003b4, gData_02003d10, MapGrid_CheckCollision,
-                       Func_02003a54)
+DEFINE_BLOCK_PUSH_ONTO(MagmaRock_PushBlockOnto, gMagmaRock_BlockPushes,
+                       MapGrid_CheckCollision, Actor_SelectAnimation)
 
 #include "../../field/map/cell_fill_byte.c"

@@ -191,7 +191,7 @@ void Func_020021a0();
 void Func_020021e8();
 
 void Func_02002230();
-void Func_0200242c(void);
+void Beam_DrawTargets(void);
 void Func_020000bc(void);
 
 void Func_02000168(void);
@@ -929,7 +929,7 @@ s32 Scene_Initialize(void) {
     FieldEffect_StartBlankOverlay(0);
     ((struct SceneWork *)heap->eventWork)->unk1ac = value;
     if (entrance - 1 <= 1U) {
-      Func_02002624(gData_02005bf0, gData_02005bf6, Func_02000514, 88);
+      Beam_Start(gData_02005bf0, gData_02005bf6, Func_02000514, 88);
       if (Flag_IsSet(0xa42))
         Actor_SetPosition(10, 0, 0);
       else
@@ -943,7 +943,7 @@ s32 Scene_Initialize(void) {
       if (Flag_IsSet(0xa46))
         Func_020004bc(1, 0);
     } else {
-      Func_02002624(gData_02005bfc, gData_02005c0e, 0, 88);
+      Beam_Start(gData_02005bfc, gData_02005c0e, 0, 88);
       Actor_DisableById(15);
       Actor_DisableById(16);
       Func_02004938(15);
@@ -953,7 +953,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_Ov6adRoom2) {
     FieldEffect_StartBlankOverlay(0);
     ((struct SceneWork *)heap->eventWork)->unk1ac = value;
-    Func_02002624(gData_02005c14, gData_02005c26, Func_02001468, 88);
+    Beam_Start(gData_02005c14, gData_02005c26, Func_02001468, 88);
     Func_020027cc(3, 1);
     if (entrance == 2)
       Func_02002604();
@@ -1023,10 +1023,10 @@ s32 Scene_Initialize(void) {
     if (Flag_IsSet(0xa37))
       Actor_SetPosition(12, 0x780000, 0x1280000);
     if (entrance - 14 <= 1U) {
-      Func_02002624(gData_02005c2c, gData_02005c32, Func_02001490, 88);
+      Beam_Start(gData_02005c2c, gData_02005c32, Func_02001490, 88);
       Func_020027cc(0, 1);
     } else {
-      Func_02002624(gData_02005c38, gData_02005c46, 0, 88);
+      Beam_Start(gData_02005c38, gData_02005c46, 0, 88);
     }
     if (!Flag_IsSet(0x109)) {
       if (entrance == 2 || entrance == 4 || entrance == 6 || entrance == 7 ||
@@ -1046,13 +1046,13 @@ s32 Scene_Initialize(void) {
     BYTE_AT(Actor_GetById(8), 98) = 1;
     BYTE_AT(Actor_GetById(9), 98) = 1;
     if (entrance - 5 <= 1U || entrance == 8) {
-      Func_02002624(gData_02005c4c, gData_02005c5a, 0, 88);
+      Beam_Start(gData_02005c4c, gData_02005c5a, 0, 88);
 #if TLA_PATCH_1
       Func_020002ec();
 #endif
     } else if (entrance == 11 || entrance == 13 || entrance == 14 ||
                entrance == 1 || entrance == 15) {
-      Func_02002624(gData_02005c60, gData_02005c6e, 0, 88);
+      Beam_Start(gData_02005c60, gData_02005c6e, 0, 88);
     }
     if (!Flag_IsSet(0x109)) {
       if (entrance == 15)
@@ -1467,7 +1467,7 @@ typedef struct IwramGlobals {
 
 #define IWRAM ((IwramGlobals *)Ram_HeapSlots)
 
-DEFINE_BEAM_DRAW_TARGETS(Func_0200242c, Func_020023ac__s242c, Func_020021a0,
+DEFINE_BEAM_DRAW_TARGETS(Beam_DrawTargets, Func_020023ac__s242c, Func_020021a0,
                          Func_02002230, Func_020021e8, Func_02001fb4)
 #undef IWRAM
 
@@ -1538,7 +1538,7 @@ void Func_02002618(s16 value) {
   ((struct RideWork__s25b0 *)(gInventorySnapshot + 0x188))->value0e = value;
 }
 
-DEFINE_BEAM_START(Func_02002624, Func_0200242c)
+DEFINE_BEAM_START(Beam_Start, Beam_DrawTargets)
 
 #undef MarsLighthouseRoomF_ContinueSlide
 /* VIEW(ride): tag struct RideSlot as struct RideSlot__ride;
@@ -2002,7 +2002,7 @@ extern u32 gData_02005e00[];
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about
 /// speed plus 0x14000 with a random spread, at a random angle and size.
-DEFINE_EMBERS_SPAWN(Func_02002e8c, gData_02005e00)
+DEFINE_EMBERS_SPAWN(Embers_Spawn, gData_02005e00)
 
 void Func_02002f6c(struct Actor *object) {
   object->movementState = Event_GetFlag(260);
@@ -2039,12 +2039,12 @@ struct WorkEvent {
 
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
 void Func_02002d08(struct Actor *actor);
-void Func_02002e8c(s32 x, s32 y, s32 z, s32 speed);
+void Embers_Spawn(s32 x, s32 y, s32 z, s32 speed);
 extern u8 gInventorySnapshot[];
 
 DEFINE_ACTOR_ROLL_AND_CRUMBLE(Actor_RollAndCrumble, Work020023c4__s2f80,
                               MapGrid_GetCellAttributeLowNibbleOrBump,
-                              Func_02002e8c, Func_02002d08)
+                              Embers_Spawn, Func_02002d08)
 #undef ABS
 
 #undef RideSlot

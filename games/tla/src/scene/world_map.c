@@ -66,9 +66,9 @@ void WorldMap_SetCountdownByZ(s32 a, s32 b, s32 c);
 
 void Actor_SetFlightMode(struct Actor *object, s32 mode);
 
-void Func_020049bc(void);
+void Gauge_Init(void);
 void Func_02003c3c(void);
-void Func_02004a1c(void);
+void Gauge_End(void);
 
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 
@@ -346,7 +346,7 @@ void WorldMap_SetUpFlyingShip(void) {
     Message_CloseFinishedWindows();
     WorldMap_ReloadPendingAreaGraphics();
   }
-  Func_020049bc();
+  Gauge_Init();
   {
     s32 zero;
 
@@ -374,7 +374,7 @@ void WorldMap_SetUpShip(void) {
 
   gMainRoutineWork.renderMode = 7;
   Func_02003c3c();
-  Func_02004a1c();
+  Gauge_End();
   Actor_SetSpriteFlags(Actor_Get(8), 0);
   count = Party_CountMembers();
   pp = 0;
@@ -2387,7 +2387,7 @@ extern s16 gData_02006e0c;
 extern s16 gData_02006e0e;
 extern u8 gData_02006f20[][32];
 
-DEFINE_GAUGE_DRAW(Func_02004744, gData_02006e0c, Data_02006e20, gData_02006f20,
+DEFINE_GAUGE_DRAW(Gauge_Draw, gData_02006e0c, Data_02006e20, gData_02006f20,
                   gData_02006e0e)
 
 // The world map cursor: counts down while A or B is held, redraws the gauge and
@@ -2406,7 +2406,7 @@ void Func_020048f4(void) {
       gData_02006e10 = 10;
     }
   }
-  Func_02004744(Party_GetPpRatio());
+  Gauge_Draw(Party_GetPpRatio());
   attributes = 0x80004000;
   Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x), (s32)(screen));
   {
@@ -2420,10 +2420,10 @@ void Func_020048f4(void) {
   Oam_AddSpriteAtDepthClamped(Data_02006e14, 255);
 }
 
-DEFINE_GAUGE_INIT(Func_020049bc, gData_02006f20, gData_02006e0e, gData_02006e0c,
+DEFINE_GAUGE_INIT(Gauge_Init, gData_02006f20, gData_02006e0e, gData_02006e0c,
                   gData_02006e10, Func_020048f4)
 
-DEFINE_GAUGE_END(Func_02004a1c, gData_02006f20, gData_02006e0e, gData_02006e0c,
+DEFINE_GAUGE_END(Gauge_End, gData_02006f20, gData_02006e0e, gData_02006e0c,
                  Func_020048f4)
 
 // clang-format off

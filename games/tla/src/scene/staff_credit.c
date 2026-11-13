@@ -763,7 +763,7 @@ void Func_02001ad0(struct Actor *parent) {
 extern s16 gData_02003fc4;
 extern u8 gData_02003fd8[][32];
 
-DEFINE_GAUGE_DRAW(Func_02001be0, gData_02003fc4, gData_02003fd8, gData_020040d8,
+DEFINE_GAUGE_DRAW(Gauge_Draw, gData_02003fc4, gData_02003fd8, gData_020040d8,
                   gData_02003fc6)
 
 extern u32 gInput;
@@ -784,7 +784,7 @@ void Func_02001d90(void) {
       gData_02003fc8 = 10;
     }
   }
-  Func_02001be0(Party_GetPpRatio());
+  Gauge_Draw(Party_GetPpRatio());
   attributes = 0x80004000;
   Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x), (s32)(screen));
   {
@@ -798,10 +798,10 @@ void Func_02001d90(void) {
   Oam_AddSpriteAtDepthClamped(Data_02003fcc, 255);
 }
 
-DEFINE_GAUGE_INIT(Func_02001e58, gData_020040d8, gData_02003fc6, gData_02003fc4,
+DEFINE_GAUGE_INIT(Gauge_Init, gData_020040d8, gData_02003fc6, gData_02003fc4,
                   gData_02003fc8, Func_02001d90)
 
-DEFINE_GAUGE_END(Func_02001eb8, gData_020040d8, gData_02003fc6, gData_02003fc4,
+DEFINE_GAUGE_END(Gauge_End, gData_020040d8, gData_02003fc6, gData_02003fc4,
                  Func_02001d90)
 
 s32 gWorldMap_SparkScript[] = {

@@ -1433,7 +1433,7 @@ typedef struct IwramGlobals {
 
 #define IWRAM ((IwramGlobals *)Ram_HeapSlots)
 
-DEFINE_BEAM_DRAW_TARGETS(Func_02001bf8, Func_02001b78__s1bf8, Func_0200196c,
+DEFINE_BEAM_DRAW_TARGETS(Beam_DrawTargets, Func_02001b78__s1bf8, Func_0200196c,
                          Func_020019fc, Func_020019b4, Func_02001780)
 #undef IWRAM
 
@@ -1596,7 +1596,7 @@ void Func_02001df0(u16 *targets, u16 *stops, s32 a2, s32 a3) {
       REG_BLDCNT = control;
     }
   }
-  Task_AddFrame(Func_02001bf8, 0x480);
+  Task_AddFrame(Beam_DrawTargets, 0x480);
 }
 
 s32 Func_02001f24(s32 index) {
@@ -1882,7 +1882,7 @@ extern u32 gData_020047b8[];
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about
 /// speed plus 0x14000 with a random spread, at a random angle and size.
-DEFINE_EMBERS_SPAWN(Func_02002658, gData_020047b8)
+DEFINE_EMBERS_SPAWN(Embers_Spawn, gData_020047b8)
 
 void Func_02002738(struct Actor *object) {
   object->movementState = Event_GetFlag(260);
@@ -1913,7 +1913,7 @@ struct WorkEvent {
 
 DEFINE_ACTOR_ROLL_AND_CRUMBLE(Actor_RollAndCrumble, Work020023c4__s236c,
                               MapGrid_GetCellAttributeLowNibbleOrBump,
-                              Func_02002658, Func_020024d4)
+                              Embers_Spawn, Func_020024d4)
 #undef WORK
 #undef ABS
 

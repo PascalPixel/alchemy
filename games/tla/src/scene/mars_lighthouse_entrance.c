@@ -757,7 +757,7 @@ extern struct Trigger gMarsLighthouseEntrance_Room7Triggers[];
 /* VIEW(mars_lighthouse_entrance): routine Func_02002c2c as void
  * Func_02002c2c(void); scene/mars_lighthouse_entrance/s263c has void
  * Func_02002c2c(struct Actor *object) {; tried as the definition's
- * DEFINE_EMBERS_SPAWN(Func_02002b4c, gData_02005714) void Func_02002c2c(struct
+ * DEFINE_EMBERS_SPAWN(Embers_Spawn, gData_02005714) void Func_02002c2c(struct
  * Actor *object), which the object already declares, it does not compile in
  * tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1828: conflicting
  * types for `Func_02002c2c'. */
@@ -937,7 +937,7 @@ void Func_02001378(void) {
     Leader_SetSlideStopped(1);
 }
 
-void Func_020022e4(u16 *targets, u16 *stops, s32 a2, s32 a3);
+void Beam_Start(u16 *targets, u16 *stops, s32 a2, s32 a3);
 void Func_0200248c(s32 index, s16 value);
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
 void Func_0200196c(void);
@@ -987,8 +987,8 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellsLayered(50, 125, 3, 3, 39, 85);
   } else if (scene == (s32)&SceneId_Ov6aaRoom3) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
-    Call4((void (*)())Func_020022e4, (s32)gData_020053e6, (s32)gData_020053f8,
-          0, 88);
+    Call4((void (*)())Beam_Start, (s32)gData_020053e6, (s32)gData_020053f8, 0,
+          88);
     Call1((void (*)())MarsLighthouseEntrance_PlaceIceCones,
           (s32)gData_020053fe);
     if (Event_GetFlag(0xa3f)) {
@@ -1050,7 +1050,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_Ov6aaRoom4) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     if (entrance == 10 || entrance == 1) {
-      Call4((void (*)())Func_020022e4, (s32)gData_0200540c, (s32)gData_02005412,
+      Call4((void (*)())Beam_Start, (s32)gData_0200540c, (s32)gData_02005412,
             (s32)Func_020019a4, 88);
       Call2((void (*)())Func_0200248c, 0, 1);
     }
@@ -1073,14 +1073,14 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_Ov6aaRoom6) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     if (entrance == 2 || entrance == 4 || entrance == 6 || entrance == 13) {
-      Call4((void (*)())Func_020022e4, (s32)gData_02005438, (s32)gData_0200543e,
+      Call4((void (*)())Beam_Start, (s32)gData_02005438, (s32)gData_0200543e,
             (s32)Func_0200196c, 88);
       Call2((void (*)())Func_0200248c, 0, 1);
     }
     if ((u32)(entrance - 7) <= 1 || entrance == 11) {
       struct Actor *target;
 
-      Call4((void (*)())Func_020022e4, (s32)gData_02005448, (s32)gData_0200544e,
+      Call4((void (*)())Beam_Start, (s32)gData_02005448, (s32)gData_0200544e,
             (s32)Func_02001988, 88);
       Call2((void (*)())Func_0200248c, 0, 1);
       if (entrance == 11) {
@@ -1341,7 +1341,7 @@ typedef struct IwramGlobals {
 
 #define IWRAM ((IwramGlobals *)Ram_HeapSlots)
 
-DEFINE_BEAM_DRAW_TARGETS(Func_020020ec, Func_0200206c__s20ec, Func_02001e60,
+DEFINE_BEAM_DRAW_TARGETS(Beam_DrawTargets, Func_0200206c__s20ec, Func_02001e60,
                          Func_02001ef0, Func_02001ea8, Func_02001c74)
 #undef IWRAM
 
@@ -1373,9 +1373,9 @@ void Func_020022c4(void) {
 
 void Func_020022d8(s16 value) { RIDE_WORK->value0e = value; }
 
-void Func_020020ec(void);
+void Beam_DrawTargets(void);
 
-DEFINE_BEAM_START(Func_020022e4, Func_020020ec)
+DEFINE_BEAM_START(Beam_Start, Beam_DrawTargets)
 
 s32 Func_02002418(s32 index) {
   return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->a;
@@ -1459,7 +1459,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 /* VIEW(s263c): routine Func_02002614 as void Func_02002614(void);
  * scene/mars_lighthouse_entrance/s2270 has DEFINE_ACTOR_BLINK(Func_02002614,
- * 10, 4, 0) #undef Func_020022e4 #undef Unit_Get // ----
+ * 10, 4, 0) #undef Beam_Start #undef Unit_Get // ----
  * scene/mars_lighthouse_entrance/s263c.c ---- /// Scene code of overlay 0x6aa,
  * in ROM order. #include "shared/mars_lighthouse.h" #include "version.h"
  * #include "types.h" #include "call.h" #include "actor.h" #include
@@ -1698,7 +1698,7 @@ extern u32 gData_02005714[];
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about
 /// speed plus 0x14000 with a random spread, at a random angle and size.
-DEFINE_EMBERS_SPAWN(Func_02002b4c, gData_02005714)
+DEFINE_EMBERS_SPAWN(Embers_Spawn, gData_02005714)
 
 void Func_02002c2c(struct Actor *object) {
   object->movementState = Event_GetFlag(260);
@@ -1729,7 +1729,7 @@ struct WorkEvent {
 
 DEFINE_ACTOR_ROLL_AND_CRUMBLE(Actor_RollAndCrumble, Work020023c4__s2860,
                               MapGrid_GetCellAttributeLowNibbleOrBump,
-                              Func_02002b4c, Func_020029c8)
+                              Embers_Spawn, Func_020029c8)
 #undef WORK
 #undef ABS
 

@@ -1367,7 +1367,7 @@ typedef struct IwramGlobals {
 
 #define IWRAM ((IwramGlobals *)Ram_HeapSlots)
 
-DEFINE_BEAM_DRAW_TARGETS(Func_02001f94, Func_02001f14__s1f94, Func_02001d08,
+DEFINE_BEAM_DRAW_TARGETS(Beam_DrawTargets, Func_02001f14__s1f94, Func_02001d08,
                          Func_02001d98, Func_02001d50, Func_02001b1c)
 #undef IWRAM
 
@@ -1401,7 +1401,7 @@ void Func_02002180(s16 value) {
   ((struct RideWork *)(gInventorySnapshot + 0x188))->value0e = value;
 }
 
-DEFINE_BEAM_START(Func_0200218c, Func_02001f94)
+DEFINE_BEAM_START(Beam_Start, Beam_DrawTargets)
 
 s32 Func_020022c0(s32 index) {
   return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->a;
@@ -1682,7 +1682,7 @@ void Func_02002870(struct Actor *actor) {
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about
 /// speed plus 0x14000 with a random spread, at a random angle and size.
-DEFINE_EMBERS_SPAWN(Func_020029f4, gData_02003348)
+DEFINE_EMBERS_SPAWN(Embers_Spawn, gData_02003348)
 
 void Func_02002ad4(struct Actor *object) {
   object->movementState = Event_GetFlag(260);
@@ -1714,7 +1714,7 @@ struct WorkEvent {
 
 DEFINE_ACTOR_ROLL_AND_CRUMBLE(Actor_RollAndCrumble, Work020023c4,
                               MapGrid_GetCellAttributeLowNibbleOrBump,
-                              Func_020029f4, Func_02002870)
+                              Embers_Spawn, Func_02002870)
 
 void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
                    const void *script) {

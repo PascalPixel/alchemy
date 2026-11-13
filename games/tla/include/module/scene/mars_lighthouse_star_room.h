@@ -16,7 +16,7 @@ void Actor_LaunchAhead(struct Actor *object);
 
 void Func_020014f4(void);
 
-void Func_02001bf8(void);
+void Beam_DrawTargets(void);
 
 void Party_TakeFallDamage(void);
 

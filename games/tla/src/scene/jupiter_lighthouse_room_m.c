@@ -18,7 +18,12 @@
 #include "system/main_routine_work.h"
 #include "field_event.h"
 #include "field/event_inline.h"
-#include "jupiter_lighthouse_room_m.h"
+#include "types.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "actor.h"
+
+void Leader_CenterInCell(void);
 #include "system/io_reg.h"
 #include "system/dma.h"
 #include "system/io_write.h"

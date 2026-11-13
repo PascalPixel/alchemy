@@ -3,7 +3,28 @@
 
 #include "../field/object/prepare_object.c"
 #include "shared/actors.h"
-#include "anemos_inner_sanctum_entrance/anemos_inner_sanctum_entrance.h"
+#include "types.h"
+#include "system/ram_buffer.h"
+#include "actor.h"
+#include "system/main_routine_work.h"
+#include "scene_tables.h"
+#include "scene_ids.h"
+
+struct AnemosInnerSanctumEntranceParty {
+  u8 unk000[0x24b];
+  u8 battleRule;
+  u8 unk24c[8];
+  u16 battleGroup;
+};
+
+void Func_02000494(void);
+void Func_02000be0(u16 value);
+void Actor_MoveToObject(s32 id, s32 a);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
+s32 Field_FindNearbyTalkTarget(s32 id);
+void Field_TryJumpForward(void);
+s32 Leader_CanPushObjectAhead(void);
+void Leader_PushObjectAhead(void);
 #include "field/field.h"
 #include "shared/jupiter_lighthouse.h"
 #include "types.h"

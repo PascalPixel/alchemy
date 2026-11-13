@@ -2,7 +2,55 @@
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
-#include "ankohl_ruins/ankohl_ruins.h"
+#include "types.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
+#include "actor.h"
+#include "system/main_routine_work.h"
+#include "scene_tables.h"
+#include "scene_ids.h"
+#include "field_sprite.h"
+#include "field/event_inline.h"
+
+/// The overlay's view of the event work heap slot.
+struct AnkohlRuinsEventWork {
+  u8 unk000[0x154];
+  s16 unk154; ///< 66 when Func_020010f4's step is refused; 40 lets it run
+  u8 unk156[0x14];
+  s16 alarm;
+  u8 unk16c[0x60];
+  /// Moved with the leader while the raft (object 9) carries them.
+  struct Actor *unk1cc;
+};
+
+void Func_02000b30(s32 id, s32 cue);
+void Func_0200160c(void);
+void Func_020019a0(void);
+void Func_02001f7c(void);
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static inline s32 AnkohlRuins_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
+
+static inline void AnkohlRuins_Call2e24(s32 a, s32 b, s32 c) {
+  MapGrid_SetScreenShake(a, b, c);
+}
+
+static inline void AnkohlRuins_CamBounds(s32 x, s32 y, s32 z, s32 mode) {
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
+}
+
+static inline void AnkohlRuins_Call2df4(s32 a, s32 b, s32 c, s32 d, s32 e,
+                                        s32 f) {
+  Map_CopyCellsRect(a, b, c, d, e, f);
+}
+
+static inline void AnkohlRuins_Call2dfc(s32 a, s32 b, s32 c, s32 d, s32 e,
+                                        s32 f) {
+  Map_CopyCellAttributeRect(a, b, c, d, e, f);
+}
+
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
 #include "field/field.h"
 #include "flags.h"
 #include "battle/battle.h"

@@ -27,7 +27,6 @@
 #include "map_grid_scroll.h"
 #include "heap.h"
 #include "menu_list.h"
-#include "types.h"
 #include "io_write_queue.h"
 #include "io_reg.h"
 #include "heap_slots.h"

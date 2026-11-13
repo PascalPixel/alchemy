@@ -207,6 +207,7 @@ void Battle_AwardSpoils(void) {
   s32 highestItemPriority;
   s32 highestItemSlot;
   s32 slot;
+  u16 *overflowItem;
   s32 itemPriority;
   struct LevelUpResult gains; // Read stat increases as signed values.
   u16 unitIds[8];
@@ -297,6 +298,7 @@ void Battle_AwardSpoils(void) {
   }
   // The items, the highest ranked first; the first the inventory cannot
   // take is left in gOverflowItem.
+  overflowItem = &gOverflowItem;
   for (;;) {
     highestItemSlot = -1;
     highestItemPriority = -1;
@@ -316,7 +318,7 @@ void Battle_AwardSpoils(void) {
     BattleMessage_ShowAndWaitFar(MsgItemGained);
     BattleMessage_WaitForAdvance();
     if (PartyInventory_AddFar(spoils->items[highestItemSlot]) == -1) {
-      gOverflowItem = spoils->items[highestItemSlot];
+      *overflowItem = spoils->items[highestItemSlot];
       break;
     }
     spoils->items[highestItemSlot] = 0;

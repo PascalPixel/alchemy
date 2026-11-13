@@ -390,7 +390,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
   }
 
   event = Func_080ce458__f0dd054(0x50000005, scene->fieldKind,
-                                 Func_080ce31c(scene->fieldKind));
+                                 Scene_SelectPsynergyTarget(scene->fieldKind));
   pusher->watchedObject = target;
   position.x = target->x;
   position.y = target->y + (16 << 16);
@@ -823,8 +823,9 @@ void FieldPsynergy_Reveal(void) {
   event->active = 0;
   wait(1);
 
-  pending = Scene_FindPsynergyTrigger(REVEAL_EVENT_START, FIELD_PSYNERGY_REVEAL,
-                                      Func_080ce31c(FIELD_PSYNERGY_REVEAL));
+  pending = Scene_FindPsynergyTrigger(
+      REVEAL_EVENT_START, FIELD_PSYNERGY_REVEAL,
+      Scene_SelectPsynergyTarget(FIELD_PSYNERGY_REVEAL));
   if (pending != 0)
     Field_RunPsynergyEvent(pending, scene->firstObjectId,
                            scene->secondObjectId);
@@ -870,8 +871,9 @@ void FieldPsynergy_EndReveal(void) {
     BattleEffect_ApplyColorToTargetBuffer__f0dcb44(0x10000, 0);
     PaletteFade_StartInterpolation(30);
     wait(1);
-    pending = Scene_FindPsynergyTrigger(0x40000005, FIELD_PSYNERGY_REVEAL,
-                                        Func_080ce31c(FIELD_PSYNERGY_REVEAL));
+    pending = Scene_FindPsynergyTrigger(
+        0x40000005, FIELD_PSYNERGY_REVEAL,
+        Scene_SelectPsynergyTarget(FIELD_PSYNERGY_REVEAL));
     if (pending != NULL)
       Field_RunPsynergyEvent(pending, scene->firstObjectId,
                              scene->secondObjectId);
@@ -1484,7 +1486,8 @@ void FieldPsynergy_Force(void) {
     }
   }
 
-  event = Scene_FindPsynergyTrigger(0x50000005, 4, Func_080ce31c(4));
+  event =
+      Scene_FindPsynergyTrigger(0x50000005, 4, Scene_SelectPsynergyTarget(4));
   if (event != NULL)
     Field_RunPsynergyEvent(event, scene->firstObjectId, scene->secondObjectId);
   wait(10);
@@ -1651,7 +1654,8 @@ void FieldPsynergy_Frost(void) {
     }
 
     target->update = (void (*)(void))FieldEffect_UpdateFrostGlint;
-    ev = Scene_FindPsynergyTrigger(0x50000005, 6, Func_080ce31c(6));
+    ev =
+        Scene_FindPsynergyTrigger(0x50000005, 6, Scene_SelectPsynergyTarget(6));
     if (ev != NULL)
       Field_RunPsynergyEvent(ev, scene->firstObjectId, scene->secondObjectId);
     wait(20);

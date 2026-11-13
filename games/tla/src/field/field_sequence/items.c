@@ -222,12 +222,18 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   return result;
 }
 
-s32 Func_080ce31c(s32 kind) {
+/// Chooses what a Psynergy of the given kind acts on, for
+/// Scene_FindPsynergyTrigger: among the scene's Psynergy triggers for that
+/// kind whose condition holds (and whose direction, if any, the leader faces),
+/// the cell the leader faces, or for Teleport the cell under it; else the
+/// nearest target in reach (its number with 0x100 set); else 0x200 for a
+/// trigger that applies anywhere, or -1.
+s32 Scene_SelectPsynergyTarget(s32 kind) {
   struct TriggerWork *work = Ram_HeapSlots->eventWork;
   struct TriggerEvent *event = work->events;
   u32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
   s32 focused = Field_GetCollisionAheadOfLeader();
-  s32 special = Func_080cb144();
+  s32 special = Field_GetCollisionUnderLeader();
   s32 best = 9999;
   // Default: -1, though every path below sets it.
   s32 result = -1;
@@ -264,7 +270,7 @@ s32 Func_080ce31c(s32 kind) {
           nearby = target | 0x100;
           best = distance;
         }
-      } else if (kind == 30) {
+      } else if (kind == FIELD_PSYNERGY_TELEPORT) {
         if (target == special) {
           selected = target;
           break;
@@ -347,7 +353,7 @@ s32 Field_RunPsynergyEndEvents(u32 packed) {
   action = packed & 0x3ff;
   mode = (packed >> 10) & 15;
   kind = Ability_Get(action)->unk04[2];
-  selector = Func_080ce31c(kind);
+  selector = Scene_SelectPsynergyTarget(kind);
   first = (struct PendingEvent *)Scene_FindPsynergyTrigger(0x30000005, kind,
                                                            selector);
   second = (struct PendingEvent *)Scene_FindPsynergyTrigger(0x20000005, kind,

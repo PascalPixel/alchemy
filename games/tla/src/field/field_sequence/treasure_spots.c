@@ -41,11 +41,11 @@ s16 *SceneItem_GetRows(void) {
   return found;
 }
 
-/// Clears out[0..2], then fills it from Func_080ca9cc's table entry for
-/// value; returns that lookup's result (0 found, -1 not).
+/// Clears out[0..2], then fills it from ScenePoint_GetPosition's table entry
+/// for value; returns that lookup's result (0 found, -1 not).
 s32 SceneItem_FindPosition(s32 value, s32 *out) {
   SET_VECTOR(out, 0, 0, 0);
-  return Func_080ca9cc(value, out);
+  return ScenePoint_GetPosition(value, out);
 }
 
 void Actor_ShowItemIconById(s32 id, s32 item);

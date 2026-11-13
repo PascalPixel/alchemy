@@ -85,7 +85,7 @@ void Event_EmptyObjectHook(void) {}
 
 struct Actor *Event_RunObjectHookAndWait(s32 object) {
   Event_EmptyObjectHook();
-  Func_080caa4c(object);
+  Actor_ResetForLeader(object);
   wait(1);
   return ObjectTable_Get(Party_GetLeaderActor());
 }

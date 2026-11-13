@@ -121,7 +121,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   spraying = 0;
   next = 0;
   mode = 0;
-  selector = Func_080ce31c(scene->fieldKind);
+  selector = Scene_SelectPsynergyTarget(scene->fieldKind);
   pending = Func_080ce458__f0e92b4(0x50000005, scene->fieldKind, selector);
   if (child != NULL) {
     if (animation != NULL) {

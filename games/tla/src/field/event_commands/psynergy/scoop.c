@@ -522,8 +522,9 @@ void FieldPsynergy_Scoop(void) {
       frame++;
     }
   } else {
-    pending = Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind,
-                                        Func_080ce31c(scene->fieldKind));
+    pending =
+        Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind,
+                                  Scene_SelectPsynergyTarget(scene->fieldKind));
     frame = 0;
     while (work->phase != 999) {
       stage = 0;

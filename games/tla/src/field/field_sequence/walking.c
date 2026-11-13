@@ -84,7 +84,9 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   return cell[2];
 }
 
-s32 Func_080cb144(void) {
+/// The collision code of the cell under the leader (on the world map, of its
+/// block), or 0 with no leader. Teleport's triggers match it.
+s32 Field_GetCollisionUnderLeader(void) {
   struct DisplayBlock *block = Ram_HeapSlots->eventWork;
   struct Actor *object = WorldMap_Unfreeze();
   struct MapWork *map = Ram_HeapSlots->mapWork;

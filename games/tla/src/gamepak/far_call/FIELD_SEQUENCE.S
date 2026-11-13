@@ -139,11 +139,11 @@ Resource_FarCall006:
 	export Actor_ReturnHomeFar, Actor_ReturnHome
 	export WorldMap_FreezeFar, WorldMap_Freeze
 	export Func_080c8438, WorldMap_ReloadPendingAreaGraphics
-	export Func_080c8440, Func_080caa4c
+	export Actor_ResetForLeaderFar, Actor_ResetForLeader
 	export Event_SpawnObjectTableFar, Event_SpawnObjectTable
 	export Actor_ReleaseAtIndexFar, Actor_ReleaseAtIndex
 	export ObjectTable_GetFar, ObjectTable_Get
-	export Func_080c8460, Func_080ca9cc
+	export ScenePoint_GetPositionFar, ScenePoint_GetPosition
 	export FieldEffect_StartFadeOverlayFar, FieldEffect_StartFadeOverlay
 	export FadeOverlay_SuspendFar, FadeOverlay_Suspend
 	export FadeOverlay_ResumeFar, FadeOverlay_Resume
@@ -215,7 +215,7 @@ Resource_FarCall006:
 	export Scene_QueueMusicFar, Scene_QueueMusic
 	export Event_NoOpFar, Event_NoOp
 	export Scene_PlayQueuedMusicFar, Scene_PlayQueuedMusic
-	export Func_080c86a0, Func_080ca6e4
+	export Actor_ReservedNoOpFar, Actor_ReservedNoOp
 	export Func_080c86a8, Rope_Initialize
 	export Func_080c86b0, Rope_Tie
 	export Func_080c86b8, Rope_Coil

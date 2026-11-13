@@ -196,10 +196,11 @@ void FieldPsynergy_EndSand(void) {
         *motionFlags = 3;
       }
       if (*(s16 *)(event + 0xd48) == 0)
-        Field_RunPsynergyEvent(Func_080ce458__growing_particle(
-                                   0x40000005, *(s16 *)(effect + 30),
-                                   Func_080ce31c(*(s16 *)(effect + 30))),
-                               *(s16 *)(effect + 24), -1);
+        Field_RunPsynergyEvent(
+            Func_080ce458__growing_particle(
+                0x40000005, *(s16 *)(effect + 30),
+                Scene_SelectPsynergyTarget(*(s16 *)(effect + 30))),
+            *(s16 *)(effect + 24), -1);
     }
     i = 0;
     particle = work + 0x1200;

@@ -929,7 +929,7 @@ s32 SuperLuckyDice_DrawNumber(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
 s32 SuperLuckyDice_DrawLargeNumber(s32 sprite, s32 x, s32 y, s32 value,
                                    s32 palette, s32 digits);
 
-void Func_080caa4c(s32 table);
+void Actor_ResetForLeader(s32 table);
 
 void Portrait_CloseWindowFar(s32 sprite);
 
@@ -984,7 +984,7 @@ void Party_ClearUnusableShortcuts(void);
 
 void BattleBackground_SelectForMap(void);
 
-s32 Func_080ca9cc(s32 id, s32 *position);
+s32 ScenePoint_GetPosition(s32 id, s32 *position);
 void ObjectTable_Clear(void);
 
 void Party_AddPp(s32 amount, s32 unused);

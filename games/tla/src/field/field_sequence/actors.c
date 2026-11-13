@@ -31,7 +31,8 @@ s32 Party_GetCharacterSprite(s32 character) {
   return sprite;
 }
 
-void Func_080ca6e4(void) {}
+/// Does nothing; nothing calls Actor_ReservedNoOpFar.
+void Actor_ReservedNoOp(void) {}
 
 void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
   struct FieldStepWork *work = Ram_HeapSlots->eventWork;
@@ -85,7 +86,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
         position[0] = (s32)object;
         position[1] = (s32)object;
         position[2] = (s32)object;
-        Func_080ca9cc(entry->x, position);
+        ScenePoint_GetPosition(entry->x, position);
         object = Actor_CreateFar(character, position[0], 0, position[2]);
       } else {
         object = Actor_CreateFar(character, entry->x, entry->y, entry->z);
@@ -146,7 +147,10 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
   }
 }
 
-s32 Func_080ca9cc(s32 id, s32 *position) {
+/// Looks point id up in the map's scene points (its scene_points.tsv, ended by
+/// id 0xff) and writes its x and z, in 16.16 pixels, to position; returns 0,
+/// or -1 when the map has no such point.
+s32 ScenePoint_GetPosition(s32 id, s32 *position) {
   u8 *cursor = Ram_Data_0202e008;
   s8 key;
 
@@ -177,7 +181,11 @@ void Actor_ReleaseAtIndex(u32 actorIndex) {
 
 u8 *ResourceMetadata_RegisterFar(void *resource, s32 id);
 
-void Func_080caa4c(s32 table) {
+/// Creates a scene's actors on entering it, as The Broken Seal's
+/// Actor_ResetForLeader does: the party leader where the main routine's work
+/// puts it, the scene's placement table from actor slot 8, and the camera
+/// that follows the leader; it also chooses the leader's control mode.
+void Actor_ResetForLeader(s32 table) {
   struct EventWork *work;
   struct EventWorkPlacements *placements;
   struct ActorPlacement *entry;

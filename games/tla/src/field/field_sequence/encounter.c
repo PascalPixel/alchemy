@@ -419,7 +419,9 @@ void BattleBackground_SelectForEnvironment(s32 behavior) {
   gMainRoutineWork.battleBackground = value;
 }
 
-s32 Func_080ca5a0(s32 owner) {
+/// Whether the character is one of the first four party members, the ones in
+/// battle.
+s32 Party_IsInFrontRow(s32 owner) {
   s32 count = Party_CountMembersFar();
   s32 i;
 
@@ -460,11 +462,11 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
   if (music == 0) {
     if (gMainRoutineWork.ownerOverride != 0 && !GameFlag_Test(0x8df))
       music = 56;
-    else if (Func_080ca5a0(4))
+    else if (Party_IsInFrontRow(4))
       music = 50;
-    else if (Func_080ca5a0(0))
+    else if (Party_IsInFrontRow(0))
       music = 750;
-    else if (Func_080ca5a0(5))
+    else if (Party_IsInFrontRow(5))
       music = 49;
     else
       music = 50;

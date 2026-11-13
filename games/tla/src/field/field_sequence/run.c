@@ -101,7 +101,7 @@ s32 FieldSequence_Run(void) {
   Field_ClearRequests();
   work->events = (const void *)OVERLAY_CALL(9);
   BattleMap_ApplySceneEntranceView();
-  Func_080caa4c(OVERLAY_CALL(7));
+  Actor_ResetForLeader(OVERLAY_CALL(7));
   Field_PlaceTreasureSpots();
   if (GameFlag_Test(265))
     Actor_Restore();

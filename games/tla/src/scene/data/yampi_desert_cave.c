@@ -3,48 +3,48 @@
 #include "scene_tables.h"
 #include "module/scene/yampi_desert_cave.h"
 
-void Func_02000e14(void);
-void Func_02000e3c(void);
-void Func_02000e68(void);
-void Func_02000f10(void);
-void Func_020011b4(void);
-void Func_02001238(void);
+void YampiDesertCave_BurstRoom1Pillar(void);
+void YampiDesertCave_BurstRoom3Pillar(void);
+void YampiDesertCave_StartMovingPillar(void);
+void YampiDesertCave_FinishMovingPillar(void);
+void YampiDesertCave_PoundStake(void);
+void YampiDesertCave_ScoopDjinni(void);
 void YampiDesertCave_MeetGuardianOfFire(void);
-void Func_020013c8(void);
+void YampiDesertCave_ScoopTreasure(void);
 
 // clang-format off
-u16 gData_02001968[] = {
+u16 gYampiDesertCave_LogSprites[] = {
     258, 259, 293, 294, 332, 331,
 };
 
-u32 gData_02001974[] = {
+u32 gYampiDesertCave_LogFootprints[] = {
     0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
 };
 
-DEFINE_G_DATA_0200198C(gData_0200198c)
+DEFINE_G_DATA_0200198C(gYampiDesertCave_DirectionSteps)
 
-u32 gData_020019cc[] = {
+u32 gYampiDesertCave_RipplePath[] = {
     0x270065, 0, 0x230061, 0, 0x250063, 0,
     0x21005f, 0,
 };
 
-s16 gData_020019ec[] = {
+s16 gYampiDesertCave_MarkPaletteSlots[] = {
     9, 10, 11, 12, 13, 14, 15, -1,
 };
 
-s16 gData_020019fc[] = {
+s16 gYampiDesertCave_MarkColorsLit[] = {
     23, 25, 22, 23, 25, 22, 23, 25,
     22, 23, 25, 22, 23, 25, 22, 23,
     25, 22, 23, 25, 22, -1,
 };
 
-s16 gData_02001a28[] = {
+s16 gYampiDesertCave_MarkColorsDim[] = {
     30, 27, 31, 22, 21, 31, 20, 18,
     31, 13, 11, 27, 11, 8, 24, 8,
     5, 21, 31, 31, 31, -1,
 };
 
-DEFINE_G_DATA_020013B4(gData_02001a54, 14, 9, 10, 11, 12, 13)
+DEFINE_G_DATA_020013B4(gYampiDesertCave_MarkCycle, 14, 9, 10, 11, 12, 13)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -85,7 +85,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-u32 gData_02001b48[] = {
+u32 gYampiDesertCave_Settle[] = {
     22, 26, 0, 17,
 };
 
@@ -99,8 +99,8 @@ struct ActorPlacement gYampiDesertCave_Placements[] = {
 // clang-format on
 
 struct ActorPlacement gYampiDesertCave_Room2Placements[] = {
-    {272, CONDITION_ALWAYS, (s32)gData_02001b48, PIXELS(552), 0, PIXELS(200),
-     FACING_SOUTH, 2, 0},
+    {272, CONDITION_ALWAYS, (s32)gYampiDesertCave_Settle, PIXELS(552), 0,
+     PIXELS(200), FACING_SOUTH, 2, 0},
     {177, 0x9cd, 1, PIXELS(200), 0, PIXELS(152), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
@@ -110,19 +110,19 @@ struct ActorPlacement gYampiDesertCave_Room3Placements[] = {
     {332, CONDITION_ALWAYS, 7, PIXELS(752), 0, PIXELS(744), FACING_SOUTH, 2, 0},
     {331, CONDITION_ALWAYS, 7, PIXELS(728), 0, PIXELS(784), FACING_SOUTH, 2, 0},
     {332, CONDITION_ALWAYS, 7, PIXELS(800), 0, PIXELS(760), FACING_SOUTH, 2, 0},
-    {272, CONDITION_ALWAYS, (s32)gData_02001b48, PIXELS(632), 0, PIXELS(264),
-     FACING_SOUTH, 2, 0},
-    {272, CONDITION_ALWAYS, (s32)gData_02001b48, PIXELS(136), 0, PIXELS(168),
-     FACING_SOUTH, 2, 0},
-    {406, CONDITION_ALWAYS, (s32)gData_02001b48, PIXELS(744), 0, PIXELS(200),
-     FACING_SOUTH, 2, 0},
+    {272, CONDITION_ALWAYS, (s32)gYampiDesertCave_Settle, PIXELS(632), 0,
+     PIXELS(264), FACING_SOUTH, 2, 0},
+    {272, CONDITION_ALWAYS, (s32)gYampiDesertCave_Settle, PIXELS(136), 0,
+     PIXELS(168), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, (s32)gYampiDesertCave_Settle, PIXELS(744), 0,
+     PIXELS(200), FACING_SOUTH, 2, 0},
     {404, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(632), FACING_SOUTH, 2, 0},
     {251, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
     {243, 0x41, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
     {SCENE_TABLE_END},
 };
 
-u32 gData_02001d20[] = {
+u32 gYampiDesertCave_Room3Stakes[] = {
     14,
     0xffff0206,
 };
@@ -136,14 +136,16 @@ struct Trigger gYampiDesertCave_Triggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {49, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {0x202, 42, CONDITION_ALWAYS, EVENT(Func_02000d84)},
-    {0x50009705, 33, 0x300, EVENT(Func_02000e14)},
-    {0x9c05, 30, CONDITION_ALWAYS, EVENT(Func_02000dac)},
-    {0x9c05, 31, CONDITION_ALWAYS, EVENT(Func_02000de0)},
+    {0x202, 42, CONDITION_ALWAYS, EVENT(YampiDesertCave_TryPushLog)},
+    {0x50009705, 33, 0x300, EVENT(YampiDesertCave_BurstRoom1Pillar)},
+    {0x9c05, 30, CONDITION_ALWAYS,
+     EVENT(YampiDesertCave_TeleportFromFirstMark)},
+    {0x9c05, 31, CONDITION_ALWAYS,
+     EVENT(YampiDesertCave_TeleportFromSecondMark)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
-     CONDITION_ALWAYS, EVENT(Func_02001040)},
+     CONDITION_ALWAYS, EVENT(YampiDesertCave_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
-     EVENT(Func_02001120)},
+     EVENT(YampiDesertCave_EndSand)},
     {TRIGGER_TABLE_END},
 };
 
@@ -156,13 +158,14 @@ struct Trigger gYampiDesertCave_Room2Triggers[] = {
     {33, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_STEP, 52, 0x9cd, EVENT(YampiDesertCave_MeetGuardianOfFire)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8,
-     0x303, EVENT(Func_02000e68)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x303, EVENT(Func_02000f10)},
+     0x303, EVENT(YampiDesertCave_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x303,
+     EVENT(YampiDesertCave_FinishMovingPillar)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
-     CONDITION_ALWAYS, EVENT(Func_02001040)},
+     CONDITION_ALWAYS, EVENT(YampiDesertCave_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
-     EVENT(Func_02001120)},
-    {0x50008805, 100, 0x302, EVENT(Func_020013c8)},
+     EVENT(YampiDesertCave_EndSand)},
+    {0x50008805, 100, 0x302, EVENT(YampiDesertCave_ScoopTreasure)},
     {TRIGGER_TABLE_END},
 };
 
@@ -180,24 +183,26 @@ struct Trigger gYampiDesertCave_Room3Triggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_02000d04)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_02000cec)},
-    {0x202, 42, CONDITION_ALWAYS, EVENT(Func_02000d84)},
-    {0x50009705, 33, 0x301, EVENT(Func_02000e3c)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(YampiDesertCave_WonderAtRipple)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(YampiDesertCave_FightCrystal)},
+    {0x202, 42, CONDITION_ALWAYS, EVENT(YampiDesertCave_TryPushLog)},
+    {0x50009705, 33, 0x301, EVENT(YampiDesertCave_BurstRoom3Pillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12,
-     0x305, EVENT(Func_02000e68)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x305, EVENT(Func_02000f10)},
+     0x305, EVENT(YampiDesertCave_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x305,
+     EVENT(YampiDesertCave_FinishMovingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13,
-     0x304, EVENT(Func_02000e68)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x304, EVENT(Func_02000f10)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_02000e68)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000f10)},
+     0x304, EVENT(YampiDesertCave_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x304,
+     EVENT(YampiDesertCave_FinishMovingPillar)},
+    {8, 0, CONDITION_ALWAYS, EVENT(YampiDesertCave_StartMovingPillar)},
+    {9, 0, CONDITION_ALWAYS, EVENT(YampiDesertCave_FinishMovingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, 0x206,
-     EVENT(Func_020011b4)},
+     EVENT(YampiDesertCave_PoundStake)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
-     CONDITION_ALWAYS, EVENT(Func_02001040)},
+     CONDITION_ALWAYS, EVENT(YampiDesertCave_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
-     EVENT(Func_02001120)},
-    {0x50008805, 33, IF_FLAG_SET(0x270), EVENT(Func_02001238)},
+     EVENT(YampiDesertCave_EndSand)},
+    {0x50008805, 33, IF_FLAG_SET(0x270), EVENT(YampiDesertCave_ScoopDjinni)},
     {TRIGGER_TABLE_END},
 };

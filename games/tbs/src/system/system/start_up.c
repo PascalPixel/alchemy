@@ -165,46 +165,64 @@ void *Resource_GetTableEntry(s32 index) {
 /// the block, which turns it into the pc-relative offset the CPU expects; the
 /// pairs are rewritten in place. `byteLength` is the code size. Nothing calls
 /// it: Overlay_Load uses the ARM routine that does the same.
-UNUSED void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
-  s32 entryCount;
-  s32 entryIndex;
+UNUSED void Code_ResolveLongBranches(u16 *pair, s32 byteLength) {
+  s32 entryCount = byteLength >> 1;
+  s32 i = 1;
 
-  entryCount = byteLength >> 1;
-  entryIndex = 1;
-  if (entryIndex < entryCount) {
-    u32 nextMarkerMask = 0xf800;
-    u32 payloadMask = 0x7ff;
-    u32 currentMarkerMask = 0xf000;
-    // Only adjacent halfwords with both BL marker patterns are relocated.
+  pair++;
+  if (i < entryCount) {
+    u32 lowMarker = 0xf800;
+    u32 offsetBits = 0x7ff;
+    u32 highMarker = 0xf000;
+
+#ifndef UBFIX
+    // UB: the walk starts a halfword before the block.
+    pair -= 2;
+#endif
+    // Each halfword from the second on is tried as the second of a pair.
     do {
-      u16 currentEntry;
-      u16 nextEntry;
-      u32 nextMarkerBits;
-      u32 currentMarkerBits;
+      u16 first, second;
+      u32 secondMarker, firstMarker;
 
-      nextEntry = entries[1];
-      nextMarkerBits = nextEntry & nextMarkerMask;
-      if (nextMarkerBits == nextMarkerMask) {
-        currentEntry = entries[0];
-        currentMarkerBits = currentEntry & nextMarkerBits;
-        if (currentMarkerBits == currentMarkerMask) {
-          u32 packedOffset;
-          u32 adjustedCurrent;
-          u32 adjustedNext;
+#ifdef UBFIX
+      second = pair[0];
+#else
+      second = pair[2];
+#endif
+      secondMarker = second & lowMarker;
 
-          packedOffset = (((currentEntry & payloadMask) << 12) |
-                          ((nextEntry & payloadMask) * 2)) -
-                         (entryIndex * 2);
-          adjustedCurrent =
-              ((packedOffset >> 12) & payloadMask) | currentMarkerBits;
-          adjustedNext = ((packedOffset >> 1) & payloadMask) | nextMarkerBits;
-          entries[0] = adjustedCurrent;
-          entries[1] = adjustedNext;
+#ifndef UBFIX
+      pair++;
+#endif
+      if (secondMarker == lowMarker) {
+#ifdef UBFIX
+        first = pair[-1];
+#else
+        first = pair[0];
+#endif
+        firstMarker = first & secondMarker;
+
+        if (firstMarker == highMarker) {
+          u32 offset = (((first & offsetBits) << 12) |
+                        ((second & offsetBits) * 2)) -
+                       i * 2;
+          u32 newFirst = ((offset >> 12) & offsetBits) | firstMarker;
+          u32 newSecond = ((offset >> 1) & offsetBits) | secondMarker;
+
+#ifdef UBFIX
+          pair[-1] = newFirst;
+          pair[0] = newSecond;
+#else
+          pair[0] = newFirst;
+          pair[1] = newSecond;
+#endif
         }
       }
-      entries++;
-      entryIndex++;
-    } while (entryIndex < entryCount);
+#ifdef UBFIX
+      pair++;
+#endif
+      i++;
+    } while (i < entryCount);
   }
 }
 

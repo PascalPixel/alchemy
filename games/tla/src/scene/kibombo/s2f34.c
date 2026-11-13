@@ -31,7 +31,7 @@ void Func_02002f34(void) {
       object->field64 = value;
       object->motionFlags = 0;
       Actor_SetSingleChildFlags(object, 0);
-      Func_02005a24(object, 2);
+      Actor_SelectAnimation(object, 2);
       Actor_StartScript(object, gData_02005ca4);
       object->sprite->priority = 1;
       object->field64 = 0;
@@ -74,7 +74,7 @@ void Func_02003030(void) {
       object->scaleY = 0x8000;
       object->field68 = 60;
       object->update = Func_02002fec;
-      Func_02005a24(object, 5);
+      Actor_SelectAnimation(object, 5);
       Actor_SetBlendMode(object, 1);
     }
   }
@@ -109,7 +109,7 @@ void Func_02003104(s32 x, s32 y, s32 z) {
     sprite = object->sprite;
     sprite->priority = 1;
     Actor_SetSingleChildFlags(object, 0);
-    Func_02005a24(object, 5);
+    Actor_SelectAnimation(object, 5);
     Actor_SetBlendMode(object, 1);
   }
 }
@@ -469,7 +469,7 @@ void Func_02003504(void) {
       spark->motionFlags = 0;
       spark->sprite->priority = 1;
       Actor_SetSingleChildFlags(spark, 0);
-      Func_02005a24(spark, 1);
+      Actor_SelectAnimation(spark, 1);
       spark->field64 = 0;
       spark->field4c = 0;
       spark->field66 = angle / 360;
@@ -487,7 +487,7 @@ void Func_02003504(void) {
 void Func_02003610(void) {
   Task_RemoveFar(Func_02002ccc);
   wait(1);
-  Func_02005bb4();
+  Import_FieldCameraWaitForArrival();
   Event_Wait(40);
   if (gData_02007950 != 0)
     Func_02003504();
@@ -803,17 +803,17 @@ void Func_02003dec(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
   Kibombo_CamMove(PIXELS(264), PIXELS(16), PIXELS(420), 1);
-  Func_02005bb4();
+  Import_FieldCameraWaitForArrival();
   Event_Wait(40);
   Camera_SetSpeedParameters(0x6666, 0xccc);
   Kibombo_CamMove(PIXELS(264), PIXELS(32), PIXELS(320), 1);
-  Func_02005bb4();
+  Import_FieldCameraWaitForArrival();
   Event_Wait(80);
   Actor_Jump(17, 4, 40);
   Event_ShowMessageAndWait(17, 0);
   Kibombo_CamSpeed(0x4cccc, 0x9999);
   Kibombo_CamMove(PIXELS(264), PIXELS(32), PIXELS(400), 1);
-  Func_02005bb4();
+  Import_FieldCameraWaitForArrival();
   Event_Wait(20);
   Kibombo_ObjArm(17, FACING_SOUTHEAST + FACING_STEP, 20);
   Event_ShowMessageAndWait(0x4000 + 17, 0);
@@ -841,11 +841,11 @@ void Func_02003dec(void) {
   Event_Wait(40);
   Camera_SetSpeedParameters(0x3333, 0x666);
   FieldCamera_MoveWithinMapBounds(PIXELS(264), 0, PIXELS(400), 1);
-  Func_02005bb4();
+  Import_FieldCameraWaitForArrival();
   Event_Wait(200);
   Camera_SetSpeedParameters(0x4cccc, 0x9999);
   FieldCamera_MoveWithinMapBounds(PIXELS(111), PIXELS(32), PIXELS(456), 1);
-  Func_02005bb4();
+  Import_FieldCameraWaitForArrival();
   Actor_ArmCallback(26, FACING_EAST, 0);
   Event_ShowMessageAndWait(26, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 20);
@@ -878,7 +878,7 @@ void Func_020040cc(void) {
   Sound_Play(78);
   Kibombo_CamSpeed(0xcccc, 0x1999);
   Kibombo_CamMove(PIXELS(264), -1, PIXELS(388), 1);
-  Func_02005bb4();
+  Import_FieldCameraWaitForArrival();
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Motion_SetModeAndWaitAnimation(17, 3);
   Event_SetMessageId((s32)MsgLetUsNow);
@@ -1042,7 +1042,7 @@ extern s32 gData_020061a8[];
 void Func_020045d0(void) {
   Camera_SetSpeedParameters(0x4cccc, 0x9999);
   Kibombo_CamMove(132 << 17, 0, 200 << 17, 1);
-  Func_02005bb4();
+  Import_FieldCameraWaitForArrival();
   Event_Wait(10);
   Actor_Jump(18, 6, 0);
   Actor_Jump(19, 6, 0);
@@ -1795,7 +1795,7 @@ void Func_02005898(void) {
     GameFlag_SetBit(0x8ee);
 }
 
-void Func_02005994(void) { Func_02005bcc(); }
+void Func_02005994(void) { Field_TryJumpForward(); }
 
 #include "text/msg_ids.h"
 #include "objcmd.h"

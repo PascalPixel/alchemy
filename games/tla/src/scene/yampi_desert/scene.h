@@ -55,7 +55,7 @@ void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z, s32 angle);
 s32 Event_AskYesNoAndShowResponse(s32 speaker, s32 flags);
 void Func_020040f8(s32 actor);
-void Func_02004148(s32 a, s32 b);
+void Import_FieldRequestDjinnBattle(s32 a, s32 b);
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02004180(s32 value);
 void BattleEffect_LoadActionEffectResources(s32 a, s32 b);

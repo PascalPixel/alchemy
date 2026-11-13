@@ -46,9 +46,9 @@ HeapSlot_AllocFar:
 	.thumb_func
 HeapSlot_Release:
 	overlay_veneer HeapSlot_ReleaseFar
-	.global Func_02002f40
+	.global Import_DecompressTaggedLz
 	.thumb_func
-Func_02002f40:
+Import_DecompressTaggedLz:
 	overlay_veneer Decompress_TaggedLzFar
 	.global VramCache_FreeEntry
 	.thumb_func
@@ -78,9 +78,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_02002f80
+	.global Import_ActorSelectAnimation
 	.thumb_func
-Func_02002f80:
+Import_ActorSelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_SetAnimationSpeed
 	.thumb_func
@@ -98,9 +98,9 @@ Import_ActorCreate:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Func_02002fa8
+	.global Import_MapCenterOnFollowedPoint
 	.thumb_func
-Func_02002fa8:
+Import_MapCenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -150,9 +150,9 @@ MapGrid_SetScreenShake:
 	.thumb_func
 MapGrid_WaitForShakeToSettle:
 	overlay_veneer MapGrid_WaitForShakeToSettleFar
-	.global Func_02003010
+	.global MapGrid_GetTerrainKind
 	.thumb_func
-Func_02003010:
+MapGrid_GetTerrainKind:
 	overlay_veneer MapGrid_GetTerrainKindFar
 	.global Func_02003018
 	.thumb_func
@@ -162,9 +162,9 @@ Func_02003018:
 	.thumb_func
 Actor_SetItemIcon:
 	overlay_veneer Actor_SetItemIconFar
-	.global Func_02003028
+	.global Import_FieldCheckSpheresOverlap
 	.thumb_func
-Func_02003028:
+Import_FieldCheckSpheresOverlap:
 	overlay_veneer Field_CheckSpheresOverlapFar
 	.global Func_02003030
 	.thumb_func
@@ -214,9 +214,9 @@ Actor_WaitForMoveById:
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
-	.global Func_02003090
+	.global Import_ActorMoveToObject
 	.thumb_func
-Func_02003090:
+Import_ActorMoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -266,13 +266,13 @@ Import_EventSetExitRequest:
 	.thumb_func
 Field_RequestDjinnBattle:
 	overlay_veneer Field_RequestDjinnBattleFar
-	.global Func_020030f8
+	.global Import_FieldTryJumpForward
 	.thumb_func
-Func_020030f8:
+Import_FieldTryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
-	.global Func_02003100
+	.global Import_LeaderStopMoving
 	.thumb_func
-Func_02003100:
+Import_LeaderStopMoving:
 	overlay_veneer Leader_StopMovingFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
@@ -302,9 +302,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 ObjectTable_Get:
 	overlay_veneer ObjectTable_GetFar
-	.global Func_02003140
+	.global Import_EventResolveAllPendingActions
 	.thumb_func
-Func_02003140:
+Import_EventResolveAllPendingActions:
 	overlay_veneer Event_ResolveAllPendingActionsFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -346,13 +346,13 @@ Func_02003188:
 	.thumb_func
 Func_02003190:
 	overlay_veneer Func_080c87c0
-	.global Func_02003198
+	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func
-Func_02003198:
+EffectSprite_DrawAtWorldPosition:
 	overlay_veneer EffectSprite_DrawAtWorldPositionFar
-	.global Func_020031a0
+	.global Import_BattleEffectStepVector3
 	.thumb_func
-Func_020031a0:
+Import_BattleEffectStepVector3:
 	overlay_veneer BattleEffect_StepVector3Far
 	.global Sound_Play
 	.thumb_func

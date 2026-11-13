@@ -484,7 +484,7 @@ void Func_02000818(void) {
   FieldEvent_ShowMessageThenWait(24, 0, 10);
   actor21 = Actor_Get(21);
   actor15 = Actor_Get(15);
-  Call2((void (*)())Func_020015a0, 8, 0x1210);
+  Call2((void (*)())Field_StartColorTransition, 8, 0x1210);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(Actor_Get(21), 2);
   Event_PlaySound(201);
@@ -571,7 +571,7 @@ void Func_02000818(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(21, 0x3000, 0);
   FieldEvent_Wait(20);
-  Func_020015a0(8, 0x1210);
+  Field_StartColorTransition(8, 0x1210);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(Actor_Get(21), 2);
   Event_PlaySound(201);

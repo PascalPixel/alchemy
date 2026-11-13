@@ -39,7 +39,7 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02001b2c,
 
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 
-DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Func_020019fc,
+DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Import_ActorSelectAnimation,
                              Whirlwind_UpdateLower, Func_02000eac)
 
 s32 Func_0200087c(struct SceneEffectSource *object) {

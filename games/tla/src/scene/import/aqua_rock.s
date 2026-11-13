@@ -90,9 +90,9 @@ Animation_ApplyChildArgument:
 	.thumb_func
 ResourceMetadata_Register:
 	overlay_veneer ResourceMetadata_RegisterFar
-	.global Func_02002910
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02002910:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
@@ -254,9 +254,9 @@ Event_ResolvePendingActions:
 	.thumb_func
 Actor_WalkByAndWaitById:
 	overlay_veneer Actor_WalkByAndWaitByIdFar
-	.global Func_02002a58
+	.global Scene_QueueMusic
 	.thumb_func
-Func_02002a58:
+Scene_QueueMusic:
 	overlay_veneer Scene_QueueMusicFar
 	.global Event_NoOp
 	.thumb_func

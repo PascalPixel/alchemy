@@ -19,11 +19,11 @@ void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
 void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02002f80(struct Actor *object, s32 mode);
+void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Actor_WaitForMove(struct Actor *actor);
 s32 Func_02003018(struct Actor *object);
-s32 Func_02003028(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 void wait(s32 frames);
 
 void Func_02001b48(void) {
@@ -97,7 +97,7 @@ retry:
   object->acceleration = 0x1999;
   object->timer = 0;
   Actor_SetMoveTarget(object, x, object->y, z);
-  Func_02002f80(object, 2);
+  Import_ActorSelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   for (i = 0; i <= 179 && Func_02003018(object) == 0; i++) {
     if (gData_02003cd0 != 0)
@@ -119,7 +119,7 @@ overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
     /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
      * call, 2 of 347 instructions differ in tla-en. */
-    if (Value4((s32 (*)())Func_02003028, (s32)&entry->x, radius, (s32)position,
+    if (Value4((s32 (*)())Import_FieldCheckSpheresOverlap, (s32)&entry->x, radius, (s32)position,
                entry->radius - 2) >= 0)
       goto blocked;
   }
@@ -169,7 +169,7 @@ end:
   object->update = NULL;
   object->actionFlags |= 1;
   object->acceleration = 0x4000;
-  Func_02002f80(object, 1);
+  Import_ActorSelectAnimation(object, 1);
 }
 
 #else
@@ -193,10 +193,10 @@ void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
 void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02002f80(struct Actor *object, s32 mode);
+void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Func_02003018(struct Actor *object);
-s32 Func_02003028(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 void wait(s32 frames);
 
 void Func_02001b48(void) {
@@ -269,7 +269,7 @@ retry:
   object->acceleration = 0x1999;
   object->timer = 0;
   Actor_SetMoveTarget(object, x, object->y, z);
-  Func_02002f80(object, 2);
+  Import_ActorSelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   Actor_WaitForMove(object);
   object->update = (void (*)(void))Func_020017dc;
@@ -287,7 +287,7 @@ overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
     /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
      * call, 2 of 332 instructions differ in tla-ja. */
-    if (Value4((s32 (*)())Func_02003028, (s32)&entry->x, radius, (s32)position,
+    if (Value4((s32 (*)())Import_FieldCheckSpheresOverlap, (s32)&entry->x, radius, (s32)position,
                entry->radius - 2) >= 0)
       goto blocked;
   }
@@ -337,7 +337,7 @@ end:
   object->update = NULL;
   object->actionFlags |= 1;
   object->acceleration = 0x4000;
-  Func_02002f80(object, 1);
+  Import_ActorSelectAnimation(object, 1);
 }
 
 #endif

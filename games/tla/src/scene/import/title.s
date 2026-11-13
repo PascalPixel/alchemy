@@ -50,9 +50,9 @@ ScreenFade_ToBlack:
 	.thumb_func
 ScreenFade_Wait:
 	overlay_veneer ScreenFade_WaitFar
-	.global Func_020005d4
+	.global Save_ScanFileSummaries
 	.thumb_func
-Func_020005d4:
+Save_ScanFileSummaries:
 	overlay_veneer Save_ScanFileSummariesFar
 	.global WindowColor_Apply
 	.thumb_func
@@ -98,9 +98,9 @@ Func_02000624:
 	.thumb_func
 Title_ShowNintendoLogo:
 	overlay_veneer Title_ShowNintendoLogoFar
-	.global Func_02000634
+	.global Title_ShowCamelotLogo
 	.thumb_func
-Func_02000634:
+Title_ShowCamelotLogo:
 	overlay_veneer Title_ShowCamelotLogoFar
 	.global Func_0200063c
 	.thumb_func

@@ -43,7 +43,7 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void FieldEvent_Wait(s32 frames);
 void FieldMessage_Show(const u8 *message, s32 mode);
-void Func_02005d5c(struct Actor *object, s32 value);
+void Import_ActorSelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const u8 *data);
 void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f);
@@ -58,18 +58,18 @@ extern s32 gData_020073e0;
 extern s32 gData_020073e4;
 extern s32 gData_020073e8;
 
-void Func_02005db4(s32 srcX, s32 src_z, s32 width, s32 height, s32 destX,
+void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 src_z, s32 width, s32 height, s32 destX,
                    s32 destZ);
 
 static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
                              s32 destX, s32 destZ) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline, which puts every
    * argument in a register before the stack arguments are stored; as direct
-   * calls to Func_02005db4, 24 of 59 instructions of Func_02002980 differ in
+   * calls to MapGrid_CopyCellPictureCellsRect, 24 of 59 instructions of Func_02002980 differ in
    * tla-en (24 of 59 in Func_02002a14, 12 of 59 in Func_02003d40). */
   /* FAKEMATCH(wrapper): CopyCells forwarded inline; as direct calls to
-   * Func_02005db4, 12 of 70 instructions of Func_020026c0 differ in tla-en. */
-  Func_02005db4(srcX, srcZ, width, height, destX, destZ);
+   * MapGrid_CopyCellPictureCellsRect, 12 of 70 instructions of Func_020026c0 differ in tla-en. */
+  MapGrid_CopyCellPictureCellsRect(srcX, srcZ, width, height, destX, destZ);
 }
 
 #endif

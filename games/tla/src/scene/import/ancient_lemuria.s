@@ -162,9 +162,9 @@ FieldCamera_WaitForArrival:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_020019f4
+	.global Field_TryJumpForward
 	.thumb_func
-Func_020019f4:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global Event_ResolvePendingActions
 	.thumb_func

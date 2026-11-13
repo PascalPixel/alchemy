@@ -478,7 +478,7 @@ void LemurianShipDeck_LeaveToFindCrew(void) {
 
 void Func_02001178(void) { GameFlag_ClearBit(0x212); }
 
-void Func_02001efc(struct Actor *object, s32 value);
+void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *data);
 
 void Func_02001188(void) {
@@ -493,7 +493,7 @@ void Func_02001188(void) {
     *(s32 *)((u8 *)object + 0x30) = 0x20000;
     *(s32 *)((u8 *)object + 0x34) = 0x8000;
     Actor_SetSingleChildFlags(object, 0);
-    Func_02001efc(object, 0);
+    Actor_SelectAnimation(object, 0);
     FieldActor_SetMoveTarget(object, PIXELS(360), PIXELS(64), PIXELS(424));
     Actor_StartScript(object, gData_0200247c);
   }
@@ -817,7 +817,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_End();
 }
 
-DEFINE_ACTOR_EMIT_SMOKE(Func_02001d60, 7, Func_02001efc, gData_02002498)
+DEFINE_ACTOR_EMIT_SMOKE(Func_02001d60, 7, Actor_SelectAnimation, gData_02002498)
 
 /// ★ Named from the game: "Then let's waste no time! We should set out for
 /// Madra at once!" (MsgThenLetS)

@@ -131,7 +131,7 @@ struct Position {
 extern s16 gData_02005f38__s3d80[] __asm__("gData_02005f38");
 
 DEFINE_LEADER_SLIDE_ON_ICE(Func_02004140, Func_0200410c, gData_02005f38__s3d80,
-    Func_02005480, Func_02004080, Func_02005538)
+    Func_02005480, Func_02004080, Import_FieldCheckSpheresOverlap)
 
 #include "version.h"
 
@@ -144,7 +144,7 @@ DEFINE_LEADER_SLIDE_ON_ICE(Func_02004140, Func_0200410c, gData_02005f38__s3d80,
 #define SHARED_F02003070_ID5 Func_02005480
 #define SHARED_F02003070_ID6 Func_02005530
 #define SHARED_F02003070_ID7 Func_02004080
-#define SHARED_F02003070_ID8 Func_02005538
+#define SHARED_F02003070_ID8 Import_FieldCheckSpheresOverlap
 #include "../shared/func_02003070.c"
 #undef SHARED_F02003070_NAME
 #undef SHARED_F02003070_ID2
@@ -162,7 +162,7 @@ void Func_02004700(s32 value) { gData_020074c8 = value; }
 #include "system/main_routine_work.h"
 
 DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_0200470c, Func_0200410c, Func_02005480, Func_02004080,
-    Func_02005538)
+    Import_FieldCheckSpheresOverlap)
 
 #include "field_sprite.h"
 
@@ -291,7 +291,7 @@ DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Func_02004fc0, Func_02005680, gData_02005f58,
 /// 64 one when the big switch is set, at its animation picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(Func_02005048, gData_020074cc, Data_0200f510,
     gData_020074ce, gData_020074d0, gData_020075d0, gData_020075d2,
-    BattleEffect_GetObjectPriority, Func_02005440)
+    BattleEffect_GetObjectPriority, Import_OamAddSpriteAtDepthClamped)
 
 #include "iwram_call.h"
 #include "task.h"

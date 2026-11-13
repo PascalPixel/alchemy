@@ -1022,9 +1022,9 @@ void TrialRoad_ReachPeakFirst(void) {
   object->acceleration = 0x8000;
   object->motionFlags = 0;
   Actor_SetMoveTarget(object, object->x, object->y + 0x580000, object->z);
-  Func_020057c8(object, 2);
+  Actor_SelectAnimation(object, 2);
   FieldActor_WaitForMove(object);
-  Func_020057c8(object, 1);
+  Actor_SelectAnimation(object, 1);
   object->motionFlags = 2;
   object->terrainHeight = 0x800000;
   object->velocityY = 0x40000;
@@ -1771,9 +1771,9 @@ struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low,
 /// other marks its cell, writes a shape for its height into the shape grid, and
 /// takes mode 0 when its first flag is set. Then the leader is lifted onto the
 /// ground if it stands below it.
-DEFINE_PILLARS_RESTORE_RAISED(Func_020042f0, Func_02005a18, Func_02005848, Func_02005958, Func_02005a20, Func_020057c8)
+DEFINE_PILLARS_RESTORE_RAISED(Func_020042f0, Func_02005a18, Func_02005848, Func_02005958, Func_02005a20, Actor_SelectAnimation)
 
-DEFINE_TRAPS_CHECK(Func_02004418, Func_020059c0, Func_02005a28, Func_020057c8,
+DEFINE_TRAPS_CHECK(Func_02004418, Import_FieldTryJumpForward, Func_02005a28, Actor_SelectAnimation,
     Func_02004a94, Func_02004d6c, Func_02004bc8)
 
 void Func_020045ac(const void *data, s32 id) {
@@ -1794,7 +1794,7 @@ void Func_020045ac(const void *data, s32 id) {
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_02004a94(0);
         wait(8);
-        Func_020057c8(object, 2);
+        Actor_SelectAnimation(object, 2);
         Func_02004ce0(-4, OBJECT_BYTE(object, 34), id);
         Func_02004a94(1);
         wait(16);
@@ -1843,7 +1843,7 @@ void Func_02004828(const u16 *table) {
   s32 second;
   u8 *motion;
 
-  if (Func_020059c0() != 0)
+  if (Import_FieldTryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   partner = Actor_GetById(8);
@@ -1862,13 +1862,13 @@ void Func_02004828(const u16 *table) {
     flag = table[1];
     Event_Start();
     if (!GameFlag_Test(flag)) {
-      Func_020057c8(partner, 1);
+      Actor_SelectAnimation(partner, 1);
       Func_0200480c(partner, trap);
       wait(1);
       Sound_Play(125);
       Actor_SetSpriteColor(Actor_GetById(8), 7);
       wait(2);
-      Func_020057c8(partner, 0);
+      Actor_SelectAnimation(partner, 0);
       Actor_CopyGraphics(id, 9);
       Actor_SetSpriteColor(Actor_GetById(8), 0);
       wait(2);
@@ -1882,7 +1882,7 @@ void Func_02004828(const u16 *table) {
     } else {
       second = flag + 1;
       if (!GameFlag_Test(second)) {
-        Func_020057c8(partner, 0);
+        Actor_SelectAnimation(partner, 0);
         Func_0200480c(partner, trap);
         motion = &leader->motionFlags;
         wait(1);
@@ -1891,7 +1891,7 @@ void Func_02004828(const u16 *table) {
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_02004a94(0);
         wait(8);
-        Func_020057c8(partner, 2);
+        Actor_SelectAnimation(partner, 2);
         Func_02004d6c(-2, trap->terrainId);
         Func_02004a94(1);
         wait(16);
@@ -1993,7 +1993,7 @@ void Func_02004a94(s32 spread) {
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
-      Func_020057c8(effect, 2);
+      Actor_SelectAnimation(effect, 2);
       Func_020057d0__s4a94(effect, gData_02006254);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
@@ -2034,7 +2034,7 @@ void Func_02004bc8(void) {
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
-      Func_020057c8(effect, 2);
+      Actor_SelectAnimation(effect, 2);
       Func_020057d0__s4a94(effect, gData_02006284);
       effect->velocity.x = Math_Cosine(i << 12);
       effect->velocity.y = 0;
@@ -2147,9 +2147,9 @@ void Func_02004ddc(void) {
       rival->z = z;
     }
     if (state->still > 2)
-      Func_020057c8(rival, 1);
+      Actor_SelectAnimation(rival, 1);
     else
-      Func_020057c8(rival, 5);
+      Actor_SelectAnimation(rival, 5);
   } else if (state->mode == 3) {
     s32 player;
     s16 *signature;
@@ -2168,7 +2168,7 @@ void Func_02004ddc(void) {
     ok = st & 0xff;
     if (GameFlag_Test(dz = 529) && link != 0) {
       state->mode = 9;
-      Func_020057c8(rival, 1);
+      Actor_SelectAnimation(rival, 1);
       if (work->linkX < rival->x)
         x = work->linkX + 0xc0000;
       else
@@ -2190,7 +2190,7 @@ void Func_02004ddc(void) {
       rival->facing = angle;
       rival->x = x;
       rival->z = z;
-      Func_020057c8(rival, ok);
+      Actor_SelectAnimation(rival, ok);
     }
     partner = *signature++;
     x = *signature++;
@@ -2205,7 +2205,7 @@ void Func_02004ddc(void) {
     rival->x = x << 16;
     rival->facing = angle;
     rival->z = z << 16;
-    Func_020057c8(rival, ok);
+    Actor_SelectAnimation(rival, ok);
   } else if (state->mode == 1) {
     if (state->resource != work->resource) {
       Func_02005770(Resource_GetTableEntry(state->resource), work->path);
@@ -2244,9 +2244,9 @@ void Func_02004ddc(void) {
       state->still++;
     }
     if (state->still > 2)
-      Func_020057c8(rival, 1);
+      Actor_SelectAnimation(rival, 1);
     else
-      Func_020057c8(rival, 5);
+      Actor_SelectAnimation(rival, 5);
   } else if (state->mode == 2) {
     x = rival->x >> 16;
     z = rival->z >> 16;

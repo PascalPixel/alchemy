@@ -15,7 +15,7 @@
 #include "module/tla.h"
 #include "text/msg_ids.h"
 
-void Func_0200114c(void);
+void Field_TryJumpForward(void);
 
 void Func_02000038(void) { Field_RequestDjinnBattle(18, 70); }
 
@@ -174,7 +174,7 @@ void Func_0200036c(void) {
 
 void Func_02000428(void) { GameFlag_SetBit(0x882); }
 
-void Func_02000438(void) { Func_0200114c(); }
+void Func_02000438(void) { Field_TryJumpForward(); }
 
 DEFINE_PILLAR_SET_MOVED(Func_02000440, 18, 6, 16, 4, 0x210)
 

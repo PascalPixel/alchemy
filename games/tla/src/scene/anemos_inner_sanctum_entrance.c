@@ -151,7 +151,7 @@ void Func_02000534(s32 a) {
     }
   } else {
     if (Actor_GetById(party->currentOwner)->y > -0x1c0000)
-      Func_02000d14();
+      Field_TryJumpForward();
   }
 }
 

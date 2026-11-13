@@ -55,7 +55,7 @@ extern u32 gData_02005204[];
 extern u8 gData_02004bfe[];
 extern char ResourceId_LetteringBanner;
 
-void Func_0200479c(const void *source, void *destination);
+void Import_DecompressTaggedLz(const void *source, void *destination);
 
 void ShamanVillage_CastWhirlwindOnSand(void);
 extern u32 gData_02004f3c[];

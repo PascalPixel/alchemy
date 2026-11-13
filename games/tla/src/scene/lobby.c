@@ -573,7 +573,7 @@ check:
 
 #include "task.h"
 
-void Func_02001944(void *callback, s32 mask);
+void Import_TaskSetFlags(void *callback, s32 mask);
 void Map_ClearLayerEntryFlag(s32 layer);
 void Map_SetLayerEntryFlag(s32 layer);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
@@ -675,7 +675,7 @@ s32 LinkLobby_EnterBattle(void) {
         LinkLobby_WriteSlotValue(0);
         LinkLobby_WriteSlotValue(4);
         Task_Add((TaskFunc)LinkLobby_PollPeerReady, TASK_PASS_VBLANK);
-        Func_02001944(LinkLobby_PollPeerReady, 1);
+        Import_TaskSetFlags(LinkLobby_PollPeerReady, 1);
         Event_ClearFlag(0x201);
         Event_ClearFlag(0x202);
         Event_ClearFlag(0x303);
@@ -1051,7 +1051,7 @@ void Map_CenterOnFollowedPoint(void);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 void MessageArgument_Push(s32 value, s32 digits);
-void Func_020019ec(void);
+void Save_ProcessSelectedFile(void);
 void Event_Start(void);
 void Event_End(void);
 /* VIEW(talk): routine Actor_ShowEmoteById as void Actor_ShowEmoteById(s32
@@ -1062,7 +1062,7 @@ void Event_End(void);
  * conflicting types for `Actor_ShowEmoteById'. */
 extern void Func_080d47b4__talk(s32 actor, s32 animation,
                                 s32 flags) __asm__("Actor_ShowEmoteById");
-s32 Func_02001a84(s32 scene, s32 entrance);
+s32 Import_EventSetDestination(s32 scene, s32 entrance);
 void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void FieldMessage_Show(s32 no, s32 flags);
 
@@ -1115,7 +1115,7 @@ s32 LinkLobby_LeaveArena(void) {
    * number before the 1; as the plain return, the 1 comes first, 2 of 8
    * instructions differ in tla-en. */
   do {
-    return Func_02001a84((s32)&SceneId_Ov64a, 1);
+    return Import_EventSetDestination((s32)&SceneId_Ov64a, 1);
   } while (0);
 }
 
@@ -1214,17 +1214,17 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 s32 LinkLobby_PartyContains(s32 id);
 void Map_CenterOnFollowedPoint(void);
 void MessageArgument_Push(s32 value, s32 digits);
-void Func_020019ec(void);
+void Save_ProcessSelectedFile(void);
 void Event_End(void);
-s32 Func_02001a84(s32 scene, s32 entrance);
+s32 Import_EventSetDestination(s32 scene, s32 entrance);
 
 s32 Func_020013ec(void) {
-  Func_020019ec();
+  Save_ProcessSelectedFile();
   FieldMessage_Show(MsgBattleResultsWere, 1);
 }
 
 s32 Func_02001400(void) {
-  Func_020019ec();
+  Save_ProcessSelectedFile();
   FieldMessage_Show(MsgMonsterBattleResults, 1);
 }
 
@@ -1266,7 +1266,7 @@ extern u8 gAutoSleepEnabled;
 s32 LinkLobby_PollPeerReady(void);
 void LinkLobby_InitializeSerial(void);
 void Serial_Initialize(void);
-void Func_02001944(void *func, s32 mask);
+void Import_TaskSetFlags(void *func, s32 mask);
 void Map_SetLayerEntryFlag(s32 entry);
 void Party_RestoreHpPp(s32 value);
 void Sound_LoadReverbCode(s32 preset);
@@ -1460,7 +1460,7 @@ s32 LinkLobby_RunRoundResult(void) {
   }
   func = LinkLobby_PollPeerReady;
   Task_Add(func, 0x480);
-  Func_02001944(func, 1);
+  Import_TaskSetFlags(func, 1);
   if (gMainRoutineWork.entrance != 8 || !Event_GetFlag(0x173)) {
     Party_RestoreHpPp(1);
     DjinnRecovery_CountDownTwenty();

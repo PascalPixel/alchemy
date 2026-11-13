@@ -144,7 +144,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Func_020003c4(void) { Func_02002400(); }
+void Func_020003c4(void) { Field_TryJumpForward(); }
 
 #include "shared/scene_set_arrival_flags.h"
 

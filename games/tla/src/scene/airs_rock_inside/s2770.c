@@ -56,9 +56,9 @@ void Func_02002790(void) {
     gData_020073e4 = x + 64;
     gData_020073e8 = z - y;
   }
-  Call6((void (*)())Func_02005db4, gData_020073e4, gData_020073e8,
+  Call6((void (*)())MapGrid_CopyCellPictureCellsRect, gData_020073e4, gData_020073e8,
         gData_020073dc, gData_020073e0, 73, 72);
-  Call6((void (*)())Func_02005db4, 70, 72, gData_020073dc, gData_020073e0,
+  Call6((void (*)())MapGrid_CopyCellPictureCellsRect, 70, 72, gData_020073dc, gData_020073e0,
         gData_020073e4, gData_020073e8);
 }
 
@@ -84,9 +84,9 @@ void Func_02002898(void) {
     gData_020073e4 = x + 64;
     gData_020073e8 = z - y;
   }
-  Call6((void (*)())Func_02005db4, gData_020073e4, gData_020073e8,
+  Call6((void (*)())MapGrid_CopyCellPictureCellsRect, gData_020073e4, gData_020073e8,
         gData_020073dc, gData_020073e0, 73, 72);
-  Call6((void (*)())Func_02005db4, 71, 72, gData_020073dc, gData_020073e0,
+  Call6((void (*)())MapGrid_CopyCellPictureCellsRect, 71, 72, gData_020073dc, gData_020073e0,
         gData_020073e4, gData_020073e8);
 }
 
@@ -311,7 +311,7 @@ row:
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
-      Func_02005d5c(spark, 7);
+      Import_ActorSelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02005fd8);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
@@ -625,7 +625,7 @@ row:
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
-      Func_02005d5c(spark, 7);
+      Import_ActorSelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02005fd8);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
@@ -846,7 +846,7 @@ void Func_02003e7c(struct Actor *source) {
   object->motionFlags = 0;
   Actor_SetSpriteColor(object, 2);
   Scene_SetActorSpritePriority(object, 1);
-  Func_02005d5c(object, 1);
+  Import_ActorSelectAnimation(object, 1);
   Actor_SetSingleChildFlags(object, 0);
   Actor_SetBlendMode(object, 1);
   Actor_StartScript(object, gData_02006084);
@@ -954,7 +954,7 @@ first:
     spark->motionFlags = 0;
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
-    Func_02005d5c(spark, 7);
+    Import_ActorSelectAnimation(spark, 7);
     Actor_SetSingleChildFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
     Actor_StartScript(spark, gData_02006094);
@@ -994,7 +994,7 @@ second:
     ((union SparkView *)spark)->bytes.unk62 = (16 - i) * 8 + 15;
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
-    Func_02005d5c(spark, 7);
+    Import_ActorSelectAnimation(spark, 7);
     Actor_SetSingleChildFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
     Call3(Vector_AddPolarOffsetFar, spark->unk4c, *angle, (s32)&spark->x);
@@ -1034,7 +1034,7 @@ third:
     spark->motionFlags = 0;
     spark->priorityFlags = 1;
     Actor_SetSpriteColor(spark, 2);
-    Func_02005d5c(spark, 7);
+    Import_ActorSelectAnimation(spark, 7);
     Actor_SetSingleChildFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
     Actor_StartScript(spark, gData_020060c0);
@@ -1281,8 +1281,8 @@ step:
   second->y = second->terrainHeight;
   GameFlag_SetBit(first->timer);
   GameFlag_ClearBit(second->timer);
-  Func_02005d5c(first, ((struct FieldSprite *)first->sprite)->frame + 1);
-  Func_02005d5c(second, ((struct FieldSprite *)second->sprite)->frame - 1);
+  Import_ActorSelectAnimation(first, ((struct FieldSprite *)first->sprite)->frame + 1);
+  Import_ActorSelectAnimation(second, ((struct FieldSprite *)second->sprite)->frame - 1);
   Func_020006cc(first);
   Func_020006cc(second);
   FieldEvent_Wait(10);
@@ -1404,7 +1404,7 @@ void Func_02004cc8(void) {
   leader->speedLimit = 0x18000;
   leader->acceleration = 0x18000;
   lift = Import_ActorCreate(280, leader->x, leader->y - 0x80000, leader->z);
-  Func_02005d5c(lift, 2);
+  Import_ActorSelectAnimation(lift, 2);
   Actor_SetSingleChildFlags(lift, 0);
   lift->motionFlags = 0;
   lift->speedLimit = 0x16666;
@@ -1425,10 +1425,10 @@ void Func_02004cc8(void) {
   height = Map_GetTerrainHeight(0, lift->x, lift->z - 0x100000);
   leader->y = height;
   leader->terrainHeight = height;
-  Func_02005d5c(leader, 6);
+  Import_ActorSelectAnimation(leader, 6);
   wait(6);
   Sound_Play(152);
-  Func_02005d5c(leader, 7);
+  Import_ActorSelectAnimation(leader, 7);
   leader->speedLimit = 0x20000;
   leader->acceleration = 0x8000;
   leader->velocityY = 0x40000;
@@ -1439,7 +1439,7 @@ void Func_02004cc8(void) {
   OverlayObject_WaitUntilIdle(leader);
   Import_ActorCommitPosition(leader);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
-  Func_02005d5c(lift, 5);
+  Import_ActorSelectAnimation(lift, 5);
   wait(12);
   Import_ActorDestroy(lift);
   leader->motionFlags = 3;

@@ -24,7 +24,7 @@ void Func_02001868(void);
 void Func_020005e8(s32 value);
 void Func_0200067c(s32 mode);
 
-void Func_02003564(void);
+void Import_FieldCameraWaitForArrival(void);
 
 void Func_020032a4(void);
 void Func_02000804(s32 item);
@@ -47,7 +47,7 @@ extern s16 gData_02003cfa[];
 struct FlashSprite;
 
 void Func_020035ac(s32 a);
-void Func_0200360c(s32 a, s32 b);
+void Field_StartColorTransition(s32 a, s32 b);
 void Func_020035fc(struct FlashSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 extern char ResourceId_FireColumn;

@@ -66,9 +66,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_02005d5c
+	.global Import_ActorSelectAnimation
 	.thumb_func
-Func_02005d5c:
+Import_ActorSelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_SetAnimationSpeed
 	.thumb_func
@@ -110,9 +110,9 @@ Map_GetTerrainHeight:
 	.thumb_func
 Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Func_02005db4
+	.global MapGrid_CopyCellPictureCellsRect
 	.thumb_func
-Func_02005db4:
+MapGrid_CopyCellPictureCellsRect:
 	overlay_veneer MapGrid_CopyCellPictureCellsRectFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func

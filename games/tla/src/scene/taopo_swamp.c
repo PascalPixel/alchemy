@@ -33,7 +33,7 @@ void Vent_SetGust(s32 id, s32 a);
 void Func_02002778(s32 a, s32 b);
 void Event_End(void);
 void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
-void Func_02002928(void);
+void Import_FieldCameraWaitForArrival(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02002990(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
@@ -45,10 +45,10 @@ extern s32 gTaopoSwamp_SteamPuffs;
 extern s32 gTaopoSwamp_PassageRows;
 extern s32 gTaopoSwamp_PoolFrames;
 extern const u8 gTaopoSwamp_PuffSteamScript[];
-void Func_02002948(void);
+void Field_TryJumpForward(void);
 void TaopoSwamp_DarkenRoom(s32 a);
 void Func_020029a0(s32 message);
-void Func_020027f8(struct Actor *object, s32 a);
+void Actor_SelectAnimation(struct Actor *object, s32 a);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
 s32 Func_02002730(void);
 #ifdef MODERN
@@ -58,7 +58,7 @@ s32 Func_02002730(void);
 void Vent_SetActive(s32 index, s32 active);
 #endif
 s32 Func_0200273c(s32 a);
-void Func_02002978(s32 a);
+void Scene_QueueMusic(s32 a);
 
 struct SpriteWork {
   u8 unk00[17];
@@ -461,7 +461,7 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
   Actor_FaceActor(gMainRoutineWork.currentOwner, 8, 0);
   FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 256, 30);
   FieldCamera_MoveTo(PIXELS(408), -1, PIXELS(312), 1);
-  Func_02002928();
+  Import_FieldCameraWaitForArrival();
   Actor_SetAttachedEffect(8, 257);
   speed = 0x8000;
   i = 2;
@@ -840,7 +840,7 @@ void TaopoSwamp_PushExitRockIn(s32 a, s32 id) {
 }
 
 #if TLA_PATCH_1 /* Absent from the Japanese edition. */
-void Func_020010bc(void) { Func_02002948(); }
+void Func_020010bc(void) { Field_TryJumpForward(); }
 #endif
 
 /// Douse on the glowing rock that lights the dark room, actor 8: the lights go
@@ -922,7 +922,7 @@ s32 TaopoSwamp_LandDrop(struct Actor *object) {
       spark->scaleY = scale;
       Actor_StartScript(spark, gData_02002a48);
       Actor_SetSingleChildFlags(spark, 0);
-      Func_020027f8(spark, 2);
+      Actor_SelectAnimation(spark, 2);
     }
     Event_PlaySound(106);
     object->y = object->terrainHeight;
@@ -963,14 +963,14 @@ void TaopoSwamp_CycleDjinniVents(void) {
     Vent_SetActive(1, 1);
     Vent_SetActive(4, 1);
     Vent_SetActive(5, 1);
-    Func_02002978(170);
+    Scene_QueueMusic(170);
     break;
   case 180:
     Vent_SetActive(0, 0);
     Vent_SetActive(1, 0);
     Vent_SetActive(4, 0);
     Vent_SetActive(5, 0);
-    Func_02002978(-1);
+    Scene_QueueMusic(-1);
     break;
   case 240:
     Vent_SetActive(2, 1);
@@ -979,7 +979,7 @@ void TaopoSwamp_CycleDjinniVents(void) {
     Vent_SetActive(7, 1);
     Vent_SetActive(8, 1);
     Vent_SetActive(9, 1);
-    Func_02002978(170);
+    Scene_QueueMusic(170);
     break;
   case 420:
     Vent_SetActive(2, 0);
@@ -988,7 +988,7 @@ void TaopoSwamp_CycleDjinniVents(void) {
     Vent_SetActive(7, 0);
     Vent_SetActive(8, 0);
     Vent_SetActive(9, 0);
-    Func_02002978(-1);
+    Scene_QueueMusic(-1);
     break;
   }
   if ((u32)(timer - 251) <= 178 && Event_GetFlag(0xa6e) && !Event_GetFlag(59) &&
@@ -1006,12 +1006,12 @@ void TaopoSwamp_CycleSpotVent(void) {
   case 0:
     Vent_SetActive(0, 1);
     Vent_SetActive(1, 1);
-    Func_02002978(170);
+    Scene_QueueMusic(170);
     break;
   case 120:
     Vent_SetActive(0, 0);
     Vent_SetActive(1, 0);
-    Func_02002978(-1);
+    Scene_QueueMusic(-1);
     break;
   }
   if ((u32)(timer - 11) <= 118) {
@@ -1031,12 +1031,12 @@ void TaopoSwamp_CycleDripVent(void) {
   case 0:
     Vent_SetActive(0, 1);
     Vent_SetActive(1, 1);
-    Func_02002978(170);
+    Scene_QueueMusic(170);
     break;
   case 120:
     Vent_SetActive(0, 0);
     Vent_SetActive(1, 0);
-    Func_02002978(-1);
+    Scene_QueueMusic(-1);
     break;
   }
   if ((u32)(timer - 11) <= 118) {
@@ -1055,12 +1055,12 @@ void TaopoSwamp_CycleRockRoomVents(void) {
   case 0:
     Vent_SetActive(0, 1);
     Vent_SetActive(1, 1);
-    Func_02002978(170);
+    Scene_QueueMusic(170);
     break;
   case 180:
     Vent_SetActive(0, 0);
     Vent_SetActive(1, 0);
-    Func_02002978(-1);
+    Scene_QueueMusic(-1);
     break;
   }
   Func_0200273c(240);
@@ -1087,7 +1087,7 @@ s32 TaopoSwamp_LandDrip(struct Actor *object) {
       spark->scaleY = scale;
       Actor_StartScript(spark, gData_02002a48);
       Actor_SetSingleChildFlags(spark, 0);
-      Func_020027f8(spark, 2);
+      Actor_SelectAnimation(spark, 2);
     }
     Event_PlaySound(106);
     object->y = object->terrainHeight;
@@ -1228,13 +1228,13 @@ s32 Scene_Initialize(void) {
     Actor_SetSingleChildFlags(piece, 0);
     if (Event_GetFlag(545)) {
       Call6(Map_CopyCellAttributeRect, 28, 8, 1, 1, 26, 8);
-      Func_020027f8(piece, 0);
+      Actor_SelectAnimation(piece, 0);
     } else {
       Call6(Map_CopyCellAttributeRect, 22, 8, 1, 1, 26, 8);
       Actor_SetSpritePriority(8, 3);
       piece->priorityFlags |= 2;
       if (!Event_GetFlag(0x220))
-        Func_020027f8(piece, 7);
+        Actor_SelectAnimation(piece, 7);
     }
     piece = Actor_GetById(9);
     piece->motionFlags = 0;
@@ -1260,12 +1260,12 @@ s32 Scene_Initialize(void) {
       object->motionFlags = 0;
       Actor_SetSingleChildFlags(object, 0);
       if (Event_GetFlag(545)) {
-        Func_020027f8(object, 0);
+        Actor_SelectAnimation(object, 0);
       } else {
         Actor_SetSpritePriority(10, 3);
         object->priorityFlags |= 2;
         if (!Event_GetFlag(0x220))
-          Func_020027f8(object, 7);
+          Actor_SelectAnimation(object, 7);
       }
       Call6(Map_CopyCellsRect, 50, 36, 13, 13, 60, 5);
     }
@@ -1432,13 +1432,13 @@ s32 Scene_Initialize(void) {
     Actor_SetSingleChildFlags(piece, 0);
     if (Event_GetFlag(545)) {
       Call6(Map_CopyCellAttributeRect, 28, 8, 1, 1, 26, 8);
-      Func_020027f8(piece, 0);
+      Actor_SelectAnimation(piece, 0);
     } else {
       Call6(Map_CopyCellAttributeRect, 22, 8, 1, 1, 26, 8);
       Actor_SetSpritePriority(8, 3);
       piece->priorityFlags |= 2;
       if (!Event_GetFlag(0x220))
-        Func_020027f8(piece, 7);
+        Actor_SelectAnimation(piece, 7);
     }
     piece = Actor_GetById(9);
     piece->motionFlags = 0;
@@ -1465,12 +1465,12 @@ s32 Scene_Initialize(void) {
       object->motionFlags = 0;
       Actor_SetSingleChildFlags(object, 0);
       if (Event_GetFlag(545)) {
-        Func_020027f8(object, 0);
+        Actor_SelectAnimation(object, 0);
       } else {
         Actor_SetSpritePriority(10, 3);
         object->priorityFlags |= 2;
         if (!Event_GetFlag(0x220))
-          Func_020027f8(object, 7);
+          Actor_SelectAnimation(object, 7);
       }
       Call6(Map_CopyCellsRect, 50, 36, 13, 13, 60, 5);
     }
@@ -1790,7 +1790,7 @@ void TaopoSwamp_SaveFirmGround(void) {
 #define VENT_BOUNCE Func_02002400
 #include "../field/object/vent_bounce.c"
 
-DEFINE_ACTOR_START_SCRIPTED(Func_020024f8, Func_020027f8, gData_02002af4)
+DEFINE_ACTOR_START_SCRIPTED(Func_020024f8, Actor_SelectAnimation, gData_02002af4)
 
 void TaopoSwamp_PuffVent(s32 *position, s32 base) {
   struct Actor *object =

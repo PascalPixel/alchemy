@@ -122,9 +122,9 @@ Func_02004b38:
 	.thumb_func
 WorldMap_UpdateCurrentTileBlock:
 	overlay_veneer WorldMap_UpdateCurrentTileBlockFar
-	.global Func_02004b48
+	.global Actor_StartIdle
 	.thumb_func
-Func_02004b48:
+Actor_StartIdle:
 	overlay_veneer Actor_StartIdleFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -474,9 +474,9 @@ WorldMap_StartZoom:
 	.thumb_func
 Func_02004e00:
 	overlay_veneer Event_WaitForZoomTransitionFar
-	.global Func_02004e08
+	.global FlagEntries_GetTable
 	.thumb_func
-Func_02004e08:
+FlagEntries_GetTable:
 	overlay_veneer FlagEntries_GetTableFar
 	.global Party_GetLeaderActor
 	.thumb_func

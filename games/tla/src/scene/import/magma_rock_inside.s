@@ -322,9 +322,9 @@ BattleEffect_LoadActionEffectResources:
 	.thumb_func
 Func_02004e78:
 	overlay_veneer FieldPsynergy_SetupActorPairFar
-	.global Func_02004e80
+	.global Import_BattleEffectStopMainActor
 	.thumb_func
-Func_02004e80:
+Import_BattleEffectStopMainActor:
 	overlay_veneer BattleEffect_StopMainActorFar
 	.global BattleEffect_CleanupSceneObjects
 	.thumb_func

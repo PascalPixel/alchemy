@@ -109,7 +109,7 @@ void Func_0200042c(s32 unused, s32 id) {
   }
 }
 
-void Func_020004b4(void) { Func_02003e6c(); }
+void Func_020004b4(void) { Field_TryJumpForward(); }
 
 void Func_020004bc(s32 unused, s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -123,7 +123,7 @@ void Func_020004bc(s32 unused, s32 id) {
   Func_02001e78(objectId);
   Actor_SetAnimation(objectId, 3);
   layer[3] -= 0x200000;
-  Func_02003d54();
+  Map_LoadCellsAndShapes();
   Map_CenterOnFollowedPoint();
   column = (Actor_Get(12)->x >> 20) - 42;
   Event_Start();
@@ -158,7 +158,7 @@ void Func_02000574(s32 unused, s32 id) {
   Func_02001e78(id);
   Actor_SetAnimation(id, 3);
   layer[3] -= 0x200000;
-  Func_02003d54();
+  Map_LoadCellsAndShapes();
   Map_CenterOnFollowedPoint();
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -245,7 +245,7 @@ void Func_0200071c(void) {
   FieldTask_AddFrame(Func_020006d0, priority);
   FieldCamera_SetSpeed(0x28000, 0x4000);
   FieldCamera_MoveTo(PIXELS(776), -1, PIXELS(648), 1);
-  Func_02003e54();
+  Import_FieldCameraWaitForArrival();
   FieldEvent_Wait(30);
   Event_End();
   Event_SetFlag(0x240);
@@ -312,7 +312,7 @@ cell:
   i++;
   if (i <= 14)
     goto row;
-  Func_02003e54();
+  Import_FieldCameraWaitForArrival();
   MapGrid_SetShake(-1, -1, 0xe666);
   Event_PlaySound(390);
   FieldEvent_Wait(30);
@@ -444,7 +444,7 @@ void Func_02000c28(s32 unused, s32 id) {
   Func_02001e78(id);
   Actor_SetAnimation(id, 3);
   layer[3] -= 0x200000;
-  Func_02003d54();
+  Map_LoadCellsAndShapes();
   Map_CenterOnFollowedPoint();
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -727,7 +727,7 @@ void Func_020011d4(s32 unused, s32 id) {
   Func_02001e78(id);
   Actor_SetAnimation(id, 3);
   layer[3] -= 0x200000;
-  Func_02003d54();
+  Map_LoadCellsAndShapes();
   Map_CenterOnFollowedPoint();
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1238,12 +1238,12 @@ void Func_02001fcc(void) {
   case 0:
     Func_02003bb8(0, 1);
     Func_02003bb8(1, 1);
-    Func_02003ecc(170);
+    Scene_QueueMusic(170);
     break;
   case 0x34bbf:
     Func_02003bb8(0, 0);
     Func_02003bb8(1, 0);
-    Func_02003ecc(-1);
+    Scene_QueueMusic(-1);
     break;
   }
   Vents_AdvanceCounter(0x34bc0);
@@ -1325,12 +1325,12 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_Ov67cRoom5) {
     if ((u32)(entrance - 5) <= 1) {
       Func_02003ab0(gData_020040f4, gData_02004102, Func_02001fcc);
-      Func_02003ecc(170);
+      Scene_QueueMusic(170);
     }
   } else if (scene == (s32)&SceneId_Ov67cRoom6) {
     if (entrance == 5 || entrance == 7) {
       Func_02003ab0(gData_02004106, gData_02004114, Func_02001fcc);
-      Func_02003ecc(170);
+      Scene_QueueMusic(170);
       Func_0200107c(0, 10);
     }
     if (!GameFlag_Test(0x238)) {

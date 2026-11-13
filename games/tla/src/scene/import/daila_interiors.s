@@ -34,9 +34,9 @@ Map_CopyCellsRect:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
-	.global Func_02000cbc
+	.global Actor_SetItemIcon
 	.thumb_func
-Func_02000cbc:
+Actor_SetItemIcon:
 	overlay_veneer Actor_SetItemIconFar
 	.global FieldMessage_Show
 	.thumb_func
@@ -142,13 +142,13 @@ Actor_ArmCallback:
 	.thumb_func
 Import_ActorSetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_02000d94
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_02000d94:
+Actor_ShowEmoteById:
 	overlay_veneer Actor_ShowEmoteByIdFar
-	.global Func_02000d9c
+	.global Field_TryJumpForward
 	.thumb_func
-Func_02000d9c:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global ItemDisplay_ShowPicture
 	.thumb_func
@@ -162,9 +162,9 @@ Func_02000dac:
 	.thumb_func
 Import_EventResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02000dbc
+	.global FieldYesNo_Ask
 	.thumb_func
-Func_02000dbc:
+FieldYesNo_Ask:
 	overlay_veneer FieldYesNo_AskFar
 	.global Func_02000dc4
 	.thumb_func

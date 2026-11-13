@@ -12,7 +12,7 @@ extern u16 gData_02001968[];
 
 void Func_02000754(struct Actor *object);
 
-void Func_02001828(struct Actor *object, s32 mode);
+void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 
 void Func_02000acc(void);
 

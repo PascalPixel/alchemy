@@ -24,7 +24,7 @@ void Irq_SetHandler(s32 a, s32 b, void *callback);
 void Import_ResourceDecodeByteLzInRam(const void *source, void *destination);
 void Actor_StartScript(struct Actor *object, const void *data);
 s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
-void Func_02001d9c(void);
+void Field_TryJumpForward(void);
 void Func_02001dfc(void);
 void Func_02001e04(s32 a, s32 b, s32 c, s32 d);
 void Func_02001e0c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);

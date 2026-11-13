@@ -20,7 +20,7 @@ extern struct ActorPlacement gData_02001044[];
 extern struct ActorPlacement gData_02001194[];
 extern s16 gData_020012cc[];
 
-void Func_02000edc(s32 a);
+void Scene_TalkToActor(s32 a);
 
 extern struct Trigger gData_020013c8[];
 extern struct Trigger gData_020014b8[];

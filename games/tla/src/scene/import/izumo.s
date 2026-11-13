@@ -102,9 +102,9 @@ Actor_ArmCallback:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_02000d88
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_02000d88:
+Actor_ShowEmoteById:
 	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func

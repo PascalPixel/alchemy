@@ -61,7 +61,7 @@ struct JupiterLighthouseRoom6EventWork {
   u16 field1c4;
 };
 
-void Func_02001ab4(struct JupiterLighthouseRoom6Object *object, s32 mode);
+void Import_ActorSelectAnimation(struct JupiterLighthouseRoom6Object *object, s32 mode);
 
 // ---- this overlay
 

@@ -48,9 +48,9 @@ void Func_020004d4(struct Actor *object) {
   }
   self->unk66 = self->timer;
   if (self->timer == 212)
-    Func_02005d5c(object, 9);
+    Import_ActorSelectAnimation(object, 9);
   else
-    Func_02005d5c(object, 10);
+    Import_ActorSelectAnimation(object, 10);
 }
 
 void Func_02000550(struct Actor *object) {
@@ -212,8 +212,8 @@ void Func_020007b4(s32 mode, s32 step) {
     second->y = second->terrainHeight;
     GameFlag_SetBit(first->timer);
     GameFlag_ClearBit(second->timer);
-    Func_02005d5c(first, ((struct FieldSprite *)first->sprite)->frame + 1);
-    Func_02005d5c(second, ((struct FieldSprite *)second->sprite)->frame - 1);
+    Import_ActorSelectAnimation(first, ((struct FieldSprite *)first->sprite)->frame + 1);
+    Import_ActorSelectAnimation(second, ((struct FieldSprite *)second->sprite)->frame - 1);
     Func_020006cc(first);
     Func_020006cc(second);
   }
@@ -247,7 +247,7 @@ void Func_02000908(u16 *list) {
       base += base << 1;
       base += choice;
     }
-    Func_02005d5c(object, base);
+    Import_ActorSelectAnimation(object, base);
     object->motionFlags = 0;
     object->collisionFlags &= ~1;
     object->timer = flag;
@@ -364,10 +364,10 @@ void Func_02000988(void) {
         Map_GetTerrainHeight(((u8 *)rider)[98], ride->x + dx, ride->z + dz);
     leader->y = height;
     leader->terrainHeight = height;
-    Func_02005d5c(leader, 6);
+    Import_ActorSelectAnimation(leader, 6);
     wait(6);
     Sound_Play(152);
-    Func_02005d5c(leader, 7);
+    Import_ActorSelectAnimation(leader, 7);
     leader->speedLimit = 0x20000;
     leader->acceleration = 0x8000;
     leader->velocityY = 0x40000;
@@ -532,7 +532,7 @@ void Func_02000f34(struct Actor *object) {
     }
     shot = (struct Actor *)Import_ActorCreate(280, position.x, object->y,
                                               position.z);
-    Func_02005d5c(shot, 2);
+    Import_ActorSelectAnimation(shot, 2);
     Actor_SetSingleChildFlags(shot, 0);
     ((struct FieldSprite *)shot->sprite)->priority = 1;
     shot->motionFlags = 0;
@@ -666,7 +666,7 @@ void Func_02001290(struct Actor *object) {
     shot->x = position.x;
     shot->y = object->y;
     shot->z = position.z;
-    Func_02005d5c(shot, 2);
+    Import_ActorSelectAnimation(shot, 2);
     Actor_SetSingleChildFlags(shot, 0);
     ((struct FieldSprite *)shot->sprite)->priority = 1;
     shot->priorityFlags |= 32;
@@ -766,7 +766,7 @@ void Func_02001458(struct Actor *object) {
 void Func_0200160c(s32 x, s32 y, s32 z) {
   struct Actor *object = Import_ActorCreate(0x11d, x, y, z);
 
-  Func_02005d5c(object, 1);
+  Import_ActorSelectAnimation(object, 1);
   Actor_SetSingleChildFlags(object, 0);
   Actor_SetSpriteColor(object, 6);
   Actor_SetBlendMode(object, 1);
@@ -892,7 +892,7 @@ void Func_02001828(void) {
   Sound_Play(207);
   gust =
       (struct Actor *)Import_ActorCreate(280, leader->x, leader->y, leader->z);
-  Func_02005d5c(gust, 2);
+  Import_ActorSelectAnimation(gust, 2);
   Actor_SetSingleChildFlags(gust, 0);
   gust->scaleX = 0x1b333;
   gust->scaleY = 0x3333;
@@ -923,7 +923,7 @@ void Func_02001828(void) {
       spark->gravity = 0xcccc;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
-      Func_02005d5c(spark, 7);
+      Import_ActorSelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02005fd8);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);

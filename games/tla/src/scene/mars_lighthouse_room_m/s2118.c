@@ -148,7 +148,7 @@ Func_02003180__s2118(struct Actor *actor,
 #define SHARED_F02002148_ID4 Func_02003118
 #define SHARED_F02002148_ID5 Func_02003168
 #define SHARED_F02002148_ID6 Func_02003180__s2118
-#define SHARED_F02002148_ID7 Func_020031b0
+#define SHARED_F02002148_ID7 Import_FieldCheckSpheresOverlap
 #include "../shared/func_02002148.c"
 #undef SHARED_F02002148_NAME
 #undef SHARED_F02002148_ID2

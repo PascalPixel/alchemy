@@ -16,7 +16,7 @@ extern struct Trigger gDaila1Triggers[];
 extern struct Trigger gDaila2Triggers[];
 extern s16 gData_02000d80[];
 
-void Func_02000d18(void);
+void Field_TryJumpForward(void);
 
 void Func_02000d68(s32 a, s32 b);
 

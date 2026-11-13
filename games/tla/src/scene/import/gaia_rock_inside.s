@@ -318,9 +318,9 @@ Event_SetAfterBattleDestination:
 	.thumb_func
 Party_SetFields1f2And1f4:
 	overlay_veneer Party_SetFields1f2And1f4Far
-	.global Func_02004f8c
+	.global Import_SceneTalkToActor
 	.thumb_func
-Func_02004f8c:
+Import_SceneTalkToActor:
 	overlay_veneer Scene_TalkToActorFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func

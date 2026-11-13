@@ -35,7 +35,7 @@ void Scene_RaiseHeldActor(void);
 
 void Func_02000730(void);
 
-s32 Func_02000dbc(s32 mode);
-void Func_02000d9c(void);
+s32 FieldYesNo_Ask(s32 mode);
+void Field_TryJumpForward(void);
 
 #endif

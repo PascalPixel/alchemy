@@ -238,9 +238,9 @@ Party_GetLeaderActor:
 	.thumb_func
 Actor_SetSpriteRotationById:
 	overlay_veneer Actor_SetSpriteRotationByIdFar
-	.global Func_020015a0
+	.global Field_StartColorTransition
 	.thumb_func
-Func_020015a0:
+Field_StartColorTransition:
 	overlay_veneer Field_StartColorTransitionFar
 	.ifdef TLA_EDITION_ES
 	.global Field_EndActorSpriteEffect

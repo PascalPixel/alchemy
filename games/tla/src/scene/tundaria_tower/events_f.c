@@ -18,7 +18,7 @@
 void Func_02001e5c(s32 value) { gData_02003cd0 = value; }
 
 void Func_020017dc(void);
-void Func_02002f80(struct Actor *object, s32 mode);
+void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 
 void Func_02001e68(void) {
   struct Actor *object;
@@ -72,7 +72,7 @@ retry:
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
   object->timer = 0;
-  Func_02002f80(object, 2);
+  Import_ActorSelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   object->update = Func_020017dc;
   goto walk;
@@ -85,7 +85,7 @@ walkNext:
   flags = &entry->collisionFlags;
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Func_02003028, (s32)&entry->x, radius, (s32)position,
+    if (Value4((s32 (*)())Import_FieldCheckSpheresOverlap, (s32)&entry->x, radius, (s32)position,
                entry->radius - 2) >= 0)
       goto blocked;
   }
@@ -124,7 +124,7 @@ end:
   object->update = NULL;
   object->actionFlags |= 1;
   object->acceleration = 0x4000;
-  Func_02002f80(object, 1);
+  Import_ActorSelectAnimation(object, 1);
 }
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
@@ -189,7 +189,7 @@ top:
 
 #include "map.h"
 
-DEFINE_ACTOR_SET_CELL_OPEN(Func_02002184, Func_02003160, Func_02002f80)
+DEFINE_ACTOR_SET_CELL_OPEN(Func_02002184, Func_02003160, Import_ActorSelectAnimation)
 
 // On entering, sets each listed pillar from its two flags (pushed: moved to its
 // place; else its cell raised and its shape redrawn), then lifts the leader
@@ -230,13 +230,13 @@ next:
     index = Func_02003160(object);
     cell = &cells[index];
     slot = shapes + index;
-    shape = Func_02003010(object->terrainId, object->x, object->z);
+    shape = MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
     height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
     Func_020030c0(id);
     cell->attributeB = 128;
     *slot = Func_02003180(object->terrainId, shape, (height >> 19) + 4);
     if (GameFlag_Test(flag))
-      Func_02002f80(object, 0);
+      Import_ActorSelectAnimation(object, 0);
   }
   table += 2;
   if (*table != 0xffff)
@@ -258,7 +258,7 @@ void Func_02002354(const u16 *table) {
   s32 flag;
   s32 second;
 
-  if (Func_020030f8() != 0)
+  if (Import_FieldTryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   position[0] = leader->x;
@@ -281,7 +281,7 @@ next:
       Sound_Play(125);
       Actor_SetSpriteColor(Actor_GetById(id), 7);
       wait(2);
-      Func_02002f80(trap, 0);
+      Import_ActorSelectAnimation(trap, 0);
       Actor_SetSpriteColor(Actor_GetById(id), 0);
       wait(2);
       Actor_SetSpriteColor(Actor_GetById(id), 7);
@@ -297,7 +297,7 @@ next:
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_020029d0(0);
         wait(8);
-        Func_02002f80(trap, 2);
+        Import_ActorSelectAnimation(trap, 2);
         Func_02002ca8(-2, trap->terrainId);
         Func_020029d0(1);
         wait(16);
@@ -343,7 +343,7 @@ loop:
     TundariaTower_SetWork(0x10000, 0x40000, 0x10000);
     Func_020029d0(0);
     wait(8);
-    Func_02002f80(object, 2);
+    Import_ActorSelectAnimation(object, 2);
     Func_02002c1c(-4, object->terrainId, id);
     Func_020029d0(1);
     wait(16);
@@ -387,9 +387,9 @@ void Func_020025e0(u16 *list) {
   s32 index;
   u8 *grid = gMapShapeGrid; // the shape grid, read once
 
-  Func_02003090(8, gMainRoutineWork.currentOwner);
-  Func_02003090(9, gMainRoutineWork.currentOwner);
-  Func_02003090(10, gMainRoutineWork.currentOwner);
+  Import_ActorMoveToObject(8, gMainRoutineWork.currentOwner);
+  Import_ActorMoveToObject(9, gMainRoutineWork.currentOwner);
+  Import_ActorMoveToObject(10, gMainRoutineWork.currentOwner);
   wait(1);
   Func_020025c8(8);
   Func_020025c8(9);
@@ -420,7 +420,7 @@ next:
     index = Func_02003160(object);
     cell = &cells[index];
     slot = shapes + index;
-    shape = Func_02003010(object->terrainId, object->x, object->z);
+    shape = MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
     height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
     Func_020030c0(id);
     cell->attributeB = 128;
@@ -450,7 +450,7 @@ void Func_02002764(const u16 *table) {
   s32 second;
   u8 *motion;
 
-  if (Func_020030f8() != 0)
+  if (Import_FieldTryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   partner = Actor_GetById(8);
@@ -469,13 +469,13 @@ void Func_02002764(const u16 *table) {
     flag = table[1];
     Func_02003048();
     if (!GameFlag_Test(flag)) {
-      Func_02002f80(partner, 1);
+      Import_ActorSelectAnimation(partner, 1);
       Func_02002748(partner, trap);
       wait(1);
       Sound_Play(125);
       Actor_SetSpriteColor(Actor_GetById(8), 7);
       wait(2);
-      Func_02002f80(partner, 0);
+      Import_ActorSelectAnimation(partner, 0);
       Actor_CopyGraphics(id, 9);
       Actor_SetSpriteColor(Actor_GetById(8), 0);
       wait(2);
@@ -489,7 +489,7 @@ void Func_02002764(const u16 *table) {
     } else {
       second = flag + 1;
       if (!GameFlag_Test(second)) {
-        Func_02002f80(partner, 0);
+        Import_ActorSelectAnimation(partner, 0);
         Func_02002748(partner, trap);
         motion = &leader->motionFlags;
         wait(1);
@@ -498,7 +498,7 @@ void Func_02002764(const u16 *table) {
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_020029d0(0);
         wait(8);
-        Func_02002f80(partner, 2);
+        Import_ActorSelectAnimation(partner, 2);
         Func_02002ca8(-2, trap->terrainId);
         Func_020029d0(1);
         wait(16);

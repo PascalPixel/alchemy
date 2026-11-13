@@ -70,9 +70,9 @@ GameFlag_GetByte:
 	.thumb_func
 GameFlag_SetByte:
 	overlay_veneer GameFlag_SetByteFar
-	.global Func_020019fc
+	.global Import_ActorSelectAnimation
 	.thumb_func
-Func_020019fc:
+Import_ActorSelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_SetAnimationSpeed
 	.thumb_func

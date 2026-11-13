@@ -40,7 +40,7 @@ extern s16 gLightSpriteCount;
 extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
 
-void Func_02002160(struct FieldEffect *effect, s32 mode);
+void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 void Leader_CenterInCell(void);
 

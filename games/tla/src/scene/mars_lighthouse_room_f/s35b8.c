@@ -87,7 +87,7 @@ void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #define CELL_TABLE gData_020070a8
 #define CELL_SPRITE_DRAW Func_02003780
-#define CELL_PUSH_SLOT_ENTRY Func_02005440
+#define CELL_PUSH_SLOT_ENTRY Import_OamAddSpriteAtDepthClamped
 #include "../../field/map/cell_sprite.c"
 
 #include "ram_buffer.h"

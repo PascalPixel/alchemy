@@ -455,7 +455,7 @@ s32 Scene_PrepareMap(void) { return 0; }
    } *)(base))                                                                 \
        ->v)
 
-void Func_02000f4c(void) { Func_0200102c(); }
+void Func_02000f4c(void) { Field_TryJumpForward(); }
 
 #include "text/msg_ids.h"
 #include "edition.h"

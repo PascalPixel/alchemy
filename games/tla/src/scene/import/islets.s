@@ -42,9 +42,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_02003de4
+	.global Import_ActorSelectAnimation
 	.thumb_func
-Func_02003de4:
+Import_ActorSelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
@@ -78,9 +78,9 @@ MapGrid_PlayMapEdit:
 	.thumb_func
 Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Func_02003e2c
+	.global MapGrid_CheckCollision
 	.thumb_func
-Func_02003e2c:
+MapGrid_CheckCollision:
 	overlay_veneer MapGrid_CheckCollisionFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -274,9 +274,9 @@ Event_ResolvePendingActions:
 	.thumb_func
 FieldPsynergy_StartMindReadWave:
 	overlay_veneer FieldPsynergy_StartMindReadWaveFar
-	.global Func_02003fb4
+	.global Import_FieldPsynergyStopMindReadWave
 	.thumb_func
-Func_02003fb4:
+Import_FieldPsynergyStopMindReadWave:
 	overlay_veneer FieldPsynergy_StopMindReadWaveFar
 	.global Func_02003fbc
 	.thumb_func

@@ -21,7 +21,7 @@ extern struct LightOam Data_02002244[];
 extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
 
-void Func_020019fc(struct FieldEffect *effect, s32 mode);
+void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 void Leader_CenterInCell(void);
 

@@ -238,14 +238,14 @@ s32 Func_02000a48(void) {
 
 #include "frame.h"
 
-void Func_02003bb4(s32 owner, u16 value);
+void Import_FieldPsynergySetupActorPair(s32 owner, u16 value);
 
 void Func_02000c08(s16 value) {
   struct MainRoutineWork *party;
 
   BattleEffect_LoadActionEffectResources(151, 1);
   party = &gMainRoutineWork;
-  Func_02003bb4(party->currentOwner, value);
+  Import_FieldPsynergySetupActorPair(party->currentOwner, value);
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   BattleEffect_CleanupSceneObjects();

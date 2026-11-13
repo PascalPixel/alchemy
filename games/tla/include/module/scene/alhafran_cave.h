@@ -9,7 +9,7 @@
 void Func_02001230(const u16 *table);
 void Func_02001220(void);
 
-void Func_020015a0(s32 frames, s32 color);
+void Field_StartColorTransition(s32 frames, s32 color);
 
 extern s32 gData_02001610[];
 extern u32 gData_02001674[];

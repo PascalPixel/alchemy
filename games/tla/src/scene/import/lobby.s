@@ -62,9 +62,9 @@ Serial_StartReceive:
 	.thumb_func
 Serial_GetActiveTransfers:
 	overlay_veneer Serial_GetActiveTransfersFar
-	.global Func_02001944
+	.global Import_TaskSetFlags
 	.thumb_func
-Func_02001944:
+Import_TaskSetFlags:
 	overlay_veneer Task_SetFlagsFar
 	.global Unit_Get
 	.thumb_func
@@ -146,9 +146,9 @@ MessageArgument_ClearAll:
 	.thumb_func
 MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
-	.global Func_020019ec
+	.global Save_ProcessSelectedFile
 	.thumb_func
-Func_020019ec:
+Save_ProcessSelectedFile:
 	overlay_veneer Save_ProcessSelectedFileFar
 	.global Djinn_GetRecoveryTable
 	.thumb_func
@@ -222,9 +222,9 @@ Event_ShowMessageAndWait:
 	.thumb_func
 Actor_ShowEmoteById:
 	overlay_veneer Actor_ShowEmoteByIdFar
-	.global Func_02001a84
+	.global Import_EventSetDestination
 	.thumb_func
-Func_02001a84:
+Import_EventSetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Field_RequestBattleFromEncounterTable
 	.thumb_func

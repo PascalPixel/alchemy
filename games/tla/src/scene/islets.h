@@ -21,7 +21,7 @@ struct IsletsEventWork {
   s32 field1ac;
 };
 
-void Func_02003de4(struct Actor *object, s32 value);
+void Import_ActorSelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *script);
 void Func_020034ec(void);
 
@@ -89,7 +89,7 @@ void Func_020020ec(s32 x, s32 z, s32 layers, s32 value);
 void Func_020021d0(void);
 void Func_02002bd8(void);
 void Func_02003fe4(void);
-s32 Func_02003e2c(struct Actor *object, struct Vector3 *position);
+s32 MapGrid_CheckCollision(struct Actor *object, struct Vector3 *position);
 struct Actor *Func_02003fdc(struct Vector3 *position, s32 mode);
 s32 Func_020037d8(struct PushTarget *target);
 void PushTarget_Push(struct PushTarget target);
@@ -99,6 +99,6 @@ void Func_02001278(struct Actor *object);
 void Actor_EmitSmoke(struct Actor *object);
 void Func_020034d8(void);
 void Actor_MoveToObject(s32 actor, s32 target);
-void Func_02003fb4(void);
+void Import_FieldPsynergyStopMindReadWave(void);
 
 #endif

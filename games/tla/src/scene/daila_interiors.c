@@ -24,7 +24,7 @@
 #include "types.h"
 
 void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
-void Func_02000d94(s32 actor, s32 jump, s32 frames);
+void Actor_ShowEmoteById(s32 actor, s32 jump, s32 frames);
 void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                        s32 height);
 
@@ -46,11 +46,11 @@ static inline void Daila_Jump(s32 actor, s32 height, s32 frames) {
   s32 a = actor;
 
   /* FAKEMATCH(barrier): an empty asm over the three copies finishes height and
-   * frames before the actor; as Func_02000d94(actor, height, frames), the actor
+   * frames before the actor; as Actor_ShowEmoteById(actor, height, frames), the actor
    * is copied two instructions early and, in Func_020000ac, 2 of 62
    * instructions differ in tla-en. */
   __asm__("" : "+l"(h), "+l"(f), "+l"(a));
-  Func_02000d94(a, h, f);
+  Actor_ShowEmoteById(a, h, f);
 }
 
 static inline void Daila_CopyCells(s32 srcX, s32 srcY, s32 destX, s32 destY,
@@ -120,7 +120,7 @@ void Func_020000ac(s32 unused, s32 actor) {
 void Func_02000150(s32 unused, s32 actor) {
   Actor_FaceActorById(actor, 4, 0);
   FieldEvent_Wait(10);
-  Func_02000d94(actor, 0x103, 50);
+  Actor_ShowEmoteById(actor, 0x103, 50);
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
@@ -500,7 +500,7 @@ s32 Func_02000878(s32 item, s32 unused) {
       }
       MessageArgument_Push(item, 2);
       FieldMessage_Show((s32)MsgItemDropPrompt + 1, 5);
-      result = Func_02000dbc(1);
+      result = FieldYesNo_Ask(1);
       Message_CloseFinishedWindows();
       if (result != 0)
         goto retry;
@@ -577,7 +577,7 @@ Actor_GetById__arrival(s32 id) __asm__("Actor_GetById");
 extern void Actor_SetSingleChildFlags__arrival(
     struct DailaStartActor *object,
     s32 value) __asm__("Actor_SetSingleChildFlags");
-void Func_02000cbc(struct DailaStartActor *object, s32 item);
+void Actor_SetItemIcon(struct DailaStartActor *object, s32 item);
 /* VIEW(daila_interiors): routine Func_02000dc4 as void Func_02000dc4(const void
  * *script); module/scene/atteka_inlet.h has void Func_02000dc4(void); tried as
  * the definition's void Func_02000dc4(void), which the object already declares,
@@ -615,7 +615,7 @@ s32 DailaInteriors_Start(void) {
     Actor_SetSingleChildFlags__arrival(Actor_GetById__arrival(13), 0);
     Func_02000dac(0);
     if (!GameFlag_Test(0xa20)) {
-      Func_02000cbc(Actor_GetById__arrival(9), 458);
+      Actor_SetItemIcon(Actor_GetById__arrival(9), 458);
       Actor_SetSingleChildFlags__arrival(Actor_GetById__arrival(9), 0);
       Import_ActorSetSpritePriority(9, 1);
       Actor_GetById__arrival(9)->speed1c = 0x13333;
@@ -650,7 +650,7 @@ s32 Scene_PrepareMap(void) {
 
 DEFINE_SCENE_FADE_IN_AND_CLEAR_FLAG(Scene_FadeInAndClearFlag)
 
-void Func_02000c74(void) { Func_02000d9c(); }
+void Func_02000c74(void) { Field_TryJumpForward(); }
 
 #include "version.h"
 

@@ -26,7 +26,7 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
 void Func_02002368();
 void Func_020023d0(s32 id);
-void Func_02002400(void);
+void Field_TryJumpForward(void);
 void Func_02002440(s32 id, s32 a);
 void Func_02002460(s32 x, s32 z, s32 a, s32 b);
 void Func_02002468(s32 id);

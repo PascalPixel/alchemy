@@ -20,7 +20,7 @@ void Func_02000be0(u16 value);
 void Actor_MoveToObject(s32 id, s32 a);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 s32 Field_FindNearbyTalkTarget(s32 id);
-void Func_02000d14(void);
+void Field_TryJumpForward(void);
 s32 Func_02000d4c(void);
 void Func_02000d54(void);
 

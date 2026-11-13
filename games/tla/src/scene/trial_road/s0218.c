@@ -124,12 +124,12 @@ void TrialRoad_OpenChests(void) {
 
 /// Puts an item in the chest: "{protagonist} put {actor}'s {item} in the
 /// chest." (MsgTrialRoadStoredItem) with sound 125 while the chest object
-/// Func_020059b8 picks plays motion 5; chests 9 and 11 clear flag 645, the
+/// Field_FindNearbyTalkTarget picks plays motion 5; chests 9 and 11 clear flag 645, the
 /// others 646, and once both are clear it calls Func_02000218 with the stage
 /// state's mirrored and field16[0], plays sound 138 and sets flag 642. Then the
 /// item leaves the owner's slot.
 void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
-  s32 kind = Func_020059b8(Party_GetLeaderActor());
+  s32 kind = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
   struct TrialRoadState *state = gTrialRoadState;
 
   Event_Start();
@@ -276,7 +276,7 @@ void Func_02000768(void) {
   Event_SetFlag(0x307);
 }
 
-void Func_02000784(void) { Func_020059c0(); }
+void Func_02000784(void) { Import_FieldTryJumpForward(); }
 
 void Func_0200078c(s32 id) {
   struct Actor *object = Actor_GetById(id);
@@ -296,7 +296,7 @@ void Func_020007b4(void) {
 
 void Func_020007e8(void) {
   if (Actor_GetById(16)->z >> 20 == 23)
-    Func_020059c0();
+    Import_FieldTryJumpForward();
   else
     Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, 0);
 }
@@ -340,8 +340,8 @@ void Func_0200082c(s32 a, s32 id) {
 }
 
 void Func_020008a4(void) {
-  if (Event_GetFlag(Func_020059b8(gMainRoutineWork.currentOwner) + 0x203))
-    Func_020059c0();
+  if (Event_GetFlag(Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner) + 0x203))
+    Import_FieldTryJumpForward();
 }
 
 void Func_020008d0(s32 a, s32 id) {
@@ -365,7 +365,7 @@ void Func_02000924(s32 id) {
     Func_0200070c(id, -16);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
-    Func_020057c8(object, 6);
+    Actor_SelectAnimation(object, 6);
   }
 }
 
@@ -376,7 +376,7 @@ void Func_0200095c(s32 id) {
     Func_0200070c(id, 16);
     object->collisionFlags = 1;
     object->priorityFlags &= 0xfd;
-    Func_020057c8(object, 5);
+    Actor_SelectAnimation(object, 5);
   }
 }
 
@@ -517,7 +517,7 @@ void Func_02000c84(void) {
   s32 y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
 
   if (y >= 0x100000) {
-    Func_020059c0();
+    Import_FieldTryJumpForward();
   } else if (Func_02005a30()) {
     Func_02005a38();
     Func_020009ac(0, 0);
@@ -652,7 +652,7 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   Sound_Play(239);
   if (dx < 0 || dz < 0)
     mode = 3;
-  Func_020057c8(object, mode);
+  Actor_SelectAnimation(object, mode);
   Actor_SetMoveTarget(object, (toX << 20) + 0x80000, 0,
                       z = (toZ << 20) + 0x80000);
   Event_Wait(6);
@@ -664,14 +664,14 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Actor_WaitForMove(object);
   if (toX <= 17) {
-    Func_020057c8(object, 1);
+    Actor_SelectAnimation(object, 1);
     Sound_Play(298);
     Sound_Play(213);
   } else {
-    Func_020057c8(object, 3);
+    Actor_SelectAnimation(object, 3);
     Actor_SetMoveTarget(object, 312 << 16, 0, z);
     Event_Wait(30);
-    Func_020057c8(object, 8);
+    Actor_SelectAnimation(object, 8);
     Actor_WaitForMove(object);
     {
       /* FAKEMATCH(pin): the 2 held in r2 while the address takes r3; as

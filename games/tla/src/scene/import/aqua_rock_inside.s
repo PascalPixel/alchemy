@@ -150,9 +150,9 @@ MapGrid_SetScreenShake:
 	.thumb_func
 Actor_SetSpriteColorMode:
 	overlay_veneer Actor_SetSpriteColorModeFar
-	.global Func_02003d54
+	.global Map_LoadCellsAndShapes
 	.thumb_func
-Func_02003d54:
+Map_LoadCellsAndShapes:
 	overlay_veneer Map_LoadCellsAndShapesFar
 	.global FieldMessage_Show
 	.thumb_func
@@ -278,9 +278,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 FieldCamera_MoveWithinMapBounds:
 	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
-	.global Func_02003e54
+	.global Import_FieldCameraWaitForArrival
 	.thumb_func
-Func_02003e54:
+Import_FieldCameraWaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Import_EventSetExitRequest
 	.thumb_func
@@ -290,9 +290,9 @@ Import_EventSetExitRequest:
 	.thumb_func
 Field_RequestDjinnBattle:
 	overlay_veneer Field_RequestDjinnBattleFar
-	.global Func_02003e6c
+	.global Field_TryJumpForward
 	.thumb_func
-Func_02003e6c:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
@@ -338,9 +338,9 @@ Scene_PlayMusic:
 	.thumb_func
 Actor_WalkByAndWaitById:
 	overlay_veneer Actor_WalkByAndWaitByIdFar
-	.global Func_02003ecc
+	.global Scene_QueueMusic
 	.thumb_func
-Func_02003ecc:
+Scene_QueueMusic:
 	overlay_veneer Scene_QueueMusicFar
 	.global Event_NoOp
 	.thumb_func

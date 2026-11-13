@@ -62,7 +62,7 @@ void Event_WaitTransitionFrames(void);
 s32 Func_02000088(struct Actor *object, struct Actor *target, s32 range,
                   s32 force);
 void Func_02001688(void);
-void Func_02002448(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 #include "version.h"
 #include "battle.h"
 #include "game.h"
@@ -101,12 +101,12 @@ s32 Func_02000088(struct Actor *object, struct Actor *target, s32 range,
 
     if (ahead == facing || right == facing || left == facing || force != 0) {
       object->movementState = 1;
-      Func_02002448(object, 1);
+      Actor_SelectAnimation(object, 1);
       result = 1;
     }
   } else {
     object->movementState = 0;
-    Func_02002448(object, 2);
+    Actor_SelectAnimation(object, 2);
   }
   return result;
 }
@@ -127,17 +127,17 @@ s32 Func_0200014c(struct Actor *object) {
   if (SceneActor_CalculateFixedPointDistance(&leader->x, &object->x) <= 11) {
     u8 *state = &object->movementState;
     /* FAKEMATCH(temporary): the call's argument copied before the barrier
-     * below; as object->movementState = force; Func_02002448(object, 2), 4 of
+     * below; as object->movementState = force; Actor_SelectAnimation(object, 2), 4 of
      * 82 instructions differ in tla-en. */
     struct Actor *arg = object;
 
     /* FAKEMATCH(barrier): the state's address and the argument are both formed
      * before the state is stored, as the native does; as object->movementState
-     * = force; Func_02002448(object, 2), with the copy above, 4 of 82
+     * = force; Actor_SelectAnimation(object, 2), with the copy above, 4 of 82
      * instructions differ in tla-en. */
     asm("" : : "l"(arg), "l"(state));
     *state = force;
-    Func_02002448(arg, 2);
+    Actor_SelectAnimation(arg, 2);
   } else {
     struct Actor *target;
     u16 *flags = (u16 *)&object->timer;
@@ -389,12 +389,12 @@ void Func_020006bc(s32 actor) {
   timer = &object->timer;
   switch (s) {
   case 0:
-    Func_02002448(object, 2);
+    Actor_SelectAnimation(object, 2);
     break;
   case 1:
     break;
   case 3:
-    Func_02002448(object, 1);
+    Actor_SelectAnimation(object, 1);
   case 2:
     Actor_SetMoveTarget(object, object->x, object->y, object->z);
     *timer &= ~1;

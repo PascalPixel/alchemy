@@ -537,7 +537,7 @@ struct Actor *Func_02000da0(struct Actor *object, s32 value) {
   return spawned;
 }
 
-DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Func_02003de4, gSmokeScript)
+DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Import_ActorSelectAnimation, gSmokeScript)
 
 #include "call.h"
 
@@ -698,10 +698,10 @@ void Func_0200129c(struct Actor *gift) {
   gift->speedLimit = 0x19999;
   gift->acceleration = 0xcccc;
   gift->update = Actor_EmitSmoke;
-  Func_02003de4(gift, 2);
+  Import_ActorSelectAnimation(gift, 2);
   FieldActor_SetMoveTarget(gift, 0x1160000, 0, 0x1c40000);
   FieldActor_WaitForMove(gift);
-  Func_02003de4(gift, 1);
+  Import_ActorSelectAnimation(gift, 1);
   gift->update = 0;
   PartyInventory_Remove(455);
   Event_ShowMessage(9, 0);
@@ -727,7 +727,7 @@ void Func_0200129c(struct Actor *gift) {
   Func_02003fc4();
   Func_020034ec();
   gift->update = Actor_EmitSmoke;
-  Func_02003de4(gift, 2);
+  Import_ActorSelectAnimation(gift, 2);
   FieldActor_SetMoveTarget(gift, 0x1200000, 0, 0x21a0000);
   FieldEvent_Wait(20);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
@@ -757,7 +757,7 @@ void Func_0200129c(struct Actor *gift) {
     if (b != 0) {                                                              \
       b->scaleY = 0x20000;                                                     \
       Actor_SetSingleChildFlags(b, 0);                                         \
-      Func_02003de4(b, 1);                                                     \
+      Import_ActorSelectAnimation(b, 1);                                                     \
       Actor_StartScript(b, gSmokeScript);                                      \
     }                                                                          \
   }
@@ -1099,7 +1099,7 @@ void Func_02001db0(void) {
   Func_02003fbc();
   Actor_SetPosition(20, 0, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Func_02003fb4();
+  Import_FieldPsynergyStopMindReadWave();
   Actor_FaceDirectionAndWait(9, FACING_NORTHWEST + FACING_STEP);
   Event_SetFlag(0xaa2);
   Event_End();
@@ -1489,7 +1489,7 @@ void Func_02002830(void) {
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 312, 440);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTHWEST);
   Event_ShowMessage(9, 0);
-  Func_02003fb4();
+  Import_FieldPsynergyStopMindReadWave();
   Actor_FaceDirectionAndWait(9, FACING_SOUTH);
   work = Ram_HeapSlots->eventWork;
   work->field1ac = 0x100;
@@ -1551,7 +1551,7 @@ void Func_020029c4(void) {
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 742);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
   Event_ShowMessage(9, 0);
-  Func_02003fb4();
+  Import_FieldPsynergyStopMindReadWave();
   Actor_FaceDirectionAndWait(9, FACING_SOUTH);
   Func_020034d8();
 #if TLA_PATCH_1

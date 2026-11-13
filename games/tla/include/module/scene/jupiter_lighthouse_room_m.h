@@ -61,8 +61,8 @@ extern struct Actor *gData_02005a84[];
 extern struct LightOam Data_02005ac4[];
 extern s16 gLightSpritePriority;
 
-s32 Func_0200499c(struct Actor *actor);
-void Func_020046f4(struct FieldEffect *effect, s32 mode);
+s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 extern struct CellTarget gTeleporters;
 

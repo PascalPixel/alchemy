@@ -136,13 +136,13 @@ extern s32 gPushDirectionSteps[];
 
 static __inline__ s32 CallFunc_02004a64(struct Actor *actor,
                                         struct Vector3 *cell) {
-  return Func_02004a64(actor, cell);
+  return MapGrid_CheckCollision(actor, cell);
 }
 
 /// Measures a push: finds the pushable actor ahead of the leader
 /// (PushTarget_FindAhead, recording its number and kind in the push state), then
 /// steps the actor's box one cell at a time along the leader's direction
-/// until a cell of it is blocked (Func_02004a64 returns 2); with at least one
+/// until a cell of it is blocked (MapGrid_CheckCollision returns 2); with at least one
 /// free step it records the end position in the push state and returns 1,
 /// else 0. The actor stays on layer 2 while it is measured. The same code as
 /// overlay 674's Func_020037d8 and overlay 662's Func_020001d4.

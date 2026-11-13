@@ -162,10 +162,10 @@ s32 Func_0200297c(void) {
         other = Ram_HeapSlots->scriptObjects;
         flags = &other->collisionFlags;
         for (i = 0; i <= 63; i++, flags += 128, other++) {
-          /* FAKEMATCH(wrapper): Func_02005538 forwarded through Value4; as a
+          /* FAKEMATCH(wrapper): Import_FieldCheckSpheresOverlap forwarded through Value4; as a
            * direct call, 110 of 236 instructions differ in tla-en. */
           if (other->script != 0 && (*flags & 1) && other != actor &&
-              Value4((s32 (*)())Func_02005538, (s32)&other->x, radius,
+              Value4((s32 (*)())Import_FieldCheckSpheresOverlap, (s32)&other->x, radius,
                      (s32)&position, other->radius - 2) >= 0) {
             System_Wait(1);
             goto done;

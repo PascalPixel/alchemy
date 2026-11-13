@@ -120,7 +120,8 @@ extern struct WarpWork gData_020070a8;
 
 void Func_02003af0(void);
 
-s32 Func_02005538(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
+s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct Position *b,
+                                    s32 radiusB);
 
 extern volatile s16 gData_020074c8;
 
@@ -143,7 +144,7 @@ extern s16 gData_020075d0;
 extern s16 gData_020075d2;
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
-void Func_02005440(struct LightOam *oam, s32 depth);
+void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 
 void Func_02000d80(void);
 

@@ -11,7 +11,7 @@
 
 void Func_02000080(s32 id);
 void Func_02000838(void);
-void Func_020019f4(void);
+void Field_TryJumpForward(void);
 void Func_02001a24(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY, s32 layer);
 
@@ -335,7 +335,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Func_02000830(void) { Func_020019f4(); }
+void Func_02000830(void) { Field_TryJumpForward(); }
 
 void Actor_MoveToObject();
 
@@ -349,7 +349,7 @@ void Func_02000838(void) {
   Event_ShowMessageThenWait(9, 0, 10);
   Actor_ShowEmote(4, 0x101, 40);
   Event_ShowMessageThenWait(10, 0, 10);
-  Func_020019f4();
+  Field_TryJumpForward();
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_Wait(20);

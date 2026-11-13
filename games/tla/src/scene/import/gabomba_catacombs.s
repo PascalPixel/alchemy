@@ -126,9 +126,9 @@ Field_RequestBattleFromEncounterTable:
 	.thumb_func
 Field_RequestDjinnBattle:
 	overlay_veneer Field_RequestDjinnBattleFar
-	.global Func_02001234
+	.global Scene_TalkToActor
 	.thumb_func
-Func_02001234:
+Scene_TalkToActor:
 	overlay_veneer Scene_TalkToActorFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func

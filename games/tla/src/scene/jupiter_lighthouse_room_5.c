@@ -676,7 +676,7 @@ struct GustObject *Func_02001230(struct GustObject *source) {
                                   Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                    position.z));
-  Func_02002810(object, 2);
+  Import_ActorSelectAnimation(object, 2);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;

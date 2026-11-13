@@ -226,9 +226,9 @@ FieldCamera_FollowActor:
 	.thumb_func
 FieldCamera_MoveWithinMapBounds:
 	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
-	.global Func_02003564
+	.global Import_FieldCameraWaitForArrival
 	.thumb_func
-Func_02003564:
+Import_FieldCameraWaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Event_SetDestination
 	.thumb_func
@@ -310,9 +310,9 @@ Func_020035fc:
 	.thumb_func
 Func_02003604:
 	overlay_veneer Func_080c87c8
-	.global Func_0200360c
+	.global Field_StartColorTransition
 	.thumb_func
-Func_0200360c:
+Field_StartColorTransition:
 	overlay_veneer Field_StartColorTransitionFar
 	.ifdef TLA_EDITION_ES
 	.global Field_EndActorSpriteEffect

@@ -27,7 +27,7 @@ void Whirlwind_Update(struct GustObject *object);
 void Func_02003b7c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Func_020046f4, Whirlwind_Update, Func_02003b7c)
+DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Import_ActorSelectAnimation, Whirlwind_Update, Func_02003b7c)
 
 DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, Func_02003b7c)
 
@@ -42,7 +42,7 @@ void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);
 /// 64 one when the big switch is set, at its animation picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, Data_02005ac4,
     gLightSpriteCount, gData_02005a84, gLightSpritesLarge, gLightSpritePriority,
-    Func_0200499c, Import_OamAddSpriteAtDepth)
+    BattleEffect_GetObjectPriority, Import_OamAddSpriteAtDepth)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

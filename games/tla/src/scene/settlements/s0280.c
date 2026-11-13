@@ -246,7 +246,7 @@ void Func_02000758(s32 x, s32 y, s32 z) {
     object->scaleY = 0x8000;
     *(s32 *)&object->watchedObject = 60;
     object->update = (void (*)(void))Func_02000714;
-    Func_02001fe0(object, 5);
+    Import_ActorSelectAnimation(object, 5);
     Actor_SetBlendMode(object, 1);
   }
 }

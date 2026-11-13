@@ -33,13 +33,13 @@ struct WorldMapSprite {
 extern struct Actor *gData_02006c08[];
 extern s32 gData_02006bd4[];
 
-struct WorldMapPlacement *Func_02004e08(void);
+struct WorldMapPlacement *FlagEntries_GetTable(void);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 void Func_02004b18(struct Actor *object, s32 mode);
 void Func_02004b38(struct Actor *object);
 
 void Func_020036a8(void) {
-  struct WorldMapPlacement *placement = Func_02004e08();
+  struct WorldMapPlacement *placement = FlagEntries_GetTable();
   struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
   s32 leaderReach =
       ((struct WorldMapSprite *)leader->sprite)->scale * leader->radius;

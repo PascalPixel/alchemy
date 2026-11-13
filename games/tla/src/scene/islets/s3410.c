@@ -232,7 +232,7 @@ static __inline__ s32 BoxSpan(s32 kind, s32 start) {
 
 static __inline__ s32 CallFunc_02003e2c(struct Actor *object,
                                         struct Vector3 *cell) {
-  return Func_02003e2c(object, cell);
+  return MapGrid_CheckCollision(object, cell);
 }
 
 s32 Func_020037d8(struct PushTarget *push) {
@@ -356,4 +356,4 @@ void Func_02003d0c(void);
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gPushFootprints, Func_02003790,
-                        Func_02003d0c, Func_02003de4, gPushLeaderSteps)
+                        Func_02003d0c, Import_ActorSelectAnimation, gPushLeaderSteps)

@@ -45,8 +45,8 @@ void Func_02003048(void);
 void Func_02003050(void);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_020030c0(s32 id);
-void Func_02003100(void);
-void Func_02003140(void);
+void Import_LeaderStopMoving(void);
+void Import_EventResolveAllPendingActions(void);
 void Event_ResolvePendingActions(s32 a);
 void Func_02003170(const s16 *script);
 

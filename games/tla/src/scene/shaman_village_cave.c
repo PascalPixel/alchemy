@@ -647,7 +647,7 @@ L_02009030:
 }
 
 void Func_02001038(void) {
-  Func_020011c0();
+  Field_TryJumpForward();
   return;
 }
 

@@ -449,13 +449,13 @@ void Func_02000d80(void) {
     if (result < 0) {
       Actor_SetAttachedEffect(owner, 258);
       Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z - 0x80000);
-      Func_02002910(leader, 7);
+      Actor_SelectAnimation(leader, 7);
       Actor_WaitForMove(leader);
       do
         wait(1);
       while (leader->y != leader->terrainHeight);
       Func_02001d30(leader);
-      Func_02002910(leader, 6);
+      Actor_SelectAnimation(leader, 6);
       wait(3);
       return;
     }
@@ -549,7 +549,7 @@ void Func_0200106c(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 257);
-  Func_02002910(object, 40);
+  Actor_SelectAnimation(object, 40);
   object->motionFlags = 3;
   for (i = 0; i < 180; i++) {
     wait(1);
@@ -560,7 +560,7 @@ void Func_0200106c(void) {
   object->gravity = saved;
   FieldEffect_SetAttached(state->currentOwner, 0);
   Actor_SetSingleChildFlags(object, 1);
-  Func_02002910(object, 1);
+  Actor_SelectAnimation(object, 1);
   state->renderMode = 0;
   Event_End();
 }
@@ -849,7 +849,7 @@ s32 Scene_Initialize(void) {
   gMainRoutineWork.retreatScene = (s32)&SceneId_Ov67bRoom1;
   gMainRoutineWork.retreatEntrance = 1;
   map->mode = 1;
-  Func_02002a58(170);
+  Scene_QueueMusic(170);
   if (scene == (s32)&SceneId_Ov67bRoom1) {
     Actor_SetSpriteColor(Actor_GetById(8), 4);
     Actor_SetSpriteColor(Actor_GetById(9), 4);
@@ -1041,13 +1041,13 @@ void Func_02001e00(void) {
   if (result < 0) {
     Actor_SetAttachedEffect(owner, 0x102);
     Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z + 0x80000);
-    Func_02002910(leader, 49);
+    Actor_SelectAnimation(leader, 49);
     Actor_WaitForMove(leader);
     do {
       wait(1);
     } while (leader->y != leader->terrainHeight);
     Func_02001d30(leader);
-    Func_02002910(leader, 49);
+    Actor_SelectAnimation(leader, 49);
     wait(3);
     return;
   }
@@ -1082,8 +1082,8 @@ void Func_02001f60(s32 id) {
 
     meta[5] = 0;
     meta[6] = 0;
-    Func_02002910(object, 0);
-    Func_02002910(object, 2);
+    Actor_SelectAnimation(object, 0);
+    Actor_SelectAnimation(object, 2);
   }
 }
 
@@ -1101,7 +1101,7 @@ void Func_02001f90(s32 arg0) {
   object->motionFlags = 0;
   object->priorityFlags |= 0x20;
   Sound_Play(215);
-  Func_02002910(object, 18);
+  Actor_SelectAnimation(object, 18);
   Sound_Play(612);
   for (i = 0; i < 60; i++) {
     if (i == 30)

@@ -113,7 +113,7 @@ void MercuryLighthouse_SpawnMotes(void) {
       object->priorityFlags &= ~1;
       sprite->priority = 2;
       Actor_StartScript(object, gMercuryLighthouse_MoteScript);
-      Func_02000540(object, 1);
+      Actor_SelectAnimation(object, 1);
     }
   }
   gMercuryLighthouse_MoteFrames++;

@@ -485,7 +485,7 @@ void Func_02000ce4(s32 unused, s32 id) {
 #include "map.h"
 #include "vram_tab.h"
 
-void Func_02004b80(u32 *oam, s32 depth);
+void Import_OamAddSpriteAtDepthClamped(u32 *oam, s32 depth);
 
 void Func_02000d18(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -513,7 +513,7 @@ void Func_02000d18(void) {
   *word++ = 0;
   *word++ = sy | (sx << 16) | 0x80008800;
   *word = tile | 0x400;
-  Func_02004b80(Data_020068a4, depth);
+  Import_OamAddSpriteAtDepthClamped(Data_020068a4, depth);
 }
 
 #include "task.h"

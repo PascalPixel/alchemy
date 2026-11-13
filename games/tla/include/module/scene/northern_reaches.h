@@ -12,7 +12,7 @@ struct Sprite6a7;
 
 void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
                                     void (*callback)(void));
-void Func_02000a10(struct Spark6a7 *spark, s32 value);
+void Oam_AddSpriteAtDepthClamped(struct Spark6a7 *spark, s32 value);
 
 void EffectSprite_DrawAtWorldPosition(struct Sprite6a7 *sprite,
                                       struct Particle6a7 *particle);

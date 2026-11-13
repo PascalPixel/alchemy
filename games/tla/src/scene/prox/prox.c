@@ -40,7 +40,7 @@
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-void Func_020043c4(struct Actor *object, s32 mode);
+void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 
 s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
                   s32 force) {
@@ -72,16 +72,16 @@ s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
 
       if (count > 120) {
         *movementState = 0;
-        Func_020043c4(object, 2);
+        Import_ActorSelectAnimation(object, 2);
       } else {
         *movementState = 1;
-        Func_020043c4(object, 1);
+        Import_ActorSelectAnimation(object, 1);
         result = 1;
       }
     }
   } else {
     object->movementState = 0;
-    Func_020043c4(object, 2);
+    Import_ActorSelectAnimation(object, 2);
   }
   return result;
 }
@@ -90,7 +90,7 @@ s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
 // that the leader stands within 11 of the actor, is still on its listing.
 #if TLA_PATCH_1
 
-/// Once the leader is within 11 of the actor, stops it (Func_020043c4 mode
+/// Once the leader is within 11 of the actor, stops it (Import_ActorSelectAnimation mode
 /// 2). Otherwise it runs Func_020002d8 toward object 18, 16 or 17 by its
 /// action (0, 1, other) at 24, and if that returns 0, toward the leader at
 /// 32, flagged when action bit 1 is set while the event work's halfword
@@ -104,7 +104,7 @@ s32 Func_020003bc(struct Actor *actor) {
   target = Actor_Get(gMainRoutineWork.currentOwner);
   if (SceneActor_CalculateFixedPointDistance(&target->x, &actor->x) <= 11) {
     actor->movementState = flag;
-    Func_020043c4(actor, 2);
+    Import_ActorSelectAnimation(actor, 2);
     return 0;
   }
   if (actor->timer == 0)
@@ -876,7 +876,7 @@ void Func_02001860(s32 a0, s32 a1, s32 a2) {
     FIELD_AT(t0, s32, 28) = 0x8000;
     FIELD_AT(t0, s32, 104) = 0x3c;
     FIELD_AT(t0, s32, 108) = (s32)Func_0200181c;
-    Call2(Func_020043c4, t0, 5);
+    Call2(Import_ActorSelectAnimation, t0, 5);
     Actor_SetBlendMode(t0, 1);
   }
 }
@@ -1296,7 +1296,7 @@ void Actor_SetWideSprite(s32 id, s32 wide);
 void Map_ClearLayerEntryFlag(s32 layer);
 void Map_SetLayerEntryFlag(u32 layer);
 void Func_020045dc(s32 a);
-void Func_0200461c(s32 a);
+void Weather_StartRain(s32 a);
 
 s32 Scene_Initialize(void) {
   s32 scene;
@@ -1329,7 +1329,7 @@ s32 Scene_Initialize(void) {
     if (!Event_GetFlag(0xa3d))
       Event_SetFlag(0x201);
     if (Event_GetFlag(0x201)) {
-      Func_0200461c(1);
+      Weather_StartRain(1);
     } else {
       REG_BLDALPHA = 0xc08;
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
@@ -1904,7 +1904,7 @@ void Prox_SayFarewell(void) {
   }
 }
 
-void Func_020043c4(struct Actor *object, s32 mode);
+void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 /* VIEW(s1cf0): variable gData_02004740 as extern const s16 gData_02004740[];
  * the definition has s32 gData_02004740[] = { 0xffff, - 0x8000, (s32)
  * 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000,
@@ -1912,7 +1912,7 @@ void Func_020043c4(struct Actor *object, s32 mode);
  * gData_02004740[], Func_0200385c moves: 7 of 60 instructions in tla-ja. */
 extern const s16 gData_02004740__s1cf0[] __asm__("gData_02004740");
 
-DEFINE_ACTOR_STEER_BY_PAD(Func_0200385c, gData_02004740__s1cf0, Func_020043c4)
+DEFINE_ACTOR_STEER_BY_PAD(Func_0200385c, gData_02004740__s1cf0, Import_ActorSelectAnimation)
 
 void Func_020038e8(void) {
   void *work = Ram_HeapSlots->eventWork;
@@ -1949,8 +1949,8 @@ struct Position {
  * games/tla/src/scene/prox.c:2004: `Func_0200385c__s391c' undeclared (first use
  * in this function). */
 extern void Func_0200385c__s391c(void) __asm__("Func_0200385c");
-void Func_020043c4(struct Actor *actor, s32 mode);
-s32 Func_02004454(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
+void Import_ActorSelectAnimation(struct Actor *actor, s32 mode);
+s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
 s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
 /* VIEW(s391c): variable gData_02004780 as extern s16 gData_02004780[]; the
  * definition has s32 gData_02004780[] = { 0xffff, - 0x8000, 0xc000, (s32)
@@ -1961,7 +1961,7 @@ s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
 extern s16 gData_02004780__s391c[] __asm__("gData_02004780");
 
 DEFINE_LEADER_SLIDE_ON_ICE(Func_0200391c, Func_020038e8, gData_02004780__s391c,
-    Func_020043c4, Func_0200385c__s391c, Func_02004454)
+    Import_ActorSelectAnimation, Func_0200385c__s391c, Import_FieldCheckSpheresOverlap)
 
 extern volatile s16 gData_020062a4;
 
@@ -1971,10 +1971,10 @@ s32 Func_0200444c(struct Actor *object);
 #define SHARED_F02003070_ID2 gData_020062a4
 #define SHARED_F02003070_ID3 Func_020038e8
 #define SHARED_F02003070_ID4 gData_02004780__s391c
-#define SHARED_F02003070_ID5 Func_020043c4
+#define SHARED_F02003070_ID5 Import_ActorSelectAnimation
 #define SHARED_F02003070_ID6 Func_0200444c
 #define SHARED_F02003070_ID7 Func_0200385c__s391c
-#define SHARED_F02003070_ID8 Func_02004454
+#define SHARED_F02003070_ID8 Import_FieldCheckSpheresOverlap
 #include "../shared/func_02003070.c"
 #undef SHARED_F02003070_NAME
 #undef SHARED_F02003070_ID2
@@ -1994,8 +1994,8 @@ s32 Func_0200444c(struct Actor *object);
 
 void Func_02003edc(s32 a0) { gData_020062a4 = a0; }
 
-DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003ee8, Func_020038e8, Func_020043c4,
-    Func_0200385c__s391c, Func_02004454)
+DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003ee8, Func_020038e8, Import_ActorSelectAnimation,
+    Func_0200385c__s391c, Import_FieldCheckSpheresOverlap)
 
 struct ParticleSprite {
   u8 unk0[8];

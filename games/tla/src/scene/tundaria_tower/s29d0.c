@@ -17,7 +17,7 @@
 #include "particle.h"
 
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
-void Func_02002f80(struct FieldEffect *effect, s32 mode);
+void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 void Func_020029d0(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -39,7 +39,7 @@ void Func_020029d0(s32 spread) {
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
-      Func_02002f80(effect, 2);
+      Import_ActorSelectAnimation(effect, 2);
       Func_02002f90(effect, gData_020032d4);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
@@ -81,7 +81,7 @@ void Func_02002b04(void) {
         effect->motionFlags = zero;
         effect->collisionFlags = zero;
         Actor_SetSingleChildFlags(effect, 0);
-        Func_02002f80(effect, 2);
+        Import_ActorSelectAnimation(effect, 2);
         Func_02002f90(effect, gData_02003304);
         angle = i << 12;
         effect->velocity.x = Math_Cosine(angle);
@@ -105,7 +105,7 @@ void Func_02002b04(void) {
 #include "map.h"
 #include "system/ram_buffer.h"
 
-DEFINE_ACTOR_SET_CELL_SHAPE(Func_02002c1c, Func_02003010, Func_02003180)
+DEFINE_ACTOR_SET_CELL_SHAPE(Func_02002c1c, MapGrid_GetTerrainKind, Func_02003180)
 
 void Func_02002ca8(s32 a, s32 b) {
   Func_02002c1c(a, b, gMainRoutineWork.currentOwner);
@@ -127,8 +127,8 @@ next:
     s32 attr = sprite->attr;
 
     sprite->attr = (attr & ~0x3ff) | tile;
-    Func_02003198(sprite, particle);
-    Func_020031a0(particle, 63, step);
+    EffectSprite_DrawAtWorldPosition(sprite, particle);
+    Import_BattleEffectStepVector3(particle, 63, step);
     particle->age++;
   }
   i--;
@@ -189,7 +189,7 @@ void Func_02002e00(void) {
   struct RockSprite__s29d0 *sprite;
   s32 i;
 
-  Func_02002f40(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  Import_DecompressTaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
   resource = VramCache_FindFreeEntry();
   tile = Vram_Load(resource, sizeof(work->tiles), work);
   work->tileBase = tile;

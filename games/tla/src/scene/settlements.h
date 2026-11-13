@@ -35,7 +35,7 @@ void Func_02002190(const void *data);
 void Func_02002198(void);
 void Func_0200052c(void);
 void Func_02000714(struct Actor *object);
-void Func_02001fe0(struct Actor *object, s32 a);
+void Import_ActorSelectAnimation(struct Actor *object, s32 a);
 void Actor_Release(struct Actor *object);
 extern s32 gData_02002ce0;
 extern u16 gData_02002ce4;

@@ -140,9 +140,9 @@ WindowSprite_RedrawSavedRect:
 	.thumb_func
 Window_SetTilemapEntry:
 	overlay_veneer Window_SetTilemapEntryFar
-	.global Func_020022d0
+	.global Import_SaveToChosenFile
 	.thumb_func
-Func_020022d0:
+Import_SaveToChosenFile:
 	overlay_veneer Save_ToChosenFileFar
 	.global Save_ChooseAndLoadFile
 	.thumb_func
@@ -160,9 +160,9 @@ Save_EraseSelectedFile:
 	.thumb_func
 Func_020022f0:
 	overlay_veneer Save_ScanFileSummariesFar
-	.global Func_020022f8
+	.global NameEntry_EditMemberName
 	.thumb_func
-Func_020022f8:
+NameEntry_EditMemberName:
 	overlay_veneer NameEntry_EditMemberNameFar
 	.global Resource_CopyFixedBlockB
 	.thumb_func

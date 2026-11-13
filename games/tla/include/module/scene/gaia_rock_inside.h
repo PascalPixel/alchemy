@@ -144,7 +144,7 @@ void Import_ActorDestroy(struct Actor *object);
 
 extern char SceneId_Ov681Room1;
 
-s32 Func_02004f8c();
+s32 Import_SceneTalkToActor();
 
 void Func_02002b58(s32 id, s32 x, s32 z);
 

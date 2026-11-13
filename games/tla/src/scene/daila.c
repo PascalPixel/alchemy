@@ -418,7 +418,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Func_02000c30(void) { Func_02000d18(); }
+void Func_02000c30(void) { Field_TryJumpForward(); }
 
 // clang-format off
 s16 gData_02000d80[] = {

@@ -44,7 +44,7 @@ void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
-void Func_02000d88(s32 id, s32 a, s32 b);
+void Actor_ShowEmoteById(s32 id, s32 a, s32 b);
 void FieldEffect_SetAttached(s32 id, s32 a);
 void FieldCamera_WaitForArrival(void);
 void FieldCamera_MoveToActorById(s32 id, s32 value);
@@ -99,16 +99,16 @@ void Func_02000048(void) {
       Event_ResolvePendingActions(0);
       FieldCamera_FollowActor(22, 1);
       FieldCamera_WaitForArrival();
-      Func_02000d88(22, 257, 0);
+      Actor_ShowEmoteById(22, 257, 0);
       FieldEvent_Wait(60);
       Actor_ArmCallback(22, FACING_WEST, 0);
       FieldEvent_Wait(60);
-      Func_02000d88(22, 256, 0);
+      Actor_ShowEmoteById(22, 256, 0);
       FieldEvent_Wait(60);
       Event_SetMessageId(MsgTheMisalignedStone);
       Event_ShowMessageAndWait(22, 0);
       FieldEvent_Wait(30);
-      Func_02000d88(22, 262, 0);
+      Actor_ShowEmoteById(22, 262, 0);
       FieldEvent_Wait(30);
       Event_ShowMessageAndWait(22, 0);
       Actor_ArmCallback(22, FACING_SOUTH, 0);
@@ -360,7 +360,7 @@ void Func_0200060c(void) {
 
 void Func_020006a4(void) {
   /* FAKEMATCH(signature): six routines called through call.h's Call3 and Value
-   * with function types they do not have (Value3 calls the void Func_02000d88
+   * with function types they do not have (Value3 calls the void Actor_ShowEmoteById
    * as returning a value), so each call's arguments are set up in the native's
    * order; as all six direct calls, 12 of 140 instructions differ in tla-en. */
   GameFlag_SetBit(0x929);
@@ -371,7 +371,7 @@ void Func_020006a4(void) {
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Event_ShowMessageAndWait(32, 0);
   FieldEvent_Wait(15);
-  Value3((s32 (*)())Func_02000d88, gMainRoutineWork.currentOwner, 256, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, gMainRoutineWork.currentOwner, 256, 30);
   Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, PIXELS(200),
         PIXELS(216));
   Actor_WalkToById(32, 200, 248);
@@ -383,8 +383,8 @@ void Func_020006a4(void) {
   Actor_SetModeById(32, 4);
   FieldEvent_Wait(30);
   Event_ShowMessageAndWait(32, 0);
-  Value3((s32 (*)())Func_02000d88, gMainRoutineWork.currentOwner, 261, 60);
-  Func_02000d88(32, 262, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, gMainRoutineWork.currentOwner, 261, 60);
+  Actor_ShowEmoteById(32, 262, 30);
   Event_ShowMessageAndWait(32, 0);
   Actor_SetModeById(32, 3);
   FieldEvent_Wait(15);
@@ -397,7 +397,7 @@ void Func_020006a4(void) {
     FieldCamera_MoveToActorById(32, 1);
     FieldEvent_Wait(60);
     Call3((void (*)())Actor_ArmCallback, 32, FACING_SOUTH, 0);
-    Func_02000d88(32, 265, 30);
+    Actor_ShowEmoteById(32, 265, 30);
     Event_ShowMessageAndWait(32, 0);
     Actor_SetSpritePriority(32, 3);
     Actor_GetById(32)->motionFlags |= 2;
@@ -410,7 +410,7 @@ void Func_020006a4(void) {
 
 void Func_02000814(void) {
   Event_SetMessageId(MsgThisTokenIsn);
-  Func_02000d88(32, 264, 30);
+  Actor_ShowEmoteById(32, 264, 30);
   Event_ShowMessageAndWait(32, 0);
   Actor_ArmCallback(32, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
@@ -427,7 +427,7 @@ void Func_02000814(void) {
   Event_ShowMessageAndWait(32, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
   FieldEvent_Wait(15);
-  Func_02000d88(32, 265, 30);
+  Actor_ShowEmoteById(32, 265, 30);
   Event_ShowMessageAndWait(32, 0);
   Actor_FaceActorById(32, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(15);
@@ -452,7 +452,7 @@ void Func_02000954(void) {
 
     Event_Start();
     Event_ResolvePendingActions(0);
-    Func_02000d88(32, 256, 60);
+    Actor_ShowEmoteById(32, 256, 60);
     message = MsgWouldYouBe;
     Event_SetMessageId(message);
     /* FAKEMATCH(signature): FieldMessage_ShowAtActor called as returning a

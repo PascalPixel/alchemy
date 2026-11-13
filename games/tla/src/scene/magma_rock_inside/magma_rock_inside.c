@@ -352,7 +352,7 @@ void Func_02000a30(void) {
 #include "frame.h"
 #include "field_effect.h"
 
-s32 Func_02004e80(void);
+s32 Import_BattleEffectStopMainActor(void);
 
 void Func_02000ce4(s16 value) {
   struct MainRoutineWork *party;
@@ -361,7 +361,7 @@ void Func_02000ce4(s16 value) {
   party = &gMainRoutineWork;
   Func_02004e78(party->currentOwner, value);
   FieldPsynergy_RunHandler(1);
-  Func_02004e80();
+  Import_BattleEffectStopMainActor();
   BattleEffect_CleanupSceneObjects();
 }
 

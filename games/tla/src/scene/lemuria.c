@@ -36,7 +36,7 @@ DEFINE_POSITION_DISTANCE(Func_02000038)
 DEFINE_ACTOR_IS_FACING_NEAR(Func_02000070, Func_02000038)
 
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
-void Func_02001b7c(struct Actor *object, s32 mode);
+void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 
 s32 Func_020000e8(struct Actor *self) {
   u8 *event = Ram_HeapSlots->eventWork;
@@ -64,11 +64,11 @@ s32 Func_020000e8(struct Actor *self) {
     goto near;
 far:
   *state = 0;
-  Func_02001b7c(self, 2);
+  Import_ActorSelectAnimation(self, 2);
   return 0;
 near:
   *state = 1;
-  Func_02001b7c(self, 1);
+  Import_ActorSelectAnimation(self, 1);
   return 0;
 }
 

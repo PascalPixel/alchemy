@@ -524,7 +524,7 @@ DEFINE_TILE_SPRITE_RESET(Func_02000c9c)
 #define Func_02004e10 Party_GetLeaderActor
 #define Func_02004b30 Import_ActorCreate
 #define Func_02004b20 Actor_StartScript
-#define Func_02004b18 Func_02001fbc
+#define Func_02004b18 Import_ActorSelectAnimation
 #define Func_02004b38 Actor_Release
 #define gData_02006bd4 gData_02003da8
 #include "shared/world_map_s36a8.h"

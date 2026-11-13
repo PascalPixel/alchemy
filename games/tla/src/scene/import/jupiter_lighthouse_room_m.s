@@ -90,9 +90,9 @@ GameFlag_GetByte:
 	.thumb_func
 GameFlag_SetByte:
 	overlay_veneer GameFlag_SetByteFar
-	.global Func_020046f4
+	.global Import_ActorSelectAnimation
 	.thumb_func
-Func_020046f4:
+Import_ActorSelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_SetAnimationSpeed
 	.thumb_func
@@ -432,9 +432,9 @@ Func_0200498c:
 	.thumb_func
 Func_02004994:
 	overlay_veneer Func_080c8780
-	.global Func_0200499c
+	.global BattleEffect_GetObjectPriority
 	.thumb_func
-Func_0200499c:
+BattleEffect_GetObjectPriority:
 	overlay_veneer BattleEffect_GetObjectPriorityFar
 	.global Func_020049a4
 	.thumb_func

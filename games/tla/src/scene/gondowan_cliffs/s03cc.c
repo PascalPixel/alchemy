@@ -460,13 +460,13 @@ struct SwingWork__s03cc {
   u32 *oam;
 };
 
-void Func_0200119c(u32 *oam, s32 depth);
+void Oam_AddSpriteAtDepthClamped(u32 *oam, s32 depth);
 
 // Draws the swinging actors' ropes and heads (the 16 records of
 // gInventorySnapshot
 // + 0x188 kept by Func_02001068): for each raised actor, a rope segment every
 // 16 pixels of its height and the bobbing head on top, at most 80 sprites,
-// queued by Func_0200119c.
+// queued by Oam_AddSpriteAtDepthClamped.
 void Func_02000dac(void) {
   struct SwingWork__s03cc *work =
       (struct SwingWork__s03cc *)(gInventorySnapshot + 0x188);
@@ -515,7 +515,7 @@ void Func_02000dac(void) {
     *p++ = 0;
     *p++ = screenY | x << 16 | 0x40002000;
     *p = (tile + frame) | 0x800;
-    Func_0200119c(oam, depth);
+    Oam_AddSpriteAtDepthClamped(oam, depth);
     oam += 3;
     count++;
   next:
@@ -548,7 +548,7 @@ void Func_02000dac(void) {
     *p++ = 0;
     *p++ = screenY | x << 16 | 0x40002000;
     *p = (tile + frame - 32) | 0x800;
-    Func_0200119c(oam, depth);
+    Oam_AddSpriteAtDepthClamped(oam, depth);
     oam += 3;
     count++;
   }

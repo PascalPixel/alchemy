@@ -54,9 +54,9 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Heap_ReleaseFar
-	.global Func_0200479c
+	.global Import_DecompressTaggedLz
 	.thumb_func
-Func_0200479c:
+Import_DecompressTaggedLz:
 	overlay_veneer Decompress_TaggedLzFar
 	.global VramCache_FreeEntry
 	.thumb_func

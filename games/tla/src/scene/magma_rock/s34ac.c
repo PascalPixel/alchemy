@@ -205,7 +205,7 @@ struct RockWork {
   u16 resource;
 };
 
-void Func_02003a14(void *entry, void *destination);
+void Import_DecompressTaggedLz(void *entry, void *destination);
 void Func_02003c34(struct RockSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 
@@ -217,7 +217,7 @@ void Func_020038dc(void) {
   struct Rock *rock;
   struct RockSprite *sprite;
 
-  Func_02003a14(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  Import_DecompressTaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
   entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;

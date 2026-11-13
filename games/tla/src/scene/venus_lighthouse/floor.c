@@ -55,7 +55,7 @@ Actor_SetPartAttribute__floor(struct VenusActor *object,
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Func_02001b2c(struct VenusActor *object, s32 mode);
+void Import_ActorSelectAnimation(struct VenusActor *object, s32 mode);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Actor_WaitForMove(struct Actor *actor);
 s32 MapGrid_CheckCollision(struct VenusActor *object, s32 *position);

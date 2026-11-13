@@ -114,7 +114,7 @@ void Func_020044c4(struct PushTarget target) {
 }
 
 DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Func_02004c3c,
-                                 gPushKinds, Func_02004a64)
+                                 gPushKinds, MapGrid_CheckCollision)
 
 void Func_020047fc(const u16 *list) {
   const u16 *spec;

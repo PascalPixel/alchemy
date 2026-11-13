@@ -102,9 +102,9 @@ GameFlag_SetByte:
 	.thumb_func
 SpriteAnimation_Clear:
 	overlay_veneer SpriteAnimation_ClearFar
-	.global Func_020041cc
+	.global Import_ActorSelectAnimation
 	.thumb_func
-Func_020041cc:
+Import_ActorSelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_SetAnimationSpeed
 	.thumb_func
@@ -202,9 +202,9 @@ Func_02004284:
 	.thumb_func
 Func_0200428c:
 	overlay_veneer Field_CheckSpheresOverlapFar
-	.global Func_02004294
+	.global TileMap_ConvertBuffer
 	.thumb_func
-Func_02004294:
+TileMap_ConvertBuffer:
 	overlay_veneer TileMap_ConvertBufferFar
 	.global FieldMessage_Show
 	.thumb_func

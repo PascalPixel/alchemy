@@ -10,7 +10,7 @@ extern u32 gData_020015e0[];
 
 extern s32 gData_0200161c[];
 
-void Func_020011c0();
+void Field_TryJumpForward();
 
 extern s32 gData_020012a0[];
 extern u32 gData_020012b8[];

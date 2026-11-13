@@ -42,9 +42,9 @@ HeapSlot_AllocFar:
 	.thumb_func
 HeapSlot_Release:
 	overlay_veneer HeapSlot_ReleaseFar
-	.global Func_02003a14
+	.global Import_DecompressTaggedLz
 	.thumb_func
-Func_02003a14:
+Import_DecompressTaggedLz:
 	overlay_veneer Decompress_TaggedLzFar
 	.global VramCache_FreeEntry
 	.thumb_func
@@ -250,9 +250,9 @@ FieldPsynergy_RunHandler:
 	.thumb_func
 BattleEffect_LoadActionEffectResources:
 	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
-	.global Func_02003bb4
+	.global Import_FieldPsynergySetupActorPair
 	.thumb_func
-Func_02003bb4:
+Import_FieldPsynergySetupActorPair:
 	overlay_veneer FieldPsynergy_SetupActorPairFar
 	.global BattleEffect_StopMainActor
 	.thumb_func

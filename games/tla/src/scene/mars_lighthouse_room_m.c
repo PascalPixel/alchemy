@@ -533,7 +533,7 @@ extern s32 Func_02000058__s0b64() __asm__("Func_02000058");
  * Scene_PrepareMap moves: 8 of 237 instructions in tla-ja. */
 extern void
 Func_02003150__mars_lighthouse_room_m(s32 value) __asm__("Func_02003150");
-void Func_020032b0(s32 a);
+void Weather_StartRain(s32 a);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -550,7 +550,7 @@ s32 Scene_PrepareMap(void) {
   if (scene == (s32)&SceneId_Ov6ACRoom6 || scene == (s32)&SceneId_Ov6ACRoom2 ||
       scene == (s32)&SceneId_Ov6ACRoom3 || scene == (s32)&SceneId_Ov6ACRoom4 ||
       scene == (s32)&SceneId_Ov6ACRoom5) {
-    Func_020032b0(1);
+    Weather_StartRain(1);
     SetBlend(1, 0x10000, 0x40000, 0x20000, 0x10000, 0x8000, 0x4000);
   }
   if (scene == (s32)&SceneId_Ov6ACRoom6) {

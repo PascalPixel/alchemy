@@ -45,7 +45,7 @@ struct AquaRockWork {
 };
 
 void Import_ResourceDecodeType01(const void *source, void *destination);
-void Func_02002910(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Import_ActorDestroy(struct Actor *object);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);

@@ -18,13 +18,13 @@ struct TundariaTowerEventWork {
 
 void Func_02001868(void);
 
-s32 Func_02003028(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 void Func_02002184(s32 id, u32 kind, s32 flag, s32 layer);
 
 s32 Func_02003160(struct Actor *object);
-s32 Func_02003010(s32 layer, s32 x, s32 z);
-s32 Func_020030f8(void);
+s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
+s32 Import_FieldTryJumpForward(void);
 struct Actor *Func_02003188(s32 *position, s32 mode);
 
 void Func_020029d0(s32 spread);
@@ -32,8 +32,8 @@ void Func_02002ca8(s32 a, s32 b);
 
 void Func_02002b04(void);
 
-void Func_02003090(s32 id, s32 target);
-void Func_02002fa8(void);
+void Import_ActorMoveToObject(s32 id, s32 target);
+void Import_MapCenterOnFollowedPoint(void);
 
 extern union FieldObject *Data_02003ccc;
 
@@ -49,9 +49,11 @@ extern u32 gData_020032d4[];
 
 extern u32 gData_02003304[];
 
-void Func_02003198(struct ParticleSprite *sprite, struct Particle *particle);
-void Func_020031a0(struct Particle *particle, s32 unk1, s32 step);
-void Func_02002f40(void *source, void *destination);
+void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite,
+                                      struct Particle *particle);
+void Import_BattleEffectStepVector3(struct Particle *particle, s32 unk1,
+                                    s32 step);
+void Import_DecompressTaggedLz(void *source, void *destination);
 
 void Func_020007dc(void);
 void Func_02000920(void);

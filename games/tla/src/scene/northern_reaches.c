@@ -439,7 +439,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position, void (*callback)(
       }
       if (spark->timer >= 0) {
         spark->oam.oam.index = sparkTiles + (spark->timer >> 2) * 4;
-        Func_02000a10(spark, 100);
+        Oam_AddSpriteAtDepthClamped(spark, 100);
       }
       spark->timer++;
       if (spark->timer > 31) {

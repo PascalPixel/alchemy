@@ -308,7 +308,7 @@
           position[0] = target->x + (data1[footprint][0] << 16);               \
           for (col = 0; col < width; col++) {                                  \
             /* FAKEMATCH(wrapper): the call through Func_02002338_; as         \
-             * Func_02002338(object, position), 2 of 171 instructions differ   \
+             * MapGrid_CheckCollision(object, position), 2 of 171 instructions differ   \
              * in tla-en. */                                                   \
             if (call2(object, position) == 2)                                  \
               goto blocked;                                                    \

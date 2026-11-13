@@ -29,12 +29,12 @@ extern s32 gData_0200249c[];
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 static inline s32 Func_02002338_(struct Actor *object, s32 *position) {
-  return Func_02002338(object, position);
+  return MapGrid_CheckCollision(object, position);
 }
 
 /// Finds the object the leader is pushing and steps its footprint, one cell
 /// at a time in the leader's direction, until a cell of it is blocked
-/// (Func_02002338 returns 2). Leaves the object's resting place in target and
+/// (MapGrid_CheckCollision returns 2). Leaves the object's resting place in target and
 /// returns 1, or 0 when nothing is pushed or it cannot move at all.
 DEFINE_PUSH_TARGET_FIND_SLIDE(Func_02000dcc, PushTarget_FindAhead,
                               gPushFootprints, gData_0200249c, Func_02002338_)

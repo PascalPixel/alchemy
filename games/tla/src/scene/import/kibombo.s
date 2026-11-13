@@ -70,9 +70,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_02005a24
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02005a24:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
@@ -270,9 +270,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 FieldCamera_MoveWithinMapBounds:
 	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
-	.global Func_02005bb4
+	.global Import_FieldCameraWaitForArrival
 	.thumb_func
-Func_02005bb4:
+Import_FieldCameraWaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global FieldCamera_GetActor
 	.thumb_func
@@ -282,9 +282,9 @@ FieldCamera_GetActor:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02005bcc
+	.global Field_TryJumpForward
 	.thumb_func
-Func_02005bcc:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
@@ -374,17 +374,17 @@ Func_02005c74:
 	.thumb_func
 Func_02005c7c:
 	overlay_veneer Func_080c8930
-	.global Func_02005c84
+	.global Shop_Run
 	.thumb_func
-Func_02005c84:
+Shop_Run:
 	overlay_veneer Shop_RunFar
-	.global Func_02005c8c
+	.global Sanctum_Run
 	.thumb_func
-Func_02005c8c:
+Sanctum_Run:
 	overlay_veneer Sanctum_RunFar
-	.global Func_02005c94
+	.global Inn_CheckIn
 	.thumb_func
-Func_02005c94:
+Inn_CheckIn:
 	overlay_veneer Inn_CheckInFar
 	.global Sound_Play
 	.thumb_func

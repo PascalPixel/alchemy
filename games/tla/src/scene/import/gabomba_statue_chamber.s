@@ -70,9 +70,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
-	.global Func_02001d78
+	.global ActorSystem_SuspendProjectionAndShowSprites
 	.thumb_func
-Func_02001d78:
+ActorSystem_SuspendProjectionAndShowSprites:
 	overlay_veneer ActorSystem_SuspendProjectionAndShowSpritesFar
 	.global ActorSystem_ResumeProjectionAndHideLayers
 	.thumb_func

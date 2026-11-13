@@ -54,9 +54,9 @@ GameFlag_SetByte:
 	.thumb_func
 Animation_ApplyChildArgument:
 	overlay_veneer Animation_ApplyChildArgumentFar
-	.global Func_020027f8
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_020027f8:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
@@ -206,9 +206,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 FieldCamera_MoveWithinMapBounds:
 	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
-	.global Func_02002928
+	.global Import_FieldCameraWaitForArrival
 	.thumb_func
-Func_02002928:
+Import_FieldCameraWaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Import_EventSetExitRequest
 	.thumb_func
@@ -223,9 +223,9 @@ Field_RequestBattleFromEncounterTable:
 Field_RequestDjinnBattle:
 	overlay_veneer Field_RequestDjinnBattleFar
 	.ifndef TLA_EDITION_JA
-	.global Func_02002948
+	.global Field_TryJumpForward
 	.thumb_func
-Func_02002948:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.endif
 	.global Actor_SetWideSprite
@@ -248,9 +248,9 @@ Event_ResolvePendingActions:
 	.thumb_func
 Actor_WalkByAndWaitById:
 	overlay_veneer Actor_WalkByAndWaitByIdFar
-	.global Func_02002978
+	.global Scene_QueueMusic
 	.thumb_func
-Func_02002978:
+Scene_QueueMusic:
 	overlay_veneer Scene_QueueMusicFar
 	.global Func_02002980
 	.thumb_func

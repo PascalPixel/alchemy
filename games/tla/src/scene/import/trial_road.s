@@ -98,9 +98,9 @@ GameFlag_ClearBit:
 	.thumb_func
 GameFlag_GetByte:
 	overlay_veneer GameFlag_GetByteFar
-	.global Func_020057c8
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_020057c8:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
@@ -346,13 +346,13 @@ Event_SetAfterBattleDestination:
 	.thumb_func
 Party_SetFields1f2And1f4:
 	overlay_veneer Party_SetFields1f2And1f4Far
-	.global Func_020059b8
+	.global Field_FindNearbyTalkTarget
 	.thumb_func
-Func_020059b8:
+Field_FindNearbyTalkTarget:
 	overlay_veneer Field_FindNearbyTalkTargetFar
-	.global Func_020059c0
+	.global Import_FieldTryJumpForward
 	.thumb_func
-Func_020059c0:
+Import_FieldTryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global Func_020059c8
 	.thumb_func

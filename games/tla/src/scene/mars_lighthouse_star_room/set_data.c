@@ -30,7 +30,7 @@ struct Position {
 };
 
 
-DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003390, Func_02002d90, Func_020041cc, Func_02002d04,
+DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003390, Func_02002d90, Import_ActorSelectAnimation, Func_02002d04,
     Func_0200428c)
 
 #include "../../field/object/set_sprite_priority.c"

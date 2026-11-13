@@ -19,7 +19,7 @@ s32 MapGrid_CheckCollision(struct Actor *object,
                            struct GabombaCatacombsVec *position);
 void Event_End(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-void Func_02001234(s32 a);
+void Scene_TalkToActor(s32 a);
 void Func_02001274(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_0200127c(s32 a, s32 b, s32 c);
 
@@ -408,7 +408,7 @@ void Func_02000d90(void) {
   struct Actor *object = Actor_GetById(64);
 
   if (object != NULL && object->x != 0)
-    Func_02001234(0x1040);
+    Scene_TalkToActor(0x1040);
 }
 
 #include "battle.h"

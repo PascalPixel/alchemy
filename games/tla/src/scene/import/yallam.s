@@ -26,9 +26,9 @@ GameFlag_Test:
 	.thumb_func
 GameFlag_SetBit:
 	overlay_veneer GameFlag_SetBitFar
-	.global Func_02002448
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02002448:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_SetMoveTarget
 	.thumb_func

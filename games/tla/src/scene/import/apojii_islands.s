@@ -234,9 +234,9 @@ FieldCamera_WaitForArrival:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02001d9c
+	.global Field_TryJumpForward
 	.thumb_func
-Func_02001d9c:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func

@@ -240,7 +240,7 @@ extern s16 gData_02003860__clear __asm__("gData_02003860");
  * Scene_Initialize moves: 2 of 738 instructions in tla-ja. */
 extern u32 gData_02001000__clear __asm__("gData_02001000");
 
-s32 Func_020022d0(void);
+s32 Import_SaveToChosenFile(void);
 s32 Save_ChooseAndLoadFile(s32 mode);
 void Save_CopyFile(void);
 u32 BuildStamp_GetTime(void);
@@ -306,7 +306,7 @@ s32 Scene_Initialize(void) {
       Party_AddMember(1);
       Party_AddMember(2);
       Party_AddMember(3);
-      i = Func_020022d0();
+      i = Import_SaveToChosenFile();
       if (i == -1)
         goto ask_save;
     }
@@ -343,7 +343,7 @@ top:
     limit = 5;
   open:
     wait(6);
-    result = Func_020022f8(i);
+    result = NameEntry_EditMemberName(i);
     if (result == -1) {
       if (i == 4)
         goto top;
@@ -393,7 +393,7 @@ top:
     limit = 1;
   close:
     wait(6);
-    result = Func_020022f8(i);
+    result = NameEntry_EditMemberName(i);
     if (result == -1) {
       if (i == 0)
         goto ask;
@@ -549,7 +549,7 @@ again:
     limit = 1;
   shut:
     wait(6);
-    result = Func_020022f8(i);
+    result = NameEntry_EditMemberName(i);
     if (result == -1) {
       if (i == 0)
         goto link;
@@ -1209,7 +1209,7 @@ s32 Func_02000e44(void) {
             WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
             Sound_Play(74);
             System_Wait(6);
-            Func_020022f8(0);
+            NameEntry_EditMemberName(0);
             StatusScreen_Run();
             Iwram_CopyWords(Data_02012f94 + 0xac, gGameFlagBytes, 0xf40);
             return 0;

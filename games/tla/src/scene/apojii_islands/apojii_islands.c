@@ -518,7 +518,7 @@ void Func_020010b4(void) {
   Event_ClearFlag(0x12f);
 }
 
-void Func_020010d0(void) { Func_02001d9c(); }
+void Func_020010d0(void) { Field_TryJumpForward(); }
 
 #include "field_sprite.h"
 

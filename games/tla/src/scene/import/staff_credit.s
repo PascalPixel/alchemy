@@ -102,9 +102,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Animation_ApplyChildArgument:
 	overlay_veneer Animation_ApplyChildArgumentFar
-	.global Func_02001fbc
+	.global Import_ActorSelectAnimation
 	.thumb_func
-Func_02001fbc:
+Import_ActorSelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func

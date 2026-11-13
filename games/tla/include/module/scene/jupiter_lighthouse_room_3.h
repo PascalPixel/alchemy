@@ -22,7 +22,7 @@ extern s32 gWhirlwindRiding;
 
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 
-s32 Func_02002338(struct Actor *object, s32 *position);
+s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 
 extern u16 gPushKinds[];
 
@@ -34,7 +34,7 @@ extern s16 gLightSpritesLarge;
 
 extern s16 gLightSpritePriority;
 
-s32 Func_02002448(struct Actor *actor);
+s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
 /// The cells Teleporters_Step watches, and the cell it copies over the one the
 /// leader steps on.

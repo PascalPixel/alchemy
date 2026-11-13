@@ -11,7 +11,7 @@ extern const u8 gData_02004840[];
 extern const u8 gData_020048b8[];
 extern const u8 gData_020048d8[];
 
-void Func_02000280(void) { Func_02004148(19, 68); }
+void Func_02000280(void) { Import_FieldRequestDjinnBattle(19, 68); }
 
 const u8 *Func_0200028c(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room11)

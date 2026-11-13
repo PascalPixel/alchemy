@@ -161,7 +161,7 @@ void Func_020002f8(u16 *list) {
   struct Actor *pillar;
   s32 position[3];
 
-  if (Func_020014d8() != 0)
+  if (Import_FieldTryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   position[0] = leader->x;
@@ -336,7 +336,7 @@ void Func_02000708(u16 *list) {
   struct Actor *pillar;
   s32 position[3];
 
-  if (Func_020014d8() != 0)
+  if (Import_FieldTryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   helper = Actor_GetById(8);

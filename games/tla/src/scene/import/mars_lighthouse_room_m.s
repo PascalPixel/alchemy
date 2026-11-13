@@ -139,9 +139,9 @@ Actor_SetSpriteColorMode:
 Actor_SetSpritePriorityDirect:
 	overlay_veneer Actor_SetSpritePriorityDirectFar
 	.ifndef TLA_EDITION_JA
-	.global Func_020031b0
+	.global Import_FieldCheckSpheresOverlap
 	.thumb_func
-Func_020031b0:
+Import_FieldCheckSpheresOverlap:
 	overlay_veneer Field_CheckSpheresOverlapFar
 	.endif
 	.global Func_020031b8
@@ -268,9 +268,9 @@ Func_020032a0:
 	.thumb_func
 Func_020032a8:
 	overlay_veneer Func_080c88e8
-	.global Func_020032b0
+	.global Weather_StartRain
 	.thumb_func
-Func_020032b0:
+Weather_StartRain:
 	overlay_veneer Weather_StartRainFar
 	.global Sound_Play
 	.thumb_func

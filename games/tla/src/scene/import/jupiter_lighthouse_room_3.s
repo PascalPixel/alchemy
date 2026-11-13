@@ -118,9 +118,9 @@ Map_CopyCellsRect:
 	.thumb_func
 Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Func_02002338
+	.global MapGrid_CheckCollision
 	.thumb_func
-Func_02002338:
+MapGrid_CheckCollision:
 	overlay_veneer MapGrid_CheckCollisionFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -218,9 +218,9 @@ FieldCamera_GetActor:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02002400
+	.global Field_TryJumpForward
 	.thumb_func
-Func_02002400:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -254,9 +254,9 @@ Func_02002438:
 	.thumb_func
 Func_02002440:
 	overlay_veneer Func_080c8780
-	.global Func_02002448
+	.global BattleEffect_GetObjectPriority
 	.thumb_func
-Func_02002448:
+BattleEffect_GetObjectPriority:
 	overlay_veneer BattleEffect_GetObjectPriorityFar
 	.global Func_02002450
 	.thumb_func

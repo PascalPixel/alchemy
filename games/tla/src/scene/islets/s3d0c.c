@@ -30,6 +30,6 @@ void Func_02003d0c(struct Actor *object) {
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
-  if (Func_02003e2c(object, &position) > 0)
+  if (MapGrid_CheckCollision(object, &position) > 0)
     FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
 }

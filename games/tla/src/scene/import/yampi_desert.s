@@ -290,9 +290,9 @@ Func_02004138:
 	.thumb_func
 Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
-	.global Func_02004148
+	.global Import_FieldRequestDjinnBattle
 	.thumb_func
-Func_02004148:
+Import_FieldRequestDjinnBattle:
 	overlay_veneer Field_RequestDjinnBattleFar
 	.global Event_SetAfterBattleDestination
 	.thumb_func

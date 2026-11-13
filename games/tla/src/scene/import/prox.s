@@ -70,9 +70,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_020043c4
+	.global Import_ActorSelectAnimation
 	.thumb_func
-Func_020043c4:
+Import_ActorSelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_SetAnimationSpeed
 	.thumb_func
@@ -142,9 +142,9 @@ MapGrid_SetScreenShake:
 	.thumb_func
 Func_0200444c:
 	overlay_veneer Func_080202f8
-	.global Func_02004454
+	.global Import_FieldCheckSpheresOverlap
 	.thumb_func
-Func_02004454:
+Import_FieldCheckSpheresOverlap:
 	overlay_veneer Field_CheckSpheresOverlapFar
 	.global Event_Wait
 	.thumb_func
@@ -370,9 +370,9 @@ EffectSprite_DrawAtWorldPosition:
 	.thumb_func
 BattleEffect_StepVector3:
 	overlay_veneer BattleEffect_StepVector3Far
-	.global Func_0200461c
+	.global Weather_StartRain
 	.thumb_func
-Func_0200461c:
+Weather_StartRain:
 	overlay_veneer Weather_StartRainFar
 	.global Shop_Run
 	.thumb_func

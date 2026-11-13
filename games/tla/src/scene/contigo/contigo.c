@@ -1394,7 +1394,7 @@ void Func_02001d50(void) {
   Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 0);
   FieldCamera_SetSpeed(0x26666, 0x4ccc);
   FieldCamera_MoveTo(PIXELS(180), -1, PIXELS(410), 1);
-  Func_0200419c();
+  Import_FieldCameraWaitForArrival();
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(PIXELS(148), -1, PIXELS(368), 1);
   Actor_SetSpeed(8, 0xcccc, 0x6666);
@@ -1533,7 +1533,7 @@ void Func_02001d50(void) {
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
   FieldCamera_MoveWithinMapBounds(PIXELS(148), -1, PIXELS(368), 1);
-  Func_0200419c();
+  Import_FieldCameraWaitForArrival();
   Scene_PlayMusic();
   Contigo_Jump(5, 265, 20);
   Event_ShowMessageAndWait(5, 0);

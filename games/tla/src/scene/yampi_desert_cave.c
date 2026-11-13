@@ -286,7 +286,7 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
                              (rect.word[2] - from[2]) >> 17);
   Actor_GetById(gMainRoutineWork.currentOwner)->update = Func_02000754;
   wait(4);
-  Func_02001828(object, 2);
+  Import_ActorSelectAnimation(object, 2);
   Event_PlaySound(239);
   Actor_SetSpeed(rect.word[4], 0x8000, 0x1999);
   Actor_SetMoveTarget(object, rect.word[0], rect.word[1], rect.word[2]);
@@ -315,7 +315,7 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
   Event_PlaySound(213);
   Actor_SetPositionAndResetMotion(object, rect.word[0], object->y,
                                   rect.word[2]);
-  Func_02001828(object, 1);
+  Import_ActorSelectAnimation(object, 1);
   rect.word[0] = (rect.word[0] + (gData_02001974[kind * 4] << 16)) >> 20;
   rect.word[2] = (rect.word[2] + (gData_02001974[kind * 4 + 1] << 16)) >> 20;
   ax = *(s32 *)&map->layers[1].unk08[0] >> 20;
@@ -492,7 +492,7 @@ DEFINE_STATUE_SINK(Func_02000bc0, Func_02000c44)
 
 s32 Func_02001940(struct Actor *object);
 
-DEFINE_ACTOR_SET_CELL_OPEN(Func_02000c44, Func_02001940, Func_02001828)
+DEFINE_ACTOR_SET_CELL_OPEN(Func_02000c44, Func_02001940, Import_ActorSelectAnimation)
 
 #include "battle.h"
 #include "game.h"

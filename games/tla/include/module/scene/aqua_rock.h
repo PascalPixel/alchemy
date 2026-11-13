@@ -15,7 +15,7 @@ void Func_02001d30(struct Actor *object);
 void Func_02001f60(s32 id);
 void Actor_EmitWaterDrop(struct Actor *object);
 
-void Func_02002a58(s32 a);
+void Scene_QueueMusic(s32 a);
 
 void Func_020013f8(void);
 void Func_02002550(void);

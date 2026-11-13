@@ -62,9 +62,9 @@ VramCache_Load:
 	.thumb_func
 VramCache_FindFreeEntry:
 	overlay_veneer VramCache_FindFreeEntryFar
-	.global Func_02004b80
+	.global Import_OamAddSpriteAtDepthClamped
 	.thumb_func
-Func_02004b80:
+Import_OamAddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global Unit_Get
 	.thumb_func

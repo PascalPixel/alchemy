@@ -150,9 +150,9 @@ Field_RequestBattleFromEncounterTable:
 	.thumb_func
 Field_FindNearbyTalkTarget:
 	overlay_veneer Field_FindNearbyTalkTargetFar
-	.global Func_02000d14
+	.global Field_TryJumpForward
 	.thumb_func
-Func_02000d14:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func

@@ -30,9 +30,9 @@ GameFlag_Test:
 	.thumb_func
 GameFlag_SetBit:
 	overlay_veneer GameFlag_SetBitFar
-	.global Func_02001b7c
+	.global Import_ActorSelectAnimation
 	.thumb_func
-Func_02001b7c:
+Import_ActorSelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global MapGrid_PlayMapEdit
 	.thumb_func

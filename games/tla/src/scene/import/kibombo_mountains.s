@@ -154,9 +154,9 @@ Event_SetDestination:
 	.thumb_func
 Field_RequestDjinnBattle:
 	overlay_veneer Field_RequestDjinnBattleFar
-	.global Func_0200114c
+	.global Field_TryJumpForward
 	.thumb_func
-Func_0200114c:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global Event_StartScreenTransition
 	.thumb_func

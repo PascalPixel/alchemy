@@ -126,9 +126,9 @@ FieldCamera_WaitForArrival:
 	.thumb_func
 FieldCamera_MoveToActorById:
 	overlay_veneer FieldCamera_MoveToActorByIdFar
-	.global Func_02000edc
+	.global Scene_TalkToActor
 	.thumb_func
-Func_02000edc:
+Scene_TalkToActor:
 	overlay_veneer Scene_TalkToActorFar
 	.global Event_StartScreenTransition
 	.thumb_func

@@ -114,9 +114,9 @@ Actor_ShowEmoteById:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02000d18
+	.global Field_TryJumpForward
 	.thumb_func
-Func_02000d18:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global Import_EventFinishScreenTransition
 	.thumb_func

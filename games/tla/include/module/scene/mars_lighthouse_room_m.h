@@ -30,7 +30,8 @@ void Func_02002118(void);
 
 void Func_0200080c(void);
 
-s32 Func_020031b0(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
+s32 Import_FieldCheckSpheresOverlap(s32 *from, s32 radius, struct Vector3 *to,
+                                    s32 radius2);
 
 void Func_020024bc(struct Actor *object);
 

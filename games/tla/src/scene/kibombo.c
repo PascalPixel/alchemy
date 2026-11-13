@@ -242,7 +242,7 @@ DEFINE_LEADER_IS_FACING_NORTH(Leader_IsFacingNorth)
 
 void Func_02000318(void) {
   if (Leader_IsFacingNorth()) {
-    Func_02005c84(17, 20);
+    Shop_Run(17, 20);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -254,7 +254,7 @@ void Func_02000318(void) {
 
 void Func_02000350(void) {
   if (Leader_IsFacingNorth()) {
-    Func_02005c84(18, 21);
+    Shop_Run(18, 21);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -266,7 +266,7 @@ void Func_02000350(void) {
 
 void Func_02000388(void) {
   if (Leader_IsFacingNorth()) {
-    Func_02005c84(19, 22);
+    Shop_Run(19, 22);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -278,7 +278,7 @@ void Func_02000388(void) {
 
 void Func_020003c0(void) {
   if (Leader_IsFacingNorth()) {
-    Func_02005c94(6, 23);
+    Inn_CheckIn(6, 23);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -290,7 +290,7 @@ void Func_020003c0(void) {
 
 void Func_020003f8(void) {
   if (Leader_IsFacingNorth()) {
-    Func_02005c8c(25);
+    Sanctum_Run(25);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -306,7 +306,7 @@ void Func_0200042c(void) {
     Event_ResolvePendingActions(0);
     Actor_FaceActorById(36, gMainRoutineWork.currentOwner, 0);
     Event_Wait(10);
-    Func_02005c8c(36);
+    Sanctum_Run(36);
     Kibombo_ObjArm(36, FACING_NORTHWEST + FACING_STEP, 0);
     Event_End();
   } else {
@@ -317,7 +317,7 @@ void Func_0200042c(void) {
     Event_ShowMessageAndWait(36, 0);
     Actor_FaceActorById(36, gMainRoutineWork.currentOwner, 0);
     Event_Wait(10);
-    Func_02005c8c(36);
+    Sanctum_Run(36);
     Kibombo_ObjArm(36, FACING_NORTHWEST + FACING_STEP, 0);
     GameFlag_SetBit(0x9df);
     Event_End();
@@ -583,7 +583,7 @@ void Func_02000c90(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
   FieldCamera_MoveWithinMapBounds(PIXELS(280), -1, PIXELS(88), 1);
-  Func_02005bb4();
+  Import_FieldCameraWaitForArrival();
   Event_Wait(20);
   Event_SetMessageId((s32)MsgYouVeCome);
   Event_ShowMessageAndWait(0x8007, 0);
@@ -621,7 +621,7 @@ void Func_02000d74(void) {
   Actor_ArmCallback(6, FACING_EAST, 10);
   Camera_SetSpeedParameters(0x4cccc, 0x9999);
   Kibombo_CamMove(PIXELS(264), -1, PIXELS(388), 1);
-  Func_02005bb4();
+  Import_FieldCameraWaitForArrival();
   Event_Wait(40);
   Kibombo_ObjArm(17, FACING_SOUTHEAST + FACING_STEP, 20);
   Motion_SetModeAndWaitAnimation(17, 3);
@@ -683,7 +683,7 @@ void Func_02000d74(void) {
   Func_020032b0();
   Event_Wait(80);
   FieldCamera_MoveWithinMapBounds(PIXELS(88), PIXELS(32), PIXELS(392), 1);
-  Func_02005bb4();
+  Import_FieldCameraWaitForArrival();
   Event_Wait(40);
   Event_ShowMessageAndWait(7, 0);
   Kibombo_ObjEmoteWait(7, 0x102);
@@ -889,7 +889,7 @@ void Func_02001318(void) {
   ((struct Actor *)((s32)Func_080d4568__s1318()))->motionFlags = 0;
   FieldCamera_SetSpeed(0x33333, 0x6666);
   FieldCamera_MoveTo(PIXELS(96), -1, PIXELS(340), 1);
-  Func_02005bb4();
+  Import_FieldCameraWaitForArrival();
   Actor_FaceDirection(7, FACING_NORTHWEST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   FieldEffect_SetAttached(7, 258);
@@ -1232,16 +1232,16 @@ void Func_02002050(void) {
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
   ((struct Actor *)((s32)Func_080d4568__s1318()))->motionFlags = done;
   FieldCamera_MoveTo(PIXELS(200), -1, PIXELS(180), 1);
-  Func_02005bb4();
+  Import_FieldCameraWaitForArrival();
   Event_Wait(10);
   FieldCamera_MoveTo(PIXELS(174), -1, PIXELS(224), 1);
-  Func_02005bb4();
+  Import_FieldCameraWaitForArrival();
   Event_Wait(10);
   FieldCamera_MoveTo(PIXELS(268), -1, PIXELS(120), 1);
-  Func_02005bb4();
+  Import_FieldCameraWaitForArrival();
   Event_Wait(20);
   FieldCamera_MoveTo(PIXELS(272), -1, PIXELS(180), 1);
-  Func_02005bb4();
+  Import_FieldCameraWaitForArrival();
   Actor_SetModeById(6, 4);
   Event_ShowMessageAndWait(6, 0);
   Actor_ShowEmote(5, 257, 0);

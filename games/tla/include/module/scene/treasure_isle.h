@@ -38,7 +38,7 @@ void Func_0200105c(void);
 
 s32 Func_02001064(s32 a, s32 b, s32 c);
 
-s32 Func_0200102c();
+s32 Field_TryJumpForward();
 
 void Func_02000864(void);
 

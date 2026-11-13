@@ -271,7 +271,7 @@ void WorldMap_SetUpShip(void) {
     Unit_AddPp(gMainRoutineWork.currentOwner, 1);
 }
 
-void Func_02004b48(struct Actor *object);
+void Actor_StartIdle(struct Actor *object);
 
 /// The leader jumps aboard the ship, actor 8, when close enough.
 void WorldMap_BoardShip(void) {
@@ -308,7 +308,7 @@ void WorldMap_BoardShip(void) {
   leader->acceleration = 0x20000;
   leader->velocityY = 0x40000;
   leader->terrainHeight = 0x40000;
-  Func_02004b48(leader);
+  Actor_StartIdle(leader);
   FieldActor_SetMoveTarget(leader, ship->x, 0, ship->z);
   FieldActor_WaitForMove(leader);
   Func_02004b18(leader, 6);
@@ -392,7 +392,7 @@ void WorldMap_LeaveShip(void) {
     leader->acceleration = 0x20000;
     leader->velocityY = 0x40000;
     leader->motionFlags = flags;
-    Func_02004b48(leader);
+    Actor_StartIdle(leader);
     FieldActor_SetMoveTarget(leader, position[0], 0, position[2]);
     FieldActor_WaitForMove(leader);
     Func_02004b18(leader, 6);

@@ -350,7 +350,7 @@ void Func_02000184(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   *(s32 *)(EVENT_WORK + 0x1b4) = 1;
   PaletteFade_StartInterpolation(1);
-  Func_02001d78();
+  ActorSystem_SuspendProjectionAndShowSprites();
   FieldMessage_ShowCentered(MsgCarriedTheMessage, 0, 3);
   ActorSystem_ResumeProjectionAndHideLayers();
   GameFlag_SetBit(0x8ff);

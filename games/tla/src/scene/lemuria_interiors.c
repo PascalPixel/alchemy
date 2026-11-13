@@ -682,13 +682,13 @@ L_02008a86:
 
 #include "field_event.h"
 
-/* VIEW(lemuria_interiors): routine Func_020027f4 as void Func_020027f4(struct
+/* VIEW(lemuria_interiors): routine Actor_SelectAnimation as void Actor_SelectAnimation(struct
  * Actor *object, s32 mode); module/scene/kandorean_temple.h has void
- * Func_020027f4(void); tried as the definition's void Func_020027f4(void),
+ * Actor_SelectAnimation(void); tried as the definition's void Actor_SelectAnimation(void),
  * which the object already declares, Func_0200128c moves: 1 of 32 instructions
  * in tla-ja. */
 extern void Func_020027f4__lemuria_interiors(struct Actor *object,
-                                             s32 mode) __asm__("Func_020027f4");
+                                             s32 mode) __asm__("Actor_SelectAnimation");
 void Actor_StartScript(struct Actor *object, const void *script);
 
 void Func_0200128c(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {

@@ -18,9 +18,9 @@ Random16Far:
 	.thumb_func
 GameFlag_SetBit:
 	overlay_veneer GameFlag_SetBitFar
-	.global Func_02000540
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02000540:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func

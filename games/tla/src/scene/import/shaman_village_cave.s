@@ -194,9 +194,9 @@ Event_SetAfterBattleDestination:
 	.thumb_func
 Party_SetFields1f2And1f4:
 	overlay_veneer Party_SetFields1f2And1f4Far
-	.global Func_020011c0
+	.global Field_TryJumpForward
 	.thumb_func
-Func_020011c0:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global Event_StartScreenTransition
 	.thumb_func

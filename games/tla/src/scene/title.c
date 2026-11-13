@@ -56,9 +56,9 @@ struct TitleSprite__title {
 
 extern struct TitleSprite__title gData_020006f0[];
 
-s32 Func_020005d4(void);
+s32 Save_ScanFileSummaries(void);
 void Title_ShowNintendoLogo(s32 value);
-void Func_02000634(s32 value);
+void Title_ShowCamelotLogo(s32 value);
 
 /// Runs the title by entrance: at entrance 10 the title is revealed and waits
 /// up to 3600 frames for a key before the title scene starts again at
@@ -96,8 +96,8 @@ s32 Title_Run(void) {
     for (;;) {
       Event_PlaySound(0);
       Title_ShowNintendoLogo(0);
-      Func_02000634(0);
-      if (Func_020005d4() > 0) {
+      Title_ShowCamelotLogo(0);
+      if (Save_ScanFileSummaries() > 0) {
         Event_PlaySound(40);
         Func_0200063c(1);
         if (Func_02000624(1) == 0) {

@@ -62,9 +62,9 @@ VramCache_Load:
 	.thumb_func
 VramCache_FindFreeEntry:
 	overlay_veneer VramCache_FindFreeEntryFar
-	.global Func_02005440
+	.global Import_OamAddSpriteAtDepthClamped
 	.thumb_func
-Func_02005440:
+Import_OamAddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global Unit_Get
 	.thumb_func
@@ -186,9 +186,9 @@ Actor_SetSpritePriorityDirect:
 	.thumb_func
 Func_02005530:
 	overlay_veneer Func_080202f8
-	.global Func_02005538
+	.global Import_FieldCheckSpheresOverlap
 	.thumb_func
-Func_02005538:
+Import_FieldCheckSpheresOverlap:
 	overlay_veneer Field_CheckSpheresOverlapFar
 	.global Func_02005540
 	.thumb_func
@@ -286,9 +286,9 @@ Import_EventSetExitRequest:
 	.thumb_func
 Field_FindNearbyTalkTarget:
 	overlay_veneer Field_FindNearbyTalkTargetFar
-	.global Func_02005600
+	.global Import_FieldTryJumpForward
 	.thumb_func
-Func_02005600:
+Import_FieldTryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global Leader_StopMoving
 	.thumb_func

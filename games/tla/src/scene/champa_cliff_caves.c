@@ -553,7 +553,7 @@ void Func_02000a34(s32 value) {
   Call2((void (*)())Actor_FaceDirectionById, 8, 0x5000);
   Event_Wait(10);
   FieldCamera_MoveWithinMapBounds(0x2980000, -1, 0xe80000, 1);
-  Func_02003564();
+  Import_FieldCameraWaitForArrival();
   Event_Wait(10);
   Value3((s32 (*)())Actor_ShowEmoteById, 8, 0x107, 40);
   Event_ShowMessageThenWait(0x2008, 0, 5);
@@ -605,7 +605,7 @@ void Func_02000a34(s32 value) {
         0x102);
   Event_Wait(50);
   Actor_ShowEmoteById(8, 0x101, 60);
-  Call2((void (*)())Func_0200360c, 16, 0x1090);
+  Call2((void (*)())Field_StartColorTransition, 16, 0x1090);
   Call3((void (*)())MapGrid_SetScreenShake, 0x20000, 0x20000, 0x10000);
   Func_02003164(glow);
   Actor_SetModeById(8, 1);
@@ -779,7 +779,7 @@ void Func_0200115c(void) {
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     Sound_Play(36);
     FieldCamera_MoveWithinMapBounds(664 << 16, -1, 0x1000000, 1);
-    Func_02003564();
+    Import_FieldCameraWaitForArrival();
     Event_Wait(5);
     Motion_SetModeAndWaitAnimation(8, 4);
     FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
@@ -792,7 +792,7 @@ void Func_0200115c(void) {
     Sound_Play(36);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
     FieldCamera_MoveWithinMapBounds(664 << 16, -1, 0x1000000, 1);
-    Func_02003564();
+    Import_FieldCameraWaitForArrival();
     Event_Wait(5);
     Actor_Jump(11, 6, 15);
     Actor_Jump(11, 6, 23);
@@ -1194,7 +1194,7 @@ void Func_02001868(void) {
   Event_Wait(10);
   Call4((void (*)())FieldCamera_MoveWithinMapBounds, PIXELS(568), -1,
         PIXELS(248), 1);
-  Func_02003564();
+  Import_FieldCameraWaitForArrival();
   Event_Wait(10);
   Actor_SetSpritePriority(14, 2);
   Actor_GetById(14)->facing = 0x3000;

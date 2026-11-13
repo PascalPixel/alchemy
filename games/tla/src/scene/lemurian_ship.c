@@ -141,7 +141,7 @@ struct LemurianShipEventWork {
 void Event_Start(void);
 void Event_End(void);
 void Func_02002dc0(const void *script);
-void Func_02002bf0(struct LemurianShipObject *object, s32 mode);
+void Actor_SelectAnimation(struct LemurianShipObject *object, s32 mode);
 void Actor_SetSingleChildFlags(struct LemurianShipObject *object, u32 value);
 void Actor_SetBlendMode(struct LemurianShipObject *object, s32 flags);
 void FieldPsynergy_RunHandler(s32 type);
@@ -967,7 +967,7 @@ void Func_020015c8(void) {
     *(s32 *)((u8 *)object + 0x30) = 0x20000;
     *(s32 *)((u8 *)object + 0x34) = 0x8000;
     Actor_SetSingleChildFlags__s00b8(object, 0);
-    Func_02002bf0(object, 0);
+    Actor_SelectAnimation(object, 0);
     Actor_SetMoveTarget(object, PIXELS(808), PIXELS(8), PIXELS(140));
     Actor_StartScript(object, gData_02003ef8);
   }

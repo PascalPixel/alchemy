@@ -20,7 +20,7 @@ void Func_020016b0(struct Actor *object);
 void Func_0200173c(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
-void Func_02001fe0(struct Actor *object, s32 mode);
+void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Func_02002048(struct Actor *object);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
@@ -94,7 +94,7 @@ retry:
   object->acceleration = 0x1999;
   object->timer = 0;
   Actor_SetMoveTarget(object, x, object->y, z);
-  Func_02001fe0(object, 2);
+  Import_ActorSelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   for (i = 0; i <= 179 && Func_02002048(object) == 0; i++) {
     if (gData_02002ce8 != 0)
@@ -164,7 +164,7 @@ end:
   object->update = NULL;
   object->actionFlags |= 1;
   object->acceleration = 0x4000;
-  Func_02001fe0(object, 1);
+  Import_ActorSelectAnimation(object, 1);
 }
 
 #else
@@ -185,7 +185,7 @@ void Func_020016b0(struct Actor *object);
 void Func_0200173c(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
-void Func_02001fe0(struct Actor *object, s32 mode);
+void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Func_02002048(struct Actor *object);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
@@ -257,7 +257,7 @@ retry:
   object->acceleration = 0x1999;
   object->timer = 0;
   Actor_SetMoveTarget(object, x, object->y, z);
-  Func_02001fe0(object, 2);
+  Import_ActorSelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   FieldActor_WaitForMove(object);
   object->update = (void (*)(void))Func_020016b0;
@@ -323,7 +323,7 @@ end:
   object->update = NULL;
   object->actionFlags |= 1;
   object->acceleration = 0x4000;
-  Func_02001fe0(object, 1);
+  Import_ActorSelectAnimation(object, 1);
 }
 
 #endif

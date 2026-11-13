@@ -76,7 +76,7 @@ void Func_02000338(struct Actor *object) {
 #include "system.h"
 #include "scene_tables.h"
 
-void Func_02002f80();
+void Import_ActorSelectAnimation();
 
 void Func_02000404(u16 *table) {
   u16 *row;
@@ -93,7 +93,7 @@ loop:
   flag = row[2];
 
   Actor_SetSingleChildFlags(object, 0);
-  Func_02002f80(object, (u16)animation + GameFlag_Test((u16)flag));
+  Import_ActorSelectAnimation(object, (u16)animation + GameFlag_Test((u16)flag));
   object->motionFlags = 0;
   object->collisionFlags &= 0xfe;
   object->timer = flag;

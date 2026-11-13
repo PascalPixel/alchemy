@@ -22,7 +22,7 @@ struct Actor *Func_02002438(s32 *position, s32 mode);
 /// Stops the object where it stands (Actor_SetPositionAndResetMotion) when
 /// the point a cell ahead along its facing holds another object
 /// (Func_02002438) whose sprite shape is not in the footprint table, and again
-/// when its own cell test (Func_02002338) is positive.
+/// when its own cell test (MapGrid_CheckCollision) is positive.
 void Func_02001300(struct Actor *object) {
   s32 position[3];
   struct Actor *other;
@@ -50,7 +50,7 @@ void Func_02001300(struct Actor *object) {
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
-  if (Func_02002338(object, position) > 0)
+  if (MapGrid_CheckCollision(object, position) > 0)
     FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
 }
 
@@ -63,7 +63,7 @@ void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);
 /// 64 one when the big switch is set, at its animation picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, Data_02002d70,
     gLightSpriteCount, gData_02002d30, gLightSpritesLarge, gLightSpritePriority,
-    Func_02002448, Import_OamAddSpriteAtDepth)
+    BattleEffect_GetObjectPriority, Import_OamAddSpriteAtDepth)
 
 
 // The scene's own event inlines: a habit of the whole game written once, as

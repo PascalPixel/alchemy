@@ -67,7 +67,7 @@ void Func_020016b0(struct Actor *object) {
   else
     angle = gData_02002276[(gInput__s1620 >> 4) & 15];
   if (angle == -1) {
-    Func_02001fe0(object, 9);
+    Import_ActorSelectAnimation(object, 9);
     return;
   }
   turn = (s16)(angle - object->facing);
@@ -76,7 +76,7 @@ void Func_020016b0(struct Actor *object) {
   if (turn < -0x1000)
     turn = -0x1000;
   object->facing += turn;
-  Func_02001fe0(object, 2);
+  Import_ActorSelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
 }
 
@@ -172,7 +172,7 @@ retry:
   object->acceleration = 0x1999;
   object->timer = 0;
   FieldActor_SetMoveTarget(object, x, object->y, z);
-  Func_02001fe0(object, 2);
+  Import_ActorSelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   FieldActor_WaitForMove(object);
   object->update = Func_020016b0__s173c;
@@ -222,5 +222,5 @@ end:
   object->update = NULL;
   object->actionFlags |= 1;
   object->acceleration = 0x4000;
-  Func_02001fe0(object, 1);
+  Import_ActorSelectAnimation(object, 1);
 }

@@ -106,9 +106,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 MapGrid_CopyCellPictureCellsRect:
 	overlay_veneer MapGrid_CopyCellPictureCellsRectFar
-	.global Func_02004a64
+	.global MapGrid_CheckCollision
 	.thumb_func
-Func_02004a64:
+MapGrid_CheckCollision:
 	overlay_veneer MapGrid_CheckCollisionFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func

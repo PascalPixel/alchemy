@@ -81,9 +81,9 @@ s32 IdentifyFlash(void) {
     chip++;
   }
   // Install the selected entry, including the fallback when no ID matched.
-  gProgramFlashSector = (*chip)->handlers[0];
-  gEraseFlashChip = (*chip)->handlers[1];
-  gEraseFlashSector = (*chip)->handlers[2];
+  gProgramFlashSector = (*chip)->program;
+  gEraseFlashChip = (*chip)->eraseChip;
+  gEraseFlashSector = (*chip)->eraseSector;
   gWaitForFlashWrite = (*chip)->wait;
   gFlashMaxTime = (*chip)->maxTime;
   gFlash = &(*chip)->type;
@@ -286,7 +286,7 @@ typedef u8 *(*FlashVerifyCore)(u8 *source, u8 *flash, u16 size);
 /// data. Returns 0 when sector `sector` holds the 4 KB at `source`, else the
 /// address of its first differing byte. Called by Save_WriteSector
 /// after each write.
-s32 Flash_VerifySector(u16 sector, s32 source) {
+s32 Flash_VerifySector(u16 sector, u8 *source) {
   u16 code[128];
   u16 *sourceCode;
   u16 *destinationCode;
@@ -303,7 +303,7 @@ s32 Flash_VerifySector(u16 sector, s32 source) {
     halfwordsRemaining--;
   }
   core = (FlashVerifyCore)((u8 *)code + 1);
-  return (s32)core((u8 *)source,
+  return (s32)core(source,
                    (u8 *)FLASH_BASE +
                        (sector << gFlash_ChipDefault.type.sector.shift),
                    (u16)gFlash_ChipDefault.type.sector.size);

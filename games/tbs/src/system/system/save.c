@@ -141,27 +141,19 @@ u32 Save_SelectWriteSector(s32 mode) {
   return index;
 }
 
-typedef u16 (*ProgramSectorProc)(u16, void *);
-typedef u16 (*EraseSectorProc)(u16);
-
 /// Programs the workspace's sector buffer into flash sector `sector` and
 /// verifies it, through the flash library's routine for this chip. Called by
 /// Save_WritePart and Save_InvalidateSector. Returns 0 on success
 /// and 1 on failure.
 u32 Save_WriteSector(s32 sector) {
-  s32 result;
   struct SaveWork *work;
   s32 value;
 
   work = gSaveWork;
   value = (u16)sector;
-  // The chip's program routine reports an error in its result's low
-  // halfword.
-  if ((u16)((ProgramSectorProc)gProgramFlashSector)(value, &work->slot) != 0) {
-    return 1U;
-  }
-  result = Flash_VerifySector(value, (s32)&work->slot);
-  return (u32)((0 - result) | result) >> 31;
+  if (gProgramFlashSector(value, (u8 *)&work->slot) != 0)
+    return 1;
+  return Flash_VerifySector(value, (u8 *)&work->slot) != 0;
 }
 
 /// Reads flash sector `index` into the workspace's sector buffer. Called by
@@ -183,9 +175,7 @@ s32 Save_ReadSector(s32 index) {
 
 /// Unused: erases flash sector `sector` with the flash library's routine for
 /// this chip. Nothing calls it.
-UNUSED u16 Save_EraseSector(u16 sector) {
-  return ((EraseSectorProc)gEraseFlashSector)(sector);
-}
+UNUSED u16 Save_EraseSector(u16 sector) { return gEraseFlashSector(sector); }
 
 /// Saves 4080 bytes from `source` as part `partId`: writes the new copy
 /// with the next counter, then invalidates the old one, updating the

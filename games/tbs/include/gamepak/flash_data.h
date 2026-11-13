@@ -31,8 +31,10 @@ struct FlashType {
 /// Settings for each flash chip model (44 bytes), in flash_setup's field order
 /// from flashset.s.
 struct FlashSetupInfo {
-  u32 handlers[3];    ///< Program, erase all, erase sector.
-  FlashWaitProc wait; ///< Wait for programming to finish.
+  u16 (*program)(u16 sector, u8 *source); ///< programs one sector
+  u16 (*eraseChip)(void);                 ///< erases the whole chip
+  u16 (*eraseSector)(u16 sector);         ///< erases one sector
+  FlashWaitProc wait;                     ///< Wait for programming to finish.
   /// Wait-time table: per timing, milliseconds, the timer's reload value and
   /// its control (flash_max_time).
   u16 *maxTime;

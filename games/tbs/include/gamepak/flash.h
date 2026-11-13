@@ -79,17 +79,17 @@ s32 SetFlashTimerIntr(u8 timer_index, void (**callback)(void));
 void ReadFlashCore(const u8 *source, u8 *destination, u32 size);
 void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size);
 u8 *VerifyFlashCore(u8 *left, u8 *right, u16 size);
-s32 Flash_VerifySector(u16 sector, s32 source);
+s32 Flash_VerifySector(u16 sector, u8 *source);
 
 extern u8 (*gFlashReadRoutine)(u8 *source);
 
 // The flash library's state, after pret's agb_flash: IdentifyFlash installs
 // the chip's routines and type. The credits borrow four of these cells while
 // no flash operation runs (menu/credits.c).
-/// The chip's erase-all routine (FlashSetupInfo.handlers[1]).
-extern u32 gEraseFlashChip;
-/// The chip's erase-sector routine (handlers[2]).
-extern u32 gEraseFlashSector;
+/// The chip's erase-all routine (FlashSetupInfo.eraseChip).
+extern u16 (*gEraseFlashChip)(void);
+/// The chip's erase-sector routine (FlashSetupInfo.eraseSector).
+extern u16 (*gEraseFlashSector)(u16 sector);
 /// The chip's wait-time table (FlashSetupInfo.maxTime).
 extern u16 *gFlashMaxTime;
 /// REG_IME as StartFlashTimer found it, for StopFlashTimer to restore.
@@ -101,9 +101,9 @@ extern u8 gFlashTimerNum;
 s32 CountRemainingErasedFlashBytes(u8 *ptr);
 s32 RunFlashEraseVerifier(u8 *sector, s32 (*verify)(u8 *));
 void StartFlashTimer(u8 index);
-/// The chip's program routine (FlashSetupInfo.handlers[0]), which
+/// The chip's program routine (FlashSetupInfo.program), which
 /// Save_WriteSector calls.
-extern u32 gProgramFlashSector;
+extern u16 (*gProgramFlashSector)(u16 sector, u8 *source);
 /// Bytes left of the sector being programmed.
 extern u16 gFlashNumRemainingBytes;
 

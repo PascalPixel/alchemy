@@ -36,20 +36,23 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
    } *)(base))                                                                 \
        ->v)
 
-extern struct ActorPlacement gData_02002240[];
-extern struct ActorPlacement gData_02002480[];
-extern struct ActorPlacement gData_02002750[];
-extern struct ActorPlacement gData_02002828[];
-extern struct Trigger gData_020028a0[];
-extern struct Trigger gData_02002bb8[];
-extern struct Trigger gData_02002c9c[];
-extern struct Trigger gData_02002da4[];
-extern struct Trigger gData_0200308c[];
+extern struct ActorPlacement gMadraInteriors_Placements[];
+extern struct ActorPlacement gMadraInteriors_PlacementsOnReturn[];
+extern struct ActorPlacement gMadraInteriors_JailPlacements[];
+extern struct ActorPlacement gMadraInteriors_SecondRoomsPlacements[];
+extern struct Trigger gMadraInteriors_TriggersBeforeRaid[];
+extern struct Trigger gMadraInteriors_JailTriggers[];
+extern struct Trigger gMadraInteriors_SecondRoomsTriggers[];
+extern struct Trigger gMadraInteriors_TriggersAfterRaid[];
+extern struct Trigger gMadraInteriors_TriggersOnReturn[];
 
 void Event_End(void);
 void Sanctum_Run(s32 actor);
 void Inn_CheckIn(s32 slot, s32 actor);
-void Func_020007dc(void);
+/// The party enters the jail as Piers is questioned, and sees him drive off an
+/// interrogator with Psynergy.
+/// "Admit it! You're one of the Champa, aren't you, Piers?"
+void MadraInteriors_InterrogatePiers(void);
 
 #include "version.h"
 #include "actor.h"
@@ -62,15 +65,16 @@ void Func_020007dc(void);
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2)
-    return gData_02002828;
+    return gMadraInteriors_SecondRoomsPlacements;
   if (gMainRoutineWork.entrance == 20)
-    return gData_02002750;
+    return gMadraInteriors_JailPlacements;
   if (Event_GetFlag(0x8ff))
-    return gData_02002480;
-  return gData_02002240;
+    return gMadraInteriors_PlacementsOnReturn;
+  return gMadraInteriors_Placements;
 }
 
-void Func_020000a4(void) {
+/// "Indra is in direct contact with southern Gondowan... Will we be safe?"
+void MadraInteriors_AskWillWeBeSafe(void) {
   s32 msg;
 
   Event_Start();
@@ -90,7 +94,10 @@ void Func_020000a4(void) {
   Event_End();
 }
 
-void Func_020000fc(void) {
+/// Madra's innkeeper takes the party in across the counter (inn 1), and
+/// otherwise talks of the week's troubles, the Kibombo, and later the dead fish
+/// on the shore, which from patch 1 is a question.
+void MadraInteriors_TalkToInnkeeper(void) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -131,7 +138,9 @@ void Func_020000fc(void) {
   }
 }
 
-void Func_020001b8(s32 actor) {
+/// Madra's sanctum healer heals across the counter, and otherwise talks of the
+/// town's trials, the Kibombo, and later the warming sea.
+void MadraInteriors_TalkToHealer(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -147,7 +156,8 @@ void Func_020001b8(s32 actor) {
   }
 }
 
-void Func_0200023c(void) {
+/// "Don't touch that gem! The elder gave us strict orders to protect it!"
+void MadraInteriors_GuardElderGem(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceActor(14, 4, 0);
@@ -159,7 +169,9 @@ void Func_0200023c(void) {
   Event_End();
 }
 
-void Func_0200028c(void) {
+/// The old man who loves the rare mushrooms of the Gondowan Cliffs, before and
+/// after the party brings him one.
+void MadraInteriors_TalkToMushroomLover(void) {
   s32 msg;
 
   if (Event_GetFlag(0x98a)) {
@@ -181,7 +193,8 @@ void Func_0200028c(void) {
   }
 }
 
-void Func_02000308(void) {
+/// His wife, who cooks them.
+void MadraInteriors_TalkToMushroomCook(void) {
   if (Event_GetFlag(0x98a)) {
     if (Event_GetFlag(0x310)) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors112);
@@ -199,7 +212,7 @@ void Func_02000308(void) {
   }
 }
 
-void Func_02000368(void) {
+void MadraInteriors_MindReadMushroomLover(void) {
   if (Event_GetFlag(0x98a)) {
     if (Event_GetFlag(0x310)) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors113);
@@ -222,7 +235,7 @@ void Func_02000368(void) {
   }
 }
 
-void Func_020003c8(void) {
+void MadraInteriors_MindReadMushroomCook(void) {
   if (Event_GetFlag(0x98a)) {
     if (Event_GetFlag(0x310)) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors114);
@@ -245,7 +258,10 @@ void Func_020003c8(void) {
   }
 }
 
-void Func_02000428(void) {
+/// The ill man in the cavern home groans, the first time, and thinks of the ice
+/// he saw made by thinking.
+/// "Uhhhnnn... UHHHNNN!"
+void MadraInteriors_TalkToIllMan(void) {
   if (!Event_GetFlag(0x211)) {
     Event_SetFlag(0x211);
     FieldEvent_SetMessageId((s32)MsgUhhhnnnUhhhnnn2);
@@ -268,14 +284,14 @@ void Func_02000428(void) {
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2)
-    return gData_02002c9c;
+    return gMadraInteriors_SecondRoomsTriggers;
   if (gMainRoutineWork.entrance == 20)
-    return gData_02002bb8;
+    return gMadraInteriors_JailTriggers;
   if (Event_GetFlag(0x8ff))
-    return gData_0200308c;
+    return gMadraInteriors_TriggersOnReturn;
   if (Event_GetFlag(0x8ab))
-    return gData_02002da4;
-  return gData_020028a0;
+    return gMadraInteriors_TriggersAfterRaid;
+  return gMadraInteriors_TriggersBeforeRaid;
 }
 
 void Func_02000534(void) {
@@ -299,7 +315,7 @@ void Func_02000570(void) {
   if (!Event_GetFlag(0x8ab)) {
     FIELD_AT(Ram_HeapSlots->eventWork, u16, 0xd4c) = 3;
     if (!Event_GetFlag(0x911)) {
-      Func_020007dc();
+      MadraInteriors_InterrogatePiers();
     } else {
       Actor_SetPosition(9, 0, 0);
       Actor_SetPosition(10, 0, 0);
@@ -387,7 +403,7 @@ s32 Func_020007c8(struct Actor *object) {
   return 0;
 }
 
-void Func_020007dc(void) {
+void MadraInteriors_InterrogatePiers(void) {
   s32 i;
   struct Actor *object0;
   struct Actor *object1;
@@ -623,7 +639,8 @@ L_02008eb2:
   return;
 }
 
-void Func_02000ed8(void) {
+/// "Ah... When will that kindly elder return and end my imprisonment?"
+void MadraInteriors_TalkToPiers(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors29);
@@ -633,7 +650,9 @@ void Func_02000ed8(void) {
   return;
 }
 
-void Func_02000f0c(void) {
+/// Piers feels the Mind Read.
+/// "Why did I use my Psynergy in anger? I must maintain control..."
+void MadraInteriors_MindReadPiers(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors30);
@@ -675,7 +694,10 @@ void Func_02000fe0(void) {
 extern u32 gData_02001f18[];
 extern u32 gData_02001f4c[];
 
-void Func_02001008(void) {
+/// The couple are given the Healing Fungus from the Gondowan Cliffs, his
+/// favourite, and trade the party Char the Mars Djinni for it.
+/// "Oh, my... Is... Is that..."
+void MadraInteriors_GiveHealingFungus(void) {
   struct Actor *object;
 
   Event_SetFlag(0x98a);
@@ -763,7 +785,10 @@ void Func_02001008(void) {
   Event_End();
 }
 
-void Func_02001310(void) {
+/// Given the Laughing Fungus, the old man tells his wife it only looks like the
+/// right one.
+/// "No, dear... They look similar, but these aren't quite right."
+void MadraInteriors_GiveLaughingFungus(void) {
   struct Actor *object0;
 
   Event_SetFlag(0x210);
@@ -804,7 +829,9 @@ void Func_02001310(void) {
   return;
 }
 
-void Func_02001450(void) {
+/// On the return with Piers, the elder's household welcomes him home.
+/// "Felix! You're back!"
+void MadraInteriors_WelcomePiersHome(void) {
   s32 result0;
   s32 result1;
   struct Actor *object2;
@@ -1165,7 +1192,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02002240[] = {
+struct ActorPlacement gMadraInteriors_Placements[] = {
     {73, -1, 3, PIXELS(184), PIXELS(0), PIXELS(120), 0x4000, 1, 0},
     {74, -1, 1, PIXELS(72), PIXELS(0), PIXELS(112), 0x2000, 1, 0},
     {75, -1, 1, PIXELS(360), PIXELS(0), PIXELS(109), 0x4000, 1, 0},
@@ -1192,7 +1219,7 @@ struct ActorPlacement gData_02002240[] = {
     {-1, 0, 0, PIXELS(0), PIXELS(0), PIXELS(0), 0, 0, 0},
 };
 
-struct ActorPlacement gData_02002480[] = {
+struct ActorPlacement gMadraInteriors_PlacementsOnReturn[] = {
     {73, CONDITION_ALWAYS, 3, PIXELS(184), 0, PIXELS(120), FACING_SOUTH, 1, 0},
     {74, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(112), FACING_SOUTHEAST, 1, 0},
     {75, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(109), FACING_SOUTH, 1, 0},
@@ -1225,7 +1252,7 @@ struct ActorPlacement gData_02002480[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002750[] = {
+struct ActorPlacement gMadraInteriors_JailPlacements[] = {
     {290, CONDITION_ALWAYS, 1, PIXELS(528), 0, PIXELS(840), FACING_NORTH, 1, 0},
     {192, CONDITION_ALWAYS, 1, PIXELS(522), 0, PIXELS(840), FACING_NORTH, 1, 0},
     {187, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(840), FACING_NORTH, 1, 0},
@@ -1237,7 +1264,7 @@ struct ActorPlacement gData_02002750[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002828[] = {
+struct ActorPlacement gMadraInteriors_SecondRoomsPlacements[] = {
     {71, CONDITION_ALWAYS, 1, PIXELS(192), 0, PIXELS(128), FACING_EAST, 1, 0},
     {72, CONDITION_ALWAYS, 1, PIXELS(128), 0, PIXELS(192), FACING_SOUTH, 1, 0},
     {198, CONDITION_ALWAYS, 1, PIXELS(356), 0, PIXELS(109), FACING_SOUTH, 2, 0},
@@ -1245,7 +1272,7 @@ struct ActorPlacement gData_02002828[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_020028a0[] = {
+struct Trigger gMadraInteriors_TriggersBeforeRaid[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1264,7 +1291,7 @@ struct Trigger gData_020028a0[] = {
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors05)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_020000a4)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(MadraInteriors_AskWillWeBeSafe)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors09)},
     {0xc400, 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors10)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors13)},
@@ -1274,13 +1301,13 @@ struct Trigger gData_020028a0[] = {
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors20)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors21)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors22)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_020001b8)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToHealer)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors34)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors35)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_020000fc)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToInnkeeper)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors40)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors41)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(Func_0200023c)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(MadraInteriors_GuardElderGem)},
     {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors42)},
     {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors43)},
     {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors165)},
@@ -1314,29 +1341,29 @@ struct Trigger gData_020028a0[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02002bb8[] = {
+struct Trigger gMadraInteriors_JailTriggers[] = {
     {TRIGGER_EXIT, 20, CONDITION_ALWAYS, 20},
     {TRIGGER_TALK, 9, 0x18ff, MSGNO(MsgMadraInteriors143)},
     {TRIGGER_TALK, 10, 0x18ff, MSGNO(MsgMadraInteriors144)},
     {0xc400, 13, 0x18ff, MSGNO(MsgWhenAndHis)},
     {0xa400, 13, 0x18ff, MSGNO(MsgWhenAndHis)},
     {0x8400, 13, 0x18ff, MSGNO(MsgWhenAndHis)},
-    {TRIGGER_TALK, 14, 0x18ff, EVENT(Func_02000428)},
+    {TRIGGER_TALK, 14, 0x18ff, EVENT(MadraInteriors_TalkToIllMan)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors75)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors76)},
-    {TRIGGER_TALK, 7, CONDITION_ALWAYS, EVENT(Func_02000ed8)},
+    {TRIGGER_TALK, 7, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToPiers)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x18ff, MSGNO(MsgMadraInteriors145)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x18ff, MSGNO(MsgMadraInteriors146)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x18ff, MSGNO(MsgSoThisFellow)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x1211, MSGNO(MsgIKnewI)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1038, 0x18ff, EVENT(Func_02000428)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1038, 0x18ff, EVENT(MadraInteriors_TalkToIllMan)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors77)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors78)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 7, CONDITION_ALWAYS, EVENT(Func_02000f0c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 7, CONDITION_ALWAYS, EVENT(MadraInteriors_MindReadPiers)},
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02002c9c[] = {
+struct Trigger gMadraInteriors_SecondRoomsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_TALK, 8, 0x8ab, MSGNO(MsgMadraInteriors01)},
@@ -1361,7 +1388,7 @@ struct Trigger gData_02002c9c[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02002da4[] = {
+struct Trigger gMadraInteriors_TriggersAfterRaid[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1390,13 +1417,13 @@ struct Trigger gData_02002da4[] = {
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors67)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors68)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors69)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_020001b8)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToHealer)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors82)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors83)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_020000fc)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToInnkeeper)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors88)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors89)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(Func_0200023c)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(MadraInteriors_GuardElderGem)},
     {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors90)},
     {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors91)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors55)},
@@ -1426,7 +1453,7 @@ struct Trigger gData_02002da4[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_0200308c[] = {
+struct Trigger gMadraInteriors_TriggersOnReturn[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1444,11 +1471,11 @@ struct Trigger gData_0200308c[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_STEP, 30, 0x989, EVENT(Func_02001450)},
+    {TRIGGER_STEP, 30, 0x989, EVENT(MadraInteriors_WelcomePiersHome)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors102)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors103)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_0200028c)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_02000308)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToMushroomLover)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToMushroomCook)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors122)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors123)},
     {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors129)},
@@ -1458,19 +1485,19 @@ struct Trigger gData_0200308c[] = {
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors133)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors134)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors135)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_020001b8)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToHealer)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors150)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors151)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_020000fc)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToInnkeeper)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors156)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors157)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(Func_0200023c)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(MadraInteriors_GuardElderGem)},
     {TRIGGER_TALK, 32, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors158)},
     {TRIGGER_TALK, 33, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors159)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors104)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors105)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, EVENT(Func_02000368)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT(Func_020003c8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, EVENT(MadraInteriors_MindReadMushroomLover)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT(MadraInteriors_MindReadMushroomCook)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors124)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors125)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors136)},
@@ -1488,8 +1515,8 @@ struct Trigger gData_0200308c[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors162)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 32, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors163)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors164)},
-    {0x1c014, 10, 0x98a, EVENT(Func_02001008)},
-    {0x1c114, 10, 0x98a, EVENT(Func_02001310)},
+    {0x1c014, 10, 0x98a, EVENT(MadraInteriors_GiveHealingFungus)},
+    {0x1c114, 10, 0x98a, EVENT(MadraInteriors_GiveLaughingFungus)},
     {0x173, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors169))},
     {0x173, 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors170))},
     {0x173, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors171))},

@@ -401,7 +401,7 @@ s32 Script_PlaySound(struct ScriptInterpreter *interpreter) {
 }
 
 s32 Script_CallWithOperand(struct ScriptInterpreter *interpreter) {
-  Func_080c88c8(interpreter, interpreter->script[interpreter->cursor + 1]);
+  Event_PlayCueNearFocusFar(interpreter, interpreter->script[interpreter->cursor + 1]);
   interpreter->cursor += 2;
   return 1;
 }

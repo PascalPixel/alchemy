@@ -76,7 +76,7 @@ void Field_StartPaletteTransition(s32 mode);
 void FieldPsynergy_RunHandler(s32 kind);
 void FieldPsynergy_RunExtraHandler(void);
 
-s32 Func_080c88c8(struct ScriptInterpreter *interpreter, s32 value);
+s32 Event_PlayCueNearFocusFar(struct ScriptInterpreter *interpreter, s32 value);
 void Actor_ReleaseAtIndex(u32 actorIndex);
 void Actor_SetSquareSprite(u32 objectId);
 void BattleEffect_DropObjectAtAnchor(u32 objectId);

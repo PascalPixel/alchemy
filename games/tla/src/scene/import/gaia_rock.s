@@ -161,7 +161,7 @@ HangingVine_Place:
 	.global Func_02000f1c
 	.thumb_func
 Func_02000f1c:
-	overlay_veneer Func_080c88c8
+	overlay_veneer Event_PlayCueNearFocusFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

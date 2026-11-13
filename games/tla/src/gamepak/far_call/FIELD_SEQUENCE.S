@@ -283,17 +283,17 @@ Resource_FarCall006:
 	export BattleEffect_FillOverlayTilesFar, BattleEffect_FillOverlayTiles
 	export EffectSprite_InitFromSlot94Far, EffectSprite_InitFromSlot94
 	export BattleEffect_DrawSpriteAtWorldPositionFar, BattleEffect_DrawSpriteAtWorldPosition
-	.global Func_080c88b8
+	.global EffectSprite_InitFromSlot94BlendedFar
 	.thumb_func
-Func_080c88b8:
+EffectSprite_InitFromSlot94BlendedFar:
 	ldr r4, [pc, #0]
 	bx r4
 	.4byte EffectSprite_InitFromSlot94Blended
 	export Actor_ApplyRandomChildValuesFar, Actor_ApplyRandomChildValues
 @ Why assembly: 8-byte far-call veneers: ldr r4, the target's word, bx r4.
-	.global Func_080c88c8
+	.global Event_PlayCueNearFocusFar
 	.thumb_func
-Func_080c88c8:
+Event_PlayCueNearFocusFar:
 	ldr r4, [pc, #0]
 	bx r4
 	.4byte Event_PlayCueNearFocus

@@ -329,7 +329,7 @@ BattleEffect_StepVector3:
 	.global Func_02003c4c
 	.thumb_func
 Func_02003c4c:
-	overlay_veneer Func_080c88c8
+	overlay_veneer Event_PlayCueNearFocusFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

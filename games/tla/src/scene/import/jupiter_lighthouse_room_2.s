@@ -261,7 +261,7 @@ BattleEffect_DrawSpriteAtWorldPosition:
 	.global Func_02002324
 	.thumb_func
 Func_02002324:
-	overlay_veneer Func_080c88b8
+	overlay_veneer EffectSprite_InitFromSlot94BlendedFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

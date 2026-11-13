@@ -349,7 +349,7 @@ Party_GetLeaderActor:
 	.global Func_02005f8c
 	.thumb_func
 Func_02005f8c:
-	overlay_veneer Func_080c88c8
+	overlay_veneer Event_PlayCueNearFocusFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

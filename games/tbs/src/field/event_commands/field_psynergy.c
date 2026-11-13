@@ -23,8 +23,6 @@ void FieldPsynergy_RunHandler(s32 kind) {
     FieldPsynergy_RunExtraHandler();
 }
 
-void _call_via_r3(s32, s32);
-
 /// Casts the current field Psynergy with no target: runs the body of its
 /// kind (effectWork->fieldPsynergy).
 ///
@@ -235,7 +233,7 @@ void FieldPsynergy_RunExtraHandler(void) {
 
 /// Runs the event tied to a field Psynergy: a result below
 /// TRIGGER_RESULT_MESSAGE_END is a message, shown at target; a larger one is a
-/// routine, called with param and target (through r3). Afterwards, with
+/// routine, called with param and target. Afterwards, with
 /// FLAG_NOTHING_HAPPENS set, says "But nothing happens.". Returns 0.
 ///
 /// Called by Field_UsePsynergy and Field_RunPsynergyEndEvents for the before
@@ -255,7 +253,7 @@ s32 Field_RunPsynergyEvent(const void *event, s32 param, s32 target) {
         Event_ShowMessageAndWait(target, 0);
         Event_End();
       } else {
-        _call_via_r3(param, target);
+        ((void (*)(s32, s32))script)(param, target);
       }
     }
     if (GameFlag_GetFar(FLAG_NOTHING_HAPPENS) != 0) {

@@ -6,12 +6,12 @@
 
 #include "types.h"
 
-s32 Func_020001e4(void);
+s32 LemuriaSpring_RunSpringGame(void);
 
 extern u16 gData_0200173c[];
 extern u32 gData_02001700[];
 
-s32 Func_02001184();
+s32 LemuriaSpring_RunToss();
 
 void Func_0200049c(s32 a0);
 
@@ -26,6 +26,6 @@ extern u8 gData_02001750[];
 
 extern u16 gData_02001754[];
 
-void Func_020008f0(s32 actor, s32 active);
+void LemuriaSpring_SetSpriteStorageKind(s32 actor, s32 active);
 
 #endif

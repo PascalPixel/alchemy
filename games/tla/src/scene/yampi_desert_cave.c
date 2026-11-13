@@ -1,5 +1,9 @@
 /// @file
-/// The scene code of overlay 0x662, in ROM order.
+/// The Yampi Desert Cave, the hidden dungeon behind the desert's sand slide:
+/// Teleport marks lead into its inner rooms, where the party pushes logs,
+/// sinks stakes with Pound, bursts pillars, slips under walls with Sand,
+/// Scoops up the Venus Djinni Crystal racing through the sand, and meets
+/// Valukar, the guardian of fire.
 
 #include "shared/map_cells.h"
 #include "shared/actors.h"
@@ -25,6 +29,9 @@ void Func_020018c8(s32 id);
 
 extern s8 gYampiDesertCave_LogFootprints[];
 
+/// Makes a log's cells solid where it lies: its footprint's cells take the
+/// raised layers' attributes and block the ground; returns 0 for an actor that
+/// is no log.
 s32 YampiDesertCave_SetLogCells(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *object = Actor_GetById(id);
@@ -85,6 +92,8 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
 
 extern s32 gYampiDesertCave_DirectionSteps[];
 
+/// Finds the log the leader faces and can push: its kind, its actor slot and
+/// the direction, or NULL.
 struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
                                             s32 *kind);
 
@@ -258,6 +267,8 @@ extern const u8 gYampiDesertCave_Room2Triggers[];
 extern const u8 gYampiDesertCave_Room3Triggers[];
 
 s32 YampiDesertCave_FindLogSlide(s32 *position);
+/// The leader pushes a log to where YampiDesertCave_FindLogSlide stopped it,
+/// and its cells move with it.
 void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect);
 void YampiDesertCave_StartMarkGlow(void);
 void YampiDesertCave_StopMarkGlow(void);
@@ -267,8 +278,6 @@ void Statue_Sink(u16 *list, s32 mode, s32 count);
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02001958(void);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void YampiDesertCave_Call1920(s32 a, s32 b, s32 c) {
   Actor_ReturnHome(a, b, c);
 }
@@ -368,6 +377,7 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   Event_NoOp();
 }
 
+/// The leader's update while pushing: it stops at a wall or another log.
 void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
   s32 position[3];
   struct Actor *hit;
@@ -472,6 +482,8 @@ void PaletteCycle_Fade(void) {
     gYampiDesertCave_MarkCycleIndex = 0;
 }
 
+/// Arriving by Teleport: the screen flashes as the marks' colours race, then
+/// fades back.
 void YampiDesertCave_ArriveByTeleport(void) {
   struct YampiDesertCaveEventWork *work = Ram_HeapSlots->eventWork;
   s32 saved;
@@ -546,6 +558,8 @@ DEFINE_ACTOR_SET_CELL_OPEN(YampiDesertCave_SetStakeCell, Func_02001940,
 #include "system.h"
 #include "scene_tables.h"
 
+/// Talking to Crystal, the Venus Djinni Scoop dug up, starts its battle
+/// (flag 0x271).
 void YampiDesertCave_FightCrystal(void) {
   Event_SetFlag(0x271);
   Event_RequestDjinnBattle(17, 17);
@@ -554,6 +568,7 @@ void YampiDesertCave_FightCrystal(void) {
 
 void Event_End();
 
+/// Talking to the ripple racing through the sand only puzzles the leader.
 void YampiDesertCave_WonderAtRipple(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -690,6 +705,7 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
 /// YampiDesertCave_EndSand's counterpart: the leader's terrain becomes 2, and
 /// in rooms 1 and 3 the same calls run with their first and last pairs swapped,
 /// each followed by more.
+/// Sand: the leader sinks into the sand and the rooms' sand-only cells open.
 void YampiDesertCave_CastSand(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 2;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room1) {
@@ -706,6 +722,7 @@ void YampiDesertCave_CastSand(void) {
   }
 }
 
+/// Sand fades: the leader rises and the cells close again.
 void YampiDesertCave_EndSand(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 0;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room1)
@@ -717,6 +734,7 @@ void YampiDesertCave_EndSand(void) {
   }
 }
 
+/// Pound sinks Room3's stake and opens its cell.
 void YampiDesertCave_PoundStake(s32 a, s32 b) {
   Statue_Sink(gYampiDesertCave_Room3Stakes, a, b);
   MapGrid_CopyCellAttributes(47, 12, 1, 1, 46, 12);
@@ -724,12 +742,12 @@ void YampiDesertCave_PoundStake(s32 a, s32 b) {
 
 extern const s16 gYampiDesertCave_RipplePath[];
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 GameFlag_GetByte_(s32 flag) {
   return ((s32)GameFlag_GetByte(flag));
 }
 
+/// Moves the ripple to the next cell of its path, step by step on the step
+/// counter in flag byte 0x278.
 void YampiDesertCave_MoveSandRipple(void) {
   s32 step = GameFlag_GetByte_(0x278);
   s32 index = (step / 32) * 2;
@@ -748,6 +766,8 @@ void YampiDesertCave_MoveSandRipple(void) {
 
 /// The chest that follows the step count: when the tracked object stands on
 /// its cell, mode 1 stops the follower and mode 2 drops the chest.
+/// Scoop on the ripple's cell stops it (mode 1) and digs up Crystal, who
+/// drops to the ground (mode 2).
 void YampiDesertCave_ScoopDjinni(s32 mode) {
   s32 index = (((s32)GameFlag_GetByte(0x278)) / 32) * 2;
   s16 column = gYampiDesertCave_RipplePath[index];

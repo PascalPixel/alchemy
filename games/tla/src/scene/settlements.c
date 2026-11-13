@@ -1047,7 +1047,7 @@ void Settlements_LiftBoulder(void) { GameFlag_Set(0x208); }
 
 /* VIEW(s1620): variable gInput as extern u32 gInput; input.h has extern struct
  * InputState gInput; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/scene/settlements.c:1061: invalid operands
+ * compile in tla-ja: games/tla/src/scene/settlements.c:1058: invalid operands
  * to binary >>. */
 extern u32 gInput__s1620 __asm__("gInput");
 extern s16 gSettlements_SlideAngles[];
@@ -1228,7 +1228,7 @@ end:
  * gSettlements_SlideStopped; scene/settlements.h has u16
  * gSettlements_SlideStopped; tried as the 2 declarations' extern volatile s16
  * gSettlements_SlideStopped, it does not compile in tla-en:
- * games/tla/src/scene/settlements.c:1228: conflicting types for
+ * games/tla/src/scene/settlements.c:1220: conflicting types for
  * `gSettlements_SlideStopped'. */
 extern volatile s16
     gSettlements_SlideStopped__s1a1c __asm__("gSettlements_SlideStopped");

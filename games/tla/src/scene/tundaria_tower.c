@@ -982,8 +982,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 /* VIEW(s11e0): variable gInput as extern u32 gInput; input.h has extern struct
  * InputState gInput; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/scene/tundaria_tower.c:1001: invalid
- * operands to binary >>. */
+ * compile in tla-ja: games/tla/src/scene/tundaria_tower.c:995: invalid operands
+ * to binary >>. */
 extern u32 gInput__s11e0 __asm__("gInput");
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
@@ -1162,7 +1162,7 @@ end:
 /* VIEW(s1b48): variable gData_02003cd0 as volatile s16 gData_02003cd0;
  * scene/shared/tundaria_tower.h has u16 gData_02003cd0; tried as the 2
  * declarations' extern volatile s16 gData_02003cd0, it does not compile in
- * tla-en: games/tla/src/scene/tundaria_tower.c:1166: conflicting types for
+ * tla-en: games/tla/src/scene/tundaria_tower.c:1157: conflicting types for
  * `gData_02003cd0'. */
 extern volatile s16 gData_02003cd0__s1b48 __asm__("gData_02003cd0");
 extern s16 gData_020032b2[];
@@ -2137,7 +2137,7 @@ next:
 // A falling rock's sprite.
 /* VIEW(s29d0): tag struct RockSprite as struct RockSprite__s29d0; module/tla.h
  * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:2184:
+ * it does not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:2168:
  * structure has no member named `blend'. */
 struct RockSprite__s29d0 {
   u8 unk00[5];

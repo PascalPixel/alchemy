@@ -1768,7 +1768,7 @@ void MagmaRockInside_SpawnSpark(struct Actor *source) {
 /* VIEW(magma_rock_inside): tag struct Orbiter as struct
  * Orbiter__magma_rock_inside; module/scene/scene.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/magma_rock_inside.c:1768: structure has no member
+ * tla-ja: games/tla/src/scene/magma_rock_inside.c:1765: structure has no member
  * named `parent'. */
 struct Orbiter__magma_rock_inside {
   u8 unk00[8];
@@ -1876,7 +1876,7 @@ extern s32 gMagmaRockInside_BlazeCasterReturnScript[];
  * DEFINE_G_DATA_02001540(gMagmaRockInside_DustScript, 44) const s32
  * *gFieldEffect_DurationScripts[] = {; tried as the one declaration extern
  * const u8 gMagmaRockInside_BlazeWatcherReturnScript[], it does not compile in
- * tla-ja: games/tla/src/scene/magma_rock_inside.c:3037: conflicting types for
+ * tla-ja: games/tla/src/scene/magma_rock_inside.c:2965: conflicting types for
  * `gMagmaRockInside_BlazeWatcherReturnScript'. */
 extern const u8
     gMagmaRockInside_BlazeWatcherReturnScript__magma_rock_inside[] __asm__(

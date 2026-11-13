@@ -180,7 +180,7 @@ void Func_02000080(void) {
 /* VIEW(jupiter_lighthouse_room_m): variable gBgScroll as s16 gBgScroll[];
  * bg_scroll.h has struct BgScroll gBgScroll[]; tried as the rest of the object
  * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:222: incompatible types in
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:216: incompatible types in
  * assignment. */
 extern s16 gBgScroll__jupiter_lighthouse_room_m[] __asm__("gBgScroll");
 
@@ -1716,7 +1716,7 @@ s32 Scene_PrepareMap(void) {
 /* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
  * the joined file has another; tried as the definition's extern s32
  * gPaletteCyclePausesInEvents, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:1723:
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:1714:
  * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
 extern s32
     gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
@@ -1729,7 +1729,7 @@ void PaletteCycle_SetPausesInEvents(s32 value) {
 /* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
  * file has another; tried as the definition's extern s32 gPaletteCycleFrame, it
  * does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:1732: `gPaletteCycleFrame'
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:1723: `gPaletteCycleFrame'
  * undeclared (first use in this function). */
 extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
 #define gPaletteCycleFrame gPaletteCycleFrame__first
@@ -1948,7 +1948,7 @@ struct CellTarget__s41ac {
  * CellTarget *table, struct CellTargetEntry *entry); tried as the definition's
  * DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell) void
  * CrackedTile_Fall(struct PushEvent *event), it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:1949: conflicting types for
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:1932: conflicting types for
  * `CrackedTile_Fall'. */
 void CrackedTile_Fall__s41ac(
     struct CellTarget__s41ac *table,

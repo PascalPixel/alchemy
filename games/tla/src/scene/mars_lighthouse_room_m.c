@@ -614,10 +614,8 @@ const struct Trigger *Scene_GetEvents(void) {
 
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
 /* VIEW(s0b64): routine Actor_LaunchAhead as void Actor_LaunchAhead(void);
- * mars_lighthouse_room_m has void Actor_LaunchAhead(struct Actor *self); tried
- * as the rest of the object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:667: too few arguments to
- * function `Actor_LaunchAhead'. */
+ * mars_lighthouse_room_m has void Actor_LaunchAhead(struct Actor *self); not
+ * tried: Actor_LaunchAhead's bound declaration was not found. */
 extern void Func_02002e6c__s0b64(void) __asm__("Actor_LaunchAhead");
 
 extern s16 gData_0200338c[];
@@ -1456,7 +1454,7 @@ struct MarsLighthouseEventWork {
 /* VIEW(s2118): routine Unit_Get as struct BattleUnit *Unit_Get(s32 owner);
  * item_icon.h has void *Unit_Get(s32 owner); tried as the definition's void
  * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1426: request for
+ * in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1427: request for
  * member `hp' in something not a structure or union. */
 struct BattleUnit *Unit_Get__s2118(s32 owner) __asm__("Unit_Get");
 #define Unit_Get Unit_Get__s2118
@@ -1497,10 +1495,8 @@ void Func_020026f0(void) {
 
 /* VIEW(s2708): routine Party_TakeFallDamage as int Party_TakeFallDamage(),
  * called with no declaration in scope as its bytes need; the definition has
- * void Party_TakeFallDamage(void); tried as the rest of the object declares it,
- * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:1521: too many arguments to
- * function `Party_TakeFallDamage'. */
+ * void Party_TakeFallDamage(void); not tried: Party_TakeFallDamage's bound
+ * declaration was not found. */
 s32 Func_02002368__s2708() __asm__("Party_TakeFallDamage");
 #define Party_TakeFallDamage Func_02002368__s2708
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z);
@@ -1715,7 +1711,7 @@ void Func_02002ad4(struct Actor *object) {
 /* VIEW(s2708): tag struct Work020023c4 as struct Work020023c4__s2708;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:1680: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_room_m.c:1676: redefinition of `struct
  * Work020023c4'. */
 #define Work020023c4 Work020023c4__s2708
 struct Work020023c4 {

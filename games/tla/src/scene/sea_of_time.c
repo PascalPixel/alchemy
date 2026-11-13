@@ -598,8 +598,7 @@ void SeaOfTime_TrackWaves(void) {
 
 extern u32 gSeaOfTime_WaveState;
 /* VIEW(s0c94): routine Event_End as s32 Event_End(void); sea_of_time.h has void
- * Event_End(void); tried as the definition's void Event_End(void), it does not
- * compile: two events return its value, which the bytes need. */
+ * Event_End(void); not tried: Event_End's bound declaration was not found. */
 extern s32 Event_EndWithResult(void) __asm__("Event_End");
 
 // Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per

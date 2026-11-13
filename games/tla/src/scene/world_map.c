@@ -2464,8 +2464,8 @@ extern s16 gData_02006e0e__s3b38 __asm__("gData_02006e0e");
 /* VIEW(s3b38): variable gData_02006f20 as u8 gData_02006f20[][32];
  * module/scene/scene.h has u8 gData_02006f20[]; tried as the rest of the object
  * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2452: `gData_02006f20__s3b38' undeclared
- * (first use in this function). */
+ * games/tla/src/scene/world_map.c:2447: subscripted value is neither array nor
+ * pointer. */
 extern u8 gData_02006f20__s3b38[][32] __asm__("gData_02006f20");
 
 DEFINE_GAUGE_DRAW(Func_02004744, gData_02006e0c__s3b38, Data_02006e20,

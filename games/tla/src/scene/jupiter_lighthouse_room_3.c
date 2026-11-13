@@ -109,14 +109,14 @@ void PaletteCycle_StepAt(void);
 /* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
  * file has another; tried as the definition's extern s32 gPaletteCycleFrame, it
  * does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_3.c:268: `gPaletteCycleFrame'
+ * games/tla/src/scene/jupiter_lighthouse_room_3.c:266: `gPaletteCycleFrame'
  * undeclared (first use in this function). */
 extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
 #define gPaletteCycleFrame gPaletteCycleFrame__first
 /* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
  * the joined file has another; tried as the definition's extern s32
  * gPaletteCyclePausesInEvents, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_3.c:262:
+ * games/tla/src/scene/jupiter_lighthouse_room_3.c:260:
  * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
 extern s32
     gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");

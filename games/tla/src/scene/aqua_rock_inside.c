@@ -555,7 +555,7 @@ void Func_020007a8(void) {
 /* VIEW(aqua_rock_inside): variable gData_02003fb8 as const u8 gData_02003fb8[];
  * scene/aqua_rock_inside/s3844 has u32 gData_02003fb8[] = {; tried as the
  * definition's extern u32 gData_02003fb8[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:586: `gData_02003fb8' undeclared
+ * games/tla/src/scene/aqua_rock_inside.c:592: `gData_02003fb8' undeclared
  * (first use in this function). */
 extern const u8 gData_02003fb8__aqua_rock_inside[] __asm__("gData_02003fb8");
 #define gData_02003fb8 gData_02003fb8__aqua_rock_inside
@@ -765,7 +765,7 @@ void Func_02000ca8(void) {
 /* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before
  * it has another declaration; tried as the definition's void
  * Func_02000ca8(void), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/scene/aqua_rock_inside.c:785: too many arguments to
+ * in tla-ja: games/tla/src/scene/aqua_rock_inside.c:791: too many arguments to
  * function `Func_02000ca8'. */
 extern void Func_02000ca8__s0cc8() __asm__("Func_02000ca8");
 

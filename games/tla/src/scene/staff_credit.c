@@ -159,10 +159,9 @@ void Func_02000138(u8 *grid, s32 count, s32 scale) {
 }
 
 /* VIEW(first): routine gData_02003d20 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA struct Trigger
- * gData_02003d20[], it does not compile in tla-ja:
- * games/tla/src/scene/staff_credit.c:202: `gData_02003d20' undeclared (first
- * use in this function). */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_02003d20[],
+ * it does not compile in tla-ja: games/tla/src/scene/staff_credit.c:202:
+ * `gData_02003d20' undeclared (first use in this function). */
 extern s16 gData_02003d20__first[][2] __asm__("gData_02003d20");
 #define gData_02003d20 gData_02003d20__first
 /* VIEW(first): routine gData_02003d34 as this part declared it; the joined file

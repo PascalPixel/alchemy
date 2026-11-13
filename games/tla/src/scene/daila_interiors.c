@@ -607,7 +607,7 @@ void Map_SetLayerEntryFlag(s32 mode);
  * *Actor_GetById(s32 id); item has struct DailaActor__item *Actor_GetById(s32
  * id); tried as the definition's struct Actor *Actor_GetById(u32 objectId),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/daila_interiors.c:620: structure has no member named
+ * games/tla/src/scene/daila_interiors.c:616: structure has no member named
  * `priorityFlags'. */
 extern struct DailaStartActor *
 Actor_GetById__arrival(s32 id) __asm__("Actor_GetById");

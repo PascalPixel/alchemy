@@ -351,7 +351,7 @@ void Func_0200092c(struct Actor *object) {
 
 /* VIEW(airs_rock): routine gData_02004674 as this part declared it; the joined
  * file has another; tried as the definition's extern u32 gData_02004674[], it
- * does not compile in tla-ja: games/tla/src/scene/airs_rock.c:489:
+ * does not compile in tla-ja: games/tla/src/scene/airs_rock.c:486:
  * `gData_02004674' undeclared (first use in this function). */
 extern s16 gData_02004674__airs_rock[][4] __asm__("gData_02004674");
 #define gData_02004674 gData_02004674__airs_rock
@@ -1516,7 +1516,7 @@ void Func_020026b8(void) {
 
 /* VIEW(airs_rock): routine gData_02004698 as this part declared it; the joined
  * file has another; tried as the definition's extern s32 gData_02004698[], it
- * does not compile in tla-ja: games/tla/src/scene/airs_rock.c:1521:
+ * does not compile in tla-ja: games/tla/src/scene/airs_rock.c:1518:
  * `gData_02004698' undeclared (first use in this function). */
 extern s32 gData_02004698__airs_rock __asm__("gData_02004698");
 #define gData_02004698 gData_02004698__airs_rock

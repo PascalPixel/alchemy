@@ -548,7 +548,7 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
 /* VIEW(s0ac8): tag struct Work as struct Work__s0ac8;
  * scene/anemos_inner_sanctum/scene_tables has another definition; tried with
  * the definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:579: structure has no member named
+ * games/tla/src/scene/anemos_inner_sanctum.c:572: structure has no member named
  * `room'. */
 struct Work__s0ac8 {
   u8 pad[340];
@@ -582,7 +582,7 @@ extern u32 gData_020035cc[];
 extern s32 gData_02003620[];
 /* VIEW(s0ac8): routine gData_020036fc as this part declared it; the joined file
  * has another; tried as the definition's extern s32 gData_020036fc[], it does
- * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:709:
+ * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:702:
  * `gData_020036fc' undeclared (first use in this function). */
 extern s32 gData_020036fc__s0ac8[][2] __asm__("gData_020036fc");
 #define gData_020036fc gData_020036fc__s0ac8
@@ -1311,7 +1311,7 @@ void Func_02001c60(void) {
 /* VIEW(s1938): tag struct EventWork154 as struct EventWork154__s1938;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:1333: structure has no member
+ * games/tla/src/scene/anemos_inner_sanctum.c:1326: structure has no member
  * named `value'. */
 struct EventWork154__s1938 {
   u8 unk000[0x154];
@@ -2016,7 +2016,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
  * DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell) void
  * CrackedTile_Fall(struct PushEvent *event), which the object already declares,
  * it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:2002: too many arguments to
+ * games/tla/src/scene/anemos_inner_sanctum.c:1992: too many arguments to
  * function `CrackedTile_Fall'. */
 void CrackedTile_Fall__s2f48(
     struct CellTarget *work,

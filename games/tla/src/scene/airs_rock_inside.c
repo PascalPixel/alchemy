@@ -2749,7 +2749,7 @@ void Func_02004880(void) {}
  * scene/airs_rock_inside/airs_rock_inside has void Func_020007b4(s32 mode, s32
  * step) {; tried as the definition's void Func_020007b4(s32 mode, s32 step),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/airs_rock_inside.c:2761: too few arguments to function
+ * games/tla/src/scene/airs_rock_inside.c:2759: too few arguments to function
  * `Func_020007b4'. */
 void Func_020007b4__s2cf0(void) __asm__("Func_020007b4");
 
@@ -3036,7 +3036,7 @@ void Func_02004eb0(void) {
 
 /* VIEW(s2cf0): routine gData_020073d8 as this part declared it; the joined file
  * has another; tried as the definition's extern s32 gData_020073d8[], it does
- * not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:3046:
+ * not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:3044:
  * `gData_020073d8' undeclared (first use in this function). */
 extern s32 gData_020073d8__s2cf0 __asm__("gData_020073d8");
 #define gData_020073d8 gData_020073d8__s2cf0

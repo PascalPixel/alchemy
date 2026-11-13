@@ -884,7 +884,7 @@ extern u32 gLightSpriteActors[];
 /* VIEW(s16d4): variable gLightSpritePriority as s16 gLightSpritePriority;
  * scene/jupiter_lighthouse_room_7 has u16 gLightSpritePriority; tried as the 13
  * declarations' extern s16 gLightSpritePriority, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_7.c:878: conflicting types for
+ * games/tla/src/scene/jupiter_lighthouse_room_7.c:876: conflicting types for
  * `gLightSpritePriority'. */
 extern s16 gLightSpritePriority__s16d4 __asm__("gLightSpritePriority");
 

@@ -290,7 +290,7 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
 /* VIEW(s0910): variable gLightSpriteCount as s16 gLightSpriteCount;
  * module/scene/scene.h has u8 gLightSpriteCount[]; tried as the 14
  * declarations' extern s16 gLightSpriteCount, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_9.c:284: conflicting types for
+ * games/tla/src/scene/jupiter_lighthouse_room_9.c:282: conflicting types for
  * `gLightSpriteCount'. */
 extern s16 gLightSpriteCount__s0910 __asm__("gLightSpriteCount");
 extern struct LightOam gLightSpriteOams[];

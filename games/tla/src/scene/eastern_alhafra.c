@@ -2253,7 +2253,7 @@ void Func_020040c0(void) {
 
 /* VIEW(s4004): routine gPushFootprints as this part declared it; the joined
  * file has another; tried as the definition's extern u32 gPushFootprints[], it
- * does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:2287:
+ * does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:2278:
  * `gPushFootprints' undeclared (first use in this function). */
 extern s8 gPushFootprints__s4004[][4] __asm__("gPushFootprints");
 #define gPushFootprints gPushFootprints__s4004
@@ -2400,7 +2400,7 @@ struct PushTarget {
 /* VIEW(s44c4): variable gPushFootprints as s8 gPushFootprints[];
  * scene/eastern_alhafra/s4004 has s8 gPushFootprints[][4]; tried as the
  * definition's extern u32 gPushFootprints[], it does not compile in tla-ja:
- * games/tla/src/scene/eastern_alhafra.c:2398: conflicting types for
+ * games/tla/src/scene/eastern_alhafra.c:2389: conflicting types for
  * `gPushFootprints__s4004'. */
 extern s8 gPushFootprints__s44c4[] __asm__("gPushFootprints");
 

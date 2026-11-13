@@ -214,7 +214,7 @@ s32 Func_02000364(struct Actor *actor) {
 /* VIEW(gabomba_statue): tag struct Orbiter as struct Orbiter__gabomba_statue;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:219: structure has no member named
+ * games/tla/src/scene/gabomba_statue.c:222: structure has no member named
  * `phase'. */
 struct Orbiter__gabomba_statue {
   u8 unk00[6];
@@ -235,7 +235,7 @@ struct Orbiter__gabomba_statue {
 /* VIEW(gabomba_statue): routine gData_02005af0 as this part declared it; the
  * joined file has another; tried as the definition's extern LATE_DATA u32
  * gData_02005af0[], it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:237: `gData_02005af0' undeclared (first
+ * games/tla/src/scene/gabomba_statue.c:240: `gData_02005af0' undeclared (first
  * use in this function). */
 extern s32 gData_02005af0__gabomba_statue __asm__("gData_02005af0");
 #define gData_02005af0 gData_02005af0__gabomba_statue
@@ -350,7 +350,7 @@ const u8 *Scene_GetPlacements(void) {
 /* VIEW(find_near): tag struct Orbiter as struct Orbiter__find_near;
  * gabomba_statue.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:362: structure has no member named
+ * games/tla/src/scene/gabomba_statue.c:365: structure has no member named
  * `phase'. */
 struct Orbiter__find_near {
   u8 unk00[6];
@@ -1042,7 +1042,7 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(Func_020015b8, 27, 17, 19, 18, 26, 28,
  * EventWork154__gabomba_statue; module/scene/scene.h has another definition;
  * tried with the definition the rest of the object has, its members read exit
  * as returnEntrance, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:911: structure has no member named
+ * games/tla/src/scene/gabomba_statue.c:914: structure has no member named
  * `returnEntrance'. */
 struct EventWork154__gabomba_statue {
   u8 unk000[0x154];
@@ -2286,8 +2286,9 @@ void Func_02003974(void) {
 /* VIEW(s2394): routine Func_02004380 as s32 Func_02004380(s32 col, s32 row, s32
  * turn); the definition has u8 Func_02004380(s32 x, s32 z, s32 direction);
  * tried as the definition's u8 Func_02004380(s32 x, s32 z, s32 direction),
- * Func_02003a64 moves: it narrows the result to a byte where the ROM keeps the
- * whole register (tla-en, tla-ja). */
+ * which the object already declares, it does not compile in tla-ja (make
+ * modern): games/tla/include/module/field/field.h:1217:42: note: expected
+ * 'struct Actor *' but argument is of type 'struct FieldEffect *'. */
 extern s32 Func_02004380__s2394(s32 col, s32 row,
                                 s32 turn) __asm__("Func_02004380");
 
@@ -2987,12 +2988,12 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
 /* VIEW(puzzle_turn): routine gData_02006f38 as this part declared it; the
  * joined file has another; tried as the definition's extern LATE_DATA s32
  * gData_02006f38[], it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:3003: `gData_02006f38__puzzle_turn'
+ * games/tla/src/scene/gabomba_statue.c:2997: `gData_02006f38__puzzle_turn'
  * undeclared (first use in this function). */
 /* VIEW(puzzle_turn): routine gData_02006ec0 as this part declared it; the
  * joined file has another; tried as the definition's extern LATE_DATA u32
  * gData_02006ec0[], it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:3125: `gData_02006ec0' undeclared (first
+ * games/tla/src/scene/gabomba_statue.c:3119: `gData_02006ec0' undeclared (first
  * use in this function). */
 extern const u8 gData_02006f38__puzzle_turn[] __asm__("gData_02006f38");
 extern const u8 gData_02006ec0__puzzle_turn[] __asm__("gData_02006ec0");
@@ -3177,7 +3178,7 @@ done:
  * it has another declaration; tried as the definition's void
  * Func_02004938(struct Actor *ball, s32 step), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:3203: too many arguments to function
+ * games/tla/src/scene/gabomba_statue.c:3197: too many arguments to function
  * `Func_02004938'. */
 extern void Func_02004938__s4d48() __asm__("Func_02004938");
 

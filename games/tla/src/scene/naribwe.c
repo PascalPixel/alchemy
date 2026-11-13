@@ -38,62 +38,62 @@ extern struct Trigger gNaribwe_TriggersOnReturn[];
 /* VIEW(first): routine gNaribwe_Doors as this part declared it; the joined file
  * has another; tried as the one declaration extern const struct WarpEntry
  * gNaribwe_Doors[], it does not compile in tla-ja:
- * games/tla/src/scene/naribwe.c:243: `gNaribwe_Doors' undeclared (first use in
+ * games/tla/src/scene/naribwe.c:238: `gNaribwe_Doors' undeclared (first use in
  * this function). */
 extern const struct WarpEntry gNaribwe_Doors__first[] __asm__("gNaribwe_Doors");
 #define gNaribwe_Doors gNaribwe_Doors__first
 
 /* VIEW(first): routine MsgNaribwe02 as this part declared it; the joined file
  * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:111: `MsgNaribwe02' undeclared
+ * in tla-ja: games/tla/src/scene/naribwe.c:106: `MsgNaribwe02' undeclared
  * (first use in this function). */
 extern u8 MsgNaribwe02__first __asm__("MsgNaribwe02");
 #define MsgNaribwe02 MsgNaribwe02__first
 /* VIEW(first): routine MsgNaribwe03 as this part declared it; the joined file
  * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:122: `MsgNaribwe03' undeclared
+ * in tla-ja: games/tla/src/scene/naribwe.c:117: `MsgNaribwe03' undeclared
  * (first use in this function). */
 extern u8 MsgNaribwe03__first __asm__("MsgNaribwe03");
 #define MsgNaribwe03 MsgNaribwe03__first
 /* VIEW(first): routine MsgNaribwe07 as this part declared it; the joined file
  * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:132: `MsgNaribwe07' undeclared
+ * in tla-ja: games/tla/src/scene/naribwe.c:127: `MsgNaribwe07' undeclared
  * (first use in this function). */
 extern u8 MsgNaribwe07__first __asm__("MsgNaribwe07");
 #define MsgNaribwe07 MsgNaribwe07__first
 /* VIEW(first): routine MsgNaribwe08 as this part declared it; the joined file
  * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:143: `MsgNaribwe08' undeclared
+ * in tla-ja: games/tla/src/scene/naribwe.c:138: `MsgNaribwe08' undeclared
  * (first use in this function). */
 extern u8 MsgNaribwe08__first __asm__("MsgNaribwe08");
 #define MsgNaribwe08 MsgNaribwe08__first
 /* VIEW(first): routine MsgNaribwe09 as this part declared it; the joined file
  * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:150: `MsgNaribwe09' undeclared
+ * in tla-ja: games/tla/src/scene/naribwe.c:145: `MsgNaribwe09' undeclared
  * (first use in this function). */
 extern u8 MsgNaribwe09__first __asm__("MsgNaribwe09");
 #define MsgNaribwe09 MsgNaribwe09__first
 /* VIEW(first): routine MsgNaribwe21 as this part declared it; the joined file
  * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:174: `MsgNaribwe21' undeclared
+ * in tla-ja: games/tla/src/scene/naribwe.c:169: `MsgNaribwe21' undeclared
  * (first use in this function). */
 extern u8 MsgNaribwe21__first __asm__("MsgNaribwe21");
 #define MsgNaribwe21 MsgNaribwe21__first
 /* VIEW(first): routine MsgNaribwe43 as this part declared it; the joined file
  * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:187: `MsgNaribwe43' undeclared
+ * in tla-ja: games/tla/src/scene/naribwe.c:182: `MsgNaribwe43' undeclared
  * (first use in this function). */
 extern u8 MsgNaribwe43__first __asm__("MsgNaribwe43");
 #define MsgNaribwe43 MsgNaribwe43__first
 /* VIEW(first): routine MsgNaribwe23 as this part declared it; the joined file
  * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:202: `MsgNaribwe23' undeclared
+ * in tla-ja: games/tla/src/scene/naribwe.c:197: `MsgNaribwe23' undeclared
  * (first use in this function). */
 extern u8 MsgNaribwe23__first __asm__("MsgNaribwe23");
 #define MsgNaribwe23 MsgNaribwe23__first
 /* VIEW(first): routine MsgNaribwe45 as this part declared it; the joined file
  * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/naribwe.c:215: `MsgNaribwe45' undeclared
+ * in tla-ja: games/tla/src/scene/naribwe.c:210: `MsgNaribwe45' undeclared
  * (first use in this function). */
 extern u8 MsgNaribwe45__first __asm__("MsgNaribwe45");
 #define MsgNaribwe45 MsgNaribwe45__first

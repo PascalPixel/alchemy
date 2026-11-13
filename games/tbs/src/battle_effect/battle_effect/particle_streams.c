@@ -489,6 +489,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         SET_VECTOR(vector, px(gParticleStreams_OrbitPoints[i][0] / 2),
                    px(gParticleStreams_OrbitPoints[i][1] + frame),
                    px(gParticleStreams_OrbitPoints[i][2] / 2));
+        /* FAKEMATCH(temporary): screenPosition holds &spot; as spot used
+         * directly, 66 of 1532 instructions differ in tbs-en. */
         Projection_Point(vector, screenPosition = &spot);
         screenPosition->x = Q_16_16_TO_INT(screenPosition->x) + 128;
         screenPosition->y = Q_16_16_TO_INT(screenPosition->y) + 60;

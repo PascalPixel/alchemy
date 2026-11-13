@@ -1,7 +1,9 @@
 /// @file
-/// The scene code of overlay 0x65e, in ROM order.
+/// Mikasalla's houses: the inn, where Galahad waits in a linked game, and the
+/// sanctum, as two scenes of one overlay.
 
 #include "shared/tables.h"
+#include "shared/actors.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -182,7 +184,7 @@ s32 Scene_Initialize(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65ERoom1) {
     if (gMainRoutineWork.entrance == 5)
-      Func_02000454();
+      MikasallaInteriors_FadeInAndClearFlag();
     else if (!Event_GetFlag(0x821) ||
              (Event_GetFlag(0xa39) && !Event_GetFlag(0x341)) ||
              Event_GetFlag(34))
@@ -210,11 +212,9 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_02000454(void) {
-  *(s32 *)((u8 *)((s32)Ram_HeapSlots->eventWork + 0x1ac) + 0) = 0x209;
-  Event_ClearFlag(0x12f);
-  return;
-}
+/// Arriving by the inn's entrance 5, the screen fades in and flag 0x12f is
+/// cleared.
+DEFINE_SCENE_FADE_IN_AND_CLEAR_FLAG(MikasallaInteriors_FadeInAndClearFlag)
 
 void MikasallaInteriors_MeetGalahad(void);
 
@@ -272,9 +272,11 @@ void MikasallaInteriors_MeetGalahad(void) {
 #include "objcmd.h"
 
 // clang-format off
-DEFINE_G_DATA_02000654(gData_02000654, 600, 616)
+/// Two women pace the inn: the explorer's widow, whose father-in-law and husband
+/// explored, and the wife of the man who keeps trying to climb Air's Rock.
+DEFINE_G_DATA_02000654(gMikasallaInteriors_ExplorersWidowPaces, 600, 616)
 
-DEFINE_G_DATA_02000654(gData_0200070c, 360, 376)
+DEFINE_G_DATA_02000654(gMikasallaInteriors_ClimbersWifePaces, 360, 376)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -297,10 +299,10 @@ u32 gSceneExits[] = {
 
 struct ActorPlacement gMikasallaInteriors_InnPlacements[] = {
     {71, CONDITION_ALWAYS, 1, PIXELS(552), 0, PIXELS(152), FACING_EAST, 1, 0},
-    {72, CONDITION_ALWAYS, (s32)gData_02000654, PIXELS(616), 0, PIXELS(104), FACING_EAST, 1, 0},
+    {72, CONDITION_ALWAYS, (s32)gMikasallaInteriors_ExplorersWidowPaces, PIXELS(616), 0, PIXELS(104), FACING_EAST, 1, 0},
     {77, CONDITION_ALWAYS, 1, PIXELS(632), 0, PIXELS(136), FACING_NORTH, 3, 0},
     {75, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(120), FACING_EAST, 1, 0},
-    {76, CONDITION_ALWAYS, (s32)gData_0200070c, PIXELS(360), 0, PIXELS(88), FACING_NORTH, 1, 0},
+    {76, CONDITION_ALWAYS, (s32)gMikasallaInteriors_ClimbersWifePaces, PIXELS(360), 0, PIXELS(88), FACING_NORTH, 1, 0},
     {130, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(120), FACING_SOUTH, 1, 0},
     {199, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(392), FACING_EAST, 1, 0},
     {209, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(424), FACING_SOUTH, 1, 0},

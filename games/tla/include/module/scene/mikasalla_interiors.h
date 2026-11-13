@@ -14,9 +14,9 @@ extern struct Trigger gMikasallaInteriors_SanctumTriggers[];
 
 void Shop_Run();
 
-void Func_02000454(void);
+void MikasallaInteriors_FadeInAndClearFlag(void);
 
-extern u32 gData_02000654[];
-extern u32 gData_0200070c[];
+extern u32 gMikasallaInteriors_ExplorersWidowPaces[];
+extern u32 gMikasallaInteriors_ClimbersWifePaces[];
 
 #endif

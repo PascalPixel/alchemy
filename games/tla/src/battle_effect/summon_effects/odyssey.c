@@ -490,6 +490,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
+typedef DrawRectangle BlitterPair[2];
+
 // The swirl runs until A is pressed, at most this many frames.
 #define SWIRL_MAX_FRAMES 312000
 

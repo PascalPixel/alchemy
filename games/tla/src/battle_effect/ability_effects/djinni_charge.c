@@ -24,8 +24,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList__ability_effects(struct Model *model) __asm__(
-    "Render_DrawModelList");
+void Render_DrawModelList__ability_effects(struct Model *model);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
@@ -77,10 +76,9 @@ void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
  * *screen, s32 count); battle_effect/summon_effects has void
  * Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex
  * *screen, s32 count) {. */
-void Render_ProjectVertices__ability_effects(
-    struct ModelVertex *vertices, struct ProjectedVertex *screen,
-    s32 count) __asm__("Render_ProjectVertices");
-#define Render_ProjectVertices Render_ProjectVertices__ability_effects
+void Render_ProjectVertices__ability_effects(struct ModelVertex *vertices,
+                                             struct ProjectedVertex *screen,
+                                             s32 count);
 void SceneTransform_ApplyPosition(const s32 *pos);
 
 extern char ResourceId_Data134;

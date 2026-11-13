@@ -16,6 +16,11 @@ struct Model;
 #define SUMMON16_FRAMES 296
 #define SUMMON16_SKIP_TO 232
 
+struct Point2D {
+  s32 x;
+  s32 y;
+};
+
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_Data0C1;
 extern char ResourceId_Data134;
@@ -598,6 +603,16 @@ void Transform_Pop(void);
 struct ResourceTableEntry {
   u16 unk0;
   u16 tile;
+};
+
+struct WordPair {
+  s32 a;
+  s32 b;
+};
+
+struct Scale {
+  s32 x;
+  s32 y;
 };
 
 // The spark objects' work, in the map cell buffer at 0x1f40.

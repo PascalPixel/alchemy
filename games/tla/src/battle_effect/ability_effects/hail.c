@@ -174,6 +174,8 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 // The chips' shapes and flips live in particles[32..63].
 #define FIRST_CHIP 32
 
+typedef DrawRectangle BlitterPair[2];
+
 extern char ResourceId_PortalSheet;
 
 // The chips: ☀️'s gHail_ChipFlips (a blitter's flags), and, by shape,

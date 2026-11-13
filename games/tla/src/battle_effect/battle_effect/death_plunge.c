@@ -741,8 +741,7 @@ void BattleEffect_EndElementStreaks(void) {
 
 struct Model;
 
-void Render_DrawModelList__battle_effect(struct Model *model) __asm__(
-    "Render_DrawModelList");
+void Render_DrawModelList__battle_effect(struct Model *model);
 
 /* VIEW(f13eb70): routine BattleObject_GetFar as void
  * **BattleObject_GetFar(s32 objectId); motobj.h has struct BattleObj
@@ -779,6 +778,7 @@ extern u8 gMapCellBuffer[];
 struct SpriteObject *EffectSprite_CreateWithTiles__battle_effect(
     s32 width, s32 height, u32 shape,
     u32 attributes) __asm__("EffectSprite_CreateWithTiles");
+#define EffectSprite_CreateWithTiles EffectSprite_CreateWithTiles__battle_effect
 /* VIEW(battle_effect): routine EffectSprite_Acquire as struct RuinObject
  * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode);
  * battle_effect/ability_effects has struct EffectSprite__f15b3b0

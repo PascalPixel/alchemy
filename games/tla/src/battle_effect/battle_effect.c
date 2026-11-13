@@ -5780,6 +5780,29 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
 #undef PUFF_COUNT
 
 // ---- battle_effect/ability_effects.c ----
+
+/* VIEW(ability_effects): tag struct Scale as struct Scale__ability_effects;
+ * module/battle_effect/battle_effect.h has the same members, but
+ * battle_effect_internal.h declares it before that header defines it, so of a
+ * smaller alignment. */
+#define Scale Scale__ability_effects
+/* VIEW(ability_effects): tag struct WordPair as struct
+ * WordPair__ability_effects; module/battle_effect/battle_effect.h has the same
+ * members, but battle_effect_internal.h declares it before that header defines
+ * it, so of a smaller alignment. */
+#define WordPair WordPair__ability_effects
+/* VIEW(ability_effects): tag struct Point2D as struct Point2D__ability_effects;
+ * module/battle_effect/battle_effect.h has the same, which the part repeats as
+ * it stood alone. */
+#define Point2D Point2D__ability_effects
+/* VIEW(ability_effects): tag struct EffectCamera as struct
+ * EffectCamera__ability_effects; module/battle_effect/battle_effect.h has the
+ * same, which the part repeats as it stood alone. */
+#define EffectCamera EffectCamera__ability_effects
+/* VIEW(ability_effects): typedef BlitterPair as BlitterPair__ability_effects;
+ * module/battle_effect/battle_effect.h has the same, which the part repeats as
+ * it stood alone. */
+#define BlitterPair BlitterPair__ability_effects
 #define SpriteAttributes SpriteAttributes__ability_effects
 #define FxSlot FxSlot__ability_effects
 #define SpriteObject SpriteObject__ability_effects
@@ -5863,6 +5886,13 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
 #undef Render_DrawModelList
 #undef Render_ProjectVertices
 #undef Render_DrawModelList
+
+#undef Scale
+#undef WordPair
+
+#undef Point2D
+#undef EffectCamera
+#undef BlitterPair
 
 // ---- battle_effect/liquifier.c ----
 
@@ -6602,6 +6632,25 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
 
 #undef Render_DrawModelList
 // ---- battle_effect/summon_effects.c ----
+
+/* VIEW(summon_effects): tag struct Scale as struct Scale__summon_effects;
+ * module/battle_effect/battle_effect.h has the same members, but
+ * battle_effect_internal.h declares it before that header defines it, so of a
+ * smaller alignment. */
+#define Scale Scale__summon_effects
+/* VIEW(summon_effects): tag struct WordPair as struct WordPair__summon_effects;
+ * module/battle_effect/battle_effect.h has the same members, but
+ * battle_effect_internal.h declares it before that header defines it, so of a
+ * smaller alignment. */
+#define WordPair WordPair__summon_effects
+/* VIEW(summon_effects): tag struct Point2D as struct Point2D__summon_effects;
+ * module/battle_effect/battle_effect.h has the same, which the part repeats as
+ * it stood alone. */
+#define Point2D Point2D__summon_effects
+/* VIEW(summon_effects): typedef BlitterPair as BlitterPair__summon_effects;
+ * module/battle_effect/battle_effect.h has the same, which the part repeats as
+ * it stood alone. */
+#define BlitterPair BlitterPair__summon_effects
 #define Model Model__summon_effects
 #define Texture Texture__summon_effects
 #define ResourceTableEntry ResourceTableEntry__summon_effects
@@ -6628,3 +6677,8 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
 #undef EffectSprite_Acquire
 #undef Texture
 #undef Model
+#undef Scale
+#undef WordPair
+
+#undef Point2D
+#undef BlitterPair

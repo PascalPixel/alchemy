@@ -224,6 +224,12 @@ SECTIONS
         "*/games/tla/src/window/item_genders.o"(.rodata)
 #endif
         "*/games/tla/src/window/text_speed.o"(.rodata)
+        /* Only German links the counted nouns: their own object, since its table
+           is word-aligned while the text speeds before it start at an odd
+           address, which no one section holding both can do. */
+#if LANGUAGE == LANGUAGE_GERMAN
+        "*/games/tla/src/window/counted_nouns.o"(.rodata)
+#endif
         "*/games/tla/src/graphics/ui/slider_palette.o"(.rodata)
         "*/games/tla/src/window/keyboard.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + GAME_BANK_START);

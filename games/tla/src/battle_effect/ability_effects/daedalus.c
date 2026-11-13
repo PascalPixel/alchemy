@@ -81,8 +81,7 @@ struct PoolEntry *Render_AllocateModelList(s32 count);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyUniformScale(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList__ability_effects(struct Model *model) __asm__(
-    "Render_DrawModelList");
+void Render_DrawModelList__ability_effects(struct Model *model);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);

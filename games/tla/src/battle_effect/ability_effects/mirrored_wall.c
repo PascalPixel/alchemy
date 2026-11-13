@@ -85,8 +85,7 @@ void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Transform_ApplyYaw(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList__ability_effects(struct Model *model) __asm__(
-    "Render_DrawModelList");
+void Render_DrawModelList__ability_effects(struct Model *model);
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 member, s32 timer,
                               s32 frames);
 void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);

@@ -50,7 +50,6 @@ void IoWriteQueue_FlushPending(void) {
     QueueFlushRoutine routine;
     u32 size = (u32)TransferCommandExecutor_Size;
     u32 wordCount = size >> 2;
-    u32 zero = 0;
     // (DMA_ENABLE | DMA_32BIT) << 16: copy the routine a word at a time
     u32 control = 0x84;
 
@@ -63,7 +62,7 @@ void IoWriteQueue_FlushPending(void) {
       Dma_Set(Resource_ExecuteTransfer, (void *)routine, wordCount | control,
               REG_DMA3);
       routine(queue, count);
-      queue->count = zero;
+      queue->count = 0;
     }
   }
 }

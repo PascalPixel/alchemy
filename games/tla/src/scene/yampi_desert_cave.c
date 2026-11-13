@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x662, in ROM order; the rest of the overlay is in yampi_desert_cave/.
 
+#include "shared/routines.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -388,16 +389,7 @@ void Func_0200091c(void) {
   Task_Add(Func_0200099c, TASK_PASS_VBLANK);
 }
 
-s32 Func_02000978(u16 *list) {
-  s32 count = 0;
-
-  while (*list != 0xffff) {
-    list++;
-    count++;
-  }
-  count--;
-  return count;
-}
+DEFINE_FUNC_020001D4(Func_02000978)
 
 /// Reads one colour's three channels, red first, stepping p past them. Its
 /// once-only block orders the shifts as the game does; see the note at its use.
@@ -505,72 +497,13 @@ loop:
 }
 
 // Finds the current target's table row and shrinks it.
-void Func_02000bc0(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
-
-  while (*list != 0xffff) {
-    u32 entry = *list;
-    s32 id = work->objectId;
-
-    if (id == entry) {
-      struct Actor *object = Actor_GetById(id);
-      s32 a;
-      s32 flag;
-
-      list++;
-      a = list[0];
-      flag = list[1];
-      if (count < 8)
-        object->scaleY -= 0x1f00;
-      if (mode == 1) {
-        GameFlag_SetBit(flag);
-        Func_02000c44(id, a, flag, object->terrainId);
-        object->scaleY = 0x10000;
-      }
-      break;
-    }
-    list += 3;
-  }
-}
+DEFINE_FUNC_02000BC0_69(Func_02000bc0, Func_02000c44)
 
 #include "field_event.h"
 
 s32 Func_02001940(struct Actor *object);
 
-void Func_02000c44(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct Actor *object = Actor_GetById(id);
-  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
-
-  cell += Func_02001940(object);
-  if (GameFlag_Test(flag)) {
-    cell->collisionCode = 0;
-    object->priorityFlags |= 2;
-    switch (kind) {
-    case 0:
-      Func_02001828(object, 2);
-      break;
-    case 1:
-      Func_02001828(object, 4);
-      break;
-    case 2:
-      Func_02001828(object, 6);
-      break;
-    }
-  } else {
-    cell->collisionCode = 255;
-    switch (kind) {
-    case 0:
-      Func_02001828(object, 1);
-      break;
-    case 1:
-      Func_02001828(object, 3);
-      break;
-    case 2:
-      Func_02001828(object, 5);
-      break;
-    }
-  }
-}
+DEFINE_FUNC_02000128(Func_02000c44, Func_02001940, Func_02001828)
 
 #include "battle.h"
 #include "game.h"

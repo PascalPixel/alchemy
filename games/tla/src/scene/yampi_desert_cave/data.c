@@ -1,3 +1,4 @@
+#include "../shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "module/scene/yampi_desert_cave.h"
@@ -20,12 +21,7 @@ u32 gData_02001974[] = {
     0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
 };
 
-s16 gData_0200198c[] = {
-    0, 16, 0, 16, 0, 16, 16, 0,
-    16, 0, 16, 0, 16, 0, 0, -16,
-    0, -16, 0, -16, 0, -16, -16, 0,
-    -16, 0, -16, 0, -16, 0, 0, 16,
-};
+DEFINE_G_DATA_0200198C(gData_0200198c)
 
 u32 gData_020019cc[] = {
     0x270065, 0, 0x230061, 0, 0x250063, 0,

@@ -1,3 +1,4 @@
+#include "../shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
@@ -24,15 +25,7 @@ u32 gData_02004004[] = {
     SC_END,
 };
 
-s32 gData_02004028[] = {
-    SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Z, -0x8000),
-    SC_ADD(SW_SCALE_X, -1024),
-    SC_ADD(SW_SCALE_Y, -1024),
-    SC_WAIT(1),
-    SC_LOOP(24, SC_TOP),
-    SC_END,
-};
+DEFINE_G_DATA_0200121C(gData_02004028)
 
 u16 gData_02004070[] = {
     258, 259, 293, 294, 332, 331,
@@ -42,12 +35,7 @@ u32 gData_0200407c[] = {
     0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
 };
 
-s16 gData_02004094[] = {
-    0, 16, 0, 16, 0, 16, 16, 0,
-    16, 0, 16, 0, 16, 0, 0, -16,
-    0, -16, 0, -16, 0, -16, -16, 0,
-    -16, 0, -16, 0, -16, 0, 0, 16,
-};
+DEFINE_G_DATA_0200198C(gData_02004094)
 
 u32 gData_020040d4[] = {
 #if !TLA_PATCH_1

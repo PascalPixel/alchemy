@@ -1,4 +1,5 @@
 // ---- games/tla/src/scene/mars_lighthouse_room_f.c ----
+#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -939,20 +940,7 @@ void Func_020015a4(s32 mode) {
 
 #include "event_inline.h"
 
-void Func_02001628(s32 id) {
-  struct Actor *object;
-  s32 height;
-
-  object = Actor_Get(id);
-  object->motionFlags = 4;
-  height = object->terrainHeight;
-  WORD_AT(object, 68) = 0;
-  object->y = height + 0x200000;
-  object->priorityFlags |= 128;
-  height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
-  Func_02005540(object->x, object->z, 0, (height >> 19) + 6);
-  Func_020056a8(object->x, object->z, 0, 128);
-}
+DEFINE_FUNC_02000378(Func_02001628, Func_02005540, Func_020056a8)
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s167c.c ----
 #include "actor.h"
@@ -1042,12 +1030,7 @@ void Func_0200167c(void) {
   Event_End();
 }
 
-s32 Func_02001868(s32 *a, s32 *b) {
-  s32 dx = (a[0] - b[0]) >> 16;
-  s32 dz = (a[2] - b[2]) >> 16;
-
-  return Iwram_Sqrt(dx * dx + dz * dz);
-}
+DEFINE_FUNC_020003D0(Func_02001868)
 
 #include "field_sprite.h"
 
@@ -1169,25 +1152,7 @@ struct GustObject *Func_02001a54(struct GustObject *source) {
   return object;
 }
 
-s32 Func_02001b2c(struct Actor *object) {
-  s32 params[10];
-
-  if ((gFrameCount & 7) == 0) {
-    s32 x;
-    s32 y;
-
-    params[0] = 3;
-    params[2] = 0xb333;
-    params[3] = 0xb333;
-    params[1] = 14;
-    x = object->x + ((((Random16Far() * 9) >> 16) - 4) << 16);
-    y = object->y + ((32 - ((Random16Far() * 20) >> 16)) << 16);
-    Func_020035b8(x, y, object->z, 0,
-                  (s32)((((Random16Far() * 5) >> 16) << 16) + 0x50000) / 10, 0,
-                  0xb0000, params);
-  }
-  return 0;
-}
+DEFINE_FUNC_0200090C(Func_02001b2c, Func_020035b8)
 
 #include "call.h"
 #include "field_coordinate.h"
@@ -1251,23 +1216,9 @@ void Func_02001bcc(void) {
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
-s32 Func_02001d5c(struct Actor *a, struct Actor *b) {
-  if (ABS(a->x - b->x) < 0x80000 && ABS(a->y - b->y) < 0x80000 &&
-      ABS(a->z - b->z) < 0x80000)
-    return 1;
-  return 0;
-}
+DEFINE_FUNC_02001A1C(Func_02001d5c)
 
-s32 Func_02001dc0(struct Actor *a, struct Actor *b) {
-  s32 dy;
-
-  if (ABS(a->x - b->x) < 0xc0000) {
-    dy = a->y - b->y;
-    if (dy > -0x80000 && dy < 0x180000 && ABS(a->z - b->z) < 0xc0000)
-      return 1;
-  }
-  return 0;
-}
+DEFINE_FUNC_02001A80_117(Func_02001dc0)
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s1e20.c ----
 #define MapLayer MapLayer__s1e20
@@ -1367,15 +1318,7 @@ void Func_02001e20(struct Actor *object) {
 
 extern const u8 gData_02005d8c[];
 
-void Func_02001f84(struct Actor *object, s32 unused) {
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  Actor_SetSingleChildFlags(object, 0);
-  Actor_StartScript(object, gData_02005d8c);
-  object->timer = 0;
-  object->speedLimit = 0;
-  object->acceleration = 0;
-}
+DEFINE_FUNC_02001C44(Func_02001f84, gData_02005d8c)
 
 void Func_02001fb4(s32 *position, s32 speed, s32 mode) {
   struct Actor *object =
@@ -1414,59 +1357,8 @@ struct RideWork__s1ffc {
   struct RideDirection direction;
 };
 
-void Func_02001ffc(struct Actor *object) {
-  struct RideWork__s1ffc *work = (struct RideWork__s1ffc *)(gData_020023c4 + 0x188);
-  struct Actor *other = Actor_Get(gMainRoutineWork.currentOwner);
-  struct EventWork *event = Ram_HeapSlots->eventWork;
-  s32 dx = object->bounce;
-  s32 dz;
-  s32 i;
-  struct RideDirection *direction;
-
-  object->z += dx;
-  object->y += object->gravity;
-  dz = object->unk4c;
-  object->x += dz;
-  object->bounce = dx - dx / 18;
-  object->unk4c = dz - dz / 16;
-  object->scaleX += object->speedLimit;
-  object->scaleY += object->acceleration;
-  ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
-  if (other->y == other->terrainHeight && Func_02001d5c(object, other) &&
-      gMainRoutineWork.renderMode == 0) {
-    if (object->unk4c != 0) {
-      work->direction.unk02 = 0;
-      direction = &work->direction;
-      if (object->unk4c > 0)
-        direction->unk00 = 1;
-      else
-        direction->unk00 = 0xffff;
-    }
-    object->priorityFlags = 2;
-    object->z -= object->bounce;
-    object->gravity += object->bounce >> 2;
-    object->unk4c = 0;
-    work->landed = 1;
-    event->exit = work->value0a;
-  }
-  for (i = 0; i < 4; i++) {
-    s32 id = work->slots[i].id;
-
-    if (id == 0)
-      break;
-    other = Actor_Get(id);
-    if (other->y == other->terrainHeight && Func_02001dc0(object, other)) {
-      if (work->slots[i].blocked == 0) {
-        object->priorityFlags = 2;
-        object->z -= object->unk4c;
-        object->gravity += object->unk4c >> 2;
-        object->unk4c = 0;
-      } else {
-        work->blocked = 1;
-      }
-    }
-  }
-}
+DEFINE_FUNC_02001B64(Func_02001ffc, RideWork__s1ffc, Func_02001d5c,
+    Func_02001dc0)
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
@@ -1493,21 +1385,8 @@ void Func_0200215c(struct Actor *object, s32 part) {
   object->acceleration = zero;
 }
 
-void Func_020021a0(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object =
-      Func_02005498_(366, position[0], position[1], position[2]);
-
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->unk4c = -speed;
-    Func_0200215c(object, 3);
-    object->update = Func_02001e20;
-    if (mode)
-      object->unk5c[0] = 2;
-    Func_02005480(object, 2);
-  }
-}
+DEFINE_FUNC_02001E60(Func_020021a0, Func_02005498_, Func_0200215c,
+    Func_02001e20, Func_02005480)
 
 void Func_020021e8(s32 *position, s32 speed, s32 mode) {
   struct Actor *object =
@@ -1525,88 +1404,17 @@ void Func_020021e8(s32 *position, s32 speed, s32 mode) {
   }
 }
 
-void Func_02002230(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object =
-      Func_02005498_(366, position[0], position[1], position[2]);
+DEFINE_FUNC_02001E60(Func_02002230, Func_02005498_, Func_0200215c,
+    Func_02001ffc, Func_02005480)
 
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->unk4c = -speed;
-    Func_0200215c(object, 3);
-    object->update = Func_02001ffc;
-    if (mode)
-      object->unk5c[0] = 2;
-    Func_02005480(object, 2);
-  }
-}
+DEFINE_FUNC_02001F38_118(Func_02002278)
 
-s32 Func_02002278(struct Actor *a, struct Actor *b) {
-  s32 dy;
+DEFINE_FUNC_02001A9C(Func_020022d0, Func_02002278)
 
-  if (ABS(a->x - b->x) < 0xc0000) {
-    dy = a->y - b->y;
-    if (dy > 0 && dy < 0x100000 && ABS(a->z - b->z) < 0x80000)
-      return 1;
-  }
-  return 0;
-}
+DEFINE_FUNC_0200202C(Func_0200236c, Func_02005480, gData_02005d8c)
 
-void Func_020022d0(struct Actor *object) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 dx = object->bounce;
-  s32 dz;
-  struct SpriteParts *parts;
-  s32 rate;
-  s32 scale;
-
-  object->x += dx;
-  object->y += object->gravity;
-  dz = object->unk4c;
-  object->z += dz;
-  object->bounce = dx - dx / 18;
-  object->unk4c = dz - dz / 16;
-  rate = object->speedLimit;
-  scale = object->scaleX;
-  parts = object->sprite;
-  object->scaleX = scale + rate;
-  object->scaleY += object->acceleration;
-  parts->unk12 += object->timer;
-  if (leader->y == leader->terrainHeight && Func_02002278(object, leader)) {
-    object->z -= object->unk4c;
-    object->gravity += object->unk4c >> 2;
-    object->unk4c = 0;
-  }
-}
-
-void Func_0200236c(struct Actor *object, s32 unused) {
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  Actor_SetSingleChildFlags(object, 0);
-  Func_02005480(object, 2);
-  Actor_StartScript(object, gData_02005d8c);
-  Actor_SetSpriteColor(object, 10);
-  object->timer = 0;
-  object->speedLimit = 0;
-  object->acceleration = 0;
-}
-
-void Func_020023ac(s32 *position, s32 speed) {
-  struct Actor *object =
-      Func_02005498_(285, position[0], position[1], position[2] + 0xfffe0000);
-  s32 spin;
-
-  if (object != NULL) {
-    object->bounce = Math_Cosine((u16)(Random16Far() * 3 >> 4) + 0x3000);
-    object->gravity = (u16)Random16Far();
-    object->unk4c = (u16)(Random16Far() << 1) + speed;
-    spin = (u16)Random16Far() + 0xffff8000;
-    object->timer = spin;
-    Func_0200236c(object, 2);
-    object->update = (void (*)(void))Func_020022d0;
-    Animation_SetStateFlags(object, 1);
-  }
-}
+DEFINE_FUNC_0200206C(Func_020023ac, Func_02005498_, Func_0200236c,
+    Func_020022d0)
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s242c.c ----
 /* VIEW(s242c): tag struct Actor as struct Actor__s242c; actor.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:1695: structure has no member named `flag5b'. */
@@ -1815,57 +1623,4 @@ void Func_02002618(s16 value) {
   ((struct RideWork__s25b0 *)(gData_020023c4 + 0x188))->value0e = value;
 }
 
-void Func_02002624(u16 *targets, u16 *stops, s32 a2, s32 a3) {
-  struct MarsLighthouseBeam *beam =
-      (struct MarsLighthouseBeam *)(gData_020023c4 + 0x188);
-  struct MarsLighthouseBeamTarget *target = beam->targets;
-  s32 id;
-  s32 i;
-  s32 value;
-  s32 one;
-  s32 flags;
-  s32 height;
-  struct Actor *object;
-  s32 alpha;
-  s32 control;
-
-  if (Event_GetFlag(0x109) == 0) {
-    for (i = 0; i < 4 && (id = *targets++) > 0; i++) {
-      flags = *targets;
-      height = flags & 15;
-      flags &= 0xf0;
-      object = Actor_Get(id);
-      targets++;
-      if (object != NULL) {
-        Actor_SetSingleChildFlags(object, 0);
-        ((u8 *)object)[98] = one = 1;
-        if ((flags & 0x80) == 0)
-          object->collisionFlags = 0;
-        target->active = one;
-        target->flags = flags;
-        target->object = Actor_Get(id);
-        target->height = height << 16;
-        target->index = i;
-        target++;
-      }
-    }
-    if (stops != NULL) {
-      for (i = 0; i < 4; i++) {
-        value = *stops++;
-        beam->stops[i].unk00 = value;
-        if (value <= 0)
-          break;
-        beam->stops[i].unk02 = *stops++;
-      }
-    }
-  }
-  beam->unk10 = a2;
-  beam->unk0a = a3;
-  if (REG_BLDCNT == 0) {
-    alpha = 0xc08;
-    REG_BLDALPHA = alpha;
-    control = 0x3f10;
-    REG_BLDCNT = control;
-  }
-  Task_AddFrame(Func_0200242c, 0x480);
-}
+DEFINE_FUNC_0200218C(Func_02002624, Func_0200242c)

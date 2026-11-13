@@ -1,4 +1,5 @@
 // ---- games/tla/src/scene/lemurian_ship/scene_tables.c ----
+#include "shared/tables.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -1551,15 +1552,7 @@ void Func_02002b98(void) {
 #include "objcmd.h"
 
 // clang-format off
-s32 gData_02002de8[] = {
-    SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Z, -0x8000),
-    SC_ADD(SW_SCALE_X, -1024),
-    SC_ADD(SW_SCALE_Y, -1024),
-    SC_WAIT(1),
-    SC_LOOP(24, SC_TOP),
-    SC_END,
-};
+DEFINE_G_DATA_0200121C(gData_02002de8)
 
 s32 gData_02002e30[] = {
     23, 9, -512, 23, 10, -1024,

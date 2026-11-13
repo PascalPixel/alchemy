@@ -1,3 +1,5 @@
+#include "../shared/routines.h"
+#include "../shared/tables.h"
 #include "types.h"
 #include "system.h"
 #include "iwram_call.h"
@@ -104,19 +106,7 @@ void Func_02002b04(void) {
 #include "map.h"
 #include "system/ram_buffer.h"
 
-void Func_02002c1c(s32 level, s32 layer, s32 owner) {
-  struct Actor *object = Actor_GetById(owner);
-  u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapWork->layers[layer].cells -
-                                  (struct MapCell *)Ram_MapCellBuffer);
-  s32 value = Func_02003010(object->terrainId, object->x, object->z);
-  s32 height =
-      Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
-
-  height += level;
-
-  shape += object->x / 0x100000 + object->z / 0x100000 * 128;
-  *shape = Func_02003180(object->terrainId, value, height);
-}
+DEFINE_FUNC_02000BC0(Func_02002c1c, Func_02003010, Func_02003180)
 
 void Func_02002ca8(s32 a, s32 b) {
   Func_02002c1c(a, b, gMainRoutineWork.currentOwner);
@@ -307,12 +297,7 @@ s16 gData_0200326e[] = {
     8, -1,
 };
 
-s16 gData_02003272[] = {
-    -1, 0, 0x8000, -1, 0xc000, 0xe000, 0xa000, 0xc000,
-    0x4000, 0x2000, 0x6000, 0x4000, -1, 0, 0x8000, -1,
-    -1, 0, 0x8000, -1, 0xc000, -1, -1, 0xc000,
-    0x4000, -1, -1, 0x4000, -1, 0, 0x8000, -1,
-};
+DEFINE_G_DATA_02002276(gData_02003272)
 
 s16 gData_020032b2[] = {
     -1, 0, 0x8000, -1, 0xc000, 0, 0x8000, 0xc000,

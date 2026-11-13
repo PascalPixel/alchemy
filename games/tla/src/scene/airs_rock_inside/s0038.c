@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x664, in ROM order, from s0038's offset up to the
 /// next object the overlay links.
 
+#include "../shared/routines.h"
 #include "airs_rock_inside.h"
 #include "system.h"
 
@@ -69,40 +70,7 @@ void Func_020000a4(u16 *list, s32 mode, s32 count) {
 
 #include "map.h"
 
-void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct Actor *object = Actor_GetById(id);
-  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
-
-  cell += Func_02005f64(object);
-  if (GameFlag_Test(flag)) {
-    cell->collisionCode = 0;
-    object->priorityFlags |= 2;
-    switch (kind) {
-    case 0:
-      Func_02005d5c(object, 2);
-      break;
-    case 1:
-      Func_02005d5c(object, 4);
-      break;
-    case 2:
-      Func_02005d5c(object, 6);
-      break;
-    }
-  } else {
-    cell->collisionCode = 255;
-    switch (kind) {
-    case 0:
-      Func_02005d5c(object, 1);
-      break;
-    case 1:
-      Func_02005d5c(object, 3);
-      break;
-    case 2:
-      Func_02005d5c(object, 5);
-      break;
-    }
-  }
-}
+DEFINE_FUNC_02000128(Func_02000128, Func_02005f64, Func_02005d5c)
 
 #include "../../field/object/set_sprite_priority.c"
 

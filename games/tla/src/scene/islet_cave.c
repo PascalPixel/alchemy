@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x675, in ROM order.
 
+#include "shared/routines.h"
 #include "field/field.h"
 #include "system/main_routine_work.h"
 
@@ -82,16 +83,7 @@ void Func_02000178(void) {
   Task_Add(Func_020001f8, TASK_PASS_VBLANK);
 }
 
-s32 Func_020001d4(u16 *list) {
-  s32 count = 0;
-
-  while (*list != 0xffff) {
-    list++;
-    count++;
-  }
-  count--;
-  return count;
-}
+DEFINE_FUNC_020001D4(Func_020001d4)
 
 void Func_020001f8(void) {
   s32 step;

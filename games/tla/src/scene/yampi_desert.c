@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/yampi_desert/s0b84.c ----
 
+#include "shared/routines.h"
 #include "types.h"
 #include "system.h"
 #include "field_effect.h"
@@ -401,18 +402,7 @@ void Func_0200163c(void) {
   GameFlag_ClearBit(0x20d);
 }
 
-void Func_02001650(s32 show, s32 first, u32 count) {
-  u32 i;
-
-  for (i = 0; i < count; i++) {
-    struct Actor *actor = Actor_GetById(first + i);
-
-    if (show)
-      actor->priorityFlags &= ~0x10;
-    else
-      actor->priorityFlags |= 0x10;
-  }
-}
+DEFINE_FUNC_02001514(Func_02001650)
 
 s32 Actor_Jump();
 s32 Motion_SetModeAndWaitAnimation();
@@ -1239,12 +1229,7 @@ void Func_02002ca0(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-void Func_02002ce0(s32 id) {
-  Func_020040f8(id);
-  Actor_SetPartAttribute(Actor_GetById(id), 15);
-  Actor_SetSpritePriority(id, 1);
-  Actor_GetById(id)->priorityFlags |= 2;
-}
+DEFINE_FUNC_02001F38(Func_02002ce0, Func_020040f8)
 
 void Func_02002d10(void) {
   if (GameFlag_Test(265)) {
@@ -1696,73 +1681,14 @@ loop:
 struct Actor *Actor_GetById(u32 objectId);
 
 // Finds the current target's table row and shrinks it.
-void Func_0200388c(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
-
-  while (*list != 0xffff) {
-    u32 entry = *list;
-    s32 id = work->objectId;
-
-    if (id == entry) {
-      struct Actor *object = Actor_GetById(id);
-      s32 a;
-      s32 flag;
-
-      list++;
-      a = list[0];
-      flag = list[1];
-      if (count < 8)
-        object->scaleY -= 0x1f00;
-      if (mode == 1) {
-        GameFlag_SetBit(flag);
-        Func_02003910(id, a, flag, object->terrainId);
-        object->scaleY = 0x10000;
-      }
-      break;
-    }
-    list += 3;
-  }
-}
+DEFINE_FUNC_02000BC0_69(Func_0200388c, Func_02003910)
 
 // ---- games/tla/src/scene/yampi_desert/s3910.c ----
 // Scene code of overlay 0x661, in ROM order, from s3910's offset up to the next object the overlay links, and the overlay's data.
 
 #include "iwram_call.h"
 
-void Func_02003910(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct Actor *object = Actor_GetById(id);
-  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
-
-  cell += Func_020041e0(object);
-  if (GameFlag_Test(flag)) {
-    cell->collisionCode = 0;
-    object->priorityFlags |= 2;
-    switch (kind) {
-    case 0:
-      Func_02003fa8(object, 2);
-      break;
-    case 1:
-      Func_02003fa8(object, 4);
-      break;
-    case 2:
-      Func_02003fa8(object, 6);
-      break;
-    }
-  } else {
-    cell->collisionCode = 255;
-    switch (kind) {
-    case 0:
-      Func_02003fa8(object, 1);
-      break;
-    case 1:
-      Func_02003fa8(object, 3);
-      break;
-    case 2:
-      Func_02003fa8(object, 5);
-      break;
-    }
-  }
-}
+DEFINE_FUNC_02000128(Func_02003910, Func_020041e0, Func_02003fa8)
 
 /// The whole-pixel half of a 16.16 coordinate.
 /* VIEW(s3910): macro PIXELS as PIXELS__s3910; another part or header has another definition; tried with the definition the rest of the object has, Func_020039b8 moves: 33 of 212 instructions in tla-ja. */

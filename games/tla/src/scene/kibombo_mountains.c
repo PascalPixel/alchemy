@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x66f, in ROM order.
 
+#include "shared/routines.h"
 #include "field/field.h"
 
 #include "types.h"
@@ -34,21 +35,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "field_event.h"
 
-s32 Func_02000058(struct Actor *object) {
-  s32 step = object->riseCounter & 63;
-  struct FieldSprite *sprite = object->sprite;
-
-  object->motionFlags = 3;
-  if (step == 0)
-    object->velocityY = PIXELS(3);
-  if (step == 16)
-    object->velocityY = PIXELS(2);
-  if (step == 24)
-    object->velocityY = PIXELS(3);
-  sprite->rotation = Math_Cosine(step << 12) / 64;
-  object->riseCounter++;
-  return -1;
-}
+DEFINE_FUNC_02000058(Func_02000058)
 
 #include "scene_ids.h"
 
@@ -81,20 +68,7 @@ void Func_02000124(void) {
   Event_SetFlag(0x222);
 }
 
-void Func_0200015c(s32 id) {
-  s32 n = 60;
-  struct Actor *object = Actor_Get(id);
-
-  object->motionFlags = 3;
-  while (n != 0) {
-    System_Wait(1);
-    if (object->velocityY == 0)
-      break;
-    n--;
-  }
-  System_Wait(10);
-  object->motionFlags = 0;
-}
+DEFINE_FUNC_0200015C(Func_0200015c)
 
 void Func_02000190(s32 unused, s32 id) {
   if (id == 15)

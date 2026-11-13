@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x678, in ROM order.
 
+#include "shared/routines.h"
 #include "taopo_swamp/local.h"
 #include "types.h"
 #include "actor.h"
@@ -314,20 +315,7 @@ void Func_0200065c(void) {
   Event_End();
 }
 
-void Func_02000710(s32 id) {
-  s32 n = 60;
-  struct Actor *object = Actor_Get(id);
-
-  object->motionFlags = 3;
-  while (n != 0) {
-    System_Wait(1);
-    if (object->velocityY == 0)
-      break;
-    n--;
-  }
-  System_Wait(10);
-  object->motionFlags = 0;
-}
+DEFINE_FUNC_0200015C(Func_02000710)
 
 void Func_02000744(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
@@ -1618,19 +1606,7 @@ void Func_0200237c(void) {
 #define VENT_BOUNCE Func_02002400
 #include "../field/object/vent_bounce.c"
 
-void Func_020024f8(struct Actor *object, s32 priority) {
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  object->priorityFlags = 2;
-  ((struct FieldSprite *)object->sprite)->priority = priority;
-  Actor_SetSingleChildFlags(object, 0);
-  Func_020027f8(object, 2);
-  Actor_StartScript(object, gData_02002af4);
-  Actor_SetSpriteColor(object, 10);
-  object->timer = 0;
-  object->speedLimit = 0;
-  object->acceleration = 0;
-}
+DEFINE_FUNC_020024F8(Func_020024f8, Func_020027f8, gData_02002af4)
 
 void Func_02002554(s32 *position, s32 base) {
   struct Actor *object =
@@ -1654,23 +1630,7 @@ void Func_02002554(s32 *position, s32 base) {
   }
 }
 
-void Func_020025d4(void) {
-  struct VentWork *work = VENT_WORK;
-  struct VentEntry *entry = work->entries;
-  s32 i;
-
-  work->hook();
-  for (i = 15; i >= 0; i--, entry++) {
-    if (entry->active != 0) {
-      if (entry->timer <= 0) {
-        Func_02002554(&entry->x, entry->value);
-        entry->timer = 9;
-      } else {
-        entry->timer--;
-      }
-    }
-  }
-}
+DEFINE_FUNC_020025D4(Func_020025d4, Func_02002554)
 
 // The registers by io_reg.h's names from here on: local.h names the blend
 // register its own way for Func_02002084 above.
@@ -1754,15 +1714,7 @@ void Func_0200271c(s32 index, s32 active) {
 
 s32 Func_02002730(void) { return VENT_WORK->counter; }
 
-s32 Func_0200273c(s32 limit) {
-  struct VentWork *work = VENT_WORK;
-
-  if (Event_GetFlag(0x104) == 0) {
-    if (++work->counter >= limit)
-      work->counter = 0;
-  }
-  return work->counter;
-}
+DEFINE_FUNC_0200273C(Func_0200273c)
 
 /// The accessors step the work pointer by whole entries and then take entry 0:
 /// the bytes add the base to index * 20 before the field offset.
@@ -1774,9 +1726,4 @@ void Func_02002764(s32 index, s32 value) {
   VENT_AT(work, index)->entries[0].value = value;
 }
 
-void Func_02002778(s32 i, s32 id) {
-  struct VentWork *work = VENT_WORK;
-
-  if ((u32)i <= 3)
-    work->ids[i] = id;
-}
+DEFINE_FUNC_02002778(Func_02002778)

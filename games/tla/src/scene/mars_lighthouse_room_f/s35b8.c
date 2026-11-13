@@ -1,3 +1,4 @@
+#include "../shared/routines.h"
 #include "types.h"
 #include "main_routine_work.h"
 #include "field_sprite.h"
@@ -242,23 +243,7 @@ s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
 
 #include "scene_tables.h"
 
-void Func_02003af0(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = object->x;
-  s32 z = object->z;
-
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
-
-  x >>= 20;
-  z >>= 20;
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, (x << 4) + 8,
-                             (z << 4) + 8);
-  System_Wait(1);
-  FieldActor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
-                                  (z << 20) + PIXELS(8));
-  FieldEvent_Wait(4);
-  FieldCamera_GetActor()->y -= 0x80000;
-}
+DEFINE_FUNC_020013E4(Func_02003af0)
 #include "../shared/cell_with_bit.h"
 
 /// Map_CopyCellsRect through this overlay's import.

@@ -1,3 +1,4 @@
+#include "../shared/routines.h"
 #include "mars_lighthouse_room_m.h"
 #include "event_inline.h"
 #include "module/field/field.h"
@@ -66,12 +67,7 @@ struct RideWork {
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 #include "main_routine_work.h"
 
-void Func_0200216c(void) {
-  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
-
-  Func_02003130(work->handle);
-  work->handle = NULL;
-}
+DEFINE_FUNC_02001DD0(Func_0200216c, Func_02003130)
 
 void Func_02002180(s16 value) {
   ((struct RideWork *)(gData_020023c4 + 0x188))->value0e = value;
@@ -80,60 +76,7 @@ void Func_02002180(s16 value) {
 #include "io_reg.h"
 #include "field.h"
 
-void Func_0200218c(u16 *targets, u16 *stops, s32 a2, s32 a3) {
-  struct MarsLighthouseBeam *beam =
-      (struct MarsLighthouseBeam *)(gData_020023c4 + 0x188);
-  struct MarsLighthouseBeamTarget *target = beam->targets;
-  s32 id;
-  s32 i;
-  s32 value;
-  s32 one;
-  s32 flags;
-  s32 height;
-  struct Actor *object;
-  s32 alpha;
-  s32 control;
-
-  if (Event_GetFlag(0x109) == 0) {
-    for (i = 0; i < 4 && (id = *targets++) > 0; i++) {
-      flags = *targets;
-      height = flags & 15;
-      flags &= 0xf0;
-      object = Actor_Get(id);
-      targets++;
-      if (object != NULL) {
-        Actor_SetSingleChildFlags(object, 0);
-        ((u8 *)object)[98] = one = 1;
-        if ((flags & 0x80) == 0)
-          object->collisionFlags = 0;
-        target->active = one;
-        target->flags = flags;
-        target->object = Actor_Get(id);
-        target->height = height << 16;
-        target->index = i;
-        target++;
-      }
-    }
-    if (stops != NULL) {
-      for (i = 0; i < 4; i++) {
-        value = *stops++;
-        beam->stops[i].unk00 = value;
-        if (value <= 0)
-          break;
-        beam->stops[i].unk02 = *stops++;
-      }
-    }
-  }
-  beam->unk10 = a2;
-  beam->unk0a = a3;
-  if (REG_BLDCNT == 0) {
-    alpha = 0xc08;
-    REG_BLDALPHA = alpha;
-    control = 0x3f10;
-    REG_BLDCNT = control;
-  }
-  Task_AddFrame(Func_02001f94, 0x480);
-}
+DEFINE_FUNC_0200218C(Func_0200218c, Func_02001f94)
 
 s32 Func_020022c0(s32 index) {
   return ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->a;
@@ -147,23 +90,9 @@ s32 Func_020022e0(void) {
   return ((struct RideWork *)(gData_020023c4 + 0x188))->counter;
 }
 
-s32 Func_020022ec(s32 limit) {
-  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
+DEFINE_FUNC_02001F50(Func_020022ec)
 
-  if (!Event_GetFlag(260)) {
-    if (++work->counter >= limit)
-      work->counter = 0;
-  }
-  return work->counter;
-}
-
-void Func_02002314(s32 index, s32 value) {
-  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
-  struct RideEntry *entry = &work->entries[index];
-
-  entry->d = (value & 15) << 16;
-  entry->b = value & 0xf0;
-}
+DEFINE_FUNC_02001F78(Func_02002314)
 
 void Func_02002334(s32 index, s16 value) {
   ((struct RideWork *)(gData_020023c4 + 0x188))->entries[index].c = value;
@@ -173,12 +102,7 @@ s32 Func_02002344(s32 index) {
   return ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->b;
 }
 
-void Func_02002354(u32 index, s32 value) {
-  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
-
-  if (index <= 3)
-    work->slots[index].value = value;
-}
+DEFINE_FUNC_02001FB8(Func_02002354)
 
 #include "battle_unit.h"
 
@@ -192,34 +116,7 @@ struct MarsLighthouseEventWork {
 
 struct BattleUnit *Unit_Get(s32 owner);
 
-void Func_02002368(void) {
-  struct MarsLighthouseEventWork *work = Ram_HeapSlots->eventWork;
-  s32 leader = FieldParty_GetLeaderActor();
-  s32 count;
-  s32 i;
-  s16 hp[8];
-
-  (void *)Actor_Get(leader);
-  count = Party_CountMembers();
-  for (i = 0; i < count; i++)
-    hp[i] = Unit_Get(gMainRoutineWork.activeOwners[i])->hp;
-  BattleParty_ApplyHealthDelta(-10, 0);
-  work->downCount = 0;
-  work->standingCount = 0;
-  Actor_SetAttachedEffect(leader, 258);
-  for (i = 0; i < count; i++) {
-    struct MainRoutineWork *main = &gMainRoutineWork;
-    struct BattleUnit *unit = Unit_Get(main->activeOwners[i]);
-
-    if (unit->hp > 0) {
-      work->standingCount++;
-    } else if (hp[i] != 0) {
-      work->downOwners[(s16)work->downCount++] = main->activeOwners[i];
-      work->unk16a = 0xffff;
-      ((u8 *)unit)[0x131] = 0;
-    }
-  }
-}
+DEFINE_FUNC_02001FCC(Func_02002368)
 
 #include "../../field/field_effect/advance_spin.c"
 

@@ -1,4 +1,5 @@
 // ---- games/tla/src/scene/izumo_ruins/s0038.c ----
+#include "../shared/routines.h"
 #include "iwram_call.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -101,40 +102,7 @@ top:
     goto top;
 }
 
-void Func_02000128__s00a4(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct Actor *object = Actor_Get(id);
-  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
-
-  cell += Func_02001508(object);
-  if (Event_GetFlag(flag)) {
-    cell->collisionCode = 0;
-    object->priorityFlags |= 2;
-    switch (kind) {
-    case 0:
-      Func_02001428(object, 2);
-      break;
-    case 1:
-      Func_02001428(object, 4);
-      break;
-    case 2:
-      Func_02001428(object, 6);
-      break;
-    }
-  } else {
-    cell->collisionCode = 255;
-    switch (kind) {
-    case 0:
-      Func_02001428(object, 1);
-      break;
-    case 1:
-      Func_02001428(object, 3);
-      break;
-    case 2:
-      Func_02001428(object, 5);
-      break;
-    }
-  }
-}
+DEFINE_FUNC_02000128__S00A4(Func_02000128__s00a4, Func_02001508, Func_02001428)
 
 s32 Func_02001528(s32 layer, s32 shape, s32 height);
 

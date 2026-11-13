@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/prox.c ----
 
+#include "shared/routines.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"
@@ -230,16 +231,7 @@ void Func_02000620(void) {
   Func_0200446c();
 }
 
-s32 Func_02000644(void) {
-  u16 turn;
-  s32 facing;
-
-  turn = Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x5fff;
-  facing = 1;
-  if (turn >= 0x3fff)
-    facing = 0;
-  return facing;
-}
+DEFINE_FUNC_020003DC(Func_02000644)
 
 void Func_02000674(void) {
   s32 t0;
@@ -1865,32 +1857,7 @@ void Func_020043c4(struct Actor *object, s32 mode);
 /* VIEW(s1cf0): variable gData_02004740 as extern const s16 gData_02004740[]; the definition has s32 gData_02004740[] = { 0xffff, - 0x8000, (s32) 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000, 0xffff, - 0x8000, -...; tried as the definition's extern s32 gData_02004740[], Func_0200385c moves: 7 of 60 instructions in tla-ja. */
 extern const s16 gData_02004740__s1cf0[] __asm__("gData_02004740");
 
-void Func_0200385c(struct Actor *object) {
-  s32 angle;
-  s32 turn;
-
-  if (object->timer != 0) {
-    object->timer--;
-    return;
-  }
-  *(u8 *)((u8 *)object + 0x5a) = 0;
-  if (Event_GetFlag(0x106))
-    angle = -1;
-  else
-    angle = gData_02004740__s1cf0[(gInput.held >> 4) & 15];
-  if (angle == -1) {
-    Func_020043c4(object, 9);
-    return;
-  }
-  turn = (s16)(angle - object->facing);
-  if (turn > 0x1000)
-    turn = 0x1000;
-  if (turn < -0x1000)
-    turn = -0x1000;
-  object->facing += turn;
-  Func_020043c4(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-}
+DEFINE_FUNC_02002D04(Func_0200385c, gData_02004740__s1cf0, Func_020043c4)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -2387,32 +2354,7 @@ struct ParticleWork {
 void Func_0200460c(struct ParticleSprite *sprite, struct Particle *particle);
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-void Func_02004114(void) {
-  struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
-  struct Particle *particle = work->particles;
-  struct ParticleSprite *sprite = work->sprites;
-  s32 i;
-  s32 step = -0x8000;
-
-  i = 63;
-next:
-  if ((u32)particle->age <= 19) {
-    u16 *base = &work->tile;
-    s32 mask = 7;
-    s32 tile = (u16)((*base + ((particle->age >> 2) & mask) * 8) & 0x3ff);
-    s32 attr = sprite->attr;
-
-    sprite->attr = (attr & ~0x3ff) | tile;
-    Func_0200460c(sprite, particle);
-    BattleEffect_StepVector3(particle, 63, step);
-    particle->age++;
-  }
-  i--;
-  sprite++;
-  particle++;
-  if (i >= 0)
-    goto next;
-}
+DEFINE_FUNC_0200379C(Func_02004114, Func_0200460c)
 
 /// One falling rock: where it is, how it moves and how long it has fallen.
 struct Rock {

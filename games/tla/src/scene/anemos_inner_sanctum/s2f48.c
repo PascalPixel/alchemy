@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x6b0, in ROM order, from s2f48's offset to the end of
 /// its code, then the overlay's data.
 
+#include "../shared/routines.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -91,56 +92,9 @@ loop:
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02002db0(struct CellTarget *work, struct CellTargetEntry *entry);
 
-s32 Func_020030e0(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = object->x >> 20;
-  s32 z = object->z >> 20;
-  struct CellTarget *work = &Data_02004458;
-  struct CellTargetEntry *entry = work->entries;
-  s32 i;
+DEFINE_FUNC_0200180C(Func_020030e0, Data_02004458, Func_02002d40, Func_02002db0)
 
-  for (i = 0; i < work->count; i++, entry++) {
-    if (entry->x == x && entry->z == z) {
-      if (Event_GetFlag(entry->flag) == 0) {
-        Func_02002d40(work, entry);
-        Event_SetFlag(entry->flag);
-        work->current = i;
-        break;
-      }
-      if (i == work->current)
-        break;
-      work->current = i;
-      Func_02002db0(work, entry);
-      GameFlag_SetByte(work->flagByte, x);
-      GameFlag_SetByte(work->flagByte + 8, z);
-      return 1;
-    }
-  }
-  return 0;
-}
-
-void Func_02003190(s32 x, s32 z, s32 effect) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
-  s32 dx = FieldGameFlag_GetByte(Data_02004458.flagByte);
-  s32 dz = FieldGameFlag_GetByte(Data_02004458.flagByte + 8);
-
-  if (dx != 0 || dz != 0) {
-    struct Actor *marker;
-
-    GameFlag_SetByte(Data_02004458.flagByte, 0);
-    GameFlag_SetByte(Data_02004458.flagByte + 8, 0);
-    leader->x = ((dx + x) << 20) + 0x80000;
-    leader->z = ((dz + z) << 20) + 0x80000;
-    marker = work->marker;
-    marker->x = leader->x;
-    marker->z = leader->z;
-    Map_CenterOnFollowedPoint();
-    Func_02002f48();
-    ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
-        ->screenEffect = effect;
-  }
-}
+DEFINE_FUNC_020018BC(Func_02003190, Data_02004458, Func_02002f48)
 
 #include "scene_tables.h"
 

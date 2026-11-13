@@ -1,3 +1,4 @@
+#include "../shared/routines.h"
 #include "local.h"
 #include "field_event.h"
 #include "field.h"
@@ -15,21 +16,7 @@ s32 Func_020002b0(struct Actor *object) {
   return 0;
 }
 
-s32 Func_020002bc(struct Actor *object) {
-  s32 step = object->riseCounter & 63;
-  struct FieldSprite *sprite = object->sprite;
-
-  object->motionFlags = 3;
-  if (step == 0)
-    object->velocityY = PIXELS(3);
-  if (step == 16)
-    object->velocityY = PIXELS(2);
-  if (step == 24)
-    object->velocityY = PIXELS(3);
-  sprite->rotation = Math_Cosine(step << 12) / 64;
-  object->riseCounter++;
-  return -1;
-}
+DEFINE_FUNC_02000058(Func_020002bc)
 
 #include "battle.h"
 #include "field.h"
@@ -579,22 +566,10 @@ void Func_02000e30(void) {
   }
 }
 
-void Func_02000e90(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
-  s16 y = layer->y >> 16;
+DEFINE_FUNC_02000E90(Func_02000e90, gData_02002ce0, gData_02002ce4,
+    gData_02002ce6)
 
-  gData_02002ce0 = 1448 - y;
-  gData_02002ce4 = layer->x >> 16;
-  gData_02002ce6 = (s16)(layer->x >> 16) - (gFrameCount >> 2);
-}
-
-void Func_02000ed0(void) {
-  s32 priority;
-
-  Irq_SetHandler(1, 0, Func_02000e30);
-  priority = 0xc80;
-  FieldTask_AddFrame(Func_02000e90, priority);
-}
+DEFINE_FUNC_02000ED0(Func_02000ed0, Func_02000e30, Func_02000e90)
 
 void Func_02000ef0(void) { Func_02002190(gData_0200226c); }
 

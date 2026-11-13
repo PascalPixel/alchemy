@@ -4,6 +4,7 @@
 
 // ---- games/tla/src/scene/aqua_rock_inside.c ----
 
+#include "shared/routines.h"
 #include "aqua_rock_inside/local.h"
 #include "field.h"
 #include "module/field/map.h"
@@ -838,49 +839,13 @@ s32 Func_020013bc(struct Orbiter *orbiter) {
 }
 
 // Moves around in a circle.
-s32 Func_0200147c(struct Orbit *object) {
-  s32 z;
-
-  object->angle += object->speed;
-  object->x = IwramMulQ16(Math_Cosine(object->angle), object->radius);
-  z = IwramMulQ16(Math_Sin(object->angle), object->radius);
-  object->x += object->centreX;
-  object->z = (z >> 1) + object->centreZ;
-  if (object->growth != 141 && (gFrameCount & 1)) {
-    object->radius = object->growth * Math_Sin(object->phase << 10);
-    object->growth += 10;
-  }
-  if (object->speed == 0)
-    return 0;
-  if (object->growth == 141)
-    object->speed -= 128;
-  return 1;
-}
+DEFINE_FUNC_0200147C(Func_0200147c)
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-s32 Func_02001520(struct Actor *object) {
-  struct Actor *target = object->watchedObject;
-  s32 steps;
-  s32 from;
+DEFINE_FUNC_020014D0(Func_02001520)
 
-  object->bounce = (target->x - object->x) / (steps = 10);
-  from = object->y;
-  object->unk4c = (target->y - from + 0x100000) / steps;
-  object->gravity = (target->z - object->z) / steps;
-  BYTE_AT(object, 98) = steps;
-  return 0;
-}
-
-s32 Func_0200156c(struct Actor *object) {
-  u8 left;
-
-  object->x += object->bounce;
-  object->y += object->unk4c;
-  object->z += object->gravity;
-  left = --BYTE_AT(object, 98);
-  return left != 0;
-}
+DEFINE_FUNC_0200151C(Func_0200156c)
 
 #include "system/field_effect.h"
 
@@ -888,24 +853,7 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 
-void Func_02001598(struct Actor *object) {
-  s32 phase = gFrameCount & 7;
-
-  if (phase == 0) {
-    struct EffectOptions options;
-    s32 position[3];
-
-    options.palette = 7;
-    options.type = 0x2a1;
-    options.priority = 1;
-    position[0] = object->x + (((Random16Far() & 31) - 16) << 16);
-    position[1] = object->y + ((Random16Far() & 31) << 16) + 0x80000;
-    position[2] = object->z;
-    Func_0200015c(
-        position[0], position[1], position[2] + 0x40000, 0, 0x8000, phase,
-        EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
-  }
-}
+DEFINE_FUNC_02001548(Func_02001598, Func_0200015c)
 #undef BYTE_AT
 
 // ---- games/tla/src/scene/aqua_rock_inside/s1620.c ----
@@ -1761,28 +1709,7 @@ void Func_02002bd4(struct Actor *object) {
   }
 }
 
-void Func_02002c3c(struct Actor *object) {
-  s32 phase = gFrameCount & 15;
-
-  if (phase == 0) {
-    struct Actor *child =
-        Import_ActorCreate_(0x10d, object->x, object->y, object->z);
-
-    if (child != 0) {
-      struct FieldSprite *sprite = child->sprite;
-
-      Actor_StartScript(child, gData_02004128);
-      child->motionFlags = 0;
-      child->y = -0x78000;
-      child->terrainId = 1;
-      if (sprite != 0) {
-        Animation_ApplyChildArgument(sprite, 2);
-        sprite->nextFrame = 0;
-        sprite->priority = 2;
-      }
-    }
-  }
-}
+DEFINE_FUNC_02001140(Func_02002c3c, gData_02004128)
 
 void Func_02002ca4(void) {
   struct Actor *center;
@@ -1843,126 +1770,17 @@ void Func_02002ca4(void) {
   actor->facing = 0x4000;
 }
 
-void Func_02002e04(s32 id) {
-  struct Actor *object = Actor_Get(id);
+DEFINE_FUNC_02001308(Func_02002e04, Func_02003cc4)
 
-  if (object != 0) {
-    u8 *meta = ResourceMetadata_Register(object->sprite, 0x17d);
-
-    meta[5] = 0;
-    meta[6] = 0;
-    Func_02003cc4(object, 0);
-    Func_02003cc4(object, 2);
-  }
-}
-
-void Func_02002e34(s32 entrance) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 i;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-  leader->motionFlags = 0;
-  leader->priorityFlags |= 0x20;
-  Event_PlaySound(215);
-  Func_02003cc4(leader, 18);
-  Event_PlaySound(612);
-  for (i = 0; i < 60; i++) {
-    s32 angle;
-
-    if (i == 30)
-      Event_FinishScreenTransition();
-    leader->y -= 0x4000;
-    angle = leader->facing;
-    leader->facing = angle + 0x1000;
-    if ((i & 7) == 0)
-      Func_02002bd4(Actor_Get(15));
-    System_Wait(1);
-  }
-  Event_End();
-  FieldEvent_SetExitRequest(entrance);
-}
+DEFINE_FUNC_02001338(Func_02002e34, Func_02003cc4, Func_02002bd4)
 
 /// On odd frames, spawns a drifting effect above the object, swaying with the
 /// frame count; Func_02002030 of Aqua Rock is the same function.
-s32 Func_02002ed4(struct Actor *object) {
-  s32 params[10];
+DEFINE_FUNC_020013D8(Func_02002ed4)
 
-  if (gFrameCount & 1) {
-    s32 drift;
-    s32 x;
-    s32 y;
+DEFINE_FUNC_02001464(Func_02002f60, Func_02002ed4)
 
-    params[1] = 7;
-    if ((gFrameCount & 2) == 0)
-      params[1] = 5;
-    params[2] = 0xcccc;
-    params[3] = 0xcccc;
-    params[0] = 0;
-    drift = ((u32)(Random16Far() << 3) >> 16) * 0x3333;
-    x = object->x;
-    y = object->y;
-    Func_0200015c(x + ((8 - (gFrameCount & 15)) << 16), y + 0x1a0000, object->z,
-                  0, -drift, 0, 0xb0000, params);
-  }
-  return 0;
-}
-
-void Func_02002f60(s32 entrance) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 *owner = &gMainRoutineWork.currentOwner;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(228);
-  leader->update = (void (*)(void))Func_02002ed4;
-  leader->motionFlags = 0;
-  leader->speedLimit = 0x3333;
-  Actor_SetAnimation(*owner, 2);
-  Actor_SetDestinationOffset(*owner, 0, -8);
-  FieldActor_WaitForMoveById(*owner);
-  Actor_SetSpriteColor(Actor_Get(*owner), 9);
-  Actor_SetSingleChildFlags(Actor_Get(*owner), 0);
-  leader->update = 0;
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(entrance);
-  Event_End();
-}
-
-void Func_02002ffc(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 flag = Event_GetFlag(0x109);
-  s32 *owner = &gMainRoutineWork.currentOwner;
-  s32 offset;
-
-  if (flag == 0) {
-    Event_Start();
-    FieldEvent_ResolvePendingActions(0);
-    Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
-    leader->motionFlags = flag;
-    Actor_SetPosition(*owner, ((s16 *)&leader->x)[1] << 16,
-                      (((s16 *)&leader->z)[1] << 16) - 0x100000);
-    Actor_SetSpriteColor(Actor_Get(*owner), 9);
-    Actor_SetSingleChildFlags(Actor_Get(*owner), 0);
-    Event_StartScreenTransition();
-    Event_PlaySound(228);
-    leader->update = (void (*)(void))Func_02002ed4;
-    Actor_SetSpeed(*owner, 0x6666, 0x3333);
-    Actor_WalkByAndWait(*owner, 0, 8);
-    Actor_SetSpriteColor(Actor_Get(*owner), 0);
-    Actor_SetSingleChildFlags(Actor_Get(*owner), 1);
-    ((struct FieldSprite *)leader->sprite)->priority = 1;
-    offset = 10;
-    Actor_WalkByAndWait(*owner, 0, offset);
-    leader->motionFlags = 3;
-    leader->update = (void (*)(void))flag;
-    Event_NoOp();
-    Event_WaitTransitionFrames();
-    Event_End();
-  }
-}
+DEFINE_FUNC_02001500(Func_02002ffc, Func_02002ed4)
 
 #include "map.h"
 #include "vram_tab.h"

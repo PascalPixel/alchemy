@@ -1,4 +1,5 @@
 // ---- games/tla/src/scene/mars_lighthouse_entrance/s01f8.c ----
+#include "shared/routines.h"
 #include "types.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
@@ -789,15 +790,7 @@ const u8 *Scene_GetEvents(void) {
 
 #include "mars_lighthouse_entrance/ride.h"
 
-void Func_02001234(s32 id) {
-  struct Actor *object = Actor_Get(id);
-
-  if (object != NULL) {
-    Actor_SetSingleChildFlags(object, 0);
-    object->collisionFlags = 0;
-    object->motionFlags = 0;
-  }
-}
+DEFINE_FUNC_020002D4(Func_02001234)
 #undef SET_SPRITE_WINDOW_LAYERS
 
 extern s16 gData_02006868;
@@ -1235,23 +1228,9 @@ extern const u8 gData_020056a0[];
 
 void Func_02001f90(struct Actor *object);
 
-s32 Func_02001a1c(struct Actor *a, struct Actor *b) {
-  if (ABS(a->x - b->x) < 0x80000 && ABS(a->y - b->y) < 0x80000 &&
-      ABS(a->z - b->z) < 0x80000)
-    return 1;
-  return 0;
-}
+DEFINE_FUNC_02001A1C(Func_02001a1c)
 
-s32 Func_02001a80(struct Actor *a, struct Actor *b) {
-  s32 dy;
-
-  if (ABS(a->x - b->x) < 0xc0000) {
-    dy = a->y - b->y;
-    if (dy > -0x80000 && dy < 0x180000 && ABS(a->z - b->z) < 0xc0000)
-      return 1;
-  }
-  return 0;
-}
+DEFINE_FUNC_02001A80_117(Func_02001a80)
 
 #include "field/event_work.h"
 
@@ -1275,84 +1254,14 @@ struct RideWork__s1930 {
   u16 direction;
 };
 
-void Func_02001ae0(struct Actor *object) {
-  struct RideWork__s1930 *work = (struct RideWork__s1930 *)(gData_020023c4 + 0x188);
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  struct EventWork *event = Ram_HeapSlots->eventWork;
-  s32 dx = object->bounce;
-  s32 dz;
-  s32 i;
-  s32 direction;
-  s32 id;
-
-  object->x += dx;
-  object->y += object->gravity;
-  dz = object->unk4c;
-  object->z += dz;
-  object->bounce = dx - dx / 18;
-  object->unk4c = dz - dz / 16;
-  object->scaleX += object->speedLimit;
-  object->scaleY += object->acceleration;
-  ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
-  if (actor->y == actor->terrainHeight && Func_02001a1c(object, actor) &&
-      gMainRoutineWork.renderMode == 0) {
-    if (object->unk4c != 0) {
-      work->value68 = 0;
-      {
-        u16 *cell = &work->direction;
-
-        if (object->unk4c > 0) {
-          direction = 1;
-          *cell = direction;
-        } else {
-          direction = 0xffff;
-          *cell = direction;
-        }
-      }
-    }
-    object->priorityFlags = 2;
-    {
-      s32 speed = object->unk4c;
-
-      object->unk4c = 0;
-      object->z -= speed;
-      object->gravity += speed >> 2;
-    }
-    work->landed = 1;
-    event->exit = work->value0a;
-  }
-  for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
-    actor = Actor_Get(id);
-
-    if (actor->y == actor->terrainHeight && Func_02001a80(object, actor)) {
-      if (work->slots[i].blocked == 0) {
-        s32 speed;
-
-        object->priorityFlags = 2;
-        speed = object->unk4c;
-        object->unk4c = 0;
-        object->z -= speed;
-        object->gravity += speed >> 2;
-      } else {
-        work->blocked = 1;
-      }
-    }
-  }
-}
+DEFINE_FUNC_020015EC(Func_02001ae0, RideWork__s1930, Func_02001a1c,
+    Func_02001a80)
 
 extern const u8 gData_020056a0[];
 
 void Func_02001f90(struct Actor *object);
 
-void Func_02001c44(struct Actor *object, s32 unused) {
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  Actor_SetSingleChildFlags(object, 0);
-  Actor_StartScript(object, gData_020056a0);
-  object->timer = 0;
-  object->speedLimit = 0;
-  object->acceleration = 0;
-}
+DEFINE_FUNC_02001C44(Func_02001c44, gData_020056a0)
 
 void Func_02001c74(s32 *position, s32 speed, s32 mode) {
   struct Actor *object =
@@ -1394,59 +1303,8 @@ struct RideWork__s1c44 {
   struct RideDirection direction;
 };
 
-void Func_02001cbc(struct Actor *object) {
-  struct RideWork__s1c44 *work = (struct RideWork__s1c44 *)(gData_020023c4 + 0x188);
-  struct Actor *other = Actor_Get(gMainRoutineWork.currentOwner);
-  struct EventWork *event = Ram_HeapSlots->eventWork;
-  s32 dx = object->bounce;
-  s32 dz;
-  s32 i;
-  struct RideDirection *direction;
-
-  object->z += dx;
-  object->y += object->gravity;
-  dz = object->unk4c;
-  object->x += dz;
-  object->bounce = dx - dx / 18;
-  object->unk4c = dz - dz / 16;
-  object->scaleX += object->speedLimit;
-  object->scaleY += object->acceleration;
-  ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
-  if (other->y == other->terrainHeight && Func_02001a1c(object, other) &&
-      gMainRoutineWork.renderMode == 0) {
-    if (object->unk4c != 0) {
-      work->direction.unk02 = 0;
-      direction = &work->direction;
-      if (object->unk4c > 0)
-        direction->unk00 = 1;
-      else
-        direction->unk00 = 0xffff;
-    }
-    object->priorityFlags = 2;
-    object->z -= object->bounce;
-    object->gravity += object->bounce >> 2;
-    object->unk4c = 0;
-    work->landed = 1;
-    event->exit = work->value0a;
-  }
-  for (i = 0; i < 4; i++) {
-    s32 id = work->slots[i].id;
-
-    if (id == 0)
-      break;
-    other = Actor_Get(id);
-    if (other->y == other->terrainHeight && Func_02001a80(object, other)) {
-      if (work->slots[i].blocked == 0) {
-        object->priorityFlags = 2;
-        object->z -= object->unk4c;
-        object->gravity += object->unk4c >> 2;
-        object->unk4c = 0;
-      } else {
-        work->blocked = 1;
-      }
-    }
-  }
-}
+DEFINE_FUNC_02001B64(Func_02001cbc, RideWork__s1c44, Func_02001a1c,
+    Func_02001a80)
 
 extern const u8 gData_020056a0[];
 
@@ -1467,21 +1325,8 @@ void Func_02001e1c(struct Actor *object, s32 part) {
   object->acceleration = zero;
 }
 
-void Func_02001e60(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object =
-      Func_02004bd8_(366, position[0], position[1], position[2]);
-
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->unk4c = -speed;
-    Func_02001e1c(object, 3);
-    object->update = Func_02001ae0;
-    if (mode)
-      object->unk5c[0] = 2;
-    Func_02004bc0(object, 2);
-  }
-}
+DEFINE_FUNC_02001E60(Func_02001e60, Func_02004bd8_, Func_02001e1c,
+    Func_02001ae0, Func_02004bc0)
 
 void Func_02001ea8(s32 *position, s32 speed, s32 mode) {
   struct Actor *object =
@@ -1499,88 +1344,17 @@ void Func_02001ea8(s32 *position, s32 speed, s32 mode) {
   }
 }
 
-void Func_02001ef0(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object =
-      Func_02004bd8_(366, position[0], position[1], position[2]);
+DEFINE_FUNC_02001E60(Func_02001ef0, Func_02004bd8_, Func_02001e1c,
+    Func_02001cbc, Func_02004bc0)
 
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->unk4c = -speed;
-    Func_02001e1c(object, 3);
-    object->update = Func_02001cbc;
-    if (mode)
-      object->unk5c[0] = 2;
-    Func_02004bc0(object, 2);
-  }
-}
+DEFINE_FUNC_02001F38_118(Func_02001f38)
 
-s32 Func_02001f38(struct Actor *a, struct Actor *b) {
-  s32 dy;
+DEFINE_FUNC_02001A9C(Func_02001f90, Func_02001f38)
 
-  if (ABS(a->x - b->x) < 0xc0000) {
-    dy = a->y - b->y;
-    if (dy > 0 && dy < 0x100000 && ABS(a->z - b->z) < 0x80000)
-      return 1;
-  }
-  return 0;
-}
+DEFINE_FUNC_0200202C(Func_0200202c, Func_02004bc0, gData_020056a0)
 
-void Func_02001f90(struct Actor *object) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 dx = object->bounce;
-  s32 dz;
-  struct SpriteParts *parts;
-  s32 rate;
-  s32 scale;
-
-  object->x += dx;
-  object->y += object->gravity;
-  dz = object->unk4c;
-  object->z += dz;
-  object->bounce = dx - dx / 18;
-  object->unk4c = dz - dz / 16;
-  rate = object->speedLimit;
-  scale = object->scaleX;
-  parts = object->sprite;
-  object->scaleX = scale + rate;
-  object->scaleY += object->acceleration;
-  parts->unk12 += object->timer;
-  if (leader->y == leader->terrainHeight && Func_02001f38(object, leader)) {
-    object->z -= object->unk4c;
-    object->gravity += object->unk4c >> 2;
-    object->unk4c = 0;
-  }
-}
-
-void Func_0200202c(struct Actor *object, s32 unused) {
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  Actor_SetSingleChildFlags(object, 0);
-  Func_02004bc0(object, 2);
-  Actor_StartScript(object, gData_020056a0);
-  Actor_SetSpriteColor(object, 10);
-  object->timer = 0;
-  object->speedLimit = 0;
-  object->acceleration = 0;
-}
-
-void Func_0200206c(s32 *position, s32 speed) {
-  struct Actor *object =
-      Func_02004bd8_(285, position[0], position[1], position[2] + 0xfffe0000);
-  s32 spin;
-
-  if (object != NULL) {
-    object->bounce = Math_Cosine((u16)(Random16Far() * 3 >> 4) + 0x3000);
-    object->gravity = (u16)Random16Far();
-    object->unk4c = (u16)(Random16Far() << 1) + speed;
-    spin = (u16)Random16Far() + 0xffff8000;
-    object->timer = spin;
-    Func_0200202c(object, 2);
-    object->update = (void (*)(void))Func_02001f90;
-    Animation_SetStateFlags(object, 1);
-  }
-}
+DEFINE_FUNC_0200206C(Func_0200206c, Func_02004bd8_, Func_0200202c,
+    Func_02001f90)
 
 // ---- games/tla/src/scene/mars_lighthouse_entrance/s20ec.c ----
 /* VIEW(s20ec): tag struct Actor as struct Actor__s20ec; actor.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1669: structure has no member named `flag5b'. */

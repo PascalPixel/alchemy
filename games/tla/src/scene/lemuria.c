@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x68b, in ROM order.
 
+#include "shared/routines.h"
 #include "types.h"
 #include "iwram_call.h"
 #include "actor.h"
@@ -29,36 +30,9 @@
 #include "module/scene/lemuria.h"
 #include "module/system/system.h"
 
-s32 Func_02000038(s32 *a, s32 *b) {
-  s32 dx = (*a++ - *b++) >> 16;
-  s32 dy = (*a++ - *b++) >> 16;
-  s32 dz = (*a - *b) >> 16;
-  s32 dxsq = dx * dx;
-  s32 dysq = dy * dy;
-  s32 dzsq = dz * dz;
+DEFINE_FUNC_02000038_75(Func_02000038)
 
-  return Iwram_Sqrt(dxsq + dysq + dzsq);
-}
-
-s32 Func_02000070(struct Actor *self, struct Actor *other, s32 range) {
-  s32 result = 0;
-  s32 *to;
-  s32 *from;
-
-  to = &other->x;
-  from = &self->x;
-  if (Func_02000038(to, from) < range) {
-    u32 angle = (u16)ArcTan2(other->z - self->z, *to - *from);
-    u32 left = (angle - 0x1000) & 0xf000;
-    u32 right = (angle + 0x1000) & 0xf000;
-    u32 ahead = angle & 0xf000;
-    u32 facing = self->facing & 0xf000;
-
-    if (ahead == facing || right == facing || left == facing)
-      result = 1;
-  }
-  return result;
-}
+DEFINE_FUNC_02000070(Func_02000070, Func_02000038)
 
 s32 Func_02001d54(struct Actor *object);
 void Func_02001b7c(struct Actor *object, s32 mode);

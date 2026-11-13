@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x64c that its scene tables belong to, in ROM order; the rest of the overlay is in staff_credit/.
 
+#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -504,14 +505,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-s32 Func_02000c9c(struct Actor *object) {
-  u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
-  struct TileSprite *sprite = object->sprite;
-
-  sprite->tile = *tile;
-  sprite->frame = 0;
-  return 1;
-}
+DEFINE_FUNC_02000038_58(Func_02000c9c)
 
 /// The two countdown choices the world map (overlay 64b) also has, under this
 /// overlay's names.
@@ -568,57 +562,16 @@ s32 Func_02001064(struct Actor *object) {
 #define gData_02004f9c gData_02002e80
 #include "world_map/s39f4.c"
 
-void Func_020011f4(struct Actor *object) {
-  if ((gFrameCount & 2) != 0) {
-    Animation_ApplyChildValues(object, 7);
-  } else {
-    Animation_ApplyChildValues(object, 0);
-  }
-  if ((gFrameCount & 15) == 0) {
-    Func_020010b0(object);
-  }
-}
+DEFINE_FUNC_020011F4(Func_020011f4, Func_020010b0)
 
 extern s32 gData_02003db8;
 
-void Func_0200122c(struct Actor *object) {
-  if (gFrameCount & 1) {
-    Animation_ApplyChildValues(object, gData_02002eac[gData_02003db8]);
-    gData_02003db8 = (gData_02003db8 + 1) & 3;
-  }
-  if (!(gFrameCount & 3)) {
-    Func_02001168(object);
-  }
-}
+DEFINE_FUNC_0200122C(Func_0200122c, gData_02002eac, gData_02003db8,
+    Func_02001168)
 
-void Func_02001274(struct Actor *object, s32 mode) {
-  if (mode == 0) {
-    object->update = 0;
-    Animation_ApplyChildValues(object, 0);
-    Event_PlaySound(390);
-  } else if (mode == 1) {
-    object->update = (void (*)(void))Func_020011f4;
-  } else {
-    object->update = (void (*)(void))Func_0200122c;
-    Event_PlaySound(291);
-  }
-}
+DEFINE_FUNC_02001274(Func_02001274, Func_020011f4, Func_0200122c)
 
-void Func_020012ac(void) {
-  struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
-  s32 i;
-
-  Event_PlaySound(212);
-  Func_02001274(object, 1);
-  for (i = 0; i < 20; i++) {
-    s32 hit = Func_02002004(&object->x);
-
-    if (hit != 0 && SceneEvent_FindActiveRecord(2, hit) != 0)
-      break;
-    System_Wait(1);
-  }
-  Func_02001274(object, 2);
-}
+DEFINE_FUNC_020012AC(Func_020012ac, Func_02001274, Func_02002004)
 
 void Func_020012f8(void) {
   Func_02001274(Actor_Get(FieldParty_GetLeaderActor()), 0);
@@ -648,30 +601,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 }
 
 /// Shakes the camera diagonally by one pixel every three frames.
-void Func_02001364(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = *(s16 *)((u8 *)object + 10);
-  s32 z = *(s16 *)((u8 *)object + 18);
-
-  if (gFrameCount % 3 == 0) {
-    switch ((u32)(Random16Far() << 2) >> 16) {
-    case 0:
-      CameraMove((x << 16) - 0x10000, -1, (z << 16) + 0x10000, 1);
-      break;
-    case 1: {
-      Camera_MoveWithinMapBounds((x << 16) + 0x10000, -1, (z << 16) - 0x10000,
-                                 1);
-      break;
-    }
-    case 2:
-      CameraMove((x << 16) + 0x10000, -1, (z << 16) + 0x10000, 1);
-      break;
-    case 3:
-      CameraMove((x << 16) - 0x10000, -1, (z << 16) - 0x10000, 1);
-      break;
-    }
-  }
-}
+DEFINE_FUNC_02001364(Func_02001364)
 
 #define PUSH_PICTURE(offset)                                                   \
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)
@@ -794,72 +724,15 @@ void Func_02001400(s32 mode) {
   Event_SetFlag(0x101);
 }
 
-void Func_0200199c(struct Actor *object) {
-  if ((gFrameCount & 2) != 0) {
-    Animation_ApplyChildValues(object, 7);
-  } else {
-    Animation_ApplyChildValues(object, 0);
-  }
-  if ((gFrameCount & 15) == 0) {
-    Func_02001ad0(object);
-  }
-}
+DEFINE_FUNC_020011F4(Func_0200199c, Func_02001ad0)
 
-void Func_020019d4(struct Actor *object) {
-  u32 frame = gFrameCount;
+DEFINE_FUNC_020019D4(Func_020019d4, Func_02001ad0)
 
-  if (frame & 1)
-    Animation_ApplyChildValues(object, (frame >> 1) % 6);
-  if ((gFrameCount & 15) == 0)
-    Func_02001ad0(object);
-}
+DEFINE_FUNC_02001A0C(Func_02001a0c)
 
-void Func_02001a0c(struct Actor *object) {
-  u32 frame = gFrameCount;
+DEFINE_FUNC_02001A34(Func_02001a34, Func_02001fd4)
 
-  if (frame & 1)
-    Animation_ApplyChildValues(object, (frame >> 1) % 6);
-}
-
-void Func_02001a34(struct Actor *object) {
-  struct Actor *parent = object->watchedObject;
-  s32 step = ++object->timer;
-  s32 scale;
-  s32 rise;
-
-  if (step > 31) {
-    Func_02001fd4(object);
-    return;
-  }
-  scale = Math_Sin(step << 10);
-  object->scaleX = scale;
-  object->scaleY = scale;
-
-  rise = 0x10000;
-  object->x = parent->x;
-  object->y += rise;
-  object->z = parent->z + (rise - scale) * 5 + 0x80000;
-}
-
-void Func_02001a80(struct Actor *object) {
-  struct Actor *parent = object->watchedObject;
-  s32 step = ++object->timer;
-  s32 scale;
-  s32 rise;
-
-  if (step > 31) {
-    Func_02001fd4(object);
-    return;
-  }
-  scale = Math_Sin(step << 10);
-  object->scaleX = scale;
-  object->scaleY = -scale;
-
-  rise = 0x10000;
-  object->x = parent->x;
-  object->y += rise;
-  object->z = parent->z - (rise - scale) * 5 + 0x100000;
-}
+DEFINE_FUNC_02001A80(Func_02001a80, Func_02001fd4)
 
 #include "field_sprite.h"
 #include "vram_tab.h"
@@ -1050,21 +923,11 @@ void Func_02001d90(void) {
   Func_02001f7c(Data_02003fcc, 255);
 }
 
-void Func_02001e58(void) {
-  Resource_DecodeType01(gWorldMapPackedTilesC, gData_020040d8);
-  gData_02003fc6 = Resource_FindFreeEntry();
-  Vram_Load(gData_02003fc6, 0x100, 0);
-  gData_02003fc4 = -1;
-  gData_02003fc8 = 10;
-  Task_AddFrame(Func_02001d90, TASK_PASS_VBLANK - 10);
-}
+DEFINE_FUNC_02001E58(Func_02001e58, gData_020040d8, gData_02003fc6,
+    gData_02003fc4, gData_02003fc8, Func_02001d90)
 
-void Func_02001eb8(void) {
-  Resource_DecodeType01(gWorldMapPackedTilesC, gData_020040d8);
-  Resource_ResetEntry(gData_02003fc6);
-  gData_02003fc4 = -1;
-  FieldTask_Remove(Func_02001d90);
-}
+DEFINE_FUNC_02001EB8(Func_02001eb8, gData_020040d8, gData_02003fc6,
+    gData_02003fc4, Func_02001d90)
 
 s32 gData_02002e74[] = {
     46,

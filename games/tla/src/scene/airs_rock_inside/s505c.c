@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x664, in ROM order, from s505c's offset up to the
 /// next object the overlay links, and the overlay's data.
 
+#include "../shared/tables.h"
 #include "types.h"
 #include "system.h"
 #include "task.h"
@@ -429,16 +430,8 @@ s32 gData_020060b0[] = {
     17,
 };
 
-s32 gData_020060c0[] = {
-    46,
-    (s32)Func_02003f94,
-    46,
-    (s32)Func_02004038,
-    46,
-    (s32)Func_02004084,
-    38,
-    17,
-};
+DEFINE_G_DATA_02004014(gData_020060c0, Func_02003f94, Func_02004038,
+    Func_02004084)
 
 u32 gData_020060e0[] = {
     5, 0, 0x180000, 0, 1, 22,

@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x654, in ROM order, from s1340's offset up to the next object the overlay links.
 
+#include "../shared/routines.h"
 #include "shrine_of_the_sea_god.h"
 #include "system.h"
 #include "macros.h"
@@ -994,12 +995,7 @@ struct ShrineOfTheSeaGodObject *Func_02002f88(s32 id) {
   return object;
 }
 
-void Func_02002fb0(s32 id) {
-  Func_02003aa0(id);
-  Actor_SetPartAttribute(Actor_GetById(id), 15);
-  Actor_SetSpritePriority(id, 1);
-  Actor_GetById(id)->priorityFlags |= 2;
-}
+DEFINE_FUNC_02001F38(Func_02002fb0, Func_02003aa0)
 
 void Func_02002fe0(void) {
   if (GameFlag_Test(265)) {

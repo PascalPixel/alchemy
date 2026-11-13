@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/eastern_alhafra_ship.c ----
 
+#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -215,26 +216,7 @@ void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
 /* VIEW(s0438): routine Func_020003e8 as s32 Func_020003e8(s32 x, s32 y, s32 z, s32 rotation, s32 timer); the definition has void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth); tried as the definition's void Func_020003e8(u16 *ids), it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra_ship.c:215: conflicting types for `Func_020003e8'. */
 extern s32 Func_020003e8__s0438(s32 x, s32 y, s32 z, s32 rotation, s32 timer) __asm__("Func_020003e8");
 
-void Func_02000438(s32 id) {
-  struct Actor *object = Actor_GetById(id);
-
-  Func_020003e8__s0438(object->x + 0x80000, object->y + 0x1c0000, object->z, 0x1000,
-                15);
-  Sound_Play(151);
-  Event_Wait(15);
-  Func_020003e8__s0438(object->x - 0x80000, object->y + 0x1c0000, object->z, 0xf000,
-                15);
-  Sound_Play(151);
-  Event_Wait(15);
-  Func_020003e8__s0438(object->x + 0x80000, object->y + 0x1c0000, object->z, 0x1000,
-                15);
-  Sound_Play(151);
-  Event_Wait(15);
-  Func_020003e8__s0438(object->x - 0x80000, object->y + 0x1c0000, object->z, 0xf000,
-                15);
-  Sound_Play(151);
-  Event_Wait(15);
-}
+DEFINE_FUNC_02000438(Func_02000438, Func_020003e8__s0438)
 
 extern u32 gData_020033c8[];
 void Event_Start();

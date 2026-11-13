@@ -1,4 +1,6 @@
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s3d80.c ----
+#include "../shared/routines.h"
+#include "../shared/tables.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -23,59 +25,7 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   Map_SetScreenShake(a, b, c);
 }
 
-void Func_02003d80(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  u32 i;
-  struct EffectOptions options;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  CamBounds(-1, -1, -1, 0);
-  Map_CenterOnFollowedPoint();
-  System_Wait(1);
-  actor->y = 0x820000;
-  actor->gravity = 0x8000;
-  actor->bounce = 0;
-  actor->motionFlags = 0;
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  Event_PlaySound(204);
-  actor->motionFlags = 3;
-  FieldEvent_Wait(24);
-  options.palette = 7;
-  options.update = Effect_AdvanceMotion;
-  options.startScaleX = 0xa3d7;
-  options.startScaleY = 0xa3d7;
-  i = 0;
-  do {
-    s32 angle;
-    s32 velocity[3];
-
-    angle = i << 12;
-    velocity[0] = Math_Cosine(angle);
-    velocity[1] = 0;
-    velocity[2] = Math_Sin(angle);
-    velocity[0] += velocity[0] >> 1;
-    velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;
-    velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
-    Func_020035b8(actor->x, actor->y, actor->z, velocity[0], velocity[1],
-                  velocity[2], 0x1090001, &options);
-    i++;
-  } while (i <= 16);
-  Event_PlaySound(188);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  SetWorkTriple(0x50000, 0x50000, 0x10000);
-  SetWorkTriple(-1, -1, 0xe666);
-  MapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
-  actor->gravity = 0x10000;
-  actor->bounce = 0x4000;
-  FieldEvent_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Event_End();
-}
+DEFINE_FUNC_02001E24(Func_02003d80, Func_020035b8)
 
 #include "room.h"
 
@@ -146,43 +96,9 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value) {
 /* VIEW(s3d80): variable gData_02005ef8 as extern const s16 gData_02005ef8[]; the definition has s32 gData_02005ef8[] = { 0xffff, - 0x8000, (s32) 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000, }; tried as the definition's extern struct Trigger gData_02005ef8[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:160: incompatible types in assignment. */
 extern const s16 gData_02005ef8__s3d80[] __asm__("gData_02005ef8");
 
-void Func_02004080(struct Actor *object) {
-  s32 angle;
-  s32 turn;
+DEFINE_FUNC_02002D04(Func_02004080, gData_02005ef8__s3d80, Func_02005480)
 
-  if (object->timer != 0) {
-    object->timer--;
-    return;
-  }
-  *(u8 *)((u8 *)object + 0x5a) = 0;
-  if (Event_GetFlag(0x106))
-    angle = -1;
-  else
-    angle = gData_02005ef8__s3d80[(gInput.held >> 4) & 15];
-  if (angle == -1) {
-    Func_02005480(object, 9);
-    return;
-  }
-  turn = (s16)(angle - object->facing);
-  if (turn > 0x1000)
-    turn = 0x1000;
-  if (turn < -0x1000)
-    turn = -0x1000;
-  object->facing += turn;
-  Func_02005480(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-}
-
-void Func_0200410c(void) {
-  u8 *event = Ram_HeapSlots->eventWork;
-
-  if (S16_AT(event, 0xca2)) {
-    Flag_Set(0x106);
-    Leader_StopMoving();
-    Event_ResolveAllPendingActions();
-    Flag_Clear(0x106);
-  }
-}
+DEFINE_FUNC_02003284(Func_0200410c)
 
 #include "fixed_math.h"
 #include "scene_tables.h"
@@ -777,170 +693,16 @@ s32 Func_02004a8c(struct PushTarget *target) {
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
 
-struct Actor *Func_02004bf4(s32 *direction, s32 *slot, s32 *kind) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  struct Actor **entry;
-  struct Actor *object;
-  u32 i, k;
-  s32 x, z, left, top, right, bottom;
-
-  *direction = leader->facing >> 12;
-  i = 8;
-  entry = &work->objects[8];
-outer:
-  object = *entry;
-  k = 0;
-inner:
-  if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
-      gData_02005f58[k]) {
-    x = (PIXELS(leader->x) + (gData_02005f7c__s4700[*direction] >> 16)) >> 4;
-    z = (PIXELS(leader->z) + (s16)gData_02005f7c__s4700[*direction]) >> 4;
-    left = (PIXELS(object->x) + gData_02005f64__s4700[k][0]) >> 4;
-    top = (PIXELS(object->z) + gData_02005f64__s4700[k][1]) >> 4;
-    right = (PIXELS(object->x) + gData_02005f64__s4700[k][2]) >> 4;
-    bottom = (PIXELS(object->z) + gData_02005f64__s4700[k][3]) >> 4;
-    if (left <= x && x < right && top <= z && z < bottom) {
-      *kind = k;
-      if (k & 1) {
-        if (left != leader->x >> 20) {
-          *slot = i;
-          return object;
-        }
-      } else {
-        if (top != leader->z >> 20) {
-          *slot = i;
-          return object;
-        }
-      }
-    }
-  }
-  k++;
-  if (k <= 5)
-    goto inner;
-  entry++;
-  i++;
-  if (i <= 63)
-    goto outer;
-  return NULL;
-}
+DEFINE_FUNC_02000DAC(Func_02004bf4, gData_02005f58, gData_02005f7c__s4700,
+    gData_02005f64__s4700)
 
 #undef PIXELS
 
-void Func_02004d10(struct PushTarget target) {
-  u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  struct Actor *object = Actor_Get(target.id);
-  s32 cell[3];
-  s32 from[3];
-  s32 footprint;
-  s32 width;
-  s32 height;
-  s32 originX;
-  s32 originZ;
-  s32 direction;
-  s32 speed;
-  s32 acceleration;
+DEFINE_FUNC_02003A5C(Func_02004d10, gData_02005f64__s4700, Func_02004a44,
+    Func_02004fc0, Func_02005480, gData_02005f7c__s4700)
 
-  direction = leader->facing >> 16;
-  footprint = target.footprint;
-  speed = leader->speedLimit;
-  acceleration = leader->acceleration;
-  from[0] = object->x;
-  from[2] = object->z;
-  cell[0] = (object->x + (gData_02005f64__s4700[footprint][0] << 16)) >> 20;
-  cell[2] = (object->z + (gData_02005f64__s4700[footprint][1] << 16)) >> 20;
-  width = (ABS(gData_02005f64__s4700[footprint][0]) +
-           ABS(gData_02005f64__s4700[footprint][2])) >>
-          4;
-  height = (ABS(gData_02005f64__s4700[footprint][1]) +
-            ABS(gData_02005f64__s4700[footprint][3])) >>
-           4;
-  Func_02004a44(0, cell[0], cell[2], width, height, 0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 8);
-  System_Wait(15);
-  {
-    s32 deltaX = (target.x - from[0]) >> 17;
-    s32 deltaZ = (target.z - from[2]) >> 17;
-
-    Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, deltaX,
-                                       deltaZ);
-  }
-  Actor_Get(gMainRoutineWork.currentOwner)->update = Func_02004fc0;
-  System_Wait(4);
-  if ((u32)(direction - 6) <= 7)
-    Func_02005480(object, 3);
-  else
-    Func_02005480(object, 2);
-  Event_PlaySound(239);
-  Actor_SetSpeed(target.id, 0x8000, 0x1999);
-  FieldActor_SetMoveTarget(object, target.x, target.y, target.z);
-  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
-  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
-                                     (gData_02005f7c__s4700[direction] << 16) >> 31,
-                                     (gData_02005f7c__s4700[direction] << 16) >> 17);
-  if (target.callback != 0)
-    target.callback();
-  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  leader->update = 0;
-  leader->speedLimit = speed;
-  leader->acceleration = acceleration;
-  Actor_WaitForMove(object);
-  Event_PlaySound(298);
-  Event_PlaySound(213);
-  FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
-  Func_02005480(object, 1);
-  target.x = target.x + (gData_02005f64__s4700[footprint][0] << 16);
-  target.z = target.z + (gData_02005f64__s4700[footprint][1] << 16);
-  target.x >>= 20;
-  target.z >>= 20;
-  originX = *(s32 *)(map + 328) >> 20;
-  originZ = *(s32 *)(map + 332) >> 20;
-  MapGrid_CopyCellAttributes(target.x, target.z, width, height, originX + target.x, originZ + target.z);
-  Func_02004a44(0, target.x, target.z, width, height, 255);
-  Func_02004a44(2, target.x, target.z, width, height, 255);
-  cell[0] = (from[0] + (gData_02005f64__s4700[footprint][0] << 16)) >> 20;
-  cell[2] = (from[2] + (gData_02005f64__s4700[footprint][1] << 16)) >> 20;
-  originX += cell[0];
-  originZ += cell[2];
-  MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
-  Func_02004a44(2, cell[0], cell[2], width, height, 0);
-  Event_NoOp();
-}
-
-void Func_02004fc0(struct Actor *object) {
-  s32 position[3];
-  struct Actor *hit;
-  u32 i;
-  s32 angle = object->facing >> 12;
-
-  angle = ((angle + 2) & 12) << 12;
-  position[0] = object->x;
-  position[1] = object->y;
-  position[2] = object->z;
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  hit = Func_02005680(position, 1);
-  if (hit != 0) {
-    i = 0;
-  next:
-    if (*((struct ObjectAnimationState *)hit->sprite)->value28 ==
-        gData_02005f58[i])
-      return;
-    i++;
-    if (i <= 5)
-      goto next;
-    FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
-  }
-  position[0] = object->x;
-  position[1] = object->y;
-  position[2] = object->z;
-  if (Func_020054f8(object, position) > 0)
-    FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
-}
+DEFINE_FUNC_02004774(Func_02004fc0, Func_02005680, gData_02005f58,
+    Func_020054f8)
 #undef ABS
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
@@ -956,76 +718,9 @@ void Func_02004fc0(struct Actor *object) {
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
 /// 64 one when the big switch is set, at its animation picture and depth.
-void Func_02005048(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  s32 *view = &map->viewX;
-  s32 viewX, viewZ, tile, viewY;
-  struct LightOam *oam;
-  s32 i;
-  viewX = view[0] & 0xffff0000;
-  viewZ = view[1] & 0xffff0000;
-  tile = gResourceTableEntries[gData_020074cc].offset >> 5;
-  viewY = map->origin[1];
-  oam = Data_0200f510;
-
-  for (i = 0; i < gData_020074ce; i++) {
-    struct Actor *actor = gData_020074d0[i];
-    if (actor != 0 && actor->x != 0) {
-      s32 big, ox, y, z, oy, depth;
-      s32 frame;
-      u32 *word;
-      ox = actor->x - viewX;
-      y = actor->y - viewY + 0x80000;
-      z = actor->z - viewZ - viewY;
-      oy = z - y;
-      depth = ((y + z) >> 16) + 58;
-      big = gData_020075d0;
-      if (big == 0) {
-        s32 x, sy;
-        frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
-        ox = x - 8;
-        oy = sy - 16;
-        if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
-          continue;
-        ox &= 0x1ff;
-        oy &= 0xff;
-        word = (u32 *)oam;
-        *word++ = 0;
-        *word++ = oy | (ox << 16) | 0x40002000;
-        *word = (tile + frame * 8) | 0x800;
-        if (gData_020075d2 == -1)
-          oam->priority = Func_02005698(actor);
-        else
-          oam->priority = gData_020075d2;
-        Func_02005440(oam, depth);
-        oam++;
-      } else {
-        s32 x, sy;
-        frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
-        ox = x - 8;
-        oy = sy - 64;
-        if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)
-          continue;
-        ox &= 0x1ff;
-        oy &= 0xff;
-        word = (u32 *)oam;
-        *word++ = 0;
-        *word++ = oy | (ox << 16) | 0xc000a000;
-        *word = (tile + frame * 8) | 0x800;
-        if (gData_020075d2 == -1)
-          oam->priority = Func_02005698(actor);
-        else
-          oam->priority = gData_020075d2;
-        Func_02005440(oam, depth);
-        oam++;
-      }
-    }
-  }
-}
+DEFINE_FUNC_02000AAC(Func_02005048, gData_020074cc, Data_0200f510,
+    gData_020074ce, gData_020074d0, gData_020075d0, gData_020075d2,
+    Func_02005698, Func_02005440)
 
 #include "iwram_call.h"
 #include "task.h"
@@ -1034,60 +729,16 @@ void Func_02005048(void) {
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-void Func_02005204(void) {
-  u8 *buffer = BumpAlloc(0xc00);
+DEFINE_FUNC_02000A98(Func_02005204, gData_020074d0, gData_020074cc,
+    Func_02005048, gData_020074ce, gData_020075d0, gData_020075d2)
 
-  Iwram_ClearWords(gData_020074d0, 64);
-  Resource_DecodeType01(gField_CachedTilesA, buffer);
-  gData_020074cc = Resource_FindFreeEntry();
-  VramCache_Load(gData_020074cc, 0xc00, buffer);
-  Heap_Release(buffer);
-  Task_Add(Func_02005048, TASK_PASS_VBLANK);
-  gData_020074ce = 0;
-  gData_020075d0 = 0;
-  gData_020075d2 = -1;
-}
+DEFINE_FUNC_02000CE8(Func_02005284, gData_020074d0, gData_020074cc,
+    Func_02005048, gData_020074ce, gData_020075d0, gData_020075d2)
 
-void Func_02005284(void) {
-  u8 *buffer = Heap_Alloc(0xc00);
+DEFINE_FUNC_02000D68(Func_02005304, gData_020074d0, gData_020074cc,
+    Func_02005048, gData_020074ce, gData_020075d0, gData_020075d2)
 
-  Iwram_ClearWords(gData_020074d0, 64);
-  Resource_DecodeType01(gField_CachedTilesB, buffer);
-  gData_020074cc = Resource_FindFreeEntry();
-  Vram_Load(gData_020074cc, 0x800, buffer);
-  Heap_Release(buffer);
-  Task_AddFrame(Func_02005048, TASK_PASS_VBLANK);
-  gData_020074ce = 0;
-  gData_020075d0 = 0;
-  gData_020075d2 = -1;
-}
-
-void Func_02005304(void) {
-  u8 *buffer = BumpAlloc(0x800);
-
-  Iwram_ClearWords(gData_020074d0, 64);
-  Resource_DecodeType01(gField_CachedTilesC, buffer);
-  gData_020074cc = Resource_FindFreeEntry();
-  Vram_Load(gData_020074cc, 0x800, buffer);
-  Heap_Release(buffer);
-  Task_AddFrame(Func_02005048, TASK_PASS_VBLANK);
-  gData_020074ce = 0;
-  gData_020075d0 = 1;
-  gData_020075d2 = -1;
-}
-
-void Func_0200538c(s32 id, s32 value) {
-  struct Actor *object = Actor_Get(id);
-
-  if (object != NULL) {
-    s16 *count;
-
-    object->timer = value;
-    count = &gData_020074ce;
-    gData_020074d0[*count] = object;
-    (*count)++;
-  }
-}
+DEFINE_FUNC_02000DF0(Func_0200538c, gData_020074ce, gData_020074d0)
 
 void Func_020053bc(s32 value) { gData_020075d2 = value; }
 
@@ -1452,10 +1103,5 @@ u32 gData_02005f64[] = {
     0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
 };
 
-s16 gData_02005f7c[] = {
-    0, 16, 0, 16, 0, 16, 16, 0,
-    16, 0, 16, 0, 16, 0, 0, -16,
-    0, -16, 0, -16, 0, -16, -16, 0,
-    -16, 0, -16, 0, -16, 0, 0, 16,
-};
+DEFINE_G_DATA_0200198C(gData_02005f7c)
 // clang-format on

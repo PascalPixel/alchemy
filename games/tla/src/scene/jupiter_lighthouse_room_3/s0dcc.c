@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x69c, in ROM order, from s0dcc's offset up to the
 /// next object the overlay links.
 
+#include "../shared/routines.h"
 #include "types.h"
 #include "map.h"
 #include "actor.h"
@@ -105,138 +106,11 @@ s32 Func_02000dcc(struct PushTarget *target) {
 /// shape is in the six-entry footprint table, the one whose footprint holds the
 /// cell one step ahead of the leader, when the leader is not in line with its
 /// near edge. Returns the object, with its id and the footprint's index.
-struct Actor *Func_02000f34(s32 *direction, s32 *slot, s32 *kind) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  struct Actor **entry;
-  struct Actor *object;
-  u32 i, k;
-  s32 x, z, left, top, right, bottom;
-
-  *direction = leader->facing >> 12;
-  i = 8;
-  entry = &work->objects[8];
-outer:
-  object = *entry;
-  k = 0;
-inner:
-  if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
-      gData_02002478[k]) {
-    x = (PIXELS(leader->x) + (gData_0200249c[*direction] >> 16)) >> 4;
-    z = (PIXELS(leader->z) + (s16)gData_0200249c[*direction]) >> 4;
-    left = (PIXELS(object->x) + gData_02002484[k][0]) >> 4;
-    top = (PIXELS(object->z) + gData_02002484[k][1]) >> 4;
-    right = (PIXELS(object->x) + gData_02002484[k][2]) >> 4;
-    bottom = (PIXELS(object->z) + gData_02002484[k][3]) >> 4;
-    if (left <= x && x < right && top <= z && z < bottom) {
-      *kind = k;
-      if (k & 1) {
-        if (left != leader->x >> 20) {
-          *slot = i;
-          return object;
-        }
-      } else {
-        if (top != leader->z >> 20) {
-          *slot = i;
-          return object;
-        }
-      }
-    }
-  }
-  k++;
-  if (k <= 5)
-    goto inner;
-  entry++;
-  i++;
-  if (i <= 63)
-    goto outer;
-  return NULL;
-}
+DEFINE_FUNC_02000DAC(Func_02000f34, gData_02002478, gData_0200249c,
+    gData_02002484)
 
 void Func_020022e0(struct Actor *object, s32 mode);
 void Func_02001300(void);
 
-void Func_02001050(struct PushTarget target) {
-  u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  struct Actor *object = Actor_Get(target.id);
-  s32 cell[3];
-  s32 from[3];
-  s32 footprint;
-  s32 width;
-  s32 height;
-  s32 originX;
-  s32 originZ;
-  s32 direction;
-  s32 speed;
-  s32 acceleration;
-
-  direction = leader->facing >> 16;
-  footprint = target.footprint;
-  speed = leader->speedLimit;
-  acceleration = leader->acceleration;
-  from[0] = object->x;
-  from[2] = object->z;
-  cell[0] = (object->x + (gData_02002484[footprint][0] << 16)) >> 20;
-  cell[2] = (object->z + (gData_02002484[footprint][1] << 16)) >> 20;
-  width =
-      (ABS(gData_02002484[footprint][0]) + ABS(gData_02002484[footprint][2])) >>
-      4;
-  height =
-      (ABS(gData_02002484[footprint][1]) + ABS(gData_02002484[footprint][3])) >>
-      4;
-  Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 8);
-  System_Wait(15);
-  {
-    s32 deltaX = (target.x - from[0]) >> 17;
-    s32 deltaZ = (target.z - from[2]) >> 17;
-
-    Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, deltaX, deltaZ);
-  }
-  Actor_Get(gMainRoutineWork.currentOwner)->update = Func_02001300;
-  System_Wait(4);
-  if ((u32)(direction - 6) <= 7)
-    Func_020022e0(object, 3);
-  else
-    Func_020022e0(object, 2);
-  Event_PlaySound(239);
-  Actor_SetSpeed(target.id, 0x8000, 0x1999);
-  FieldActor_SetMoveTarget(object, target.x, target.y, target.z);
-  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
-  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
-                             (gData_0200249c[direction] << 16) >> 31,
-                             (gData_0200249c[direction] << 16) >> 17);
-  if (target.callback != 0)
-    target.callback();
-  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  leader->update = 0;
-  leader->speedLimit = speed;
-  leader->acceleration = acceleration;
-  Actor_WaitForMove(object);
-  Event_PlaySound(298);
-  Event_PlaySound(213);
-  FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
-  Func_020022e0(object, 1);
-  target.x = target.x + (gData_02002484[footprint][0] << 16);
-  target.z = target.z + (gData_02002484[footprint][1] << 16);
-  target.x >>= 20;
-  target.z >>= 20;
-  originX = *(s32 *)(map + 328) >> 20;
-  originZ = *(s32 *)(map + 332) >> 20;
-  MapGrid_CopyCellAttributes(target.x, target.z, width, height,
-                             originX + target.x, originZ + target.z);
-  Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
-  Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
-  cell[0] = (from[0] + (gData_02002484[footprint][0] << 16)) >> 20;
-  cell[2] = (from[2] + (gData_02002484[footprint][1] << 16)) >> 20;
-  originX += cell[0];
-  originZ += cell[2];
-  MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
-  Map_FillCellRectByte2(2, cell[0], cell[2], width, height, 0);
-  Event_NoOp();
-}
+DEFINE_FUNC_02000EC8(Func_02001050, gData_02002484, Func_02001300,
+    Func_020022e0, gData_0200249c)

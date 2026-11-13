@@ -4,6 +4,7 @@
 
 // ---- games/tla/src/scene/sea_of_time.c ----
 
+#include "shared/routines.h"
 #include "sea_of_time/sea_of_time.h"
 #include "event_work.h"
 #include "module/field/event_commands.h"
@@ -50,12 +51,7 @@ s32 Func_02000388(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
-s32 Func_020003d0(s32 *a, s32 *b) {
-  s32 dx = (a[0] - b[0]) >> 16;
-  s32 dz = (a[2] - b[2]) >> 16;
-
-  return Iwram_Sqrt(dx * dx + dz * dz);
-}
+DEFINE_FUNC_020003D0(Func_020003d0)
 
 #include "battle.h"
 #include "field.h"

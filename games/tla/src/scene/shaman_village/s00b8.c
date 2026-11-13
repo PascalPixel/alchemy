@@ -1,4 +1,5 @@
 // ---- games/tla/src/scene/shaman_village/s00b8.c ----
+#include "../shared/routines.h"
 #include "types.h"
 #include "field_effect.h"
 #include "main_routine_work.h"
@@ -546,12 +547,7 @@ void *Scene_GetEvents(void) {
   return gData_02005aa0;
 }
 
-void Func_02000d08(void) {
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  FieldMessage_Show((s32)MsgShamanEntranceLocked, 1);
-  Event_End();
-}
+DEFINE_FUNC_0200098C(Func_02000d08)
 
 void Func_02000d28(void) {
   Event_Start();

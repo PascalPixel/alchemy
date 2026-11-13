@@ -3,6 +3,8 @@
 
 // ---- games/tla/src/scene/apojii_islands.c ----
 
+#include "shared/routines.h"
+#include "shared/tables.h"
 #include "apojii_islands/local.h"
 #include "types.h"
 #include "main_routine_work.h"
@@ -472,22 +474,10 @@ void Func_02000ef8(void) {
   }
 }
 
-void Func_02000f58(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
-  s16 y = layer->y >> 16;
+DEFINE_FUNC_02000E90(Func_02000f58, gData_02002a98, gData_02002a9c,
+    gData_02002a9e)
 
-  gData_02002a98 = 1448 - y;
-  gData_02002a9c = layer->x >> 16;
-  gData_02002a9e = (s16)(layer->x >> 16) - (gFrameCount >> 2);
-}
-
-void Func_02000f98(void) {
-  s32 priority;
-
-  Irq_SetHandler(1, 0, Func_02000ef8);
-  priority = 0xc80;
-  FieldTask_AddFrame(Func_02000f58, priority);
-}
+DEFINE_FUNC_02000ED0(Func_02000f98, Func_02000ef8, Func_02000f58)
 
 
 /// The overlay's entry: sets the map mode and screen effect 0x202, then starts
@@ -565,28 +555,7 @@ void Func_020010d8(struct Actor *object) {
 // ---- games/tla/src/scene/apojii_islands/events_h.c ----
 // Scene code of overlay 0x679, in ROM order, from events_h's offset up to the next object the overlay links.
 
-void Func_02001140(struct Actor *object) {
-  s32 phase = gFrameCount & 15;
-
-  if (phase == 0) {
-    struct Actor *child =
-        Import_ActorCreate_(0x10d, object->x, object->y, object->z);
-
-    if (child != 0) {
-      struct FieldSprite *sprite = child->sprite;
-
-      Actor_StartScript(child, gData_02001ef4);
-      child->motionFlags = 0;
-      child->y = -0x78000;
-      child->terrainId = 1;
-      if (sprite != 0) {
-        Animation_ApplyChildArgument(sprite, 2);
-        sprite->nextFrame = 0;
-        sprite->priority = 2;
-      }
-    }
-  }
-}
+DEFINE_FUNC_02001140(Func_02001140, gData_02001ef4)
 
 void Func_020011a8(void) {
   struct EventWork1cc *work = Ram_HeapSlots->eventWork;
@@ -641,128 +610,18 @@ void Func_020011a8(void) {
   }
 }
 
-void Func_02001308(s32 id) {
-  struct Actor *object = Actor_Get(id);
+DEFINE_FUNC_02001308(Func_02001308, Func_02001c6c)
 
-  if (object != 0) {
-    u8 *meta = ResourceMetadata_Register(object->sprite, 0x17d);
-
-    meta[5] = 0;
-    meta[6] = 0;
-    Func_02001c6c(object, 0);
-    Func_02001c6c(object, 2);
-  }
-}
-
-void Func_02001338(s32 entrance) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 i;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-  leader->motionFlags = 0;
-  leader->priorityFlags |= 0x20;
-  Event_PlaySound(215);
-  Func_02001c6c(leader, 18);
-  Event_PlaySound(612);
-  for (i = 0; i < 60; i++) {
-    s32 angle;
-
-    if (i == 30)
-      Event_FinishScreenTransition();
-    leader->y -= 0x4000;
-    angle = leader->facing;
-    leader->facing = angle + 0x1000;
-    if ((i & 7) == 0)
-      Func_020010d8(Actor_Get(15));
-    System_Wait(1);
-  }
-  Event_End();
-  FieldEvent_SetExitRequest(entrance);
-}
+DEFINE_FUNC_02001338(Func_02001338, Func_02001c6c, Func_020010d8)
 
 /// Every other frame, emits particle 7 (5 on every other such frame) from the
 /// object, 26 pixels up, swaying with the frame count and drifting by a random
 /// amount.
-s32 Func_020013d8(struct Actor *object) {
-  s32 params[10];
+DEFINE_FUNC_020013D8(Func_020013d8)
 
-  if (gFrameCount & 1) {
-    s32 drift;
-    s32 x;
-    s32 y;
+DEFINE_FUNC_02001464(Func_02001464, Func_020013d8)
 
-    params[1] = 7;
-    if ((gFrameCount & 2) == 0)
-      params[1] = 5;
-    params[2] = 0xcccc;
-    params[3] = 0xcccc;
-    params[0] = 0;
-    drift = ((u32)(Random16Far() << 3) >> 16) * 0x3333;
-    x = object->x;
-    y = object->y;
-    Func_0200015c(x + ((8 - (gFrameCount & 15)) << 16), y + 0x1a0000, object->z,
-                  0, -drift, 0, 0xb0000, params);
-  }
-  return 0;
-}
-
-void Func_02001464(s32 entrance) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 *owner = &gMainRoutineWork.currentOwner;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(228);
-  leader->update = (void (*)(void))Func_020013d8;
-  leader->motionFlags = 0;
-  leader->speedLimit = 0x3333;
-  Actor_SetAnimation(*owner, 2);
-  Actor_SetDestinationOffset(*owner, 0, -8);
-  FieldActor_WaitForMoveById(*owner);
-  Actor_SetSpriteColor(Actor_Get(*owner), 9);
-  Actor_SetSingleChildFlags(Actor_Get(*owner), 0);
-  leader->update = 0;
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(entrance);
-  Event_End();
-}
-
-void Func_02001500(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 flag = Event_GetFlag(0x109);
-  s32 *owner = &gMainRoutineWork.currentOwner;
-  s32 offset;
-
-  if (flag == 0) {
-    Event_Start();
-    FieldEvent_ResolvePendingActions(0);
-    Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
-    leader->motionFlags = flag;
-    Actor_SetPosition(*owner, ((s16 *)&leader->x)[1] << 16,
-                                           (((s16 *)&leader->z)[1] << 16) -
-                                               0x100000);
-    Actor_SetSpriteColor(Actor_Get(*owner), 9);
-    Actor_SetSingleChildFlags(Actor_Get(*owner), 0);
-    Event_StartScreenTransition();
-    Event_PlaySound(228);
-    leader->update = (void (*)(void))Func_020013d8;
-    Actor_SetSpeed(*owner, 0x6666, 0x3333);
-    Actor_WalkByAndWait(*owner, 0, 8);
-    Actor_SetSpriteColor(Actor_Get(*owner), 0);
-    Actor_SetSingleChildFlags(Actor_Get(*owner), 1);
-    ((struct FieldSprite *)leader->sprite)->priority = 1;
-    offset = 10;
-    Actor_WalkByAndWait(*owner, 0, offset);
-    leader->motionFlags = 3;
-    leader->update = (void (*)(void))flag;
-    Event_NoOp();
-    Event_WaitTransitionFrames();
-    Event_End();
-  }
-}
+DEFINE_FUNC_02001500(Func_02001500, Func_020013d8)
 
 #include "graphics/vram_tab.h"
 #include "system/dma.h"
@@ -913,56 +772,7 @@ void Func_020017f8(u32 base, s32 a, s32 b) {
 
 extern s16 gData_02001f18[];
 
-void Func_02001940(void) {
-  struct MapWork *view = Ram_HeapSlots->mapWork;
-  struct GroundParticleWork *work = Ram_HeapSlots->unk70[1];
-  s32 *camera = &view->viewX;
-  struct GroundParticle *particle = work->particles;
-  s32 cameraX = camera[0];
-  s32 cameraZ = camera[1];
-  u32 i;
-
-  for (i = 0; i < 64; i++, particle++) {
-    s16 *frame;
-    s32 x;
-    s32 y;
-
-    if (--particle->timer == 0xffff)
-      continue;
-    if (GameFlag_Test(0x166))
-      particle->timer++;
-    frame = &gData_02001f18[5 * particle->timer];
-    x = (particle->posX - cameraX) / 0x10000 + *frame++;
-    y = (particle->posZ - particle->posY - cameraZ) / 0x10000 + *frame++;
-    if ((x >= -16 && x <= 239) && y >= -32 && y <= 159) {
-      particle->priority = 1;
-      particle->x = x;
-      particle->y = y;
-      particle->tile = work->tileBase + *(u16 *)frame;
-      frame++;
-      particle->shape = *(u8 *)frame;
-      particle->size = *(u8 *)(frame + 1);
-      Oam_AddSpriteAtDepth(particle, 240);
-    }
-    if (particle->timer == 0) {
-      s32 *leader = work->leader;
-
-      if (leader != NULL) {
-        x = leader[0] + Random16Far() * 240 - 0x780000;
-        y = leader[2] + Random16Far() * 160 - 0x500000;
-        particle->posX = x;
-        particle->posZ = y;
-        particle->posY = Map_GetTerrainHeight(0, x, y);
-        particle->timer = 16;
-      } else {
-        particle->posX = 0;
-        particle->posZ = 0;
-        particle->posY = 0;
-        particle->timer = 16;
-      }
-    }
-  }
-}
+DEFINE_FUNC_02001940(Func_02001940, gData_02001f18)
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
 /// decoded into VRAM, and Func_02001940 scheduled at priority 0x480 to move
@@ -1064,26 +874,7 @@ u32 gData_02001ef4[] = {
     30, 0, 38,
 };
 
-s16 gData_02001f18[] = {
-    -8, -12, 20, 0, 1, -8, -12, 20,
-    0, 1, -8, -12, 20, 0, 1, -8,
-    -12, 16, 0, 1, -8, -12, 16, 0,
-    1, -8, -12, 12, 0, 1, -8, -12,
-    8, 0, 1, 0, -32, 0, 2, 2,
-    8, -48, 0, 2, 2, 16, -64, 0,
-    2, 2, 24, -80, 0, 2, 2, 32,
-    -96, 0, 2, 2, 40, -112, 0, 2,
-    2, 48, -128, 0, 2, 2, 56, -144,
-    0, 2, 2, 64, -160, 0, 2, 2,
-    -2, 12, -4, 12, -6, 12, -8, 8,
-    -10, 8, -12, 8, -14, 8, -16, 8,
-    -19, 4, -21, 4, -24, 4, -27, 4,
-    -30, 4, -33, 4, -36, 4, -40, 4,
-    -44, 4, -48, 0, -52, 0, -56, 0,
-    -60, 0, -64, 0, -68, 0, -72, 0,
-    -76, 0, -80, 0, -85, 0, -90, 0,
-    -95, 0, -100, 0, -110, 0, -120, 0,
-};
+DEFINE_G_DATA_02001F18(gData_02001f18)
 
 s32 gData_02002038[] = {
     (s32)gData_02001e34,

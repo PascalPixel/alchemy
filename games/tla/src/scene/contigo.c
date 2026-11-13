@@ -1,4 +1,5 @@
 // ---- games/tla/src/scene/contigo.c ----
+#include "shared/routines.h"
 #include "types.h"
 #include "field_effect.h"
 #include "main_routine_work.h"
@@ -120,36 +121,9 @@ void Func_02000608(void) {
   GameFlag_SetBit(2534);
 }
 
-s32 Func_02000620(s32 *a, s32 *b) {
-  s32 dx = (*a++ - *b++) >> 16;
-  s32 dy = (*a++ - *b++) >> 16;
-  s32 dz = (*a - *b) >> 16;
-  s32 dxsq = dx * dx;
-  s32 dysq = dy * dy;
-  s32 dzsq = dz * dz;
+DEFINE_FUNC_02000038_75(Func_02000620)
 
-  return Iwram_Sqrt(dxsq + dysq + dzsq);
-}
-
-s32 Func_02000658(struct Actor *self, struct Actor *other, s32 range) {
-  s32 result = 0;
-  s32 *to;
-  s32 *from;
-
-  to = &other->x;
-  from = &self->x;
-  if (Func_02000620(to, from) < range) {
-    u32 angle = (u16)ArcTan2(other->z - self->z, *to - *from);
-    u32 left = (angle - 0x1000) & 0xf000;
-    u32 right = (angle + 0x1000) & 0xf000;
-    u32 ahead = angle & 0xf000;
-    u32 facing = self->facing & 0xf000;
-
-    if (ahead == facing || right == facing || left == facing)
-      result = 1;
-  }
-  return result;
-}
+DEFINE_FUNC_02000070(Func_02000658, Func_02000620)
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -285,12 +259,7 @@ void Func_0200096c(void) {
   Event_End();
 }
 
-void Func_0200098c(void) {
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  FieldMessage_Show((s32)MsgShamanEntranceLocked, 1);
-  Event_End();
-}
+DEFINE_FUNC_0200098C(Func_0200098c)
 
 void Func_020009ac(void) {
   Event_Start();
@@ -444,16 +413,7 @@ void Func_02004294(s32 a, s32 b);
 void Func_0200429c(s32 a);
 void Func_020042a4(s32 a, s32 b);
 
-s32 Func_02000cc4(void) {
-  u16 turn;
-  s32 facing;
-
-  turn = Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x5fff;
-  facing = 1;
-  if (turn >= 0x3fff)
-    facing = 0;
-  return facing;
-}
+DEFINE_FUNC_020002E8(Func_02000cc4)
 
 void Func_02000cf4(void) {
   if (Func_02000cc4()) {

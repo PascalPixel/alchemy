@@ -1,3 +1,4 @@
+#include "../shared/routines.h"
 #include "types.h"
 #include "field_event.h"
 #include "event_inline.h"
@@ -14,54 +15,9 @@
 
 void Func_0200128c();
 
-void Func_020012dc(s32 id) {
-  struct Actor *object = Actor_GetById(id);
+DEFINE_FUNC_02000438(Func_020012dc, Func_0200128c)
 
-  Func_0200128c(object->x + 0x80000, object->y + 0x1c0000, object->z, 0x1000,
-                15);
-  Sound_Play(151);
-  Event_Wait(15);
-  Func_0200128c(object->x - 0x80000, object->y + 0x1c0000, object->z, 0xf000,
-                15);
-  Sound_Play(151);
-  Event_Wait(15);
-  Func_0200128c(object->x + 0x80000, object->y + 0x1c0000, object->z, 0x1000,
-                15);
-  Sound_Play(151);
-  Event_Wait(15);
-  Func_0200128c(object->x - 0x80000, object->y + 0x1c0000, object->z, 0xf000,
-                15);
-  Sound_Play(151);
-  Event_Wait(15);
-}
-
-void Func_02001398(struct Actor *object) {
-  struct AnimatedSprite *sprite = (struct AnimatedSprite *)object->sprite;
-  struct SpritePictures *pictures = sprite->pictures;
-
-  switch (object->timer & 3) {
-  case 0:
-    pictures->picture = 7;
-    sprite->picture = 1;
-    sprite->nextPicture = 2;
-    break;
-  case 1:
-    sprite->picture = 1;
-    sprite->nextPicture = 0;
-    break;
-  case 2:
-    pictures->picture = 7;
-    sprite->picture = 1;
-    sprite->nextPicture = 0;
-    break;
-  case 3:
-    pictures->picture = 0;
-    sprite->picture = 1;
-    sprite->nextPicture = 0;
-    break;
-  }
-  object->timer++;
-}
+DEFINE_FUNC_020000C8(Func_02001398)
 
 void Event_Start();
 void Event_End();

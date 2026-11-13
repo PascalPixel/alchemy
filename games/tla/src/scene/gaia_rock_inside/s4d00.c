@@ -1,3 +1,4 @@
+#include "../shared/tables.h"
 #include "types.h"
 #include "module/scene/gaia_rock_inside.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -124,12 +125,7 @@ u32 gData_02005208[] = {
     0, 6, 38, 17,
 };
 
-u32 gData_02005218[] = {
-    SC_MOVE_BY(0, PIXELS(160), 0),
-    SC_SYNC,
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_02005218(gData_02005218)
 
 s32 gData_02005234[] = {
     SC_CALL(Func_0200136c),
@@ -137,13 +133,8 @@ s32 gData_02005234[] = {
     SC_END,
 };
 
-s32 gData_02005244[] = {
-    SC_CALL(Func_0200142c),
-    SC_CALL(Func_020014d0),
-    SC_CALL(Func_0200151c),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_02005244(gData_02005244, Func_0200142c, Func_020014d0,
+    Func_0200151c)
 
 u32 gData_02005264[] = {
     SC_MOVE_BY(0, PIXELS(24), 0),
@@ -661,45 +652,5 @@ u32 gData_02006290[] = {
     1, 13, 10, 0xc0010000, 38,
 };
 
-s32 gData_020062d4[] = {
-    SC_ADD(SW_SCALE_X, 0x8000),
-    SC_ADD(SW_SCALE_Y, 0x8000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, -0x4000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x2000),
-    SC_ADD(SW_SCALE_Y, -0x2000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x2000),
-    SC_ADD(SW_SCALE_Y, -0x2000),
-    SC_WAIT(4),
-    SC_ADD(SW_SCALE_X, 0x8000),
-    SC_ADD(SW_SCALE_Y, 0x8000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, -0x4000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x2000),
-    SC_ADD(SW_SCALE_Y, -0x2000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x2000),
-    SC_ADD(SW_SCALE_Y, -0x2000),
-    SC_WAIT(4),
-    SC_ADD(SW_SCALE_X, 0x8000),
-    SC_ADD(SW_SCALE_Y, 0x8000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, -0x4000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x2000),
-    SC_ADD(SW_SCALE_Y, -0x2000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x2000),
-    SC_ADD(SW_SCALE_Y, -0x2000),
-    SC_WAIT(4),
-    SC_WAIT(20),
-    SC_LOOP(3, SC_TOP),
-    SC_END,
-};
+DEFINE_G_DATA_020016CC(gData_020062d4)
 // clang-format on

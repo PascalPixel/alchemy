@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x64b, in ROM order, from s3b38's offset up to the next object the overlay links, and the overlay's data.
 
+#include "../shared/routines.h"
 #include "types.h"
 #include "system.h"
 #include "frame.h"
@@ -21,57 +22,16 @@
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
-void Func_02003b38(struct Actor *object) {
-  if ((gFrameCount & 2) != 0) {
-    Animation_ApplyChildValues(object, 7);
-  } else {
-    Animation_ApplyChildValues(object, 0);
-  }
-  if ((gFrameCount & 15) == 0) {
-    Func_020039f4(object);
-  }
-}
+DEFINE_FUNC_020011F4(Func_02003b38, Func_020039f4)
 
 extern s32 gData_02006be4;
 
-void Func_02003b70(struct Actor *object) {
-  if (gFrameCount & 1) {
-    Animation_ApplyChildValues(object, gData_02004fc8[gData_02006be4]);
-    gData_02006be4 = (gData_02006be4 + 1) & 3;
-  }
-  if (!(gFrameCount & 3)) {
-    Func_02003aac(object);
-  }
-}
+DEFINE_FUNC_0200122C(Func_02003b70, gData_02004fc8, gData_02006be4,
+    Func_02003aac)
 
-void Func_02003bb8(struct Actor *object, s32 mode) {
-  if (mode == 0) {
-    object->update = 0;
-    Animation_ApplyChildValues(object, 0);
-    Event_PlaySound(390);
-  } else if (mode == 1) {
-    object->update = (void (*)(void))Func_02003b38;
-  } else {
-    object->update = (void (*)(void))Func_02003b70;
-    Event_PlaySound(291);
-  }
-}
+DEFINE_FUNC_02001274(Func_02003bb8, Func_02003b38, Func_02003b70)
 
-void Func_02003bf0(void) {
-  struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
-  s32 i;
-
-  Event_PlaySound(212);
-  Func_02003bb8(object, 1);
-  for (i = 0; i < 20; i++) {
-    s32 hit = Func_02004b90(&object->x);
-
-    if (hit != 0 && SceneEvent_FindActiveRecord(2, hit) != 0)
-      break;
-    System_Wait(1);
-  }
-  Func_02003bb8(object, 2);
-}
+DEFINE_FUNC_020012AC(Func_02003bf0, Func_02003bb8, Func_02004b90)
 
 u32 __umodsi3(u32 a, u32 b);
 
@@ -107,30 +67,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 }
 
 /// Shakes the camera diagonally by one pixel every three frames.
-void Func_02003ca8(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = *(s16 *)((u8 *)object + 10);
-  s32 z = *(s16 *)((u8 *)object + 18);
-
-  if (gFrameCount % 3 == 0) {
-    switch ((u32)(Random16Far() << 2) >> 16) {
-    case 0:
-      CameraMove((x << 16) - 0x10000, -1, (z << 16) + 0x10000, 1);
-      break;
-    case 1: {
-      Camera_MoveWithinMapBounds((x << 16) + 0x10000, -1, (z << 16) - 0x10000,
-                                 1);
-      break;
-    }
-    case 2:
-      CameraMove((x << 16) + 0x10000, -1, (z << 16) + 0x10000, 1);
-      break;
-    case 3:
-      CameraMove((x << 16) - 0x10000, -1, (z << 16) - 0x10000, 1);
-      break;
-    }
-  }
-}
+DEFINE_FUNC_02001364(Func_02003ca8)
 
 #include "event_work.h"
 #include "bg_scroll.h"
@@ -302,72 +239,15 @@ void Func_020042e0(void) {
   gBgScroll[0].y = 0;
 }
 
-void Func_02004500(struct Actor *object) {
-  if ((gFrameCount & 2) != 0) {
-    Animation_ApplyChildValues(object, 7);
-  } else {
-    Animation_ApplyChildValues(object, 0);
-  }
-  if ((gFrameCount & 15) == 0) {
-    Func_02004634(object);
-  }
-}
+DEFINE_FUNC_020011F4(Func_02004500, Func_02004634)
 
-void Func_02004538(struct Actor *object) {
-  u32 frame = gFrameCount;
+DEFINE_FUNC_020019D4(Func_02004538, Func_02004634)
 
-  if (frame & 1)
-    Animation_ApplyChildValues(object, (frame >> 1) % 6);
-  if ((gFrameCount & 15) == 0)
-    Func_02004634(object);
-}
+DEFINE_FUNC_02001A0C(Func_02004570)
 
-void Func_02004570(struct Actor *object) {
-  u32 frame = gFrameCount;
+DEFINE_FUNC_02001A34(Func_02004598, Func_02004b38)
 
-  if (frame & 1)
-    Animation_ApplyChildValues(object, (frame >> 1) % 6);
-}
-
-void Func_02004598(struct Actor *object) {
-  struct Actor *parent = object->watchedObject;
-  s32 step = ++object->timer;
-  s32 scale;
-  s32 rise;
-
-  if (step > 31) {
-    Func_02004b38(object);
-    return;
-  }
-  scale = Math_Sin(step << 10);
-  object->scaleX = scale;
-  object->scaleY = scale;
-
-  rise = 0x10000;
-  object->x = parent->x;
-  object->y += rise;
-  object->z = parent->z + (rise - scale) * 5 + 0x80000;
-}
-
-void Func_020045e4(struct Actor *object) {
-  struct Actor *parent = object->watchedObject;
-  s32 step = ++object->timer;
-  s32 scale;
-  s32 rise;
-
-  if (step > 31) {
-    Func_02004b38(object);
-    return;
-  }
-  scale = Math_Sin(step << 10);
-  object->scaleX = scale;
-  object->scaleY = -scale;
-
-  rise = 0x10000;
-  object->x = parent->x;
-  object->y += rise;
-  object->z = parent->z - (rise - scale) * 5 + 0x100000;
-}
+DEFINE_FUNC_02001A80(Func_020045e4, Func_02004b38)
 
 s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
 
@@ -556,21 +436,11 @@ void Func_020048f4(void) {
   Func_02004ad0(Data_02006e14, 255);
 }
 
-void Func_020049bc(void) {
-  Resource_DecodeType01(gWorldMapPackedTilesC, gData_02006f20__s3b38);
-  gData_02006e0e__s3b38 = Resource_FindFreeEntry();
-  Vram_Load(gData_02006e0e__s3b38, 0x100, 0);
-  gData_02006e0c__s3b38 = -1;
-  gData_02006e10 = 10;
-  Task_AddFrame(Func_020048f4, TASK_PASS_VBLANK - 10);
-}
+DEFINE_FUNC_02001E58(Func_020049bc, gData_02006f20__s3b38,
+    gData_02006e0e__s3b38, gData_02006e0c__s3b38, gData_02006e10, Func_020048f4)
 
-void Func_02004a1c(void) {
-  Resource_DecodeType01(gWorldMapPackedTilesC, gData_02006f20__s3b38);
-  Resource_ResetEntry(gData_02006e0e__s3b38);
-  gData_02006e0c__s3b38 = -1;
-  FieldTask_Remove(Func_020048f4);
-}
+DEFINE_FUNC_02001EB8(Func_02004a1c, gData_02006f20__s3b38,
+    gData_02006e0e__s3b38, gData_02006e0c__s3b38, Func_020048f4)
 
 #include "scene_tables.h"
 

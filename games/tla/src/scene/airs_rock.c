@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x663 that its scene tables belong to, in ROM order; the rest of the overlay is in airs_rock/.
 
+#include "shared/routines.h"
 #include "system/main_routine_work.h"
 #include "field/field.h"
 #include "event_work.h"
@@ -22,36 +23,7 @@
 #include "resource.h"
 #include "text/msg_ids.h"
 
-void Func_020003e8(u16 *ids) {
-  struct Actor *object;
-  u8 *blocked;
-  struct MapWork *map;
-  struct MapCell **cells;
-  struct MapCell *cell;
-  s32 x, z;
-
-  while (*ids != 0xffff) {
-    object = Actor_Get(*ids);
-    blocked = (u8 *)object + 0x63;
-    *blocked = 0;
-    if (Func_02000348(0, object->x >> 20, object->z >> 20) & 0x40) {
-      map = Ram_HeapSlots->mapWork;
-      if (map == NULL)
-        return;
-      cells = &map->layers[2].cells;
-      z = (object->z - object->y) >> 20;
-      x = object->x >> 20;
-      cell = *cells;
-      cell += x + ((z + 1) << 7);
-      cell->collisionCode = 255;
-      cell = *cells;
-      cell += x + ((z - 1) << 7);
-      cell->collisionCode = 255;
-      *blocked = 1;
-    }
-    ids++;
-  }
-}
+DEFINE_FUNC_020003E8(Func_020003e8, Func_02000348)
 
 void Func_02000468(struct Unk_02000468 *unk) {
   struct MapWork *map;
@@ -849,19 +821,9 @@ void Func_02001560(void) {
   Event_End();
 }
 
-s32 Func_020018ac(s32 *a, s32 *b) {
-  s32 dx = (a[0] - b[0]) >> 16;
-  s32 dz = (a[2] - b[2]) >> 16;
+DEFINE_FUNC_020003D0(Func_020018ac)
 
-  return Iwram_Sqrt(dx * dx + dz * dz);
-}
-
-s32 Func_020018d8(s32 *a, s32 *b) {
-  s32 dx = (*a++ - *b++) >> 16;
-  s32 dy = (*a - *b + 0x60000) >> 16;
-
-  return Iwram_Sqrt(dx * dx + dy * dy);
-}
+DEFINE_FUNC_02000D18(Func_020018d8)
 
 #include "field/event_work.h"
 
@@ -1514,22 +1476,7 @@ void Func_02002b88(void) {
   }
 }
 
-void Func_02002c24(s32 height) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-
-  if (!Event_GetFlag(0x109)) {
-    object->motionFlags = 0;
-    Actor_SetSingleChildFlags(object, 0);
-    object->y += height;
-    object->speedLimit = 0x10000;
-    object->velocityY = 0;
-    gMainRoutineWork.renderMode = 2;
-    object->actionFlags = 1;
-    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
-    Map_CenterOnFollowedPoint();
-    System_Wait(1);
-  }
-}
+DEFINE_FUNC_0200244C(Func_02002c24)
 
 #define LEADER() Actor_GetById(gMainRoutineWork.currentOwner)
 #define BEAM ((s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178))

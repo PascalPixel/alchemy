@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x66b that its scene tables belong to and the routine after it, in ROM order, then its data; the rest of the overlay is in gondowan_cliffs/.
 
+#include "shared/routines.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -12,14 +13,7 @@
 extern const u8 gData_02001698[];
 extern const u8 gData_02001728[];
 
-s32 Func_02000038(struct Actor *object) {
-  u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
-  struct TileSprite *sprite = object->sprite;
-
-  sprite->tile = *tile;
-  sprite->frame = 0;
-  return 1;
-}
+DEFINE_FUNC_02000038_58(Func_02000038)
 
 void Func_02000058(void) { Func_080d2b4c(21, 49); }
 
@@ -90,18 +84,4 @@ u32 gData_0200139c[] = {
 
 #include "../field/object/prepare_object.c"
 
-struct Actor *Func_02000160(s32 a0, s32 a1, s32 a2, s32 a3) {
-  struct Actor *t0;
-
-  t0 = FieldActor_Create(a3, a0, a1, a2);
-  if (t0 != 0) {
-    Scene_SetActorSpritePriority(t0, 1);
-    t0->motionFlags = 0;
-    t0->collisionFlags = 8;
-    Actor_SetSingleChildFlags(t0, 0);
-    Actor_SetSpriteColor(t0, 0xf);
-    t0->priorityFlags = 0x22 | t0->priorityFlags;
-    return t0;
-  }
-  return 0;
-}
+DEFINE_FUNC_020000D0(Func_02000160)

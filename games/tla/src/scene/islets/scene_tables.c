@@ -1,3 +1,4 @@
+#include "../shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -201,16 +202,7 @@ L_020083cc:
   return;
 }
 
-s32 Func_020003dc(void) {
-  u16 turn;
-  s32 facing;
-
-  turn = Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x5fff;
-  facing = 1;
-  if (turn >= 0x3fff)
-    facing = 0;
-  return facing;
-}
+DEFINE_FUNC_020003DC(Func_020003dc)
 
 void Func_0200040c(void) {
   s32 result0;

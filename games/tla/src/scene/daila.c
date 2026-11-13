@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x651, in ROM order.
 
+#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -411,18 +412,7 @@ void Func_02000a5c(void) {
 
 void Actor_SetWideSprite(s32 actor, s32 flag);
 
-void Func_02000a9c(void) {
-  u8 *event = Ram_HeapSlots->eventWork;
-  struct Actor *object;
-  s32 flags;
-
-  Func_02000d58(gData_02000d80);
-  object = *(struct Actor **)(event + 0xcbc);
-  flags = 1;
-  flags |= object->priorityFlags;
-  flags &= 0xfd;
-  object->priorityFlags = flags;
-}
+DEFINE_FUNC_02000704(Func_02000a9c, Func_02000d58, gData_02000d80)
 
 s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;

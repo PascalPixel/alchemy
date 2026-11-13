@@ -1,3 +1,4 @@
+#include "../shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "version.h"
@@ -182,17 +183,7 @@ s32 gData_02006338[] = {
     SC_END,
 };
 
-s32 gData_0200641c[] = {
-    SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, -1536),
-    SC_WAIT(1),
-    SC_LOOP(4, SC_TO(1)),
-    SC_LABEL(2),
-    SC_ADD(SW_SCALE_X, 0x600),
-    SC_WAIT(1),
-    SC_LOOP(4, SC_TO(2)),
-    SC_LOOP(SC_FOREVER, SC_TOP),
-};
+DEFINE_G_DATA_02005B54(gData_0200641c)
 
 s32 gData_02006470[] = {
     SC_SET(SW_SCALE_X, 0xcccc),

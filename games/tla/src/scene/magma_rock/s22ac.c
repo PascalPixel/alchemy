@@ -1,3 +1,4 @@
+#include "../shared/routines.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -81,22 +82,7 @@ loop:
   Func_02003af4();
 }
 
-void Func_0200244c(s32 height) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-
-  if (!Event_GetFlag(0x109)) {
-    object->motionFlags = 0;
-    Actor_SetSingleChildFlags(object, 0);
-    object->y += height;
-    object->speedLimit = 0x10000;
-    object->velocityY = 0;
-    gMainRoutineWork.renderMode = 2;
-    object->actionFlags = 1;
-    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
-    Map_CenterOnFollowedPoint();
-    System_Wait(1);
-  }
-}
+DEFINE_FUNC_0200244C(Func_0200244c)
 
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
@@ -443,57 +429,8 @@ extern u8 gMapShapeGrid[];
 s32 Func_02003adc(s32 layer, s32 x, s32 z);
 u8 Func_02003c24(s32 layer, s32 shape, s32 height);
 
-void Func_02002d08(const u16 *table) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct Actor *object;
-  s32 id;
-  s32 flag;
-  s32 nextFlag;
-  struct MapCell *cells;
-  u8 *shapes;
-  struct MapCell *cell;
-  s32 index;
-  struct Actor *leader;
-  s32 ground;
-
-  if (*table == 0xffff)
-    goto done;
-next:
-  id = table[0];
-  object = Actor_Get(id);
-  flag = table[1];
-  nextFlag = flag + 1;
-  cells = map->layers[object->terrainId].cells;
-  shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-  if (Event_GetFlag(nextFlag)) {
-    Actor_SetPosition(id, 0, 0);
-  } else {
-    s32 shape;
-    u8 *slot;
-    s32 height;
-
-    index = Func_02003c04(object);
-    cell = &cells[index];
-    slot = shapes + index;
-    shape = Func_02003adc(object->terrainId, object->x, object->z);
-    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
-    Func_02003b3c(id);
-    cell->attributeB = 128;
-    *slot = Func_02003c24(object->terrainId, shape, (height >> 19) + 4);
-    if (Event_GetFlag(flag))
-      Func_02003a54(object, 0);
-  }
-  table += 2;
-  if (*table != 0xffff)
-    goto next;
-done:
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
-  ground = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
-  if (leader->y < ground) {
-    leader->terrainHeight = ground;
-    leader->y = ground;
-  }
-}
+DEFINE_FUNC_02002D08(Func_02002d08, Func_02003c04, Func_02003adc, Func_02003b3c,
+    Func_02003c24, Func_02003a54)
 
 void Func_020035e0(void);
 
@@ -623,65 +560,8 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 /// it copy actor 9's visual attributes.
-void Func_020030bc(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct Actor *object;
-  s32 id;
-  s32 flag;
-  s32 nextFlag;
-  struct MapCell *cells;
-  u8 *shapes;
-  struct MapCell *cell;
-  s32 index;
-  u8 *grid = gMapShapeGrid; // the shape grid, read once
-
-  Actor_MoveToObject(8, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(10, gMainRoutineWork.currentOwner);
-  System_Wait(1);
-  Func_020030a4(8);
-  Func_020030a4(9);
-  Func_020030a4(10);
-  Actor_SetAnimation(9, 0);
-  System_Wait(1);
-  Actor_SetPosition(8, 0, 0);
-  Actor_SetPosition(9, 0, 0);
-  Actor_SetPosition(10, 0, 0);
-  System_Wait(1);
-  if (*list == 0xffff)
-    goto done;
-next:
-  id = list[0];
-  object = Actor_Get(id);
-  flag = list[1];
-  nextFlag = flag + 1;
-  cells = map->layers[object->terrainId].cells;
-  shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-  object->unk5c[0] = 3;
-  if (Event_GetFlag(nextFlag)) {
-    Actor_SetPosition(id, 0, 0);
-  } else {
-    s32 shape;
-    u8 *slot;
-    s32 height;
-
-    index = Func_02003c04(object);
-    cell = &cells[index];
-    slot = shapes + index;
-    shape = Func_02003adc(object->terrainId, object->x, object->z);
-    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
-    Func_02003b3c(id);
-    cell->attributeB = 128;
-    *slot = Func_02003c24(object->terrainId, shape, (height >> 19) + 4);
-    if (Event_GetFlag(flag))
-      ObjectVisual_CopyAttributes(id, 9);
-  }
-  list += 2;
-  if (*list != 0xffff)
-    goto next;
-done:
-  System_Wait(10);
-}
+DEFINE_FUNC_020030BC(Func_020030bc, Func_020030a4, Func_02003c04, Func_02003adc,
+    Func_02003b3c, Func_02003c24)
 
 void Func_02003224(struct Actor *object, struct Actor *source) {
   FieldActor_SetPositionAndResetMotion(object, source->x, source->y, source->z);

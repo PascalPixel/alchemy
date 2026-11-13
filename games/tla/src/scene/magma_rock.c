@@ -1,3 +1,4 @@
+#include "shared/routines.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -15,12 +16,7 @@ struct EventObjects {
 
 void Func_02000594(void) { Func_080d2b4c(8, 56); }
 
-s32 Func_020005a0(s32 *a, s32 *b) {
-  s32 dx = (a[0] - b[0]) >> 16;
-  s32 dz = (a[2] - b[2]) >> 16;
-
-  return Iwram_Sqrt(dx * dx + dz * dz);
-}
+DEFINE_FUNC_020003D0(Func_020005a0)
 
 extern u8 gMapShapeGrid[];
 
@@ -28,33 +24,13 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02003adc(s32 layer, s32 x, s32 z);
 s32 Func_02003c24(s32 layer, s32 shape, s32 height);
 
-s32 Func_020005cc(s32 layer, s32 x, s32 z, s32 height) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  s32 shape = Func_02003adc(layer, x, z);
-  u8 *out = Ram_MapShapeGrid +
-            (map->layers[layer].cells - (struct MapCell *)Ram_MapCellBuffer);
-
-  out += x + (z << 7);
-  *out = Func_02003c24(layer, shape, height);
-  return 0;
-}
+DEFINE_FUNC_020005CC(Func_020005cc, Func_02003adc, Func_02003c24)
 
 #include "../field/map/cell_get.c"
 
 #include "field.h"
 
-void Func_02000668(u16 *list) {
-  for (; *list != 0xffff; list += 3) {
-    struct Actor *object = Actor_Get(*list);
-    s32 height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
-
-    object->motionFlags = 0;
-    object->collisionFlags = 0;
-    Actor_SetSingleChildFlags(object, 0);
-    Func_020005cc(object->terrainId, object->x >> 20, object->z >> 20,
-                  (height >> 19) + 4);
-  }
-}
+DEFINE_FUNC_02000668(Func_02000668, Func_020005cc)
 
 #include "battle.h"
 #include "game.h"
@@ -114,29 +90,7 @@ struct Object0200074c {
   u8 marked;
 };
 
-void Func_0200074c(struct Object0200074c *object) {
-  struct MapWork *map;
-  struct MapCell **cells;
-  struct MapCell *cell;
-  s32 x;
-  s32 z;
-
-  if (object->marked == 0)
-    return;
-  map = Ram_HeapSlots->mapWork;
-  if (map == NULL)
-    return;
-  cells = &map->layers[2].cells;
-  cell = *cells;
-  x = object->x >> 20;
-  z = (object->z - object->y) >> 20;
-  cell += x + ((z + 1) << 7);
-  cell->collisionCode = 0;
-  cell = *cells;
-  cell += x + ((z - 1) << 7);
-  cell->collisionCode = 0;
-  object->marked = 0;
-}
+DEFINE_FUNC_0200074C(Func_0200074c)
 
 // For each id of a list ended by 0xffff: settles the object on its ground,
 // copies the cell under it, and blocks the cells ahead of and behind it on a

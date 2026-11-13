@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x655, in ROM order, from s0bc0's offset up to the next object the overlay links.
 
+#include "../shared/routines.h"
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 #include "map.h"
 #include "types.h"
@@ -18,19 +19,7 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
-void Func_02000bc0(s32 level, s32 layer, s32 owner) {
-  struct Actor *object = Actor_GetById(owner);
-  u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapWork->layers[layer].cells -
-                                  (struct MapCell *)Ram_MapCellBuffer);
-  s32 value = Func_02003c10(object->terrainId, object->x, object->z);
-  s32 height =
-      Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
-
-  height += level;
-
-  shape += object->x / 0x100000 + object->z / 0x100000 * 128;
-  *shape = Func_02003dd0(object->terrainId, value, height);
-}
+DEFINE_FUNC_02000BC0(Func_02000bc0, Func_02003c10, Func_02003dd0)
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -63,49 +52,7 @@ void Actor_MoveToObject(s32 id, s32 target);
 
 // Raises each listed actor's cells: the shape grid and the cell flags under it,
 // then lifts the leader if the new terrain is above the leader.
-void Func_02000c64(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct Actor *leader;
-  s32 height;
-
-  while (((struct ListedActor *)list)->id != 0xffff) {
-    struct Actor *object = Actor_GetById(*list);
-    u8 *layer = &object->terrainId;
-    s32 shape = Func_02003c10(*layer, object->x, object->z);
-    s32 level = Map_GetTerrainHeight(*layer, object->x, object->z);
-    s32 index;
-    u8 *cells;
-    u8 *shapes;
-    u8 newShape;
-    u8 *grid;
-
-    level >>= 19;
-    index = Func_02003db0(object);
-    cells = (u8 *)map->layers[*layer].cells;
-    grid = Ram_MapShapeGrid;
-    shapes =
-        grid + (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
-    object->motionFlags = 0;
-    object->collisionFlags = 0;
-    Actor_SetSingleChildFlags(object, 0);
-    level += 4;
-    newShape = Func_02003dd0(*layer, shape, level);
-    shapes += index;
-    index <<= 2;
-    ((struct ShapeCell *)shapes)->shape = newShape;
-    cells += index;
-    ((struct MapCell *)cells)->attributeB |= 192;
-    cells += 0x200;
-    ((struct MapCell *)cells)->attributeB |= 64;
-    list++;
-  }
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  height = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
-  if (leader->y < height) {
-    leader->terrainHeight = height;
-    leader->y = height;
-  }
-}
+DEFINE_FUNC_02000038(Func_02000c64, Func_02003c10, Func_02003db0, Func_02003dd0)
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 

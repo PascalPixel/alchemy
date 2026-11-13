@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/kibombo/s0038.c ----
 
+#include "shared/routines.h"
 #include "kibombo/kibombo.h"
 #include "event_work.h"
 #include "gamepak/far_call/system.h"
@@ -201,16 +202,7 @@ void Func_020002c4(void) {
   Event_End();
 }
 
-s32 Func_020002e8(void) {
-  u16 turn;
-  s32 facing;
-
-  turn = Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x5fff;
-  facing = 1;
-  if (turn >= 0x3fff)
-    facing = 0;
-  return facing;
-}
+DEFINE_FUNC_020002E8(Func_020002e8)
 
 void Func_02000318(void) {
   if (Func_020002e8()) {

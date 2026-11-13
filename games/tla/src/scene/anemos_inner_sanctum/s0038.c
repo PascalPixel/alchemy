@@ -1,6 +1,7 @@
 /// @file
 /// Overlay 0x6b0's code from its entry table up to field/object/set_sprite_priority, in ROM order.
 
+#include "../shared/routines.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "event_inline.h"
@@ -80,16 +81,7 @@ void Func_02000178(void) {
   Task_AddFrame(Func_020001f8, TASK_PASS_VBLANK);
 }
 
-s32 Func_020001d4(u16 *list) {
-  s32 count = 0;
-
-  while (*list != 0xffff) {
-    list++;
-    count++;
-  }
-  count--;
-  return count;
-}
+DEFINE_FUNC_020001D4(Func_020001d4)
 
 void Func_020001f8(void) {
   s32 step;

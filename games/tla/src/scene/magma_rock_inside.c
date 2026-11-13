@@ -1,4 +1,5 @@
 // ---- games/tla/src/scene/magma_rock_inside/s03b4.c ----
+#include "shared/routines.h"
 #include "types.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
@@ -131,28 +132,14 @@ void Func_02000594(void) { Func_080d2b4c(15, 56); }
 
 void Func_020005a0(void) { Func_080d7788(17, 2, 19); }
 
-s32 Func_020005b0(s32 *a, s32 *b) {
-  s32 dx = (a[0] - b[0]) >> 16;
-  s32 dz = (a[2] - b[2]) >> 16;
-
-  return Iwram_Sqrt(dx * dx + dz * dz);
-}
+DEFINE_FUNC_020003D0(Func_020005b0)
 
 #include "actor.h"
 
 s32 Func_02004d20(s32 layer, s32 x, s32 z);
 s32 Func_02004ef0(s32 layer, s32 shape, s32 height);
 
-s32 Func_020005dc(s32 layer, s32 x, s32 z, s32 height) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  s32 shape = Func_02004d20(layer, x, z);
-  u8 *out = Ram_MapShapeGrid +
-            (map->layers[layer].cells - (struct MapCell *)Ram_MapCellBuffer);
-
-  out += x + (z << 7);
-  *out = Func_02004ef0(layer, shape, height);
-  return 0;
-}
+DEFINE_FUNC_020005CC(Func_020005dc, Func_02004d20, Func_02004ef0)
 
 void Func_0200063c(struct Actor *object) {
   s32 count;
@@ -169,97 +156,18 @@ void Func_0200063c(struct Actor *object) {
   }
 }
 
-s32 Func_02000658(u32 layer, s32 x, s32 y) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct MapCell *cell;
+DEFINE_FUNC_0200012C(Func_02000658)
 
-  if (map == NULL)
-    return 0;
-  if (layer <= 2)
-    cell = map->layers[layer].cells;
-  else
-    cell = gMapCellBuffer;
-  cell += x + (y << 7);
-  return (cell->collisionCode << 8) | cell->attributeB;
-}
-
-s32 Func_02000694(u32 layer, s32 x, s32 y, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct MapCell *cell;
-  s32 old;
-
-  if (map == NULL)
-    return 0;
-  if (layer <= 2)
-    cell = map->layers[layer].cells;
-  else
-    cell = gMapCellBuffer;
-  cell += x + (y << 7);
-  old = (cell->collisionCode << 8) | cell->attributeB;
-  cell->collisionCode = value >> 8;
-  cell->attributeB = value;
-  return old;
-}
+DEFINE_FUNC_02000168(Func_02000694)
 
 /// For each id of a list ended by 0xffff: clears the object's mark and, on a
 /// cell with attribute bit 6, blocks the cells ahead of and behind it and sets
 /// the mark.
-void Func_020006dc(u16 *ids) {
-  struct Actor *object;
-  u8 *blocked;
-  struct MapWork *map;
-  struct MapCell **cells;
-  struct MapCell *cell;
-  s32 x, z;
-
-  while (*ids != 0xffff) {
-    object = Actor_Get(*ids);
-    blocked = (u8 *)object + 0x63;
-    *blocked = 0;
-    if (Func_02000658(0, object->x >> 20, object->z >> 20) & 0x40) {
-      map = Ram_HeapSlots->mapWork;
-      if (map == NULL)
-        return;
-      cells = &map->layers[2].cells;
-      z = (object->z - object->y) >> 20;
-      x = object->x >> 20;
-      cell = *cells;
-      cell += x + ((z + 1) << 7);
-      cell->collisionCode = 255;
-      cell = *cells;
-      cell += x + ((z - 1) << 7);
-      cell->collisionCode = 255;
-      *blocked = 1;
-    }
-    ids++;
-  }
-}
+DEFINE_FUNC_020003E8(Func_020006dc, Func_02000658)
 
 /// Clears the object's mark and the cells ahead of and behind it that the mark
 /// blocked.
-void Func_0200075c(struct Object0200074c *object) {
-  struct MapWork *map;
-  struct MapCell **cells;
-  struct MapCell *cell;
-  s32 x;
-  s32 z;
-
-  if (object->marked == 0)
-    return;
-  map = Ram_HeapSlots->mapWork;
-  if (map == NULL)
-    return;
-  cells = &map->layers[2].cells;
-  cell = *cells;
-  x = object->x >> 20;
-  z = (object->z - object->y) >> 20;
-  cell += x + ((z + 1) << 7);
-  cell->collisionCode = 0;
-  cell = *cells;
-  cell += x + ((z - 1) << 7);
-  cell->collisionCode = 0;
-  object->marked = 0;
-}
+DEFINE_FUNC_0200074C(Func_0200075c)
 
 void Func_020007ac(struct Actor *object) {
   u8 *work = (u8 *)Ram_HeapSlots->eventWork;
@@ -336,18 +244,7 @@ L_02008870:
 
 s32 Func_020005dc(s32 terrain, s32 x, s32 z, s32 height);
 
-void Func_02000880(u16 *list) {
-  for (; *list != 0xffff; list += 3) {
-    struct Actor *object = Actor_Get(*list);
-    s32 height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
-
-    object->motionFlags = 0;
-    object->collisionFlags = 0;
-    Actor_SetSingleChildFlags(object, 0);
-    Func_020005dc(object->terrainId, object->x >> 20, object->z >> 20,
-                  (height >> 19) + 4);
-  }
-}
+DEFINE_FUNC_02000668(Func_02000880, Func_020005dc)
 
 #include "battle.h"
 #include "game.h"
@@ -1801,24 +1698,7 @@ s32 Func_02002a6c(struct Orbiter__magma_rock_inside *object) {
 }
 
 // Moves around in a circle.
-s32 Func_02002b2c(struct Orbit *object) {
-  s32 z;
-
-  object->angle += object->speed;
-  object->x = IwramMulQ16(Math_Cosine(object->angle), object->radius);
-  z = IwramMulQ16(Math_Sin(object->angle), object->radius);
-  object->x += object->centreX;
-  object->z = (z >> 1) + object->centreZ;
-  if (object->growth != 141 && (gFrameCount & 1)) {
-    object->radius = object->growth * Math_Sin(object->phase << 10);
-    object->growth += 10;
-  }
-  if (object->speed == 0)
-    return 0;
-  if (object->growth == 141)
-    object->speed -= 128;
-  return 1;
-}
+DEFINE_FUNC_0200147C(Func_02002b2c)
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 

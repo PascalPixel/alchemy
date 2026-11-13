@@ -1,6 +1,8 @@
 /// @file
 /// Scene code of overlay 0x67c, in ROM order, from s3844's offset up to the next object the overlay links and the overlay's data.
 
+#include "../shared/routines.h"
+#include "../shared/tables.h"
 #include "local.h"
 #include "types.h"
 #include "iwram_call.h"
@@ -13,19 +15,7 @@
 #define VENT_BOUNCE Func_0200389c
 #include "../../field/object/vent_bounce.c"
 
-void Func_02003994(struct Actor *object, s32 priority) {
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  object->priorityFlags = 2;
-  ((struct FieldSprite *)object->sprite)->priority = priority;
-  Actor_SetSingleChildFlags(object, 0);
-  Func_02003cc4(object, 2);
-  Actor_StartScript(object, gData_020044c8);
-  Actor_SetSpriteColor(object, 10);
-  object->timer = 0;
-  object->speedLimit = 0;
-  object->acceleration = 0;
-}
+DEFINE_FUNC_020024F8(Func_02003994, Func_02003cc4, gData_020044c8)
 
 void Func_020039f0(s32 *position, s32 base) {
   struct Actor *object = Import_ActorCreate_(0x11d, position[0], position[1],
@@ -49,23 +39,7 @@ void Func_020039f0(s32 *position, s32 base) {
   }
 }
 
-void Func_02003a70(void) {
-  struct VentWork *work = VENT_WORK;
-  struct VentEntry *entry = work->entries;
-  s32 i;
-
-  work->hook();
-  for (i = 15; i >= 0; i--, entry++) {
-    if (entry->active != 0) {
-      if (entry->timer <= 0) {
-        Func_020039f0(&entry->x, entry->value);
-        entry->timer = 9;
-      } else {
-        entry->timer--;
-      }
-    }
-  }
-}
+DEFINE_FUNC_020025D4(Func_02003a70, Func_020039f0)
 
 void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
   struct WaterWork *work = (struct WaterWork *)(gData_020023c4 + 0x188);
@@ -137,15 +111,7 @@ s32 Func_02003bb8(s32 index, s32 value) {
 
 s32 Func_02003bcc(void) { return VENT_WORK->counter; }
 
-s32 Func_02003bd8(s32 limit) {
-  struct VentWork *work = VENT_WORK;
-
-  if (Event_GetFlag(0x104) == 0) {
-    if (++work->counter >= limit)
-      work->counter = 0;
-  }
-  return work->counter;
-}
+DEFINE_FUNC_0200273C(Func_02003bd8)
 
 void Func_02003c00(s32 index, s32 value) {
   u8 *base = (u8 *)VENT_WORK;
@@ -153,12 +119,7 @@ void Func_02003c00(s32 index, s32 value) {
   ((struct VentRow *)(base + index * 20))->value = value;
 }
 
-void Func_02003c14(s32 i, s32 id) {
-  struct VentWork *work = VENT_WORK;
-
-  if ((u32)i <= 3)
-    work->ids[i] = id;
-}
+DEFINE_FUNC_02002778(Func_02003c14)
 
 #include "scene_tables.h"
 
@@ -207,16 +168,8 @@ s32 gData_02004004[] = {
     17,
 };
 
-s32 gData_02004014[] = {
-    46,
-    (s32)Func_0200147c,
-    46,
-    (s32)Func_02001520,
-    46,
-    (s32)Func_0200156c,
-    38,
-    17,
-};
+DEFINE_G_DATA_02004014(gData_02004014, Func_0200147c, Func_02001520,
+    Func_0200156c)
 
 u32 gData_02004034[] = {
     5, 0, 0x180000, 0, 1, 22,

@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x661, in ROM order, from placements' offset up to the next object the overlay links.
 
+#include "../shared/routines.h"
 #include "scene.h"
 #include "module/scene/yampi_desert.h"
 #include "module/tla.h"
@@ -188,23 +189,11 @@ void Func_02000620(s32 a, s32 b) { Func_0200388c(gData_02004768, a, b); }
 
 void Func_02000634(s32 a, s32 b) { Func_0200388c(gData_0200478e, a, b); }
 
-void Func_02000648(s32 a, s32 b) {
-  Func_0200388c(gData_020047d2, a, b);
-  if (a == 1) {
-    if (gData_02004808 == 0)
-      gData_02004808 = 210;
-  }
-}
+DEFINE_FUNC_02000648(Func_02000648, gData_020047d2)
 
 void Func_02000670(s32 a, s32 b) { Func_0200388c(gData_02004800, a, b); }
 
-void Func_02000684(s32 a, s32 b) {
-  Func_0200388c(gData_020047ec, a, b);
-  if (a == 1) {
-    if (gData_02004808 == 0)
-      gData_02004808 = 210;
-  }
-}
+DEFINE_FUNC_02000648(Func_02000684, gData_020047ec)
 
 void Func_020006ac(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;

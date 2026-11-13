@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x680, in ROM order.
 
+#include "shared/tables.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -821,45 +822,5 @@ u32 gData_02001688[] = {
     1, 13, 10, 0xc0010000, 38,
 };
 
-s32 gData_020016cc[] = {
-    SC_ADD(SW_SCALE_X, 0x8000),
-    SC_ADD(SW_SCALE_Y, 0x8000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, -0x4000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x2000),
-    SC_ADD(SW_SCALE_Y, -0x2000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x2000),
-    SC_ADD(SW_SCALE_Y, -0x2000),
-    SC_WAIT(4),
-    SC_ADD(SW_SCALE_X, 0x8000),
-    SC_ADD(SW_SCALE_Y, 0x8000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, -0x4000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x2000),
-    SC_ADD(SW_SCALE_Y, -0x2000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x2000),
-    SC_ADD(SW_SCALE_Y, -0x2000),
-    SC_WAIT(4),
-    SC_ADD(SW_SCALE_X, 0x8000),
-    SC_ADD(SW_SCALE_Y, 0x8000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, -0x4000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x2000),
-    SC_ADD(SW_SCALE_Y, -0x2000),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x2000),
-    SC_ADD(SW_SCALE_Y, -0x2000),
-    SC_WAIT(4),
-    SC_WAIT(20),
-    SC_LOOP(3, SC_TOP),
-    SC_END,
-};
+DEFINE_G_DATA_020016CC(gData_020016cc)
 // clang-format on

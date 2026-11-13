@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/daila_interiors.c ----
 
+#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -323,18 +324,7 @@ void Func_020006c4(void) {
   Import_EventEnd();
 }
 
-void Func_02000704(void) {
-  u8 *event = Ram_HeapSlots->eventWork;
-  struct Actor *object;
-  s32 flags;
-
-  Func_02000dcc(gData_02000e04);
-  object = *(struct Actor **)(event + 0xcbc);
-  flags = 1;
-  flags |= object->priorityFlags;
-  flags &= 0xfd;
-  object->priorityFlags = flags;
-}
+DEFINE_FUNC_02000704(Func_02000704, Func_02000dcc, gData_02000e04)
 
 // ---- games/tla/src/scene/daila_interiors/item.c ----
 // Scene code of overlay 0x652, in ROM order, from item's offset up to the next object the overlay links.
@@ -575,12 +565,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Func_02000c58(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
-
-  work->screenEffect = 0x209;
-  GameFlag_ClearBit(0x12f);
-}
+DEFINE_FUNC_0200014C(Func_02000c58)
 
 void Func_02000c74(void) { Func_02000d9c(); }
 

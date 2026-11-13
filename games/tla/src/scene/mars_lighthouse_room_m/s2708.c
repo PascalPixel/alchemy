@@ -1,3 +1,4 @@
+#include "../shared/routines.h"
 #include "mars_lighthouse_room_m.h"
 #include "event_inline.h"
 #include "display_transition.h"
@@ -141,13 +142,7 @@ void Func_02003230(s32 a, s32 b);
 void Func_02003228(void);
 void Func_020032a8(void);
 
-s32 Func_02002848(void) {
-  if (((struct RideWork *)(gData_020023c4 + 0x188))->active) {
-    Func_02002708();
-    return 1;
-  }
-  return 0;
-}
+DEFINE_FUNC_020024AC(Func_02002848, Func_02002708)
 
 s32 Func_02002864(void) {
   return ((struct RideWork *)(gData_020023c4 + 0x188))->active;
@@ -477,113 +472,18 @@ void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
 /// gives it Func_02002ae8 as its update hook and its speed, clears its scale
 /// and action, has it watch what self watches, and calls Event_PlaySound(104).
 /// Overlays 6aa and 6ab keep the same code.
-void Func_02002e6c(struct Actor *self) {
-  struct Actor *actor = Actor_Get(((u8 *)self)[0x62]);
-  s32 angle = (s16)self->unk66;
-  struct FieldSprite *sprite = actor->sprite;
-  // volatile: the call reads position[0] before [1] and [2] (as a plain
-  // array, 2 of 86 differ in tla-en).
-  volatile s32 position[3];
-
-  position[0] = self->x;
-  position[1] = self->y - PIXELS(12);
-  position[2] = self->z;
-  FieldVector_AddPolarOffset(PIXELS(32), angle, (struct Vector3 *)position);
-  actor->facing = angle;
-  actor->motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(actor, position[0], position[1], position[2]);
-  actor->update = (void (*)(void))Func_02002ae8;
-  actor->actionFlags = 0;
-  actor->speedLimit = 0x80000;
-  actor->acceleration = 0x2000;
-  sprite->rotation = angle - 0x4000;
-  actor->scaleX = 0;
-  // A once-only block: its end holds the order around it (as the plain
-  // statement, 4 of 86 differ in tla-en).
-  do {
-    actor->scaleY = 0;
-  } while (0);
-  actor->timer = 0;
-  actor->watchedObject = self->watchedObject;
-  Event_PlaySound(104);
-}
+DEFINE_FUNC_02002AD0(Func_02002e6c, Func_02002ae8)
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 
-s32 Func_02002f34(struct Actor *object) {
-  s32 frame = object->timer;
+DEFINE_FUNC_02002B98(Func_02002f34, Func_02003118)
 
-  if (frame == 0) {
-    object->y = Map_GetTerrainHeight(0, object->x, object->z) + 0x100000;
-    object->scaleX = frame;
-    object->scaleY = frame;
-    object->speedLimit = 0x10000;
-    object->acceleration = 0x10000;
-    Actor_SetSpritePriorityDirect(object, 1);
-  } else if (frame <= 30) {
-    if (frame == 30) {
-      Event_PlaySound(136);
-      Func_02003118(object->watchedObject, 2);
-    }
-  } else if (frame <= 60) {
-    object->scaleX = 0x10000;
-    object->scaleY = 0x10000;
-    {
-      s32 half = (object->timer / 2) & 1;
-
-      Animation_ApplyChildValues(object->watchedObject, half * 7);
-    }
-  } else {
-    Func_02003118(object->watchedObject, 1);
-    Event_PlaySound(184);
-    object->y = Map_GetTerrainHeight(0, object->x, object->z);
-    object->watchedObject = 0;
-    return 0;
-  }
-  object->timer++;
-  return 1;
-}
-
-s32 Func_02002fe0(struct Actor *object) {
-  s32 frame = object->timer;
-
-  if (frame == 0) {
-    Event_PlaySound(136);
-    Func_02003118(object->watchedObject, 2);
-    object->y = Map_GetTerrainHeight(0, object->x, object->z) + 0x100000;
-    object->scaleX = frame;
-    object->scaleY = frame;
-    object->speedLimit = 0x10000;
-    object->acceleration = 0x8000;
-    Actor_SetSpritePriorityDirect(object, 1);
-  } else if (frame <= 32) {
-    object->scaleX = 0x10000;
-    object->scaleY = 0x10000;
-    {
-      s32 half = (object->timer / 2) & 1;
-
-      Animation_ApplyChildValues(object->watchedObject, half * 7);
-    }
-  } else {
-    Func_02003118(object->watchedObject, 1);
-    Event_PlaySound(184);
-    object->y = Map_GetTerrainHeight(0, object->x, object->z);
-    object->watchedObject = 0;
-    return 0;
-  }
-  object->timer++;
-  return 1;
-}
+DEFINE_FUNC_02002C44(Func_02002fe0, Func_02003118)
 
 #include "macros.h"
 
-s32 Func_02003084(struct Actor *object) {
-  Func_02002e6c(object);
-  SET_POSITION(object, 0, 0, 0);
-  SET_VELOCITY(object, 0, 0, 0);
-  return 0;
-}
+DEFINE_FUNC_02002CE8(Func_02003084, Func_02002e6c)
 
 #include "objcmd.h"
 

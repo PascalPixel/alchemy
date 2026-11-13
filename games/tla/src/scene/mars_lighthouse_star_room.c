@@ -1,4 +1,5 @@
 // ---- games/tla/src/scene/mars_lighthouse_star_room.c ----
+#include "shared/routines.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "frame.h"
@@ -199,15 +200,7 @@ void Func_0200024c(s32 phase, s32 frame) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Func_020002d4(s32 id) {
-  struct Actor *object = Actor_Get(id);
-
-  if (object != NULL) {
-    Actor_SetSingleChildFlags(object, 0);
-    object->collisionFlags = 0;
-    object->motionFlags = 0;
-  }
-}
+DEFINE_FUNC_020002D4(Func_020002d4)
 
 #include "main_routine_work.h"
 
@@ -1179,70 +1172,8 @@ struct RideWork__s1424 {
 
 extern u8 gData_020023c4[];
 
-void Func_020015ec(struct Actor *object) {
-  struct RideWork__s1424 *work = (struct RideWork__s1424 *)(gData_020023c4 + 0x188);
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  struct EventWork *event = Ram_HeapSlots->eventWork;
-  s32 dx = object->bounce;
-  s32 dz;
-  s32 i;
-  s32 direction;
-  s32 id;
-
-  object->x += dx;
-  object->y += object->gravity;
-  dz = object->unk4c;
-  object->z += dz;
-  object->bounce = dx - dx / 18;
-  object->unk4c = dz - dz / 16;
-  object->scaleX += object->speedLimit;
-  object->scaleY += object->acceleration;
-  ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
-  if (actor->y == actor->terrainHeight && Func_02001528(object, actor) &&
-      gMainRoutineWork.renderMode == 0) {
-    if (object->unk4c != 0) {
-      work->value68 = 0;
-      {
-        u16 *cell = &work->direction;
-
-        if (object->unk4c > 0) {
-          direction = 1;
-          *cell = direction;
-        } else {
-          direction = 0xffff;
-          *cell = direction;
-        }
-      }
-    }
-    object->priorityFlags = 2;
-    {
-      s32 speed = object->unk4c;
-
-      object->unk4c = 0;
-      object->z -= speed;
-      object->gravity += speed >> 2;
-    }
-    work->landed = 1;
-    event->exit = work->value0a;
-  }
-  for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
-    actor = Actor_Get(id);
-
-    if (actor->y == actor->terrainHeight && Func_0200158c(object, actor)) {
-      if (work->slots[i].blocked == 0) {
-        s32 speed;
-
-        object->priorityFlags = 2;
-        speed = object->unk4c;
-        object->unk4c = 0;
-        object->z -= speed;
-        object->gravity += speed >> 2;
-      } else {
-        work->blocked = 1;
-      }
-    }
-  }
-}
+DEFINE_FUNC_020015EC(Func_020015ec, RideWork__s1424, Func_02001528,
+    Func_0200158c)
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/spawn.c ----
 extern const u8 gData_02004744[];
@@ -1250,15 +1181,7 @@ extern const u8 gData_02004744[];
 void Func_020041cc(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
 
-void Func_02001750(struct Actor *object) {
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  Actor_SetSingleChildFlags(object, 0);
-  Actor_StartScript(object, gData_02004744);
-  object->timer = 0;
-  object->speedLimit = 0;
-  object->acceleration = 0;
-}
+DEFINE_FUNC_02001750(Func_02001750, gData_02004744)
 
 void Func_02001780(s32 *position, s32 speed, s32 flag) {
   struct Actor *object = FieldActor_Create(366, position[0], position[1], position[2]);
@@ -1381,20 +1304,7 @@ void Func_02001928(struct Actor *object, s32 part) {
   object->acceleration = zero;
 }
 
-void Func_0200196c(s32 *position, s32 speed, s32 flag) {
-  struct Actor *object = FieldActor_Create(366, position[0], position[1], position[2]);
-
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->unk4c = -speed;
-    Func_02001928(object, 3);
-    object->update = Func_020015ec;
-    if (flag != 0)
-      object->unk5c[0] = 2;
-    Func_020041cc(object, 2);
-  }
-}
+DEFINE_FUNC_0200196C_97(Func_0200196c, Func_020015ec)
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s19b4.c ----
 
@@ -1413,20 +1323,7 @@ void Func_020019b4(s32 *position, s32 speed, s32 flag) {
   }
 }
 
-void Func_020019fc(s32 *position, s32 speed, s32 flag) {
-  struct Actor *object = FieldActor_Create(366, position[0], position[1], position[2]);
-
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->unk4c = -speed;
-    Func_02001928(object, 3);
-    object->update = Func_020017c8;
-    if (flag != 0)
-      object->unk5c[0] = 2;
-    Func_020041cc(object, 2);
-  }
-}
+DEFINE_FUNC_0200196C_97(Func_020019fc, Func_020017c8)
 
 s32 Func_02001a44(struct Actor *a, struct Actor *b) {
   if (DIFF(a->x, b->x) < 0xc0000) {
@@ -1440,46 +1337,11 @@ s32 Func_02001a44(struct Actor *a, struct Actor *b) {
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
-void Func_02001a9c(struct Actor *object) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 dx = object->bounce;
-  s32 dz;
-  struct SpriteParts *parts;
-  s32 rate;
-  s32 scale;
-
-  object->x += dx;
-  object->y += object->gravity;
-  dz = object->unk4c;
-  object->z += dz;
-  object->bounce = dx - dx / 18;
-  object->unk4c = dz - dz / 16;
-  rate = object->speedLimit;
-  scale = object->scaleX;
-  parts = object->sprite;
-  object->scaleX = scale + rate;
-  object->scaleY += object->acceleration;
-  parts->unk12 += object->timer;
-  if (leader->y == leader->terrainHeight && Func_02001a44(object, leader)) {
-    object->z -= object->unk4c;
-    object->gravity += object->unk4c >> 2;
-    object->unk4c = 0;
-  }
-}
+DEFINE_FUNC_02001A9C(Func_02001a9c, Func_02001a44)
 
 extern const u8 gData_02004744[];
 
-void Func_02001b38(struct Actor *object) {
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  Actor_SetSingleChildFlags(object, 0);
-  Func_020041cc(object, 2);
-  Actor_StartScript(object, gData_02004744);
-  Actor_SetSpriteColor(object, 10);
-  object->timer = 0;
-  object->speedLimit = 0;
-  object->acceleration = 0;
-}
+DEFINE_FUNC_02001B38(Func_02001b38, Func_020041cc, gData_02004744)
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s1b78.c ----
 void Animation_SetStateFlags(struct Actor *object, u32 value);

@@ -4,6 +4,7 @@
 
 // ---- games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c ----
 
+#include "../shared/routines.h"
 #include "types.h"
 #include "heap_release.h"
 #include "actor.h"
@@ -2342,35 +2343,10 @@ next:
 /* VIEW(s0198): routine Func_020057c4 as void Func_020057c4(); module/scene/scene.h has void Func_020057c4(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2369: too many arguments to function `Func_020057c4'. */
 extern void Func_020057c4__s0198() __asm__("Func_020057c4");
 
-void Func_0200401c(s32 mode) {
-  gData_020069f8 = 1;
-  if (mode != 2) {
-    Iwram_CopyWords(gData_02006a2c, (void *)&BG_PLTT_COLOR(12, 0), 32);
-    Iwram_CopyWords(gData_02006a4c, (void *)&BG_PLTT_COLOR(13, 0), 32);
-  }
-  if (Event_GetFlag(0xa00) || mode == 1) {
-    Counter_Set(0);
-    Task_Add(Func_02003f60, 1152);
-  } else {
-    Dma_Set(gData_02006a50, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2),
-            REG_DMA3);
-  }
-}
+DEFINE_FUNC_020002F4(Func_0200401c, gData_020069f8, gData_02006a2c,
+    gData_02006a4c, Func_02003f60, gData_02006a50)
 
-void Func_020040a0(s32 id) {
-  struct Actor *object;
-  s32 height;
-
-  object = Actor_Get(id);
-  object->motionFlags = 4;
-  height = object->terrainHeight;
-  WORD_AT(object, 68) = 0;
-  object->y = height + 0x200000;
-  object->priorityFlags |= 128;
-  height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
-  Func_020057c4__s0198(object->x, object->z, 0, (height >> 19) + 6);
-  Func_020059ec(object->x, object->z, 0, 128);
-}
+DEFINE_FUNC_02000378(Func_020040a0, Func_020057c4__s0198, Func_020059ec)
 
 #include "vector3.h"
 #include "main_routine_work.h"
@@ -2446,12 +2422,7 @@ void Func_020040f4(void) {
   Func_0200581c__s0198();
 }
 
-s32 Func_020042e0(s32 *a, s32 *b) {
-  s32 dx = (a[0] - b[0]) >> 16;
-  s32 dz = (a[2] - b[2]) >> 16;
-
-  return Iwram_Sqrt(dx * dx + dz * dz);
-}
+DEFINE_FUNC_020003D0(Func_020042e0)
 
 /* VIEW(s3f54): routine Actor_StartScript as void Actor_StartScript(struct Object6a5 *object, const void *script); s0198 has void Actor_StartScript(struct Actor *object, const void *script); not tried: Actor_StartScript's bound declaration was not found. */
 extern void Func_02005764__s3f54(struct Object6a5 *object, const void *script) __asm__("Actor_StartScript");

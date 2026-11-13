@@ -1,4 +1,5 @@
 // ---- games/tla/src/scene/venus_lighthouse/floor.c ----
+#include "../shared/tables.h"
 #include "types.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -854,12 +855,7 @@ u32 gData_02001d54[] = {
     1, 38,
 };
 
-s16 gData_02001d8c[] = {
-    0, 16, 0, 16, 0, 16, 16, 0,
-    16, 0, 16, 0, 16, 0, 0, -16,
-    0, -16, 0, -16, 0, -16, -16, 0,
-    -16, 0, -16, 0, -16, 0, 0, 16,
-};
+DEFINE_G_DATA_0200198C(gData_02001d8c)
 // clang-format on
 
 s32 gData_02001dcc[] = {

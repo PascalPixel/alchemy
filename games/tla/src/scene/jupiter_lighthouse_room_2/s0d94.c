@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x69b, in ROM order, from s0d94's offset up to the
 /// next object the overlay links.
 
+#include "../shared/routines.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -103,110 +104,11 @@ void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_0200165c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-struct GustObject *Func_02000f54(struct GustObject *source) {
-  struct Vector3 position;
-  struct EffectOptions options;
-  struct GustObject *object;
+DEFINE_FUNC_020007E8(Func_02000f54, Func_020021b4, Func_02000d94, Func_0200165c)
 
-  Event_PlaySound(222);
-  position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                  Math_Cosine(source->angle));
-  position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                  Math_Sin(source->angle));
-  object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
-                                                   position.z));
-  Func_020021b4(object, 2);
-  Actor_SetSingleChildFlags(object, 0);
-  object->motionFlags = 0;
-  object->priorityFlags &= ~1;
-  object->angle = source->angle;
-  object->unk64 = 0;
-  object->unk62 = 0;
-  object->unk63 = 0;
-  object->update = Func_02000d94;
-  object->unk30 = 0x18000;
-  options.priority = 1;
-  options.palette = 7;
-  Func_0200165c(position.x, source->y, position.z - 0x60000, 0, 0, 0, 0x30000,
-                &options);
-  return object;
-}
+DEFINE_FUNC_020008C0(Func_0200102c, Func_0200165c)
 
-s32 Func_0200102c(struct Actor *object) {
-  struct JupiterLighthouseAerieSpark spark;
-  s32 frame = gFrameCount & 7;
-
-  if (frame == 0) {
-    s32 x;
-    s32 y;
-    s32 speed;
-
-    spark.word[0] = 3;
-    spark.word[2] = 0xb333;
-    spark.word[3] = 0xb333;
-    spark.word[1] = 14;
-    x = object->x + (((((u32)Random16Far() * 9) >> 16) - 4) << 16);
-    y = object->y + ((32 - (((u32)Random16Far() * 20) >> 16)) << 16);
-    speed = (s32)(((((u32)Random16Far() * 5) >> 16) << 16) + 0x50000) / 10;
-    Func_0200165c(x, y, object->z, 0, speed, frame, 0xb0000, &spark);
-  }
-  return 0;
-}
-
-void Func_020010cc(void) {
-  struct PositionedActor *actor9 = ((struct PositionedActor *)Actor_Get(9));
-  struct PositionedActor *actor10 = ((struct PositionedActor *)Actor_Get(10));
-  struct PositionedActor *actor23 = ((struct PositionedActor *)Actor_Get(23));
-  struct FieldSprite *sprite = actor23->animation;
-
-  Actor_SetPosition(24, 0x2000000, 0xf80000);
-  Actor_SetPosition(23, 0x2000000, 0xf80000);
-  Actor_SetPosition(9, 0x1d80000, 0x1000000);
-  Actor_SetPosition(10, 0x2280000, 0x1000000);
-  ((struct PositionedActor *)Actor_Get(24))->scaleX = 0;
-  actor23->motionFlags = 0;
-  actor23->y.fixed = actor23->terrainHeight;
-  actor9->motionFlags = 0;
-  actor9->y.fixed = actor9->terrainHeight;
-  actor10->motionFlags = 0;
-  actor10->y.fixed = actor10->terrainHeight;
-  if (Event_GetFlag(0xa0a)) {
-    actor9->y.fixed += 0x66640;
-    {
-      s32 step = 0x1eb80;
-
-      actor23->y.fixed += step;
-    }
-    actor23->x.fixed -= 0x28f40;
-    sprite->rotation += 0x800;
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(9)), 4);
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(11)), 4);
-  }
-  if (Event_GetFlag(0xa0b)) {
-    actor10->y.fixed += 0x66640;
-    {
-      s32 step = 0x1eb80;
-
-      actor23->y.fixed += step;
-    }
-    actor23->x.fixed += 0x28f40;
-    sprite->rotation -= 0x800;
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(10)), 4);
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(12)), 4);
-  }
-  if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {
-    actor9->y.fixed += 0x199900;
-    actor10->y.fixed += 0x199900;
-    {
-      s32 step = 0x1b8480;
-
-      actor23->y.fixed += step;
-    }
-    actor9->motionFlags = 4;
-    actor10->motionFlags = 4;
-    actor23->motionFlags = 4;
-  }
-}
+DEFINE_FUNC_0200091C(Func_020010cc)
 
 extern s16 gData_02002cdc;
 
@@ -216,122 +118,22 @@ void Func_0200218c(struct LightOam *oam, s32 depth);
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
 /// picture and depth.
-void Func_0200125c(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  s32 *view = &map->viewX;
-  s32 viewX, viewZ, tile, viewY;
-  struct LightOam *oam;
-  s32 i;
-  viewX = view[0] & 0xffff0000;
-  viewZ = view[1] & 0xffff0000;
-  tile = gResourceTableEntries[gData_02002bd8].offset >> 5;
-  viewY = map->origin[1];
-  oam = Data_02002c1c;
-
-  for (i = 0; i < gData_02002bda; i++) {
-    struct Actor *actor = gData_02002bdc[i];
-    if (actor != 0 && actor->x != 0) {
-      s32 big, ox, y, z, oy, depth;
-      s32 frame;
-      u32 *word;
-      ox = actor->x - viewX;
-      y = actor->y - viewY + 0x80000;
-      z = actor->z - viewZ - viewY;
-      oy = z - y;
-      depth = ((y + z) >> 16) + 58;
-      big = gData_02002cdc;
-      if (big == 0) {
-        s32 x, sy;
-        frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
-        ox = x - 8;
-        oy = sy - 16;
-        if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
-          continue;
-        ox &= 0x1ff;
-        oy &= 0xff;
-        word = (u32 *)oam;
-        *word++ = 0;
-        *word++ = oy | (ox << 16) | 0x40002000;
-        *word = (tile + frame * 8) | 0x800;
-        if (gData_02002cde == -1)
-          oam->priority = Func_020022f4(actor);
-        else
-          oam->priority = gData_02002cde;
-        Func_0200218c(oam, depth);
-        oam++;
-      } else {
-        s32 x, sy;
-        frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
-        ox = x - 8;
-        oy = sy - 64;
-        if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)
-          continue;
-        ox &= 0x1ff;
-        oy &= 0xff;
-        word = (u32 *)oam;
-        *word++ = 0;
-        *word++ = oy | (ox << 16) | 0xc000a000;
-        *word = (tile + frame * 8) | 0x800;
-        if (gData_02002cde == -1)
-          oam->priority = Func_020022f4(actor);
-        else
-          oam->priority = gData_02002cde;
-        Func_0200218c(oam, depth);
-        oam++;
-      }
-    }
-  }
-}
+DEFINE_FUNC_02000AAC(Func_0200125c, gData_02002bd8, Data_02002c1c,
+    gData_02002bda, gData_02002bdc, gData_02002cdc, gData_02002cde,
+    Func_020022f4, Func_0200218c)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-void Func_02001418(void) {
-  u8 *buffer = BumpAlloc(0xc00);
+DEFINE_FUNC_02000A98(Func_02001418, gData_02002bdc, gData_02002bd8,
+    Func_0200125c, gData_02002bda, gData_02002cdc, gData_02002cde)
 
-  Iwram_ClearWords(gData_02002bdc, 64);
-  Resource_DecodeType01(gField_CachedTilesA, buffer);
-  gData_02002bd8 = Resource_FindFreeEntry();
-  VramCache_Load(gData_02002bd8, 0xc00, buffer);
-  Heap_Release(buffer);
-  Task_Add(Func_0200125c, TASK_PASS_VBLANK);
-  gData_02002bda = 0;
-  gData_02002cdc = 0;
-  gData_02002cde = -1;
-}
+DEFINE_FUNC_02000CE8(Func_02001498, gData_02002bdc, gData_02002bd8,
+    Func_0200125c, gData_02002bda, gData_02002cdc, gData_02002cde)
 
-void Func_02001498(void) {
-  u8 *buffer = Heap_Alloc(0xc00);
-
-  Iwram_ClearWords(gData_02002bdc, 64);
-  Resource_DecodeType01(gField_CachedTilesB, buffer);
-  gData_02002bd8 = Resource_FindFreeEntry();
-  Vram_Load(gData_02002bd8, 0x800, buffer);
-  Heap_Release(buffer);
-  Task_AddFrame(Func_0200125c, TASK_PASS_VBLANK);
-  gData_02002bda = 0;
-  gData_02002cdc = 0;
-  gData_02002cde = -1;
-}
-
-void Func_02001518(void) {
-  u8 *buffer = BumpAlloc(0x800);
-
-  Iwram_ClearWords(gData_02002bdc, 64);
-  Resource_DecodeType01(gField_CachedTilesC, buffer);
-  gData_02002bd8 = Resource_FindFreeEntry();
-  Vram_Load(gData_02002bd8, 0x800, buffer);
-  Heap_Release(buffer);
-  Task_AddFrame(Func_0200125c, TASK_PASS_VBLANK);
-  gData_02002bda = 0;
-  gData_02002cdc = 1;
-  gData_02002cde = -1;
-}
+DEFINE_FUNC_02000D68(Func_02001518, gData_02002bdc, gData_02002bd8,
+    Func_0200125c, gData_02002bda, gData_02002cdc, gData_02002cde)
 
 void Func_020015a0(s32 id, s32 value) {
   struct Actor *object = Actor_Get(id);

@@ -1,6 +1,8 @@
 /// @file
 /// The scene code of overlay 0x65a, in ROM order.
 
+#include "shared/routines.h"
+#include "shared/tables.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -22,49 +24,7 @@ s32 Func_020011d4(struct Actor *object);
 
 // Raises each listed actor's cells: the shape grid and the cell flags under it,
 // then lifts the leader if the new terrain is above the leader.
-void Func_02000038(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct Actor *leader;
-  s32 height;
-
-  while (((struct ListedActor *)list)->id != 0xffff) {
-    struct Actor *object = Actor_GetById(*list);
-    u8 *layer = &object->terrainId;
-    s32 shape = Func_020010ec(*layer, object->x, object->z);
-    s32 level = Map_GetTerrainHeight(*layer, object->x, object->z);
-    s32 index;
-    u8 *cells;
-    u8 *shapes;
-    u8 newShape;
-    u8 *grid;
-
-    level >>= 19;
-    index = Func_020011d4(object);
-    cells = (u8 *)map->layers[*layer].cells;
-    grid = Ram_MapShapeGrid;
-    shapes =
-        grid + (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
-    object->motionFlags = 0;
-    object->collisionFlags = 0;
-    Actor_SetSingleChildFlags(object, 0);
-    level += 4;
-    newShape = Func_020011f4(*layer, shape, level);
-    shapes += index;
-    index <<= 2;
-    ((struct ShapeCell *)shapes)->shape = newShape;
-    cells += index;
-    ((struct MapCell *)cells)->attributeB |= 192;
-    cells += 0x200;
-    ((struct MapCell *)cells)->attributeB |= 64;
-    list++;
-  }
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  height = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
-  if (leader->y < height) {
-    leader->terrainHeight = height;
-    leader->y = height;
-  }
-}
+DEFINE_FUNC_02000038(Func_02000038, Func_020010ec, Func_020011d4, Func_020011f4)
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 
@@ -234,17 +194,7 @@ void Func_02000474(void) {
   Event_End();
 }
 
-void Func_020004a4(struct Actor *object) {
-  u8 *flags = &object->motionFlags;
-
-  *flags = 3;
-  do {
-    wait(1);
-  } while (object->velocityY != 0);
-  Sound_Play(188);
-  wait(10);
-  *flags = 0;
-}
+DEFINE_FUNC_020004A4(Func_020004a4)
 
 void Func_020004cc(void) {
   struct Actor *object = Actor_GetById(11);
@@ -411,16 +361,8 @@ void Func_020008d0(struct Actor *object) {
     GameFlag_SetBit(0x9ef);
 }
 
-void Func_020008f4(void) {
-  struct Actor *object;
-
-  if (Func_020011fc() != 0) {
-    object = Actor_GetById(Func_02001184(gMainRoutineWork.currentOwner));
-    Func_0200014c(gData_020013ca);
-    Func_02001204();
-    Func_020008d0(object);
-  }
-}
+DEFINE_FUNC_020008F4(Func_020008f4, Func_020011fc, Func_02001184, Func_0200014c,
+    gData_020013ca, Func_02001204, Func_020008d0)
 
 void Func_0200092c(void) { Func_0200014c(gData_020013ca); }
 
@@ -705,15 +647,7 @@ void Func_0200102c(void) {
 #include "objcmd.h"
 
 // clang-format off
-s32 gData_0200121c[] = {
-    SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Z, -0x8000),
-    SC_ADD(SW_SCALE_X, -1024),
-    SC_ADD(SW_SCALE_Y, -1024),
-    SC_WAIT(1),
-    SC_LOOP(24, SC_TOP),
-    SC_END,
-};
+DEFINE_G_DATA_0200121C(gData_0200121c)
 
 u32 gData_02001264[] = {
     SC_SET(SW_SCALE_X, 0x1000),

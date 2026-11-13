@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/jupiter_lighthouse_aerie.c ----
 
+#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -349,20 +350,7 @@ void Func_02000858(s32 mode) {
   }
 }
 
-void Func_020008dc(s32 id) {
-  struct Actor *object;
-  s32 height;
-
-  object = Actor_Get(id);
-  object->motionFlags = 4;
-  height = object->terrainHeight;
-  WORD_AT(object, 68) = 0;
-  object->y = height + 0x200000;
-  object->priorityFlags |= 128;
-  height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
-  Func_02002a78(object->x, object->z, 0, (height >> 19) + 6);
-  Func_02002b58(object->x, object->z, 0, 128);
-}
+DEFINE_FUNC_02000378(Func_020008dc, Func_02002a78, Func_02002b58)
 
 #include "frame.h"
 #include "field_sprite.h"
@@ -432,12 +420,7 @@ void Func_02000930(void) {
   Event_End();
 }
 
-s32 Func_02000b1c(s32 *a, s32 *b) {
-  s32 dx = (a[0] - b[0]) >> 16;
-  s32 dz = (a[2] - b[2]) >> 16;
-
-  return Iwram_Sqrt(dx * dx + dz * dz);
-}
+DEFINE_FUNC_020003D0(Func_02000b1c)
 
 extern const s32 gData_0200331c[];
 extern s32 gData_0200333c;
@@ -530,34 +513,7 @@ stop:
 #include "call.h"
 #include "field_effect.h"
 
-struct GustObject *Func_02000d08(struct GustObject *source) {
-  struct Vector3 position;
-  struct EffectOptions options;
-  struct GustObject *object;
-
-  Event_PlaySound(222);
-  position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                  Math_Cosine(source->angle));
-  position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                  Math_Sin(source->angle));
-  object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
-                                                   position.z));
-  Func_020029f0(object, 2);
-  Actor_SetSingleChildFlags(object, 0);
-  object->motionFlags = 0;
-  object->priorityFlags &= ~1;
-  object->angle = source->angle;
-  object->unk64 = 0;
-  object->unk62 = 0;
-  object->unk63 = 0;
-  object->update = Func_02000b48;
-  object->unk30 = 0x18000;
-  options.priority = 1;
-  options.palette = 7;
-  Func_02001e78(position.x, source->y, position.z - 0x60000, 0, 0, 0, 0x30000,
-                &options);
-  return object;
-}
+DEFINE_FUNC_020007E8(Func_02000d08, Func_020029f0, Func_02000b48, Func_02001e78)
 
 #include "field_coordinate.h"
 
@@ -582,60 +538,7 @@ s32 Func_02000de0(struct Actor *object) {
   return 0;
 }
 
-void Func_02000e80(void) {
-  struct PositionedActor *actor9 = ((struct PositionedActor *)Actor_Get(9));
-  struct PositionedActor *actor10 = ((struct PositionedActor *)Actor_Get(10));
-  struct PositionedActor *actor23 = ((struct PositionedActor *)Actor_Get(23));
-  struct FieldSprite *sprite = actor23->animation;
-
-  Actor_SetPosition(24, 0x2000000, 0xf80000);
-  Actor_SetPosition(23, 0x2000000, 0xf80000);
-  Actor_SetPosition(9, 0x1d80000, 0x1000000);
-  Actor_SetPosition(10, 0x2280000, 0x1000000);
-  ((struct PositionedActor *)Actor_Get(24))->scaleX = 0;
-  actor23->motionFlags = 0;
-  actor23->y.fixed = actor23->terrainHeight;
-  actor9->motionFlags = 0;
-  actor9->y.fixed = actor9->terrainHeight;
-  actor10->motionFlags = 0;
-  actor10->y.fixed = actor10->terrainHeight;
-  if (Event_GetFlag(0xa0a)) {
-    actor9->y.fixed += 0x66640;
-    {
-      s32 step = 0x1eb80;
-
-      actor23->y.fixed += step;
-    }
-    actor23->x.fixed -= 0x28f40;
-    sprite->rotation += 0x800;
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(9)), 4);
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(11)), 4);
-  }
-  if (Event_GetFlag(0xa0b)) {
-    actor10->y.fixed += 0x66640;
-    {
-      s32 step = 0x1eb80;
-
-      actor23->y.fixed += step;
-    }
-    actor23->x.fixed += 0x28f40;
-    sprite->rotation -= 0x800;
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(10)), 4);
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(12)), 4);
-  }
-  if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {
-    actor9->y.fixed += 0x199900;
-    actor10->y.fixed += 0x199900;
-    {
-      s32 step = 0x1b8480;
-
-      actor23->y.fixed += step;
-    }
-    actor9->motionFlags = 4;
-    actor10->motionFlags = 4;
-    actor23->motionFlags = 4;
-  }
-}
+DEFINE_FUNC_0200091C(Func_02000e80)
 
 void Func_02001010(struct Actor *object) {
   u8 *fill = &gDecodeFillByte;

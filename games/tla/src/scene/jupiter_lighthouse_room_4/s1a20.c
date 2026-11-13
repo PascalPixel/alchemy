@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x69d, in ROM order, from s1a20's offset up to the next object the overlay links, and the overlay's data.
 
+#include "../shared/routines.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -17,59 +18,7 @@
 void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-void Func_02001a20(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  u32 i;
-  struct EffectOptions options;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
-  Map_CenterOnFollowedPoint();
-  System_Wait(1);
-  actor->y = 0x820000;
-  actor->gravity = 0x8000;
-  actor->bounce = 0;
-  actor->motionFlags = 0;
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  Event_PlaySound(204);
-  actor->motionFlags = 3;
-  FieldEvent_Wait(24);
-  options.palette = 7;
-  options.update = Effect_AdvanceMotion;
-  options.startScaleX = 0xa3d7;
-  options.startScaleY = 0xa3d7;
-  i = 0;
-  do {
-    s32 angle;
-    s32 velocity[3];
-
-    angle = i << 12;
-    velocity[0] = Math_Cosine(angle);
-    velocity[1] = 0;
-    velocity[2] = Math_Sin(angle);
-    velocity[0] += velocity[0] >> 1;
-    velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;
-    velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
-    Func_02001258(actor->x, actor->y, actor->z, velocity[0], velocity[1],
-                  velocity[2], 0x1090001, &options);
-    i++;
-  } while (i <= 16);
-  Event_PlaySound(188);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
-  MapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
-  actor->gravity = 0x10000;
-  actor->bounce = 0x4000;
-  FieldEvent_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Event_End();
-}
+DEFINE_FUNC_02001724(Func_02001a20, Func_02001258)
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02001888(struct CellTarget *puzzle, struct CellTargetEntry *tile);

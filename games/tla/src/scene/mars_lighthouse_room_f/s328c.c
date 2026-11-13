@@ -1,24 +1,11 @@
+#include "../shared/routines.h"
 #include "room.h"
 #include "field.h"
 #include "module/scene/mars_lighthouse_star_room.h"
 
 void Func_02002f6c(struct Actor *object);
 
-void Func_0200328c(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
-  struct Actor *source = Actor_Get(id);
-  struct Actor *object = Actor_Get(target);
-
-  FieldActor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
-  Actor_StartScript(object, script);
-  Actor_SetSingleChildFlags(object, 0);
-  object->motionFlags = 0;
-  Func_02005480(object, 1);
-  object->watchedObject = source;
-  object->timer = 0;
-  object->unk66 = a3;
-  BYTE_AT(object, 98) = kind;
-  object->update = Func_02002f6c;
-}
+DEFINE_FUNC_02002F4C(Func_0200328c, Func_02005480, Func_02002f6c)
 
 #include "types.h"
 #include "actor.h"
@@ -67,70 +54,9 @@ void Func_02003304(struct Actor *self) {
 
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 
-s32 Func_020033cc(struct Actor *object) {
-  s32 frame = object->timer;
+DEFINE_FUNC_02002B98(Func_020033cc, Func_02005480)
 
-  if (frame == 0) {
-    object->y = Map_GetTerrainHeight(0, object->x, object->z) + 0x100000;
-    object->scaleX = frame;
-    object->scaleY = frame;
-    object->speedLimit = 0x10000;
-    object->acceleration = 0x10000;
-    Actor_SetSpritePriorityDirect(object, 1);
-  } else if (frame <= 30) {
-    if (frame == 30) {
-      Event_PlaySound(136);
-      Func_02005480(object->watchedObject, 2);
-    }
-  } else if (frame <= 60) {
-    object->scaleX = 0x10000;
-    object->scaleY = 0x10000;
-    {
-      s32 half = (object->timer / 2) & 1;
-
-      Animation_ApplyChildValues(object->watchedObject, half * 7);
-    }
-  } else {
-    Func_02005480(object->watchedObject, 1);
-    Event_PlaySound(184);
-    object->y = Map_GetTerrainHeight(0, object->x, object->z);
-    object->watchedObject = 0;
-    return 0;
-  }
-  object->timer++;
-  return 1;
-}
-
-s32 Func_02003478(struct Actor *object) {
-  s32 frame = object->timer;
-
-  if (frame == 0) {
-    Event_PlaySound(136);
-    Func_02005480(object->watchedObject, 2);
-    object->y = Map_GetTerrainHeight(0, object->x, object->z) + 0x100000;
-    object->scaleX = frame;
-    object->scaleY = frame;
-    object->speedLimit = 0x10000;
-    object->acceleration = 0x8000;
-    Actor_SetSpritePriorityDirect(object, 1);
-  } else if (frame <= 32) {
-    object->scaleX = 0x10000;
-    object->scaleY = 0x10000;
-    {
-      s32 half = (object->timer / 2) & 1;
-
-      Animation_ApplyChildValues(object->watchedObject, half * 7);
-    }
-  } else {
-    Func_02005480(object->watchedObject, 1);
-    Event_PlaySound(184);
-    object->y = Map_GetTerrainHeight(0, object->x, object->z);
-    object->watchedObject = 0;
-    return 0;
-  }
-  object->timer++;
-  return 1;
-}
+DEFINE_FUNC_02002C44(Func_02003478, Func_02005480)
 
 #include "ram_buffer.h"
 #include "frame.h"
@@ -178,11 +104,6 @@ extern u16 gData_02004cf0[];
 void Func_020041ec(void *handle);
 void Func_0200236c(struct Actor *object, s32 unused);
 
-s32 Func_0200351c(struct Actor *object) {
-  Func_02003304(object);
-  SET_POSITION(object, 0, 0, 0);
-  SET_VELOCITY(object, 0, 0, 0);
-  return 0;
-}
+DEFINE_FUNC_02002CE8(Func_0200351c, Func_02003304)
 
 #include "../../field/object/set_sprite_priority.c"

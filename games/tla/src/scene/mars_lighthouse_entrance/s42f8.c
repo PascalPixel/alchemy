@@ -1,3 +1,4 @@
+#include "../shared/routines.h"
 #include "room.h"
 #include "field_effect.h"
 #include "module/field/field_effect.h"
@@ -77,56 +78,9 @@ void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02004160(struct CellTarget *work,
                    struct CellTargetEntry *entry);
 
-s32 Func_02004490(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = object->x >> 20;
-  s32 z = object->z >> 20;
-  struct CellTarget *work = &Data_020068b4;
-  struct CellTargetEntry *entry = work->entries;
-  s32 i;
+DEFINE_FUNC_0200180C(Func_02004490, Data_020068b4, Func_020040f0, Func_02004160)
 
-  for (i = 0; i < work->count; i++, entry++) {
-    if (entry->x == x && entry->z == z) {
-      if (Event_GetFlag(entry->flag) == 0) {
-        Func_020040f0(work, entry);
-        Event_SetFlag(entry->flag);
-        work->current = i;
-        break;
-      }
-      if (i == work->current)
-        break;
-      work->current = i;
-      Func_02004160(work, entry);
-      GameFlag_SetByte(work->flagByte, x);
-      GameFlag_SetByte(work->flagByte + 8, z);
-      return 1;
-    }
-  }
-  return 0;
-}
-
-void Func_02004540(s32 x, s32 z, s32 effect) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
-  s32 dx = FieldGameFlag_GetByte(Data_020068b4.flagByte);
-  s32 dz = FieldGameFlag_GetByte(Data_020068b4.flagByte + 8);
-
-  if (dx != 0 || dz != 0) {
-    struct Actor *marker;
-
-    GameFlag_SetByte(Data_020068b4.flagByte, 0);
-    GameFlag_SetByte(Data_020068b4.flagByte + 8, 0);
-    leader->x = ((dx + x) << 20) + 0x80000;
-    leader->z = ((dz + z) << 20) + 0x80000;
-    marker = work->marker;
-    marker->x = leader->x;
-    marker->z = leader->z;
-    Map_CenterOnFollowedPoint();
-    Func_020042f8();
-    ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
-        ->screenEffect = effect;
-  }
-}
+DEFINE_FUNC_020018BC(Func_02004540, Data_020068b4, Func_020042f8)
 
 #include "dma.h"
 #include "io_reg.h"
@@ -199,16 +153,7 @@ void Func_02004738(void) {
   Task_AddFrame(Func_020047b8, TASK_PASS_VBLANK);
 }
 
-s32 Func_02004794(u16 *list) {
-  s32 count = 0;
-
-  while (*list != 0xffff) {
-    list++;
-    count++;
-  }
-  count--;
-  return count;
-}
+DEFINE_FUNC_020001D4(Func_02004794)
 
 void Func_020047b8(void) {
   s32 step;
@@ -293,33 +238,7 @@ void Func_020048e8(void) {
 
 #include "field.h"
 
-void Func_02004970(const u16 *list) {
-  const u16 *spec;
-  u16 id;
-  struct Actor *object;
-  s16 mode;
-  s16 flag;
-  s32 limit;
-  s32 first;
-  limit = 0xff;
-  first = list[0];
-  if (first == ((limit << 8) + 0xff)) {
-    return;
-  }
-  spec = list;
-  do {
-    id = spec[0];
-    object = Actor_Get(id);
-    mode = spec[1];
-    flag = spec[2];
-    object->collisionFlags &= 0xfe;
-    Actor_SetSingleChildFlags(object, 0);
-    Func_02004a60(id, (u16)mode, (u16)flag, object->terrainId);
-    limit = 0xff;
-    spec += 3;
-    first = spec[0];
-  } while (first != ((limit << 8) + 0xff));
-}
+DEFINE_FUNC_020019DC(Func_02004970, Func_02004a60)
 
 // Finds the current target's table row and shrinks it.
 void Func_020049dc(u16 *list, s32 mode, s32 count) {
@@ -359,40 +278,7 @@ void Func_020049dc(u16 *list, s32 mode, s32 count) {
 #include "field_event.h"
 #include "map.h"
 
-void Func_02004a60(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct Actor *object = Actor_Get(id);
-  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
-
-  cell += Func_02004db8(object);
-  if (Event_GetFlag(flag)) {
-    cell->collisionCode = 0;
-    object->priorityFlags |= 2;
-    switch (kind) {
-    case 0:
-      Func_02004bc0(object, 2);
-      break;
-    case 1:
-      Func_02004bc0(object, 4);
-      break;
-    case 2:
-      Func_02004bc0(object, 6);
-      break;
-    }
-  } else {
-    cell->collisionCode = 255;
-    switch (kind) {
-    case 0:
-      Func_02004bc0(object, 1);
-      break;
-    case 1:
-      Func_02004bc0(object, 3);
-      break;
-    case 2:
-      Func_02004bc0(object, 5);
-      break;
-    }
-  }
-}
+DEFINE_FUNC_02000128__S00A4(Func_02004a60, Func_02004db8, Func_02004bc0)
 
 #include "scene_tables.h"
 #include "version.h"

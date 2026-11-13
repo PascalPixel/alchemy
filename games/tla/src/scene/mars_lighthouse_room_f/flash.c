@@ -1,4 +1,5 @@
 // ---- games/tla/src/scene/mars_lighthouse_room_f/flash.c ----
+#include "../shared/routines.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "frame.h"
@@ -293,13 +294,7 @@ s32 Func_02002ba0(void) {
   ride->active = 0;
 }
 
-s32 Func_02002ce0(void) {
-  if (((struct RideWork *)(gData_020023c4 + 0x188))->active) {
-    Func_02002ba0();
-    return 1;
-  }
-  return 0;
-}
+DEFINE_FUNC_020024AC(Func_02002ce0, Func_02002ba0)
 
 s32 Func_02002cfc(void) {
   return ((struct RideWork *)(gData_020023c4 + 0x188))->active;

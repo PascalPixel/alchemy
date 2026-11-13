@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x668, in ROM order, from s44c4's offset up to the next object the overlay links.
 
+#include "../shared/routines.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -113,35 +114,8 @@ void Func_020044c4(struct PushTarget target) {
 }
 
 
-void Func_02004774(struct Actor *object) {
-  s32 position[3];
-  struct Actor *hit;
-  u32 i;
-  s32 angle = object->facing >> 12;
-
-  angle = ((angle + 2) & 12) << 12;
-  position[0] = object->x;
-  position[1] = object->y;
-  position[2] = object->z;
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  hit = Func_02004c3c(position, 1);
-  if (hit != 0) {
-    i = 0;
-  next:
-    if (*((struct ObjectAnimationState *)hit->sprite)->value28 ==
-        gData_02004ca4[i])
-      return;
-    i++;
-    if (i <= 5)
-      goto next;
-    FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
-  }
-  position[0] = object->x;
-  position[1] = object->y;
-  position[2] = object->z;
-  if (Func_02004a64(object, position) > 0)
-    FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
-}
+DEFINE_FUNC_02004774(Func_02004774, Func_02004c3c, gData_02004ca4,
+    Func_02004a64)
 
 void Func_020047fc(const u16 *list) {
   const u16 *spec;
@@ -174,68 +148,9 @@ next:
 }
 
 // Finds the current target's table row and shrinks it.
-void Func_02004868(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
-
-  while (*list != 0xffff) {
-    u32 entry = *list;
-    s32 id = work->objectId;
-
-    if (id == entry) {
-      struct Actor *object = Actor_Get(id);
-      s32 a;
-      s32 flag;
-
-      list++;
-      a = list[0];
-      flag = list[1];
-      if (count < 8)
-        object->scaleY -= 0x1f00;
-      if (mode == 1) {
-        Event_SetFlag(flag);
-        Func_020048ec(id, a, flag, object->terrainId);
-        object->scaleY = 0x10000;
-      }
-      break;
-    }
-    list += 3;
-  }
-}
+DEFINE_FUNC_02004868(Func_02004868, Func_020048ec)
 
 #include "field_event.h"
 
-void Func_020048ec(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct Actor *object = Actor_Get(id);
-  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
-
-  cell += Func_02004c34(object);
-  if (Event_GetFlag(flag)) {
-    cell->collisionCode = 0;
-    object->priorityFlags |= 2;
-    switch (kind) {
-    case 0:
-      Func_02004a0c(object, 2);
-      break;
-    case 1:
-      Func_02004a0c(object, 4);
-      break;
-    case 2:
-      Func_02004a0c(object, 6);
-      break;
-    }
-  } else {
-    cell->collisionCode = 255;
-    switch (kind) {
-    case 0:
-      Func_02004a0c(object, 1);
-      break;
-    case 1:
-      Func_02004a0c(object, 3);
-      break;
-    case 2:
-      Func_02004a0c(object, 5);
-      break;
-    }
-  }
-}
+DEFINE_FUNC_02000128__S00A4(Func_020048ec, Func_02004c34, Func_02004a0c)
 

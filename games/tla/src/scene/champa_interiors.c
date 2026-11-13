@@ -1,6 +1,7 @@
 /// @file
 /// Overlay 0x683's scene: its code, then its tables, in the order the ROM has them.
 
+#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -68,12 +69,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_0200014c(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
-
-  work->screenEffect = 0x209;
-  GameFlag_ClearBit(0x12f);
-}
+DEFINE_FUNC_0200014C(Func_0200014c)
 
 #include "text/msg_ids.h"
 

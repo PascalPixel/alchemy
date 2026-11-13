@@ -1,4 +1,6 @@
 // ---- games/tla/src/scene/mars_lighthouse_aerie/s3370.c ----
+#include "../shared/routines.h"
+#include "../shared/tables.h"
 #include "types.h"
 #include "actor.h"
 #include "frame.h"
@@ -1080,16 +1082,7 @@ void Func_02005030(void) {
   Task_AddFrame(Func_020050b0, TASK_PASS_VBLANK);
 }
 
-s32 Func_0200508c(u16 *list) {
-  s32 count = 0;
-
-  while (*list != 0xffff) {
-    list++;
-    count++;
-  }
-  count--;
-  return count;
-}
+DEFINE_FUNC_020001D4(Func_0200508c)
 
 void Func_020050b0(void) {
   s32 step;
@@ -1364,17 +1357,7 @@ u32 gData_02005b0c[] = {
     0x8b008a, 0x8d008c, 0x89008e, 0x8a0089, 0x8c008b, 0x8e008d,
 };
 
-s32 gData_02005b54[] = {
-    SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, -1536),
-    SC_WAIT(1),
-    SC_LOOP(4, SC_TO(1)),
-    SC_LABEL(2),
-    SC_ADD(SW_SCALE_X, 0x600),
-    SC_WAIT(1),
-    SC_LOOP(4, SC_TO(2)),
-    SC_LOOP(SC_FOREVER, SC_TOP),
-};
+DEFINE_G_DATA_02005B54(gData_02005b54)
 
 u32 gData_02005ba8[] = {
     SC_ARG(2),
@@ -1508,16 +1491,7 @@ u32 gData_02005e80[] = {
     SC_END,
 };
 
-u32 gData_02005ec4[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(560), 0, PIXELS(280)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_WEST),
-    SC_WAIT(10),
-    SC_END,
-};
+DEFINE_G_DATA_02005EC4(gData_02005ec4)
 
 u32 gData_02005f08[] = {
     39, 2, 4, 0x1d80000, 0, 0x1400000,
@@ -1558,16 +1532,7 @@ u32 gData_02006004[] = {
     SC_END,
 };
 
-u32 gData_0200602c[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(560), 0, PIXELS(280)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_WEST),
-    SC_WAIT(10),
-    SC_END,
-};
+DEFINE_G_DATA_02005EC4(gData_0200602c)
 
 u32 gData_02006070[] = {
     SC_ARG(2),
@@ -1790,16 +1755,5 @@ u32 gData_02006ad0[] = {
     SC_FREE,
 };
 
-u32 gData_02006afc[] = {
-    SC_SET(SW_SCALE_X, 0xcccc),
-    SC_SET(SW_SCALE_Y, 0xcccc),
-    SC_ARG(1),
-    SC_LABEL(1),
-    SC_ADD(SW_Y, PIXELS(1)),
-    SC_WAIT(1),
-    SC_LOOP(16, SC_TO(1)),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-};
+DEFINE_G_DATA_02003214(gData_02006afc)
 // clang-format on

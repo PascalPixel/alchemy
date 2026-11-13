@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x69a, in ROM order, from s1704's offset up to the next object the overlay links, and the overlay's data.
 
+#include "../shared/routines.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -96,58 +97,12 @@ extern struct CellTarget gData_020023a0;
 void Func_020014fc();
 void Func_0200156c();
 
-s32 Func_0200189c(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = object->x >> 20;
-  s32 z = object->z >> 20;
-  struct CellTarget *work = &gData_020023a0;
-  struct CellTargetEntry *entry = work->entries;
-  s32 i;
-
-  for (i = 0; i < work->count; i++, entry++) {
-    if (entry->x == x && entry->z == z) {
-      if (Event_GetFlag(entry->flag) == 0) {
-        Func_020014fc(work, entry);
-        Event_SetFlag(entry->flag);
-        work->current = i;
-        break;
-      }
-      if (i == work->current)
-        break;
-      work->current = i;
-      Func_0200156c(work, entry);
-      GameFlag_SetByte(work->flagByte, x);
-      GameFlag_SetByte(work->flagByte + 8, z);
-      return 1;
-    }
-  }
-  return 0;
-}
+DEFINE_FUNC_0200180C(Func_0200189c, gData_020023a0, Func_020014fc,
+    Func_0200156c)
 
 #include "cell_target.h"
 
-void Func_0200194c(s32 x, s32 z, s32 effect) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
-  s32 dx = FieldGameFlag_GetByte(gData_020023a0.flagByte);
-  s32 dz = FieldGameFlag_GetByte(gData_020023a0.flagByte + 8);
-
-  if (dx != 0 || dz != 0) {
-    struct Actor *marker;
-
-    GameFlag_SetByte(gData_020023a0.flagByte, 0);
-    GameFlag_SetByte(gData_020023a0.flagByte + 8, 0);
-    leader->x = ((dx + x) << 20) + 0x80000;
-    leader->z = ((dz + z) << 20) + 0x80000;
-    marker = work->marker;
-    marker->x = leader->x;
-    marker->z = leader->z;
-    Map_CenterOnFollowedPoint();
-    Func_02001704();
-    ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
-        ->screenEffect = effect;
-  }
-}
+DEFINE_FUNC_020018BC(Func_0200194c, gData_020023a0, Func_02001704)
 
 #include "scene_tables.h"
 #include "objcmd.h"

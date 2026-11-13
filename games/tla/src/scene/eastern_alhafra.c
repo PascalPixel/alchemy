@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/eastern_alhafra.c ----
 
+#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -2099,32 +2100,7 @@ void Func_02003274(void) {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-void Func_02003ec4(void) {
-  struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
-  struct Particle *particle = work->particles;
-  struct ParticleSprite *sprite = work->sprites;
-  s32 i;
-  s32 step = -0x8000;
-
-  i = 63;
-next:
-  if ((u32)particle->age <= 19) {
-    u16 *base = &work->tile;
-    s32 mask = 7;
-    s32 tile = (u16)((*base + ((particle->age >> 2) & mask) * 8) & 0x3ff);
-    s32 attr = sprite->attr;
-
-    sprite->attr = (attr & ~0x3ff) | tile;
-    Func_02004c6c(sprite, particle);
-    BattleEffect_StepVector3(particle, 63, step);
-    particle->age++;
-  }
-  i--;
-  sprite++;
-  particle++;
-  if (i >= 0)
-    goto next;
-}
+DEFINE_FUNC_0200379C(Func_02003ec4, Func_02004c6c)
 
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a

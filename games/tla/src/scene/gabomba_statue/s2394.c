@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/gabomba_statue/s2394.c ----
 
+#include "../shared/routines.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -2047,33 +2048,7 @@ void Func_020053bc(const u16 *entry) {
 }
 
 // Finds the current target's table row and shrinks it.
-void Func_02005428(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
-
-  while (*list != 0xffff) {
-    u32 entry = *list;
-    s32 id = work->objectId;
-
-    if (id == entry) {
-      struct Actor *object = Actor_Get(id);
-      s32 a;
-      s32 flag;
-
-      list++;
-      a = list[0];
-      flag = list[1];
-      if (count < 8)
-        object->scaleY -= 0x1f00;
-      if (mode == 1) {
-        Event_SetFlag(flag);
-        Func_020054ac(id, a, flag, object->terrainId);
-        object->scaleY = 0x10000;
-      }
-      break;
-    }
-    list += 3;
-  }
-}
+DEFINE_FUNC_02004868(Func_02005428, Func_020054ac)
 
 void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
   struct Actor *object = Actor_Get(id);

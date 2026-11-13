@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/jupiter_lighthouse_room_5.c ----
 
+#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -69,33 +70,7 @@ void Func_02000064(s32 unused, s32 id) {
 u32 __umodsi3();
 void Animation_ApplyChildValues();
 
-void Func_020000c8(struct Actor *object) {
-  struct AnimatedSprite *sprite = (struct AnimatedSprite *)object->sprite;
-  struct SpritePictures *pictures = sprite->pictures;
-
-  switch (object->timer & 3) {
-  case 0:
-    pictures->picture = 7;
-    sprite->picture = 1;
-    sprite->nextPicture = 2;
-    break;
-  case 1:
-    sprite->picture = 1;
-    sprite->nextPicture = 0;
-    break;
-  case 2:
-    pictures->picture = 7;
-    sprite->picture = 1;
-    sprite->nextPicture = 0;
-    break;
-  case 3:
-    pictures->picture = 0;
-    sprite->picture = 1;
-    sprite->nextPicture = 0;
-    break;
-  }
-  object->timer++;
-}
+DEFINE_FUNC_020000C8(Func_020000c8)
 
 void Func_02000120(struct Actor *object) {
   u32 frameCount = gFrameCount;
@@ -635,116 +610,17 @@ next:
 
 void Func_02002888();
 
-void Func_02000d80(s32 mode) {
-  gData_020033dc = 1;
-  if (mode != 2) {
-    Iwram_CopyWords(gData_02003404, (void *)&BG_PLTT_COLOR(12, 0), 32);
-    Iwram_CopyWords(gData_02003424, (void *)&BG_PLTT_COLOR(13, 0), 32);
-  }
-  if (Event_GetFlag(0xa00) || mode == 1) {
-    Counter_Set(0);
-    Task_Add(Func_02000cc4, 1152);
-  } else {
-    Dma_Set(gData_02003428, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2),
-            REG_DMA3);
-  }
-}
+DEFINE_FUNC_020002F4(Func_02000d80, gData_020033dc, gData_02003404,
+    gData_02003424, Func_02000cc4, gData_02003428)
 
-void Func_02000e04(s32 id) {
-  struct Actor *object;
-  s32 height;
-
-  object = Actor_Get(id);
-  object->motionFlags = 4;
-  height = object->terrainHeight;
-  WORD_AT(object, 68) = 0;
-  object->y = height + 0x200000;
-  object->priorityFlags |= 128;
-  height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
-  Func_02002888(object->x, object->z, 0, (height >> 19) + 6);
-  Func_02002a30(object->x, object->z, 0, 128);
-}
+DEFINE_FUNC_02000378(Func_02000e04, Func_02002888, Func_02002a30)
 
 #include "field_sprite.h"
 #include "event_work.h"
 
-void Func_02000e58(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  struct Actor *linked = actor->watchedObject;
-  struct Actor *shadow;
-  u8 *p;
-  s32 angle;
-  s32 i;
+DEFINE_FUNC_02000410(Func_02000e58)
 
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  i = 0;
-  work->unkd46 = i;
-
-  actor->motionFlags = 4;
-  Actor_SetSingleChildFlags(actor, 0);
-
-  while (*((u8 *)linked + 0x63) != 0) {
-    actor->x = linked->x;
-    actor->y = linked->y + i;
-    actor->z = linked->z;
-    if (i <= 0x3ffff)
-      i += 0x1999;
-    actor->facing = (u8)gFrameCount << 12;
-    p = &actor->priorityFlags;
-    *p ^= 2 << (gFrameCount & 1);
-    System_Wait(1);
-  }
-  work->unkd44 = 1;
-  work->unkd46 = 1;
-  angle = linked->facing;
-  actor->x = (((linked->x >> 19) & ~1) + (angle >> 13) - 1) << 19;
-  actor->z = (((linked->z >> 19) & ~1) - ((angle >> 13) & 2) + 1) << 19;
-  actor->velocityY = 0x60000;
-  actor->priorityFlags = 1;
-  actor->motionFlags = 3;
-  Actor_SetSingleChildFlags(actor, 1);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
-  shadow = FieldCamera_GetActor();
-  shadow->speedLimit = 0x80000;
-  shadow->acceleration = 0x10000;
-  shadow->motionFlags = 0;
-  FieldActor_SetMoveTarget(
-      shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
-  i = 0;
-  if (actor->y > actor->terrainHeight + 0x100000) {
-    do {
-      System_Wait(1);
-      i++;
-      if (i > 59)
-        break;
-    } while (actor->y > actor->terrainHeight + 0x100000);
-  }
-  Event_PlaySound(127);
-  i = 0;
-  if (actor->velocityY != 0) {
-    do {
-      System_Wait(1);
-      i++;
-      if (i > 59)
-        break;
-    } while (actor->velocityY != 0);
-  }
-  Actor_WaitForMove(shadow);
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  work->unkd46 = 1;
-  work->exit = 0;
-  Event_End();
-}
-
-s32 Func_02001044(s32 *a, s32 *b) {
-  s32 dx = (a[0] - b[0]) >> 16;
-  s32 dz = (a[2] - b[2]) >> 16;
-
-  return Iwram_Sqrt(dx * dx + dz * dz);
-}
+DEFINE_FUNC_020003D0(Func_02001044)
 
 extern const s32 gData_020033e0[];
 extern s32 gData_02003400;
@@ -892,65 +768,7 @@ done:
   return 0;
 }
 
-void Func_020013a8(void) {
-  struct PositionedActor *actor9 = ((struct PositionedActor *)Actor_Get(9));
-  struct PositionedActor *actor10 =
-      ((struct PositionedActor *)Actor_Get(10));
-  struct PositionedActor *actor23 =
-      ((struct PositionedActor *)Actor_Get(23));
-  struct FieldSprite *sprite = actor23->animation;
-
-  Actor_SetPosition(24, 0x2000000, 0xf80000);
-  Actor_SetPosition(23, 0x2000000, 0xf80000);
-  Actor_SetPosition(9, 0x1d80000, 0x1000000);
-  Actor_SetPosition(10, 0x2280000, 0x1000000);
-  ((struct PositionedActor *)Actor_Get(24))->scaleX = 0;
-  actor23->motionFlags = 0;
-  actor23->y.fixed = actor23->terrainHeight;
-  actor9->motionFlags = 0;
-  actor9->y.fixed = actor9->terrainHeight;
-  actor10->motionFlags = 0;
-  actor10->y.fixed = actor10->terrainHeight;
-  if (Event_GetFlag(0xa0a)) {
-    actor9->y.fixed += 0x66640;
-    {
-      s32 step = 0x1eb80;
-
-      actor23->y.fixed += step;
-    }
-    actor23->x.fixed -= 0x28f40;
-    sprite->rotation += 0x800;
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(9)), 4);
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(11)),
-                               4);
-  }
-  if (Event_GetFlag(0xa0b)) {
-    actor10->y.fixed += 0x66640;
-    {
-      s32 step = 0x1eb80;
-
-      actor23->y.fixed += step;
-    }
-    actor23->x.fixed += 0x28f40;
-    sprite->rotation -= 0x800;
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(10)),
-                               4);
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(12)),
-                               4);
-  }
-  if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {
-    actor9->y.fixed += 0x199900;
-    actor10->y.fixed += 0x199900;
-    {
-      s32 step = 0x1b8480;
-
-      actor23->y.fixed += step;
-    }
-    actor9->motionFlags = 4;
-    actor10->motionFlags = 4;
-    actor23->motionFlags = 4;
-  }
-}
+DEFINE_FUNC_0200091C(Func_020013a8)
 
 struct Spark {
   u8 unk00[0x0c];

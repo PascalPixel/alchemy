@@ -1,3 +1,4 @@
+#include "../shared/routines.h"
 #include "tundaria_tower.h"
 #include "call.h"
 #include "types.h"
@@ -188,40 +189,7 @@ top:
 
 #include "map.h"
 
-void Func_02002184(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct Actor *object = Actor_GetById(id);
-  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
-
-  cell += Func_02003160(object);
-  if (GameFlag_Test(flag)) {
-    cell->collisionCode = 0;
-    object->priorityFlags |= 2;
-    switch (kind) {
-    case 0:
-      Func_02002f80(object, 2);
-      break;
-    case 1:
-      Func_02002f80(object, 4);
-      break;
-    case 2:
-      Func_02002f80(object, 6);
-      break;
-    }
-  } else {
-    cell->collisionCode = 255;
-    switch (kind) {
-    case 0:
-      Func_02002f80(object, 1);
-      break;
-    case 1:
-      Func_02002f80(object, 3);
-      break;
-    case 2:
-      Func_02002f80(object, 5);
-      break;
-    }
-  }
-}
+DEFINE_FUNC_02000128(Func_02002184, Func_02003160, Func_02002f80)
 
 // On entering, sets each listed pillar from its two flags (pushed: moved to its
 // place; else its cell raised and its shape redrawn), then lifts the leader

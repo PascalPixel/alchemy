@@ -3,6 +3,8 @@
 
 // ---- games/tla/src/scene/kibombo/s2f34.c ----
 
+#include "../shared/routines.h"
+#include "../shared/tables.h"
 #include "kibombo.h"
 #include "event_work.h"
 #include "module/field/event_commands.h"
@@ -142,12 +144,7 @@ void Func_02003184(void) {
 
 #include "scene_tables.h"
 
-void Func_020031f0(s32 id) {
-  Func_02005b8c(id);
-  Actor_SetPartAttribute(Actor_GetById(id), 15);
-  Actor_SetSpritePriority(id, 1);
-  Actor_GetById(id)->priorityFlags |= 2;
-}
+DEFINE_FUNC_02001F38(Func_020031f0, Func_02005b8c)
 
 void Func_02003220(void) {
   if (GameFlag_Test(265)) {
@@ -1815,15 +1812,7 @@ u32 gData_02005ca4[] = {
     1, 3, 0, 1, 38,
 };
 
-s32 gData_02005cd0[] = {
-    SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Z, -0x8000),
-    SC_ADD(SW_SCALE_X, -1024),
-    SC_ADD(SW_SCALE_Y, -1024),
-    SC_WAIT(1),
-    SC_LOOP(24, SC_TOP),
-    SC_END,
-};
+DEFINE_G_DATA_0200121C(gData_02005cd0)
 
 u32 gData_02005d18[] = {
     SC_ARG(2),

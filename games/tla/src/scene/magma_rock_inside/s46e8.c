@@ -1,4 +1,6 @@
 // ---- games/tla/src/scene/magma_rock_inside/s46e8.c ----
+#include "../shared/routines.h"
+#include "../shared/tables.h"
 #include "types.h"
 #include "system.h"
 #include "iwram_call.h"
@@ -106,19 +108,7 @@ void Func_0200481c(void) {
 s32 Func_02004d20(s32 layer, s32 x, s32 z);
 s32 Func_02004ef0(s32 layer, s32 shape, s32 height);
 
-void Func_02004934(s32 level, s32 layer, s32 owner) {
-  struct Actor *object = Actor_GetById(owner);
-  u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapWork->layers[layer].cells -
-                                  (struct MapCell *)Ram_MapCellBuffer);
-  s32 value = Func_02004d20(object->terrainId, object->x, object->z);
-  s32 height =
-      Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
-
-  height += level;
-
-  shape += object->x / 0x100000 + object->z / 0x100000 * 128;
-  *shape = Func_02004ef0(object->terrainId, value, height);
-}
+DEFINE_FUNC_02000BC0(Func_02004934, Func_02004d20, Func_02004ef0)
 
 #include "local.h"
 
@@ -130,32 +120,7 @@ void Func_020049c0(s32 a, s32 b) {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-void Func_020049d8(void) {
-  struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
-  struct Particle *particle = work->particles;
-  struct ParticleSprite *sprite = work->sprites;
-  s32 i;
-  s32 step = -0x8000;
-
-  i = 63;
-next:
-  if ((u32)particle->age <= 19) {
-    u16 *base = &work->tile;
-    s32 mask = 7;
-    s32 tile = (u16)((*base + ((particle->age >> 2) & mask) * 8) & 0x3ff);
-    s32 attr = sprite->attr;
-
-    sprite->attr = (attr & ~0x3ff) | tile;
-    Func_02004f18(sprite, particle);
-    BattleEffect_StepVector3(particle, 63, step);
-    particle->age++;
-  }
-  i--;
-  sprite++;
-  particle++;
-  if (i >= 0)
-    goto next;
-}
+DEFINE_FUNC_0200379C(Func_020049d8, Func_02004f18)
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
@@ -304,12 +269,7 @@ u32 gData_02004fb0[] = {
     SC_END,
 };
 
-s16 gData_02004fec[] = {
-    0, 16, 0, 16, 0, 16, 16, 0,
-    16, 0, 16, 0, 16, 0, 0, -16,
-    0, -16, 0, -16, 0, -16, -16, 0,
-    -16, 0, -16, 0, -16, 0, 0, 16,
-};
+DEFINE_G_DATA_0200198C(gData_02004fec)
 
 u32 gData_0200502c[] = {
     39, 2, 0, 18, 3, 0,
@@ -471,12 +431,7 @@ u32 gData_02005534[] = {
     0, 6, 38, 17,
 };
 
-u32 gData_02005544[] = {
-    SC_MOVE_BY(0, PIXELS(160), 0),
-    SC_SYNC,
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_02005218(gData_02005544)
 
 s32 gData_02005560[] = {
     SC_CALL(Func_02002a6c),
@@ -484,13 +439,8 @@ s32 gData_02005560[] = {
     SC_END,
 };
 
-s32 gData_02005570[] = {
-    SC_CALL(Func_02002b2c),
-    SC_CALL(Func_02002bd0),
-    SC_CALL(Func_02002c1c),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_02005244(gData_02005570, Func_02002b2c, Func_02002bd0,
+    Func_02002c1c)
 
 u32 gData_02005590[] = {
     SC_MOVE_BY(0, PIXELS(24), 0),

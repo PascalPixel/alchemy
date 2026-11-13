@@ -2,6 +2,7 @@
 /// The scene code of overlay 0x69b that its scene tables belong to, in ROM
 /// order; the rest of the overlay is in jupiter_lighthouse_room_2/.
 
+#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -493,104 +494,18 @@ next:
 
 extern u16 gData_02002bb8[];
 
-void Func_02000aa4(s32 mode) {
-  gData_02002b38 = 1;
-  if (mode != 2) {
-    Iwram_CopyWords(gData_02002b98, (void *)&BG_PLTT_COLOR(12, 0), 32);
-    Iwram_CopyWords(gData_02002bb8, (void *)&BG_PLTT_COLOR(13, 0), 32);
-  }
-  if (Event_GetFlag(0xa00) || mode == 1) {
-    Counter_Set(0);
-    Task_Add(Func_020009e8, 1152);
-  } else {
-    Dma_Set(gData_02002bbc, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2),
-            REG_DMA3);
-  }
-}
+DEFINE_FUNC_020002F4(Func_02000aa4, gData_02002b38, gData_02002b98,
+    gData_02002bb8, Func_020009e8, gData_02002bbc)
 
 void Func_0200223c();
 /* VIEW(jupiter_lighthouse_room_2): routine Func_0200230c as void Func_0200230c(); module/scene/scene.h has void Func_0200230c(s32 actor); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_2.c:525: too many arguments to function `Func_0200230c'. */
 extern void Func_0200230c__jupiter_lighthouse_room_2() __asm__("Func_0200230c");
 
-void Func_02000b28(s32 id) {
-  struct Actor *object;
-  s32 height;
-
-  object = Actor_Get(id);
-  object->motionFlags = 4;
-  height = object->terrainHeight;
-  WORD_AT(object, 68) = 0;
-  object->y = height + 0x200000;
-  object->priorityFlags |= 128;
-  height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
-  Func_0200223c(object->x, object->z, 0, (height >> 19) + 6);
-  Func_0200230c__jupiter_lighthouse_room_2(object->x, object->z, 0, 128);
-}
+DEFINE_FUNC_02000378(Func_02000b28, Func_0200223c,
+    Func_0200230c__jupiter_lighthouse_room_2)
 
 #include "frame.h"
 
-void Func_02000b7c(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  struct Actor *linked = actor->watchedObject;
-  struct Actor *shadow;
-  s32 facing;
-  s32 i;
+DEFINE_FUNC_020003CC(Func_02000b7c)
 
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  i = 0;
-  work->unkd46 = 0;
-  actor->motionFlags = 4;
-  Actor_SetSingleChildFlags(actor, 0);
-  while (*((u8 *)linked + 0x63) != 0) {
-    actor->x = linked->x;
-    actor->y = linked->y + i;
-    actor->z = linked->z;
-    if (i <= 0x3ffff)
-      i += 0x1999;
-    actor->facing = (u8)gFrameCount << 12;
-    actor->priorityFlags ^= 2 << (gFrameCount & 1);
-    System_Wait(1);
-  }
-  work->unkd44 = 1;
-  work->unkd46 = 1;
-  facing = linked->facing;
-  actor->x = (((linked->x >> 19) & ~1) + (facing >> 13) - 1) << 19;
-  actor->z = (((linked->z >> 19) & ~1) - ((facing >> 13) & 2) + 1) << 19;
-  actor->velocityY = 0x60000;
-  actor->priorityFlags = 1;
-  actor->motionFlags = 3;
-  Actor_SetSingleChildFlags(actor, 1);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
-  shadow = FieldCamera_GetActor();
-  shadow->speedLimit = 0x80000;
-  shadow->acceleration = 0x10000;
-  shadow->motionFlags = 0;
-  FieldActor_SetMoveTarget(
-      shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
-  i = 0;
-  while (i <= 59 && actor->y > actor->terrainHeight + 0x100000) {
-    i++;
-    System_Wait(1);
-  }
-  Event_PlaySound(127);
-  i = 0;
-  while (i <= 59 && actor->velocityY != 0) {
-    i++;
-    System_Wait(1);
-  }
-  Actor_WaitForMove(shadow);
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  work->unkd46 = 1;
-  work->exit = 0;
-  Event_End();
-}
-
-s32 Func_02000d68(s32 *a, s32 *b) {
-  s32 dx = (a[0] - b[0]) >> 16;
-  s32 dz = (a[2] - b[2]) >> 16;
-
-  return Iwram_Sqrt(dx * dx + dz * dz);
-}
+DEFINE_FUNC_020003D0(Func_02000d68)

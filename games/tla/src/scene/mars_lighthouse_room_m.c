@@ -1,4 +1,5 @@
 // ---- games/tla/src/scene/mars_lighthouse_room_m.c ----
+#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -893,16 +894,7 @@ void Func_0200168c(void) {
   Task_AddFrame(Func_0200170c, 0x480);
 }
 
-s32 Func_020016e8(u16 *list) {
-  s32 count = 0;
-
-  while (*list != 0xffff) {
-    list++;
-    count++;
-  }
-  count--;
-  return count;
-}
+DEFINE_FUNC_020001D4(Func_020016e8)
 
 extern u16 *Data_0200391c;
 extern u16 *Data_0200392c;
@@ -1044,82 +1036,12 @@ struct RideWork__s1988 {
 s32 Func_020018c4(struct Actor *a, struct Actor *b);
 s32 Func_02001928(struct Actor *a, struct Actor *b);
 
-void Func_02001988(struct Actor *object) {
-  struct RideWork__s1988 *work = (struct RideWork__s1988 *)(gData_020023c4 + 0x188);
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  struct EventWork *event = Ram_HeapSlots->eventWork;
-  s32 dx = object->bounce;
-  s32 dz;
-  s32 i;
-  s32 direction;
-  s32 id;
-
-  object->x += dx;
-  object->y += object->gravity;
-  dz = object->unk4c;
-  object->z += dz;
-  object->bounce = dx - dx / 18;
-  object->unk4c = dz - dz / 16;
-  object->scaleX += object->speedLimit;
-  object->scaleY += object->acceleration;
-  ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
-  if (actor->y == actor->terrainHeight && Func_020018c4(object, actor) &&
-      gMainRoutineWork.renderMode == 0) {
-    if (object->unk4c != 0) {
-      work->value68 = 0;
-      {
-        u16 *cell = &work->direction;
-
-        if (object->unk4c > 0) {
-          direction = 1;
-          *cell = direction;
-        } else {
-          direction = 0xffff;
-          *cell = direction;
-        }
-      }
-    }
-    object->priorityFlags = 2;
-    {
-      s32 speed = object->unk4c;
-
-      object->unk4c = 0;
-      object->z -= speed;
-      object->gravity += speed >> 2;
-    }
-    work->landed = 1;
-    event->exit = work->value0a;
-  }
-  for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
-    actor = Actor_Get(id);
-
-    if (actor->y == actor->terrainHeight && Func_02001928(object, actor)) {
-      if (work->slots[i].blocked == 0) {
-        s32 speed;
-
-        object->priorityFlags = 2;
-        speed = object->unk4c;
-        object->unk4c = 0;
-        object->z -= speed;
-        object->gravity += speed >> 2;
-      } else {
-        work->blocked = 1;
-      }
-    }
-  }
-}
+DEFINE_FUNC_020015EC(Func_02001988, RideWork__s1988, Func_020018c4,
+    Func_02001928)
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
-void Func_02001aec(struct Actor *object) {
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  Actor_SetSingleChildFlags(object, 0);
-  Actor_StartScript(object, gData_020032d4);
-  object->timer = 0;
-  object->speedLimit = 0;
-  object->acceleration = 0;
-}
+DEFINE_FUNC_02001750(Func_02001aec, gData_020032d4)
 
 void Func_02001b1c(struct MarsLighthouseRoomMVector *position, s32 value, s32 flag) {
   struct Actor *object = FieldActor_Create(366, position->x, position->y, position->z);
@@ -1168,59 +1090,8 @@ extern u8 gData_020023c4[];
 s32 Func_020018c4(struct Actor *a, struct Actor *b);
 s32 Func_02001928(struct Actor *a, struct Actor *b);
 
-void Func_02001b64(struct Actor *object) {
-  struct RideWork__s1b64 *work = (struct RideWork__s1b64 *)(gData_020023c4 + 0x188);
-  struct Actor *other = Actor_Get(gMainRoutineWork.currentOwner);
-  struct EventWork *event = Ram_HeapSlots->eventWork;
-  s32 dx = object->bounce;
-  s32 dz;
-  s32 i;
-  struct RideDirection *direction;
-
-  object->z += dx;
-  object->y += object->gravity;
-  dz = object->unk4c;
-  object->x += dz;
-  object->bounce = dx - dx / 18;
-  object->unk4c = dz - dz / 16;
-  object->scaleX += object->speedLimit;
-  object->scaleY += object->acceleration;
-  ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
-  if (other->y == other->terrainHeight && Func_020018c4(object, other) &&
-      gMainRoutineWork.renderMode == 0) {
-    if (object->unk4c != 0) {
-      work->direction.unk02 = 0;
-      direction = &work->direction;
-      if (object->unk4c > 0)
-        direction->unk00 = 1;
-      else
-        direction->unk00 = 0xffff;
-    }
-    object->priorityFlags = 2;
-    object->z -= object->bounce;
-    object->gravity += object->bounce >> 2;
-    object->unk4c = 0;
-    work->landed = 1;
-    event->exit = work->value0a;
-  }
-  for (i = 0; i < 4; i++) {
-    s32 id = work->slots[i].id;
-
-    if (id == 0)
-      break;
-    other = Actor_Get(id);
-    if (other->y == other->terrainHeight && Func_02001928(object, other)) {
-      if (work->slots[i].blocked == 0) {
-        object->priorityFlags = 2;
-        object->z -= object->unk4c;
-        object->gravity += object->unk4c >> 2;
-        object->unk4c = 0;
-      } else {
-        work->blocked = 1;
-      }
-    }
-  }
-}
+DEFINE_FUNC_02001B64(Func_02001b64, RideWork__s1b64, Func_020018c4,
+    Func_02001928)
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
@@ -1330,17 +1201,7 @@ void Func_02001e38(struct Actor *object) {
   }
 }
 
-void Func_02001ed4(struct Actor *object) {
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  Actor_SetSingleChildFlags(object, 0);
-  Func_02003118(object, 2);
-  Actor_StartScript(object, gData_020032d4);
-  Actor_SetSpriteColor(object, 10);
-  object->timer = 0;
-  object->speedLimit = 0;
-  object->acceleration = 0;
-}
+DEFINE_FUNC_02001B38(Func_02001ed4, Func_02003118, gData_020032d4)
 
 void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
   struct Actor *object =

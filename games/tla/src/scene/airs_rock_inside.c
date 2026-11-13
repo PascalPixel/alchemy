@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x664 that its scene tables belong to, in ROM order; the rest of the overlay is in airs_rock_inside/.
 
+#include "shared/routines.h"
 #include "airs_rock_inside/airs_rock_inside.h"
 #include "system.h"
 #include "module/field/field.h"
@@ -407,19 +408,9 @@ void Func_02000988(void) {
   Event_End();
 }
 
-s32 Func_02000cec(s32 *a, s32 *b) {
-  s32 dx = (a[0] - b[0]) >> 16;
-  s32 dz = (a[2] - b[2]) >> 16;
+DEFINE_FUNC_020003D0(Func_02000cec)
 
-  return Iwram_Sqrt(dx * dx + dz * dz);
-}
-
-s32 Func_02000d18(s32 *a, s32 *b) {
-  s32 dx = (*a++ - *b++) >> 16;
-  s32 dy = (*a - *b + 0x60000) >> 16;
-
-  return Iwram_Sqrt(dx * dx + dy * dy);
-}
+DEFINE_FUNC_02000D18(Func_02000d18)
 
 // Func_020010b4's twin for another shot: it also stops while the render mode
 // is 5, and on a cell of kind 212 it ends with one of two end scripts by its

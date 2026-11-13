@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x69c, in ROM order, from s1300's offset up to the next object the overlay links.
 
+#include "../shared/routines.h"
 #include "local.h"
 #include "types.h"
 #include "ram_buffer.h"
@@ -60,136 +61,25 @@ void Func_020022b8(struct LightOam *oam, s32 depth);
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
 /// 64 one when the big switch is set, at its animation picture and depth.
-void Func_02001388(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  s32 *view = &map->viewX;
-  s32 viewX, viewZ, tile, viewY;
-  struct LightOam *oam;
-  s32 i;
-  viewX = view[0] & 0xffff0000;
-  viewZ = view[1] & 0xffff0000;
-  tile = gResourceTableEntries[gData_02002d2c].offset >> 5;
-  viewY = map->origin[1];
-  oam = Data_02002d70;
-
-  for (i = 0; i < gData_02002d2e; i++) {
-    struct Actor *actor = gData_02002d30[i];
-    if (actor != 0 && actor->x != 0) {
-      s32 big, ox, y, z, oy, depth;
-      s32 frame;
-      u32 *word;
-      ox = actor->x - viewX;
-      y = actor->y - viewY + 0x80000;
-      z = actor->z - viewZ - viewY;
-      oy = z - y;
-      depth = ((y + z) >> 16) + 58;
-      big = gData_02002e30;
-      if (big == 0) {
-        s32 x, sy;
-        frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
-        ox = x - 8;
-        oy = sy - 16;
-        if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
-          continue;
-        ox &= 0x1ff;
-        oy &= 0xff;
-        word = (u32 *)oam;
-        *word++ = 0;
-        *word++ = oy | (ox << 16) | 0x40002000;
-        *word = (tile + frame * 8) | 0x800;
-        if (gData_02002e32 == -1)
-          oam->priority = Func_02002448(actor);
-        else
-          oam->priority = gData_02002e32;
-        Func_020022b8(oam, depth);
-        oam++;
-      } else {
-        s32 x, sy;
-        frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
-        ox = x - 8;
-        oy = sy - 64;
-        if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)
-          continue;
-        ox &= 0x1ff;
-        oy &= 0xff;
-        word = (u32 *)oam;
-        *word++ = 0;
-        *word++ = oy | (ox << 16) | 0xc000a000;
-        *word = (tile + frame * 8) | 0x800;
-        if (gData_02002e32 == -1)
-          oam->priority = Func_02002448(actor);
-        else
-          oam->priority = gData_02002e32;
-        Func_020022b8(oam, depth);
-        oam++;
-      }
-    }
-  }
-}
+DEFINE_FUNC_02000AAC(Func_02001388, gData_02002d2c, Data_02002d70,
+    gData_02002d2e, gData_02002d30, gData_02002e30, gData_02002e32,
+    Func_02002448, Func_020022b8)
 
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-void Func_02001544(void) {
-  u8 *buffer = BumpAlloc(0xc00);
+DEFINE_FUNC_02000A98(Func_02001544, gData_02002d30, gData_02002d2c,
+    Func_02001388, gData_02002d2e, gData_02002e30, gData_02002e32)
 
-  Iwram_ClearWords(gData_02002d30, 64);
-  Resource_DecodeType01(gField_CachedTilesA, buffer);
-  gData_02002d2c = Resource_FindFreeEntry();
-  VramCache_Load(gData_02002d2c, 0xc00, buffer);
-  Heap_Release(buffer);
-  Task_Add(Func_02001388, TASK_PASS_VBLANK);
-  gData_02002d2e = 0;
-  gData_02002e30 = 0;
-  gData_02002e32 = -1;
-}
+DEFINE_FUNC_02000CE8(Func_020015c4, gData_02002d30, gData_02002d2c,
+    Func_02001388, gData_02002d2e, gData_02002e30, gData_02002e32)
 
-void Func_020015c4(void) {
-  u8 *buffer = Heap_Alloc(0xc00);
+DEFINE_FUNC_02000D68(Func_02001644, gData_02002d30, gData_02002d2c,
+    Func_02001388, gData_02002d2e, gData_02002e30, gData_02002e32)
 
-  Iwram_ClearWords(gData_02002d30, 64);
-  Resource_DecodeType01(gField_CachedTilesB, buffer);
-  gData_02002d2c = Resource_FindFreeEntry();
-  Vram_Load(gData_02002d2c, 0x800, buffer);
-  Heap_Release(buffer);
-  Task_AddFrame(Func_02001388, TASK_PASS_VBLANK);
-  gData_02002d2e = 0;
-  gData_02002e30 = 0;
-  gData_02002e32 = -1;
-}
-
-void Func_02001644(void) {
-  u8 *buffer = BumpAlloc(0x800);
-
-  Iwram_ClearWords(gData_02002d30, 64);
-  Resource_DecodeType01(gField_CachedTilesC, buffer);
-  gData_02002d2c = Resource_FindFreeEntry();
-  Vram_Load(gData_02002d2c, 0x800, buffer);
-  Heap_Release(buffer);
-  Task_AddFrame(Func_02001388, TASK_PASS_VBLANK);
-  gData_02002d2e = 0;
-  gData_02002e30 = 1;
-  gData_02002e32 = -1;
-}
-
-void Func_020016cc(s32 id, s32 value) {
-  struct Actor *object = Actor_Get(id);
-
-  if (object != NULL) {
-    s16 *count;
-
-    object->timer = value;
-    count = &gData_02002d2e;
-    gData_02002d30[*count] = object;
-    (*count)++;
-  }
-}
+DEFINE_FUNC_02000DF0(Func_020016cc, gData_02002d2e, gData_02002d30)
 
 void Func_020016fc(s32 value) { gData_02002e32 = value; }
 

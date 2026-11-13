@@ -4,6 +4,7 @@
 
 // ---- games/tla/src/scene/aqua_rock.c ----
 
+#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -1031,28 +1032,7 @@ void Func_02001d30(struct Actor *object) {
 }
 
 // ---- games/tla/src/scene/aqua_rock/events_g.c ----
-void Func_02001d98(struct Actor *object) {
-  s32 phase = gFrameCount & 15;
-
-  if (phase == 0) {
-    struct Actor *child =
-        Import_ActorCreate_(0x10d, object->x, object->y, object->z);
-
-    if (child != 0) {
-      struct FieldSprite *sprite = child->sprite;
-
-      Actor_StartScript(child, gData_02002c50);
-      child->motionFlags = 0;
-      child->y = -0x78000;
-      child->terrainId = 1;
-      if (sprite != 0) {
-        Animation_ApplyChildArgument(sprite, 2);
-        sprite->nextFrame = 0;
-        sprite->priority = 2;
-      }
-    }
-  }
-}
+DEFINE_FUNC_02001140(Func_02001d98, gData_02002c50)
 
 #include "scene_ids.h"
 
@@ -1162,28 +1142,7 @@ void Func_02001f90(s32 arg0) {
 /// Every other frame, emits particle 7 (5 on every other such frame) from the
 /// object, 26 pixels up, swaying with the frame count and drifting by a random
 /// amount.
-s32 Func_02002030(struct Actor *object) {
-  s32 params[10];
-
-  if (gFrameCount & 1) {
-    s32 drift;
-    s32 x;
-    s32 y;
-
-    params[1] = 7;
-    if ((gFrameCount & 2) == 0)
-      params[1] = 5;
-    params[2] = 0xcccc;
-    params[3] = 0xcccc;
-    params[0] = 0;
-    drift = ((u32)(Random16Far() << 3) >> 16) * 0x3333;
-    x = object->x;
-    y = object->y;
-    Func_0200015c(x + ((8 - (gFrameCount & 15)) << 16), y + 0x1a0000, object->z,
-                  0, -drift, 0, 0xb0000, params);
-  }
-  return 0;
-}
+DEFINE_FUNC_020013D8(Func_02002030)
 
 void Func_020020bc(s32 entrance) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1414,56 +1373,7 @@ void Func_020025a8(s32 id) {
 #include "io_reg.h"
 #include "resource.h"
 
-void Func_020025d4(void) {
-  struct MapWork *view = Ram_HeapSlots->mapWork;
-  struct GroundParticleWork *work = Ram_HeapSlots->unk70[1];
-  s32 *camera = &view->viewX;
-  struct GroundParticle *particle = work->particles;
-  s32 cameraX = camera[0];
-  s32 cameraZ = camera[1];
-  u32 i;
-
-  for (i = 0; i < 64; i++, particle++) {
-    s16 *frame;
-    s32 x;
-    s32 y;
-
-    if (--particle->timer == 0xffff)
-      continue;
-    if (GameFlag_Test(0x166))
-      particle->timer++;
-    frame = &gData_02002cd4[5 * particle->timer];
-    x = (particle->posX - cameraX) / 0x10000 + *frame++;
-    y = (particle->posZ - particle->posY - cameraZ) / 0x10000 + *frame++;
-    if ((x >= -16 && x <= 239) && y >= -32 && y <= 159) {
-      particle->priority = 1;
-      particle->x = x;
-      particle->y = y;
-      particle->tile = work->tileBase + *(u16 *)frame;
-      frame++;
-      particle->shape = *(u8 *)frame;
-      particle->size = *(u8 *)(frame + 1);
-      Oam_AddSpriteAtDepth(particle, 240);
-    }
-    if (particle->timer == 0) {
-      s32 *leader = work->leader;
-
-      if (leader != NULL) {
-        x = leader[0] + Random16Far() * 240 - 0x780000;
-        y = leader[2] + Random16Far() * 160 - 0x500000;
-        particle->posX = x;
-        particle->posZ = y;
-        particle->posY = Map_GetTerrainHeight(0, x, y);
-        particle->timer = 16;
-      } else {
-        particle->posX = 0;
-        particle->posZ = 0;
-        particle->posY = 0;
-        particle->timer = 16;
-      }
-    }
-  }
-}
+DEFINE_FUNC_02001940(Func_020025d4, gData_02002cd4)
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
 /// decoded into VRAM, and Func_020025d4 scheduled at priority 0x480 to move

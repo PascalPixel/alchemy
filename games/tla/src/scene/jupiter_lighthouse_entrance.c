@@ -1,3 +1,4 @@
+#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -153,95 +154,13 @@ next:
 
 void Func_02001a6c();
 
-void Func_020002f4(s32 mode) {
-  gData_02002198 = 1;
-  if (mode != 2) {
-    Iwram_CopyWords(gData_020021c0, (void *)&BG_PLTT_COLOR(12, 0), 32);
-    Iwram_CopyWords(gData_020021e0, (void *)&BG_PLTT_COLOR(13, 0), 32);
-  }
-  if (Event_GetFlag(0xa00) || mode == 1) {
-    Counter_Set(0);
-    Task_Add(Func_02000238, 1152);
-  } else {
-    Dma_Set(gData_020021e4, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2),
-            REG_DMA3);
-  }
-}
+DEFINE_FUNC_020002F4(Func_020002f4, gData_02002198, gData_020021c0,
+    gData_020021e0, Func_02000238, gData_020021e4)
 
-void Func_02000378(s32 id) {
-  struct Actor *object;
-  s32 height;
-
-  object = Actor_Get(id);
-  object->motionFlags = 4;
-  height = object->terrainHeight;
-  WORD_AT(object, 68) = 0;
-  object->y = height + 0x200000;
-  object->priorityFlags |= 128;
-  height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
-  Func_02001a6c(object->x, object->z, 0, (height >> 19) + 6);
-  Func_02001b34(object->x, object->z, 0, 128);
-}
+DEFINE_FUNC_02000378(Func_02000378, Func_02001a6c, Func_02001b34)
 
 #include "actor.h"
 #include "frame.h"
 #include "event_work.h"
 
-void Func_020003cc(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  struct Actor *linked = actor->watchedObject;
-  struct Actor *shadow;
-  s32 facing;
-  s32 i;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  i = 0;
-  work->unkd46 = 0;
-  actor->motionFlags = 4;
-  Actor_SetSingleChildFlags(actor, 0);
-  while (*((u8 *)linked + 0x63) != 0) {
-    actor->x = linked->x;
-    actor->y = linked->y + i;
-    actor->z = linked->z;
-    if (i <= 0x3ffff)
-      i += 0x1999;
-    actor->facing = (u8)gFrameCount << 12;
-    actor->priorityFlags ^= 2 << (gFrameCount & 1);
-    System_Wait(1);
-  }
-  work->unkd44 = 1;
-  work->unkd46 = 1;
-  facing = linked->facing;
-  actor->x = (((linked->x >> 19) & ~1) + (facing >> 13) - 1) << 19;
-  actor->z = (((linked->z >> 19) & ~1) - ((facing >> 13) & 2) + 1) << 19;
-  actor->velocityY = 0x60000;
-  actor->priorityFlags = 1;
-  actor->motionFlags = 3;
-  Actor_SetSingleChildFlags(actor, 1);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
-  shadow = FieldCamera_GetActor();
-  shadow->speedLimit = 0x80000;
-  shadow->acceleration = 0x10000;
-  shadow->motionFlags = 0;
-  FieldActor_SetMoveTarget(
-      shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
-  i = 0;
-  while (i <= 59 && actor->y > actor->terrainHeight + 0x100000) {
-    i++;
-    System_Wait(1);
-  }
-  Event_PlaySound(127);
-  i = 0;
-  while (i <= 59 && actor->velocityY != 0) {
-    i++;
-    System_Wait(1);
-  }
-  Actor_WaitForMove(shadow);
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  work->unkd46 = 1;
-  work->exit = 0;
-  Event_End();
-}
+DEFINE_FUNC_020003CC(Func_020003cc)

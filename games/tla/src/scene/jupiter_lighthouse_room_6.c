@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x69f that its scene tables belong to, in ROM order; the rest of the overlay is in jupiter_lighthouse_room_6/.
 
+#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -186,20 +187,8 @@ next:
   gData_020023bc++;
 }
 
-void Func_020003a4(s32 mode) {
-  gData_020023c0 = 1;
-  if (mode != 2) {
-    Iwram_CopyWords(gData_020023e8, (void *)&BG_PLTT_COLOR(12, 0), 32);
-    Iwram_CopyWords(gData_02002408, (void *)&BG_PLTT_COLOR(13, 0), 32);
-  }
-  if (Event_GetFlag(0xa00) || mode == 1) {
-    Counter_Set(0);
-    Task_Add(Func_020002e8, 1152);
-  } else {
-    Dma_Set(gData_0200240c, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2),
-            REG_DMA3);
-  }
-}
+DEFINE_FUNC_020002F4(Func_020003a4, gData_020023c0, gData_020023e8,
+    gData_02002408, Func_020002e8, gData_0200240c)
 
 void Func_02000428(s32 id) {
   struct JupiterLighthouseRoom6Object *object;
@@ -220,83 +209,9 @@ void Func_02000428(s32 id) {
 #include "field_sprite.h"
 #include "event_work.h"
 
-void Func_0200047c(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  struct Actor *linked = actor->watchedObject;
-  struct Actor *shadow;
-  u8 *p;
-  s32 angle;
-  s32 i;
+DEFINE_FUNC_02000410(Func_0200047c)
 
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  i = 0;
-  work->unkd46 = i;
-
-  actor->motionFlags = 4;
-  Actor_SetSingleChildFlags(actor, 0);
-
-  while (*((u8 *)linked + 0x63) != 0) {
-    actor->x = linked->x;
-    actor->y = linked->y + i;
-    actor->z = linked->z;
-    if (i <= 0x3ffff)
-      i += 0x1999;
-    actor->facing = (u8)gFrameCount << 12;
-    p = &actor->priorityFlags;
-    *p ^= 2 << (gFrameCount & 1);
-    System_Wait(1);
-  }
-  work->unkd44 = 1;
-  work->unkd46 = 1;
-  angle = linked->facing;
-  actor->x = (((linked->x >> 19) & ~1) + (angle >> 13) - 1) << 19;
-  actor->z = (((linked->z >> 19) & ~1) - ((angle >> 13) & 2) + 1) << 19;
-  actor->velocityY = 0x60000;
-  actor->priorityFlags = 1;
-  actor->motionFlags = 3;
-  Actor_SetSingleChildFlags(actor, 1);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
-  shadow = FieldCamera_GetActor();
-  shadow->speedLimit = 0x80000;
-  shadow->acceleration = 0x10000;
-  shadow->motionFlags = 0;
-  FieldActor_SetMoveTarget(
-      shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
-  i = 0;
-  if (actor->y > actor->terrainHeight + 0x100000) {
-    do {
-      System_Wait(1);
-      i++;
-      if (i > 59)
-        break;
-    } while (actor->y > actor->terrainHeight + 0x100000);
-  }
-  Event_PlaySound(127);
-  i = 0;
-  if (actor->velocityY != 0) {
-    do {
-      System_Wait(1);
-      i++;
-      if (i > 59)
-        break;
-    } while (actor->velocityY != 0);
-  }
-  Actor_WaitForMove(shadow);
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  work->unkd46 = 1;
-  work->exit = 0;
-  Event_End();
-}
-
-s32 Func_02000668(s32 *a, s32 *b) {
-  s32 dx = (a[0] - b[0]) >> 16;
-  s32 dz = (a[2] - b[2]) >> 16;
-
-  return Iwram_Sqrt(dx * dx + dz * dz);
-}
+DEFINE_FUNC_020003D0(Func_02000668)
 
 extern const s32 gData_0200a3c4[];
 

@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x64b that its scene tables belong to, in ROM order; the rest of the overlay is in world_map/.
 
+#include "shared/routines.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
@@ -101,14 +102,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 u32 __umodsi3(u32 a, u32 b);
 
-s32 Func_020002a4(struct Actor *object) {
-  u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
-  struct TileSprite *sprite = object->sprite;
-
-  sprite->tile = *tile;
-  sprite->frame = 0;
-  return 1;
-}
+DEFINE_FUNC_02000038_58(Func_020002a4)
 
 static __inline__ s32 MulQ16(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): through the inline the multiply's address loads between
@@ -163,14 +157,7 @@ s32 StoryActor_Initialize(struct Actor *actor) {
   return 0;
 }
 
-s32 Func_02000388(struct Actor *object) {
-  u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
-  struct TileSprite *sprite = object->sprite;
-
-  sprite->tile = *tile;
-  sprite->frame = 0;
-  return 1;
-}
+DEFINE_FUNC_02000038_58(Func_02000388)
 
 s32 Func_020003a8(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);
@@ -2054,11 +2041,4 @@ void Func_02003490(void) {
   FieldEvent_SetExitRequest(78);
 }
 
-s32 Func_020035e0(struct Actor *object) {
-  u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
-  struct TileSprite *sprite = object->sprite;
-
-  sprite->tile = *tile;
-  sprite->frame = 0;
-  return 1;
-}
+DEFINE_FUNC_02000038_58(Func_020035e0)

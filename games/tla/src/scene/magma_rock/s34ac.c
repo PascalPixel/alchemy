@@ -1,3 +1,5 @@
+#include "../shared/routines.h"
+#include "../shared/tables.h"
 #include "types.h"
 #include "system.h"
 #include "iwram_call.h"
@@ -107,21 +109,7 @@ s32 Func_02003adc(s32 terrainId, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02003c24(s32 terrainId, s32 value, s32 height);
 
-void Func_020036f8(s32 heightOffset, s32 layer, s32 id) {
-  struct Actor *actor = Actor_Get(id);
-  s32 cell = Ram_HeapSlots->mapWork->layers[layer].cells -
-             (struct MapCell *)Ram_MapCellBuffer;
-  s32 z = actor->z;
-  u8 *shapes = gMapShapeGrid + cell;
-  s32 value;
-  s32 height;
-
-  value = Func_02003adc(actor->terrainId, actor->x, z);
-  height = Map_GetTerrainHeight(actor->terrainId, actor->x, actor->z) >> 19;
-  height += heightOffset;
-  shapes += actor->x / 0x100000 + (actor->z / 0x100000 << 7);
-  *shapes = Func_02003c24(actor->terrainId, value, height);
-}
+DEFINE_FUNC_02000BC0_89(Func_020036f8, Func_02003adc, Func_02003c24)
 
 void Func_02002e30(const u8 *data);
 
@@ -145,32 +133,7 @@ struct ParticleWork {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-void Func_0200379c(void) {
-  struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
-  struct Particle *particle = work->particles;
-  struct ParticleSprite *sprite = work->sprites;
-  s32 i;
-  s32 step = -0x8000;
-
-  i = 63;
-next:
-  if ((u32)particle->age <= 19) {
-    u16 *base = &work->tile;
-    s32 mask = 7;
-    s32 tile = (u16)((*base + ((particle->age >> 2) & mask) * 8) & 0x3ff);
-    s32 attr = sprite->attr;
-
-    sprite->attr = (attr & ~0x3ff) | tile;
-    Func_02003c3c(sprite, particle);
-    BattleEffect_StepVector3(particle, 63, step);
-    particle->age++;
-  }
-  i--;
-  sprite++;
-  particle++;
-  if (i >= 0)
-    goto next;
-}
+DEFINE_FUNC_0200379C(Func_0200379c, Func_02003c3c)
 
 void Func_02003820(s32 x, s32 y, s32 z, s32 count) {
   struct EntryWork *work;
@@ -334,12 +297,7 @@ u32 gData_02003cd4[] = {
     SC_END,
 };
 
-s16 gData_02003d10[] = {
-    0, 16, 0, 16, 0, 16, 16, 0,
-    16, 0, 16, 0, 16, 0, 0, -16,
-    0, -16, 0, -16, 0, -16, -16, 0,
-    -16, 0, -16, 0, -16, 0, 0, 16,
-};
+DEFINE_G_DATA_0200198C(gData_02003d10)
 
 u32 gData_02003d50[] = {
     39, 2, 0, 18, 3, 0,

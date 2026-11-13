@@ -1,4 +1,5 @@
 // ---- games/tla/src/scene/trial_road/s15a8.c ----
+#include "../shared/routines.h"
 #include "trial_road.h"
 #include "event_inline.h"
 #include "event_work.h"
@@ -1813,78 +1814,8 @@ done:
   }
 }
 
-void Func_02004418(const u16 *table) {
-  struct Actor *leader;
-  struct Actor *trap;
-  s32 position[3];
-  s32 id;
-  s32 flag;
-  s32 second;
-
-  if (Func_020059c0() != 0)
-    return;
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  position[0] = leader->x;
-  position[1] = leader->y;
-  position[2] = leader->z;
-  trap = Func_02005a28(position, 0);
-  if (trap != 0)
-    goto test;
-  return;
-next:
-  id = table[0];
-  if (Actor_GetById(id) != trap) {
-    table += 2;
-    goto test;
-  }
-  {
-    flag = table[1];
-    Event_Start();
-    if (!GameFlag_Test(flag)) {
-      Sound_Play(125);
-      Actor_SetPartAttribute(Actor_GetById(id), 7);
-      wait(2);
-      Func_020057c8(trap, 0);
-      Actor_SetPartAttribute(Actor_GetById(id), 0);
-      wait(2);
-      Actor_SetPartAttribute(Actor_GetById(id), 7);
-      wait(4);
-      Actor_SetPartAttribute(Actor_GetById(id), 0);
-      Func_02004a94(0);
-      GameFlag_SetBit(flag);
-    } else {
-      second = flag + 1;
-      if (!GameFlag_Test(second)) {
-        leader->motionFlags = 0;
-        Sound_Play(185);
-        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
-        Func_02004a94(0);
-        wait(8);
-        Func_020057c8(trap, 2);
-        Func_02004d6c(-2, trap->terrainId);
-        Func_02004a94(1);
-        wait(16);
-        Func_02004d6c(-2, trap->terrainId);
-        wait(4);
-        MapGrid_SetShake(-1, -1, 0xe666);
-        wait(8);
-        leader->motionFlags = 3;
-        wait(5);
-        Actor_SetPositionAndResetMotion(trap, 0, 0, 0);
-        wait(2);
-        Sound_Play(188);
-        Func_02004bc8();
-        wait(20);
-        GameFlag_SetBit(second);
-      }
-    }
-    Event_End();
-    return;
-  }
-test:
-  if (*table != 0xffff)
-    goto next;
-}
+DEFINE_FUNC_0200406C(Func_02004418, Func_020059c0, Func_02005a28, Func_020057c8,
+    Func_02004a94, Func_02004d6c, Func_02004bc8)
 
 void Func_020045ac(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
@@ -2223,19 +2154,7 @@ void Func_02004bc8(void) {
 
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 
-void Func_02004ce0(s32 level, s32 layer, s32 owner) {
-  struct Actor *object = Actor_GetById(owner);
-  u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapWork->layers[layer].cells -
-                                  (struct MapCell *)Ram_MapCellBuffer);
-  s32 value = Func_02005848(object->terrainId, object->x, object->z);
-  s32 height =
-      Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
-
-  height += level;
-
-  shape += object->x / 0x100000 + object->z / 0x100000 * 128;
-  *shape = Func_02005a20(object->terrainId, value, height);
-}
+DEFINE_FUNC_02000BC0(Func_02004ce0, Func_02005848, Func_02005a20)
 
 void Func_02004d6c(s32 a, s32 b) {
   Func_02004ce0(a, b, gMainRoutineWork.currentOwner);

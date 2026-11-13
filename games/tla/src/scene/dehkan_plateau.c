@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/dehkan_plateau.c ----
 
+#include "shared/routines.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -200,18 +201,7 @@ void Func_02001500(void) {
   GameFlag_ClearBit(0x200);
 }
 
-void Func_02001514(s32 show, s32 first, u32 count) {
-  u32 i;
-
-  for (i = 0; i < count; i++) {
-    struct Actor *actor = Actor_GetById(first + i);
-
-    if (show)
-      actor->priorityFlags &= ~0x10;
-    else
-      actor->priorityFlags |= 0x10;
-  }
-}
+DEFINE_FUNC_02001514(Func_02001514)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -226,17 +216,7 @@ void Func_02001590(s32 a, s32 b) { Func_020000a4(gData_02003fb0, a, b); }
 
 void Func_020015a4(s32 a, s32 b) { Func_020000a4(gData_02003fb8, a, b); }
 
-void Func_020015b8(struct Actor *object) {
-  u8 *flags = &object->motionFlags;
-
-  *flags = 3;
-  do {
-    wait(1);
-  } while (object->velocityY != 0);
-  Sound_Play(188);
-  wait(10);
-  *flags = 0;
-}
+DEFINE_FUNC_020004A4(Func_020015b8)
 
 void Func_020015e0(void) {
   struct Actor *object = Actor_GetById(12);
@@ -657,12 +637,7 @@ void Func_02001ee8(void) {
   }
 }
 
-void Func_02001f38(s32 id) {
-  Func_02003cc0(id);
-  Actor_SetPartAttribute(Actor_GetById(id), 15);
-  Actor_SetSpritePriority(id, 1);
-  Actor_GetById(id)->priorityFlags |= 2;
-}
+DEFINE_FUNC_02001F38(Func_02001f38, Func_02003cc0)
 
 void Func_02001f68(void) {
   if (GameFlag_Test(0x109) != 0) {
@@ -747,16 +722,8 @@ void Func_0200200c(struct Actor *object) {
 void Func_02000d78(const void *data);
 extern const u8 gData_02003fc8[];
 
-void Func_020020dc(void) {
-  struct Actor *object;
-
-  if (Func_02003de0() != 0) {
-    object = Actor_GetById(Func_02003d10(gMainRoutineWork.currentOwner));
-    Func_02000d78(gData_02003fc8);
-    Func_02003de8();
-    Func_0200200c(object);
-  }
-}
+DEFINE_FUNC_020008F4(Func_020020dc, Func_02003de0, Func_02003d10, Func_02000d78,
+    gData_02003fc8, Func_02003de8, Func_0200200c)
 
 void Func_02002114(void) { Func_02000d78(gData_02003fc8); }
 

@@ -201,7 +201,6 @@ void Title_LoadIntroBackgrounds(void) {
   s32 column;
   s32 row;
   u16 tileIndex;
-  s32 blankTile;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_TITLE_INTRO);
   REG_DISPCNT = 0;
@@ -222,62 +221,65 @@ void Title_LoadIntroBackgrounds(void) {
   Dma_Set(Ram_MapGridCellBuffer + 41280, (void *)0x06004ec0,
           DMA_ENABLE << 16 | 20160, REG_DMA3);
 
-  blankTile = 511;
-  tilemap = (u16 *)BG_SCREEN_BLOCK(30);
-  tileIndex = 615;
-  for (row = 0; row <= 10; row++) {
-    for (column = 0; column < 30; column++)
-      *tilemap++ = tileIndex++;
-    *tilemap++ = blankTile;
-    *tilemap++ = blankTile;
-  }
-  tileIndex = 315;
-  for (row = 11; row <= 31; row++) {
-    for (column = 0; column < 30; column++)
-      *tilemap++ = tileIndex++;
-    *tilemap++ = blankTile;
-    *tilemap++ = blankTile;
-  }
-  tilemap = (u16 *)BG_SCREEN_BLOCK(31);
-  tileIndex = 300;
-  for (row = 0; row <= 10; row++) {
-    for (column = 0; column < 30; column++)
-      *tilemap++ = tileIndex++;
-    *tilemap++ = blankTile;
-    *tilemap++ = blankTile;
-  }
-  tileIndex = 0;
-  for (row = 11; row <= 31; row++) {
-    for (column = 0; column < 30; column++)
-      *tilemap++ = tileIndex++;
-    *tilemap++ = blankTile;
-    *tilemap++ = blankTile;
-  }
+  {
+    s32 blankTile = 511;
 
-  REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_MOSAIC | BGCNT_SCREEN_BASE(31);
-  REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(30);
-  REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
-  REG_WIN0V = WIN_RANGE(0, DISPLAY_HEIGHT - 1);
-  REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
-  REG_WIN1V = WIN_RANGE(0, DISPLAY_HEIGHT - 1);
-  REG_WININ = WININ_WIN0_BG1 | WININ_WIN0_BG2 | WININ_WIN0_OBJ |
-              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_OBJ;
-  for (row = 0; row < 4; row++) {
-    gBgScroll[row].y = 0;
-    gBgScroll[row].x = 0;
+    tilemap = (u16 *)BG_SCREEN_BLOCK(30);
+    tileIndex = 615;
+    for (row = 0; row <= 10; row++) {
+      for (column = 0; column < 30; column++)
+        *tilemap++ = tileIndex++;
+      *tilemap++ = blankTile;
+      *tilemap++ = blankTile;
+    }
+    tileIndex = 315;
+    for (row = 11; row <= 31; row++) {
+      for (column = 0; column < 30; column++)
+        *tilemap++ = tileIndex++;
+      *tilemap++ = blankTile;
+      *tilemap++ = blankTile;
+    }
+    tilemap = (u16 *)BG_SCREEN_BLOCK(31);
+    tileIndex = 300;
+    for (row = 0; row <= 10; row++) {
+      for (column = 0; column < 30; column++)
+        *tilemap++ = tileIndex++;
+      *tilemap++ = blankTile;
+      *tilemap++ = blankTile;
+    }
+    tileIndex = 0;
+    for (row = 11; row <= 31; row++) {
+      for (column = 0; column < 30; column++)
+        *tilemap++ = tileIndex++;
+      *tilemap++ = blankTile;
+      *tilemap++ = blankTile;
+    }
+
+    REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_MOSAIC | BGCNT_SCREEN_BASE(31);
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(30);
+    REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
+    REG_WIN0V = WIN_RANGE(0, DISPLAY_HEIGHT - 1);
+    REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
+    REG_WIN1V = WIN_RANGE(0, DISPLAY_HEIGHT - 1);
+    REG_WININ = WININ_WIN0_BG1 | WININ_WIN0_BG2 | WININ_WIN0_OBJ |
+                WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_OBJ;
+    for (row = 0; row < 4; row++) {
+      gBgScroll[row].y = 0;
+      gBgScroll[row].x = 0;
+    }
+    gBgScroll[1].y = 96;
+    gBgScroll[2].y = 96;
+    work->frame = 0;
+    work->backRows = 0;
+    work->frontRows = 0;
+    work->frameCount = 0;
+    work->rise = 0;
+    work->state = INTRO_STATE_SCROLLING;
+    Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
+    REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
+    REG_BLDALPHA = BLEND_ALPHA(16, 16);
+    REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   }
-  gBgScroll[1].y = 96;
-  gBgScroll[2].y = 96;
-  work->frame = 0;
-  work->backRows = 0;
-  work->frontRows = 0;
-  work->frameCount = 0;
-  work->rise = 0;
-  work->state = INTRO_STATE_SCROLLING;
-  Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-  REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 }
 
 // The "Press Start" prompt: its tile count, rows and sprites, and where it
@@ -625,55 +627,58 @@ s32 Title_ShowNintendoLogo(s32 mode) {
 /// A or Start ends it early. Reached through the palette far-call table from
 /// the intro. Returns 0.
 s32 Title_ShowCamelotLogo(void) {
-  s32 result;
   u32 workIndex;
   u8 *resourceData;
   s32 resourceId;
 
   gOamCopyEnabled = 1;
-  result = 0;
-  resourceId = (s32)&ResourceId_CamelotLogo;
-  Task_ResetAll();
-  ScreenFade_ToBlack(1);
-  DebugText_Clear();
-  wait(1);
-  REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
-               BGCNT_SCREEN_BASE(6);
-  REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-  gBgScroll[2].y = result;
-  resourceData = Resource_GetTableEntry(resourceId);
-  Decompress_TaggedLz(resourceData, Ram_MapGridCellBuffer);
-  // The decoded resource: 224 colours, the map, the still tiles, then four
-  // animation pictures of 1024 bytes each.
-  resourceData = Ram_MapGridCellBuffer;
-  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(448 / 4), REG_DMA3);
-  resourceData += 448;
-  Dma_Set(resourceData, BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(2048 / 4), REG_DMA3);
-  resourceData += 2048;
-  Dma_Set(resourceData, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(BG_CHAR_SIZE / 4),
-          REG_DMA3);
-  resourceData += BG_CHAR_SIZE;
-  for (workIndex = 0; workIndex < 4; workIndex++) {
-    gBgScroll[workIndex].y = 0;
-    gBgScroll[workIndex].x = 0;
-  }
-  Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-  Window_LoadGraphics();
-  DebugText_Clear();
-  ScreenFade_FromWhite(1);
-  ScreenFade_Wait();
-  REG_DISPCNT =
-      DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-  // Replace only the animated tiles; the rest of the decoded logo stays
-  // in VRAM while the four animation pictures cycle.
-  for (workIndex = 0; workIndex < 120; workIndex++) {
-    Dma_Set(((gFrameCount >> 3) & 3) * 1024 + resourceData,
-            BG_CHAR_BLOCK(1) + 256, DMA_COPY_WORDS(832 / 4), REG_DMA3);
-    if (gKeysPressed & (KEY_A | KEY_START))
-      break;
+  {
+    s32 result = 0;
+
+    resourceId = (s32)&ResourceId_CamelotLogo;
+    Task_ResetAll();
+    ScreenFade_ToBlack(1);
+    DebugText_Clear();
     wait(1);
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(6);
+    REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
+    gBgScroll[2].y = result;
+    resourceData = Resource_GetTableEntry(resourceId);
+    Decompress_TaggedLz(resourceData, Ram_MapGridCellBuffer);
+    // The decoded resource: 224 colours, the map, the still tiles, then four
+    // animation pictures of 1024 bytes each.
+    resourceData = Ram_MapGridCellBuffer;
+    Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(448 / 4), REG_DMA3);
+    resourceData += 448;
+    Dma_Set(resourceData, BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(2048 / 4),
+            REG_DMA3);
+    resourceData += 2048;
+    Dma_Set(resourceData, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(BG_CHAR_SIZE / 4),
+            REG_DMA3);
+    resourceData += BG_CHAR_SIZE;
+    for (workIndex = 0; workIndex < 4; workIndex++) {
+      gBgScroll[workIndex].y = 0;
+      gBgScroll[workIndex].x = 0;
+    }
+    Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
+    Window_LoadGraphics();
+    DebugText_Clear();
+    ScreenFade_FromWhite(1);
+    ScreenFade_Wait();
+    REG_DISPCNT =
+        DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
+    // Replace only the animated tiles; the rest of the decoded logo stays
+    // in VRAM while the four animation pictures cycle.
+    for (workIndex = 0; workIndex < 120; workIndex++) {
+      Dma_Set(((gFrameCount >> 3) & 3) * 1024 + resourceData,
+              BG_CHAR_BLOCK(1) + 256, DMA_COPY_WORDS(832 / 4), REG_DMA3);
+      if (gKeysPressed & (KEY_A | KEY_START))
+        break;
+      wait(1);
+    }
+    return result;
   }
-  return result;
 }
 
 /// Unused: color entry retained in the far-call table.
@@ -717,7 +722,6 @@ void TitlePaletteFade_Update(void) {
   u16 *packedColors;
   s32 remaining;
   u16 *pagePalettes;
-  s32 blueMask;
 
   if (work->duration == 0)
     return;
@@ -734,25 +738,28 @@ void TitlePaletteFade_Update(void) {
   // The queued DMA keeps a pointer until VBlank. Build into the spare page
   // so packing this frame cannot overwrite the last frame's pending colours.
   packedColors = work->packed[work->page ^ 1];
-  blueMask = 0x7c00;
-  remaining = 512;
-  currentComponents = work->current;
-  for (; remaining != 0; remaining--) {
-    *packedColors++ = (currentComponents[0] & blueMask) |
-                      (((s16)currentComponents[1] >> 5) & 0x3e0) |
-                      (((s16)currentComponents[2] >> 10) & 0x1f);
-    currentComponents += 3;
-  }
-  work->page ^= 1;
-  pagePalettes = work->packed[work->page];
   {
-    u16 *backgroundColors = pagePalettes;
+    s32 blueMask = 0x7c00;
 
-    IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)backgroundColors,
+    remaining = 512;
+    currentComponents = work->current;
+    for (; remaining != 0; remaining--) {
+      *packedColors++ = (currentComponents[0] & blueMask) |
+                        (((s16)currentComponents[1] >> 5) & 0x3e0) |
+                        (((s16)currentComponents[2] >> 10) & 0x1f);
+      currentComponents += 3;
+    }
+    work->page ^= 1;
+    pagePalettes = work->packed[work->page];
+    {
+      u16 *backgroundColors = pagePalettes;
+
+      IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)backgroundColors,
+                          DMA_COPY_WORDS(128));
+    }
+    IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(pagePalettes + 256),
                         DMA_COPY_WORDS(128));
   }
-  IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(pagePalettes + 256),
-                      DMA_COPY_WORDS(128));
 }
 
 /// Tints 512 source colours into destination components (three

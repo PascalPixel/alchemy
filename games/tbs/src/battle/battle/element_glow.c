@@ -327,9 +327,6 @@ s32 ElementGlow_End(s32 unused) {
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
   s32 remaining;
-  u32 redMask;
-  u32 greenMask;
-  u32 blueMask;
   u32 pixel;
   u32 red;
   u32 green;
@@ -338,9 +335,9 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
   if (scale > Q16_ONE)
     scale = Q16_ONE;
   if (count > 0) {
-    redMask = 0x1f;
-    greenMask = 0x3e0;
-    blueMask = 0x7c00;
+    u32 redMask = 0x1f;
+    u32 greenMask = 0x3e0;
+    u32 blueMask = 0x7c00;
     remaining = count;
     do {
       pixel = *source;

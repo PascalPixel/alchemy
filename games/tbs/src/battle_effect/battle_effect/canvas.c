@@ -325,7 +325,6 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   s32 row;
   s32 column;
-  s32 offset;
 
   // The background view's secondMode, which also sets BG1's scroll while it
   // is BATTLE_BACKGROUND_FIXED, holds for the frames BG2 is being changed.
@@ -373,17 +372,20 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
 
   // The screen map: the 16x16 tiles in order. An affine map has one byte
   // per tile, so they are written two at a time.
-  offset = 0;
-  for (row = 0; row != 16; row++) {
-    EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
-  }
+  {
+    s32 offset = 0;
 
-  Iwram_ClearWords(canvas, CANVAS_BYTES);
-  Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
-  work->shakeFrames = 0;
-  work->savedBg1X = gBgScroll[1].x;
-  work->savedBg1Y = gBgScroll[1].y;
-  wait(1);
+    for (row = 0; row != 16; row++) {
+      EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
+    }
+
+    Iwram_ClearWords(canvas, CANVAS_BYTES);
+    Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
+    work->shakeFrames = 0;
+    work->savedBg1X = gBgScroll[1].x;
+    work->savedBg1Y = gBgScroll[1].y;
+    wait(1);
+  }
 }
 
 /// Opens the canvas layer as BattleEffect_StartCanvasLayer does, but with the
@@ -406,7 +408,6 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   s32 row;
   s32 column;
-  s32 offset;
 
   BattleEffect_ClearActorTimers();
   display->secondMode = BATTLE_BACKGROUND_FIXED;
@@ -448,14 +449,17 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
   wait(1);
 
-  offset = 0;
-  for (row = 0; row != 16; row++) {
-    EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
-  }
+  {
+    s32 offset = 0;
 
-  Iwram_ClearWords(canvas, CANVAS_BYTES);
-  Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
-  wait(1);
+    for (row = 0; row != 16; row++) {
+      EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
+    }
+
+    Iwram_ClearWords(canvas, CANVAS_BYTES);
+    Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
+    wait(1);
+  }
 }
 
 /// Opens the canvas layer with BG2 a wrapping 256x256 map: each row of the

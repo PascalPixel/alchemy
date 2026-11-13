@@ -149,26 +149,28 @@ enum KolimaRoomActorId {
 /// turning.
 static void LogRoomsC_TurnVillagersIntoTrees(struct ActorPlacement *placement) {
   u32 villagerIndex;
-  u8 talkFacing;
-  s32 behavior;
-  u16 treeSprite;
 
   villagerIndex = 0;
-  talkFacing = TALK_FACING_KEEP;
-  behavior = MOVEMENT_TYPE_STAND;
-  treeSprite = SPRITE_TREE;
-  do {
-    placement->talkFacing = talkFacing;
-    placement->movement = behavior;
-    placement->sprite = treeSprite;
-    // The two residents drawn as SPRITE_BOY_WITH_FAIR_HAIR take the small tree.
-    if (villagerIndex == ACTOR_CHILD_TOLD_THE_SECRET - ACTOR_FIRST_VILLAGER ||
-        villagerIndex == ACTOR_LUMBERJACKS_HUNGRY_SON - ACTOR_FIRST_VILLAGER) {
-      placement->sprite = SPRITE_SMALL_TREE;
-    }
-    villagerIndex++;
-    placement++;
-  } while (villagerIndex < ACTOR_LAST_VILLAGER - ACTOR_FIRST_VILLAGER + 1);
+  {
+    u8 talkFacing = TALK_FACING_KEEP;
+    s32 behavior = MOVEMENT_TYPE_STAND;
+    u16 treeSprite = SPRITE_TREE;
+
+    do {
+      placement->talkFacing = talkFacing;
+      placement->movement = behavior;
+      placement->sprite = treeSprite;
+      // The two residents drawn as SPRITE_BOY_WITH_FAIR_HAIR take the small
+      // tree.
+      if (villagerIndex == ACTOR_CHILD_TOLD_THE_SECRET - ACTOR_FIRST_VILLAGER ||
+          villagerIndex ==
+              ACTOR_LUMBERJACKS_HUNGRY_SON - ACTOR_FIRST_VILLAGER) {
+        placement->sprite = SPRITE_SMALL_TREE;
+      }
+      villagerIndex++;
+      placement++;
+    } while (villagerIndex < ACTOR_LAST_VILLAGER - ACTOR_FIRST_VILLAGER + 1);
+  }
 }
 
 const struct SceneEntrance *LogRoomsC_GetEntrances(void) {

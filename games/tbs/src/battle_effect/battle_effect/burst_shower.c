@@ -120,7 +120,6 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   s32 target;
   s32 level;
   s32 paletteId;
-  s32 width;
 
   // The slots are read from the canvas's, not the work block's.
   slots = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
@@ -291,88 +290,91 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     // 32x64 pictures (2048 bytes apart) every 4. The faces have one picture,
     // mirrored on EFFECT_SIDE_PARTY.
     i = 0;
-    width = 32;
-    do {
-      struct Particle *spark = &work->particles[i];
-      // A burst shows from its third frame, or its seventh for the faces
-      // and the Mars Djinni's bursts.
-      if (spark->variant >= 0) {
-        if (mode == BURST_SHOWER_MODE_FACES) {
-          if (spark->variant > 5) {
-            draw[work->args->side](canvas,
-                                   (work->sheet + BURST_SHOWER_PICTURES),
-                                   Q_16_16_TO_INT(spark->x) - 16,
-                                   Q_16_16_TO_INT(spark->y) - 32, width, 64);
-          }
-        } else if (mode == BURST_SHOWER_MODE_DJINNI) {
-          if (spark->variant > 5) {
-            draw[0](canvas,
-                    (work->sheet + BURST_SHOWER_PICTURES) +
-                        ((spark->variant / 4) << 11),
-                    Q_16_16_TO_INT(spark->x) - 16,
-                    Q_16_16_TO_INT(spark->y) - 32, width, 64);
-          }
-        } else if (mode != BURST_SHOWER_MODE_LIGHTNING) {
-          if (spark->variant > 1) {
-            draw[0](canvas,
-                    (work->sheet + BURST_SHOWER_PICTURES) +
-                        ((spark->variant / 4) << 11),
-                    Q_16_16_TO_INT(spark->x) - 16,
-                    Q_16_16_TO_INT(spark->y) - 32, width, 64);
-          }
-        }
-        spark->x += spark->velocityX;
-        spark->y += spark->velocityY;
-        spark->variant += 1;
-        if (spark->variant == BURST_SHOWER_BURST_LIFE) {
-          spark->variant = -1;
-        }
-      }
-      i += 1;
-    } while (i != 64);
+    {
+      s32 width = 32;
 
-    // Hit each target every 8 frames, once its turn has come: target i on
-    // frames whose low three bits are i.
-    if (mode == BURST_SHOWER_MODE_LIGHTNING) {
-      i = 0;
-      while (i != work->args->targetCount) {
-        // The bolt strikes target i from frame i * 4 + 2 and does not knock
-        // it back.
-        if ((frame >= (i * 4) + 2) && ((frame & 7) == i)) {
-          work->shakeFrames = 8;
-          BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
-                                   POSE_DAMAGE, i, 4);
+      do {
+        struct Particle *spark = &work->particles[i];
+        // A burst shows from its third frame, or its seventh for the faces
+        // and the Mars Djinni's bursts.
+        if (spark->variant >= 0) {
+          if (mode == BURST_SHOWER_MODE_FACES) {
+            if (spark->variant > 5) {
+              draw[work->args->side](canvas,
+                                     (work->sheet + BURST_SHOWER_PICTURES),
+                                     Q_16_16_TO_INT(spark->x) - 16,
+                                     Q_16_16_TO_INT(spark->y) - 32, width, 64);
+            }
+          } else if (mode == BURST_SHOWER_MODE_DJINNI) {
+            if (spark->variant > 5) {
+              draw[0](canvas,
+                      (work->sheet + BURST_SHOWER_PICTURES) +
+                          ((spark->variant / 4) << 11),
+                      Q_16_16_TO_INT(spark->x) - 16,
+                      Q_16_16_TO_INT(spark->y) - 32, width, 64);
+            }
+          } else if (mode != BURST_SHOWER_MODE_LIGHTNING) {
+            if (spark->variant > 1) {
+              draw[0](canvas,
+                      (work->sheet + BURST_SHOWER_PICTURES) +
+                          ((spark->variant / 4) << 11),
+                      Q_16_16_TO_INT(spark->x) - 16,
+                      Q_16_16_TO_INT(spark->y) - 32, width, 64);
+            }
+          }
+          spark->x += spark->velocityX;
+          spark->y += spark->velocityY;
+          spark->variant += 1;
+          if (spark->variant == BURST_SHOWER_BURST_LIFE) {
+            spark->variant = -1;
+          }
         }
         i += 1;
-      }
-    } else {
-      i = 0;
-      while (i != work->args->targetCount) {
-        // The bursts reach target i from frame i * 4 + 16.
-        if ((frame >= (i * 4) + 16) && ((frame & 7) == i)) {
-          work->shakeFrames = 8;
-          if (mode == BURST_SHOWER_MODE_GREY) {
-            BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_BLACK,
-                                     POSE_DAMAGE, i, 4);
-          } else {
+      } while (i != 64);
+
+      // Hit each target every 8 frames, once its turn has come: target i on
+      // frames whose low three bits are i.
+      if (mode == BURST_SHOWER_MODE_LIGHTNING) {
+        i = 0;
+        while (i != work->args->targetCount) {
+          // The bolt strikes target i from frame i * 4 + 2 and does not knock
+          // it back.
+          if ((frame >= (i * 4) + 2) && ((frame & 7) == i)) {
+            work->shakeFrames = 8;
             BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, i, 4);
           }
-          BattleMotion_ApplyKnockbackFar(work->args->targets[i],
-                                         KNOCKBACK_HURL);
+          i += 1;
         }
-        i += 1;
+      } else {
+        i = 0;
+        while (i != work->args->targetCount) {
+          // The bursts reach target i from frame i * 4 + 16.
+          if ((frame >= (i * 4) + 16) && ((frame & 7) == i)) {
+            work->shakeFrames = 8;
+            if (mode == BURST_SHOWER_MODE_GREY) {
+              BattleEffect_TintBattler(work->args->targets[i],
+                                       SPRITE_COLOR_BLACK, POSE_DAMAGE, i, 4);
+            } else {
+              BattleEffect_TintBattler(work->args->targets[i],
+                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 4);
+            }
+            BattleMotion_ApplyKnockbackFar(work->args->targets[i],
+                                           KNOCKBACK_HURL);
+          }
+          i += 1;
+        }
       }
-    }
 
-    BattleCamera_Shake(4, 4);
-    // In the grey mode the flash timers never run down, so the targets stay
-    // black.
-    if (mode != BURST_SHOWER_MODE_GREY) {
-      BattleEffect_CountDownBattlerTints();
+      BattleCamera_Shake(4, 4);
+      // In the grey mode the flash timers never run down, so the targets stay
+      // black.
+      if (mode != BURST_SHOWER_MODE_GREY) {
+        BattleEffect_CountDownBattlerTints();
+      }
+      EFFECT_PRESENT_CANVAS(work);
+      frame += 1;
     }
-    EFFECT_PRESENT_CANVAS(work);
-    frame += 1;
   } while (frame != BURST_SHOWER_FRAMES);
 
   EFFECT_FINISH_CANVAS();

@@ -1177,12 +1177,14 @@ static void LunpaFortress_CheckEntranceGuard(void) {
   if (LunpaFortress_CanGuardSeeLeader(ACTOR_GROUND_FLOOR_ENTRANCE_GUARD) != 0 &&
       gMainRoutineWork.cloaked == 0) {
     s16 *raisedTrigger;
-    s32 caughtTrigger;
 
     Task_Remove(LunpaFortress_CheckEntranceGuard);
     raisedTrigger = &work->raisedTrigger;
-    caughtTrigger = RAISED_ENTRANCE_GUARD_SPOTTED;
-    *raisedTrigger = caughtTrigger;
+    {
+      s32 caughtTrigger = RAISED_ENTRANCE_GUARD_SPOTTED;
+
+      *raisedTrigger = caughtTrigger;
+    }
   }
 }
 

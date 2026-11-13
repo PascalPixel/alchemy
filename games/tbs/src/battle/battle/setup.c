@@ -35,7 +35,6 @@ void BattleCamera_Update(void) {
   struct FixedPointPosition eyeOffset;
   s32 *focus;
   s16 delta;
-  u32 linkId;
 
   // The link check: a missed frame counts only while the link is down, and
   // any frame with it up resets the count.
@@ -46,7 +45,7 @@ void BattleCamera_Update(void) {
         battle->linkPaused = 1;
       }
     } else {
-      linkId = SIO_MULTI_PLAYER_ID();
+      u32 linkId = SIO_MULTI_PLAYER_ID();
       if (battle->linkSide != linkId) {
         battle->linkPaused = 1;
       }

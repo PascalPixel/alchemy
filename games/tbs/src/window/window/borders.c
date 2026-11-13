@@ -21,7 +21,6 @@ void Window_UpdateZooms(void) {
   struct WindowWork *state = WINDOW_WORK;
   struct Window *window = state->windows;
   s32 index = 0;
-  u8 dirty;
 
   // The loop is written with goto: as a do-while loop, loop.c
   // keeps the 1 stored on closing in a saved register, and 59 of 99
@@ -47,8 +46,11 @@ loop:
                              (s16)window->previousHeight);
       Window_DrawZoomBorder(window, 1);
       window->zoomStage++;
-      dirty = 1;
-      state->dirty = dirty;
+      {
+        u8 dirty = 1;
+
+        state->dirty = dirty;
+      }
     } else {
       Window_EraseBorderRect((s16)window->previousX, (s16)window->previousY,
                              (s16)window->previousWidth,

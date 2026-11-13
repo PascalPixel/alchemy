@@ -55,7 +55,6 @@ void FieldEffect_UpdateDouseDrop(struct Actor *actor) {
   s32 i;
   struct ActorDouseView *p;
   s32 dropWait = 2;
-  s32 splashWait;
   s16 *pp;
 
   if (particle->y <= particle->altitude) {
@@ -81,10 +80,13 @@ void FieldEffect_UpdateDouseDrop(struct Actor *actor) {
       Actor_SetTargetPositionFromMagnitudeAngle((struct Actor *)p, px(32),
                                                 Random16());
       pp = &p->wait;
-      splashWait = 6;
-      *pp = splashWait;
-      Actor_StartScriptFar((struct Actor *)p,
-                           gFieldEffect_SharedParticleScript);
+      {
+        s32 splashWait = 6;
+
+        *pp = splashWait;
+        Actor_StartScriptFar((struct Actor *)p,
+                             gFieldEffect_SharedParticleScript);
+      }
     }
   }
 }

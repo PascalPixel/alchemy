@@ -1402,7 +1402,6 @@ static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
 /// The first time, Isaac appears and climbs it. Then comes the objective, and
 /// a place for a friend to cheer.
 static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
-  s32 z;
   struct Actor *actor;
   s32 result;
 
@@ -1421,35 +1420,38 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
     Event_Wait(45);
     FieldCamera_SetSpeed(1);
     FieldCamera_MoveTo(536, CAMERA_KEEP, 192, 1);
-    z = 264;
-    FieldCamera_WaitForMove();
-    // "The fans just call this The Wall."
-    Event_ShowMessage(attendant, 0);
-    Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 632, z);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, z);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-    Field_ClimbUp();
-    FieldCamera_SetSpeed(0.25);
-    FieldCamera_MoveTo(536, CAMERA_KEEP, 160, 1);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
-    actor = Actor_Get(ACTOR_PARTY_LEADER);
-    FieldActor_SetMoveTargetFixed(actor, actor->x.fixed,
-                                  actor->y.fixed + px(64), actor->z.fixed);
-    Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-    Field_ClimbUp();
-    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-    Event_ShowMessage(attendant, 0);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
-    Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 488, 248);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
-    FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, 0);
-    FieldCamera_MoveTo(536, CAMERA_KEEP, 160, 1);
-    Event_ShowMessage(attendant, 0);
-    Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
-    FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
-    Colosso_RepeatStageNumber(attendant, 4);
+    {
+      s32 z = 264;
+
+      FieldCamera_WaitForMove();
+      // "The fans just call this The Wall."
+      Event_ShowMessage(attendant, 0);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 632, z);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, z);
+      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
+      Field_ClimbUp();
+      FieldCamera_SetSpeed(0.25);
+      FieldCamera_MoveTo(536, CAMERA_KEEP, 160, 1);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
+      Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
+      actor = Actor_Get(ACTOR_PARTY_LEADER);
+      FieldActor_SetMoveTargetFixed(actor, actor->x.fixed,
+                                    actor->y.fixed + px(64), actor->z.fixed);
+      Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
+      Field_ClimbUp();
+      FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+      Event_ShowMessage(attendant, 0);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
+      Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 488, 248);
+      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
+      FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, 0);
+      FieldCamera_MoveTo(536, CAMERA_KEEP, 160, 1);
+      Event_ShowMessage(attendant, 0);
+      Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
+      FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
+      Colosso_RepeatStageNumber(attendant, 4);
+    }
   } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
     Event_SetMessageId(MsgColossoScalingWallQuickly);
     // "Scaling the wall quickly is priority one in this stage."

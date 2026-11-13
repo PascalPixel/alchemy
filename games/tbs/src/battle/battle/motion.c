@@ -19,28 +19,30 @@
 /// effect.
 void BattleMotion_ReturnToSpot(s32 unitId) {
   s32 z;
-  s32 stopped;
   struct BattleObject *battleObject;
   struct Actor *actor;
 
   battleObject = BattleObject_Get(unitId);
   actor = battleObject->actor;
-  stopped = 0;
-  actor->acceleration = px(2);
-  actor->speedLimit = px(8);
-  actor->gravity = BATTLE_UNIT_GRAVITY;
-  actor->velocityY = stopped;
-  actor->bounce = stopped;
-  actor->steeringFlags = stopped;
-  actor->snapToTarget = 1;
-  Actor_StartIdleFar(actor);
-  Actor_SetMoveTargetFar(actor, battleObject->anchorX, 0,
-                         battleObject->anchorZ);
-  // z / 8, rounded toward zero, as BattleObject_Make turns a new actor.
-  z = battleObject->anchorZ;
-  if (z < 0)
-    z += 7;
-  actor->facing = ArcTan2(z >> 3, battleObject->anchorX) - TRIG_TURN / 2;
+  {
+    s32 stopped = 0;
+
+    actor->acceleration = px(2);
+    actor->speedLimit = px(8);
+    actor->gravity = BATTLE_UNIT_GRAVITY;
+    actor->velocityY = stopped;
+    actor->bounce = stopped;
+    actor->steeringFlags = stopped;
+    actor->snapToTarget = 1;
+    Actor_StartIdleFar(actor);
+    Actor_SetMoveTargetFar(actor, battleObject->anchorX, 0,
+                           battleObject->anchorZ);
+    // z / 8, rounded toward zero, as BattleObject_Make turns a new actor.
+    z = battleObject->anchorZ;
+    if (z < 0)
+      z += 7;
+    actor->facing = ArcTan2(z >> 3, battleObject->anchorX) - TRIG_TURN / 2;
+  }
 }
 
 /// Sends unitId running off its side of the battlefield, three times

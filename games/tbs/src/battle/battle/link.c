@@ -113,57 +113,59 @@ UNREAD_RESULT LinkBattle_SendParty(void) {
   s32 size;
   s32 count;
   s32 i;
-  s32 noSlot;
   u16 unitIds[8];
 
   size = LINK_PARTY_UNIT_BYTES;
   buffer = (u8 *)Heap_AllocEwram(size);
-  noSlot = 0xff;
-  battle = gBattleWork;
-  for (i = 7; i >= 0; i--)
-    battle->opponentSlots[i] = noSlot;
+  {
+    s32 noSlot = 0xff;
 
-  // The party members, each marked as the opponent's.
-  count = BattleParty_PrepareMembers(unitIds);
-  for (i = 0; i < count; i++) {
-    Iwram_CopyWords(buffer, Unit_GetFar(unitIds[i]), size);
-    ((struct Unit *)buffer)->side = BATTLE_SIDE_PARTY;
-    // FIRST_ENEMY_UNIT + i, in a byte.
-    battle->opponentSlots[unitIds[i]] = i - FIRST_ENEMY_UNIT;
-    if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
-      break;
-    Serial_WaitForSend();
-    wait(2);
-  }
-  // Empty places up to three.
-  for (; i < LINK_PARTY_SIZE; i++) {
-    ((struct Unit *)buffer)->side = BATTLE_SIDE_NONE;
-    if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
-      break;
-    Serial_WaitForSend();
-    wait(2);
-  }
+    battle = gBattleWork;
+    for (i = 7; i >= 0; i--)
+      battle->opponentSlots[i] = noSlot;
 
-  // The Djinn recovery list, its units renumbered for the opponent.
-  size = LINK_PARTY_OFFER_BYTES;
-  Heap_Release(buffer);
-  buffer = (u8 *)Heap_AllocEwram(size);
-  /* FAKEMATCH(dead): the copy in a once-only block keeps the list pointer's
-   * copy ahead of the count's load; as the plain call, 2 of 152 instructions
-   * differ in tbs-en. */
-  do {
-    Iwram_CopyWords(buffer, Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY),
-                    size);
-  } while (0);
-  list = &((struct DjinnRecoveryTable *)buffer)->list;
-  for (j = 0; j < list->count; j++)
-    list->entries[j].unitId = battle->opponentSlots[list->entries[j].unitId];
-  if (Serial_StartSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
-    Serial_WaitForSend();
-    wait(1);
-    wait(2);
+    // The party members, each marked as the opponent's.
+    count = BattleParty_PrepareMembers(unitIds);
+    for (i = 0; i < count; i++) {
+      Iwram_CopyWords(buffer, Unit_GetFar(unitIds[i]), size);
+      ((struct Unit *)buffer)->side = BATTLE_SIDE_PARTY;
+      // FIRST_ENEMY_UNIT + i, in a byte.
+      battle->opponentSlots[unitIds[i]] = i - FIRST_ENEMY_UNIT;
+      if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+        break;
+      Serial_WaitForSend();
+      wait(2);
+    }
+    // Empty places up to three.
+    for (; i < LINK_PARTY_SIZE; i++) {
+      ((struct Unit *)buffer)->side = BATTLE_SIDE_NONE;
+      if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+        break;
+      Serial_WaitForSend();
+      wait(2);
+    }
+
+    // The Djinn recovery list, its units renumbered for the opponent.
+    size = LINK_PARTY_OFFER_BYTES;
+    Heap_Release(buffer);
+    buffer = (u8 *)Heap_AllocEwram(size);
+    /* FAKEMATCH(dead): the copy in a once-only block keeps the list pointer's
+     * copy ahead of the count's load; as the plain call, 2 of 152 instructions
+     * differ in tbs-en. */
+    do {
+      Iwram_CopyWords(buffer, Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY),
+                      size);
+    } while (0);
+    list = &((struct DjinnRecoveryTable *)buffer)->list;
+    for (j = 0; j < list->count; j++)
+      list->entries[j].unitId = battle->opponentSlots[list->entries[j].unitId];
+    if (Serial_StartSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
+      Serial_WaitForSend();
+      wait(1);
+      wait(2);
+    }
+    Heap_Release(buffer);
   }
-  Heap_Release(buffer);
 }
 
 /// Copies the low bytes of a name's first four characters and a terminator,

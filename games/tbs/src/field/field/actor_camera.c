@@ -207,7 +207,6 @@ void ActorSystem_ProjectSprites(void) {
   s32 spritesRemaining;
   s32 kind;
   s32 *objectPosition;
-  s32 fixedScale;
   void **sprites;
   void *sprite;
   s32 groupScale[2];
@@ -253,44 +252,47 @@ void ActorSystem_ProjectSprites(void) {
   // draw slot here: 0 sorts it by distance (Render_PlaceProjectedSprite).
   actor = gActors;
   actor += ACTOR_COUNT - 1;
-  fixedScale = Q16_ONE;
-  for (i = ACTOR_COUNT - 1; i >= 0; i--, actor--) {
-    if (actor->script == 0)
-      continue;
-    kind = actor->spriteStorageKind & 15;
-    switch (kind) {
-    case ACTOR_SPRITE_ONE:
-      objectPosition = &actor->x.fixed;
-      scale[0] = actor->scaleX;
-      scale[1] = actor->scaleY;
-      sprite = actor->sprite;
-      if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS)) {
-        scale[0] = fixedScale;
-        scale[1] = fixedScale;
+  {
+    s32 fixedScale = Q16_ONE;
+
+    for (i = ACTOR_COUNT - 1; i >= 0; i--, actor--) {
+      if (actor->script == 0)
+        continue;
+      kind = actor->spriteStorageKind & 15;
+      switch (kind) {
+      case ACTOR_SPRITE_ONE:
+        objectPosition = &actor->x.fixed;
+        scale[0] = actor->scaleX;
+        scale[1] = actor->scaleY;
+        sprite = actor->sprite;
+        if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS)) {
+          scale[0] = fixedScale;
+          scale[1] = fixedScale;
+        }
+        Render_PlaceProjectedSprite(sprite, objectPosition, scale,
+                                    actor->facing + angle, actor->layer);
+        break;
+      case ACTOR_SPRITE_GROUP:
+        groupScale[0] = actor->scaleX;
+        groupScale[1] = actor->scaleY;
+        if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS)) {
+          groupScale[0] = fixedScale;
+          groupScale[1] = fixedScale;
+        }
+        // A group's sprite field points to its four sprite pointers; empty
+        // ones are null.
+        sprites = (void **)actor->sprite;
+        for (spritesRemaining = 3; spritesRemaining >= 0; spritesRemaining--) {
+          sprite = *sprites++;
+          if (sprite != NULL)
+            Render_PlaceProjectedSprite(sprite, &actor->x.fixed, groupScale,
+                                        actor->facing + angle, actor->layer);
+        }
+        break;
+      case ACTOR_SPRITE_NONE:
+        break;
       }
-      Render_PlaceProjectedSprite(sprite, objectPosition, scale,
-                                  actor->facing + angle, actor->layer);
-      break;
-    case ACTOR_SPRITE_GROUP:
-      groupScale[0] = actor->scaleX;
-      groupScale[1] = actor->scaleY;
-      if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS)) {
-        groupScale[0] = fixedScale;
-        groupScale[1] = fixedScale;
-      }
-      // A group's sprite field points to its four sprite pointers; empty
-      // ones are null.
-      sprites = (void **)actor->sprite;
-      for (spritesRemaining = 3; spritesRemaining >= 0; spritesRemaining--) {
-        sprite = *sprites++;
-        if (sprite != NULL)
-          Render_PlaceProjectedSprite(sprite, &actor->x.fixed, groupScale,
-                                      actor->facing + angle, actor->layer);
-      }
-      break;
-    case ACTOR_SPRITE_NONE:
-      break;
     }
+    HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
   }
-  HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
 }

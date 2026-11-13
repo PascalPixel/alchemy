@@ -85,24 +85,26 @@ s32 VramCache_FreeBlocks(s32 id) {
   s32 cleared = 0;
   s32 remaining;
   u8 *owner;
-  u8 empty;
 
   if ((u32)id >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
   owner = gVramCacheBlockOwners;
-  empty = VRAM_BLOCK_OWNER_FREE;
-  remaining = VRAM_BLOCK_COUNT;
-  do {
-    if (*owner == id) {
-      *owner = empty;
-      cleared++;
-    }
-    remaining--;
-    owner++;
-  } while (remaining != 0);
-  if (cleared != 0)
-    return -1;
-  return 0;
+  {
+    u8 empty = VRAM_BLOCK_OWNER_FREE;
+
+    remaining = VRAM_BLOCK_COUNT;
+    do {
+      if (*owner == id) {
+        *owner = empty;
+        cleared++;
+      }
+      remaining--;
+      owner++;
+    } while (remaining != 0);
+    if (cleared != 0)
+      return -1;
+    return 0;
+  }
 }
 
 /// Frees cache entry `no`: its blocks go back and the entry is marked free

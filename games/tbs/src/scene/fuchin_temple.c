@@ -732,7 +732,6 @@ static void FuchinTemple_ToppleTreeNorth(void) {
   struct Actor *tree = Actor_Get(ACTOR_TRAINING_TREE);
   u32 stepIndex = 0;
   s32 delay = 8;
-  u8 rotation;
   do {
     wait(delay);
     tree->z.fixed -= px(1);
@@ -740,17 +739,20 @@ static void FuchinTemple_ToppleTreeNorth(void) {
     stepIndex++;
     delay -= 2;
   } while (stepIndex < 4);
-  rotation = 0;
-  tree->sprite->rotation = rotation;
-  Sound_Play(SE_TOPPLE);
-  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed - px(8),
-                    -px(4) / 5, 0, -px(1) / 5, 0, 0);
-  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed - px(8),
-                    px(4) / 5, 0, -px(1) / 5, 0, 0);
-  FieldEffect_Spawn(tree->x.fixed - px(6), tree->y.fixed,
-                    tree->z.fixed + px(10), px(1) / 5, 0, -px(1), 0, 0);
-  FieldEffect_Spawn(tree->x.fixed + px(6), tree->y.fixed,
-                    tree->z.fixed + px(10), px(1) / 5, 0, -px(1), 0, 0);
+  {
+    u8 rotation = 0;
+
+    tree->sprite->rotation = rotation;
+    Sound_Play(SE_TOPPLE);
+    FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed - px(8),
+                      -px(4) / 5, 0, -px(1) / 5, 0, 0);
+    FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed - px(8),
+                      px(4) / 5, 0, -px(1) / 5, 0, 0);
+    FieldEffect_Spawn(tree->x.fixed - px(6), tree->y.fixed,
+                      tree->z.fixed + px(10), px(1) / 5, 0, -px(1), 0, 0);
+    FieldEffect_Spawn(tree->x.fixed + px(6), tree->y.fixed,
+                      tree->z.fixed + px(10), px(1) / 5, 0, -px(1), 0, 0);
+  }
 }
 
 /// Slides the training tree south in four steps before the final displacement.
@@ -790,24 +792,26 @@ static void FuchinTemple_ToppleTreeSouth(void) {
 /// Routes the student around the tree according to the leader's facing.
 static void FuchinTemple_StudentWalksAroundTree(void) {
   u32 leaderFacing;
-  u32 quadrantLimit;
 
   leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
-  quadrantLimit = 0x3fff;
-  if (((leaderFacing - FACING_SOUTHEAST) << 16) <= 0x3fff0000) {
-    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 168);
-    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 224, 168);
-    Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 20);
-  } else if ((u16)(leaderFacing - FACING_SOUTHWEST) <= quadrantLimit) {
-    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 232, 160);
-    Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTH_SOUTHWEST, 20);
-  } else if ((u16)(leaderFacing - FACING_NORTHWEST) <= quadrantLimit) {
-    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 168);
-    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 224, 172);
-    Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_NORTHEAST, 20);
-  } else {
-    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 232, 160);
-    Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 20);
+  {
+    u32 quadrantLimit = 0x3fff;
+
+    if (((leaderFacing - FACING_SOUTHEAST) << 16) <= 0x3fff0000) {
+      Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 168);
+      Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 224, 168);
+      Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 20);
+    } else if ((u16)(leaderFacing - FACING_SOUTHWEST) <= quadrantLimit) {
+      Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 232, 160);
+      Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTH_SOUTHWEST, 20);
+    } else if ((u16)(leaderFacing - FACING_NORTHWEST) <= quadrantLimit) {
+      Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 168);
+      Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 224, 172);
+      Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_NORTHEAST, 20);
+    } else {
+      Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 232, 160);
+      Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 20);
+    }
   }
 }
 

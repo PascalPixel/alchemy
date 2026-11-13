@@ -463,7 +463,6 @@ void WorldPicture_Show(s32 picture) {
   s32 i;
   u8 *graphics;
   s32 savedStatus;
-  s16 blend;
 
   if (work->mode != ACTOR_SYSTEM_WORLD_MAP)
     return;
@@ -480,45 +479,48 @@ void WorldPicture_Show(s32 picture) {
   }
   menu->suspended = 1;
   wait(1);
-  blend = REG_BLDALPHA;
-  // The picture's 224 BG colours (448 bytes), then its 240 by 160 pixels of
-  // 256 colours, a byte each, decoded into the borrowed buffer and copied
-  // to BG1's tiles.
-  graphics = Resource_GetTableEntry(resource);
-  Dma_Set(graphics, (void *)BG_PLTT,
-          (u32)(DMA_ENABLE | DMA_32BIT) << 16 | (448 / 4), REG_DMA3);
-  BG_PLTT[0] = 0;
-  Decompress_TaggedLz(graphics + 448, gMapGridCellBuffer);
-  Dma_Set(gMapGridCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
-          (u32)(DMA_ENABLE | DMA_32BIT) << 16 |
-              (WORLD_MAP_SCREEN_WIDTH * WORLD_MAP_SCREEN_HEIGHT / 4),
-          REG_DMA3);
-  Io_Write16(BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | 2, &REG_BG1CNT);
-  Io_Write16(DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
-                 DISPCNT_OBJ_1D_MAP,
-             &REG_DISPCNT);
-  WorldPicture_Initialize();
-  Task_Add(WorldPicture_UpdateMarkers, TASK_PASS_FRAME);
-  if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT))
-    FieldMessage_ShowFar(MsgNotOnMap, FIELD_MESSAGE_ZOOM);
-  do {
-    wait(1);
-  } while ((gKeysRepeat & (KEY_A | KEY_B)) == 0);
-  Task_Remove(WorldPicture_UpdateMarkers);
-  WorldPicture_Release();
-  Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
-  WorldMap_LoadAreaGraphicsFar();
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, (u16)blend, IO_WRITE_16);
-  layer = gridState->animations;
-  for (i = 0; i < (s32)(sizeof(savedFlags) / sizeof(savedFlags[0])); i++) {
-    layer->paused = savedFlags[i];
-    layer++;
+  {
+    s16 blend = REG_BLDALPHA;
+
+    // The picture's 224 BG colours (448 bytes), then its 240 by 160 pixels of
+    // 256 colours, a byte each, decoded into the borrowed buffer and copied
+    // to BG1's tiles.
+    graphics = Resource_GetTableEntry(resource);
+    Dma_Set(graphics, (void *)BG_PLTT,
+            (u32)(DMA_ENABLE | DMA_32BIT) << 16 | (448 / 4), REG_DMA3);
+    BG_PLTT[0] = 0;
+    Decompress_TaggedLz(graphics + 448, gMapGridCellBuffer);
+    Dma_Set(gMapGridCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
+            (u32)(DMA_ENABLE | DMA_32BIT) << 16 |
+                (WORLD_MAP_SCREEN_WIDTH * WORLD_MAP_SCREEN_HEIGHT / 4),
+            REG_DMA3);
+    Io_Write16(BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | 2, &REG_BG1CNT);
+    Io_Write16(DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
+                   DISPCNT_OBJ_1D_MAP,
+               &REG_DISPCNT);
+    WorldPicture_Initialize();
+    Task_Add(WorldPicture_UpdateMarkers, TASK_PASS_FRAME);
+    if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT))
+      FieldMessage_ShowFar(MsgNotOnMap, FIELD_MESSAGE_ZOOM);
+    do {
+      wait(1);
+    } while ((gKeysRepeat & (KEY_A | KEY_B)) == 0);
+    Task_Remove(WorldPicture_UpdateMarkers);
+    WorldPicture_Release();
+    Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
+    WorldMap_LoadAreaGraphicsFar();
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, (u16)blend, IO_WRITE_16);
+    layer = gridState->animations;
+    for (i = 0; i < (s32)(sizeof(savedFlags) / sizeof(savedFlags[0])); i++) {
+      layer->paused = savedFlags[i];
+      layer++;
+    }
+    menu->suspended = 0;
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
+    work->transitionFrames = savedStatus;
+    work->camera->paused = 0;
   }
-  menu->suspended = 0;
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  work->transitionFrames = savedStatus;
-  work->camera->paused = 0;
 }
 
 /// On the World Map, shows only the scene's actors within 320 pixels

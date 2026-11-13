@@ -99,7 +99,6 @@ void Exit_PrepareAnimation(s32 animation) {
   /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 20 of
    * 49 instructions differ in tbs-en. */
   u32 zero;
-  u8 param;
   struct Actor *actor;
   struct Sprite *context;
   struct SpriteAnimation *effect;
@@ -109,22 +108,24 @@ void Exit_PrepareAnimation(s32 animation) {
   effect =
       (struct SpriteAnimation *)Sprite_AddAnimationFar(context, SPRITE_DOORWAY);
   zero = 0;
-  param = SPRITE_COLOR_HIDDEN;
+  {
+    u8 param = SPRITE_COLOR_HIDDEN;
 
-  // No shadow as the leader leaves.
-  context->flags = zero;
-  effect->colorMode = param;
-  // Positions are 16.16 fixed point and cells 16 pixels: keep the cell and
-  // put the leader at its middle in x (8 pixels) and its south edge in z.
-  // The coordinates as plain words: through .fixed, the union moves a store.
-  *(s32 *)&actor->x = (*(s32 *)&actor->x & FIELD_CELL_MASK) + px(8);
-  *(s32 *)&actor->z = (*(s32 *)&actor->z & FIELD_CELL_MASK) + px(16);
-  actor->velocityX = zero;
-  actor->velocityZ = zero;
-  actor->targetX = ACTOR_NO_TARGET;
-  actor->targetZ = ACTOR_NO_TARGET;
-  Actor_SelectAnimationFar(actor, animation);
-  wait(18);
+    // No shadow as the leader leaves.
+    context->flags = zero;
+    effect->colorMode = param;
+    // Positions are 16.16 fixed point and cells 16 pixels: keep the cell and
+    // put the leader at its middle in x (8 pixels) and its south edge in z.
+    // The coordinates as plain words: through .fixed, the union moves a store.
+    *(s32 *)&actor->x = (*(s32 *)&actor->x & FIELD_CELL_MASK) + px(8);
+    *(s32 *)&actor->z = (*(s32 *)&actor->z & FIELD_CELL_MASK) + px(16);
+    actor->velocityX = zero;
+    actor->velocityZ = zero;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
+    Actor_SelectAnimationFar(actor, animation);
+    wait(18);
+  }
 }
 
 /// Leaves through a EXIT_STYLE_STAIRS_UP exit (ANIM_LEADER_LEAVE);

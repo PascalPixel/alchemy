@@ -920,7 +920,6 @@ static void LamakanDesert_MeetManticore(void) {
   s32 paused;
   struct Actor *record;
   struct FieldPosition backwardOffset;
-  s32 holdFrames;
   u16 *revealFrames;
   u8 *eventBytes;
 
@@ -935,47 +934,50 @@ static void LamakanDesert_MeetManticore(void) {
       // A running Reveal's countdown is refilled to 600 frames as the
       // Manticore rises and again once it has.
       revealFrames = (u16 *)&((struct FieldWork *)eventBytes)->revealFrames;
-      holdFrames = 600;
-      *revealFrames = holdFrames;
-      record = Actor_Get(ACTOR_PARTY_LEADER);
-      record->velocityX = paused;
-      record = Actor_Get(ACTOR_PARTY_LEADER);
-      record->velocityZ = paused;
-      record = Actor_Get(ACTOR_PARTY_LEADER);
-      record->targetX = ACTOR_NO_TARGET;
-      record = Actor_Get(ACTOR_PARTY_LEADER);
-      record->targetZ = ACTOR_NO_TARGET;
-      Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-      Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MANTICORE, 0);
-      Event_Wait(40);
-      Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-      Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
-                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Event_Wait(40);
-      Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      backwardOffset.x = paused;
-      // Step backward without turning away from the emerging Manticore.
-      backwardOffset.y = paused;
-      backwardOffset.z = paused;
-      record = Actor_Get(ACTOR_PARTY_LEADER);
-      FieldVector_AddPolarOffset(-16, record->facing, &backwardOffset);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
-      Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-      Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, backwardOffset.x / px(1),
-                                 backwardOffset.z / px(1));
-      Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-      Event_Wait(2);
-      Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-      Event_Wait(30);
-      Sound_Play(SE_BOSS_ROAR);
-      Actor_RunRepeatedMotion(ACTOR_MANTICORE, 2);
-      Event_Wait(20);
-      Actor_SetSpeed(ACTOR_MANTICORE, 2.5);
-      Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 104);
-      Actor_SetSpeed(ACTOR_MANTICORE, 0.5);
-      Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 92);
-      *revealFrames = holdFrames;
-      HeatGauge_SetHeld(0);
+      {
+        s32 holdFrames = 600;
+
+        *revealFrames = holdFrames;
+        record = Actor_Get(ACTOR_PARTY_LEADER);
+        record->velocityX = paused;
+        record = Actor_Get(ACTOR_PARTY_LEADER);
+        record->velocityZ = paused;
+        record = Actor_Get(ACTOR_PARTY_LEADER);
+        record->targetX = ACTOR_NO_TARGET;
+        record = Actor_Get(ACTOR_PARTY_LEADER);
+        record->targetZ = ACTOR_NO_TARGET;
+        Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+        Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MANTICORE, 0);
+        Event_Wait(40);
+        Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+        Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
+                                                        ATTACHED_EFFECT_ONCE);
+        Event_Wait(40);
+        Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+        backwardOffset.x = paused;
+        // Step backward without turning away from the emerging Manticore.
+        backwardOffset.y = paused;
+        backwardOffset.z = paused;
+        record = Actor_Get(ACTOR_PARTY_LEADER);
+        FieldVector_AddPolarOffset(-16, record->facing, &backwardOffset);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
+        Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+        Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, backwardOffset.x / px(1),
+                                   backwardOffset.z / px(1));
+        Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
+        Event_Wait(2);
+        Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+        Event_Wait(30);
+        Sound_Play(SE_BOSS_ROAR);
+        Actor_RunRepeatedMotion(ACTOR_MANTICORE, 2);
+        Event_Wait(20);
+        Actor_SetSpeed(ACTOR_MANTICORE, 2.5);
+        Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 104);
+        Actor_SetSpeed(ACTOR_MANTICORE, 0.5);
+        Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 92);
+        *revealFrames = holdFrames;
+        HeatGauge_SetHeld(0);
+      }
     }
   }
 }

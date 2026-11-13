@@ -68,18 +68,15 @@ s32 LuckyWheels_Start(void) {
 /// keeps them). Returns 0.
 s32 LuckyWheels_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count) {
   s32 n;
-  u32 redMask;
-  u32 greenMask;
-  u32 blueMask;
   u32 col;
   u32 r;
   u32 g;
   u32 b;
 
   if (count > 0) {
-    redMask = 0x1f;
-    greenMask = 0x3e0;
-    blueMask = 0x7c00;
+    u32 redMask = 0x1f;
+    u32 greenMask = 0x3e0;
+    u32 blueMask = 0x7c00;
     n = count;
     do {
       // Scale each channel where it stands and keep the top 16 bits.

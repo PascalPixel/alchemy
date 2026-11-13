@@ -948,7 +948,7 @@ void Func_02001388(void) {
 #include "system.h"
 
 void Func_020016e8(void) {
-  s32 northwest;
+  s32 northwest = FACING_NORTHWEST;
   s32 southeast;
   s32 north;
 
@@ -958,9 +958,6 @@ void Func_020016e8(void) {
    * to 98; the five Value3 calls, 27). */
   Func_02005814();
   FieldEvent_ResolvePendingActions(0);
-  /* FAKEMATCH(temporary): the three angles held in locals; as FACING_
-   * constants at each call, 57 of 400 instructions differ in tla-en. */
-  northwest = FACING_NORTHWEST;
   Actor_SetPositionAndFacing(4, PIXELS(512), PIXELS(312), northwest);
   Actor_SetPositionAndFacing(7, PIXELS(528), PIXELS(304), northwest);
   southeast = FACING_SOUTHEAST;

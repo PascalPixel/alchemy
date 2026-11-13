@@ -798,7 +798,7 @@ void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
 /// with bit 0 of its byte 90 cleared for the move.
 void Func_02003b08(void) {
   u8 *flags;
-  u8 bit;
+  u8 bit = 1;
 
   if (((s16 *)&Actor_GetById(gMainRoutineWork.currentOwner)->z)[1] > 653)
     return;
@@ -809,10 +809,6 @@ void Func_02003b08(void) {
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 376, 668);
   flags = &BYTE_AT(Actor_GetById(gMainRoutineWork.currentOwner), 90);
-  /* FAKEMATCH(temporary): the bit held in a u8 local, built in the register it
-   * ORs into, as the ROM does; as |= 1, the byte loads there instead, 4 of
-   * 47 instructions differ in tla-en (also as an s32 local). */
-  bit = 1;
   *flags = bit | *flags;
   Func_02005e1c();
 }

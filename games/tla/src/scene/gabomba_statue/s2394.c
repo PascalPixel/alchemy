@@ -272,7 +272,7 @@ void Func_0200581c(void);
 
 void Func_02002a64(void) {
   s32 speed;
-  s32 cue;
+  s32 cue = 0x6007;
 
   Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
@@ -304,11 +304,6 @@ void Func_02002a64(void) {
   Event_ShowMessage(23, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(0xcccc, 0x1999);
-  /* FAKEMATCH(temporary): the else branch's 0x6007 set here in a local, which
-   * gives the event work counter r3 and r2 as the native has them; as
-   * Event_ShowMessage(0x6007, 0), 20 of 521 instructions differ in
-   * tla-en. */
-  cue = 0x6007;
   FieldCamera_MoveTo(196 << 17, -1, 146 << 17, 1);
   Func_020057b4();
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);

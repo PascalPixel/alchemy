@@ -1206,13 +1206,9 @@ extern const struct CellPictureCopyEntry gData_02003308__s0ac4[] __asm__("gData_
 /// the group, and they all gather at 4 before flags 0x980 and 0x98e are set.
 void Func_020019d8(void) {
   struct Actor *object;
-  s32 x;
+  s32 x = 153 << 16;
   s32 z;
 
-  /* FAKEMATCH(temporary): x and z held in locals set first, so the place call
-   * builds x before the actor id; as constants passed to the call, 4 of 1565
-   * instructions differ in tla-en (with z alone a local, 2). */
-  x = 153 << 16;
   z = 0x01030000;
   Func_02002b28();
   Event_ResolvePendingActions(0);

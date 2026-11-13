@@ -436,7 +436,7 @@ SECTIONS
         "*/games/tla/src/scene/entry/alhafra.o"(.text)
         "*/games/tla/src/scene/alhafra.o"(.text)
         "*/games/tla/src/scene/import/alhafra.o"(.text)
-        "*/games/tla/src/scene/data/alhafra.o"(.data)
+        "*/games/tla/src/scene/alhafra.o"(.data)
     }
 }
 #elif OVERLAY == 0x666

@@ -519,7 +519,8 @@ s32 Scene_Initialize(void) {
   Func_02000af8();
   OBJECT(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) != 0) {
-    if (Event_GetFlag(0x905) != 0 && Event_GetFlag(0x90f) == 0) {
+    if (Event_GetFlag(0x905) != 0 &&
+        Event_GetFlag(FLAG_ALHAFRA_SHIP_GONE) == 0) {
       Actor_SetPosition(30, PIXELS(184), PIXELS(616));
       Actor_SetPosition(31, PIXELS(136), PIXELS(600));
       Actor_SetPosition(28, PIXELS(168), PIXELS(584));
@@ -1548,8 +1549,8 @@ void Func_02002048(void) {
 }
 
 /// Only once flag 0x8a7 is set: the scene that opens with MsgBriggs2, which
-/// sets flags 0x90f and FLAG_BRIGGS_SAILED_FROM_ALHAFRA and ends by sending the
-/// party to SceneId_Ov668Room1, entrance 99.
+/// sets flags FLAG_ALHAFRA_SHIP_GONE and FLAG_BRIGGS_SAILED_FROM_ALHAFRA and
+/// ends by sending the party to SceneId_Ov668Room1, entrance 99.
 void Func_02002a08(void) {
   struct MapWork *map;
   s32 i;
@@ -1557,7 +1558,7 @@ void Func_02002a08(void) {
 
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0)
     return;
-  Event_SetFlag(0x90f);
+  Event_SetFlag(FLAG_ALHAFRA_SHIP_GONE);
   Event_SetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);

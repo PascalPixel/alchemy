@@ -62,6 +62,14 @@
 /// ★ Named from the game: "That cute boy next door left already."
 /// (MsgAlhafraInteriors84)
 #define FLAG_ALEX_LEFT_ALHAFRA 0x971
+/// Set as the party from Madra, its mayor among them, reaches Alhafra across
+/// the Yampi Desert.
+/// ★ Named from the game: "Finally! We made it!" (MsgAlhafra10)
+#define FLAG_ALHAFRA_MADRANS_ARRIVED 0x8b3
+/// Set as Alhafra's sailboat leaves its harbour, with
+/// FLAG_BRIGGS_SAILED_FROM_ALHAFRA; the town then mourns its only ship.
+/// ★ Named from the game: "Alhafra lost its ship." (MsgAlhafra132)
+#define FLAG_ALHAFRA_SHIP_GONE 0x90f
 /// Set as Alhafra's inn tells that someone named Isaac picked Crossbone Isle
 /// clean, which it tells only while FLAG_ISAAC_CLEARED_CROSSBONE_ISLE is set.
 /// ★ Named from the game: "Legends said that Crossbone Isle could be found in

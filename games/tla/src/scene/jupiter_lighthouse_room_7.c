@@ -348,7 +348,7 @@ void Func_020007a4(s32 unused, s32 id) {
     spot = Func_02000194();
     if (spot == -1)
       return;
-    Actor_SetSingleChildFlags(Actor_GetById(id), 0);
+    Actor_SetSpriteFlags(Actor_GetById(id), 0);
     Event_Wait(30);
     Func_020002f0();
     if (spot == 0)
@@ -385,7 +385,7 @@ void Func_020007a4(s32 unused, s32 id) {
     return;
   if (object->x >> 20 == 8 && *(s32 *)&object->z >> 20 == 12) {
     Event_SetFlag(2586);
-    Actor_SetSingleChildFlags(Actor_GetById(20), 0);
+    Actor_SetSpriteFlags(Actor_GetById(20), 0);
     Event_Wait(30);
     Event_PlaySound(167);
     Func_020005e8(1);
@@ -719,7 +719,7 @@ extern const s32 gWhirlwindEndScript[];
 extern s32 gWhirlwindRiding;
 
 s32 Func_02002c34(s32 x, s32 z, s32 layer);
-s32 Math_Cosine(s32 angle);
+s32 Trig_Cos(s32 angle);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_02002c34, Position_FlatDistance,

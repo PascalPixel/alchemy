@@ -14,7 +14,7 @@
 #include "types.h"
 
 s32 Func_0200033c(s32 a0) {
-  Actor_SetSingleChildFlags(a0, 0);
+  Actor_SetSpriteFlags(a0, 0);
   return 0;
 }
 

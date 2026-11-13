@@ -9,7 +9,7 @@
 #include "module/scene/scene.h"
 
 s32 Func_02000038(struct Actor *object) {
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   return 0;
 }
 

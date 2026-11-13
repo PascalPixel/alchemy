@@ -1262,10 +1262,10 @@ void TrialRoad_LoseToMoapa(void) {
   Actor_SetAnimation(6, 19);
   Actor_SetAnimation(7, 19);
   FieldActor_SetSpriteRotationById(7, 0x4000);
-  Actor_SetSingleChildFlags(Actor_GetById(4), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(5), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(6), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(7), 0);
+  Actor_SetSpriteFlags(Actor_GetById(4), 0);
+  Actor_SetSpriteFlags(Actor_GetById(5), 0);
+  Actor_SetSpriteFlags(Actor_GetById(6), 0);
+  Actor_SetSpriteFlags(Actor_GetById(7), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(30);
@@ -1534,7 +1534,7 @@ void Func_02003da0(void) {
       } else {
         s32 wave;
         mover->bob += 0x1000;
-        wave = Iwram_MulQ16(0x20000, Math_Sine(mover->bob)) - 0xe0000;
+        wave = Iwram_MulQ16(0x20000, Trig_Sin(mover->bob)) - 0xe0000;
         marker->y = actor->y + (mover->offset << 16) + wave;
       }
       marker->x = actor->x;
@@ -1654,7 +1654,7 @@ void Func_02003f68(void) {
     z = object->z - viewZ - viewY;
     x = (x >> 16) - 8;
     sy = z - height;
-    bob = Iwram_MulQ16(rise, Math_Sine(mover->bob));
+    bob = Iwram_MulQ16(rise, Trig_Sin(mover->bob));
     sy = ((sy + bob + rise) >> 16) - 4;
     depth = ((height + z) >> 16) + 58;
     if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
@@ -1728,7 +1728,7 @@ struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low,
   struct Actor *rider;
 
   Actor_GetById(id);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   if (!Event_GetFlag(0x109)) {
     if (high < low) {
       s32 swap = low;
@@ -1991,14 +1991,14 @@ void Func_02004a94(s32 spread) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags(effect, 0);
+      Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
       Func_020057d0__s4a94(effect, gData_02006254);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
-        effect->velocity.x = Iwram_MulQ16(Math_Cosine(i << 13), 0x13333);
-        effect->velocity.z = Math_Sine(i << 13);
+        effect->velocity.x = Iwram_MulQ16(Trig_Cos(i << 13), 0x13333);
+        effect->velocity.z = Trig_Sin(i << 13);
       } else {
         effect->velocity.x = spread;
         effect->velocity.z = spread;
@@ -2032,12 +2032,12 @@ void Func_02004bc8(void) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags(effect, 0);
+      Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
       Func_020057d0__s4a94(effect, gData_02006284);
-      effect->velocity.x = Math_Cosine(i << 12);
+      effect->velocity.x = Trig_Cos(i << 12);
       effect->velocity.y = 0;
-      effect->velocity.z = Math_Sine(i << 12);
+      effect->velocity.z = Trig_Sin(i << 12);
       effect->velocity.x += effect->velocity.x >> 1;
       effect->velocity.x += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
       effect->velocity.z += ((Random16Far() * 3) << 13 >> 16) - 0x3000;

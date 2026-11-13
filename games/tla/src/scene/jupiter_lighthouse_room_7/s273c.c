@@ -54,7 +54,7 @@ loop:
     s32 velocity[3];
 
     angle = i << 12;
-    velocity[0] = Math_Cosine(angle);
+    velocity[0] = Trig_Cos(angle);
     velocity[1] = 0;
     velocity[2] = Math_Sin(angle);
     velocity[0] += velocity[0] >> 1;

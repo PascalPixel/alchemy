@@ -16,7 +16,7 @@ struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 kind) {
     Scene_SetActorSpritePriority(object, 1);
     object->motionFlags = 0;
     object->collisionFlags = 8;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     FieldActor_SetSpriteColor(object, 15);
     object->priorityFlags |= 34;
     return object;

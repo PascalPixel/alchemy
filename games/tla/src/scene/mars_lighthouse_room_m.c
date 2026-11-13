@@ -95,7 +95,7 @@ void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Func_0200166c(void);
 
 s32 Func_0200004c(struct Actor *object) {
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   return 0;
 }
 
@@ -104,7 +104,7 @@ void Func_02000058(s32 id, s32 value) {
 
   object->motionFlags = 0;
   object->y = PIXELS(14);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   Func_02003118(object, value);
 }
 
@@ -556,7 +556,7 @@ void Weather_StartRain(s32 a);
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void SetBlend(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                 s32 g) {
-  DisplayScroll_InitializeHBlankDma(a, b, c, d, e, f, g);
+  LineScroll_InitWave(a, b, c, d, e, f, g);
 }
 
 s32 Scene_PrepareMap(void) {
@@ -732,7 +732,7 @@ void Func_020012a4(s32 x, s32 z, s32 kind) {
   object = (struct Actor *)Import_ActorCreate(403, x << 16, 0, z);
 
   if (object != 0) {
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     Func_02003118(object, 3);
     if (kind != 0) {
       ((struct MarsLighthouseRoomMAnimation *)object->sprite)->layer = 2;
@@ -980,7 +980,7 @@ s32 Func_02001928(struct Actor *a, struct Actor *b);
 DEFINE_RIDE_UPDATE_CARRIED(Func_02001988, RideWork__s1988, Func_020018c4,
     Func_02001928)
 
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
 DEFINE_ACTOR_RESET_SCRIPTED(Func_02001aec, gData_020032d4)
 
@@ -1044,7 +1044,7 @@ s32 Func_02001928(struct Actor *a, struct Actor *b);
 DEFINE_RIDE_UPDATE_LANDING(Func_02001b64, RideWork__s1b64, Func_020018c4,
     Func_02001928)
 
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
 /// Stops the object and sets its sprite part, then restarts its script at
 /// gData_020032d4; Func_02001e1c of the Mars Lighthouse entrance is the same
@@ -1150,7 +1150,7 @@ void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
 
   if (object != 0) {
     object->bounce =
-        Math_Cosine(((u32)(Random16Far() * 3 << 12) >> 16) + 0x3000);
+        Trig_Cos(((u32)(Random16Far() * 3 << 12) >> 16) + 0x3000);
     object->gravity = (u16)Random16Far();
     object->unk4c = ((u32)(Random16Far() << 17) >> 16) + value;
     /* FAKEMATCH(temporary): the angle held in an s32 local keeps the zero

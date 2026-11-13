@@ -88,17 +88,17 @@ extern void Actor_SetPositionAndResetMotion__kibombo(
 extern void
 Actor_SetSpritePriority__kibombo(u32, s32) __asm__("Actor_SetSpritePriority");
 #define Actor_SetSpritePriority Actor_SetSpritePriority__kibombo
-/* VIEW(kibombo): routine Actor_SetSingleChildFlags as void
- * Actor_SetSingleChildFlags(struct Actor *object, u32 flags); kibombo.h has
- * void Actor_SetSingleChildFlags(struct KibomboObject *object, u32 value);
- * tried as the 35 declarations' void Actor_SetSingleChildFlags(struct
+/* VIEW(kibombo): routine Actor_SetSpriteFlags as void
+ * Actor_SetSpriteFlags(struct Actor *object, u32 flags); kibombo.h has
+ * void Actor_SetSpriteFlags(struct KibomboObject *object, u32 value);
+ * tried as the 35 declarations' void Actor_SetSpriteFlags(struct
  * FieldEffect *effect, s32 flags), it does not compile in tla-ja:
  * games/tla/include/field/field.h:25: conflicting types for
- * `Actor_SetSingleChildFlags'. */
+ * `Actor_SetSpriteFlags'. */
 struct Actor;
 extern void Actor_SetSingleChildFlags__kibombo(
-    struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
-#define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__kibombo
+    struct Actor *object, u32 flags) __asm__("Actor_SetSpriteFlags");
+#define Actor_SetSpriteFlags Actor_SetSingleChildFlags__kibombo
 /* VIEW(kibombo): routine Actor_SetBlendMode as void
  * Actor_SetBlendMode(struct Actor *object, u32 value); kibombo.h has void
  * Actor_SetBlendMode(struct KibomboObject *object, s32 flags); tried as
@@ -125,7 +125,7 @@ extern void Actor_SetPartAttribute__kibombo(
 #include "field.h"
 #undef Actor_SetSpriteColor
 #undef Actor_SetBlendMode
-#undef Actor_SetSingleChildFlags
+#undef Actor_SetSpriteFlags
 #undef Actor_SetSpritePriority
 #undef Actor_SetPositionAndResetMotion
 #include "game.h"
@@ -627,7 +627,7 @@ void Func_02000d74(void) {
   Motion_SetModeAndWaitAnimation(17, 3);
   Event_ShowMessageAndWait(0x4011, 0);
   Sound_Play(26);
-  Actor_SetSingleChildFlags(Actor_GetById(27), 0);
+  Actor_SetSpriteFlags(Actor_GetById(27), 0);
   Actor_GetById(27)->motionFlags = 0;
   Actor_SetPositionAndResetMotion(Actor_GetById(27), PIXELS(265), PIXELS(24),
                                   PIXELS(344));

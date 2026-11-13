@@ -74,7 +74,7 @@ void Func_020000e4(struct Actor *object) {
   s32 across;
   u8 *counter;
 
-  cosine = Math_Cosine(angle);
+  cosine = Trig_Cos(angle);
   counter = &object->unk5c[6];
   {
     s32 radius = object->speedLimit + *counter;
@@ -156,7 +156,7 @@ void Func_020001d8(void) {
   object->motionFlags = 4;
   object->y = 0x700000;
   Actor_SetSpriteColorMode(object, 5);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   object->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(9, 2);
   object = Actor_Get(9);
@@ -165,7 +165,7 @@ void Func_020001d8(void) {
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
   Actor_SetSpriteColorMode(object, 5);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   object->priorityFlags |= 0x20;
   object->priorityFlags |= 2;
   Actor_SetBlendMode(object, 1);
@@ -284,7 +284,7 @@ void Func_020005a0(struct Actor *object) {
   u16 angle = *pangle;
   struct Actor *parent = object->watchedObject;
 
-  object->x = parent->x + Math_Cosine(angle) * (object->speedLimit + 28);
+  object->x = parent->x + Trig_Cos(angle) * (object->speedLimit + 28);
   object->z = (Math_Sin(angle) << 4) + 0x1080000;
   object->targetX = object->x;
   object->targetZ = object->z;
@@ -1658,7 +1658,7 @@ void Func_02003210(struct Actor *self) {
   s32 x;
   s32 z;
 
-  self->x = centre->x + Math_Cosine(angle) * (self->speedLimit + 3);
+  self->x = centre->x + Trig_Cos(angle) * (self->speedLimit + 3);
   sine = Math_Sin(angle);
   z = centre->z;
   x = self->x;

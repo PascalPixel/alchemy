@@ -22,7 +22,7 @@
 #include "particle.h"
 #include "resource.h"
 
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 /* VIEW(s46e8): routine Actor_StartScript as void Actor_StartScript(struct
  * FieldEffect *effect, const s32 *script); local.h has void
  * Actor_StartScript(struct Actor *object, const void *data); not tried:
@@ -51,13 +51,13 @@ void Func_020046e8(s32 spread) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags(effect, 0);
+      Actor_SetSpriteFlags(effect, 0);
       Func_02004c98(effect, 2);
       Func_02004ca0__s46e8(effect, gData_02005638);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
-        effect->velocity.x = Iwram_MulQ16(Math_Cosine(i << 13), 0x13333);
+        effect->velocity.x = Iwram_MulQ16(Trig_Cos(i << 13), 0x13333);
         effect->velocity.z = Math_Sin(i << 13);
       } else {
         effect->velocity.x = spread;
@@ -90,10 +90,10 @@ void Func_0200481c(void) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags(effect, 0);
+      Actor_SetSpriteFlags(effect, 0);
       Func_02004c98(effect, 2);
       Func_02004ca0__s46e8(effect, gData_02005668);
-      effect->velocity.x = Math_Cosine(i << 12);
+      effect->velocity.x = Trig_Cos(i << 12);
       effect->velocity.y = 0;
       effect->velocity.z = Math_Sin(i << 12);
       effect->velocity.x += effect->velocity.x >> 1;

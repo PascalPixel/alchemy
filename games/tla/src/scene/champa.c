@@ -509,8 +509,8 @@ s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Task_AddFrame((s32)Func_02000a80, 0xc80);
   Map_SetLayerEntryFlag(8);
-  Actor_SetSingleChildFlags(((s32)Actor_Get(10)), 0);
-  Actor_SetSingleChildFlags(((s32)Actor_Get(11)), 0);
+  Actor_SetSpriteFlags(((s32)Actor_Get(10)), 0);
+  Actor_SetSpriteFlags(((s32)Actor_Get(11)), 0);
   FieldActor_SetSpritePriority(13, 3);
   Actor_Get(23)->scaleX = 0x8000;
   Actor_Get(23)->scaleY = 0x8000;
@@ -610,7 +610,7 @@ void Func_02000d4c(s32 firstId, s32 firstX, s32 firstY, s32 firstA, s32 firstB,
   s32 second = Actor_GetSpriteById(secondId);
 
   Message_OpenWindow(work->message++, firstX, firstY,
-                     BattleEffect_GetResourceId(first) << 16);
+                     Speaker_GetVoice(first) << 16);
   Portrait_OpenWindow(first, 0, firstA, firstB);
   if (frames != 0) {
     while (!Message_AllTyped())
@@ -620,7 +620,7 @@ void Func_02000d4c(s32 firstId, s32 firstX, s32 firstY, s32 firstA, s32 firstB,
    * volatile, so x is loaded after the store; as work->message++ and s32
    * secondX, 4 of 79 instructions differ in tla-en. */
   Message_OpenWindow((*(volatile s16 *)&work->message)++, secondX, secondY,
-                     BattleEffect_GetResourceId(second) << 16);
+                     Speaker_GetVoice(second) << 16);
   Portrait_OpenWindow(second, 0, secondA, secondB);
   while (!Message_AllTyped())
     System_Wait(1);

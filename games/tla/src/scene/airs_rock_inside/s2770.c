@@ -174,17 +174,17 @@ next:
     goto next;
 }
 
-s32 Math_Sine(s32 angle);
+s32 Trig_Sin(s32 angle);
 
 void Func_02002bd0(struct Actor *object) {
   s32 radius = ((object->y - object->terrainHeight) >> 1) + 0x100000;
 
   object->x =
       WORD_AT(object, 68) +
-      Iwram_MulQ16(Math_Cosine((WORD_AT(object, 48) & 255) << 11), radius);
+      Iwram_MulQ16(Trig_Cos((WORD_AT(object, 48) & 255) << 11), radius);
   object->z =
       WORD_AT(object, 76) +
-      Iwram_MulQ16(Math_Sine((WORD_AT(object, 48) & 255) << 11), radius) / 3;
+      Iwram_MulQ16(Trig_Sin((WORD_AT(object, 48) & 255) << 11), radius) / 3;
   object->y += WORD_AT(object, 72);
   WORD_AT(object, 48)++;
 }
@@ -205,10 +205,10 @@ void Func_02002c40(struct Actor *object) {
   __asm__("");
   radius += y >> 2;
   object->x = WORD_AT(object, 68) +
-              Iwram_MulQ16(Math_Cosine((phase & 255) << 11), radius) * 2;
+              Iwram_MulQ16(Trig_Cos((phase & 255) << 11), radius) * 2;
   object->z =
       WORD_AT(object, 76) +
-      Iwram_MulQ16(Math_Sine((WORD_AT(object, 48) & 255) << 11), radius);
+      Iwram_MulQ16(Trig_Sin((WORD_AT(object, 48) & 255) << 11), radius);
   object->y += WORD_AT(object, 72);
   WORD_AT(object, 48)++;
   Actor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
@@ -312,7 +312,7 @@ row:
       spark->speedLimit = Random16Far() & 0xffff;
       Import_ActorSelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02005fd8);
-      Actor_SetSingleChildFlags(spark, 0);
+      Actor_SetSpriteFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_02002c40;
     }
@@ -626,7 +626,7 @@ row:
       spark->speedLimit = Random16Far() & 0xffff;
       Import_ActorSelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02005fd8);
-      Actor_SetSingleChildFlags(spark, 0);
+      Actor_SetSpriteFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_02002c40;
     }
@@ -739,7 +739,7 @@ void Func_02003b7c(s32 x, s32 y) {
   REG_BLDALPHA = 16;
   REG_BLDCNT = 0x3f44;
   Scene_SetActorSpritePriority(marker, 0);
-  Actor_SetSingleChildFlags(marker, 0);
+  Actor_SetSpriteFlags(marker, 0);
   sprite = marker->sprite;
   sprite->blendMode = 2;
   Event_Start();
@@ -766,7 +766,7 @@ fadeOut:
   Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, 65, 1, cellX + 64, cellY, 1,
         2);
   Func_0200062c(0, cellX, cellY, 0xff00);
-  Import_ActorDestroy(marker);
+  Import_ActorRelease(marker);
   Event_End();
   REG_BLDCNT = 0;
   REG_DISPCNT &= 0x7fff;
@@ -845,7 +845,7 @@ void Func_02003e7c(struct Actor *source) {
   Actor_SetSpriteColor(object, 2);
   Scene_SetActorSpritePriority(object, 1);
   Import_ActorSelectAnimation(object, 1);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   Actor_SetBlendMode(object, 1);
   Actor_StartScript(object, gData_02006084);
 }
@@ -882,12 +882,12 @@ s32 Func_02003f94(struct Orbit *object) {
   s32 z;
 
   object->angle += object->speed;
-  object->x = IwramMulQ16(Math_Cosine(object->angle), object->radius);
-  z = IwramMulQ16(Math_Sine(object->angle), object->radius);
+  object->x = IwramMulQ16(Trig_Cos(object->angle), object->radius);
+  z = IwramMulQ16(Trig_Sin(object->angle), object->radius);
   object->x += object->centreX;
   object->z = (z >> 1) + object->centreZ;
   if (object->growth != 141 && (gFrameCount & 1)) {
-    object->radius = object->growth * Math_Sine(object->phase << 10);
+    object->radius = object->growth * Trig_Sin(object->phase << 10);
     object->growth += 10;
   }
   if (object->speed == 0)
@@ -953,7 +953,7 @@ first:
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Import_ActorSelectAnimation(spark, 7);
-    Actor_SetSingleChildFlags(spark, 0);
+    Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
     Actor_StartScript(spark, gData_02006094);
     REG_BLDALPHA = 0x1004;
@@ -993,7 +993,7 @@ second:
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Import_ActorSelectAnimation(spark, 7);
-    Actor_SetSingleChildFlags(spark, 0);
+    Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
     Call3(Vector_AddPolarOffsetFar, spark->unk4c, *angle, (s32)&spark->x);
     Actor_StartScript(spark, gData_020060b0);
@@ -1033,7 +1033,7 @@ third:
     spark->priorityFlags = 1;
     Actor_SetSpriteColor(spark, 2);
     Import_ActorSelectAnimation(spark, 7);
-    Actor_SetSingleChildFlags(spark, 0);
+    Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
     Actor_StartScript(spark, gData_020060c0);
   }
@@ -1397,18 +1397,18 @@ void Func_02004cc8(void) {
 #endif
   prepared = OverlayObject_PrepareObject(0xd80000, -0x200000, 0x2200000, 286);
   leader->motionFlags = 0;
-  Actor_SetSingleChildFlags(leader, 0);
+  Actor_SetSpriteFlags(leader, 0);
   leader->speedLimit = 0x18000;
   leader->acceleration = 0x18000;
   lift = Import_ActorCreate(280, leader->x, leader->y - 0x80000, leader->z);
   Import_ActorSelectAnimation(lift, 2);
-  Actor_SetSingleChildFlags(lift, 0);
+  Actor_SetSpriteFlags(lift, 0);
   lift->motionFlags = 0;
   lift->speedLimit = 0x16666;
   lift->acceleration = 0x16666;
-  Import_ActorSetTargetPosition(leader, leader->x, leader->y + 0x500000,
+  Import_ActorSetMoveTarget(leader, leader->x, leader->y + 0x500000,
                                 leader->z);
-  Import_ActorSetTargetPosition(lift, lift->x, lift->y + 0x480000, lift->z);
+  Import_ActorSetMoveTarget(lift, lift->x, lift->y + 0x480000, lift->z);
   Sound_Play(137);
   Event_StartScreenTransition();
   while (!Func_02005dec(leader)) {
@@ -1431,21 +1431,21 @@ void Func_02004cc8(void) {
   leader->velocityY = 0x40000;
   leader->motionFlags = 2;
   leader->priorityFlags = 1;
-  Import_ActorSetTargetPosition(leader, leader->x, leader->y,
+  Import_ActorSetMoveTarget(leader, leader->x, leader->y,
                                 leader->z - 0x100000);
   OverlayObject_WaitUntilIdle(leader);
-  Import_ActorCommitPosition(leader);
+  Import_ActorWaitForMove(leader);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Import_ActorSelectAnimation(lift, 5);
   wait(12);
-  Import_ActorDestroy(lift);
+  Import_ActorRelease(lift);
   leader->motionFlags = 3;
   leader->terrainHeight = leader->y;
-  Actor_SetSingleChildFlags(leader, 1);
+  Actor_SetSpriteFlags(leader, 1);
 #if TLA_PATCH_1
   leader->priorityFlags = priorityFlags;
 #endif
-  Import_ActorDestroy(prepared);
+  Import_ActorRelease(prepared);
   wait(1);
   Event_WaitTransitionFrames();
   Event_End();
@@ -1470,7 +1470,7 @@ void Func_02004eb0(void) {
     }
     object->acceleration = object->speedLimit = (i << 12) + 0x8000;
     object->update = Func_02000550;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     Actor_SetSpriteColor(object, 2);
     if (i & 1) {
       object->timer = 212;

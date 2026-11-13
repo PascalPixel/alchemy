@@ -14,7 +14,7 @@
 #include "text/msg_ids.h"
 
 s32 Func_0200033c(struct Actor *object) {
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   return 0;
 }
 
@@ -102,9 +102,9 @@ void Func_02000494(void) {
 void Func_020004b4(struct Actor *object) {
   if ((object->terrainHeight = Map_GetTerrainHeight(0, object->x, object->z)) >=
       -0x200000)
-    Actor_SetSingleChildFlags(object, 1);
+    Actor_SetSpriteFlags(object, 1);
   else
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
 }
 
 /* VIEW(hide): variable gData_02000ee0 as extern const s8 gData_02000ee0[]; the
@@ -192,7 +192,7 @@ next:
     object->y += 0x8000;
     object->acceleration = 0x1000;
     object->speedLimit = 0x20000;
-    Actor_SetSingleChildFlags(object, 1);
+    Actor_SetSpriteFlags(object, 1);
     Actor_SetMoveTarget(object, object->x, 0xfff80000, object->z);
     object->update = Func_020004b4;
     Sound_Play(152);
@@ -366,7 +366,7 @@ void LightSprites_Draw(void) {
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else
           oam->priority = gData_02001de2__s0588;
-        Import_OamAddSpriteAtDepth(oam, depth);
+        Import_OamAddSpriteAtDepthClamped(oam, depth);
         oam++;
       } else {
         s32 frame = actor->timer;
@@ -386,7 +386,7 @@ void LightSprites_Draw(void) {
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else
           oam->priority = gData_02001de2__s0588;
-        Import_OamAddSpriteAtDepth(oam, depth);
+        Import_OamAddSpriteAtDepthClamped(oam, depth);
         oam++;
       }
     }

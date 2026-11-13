@@ -298,7 +298,7 @@ void Func_02000534(void) {
     Actor_SetPosition(26, PIXELS(888), PIXELS(8));
   } else {
     Actor_SetItemIcon(Actor_Get(26), 242);
-    Actor_SetSingleChildFlags(Actor_Get(26), 0);
+    Actor_SetSpriteFlags(Actor_Get(26), 0);
   }
 }
 
@@ -367,7 +367,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(10, 0, 0);
     } else {
       Actor_SetSpriteRotationById(10, 0xc000);
-      Actor_SetSingleChildFlags(Actor_Get(10), 0);
+      Actor_SetSpriteFlags(Actor_Get(10), 0);
       ((struct FieldSprite *)Actor_Get(10)->sprite)->nextFrame |= 8;
       sprite = Actor_Get(10)->sprite;
       sprite->unk11 = (sprite->unk11 & 3) | 32;
@@ -511,7 +511,7 @@ void MadraInteriors_InterrogatePiers(void) {
   Actor_FaceActor(9, 7, 0);
   Actor_FaceActor(10, 7, 0);
   object2 = Actor_Get(9);
-  Actor_SetSingleChildFlags(object2, 0);
+  Actor_SetSpriteFlags(object2, 0);
   Actor_SetScript(9, gData_0200349c);
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
@@ -538,7 +538,7 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_Wait(3);
   Actor_SetSpriteRotationById(9, 0);
   object8 = Actor_Get(9);
-  Actor_SetSingleChildFlags(object8, 1);
+  Actor_SetSpriteFlags(object8, 1);
   Actor_FaceDirection(9, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(10, FACING_EAST, 0);

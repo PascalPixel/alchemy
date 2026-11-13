@@ -82,9 +82,9 @@ Actor_GetById:
 	.thumb_func
 Import_EventSetDestination:
 	overlay_veneer Event_SetDestinationFar
-	.global BattleEffect_GetResourceId
+	.global Speaker_GetVoice
 	.thumb_func
-BattleEffect_GetResourceId:
+Speaker_GetVoice:
 	overlay_veneer Speaker_GetVoiceFar
 	.global Func_02000834
 	.thumb_func

@@ -87,7 +87,7 @@ void Func_0200079c(u16 *ids) {
         255 & MapCell_GetAttributes(0, object->x >> 20, object->z >> 20);
     object->motionFlags = 0;
     object->collisionFlags = 0;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     Func_020005cc(*terrainId, object->x >> 20, object->z >> 20,
                   (height >> 19) + 4);
     blocked = (u8 *)object + 99;
@@ -358,7 +358,7 @@ struct MagmaRockEventWork {
   u16 unk16a;
 };
 
-s32 Math_Cosine(s32 angle);
+s32 Trig_Cos(s32 angle);
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define HALF_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
@@ -368,7 +368,7 @@ void Func_02000dc0(struct Actor *object) {
   struct Actor *partner;
   struct Actor *leader;
 
-  step = Math_Cosine(object->facing);
+  step = Trig_Cos(object->facing);
   partner = Actor_Get(HALF_AT(object, 102) + BYTE_AT(object, 98));
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   object->x += step * 2;

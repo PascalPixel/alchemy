@@ -40,8 +40,8 @@ extern u32 gSceneState[];
 extern u8 gMapCellBuffer[];
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-s32 Math_Cosine(s32 angle);
+void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
+s32 Trig_Cos(s32 angle);
 void Func_02001fb4(void);
 void FieldCamera_WaitForArrival(void);
 
@@ -56,6 +56,6 @@ void Func_020018a8(s32 x, s32 z, s32 actor);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static inline s32 SeaOfTime_Cos(s32 angle) { return Math_Cosine(angle); }
+static inline s32 SeaOfTime_Cos(s32 angle) { return Trig_Cos(angle); }
 
 #endif

@@ -71,7 +71,7 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       object->motionFlags = 0;
       object->collisionFlags = 0;
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       Func_02003ba0(object, 2);
       Actor_StartScript(object, gData_02003f14);
       object->scaleX = 0xb333;
@@ -110,15 +110,15 @@ void Func_020027e0(void) {
   Actor_SetSpeed(25, 0x20000, 0x10000);
   Sound_Play(153);
   actor->velocityY = 0x80000;
-  Actor_SetSingleChildFlags(Actor_GetById(25), 0);
+  Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWait(25, 664, 280);
-  Actor_SetSingleChildFlags(Actor_GetById(25), 1);
+  Actor_SetSpriteFlags(Actor_GetById(25), 1);
   Func_02002698(21, 25, 0x210);
   Sound_Play(153);
   actor->velocityY = 0x80000;
-  Actor_SetSingleChildFlags(Actor_GetById(25), 0);
+  Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWait(25, 696, 280);
-  Actor_SetSingleChildFlags(Actor_GetById(25), 1);
+  Actor_SetSpriteFlags(Actor_GetById(25), 1);
   Event_Wait(10);
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_WalkToAndWait(25, 712, 280);
@@ -133,16 +133,16 @@ void Func_020027e0(void) {
   Actor_SetSpeedParameters(25, 0x20000, 0x10000);
   Sound_Play(153);
   actor->velocityY = 0x80000;
-  Actor_SetSingleChildFlags(Actor_GetById(25), 0);
+  Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWait(25, 744, 168);
-  Actor_SetSingleChildFlags(Actor_GetById(25), 1);
+  Actor_SetSpriteFlags(Actor_GetById(25), 1);
   Func_02002698(24, 25, 0x216);
   Actor_FaceDirectionById(25, FACING_NORTH);
   Sound_Play(153);
   actor->velocityY = 0x80000;
-  Actor_SetSingleChildFlags(Actor_GetById(25), 0);
+  Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWait(25, 744, 136);
-  Actor_SetSingleChildFlags(Actor_GetById(25), 1);
+  Actor_SetSpriteFlags(Actor_GetById(25), 1);
   Event_Wait(10);
   Actor_WalkToAndWait(25, 744, 72);
   MapGrid_CopyCellPictureIndicesRect(66, 51, 110, 4, 1, 1);
@@ -201,7 +201,7 @@ void Func_02002b68(void) {
     Sound_Play(229);
     MapGrid_CopyCellPictureIndicesRect(64, 64, 15, 8, 1, 1);
     MapGrid_CopyCellPictureIndicesRect(64, 66, 15, 72, 1, 2);
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   }
 }
 
@@ -349,21 +349,21 @@ void Func_02002dd4(void) {
   Actor_SetSpeedParameters(16, 0x20000, 0x10000);
   Sound_Play(153);
   actor->velocityY = 0x80000;
-  Actor_SetSingleChildFlags(Actor_GetById(16), 0);
+  Actor_SetSpriteFlags(Actor_GetById(16), 0);
   Actor_WalkToAndWaitById(16, 760, 200);
-  Actor_SetSingleChildFlags(Actor_GetById(16), 1);
+  Actor_SetSpriteFlags(Actor_GetById(16), 1);
   Event_Wait(20);
   Sound_Play(153);
   actor->velocityY = 0x80000;
-  Actor_SetSingleChildFlags(Actor_GetById(16), 0);
+  Actor_SetSpriteFlags(Actor_GetById(16), 0);
   Actor_WalkToAndWaitById(16, 792, 200);
-  Actor_SetSingleChildFlags(Actor_GetById(16), 1);
+  Actor_SetSpriteFlags(Actor_GetById(16), 1);
   Func_02002698(9, 16, 0x210);
   Sound_Play(153);
   actor->velocityY = 0x80000;
-  Actor_SetSingleChildFlags(Actor_GetById(16), 0);
+  Actor_SetSpriteFlags(Actor_GetById(16), 0);
   Actor_WalkToAndWaitById(16, 824, 200);
-  Actor_SetSingleChildFlags(Actor_GetById(16), 1);
+  Actor_SetSpriteFlags(Actor_GetById(16), 1);
   Event_Wait(20);
   Actor_WatchAndSetScript(16, gMainRoutineWork.currentOwner);
   Actor_Stop(gMainRoutineWork.currentOwner);
@@ -414,7 +414,7 @@ void Func_02002f9c(void) {
     Func_02003d40__s2698(gData_02004420, 3);
   PartyInventory_GiveItem(199, 0);
   if (gData_02004420 != 0)
-    Import_ActorDestroy(gData_02004420);
+    Import_ActorRelease(gData_02004420);
   Map_CopyAttributes(1, 0, 1, 1, 15, 5);
   GameFlag_SetBit(0x878);
   Event_End();
@@ -767,11 +767,11 @@ loop:
     s32 cosine;
 
     angle = i << 12;
-    cosine = Math_Cosine(angle);
+    cosine = Trig_Cos(angle);
     if (spawn) {
       velocity[0] = cosine;
       velocity[1] = 0;
-      velocity[2] = Math_Sine(angle);
+      velocity[2] = Trig_Sin(angle);
       velocity[0] += velocity[0] >> 1;
       velocity[0] += ((Random16Far() * 3) << 14) >> 16;
       velocity[0] += -0x6000;

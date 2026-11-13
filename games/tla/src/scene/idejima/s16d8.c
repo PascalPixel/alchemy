@@ -48,7 +48,7 @@ void Func_020016d8(void) {
   }
   Actor_SetPosition(10, PIXELS(186), PIXELS(164));
   FieldActor_SetSpriteColor(Actor_Get(10), 15);
-  Actor_SetSingleChildFlags(Actor_Get(10), 0);
+  Actor_SetSpriteFlags(Actor_Get(10), 0);
   System_Wait(1);
   Event_StartScreenTransition();
   FieldCamera_SetSpeed(0x9999, 0x1333);
@@ -56,7 +56,7 @@ void Func_020016d8(void) {
   Actor_WalkToAndWait(5, 204, 196);
   Actor_WalkToAndWait(5, 208, 218);
   Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
-  Import_ActorPlaceAtActor(8, 5);
+  Import_ActorMoveToObject(8, 5);
   System_Wait(1);
   Actor_SetSpeed(8, 0xcccc, 0x6666);
   Actor_WalkToAndWait(8, 186, 216);
@@ -190,7 +190,7 @@ void Func_020016d8(void) {
   Event_ShowMessage(0x900a, 0);
   Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(8, FACING_WEST, 0);
-  Actor_SetSingleChildFlags(Actor_Get(10), 1);
+  Actor_SetSpriteFlags(Actor_Get(10), 1);
   FieldActor_SetSpriteColor(Actor_Get(10), 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(10, FACING_EAST, 40);
@@ -233,11 +233,11 @@ void Func_02001ee0(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_SetPosition(6, PIXELS(444), PIXELS(212));
   Actor_SetAnimation(6, 19);
-  Actor_SetSingleChildFlags(Actor_Get(6), 0);
+  Actor_SetSpriteFlags(Actor_Get(6), 0);
   Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(432), PIXELS(234));
   Actor_Get(gMainRoutineWork.currentOwner)->scaleX = 0xffff0000;
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 41);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_SetPosition(10, PIXELS(392), PIXELS(172));
   System_Wait(1);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(214), 0);
@@ -245,10 +245,10 @@ void Func_02001ee0(void) {
   System_Wait(1);
   Actor_SetPosition(5, PIXELS(208), PIXELS(218));
   Actor_SetAnimation(5, 19);
-  Actor_SetSingleChildFlags(Actor_Get(5), 0);
+  Actor_SetSpriteFlags(Actor_Get(5), 0);
   Actor_SetPosition(8, PIXELS(176), PIXELS(204));
   Actor_SetAnimation(8, 5);
-  Actor_SetSingleChildFlags(Actor_Get(8), 0);
+  Actor_SetSpriteFlags(Actor_Get(8), 0);
   System_Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -288,10 +288,10 @@ void Func_02001ee0(void) {
   Actor_SetScript(10, gData_020033a8);
   FieldEvent_Wait(40);
   Actor_SetAnimation(8, 1);
-  Actor_SetSingleChildFlags(Actor_Get(8), 1);
+  Actor_SetSpriteFlags(Actor_Get(8), 1);
   FieldActor_Jump(8, 4, 20);
   Actor_SetAnimation(5, 1);
-  Actor_SetSingleChildFlags(Actor_Get(5), 1);
+  Actor_SetSpriteFlags(Actor_Get(5), 1);
   FieldActor_Jump(5, 4, 20);
   Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(5, FACING_NORTHWEST, 40);
@@ -343,12 +343,12 @@ void Func_02002304(void) {
   Actor_SetPositionAndFacing(5, PIXELS(340), PIXELS(200), a4000);
   Actor_SetPositionAndFacing(6, PIXELS(342), PIXELS(230), FACING_EAST);
   Actor_SetAnimation(6, 19);
-  Actor_SetSingleChildFlags(Actor_Get(6), 0);
+  Actor_SetSpriteFlags(Actor_Get(6), 0);
   a8000 = 0x8000;
   Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, PIXELS(312),
                              PIXELS(230), a8000);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 41);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   System_Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -386,7 +386,7 @@ void Func_02002304(void) {
   Actor_WalkTo(6, 340, 226);
   FieldActor_Jump(6, 4, 0);
   Actor_SetAnimation(6, 1);
-  Actor_SetSingleChildFlags(Actor_Get(6), 1);
+  Actor_SetSpriteFlags(Actor_Get(6), 1);
   FieldEvent_Wait(20);
   Actor_SetAttachedEffect(5, 0x102);
   FieldEvent_Wait(20);
@@ -483,7 +483,7 @@ void Func_02002304(void) {
   Actor_WalkTo(gMainRoutineWork.currentOwner, 314, 226);
   FieldActor_Jump(gMainRoutineWork.currentOwner, 4, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 1);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 1);
   leader->scaleX = 0x10000;
   FieldEvent_Wait(20);
   Actor_SetAttachedEffect(5, 0x102);
@@ -590,7 +590,7 @@ void Func_02002c64(void) {
   System_Wait(1);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 41);
   System_Wait(1);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   System_Wait(1);
   Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(384), PIXELS(728));
   Actor_SetPosition(11, PIXELS(384), PIXELS(702));
@@ -614,7 +614,7 @@ void Func_02002c64(void) {
   FelixWake_WaitForButton();
   FelixWake_StartStep();
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 1);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 1);
   System_Wait(1);
   FieldActor_Jump(gMainRoutineWork.currentOwner, 4, 20);
   FieldEvent_SetMessageId((s32)MsgIdejimaCheckForInjuries);
@@ -715,7 +715,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 void Func_02002f88(s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Actor_SetSingleChildFlags(Actor_Get(id), 0);
+  Actor_SetSpriteFlags(Actor_Get(id), 0);
   object->facing = FACING_SOUTH;
   object->motionFlags = 0;
   object->x += 0xc0000;
@@ -733,7 +733,7 @@ void Func_02002fd4(void) {
     Actor_SetPosition(8, PIXELS(416), PIXELS(680));
     MapGrid_CopyCellAttributes(38, 32, 2, 1, 25, 42);
     actor = Actor_Get(8);
-    Actor_SetSingleChildFlags(Actor_Get(8), 0);
+    Actor_SetSpriteFlags(Actor_Get(8), 0);
     actor->facing = FACING_SOUTH;
     actor->motionFlags = 0;
     actor->y = PIXELS(12);
@@ -746,7 +746,7 @@ void Func_02002fd4(void) {
     Actor_SetPosition(5, PIXELS(288), PIXELS(744));
     MapGrid_CopyCellAttributes(38, 33, 2, 1, 17, 46);
     actor = Actor_Get(5);
-    Actor_SetSingleChildFlags(Actor_Get(5), 0);
+    Actor_SetSpriteFlags(Actor_Get(5), 0);
     actor->facing = FACING_SOUTH;
     actor->motionFlags = 0;
     actor->y = PIXELS(12);
@@ -761,7 +761,7 @@ void Func_02002fd4(void) {
     Actor_SetPosition(6, PIXELS(240), PIXELS(648));
     MapGrid_CopyCellAttributes(38, 34, 2, 1, 14, 40);
     Actor_SetAnimation(6, 19);
-    Actor_SetSingleChildFlags(Actor_Get(6), 0);
+    Actor_SetSpriteFlags(Actor_Get(6), 0);
     actor->motionFlags = 0;
     actor->y = PIXELS(12);
   }

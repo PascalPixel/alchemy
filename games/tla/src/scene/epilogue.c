@@ -134,7 +134,7 @@ void Epilogue_ShowLineAt(s32 message, s32 x, s32 y, s32 left, s32 line,
   wide = 0x8000 & message;
   message &= 0x7fff;
   window = Message_OpenWindow(gEpilogueMessage, x, y,
-                              (BattleEffect_GetResourceId(message) << 16) | 4);
+                              (Speaker_GetVoice(message) << 16) | 4);
   if (!wide) {
     /* FAKEMATCH(temporary): the name window held in a temporary until after
      * the stores; as name = Portrait_OpenWindow(...), 2 of 100 instructions

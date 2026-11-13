@@ -18,9 +18,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Window_Close
 	.thumb_func
@@ -110,9 +110,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global BattleEffect_GetResourceId
+	.global Speaker_GetVoice
 	.thumb_func
-BattleEffect_GetResourceId:
+Speaker_GetVoice:
 	overlay_veneer Speaker_GetVoiceFar
 	.global Sound_Play
 	.thumb_func

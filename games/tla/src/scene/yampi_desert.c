@@ -45,7 +45,7 @@ extern void Func_0200388c__s0b84(const void *script, s32 a,
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-s32 Math_Sine(s32 angle);
+s32 Trig_Sin(s32 angle);
 
 void Func_02000b84(s32 x, s32 y, s32 z) {
   struct EffectOptions options;
@@ -57,9 +57,9 @@ void Func_02000b84(s32 x, s32 y, s32 z) {
   for (i = 0; i <= 16; i++) {
     s32 velocity[3];
 
-    velocity[0] = Math_Cosine(i << 14);
+    velocity[0] = Trig_Cos(i << 14);
     velocity[1] = 0;
-    velocity[2] = Math_Sine(i << 14);
+    velocity[2] = Trig_Sin(i << 14);
     velocity[0] += velocity[0] >> 1;
     velocity[0] += ((u32)(Random16Far() << 17) >> 16) + -0x10000;
     velocity[2] += (u16)Random16Far() + -0x8000;
@@ -89,7 +89,7 @@ void YampiDesert_StirScorpion(void) {
   Sound_Play(176);
   Actor_GetById(16)->velocityY = 0x60000;
   Actor_SetSpriteColor(Actor_GetById(16), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(16), 1);
+  Actor_SetSpriteFlags(Actor_GetById(16), 1);
   Actor_MoveToAndWaitById(16, 380, 248);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Sound_Play(241);
@@ -121,7 +121,7 @@ void YampiDesert_StirScorpionAgain(void) {
   Sound_Play(176);
   Actor_GetById(21)->velocityY = 0x60000;
   Actor_SetSpriteColor(Actor_GetById(21), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(21), 1);
+  Actor_SetSpriteFlags(Actor_GetById(21), 1);
   Actor_MoveToAndWaitById(21, 256, 560);
   FieldEvent_Wait(20);
   Actor_Stop(gMainRoutineWork.currentOwner);
@@ -184,7 +184,7 @@ void Func_02000f24(void) {
       if (object != NULL) {
         object->speedLimit = 0x12000;
         object->acceleration = 0x8000;
-        Actor_SetSingleChildFlags((struct Actor *)object, 0);
+        Actor_SetSpriteFlags((struct Actor *)object, 0);
         Import_ActorSelectAnimation((struct Actor *)object, 1);
         Actor_StartScript(object, gData_02005828);
       }
@@ -241,7 +241,7 @@ loop_3:
   partner->priorityFlags &= ~2;
   Actor_SetSpritePriority(21, 2);
   Actor_SetSpriteColor(Actor_GetById(21), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(21), 1);
+  Actor_SetSpriteFlags(Actor_GetById(21), 1);
   Scene_SetSpeed(21, 0x19999, 0xcccc);
   Actor_MoveToAndWaitById(21, 216, 184);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, angle, 0);
@@ -250,7 +250,7 @@ loop_3:
   Func_02002ca0();
   Sound_Play(136);
   Func_02000f24();
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   FieldEvent_Wait(20);
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 27);
@@ -270,7 +270,7 @@ step_13:
   Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Sound_Play(153);
   partner->velocityY = 0x80000;
-  Actor_SetSingleChildFlags(Actor_GetById(21), 0);
+  Actor_SetSpriteFlags(Actor_GetById(21), 0);
   Actor_MoveToAndWaitById(21, 232, 168);
   FieldEvent_Wait(3);
   Sound_Play(204);
@@ -704,10 +704,10 @@ void Func_02001c5c(void) {
 
 struct Actor *Actor_GetById(u32 objectId);
 void Actor_StartScript(struct Actor *object, const void *script);
-s32 Math_Sine(s32 angle);
+s32 Trig_Sin(s32 angle);
 
 void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   if (gMainRoutineWork.renderMode != 5) {
     u32 odd = gFrameCount & 1;
 
@@ -721,7 +721,7 @@ void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
 
         dust->motionFlags = odd;
         dust->collisionFlags = odd;
-        Actor_SetSingleChildFlags(dust, 0);
+        Actor_SetSpriteFlags(dust, 0);
         Import_ActorSelectAnimation(dust, 1);
         Actor_StartScript(dust, gData_020042f0);
         sprite = dust->sprite;
@@ -733,18 +733,18 @@ void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
         } while (0);
         if (gInput.held != 0) {
           FIELD32(dust, 68) =
-              Math_Cosine(((Random16Far() << 3) >> 16) << 14) + dx;
+              Trig_Cos(((Random16Far() << 3) >> 16) << 14) + dx;
           FIELD32(dust, 76) =
-              Math_Sine(((Random16Far() << 3) >> 16) << 14) + dz;
+              Trig_Sin(((Random16Far() << 3) >> 16) << 14) + dz;
           if (gInput.held & 2) {
             FIELD32(dust, 68) += dx;
             FIELD32(dust, 76) += dz;
           }
         } else {
           FIELD32(dust, 68) =
-              (Math_Cosine(((Random16Far() << 3) >> 16) << 14) >> 1) + dx;
+              (Trig_Cos(((Random16Far() << 3) >> 16) << 14) >> 1) + dx;
           FIELD32(dust, 76) =
-              (Math_Sine(((Random16Far() << 3) >> 16) << 14) >> 1) + dz;
+              (Trig_Sin(((Random16Far() << 3) >> 16) << 14) >> 1) + dz;
         }
         FIELD32(dust, 72) = 0;
         dust->timer = ((Random16Far() << 9) >> 16) - 256;
@@ -810,7 +810,7 @@ void Func_02001e58(void) {
     if (gMainRoutineWork.renderMode == 5)
       speed = 0;
     else
-      Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+      Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                 1);
   }
   if (ahead->collisionCode == 255)
@@ -1289,7 +1289,7 @@ void Func_02002d6c(struct Actor *object, s32 x, s32 z, s32 mode) {
   Actor_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
   Actor_WalkToAndWaitById(party->currentOwner, x, z);
   Actor_FaceDirectionById(party->currentOwner, 0xc000);
-  Actor_SetSingleChildFlags(Actor_GetById(party->currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(party->currentOwner), 0);
   Actor_SetModeById(party->currentOwner, 13);
   Actor_SetMoveTarget(object, object->x, object->y - 0xa0000, object->z);
   Actor_WaitForMove(object);
@@ -1348,12 +1348,12 @@ void Func_02002ebc(void) {
   Call4(FieldCamera_MoveWithinMapBounds, PIXELS(232), -1, PIXELS(184), 0);
   Map_CenterOnFollowedPoint();
   wait(1);
-  Actor_SetSingleChildFlags(Actor_GetById(party->currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(party->currentOwner), 0);
   leader->motionFlags = 0;
   leader->y = PIXELS(130);
   leader->gravity = Q16_ONE / 2;
   leader->bounce = 0;
-  Actor_SetSingleChildFlags(Actor_GetById(8), 0);
+  Actor_SetSpriteFlags(Actor_GetById(8), 0);
   {
     // The angle is held in a local; as a literal argument, its constant is
     // built last.
@@ -1372,7 +1372,7 @@ void Func_02002ebc(void) {
   Event_WaitTransitionFrames();
   Sound_Play(204);
   leader->motionFlags = 3;
-  Actor_SetSingleChildFlags(Actor_GetById(party->currentOwner), 1);
+  Actor_SetSpriteFlags(Actor_GetById(party->currentOwner), 1);
   FieldEvent_Wait(24);
   Func_02000b84(leader->x, leader->y, leader->z);
   Sound_Play(188);
@@ -1380,7 +1380,7 @@ void Func_02002ebc(void) {
   Motion_SetModeAndWaitAnimation(party->currentOwner, 49);
   Sound_Play(204);
   actor8->motionFlags = 3;
-  Actor_SetSingleChildFlags(Actor_GetById(8), 1);
+  Actor_SetSpriteFlags(Actor_GetById(8), 1);
   FieldEvent_Wait(24);
   Func_02000b84(actor8->x, actor8->y, actor8->z);
   Sound_Play(188);
@@ -1687,7 +1687,7 @@ loop:
     s32 flag = (s16)entry[2];
 
     object->collisionFlags &= 0xfe;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     Func_02003910(id, (u16)kind, (u16)flag, object->terrainId);
     entry += 3;
   }
@@ -1742,7 +1742,7 @@ struct RideWork {
   void *block;
 };
 
-s32 Math_Sine(s32 angle);
+s32 Trig_Sin(s32 angle);
 
 // The rising platforms callback: for each of the 16 entries it raises or lowers
 // the platform on its timer, writes its height to the collision and cell maps,
@@ -1814,7 +1814,7 @@ void Func_020039b8(void) {
       s32 wave;
 
       entry->phase += 0x1000;
-      wave = Iwram_MulQ16(0x20000, Math_Sine(entry->phase)) + -0xe0000;
+      wave = Iwram_MulQ16(0x20000, Trig_Sin(entry->phase)) + -0xe0000;
       rider->y = object->y + (entry->height << 16) + wave;
     }
     rider->x = object->x;
@@ -1891,7 +1891,7 @@ void Func_02003b80(void) {
      * again for the sum; as a direct call, 276 of 252 instructions differ in
      * tla-en. */
     sy = ((sy +
-           Value2((s32 (*)())Iwram_MulQ16, -0x20000, Math_Sine(entry->phase)) +
+           Value2((s32 (*)())Iwram_MulQ16, -0x20000, Trig_Sin(entry->phase)) +
            -0x20000) >>
           16) -
          4;
@@ -1937,7 +1937,7 @@ struct RideEntry *Func_02003e3c(s32 slot, s32 id, s32 timer, s32 low,
   struct Actor *rider;
 
   Actor_GetById(id);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   if (!GameFlag_Test(0x109)) {
     if (high < low) {
       s32 swap = low;

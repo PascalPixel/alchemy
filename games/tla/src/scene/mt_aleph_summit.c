@@ -44,7 +44,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   LinkLobby_RunRoundResult(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_02001650[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSingleChildFlags(effect, 0);
+  Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;

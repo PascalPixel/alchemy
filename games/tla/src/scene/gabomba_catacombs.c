@@ -270,7 +270,7 @@ void Func_0200094c(void) {
     steam = ((struct Actor *)Import_ActorCreate(
         14, leader->x, leader->y + 0x60000, leader->z));
     if (steam) {
-      Actor_SetSingleChildFlags(steam, 0);
+      Actor_SetSpriteFlags(steam, 0);
       Actor_SelectAnimation(steam, 1);
       Actor_StartScript(steam, gData_0200128c);
     }

@@ -13,7 +13,7 @@
 #include "event_inline.h"
 #include "frame.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
 void Event_End(void);
 void Func_02000668(struct Actor *object, s32 a);
@@ -88,7 +88,7 @@ extern s16 gData_020054e0[];
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_SetSingleChildFlags_(struct Actor *object,
                                                   s32 flags) {
-  Actor_SetSingleChildFlags(object, flags);
+  Actor_SetSpriteFlags(object, flags);
 }
 
 static __inline__ struct Actor *Func_02005140_(s32 type, s32 x, s32 y, s32 z) {

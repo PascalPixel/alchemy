@@ -358,7 +358,7 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(0x8ff)) {
     Madra_SealHole();
   } else {
-    Actor_SetSingleChildFlags(Actor_GetById(26), 0);
+    Actor_SetSpriteFlags(Actor_GetById(26), 0);
     object = Actor_GetById(26);
     object->radius = Actor_GetById(26)->radius * 4 / 3;
     ((struct FieldSprite *)Actor_GetById(26)->sprite)->nextFrame |= 8;
@@ -1488,7 +1488,7 @@ void Madra_ClimbDownLadder(void) {
   Actor_GetById(4)->actionFlags &= 0xfe;
   Actor_SetDestinationOffset(4, 0, 4);
   Actor_WaitForMoveById(4);
-  Actor_SetSingleChildFlags(Actor_GetById(4), 0);
+  Actor_SetSpriteFlags(Actor_GetById(4), 0);
   Actor_SetAnimation(4, 13);
   Actor_SetDestinationOffset(4, 0, 16);
   Actor_WaitForMoveById(4);

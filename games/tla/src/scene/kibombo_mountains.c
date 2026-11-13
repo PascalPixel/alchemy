@@ -75,7 +75,7 @@ void Func_02000190(s32 unused, s32 id) {
 extern const u8 gData_02001404[];
 
 void Actor_StartScript(struct Actor *object, const u8 *script);
-void Import_ActorResetMotion(struct Actor *object);
+void Import_ActorStartIdle(struct Actor *object);
 
 void Func_020001a0(s32 unused, s32 id) {
   struct Actor saved;
@@ -127,7 +127,7 @@ void Func_020001a0(s32 unused, s32 id) {
         FieldActor_SetMoveTarget(other, block->x, block->y, block->z);
         FieldActor_WaitForMove(other);
         Actor_StartScript(block, gData_02001404);
-        Import_ActorResetMotion(other);
+        Import_ActorStartIdle(other);
         other->x = 0;
         other->z = 0;
         Event_SetFlag(0x200);
@@ -278,7 +278,7 @@ s32 Scene_Initialize(void) {
   if (scene == (s32)&SceneId_Ov66fRoom1) {
     Actor_SetSpritePriority(18, 1);
     Actor_SetSpritePriority(19, 1);
-    Actor_SetSingleChildFlags(Actor_GetById(19), 0);
+    Actor_SetSpriteFlags(Actor_GetById(19), 0);
     Actor_GetById(19)->collisionFlags = 0;
     Actor_GetById(19)->priorityFlags |= 2;
     Actor_GetById(12)->collisionFlags = 0;

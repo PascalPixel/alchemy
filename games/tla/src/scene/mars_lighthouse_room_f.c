@@ -54,7 +54,7 @@ extern const u8 gMarsLighthouseRoomF_Room3Placements[];
 extern const u8 gMarsLighthouseRoomF_Room2Placements[];
 
 s32 Func_0200004c(struct Actor *object) {
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   return 0;
 }
 
@@ -319,9 +319,9 @@ void Func_0200055c(s32 id) {
         else
           Actor_StartScript(object, gData_02005bac);
       }
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       object->velocityY = (angle << 2) + 0x20000;
-      object->velocityZ = Iwram_MulQ16(speed, Math_Cosine(angle));
+      object->velocityZ = Iwram_MulQ16(speed, Trig_Cos(angle));
       {
         s32 vx = Iwram_MulQ16(speed, Math_Sin(angle));
 
@@ -436,7 +436,7 @@ void Func_02000944(void) {
   s32 frame;
 
   Leader_StopMoving();
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
   FieldEvent_Wait(16);
   frame = 0;
@@ -925,7 +925,7 @@ void Func_0200167c(void) {
   work->unk_d46 = 0;
   motion = &actor->motionFlags;
   *motion = 4;
-  Actor_SetSingleChildFlags(actor, 0);
+  Actor_SetSpriteFlags(actor, 0);
   flag = (u8 *)linked + 0x63;
   while (*flag != 0) {
     actor->x = linked->x;
@@ -948,7 +948,7 @@ void Func_0200167c(void) {
   // Through a pointer: the native loads this 1 from the pool.
   *(u8 *)&actor->priorityFlags = 1;
   *motion = 3;
-  Actor_SetSingleChildFlags(actor, 1);
+  Actor_SetSpriteFlags(actor, 1);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   shadow = FieldCamera_GetActor();
   shadow->speedLimit = 0x80000;
@@ -1006,12 +1006,12 @@ struct GustObject *Func_02001a54(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(222);
-  position.x = source->x + MulQ16(0x80000, Math_Cosine(source->angle));
+  position.x = source->x + MulQ16(0x80000, Trig_Cos(source->angle));
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
   object = (struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                   position.z);
   Func_02005480(object, 2);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;

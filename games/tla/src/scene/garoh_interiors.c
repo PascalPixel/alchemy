@@ -426,9 +426,9 @@ s32 Scene_Initialize(void) {
         Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_STUBBORN_TRAVELER,
                                                        345 << 16, z, angle);
       }
-      Actor_SetSingleChildFlags(Actor_GetById(ACTOR_DISAPPOINTED_TRAVELERS_BED),
+      Actor_SetSpriteFlags(Actor_GetById(ACTOR_DISAPPOINTED_TRAVELERS_BED),
                                 0);
-      Actor_SetSingleChildFlags(Actor_GetById(ACTOR_STUBBORN_TRAVELERS_BED), 0);
+      Actor_SetSpriteFlags(Actor_GetById(ACTOR_STUBBORN_TRAVELERS_BED), 0);
       Actor_GetById(ACTOR_DISAPPOINTED_TRAVELER)->motionFlags = 0;
       Actor_GetById(ACTOR_DISAPPOINTED_TRAVELER)->y = 0;
       Actor_GetById(ACTOR_STUBBORN_TRAVELER)->motionFlags = 0;
@@ -438,9 +438,9 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_STUBBORN_TRAVELERS_BED)->motionFlags = 0;
       Actor_GetById(ACTOR_STUBBORN_TRAVELERS_BED)->y = 0;
       Actor_SetSpriteRotationById(ACTOR_DISAPPOINTED_TRAVELER, 0xe000);
-      Actor_SetSingleChildFlags(Actor_GetById(ACTOR_DISAPPOINTED_TRAVELER), 0);
+      Actor_SetSpriteFlags(Actor_GetById(ACTOR_DISAPPOINTED_TRAVELER), 0);
       Actor_SetSpriteRotationById(ACTOR_STUBBORN_TRAVELER, turn);
-      Actor_SetSingleChildFlags(Actor_GetById(ACTOR_STUBBORN_TRAVELER), 0);
+      Actor_SetSpriteFlags(Actor_GetById(ACTOR_STUBBORN_TRAVELER), 0);
     }
     if (gMainRoutineWork.entrance == 99 &&
         !GameFlag_Test(FLAG_GAROH_SECRET_SHARED))

@@ -81,7 +81,7 @@ void Sound_Play(s32 cue);
 extern struct Actor *gData_0200480c;
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 void Actor_WaitForMove(struct Actor *object);

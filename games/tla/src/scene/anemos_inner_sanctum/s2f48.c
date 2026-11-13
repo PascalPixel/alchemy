@@ -54,7 +54,7 @@ loop:
     s32 cosine;
 
     angle = i << 12;
-    cosine = Math_Cosine(angle);
+    cosine = Trig_Cos(angle);
     /* FAKEMATCH(dead): spawn is always 1, a constant GCSE only folds after its
      * partial redundancy pass, so that pass leaves the velocity array's
      * address in the loop, built after the cosine call as the native has it;

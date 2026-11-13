@@ -540,7 +540,7 @@ void Func_02000bdc(void) {
   BYTE_AT(Actor_GetById(4), 90) &= ~1;
   Actor_SetDestinationOffsetById(4, 0, 4);
   Actor_WaitForMoveById(4);
-  Actor_SetSingleChildFlags(Actor_GetById(4), 0);
+  Actor_SetSpriteFlags(Actor_GetById(4), 0);
 #if TLA_PATCH_1 /* From patch 1. */
   Sound_Play(129);
 #endif

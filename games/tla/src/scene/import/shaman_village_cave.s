@@ -22,9 +22,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Message_CloseFinishedWindows
 	.thumb_func

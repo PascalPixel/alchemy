@@ -651,7 +651,7 @@ void Func_02000f38(void) {
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffset(4, 0, 4);
   Actor_WaitForMoveById(4);
-  Actor_SetSingleChildFlags(Actor_GetById(4), 0);
+  Actor_SetSpriteFlags(Actor_GetById(4), 0);
   Actor_SetAnimation(4, 13);
   Actor_SetDestinationOffset(4, 0, 16);
   Actor_WaitForMoveById(4);
@@ -690,12 +690,12 @@ void Func_0200105c(void) {
 
 void Func_02001080(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
-  Actor_SetSingleChildFlags(Actor_GetById(20), 0);
+  Actor_SetSpriteFlags(Actor_GetById(20), 0);
 }
 
 void Func_020010a0(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 521;
-  Actor_SetSingleChildFlags(Actor_GetById(9), 0);
+  Actor_SetSpriteFlags(Actor_GetById(9), 0);
 }
 
 void Actor_SetWideSprite(s32 id, s32 wide);

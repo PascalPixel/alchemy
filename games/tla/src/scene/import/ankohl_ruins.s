@@ -23,15 +23,15 @@ Task_RemoveFar:
 Random16Far:
 	overlay_veneer Func_080000f8
 	.ifndef TLA_EDITION_JA
-	.global Math_Sine
+	.global Trig_Sin
 	.thumb_func
-Math_Sine:
+Trig_Sin:
 	overlay_veneer Trig_SinFar
 	.endif
 	.ifndef TLA_EDITION_JA
-	.global Math_Cosine
+	.global Trig_Cos
 	.thumb_func
-Math_Cosine:
+Trig_Cos:
 	overlay_veneer Trig_CosFar
 	.endif
 	.global Heap_Alloc
@@ -50,9 +50,9 @@ VramCache_Load:
 	.thumb_func
 VramCache_FindFreeEntry:
 	overlay_veneer VramCache_FindFreeEntryFar
-	.global Import_OamAddSpriteAtDepth
+	.global Import_OamAddSpriteAtDepthClamped
 	.thumb_func
-Import_OamAddSpriteAtDepth:
+Import_OamAddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global GameFlag_Test
 	.thumb_func
@@ -102,9 +102,9 @@ MapGrid_CopyCellPictureCellsRect:
 	.thumb_func
 MapGrid_CheckCollision:
 	overlay_veneer MapGrid_CheckCollisionFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Actor_SetBlendMode
 	.thumb_func

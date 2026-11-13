@@ -242,10 +242,10 @@ void Func_020029c8(struct Actor *actor) {
       sum = Random16Far() + Random16Far();
       scale = (sum >> 2) + 0x8000;
       Actor_StartScript(object, gData_020056d0);
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       object->velocityY = angle * 4 + 0x20000;
-      object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));
-      object->velocityX = Iwram_MulQ16(radius, Math_Sine(angle));
+      object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));
+      object->velocityX = Iwram_MulQ16(radius, Trig_Sin(angle));
       object->gravity = 0x547a;
       object->scaleX = scale;
       object->scaleY = scale;

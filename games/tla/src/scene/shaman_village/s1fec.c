@@ -1275,7 +1275,7 @@ void ShamanVillage_SetUpRoom3(void) {
   object->collisionFlags = 8;
   object->scaleX = 0xcccc;
   object->scaleY = 0xcccc;
-  Actor_SetSingleChildFlags(((struct ShamanVillageObject *)Actor_GetById(16)),
+  Actor_SetSpriteFlags(((struct ShamanVillageObject *)Actor_GetById(16)),
                             0);
 }
 
@@ -1306,7 +1306,7 @@ void Func_0200430c(s32 x, s32 y, s32 z) {
     FieldActor_SetSpriteColor(object, 7);
     object->sprite->priority = 1;
     object->priorityFlags |= 2;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     object->scaleX = 0x8000;
     object->scaleY = 0x8000;
     object->field68 = 60;
@@ -1405,7 +1405,7 @@ void ShamanVillage_SetUpRoom4(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 41);
-    Actor_SetSingleChildFlags(((struct ShamanVillageObject *)Actor_GetById(
+    Actor_SetSpriteFlags(((struct ShamanVillageObject *)Actor_GetById(
                                   gMainRoutineWork.currentOwner)),
                               0);
     wait(1);
@@ -1438,7 +1438,7 @@ void ShamanVillage_SetUpRoom4(void) {
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 813, 120);
-    Actor_SetSingleChildFlags(((struct ShamanVillageObject *)Actor_GetById(
+    Actor_SetSpriteFlags(((struct ShamanVillageObject *)Actor_GetById(
                                   gMainRoutineWork.currentOwner)),
                               1);
     Event_End();

@@ -174,7 +174,7 @@ s32 StoryActor_Initialize(struct Actor *actor) {
 DEFINE_TILE_SPRITE_RESET(Func_02000388)
 
 s32 Func_020003a8(struct Actor *object) {
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   return 0;
 }
 
@@ -185,7 +185,7 @@ s32 Func_020003b4(struct Actor *object) {
 
   if (!Event_GetFlag(0x200))
     return 1;
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   x = object->x;
   object->acceleration = 0x1000;
   object->speedLimit = 0x1000;
@@ -269,7 +269,7 @@ void WorldMap_SetUpShip(void) {
   gMainRoutineWork.renderMode = 7;
   Func_02003c3c();
   Func_02004a1c();
-  Actor_SetSingleChildFlags(Actor_Get(8), 0);
+  Actor_SetSpriteFlags(Actor_Get(8), 0);
   count = Party_CountMembers();
   pp = 0;
   i = 0;
@@ -316,7 +316,7 @@ void WorldMap_BoardShip(void) {
   Import_ActorSelectAnimation(leader, 6);
   System_Wait(6);
   Event_PlaySound(152);
-  Actor_SetSingleChildFlags(leader, 0);
+  Actor_SetSpriteFlags(leader, 0);
   Import_ActorSelectAnimation(leader, 7);
   leader->speedLimit = 0x30000;
   leader->acceleration = 0x20000;
@@ -397,7 +397,7 @@ void WorldMap_LeaveShip(void) {
     leader->y = 0x40000;
     leader->z = ship->z;
     leader->motionFlags = 0;
-    Actor_SetSingleChildFlags(leader, 0);
+    Actor_SetSpriteFlags(leader, 0);
     Import_ActorSelectAnimation(leader, 6);
     System_Wait(6);
     Event_PlaySound(152);
@@ -602,7 +602,7 @@ void Func_02000d4c(void) {
   object = Actor_Get(19);
   animation = object->sprite;
   animation[17] |= 1;
-  Actor_SetSingleChildFlags(Actor_Get(19), 0);
+  Actor_SetSpriteFlags(Actor_Get(19), 0);
   a = 0x4000;
   id = 19;
   Actor_SetPositionAndFacing(id, PIXELS(10168), PIXELS(9648), a);
@@ -921,7 +921,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     EventCamera_FollowActor(4, 0);
     FieldEffect_ScheduleRatioTransition(0x18ccc, 1);
     Actor_SetAnimation(4, 19);
-    Actor_SetSingleChildFlags(Actor_Get(4), 0);
+    Actor_SetSpriteFlags(Actor_Get(4), 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Import_WorldMapFreeze();
@@ -1614,8 +1614,8 @@ void Func_020029a4(void) {
   EventCamera_FollowActor(8, 1);
   System_Wait(1);
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Actor_SetSingleChildFlags(Actor_Get(8), 0);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_Get(8), 0);
   Actor_SetSpeed(8, 0x6666, 0x3333);
   actor->timer = 0;
   Actor_SetScript(8, gData_02004eb8);
@@ -1651,8 +1651,8 @@ void WorldMap_DriftNorthOfContinent(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   System_Wait(1);
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Actor_SetSingleChildFlags(Actor_Get(10), 0);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_Get(10), 0);
   Actor_SetSpeed(10, 0x6666, 0x3333);
   boat->timer = 0;
   boat->acceleration = 0x2000;
@@ -1706,7 +1706,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   Actor_SetPosition(5, 0x0e490000, 0x1dc50000);
   Actor_SetPosition(6, 0x0e770000, 0x1de30000);
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 1);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 1);
   System_Wait(1);
   Import_WorldMapFreeze();
   Actor_SetAttachedEffect(5, 0x102);
@@ -1733,7 +1733,7 @@ void WorldMap_DriftNorthOfContinent(void) {
 /// once a key is held the scene changes to SceneId_Ov667.
 void Func_02002e00(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = 0;
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
@@ -1766,7 +1766,7 @@ void WorldMap_TakeTheTiller(void) {
     FieldEvent_ResolvePendingActions(0);
     scale = Actor_GetById(gMainRoutineWork.currentOwner)->scaleX;
     Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = 0;
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Import_WorldMapFreeze();
@@ -1861,7 +1861,7 @@ void WorldMap_TakeOff(void) {
       if (Actor_Get(i) != NULL) {
         Data_02006be8[i] = i;
         Actor_Get(i)->scaleX = 0;
-        Actor_SetSingleChildFlags(Actor_Get(i), 0);
+        Actor_SetSpriteFlags(Actor_Get(i), 0);
         Actor_SetPosition(i, x << 16, z << 16);
       } else {
         Data_02006be8[i] = -1;
@@ -1870,7 +1870,7 @@ void WorldMap_TakeOff(void) {
     } while (i <= 7);
   }
   Actor_Get(23)->scaleX = 0;
-  Actor_SetSingleChildFlags(Actor_Get(23), 0);
+  Actor_SetSpriteFlags(Actor_Get(23), 0);
   Actor_SetPosition(23, x << 16, z << 16);
   Import_WorldMapFreeze();
   FieldEvent_SetMessageId((s32)MsgWeDidIt);
@@ -1936,7 +1936,7 @@ void WorldMap_TakeOff(void) {
   {
   restore:
     if (Data_02006be8[i] >= 0) {
-      Actor_SetSingleChildFlags(Actor_Get(Data_02006be8[i]), 1);
+      Actor_SetSpriteFlags(Actor_Get(Data_02006be8[i]), 1);
       Actor_Get(Data_02006be8[i])->scaleX = 0x10000;
       Actor_SetPosition(Data_02006be8[i], 0, 0);
     }
@@ -1966,7 +1966,7 @@ void Func_0200343c(struct Actor *parent) {
     if (object != NULL) {
       Actor_StartScript(object, gData_02004f70);
       Import_ActorSelectAnimation(object, 1);
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       object->motionFlags = 0;
       object->scaleX = 0x20000;
       object->scaleY = 0x20000;
@@ -1978,7 +1978,7 @@ void Func_02003490(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_Get(gMainRoutineWork.currentOwner)->update = Func_0200343c;
   Actor_Get(gMainRoutineWork.currentOwner)->acceleration = 0x2000;
   Actor_Get(gMainRoutineWork.currentOwner)->speedLimit = 0x20000;

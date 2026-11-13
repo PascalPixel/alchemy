@@ -22,13 +22,13 @@ Task_Add:
 	.thumb_func
 Random16Far:
 	overlay_veneer Func_080000f8
-	.global Math_Sine
+	.global Trig_Sin
 	.thumb_func
-Math_Sine:
+Trig_Sin:
 	overlay_veneer Trig_SinFar
-	.global Math_Cosine
+	.global Trig_Cos
 	.thumb_func
-Math_Cosine:
+Trig_Cos:
 	overlay_veneer Trig_CosFar
 	.global Vector_AddPolarOffsetFar
 	.thumb_func
@@ -54,9 +54,9 @@ VramCache_Load:
 	.thumb_func
 VramCache_FindFreeEntry:
 	overlay_veneer VramCache_FindFreeEntryFar
-	.global Import_OamAddSpriteAtDepth
+	.global Import_OamAddSpriteAtDepthClamped
 	.thumb_func
-Import_OamAddSpriteAtDepth:
+Import_OamAddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global GameFlag_Test
 	.thumb_func
@@ -122,9 +122,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 MapGrid_CheckCollision:
 	overlay_veneer MapGrid_CheckCollisionFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global MapGrid_SetScreenShake
 	.thumb_func

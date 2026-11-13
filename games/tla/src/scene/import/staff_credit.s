@@ -30,13 +30,13 @@ Task_RemoveFar:
 	.thumb_func
 Random16Far:
 	overlay_veneer Func_080000f8
-	.global Math_Sine
+	.global Trig_Sin
 	.thumb_func
-Math_Sine:
+Trig_Sin:
 	overlay_veneer Trig_SinFar
-	.global Math_Cosine
+	.global Trig_Cos
 	.thumb_func
-Math_Cosine:
+Trig_Cos:
 	overlay_veneer Trig_CosFar
 	.global Vector_AddPolarOffsetFar
 	.thumb_func
@@ -122,9 +122,9 @@ Actor_Release:
 	.thumb_func
 WorldMap_UpdateCurrentTileBlock:
 	overlay_veneer WorldMap_UpdateCurrentTileBlockFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Actor_SetBlendMode
 	.thumb_func

@@ -18,9 +18,9 @@ Task_Add:
 	.thumb_func
 Task_RemoveFar:
 	overlay_veneer Func_080000d8
-	.global Math_Sine
+	.global Trig_Sin
 	.thumb_func
-Math_Sine:
+Trig_Sin:
 	overlay_veneer Trig_SinFar
 	.global HeapSlot_AllocFar
 	.thumb_func
@@ -70,9 +70,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 MapGrid_CopyCellPictureCellsRect:
 	overlay_veneer MapGrid_CopyCellPictureCellsRectFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global MapGrid_SetScreenShake
 	.thumb_func
@@ -314,24 +314,10 @@ Func_02003604:
 	.thumb_func
 Field_StartColorTransition:
 	overlay_veneer Field_StartColorTransitionFar
-	.ifdef TLA_EDITION_ES
-	.global Field_EndActorSpriteEffect
-	.thumb_func
-Field_EndActorSpriteEffect:
-	overlay_veneer Field_StartPaletteTransitionFar
-	.else
-	.ifdef TLA_EDITION_IT
-	.global Field_EndActorSpriteEffect
-	.thumb_func
-Field_EndActorSpriteEffect:
-	overlay_veneer Field_StartPaletteTransitionFar
-	.else
 	.global Field_StartPaletteTransition
 	.thumb_func
 Field_StartPaletteTransition:
 	overlay_veneer Field_StartPaletteTransitionFar
-	.endif
-	.endif
 	.global Actor_ShowItemIconById
 	.thumb_func
 Actor_ShowItemIconById:

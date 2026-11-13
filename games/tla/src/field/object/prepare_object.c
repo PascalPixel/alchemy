@@ -17,7 +17,7 @@ struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
     Scene_SetActorSpritePriority(object, 0);
     object->motionFlags = 0;
     object->collisionFlags = 8;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     Actor_SetSpriteColor(object, 14);
     Actor_SetBlendMode(object, 1);
     return object;

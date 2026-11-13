@@ -49,7 +49,7 @@ static inline void PaletteFade_Interpolate(s32 frames) {
 static inline void Item_LoadIcon(s32 item) { Icon_DrawItem(item); }
 
 /// The sine of an angle, a full turn being TRIG_TURN, in 16.16.
-static inline s32 Math_Sin(s32 angle) { return Math_Sine(angle); }
+static inline s32 Math_Sin(s32 angle) { return Trig_Sin(angle); }
 
 /// Shows a message in the middle of the screen rather than in a speech window.
 static inline void Message_ShowCentered(s32 message, s32 flags) {

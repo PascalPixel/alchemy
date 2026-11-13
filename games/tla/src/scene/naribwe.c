@@ -256,9 +256,9 @@ void Naribwe_HideStone(void) {
 
 s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
-  Actor_SetSingleChildFlags(Actor_GetById(9), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(10), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(23), 0);
+  Actor_SetSpriteFlags(Actor_GetById(9), 0);
+  Actor_SetSpriteFlags(Actor_GetById(10), 0);
+  Actor_SetSpriteFlags(Actor_GetById(23), 0);
   Actor_GetById(23)->scaleY = 0x19999;
   Actor_GetById(27)->scaleX = 0x8000;
   Actor_GetById(27)->scaleY = 0x8000;
@@ -267,7 +267,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(23, 0, 0);
   Func_020005cc();
   Func_020005d4(0, 0x202, 24, 25);
-  Actor_SetSingleChildFlags(Actor_GetById(24), 0);
+  Actor_SetSpriteFlags(Actor_GetById(24), 0);
   Func_0200059c(25);
   return 0;
 }

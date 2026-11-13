@@ -797,7 +797,7 @@ void Func_02001364(struct Actor *object) {
   FieldActor_SetSpriteColor(child, 2);
   Scene_SetActorSpritePriority(child, 1);
   Actor_SelectAnimation(child, 1);
-  Actor_SetSingleChildFlags(child, 0);
+  Actor_SetSpriteFlags(child, 0);
   Actor_SetBlendMode(child, 1);
   Actor_StartScript(child, gData_02003fd8);
 }
@@ -899,7 +899,7 @@ burst:
   Actor_SetSpriteColor(object, 2);
   Scene_SetActorSpritePriority(object, 1);
   Actor_SelectAnimation(object, 7);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   Actor_SetBlendMode(object, 1);
   Actor_StartScript(object, gData_02003fe8);
   REG_BLDALPHA = 0x1004;
@@ -936,7 +936,7 @@ spiral:
   Actor_SetSpriteColor(spark, 2);
   Scene_SetActorSpritePriority(spark, 1);
   Actor_SelectAnimation(spark, 7);
-  Actor_SetSingleChildFlags(spark, 0);
+  Actor_SetSpriteFlags(spark, 0);
   Actor_SetBlendMode(spark, 1);
   FieldVector_AddPolarOffset(spark->unk4c, spark->timer, &spark->x);
   Actor_StartScript(spark, gData_02004004);
@@ -970,7 +970,7 @@ column:
   riser->priorityFlags = 1;
   Actor_SetSpriteColor(riser, 2);
   Actor_SelectAnimation(riser, 7);
-  Actor_SetSingleChildFlags(riser, 0);
+  Actor_SetSpriteFlags(riser, 0);
   Actor_SetBlendMode(riser, 1);
   Actor_StartScript(riser, gData_02004014);
   i += 2;
@@ -1216,7 +1216,7 @@ fall:
   object->y -= speed;
   object->facing += 0x2000;
   speed += -0xccc;
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   System_Wait(1);
   i--;
   if (i >= 0)
@@ -1338,7 +1338,7 @@ s32 Scene_Initialize(void) {
       Actor_SetAnimation(9, 3);
     }
     object = Actor_GetById(12);
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
     object->update = (void (*)(void))Func_02001ea0;
@@ -1459,8 +1459,8 @@ s32 Scene_PrepareMap(void) {
     actor->y = 0;
   } else if (scene == (s32)&SceneId_Ov67cRoom3) {
     Call1((void (*)())Func_02003ea4, 0);
-    Call2((void (*)())Actor_SetSingleChildFlags, (s32)Actor_GetById(9), 0);
-    Call2((void (*)())Actor_SetSingleChildFlags, (s32)Actor_GetById(10), 0);
+    Call2((void (*)())Actor_SetSpriteFlags, (s32)Actor_GetById(9), 0);
+    Call2((void (*)())Actor_SetSpriteFlags, (s32)Actor_GetById(10), 0);
     Func_020032d4(33, 8, -2);
     Call3((void (*)())Func_020032d4, 40, 8, 8);
     if (GameFlag_Test(0xa66)) {
@@ -1797,7 +1797,7 @@ void Func_020030f4(void) {
           screenY |= 0x40002000;
           entry->top[1] = screenY;
           entry->top[2] = (tile + rise) | attributes;
-          Import_OamAddSpriteAtDepth(entry->top, depth);
+          Import_OamAddSpriteAtDepthClamped(entry->top, depth);
         }
         screenY = z - y;
         screenY = (screenY >> 16) + 8;
@@ -1816,7 +1816,7 @@ void Func_020030f4(void) {
             screenY |= 0x6000;
             entry->column[1] = screenY;
             entry->column[2] = attributes | (tile + rise);
-            Import_OamAddSpriteAtDepth(column, depth);
+            Import_OamAddSpriteAtDepthClamped(column, depth);
           }
         }
       }
@@ -2003,7 +2003,7 @@ void Func_020034fc(void) {
         splash->sprite[0] = 0;
         splash->sprite[1] = screenY | (column << 16) | 0x40002000;
         *frame = (tile + (((Random16Far() * 3) >> 16) << 3)) | priority;
-        Import_OamAddSpriteAtDepth(splash->sprite, z);
+        Import_OamAddSpriteAtDepthClamped(splash->sprite, z);
       }
     }
     i--;

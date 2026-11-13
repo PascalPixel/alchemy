@@ -32,7 +32,7 @@ void Func_02001620(s32 objectId) {
   params.update = FieldEffect_AdvanceMotion;
   for (angleStep = 0; angleStep <= 16; angleStep += 2) {
     angle = angleStep << 12;
-    vec.x = Math_Cosine(angle);
+    vec.x = Trig_Cos(angle);
     vec.y = 0;
     z = Math_Sin(angle);
     x = vec.x;

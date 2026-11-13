@@ -54,7 +54,7 @@ void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void MarsLighthouseStarRoom_SlideOnIce(void);
 
 s32 Func_02000038(struct Actor *object) {
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   return 0;
 }
 
@@ -114,13 +114,13 @@ next:
       radius = Random16Far();
       scale = ((u32)Random16Far() >> 1) + 0x4000;
       Actor_StartScript(object, gMarsLighthouseStarRoom_ScatterIceChipsScript);
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       /* FAKEMATCH(dead): an empty once-only block holds the order around it; as
        * no block, 2 of 113 instructions differ in tla-en. */
       do {
       } while (0);
       object->velocityY = angle * 4 + 0x20000;
-      object->velocityZ = Iwram_MulQ16(radius * 8, Math_Cosine(angle));
+      object->velocityZ = Iwram_MulQ16(radius * 8, Trig_Cos(angle));
       object->velocityX = Iwram_MulQ16(radius * 8, Math_Sin(angle));
       object->acceleration = 0;
       object->gravity = 0x547a;
@@ -402,9 +402,9 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_02000d88();
   t8 = Actor_Get(13);
-  Actor_SetSingleChildFlags(t8, 0);
+  Actor_SetSpriteFlags(t8, 0);
   t10 = Actor_Get(14);
-  Actor_SetSingleChildFlags(t10, 0);
+  Actor_SetSpriteFlags(t10, 0);
   t12 = Actor_Get(15);
   FieldActor_SetSpriteColor(t12, 7);
   t14 = Actor_Get(16);
@@ -695,12 +695,12 @@ void Func_02000d88(void) {
   MapGrid_CopyCellAttributes(104, 9, 5, 6, 40, 9);
 }
 
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
 void Func_02000db8(s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Actor_SetSingleChildFlags(Actor_Get(id), 0);
+  Actor_SetSpriteFlags(Actor_Get(id), 0);
   FieldActor_SetSpritePriority(id, 3);
   object->motionFlags = 0;
   object->priorityFlags |= 2;
@@ -1060,7 +1060,7 @@ void Func_020013e4(struct Actor *object) {
 }
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s1424.c ----
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 
 void Func_02001424(void) {
@@ -1109,7 +1109,7 @@ void Func_02001424(void) {
     object->priorityFlags &= 0xfe;
     sprite = object->sprite;
     sprite->priority = 2;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     object->scaleX = 0x8000;
     object->scaleY = 0x8000;
     *(s32 *)&object->watchedObject = 60;
@@ -1333,7 +1333,7 @@ void Func_02001b78(s32 *position, s32 base) {
 
   if (object != 0) {
     object->bounce =
-        Math_Cosine(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
+        Trig_Cos(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
     object->gravity = (u16)Random16Far();
     object->unk4c = (u16)(Random16Far() << 1) + base;
     /* FAKEMATCH(temporary): the angle held in an s32 local keeps the zero

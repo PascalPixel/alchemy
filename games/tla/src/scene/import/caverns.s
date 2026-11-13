@@ -14,13 +14,13 @@ wait:
 	.thumb_func
 Random16Far:
 	overlay_veneer Func_080000f8
-	.global Math_Sine
+	.global Trig_Sin
 	.thumb_func
-Math_Sine:
+Trig_Sin:
 	overlay_veneer Trig_SinFar
-	.global Math_Cosine
+	.global Trig_Cos
 	.thumb_func
-Math_Cosine:
+Trig_Cos:
 	overlay_veneer Trig_CosFar
 	.global Vector_AddPolarOffsetFar
 	.thumb_func
@@ -50,9 +50,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Actor_CreateFar
-	.global Import_ActorDestroy
+	.global Import_ActorRelease
 	.thumb_func
-Import_ActorDestroy:
+Import_ActorRelease:
 	overlay_veneer Actor_ReleaseFar
 	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
@@ -74,9 +74,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 MapGrid_CheckCollision:
 	overlay_veneer MapGrid_CheckCollisionFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Actor_SetBlendMode
 	.thumb_func

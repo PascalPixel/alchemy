@@ -572,7 +572,7 @@ s32 Scene_Initialize(void) {
   FieldTask_AddFrame((s32)Func_02000a6c, 0xc80);
   Func_02001cfc(0);
   t3 = Actor_Get(11);
-  Actor_SetSingleChildFlags(t3, 0);
+  Actor_SetSpriteFlags(t3, 0);
   FieldActor_SetSpritePriority(9, 3);
   FieldActor_SetSpritePriority(29, 3);
   t7 = Actor_Get(21);
@@ -641,7 +641,7 @@ L_02008d2a:
   Call4(Func_02001d3c, 1, 0x96f, 28, 27);
 L_02008da6:
   t40 = Actor_Get(28);
-  Actor_SetSingleChildFlags(t40, 0);
+  Actor_SetSpriteFlags(t40, 0);
   t42 = Event_GetFlag(0x963);
   if (t42 == 0)
     goto L_02008dcc;

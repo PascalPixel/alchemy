@@ -443,7 +443,7 @@ void Func_0200065c(void) {
       FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
       FieldActor_SetSpritePriority(7, 1);
       FieldEvent_Wait(20);
-      Actor_SetSingleChildFlags(Actor_GetById(31), 0);
+      Actor_SetSpriteFlags(Actor_GetById(31), 0);
       FieldActor_SetSpriteColor(Actor_GetById(31), 7);
       actor31 = Actor_GetById(31);
       actor31->scaleY = 0xffff0000;
@@ -453,7 +453,7 @@ void Func_0200065c(void) {
       actor31->y = 0x800000;
       actor31->z = 0x1080000;
       actor31->priorityFlags |= 2;
-      Actor_SetSingleChildFlags(Actor_GetById(32), 0);
+      Actor_SetSpriteFlags(Actor_GetById(32), 0);
       FieldActor_SetSpriteColor(Actor_GetById(32), 7);
       actor32 = Actor_GetById(32);
       actor32->scaleY = 0xffff0000;
@@ -2230,8 +2230,8 @@ s32 Scene_Initialize(void) {
   if ((u32)((FIELD_AT(&gMainRoutineWork, u16, 482) - 1) << 16) > 0x10000) {
     Actor_SetPosition(24, 0, 0);
   }
-  Actor_SetSingleChildFlags(Actor_Get(36), 0);
-  Actor_SetSingleChildFlags(Actor_Get(36), 0);
+  Actor_SetSpriteFlags(Actor_Get(36), 0);
+  Actor_SetSpriteFlags(Actor_Get(36), 0);
   Task_AddFrame((s32)Func_020005b8, 0x480);
   if (gMainRoutineWork.entrance == 9) {
     Func_02000cd0();
@@ -2330,7 +2330,7 @@ void Func_020040f4(void) {
   work->unkd46 = i;
 
   actor->motionFlags = 4;
-  Actor_SetSingleChildFlags(actor, 0);
+  Actor_SetSpriteFlags(actor, 0);
 
   while (*((u8 *)linked + 0x63) != 0) {
     actor->x = linked->x;
@@ -2351,7 +2351,7 @@ void Func_020040f4(void) {
   actor->velocityY = 0x60000;
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
-  Actor_SetSingleChildFlags(actor, 1);
+  Actor_SetSpriteFlags(actor, 1);
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   shadow = EventCamera_GetActor();
   shadow->speedLimit = 0x80000;
@@ -2448,7 +2448,7 @@ void Whirlwind_Update(struct Object6a5 *object) {
             object->unk63 = 1;
           }
         }
-        object->x += IwramMulQ16(Math_Cosine(object->angle), object->speed);
+        object->x += IwramMulQ16(Trig_Cos(object->angle), object->speed);
         object->z += IwramMulQ16(Math_Sin(object->angle), object->speed);
         return;
       }

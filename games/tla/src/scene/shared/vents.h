@@ -32,7 +32,7 @@
     object->collisionFlags = 0;                                                \
     object->priorityFlags = 2;                                                 \
     ((struct FieldSprite *)object->sprite)->priority = priority;               \
-    Actor_SetSingleChildFlags(object, 0);                                      \
+    Actor_SetSpriteFlags(object, 0);                                      \
     call1(object, 2);                                                          \
     Actor_StartScript(object, data1);                                          \
     FieldActor_SetSpriteColor(object, 10);                                          \

@@ -229,7 +229,7 @@ void Func_020006b4(s32 id) {
   if (owner != NULL) {
     object = Actor_Create(489, owner->x, owner->y, owner->z);
     if (object != NULL) {
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       Actor_StartScript(object, gData_02005a7c);
       object->watchedObject = owner;
       object->priorityFlags |= 0x80;

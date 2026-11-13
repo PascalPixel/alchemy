@@ -37,7 +37,7 @@
 #include "text/msg_ids.h"
 
 s32 Func_02000038(s32 object) {
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   return 0;
 }
 
@@ -517,7 +517,7 @@ void Func_02000c08(void) {
   PLACE(3, 816, 285, FACING_SOUTHEAST);
   PLACE(1, 824, 302, FACING_NORTH);
   PLACE(29, 821, 302, FACING_NORTH);
-  Actor_SetSingleChildFlags(Actor_Get(1), 0);
+  Actor_SetSpriteFlags(Actor_Get(1), 0);
   Actor_SetScript(1, gData_02005524);
   {
     s32 priority = 0x480;
@@ -1083,7 +1083,7 @@ void Func_02001c7c(void) {
   FieldCamera_MoveTo(PIXELS(705), 0, PIXELS(177), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
-  Actor_SetSingleChildFlags(Actor_Get(2), 0);
+  Actor_SetSpriteFlags(Actor_Get(2), 0);
   Actor_SetAnimation(2, 32);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(0, FACING_SOUTHWEST);
@@ -1125,9 +1125,9 @@ void Func_02001c7c(void) {
 void Func_02001e38(void) {
   PLACE(0, 761, 219, FACING_NORTHWEST);
   PLACE(2, 741, 232, FACING_NORTHWEST);
-  Actor_SetSingleChildFlags(Actor_Get(0), 0);
+  Actor_SetSpriteFlags(Actor_Get(0), 0);
   Actor_SetAnimation(0, 39);
-  Actor_SetSingleChildFlags(Actor_Get(2), 0);
+  Actor_SetSpriteFlags(Actor_Get(2), 0);
   Actor_SetAnimation(2, 32);
   PLACE(5, 761, 203, FACING_SOUTH);
   PLACE(6, 725, 232, FACING_EAST);
@@ -1189,9 +1189,9 @@ void Func_02001ed0(void) {
   }
   Actor_SetPositionAndFacing(2, 0x2e50000, 0xe80000, 0xa000);
   Actor_SetScript(3, (s32)gData_02005548);
-  Actor_SetSingleChildFlags(Actor_Get(0), 0);
+  Actor_SetSpriteFlags(Actor_Get(0), 0);
   Actor_SetAnimation(0, 0x27);
-  Actor_SetSingleChildFlags(Actor_Get(2), 0);
+  Actor_SetSpriteFlags(Actor_Get(2), 0);
   Actor_SetAnimation(2, 0x20);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

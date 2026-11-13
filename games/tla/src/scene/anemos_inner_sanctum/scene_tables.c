@@ -93,7 +93,7 @@ void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
   FieldActor_SetSpriteColor(actor, (u16)part);
   Scene_SetActorSpritePriority(actor, 2);
   Actor_SelectAnimation(actor, 7);
-  Actor_SetSingleChildFlags(actor, 0);
+  Actor_SetSpriteFlags(actor, 0);
   FieldVector_AddPolarOffset(actor->unk4c, actor->unk64, &actor->position);
   Actor_StartScript(actor, gData_02003684);
   Func_020006f8(actor);
@@ -123,7 +123,7 @@ void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
     FieldActor_SetSpriteColor(object, (u16)part);
     Scene_SetActorSpritePriority(object, 2);
     Actor_SelectAnimation(object, 7);
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     Actor_StartScript(object, gData_02003584);
     i += 2;
   }
@@ -137,5 +137,5 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
   FieldActor_SetSpriteColor(t0, (u16)a2);
   Scene_SetActorSpritePriority(t0, 2);
   Actor_SelectAnimation(t0, 7);
-  Actor_SetSingleChildFlags(t0, 0);
+  Actor_SetSpriteFlags(t0, 0);
 }

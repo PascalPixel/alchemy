@@ -228,7 +228,7 @@
       s32 velocity[3];                                                         \
                                                                                \
       angle = i << 12;                                                         \
-      velocity[0] = Math_Cosine(angle);                                        \
+      velocity[0] = Trig_Cos(angle);                                        \
       velocity[1] = 0;                                                         \
       velocity[2] = Math_Sin(angle);                                           \
       velocity[0] += velocity[0] >> 1;                                         \
@@ -266,7 +266,7 @@
     FieldEvent_Wait(12);                                                       \
     leader->facing = 0x4000;                                                   \
     leader->motionFlags = 0;                                                   \
-    Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);    \
+    Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);    \
     Io_Write16(0xf1f, &REG_WINOUT);                                            \
     REG_DISPCNT |= 0x8000;                                                     \
     table->shown = 1;                                                          \
@@ -471,7 +471,7 @@
       s32 cosine;                                                              \
                                                                                \
       angle = i << 12;                                                         \
-      cosine = Math_Cosine(angle);                                             \
+      cosine = Trig_Cos(angle);                                             \
       /* FAKEMATCH(dead): spawn is always 1, a constant GCSE only folds after  \
        * its partial redundancy pass, so that pass leaves the velocity array's \
        * address in the loop, built after the cosine call as the native has    \
@@ -529,7 +529,7 @@
       object->facing = 0x4000;                                                 \
       object->motionFlags = zero;                                              \
     }                                                                          \
-    Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);    \
+    Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);    \
     {                                                                          \
       /* FAKEMATCH(temporary): a word local holding 0xf1f, built with movs,    \
        * lsls, adds as the native does; as a constant stored to the halfword   \

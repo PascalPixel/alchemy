@@ -310,7 +310,7 @@ s32 Scene_Initialize(void) {
   } else if (party->scene == (s32)&SceneId_Ov685Room3) {
     if (GameFlag_Test(0x97e)) {
       Actor_SetModeById(8, 11);
-      Actor_SetSingleChildFlags(Actor_GetById(8), 0);
+      Actor_SetSpriteFlags(Actor_GetById(8), 0);
     }
   }
   return 0;
@@ -476,12 +476,6 @@ void Func_02000978(s32 actor) {
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 
-#if TLA_PATCH_4
-#define END_THROW_EFFECT Field_EndActorSpriteEffect
-#else
-#define END_THROW_EFFECT Field_StartPaletteTransition
-#endif
-
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -639,7 +633,7 @@ void Func_02000a34(s32 value) {
   thrown->scaleX = 0;
   thrown->scaleY = 0;
   Actor_Jump(10, 5, 0);
-  END_THROW_EFFECT(8);
+  Field_StartPaletteTransition(8);
   Func_020032a4();
   Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
   while (thrown->y > 0)
@@ -862,7 +856,7 @@ void Func_0200115c(void) {
   Actor_SetPosition(12, 724 << 16, 252 << 16);
   WORD_AT(Actor_GetById(12), 24) = 0x13333;
   WORD_AT(Actor_GetById(12), 28) = 0x13333;
-  Actor_SetSingleChildFlags(Actor_GetById(12), 0);
+  Actor_SetSpriteFlags(Actor_GetById(12), 0);
   FieldMessage_ShowAtActor_(0x2008, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Scene_PlayMusic();
@@ -1531,7 +1525,7 @@ void Func_020029f8(s32 id, s32 mode) {
   }
   wait(2);
   object->scaleX = 0;
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   Dma_Set(Field_Palette685, (void *)0x050003e0, 0x80000010,
           (volatile u32 *)0x040000d4);
   Resource_DecodeType01__champa_cliff_caves(
@@ -1588,7 +1582,7 @@ void Func_020029f8(s32 id, s32 mode) {
   VramCache_FreeEntry(slot);
   HeapSlot_Release(220);
 }
-#undef END_THROW_EFFECT
+#undef Field_StartPaletteTransition
 #undef FIELD_AT
 #undef PALETTE
 #undef BYTE_AT
@@ -1750,8 +1744,8 @@ loop:
   {
     s32 red = 31;
     s16 *frame = &work->frame;
-    s32 wave = Math_Sine((*frame + i) << 11) * 6;
-    s32 blue = Math_Sine(((*frame / 2 + i) << 11) + 0x4800) * 3;
+    s32 wave = Trig_Sin((*frame + i) << 11) * 6;
+    s32 blue = Trig_Sin(((*frame / 2 + i) << 11) + 0x4800) * 3;
     s32 colour;
     wave >>= 16;
     blue >>= 16;

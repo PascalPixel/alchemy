@@ -34,9 +34,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Actor_CreateFar
-	.global Import_ActorDestroy
+	.global Import_ActorRelease
 	.thumb_func
-Import_ActorDestroy:
+Import_ActorRelease:
 	overlay_veneer Actor_ReleaseFar
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
@@ -66,9 +66,9 @@ BlendScript_Suspend:
 	.thumb_func
 Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global ActorSystem_SuspendProjectionAndShowSprites
 	.thumb_func

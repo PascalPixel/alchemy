@@ -13,15 +13,15 @@
 
 extern const s32 *gData_02004c50[];
 
-/* VIEW(s00b8): routine Actor_SetSingleChildFlags as void
- * Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
- * shaman_village.h has void Actor_SetSingleChildFlags(struct
+/* VIEW(s00b8): routine Actor_SetSpriteFlags as void
+ * Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
+ * shaman_village.h has void Actor_SetSpriteFlags(struct
  * ShamanVillageObject *object, u32 value); tried as the 35 declarations' void
- * Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not
+ * Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags), it does not
  * compile in tla-ja: games/tla/src/scene/shaman_village/shaman_village.h:73:
- * conflicting types for `Actor_SetSingleChildFlags'. */
+ * conflicting types for `Actor_SetSpriteFlags'. */
 extern void Actor_SetSingleChildFlags__s00b8(
-    struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
+    struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSpriteFlags");
 
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -40,7 +40,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Import_ActorSetMode((struct Actor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Import_ActorSetScript((struct Actor *)effect,
+  Import_ActorStartScript((struct Actor *)effect,
                         gData_02004c50[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags__s00b8(effect, 0);
@@ -83,7 +83,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
     Import_ActorSetMode((struct Actor *)effect, 1);
-    Import_ActorSetScript((struct Actor *)effect, options->script);
+    Import_ActorStartScript((struct Actor *)effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
     sprite->rotation = options->rotation;
@@ -121,17 +121,17 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 // ---- games/tla/src/scene/shaman_village/scene_tables.c ----
 #include "battle.h"
-/* VIEW(scene_tables): routine Actor_SetSingleChildFlags as void
- * Actor_SetSingleChildFlags(struct Actor *object, u32 flags); shaman_village.h
- * has void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32
- * value); tried as the 35 declarations' void Actor_SetSingleChildFlags(struct
+/* VIEW(scene_tables): routine Actor_SetSpriteFlags as void
+ * Actor_SetSpriteFlags(struct Actor *object, u32 flags); shaman_village.h
+ * has void Actor_SetSpriteFlags(struct ShamanVillageObject *object, u32
+ * value); tried as the 35 declarations' void Actor_SetSpriteFlags(struct
  * FieldEffect *effect, s32 flags), it does not compile in tla-ja:
  * games/tla/include/field/field.h:25: conflicting types for
- * `Actor_SetSingleChildFlags'. */
+ * `Actor_SetSpriteFlags'. */
 struct Actor;
 extern void Actor_SetSingleChildFlags__scene_tables(
-    struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
-#define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__scene_tables
+    struct Actor *object, u32 flags) __asm__("Actor_SetSpriteFlags");
+#define Actor_SetSpriteFlags Actor_SetSingleChildFlags__scene_tables
 /* VIEW(scene_tables): routine Actor_SetBlendMode as void
  * Actor_SetBlendMode(struct Actor *object, u32 value); shaman_village.h
  * has void Actor_SetBlendMode(struct ShamanVillageObject *object, s32
@@ -145,7 +145,7 @@ Animation_SetStateFlags__scene_tables(struct Actor *object,
 #define Actor_SetBlendMode Animation_SetStateFlags__scene_tables
 #include "field.h"
 #undef Actor_SetBlendMode
-#undef Actor_SetSingleChildFlags
+#undef Actor_SetSpriteFlags
 #include "game.h"
 #include "graphics.h"
 #include "lib.h"
@@ -205,7 +205,7 @@ void Func_02000378(void) {
   for (i = 0; i != 160; i++, line++) {
     s32 range = (160 - i) >> 2;
 
-    *line = (Iwram_MulQ16(Math_Sine((i + *(u8 *)&gFrameCount) << 8),
+    *line = (Iwram_MulQ16(Trig_Sin((i + *(u8 *)&gFrameCount) << 8),
                           (144 - i) << 10) >>
              11) -
             4;
@@ -261,10 +261,10 @@ void Effect_CircleAndBlink(struct Actor *object) {
   radius >>= 2;
   radius += 0xc0000;
   object->x = WORD_AT(object, 68) +
-              Iwram_MulQ16(Math_Cosine((step & 255) << 11), radius) * 2;
+              Iwram_MulQ16(Trig_Cos((step & 255) << 11), radius) * 2;
   object->z =
       WORD_AT(object, 76) +
-      Iwram_MulQ16(Math_Sine((WORD_AT(object, 48) & 255) << 11), radius);
+      Iwram_MulQ16(Trig_Sin((WORD_AT(object, 48) & 255) << 11), radius);
   object->y += WORD_AT(object, 72);
   WORD_AT(object, 48)++;
   FieldActor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
@@ -374,8 +374,8 @@ row:
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Import_ActorSetMode((struct Actor *)spark, 7);
-      Import_ActorSetScript((struct Actor *)spark, gData_02004ae0);
-      Actor_SetSingleChildFlags(spark, 0);
+      Import_ActorStartScript((struct Actor *)spark, gData_02004ae0);
+      Actor_SetSpriteFlags(spark, 0);
       FieldActor_SetSpriteColor(spark, 2);
       spark->update = Effect_CircleAndBlink;
     }

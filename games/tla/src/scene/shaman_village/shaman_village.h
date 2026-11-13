@@ -69,7 +69,7 @@ void Sanctum_Run(s32 keeper);
 void Inn_CheckIn(s32 shop, s32 keeper);
 void Import_ActorSetMode(struct ShamanVillageObject *object, s32 mode);
 void Actor_Release(struct ShamanVillageObject *object);
-void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32 value);
+void Actor_SetSpriteFlags(struct ShamanVillageObject *object, u32 value);
 void Actor_SetBlendMode(struct ShamanVillageObject *object, s32 flags);
 void FieldPsynergy_RunHandler(s32 type);
 void Event_FinishScreenTransition(void);

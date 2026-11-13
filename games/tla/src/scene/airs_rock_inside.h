@@ -34,7 +34,7 @@ extern char SceneId_Ov664Room10;
 extern u8 gMapCellBuffer[];
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 struct Actor *Actor_GetById(u32 objectId);

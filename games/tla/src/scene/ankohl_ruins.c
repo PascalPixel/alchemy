@@ -104,7 +104,7 @@ void Func_02000418(void) {
   i = 0;
 loop:
   angle = i << 12;
-  velocity[0] = Math_Cosine(angle);
+  velocity[0] = Trig_Cos(angle);
   velocity[1] = 0;
   velocity[2] = Math_Sin(angle);
   velocity[0] += velocity[0] >> 1;
@@ -133,7 +133,7 @@ loop:
 #endif
 
 s32 Func_020005c0(struct Actor *object) {
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   ((struct FieldSprite *)object->sprite)->priority = 2;
   object->priorityFlags &= 0xfe;
   object->motionFlags = 0;
@@ -482,7 +482,7 @@ void Func_0200104c(s32 unused, s32 id) {
   s32 z = object->z >> 20;
 
   if (id == 10 && x == 15 && z == 24) {
-    Actor_SetSingleChildFlags(Actor_GetById(10), 0);
+    Actor_SetSpriteFlags(Actor_GetById(10), 0);
     object->y -= 0x20000;
     FieldEvent_Wait(1);
     object->y -= 0x20000;
@@ -649,7 +649,7 @@ void Func_020012c4(void) {
         sprite->oam[0] = 0;
         sprite->oam[1] = sy | (sx << 16) | 0x40000800;
         sprite->oam[2] = tile | 0x400;
-        Import_OamAddSpriteAtDepth(sprite->oam, 255);
+        Import_OamAddSpriteAtDepthClamped(sprite->oam, 255);
       }
       sprite++;
     }

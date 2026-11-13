@@ -99,7 +99,7 @@ loop:
   object->motionFlags = 0;
   object->collisionFlags = 0;
   object->bounce = 0;
-  Actor_SetSingleChildFlags((struct Actor *)object, 0);
+  Actor_SetSpriteFlags((struct Actor *)object, 0);
   height = (Map_GetTerrainHeight(0, object->x, object->z) >> 19) + 2;
   Func_020010cc(object->x, object->z, 0, height);
   Func_020010cc(object->x, object->z, 2, height);
@@ -246,7 +246,7 @@ void Func_02000848(struct Actor *object) {
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-void Import_ActorDestroy(struct Actor *object);
+void Import_ActorRelease(struct Actor *object);
 
 void Func_0200087c(void) {
   s32 velocity[3];
@@ -291,7 +291,7 @@ void Func_0200087c(void) {
       OverlayObject_WaitUntilIdle(object);
       OverlayObject_WaitUntilIdle(object);
       object->x = object->y = object->z = 0;
-      Import_ActorDestroy(spawned);
+      Import_ActorRelease(spawned);
       wait(1);
       *blendControl = 0;
     } else {
@@ -309,9 +309,9 @@ void Func_0200087c(void) {
     loop:
       {
         angle = i << 12;
-        velocity[0] = Math_Cosine(angle) * 2;
+        velocity[0] = Trig_Cos(angle) * 2;
         velocity[1] = 0;
-        velocity[2] = Math_Sine(angle) * 2;
+        velocity[2] = Trig_Sin(angle) * 2;
         velocity[0] += velocity[0] >> 1;
         velocity[0] += ((u32)(Random16Far() * 3 << 14) >> 16) - 0x6000;
         velocity[2] += ((u32)(Random16Far() * 3 << 13) >> 16) - 0x3000;
@@ -420,7 +420,7 @@ s32 Func_02000c38(struct Actor *object, s16 *position) {
     object->acceleration = 0x20000;
     object->velocityY = 0x40000;
     *flags &= 0x7e;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
       s32 x = position[1];
@@ -430,7 +430,7 @@ s32 Func_02000c38(struct Actor *object, s16 *position) {
       Actor_MoveToAndWaitById(owner, x, z);
     }
     Actor_SelectAnimation(object, 6);
-    Actor_SetSingleChildFlags(object, 1);
+    Actor_SetSpriteFlags(object, 1);
     *flags = saved;
     Event_End();
     return 1;
@@ -482,7 +482,7 @@ void Func_02000d68(void) {
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffsetById(4, 0, 4);
   Actor_WaitForMoveById(4);
-  Actor_SetSingleChildFlags(Actor_GetById(4), 0);
+  Actor_SetSpriteFlags(Actor_GetById(4), 0);
   Actor_SetDestinationOffsetById(4, 0, 16);
   Actor_WaitForMoveById(4);
   Actor_SetModeById(4, 13);

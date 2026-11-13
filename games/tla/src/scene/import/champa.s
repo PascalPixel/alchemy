@@ -50,9 +50,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 MapGrid_CopyCellPictureCellsRect:
 	overlay_veneer MapGrid_CopyCellPictureCellsRectFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Message_OpenWindow
 	.thumb_func
@@ -222,9 +222,9 @@ ObjectEvent_PlaceOnGround:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global BattleEffect_GetResourceId
+	.global Speaker_GetVoice
 	.thumb_func
-BattleEffect_GetResourceId:
+Speaker_GetVoice:
 	overlay_veneer Speaker_GetVoiceFar
 	.global Actor_LaunchFromLeader
 	.thumb_func

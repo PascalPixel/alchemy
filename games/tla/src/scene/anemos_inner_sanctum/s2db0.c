@@ -31,7 +31,7 @@ void Teleporter_Sink(struct PushEvent *event) {
     object->facing = 0x4000;
     object->motionFlags = zero;
   }
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   {
     u32 winout = 0xf1f;
 

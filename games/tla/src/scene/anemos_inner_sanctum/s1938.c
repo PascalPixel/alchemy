@@ -83,7 +83,7 @@ void Func_020019a8(void) {
   object->y = 0;
   object->z = 0;
   Actor_SetPosition(8, 0, 0);
-  Import_ActorDestroy(effect);
+  Import_ActorRelease(effect);
   Event_End();
 }
 

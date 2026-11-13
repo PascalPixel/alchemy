@@ -302,7 +302,7 @@ void Func_02000184(void) {
   }
   PartyInventory_GiveItem(242, 0);
   if (gData_02002058 != 0)
-    Import_ActorDestroy((s32)gData_02002058);
+    Import_ActorRelease((s32)gData_02002058);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x6000, 0);
   Actor_FaceDirection(9, 0xd000, 40);
@@ -376,7 +376,7 @@ void Func_02000a98(s32 x, s32 z) {
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, x, z);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
-  Actor_SetSingleChildFlags(((struct GabombaStatueChamberObject *)Actor_GetById(
+  Actor_SetSpriteFlags(((struct GabombaStatueChamberObject *)Actor_GetById(
                                 gMainRoutineWork.currentOwner)),
                             0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);

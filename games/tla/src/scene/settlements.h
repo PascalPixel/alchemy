@@ -10,7 +10,7 @@
 #include "scene_ids.h"
 #include "event_inline.h"
 
-s32 Math_Cosine(s32 angle);
+s32 Trig_Cos(s32 angle);
 
 extern u8 MsgSettlements01[];
 

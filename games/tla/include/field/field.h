@@ -22,7 +22,7 @@ void SpriteDissolve_Step(u8 *object, u32 position);
 void FieldCamera_FollowActor(s32 id, s32 flag);
 void Actor_UpdateAllMotion(void);
 void Actor_UpdateAllThumb(void);
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 void ObjectSystem_UpdateCamera(void);
 void ObjectSystem_UpdateCameraFixed(void);
 s32 Actor_FindLastActiveId(void);
@@ -76,7 +76,6 @@ void Actor_TurnPairToFaceEachOther(struct FacingObject *first,
                                    struct FacingObject *second);
 void Field_StartPaletteTransition(s32 mode);
 void FieldPsynergy_RunHandler(s32 kind);
-void Field_EndActorSpriteEffect(s32 mode);
 void FieldPsynergy_RunExtraHandler(void);
 
 s32 Func_080c88c8(struct ScriptInterpreter *interpreter, s32 value);

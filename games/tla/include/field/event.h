@@ -7,7 +7,7 @@
 /// (Actor_ArmCallback, Event_ShowMessageAndWait, Actor_SetSpeedParameters and
 /// the rest), whose declarations it holds. An overlay's import stub takes the
 /// name of the routine it reaches, except the few the overlays share under
-/// another (Math_Sine, Import_ActorCreate, Import_EventSetExitRequest).
+/// another (Import_ActorCreate, Import_EventSetExitRequest).
 ///
 /// It is a habit of the whole game written once, as declarations and inlines,
 /// not a compiler-steering device. An inline's parameters are its own, so where
@@ -84,7 +84,7 @@ void Actor_TurnToFaceEachOther(s32 actorId, s32 other, s32 frames);
 void Actor_SetModeById(u32 actorId, s32 animation);
 void PaletteFade_StartInterpolation(s32 frames);
 void Icon_DrawItem(s32 item);
-s32 Math_Sine(s32 angle);
+s32 Trig_Sin(s32 angle);
 void FieldMessage_Show(s32 message, s32 flags);
 s32 PartyInventory_GiveItem(s32 item, s32 flags);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);

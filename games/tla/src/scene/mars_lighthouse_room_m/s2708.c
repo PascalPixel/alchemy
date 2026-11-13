@@ -229,11 +229,11 @@ void Func_02002870(struct Actor *actor) {
       sum += Random16Far();
       scale = (sum >> 2) + Q16_ONE / 2;
       Actor_StartScript(object, gData_02003304);
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       object->velocityY = angle * 4 + Q16_ONE * 2;
       radius <<= 3;
-      object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));
-      velocity = Iwram_MulQ16(radius, Math_Sine(angle));
+      object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));
+      velocity = Iwram_MulQ16(radius, Trig_Sin(angle));
       object->gravity = 0x547a;
       object->scaleX = scale;
       object->scaleY = scale;
@@ -296,7 +296,7 @@ void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
 
   FieldActor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
   Actor_StartScript(object, script);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   Func_02003118(object, 1);
   object->watchedObject = source;

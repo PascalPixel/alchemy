@@ -495,7 +495,7 @@ void Func_02001188(void) {
     object->motionFlags = 0;
     *(s32 *)((u8 *)object + 0x30) = 0x20000;
     *(s32 *)((u8 *)object + 0x34) = 0x8000;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     Actor_SelectAnimation(object, 0);
     FieldActor_SetMoveTarget(object, PIXELS(360), PIXELS(64), PIXELS(424));
     Actor_StartScript(object, gData_0200247c);
@@ -833,7 +833,7 @@ void LemurianShipDeck_SetOutForMadra(void) {
     Actor_SetSpeed(4, 0xcccc, 0x6666);
     Actor_Get(7)->update = (void (*)(void))Func_02001d60;
     FieldActor_LaunchFromLeader(7, 16, 0, FACING_WEST);
-    Actor_SetSingleChildFlags(Actor_Get(7), 0);
+    Actor_SetSpriteFlags(Actor_Get(7), 0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     FieldEvent_SetMessageId(MsgThenLetS);
     FieldActor_WaitForMoveById(7);
@@ -853,7 +853,7 @@ void LemurianShipDeck_SetOutForMadra(void) {
     FieldActor_WaitForMoveById(7);
     Actor_SetPosition(7, 0, 0);
     Actor_Get(7)->update = 0;
-    Actor_SetSingleChildFlags(Actor_Get(7), 1);
+    Actor_SetSpriteFlags(Actor_Get(7), 1);
     Event_End();
   }
 }

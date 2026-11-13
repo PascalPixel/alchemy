@@ -32,7 +32,7 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02002450,
                               Position_FlatDistance, gWhirlwindEndScript,
                               gWhirlwindRiding)
 
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 
 void Func_02001788(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);

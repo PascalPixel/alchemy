@@ -91,7 +91,7 @@ loop:
   animation = row[1];
   flag = row[2];
 
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   Func_02004bc0(object, (u16)animation + Event_GetFlag((u16)flag));
   object->motionFlags = 0;
   object->collisionFlags &= 0xfe;
@@ -168,13 +168,13 @@ next:
       radius = Random16Far();
       scale = (Random16Far() >> 1) + 0x4000;
       Actor_StartScript(object, gData_02005394);
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       /* FAKEMATCH(dead): an empty once-only block holds the order around it; as
        * no block, 2 of 113 instructions differ in tla-en. */
       do {
       } while (0);
       object->velocityY = angle * 4 + 0x20000;
-      object->velocityZ = Iwram_MulQ16(radius * 8, Math_Cosine(angle));
+      object->velocityZ = Iwram_MulQ16(radius * 8, Trig_Cos(angle));
       object->velocityX = Iwram_MulQ16(radius * 8, Math_Sin(angle));
       object->acceleration = 0;
       object->gravity = 0x547a;
@@ -571,7 +571,7 @@ void Func_02000e3c(s32 arg) {
   actor = Actor_Get(gMainRoutineWork.currentOwner);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   actor->update = NULL;
   {
     s32 value = 0x100;
@@ -663,7 +663,7 @@ void Func_02000fe0(const struct MapCell *cell) {
   GameFlag_SetByte(0x348, z >> 20);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   leader->update = 0;
   FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
   Func_02004bc0(leader, 27);

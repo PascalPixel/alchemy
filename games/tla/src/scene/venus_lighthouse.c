@@ -73,8 +73,8 @@ done:
   return 0;
 }
 
-#define Actor_SetSingleChildFlags                                              \
-  ((void (*)(void *, s32))Actor_SetSingleChildFlags)
+#define Actor_SetSpriteFlags                                              \
+  ((void (*)(void *, s32))Actor_SetSpriteFlags)
 
 extern const struct ActorPlacement gActorPlacementsEntrance99[];
 
@@ -90,7 +90,7 @@ s32 SceneActor_ApplyCounterLowBitsAsMode(struct Actor *actor) {
 }
 
 s32 SceneActor_ClearSingleChildField(void *actor) {
-  Actor_SetSingleChildFlags(actor, 0);
+  Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
 

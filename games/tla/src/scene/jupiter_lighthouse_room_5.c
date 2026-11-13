@@ -82,12 +82,12 @@ void Func_02000120(struct Actor *object) {
     Actor_SetSpriteColorMode(object, (frameCount >> 1) % 6);
 }
 
-/* VIEW(jupiter_lighthouse_room_5): routine Math_Cosine as s32 Math_Cosine(u32
- * angle); module/scene/scene.h has s32 Math_Cosine(s32 angle); tried as the
+/* VIEW(jupiter_lighthouse_room_5): routine Trig_Cos as s32 Trig_Cos(u32
+ * angle); module/scene/scene.h has s32 Trig_Cos(s32 angle); tried as the
  * rest of the object declares it, Func_02001070 moves: 1 of 195 instructions,
  * Func_02001230 moves: 1 of 90 instructions in tla-ja. */
 extern s32
-Math_Cosine__jupiter_lighthouse_room_5(u32 angle) __asm__("Math_Cosine");
+Math_Cosine__jupiter_lighthouse_room_5(u32 angle) __asm__("Trig_Cos");
 
 /// Circles the object around actor 23, as overlay 6a5's Func_02000090 circles
 /// actor 31.
@@ -235,7 +235,7 @@ void Func_020002b8(void) {
   System_Wait(1);
   leader->update = 0;
   Actor_SetAnimationSpeed(leader, 16);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   Actor_SetScript(23, gData_02002f94);
   Actor_SetScript(24, gData_02002f94);
   gData_02003274 = 2;
@@ -318,7 +318,7 @@ void Func_02000734(void) {
 
   actor = ((struct SparkActor *)Actor_Get(22));
   Event_PlaySound(190);
-  Actor_SetSingleChildFlags(((struct SparkActor *)Actor_Get(22)), 0);
+  Actor_SetSpriteFlags(((struct SparkActor *)Actor_Get(22)), 0);
   p = &params;
   p->count = 1;
   p->kind = 5;
@@ -345,7 +345,7 @@ void Func_02000734(void) {
       Actor_SetSpriteColorById(22, 0x100);
   }
   Actor_SetSpriteColorById(22, 0);
-  Actor_SetSingleChildFlags(((struct SparkActor *)Actor_Get(22)), 1);
+  Actor_SetSpriteFlags(((struct SparkActor *)Actor_Get(22)), 1);
 }
 
 /* VIEW(jupiter_lighthouse_room_5): routine BattleEffect_SetObjectUpdateMode as
@@ -413,7 +413,7 @@ void Func_020008a4(void) {
   FieldEvent_Wait(20);
   Actor_FaceDirectionAndWait(4, FACING_NORTH);
   FieldEvent_Wait(10);
-  Actor_SetSingleChildFlags(((void *)Actor_Get(22)), 0);
+  Actor_SetSpriteFlags(((void *)Actor_Get(22)), 0);
   FieldActor_SetSpriteColor(((void *)Actor_Get(22)), 15);
   angle = 0x4000;
   Actor_SetPositionAndFacing(22, PIXELS(64), PIXELS(225), angle);
@@ -480,12 +480,12 @@ s32 Scene_Initialize(void) {
   object->scaleX = 0;
   object->motionFlags = 0;
   SET_POSITION(object, 0x2a80000, 0x200000, 0x2440000);
-  Actor_SetSingleChildFlags(Actor_Get(23), 0);
+  Actor_SetSpriteFlags(Actor_Get(23), 0);
   object = Actor_Get(24);
   object->scaleX = 0;
   object->motionFlags = 0;
   SET_POSITION(object, 0x2a80000, 0x400000, 0x2440000);
-  Actor_SetSingleChildFlags(Actor_Get(24), 0);
+  Actor_SetSpriteFlags(Actor_Get(24), 0);
   if (Event_GetFlag(0xa00)) {
     MapGrid_CopyCellsLayered(58, 99, 3, 3, 41, 99);
     MapGrid_CopyCellsLayered(123, 32, 1, 5, 106, 32);
@@ -677,7 +677,7 @@ struct GustObject *Func_02001230(struct GustObject *source) {
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                    position.z));
   Import_ActorSelectAnimation(object, 2);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;

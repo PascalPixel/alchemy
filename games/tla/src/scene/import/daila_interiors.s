@@ -18,9 +18,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Import_ActorResetMotion
+	.global Import_ActorStartIdle
 	.thumb_func
-Import_ActorResetMotion:
+Import_ActorStartIdle:
 	overlay_veneer Actor_StartIdleFar
 	.global Map_SetLayerEntryFlag
 	.thumb_func
@@ -30,9 +30,9 @@ Map_SetLayerEntryFlag:
 	.thumb_func
 Map_CopyCellsRect:
 	overlay_veneer Map_CopyCellsRectFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Actor_SetItemIcon
 	.thumb_func

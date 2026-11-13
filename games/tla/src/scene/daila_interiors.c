@@ -421,7 +421,7 @@ Actor_GetById__item(s32 id) __asm__("Actor_GetById");
 void ItemDisplay_ShowPicture(struct DailaActor__item *object,
                                          s32 mode);
 void Sound_Play(s32 cue);
-void Import_ActorResetMotion(struct DailaActor__item *object);
+void Import_ActorStartIdle(struct DailaActor__item *object);
 
 void Func_02000730(void) {
   s32 saved48;
@@ -458,7 +458,7 @@ void Func_02000730(void) {
       Actor_GetById__item(9)->y = savedY;
       Actor_GetById__item(9)->unk48 = saved48;
       Actor_GetById__item(9)->unk6c = 0;
-      Import_ActorResetMotion(Actor_GetById__item(9));
+      Import_ActorStartIdle(Actor_GetById__item(9));
       Import_ActorSetSpritePriority(9, 1);
       Actor_GetById__item(9)->kind55 = 2;
       Actor_GetById__item(9)->speed1c = 0x13333;
@@ -567,16 +567,16 @@ extern s16 gData_02000e04__arrival[] __asm__("gData_02000e04");
  * games/tla/src/scene/daila_interiors.c:530: invalid type argument of `->'. */
 extern struct DailaStartActor *
 Actor_GetById__arrival(s32 id) __asm__("Actor_GetById");
-/* VIEW(arrival): routine Actor_SetSingleChildFlags as void
- * Actor_SetSingleChildFlags(struct DailaStartActor *object, s32 value); field.h
- * has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); tried as
- * the 35 declarations' void Actor_SetSingleChildFlags(struct FieldEffect
+/* VIEW(arrival): routine Actor_SetSpriteFlags as void
+ * Actor_SetSpriteFlags(struct DailaStartActor *object, s32 value); field.h
+ * has void Actor_SetSpriteFlags(struct Actor *object, u32 flags); tried as
+ * the 35 declarations' void Actor_SetSpriteFlags(struct FieldEffect
  * *effect, s32 flags), it does not compile in tla-ja:
  * games/tla/src/scene/daila_interiors.c:506: conflicting types for
- * `Actor_SetSingleChildFlags'. */
+ * `Actor_SetSpriteFlags'. */
 extern void Actor_SetSingleChildFlags__arrival(
     struct DailaStartActor *object,
-    s32 value) __asm__("Actor_SetSingleChildFlags");
+    s32 value) __asm__("Actor_SetSpriteFlags");
 void Actor_SetItemIcon(struct DailaStartActor *object, s32 item);
 /* VIEW(daila_interiors): routine Func_02000dc4 as void Func_02000dc4(const void
  * *script); module/scene/atteka_inlet.h has void Func_02000dc4(void); tried as

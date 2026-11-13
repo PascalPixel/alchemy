@@ -131,7 +131,7 @@ void Func_02000244(struct Actor *object) {
   s16 height = object->unk66;
 
   SET_POSITION(object,
-               Iwram_MulQ16(Math_Cosine(angle), object->speedLimit) +
+               Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) +
                    (232 << 16),
                (height * 3 << 16) - (120 << 16), 130 << 18);
   if ((s16)object->unk66 == 1)
@@ -163,7 +163,7 @@ void Func_02000300(void) {
     object->update = (void (*)(void))Func_02000244;
     object->timer = Random16Far();
     object->unk66 = phase;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     FieldActor_SetSpriteColor(object, 2);
     ((struct FieldSprite *)object->sprite)->priority = 1;
     phase += 5;
@@ -236,7 +236,7 @@ s32 Scene_PrepareMap(void) {
     Actor_RaiseFromCell(19);
     Actor_Get(19)->gravity = 0x30000;
   }
-  Actor_SetSingleChildFlags(Actor_Get(19), 0);
+  Actor_SetSpriteFlags(Actor_Get(19), 0);
   if (Event_GetFlag(0xa06)) {
     Actor_SetPosition(15, PIXELS(168), PIXELS(520));
     Actor_RaiseFromCell(15);

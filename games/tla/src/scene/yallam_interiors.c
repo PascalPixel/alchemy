@@ -403,7 +403,7 @@ void YallamInteriors_TalkToSunshine(void) {
       Event_SetMessageId(message + 1);
       Event_ShowMessage(14, 0);
       Func_02000a60(14, 0xc000);
-      Actor_SetSingleChildFlags(
+      Actor_SetSpriteFlags(
           ((struct YallamInteriorsObject *)Actor_GetById(14)), 1);
       Actor_SetDestination(gMainRoutineWork.currentOwner, 488, 408);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -437,7 +437,7 @@ void YallamInteriors_TalkToSunshine(void) {
         Actor_SetDestination(14, 491, 398);
         Actor_WaitForMoveById(14);
         Actor_FaceDirection(14, FACING_SOUTH, 0);
-        Actor_SetSingleChildFlags(((struct YallamInteriorsObject *)Actor_GetById(14)), 0);
+        Actor_SetSpriteFlags(((struct YallamInteriorsObject *)Actor_GetById(14)), 0);
         Func_02000a60(14, 0);
       }
     } else {
@@ -515,7 +515,7 @@ s32 Scene_Initialize(void) {
     } else {
       Func_02000a60(14, 0);
     }
-    Actor_SetSingleChildFlags(
+    Actor_SetSpriteFlags(
         ((struct YallamInteriorsObject *)Actor_GetById(17)), 0);
     Actor_SetSpritePriority(11, 2);
   }

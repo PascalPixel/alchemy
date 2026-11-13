@@ -53,7 +53,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Func_02005624__gabomba_statue(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_02005ae4[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSingleChildFlags(effect, 0);
+  Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
@@ -446,12 +446,12 @@ void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
   object->acceleration = 0x20000;
   object->velocityY = velocity;
   *flags &= 0x7e;
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   FieldActor_SetMoveTarget(object, object->x + dx, object->y, object->z + dz);
   FieldActor_WaitForMove(object);
   *flags = saved;
   Func_02005624__gabomba_statue(object, 6);
-  Actor_SetSingleChildFlags(object, 1);
+  Actor_SetSpriteFlags(object, 1);
   System_Wait(3);
 }
 
@@ -498,7 +498,7 @@ void Func_02000784(void) {
     back = -turn;
     {
       s32 s = Math_Sin(back);
-      s32 c = Math_Cosine(back);
+      s32 c = Trig_Cos(back);
       x = table->x + Iwram_MulQ16(c, dx) + Iwram_MulQ16(s, dz);
       z = table->z - Iwram_MulQ16(s, dx) + Iwram_MulQ16(c, dz);
     }
@@ -509,7 +509,7 @@ void Func_02000784(void) {
       s32 s, c, angle;
       angle = 0x1555 - turn;
       s = Math_Sin(angle);
-      c = Math_Cosine(angle);
+      c = Trig_Cos(angle);
       tx = table->x + Iwram_MulQ16(c, dx) + Iwram_MulQ16(s, dz);
       tz = table->z - Iwram_MulQ16(s, dx) + Iwram_MulQ16(c, dz);
       test.x = tx + actor->velocityX;
@@ -518,7 +518,7 @@ void Func_02000784(void) {
         s32 s, c, angle;
         angle = back - 0x1555;
         s = Math_Sin(angle);
-        c = Math_Cosine(angle);
+        c = Trig_Cos(angle);
         tx = table->x + Iwram_MulQ16(c, dx) + Iwram_MulQ16(s, dz);
         tz = table->z - Iwram_MulQ16(s, dx) + Iwram_MulQ16(c, dz);
         test.x = tx + actor->velocityX;
@@ -581,7 +581,7 @@ void Func_02000a20(struct Actor *object) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->y = PIXELS(6);
   object->z = 0xf741cf;
@@ -826,7 +826,7 @@ void Func_02000fc0(void) {
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(40);
   System_Wait(80);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
   Func_02000f6c();
   System_Wait(1);
@@ -906,7 +906,7 @@ void Func_020011bc(s32 x, s32 z) {
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, x, z);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   FieldActor_RefreshSelectorById(gMainRoutineWork.currentOwner);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 13);
   FieldActor_SetMoveTarget(object, x << 16, PIXELS(-12), z << 16);
   FieldActor_WaitForMove(object);
@@ -1061,7 +1061,7 @@ void Func_02001630(void) {
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 472, 144);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   FieldActor_RefreshSelectorById(gMainRoutineWork.currentOwner);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 13);
   FieldActor_SetMoveTarget(leader, PIXELS(472), 0, PIXELS(156));
   FieldActor_WaitForMove(leader);
@@ -1372,7 +1372,7 @@ void Func_02001c10(void) {
       object->collisionFlags = 0;
       object->motionFlags = 0;
       object->priorityFlags = 0;
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
     }
   }
   Task_AddFrame(Func_02001b98, TASK_PASS_VBLANK);
@@ -1438,7 +1438,7 @@ void Func_020020f0(s32 direction) {
       MapGrid_CopyCellAttributes(35, 12, 1, 3, 27, 12);
   } else if (scene == (s32)&SceneId_Ov671Room6) {
     Actor_SetAnimation(13, 5);
-    Actor_SetSingleChildFlags(Actor_Get(13), 0);
+    Actor_SetSpriteFlags(Actor_Get(13), 0);
   } else if (scene == (s32)&SceneId_Ov671Room7) {
     Func_020020b0(8, direction, 0);
     Func_020020b0(9, direction, 1);
@@ -1471,7 +1471,7 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
 
   Func_02005624__gabomba_statue(object, 0);
   Func_02005634__find_near(object, gData_0200e88c);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->link = target;
   object->phase = angle / 256;

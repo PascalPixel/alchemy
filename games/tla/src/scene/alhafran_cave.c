@@ -330,7 +330,7 @@ void Func_0200051c(void) {
   Actor_Get(10)->priorityFlags |= 32;
   Actor_Get(11)->priorityFlags |= 32;
   Func_02001230(gData_020016e4);
-  Actor_SetSingleChildFlags(Actor_Get(9), 0);
+  Actor_SetSpriteFlags(Actor_Get(9), 0);
   FieldActor_SetSpriteRotationById(14, 0x1000);
   Actor_SetAnimation(12, 0);
   Actor_SetAnimation(13, 1);
@@ -537,11 +537,7 @@ void Func_02000818(void) {
   BattleEffect_SetObjectUpdateMode(Actor_Get(21), 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
-#if TLA_PATCH_4
-  Field_EndActorSpriteEffect(8);
-#else
   Field_StartPaletteTransition(8);
-#endif
   FieldEvent_Wait(30);
   Actor_FaceDirection(4, 0x8000, 0);
   Actor_FaceDirection(16, 0, 0);
@@ -580,11 +576,7 @@ void Func_02000818(void) {
   BattleEffect_SetObjectUpdateMode(Actor_Get(21), 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
-#if TLA_PATCH_4
-  Field_EndActorSpriteEffect(8);
-#else
   Field_StartPaletteTransition(8);
-#endif
   Actor_FaceDirection(16, 0, 0);
   Actor_FaceDirection(17, 0x3000, 0);
   Actor_FaceDirection(19, 0x5000, 0);
@@ -721,7 +713,7 @@ loop:
     s16 flag = entry[2];
 
     object->collisionFlags &= ~1;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     Func_02001320(id, (u16)kind, (u16)flag, object->terrainId);
     entry += 3;
   }

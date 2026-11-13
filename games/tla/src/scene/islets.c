@@ -316,7 +316,7 @@ void Func_02000568(void) {
     if (spawned != 0) {
       Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
       FieldActor_SetItemIcon(spawned, 0x1c5);
-      Actor_SetSingleChildFlags(spawned, 0);
+      Actor_SetSpriteFlags(spawned, 0);
       spawned->motionFlags = 0;
     }
     FieldEvent_Wait(10);
@@ -326,7 +326,7 @@ void Func_02000568(void) {
     Party_GiveItem(0x1c5, 0);
     Import_FieldPsynergyGreyMindReadPalette();
     if (spawned != 0) {
-      Import_ActorDestroy(spawned);
+      Import_ActorRelease(spawned);
       Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
     }
     Actor_FaceDirectionAndWait(10, FACING_EAST);
@@ -376,7 +376,7 @@ void Func_02000568(void) {
     PartyInventory_Remove(453);                                                \
     PartyInventory_GiveItem(454, 0);                                           \
     if (given != 0) {                                                          \
-      Import_ActorDestroy(given);                                              \
+      Import_ActorRelease(given);                                              \
       Actor_SetModeById(gMainRoutineWork.currentOwner, 1);                     \
     }                                                                          \
     Import_FieldPsynergyGreyMindReadPalette();                                                           \
@@ -428,7 +428,7 @@ void Func_020006f4(void) {
         given = 0;
         if (item != 0) {
           Actor_SetItemIcon(item, 453);
-          Actor_SetSingleChildFlags(item, 0);
+          Actor_SetSpriteFlags(item, 0);
           item->motionFlags = 0;
           item->unk5c[0] = 1;
         }
@@ -461,7 +461,7 @@ void Func_020006f4(void) {
       item = FieldActor_Create(489, 0x8c0000, 0, 0xbe0000);
       if (item != 0) {
         Actor_SetItemIcon(item, 453);
-        Actor_SetSingleChildFlags(item, 0);
+        Actor_SetSpriteFlags(item, 0);
         item->motionFlags = 0;
         zero.v = 0;
         item->unk5c[0] = 1;
@@ -506,7 +506,7 @@ void Func_020006f4(void) {
         Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0xc000);
         Actor_Jump(gMainRoutineWork.currentOwner, 4, 10);
         if (item != 0)
-          Import_ActorDestroy(item);
+          Import_ActorRelease(item);
         Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
         Event_SetFlag(513);
       }
@@ -531,7 +531,7 @@ struct Actor *Func_02000da0(struct Actor *object, s32 value) {
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
     spawned->motionFlags = 0;
     FieldActor_SetItemIcon(spawned, value);
-    Actor_SetSingleChildFlags(spawned, 0);
+    Actor_SetSpriteFlags(spawned, 0);
     spawned->unk5c[0] = 1;
   }
   return spawned;
@@ -636,7 +636,7 @@ void Func_02000e38(void) {
     Import_FieldPsynergyGreyMindReadPalette();
     Actor_GetById(gMainRoutineWork.currentOwner)->facing = 0x4000;
     if (gift != 0) {
-      Import_ActorDestroy(gift);
+      Import_ActorRelease(gift);
       Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
     }
     Actor_FaceDirectionAndWait(11, 0xc000);
@@ -752,11 +752,11 @@ void Func_0200129c(struct Actor *gift) {
     b = FieldActor_Create(14, 0x1280000, 0, 0x1a80000);                        \
     if (a != 0) {                                                              \
       a->motionFlags = answer;                                                 \
-      Actor_SetSingleChildFlags(a, 0);                                         \
+      Actor_SetSpriteFlags(a, 0);                                         \
     }                                                                          \
     if (b != 0) {                                                              \
       b->scaleY = 0x20000;                                                     \
-      Actor_SetSingleChildFlags(b, 0);                                         \
+      Actor_SetSpriteFlags(b, 0);                                         \
       Import_ActorSelectAnimation(b, 1);                                                     \
       Actor_StartScript(b, gSmokeScript);                                      \
     }                                                                          \
@@ -843,7 +843,7 @@ void Func_020014e0(void) {
         Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 302, 424);
         leader->update = 0;
         if (a != 0)
-          Import_ActorDestroy(a);
+          Import_ActorRelease(a);
         Event_SetFlag(513);
       }
     }
@@ -1595,7 +1595,7 @@ void Func_02002c38(void) {
   if (gMainRoutineWork.entrance == 2)
     Event_ClearFlag(0x12f);
   map->mode = 1;
-  Actor_SetSingleChildFlags(Actor_Get(11), 0);
+  Actor_SetSpriteFlags(Actor_Get(11), 0);
   Actor_SetSpeed(10, 0xcccc, 0x6666);
   Actor_Get(10)->collisionFlags |= 0x80;
   if (Event_GetFlag(0xaa1)) {
@@ -1603,7 +1603,7 @@ void Func_02002c38(void) {
     if (spawned != 0) {
       spawned->motionFlags = 0;
       FieldActor_SetItemIcon(spawned, 454);
-      Actor_SetSingleChildFlags(spawned, 0);
+      Actor_SetSpriteFlags(spawned, 0);
       spawned->collisionFlags = 9;
       spawned->unk5c[0] = 1;
     }
@@ -1617,7 +1617,7 @@ void Func_02002c38(void) {
 void Func_02002d0c(s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   object->unk5c[0] = 3;
   object->motionFlags = 0;
   object->priorityFlags |= 0x80;
@@ -1764,14 +1764,14 @@ void Func_020030b4(void) {
 
   if (gMainRoutineWork.entrance == 3)
     Event_ClearFlag(0x12f);
-  Actor_SetSingleChildFlags(Actor_Get(10), 0);
+  Actor_SetSpriteFlags(Actor_Get(10), 0);
   Actor_SetAnimation(10, 4);
   if (Event_GetFlag(0xaa3)) {
     spawned = FieldActor_Create(489, 0x680000, 0x180000, 0xa00000);
     if (spawned != 0) {
       spawned->motionFlags = 0;
       FieldActor_SetItemIcon(spawned, 453);
-      Actor_SetSingleChildFlags(spawned, 0);
+      Actor_SetSpriteFlags(spawned, 0);
       spawned->unk5c[0] = 1;
     }
     Actor_SetPosition(10, PIXELS(104), PIXELS(204));
@@ -1882,9 +1882,9 @@ void Func_0200329c(void) {
       Actor_SetPosition(9, a1, 0x1c40000);
     }
   }
-  Actor_SetSingleChildFlags(Actor_Get(9), 0);
-  Actor_SetSingleChildFlags(Actor_Get(11), 0);
-  Actor_SetSingleChildFlags(Actor_Get(12), 0);
+  Actor_SetSpriteFlags(Actor_Get(9), 0);
+  Actor_SetSpriteFlags(Actor_Get(11), 0);
+  Actor_SetSpriteFlags(Actor_Get(12), 0);
   FieldTask_AddFrame(Func_02001c4c, 0x480);
   if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
     Event_SetFlag(0x217);
@@ -1953,9 +1953,9 @@ void Func_0200329c(void) {
       Actor_SetPosition(9, a1, 0x1c40000);
     }
   }
-  Actor_SetSingleChildFlags(Actor_Get(9), 0);
-  Actor_SetSingleChildFlags(Actor_Get(11), 0);
-  Actor_SetSingleChildFlags(Actor_Get(12), 0);
+  Actor_SetSpriteFlags(Actor_Get(9), 0);
+  Actor_SetSpriteFlags(Actor_Get(11), 0);
+  Actor_SetSpriteFlags(Actor_Get(12), 0);
   FieldTask_AddFrame(Func_02001c4c, 0x480);
   if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
     Event_SetFlag(0x217);

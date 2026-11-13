@@ -871,7 +871,7 @@ void Func_02001860(s32 a0, s32 a1, s32 a2) {
     FieldActor_SetSpriteColor(t0, 7);
     FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9) =
         ((-13 & FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9)) | 4);
-    Actor_SetSingleChildFlags(t0, 0);
+    Actor_SetSpriteFlags(t0, 0);
     FIELD_AT(t0, s32, 24) = 0x8000;
     FIELD_AT(t0, s32, 28) = 0x8000;
     FIELD_AT(t0, s32, 104) = 0x3c;
@@ -969,7 +969,7 @@ void Func_02001b7c(void) {
   FieldActor_WaitForMove(object);
   object->facing = 0xc000;
   Event_PlaySound(128);
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   id = gMainRoutineWork.currentOwner;
   if (entrance == 6)
     Actor_SetAnimation(id, 25);
@@ -988,7 +988,7 @@ void Func_02001c24(s32 a0) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (a0 != 0) {
-    Actor_SetSingleChildFlags(((s32)Actor_Get(gMainRoutineWork.currentOwner)),
+    Actor_SetSpriteFlags(((s32)Actor_Get(gMainRoutineWork.currentOwner)),
                               0);
     FieldActor_SetPositionAndResetMotion(t0, (FIELD_AT(t0, s32, 8) + -65536),
                                          FIELD_AT(t0, s32, 12),
@@ -1004,7 +1004,7 @@ void Func_02001c24(s32 a0) {
     Event_StartScreenTransition();
     Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 0x18);
   }
-  Actor_SetSingleChildFlags(((s32)Actor_Get(gMainRoutineWork.currentOwner)), 1);
+  Actor_SetSpriteFlags(((s32)Actor_Get(gMainRoutineWork.currentOwner)), 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, 8);
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);

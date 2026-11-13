@@ -42,7 +42,7 @@ struct BeamWork {
   struct Actor *second;
 };
 
-void Import_ActorResetMotion(struct Actor *object);
+void Import_ActorStartIdle(struct Actor *object);
 
 static __inline__ void SetUp(struct EffectSprite *sprite, s32 pivotX,
                              s32 pivotY, u32 attributes, s32 tile) {
@@ -122,7 +122,7 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   work->start[2] = work->from[2];
   carrier->speedLimit = 0x8000;
   carrier->acceleration = 0x8000;
-  Import_ActorResetMotion(carrier);
+  Import_ActorStartIdle(carrier);
   FieldActor_SetMoveTarget(carrier, work->start[0], work->start[1], work->start[2]);
   Event_PlaySound(142);
   Func_0200105c(work->first);
@@ -148,7 +148,7 @@ extern s16 gLightSpriteTile;
 /// 64 one when the big switch is set, at its animation picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, Data_020033c4,
     gLightSpriteCount, gData_02003384, gLightSpritesLarge, gLightSpritePriority,
-    BattleEffect_GetObjectPriority, Import_OamAddSpriteAtDepth)
+    BattleEffect_GetObjectPriority, Import_OamAddSpriteAtDepthClamped)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

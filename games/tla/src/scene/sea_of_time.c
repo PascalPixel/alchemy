@@ -114,10 +114,10 @@ void Func_0200043c(void) {
       object->z -= 0x3333;
     if (Func_0200034c(1, center[0] >> 20, center[2] >> 20) >> 8 == 40) {
       turn[0] = SeaOfTime_Cos(-0x200);
-      sine = Math_Sine(-0x200);
+      sine = Trig_Sin(-0x200);
     } else {
       turn[0] = SeaOfTime_Cos(0x200);
-      sine = Math_Sine(0x200);
+      sine = Trig_Sin(0x200);
     }
     dx = object->x - center[0];
     dz = object->z - center[2];
@@ -205,10 +205,10 @@ void Func_0200054c(void) {
   }
   if (Func_0200034c(1, center.x >> 20, center.z >> 20) >> 8 == 40) {
     turn[0] = SeaOfTime_Cos(-0x200);
-    s = Math_Sine(-0x200);
+    s = Trig_Sin(-0x200);
   } else {
     turn[0] = SeaOfTime_Cos(0x200);
-    s = Math_Sine(0x200);
+    s = Trig_Sin(0x200);
   }
   dx = object->x - center.x;
   dz = object->z - center.z;
@@ -235,9 +235,9 @@ void Func_0200054c(void) {
     spark.palette = 7;
     spark.startScaleX = 0xcccc;
     spark.startScaleY = 0xcccc;
-    c = Math_Cosine(object->facing);
+    c = Trig_Cos(object->facing);
     {
-      s32 sine = Math_Sine(object->facing);
+      s32 sine = Trig_Sin(object->facing);
       ends[0] = c * 10;
       ends[1] = sine * 10;
       ends[2] = -(c * 10);
@@ -294,8 +294,8 @@ void Func_02000818(void) {
   Event_ResolvePendingActions(0);
   x = actor->x >> 20;
   z = actor->z >> 20;
-  dx = Math_Cosine(angle) >> 16;
-  dz = Math_Sine(angle) >> 16;
+  dx = Trig_Cos(angle) >> 16;
+  dz = Trig_Sin(angle) >> 16;
   actor->speedLimit = 0x40000;
   actor->acceleration = 0x40000;
   targetZ = 0;
@@ -324,8 +324,8 @@ void Func_02000818(void) {
         spark.palette = 7;
         spark.startScaleX = 0x16666;
         spark.startScaleY = 0x13333;
-        cosine = Math_Cosine(actor->facing);
-        sine = Math_Sine(actor->facing);
+        cosine = Trig_Cos(actor->facing);
+        sine = Trig_Sin(actor->facing);
         pos[0] = cosine * 12;
         pos[1] = sine * 12;
         pos[2] = -(cosine * 12);
@@ -657,8 +657,8 @@ void Func_02000ef0(void) {
       options.palette = 7;
       options.startScaleX = 0x16666;
       options.startScaleY = 0x13333;
-      cosine = Math_Cosine(actor->facing);
-      sine = Math_Sine(actor->facing);
+      cosine = Trig_Cos(actor->facing);
+      sine = Trig_Sin(actor->facing);
       sides[0] = cosine * 12;
       sides[1] = sine * 12;
       sides[2] = -(cosine * 12);
@@ -1025,7 +1025,7 @@ void Func_02001650(void) {
   for (i = 0; i != 160; i++)
     *line++ =
         (s16)(layer->x >> 16) +
-        (Math_Sine((i + *(u8 *)&gFrameCount + (s16)(layer->y >> 16)) << 9) >>
+        (Trig_Sin((i + *(u8 *)&gFrameCount + (s16)(layer->y >> 16)) << 9) >>
          15);
   line = Data_02002580;
   REG_BG1HOFS = *line;

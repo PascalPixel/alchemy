@@ -361,7 +361,7 @@ void Func_02000930(void) {
   i = 0;
   work->unkd46 = 0;
   actor->motionFlags = 4;
-  Actor_SetSingleChildFlags(actor, 0);
+  Actor_SetSpriteFlags(actor, 0);
   while (*((u8 *)linked + 0x63) != 0) {
     actor->x = linked->x;
     actor->y = linked->y + i;
@@ -380,7 +380,7 @@ void Func_02000930(void) {
   actor->velocityY = 0x60000;
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
-  Actor_SetSingleChildFlags(actor, 1);
+  Actor_SetSpriteFlags(actor, 1);
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   shadow = FieldCamera_GetActor();
   shadow->speedLimit = 0x80000;
@@ -478,7 +478,7 @@ void Whirlwind_Update(struct Actor *self) {
       }
       {
         s32 (*multiply)(s32, s32);
-        s32 cosine = Math_Cosine(self->facing);
+        s32 cosine = Trig_Cos(self->facing);
         s32 speed = self->speedLimit;
         /* FAKEMATCH(dead): the routine address taken inside a once-only
          * block, so the speed loads first; as a plain call, 2 of 197
@@ -732,11 +732,11 @@ void Func_02001080(void) {
         spark->position[2] = work->pointB[2];
       }
       if (work->still == 0) {
-        spark->position[1] += Math_Sine(Random16Far()) << 3;
+        spark->position[1] += Trig_Sin(Random16Far()) << 3;
         spark->drift = 0x4ccc;
       } else {
-        spark->position[1] += Math_Sine(Random16Far()) << 1;
-        spark->position[0] += Math_Cosine(Random16Far()) * 10;
+        spark->position[1] += Trig_Sin(Random16Far()) << 1;
+        spark->position[0] += Trig_Cos(Random16Far()) * 10;
         spark->drift = (Random16Far() - 0x8000) << 1;
       }
     }

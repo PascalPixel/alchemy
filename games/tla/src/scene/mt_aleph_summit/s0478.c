@@ -49,7 +49,7 @@ void Func_02000478(s32 radius, u32 count) {
   i = 0;
 next:
   angle = i * (0x10000 / (s32)count);
-  dir.x = Math_Cosine(angle) * radius / 256;
+  dir.x = Trig_Cos(angle) * radius / 256;
   dir.y = 0;
   dir.z = Math_Sin(angle) * radius / 256;
   dir.x += dir.x >> 1;
@@ -105,7 +105,7 @@ s32 Scene_Initialize(void) {
   } else if (mode == 2) {
     FieldCamera_MoveTo(0x1000000, -1, 0x800000, 0);
     FieldCamera_SetSpeed(0x10000, 0x2000);
-    Call2((void (*)())Actor_SetSingleChildFlags, (s32)(s32)Actor_Get(8), 0);
+    Call2((void (*)())Actor_SetSpriteFlags, (s32)(s32)Actor_Get(8), 0);
     Actor_SetAnimation(8, 12);
     Actor_SetAnimationSpeedById(8, 8);
     ((struct EventWorkView__s0478 *)Ram_HeapSlots->eventWork)->unk1ac = 0;
@@ -303,7 +303,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(50);
     Actor_RunRepeatedMotion(8, 2);
     FieldEvent_Wait(5);
-    Call2((void (*)())Actor_SetSingleChildFlags, (s32)(s32)Actor_Get(9), 0);
+    Call2((void (*)())Actor_SetSpriteFlags, (s32)(s32)Actor_Get(9), 0);
     Actor_WalkToAndWait(9, 216, 96);
     Actor_FaceDirection(8, 0x2000, 0);
     Actor_ShowEmote(8, 0x102, 30);
@@ -535,7 +535,7 @@ s32 Scene_Initialize(void) {
       if (*held & 1)
         break;
       if (j == 0) {
-        Call2((void (*)())Actor_SetSingleChildFlags, (s32)(s32)Actor_Get(8), 0);
+        Call2((void (*)())Actor_SetSpriteFlags, (s32)(s32)Actor_Get(8), 0);
         Actor_SetAnimation(8, 12);
       }
     }

@@ -48,7 +48,7 @@ void Func_020006a8(void);
 
 void Idejima_RunAlexDeparture(void);
 
-void Import_ActorPlaceAtActor();
+void Import_ActorMoveToObject();
 void Func_02003320();
 extern s16 gData_02003c14;
 extern s16 gData_02003990[2][160];

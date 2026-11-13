@@ -46,9 +46,9 @@ void Func_02002ec4(void) {
   for (i = 0; i <= 16; i++) {
     s32 velocity[3];
 
-    velocity[0] = Math_Cosine(i << 12);
+    velocity[0] = Trig_Cos(i << 12);
     velocity[1] = 0;
-    velocity[2] = Math_Sine(i << 12);
+    velocity[2] = Trig_Sin(i << 12);
     velocity[0] += velocity[0] >> 1;
     velocity[0] += ((Random16Far() * 3) << 14) >> 16;
     velocity[0] += -0x6000;
@@ -142,7 +142,7 @@ void Func_0200306c(void) {
   statue->priorityFlags |= 2;
   Actor_SetSpritePriority(9, 3);
   Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Event_End();
@@ -205,7 +205,7 @@ void Func_020032c8(void) {
   statue->priorityFlags |= 2;
   Actor_SetSpritePriority(10, 3);
   Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Event_End();
@@ -239,7 +239,7 @@ void Func_02003584(void) {
   Event_ResolvePendingActions(0);
   object->motionFlags = 0;
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   object->facing = 0;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 16);
   for (i = 0; i <= 7; i++) {
@@ -400,7 +400,7 @@ void Func_02003a8c(void) {
   if (GameFlag_Test(0x849)) {
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
   } else {
-    Actor_SetSingleChildFlags(Actor_GetById(10), 0);
+    Actor_SetSpriteFlags(Actor_GetById(10), 0);
     Actor_SetModeById(10, 6);
     Actor_SetMovementTypeById(10, gData_02005550);
   }
@@ -710,7 +710,7 @@ fall15:
   Event_ShowMessageAndWait(0x800c, 0);
   Actor_WalkToAndWait(12, 326, 664);
   Actor_WalkToAndWaitById(12, 328, 648);
-  Actor_SetSingleChildFlags(Actor_GetById(12), 0);
+  Actor_SetSpriteFlags(Actor_GetById(12), 0);
   Actor_SetSpriteColor(Actor_GetById(12), 15);
   Actor_SetPosition(12, 0x1b80000, 0x2580000);
   FieldCamera_MoveTo(0x1900000, 0, 0x2b00000, 1);
@@ -980,12 +980,12 @@ void Func_0200482c(void) {
   flags = &object->motionFlags;
   *flags = 0;
   object->y += 0x40000;
-  Actor_SetSingleChildFlags(Actor_GetById(12), 0);
+  Actor_SetSpriteFlags(Actor_GetById(12), 0);
   Actor_SetSpeed(12, 0x6666, 0x3333);
   Actor_SetMoveTarget((s32)object, 0x1bc0000, 0x280000, 0x1780000);
   Actor_WaitForMoveById(12);
   *flags = 3;
-  Actor_SetSingleChildFlags(Actor_GetById(12), 1);
+  Actor_SetSpriteFlags(Actor_GetById(12), 1);
   sprite->rotation = 0;
   object->scaleX = 0x10000;
   object->terrainHeight = 0x200000;

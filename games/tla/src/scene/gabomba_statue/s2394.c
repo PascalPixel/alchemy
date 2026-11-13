@@ -56,7 +56,7 @@ void Func_02002394(void) {
     s32 velocity[3];
 
     angle = i << 12;
-    velocity[0] = Math_Cosine(angle);
+    velocity[0] = Trig_Cos(angle);
     velocity[1] = 0;
     velocity[2] = Math_Sin(angle);
     velocity[0] += velocity[0] >> 1;
@@ -430,7 +430,7 @@ void Func_02002f70(void) {
   z = (z << 20) + (184 << 16);
   spark = (FieldActor_Create(434, x, 0, z));
   spark->motionFlags |= 4;
-  Actor_SetSingleChildFlags(spark, 0);
+  Actor_SetSpriteFlags(spark, 0);
   Actor_SelectAnimation(spark, 1);
   System_Wait(1);
   actor = Actor_Get(5);
@@ -438,7 +438,7 @@ void Func_02002f70(void) {
   FieldCamera_MoveTo(spark->x, -1, spark->z, 1);
   FieldCamera_WaitForArrival();
   Event_ShowMessage(5, 0);
-  Import_ActorDestroy(spark);
+  Import_ActorRelease(spark);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(304), 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
@@ -612,19 +612,19 @@ void Func_02003634(void) {
   t10 = ((s32)Actor_Get(14));
   FieldActor_SetSpriteColor(t10, 10);
   t12 = ((s32)Actor_Get(16));
-  Actor_SetSingleChildFlags(t12, 0);
+  Actor_SetSpriteFlags(t12, 0);
   t14 = ((s32)Actor_Get(17));
-  Actor_SetSingleChildFlags(t14, 0);
+  Actor_SetSpriteFlags(t14, 0);
   t16 = ((s32)Actor_Get(18));
-  Actor_SetSingleChildFlags(t16, 0);
+  Actor_SetSpriteFlags(t16, 0);
   t18 = ((s32)Actor_Get(19));
-  Actor_SetSingleChildFlags(t18, 0);
+  Actor_SetSpriteFlags(t18, 0);
   t20 = ((s32)Actor_Get(20));
-  Actor_SetSingleChildFlags(t20, 0);
+  Actor_SetSpriteFlags(t20, 0);
   t22 = ((s32)Actor_Get(21));
-  Actor_SetSingleChildFlags(t22, 0);
+  Actor_SetSpriteFlags(t22, 0);
   t24 = ((s32)Actor_Get(22));
-  Actor_SetSingleChildFlags(t24, 0);
+  Actor_SetSpriteFlags(t24, 0);
   t26 = Event_GetFlag(0x8fb);
   if (t26 == 0)
     goto L_0200b6f2;
@@ -755,7 +755,7 @@ void Func_020038ac(void) {
   void *buffer = Mem_Alloc(0xc00);
   s32 handle;
 
-  Import_ResourceDecodeType01(gField_CachedTilesA, buffer);
+  Import_DecompressTaggedLz(gField_CachedTilesA, buffer);
   handle = VramCache_FindFreeEntry();
   VramCache_Load(handle, 0xc00, buffer);
   state->tileEntry = handle;
@@ -1493,7 +1493,7 @@ void Func_02004710(void) {
         oam->mode = 1;
         oam->affine = affine;
       }
-      Import_OamAddSpriteAtDepth(oam, depth);
+      Import_OamAddSpriteAtDepthClamped(oam, depth);
       oam++;
     }
   }
@@ -1543,8 +1543,8 @@ void Func_02004938(struct Actor *ball, s32 step) {
   s32 key = (heading << 8) + piece;
   s32 d = step - 8;
   s32 arc = step << 10;
-  s32 s = Value2((s32 (*)())Iwram_MulQ16, 0x80000, Math_Sine(arc));
-  s32 c = Value2((s32 (*)())Iwram_MulQ16, 0x80000, Math_Cosine(arc));
+  s32 s = Value2((s32 (*)())Iwram_MulQ16, 0x80000, Trig_Sin(arc));
+  s32 c = Value2((s32 (*)())Iwram_MulQ16, 0x80000, Trig_Cos(arc));
   s32 z;
   s32 x;
 
@@ -1723,10 +1723,10 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk62 = 2;
   actor->unk63 = 1;
   actor->unk4c = 0;
-  /* FAKEMATCH(signature): Import_ActorResetMotion, Actor_StartIdleFar's veneer,
+  /* FAKEMATCH(signature): Import_ActorStartIdle, Actor_StartIdleFar's veneer,
    * called without the actor it reads from r0; as
-   * Import_ActorResetMotion(actor), 73 of 230 instructions differ in tla-en. */
-  Import_ActorResetMotion();
+   * Import_ActorStartIdle(actor), 73 of 230 instructions differ in tla-en. */
+  Import_ActorStartIdle();
   Actor_SelectAnimation(actor, 2);
   id = second;
   actor = ((struct Unk02004d48 *)Actor_Get(id++));
@@ -1735,7 +1735,7 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk62 = 0;
   actor->unk63 = 1;
   actor->unk4c = 0;
-  Import_ActorResetMotion(actor);
+  Import_ActorStartIdle(actor);
   Actor_SelectAnimation(actor, 2);
   actor = ((struct Unk02004d48 *)Actor_Get(id++));
   actor->unk64 = 8;
@@ -1743,7 +1743,7 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk62 = 2;
   actor->unk63 = 1;
   actor->unk4c = 0;
-  Import_ActorResetMotion(actor);
+  Import_ActorStartIdle(actor);
   Actor_SelectAnimation(actor, 2);
   actor = ((struct Unk02004d48 *)Actor_Get(id));
   actor->unk64 = 10;
@@ -1751,7 +1751,7 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk62 = 0;
   actor->unk63 = 1;
   actor->unk4c = 0;
-  Import_ActorResetMotion(actor);
+  Import_ActorStartIdle(actor);
   Actor_SelectAnimation(actor, 2);
   for (tries = 0; tries <= 127; tries++) {
     done = 1;
@@ -1883,7 +1883,7 @@ s32 Func_02005020(s32 time) {
     *ringing = second;
   }
   if (second <= 19) {
-    s32 cosine = Math_Cosine((second << 15) / 10);
+    s32 cosine = Trig_Cos((second << 15) / 10);
     s32 (*mul)(s32 a, s32 b);
     s32 scale = 128;
 
@@ -1943,7 +1943,7 @@ void Func_02005090(void) {
       oam->affine = scaled;
     else
       oam->affine = plain;
-    Import_OamAddSpriteAtDepth(oam, 236);
+    Import_OamAddSpriteAtDepthClamped(oam, 236);
   }
 }
 
@@ -1981,7 +1981,7 @@ void Func_020052a4(s32 mode) {
     clock->ringing = 1;
   }
   tiles = Heap_AllocEwram(0x400);
-  Import_ResourceDecodeType01(
+  Import_DecompressTaggedLz(
       Resource_GetTableEntry((s32)&ResourceId_ClockDigits), tiles);
   clock->tiles = tiles;
   clock->digits = tiles + 0x2c0;
@@ -2032,7 +2032,7 @@ void Func_020053bc(const u16 *entry) {
     s16 flag = entry[1];
 
     object->collisionFlags &= 0xfe;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     Func_020054ac(id, (u16)mode, (u16)flag, object->terrainId);
     entry += 2;
   }

@@ -280,11 +280,11 @@ void Func_020024d4(struct Actor *actor) {
       sum += Random16Far();
       scale = (sum >> 2) + 0x8000;
       Actor_StartScript(object, gData_02004774);
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       object->velocityY = angle * 4 + 0x20000;
       radius <<= 3;
-      object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));
-      velocity = Iwram_MulQ16(radius, Math_Sine(angle));
+      object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));
+      velocity = Iwram_MulQ16(radius, Trig_Sin(angle));
       object->gravity = 0x547a;
       object->scaleX = scale;
       object->scaleY = scale;
@@ -358,7 +358,7 @@ void Func_02002a58(s32 sourceId, s32 id, s32 kind, s32 value,
 
   FieldActor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
   Actor_StartScript(object, script);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   Import_ActorSelectAnimation(object, 1);
   *(struct Actor **)((u8 *)object + 0x68) = source;

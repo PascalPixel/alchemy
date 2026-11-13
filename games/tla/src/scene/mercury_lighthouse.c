@@ -94,7 +94,7 @@ void MercuryLighthouse_SpawnMotes(void) {
 
   Actor_SetSpritePriority(8, 3);
   Actor_SetSpritePriority(9, 3);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   phase = gFrameCount & 15;
   if (phase == 0) {
     object = ((struct Actor *)Import_ActorCreate(0x2a2, 0, 0, 0));
@@ -109,7 +109,7 @@ void MercuryLighthouse_SpawnMotes(void) {
       object->x = x;
       object->y = PIXELS(160);
       object->z = z;
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       object->priorityFlags &= ~1;
       sprite->priority = 2;
       Actor_StartScript(object, gMercuryLighthouse_MoteScript);

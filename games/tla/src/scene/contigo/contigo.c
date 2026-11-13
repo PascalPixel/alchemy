@@ -79,7 +79,7 @@ void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_0200474c[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSingleChildFlags(effect, 0);
+  Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
@@ -302,7 +302,7 @@ struct OrbitEffect {
   s16 pause;
 };
 
-s32 Math_Cosine(s32 angle);
+s32 Trig_Cos(s32 angle);
 
 void Func_020009d0(struct OrbitEffect *effect) {
   s32 radius;
@@ -312,8 +312,8 @@ void Func_020009d0(struct OrbitEffect *effect) {
 
   radius = Random16Far() + 0x20000;
   angle = effect->angle;
-  dx = Iwram_MulQ16(radius, Math_Cosine(angle));
-  dz = Iwram_MulQ16(radius, Math_Sine(angle));
+  dx = Iwram_MulQ16(radius, Trig_Cos(angle));
+  dz = Iwram_MulQ16(radius, Trig_Sin(angle));
   effect->x += dx;
   effect->z += dz;
   effect->angle += 0xfff0;
@@ -324,7 +324,7 @@ void Func_020009d0(struct OrbitEffect *effect) {
     effect->pause = ((Random16Far() << 4) >> 16) + 8;
   }
   if (++effect->timer == 101)
-    Import_ActorDestroy(effect);
+    Import_ActorRelease(effect);
 }
 
 void Func_02000a80(void) {
@@ -332,7 +332,7 @@ void Func_02000a80(void) {
     struct Actor *object = Actor_Spawn(308, 0x02c20000, 0xcccc, 0x740000);
 
     if (object != NULL) {
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       object->update = Func_020009d0;
       object->motionFlags = 0;
       object->timer = -(s32)((u32)(Random16Far() * 16) >> 16) * 2 + 20;
@@ -377,7 +377,7 @@ void Func_02000af4(void) {
                                    2);
   effect = ((struct ContigoGlow *)Import_ActorCreate(280, x, 0, z));
   if (effect != 0) {
-    Actor_SetSingleChildFlags(effect, 0);
+    Actor_SetSpriteFlags(effect, 0);
     Actor_SelectAnimation(effect, 2);
     effect->motionFlags = 0;
     effect->scaleX = 0x1999;
@@ -404,7 +404,7 @@ void Func_02000af4(void) {
     i++;
     if (i < 28)
       goto shrink;
-    Import_ActorDestroy(effect);
+    Import_ActorRelease(effect);
   }
   BattleEffect_SetObjectUpdateMode(((struct ContigoObject *)Actor_GetById(17)),
                                    0);
@@ -812,15 +812,15 @@ void Func_020015ac(void) {
   MapGrid_SetShake(0x10000, 0x20000, 0x10000);
   for (i = 0; i <= 16; i++) {
     angle = i << 12;
-    velocity[0] = Math_Cosine(angle);
+    velocity[0] = Trig_Cos(angle);
     velocity[1] = 0;
-    velocity[2] = Math_Sine(angle);
+    velocity[2] = Trig_Sin(angle);
     velocity[0] += velocity[0] / 3;
     Func_02000430(object->x, object->y, object->z, velocity[0],
                   velocity[1] + 0x1999, velocity[2], 0x20000, &options);
   }
   Actor_SetSpriteColor(Actor_GetById(17), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(17), 1);
+  Actor_SetSpriteFlags(Actor_GetById(17), 1);
   Actor_SetSpeed(17, 0x30000, 0x18000);
   object->velocityY = 0xc0000;
   Actor_MoveToAndWait(17, 40, 680);
@@ -879,13 +879,13 @@ void Func_020017f4(void) {
   Func_020017bc(24);
   Func_020017bc(25);
   Func_020017bc(26);
-  Actor_SetSingleChildFlags(Actor_GetById(27), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(28), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(29), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(30), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(31), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(32), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(33), 0);
+  Actor_SetSpriteFlags(Actor_GetById(27), 0);
+  Actor_SetSpriteFlags(Actor_GetById(28), 0);
+  Actor_SetSpriteFlags(Actor_GetById(29), 0);
+  Actor_SetSpriteFlags(Actor_GetById(30), 0);
+  Actor_SetSpriteFlags(Actor_GetById(31), 0);
+  Actor_SetSpriteFlags(Actor_GetById(32), 0);
+  Actor_SetSpriteFlags(Actor_GetById(33), 0);
   Actor_GetById(27)->collisionFlags |= 8;
   Actor_GetById(28)->collisionFlags |= 8;
   Actor_GetById(29)->collisionFlags |= 8;
@@ -1880,7 +1880,7 @@ void Func_02003720(void) {
     Actor_SetPosition(17, PIXELS(32), PIXELS(708));
   } else {
     Actor_SetSpriteColor(Actor_GetById(17), 15);
-    Actor_SetSingleChildFlags(Actor_GetById(17), 0);
+    Actor_SetSpriteFlags(Actor_GetById(17), 0);
   }
   if (GameFlag_Test(0x109) == 0) {
     switch (gMainRoutineWork.entrance) {
@@ -1958,7 +1958,7 @@ void Func_020039d4(void) {
     GameFlag_ClearBit(0x12f);
   } else {
     Actor_SetModeById(17, 2);
-    Actor_SetSingleChildFlags(Actor_GetById(17), 0);
+    Actor_SetSpriteFlags(Actor_GetById(17), 0);
     if (GameFlag_Test(0x9b2) != 0)
       Actor_SetMovementTypeById(11, gData_02004a1c);
     if (GameFlag_Test(0x9d0) != 0) {
@@ -2165,7 +2165,7 @@ void Func_02003cd8(struct Actor *object) {
   }
   (*count)++;
   for (i = 0; i < 2; i++) {
-    sine = Math_Sine(work->unka0[i] << 10);
+    sine = Trig_Sin(work->unka0[i] << 10);
     if (work->unka0[i] >= 0) {
       if (work->unka0[i] <= 31) {
         position.x = object->x;

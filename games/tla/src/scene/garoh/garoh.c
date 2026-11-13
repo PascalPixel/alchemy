@@ -35,9 +35,9 @@ void Func_02000280(void) {
 void Func_020002a4(void) {
   // Declared first: x then wins its allocation tie with sine.
   s32 x;
-  // Math_Sine is an 8-byte far-call veneer: its target address is the word
+  // Trig_Sin is an 8-byte far-call veneer: its target address is the word
   // after its first instruction.
-  s32 (*sine)(s32) = *(s32 (**)(s32))(((u32)Math_Sine & ~3) + 4);
+  s32 (*sine)(s32) = *(s32 (**)(s32))(((u32)Trig_Sin & ~3) + 4);
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[1];
   /* FAKEMATCH(pin): line held in r5; as a plain local, 70 of 110 instructions
    * differ in tla-en. */
@@ -118,7 +118,7 @@ DEFINE_GAROH_LOAD_PALETTE(Func_02000390, gData_020054ee, 24, 8)
 DEFINE_GAROH_LOAD_PALETTE(Func_020003d8, gData_020054b8, 97, 9)
 
 s32 Func_02000420(struct Actor *object) {
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   return 0;
 }
 
@@ -354,7 +354,7 @@ void Func_02000808(void) {
     Event_SetFlag(0x320);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Actor_SetSingleChildFlags(Actor_Get(22), 0);
+    Actor_SetSpriteFlags(Actor_Get(22), 0);
     speed = 0x4000;
     Actor_SetPositionAndFacing(22, PIXELS(360), PIXELS(199), speed);
     FieldCamera_MoveTo(PIXELS(359), -1, PIXELS(220), 1);

@@ -102,7 +102,7 @@ void Func_0200100c(u16 *list) {
   while (list[0] != 0xffff) {
     object = Actor_Get(list[0]);
     flag = (s16)list[2];
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     Actor_SelectAnimation(object, Event_GetFlag((u16)flag) + 1);
     object->motionFlags = 0;
     object->collisionFlags &= 0xfe;

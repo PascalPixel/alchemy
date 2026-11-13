@@ -273,7 +273,7 @@ struct OrbitEffect {
   void (*update)(struct OrbitEffect *);
 };
 
-s32 Math_Cosine(s32 angle);
+s32 Trig_Cos(s32 angle);
 
 void Func_02000474(struct OrbitEffect *effect) {
   s32 radius;
@@ -283,7 +283,7 @@ void Func_02000474(struct OrbitEffect *effect) {
 
   radius = Random16Far() + 0x20000;
   angle = effect->angle;
-  dx = Iwram_MulQ16(radius, Math_Cosine(angle));
+  dx = Iwram_MulQ16(radius, Trig_Cos(angle));
   dz = Iwram_MulQ16(radius, Math_Sin(angle));
   effect->x += dx;
   effect->z += dz;
@@ -430,7 +430,7 @@ s32 Scene_Initialize(void) {
       actor->motionFlags = 0;
       actor->x = 0x580000;
       actor->y = 0x800000;
-      Actor_SetSingleChildFlags(actor, 0);
+      Actor_SetSpriteFlags(actor, 0);
       MapGrid_CopyCellAttributes(6, 27, 1, 1, 5, 27);
     }
     actor = Actor_GetById(19);
@@ -439,7 +439,7 @@ s32 Scene_Initialize(void) {
       actor->motionFlags = 0;
       actor->x = 0x2880000;
       actor->y = 0x400000;
-      Actor_SetSingleChildFlags(actor, 0);
+      Actor_SetSpriteFlags(actor, 0);
       MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
       MapGrid_CopyCellAttributes(27, 44, 1, 1, 40, 46);
     } else if (GameFlag_Test(0x109)) {
@@ -545,7 +545,7 @@ void Func_02000b2c(s32 id, s32 x, s32 y, s32 z) {
   object->y = object->z - (cellZ << 20);
   object->motionFlags = 0;
   object->priorityFlags |= 2;
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
 }
 
 void Func_02000bc0(s32 id, s32 flag) {
@@ -577,7 +577,7 @@ dust:
       speed = Random16Far();
       size = Random16Far();
       scale = (size >> 1) + 0x2000;
-      dust->velocityY = Iwram_MulQ16(speed * 8, Math_Cosine(angle));
+      dust->velocityY = Iwram_MulQ16(speed * 8, Trig_Cos(angle));
       dust->velocityX = Iwram_MulQ16(speed * 8, Math_Sin(angle));
       dust->acceleration = 0;
       dust->scaleX = scale;
@@ -618,7 +618,7 @@ fall:
   FieldCamera_MoveTo(leader->x, leader->y, leader->z, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_SetSingleChildFlags(leader, 1);
+  Actor_SetSpriteFlags(leader, 1);
   Actor_SelectAnimation(leader, 1);
   leader->velocityY = 0x40000;
   System_Wait(20);

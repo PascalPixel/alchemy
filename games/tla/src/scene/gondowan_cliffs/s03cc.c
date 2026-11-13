@@ -54,7 +54,7 @@ void Func_020003f8(s32 unk0, s32 id) {
       sprite = actor->sprite;
       sprite->rotation -= 256;
       actor->x -=
-          Math_Cosine(((struct FieldSprite *)actor->sprite)->rotation) / 2;
+          Trig_Cos(((struct FieldSprite *)actor->sprite)->rotation) / 2;
       actor->targetX = 0x80000000;
     }
     actor->update = Func_020003cc;
@@ -438,7 +438,7 @@ void Func_02000be4(void) {
       s32 wave;
 
       entry->phase += 0x1000;
-      wave = Iwram_MulQ16(0x20000, Math_Sine(entry->phase)) + -0xe0000;
+      wave = Iwram_MulQ16(0x20000, Trig_Sin(entry->phase)) + -0xe0000;
       rider->y = object->y + (entry->height << 16) + wave;
     }
     rider->x = object->x;
@@ -535,7 +535,7 @@ void Func_02000dac(void) {
      * tla-en. */
     screenY =
         ((screenY +
-          Value2((s32 (*)())Iwram_MulQ16, -0x20000, Math_Sine(swing->bob)) +
+          Value2((s32 (*)())Iwram_MulQ16, -0x20000, Trig_Sin(swing->bob)) +
           -0x20000) >>
          16) -
         4;
@@ -581,7 +581,7 @@ struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
   struct Actor *rider;
 
   Actor_Get(id);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   if (!Event_GetFlag(0x109)) {
     if (high < low) {
       s32 swap = low;

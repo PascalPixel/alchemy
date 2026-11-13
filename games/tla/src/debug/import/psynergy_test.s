@@ -10,9 +10,9 @@ __umodsi3:
 	.thumb_func
 wait:
 	overlay_veneer waitFar
-	.global Math_Sine
+	.global Trig_Sin
 	.thumb_func
-Math_Sine:
+Trig_Sin:
 	overlay_veneer Trig_SinFar
 	.global VramCache_FreeEntry
 	.thumb_func
@@ -50,9 +50,9 @@ Import_ActorCreate:
 	.thumb_func
 Map_CopyCellsRect:
 	overlay_veneer Map_CopyCellsRectFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Actor_SetSpriteColorMode
 	.thumb_func

@@ -48,11 +48,11 @@ s32 Func_020007f4(void) {
       if (dust != 0) {
         dust->motionFlags = 0;
         dust->collisionFlags = 0;
-        Actor_SetSingleChildFlags(dust, 0);
+        Actor_SetSpriteFlags(dust, 0);
         Actor_SelectAnimation(dust, 1);
         Actor_StartScript(dust, gData_020050f4);
         ((struct DustSprite__s07f4 *)dust->sprite)->layer = 1;
-        dust->bounce = Math_Cosine(((Random16Far() << 3) >> 16) << 14) >> 1;
+        dust->bounce = Trig_Cos(((Random16Far() << 3) >> 16) << 14) >> 1;
         dust->unk4c = Math_Sin(((Random16Far() << 3) >> 16) << 14) >> 1;
         dust->gravity = 0;
         dust->timer = ((Random16Far() << 9) >> 16) - 0x100;
@@ -529,7 +529,7 @@ void Func_02001314(s32 a0) {
   FieldActor_SetSpriteColor(t0, 2);
   Scene_SetActorSpritePriority(t0, 1);
   Actor_SelectAnimation(t0, 1);
-  Actor_SetSingleChildFlags(t0, 0);
+  Actor_SetSpriteFlags(t0, 0);
   Actor_SetBlendMode(t0, 1);
   Func_02004dac__s12ac(t0, (s32)gData_02005208);
 }
@@ -557,7 +557,7 @@ s32 Func_0200142c(struct GaiaRockInsideOrbit *object) {
   s32 z;
 
   object->angle += object->speed;
-  object->x = IwramMulQ16(Math_Cosine(object->angle), object->radius);
+  object->x = IwramMulQ16(Trig_Cos(object->angle), object->radius);
   z = IwramMulQ16(Math_Sin(object->angle), object->radius);
   object->x += object->centreX;
   object->z = (z >> 1) + object->centreZ;

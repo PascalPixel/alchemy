@@ -20,7 +20,7 @@
 #include "module/scene/scene.h"
 
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-s32 Math_Sine(s32 angle);
+s32 Trig_Sin(s32 angle);
 void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
@@ -55,9 +55,9 @@ void Func_0200505c(void) {
     s32 velocity[3];
 
     angle = i << 12;
-    velocity[0] = Math_Cosine(angle);
+    velocity[0] = Trig_Cos(angle);
     velocity[1] = 0;
-    velocity[2] = Math_Sine(angle);
+    velocity[2] = Trig_Sin(angle);
     velocity[0] += velocity[0] >> 1;
     velocity[0] += ((Random16Far() * 3) << 14) >> 16;
     velocity[0] += -0x6000;
@@ -152,9 +152,9 @@ s32 Scene_Initialize(void) {
       Func_02001084(Actor_GetById(9), 60, 0);
       Func_02001420(Actor_GetById(12), 60, 0);
     }
-    Actor_SetSingleChildFlags(Actor_GetById(8), 0);
-    Actor_SetSingleChildFlags(Actor_GetById(9), 0);
-    Actor_SetSingleChildFlags(Actor_GetById(12), 0);
+    Actor_SetSpriteFlags(Actor_GetById(8), 0);
+    Actor_SetSpriteFlags(Actor_GetById(9), 0);
+    Actor_SetSpriteFlags(Actor_GetById(12), 0);
     if (gMainRoutineWork.entrance == 11 && !GameFlag_Test(265))
       Func_0200505c();
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room2) {
@@ -175,7 +175,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteColor(Actor_GetById(10), 6);
       Call6(MapGrid_CopyCellPictureIndicesRect, 68, 84, 12, 77, 3, 6);
     }
-    Actor_SetSingleChildFlags(Actor_GetById(8), 0);
+    Actor_SetSpriteFlags(Actor_GetById(8), 0);
     if (gMainRoutineWork.entrance == 3 && !GameFlag_Test(265))
       Func_02004cc8();
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room3) {
@@ -206,9 +206,9 @@ s32 Scene_Initialize(void) {
     Actor_GetById(9)->actionFlags = 0;
     Actor_GetById(10)->actionFlags = 0;
     Actor_GetById(13)->actionFlags = 0;
-    Actor_SetSingleChildFlags(Actor_GetById(9), 0);
-    Actor_SetSingleChildFlags(Actor_GetById(10), 0);
-    Actor_SetSingleChildFlags(Actor_GetById(13), 0);
+    Actor_SetSpriteFlags(Actor_GetById(9), 0);
+    Actor_SetSpriteFlags(Actor_GetById(10), 0);
+    Actor_SetSpriteFlags(Actor_GetById(13), 0);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
     Func_02005f54();
     Func_02005f5c(0, 11, 12);
@@ -336,7 +336,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteColor(Actor_GetById(11), 6);
     else
       Func_02001084(Actor_GetById(11), 8, 0);
-    Actor_SetSingleChildFlags(Actor_GetById(11), 0);
+    Actor_SetSpriteFlags(Actor_GetById(11), 0);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
     Func_02002770();
     if (GameFlag_Test(0x8d3))
@@ -349,7 +349,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteColor(Actor_GetById(10), 6);
     else
       Func_02001084(Actor_GetById(10), 60, 0);
-    Actor_SetSingleChildFlags(Actor_GetById(10), 0);
+    Actor_SetSpriteFlags(Actor_GetById(10), 0);
     if (GameFlag_Test(774)) {
       Call6(MapGrid_CopyCellPictureIndicesRect, 15, 80, 15, 77, 2, 3);
       Call6(Map_CopyCellAttributeRect, 15, 80, 1, 1, 15, 79);

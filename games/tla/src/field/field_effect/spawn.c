@@ -23,7 +23,7 @@ static inline struct FieldEffect *Effect_CreateActor(s32 type, s32 x, s32 y,
 extern void EFFECT_SET_MODE(struct FieldEffect *effect, s32 mode);
 extern void EFFECT_SET_SCRIPT(struct FieldEffect *effect, const s32 *script);
 extern const s32 *EFFECT_SCRIPTS[];
-extern void Actor_SetSingleChildFlags(struct FieldEffect *effect, u32 flags);
+extern void Actor_SetSpriteFlags(struct FieldEffect *effect, u32 flags);
 extern void Scene_SetActorSpritePriority(struct FieldEffect *effect,
                                          s32 priority);
 extern void Actor_SetSpriteColor(struct FieldEffect *effect, s32 attribute);
@@ -58,7 +58,7 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   EFFECT_SET_MODE(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   EFFECT_SET_SCRIPT(effect, EFFECT_SCRIPTS[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSingleChildFlags(effect, 0);
+  Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;

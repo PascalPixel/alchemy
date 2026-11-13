@@ -15,12 +15,12 @@
 
 s32 Func_02000038(s32 a0) {
   Event_PlaySound(0x98);
-  Actor_SetSingleChildFlags(a0, 0);
+  Actor_SetSpriteFlags(a0, 0);
   return 0;
 }
 
 s32 Func_02000050(s32 a0) {
-  Actor_SetSingleChildFlags(a0, 1);
+  Actor_SetSpriteFlags(a0, 1);
   return 0;
 }
 
@@ -45,7 +45,7 @@ void Func_02000090(struct Actor *self) {
   s32 x;
   s32 z;
 
-  self->x = centre->x + Math_Cosine(angle) * (self->speedLimit + 3);
+  self->x = centre->x + Trig_Cos(angle) * (self->speedLimit + 3);
   sine = Math_Sin(angle);
   z = centre->z;
   x = self->x;
@@ -64,7 +64,7 @@ void Func_02000090(struct Actor *self) {
 void Func_020000ec(struct Actor *self) {
   struct Actor *centre = Actor_Get(36);
   u16 angle = self->timer;
-  s32 cosine = Math_Cosine(angle);
+  s32 cosine = Trig_Cos(angle);
   s32 radius = self->speedLimit + BYTE_AT(self, 98);
   self->x = centre->x + cosine * (radius + 6);
   self->z = centre->z + Math_Sin(angle) * (BYTE_AT(self, 98) + 4);

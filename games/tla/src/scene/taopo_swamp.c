@@ -107,7 +107,7 @@ extern u8 gInventorySnapshot[];
 #define VENT_WORK ((struct VentWork *)(gInventorySnapshot + 0x188))
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 
-s32 Math_Cosine(s32 angle);
+s32 Trig_Cos(s32 angle);
 void Func_02002400(struct Actor *object);
 extern const u8 gData_02002af4[];
 extern s32 gTaopoSwamp_SparkleFrame;
@@ -684,7 +684,7 @@ void TaopoSwamp_PuffSteam(void) {
   z = Random16Far() * 16 + a + 0x1040000;
   object = FieldActor_Create(0x11d, x, 0, z);
   Actor_StartScript(object, gTaopoSwamp_PuffSteamScript);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   Actor_SetBlendMode(object, 1);
   if (gTaopoSwamp_SteamPuffs == 0)
     FieldTask_Remove(TaopoSwamp_PuffSteam);
@@ -727,7 +727,7 @@ void TaopoSwamp_TremorPillar(void) {
   for (i = 9; i >= 0; i--) {
     System_Wait(1);
     ((struct FieldSprite *)rock->sprite)->rotation += turn;
-    rock->x -= Math_Cosine(((struct FieldSprite *)rock->sprite)->rotation) / 2;
+    rock->x -= Trig_Cos(((struct FieldSprite *)rock->sprite)->rotation) / 2;
     rock->targetX = 0x80000000;
   }
   rock->update = TaopoSwamp_SpinBoulder;
@@ -758,9 +758,9 @@ burst:
   speed = Random16Far();
   scale = (Random16Far() >> 2) + 0x1000;
   Actor_StartScript(clod, gTaopoSwamp_TremorPillarScript);
-  Actor_SetSingleChildFlags(clod, 0);
+  Actor_SetSpriteFlags(clod, 0);
   clod->velocityY = (angle << 2) + 0x20000;
-  cosine = Math_Cosine(angle);
+  cosine = Trig_Cos(angle);
   mul = Iwram_MulQ16;
   speed <<= 3;
   clod->velocityZ = mul(speed, cosine);
@@ -928,7 +928,7 @@ s32 TaopoSwamp_LandDrop(struct Actor *object) {
       spark->scaleX = scale;
       spark->scaleY = scale;
       Actor_StartScript(spark, gData_02002a48);
-      Actor_SetSingleChildFlags(spark, 0);
+      Actor_SetSpriteFlags(spark, 0);
       Actor_SelectAnimation(spark, 2);
     }
     Event_PlaySound(106);
@@ -953,7 +953,7 @@ void TaopoSwamp_DripAtRandom(void) {
       object->scaleY = scale;
       object->gravity = 0x7333;
       Actor_StartScript(object, gTaopoSwamp_DripAtRandomScript);
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       Actor_SetSpritePriorityDirect(object, 3);
     }
   }
@@ -1093,7 +1093,7 @@ s32 TaopoSwamp_LandDrip(struct Actor *object) {
       spark->scaleX = scale;
       spark->scaleY = scale;
       Actor_StartScript(spark, gData_02002a48);
-      Actor_SetSingleChildFlags(spark, 0);
+      Actor_SetSpriteFlags(spark, 0);
       Actor_SelectAnimation(spark, 2);
     }
     Event_PlaySound(106);
@@ -1130,7 +1130,7 @@ void TaopoSwamp_DripFromCeiling(void) {
       object->scaleY = scale;
       object->gravity = 0x7333;
       Actor_StartScript(object, gTaopoSwamp_DripFromCeilingScript);
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
     }
   }
 }
@@ -1158,7 +1158,7 @@ s32 Func_0200166c(struct Actor *object) {
         object->terrainHeight = 0xffc00000;                                    \
         object->gravity = 0x7333;                                              \
         Actor_StartScript(object, gData_02002a6c);                             \
-        Actor_SetSingleChildFlags(object, 0);                                  \
+        Actor_SetSpriteFlags(object, 0);                                  \
       }                                                                        \
     }                                                                          \
   }
@@ -1231,7 +1231,7 @@ s32 Scene_Initialize(void) {
       TaopoSwamp_StartVents(gData_02002abc, 0, TaopoSwamp_CycleSpotVent);
     piece = Actor_GetById(8);
     piece->motionFlags = 0;
-    Actor_SetSingleChildFlags(piece, 0);
+    Actor_SetSpriteFlags(piece, 0);
     if (Event_GetFlag(545)) {
       Call6(Map_CopyCellAttributeRect, 28, 8, 1, 1, 26, 8);
       Actor_SelectAnimation(piece, 0);
@@ -1264,7 +1264,7 @@ s32 Scene_Initialize(void) {
       Call2(Task_Add, TaopoSwamp_DripFromCeiling, 0x480);
       object = Actor_GetById(10);
       object->motionFlags = 0;
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       if (Event_GetFlag(545)) {
         Actor_SelectAnimation(object, 0);
       } else {
@@ -1435,7 +1435,7 @@ s32 Scene_Initialize(void) {
       TaopoSwamp_StartVents(gData_02002abc, 0, TaopoSwamp_CycleSpotVent);
     piece = Actor_GetById(8);
     piece->motionFlags = 0;
-    Actor_SetSingleChildFlags(piece, 0);
+    Actor_SetSpriteFlags(piece, 0);
     if (Event_GetFlag(545)) {
       Call6(Map_CopyCellAttributeRect, 28, 8, 1, 1, 26, 8);
       Actor_SelectAnimation(piece, 0);
@@ -1469,7 +1469,7 @@ s32 Scene_Initialize(void) {
       Call2(Task_Add, TaopoSwamp_DripFromCeiling, 0x480);
       object = Actor_GetById(10);
       object->motionFlags = 0;
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       if (Event_GetFlag(545)) {
         Actor_SelectAnimation(object, 0);
       } else {
@@ -1805,7 +1805,7 @@ void TaopoSwamp_PuffVent(s32 *position, s32 base) {
 
   if (object != 0) {
     object->bounce =
-        Math_Cosine(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
+        Trig_Cos(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
     object->gravity = (u16)Random16Far();
     object->unk4c = (u16)(Random16Far() << 1) + base;
     /* FAKEMATCH(temporary): an s32 local keeps the zero extension and the

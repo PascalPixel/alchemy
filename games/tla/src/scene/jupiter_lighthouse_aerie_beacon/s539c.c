@@ -54,7 +54,7 @@ void Teleporter_DropIn(void) {
   for (i = 0; i <= 16; i++) {
     s32 angle = i << 12;
 
-    velocity.x = Math_Cosine(angle);
+    velocity.x = Trig_Cos(angle);
     velocity.y = 0;
     velocity.z = Math_Sin(angle);
     velocity.x += velocity.x >> 1;

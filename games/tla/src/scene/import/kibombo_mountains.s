@@ -6,9 +6,9 @@
 	.thumb_func
 wait:
 	overlay_veneer waitFar
-	.global Math_Cosine
+	.global Trig_Cos
 	.thumb_func
-Math_Cosine:
+Trig_Cos:
 	overlay_veneer Trig_CosFar
 	.global GameFlag_Test
 	.thumb_func
@@ -26,9 +26,9 @@ Actor_SelectAnimation:
 	.thumb_func
 Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
-	.global Import_ActorResetMotion
+	.global Import_ActorStartIdle
 	.thumb_func
-Import_ActorResetMotion:
+Import_ActorStartIdle:
 	overlay_veneer Actor_StartIdleFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -46,9 +46,9 @@ Map_GetTerrainHeight:
 	.thumb_func
 Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Event_Wait
 	.thumb_func

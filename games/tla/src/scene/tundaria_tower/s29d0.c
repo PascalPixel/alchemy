@@ -19,7 +19,7 @@
 s32 Func_02003180(s32 layer, s32 shape, s32 height);
 u32 Import_SpriteShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
 
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 void Func_020029d0(s32 spread) {
@@ -41,14 +41,14 @@ void Func_020029d0(s32 spread) {
       frame = Import_SpriteShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags(effect, 0);
+      Actor_SetSpriteFlags(effect, 0);
       Import_ActorSelectAnimation(effect, 2);
       Func_02002f90(effect, gData_020032d4);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
-        effect->velocity.x = Iwram_MulQ16(Math_Cosine(i << 13), 0x13333);
-        effect->velocity.z = Math_Sine(i << 13);
+        effect->velocity.x = Iwram_MulQ16(Trig_Cos(i << 13), 0x13333);
+        effect->velocity.z = Trig_Sin(i << 13);
       } else {
         effect->velocity.x = spread;
         effect->velocity.z = spread;
@@ -83,13 +83,13 @@ void Func_02002b04(void) {
         zero = 0;
         effect->motionFlags = zero;
         effect->collisionFlags = zero;
-        Actor_SetSingleChildFlags(effect, 0);
+        Actor_SetSpriteFlags(effect, 0);
         Import_ActorSelectAnimation(effect, 2);
         Func_02002f90(effect, gData_02003304);
         angle = i << 12;
-        effect->velocity.x = Math_Cosine(angle);
+        effect->velocity.x = Trig_Cos(angle);
         effect->velocity.y = zero;
-        effect->velocity.z = Math_Sine(angle);
+        effect->velocity.z = Trig_Sin(angle);
         effect->velocity.x += effect->velocity.x >> 1;
         effect->velocity.x += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
         effect->velocity.z += ((Random16Far() * 3) << 13 >> 16) - 0x3000;

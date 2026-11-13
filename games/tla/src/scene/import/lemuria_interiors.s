@@ -10,9 +10,9 @@ __divsi3:
 	.thumb_func
 wait:
 	overlay_veneer waitFar
-	.global Math_Sine
+	.global Trig_Sin
 	.thumb_func
-Math_Sine:
+Trig_Sin:
 	overlay_veneer Trig_SinFar
 	.global Vector_AddPolarOffsetFar
 	.thumb_func
@@ -38,9 +38,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Actor_CreateFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global MapGrid_SetScreenShake
 	.thumb_func

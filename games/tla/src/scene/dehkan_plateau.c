@@ -36,7 +36,7 @@ next:
   mode = spec[1];
   flag = spec[2];
   object->collisionFlags &= 0xfe;
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   Func_02000128(id, (u16)mode, (u16)flag, object->terrainId);
   limit = 0xff;
   spec += 3;

@@ -24,13 +24,13 @@ void Func_02002f34(void) {
     s32 value;
 
     if (object != 0) {
-      object->field44 = Math_Cosine(((Random16Far() << 13) >> 16) + 0x3000);
+      object->field44 = Trig_Cos(((Random16Far() << 13) >> 16) + 0x3000);
       object->field48 = 0x10000;
       object->field4c = 0x40000 - (u16)Random16Far();
       value = (u16)Random16Far() + 0xffff8000;
       object->field64 = value;
       object->motionFlags = 0;
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       Actor_SelectAnimation(object, 2);
       Actor_StartScript(object, gData_02005ca4);
       object->sprite->priority = 1;
@@ -51,7 +51,7 @@ void Func_02002fec(struct KibomboObject *object) {
   object->scaleY += 0x51e;
   object->field64 += 2;
   if (--object->field68 == 0)
-    Import_ActorDestroy(object);
+    Import_ActorRelease(object);
 }
 
 void Func_02003030(void) {
@@ -69,7 +69,7 @@ void Func_02003030(void) {
       mask = 13;
       part = (u8 *)object->sprite;
       part[9] = (part[9] & -mask) | 8;
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       object->scaleX = 0x8000;
       object->scaleY = 0x8000;
       object->field68 = 60;
@@ -108,7 +108,7 @@ void Func_02003104(s32 x, s32 y, s32 z) {
     object->update = Func_020030b8;
     sprite = object->sprite;
     sprite->priority = 1;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     Actor_SelectAnimation(object, 5);
     Actor_SetBlendMode(object, 1);
   }
@@ -192,7 +192,7 @@ DEFINE_KIBOMBO_SET_CROWD_MODE(Func_020032c8, 1)
 
 void Func_020032e0(void) {
   BattleEffect_LoadActionEffectResources(143, 1);
-  Import_BattleEffectSetupObjectPair(17, 27);
+  Import_FieldPsynergySetupActorPair(17, 27);
   EventObject_Initialize();
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
@@ -350,7 +350,7 @@ void Func_02003308(struct Actor *actor) {
   s32 turn;
 
   if (*timer != 0)
-    wobble = Math_Sine((actor->timer + (s16)actor->unk66) * 9 << 9) * 6;
+    wobble = Trig_Sin((actor->timer + (s16)actor->unk66) * 9 << 9) * 6;
   object = (union Whirl *)actor;
   action = &object->actor.timer;
   centre.x = object->actor.targetX;
@@ -429,7 +429,7 @@ void Func_02003308(struct Actor *actor) {
   case 7:
     VramCache_FreeEntry(
         ((struct FieldSprite *)object->actor.sprite)->vramBlock);
-    Import_ActorDestroy(&object->actor);
+    Import_ActorRelease(&object->actor);
     break;
   }
 }
@@ -467,7 +467,7 @@ void Func_02003504(void) {
       previous = Sprite_ShareVramCacheEntry(spark->sprite, previous);
       spark->motionFlags = 0;
       spark->sprite->priority = 1;
-      Actor_SetSingleChildFlags(spark, 0);
+      Actor_SetSpriteFlags(spark, 0);
       Actor_SelectAnimation(spark, 1);
       spark->field64 = 0;
       spark->field4c = 0;
@@ -569,7 +569,7 @@ void Func_020037e4(void) {
 void Func_0200384c(void) {
   BattleEffect_LoadActionEffectResources(136, 1);
   Task_Add(Func_020037e4, 0x480);
-  Import_BattleEffectSetupObjectPair(gMainRoutineWork.currentOwner, -1);
+  Import_FieldPsynergySetupActorPair(gMainRoutineWork.currentOwner, -1);
   EventObject_Initialize();
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
@@ -646,7 +646,7 @@ void Func_02003a08(s32 x, s32 z) {
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, x, z);
   Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_NORTH);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
   Actor_SetMoveTarget(leader, x << 16, PIXELS(-12), z << 16);
   Actor_WaitForMove(leader);
@@ -865,7 +865,7 @@ void Func_02003dec(void) {
 void Func_02002eb0(void);
 
 void Func_020040cc(void) {
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Kibombo_CamMove(-1, -1, -1, 0);
   FieldCamera_GetActor()->motionFlags = 0;
@@ -882,7 +882,7 @@ void Func_020040cc(void) {
   Event_SetMessageId((s32)MsgLetUsNow);
   Event_ShowMessageAndWait(0x4000 + 17, 0);
   Sound_Play(26);
-  Actor_SetSingleChildFlags(Actor_GetById(27), 0);
+  Actor_SetSpriteFlags(Actor_GetById(27), 0);
   Actor_GetById(27)->motionFlags = 0;
   Actor_SetPositionAndResetMotion(Actor_GetById(27), PIXELS(265), PIXELS(24),
                                   PIXELS(344));
@@ -918,11 +918,11 @@ void Func_02004294(void) {
   struct KibomboObject *object;
   s32 y;
 
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Kibombo_CamMove(-1, -1, -1, 0);
   FieldCamera_GetActor()->motionFlags = 0;
-  Actor_SetSingleChildFlags(Actor_GetById(27), 0);
+  Actor_SetSpriteFlags(Actor_GetById(27), 0);
   Actor_GetById(27)->motionFlags = 0;
   Actor_SetPositionAndResetMotion(Actor_GetById(27), PIXELS(265), PIXELS(24),
                                   PIXELS(344));
@@ -985,7 +985,7 @@ void Func_02004424(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Func_020032b0();
   KIBOMBO_TASK_ADD(Func_02002ccc, 1152);
   work = Ram_HeapSlots->eventWork;
@@ -1019,7 +1019,7 @@ void Func_02004524(void) {
   Kibombo_CamMove(-1, -1, -1, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   KIBOMBO_TASK_ADD(Func_02002ccc, 0x480);
   Func_02003640(1, 1);
   if (gData_02007950 != 0) {
@@ -1392,8 +1392,8 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_020050ac(void) {
-  Actor_SetSingleChildFlags(Actor_GetById(9), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(10), 0);
+  Actor_SetSpriteFlags(Actor_GetById(9), 0);
+  Actor_SetSpriteFlags(Actor_GetById(10), 0);
   Func_02005c04(0);
   Func_02005c64(gData_02006324);
   Actor_SetSpritePriority(8, 3);
@@ -1405,7 +1405,7 @@ void Func_020050ac(void) {
 
 void Func_02005114(void) {
   Actor_SetHorizontalPositionWithTerrain(11, PIXELS(88), PIXELS(314));
-  Actor_SetSingleChildFlags(Actor_GetById(11), 0);
+  Actor_SetSpriteFlags(Actor_GetById(11), 0);
   Actor_GetById(11)->scaleY = 0x8000;
   Func_020050ac();
   GameFlag_ClearBit(0x86b);
@@ -1418,17 +1418,17 @@ void Func_02005114(void) {
 // ---- games/tla/src/scene/kibombo/s516c.c ----
 // Kibombo's setup.
 #include "main_routine_work.h"
-/* VIEW(s516c): routine Actor_SetSingleChildFlags as void
- * Actor_SetSingleChildFlags(struct Actor *object, u32 flags); kibombo.h has
- * void Actor_SetSingleChildFlags(struct KibomboObject *object, u32 value);
- * tried as the 35 declarations' void Actor_SetSingleChildFlags(struct
+/* VIEW(s516c): routine Actor_SetSpriteFlags as void
+ * Actor_SetSpriteFlags(struct Actor *object, u32 flags); kibombo.h has
+ * void Actor_SetSpriteFlags(struct KibomboObject *object, u32 value);
+ * tried as the 35 declarations' void Actor_SetSpriteFlags(struct
  * FieldEffect *effect, s32 flags), it does not compile in tla-ja:
  * games/tla/include/field/field.h:25: conflicting types for
- * `Actor_SetSingleChildFlags'. */
+ * `Actor_SetSpriteFlags'. */
 struct Actor;
 extern void Actor_SetSingleChildFlags__s516c(
-    struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
-#define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__s516c
+    struct Actor *object, u32 flags) __asm__("Actor_SetSpriteFlags");
+#define Actor_SetSpriteFlags Actor_SetSingleChildFlags__s516c
 /* VIEW(s516c): routine Actor_SetBlendMode as void
  * Actor_SetBlendMode(struct Actor *object, u32 value); kibombo.h has void
  * Actor_SetBlendMode(struct KibomboObject *object, s32 flags); tried as
@@ -1455,7 +1455,7 @@ Actor_SetPartAttribute__s516c(struct Actor *object,
 #include "field.h"
 #undef Actor_SetSpriteColor
 #undef Actor_SetBlendMode
-#undef Actor_SetSingleChildFlags
+#undef Actor_SetSpriteFlags
 
 void *Unit_Get(s32 owner);
 
@@ -1566,8 +1566,8 @@ void Func_0200516c(void) {
 void Func_02002de0(void);
 
 void Func_0200538c(void) {
-  Actor_SetSingleChildFlags(Actor_GetById(9), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(10), 0);
+  Actor_SetSpriteFlags(Actor_GetById(9), 0);
+  Actor_SetSpriteFlags(Actor_GetById(10), 0);
   if (!GameFlag_Test(0x8fb))
     Func_02002de0();
   Func_0200324c();
@@ -1575,7 +1575,7 @@ void Func_0200538c(void) {
     GameFlag_SetBit(0x201);
   Func_02005c64(gData_02006324);
   Actor_SetSpritePriority(8, 2);
-  Actor_SetSingleChildFlags(Actor_GetById(11), 0);
+  Actor_SetSpriteFlags(Actor_GetById(11), 0);
   Actor_GetById(11)->motionFlags = 0;
   if (GameFlag_Test(0x9ea)) {
     Kibombo_ObjSetPos(Actor_GetById(11), 208 << 15, 0, 148 << 17);
@@ -1733,11 +1733,11 @@ void Func_020057e0(void) {
   gData_02007948[1] = PALETTE_WORD(167);
   gData_02007948[2] = PALETTE_WORD(166);
   if (gMainRoutineWork.entrance == 10) {
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
     Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
     Func_02003c84();
   } else if (gMainRoutineWork.entrance == 11) {
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
     Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
     Func_02003c14();
   } else {

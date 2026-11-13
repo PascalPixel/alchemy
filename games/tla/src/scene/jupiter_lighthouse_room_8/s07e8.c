@@ -18,7 +18,7 @@
 #include "module/scene/scene.h"
 #include "module/scene/jupiter_lighthouse_room_8.h"
 
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 void Whirlwind_Update(struct GustObject *object);
 void Func_02001600(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);

@@ -537,7 +537,7 @@ void Func_02000a10(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
   if (mode == 1) {
     object = FieldActor_Create(354, x << 16, 0, z << 16);
     if (object != NULL) {
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       object->priorityFlags = 2;
     }
   }
@@ -546,7 +546,7 @@ void Func_02000a10(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
     if (object != NULL) {
       s32 scale;
 
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       object->velocityY = 0x60000;
       object->scaleX = 0x6666;
       object->scaleY = 0x6666;

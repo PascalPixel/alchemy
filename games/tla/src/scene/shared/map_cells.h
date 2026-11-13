@@ -261,7 +261,7 @@
                        (struct MapCell *)Ram_MapCellBuffer);                   \
       object->motionFlags = 0;                                                 \
       object->collisionFlags = 0;                                              \
-      Actor_SetSingleChildFlags(object, 0);                                    \
+      Actor_SetSpriteFlags(object, 0);                                    \
       level += 4;                                                              \
       newShape = call3(*layer, shape, level);                                  \
       shapes += index;                                                         \
@@ -374,7 +374,7 @@
       mode = spec[1];                                                          \
       flag = spec[2];                                                          \
       object->collisionFlags &= 0xfe;                                          \
-      Actor_SetSingleChildFlags(object, 0);                                    \
+      Actor_SetSpriteFlags(object, 0);                                    \
       call1(id, (u16)mode, (u16)flag, object->terrainId);                      \
       limit = 0xff;                                                            \
       spec += 3;                                                               \
@@ -481,7 +481,7 @@
                                                                                \
       object->motionFlags = 0;                                                 \
       object->collisionFlags = 0;                                              \
-      Actor_SetSingleChildFlags(object, 0);                                    \
+      Actor_SetSpriteFlags(object, 0);                                    \
       call1(object->terrainId, object->x >> 20, object->z >> 20,               \
             (height >> 19) + 4);                                               \
     }                                                                          \

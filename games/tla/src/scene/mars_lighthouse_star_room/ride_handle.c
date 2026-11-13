@@ -107,7 +107,7 @@ void Func_02001df0(u16 *targets, u16 *stops, s32 a2, s32 a3) {
         object = Actor_Get(id);
         targets++;
         if (object != NULL) {
-          Actor_SetSingleChildFlags(object, 0);
+          Actor_SetSpriteFlags(object, 0);
           ((u8 *)object)[98] = one = 1;
           if ((flags & 0x80) == 0)
             object->collisionFlags = 0;

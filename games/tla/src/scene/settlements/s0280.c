@@ -16,7 +16,7 @@ void Func_02000290(void) { Djinn_JoinParty(11, 2, 14); }
 void Func_020002a0(void) { Djinn_JoinParty(23, 3, 19); }
 
 s32 Func_020002b0(struct Actor *object) {
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   return 0;
 }
 
@@ -142,7 +142,7 @@ void Func_0200052c(void) {
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffset(4, 0, 4);
   FieldActor_WaitForMoveById(4);
-  Actor_SetSingleChildFlags(Actor_Get(4), 0);
+  Actor_SetSpriteFlags(Actor_Get(4), 0);
   Actor_SetAnimation(4, 13);
   Actor_SetDestinationOffset(4, 0, 16);
   FieldActor_WaitForMoveById(4);
@@ -241,7 +241,7 @@ void Func_02000758(s32 x, s32 y, s32 z) {
     FieldActor_SetSpriteColor(object, 7);
     animation = object->sprite;
     animation[9] = (animation[9] & -13) | 4;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     object->scaleX = 0x8000;
     object->scaleY = 0x8000;
     *(s32 *)&object->watchedObject = 60;
@@ -266,9 +266,9 @@ s32 Func_020007fc(s32 *p) {
 
   if (d > 0)
     d = -d;
-  p[2] = p[14] + Math_Cosine(p[12]) * 2;
+  p[2] = p[14] + Trig_Cos(p[12]) * 2;
   p[3] = p[15] + d;
-  q[9] = Math_Cosine(p[12] + 0x8000) / 8;
+  q[9] = Trig_Cos(p[12] + 0x8000) / 8;
   a = Random16Far();
   b = Random16Far();
   {
@@ -313,7 +313,7 @@ void Func_02000860(void) {
   sprite->flags05Bit5 = 0;
   sprite->flags09High = 0;
   sprite->state = 0;
-  Actor_SetSingleChildFlags((struct Actor *)actor, 0);
+  Actor_SetSpriteFlags((struct Actor *)actor, 0);
   actor->active = 0;
   actor->mode = 0;
   if (Event_GetFlag(0x109) == 0)

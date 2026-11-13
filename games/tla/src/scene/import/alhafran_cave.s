@@ -38,9 +38,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 MapGrid_CopyCellPictureCellsRect:
 	overlay_veneer MapGrid_CopyCellPictureCellsRectFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Actor_SetSpriteColorMode
 	.thumb_func
@@ -242,24 +242,10 @@ Actor_SetSpriteRotationById:
 	.thumb_func
 Field_StartColorTransition:
 	overlay_veneer Field_StartColorTransitionFar
-	.ifdef TLA_EDITION_ES
-	.global Field_EndActorSpriteEffect
-	.thumb_func
-Field_EndActorSpriteEffect:
-	overlay_veneer Field_StartPaletteTransitionFar
-	.else
-	.ifdef TLA_EDITION_IT
-	.global Field_EndActorSpriteEffect
-	.thumb_func
-Field_EndActorSpriteEffect:
-	overlay_veneer Field_StartPaletteTransitionFar
-	.else
 	.global Field_StartPaletteTransition
 	.thumb_func
 Field_StartPaletteTransition:
 	overlay_veneer Field_StartPaletteTransitionFar
-	.endif
-	.endif
 	.global BattleEffect_StartArcEffect
 	.thumb_func
 BattleEffect_StartArcEffect:

@@ -36,7 +36,7 @@ void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_020023a0[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSingleChildFlags(effect, 0);
+  Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
@@ -88,7 +88,7 @@ void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #define CELL_TABLE gTeleporters
 #define CELL_SPRITE_DRAW Func_0200125c
-#define CELL_PUSH_SLOT_ENTRY Import_OamAddSpriteAtDepth
+#define CELL_PUSH_SLOT_ENTRY Import_OamAddSpriteAtDepthClamped
 #include "../../field/map/cell_sprite.c"
 
 #include "ram_buffer.h"

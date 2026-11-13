@@ -99,7 +99,7 @@
         object = Actor_Get(id);                                                \
         targets++;                                                             \
         if (object != NULL) {                                                  \
-          Actor_SetSingleChildFlags(object, 0);                                \
+          Actor_SetSpriteFlags(object, 0);                                \
           ((u8 *)object)[98] = one = 1;                                        \
           if ((flags & 0x80) == 0)                                             \
             object->collisionFlags = 0;                                        \
@@ -427,7 +427,7 @@
     s32 spin;                                                                  \
                                                                                \
     if (object != NULL) {                                                      \
-      object->bounce = Math_Cosine((u16)(Random16Far() * 3 >> 4) + 0x3000);    \
+      object->bounce = Trig_Cos((u16)(Random16Far() * 3 >> 4) + 0x3000);    \
       object->gravity = (u16)Random16Far();                                    \
       object->unk4c = (u16)(Random16Far() << 1) + speed;                       \
       spin = (u16)Random16Far() + 0xffff8000;                                  \
@@ -447,7 +447,7 @@
     FieldActor_SetPositionAndResetMotion(object, source->x, source->y,         \
                                          source->z);                           \
     Actor_StartScript(object, script);                                         \
-    Actor_SetSingleChildFlags(object, 0);                                      \
+    Actor_SetSpriteFlags(object, 0);                                      \
     object->motionFlags = 0;                                                   \
     call1(object, 1);                                                          \
     object->watchedObject = source;                                            \
@@ -491,7 +491,7 @@
   void name(struct Actor *object, s32 unused) {                                \
     object->motionFlags = 0;                                                   \
     object->collisionFlags = 0;                                                \
-    Actor_SetSingleChildFlags(object, 0);                                      \
+    Actor_SetSpriteFlags(object, 0);                                      \
     call1(object, 2);                                                          \
     Actor_StartScript(object, data1);                                          \
     FieldActor_SetSpriteColor(object, 10);                                          \
@@ -505,7 +505,7 @@
   void name(struct Actor *object) {                                            \
     object->motionFlags = 0;                                                   \
     object->collisionFlags = 0;                                                \
-    Actor_SetSingleChildFlags(object, 0);                                      \
+    Actor_SetSpriteFlags(object, 0);                                      \
     call1(object, 2);                                                          \
     Actor_StartScript(object, data1);                                          \
     FieldActor_SetSpriteColor(object, 10);                                          \
@@ -558,7 +558,7 @@
   void name(struct Actor *object, s32 unused) {                                \
     object->motionFlags = 0;                                                   \
     object->collisionFlags = 0;                                                \
-    Actor_SetSingleChildFlags(object, 0);                                      \
+    Actor_SetSpriteFlags(object, 0);                                      \
     Actor_StartScript(object, data1);                                          \
     object->timer = 0;                                                         \
     object->speedLimit = 0;                                                    \
@@ -570,7 +570,7 @@
   void name(struct Actor *object) {                                            \
     object->motionFlags = 0;                                                   \
     object->collisionFlags = 0;                                                \
-    Actor_SetSingleChildFlags(object, 0);                                      \
+    Actor_SetSpriteFlags(object, 0);                                      \
     Actor_StartScript(object, data1);                                          \
     object->timer = 0;                                                         \
     object->speedLimit = 0;                                                    \
@@ -1167,13 +1167,13 @@
         radius = Random16Far() * 8;                                            \
         size = Random16Far();                                                  \
         Actor_StartScript(object, data1);                                      \
-        Actor_SetSingleChildFlags(object, 0);                                  \
+        Actor_SetSpriteFlags(object, 0);                                  \
         /* FAKEMATCH(temporary): the scale is taken before the velocity        \
          * stores, as in the native; as object->scaleX = (size >> 1) + 0x4000, \
          * 14 of 98 instructions differ in tla-en. */                          \
         scale = (size >> 1) + 0x4000;                                          \
         object->velocityY = rise + 0x14000;                                    \
-        object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));          \
+        object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));          \
         object->velocityX = Iwram_MulQ16(radius, Math_Sin(angle));             \
         object->acceleration = 0;                                              \
         object->gravity = 0x547a;                                              \
@@ -1196,7 +1196,7 @@
     object->collisionFlags = zero;                                             \
                                                                                \
     ((struct SpriteParts *)object->sprite)->part = part;                       \
-    Actor_SetSingleChildFlags(object, 0);                                      \
+    Actor_SetSpriteFlags(object, 0);                                      \
     Actor_StartScript(object, data1);                                          \
     object->timer = zero;                                                      \
     object->speedLimit = zero;                                                 \

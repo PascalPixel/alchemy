@@ -63,7 +63,7 @@ s32 Func_0200035c(struct Actor *object) {
   object->scaleX = 0xcccc;
   object->scaleY = 0xcccc;
   object->collisionFlags |= 8;
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   return 0;
 }
 
@@ -207,7 +207,7 @@ void *Scene_GetEvents(void) {
 void Func_0200063c(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Func_02000668(leader, 0);
 }
 
@@ -255,7 +255,7 @@ void Func_02000710(void) {
     steam = ((struct Actor *)Import_ActorCreate(
         14, leader->x, leader->y + 0x60000, leader->z));
     if (steam) {
-      Actor_SetSingleChildFlags(steam, 0);
+      Actor_SetSpriteFlags(steam, 0);
       Actor_SelectAnimation(steam, 1);
       Actor_StartScript(steam, gData_020054f0);
     }
@@ -356,7 +356,7 @@ void Func_02000930(struct Actor *object, s32 priority) {
   object->priorityFlags = 2;
   sprite = object->sprite;
   sprite->priority = priority;
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   Actor_SelectAnimation(object, 2);
   Actor_StartScript(object, gData_02005494);
   Actor_SetSpriteColor(object, 9);
@@ -372,7 +372,7 @@ void Func_0200098c(s32 *position, s32 value) {
   if (object) {
     s32 timer;
 
-    object->bounce = Math_Cosine(((Random16Far() * 0x3000) >> 16) + 0x3000);
+    object->bounce = Trig_Cos(((Random16Far() * 0x3000) >> 16) + 0x3000);
     object->gravity = (u16)Random16Far();
     object->unk4c = (u16)(Random16Far() * 2) + value;
     timer = (u16)Random16Far() - 0x8000;
@@ -442,7 +442,7 @@ void Func_02000adc(void) {
   if (object) {
     s32 timer;
 
-    object->bounce = Math_Cosine(((Random16Far() * 0x3000) >> 16) + 0x3000);
+    object->bounce = Trig_Cos(((Random16Far() * 0x3000) >> 16) + 0x3000);
     object->gravity = (u16)Random16Far();
     object->unk4c = (u16)(Random16Far() * 2) + 0x58000;
     timer = (u16)Random16Far() - 0x8000;
@@ -454,7 +454,7 @@ void Func_02000adc(void) {
 }
 
 void Func_02000b5c(void) {
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
 }
 
 void Func_02000b78(s32 id) {
@@ -646,7 +646,7 @@ void Func_02000f60(void) {
           Task_RemoveFar(Func_02000f60);
         }
         phase = &gData_020062a8;
-        statue->y += Math_Sine(*phase) >> 1;
+        statue->y += Trig_Sin(*phase) >> 1;
         *phase += 0x1000;
       } else if (t <= 999) {
         phase = &gData_020062a8;
@@ -655,7 +655,7 @@ void Func_02000f60(void) {
           *timer = 999;
           GameFlag_ClearBit(0x20c);
         }
-        statue->y += Math_Sine(*phase) >> 1;
+        statue->y += Trig_Sin(*phase) >> 1;
         *phase += 0x1000;
       } else {
         statue->y += -0x6c000;
@@ -677,7 +677,7 @@ void Func_02000f60(void) {
         Func_02000cd8(14, 0, limit);
       } else if (t < 600) {
         phase = &gData_020062a8;
-        statue->y += Math_Sine(*phase) >> 1;
+        statue->y += Trig_Sin(*phase) >> 1;
         *phase += 0x1000;
       } else if (t <= 999) {
         phase = &gData_020062a8;
@@ -686,7 +686,7 @@ void Func_02000f60(void) {
           *timer = 999;
           GameFlag_ClearBit(0x20c);
         }
-        statue->y += Math_Sine(*phase) >> 1;
+        statue->y += Trig_Sin(*phase) >> 1;
         *phase += 0x1000;
       } else {
         statue->y += -0x3b666;
@@ -722,7 +722,7 @@ void Func_02000f60(void) {
     if (GameFlag_Test(0x208)) {
       leader = Actor_GetById(gMainRoutineWork.currentOwner);
       Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
-      Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+      Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                 1);
     }
     goto count;
@@ -743,7 +743,7 @@ count:
 // Bob the statue on a sine.
 #define BOB(statue, phase)                                                     \
   do {                                                                         \
-    (statue)->y += Math_Sine(*(phase)) >> 1;                                   \
+    (statue)->y += Trig_Sin(*(phase)) >> 1;                                   \
     *(phase) += 0x1000;                                                        \
   } while (0)
 
@@ -856,7 +856,7 @@ void Func_020012c4(void) {
       if (GameFlag_Test(0x209)) {
         leader = Actor_GetById(gMainRoutineWork.currentOwner);
         Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
-        Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+        Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                   1);
       }
     } else {
@@ -903,7 +903,7 @@ void Func_02001634(void) {
   } else if (*timer < 2800) {
     u16 *phase = &gData_020062a8;
 
-    lift->y += Math_Sine(*phase) >> 1;
+    lift->y += Trig_Sin(*phase) >> 1;
     *phase += 0x1000;
     if (*timer == 2280)
       MapGrid_CopyCellAttributes(27, 10, 1, 1, 27, 12);
@@ -968,7 +968,7 @@ void Func_02001804(void) {
   } else if (*timer < 2800) {
     u16 *phase = &gData_020062aa;
 
-    lift->y += Math_Sine(*phase) >> 1;
+    lift->y += Trig_Sin(*phase) >> 1;
     *phase += 0x1000;
     if (*timer == 2280)
       MapGrid_CopyCellAttributes(37, 12, 1, 1, 37, 14);
@@ -1059,7 +1059,7 @@ void Func_02001b50(void) {
     return;
   if (cellX == 27 && cellZ == 12) {
     struct Actor *lift = Actor_GetById(13);
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
     Actor_SetModeById(13, 4);
     leader->motionFlags = riding;
     leader->y = lift->y;
@@ -1068,7 +1068,7 @@ void Func_02001b50(void) {
   }
   if (cellX == 37 && cellZ == 14) {
     struct Actor *lift = Actor_GetById(14);
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
     Actor_SetModeById(14, 4);
     leader->motionFlags = 0;
     leader->y = lift->y;
@@ -1081,7 +1081,7 @@ void Func_02001b50(void) {
   }
   Actor_SetModeById(13, 0);
   Actor_SetModeById(14, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   leader->motionFlags = 3;
   GameFlag_ClearBit(0x208);
   GameFlag_ClearBit(0x209);
@@ -1214,7 +1214,7 @@ void Func_02001e58(void) {
   Actor_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
   Actor_WalkToAndWaitById(party->currentOwner, 168, 80);
   Actor_FaceDirectionById(party->currentOwner, FACING_NORTH);
-  Actor_SetSingleChildFlags(Actor_GetById(party->currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(party->currentOwner), 0);
   Actor_SetModeById(party->currentOwner, 13);
   Actor_SetMoveTarget(leader, PIXELS(168), PIXELS(-12), PIXELS(80));
   Actor_WaitForMove(leader);
@@ -1264,7 +1264,7 @@ void Func_02002014(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   leader->motionFlags = 0;
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   for (i = 0; i < 8; i++) {
     leader->z += PIXELS(1);
     wait(1);
@@ -1421,7 +1421,7 @@ void Func_020023e8(void) {
     ItemDisplay_ShowPicture(gData_020062ac, 3);
   Party_GiveItem(198, 0);
   if (gData_020062ac != 0)
-    Import_ActorDestroy(gData_020062ac);
+    Import_ActorRelease(gData_020062ac);
   Actor_SetAnimation(12, 4);
   Event_ShowMessage(0x800c, 0);
   FieldCamera_SetSpeed(0x6666, 0xccc);
@@ -1439,7 +1439,7 @@ void Func_020023e8(void) {
   sprite->rotation = 0xe000;
   object->motionFlags = 0;
   object->y += 0x40000;
-  Actor_SetSingleChildFlags(Actor_GetById(12), 0);
+  Actor_SetSpriteFlags(Actor_GetById(12), 0);
   Actor_SetSpeed(12, 0x6666, 0x3333);
   FieldActor_SetMoveTarget(object, 0x1ec0000, 0x80000, 0x1780000);
   FieldActor_WaitForMoveById(12);
@@ -1448,7 +1448,7 @@ void Func_020023e8(void) {
   object->scaleX = 0x10000;
   sprite->rotation = 0;
   Actor_SetAnimation(12, 1);
-  Actor_SetSingleChildFlags(Actor_GetById(12), 1);
+  Actor_SetSpriteFlags(Actor_GetById(12), 1);
   Actor_SetSpeed(12, 0x19999, 0xcccc);
   FieldActor_Jump(12, 4, 0);
   Actor_MoveToAndWait(12, 504, 376);

@@ -92,7 +92,7 @@ loop:
   animation = row[1];
   flag = row[2];
 
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   Import_ActorSelectAnimation(object, (u16)animation + GameFlag_Test((u16)flag));
   object->motionFlags = 0;
   object->collisionFlags &= 0xfe;
@@ -424,7 +424,7 @@ void Func_02000b3c(void) {
   Func_02003048();
   Event_ResolvePendingActions(0);
   Call4((void (*)())FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   leader->facing = 0x4000;
   Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);

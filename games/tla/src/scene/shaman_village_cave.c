@@ -71,7 +71,7 @@ void Func_02000098(s32 id) {
     frames--;
   }
   System_Wait(10);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
 }
 
@@ -176,7 +176,7 @@ void Func_0200030c(void) {
 }
 
 s32 Func_0200032c(struct Actor *object) {
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   ((struct FieldSprite *)object->sprite)->priority = 2;
   object->motionFlags = 0;
   return 0;
@@ -596,10 +596,10 @@ s32 Scene_Initialize(void) {
     object->priorityFlags = 0;
     object->x = 0x2680000;
     object->y = 0;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     MapGrid_CopyCellAttributes(40, 19, 1, 1, 38, 19);
   }
-  Actor_SetSingleChildFlags(Actor_Get(16), 0);
+  Actor_SetSpriteFlags(Actor_Get(16), 0);
   Actor_SetAnimation(16, 1);
   if (Event_GetFlag(770)) {
     object = Actor_Get(16);

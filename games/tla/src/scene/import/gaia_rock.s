@@ -14,13 +14,13 @@ Task_Add:
 	.thumb_func
 Random16Far:
 	overlay_veneer Func_080000f8
-	.global Math_Sine
+	.global Trig_Sin
 	.thumb_func
-Math_Sine:
+Trig_Sin:
 	overlay_veneer Trig_SinFar
-	.global Math_Cosine
+	.global Trig_Cos
 	.thumb_func
-Math_Cosine:
+Trig_Cos:
 	overlay_veneer Trig_CosFar
 	.global Vector_AddPolarOffsetFar
 	.thumb_func
@@ -54,9 +54,9 @@ Actor_SetMoveTarget:
 	.thumb_func
 Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global MapGrid_SetScreenShake
 	.thumb_func

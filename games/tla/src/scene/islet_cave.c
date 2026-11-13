@@ -94,7 +94,7 @@ void Func_020003bc(void) {
 }
 
 s32 Func_020003c8(s32 arg0) {
-  Actor_SetSingleChildFlags(arg0, 0);
+  Actor_SetSpriteFlags(arg0, 0);
   return 0;
 }
 
@@ -109,7 +109,7 @@ s32 Func_020003d4(struct Actor *object) {
   if (step < 32) {
     if (step == 0)
       object->velocityY = PIXELS(1);
-    animation[9] = Math_Cosine(step << 12) / 128;
+    animation[9] = Trig_Cos(step << 12) / 128;
   }
   (*phase)++;
   return -1;
@@ -289,7 +289,7 @@ s32 Scene_Initialize(void) {
     Palette_SetColors(gData_0200134c, gData_0200135c, gData_02001388,
                       gData_020013b4);
   } else if (scene == (s32)&SceneId_Ov675Room3) {
-    Actor_SetSingleChildFlags(Actor_GetById(9), 0);
+    Actor_SetSpriteFlags(Actor_GetById(9), 0);
     if (gMainRoutineWork.entrance == 2) {
       Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
       GameFlag_SetBit(0x9cf);

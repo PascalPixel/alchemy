@@ -7,23 +7,19 @@ runs, its tables and its [events](../../../tbs/glossary.md#event).
 
 ## What differs from The Broken Seal
 
-- Most scenes' overlays are a folder, not a file. The Broken Seal writes each as
-  one `<scene>.c` with its [entry and import tables](../../../tbs/glossary.md#entry-table-and-import-table)
-  beside it. Here the folder holds `entry.s`, `import.s`, `scene_tables.c`
-  and its code, with a header of its own names where it has any
-  (`airs_rock_inside.h`). The overlay's tables follow its last code in the same
-  file, or are `data.c` where the code still reads them through a view of its
-  own. Where a scene's code has been gathered, it is one
-  `<scene>.c` beside the folder, as The Broken Seal's are
-  (`mercury_lighthouse.c`). Where a shared object, or files that disagree
-  about a type, split the overlay's code, each other stretch is one file in
-  the folder, named for its first file (`mt_aleph_summit/s0478.c`,
-  `airs_rock_inside/s0038.c`); a file named for its offset in the overlay
-  waits for what it does to be known.
+- A scene is one `<scene>.c`, as The Broken Seal's are, with its [entry and import tables](../../../tbs/glossary.md#entry-table-and-import-table)
+  in `entry/` and `import/` and a header of its own names beside it where it
+  has any (`airs_rock_inside.h`). Where a shared object, or files that
+  disagree about a type, split the overlay's code, each other stretch is one
+  file in a folder named for the scene, itself named for its first file
+  (`mt_aleph_summit/s0478.c`, `airs_rock_inside/s0038.c`); a file named for
+  its offset in the overlay waits for what it does to be known. The
+  overlay's tables follow its last code in the same file, or are
+  `data/<scene>.c` where the code still reads them through a view of its own.
 - Both games link every overlay through one `overlay.ld`, one block per
   overlay: an overlay's block names its folder's objects in ROM order, and
-  where its globals are still written in assembly they are the folder's
-  `bss.s`.
+  where its globals are still written in assembly they are
+  `bss/<scene>.s`, as in The Broken Seal.
 - The scene table is in the field folder, with what differs in it
   ([The Lost Age: field](../field/README.md)).
 - The main-image code a scene imports is in the bank folders of this game,

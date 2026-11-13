@@ -52,7 +52,7 @@ void Func_02004d20(void);
 void Func_02004d40(void);
 void ObjectTable_Snapshot(void);
 void Func_02004bc0(struct Actor *object, s32 a1);
-s32 Math_Cosine(s32 angle);
+s32 Trig_Cos(s32 angle);
 
 void Func_02001e1c(struct Actor *object, s32 part);
 

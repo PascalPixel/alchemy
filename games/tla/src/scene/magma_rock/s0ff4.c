@@ -141,7 +141,7 @@ void Func_020011b8(struct Actor *object) {
 #include "frame.h"
 #include "field.h"
 
-s32 Math_Cosine(s32 angle);
+s32 Trig_Cos(s32 angle);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 s32 Func_020005a0(s32 *a, s32 *b);
@@ -171,10 +171,10 @@ s32 Func_020011e4(struct Actor *source) {
 
     object = FieldActor_Create(403, x, y, z);
   }
-  step = Math_Cosine(source->facing) << 1;
+  step = Trig_Cos(source->facing) << 1;
   object->motionFlags = 0;
   Func_02003a54(object, 1);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   position[0] = object->x;
@@ -496,7 +496,7 @@ void Func_02001738(struct Actor *object) {
       part->y = parts[0]->y;
       part->z = parts[0]->z;
       part->motionFlags = 0;
-      Actor_SetSingleChildFlags(part, 0);
+      Actor_SetSpriteFlags(part, 0);
       Func_02003a54(parts[i], 3);
       /* FAKEMATCH(dead): part set again to parts[i], which it holds; as
        * parts[i]-> for the uses below, 65 of 294 instructions differ in
@@ -514,7 +514,7 @@ void Func_02001738(struct Actor *object) {
       struct Actor *part = parts[0];
 
       part->motionFlags = 0;
-      Actor_SetSingleChildFlags(part, 0);
+      Actor_SetSpriteFlags(part, 0);
       Func_02003a54(parts[0], 3);
       Scene_SetActorSpritePriority(parts[0], 3);
       /* FAKEMATCH(dead): part set again to parts[0], which it holds; as
@@ -707,7 +707,7 @@ second:
       goto second;
   }
   Event_PlaySound(188);
-  Actor_SetSingleChildFlags(leader, 1);
+  Actor_SetSpriteFlags(leader, 1);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
   MapGrid_SetShake(0x50000, 0x80000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);

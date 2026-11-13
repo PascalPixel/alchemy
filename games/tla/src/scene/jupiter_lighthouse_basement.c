@@ -146,7 +146,7 @@ void Func_020001d8(struct Actor *object) {
    * without it, 2 of 87 instructions differ in tla-en. */
   do {
   } while (0);
-  object->x += Math_Cosine(((object->z >> 14) + (object->y >> 15)) << 8) / 2;
+  object->x += Trig_Cos(((object->z >> 14) + (object->y >> 15)) << 8) / 2;
   object->y += object->speedLimit;
 }
 
@@ -168,7 +168,7 @@ void Func_02000298(void) {
     object->acceleration = (i << 12) + 0x8000;
     object->update = (void (*)(void))Func_020001d8;
     OBJECT_BYTE(object, 99) = i << 3;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     FieldActor_SetSpriteColor(object, 2);
     ((struct FieldSprite *)object->sprite)->priority = 1;
     Actor_SetBlendMode(object, 1);

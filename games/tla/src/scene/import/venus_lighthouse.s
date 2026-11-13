@@ -58,9 +58,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 MapGrid_CheckCollision:
 	overlay_veneer MapGrid_CheckCollisionFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Actor_SetBlendMode
 	.thumb_func

@@ -803,8 +803,8 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(20, 1);
   Actor_SetPosition(20, 0, 0);
 
-  Actor_SetSingleChildFlags(Actor_Get(19), 0);
-  Actor_SetSingleChildFlags(Actor_Get(20), 0);
+  Actor_SetSpriteFlags(Actor_Get(19), 0);
+  Actor_SetSpriteFlags(Actor_Get(20), 0);
   FieldActor_SetSpriteColor(Actor_Get(20), 4);
   return 0;
 }

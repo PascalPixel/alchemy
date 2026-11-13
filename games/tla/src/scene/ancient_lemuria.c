@@ -46,7 +46,7 @@ void Func_02000048(struct Actor *object) {
   struct FieldSprite *sprite = object->sprite;
   s16 time = object->timer++;
 
-  sprite->rotation = Iwram_MulQ16(Math_Sine(time << 12), 0x100);
+  sprite->rotation = Iwram_MulQ16(Trig_Sin(time << 12), 0x100);
   if ((time & 15) == 0)
     Sound_Play(155);
 }
@@ -110,7 +110,7 @@ void Func_02000110(void) {
   object = Actor_GetById(12);
   Event_SetFlag(0x96c);
   Event_SetFlag(0x96e);
-  Actor_SetSingleChildFlags(Actor_GetById(12), 0);
+  Actor_SetSpriteFlags(Actor_GetById(12), 0);
   Actor_SetPosition(12, 176 << 15, 216 << 16);
   Actor_Jump(12, 9, 0);
   object->scaleY = 0x8000;
@@ -135,7 +135,7 @@ void Func_02000110(void) {
   object->facing = 0x3000;
   object->scaleY = 0x10000;
   object->scaleX = 0x10000;
-  Actor_SetSingleChildFlags(Actor_GetById(12), 1);
+  Actor_SetSpriteFlags(Actor_GetById(12), 1);
   Actor_SetSpritePriority(12, 1);
   Event_Wait(8);
   Actor_Jump(12, 9, 0);
@@ -310,7 +310,7 @@ s32 Scene_Initialize(void) {
     *(void (**)(void))(((u8 *)Actor_GetById(13)) + 108) = Func_02000048;
     *(u16 *)(((u8 *)Actor_GetById(13)) + 100) = 0;
   }
-  Actor_SetSingleChildFlags(Actor_GetById(13), 0);
+  Actor_SetSpriteFlags(Actor_GetById(13), 0);
   return 0;
 }
 

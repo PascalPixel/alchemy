@@ -26,7 +26,7 @@ next:
     s32 flag = entry[2];
 
     object->collisionFlags &= ~1;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     Actor_SetCellOpen(id, (u16)kind, (u16)flag, BYTE_AT(object, 34));
     entry += 3;
   }

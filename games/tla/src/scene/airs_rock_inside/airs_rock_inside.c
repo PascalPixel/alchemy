@@ -77,7 +77,7 @@ void Func_02000550(struct Actor *object) {
    * no block, 2 of 87 instructions differ in tla-en. */
   do {
   } while (0);
-  object->x += Math_Cosine(((object->z >> 14) + (object->y >> 15)) << 8) / 2;
+  object->x += Trig_Cos(((object->z >> 14) + (object->y >> 15)) << 8) / 2;
   object->y += WORD_AT(object, 48);
 }
 
@@ -237,7 +237,7 @@ void Func_02000908(u16 *list) {
     object = Actor_GetById(*entry);
     base = ((s16 *)entry)[1];
     flag = ((s16 *)entry)[2];
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     {
       s32 choice = GameFlag_Test((u16)flag);
 
@@ -278,7 +278,7 @@ void Func_02000988(void) {
   Event_ResolvePendingActions(0);
   motion = &leader->motionFlags;
   *motion = 4;
-  Actor_SetSingleChildFlags(leader, 0);
+  Actor_SetSpriteFlags(leader, 0);
   GameFlag_SetBit(0x250);
   Sound_Play(137);
   riding = (u8 *)ride + 99;
@@ -374,11 +374,11 @@ void Func_02000988(void) {
     *motion = 2;
     *priority = 1;
     leader->terrainId = ((u8 *)rider)[98];
-    Import_ActorSetTargetPosition(leader, leader->x + dx, leader->y,
+    Import_ActorSetMoveTarget(leader, leader->x + dx, leader->y,
                                   leader->z + dz);
     OverlayObject_WaitUntilIdle(leader);
-    Import_ActorCommitPosition(leader);
-    Actor_SetSingleChildFlags(leader, 1);
+    Import_ActorWaitForMove(leader);
+    Actor_SetSpriteFlags(leader, 1);
     *motion = 3;
     break;
   default:
@@ -386,7 +386,7 @@ void Func_02000988(void) {
     leader->x = (((ride->x >> 19) & ~1) + (angle >>= 13) - 1) << 19;
     leader->z = (((ride->z >> 19) & ~1) - (angle & 2) + 1) << 19;
     noFlags = 0;
-    Actor_SetSingleChildFlags(leader, 1);
+    Actor_SetSpriteFlags(leader, 1);
     leader->velocityY = 0x60000;
     *priority = 33;
     *motion = 3;
@@ -395,11 +395,11 @@ void Func_02000988(void) {
     dust->speedLimit = 0x80000;
     dust->acceleration = 0x10000;
     dust->motionFlags = noFlags;
-    Import_ActorSetTargetPosition(dust, leader->x,
+    Import_ActorSetMoveTarget(dust, leader->x,
                                   Map_GetTerrainHeight(0, leader->x, leader->z),
                                   leader->z);
     OverlayObject_WaitUntilIdle(leader);
-    Import_ActorCommitPosition(dust);
+    Import_ActorWaitForMove(dust);
     break;
   }
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
@@ -427,7 +427,7 @@ DEFINE_POSITION_DISTANCE_ABOVE(Position_DistanceAbove)
 
 extern u8 gData_020061ac[], gData_02006194[];
 
-s32 Math_Sine(s32 angle);
+s32 Trig_Sin(s32 angle);
 
 /// Func_020010b4's twin for another shot: it also stops while the render mode
 /// is 5, and on a cell of kind 212 it ends with one of two end scripts by its
@@ -487,11 +487,11 @@ void Func_02000d48(struct Actor *shot) {
     }
   }
   if (shot->facing == 0xc000) {
-    shot->x += Iwram_MulQ16(Math_Cosine(shot->facing), speed);
-    shot->y -= Iwram_MulQ16(Math_Sine(shot->facing), speed);
+    shot->x += Iwram_MulQ16(Trig_Cos(shot->facing), speed);
+    shot->y -= Iwram_MulQ16(Trig_Sin(shot->facing), speed);
   } else {
-    shot->x += Iwram_MulQ16(Math_Cosine(shot->facing), speed);
-    shot->z += Iwram_MulQ16(Math_Sine(shot->facing), speed);
+    shot->x += Iwram_MulQ16(Trig_Cos(shot->facing), speed);
+    shot->z += Iwram_MulQ16(Trig_Sin(shot->facing), speed);
   }
 }
 
@@ -526,14 +526,14 @@ void Func_02000f34(struct Actor *object) {
        * and they share the routine's address; as direct calls, 106 of 153
        * instructions differ in tla-en. */
       position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Math_Cosine(object->facing));
+                                      Trig_Cos(object->facing));
       position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Math_Sine(object->facing));
+                                      Trig_Sin(object->facing));
     }
     shot = (struct Actor *)Import_ActorCreate(280, position.x, object->y,
                                               position.z);
     Import_ActorSelectAnimation(shot, 2);
-    Actor_SetSingleChildFlags(shot, 0);
+    Actor_SetSpriteFlags(shot, 0);
     ((struct FieldSprite *)shot->sprite)->priority = 1;
     shot->motionFlags = 0;
     ((u8 *)shot)[0x62] = 0;
@@ -617,11 +617,11 @@ void Func_020010b4(struct Actor *shot) {
     }
   }
   if (shot->facing == 0xc000) {
-    shot->x += Iwram_MulQ16(Math_Cosine(shot->facing), speed);
-    shot->y -= Iwram_MulQ16(Math_Sine(shot->facing), speed);
+    shot->x += Iwram_MulQ16(Trig_Cos(shot->facing), speed);
+    shot->y -= Iwram_MulQ16(Trig_Sin(shot->facing), speed);
   } else {
-    shot->x += Iwram_MulQ16(Math_Cosine(shot->facing), speed);
-    shot->z += Iwram_MulQ16(Math_Sine(shot->facing), speed);
+    shot->x += Iwram_MulQ16(Trig_Cos(shot->facing), speed);
+    shot->z += Iwram_MulQ16(Trig_Sin(shot->facing), speed);
   }
 }
 
@@ -654,9 +654,9 @@ void Func_02001290(struct Actor *object) {
        * and they share the routine's address; as direct calls, 129 of 184
        * instructions differ in tla-en. */
       position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Math_Cosine(object->facing));
+                                      Trig_Cos(object->facing));
       position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Math_Sine(object->facing));
+                                      Trig_Sin(object->facing));
     }
     for (i = 0; i != 3; i++) {
       shot = Actor_GetById(13 + i);
@@ -667,7 +667,7 @@ void Func_02001290(struct Actor *object) {
     shot->y = object->y;
     shot->z = position.z;
     Import_ActorSelectAnimation(shot, 2);
-    Actor_SetSingleChildFlags(shot, 0);
+    Actor_SetSpriteFlags(shot, 0);
     ((struct FieldSprite *)shot->sprite)->priority = 1;
     shot->priorityFlags |= 32;
     shot->motionFlags = 0;
@@ -691,7 +691,7 @@ void Func_02001420(struct Actor *object, s16 timer, u8 value) {
     object->timer = timer;
     BYTE_AT(object, 98) = value;
     WORD_AT(object, 108) = (s32)Func_02001290;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
   }
 }
 
@@ -714,7 +714,7 @@ void Func_02001458(struct Actor *object) {
   Actor_SetAnimationSpeed(object, 16);
   if (object->timer == 0) {
     if (object->x == 0) {
-      Import_ActorDestroy(object);
+      Import_ActorRelease(object);
     } else {
       object->z = 0;
       object->x = 0;
@@ -767,7 +767,7 @@ void Func_0200160c(s32 x, s32 y, s32 z) {
   struct Actor *object = Import_ActorCreate(0x11d, x, y, z);
 
   Import_ActorSelectAnimation(object, 1);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   Actor_SetSpriteColor(object, 6);
   Actor_SetBlendMode(object, 1);
   object->timer = 27;
@@ -860,7 +860,7 @@ void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
     (object)->update = Func_020017f4;                                          \
     (object)->motionFlags = 0;                                                 \
     (object)->priorityFlags &= ~1;                                             \
-    Actor_SetSingleChildFlags(object, 0);                                      \
+    Actor_SetSpriteFlags(object, 0);                                      \
     ((struct FieldSprite *)(object)->sprite)->priority =                       \
         ((struct FieldSprite *)gust->sprite)->priority;                        \
     gust->watchedObject = (object);                                            \
@@ -893,7 +893,7 @@ void Func_02001828(void) {
   gust =
       (struct Actor *)Import_ActorCreate(280, leader->x, leader->y, leader->z);
   Import_ActorSelectAnimation(gust, 2);
-  Actor_SetSingleChildFlags(gust, 0);
+  Actor_SetSpriteFlags(gust, 0);
   gust->scaleX = 0x1b333;
   gust->scaleY = 0x3333;
   gust->motionFlags = 0;
@@ -903,14 +903,14 @@ void Func_02001828(void) {
   ((struct FieldSprite *)gust->sprite)->priority =
       ((struct FieldSprite *)((struct Actor *)*(long *)&effect->target)->sprite)
           ->priority;
-  Import_ActorSetTargetPosition(gust, TARGET(effect)->x, TARGET(effect)->y,
+  Import_ActorSetMoveTarget(gust, TARGET(effect)->x, TARGET(effect)->y,
                                 TARGET(effect)->z + 0xffff0000);
   gust->terrainHeight = Map_GetTerrainHeight(0, gust->x, gust->z);
   while (gust->scaleY <= 0x14ccb) {
     gust->scaleY += 0x1999;
     FieldEvent_Wait(1);
   }
-  Import_ActorCommitPosition(gust);
+  Import_ActorWaitForMove(gust);
   gust->z = TARGET(effect)->z + 0xffff0000;
   while (gust->scaleY <= 0x1cccb) {
     if ((gFrameCount & 3) == 0) {
@@ -925,7 +925,7 @@ void Func_02001828(void) {
       spark->speedLimit = Random16Far() & 0xffff;
       Import_ActorSelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02005fd8);
-      Actor_SetSingleChildFlags(spark, 0);
+      Actor_SetSpriteFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_02002bd0;
     }
@@ -978,7 +978,7 @@ void Func_02001828(void) {
     cell.z = z;
     gust->speedLimit = 0x40000;
     gust->acceleration = 0x40000;
-    Import_ActorSetTargetPosition(gust, cell.x << 16, gust->y, cell.z << 16);
+    Import_ActorSetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
     Call2((void (*)())Camera_SetSpeedParameters, 0x50000, 0x50000);
     Call4((void (*)())FieldCamera_MoveWithinMapBounds, x << 16, -1, z << 16, 1);
   }
@@ -1003,9 +1003,9 @@ void Func_02001828(void) {
       leaves.priority = 1;
       leaves.type = 674;
       leaves.palette = 2;
-      velocity.x = Math_Cosine((gFrameCount & 0x1ff) << 12) << 1;
+      velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
       velocity.y = gust->y + ((Random16Far() & 31) << 16);
-      velocity.z = Math_Sine((gFrameCount & 0x1ff) << 12);
+      velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
       Func_020002f4(gust->x, velocity.y, gust->z, velocity.x, 0, velocity.z,
                     EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                     &leaves);
@@ -1021,7 +1021,7 @@ void Func_02001828(void) {
     object->motionFlags = 2;
     object->priorityFlags |= 1;
     object->priorityFlags &= ~6;
-    Actor_SetSingleChildFlags(object, 1);
+    Actor_SetSpriteFlags(object, 1);
     Scene_SetActorSpritePriority(object, 2);
     if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
       object->terrainHeight = 0xffe00000;
@@ -1040,7 +1040,7 @@ void Func_02001828(void) {
       OverlayObject_WaitUntilIdle(object);
       wait(1);
       OverlayObject_WaitUntilIdle(object);
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       object->motionFlags = 0;
       object->terrainHeight = 0;
       object->y = 0;
@@ -1056,7 +1056,7 @@ void Func_02001828(void) {
     cell.z = (gust->z >> 16) + dir.z * 48;
     gust->speedLimit = 0x8000;
     gust->acceleration = 0x8000;
-    Call4((void (*)())Import_ActorSetTargetPosition, (s32)(gust),
+    Call4((void (*)())Import_ActorSetMoveTarget, (s32)(gust),
           (s32)(cell.x << 16), (s32)(gust->y), (s32)(cell.z << 16));
     hit -= 30;
     i = 0;
@@ -1073,9 +1073,9 @@ void Func_02001828(void) {
           dust.startScaleX = dust.startScaleY =
               (Random16Far() & 0xffff) + 0x10000;
         }
-        velocity.x = Math_Cosine((gFrameCount & 0x1ff) << 12) << 1;
+        velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
         velocity.y = 0x10000;
-        velocity.z = Math_Sine((gFrameCount & 0x1ff) << 12);
+        velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
         Func_020002f4(gust->x, gust->y, gust->z, velocity.x, velocity.y,
                       velocity.z, EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
                       &dust);
@@ -1129,7 +1129,7 @@ shrink:
     gust->y += 0x38000;
     FieldEvent_Wait(1);
   }
-  Import_ActorDestroy(gust);
+  Import_ActorRelease(gust);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
     if (hit == 5) {
       SHAKE();

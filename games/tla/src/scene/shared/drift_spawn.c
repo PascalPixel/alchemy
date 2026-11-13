@@ -19,7 +19,7 @@ void DriftScene_SpawnObject(s32 x, s32 y, s32 z, s16 value) {
     sprite = object->sprite;
     Sound_Play(0x97);
     Import_ActorSetMode(object, 1);
-    Import_ActorSetScript(object, gDriftScene_SpawnScript);
+    Import_ActorStartScript(object, gDriftScene_SpawnScript);
     object->motionFlags = 0;
     sprite->nextFrame = 0;
     sprite->rotation = value;

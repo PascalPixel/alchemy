@@ -102,7 +102,7 @@ loop:
     s32 cosine;
 
     angle = i << 12;
-    cosine = Math_Cosine(angle);
+    cosine = Trig_Cos(angle);
     /* FAKEMATCH(dead): spawn is always 1, a constant GCSE only folds after its
      * partial redundancy pass, so that pass leaves the velocity array's
      * address in the loop, built after the cosine call as the native has it;
@@ -206,7 +206,7 @@ s32 Func_02000678(void) {
   object = (FieldActor_Create(14, source->x + 0x80000, source->y - 0x20000,
                               source->z));
   object->motionFlags = 0;
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   Actor_StartScript(object, gData_020050d0);
   object->scaleX = 0x6666;
   object->scaleY = 0x6666;

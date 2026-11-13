@@ -42,9 +42,9 @@ VramCache_Load:
 	.thumb_func
 VramCache_FindFreeEntry:
 	overlay_veneer VramCache_FindFreeEntryFar
-	.global Import_OamAddSpriteAtDepth
+	.global Import_OamAddSpriteAtDepthClamped
 	.thumb_func
-Import_OamAddSpriteAtDepth:
+Import_OamAddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global GameFlag_Test
 	.thumb_func
@@ -86,9 +86,9 @@ Map_GetTerrainHeight:
 	.thumb_func
 MapGrid_GetCellBehaviorAt:
 	overlay_veneer MapGrid_GetCellBehaviorAtFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Actor_SetBlendMode
 	.thumb_func

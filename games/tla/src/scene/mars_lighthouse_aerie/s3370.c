@@ -215,7 +215,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   A(object)->motionFlags = zero;
   A(object)->unk5c = 1;
   A(object)->priorityFlags |= 2;
-  Actor_SetSingleChildFlags(created, 0);
+  Actor_SetSpriteFlags(created, 0);
   A(object)->speedLimit = 0x6666;
   A(object)->acceleration = 0xccc;
   A(object)->gravity = 0x8000;

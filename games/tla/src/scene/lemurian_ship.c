@@ -51,18 +51,18 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 // Scene code of overlay 0x656, in ROM order, from s00b8's offset up to the next
 // object the overlay links.
 
-/* VIEW(s00b8): routine Actor_SetSingleChildFlags as void
- * Actor_SetSingleChildFlags(struct LemurianShipObject *object, u32 value);
- * field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
- * tried as the 35 declarations' void Actor_SetSingleChildFlags(struct
+/* VIEW(s00b8): routine Actor_SetSpriteFlags as void
+ * Actor_SetSpriteFlags(struct LemurianShipObject *object, u32 value);
+ * field.h has void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
+ * tried as the 35 declarations' void Actor_SetSpriteFlags(struct
  * FieldEffect *effect, s32 flags), it does not compile in tla-ja:
  * games/tla/src/scene/lemurian_ship/lemurian_ship.h:72: conflicting types for
- * `Actor_SetSingleChildFlags'. */
+ * `Actor_SetSpriteFlags'. */
 struct LemurianShipObject;
 extern void Actor_SetSingleChildFlags__s00b8(
     struct LemurianShipObject *object,
-    u32 value) __asm__("Actor_SetSingleChildFlags");
-#define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__s00b8
+    u32 value) __asm__("Actor_SetSpriteFlags");
+#define Actor_SetSpriteFlags Actor_SetSingleChildFlags__s00b8
 /* VIEW(s00b8): routine Actor_SetBlendMode as void
  * Actor_SetBlendMode(struct LemurianShipObject *object, s32 flags);
  * field.h has void Actor_SetBlendMode(struct Actor *object, u32 value);
@@ -142,7 +142,7 @@ void Event_Start(void);
 void Event_End(void);
 void Func_02002dc0(const void *script);
 void Actor_SelectAnimation(struct LemurianShipObject *object, s32 mode);
-void Actor_SetSingleChildFlags(struct LemurianShipObject *object, u32 value);
+void Actor_SetSpriteFlags(struct LemurianShipObject *object, u32 value);
 void Actor_SetBlendMode(struct LemurianShipObject *object, s32 flags);
 void FieldPsynergy_RunHandler(s32 type);
 void Event_FinishScreenTransition(void);
@@ -182,7 +182,7 @@ void Actor_StartScript(struct LemurianShipObject *object, const void *script);
 void Func_02002dc8(const void *script);
 extern u32 gData_02003ef8[];
 #undef Actor_SetBlendMode
-#undef Actor_SetSingleChildFlags
+#undef Actor_SetSpriteFlags
 #include "event_inline.h"
 #include "version.h"
 #include "macros.h"

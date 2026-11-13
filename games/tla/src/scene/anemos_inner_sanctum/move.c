@@ -32,7 +32,7 @@ void Effect_MoveLocal(union FieldObject *object) {
 void Actor_SelectAnimation(struct Actor *, s32);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gData_02004428[];
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 extern void Actor_SetSpritePriorityB(struct FieldEffect *effect, s32 priority);
 void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -55,7 +55,7 @@ void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_02004428[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSingleChildFlags(effect, 0);
+  Actor_SetSpriteFlags(effect, 0);
   effect->update = Effect_MoveLocal;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;

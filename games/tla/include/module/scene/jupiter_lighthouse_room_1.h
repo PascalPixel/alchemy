@@ -21,7 +21,7 @@ extern struct Actor *gData_0200229c[];
 extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
 
-void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);
+void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 
 void Leader_CenterInCell(void);
 

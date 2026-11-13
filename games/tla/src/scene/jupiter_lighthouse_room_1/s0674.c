@@ -36,7 +36,7 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02001bbc,
                               Position_FlatDistance, gWhirlwindEndScript,
                               gWhirlwindRiding)
 
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 
 void Func_02000f3c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -60,7 +60,7 @@ extern struct LightOam gData_020022dc[];
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gData_020022dc,
                           gLightSpriteCount, gData_0200229c, gLightSpritesLarge,
                           gLightSpritePriority, BattleEffect_GetObjectPriority,
-                          Import_OamAddSpriteAtDepth)
+                          Import_OamAddSpriteAtDepthClamped)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

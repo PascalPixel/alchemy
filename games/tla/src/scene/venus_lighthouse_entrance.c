@@ -1028,7 +1028,7 @@ void VenusLighthouseEntrance_WakeUp(void) {
   Actor_FaceDirection(9, FACING_SOUTH, 0);
   FieldActor_SetSpritePriority(8, 2);
   Actor_SetSpriteRotationById(5, 0x4000);
-  Actor_SetSingleChildFlags(((s32)Actor_Get(5)), 0);
+  Actor_SetSpriteFlags(((s32)Actor_Get(5)), 0);
   FieldCamera_MoveToActorById(5, 0);
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1b4), s32, 0) = 0x3c;
   Event_StartScreenTransition();
@@ -1049,7 +1049,7 @@ void VenusLighthouseEntrance_WakeUp(void) {
   FieldEvent_Wait(30);
   Actor_SetPosition(5, PIXELS(376), PIXELS(164));
   Actor_SetSpriteRotationById(5, 0);
-  Actor_SetSingleChildFlags(((s32)Actor_Get(5)), 1);
+  Actor_SetSpriteFlags(((s32)Actor_Get(5)), 1);
   FieldActor_Jump(5, 6, 50);
   Actor_SetAnimationAndWait(5, 4);
   FieldEvent_Wait(20);
@@ -1320,9 +1320,9 @@ void Func_020023a4(s32 id) {
   effect = (FieldActor_Create(290, actor->x, actor->y, actor->z));
   work->effect = effect;
   Actor_SelectAnimation(effect, 1);
-  Actor_SetSingleChildFlags(effect, 0);
+  Actor_SetSpriteFlags(effect, 0);
   effect->priorityFlags = 2;
-  Actor_SetSingleChildFlags(actor, 0);
+  Actor_SetSpriteFlags(actor, 0);
   ((struct GlowAnimation *)actor->sprite)->angle = 0x4000;
   actor->x += -0xc0000;
   actor->motionFlags = 0;

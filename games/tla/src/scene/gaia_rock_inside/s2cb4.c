@@ -183,7 +183,7 @@ s32 Scene_Initialize(void) {
   if (work->scene == (s32)&SceneId_Ov681Room1) {
     early = &work->entrance;
     if (work->entrance > 8) {
-      C2(Actor_SetSingleChildFlags, Actor_GetById(8), 0);
+      C2(Actor_SetSpriteFlags, Actor_GetById(8), 0);
       Func_02002d30();
     }
     if (*early == 20) {
@@ -370,7 +370,7 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 15);
         C1(Sound_Play, 215);
         object = FieldActor_Create(285, 0x1e80000, -0x100000, 0x1590000);
-        C2(Actor_SetSingleChildFlags, object, 0);
+        C2(Actor_SetSpriteFlags, object, 0);
         C2(Actor_StartScript, object, gData_0200539c);
         C2(Actor_SelectAnimation, object, 1);
         C2(Actor_SetSpriteColorMode, object, 6);
@@ -381,7 +381,7 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 5);
         C1(Sound_Play, 136);
         object = FieldActor_Create(412, 0x1e80000, -0x100000, 0x1590000);
-        C2(Actor_SetSingleChildFlags, object, 0);
+        C2(Actor_SetSpriteFlags, object, 0);
         C2(Actor_StartScript, object, gData_02005360);
         ((struct GaiaRockAnimation *)object->sprite)->angle = 0x2000;
         object->speedLimit = 0x18000;
@@ -408,7 +408,7 @@ s32 Scene_Initialize(void) {
           shards[i] = (struct Actor *)Import_ActorCreate(
               403, 0x1c80000 + (dx << 16), -0x200000, 0x1660000 + (dz << 16));
           C2(Actor_SelectAnimation, shards[i], 2);
-          C2(Actor_SetSingleChildFlags, shards[i], 0);
+          C2(Actor_SetSpriteFlags, shards[i], 0);
           C2(Actor_StartScript, shards[i], gData_0200539c);
         }
         dragon->velocityY = 0xa0000;
@@ -616,7 +616,7 @@ s32 Scene_Initialize(void) {
       object->x = 0;
       object->z = 0;
       C1(Event_Wait, 1);
-      C1(Import_ActorDestroy, object);
+      C1(Import_ActorRelease, object);
       C1(Sound_Play, 390);
       C1(Event_Wait, 30);
       REG_DISPCNT |= 0xf00;
@@ -746,11 +746,11 @@ s32 Scene_Initialize(void) {
       Event_StartScreenTransition();
       C1(Event_Wait, 15);
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0x2a00000, 0x1800000);
-      C2(Actor_SetSingleChildFlags, Actor_GetById(11), 0);
+      C2(Actor_SetSpriteFlags, Actor_GetById(11), 0);
       object = Actor_GetById(11);
       other = FieldActor_Create(324, object->x, object->y, object->z);
       if (other != NULL) {
-        C2(Actor_SetSingleChildFlags, other, 0);
+        C2(Actor_SetSpriteFlags, other, 0);
         C2(Actor_StartScript, other, gData_020053d8);
         C2(Actor_SelectAnimation, other, 1);
         C2(Actor_SetSpriteColorMode, other, 14);
@@ -795,7 +795,7 @@ s32 Scene_Initialize(void) {
       C6(Map_CopyCellAttributeRect, 27, 15, 2, 1, height, height);
       C6(Map_CopyCellAttributeRect, 25, 25, 1, 1, width, height);
     }
-    C2(Actor_SetSingleChildFlags, Actor_GetById(15), 0);
+    C2(Actor_SetSpriteFlags, Actor_GetById(15), 0);
     if (Test(0x9c4)) {
       s32 height = 20;
 
@@ -863,7 +863,7 @@ void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004d00(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const u8 *script);
-void Import_ActorDestroy();
+void Import_ActorRelease();
 void BlendScript_Resume(void);
 void BlendScript_Suspend(void);
 void Actor_SetSpritePriorityDirect();
@@ -895,7 +895,7 @@ s32 Scene_Initialize(void) {
   if (work->scene == (s32)&SceneId_Ov681Room1) {
     early = &work->entrance;
     if (work->entrance > 8) {
-      C2(Actor_SetSingleChildFlags, Actor_GetById(8), 0);
+      C2(Actor_SetSpriteFlags, Actor_GetById(8), 0);
       Func_02002d30();
     }
     if (*early == 20) {
@@ -1082,7 +1082,7 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 15);
         C1(Sound_Play, 215);
         object = FieldActor_Create(285, 0x1e80000, -0x100000, 0x1590000);
-        C2(Actor_SetSingleChildFlags, object, 0);
+        C2(Actor_SetSpriteFlags, object, 0);
         C2(Actor_StartScript, object, gData_0200539c);
         C2(Actor_SelectAnimation, object, 1);
         C2(Actor_SetSpriteColorMode, object, 6);
@@ -1093,7 +1093,7 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 5);
         C1(Sound_Play, 136);
         object = FieldActor_Create(412, 0x1e80000, -0x100000, 0x1590000);
-        C2(Actor_SetSingleChildFlags, object, 0);
+        C2(Actor_SetSpriteFlags, object, 0);
         C2(Actor_StartScript, object, gData_02005360);
         ((struct GaiaRockAnimation *)object->sprite)->angle = 0x2000;
         object->speedLimit = 0x18000;
@@ -1120,7 +1120,7 @@ s32 Scene_Initialize(void) {
           shards[i] = (struct Actor *)Import_ActorCreate(
               403, 0x1c80000 + (dx << 16), -0x200000, 0x1660000 + (dz << 16));
           C2(Actor_SelectAnimation, shards[i], 2);
-          C2(Actor_SetSingleChildFlags, shards[i], 0);
+          C2(Actor_SetSpriteFlags, shards[i], 0);
           C2(Actor_StartScript, shards[i], gData_0200539c);
         }
         dragon->velocityY = 0xa0000;
@@ -1328,7 +1328,7 @@ s32 Scene_Initialize(void) {
       object->x = 0;
       object->z = 0;
       C1(Event_Wait, 1);
-      C1(Import_ActorDestroy, object);
+      C1(Import_ActorRelease, object);
       C1(Sound_Play, 390);
       C1(Event_Wait, 30);
       REG_DISPCNT |= 0xf00;
@@ -1459,11 +1459,11 @@ s32 Scene_Initialize(void) {
       Event_StartScreenTransition();
       C1(Event_Wait, 15);
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0x2a00000, 0x1800000);
-      C2(Actor_SetSingleChildFlags, Actor_GetById(11), 0);
+      C2(Actor_SetSpriteFlags, Actor_GetById(11), 0);
       object = Actor_GetById(11);
       other = FieldActor_Create(324, object->x, object->y, object->z);
       if (other != NULL) {
-        C2(Actor_SetSingleChildFlags, other, 0);
+        C2(Actor_SetSpriteFlags, other, 0);
         C2(Actor_StartScript, other, gData_020053d8);
         C2(Actor_SelectAnimation, other, 1);
         C2(Actor_SetSpriteColorMode, other, 14);
@@ -1506,7 +1506,7 @@ s32 Scene_Initialize(void) {
       C6(Map_CopyCellAttributeRect, 27, 15, 2, 1, height, height);
       C6(Map_CopyCellAttributeRect, 25, 25, 1, 1, width, height);
     }
-    C2(Actor_SetSingleChildFlags, Actor_GetById(15), 0);
+    C2(Actor_SetSpriteFlags, Actor_GetById(15), 0);
     if (Test(0x9c4)) {
       s32 height = 20;
 
@@ -2006,7 +2006,7 @@ void Func_02004a5c(s32 id, s32 x, s32 y, s32 z) {
   object->y = object->z - (row << 20);
   object->motionFlags = 0;
   object->priorityFlags |= 2;
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
 }
 
 extern const u8 gData_020062d4[];
@@ -2051,7 +2051,7 @@ burst:
     value = Random16Far();
     size = Random16Far();
     scale = (size >> 1) + 0x2000;
-    object->velocityY = Iwram_MulQ16(value << 3, Math_Cosine(angle));
+    object->velocityY = Iwram_MulQ16(value << 3, Trig_Cos(angle));
     object->velocityX = Iwram_MulQ16(value << 3, Math_Sin(angle));
     object->acceleration = 0;
     object->scaleX = scale;
@@ -2088,7 +2088,7 @@ burst:
   FieldCamera_MoveTo(leader->x, leader->y, leader->z, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_SetSingleChildFlags(leader, 1);
+  Actor_SetSpriteFlags(leader, 1);
   Actor_SelectAnimation(leader, 1);
   leader->velocityY = 0x40000;
   System_Wait(20);

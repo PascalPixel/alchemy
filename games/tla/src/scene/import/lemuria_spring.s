@@ -22,13 +22,13 @@ Task_Add:
 	.thumb_func
 Random16Far:
 	overlay_veneer Func_080000f8
-	.global Math_Sine
+	.global Trig_Sin
 	.thumb_func
-Math_Sine:
+Trig_Sin:
 	overlay_veneer Trig_SinFar
-	.global Math_Cosine
+	.global Trig_Cos
 	.thumb_func
-Math_Cosine:
+Trig_Cos:
 	overlay_veneer Trig_CosFar
 	.global GameFlag_Test
 	.thumb_func

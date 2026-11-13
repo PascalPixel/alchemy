@@ -14,7 +14,7 @@ extern const s32 *gData_02002248[];
 
 void Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 
 void Func_02000f3c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -35,7 +35,7 @@ void Func_02000f3c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_02002248[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSingleChildFlags(effect, 0);
+  Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
@@ -89,7 +89,7 @@ void Func_02000f3c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // leader steps on.
 #define CELL_TABLE gTeleporters
 #define CELL_SPRITE_DRAW Func_02001104
-#define CELL_PUSH_SLOT_ENTRY Import_OamAddSpriteAtDepth
+#define CELL_PUSH_SLOT_ENTRY Import_OamAddSpriteAtDepthClamped
 #include "../../field/map/cell_sprite.c"
 
 #include "ram_buffer.h"

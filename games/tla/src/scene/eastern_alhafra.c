@@ -173,7 +173,7 @@ void Func_02000200(s32 mode, s32 id) {
       Event_PlaySound(310);
     object->gravity = 0x170a;
     object->motionFlags = 3;
-    Actor_SetSingleChildFlags(Actor_Get(id), 1);
+    Actor_SetSpriteFlags(Actor_Get(id), 1);
     System_Wait(5);
     for (i = 0; i < 60 && object->y > 0; i++)
       System_Wait(1);
@@ -189,7 +189,7 @@ void Func_02000200(s32 mode, s32 id) {
     sparks[i] = spark;
     spark->scaleX = 0xa666;
     Func_02004a0c__eastern_alhafra(spark, 1);
-    Actor_SetSingleChildFlags(spark, 0);
+    Actor_SetSpriteFlags(spark, 0);
     Event_PlaySound(154);
     System_Wait(5);
     i++;
@@ -199,7 +199,7 @@ void Func_02000200(s32 mode, s32 id) {
     FieldActor_Stop(gMainRoutineWork.currentOwner);
     System_Wait(30);
     for (i = 0; i <= 2; i++)
-      Import_ActorDestroy(sparks[i]);
+      Import_ActorRelease(sparks[i]);
   }
 }
 
@@ -532,11 +532,11 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(29, PIXELS(152), PIXELS(376));
       Actor_FaceDirection(29, FACING_SOUTH, 0);
       FieldActor_SetSpriteRotationById(25, 0x4000);
-      Actor_SetSingleChildFlags((s32)Actor_Get(25), 0);
+      Actor_SetSpriteFlags((s32)Actor_Get(25), 0);
       FieldActor_SetSpriteRotationById(27, 0xc000);
-      Actor_SetSingleChildFlags((s32)Actor_Get(27), 0);
+      Actor_SetSpriteFlags((s32)Actor_Get(27), 0);
       FieldActor_SetSpriteRotationById(29, 0x4000);
-      Actor_SetSingleChildFlags((s32)Actor_Get(29), 0);
+      Actor_SetSpriteFlags((s32)Actor_Get(29), 0);
       Actor_SetAnimation(25, 13);
       Actor_SetAnimation(27, 13);
       Actor_SetAnimation(29, 13);
@@ -561,11 +561,11 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(31, PIXELS(136), PIXELS(600));
     Actor_SetPosition(28, PIXELS(160), PIXELS(584));
     FieldActor_SetSpriteRotationById(30, 0x4000);
-    Actor_SetSingleChildFlags(Actor_Get(30), 0);
+    Actor_SetSpriteFlags(Actor_Get(30), 0);
     FieldActor_SetSpriteRotationById(31, 0xc000);
-    Actor_SetSingleChildFlags(Actor_Get(31), 0);
+    Actor_SetSpriteFlags(Actor_Get(31), 0);
     FieldActor_SetSpriteRotationById(28, 0x4000);
-    Actor_SetSingleChildFlags(Actor_Get(28), 0);
+    Actor_SetSpriteFlags(Actor_Get(28), 0);
     FieldActor_SetSpritePriority(27, 2);
     FieldActor_SetSpritePriority(25, 2);
     FieldActor_SetSpritePriority(29, 2);
@@ -573,9 +573,9 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(27, PIXELS(176), PIXELS(408));
     Actor_SetPosition(29, PIXELS(152), PIXELS(376));
     FieldActor_SetSpriteRotationById(27, 0xc000);
-    Actor_SetSingleChildFlags(Actor_Get(27), 0);
+    Actor_SetSpriteFlags(Actor_Get(27), 0);
     FieldActor_SetSpriteRotationById(29, 0x4000);
-    Actor_SetSingleChildFlags(Actor_Get(29), 0);
+    Actor_SetSpriteFlags(Actor_Get(29), 0);
     Actor_FaceDirection(25, 0xd000, 0);
     Actor_FaceDirection(29, FACING_SOUTH, 0);
     Actor_SetAnimation(27, 13);
@@ -594,10 +594,10 @@ s32 Scene_Initialize(void) {
   OBJECT(9)->priorityFlags |= 32;
   Func_02004c1c();
   Func_02004c24(0, 12, 13);
-  Actor_SetSingleChildFlags(Actor_Get(12), 0);
-  Actor_SetSingleChildFlags(Actor_Get(13), 0);
+  Actor_SetSpriteFlags(Actor_Get(12), 0);
+  Actor_SetSpriteFlags(Actor_Get(13), 0);
   Func_020047fc(gData_02004d0c);
-  Actor_SetSingleChildFlags(Actor_Get(14), 0);
+  Actor_SetSpriteFlags(Actor_Get(14), 0);
   flag = Event_GetFlag(0x8a2);
   if (flag == 0) {
     object = OBJECT(18);
@@ -619,8 +619,8 @@ s32 Scene_Initialize(void) {
     object->y = 0x100000;
     Func_02004c24(2, 20, 21);
   }
-  Actor_SetSingleChildFlags(Actor_Get(16), 0);
-  Actor_SetSingleChildFlags(Actor_Get(17), 0);
+  Actor_SetSpriteFlags(Actor_Get(16), 0);
+  Actor_SetSpriteFlags(Actor_Get(17), 0);
   FieldActor_SetSpritePriority(10, 2);
   ((u8 *)OBJECT(23))[0x62] = 1;
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0 &&
@@ -1880,7 +1880,7 @@ void Func_02003274(void) {
   FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
   Actor_SetPosition(29, PIXELS(168), PIXELS(368));
   FieldActor_SetSpriteRotationById(0x1d, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(29), 1);
+  Actor_SetSpriteFlags(Actor_GetById(29), 1);
   Actor_FaceDirection(29, 0x5000, 0);
   FieldActor_Jump(29, 6, 40);
   Func_02004b6c_(0x1d, 0x102, 0x28);
@@ -1928,7 +1928,7 @@ void Func_02003274(void) {
   FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
   Actor_SetPosition(27, PIXELS(168), PIXELS(424));
   FieldActor_SetSpriteRotationById(0x1b, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(27), 1);
+  Actor_SetSpriteFlags(Actor_GetById(27), 1);
   Actor_GetById(27)->facing = 0xb000;
   FieldActor_Jump(27, 6, 40);
   Func_02004b6c_(0x1b, 0x102, 0x28);
@@ -2017,17 +2017,17 @@ void Func_02003274(void) {
   FieldEvent_Wait(20);
   Actor_SetPosition(28, PIXELS(176), PIXELS(592));
   FieldActor_SetSpriteRotationById(0x1c, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(28), 1);
+  Actor_SetSpriteFlags(Actor_GetById(28), 1);
   FieldActor_Jump(28, 6, 20);
   Actor_ArmCallback(28, FACING_WEST, 0);
   Actor_SetPosition(31, PIXELS(128), PIXELS(608));
   FieldActor_SetSpriteRotationById(0x1f, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(31), 1);
+  Actor_SetSpriteFlags(Actor_GetById(31), 1);
   FieldActor_Jump(31, 6, 20);
   Actor_ArmCallback(31, 0xd000, 0);
   Actor_SetPosition(30, PIXELS(192), PIXELS(616));
   FieldActor_SetSpriteRotationById(0x1e, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(30), 1);
+  Actor_SetSpriteFlags(Actor_GetById(30), 1);
   FieldActor_Jump(30, 6, 20);
   Actor_ArmCallback(30, 0xb000, 0);
   FieldEvent_Wait(20);

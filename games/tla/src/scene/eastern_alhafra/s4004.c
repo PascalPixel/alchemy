@@ -34,7 +34,7 @@ void Func_02004004(void) {
   struct Rock *rock;
   struct RockSprite *sprite;
 
-  Import_ResourceDecodeType01(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  Import_DecompressTaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
   entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;

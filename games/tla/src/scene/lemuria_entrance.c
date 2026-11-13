@@ -107,21 +107,21 @@ s32 Scene_Initialize(void) {
 
   *screen = effect;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-  Actor_SetSingleChildFlags(Actor_Get(19), 0);
+  Actor_SetSpriteFlags(Actor_Get(19), 0);
   Event_SetFlag(0x907);
   Event_ClearFlag(0x9b4);
   if (Event_GetFlag(0x909))
     Actor_SetPosition(19, 0, 0);
-  Actor_SetSingleChildFlags(Actor_Get(9), 0);
-  Actor_SetSingleChildFlags(Actor_Get(10), 0);
-  Actor_SetSingleChildFlags(Actor_Get(11), 0);
-  Actor_SetSingleChildFlags(Actor_Get(12), 0);
-  Actor_SetSingleChildFlags(Actor_Get(13), 0);
-  Actor_SetSingleChildFlags(Actor_Get(14), 0);
-  Actor_SetSingleChildFlags(Actor_Get(15), 0);
-  Actor_SetSingleChildFlags(Actor_Get(16), 0);
-  Actor_SetSingleChildFlags(Actor_Get(17), 0);
-  Actor_SetSingleChildFlags(Actor_Get(18), 0);
+  Actor_SetSpriteFlags(Actor_Get(9), 0);
+  Actor_SetSpriteFlags(Actor_Get(10), 0);
+  Actor_SetSpriteFlags(Actor_Get(11), 0);
+  Actor_SetSpriteFlags(Actor_Get(12), 0);
+  Actor_SetSpriteFlags(Actor_Get(13), 0);
+  Actor_SetSpriteFlags(Actor_Get(14), 0);
+  Actor_SetSpriteFlags(Actor_Get(15), 0);
+  Actor_SetSpriteFlags(Actor_Get(16), 0);
+  Actor_SetSpriteFlags(Actor_Get(17), 0);
+  Actor_SetSpriteFlags(Actor_Get(18), 0);
   if (gMainRoutineWork.entrance == 90) {
     gMainRoutineWork.ownerOverride = 1;
     Event_SetDestination((s32)&SceneId_Ov688, 1);
@@ -167,7 +167,7 @@ void Func_02000310(s32 kind, s32 frames) {
   id = 56;
   if (kind != 8)
     id = kind;
-  resource = BattleEffect_GetResourceId(id);
+  resource = Speaker_GetVoice(id);
   if (kind == 7) {
     width = 10;
     height = 10;

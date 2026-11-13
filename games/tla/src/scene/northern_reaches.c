@@ -161,13 +161,13 @@ L_0200820c:
   t13 = (s32)Actor_Get(6);
   FIELD_AT(t13, s32, 24) = v_r5;
   t14 = (s32)Actor_Get(11);
-  Actor_SetSingleChildFlags(t14, 0);
+  Actor_SetSpriteFlags(t14, 0);
   t16 = (s32)Actor_Get(7);
-  Actor_SetSingleChildFlags(t16, 0);
+  Actor_SetSpriteFlags(t16, 0);
   t18 = (s32)Actor_Get(5);
-  Actor_SetSingleChildFlags(t18, 0);
+  Actor_SetSpriteFlags(t18, 0);
   t20 = (s32)Actor_Get(6);
-  Actor_SetSingleChildFlags(t20, 0);
+  Actor_SetSpriteFlags(t20, 0);
   Actor_SetPosition(11, 0x1d00000, 0xd80000);
   Actor_SetPosition(7, 0x1d00000, 0xd80000);
   Actor_SetPosition(5, 0x1d00000, 0xd80000);

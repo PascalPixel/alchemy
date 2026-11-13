@@ -109,7 +109,7 @@ struct FieldSpriteFlags {
   u8 flag0 : 1;
 };
 
-s32 Math_Cosine(s32 angle);
+s32 Trig_Cos(s32 angle);
 void Decompress_TaggedLz(const void *source, void *destination);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *data);

@@ -30,9 +30,9 @@ Import_ActorCreate:
 	.thumb_func
 Map_CopyCellsRect:
 	overlay_veneer Map_CopyCellsRectFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Window_Create
 	.thumb_func

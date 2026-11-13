@@ -579,11 +579,11 @@ L_02008a86:
   angle = 0xb000;
   for (i = 0; i <= 191; i++) {
     phase = i * 32768 / 192;
-    radius = Math_Sine(phase) * 32;
+    radius = Trig_Sin(phase) * 32;
     angle += 512;
     pos = posBuf;
     pos[0] = start[0] + (target[0] - start[0]) * i / 192;
-    sine = Math_Sine(phase);
+    sine = Trig_Sin(phase);
     pos[1] = start[1] + (target[1] - start[1]) * i / 192 + sine * 56;
     pos[2] = start[2] + (target[2] - start[2]) * i / 192;
     Vector_AddPolarOffsetFar(radius, angle, pos);
@@ -639,10 +639,10 @@ L_02008a86:
   target[2] = 0x640000;
   angle = 0x4200;
   for (i = 0; i <= 191; i++) {
-    radius = Math_Sine(i * 16384 / 192) * 40;
+    radius = Trig_Sin(i * 16384 / 192) * 40;
     angle += 768;
     pos[0] = start[0] + (target[0] - start[0]) * i / 192;
-    sine = Math_Sine(i * 32768 / 192);
+    sine = Trig_Sin(i * 32768 / 192);
     pos[1] = start[1] + (target[1] - start[1]) * i / 192 + (sine <<= 5);
     pos[2] = start[2] + (target[2] - start[2]) * i / 192;
     Vector_AddPolarOffsetFar(radius, angle, pos);

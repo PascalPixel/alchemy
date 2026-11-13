@@ -223,7 +223,7 @@ s32 Scene_Initialize(void) {
     for (i = 0; i != 4; i++)
       Actor_SetAnimation(i + 13, 2);
     for (i = 0; i != 11; i++)
-      Actor_SetSingleChildFlags(Actor_GetById(i + 12), 0);
+      Actor_SetSpriteFlags(Actor_GetById(i + 12), 0);
     if (!Event_GetFlag(2552)) {
       for (i = 0; i != 9; i++)
         Actor_SetPosition(i + 12, 0, 0);
@@ -241,8 +241,8 @@ s32 Scene_Initialize(void) {
     }
     if (++i != 6)
       goto room8;
-    Actor_SetSingleChildFlags(Actor_GetById(10), 0);
-    Actor_SetSingleChildFlags(Actor_GetById(11), 0);
+    Actor_SetSpriteFlags(Actor_GetById(10), 0);
+    Actor_SetSpriteFlags(Actor_GetById(11), 0);
     if (Event_GetFlag(773)) {
       Lower(9, -0x200000);
       Actor_SetAnimation(9, 4);

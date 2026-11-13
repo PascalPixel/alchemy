@@ -19,7 +19,7 @@
 
 extern const s32 gData_02003e00[];
 
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 
 /// Eight puffs (type 285) in a row over the leader, flung outwards when spread
@@ -43,14 +43,14 @@ void Func_02000974(s32 spread) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags(effect, 0);
+      Actor_SetSpriteFlags(effect, 0);
       Func_02003ba0(effect, 2);
       Actor_StartScript(effect, gData_02003e00);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
-        effect->velocity.x = Iwram_MulQ16(Math_Cosine(i << 13), 0x13333);
-        effect->velocity.z = Math_Sine(i << 13);
+        effect->velocity.x = Iwram_MulQ16(Trig_Cos(i << 13), 0x13333);
+        effect->velocity.z = Trig_Sin(i << 13);
       } else {
         effect->velocity.x = spread;
         effect->velocity.z = spread;
@@ -90,12 +90,12 @@ void Func_02000aa8(void) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       object->motionFlags = 0;
       object->collisionFlags = 0;
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSpriteFlags(object, 0);
       Func_02003ba0(object, 2);
       Actor_StartScript(object, gData_02003e30);
-      effect->velocityX = Math_Cosine(i << 12);
+      effect->velocityX = Trig_Cos(i << 12);
       effect->velocityY = 0;
-      effect->velocityZ = Math_Sine(i << 12);
+      effect->velocityZ = Trig_Sin(i << 12);
       effect->velocityX += effect->velocityX >> 1;
       effect->velocityX += (((Random16Far() * 3) << 14) >> 16) + -0x6000;
       effect->velocityZ += (((Random16Far() * 3) << 13) >> 16) + -0x3000;

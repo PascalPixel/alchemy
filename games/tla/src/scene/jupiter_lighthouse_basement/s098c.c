@@ -16,7 +16,7 @@
 
 extern s16 gData_020024f6;
 
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 void Whirlwind_UpdateLower(struct GustObject *object);
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation,
@@ -69,7 +69,7 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
  * has an incomplete type. */
 extern s16 gData_020024f4__s098c __asm__("gData_020024f4");
 
-void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);
+void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 
 void LightSprites_Draw(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -115,7 +115,7 @@ void LightSprites_Draw(void) {
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else
           oam->priority = gData_020024f6;
-        Import_OamAddSpriteAtDepth(oam, depth);
+        Import_OamAddSpriteAtDepthClamped(oam, depth);
         oam++;
       } else {
         s32 x, sy;
@@ -136,7 +136,7 @@ void LightSprites_Draw(void) {
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else
           oam->priority = gData_020024f6;
-        Import_OamAddSpriteAtDepth(oam, depth);
+        Import_OamAddSpriteAtDepthClamped(oam, depth);
         oam++;
       }
     }

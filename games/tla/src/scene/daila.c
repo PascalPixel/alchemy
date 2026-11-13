@@ -144,7 +144,7 @@ void Daila_AskAfterTaviAndRiki(s32 keeper) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Import_ShopOpen(3, keeper);
+    Import_ShopRun(3, keeper);
   } else {
     Import_EventStart();
     Event_ResolvePendingActions(0);
@@ -177,7 +177,7 @@ void Daila_TaviAndRikiAreHome(s32 keeper) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Import_ShopOpen(3, keeper);
+    Import_ShopRun(3, keeper);
   } else {
     Import_EventStart();
     Event_ResolvePendingActions(0);

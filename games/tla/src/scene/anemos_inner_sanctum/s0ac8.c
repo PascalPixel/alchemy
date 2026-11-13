@@ -131,7 +131,7 @@ void Func_02000ac8(void) {
   actor->motionFlags = 0;
   actor->scaleY = 0x1999;
   actor->scaleX = 0x1999;
-  Actor_SetSingleChildFlags((s32)actor, 0);
+  Actor_SetSpriteFlags((s32)actor, 0);
   Actor_StartScript(actor, gData_020035cc);
   Actor_SetBlendMode(actor, 1);
   PaletteFade_ApplySource(0x10000, 0);
@@ -247,7 +247,7 @@ void Func_02000ac8(void) {
     }
   }
 
-  Import_ActorDestroy(actor);
+  Import_ActorRelease(actor);
   Event_SetFlag(0x200);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
@@ -391,7 +391,7 @@ void Func_02001398(void) {
   object->scaleX = 0x16000;
   Scene_SetActorSpritePriority(object, 2);
   Actor_SelectAnimation(object, 3);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   Actor_StartScript(object, gData_02003574);
   Event_SetFlag(work->exit + 0x1ce);
   all = Event_GetFlag(0x200);
@@ -560,7 +560,7 @@ void Func_020017b4(struct Actor *self) {
     FieldActor_SetSpriteColor(dust, ((u8 *)self)[0x62]);
     Scene_SetActorSpritePriority(dust, 2);
     Actor_SelectAnimation(dust, 1);
-    Actor_SetSingleChildFlags(dust, 0);
+    Actor_SetSpriteFlags(dust, 0);
     Actor_StartScript(dust, gData_02003594);
     self->unk4c = leader->x;
     self->acceleration = leader->z;

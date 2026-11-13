@@ -190,7 +190,7 @@ void Func_02000700(void) {
   Actor_SelectAnimation(leader, 6);
   System_Wait(10);
   Actor_SelectAnimation(leader, 1);
-  Actor_SetSingleChildFlags(leader, 0);
+  Actor_SetSpriteFlags(leader, 0);
   leader->motionFlags |= 2;
   leader->velocityY = 0x40000;
   FieldActor_SetMoveTarget(leader, leader->x, leader->y, z + 0xc0000);
@@ -207,7 +207,7 @@ void Func_02000700(void) {
   leader->velocityY = 0x30000;
   FieldActor_SetMoveTarget(leader, leader->x, leader->y, z + 0x100000);
   FieldActor_WaitForMove(leader);
-  Actor_SetSingleChildFlags(leader, 1);
+  Actor_SetSpriteFlags(leader, 1);
   Event_PlaySound(390);
   Event_NoOp();
 }
@@ -242,7 +242,7 @@ void Func_02000840(struct Actor *object) {
   radius >>= 1;
   radius += 0x100000;
   object->x = WORD_AT(object, 68) +
-              Iwram_MulQ16(Math_Cosine((step & 255) << 11), radius);
+              Iwram_MulQ16(Trig_Cos((step & 255) << 11), radius);
   object->z =
       WORD_AT(object, 76) +
       Iwram_MulQ16(Math_Sin((WORD_AT(object, 48) & 255) << 11), radius) / 3;
@@ -259,7 +259,7 @@ void Func_020008ac(struct Actor *object) {
   radius >>= 2;
   radius += 0xc0000;
   object->x = WORD_AT(object, 68) +
-              Iwram_MulQ16(Math_Cosine((step & 255) << 11), radius) * 2;
+              Iwram_MulQ16(Trig_Cos((step & 255) << 11), radius) * 2;
   object->z = WORD_AT(object, 76) +
               Iwram_MulQ16(Math_Sin((WORD_AT(object, 48) & 255) << 11), radius);
   object->y += WORD_AT(object, 72);
@@ -315,7 +315,7 @@ void Func_0200095c(void) {
   Sound_Play(207);
   gust = FieldActor_Create(280, leader->x, leader->y, leader->z);
   Actor_SelectAnimation(gust, 2);
-  Actor_SetSingleChildFlags(gust, 0);
+  Actor_SetSpriteFlags(gust, 0);
   gust->scaleX = 0x1b333;
   gust->scaleY = 0x3333;
   // Stored through a bit field view: its alias set frees the load after it, as
@@ -343,7 +343,7 @@ void Func_0200095c(void) {
       spark->speedLimit = Random16Far() & 0xffff;
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02003d1c);
-      Actor_SetSingleChildFlags(spark, 0);
+      Actor_SetSpriteFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_02000840;
     }
@@ -362,8 +362,8 @@ void Func_0200095c(void) {
   cell.x = effect->target->x >> 20;
   cell.z = effect->target->z >> 20;
   angle = (leader->facing + 0x2000) & 0xc000;
-  delta.x = Math_Cosine(angle) >> 16;
-  delta.z = Math_Sine(angle) >> 16;
+  delta.x = Trig_Cos(angle) >> 16;
+  delta.z = Trig_Sin(angle) >> 16;
   do {
     hit = Func_02000348(2, cell.x, cell.z);
     hit >>= 8;
@@ -390,9 +390,9 @@ void Func_0200095c(void) {
       leaves.priority = 1;
       leaves.type = 674;
       leaves.palette = 2;
-      velocity.x = Math_Cosine((gFrameCount & 0x1ff) << 12) << 1;
+      velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
       velocity.y = gust->y + ((Random16Far() & 31) << 16);
-      velocity.z = Math_Sine((gFrameCount & 0x1ff) << 12);
+      velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
       Func_0200015c(gust->x, velocity.y, gust->z, velocity.x, 0, velocity.z,
                     EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                     &leaves);
@@ -414,9 +414,9 @@ void Func_0200095c(void) {
         dust.priority = 1;
         dust.startScaleX = dust.startScaleY =
             (Random16Far() & 0xffff) + 0x10000;
-        velocity.x = Math_Cosine((gFrameCount & 0x1ff) << 12) << 1;
+        velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
         velocity.y = 0x10000;
-        velocity.z = Math_Sine((gFrameCount & 0x1ff) << 12);
+        velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
         Func_0200015c(gust->x, gust->y, gust->z, velocity.x, velocity.y,
                       velocity.z, EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
                       &dust);
@@ -471,7 +471,7 @@ void Func_0200095c(void) {
     gust->y += 0x38000;
     Event_Wait(1);
   }
-  Import_ActorDestroy(gust);
+  Import_ActorRelease(gust);
   Event_Wait(30);
   FieldCamera_MoveToActorById(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
@@ -587,7 +587,7 @@ row:
       spark->speedLimit = Random16Far() & 0xffff;
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02003d1c);
-      Actor_SetSingleChildFlags(spark, 0);
+      Actor_SetSpriteFlags(spark, 0);
       FieldActor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
     }
@@ -710,7 +710,7 @@ void Func_02001560(void) {
   Event_ResolvePendingActions(0);
   motion = &leader->motionFlags;
   *motion = 4;
-  Actor_SetSingleChildFlags(leader, 0);
+  Actor_SetSpriteFlags(leader, 0);
   GameFlag_SetBit(0x250);
   Sound_Play(137);
   riding = (u8 *)ride + 99;
@@ -800,14 +800,14 @@ void Func_02001560(void) {
     FieldActor_SetMoveTarget(leader, leader->x + dx, leader->y, leader->z + dz);
     OverlayObject_WaitUntilIdle(leader);
     FieldActor_WaitForMove(leader);
-    Actor_SetSingleChildFlags(leader, 1);
+    Actor_SetSpriteFlags(leader, 1);
     *motion = 3;
   } else {
     angle = ride->facing;
     leader->x = (((ride->x >> 19) & ~1) + (angle >>= 13) - 1) << 19;
     leader->z = (((ride->z >> 19) & ~1) - (angle & 2) + 1) << 19;
     still = 0;
-    Actor_SetSingleChildFlags(leader, 1);
+    Actor_SetSpriteFlags(leader, 1);
     leader->velocityY = 0x60000;
     leader->priorityFlags = 1;
     *motion = 3;
@@ -910,10 +910,10 @@ void Func_02001908(struct Actor *shot) {
     }
   }
   if (shot->facing == 0xc000) {
-    shot->x += Iwram_MulQ16(Math_Cosine(shot->facing), speed);
+    shot->x += Iwram_MulQ16(Trig_Cos(shot->facing), speed);
     shot->y -= Iwram_MulQ16(Math_Sin(shot->facing), speed);
   } else {
-    shot->x += Iwram_MulQ16(Math_Cosine(shot->facing), speed);
+    shot->x += Iwram_MulQ16(Trig_Cos(shot->facing), speed);
     shot->z += Iwram_MulQ16(Math_Sin(shot->facing), speed);
   }
 }
@@ -944,13 +944,13 @@ void Func_02001b54(struct Actor *object) {
        * and they share the routine's address; as direct calls, 106 of 153
        * instructions differ in tla-en. */
       position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Math_Cosine(object->facing));
+                                      Trig_Cos(object->facing));
       position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
                                       Math_Sin(object->facing));
     }
     shot = FieldActor_Create(280, position.x, object->y, position.z);
     Actor_SelectAnimation(shot, 2);
-    Actor_SetSingleChildFlags(shot, 0);
+    Actor_SetSpriteFlags(shot, 0);
     ((struct FieldSprite *)shot->sprite)->priority = 1;
     shot->motionFlags = 0;
     ((u8 *)shot)[0x62] = 0;
@@ -1055,7 +1055,7 @@ void Func_02001dc4(s32 x, s32 z) {
       rock = FieldActor_Create(255, x, 0, z);
       Sprite_ShareVramCacheEntry(rock->sprite, first->sprite);
     }
-    Actor_SetSingleChildFlags(rock, 0);
+    Actor_SetSpriteFlags(rock, 0);
     Actor_StartScript(rock, gData_02003dfc);
     Actor_SelectAnimation(rock, 2);
     rock->velocityY = ((Random16Far() & 3) << 16) + 0x40000;
@@ -1065,7 +1065,7 @@ void Func_02001dc4(s32 x, s32 z) {
     rock->scaleY = 0xcccc;
     rock->speedLimit = 0xcccc;
     scatter.y = Random16Far() & 7;
-    scatter.x = Iwram_MulQ16(Math_Cosine(scatter.y << 12), radius);
+    scatter.x = Iwram_MulQ16(Trig_Cos(scatter.y << 12), radius);
     scatter.z = Iwram_MulQ16(Math_Sin(scatter.y << 12), radius);
     ((struct FieldSprite *)rock->sprite)->priority = 1;
     FieldActor_SetMoveTarget(rock, rock->x + scatter.x, rock->y,
@@ -1152,7 +1152,7 @@ row:
       spark->speedLimit = Random16Far() & 0xffff;
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02003d1c);
-      Actor_SetSingleChildFlags(spark, 0);
+      Actor_SetSpriteFlags(spark, 0);
       FieldActor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
     }
@@ -1379,7 +1379,7 @@ void Func_020026b8(void) {
       spark->speedLimit = Random16Far() & 0xffff;
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02003d1c);
-      Actor_SetSingleChildFlags(spark, 0);
+      Actor_SetSpriteFlags(spark, 0);
       FieldActor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
     }
@@ -1494,7 +1494,7 @@ DEFINE_LEADER_LIFT(Leader_Lift)
 #define SWAY(id, phase)                                                        \
   (Actor_GetById(id)->timer = (phase),                                         \
    Actor_GetById(id)->update = Func_02001b54,                                  \
-   Actor_SetSingleChildFlags(Actor_GetById(id), 0))
+   Actor_SetSpriteFlags(Actor_GetById(id), 0))
 
 /// A step that hangs at the given height and sways.
 #define HANG(id, height, phase)                                                \
@@ -1627,7 +1627,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(21)->timer = 180;
       ((u8 *)Actor_GetById(21))[98] = 1;
       Actor_GetById(21)->update = Func_02001b54;
-      Actor_SetSingleChildFlags(Actor_GetById(21), 0);
+      Actor_SetSpriteFlags(Actor_GetById(21), 0);
       break;
     }
   }
@@ -1643,14 +1643,14 @@ s32 Scene_Initialize(void) {
       Actor_GetById(8)->timer = 60;
       ((u8 *)Actor_GetById(8))[98] = 0;
       Actor_GetById(8)->update = Func_02001b54;
-      Actor_SetSingleChildFlags(Actor_GetById(8), 0);
+      Actor_SetSpriteFlags(Actor_GetById(8), 0);
       Actor_GetById(9)->motionFlags = 0;
       Actor_GetById(9)->y = 0xfff80000;
       Actor_SetSpritePriority(9, 2);
       Actor_GetById(9)->timer = 180;
       ((u8 *)Actor_GetById(9))[98] = 0;
       Actor_GetById(9)->update = Func_02001b54;
-      Actor_SetSingleChildFlags(Actor_GetById(9), 0);
+      Actor_SetSpriteFlags(Actor_GetById(9), 0);
       Actor_GetById(10)->terrainId = 2;
       Actor_SetSpritePriority(10, 1);
       Actor_GetById(10)->y = 0xd00000;

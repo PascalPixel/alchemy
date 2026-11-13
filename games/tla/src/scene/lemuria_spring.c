@@ -809,8 +809,8 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         Import_ActorSelectAnimation(Actor_GetById(20), 3);
       } else {
         Import_ActorSelectAnimation(Actor_GetById(20), 2);
-        obstacle->position.x = Math_Sine(obstacle->heading) * 48 + 0x700000;
-        obstacle->position.z = Math_Cosine(obstacle->heading) * 40 + 0x480000;
+        obstacle->position.x = Trig_Sin(obstacle->heading) * 48 + 0x700000;
+        obstacle->position.z = Trig_Cos(obstacle->heading) * 40 + 0x480000;
         /* FAKEMATCH(temporary): the new heading held in cycleFrame, the local
          * the last obstacle keeps its phase in; as obstacle->heading +=
          * motionStep, 15 of 918 instructions differ in tla-en. */
@@ -831,8 +831,8 @@ void LemuriaSpring_UpdateTossSimulation(void) {
       if (obstacle->reactionFrames > 0) {
         Import_ActorSelectAnimation(Actor_GetById(21), 3);
       } else if (cycleFrame <= 383) {
-        obstacle->position.x = Math_Sine(obstacle->heading) * 52 + 0x700000;
-        obstacle->position.z = Math_Cosine(obstacle->heading) * 24 + 0x480000;
+        obstacle->position.x = Trig_Sin(obstacle->heading) * 52 + 0x700000;
+        obstacle->position.z = Trig_Cos(obstacle->heading) * 24 + 0x480000;
         obstacle->heading = obstacle->heading + motionStep;
         Import_ActorSelectAnimation(Actor_GetById(21), 2);
       } else {

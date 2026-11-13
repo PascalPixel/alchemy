@@ -43,13 +43,13 @@ void Func_02000974(s32 spread) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags((struct Actor *)effect, 0);
+      Actor_SetSpriteFlags((struct Actor *)effect, 0);
       Actor_SelectAnimation((struct Actor *)effect, 2);
       Actor_StartScript(effect, gData_02001540);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
-        effect->velocity.x = Iwram_MulQ16(Math_Cosine(i << 13), 0x13333);
+        effect->velocity.x = Iwram_MulQ16(Trig_Cos(i << 13), 0x13333);
         effect->velocity.z = Math_Sin(i << 13);
       } else {
         effect->velocity.x = spread;
@@ -84,10 +84,10 @@ void Func_02000aa8(void) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags((struct Actor *)effect, 0);
+      Actor_SetSpriteFlags((struct Actor *)effect, 0);
       Actor_SelectAnimation((struct Actor *)effect, 2);
       Actor_StartScript(effect, gData_02001570);
-      effect->velocity.x = Math_Cosine(i << 12);
+      effect->velocity.x = Trig_Cos(i << 12);
       effect->velocity.y = 0;
       effect->velocity.z = Math_Sin(i << 12);
       effect->velocity.x += effect->velocity.x >> 1;

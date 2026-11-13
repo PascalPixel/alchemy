@@ -498,7 +498,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   target->timer = 3;
   wait(1);
   target->update = 0;
-  Actor_SetSingleChildFlags((s32)Actor_GetById(18), 1);
+  Actor_SetSpriteFlags((s32)Actor_GetById(18), 1);
   Event_Wait(40);
   MapGrid_SetShake(0, 0, 0);
   Event_Wait(20);

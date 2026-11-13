@@ -39,7 +39,7 @@
       Scene_SetActorSpritePriority(t0, 1);                                     \
       t0->motionFlags = 0;                                                     \
       t0->collisionFlags = 8;                                                  \
-      Actor_SetSingleChildFlags(t0, 0);                                        \
+      Actor_SetSpriteFlags(t0, 0);                                        \
       FieldActor_SetSpriteColor(t0, 0xf);                                           \
       t0->priorityFlags = 0x22 | t0->priorityFlags;                            \
       return t0;                                                               \
@@ -141,7 +141,7 @@
                                                                                \
     if (!Event_GetFlag(0x109)) {                                               \
       object->motionFlags = 0;                                                 \
-      Actor_SetSingleChildFlags(object, 0);                                    \
+      Actor_SetSpriteFlags(object, 0);                                    \
       object->y += height;                                                     \
       object->speedLimit = 0x10000;                                            \
       object->velocityY = 0;                                                   \
@@ -166,7 +166,7 @@
       object->velocityY = PIXELS(2);                                           \
     if (step == 24)                                                            \
       object->velocityY = PIXELS(3);                                           \
-    sprite->rotation = Math_Cosine(step << 12) / 64;                           \
+    sprite->rotation = Trig_Cos(step << 12) / 64;                           \
     object->riseCounter++;                                                     \
     return -1;                                                                 \
   }
@@ -251,7 +251,7 @@
     struct Actor *object = Actor_Get(id);                                      \
                                                                                \
     if (object != NULL) {                                                      \
-      Actor_SetSingleChildFlags(object, 0);                                    \
+      Actor_SetSpriteFlags(object, 0);                                    \
       object->collisionFlags = 0;                                              \
       object->motionFlags = 0;                                                 \
     }                                                                          \
@@ -294,7 +294,7 @@
       Scene_SetActorSpritePriority(object, 1);                                 \
       object->motionFlags = 0;                                                 \
       object->collisionFlags = 8;                                              \
-      Actor_SetSingleChildFlags(object, 0);                                    \
+      Actor_SetSpriteFlags(object, 0);                                    \
       Actor_SetSpriteColor(object, 15);                                      \
       object->priorityFlags |= n1;                                             \
       return object;                                                           \

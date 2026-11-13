@@ -269,7 +269,7 @@ void Mikasalla_ClimbDownLadder(void) {
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffset(4, 0, 4);
   Actor_WaitForMoveById(4);
-  Actor_SetSingleChildFlags(Actor_GetById(4), 0);
+  Actor_SetSpriteFlags(Actor_GetById(4), 0);
   Actor_SetAnimation(4, 13);
   Actor_SetDestinationOffset(4, 0, drop);
   Actor_WaitForMoveById(4);

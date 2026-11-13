@@ -38,7 +38,7 @@ L_0200804e:
   r4 = *(s16 *)(r7 + 4);
   FIELD_AT(r5, u8, 89) = 254 & (FIELD_AT(r5, u8, 89));
   stack[0] = r4;
-  Actor_SetSingleChildFlags(v0, 0);
+  Actor_SetSpriteFlags(v0, 0);
   r4 = stack[0];
   r6 = r6 << 16;
   r4 = r4 << 16;

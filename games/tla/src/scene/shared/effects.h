@@ -219,14 +219,14 @@
       Actor_SetPosition(*owner, ((s16 *)&leader->x)[1] << 16,                  \
                         (((s16 *)&leader->z)[1] << 16) - 0x100000);            \
       FieldActor_SetSpriteColor(Actor_Get(*owner), 9);                              \
-      Actor_SetSingleChildFlags(Actor_Get(*owner), 0);                         \
+      Actor_SetSpriteFlags(Actor_Get(*owner), 0);                         \
       Event_StartScreenTransition();                                           \
       Event_PlaySound(228);                                                    \
       leader->update = (void (*)(void))call1;                                  \
       Actor_SetSpeed(*owner, 0x6666, 0x3333);                                  \
       Actor_WalkByAndWait(*owner, 0, 8);                                       \
       FieldActor_SetSpriteColor(Actor_Get(*owner), 0);                              \
-      Actor_SetSingleChildFlags(Actor_Get(*owner), 1);                         \
+      Actor_SetSpriteFlags(Actor_Get(*owner), 1);                         \
       ((struct FieldSprite *)leader->sprite)->priority = 1;                    \
       offset = 10;                                                             \
       Actor_WalkByAndWait(*owner, 0, offset);                                  \
@@ -299,7 +299,7 @@
     Actor_SetDestinationOffset(*owner, 0, -8);                                 \
     FieldActor_WaitForMoveById(*owner);                                        \
     FieldActor_SetSpriteColor(Actor_Get(*owner), 9);                                \
-    Actor_SetSingleChildFlags(Actor_Get(*owner), 0);                           \
+    Actor_SetSpriteFlags(Actor_Get(*owner), 0);                           \
     leader->update = 0;                                                        \
     Event_FinishScreenTransition();                                            \
     Event_WaitTransitionFrames();                                              \
@@ -344,7 +344,7 @@
     s32 z;                                                                     \
                                                                                \
     object->angle += object->speed;                                            \
-    object->x = IwramMulQ16(Math_Cosine(object->angle), object->radius);       \
+    object->x = IwramMulQ16(Trig_Cos(object->angle), object->radius);       \
     z = IwramMulQ16(Math_Sin(object->angle), object->radius);                  \
     object->x += object->centreX;                                              \
     object->z = (z >> 1) + object->centreZ;                                    \
@@ -447,7 +447,7 @@
     if ((gFrameCount & n1) == 0) {                                             \
       spawned = FieldActor_Create(14, object->x, object->y, object->z);        \
       if (spawned != 0) {                                                      \
-        Actor_SetSingleChildFlags(spawned, 0);                                 \
+        Actor_SetSpriteFlags(spawned, 0);                                 \
         call1(spawned, 1);                                                     \
         Actor_StartScript(spawned, data1);                                     \
       }                                                                        \

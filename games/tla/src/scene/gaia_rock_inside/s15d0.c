@@ -91,7 +91,7 @@ first:
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
-    Actor_SetSingleChildFlags(spark, 0);
+    Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
     Actor_StartScript(spark, gData_02005218);
     REG_BLDALPHA = 0x1004;
@@ -123,7 +123,7 @@ second:
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
-    Actor_SetSingleChildFlags(spark, 0);
+    Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
     FieldVector_AddPolarOffset(spark->unk4c, *angle, &spark->x);
     Actor_StartScript(spark, gData_02005234);
@@ -162,7 +162,7 @@ third:
     spark->priorityFlags = 1;
     Actor_SetSpriteColor(spark, 2);
     Actor_SelectAnimation(spark, 7);
-    Actor_SetSingleChildFlags(spark, 0);
+    Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
     Actor_StartScript(spark, gData_02005244);
   }
@@ -316,7 +316,7 @@ void Func_02001c9c(void) {
     {
       s32 angle = i << 12;
 
-      velocity[0] = Math_Cosine(angle);
+      velocity[0] = Trig_Cos(angle);
       velocity[1] = 0;
       velocity[2] = Math_Sin(angle);
       velocity[0] += velocity[0] / 3;
@@ -370,7 +370,7 @@ void Func_02001d14(void) {
   object->x = 0;
   object->z = 0;
   FieldEvent_Wait(1);
-  Import_ActorDestroy(object);
+  Import_ActorRelease(object);
   Event_PlaySound(390);
   FieldEvent_Wait(30);
   REG_DISPCNT |= 0xf00;

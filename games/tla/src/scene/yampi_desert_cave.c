@@ -483,7 +483,7 @@ loop:
     s16 row = entry[2];
 
     object->collisionFlags &= ~1;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     Func_02000c44(id, (u16)column, (u16)row, object->terrainId);
     entry += 3;
   }

@@ -37,7 +37,7 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_02003840[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSingleChildFlags(effect, 0);
+  Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
@@ -90,7 +90,7 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 }
 
 s32 Func_02000654(s32 a0) {
-  Actor_SetSingleChildFlags(a0, 0);
+  Actor_SetSpriteFlags(a0, 0);
   return 0;
 }
 
@@ -119,7 +119,7 @@ void Func_020006a4(struct Actor *source) {
   FieldActor_SetSpriteColor(object, BYTE_AT(source, 98));
   Scene_SetActorSpritePriority(object, 2);
   Actor_SelectAnimation(object, 1);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   Actor_StartScript(object, gData_02003674);
   Actor_SetBlendMode(object, 1);
 }

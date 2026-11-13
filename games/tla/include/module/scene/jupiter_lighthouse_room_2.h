@@ -8,7 +8,7 @@
 #include "field/cell_target.h"
 #include "module/scene/scene.h"
 
-void Import_ActorDestroy(struct Actor *object);
+void Import_ActorRelease(struct Actor *object);
 
 void Actor_RaiseFromCell(s32 id);
 

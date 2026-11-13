@@ -19,7 +19,7 @@
 #include "particle.h"
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
-s32 Math_Cosine(s32 angle);
+s32 Trig_Cos(s32 angle);
 
 void Func_020034ac(s32 spread) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -40,13 +40,13 @@ void Func_020034ac(s32 spread) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags(effect, 0);
+      Actor_SetSpriteFlags(effect, 0);
       Func_02003a54(effect, 2);
       Actor_StartScript(effect, gData_02003e0c);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
-        effect->velocity.x = Iwram_MulQ16(Math_Cosine(i << 13), 0x13333);
+        effect->velocity.x = Iwram_MulQ16(Trig_Cos(i << 13), 0x13333);
         effect->velocity.z = Math_Sin(i << 13);
       } else {
         effect->velocity.x = spread;
@@ -84,11 +84,11 @@ void Func_020035e0(void) {
       zero = 0;
       effect->motionFlags = zero;
       effect->collisionFlags = zero;
-      Actor_SetSingleChildFlags((struct Actor *)effect, 0);
+      Actor_SetSpriteFlags((struct Actor *)effect, 0);
       Func_02003a54(effect, 2);
       Actor_StartScript(effect, gData_02003e3c);
       angle = i << 12;
-      effect->velocity.x = Math_Cosine(angle);
+      effect->velocity.x = Trig_Cos(angle);
       effect->velocity.y = zero;
       effect->velocity.z = Math_Sin(angle);
       effect->velocity.x += effect->velocity.x >> 1;

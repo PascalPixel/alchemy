@@ -54,9 +54,9 @@ void Func_02001650(s32 count) {
     radius = 0x400000;
     speed = ((Random16Far() << 4) >> 16) + 16;
     /* FAKEMATCH(temporary): the cosine held in a 64-bit temporary; as
-     * Iwram_MulQ16(Math_Cosine(angle), radius), 14 of 92 instructions differ
+     * Iwram_MulQ16(Trig_Cos(angle), radius), 14 of 92 instructions differ
      * in tla-en. */
-    cosine = Math_Cosine(angle);
+    cosine = Trig_Cos(angle);
     spark->dx = Iwram_MulQ16(cosine, radius) >> 16;
     spark->dy = -Iwram_MulQ16(Math_Sin(angle), radius) >> 16;
     spark->speed = speed;
@@ -140,7 +140,7 @@ void Func_0200185c(void) {
 
 extern struct LightOam gData_02003488[];
 
-void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);
+void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
@@ -149,7 +149,7 @@ void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gData_02003488,
                           gLightSpriteCount, gData_02003448, gLightSpritesLarge,
                           gLightSpritePriority, Func_020029f0__s1650,
-                          Import_OamAddSpriteAtDepth)
+                          Import_OamAddSpriteAtDepthClamped)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

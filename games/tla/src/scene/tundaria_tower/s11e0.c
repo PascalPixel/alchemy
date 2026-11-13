@@ -56,9 +56,9 @@ void Func_020011e0(void) {
     s32 velocity[3];
 
     angle = i << 12;
-    velocity[0] = Math_Cosine(angle);
+    velocity[0] = Trig_Cos(angle);
     velocity[1] = 0;
-    velocity[2] = Math_Sine(angle);
+    velocity[2] = Trig_Sin(angle);
     velocity[0] += velocity[0] >> 1;
     velocity[0] += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
     velocity[2] += ((Random16Far() * 3) << 13 >> 16) - 0x3000;
@@ -120,7 +120,7 @@ s32 Scene_Initialize(void) {
       flag = GameFlag_Test(0x945);
       if (flag == 0) {
         object = Actor_GetById(8);
-        Actor_SetSingleChildFlags(Actor_GetById(8), 0);
+        Actor_SetSpriteFlags(Actor_GetById(8), 0);
         object->collisionFlags = 0;
         object->motionFlags = 0;
         object->terrainHeight = PIXELS(8);
@@ -167,7 +167,7 @@ s32 Scene_Initialize(void) {
       if (object != NULL) {
         Call2((void (*)())Scene_SetActorSpritePriority, (s32)object, 1);
         object->motionFlags = 0;
-        Actor_SetSingleChildFlags(object, 0);
+        Actor_SetSpriteFlags(object, 0);
         Actor_SetSpriteColor(object, 14);
         Actor_SetBlendMode(object, 1);
       }

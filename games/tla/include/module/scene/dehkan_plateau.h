@@ -28,7 +28,7 @@ void Func_02001474(s32 show);
 void Actor_DropAndWait(struct Actor *object);
 void Func_0200172c(void);
 
-void Import_ActorDestroy(struct Actor *object);
+void Import_ActorRelease(struct Actor *object);
 
 void Func_02002b68(void);
 void Func_02002f08(void);

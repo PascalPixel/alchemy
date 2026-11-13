@@ -480,7 +480,7 @@ void Func_02000c78(void) { Func_02000b38(92, 29, 92, 31, 1, 2); }
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
     FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),    \
+    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner),    \
                               0);                                              \
     Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);  \
     wait(1);                                                                   \

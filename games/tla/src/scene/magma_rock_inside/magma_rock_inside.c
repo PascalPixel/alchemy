@@ -158,7 +158,7 @@ void Func_02000800(s32 a0, s32 a1, s32 a2) {
   v5 = (v5 << 16);
   FIELD_AT(v6, u8, 35) = (128 | FIELD_AT(v6, u8, 35));
   v5 = ((u32)v5 >> 16);
-  Actor_SetSingleChildFlags(v6, 0);
+  Actor_SetSpriteFlags(v6, 0);
   t4 = Event_GetFlag(v5);
   /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
    * the listing orders it; without it, 2 of 53 instructions differ in
@@ -515,14 +515,14 @@ void Func_02000ed0(struct Actor *source) {
   struct Actor *other;
   s32 position[3];
   struct EffectOptions options;
-  s32 step = Math_Cosine(source->facing) << 1;
+  s32 step = Trig_Cos(source->facing) << 1;
   s32 cell;
   s32 id;
   s32 bit;
 
   flame->motionFlags = 0;
   Func_02004c98(flame, 1);
-  Actor_SetSingleChildFlags(flame, 0);
+  Actor_SetSpriteFlags(flame, 0);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   position[0] = flame->x;
@@ -683,7 +683,7 @@ void Func_020011fc(void) {
   leader->acceleration = 0x20000;
   leader->velocityY = 0x4cccc;
   leader->motionFlags &= 0x7e;
-  Actor_SetSingleChildFlags(leader, 0);
+  Actor_SetSpriteFlags(leader, 0);
   stepX = (position[0] - leader->x) / 12;
   stepZ = (position[2] - leader->z) / 12;
   i = 0;
@@ -699,7 +699,7 @@ void Func_020011fc(void) {
   leader->y = leader->terrainHeight = target->y + 0x100000;
   leader->z = target->z;
   Func_02004c98(leader, 6);
-  Actor_SetSingleChildFlags(leader, 1);
+  Actor_SetSpriteFlags(leader, 1);
   leader->motionFlags |= 3;
   Event_End();
 }
@@ -1417,7 +1417,7 @@ void Func_020026a4(s32 x, s32 z) {
   REG_BLDALPHA = 16;
   REG_BLDCNT = 0x3f44;
   Scene_SetActorSpritePriority(object, 0);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   ((struct FieldSprite *)object->sprite)->blendMode = 2;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1545,7 +1545,7 @@ void Func_02002a14(struct Actor *source) {
   FieldActor_SetSpriteColor(object, 10);
   Scene_SetActorSpritePriority(object, 1);
   Func_02004c98(object, 1);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   Actor_SetBlendMode(object, 1);
   Actor_StartScript(object, gData_02005534);
 }
@@ -1702,7 +1702,7 @@ burst:
   FieldActor_SetSpriteColor(object, 10);
   Scene_SetActorSpritePriority(object, 1);
   Func_02004c98(object, 7);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   Actor_SetBlendMode(object, 1);
   Actor_StartScript(object, gData_02005544);
   REG_BLDALPHA = 0x1004;
@@ -1739,7 +1739,7 @@ spiral:
   FieldActor_SetSpriteColor(spark, 10);
   Scene_SetActorSpritePriority(spark, 1);
   Func_02004c98(spark, 7);
-  Actor_SetSingleChildFlags(spark, 0);
+  Actor_SetSpriteFlags(spark, 0);
   Actor_SetBlendMode(spark, 1);
   FieldVector_AddPolarOffset(spark->unk4c, spark->timer, &spark->x);
   Actor_StartScript(spark, gData_02005560);
@@ -1773,7 +1773,7 @@ column:
   riser->priorityFlags = 1;
   FieldActor_SetSpriteColor(riser, 10);
   Func_02004c98(riser, 7);
-  Actor_SetSingleChildFlags(riser, 0);
+  Actor_SetSpriteFlags(riser, 0);
   Actor_SetBlendMode(riser, 1);
   Actor_StartScript(riser, gData_02005570);
   i += 2;

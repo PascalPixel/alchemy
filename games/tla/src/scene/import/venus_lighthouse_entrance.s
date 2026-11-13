@@ -22,9 +22,9 @@ Task_RemoveFar:
 	.thumb_func
 Random16Far:
 	overlay_veneer Func_080000f8
-	.global Math_Sine
+	.global Trig_Sin
 	.thumb_func
-Math_Sine:
+Trig_Sin:
 	overlay_veneer Trig_SinFar
 	.global Vector_AddPolarOffsetFar
 	.thumb_func
@@ -90,9 +90,9 @@ Actor_SetPositionAndResetMotion:
 	.thumb_func
 Actor_SetMoveTarget:
 	overlay_veneer Actor_SetMoveTargetFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global MapGrid_SetScreenShake
 	.thumb_func

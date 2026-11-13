@@ -22,7 +22,7 @@ struct MagmaRockEventWork {
   s32 field1ac;
 };
 
-s32 Math_Cosine(s32 angle);
+s32 Trig_Cos(s32 angle);
 void FieldEffect_AdvanceMotion();
 void Map_CenterOnFollowedPoint(void);
 void Func_02003af4(void);
@@ -59,7 +59,7 @@ void Func_020022ac(void) {
   i = 0;
 loop:
   angle = i << 12;
-  velocity[0] = Math_Cosine(angle);
+  velocity[0] = Trig_Cos(angle);
   velocity[1] = 0;
   velocity[2] = Math_Sin(angle);
   velocity[0] += velocity[0] >> 1;
@@ -159,14 +159,14 @@ next:
   part->y = parts[0]->y;
   part->z = parts[0]->z;
   part->motionFlags = 0;
-  Actor_SetSingleChildFlags(part, 0);
+  Actor_SetSpriteFlags(part, 0);
   Func_02003a54(parts[i], 3);
   AttachPart(parts[i], anchor, i - 1);
   if (++i != 4)
     goto next;
   part = parts[0];
   part->motionFlags = 0;
-  Actor_SetSingleChildFlags(part, 0);
+  Actor_SetSpriteFlags(part, 0);
   Func_02003a54(parts[0], 3);
   Scene_SetActorSpritePriority(parts[0], 3);
   AttachPart(parts[0], anchor, 3);
@@ -225,7 +225,7 @@ s32 Scene_Initialize(void) {
       actor->motionFlags = zero;
       actor->collisionFlags = zero;
       actor->terrainHeight = actor->y += 0x180000;
-      Actor_SetSingleChildFlags(actor, 0);
+      Actor_SetSpriteFlags(actor, 0);
     }
     Call1((void (*)())Func_02002518, 20);
     switch (work->entrance) {
@@ -299,13 +299,13 @@ s32 Scene_Initialize(void) {
           actor->collisionFlags = zero;
           rise = 0x180000;
           actor->terrainHeight = actor->y += rise;
-          Actor_SetSingleChildFlags(actor, 0);
+          Actor_SetSpriteFlags(actor, 0);
           actor = Actor_GetById(18);
           actor->x += other;
           actor->motionFlags = zero;
           actor->collisionFlags = zero;
           actor->terrainHeight = actor->y += rise;
-          Actor_SetSingleChildFlags(actor, 0);
+          Actor_SetSpriteFlags(actor, 0);
         }
         Call1((void (*)())Func_02002518, 15);
         Call1((void (*)())Func_02002518, 18);
@@ -342,13 +342,13 @@ s32 Scene_Initialize(void) {
           actor->collisionFlags = zero;
           rise = 0x180000;
           actor->terrainHeight = actor->y += rise;
-          Actor_SetSingleChildFlags(actor, 0);
+          Actor_SetSpriteFlags(actor, 0);
           actor = Actor_GetById(12);
           actor->x += other;
           actor->motionFlags = zero;
           actor->collisionFlags = zero;
           actor->terrainHeight = actor->y += rise;
-          Actor_SetSingleChildFlags(actor, 0);
+          Actor_SetSpriteFlags(actor, 0);
         }
         Call1((void (*)())Func_02002518, 10);
         Call1((void (*)())Func_02002518, 12);
@@ -364,7 +364,7 @@ s32 Scene_Initialize(void) {
           actor->motionFlags = zero;
           actor->collisionFlags = zero;
           actor->terrainHeight = actor->y += 0x180000;
-          Actor_SetSingleChildFlags(actor, 0);
+          Actor_SetSpriteFlags(actor, 0);
         }
         Call1((void (*)())Func_02002518, 13);
         if (Event_GetFlag(0x8da))

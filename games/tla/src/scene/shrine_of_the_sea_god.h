@@ -129,7 +129,7 @@ void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
-void Actor_SetSingleChildFlags(struct ShrineOfTheSeaGodObject *object,
+void Actor_SetSpriteFlags(struct ShrineOfTheSeaGodObject *object,
                                u32 value);
 
 static inline void ShrineOfTheSeaGod_Jump(s32 actor, s32 height, s32 frames) {

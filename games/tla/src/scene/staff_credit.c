@@ -116,7 +116,7 @@ void Func_02000138(u8 *grid, s32 count, s32 scale) {
     s32 x = i;
     s32 error = i;
 
-    level = (Math_Cosine((i << 14) / last) * 15) >> 16;
+    level = (Trig_Cos((i << 14) / last) * 15) >> 16;
     level = level * scale / 0x10000;
     if (level > 15)
       level = 15;
@@ -181,7 +181,7 @@ void Func_0200020c(s32 stage) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   palette = stage;
   buffer = Heap_AllocEwram(0x6000);
-  Actor_SetSingleChildFlags(Actor_GetById(8), 0);
+  Actor_SetSpriteFlags(Actor_GetById(8), 0);
   if (stage == 4)
     palette = 0;
   gBgScroll[0].y = 0;

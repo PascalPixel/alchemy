@@ -1285,7 +1285,6 @@ struct YampiDesertCaveEventWork {
   s32 value1ac;
 };
 
-s32 Math_Cosine(s32 angle);
 void Map_CenterOnFollowedPoint(void);
 
 extern char ResourceId_WhirlwindMap;
@@ -1300,7 +1299,7 @@ extern u8 gField_CachedTilesD[];
 
 extern const u8 gField_Tiles679[];
 
-s32 BattleEffect_GetResourceId(s32 object);
+s32 Speaker_GetVoice(s32 object);
 
 extern const u16 Field_Palette685[];
 
@@ -1363,8 +1362,7 @@ void Func_02003118(struct Actor *object, s32 value);
 extern char SceneId_Ov6ACRoom6;
 extern char SceneId_Ov6ACRoom1;
 
-void DisplayScroll_InitializeHBlankDma(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                       s32 g);
+void LineScroll_InitWave(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
 extern char SceneId_Ov64c;
 

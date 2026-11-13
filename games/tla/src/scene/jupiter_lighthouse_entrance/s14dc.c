@@ -42,7 +42,7 @@ void Teleporter_Sink(struct CellTarget__s14dc *table,
   FieldEvent_Wait(12);
   leader->facing = 0x4000;
   leader->motionFlags = 0;
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Io_Write16(0xf1f, &REG_WINOUT);
   REG_DISPCNT |= 0x8000;
   table->shown = 1;

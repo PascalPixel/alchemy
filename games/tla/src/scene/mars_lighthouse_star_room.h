@@ -11,7 +11,7 @@
 
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 
-s32 Math_Cosine(s32 angle);
+s32 Trig_Cos(s32 angle);
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 void Func_02001928(struct Actor *object, s32 priority);
 

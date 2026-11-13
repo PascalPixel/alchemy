@@ -99,7 +99,7 @@ void Func_02000468(struct Actor *object) {
 }
 
 s32 Func_02000478(struct Actor *object) {
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   object->speedLimit = 0x10000;
   object->acceleration = 0xccc;
   object->collisionFlags = 0;
@@ -123,9 +123,9 @@ void Func_020004e4(struct Actor *object) {
   else
     object->z -= 0x20000;
   if (object->y >> 20 == 23)
-    Import_ActorDestroy(object);
+    Import_ActorRelease(object);
   if (object->z >> 20 == 48)
-    Import_ActorDestroy(object);
+    Import_ActorRelease(object);
 }
 
 void Func_0200052c(struct Actor *object) {
@@ -137,7 +137,7 @@ void Func_0200052c(struct Actor *object) {
     x += spread * 48;
     child = Import_ActorCreate(0x2a2, x - 0x180000, object->y, object->z);
     if (child != 0) {
-      Actor_SetSingleChildFlags(child, 0);
+      Actor_SetSpriteFlags(child, 0);
       child->update = (void (*)(void))Func_020004e4;
       child->motionFlags = 0;
     }
@@ -469,7 +469,7 @@ void Func_02000d80(void) {
       Event_Start();
       Event_ResolvePendingActions(0);
       leader->motionFlags = 0;
-      Actor_SetSingleChildFlags(leader, 0);
+      Actor_SetSpriteFlags(leader, 0);
       gMainRoutineWork.renderMode = 2;
       Func_02001d30(leader);
       Event_Wait(5);
@@ -559,7 +559,7 @@ void Func_0200106c(void) {
   state = &gMainRoutineWork;
   object->gravity = saved;
   FieldEffect_SetAttached(state->currentOwner, 0);
-  Actor_SetSingleChildFlags(object, 1);
+  Actor_SetSpriteFlags(object, 1);
   Actor_SelectAnimation(object, 1);
   state->renderMode = 0;
   Event_End();
@@ -637,7 +637,7 @@ void Func_02001224(s32 unused, s32 id) {
   FieldCamera_MoveWithinMapBounds(PIXELS(248), -PIXELS(32), PIXELS(760), 1);
   FieldCamera_WaitForArrival();
   Actor_SetHorizontalPositionWithTerrain(15, PIXELS(264), PIXELS(792));
-  Actor_SetSingleChildFlags(Actor_GetById(15), 0);
+  Actor_SetSpriteFlags(Actor_GetById(15), 0);
   Actor_GetById(15)->collisionFlags = 0;
   Actor_GetById(15)->priorityFlags |= 2;
   Actor_GetById(15)->update = (void (*)(void))Actor_EmitWaterDrop;
@@ -687,7 +687,7 @@ void Func_02001460(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->y = -0x100000;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
@@ -701,7 +701,7 @@ void Func_02001460(void) {
   Func_02001d30(object);
   object->motionFlags = saved;
   object->velocityY = 0x80000;
-  Actor_SetSingleChildFlags(object, 1);
+  Actor_SetSpriteFlags(object, 1);
   up = gInput.held & 0x40;
   state = &gMainRoutineWork;
   if (up)
@@ -720,7 +720,7 @@ void Func_0200153c(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->y = -0x400000;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
@@ -734,7 +734,7 @@ void Func_0200153c(void) {
   Func_02001d30(object);
   object->motionFlags = saved;
   object->velocityY = 0xc0000;
-  Actor_SetSingleChildFlags(object, 1);
+  Actor_SetSpriteFlags(object, 1);
   Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 680, 912);
   Event_End();
 }
@@ -748,7 +748,7 @@ void Func_020015e8(struct Actor *object) {
   *amplitude += 32;
   if (*amplitude > 0x200)
     *amplitude = 0x200;
-  sprite->rotation = Iwram_MulQ16(Math_Sine(object->timer), *amplitude);
+  sprite->rotation = Iwram_MulQ16(Trig_Sin(object->timer), *amplitude);
 }
 
 void Func_02001630(struct Actor *object) {
@@ -761,14 +761,14 @@ void Func_02001630(struct Actor *object) {
   if (*amplitude < 0) {
     *amplitude = 0;
   }
-  sprite->rotation = Iwram_MulQ16(Math_Sine(object->timer), *amplitude);
+  sprite->rotation = Iwram_MulQ16(Trig_Sin(object->timer), *amplitude);
 }
 
 void Func_02001670(struct Actor *object) {
   struct FieldSprite *sprite = object->sprite;
 
   object->timer += 0x100;
-  sprite->rotation = Math_Sine(object->timer) / 64 + 0x600;
+  sprite->rotation = Trig_Sin(object->timer) / 64 + 0x600;
 }
 
 /// Scatters objects 17 to 21 under cue 184, lines them up 32 pixels apart
@@ -926,7 +926,7 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == 4)
       Func_02002158();
   } else if (scene == (s32)&SceneId_Ov67bRoom2) {
-    Actor_SetSingleChildFlags(Actor_GetById(14), 0);
+    Actor_SetSpriteFlags(Actor_GetById(14), 0);
     if (GameFlag_Test(545))
       Call6(Map_CopyCellAttributeRect, 42, 32, 1, 1, 44, 32);
     if (GameFlag_Test(546))
@@ -957,7 +957,7 @@ s32 Scene_Initialize(void) {
         Map_ClearLayerEntryFlag(5);
         Map_ClearLayerEntryFlag(6);
       }
-      Actor_SetSingleChildFlags(Actor_GetById(14), 0);
+      Actor_SetSpriteFlags(Actor_GetById(14), 0);
     } else {
       Func_02002550();
       Func_0200276c();
@@ -966,7 +966,7 @@ s32 Scene_Initialize(void) {
         Func_020025a8(8);
         Func_02002834(8);
         Actor_SetHorizontalPositionWithTerrain(15, PIXELS(264), PIXELS(792));
-        Actor_SetSingleChildFlags(Actor_GetById(15), 0);
+        Actor_SetSpriteFlags(Actor_GetById(15), 0);
         Actor_GetById(15)->collisionFlags = 0;
         Actor_GetById(15)->priorityFlags |= 2;
         Actor_GetById(15)->update = Actor_EmitWaterDrop;
@@ -1135,7 +1135,7 @@ void Func_020020bc(s32 entrance) {
   Actor_SetDestinationOffsetById(*owner, 0, -8);
   Actor_WaitForMoveById(*owner);
   Actor_SetSpriteColor(Actor_GetById(*owner), 9);
-  Actor_SetSingleChildFlags(Actor_GetById(*owner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(*owner), 0);
   leader->update = 0;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1158,14 +1158,14 @@ void Func_02002158(void) {
                                            (((s16 *)&leader->z)[1] << 16) -
                                                0x100000);
     Actor_SetSpriteColor(Actor_GetById(*owner), 9);
-    Actor_SetSingleChildFlags(Actor_GetById(*owner), 0);
+    Actor_SetSpriteFlags(Actor_GetById(*owner), 0);
     Event_StartScreenTransition();
     Sound_Play(228);
     leader->update = (void (*)(void))Actor_EmitMist;
     Actor_SetSpeedParameters(*owner, 0x6666, 0x3333);
     Actor_WalkByAndWaitById(*owner, 0, 8);
     Actor_SetSpriteColor(Actor_GetById(*owner), 0);
-    Actor_SetSingleChildFlags(Actor_GetById(*owner), 1);
+    Actor_SetSpriteFlags(Actor_GetById(*owner), 1);
     ((struct FieldSprite *)leader->sprite)->priority = 1;
     offset = 10;
     Actor_WalkByAndWaitById(*owner, 0, offset);
@@ -1322,7 +1322,7 @@ void Func_02002550(void) {
 
   Iwram_ClearWordsEntry(work, 0x70c);
   buffer = MemAlloc_(0x100);
-  Import_ResourceDecodeType01(gData_02002c74, buffer);
+  Import_DecompressTaggedLz(gData_02002c74, buffer);
   work->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(work->vramEntry, 0x100, buffer);
   Heap_Release(buffer);

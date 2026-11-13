@@ -493,7 +493,7 @@ void Func_02000dc4(void) {
   Actor_GetById(party->currentOwner)->priorityFlags |= 32;
   Task_Add_(Func_02000c14, 0x480);
   Task_Add_(Func_02000bb8, 0x480);
-  Actor_SetSingleChildFlags(Actor_GetById(17), 0);
+  Actor_SetSpriteFlags(Actor_GetById(17), 0);
   *((u8 *)Actor_GetById(17) + 85) = 0;
   if (GameFlag_Test(0x9b2)) {
     Actor_SetHorizontalPositionWithTerrain(19, 0, 0);

@@ -54,11 +54,11 @@ void Func_02000098(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   Actor_SetAnimation(id, 1);
-  Actor_SetSingleChildFlags(Actor_Get(id), 1);
+  Actor_SetSpriteFlags(Actor_Get(id), 1);
   object->x -= PIXELS(12);
   ((struct ActorSprite *)object->sprite)->rotation = 0;
   System_Wait(1);
-  Actor_SetSingleChildFlags(Actor_Get(id), 1);
+  Actor_SetSpriteFlags(Actor_Get(id), 1);
   object->velocityY = PIXELS(4);
   object->motionFlags = 3;
   System_Wait(40);
@@ -81,9 +81,9 @@ void Func_020000f0(void) {
   MapGrid_CopyCellAttributes(38, 31, 2, 1, 25, 42);
   actor = Actor_Get(8);
   Actor_SetAnimation(8, 1);
-  Actor_SetSingleChildFlags(Actor_Get(8), 1);
+  Actor_SetSpriteFlags(Actor_Get(8), 1);
   System_Wait(1);
-  Actor_SetSingleChildFlags(Actor_Get(8), 1);
+  Actor_SetSpriteFlags(Actor_Get(8), 1);
   actor->velocityY = PIXELS(4);
   actor->motionFlags = 3;
   System_Wait(40);
@@ -138,9 +138,9 @@ void Func_020002b4(void) {
   MapGrid_CopyCellAttributes(38, 31, 2, 1, 17, 46);
   actor = Actor_Get(5);
   Actor_SetAnimation(5, 1);
-  Actor_SetSingleChildFlags(Actor_Get(5), 1);
+  Actor_SetSpriteFlags(Actor_Get(5), 1);
   System_Wait(1);
-  Actor_SetSingleChildFlags(Actor_Get(5), 1);
+  Actor_SetSpriteFlags(Actor_Get(5), 1);
   actor->velocityY = PIXELS(4);
   actor->motionFlags = 3;
   System_Wait(40);
@@ -198,7 +198,7 @@ void Func_0200049c(void) {
   Actor_GetById(6)->motionFlags = 3;
   Actor_Jump(6, 4, 0);
   Actor_SetModeById(6, 1);
-  Actor_SetSingleChildFlags(Actor_GetById(6), 1);
+  Actor_SetSpriteFlags(Actor_GetById(6), 1);
   Event_Wait(20);
   Actor_TurnToFaceEachOther(6, gMainRoutineWork.currentOwner, 0);
   Event_ShowMessageAndWait(6, 0);
@@ -373,7 +373,7 @@ void Func_020006a8(void) {
     Actor_GetById(6)->motionFlags = 3;
     Actor_Jump(6, 4, 0);
     Actor_SetModeById(6, 1);
-    Actor_SetSingleChildFlags(Actor_GetById(6), 1);
+    Actor_SetSpriteFlags(Actor_GetById(6), 1);
     Event_Wait(20);
     Actor_SetSpeed(6, 0x19999, 0xcccc);
     Actor_WalkToAndWait(6, 212, 680);
@@ -425,7 +425,7 @@ void Idejima_RunAlexDeparture(void) {
   FieldCamera_MoveTo(PIXELS(108), -1, PIXELS(720), 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 86, 712);
-  Import_ActorPlaceAtActor(8, gMainRoutineWork.currentOwner);
+  Import_ActorMoveToObject(8, gMainRoutineWork.currentOwner);
   System_Wait(1);
   Actor_SetSpeed(8, 0xcccc, 0x6666);
   Actor_WalkToAndWait(8, 104, 712);
@@ -447,8 +447,8 @@ void Idejima_RunAlexDeparture(void) {
   Event_AskYesNo(8, 0);
   Actor_ShowEmote(8, 0x106, 40);
   Event_ShowMessage(8, 0);
-  Import_ActorPlaceAtActor(5, gMainRoutineWork.currentOwner);
-  Import_ActorPlaceAtActor(6, gMainRoutineWork.currentOwner);
+  Import_ActorMoveToObject(5, gMainRoutineWork.currentOwner);
+  Import_ActorMoveToObject(6, gMainRoutineWork.currentOwner);
   System_Wait(1);
   Actor_SetSpeed(6, 0xcccc, 0x6666);
   Actor_SetSpeed(5, 0xcccc, 0x6666);

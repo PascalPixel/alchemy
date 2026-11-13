@@ -127,7 +127,7 @@ void Func_02003620(void) {
   v5 = &gMainRoutineWork;
   v5 = (v5 + 0x214);
   object0 = Actor_Get(*(s32 *)((u8 *)v5 + 0));
-  Actor_SetSingleChildFlags((s32)object0, 0);
+  Actor_SetSpriteFlags((s32)object0, 0);
   Actor_SetAnimation(*(s32 *)((u8 *)v5 + 0), 18);
   FieldEvent_Wait(40);
   *(s32 *)((u8 *)((s32)Ram_HeapSlots->eventWork + 0x1ac) + 0) = 0x209;

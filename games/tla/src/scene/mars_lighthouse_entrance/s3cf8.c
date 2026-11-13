@@ -61,7 +61,7 @@ void Func_02004160(struct PushEvent *event) {
     object->facing = 0x4000;
     object->motionFlags = zero;
   }
-  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner),
                                      0);
   {
     u32 winout = 0xf1f;

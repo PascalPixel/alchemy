@@ -26,9 +26,9 @@ Unit_Get:
 	.thumb_func
 GameFlag_Test:
 	overlay_veneer GameFlag_TestFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global Actor_SetItemIcon
 	.thumb_func

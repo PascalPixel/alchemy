@@ -7,7 +7,7 @@
 extern void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gData_02001dcc[];
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 
 void Func_02000150(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,

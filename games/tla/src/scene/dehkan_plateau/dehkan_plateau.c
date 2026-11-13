@@ -510,7 +510,7 @@ void Func_02001a30(void) {
     Event_Wait(12);
     leader->facing = 0x4000;
     leader->motionFlags = 0;
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
     {
       s16 scene = gMainRoutineWork.scene;
       if (scene == SCENE(Ov655Room1)) {
@@ -800,9 +800,9 @@ void Func_02002390(void) {
   Event_Wait(10);
   Sound_Play(153);
   Actor_GetById(25)->velocityY = 0x80000;
-  Actor_SetSingleChildFlags(Actor_GetById(25), 0);
+  Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWaitById(25, 200, 104);
-  Actor_SetSingleChildFlags(Actor_GetById(25), 1);
+  Actor_SetSpriteFlags(Actor_GetById(25), 1);
   Actor_MoveTo(25, 294, 104);
   Actor_PlaceFacing(25, 212 << 17, 208 << 15, FACING_SOUTH);
   GameFlag_SetBit(0x86e);

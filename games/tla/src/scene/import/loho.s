@@ -82,9 +82,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 MapGrid_CopyCellPictureCellsRect:
 	overlay_veneer MapGrid_CopyCellPictureCellsRectFar
-	.global Actor_SetSingleChildFlags
+	.global Actor_SetSpriteFlags
 	.thumb_func
-Actor_SetSingleChildFlags:
+Actor_SetSpriteFlags:
 	overlay_veneer Actor_SetSpriteFlagsFar
 	.global MapGrid_SetScreenShake
 	.thumb_func

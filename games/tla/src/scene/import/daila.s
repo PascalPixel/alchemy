@@ -158,9 +158,9 @@ Party_GetLeaderActor:
 	.thumb_func
 Func_02000d68:
 	overlay_veneer Func_080c87b0
-	.global Import_ShopOpen
+	.global Import_ShopRun
 	.thumb_func
-Import_ShopOpen:
+Import_ShopRun:
 	overlay_veneer Shop_RunFar
 	.global Sound_Play
 	.thumb_func

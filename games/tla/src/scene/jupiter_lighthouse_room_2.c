@@ -109,8 +109,8 @@ void Func_020000d0(s32 kind) {
     System_Wait(1);
     i--;
   } while (i >= 0);
-  Import_ActorDestroy(effect);
-  Actor_SetSingleChildFlags(Actor_Get(owner), 1);
+  Import_ActorRelease(effect);
+  Actor_SetSpriteFlags(Actor_Get(owner), 1);
   leader->facing = 0x4000;
   leader->terrainId = 0;
   leader->motionFlags = 3;
@@ -187,8 +187,8 @@ spin:
   i--;
   if (i >= 0)
     goto spin;
-  Import_ActorDestroy(effect);
-  Actor_SetSingleChildFlags(Actor_Get(owner), 1);
+  Import_ActorRelease(effect);
+  Actor_SetSpriteFlags(Actor_Get(owner), 1);
   leader->facing = 0x4000;
   leader->terrainId = 1;
   leader->motionFlags = 3;
@@ -293,7 +293,7 @@ void Func_02000500(s32 unused, s32 id) {
   }
   if (object->x >> 20 == 20 && object->z >> 20 == 39) {
     Event_SetFlag(0xa02);
-    Actor_SetSingleChildFlags(Actor_Get(id), 0);
+    Actor_SetSpriteFlags(Actor_Get(id), 0);
     FieldActor_SetSpritePriority(id, 3);
     Actor_SetPosition(id, 0, 0);
     MapGrid_CopyCellAttributes(28, 39, 1, 1, 20, 39);
@@ -350,7 +350,7 @@ void Func_02000720(struct Actor *object) {
   s16 height = object->unk66;
 
   SET_POSITION(object,
-               Iwram_MulQ16(Math_Cosine(angle), object->speedLimit) +
+               Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) +
                    (214 << 16),
                (height * 3 << 16) + 0x80000, 170 << 18);
   // Read signed, as the phase is above; the field is declared unsigned.
@@ -380,7 +380,7 @@ void Func_020007d0(void) {
     object->update = Func_02000720;
     object->timer = Random16Far();
     object->unk66 = phase;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSpriteFlags(object, 0);
     FieldActor_SetSpriteColor(object, 2);
     ((struct FieldSprite *)object->sprite)->priority = 1;
   }

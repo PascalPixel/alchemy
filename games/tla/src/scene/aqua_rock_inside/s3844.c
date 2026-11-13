@@ -24,7 +24,7 @@ void Func_020039f0(s32 *position, s32 base) {
 
   if (object != 0) {
     object->bounce =
-        Math_Cosine(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
+        Trig_Cos(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
     object->gravity = (u16)Random16Far();
     object->unk4c = (u16)(Random16Far() << 1) + base;
     /* FAKEMATCH(temporary): the s32 local keeps the zero extension and the pool

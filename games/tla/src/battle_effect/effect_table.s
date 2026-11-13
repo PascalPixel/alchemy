@@ -2916,11 +2916,11 @@ Data_08199f4c:
 	.2byte 3840, 15, 3855, 0, 770, 4, 3584, 3599
 	.2byte 3840, 0, 772, 5, 3840, 3599, 3855, 0
 	.2byte 0, 0, 0, 0, 0, 0
-@ read by Func_08192a4c
+@ read by DrawParticles
 	.global Data_08199f88
 Data_08199f88:
 	.2byte 63740, 0, 63492, 0, 2300, 0, 2052, 0
-@ read by Func_08192a4c
+@ read by DrawParticles
 	.global Data_08199f98
 Data_08199f98:
 	.4byte 0x20100, 0x1f0000, 0x3f00, 196866

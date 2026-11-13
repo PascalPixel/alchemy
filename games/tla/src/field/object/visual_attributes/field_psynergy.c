@@ -10,7 +10,7 @@
 #include "module/field/object.h"
 
 /// If the scene's sprite is active, stops its update callback
-/// (Func_080dba44) and frees its VRAM cache entry.
+/// (BattleEffect_DrawSceneSprite) and frees its VRAM cache entry.
 void Func_080dbb40(void) {
   struct DepthScene *scene = Ram_HeapSlots->effectWork;
 

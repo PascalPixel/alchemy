@@ -1989,7 +1989,7 @@ void Func_080d1ae4(void) {
   }
 }
 
-/// Like Func_080d1a18 (the fade overlay) with blank tiles and no blending:
+/// Like FieldEffect_StartFadeOverlay with blank tiles and no blending:
 /// loads 0x200 zeroed tiles to VRAM slot 94 and starts Func_080d1ae4 on
 /// object (the controlled owner's when 0).
 void Func_080d1cc0(s32 object) {

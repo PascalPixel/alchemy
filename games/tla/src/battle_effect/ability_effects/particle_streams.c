@@ -691,7 +691,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunOuterSpace, BattleEffect_RunParticleStreams,
 // BattleEffect_RunParticleStreams, summon 11 and summon 0's default
 // (BattleEffect_RunSceneEffect's default case, through BattleEffect_RunMeteor
 // and BattleEffect_RunOuterSpace), with its nested
-// helpers AddFlame (Func_08164c0c) and AddMote (Func_08164c70, unused).
+// helpers AddFlame and AddMote (unused).
 
 // Twin: ☀️ BattleEffect_RunParticleStreams (games/tbs/src/effect/effect.c),
 // ported: the heap blocks read from Ram_HeapSlots (canvas first), the effect

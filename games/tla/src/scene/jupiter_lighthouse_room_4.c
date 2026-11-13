@@ -26,10 +26,11 @@
 #include "main_routine_work.h"
 #include "event_work.h"
 #include "module/field/field.h"
-#include "module/scene/clear.h"
 #include "module/scene/jupiter_lighthouse_room_4.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
+
+extern u16 gData_0200271c[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

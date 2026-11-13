@@ -156,9 +156,9 @@ Save_CopyFile:
 	.thumb_func
 Save_EraseSelectedFile:
 	overlay_veneer Save_EraseSelectedFileFar
-	.global Func_020022f0
+	.global Import_SaveScanFileSummaries
 	.thumb_func
-Func_020022f0:
+Import_SaveScanFileSummaries:
 	overlay_veneer Save_ScanFileSummariesFar
 	.global NameEntry_EditMemberName
 	.thumb_func
@@ -204,9 +204,9 @@ Unit_Calculate:
 	.thumb_func
 PartyInventory_Add:
 	overlay_veneer PartyInventory_AddFar
-	.global Func_02002350
+	.global Import_MainRoutineWorkInitializeDefaults
 	.thumb_func
-Func_02002350:
+Import_MainRoutineWorkInitializeDefaults:
 	overlay_veneer MainRoutineWork_InitializeDefaultsFar
 	.global Party_AddMember
 	.thumb_func

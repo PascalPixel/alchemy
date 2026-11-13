@@ -319,7 +319,7 @@ s32 Scene_Initialize(void) {
   }
   gSleepDisabled = started;
 top:
-  result = Func_020022f0();
+  result = Import_SaveScanFileSummaries();
   if (result < 0 && gDebugMode) {
     gMainRoutineWork.unk244[6] = 1;
     gAutoSleepEnabled = 1;
@@ -336,7 +336,7 @@ top:
   else
     result = 0;
   if (result == 0) {
-    Func_02002350();
+    Import_MainRoutineWorkInitializeDefaults();
     WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                       gMainRoutineWork.paletteGlow[1]);
     i = 4;
@@ -374,7 +374,7 @@ top:
         Func_02002370(MAP_CELL_BACKUP, 0, 0);
       } else if (result == 0) {
         SAVE_CELLS();
-        Func_02002350();
+        Import_MainRoutineWorkInitializeDefaults();
 #if !TLA_PATCH_2
         status = Func_02000e44();
         RESTORE_CELLS()
@@ -537,7 +537,7 @@ again:
     Func_02002370(MAP_CELL_BACKUP, 0, 1);
   } else if (result == 0) {
     SAVE_CELLS();
-    Func_02002350();
+    Import_MainRoutineWorkInitializeDefaults();
     status = Func_02000e44();
     RESTORE_CELLS()
     if (status == -1)
@@ -1191,7 +1191,7 @@ s32 Func_02000e44(void) {
             if (!(gInput.pressed & 1))
               goto wait_accepted;
             Sound_Play(112);
-            Func_02002350();
+            Import_MainRoutineWorkInitializeDefaults();
             party = &gMainRoutineWork;
             party->currentOwner = 0;
             Party_RemoveMember(4);

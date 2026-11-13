@@ -23,7 +23,8 @@
 #include "module/tla.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
-#include "module/scene/aqua_rock_inside.h"
+
+void Func_02003278(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

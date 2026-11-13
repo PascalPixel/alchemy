@@ -39,8 +39,8 @@ extern u16 gData_02002490[];
 
 struct Window;
 
-s32 Func_020022f0(void);
-void Func_02002350(void);
+s32 Import_SaveScanFileSummaries(void);
+void Import_MainRoutineWorkInitializeDefaults(void);
 void Func_02002370(void *data, s32 a, s32 b);
 void Func_02002398(void);
 void Func_020023a0(void *data);

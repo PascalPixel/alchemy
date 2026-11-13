@@ -61,7 +61,7 @@ void Func_02001cd8(void);
 void Func_02001d40(void);
 void Func_02002ca4(void);
 
-void Func_02003cc4(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Func_02003ea4();
 void Func_02003ee4();
 

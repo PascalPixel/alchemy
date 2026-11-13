@@ -111,7 +111,7 @@ struct FieldSpriteFlags {
 
 s32 Math_Cosine(s32 angle);
 void Decompress_TaggedLz(const void *source, void *destination);
-void Func_02003cc4(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Map_LoadCellsAndShapes(void);
 void MessageArgument_Push(s32 item, s32 mode);

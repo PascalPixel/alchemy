@@ -11,9 +11,10 @@
 #include "field_effect.h"
 #include "event_inline.h"
 #include "item_icon.h"
-#include "module/scene/clear.h"
 #include "module/scene/jupiter_lighthouse_basement.h"
 #include "module/scene/scene.h"
+
+extern s16 gData_020024f6;
 
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Whirlwind_UpdateLower(struct GustObject *object);

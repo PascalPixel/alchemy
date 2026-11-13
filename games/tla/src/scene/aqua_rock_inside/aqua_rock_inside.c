@@ -564,11 +564,11 @@ void Func_02000e18(s32 value) {
   speed = 0;
   *flags = 0;
   object->priorityFlags |= 0x20;
-  Func_02003cc4(object, 18);
+  Actor_SelectAnimation(object, 18);
   Event_PlaySound(215);
   System_Wait(13);
   Actor_SetSpriteColorMode(object, 9);
-  Func_02003cc4(object, 28);
+  Actor_SelectAnimation(object, 28);
   Event_PlaySound(0x236);
   for (i = 0; i <= 59; i++) {
     if (i == 30)
@@ -794,7 +794,7 @@ void Func_02001364(struct Actor *object) {
   child->motionFlags = 0;
   FieldActor_SetSpriteColor(child, 2);
   Scene_SetActorSpritePriority(child, 1);
-  Func_02003cc4(child, 1);
+  Actor_SelectAnimation(child, 1);
   Actor_SetSingleChildFlags(child, 0);
   Actor_SetBlendMode(child, 1);
   Actor_StartScript(child, gData_02003fd8);
@@ -896,7 +896,7 @@ burst:
   object->motionFlags = 0;
   Actor_SetSpriteColor(object, 2);
   Scene_SetActorSpritePriority(object, 1);
-  Func_02003cc4(object, 7);
+  Actor_SelectAnimation(object, 7);
   Actor_SetSingleChildFlags(object, 0);
   Actor_SetBlendMode(object, 1);
   Actor_StartScript(object, gData_02003fe8);
@@ -933,7 +933,7 @@ spiral:
   ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
   Actor_SetSpriteColor(spark, 2);
   Scene_SetActorSpritePriority(spark, 1);
-  Func_02003cc4(spark, 7);
+  Actor_SelectAnimation(spark, 7);
   Actor_SetSingleChildFlags(spark, 0);
   Actor_SetBlendMode(spark, 1);
   FieldVector_AddPolarOffset(spark->unk4c, spark->timer, &spark->x);
@@ -967,7 +967,7 @@ column:
   riser->motionFlags = (u16)0;
   riser->priorityFlags = 1;
   Actor_SetSpriteColor(riser, 2);
-  Func_02003cc4(riser, 7);
+  Actor_SelectAnimation(riser, 7);
   Actor_SetSingleChildFlags(riser, 0);
   Actor_SetBlendMode(riser, 1);
   Actor_StartScript(riser, gData_02004014);
@@ -1168,7 +1168,7 @@ void Func_02001e78(s32 id) {
 
     meta[5] = 0;
     meta[6] = 0;
-    Func_02003cc4(object, 2);
+    Actor_SelectAnimation(object, 2);
   }
 }
 
@@ -1407,7 +1407,7 @@ s32 Scene_PrepareMap(void) {
       actor->motionFlags = i1;
       actor->terrainHeight = i1;
       actor->y = i1;
-      Call2((void (*)())Func_02003cc4, (s32)actor, 0);
+      Call2((void (*)())Actor_SelectAnimation, (s32)actor, 0);
       actor = Actor_GetById(13);
       actor->motionFlags = i1;
       actor->terrainHeight = i1;
@@ -1692,13 +1692,13 @@ void Func_02002ca4(void) {
   if (hit < 0) {
     Actor_SetAttachedEffect(id, 258);
     FieldActor_SetMoveTarget(actor, actor->x, actor->y, actor->z + 0x80000);
-    Func_02003cc4(actor, 49);
+    Actor_SelectAnimation(actor, 49);
     FieldActor_WaitForMove(actor);
     do {
       System_Wait(1);
     } while (actor->y != actor->terrainHeight);
     Func_02002bd4(actor);
-    Func_02003cc4(actor, 49);
+    Actor_SelectAnimation(actor, 49);
     System_Wait(3);
     return;
   }
@@ -1725,9 +1725,9 @@ void Func_02002ca4(void) {
   actor->facing = 0x4000;
 }
 
-DEFINE_ACTOR_SHOW_PARTS(Actor_ShowParts, Func_02003cc4)
+DEFINE_ACTOR_SHOW_PARTS(Actor_ShowParts, Actor_SelectAnimation)
 
-DEFINE_LEADER_SPIN_AWAY(Leader_SpinAway, Func_02003cc4, Func_02002bd4)
+DEFINE_LEADER_SPIN_AWAY(Leader_SpinAway, Actor_SelectAnimation, Func_02002bd4)
 
 /// On odd frames, spawns a drifting effect above the object, swaying with the
 /// frame count; Func_02002030 of Aqua Rock is the same function.

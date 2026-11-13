@@ -15,7 +15,7 @@
 #define VENT_BOUNCE Func_0200389c
 #include "../../field/object/vent_bounce.c"
 
-DEFINE_ACTOR_START_SCRIPTED(Actor_StartScripted, Func_02003cc4, gData_020044c8)
+DEFINE_ACTOR_START_SCRIPTED(Actor_StartScripted, Actor_SelectAnimation, gData_020044c8)
 
 void Func_020039f0(s32 *position, s32 base) {
   struct Actor *object = Import_ActorCreate_(0x11d, position[0], position[1],

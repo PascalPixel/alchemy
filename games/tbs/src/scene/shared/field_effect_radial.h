@@ -1,7 +1,3 @@
-#include "types.h"
-#include "actor.h"
-#include "field_effect.h"
-#include "vector3.h"
 
 // The Tunnel Ruins and Venus Lighthouse.
 

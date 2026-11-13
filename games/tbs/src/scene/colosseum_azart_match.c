@@ -60,7 +60,6 @@
 /// Isaac's friends tell him he was only dreaming of the finals.
 
 #include "script_operands.h"
-#include "version.h"
 #include "main_routine_work.h"
 #include "io_write_queue.h"
 #include "scene_ids.h"
@@ -74,14 +73,11 @@
 #include "module/field/field_sequence.h"
 #include "module/system/main_routine.h"
 #include "module/field/event_commands.h"
-#include "module/field/field.h"
 #include "module/game/game.h"
 #include "module/window/window.h"
 #include "module/window/screens.h"
-#include "module/menu/menu.h"
 #include "module/sound/sound.h"
 #include "module/system/system.h"
-#include "module/scene/shared/colosso_item_icon.h"
 #include "battle.h"
 #include "input.h"
 #include "debug.h"
@@ -89,32 +85,18 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "heap_release.h"
-#include "task.h"
-#include "event.h"
 #include "event_inline.h"
-#include "scene_tables.h"
 #include "pushed_actor.h"
 #include "resource_ids.h"
 #include "text/msg_ids.h"
-#include "battle_unit.h"
-#include "battle_sprite_id.h"
-#include "actor.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
-#include "heap.h"
-#include "scene.h"
-#include "fixed_math.h"
 #include "shared/colosso_gauge.h"
 #include "macros.h"
 #include "flags.h"
-#include "sounds.h"
 #include "sound_driver_symbols.h"
 
 // UB: each of these calls a void function through an s32 function type, the
@@ -275,11 +257,7 @@ static void ColosseumAzartMatch_WaitForBridgeOpening(void) {
 }
 
 /// Move on a rock in the Rock Challenge, and each push, settles the rocks.
-///
-/// A rock resting on the floor becomes a step. The second rock's column is
-/// kept in the byte of flags from FLAG_SECOND_ROCK_COLUMN.
 static void ColosseumAzartMatch_SettleRocks(void) {
-
   struct Actor *actor;
   s32 blocked;
 
@@ -312,23 +290,17 @@ static void ColosseumAzartMatch_SettleRocks(void) {
 
 /// Walking into a rock in the Rock Challenge pushes it one cell.
 static void ColosseumAzartMatch_PushRock(void) {
-
   Colosso_PushActorAhead();
   ColosseumAzartMatch_SettleRocks();
 }
 
 /// Growth on the plant before the Broken Bridge makes it grow.
-///
-/// Its cell becomes walkable, and FLAG_PLANT_GROWN keeps it grown.
 static void ColosseumAzartMatch_GrowPlant(void) {
   MapGrid_CopyCellAttributes(47, 24, 1, 1, 47, 12);
   GameFlag_Set(FLAG_PLANT_GROWN);
 }
 
 /// Douse on the Pipeworks' west pipe fills it.
-///
-/// The camera turns to the Pipeworks and the two pipes move as it fills
-/// (FLAG_PIPES_MOVED).
 static void ColosseumAzartMatch_DousePipe(void) {
   struct Actor *actor;
 
@@ -395,9 +367,6 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
 }
 
 /// The north-south log carries the leader to the other bank.
-///
-/// It's the Lumber Water Crossing Area's north-south log, and walking into it
-/// rolls it, with the leader, across.
 static void ColosseumAzartMatch_RollLogNorthSouth(void) {
   struct Actor *actor;
   s32 row;
@@ -417,9 +386,6 @@ static void ColosseumAzartMatch_RollLogNorthSouth(void) {
 }
 
 /// The east-west log carries the leader the way the pad is held.
-///
-/// It's the Lumber Water Crossing Area's east-west log, and walking into it
-/// rolls it, with the leader.
 static void ColosseumAzartMatch_RollLogEastWest(void) {
   s32 column;
   s32 offset;
@@ -471,9 +437,6 @@ static inline void ColosseumAzartMatch_AnimatePipeworksWater(void) {
 }
 
 /// Walking west into the Pipeworks' pillar pushes it.
-///
-/// Water runs into the channel, and the first time the pipes move
-/// (FLAG_PIPEWORKS_PIPE_PUSHED, FLAG_PIPES_MOVED).
 static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   s32 leaderId;
   struct Actor *leader;
@@ -553,15 +516,6 @@ UNUSED static void ColosseumAzartMatch_SetCourseFlag(void) {
 
 /// Reaching Colosseum Final 1's arena, the leader takes a prize and fights
 /// Azart.
-///
-/// The prize is the Iron Shield if he is first, the Padded Gloves if second.
-/// He and Azart face off and fight, and the battle's group follows who took
-/// the shield.
-///
-/// The arena is never closed. Its step trigger row, in all three finals
-/// stages, waits on FLAG_COLOSSEUM_ARENA_CLOSED being clear, and nothing in
-/// the game sets it. No scene code does, no actor script does (none uses
-/// SC_FLAG_ON), and none of the main image's flag writers reaches it.
 static void ColosseumAzartMatch_ReachArena(void) {
   s32 approach;
   s32 n;
@@ -605,7 +559,6 @@ static void ColosseumAzartMatch_ReachArena(void) {
 /// Walking into something in the Rock Challenge (step trigger 90) pushes a
 /// rock, and checks anything else.
 static void ColosseumAzartMatch_PushRockOrCheckAhead(void) {
-
   if (Colosso_FindActorAhead() == 0) {
     Field_TryJumpForward();
   } else {
@@ -619,10 +572,7 @@ const struct Trigger *ColosseumAzartMatch_GetTriggers(void) {
 
 /// Back from the battle, Isaac and Azart stand in the arena as the result is
 /// shown.
-///
-/// The entrance is COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON or _LOST.
 static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
-
   Actor_ReleaseById(ACTOR_PRIZE_A);
   Actor_ReleaseById(ACTOR_PRIZE_B);
   Party_RestoreHpPp(1);
@@ -659,7 +609,7 @@ static void ColosseumAzartMatch_MarkFinishTerrain(s32 actorId) {
   s32 row;
 
   target = Actor_Get(actorId);
-  if (target != 0) {
+  if (target != NULL) {
     column = target->x.fixed >> 19;
     row = target->z.fixed >> 19;
     if (column >= 94 && column <= 95 && row > 23 && row <= 26) {
@@ -669,15 +619,6 @@ static void ColosseumAzartMatch_MarkFinishTerrain(s32 actorId) {
 }
 
 /// Sets up Colosseum Final 1 for the visit its entrance stands for.
-///
-/// It restores the stages as they were left, then goes by the arrival:
-///
-/// - the race (COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND),
-/// - the friends' turns to lend a hand
-///   (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST),
-/// - the guide's tour (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM),
-/// - the match won (COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON),
-/// - or the match lost (COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST).
 s32 ColosseumAzartMatch_Initialize(void) {
   struct Actor *actor;
   s32 hit;
@@ -744,7 +685,6 @@ s32 ColosseumAzartMatch_Initialize(void) {
   Actor_Get(ACTOR_PIPE_EAST)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   Colosso_ShowItemIcon(ACTOR_PRIZE_A, ITEM_IRON_SHIELD);
   Colosso_ShowItemIcon(ACTOR_PRIZE_B, ITEM_PADDED_GLOVES);
-  // Select competition, support, explanation, or post-battle arrival.
   switch (gMainRoutineWork.entrance) {
   case COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND:
     Colosso_StartRaceGauge(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 4, px(1304),
@@ -799,10 +739,6 @@ s32 ColosseumAzartMatch_Initialize(void) {
 
 /// The guide gives the party the tour of Colosseum Final 1
 /// (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM).
-///
-/// He shows the site of the first finals match, the race through the stages
-/// to the arena, and the prizes there. He also says that the companions
-/// choose where to cheer from.
 static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   struct Actor *actor;
   s32 x;
@@ -909,7 +845,6 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
     // "Ask the attendants for explanations of the stages."
     Event_ShowMessage(guide, 0);
   }
-  // Explain the party's support role, then gather them behind Isaac.
   Event_SetMessageId(MsgColossoIsaacYoureContestantInFinals);
   Actor_RunRepeatedMotion(guide, 2);
   // "...Isaac, you're a contestant in the finals. Do not forget..."
@@ -936,17 +871,17 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   Event_Wait(6);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_WalkToAndWait(guide, x - 16, z - 64);
@@ -960,13 +895,6 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
 }
 
 /// The Rock Challenge's attendant explains stage 1 of Colosseum Final 1.
-///
-/// The first time, Isaac appears on the stage and pushes the rocks into
-/// steps. Then comes the objective, and a place for a friend to cheer.
-///
-/// With a friend alone on the stages
-/// (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) he asks whether they are done
-/// cheering instead.
 static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
   s32 path;
 
@@ -1038,9 +966,6 @@ static inline void ColosseumAzartMatch_SetPipeHeight(struct Actor *actor,
 }
 
 /// The Pipeworks' attendant explains stage 2 of Colosseum Final 1.
-///
-/// The first time, a pointer shows how the pipes rise and fall like scales.
-/// Then comes the objective, and a place for a friend to cheer.
 static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
   s32 path;
   struct Actor *second;
@@ -1104,10 +1029,6 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
 }
 
 /// The Broken Bridge's attendant explains stage 3 of Colosseum Final 1.
-///
-/// The first time, Isaac appears and times his crossing. Then the attendant
-/// says that the bridge's operator will cheer for him, and offers a place for
-/// a friend to cheer.
 static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
   s32 path;
 
@@ -1149,9 +1070,6 @@ static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
 
 /// The Lumber Water Crossing Area's attendant explains stage 4 of Colosseum
 /// Final 1.
-///
-/// The first time, a pointer shows the water tank and Isaac appears and rolls
-/// a log across. Then comes the objective, and a place for a friend to cheer.
 static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
   s32 path;
 

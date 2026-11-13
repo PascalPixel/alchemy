@@ -7,7 +7,6 @@
 
 #include "scene_ids.h"
 #include "module/scene/file_screen.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
 #include "module/window/window.h"
@@ -20,14 +19,9 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "battle_sprite_id.h"
 #include "heap_slots.h"
-#include "tbs_edition.h"
 #include "text_font.h"
 #include "dma.h"
 #include "ram_buffer.h"
@@ -35,17 +29,9 @@
 #include "system_call.h"
 #include "resource_ids.h"
 #include "io_write_queue.h"
-#include "io_reg.h"
-#include "scene_tables.h"
 #include "serial.h"
-#include "heap_release.h"
-#include "window.h"
-#include "item.h"
-#include "main_routine_work.h"
 #include "text/msg_ids.h"
-#include "sounds.h"
 #include "sound_driver_symbols.h"
-#include "frame.h"
 #include "map_grid_scroll.h"
 #include "flags.h"
 #include "title.h"
@@ -140,8 +126,6 @@ static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 FileScreen_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 
 /// The File Screen overlay's scene tables, for the scene loader.
-///
-/// They are one entrance, the exit, and no actor placements or triggers.
 u8 *FileScreen_GetEntrances(void) { return (u8 *)gFileScreen_Entrances; }
 
 /// The exit regions entry: the File Screen has no exit boxes.
@@ -157,8 +141,6 @@ u8 *FileScreen_GetTriggers(void) { return (u8 *)gFileScreen_Triggers; }
 
 /// Loads the Golden Sun logo onto BG2 as Title_LoadBackground (title.c) does,
 /// and stops the leader's motion.
-///
-/// FileScreen_Run calls it first.
 static void FileScreen_LoadBackground(void) {
   u8 *resource;
   s32 resourceId;
@@ -206,10 +188,6 @@ static void FileScreen_LoadBackground(void) {
 }
 
 /// The task that fades BG0 and the sprites in over the logo.
-///
-/// Their weight rises by a sixteenth every two frames, and the task removes
-/// itself at full weight, 32 frames on. FileScreen_Run schedules it once,
-/// when there is no save file to choose.
 static void FileScreen_UpdateBlend(void) {
   u16 level;
 
@@ -256,10 +234,6 @@ const u16 gFileScreen_ExtraButtonCode[] = {
 
 /// The task that follows the two hidden codes each frame while the File
 /// Screen runs.
-///
-/// Each key must be held alone and then every key released. Any other key
-/// starts that code over. A finished code sets its unlocked flag, which stays
-/// set, and plays SE_CHIME.
 static void FileScreen_CheckButtonCodes(void) {
   if (gFileScreen_CodeUnlocked == 0) {
     if (gFileScreen_CodeHeld != 0) {
@@ -306,16 +280,6 @@ static void FileScreen_CheckButtonCodes(void) {
 #undef FILE_SCREEN_BUTTON_CODE_KEYS
 
 /// Converts a six-bit password symbol to the edition's one- or two-byte glyph.
-///
-/// It writes the glyph, a second byte (Japanese's voiced mark, else 0) and a
-/// terminator into text.
-///
-/// Outside Japanese the 64 symbols are A to Z without I and O, 2 to 9, a to z
-/// without l and o, and ! ? # & $ % + =. Japanese uses hiragana, the last 18
-/// with the voiced mark.
-///
-/// The six left out are the three pairs that look alike (I, l and 1; O, o and
-/// 0), so a password copied by hand reads back one way.
 static void FileScreen_NameEntryCharacter(s32 cell, u8 *text) {
   text[1] = 0;
   text[2] = 0;
@@ -375,10 +339,6 @@ static void FileScreen_NameEntryCharacter(s32 cell, u8 *text) {
 
 /// Returns -1 when the loaded game may not restart at its last Sanctum, 0
 /// otherwise.
-///
-/// It may not when it was saved where an event blocked Retreat
-/// (FLAG_RETREAT_BLOCKED). Towns (SCENE_TYPE_TOWN), which block it by
-/// themselves, and the world map are the exceptions.
 static s32 FileScreen_GetSaveRecoveryBlockMask(void) {
   s32 mapDifference;
 
@@ -388,8 +348,6 @@ static s32 FileScreen_GetSaveRecoveryBlockMask(void) {
   if (gMainRoutineWork.sceneType == SCENE_TYPE_TOWN) {
     return 0;
   }
-  // -1 unless the map is the world map: -d | d has its top bit set for any
-  // d but 0.
   mapDifference = gMainRoutineWork.next ^ (s32)&SceneId_WorldMap;
   return -((u32)(-mapDifference | mapDifference) >> 31);
 }
@@ -416,21 +374,13 @@ struct SaveLinkGreeting {
 
 /// The overlay's initialize entry: the File Screen.
 ///
-/// At entrance 2, after the credits, it offers to save the cleared game and
-/// goes on to the world map.
-///
-/// Otherwise it loops on the start menu until the player starts a new game,
-/// continues a file or enters the Battle Arena. Copying, erasing and sending
-/// a cleared file's data, by cable or as a password, come back to the menu.
-///
 /// Returns 0 once a destination is set.
 s32 FileScreen_Run(void) {
   s32 pageCount;
   s32 encodedSize;
   struct Window *pageWindow;
-  s32 wrappedPage;
   s32 glyphColumn;
-  s32 windowHandle;
+  struct Window *linkWindow;
   s32 passwordColumn;
   s32 tileValue;
   s32 limit;
@@ -452,14 +402,14 @@ s32 FileScreen_Run(void) {
   blendStarted = 0;
   FileScreen_LoadBackground();
   Task_AddFrame(FileScreen_CheckButtonCodes, TASK_PASS_FRAME);
-  gFieldWork->transition = blendStarted;
+  gFieldWork->transition = 0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   // FILE_SCREEN_FROM_TITLE, after the credits (Title_Run): save the cleared
   // game, then WORLD_MAP_FROM_FILE_SCREEN. Cancelling the file choice asks
   // again.
   if (gMainRoutineWork.entrance == FILE_SCREEN_FROM_TITLE) {
-  L_ask:
+  ask_to_save:
     FieldMessage_Show(MsgSaveAdventureQuestion,
                       FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
     index = FieldYesNo_Ask(1);
@@ -471,7 +421,7 @@ s32 FileScreen_Run(void) {
       gMainRoutineWork.sendFlag = 1;
       index = Save_ToChosenFile();
       if (index == -1) {
-        goto L_ask;
+        goto ask_to_save;
       }
     }
     Event_Wait(60);
@@ -481,9 +431,7 @@ s32 FileScreen_Run(void) {
     Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_FILE_SCREEN);
     return 0;
   }
-  gSleepDisabled = blendStarted;
-  // Choose a new game, existing save, arena entry, or data transfer; every
-  // way back comes here.
+  gSleepDisabled = 0;
 menu_top:;
   result = Save_ScanFileSummaries();
   // No backup memory: in debug mode, say so and turn idle sleep on.
@@ -545,11 +493,6 @@ menu_top:;
     gMainRoutineWork.entrance = COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST;
     goto leave;
   }
-  // Continue a file where it was saved, except: a file from another build of
-  // the game, or one loaded with L and Start held, restarts at its last
-  // Sanctum (restartScene); a file whose two play times differ is reported
-  // corrupted, with the offer to restart there. The two chosen restarts set
-  // flags that nothing reads.
   if (result == 1) {
     struct MainRoutineWork *state;
 
@@ -641,7 +584,6 @@ menu_top:;
     if (result != 5) {
       goto menu_top;
     }
-    // Send: choose a cleared file, then Password (0) or Cable (1).
   link_load:;
     result = Save_ChooseAndLoadFile(5);
     if (result == -1) {
@@ -657,14 +599,14 @@ menu_top:;
     // Link transfer waits for the other game's edition-specific greeting in
     // the partner's payload (struct SaveLinkGreeting); B gives up.
     if (result == TRANSFER_METHOD_CABLE) {
-      result = (s32)Window_Create(FILE_SCREEN_LINK_WINDOW_X, 5,
-                                  FILE_SCREEN_LINK_WINDOW_WIDTH, 8,
-                                  WINDOW_FLAG_INSTANT);
+      linkWindow =
+          Window_Create(FILE_SCREEN_LINK_WINDOW_X, 5,
+                        FILE_SCREEN_LINK_WINDOW_WIDTH, 8, WINDOW_FLAG_INSTANT);
       linkMessage = MsgClearSaveLabel;
 
-      Text_DrawMessage(linkMessage, (struct Window *)result, 0, 4);
-      Text_DrawMessage((linkMessage + 1), (struct Window *)result, 0, 16);
-      Text_DrawMessage((linkMessage + 3), (struct Window *)result, 0, 36);
+      Text_DrawMessage(linkMessage, linkWindow, 0, 4);
+      Text_DrawMessage(linkMessage + 1, linkWindow, 0, 16);
+      Text_DrawMessage(linkMessage + 3, linkWindow, 0, 36);
       Serial_Initialize();
       wait(10);
       {
@@ -710,27 +652,25 @@ menu_top:;
         }
         wait(1);
       }
-      Window_Close((struct Window *)result, 2);
+      Window_Close(linkWindow, 2);
       if (index == 0) {
         goto link_select;
       }
-      result = (s32)Window_Create(FILE_SCREEN_LINK_ERROR_WINDOW_X, 10,
-                                  FILE_SCREEN_LINK_ERROR_WINDOW_WIDTH, 4,
-                                  WINDOW_FLAG_INSTANT);
+      linkWindow = Window_Create(FILE_SCREEN_LINK_ERROR_WINDOW_X, 10,
+                                 FILE_SCREEN_LINK_ERROR_WINDOW_WIDTH, 4,
+                                 WINDOW_FLAG_INSTANT);
 
-      Text_DrawMessage(MsgClearSendingData, (struct Window *)result, 0, 4);
+      Text_DrawMessage(MsgClearSendingData, linkWindow, 0, 4);
       wait(10);
       Serial_StartSend(gSaveBuffer, 4100);
       wait(10);
-      // Wait for the send to finish, at most 600000 frames (about 2.8
-      // hours); ten frames in a row without both consoles is an error.
       limit = 0;
       {
         s32 requiredLinkMask = 3;
 
         linkConnectionOk = 1;
         for (index = 0; index <= 599999; index++) {
-          limit = (limit + 1);
+          limit++;
           if ((requiredLinkMask & gLinkStatus) == requiredLinkMask) {
             limit = 0;
           }
@@ -744,25 +684,22 @@ menu_top:;
           wait(1);
         }
         if (linkConnectionOk == 0) {
-          WindowSprite_PrepareForRedraw((struct Window *)result);
-          Text_DrawMessage(MsgClearCommunicationError, (struct Window *)result,
-                           0, 4);
-          // Wait for A.
-          limit = KEY_A;
+          WindowSprite_PrepareForRedraw(linkWindow);
+          Text_DrawMessage(MsgClearCommunicationError, linkWindow, 0, 4);
           do {
             wait(1);
-          } while ((gKeysPressed & limit) == 0);
+          } while ((gKeysPressed & KEY_A) == 0);
         }
         wait(10);
         Serial_RemoveIrqHandlers();
         wait(10);
       }
 #if TBS_PATCH_4
-      Window_Close((struct Window *)result, 2);
+      Window_Close(linkWindow, 2);
       wait(1);
 #else
-      WindowSprite_PrepareForRedraw((struct Window *)result);
-      Window_Close((struct Window *)result, 2);
+      WindowSprite_PrepareForRedraw(linkWindow);
+      Window_Close(linkWindow, 2);
 #endif
       goto menu_top;
     }
@@ -787,34 +724,28 @@ menu_top:;
         encodedSize += 2;
         encodedSize = FileScreen_EncodePassword(data, encodedSize, password);
       }
-      result = 2;
       Window_LoadGraphics();
-      pageWindow = Window_Create(5, 4, 20, 12, result);
+      pageWindow = Window_Create(5, 4, 20, 12, WINDOW_FLAG_INSTANT);
       pageIndex = 0;
-      pageCount = ((encodedSize / PASSWORD_SYMBOLS_PER_PAGE) + 1);
-      windowHandle =
-          (s32)Window_Create(FILE_SCREEN_HELP_WINDOW_X, 0,
-                             FILE_SCREEN_HELP_WINDOW_WIDTH, 4, result);
+      pageCount = encodedSize / PASSWORD_SYMBOLS_PER_PAGE + 1;
+      headingWindow =
+          Window_Create(FILE_SCREEN_HELP_WINDOW_X, 0,
+                        FILE_SCREEN_HELP_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
       passwordHeadingMessage = MsgClearPasswordLabel;
-      headingWindow = (struct Window *)windowHandle;
       Text_DrawMessage(passwordHeadingMessage, headingWindow, 6, 4);
       index = 1;
       // The help line below: B alone for one page, with Left and Right for
       // more (the two messages before MsgClearPasswordLabel).
       if (pageCount == 1) {
-        windowHandle = (s32)Window_Create(5, 16, 20, 3, result);
-        helpWindow = (struct Window *)windowHandle;
+        helpWindow = Window_Create(5, 16, 20, 3, WINDOW_FLAG_INSTANT);
         Text_DrawMessageAsTiles(passwordHeadingMessage - 2, helpWindow,
                                 FILE_SCREEN_PAGE_LABEL_X, 0);
       } else {
-        windowHandle =
-            (s32)Window_Create(FILE_SCREEN_MESSAGE_WINDOW_X, 16,
-                               FILE_SCREEN_MESSAGE_WINDOW_WIDTH, 3, result);
-        helpWindow = (struct Window *)windowHandle;
+        helpWindow = Window_Create(FILE_SCREEN_MESSAGE_WINDOW_X, 16,
+                                   FILE_SCREEN_MESSAGE_WINDOW_WIDTH, 3,
+                                   WINDOW_FLAG_INSTANT);
         Text_DrawMessageAsTiles(passwordHeadingMessage - 1, helpWindow, 0, 0);
       }
-      // Copy the font's ten digit tiles to the 20 tiles from 768 in two
-      // colourings, for the page numbers.
       Graphics_ExpandVramTilesByColorTable(
           (u16 *)(BG_CHAR_BLOCK(0) + 768 * TILE_SIZE_4BPP));
       WindowSprite_PrepareForRedraw(pageWindow);
@@ -832,7 +763,7 @@ menu_top:;
           goto page_select;
         }
         if ((gKeysPressed & KEY_A) != 0) {
-          pageIndex = (pageIndex + 1);
+          pageIndex++;
           index = 1;
           if (pageIndex == pageCount) {
             Sound_Play(SE_MENU_CONFIRM);
@@ -844,32 +775,24 @@ menu_top:;
             goto menu_top;
           }
           Sound_Play(SE_MENU_CURSOR_MOVE);
-        } else {
+        } else if ((gKeysPressed & KEY_LEFT) != 0 && pageCount > 1) {
           // Left and Right turn the page, wrapping round.
-          if ((gKeysPressed & KEY_LEFT) != 0 && pageCount > 1) {
-            Sound_Play(SE_MENU_CURSOR_MOVE);
-            wrappedPage = pageIndex + pageCount;
-            wrappedPage--;
-          } else if ((gKeysPressed & KEY_RIGHT) != 0 && pageCount > 1) {
-            Sound_Play(SE_MENU_CURSOR_MOVE);
-            wrappedPage = pageIndex + pageCount;
-            wrappedPage++;
-          } else {
-            goto keys_done;
-          }
-          wrappedPage = (wrappedPage % pageCount);
+          Sound_Play(SE_MENU_CURSOR_MOVE);
+          pageIndex = (pageIndex + pageCount - 1) % pageCount;
           index = 1;
-          pageIndex = wrappedPage;
+        } else if ((gKeysPressed & KEY_RIGHT) != 0 && pageCount > 1) {
+          Sound_Play(SE_MENU_CURSOR_MOVE);
+          pageIndex = (pageIndex + pageCount + 1) % pageCount;
+          index = 1;
         }
-      keys_done:;
         if (index == 1) {
           WindowSprite_PrepareForRedraw(pageWindow);
           index = 0;
           limit = 2;
           do {
             Window_DrawDividerLine(pageWindow, 0, limit, 18, limit);
-            limit = (limit + 2);
-            index = (index + 1);
+            limit = limit + 2;
+            index++;
           } while (index != 4);
           // The page numbers beside the arrows, on WINDOW_PALETTE: tile 769 +
           // n is the digit n + 1, and 779 + n the same digit in the second
@@ -877,6 +800,8 @@ menu_top:;
           if (pageCount > 1) {
             index = 0;
             if (pageCount != 0) {
+              /* FAKEMATCH(temporary): result holds the 0 the entries take; as 0
+               * at the call, 36 of 920 instructions differ in tbs-en. */
               result = 0;
               do {
                 tileValue = index + WINDOW_TILE(769);
@@ -885,14 +810,14 @@ menu_top:;
                 }
                 Window_SetTilemapEntry(pageWindow, tileValue,
                                        index + 18 - pageCount, -1, result);
-                index = (index + 1);
+                index++;
               } while (index != pageCount);
             }
-            Window_SetTilemapEntry(pageWindow, PAGE_ARROW_LEFT,
-                                   (17 - (s32)pageCount), -1, 0);
+            Window_SetTilemapEntry(pageWindow, PAGE_ARROW_LEFT, 17 - pageCount,
+                                   -1, 0);
             Window_SetTilemapEntry(pageWindow, PAGE_ARROW_RIGHT, 18, -1, 0);
             Window_MarkTilemapRow((struct WindowWork *)gWindowWork[0],
-                                  ((struct Window *)pageWindow)->y);
+                                  pageWindow->y);
           }
           // Each page holds 50 symbols in five rows, split into two groups.
           // Rows are 16 pixels apart; the second five of a row sit 10 pixels
@@ -911,21 +836,19 @@ menu_top:;
               FileScreen_NameEntryCharacter(
                   password[index] & PASSWORD_SYMBOL_MASK, glyph);
             } while (0);
-            passwordColumn = (index % 10);
+            passwordColumn = index % 10;
             if (passwordColumn > 4) {
               s32 row;
 
-              glyphColumn = (pageGlyphIndex % 10);
-              row = (pageGlyphIndex / 10);
+              glyphColumn = pageGlyphIndex % 10;
+              row = pageGlyphIndex / 10;
               Text_DrawString(glyph, pageWindow, glyphColumn * 12 + 18,
                               (row << 4) + 2);
             } else {
               s32 row;
 
-              glyphColumn = (pageGlyphIndex % 10);
-              /* FAKEMATCH(wrapper): the division written as its library call;
-               * as pageGlyphIndex / 10, 45 of 921 instructions differ in
-               * tbs-en. */
+              glyphColumn = pageGlyphIndex % 10;
+              // The same division, by the divide routine's own name.
               row = __divsi3(pageGlyphIndex, 10);
               Text_DrawString(glyph, pageWindow, glyphColumn * 12 + 8,
                               (row << 4) + 2);
@@ -1053,24 +976,6 @@ struct PasswordMember {
 /// PASSWORD_LEVEL_GOLD takes 173 bytes, _SILVER 39 or _BRONZE 9. Any other
 /// mode clears 11. It clamps each party member's base stats and level in
 /// place first, and returns the byte count.
-///
-/// Every level of password holds:
-/// - the four levels, 7 bits each from the lowest bit, in bytes 0 to 2 and
-///   the high half of 3
-/// - the Djinn held, 7 bits an element, in the low half of 3 and bytes 4 to 6
-/// - the story flags of gFileScreen_PasswordFlags, in byte 7
-///
-/// Silver and Bronze keep in byte 8 which Psynergy items the party carries.
-///
-/// Gold and Silver add the base stats, 60 bits a party member, high bits
-/// first, from byte 8 (Gold) or 9 (Silver).
-///
-/// Gold alone adds:
-/// - the 60 inventory slots' items, 9 bits each from byte 39, with a spare
-///   bit after every seventh
-/// - the 5-bit quantity fields of the 23 gFileScreen_PasswordStackItems for
-///   each party member, from the low half of byte 107
-/// - the coins, in bytes 165 to 167
 static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   // The private view remains pending member reconciliation; its fields below
   // follow Unit's actual base stats.
@@ -1111,7 +1016,6 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     packedStats[i] = 0;
   }
 
-  // Preserve the selected story flags and four heroes' transfer data.
   for (i = 0; i != 6; i++) {
     if (GameFlag_Get(((const u16 *)gFileScreen_PasswordFlags)[i])) {
       flagBits |= 1 << i;
@@ -1284,12 +1188,6 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
 
 /// Encodes size bytes of data as password symbols in out and returns how
 /// many there are.
-///
-/// - It XORs every byte but the last with the last (in place).
-/// - It cuts the bits into six-bit symbols, high bits first.
-/// - It adds a check symbol after every nine (their sum, mod 64; a shorter
-///   last group gets none).
-/// - It then adds each symbol's position, mod 64.
 static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out) {
   s32 xorKey;
   s32 symbolCount;
@@ -1334,7 +1232,6 @@ static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out) {
       groupSymbols = 0;
     }
   } while (inputIndex != size);
-  // Add each symbol's position, wrapping within the 64-character alphabet.
   for (i = 0; i != symbolCount; i++)
     out[i] = (out[i] + i) & PASSWORD_SYMBOL_MASK;
   return symbolCount;
@@ -1342,10 +1239,6 @@ static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out) {
 
 /// Runs the original shift/subtract checksum, initially 0xffff, and returns
 /// its complemented low 16 bits.
-///
-/// 0xFFFFEFDF is -0x1021, CRC-16-CCITT's polynomial, subtracted where that CRC
-/// XORs it. Bits above 15 never reach the result, since carries and borrows
-/// only move up.
 static u16 FileScreen_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
   u32 crc;
   u32 byteIndex;

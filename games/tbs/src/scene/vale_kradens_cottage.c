@@ -94,23 +94,14 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
-#include "event.h"
 #include "event_inline.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
-#include "fixed_math.h"
-#include "palette_buffers.h"
 #include "flags.h"
-#include "sounds.h"
 #include "sound_driver_symbols.h"
 #include "shared/walk_into_leader.h"
 
@@ -171,9 +162,7 @@ const struct ActorPlacement *ValeKradensCottage_GetActorPlacements(void) {
   return gValeKradensCottage_ActorPlacements;
 }
 
-/// Selects the events for the current visit to Vale. They are the ones for
-/// after Kalay (FLAG_KALAY_REACHED), for the stormy night (FLAG_VALE_STORM), or
-/// else for the day the story begins.
+/// Selects the events for the current visit to Vale.
 const struct Trigger *ValeKradensCottage_GetTriggers(void) {
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     return gValeKradensCottage_TriggersAfterKalay;
@@ -185,32 +174,27 @@ const struct Trigger *ValeKradensCottage_GetTriggers(void) {
 }
 
 /// Finishes the party's nod together before the next line of dialogue.
-static __inline__ void ValeKradensCottage_NodTogether(void) {
+static inline void ValeKradensCottage_NodTogether(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
 }
 
 /// Turns all three party members toward the strangers.
-static __inline__ void ValeKradensCottage_FacePartySouth(void) {
+static inline void ValeKradensCottage_FacePartySouth(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
 }
 
 /// Starts a companion walking back to Isaac's current pixel position.
-static __inline__ void ValeKradensCottage_WalkTowardLeader(s32 companionId) {
+static inline void ValeKradensCottage_WalkTowardLeader(s32 companionId) {
   Actor_SetAnimation(companionId, ANIM_WALK);
   Scene_WalkTowardLeader(companionId);
 }
 
 /// In Vale by Kraden's cottage, the child at the fence asks whether Isaac hears
 /// the growls beyond it.
-///
-/// Once the party has left Vale, he means to climb it someday.
-///
-/// Reached by talking to the boy by the fence (ACTOR_BOY_BY_THE_FENCE) in the
-/// day's events.
 static void ValeKradensCottage_TalkToBoyByTheFence(void) {
   s32 message;
 
@@ -241,17 +225,6 @@ static void ValeKradensCottage_TalkToBoyByTheFence(void) {
 
 /// In Vale, talking to Kraden outside his cottage has him talk Isaac, Garet and
 /// Jenna into a secret look at Sol Sanctum.
-///
-/// He then goes inside to prepare.
-///
-/// Reached by talking to Kraden in the day's events, until
-/// FLAG_SANCTUM_VISIT_PLANNED is set. Ends by taking
-/// VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG into the cottage
-/// (SceneId_CottageRoomsB,
-/// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG).
-///
-/// The party comes back by VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH,
-/// where ValeKradensCottage_KradenSetsOff goes on.
 static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
   struct Actor *leader;
   s32 x, z;
@@ -435,9 +408,9 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     // "We'll be fine if they don't see us, right?"
     Event_OpenMessage(ACTOR_GARET, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-      Event_SetMessageId((sneakingMessage + 1));
+      Event_SetMessageId(sneakingMessage + 1);
     } else {
-      Event_SetMessageId((sneakingMessage + 2));
+      Event_SetMessageId(sneakingMessage + 2);
     }
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 6);
     // Jenna makes it their secret; a yes earns the warning not even to tell
@@ -523,13 +496,6 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
 
 /// In Vale, when the party comes back out of Kraden's cottage, Kraden comes out
 /// ready and everyone joins Isaac for Mt. Aleph.
-///
-/// "This is our best bet."
-///
-/// Called by ValeKradensCottage_Initialize on
-/// VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH unless the party keeps its
-/// position. Sets FLAG_SANCTUM_VISIT_PLANNED and FLAG_VALE_KRADENS_DOOR_OPEN,
-/// so the door stays open. Removes Kraden, Garet, Jenna, Saturos and Menardi.
 static void ValeKradensCottage_KradenSetsOff(void) {
   struct Actor *actor;
 
@@ -599,9 +565,6 @@ static void ValeKradensCottage_KradenSetsOff(void) {
 
 /// In Vale, walking into Kraden's cottage opens the door, unless Kraden left it
 /// open.
-///
-/// Reached by walking north into cell behavior 3, by day and after Kalay. Takes
-/// VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH into the cottage.
 static void ValeKradensCottage_EnterCottage(void) {
   if (GameFlag_Get(FLAG_VALE_KRADENS_DOOR_OPEN) == 0) {
     Sound_Play(SE_DOOR_OPEN);
@@ -613,13 +576,6 @@ static void ValeKradensCottage_EnterCottage(void) {
 
 /// In Vale on the way to Kraden's cottage, Isaac, Garet and Jenna walk past two
 /// strangers and overhear them.
-///
-/// The strangers are Saturos and Menardi. The three confront them and are
-/// warned off.
-///
-/// Reached by stepping on cell behavior 7 in the day's events. Runs once,
-/// setting FLAG_MET_SATUROS_AND_MENARDI. Saturos and Menardi are left turning
-/// to watch the leader.
 static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   struct Actor *actor;
   s32 x, z;
@@ -852,12 +808,6 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
 }
 
 /// In Vale, walking up to Kraden's cottage finds Kraden pacing.
-///
-/// He wonders aloud who the strangers were, and what they know of Sol Sanctum
-/// and the Elemental Stars.
-///
-/// Reached by stepping on cell behavior 5 in the day's events. Runs once,
-/// setting FLAG_KRADEN_WONDERED_ABOUT_STRANGERS.
 static void ValeKradensCottage_OverhearKraden(void) {
   struct Actor *leader;
 
@@ -934,21 +884,6 @@ static void ValeKradensCottage_OverhearKraden(void) {
 
 /// Arriving in Kraden's part of Vale places the actors for the storm or for the
 /// day, and plays the arrival from the cottage.
-///
-/// This is the scene's initialize entry.
-///
-/// On the stormy night (FLAG_VALE_STORM) it starts the lightning and removes
-/// the day's people. It lays the survivor by the fence (unless
-/// FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) and blocks the cells the rockslide
-/// covers.
-///
-/// By day it removes the rocks and Garet. It runs
-/// ValeKradensCottage_KradenSetsOff from
-/// VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH, removes Kraden and the
-/// strangers once FLAG_SANCTUM_VISIT_PLANNED is set, and places the cottage
-/// visitor after Kalay.
-///
-/// Clears FLAG_VALE_KRADENS_DOOR_OPEN when the party keeps its position.
 s32 ValeKradensCottage_Initialize(void) {
   struct Actor *actor;
 
@@ -1027,15 +962,6 @@ s32 ValeKradensCottage_Initialize(void) {
 
 /// In Vale on the stormy night, the man hurt in the rockslide asks whether he
 /// will die.
-///
-/// On a yes he gives up. On a no he finds he is unhurt, warns them about the
-/// monsters and runs off.
-///
-/// Reached on the stormy night by talking to him (ACTOR_ROCKSLIDE_SURVIVOR), or
-/// by stepping on cell behavior 20 until he has given up. Sets
-/// FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP on yes, or
-/// FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED on no. Once he has escaped it does
-/// nothing.
 static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
   struct Actor *leader;
   s32 message;
@@ -1064,7 +990,7 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 94, 293);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
-      if (leader != 0) {
+      if (leader != NULL) {
         Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
       }
       Actor_WalkToAndWait(ACTOR_GARET, 110, 279);
@@ -1078,7 +1004,7 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
       if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
         Actor_RunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
         Event_Wait(20);
-        Event_SetMessageId((message + 2));
+        Event_SetMessageId(message + 2);
         // "I knew it... This is it for me. Save yourselves..."
         Event_ShowMessage(ACTOR_ROCKSLIDE_SURVIVOR, 0);
         GameFlag_Set(FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP);
@@ -1087,7 +1013,7 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
         // warns them of the monsters on the way to the plaza.
         Actor_RunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
         Event_Wait(20);
-        Event_SetMessageId((message + 3));
+        Event_SetMessageId(message + 3);
         // "This is awful. I'm left here for the monsters to..."
         Event_ShowMessageThenWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 40);
         Actor_FaceActor(ACTOR_ROCKSLIDE_SURVIVOR, ACTOR_PARTY_LEADER, 0);
@@ -1104,7 +1030,6 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
         // "But I'm serious about the monsters, so be careful on your..."
         Event_ShowMessageThenWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 10);
         Actor_SetAnimationAndWait(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_NOD);
-        // Follow his escape until the party can see that he is unharmed.
         FieldActor_WatchAndStartScript(ACTOR_PARTY_LEADER,
                                        ACTOR_WATCH_KEEP_MOTION |
                                            ACTOR_ROCKSLIDE_SURVIVOR,
@@ -1131,11 +1056,6 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
 }
 
 /// In Vale on the stormy night, a monster attacks by the broken fence.
-///
-/// Reached by stepping on cell behavior 10 until
-/// FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT is set. Sets it and
-/// FLAG_VALE_STORM_MONSTER_FOUGHT, and starts the first slot of the encounter
-/// zone of the scripted battles of Vale, Vault and the World Map.
 static void ValeKradensCottage_FightFirstMonster(void) {
   struct FieldWork *work;
 
@@ -1153,10 +1073,6 @@ static void ValeKradensCottage_FightFirstMonster(void) {
 }
 
 /// In Vale on the stormy night, a second monster attacks by the broken fence.
-///
-/// Reached by stepping on cell behavior 11 until
-/// FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT is set. Sets it and
-/// FLAG_VALE_STORM_MONSTER_FOUGHT, and starts its second slot.
 static void ValeKradensCottage_FightSecondMonster(void) {
   struct FieldWork *work;
 
@@ -1175,9 +1091,6 @@ static void ValeKradensCottage_FightSecondMonster(void) {
 
 /// A villager at Kraden's cottage asks Isaac about his memories of it. This is
 /// in Vale after the party has reached Kalay.
-///
-/// Reached by talking to the cottage visitor (ACTOR_COTTAGE_VISITOR) in the
-/// events after Kalay.
 static void ValeKradensCottage_TalkToCottageVisitor(void) {
   Event_Start();
   Event_SetMessageId(MsgValeMemoriesOfThisCottage);

@@ -1,24 +1,5 @@
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_release.h"
 #include "dma.h"
 #include "ram_buffer.h"
-#include "event.h"
-#include "scene_tables.h"
-#include "actor.h"
-#include "sprite.h"
-#include "map_grid.h"
-#include "io_reg.h"
-#include "flags.h"
 
 // Mercury Lighthouse and its entrance: the lights that carry the leader over
 // the pool (mercury_lighthouse_pillar.h).
@@ -51,14 +32,14 @@ void MercuryLighthouse_RestoreLights(s32 region,
   if (st->levels != 0 && st->pillar != 0) {
     obj = FieldActor_Create(SPRITE_GOLDEN_RINGS, actor->x.fixed,
                             actor->y.fixed + px(24), z);
-    if (obj != 0) {
+    if (obj != NULL) {
       obj->groundHeight = actor->groundHeight;
       animation = obj->sprite;
       Actor_StartScript(obj, gMercuryLighthouse_PillarScript);
       obj->watchedActor = actor;
       obj->motionFlags = ACTOR_FLOATS;
-      obj->y.fixed += -px(1) / 2;
-      if (animation != 0) {
+      obj->y.fixed -= px(1) / 2;
+      if (animation != NULL) {
         Sprite_StartAnimation(animation, 6 - st->levels);
         animation->flags = 0;
         animation->image.priority = 1;
@@ -71,7 +52,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
   if (cell->behavior == region && st->stepEffect != 0) {
     obj = FieldActor_Create(SPRITE_GOLDEN_RINGS, actor->x.fixed, actor->y.fixed,
                             actor->z.fixed);
-    if (obj == 0)
+    if (obj == NULL)
       return;
     obj->groundHeight = actor->groundHeight;
     animation = obj->sprite;
@@ -80,7 +61,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
     obj->timer = 0;
     obj->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     obj->speedLimit = px(4);
-    if (animation != 0) {
+    if (animation != NULL) {
       Sprite_StartAnimation(animation, 6);
       animation->flags = 0;
     }

@@ -110,9 +110,7 @@
 #include "scene_ids.h"
 #include "module/import.h"
 #include "module/scene/bilibin.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
-#include "module/field/field.h"
 #include "module/system/system.h"
 #include "battle.h"
 #include "debug.h"
@@ -120,22 +118,13 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "bilibin.h"
-#include "event.h"
 #include "event_inline.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "actor_script.h"
-#include "actor.h"
-#include "sounds.h"
-#include "item_ids.h"
-#include "fixed_math.h"
 #include "pushed_actor.h"
 
 static void Bilibin_RestoreVillageActors(void);
@@ -327,8 +316,6 @@ static void Bilibin_ReadWarehouseSign(void) {
 }
 
 /// The Gang of Three's trees at the Bilibin Barricade look like people.
-/// Talking to one, standing or pushed down, or to the actor that answers
-/// for the fallen one, says so. `There is a tree that looks like a person.`
 static void Bilibin_InspectHumanShapedTree(void) {
   Event_Start();
   FieldMessage_Show(MsgBilibinThereTreeLooksLikePerson, 1);
@@ -337,10 +324,6 @@ static void Bilibin_InspectHumanShapedTree(void) {
 
 /// The tree at Bilibin's entrance almost looks like a man and, looked at again,
 /// like a living person.
-///
-/// The party talks to it before the curse is lifted. Map-section temp flag
-/// FLAG_BILIBIN_TREE_EXAMINED remembers the first look until the party leaves
-/// Bilibin's area.
 static void Bilibin_ExamineTreeMan(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinItsTreeButAlmostLooks);
@@ -353,9 +336,6 @@ static void Bilibin_ExamineTreeMan(void) {
 }
 
 /// A burly man asks about the tree at Bilibin's entrance.
-///
-/// He's grey-haired and there before the curse is lifted, and asks whether the
-/// party saw it. On yes, he says it was once a man who came under a curse.
 static void Bilibin_AskAboutEntranceTree(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinDidSeeTreeAtEntrance);
@@ -367,9 +347,6 @@ static void Bilibin_AskAboutEntranceTree(void) {
 }
 
 /// An old man asks whether the party has tried heading southeast.
-///
-/// He's in Bilibin before the curse is lifted, and either way he says the
-/// barricade blocks the road.
 static void Bilibin_AskAboutSoutheastRoute(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinHaveTriedHeadingSoutheastFrom);
@@ -381,9 +358,6 @@ static void Bilibin_AskAboutSoutheastRoute(void) {
 }
 
 /// The man who was the tree at the entrance talks about it.
-///
-/// He's in Bilibin once the curse is lifted, and asks whether the party can
-/// believe he was a tree.
 static void Bilibin_AskAboutBeingATree(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinWasTurnedIntoTreeFor);
@@ -395,9 +369,6 @@ static void Bilibin_AskAboutBeingATree(void) {
 }
 
 /// A small boy asks whether the party broke the curse.
-///
-/// He's in Bilibin once the curse is lifted, and asks whether the party are the
-/// three young warriors who broke it.
 static void Bilibin_AskAboutCurseBreakers(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinCurseWasBrokenThanksEfforts);
@@ -409,9 +380,6 @@ static void Bilibin_AskAboutCurseBreakers(void) {
 }
 
 /// A strongman asks whether the party has been to Imil.
-///
-/// He's in Bilibin once the curse is lifted, and asks whether the party has
-/// been there, up north, and seen its lighthouse.
 static void Bilibin_AskAboutImil(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinHaveEverBeenVillageImil);
@@ -424,13 +392,7 @@ static void Bilibin_AskAboutImil(void) {
 
 /// Walking into one of Bilibin's doors opens it. Everyone stops, the door opens
 /// and the leader walks through it.
-///
-/// The doors' step triggers, 3 to 9, are the numbers of the exits they take.
-/// BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP lead into Bilibin's
-/// buildings, and BILIBIN_TO_SANCTUM into the Bilibin Sanctum, whose door
-/// sounds and is stepped through differently.
 static void Bilibin_OpenDoorAndLeave(void) {
-
   u32 actorSlot;
   struct Actor *actor;
   s32 exitIndex;
@@ -444,7 +406,7 @@ static void Bilibin_OpenDoorAndLeave(void) {
   for (actorSlot = ACTOR_FIRST_PLACED; actorSlot < ACTOR_ID_COUNT;
        actorSlot++) {
     actor = Actor_Get(actorSlot);
-    if (actor != 0) {
+    if (actor != NULL) {
       actor->motionFlags = 0;
     }
   }
@@ -479,10 +441,6 @@ static void Bilibin_OpenDoorAndLeave(void) {
 
 /// Move on Jill's tree in the river at the Bilibin Barricade, until she is
 /// rescued, lets the leader pull her ashore.
-///
-/// Once Move has brought her to cell column 6, by the bank, the leader pulls
-/// her ashore in three tugs. She thanks the party for saving her from being
-/// washed downstream.
 static void Bilibin_PullJillFromRiver(void) {
   struct Actor *leader;
   struct Actor *jillTree;
@@ -545,11 +503,6 @@ static void Bilibin_PullJillFromRiver(void) {
 static void Bilibin_JumpOntoStatueOrCrates(void) { Field_TryJumpForward(); }
 
 /// Jill and her friends thank the leader with a Hard Nut.
-///
-/// It happens on stepping up to them on the bank at the Bilibin Barricade, once
-/// the curse is lifted and if she was pulled from the river. They recognize the
-/// leader, and she gives him the Hard Nut in thanks.
-/// "Remember me? I was that tree!"
 static void Bilibin_JillGivesHardNut(void) {
   struct Actor *leader;
   struct Actor *eastMember;
@@ -621,7 +574,6 @@ static void Bilibin_JillGivesHardNut(void) {
   Actor_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
   // "Please, take this. It is a small token of my appreciation."
   Event_ShowMessageThenWait(ACTOR_JILL, 0, 10);
-  // Show the named gift before adding it to the party's inventory.
   FieldMessage_Show(MsgBilibinJillGaveIsaacSpecialGift, 1);
   gFieldWork->message++;
   Item_ShowFound(ITEM_HARD_NUT, 3);
@@ -660,8 +612,7 @@ static void Bilibin_JillGivesHardNut(void) {
 }
 
 /// Sets up the scene being entered, Bilibin, the Bilibin Barricade or the
-/// Bilibin Treasury. It sets up its actors by story flags, its cell behaviors
-/// and its opening transition.
+/// Bilibin Treasury.
 s32 Bilibin_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gMainRoutineWork.next == (s32)&SceneId_Bilibin) {
@@ -676,13 +627,7 @@ s32 Bilibin_Initialize(void) {
 }
 
 /// Sets up Bilibin.
-///
-/// - The tree or the man, by FLAG_KOLIMA_CURSE_LIFTED.
-/// - The ivy and the statue, by the entrance used.
-/// - Area temp flag FLAG_BILIBIN_KEEPING_MCCOY_WAITING, for McCoy's garden
-///   guard.
 static void Bilibin_RestoreVillageActors(void) {
-
   s16 entrance;
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
@@ -695,7 +640,6 @@ static void Bilibin_RestoreVillageActors(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_TREE_MAN), 0);
     Actor_SetPosition(ACTOR_FORMER_TREE_MAN, 0, 0);
   }
-  // Apply arrival-specific changes after restoring the population.
   Actor_Get(ACTOR_IVY)->scaleY = 3 * Q16_ONE / 2;
   entrance = gMainRoutineWork.entrance;
   if (entrance == BILIBIN_FROM_BILIBIN_TREASURY_WEST) {
@@ -718,9 +662,6 @@ static void Bilibin_RestoreVillageActors(void) {
 
 /// Updates the cells around the statue in Bilibin after it moves. It runs after
 /// Move, a push, or entry.
-///
-/// It updates the cell behaviors of the statue's lane, opens its home cell (16,
-/// 13) once it has left it, and moves the leader clear if it has landed on him.
 static void Bilibin_UpdateVillageStatueCells(void) {
   s32 leaderRow;
   s32 leaderColumn;
@@ -764,10 +705,6 @@ static void Bilibin_UpdateVillageStatueCells(void) {
 }
 
 /// Sets up the Bilibin Barricade.
-///
-/// Before the curse is lifted, Jill and her friends are trees here, stacked or,
-/// once Saturos is beaten at Mercury Lighthouse, pushed down. Afterwards they
-/// are children again on the bank.
 static void Bilibin_RestoreRiverActors(void) {
   struct Actor *jillTree;
   s32 populationState;
@@ -816,7 +753,7 @@ static void Bilibin_RestoreRiverActors(void) {
       Actor_SetSpriteFlags(Actor_Get(ACTOR_FALLEN_TREE_STAND_IN), 0);
       Actor_SetPosition(ACTOR_MIDDLE_TREE, 142, 156);
       fallenTree->sprite->rotation = TRIG_TURN / 4;
-      fallenTree->y.fixed += -px(8);
+      fallenTree->y.fixed -= px(8);
       if (GameFlag_Get(FLAG_BILIBIN_JILL_RESCUED) != 0) {
         Actor_SetPosition(ACTOR_JILL_TREE, 132, 186);
       } else {
@@ -853,9 +790,7 @@ static void Bilibin_UpdateCratesCells(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, cratesColumn, cratesRow);
 }
 
-/// Sets up the Bilibin Treasury. It sets its statue's cells, and the leader
-/// arriving by BILIBIN_TREASURY_UPPER_FROM_LOWER or
-/// BILIBIN_TREASURY_FROM_BILIBIN_NORTH starts 16 pixels above the floor.
+/// Sets up the Bilibin Treasury.
 static void Bilibin_SetUpTreasury(void) {
   struct Actor *leader;
 
@@ -930,9 +865,7 @@ static void Bilibin_PushStatueOrCrates(void) {
   }
 }
 
-/// Runs every frame at the Bilibin Barricade. While whoever the player controls
-/// wades in the river, west of x 142 and under 8 pixels up, a ripple spreads
-/// from their feet every 30 frames.
+/// Runs every frame at the Bilibin Barricade.
 static void Bilibin_UpdateWadingRipples(void) {
   struct Actor *actor;
 

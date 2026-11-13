@@ -1,7 +1,3 @@
-#include "module/field/field.h"
-#include "types.h"
-#include "actor.h"
-#include "main_routine_work.h"
 
 // Imil and Fuchin Falls, and Vale's cave.
 

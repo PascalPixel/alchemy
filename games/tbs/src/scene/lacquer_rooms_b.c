@@ -36,24 +36,17 @@
 #include "main_routine_work.h"
 #include "module/scene/lacquer_rooms_b.h"
 #include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "types.h"
 #include "event.h"
-#include "scene_tables.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "field_effect.h"
 #include "text/msg_ids.h"
-#include "actor.h"
 #include "flags.h"
 
 /// The actors of the houses, shops and inn, numbered by the rows of
@@ -105,7 +98,6 @@ enum { ANIM_HSU_IN_BED = 6 };
 #include "shared/field_effect_spawn.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
 
 const struct SceneEntrance *LacquerRoomsB_GetEntrances(void) {
   return gLacquerRoomsB_Entrances;
@@ -115,10 +107,7 @@ const struct SceneExitRegion *LacquerRoomsB_GetRegions(void) { return NULL; }
 
 const u32 *LacquerRoomsB_GetExits(void) { return gLacquerRoomsB_Exits; }
 
-/// The room behind the school places only Master Feh, Feizhi and Hsu. Every
-/// other room shares one table, whose CONDITION_IN_VIEW Scene_AssignViewFlags
-/// replaces with whether each actor stands inside the view bounds of the
-/// room entered.
+/// The room behind the school places only Master Feh, Feizhi and Hsu.
 const struct ActorPlacement *LacquerRoomsB_GetActorPlacements(void) {
   if (gMainRoutineWork.entrance ==
       LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
@@ -174,11 +163,8 @@ static void LacquerRoomsB_TalkToArmorMerchant(void) {
   Event_End();
 }
 
-/// Talking to Xian's item merchant across the counter opens the item shop. From
-/// elsewhere the merchant talks of armor, or, once Xian has heard of Hsu, of
-/// whether the party will cross the desert.
+/// Talking to Xian's item merchant across the counter opens the item shop.
 static void LacquerRoomsB_TalkToItemMerchant(void) {
-
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
 
   Event_Start();
@@ -202,7 +188,6 @@ static void LacquerRoomsB_TalkToItemMerchant(void) {
 /// Talking to Xian's innkeeper across the counter opens the inn. From elsewhere
 /// the innkeeper talks of towns and travelers.
 static void LacquerRoomsB_TalkToInnkeeper(void) {
-
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
 
   Event_Start();
@@ -220,9 +205,6 @@ static void LacquerRoomsB_TalkToInnkeeper(void) {
 }
 
 /// A young man in a house in Xian asks whether something is wrong on Silk Road.
-/// He is ACTOR_YOUNG_MAN_ON_SILK_ROAD, after the news of Hsu, and asks about
-/// Lamakan Desert too. To a yes he says no one can use Silk Road. To a no, it
-/// is good to hear the desert is fine.
 static void LacquerRoomsB_AskAboutSilkRoad(void) {
   Event_Start();
   Event_SetMessageId(MsgXianSomethingWrongOnSilkRoad);
@@ -234,8 +216,7 @@ static void LacquerRoomsB_AskAboutSilkRoad(void) {
 }
 
 /// An old man in a house in Xian, ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD, asks after
-/// the news of Hsu whether the monsters in Altin spat water. To a yes he says
-/// how strange. To a no, but why would Feizhi lie?
+/// the news of Hsu whether the monsters in Altin spat water.
 static void LacquerRoomsB_AskAboutAltinMonsters(void) {
   Event_Start();
   Event_SetMessageId(MsgXianDidMonstersInAltinSpit);
@@ -246,10 +227,7 @@ static void LacquerRoomsB_AskAboutAltinMonsters(void) {
   Event_End();
 }
 
-/// Feizhi thanks the party and Master Hama for freeing Hsu, in Xian. She is in
-/// the room behind Master Feh's school, when the party helped free Hsu
-/// (FLAG_HSU_RESCUED_WITHOUT_PARTY clear). She welcomes the party, looks at
-/// Hsu, then thanks the party and Master Hama. "Oh, warrior! Welcome!"
+/// Feizhi thanks the party and Master Hama for freeing Hsu, in Xian.
 static void LacquerRoomsB_FeizhiThanksParty(void) {
   Event_Start();
   Event_SetMessageId(MsgXianWarriorWelcome);
@@ -274,12 +252,7 @@ const struct Trigger *LacquerRoomsB_GetTriggers(void) {
 }
 
 /// Opens the room through a window transition and places hidden still actors of
-/// SPRITE_CHEST's sheet (Actor_CreateConfigured). There is one in the inn
-/// (LACQUER_ROOMS_B_INN_SOUTH and LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS) and
-/// two in the shops (LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP).
-///
-/// In the room behind the school, it clears FLAG_SHOW_AREA_NAME and lays Hsu in
-/// the bed.
+/// SPRITE_CHEST's sheet (Actor_CreateConfigured).
 s32 LacquerRoomsB_Initialize(void) {
   s16 entrance;
 

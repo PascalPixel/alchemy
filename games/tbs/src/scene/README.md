@@ -154,6 +154,27 @@ Screen ([file_screen.c](file_screen.c)) and the Battle Arena
 ([battle_arena.c](battle_arena.c)) are each in the scene table with an
 overlay of its own, and the game runs them exactly as it runs Vale.
 
+### Passwords
+
+A cleared game can carry its party over to The Lost Age, by cable or, for
+anyone without a second Game Boy Advance, as a password the player copies
+down by hand. The File Screen offers three sizes. Bronze, the shortest,
+holds the four levels, the Djinn, a byte of story flags and the Psynergy
+items carried; Silver adds every party member's base stats; Gold drops the
+Psynergy items for the whole inventory and the coins.
+
+Turning those bytes into something a person can copy is a little cipher.
+A CRC-16 of the data goes on its end, and every byte before the last is
+XORed with that last byte, so changing any one value scrambles the lot.
+The bits are then cut into six-bit symbols, one of 64 characters each, a
+check symbol (the sum of the nine before it) follows every nine, and last
+each symbol's position is added to it. A slip of the pen fails a check
+long before it could become someone else's party.
+
+The 64 characters leave out the look-alikes: there is no I, l or 1, and
+no O, o or 0, so a password written in a hurry reads back only one way.
+The Japanese edition uses hiragana instead.
+
 ## Code shared between overlays
 
 Only one overlay is ever loaded, so one cannot call another. Code that

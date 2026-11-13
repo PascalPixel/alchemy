@@ -1,15 +1,9 @@
-#include "heap_release.h"
 #include "system_call.h"
-#include "dma.h"
-#include "system.h"
-#include "task.h"
-#include "line_scroll.h"
-#include "io_reg.h"
 
 // The Lemurian ship: the ripple of the water, a wave in each axis of the
 // background's scrolling, changed line by line in the horizontal blank.
 
-static __inline__ void WaitDma(volatile u32 *channel) {
+static inline void WaitDma(volatile u32 *channel) {
   while (channel[2] & 0x80000000) {
   }
 }

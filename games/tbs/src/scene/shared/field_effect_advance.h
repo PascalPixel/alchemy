@@ -1,5 +1,3 @@
-#include "types.h"
-#include "field_effect.h"
 
 // Babi Lighthouse, Crossbone Isle, Tret's rooms, the Tunnel Ruins and Venus
 // Lighthouse, and the main image's Carry (whirlwind.c, with

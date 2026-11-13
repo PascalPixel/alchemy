@@ -2,20 +2,12 @@
 /// Vault's rooms, before and after the thieves are caught: whether the
 /// leader stands beside the Bone on the floor, which the scenes' trigger tables
 /// test through FLAG_VAULT_LEADER_BESIDE_BONE.
-#include "types.h"
-#include "actor.h"
-#include "event.h"
-#include "flags.h"
 
 /// The leader stands beside the Bone on the inn's floor, so the girl at the
 /// inn's talk row gives way and the A button searches the Bone.
 #define FLAG_VAULT_LEADER_BESIDE_BONE FLAG_SCENE_TEMP_50
 
-/// Keeps the girl at the inn from offering another Bone too soon. She doesn't
-/// offer one while the leader stands beside the one on the floor. Each scene
-/// adds this task in the girl at the inn's house after the thieves are jailed.
-/// FLAG_VAULT_LEADER_BESIDE_BONE records proximity for the actor talk
-/// table.
+/// Keeps the girl at the inn from offering another Bone too soon.
 static void Vault_UpdateBoneProximityFlag(void) {
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   s32 fixedX = leader->x.fixed;

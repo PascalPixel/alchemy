@@ -1,6 +1,6 @@
 #include "heap_slots.h"
-#ifndef LUNPA_FORTRESS_H
-#define LUNPA_FORTRESS_H
+#ifndef ALCHEMY_LUNPA_FORTRESS_H
+#define ALCHEMY_LUNPA_FORTRESS_H
 
 #include "edition.h"
 #include "types.h"

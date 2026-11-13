@@ -1,21 +1,3 @@
-#include "types.h"
-#include "event.h"
-#include "system_call.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
-#include "main_routine_work.h"
-#include "battle_unit.h"
-#include "actor.h"
-#include "sprite.h"
-#include "text/msg_ids.h"
 
 // The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
 // before Isaac runs, Garet, Ivan and Mia each look around the stages on their
@@ -52,7 +34,7 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     x += px(8);
     y <<= 20;
     y += px(8);
-    Import_ActorSetPosition(ACTOR_GARET, x, y);
+    Actor_SetPositionFixed(ACTOR_GARET, x, y);
   }
   {
     s32 x =
@@ -63,7 +45,7 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     x += px(8);
     y <<= 20;
     y += px(8);
-    Import_ActorSetPosition(ACTOR_IVAN, x, y);
+    Actor_SetPositionFixed(ACTOR_IVAN, x, y);
   }
   {
     s32 x =
@@ -74,14 +56,12 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     x += px(8);
     y <<= 20;
     y += px(8);
-    Import_ActorSetPosition(ACTOR_MIA, x, y);
+    Actor_SetPositionFixed(ACTOR_MIA, x, y);
   }
 }
 
-/// Makes the character the only party member, the one the player moves and
-/// the camera follows, with full HP and PP and no poison. The gauges are the
-/// battle's (1 << 14 full; a character with any HP or PP left shows at
-/// least 1).
+/// Makes the character the only party member, the one the player moves and the
+/// camera follows, with full HP and PP and no poison.
 void Colosso_ControlCharacterAlone(s32 id) {
   struct Unit *unit;
   s32 v;
@@ -166,7 +146,7 @@ static void Colosso_TakePlaceForMatch(void) {
 #endif
     struct Actor *actor = Actor_GetById(actorId);
 
-    if (actor != 0 && actor->spriteStorageKind == 1 &&
+    if (actor != NULL && actor->spriteStorageKind == 1 &&
         actor->sprite->entries[0]->animationId ==
             SPRITE_YOUNG_MAN_WITH_FAIR_HAIR) {
       s32 distanceX = (supporter->x.fixed - actor->x.fixed) / px(1);
@@ -219,10 +199,7 @@ static void Colosso_TakePlaceForMatch(void) {
 }
 
 /// A stage's guide, talking to a friend who looks around alone, asks whether
-/// they are done cheering. "Huh? Are you done cheering?" On "Yeah", "Then
-/// please wait here until the match begins.": the friend's cell becomes their
-/// place, and the next friend looks around, or, after Mia, the party leaves by
-/// the way to the race. On "Nope", "Then cheer as best you can!"
+/// they are done cheering.
 void Colosso_AskDoneCheering(s32 id) {
   struct FieldWork *work;
   s32 slot;
@@ -231,7 +208,6 @@ void Colosso_AskDoneCheering(s32 id) {
   s32 res;
 
   work = gFieldWork;
-  // Look up the speaker twice and discard both results (two original calls).
   Actor_GetById(id);
   Actor_GetById(id);
   slot = gMainRoutineWork.leaderActorId;
@@ -272,11 +248,7 @@ void Colosso_AskDoneCheering(s32 id) {
   Event_End();
 }
 
-/// The guide where the stages start. Once the friends have all gone to cheer
-/// (Isaac is the party), "Isaac, did you get a good look around?": on yes the
-/// guide steps aside, Isaac walks past and the party leaves for the Colosseum.
-/// Otherwise "Wait, shouldn't you decide where the best place to cheer for
-/// Isaac is?"
+/// The guide where the stages start.
 static void Colosso_AskReadyToRace(s32 actorId) {
   struct Actor *actor;
   s32 x;
@@ -360,8 +332,7 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
 }
 
 /// A stage's guide, after describing the stage, names it again: the copy of
-/// that line after it in the text. "This is stage N of the first finals
-/// match." (or the second or third)
+/// that line after it in the text.
 void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
   s32 sceneId;
   s32 message;
@@ -379,15 +350,8 @@ void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
   Event_ShowMessageAndWait(speaker, 0);
 }
 
-/// The guide at a stage, with the reply
-/// Colosso_GreetAtStage returned: offer a friend's
-/// cheering at the stage. With Isaac alone, "All right, do your best!"; with
-/// the stage taken, "Unfortunately, we have a full house."; otherwise "Would
-/// you like a friend to cheer for you here?" (taken as yes for
-/// COLOSSO_GUIDE_CHEER) and a choice of party member. The friend chosen is
-/// led to the stage and leaves the party, and their cell is kept. With
-/// COLOSSO_GUIDE_NOTHING, no or no choice: "If you know who you want to cheer
-/// you on, please let me know!"
+/// The guide at a stage, with the reply Colosso_GreetAtStage returned: offer a
+/// friend's cheering at the stage.
 void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
   struct Actor *actor;
   struct Actor *leader;
@@ -464,7 +428,7 @@ L_main:
   Actor_SetSpeed(friendId, 1);
   Actor_SetSpeed(guide, 1);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(friendId, leader->x.fixed, leader->z.fixed);
   }
   frontZ = guideZ + 16;
@@ -472,14 +436,14 @@ L_main:
   besideX = guideX + 16;
   Actor_WalkToAndWaitById(ACTOR_PARTY_LEADER, besideX, frontZ);
   Actor_TurnToFaceEachOther(friendId, ACTOR_PARTY_LEADER, 30);
-  Import_ActorSetAnimation(friendId, ANIM_NOD);
+  Actor_SetAnimation(friendId, ANIM_NOD);
   behindZ = frontZ - 32;
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_WalkToAndWait(guide, guideX, behindZ);
   Actor_WalkToById(guide, besideX, behindZ);
   Actor_WatchAndSetScript(ACTOR_PARTY_LEADER, friendId);
   Actor_WalkToAndWait(friendId, guideX, behindZ);
-  Import_ActorSetAnimation(guide, ANIM_STAND);
+  Actor_SetAnimation(guide, ANIM_STAND);
   Actor_FaceDirection(guide, FACING_WEST, 0);
   Actor_WalkToAndWait(friendId, guideX, guideZ - 48);
   Actor_WalkToAndWait(guide, guideX, behindZ);

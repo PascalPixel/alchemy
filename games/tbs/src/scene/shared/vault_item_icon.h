@@ -1,9 +1,6 @@
 /// @file
 /// Vault's rooms, before and after the thieves are caught: an item lying on
 /// the floor, drawn as its menu icon (the Bone, at (568, 16, 672)).
-#include "types.h"
-#include "actor.h"
-#include "event.h"
 
 /// Creates a blank actor at the 16.16 position and draws it as the item's
 /// icon: the sprite's own animation is stopped (flags and count 0,
@@ -19,7 +16,7 @@ void Vault_PlaceItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z) {
   s32 zero = 0;
 
   actor = Actor_Create(SPRITE_BLANK, fixed_x, fixed_y, fixed_z);
-  if (actor != 0) {
+  if (actor != NULL) {
     sprite = actor->sprite;
     sprite->flags = zero;
     sprite->count = zero;

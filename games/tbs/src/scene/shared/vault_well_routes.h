@@ -2,9 +2,6 @@
 /// Vault, on the first visit (vault.c) and once the party has reached Kalay
 /// (vault_revisit.c): the two children who walk round the well.
 
-#include "types.h"
-#include "actor_script.h"
-
 /// ACTOR_BOY_ROUND_THE_WELL's walk, round eight points for as long as the
 /// party stays on the map.
 s32 gVault_BoyRoundTheWellRoute[] = {

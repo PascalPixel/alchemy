@@ -1,26 +1,5 @@
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
 #include "affine.h"
-#include "vram_cache.h"
-#include "task.h"
-#include "battle_sprite_id.h"
-#include "tbs_edition.h"
-#include "heap_release.h"
-#include "event.h"
-#include "event_inline.h"
 #include "dma.h"
-#include "resource_ids.h"
-#include "io_reg.h"
-#include "io_write_queue.h"
 
 /// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
 /// the large lettering a race starts with. It reads "The 1st Match", "3", "2",
@@ -71,7 +50,7 @@ enum ColossoLetteringShape {
   COLOSSO_SHAPE_GO = 4      ///< Go!: one 64x32 piece, or two 32x16 in French
 };
 
-static __inline__ void Dma_Wait(volatile u32 *dma) {
+static inline void Dma_Wait(volatile u32 *dma) {
   while (dma[2] & DMA_ENABLE << 16)
     ;
 }

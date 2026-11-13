@@ -1,24 +1,3 @@
-#include "module/field/field.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
-#include "scene_tables.h"
-#include "io_reg.h"
-#include "io_write_queue.h"
-#include "sprite.h"
-#include "actor.h"
-#include "task.h"
-#include "vram_cache.h"
-#include "sounds.h"
 
 // The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
 // what a stage's guide uses to describe the stage. Isaac appears on the stage
@@ -50,7 +29,7 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   Actor_SetSpriteFlags(actor, 3);
   Actor_SelectAnimation(actor, ANIM_STILL);
   Actor_SelectAnimation(actor, ANIM_STAND);
-  Import_ActorSetPosition(id, px(x), px(z));
+  Actor_SetPositionFixed(id, px(x), px(z));
   // BUG: FACING_SOUTH is passed where an actor id belongs; no actor has
   // it, so the leader does not turn.
   Actor_FaceActorById(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -93,10 +72,10 @@ void Colosso_RestoreWarrior(s32 id) {
   actor = Actor_GetById(id);
   if (gMainRoutineWork.movementMode == 1) {
     gMainRoutineWork.movementMode = 0;
-    Import_ActorSetAnimation(id, ANIM_STAND);
+    Actor_SetAnimation(id, ANIM_STAND);
   } else {
     Actor_FaceDirection(id, FACING_SOUTH, 30);
-    Import_ActorSetAnimation(id, ANIM_NOD);
+    Actor_SetAnimation(id, ANIM_NOD);
     Event_Wait(30);
   }
   system->fill = 0;
@@ -134,7 +113,6 @@ void Actor_ResetMotionFields(s32 actorId) {
 
 /// Loads the pointer's picture into a free VRAM block, once.
 static void Colosso_EnsureMarkerSlot(void) {
-
   if (gColosso_MarkerSlot == -1) {
     gColosso_MarkerSlot = Resource_LoadFixedBlockBIntoFreeSlot();
   }
@@ -228,7 +206,6 @@ void Colosso_MovePointer(u32 x, u32 y, u32 duration) {
 
 /// Hides the pointer and frees its VRAM block.
 void Colosso_HidePointer(void) {
-
   Task_Remove(Colosso_UpdateMarker);
   VramCache_FreeEntry(gColosso_MarkerSlot);
   gColosso_MarkerSlot = -1;
@@ -239,10 +216,8 @@ void Colosso_HidePointer(void) {
 void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
-  if (actor != 0) {
+  if (actor != NULL) {
     s32 speed = px(2);
-    /* FAKEMATCH(temporary): a local holds the 0 that unpauses the actor; as
-     * paused = 0, 8 of 28 instructions differ in tbs-en. */
     s32 unpaused = 0;
 
     actor->speedLimit = speed;
@@ -259,10 +234,8 @@ void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
 void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
-  if (actor != 0) {
+  if (actor != NULL) {
     s32 speed = px(5) / 4;
-    /* FAKEMATCH(temporary): a local holds the 0 that unpauses the actor; as
-     * paused = 0, 8 of 33 instructions differ in tbs-en. */
     s32 unpaused = 0;
 
     actor->speedLimit = speed;

@@ -61,32 +61,22 @@
 /// from Xian paces between his pots (gCottageRoomsD_CookScript).
 
 #include "main_routine_work.h"
-#include "version.h"
 #include "scene_ids.h"
 #include "module/scene/altin.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "event.h"
 #include "system_call.h"
-#include "scene_tables.h"
 #include "field_effect.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "sounds.h"
-#include "actor_script.h"
 
 #if !TBS_PATCH_3
 #define ALTIN_COOK_LAST_POT_X 384
@@ -218,7 +208,7 @@ enum {
 #define WATER_SPRAY_LIFETIME 20
 #define WATER_SPRAY_START_SCALE (3 * Q16_ONE / 10)
 
-// UB: the ROM's facing test overflows a signed left shift for many headings.
+// UB: the facing test overflows a signed left shift for many headings.
 #ifdef UBFIX
 #define ALTIN_FACES_COUNTER(facing) FACING_IS_NORTH(facing)
 #else
@@ -299,9 +289,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// A bald strong man asks whether this is the party's first visit.
-///
-/// He's in Altin's village before the hydros statues are beaten. Either way, he
-/// says the flood has changed Altin.
 static void Altin_AskAboutFirstVisit(void) {
   Event_Start();
   Event_SetMessageId(MsgAltinYourFirstTimeVisitAltin);
@@ -336,12 +323,7 @@ static void Altin_AskAboutHydros(void) {
 }
 
 /// An old woman in Altin's village.
-///
-/// While the beasts live, she complains that their water cannot be drunk, and
-/// the first time the camera pans to the water beast spitting at the houses.
-/// Once the statues are gone, she asks for help rebuilding.
 static void Altin_TalkToThirstyOldWoman(void) {
-
   struct Actor *beast;
   struct Actor *leader;
 
@@ -387,7 +369,6 @@ static void Altin_TalkToThirstyOldWoman(void) {
 /// An old man asks whether the party really found ruins deep in the mine. He's
 /// in Altin's village once the hydros statues are beaten.
 static void Altin_AskAboutRuins(void) {
-
   Event_Start();
   Event_SetMessageId(MsgAltinTrueFoundAncientRuinsIn);
   // "Is it true you found ancient ruins in the deepest part of..."
@@ -398,11 +379,7 @@ static void Altin_AskAboutRuins(void) {
 }
 
 /// A woman asks whether the party is who the girl from Xian was looking for.
-///
-/// She's from the family that sheltered in the inn's Room One, and asks inside
-/// Altin once the hydros statues are beaten.
 static void CottageRoomsD_AskAboutXianGirl(void) {
-
   Event_Start();
   Event_SetMessageId(MsgAltinGirlFromXianWasAsking);
   // "A girl from Xian was asking questions about young warriors...."
@@ -413,11 +390,7 @@ static void CottageRoomsD_AskAboutXianGirl(void) {
 }
 
 /// An old man points the party to the bottom of the mine.
-///
-/// He's from the family sheltering in the inn's Room Two. Inside Altin, before
-/// the hydros statues are beaten, he asks whether the party seeks the way west.
 static void CottageRoomsD_AskAboutWayWest(void) {
-
   Event_Start();
   Event_SetMessageId(MsgAltinTryingFindYourWayWest);
   // "Are you trying to find your way west through the mountains?"
@@ -428,11 +401,7 @@ static void CottageRoomsD_AskAboutWayWest(void) {
 }
 
 /// A little girl thanks the leader with a kiss.
-///
-/// She's back home inside Altin before the hydros statues are beaten, and asks
-/// whether the party defeated the monsters. She gives the kiss either way.
 static void CottageRoomsD_AskAboutMonsters(void) {
-
   Event_Start();
   Event_SetMessageId(MsgAltinDefeatedThoseMonstersDidnt);
   // "You defeated those monsters, didn't you?"
@@ -445,7 +414,6 @@ static void CottageRoomsD_AskAboutMonsters(void) {
 /// A man at the inn asks whether the remaining beasts are deep below. He's
 /// staying at Altin's inn once the hydros statues are beaten.
 static void CottageRoomsD_AskAboutMineBeasts(void) {
-
   Event_Start();
   Event_SetMessageId(MsgAltinThereFewBeastsInMine);
   // "There are a few beasts in the mine still, but they're down..."
@@ -456,9 +424,6 @@ static void CottageRoomsD_AskAboutMineBeasts(void) {
 }
 
 /// Returns whether the party leader faces north, toward a shop counter.
-///
-/// Its facing must lie strictly between northwest and northeast, measured in 16
-/// bits.
 static s32 Altin_LeaderFacesCounter(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -470,10 +435,7 @@ static s32 Altin_LeaderFacesCounter(void) {
 
 /// Altin's weapon merchant waits in the inn until the water drains, and cannot
 /// sell.
-///
-/// Afterwards he opens his shop when spoken to across the counter.
 static void CottageRoomsD_TalkToWeaponMerchant(void) {
-
   if (GameFlag_Get(FLAG_ALTIN_WATER_DRAINED) == 0) {
     Event_Start();
     Event_SetMessageId(MsgAltinDoWantWeapons);
@@ -501,11 +463,7 @@ static void CottageRoomsD_TalkToWeaponMerchant(void) {
 }
 
 /// Altin's armor merchant speaks in either scene.
-///
-/// Outside, while his shop is under water, he laments. Once it has dried after
-/// the second drop, he sells across his counter in the houses.
 static void Altin_TalkToArmorMerchant(void) {
-
   if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_TWICE) == 0) {
     Event_Start();
     Event_SetMessageId(MsgAltinMyStoreSubmergedWantSell);
@@ -555,9 +513,6 @@ static void Altin_TalkToItemMerchant(void) {
 }
 
 /// Altin's innkeeper opens the inn when spoken to across the counter.
-///
-/// Spoken to otherwise, the innkeeper talks about the flood or, once it is
-/// over, the temple west of the mine.
 static void CottageRoomsD_TalkToInnkeeper(void) {
   struct Actor *leader;
 
@@ -586,10 +541,6 @@ static void CottageRoomsD_TalkToInnkeeper(void) {
 }
 
 /// The party leader walks north into one of the doors of Altin's village.
-///
-/// Everyone stops, the door opens and the leader walks in. The Sanctum's wide
-/// door is redrawn in two halves by hand. The others play their opening
-/// pictures.
 static void Altin_EnterDoor(void) {
   u32 actorId;
   struct FieldWork *work;
@@ -603,7 +554,7 @@ static void Altin_EnterDoor(void) {
   Event_Start();
   for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_ID; actorId++) {
     actor = Actor_Get(actorId);
-    if (actor != 0) {
+    if (actor != NULL) {
       actor->motionFlags = 0;
     }
   }
@@ -635,7 +586,6 @@ static void Altin_EnterDoor(void) {
     MapGrid_AnimateCells(gAltin_Doors[doorIndex].steps, column, row);
   }
 
-  // Walk the leader through.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
@@ -674,9 +624,6 @@ static void Altin_WalkThroughDoorway(void) {
 }
 
 /// Update routine of the hopping water beast in Altin's village.
-///
-/// Once a second it leaps up and falls back with a splash that shakes the
-/// screen briefly. It stands while on the ground.
 static void Altin_BeastHop(struct Actor *actor) {
   struct Actor *beast = actor;
   s16 *shakeFrames = (s16 *)&beast->userValue;
@@ -691,7 +638,7 @@ static void Altin_BeastHop(struct Actor *actor) {
   }
   if (beast->velocityY == 0) {
     Actor_SelectAnimation(beast, 1);
-    beast->y.fixed += -px(3) / 2;
+    beast->y.fixed -= px(3) / 2;
     if (beast->y.fixed < beast->groundHeight) {
       if (((struct FieldEffect *)actor)->countdown != 0) {
         Sound_Play(SE_SPLASH);
@@ -778,24 +725,10 @@ s32 Scene_Initialize(void) {
 }
 
 /// Sets up Altin's village (Altin).
-///
-/// - The layout area for the current water level, one of four 32 by 32 cell
-///   areas kept in the layout.
-/// - The villagers and merchants present at that level.
-/// - The water beast with its spray, while it remains.
-/// - The pushed pillar.
-///
-/// Then it redraws the map around the leader.
 static void Altin_ApplyWaterLevel(void) {
   struct Actor *leader;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  // Select the water-level layout area and remove villagers whose areas are
-  // flooded.
-  // Altin at each level its water has dropped to is a whole 32-by-32 picture
-  // kept beside the flooded one. The picture for the level reached is copied
-  // over the town with its ground, and the townspeople that level has no
-  // place for are released.
   if (GameFlag_Get(FLAG_ALTIN_WATER_DRAINED) != 0) {
     MapGrid_CopyCellsTo(64, 32, 0, 32, 32, 32);
     MapGrid_CopyCellAttributes(64, 32, 32, 32, 0, 0);
@@ -819,8 +752,6 @@ static void Altin_ApplyWaterLevel(void) {
     Actor_ReleaseById(ACTOR_STRONGMAN_GUARDIAN_STATUES);
     Actor_ReleaseById(ACTOR_OLD_MAN_ROCK_FLUSHED_OUT);
   }
-  // Restore the remaining beast spitting water, with its sound
-  // (SE_AMBIENT_WATER) and its spray.
   if (GameFlag_Get(FLAG_ALTIN_WATER_BEAST_LEFT) != 0) {
     Actor_ReleaseById(ACTOR_WATER_BEAST);
   } else {
@@ -837,8 +768,6 @@ static void Altin_ApplyWaterLevel(void) {
     Actor_SetPosition(ACTOR_STONE_STATUE, 360, 168);
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_STONE_STATUE), 0);
-  // Hide the three crates, which stay solid, and draw them under the
-  // actors.
   Actor_SetSpriteColorById(ACTOR_FIRST_CRATE, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteColorById(ACTOR_SECOND_CRATE, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteColorById(ACTOR_THIRD_CRATE, SPRITE_COLOR_HIDDEN);
@@ -851,7 +780,6 @@ static void Altin_ApplyWaterLevel(void) {
   Actor_SetSpritePriority(ACTOR_FIRST_CRATE, 1);
   Actor_SetSpritePriority(ACTOR_SECOND_CRATE, 1);
   Actor_SetSpritePriority(ACTOR_THIRD_CRATE, 1);
-  // Redraw at the leader after the map and actor state are ready.
   wait(1);
   Event_Start();
   FieldCamera_MoveToFixed(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
@@ -861,10 +789,6 @@ static void Altin_ApplyWaterLevel(void) {
 }
 
 /// Sets up inside Altin's buildings (CottageRoomsD).
-///
-/// - The families still sheltering in the inn's rooms.
-/// - The weapon merchant waiting there until the water drains.
-/// - The shopkeepers, kept from wandering.
 static void CottageRoomsD_PlaceSheltering(void) {
   struct Actor *actor;
 
@@ -886,20 +810,16 @@ static void CottageRoomsD_PlaceSheltering(void) {
     actor->collisionFlags |= ACTOR_NEAR_TALK;
   }
   actor = Actor_Get(ACTOR_ARMOR_MERCHANT);
-  if (actor != 0) {
+  if (actor != NULL) {
     actor->collisionFlags |= ACTOR_NEAR_TALK;
   }
   actor = Actor_Get(ACTOR_ITEM_MERCHANT);
-  if (actor != 0) {
+  if (actor != NULL) {
     actor->collisionFlags |= ACTOR_NEAR_TALK;
   }
 }
 
 /// Gives a new spray particle its look.
-///
-/// It is SPRITE_DUST_PUFF standing still, drawn with its red and blue swapped
-/// so the dust is water, on sprite priority 1 and at 0.3 scale.
-/// Altin_SprayDrift turns some white as they fade.
 static void Altin_SprayInitialize(struct Actor *spray) {
   spray->motionFlags = 0;
   spray->sprite->image.priority = 1;
@@ -910,23 +830,19 @@ static void Altin_SprayInitialize(struct Actor *spray) {
 }
 
 /// Update routine of a spray particle.
-///
-/// It drifts and grows with a random wobble, then curls upward and flattens as
-/// its movement timer runs down. The separate lifetime releases it after 20
-/// updates.
 static void Altin_SprayDrift(struct Actor *spray) {
   spray->x.fixed +=
       WATER_SPRAY_LATERAL_STEP(spray->timer, (s16)((s32)(Random_Below(2)) - 1));
   if (spray->timer <= 3) {
-    spray->z.fixed += -(Random_Below((px(1) / 2))) - px(1);
+    spray->z.fixed -= Random_Below(px(1) / 2) + px(1);
     spray->scaleX += 3 * Q16_ONE / 20;
-    spray->scaleY += -Q16_ONE / 25;
+    spray->scaleY -= Q16_ONE / 25;
   } else {
     spray->z.fixed += px(2);
     spray->scaleX += 3 * Q16_ONE / 100;
     spray->scaleY += 3 * Q16_ONE / 100;
   }
-  if (((u32)Import_RandomNext() * spray->timer) >> 16 == 0)
+  if (Random_Below(spray->timer) == 0)
     Actor_SetSpriteColor(spray, SPRITE_COLOR_WHITE);
   if (spray->timer != 0)
     spray->timer--;
@@ -945,7 +861,7 @@ static void Altin_BeastSpawnSpray(void) {
   if ((gFrameCount & 3) == 0) {
     spray = ((struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(64), 0,
                                                px(400)));
-    if (spray != 0) {
+    if (spray != NULL) {
       spray->timer = WATER_SPRAY_LIFETIME;
       spray->userValue = 0;
       ((struct FieldEffect *)spray)->countdown = WATER_SPRAY_LIFETIME;
@@ -957,9 +873,6 @@ static void Altin_BeastSpawnSpray(void) {
 }
 
 /// The party scares off the water beast by stepping near it in Altin's village.
-///
-/// The camera pans to it, and it stops spitting, turns to the party, cries out
-/// and hops away into the flood.
 static void Altin_ScareOffBeast(void) {
   Event_Start();
   FieldCamera_SetSpeed(0.4);

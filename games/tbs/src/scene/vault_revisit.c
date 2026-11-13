@@ -48,31 +48,23 @@
 #include "vault.h"
 #include "module/scene/shared/vault_range.h"
 #include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
 #include "module/system/system.h"
 #include "actor.h"
-#include "types.h"
 #include "event.h"
-#include "scene_tables.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "iwram_call.h"
-#include "tbs_edition.h"
 #include "inventory.h"
 #include "text/msg_ids.h"
-#include "edition.h"
 #include "flags.h"
-#include "sounds.h"
 
 /// The townspeople, the dog and Sap, numbering
 /// gVaultRevisit_ActorPlacements' rows from ACTOR_FIRST_PLACED.
@@ -169,10 +161,7 @@ static void VaultRevisit_TalkOfLunpaThieves(void) {
   VaultRevisit_ShowStandingActorMessage(ACTOR_WOMAN_ON_LUNPAS_THIEVES);
 }
 
-/// The old man was just talking about the party with the mayor. They are so
-/// strong, he says, let those thieves attack. Sets
-/// FLAG_VAULT_REVISIT_PARTY_PRAISED and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES
-/// (0x868).
+/// The old man was just talking about the party with the mayor.
 static void VaultRevisit_PraisePartyStrength(void) {
   Event_Start();
   Actor_FaceActor(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 2);
@@ -193,13 +182,7 @@ static void VaultRevisit_HopeVolcanoStaysCalm(void) {
   VaultRevisit_ShowStandingActorMessage(ACTOR_OLD_WOMAN_ON_THE_VOLCANO);
 }
 
-/// The boy round the well stops circling. The first time
-/// (FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED) he says "Hey, it's that warrior
-/// guy!" and "Yeah, and Ivan, too." After that he says "I'm so glad you came
-/// back to Vault!"
-///
-/// Bit 1 of the boy's timer keeps Vault_UpdateWalkingVillager from moving it
-/// while it talks.
+/// The boy round the well stops circling.
 static void VaultRevisit_GreetWarriorGuy(void) {
   struct Actor *actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
   u16 facing = actor->facing;
@@ -250,9 +233,6 @@ static void VaultRevisit_WishEldersWereBrave(void) {
 
 /// The strongman on watch asks about the jail. "Did you guys check out the
 /// jail?"
-///
-/// - Yes: how did the thugs break out?
-/// - No: the thieves broke out and got away.
 static void VaultRevisit_AskAboutJailbreak(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultGuysCheckJail);
@@ -281,9 +261,7 @@ static void VaultRevisit_ReadMindAndRecognizeThiefCatchers(void) {
   Event_End();
 }
 
-/// Mind Read on the woman who talks of Lunpa's thieves. Since Dodonpa took
-/// over, Lunpa's outlaws are no better than thieves, and there must be a reason
-/// they are so quiet.
+/// Mind Read on the woman who talks of Lunpa's thieves.
 static void VaultRevisit_ReadMindOnDodonpa(void) {
   Event_SetMessageId(MsgVaultOnceDodonpaTook);
   Actor_Get(ACTOR_WOMAN_ON_LUNPAS_THIEVES)->paused = 1;
@@ -341,9 +319,7 @@ static void VaultRevisit_ReadMindOnScaredGrownUps(void) {
   Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer = 0;
 }
 
-/// Mind Read on the strongman on watch. Before he has asked about the jail,
-/// he asks now. Afterwards, the thieves must know the secret of the jail's
-/// lock.
+/// Mind Read on the strongman on watch.
 static void VaultRevisit_ReadMindOnJailKey(void) {
   s32 requestHeard;
 
@@ -396,10 +372,7 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
   jumpingActor->gravity = px(1);
 }
 
-/// Searching the bell rings it (SE_BELL). The first ring since the party came
-/// in by a gate makes Sap jump out of the tree east of the bell tower
-/// onto the cliff top above the cave mouth. It also sets
-/// FLAG_VAULT_SAP_CALLED_BY_BELL.
+/// Searching the bell rings it (SE_BELL).
 static void VaultRevisit_RingBell(void) {
   Event_Start();
   Sound_Play(SE_BELL);
@@ -429,8 +402,6 @@ static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitNumber) {
 }
 
 /// The door of the gem owner's house opens and the party walks in.
-/// It's VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHEAST, into the house of the man
-/// whose precious stone a cat ate.
 static void VaultRevisit_EnterGemOwnersHouse(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVaultRevisit_GemOwnersHouseDoorCells, 56, 19);
@@ -438,8 +409,6 @@ static void VaultRevisit_EnterGemOwnersHouse(void) {
 }
 
 /// The door of a child's home opens and the party walks in.
-/// It's VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTH, into the house of the child who
-/// doubts the thieves were from Lunpa.
 static void VaultRevisit_EnterChildsHouse(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVaultRevisit_ChildsHouseDoorCells, 50, 18);
@@ -454,12 +423,6 @@ static void VaultRevisit_EnterInn(void) {
 }
 
 /// The item shop's door opens and the party walks in.
-/// It's VAULT_REVISIT_TO_LOG_ROOMS_B_EAST, into the item shop, where the
-/// couple who talk of Colosso also stand.
-///
-/// The leader is drawn at sprite priority 3 as he walks in, as at the weapon
-/// and armor shop and the jail. The cell behavior of the doorway, a column of
-/// three cells at (23, 12), is replaced so he can pass.
 static void VaultRevisit_EnterItemShop(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
@@ -497,11 +460,8 @@ static void VaultRevisit_EnterMayorsHouse(void) {
 #include "shared/vault_map_cells.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
 
 /// The jail door opens and the party walks in.
-/// It's drawn behind the doorway as it goes in, to
-/// STONE_ROOMS_FROM_VAULT_REVISIT, where the lone prisoner sits.
 static void VaultRevisit_EnterJail(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
@@ -528,10 +488,7 @@ static inline void VaultRevisit_DogJumpAtPassage(void) {
   Event_Wait(30);
 }
 
-/// Using a Bone on the dog makes it show the hidden passage. It takes the
-/// Bone, runs to the passage at (216, 408) and jumps there three times, then
-/// steps back. That sets FLAG_VAULT_DOG_SHOWN_PASSAGE, which places it there,
-/// a step back, on later arrivals.
+/// Using a Bone on the dog makes it show the hidden passage.
 static void VaultRevisit_GiveBoneToDog(void) {
   PartyInventory_Discard(ITEM_BONE);
   Event_Start();
@@ -541,7 +498,6 @@ static void VaultRevisit_GiveBoneToDog(void) {
   Actor_WalkToAndWait(ACTOR_VAULT_DOG, 216, 408);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_VAULT_DOG, FACING_SOUTH, 20);
-  // Repeat the clue at the concealed passage, then step back.
   VaultRevisit_DogJumpAtPassage();
   VaultRevisit_DogJumpAtPassage();
   VaultRevisit_DogJumpAtPassage();
@@ -559,17 +515,13 @@ static void VaultRevisit_HidePassage(void) {
   MapGrid_CopyCellsTo(40, 42, 12, 22, 3, 3);
 }
 
-/// Reveal shows the hidden passage where the dog jumps. It shows its tiles,
-/// and the cell behavior of cell (13, 25), which lets the party step onto
-/// cell behavior 40 and down into Vault Cave.
+/// Reveal shows the hidden passage where the dog jumps.
 static void VaultRevisit_RevealPassage(void) {
   MapGrid_CopyCellAttributes(37, 43, 1, 1, 13, 25);
   MapGrid_CopyCellsTo(36, 42, 12, 22, 3, 3);
 }
 
-/// The dog barks. If the party carries a Bone and the dog has not yet shown
-/// the passage, the party can give it one, and the File Screen opens as the
-/// talk ends.
+/// The dog barks.
 static void VaultRevisit_TalkToDog(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultRuffRrruff2);
@@ -610,31 +562,9 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 }
 
 /// Sets up Vault as the party finds it after reaching Kalay.
-///
-/// On arrival it does these things:
-///
-/// - It restores the passage's cell behaviors (shared/vault_toggle.h).
-/// - It creates the still actor of SPRITE_CRATE on the well, which shows
-///   nothing.
-/// - It mends the inn's roof, which vault.c leaves holed.
-/// - It gives the two children round the well the update routine
-///   Vault_UpdateWalkingVillager.
-///
-/// The dog waits at the hidden passage once it has shown it.
-///
-/// Coming in by a gate (ENTRANCE_DEFAULT to VAULT_REVISIT_NORTH_UNUSED,
-/// forwarded from vault.c) before Sap has joined clears
-/// FLAG_VAULT_SAP_CALLED_BY_BELL, so Sap is hidden again. While it is called
-/// and has not joined, it stands on the cliff top.
-///
-/// Coming out of Vault Sanctum (VAULT_REVISIT_FROM_SANCTUM) clears
-/// FLAG_SHOW_AREA_NAME. Coming up from Vault Cave
-/// (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE) clears FLAG_ARRIVAL_STAIRS_UP, so
-/// the leader's arrival animation does not play.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  // Keep the bridge deck after a battle, and mend the inn's roof.
   if (GameFlag_Get(FLAG_VAULT_ON_BRIDGE))
     MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
   // A still actor on the well that shows nothing. XXX (no evidence): what it
@@ -643,14 +573,12 @@ s32 Scene_Initialize(void) {
   Actor_CreateConfigured(128, 0, 420, SPRITE_CRATE);
   MapGrid_CopyCellsTo(45, 41, 8, 45, 3, 3);
   wait(1);
-  // Resume the two walking villagers' proximity reactions.
   actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
   actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
   Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer = 1;
   actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
   actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
   Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer = 0;
-  // Restore the dog's clue position and Sap's on the cliff top.
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     Actor_SetPosition(ACTOR_VAULT_DOG, 216, 392);
   if (gMainRoutineWork.entrance <= VAULT_REVISIT_NORTH_UNUSED &&

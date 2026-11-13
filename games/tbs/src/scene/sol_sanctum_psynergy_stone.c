@@ -20,19 +20,11 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
-
-#include "scene_tables.h"
 
 #include "event.h"
 #include "flags.h"
-#include "sounds.h"
-#include "fixed_math.h"
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
@@ -57,9 +49,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Opens the map with the window transition and blocks Retreat.
-///
-/// Once Mt. Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED), the room rumbles
-/// (SE_RUMBLE) and shakes gently, as the rest of the sanctum does.
 s32 Scene_Initialize(void) {
   s32 shakeX = px(1);
   s32 shakeY = px(1);

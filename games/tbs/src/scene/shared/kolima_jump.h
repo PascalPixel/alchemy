@@ -1,12 +1,6 @@
 /// @file
 /// Kolima Forest (SceneId_KolimaForestEntrance and SceneId_KolimaForestCliff):
 /// the hop east onto the scene's third placed actor.
-#include "types.h"
-#include "system_call.h"
-#include "actor.h"
-#include "scene.h"
-#include "main_routine_work.h"
-#include "sounds.h"
 
 /// Hops the leader to the pixel of the 16.16 position request, unless something
 /// blocks the way: the leader crouches, jumps (3 pixels a frame, rising at 4)
@@ -36,12 +30,12 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     *flags = ret;
-    Import_ActorSetAnimation(ACTOR_FIRST_PLACED + 2, 7);
-    actor->y.fixed += -px(1);
-    actor->groundHeight += -px(1);
+    Actor_SetAnimation(ACTOR_FIRST_PLACED + 2, 7);
+    actor->y.fixed -= px(1);
+    actor->groundHeight -= px(1);
     wait(2);
-    actor->y.fixed += -px(1);
-    actor->groundHeight += -px(1);
+    actor->y.fixed -= px(1);
+    actor->groundHeight -= px(1);
     wait(10);
     actor->y.fixed += px(1);
     actor->groundHeight += px(1);
@@ -55,9 +49,7 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
   return 0;
 }
 
-/// Step trigger 11, walking east: hop 30 pixels east of the leader. The
-/// patched editions hop from the centre of the moving character's cell, 40
-/// pixels.
+/// Step trigger 11, walking east: hop 30 pixels east of the leader.
 static void KolimaForest_HopEast(void) {
   struct FieldPosition target;
 #if !TBS_PATCH_1

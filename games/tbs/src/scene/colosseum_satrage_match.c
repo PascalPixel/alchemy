@@ -70,14 +70,11 @@
 #include "pushed_actor.h"
 #include "module/system/main_routine.h"
 #include "module/field/event_commands.h"
-#include "module/field/field.h"
 #include "module/game/game.h"
 #include "module/window/window.h"
 #include "module/window/screens.h"
-#include "module/menu/menu.h"
 #include "module/sound/sound.h"
 #include "module/system/system.h"
-#include "module/scene/shared/colosso_item_icon.h"
 #include "battle.h"
 #include "input.h"
 #include "debug.h"
@@ -85,32 +82,19 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "field_psynergy_work.h"
-#include "heap_release.h"
-#include "battle_sprite_id.h"
 #include "event.h"
-#include "scene_tables.h"
-#include "io_reg.h"
-#include "task.h"
 #include "resource_ids.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
-#include "battle_unit.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
-#include "actor.h"
 #include "heap_slots.h"
-#include "heap.h"
-#include "scene.h"
 #include "shared/colosso_gauge.h"
 #include "flags.h"
-#include "sounds.h"
 #include "sound_driver_symbols.h"
 #include "macros.h"
 
@@ -140,7 +124,6 @@
   ((s32 (*)())ColosseumSatrageMatch_MovePusherAndLog)
 #endif
 
-// Forward declarations.
 static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId);
 static void Colosso_ShowOpeningLettering(s32 match);
 static void Colosso_ShowMatchResult(s32 result);
@@ -266,15 +249,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 static void ColosseumSatrageMatch_IgnoreMove(void) {}
 
 /// Walking into a stone pillar pushes it.
-///
-/// In Colosseum Final 2, walking into one at step trigger 21 pushes the
-/// obstacle immediately ahead of the selected actor.
 static void ColosseumSatrageMatch_PushPillar(void) { Colosso_PushActorAhead(); }
 
 /// Move on the stone pillar by The Wall, and each push, keeps where it stands.
-///
-/// Its cell is updated, and FLAG_WALL_PILLAR_MOVED keeps whether it stands at
-/// column 36.
 static void ColosseumSatrageMatch_MoveWallPillar(void) {
   struct Actor *obstacle;
   s32 column;
@@ -303,11 +280,7 @@ static void ColosseumSatrageMatch_PushWallPillar(void) {
 
 /// Move on a stone pillar in the Mini-Maze, and each push, keeps where the
 /// pillars stand.
-///
-/// The three pillars' columns are kept (FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN
-/// and the two after it) and their cells rebuilt.
 static void ColosseumSatrageMatch_MoveMiniMazePillar(void) {
-
   struct Actor *obstacle;
   s32 column;
 
@@ -338,9 +311,6 @@ static void ColosseumSatrageMatch_PrepareForce(void) {
 }
 
 /// Force on the target over the Board Walk knocks the obstacle down.
-///
-/// It spins down into place and the way past it opens
-/// (FLAG_OBSTACLE_KNOCKED_DOWN).
 static void ColosseumSatrageMatch_KnockDownObstacle(void) {
   struct Actor *obstacle;
   s32 fallFrames;
@@ -355,7 +325,6 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
   obstacle->acceleration = px(1) / 10;
   obstacle->speedLimit = px(6) / 5;
   Sound_Play(SE_TOPPLE);
-  // Spin through the fall, then settle the obstacle at its final height.
   FieldActor_SetMoveTarget(obstacle, 336, 10, 264);
   for (rotationStep = 0, fallFrames = 9; fallFrames >= 0; fallFrames--) {
     sprite->rotation -= rotationStep;
@@ -379,7 +348,6 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
   obstacle->z.fixed = px(264);
   obstacle->velocityY = 0;
   obstacle->velocityX = 0;
-  // Keep both the stage and its saved cell behavior strip in the new state.
   MapGrid_CopyCellAttributes(19, 16, 1, 1, 20, 16);
   MapGrid_CopyCellAttributes(20, 80, 1, 1, 21, 80);
 }
@@ -414,10 +382,6 @@ static void ColosseumSatrageMatch_GrowPlant(void) {
 }
 
 /// The selected actor jumps down off the ledge by an obstacle.
-///
-/// Walking south into the obstacle at step trigger 30 in Colosseum Final 2
-/// plays the hop the field plays at any ledge (FieldActor_JumpDownLedge) for
-/// the actor touching it.
 static void ColosseumSatrageMatch_JumpDownLedge(void) {
   FieldActor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0);
 }
@@ -431,7 +395,6 @@ static void ColosseumSatrageMatch_JumpWestFromLedge(void) {
 /// Moves a riding log and its pusher to aligned cell centers.
 static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
                                                    s32 offsetZ) {
-
   struct Actor *pusher;
   struct Actor *log;
   s32 destinationX;
@@ -506,7 +469,6 @@ static void ColosseumSatrageMatch_RideLog(void) {
   }
   if (offsetX != 0) {
     ColosseumSatrageMatch_MovePusherAndLog(logId, offsetX, 0);
-    // Replace both log footprints after the moving pair has stopped.
     MapGrid_CopyCellAttributes(120, 10, 5, 6, 48, 10);
     column = FIELD_CELL(Actor_Get(ACTOR_RIDING_LOG_NORTH)->x.fixed);
     MapGrid_CopyCellAttributes(52, 28, 1, 3, column, 10);
@@ -583,10 +545,6 @@ static void ColosseumSatrageMatch_UpdateRollingLogCollision(void) {
 }
 
 /// Walking west into the Board Walk's western log rolls it west.
-///
-/// Walking into the western log from the east (step trigger 24) or the west
-/// (25), or into the eastern one from the east (28) or the west (27), rolls it
-/// the way the leader walks.
 static void ColosseumSatrageMatch_RollWestLogWest(void) {
   ColosseumSatrageMatch_RollLogToCell(ACTOR_ROLLING_LOG_WEST, 29, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
@@ -633,9 +591,6 @@ static UNUSED void ColosseumSatrageMatch_UnusedRollCenterLogSouth(void) {
 }
 
 /// The shifting floor's task carries the selected actor on the lifts.
-///
-/// It alternates their routes every two seconds, until Halt stops the
-/// operator.
 static void ColosseumSatrageMatch_UpdateLifts(void) {
   s32 liftId;
   struct Actor *rider;
@@ -702,7 +657,6 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
     MapGrid_CopyCellAttributes(57, 11, 1, 1, 58, 11);
     MapGrid_CopyCellAttributes(58, 14, 7, 1, 58, 13);
   }
-  // Start the next alternating route when the two-second cycle wraps.
   if (gColosseumSatrageMatch_LiftTimer == 0) {
     gColosseumSatrageMatch_LiftPhase ^= 1;
     if (gColosseumSatrageMatch_LiftPhase != 0) {
@@ -794,14 +748,6 @@ static void ColosseumSatrageMatch_HaltLifts(void) {
 
 /// Reaching Colosseum Final 2's arena, the leader takes a prize and fights
 /// Satrage.
-///
-/// The prize is the Chain Mail if he is first, the Cotton Shirt if second. He
-/// and Satrage face off and fight, and the battle's group follows who took the
-/// mail.
-///
-/// The arena's step trigger row waits on FLAG_COLOSSEUM_ARENA_CLOSED being
-/// clear, which nothing in the game sets (colosseum_azart_match.c's
-/// ColosseumSatrageMatch_ReachArena).
 static void ColosseumSatrageMatch_ReachArena(void) {
   s32 opponentFinishedFirst;
   s32 refreshCount;
@@ -813,9 +759,8 @@ static void ColosseumSatrageMatch_ReachArena(void) {
   refreshCount = 9;
   do {
     Actor_WaitForScriptEndById(ACTOR_OPPONENT);
-    refreshCount = (refreshCount - 1);
+    refreshCount = refreshCount - 1;
   } while (refreshCount >= 0);
-  // Bring the warriors together before selecting the battle's result bias.
   Actor_SetSpeed(ACTOR_OPPONENT, 1);
   Actor_WalkTo(ACTOR_OPPONENT, 88, 256);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
@@ -850,10 +795,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Back from the battle, Isaac and Satrage stand in the arena as the result is
 /// shown.
-///
-/// The entrance is COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON or _LOST.
 static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
-
   Actor_ReleaseById(ACTOR_PRIZE_A);
   Actor_ReleaseById(ACTOR_PRIZE_B);
   Party_RestoreHpPp(1);
@@ -884,15 +826,6 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
 }
 
 /// Sets up Colosseum Final 2 for the visit its entrance stands for.
-///
-/// It restores obstacle progress, then goes by the arrival:
-///
-/// - the race (COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND),
-/// - the friends' turns to lend a hand
-///   (COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST),
-/// - the guide's tour (COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST),
-/// - the match won (COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON),
-/// - or the match lost (COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST).
 s32 ColosseumSatrageMatch_Initialize(void) {
   struct Actor *actor;
   s32 x;
@@ -903,8 +836,6 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   s32 row;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
-  // Restore the cell behavior templates before applying saved puzzle
-  // progress.
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   MapGrid_CopyCellAttributes(14, 11, 12, 4, 100, 11);
   MapGrid_CopyCellAttributes(48, 10, 5, 6, 120, 10);
@@ -1080,9 +1011,6 @@ s32 ColosseumSatrageMatch_Initialize(void) {
 
 /// The guide gives the party the tour of Colosseum Final 2
 /// (COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST).
-///
-/// He welcomes the party to the second finals match's stages and leaves them
-/// to their attendants. Then Garet, Ivan and Mia walk back into Isaac.
 static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   s32 attendantZ;
   s32 attendantX;
@@ -1124,7 +1052,6 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Actor_RunRepeatedMotion(attendantId, 2);
   // "...Isaac, that first match was terrific. I'll be right here,..."
   Event_ShowMessage(attendantId, 0);
-  // Gather the companions into Isaac before the attendant returns to his post.
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
@@ -1132,37 +1059,30 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Event_Wait(6);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Actor_WalkToAndWait(attendantId, (attendantX - 16), (attendantZ - 64));
+  Actor_WalkToAndWait(attendantId, attendantX - 16, attendantZ - 64);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
-  Actor_WalkToAndWait(attendantId, (attendantX - 16), (attendantZ - 16));
+  Actor_WalkToAndWait(attendantId, attendantX - 16, attendantZ - 16);
   Actor_WalkToAndWait(attendantId, attendantX, attendantZ);
   Actor_FaceDirection(attendantId, FACING_NORTH, 10);
   Event_End();
 }
 
 /// The Mini-Maze's attendant explains stage 1 of Colosseum Final 2.
-///
-/// The first time, Isaac appears and runs the maze. Then comes the objective,
-/// and a place for a friend to cheer.
-///
-/// With a friend alone on the stages
-/// (COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) he asks whether they are done
-/// cheering instead.
 static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
   s32 result;
 
@@ -1208,10 +1128,6 @@ static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
 }
 
 /// The shifting floor stage's attendant explains stage 2 of Colosseum Final 2.
-///
-/// The first time, Isaac appears and rides the lifts. Then the attendant says
-/// that the lifts' operator will cheer for Isaac, and offers a place for a
-/// friend to cheer.
 static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
   s32 result;
 
@@ -1255,9 +1171,6 @@ static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
 }
 
 /// The Log-Rolling Stage's attendant explains stage 3 of Colosseum Final 2.
-///
-/// The first time, Isaac appears and rides a log across. Then comes the
-/// objective, and a place for a friend to cheer.
 static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
   s32 result;
 
@@ -1310,9 +1223,6 @@ static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
 }
 
 /// The Wall's attendant explains stage 4 of Colosseum Final 2.
-///
-/// The first time, Isaac appears and climbs it. Then comes the objective, and
-/// a place for a friend to cheer.
 static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
   struct Actor *actor;
   s32 result;
@@ -1416,9 +1326,6 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
 }
 
 /// The Board Walk's attendant explains stage 5 of Colosseum Final 2.
-///
-/// The first time, Isaac appears and rolls a log into a path. Then comes the
-/// objective, and a place for a friend to cheer.
 static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
   s32 result;
 

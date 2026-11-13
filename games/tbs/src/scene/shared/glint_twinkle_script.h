@@ -2,9 +2,6 @@
 /// Mercury Lighthouse, its entrance and Venus Lighthouse: the glints that
 /// twinkle in rising water and spray.
 
-#include "types.h"
-#include "actor_script.h"
-
 /// A SPRITE_GLINT's life: it shrinks from full size to a quarter and back,
 /// four times over 24 frames each, then is released.
 s32 gGlint_TwinkleScript[] = {

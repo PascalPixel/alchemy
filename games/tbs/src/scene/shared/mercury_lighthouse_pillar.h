@@ -1,27 +1,3 @@
-#include "script_operands.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
-#include "mercury_lighthouse.h"
-#include "iwram_call.h"
-#include "event.h"
-#include "system_call.h"
-#include "field_effect.h"
-#include "ram_buffer.h"
-#include "map_grid.h"
-#include "scene.h"
-#include "heap.h"
-#include "input.h"
-#include "fixed_math.h"
-#include "sounds.h"
 
 // Mercury Lighthouse and its entrance, once the pool is woken: standing at the
 // pool's heart (CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART) gives the leader
@@ -111,7 +87,6 @@ static s32 MercuryLighthouse_FollowLeader(struct Actor *actor) {
   if (moveDistance > actor->speedLimit)
     moveDistance = actor->speedLimit;
 
-  // Snap within a quarter pixel; otherwise ease toward the leader.
   if (distance < px(1) / 4) {
     actor->x.fixed = targetX;
     actor->z.fixed = targetZ;
@@ -197,10 +172,10 @@ void MercuryLighthouse_ChargeLights(void) {
     return;
   Event_Start();
   pillar = state->pillar;
-  if (pillar == 0) {
+  if (pillar == NULL) {
     actor = FieldActor_Create(SPRITE_GOLDEN_RINGS, leader->x.fixed,
                               leader->y.fixed + px(24), leader->z.fixed);
-    if (actor != 0) {
+    if (actor != NULL) {
       struct Sprite *sprite = actor->sprite;
 
       actor->groundHeight = leader->groundHeight;
@@ -210,7 +185,7 @@ void MercuryLighthouse_ChargeLights(void) {
       /* FAKEMATCH(temporary): the height lowered as a plain word, outside its
        * union; as actor->y.fixed, 2 of 80 instructions differ in tbs-en. */
       *(s32 *)&actor->y -= px(1) / 2;
-      if (sprite != 0) {
+      if (sprite != NULL) {
         sprite->flags = 0;
         sprite->image.priority = 1;
       }
@@ -252,7 +227,7 @@ void MercuryLighthouse_LoseLights(void) {
   GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_AREA);
 
   target = state->pillar;
-  if (target != 0) {
+  if (target != NULL) {
     target->timer = 0;
     Actor_StartScript(target, gMercuryLighthouse_ScaleCounterScript);
     Actor_SelectAnimation(target, 7);

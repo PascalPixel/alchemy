@@ -97,7 +97,6 @@
 #include "module/field/field_sequence.h"
 #include "module/system/main_routine.h"
 #include "module/field/event_commands.h"
-#include "module/field/field.h"
 #include "module/window/window.h"
 #include "module/window/screens.h"
 #include "module/system/system.h"
@@ -107,31 +106,17 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "heap_release.h"
 #include "heap_slots.h"
-#include "edition.h"
 #include "vale.h"
-#include "types.h"
-#include "event.h"
 #include "event_inline.h"
-#include "scene_tables.h"
 #include "iwram_call.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "actor_script.h"
-#include "actor.h"
 #include "field_effect.h"
 #include "map_grid_scroll.h"
-#include "fixed_math.h"
-#include "macros.h"
 #include "flags.h"
-#include "sounds.h"
-#include "heap.h"
 #include "shared/walk_into_leader.h"
 
 // Where Garet lands after his jump once Dora has gone in, at the roof's end
@@ -410,8 +395,6 @@ static void Vale_TalkAboutTheMayorAndTremors(void) {
 
 /// A woman in Vale (ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN) asks whether Isaac is
 /// going to Kraden's cottage and warns him not to go beyond it.
-///
-/// After the party has left, she says Kraden has not come back.
 static void Vale_WarnAboutGoingBeyondKradensCottage(void) {
   s32 asked = FLAG_VALE_ASKED_IF_GOING_TO_KRADEN;
 
@@ -470,10 +453,6 @@ static void Vale_ArgueWithGaretsSister(void) {
 
 /// Talking to Dora in Vale before the party leaves has her speak of the hole in
 /// the roof.
-///
-/// Right after the roof is mended (FLAG_VALE_ROOF_JUST_MENDED) she frets about
-/// the hole clumsy Garet left. Otherwise, since it will not rain for a while,
-/// Isaac can fix it later.
 static void Vale_DoraFretsAboutTheRoof(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VALE_ROOF_JUST_MENDED) != 0) {
@@ -514,8 +493,7 @@ static void Vale_ReactToAnotherTremor(void) {
 }
 
 /// A burly grey-haired man asks about the lack of travellers since the
-/// eruption. He (ACTOR_MAN_MISSING_TRAVELERS) is in Vale back from Kalay, and
-/// the talk sets area flag FLAG_VALE_ASKED_ABOUT_TRAVELERS.
+/// eruption.
 static void Vale_AskAboutTheLackOfTravelers(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_MAN_MISSING_TRAVELERS, 2);
@@ -555,9 +533,6 @@ static void Vale_EnterSanctum(void) {
 
 /// On the path to Mt. Aleph in Vale (cell behavior 2), Jenna stops Isaac until
 /// Kraden has planned the visit (FLAG_SANCTUM_VISIT_PLANNED).
-///
-/// After that, VALE_TO_SOL_ENTRANCE leads up to Sol Entrance. Jenna says
-/// "Kraden is waiting for us".
 static void Vale_ApproachMtAleph(void) {
   if (GameFlag_Get(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
     Vale_HaveJennaStopTheAlephDetour();
@@ -607,10 +582,7 @@ static void Vale_EnterCottageRoomsA(void) {
 }
 
 /// At the door of Isaac's house in Vale (cell behavior 8), Dora will not open
-/// after the party has left and before Kalay. "My Isaac would keep his
-/// promise... Go away."
-///
-/// Otherwise VALE_TO_COTTAGE_ROOMS_B leads in.
+/// after the party has left and before Kalay.
 static void Vale_EnterIsaacsHouse(void) {
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0 &&
       GameFlag_Get(FLAG_KALAY_REACHED) == 0) {
@@ -624,7 +596,6 @@ static void Vale_EnterIsaacsHouse(void) {
       // "He promised not to return until he fulfills his mission. My..."
       Event_ShowMessage(ACTOR_DORA, 0);
     } else {
-
       gFieldWork->message += 2;
       Event_Wait(40);
       Event_ShowMessage(ACTOR_DORA, 0);
@@ -661,11 +632,6 @@ static void Vale_EnterCottageRoomsAWest(void) {
 /// (map/vale_prologue, the stormy night's too) carries, as
 /// ValePrologue_UnusedLeaveToCottageRoomsAWestByWestBankDoor in
 /// vale_prologue.c.
-///
-/// It would have opened the door of the house west of the river, walked the
-/// leader to the spot before it and taken
-/// VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR into the house of Jenna's
-/// grandparents, whose way out returns by that house's own door.
 static void Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_IsaacsDoorOpens, 35, 74);
@@ -737,7 +703,6 @@ static void Vale_WatchThePuppies(void) {
     savedOrigin = grid->origin;
     grid->origin = cameraPosition;
     frame = 0;
-    // Pan down to the puppies while the leader stays in place.
     do {
       cameraPosition[2] += px(2);
       Event_Wait(1);
@@ -754,7 +719,6 @@ static void Vale_WatchThePuppies(void) {
       frame++;
       MapGrid_CenterOnFollowedPoint();
     } while (frame != 40);
-    // Return camera ownership to the normal follow target.
     grid->origin = savedOrigin;
     Event_Wait(60);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 70, 741);
@@ -784,8 +748,6 @@ static void Vale_TurnBackFromThePuppies(void) {
 }
 
 /// Cell behavior 100 in Vale is at the foot of the ladder beside Isaac's house.
-/// Walking north into it climbs the leader up onto the roof, whose cells change
-/// so it can be walked (FLAG_VALE_ON_ROOF set while there).
 static void Vale_ClimbLadderOntoRoof(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
@@ -796,8 +758,6 @@ static void Vale_ClimbLadderOntoRoof(void) {
 }
 
 /// Cell behavior 101 in Vale is at the top of the ladder beside Isaac's house.
-/// Walking south into it climbs the leader back down, and the roof's cells are
-/// put back (FLAG_VALE_ON_ROOF cleared).
 static void Vale_ClimbDownFromRoof(void) {
   Event_Start();
   Vale_ClimbDownRoofLadder(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB_DOWN_FROM_TOP,
@@ -809,9 +769,6 @@ static void Vale_ClimbDownFromRoof(void) {
 
 /// A bearded man in a long robe in Vale (ACTOR_MAN_GUARDING_MT_ALEPH, cell
 /// behavior 50) jumps out in front of Isaac, then keeps watching him.
-///
-/// Sets FLAG_VALE_WARNED_AGAINST_MT_ALEPH. "You're not planning on sneaking up
-/// to Mt. Aleph...?"
 static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   struct Actor *guard;
   struct Actor *actor;
@@ -1513,10 +1470,6 @@ UNUSED static void Vale_UnusedRoofMended(void) {
 
 /// Vale's setup plays the roof mending (VALE_FROM_TITLE) or its end (entrance
 /// 17, once).
-///
-/// It also floats the Nut, places the pillar by its column, sets the watching
-/// man going, and removes the puppies once Saturos and Menardi have been met.
-/// After a battle it restores the roof's and the bridge's cells.
 s32 Vale_Initialize(void) {
   struct Actor *actor;
   s32 set;
@@ -1645,9 +1598,6 @@ s32 Vale_Initialize(void) {
 }
 
 /// Back from Kalay, Garet meets his sister in Vale.
-///
-/// Sets area flag FLAG_VALE_GARET_MET_SISTER. "Ah! It's been a while... You're
-/// back?" ("Sis...").
 static void Vale_GaretMeetsHisSister(void) {
   struct Actor *actor;
   s32 msg;
@@ -1669,7 +1619,7 @@ static void Vale_GaretMeetsHisSister(void) {
   Actor_FaceDirection(ACTOR_GARETS_SISTER_AFTER_KALAY, FACING_SOUTH_SOUTHEAST,
                       0);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 402, 608);
@@ -1739,9 +1689,6 @@ static void Vale_GaretMeetsHisSister(void) {
 
 /// Back from Kalay, Garet asks one of his family in Vale
 /// (ACTOR_GARETS_BROTHER_AFTER_KALAY) to protect it while he is gone.
-///
-/// Sets area flag FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY. "WHATEVER YOU DO,
-/// you must protect the family while I'm gone."
 static void Vale_GaretAsksToProtectFamily(void) {
   struct Actor *actor;
 
@@ -1750,7 +1697,7 @@ static void Vale_GaretAsksToProtectFamily(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 367, 745);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 346, 745);
@@ -1969,10 +1916,6 @@ static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode) {
 
 /// Arriving by VALE_FROM_TITLE, the game's opening in Vale, finds Isaac mending
 /// the roof of his house.
-///
-/// Garet trains his Psynergy, and Jenna comes by. The two speak of the storm
-/// three years ago before going to fetch Isaac. "Three years later... Isaac!
-/// Haven't you finished mending the roof yet?"
 static void Vale_MendingTheRoof(void) {
   u32 i;
   // Default: NULL until the first board is fetched.
@@ -1985,7 +1928,6 @@ static void Vale_MendingTheRoof(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   moveHand = Actor_Get(ACTOR_OPENING_MOVE_HAND);
 
-  // Prepare the damaged house and start Isaac's hammering behind the caption.
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
@@ -2024,7 +1966,6 @@ static void Vale_MendingTheRoof(void) {
   FieldMessage_ShowCentered(message, 0, 0);
   ActorSystem_ResumeProjectionAndHideLayers();
 
-  // Follow Jenna through the village until she notices the repair work.
   FieldCamera_MoveTo(339, 160, 1173, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -2161,7 +2102,6 @@ static void Vale_MendingTheRoof(void) {
   Vale_VanishMoveHand(moveHand);
   Scene_EndEventPsynergy();
 
-  // Finish the reunion conversation after the repair effects settle.
   Event_Wait(10);
   Actor_WalkToAndWait(ACTOR_JENNA, 424, 624);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_JENNA, 60);
@@ -2957,11 +2897,6 @@ static s32 Vale_DistanceInPixels(s32 *first, s32 *second) {
 /// He sees it within range pixels and in the sixteenth of a turn he faces or
 /// the one either side of it, or always when force is set.
 ///
-/// Seeing it stops him where he stands (paused, mode 1, with riseCounter
-/// marking why) until it is out of sight again. Paused without riseCounter, as
-/// Vale_SynchronizeAlephGuardPause leaves him while a menu is open, he just
-/// stands.
-///
 /// Returns 1 when he is stopped.
 static s32 Vale_TestFacing(struct Actor *actor, struct Actor *target, s32 range,
                            s32 force) {
@@ -3026,7 +2961,7 @@ static void Vale_TrailSparkles(struct Actor *source) {
   Vector_AddPolarOffset(randomDistance * 48, Random_Next(), spawnPosition);
   particle = FieldActor_Create(SPRITE_SPARKLE, spawnPosition[0],
                                spawnPosition[1], spawnPosition[2]);
-  if (particle != 0) {
+  if (particle != NULL) {
     particle->motionFlags = ACTOR_FALLS;
     particle->gravity = px(1) / 10;
     particle->wait = 12;
@@ -3057,7 +2992,7 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
     struct Actor *particle = FieldActor_Create(
         SPRITE_SPARKLE, emitter->x.fixed, emitter->y.fixed, emitter->z.fixed);
 
-    if (particle != 0) {
+    if (particle != NULL) {
       s32 verticalSpeed;
 
       Actor_SetSpriteFlags(particle, 0);
@@ -3106,10 +3041,7 @@ static void Vale_PushPillar(void) {
   Vale_MovePillarBelowCliff();
 }
 
-/// Records where the pillar now stands and blocks its cell. After Move or a
-/// push, it records the pillar's column in FLAG_VALE_PILLAR_IN_WEST_COLUMN,
-/// _IN_MIDDLE_COLUMN and _IN_EAST_COLUMN and blocks the cell the pillar now
-/// stands on.
+/// Records where the pillar now stands and blocks its cell.
 static void Vale_MovePillarBelowCliff(void) {
   struct Actor *actor;
   s32 column;
@@ -3177,7 +3109,7 @@ static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
     pillar = Actor_Get(ACTOR_PILLAR_AFTER_KALAY);
   else
     pillar = Actor_Get(ACTOR_PILLAR);
-  if (pillar != 0) {
+  if (pillar != NULL) {
     if (leader->y.fixed > px(200))
       pillar->priorityFlags =
           ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
@@ -3199,9 +3131,7 @@ static void Vale_FlashActorAndSpawnEffects(struct Actor *actor) {
     WorldMap_CreateAttachedEffects(actor);
 }
 
-/// Someone using Psynergy. They go through colour modes SPRITE_COLOR_NORMAL to
-/// SPRITE_COLOR_BRG (0 to 5), the sprite and its five swaps of colour channels,
-/// in turn, with sparks every 16 frames.
+/// Someone using Psynergy.
 static void Vale_CycleActorPaletteAndSpawnEffects(struct Actor *actor) {
   if ((gFrameCount & 1) != 0)
     Actor_SetColorMode(actor, (gFrameCount >> 1) % 6);

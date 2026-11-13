@@ -76,33 +76,22 @@
 #include "script_operands.h"
 #include "main_routine_work.h"
 #include "system_call.h"
-#include "scene_ids.h"
-#include "module/import.h"
 #include "module/scene/bilibin_cave.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
 #include "map_grid.h"
 #include "event.h"
-#include "scene_tables.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
-#include "actor.h"
 #include "flags.h"
-#include "sounds.h"
 #include "map_grid_scroll.h"
 #include "pushed_actor.h"
 
@@ -118,7 +107,6 @@
 /// At the Bilibin Cave Entrance, Growth has grown the sprout into a vine.
 #define FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN FLAG_AREA_TEMP_05
 
-// BilibinCave_Initialize calls one of these for the scene being entered.
 static void BilibinCave_RestoreEntrance(void);
 static void BilibinCave_RestoreRapierRoom(void);
 static void BilibinCave_RestoreIceRoom(void);
@@ -227,25 +215,17 @@ const struct Trigger *BilibinCave_GetTriggers(void) {
 
 /// Stepping on step trigger 10 at the Bilibin Cave Entrance, on either side of
 /// the way into Bilibin Cave, turns the way's exit off.
-///
-/// The way's cell (21, 14), the exit cell of
-/// BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH, takes the cell behavior
-/// of source cell (1, 0), which has none.
 static void BilibinCave_WalkOntoLedgeOverCaveMouth(void) {
   MapGrid_CopyCellAttributes(1, 0, 1, 1, 21, 14);
 }
 
 /// Stepping on step trigger 11 at the Bilibin Cave Entrance, a cell further
 /// out, turns the way's exit back on.
-///
-/// The way's cell (21, 14) takes back the exit, from source cell (0, 0).
 static void BilibinCave_WalkOffLedgeOverCaveMouth(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 14);
 }
 
 /// Reveal in Bilibin Cave (SceneId_BilibinCaveRapier) shows the hidden path.
-///
-/// The path is a strip of tiles and two rows of the cells under it.
 static void BilibinCave_RevealHiddenPath(void) {
   MapGrid_CopyCellsTo(111, 37, 97, 21, 1, 3);
   {
@@ -259,8 +239,6 @@ static void BilibinCave_RevealHiddenPath(void) {
 
 /// As Reveal wears off in Bilibin Cave (SceneId_BilibinCaveRapier), the path is
 /// hidden again.
-///
-/// The strip's tiles and one row of its cells are restored.
 static void BilibinCave_HideRevealedPath(void) {
   MapGrid_CopyCellsTo(95, 21, 97, 21, 1, 3);
   {
@@ -283,8 +261,6 @@ static void BilibinCave_DouseRapierRoomFire(void) {
 
 /// Douse on the fire in Bilibin Cave (SceneId_BilibinCaveIce), until it is out,
 /// puts it out.
-///
-/// The puddle beside it then freezes into a pillar the party can walk over.
 static void BilibinCave_DouseIceRoomFire(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_ICE_ROOM_FIRE, 0, 0);
@@ -301,9 +277,6 @@ static void BilibinCave_DouseIceRoomFire(void) {
 
 /// Frost on a puddle in Bilibin Cave (SceneId_BilibinCaveIce) that heat keeps
 /// from freezing melts straight back.
-///
-/// This clears the Psynergy's child effect and plays the ice melting back into
-/// a puddle.
 static inline void BilibinCave_MeltFrostBack(s32 actorId) {
   Event_Start();
   Actor_SetSpriteColorById(actorId, SPRITE_COLOR_NORMAL);
@@ -332,20 +305,11 @@ static void BilibinCave_FreezeThirdPuddle(void) {
 }
 
 /// A movable torch melts the ice pillar beside it.
-///
-/// This runs after a push or Move in Bilibin Cave (SceneId_BilibinCaveIce).
-/// While either movable torch stands on cell (35, 23)
-/// (FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR and
-/// FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR), the ice pillar beside it melts
-/// with a sound, and FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED says so. When both
-/// leave, it freezes again.
 static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
   struct Actor *firstActor;
   struct Actor *secondActor;
   s32 destinationCellX;
 
-  // Track each movable actor independently before changing the Frost
-  // target.
   firstActor = Actor_Get(ACTOR_THIRD_TORCH);
   secondActor = Actor_Get(ACTOR_FOURTH_TORCH);
   if (FIELD_CELL(firstActor->x.fixed) == 35 &&
@@ -390,11 +354,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
 
 /// Growth on the sprout at the Bilibin Cave Entrance, until it has grown, grows
 /// it into a vine.
-///
-/// Its cell's cell behavior changes, and
-/// FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN keeps it grown.
 static void BilibinCave_GrowPlant(void) {
-
   MapGrid_CopyCellAttributes(31, 0, 1, 1, 8, 13);
   GameFlag_Set(FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN);
 }
@@ -414,8 +374,6 @@ static void BilibinCave_StopFootprints(void) {
 }
 
 /// Sets up the scene being entered, with its puzzles already solved.
-///
-/// The scene is the Bilibin Cave Entrance or one of Bilibin Cave's two.
 s32 BilibinCave_Initialize(void) {
   s16 variant = gMainRoutineWork.next;
 
@@ -433,17 +391,13 @@ s32 BilibinCave_Initialize(void) {
 /// cell.
 static void BilibinCave_RestoreEntrance(void) {
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN) != 0) {
-
     MapGrid_CopyCellAttributes(31, 0, 1, 1, 8, 13);
     Actor_SetAnimation(ACTOR_SPROUT, 0);
   }
 }
 
 /// Sets up Bilibin Cave's SceneId_BilibinCaveRapier.
-///
-/// It places its two torches, and its fire, gone once Douse has put it out.
 static void BilibinCave_RestoreRapierRoom(void) {
-
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
@@ -464,16 +418,11 @@ static inline void BilibinCave_ClearActorSpriteFlags(s32 actorId) {
 }
 
 /// Sets up Bilibin Cave's SceneId_BilibinCaveIce.
-///
-/// It places its torches, puddles and pillars, with the steps of its puzzle
-/// already solved.
 static void BilibinCave_RestoreIceRoom(void) {
   s32 destinationCellX;
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  // Set up the decorative animations before restoring interactive
-  // actors.
   BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR);
   BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR + 1);
   BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR + 2);
@@ -513,8 +462,6 @@ static void BilibinCave_RestoreIceRoom(void) {
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 3);
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 4);
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 5);
-  // Restore the surface exposed by Douse, including its cell behavior and
-  // priority.
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED) != 0) {
     Actor_SetPosition(ACTOR_ICE_ROOM_FIRE, 0, 0);
     Actor_SetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PILLAR);
@@ -528,8 +475,6 @@ static void BilibinCave_RestoreIceRoom(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_ICE_ROOM_FIRE), 0);
     Actor_SetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
   }
-  // Rebuild the Frost target and return moved actors to their saved
-  // cells.
   Actor_SetAnimation(ACTOR_SECOND_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) != 0) {
     destinationCellX = 36;
@@ -573,7 +518,7 @@ static void BilibinCave_PushTorch(void) {
   nextCellZ =
       (leader->z.part.pixel + (s16)gPushedActor_DirectionSteps[heading]) >> 4;
   target = Actor_FindAtCell(nextCellX, nextCellZ);
-  if (target == 0)
+  if (target == NULL)
     return;
 
   nextCellX =
@@ -582,11 +527,9 @@ static void BilibinCave_PushTorch(void) {
   nextCellZ =
       (target->z.part.pixel + (s16)gPushedActor_DirectionSteps[heading]) >> 4;
   blocker = Actor_FindAtCell(nextCellX, nextCellZ);
-  if (blocker != 0)
+  if (blocker != NULL)
     return;
 
-  // Check the destination before moving both actors into their push
-  // states.
   target->layer = 2;
 
   Actor_StepFrom(&destination, target, gPushedActor_DirectionSteps[heading]);
@@ -608,7 +551,6 @@ static void BilibinCave_PushTorch(void) {
   FieldActor_SetMoveTargetFixed(leader, destination.x, destination.y,
                                 destination.z);
 
-  // Wait for the target's movement before snapping it to the destination.
   Actor_WaitForMove(target);
 
   target->x.fixed = destination.x;
@@ -616,8 +558,6 @@ static void BilibinCave_PushTorch(void) {
   target->velocityX = (s32)blocker;
   target->velocityZ = (s32)blocker;
 
-  // Resume the leader and refresh the mechanism affected by the moved
-  // actor.
   Actor_SelectAnimation(leader, ANIM_STAND);
   BilibinCave_UpdateThirdPuddleFromTorches();
 }

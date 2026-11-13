@@ -38,11 +38,9 @@
 #include "main_routine_work.h"
 #include "module/scene/goma_cave_stream.h"
 #include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "actor.h"
-#include "types.h"
 #include "event.h"
 #include "battle.h"
 #include "debug.h"
@@ -50,19 +48,12 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "scene_tables.h"
-#include "scene_ids.h"
-#include "fixed_math.h"
 #include "actor_script.h"
 #include "flags.h"
-#include "sounds.h"
 #include "item_ids.h"
 #include "ability_ids.h"
-#include "vector3.h"
 
 /// SceneId_GomaCaveStream's actors, numbering its actor placement
 /// rows from ACTOR_FIRST_PLACED.
@@ -103,8 +94,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// Move on the stump in Goma Cave (SceneId_GomaCaveStream), until it has leapt
 /// (FLAG_GOMA_CAVE_STREAM_STUMP_MOVED).
-///
-/// From column 24 it spins, leaps away and lies where it lands.
 static void GomaCaveStream_MoveStump(void) {
   if (Actor_Get(ACTOR_STUMP)->x.fixed / px(16) == 24) {
     GomaCaveStream_LeapStump(ACTOR_STUMP);
@@ -124,10 +113,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Sets up SceneId_GomaCaveStream as the party enters (SceneId_GomaCaveBridge
 /// needs nothing).
-///
-/// Arriving in the small cave off Vale's plaza
-/// (GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA) shows no area name.
-/// Otherwise the stump lies where the party moved it.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -160,10 +145,6 @@ static void GomaCaveStream_SpinStump(struct Actor *actor) {
 #include "shared/actor_wait_below_height.h"
 
 /// The stump leaps out of the way and sinks in the water.
-///
-/// It spins in place, leaps and lands with a shake and a ring of dust. Then
-/// it hops on into the water with a splash and sinks
-/// (STUMP_ANIMATION_SPLASH).
 static void GomaCaveStream_LeapStump(s32 stumpId) {
   struct Actor *stump;
   u32 i;

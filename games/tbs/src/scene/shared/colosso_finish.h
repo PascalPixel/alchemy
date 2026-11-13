@@ -3,10 +3,6 @@
 /// the end of the race at the arena, where each warrior walks up to a prize
 /// and holds it up. The first to arrive takes the better one
 /// (gColosso_OpponentFinishScript, gColosso_LeaderFinishScript).
-#include "types.h"
-#include "actor.h"
-#include "field.h"
-#include "colosso_gauge.h"
 
 // UB: calls a void function through an s32 function type, the call the bytes
 // show; UBFIX calls it as declared.
@@ -46,15 +42,15 @@ static void Colosso_SparkleAroundPrize(struct Actor *prize) {
   if (prize->velocityY >= -255 && prize->velocityY <= 255) {
     prize->motionFlags = 0;
   }
-  chance = Import_RandomNext();
+  chance = Random_Next();
   if (chance * 100 >> 16 <= 9) {
     struct Actor *sparkle;
     s32 distance;
     s32 angle;
 
     SET_VECTOR(position, prize->x.fixed, prize->y.fixed, prize->z.fixed);
-    distance = Import_RandomNext();
-    angle = Import_RandomNext();
+    distance = Random_Next();
+    angle = Random_Next();
     Vector_AddPolarOffset(distance << 4, angle, position);
     {
       s32 x = position[0];
@@ -63,7 +59,7 @@ static void Colosso_SparkleAroundPrize(struct Actor *prize) {
 
       sparkle = FieldActor_Create(SPRITE_SPARKLE, x, y, z);
     }
-    if (sparkle != 0) {
+    if (sparkle != NULL) {
       sparkle->motionFlags = 0;
       Actor_SetSpriteFlags(sparkle, 0);
       Actor_StartScript(sparkle, gColosso_PrizeSparkleScript);

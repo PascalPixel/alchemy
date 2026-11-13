@@ -1,5 +1,5 @@
-#ifndef IMIL_FUCHIN_FALLS_H
-#define IMIL_FUCHIN_FALLS_H
+#ifndef ALCHEMY_IMIL_FUCHIN_FALLS_H
+#define ALCHEMY_IMIL_FUCHIN_FALLS_H
 
 #include "types.h"
 #include "input.h"

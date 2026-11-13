@@ -1,8 +1,3 @@
-#include "battle_sprite_id.h"
-#include "types.h"
-#include "sprite.h"
-#include "field_effect.h"
-#include "vram_cache.h"
 #include "field_psynergy_work.h"
 
 // Vale and the World Map: the particles that rise around a glowing

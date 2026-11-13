@@ -29,12 +29,6 @@
 /// Searching the switch opens the passage to the hidden room. The passage can
 /// be walked through only while Reveal shows it (Lunpa_EnterHiddenPassage).
 ///
-/// The town's scene temp flags:
-///
-/// - FLAG_LUNPA_PUDDLE_FROZEN: Frost has frozen the puddle.
-/// - FLAG_LUNPA_SECRETS_HIDDEN: the secrets are hidden, Reveal not shining.
-/// - FLAG_LUNPA_HIDDEN_PASSAGE_OPEN: the switch has opened the passage.
-///
 /// At the gates, stepping uncloaked on the ground before the guards
 /// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_GUARDED_GROUND) brings them in front of
 /// the door. An uncloaked leader among them, or one still among them as Cloak
@@ -52,38 +46,16 @@
 /// Between Donpa's judgment and the reunion in West Lunpa Cave
 /// (FLAG_LUNPA_CAVE_REUNION_SEEN), Garet stops the leader from going back up
 /// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH).
-///
-/// The gates' scene temp flags:
-///
-/// - FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR: the guards stand before the
-///   door.
-/// - FLAG_LUNPA_FORTRESS_GATES_CLOAK_CAST: Cloak has been cast at the gates.
-/// - FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS: the leader is going through
-///   the fortress door.
-/// - FLAG_LUNPA_FORTRESS_GATES_GARET_WARNING: Garet's warning is under way.
-/// - FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY: the guards are marching
-///   the party down.
 
 #include "main_routine_work.h"
-#include "version.h"
-#include "scene_ids.h"
 #include "module/scene/lunpa.h"
 #include "module/scene/shared/actor_orbit.h"
 #include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "types.h"
 #include "field_effect.h"
-#include "event.h"
 #include "system_call.h"
-#include "scene_tables.h"
 #include "scene.h"
-#include "edition.h"
 #include "lunpa.h"
-#include "text/msg_ids.h"
-#include "actor.h"
 #include "macros.h"
-#include "heap.h"
 
 static void Lunpa_WatchForUncloakedParty(void);
 
@@ -213,7 +185,6 @@ static void Lunpa_RevealSecrets(void) {
   s32 cellX;
   s32 cellZ;
 
-  // Restore the hidden stone and pillar before exposing the switch or passage.
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   cellX = actor->x.fixed / CELL_SIZE;
   cellZ = actor->z.fixed / CELL_SIZE;
@@ -315,9 +286,6 @@ static void Lunpa_TalkToWestGuard(void) {
 
 /// Lunpa, before Donpa's judgment: the east guard on the road in wants
 /// Dodonpa's authorization.
-///
-/// Once the guards suspect Kalay, he asks instead whether the party came from
-/// there and whether they are here to save Hammet.
 static void Lunpa_TalkToEastGuard(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
@@ -342,11 +310,6 @@ static void Lunpa_TalkToEastGuard(void) {
 }
 
 /// Lunpa: Mind Read on the east guard.
-///
-/// - He fears Dodonpa's blame.
-/// - Once he suspects Kalay, he trusts the cave's gate.
-/// - After Donpa's judgment, he thinks the merchant who was desperate to do
-///   business in the village is still around somewhere, causing no trouble.
 static void Lunpa_ReadEastGuardsThoughts(void) {
   s32 thoughts;
 
@@ -428,8 +391,6 @@ static void Lunpa_AskAboutFortressCommotion(void) {
 
 /// Lunpa Fortress Gates: the left guard hears someone while the party is
 /// cloaked.
-///
-/// After Donpa's judgment, he nearly recognizes Hammet with the party.
 static void Lunpa_TalkToLeftGuard(void) {
   s32 recognitionMessageBase;
 
@@ -451,9 +412,6 @@ static void Lunpa_TalkToLeftGuard(void) {
 }
 
 /// Lunpa Fortress Gates: the right guard boasts.
-///
-/// He finds the place creepy while the party is cloaked, and after Donpa's
-/// judgment wonders how the warriors from Kalay got in.
 static void Lunpa_TalkToRightGuard(void) {
   if (gMainRoutineWork.cloaked != 0) {
     Event_SetMessageId(MsgLunpaRightGuardFeelsCreepy);
@@ -466,10 +424,6 @@ static void Lunpa_TalkToRightGuard(void) {
 }
 
 /// Lunpa Fortress Gates: Mind Read on the left guard.
-///
-/// After Donpa's judgment and before Hammet finds Bunza, he thinks the man
-/// with the party looks like that merchant. The first time, Mind Read is cut
-/// short as he turns to look.
 static void Lunpa_ReadLeftGuardsThoughts(void) {
   s32 recognizedHammet;
 
@@ -629,7 +583,6 @@ static void Lunpa_PressHiddenSwitch(void) {
   if (Event_GetFlag(FLAG_LUNPA_HIDDEN_PASSAGE_OPEN) != 0) {
     return;
   }
-  // Open the passage over five map pictures, then remember its final state.
   Actor_SetPosition(ACTOR_SWITCH_SPARKLE, 0, 0);
   Sound_Play(SE_HIDDEN_PASSAGE_OPEN);
   wait(1);
@@ -728,7 +681,6 @@ static void Lunpa_GuardsCatchParty(void) {
   Actor_WalkTo(ACTOR_LEFT_GUARD, leader->x.part.pixel - 1,
                leader->z.part.pixel);
   Actor_WaitForMoveById(ACTOR_LEFT_GUARD);
-  // Bring the party and both guards together at the first landing.
   Actor_WalkTo(ACTOR_PARTY_LEADER, 160, 216);
   Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 200);
   Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 200);
@@ -738,7 +690,6 @@ static void Lunpa_GuardsCatchParty(void) {
   Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_RIGHT_GUARD, ACTOR_PARTY_LEADER, 0);
   Event_Wait(12);
-  // Continue to the foot of the gate before enabling the watcher again.
   Actor_WalkTo(ACTOR_PARTY_LEADER, 160, 272);
   Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 256);
   Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 256);
@@ -931,11 +882,6 @@ static void Lunpa_LeaderSneaksOut(void) {
 }
 
 /// Sets Lunpa or the Lunpa Fortress Gates up.
-///
-/// In the town, that means Reveal's secrets hidden and the floating Nut.
-///
-/// At the gates, it means the thrown-out or sneaking-out event, the watchers,
-/// and the fortress's puzzle and guard flags cleared.
 s32 Scene_Initialize(void) {
   struct Actor *puddle;
 
@@ -951,7 +897,6 @@ s32 Scene_Initialize(void) {
     }
     GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
   }
-  // Restore the gate's arrival event and active detection tasks separately.
   if (gMainRoutineWork.next == (s32)&SceneId_LunpaFortressGates) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gMainRoutineWork.retreatEntrance = GATE_RETREAT_ENTRANCE;

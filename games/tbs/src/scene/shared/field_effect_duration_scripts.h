@@ -10,9 +10,6 @@
 /// An includer whose scripts are read-only defines
 /// FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER as const first.
 
-#include "types.h"
-#include "actor_script.h"
-
 #ifndef FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER
 #define FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER
 #endif

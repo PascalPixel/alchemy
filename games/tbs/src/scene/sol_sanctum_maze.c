@@ -29,19 +29,12 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 
 #include "shared/sol_sanctum_imports.h"
-#include "scene_tables.h"
-#include "actor.h"
 
 #include "event.h"
-#include "flags.h"
 #include "item_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {

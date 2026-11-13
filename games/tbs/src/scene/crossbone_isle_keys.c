@@ -45,48 +45,29 @@
 
 #include "main_routine_work.h"
 #include "djinn_ids.h"
-#include "version.h"
 #include "heap_slots.h"
 #include "scene_ids.h"
 #include "module/import.h"
 #include "module/scene/crossbone_isle_keys.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
-#include "module/field/field.h"
 #include "module/game/game.h"
 #include "module/system/system.h"
-#include "module/scene/shared/colosso_item_icon.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "event.h"
 #include "event_inline.h"
-#include "scene_tables.h"
 #include "pushed_actor.h"
-#include "io_reg.h"
-#include "battle_sprite_id.h"
-#include "actor.h"
-#include "sprite.h"
-#include "heap_release.h"
 #include "dma.h"
-#include "task.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
 #include "io_write.h"
 #include "field_effect.h"
-#include "fixed_math.h"
 #include "flags.h"
-#include "sounds.h"
-#include "heap.h"
 
 // Map-section temp flags: Scene_Arrive clears FLAG_AREA_TEMP_FIRST to
 // FLAG_AREA_TEMP_LAST when the party enters another area, and other areas use
@@ -184,12 +165,12 @@ enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
 #define FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER FLAG_SCENE_TEMP_20
 
 /// Publishes the next raised-event trigger.
-static __inline__ void MapLocalState_StoreStep(s16 *field, s32 step) {
+static inline void MapLocalState_StoreStep(s16 *field, s32 step) {
   *field = step;
 }
 
 /// Lifts the first pillar and clears the terrain beneath its column.
-static __inline__ void LiftPillar(s32 column, u8 motionFlags) {
+static inline void LiftPillar(s32 column, u8 motionFlags) {
   MapGrid_CopyCellAttributes(61, 36, 1, 1, column, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->motionFlags = motionFlags;
   Actor_Get(ACTOR_FIRST_PILLAR)->y.fixed = px(32);
@@ -244,7 +225,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// field Psynergy itself, which keeps it from stepping out.
 static void CrossboneIsleKeys_HaltPursuer(void) {}
 
-// Turn the Djinni toward the party leader each frame.
+/// Turn the Djinni toward the party leader each frame.
 static UNREAD_RESULT
 CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *actor) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -282,9 +263,6 @@ static void CrossboneIsleKeys_BaneFirstEscape(void) {
 
 /// In CrossboneIsleBane, coming near again (step trigger 21): Bane flees a
 /// second time.
-///
-/// It hops, dashes across the platforms and crashes into the far wall, shaking
-/// the room, and is left squashing and stretching.
 static void CrossboneIsleKeys_BaneSecondEscape(void) {
   struct Actor *spinningDjinni;
   struct Actor *jumpingDjinni;
@@ -325,7 +303,6 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       Event_Wait(30);
 
-      // Leave the Djinni tilted while its scale animation continues.
       Actor_SetPosition(ACTOR_BANE, 888, 664);
       spinningDjinni = Actor_Get(ACTOR_BANE);
       spinningDjinni->sprite->rotation = TRIG_TURN * 31 / 32;
@@ -339,9 +316,6 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
 
 /// In CrossboneIsleBane, the third time (step trigger 22): Bane flees to the
 /// room's last corner.
-///
-/// It recovers, hops down a winding path to that corner and keeps watching
-/// the leader.
 static void CrossboneIsleKeys_BaneLastEscape(void) {
   struct Actor *djinni;
 
@@ -350,7 +324,6 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE);
     Event_Start();
 
-    // Restore the sprite before the last jump and winding escape path.
     djinni = Actor_Get(ACTOR_BANE);
     djinni->sprite->rotation = 0;
     Actor_SetAnimationSpeed(djinni, 16);
@@ -398,28 +371,22 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
 static void CrossboneIsleKeys_BaneKeepsAway(void) {
   struct Actor *djinni;
   struct Actor *leader;
-  s32 targetByteOffset;
-  const u8 *targets;
-  s32 zByteOffset;
+  s32 target;
   struct FieldWork *work;
 
   work = gFieldWork;
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
     if (gMainRoutineWork.haltedActor != ACTOR_BANE) {
-      targetByteOffset = work->stepTrigger;
+      target = work->stepTrigger;
       djinni = Actor_Get(ACTOR_BANE);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       djinni->speedLimit = leader->speedLimit;
       djinni = Actor_Get(ACTOR_BANE);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       djinni->acceleration = leader->speedLimit;
-      targetByteOffset -= 30;
-      targets = (const u8 *)gCrossboneIsleKeys_BaneWalkTargets;
-      // The table stores consecutive signed X/Z pixel pairs.
-      targetByteOffset *= 2 * sizeof(s32);
-      zByteOffset = targetByteOffset + sizeof(s32);
-      Actor_WalkTo(ACTOR_BANE, *(const s32 *)(targets + targetByteOffset),
-                   *(const s32 *)(targets + zByteOffset));
+      target -= 30;
+      Actor_WalkTo(ACTOR_BANE, gCrossboneIsleKeys_BaneWalkTargets[target][0],
+                   gCrossboneIsleKeys_BaneWalkTargets[target][1]);
     }
   }
 }
@@ -449,13 +416,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Unused: pressing south on the walkway cell in front of CrossboneIsleKeys's
 /// third or fourth blue door jumps the leader over the pit onto the post two
 /// cells south, at (21, 45) or (25, 45) (Field_TryJumpForward).
-///
-/// Both rows that name it follow a plain step trigger row for the same cell
-/// (CrossboneIsleKeys_OpenThirdBlueDoor, CrossboneIsleKeys_OpenFourthBlueDoor),
-/// which Scene_FindTrigger always finds first.
-///
-/// Those events make the same jump themselves once more than 12 blocked steps
-/// have passed.
 static void CrossboneIsleKeys_UnusedJumpOntoPost(void) {
   Field_TryJumpForward();
 }
@@ -542,9 +502,6 @@ static void CrossboneIsleKeys_OpenSecondBlueDoor(void) {
 
 /// Touching CrossboneIsleKeys's third blue door (step trigger 53, the walkway
 /// cell in front of it).
-///
-/// Facing away from the door, once more than 12 blocked steps have passed, the
-/// leader jumps over the pit onto a post.
 static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
   struct Actor *leader;
   s16 *blockedSteps;
@@ -563,9 +520,6 @@ static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
 
 /// Touching CrossboneIsleKeys's fourth blue door (step trigger 54, the walkway
 /// cell in front of it).
-///
-/// Facing away from the door, once more than 12 blocked steps have passed, the
-/// leader jumps over the pit onto a post.
 static void CrossboneIsleKeys_OpenFourthBlueDoor(void) {
   struct Actor *leader;
   s16 *blockedSteps;
@@ -669,7 +623,7 @@ static void CrossboneIsleKeys_DodgeFirstPursuer(void) {
   Actor_SetSpeed(ACTOR_FIRST_STATUE, 1.9);
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(ACTOR_FIRST_STATUE, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
@@ -711,7 +665,7 @@ static void CrossboneIsleKeys_DodgeSecondPursuer(void) {
   Actor_SetSpeed(ACTOR_SECOND_STATUE, 1.7);
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(ACTOR_SECOND_STATUE, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
@@ -729,7 +683,6 @@ static void CrossboneIsleKeys_DodgeSecondPursuer(void) {
 
 /// Moves a pursuer to the leader column and remembers its last column.
 static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
-
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / px(16);
   s32 row = leader->z.fixed / px(16);
@@ -780,7 +733,7 @@ static void CrossboneIsleKeys_DodgeThirdPursuer(void) {
     Actor_SetSpeed(ACTOR_THIRD_STATUE, 1.7);
     Sound_Play(SE_THUMP);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetDestination(ACTOR_THIRD_STATUE, leader->x.part.pixel,
                            leader->z.part.pixel);
     }
@@ -818,7 +771,7 @@ static void CrossboneIsleKeys_DodgeFourthPursuer(void) {
     }
     Actor_WaitForMoveById(ACTOR_FOURTH_STATUE);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetDestination(ACTOR_FOURTH_STATUE, leader->x.part.pixel,
                            leader->z.part.pixel);
     }
@@ -861,7 +814,7 @@ static void CrossboneIsleKeys_DodgeFifthPursuer(void) {
   Actor_SetSpeed(ACTOR_FIFTH_STATUE, 1.7);
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(ACTOR_FIFTH_STATUE, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
@@ -879,6 +832,9 @@ static void CrossboneIsleKeys_DodgeFifthPursuer(void) {
 /// Reveal in CrossboneIsleStatues: the translucent layer over the room
 /// vanishes while it lasts.
 static void CrossboneIsleKeys_CastRevealInStatueRoom(void) {
+  /* FAKEMATCH(temporary): the blend built in a local, 208 shifted by 4; as
+   * REG_BLDALPHA = BLEND_ALPHA(0, 13), 4 of 5 instructions differ in tbs-en.
+   */
   u32 coefficient = 208;
 
   coefficient <<= 4;
@@ -942,7 +898,7 @@ static void CrossboneIsleKeys_FreezePuddle(void) {
   struct Actor *puddle = Actor_Get(ACTOR_PUDDLE);
 
   MapGrid_CopyCellAttributes(40, 54, 1, 1, 40, 55);
-  if (puddle != 0) {
+  if (puddle != NULL) {
     u8 *motionFlags = &Actor_Get(ACTOR_PUDDLE)->motionFlags;
     u8 *priorityFlags = &puddle->priorityFlags;
 
@@ -976,21 +932,18 @@ static void CrossboneIsleKeys_RestoreFirstPillarTerrain(void) {
 
 /// Restores support under the first pillar at the eastern cell.
 static void CrossboneIsleKeys_RestoreEastUnderfootCell(void) {
-
   MapGrid_CopyCellAttributes(58, 41, 1, 1, 42, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /// Restores support under the first pillar at the middle cell.
 static void CrossboneIsleKeys_RestoreMiddleUnderfootCell(void) {
-
   MapGrid_CopyCellAttributes(44, 42, 1, 1, 41, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /// Restores support under the first pillar at the western cell.
 static void CrossboneIsleKeys_RestoreWestUnderfootCell(void) {
-
   MapGrid_CopyCellAttributes(39, 42, 1, 1, 40, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
@@ -1025,8 +978,6 @@ static void CrossboneIsleKeys_MoveFirstPillar(void) {
 }
 
 /// Pushing CrossboneIsleBane's first pillar (step trigger 51).
-///
-/// Standing at the ladder in column 38, the leader climbs instead.
 static void CrossboneIsleKeys_PushFirstPillar(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *pillar = Actor_Get(ACTOR_FIRST_PILLAR);
@@ -1052,9 +1003,6 @@ static void CrossboneIsleKeys_PushFirstPillar(void) {
 }
 
 /// Leaves the chest where the second pillar has reached the ladder.
-///
-/// The chest's actor is hidden, its examine trigger takes its place and the
-/// ladder cell is restored.
 static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
   Task_Remove(CrossboneIsleKeys_FollowSecondPillar);
   Actor_SetPosition(ACTOR_SECOND_PILLAR_CHEST, 0, 0);
@@ -1080,8 +1028,6 @@ static void CrossboneIsleKeys_MoveSecondPillar(void) {
 }
 
 /// Pushing CrossboneIsleBane's second pillar (step trigger 52).
-///
-/// At the ladder, the chest on top of it stays there.
 static void CrossboneIsleKeys_PushSecondPillar(void) {
   PushedActor_AdvancePair();
   CrossboneIsleKeys_MoveSecondPillar();
@@ -1089,21 +1035,18 @@ static void CrossboneIsleKeys_PushSecondPillar(void) {
 
 /// Restores the terrain at both ends of the third pillar row.
 static void CrossboneIsleKeys_RestoreThirdPillarTerrain(void) {
-
   MapGrid_CopyCellAttributes(38, 56, 1, 1, 38, 55);
   MapGrid_CopyCellAttributes(42, 56, 1, 1, 42, 55);
 }
 
 /// Restores the third pillar support at the western end.
 static void CrossboneIsleKeys_RestoreThirdPillarWestCell(void) {
-
   MapGrid_CopyCellAttributes(40, 54, 1, 1, 38, 55);
   Actor_Get(ACTOR_THIRD_PILLAR)->motionFlags = 0;
 }
 
 /// Restores the third pillar support at the eastern end.
 static void CrossboneIsleKeys_RestoreThirdPillarEastCell(void) {
-
   MapGrid_CopyCellAttributes(40, 54, 1, 1, 42, 55);
   Actor_Get(ACTOR_THIRD_PILLAR)->motionFlags = 0;
 }
@@ -1154,7 +1097,6 @@ static void CrossboneIsleKeys_TouchThirdPillar(void) {
 
 /// Clears the support row before repainting the fourth and fifth pillars.
 static void CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain(void) {
-
   MapGrid_CopyCellAttributes(48, 55, 1, 1, 49, 55);
   MapGrid_CopyCellAttributes(48, 55, 1, 1, 50, 55);
   MapGrid_CopyCellAttributes(48, 55, 1, 1, 51, 55);
@@ -1373,8 +1315,6 @@ static void CrossboneIsleKeys_InitializeStatues(void) {
 static void CrossboneIsleKeys_InitializeBane(void) {
   struct Actor *djinni;
 
-  // Put the chest back on the second pillar and rebuild all pillar support
-  // cells.
   Actor_Get(ACTOR_SECOND_PILLAR_CHEST)->motionFlags = 0;
   Task_AddOrUpdateFrame(CrossboneIsleKeys_FollowSecondPillar, TASK_PASS_FRAME);
   Task_AddFrame(CrossboneIsleKeys_UpdatePillarPriorities, TASK_PASS_FRAME);
@@ -1398,7 +1338,6 @@ static void CrossboneIsleKeys_InitializeBane(void) {
     Actor_SetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_PILLAR);
   }
 
-  // Restore the surviving Djinni at the last completed escape stage.
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
       Actor_SetPosition(ACTOR_BANE, 856, 824);
@@ -1449,19 +1388,21 @@ s32 gCrossboneIsleKeys_BaneSquashScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gCrossboneIsleKeys_BaneWalkTargets[] = {
-    888, 856,
-    872, 856,
-    856, 856,
-    840, 856,
-    824, 856,
-    824, 840,
-    824, 824,
-    840, 824,
-    856, 824,
-    872, 824,
-    888, 824,
-    888, 840,
+/// Where Bane runs from each step trigger round its corner, 30 to 41, in
+/// pixels.
+s32 gCrossboneIsleKeys_BaneWalkTargets[][2] = {
+    { 888, 856 },
+    { 872, 856 },
+    { 856, 856 },
+    { 840, 856 },
+    { 824, 856 },
+    { 824, 840 },
+    { 824, 824 },
+    { 840, 824 },
+    { 856, 824 },
+    { 872, 824 },
+    { 888, 824 },
+    { 888, 840 },
 };
 
 struct SceneEntrance gCrossboneIsleKeysEntrancesOther[] = {

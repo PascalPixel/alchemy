@@ -59,11 +59,8 @@
 #include "scene_ids.h"
 #include "event.h"
 #include "module/scene/west_lunpa_cave.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
 #include "west_lunpa_cave.h"
 #include "text/msg_ids.h"
-#include "fixed_math.h"
 #include "shared/walk_into_leader.h"
 
 /// The gate's puddle is frozen into a pillar, propping the gate open.
@@ -168,8 +165,7 @@ static void WestLunpaCave_GateDrawPropped(void) {
 }
 
 /// In West Lunpa Cave, Frost on the puddle under the gate freezes it into a
-/// pillar that props the gate open. If the gate was down, the player sees it
-/// rise and hears the puzzle solved.
+/// pillar that props the gate open.
 static void WestLunpaCave_FreezeGatePuddle(void) {
   struct Actor *pillar;
 
@@ -219,8 +215,6 @@ static void WestLunpaCave_GateLower(void) {
 }
 
 /// In West Lunpa Cave, searching the lowering switch makes the leader flip it.
-/// The gate comes down, unless it is down already or a frozen pillar props it
-/// open. "flipped the switch."
 static void WestLunpaCave_FlipLoweringSwitch(void) {
   if (Event_GetFlag(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED) == 0) {
     if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) == 0) {
@@ -249,8 +243,6 @@ static void WestLunpaCave_GateRaise(void) {
 }
 
 /// In West Lunpa Cave, searching the raising switch makes the leader flip it.
-/// The gate goes up, unless it is up already or propped open. "flipped the
-/// switch."
 static void WestLunpaCave_FlipRaisingSwitch(void) {
   if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) == 0) {
     if (Event_GetFlag(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) == 0) {
@@ -264,26 +256,11 @@ static void WestLunpaCave_FlipRaisingSwitch(void) {
 }
 
 /// In West Lunpa Cave, Hammet finds Bunza hiding behind a rock.
-///
-/// It plays on stepping onto cell behavior 10, by the rock Bunza hides
-/// behind. Donpa must first have let the party leave the fortress with Hammet
-/// (FLAG_DODONPA_LOCKED_UP).
-///
-/// - Bunza steps out.
-/// - The party and Hammet gather behind the leader.
-/// - Garet and Mia think they saw someone.
-/// - Ivan asks whether Dodonpa's henchmen have found them. On a yes, Garet
-///   will fight. On a no, Garet wonders what else it could be.
-/// - Hammet calls out and names Bunza, and Bunza knows Hammet's voice.
-/// - The reunion and the wagon talk follow.
-///
-/// It sets FLAG_LUNPA_CAVE_REUNION_SEEN, so it plays once.
 static void WestLunpaCave_HammetFindsBunza(void) {
   s32 sighting;
   s32 recognition;
 
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
-    // Bring Hammet and the party into view as Bunza leaves his hiding place.
     GameFlag_Set(FLAG_LUNPA_CAVE_REUNION_SEEN);
     Event_Start();
     Actor_SetPosition(ACTOR_BUNZA, 144, 400);
@@ -385,10 +362,6 @@ static void WestLunpaCave_HammetFindsBunza(void) {
 }
 
 /// The reunion, with the screen closed and reopened on the group.
-///
-/// Hammet and Ivan tell how the party came to his rescue. Bunza tells how he
-/// came to Lunpa and found the cave. He warns that Dodonpa's henchmen are
-/// combing the area, and offers his wagon as a way out of Lunpa.
 static void Reunion_Converse(void) {
   s32 reunion;
   s32 messageBase;
@@ -685,22 +658,6 @@ static void Reunion_Converse(void) {
 }
 
 /// Reconciles the party's answers until they either ride or stay behind.
-///
-/// Garet asks whether to ride.
-///
-/// - A yes brings Bunza's question whether the party has unfinished business.
-///   A no to that rides.
-/// - A no brings Garet's and Mia's questions whether it really will not ride.
-/// - Answers that point to staying meet Garet's check that nothing is left to
-///   do, where a yes rides. They also meet Bunza's apology that he cannot
-///   wait, after which Mia asks whether the party will stay.
-/// - A no to Mia's "You do want to go with them?" leaves Ivan confused and
-///   Garet asking again.
-///
-/// The gotos are the conversation's own shape, not a forced layout. Two of
-/// them enter the middle of the other branch. A no to riding joins the
-/// nothing-left check, and Mia's question joins Bunza's. Structured C could
-/// only write that by repeating those questions' calls.
 static void WagonChoice_Run(void) {
   s32 wagon;
   s32 insisted;
@@ -915,8 +872,6 @@ static void Party_StaysBehind(void) {
   Event_SetMessageId(farewell + FAREWELL_GARET_MOVES_ON);
   Event_ShowMessage(ACTOR_GARET, 0);
 
-  // Merge the companions back into the leader and restore player camera
-  // control.
   Scene_WalkIntoLeader(ACTOR_GARET);
   Scene_WalkIntoLeader(ACTOR_IVAN);
   Scene_WalkIntoLeader(ACTOR_MIA);

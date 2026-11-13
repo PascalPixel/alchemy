@@ -49,9 +49,7 @@
 /// McCoy speaks with his portrait (SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY).
 
 #include "main_routine_work.h"
-#include "scene_ids.h"
 #include "module/scene/mccoy_palace.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/system/system.h"
@@ -61,23 +59,14 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "flags.h"
-#include "character_ids.h"
-#include "types.h"
-#include "event.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "scene_tables.h"
 #include "item_ids.h"
 #include "actor_script.h"
-#include "fixed_math.h"
-#include "sounds.h"
 
 /// The palace's people and the treasure room's chests, numbering
 /// gMcCoyPalaceActorPlacements' rows from ACTOR_FIRST_PLACED.
@@ -171,11 +160,6 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gMcCoyPalaceExits; }
 
 /// The people of McCoy's Palace.
-///
-/// Once the reward is taken, four of them turn differently when talked to:
-/// the woman in Milady's nightgown, the old man who praises the warriors, the
-/// soldier who watched the party go to Kolima and the soldier who keeps the
-/// treasure.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *placements;
 
@@ -245,8 +229,6 @@ static void McCoyPalace_TalkToWomanInMiladysNightgown(void) {
 
 /// McCoy's Palace, after the reward: the old man praises the party the first
 /// time, then warns of the holy tree.
-/// "You are a fine warrior." After, "It's very reckless for such young
-/// warriors to face the holy tree..."
 static void McCoyPalace_TalkToOldManPraisingTheWarriors(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinFineWarrior);
@@ -272,11 +254,6 @@ static void McCoyPalace_TalkToSoldierWatchingKolima(void) {
 
 /// McCoy's Palace, the treasure room: the soldier who keeps the treasure.
 ///
-/// What he says follows the reward:
-/// - Before, Bilibin's great treasures go to whoever ends the curse.
-/// - While the party chooses, only one item.
-/// - After, the reward was the greatest.
-///
 /// Unused: with flag 0x84d set he would say `Pick any one of the four
 /// treasures.` instead, but nothing in the game names or sets that flag.
 static void McCoyPalace_TalkToSoldierShowingTheReward(void) {
@@ -298,9 +275,7 @@ static void McCoyPalace_TalkToSoldierShowingTheReward(void) {
 }
 
 /// McCoy's Palace, after the reward: Mind Read on the old man shows two
-/// thoughts. "Sometimes, we need children to remind us of our own
-/// responsibilities." Then "You looked very courageous walking toward
-/// Kolima."
+/// thoughts.
 static void McCoyPalace_ReadOldMansThoughtsOnTheWarriors(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinSometimesWeNeedChildrenRemind);
@@ -334,8 +309,6 @@ static void McCoyPalace_ReadRewardSoldiersThoughts(void) {
 
 /// McCoy's Palace, step triggers 9, 12 and 13: walking north through a door
 /// opens it with a sound, the leader walks through and the next room loads.
-///
-/// McCoy's door (step trigger 9) makes no sound once the captain has opened it.
 static void McCoyPalace_WalkThroughDoor(void) {
   struct FieldWork *work;
   s32 hideDoorLayers;
@@ -437,8 +410,6 @@ static void McCoyPalace_SearchWaterOfLifeChest(void) {
 }
 
 /// The chest opens and gives its item.
-/// With no room for it, the chest closes again and the reward is still to
-/// choose.
 static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
                                     s32 chestFlag) {
   s32 emitterHandle;
@@ -464,8 +435,7 @@ static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
 }
 
 /// McCoy's Palace, step trigger 51, leaving the treasure room without a reward:
-/// the captain walks the leader back. "Please take your reward before your
-/// depart!"
+/// the captain walks the leader back.
 static void McCoyPalace_CaptainAsksPartyToChoose(void) {
   if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) == 0) {
     if (GameFlag_Get(FLAG_REWARD_OFFERED) != 0) {
@@ -486,8 +456,7 @@ static void McCoyPalace_CaptainAsksPartyToChoose(void) {
 }
 
 /// McCoy's Palace, step trigger 50, leaving the treasure room with a reward:
-/// the captain sees the party off. "You are always welcome in the palace of
-/// Lord McCoy."
+/// the captain sees the party off.
 static void McCoyPalace_CaptainSeesPartyOff(void) {
   if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     Event_Start();
@@ -516,7 +485,7 @@ static void McCoyPalace_CaptainSeesPartyOff(void) {
 }
 
 /// The four reward chests stand in a row.
-static __inline__ void McCoyPalace_PositionRewardChests(void) {
+static inline void McCoyPalace_PositionRewardChests(void) {
   Actor_SetPosition(ACTOR_VIAL_CHEST, 616, 728);
   Actor_SetPosition(ACTOR_POTION_CHEST, 632, 728);
   Actor_SetPosition(ACTOR_PSY_CRYSTAL_CHEST, 648, 728);
@@ -524,18 +493,12 @@ static __inline__ void McCoyPalace_PositionRewardChests(void) {
 }
 
 /// The cells before the chest row can be walked on.
-static __inline__ void McCoyPalace_OpenRewardChestRow(void) {
+static inline void McCoyPalace_OpenRewardChestRow(void) {
   MapGrid_CopyCellAttributes(38, 55, 4, 1, 38, 45);
   MapGrid_CopyCellAttributes(42, 55, 4, 1, 38, 46);
 }
 
 /// Sets McCoy's Palace up.
-///
-/// It sets up one of these:
-/// - McCoy's first audience.
-/// - The captain outside McCoy's door after it.
-/// - The reward audience once Kolima's curse is lifted.
-/// - The reward chests where the party left them.
 s32 Scene_Initialize(void) {
   s32 rewardTaken;
   s32 curseLifted;
@@ -572,7 +535,6 @@ s32 Scene_Initialize(void) {
           }
         }
       } else {
-        // Restore the displayed chest row after reloading the treasure room.
         if (gMainRoutineWork.entrance ==
             MCCOY_PALACE_TREASURE_ROOM_FROM_ENTRANCE_ROOM) {
           if (GameFlag_Get(FLAG_REWARD_OFFERED) != 0) {
@@ -611,7 +573,7 @@ s32 Scene_Initialize(void) {
 }
 
 /// Garet, Ivan and Mia get ready to walk up to McCoy.
-static __inline__ void McCoyPalace_PrepareCompanionApproach(void) {
+static inline void McCoyPalace_PrepareCompanionApproach(void) {
   Actor_SetSpeed(ACTOR_GARET, 0.6);
   Actor_SetSpeed(ACTOR_IVAN, 0.6);
   Actor_SetSpeed(ACTOR_MIA, 1);
@@ -623,19 +585,9 @@ static __inline__ void McCoyPalace_PrepareCompanionApproach(void) {
 /// McCoy's Palace, through McCoy's door before the curse is lifted, the first
 /// audience: the captain announces the party and McCoy asks whether they can
 /// save Kolima.
-///
-/// - Refusing, he calls them too young and they leave. Coming back, they may
-///   change their minds.
-/// - Accepting, McCoy gives the key to the barricades, Garet bristles at
-///   being called children, and McCoy takes the key back and has the captain
-///   see them out.
-///
-/// The party arrives at MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST, beyond
-/// the door.
 static void McCoyPalace_AudienceWithMcCoy(void) {
   struct Actor *actor;
 
-  // Stage the first audience, or place the leader for a return visit.
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
@@ -712,16 +664,16 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     FieldCamera_MoveTo(894, CAMERA_KEEP, 664, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 684);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (actor != 0) {
+    if (actor != NULL) {
       Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
     }
     actor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (actor != 0) {
+    if (actor != NULL) {
       Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
     }
     if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
       actor = Actor_Get(ACTOR_PARTY_LEADER);
-      if (actor != 0) {
+      if (actor != NULL) {
         Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
       }
     }
@@ -755,7 +707,6 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Event_Wait(40);
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHWEST, 20);
     Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-    // Let the party accept the assignment or leave after McCoy refuses them.
     Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
@@ -777,20 +728,20 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (actor != 0) {
+    if (actor != NULL) {
       Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel,
                            actor->z.part.pixel);
     }
     Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (actor != 0) {
+    if (actor != NULL) {
       Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel,
                            actor->z.part.pixel);
     }
     if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
       Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
-      if (actor != 0) {
+      if (actor != NULL) {
         Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel,
                              actor->z.part.pixel);
       }
@@ -815,16 +766,16 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
     actor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (actor != 0) {
+    if (actor != NULL) {
       Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
     }
   }
@@ -849,7 +800,6 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
   // "What is it? Yeh've had a change of heart? Yeh want tae help..."
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
-    // Reuse the initial refusal's dialogue and departure.
     goto declined;
   }
 accepted:
@@ -866,14 +816,13 @@ accepted:
   Event_SetMessageId(MsgBilibinHmmmWellGrant);
   // "Hmmm. Well, I'll grant yeh're a brave lot."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
-  // Animate McCoy tossing the barricade key to the party.
   actor = Actor_Get(ACTOR_BARRICADE_KEY);
   Actor_SetSpriteFlags(actor, 0);
   actor = Actor_Get(ACTOR_BARRICADE_KEY);
   actor->scaleX = Q16_ONE / 2;
   actor->scaleY = Q16_ONE / 2;
   actor = Actor_Get(ACTOR_LORD_MCCOY);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_BARRICADE_KEY, actor->x.fixed, actor->z.fixed);
   }
   wait(1);
@@ -1001,7 +950,7 @@ accepted:
                                  10);
   Actor_Jump(ACTOR_BARRICADE_KEY, 6, 0);
   actor = Actor_Get(ACTOR_LORD_MCCOY);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_BARRICADE_KEY, actor->x.part.pixel,
                          actor->z.part.pixel);
   }
@@ -1067,7 +1016,6 @@ accepted:
   FieldActor_WatchAndStartScript(ACTOR_PARTY_LEADER,
                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
                                  gPalace_FacingActions);
-  // Keep the party looking at the captain while he leaves the audience.
   FieldActor_WatchAndStartScript(ACTOR_GARET,
                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
                                  gPalace_FacingActions);
@@ -1098,18 +1046,18 @@ accepted:
                                  gPalace_FacingActions);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
     Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (actor != 0) {
+    if (actor != NULL) {
       Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
     }
   }
@@ -1206,18 +1154,12 @@ static void McCoyPalace_FaceCompanionsForAudience(void) {
 
 /// McCoy's Palace, once Kolima's curse is lifted: brought in under arrest, the
 /// party is thanked by McCoy and sent to choose a reward.
-///
-/// The gate guards bring the party in from the grounds
-/// (MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST) to
-/// MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST, before McCoy.
 static void McCoyPalace_McCoyRewardsParty(void) {
   struct Actor *viewCenter;
   struct Actor *actor;
   s32 advanceAlternateReply;
 
   Event_Start();
-  // Reveal the approach, then walk the leader and the captain into the
-  // audience.
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   viewCenter = FieldCamera_GetActor();
@@ -1251,8 +1193,6 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
-  // Present the returning warriors, using the reply for their earlier
-  // reception.
   Event_SetMessageId(MsgBilibinWeveBroughtWarriorsMilord);
   // Adjacent variants depend on whether McCoy's earlier request was declined.
 
@@ -1271,15 +1211,15 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 684);
 
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
 
@@ -1322,7 +1262,6 @@ static void McCoyPalace_McCoyRewardsParty(void) {
     gFieldWork->message++;
   }
 
-  // Let the companions answer McCoy\'s thanks in turn.
   McCoyPalace_FaceCompanionsForDiscussion();
   Event_Wait(20);
   if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0) {
@@ -1451,17 +1390,17 @@ static void McCoyPalace_McCoyRewardsParty(void) {
 
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
   }
 
@@ -1503,8 +1442,6 @@ static void McCoyPalace_PresentRewardChests(void) {
   struct Actor *actor;
 
   Event_Start();
-  // Restore the chest-row cell behavior patches before presenting the
-  // reward.
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(628, CAMERA_KEEP, 748, 0);

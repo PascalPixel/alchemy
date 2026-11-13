@@ -6,6 +6,5 @@
 /// buffer.
 
 #include "heap_slots.h"
-#include "static_assert.h"
 
 #endif

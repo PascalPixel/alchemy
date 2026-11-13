@@ -46,23 +46,16 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "tbs_edition.h"
 #include "event.h"
 #include "system_call.h"
-#include "scene_tables.h"
 #include "kolima.h"
 #include "pushed_actor.h"
 #include "text/msg_ids.h"
 #include "actor_script.h"
-#include "sounds.h"
 #include "io_reg.h"
 #include "sound_driver_symbols.h"
-#include "fixed_math.h"
 
 /// The scene's actors after Garet's, Ivan's and Mia's party slots,
 /// numbering the rows of gKolimaForestEntrance_ActorPlacements from
@@ -110,9 +103,7 @@ static s32 KolimaForestEntrance_FlashHitPsynergyFields(struct Actor *actor) {
   return 1;
 }
 
-/// Each frame, a ground sparkle's timer runs on at random. The sparkle shows
-/// its bright frame (7) while the timer is past 1000, its dim one (10) before.
-/// At 1200 the timer starts over.
+/// Each frame, a ground sparkle's timer runs on at random.
 static s32 KolimaForestEntrance_TwinkleGroundSparkle(struct Actor *actor) {
   s16 *counter = &actor->timer;
   *counter = (*counter + (Random_Below(100)));
@@ -150,10 +141,7 @@ const struct ActorPlacement *KolimaForestEntrance_GetActorPlacements(void) {
 }
 
 /// In Kolima Forest (SceneId_KolimaForestEntrance), walking into a log rolls it
-/// ahead until something stops it. The river log, stopped at the bank (cell
-/// column 20), tips over with a splash and floats in the water. Its cells
-/// become ground the party can cross (sets
-/// FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER).
+/// ahead until something stops it.
 static void KolimaForestEntrance_PushLog(void) {
   struct PushedActorProbe res;
   Event_Start();
@@ -187,8 +175,7 @@ const struct Trigger *KolimaForestEntrance_GetTriggers(void) {
 }
 
 /// On entry a log already in the river floats there again and the logs mark the
-/// cells they cover. From the World Map, before the curse has been seen, the
-/// party sees it fall. Once the curse is lifted the ground sparkles are gone.
+/// cells they cover.
 s32 KolimaForestEntrance_Initialize(void) {
   Scene_RedrawActorFootprint(ACTOR_RIVER_LOG);
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER) != 0) {
@@ -219,19 +206,6 @@ s32 KolimaForestEntrance_Initialize(void) {
 /// been seen in Kolima (FLAG_KOLIMA_CURSE_WITNESSED clear), the party sees the
 /// curse fall. It is the same event as Kolima_WitnessForestCurse without the
 /// trees that were people.
-///
-/// - Ivan notices sparkly stuff on the ground.
-/// - Sparkles rain from the sky, the party sinks under them, and fields of
-///   Psynergy rise around each party member before the sparkles reach them.
-/// - They argue over whether it was their Psynergy.
-/// - The sparkles fall again and the Psynergy fields rise again.
-/// - Tret and Laurel speak. Tret turned Kolima's people into trees for cutting
-///   him. Laurel tells them to reawaken his gentle side and look for Tret deep
-///   within the forest.
-///
-/// Lines and choices for Mia are skipped when she is not in the party.
-///
-/// Sets FLAG_KOLIMA_CURSE_WITNESSED.
 static void KolimaForestEntrance_WitnessForestCurse(void) {
   s32 *party;
   const s32 *sparkleAction;
@@ -275,14 +249,14 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
     }
   }
   {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
     }
   }
@@ -293,7 +267,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     {
       struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-      if (leader != 0) {
+      if (leader != NULL) {
         Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
       }
     }
@@ -1009,7 +983,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
                            leader->z.part.pixel);
     }
@@ -1020,7 +994,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
                            leader->z.part.pixel);
     }
@@ -1032,7 +1006,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     {
       struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-      if (leader != 0) {
+      if (leader != NULL) {
         Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel,
                              leader->z.part.pixel);
       }
@@ -1079,7 +1053,7 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
   if (gKolimaForestEntrance_SparkleSoundOn != 0)
     Sound_Play(SE_SPARKLE_FALL);
   sparkle = FieldActor_Create(SPRITE_GOLDEN_RINGS, spawnX, 0, spawnZ);
-  if (sparkle == 0)
+  if (sparkle == NULL)
     return;
   sprite = sparkle->sprite;
   sprite->flags = framePhase;
@@ -1142,7 +1116,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
   struct Actor *p;
 
   p = Actor_Get(ACTOR_LEADER_PSYNERGY_FIELD);
-  if (p != 0) {
+  if (p != NULL) {
     p->motionFlags = 0;
     if ((gFrameCount & 1) == 0) {
       p->y.fixed = 0;
@@ -1151,7 +1125,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
     }
   }
   p = Actor_Get(ACTOR_IVAN_PSYNERGY_FIELD);
-  if (p != 0) {
+  if (p != NULL) {
     p->motionFlags = 0;
     if ((gFrameCount & 1) != 0) {
       p->y.fixed = 0;
@@ -1160,7 +1134,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
     }
   }
   p = Actor_Get(ACTOR_MIA_PSYNERGY_FIELD);
-  if (p != 0) {
+  if (p != NULL) {
     p->motionFlags = 0;
     if ((gFrameCount & 1) == 0) {
       p->y.fixed = 0;
@@ -1169,7 +1143,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
     }
   }
   p = Actor_Get(ACTOR_GARET_PSYNERGY_FIELD);
-  if (p != 0) {
+  if (p != NULL) {
     p->motionFlags = 0;
     if ((gFrameCount & 1) != 0) {
       p->y.fixed = 0;

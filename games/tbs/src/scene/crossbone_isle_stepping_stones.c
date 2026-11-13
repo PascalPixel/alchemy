@@ -53,20 +53,12 @@
 #include "module/import.h"
 #include "module/scene/crossbone_isle_stepping_stones.h"
 #include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
-#include "module/field/field.h"
 #include "module/system/system.h"
 #include "actor.h"
-#include "types.h"
-#include "sprite.h"
-#include "event.h"
-#include "scene_tables.h"
 #include "field_effect.h"
 #include "create_configured_actor.h"
 #include "pushed_actor.h"
-#include "ram_buffer.h"
-#include "map_grid.h"
 #include "io_reg.h"
 #include "battle.h"
 #include "debug.h"
@@ -74,26 +66,16 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "heap_slots.h"
 #include "dma.h"
 #include "text/msg_ids.h"
 #include "event_inline.h"
-#include "irq.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
-#include "heap.h"
-#include "scene.h"
 #include "ground_mask.h"
-#include "fixed_math.h"
 #include "flags.h"
-#include "sounds.h"
 #include "sound_driver_symbols.h"
-#include "macros.h"
 
 /// A chest searched while facing the given way.
 #define EXAMINE_CHEST_FACING(facing)                                           \
@@ -357,7 +339,7 @@ static void CrossboneIsleSteppingStones_ReadMapGridCell(
     s32 layer, s32 x, s32 y, union CrossboneIslePillarCell *dst) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
 
-  if (grid != 0) {
+  if (grid != NULL) {
     struct MapGridCell *cell = grid->layers[layer].cells;
 
     cell += x + (y << 7);
@@ -379,7 +361,7 @@ static void CrossboneIsleSteppingStones_SetCellAttributes(
     s32 layer, s32 x, s32 y, const union CrossboneIslePillarCell *source) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
 
-  if (grid != 0) {
+  if (grid != NULL) {
     struct CrossboneIslePillarCellBits *cell =
         (struct CrossboneIslePillarCellBits *)grid->layers[layer].cells;
 
@@ -448,7 +430,7 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
   actor->x.fixed = 0;
   actor->y.fixed = 0;
   actor->z.fixed = 0;
-  if (temporaryActor != 0) {
+  if (temporaryActor != NULL) {
     Actor_Release(temporaryActor);
   }
   return found;
@@ -466,8 +448,8 @@ static void CrossboneIsleSteppingStones_ShrinkPillar(s32 index) {
     if (elapsedFrames > 31)
       return;
     wait(1);
-    actor->scaleY += -Q16_ONE / 10;
-    actor->y.fixed += -px(4) / 5;
+    actor->scaleY -= Q16_ONE / 10;
+    actor->y.fixed -= px(4) / 5;
     elapsedFrames++;
     if (actor->scaleY <= Q16_ONE / 10 - 1) {
       actor->scaleY = Q16_ONE / 10;
@@ -479,7 +461,6 @@ static void CrossboneIsleSteppingStones_ShrinkPillar(s32 index) {
 /// Unused: spawns a particle near the leader once every four frames; nothing
 /// calls it.
 UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
-
   struct Actor *leader;
   s32 cycleFrame;
   s32 x;
@@ -496,11 +477,11 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
     options.palette = 10;
     options.startScaleX = 7 * Q16_ONE / 10;
     options.startScaleY = 7 * Q16_ONE / 10;
-    drawX = Import_RandomNext();
+    drawX = Random_Next();
     x = leader->x.fixed + px(((u32)((drawX << 4) + drawX) >> 16) - 8);
-    drawZ = Import_RandomNext();
+    drawZ = Random_Next();
     z = leader->z.fixed + px(((u32)((drawZ << 4) + drawZ) >> 16) - 8);
-    drawY = Import_RandomNext();
+    drawY = Random_Next();
     velocityY =
         Math_Divide((((u32)((drawY << 2) + drawY) >> 16) << 16) + px(3), 10);
     FieldEffect_Spawn(x, leader->y.fixed, z, 0, velocityY, cycleFrame,
@@ -532,22 +513,21 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
     return 0;
   }
 #if TBS_PATCH_1
-  destination.x = (leader->x.fixed & -0x100000) + px(8);
+  destination.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
   destination.y = leader->y.fixed;
-  destination.z = (leader->z.fixed & -0x100000) + px(8);
+  destination.z = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
   Vector_AddPolarOffset(px(16), jumpDirection, &destination);
 #else
   jumpDirection = leader->facing >> 12;
   Actor_StepFrom(&destination, leader,
                  gPushedActor_DirectionSteps[jumpDirection]);
 #endif
-  // Require a free intervening cell before testing the two-cell landing.
   if (FieldActor_CheckMovementCollision(leader, &destination) != 1 &&
       PushedActor_FindAtTile(&destination, leader) == 0) {
 #if TBS_PATCH_1
-    destination.x = (leader->x.fixed & -0x100000) + px(8);
+    destination.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
     destination.y = leader->y.fixed;
-    destination.z = (leader->z.fixed & -0x100000) + px(8);
+    destination.z = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
     Vector_AddPolarOffset(px(32), jumpDirection, &destination);
 #else
     step = gPushedActor_DirectionSteps[jumpDirection];
@@ -718,7 +698,7 @@ static void CrossboneIsleSteppingStones_JitterBackgroundScroll(void) {
 }
 
 /// Waits until the DMA channel clears its enable bit.
-static __inline__ void Dma_Wait(volatile u32 *dma) {
+static inline void Dma_Wait(volatile u32 *dma) {
   while (dma[2] & ((u32)DMA_ENABLE << 16))
     ;
 }
@@ -785,10 +765,6 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
 }
 
 /// Searching the switch beside CrossboneIsleFloodgate's floodgate flips it.
-///
-/// "Isaac flipped the switch." Either the floodgate closes and the water backs
-/// up behind it, floating the logs higher, or it opens and the water drains
-/// away and the logs settle on the floor.
 static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
   s32 waterRaised;
   struct Actor *water;
@@ -799,7 +775,6 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
   FieldCamera_WaitForMove();
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);
   waterRaised = Event_GetFlag(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
-  // Raise or drain the water before redrawing the logs' footprints.
   if (waterRaised == 0) {
     Sound_Play(SE_CRUNCH);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_SwitchCloseSteps, 84, 24);
@@ -1065,7 +1040,6 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
       }
       *flags = 0;
     }
-    // Save the new ground cell before applying the pillar's height attributes.
     CrossboneIsleSteppingStones_ReadMapGridCell(0, FIELD_CELL(actor->x.fixed),
                                                 FIELD_CELL(actor->z.fixed),
                                                 &sPillarSlots[i].cell);
@@ -1076,7 +1050,8 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
           0, FIELD_CELL(actor->x.fixed), FIELD_CELL(actor->z.fixed), &cell);
       cell.bits.highFlags = sPillarSlots[i].cell.bits.highFlags;
       /* FAKEMATCH(temporary): x and z read as plain words outside their unions;
-       * as actor->x.fixed and z.fixed, a load moves. */
+       * as actor->x.fixed and z.fixed, 3 of 265 instructions differ in tbs-en.
+       */
       CrossboneIsleSteppingStones_SetCellAttributes(
           2, FIELD_CELL(*(s32 *)&actor->x), FIELD_CELL(*(s32 *)&actor->z),
           &cell);
@@ -1084,7 +1059,6 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
     sPillarSlots[i].x = FIELD_CELL(actor->x.fixed);
     sPillarSlots[i].y = FIELD_CELL(actor->y.fixed);
     sPillarSlots[i].z = FIELD_CELL(actor->z.fixed);
-    // Mark pillars covered by this one, then restore their sort order.
     for (k = 0; k <= 3; k++) {
       if (k == i) {
         continue;
@@ -1262,16 +1236,16 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   options.startScaleY = Q16_ONE / 2;
   options.targetScaleX = 8 * Q16_ONE / 5;
   options.targetScaleY = 8 * Q16_ONE / 5;
-  draw = Import_RandomNext();
+  draw = Random_Next();
   mask = 0x0ffff000;
   mask &= draw;
   options.rotation = mask;
   options.update = CrossboneIsleSteppingStones_UpdateDampedParticle;
 
-  draw = Import_RandomNext();
+  draw = Random_Next();
   velocityX = -(px((draw * 5) >> 16) + px(6));
   velocityX /= 2;
-  draw = Import_RandomNext();
+  draw = Random_Next();
   velocityY = -(px((draw * 5) >> 16) + px(5));
 
   FieldEffect_Spawn(px(324), px(48), px(228), velocityX, velocityY, 0,
@@ -1312,8 +1286,6 @@ CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *actor) {
 
 /// Frost ends on the third puddle in CrossboneIsleDragonStatue: it freezes,
 /// unless the leader stood on it.
-///
-/// A frozen second puddle thaws back to water.
 static void CrossboneIsleSteppingStones_FreezeThirdPuddle(void) {
   s32 set;
 
@@ -1521,8 +1493,6 @@ s32 Scene_Initialize(void) {
     Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 3);
     Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 4);
   } else if (gMainRoutineWork.next == (s32)&SceneId_CrossboneIsleFloodgate) {
-    // Rebuild the flooded room and float the logs again when the water stayed
-    // raised through a battle.
     MapGrid_CopyCells(32, 0, 64, 32, 0, 64);
     Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);
     Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
@@ -1542,7 +1512,6 @@ s32 Scene_Initialize(void) {
     }
   } else if (gMainRoutineWork.next ==
              (s32)&SceneId_CrossboneIsleStackedPillars) {
-    // Restore the four movable pillars and the leader's riding overlay.
     Actor_CreateConfigured(584, 0, 200, SPRITE_CRATE);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Actor_Get(ACTOR_PARTY_LEADER)->riseCounter = 1;
@@ -1583,8 +1552,6 @@ s32 Scene_Initialize(void) {
       }
     }
   } else if (gMainRoutineWork.next == (s32)&SceneId_CrossboneIsleDragonStatue) {
-    // Restore CrossboneIsleDragonStatue's moved pillar, frozen puddles, and
-    // raised pillar pair.
     Actor_SetAnimation(ACTOR_SINKING_BOULDER, 2);
     Actor_SetSpriteColorById(ACTOR_SINKING_BOULDER, SPRITE_COLOR_GREY);
     Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);

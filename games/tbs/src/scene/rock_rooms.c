@@ -41,11 +41,7 @@
 #include "main_routine_work.h"
 #include "event.h"
 #include "module/scene/rock_rooms.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
 #include "rock_rooms.h"
-#include "scene_ids.h"
-#include "text/msg_ids.h"
 
 static void RockRooms_TalkToInnkeeper(void);
 static void RockRooms_TalkToChef(void);

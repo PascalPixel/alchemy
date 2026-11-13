@@ -2,7 +2,6 @@
 /// The tables of staged_actor.h, which every scene with pushed things holds:
 /// the cell ahead for each of sixteen headings, and the six footprints.
 
-#include "types.h"
 #include "pushed_actor_direction_steps.h"
 
 u32 gPushedActor_FootprintKinds[] PUSHED_ACTOR_TABLE_SECTION = {

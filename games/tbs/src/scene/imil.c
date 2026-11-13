@@ -87,49 +87,30 @@
 
 #include "script_operands.h"
 #include "sprite.h"
-#include "version.h"
 #include "main_routine_work.h"
 #include "input.h"
-#include "scene_ids.h"
 #include "module/scene/imil.h"
 #include "shared/walk_into_leader.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
 #include "text/msg_ids.h"
-#include "event.h"
-#include "scene_tables.h"
 #include "field_effect.h"
 #include "field_psynergy_work.h"
-#include "speaker.h"
 #include "event_inline.h"
 #include "iwram_call.h"
-#include "frame.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
-#include "fixed_math.h"
-#include "palette_buffers.h"
 #include "io_reg.h"
-#include "map_grid.h"
 #include "map_grid_scroll.h"
 #include "macros.h"
 #include "flags.h"
-#include "character_ids.h"
-#include "sounds.h"
 
 /// The village's actors (Imil), numbering gImil_TownActorPlacements' rows,
 /// and gImil_TownActorPlacementsCured's, from ACTOR_FIRST_PLACED.
@@ -240,13 +221,10 @@ static void Imil_MiaSaysFarewellToApprentices(void);
 static void Imil_RunIceSlide(void);
 
 /// A sick person shivers: a quick squash, then a pause.
-///
-/// The pause is longer for ACTOR_SICK_OLD_MAN, whose work Imil_Initialize
-/// sets.
 static s32 Imil_UpdateShiver(struct Actor *actor) {
   switch (actor->timer) {
   case 6:
-    actor->scaleX += -Q16_ONE / 4;
+    actor->scaleX -= Q16_ONE / 4;
     actor->scaleY += Q16_ONE / 8;
     break;
   case 4:
@@ -255,15 +233,15 @@ static s32 Imil_UpdateShiver(struct Actor *actor) {
     break;
   case 2:
     actor->scaleX += Q16_ONE / 16;
-    actor->scaleY += -Q16_ONE / 32;
+    actor->scaleY -= Q16_ONE / 32;
     break;
   case 0:
     actor->scaleX += Q16_ONE / 16;
-    actor->scaleY += -Q16_ONE / 32;
+    actor->scaleY -= Q16_ONE / 32;
     if ((s16)actor->userValue != 0) {
-      actor->timer = (u32)Import_RandomNext() % 40 + 40;
+      actor->timer = (u32)Random_Next() % 40 + 40;
     } else {
-      actor->timer = (u32)Import_RandomNext() % 20 + 20;
+      actor->timer = (u32)Random_Next() % 20 + 20;
     }
     break;
   }
@@ -286,9 +264,6 @@ const struct SceneExitRegion *Imil_GetRegions(void) { return NULL; }
 const u32 *Imil_GetExits(void) { return gImil_Exits; }
 
 /// Once Saturos is beaten at Mercury Lighthouse, the villagers are well again.
-///
-/// Inside, the sick old man is up and wandering, and the restaurant owner
-/// keeps facing the party after talking.
 const struct ActorPlacement *Imil_GetActorPlacements(void) {
   struct ActorPlacement *script;
 
@@ -330,9 +305,6 @@ const struct Trigger *Imil_GetTriggers(void) {
 
 /// In Imil, until Saturos is beaten at Mercury Lighthouse: the freezing young
 /// man sneezes and shivers, waiting for Mia.
-///
-/// Once she travels with the party, he says that even her healing can't help
-/// them all.
 static void Imil_TalkToFreezingYoungMan(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
@@ -350,9 +322,6 @@ static void Imil_TalkToFreezingYoungMan(void) {
 
 /// Mind Read on the freezing young man in Imil, until Saturos is beaten: Mia
 /// should be here by now.
-///
-/// Once she has joined the party, he instead can't understand why anyone
-/// would exercise in the cold.
 static void Imil_ReadFreezingYoungMansMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
@@ -375,9 +344,6 @@ static void Imil_GreetVisitor(void) {
 }
 
 /// The strongman who keeps in shape pauses his exercises to talk.
-///
-/// He stops, turns to the leader and goes back to counting. Once Saturos is
-/// beaten, he wonders what he trained so hard for.
 static void Imil_TalkToStrongmanKeepingInShape(void) {
   Event_Start();
 
@@ -416,11 +382,7 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
 
 /// The old man in the old couple's house moans for help, and his wife hurries
 /// to fetch Mia (FLAG_IMIL_MIA_SENT_FOR).
-///
-/// After Mia's healing he feels much better. Once Saturos is beaten he asks
-/// whether the party really thought he would die.
 static void Imil_TalkToOldMan(void) {
-
   struct Actor *oldMan;
   struct Actor *oldWoman;
 
@@ -484,9 +446,6 @@ static void Imil_TalkToOldMan(void) {
 
 /// Talking to the weapon seller of Imil, until Saturos is beaten: he asks
 /// whether the party wants weapons.
-///
-/// He cannot sell them until he is cured, and blames the travellers from the
-/// south for the disease.
 static void Imil_AskAboutWeapons(void) {
   Event_Start();
   Event_SetMessageId(MSGNO(MsgImilDoWantWeapons));
@@ -504,12 +463,6 @@ static void Imil_AskAboutRestaurantMenu(void) {
 }
 
 /// Megan asks whether the party has visited the old couple.
-///
-/// She is in the Imil Sanctum until Saturos is beaten, and the old couple's
-/// house is where Mia went (FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE, and
-/// FLAG_IMIL_MIA_SENT_FOR).
-///
-/// Once Mia has joined the party, she says everyone counts on her.
 static void Imil_TalkToMegan(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
@@ -529,8 +482,6 @@ static void Imil_TalkToMegan(void) {
 
 /// Mind Read on Megan in the Imil Sanctum, until Saturos is beaten: Mia had a
 /// bad feeling.
-///
-/// Once she has joined, Megan instead thinks they must help her.
 static void Imil_ReadMegansMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
@@ -543,8 +494,6 @@ static void Imil_ReadMegansMind(void) {
 }
 
 /// The old woman of the old couple asks what happened at the lighthouse.
-///
-/// She's in their house after Mia's healing and until Saturos is beaten.
 static void Imil_TalkToOldWoman(void) {
   Event_Start();
   Event_SetMessageId(MSGNO(MsgImilHappenedInLighthouseNortheast));
@@ -575,8 +524,6 @@ static void Imil_TalkToOldManInBed(void) { Imil_TalkToOldMan(); }
 
 /// After Mia's visit, Mind Read across the bed in the old couple's house
 /// reaches the old man.
-///
-/// He admires Mia, and wishes he had a daughter like her.
 static void Imil_ReadOldManInBedMind(void) {
   Event_Start();
   Event_SetMessageId(MSGNO(MsgImilMiaIsAGoodGirlI));
@@ -586,8 +533,6 @@ static void Imil_ReadOldManInBedMind(void) {
 
 /// Mind Read on Justin in the Imil Sanctum, until Saturos is beaten: he
 /// thinks the party are not bad people.
-///
-/// Once Mia has joined, he instead feels grown up serving as a healer.
 static void Imil_ReadJustinsMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
@@ -601,9 +546,6 @@ static void Imil_ReadJustinsMind(void) {
 
 /// Walking north into one of Imil's six doors (step triggers 51 to 56):
 /// everyone stops, the door opens and the leader walks in.
-///
-/// The Sanctum's door (IMIL_TO_ICE_ROOMS_NORTHEAST) has its own sound and a
-/// slower walk.
 static void Imil_OpenDoorAndExit(void) {
   struct FieldWork *work;
   struct Actor *actor;
@@ -647,13 +589,6 @@ static void Imil_OpenDoorAndExit(void) {
 }
 
 /// Imil's weapon shop.
-///
-/// Once Saturos is beaten, talking to the seller across the counter, the
-/// leader facing north, opens the shop. From elsewhere he is eager for
-/// business.
-///
-/// Before, searching the counter from the same side pans the camera to him,
-/// sick, and he says the shop is closed.
 static void Imil_TalkToWeaponMerchant(void) {
   s32 facing;
 
@@ -690,9 +625,6 @@ static void Imil_TalkToWeaponMerchant(void) {
 }
 
 /// Imil's armor shop, as the weapon shop.
-///
-/// Once Saturos is beaten the seller opens across the counter. Before,
-/// searching the counter pans to him, too sick for business.
 static void Imil_TalkToArmorMerchant(void) {
   s32 facing;
 
@@ -729,10 +661,6 @@ static void Imil_TalkToArmorMerchant(void) {
 }
 
 /// Imil's item shop.
-///
-/// Once Saturos is beaten the mother sells again. Before, her daughter minds
-/// the counter while she is sick, or, away from it, talks of her father, a
-/// lumberjack working in Kolima.
 static void Imil_TalkToItemMerchant(void) {
   s32 facing;
 
@@ -769,9 +697,6 @@ static void Imil_TalkToItemMerchant(void) {
 }
 
 /// Across the counter of Imil's inn, the leader facing north, the inn opens.
-///
-/// Otherwise the innkeeper wonders why two groups of travellers came through
-/// the snow, or, once Saturos is beaten, talks of the party's leaving.
 static void Imil_TalkToInnkeeper(void) {
   struct Actor *leader;
 
@@ -794,10 +719,6 @@ static void Imil_TalkToInnkeeper(void) {
 }
 
 /// Justin offers the Sanctum's services across its counter.
-///
-/// He does so when the leader faces north across the counter of the Imil
-/// Sanctum, the first time saying he can act as healer. Otherwise he talks
-/// of Mia.
 static void Imil_TalkToJustin(void) {
   struct Actor *leader;
 
@@ -829,12 +750,6 @@ static void Imil_TalkToJustin(void) {
 }
 
 /// Sets up the scene as the party enters.
-///
-/// The village gets its rising puffs, map layers and snowman, and coming
-/// from Imil Falls Cave the leader walks in.
-///
-/// Inside, each room restores its people for the village's state, and the
-/// old couple's house and the Sanctum start Mia's healing and her farewell.
 s32 Imil_Initialize(void) {
   struct Actor *leader;
   s32 entrance;
@@ -861,7 +776,6 @@ s32 Imil_Initialize(void) {
       Imil_ArriveFromFallsCave();
     }
   } else if (gMainRoutineWork.next == (s32)&SceneId_IceRooms) {
-    // Restore each room's occupants before running its arrival event.
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     entrance = gMainRoutineWork.entrance;
@@ -961,9 +875,6 @@ s32 Imil_Initialize(void) {
 
 /// Mia's healing, in the old couple's house in Imil: after hearing where Mia
 /// went, the party finds her at the old man's bedside.
-///
-/// She heals him with Ply, the Mercury Lighthouse flashes, and Mia runs out.
-/// The party follows her.
 static void Imil_MeetMiaAtOldCouplesHouse(void) {
   const s32 *table;
   struct FieldWork *work;
@@ -1019,7 +930,6 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_SetScript(ACTOR_OLD_MAN, table);
 
-  // Play the healing Psynergy, then let the old man respond.
   Imil_MiaCastsPlyOnOldMan();
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 40);
@@ -1136,7 +1046,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
 /// until its timer runs out. No actor is given it.
 UNUSED static void Imil_UpdateCountdownArc(struct Actor *actor) {
   // XXX (no evidence): what this and Imil_SwayAndSpark were for; no
-  // actor is given either, so neither the ROM nor a render shows them in use.
+  // actor is given either, so nothing in the game shows them in use.
   s32 buf[3];
   s32 *b;
   s32 n;
@@ -1174,8 +1084,8 @@ UNUSED static void Imil_SwayAndSpark(struct Actor *actor) {
   actor->timer = (actor->timer + 64) % 64;
   if (gFrameCount % 3 == 0) {
     SET_VECTOR(pos, actor->x.fixed, actor->y.fixed + px(2), actor->z.fixed);
-    radius = Import_RandomNext();
-    Vector_AddPolarOffset(radius * 6, Import_RandomNext(), pos);
+    radius = Random_Next();
+    Vector_AddPolarOffset(radius * 6, Random_Next(), pos);
     spark = FieldActor_Create(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
     if (spark != NULL) {
       spark->sprite->image.priority = 0;
@@ -1287,11 +1197,6 @@ static void Imil_SpawnChimneySmoke(void) {
 
 /// Turns the leader's footprints off in two stretches of Imil and back on
 /// elsewhere, each frame while the party is in the village.
-///
-/// - The frozen river, a north-south strip from x 192 to 255 widening to x 176
-///   between z 288 and 367.
-/// - The raised ground under the big tree, above a height of 30 pixels east
-///   of x 232 and south of z 212.
 static void Imil_UpdateFootprints(void) {
   struct Actor *actor;
   s32 x;
@@ -1305,7 +1210,7 @@ static void Imil_UpdateFootprints(void) {
   x = actor->x.fixed;
   // In units of 8 pixels.
   column = x >> 19;
-  if ((u32)(column - 24) <= 7 ||
+  if ((column >= 24 && column <= 31) ||
       ((u32)((actor->z.fixed >> 19) - 36) <= 9 && (u32)(column - 22) <= 9)) {
     isSet = GameFlag_Get(zoneFlag);
     if (isSet != 0)
@@ -1334,9 +1239,6 @@ static void Imil_UpdateFootprints(void) {
 
 /// Move on Imil's snowman, while the leader leaves footprints: once it is
 /// at cell (15, 7) it stays there for the rest of the visit.
-///
-/// That cell takes the attributes of the cell north of it. Before patch 3
-/// any Move on it does so, wherever it stops.
 static void Imil_PlaceMovedSnowman(void) {
   s32 a;
   s32 b;
@@ -1456,7 +1358,6 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_FaceDirection(ACTOR_JUSTIN, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_MEGAN, FACING_SOUTH_SOUTHEAST, 20);
   Actor_SetSpeed(ACTOR_MEGAN, 1);
-  // Let the student approach Mia before she rejoins the party.
   Actor_Get(ACTOR_MEGAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MEGAN, 656, 166);
   Event_Wait(1);
@@ -1522,8 +1423,9 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_Get(ACTOR_MEGAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MEGAN, 644, 166);
   Event_Wait(1);
-  // Restore the student's steering after the farewell walk. A byte view: as
-  // the field, the next gFieldWork load moves after the constant.
+  /* FAKEMATCH(temporary): the flags set through a byte pointer to the actor;
+   * as Actor_Get(ACTOR_MEGAN)->steeringFlags |=, 2 of 506 instructions differ
+   * in tbs-en. */
   *((u8 *)Actor_Get(ACTOR_MEGAN) + offsetof(struct Actor, steeringFlags)) |=
       ACTOR_FACES_MOTION;
   gFieldWork->transition =
@@ -1571,7 +1473,6 @@ static void Imil_TurnSlidingActor(struct Actor *updated) {
 
 /// The leader slides along Imil's ice until something stops him.
 static void Imil_RunIceSlide(void) {
-
   struct Actor *subject;
   struct FieldPosition probe;
   s32 heading;
@@ -1585,7 +1486,7 @@ static void Imil_RunIceSlide(void) {
 
   for (;;) {
     heading = gImil_SwayHeadings[(gKeysHeld >> 4) & 15];
-    if ((heading << 16) == -0x10000) {
+    if ((u16)heading == 0xffff) {
       return;
     }
 
@@ -1619,7 +1520,6 @@ static void Imil_RunIceSlide(void) {
     Actor_WaitForMove(subject);
     subject->update = Imil_TurnSlidingActor;
 
-    // Advance along the slide until its next cell is blocked or too high.
     for (;;) {
       FieldVector_AddPolarOffset(16, heading, &probe);
       if ((nextBehavior =

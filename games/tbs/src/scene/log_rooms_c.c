@@ -44,7 +44,6 @@
 #include "main_routine_work.h"
 #include "flags.h"
 #include "module/scene/log_rooms_c.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
@@ -52,16 +51,12 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "event.h"
 
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "scene_tables.h"
 #include "item_ids.h"
 
 /// Kolima's shops and inn, as Shop_Run and Inn_CheckIn number them.
@@ -157,10 +152,8 @@ const struct ActorPlacement *LogRoomsC_GetActorPlacements(void) {
   return placements;
 }
 
-/// Kolima's weapon seller, once the curse is lifted, opens the shop when
-/// spoken to across the counter (facing north).
-/// From any other side, the seller says Fuchin Temple is on the other side of
-/// the river.
+/// Kolima's weapon seller, once the curse is lifted, opens the shop when spoken
+/// to across the counter (facing north).
 static void LogRoomsC_TalkToWeaponMerchant(void) {
   u32 facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
 
@@ -177,8 +170,6 @@ static void LogRoomsC_TalkToWeaponMerchant(void) {
 
 /// Kolima's armor seller, once the curse is lifted, opens the shop across the
 /// counter.
-/// Otherwise the seller calls the grand bridge across the river the pride of
-/// Kolima.
 static void LogRoomsC_TalkToArmorMerchant(void) {
   u32 facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
 
@@ -195,8 +186,6 @@ static void LogRoomsC_TalkToArmorMerchant(void) {
 
 /// Kolima's item seller, once the curse is lifted, opens the shop across the
 /// counter.
-/// Otherwise the seller says "When I was a tree, I learned to appreciate the
-/// sun."
 static void LogRoomsC_TalkToItemMerchant(void) {
   u32 facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
 
@@ -213,8 +202,6 @@ static void LogRoomsC_TalkToItemMerchant(void) {
 
 /// Kolima's innkeeper, once the curse is lifted, opens the inn across the
 /// counter.
-/// Otherwise the innkeeper says McCoy has halted the palace's construction, so
-/// the lumberjacks who came for the work will leave.
 static void LogRoomsC_TalkToInnkeeper(void) {
   u32 facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
 
@@ -238,9 +225,6 @@ const struct Trigger *LogRoomsC_GetTriggers(void) {
 }
 
 /// Sets up the houses for the curse and the way they're entered.
-///
-/// It opens with a window transition, sets the trees' sprites while the curse
-/// lasts, and draws the father's room for the way it is entered.
 s32 LogRoomsC_Initialize(void) {
   struct FieldWork *work = gFieldWork;
   s32 actorId;

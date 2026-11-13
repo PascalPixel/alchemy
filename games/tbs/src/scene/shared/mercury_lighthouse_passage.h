@@ -1,10 +1,6 @@
 /// @file
 /// Mercury Lighthouse and its entrance: leaving a floor through one of its
 /// sparkling passages.
-#include "types.h"
-#include "actor.h"
-#include "event.h"
-#include "sounds.h"
 
 /// Stepping into a passage: the leader moves north with the trail of sparks,
 /// vanishes, and after half a second the screen fades and the party takes that
@@ -15,7 +11,7 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
   Sound_Play(SE_SPARKLING_PASSAGE);
   v->update = (void (*)(struct Actor *))MercuryLighthouse_TrailSparks;
   v->speedLimit = px(1) / 5;
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER, 0, -6);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -35,7 +31,6 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
 /// vanishes, then is put at x 8 * column + 8, z 0, with no exit and no end to
 /// the event; nothing in either overlay calls it.
 static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
-
   Event_Start();
   Sound_Play(SE_SPARKLING_PASSAGE);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.4);

@@ -422,7 +422,7 @@ const struct Trigger *Scene_GetEvents(void) {
 #include "call.h"
 
 void Func_0200154c(u16 *slots, u16 *colours, u16 *a, u16 *b);
-/* VIEW(s0b64): routine Func_02002e6c as void Func_02002e6c(void); mars_lighthouse_room_m has void Func_02002e6c(struct Actor *self); tried as the definition's void Func_02002e6c(struct Actor *self), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:491: too few arguments to function `Func_02002e6c'. */
+/* VIEW(s0b64): routine Func_02002e6c as void Func_02002e6c(void); mars_lighthouse_room_m has void Func_02002e6c(struct Actor *self); tried as the definition's void Func_02002e6c(struct Actor *self), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:490: too few arguments to function `Func_02002e6c'. */
 extern void Func_02002e6c__s0b64(void) __asm__("Func_02002e6c");
 void Func_02003278(void);
 

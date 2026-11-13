@@ -760,7 +760,7 @@ struct Trigger gSceneEvents[] = {
 // ---- games/tla/src/debug/psynergy_test/s0c4c.c ----
 // Overlay 0x6b8's code from Func_02000c4c on, in ROM order.
 
-/* VIEW(s0c4c): tag struct SparkleSprite as struct SparkleSprite__s0c4c; psynergy_test.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/debug/psynergy_test.c:806: structure has no member named `flag'. */
+/* VIEW(s0c4c): tag struct SparkleSprite as struct SparkleSprite__s0c4c; psynergy_test.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/debug/psynergy_test.c:802: structure has no member named `flag'. */
 struct SparkleSprite__s0c4c {
   u8 unk00[5];
   u8 attr5Low : 5;
@@ -774,7 +774,7 @@ struct SparkleSprite__s0c4c {
   u8 unk0a[0x1e];
 };
 
-/* VIEW(s0c4c): tag struct SparkleWork as struct SparkleWork__s0c4c; psynergy_test.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/debug/psynergy_test.c:796: incompatible types in assignment. */
+/* VIEW(s0c4c): tag struct SparkleWork as struct SparkleWork__s0c4c; psynergy_test.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/debug/psynergy_test.c:792: incompatible types in assignment. */
 struct SparkleWork__s0c4c {
   struct SparkleSprite__s0c4c sprites[4];
   u16 unka0;

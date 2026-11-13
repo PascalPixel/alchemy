@@ -70,7 +70,7 @@ void Func_02002954(struct Actor *object) {
 #include "vector3.h"
 #include "fixed_math.h"
 
-/* VIEW(flash): routine Func_020054f8 as s32 Func_020054f8(struct Actor *actor); module/scene/mars_lighthouse_room_f.h has s32 Func_020054f8(struct Actor *object, s32 *position); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/flash.c:134: too few arguments to function `Func_020054f8'. */
+/* VIEW(flash): routine Func_020054f8 as s32 Func_020054f8(struct Actor *actor); module/scene/mars_lighthouse_room_f.h has s32 Func_020054f8(struct Actor *object, s32 *position); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/flash.c:132: too few arguments to function `Func_020054f8'. */
 extern s32 Func_020054f8__flash(struct Actor *actor) __asm__("Func_020054f8");
 
 #if TLA_PATCH_1

@@ -15,7 +15,7 @@ struct Work {
   u16 room;
 };
 
-/* VIEW(s0ac8): tag struct Vector3 as struct Vector3__s0ac8; vector3.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum/s0ac8.c:52: storage size of `from' isn't known. */
+/* VIEW(s0ac8): tag struct Vector3 as struct Vector3__s0ac8; vector3.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum/s0ac8.c:47: storage size of `from' isn't known. */
 struct Vector3__s0ac8 {
   s32 x;
   s32 y;

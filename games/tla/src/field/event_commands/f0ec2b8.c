@@ -13,7 +13,7 @@ struct WorldMapPlace {
 };
 
 // The world map screen's work, laid out as field/world_map.h has it.
-/* VIEW(f0ec2b8): tag struct WorldMapWork as struct WorldMapWork__f0ec2b8; world_map.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:47: dereferencing pointer to incomplete type. */
+/* VIEW(f0ec2b8): tag struct WorldMapWork as struct WorldMapWork__f0ec2b8; world_map.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:45: dereferencing pointer to incomplete type. */
 struct WorldMapWork__f0ec2b8 {
   u16 vramBlock;
   u16 windowSlot;
@@ -171,7 +171,7 @@ struct WorldMapMarker {
   u8 unk0a[2];
 };
 
-/* VIEW(f0ec4d4): tag struct WorldMapWork as struct WorldMapWork__f0ec4d4; f0ec2b8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:274: dereferencing pointer to incomplete type. */
+/* VIEW(f0ec4d4): tag struct WorldMapWork as struct WorldMapWork__f0ec4d4; f0ec2b8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:272: dereferencing pointer to incomplete type. */
 struct WorldMapWork__f0ec4d4 {
   u16 vramBlock;
   u16 windowSlot;
@@ -188,7 +188,7 @@ struct WorldMapWork__f0ec4d4 {
   s32 scrollZ;
 };
 
-/* VIEW(f0ec4d4): tag struct WorldMapPlace as struct WorldMapPlace__f0ec4d4; f0ec2b8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:354: structure has no member named `name'. */
+/* VIEW(f0ec4d4): tag struct WorldMapPlace as struct WorldMapPlace__f0ec4d4; f0ec2b8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:352: structure has no member named `name'. */
 struct WorldMapPlace__f0ec4d4 {
   u8 flag;
   u8 value;

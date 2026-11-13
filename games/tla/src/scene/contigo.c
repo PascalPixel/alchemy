@@ -10,11 +10,11 @@
 #include "module/game/game.h"
 #include "module/scene/contigo.h"
 #include "module/system/system.h"
-/* VIEW(contigo): routine Func_02003e54 as void Func_02003e54(struct ContigoObject *object, const void *effect); the definition has void Func_02003e54(struct Actor *object, struct SparkleWork *work); tried as the definition's void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2268: conflicting types for `Func_02003e54'. */
+/* VIEW(contigo): routine Func_02003e54 as void Func_02003e54(struct ContigoObject *object, const void *effect); the definition has void Func_02003e54(struct Actor *object, struct SparkleWork *work); tried as the definition's void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2224: conflicting types for `Func_02003e54'. */
 struct ContigoObject;
 extern void Func_02003e54__contigo(struct ContigoObject *object, const void *effect) __asm__("Func_02003e54");
 #define Func_02003e54 Func_02003e54__contigo
-/* VIEW(contigo): routine Func_02003f54 as void Func_02003f54(struct ContigoObject *object); the definition has void Func_02003f54(struct ContigoObject__s3e54 *object); tried as the definition's void Func_02003f54(struct ContigoObject__s3e54 *object), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2302: conflicting types for `Func_02003f54'. */
+/* VIEW(contigo): routine Func_02003f54 as void Func_02003f54(struct ContigoObject *object); the definition has void Func_02003f54(struct ContigoObject__s3e54 *object); tried as the definition's void Func_02003f54(struct ContigoObject__s3e54 *object), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2258: conflicting types for `Func_02003f54'. */
 struct ContigoObject;
 extern void Func_02003f54__contigo(struct ContigoObject *object) __asm__("Func_02003f54");
 #define Func_02003f54 Func_02003f54__contigo
@@ -205,7 +205,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(contigo): variable gData_02004c70 as extern u8 gData_02004c70[]; the definition has u32 gData_02004c70[] = { 0xffff, 0, 0, 0, 0, 0, }; tried as the definition's extern s32 gData_02004c70[], it does not compile in tla-ja: games/tla/src/scene/contigo.c:2551: conflicting types for `gData_02004c70'. */
+/* VIEW(contigo): variable gData_02004c70 as extern u8 gData_02004c70[]; the definition has u32 gData_02004c70[] = { 0xffff, 0, 0, 0, 0, 0, }; tried as the definition's extern s32 gData_02004c70[], it does not compile in tla-ja: games/tla/src/scene/contigo.c:2509: conflicting types for `gData_02004c70'. */
 extern u8 gData_02004c70__contigo[] __asm__("gData_02004c70");
 
 u8 *Scene_GetPlacements(void) {
@@ -2196,7 +2196,7 @@ struct ResourceTableEntry {
   u16 offset; ///< in bytes; its tile is offset / 32
 };
 
-/* VIEW(s3e54): tag struct SparkleSprite as struct SparkleSprite__s3e54; contigo.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2241: structure has no member named `blend'. */
+/* VIEW(s3e54): tag struct SparkleSprite as struct SparkleSprite__s3e54; contigo.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2237: structure has no member named `blend'. */
 struct SparkleSprite__s3e54 {
   u8 unk00[5];
   u8 unk05_0 : 5;
@@ -2209,7 +2209,7 @@ struct SparkleSprite__s3e54 {
   u8 unk0a[0x1e];
 };
 
-/* VIEW(s3e54): tag struct SparkleWork as struct SparkleWork__s3e54; contigo.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2233: incompatible types in assignment. */
+/* VIEW(s3e54): tag struct SparkleWork as struct SparkleWork__s3e54; contigo.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2229: incompatible types in assignment. */
 struct SparkleWork__s3e54 {
   struct SparkleSprite__s3e54 sprites[4];
   u16 unka0;

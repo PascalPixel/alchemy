@@ -123,7 +123,7 @@ void Func_02004644(void) {
   }
 }
 
-/* VIEW(s44cc): variable gData_02006b70 as s16 gData_02006b70; module/scene/scene.h has u8 gData_02006b70[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s44cc.c:220: `gData_02006b70' has an incomplete type. */
+/* VIEW(s44cc): variable gData_02006b70 as s16 gData_02006b70; module/scene/scene.h has u8 gData_02006b70[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s44cc.c:218: `gData_02006b70' has an incomplete type. */
 extern s16 gData_02006b70__s44cc __asm__("gData_02006b70");
 
 void Func_0200571c(struct LightOam *oam, s32 depth);

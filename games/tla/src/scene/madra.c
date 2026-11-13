@@ -1107,7 +1107,7 @@ void Func_020014fc(void) {
   Event_End();
 }
 
-/* VIEW(s0ac4): variable gData_02003308 as extern const struct CellPictureCopyEntry gData_02003308[]; madra has extern struct MadraPlacement gData_02003308[]; tried as the definition's extern s32 gData_02003308[], it does not compile in tla-ja: games/tla/src/scene/madra.c:1172: request for member `steps' in something not a structure or union. */
+/* VIEW(s0ac4): variable gData_02003308 as extern const struct CellPictureCopyEntry gData_02003308[]; madra has extern struct MadraPlacement gData_02003308[]; tried as the definition's extern s32 gData_02003308[], it does not compile in tla-ja: games/tla/src/scene/madra.c:1149: request for member `steps' in something not a structure or union. */
 extern const struct CellPictureCopyEntry gData_02003308__s0ac4[] __asm__("gData_02003308");
 
 // The macro's do-while starts each mode change's own scheduling region; as

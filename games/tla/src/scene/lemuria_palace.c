@@ -234,17 +234,17 @@ void Func_020002b4(void) {
 #include "system/io_write.h"
 
 extern s32 gData_02003020;
-/* VIEW(s03a0): variable Data_02003060 as extern struct Unk_020003a0Sprite Data_02003060; lemuria_palace has extern u8 Data_02003060[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:268: request for member `unk1e' in something not a structure or union. */
+/* VIEW(s03a0): variable Data_02003060 as extern struct Unk_020003a0Sprite Data_02003060; lemuria_palace has extern u8 Data_02003060[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:266: request for member `unk1e' in something not a structure or union. */
 extern struct Unk_020003a0Sprite Data_02003060__s03a0 __asm__("Data_02003060");
-/* VIEW(s03a0): variable Data_02003030 as extern struct Unk_020003a0Sprite Data_02003030; lemuria_palace has extern u8 Data_02003030[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:279: request for member `unk1e' in something not a structure or union. */
+/* VIEW(s03a0): variable Data_02003030 as extern struct Unk_020003a0Sprite Data_02003030; lemuria_palace has extern u8 Data_02003030[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:277: request for member `unk1e' in something not a structure or union. */
 extern struct Unk_020003a0Sprite Data_02003030__s03a0 __asm__("Data_02003030");
-/* VIEW(s03a0): variable Data_02003090 as extern s32 Data_02003090; lemuria_palace has extern u8 Data_02003090[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:284: `Data_02003090' has an incomplete type. */
+/* VIEW(s03a0): variable Data_02003090 as extern s32 Data_02003090; lemuria_palace has extern u8 Data_02003090[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:282: `Data_02003090' has an incomplete type. */
 extern s32 Data_02003090__s03a0 __asm__("Data_02003090");
-/* VIEW(s03a0): variable Data_02003024 as extern s32 Data_02003024; lemuria_palace has extern u8 Data_02003024[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:285: `Data_02003024' has an incomplete type. */
+/* VIEW(s03a0): variable Data_02003024 as extern s32 Data_02003024; lemuria_palace has extern u8 Data_02003024[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:283: `Data_02003024' has an incomplete type. */
 extern s32 Data_02003024__s03a0 __asm__("Data_02003024");
-/* VIEW(s03a0): variable Data_02003098 as extern s32 Data_02003098; lemuria_palace has extern u8 Data_02003098[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:286: `Data_02003098' has an incomplete type. */
+/* VIEW(s03a0): variable Data_02003098 as extern s32 Data_02003098; lemuria_palace has extern u8 Data_02003098[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:284: `Data_02003098' has an incomplete type. */
 extern s32 Data_02003098__s03a0 __asm__("Data_02003098");
-/* VIEW(s03a0): variable gData_0200308c as extern u8 gData_0200308c; lemuria_palace has extern u8 gData_0200308c[]; tried as the definition's extern struct Trigger gData_0200308c[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:287: `gData_0200308c' has an incomplete type. */
+/* VIEW(s03a0): variable gData_0200308c as extern u8 gData_0200308c; lemuria_palace has extern u8 gData_0200308c[]; tried as the definition's extern struct Trigger gData_0200308c[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:285: `gData_0200308c' has an incomplete type. */
 extern u8 gData_0200308c__s03a0 __asm__("gData_0200308c");
 
 

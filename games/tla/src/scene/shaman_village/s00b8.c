@@ -11,7 +11,7 @@
 
 extern const s32 *gData_02004c50[];
 
-/* VIEW(s00b8): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); shaman_village.h has void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32 value); tried as the 19 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/src/scene/shaman_village/shaman_village.h:73: conflicting types for `Actor_SetSingleChildFlags'. */
+/* VIEW(s00b8): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); shaman_village.h has void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32 value); tried as the 35 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/src/scene/shaman_village/shaman_village.h:73: conflicting types for `Actor_SetSingleChildFlags'. */
 extern void Actor_SetSingleChildFlags__s00b8(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
 
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -106,7 +106,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 // ---- games/tla/src/scene/shaman_village/scene_tables.c ----
 #include "battle.h"
-/* VIEW(scene_tables): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); shaman_village.h has void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32 value); tried as the 19 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/include/field/field.h:25: conflicting types for `Actor_SetSingleChildFlags'. */
+/* VIEW(scene_tables): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); shaman_village.h has void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32 value); tried as the 35 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/include/field/field.h:25: conflicting types for `Actor_SetSingleChildFlags'. */
 struct Actor;
 extern void Actor_SetSingleChildFlags__scene_tables(struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
 #define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__scene_tables

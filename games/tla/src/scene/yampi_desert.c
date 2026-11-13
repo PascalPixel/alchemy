@@ -18,7 +18,7 @@
 #include "module/tla.h"
 #include "resource.h"
 #include "text/msg_ids.h"
-/* VIEW(s0b84): routine Func_0200388c as void Func_0200388c(const void *script, s32 a, s32 b); the definition has void Func_0200388c(u16 *list, s32 mode, s32 count); tried as the definition's void Func_0200388c(u16 *list, s32 mode, s32 count), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/yampi_desert.c:1701: conflicting types for `Func_0200388c'. */
+/* VIEW(s0b84): routine Func_0200388c as void Func_0200388c(const void *script, s32 a, s32 b); the definition has void Func_0200388c(u16 *list, s32 mode, s32 count); tried as the definition's void Func_0200388c(u16 *list, s32 mode, s32 count), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/yampi_desert.c:1697: conflicting types for `Func_0200388c'. */
 extern void Func_0200388c__s0b84(const void *script, s32 a, s32 b) __asm__("Func_0200388c");
 #define Func_0200388c Func_0200388c__s0b84
 #include "yampi_desert/scene.h"

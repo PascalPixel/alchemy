@@ -1115,7 +1115,7 @@ s32 MapGrid_IsWallAt(s32 *position) {
   return (cell[2] != 255) - 1;
 }
 
-/* VIEW(f02c58c): variable gMapBlocks as struct WorldMapBlock gMapBlocks[]; module/tla.h has u32 gMapBlocks[]; tried as the 2 declarations' extern u8 gMapBlocks[], it does not compile in tla-ja: games/tla/src/field/map/f02c58c.c:1118: conflicting types for `gMapBlocks'. */
+/* VIEW(f02c58c): variable gMapBlocks as struct WorldMapBlock gMapBlocks[]; module/tla.h has u32 gMapBlocks[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/map/f02c58c.c:1131: request for member `unk2' in something not a structure or union. */
 extern struct WorldMapBlock gMapBlocks__f02c58c[] __asm__("gMapBlocks");
 
 /// Reads byte 2 of the world map block under position: blocks are 32 pixels

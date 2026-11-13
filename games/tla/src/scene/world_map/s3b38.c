@@ -428,7 +428,7 @@ void Func_02004634(struct Actor *parent) {
 
 /* VIEW(s3b38): variable gData_02006e0c as s16 gData_02006e0c; module/scene/scene.h has u8 gData_02006e0c[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/world_map/s3b38.c:447: `gData_02006e0c' has an incomplete type. */
 extern s16 gData_02006e0c__s3b38 __asm__("gData_02006e0c");
-/* VIEW(s3b38): variable gData_02006e0e as s16 gData_02006e0e; module/scene/scene.h has u8 gData_02006e0e[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/world_map/s3b38.c:535: array subscript is not an integer. */
+/* VIEW(s3b38): variable gData_02006e0e as s16 gData_02006e0e; module/scene/scene.h has u8 gData_02006e0e[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/world_map/s3b38.c:533: array subscript is not an integer. */
 extern s16 gData_02006e0e__s3b38 __asm__("gData_02006e0e");
 /* VIEW(s3b38): variable gData_02006f20 as u8 gData_02006f20[][32]; module/scene/scene.h has u8 gData_02006f20[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/world_map/s3b38.c:492: subscripted value is neither array nor pointer. */
 extern u8 gData_02006f20__s3b38[][32] __asm__("gData_02006f20");

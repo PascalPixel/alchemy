@@ -1548,7 +1548,7 @@ void Func_02003da0(void) {
 // Effect_AdvanceMotionAtLeaderPriority, in ROM order.
 #include "frame.h"
 
-/* VIEW(s3f68): tag struct TrialRoadMover as struct TrialRoadMover__s3f68; s15a8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:1600: structure has no member named `offset'. */
+/* VIEW(s3f68): tag struct TrialRoadMover as struct TrialRoadMover__s3f68; s15a8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:1598: structure has no member named `offset'. */
 struct TrialRoadMover__s3f68 {
   s16 id;
   s16 phase;
@@ -1558,7 +1558,7 @@ struct TrialRoadMover__s3f68 {
   struct Actor *marker;
 };
 
-/* VIEW(s3f68): tag struct TrialRoadMovers as struct TrialRoadMovers__s3f68; s15a8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:1591: structure has no member named `vramEntry'. */
+/* VIEW(s3f68): tag struct TrialRoadMovers as struct TrialRoadMovers__s3f68; s15a8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:1589: structure has no member named `vramEntry'. */
 struct TrialRoadMovers__s3f68 {
   s16 vramEntry;
   s16 shape;

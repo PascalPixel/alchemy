@@ -33,7 +33,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-/* VIEW(daila_interiors): variable gData_0200116c as extern const u8 gData_0200116c[]; the definition has s32 gData_0200116c[] = { 11, 0x1010100a, - 1, 0x1020200a, - 1, 0x1030300a, - 1, 0x1040400a, - 1, 0x1050500a, - 1, 0x1060600a, - 1, 0x1070308...; tried as the definition's extern s16 gData_0200116c[], it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:658: conflicting types for `gData_0200116c'. */
+/* VIEW(daila_interiors): variable gData_0200116c as extern const u8 gData_0200116c[]; the definition has s32 gData_0200116c[] = { 11, 0x1010100a, - 1, 0x1020200a, - 1, 0x1030300a, - 1, 0x1040400a, - 1, 0x1050500a, - 1, 0x1060600a, - 1, 0x1070308...; tried as the definition's extern s16 gData_0200116c[], it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:654: conflicting types for `gData_0200116c'. */
 extern const u8 gData_0200116c__daila_interiors[] __asm__("gData_0200116c");
 
 const void *Scene_GetExits(void) {
@@ -109,7 +109,7 @@ void DailaInteriors_StartLeaderEvent(void) {
   Import_ActorSetSpritePriority(gMainRoutineWork.currentOwner, 1);
 }
 
-/* VIEW(daila_interiors): variable gData_020016e4 as extern const u8 gData_020016e4[]; the definition has s32 gData_020016e4[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 1, (s32) 0xffff0004, 4, 1, (s32) 0xffff0005...; tried as the definition's extern s16 gData_020016e4[], it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:959: conflicting types for `gData_020016e4'. */
+/* VIEW(daila_interiors): variable gData_020016e4 as extern const u8 gData_020016e4[]; the definition has s32 gData_020016e4[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 1, (s32) 0xffff0004, 4, 1, (s32) 0xffff0005...; tried as the definition's extern s16 gData_020016e4[], it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:955: conflicting types for `gData_020016e4'. */
 extern const u8 gData_020016e4__daila_interiors[] __asm__("gData_020016e4");
 
 const struct Trigger *Scene_GetEvents(void) {
@@ -341,7 +341,7 @@ void Func_02000704(void) {
 
 #include "item.h"
 
-/* VIEW(item): tag struct DailaActor as struct DailaActor__item; daila_interiors.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:359: structure has no member named `unk48'. */
+/* VIEW(item): tag struct DailaActor as struct DailaActor__item; daila_interiors.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:357: structure has no member named `unk48'. */
 struct DailaActor__item {
   u8 unk00[0xc];
   s32 y;
@@ -360,7 +360,7 @@ struct DailaActor__item {
   s32 unk6c;
 };
 
-/* VIEW(item): routine Actor_GetById as struct DailaActor__item *Actor_GetById(s32 id); daila_interiors has struct DailaActor *Actor_GetById(s32 id); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:375: structure has no member named `unk48'. */
+/* VIEW(item): routine Actor_GetById as struct DailaActor__item *Actor_GetById(s32 id); daila_interiors has struct DailaActor *Actor_GetById(s32 id); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:373: structure has no member named `unk48'. */
 extern struct DailaActor__item *Actor_GetById__item(s32 id) __asm__("Actor_GetById");
 void Func_02000da4(struct DailaActor__item *object, s32 mode);
 void Sound_Play(s32 cue);
@@ -501,9 +501,9 @@ void Func_02000ca4(s32 mode);
 /* VIEW(arrival): variable gData_02000e04 as extern s16 gData_02000e04[]; daila_interiors has extern const u8 gData_02000e04[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:560: `gData_02000e04__arrival' undeclared (first use in this function). */
 extern s16 gData_02000e04__arrival[] __asm__("gData_02000e04");
 
-/* VIEW(arrival): routine Actor_GetById as struct DailaStartActor *Actor_GetById(s32 id); item has struct DailaActor__item *Actor_GetById(s32 id); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:534: invalid type argument of `->'. */
+/* VIEW(arrival): routine Actor_GetById as struct DailaStartActor *Actor_GetById(s32 id); item has struct DailaActor__item *Actor_GetById(s32 id); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:530: invalid type argument of `->'. */
 extern struct DailaStartActor *Actor_GetById__arrival(s32 id) __asm__("Actor_GetById");
-/* VIEW(arrival): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct DailaStartActor *object, s32 value); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); tried as the 19 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:506: conflicting types for `Actor_SetSingleChildFlags'. */
+/* VIEW(arrival): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct DailaStartActor *object, s32 value); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); tried as the 35 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:506: conflicting types for `Actor_SetSingleChildFlags'. */
 extern void Actor_SetSingleChildFlags__arrival(struct DailaStartActor *object,
                                         s32 value) __asm__("Actor_SetSingleChildFlags");
 void Func_02000cbc(struct DailaStartActor *object, s32 item);

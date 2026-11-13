@@ -447,7 +447,7 @@ void Func_02000978(s32 actor) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(s0a34): variable gData_02003634 as extern const struct ThrowAnimations gData_02003634; the definition has u32 gData_02003634[] = { 439, 440, 441, }; tried as the definition's extern u32 gData_02003634[], it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:528: incompatible types in assignment. */
+/* VIEW(s0a34): variable gData_02003634 as extern const struct ThrowAnimations gData_02003634; the definition has u32 gData_02003634[] = { 439, 440, 441, }; tried as the definition's extern u32 gData_02003634[], it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:522: incompatible types in assignment. */
 extern const struct ThrowAnimations gData_02003634__s0a34 __asm__("gData_02003634");
 
 struct Actor *Actor_GetById(u32 objectId);

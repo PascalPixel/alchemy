@@ -110,7 +110,7 @@ void Func_02000184(void) {
   if (dz == 1 && Event_GetFlag(514) != 0) {
     if (Event_GetFlag(516) != 0)
       return;
-    Func_02001080();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldActor_Jump(17, 4, 20);
     Actor_SetDestinationOffset(17, 0, 32);
@@ -129,11 +129,11 @@ void Func_02000184(void) {
     FieldEvent_Wait(30);
     Actor_ShowEmote(17, 258, 0);
     FieldEvent_Wait(30);
-    Func_02001088();
+    Event_End();
     Event_SetFlag(516);
     return;
   }
-  Func_02001080();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   dz <<= 5;
   FieldActor_Jump(17, 4, 20);
@@ -147,7 +147,7 @@ void Func_02000184(void) {
   FieldActor_WaitForMoveById(17);
   Actor_SetDestinationOffset(17, 0, dz);
   FieldActor_WaitForMoveById(17);
-  Func_02001088();
+  Event_End();
 }
 
 void Func_0200030c(void) {
@@ -196,14 +196,14 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 void Func_0200039c(void) {
   s32 result0;
 
-  Func_02001080();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Value3((s32 (*)())Func_02001098, 22, 0x190, -1);
   if (result0 != 0)
     goto L_020083c4;
   Event_ClearFlag(0xa73);
 L_020083c4:
-  Func_02001088();
+  Event_End();
   return;
 }
 
@@ -240,7 +240,7 @@ void Func_02000430(void) {
     return;
   if (Event_GetFlag(0) == 0)
     return;
-  Func_02001080();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_SetFlag(0xa70);
   FieldEvent_SetMessageId((s32)MsgIFound2);
@@ -347,11 +347,11 @@ void Func_02000430(void) {
   } while (0);
   Event_SetAfterBattleDestination((s32)&SceneId_Ov695, 20);
   Event_SetDefeatDestination((s32)&SceneId_Ov695, 21);
-  Func_020011a0(102, 2);
+  Field_RequestBattleFromEncounterTable(102, 2);
 }
 
 void Func_0200083c(void) {
-  Func_02001080();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -365,10 +365,10 @@ void Func_0200083c(void) {
   }
   Event_SetAfterBattleDestination((s32)&SceneId_Ov695, 20);
   Event_SetDefeatDestination((s32)&SceneId_Ov695, 21);
-  Func_020011a0(102, 2);
+  Field_RequestBattleFromEncounterTable(102, 2);
 }
 
-void Func_02001190();
+void Event_SetDestination();
 void Func_02001208();
 void Message_CloseFinishedWindows();
 
@@ -382,7 +382,7 @@ void Message_CloseFinishedWindows();
 void Func_0200087c(void) {
   s32 angle = 0xa000;
 
-  Func_02001080();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(273), 0);
   FieldEvent_SetMessageId((s32)MsgHeyTheseGuys);
@@ -425,7 +425,7 @@ void Func_0200087c(void) {
   FieldEvent_Wait(100);
   Actor_ShowEmote(18, 261, 1);
   FieldEvent_Wait(20);
-  Func_02001190((s16)gMainRoutineWork.savedScene,
+  Event_SetDestination((s16)gMainRoutineWork.savedScene,
                 (s16)gMainRoutineWork.savedEntrance);
 #if TLA_PATCH_1
   Func_02001208(gMainRoutineWork.scene, gMainRoutineWork.entrance);
@@ -446,7 +446,7 @@ void Func_02000a24(void) {
 
   Event_ClearFlag(0xa71);
   Event_SetFlag(0xa72);
-  Func_02001080();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(273), 0);
   FieldEvent_SetMessageId((s32)MsgTheseGuysWere);
@@ -537,7 +537,7 @@ void Func_02000a24(void) {
     Actor_SetDestination(18, target[5], target[9]);
   FieldActor_WaitForMoveById(18);
   Actor_SetPosition(18, 0, 0);
-  Func_02001088();
+  Event_End();
 }
 
 void Func_02000d84(void) {
@@ -545,7 +545,7 @@ void Func_02000d84(void) {
   struct Actor *object;
   u32 id;
 
-  Func_02001080();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   id = 8;
 next:
@@ -563,7 +563,7 @@ next:
   FieldEvent_SetExitRequest(work->value154);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02001088();
+  Event_End();
 }
 
 struct ShamanVillageCaveSceneWork {

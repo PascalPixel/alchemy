@@ -289,7 +289,7 @@ void Func_02000818(void) {
   work = Ram_HeapSlots->eventWork;
   actor = Actor_GetById(8);
   angle = (work->exit - 45) << 14;
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   x = actor->x >> 20;
   z = actor->z >> 20;
@@ -492,7 +492,7 @@ void Func_02000c50(void) {
 
 extern u32 gData_020022cc;
 void Func_02000c50(void);
-void Func_02001fac(void);
+void Event_Start(void);
 /* VIEW(s0c94): routine Func_02001fb4 as s32 Func_02001fb4(void); sea_of_time.h has void Func_02001fb4(void); tried as the definition's void Func_02001fb4(s32 *position, s32 speed, s32 mode), it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:494: conflicting types for `Func_02001fb4'. */
 extern s32 Func_02001fb4__s0c94(void) __asm__("Func_02001fb4");
 
@@ -505,7 +505,7 @@ s32 Func_02000c94(void) {
   s32 i;
   s32 frame;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_SetBit(0x200);
   Sound_Play(0x22d);
@@ -570,7 +570,7 @@ s32 Func_02000da0(void) {
   u32 j;
 
   Task_RemoveFar(Func_02000c50);
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(0x22c);
   gData_020022cc = 1;
@@ -633,7 +633,7 @@ fade:
 // next object the overlay links.
 
 
-void Func_02001fac(void);
+void Event_Start(void);
 s32 Math_Cosine(s32 angle);
 s32 Func_02001f9c(struct Actor *actor);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -651,7 +651,7 @@ void Func_02000ef0(void) {
   s32 velocity, reverseVelocity, alternate;
 
   actor = Actor_GetById(8);
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetMoveTarget(actor, actor->x, actor->y, actor->z + 0x80000);
   // A goto loop: as while (Func_02001f9c(actor) == 0), loop.c moves 0xb0000
@@ -711,7 +711,7 @@ void Func_02000ef0(void) {
 #include "io_reg.h"
 
 void Func_02001068(void) {
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (!Event_GetFlag(0x8dd)) {
     Import_EventSetExitRequest(4);
@@ -743,7 +743,7 @@ void Func_020010a8(struct Actor *object) {
 extern struct SavedColors gData_020026c0;
 
 void Func_02001f4c(struct Actor *object, s32 value);
-void Func_0200200c(s32 a, s32 b);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
 void Func_02001108(void) {
   volatile u16 fill;
@@ -756,7 +756,7 @@ void Func_02001108(void) {
   u32 i;
   u32 j;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_SetBit(0x8dd);
   Actor_SetSpeed(8, 0x10000, 0x8000);
@@ -880,7 +880,7 @@ next:
   Event_Wait(40);
   gMainRoutineWork.battleRule24b = 2;
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov687Room2, 4);
-  Func_0200200c(12, 6);
+  Field_RequestBattleFromEncounterTable(12, 6);
   Func_02001fb4();
 }
 
@@ -902,7 +902,7 @@ void Func_0200141c(s32 x, s32 z, s32 actor) {
 void Func_02001480(void) {
   struct Actor *object;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object = Actor_GetById(9);
   Func_0200141c(object->x, Actor_GetById(9)->z, 9);
@@ -913,7 +913,7 @@ void Func_02001480(void) {
 void Func_020014b4(void) {
   struct Actor *object;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object = Actor_GetById(10);
   Func_0200141c(object->x, Actor_GetById(10)->z, 10);
@@ -924,7 +924,7 @@ void Func_020014b4(void) {
 void Func_020014ec(void) {
   struct Actor *object;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object = Actor_GetById(11);
   Func_0200141c(object->x, Actor_GetById(11)->z, 11);
@@ -935,7 +935,7 @@ void Func_020014ec(void) {
 void Func_02001524(void) {
   struct Actor *object;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object = Actor_GetById(12);
   Func_0200141c(object->x, Actor_GetById(12)->z, 12);
@@ -946,7 +946,7 @@ void Func_02001524(void) {
 void Func_0200155c(void) {
   struct Actor *object;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object = Actor_GetById(13);
   Func_0200141c(object->x, Actor_GetById(13)->z, 13);
@@ -957,7 +957,7 @@ void Func_0200155c(void) {
 void Func_02001594(void) {
   struct Actor *object;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object = Actor_GetById(9);
   Func_0200141c(object->x, Actor_GetById(9)->z, 9);
@@ -966,7 +966,7 @@ void Func_02001594(void) {
 }
 
 void Func_020015cc(void) {
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Import_EventSetExitRequest(4);
   Event_FinishScreenTransition();
@@ -975,7 +975,7 @@ void Func_020015cc(void) {
 }
 
 void Func_020015ec(void) {
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Import_EventSetExitRequest(5);
   Event_FinishScreenTransition();
@@ -1151,7 +1151,7 @@ void Func_02001928(s32 x, s32 z, s32 actor) {
 
 
 void Func_02001f64();
-void Func_0200204c();
+void Party_PlaySavedMusic();
 /// The Sea of Time's opening: places the camera and the first effects, showers
 /// sparks for 360 frames and larger effects for 16, then fades BG palette 3 to
 /// RGB(11, 6, 23).
@@ -1163,7 +1163,7 @@ void Func_02001a14(void) {
   struct EffectOptions params;
   struct EffectOptions burst;
 
-  Func_02001fac();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(0);
   Map_CopyCellPictureIndicesRect(49, 70, 19, 73, 6, 6);
@@ -1276,7 +1276,7 @@ void Func_02001a14(void) {
     gData_020022cc += gFrameCount & 1;
   } while (changed);
   Task_RemoveFar(Func_02001650);
-  Func_0200204c();
+  Party_PlaySavedMusic();
   GameFlag_SetBit(0x940);
   Func_02001fb4();
 }

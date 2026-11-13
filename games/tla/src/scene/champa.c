@@ -16,8 +16,8 @@
 #include "ram_buffer.h"
 #include "field_event.h"
 
-void Func_02002a44(void);
-void Func_02002a4c(void);
+void Event_Start(void);
+void Event_End(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -60,7 +60,7 @@ static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
 void Func_02000080(const void *warp, s32 door, s32 mode) {
   s32 id;
 
-  Func_02002a44();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(158);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
@@ -75,7 +75,7 @@ void Func_02000080(const void *warp, s32 door, s32 mode) {
   FieldEvent_SetExitRequest(door);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02002a4c();
+  Event_End();
 }
 
 extern s32 gData_020031fc[];
@@ -119,7 +119,7 @@ void Func_02000188(void) {
   s32 t29;
 
   Event_SetFlag(0x973);
-  Func_02002a44();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgChampa49);
   Actor_FaceDirection(32, 0x3000, 0);
@@ -184,7 +184,7 @@ void Func_02000188(void) {
   Actor_SetPosition(32, 0, 0);
   Actor_WalkByAndWait(33, 0, -16);
   Actor_SetPosition(33, 0, 0);
-  Func_02002a4c();
+  Event_End();
 }
 
 void Func_02000430(s32 actor) {
@@ -277,13 +277,13 @@ s32 Func_02002a5c();
 void Func_020005dc(s32 a0) {
   s32 t2;
 
-  Func_02002a44();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   t2 = Value3(Func_02002a5c, a0, 0x19f, -1);
   if (t2 == 0) {
     Event_ClearFlag(0xa74);
   }
-  Func_02002a4c();
+  Event_End();
 }
 
 void Func_0200060c(void) {
@@ -320,7 +320,7 @@ void Func_02000638(void) {
 #endif
     {
       Event_SetFlag(0xa75);
-      Func_02002a44();
+      Event_Start();
       FieldEvent_ResolvePendingActions(0);
       FieldEvent_SetMessageId((s32)MsgChampa52);
       {
@@ -466,7 +466,7 @@ void Func_02000638(void) {
       FieldActor_WaitForMoveById(30);
       Actor_SetPosition(30, 0, 0);
       Actor_SetPosition(29, 0, 0);
-      Func_02002a4c();
+      Event_End();
     }
   }
 }
@@ -575,7 +575,7 @@ s32 Scene_PrepareMap(void) {
 extern u32 gData_02003620[];
 
 void Func_020029dc(struct Actor *object, s32 mode);
-void Func_020029e4(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 
 void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
   s16 value = angle;
@@ -586,7 +586,7 @@ void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
   if (object != 0) {
     sprite = object->sprite;
     Func_020029dc(object, 1);
-    Func_020029e4(object, gData_02003620);
+    Actor_StartScript(object, gData_02003620);
     object->motionFlags = 0;
     ((struct {
       u8 unk00[94];
@@ -697,7 +697,7 @@ void Func_02000e30(void) {
     return;
   }
   Event_SetFlag(0x971);
-  Func_02002a44();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgChampa25);
   Actor_SetSpeed(25, 0xcccc, 0x6666);
@@ -1421,7 +1421,7 @@ void Func_02000e30(void) {
   }
   FieldActor_WaitForMoveById(28);
   Actor_SetPosition(28, 0, 0);
-  Func_02002a4c();
+  Event_End();
 }
 
 extern s16 gData_020031e4[];

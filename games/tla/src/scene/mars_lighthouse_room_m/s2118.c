@@ -221,7 +221,7 @@ struct MarsLighthouseEventWork {
   u16 downOwners[8];
 };
 
-void Func_02003288(s32 a, s32 b);
+void BattleParty_ApplyHealthDelta(s32 a, s32 b);
 struct BattleUnit *Unit_Get(s32 owner);
 
 void Func_02002368(void) {
@@ -235,7 +235,7 @@ void Func_02002368(void) {
   count = Party_CountActiveOwners();
   for (i = 0; i < count; i++)
     hp[i] = Unit_Get(gMainRoutineWork.activeOwners[i])->hp;
-  Func_02003288(-10, 0);
+  BattleParty_ApplyHealthDelta(-10, 0);
   work->downCount = 0;
   work->standingCount = 0;
   Actor_SetAttachedEffect(leader, 258);
@@ -282,7 +282,7 @@ struct Work020023c4 {
 
 s32 Func_02003168(s32 terrain, s32 x, s32 z);
 s32 Func_02003180(struct Actor *actor, struct Vector3 *position);
-void Func_02003200();
+void Actor_JumpDownLedge();
 s32 Func_020031b0(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
 
 void Func_020024e4(void) {
@@ -301,7 +301,7 @@ void Func_020024e4(void) {
 #endif
     actor = Actor_Get(main->currentOwner);
     work = (struct Work020023c4 *)(gData_020023c4 + 0x188);
-    Func_020031e0();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     actor->update = Func_020024bc;
     actor->facing = TRIG_TURN / 4;
@@ -369,7 +369,7 @@ void Func_020024e4(void) {
           break;
         if (result < 0) {
           actor->facing = TRIG_TURN / 4;
-          Func_02003200(gMainRoutineWork.currentOwner, 6, -1);
+          Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, -1);
           break;
         }
 #if TLA_PATCH_1

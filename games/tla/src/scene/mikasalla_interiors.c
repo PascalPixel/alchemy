@@ -34,24 +34,24 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return (const struct ActorPlacement *)gData_02000840;
 }
 
-void Func_020005c4();
-void Func_020005cc();
+void Event_Start();
+void Event_End();
 
 s32 Func_02000078(void) {
-  Func_020005c4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors18);
   Event_ShowMessage(8, 0);
-  Func_020005cc();
+  Event_End();
   return 0;
 }
 
 s32 Func_020000a0(void) {
-  Func_020005c4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors32);
   Event_ShowMessage(9, 0);
-  Func_020005cc();
+  Event_End();
   return 0;
 }
 
@@ -72,7 +72,7 @@ void Func_020000f4(void) {
   s32 result0;
   s32 result1;
 
-  Func_020005c4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors03);
   Event_OpenMessage(10, 0);
@@ -88,7 +88,7 @@ L_0200812c:
   FieldEvent_SetMessageId(((s32)MsgMikasallaInteriors03 + 2));
 L_02008138:
   Event_ShowMessage(10, 0);
-  Func_020005cc();
+  Event_End();
   return;
 }
 
@@ -111,11 +111,11 @@ void Func_0200019c(s32 actor) {
   if (facing == 0xc000) {
     Func_0200064c(4, actor);
   } else {
-    Func_020005c4();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors14);
     Event_ShowMessage(actor, 0);
-    Func_020005cc();
+    Event_End();
   }
 }
 
@@ -126,7 +126,7 @@ void Func_020001fc(s32 actor) {
   if (facing == 0xc000) {
     Func_02000644(actor);
   } else {
-    Func_020005c4();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors17);
     Event_OpenMessage(actor, 0);
@@ -139,7 +139,7 @@ void Func_020001fc(s32 actor) {
       FieldEvent_SetMessageId((s32)MsgMikasallaInteriors17 + 2);
     }
     Event_ShowMessage(actor, 0);
-    Func_020005cc();
+    Event_End();
   }
 }
 
@@ -150,11 +150,11 @@ void Func_02000288(s32 actor) {
   if (facing == 0xc000) {
     Func_02000644(actor);
   } else {
-    Func_020005c4();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors29);
     Event_ShowMessage(actor, 0);
-    Func_020005cc();
+    Event_End();
   }
 }
 
@@ -165,11 +165,11 @@ void Func_020002e4(s32 actor) {
   if (facing == 0xc000) {
     Func_02000644(actor);
   } else {
-    Func_020005c4();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors27);
     Event_ShowMessage(actor, 0);
-    Func_020005cc();
+    Event_End();
   }
 }
 
@@ -244,7 +244,7 @@ L_020084d4:
 void Func_020004dc(void) {
   s32 result0;
 
-  Func_020005c4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors19);
   Actor_ShowEmote(18, 0x100, 60);
@@ -269,7 +269,7 @@ L_02008568:
 L_02008582:
   Event_SetFlag(0xa39);
   Event_SetFlag(0x341);
-  Func_020005cc();
+  Event_End();
   return;
 }
 

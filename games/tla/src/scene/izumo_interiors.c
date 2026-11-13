@@ -65,8 +65,8 @@ extern struct Trigger gData_02002f78[];
 extern struct Trigger gData_02003164[];
 extern struct Trigger gData_0200323c[];
 
-void Func_020021c4(void);
-void Func_020021cc(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02002304(s32 slot, s32 actor);
 void Func_0200230c(s32 actor);
 void Func_02002314(s32 slot, s32 actor);
@@ -98,7 +98,7 @@ void Func_0200012c(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_0200230c(actor);
   } else {
-    Func_020021c4();
+    Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Test(0x927)) {
       Event_SetMessageId((s32)MsgNowThatPeace);
@@ -107,7 +107,7 @@ void Func_0200012c(s32 actor) {
       Event_SetMessageId((s32)MsgWhyWouldOur);
       Event_ShowMessageAndWait(22, 0);
     }
-    Func_020021cc();
+    Event_End();
   }
 }
 
@@ -117,14 +117,14 @@ void Func_020001a8(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02002314(9, actor);
   } else {
-    Func_020021c4();
+    Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Test(0x927))
       Event_SetMessageId((s32)MsgBriggsFromChampa);
     else
       Event_SetMessageId((s32)MsgOfCourseI);
     Event_ShowMessageAndWait(actor, 0);
-    Func_020021cc();
+    Event_End();
   }
 }
 
@@ -134,19 +134,19 @@ void Func_02000220(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02002304(24, actor);
   } else {
-    Func_020021c4();
+    Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Test(0x927))
       Event_SetMessageId((s32)MsgYouMustSee);
     else
       Event_SetMessageId((s32)MsgIzumoSLeaders);
     Event_ShowMessageAndWait(actor, 0);
-    Func_020021cc();
+    Event_End();
   }
 }
 
 void Func_02000298(void) {
-  Func_020021c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (!Event_GetFlag(0x922)) {
     Event_SetMessageId((s32)MsgSusaSNot);
@@ -170,7 +170,7 @@ void Func_02000298(void) {
   Event_Wait(60);
   Event_SetMessageId((s32)MsgIfTheSerpent);
   Event_ShowMessageAndWait(8, 0);
-  Func_020021cc();
+  Event_End();
 }
 
 void Func_02000358(void) {
@@ -182,7 +182,7 @@ void Func_02000358(void) {
 void Func_02000378(void) {
   void *work = Ram_HeapSlots->eventWork;
 
-  Func_020021c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
   if (GameFlag_Test(0x92c)) {
@@ -195,13 +195,13 @@ void Func_02000378(void) {
       FIELD_AT(work, u16, 346) = 1;
   }
   Actor_FaceDirection(15, FACING_SOUTH, 0);
-  Func_020021cc();
+  Event_End();
 }
 
 void Func_02000400(void) {
   s32 msg;
 
-  Func_020021c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgTheyVeBeen;
   Event_SetMessageId(msg);
@@ -214,11 +214,11 @@ void Func_02000400(void) {
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessageAndWait(16, 0);
-  Func_020021cc();
+  Event_End();
 }
 
 void Func_02000458(void) {
-  Func_020021c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
   if (Event_GetFlag(0x92b)) {
@@ -239,11 +239,11 @@ void Func_02000458(void) {
     GameFlag_SetBit(0x92b);
   }
   Actor_FaceDirection(15, FACING_SOUTH, 0);
-  Func_020021cc();
+  Event_End();
 }
 
 s32 Func_0200051c(void) {
-  Func_020021c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (!Event_GetFlag(0x925)) {
     Event_SetMessageId((s32)MsgSusaDonT);
@@ -270,7 +270,7 @@ s32 Func_0200051c(void) {
   Actor_OffsetPositionAndReset(gMainRoutineWork.currentOwner, 0, 16);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
-  Func_020021cc();
+  Event_End();
   return 0;
 }
 
@@ -289,7 +289,7 @@ void Func_0200061c(s32 mode) {
   struct Actor *person, *leader;
   s32 party, owner, answer, message;
 
-  Func_020021c4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(PIXELS(143), -1, PIXELS(560), 1);
   party = (s32)&gMainRoutineWork;
@@ -987,41 +987,41 @@ void Func_0200061c(s32 mode) {
   Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
   GameFlag_SetBit(0x928);
   GameFlag_SetBit(0x350);
-  Func_020021cc();
+  Event_End();
 }
 
 typedef s32 (*HandlerFn)(void);
 
-void Func_02002294(s32, s32);
-void Func_0200229c(s32, s32);
-void Func_020022a4(void);
-void Func_020022ac(void);
-void Func_020022b4(void);
+void BattleEffect_LoadActionEffectResources(s32, s32);
+void BattleEffect_SetupObjectPair(s32, s32);
+void BattleEffect_StopMainActor(void);
+void BattleEffect_CleanupSceneObjects(void);
+void EventObject_Initialize(void);
 
 s32 Func_02001d84(void) { return -1; }
 
 void Func_02001d8c(void) {
-  Func_02002294(140, 1);
-  Func_0200229c(15, -1);
+  BattleEffect_LoadActionEffectResources(140, 1);
+  BattleEffect_SetupObjectPair(15, -1);
   FIELD_AT(Ram_HeapSlots->effectWork, HandlerFn, 36) = Func_02001d84;
   FIELD_AT(Ram_HeapSlots->effectWork, u8, 32) = 1;
-  Func_020022b4();
+  EventObject_Initialize();
   Event_Wait(10);
   Field_DispatchTypeHandler(0);
-  Func_020022a4();
-  Func_020022ac();
+  BattleEffect_StopMainActor();
+  BattleEffect_CleanupSceneObjects();
 }
 
-void Func_020022e4();
-void Func_020022ec();
-void Func_020022f4();
-void Func_020022fc();
+void BattleEffect_StartArcEffect();
+void BattleEffect_EndArcEffect();
+void BattleEffect_WaitForArcGroups();
+void BattleEffect_SetObjectUpdateMode();
 void PartyInventory_Remove();
 
 void Func_02001dd0(void) {
   s32 t9, t21, t31;
 
-  Func_020021c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAhCouldIt);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 144, 536);
@@ -1045,9 +1045,9 @@ L_02009e48:
   Actor_ShowEmote(15, 0x105, 120);
   Func_080d47b4(15, 0x106, 60);
   Event_ShowMessageAndWait(15, 0);
-  Func_020022e4();
+  BattleEffect_StartArcEffect();
   t21 = ((s32)Actor_GetById(15));
-  Func_020022fc(t21, 2);
+  BattleEffect_SetObjectUpdateMode(t21, 2);
   Sound_Play(201);
   Event_Wait(60);
   Actor_SetPosition(24, PIXELS(144), PIXELS(520));
@@ -1057,9 +1057,9 @@ L_02009e48:
   Actor_ArmCallback(24, FACING_SOUTH, 0);
   Event_Wait(60);
   t31 = ((s32)Actor_GetById(15));
-  Func_020022fc(t31, 0);
-  Func_020022f4();
-  Func_020022ec();
+  BattleEffect_SetObjectUpdateMode(t31, 0);
+  BattleEffect_WaitForArcGroups();
+  BattleEffect_EndArcEffect();
   Event_Wait(30);
   Event_Wait(30);
   Actor_SetAngleToward(15, 24, 0);
@@ -1083,8 +1083,8 @@ L_02009e48:
   Event_ShowMessageAndWait(15, 0);
   Actor_Jump(24, 2, 20);
   Func_080d7788(24, 2, 11);
-  Func_020021cc();
-  Func_020021c4();
+  Event_End();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(gMainRoutineWork.currentOwner, 15, 0);
   Event_Wait(60);
@@ -1094,7 +1094,7 @@ L_02009e48:
   Event_Wait(60);
   GameFlag_SetBit(0x92c);
   PartyInventory_Remove(0x1c3);
-  Func_020021cc();
+  Event_End();
 }
 
 s32 Scene_Initialize(void) {

@@ -38,9 +38,9 @@ Import_ActorSetScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02003180
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_02003180:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Map_CopyCellPictureIndicesRect
 	.thumb_func

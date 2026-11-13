@@ -49,29 +49,29 @@ void Func_02002d6c(struct Actor *object, s32 x, s32 z, s32 mode);
 void Func_020032c4(void);
 void Func_02003820(const void *script);
 void Func_0200388c(const void *script, s32 a, s32 b);
-void Func_02003ff0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02004000(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02004040(void);
-void Func_02004048(void);
-void Func_02004090(s32 actor, s32 x, s32 z);
-void Func_02004098(s32 actor, s32 x, s32 z, s32 angle);
-void Func_020040c8(s32 message);
+void Map_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Event_Start(void);
+void Event_End(void);
+void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z, s32 angle);
+void Event_SetMessageId(s32 message);
 s32 Func_020040d8(s32 speaker, s32 flags);
 void Func_020040f8(s32 actor);
 void Func_02004148(s32 a, s32 b);
-void Func_02004178(s32 a, s32 b, s32 c);
+void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02004180(s32 value);
-void Func_02004190(s32 a, s32 b);
-void Func_02004198(s32 a, s32 b);
-void Func_020041a0(void);
-void Func_020041a8(void);
-void Func_020041b0(void);
-void Func_020041b8(s32 skip);
+void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
+void BattleEffect_SetupObjectPair(s32 a, s32 b);
+void BattleEffect_StopMainActor(void);
+void BattleEffect_CleanupSceneObjects(void);
+void EventObject_Initialize(void);
+void Event_ResolvePendingActions(s32 skip);
 void Func_020041c8(s32 cue);
 void Func_020041d0(void);
 void Func_020041d8(s32 a, s32 b, s32 c, s32 d);
 s32 Func_020041e0(struct Actor *object);
-void Func_020040d0(s32 actor, s32 flags);
+void Event_ShowMessageAndWait(s32 actor, s32 flags);
 void Func_020004e0(void);
 void Func_02000918(u16 *list);
 void Func_0200095c(u16 *list);
@@ -86,7 +86,7 @@ void FieldEvent_Wait(s32 frames);
 void PartyInventory_GiveItem(s32 item, s32 flags);
 struct Actor *Func_02001b70(void);
 void Func_02003fc8(struct Actor *object);
-void Func_020041f8(s32 cue);
+void Sound_Play(s32 cue);
 extern struct Actor *gData_0200480c;
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
@@ -94,9 +94,9 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02003fe0(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02003fe8(struct Actor *object);
-void Func_020040e8(s32 actor, s32 angle);
+void Actor_ArmCallbackAndRefresh(s32 actor, s32 angle);
 void Func_02004138(s32 mode);
-void Func_02004118(s32 a, s32 b);
+void Camera_SetSpeedParameters(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
 void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
 void Actor_Stop(s32 id);
@@ -121,15 +121,15 @@ static inline void Scene_ArmCallback(s32 id, s32 angle, s32 flags) {
 }
 
 static inline void Scene_Call4090(s32 actor, s32 x, s32 z) {
-  Func_02004090(actor, x, z);
+  Actor_SetHorizontalPositionWithTerrain(actor, x, z);
 }
 
 static inline void Scene_Call4098(s32 actor, s32 x, s32 z, s32 angle) {
-  Func_02004098(actor, x, z, angle);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(actor, x, z, angle);
 }
 
 static inline void Scene_Call4000(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  Func_02004000(a, b, c, d, e, f);
+  Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
 static inline void Scene_Call41d8(s32 a, s32 b, s32 c, s32 d) {
@@ -149,7 +149,7 @@ static inline void Scene_SetPositionAndCommit(s32 id, s32 x, s32 z) {
 }
 
 static inline void Scene_Call4178(s32 a, s32 b, s32 c) {
-  Func_02004178(a, b, c);
+  Actor_ReturnHome(a, b, c);
 }
 
 static inline void Scene_SetPositionAndReset(s32 id, s32 x, s32 z) {

@@ -63,8 +63,8 @@ void Func_020000b4(void) {
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Func_020021b4(struct Actor *object, s32 a);
 void Func_020021d4(struct Actor *object);
-void Func_0200224c(void);
-void Func_02002254(void);
+void Event_Start(void);
+void Event_End(void);
 
 void Func_020000d0(s32 kind) {
   s32 owner = gMainRoutineWork.currentOwner;
@@ -73,7 +73,7 @@ void Func_020000d0(s32 kind) {
   s32 i;
   s32 *target;
 
-  Func_0200224c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   target = gData_02002b88;
   if (kind == 32) {
@@ -124,7 +124,7 @@ void Func_020000d0(s32 kind) {
   leader->motionFlags = 3;
   FieldTask_Remove(Func_020000b4);
   Func_02000054();
-  Func_02002254();
+  Event_End();
 }
 
 void Func_02000230(s32 kind) {
@@ -134,7 +134,7 @@ void Func_02000230(s32 kind) {
   s32 *target;
   s32 i;
 
-  Func_0200224c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   target = gData_02002b88;
   if (kind == 30) {
@@ -204,7 +204,7 @@ spin:
   leader->terrainHeight = 0x900000;
   FieldTask_Remove(Func_020000b4);
   Func_02000054();
-  Func_02002254();
+  Event_End();
 }
 
 void Func_020003f4(void) {
@@ -566,7 +566,7 @@ void Func_02000b7c(void) {
   s32 facing;
   s32 i;
 
-  Func_0200224c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkd46 = 0;
@@ -614,7 +614,7 @@ void Func_02000b7c(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_02002254();
+  Event_End();
 }
 
 s32 Func_02000d68(s32 *a, s32 *b) {

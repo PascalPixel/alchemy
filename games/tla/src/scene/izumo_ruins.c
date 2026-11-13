@@ -153,13 +153,13 @@ void Func_02001148(void) {
   struct IzumoRuinsEventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *object;
 
-  Func_02001488();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Func_02001500(gData_02001696);
   object = work->objectCbc;
   object->priorityFlags |= 1;
   object->priorityFlags &= ~2;
-  Func_02001490();
+  Event_End();
 }
 
 void Func_02001184(void) {
@@ -202,20 +202,20 @@ void Func_020011d4(void) {
 }
 
 void Func_02001228(void) {
-  Func_02001488();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Func_02001520();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov67FRoom2)
     Func_02000ee8(2, 50, 13, Func_02000eac(2, 50, 13) & 255);
-  Func_02001490();
+  Event_End();
 }
 
 void Func_02001270(void) {
-  Func_02001488();
+  Event_Start();
   MapGrid_CopyCellAttributes(7, 2, 8, 7, 7, 12);
   MapGrid_CopyCellsTo(7, 66, 7, 76, 8, 9);
   Event_SetFlag(0x941);
-  Func_02001490();
+  Event_End();
 }
 
 const struct Trigger *Scene_GetEvents(void) {
@@ -246,7 +246,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(0x941)) {
       MapGrid_CopyCellAttributes(7, 2, 8, 7, 7, 12);
       MapGrid_CopyCellsTo(7, 66, 7, 76, 8, 9);
-      Func_02001448();
+      Map_CenterOnFollowedPoint();
       System_Wait(1);
       if (Event_GetFlag(0x109)) {
         object = Actor_Get(gMainRoutineWork.currentOwner);

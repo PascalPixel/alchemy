@@ -4,7 +4,7 @@
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Func_02004bf0(void);
+void Map_CenterOnFollowedPoint(void);
 
 static __inline__ void Func_02004c50_(s32 a, s32 b, s32 c) {
   Map_SetScreenShake(a, b, c);
@@ -16,10 +16,10 @@ void Func_020042f8(void) {
   struct Vector3 velocity;
   u32 i;
 
-  Func_02004ca8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Camera_SetBounds(-1, -1, -1, 0);
-  Func_02004bf0();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   leader->y = 0x820000;
   leader->gravity = 0x8000;
@@ -62,7 +62,7 @@ next:
   leader->bounce = 0x4000;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Func_02004cb0();
+  Event_End();
 }
 
 #include "types.h"
@@ -131,7 +131,7 @@ void Func_02004540(s32 x, s32 z, s32 effect) {
     marker = work->marker;
     marker->x = leader->x;
     marker->z = leader->z;
-    Func_02004bf0();
+    Map_CenterOnFollowedPoint();
     Func_020042f8();
     ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
         ->screenEffect = effect;

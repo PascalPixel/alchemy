@@ -41,7 +41,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 void Func_020000a4(void) {
   s32 msg;
 
-  Func_02001d50();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   msg = (s32)MsgMadraInteriors06;
   FieldEvent_SetMessageId(msg);
@@ -55,7 +55,7 @@ void Func_020000a4(void) {
     FieldEvent_SetMessageId(msg + 2);
   }
   Event_ShowMessage(9, 0);
-  Func_02001d58();
+  Event_End();
 }
 
 void Func_020000fc(void) {
@@ -116,7 +116,7 @@ void Func_020001b8(s32 actor) {
 }
 
 void Func_0200023c(void) {
-  Func_02001d50();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceActor(14, 4, 0);
   FieldActor_Jump(14, 6, 20);
@@ -124,7 +124,7 @@ void Func_0200023c(void) {
   FieldEvent_SetMessageId((s32)MsgMadraInteriors18);
   Event_ShowMessage(14, 0);
   ActorTurn(14, FACING_SOUTHEAST, 0);
-  Func_02001d58();
+  Event_End();
 }
 
 void Func_0200028c(void) {
@@ -287,11 +287,11 @@ extern s32 gData_0200349c[];
 extern s32 gData_02003418[];
 extern u32 gData_020033c8[];
 void Func_02001e68();
-void Func_02001e90();
-void Func_02001e98();
-void Func_02001ea0();
-void Func_02001ea8();
-void Func_02001eb0();
+void BattleEffect_LoadActionEffectResources();
+void BattleEffect_SetupObjectPair();
+void BattleEffect_StopMainActor();
+void BattleEffect_CleanupSceneObjects();
+void EventObject_Initialize();
 
 void Func_02001e80(s32 value);
 
@@ -379,7 +379,7 @@ void Func_020007dc(void) {
   s32 result13;
   struct Actor *object14;
 
-  Func_02001d50();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(8, 1);
   Actor_SetPosition(4, PIXELS(400), PIXELS(888));
@@ -460,9 +460,9 @@ void Func_020007dc(void) {
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(7, 0, 16);
-  Func_02001e90(24, 1);
-  Func_02001e98(7, 8);
-  Func_02001eb0();
+  BattleEffect_LoadActionEffectResources(24, 1);
+  BattleEffect_SetupObjectPair(7, 8);
+  EventObject_Initialize();
   Actor_ShowEmote(9, 0x101, 30);
   Actor_FaceActor(9, 7, 0);
   Actor_FaceActor(10, 7, 0);
@@ -470,8 +470,8 @@ void Func_020007dc(void) {
   Actor_SetSingleChildFlags(object2, 0);
   Actor_SetScript(9, gData_0200349c);
   Field_DispatchTypeHandler(1);
-  Func_02001ea0();
-  Func_02001ea8();
+  BattleEffect_StopMainActor();
+  BattleEffect_CleanupSceneObjects();
   FieldEvent_ShowMessageThenWait(11, 0, 10);
   FieldActor_Stop(9);
   object3 = Actor_Get(9);
@@ -593,22 +593,22 @@ L_02008eb2:
   FieldActor_WaitForMoveById(11);
   Actor_SetPosition(11, 0, 0);
   Event_SetFlag(0x911);
-  Func_02001d58();
+  Event_End();
   return;
 }
 
 void Func_02000ed8(void) {
-  Func_02001d50();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors29);
   Actor_FaceDirection(11, FACING_SOUTH, 0);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Func_02001d58();
+  Event_End();
   return;
 }
 
 void Func_02000f0c(void) {
-  Func_02001d50();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors30);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
@@ -632,17 +632,17 @@ void Func_02000f0c(void) {
   Actor_FaceDirection(7, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Func_02001d58();
+  Event_End();
   return;
 }
 
 void Func_02000fe0(void) {
-  Func_02001e90(24, 1);
-  Func_02001e98(7, 8);
-  Func_02001eb0();
+  BattleEffect_LoadActionEffectResources(24, 1);
+  BattleEffect_SetupObjectPair(7, 8);
+  EventObject_Initialize();
   Field_DispatchTypeHandler(1);
-  Func_02001ea0();
-  Func_02001ea8();
+  BattleEffect_StopMainActor();
+  BattleEffect_CleanupSceneObjects();
   return;
 }
 
@@ -663,7 +663,7 @@ void Func_02001008(void) {
   Event_SetFlag(0x98a);
   Event_SetFlag(0x310);
   PartyInventory_Remove(0x1c0);
-  Func_02001d50();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeed(11, 0x6666, 0x3333);
   Actor_WalkTo(11, 410, 109);
@@ -742,14 +742,14 @@ void Func_02001008(void) {
   Actor_SetAnimationAndWait(11, 3);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(11, 0, 10);
-  Func_02001d58();
+  Event_End();
 }
 
 void Func_02001310(void) {
   struct Actor *object0;
 
   Event_SetFlag(0x210);
-  Func_02001d50();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object0 = Actor_Get(4);
   if (object0->z > 0x5f0000)
@@ -782,7 +782,7 @@ void Func_02001310(void) {
   Actor_RunRepeatedMotion(11, 2);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
-  Func_02001d58();
+  Event_End();
   return;
 }
 
@@ -794,7 +794,7 @@ void Func_02001450(void) {
   struct Actor *object4;
   struct Actor *object5;
 
-  Func_02001d50();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors126);
   Actor_ShowEmote(28, 0x100, 30);
@@ -945,7 +945,7 @@ L_020098ec:
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
   Event_SetFlag(0x989);
-  Func_02001d58();
+  Event_End();
   return;
 }
 

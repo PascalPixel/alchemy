@@ -348,8 +348,8 @@ done:
 
 s32 Func_02004e38(void);
 struct Actor *Func_02004ef8(s32 *position, s32 mode);
-void Func_02004d40(void);
-void Func_02004d48(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_020046e8(s32 value);
 void Func_020049c0(s32 offset, s32 layer);
 void Func_0200481c(void);
@@ -388,7 +388,7 @@ next:
   }
   {
     flag = table[1];
-    Func_02004d40();
+    Event_Start();
     if (!GameFlag_Test(flag)) {
       Sound_Play(125);
       Actor_SetPartAttribute(Actor_GetById(id), 7);
@@ -427,7 +427,7 @@ next:
         GameFlag_SetBit(second);
       }
     }
-    Func_02004d48();
+    Event_End();
     return;
   }
 test:
@@ -459,7 +459,7 @@ void Func_02004200(const void *data, s32 id) {
       goto test;
     }
     flag = entry->flag;
-    Func_02004d40();
+    Event_Start();
     if (!Event_GetFlag(flag + 1)) {
       Event_PlaySound(185);
       Func_02005838_(0x10000, 0x40000, 0x10000);
@@ -479,7 +479,7 @@ void Func_02004200(const void *data, s32 id) {
       Event_SetFlag(flag);
       Event_SetFlag(flag + 1);
     }
-    Func_02004d48();
+    Event_End();
     return;
   test:
     if (entry->actor != 0xffff)
@@ -492,7 +492,7 @@ void Func_020042e0(s32 id) {
   Func_02004df8(id);
 }
 
-void Func_02004da8(s32 id, s32 owner);
+void Actor_MoveToObject(s32 id, s32 owner);
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 /// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
@@ -510,9 +510,9 @@ void Func_020042f8(u16 *list) {
   s32 index;
   u8 *grid = gMapShapeGrid; // the shape grid, read once
 
-  Func_02004da8(8, gMainRoutineWork.currentOwner);
-  Func_02004da8(9, gMainRoutineWork.currentOwner);
-  Func_02004da8(10, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(8, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(10, gMainRoutineWork.currentOwner);
   System_Wait(1);
   Func_020042e0(8);
   Func_020042e0(9);
@@ -591,7 +591,7 @@ next:
   }
   {
     flag = table[1];
-    Func_02004d40();
+    Event_Start();
     if (!GameFlag_Test(flag)) {
       Func_02004c98(partner, 1);
       Func_02004460(partner, trap);
@@ -639,7 +639,7 @@ next:
         GameFlag_SetBit(second);
       }
     }
-    Func_02004d48();
+    Event_End();
     return;
   }
 test:

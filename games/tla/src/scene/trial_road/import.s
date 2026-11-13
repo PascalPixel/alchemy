@@ -70,9 +70,9 @@ VramCache_Load:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
-	.global Func_02005790
+	.global Oam_AddSpriteAtDepth
 	.thumb_func
-Func_02005790:
+Oam_AddSpriteAtDepth:
 	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global Resource_GetTableEntry
 	.thumb_func
@@ -102,9 +102,9 @@ GameFlag_GetByte:
 	.thumb_func
 Func_020057c8:
 	overlay_veneer Actor_SetMode
-	.global Func_020057d0
+	.global Actor_StartScript
 	.thumb_func
-Func_020057d0:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -114,9 +114,9 @@ Import_ActorCreate:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Func_020057e8
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_020057e8:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Func_020057f0
 	.thumb_func
@@ -170,13 +170,13 @@ Func_02005848:
 	.thumb_func
 FieldMessage_Show:
 	overlay_veneer FieldMessage_ShowFar
-	.global Func_02005858
+	.global MessageArgument_Push
 	.thumb_func
-Func_02005858:
+MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
-	.global Func_02005860
+	.global PartyInventory_Discard
 	.thumb_func
-Func_02005860:
+PartyInventory_Discard:
 	overlay_veneer PartyInventory_DiscardFar
 	.global Func_02005868
 	.thumb_func
@@ -190,13 +190,13 @@ Func_02005870:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02005880
+	.global Event_Start
 	.thumb_func
-Func_02005880:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02005888
+	.global Event_End
 	.thumb_func
-Func_02005888:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
@@ -246,9 +246,9 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_SetHorizontalPositionAndAngleWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionAndAngleWithTerrainFar
-	.global Func_020058f0
+	.global Actor_MoveToObject
 	.thumb_func
-Func_020058f0:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -266,9 +266,9 @@ Actor_StartRepeatedMotion:
 	.thumb_func
 Motion_SetVarCbAndRefresh:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global Func_02005918
+	.global Actor_JumpDownLedge
 	.thumb_func
-Func_02005918:
+Actor_JumpDownLedge:
 	overlay_veneer Actor_JumpDownLedgeFar
 	.global Actor_SetAngleToward
 	.thumb_func
@@ -322,17 +322,17 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_02005980:
 	overlay_veneer Func_080c8240
-	.global Func_02005988
+	.global Event_SetDestination
 	.thumb_func
-Func_02005988:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02005998
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_02005998:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_080d2b4c
 	.thumb_func

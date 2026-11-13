@@ -12,8 +12,8 @@
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 
 s32 Math_Cosine(s32 angle);
-void Func_020043f4(void);
-void Func_02004444(void);
+void Leader_StopMoving(void);
+void Event_ResolveAllPendingActions(void);
 void Func_020041cc(struct Actor *object, s32 mode);
 void Func_02001928(struct Actor *object, s32 priority);
 
@@ -27,7 +27,7 @@ static __inline__ struct Actor *ObjectCreate_(s32 kind, s32 x, s32 y,
 #include "field_sprite.h"
 #include "tla_edition.h"
 
-void Func_020041dc(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 void Actor_SetAnimationSpeed(struct Actor *object,
                                          s32 value);
 extern const s16 gData_020047fc[];

@@ -43,7 +43,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 s32 Func_0200008c(void) {
   s32 t2;
 
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   t2 = GameFlag_Test(0x301);
   if (t2 != 0) {
@@ -52,14 +52,14 @@ s32 Func_0200008c(void) {
     Event_SetMessageId((s32)MsgYallamInteriors33);
   }
   Event_ShowMessageAndWait(14, 0);
-  Func_020009b8();
+  Event_End();
   return 0;
 }
 
 s32 Func_020000cc(void) {
   s32 t2;
 
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   t2 = GameFlag_Test(0x301);
   if (t2 != 0) {
@@ -68,14 +68,14 @@ s32 Func_020000cc(void) {
     Event_SetMessageId((s32)MsgYallamInteriors34);
   }
   Event_ShowMessageAndWait(15, 0);
-  Func_020009b8();
+  Event_End();
   return 0;
 }
 
 s32 Func_0200010c(void) {
   s32 t2;
 
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   t2 = GameFlag_Test(0x301);
   if (t2 != 0) {
@@ -84,14 +84,14 @@ s32 Func_0200010c(void) {
     Event_SetMessageId((s32)MsgYallamInteriors35);
   }
   Event_ShowMessageAndWait(16, 0);
-  Func_020009b8();
+  Event_End();
   return 0;
 }
 
 s32 Func_0200014c(void) {
   s32 t2;
 
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   t2 = GameFlag_Test(0x301);
   if (t2 != 0) {
@@ -100,34 +100,34 @@ s32 Func_0200014c(void) {
     Event_SetMessageId((s32)MsgYallamInteriors32);
   }
   Event_ShowMessageAndWait(16, 0);
-  Func_020009b8();
+  Event_End();
   return 0;
 }
 
 s32 Func_0200018c(void) {
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors22);
   Event_ShowMessageAndWait(10, 0);
-  Func_020009b8();
+  Event_End();
   return 0;
 }
 
 s32 Func_020001b4(void) {
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors24);
   Event_ShowMessageAndWait(11, 0);
-  Func_020009b8();
+  Event_End();
   return 0;
 }
 
 s32 Func_020001dc(void) {
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors26);
   Event_ShowMessageAndWait(12, 0);
-  Func_020009b8();
+  Event_End();
   return 0;
 }
 
@@ -144,7 +144,7 @@ const struct Trigger *Scene_GetEvents(void) {
 void Func_02000244(void) {
   s32 msg;
 
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgYallamInteriors10;
   Event_SetMessageId(msg);
@@ -157,7 +157,7 @@ void Func_02000244(void) {
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessageAndWait(9, 0);
-  Func_020009b8();
+  Event_End();
 }
 
 void Func_0200029c(s32 actor) {
@@ -166,11 +166,11 @@ void Func_0200029c(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000a68(20, actor);
   } else {
-    Func_020009b0();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgYallamInteriors21);
     Event_ShowMessageAndWait(actor, 0);
-    Func_020009b8();
+    Event_End();
   }
 }
 
@@ -180,11 +180,11 @@ void Func_020002fc(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000a68(21, actor);
   } else {
-    Func_020009b0();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgYallamInteriors23);
     Event_ShowMessageAndWait(actor, 0);
-    Func_020009b8();
+    Event_End();
   }
 }
 
@@ -194,11 +194,11 @@ void Func_0200035c(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000a68(22, actor);
   } else {
-    Func_020009b0();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgYallamInteriors25);
     Event_ShowMessageAndWait(actor, 0);
-    Func_020009b8();
+    Event_End();
   }
 }
 
@@ -209,11 +209,11 @@ void Func_020003bc(s32 actor) {
     Func_02000a78(7, actor);
     GameFlag_ClearBit(0x301);
   } else {
-    Func_020009b0();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgYallamInteriors27);
     Event_ShowMessageAndWait(actor, 0);
-    Func_020009b8();
+    Event_End();
   }
 }
 
@@ -223,18 +223,18 @@ void Func_02000424(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000a70(actor);
   } else {
-    Func_020009b0();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgMikasallaInteriors27);
     Event_ShowMessageAndWait(actor, 0);
-    Func_020009b8();
+    Event_End();
   }
 }
 
 void Func_02000480(void) {
   s32 msg;
 
-  Func_020009b0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_StartRepeatedMotion(14, 2);
   msg = (s32)MsgYallamInteriors31;
@@ -248,7 +248,7 @@ void Func_02000480(void) {
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessageAndWait(14, 0);
-  Func_020009b8();
+  Event_End();
 }
 
 s32 Func_02000a90(void);
@@ -351,9 +351,9 @@ void Func_02000524(void) {
 }
 
 void Party_AdjustCoins(s32 amount);
-void Func_02000980(s32 value, s32 slot);
+void MessageArgument_Push(s32 value, s32 slot);
 u16 *Func_02000988(s32 item);
-s32 Func_020009a0(s32 item);
+s32 PartyInventory_FindRoom(s32 item);
 void Func_02000a40(s32 item, s32 mode);
 void Func_02000a88(s32 value);
 
@@ -369,15 +369,15 @@ void Func_0200077c(s32 actor) {
     u32 price = *Func_02000988(item);
     s32 message;
 
-    Func_02000980(item, 2);
-    Func_02000980(price, 5);
+    MessageArgument_Push(item, 2);
+    MessageArgument_Push(price, 5);
     message = (s32)MsgHereSThe;
     Event_SetMessageId(message);
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) != 0) {
       Event_SetMessageId(message + 1);
       Event_ShowMessageAndWait(actor, 0);
-    } else if (Func_020009a0(item) < 0) {
+    } else if (PartyInventory_FindRoom(item) < 0) {
       Event_SetMessageId(message + 2);
       Event_ShowMessageAndWait(actor, 0);
     } else if ((u32)gMainRoutineWork.coins < price) {

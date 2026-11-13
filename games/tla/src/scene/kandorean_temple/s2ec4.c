@@ -13,7 +13,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 void Effect_AdvanceMotion(union FieldObject *object);
-void Func_02005158(void);
+void Map_CenterOnFollowedPoint(void);
 s32 Math_Cosine(s32 angle);
 
 void Func_02002ec4(void) {
@@ -21,10 +21,10 @@ void Func_02002ec4(void) {
   struct EffectOptions options;
   u32 i;
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Func_02005158();
+  Map_CenterOnFollowedPoint();
   wait(1);
   leader->y = 0x820000;
   leader->gravity = 0x8000;
@@ -65,7 +65,7 @@ void Func_02002ec4(void) {
   Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  Func_020051c8();
+  Event_End();
 }
 
 void Func_02000cd8(s32 id, s32 offset, s32 limit);
@@ -78,7 +78,7 @@ void Func_0200306c(void) {
   s16 i; u16 next;
   s32 limit;
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_080d4568()->motionFlags = 0;
@@ -105,7 +105,7 @@ do {
   next++;
   i = next;
 } while (next <= 15);
-  Func_02005158();
+  Map_CenterOnFollowedPoint();
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Event_StartScreenTransition();
@@ -140,7 +140,7 @@ do {
                                      1);
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  Func_020051c8();
+  Event_End();
 }
 
 void Func_02000e60(void);
@@ -152,7 +152,7 @@ void Func_020032c8(void) {
   s16 i; u16 next;
   s32 limit;
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_080d4568()->motionFlags = 0;
@@ -179,7 +179,7 @@ do {
   next++;
   i = next;
 } while (next <= 15);
-  Func_02005158();
+  Map_CenterOnFollowedPoint();
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Event_StartScreenTransition();
@@ -214,11 +214,11 @@ do {
                                      1);
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  Func_020051c8();
+  Event_End();
 }
 
 void Func_02003524(void) {
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x209;
@@ -241,7 +241,7 @@ void Func_02003584(void) {
   u32 i;
   struct MainRoutineWork *party;
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object->motionFlags = 0;
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
@@ -290,7 +290,7 @@ void Func_02003684(void) {
   struct Actor *first = Actor_GetById(13);
   struct Actor *second = Actor_GetById(15);
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Func_02005388(162);
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -328,7 +328,7 @@ rise:
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 27, 12);
   gData_020062a0 = 2000;
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 516;
-  Func_020051c8();
+  Event_End();
 }
 
 /// As Func_02003684, for actors 14 and 16 at another place.
@@ -337,7 +337,7 @@ void Func_020037e0(void) {
   struct Actor *first = Actor_GetById(14);
   struct Actor *second = Actor_GetById(16);
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Func_02005388(162);
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -375,14 +375,14 @@ rise:
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 37, 14);
   gData_020062a4 = 2000;
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 516;
-  Func_020051c8();
+  Event_End();
 }
 
 /// Actor 13 rises out of view while actor 15 scales, then the scene moves on.
 void Func_0200393c(void) {
   struct Actor *object = Actor_GetById(13);
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   // A goto loop: as a do-while, loop.c hoists the scale constant into r6
   // (differ 19).
@@ -403,7 +403,7 @@ rise:
 void Func_020039a8(void) {
   struct Actor *object = Actor_GetById(14);
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   // A goto loop, as in Func_0200393c.
 rise:
@@ -623,7 +623,7 @@ void Func_02003e8c(void) {
   struct FieldSprite *sprite;
   u32 i;
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_080d4568()->motionFlags = 0;
@@ -804,7 +804,7 @@ fall15:
   Camera_MoveWithinMapBounds(0x1900000, 0, 0x2f00000, 1);
   Func_020052e8();
   Task_Add(Func_02001c8c, 0x480);
-  Func_020051c8();
+  Event_End();
   GameFlag_SetBit(0x848);
 }
 
@@ -814,7 +814,7 @@ void Func_020044d4(void) {
    * instructions differ in tla-en. */
   s32 angle;
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   wait(1);
@@ -839,7 +839,7 @@ void Func_020044d4(void) {
   Actor_SetSpeed(12, 0x19999, 0xcccc);
   Actor_WalkToAndWait(12, 456, 408);
   Event_ShowMessageAndWait(12, 0);
-  Func_02005240(16, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(16, gMainRoutineWork.currentOwner);
   wait(1);
   Actor_SetSpeed(16, 0xcccc, 0x6666);
   Actor_WalkToAndWait(16, 376, 392);
@@ -865,7 +865,7 @@ void Func_020044d4(void) {
 }
 
 void Func_020046d8(void) {
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
@@ -914,7 +914,7 @@ void Func_0200482c(void) {
   struct FieldSprite *sprite;
   u8 *flags;
 
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_080d4568()->motionFlags = 0;
@@ -1102,7 +1102,7 @@ void Func_0200482c(void) {
 #if TLA_PATCH_1
   WORK->screenEffect = 0x209;
 #endif
-  Func_020051c8();
+  Event_End();
 }
 
 void Func_02004fb4(void) {
@@ -1133,7 +1133,7 @@ void Func_02004fb4(void) {
 }
 
 void Func_02005028(void) {
-  Func_020051c0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1148,7 +1148,7 @@ void Func_02005028(void) {
   Map_CopyCellPictureIndicesRect(41, 3, 20, 3, 1, 1);
   Event_Wait(10);
   GameFlag_SetBit(0x92d);
-  Func_020051c8();
+  Event_End();
 }
 
 #include "types.h"

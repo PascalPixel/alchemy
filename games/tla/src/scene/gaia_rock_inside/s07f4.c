@@ -14,7 +14,7 @@
 extern u32 gData_020050f4[];
 
 void Func_02004d9c(struct Actor *object, s32 mode);
-void Func_02004dac(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(void);
 
@@ -40,7 +40,7 @@ s32 Func_020007f4(void) {
         dust->collisionFlags = 0;
         Actor_SetSingleChildFlags(dust, 0);
         Func_02004d9c(dust, 1);
-        Func_02004dac(dust, gData_020050f4);
+        Actor_StartScript(dust, gData_020050f4);
         ((struct DustSprite *)dust->sprite)->layer = 1;
         dust->bounce = Math_Cosine(((Random16Far() << 3) >> 16) << 14) >> 1;
         dust->unk4c = Math_Sin(((Random16Far() << 3) >> 16) << 14) >> 1;
@@ -63,9 +63,9 @@ s32 Func_020008b4(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 
   if (leader->z >> 19 <= 45 && leader->x >> 19 <= 57)
-    Func_02004dac(object, gData_02005728);
+    Actor_StartScript(object, gData_02005728);
   else
-    Func_02004dac(object, gData_020056c4);
+    Actor_StartScript(object, gData_020056c4);
   return 0;
 }
 
@@ -172,7 +172,7 @@ void Func_02000a60(struct Actor *object) {
   Animation_ApplyChildValues(object, value & 7);
   if ((gData_02005ee4 & 31) == 0) {
     object->scaleX = 0x10000;
-    Func_02004dac(object, gData_02005e28);
+    Actor_StartScript(object, gData_02005e28);
     Event_PlaySound(106);
   }
   gData_02005ee4++;
@@ -186,7 +186,7 @@ void Func_02000aac(struct Actor *object) {
   Animation_ApplyChildValues(object, value & 7);
   if ((gData_02005ee4 & 31) == 0) {
     object->scaleY = 0x10000;
-    Func_02004dac(object, gData_02005d6c);
+    Actor_StartScript(object, gData_02005d6c);
     Event_PlaySound(106);
   }
   gData_02005ee4++;
@@ -211,9 +211,9 @@ void Func_02000af8(s32 unused, u32 id) {
   System_Wait(20);
 }
 
-void Func_02004e5c(void);
+void Event_Start(void);
 void Func_02004e64(void);
-void Func_02004fdc(void);
+void ObjectTable_Snapshot(void);
 void Func_02004ff4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
 /// Unless MapGrid_GetCellBehaviorAt(2, ...) holds, copies map cell (36, 23) to
@@ -225,7 +225,7 @@ void Func_02000b6c(void) {
   Call7(Func_02004ff4, 37, 26, 0, 3, 3, 61, 0);
   if (MapGrid_GetCellBehaviorAt(2, 152 << 18, 200 << 17) == 0) {
     MapGrid_CopyCellAttributes(36, 23, 1, 1, 38, 25);
-    Func_02004e5c();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     if (leader->x >> 20 == 38 && leader->z >> 20 == 25) {
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 258);
@@ -236,7 +236,7 @@ void Func_02000b6c(void) {
     if (!Event_GetFlag(0x927)) {
       Event_SetFlag(0x30a);
       FieldEvent_Wait(30);
-      Func_02004fdc();
+      ObjectTable_Snapshot();
       FieldEvent_SetExitRequest(20);
     } else {
       Event_SetFlag(0x9bf);
@@ -246,7 +246,7 @@ void Func_02000b6c(void) {
 }
 
 void Func_02002cb4(s32 a);
-void Func_02004f74(s32 a, s32 b);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Func_0200500c(s32 a, s32 b, s32 c);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -281,7 +281,7 @@ void Func_02000c74(void) {
     Func_0200500c_(249, 328, 344);
     ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b7;
     gMainRoutineWork.battleRule24b = 2;
-    Func_02004f74(106, 2);
+    Field_RequestBattleFromEncounterTable(106, 2);
   }
 }
 
@@ -330,7 +330,7 @@ void Func_02000d18(void) {
     return;
   guard = Actor_Get(15);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
-  Func_02004e5c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (leader->z >> 19 > 53 && leader->x >> 19 > 83 && leader->x >> 19 <= 91) {
     leader->speedLimit = 0x20000;
@@ -358,7 +358,7 @@ void Func_02000d18(void) {
   ((struct BoulderSprite *)guard->sprite)->layer = 3;
   FieldEvent_Wait(10);
   Actor_SetPosition(15, 0, 0);
-  Func_02004fdc();
+  ObjectTable_Snapshot();
   Event_SetFlag(0x9c4);
   FieldEvent_SetExitRequest(9);
 }
@@ -366,7 +366,7 @@ void Func_02000d18(void) {
 extern u8 MsgGaiaRockInside05[];
 
 void Func_02000edc(void) {
-  Func_02004e5c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgGaiaRockInside05);
   Event_ShowMessage(0xa, 0);
@@ -453,7 +453,7 @@ extern s32 gData_020064f0;
 
 void Func_02000f00(void);
 void Func_02000fac(void);
-void Func_02004e5c(void);
+void Event_Start(void);
 void Func_02004e64(void);
 void Func_02004f54(void);
 
@@ -463,7 +463,7 @@ void Func_02004f54(void);
 void Func_02001048(void) {
   struct Actor *object = Actor_Get(9);
 
-  Func_02004e5c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgGaiaRockInside02);
   FieldCamera_FollowActor(10, 1);
@@ -510,7 +510,7 @@ void Func_02001048(void) {
 void Func_020011c8(void) {
   if (*((u8 *)Actor_Get(10) + 96) > 2)
     return;
-  Func_02004e5c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(0x9ac)) {
     if (Event_GetFlag(0x9bc) || Event_GetFlag(0x9bd) || Event_GetFlag(0x9be) ||
@@ -554,7 +554,7 @@ void Func_020012ac(void) {
   s32 t5;
   s32 t2;
 
-  Func_02004e5c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   t2 = FieldPartyInventory_FindOwner(0x1c3);
   if (t2 != -1) {
@@ -579,8 +579,8 @@ extern s32 Scene_SetActorSpritePriority__s12ac() __asm__("Scene_SetActorSpritePr
 extern s32 Func_02004d9c__s12ac() __asm__("Func_02004d9c");
 /* VIEW(s12ac): routine Animation_SetStateFlags as s32 Animation_SetStateFlags(); field.h has void Animation_SetStateFlags(struct Actor *object, u32 value). */
 extern s32 Animation_SetStateFlags__s12ac() __asm__("Animation_SetStateFlags");
-/* VIEW(s12ac): routine Func_02004dac as s32 Func_02004dac(); s07f4 has void Func_02004dac(struct Actor *object, const s32 *script). */
-extern s32 Func_02004dac__s12ac() __asm__("Func_02004dac");
+/* VIEW(s12ac): routine Actor_StartScript as s32 Actor_StartScript(); s07f4 has void Actor_StartScript(struct Actor *object, const s32 *script). */
+extern s32 Func_02004dac__s12ac() __asm__("Actor_StartScript");
 extern u8 gData_02005208[];
 
 void Func_02001314(s32 a0) {

@@ -13,7 +13,7 @@ void Func_020016b0(void);
 void Func_0200173c(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-s32 Func_02002050(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 void Func_02001d3c(void) {
   struct Actor *object;
@@ -80,7 +80,7 @@ walkNext:
   flags = &entry->collisionFlags;
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Func_02002050, (s32)&entry->x, radius, (s32)position,
+    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius, (s32)position,
                entry->radius - 2) >= 0)
       goto blocked;
   }

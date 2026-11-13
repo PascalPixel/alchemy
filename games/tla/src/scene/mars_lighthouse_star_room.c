@@ -110,7 +110,7 @@ next:
       angle = Random16Far();
       radius = Random16Far();
       scale = ((u32)Random16Far() >> 1) + 0x4000;
-      Func_020041dc(object, gData_02004474);
+      Actor_StartScript(object, gData_02004474);
       Actor_SetSingleChildFlags(object, 0);
       /* FAKEMATCH(dead): an empty once-only block holds the order around it; as
        * no block, 2 of 113 instructions differ in tla-en. */
@@ -227,7 +227,7 @@ void Func_02000db8(s32 actor);
 void Func_02001d7c(void);
 void Func_02001df0(s32 a, s32 b, s32 c, s32 d);
 void Func_02003e04(void);
-void Func_020041fc(void);
+void Map_CenterOnFollowedPoint(void);
 void Func_0200443c(s32 a);
 extern struct Actor *Data_02004cec;
 extern char SceneId_Ov6abRoom1;
@@ -269,7 +269,7 @@ s32 Scene_Initialize(void) {
       other = work->unk1cc;
       other->x = x;
       other->z = leader->z;
-      Func_020041fc();
+      Map_CenterOnFollowedPoint();
       if (!GameFlag_Test(0x109))
         Func_02003e04();
     }
@@ -332,12 +332,12 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Func_020042dc(void);
-void Func_020043e4(s32 a, s32 b);
+void Event_Start(void);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 extern char SceneId_Ov66c;
 
 void Func_020005b0(void) {
-  Func_020042dc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Func_02000d88();
   Event_PlaySound(0);
@@ -372,7 +372,7 @@ void Func_020005b0(void) {
   gMainRoutineWork.battleRule24b = 2;
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6abRoom1, 20);
   gMainRoutineWork.special = (s32)&SceneId_Ov66c;
-  Func_020043e4(102, 0);
+  Field_RequestBattleFromEncounterTable(102, 0);
 }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -382,9 +382,9 @@ void Func_020005b0(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_020042e4();
-void Func_02004334();
-void Func_0200445c();
+void Event_End();
+void Actor_MoveToObject();
+void Party_PlaySavedMusic();
 extern u8 MsgMarsStar01[];
 extern u8 gData_0200491c[];
 extern u8 gData_02004958[];
@@ -401,7 +401,7 @@ void Func_02000714(void) {
   v6 = t2;
   t3 = Actor_Get(16);
   v8 = t3;
-  Func_020042dc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_02000d88();
@@ -430,7 +430,7 @@ void Func_02000714(void) {
   FieldCamera_MoveTo(PIXELS(680), -1, PIXELS(228), 0);
   Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(680), PIXELS(264));
   System_Wait(1);
-  Func_020041fc();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -447,8 +447,8 @@ void Func_02000714(void) {
   Actor_SetSpriteColor(t34, 7);
   FieldEvent_Wait(20);
   Event_PlaySound(190);
-  Func_02004334(15, 11);
-  Func_02004334(16, 12);
+  Actor_MoveToObject(15, 11);
+  Actor_MoveToObject(16, 12);
   System_Wait(1);
   Actor_SetScript(11, (s32)&gData_020049a0);
   Actor_SetScript(12, (s32)&gData_020049dc);
@@ -529,8 +529,8 @@ L_02008a2c:
   Actor_SetAnimation(13, 10);
   Actor_SetAnimation(14, 9);
   Event_SetFlag(0xa3b);
-  Func_0200445c();
-  Func_020042e4();
+  Party_PlaySavedMusic();
+  Event_End();
 }
 
 struct SpriteBits {
@@ -603,23 +603,23 @@ void Func_02000ae4(s32 rise) {
 
 #include "text/msg_ids.h"
 
-void Func_020042dc(void);
-void Func_020042e4(void);
+void Event_Start(void);
+void Event_End(void);
 
 void Func_02000ba4(void) {
-  Func_020042dc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(14, 5);
   FieldEvent_SetMessageId((s32)MsgMarsStar03);
   Event_ShowMessage(14, 0);
   Actor_SetAnimation(14, 9);
-  Func_020042e4();
+  Event_End();
 }
 
 void PartyInventory_Remove(s32 item);
 s32 Inventory_AddItem(s32 owner, s32 item);
 void *Unit_Get(s32 owner);
-void Func_020042c4(s32 owner, s32 slot);
+void Inventory_Equip(s32 owner, s32 slot);
 void Func_020041ec(struct Actor *object);
 void Func_020043d4(void);
 
@@ -635,7 +635,7 @@ void Func_02000bd8(void) {
   s32 i;
   s32 offset;
 
-  Func_020042dc();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetModeById(13, 5);
   Event_SetMessageId((s32)MsgMarsStar02);
@@ -659,7 +659,7 @@ void Func_02000bd8(void) {
     offset = 216;
     for (; i <= 14; offset += 2, i++) {
       if ((*(u16 *)(Unit_Get(4) + offset) & 0x1ff) == 222) {
-        Func_020042c4(4, i);
+        Inventory_Equip(4, i);
         break;
       }
     }
@@ -691,7 +691,7 @@ void Func_02000bd8(void) {
     PaletteFade_Interpolate(20);
     System_Wait(20);
   }
-  Func_020042e4();
+  Event_End();
 }
 
 void Func_02000d88(void) {
@@ -742,11 +742,11 @@ struct EventNote {
 void Func_02000e50(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
-  Func_020042dc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered((s32)MsgMarsStar07, 1);
   ((struct EventNote *)work)->unk15a = 1;
-  Func_020042e4();
+  Event_End();
 }
 
 #include "field_sprite.h"
@@ -756,7 +756,7 @@ extern char SceneId_Ov66d;
 
 /* VIEW(s0ae4): routine Func_02004294 as void Func_02004294(s32 map, void *destination); the definition has void Func_02000188(void) { struct Actor *object = Actor_Get(10); if(Event_GetFlag(0xa4b) == 0) { if(Event_GetFlag(0x238) == 0 || Event_GetFl.... */
 extern void Func_02004294__s0ae4(s32 map, void *destination) __asm__("Func_02004294");
-void Func_0200445c(void);
+void Party_PlaySavedMusic(void);
 void Func_02001424(void);
 
 #if !TLA_PATCH_1
@@ -770,7 +770,7 @@ void Func_02000e80(void) {
   s32 zero;
 
   screen = (u16 *)Ram_HeapSlots->block32;
-  Func_020042dc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered((s32)MsgMarsStar09, 1);
   Event_PlaySound(78);
@@ -868,10 +868,10 @@ void Func_02000e80(void) {
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x2a8, 186);
   FieldEvent_Wait(1);
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
-  Func_0200445c();
+  Party_PlaySavedMusic();
   Event_SetFlag(0xa30);
   gMainRoutineWork.special = (s32)&SceneId_Ov66d;
-  Func_020042e4();
+  Event_End();
 }
 
 #else
@@ -889,7 +889,7 @@ void Func_02000e80(void) {
     goto L_02008ea2;
   goto L_0200905c;
 L_02008ea2:
-  Func_020042dc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered((s32)MsgMarsStar09, 1);
   Event_PlaySound(78);
@@ -944,12 +944,12 @@ L_02008ea2:
   if (object != 0)
     Func_020041ec(object);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
-  Func_0200445c();
-  Func_020042e4();
+  Party_PlaySavedMusic();
+  Event_End();
   goto L_020093b0;
 L_0200905c:
   screen = (u16 *)Ram_HeapSlots->block32;
-  Func_020042dc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered((s32)MsgMarsStar09, 1);
   Event_PlaySound(78);
@@ -1042,11 +1042,11 @@ L_0200905c:
   if (object2 != 0)
     Func_020041ec(object2);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
-  Func_0200445c();
+  Party_PlaySavedMusic();
   Event_SetFlag(0xa30);
   Event_SetFlag(0xa9e);
   gMainRoutineWork.special = (s32)&SceneId_Ov66d;
-  Func_020042e4();
+  Event_End();
 L_020093b0:
   return;
 }
@@ -1262,7 +1262,7 @@ void Func_020015ec(struct Actor *object) {
 extern const u8 gData_02004744[];
 
 void Func_020041cc(struct Actor *object, s32 mode);
-void Func_020041dc(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 /* VIEW(spawn): routine Func_020015ec as void Func_020015ec(void); the definition has void Func_020015ec(struct Actor *object). */
 extern void Func_020015ec__spawn(void) __asm__("Func_020015ec");
 
@@ -1270,7 +1270,7 @@ void Func_02001750(struct Actor *object) {
   object->motionFlags = 0;
   object->collisionFlags = 0;
   Actor_SetSingleChildFlags(object, 0);
-  Func_020041dc(object, gData_02004744);
+  Actor_StartScript(object, gData_02004744);
   object->timer = 0;
   object->speedLimit = 0;
   object->acceleration = 0;
@@ -1391,7 +1391,7 @@ void Func_02001928(struct Actor *object, s32 part) {
 
   ((struct SpriteParts *)object->sprite)->part = part;
   Actor_SetSingleChildFlags(object, 0);
-  Func_020041dc(object, gData_02004744);
+  Actor_StartScript(object, gData_02004744);
   object->timer = zero;
   object->speedLimit = zero;
   object->acceleration = zero;
@@ -1494,7 +1494,7 @@ void Func_02001b38(struct Actor *object) {
   object->collisionFlags = 0;
   Actor_SetSingleChildFlags(object, 0);
   Func_020041cc(object, 2);
-  Func_020041dc(object, gData_02004744);
+  Actor_StartScript(object, gData_02004744);
   Actor_SetSpriteColor(object, 10);
   object->timer = 0;
   object->speedLimit = 0;

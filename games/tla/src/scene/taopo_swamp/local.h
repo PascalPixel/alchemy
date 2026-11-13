@@ -29,15 +29,15 @@ extern char SceneId_Ov678Room11;
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02002764(s32 id, s32 a);
 void Func_02002778(s32 a, s32 b);
-void Func_02002898(void);
-void Func_020028a0(void);
-void Func_020028e0(s32 id, s32 a, s32 b);
+void Event_Start(void);
+void Event_End(void);
+void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
 void Func_02002928(void);
-void Func_02002938(s32 a, s32 b);
-void Func_02002958(s32 a, s32 b, s32 c);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
+void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02002990(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_020029a8(s32 a, s32 b, s32 c);
-void Func_02002800(struct Actor *object, const void *data);
+void Actor_StartScript(struct Actor *object, const void *data);
 void Animation_SetStateFlags(struct Actor *object, u32 value);
 
 extern s32 gData_02003458;
@@ -48,7 +48,7 @@ void Func_02002948(void);
 void Func_02002084(s32 a);
 void Func_020029a0(s32 message);
 void Func_020027f8(struct Actor *object, s32 a);
-void Func_02002880(struct Actor *object, s32 a);
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
 s32 Func_02002730(void);
 void Func_0200271c(s32 a, s32 b);
 s32 Func_0200273c(s32 a);
@@ -106,8 +106,8 @@ void Func_02002400(struct Actor *object);
 extern const u8 gData_02002af4[];
 extern s32 gData_020035f0;
 extern u8 gMapShapeGrid[];
-void Func_02002810(void);
-void Func_02002828(void);
+void Map_CenterOnFollowedPoint(void);
+void DisplayBlend_EnableRunScript(void);
 void Func_02001eb8(void);
 void Func_02001ff0(s32 x, s32 z);
 void Func_0200237c(void);
@@ -144,7 +144,7 @@ static __inline__ void Func_020028d0_(s32 id, s32 x, s32 z) {
 }
 
 static __inline__ void Func_020028e0_(s32 id, s32 a, s32 b) {
-  Func_020028e0(id, a, b);
+  Actor_JumpDownLedge(id, a, b);
 }
 
 static __inline__ void Func_02002910_(s32 id, s32 a) {
@@ -152,7 +152,7 @@ static __inline__ void Func_02002910_(s32 id, s32 a) {
 }
 
 static __inline__ void Func_02002958_(s32 a, s32 b, s32 c) {
-  Func_02002958(a, b, c);
+  Actor_ReturnHome(a, b, c);
 }
 
 static __inline__ void Func_02002990_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,

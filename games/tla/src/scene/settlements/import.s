@@ -34,9 +34,9 @@ Math_Cosine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Func_02001fa8
+	.global Irq_SetHandler
 	.thumb_func
-Func_02001fa8:
+Irq_SetHandler:
 	overlay_veneer Irq_SetHandlerFar
 	.global HeapSlot_AllocFar
 	.thumb_func
@@ -70,9 +70,9 @@ Func_02001fe0:
 	.thumb_func
 Actor_SetAnimationSpeed:
 	overlay_veneer Actor_SetAnimationSpeedFar
-	.global Func_02001ff0
+	.global Actor_StartScript
 	.thumb_func
-Func_02001ff0:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -118,9 +118,9 @@ Animation_SetStateFlags:
 	.thumb_func
 Func_02002048:
 	overlay_veneer Func_080202f8
-	.global Func_02002050
+	.global Field_CheckSpheresOverlap
 	.thumb_func
-Func_02002050:
+Field_CheckSpheresOverlap:
 	overlay_veneer Field_CheckSpheresOverlapFar
 	.global Icon_DrawItem
 	.thumb_func
@@ -130,13 +130,13 @@ Icon_DrawItem:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02002068
+	.global Event_Start
 	.thumb_func
-Func_02002068:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02002070
+	.global Event_End
 	.thumb_func
-Func_02002070:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
@@ -218,9 +218,9 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02002118
+	.global Leader_StopMoving
 	.thumb_func
-Func_02002118:
+Leader_StopMoving:
 	overlay_veneer Leader_StopMovingFar
 	.global Event_FinishScreenTransition
 	.thumb_func
@@ -242,9 +242,9 @@ ObjectTable_Get:
 	.thumb_func
 Func_02002140:
 	overlay_veneer Func_080c8480
-	.global Func_02002148
+	.global Event_ResolveAllPendingActions
 	.thumb_func
-Func_02002148:
+Event_ResolveAllPendingActions:
 	overlay_veneer Event_ResolveAllPendingActionsFar
 	.global Event_ResolvePendingActions
 	.thumb_func

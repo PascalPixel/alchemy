@@ -47,8 +47,8 @@ void Func_020002f8(const void *data);
 
 void Func_02001474(s32 show);
 void Func_02002180(void);
-void Func_02003c28(void);
-void Func_02003c30(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02003dc0(const void *data);
 void Func_02003dc8(void);
 void Func_02003de8(void);
@@ -67,11 +67,11 @@ extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
 void Func_02003cf0(void);
-void Func_02003d50(s32 a, s32 b);
-void Func_02003d58(s32 a, s32 b);
-void Func_02003d60(void);
-void Func_02003d68(void);
-void Func_02003d70(void);
+void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
+void BattleEffect_SetupObjectPair(s32 a, s32 b);
+void BattleEffect_StopMainActor(void);
+void BattleEffect_CleanupSceneObjects(void);
+void EventObject_Initialize(void);
 void Func_02003cc0(s32 id);
 void Func_02003d40(struct Actor *object, s32 mode);
 void Func_02003bb8(struct Actor *object);
@@ -97,8 +97,8 @@ void Func_020006ec(struct Actor *object, struct Actor *other);
 void Func_02000974(s32 mode);
 void Func_02000aa8(void);
 void Func_02003ba0(struct Actor *object, s32 mode);
-void Func_02003ba8(struct Actor *object, const void *script);
-void Func_02003c78(s32 id, s32 target);
+void Actor_StartScript(struct Actor *object, const void *script);
+void Actor_MoveToObject(s32 id, s32 target);
 s32 Func_02003d20(void);
 s32 Func_02003d80(void *sprite, s32 frame);
 s32 Func_02003db0(struct Actor *object);
@@ -178,7 +178,7 @@ void Func_02000c64(u16 *list) {
   }
 }
 
-s32 Func_02003d18(s32 owner, s32 mode);
+s32 BattleEffect_FindNearestObject(s32 owner, s32 mode);
 struct Actor *Func_02003df0(void);
 
 /// A shape grid byte seen as a bit-field, so its store takes the struct's
@@ -195,7 +195,7 @@ void Func_02000d78(u16 *list) {
   u8 *shapeGrid = gMapShapeGrid;
 
   if (held == NULL) {
-    s32 id = Func_02003d18(gMainRoutineWork.currentOwner, 1);
+    s32 id = BattleEffect_FindNearestObject(gMainRoutineWork.currentOwner, 1);
 
     if (id != -1)
       held = Actor_GetById(id);

@@ -26,8 +26,8 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gData_02000318[];
 extern struct ActorPlacement gData_02000270[];
-void Func_020001b4(void);
-void Func_020001bc(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_0200020c(void);
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
@@ -40,7 +40,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 void Func_02000074(void) {
   if (!GameFlag_Test(2219)) {
-    Func_020001b4();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgKibomboWarriorsFound);
     Camera_SetSpeedParameters(0x10000, 0x2000);
@@ -71,7 +71,7 @@ void Func_02000074(void) {
     Event_ShowMessageAndWait(12, 0);
     Motion_SetModeAndWaitAnimation(13, 3);
     Event_ShowMessageAndWait(13, 0);
-    Func_020001bc();
+    Event_End();
   }
   GameFlag_SetBit(2447);
 }

@@ -26,7 +26,7 @@ extern u32 gData_020007e4;
 
 struct Actor;
 void Func_020001b0(void);
-void Func_02000568(void);
+void Event_Start(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
@@ -83,7 +83,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 extern s32 gData_02000618[];
 
 void Func_02000540(struct Actor *object, s32 mode);
-void Func_02000548(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 
 void Func_020000f4(void) {
   struct Actor *object;
@@ -112,7 +112,7 @@ void Func_020000f4(void) {
       Actor_SetSingleChildFlags(object, 0);
       object->priorityFlags &= ~1;
       sprite->priority = 2;
-      Func_02000548(object, gData_02000618);
+      Actor_StartScript(object, gData_02000618);
       Func_02000540(object, 1);
     }
   }
@@ -127,7 +127,7 @@ void Func_02000608(void);
 void Func_020001b0(void) {
   struct Actor *actor;
 
-  Func_02000568();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   wait(1);
@@ -225,7 +225,7 @@ void Func_020001b0(void) {
 
 s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == 12) {
-    Func_02000568();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();

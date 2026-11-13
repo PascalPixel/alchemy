@@ -26,9 +26,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Func_020029dc:
 	overlay_veneer Actor_SetMode
-	.global Func_020029e4
+	.global Actor_StartScript
 	.thumb_func
-Func_020029e4:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -74,13 +74,13 @@ Window_CloseMatchingId:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02002a44
+	.global Event_Start
 	.thumb_func
-Func_02002a44:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02002a4c
+	.global Event_End
 	.thumb_func
-Func_02002a4c:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func

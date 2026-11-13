@@ -49,8 +49,8 @@ extern struct MadraPlacement gData_02003308__madra[] __asm__("gData_02003308");
 
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_02002b28(void);
-void Func_02002b30(void);
+void Event_Start(void);
+void Event_End(void);
 
 void Func_0200006c(void) {
   struct MadraEventWork *work;
@@ -60,7 +60,7 @@ void Func_0200006c(void) {
   s32 index;
 
   work = Ram_HeapSlots->eventWork;
-  Func_02002b28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   id = 8;
 next:
@@ -87,7 +87,7 @@ next:
   Import_EventSetExitRequest(*trigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02002b30();
+  Event_End();
 }
 
 void Func_02002c88(s32 a, s32 b);
@@ -224,8 +224,8 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 de
                    s32 destY);
 void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
-void Func_02002b28(void);
-void Func_02002b30(void);
+void Event_Start(void);
+void Event_End(void);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 y, s32 z);
 void Event_SetMessageId(s32 message);
@@ -298,12 +298,12 @@ void Func_02000320(void) {
 
 void Func_0200036c(void) {
   if (Flag_Test(0x20f) == 0) {
-    Func_02002b28();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Func_080d47b4__events_b(33, 0x105, 30);
     Event_SetMessageId((s32)&MsgWhereCouldMenardi);
     Event_ShowMessageThenWait(33, 0, 10);
-    Func_02002b30();
+    Event_End();
     GameFlag_SetBit(0x20f);
   }
 }
@@ -379,8 +379,8 @@ void Func_02000490(void) {
 
 void Func_02000404(void);
 void Func_02000490(void);
-void Func_02002b28(void);
-void Func_02002b30(void);
+void Event_Start(void);
+void Event_End(void);
 
 #define PLACE(id, x, z, angle)                                                 \
   {                                                                            \
@@ -412,7 +412,7 @@ void Func_0200051c(void) {
     Sound_Play(123);
     Import_EventSetExitRequest(16);
   } else if (!Event_GetFlag(0x280)) {
-    Func_02002b28();
+    Event_Start();
     Event_ResolvePendingActions(0);
     PLACE(26, PIXELS(744), PIXELS(257), FACING_SOUTH);
     Actor_GetById(4)->velocityY = PIXELS(5);
@@ -422,13 +422,13 @@ void Func_0200051c(void) {
     PLACE(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
     Event_SetFlag(0x280);
     Func_02000404();
-    Func_02002b30();
+    Event_End();
   }
 }
 
 void Func_020005b8(void) {
   if (!Event_GetFlag(0x280)) {
-    Func_02002b28();
+    Event_Start();
     Event_ResolvePendingActions(0);
     PLACE(26, PIXELS(744), PIXELS(256), FACING_SOUTH);
     Actor_GetById(4)->velocityY = PIXELS(5);
@@ -438,7 +438,7 @@ void Func_020005b8(void) {
     PLACE(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
     Event_SetFlag(0x280);
     Func_02000490();
-    Func_02002b30();
+    Event_End();
   }
 }
 
@@ -544,7 +544,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 void Func_0200083c(s32 actor) {
   s32 msg;
 
-  Func_02002b28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)&MsgWasIJust;
   Event_SetMessageId(msg);
@@ -557,13 +557,13 @@ void Func_0200083c(s32 actor) {
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessageAndWait(actor, 0);
-  Func_02002b30();
+  Event_End();
 }
 
 void Func_02000894(void) {
   s32 msg;
 
-  Func_02002b28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x8ab)) {
     msg = (s32)&MsgHeyMisterAre;
@@ -594,13 +594,13 @@ void Func_02000894(void) {
   }
   Actor_ArmCallback(14, FACING_SOUTH, 0);
   GameFlag_SetBit(0x300);
-  Func_02002b30();
+  Event_End();
 }
 
 void Func_02000968(void) {
   s32 msg, x, z;
 
-  Func_02002b28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x8ab)) {
     msg = (s32)&MsgHeyMisterAre;
@@ -635,13 +635,13 @@ void Func_02000968(void) {
   }
   Actor_ArmCallback(14, FACING_SOUTH, 0);
   GameFlag_SetBit(0x300);
-  Func_02002b30();
+  Event_End();
 }
 
 void Func_02000a48(void) {
   s32 flags;
 
-  Func_02002b28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(11, 4, 0);
   Event_SetMessageId((s32)&MsgIsThereBy);
@@ -655,7 +655,7 @@ void Func_02000a48(void) {
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Event_ShowMessageAndWait(11, 0);
   }
-  Func_02002b30();
+  Event_End();
 }
 #undef PLACE
 
@@ -681,8 +681,8 @@ void Event_WaitTransitionFrames(void);
 void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 s32 FieldMessage_ShowAtActor(s32 localId, s32 unused);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
-void Func_02002b28(void);
-void Func_02002b30(void);
+void Event_Start(void);
+void Event_End(void);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 /* VIEW(s0ac4): routine Event_SetMessageId as void Event_SetMessageId(const u8 *message); event_work.h has void Event_SetMessageId(s32 message). */
 extern void Event_SetMessageId__s0ac4(const u8 *message) __asm__("Event_SetMessageId");
@@ -700,10 +700,10 @@ void Actor_LaunchFromLeader(s32 id, s32 a, s32 b, s32 c);
 extern s32 Map_PlayMapEdit__s0ac4(const void *edit, s32 a, s32 b) __asm__("Map_PlayMapEdit");
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
-void Func_02002b10(s32 item, s32 a);
-s32 Func_02002b18(s32 item);
+void MessageArgument_Push(s32 item, s32 a);
+s32 PartyInventory_FindRoom(s32 item);
 void Func_02002c50(s32 item, s32 a);
-void Func_02002c60(void);
+void Party_PlaySavedMusic(void);
 void Sound_Play(s32 cue);
 s32 PartyInventory_GiveItem(s32 item, s32 count);
 void FieldMessage_Show(s32 message, s32 position);
@@ -835,7 +835,7 @@ static __inline__ void Madra_Func_02002c10(s32 id, s32 a) {
 void Func_02000ac4(void) {
   struct Actor *object;
 
-  Func_02002b28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId__s0ac4(MsgYouThereHold__s0ac4);
   Event_ShowMessageThenWait(24, 0, 2);
@@ -961,7 +961,7 @@ void Func_02000ac4(void) {
   Actor_SetHorizontalPositionWithTerrain(32, 0, 0);
   GameFlag_SetBit(0x910);
   Actor_SetHorizontalPositionWithTerrain(26, 0, 0);
-  Func_02002b30();
+  Event_End();
 }
 
 /// Once flag 0x911 is set: actors 33 and 34 talk with 4, the prompt's answer
@@ -970,7 +970,7 @@ void Func_02000ac4(void) {
 void Func_02000f80(void) {
   if (!GameFlag_Test(0x911))
     return;
-  Func_02002b28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Camera_MoveWithinMapBounds(PIXELS(124), -1, PIXELS(420), 1);
   Func_02002c28();
@@ -1121,7 +1121,7 @@ void Func_02000f80(void) {
   Event_Wait(20);
   Actor_SetHorizontalPositionWithTerrain(33, 0, 0);
   Event_Wait(20);
-  Func_02002b30();
+  Event_End();
 }
 
 /// Actors 24, 25 and 32 question 4, whose answers are counted in the event
@@ -1131,7 +1131,7 @@ void Func_02000f80(void) {
 void Func_020014fc(void) {
   struct Actor *object;
 
-  Func_02002b28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId__s0ac4(MsgHeyYouLot__s0ac4);
   Event_ShowMessageThenWait(24, 0, 2);
@@ -1262,7 +1262,7 @@ void Func_020014fc(void) {
   Actor_WaitForMoveById(32);
   Actor_SetHorizontalPositionWithTerrain(32, 0, 0);
   ArmCallbackAndRefresh(4, FACING_NORTH);
-  Func_02002b30();
+  Event_End();
 }
 
 /// A map edit and where it applies (Map_PlayMapEdit forwards
@@ -1297,7 +1297,7 @@ void Func_020019d8(void) {
    * instructions differ in tla-en (with z alone a local, 2). */
   x = 153 << 16;
   z = 0x01030000;
-  Func_02002b28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   if (GameFlag_Test(0x825) || GameFlag_Test(0x826))
@@ -1377,7 +1377,7 @@ void Func_020019d8(void) {
   Event_ShowMessageThenWait(34, 0, 0);
   Actor_CommitPositionAndActivate(34, 16, 8);
   ArmCallback(34, FACING_SOUTH, 0);
-  if (Func_02002b18(210) >= 0) {
+  if (PartyInventory_FindRoom(210) >= 0) {
     Func_02002c50(210, 3);
     PartyInventory_GiveItem(210, 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
@@ -1387,12 +1387,12 @@ void Func_020019d8(void) {
     s32 count = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) + 1;
 
     Event_SetMessageId__s0ac4(MsgTheMayorTried__s0ac4);
-    Func_02002b10(210, 2);
+    MessageArgument_Push(210, 2);
     FieldMessage_Show((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
     Motion_SetVarCbAndRefresh(34, 2);
     Event_ShowMessageAndWait(34, 0);
     Actor_CommitPositionAndActivate(34, 16, 0);
-    Func_02002b10(210, 2);
+    MessageArgument_Push(210, 2);
     FieldMessage_Show((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
     CommitPos(34, -16, 0);
     ArmCallbackAndRefresh(34, FACING_SOUTH);
@@ -1622,7 +1622,7 @@ void Func_020019d8(void) {
   Actor_CommitPositionAndActivate(33, 24, 24);
   Actor_CommitPositionAndActivate(33, 132, 0);
   Actor_SetHorizontalPositionWithTerrain(33, 0, 0);
-  Func_02002c60();
+  Party_PlaySavedMusic();
   Camera_FollowActor(4, 1);
   Func_080d47b4__s0ac4(6, 0x102, 30);
   Event_ShowMessageAndWait(6, 0);
@@ -1772,15 +1772,15 @@ void Func_020019d8(void) {
   Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
   GameFlag_SetBit(0x980);
   GameFlag_SetBit(0x98e);
-  Func_02002b30();
+  Event_End();
 }
 #undef SET_MODE
 
 // ---- games/tla/src/scene/madra/events_d.c ----
 #include "text/msg_ids.h"
 
-void Func_02002b28(void);
-void Func_02002b30(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02002c88(s32 a, s32 b);
 void Func_02000f80(void);
 void Func_020019d8(void);
@@ -1822,13 +1822,13 @@ void Func_020029c8(void) {
   Event_Wait(10);
   Sound_Play(123);
   Import_EventSetExitRequest(next);
-  Func_02002b30();
+  Event_End();
 }
 
 void Func_02002a58(void) {
   s32 id;
 
-  Func_02002b28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   CommitPos(4, 0, -14);
   id = 4;
@@ -1839,7 +1839,7 @@ void Func_02002a58(void) {
 void Func_02002a80(void) {
   s32 id, x, z;
 
-  Func_02002b28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   CommitPos(4, -2, -6);
   x = 14;
@@ -1856,7 +1856,7 @@ void Func_02002a80(void) {
 void Func_02002ab0(void) {
   s32 id, a;
 
-  Func_02002b28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   a = 192;
   id = 4;

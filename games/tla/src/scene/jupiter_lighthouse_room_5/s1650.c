@@ -82,7 +82,7 @@ void Func_02001650(s32 count) {
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void *Resource_GetTableEntry(s32 id);
 extern char ResourceId_ColouredOrbs;
-s32 Func_020027b8(const void *source, void *destination);
+s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void Func_020029e0(struct SparkSprite *sprite, s32 width, s32 height,
                    s32 attributes, s32 tile);
@@ -105,7 +105,7 @@ void Func_02001718(const s32 *from, const s32 *to) {
   work->to[0] = to[0];
   work->to[1] = to[1];
   work->to[2] = to[2];
-  Func_020027b8(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs), work);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs), work);
   entry = Resource_FindFreeEntry();
   tile = Vram_Load(entry, 0x400, work);
   work->tile = tile;
@@ -255,7 +255,7 @@ void Func_02001a44(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02003448, 64);
-  Func_020027b8(gField_CachedTilesA, buffer);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_02003444 = Resource_FindFreeEntry();
   VramCache_Load(gData_02003444, 0xc00, buffer);
   Heap_Release(buffer);
@@ -269,7 +269,7 @@ void Func_02001ac4(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_02003448, 64);
-  Func_020027b8(gField_CachedTilesB, buffer);
+  Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_02003444 = Resource_FindFreeEntry();
   Vram_Load(gData_02003444, 0x800, buffer);
   Heap_Release(buffer);
@@ -283,7 +283,7 @@ void Func_02001b44(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_02003448, 64);
-  Func_020027b8(gField_CachedTilesC, buffer);
+  Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_02003444 = Resource_FindFreeEntry();
   Vram_Load(gData_02003444, 0x800, buffer);
   Heap_Release(buffer);

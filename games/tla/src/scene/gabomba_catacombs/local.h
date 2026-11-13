@@ -11,13 +11,13 @@
 #include "field/field.h"
 
 void Func_0200114c(struct Actor *object, s32 mode);
-void Func_02001154(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 struct GabombaCatacombsVec;
 s32 Func_02001174(struct Actor *object,
                   struct GabombaCatacombsVec *position);
-void Func_0200119c(void);
-void Func_020011a4(void);
-void Func_02001224(s32 a, s32 b);
+void Event_Start(void);
+void Event_End(void);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Func_02001234(s32 a);
 void Func_02001274(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_0200127c(s32 a, s32 b, s32 c);

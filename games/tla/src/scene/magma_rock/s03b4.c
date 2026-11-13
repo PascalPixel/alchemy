@@ -45,7 +45,7 @@ struct StagedActor *Actor_FindInCell(struct FieldPosition *position,
                                      struct StagedActor *self);
 void Func_02003a54(struct StagedActor *object, s32 mode);
 s32 Func_02003aac(struct StagedActor *object, struct FieldPosition *position);
-void Func_02003bdc(void);
+void Event_NoOp(void);
 
 void Func_020003b4(void) {
   struct FieldPosition dst;
@@ -106,7 +106,7 @@ void Func_020003b4(void) {
   lead->moveRateZ = rate;
   FieldActor_SetMoveTarget(lead, dst.x, dst.y, dst.z);
   Actor_WaitForMove(next);
-  Func_02003bdc();
+  Event_NoOp();
   next->x.fixed = dst.x;
   {
     /* FAKEMATCH(temporary): z read ahead of velocityX's store; as dst.z at its

@@ -18,13 +18,13 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_020002b8
+	.global Event_Start
 	.thumb_func
-Func_020002b8:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020002c0
+	.global Event_End
 	.thumb_func
-Func_020002c0:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func

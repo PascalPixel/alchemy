@@ -159,7 +159,7 @@ struct OrbitEffect {
 
 extern u32 gData_02003214[];
 
-void Func_02002820(struct OrbitEffect *object, const void *script);
+void Actor_StartScript(struct OrbitEffect *object, const void *script);
 
 static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
                                                     s32 z) {
@@ -199,7 +199,7 @@ void Func_020001a4(void) {
   }
   if (effect != 0) {
     sprite = effect->sprite;
-    Func_02002820(effect, gData_02003214);
+    Actor_StartScript(effect, gData_02003214);
     Actor_SetSpriteColor(effect, 1);
     effect->motionFlags = 0;
     angle = Random16Far() & 0xffff000;
@@ -393,15 +393,15 @@ extern s32 gData_020033dc;
 
 s32 Resource_ResetEntry(u32 slot);
 void Func_02001538(void);
-void Func_020028b0(void);
-void Func_020028b8(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02001c88(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 a5, s32 a6,
                    struct EffectParams *params);
 
 void Func_020006ac(void) {
   if (!Event_GetFlag(0xa0e)) {
     Event_SetFlag(0xa0e);
-    Func_020028b0();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     PaletteFade_ApplySource(0x10000, 0);
     PaletteFade_ApplyTarget(0x10003, 1);
@@ -412,7 +412,7 @@ void Func_020006ac(void) {
     FieldMessage_ShowCentered((s32)MsgFieldShowAnemosPower, 0, -2);
     PaletteFade_ApplyTarget(0x10000, 0);
     PaletteFade_Interpolate(30);
-    Func_020028b8();
+    Event_End();
   }
 }
 
@@ -462,16 +462,16 @@ void Func_02000734(void) {
   Actor_SetSingleChildFlags(((struct SparkActor *)Actor_Get(22)), 1);
 }
 
-void Func_02002a00(void);
-void Func_02002a08(void);
-void Func_02002a10(void);
-/* VIEW(jupiter_lighthouse_room_5): routine Func_02002a18 as void Func_02002a18(struct Actor *object, s32 value); jupiter_lighthouse_aerie.h has void Func_02002a18(void). */
-extern void Func_02002a18__jupiter_lighthouse_room_5(struct Actor *object, s32 value) __asm__("Func_02002a18");
+void BattleEffect_StartArcEffect(void);
+void BattleEffect_EndArcEffect(void);
+void BattleEffect_WaitForArcGroups(void);
+/* VIEW(jupiter_lighthouse_room_5): routine BattleEffect_SetObjectUpdateMode as void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 value); jupiter_lighthouse_aerie.h has void BattleEffect_SetObjectUpdateMode(void). */
+extern void Func_02002a18__jupiter_lighthouse_room_5(struct Actor *object, s32 value) __asm__("BattleEffect_SetObjectUpdateMode");
 
 void Func_02000810(s32 actor, s32 target) {
   s32 i;
 
-  Func_02002a00();
+  BattleEffect_StartArcEffect();
   Func_02002a18__jupiter_lighthouse_room_5(Actor_Get(actor), 2);
   Event_PlaySound(201);
   System_Wait(50);
@@ -489,8 +489,8 @@ void Func_02000810(s32 actor, s32 target) {
   Actor_Get(target)->facing = 0xc000;
   Actor_SetSpriteColor(Actor_Get(target), 0);
   Func_02002a18__jupiter_lighthouse_room_5(Actor_Get(actor), 0);
-  Func_02002a10();
-  Func_02002a08();
+  BattleEffect_WaitForArcGroups();
+  BattleEffect_EndArcEffect();
   Actor_SetAnimation(target, 1);
 }
 
@@ -517,7 +517,7 @@ void Func_020008a4(void) {
   if (Event_GetFlag(0xa22))
     return;
   Event_SetFlag(0xa22);
-  Func_020028b0();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgFieldWaitingForCompanion);
   FieldEvent_ShowMessageThenWait(22, 0, 5);
@@ -573,7 +573,7 @@ void Func_020008a4(void) {
   Event_SetFlag(0xa25);
   Event_SetFlag(0x161);
   Event_SetFlag(0x144);
-  Func_020028b8();
+  Event_End();
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
@@ -754,8 +754,8 @@ void Func_02000e04(s32 id) {
 #include "field_sprite.h"
 #include "event_work.h"
 
-void Func_020028b0(void);
-void Func_020028b8(void);
+void Event_Start(void);
+void Event_End(void);
 
 void Func_02000e58(void) {
   /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
@@ -769,7 +769,7 @@ void Func_02000e58(void) {
   s32 angle;
   s32 i;
 
-  Func_020028b0();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkd46 = i;
@@ -828,7 +828,7 @@ void Func_02000e58(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_020028b8();
+  Event_End();
 }
 
 s32 Func_02001044(s32 *a, s32 *b) {
@@ -843,9 +843,9 @@ extern s32 gData_02003400;
 
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_02002a20(s32 x, s32 z, s32 layer);
-void Func_020029b0(s32 *position);
-/* VIEW(s0cb8): routine Func_02002820 as void Func_02002820(struct Actor *object, const s32 *script); jupiter_lighthouse_room_5 has void Func_02002820(struct OrbitEffect *object, const void *script). */
-extern void Func_02002820__s0cb8(struct Actor *object, const s32 *script) __asm__("Func_02002820");
+void Camera_WorldToScreen(s32 *position);
+/* VIEW(s0cb8): routine Actor_StartScript as void Actor_StartScript(struct Actor *object, const s32 *script); jupiter_lighthouse_room_5 has void Actor_StartScript(struct OrbitEffect *object, const void *script). */
+extern void Func_02002820__s0cb8(struct Actor *object, const s32 *script) __asm__("Actor_StartScript");
 
 void Func_02001070(struct Actor *self) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -872,7 +872,7 @@ void Func_02001070(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Func_020029b0(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -1119,7 +1119,7 @@ struct SparkWork__s1230 {
   s16 next;
 };
 
-void Func_020029b0(s32 *position);
+void Camera_WorldToScreen(s32 *position);
 void Func_020029e8(struct SparkSprite *sprite);
 
 void Func_02001538(void) {
@@ -1146,7 +1146,7 @@ void Func_02001538(void) {
              sine * spark->dy;
       p[2] =
           work->from[2] + (work->to[2] - work->from[2]) * spark->age / duration;
-      Func_020029b0(p);
+      Camera_WorldToScreen(p);
       sprite->x = p[0];
       sprite->z = p[2];
       Func_020029e8(sprite);

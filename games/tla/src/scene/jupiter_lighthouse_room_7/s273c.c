@@ -10,13 +10,13 @@
 #include "event_inline.h"
 #include "cell_target.h"
 
-void Func_02002b6c(void);
-void Func_02002afc(void);
+void Event_Start(void);
+void Map_CenterOnFollowedPoint(void);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02001f74(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Func_02002b74(void);
+void Event_End(void);
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
                                                    s32 mode) {
@@ -39,10 +39,10 @@ void Func_0200273c(void) {
   struct EffectOptions options;
   s32 always;
 
-  Func_02002b6c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
-  Func_02002afc();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = 0x820000;
   actor->gravity = 0x8000;
@@ -92,7 +92,7 @@ loop:
   actor->bounce = 0x4000;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Func_02002b74();
+  Event_End();
 }
 
 extern struct CellTarget gData_02003704;
@@ -152,7 +152,7 @@ void Func_02002984(s32 x, s32 z, s32 effect) {
     marker = work->marker;
     marker->x = leader->x;
     marker->z = leader->z;
-    Func_02002afc();
+    Map_CenterOnFollowedPoint();
     Func_0200273c();
     ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
         ->screenEffect = effect;

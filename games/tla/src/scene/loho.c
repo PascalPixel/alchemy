@@ -22,9 +22,9 @@ extern u32 gData_020017d8[];
 extern u32 gData_020017a4[];
 extern u32 gData_0200171c[];
 
-void Func_020013f0(s32 a, s32 b, s32 c);
+void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02001440(s32 a, s32 b);
-void Func_020012e0(void);
+void Event_Start(void);
 void Func_02000f38(void);
 
 void Func_02000038(void) { Func_080d7788(19, 3, 16); }
@@ -91,12 +91,12 @@ void Func_02000178(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-s32 Func_02001248();
+s32 Resource_DecodeType01();
 s32 Func_02001268();
-s32 Func_02001278();
-s32 Func_02001280();
+s32 Fade_ToWhite();
+s32 Fade_FromWhite();
 
-void Func_020012e8(void);
+void Event_End(void);
 void Func_020013c8();
 
 s32 Resource_FindFreeEntry();
@@ -149,7 +149,7 @@ void Func_02000198(void) {
   u8 unused[4]; // Unused: gives the stack frame its 4 bytes.
 
   t0 = ((s32)Actor_GetById(4));
-  Func_020012e0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   p = (struct Unk16 *)t0;
   goto L_020081ec;
@@ -222,7 +222,7 @@ L_0200821e:
   table = (struct Unk16 *)Heap_AllocEwram(0x600);
   p = (struct Unk16 *)Heap_Alloc(0x1000);
   t38 = Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion);
-  Func_02001248(t38, p);
+  Resource_DecodeType01(t38, p);
   entry = Resource_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x400, p);
   Heap_Release(p);
@@ -251,7 +251,7 @@ L_020083b6:
 L_020083c4:
   if (i != 30)
     goto L_020083d4;
-  Func_02001278(90);
+  Fade_ToWhite(90);
   Sound_Play(141);
 L_020083d4:
   p = table;
@@ -297,7 +297,7 @@ L_02008474:
   MapGrid_SetShake(0, 0, 0x10000);
   Sound_Play(0x186);
   Event_Wait(180);
-  Func_02001280(120);
+  Fade_FromWhite(120);
   Event_SetMessageId((s32)MsgLoho28);
   Event_Wait(120);
   Actor_RunRepeatedMotion(18, 2);
@@ -492,7 +492,7 @@ L_020089c4:
   Actor_SetPosition(18, 0, 0);
   Actor_SetPosition(17, 0, 0);
   Actor_SetPosition(20, 0, 0);
-  Func_020012e8();
+  Event_End();
   return;
 }
 
@@ -520,7 +520,7 @@ void Func_02000c54(s32 id) {
    * between the value's halves; as constant arguments, 2 of 6 instructions
    * differ in tla-en. */
   asm("" : "+l"(high), "+l"(kind));
-  Func_020013f0(id, kind, high << 2);
+  Actor_ReturnHome(id, kind, high << 2);
 }
 
 void Func_02000c64(s32 id) {
@@ -531,7 +531,7 @@ void Func_02000c64(s32 id) {
    * between the value's halves; as constant arguments, 2 of 7 instructions
    * differ in tla-en. */
   asm("" : "+l"(value), "+l"(kind));
-  Func_020013f0(id, kind, value + 1);
+  Actor_ReturnHome(id, kind, value + 1);
 }
 
 void Func_02000c74(s32 id) {
@@ -542,7 +542,7 @@ void Func_02000c74(s32 id) {
    * between the value's halves; as constant arguments, 2 of 7 instructions
    * differ in tla-en. */
   asm("" : "+l"(value), "+l"(kind));
-  Func_020013f0(id, kind, value + 2);
+  Actor_ReturnHome(id, kind, value + 2);
 }
 
 extern char SceneId_Ov6A6Room1;
@@ -666,7 +666,7 @@ void Func_02000e54(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   s32 i;
 
-  Func_020012e0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   // The loop is written with goto so that it carries no loop notes: the bytes
   // rebuild the zero on every pass, and a for loop hoists it and moves the work
@@ -693,7 +693,7 @@ loop:
   Import_EventSetExitRequest(*(s16 *)work);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_020012e8();
+  Event_End();
 }
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -743,7 +743,7 @@ void Func_02000f38(void) {
   Event_Wait(14);
   Sound_Play(123);
   Import_EventSetExitRequest(value);
-  Func_020012e8();
+  Event_End();
 }
 
 void Func_02000ffc(void) {
@@ -751,7 +751,7 @@ void Func_02000ffc(void) {
   s32 id;
   s32 x;
 
-  Func_020012e0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   back = 14;
   id = 4;
@@ -771,7 +771,7 @@ void Func_0200102c(void) {
   s32 id;
   s32 x;
 
-  Func_020012e0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   back = 14;
   id = 4;
@@ -787,7 +787,7 @@ void Func_0200102c(void) {
 }
 
 void Func_0200105c(void) {
-  Func_020012e0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_ArmCallback(4, FACING_NORTH, 0);
   Event_Wait(10);

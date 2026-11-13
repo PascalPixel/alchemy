@@ -211,9 +211,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_020045cc();
+s32 Actor_ReturnHome();
 
-void Func_02000588(s32 a0) { Call3(Func_020045cc, a0, 0x40, 0x300); }
+void Func_02000588(s32 a0) { Call3(Actor_ReturnHome, a0, 0x40, 0x300); }
 
 /* VIEW(prox): variable gData_0200554c as extern const u8 gData_0200554c[]; the definition has struct Trigger gData_0200554c[] = { { TRIGGERS_END }, }. */
 extern const u8 gData_0200554c__prox[] __asm__("gData_0200554c");
@@ -254,12 +254,12 @@ const u8 *Scene_GetEvents(void) {
   return gData_0200554c__prox;
 }
 
-void Func_02004464(void);
+void Event_Start(void);
 s32 Func_0200446c();
 extern u8 MsgProx33[];
 
 void Func_02000620(void) {
-  Func_02004464();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgProx33);
   Event_AskYesNo(0xf, 0);
@@ -289,7 +289,7 @@ void Func_02000674(void) {
   if (t0 != 0) {
     Func_02004634(0xe, 0x16);
   } else {
-    Func_02004464();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     t4 = Event_GetFlag(0xa3d);
     if (t4 != 0) {
@@ -314,7 +314,7 @@ void Func_020006c4(void) {
   if (t0 != 0) {
     Func_02004624(0x1f, 0xa);
   } else {
-    Func_02004464();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     t4 = Event_GetFlag(0xa3d);
     if (t4 != 0) {
@@ -339,7 +339,7 @@ void Func_02000714(void) {
   if (t0 != 0) {
     Func_0200462c(8);
   } else {
-    Func_02004464();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     t4 = Event_GetFlag(0xa3d);
     if (t4 != 0) {
@@ -373,7 +373,7 @@ void Func_02000764(void) {
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(16));
   s16 angle = object->angle;
 
-  Func_02004464();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
   if (work->unk166 == 0) {
@@ -394,7 +394,7 @@ void Func_020007f4(void) {
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(17));
   s16 angle = object->angle;
 
-  Func_02004464();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
   if (work->unk166 == 0) {
@@ -415,7 +415,7 @@ void Func_02000884(void) {
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(18));
   s16 angle = object->angle;
 
-  Func_02004464();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
   if (work->unk166 == 0) {
@@ -440,7 +440,7 @@ void Func_02000914(void) {
   t0 = Event_GetFlag(0xa3d);
   if (t0 != 0) {
   } else {
-    Func_02004464();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Event_PlaySound(158);
     MapGrid_CopyCellsTo(0x59, 0, 0x4d, 0x10, 1, 2);
@@ -492,7 +492,7 @@ void Func_0200457c(void);
 extern u8 MsgProx62[];
 
 void Func_02000ad8(void) {
-  Func_02004464();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x4cccc, 0x9999);
   FieldCamera_MoveTo(PIXELS(160), -1, PIXELS(160), 1);
@@ -569,7 +569,7 @@ void Func_02000ad8(void) {
   Func_0200446c();
 }
 
-s32 Func_020044dc();
+s32 Actor_MoveToObject();
 extern u8 MsgProx75[];
 extern u32 gData_020049c4[];
 extern u32 gData_02004980[];
@@ -580,7 +580,7 @@ void Func_02000dac(void) {
   s32 result;
   s32 owner;
 
-  Func_02004464();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(PIXELS(160), -1, PIXELS(160), 1);
@@ -596,8 +596,8 @@ void Func_02000dac(void) {
   Event_ShowMessage(10, 0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 144, 154);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  Func_020044dc(0x12, gMainRoutineWork.currentOwner);
-  Func_020044dc(0, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(0x12, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(0, gMainRoutineWork.currentOwner);
   System_Wait(1);
   Actor_FaceDirection(14, 0xb000, 0);
   Actor_SetSpeed(18, 0xcccc, 0x6666);
@@ -799,7 +799,7 @@ test_wait:
 void Func_020015d0(void) {
   struct Actor *object;
 
-  Func_02004464();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
   Actor_SetSpeed(20, 0x20000, 0x10000);
@@ -846,7 +846,7 @@ void Func_02001770(void) {
   if (Event_GetFlag(0xa3d) == 0 && Event_GetFlag(64) == 0) {
     u8 *work = Ram_HeapSlots->eventWork;
 
-    Func_02004464();
+    Event_Start();
     FieldEvent_ResolvePendingActions(1);
     {
       s32 y = 0x80;
@@ -944,7 +944,7 @@ void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   struct Actor *object;
   s32 cell;
 
-  Func_02004464();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (!Event_GetFlag(0x200)) {
     if (mode == 2)
@@ -1019,7 +1019,7 @@ void Func_02001c24(s32 a0) {
   s32 t0;
 
   t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
-  Func_02004464();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (a0 != 0) {
     Actor_SetSingleChildFlags(
@@ -1062,7 +1062,7 @@ void Func_02001c24(s32 a0) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02004464(void);
+void Event_Start(void);
 void Func_0200457c(void);
 s32 Func_0200446c();
 extern u8 MsgProx80[];
@@ -1077,7 +1077,7 @@ void Func_02001cf0(void) {
   s32 angleB000;
   s32 angle3000;
 
-  Func_02004464();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   FieldActor_Stop(0x14);
@@ -1559,7 +1559,7 @@ void Func_02002a38(void) {
   Task_AddFrame(Func_02002a08, priority);
 }
 
-s32 Func_020044dc();
+s32 Actor_MoveToObject();
 /* VIEW(s1cf0): variable gData_02005ee8 as extern u8 gData_02005ee8[]; the definition has u32 gData_02005ee8[] = { 39, 2, 4, 0x780000, 0, 0xc40000, 1, 39, 1, 0, 10, 22, 3, 0x4000, 0, 10, 17, }; tried as the definition's extern struct Trigger gData_02005ee8[], it does not compile in tla-ja: games/tla/src/scene/prox.c:3216: conflicting types for `gData_02005ee8'. */
 extern u8 gData_02005ee8__s1cf0[] __asm__("gData_02005ee8");
 extern u32 gData_02005f2c[];
@@ -1584,7 +1584,7 @@ void Func_02002a8c(void) {
   u32 i;
 
   if (Event_GetFlag(0x9c5) != 0) {
-    Func_02004464();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Event_PlaySound(78);
     FieldActor_Jump(5, 2, 10);
@@ -1600,8 +1600,8 @@ void Func_02002a8c(void) {
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 136, 196);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-    Func_020044dc(0, gMainRoutineWork.currentOwner);
-    Func_020044dc(0xb, gMainRoutineWork.currentOwner);
+    Actor_MoveToObject(0, gMainRoutineWork.currentOwner);
+    Actor_MoveToObject(0xb, gMainRoutineWork.currentOwner);
     System_Wait(1);
     Actor_SetSpeed(0, 0xcccc, 0x6666);
     Actor_SetSpeed(11, 0xcccc, 0x6666);
@@ -1979,8 +1979,8 @@ void Func_0200385c(struct Actor *object) {
   Actor_SetAnimationSpeed(object, 48);
 }
 
-void Func_02004594(void);
-void Func_020045e4(void);
+void Leader_StopMoving(void);
+void Event_ResolveAllPendingActions(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1991,8 +1991,8 @@ void Func_020038e8(void) {
 
   if (FIELD_AT(work, s16, 0xca2) != 0) {
     FlagSet(0x106);
-    Func_02004594();
-    Func_020045e4();
+    Leader_StopMoving();
+    Event_ResolveAllPendingActions();
     GameFlag_ClearBit(0x106);
   }
 }
@@ -2495,7 +2495,7 @@ struct ParticleWork {
 };
 
 void Func_0200460c(struct ParticleSprite *sprite, struct Particle *particle);
-void Func_02004614(struct Particle *particle, s32 unk1, s32 step);
+void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
 void Func_02004114(void) {
   struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
@@ -2514,7 +2514,7 @@ next:
 
     sprite->attr = (attr & ~0x3ff) | tile;
     Func_0200460c(sprite, particle);
-    Func_02004614(particle, 63, step);
+    BattleEffect_StepVector3(particle, 63, step);
     particle->age++;
   }
   i--;
@@ -2636,7 +2636,7 @@ struct RockWork__s4254 {
 
 struct RockWork__s4254 *HeapSlot_AllocFar(s32 slot, s32 size);
 void *Resource_GetTableEntry(s32 id);
-void Func_02004384(void *entry, void *destination);
+void Resource_DecodeType01(void *entry, void *destination);
 s32 Resource_FindFreeEntry(void);
 void Func_02004604(struct RockSprite__s4254 *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
@@ -2656,7 +2656,7 @@ void Func_02004254(void) {
   struct Rock__s4254 *rock;
   struct RockSprite__s4254 *sprite;
 
-  Func_02004384(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
   entry = Resource_FindFreeEntry();
   tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;

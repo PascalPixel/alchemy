@@ -44,7 +44,7 @@ void Func_020002a4(s32 side, s32 phase) {
    } *)(base))                                                                 \
        ->v)
 void Func_02005868();
-void Func_02005880(void);
+void Event_Start(void);
 
 s32 Func_02000330(void) {
   s32 t1, t2, t9, v_r5, v_r6;
@@ -55,7 +55,7 @@ s32 Func_02000330(void) {
   t2 = GameFlag_Test(0x9ff);
   if (t2 == 0)
     goto L_02008400;
-  Func_02005880();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner,
                             (((FIELD_AT(v_r5, s32, 8) >> 20) << 4) + 8),
@@ -87,7 +87,7 @@ L_02008400:
 
 void Func_02000418(void) { GameFlag_ClearBit(0x281); }
 
-void Func_02005888(void);
+void Event_End(void);
 void TrialRoad_Idle(void);
 s32 Func_020000fc(s32 value);
 
@@ -96,7 +96,7 @@ void Func_02000428(void) {
   struct TrialRoadState *state = gTrialRoadState;
   s32 found;
 
-  Func_02005880();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner,
                                    ((leader->x >> 20) << 4) + 8,
@@ -122,10 +122,10 @@ void Func_02000428(void) {
     }
   }
   GameFlag_SetBit(644);
-  Func_02005888();
+  Event_End();
 }
 
-void Func_02005858(s32 value, s32 slot);
+void MessageArgument_Push(s32 value, s32 slot);
 /// Func_080af0e4 through its far call: empties an inventory slot and returns 2.
 s32 Func_02005870(s32 owner, s32 slot);
 
@@ -139,10 +139,10 @@ void Func_020004f4(s32 item, s32 owner, s32 slot) {
   s32 kind = Func_020059b8(Party_GetLeaderActor());
   struct TrialRoadState *state = gTrialRoadState;
 
-  Func_02005880();
+  Event_Start();
   Event_ResolvePendingActions(0);
-  Func_02005858(owner, 1);
-  Func_02005858(item, 2);
+  MessageArgument_Push(owner, 1);
+  MessageArgument_Push(item, 2);
   FieldMessage_Show((s32)&MsgTrialRoadStoredItem, 1);
   Sound_Play(125);
   Motion_SetModeAndWaitAnimation(kind, 5);
@@ -156,7 +156,7 @@ void Func_020004f4(s32 item, s32 owner, s32 slot) {
     GameFlag_SetBit(642);
   }
   Func_02005870(owner, slot);
-  Func_02005888();
+  Event_End();
 }
 
 struct EventWork15a {
@@ -172,10 +172,10 @@ void Func_020005b4(s32 id) {
   else
     flag = 0x286;
   if (!GameFlag_Test(flag)) {
-    Func_02005880();
+    Event_Start();
     Event_ResolvePendingActions(0);
     FieldMessage_Show((s32)MsgTrialRoadChestBlocked, 1);
-    Func_02005888();
+    Event_End();
   } else {
     FieldMessage_Show((s32)MsgTrialRoadPlaceItemPrompt, 13);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 1) == 0)
@@ -234,7 +234,7 @@ void Func_020006b4(s32 id) {
     object = Actor_Create(489, owner->x, owner->y, owner->z);
     if (object != NULL) {
       Actor_SetSingleChildFlags(object, 0);
-      Func_020057d0(object, gData_02005a7c);
+      Actor_StartScript(object, gData_02005a7c);
       object->watchedObject = owner;
       object->priorityFlags |= 0x80;
       object->motionFlags = 0;
@@ -305,7 +305,7 @@ void Func_020007e8(void) {
   if (Actor_GetById(16)->z >> 20 == 23)
     Func_020059c0();
   else
-    Func_02005918(gMainRoutineWork.currentOwner, 6, 0);
+    Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, 0);
 }
 
 void Func_02000818(s32 a, s32 id) {
@@ -491,7 +491,7 @@ void Func_02000b7c(s32 id, s32 other, s32 flag, s32 side) {
 
   if (OBJECT_BYTE(object, 0x63) != 0)
     return;
-  Func_02005880();
+  Event_Start();
   Event_ResolvePendingActions(0);
   partner->scaleY = 0x2000;
   wait(1);
@@ -512,7 +512,7 @@ grow:
     GameFlag_SetBit(flag);
   else
     GameFlag_ClearBit(flag);
-  Func_02005888();
+  Event_End();
 }
 
 void Func_02000c34(void) { Func_02000b7c(18, 19, 0x335, 1); }
@@ -659,7 +659,7 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   }
   if (fromX == toX && fromZ == toZ)
     return;
-  Func_02005880();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
   Event_Wait(6);
@@ -702,7 +702,7 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
     GameFlag_SetBit(id + 579);
   }
   Event_Wait(15);
-  Func_02005888();
+  Event_End();
   Func_02000d70();
 }
 

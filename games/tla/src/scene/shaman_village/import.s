@@ -70,21 +70,21 @@ VramCache_Load:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
-	.global Func_020047bc
+	.global DebugText_Clear
 	.thumb_func
-Func_020047bc:
+DebugText_Clear:
 	overlay_veneer DebugText_ClearFar
 	.global AffineMatrix_BuildForEffect
 	.thumb_func
 AffineMatrix_BuildForEffect:
 	overlay_veneer AffineMatrix_BuildForEffectFar
-	.global Func_020047cc
+	.global Oam_AddSpriteAtDepth
 	.thumb_func
-Func_020047cc:
+Oam_AddSpriteAtDepth:
 	overlay_veneer Oam_AddSpriteAtDepthFar
-	.global Func_020047d4
+	.global Window_LoadGraphics
 	.thumb_func
-Func_020047d4:
+Window_LoadGraphics:
 	overlay_veneer Window_LoadGraphicsFar
 	.global Resource_GetTableEntry
 	.thumb_func
@@ -126,9 +126,9 @@ Func_0200481c:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Func_0200482c
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_0200482c:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -166,9 +166,9 @@ Map_WaitForShakeToSettle:
 	.thumb_func
 FieldMessage_Show:
 	overlay_veneer FieldMessage_ShowFar
-	.global Func_0200487c
+	.global MessageArgument_Push
 	.thumb_func
-Func_0200487c:
+MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
 	.global Icon_DrawItem
 	.thumb_func
@@ -202,13 +202,13 @@ Func_020048b4:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_020048c4
+	.global Event_Start
 	.thumb_func
-Func_020048c4:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020048cc
+	.global Event_End
 	.thumb_func
-Func_020048cc:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -266,9 +266,9 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_SetHorizontalPositionAndAngleWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionAndAngleWithTerrainFar
-	.global Func_02004944
+	.global Actor_MoveToObject
 	.thumb_func
-Func_02004944:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -382,9 +382,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02004a2c
+	.global Party_PlaySavedMusic
 	.thumb_func
-Func_02004a2c:
+Party_PlaySavedMusic:
 	overlay_veneer Party_PlaySavedMusicFar
 	.global Func_080d7788
 	.thumb_func
@@ -402,21 +402,21 @@ Func_02004a44:
 	.thumb_func
 Func_02004a4c:
 	overlay_veneer Func_080c86e8
-	.global Func_02004a54
+	.global BattleEffect_StartArcEffect
 	.thumb_func
-Func_02004a54:
+BattleEffect_StartArcEffect:
 	overlay_veneer BattleEffect_StartArcEffectFar
-	.global Func_02004a5c
+	.global BattleEffect_EndArcEffect
 	.thumb_func
-Func_02004a5c:
+BattleEffect_EndArcEffect:
 	overlay_veneer BattleEffect_EndArcEffectFar
-	.global Func_02004a64
+	.global BattleEffect_WaitForArcGroups
 	.thumb_func
-Func_02004a64:
+BattleEffect_WaitForArcGroups:
 	overlay_veneer BattleEffect_WaitForArcGroupsFar
-	.global Func_02004a6c
+	.global BattleEffect_SetObjectUpdateMode
 	.thumb_func
-Func_02004a6c:
+BattleEffect_SetObjectUpdateMode:
 	overlay_veneer BattleEffect_SetObjectUpdateModeFar
 	.global Func_02004a74
 	.thumb_func
@@ -434,9 +434,9 @@ Func_02004a84:
 	.thumb_func
 Func_02004a8c:
 	overlay_veneer Func_08108028
-	.global Func_02004a94
+	.global Inn_PlaySleep
 	.thumb_func
-Func_02004a94:
+Inn_PlaySleep:
 	overlay_veneer Inn_PlaySleepFar
 	.global Sound_Play
 	.thumb_func

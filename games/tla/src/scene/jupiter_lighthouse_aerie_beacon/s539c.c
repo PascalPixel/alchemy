@@ -14,8 +14,8 @@ s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02004bd4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Func_0200577c(void);
-void Func_02005814(void);
+void Map_CenterOnFollowedPoint(void);
+void Event_Start(void);
 void Func_0200581c(void);
 
 static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
@@ -32,10 +32,10 @@ void Func_0200539c(void) {
   struct Vector3 velocity;
   u32 i;
 
-  Func_02005814();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Camera_SetBounds(-1, -1, -1, 0);
-  Func_0200577c();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   leader->y = 0x820000;
   leader->gravity = 0x8000;
@@ -134,7 +134,7 @@ void Func_020055e4(s32 x, s32 z, s32 effect) {
     marker = work->marker;
     marker->x = leader->x;
     marker->z = leader->z;
-    Func_0200577c();
+    Map_CenterOnFollowedPoint();
     Func_0200539c();
     ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
         ->screenEffect = effect;

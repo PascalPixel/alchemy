@@ -27,7 +27,7 @@ extern s32 gData_0200641c[];
 extern s32 gData_02006470[];
 
 u32 Random16Far(void);
-void Func_02005764(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 void SceneActor_ParkRecord(struct Actor *object);
 void Func_020000ec(void);
 
@@ -139,7 +139,7 @@ void Func_02000198(void) {
         Actor_Create(672, center->x, center->y - rise + 0xfff80000, center->z);
     if (effect != 0) {
       sprite = effect->sprite;
-      Func_02005764(effect, gData_02006470);
+      Actor_StartScript(effect, gData_02006470);
       Actor_SetSpriteColor(effect, 1);
       effect->motionFlags = 0;
       angle = Random16Far() & 0xffff000;
@@ -167,7 +167,7 @@ void Func_02000198(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02005814(void);
+void Event_Start(void);
 s32 Func_0200581c();
 
 void Func_0200045c(void) {
@@ -179,7 +179,7 @@ void Func_0200045c(void) {
     Event_SetFlag(0x200);
     t2 = Event_GetFlag(0xa21);
     if (t2 == 0) {
-      Func_02005814();
+      Event_Start();
       FieldEvent_ResolvePendingActions(0);
       FieldEvent_SetMessageId((s32)MsgYouReLate);
       Actor_ShowEmote(0x1c, 0x103, 0x1e);
@@ -235,7 +235,7 @@ void Func_020004c8(void) {
   }
   if (effect != 0) {
     sprite = effect->sprite;
-    Func_02005764(effect, gData_020068b0);
+    Actor_StartScript(effect, gData_020068b0);
     Actor_SetSpriteColor(effect, 1);
     effect->motionFlags = 0;
     angle = Random16Far() & 0xffff000;
@@ -295,7 +295,7 @@ void Func_020005b8(void) {
   }
 }
 
-s32 Func_02005894();
+s32 Actor_MoveToObject();
 void Func_02005924(void);
 s32 PartyInventory_Remove();
 void *HeapSlot_AllocFar();
@@ -310,7 +310,7 @@ void Func_0200065c(void) {
   u8 *flags;
 
   if (GameFlag_Test(0xa23) != 0) {
-    Func_02005814();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Message_ShowCentered((s32)MsgThereSeemsTo, 5);
     answer = Event_AskYesNoWithActorAnimation(4, 0);
@@ -373,7 +373,7 @@ void Func_0200065c(void) {
         created->velocityY = 0x80000;
         FieldActor_SetMoveTarget(created, 0x2000000, 0x800000, 0x1260000);
         FieldActor_SetMoveTarget(actor37, 0x2000000, -1, 0x1260000);
-        Func_02005894(7, gMainRoutineWork.currentOwner);
+        Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
         System_Wait(1);
         Actor_SetSpeed(7, 0xcccc, 0x6666);
         Actor_WalkBy(7, 12, 0);
@@ -507,12 +507,12 @@ void Func_0200065c(void) {
 
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_0200577c(void);
+void Map_CenterOnFollowedPoint(void);
 
 void PartyInventory_Add(s32 item);
 void *Unit_Get(s32 owner);
-void Func_020057ec(s32 id, s32 slot);
-void Func_0200593c(s32 row, s32 column);
+void Inventory_Equip(s32 id, s32 slot);
+void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
 static __inline__ s32 Func_0200592c_(void) { return ((s32)Func_080d4568()); }
 static __inline__ void Func_02005984_(s32 a) { Event_ResolvePendingActions(a); }
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 b) {
@@ -578,7 +578,7 @@ static __inline__ void PartyInventory_Add_(s32 item) {
 }
 static __inline__ void *Unit_Get_(s32 id) { return Unit_Get(id); }
 static __inline__ void Func_020057ec_(s32 id, s32 slot) {
-  Func_020057ec(id, slot);
+  Inventory_Equip(id, slot);
 }
 static __inline__ void Func_02005904_(s32 id, s32 emote) {
   FieldEffect_SetAttached(id, emote);
@@ -587,7 +587,7 @@ static __inline__ void Actor_StartRepeatedMotion_(s32 id, s32 motion) {
   Actor_StartRepeatedMotion(id, motion);
 }
 static __inline__ void GameFlag_SetBit_(s32 flag) { GameFlag_SetBit(flag); }
-static __inline__ void Func_0200593c_(s32 a, s32 b) { Func_0200593c(a, b); }
+static __inline__ void Func_0200593c_(s32 a, s32 b) { Field_RequestBattleFromEncounterTable(a, b); }
 
 struct UnitItems {
   u8 unk00[0xd8];
@@ -609,7 +609,7 @@ void Func_02000cd0(void) {
   s32 slot;
   s32 facing;
 
-  Func_02005814();
+  Event_Start();
   Func_02005984_(0);
   t2 = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT(t2, s32, 428) = 0x100;
@@ -619,7 +619,7 @@ void Func_02000cd0(void) {
   FIELD_AT(t4, u8, 85) = 0;
   Camera_MoveWithinMapBounds_(0x2000000, 0x600000, 0xf00000, 0);
   wait_(1);
-  Func_0200577c();
+  Map_CenterOnFollowedPoint();
   wait_(1);
   Func_020058c4_(MsgWeHaveIgnited);
   Func_0200588c_(4, 0x1fc0000, 0x1160000, facing = 0xc000);
@@ -824,7 +824,7 @@ void Func_02001388(void) {
   s32 t35;
   s32 t36;
 
-  Func_02005814();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   fast = 0xa000;
   Actor_SetPositionAndFacing(4, 0x2000000, 0x1380000, fast);
@@ -941,7 +941,7 @@ void Func_02001388(void) {
   } while (0);
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6a5, 0xb);
   Event_SetDefeatDestination((s32)&SceneId_Ov6a5, 0xb);
-  Call2(Func_0200593c, 0xd, 6);
+  Call2(Field_RequestBattleFromEncounterTable, 0xd, 6);
 }
 
 #include "owner_state.h"
@@ -962,7 +962,7 @@ void Func_020016e8(void) {
    * Call4, Value2 and Value3 (Func_080d47b4's through a cast of its type); as
    * direct calls, 171 of 400 instructions differ in tla-en (any one alone, 2
    * to 98; the five Value3 calls, 27). */
-  Func_02005814();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   /* FAKEMATCH(temporary): the three angles held in locals; as FACING_
    * constants at each call, 57 of 400 instructions differ in tla-en. */
@@ -1069,22 +1069,22 @@ void Func_020016e8(void) {
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6a5, 12);
   Event_SetDefeatDestination((s32)&SceneId_Ov6a5, 13);
   Event_ClearFlag(0x11b);
-  Func_0200593c(13, 7);
+  Field_RequestBattleFromEncounterTable(13, 7);
 }
 
-s32 Func_020059c4();
-s32 Func_020059dc();
-s32 Func_020059d4();
-s32 Func_020059cc();
+s32 BattleEffect_StartArcEffect();
+s32 BattleEffect_SetObjectUpdateMode();
+s32 BattleEffect_WaitForArcGroups();
+s32 BattleEffect_EndArcEffect();
 
 void Func_02001ac4(s32 a0, s32 a1) {
-  Func_020059c4();
-  Func_020059dc(((s32)Actor_Get(a0)), 2);
+  BattleEffect_StartArcEffect();
+  BattleEffect_SetObjectUpdateMode(((s32)Actor_Get(a0)), 2);
   Event_PlaySound(0xc9);
   FieldEvent_Wait(60);
-  Func_020059dc(((s32)Actor_Get(a0)), 0);
-  Func_020059d4();
-  Func_020059cc();
+  BattleEffect_SetObjectUpdateMode(((s32)Actor_Get(a0)), 0);
+  BattleEffect_WaitForArcGroups();
+  BattleEffect_EndArcEffect();
   Actor_SetAnimation(a1, 1);
 }
 
@@ -1093,7 +1093,7 @@ void Event_FinishScreenTransition(void);
 void Func_02003a6c(s32 mode);
 void Func_02003c58(s32 mode);
 
-s32 Func_0200598c();
+s32 Party_PlaySavedMusic();
 extern u8 gData_02005ff0[];
 extern u8 gData_02005ff8[];
 extern u8 gData_02006088[];
@@ -1131,7 +1131,7 @@ void Func_02001bc4(void) {
     }
   }
 
-  Func_02005814();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_Get(0)->priorityFlags |= 1;
   Actor_Get(1)->priorityFlags |= 1;
@@ -1270,7 +1270,7 @@ void Func_02001bc4(void) {
   FieldEvent_ShowMessageThenWait(30, 0, 0);
   Actor_SetPositionAndFacing(30, 0x2000000, 0x1480000, mid);
   Func_02003a6c(0);
-  Func_0200598c();
+  Party_PlaySavedMusic();
   FieldEvent_Wait(10);
   Actor_SetPositionAndFacing(0, 0x2180000, 0x1700000, mid);
   Actor_SetPositionAndFacing(1, 0x2180000, 0x1800000, mid);
@@ -1622,7 +1622,7 @@ void Func_02002ae4(void) {
   s32 t382;
   s32 work;
 
-  Func_02005814();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   t2 = (s32)Actor_Get(0);
   FIELD_AT((t2 + 0x23), u8, 0) = (FIELD_AT((t2 + 0x23), u8, 0) | 1);
@@ -1844,7 +1844,7 @@ void Func_02002ae4(void) {
   Actor_FaceDirection(6, 0x4000, 0);
   Actor_FaceDirection(7, 0x4000, 0);
   Func_02003a6c(3);
-  Func_0200598c();
+  Party_PlaySavedMusic();
   FieldEvent_ShowMessageThenWait(0, 0, 0);
   Actor_ShowEmote(4, 0x102, 0x1e);
   W_Func_020058fc(5, 0x109, 0x1e);
@@ -2250,7 +2250,7 @@ void Func_02003c58(s32 mode) {
     }
   }
   work->height = Data_02006a1c;
-  Func_0200577c();
+  Map_CenterOnFollowedPoint();
   System_Wait(2);
 }
 
@@ -2451,7 +2451,7 @@ void Func_020040a0(s32 id) {
 #include "vector3.h"
 #include "main_routine_work.h"
 
-void Func_02005814(void);
+void Event_Start(void);
 
 
 void Func_020040f4(void) {
@@ -2466,7 +2466,7 @@ void Func_020040f4(void) {
   s32 angle;
   s32 i;
 
-  Func_02005814();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkd46 = i;
@@ -2567,9 +2567,9 @@ struct EventWork6a5 {
   s16 unk16a;
 };
 
-/* VIEW(s3f54): routine Func_02005764 as void Func_02005764(struct Object6a5 *object, const void *script); s0198 has void Func_02005764(struct Actor *object, const void *script). */
-extern void Func_02005764__s3f54(struct Object6a5 *object, const void *script) __asm__("Func_02005764");
-void Func_02005994(struct Vector3 *position);
+/* VIEW(s3f54): routine Actor_StartScript as void Actor_StartScript(struct Object6a5 *object, const void *script); s0198 has void Actor_StartScript(struct Actor *object, const void *script). */
+extern void Func_02005764__s3f54(struct Object6a5 *object, const void *script) __asm__("Actor_StartScript");
+void Camera_WorldToScreen(struct Vector3 *position);
 s32 Func_020059e4();
 s32 Math_Cosine(s32 angle);
 void Actor_SetAnimationSpeed(struct Object6a5 *object, s32 value);
@@ -2606,7 +2606,7 @@ void Func_0200430c(struct Object6a5 *object) {
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;
-    Func_02005994(&position);
+    Camera_WorldToScreen(&position);
     if (position.x <= 0x1100000) {
       if (position.x >= -0x200000) {
         if (object->unk62 == 0) {

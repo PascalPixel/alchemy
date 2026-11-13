@@ -78,9 +78,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Func_02003a54:
 	overlay_veneer Actor_SetMode
-	.global Func_02003a5c
+	.global Actor_StartScript
 	.thumb_func
-Func_02003a5c:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -94,9 +94,9 @@ Func_02003a6c:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Func_02003a7c
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_02003a7c:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -150,9 +150,9 @@ Func_02003adc:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02003aec
+	.global Event_Start
 	.thumb_func
-Func_02003aec:
+Event_Start:
 	overlay_veneer Event_StartFar
 	.global Func_02003af4
 	.thumb_func
@@ -170,9 +170,9 @@ Actor_ResetAndSetPositionInMode2:
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
-	.global Func_02003b14
+	.global Actor_MoveToObject
 	.thumb_func
-Func_02003b14:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -246,21 +246,21 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Field_DispatchTypeHandler:
 	overlay_veneer Field_DispatchTypeHandlerFar
-	.global Func_02003bac
+	.global BattleEffect_LoadActionEffectResources
 	.thumb_func
-Func_02003bac:
+BattleEffect_LoadActionEffectResources:
 	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
 	.global Func_02003bb4
 	.thumb_func
 Func_02003bb4:
 	overlay_veneer BattleEffect_SetupObjectPairFar
-	.global Func_02003bbc
+	.global BattleEffect_StopMainActor
 	.thumb_func
-Func_02003bbc:
+BattleEffect_StopMainActor:
 	overlay_veneer BattleEffect_StopMainActorFar
-	.global Func_02003bc4
+	.global BattleEffect_CleanupSceneObjects
 	.thumb_func
-Func_02003bc4:
+BattleEffect_CleanupSceneObjects:
 	overlay_veneer BattleEffect_CleanupSceneObjectsFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -270,9 +270,9 @@ Event_ResolvePendingActions:
 	.thumb_func
 Func_02003bd4:
 	overlay_veneer Func_080c8518
-	.global Func_02003bdc
+	.global Event_NoOp
 	.thumb_func
-Func_02003bdc:
+Event_NoOp:
 	overlay_veneer Event_NoOpFar
 	.global Func_02003be4
 	.thumb_func
@@ -322,9 +322,9 @@ Func_02003c34:
 	.thumb_func
 Func_02003c3c:
 	overlay_veneer Func_080c87d0
-	.global Func_02003c44
+	.global BattleEffect_StepVector3
 	.thumb_func
-Func_02003c44:
+BattleEffect_StepVector3:
 	overlay_veneer BattleEffect_StepVector3Far
 	.global Func_02003c4c
 	.thumb_func

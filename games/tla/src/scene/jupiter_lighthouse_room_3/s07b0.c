@@ -21,10 +21,10 @@ extern s32 gData_02002ce8;
 
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_02002450(s32 x, s32 z, s32 layer);
-void Func_02002428(s32 *position);
+void Camera_WorldToScreen(s32 *position);
 s32 Func_02000784(s32 *from, s32 *to);
 s32 Math_Cosine(s32 angle);
-void Func_020022f0(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_020007b0(struct Actor *self) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -47,7 +47,7 @@ void Func_020007b0(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Func_02002428(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -91,7 +91,7 @@ stop:
     *((u8 *)self + 0x63) = zero;
     self->update = (void *)zero;
   }
-  Func_020022f0(self, gData_02002cc8);
+  Actor_StartScript(self, gData_02002cc8);
   Event_PlaySound(228);
   gData_02002ce8 = 0;
 }

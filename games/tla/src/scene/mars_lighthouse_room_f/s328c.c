@@ -9,7 +9,7 @@ void Func_0200328c(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   struct Actor *object = Actor_Get(target);
 
   FieldActor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
-  Func_02005490(object, script);
+  Actor_StartScript(object, script);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   Func_02005480(object, 1);
@@ -65,7 +65,7 @@ void Func_02003304(struct Actor *self) {
   Event_PlaySound(104);
 }
 
-void Func_02005528(struct Actor *object, s32 mode);
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 
 s32 Func_020033cc(struct Actor *object) {
   s32 frame = object->timer;
@@ -76,7 +76,7 @@ s32 Func_020033cc(struct Actor *object) {
     object->scaleY = frame;
     object->speedLimit = 0x10000;
     object->acceleration = 0x10000;
-    Func_02005528(object, 1);
+    Actor_SetSpritePriorityDirect(object, 1);
   } else if (frame <= 30) {
     if (frame == 30) {
       Event_PlaySound(136);
@@ -112,7 +112,7 @@ s32 Func_02003478(struct Actor *object) {
     object->scaleY = frame;
     object->speedLimit = 0x10000;
     object->acceleration = 0x8000;
-    Func_02005528(object, 1);
+    Actor_SetSpritePriorityDirect(object, 1);
   } else if (frame <= 32) {
     object->scaleX = 0x10000;
     object->scaleY = 0x10000;

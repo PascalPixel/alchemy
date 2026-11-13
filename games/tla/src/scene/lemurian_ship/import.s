@@ -38,9 +38,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Func_02002bf0:
 	overlay_veneer Actor_SetMode
-	.global Func_02002bf8
+	.global Actor_StartScript
 	.thumb_func
-Func_02002bf8:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -50,9 +50,9 @@ Import_ActorCreate:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Func_02002c10
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_02002c10:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -94,13 +94,13 @@ PartyInventory_Remove:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02002c68
+	.global Event_Start
 	.thumb_func
-Func_02002c68:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02002c70
+	.global Event_End
 	.thumb_func
-Func_02002c70:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -150,9 +150,9 @@ Actor_WaitForMoveById:
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
-	.global Func_02002cd8
+	.global Actor_MoveToObject
 	.thumb_func
-Func_02002cd8:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -230,9 +230,9 @@ MapGrid_SetCameraBounds:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02002d78
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_02002d78:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func

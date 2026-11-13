@@ -175,8 +175,8 @@ void Func_02000164(s32 unused, s32 id) {
 
 struct SceneEntrance;
 
-void Func_02000e74(void);
-void Func_02000e7c(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02000edc(s32 a);
 void Func_02000f04(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
@@ -233,14 +233,14 @@ void Func_02000314(void) {
 
 void Func_02000378(void) {
   if (Event_GetFlag(0x927)) {
-    Func_02000e74();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId(MsgYouReGoing);
     FieldActor_StartRepeatedMotion(20, 1);
     FieldEvent_Wait(15);
     Event_AskYesNo(20, 0);
     Event_SetFlag(0x9ab);
-    Func_02000e7c();
+    Event_End();
   }
 }
 
@@ -292,8 +292,8 @@ struct OrbitEffect {
 };
 
 s32 Math_Cosine(s32 angle);
-void Func_02000e2c(struct Actor *object, const s32 *script);
-void Func_02000e5c(struct Actor *object, s32 a);
+void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 extern u32 gData_020015c0[];
@@ -318,7 +318,7 @@ void Func_02000474(struct OrbitEffect *effect) {
     effect->pause = ((Random16Far() << 4) >> 16) + 8;
   }
   if (++effect->timer == 71)
-    Func_02000e2c((struct Actor *)effect, gData_020015c0);
+    Actor_StartScript((struct Actor *)effect, gData_020015c0);
 }
 
 s32 Func_02000528(struct OrbitEffect *source) {
@@ -348,7 +348,7 @@ loop:
       effect->scale = 0x30000;
       effect->angle = Random16Far();
       effect->priorityFlags = 0;
-      Func_02000e5c((struct Actor *)effect, 2);
+      Actor_SetSpritePriorityDirect((struct Actor *)effect, 2);
     }
   }
   timer -= 2;
@@ -419,8 +419,8 @@ void Func_02000670(void) {
       Func_02000e24(object, 2);
       FieldActor_SetMoveTarget(object, object->x - PIXELS(32), object->y,
                                object->z);
-      Func_02000e2c(object, gData_020015c4);
-      Func_02000e5c(object, 2);
+      Actor_StartScript(object, gData_020015c4);
+      Actor_SetSpritePriorityDirect(object, 2);
     }
   }
 }
@@ -496,7 +496,7 @@ s32 Scene_Initialize(void) {
         FieldActor_StartRepeatedMotion(20, 2);
         FieldEvent_Wait(30);
         Event_SetFlag(0xa61);
-        Func_02000e7c();
+        Event_End();
       }
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2) {
@@ -588,12 +588,12 @@ void Func_02000bc0(s32 id, s32 flag) {
   struct Actor *pillar;
   s32 i;
 
-  Func_02000e74();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   pillar = Actor_Get(id);
   Func_02000b2c(id, leader->x, leader->y, leader->z);
-  Func_02000e2c(pillar, gData_020016cc);
+  Actor_StartScript(pillar, gData_020016cc);
   i = 15;
 dust:
   {
@@ -606,7 +606,7 @@ dust:
       u32 size;
       s32 scale;
 
-      Func_02000e2c(dust, gData_02001688);
+      Actor_StartScript(dust, gData_02001688);
       angle = Random16Far();
       speed = Random16Far();
       size = Random16Far();
@@ -657,7 +657,7 @@ fall:
   leader->velocityY = 0x40000;
   System_Wait(20);
   gMainRoutineWork.renderMode = 0;
-  Func_02000e7c();
+  Event_End();
   Event_SetFlag(flag);
 }
 

@@ -155,8 +155,8 @@ void Func_0200043c(void) { MapCopy(39, 0, 4, 3, 25, 8, 0); }
 
 void Func_0200045c(void) { Func_02000080(13); }
 
-void Func_02001914(void);
-void Func_0200191c(void);
+void Event_Start(void);
+void Event_End(void);
 
 /// Once flag 0x96c is set and 0x96d is not: sets 0x96d, clears 0x96e, launches
 /// object 12 from 22 pixels up at half size and turns it an eighth of a turn a
@@ -212,7 +212,7 @@ void Func_02000534(void) {
     Sound_Play(123);
     Import_EventSetExitRequest(2);
   } else {
-    Func_02001914();
+    Event_Start();
     Event_ResolvePendingActions(0);
     FieldActor_LaunchFromLeader(11, 0, -16, 0x5000);
     Actor_ArmCallback(4, FACING_NORTH, 0);
@@ -234,7 +234,7 @@ void Func_02000534(void) {
     Actor_WaitForMoveById(11);
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
     Actor_WalkToAndWait(4, 168, 832);
-    Func_0200191c();
+    Event_End();
   }
 }
 
@@ -328,7 +328,7 @@ struct EventWork1c4 {
   u16 count;
 };
 
-void Func_02001964();
+void Actor_MoveToObject();
 void Func_020019e4();
 void Message_CloseFinishedWindows();
 
@@ -336,14 +336,14 @@ void Func_02000838(void) {
   struct Actor *leader;
   s32 result;
 
-  Func_02001914();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaRecognizePsynergy);
   Event_ShowMessageThenWait(9, 0, 10);
   Actor_ShowEmote(4, 0x101, 40);
   Event_ShowMessageThenWait(10, 0, 10);
   Func_020019f4();
-  Func_02001914();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_Wait(20);
   Actor_SetModeById(4, 1);
@@ -425,7 +425,7 @@ void Func_02000838(void) {
   Motion_SetModeAndWaitAnimation(9, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(9, 0, 10);
-  Func_02001964(7, 4);
+  Actor_MoveToObject(7, 4);
   Actor_GetById(7)->scaleX = 0;
   Event_ShowMessageThenWait(7, 0, 10);
   Actor_ArmCallback(9, FACING_EAST, 0);
@@ -794,7 +794,7 @@ void Func_02000838(void) {
                               ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(11);
   Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
-  Func_0200191c();
+  Event_End();
 }
 
 struct SceneEntrance gSceneEntrances[] = {

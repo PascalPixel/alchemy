@@ -42,7 +42,7 @@ void Func_02000b84(s32 a, s32 b);
 
 void Func_02000084(void) {
   Event_SetFlag(0x8b2);
-  Func_02000a94();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors31);
   Func_02000b84(0x1f, 1);
@@ -72,7 +72,7 @@ void Func_02000084(void) {
   FieldEvent_Wait(20);
   FieldCamera_FollowActor(FIELD_AT(&gMainRoutineWork, s32, 532), 1);
   Func_02000b7c();
-  Func_02000a9c();
+  Event_End();
 }
 
 void Func_020001ac(s32 actor) {
@@ -117,7 +117,7 @@ void Func_02000298(s32 a0) {
 
 void Func_020002bc(void) {
   Event_SetFlag(0x8b1);
-  Func_02000a94();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkToAndWait(FIELD_AT(&gMainRoutineWork, s32, 532), 152, 328);
   Actor_FaceDirection(FIELD_AT(&gMainRoutineWork, s32, 532), 0xc000, 0);
@@ -158,7 +158,7 @@ void Func_020002bc(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(14, 0x3000, 0);
   Actor_FaceDirection(15, 0x4000, 0);
-  Func_02000a9c();
+  Event_End();
 }
 
 void Func_02000444(s32 a0) {
@@ -326,7 +326,7 @@ void Func_02000738(void) {
 #endif
     {
       Event_SetFlag(0x903);
-      Func_02000a94();
+      Event_Start();
       FieldEvent_ResolvePendingActions(0);
       FieldEvent_SetMessageId((s32)MsgAlhafraInteriors120);
       Actor_WalkToAndWait(4, 504, 328);
@@ -414,7 +414,7 @@ void Func_02000738(void) {
       Actor_SetPosition(31, 0, 0);
       Event_PlaySound(0x7b);
       FieldEvent_Wait(10);
-      Func_02000a9c();
+      Event_End();
     }
   }
 }

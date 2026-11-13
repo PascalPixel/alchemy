@@ -2,7 +2,7 @@
 #include "event_inline.h"
 
 s32 Func_02002368(s32 a, s32 b);
-void Func_02003240(s32 a, s32 b);
+void ScreenTransition_Start(s32 a, s32 b);
 s32 Func_02003168(s32 layer, s32 x, s32 z);
 void Func_020024bc(struct Actor *object);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
@@ -48,7 +48,7 @@ s32 Func_02002708(void) {
   UNUSED s32 unused[3];
 
   if (event->started == 0) {
-    Func_02003240(event->field1ac, event->field1b4);
+    ScreenTransition_Start(event->field1ac, event->field1b4);
     event->started = 1;
   }
   Event_ClearFlag(0x106);
@@ -64,7 +64,7 @@ s32 Func_02002708(void) {
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gData_020023c4 + 0x188);
   Event_SetFlag(0x106);
-  Func_020031e0();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_ClearFlag(0x106);
   leader->update = (void (*)(void))Func_020024bc;
@@ -233,7 +233,7 @@ void Func_02002870(struct Actor *actor) {
       sum = Random16Far();
       sum += Random16Far();
       scale = (sum >> 2) + Q16_ONE / 2;
-      Func_02003120(object, gData_02003304);
+      Actor_StartScript(object, gData_02003304);
       Actor_SetSingleChildFlags(object, 0);
       object->velocityY = angle * 4 + Q16_ONE * 2;
       radius <<= 3;
@@ -286,7 +286,7 @@ next:
       angle = 0x4000 + rise;
       radius = Random16Far() * 8;
       size = Random16Far();
-      Func_02003120(object, gData_02003348);
+      Actor_StartScript(object, gData_02003348);
       Actor_SetSingleChildFlags(object, 0);
       /* FAKEMATCH(temporary): the scale is taken before the velocity stores, as
        * in the native; as object->scaleX = (size >> 1) + 0x4000, 14 of 98
@@ -466,7 +466,7 @@ void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
   struct Actor *object = Actor_Get(id);
 
   FieldActor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
-  Func_02003120(object, script);
+  Actor_StartScript(object, script);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   Func_02003118(object, 1);
@@ -517,7 +517,7 @@ void Func_02002e6c(struct Actor *self) {
 }
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_020031a8(struct Actor *object, s32 mode);
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 
 s32 Func_02002f34(struct Actor *object) {
   s32 frame = object->timer;
@@ -528,7 +528,7 @@ s32 Func_02002f34(struct Actor *object) {
     object->scaleY = frame;
     object->speedLimit = 0x10000;
     object->acceleration = 0x10000;
-    Func_020031a8(object, 1);
+    Actor_SetSpritePriorityDirect(object, 1);
   } else if (frame <= 30) {
     if (frame == 30) {
       Event_PlaySound(136);
@@ -564,7 +564,7 @@ s32 Func_02002fe0(struct Actor *object) {
     object->scaleY = frame;
     object->speedLimit = 0x10000;
     object->acceleration = 0x8000;
-    Func_020031a8(object, 1);
+    Actor_SetSpritePriorityDirect(object, 1);
   } else if (frame <= 32) {
     object->scaleX = 0x10000;
     object->scaleY = 0x10000;

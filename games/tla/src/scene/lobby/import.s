@@ -38,13 +38,13 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_02001914
+	.global Serial_Initialize
 	.thumb_func
-Func_02001914:
+Serial_Initialize:
 	overlay_veneer Serial_InitializeFar
-	.global Func_0200191c
+	.global Serial_RemoveIrqHandlers
 	.thumb_func
-Func_0200191c:
+Serial_RemoveIrqHandlers:
 	overlay_veneer Serial_RemoveIrqHandlersFar
 	.global Sound_LoadPresetParameters
 	.thumb_func
@@ -58,9 +58,9 @@ Func_0200192c:
 	.thumb_func
 Serial_StartReceive:
 	overlay_veneer Party_CheckFar
-	.global Func_0200193c
+	.global Serial_GetActiveTransfers
 	.thumb_func
-Func_0200193c:
+Serial_GetActiveTransfers:
 	overlay_veneer Serial_GetActiveTransfersFar
 	.global Func_02001944
 	.thumb_func
@@ -90,9 +90,9 @@ GameFlag_GetByte:
 	.thumb_func
 GameFlag_SetByte:
 	overlay_veneer GameFlag_SetByteFar
-	.global Func_0200197c
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_0200197c:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Map_CopyCellPictureIndicesRect
 	.thumb_func
@@ -142,9 +142,9 @@ Text_DrawNumber:
 	.thumb_func
 MessageArgument_ClearAll:
 	overlay_veneer MessageArgument_ClearAllFar
-	.global Func_020019e4
+	.global MessageArgument_Push
 	.thumb_func
-Func_020019e4:
+MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
 	.global Func_020019ec
 	.thumb_func
@@ -166,13 +166,13 @@ Func_02001a04:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02001a14
+	.global Event_Start
 	.thumb_func
-Func_02001a14:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02001a1c
+	.global Event_End
 	.thumb_func
-Func_02001a1c:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -226,9 +226,9 @@ Func_080d47b4:
 	.thumb_func
 Func_02001a84:
 	overlay_veneer Event_SetDestinationFar
-	.global Func_02001a8c
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_02001a8c:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
@@ -266,7 +266,7 @@ DebugParty_LoadPreset:
 	.thumb_func
 Sound_Play:
 	overlay_veneer Sound_PlayFar
-	.global Func_02001adc
+	.global SoundFlag_Test
 	.thumb_func
-Func_02001adc:
+SoundFlag_Test:
 	overlay_veneer SoundFlag_TestFar

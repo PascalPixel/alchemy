@@ -16,10 +16,10 @@ u32 Func_02004e98(struct FieldSprite *sprite, u32 frame);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 /* VIEW(s46e8): routine Func_02004c98 as void Func_02004c98(struct FieldEffect *effect, s32 mode); local.h has void Func_02004c98(struct Actor *object, s32 a). */
 extern void Func_02004c98__s46e8(struct FieldEffect *effect, s32 mode) __asm__("Func_02004c98");
-/* VIEW(s46e8): routine Func_02004ca0 as void Func_02004ca0(struct FieldEffect *effect, const s32 *script); local.h has void Func_02004ca0(struct Actor *object, const void *data). */
-extern void Func_02004ca0__s46e8(struct FieldEffect *effect, const s32 *script) __asm__("Func_02004ca0");
+/* VIEW(s46e8): routine Actor_StartScript as void Actor_StartScript(struct FieldEffect *effect, const s32 *script); local.h has void Actor_StartScript(struct Actor *object, const void *data). */
+extern void Func_02004ca0__s46e8(struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
 void Func_02004c98(struct Actor *object, s32 a);
-void Func_02004ca0(struct Actor *object, const void *data);
+void Actor_StartScript(struct Actor *object, const void *data);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
@@ -160,7 +160,7 @@ struct ParticleWork {
 };
 
 void Func_02004f18(struct ParticleSprite *sprite, struct Particle *particle);
-void Func_02004f20(struct Particle *particle, s32 unk1, s32 step);
+void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
 void Func_020049d8(void) {
   struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
@@ -179,7 +179,7 @@ next:
 
     sprite->attr = (attr & ~0x3ff) | tile;
     Func_02004f18(sprite, particle);
-    Func_02004f20(particle, 63, step);
+    BattleEffect_StepVector3(particle, 63, step);
     particle->age++;
   }
   i--;

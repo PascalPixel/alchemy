@@ -150,15 +150,15 @@ extern const u8 gData_02003c10[];
 void Func_020004b0(void) {
   struct ShrineOfTheSeaGodEventWork *work = Ram_HeapSlots->eventWork;
 
-  Func_020039d8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgFieldStatueLikeDailaShrine, 1);
   work->unk15a = 1;
-  Func_020039e0();
+  Event_End();
 }
 
 void Func_020004e0(void) {
-  Func_020039d8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_Stop(11);
   ShrineOfTheSeaGod_Jump(11, 0x100, 20);
@@ -169,7 +169,7 @@ void Func_020004e0(void) {
   Actor_SetModeById(11, 4);
   Event_ShowMessageThenWait(11, 0, 20);
   Actor_SetMovementTypeById(11, gData_02003c10);
-  Func_020039e0();
+  Event_End();
 }
 
 void Func_02000554(void) {
@@ -228,7 +228,7 @@ void Func_0200063c(s32 x, s32 y) {
   }
 }
 
-void Func_020039a0(void);
+void DisplayBlend_EnableRunScript(void);
 void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Import_EventSetExitRequest(s32 value);
 void Event_FinishScreenTransition(void);
@@ -237,9 +237,9 @@ void Event_WaitTransitionFrames(void);
 void Func_02000688(void) {
   u32 i;
 
-  Func_020039d8();
+  Event_Start();
   Event_ResolvePendingActions(0);
-  Func_020039a0();
+  DisplayBlend_EnableRunScript();
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Camera_MoveWithinMapBounds(248 << 16, -1, 168 << 16, 1);
   Func_02003ac8();
@@ -350,7 +350,7 @@ loop:
     goto loop;
 }
 
-void Func_02003988(void);
+void Map_CenterOnFollowedPoint(void);
 void Map_WaitForShakeToSettle(void);
 void Func_02003854(s32 actor);
 
@@ -368,7 +368,7 @@ void Func_02000994(void) {
   struct ShrineOfTheSeaGodObject *c = Actor_GetById(10);
   u32 i;
 
-  Func_020039d8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
@@ -376,7 +376,7 @@ void Func_02000994(void) {
   Actor_SetSpritePriority(8, 1);
   Actor_SetSpritePriority(9, 1);
   Actor_SetSpritePriority(10, 1);
-  Func_020039a0();
+  DisplayBlend_EnableRunScript();
   wait(1);
   ShrineOfTheSeaGod_CopyRect(46, 51, 6, 56, 18, 25);
   ShrineOfTheSeaGod_CopyRect(84, 100, 6, 56, 18, 6);
@@ -391,7 +391,7 @@ void Func_02000994(void) {
   a->z += -0xc0000;
   b->z += -0xc0000;
   c->z += -0xc0000;
-  Func_02003988();
+  Map_CenterOnFollowedPoint();
   wait(4);
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 0x209;
@@ -456,7 +456,7 @@ void Func_02000994(void) {
   leader->motionFlags = 3;
   leader->y = 0;
   leader->height = 0;
-  Func_020039e0();
+  Event_End();
 }
 
 extern const u8 gData_02003cbc[];
@@ -476,7 +476,7 @@ void Func_02000ce8(void) {
   layer = &map->layers[1];
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  Func_020039d8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(244);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
@@ -488,7 +488,7 @@ void Func_02000ce8(void) {
   leader->y = -50 << 16;
   leader->height = -50 << 16;
   layer->y += -50 << 16;
-  Func_02003988();
+  Map_CenterOnFollowedPoint();
   wait(1);
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 515;
@@ -520,7 +520,7 @@ loop:
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   ShrineOfTheSeaGod_CopyRect(62, 69, 62, 18, 19, 6);
   wait(1);
-  Func_020039e0();
+  Event_End();
 }
 
 /// The leader turns, then moves with map layer 1 by -0x8000 in y a frame for
@@ -535,7 +535,7 @@ void Func_02000e38(void) {
   layer = &map->layers[1];
   object = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  Func_020039d8();
+  Event_Start();
   Event_ResolvePendingActions(0);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
   Camera_MoveWithinMapBounds(344 << 16, -1, 248 << 16, 1);
@@ -620,12 +620,12 @@ void Func_02001038(void) {
   s32 z = object->z >> 20;
 
   if (z == 16) {
-    Func_020039d8();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Func_02001010(object);
     Map_CopyCellAttributeRect(0, 0, 1, 1, 15, z);
     Actor_SetSpritePriority(8, 3);
-    Func_020039e0();
+    Event_End();
     GameFlag_SetBit(0x301);
   }
 }

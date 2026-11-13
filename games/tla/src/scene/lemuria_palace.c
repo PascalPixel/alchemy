@@ -27,8 +27,8 @@ struct DoorStep {
 
 void Event_FinishScreenTransition();
 void Event_WaitTransitionFrames();
-void Func_02001fcc();
-void Func_02001fd4();
+void Event_Start();
+void Event_End();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -41,7 +41,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Func_02000054(struct DoorStep *step, s32 countdown, s32 unused) {
-  Func_02001fcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(158);
   MapGrid_AnimateCells(step->script, step->x, step->z);
@@ -53,7 +53,7 @@ void Func_02000054(struct DoorStep *step, s32 countdown, s32 unused) {
   FieldEvent_SetExitRequest(countdown);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02001fd4();
+  Event_End();
 }
 
 /* VIEW(lemuria_palace): variable gData_02002368 as extern u8 gData_02002368[]; the definition has s32 gData_02002368[] = { (s32) gData_0200233c, 0x170005, (s32) gData_0200233c, 0x17001e, }. */
@@ -177,7 +177,7 @@ extern u8 Data_02003024[];
 extern u8 Data_02003060[];
 extern u8 Data_02003030[];
 s32 __modsi3();
-s32 Func_020020d4();
+s32 Camera_WorldToScreen();
 s32 Func_0200210c();
 
 void Func_020002b4(void) {
@@ -233,7 +233,7 @@ void Func_020002b4(void) {
   position.x = 0x3400000;
   position.y = 0;
   position.z = 0x1c00000;
-  Func_020020d4(&position);
+  Camera_WorldToScreen(&position);
   if (*(s32 *)Data_02003090 != 0) {
     ((struct Actor *)Data_02003060)->y = position.x;
     ((struct Actor *)Data_02003060)->z = position.z;
@@ -291,7 +291,7 @@ extern u8 gData_0200308c__s03a0 __asm__("gData_0200308c");
 
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *p);
-void Func_02001f6c(const u8 *source, void *destination);
+void Resource_DecodeType01(const u8 *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void Func_02002104(struct Unk_020003a0Sprite *sprite, s32 a, s32 b, u32 attr,
                    s32 tile);
@@ -308,7 +308,7 @@ void Func_020003a0(void) {
 
   Io_Write16(0x3f40, &REG_BLDCNT);
   Io_Write16(0x1000, &REG_BLDALPHA);
-  Func_02001f6c(Data_02002620, buffer);
+  Resource_DecodeType01(Data_02002620, buffer);
   firstSlot = &gData_02003020;
   *firstSlot = Resource_FindFreeEntry();
   firstTile = &Data_02003088;
@@ -319,7 +319,7 @@ void Func_020003a0(void) {
   Data_02003060__s03a0.shape = 1;
   Data_02003060__s03a0.blend = 1;
   Data_02003060__s03a0.palette = 0;
-  Func_02001f6c(Data_02002af8, buffer);
+  Resource_DecodeType01(Data_02002af8, buffer);
   secondSlot = &gData_02003094;
   *secondSlot = Resource_FindFreeEntry();
   secondTile = &Data_02003058;
@@ -402,9 +402,9 @@ loop:
    } *)(base))                                                                 \
        ->v)
 
-void Func_02001fcc();
-/* VIEW(s03a0): routine Func_02001fd4 as s32 Func_02001fd4(); lemuria_palace has void Func_02001fd4(); tried as the definition's void Func_02001fd4(void), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:442: void value not ignored as it ought to be. */
-extern s32 Func_02001fd4__s03a0() __asm__("Func_02001fd4");
+void Event_Start();
+/* VIEW(s03a0): routine Event_End as s32 Event_End(); lemuria_palace has void Event_End(); tried as the definition's void Event_End(void), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:442: void value not ignored as it ought to be. */
+extern s32 Func_02001fd4__s03a0() __asm__("Event_End");
 s32 Party_AddActiveOwner();
 void Func_020020ac();
 /* VIEW(s03a0): routine Func_020001d8 as s32 Func_020001d8(); the definition has void Func_020001d8(void); tried as the definition's void Func_020001d8(struct Actor *object), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:406: conflicting types for `Func_020001d8'. */
@@ -419,7 +419,7 @@ s32 Func_0200058c(s32 a0, s32 a1, s32 a2, s32 a3) {
   struct Actor *v3, *v6, *v7, *v12, *v13, *v19, *v20, *v22, *v23, *v24, *v25,
       *v26, *v27;
 
-  Func_02001fcc();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaPalace11);
   Call3((void (*)())Actor_SetSpeedParameters, 16, 0x13333, 0x9999);

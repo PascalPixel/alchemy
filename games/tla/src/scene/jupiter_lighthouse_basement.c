@@ -38,7 +38,7 @@ extern const u8 gData_020022e8[];
 extern const u8 gData_0200236c[];
 
 void Func_02001bec(struct Actor *object, s32 mode);
-void Func_02001cec(s32 a, s32 b);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Func_02001d1c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_02001d44(s32 a, s32 b, s32 c);
 
@@ -63,7 +63,7 @@ void Func_02000094(void) {
     Func_02001d44_(249, 424, 488);
     ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b8;
     gMainRoutineWork.battleRule24b = 2;
-    Func_02001cec(106, 3);
+    Field_RequestBattleFromEncounterTable(106, 3);
   }
 }
 
@@ -304,8 +304,8 @@ void Func_02000560(s32 id) {
 
 #include "event_work.h"
 
-void Func_02001c84(void);
-void Func_02001c8c(void);
+void Event_Start(void);
+void Event_End(void);
 
 void Func_020005b4(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -315,7 +315,7 @@ void Func_020005b4(void) {
   s32 facing;
   s32 i;
 
-  Func_02001c84();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkd46 = 0;
@@ -363,7 +363,7 @@ void Func_020005b4(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_02001c8c();
+  Event_End();
 }
 
 #include "irq.h"
@@ -379,8 +379,8 @@ extern const s32 gData_0200238c[];
 extern s32 Data_020023ac;
 
 s32 Func_02001d2c(s32 x, s32 z, s32 layer);
-void Func_02001d14(s32 *position);
-void Func_02001bfc(struct Actor *object, const s32 *script);
+void Camera_WorldToScreen(s32 *position);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_020007cc(struct Actor *self) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -403,7 +403,7 @@ void Func_020007cc(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Func_02001d14(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -447,7 +447,7 @@ stop:
     *((u8 *)self + 0x63) = zero;
     self->update = (void *)zero;
   }
-  Func_02001bfc(self, gData_0200238c);
+  Actor_StartScript(self, gData_0200238c);
   Event_PlaySound(228);
   Data_020023ac = 0;
 }

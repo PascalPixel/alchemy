@@ -26,13 +26,13 @@ PartyInventory_Remove:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_020021c4
+	.global Event_Start
 	.thumb_func
-Func_020021c4:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020021cc
+	.global Event_End
 	.thumb_func
-Func_020021cc:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -130,25 +130,25 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Field_DispatchTypeHandler:
 	overlay_veneer Field_DispatchTypeHandlerFar
-	.global Func_02002294
+	.global BattleEffect_LoadActionEffectResources
 	.thumb_func
-Func_02002294:
+BattleEffect_LoadActionEffectResources:
 	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
-	.global Func_0200229c
+	.global BattleEffect_SetupObjectPair
 	.thumb_func
-Func_0200229c:
+BattleEffect_SetupObjectPair:
 	overlay_veneer BattleEffect_SetupObjectPairFar
-	.global Func_020022a4
+	.global BattleEffect_StopMainActor
 	.thumb_func
-Func_020022a4:
+BattleEffect_StopMainActor:
 	overlay_veneer BattleEffect_StopMainActorFar
-	.global Func_020022ac
+	.global BattleEffect_CleanupSceneObjects
 	.thumb_func
-Func_020022ac:
+BattleEffect_CleanupSceneObjects:
 	overlay_veneer BattleEffect_CleanupSceneObjectsFar
-	.global Func_020022b4
+	.global EventObject_Initialize
 	.thumb_func
-Func_020022b4:
+EventObject_Initialize:
 	overlay_veneer EventObject_InitializeFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -170,21 +170,21 @@ Actor_OffsetPositionAndReset:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_020022e4
+	.global BattleEffect_StartArcEffect
 	.thumb_func
-Func_020022e4:
+BattleEffect_StartArcEffect:
 	overlay_veneer BattleEffect_StartArcEffectFar
-	.global Func_020022ec
+	.global BattleEffect_EndArcEffect
 	.thumb_func
-Func_020022ec:
+BattleEffect_EndArcEffect:
 	overlay_veneer BattleEffect_EndArcEffectFar
-	.global Func_020022f4
+	.global BattleEffect_WaitForArcGroups
 	.thumb_func
-Func_020022f4:
+BattleEffect_WaitForArcGroups:
 	overlay_veneer BattleEffect_WaitForArcGroupsFar
-	.global Func_020022fc
+	.global BattleEffect_SetObjectUpdateMode
 	.thumb_func
-Func_020022fc:
+BattleEffect_SetObjectUpdateMode:
 	overlay_veneer BattleEffect_SetObjectUpdateModeFar
 	.global Func_02002304
 	.thumb_func

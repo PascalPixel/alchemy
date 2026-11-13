@@ -90,7 +90,7 @@ extern s32 Data_02000a30;
 void *Resource_GetTableEntry(s32 id);
 extern char ResourceId_GreenPanel;
 s32 Resource_FindFreeEntry(void);
-void Func_020007ac(void *resource, void *destination);
+void Resource_DecodeType01(void *resource, void *destination);
 void Func_02000834(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
                    s32 tile);
 
@@ -114,7 +114,7 @@ void Func_02000098(void) {
 
   Dma_Set(Data_02000874, (void *)0x050003c0, 0x80000010, REG_DMA3);
   sprite = &gData_02000a00;
-  Func_020007ac(Resource_GetTableEntry((s32)&ResourceId_GreenPanel), buffer);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GreenPanel), buffer);
   slot = &Data_020008f0;
   value = Resource_FindFreeEntry();
   *slot = value;
@@ -256,8 +256,8 @@ void Func_02000244(s32 message, s32 position, s32 frames) {
   Func_02000158(message, x, y, left, line, frames, mode);
 }
 
-s32 Func_020007c4();
-s32 Func_020007cc();
+s32 DebugText_Clear();
+s32 Window_LoadGraphics();
 s32 Func_02000824();
 s32 Func_02000844();
 s32 Func_0200084c();
@@ -462,8 +462,8 @@ L_0200871e:
   } while (0);
   value = 0x1040;
   REG_DISPCNT = value;
-  Func_020007cc();
-  Func_020007c4();
+  Window_LoadGraphics();
+  DebugText_Clear();
   gRenderOamEnabled = 1;
   Event_ClearFlag(0x17c);
   Call2((void (*)())Func_02000824, (s32)&SceneId_Ov64a, 2);

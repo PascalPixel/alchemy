@@ -38,9 +38,9 @@ Func_020005ac:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global Func_020005bc
+	.global Resource_ReservedNoOp
 	.thumb_func
-Func_020005bc:
+Resource_ReservedNoOp:
 	overlay_veneer Resource_ReservedNoOpFar
 	.global Fade_ToBlack
 	.thumb_func
@@ -58,13 +58,13 @@ Func_020005d4:
 	.thumb_func
 Func_0803f9c0:
 	overlay_veneer Func_08038348
-	.global Func_020005e4
+	.global Party_SetLeaderJenna
 	.thumb_func
-Func_020005e4:
+Party_SetLeaderJenna:
 	overlay_veneer Party_SetLeaderJennaFar
-	.global Func_020005ec
+	.global Party_SetLeaderFelix
 	.thumb_func
-Func_020005ec:
+Party_SetLeaderFelix:
 	overlay_veneer Party_SetLeaderFelixFar
 	.global Event_Wait
 	.thumb_func
@@ -74,9 +74,9 @@ Event_Wait:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Func_02000604
+	.global Event_SetDestination
 	.thumb_func
-Func_02000604:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Event_StartScreenTransition
 	.thumb_func

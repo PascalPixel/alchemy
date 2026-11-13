@@ -48,7 +48,7 @@ const u8 *Scene_GetPlacements(void) {
 void Func_02000388(void) {
   struct AnemosInnerSanctumEntranceParty *party;
 
-  Func_02000cb4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_StartRepeatedMotion(8, 2);
   Event_Wait(20);
@@ -60,7 +60,7 @@ void Func_02000388(void) {
   party = (struct AnemosInnerSanctumEntranceParty *)&gMainRoutineWork;
   party->battleGroup = 0x1a9f;
   party->battleRule = 2;
-  Func_02000d04(103, 3);
+  Field_RequestBattleFromEncounterTable(103, 3);
   GameFlag_SetBit(0x201);
 }
 
@@ -70,20 +70,20 @@ void Func_02000408(void) {
   object->motionFlags = 0;
   object->scaleX = 0x4000;
   object->scaleY = 0x4000;
-  Func_02000cb4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(151);
   Actor_SetPartAttribute(Actor_GetById(8), 7);
   Actor_SetPartAttribute(Actor_GetById(15), 7);
   Event_Wait(20);
   Sound_Play(190);
-  Func_02000cdc(15, 8);
+  Actor_MoveToObject(15, 8);
   wait(1);
   Actor_SetMovementTypeById(8, gData_02000ea4);
   Actor_SetMovementTypeAndWaitById(15, gData_02000e20);
   Actor_SetMovementTypeAndWaitById(15, gData_02000e5c);
   Event_Wait(10);
-  Func_02000cbc();
+  Event_End();
 }
 
 void Func_02000494(void) {
@@ -439,7 +439,7 @@ void Func_02000858(void) {
 extern u8 gField_CachedTilesA[];
 extern u8 gField_CachedTilesD[];
 
-void Func_02000c24(const void *source, void *destination);
+void Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -450,7 +450,7 @@ void Func_02000a98(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02001ce0, 64);
-  Func_02000c24(gField_CachedTilesA, buffer);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_02001cdc = Resource_FindFreeEntry();
   VramCache_Load(gData_02001cdc, 0xc00, buffer);
   Heap_Release(buffer);
@@ -464,7 +464,7 @@ void Func_02000b18(void) {
   u8 *buffer = BumpAlloc(0x1800);
 
   Iwram_ClearWords(gData_02001ce0, 64);
-  Func_02000c24(gField_CachedTilesD, buffer);
+  Resource_DecodeType01(gField_CachedTilesD, buffer);
   gData_02001cdc = Resource_FindFreeEntry();
   VramCache_Load(gData_02001cdc, 0x1800, buffer);
   Heap_Release(buffer);

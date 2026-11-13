@@ -175,7 +175,7 @@ void Func_020002fc(void) {
 void Func_0200030c(void) {
   struct MarsLighthouseRoomMEventWork *work;
 
-  Func_020031e0();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(30);
@@ -202,7 +202,7 @@ void Func_0200030c(void) {
   PaletteFade_Interpolate(30);
   FieldEvent_Wait(30);
   FieldEvent_Wait(10);
-  Func_020031e8();
+  Event_End();
 }
 
 extern s32 gData_02003704;
@@ -371,12 +371,12 @@ void Func_0200080c(void) {
   System_Wait(1);
 }
 
-void Func_02003158(void);
+void DisplayBlend_EnableRunScript(void);
 
 void Func_02000934(s32 entrance) {
   s32 cell = -1;
   s16 *blend;
-  Func_02003158();
+  DisplayBlend_EnableRunScript();
   blend = &Data_02003a7c;
   if (entrance == 8)
     cell = 20;
@@ -452,11 +452,11 @@ void Func_02001324(s32 x, s32 z, s32 c, s32 d, s32 e, s32 f);
 void Func_0200154c(u16 *slots, u16 *colours, u16 *a, u16 *b);
 /* VIEW(s0b64): routine Func_02002e6c as void Func_02002e6c(void); mars_lighthouse_room_m has void Func_02002e6c(struct Actor *self); tried as the definition's void Func_02002e6c(struct Actor *self), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:523: too few arguments to function `Func_02002e6c'. */
 extern void Func_02002e6c__s0b64(void) __asm__("Func_02002e6c");
-void Func_020031e0(void);
-void Func_020031e8(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02003228(void);
 void Func_02003278(s32 a);
-void Func_02003290(void);
+void Party_PlaySavedMusic(void);
 
 extern u8 MsgYouHaveProven[];
 extern u8 gData_0200338c[];
@@ -488,7 +488,7 @@ s32 Scene_Initialize(void) {
           Event_GetFlag(0xa35)) {
         struct Actor *actor;
 
-        Func_020031e0();
+        Event_Start();
         FieldEvent_ResolvePendingActions(0);
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
@@ -543,8 +543,8 @@ s32 Scene_Initialize(void) {
         Event_SetFlag(0xa31);
         Event_PlaySound(80);
         Sound_WaitForBgmRestore();
-        Func_02003290();
-        Func_020031e8();
+        Party_PlaySavedMusic();
+        Event_End();
       }
     }
   }
@@ -562,13 +562,13 @@ void Func_02000934(s32 entrance);
 void Func_02002118(void);
 void Func_02003150(s32 value);
 void Func_020031b8(s32 scene, s32 a1);
-void Func_02003270(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void DisplayScroll_InitializeHBlankDma(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_020032b0(s32 a);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void SetBlend(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
-  Func_02003270(a, b, c, d, e, f, g);
+  DisplayScroll_InitializeHBlankDma(a, b, c, d, e, f, g);
 }
 
 s32 Scene_PrepareMap(void) {
@@ -662,7 +662,7 @@ void Func_0200080c(void);
 void Func_020010e4(void) {
   u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
 
-  Func_020031e0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
    * call; as a direct call, 8 of 37 instructions differ in tla-en. */
@@ -676,13 +676,13 @@ void Func_020010e4(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(20);
   wait(20);
-  Func_020031e8();
+  Event_End();
 }
 
 void Func_02001154(void) {
   u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
 
-  Func_020031e0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
    * call; as a direct call, 8 of 37 instructions differ in tla-en. */
@@ -696,13 +696,13 @@ void Func_02001154(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(20);
   wait(20);
-  Func_020031e8();
+  Event_End();
 }
 
 void Func_020011c4(void) {
   u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
 
-  Func_020031e0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
    * call; as a direct call, 8 of 37 instructions differ in tla-en. */
@@ -716,13 +716,13 @@ void Func_020011c4(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(20);
   wait(20);
-  Func_020031e8();
+  Event_End();
 }
 
 void Func_02001234(void) {
   u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
 
-  Func_020031e0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
    * call; as a direct call, 8 of 37 instructions differ in tla-en. */
@@ -736,7 +736,7 @@ void Func_02001234(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(20);
   wait(20);
-  Func_020031e8();
+  Event_End();
 }
 
 void Func_020012a4(s32 x, s32 z, s32 kind) {
@@ -752,12 +752,12 @@ void Func_020012a4(s32 x, s32 z, s32 kind) {
     Func_02003118(object, 3);
     if (kind != 0) {
       ((struct MarsLighthouseRoomMAnimation *)object->sprite)->layer = 2;
-      Func_02003120(object, gData_0200387c);
+      Actor_StartScript(object, gData_0200387c);
     } else {
       ((struct MarsLighthouseRoomMAnimation *)object->sprite)->layer = 1;
       object->velocityX = (((u32)(Random16Far() * 8) >> 16) - 4) << 16;
       object->velocityY = PIXELS(4);
-      Func_02003120(object, gData_02003900);
+      Actor_StartScript(object, gData_02003900);
     }
   }
 }
@@ -787,7 +787,7 @@ void Func_020013a0(void) {
     if (!Event_GetFlag(0xa2f)) {
       u16 *color = (volatile u16 *)&OBJ_PLTT_COLOR(0, 15);
 
-      Func_020031e0();
+      Event_Start();
       Event_ResolvePendingActions(0);
       FieldCamera_SetSpeed(0x20000, 0x4000);
       FieldCamera_MoveTo(PIXELS(224), PIXELS(64), PIXELS(216), 1);
@@ -806,7 +806,7 @@ void Func_020013a0(void) {
       BattleEffect_StartBufferInterpolation(20);
       wait(20);
       Event_SetFlag(0xa2f);
-      Func_020031e8();
+      Event_End();
     }
   }
 #if !TLA_PATCH_1
@@ -816,7 +816,7 @@ void Func_020013a0(void) {
 #endif
     u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
 
-    Func_020031e0();
+    Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_SetSpeed(0x20000, 0x4000);
     /* FAKEMATCH(wrapper): forwarded so this branch builds its own positions;
@@ -846,7 +846,7 @@ void Func_020013a0(void) {
     BattleEffect_StartBufferInterpolation(20);
     wait(40);
     Event_SetFlag(0xa2e);
-    Func_020031e8();
+    Event_End();
   }
 }
 
@@ -1165,7 +1165,7 @@ void Func_02001aec(struct Actor *object) {
   object->motionFlags = 0;
   object->collisionFlags = 0;
   Actor_SetSingleChildFlags(object, 0);
-  Func_02003120(object, gData_020032d4);
+  Actor_StartScript(object, gData_020032d4);
   object->timer = 0;
   object->speedLimit = 0;
   object->acceleration = 0;
@@ -1288,7 +1288,7 @@ void Func_02001cc4(struct Actor *object, s32 part) {
 
   ((struct SpriteParts *)object->sprite)->part = part;
   Actor_SetSingleChildFlags(object, 0);
-  Func_02003120(object, gData_020032d4);
+  Actor_StartScript(object, gData_020032d4);
   object->timer = zero;
   object->speedLimit = zero;
   object->acceleration = zero;
@@ -1386,7 +1386,7 @@ void Func_02001ed4(struct Actor *object) {
   object->collisionFlags = 0;
   Actor_SetSingleChildFlags(object, 0);
   Func_02003118(object, 2);
-  Func_02003120(object, gData_020032d4);
+  Actor_StartScript(object, gData_020032d4);
   Actor_SetSpriteColor(object, 10);
   object->timer = 0;
   object->speedLimit = 0;

@@ -50,9 +50,9 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_02001f54
+	.global Resource_DecodeType01
 	.thumb_func
-Func_02001f54:
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
@@ -66,9 +66,9 @@ VramCache_Load:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
-	.global Func_02001f74
+	.global DebugText_Clear
 	.thumb_func
-Func_02001f74:
+DebugText_Clear:
 	overlay_veneer DebugText_ClearFar
 	.global Func_02001f7c
 	.thumb_func
@@ -78,9 +78,9 @@ Func_02001f7c:
 	.thumb_func
 Render_ProjectPoint:
 	overlay_veneer Render_ProjectPointFar
-	.global Func_02001f8c
+	.global Resource_ReservedNoOp
 	.thumb_func
-Func_02001f8c:
+Resource_ReservedNoOp:
 	overlay_veneer Resource_ReservedNoOpFar
 	.global QueueIoWriteDelay2
 	.thumb_func
@@ -106,9 +106,9 @@ Animation_ApplyChildArgument:
 	.thumb_func
 Func_02001fbc:
 	overlay_veneer Actor_SetMode
-	.global Func_02001fc4
+	.global Actor_StartScript
 	.thumb_func
-Func_02001fc4:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -118,9 +118,9 @@ Import_ActorCreate:
 	.thumb_func
 Func_02001fd4:
 	overlay_veneer Actor_Destroy
-	.global Func_02001fdc
+	.global Map_UpdateCurrentTileBlock
 	.thumb_func
-Func_02001fdc:
+Map_UpdateCurrentTileBlock:
 	overlay_veneer Map_UpdateCurrentTileBlockFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -154,9 +154,9 @@ Func_02002014:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02002024
+	.global Event_Start
 	.thumb_func
-Func_02002024:
+Event_Start:
 	overlay_veneer Event_StartFar
 	.global Actor_GetById
 	.thumb_func
@@ -178,9 +178,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02002054
+	.global Event_SetDestination
 	.thumb_func
-Func_02002054:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -218,9 +218,9 @@ Func_02002094:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_020020a4
+	.global SceneEvent_FindActiveRecord
 	.thumb_func
-Func_020020a4:
+SceneEvent_FindActiveRecord:
 	overlay_veneer SceneEvent_FindActiveRecordFar
 	.global Func_020020ac
 	.thumb_func

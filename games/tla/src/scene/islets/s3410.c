@@ -119,14 +119,14 @@ void Func_020034fc(void) {
   }
 }
 
-void Func_02003e64();
+void Event_Start();
 void Func_02003f84();
 
 void Func_02003620(void) {
   s32 v5;
   struct Actor *object0;
 
-  Func_02003e64();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(0x226);
   v5 = &gMainRoutineWork;
@@ -358,7 +358,7 @@ inner:
   return NULL;
 }
 
-void Func_02003fd4(void);
+void Event_NoOp(void);
 void Func_02003d0c(void);
 
 /// The heap slots read as words: the map slot comes through u32, not its
@@ -452,5 +452,5 @@ void Func_02003a5c(struct PushTarget target) {
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
   Func_02003790(2, cell[0], cell[2], width, height, 0);
-  Func_02003fd4();
+  Event_NoOp();
 }

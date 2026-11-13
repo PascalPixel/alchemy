@@ -255,7 +255,7 @@ void Func_02000940(void) {
   Func_0200074c(*(struct Actor **)(event + 0xcbc));
 }
 
-void Func_02003aec();
+void Event_Start();
 void Func_02003c1c();
 s32 Func_02003af4();
 
@@ -266,7 +266,7 @@ s32 Func_02000a48(void) {
       *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 3260);
   s32 x, z;
 
-  Func_02003aec();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Func_02003c1c();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
@@ -317,20 +317,20 @@ s32 Func_02000a48(void) {
 
 #include "frame.h"
 
-void Func_02003bac(s32 a, s32 b);
+void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
 void Func_02003bb4(s32 owner, u16 value);
-void Func_02003bbc(void);
-void Func_02003bc4(void);
+void BattleEffect_StopMainActor(void);
+void BattleEffect_CleanupSceneObjects(void);
 
 void Func_02000c08(s16 value) {
   struct MainRoutineWork *party;
 
-  Func_02003bac(151, 1);
+  BattleEffect_LoadActionEffectResources(151, 1);
   party = &gMainRoutineWork;
   Func_02003bb4(party->currentOwner, value);
   Field_DispatchTypeHandler(1);
-  Func_02003bbc();
-  Func_02003bc4();
+  BattleEffect_StopMainActor();
+  BattleEffect_CleanupSceneObjects();
 }
 
 struct MagmaRockEffectParams {

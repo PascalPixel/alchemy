@@ -76,8 +76,8 @@ void Actor_Jump(s32 actor, s32 speed, s32 frames);
 void Actor_SetPositionAndResetMotion(struct ShrineOfTheSeaGodObject *object,
                                       s32 x, s32 y, s32 z);
 void Actor_SetModeById(u32 actorId, s32 animation);
-void Func_020039d8(void);
-void Func_020039e0(void);
+void Event_Start(void);
+void Event_End(void);
 void Event_ResolvePendingActions(s32 skip);
 void Func_02003aa0(s32 actor);
 void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,

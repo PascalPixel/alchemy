@@ -34,7 +34,7 @@ void Func_0200006c(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->entrance == 2) {
-    Func_0200046c();
+    Event_Start();
     Event_ResolvePendingActions(0);
     if (Actor_GetById(8)->x == 0) {
       Actor_WalkByAndWait(4, 0, -16);
@@ -57,7 +57,7 @@ void Func_0200006c(void) {
       Actor_WaitForMoveById(8);
       Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
     }
-    Func_02000474();
+    Event_End();
   }
 }
 
@@ -104,7 +104,7 @@ void Func_02000158(void) {
 void Func_02000254(const struct WarpTarget *warp, s32 door, s32 mode) {
   s32 id;
 
-  Func_0200046c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(158);
   Map_PlayMapEdit(warp->scene, warp->x, warp->z);
@@ -120,7 +120,7 @@ void Func_02000254(const struct WarpTarget *warp, s32 door, s32 mode) {
   Import_EventSetExitRequest(door);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02000474();
+  Event_End();
 }
 
 void Func_020002dc(s32 door) { Func_02000254(&gData_02000610, door, 0); }

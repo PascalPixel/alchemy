@@ -34,13 +34,13 @@ Message_CloseFinishedWindows:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02001080
+	.global Event_Start
 	.thumb_func
-Func_02001080:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02001088
+	.global Event_End
 	.thumb_func
-Func_02001088:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -170,17 +170,17 @@ Func_02001180:
 	.thumb_func
 Func_02001188:
 	overlay_veneer Func_080c8248
-	.global Func_02001190
+	.global Event_SetDestination
 	.thumb_func
-Func_02001190:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_020011a0
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_020011a0:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_080d2b4c
 	.thumb_func

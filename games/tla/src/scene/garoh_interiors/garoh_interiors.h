@@ -27,11 +27,11 @@ extern struct Trigger gData_02000fe8[];
 
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_020007bc(void);
+void Map_CenterOnFollowedPoint(void);
 void Func_020007cc(void);
 void Func_020007d4(void);
-void Func_020007f4(void);
-void Func_020007fc(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_0200089c(s32 slot, s32 actor);
 void Func_020008a4(s32 id);
 void Func_020008ac(s32 slot, s32 actor);

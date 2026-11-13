@@ -96,13 +96,13 @@ struct JupiterLighthouseAerieObject {
 extern void Func_02001070__jupiter_lighthouse_aerie(struct JupiterLighthouseAerieObject *object) __asm__("Func_02001070");
 void Func_020017a8(s32 a, s32 b, s32 c);
 void Func_02002a78(s32 x, s32 z, s32 a, s32 b);
-void Func_02002a88(void);
-void Func_02002a90(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02002af0(void);
 
 void Func_020001b4(void) {
   Event_SetFlag(0xa0a);
-  Func_02002a88();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
@@ -121,12 +121,12 @@ void Func_020001b4(void) {
   Func_02001070__jupiter_lighthouse_aerie(((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
   Func_02001070__jupiter_lighthouse_aerie(((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
   Func_02002af0();
-  Func_02002a90();
+  Event_End();
 }
 
 void Func_02000264(void) {
   Event_SetFlag(0xa0b);
-  Func_02002a88();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
@@ -145,7 +145,7 @@ void Func_02000264(void) {
   Func_02001070__jupiter_lighthouse_aerie(((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
   Func_02001070__jupiter_lighthouse_aerie(((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
   Func_02002af0();
-  Func_02002a90();
+  Event_End();
 }
 
 void Func_02000314(s32 unused, s32 actor) {
@@ -415,7 +415,7 @@ void Func_02000930(void) {
   s32 facing;
   s32 i;
 
-  Func_02002a88();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkd46 = 0;
@@ -463,7 +463,7 @@ void Func_02000930(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_02002a90();
+  Event_End();
 }
 
 s32 Func_02000b1c(s32 *a, s32 *b) {
@@ -478,9 +478,9 @@ extern s32 gData_0200333c;
 
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_02002b50(s32 x, s32 z, s32 layer);
-void Func_02002b20(s32 *position);
+void Camera_WorldToScreen(s32 *position);
 s32 Math_Cosine(s32 angle);
-void Func_02002a00(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_02000b48(struct Actor *self) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -507,7 +507,7 @@ void Func_02000b48(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Func_02002b20(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -555,7 +555,7 @@ stop:
     s32 zero = 0;
     *((u8 *)self + 0x63) = zero;
     self->update = zero;
-    Func_02002a00(self, gData_0200331c);
+    Actor_StartScript(self, gData_0200331c);
     Event_PlaySound(228);
     gData_0200333c = zero;
   }
@@ -794,7 +794,7 @@ struct BeamWork {
   struct Actor *second;
 };
 
-void Func_02002b20(s32 *position);
+void Camera_WorldToScreen(s32 *position);
 void Func_02002b38(struct BeamSprite *sprite);
 void Func_02002b40(struct BeamSprite *sprite, struct BeamSpark *spark);
 
@@ -923,7 +923,7 @@ void Func_02001080(void) {
   pos[0] = work->carried[0];
   pos[1] = work->carried[1];
   pos[2] = work->carried[2];
-  Func_02002b20(pos);
+  Camera_WorldToScreen(pos);
   large->x = pos[0];
   large->z = pos[2];
   Func_02002b38(large);

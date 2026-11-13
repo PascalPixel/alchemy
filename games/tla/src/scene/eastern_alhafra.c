@@ -127,9 +127,9 @@ s32 Func_02004240(struct DoorPlan *);
 void Func_020044c4(struct DoorPlan);
 s32 Func_02004a0c();
 s32 Func_02004a24();
-s32 Func_02004a84();
-void Func_02004a94();
-void Func_02004a9c();
+s32 Party_FindOwnerWithAction();
+void Event_Start();
+void Event_End();
 s32 Func_02004bb4();
 s32 Func_02004c44();
 s32 Func_02004c4c();
@@ -269,9 +269,9 @@ extern void Func_020044c4__s0514(struct Unk_02004240) __asm__("Func_020044c4");
 void Func_02004868(void *, s32, s32);
 s32 Func_02004a24();
 s32 Func_02004a7c();
-s32 Func_02004a84();
-void Func_02004a94();
-void Func_02004a9c();
+s32 Party_FindOwnerWithAction();
+void Event_Start();
+void Event_End();
 s32 Func_02004bb4();
 s32 Func_02004c44();
 s32 Func_02004c4c();
@@ -295,7 +295,7 @@ void Func_02000514(void) {
       Func_020044c4__s0514(unk);
     } else {
       Event_SetFlag(0x8a6);
-      Func_02004a94();
+      Event_Start();
       FieldEvent_ResolvePendingActions(0);
       FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(560), 1);
       Func_020044c4__s0514(unk);
@@ -322,7 +322,7 @@ void Func_02000514(void) {
       Actor_SetAnimation(15, 8);
       FieldEvent_Wait(60);
       FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-      Func_02004a9c();
+      Event_End();
     }
   }
   if (actor16 != NULL && Event_GetFlag(0x8a4) == 0)
@@ -357,7 +357,7 @@ void Func_020006ec(s32 mode) {
 
 void Func_02000730(void) {
   Event_SetFlag(0x8a8);
-  Func_02004a94();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgWhatSYour);
   Actor_ShowEmote(22, 0x101, 40);
@@ -392,7 +392,7 @@ void Func_02000730(void) {
     }
   }
   Actor_FaceDirection(22, FACING_EAST, 0);
-  Func_02004a9c();
+  Event_End();
 }
 
 void Func_02000838(void) {
@@ -402,7 +402,7 @@ void Func_02000838(void) {
       Func_02001cb0();
     }
   } else if (Event_GetFlag(0x8ab)) {
-    if (Event_GetFlag(0x8a0) && Func_02004a84(151) == -1 &&
+    if (Event_GetFlag(0x8a0) && Party_FindOwnerWithAction(151) == -1 &&
         Event_GetFlag(0x8ad) == 0) {
       Event_SetFlag(0x8ad);
       Func_020017ec();
@@ -414,7 +414,7 @@ void Func_02000838(void) {
 }
 
 void Func_020008cc(struct DoorStep *step, s32 countdown, s32 unused) {
-  Func_02004a94();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(158);
   MapGrid_AnimateCells(step->script, step->x, step->z);
@@ -426,7 +426,7 @@ void Func_020008cc(struct DoorStep *step, s32 countdown, s32 unused) {
   FieldEvent_SetExitRequest(countdown);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02004a9c();
+  Event_End();
 }
 
 void Func_02000940(s32 countdown) {
@@ -442,10 +442,10 @@ void Func_02000968(void) {
 
   goto check;
 run:
-  if (Func_02004a84(151) != -1)
+  if (Party_FindOwnerWithAction(151) != -1)
     return;
   Event_SetFlag(0x8bf);
-  Func_02004a94();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkToAndWait(4, 488, 440);
   FieldActor_LaunchFromLeader(5, -16, 0, 0);
@@ -459,7 +459,7 @@ run:
     Actor_SetDestination(5, ((s16 *)leader)[5], ((s16 *)leader)[9]);
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
-  Func_02004a9c();
+  Event_End();
   return;
 check:
   if (Event_GetFlag(0x8ab) && Event_GetFlag(0x8a7) == 0 && Event_GetFlag(0x8be))
@@ -744,7 +744,7 @@ void Func_0200112c(void) {
   struct Actor *object1;
   struct Actor *object2;
 
-  Func_02004a94();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgItSIt);
   FieldCamera_SetSpeed(0x40000, 0x8000);
@@ -874,7 +874,7 @@ L_02009550:
   Actor_SetPosition(26, 0, 0);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02004b94();
-  Func_02004a9c();
+  Event_End();
   return;
 }
 
@@ -898,7 +898,7 @@ L_02009586:
     goto L_02009596;
   goto L_020097dc;
 L_02009596:
-  Func_02004a94();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgYouDoPlan);
   Event_SetFlag(0x8ac);
@@ -977,7 +977,7 @@ L_0200978a:
 L_020097c8:
   FieldActor_WaitForMoveById(26);
   Actor_SetPosition(26, 0, 0);
-  Func_02004a9c();
+  Event_End();
 L_020097dc:
   return;
 }
@@ -992,7 +992,7 @@ void Func_020017ec(void) {
   struct Actor *object6;
   struct Actor *object7;
 
-  Func_02004a94();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgAreYouFinished);
   Actor_WalkToAndWait(4, 232, 392);
@@ -1115,7 +1115,7 @@ L_02009b36:
 L_02009b74:
   FieldActor_WaitForMoveById(26);
   Actor_SetPosition(26, 0, 0);
-  Func_02004a9c();
+  Event_End();
   return;
 }
 
@@ -1130,8 +1130,8 @@ struct SpawnObject {
 
 extern const u8 gData_020056d4[];
 
-void Func_02004a14(struct SpawnObject *object, const void *script);
-void Func_02004a74(struct SpawnObject *object, s32 priority);
+void Actor_StartScript(struct SpawnObject *object, const void *script);
+void Actor_SetSpritePriorityDirect(struct SpawnObject *object, s32 priority);
 
 /// Spawns object type 0x1e8 at x, y, z with its sprite turned to value and
 /// its timer set.
@@ -1143,8 +1143,8 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
   if (object != 0) {
     sprite = object->sprite;
     Func_02004a0c(object, 1);
-    Func_02004a14(object, gData_020056d4);
-    Func_02004a74(object, 1);
+    Actor_StartScript(object, gData_020056d4);
+    Actor_SetSpritePriorityDirect(object, 1);
     object->motionFlags = 0;
     {
       /* FAKEMATCH(signature): the timer copied into an s64 local, so it loads
@@ -1198,10 +1198,10 @@ extern u32 gData_0200d5d0[];
 extern u32 gData_02005620[];
 extern s32 gData_02005670[];
 
-void Func_02004a94();
-void Func_02004a9c();
+void Event_Start();
+void Event_End();
 void Func_02004b94();
-void Func_02004ba4();
+void Event_SetDestination();
 
 static __inline__ void Func_02004b6c_(s32 actor, s32 a, s32 b) {
   Func_080d47b4(actor, a, b);
@@ -1216,7 +1216,7 @@ static __inline__ void FieldMessage_ShowAtActor_(s32 actor, s32 flags) {
 /// The scene that opens with MsgHeyThatBlock: either answer to the prompt
 /// steps the event to its next message.
 void Func_02001cb0(void) {
-  Func_02004a94();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgHeyThatBlock);
   Actor_SetSpeed(28, 0x2cccc, 0x16666);
@@ -1315,7 +1315,7 @@ void Func_02001cb0(void) {
   Actor_SetPosition(23, 0, 0);
   FieldCamera_FollowActor(4, 1);
   Func_02004b94();
-  Func_02004a9c();
+  Event_End();
 }
 
 /// Only once flag 0x8a7 is set: the scene that opens with MsgIStillJust, which
@@ -1324,7 +1324,7 @@ void Func_02002048(void) {
   if (Event_GetFlag(0x8a7) == 0)
     return;
   Event_SetFlag(0x905);
-  Func_02004a94();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgIStillJust);
   FieldCamera_SetSpeed(0x40000, 0x8000);
@@ -1578,8 +1578,8 @@ void Func_02002048(void) {
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Call2((void (*)())Func_02004ba4, (s32)&SceneId_Ov667, 81);
-  Func_02004a9c();
+  Call2((void (*)())Event_SetDestination, (s32)&SceneId_Ov667, 81);
+  Event_End();
 }
 
 /// Only once flag 0x8a7 is set: the scene that opens with MsgBriggs2, which sets
@@ -1594,7 +1594,7 @@ void Func_02002a08(void) {
     return;
   Event_SetFlag(0x90f);
   Event_SetFlag(0x97f);
-  Func_02004a94();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgBriggs2);
   FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
@@ -1831,15 +1831,15 @@ scroll:
     goto scroll;
   Event_PlaySound(0x4e);
   FieldEvent_Wait(30);
-  Func_02004a9c();
+  Event_End();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Func_02004ba4((s32)&SceneId_Ov668Room1, 99);
+  Event_SetDestination((s32)&SceneId_Ov668Room1, 99);
 }
 
 /// The scene that opens with MsgWhatYouLet; either answer to each of its two
 /// prompts steps the event's message number, by 1 and then by 2.
 void Func_02003274(void) {
-  Func_02004a94();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgWhatYouLet);
   FieldCamera_MoveTo(PIXELS(152), -1, PIXELS(272), 0);
@@ -2152,7 +2152,7 @@ void Func_02003274(void) {
   FieldActor_WaitForMoveById(26);
   Actor_SetPosition(26, 0, 0);
   FieldEvent_Wait(10);
-  Func_02004a9c();
+  Event_End();
 }
 
 struct Particle {
@@ -2180,7 +2180,7 @@ struct ParticleWork {
 };
 
 void Func_02004c6c(struct ParticleSprite *sprite, struct Particle *particle);
-void Func_02004c74(struct Particle *particle, s32 unk1, s32 step);
+void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
 void Func_02003ec4(void) {
   struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
@@ -2199,7 +2199,7 @@ next:
 
     sprite->attr = (attr & ~0x3ff) | tile;
     Func_02004c6c(sprite, particle);
-    Func_02004c74(particle, 63, step);
+    BattleEffect_StepVector3(particle, 63, step);
     particle->age++;
   }
   i--;

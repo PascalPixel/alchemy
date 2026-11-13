@@ -80,8 +80,8 @@ struct EventWork1c4 {
   u16 count;
 };
 
-void Func_0200282c();
-void Func_02002834();
+void Event_Start();
+void Event_End();
 void Func_020028f4();
 
 void Func_020013f0(void) {
@@ -91,7 +91,7 @@ void Func_020013f0(void) {
   s32 result;
 
   GameFlag_SetBit(0x969);
-  Func_0200282c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaInteriors26);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
@@ -621,7 +621,7 @@ void Func_020013f0(void) {
                               ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(6);
   Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
-  Func_02002834();
+  Event_End();
 }
 
 void Func_02000058(s32 arg0);

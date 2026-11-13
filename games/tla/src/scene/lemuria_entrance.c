@@ -45,8 +45,8 @@ s32 Message_AllTyped(void);
 void Window_Close(s32 work, s32 mode);
 void Message_CloseFinishedWindows(void);
 s32 Func_0200053c(s32 a, s32 b, s32 c, s32 d);
-void Func_0200055c(void);
-void Func_02000564(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02000310(s32 kind, s32 frames);
 
 s32 Func_02000038(struct Actor *object) {
@@ -99,7 +99,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 void Func_02000120(void) {
   if (Event_GetFlag(0x800) != 0) {
-    Func_0200055c();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -110,7 +110,7 @@ void Func_02000120(void) {
       state->ownerOverride = 1;
     }
     Actor_SetAnimation(8, 7);
-    Func_02000564();
+    Event_End();
   } else {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -124,7 +124,7 @@ void Func_02000120(void) {
 // reached by calls for.
 extern char SceneId_Ov688;
 
-void Func_020005a4(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 void Func_020003cc(void);
 
 /// The scene's setup: places its actors, then plays what the entrance it was
@@ -152,7 +152,7 @@ s32 Scene_Initialize(void) {
   Actor_SetSingleChildFlags(Actor_Get(18), 0);
   if (gMainRoutineWork.entrance == 90) {
     gMainRoutineWork.ownerOverride = 1;
-    Func_020005a4((s32)&SceneId_Ov688, 1);
+    Event_SetDestination((s32)&SceneId_Ov688, 1);
   }
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5) {
     gMainRoutineWork.currentOwner = 8;
@@ -232,7 +232,7 @@ void Func_020003cc(void) {
 
   saved = gMainRoutineWork.eventMode;
   gMainRoutineWork.eventMode = 2;
-  Func_0200055c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeedParameters_(8, 0x451e, 0x228f);
   Actor_SetScript(8, gData_020005e4);
@@ -268,7 +268,7 @@ void Func_020003cc(void) {
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(1);
   gMainRoutineWork.eventMode = saved;
-  Func_02000564();
+  Event_End();
 }
 
 #include "objcmd.h"

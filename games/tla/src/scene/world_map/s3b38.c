@@ -54,7 +54,7 @@ void Func_02003bb8(struct Actor *object, s32 mode) {
 }
 
 s32 Func_02004b90(s32 *position);
-s32 Func_02004e20(s32 a, s32 b);
+s32 SceneEvent_FindActiveRecord(s32 a, s32 b);
 
 void Func_02003bf0(void) {
   struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
@@ -65,15 +65,15 @@ void Func_02003bf0(void) {
   for (i = 0; i < 20; i++) {
     s32 hit = Func_02004b90(&object->x);
 
-    if (hit != 0 && Func_02004e20(2, hit) != 0)
+    if (hit != 0 && SceneEvent_FindActiveRecord(2, hit) != 0)
       break;
     System_Wait(1);
   }
   Func_02003bb8(object, 2);
 }
 
-void Func_02004c20(void);
-void Func_02004c28(void);
+void Event_Start(void);
+void Event_End(void);
 s32 Func_02004c38(s32 a, s32 b, s32 c);
 void Func_02003654(s32 a, s32 b, s32 c);
 void Event_StartScreenTransition(void);
@@ -162,8 +162,8 @@ extern u8 gWorldMapPackedPictures[];
 extern u8 gWorldMapPalettes[];
 
 void Func_02004da8(void);
-s32 Func_02004aa8(const void *source, void *destination);
-void Func_02004ac8(void);
+s32 Resource_DecodeType01(const void *source, void *destination);
+void DebugText_Clear(void);
 
 #define PUSH_PICTURE(offset)                                                   \
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)
@@ -185,13 +185,13 @@ void Func_02003d44(s32 mode) {
   }
   Func_02004da8();
   buffer = Heap_AllocEwram(0x4000);
-  Func_02004aa8(gWorldMapPackedTiles, buffer);
-  Func_02004aa8(gWorldMapPackedPictures, buffer + 0x1000);
+  Resource_DecodeType01(gWorldMapPackedTiles, buffer);
+  Resource_DecodeType01(gWorldMapPackedPictures, buffer + 0x1000);
   IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(gWorldMapPalettes + mode * 32),
                       0x80000010);
   IO_WRITE_QUEUE_PUSH(0x06001000, (u32)buffer, 0x84000400);
   Task_AddFrame(Func_02003c50, 0x480);
-  Func_02004c20();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(246);
   gData_02006e08 = 0xe00;
@@ -247,7 +247,7 @@ void Func_02003d44(s32 mode) {
     gData_02006e08 = 0x1000;
     FieldEvent_Wait(45);
     FieldTask_Remove(Func_02003c50);
-    Func_02004ac8();
+    DebugText_Clear();
     /* FAKEMATCH(temporary): the blend read into blend before each of the two
      * QueueIoWriteDelay2 calls; as QueueIoWriteDelay2((u32)&REG_BLDALPHA,
      * gData_02006e08) at both, 2 of 593 instructions differ in tla-en. */
@@ -264,7 +264,7 @@ void Func_02003d44(s32 mode) {
     gData_02006e08 = 0x1000;
     FieldEvent_Wait(45);
     FieldTask_Remove(Func_02003c50);
-    Func_02004ac8();
+    DebugText_Clear();
     blend = gData_02006e08;
     QueueIoWriteDelay2((u32)&REG_BLDALPHA, blend);
     QueueIoWriteDelay2((u32)&REG_BLDCNT, 0);
@@ -277,7 +277,7 @@ extern u8 gWorldMapPackedTilesB[];
 extern u8 gWorldMapPackedPicturesB[];
 extern u8 gWorldMapPalettesB[];
 
-void Func_02004ad8(void);
+void Window_LoadGraphics(void);
 
 void Func_020042e0(void) {
   u8 *buffer = Heap_AllocEwram(0x4000);
@@ -286,9 +286,9 @@ void Func_020042e0(void) {
   u16 scrollY;
   s32 mode;
 
-  Func_02004aa8(gWorldMapPackedTilesB, buffer);
+  Resource_DecodeType01(gWorldMapPackedTilesB, buffer);
   frames = buffer + 0x2000;
-  Func_02004aa8(gWorldMapPackedPicturesB, frames);
+  Resource_DecodeType01(gWorldMapPackedPicturesB, frames);
   IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)gWorldMapPalettesB, 0x80000010);
   IO_WRITE_QUEUE_PUSH(0x06000000, (u32)buffer, 0x84000400);
   IO_WRITE_QUEUE_PUSH(0x06001000, (u32)frames, 0x84000800);
@@ -329,8 +329,8 @@ void Func_020042e0(void) {
   System_Wait(120);
   Ram_HeapSlots->objectSystem->suspended = 1;
   System_Wait(1);
-  Func_02004ad8();
-  Func_02004ac8();
+  Window_LoadGraphics();
+  DebugText_Clear();
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   gBgScroll[0].x = 0;
@@ -629,7 +629,7 @@ void Func_020048f4(void) {
 extern const u8 gWorldMapPackedTilesC[];
 
 void Func_020049bc(void) {
-  Func_02004aa8(gWorldMapPackedTilesC, gData_02006f20);
+  Resource_DecodeType01(gWorldMapPackedTilesC, gData_02006f20);
   gData_02006e0e = Resource_FindFreeEntry();
   Vram_Load(gData_02006e0e, 0x100, 0);
   gData_02006e0c = -1;
@@ -638,7 +638,7 @@ void Func_020049bc(void) {
 }
 
 void Func_02004a1c(void) {
-  Func_02004aa8(gWorldMapPackedTilesC, gData_02006f20);
+  Resource_DecodeType01(gWorldMapPackedTilesC, gData_02006f20);
   Resource_ResetEntry(gData_02006e0e);
   gData_02006e0c = -1;
   FieldTask_Remove(Func_020048f4);

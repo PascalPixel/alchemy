@@ -20,7 +20,7 @@ s32 ArcTan2(s32 y, s32 x);
 void Func_02001fe0(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Func_02002048(struct Actor *object);
-s32 Func_02002050(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 void Func_02001a1c(void) {
   struct Actor *object;
@@ -115,7 +115,7 @@ overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
     /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
      * call, 2 of 347 instructions differ in tla-en. */
-    if (Value4((s32 (*)())Func_02002050, (s32)&entry->x, radius, (s32)position,
+    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius, (s32)position,
                entry->radius - 2) >= 0)
       goto blocked;
   }
@@ -189,7 +189,7 @@ s32 ArcTan2(s32 y, s32 x);
 void Func_02001fe0(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Func_02002048(struct Actor *object);
-s32 Func_02002050(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 void Func_02001a1c(void) {
   struct Actor *object;
@@ -278,7 +278,7 @@ overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
     /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
      * call, 2 of 332 instructions differ in tla-ja. */
-    if (Value4((s32 (*)())Func_02002050, (s32)&entry->x, radius, (s32)position,
+    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius, (s32)position,
                entry->radius - 2) >= 0)
       goto blocked;
   }

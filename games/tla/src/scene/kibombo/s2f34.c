@@ -6,7 +6,7 @@
 #include "kibombo.h"
 
 s32 Math_Cosine(s32 angle);
-void Func_02005a2c(struct KibomboObject *object, const void *script);
+void Actor_StartScript(struct KibomboObject *object, const void *script);
 void Effect_AdvanceMotion(struct KibomboObject *object);
 extern u32 gData_02005ca4[];
 
@@ -27,7 +27,7 @@ void Func_02002f34(void) {
       object->motionFlags = 0;
       Actor_SetSingleChildFlags(object, 0);
       Func_02005a24(object, 2);
-      Func_02005a2c(object, gData_02005ca4);
+      Actor_StartScript(object, gData_02005ca4);
       object->sprite->priority = 1;
       object->field64 = 0;
       *(s32 *)&object->unk2c[4] = 0;
@@ -200,12 +200,12 @@ void Func_020032c8(void) {
 }
 
 void Func_020032e0(void) {
-  Func_02005c14(143, 1);
+  BattleEffect_LoadActionEffectResources(143, 1);
   Func_02005c1c(17, 27);
-  Func_02005c34();
+  EventObject_Initialize();
   Field_DispatchTypeHandler(1);
-  Func_02005c24();
-  Func_02005c2c();
+  BattleEffect_StopMainActor();
+  BattleEffect_CleanupSceneObjects();
 }
 
 // ---- games/tla/src/scene/kibombo/s3308.c ----
@@ -515,14 +515,14 @@ void Func_020037e4(void) {
 }
 
 void Func_0200384c(void) {
-  Func_02005c14(136, 1);
+  BattleEffect_LoadActionEffectResources(136, 1);
   Task_Add(Func_020037e4, 0x480);
   Func_02005c1c(gMainRoutineWork.currentOwner, -1);
-  Func_02005c34();
+  EventObject_Initialize();
   Field_DispatchTypeHandler(1);
-  Func_02005c24();
+  BattleEffect_StopMainActor();
   Task_RemoveFar(Func_020037e4);
-  Func_02005c2c();
+  BattleEffect_CleanupSceneObjects();
 }
 
 void Func_02003898(void) {
@@ -539,7 +539,7 @@ void Func_02003898(void) {
 void Func_020038ec(void) {
   struct KibomboEventWork *work = Ram_HeapSlots->eventWork;
 
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x202))
     Func_02003898();
@@ -563,7 +563,7 @@ void Func_02003948(void) {
   s32 px;
 
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Kibombo_CamMove(-1, -1, -1, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
@@ -589,7 +589,7 @@ void Func_02003a08(s32 x, s32 z) {
   struct KibomboEventWork *work = Ram_HeapSlots->eventWork;
   struct KibomboObject *leader = Actor_GetById(party->currentOwner);
 
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   leader->motionFlags = 0;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
@@ -663,7 +663,7 @@ void Func_02003bf0(void) {
 void Func_02003c14(void) {
   u32 i;
 
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -689,7 +689,7 @@ done:
   Import_EventSetExitRequest(11);
 }
 
-void Func_02005a4c(void);
+void Map_CenterOnFollowedPoint(void);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 
 void Func_02003c84(void) {
@@ -711,7 +711,7 @@ void Func_02003c84(void) {
   BattleEffect_StartBufferInterpolation(1);
   wait(1);
   Kibombo_CamMove(146 << 18, -1, PIXELS(248), 0);
-  Func_02005a4c();
+  Map_CenterOnFollowedPoint();
   wait(1);
   Kibombo_FadeTo(0x10000, 0);
   BattleEffect_StartBufferInterpolation(1);
@@ -726,7 +726,7 @@ void Func_02003c84(void) {
   BattleEffect_StartBufferInterpolation(1);
   wait(1);
   Camera_MoveWithinMapBounds(PIXELS(248), -1, 134 << 18, 0);
-  Func_02005a4c();
+  Map_CenterOnFollowedPoint();
   wait(1);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(1);
@@ -952,7 +952,7 @@ void Func_02004424(void) {
   struct KibomboEventWork *work;
   s32 effect;
 
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
@@ -984,7 +984,7 @@ void Func_02004424(void) {
 void Func_02004524(void) {
   struct KibomboEventWork *work;
 
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Kibombo_CamMove(-1, -1, -1, 0);
   Func_080d4568()->motionFlags = 0;
@@ -1254,14 +1254,14 @@ void Func_02004cf4(void) {
   struct KibomboEventWork *work;
   struct KibomboObject *leader;
 
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Kibombo_CamMove(-1, -1, -1, 0);
   Camera_MoveWithinMapBounds(PIXELS(384), -1, PIXELS(601), 0);
   wait(1);
   Actor_SetHorizontalPositionAndAngleWithTerrain(
       gMainRoutineWork.currentOwner, PIXELS(370), PIXELS(636), FACING_NORTH);
-  Func_02005a4c();
+  Map_CenterOnFollowedPoint();
   wait(1);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   BattleEffect_ApplyColorToSourceBuffer(0, 0);
@@ -1340,7 +1340,7 @@ void Func_02004cf4(void) {
   work->field1b4 = 16;
   work->screenEffect = 0x209;
   GameFlag_SetBit(0x8ef);
-  Func_02005aa4();
+  Event_End();
 }
 
 s32 Scene_Initialize(void) {
@@ -1408,8 +1408,8 @@ extern void Actor_SetPartAttribute__s516c(struct Actor *object, s32 attribute) _
 #undef Animation_SetStateFlags
 #undef Actor_SetSingleChildFlags
 
-void Func_02005a9c(void);
-void Func_02005aa4(void);
+void Event_Start(void);
+void Event_End(void);
 void *Unit_Get(s32 owner);
 void Party_RemoveOwnerRestored(s32 unit);
 void Func_020050ac(void);
@@ -1445,7 +1445,7 @@ void Func_0200516c(void) {
   u8 *unit;
   s32 done;
 
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   done = GameFlag_Test(265);
   if (!done) {
@@ -1522,7 +1522,7 @@ void Func_0200516c(void) {
 
     Task_Add(Func_02002c34, priority);
   }
-  Func_02005aa4();
+  Event_End();
 }
 
 // ---- games/tla/src/scene/kibombo/s538c.c ----
@@ -1611,7 +1611,7 @@ void Func_02003dec(void);
 void Func_02005594(void) {
   u32 i;
 
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_SetBit(0x869);
   GameFlag_SetBit(0x202);
@@ -1681,7 +1681,7 @@ void Func_02005594(void) {
   } else if (gMainRoutineWork.entrance == 5) {
     Func_02003dec();
   }
-  Func_02005aa4();
+  Event_End();
   if (gMainRoutineWork.entrance == 99) {
     Func_02003640(0, 0);
     Func_020036e0(0, 0);
@@ -1708,7 +1708,7 @@ void Func_02003c84(void);
 #define PALETTE_WORD(index) (*(u16 *)(0x05000000 + (index) * 2))
 
 void Func_020057e0(void) {
-  Func_02005a9c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_SetBit(514);
   gData_02007948[0] = PALETTE_WORD(169);
@@ -1728,7 +1728,7 @@ void Func_020057e0(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     KIBOMBO_TASK_ADD(Func_02002d64, 1152);
-    Func_02005aa4();
+    Event_End();
   }
 }
 

@@ -38,9 +38,9 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_020009f0
+	.global Resource_DecodeType01
 	.thumb_func
-Func_020009f0:
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
@@ -98,13 +98,13 @@ Animation_ApplyChildValues:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02000a68
+	.global Event_Start
 	.thumb_func
-Func_02000a68:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02000a70
+	.global Event_End
 	.thumb_func
-Func_02000a70:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -170,9 +170,9 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_02000af0:
 	overlay_veneer Func_080c8240
-	.global Func_02000af8
+	.global Event_SetDestination
 	.thumb_func
-Func_02000af8:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Import_EventSetExitRequest
 	.thumb_func
@@ -214,9 +214,9 @@ Func_02000b40:
 	.thumb_func
 Func_02000b48:
 	overlay_veneer Func_080c87d0
-	.global Func_02000b50
+	.global BattleEffect_StepVector3
 	.thumb_func
-Func_02000b50:
+BattleEffect_StepVector3:
 	overlay_veneer BattleEffect_StepVector3Far
 	.global Sound_Play
 	.thumb_func

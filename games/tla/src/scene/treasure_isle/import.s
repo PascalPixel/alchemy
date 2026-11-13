@@ -26,9 +26,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Func_02000f7c:
 	overlay_veneer Actor_SetMode
-	.global Func_02000f84
+	.global Actor_StartScript
 	.thumb_func
-Func_02000f84:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -102,9 +102,9 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_02001014:
 	overlay_veneer Func_080c8240
-	.global Func_0200101c
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_0200101c:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_080d2b4c
 	.thumb_func

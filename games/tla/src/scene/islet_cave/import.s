@@ -62,13 +62,13 @@ Func_0803ce64:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02001254
+	.global Event_Start
 	.thumb_func
-Func_02001254:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_0200125c
+	.global Event_End
 	.thumb_func
-Func_0200125c:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -126,9 +126,9 @@ Actor_SetSpritePriority:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_020012d4
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_020012d4:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_080d2b4c
 	.thumb_func

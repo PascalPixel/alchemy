@@ -71,9 +71,9 @@ extern char ResourceId_LightningMap;
 extern s16 gBgScroll[];
 
 void *Resource_GetTableEntry(s32 id);
-void Func_0200468c(void *resource, void *destination);
-void Func_020046b4(void);
-void Func_020046a4(void);
+void Resource_DecodeType01(void *resource, void *destination);
+void Window_LoadGraphics(void);
+void DebugText_Clear(void);
 void Func_0200354c(void);
 
 static __inline__ void Func_0200474c_(s32 a, s32 b, s32 c, s32 d, s32 e,
@@ -115,13 +115,13 @@ void Func_020000c4(void) {
   REG_DISPCNT &= ~0x100;
   Io_Write16(0x400, &REG_BG0CNT);
   buffer = Heap_Alloc(0x800);
-  Func_0200468c(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                 buffer);
   Dma_Set(buffer, (void *)(0x06000000), 0x84000200, REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)0x06002000, 0x800);
   buffer = Heap_Alloc(128);
-  Func_0200468c(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
   p = buffer;
   for (i = 0; i != 64; i++)
     *p++ &= 0xfcff;
@@ -162,8 +162,8 @@ void Func_020000c4(void) {
   Func_02004924_(0x10003, 0);
   Func_0200491c_(0x10000, 0);
   PaletteFade_Interpolate(60);
-  Func_020046b4();
-  Func_020046a4();
+  Window_LoadGraphics();
+  DebugText_Clear();
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   REG_BLDALPHA = 0x1008;
@@ -184,8 +184,8 @@ void Func_0200039c(s32 unused, s32 id) {
   Call4(Func_02004774, object->x, object->z, 0, -8);
 }
 
-void Func_020047d4(void);
-void Func_020047dc(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_020048f4(void);
 void Func_02002efc(s32 value);
 
@@ -224,7 +224,7 @@ void Func_020003b8(s32 unused, s32 id) {
     }
     object->motionFlags = 0;
     Event_PlaySound(134);
-    Func_020047d4();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Camera_MoveWithinMapBounds_(254 << 18, -1, 232 << 16, 1);
     Func_020048f4();
@@ -277,7 +277,7 @@ void Func_020003b8(s32 unused, s32 id) {
     Func_020048f4();
     FieldEvent_Wait(10);
     Func_02002efc(1);
-    Func_020047dc();
+    Event_End();
   }
   Func_02004774_(object->x, object->z, 0, -6);
 }
@@ -323,7 +323,7 @@ void Func_0200060c(void) {
   if (GameFlag_Test_(2591))
     return;
   GameFlag_SetBit(514);
-  Func_020047d4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(124);
   /* FAKEMATCH(wrapper): forwarded through Camera_MoveWithinMapBounds_ above;
@@ -413,14 +413,14 @@ void Func_0200060c(void) {
   Event_Wait(20);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_020048f4();
-  Func_020047dc();
+  Event_End();
 }
 
 void Func_020008c8(void) {
   if (Event_GetFlag(0xa1f) != 0)
     return;
   Event_ClearFlag(0x202);
-  Func_020047d4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(125);
   FieldCamera_MoveTo(PIXELS(776), -1, PIXELS(208), 1);
@@ -436,7 +436,7 @@ void Func_020008c8(void) {
   FieldEvent_Wait(20);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_020048f4();
-  Func_020047dc();
+  Event_End();
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
@@ -449,7 +449,7 @@ extern const u8 MsgYouVeBeen[];
 
 /// Talking to one of the party: each answers with its own message.
 void Func_02000970(s32 actor) {
-  Func_020047d4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   switch (actor) {
   case 0:
@@ -477,7 +477,7 @@ void Func_02000970(s32 actor) {
     Event_ShowMessage(6, 0);
     break;
   }
-  Func_020047dc();
+  Event_End();
 }
 
 static __inline__ void I_Func_020048d4(s32 actor, s32 a) {
@@ -708,7 +708,7 @@ void Func_02000cac(s32 arg) {
   struct Actor *object;
   s32 angle;
 
-  Func_020047d4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1204,7 +1204,7 @@ void Func_02000cac(s32 arg) {
   FieldActor_RefreshSelectorById(6);
   FieldActor_RefreshSelectorById(5);
   FieldActor_RefreshSelectorById(28);
-  Func_020047dc();
+  Event_End();
 }
 
 #include "scene_ids.h"
@@ -1219,7 +1219,7 @@ void Party_RemoveActiveOwner(s32 owner);
 s32 Party_AddActiveOwner(s32 owner);
 void Unit_Calculate(s32 owner);
 s32 Unit_AddPp(s32 owner, s32 delta);
-void Func_02004904(s32 a, s32 b);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
 static __inline__ void JupiterLighthouseRoomM_AddHp(s32 owner, s32 delta) {
   /* FAKEMATCH(wrapper): forwarding through the inline reloads -10000 from
@@ -1256,7 +1256,7 @@ static __inline__ void JupiterLighthouseRoomM_Func_020048b4(s32 actor, s32 a) {
 /// Places actors 0, 2, 27 and 26 and shows an apology; then the party is left
 /// with owners 2 and 0, whose first values and PP drop by 10000. "I'm sorry"
 void Func_02001c7c(void) {
-  Func_020047d4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   PLACE(0, 776, 202, FACING_WEST);
   PLACE(2, 731, 232, FACING_NORTHWEST);
@@ -1310,7 +1310,7 @@ void Func_02001c7c(void) {
   JupiterLighthouseRoomM_AddPp(2, -10000);
   Unit_AddPp(0, -10000);
   gMainRoutineWork.currentOwner = 0;
-  Func_02004904(102, 4);
+  Field_RequestBattleFromEncounterTable(102, 4);
 }
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -1353,7 +1353,7 @@ extern u32 gData_02005a00[];
 void PartyInventory_Remove(s32 a);
 s32 PartyInventory_Add(s32 item);
 void *Unit_Get(s32 owner);
-s32 Func_020047a4();
+s32 Inventory_Equip();
 s32 Event_ClearInvalidPackedValues();
 
 #define ACTOR_SET_MODE_AND_WAIT(id, mode, frames)                              \
@@ -1375,7 +1375,7 @@ void Func_02001ed0(void) {
   s32 offset;
   s32 answer;
 
-  Func_020047d4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(0x2e10000, 0, 0xd10000, 0);
   gMainRoutineWork.currentOwner = 4;
@@ -1682,7 +1682,7 @@ void Func_02001ed0(void) {
   offset = 0xd8;
   for (index = 0; index <= 14; offset += 2, index++) {
     if ((*(u16 *)((u8 *)Unit_Get(4) + offset) & 0x1ff) == 245) {
-      Func_020047a4(4, index);
+      Inventory_Equip(4, index);
       break;
     }
   }
@@ -1747,7 +1747,7 @@ void Func_02001ed0(void) {
   Event_ClearInvalidPackedValues();
 #endif
   Actor_WalkToAndWait(4, 0x298, 0x46);
-  Func_020047dc();
+  Event_End();
 }
 
 void Func_02004994(s32 id, s32 mode);
@@ -1964,7 +1964,7 @@ void Func_0200309c(void) {
   s32 angle;
   s32 i;
 
-  Func_020047d4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkd46 = i;
@@ -2023,7 +2023,7 @@ void Func_0200309c(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_020047dc();
+  Event_End();
 }
 
 s32 Func_02003288(s32 *a, s32 *b) {
@@ -2037,9 +2037,9 @@ extern const s32 gData_02005a1c[];
 
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_020049a4(s32 x, s32 z, s32 layer);
-void Func_02004954(s32 *position);
+void Camera_WorldToScreen(s32 *position);
 s32 Math_Cosine(s32 angle);
-void Func_02004704(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_020032b4(struct Actor *self) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -2066,7 +2066,7 @@ void Func_020032b4(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Func_02004954(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -2114,7 +2114,7 @@ stop:
     s32 zero = 0;
     *((u8 *)self + 0x63) = zero;
     self->update = zero;
-    Func_02004704(self, gData_02005a1c);
+    Actor_StartScript(self, gData_02005a1c);
     Event_PlaySound(228);
     gData_02005a3c = zero;
   }

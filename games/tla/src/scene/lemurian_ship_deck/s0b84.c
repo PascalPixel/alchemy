@@ -31,8 +31,8 @@ void Func_02000258(void);
 void Func_02000288(void);
 void Func_020002cc(void);
 void Func_020006e4(void);
-void Func_02001f1c(void);
-void Func_02001f5c(void);
+void Map_CenterOnFollowedPoint(void);
+void Event_Start(void);
 void Func_0200206c(void);
 
 static __inline__ void AddTask(void (*func)(void), s32 priority) {
@@ -49,7 +49,7 @@ void Func_020002cc(void) {
   s32 angle;
   s32 turn;
 
-  Func_02001f5c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   FieldCamera_GetActor()->motionFlags = 0;
@@ -68,7 +68,7 @@ void Func_020002cc(void) {
   Actor_SetPositionAndFacing(6, PIXELS(568), PIXELS(408), turn);
   angle = 0x4000;
   Actor_SetPositionAndFacing(5, PIXELS(546), PIXELS(440), angle);
-  Func_02001f1c();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   Actor_SetScript(5, gData_0200218c);
   Actor_SetScript(6, gData_020021e8);
@@ -175,7 +175,7 @@ static inline void RunToActor4(s32 id) {
 /// spot, two callbacks start the bobbing, and after the exchange of looks and
 /// emotes the four actors run to actor 4.
 void Func_020006e4(void) {
-  Func_02001f5c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   FieldCamera_GetActor()->motionFlags = 0;
@@ -199,7 +199,7 @@ void Func_020006e4(void) {
   FieldActor_LaunchFromLeader(9, -24, 8, FACING_NORTHEAST + FACING_STEP);
   FieldActor_LaunchFromLeader(7, -4, 24, FACING_NORTHEAST);
   MapGrid_CopyCellsTo(60, 53, 67, 16, 7, 3);
-  Func_02001f1c();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -354,7 +354,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-void Func_02001f64(void);
+void Event_End(void);
 
 static __inline__ void Func_02001f2c_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
@@ -384,7 +384,7 @@ void Func_02000ce0(void) {
     Event_SetFlag(0x980);
     return;
   }
-  Func_02001f5c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeed(4, 0xcccc, 0x6666);
   Actor_WalkToAndWait(4, 264, 136);
@@ -477,7 +477,7 @@ void Func_02000ce0(void) {
   Actor_SetPosition(6, 0, 0);
   Actor_SetPosition(5, 0, 0);
   Actor_SetPosition(9, 0, 0);
-  Func_02001f64();
+  Event_End();
   Event_SetFlag(0x980);
 }
 
@@ -485,7 +485,7 @@ void Func_020020cc(const void *data);
 
 void Func_02001064(void) { Func_020020cc(gData_020020dc); }
 
-void Func_02001fd4(s32 id, s32 target);
+void Actor_MoveToObject(s32 id, s32 target);
 
 static __inline__ void SetSpeed(s32 id, s32 speed, s32 acceleration) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
@@ -512,9 +512,9 @@ void Func_02001074(void) {
     return;
   Event_SetFlag(0x212);
   if (Event_GetFlag(0x211)) {
-    Func_02001f5c();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Func_02001fd4(9, gMainRoutineWork.currentOwner);
+    Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
     System_Wait(1);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     SetSpeed(9, 0xcccc, 0x6666);
@@ -530,7 +530,7 @@ void Func_02001074(void) {
     FieldActor_WaitForMoveById(9);
     Actor_SetPosition(9, 0, 0);
     Event_SetFlag(0x988);
-    Func_02001f64();
+    Event_End();
   } else if (Event_GetFlag(0x210)) {
     Event_SetFlag(0x211);
   } else {
@@ -543,7 +543,7 @@ void Func_02001178(void) { GameFlag_ClearBit(0x212); }
 extern u32 gData_0200247c[];
 
 void Func_02001efc(struct Actor *object, s32 value);
-void Func_02001f04(struct Actor *object, const void *data);
+void Actor_StartScript(struct Actor *object, const void *data);
 
 void Func_02001188(void) {
   s32 position[3];
@@ -559,7 +559,7 @@ void Func_02001188(void) {
     Actor_SetSingleChildFlags(object, 0);
     Func_02001efc(object, 0);
     FieldActor_SetMoveTarget(object, PIXELS(360), PIXELS(64), PIXELS(424));
-    Func_02001f04(object, gData_0200247c);
+    Actor_StartScript(object, gData_0200247c);
   }
 }
 
@@ -602,9 +602,9 @@ void Func_0200128c(void) {
     return;
   if (Event_GetFlag(7) == 0)
     return;
-  Func_02001f5c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Call2((void (*)())Func_02001fd4, 7, gMainRoutineWork.currentOwner);
+  Call2((void (*)())Actor_MoveToObject, 7, gMainRoutineWork.currentOwner);
   System_Wait(1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_SetSpeed(7, 0x19999, 0xcccc);
@@ -659,7 +659,7 @@ void Func_0200128c(void) {
   FieldActor_WaitForMoveById(7);
   Actor_SetPosition(7, 0, 0);
   Event_SetFlag(0x985);
-  Func_02001f64();
+  Event_End();
 }
 
 extern u32 gData_020020e4[];
@@ -672,7 +672,7 @@ void Func_020014c0(void) {
     return;
   if (Event_GetFlag(0x989) != 0)
     return;
-  Func_02001f5c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgMyShipAt);
   Actor_WalkTo(4, 264, 176);
@@ -883,7 +883,7 @@ void Func_020014c0(void) {
   Actor_RunScriptAndWait(7, gData_020020e4);
   FieldEvent_Wait(20);
   Event_SetFlag(0x981);
-  Func_02001f64();
+  Event_End();
 }
 
 extern u32 gData_02002498[];
@@ -896,7 +896,7 @@ void Func_02001d60(struct Actor *object) {
     if (spawned != 0) {
       Actor_SetSingleChildFlags(spawned, 0);
       Func_02001efc(spawned, 1);
-      Func_02001f04(spawned, gData_02002498);
+      Actor_StartScript(spawned, gData_02002498);
     }
   }
 }
@@ -913,7 +913,7 @@ void Func_02001da0(void) {
   if (Event_GetFlag(7)) {
     struct Actor *object;
 
-    Func_02001f5c();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_SetSpeed(4, 0xcccc, 0x6666);
     Actor_Get(7)->update = (void (*)(void))Func_02001d60;
@@ -939,7 +939,7 @@ void Func_02001da0(void) {
     Actor_SetPosition(7, 0, 0);
     Actor_Get(7)->update = 0;
     Actor_SetSingleChildFlags(Actor_Get(7), 1);
-    Func_02001f64();
+    Event_End();
   }
 }
 

@@ -421,7 +421,7 @@ s32 Func_02000c38(struct Actor *object, s16 *position) {
   s32 blocked = Func_020010b4(object, position);
 
   if (blocked == 0) {
-    Func_020010dc();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Func_02001074(object, 6);
     wait(6);
@@ -443,7 +443,7 @@ s32 Func_02000c38(struct Actor *object, s16 *position) {
     Func_02001074(object, 6);
     Actor_SetSingleChildFlags(object, 1);
     *flags = saved;
-    Func_020010e4();
+    Event_End();
     return 1;
   }
   return 0;
@@ -548,13 +548,13 @@ L_02008eee:
 }
 
 void Func_02000ef4(void) {
-  Func_020010dc();
+  Event_Start();
   Event_ResolvePendingActions(0);
   MapGrid_CopyCellAttributes(31, 43, 9, 11, 48, 47);
   MapGrid_CopyCellsTo(30, 110, 48, 110, 9, 13);
   MapGrid_CopyCellAttributes(52, 110, 1, 1, 52, 111);
   GameFlag_SetBit(0x917);
-  Func_020010e4();
+  Event_End();
   return;
 }
 
@@ -574,7 +574,7 @@ void Func_02000f98(void) {
 }
 
 void Func_02000fe4(void) {
-  Func_020010dc();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(158);
   Event_Wait(10);
@@ -582,7 +582,7 @@ void Func_02000fe4(void) {
   Event_Wait(16);
   Sound_Play(123);
   Import_EventSetExitRequest(8);
-  Func_020010e4();
+  Event_End();
 }
 
 extern u32 gData_0200116c[];

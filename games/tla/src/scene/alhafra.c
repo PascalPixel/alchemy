@@ -32,8 +32,8 @@ struct DoorStep {
 
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_02001be4(void);
-void Func_02001bec(void);
+void Event_Start(void);
+void Event_End(void);
 
 extern const u8 gData_02001e48[];
 extern const u8 gData_02002100[];
@@ -53,7 +53,7 @@ const u8 *Scene_GetPlacements(void) {
 }
 
 void Func_02000098(struct DoorStep *step, s32 countdown, s32 unused) {
-  Func_02001be4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(158);
   Map_PlayMapEdit(step->script, step->x, step->z);
@@ -65,7 +65,7 @@ void Func_02000098(struct DoorStep *step, s32 countdown, s32 unused) {
   Import_EventSetExitRequest(countdown);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02001bec();
+  Event_End();
 }
 
 void Func_0200010c(s32 index) {
@@ -250,7 +250,7 @@ extern u8 MsgAlhafra69[];
 void Func_020002f8(void) {
   GameFlag_SetBit(0x8b5);
   PartyInventory_Remove(0x1c9);
-  Func_02001be4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra69);
   Event_Wait(10);
@@ -264,7 +264,7 @@ void Func_020002f8(void) {
   Event_ShowMessageThenWait(0x1b, 0, 0);
   Func_02000398(0x1b);
   Actor_FaceDirection(27, 0x4000, 0);
-  Func_02001bec();
+  Event_End();
 }
 #undef FIELD_AT
 
@@ -323,7 +323,7 @@ extern u8 MsgAlhafra74[];
 
 void Func_0200047c(void) {
   GameFlag_SetBit(0x8b7);
-  Func_02001be4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra74);
   Camera_MoveWithinMapBounds(0x2300000, -1, 0x1f00000, 1);
@@ -377,7 +377,7 @@ void Func_0200047c(void) {
   Actor_FaceDirection(28, 0xc000, 0);
   FieldCamera_FollowActor(FIELD_AT(&gMainRoutineWork, s32, 532), 1);
   Func_02001ccc();
-  Func_02001bec();
+  Event_End();
 }
 #undef FIELD_AT
 
@@ -644,7 +644,7 @@ extern u8 gData_02003a98[];
 
 void Func_02000aa0(s32 a0) {
   GameFlag_SetBit(0x8b3);
-  Func_02001be4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra10);
   Actor_SetSpeed(29, 0x10000, 0x8000);
@@ -1045,7 +1045,7 @@ void Func_02000aa0(s32 a0) {
   Event_Wait(15);
   Camera_FollowActor(FIELD_AT(&gMainRoutineWork, s32, 532), 1);
   Func_02001ccc();
-  Func_02001bec();
+  Event_End();
 }
 #undef FIELD_AT
 
@@ -1065,7 +1065,7 @@ void Func_02001958(s32 a0) {
   s32 t40;
 
   Event_SetFlag(0x8b4);
-  Func_02001be4();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgAlhafra28);
   if (a0 == 1) {
@@ -1143,5 +1143,5 @@ void Func_02001958(s32 a0) {
     Actor_CommitPositionAndActivate(25, 150, 0);
   }
   Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
-  Func_02001bec();
+  Event_End();
 }

@@ -66,9 +66,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_0200556c
+	.global Actor_StartScript
 	.thumb_func
-Func_0200556c:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -82,9 +82,9 @@ Func_0200557c:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Func_0200558c
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_0200558c:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -146,13 +146,13 @@ Func_020055fc:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_0200560c
+	.global Event_Start
 	.thumb_func
-Func_0200560c:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02005614
+	.global Event_End
 	.thumb_func
-Func_02005614:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_PrepareObjectAndApplyValue
 	.thumb_func
@@ -170,9 +170,9 @@ Event_AskYesNoWithActorAnimation:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Func_0200563c
+	.global ObjectTable_DestroyById
 	.thumb_func
-Func_0200563c:
+ObjectTable_DestroyById:
 	overlay_veneer ObjectTable_DestroyByIdFar
 	.global Actor_SetSpeedParameters
 	.thumb_func
@@ -210,9 +210,9 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_SetHorizontalPositionAndAngleWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionAndAngleWithTerrainFar
-	.global Func_0200568c
+	.global Actor_MoveToObject
 	.thumb_func
-Func_0200568c:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -306,9 +306,9 @@ Func_080d4568:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_0200574c
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_0200574c:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
@@ -346,9 +346,9 @@ Func_080dc978:
 	.thumb_func
 Func_02005794:
 	overlay_veneer Func_080c84f0
-	.global Func_0200579c
+	.global Camera_WorldToScreen
 	.thumb_func
-Func_0200579c:
+Camera_WorldToScreen:
 	overlay_veneer Camera_WorldToScreenFar
 	.global Func_020057a4
 	.thumb_func

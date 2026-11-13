@@ -76,13 +76,13 @@ Func_0803ce64:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02001870
+	.global Event_Start
 	.thumb_func
-Func_02001870:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02001878
+	.global Event_End
 	.thumb_func
-Func_02001878:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -128,13 +128,13 @@ Func_020018c8:
 	.thumb_func
 Func_080d47b4:
 	overlay_veneer Func_080c8210
-	.global Func_020018d8
+	.global Event_SetDestination
 	.thumb_func
-Func_020018d8:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
-	.global Func_020018e0
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_020018e0:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_080d2b4c
 	.thumb_func
@@ -164,9 +164,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Actor_SetWideSprite:
 	overlay_veneer Actor_SetWideSpriteFar
-	.global Func_02001920
+	.global Actor_ReturnHome
 	.thumb_func
-Func_02001920:
+Actor_ReturnHome:
 	overlay_veneer Actor_ReturnHomeFar
 	.global Func_02001928
 	.thumb_func
@@ -176,9 +176,9 @@ Func_02001928:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02001938
+	.global Event_NoOp
 	.thumb_func
-Func_02001938:
+Event_NoOp:
 	overlay_veneer Event_NoOpFar
 	.global Func_02001940
 	.thumb_func

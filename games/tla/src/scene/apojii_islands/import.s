@@ -34,9 +34,9 @@ Func_02001bfc:
 	.thumb_func
 Random16Far:
 	overlay_veneer Func_080000f8
-	.global Func_02001c0c
+	.global Irq_SetHandler
 	.thumb_func
-Func_02001c0c:
+Irq_SetHandler:
 	overlay_veneer Irq_SetHandlerFar
 	.global HeapSlot_AllocEwram
 	.thumb_func
@@ -58,9 +58,9 @@ VramCache_Load:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
-	.global Func_02001c3c
+	.global Oam_AddSpriteAtDepth
 	.thumb_func
-Func_02001c3c:
+Oam_AddSpriteAtDepth:
 	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global GameFlag_Test
 	.thumb_func
@@ -86,9 +86,9 @@ ResourceMetadata_Register:
 	.thumb_func
 Func_02001c6c:
 	overlay_veneer Actor_SetMode
-	.global Func_02001c74
+	.global Actor_StartScript
 	.thumb_func
-Func_02001c74:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -126,13 +126,13 @@ Animation_ApplyChildValues:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02001cc4
+	.global Event_Start
 	.thumb_func
-Func_02001cc4:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02001ccc
+	.global Event_End
 	.thumb_func
-Func_02001ccc:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -178,9 +178,9 @@ Actor_Jump:
 	.thumb_func
 Motion_SetVarCbAndRefresh:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global Func_02001d2c
+	.global Actor_JumpDownLedge
 	.thumb_func
-Func_02001d2c:
+Actor_JumpDownLedge:
 	overlay_veneer Actor_JumpDownLedgeFar
 	.global Actor_SetAngleToward
 	.thumb_func
@@ -270,17 +270,17 @@ Func_080d7788:
 	.thumb_func
 Actor_CommitPositionAndActivate:
 	overlay_veneer Actor_CommitPositionAndActivateFar
-	.global Func_02001de4
+	.global ObjectTable_Snapshot
 	.thumb_func
-Func_02001de4:
+ObjectTable_Snapshot:
 	overlay_veneer ObjectTable_SnapshotFar
 	.global Func_02001dec
 	.thumb_func
 Func_02001dec:
 	overlay_veneer Func_080c8688
-	.global Func_02001df4
+	.global Event_NoOp
 	.thumb_func
-Func_02001df4:
+Event_NoOp:
 	overlay_veneer Event_NoOpFar
 	.global Func_02001dfc
 	.thumb_func

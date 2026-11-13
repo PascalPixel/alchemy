@@ -42,8 +42,8 @@ void Func_020000d4(void) { Call7(Func_02001b1c, 0x38, 0, 5, 3, 0x5e, 0x1a, 1); }
 
 #include "main_routine_work.h"
 
-void Func_02001a7c(void);
-void Func_02001a84(void);
+void Event_Start(void);
+void Event_End(void);
 
 void Func_020000f4(void) {
   s32 t0;
@@ -56,13 +56,13 @@ void Func_020000f4(void) {
     Actor_SetPosition(0x40, 0x1180000, 0x1b80000);
     if ((FIELD_AT(t0, s32, 8) >> 20) == 0x11) {
       if ((FIELD_AT(t0, s32, 16) >> 20) == 0x1b) {
-        Func_02001a7c();
+        Event_Start();
         FieldEvent_ResolvePendingActions(0);
         Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
         Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, -16, 0);
         FIELD_AT(t0, s32, 40) = 0x60000;
         FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-        Func_02001a84();
+        Event_End();
       }
     }
   }
@@ -211,7 +211,7 @@ void Func_020003cc(void) {
   s32 facing;
   s32 i;
 
-  Func_02001a7c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkd46 = 0;
@@ -259,5 +259,5 @@ void Func_020003cc(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_02001a84();
+  Event_End();
 }

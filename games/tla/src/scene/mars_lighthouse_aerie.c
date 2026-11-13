@@ -184,7 +184,7 @@ void Func_02001f10(void);
 void Func_020029ac(void);
 void Func_02003658(void);
 void Func_02003ff4(void);
-void Func_0200558c(void);
+void Map_CenterOnFollowedPoint(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
@@ -204,7 +204,7 @@ s32 Scene_Initialize(void) {
     REG_BLDCNT = 0x3f10;
     Func_02003ff4();
   } else if (gMainRoutineWork.entrance == 4) {
-    Func_0200560c();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_SetAnimation(20, 8);
     Actor_SetAnimation(21, 8);
@@ -216,13 +216,13 @@ s32 Scene_Initialize(void) {
     FieldCamera_MoveTo(-1, -1, -1, 0);
     FieldCamera_GetActor()->motionFlags = 0;
     FieldCamera_MoveTo(PIXELS(512), PIXELS(96), PIXELS(312), 1);
-    Func_0200558c();
+    Map_CenterOnFollowedPoint();
     System_Wait(1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     FieldEvent_Wait(40);
     Func_02003658();
-    Func_02005614();
+    Event_End();
   } else if (gMainRoutineWork.entrance == 3) {
     Actor_SetAnimation(20, 8);
     Actor_SetAnimation(21, 8);
@@ -261,7 +261,7 @@ struct MarsLighthouseAerieSprite {
 
 extern const u8 gData_02006ad0[];
 
-void Func_0200556c(struct Actor *object, const u8 *script);
+void Actor_StartScript(struct Actor *object, const u8 *script);
 void Func_020005a0(struct Actor *object);
 
 void Func_020004a4(void) {
@@ -280,7 +280,7 @@ void Func_020004a4(void) {
       u8 zero;
 
       sprite = object->sprite;
-      Func_0200556c(object, gData_02006ad0);
+      Actor_StartScript(object, gData_02006ad0);
       Actor_SetSpriteColor(object, 10);
       object->motionFlags = phase;
       {
@@ -348,10 +348,10 @@ void Func_02000640(s32 id) {
 struct SparkleWork;
 void Func_020053e4(struct Actor *object, struct SparkleWork *work);
 void Func_020054e4(struct Actor *object);
-s32 Func_0200563c();
-s32 Func_0200568c();
+s32 ObjectTable_DestroyById();
+s32 Actor_MoveToObject();
 void Func_02005734();
-s32 Func_0200574c();
+s32 Field_RequestBattleFromEncounterTable();
 extern u8 MsgBetrayersYouHave[];
 extern u8 gData_02005ba8[];
 extern u8 gData_02005bd0[];
@@ -390,7 +390,7 @@ void Func_0200065c(void) {
   t0 = gMainRoutineWork.currentOwner;
   actor = Actor_Get(t0);
   palette = (u16 *)0x500021e;
-  Func_0200560c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   t4 = Actor_Get(18);
   Actor_SetSpriteColor(t4, 15);
@@ -417,12 +417,12 @@ void Func_0200065c(void) {
   t25 = gMainRoutineWork.currentOwner;
   Actor_FaceDirection(t25, 0xc000, 0);
   t27 = gMainRoutineWork.currentOwner;
-  Func_0200568c(0, t27);
+  Actor_MoveToObject(0, t27);
   System_Wait(1);
   Actor_SetSpeed(0, 0x19999, 0xcccc);
   Actor_WalkToAndWait(0, 0x208, 0x140);
   Actor_FaceDirection(0, 0xc000, 0);
-  Func_0200568c(1, 0);
+  Actor_MoveToObject(1, 0);
   System_Wait(1);
   Actor_SetSpeed(1, 0x19999, 0xcccc);
   Actor_WalkToAndWait(1, 0x218, 0x140);
@@ -430,7 +430,7 @@ void Func_0200065c(void) {
   Actor_FaceDirection(1, 0xe000, 20);
   Actor_FaceDirection(1, 0xc000, 0);
   Event_ShowMessage(1, 0);
-  Func_0200568c(3, 1);
+  Actor_MoveToObject(3, 1);
   System_Wait(1);
   Actor_SetSpeed(3, 0x19999, 0xcccc);
   Actor_WalkToAndWait(3, 0x220, 0x148);
@@ -445,15 +445,15 @@ void Func_0200065c(void) {
   Func_02000610(1);
   Func_02000610(3);
   t53 = gMainRoutineWork.currentOwner;
-  Func_0200568c(5, t53);
+  Actor_MoveToObject(5, t53);
   t55 = gMainRoutineWork.currentOwner;
-  Func_0200568c(6, t55);
+  Actor_MoveToObject(6, t55);
   t57 = gMainRoutineWork.currentOwner;
-  Func_0200568c(7, t57);
+  Actor_MoveToObject(7, t57);
   t59 = gMainRoutineWork.currentOwner;
-  Func_0200568c(2, t59);
+  Actor_MoveToObject(2, t59);
   t61 = gMainRoutineWork.currentOwner;
-  Func_0200568c(19, t61);
+  Actor_MoveToObject(19, t61);
   System_Wait(1);
   Actor_SetSpeed(5, 0x19999, 0xcccc);
   Actor_SetSpeed(6, 0x19999, 0xcccc);
@@ -466,13 +466,13 @@ void Func_0200065c(void) {
   Actor_SetScript(19, (s32)gData_02005c48);
   Actor_RunScriptAndWait(2, (s32)gData_02005c20);
   FieldEvent_Wait(10);
-  Func_0200563c(16);
-  Func_0200563c(15);
-  Func_0200563c(14);
-  Func_0200563c(13);
-  Func_0200563c(12);
-  Func_0200563c(11);
-  Func_0200563c(10);
+  ObjectTable_DestroyById(16);
+  ObjectTable_DestroyById(15);
+  ObjectTable_DestroyById(14);
+  ObjectTable_DestroyById(13);
+  ObjectTable_DestroyById(12);
+  ObjectTable_DestroyById(11);
+  ObjectTable_DestroyById(10);
   Func_02000610(5);
   Func_02000610(6);
   Func_02000610(7);
@@ -1120,7 +1120,7 @@ L_02009638:
   Event_ShowMessage(0x2013, 0);
   FIELD_AT(work, u8, 0x24b) = 2;
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6aeRoom1, 2);
-  Call2(Func_0200574c, 102, 1);
+  Call2(Field_RequestBattleFromEncounterTable, 102, 1);
   return;
 }
 
@@ -1166,7 +1166,7 @@ void Func_02001f10(void) {
   t1 = Actor_Get(30);
   t2 = Actor_Get(31);
   spill = (Actor_Get(32));
-  Func_0200560c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   /* FAKEMATCH(wrapper): Actor_SetModeById called through call.h's Call2; as a
    * direct call, 2 of 1038 instructions differ in tla-en. */
@@ -1712,7 +1712,7 @@ void Func_0200298c(s32 id) {
 /// The scene that opens with MsgWhatSTheMatter; either answer to its prompt
 /// steps the event's message number.
 void Func_020029ac(void) {
-  Func_0200560c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   System_Wait(1);
@@ -1921,7 +1921,7 @@ void Func_020029ac(void) {
   System_Wait(1);
   Event_SetFlag(0x17c);
   Event_SetFlag(0x144);
-  Func_02005614();
+  Event_End();
 }
 
 #include "field_event.h"
@@ -2014,7 +2014,7 @@ void Func_0200326c(void) {
   }
   if (effect != 0) {
     sprite = effect->sprite;
-    Func_0200556c(effect, gData_02006afc);
+    Actor_StartScript(effect, gData_02006afc);
     Actor_SetSpriteColor(effect, 1);
     effect->motionFlags = 0;
     angle = Random16Far() & 0xffff000;

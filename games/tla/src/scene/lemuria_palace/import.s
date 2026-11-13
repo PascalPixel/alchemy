@@ -30,9 +30,9 @@ Heap_Alloc:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_02001f6c
+	.global Resource_DecodeType01
 	.thumb_func
-Func_02001f6c:
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
@@ -78,13 +78,13 @@ Party_AddActiveOwner:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02001fcc
+	.global Event_Start
 	.thumb_func
-Func_02001fcc:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02001fd4
+	.global Event_End
 	.thumb_func
-Func_02001fd4:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -210,9 +210,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_020020d4
+	.global Camera_WorldToScreen
 	.thumb_func
-Func_020020d4:
+Camera_WorldToScreen:
 	overlay_veneer Camera_WorldToScreenFar
 	.global Actor_LaunchFromLeader
 	.thumb_func

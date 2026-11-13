@@ -67,8 +67,8 @@ s32 *Scene_GetEvents(void) {
   return gData_0200171c;
 }
 
-void Func_02001010(void);
-void Func_02001018(void);
+void Event_Start(void);
+void Event_End(void);
 
 /// Object 18 asks whether to set out: a yes sets the owner override and, once
 /// flag 0x9d0 is set, flags 0x8df and 0x9b2; a no counts the refusal and
@@ -76,7 +76,7 @@ void Func_02001018(void);
 void Func_02000120(void) {
   struct Actor *object;
 
-  Func_02001010();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId(MsgAreWeSetting);
   FieldMessage_ShowAtActor(18, 0);
@@ -105,7 +105,7 @@ void Func_02000120(void) {
     Actor_WaitForMoveById(18);
     Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
     GameFlag_SetBit(0x201);
-    Func_02001018();
+    Event_End();
   }
 }
 
@@ -114,7 +114,7 @@ void Func_02000120(void) {
 /// set.
 void Func_02000208(void) {
   if (GameFlag_Test(0x9d0) && !GameFlag_Test(0x9b2)) {
-    Func_02001010();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Camera_MoveWithinMapBounds(96 << 16, -1, 308 << 16, 1);
     {
@@ -165,7 +165,7 @@ void Func_02000208(void) {
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 20);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 21);
     GameFlag_SetBit(0x9b0);
-    Func_02001018();
+    Event_End();
   }
 }
 
@@ -175,7 +175,7 @@ void Func_020010e0(void);
 /// party, turns, talks and walks to its place; flag 0x9b1 is set.
 void Func_020003e4(void) {
   if (GameFlag_Test(0x9d0)) {
-    Func_02001010();
+    Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_MoveTo(-1, -1, -1, 0);
     Camera_SetSpeedParameters(0x26666, 0x4ccc);
@@ -231,20 +231,20 @@ void Func_020003e4(void) {
     Motion_SetModeAndWaitAnimation(23, 3);
     Event_ShowMessageAndWait(23, 0);
     GameFlag_SetBit(0x9b1);
-    Func_02001018();
+    Event_End();
   }
 }
 
-void Func_02001070(s32 id, s32 target);
+void Actor_MoveToObject(s32 id, s32 target);
 
 /// Object 18 comes to the party leader and asks whether to set out, as in
 /// Func_02000120; after a no the leader steps back.
 void Func_02000640(void) {
   struct Actor *object;
 
-  Func_02001010();
+  Event_Start();
   Event_ResolvePendingActions(0);
-  Func_02001070(18, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(18, gMainRoutineWork.currentOwner);
   wait(1);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Actor_SetSpeed(18, 0xcccc, 0x6666);
@@ -274,7 +274,7 @@ void Func_02000640(void) {
     Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 528, 276);
-    Func_02001018();
+    Event_End();
   }
 }
 
@@ -301,7 +301,7 @@ void Func_020007ac(void) {
   MapCopy(9, 23, 1, 1, 7, 23, 0);
   if (!GameFlag_Test(63)) {
     object = Actor_GetById(gMainRoutineWork.currentOwner);
-    Func_02001010();
+    Event_Start();
     Event_ResolvePendingActions(0);
     moved = 0;
     if ((object->x >> 20) == 7 && (object->z >> 20) == 23) {
@@ -315,7 +315,7 @@ void Func_020007ac(void) {
     GameFlag_SetBit(0x300);
     if (moved)
       Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_EAST);
-    Func_02001018();
+    Event_End();
   }
 }
 
@@ -342,7 +342,7 @@ void Func_0200095c(void) { MapCopy(9, 23, 1, 1, 23, 7, 0); }
 void Func_0200097c(void) {
   s32 angle;
 
-  Func_02001010();
+  Event_Start();
   Event_ResolvePendingActions(0);
   angle = 0xd000;
   Actor_SetHorizontalPositionAndAngleWithTerrain(24, PIXELS(504), PIXELS(460),
@@ -394,7 +394,7 @@ void Func_0200097c(void) {
   Func_080d47b4(23, 264, 0);
   Event_ShowMessageAndWait(23, 0);
   GameFlag_SetBit(0x9ad);
-  Func_02001018();
+  Event_End();
 }
 
 void Func_02000bb8(void) {
@@ -452,7 +452,7 @@ void Func_02000c14(void) {
 void Func_02000c8c(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
-  Func_02001010();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(158);
   MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);

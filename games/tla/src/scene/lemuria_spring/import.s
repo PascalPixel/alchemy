@@ -70,9 +70,9 @@ Text_DrawCharacterAtOffset:
 	.thumb_func
 Text_DrawNumberInWindow:
 	overlay_veneer Text_DrawNumberInWindowFar
-	.global Func_02001328
+	.global MessageArgument_Push
 	.thumb_func
-Func_02001328:
+MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
 	.global Message_CloseFinishedWindows
 	.thumb_func
@@ -114,13 +114,13 @@ Func_02001370:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02001380
+	.global Event_Start
 	.thumb_func
-Func_02001380:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02001388
+	.global Event_End
 	.thumb_func
-Func_02001388:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
@@ -142,9 +142,9 @@ Actor_SetPositionAndReset:
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
-	.global Func_020013b8
+	.global Actor_MoveToObject
 	.thumb_func
-Func_020013b8:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func

@@ -23,7 +23,7 @@ struct PushedBlock {
 
 void Scene_SetArrivalFlags(s32 a);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02002360(struct Actor *object, s32 a);
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
 void Func_02002368();
 void Func_020023d0(s32 id);
 void Func_02002400(void);

@@ -124,7 +124,7 @@ void Func_02000184(void) {
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 358, 108);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xe000, 0);
-  Func_02001e20(9, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
   wait(1);
   Actor_SetSpeed(9, 0xcccc, 0x6666);
   Actor_WalkToAndWait(9, 364, 124);
@@ -153,7 +153,7 @@ void Func_02000184(void) {
   object = OBJECT(14);
   object->facing = OBJECT(10)->facing;
   wait(1);
-  Func_02001e20(14, 10);
+  Actor_MoveToObject(14, 10);
   Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
   Sound_Play(110);
   Actor_SetModeById(14, 5);
@@ -412,8 +412,8 @@ void Func_02000b70(void) {
   Func_02000a98(424, 100);
 }
 
-void Func_02001d60(void);
-void Func_02001d40(void);
+void DisplayBlend_EnableRunScript(void);
+void Map_CenterOnFollowedPoint(void);
 
 void Func_02000be8(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -423,7 +423,7 @@ void Func_02000be8(void) {
 
   Func_02001da0();
   Event_ResolvePendingActions(0);
-  Func_02001d60();
+  DisplayBlend_EnableRunScript();
   step = 1;
   for (i = 0; i < 352; i++) {
     if (i >= 17 && i < 80) {
@@ -436,7 +436,7 @@ void Func_02000be8(void) {
     *(s32 *)(lower + 12) += 0x10000;
     *(s32 *)(upper + 12) += 0x10000;
   }
-  Func_02001d40();
+  Map_CenterOnFollowedPoint();
   wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -463,7 +463,7 @@ void Func_02000be8(void) {
   Sound_Play(125);
   Event_Wait(20);
   GameFlag_SetBit(0x206);
-  Func_02001da8();
+  Event_End();
 }
 
 void Func_02000d3c(void) {
@@ -474,7 +474,7 @@ void Func_02000d3c(void) {
 
   Func_02001da0();
   Event_ResolvePendingActions(0);
-  Func_02001d60();
+  DisplayBlend_EnableRunScript();
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 0, -8);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -502,7 +502,7 @@ void Func_02000d3c(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 1;
   GameFlag_SetBit(0x206);
   GameFlag_SetBit(0x207);
-  Func_02001da8();
+  Event_End();
 }
 
 void Func_02000e50(void) { GameFlag_ClearBit(518); }
@@ -524,7 +524,7 @@ void Func_02000e60(void) {
   Motion_SetModeAndWaitAnimation(10, 4);
   Event_ShowMessageAndWait(10, 0);
   GameFlag_SetBit(0x8fe);
-  Func_02001da8();
+  Event_End();
 }
 
 void Func_02000ef0(struct Actor *object) {
@@ -633,7 +633,7 @@ void Func_02001094(void) {
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
 extern const u8 gData_02001f18[];
-void Func_02001ef0(void);
+void Party_PlaySavedMusic(void);
 
 /// Places the party around the statue object (its sprite reloaded with item
 /// 242's picture), raises and moves the statue while the camera follows, has
@@ -729,7 +729,7 @@ void Func_020010d4(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(40);
   wait(40);
-  Func_02001ef0();
+  Party_PlaySavedMusic();
   Func_080d47b4(11, 0x100, 40);
   Event_ShowMessage(0x400b, 0);
   Func_080d47b4(6, 261, 20);
@@ -819,7 +819,7 @@ void Func_020010d4(void) {
   Import_EventSetExitRequest(2);
 }
 
-void Func_02001d40(void);
+void Map_CenterOnFollowedPoint(void);
 s32 Func_02001f08();
 extern u8 gData_02001f4c[];
 
@@ -842,7 +842,7 @@ void Func_02001710(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   System_Wait(1);
   Func_02001010();
-  Func_02001d40();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   owner = (s32 *)&gMainRoutineWork;
   owner += 133;
@@ -948,7 +948,7 @@ void Func_02001710(void) {
     Actor_RunScriptAndWait(6, path);
   }
   Event_SetFlag(0x8fd);
-  Func_02001da8();
+  Event_End();
 }
 
 void Func_02001b14(void);
@@ -1022,7 +1022,7 @@ struct GabombaStatueChamberMapWork {
   struct GabombaStatueChamberLayer layers[3];
 };
 
-void Func_02001d60(void);
+void DisplayBlend_EnableRunScript(void);
 void Func_02000be8(void);
 
 void Func_02001ba8(void) {
@@ -1035,7 +1035,7 @@ void Func_02001ba8(void) {
       s32 blend = 1;
       s32 i;
 
-      Func_02001d60();
+      DisplayBlend_EnableRunScript();
       i = 0;
     loop:
       if (i >= 17 && i <= 79) {
@@ -1050,7 +1050,7 @@ void Func_02001ba8(void) {
       i++;
       if (i < 352)
         goto loop;
-      Func_02001d40();
+      Map_CenterOnFollowedPoint();
       wait(1);
     }
   } else if (gMainRoutineWork.entrance == 2) {

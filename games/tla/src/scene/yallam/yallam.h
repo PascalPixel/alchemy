@@ -17,8 +17,8 @@ extern const u8 MsgIOnceHeard[];
 
 void Func_020006bc(s32 id);
 void Func_02001944(void);
-void Func_02002488(void);
-void Func_02002490(void);
+void Event_Start(void);
+void Event_End(void);
 
 struct YallamSaved {
   s32 action;

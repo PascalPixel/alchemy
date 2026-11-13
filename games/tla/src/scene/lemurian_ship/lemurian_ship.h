@@ -64,8 +64,8 @@ struct LemurianShipEventWork {
   u16 field1c4;
 };
 
-void Func_02002c68(void);
-void Func_02002c70(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02002dc0(const void *script);
 void Func_02002bf0(struct LemurianShipObject *object, s32 mode);
 void Actor_SetSingleChildFlags(struct LemurianShipObject *object,
@@ -78,7 +78,7 @@ void Event_WaitTransitionFrames(void);
 void Func_02002db8(const void *script);
 void Event_StartScreenTransition(void);
 
-void Func_02002cd8(s32 actor, s32 target);
+void Actor_MoveToObject(s32 actor, s32 target);
 
 #define LEMURIAN_SHIP_TASK_ADD(func, priority)                                 \
   Task_Add((func), (priority))
@@ -89,8 +89,8 @@ static inline void LemurianShip_TaskAdd(void (*func)(void), s32 priority) {
   Task_Add(func, priority);
 }
 
-void Func_02002c10(void);
-void Func_02002d78(s32 a, s32 b);
+void Map_CenterOnFollowedPoint(void);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Func_02002dd0(const void *script);
 void Func_02002dd8(void);
 
@@ -112,7 +112,7 @@ extern s16 gData_0200304e[];
 
 void Func_02001a04(void);
 void Func_02001650(void);
-void Func_02002bf8(struct LemurianShipObject *object, const void *script);
+void Actor_StartScript(struct LemurianShipObject *object, const void *script);
 void Func_02002dc8(const void *script);
 extern u32 gData_02003ef8[];
 

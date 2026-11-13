@@ -54,11 +54,11 @@ void Fade_ToBlack(s32 vblanks);
 void Fade_Wait(void);
 
 void Func_020005ac(struct TitleSprite *sprite, s32 priority);
-void Func_020005bc(s32 resource);
+void Resource_ReservedNoOp(s32 resource);
 s32 Func_020005d4(void);
-void Func_020005e4(void);
-void Func_020005ec(void);
-void Func_02000604(s32 scene, s32 entrance);
+void Party_SetLeaderJenna(void);
+void Party_SetLeaderFelix(void);
+void Event_SetDestination(s32 scene, s32 entrance);
 void Func_0200061c(s32 value);
 s32 Func_02000624(s32 value);
 void Func_0200062c(s32 value);
@@ -96,7 +96,7 @@ s32 Title_Run(void) {
     if (gInput.pressed == 0)
       goto next;
   out:
-    Func_02000604((s32)&SceneId_Title, 2);
+    Event_SetDestination((s32)&SceneId_Title, 2);
     return 0;
   }
   if (gMainRoutineWork.entrance == 8) {
@@ -107,10 +107,10 @@ s32 Title_Run(void) {
     Fade_Wait();
     Event_Wait(240);
     Sound_Play(0);
-    Func_02000604((s32)&SceneId_Title, 2);
+    Event_SetDestination((s32)&SceneId_Title, 2);
     return 0;
   }
-  Func_020005bc((s32)&ResourceId_FarCall00B);
+  Resource_ReservedNoOp((s32)&ResourceId_FarCall00B);
   if (gMainRoutineWork.entrance == 1) {
     for (;;) {
       Sound_Play(0);
@@ -143,21 +143,21 @@ s32 Title_Run(void) {
       }
       break;
     }
-    Func_02000604((s32)&SceneId_Ov64a, 1);
+    Event_SetDestination((s32)&SceneId_Ov64a, 1);
   } else {
     if (gMainRoutineWork.entrance == 2) {
       Sound_Play(40);
       Func_0200063c(0);
       Func_0803f9c0(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
-      Func_020005e4();
-      Func_02000604((s32)&SceneId_VenusLighthouse, 99);
+      Party_SetLeaderJenna();
+      Event_SetDestination((s32)&SceneId_VenusLighthouse, 99);
     }
     if (gMainRoutineWork.entrance == 3) {
       Sound_Play(75);
       Func_02000624(0);
       Func_0803f9c0(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
-      Func_020005ec();
-      Func_02000604((s32)&SceneId_Ov650, 13);
+      Party_SetLeaderFelix();
+      Event_SetDestination((s32)&SceneId_Ov650, 13);
     }
   }
   Sound_Play(78);

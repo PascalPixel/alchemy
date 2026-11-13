@@ -117,9 +117,9 @@ void Func_020004bc(s32 unused, s32 id) {
   Actor_SetAnimation(objectId, 3);
   layer[3] -= 0x200000;
   Func_02003d54();
-  Func_02003cdc();
+  Map_CenterOnFollowedPoint();
   column = (Actor_Get(12)->x >> 20) - 42;
-  Func_02003d7c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(0x22c);
   for (i = 0; i <= 31; i++) {
@@ -137,7 +137,7 @@ void Func_020004bc(s32 unused, s32 id) {
   }
   if (Event_GetFlag(0x250))
     Func_02003d1c_(41, 42, 1, 1, 43, 44);
-  Func_02003d84();
+  Event_End();
   Event_SetFlag(0x230);
 }
 
@@ -152,8 +152,8 @@ void Func_02000574(s32 unused, s32 id) {
   Actor_SetAnimation(id, 3);
   layer[3] -= 0x200000;
   Func_02003d54();
-  Func_02003cdc();
-  Func_02003d7c();
+  Map_CenterOnFollowedPoint();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(0x22c);
   for (i = 0; i <= 31; i++) {
@@ -161,7 +161,7 @@ void Func_02000574(s32 unused, s32 id) {
     layer[3] += 0x10000;
     System_Wait(4);
   }
-  Func_02003d84();
+  Event_End();
   Event_SetFlag(0x231);
 }
 
@@ -200,12 +200,12 @@ void Func_02000644(s32 unused, s32 id) {
       Event_SetFlag(0x95c);
       MapGrid_CopyCellAttributes(41, 9, 1, 1, x, id);
 #else
-      Func_02003d7c();
+      Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Func_0200061c(object);
       Event_SetFlag(0x95c);
       MapGrid_CopyCellAttributes(41, 9, 1, 1, x, id);
-      Func_02003d84();
+      Event_End();
 #endif
     }
   }
@@ -232,7 +232,7 @@ void Func_020006d0(void) {
 void Func_0200071c(void) {
   s32 priority;
 
-  Func_02003d7c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_ArmCallback_(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Event_PlaySound(0x22d);
@@ -242,7 +242,7 @@ void Func_0200071c(void) {
   FieldCamera_MoveTo(PIXELS(776), -1, PIXELS(648), 1);
   Func_02003e54();
   FieldEvent_Wait(30);
-  Func_02003d84();
+  Event_End();
   Event_SetFlag(0x240);
   Func_02003d1c_(59, 16, 5, 32, 46, 16);
 }
@@ -262,7 +262,7 @@ void Func_020007a8(void) {
 extern const u8 gData_02003fb8[];
 
 void Sound_WaitForBgmRestore(void);
-void Func_02003ebc(void);
+void Party_PlaySavedMusic(void);
 
 static __inline__ void Func_02003d44_(s32 a, s32 b, s32 c) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline, which keeps each
@@ -277,7 +277,7 @@ void Func_020007d4(void) {
   s32 i;
   s32 j;
 
-  Func_02003d7c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 0);
   Func_020007a8();
@@ -324,8 +324,8 @@ cell:
   FieldEvent_Wait(30);
   Event_PlaySound(80);
   Sound_WaitForBgmRestore();
-  Func_02003d84();
-  Func_02003ebc();
+  Event_End();
+  Party_PlaySavedMusic();
   Event_SetFlag(0x95d);
   Event_SetFlag(0x143);
 }
@@ -334,7 +334,7 @@ void Func_02000958(s32 value) {
   s32 width = 1;
   s32 height = 2;
 
-  Func_02003d7c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(188);
   MapGrid_CopyCellsTo(107, 96, 19, 29, width, height);
@@ -358,7 +358,7 @@ void Func_02000a24(void) {
   s32 seen;
   const u8 *message;
 
-  Func_02003d7c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   seen = Event_GetFlag(0x95d);
   message = MsgCheckedTheColumn;
@@ -369,10 +369,10 @@ void Func_02000a24(void) {
       ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->value15a = 1;
   } else {
     Message_ShowCentered(message, 1);
-    Func_02003d64(0x1c8, 2);
+    MessageArgument_Push(0x1c8, 2);
     Message_ShowCentered(message + 2, 1);
   }
-  Func_02003d84();
+  Event_End();
 }
 
 void Func_02000a98(void) {
@@ -451,22 +451,22 @@ void Func_02000c28(s32 unused, s32 id) {
   Actor_SetAnimation(id, 3);
   layer[3] -= 0x200000;
   Func_02003d54();
-  Func_02003cdc();
-  Func_02003d7c();
+  Map_CenterOnFollowedPoint();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(0x22d);
   for (i = 31; i >= 0; i--) {
     layer[3] += 0x10000;
     System_Wait(4);
   }
-  Func_02003d84();
+  Event_End();
   Func_02000b5c();
   Event_SetFlag(0x249);
 }
 
 void Func_02000ca8(void) {
-  Func_02003df4(gMainRoutineWork.currentOwner, 6, 0);
-  Func_02003d84();
+  Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, 0);
+  Event_End();
 }
 
 // ---- games/tla/src/scene/aqua_rock_inside/s0cc8.c ----
@@ -506,7 +506,7 @@ void Func_02000cc8(s32 trigger) {
   if (clear == 0)
     return;
   object = Actor_Get(gMainRoutineWork.currentOwner);
-  Func_02003d7c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   goto test;
 step:
@@ -563,7 +563,7 @@ void Func_02000e18(s32 value) {
   s32 i;
   u8 *flags;
 
-  Func_02003d7c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   flags = &object->motionFlags;
@@ -585,12 +585,12 @@ void Func_02000e18(s32 value) {
       Func_02002bd4(Actor_Get(15));
     System_Wait(1);
   }
-  Func_02003d84();
+  Event_End();
   FieldEvent_SetExitRequest(value);
 }
 
-void Func_02003cfc(void);
-void Func_02003d04(void);
+void DisplayBlend_DisableRunScript(void);
+void DisplayBlend_EnableRunScript(void);
 
 void Func_02000ecc(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
@@ -599,7 +599,7 @@ void Func_02000ecc(s32 unused, s32 id) {
     s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x140);
     s32 i;
 
-    Func_02003d7c();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
     Event_PlaySound(0x22d);
@@ -623,7 +623,7 @@ void Func_02000ecc(s32 unused, s32 id) {
     i++;
     if (i <= 15)
       goto place;
-    Func_02003d04();
+    DisplayBlend_EnableRunScript();
     // A goto loop too: here a for loop hoists the queue's and the register's
     // addresses (differ 24).
     i = 12;
@@ -635,8 +635,8 @@ void Func_02000ecc(s32 unused, s32 id) {
       goto blend;
     MapGrid_CopyCellAttributes(105, 41, 12, 13, 41, 41);
     MapGrid_CopyCellsLayered(105, 105, 12, 13, 105, 41);
-    Func_02003cfc();
-    Func_02003d84();
+    DisplayBlend_DisableRunScript();
+    Event_End();
     Event_SetFlag(0x238);
   }
 }
@@ -687,15 +687,15 @@ void Func_020010d0(struct Actor *object) {
 }
 
 void Func_020010ec(void) {
-  Func_02003d7c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered(MsgCheckedThePsynergy, 1);
   Event_PlaySound(126);
-  Func_02003eb4(999, 0);
+  BattleParty_ApplyDrain(999, 0);
   FieldEvent_Wait(10);
   Event_ClearFlag(0x142);
   Message_ShowCentered(MsgCheckedThePsynergy + 1, 1);
-  Func_02003d84();
+  Event_End();
 }
 
 void Func_02001138(s32 unused, s32 id) {
@@ -737,15 +737,15 @@ void Func_020011d4(s32 unused, s32 id) {
   Actor_SetAnimation(id, 3);
   layer[3] -= 0x200000;
   Func_02003d54();
-  Func_02003cdc();
-  Func_02003d7c();
+  Map_CenterOnFollowedPoint();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(0x22c);
   for (i = 31; i >= 0; i--) {
     layer[3] += 0x10000;
     System_Wait(4);
   }
-  Func_02003d84();
+  Event_End();
   Event_SetFlag(0x24b);
 }
 
@@ -756,10 +756,10 @@ void Func_0200124c(void) {
   s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x140);
   s32 i;
 
-  Func_02003d7c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   layer[3] -= 0x200000;
-  Func_02003cdc();
+  Map_CenterOnFollowedPoint();
   Func_02003d44_(0x10000, 0x10000, 0x10000);
   // A goto loop: the ROM sets the column and the row on every pass, which a for
   // loop hoists (differ 44).
@@ -783,7 +783,7 @@ shake:
     System_Wait(1);
   }
   Func_02003d44_(-1, -1, 0xe666);
-  Func_02003d84();
+  Event_End();
   Func_02003d1c_(38, 9, 7, 6, 13, 9);
   Event_SetFlag(0x349);
 }
@@ -806,7 +806,7 @@ void Func_02001364(struct Actor *object) {
   Func_02003cc4(child, 1);
   Actor_SetSingleChildFlags(child, 0);
   Animation_SetStateFlags(child, 1);
-  Func_02003ccc(child, gData_02003fd8);
+  Actor_StartScript(child, gData_02003fd8);
 }
 
 // ---- games/tla/src/scene/aqua_rock_inside/s13bc.c ----
@@ -979,10 +979,10 @@ void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02003cc4(struct Actor *object, s32 mode);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 void Animation_SetStateFlags(struct Actor *object, u32 value);
-void Func_02003ccc(struct Actor *object, const void *data);
+void Actor_StartScript(struct Actor *object, const void *data);
 /* VIEW(s1620): routine Func_02001598 as void Func_02001598(void); the definition has void Func_02001598(struct Actor *object). */
 extern void Func_02001598__s1620(void) __asm__("Func_02001598");
-void Func_02003ebc(void);
+void Party_PlaySavedMusic(void);
 
 void Func_02001620(s32 firstId, s32 secondId) {
   struct Actor *first = Actor_GetById(firstId);
@@ -1033,7 +1033,7 @@ burst:
   Func_02003cc4(object, 7);
   Actor_SetSingleChildFlags(object, 0);
   Animation_SetStateFlags(object, 1);
-  Func_02003ccc(object, gData_02003fe8);
+  Actor_StartScript(object, gData_02003fe8);
   REG_BLDALPHA = 0x1004;
   wait(2);
   REG_BLDALPHA = 0x100a;
@@ -1075,7 +1075,7 @@ spiral:
   /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2
    * of 402 instructions differ in tla-en. */
   FieldVector_AddPolarOffset(spark->unk4c, spark->timer, &spark->x);
-  Func_02003ccc(spark, gData_02004004);
+  Actor_StartScript(spark, gData_02004004);
   if (i == 3) {
     /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2
      * of 402 instructions differ in tla-en. */
@@ -1112,7 +1112,7 @@ column:
   Func_02003cc4(riser, 7);
   Actor_SetSingleChildFlags(riser, 0);
   Animation_SetStateFlags(riser, 1);
-  Func_02003ccc(riser, gData_02004014);
+  Actor_StartScript(riser, gData_02004014);
   i += 2;
   if (i != 32)
     goto column;
@@ -1133,7 +1133,7 @@ column:
   wait(120);
   second->update = 0;
   Sound_Play(390);
-  Func_02003ebc();
+  Party_PlaySavedMusic();
   wait(1);
 }
 
@@ -1145,9 +1145,9 @@ column:
        ->v)
 
 void Func_0200124c();
-void Func_02003d7c();
-void Func_02003d84();
-void Func_02003de4();
+void Event_Start();
+void Event_End();
+void Actor_MoveToObject();
 void Party_LearnAbility();
 extern u8 MsgCheckedTheTabletIt[];
 extern u8 MsgWhatWentWrong[];
@@ -1155,19 +1155,19 @@ extern u8 MsgWhatWentWrong[];
 void Func_02001a1c(void) {
   s32 t4, t59;
 
-  Func_02003d7c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered((s32)&MsgCheckedTheTabletIt, 1);
   t4 = Event_GetFlag(0x9ae);
   if (t4 == 0)
     goto L_02009a46;
-  Func_02003d84();
+  Event_End();
   goto L_02009c56;
 L_02009a46:
   FieldEvent_SetMessageId((s32)&MsgCheckedTheTabletIt);
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), s16, 0) =
       (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
-  Func_02003de4(7, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
   FieldEvent_Wait(1);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 256, 184);
   Actor_WalkTo(7, 274, 184);
@@ -1226,7 +1226,7 @@ L_02009a46:
 L_02009c42:
   FieldActor_WaitForMoveById(7);
   Actor_SetPosition(7, 0, 0);
-  Func_02003d84();
+  Event_End();
 L_02009c56:
 }
 
@@ -1234,10 +1234,10 @@ L_02009c56:
 
 void Func_02001c68(void) {
   if (Event_GetFlag(0x9ae)) {
-    Func_02003d7c();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Message_ShowCentered(MsgCheckedTheTabletIt, 1);
-    Func_02003d84();
+    Event_End();
   } else {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 248, 152);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 248, 184);
@@ -1250,10 +1250,10 @@ void Func_02001c68(void) {
 
 void Func_02001cd8(void) {
   if (Event_GetFlag(0x9ae)) {
-    Func_02003d7c();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Message_ShowCentered(MsgCheckedTheTabletIt, 1);
-    Func_02003d84();
+    Event_End();
   } else {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 280, 184);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 184);
@@ -1265,10 +1265,10 @@ void Func_02001cd8(void) {
 
 void Func_02001d40(void) {
   if (Event_GetFlag(0x9ae)) {
-    Func_02003d7c();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Message_ShowCentered(MsgCheckedTheTabletIt, 1);
-    Func_02003d84();
+    Event_End();
   } else {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 248, 184);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 184);
@@ -1338,7 +1338,7 @@ void Func_02001ea0(struct Actor *object) {
     if (child != 0) {
       struct FieldSprite *sprite = child->sprite;
 
-      Func_02003ccc(child, gData_020040dc);
+      Actor_StartScript(child, gData_020040dc);
       child->motionFlags = 0;
       child->terrainId = 1;
       if (sprite != 0) {
@@ -1358,7 +1358,7 @@ void Func_02001f04(void) {
   s32 speed;
   s32 i;
 
-  Func_02003d7c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Animation_ApplyChildValues(object, 9);
@@ -1384,7 +1384,7 @@ fall:
   object->velocityY = 0x80000;
   Event_PlaySound(215);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 168, 200);
-  Func_02003d84();
+  Event_End();
 }
 
 void Func_02001fcc(void) {
@@ -1827,7 +1827,7 @@ void Func_02002bd4(struct Actor *object) {
     struct FieldSprite *sprite = child->sprite;
 
     child->terrainHeight = object->terrainHeight;
-    Func_02003ccc(child, gData_0200411c);
+    Actor_StartScript(child, gData_0200411c);
     child->motionFlags = 0;
     if (sprite != 0) {
       Animation_ApplyChildArgument(sprite, 1);
@@ -1847,7 +1847,7 @@ void Func_02002c3c(struct Actor *object) {
     if (child != 0) {
       struct FieldSprite *sprite = child->sprite;
 
-      Func_02003ccc(child, gData_02004128);
+      Actor_StartScript(child, gData_02004128);
       child->motionFlags = 0;
       child->y = -0x78000;
       child->terrainId = 1;
@@ -1946,7 +1946,7 @@ void Func_02002e34(s32 entrance) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 i;
 
-  Func_02003d7c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   leader->motionFlags = 0;
@@ -1966,7 +1966,7 @@ void Func_02002e34(s32 entrance) {
       Func_02002bd4(Actor_Get(15));
     System_Wait(1);
   }
-  Func_02003d84();
+  Event_End();
   FieldEvent_SetExitRequest(entrance);
 }
 
@@ -2003,7 +2003,7 @@ void Func_02002f60(s32 entrance) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 *owner = &gMainRoutineWork.currentOwner;
 
-  Func_02003d7c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(228);
   leader->update = (void (*)(void))Func_02002ed4;
@@ -2018,7 +2018,7 @@ void Func_02002f60(s32 entrance) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(entrance);
-  Func_02003d84();
+  Event_End();
 }
 
 void Func_02002ffc(void) {
@@ -2028,7 +2028,7 @@ void Func_02002ffc(void) {
   s32 offset;
 
   if (flag == 0) {
-    Func_02003d7c();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     leader->motionFlags = flag;
@@ -2048,9 +2048,9 @@ void Func_02002ffc(void) {
     Actor_WalkByAndWait(*owner, 0, offset);
     leader->motionFlags = 3;
     leader->update = (void (*)(void))flag;
-    Func_02003ed4();
+    Event_NoOp();
     Event_WaitTransitionFrames();
-    Func_02003d84();
+    Event_End();
   }
 }
 
@@ -2150,7 +2150,7 @@ void Func_02003278(void) {
 
   Iwram_ClearWords(&gData_0200536c, 0x604);
   buffer = MemAlloc_(0xc80);
-  Func_02003c7c(gData_0200414c, buffer);
+  Resource_DecodeType01(gData_0200414c, buffer);
   gData_0200536c.vramEntry = Resource_FindFreeEntry();
   Vram_Load(gData_0200536c.vramEntry, 0xc80, buffer);
   Heap_Release(buffer);
@@ -2340,7 +2340,7 @@ void Func_02003628(void) {
 
   Iwram_ClearWords(&gData_02005970, 0x3a4);
   buffer = MemAlloc_(0x400);
-  Func_02003c7c(gData_02004351, buffer);
+  Resource_DecodeType01(gData_02004351, buffer);
   gData_02005970.vramEntry = Resource_FindFreeEntry();
   Vram_Load(gData_02005970.vramEntry, 0x400, buffer);
   Heap_Release(buffer);

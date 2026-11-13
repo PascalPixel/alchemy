@@ -127,7 +127,7 @@ void Func_02000298(void) {
 void Func_02000318(s32 actor) {
   s32 message;
 
-  Func_020007f4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   message = (s32)MsgGarohInteriors01;
   Event_SetMessageId(message);
@@ -144,51 +144,51 @@ void Func_02000318(s32 actor) {
   } else {
     Event_ShowMessageAndWait(actor, 0);
   }
-  Func_020007fc();
+  Event_End();
 }
 
 void Func_0200039c(void) {
-  Func_020007f4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x91b))
     Event_SetMessageId((s32)MsgGarohInteriors60);
   else
     Event_SetMessageId((s32)MsgGarohInteriors25);
   Event_ShowMessageAndWait(17, 0);
-  Func_020007fc();
+  Event_End();
 }
 
 void Func_020003dc(void) {
-  Func_020007f4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x91b))
     Event_SetMessageId((s32)MsgGarohInteriors61);
   else
     Event_SetMessageId((s32)MsgGarohInteriors26);
   Event_ShowMessageAndWait(18, 0);
-  Func_020007fc();
+  Event_End();
 }
 
 void Func_0200041c(void) {
-  Func_020007f4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x91b))
     Event_SetMessageId((s32)MsgGarohInteriors64);
   else
     Event_SetMessageId((s32)MsgGarohInteriors29);
   Event_ShowMessageAndWait(17, 0);
-  Func_020007fc();
+  Event_End();
 }
 
 void Func_0200045c(void) {
-  Func_020007f4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x91b))
     Event_SetMessageId((s32)MsgGarohInteriors65);
   else
     Event_SetMessageId((s32)MsgGarohInteriors30);
   Event_ShowMessageAndWait(18, 0);
-  Func_020007fc();
+  Event_End();
 }
 
 void Func_0200049c(void) {
@@ -302,7 +302,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_02000710(void) {
   GameFlag_SetBit(0x91b);
-  Func_020007f4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_Wait(30);
   Func_020007cc();
@@ -310,7 +310,7 @@ void Func_02000710(void) {
   Func_0803ce64((s32)MsgGarohInteriors33, 0, 0);
   Event_Wait(20);
   Func_020007d4();
-  Func_020007bc();
+  Map_CenterOnFollowedPoint();
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_SetMessageId((s32)MsgGarohInteriors34);
@@ -321,7 +321,7 @@ void Func_02000710(void) {
   Motion_SetModeAndWaitAnimation(15, 3);
   Event_Wait(30);
   Event_ShowMessageThenWait(15, 0, 10);
-  Func_020007fc();
+  Event_End();
 }
 
 #include "text/msg_ids.h"

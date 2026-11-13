@@ -18,8 +18,8 @@ struct WarpEntry {
 
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_0200054c(void);
-void Func_02000554(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_0200059c(s32 id);
 void Func_020005cc(void);
 void Func_020005d4(s32 a, s32 b, s32 c, s32 d);

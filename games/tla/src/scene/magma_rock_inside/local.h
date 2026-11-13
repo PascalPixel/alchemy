@@ -34,7 +34,7 @@ void Func_02001190(s32 a, s32 b);
 void Func_020024ac(void);
 void Func_02004934(s32 a, s32 b, s32 owner);
 void Func_02004c98(struct Actor *object, s32 a);
-void Func_02004ca0(struct Actor *object, const void *data);
+void Actor_StartScript(struct Actor *object, const void *data);
 void Func_02004df8(s32 id);
 
 // The scene's own event inlines: a habit of the whole game written once, as

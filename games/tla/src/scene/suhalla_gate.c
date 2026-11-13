@@ -159,13 +159,13 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 extern char SceneId_VenusLighthouseEntrance;
 
-void Func_02000a40(s32 a, s32 b);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
 /// Places the leader and the camera after a message, runs actor 8's motions
 /// and sends the party to Suhalla Gate 1, entrance 99. The message is
 /// "Waahhh".
 void Func_020003ac(void) {
-  Func_02000988();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWaahhhItS);
   Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, 472, 320);
@@ -191,8 +191,8 @@ void Func_020003ac(void) {
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate1, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
   gMainRoutineWork.battleRule24b = 2;
-  Func_02000a40(9, 1);
-  Func_02000990();
+  Field_RequestBattleFromEncounterTable(9, 1);
+  Event_End();
 }
 
 #include "actor.h"
@@ -201,7 +201,7 @@ void Func_02000494(void) {
   struct MainRoutineWork *work;
   s32 *owner;
 
-  Func_02000988();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgHaThatWas);
   work = &gMainRoutineWork;
@@ -234,8 +234,8 @@ void Func_02000494(void) {
   Event_SetAfterBattleDestination((s32)&SceneId_SuhallaGate2, 99);
   Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseEntrance, 98);
   *((u8 *)work + 0x24b) = 2;
-  Func_02000a40(9, 2);
-  Func_02000990();
+  Field_RequestBattleFromEncounterTable(9, 2);
+  Event_End();
 }
 
 void Func_020005e8(void) {
@@ -250,12 +250,12 @@ void Func_020005e8(void) {
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate3, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
   gMainRoutineWork.battleRule24b = 2;
-  Func_02000a40(9, 3);
-  Func_02000990();
+  Field_RequestBattleFromEncounterTable(9, 3);
+  Event_End();
 }
 
 void Func_02000650(void) {
-  Func_02000988();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetHorizontalPositionWithTerrain(8, PIXELS(472), PIXELS(480));
   Event_Wait(16);
@@ -280,7 +280,7 @@ void Func_02000650(void) {
 void Func_0200071c(void) {
   s32 x, z;
 
-  Func_02000988();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetHorizontalPositionWithTerrain(8, PIXELS(472), PIXELS(480));
   Event_Wait(16);
@@ -310,7 +310,7 @@ void Func_0200071c(void) {
 void Func_02000800(void) {
   struct Actor *leader;
 
-  Func_02000988();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgMyThatWas);
   Actor_SetPosition(9, PIXELS(512), PIXELS(432));
@@ -334,13 +334,13 @@ void Func_02000800(void) {
   Actor_WaitForMoveById(9);
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Event_Wait(10);
-  Func_02000990();
+  Event_End();
 }
 
 void Func_020008cc(void) {
   struct Actor *leader;
 
-  Func_02000988();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgNotThatWay);
   Actor_LaunchFromLeader(16, -16, 0, 0);
@@ -355,7 +355,7 @@ void Func_020008cc(void) {
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   Event_Wait(10);
   Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, 16, 0);
-  Func_02000990();
+  Event_End();
 }
 
 // clang-format off

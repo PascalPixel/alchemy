@@ -83,7 +83,7 @@ void Func_02000550(struct Actor *object) {
   object->y += WORD_AT(object, 48);
 }
 
-void Func_02000610(void) { Func_02005f2c(0); }
+void Func_02000610(void) { Event_ResolvePendingActions(0); }
 
 void Func_0200061c(void) { BYTE_AT(Ram_HeapSlots->effectWork, 52) = 1; }
 
@@ -284,13 +284,13 @@ void Func_02000988(void) {
   u16 facing;
   s32 angle, noFlags;
 
-  Func_02005e14();
-  Func_02005f2c(0);
+  Event_Start();
+  Event_ResolvePendingActions(0);
   motion = &leader->motionFlags;
   *motion = 4;
   Actor_SetSingleChildFlags(leader, 0);
   GameFlag_SetBit(0x250);
-  Func_02005f94(137);
+  Sound_Play(137);
   riding = (u8 *)ride + 99;
   rise = 0;
   while (*riding != 0) {
@@ -303,11 +303,11 @@ void Func_02000988(void) {
     leader->priorityFlags ^= 2 << (gFrameCount & 1);
     wait(1);
   }
-  Func_02005f94(0x120);
+  Sound_Play(0x120);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1 &&
       leader->x >> 19 == 39) {
     Func_02005efc(16);
-    Func_02005e1c();
+    Event_End();
     return;
   }
   priority = &leader->priorityFlags;
@@ -376,7 +376,7 @@ void Func_02000988(void) {
     leader->terrainHeight = height;
     Func_02005d5c(leader, 6);
     wait(6);
-    Func_02005f94(152);
+    Sound_Play(152);
     Func_02005d5c(leader, 7);
     leader->speedLimit = 0x20000;
     leader->acceleration = 0x8000;
@@ -415,7 +415,7 @@ void Func_02000988(void) {
   Func_02005ee4();
   GameFlag_ClearBit(0x250);
   wait(10);
-  Func_02005e1c();
+  Event_End();
 }
 
 s32 Func_02000cec(s32 *a, s32 *b) {
@@ -480,9 +480,9 @@ void Func_02000d48(struct Actor *shot) {
     shot->update = 0;
     Call2((void (*)())Func_02005f8c, (s32)shot, 539);
     if (shot->facing == 0xc000)
-      Func_02005d6c(shot, gData_020061ac);
+      Actor_StartScript(shot, gData_020061ac);
     else
-      Func_02005d6c(shot, gData_02006194);
+      Actor_StartScript(shot, gData_02006194);
     return;
   }
   if (((struct Shot *)shot)->unk62 == 0) {
@@ -608,7 +608,7 @@ void Func_020010b4(struct Actor *shot) {
     }
     ((struct Shot *)shot)->unk63 = 0;
     shot->update = 0;
-    Func_02005d6c(shot, gData_020061cc);
+    Actor_StartScript(shot, gData_020061cc);
     /* FAKEMATCH(dead): an empty once-only block holds the next statement after
      * this one; as no block, 2 of 211 instructions differ in tla-en. */
     do {
@@ -874,10 +874,10 @@ void Func_020017f4(struct Actor *object) {
 
 extern const u8 gData_02005fd8[];
 void Func_02002bd0(void);
-void Func_02005ed4(s32 a, s32 b);
+void Camera_SetSpeedParameters(s32 a, s32 b);
 s32 Func_02005dec(struct Actor *object);
-void Func_02005d84(void);
-void Func_02005dcc(s32 a, s32 b, s32 c);
+void Map_CenterOnFollowedPoint(void);
+void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Func_02005eec(s32 actor, s32 a);
 
 /// A cell of the map, and a step from one cell to the next.
@@ -909,8 +909,8 @@ struct EffectWork {
 
 /// One shake of the walls (cue 157).
 #define SHAKE()                                                                \
-  (Func_02005f94(157), Call3(Func_02005dcc, 0x50000, 0x50000, 0x10000),        \
-   Call3(Func_02005dcc, -1, -1, 0xe666))
+  (Sound_Play(157), Call3(Map_SetScreenShake, 0x50000, 0x50000, 0x10000),        \
+   Call3(Map_SetScreenShake, -1, -1, 0xe666))
 
 void Func_02001828(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -927,9 +927,9 @@ void Func_02001828(void) {
   /* FAKEMATCH(wrapper): calls forwarded through call.h's Call2, Call3, Call4
    * and Call6, so each builds its own constants; as direct calls, 416 of 1527
    * instructions differ in tla-en. */
-  Func_02005e14();
-  Func_02005f2c(0);
-  Func_02005f94(207);
+  Event_Start();
+  Event_ResolvePendingActions(0);
+  Sound_Play(207);
   gust =
       (struct Actor *)Import_ActorCreate(280, leader->x, leader->y, leader->z);
   Func_02005d5c(gust, 2);
@@ -964,7 +964,7 @@ void Func_02001828(void) {
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02005d5c(spark, 7);
-      Func_02005d6c(spark, gData_02005fd8);
+      Actor_StartScript(spark, gData_02005fd8);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetPartAttribute(spark, 2);
       spark->update = Func_02002bd0;
@@ -979,7 +979,7 @@ void Func_02001828(void) {
     FieldEvent_Wait(1);
   }
   Actor_SetPartAttribute(TARGET(effect), 0);
-  Func_02005f94(136);
+  Sound_Play(136);
   cell.x = TARGET(effect)->x >> 20;
   cell.z = TARGET(effect)->z >> 20;
   if (leader->x >> 20 < cell.x) {
@@ -1019,7 +1019,7 @@ void Func_02001828(void) {
     gust->speedLimit = 0x40000;
     gust->acceleration = 0x40000;
     Func_02005d8c(gust, cell.x << 16, gust->y, cell.z << 16);
-    Call2((void (*)())Func_02005ed4, 0x50000, 0x50000);
+    Call2((void (*)())Camera_SetSpeedParameters, 0x50000, 0x50000);
     Call4((void (*)())Camera_MoveWithinMapBounds, x << 16, -1, z << 16, 1);
   }
   carried = 0;
@@ -1065,10 +1065,10 @@ void Func_02001828(void) {
     Scene_SetActorSpritePriority(object, 2);
     if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
       object->terrainHeight = 0xffe00000;
-      Call6(Func_02005dac, 19, 16, 1, 1, 19, 18);
+      Call6(Map_CopyCellAttributeRect, 19, 16, 1, 1, 19, 18);
       GameFlag_SetBit(0x89f);
     } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room8) {
-      Call6(Func_02005dac, 19, 38, 1, 1, 20, 38);
+      Call6(Map_CopyCellAttributeRect, 19, 38, 1, 1, 20, 38);
       OverlayObject_WaitUntilIdle(object);
       wait(1);
       OverlayObject_WaitUntilIdle(object);
@@ -1090,7 +1090,7 @@ void Func_02001828(void) {
     }
   }
   if (hit == 255) {
-    Func_02005f94(136);
+    Sound_Play(136);
   } else {
     cell.x = (gust->x >> 16) + dir.x * 48;
     cell.z = (gust->z >> 16) + dir.z * 48;
@@ -1104,7 +1104,7 @@ void Func_02001828(void) {
       if (hit > 4)
         goto shrink;
       if (i == 0) {
-        Func_02005f94(235);
+        Sound_Play(235);
         i = 1;
       }
       if ((gFrameCount & 1) == 0) {
@@ -1125,36 +1125,36 @@ void Func_02001828(void) {
           GameFlag_SetBit(0x300);
           cell.x = (gust->x >> 20) + 64;
           cell.z = gust->z >> 20;
-          Func_02005d9c(90, 25, cell.x + 1, cell.z, 1, 3);
-          Func_02005d9c(21, 88, 24, 89, 1, 2);
-          Func_02005dac(23, 92, 2, 1, 23, 89);
-          Func_02005dac(18, 33, 2, 1, 23, 25);
+          Map_CopyCellPictureIndicesRect(90, 25, cell.x + 1, cell.z, 1, 3);
+          Map_CopyCellPictureIndicesRect(21, 88, 24, 89, 1, 2);
+          Map_CopyCellAttributeRect(23, 92, 2, 1, 23, 89);
+          Map_CopyCellAttributeRect(18, 33, 2, 1, 23, 25);
         } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room7) {
           cell.x = gust->x >> 20;
           cell.z = ((gust->z - gust->y) >> 20) + 64;
           if (hit == 0) {
             GameFlag_SetBit(772);
-            Func_02005d9c(39, 82, cell.x, cell.z, 1, 1);
-            Func_02005dac(39, 82, 1, 1, 38, 82);
-            Call6(Func_02005dac, 38, 19, 1, 1, 38, 18);
+            Map_CopyCellPictureIndicesRect(39, 82, cell.x, cell.z, 1, 1);
+            Map_CopyCellAttributeRect(39, 82, 1, 1, 38, 82);
+            Call6(Map_CopyCellAttributeRect, 38, 19, 1, 1, 38, 18);
           } else {
             GameFlag_SetBit(773);
-            Call6(Func_02005d9c, 39, 82, cell.x, cell.z, 1, 1);
-            Call6(Func_02005dac, 38, 98, 1, 1, 38, 99);
-            Call6(Func_02005dac, 38, 35, 1, 1, 38, 37);
+            Call6(Map_CopyCellPictureIndicesRect, 39, 82, cell.x, cell.z, 1, 1);
+            Call6(Map_CopyCellAttributeRect, 38, 98, 1, 1, 38, 99);
+            Call6(Map_CopyCellAttributeRect, 38, 35, 1, 1, 38, 37);
           }
         } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
           GameFlag_SetBit(774);
           cell.x = gust->x >> 20;
-          Call6(Func_02005d9c, 15, 80, cell.x, 77, 1, 3);
-          Call6(Func_02005dac, 15, 80, 1, 1, 15, 79);
-          Call6(Func_02005dac, 17, 15, 2, 1, 15, 15);
+          Call6(Map_CopyCellPictureIndicesRect, 15, 80, cell.x, 77, 1, 3);
+          Call6(Map_CopyCellAttributeRect, 15, 80, 1, 1, 15, 79);
+          Call6(Map_CopyCellAttributeRect, 17, 15, 2, 1, 15, 15);
         }
-        Func_02005d84();
+        Map_CenterOnFollowedPoint();
       }
       FieldEvent_Wait(1);
     }
-    Func_02005f94(298);
+    Sound_Play(298);
   }
 shrink:
   gust->acceleration = 0;
@@ -1172,29 +1172,29 @@ shrink:
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
     if (hit == 5) {
       SHAKE();
-      Call6(Func_02005d9c, 79, 0x40, 29, 85, 5, 7);
+      Call6(Map_CopyCellPictureIndicesRect, 79, 0x40, 29, 85, 5, 7);
       FieldEvent_Wait(30);
       SHAKE();
-      Call6(Func_02005d9c, 69, 0x40, 29, 85, 5, 7);
-      Call6(Func_02005dac, 46, 20, 5, 5, 29, 21);
-      Call6(Func_02005dac, 0x20, 89, 1, 1, 31, 89);
-      Call6(Func_02005dac, 50, 86, 1, 1, 33, 87);
+      Call6(Map_CopyCellPictureIndicesRect, 69, 0x40, 29, 85, 5, 7);
+      Call6(Map_CopyCellAttributeRect, 46, 20, 5, 5, 29, 21);
+      Call6(Map_CopyCellAttributeRect, 0x20, 89, 1, 1, 31, 89);
+      Call6(Map_CopyCellAttributeRect, 50, 86, 1, 1, 33, 87);
       GameFlag_SetBit(769);
     } else if (hit == 6) {
       SHAKE();
-      Call6(Func_02005d9c, 74, 0x40, 29, 85, 5, 7);
+      Call6(Map_CopyCellPictureIndicesRect, 74, 0x40, 29, 85, 5, 7);
       FieldEvent_Wait(30);
       SHAKE();
-      Call6(Func_02005d9c, 0x40, 0x40, 29, 85, 5, 7);
-      Call6(Func_02005dac, 52, 20, 5, 5, 29, 21);
-      Call6(Func_02005dac, 33, 88, 1, 1, 33, 87);
-      Call6(Func_02005dac, 0x30, 88, 1, 1, 31, 89);
+      Call6(Map_CopyCellPictureIndicesRect, 0x40, 0x40, 29, 85, 5, 7);
+      Call6(Map_CopyCellAttributeRect, 52, 20, 5, 5, 29, 21);
+      Call6(Map_CopyCellAttributeRect, 33, 88, 1, 1, 33, 87);
+      Call6(Map_CopyCellAttributeRect, 0x30, 88, 1, 1, 31, 89);
       GameFlag_ClearBit(769);
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
     if (hit == 5) {
       SHAKE();
-      Call6(Func_02005d9c, 79, 0x40, 0x20, 79, 5, 7);
+      Call6(Map_CopyCellPictureIndicesRect, 79, 0x40, 0x20, 79, 5, 7);
       if (Actor_GetById(8)->x >> 19 == 65) {
         velocity.x = Actor_GetById(8)->x + 0xfff80000;
         velocity.y = Actor_GetById(8)->y;
@@ -1208,15 +1208,15 @@ shrink:
         }
         wait(30);
         SHAKE();
-        Call6(Func_02005d9c, 0x40, 0x40, 0x20, 79, 5, 7);
+        Call6(Map_CopyCellPictureIndicesRect, 0x40, 0x40, 0x20, 79, 5, 7);
         Actor_GetById(8)->priorityFlags |= 1;
       } else {
         FieldEvent_Wait(30);
         SHAKE();
-        Call6(Func_02005d9c, 69, 0x40, 0x20, 79, 5, 7);
-        Call6(Func_02005dac, 49, 15, 5, 5, 0x20, 15);
-        Call6(Func_02005dac, 33, 82, 1, 1, 34, 82);
-        Call6(Func_02005dac, 52, 81, 1, 1, 36, 81);
+        Call6(Map_CopyCellPictureIndicesRect, 69, 0x40, 0x20, 79, 5, 7);
+        Call6(Map_CopyCellAttributeRect, 49, 15, 5, 5, 0x20, 15);
+        Call6(Map_CopyCellAttributeRect, 33, 82, 1, 1, 34, 82);
+        Call6(Map_CopyCellAttributeRect, 52, 81, 1, 1, 36, 81);
         GameFlag_ClearBit(770);
       }
     } else if (hit == 6) {
@@ -1233,14 +1233,14 @@ shrink:
         }
         wait(20);
       } else {
-        Call6(Func_02005d9c, 79, 0x40, 0x20, 79, 5, 7);
-        Func_02005f94(157);
+        Call6(Map_CopyCellPictureIndicesRect, 79, 0x40, 0x20, 79, 5, 7);
+        Sound_Play(157);
         FieldEvent_Wait(30);
         SHAKE();
-        Call6(Func_02005d9c, 0x40, 0x40, 0x20, 79, 5, 7);
-        Call6(Func_02005dac, 49, 21, 5, 5, 0x20, 15);
-        Call6(Func_02005dac, 35, 81, 1, 1, 36, 81);
-        Call6(Func_02005dac, 50, 82, 1, 1, 34, 82);
+        Call6(Map_CopyCellPictureIndicesRect, 0x40, 0x40, 0x20, 79, 5, 7);
+        Call6(Map_CopyCellAttributeRect, 49, 21, 5, 5, 0x20, 15);
+        Call6(Map_CopyCellAttributeRect, 35, 81, 1, 1, 36, 81);
+        Call6(Map_CopyCellAttributeRect, 50, 82, 1, 1, 34, 82);
         GameFlag_SetBit(770);
       }
     }
@@ -1248,7 +1248,7 @@ shrink:
   FieldEvent_Wait(30);
   Func_02005eec(gMainRoutineWork.currentOwner, 1);
   Func_02005ee4();
-  Func_02005e1c();
+  Event_End();
 }
 
 extern const u8 gData_02006238[];
@@ -1298,7 +1298,7 @@ u32 *Scene_GetPlacements(void) {
 void Func_020026c0(void);
 
 void Func_020026c0(void) {
-  struct Actor *object = Actor_GetById(Func_02005f84());
+  struct Actor *object = Actor_GetById(Party_GetLeaderActor());
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   s32 key = (x << 16) + z;

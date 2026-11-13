@@ -22,9 +22,9 @@ GameFlag_SetBit:
 	.thumb_func
 Func_0200103c:
 	overlay_veneer Actor_SetMode
-	.global Func_02001044
+	.global Actor_StartScript
 	.thumb_func
-Func_02001044:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Func_0200104c
 	.thumb_func
@@ -54,13 +54,13 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02001084
+	.global Event_Start
 	.thumb_func
-Func_02001084:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_0200108c
+	.global Event_End
 	.thumb_func
-Func_0200108c:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -146,9 +146,9 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_02001134:
 	overlay_veneer Func_080c8240
-	.global Func_0200113c
+	.global Event_SetDestination
 	.thumb_func
-Func_0200113c:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Func_080d2b4c
 	.thumb_func

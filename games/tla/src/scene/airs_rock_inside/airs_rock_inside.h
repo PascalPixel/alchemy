@@ -46,14 +46,14 @@ void GameFlag_ClearBit(s32 flag);
 void FieldEvent_Wait(s32 frames);
 void FieldMessage_Show(const u8 *message, s32 mode);
 void Func_02005d5c(struct Actor *object, s32 value);
-void Func_02005d6c(struct Actor *object, const u8 *data);
-void Func_02005d9c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02005dac(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02005e14(void);
-void Func_02005e1c(void);
-void Func_02005f2c(s32 value);
-void Func_02005f34(s32 a, s32 b);
-void Func_02005f94(s32 value);
+void Actor_StartScript(struct Actor *object, const u8 *data);
+void Map_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Event_Start(void);
+void Event_End(void);
+void Event_ResolvePendingActions(s32 value);
+void BattleParty_ApplyDrain(s32 a, s32 b);
+void Sound_Play(s32 value);
 
 // The cell stampers keep their last cell and the block they copy.
 extern s32 gData_02006c0c;
@@ -62,7 +62,7 @@ extern s32 gData_020073e0;
 extern s32 gData_020073e4;
 extern s32 gData_020073e8;
 
-s32 Func_02005f84(void);
+s32 Party_GetLeaderActor(void);
 void Func_02005db4(s32 srcX, s32 src_z, s32 width, s32 height, s32 destX,
                    s32 destZ);
 

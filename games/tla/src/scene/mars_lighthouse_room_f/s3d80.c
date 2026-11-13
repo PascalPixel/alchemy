@@ -7,12 +7,12 @@
 #include "field_effect.h"
 #include "event_inline.h"
 
-void Func_02005560(void);
-void Func_020054b0(void);
+void Event_Start(void);
+void Map_CenterOnFollowedPoint(void);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct EffectOptions *options);
-void Func_02005568(void);
+void Event_End(void);
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
@@ -27,10 +27,10 @@ void Func_02003d80(void) {
   u32 i;
   struct EffectOptions options;
 
-  Func_02005560();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   CamBounds(-1, -1, -1, 0);
-  Func_020054b0();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = 0x820000;
   actor->gravity = 0x8000;
@@ -73,7 +73,7 @@ void Func_02003d80(void) {
   actor->bounce = 0x4000;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Func_02005568();
+  Event_End();
 }
 
 #include "room.h"
@@ -157,7 +157,7 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value) {
     other = *(struct Actor **)(event + 460);
     other->x = object->x;
     other->z = object->z;
-    Func_020054b0();
+    Map_CenterOnFollowedPoint();
     Func_02003d80();
     WORD_AT(Ram_HeapSlots->eventWork, 428) = value;
   }
@@ -198,15 +198,15 @@ void Func_02004080(struct Actor *object) {
   Actor_SetAnimationSpeed(object, 48);
 }
 
-void Func_02005640(void);
+void Event_ResolveAllPendingActions(void);
 
 void Func_0200410c(void) {
   u8 *event = Ram_HeapSlots->eventWork;
 
   if (S16_AT(event, 0xca2)) {
     Flag_Set(0x106);
-    Func_02005608();
-    Func_02005640();
+    Leader_StopMoving();
+    Event_ResolveAllPendingActions();
     Flag_Clear(0x106);
   }
 }
@@ -876,7 +876,7 @@ inner:
 
 #undef PIXELS
 
-void Func_02005668(void);
+void Event_NoOp(void);
 void Func_02004fc0(struct Actor *object);
 
 /// The heap slots read as words: the map slot comes through u32, not its
@@ -968,7 +968,7 @@ void Func_02004d10(struct PushTarget target) {
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
   Func_02004a44(2, cell[0], cell[2], width, height, 0);
-  Func_02005668();
+  Event_NoOp();
 }
 
 void Func_02004fc0(struct Actor *object) {
@@ -1113,7 +1113,7 @@ extern u8 gField_CachedTilesB[];
 extern u8 gField_CachedTilesC[];
 
 void *Heap_Alloc(s32 size);
-void Func_02005420(const void *source, void *destination);
+void Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void Heap_Release(void *block);
 
@@ -1125,7 +1125,7 @@ void Func_02005204(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_020074d0, 64);
-  Func_02005420(gField_CachedTilesA, buffer);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_020074cc = Resource_FindFreeEntry();
   VramCache_Load(gData_020074cc, 0xc00, buffer);
   Heap_Release(buffer);
@@ -1139,7 +1139,7 @@ void Func_02005284(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_020074d0, 64);
-  Func_02005420(gField_CachedTilesB, buffer);
+  Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_020074cc = Resource_FindFreeEntry();
   Vram_Load(gData_020074cc, 0x800, buffer);
   Heap_Release(buffer);
@@ -1153,7 +1153,7 @@ void Func_02005304(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_020074d0, 64);
-  Func_02005420(gField_CachedTilesC, buffer);
+  Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_020074cc = Resource_FindFreeEntry();
   Vram_Load(gData_020074cc, 0x800, buffer);
   Heap_Release(buffer);

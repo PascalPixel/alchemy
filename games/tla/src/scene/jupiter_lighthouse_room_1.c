@@ -208,8 +208,8 @@ void Func_02000408(s32 id) {
 #include "frame.h"
 #include "event_work.h"
 
-void Func_02001b24(void);
-void Func_02001b2c(void);
+void Event_Start(void);
+void Event_End(void);
 
 void Func_0200045c(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -219,7 +219,7 @@ void Func_0200045c(void) {
   s32 facing;
   s32 i;
 
-  Func_02001b24();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkd46 = 0;
@@ -267,7 +267,7 @@ void Func_0200045c(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_02001b2c();
+  Event_End();
 }
 
 s32 Func_02000648(s32 *a, s32 *b) {

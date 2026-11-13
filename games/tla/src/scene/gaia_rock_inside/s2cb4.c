@@ -157,16 +157,16 @@ void Func_0200042c(void);
 void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004d00(void);
 void Func_02004d9c(struct Actor *object, s32 mode);
-void Func_02004dac(struct Actor *object, const u8 *script);
+void Actor_StartScript(struct Actor *object, const u8 *script);
 void Func_02004dbc();
-void Func_02004dd4(void);
-void Func_02004ddc(void);
-void Func_02004e3c();
-void Func_02004e5c(void);
+void DisplayBlend_DisableRunScript(void);
+void DisplayBlend_EnableRunScript(void);
+void Actor_SetSpritePriorityDirect();
+void Event_Start(void);
 void Func_02004e64(void);
 void Func_02004f54(void);
 void Func_02004f5c();
-void Func_02004f64();
+void Event_SetDestination();
 void Func_02004fc4();
 void Func_02004fec();
 void Func_02005004();
@@ -197,7 +197,7 @@ s32 Scene_Initialize(void) {
       Func_02002d30();
     }
     if (*early == 20) {
-      Func_02004e5c();
+      Event_Start();
       C1(Event_ResolvePendingActions, 0);
       C4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, work->currentOwner, 0, 0);
@@ -296,7 +296,7 @@ s32 Scene_Initialize(void) {
         C1(Sound_Play, 390);
         C1(GameFlag_SetBit, 0x9ac);
         C1(GameFlag_SetBit, 0x9de);
-        Func_02004e5c();
+        Event_Start();
         C1(Event_ResolvePendingActions, 0);
         C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
         C2(Actor_SetMovementTypeById, 9, 1);
@@ -381,7 +381,7 @@ s32 Scene_Initialize(void) {
         C1(Sound_Play, 215);
         object = FieldActor_Create(285, 0x1e80000, -0x100000, 0x1590000);
         C2(Actor_SetSingleChildFlags, object, 0);
-        C2(Func_02004dac, object, gData_0200539c);
+        C2(Actor_StartScript, object, gData_0200539c);
         C2(Func_02004d9c, object, 1);
         C2(Animation_ApplyChildValues, object, 6);
         C3(Actor_Jump, 10, 2, 0);
@@ -392,7 +392,7 @@ s32 Scene_Initialize(void) {
         C1(Sound_Play, 136);
         object = FieldActor_Create(412, 0x1e80000, -0x100000, 0x1590000);
         C2(Actor_SetSingleChildFlags, object, 0);
-        C2(Func_02004dac, object, gData_02005360);
+        C2(Actor_StartScript, object, gData_02005360);
         ((struct GaiaRockAnimation *)object->sprite)->angle = 0x2000;
         object->speedLimit = 0x18000;
         *(u8 *)&object->motionFlags = 0;
@@ -419,7 +419,7 @@ s32 Scene_Initialize(void) {
               403, 0x1c80000 + (dx << 16), -0x200000, 0x1660000 + (dz << 16));
           C2(Func_02004d9c, shards[i], 2);
           C2(Actor_SetSingleChildFlags, shards[i], 0);
-          C2(Func_02004dac, shards[i], gData_0200539c);
+          C2(Actor_StartScript, shards[i], gData_0200539c);
         }
         dragon->velocityY = 0xa0000;
         Actor_GetById(10)->actionFlags &= 254;
@@ -465,7 +465,7 @@ s32 Scene_Initialize(void) {
       flag = Test(0x927);
       if (flag != 0)
         goto end;
-      Func_02004e5c();
+      Event_Start();
       C1(Event_ResolvePendingActions, 0);
       C1(GameFlag_SetBit, 0x927);
       C1(Event_SetMessageId, (s32)MsgFieldItLooksLikeTheDragon);
@@ -595,7 +595,7 @@ s32 Scene_Initialize(void) {
       alpha = REG_BLDALPHA;
       C3(Map_SetScreenShake, 0xa0000, 0xa0000, scale);
       C1(Sound_Play, 107);
-      Func_02004ddc();
+      DisplayBlend_EnableRunScript();
       alpha = *(u8 *)&alpha;
       while (alpha != 0) {
         REG_BLDALPHA = alpha | 0x1000;
@@ -637,10 +637,10 @@ s32 Scene_Initialize(void) {
         alpha++;
         C1(wait, 1);
       }
-      Func_02004dd4();
+      DisplayBlend_DisableRunScript();
       Func_02004e64();
     } else if (*entrance == 11) {
-      Func_02004e5c();
+      Event_Start();
       C1(Event_ResolvePendingActions, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1c00000, 0x1580000);
@@ -655,7 +655,7 @@ s32 Scene_Initialize(void) {
       message = (s32)MsgFieldYouYouCannotFightThe;
       goto leave;
     } else if (*entrance == 12) {
-      Func_02004e5c();
+      Event_Start();
       C1(Event_ResolvePendingActions, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1ae0000, 0x1400000);
@@ -672,7 +672,7 @@ s32 Scene_Initialize(void) {
       Event_ShowMessageAndWait(10, 0);
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
-      C2(Func_02004f64, (s16)room->savedScene, (s16)room->savedEntrance);
+      C2(Event_SetDestination, (s16)room->savedScene, (s16)room->savedEntrance);
       C2(Func_02005004, room->scene, *entrance);
       Func_02004e64();
     }
@@ -683,10 +683,10 @@ s32 Scene_Initialize(void) {
     struct Actor *object = Actor_Get(8);
 
     object->priorityFlags |= mask;
-    C2(Func_02004e3c, object, 3);
+    C2(Actor_SetSpritePriorityDirect, object, 3);
     object = Actor_Get(9);
     object->priorityFlags |= mask;
-    C2(Func_02004e3c, object, 3);
+    C2(Actor_SetSpritePriorityDirect, object, 3);
     C2(Func_02002ac8, 8, 12);
     C2(Func_02002ac8, 9, 12);
     if (Test(0xa62)) {
@@ -714,7 +714,7 @@ s32 Scene_Initialize(void) {
     struct Actor *other;
 
     object = Actor_GetById(10);
-    C2(Func_02004e3c, object, 3);
+    C2(Actor_SetSpritePriorityDirect, object, 3);
     C2(Func_02002ac8, 8, 10);
     C2(Func_02002ac8, 9, 11);
     if (!Test(0x9bc))
@@ -748,7 +748,7 @@ s32 Scene_Initialize(void) {
     if (work->entrance == 6) {
       s32 frames = 60;
 
-      Func_02004e5c();
+      Event_Start();
       C1(Event_ResolvePendingActions, 0);
       C4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
@@ -761,7 +761,7 @@ s32 Scene_Initialize(void) {
       other = FieldActor_Create(324, object->x, object->y, object->z);
       if (other != NULL) {
         C2(Actor_SetSingleChildFlags, other, 0);
-        C2(Func_02004dac, other, gData_020053d8);
+        C2(Actor_StartScript, other, gData_020053d8);
         C2(Func_02004d9c, other, 1);
         C2(Animation_ApplyChildValues, other, 14);
         ((u8 *)other->sprite)[9] |= 12;
@@ -872,16 +872,16 @@ void Func_02001c9c(void);
 void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004d00(void);
 void Func_02004d9c(struct Actor *object, s32 mode);
-void Func_02004dac(struct Actor *object, const u8 *script);
+void Actor_StartScript(struct Actor *object, const u8 *script);
 void Func_02004dbc();
-void Func_02004dd4(void);
-void Func_02004ddc(void);
-void Func_02004e3c();
-void Func_02004e5c(void);
+void DisplayBlend_DisableRunScript(void);
+void DisplayBlend_EnableRunScript(void);
+void Actor_SetSpritePriorityDirect();
+void Event_Start(void);
 void Func_02004e64(void);
 void Func_02004f54(void);
 void Func_02004f5c();
-void Func_02004f64();
+void Event_SetDestination();
 void Func_02004fc4();
 void Func_02004fec();
 void Func_02005004();
@@ -909,7 +909,7 @@ s32 Scene_Initialize(void) {
       Func_02002d30();
     }
     if (*early == 20) {
-      Func_02004e5c();
+      Event_Start();
       C1(Event_ResolvePendingActions, 0);
       C4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, work->currentOwner, 0, 0);
@@ -1008,7 +1008,7 @@ s32 Scene_Initialize(void) {
         C1(Sound_Play, 390);
         C1(GameFlag_SetBit, 0x9ac);
         C1(GameFlag_SetBit, 0x9de);
-        Func_02004e5c();
+        Event_Start();
         C1(Event_ResolvePendingActions, 0);
         C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
         C2(Actor_SetMovementTypeById, 9, 1);
@@ -1093,7 +1093,7 @@ s32 Scene_Initialize(void) {
         C1(Sound_Play, 215);
         object = FieldActor_Create(285, 0x1e80000, -0x100000, 0x1590000);
         C2(Actor_SetSingleChildFlags, object, 0);
-        C2(Func_02004dac, object, gData_0200539c);
+        C2(Actor_StartScript, object, gData_0200539c);
         C2(Func_02004d9c, object, 1);
         C2(Animation_ApplyChildValues, object, 6);
         C3(Actor_Jump, 10, 2, 0);
@@ -1104,7 +1104,7 @@ s32 Scene_Initialize(void) {
         C1(Sound_Play, 136);
         object = FieldActor_Create(412, 0x1e80000, -0x100000, 0x1590000);
         C2(Actor_SetSingleChildFlags, object, 0);
-        C2(Func_02004dac, object, gData_02005360);
+        C2(Actor_StartScript, object, gData_02005360);
         ((struct GaiaRockAnimation *)object->sprite)->angle = 0x2000;
         object->speedLimit = 0x18000;
         *(u8 *)&object->motionFlags = 0;
@@ -1131,7 +1131,7 @@ s32 Scene_Initialize(void) {
               403, 0x1c80000 + (dx << 16), -0x200000, 0x1660000 + (dz << 16));
           C2(Func_02004d9c, shards[i], 2);
           C2(Actor_SetSingleChildFlags, shards[i], 0);
-          C2(Func_02004dac, shards[i], gData_0200539c);
+          C2(Actor_StartScript, shards[i], gData_0200539c);
         }
         dragon->velocityY = 0xa0000;
         Actor_GetById(10)->actionFlags &= 254;
@@ -1177,7 +1177,7 @@ s32 Scene_Initialize(void) {
       flag = Test(0x927);
       if (flag != 0)
         goto end;
-      Func_02004e5c();
+      Event_Start();
       C1(Event_ResolvePendingActions, 0);
       C1(GameFlag_SetBit, 0x927);
       C1(Event_SetMessageId, (s32)MsgFieldItLooksLikeTheDragon);
@@ -1307,7 +1307,7 @@ s32 Scene_Initialize(void) {
       alpha = REG_BLDALPHA;
       C3(Map_SetScreenShake, 0xa0000, 0xa0000, scale);
       C1(Sound_Play, 107);
-      Func_02004ddc();
+      DisplayBlend_EnableRunScript();
       alpha = *(u8 *)&alpha;
       while (alpha != 0) {
         REG_BLDALPHA = alpha | 0x1000;
@@ -1349,10 +1349,10 @@ s32 Scene_Initialize(void) {
         alpha++;
         C1(wait, 1);
       }
-      Func_02004dd4();
+      DisplayBlend_DisableRunScript();
       Func_02004e64();
     } else if (*entrance == 11) {
-      Func_02004e5c();
+      Event_Start();
       C1(Event_ResolvePendingActions, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1c00000, 0x1580000);
@@ -1368,10 +1368,10 @@ s32 Scene_Initialize(void) {
       Event_ShowMessageAndWait(10, 0);
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
-      C2(Func_02004f64, (s16)room->savedScene, (s16)room->savedEntrance);
+      C2(Event_SetDestination, (s16)room->savedScene, (s16)room->savedEntrance);
       Func_02004e64();
     } else if (*entrance == 12) {
-      Func_02004e5c();
+      Event_Start();
       C1(Event_ResolvePendingActions, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1ae0000, 0x1400000);
@@ -1386,7 +1386,7 @@ s32 Scene_Initialize(void) {
       Event_ShowMessageAndWait(10, 0);
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
-      C2(Func_02004f64, (s16)room->savedScene, (s16)room->savedEntrance);
+      C2(Event_SetDestination, (s16)room->savedScene, (s16)room->savedEntrance);
       Func_02004e64();
     }
   } else if (work->scene == (s32)&SceneId_Ov681Room2) {
@@ -1396,10 +1396,10 @@ s32 Scene_Initialize(void) {
     struct Actor *object = Actor_Get(8);
 
     object->priorityFlags |= mask;
-    C2(Func_02004e3c, object, 3);
+    C2(Actor_SetSpritePriorityDirect, object, 3);
     object = Actor_Get(9);
     object->priorityFlags |= mask;
-    C2(Func_02004e3c, object, 3);
+    C2(Actor_SetSpritePriorityDirect, object, 3);
     C2(Func_02002ac8, 8, 12);
     C2(Func_02002ac8, 9, 12);
     if (Test(0xa62)) {
@@ -1427,7 +1427,7 @@ s32 Scene_Initialize(void) {
     struct Actor *other;
 
     object = Actor_GetById(10);
-    C2(Func_02004e3c, object, 3);
+    C2(Actor_SetSpritePriorityDirect, object, 3);
     C2(Func_02002ac8, 8, 10);
     C2(Func_02002ac8, 9, 11);
     if (!Test(0x9bc))
@@ -1461,7 +1461,7 @@ s32 Scene_Initialize(void) {
     if (work->entrance == 6) {
       s32 frames = 60;
 
-      Func_02004e5c();
+      Event_Start();
       C1(Event_ResolvePendingActions, 0);
       C4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
@@ -1474,7 +1474,7 @@ s32 Scene_Initialize(void) {
       other = FieldActor_Create(324, object->x, object->y, object->z);
       if (other != NULL) {
         C2(Actor_SetSingleChildFlags, other, 0);
-        C2(Func_02004dac, other, gData_020053d8);
+        C2(Actor_StartScript, other, gData_020053d8);
         C2(Func_02004d9c, other, 1);
         C2(Animation_ApplyChildValues, other, 14);
         ((u8 *)other->sprite)[9] |= 12;
@@ -1554,8 +1554,8 @@ void *Unit_Get(s32 owner);
 void Func_020044f8(s32 level);
 void Func_020048a0(void);
 s32 Func_02004904(void);
-void Func_02004dc4(void);
-void Func_02004de4(u16 *script);
+void Map_CenterOnFollowedPoint(void);
+void DisplayBlend_StartScript(u16 *script);
 void Func_02000aac(void);
 void Func_02000a60(void);
 
@@ -1636,14 +1636,14 @@ s32 Scene_PrepareMap(void) {
           Iwram_MulQ16(((struct MapWork *)map)->viewZ,
                        FIELD_AT(layer, s32, 20)) +
           FIELD_AT(layer, s32, 12);
-      Func_02004dc4();
+      Map_CenterOnFollowedPoint();
       System_Wait(1);
       /* FAKEMATCH(wrapper): the copy forwarded through CopyWords_, so the
          blend buffer's address is loaded straight into r0 at each call; as a
          direct Iwram_CopyWords call, 17 of 229 instructions differ in
          tla-en. */
       CopyWords_(Ram_MapCollision + 0x1e00, gData_020053e4, 24);
-      Func_02004de4((u16 *)(Ram_MapCollision + 0x1e00));
+      DisplayBlend_StartScript((u16 *)(Ram_MapCollision + 0x1e00));
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room2) {
     switch (gMainRoutineWork.entrance) {
@@ -2120,12 +2120,12 @@ void Func_02004af0(s32 id, s32 flag) {
   value = id;
   leader = Actor_Get(entryWork->currentOwner);
   gravity = leader->gravity;
-  Func_02004e5c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   object = Actor_Get(value);
   Func_02004a5c(value, leader->x, leader->y, leader->z);
-  Func_02004dac(object, gData_020062d4);
+  Actor_StartScript(object, gData_020062d4);
   i = 15;
 burst:
   object = (FieldActor_Create(255, leader->x, leader->y + 0x100000, leader->z));
@@ -2134,7 +2134,7 @@ burst:
     u32 size;
     s32 scale;
 
-    Func_02004dac(object, gData_02006290);
+    Actor_StartScript(object, gData_02006290);
     angle = Random16Far();
     value = Random16Far();
     size = Random16Far();

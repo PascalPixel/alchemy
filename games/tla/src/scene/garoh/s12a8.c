@@ -65,7 +65,7 @@ struct SpawnObject {
 extern u8 gData_02006330__s12a8[] __asm__("gData_02006330");
 
 void Func_02005164(struct SpawnObject *object, s32 mode);
-void Func_0200516c(struct SpawnObject *object, const void *script);
+void Actor_StartScript(struct SpawnObject *object, const void *script);
 
 void Func_0200132c(void) {
   s32 b = 10;
@@ -93,7 +93,7 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
   if (object != 0) {
     sprite = object->sprite;
     Func_02005164(object, 1);
-    Func_0200516c(object, gData_02006330__s12a8);
+    Actor_StartScript(object, gData_02006330__s12a8);
     object->motionFlags = 0;
     /* FAKEMATCH(barrier): an empty asm, so the stack argument is loaded before
      * the pooled zero for nextFrame; without it, 2 of 32 instructions differ in
@@ -117,10 +117,10 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 #include "field.h"
 #include "text/msg_ids.h"
 
-void Func_02005304(s32 a, s32 b);
-void Func_0200530c(s32 a, s32 b);
-void Func_02005314(void);
-void Func_0200531c(void);
+void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
+void BattleEffect_SetupObjectPair(s32 a, s32 b);
+void BattleEffect_StopMainActor(void);
+void BattleEffect_CleanupSceneObjects(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -147,21 +147,21 @@ void Func_020013b0(s32 id) {
 }
 
 void Func_02001418(s32 actor) {
-  Func_02005304(144, 1);
-  Func_0200530c(actor, 0);
+  BattleEffect_LoadActionEffectResources(144, 1);
+  BattleEffect_SetupObjectPair(actor, 0);
   Field_DispatchTypeHandler(1);
   BlendBack(44, 5, 3, 3, 19, 5);
-  Func_02005314();
-  Func_0200531c();
+  BattleEffect_StopMainActor();
+  BattleEffect_CleanupSceneObjects();
 }
 
 void Func_02001454(s32 actor) {
-  Func_02005304(144, 1);
-  Func_0200530c(actor, 0);
+  BattleEffect_LoadActionEffectResources(144, 1);
+  BattleEffect_SetupObjectPair(actor, 0);
   Field_DispatchTypeHandler(3);
   BlendBack(39, 5, 3, 3, 19, 5);
-  Func_02005314();
-  Func_0200531c();
+  BattleEffect_StopMainActor();
+  BattleEffect_CleanupSceneObjects();
 }
 
 #define ACTOR_MODE_THEN_WAIT(id, mode, frames)                                 \
@@ -200,7 +200,7 @@ void Func_02001490(void) {
   s32 toX, toZ;
 
   Event_SetFlag(0x91c);
-  Func_020051ac();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(8, 0x600000, 0x80000);
   FieldEvent_SetMessageId((s32)MsgGaroh01);
@@ -543,7 +543,7 @@ loop2:
     FOLLOW_LEADER(7);
   }
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_020051b4();
+  Event_End();
 }
 
 void Func_020022f4(void) {
@@ -554,7 +554,7 @@ void Func_020022f4(void) {
   s32 b1;
 
   Event_SetFlag(0x91d);
-  Func_020051ac();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(((s32)MsgGaroh13));
   Actor_SetPosition(8, PIXELS(144), PIXELS(752));
@@ -684,7 +684,7 @@ L_0200a66c:;
     asm volatile("" : "+l"(a0));
     Actor_SetPosition(a0, 0, 0);
   }
-  Func_020051b4();
+  Event_End();
 }
 
 s32 Func_02001344();
@@ -717,7 +717,7 @@ void Func_02002694(void) {
   s32 p2;
 
   Event_SetFlag(0x91e);
-  Func_020051ac();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(((s32)MsgGaroh14));
   Actor_SetPosition(10, PIXELS(328), PIXELS(40));
@@ -1495,7 +1495,7 @@ L_0200b84e:;
   FieldCamera_FollowActor(*(s32 *)((p2 + 0x214)), 1);
   Func_02001344();
   FieldEvent_SetExitRequest(11);
-  Func_020051b4();
+  Event_End();
 }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -1548,7 +1548,7 @@ void Func_02003878(void) {
   s32 p2;
 
   Event_SetFlag(0x91f);
-  Func_020051ac();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(((s32)MsgGaroh28));
   Actor_SetPosition(10, 0x1480000, 0x280000);
@@ -2463,7 +2463,7 @@ L_0200d0fa:;
     s32 a0 = *(s32 *)((p2 + 0x214));
     FieldCamera_FollowActor(a0, 1);
   }
-  Func_020051b4();
+  Event_End();
 }
 
 #include "objcmd.h"

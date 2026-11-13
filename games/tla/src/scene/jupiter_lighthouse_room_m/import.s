@@ -38,9 +38,9 @@ Heap_Alloc:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_0200468c
+	.global Resource_DecodeType01
 	.thumb_func
-Func_0200468c:
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global VramCache_Load
 	.thumb_func
@@ -50,17 +50,17 @@ VramCache_Load:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
-	.global Func_020046a4
+	.global DebugText_Clear
 	.thumb_func
-Func_020046a4:
+DebugText_Clear:
 	overlay_veneer DebugText_ClearFar
 	.global Func_020046ac
 	.thumb_func
 Func_020046ac:
 	overlay_veneer Oam_AddSpriteAtDepthFar
-	.global Func_020046b4
+	.global Window_LoadGraphics
 	.thumb_func
-Func_020046b4:
+Window_LoadGraphics:
 	overlay_veneer Window_LoadGraphicsFar
 	.global Resource_GetTableEntry
 	.thumb_func
@@ -98,9 +98,9 @@ Func_020046f4:
 	.thumb_func
 Actor_SetAnimationSpeed:
 	overlay_veneer Actor_SetAnimationSpeedFar
-	.global Func_02004704
+	.global Actor_StartScript
 	.thumb_func
-Func_02004704:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -110,9 +110,9 @@ Import_ActorCreate:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Func_0200471c
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_0200471c:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -178,9 +178,9 @@ PartyInventory_Add:
 	.thumb_func
 PartyInventory_Remove:
 	overlay_veneer PartyInventory_RemoveFar
-	.global Func_020047a4
+	.global Inventory_Equip
 	.thumb_func
-Func_020047a4:
+Inventory_Equip:
 	overlay_veneer Inventory_EquipFar
 	.global Unit_AddHp
 	.thumb_func
@@ -202,13 +202,13 @@ Party_RemoveActiveOwner:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_020047d4
+	.global Event_Start
 	.thumb_func
-Func_020047d4:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020047dc
+	.global Event_End
 	.thumb_func
-Func_020047dc:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -354,9 +354,9 @@ Func_020048f4:
 	.thumb_func
 Func_080d4568:
 	overlay_veneer Func_080c8258
-	.global Func_02004904
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_02004904:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
@@ -394,9 +394,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02004954
+	.global Camera_WorldToScreen
 	.thumb_func
-Func_02004954:
+Camera_WorldToScreen:
 	overlay_veneer Camera_WorldToScreenFar
 	.ifndef TLA_EDITION_JA
 	.global Event_ClearInvalidPackedValues

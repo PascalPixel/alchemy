@@ -16,7 +16,7 @@ extern u32 gData_02003e0c[];
 struct ResourceEntry *Func_02003bd4(void *sprite, struct ResourceEntry *last);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 void Func_02003a54(struct FieldEffect *effect, s32 mode);
-void Func_02003a5c(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
@@ -41,7 +41,7 @@ void Func_020034ac(s32 spread) {
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
       Func_02003a54(effect, 2);
-      Func_02003a5c(effect, gData_02003e0c);
+      Actor_StartScript(effect, gData_02003e0c);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -87,7 +87,7 @@ void Func_020035e0(void) {
       effect->collisionFlags = zero;
       Actor_SetSingleChildFlags((struct Actor *)effect, 0);
       Func_02003a54(effect, 2);
-      Func_02003a5c(effect, gData_02003e3c);
+      Actor_StartScript(effect, gData_02003e3c);
       angle = i << 12;
       effect->velocity.x = Math_Cosine(angle);
       effect->velocity.y = zero;
@@ -160,7 +160,7 @@ struct ParticleWork {
 };
 
 void Func_02003c3c(struct ParticleSprite *sprite, struct Particle *particle);
-void Func_02003c44(struct Particle *particle, s32 unk1, s32 step);
+void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
 void Func_0200379c(void) {
   struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
@@ -179,7 +179,7 @@ next:
 
     sprite->attr = (attr & ~0x3ff) | tile;
     Func_02003c3c(sprite, particle);
-    Func_02003c44(particle, 63, step);
+    BattleEffect_StepVector3(particle, 63, step);
     particle->age++;
   }
   i--;

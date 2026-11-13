@@ -47,7 +47,7 @@ void Func_02002068(void) {
   struct ShamanVillageObject *object;
   s32 angle;
 
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(78);
   angle = 0xc000;
@@ -75,10 +75,10 @@ void Func_02002068(void) {
     Func_0200481c(rod);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, angle);
-  Func_02004944(18, gMainRoutineWork.currentOwner);
-  Func_02004944(7, gMainRoutineWork.currentOwner);
-  Func_02004944(5, gMainRoutineWork.currentOwner);
-  Func_02004944(6, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(18, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
   wait(1);
   Actor_SetSpeed(18, 0x19999, 0xcccc);
   Actor_SetSpeed(7, 0x19999, 0xcccc);
@@ -241,7 +241,7 @@ void Func_02002068(void) {
   Actor_Stop(5);
   Actor_Stop(6);
   wait(1);
-  Func_02004a2c();
+  Party_PlaySavedMusic();
   Camera_SetSpeedParameters(0x33333, 0x6666);
   Camera_MoveWithinMapBounds(PIXELS(120), -1, PIXELS(260), 1);
   Func_020049f4();
@@ -270,37 +270,37 @@ void Func_02002068(void) {
   Event_Wait(20);
   GameFlag_SetBit(514);
   GameFlag_SetBit(0x9e1);
-  Func_020048cc();
+  Event_End();
 }
 
 void Func_0200279c(void) {
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanShowMeSomething);
   Event_ShowMessageAndWait(15, 0);
-  Func_020048cc();
+  Event_End();
 }
 
 void Func_020027c0(void) {
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanCannotBuyGift);
   Event_ShowMessageAndWait(16, 0);
-  Func_020048cc();
+  Event_End();
 }
 
 void Func_020027e4(void) {
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanShowItToMoapa);
   Event_ShowMessageAndWait(17, 0);
-  Func_020048cc();
+  Event_End();
 }
 
 void Func_02002808(void) {
   if (GameFlag_Test(0x9fe)) {
     Sound_Play(0);
-    Func_020048c4();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgShamanFortuneGreeting);
     Actor_SetModeById(17, 5);
@@ -309,7 +309,7 @@ void Func_02002808(void) {
     Func_020011f8();
     Actor_SetModeById(17, 1);
     GameFlag_SetBit(0x203);
-    Func_020048cc();
+    Event_End();
   }
 }
 
@@ -422,7 +422,7 @@ extern s16 gData_020064b0;
 extern s16 gData_02006494;
 
 s32 Resource_ResetEntry(u32 slot);
-void Func_020047cc(void *entry, s32 slot);
+void Oam_AddSpriteAtDepth(void *entry, s32 slot);
 
 /// The portrait mode task: reads its command script, eases the portrait's
 /// scale, blend and position, and queues its sprites.
@@ -547,7 +547,7 @@ commands:
         *write++ = 0;
         *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
         *write++ = 0xf400 | tile;
-        Func_020047cc(sprite++, 236);
+        Oam_AddSpriteAtDepth(sprite++, 236);
       }
       tile += 8;
     }
@@ -564,7 +564,7 @@ commands:
         *write++ = 0;
         *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
         *write++ = 0xf400 | (tile + gData_02006494);
-        Func_020047cc(sprite++, 236);
+        Oam_AddSpriteAtDepth(sprite++, 236);
       }
       tile += 8;
     }
@@ -582,7 +582,7 @@ commands:
         *write++ = 0;
         *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
         *write++ = 0xf400 | (tile + gData_02006494);
-        Func_020047cc(sprite++, 236);
+        Oam_AddSpriteAtDepth(sprite++, 236);
       }
       tile += 8;
     }
@@ -598,7 +598,7 @@ commands:
       *write++ = 0;
       *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
       *write++ = 0xf400 | (tile + gData_02006494);
-      Func_020047cc(sprite, 236);
+      Oam_AddSpriteAtDepth(sprite, 236);
     }
     break;
 #endif
@@ -611,7 +611,7 @@ commands:
       *write++ = 0;
       *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
       *write++ = 0xf400 | (tile + gData_02006494);
-      Func_020047cc(sprite, 236);
+      Oam_AddSpriteAtDepth(sprite, 236);
     }
     break;
   }
@@ -757,7 +757,7 @@ void Func_020030bc(void) {
 
   work[34] = 0;
   work[35] = 0;
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -765,11 +765,11 @@ void Func_020030bc(void) {
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(528), 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 168, 536);
-  Func_02004944(18, gMainRoutineWork.currentOwner);
-  Func_02004944(7, gMainRoutineWork.currentOwner);
-  Func_02004944(5, gMainRoutineWork.currentOwner);
-  Func_02004944(7, gMainRoutineWork.currentOwner);
-  Func_02004944(6, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(18, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
   wait(1);
   Actor_FaceDirection(6, FACING_NORTH, 0);
   Actor_SetSpeed(18, 0x10000, 0x8000);
@@ -1019,7 +1019,7 @@ void Func_020030bc(void) {
   Actor_Stop(5);
   Actor_Stop(7);
   Actor_Stop(6);
-  Func_02004a2c();
+  Party_PlaySavedMusic();
   Camera_SetSpeedParameters(0x4cccc, 0x9999);
   Camera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(540), 1);
   Event_Wait(20);
@@ -1055,18 +1055,18 @@ void Func_020030bc(void) {
   Actor_SetMovementTypeById(5, gData_020050bc);
   Actor_SetMovementTypeAndWaitById(18, gData_020050bc);
   GameFlag_SetBit(0x94c);
-  Func_020048cc();
+  Event_End();
 }
 
 void Func_02003b24(void) {
   Actor_SetSpritePriority(6, 1);
   Sound_Play(131);
-  Func_02004a54();
-  Func_02004a6c(((struct ShamanVillageObject *)Actor_GetById(6)), 2);
+  BattleEffect_StartArcEffect();
+  BattleEffect_SetObjectUpdateMode(((struct ShamanVillageObject *)Actor_GetById(6)), 2);
   Event_Wait(40);
-  Func_02004a6c(((struct ShamanVillageObject *)Actor_GetById(6)), 0);
-  Func_02004a64();
-  Func_02004a5c();
+  BattleEffect_SetObjectUpdateMode(((struct ShamanVillageObject *)Actor_GetById(6)), 0);
+  BattleEffect_WaitForArcGroups();
+  BattleEffect_EndArcEffect();
   Func_0200057c();
   Actor_SetSpritePriority(6, 2);
 }
@@ -1076,7 +1076,7 @@ void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   struct ShamanVillageObject *object;
   s32 cell;
 
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (mode == 2)
     Sound_Play(188);
@@ -1114,7 +1114,7 @@ void Func_02003cc8(void) { Func_02003b6c(43, 42, 10, 8, 1, 2); }
 
 void Func_02003ce4(void) {
   if (GameFlag_Test(0x202)) {
-    Func_020048c4();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Sound_Play(123);
     Event_FinishScreenTransition();
@@ -1125,20 +1125,20 @@ void Func_02003ce4(void) {
   }
 }
 
-void Func_0200482c(void);
+void Map_CenterOnFollowedPoint(void);
 
 void Func_02003d30(void) {
   s32 angle;
 
   GameFlag_ClearBit(0x11b);
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
   ((struct ShamanVillageObject *)Actor_GetById(15))->facing = 0xc000;
   FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(182), 0);
   wait(1);
-  Func_0200482c();
+  Map_CenterOnFollowedPoint();
   wait(1);
   angle = 0x4000;
   Event_StartScreenTransition();
@@ -1189,9 +1189,9 @@ void Func_02003d30(void) {
     Event_ShowMessageAndWait(0x200f, 0);
     Func_0200290c();
   }
-  Func_02004a2c();
+  Party_PlaySavedMusic();
   GameFlag_ClearBit(0x12f);
-  Func_020048cc();
+  Event_End();
 }
 
 void Func_02004060(void);
@@ -1201,7 +1201,7 @@ void Func_02004534(void);
 void Func_020046ec(void);
 
 void Func_02003f78(void) {
-  Func_020048c4();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanMoapaAdvisesLeaving);
   ((struct ShamanVillageObject *)Actor_GetById(15))->facing = 0x8000;
@@ -1209,7 +1209,7 @@ void Func_02003f78(void) {
   ((struct ShamanVillageObject *)Actor_GetById(17))->facing = 0x8000;
   Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(280), 0);
   wait(1);
-  Func_0200482c();
+  Map_CenterOnFollowedPoint();
   wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1217,7 +1217,7 @@ void Func_02003f78(void) {
   Event_ShowMessageAndWait(0x200f, 0);
   Func_0200289c();
   GameFlag_ClearBit(0x12f);
-  Func_020048cc();
+  Event_End();
 }
 
 s32 Scene_Initialize(void) {
@@ -1436,7 +1436,7 @@ void Func_02004534(void) {
   if ((gMainRoutineWork.entrance == 30 || gMainRoutineWork.entrance == 31) &&
       !GameFlag_Test(0x109)) {
     Func_020048ac(1);
-    Func_020048c4();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Actor_SetModeById(gMainRoutineWork.currentOwner, 41);
     Actor_SetSingleChildFlags(((struct ShamanVillageObject *)Actor_GetById(
@@ -1475,7 +1475,7 @@ void Func_02004534(void) {
     Actor_SetSingleChildFlags(((struct ShamanVillageObject *)Actor_GetById(
                                   gMainRoutineWork.currentOwner)),
                               1);
-    Func_020048cc();
+    Event_End();
     if (gMainRoutineWork.entrance == 30) {
       GameFlag_SetBit(0x9fe);
       GameFlag_SetBit(0x94d);

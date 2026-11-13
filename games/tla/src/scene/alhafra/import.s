@@ -26,13 +26,13 @@ PartyInventory_Remove:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02001be4
+	.global Event_Start
 	.thumb_func
-Func_02001be4:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02001bec
+	.global Event_End
 	.thumb_func
-Func_02001bec:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func

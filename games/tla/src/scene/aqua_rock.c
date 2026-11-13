@@ -353,7 +353,7 @@ void Func_02000b68(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 i;
 
-  Func_02002998();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object->update = (void (*)(void))Func_02000b10;
   wait(30);
@@ -397,7 +397,7 @@ void Func_02000b68(s32 unused, s32 id) {
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(30);
   Event_Wait(15);
-  Func_020029a0();
+  Event_End();
 }
 
 void GameFlag_SetByte(s32 flag, s32 value);
@@ -498,7 +498,7 @@ void Func_02000d80(void) {
     if (result > 0) {
       if (gMainRoutineWork.scene != (s32)&SceneId_Ov67bRoom1)
         return;
-      Func_02002998();
+      Event_Start();
       Event_ResolvePendingActions(0);
       leader->motionFlags = 0;
       Actor_SetSingleChildFlags(leader, 0);
@@ -513,7 +513,7 @@ void Func_02000d80(void) {
         wait(1);
       }
       gMainRoutineWork.renderMode = 0;
-      Func_020029a0();
+      Event_End();
       Import_EventSetExitRequest(6);
       return;
     }
@@ -585,7 +585,7 @@ void Func_0200106c(void) {
   s32 i;
   struct MainRoutineWork *state;
 
-  Func_02002998();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 257);
   Func_02002910(object, 40);
@@ -601,7 +601,7 @@ void Func_0200106c(void) {
   Actor_SetSingleChildFlags(object, 1);
   Func_02002910(object, 1);
   state->renderMode = 0;
-  Func_020029a0();
+  Event_End();
 }
 
 void Func_020010f4(s32 unused, s32 id) {
@@ -665,7 +665,7 @@ void Func_02001224(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 i;
 
-  Func_02002998();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object->update = (void (*)(void))Func_02000b10;
   wait(30);
@@ -707,7 +707,7 @@ void Func_02001224(s32 unused, s32 id) {
     wait(10);
   }
   Event_Wait(30);
-  Func_020029a0();
+  Event_End();
 }
 
 const u8 *Scene_GetEvents(void) {
@@ -744,7 +744,7 @@ void Func_02001460(void) {
   struct MainRoutineWork *state;
 
   Sound_Play(612);
-  Func_02002998();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Actor_SetSingleChildFlags(object, 0);
@@ -768,7 +768,7 @@ void Func_02001460(void) {
     Actor_SetPositionAndCommit(state->currentOwner, 264, 760);
   else
     Actor_SetPositionAndCommit(state->currentOwner, 264, 824);
-  Func_020029a0();
+  Event_End();
 }
 
 void Func_0200153c(void) {
@@ -777,7 +777,7 @@ void Func_0200153c(void) {
   s32 i;
   s32 angle;
 
-  Func_02002998();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Actor_SetSingleChildFlags(object, 0);
@@ -796,7 +796,7 @@ void Func_0200153c(void) {
   object->velocityY = 0xc0000;
   Actor_SetSingleChildFlags(object, 1);
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 680, 912);
-  Func_020029a0();
+  Event_End();
 }
 
 void Func_020015e8(struct Actor *object) {
@@ -837,7 +837,7 @@ void Func_02001670(struct Actor *object) {
 void Func_0200169c(void) {
   s32 i;
 
-  Func_02002998();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, 0, 0);
@@ -886,7 +886,7 @@ settle:
   GameFlag_SetBit(0x109);
   GameFlag_ClearBit(0x12f);
   Import_EventSetExitRequest(77);
-  Func_020029a0();
+  Event_End();
   GameFlag_SetBit(0x955);
 }
 #undef UNK02003450_SET
@@ -1088,7 +1088,7 @@ void Func_02001d30(struct Actor *object) {
     struct FieldSprite *sprite = child->sprite;
 
     child->terrainHeight = object->terrainHeight;
-    Func_02002918(child, gData_02002c44);
+    Actor_StartScript(child, gData_02002c44);
     child->motionFlags = 0;
     if (sprite != 0) {
       Animation_ApplyChildArgument(sprite, 1);
@@ -1109,7 +1109,7 @@ void Func_02001d98(struct Actor *object) {
     if (child != 0) {
       struct FieldSprite *sprite = child->sprite;
 
-      Func_02002918(child, gData_02002c50);
+      Actor_StartScript(child, gData_02002c50);
       child->motionFlags = 0;
       child->y = -0x78000;
       child->terrainId = 1;
@@ -1209,7 +1209,7 @@ void Func_02001f90(s32 arg0) {
   s32 i;
   s32 angle;
 
-  Func_02002998();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   object->motionFlags = 0;
@@ -1228,7 +1228,7 @@ void Func_02001f90(s32 arg0) {
       Func_02001d30(Actor_GetById(15));
     wait(1);
   }
-  Func_020029a0();
+  Event_End();
   Import_EventSetExitRequest(arg0);
 }
 
@@ -1262,7 +1262,7 @@ void Func_020020bc(s32 entrance) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 *owner = &gMainRoutineWork.currentOwner;
 
-  Func_02002998();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(228);
   leader->update = (void (*)(void))Func_02002030;
@@ -1277,7 +1277,7 @@ void Func_020020bc(s32 entrance) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(entrance);
-  Func_020029a0();
+  Event_End();
 }
 
 void Func_02002158(void) {
@@ -1287,7 +1287,7 @@ void Func_02002158(void) {
   s32 offset;
 
   if (flag == 0) {
-    Func_02002998();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     leader->motionFlags = flag;
@@ -1308,15 +1308,15 @@ void Func_02002158(void) {
     Actor_CommitPositionAndActivate(*owner, 0, offset);
     leader->motionFlags = 3;
     leader->update = (void (*)(void))flag;
-    Func_02002a60();
+    Event_NoOp();
     Event_WaitTransitionFrames();
-    Func_020029a0();
+    Event_End();
   }
 }
 
 #include "graphics/vram_tab.h"
 
-void Func_020028d0(void *entry, s32 slot);
+void Oam_AddSpriteAtDepth(void *entry, s32 slot);
 
 void Func_02002250(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -1385,7 +1385,7 @@ void Func_02002250(void) {
         entry->oam[0] = 0;
         entry->oam[1] = screenY | (x << 16) | 0x2000;
         entry->oam[2] = (tile + (entry->age & 3) * 2) | 0x400;
-        Func_020028d0(entry->oam, z);
+        Oam_AddSpriteAtDepth(entry->oam, z);
       }
     }
   }
@@ -1443,7 +1443,7 @@ void Func_020023c0(void) {
         bubble->oam[0] = 0;
         bubble->oam[1] = screenY | (x << 16) | 0x2000;
         bubble->oam[2] = (tile + (bubble->age & 3) * 2) | 0x400;
-        Func_020028d0(bubble->oam, depth);
+        Oam_AddSpriteAtDepth(bubble->oam, depth);
       }
     }
   }
@@ -1551,7 +1551,7 @@ void Func_020025d4(void) {
       frame++;
       particle->shape = *(u8 *)frame;
       particle->size = *(u8 *)(frame + 1);
-      Func_020028d0(particle, 240);
+      Oam_AddSpriteAtDepth(particle, 240);
     }
     if (particle->timer == 0) {
       s32 *leader = work->leader;

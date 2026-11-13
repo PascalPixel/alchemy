@@ -224,7 +224,7 @@ void Func_020004cc(void) {
   s32 index;
   s32 i;
 
-  Func_020051ac();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   // A goto loop: the bytes rebuild the zero on every pass, which a for
   // loop hoists (differ 12).
@@ -258,7 +258,7 @@ loop:
   FieldEvent_SetExitRequest(*(s16 *)(work + 0x154));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_020051b4();
+  Event_End();
 }
 
 extern u8 MsgGaroh02[];
@@ -313,19 +313,19 @@ void Func_02000618(s32 actor) {
 }
 
 void Func_02000664(s32 actor) {
-  Func_020051ac();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgGaroh17);
   FieldEvent_ShowMessageThenWait(actor, 0, 10);
   FieldEvent_ShowMessageThenWait(actor, 0, 10);
-  Func_020051b4();
+  Event_End();
 }
 
 void Func_02000698(s32 actor) {
   s32 flag;
   s32 msg;
 
-  Func_020051ac();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   flag = Event_GetFlag(0x300);
   msg = (s32)MsgGaroh04;
@@ -337,14 +337,14 @@ void Func_02000698(s32 actor) {
     FieldEvent_ShowMessageThenWait(actor, 0, 10);
   }
   FieldEvent_ShowMessageThenWait(actor, 0, 10);
-  Func_020051b4();
+  Event_End();
 }
 
 extern u8 MsgGaroh20[];
 extern u8 MsgGaroh21[];
 
 void Func_020006ec(void) {
-  Func_020051ac();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_Stop(13);
   Actor_SetAnimation(13, 1);
@@ -379,41 +379,41 @@ void Func_020006ec(void) {
   FieldEvent_ShowMessageThenWait(13, 0, 10);
   Event_SetFlag(0x301);
   Actor_SetScript(13, 2);
-  Func_020051b4();
+  Event_End();
 }
 
 extern u8 MsgGaroh12[];
 
 void Func_020052b4(void);
-void Func_02005304(s32 a, s32 b);
-void Func_0200530c(s32 id, s32 a);
-void Func_02005314(void);
-void Func_0200531c(void);
+void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
+void BattleEffect_SetupObjectPair(s32 id, s32 a);
+void BattleEffect_StopMainActor(void);
+void BattleEffect_CleanupSceneObjects(void);
 
 void Func_02000808(void) {
   s32 flag;
   s32 speed;
 
   void Func_020007a0(s32 id) {
-    Func_02005304(144, 1);
-    Func_0200530c(id, 0);
+    BattleEffect_LoadActionEffectResources(144, 1);
+    BattleEffect_SetupObjectPair(id, 0);
     Field_DispatchTypeHandler(1);
-    Func_02005314();
-    Func_0200531c();
+    BattleEffect_StopMainActor();
+    BattleEffect_CleanupSceneObjects();
   }
 
   void Func_020007d4(s32 id) {
-    Func_02005304(144, 1);
-    Func_0200530c(id, 0);
+    BattleEffect_LoadActionEffectResources(144, 1);
+    BattleEffect_SetupObjectPair(id, 0);
     Field_DispatchTypeHandler(3);
-    Func_02005314();
-    Func_0200531c();
+    BattleEffect_StopMainActor();
+    BattleEffect_CleanupSceneObjects();
   }
 
   flag = Event_GetFlag(0x320);
   if (flag == 0) {
     Event_SetFlag(0x320);
-    Func_020051ac();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_SetSingleChildFlags(Actor_Get(22), 0);
     speed = 0x4000;
@@ -445,7 +445,7 @@ void Func_02000808(void) {
     Func_020007d4(22);
     FieldEvent_Wait(60);
     Actor_SetPosition(22, 0, 0);
-    Func_020051b4();
+    Event_End();
   }
 }
 

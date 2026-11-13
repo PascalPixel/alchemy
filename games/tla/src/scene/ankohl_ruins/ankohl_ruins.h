@@ -32,9 +32,9 @@ void Func_02000b30(s32 id, s32 cue);
 void Func_0200160c(void);
 void Func_020019a0(void);
 void Func_02001f7c(void);
-s32 Func_02002dcc(void (*callback)(void));
-void Func_02002e44(void);
-void Func_02002e4c(void);
+s32 Task_Find(void (*callback)(void));
+void Event_Start(void);
+void Event_End(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -60,7 +60,7 @@ static inline void AnkohlRuins_Call2dfc(s32 a, s32 b, s32 c, s32 d, s32 e,
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
-void Func_02002e34(struct Actor *object, s32 a);
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
 void Func_02002eb4(void);
 
 #endif

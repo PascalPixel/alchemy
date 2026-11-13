@@ -17,7 +17,7 @@
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
 void Func_02003ba0(struct Actor *object, s32 mode);
-void Func_02003ba8(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 s32 Func_02003d80(void *sprite, s32 frame);
 void Effect_AdvanceMotion(struct Actor *object);
 
@@ -72,7 +72,7 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
       object->collisionFlags = 0;
       Actor_SetSingleChildFlags(object, 0);
       Func_02003ba0(object, 2);
-      Func_02003ba8(object, gData_02003f14);
+      Actor_StartScript(object, gData_02003f14);
       object->scaleX = 0xb333;
       object->scaleY = 0xb333;
       effect->sprite->priority = 1;
@@ -91,15 +91,15 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
 }
 
 void Func_020021b4(void);
-void Func_02003c28(void);
-void Func_02003c30();
+void Event_Start(void);
+void Event_End();
 void Func_02003cf0();
 
 void Func_020027e0(void) {
   struct Actor *actor;
 
   actor = Actor_GetById(25);
-  Func_02003c28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 25);
   Func_080d4568()->motionFlags = 0;
@@ -157,7 +157,7 @@ void Func_020027e0(void) {
   Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
   Event_Wait(20);
   GameFlag_SetBit(0x870);
-  Func_02003c30();
+  Event_End();
 }
 
 void Func_02002bcc(void);
@@ -167,7 +167,7 @@ void Func_02002a5c(void) {
   u32 i;
   s32 angle;
 
-  Func_02003c28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   /* FAKEMATCH(temporary): the angle named before the call, so it is built
    * before the two coordinates; as the literal argument FACING_NORTH, 4 of
@@ -243,8 +243,8 @@ void Func_02000708(const void *data);
 void Func_02001474(s32 show);
 void Func_02002180(void);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02003c28(void);
-void Func_02003c30(void);
+void Event_Start(void);
+void Event_End(void);
 void Event_ResolvePendingActions(s32 skip);
 void Func_02003dc0(const void *data);
 void Func_02003dc8(void);
@@ -271,11 +271,11 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z, s32 an
 s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 void Func_02003cf0(void);
 struct Actor *Func_080d4568(void);
-void Func_02003d50(s32 a, s32 b);
-void Func_02003d58(s32 a, s32 b);
-void Func_02003d60(void);
-void Func_02003d68(void);
-void Func_02003d70(void);
+void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
+void BattleEffect_SetupObjectPair(s32 a, s32 b);
+void BattleEffect_StopMainActor(void);
+void BattleEffect_CleanupSceneObjects(void);
+void EventObject_Initialize(void);
 void Actor_ArmCallbackAndRefresh(s32 id, s32 value);
 void Func_02003cc0(s32 id);
 void FieldEffect_SetAttached(s32 id, s32 value);
@@ -300,14 +300,14 @@ void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
 
 void Func_02002bcc(void) {
-  Func_02003d50(134, 1);
+  BattleEffect_LoadActionEffectResources(134, 1);
   Task_Add__events_i(Func_02002b68, 0x480);
-  Func_02003d58(9, gMainRoutineWork.currentOwner);
-  Func_02003d70();
+  BattleEffect_SetupObjectPair(9, gMainRoutineWork.currentOwner);
+  EventObject_Initialize();
   Field_DispatchTypeHandler(1);
-  Func_02003d60();
+  BattleEffect_StopMainActor();
   Task_RemoveFar(Func_02002b68);
-  Func_02003d68();
+  BattleEffect_CleanupSceneObjects();
 }
 
 // ---- games/tla/src/scene/dehkan_plateau/s2c14.c ----
@@ -329,11 +329,11 @@ void Func_02000974(s32 mode);
 void Func_02000aa8(void);
 void Func_02000c4c(s32 level, s32 layer);
 void Func_02003ba0(struct Actor *object, s32 mode);
-void Func_02003ba8(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 s32 Func_02003c10(s32 layer, s32 x, s32 z);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003c78(s32 id, s32 target);
+void Event_Start(void);
+void Event_End(void);
+void Actor_MoveToObject(s32 id, s32 target);
 void Func_02003cc0(s32 id);
 s32 Func_02003d20(void);
 s32 Func_02003d80(void *sprite, s32 frame);
@@ -346,16 +346,16 @@ extern struct Actor *gData_02004420;
 
 void Func_020021b4(void);
 void Func_02002bcc(void);
-void Func_02003bc8(void);
+void Map_CenterOnFollowedPoint(void);
 
 void Func_02002c14(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *helper = Actor_GetById(9);
 
-  Func_02003c28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Func_02003bc8();
+  Map_CenterOnFollowedPoint();
   wait(1);
   leader->y = 0x820000;
   leader->gravity = 0x8000;
@@ -399,7 +399,7 @@ void Func_02002c14(void) {
     wait(1);
   }
   GameFlag_SetBit(0x871);
-  Func_02003c30();
+  Event_End();
 }
 
 void Func_02002698();
@@ -409,7 +409,7 @@ void Func_02002dd4(void) {
   struct Actor *actor;
 
   actor = Actor_GetById(16);
-  Func_02003c28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
   Func_080d4568()->motionFlags = 0;
@@ -441,7 +441,7 @@ void Func_02002dd4(void) {
   Actor_WatchAndSetScript(16, gMainRoutineWork.currentOwner);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Event_Wait(20);
-  Func_02003c30();
+  Event_End();
 }
 
 extern const u8 gData_02003f44[];
@@ -472,11 +472,11 @@ void Func_02001804(void);
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-void Func_02003d50(s32 a, s32 b);
-void Func_02003d58(s32 a, s32 b);
-void Func_02003d60(void);
-void Func_02003d68(void);
-void Func_02003d70(void);
+void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
+void BattleEffect_SetupObjectPair(s32 a, s32 b);
+void BattleEffect_StopMainActor(void);
+void BattleEffect_CleanupSceneObjects(void);
+void EventObject_Initialize(void);
 void Func_02003d40(struct Actor *object, s32 mode);
 void Func_02003bb8(struct Actor *object);
 void Func_02002b68(void);
@@ -490,7 +490,7 @@ static __inline__ void Actor_SetAngle(s32 id, s32 angle) {
 }
 
 void Func_02002f08(void) {
-  Func_02003c28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(16, gMainRoutineWork.currentOwner, 0);
   Func_080d47b4(16, 0x100, 40);
@@ -501,7 +501,7 @@ void Func_02002f08(void) {
   Actor_WatchAndSetScript(16, gMainRoutineWork.currentOwner);
   FieldEffect_SetAttached(16, 0x102);
   Event_Wait(40);
-  Func_02003c30();
+  Event_End();
 }
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -520,7 +520,7 @@ void Func_02002f74(void) {
 }
 
 void Func_02002f9c(void) {
-  Func_02003c28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (gData_02004420 != 0)
     Func_02003d40(gData_02004420, 3);
@@ -529,7 +529,7 @@ void Func_02002f9c(void) {
     Func_02003bb8(gData_02004420);
   Map_CopyAttributes(1, 0, 1, 1, 15, 5);
   GameFlag_SetBit(0x878);
-  Func_02003c30();
+  Event_End();
 }
 
 void Func_020030e4(void);
@@ -542,7 +542,7 @@ void Func_02003aa0(void);
 void Func_02002ff4(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
-  Func_02003c28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov655Room1)
     Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
@@ -924,11 +924,11 @@ void Func_02000974(s32 mode);
 void Func_02000aa8(void);
 void Func_02000c4c(s32 level, s32 layer);
 void Func_02003ba0(struct Actor *object, s32 mode);
-void Func_02003ba8(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 s32 Func_02003c10(s32 layer, s32 x, s32 z);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003c78(s32 id, s32 target);
+void Event_Start(void);
+void Event_End(void);
+void Actor_MoveToObject(s32 id, s32 target);
 s32 Func_02003d20(void);
 s32 Func_02003d80(void *sprite, s32 frame);
 
@@ -941,7 +941,7 @@ void Func_02000fc4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    const struct EffectOptions *options);
 /* VIEW(s3284): routine Effect_AdvanceMotion as void Effect_AdvanceMotion(union FieldObject *object); s2698 has void Effect_AdvanceMotion(struct Actor *object). */
 extern void Effect_AdvanceMotion__s3284(union FieldObject *object) __asm__("Effect_AdvanceMotion");
-void Func_02003bc8(void);
+void Map_CenterOnFollowedPoint(void);
 
 void Func_02003764(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -950,10 +950,10 @@ void Func_02003764(void) {
   struct EffectOptions *opts;
   s32 spawn;
 
-  Func_02003c28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Func_02003bc8();
+  Map_CenterOnFollowedPoint();
   wait(1);
   leader->y = 0x820000;
   leader->gravity = 0x8000;
@@ -1008,7 +1008,7 @@ loop:
   Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  Func_02003c30();
+  Event_End();
 }
 
 // ---- games/tla/src/scene/dehkan_plateau/s390c.c ----

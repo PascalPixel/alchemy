@@ -216,7 +216,7 @@ body:
     {
       s32 flag = list[1];
 
-      Func_02001488();
+      Event_Start();
       if (!GameFlag_Test(flag)) {
         Sound_Play(125);
         Actor_SetPartAttribute(Actor_GetById(id), 7);
@@ -254,7 +254,7 @@ body:
         wait(20);
         GameFlag_SetBit(flag + 1);
       }
-      Func_02001490();
+      Event_End();
       return;
     }
   }
@@ -280,7 +280,7 @@ void Func_0200048c(const void *data, s32 id) {
     }
     {
       flag = entry->flag;
-      Func_02001488();
+      Event_Start();
       if (!Event_GetFlag(flag + 1)) {
         Event_PlaySound(185);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
@@ -300,7 +300,7 @@ void Func_0200048c(const void *data, s32 id) {
         Event_SetFlag(flag);
         Event_SetFlag(flag + 1);
       }
-      Func_02001490();
+      Event_End();
       break;
     }
   }
@@ -311,16 +311,16 @@ void Func_0200056c(s32 id) {
   Func_020014c0(id);
 }
 
-void Func_020014a8(s32 id, s32 target);
+void Actor_MoveToObject(s32 id, s32 target);
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 
 void Func_02000584(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   u8 *grid;
 
-  Func_020014a8(8, gMainRoutineWork.currentOwner);
-  Func_020014a8(9, gMainRoutineWork.currentOwner);
-  Func_020014a8(10, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(8, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(10, gMainRoutineWork.currentOwner);
   System_Wait(1);
   Func_0200056c(8);
   Func_0200056c(9);
@@ -398,7 +398,7 @@ body:
     {
       s32 flag = list[1];
 
-      Func_02001488();
+      Event_Start();
       if (!GameFlag_Test(flag)) {
         Func_02001428(helper, 1);
         Func_020006ec(helper, pillar);
@@ -446,7 +446,7 @@ body:
         wait(20);
         GameFlag_SetBit(flag + 1);
       }
-      Func_02001490();
+      Event_End();
       return;
     }
   }

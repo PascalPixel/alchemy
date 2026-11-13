@@ -44,14 +44,14 @@ extern char ResourceId_LogoOnBlack;
 extern u16 gData_020024f4[];
 
 void Fade_ToBlack(s32 vblanks);
-s32 Func_020021f8(const void *source, void *destination);
+s32 Resource_DecodeType01(const void *source, void *destination);
 
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps the buffer address
    * a constant of each call, as ☀️'s system call layer does; as a direct call
-   * the address is kept in r5; as Func_020021f8 called directly, 21 of 103
+   * the address is kept in r5; as Resource_DecodeType01 called directly, 21 of 103
    * instructions differ in tla-en (Func_0200005c). */
-  Func_020021f8(source, destination);
+  Resource_DecodeType01(source, destination);
 }
 
 /// The logo background, as the title's Title_LoadBackground, then the party
@@ -267,11 +267,11 @@ s32 Func_020022f0(void);
 s32 Func_020022f8(s32 step);
 void Func_02002350(void);
 void Func_02002370(void *data, s32 a, s32 b);
-u32 Func_02002388(void);
+u32 BuildStamp_GetTime(void);
 void Func_02002390(void);
 void Func_02002398(void);
 void Func_020023a0(void *data);
-void Func_020023b8(s32 a, s32 b);
+void Event_SetDestination(s32 a, s32 b);
 void Func_020023e0(s32 scene, s32 entrance);
 void Func_020023e8(void);
 void Event_StartScreenTransition(void);
@@ -349,7 +349,7 @@ s32 Scene_Initialize(void) {
     Event_FinishScreenTransition();
     Sound_Play(78);
     Event_Wait(300);
-    Func_020023b8((s32)&SceneId_Title, 1);
+    Event_SetDestination((s32)&SceneId_Title, 1);
     return 0;
   }
   gSleepDisabled = started;
@@ -479,7 +479,7 @@ top:
         goto save;
     }
   leave:
-    Func_020023b8((s32)&SceneId_Title, 8);
+    Event_SetDestination((s32)&SceneId_Title, 8);
     goto finish;
   }
   if (result == 1) {
@@ -491,7 +491,7 @@ top:
       struct MainRoutineWork *party = &gMainRoutineWork;
 
       Func_0803f9c0(party->paletteGlow[0], party->paletteGlow[1]);
-      if (PARTY_WORD(party, 0) != Func_02002388()) {
+      if (PARTY_WORD(party, 0) != BuildStamp_GetTime()) {
         RETURN_TO_SAVED(party)
       } else if (mask = 0x208, (gInput.held & mask) == mask) {
         if (Func_020002e0()) {
@@ -545,7 +545,7 @@ top:
       Event_ClearFlag(0x106);
       party->ownerOverride = 0;
       gSleepDisabled = 1;
-      Func_020023b8((s32)&SceneId_Ov6b5, 1);
+      Event_SetDestination((s32)&SceneId_Ov6b5, 1);
     }
     goto finish;
   }
@@ -698,8 +698,8 @@ void Text_DrawMessage(s32 message, void *window, s32 x, s32 y);
 void WindowSprite_PrepareForRedraw(void *window);
 s32 Serial_StartReceive(void *destination);
 void Unit_Calculate(s32 id);
-void Func_02002220(void);
-void Func_02002228(void);
+void Serial_Initialize(void);
+void Serial_RemoveIrqHandlers(void);
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define REQUEST_EDITION 'C'
@@ -751,7 +751,7 @@ s32 Func_02000b24(void) {
   Text_DrawMessage(message, window, 0, 4);
   Text_DrawMessage(message + 1, window, 0, 16);
   Text_DrawMessage(message + 3, window, 0, 36);
-  Func_02002220();
+  Serial_Initialize();
   System_Wait(10);
 restart:
   mask = 3;
@@ -798,9 +798,9 @@ transfer:
     request[1] = 0;
     request[2] = 0;
     request[3] = 0;
-    Func_02002228();
+    Serial_RemoveIrqHandlers();
     System_Wait(10);
-    Func_02002220();
+    Serial_Initialize();
     System_Wait(10);
     goto restart;
   }
@@ -830,7 +830,7 @@ done:
     return -1;
   }
   System_Wait(10);
-  Func_02002228();
+  Serial_RemoveIrqHandlers();
   System_Wait(10);
   Window_Close(window, 2);
   flags = gGameFlagBytes;
@@ -941,10 +941,10 @@ void Party_RemoveActiveOwner(s32 id);
 u16 Func_0200217c(u32 length, u8 *p);
 void Func_020018e0(s32 mode, u8 *data);
 s32 Func_02002068(u8 *src, s32 length, u8 *dst);
-void Func_02002208(void);
-void Func_02002300(void);
-void Func_02002308(void);
-void Func_02002320(void *vram);
+void Window_LoadGraphics(void);
+void Resource_CopyFixedBlockB(void);
+void Resource_CopyFixedBlockA(void);
+void Graphics_ExpandVramTilesByColorTable(void *vram);
 void Func_02002328(s32 glyph, void *cell);
 void *Func_02002330(struct Window *window, void *glyph, s32 x, s32 y);
 void Func_020023f0(struct ShopCursor *cursor);
@@ -1057,7 +1057,7 @@ s32 Func_02000e44(void) {
   u16 *palette;
   s32 height;
 
-  Func_02002208();
+  Window_LoadGraphics();
   Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   palette = (u16 *)0x050001c0;
@@ -1073,7 +1073,7 @@ s32 Func_02000e44(void) {
   row = 0;
   work = Heap_AllocEwram(476);
   advance = 0;
-  Func_02002320((void *)0x06006000);
+  Graphics_ExpandVramTilesByColorTable((void *)0x06006000);
   if (mode == 0) {
     length = 260;
   } else {
@@ -1104,7 +1104,7 @@ s32 Func_02000e44(void) {
   }
   entry = Resource_FindFreeEntry();
   if (entry <= 95) {
-    Func_02002300();
+    Resource_CopyFixedBlockB();
     sprite = WindowSprite_Create(entry, OUTPUT_SIZE_16X16,
                                  (struct RenderInput *)window, 0, 0);
     Cursor_Attach(&cursorStore, sprite);
@@ -1112,7 +1112,7 @@ s32 Func_02000e44(void) {
   }
   entry = Resource_FindFreeEntry();
   if (entry <= 95) {
-    Func_02002308();
+    Resource_CopyFixedBlockA();
     sprite = WindowSprite_Create(entry, OUTPUT_SIZE_16X16,
                                  (struct RenderInput *)window, 0, 0);
     Cursor_Attach(&gridStore, sprite);
@@ -1422,7 +1422,7 @@ void Func_02001804(struct Panel_02001804 *panel, const void *source) {
   s32 row;
   s32 column;
 
-  Func_020021f8(source, work);
+  Resource_DecodeType01(source, work);
   offset = panel->y * 32 + panel->x;
 
   offset *= 2;

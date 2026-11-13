@@ -63,8 +63,8 @@ struct ShamanVillageEventWork {
   u16 field1c4;
 };
 
-void Func_020048c4(void);
-void Func_020048cc(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02004a74(s32 shop, s32 keeper);
 void Func_02004a7c(s32 keeper);
 void Func_02004a84(s32 shop, s32 keeper);
@@ -81,13 +81,13 @@ void Func_02004a44(void);
 void Func_02004a4c(s32 a, s32 b, s32 c, s32 d);
 void Event_StartScreenTransition(void);
 
-void Func_02004944(s32 actor, s32 target);
+void Actor_MoveToObject(s32 actor, s32 target);
 
-void Func_02004a54(void);
-void Func_02004a5c(void);
-void Func_02004a64(void);
-void Func_02004a6c(struct ShamanVillageObject *object, s32 value);
-void Func_02004a2c(void);
+void BattleEffect_StartArcEffect(void);
+void BattleEffect_EndArcEffect(void);
+void BattleEffect_WaitForArcGroups(void);
+void BattleEffect_SetObjectUpdateMode(struct ShamanVillageObject *object, s32 value);
+void Party_PlaySavedMusic(void);
 void Func_020048b4(void);
 
 #define SHAMAN_VILLAGE_EMOTE(actor, emote, frames)                             \

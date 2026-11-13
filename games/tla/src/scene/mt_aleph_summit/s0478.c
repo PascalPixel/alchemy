@@ -69,14 +69,14 @@ struct EventWorkView {
 void Func_020002a4(u16 *colors, u16 *target, s32 count);
 void Func_0200032c(u16 *colors, s32 count, s32 delta);
 void Func_02000394(void);
-void Func_02001454(void);
+void Window_LoadGraphics(void);
 void Func_0200152c(void);
-void Func_02001534(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 void Func_02001564(s32 a, s32 b);
-void Func_02001574(void);
-void Func_0200157c(void);
-void Func_02001584(void);
-void Func_0200158c(struct Actor *object, s32 a);
+void BattleEffect_StartArcEffect(void);
+void BattleEffect_EndArcEffect(void);
+void BattleEffect_WaitForArcGroups(void);
+void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 a);
 extern u8 MsgGoldenSunEternalLifeAndPower[];
 extern u8 MsgGoldenSunFormation[];
 extern char SceneId_Ov64c;
@@ -101,12 +101,12 @@ s32 Scene_Initialize(void) {
   struct HeapSlots *slots;
 
   buffer = Heap_AllocEwram(0x200);
-  Func_02001454();
+  Window_LoadGraphics();
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
   Actor_SetPosition(4, 0, 0);
   mode = gMainRoutineWork.entrance;
   if (mode == 10) {
-    Func_02001534((s32)&SceneId_Ov64c, 72);
+    Event_SetDestination((s32)&SceneId_Ov64c, 72);
   } else if (mode == 2) {
     FieldCamera_MoveTo(0x1000000, -1, 0x800000, 0);
     FieldCamera_SetSpeed(0x10000, 0x2000);
@@ -191,7 +191,7 @@ s32 Scene_Initialize(void) {
     i++;
     if (i != 20)
       goto L4;
-    Func_02001534((s32)&SceneId_Ov64c, 1);
+    Event_SetDestination((s32)&SceneId_Ov64c, 1);
   } else if (mode == 3) {
     slots = Ram_HeapSlots;
     block = slots->block32;
@@ -345,8 +345,8 @@ s32 Scene_Initialize(void) {
     FieldEvent_SetMessageId(message);
     FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
     Actor_SetAnimation(8, 13);
-    Func_02001574();
-    Func_0200158c((s32)Actor_Get(8), 2);
+    BattleEffect_StartArcEffect();
+    BattleEffect_SetObjectUpdateMode((s32)Actor_Get(8), 2);
     Event_PlaySound(178);
     Func_02001564(8, 0x4084);
     FieldEvent_Wait(20);
@@ -375,12 +375,12 @@ s32 Scene_Initialize(void) {
     Actor_ShowEmote(8, 0x108, 30);
     FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
     FieldEvent_Wait(10);
-    Func_0200158c((s32)Actor_Get(8), 0);
-    Func_02001584();
-    Func_0200157c();
+    BattleEffect_SetObjectUpdateMode((s32)Actor_Get(8), 0);
+    BattleEffect_WaitForArcGroups();
+    BattleEffect_EndArcEffect();
     Actor_SetAnimation(9, 6);
-    Func_02001574();
-    Func_0200158c((s32)Actor_Get(9), 2);
+    BattleEffect_StartArcEffect();
+    BattleEffect_SetObjectUpdateMode((s32)Actor_Get(9), 2);
     System_Wait(30);
     Event_PlaySound(212);
     MapGrid_SetShake(0x100000, 0x100000, 0x10000);
@@ -446,9 +446,9 @@ s32 Scene_Initialize(void) {
     MapGrid_SetShake(0x100000, 0x100000, 0x10000);
     FieldEvent_Wait(10);
     MapGrid_SetShake(-1, -1, 0xe666);
-    Func_0200158c((s32)Actor_Get(9), 0);
-    Func_02001584();
-    Func_0200157c();
+    BattleEffect_SetObjectUpdateMode((s32)Actor_Get(9), 0);
+    BattleEffect_WaitForArcGroups();
+    BattleEffect_EndArcEffect();
     Event_PlaySound(0x186);
     Actor_SetAnimation(9, 4);
     Field_StartPaletteTransition(32);
@@ -530,7 +530,7 @@ s32 Scene_Initialize(void) {
     PaletteFade_ApplyTarget(0, 0);
     PaletteFade_Interpolate(120);
     System_Wait(0x12c);
-    Func_02001534((s32)&SceneId_Ov6b3, 1);
+    Event_SetDestination((s32)&SceneId_Ov6b3, 1);
   } else {
     ((struct EventWorkView *)Ram_HeapSlots->eventWork)->unk1ac = 0;
     Event_StartScreenTransition();
@@ -547,7 +547,7 @@ s32 Scene_Initialize(void) {
         Actor_SetAnimation(8, 12);
       }
     }
-    Func_02001534((s32)&SceneId_Ov64c, 0);
+    Event_SetDestination((s32)&SceneId_Ov64c, 0);
   }
   Heap_Release(buffer);
   return 0;

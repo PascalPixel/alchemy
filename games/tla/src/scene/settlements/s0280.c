@@ -104,14 +104,14 @@ u8 *Scene_GetPlacements(void) {
 void Func_02000404(void) {
   s32 mode;
 
-  Func_02002068();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(11, 0, 0);
   Event_SetFlag(0xf5d);
   Func_02002130(193, 3);
   mode = 0;
   Party_GiveItem(193, mode);
-  Func_02002070();
+  Event_End();
 }
 
 void Func_0200043c(s32 actor) {
@@ -164,13 +164,13 @@ void Func_0200052c(void) {
   FieldEvent_Wait(10);
   Event_PlaySound(123);
   FieldEvent_SetExitRequest(next);
-  Func_02002070();
+  Event_End();
 }
 
 void Func_020005cc(void) {
   s32 id;
 
-  Func_02002068();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   CommitPos(4, 0, -14);
   id = 4;
@@ -181,7 +181,7 @@ void Func_020005cc(void) {
 void Func_020005f4(void) {
   s32 id, x, z;
 
-  Func_02002068();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   CommitPos(4, -2, -6);
   x = 14;
@@ -198,7 +198,7 @@ void Func_020005f4(void) {
 void Func_02000624(void) {
   s32 id, a;
 
-  Func_02002068();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   a = 192;
   id = 4;
@@ -525,7 +525,7 @@ static __inline__ void CenterOn(s32 id, s32 column, s32 offset) {
 void Func_02000c44(void) {
   u32 i;
 
-  Func_02002068();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   // A goto loop carries no loop notes: the bytes rebuild the zero on every
   // pass, and a for loop hoists it.
@@ -552,7 +552,7 @@ loop:
   FieldEvent_SetExitRequest(2);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02002070();
+  Event_End();
 }
 
 void Func_02000cfc(void) {
@@ -655,7 +655,7 @@ void Func_02000e90(void) {
 void Func_02000ed0(void) {
   s32 priority;
 
-  Func_02001fa8(1, 0, Func_02000e30);
+  Irq_SetHandler(1, 0, Func_02000e30);
   priority = 0xc80;
   FieldTask_AddFrame(Func_02000e90, priority);
 }
@@ -749,7 +749,7 @@ void Func_02000fd0(void) {
       FieldEvent_Wait(30);
       Event_SetFlag(0x205);
     }
-    Func_02002070();
+    Event_End();
   } else if (!Flag_Test(0x207) && column == 16 && row == 12) {
     MapGrid_CopyCellAttributes(17, 12, 1, 1, column, row);
     flags = &object->motionFlags;
@@ -757,7 +757,7 @@ void Func_02000fd0(void) {
     FieldEvent_Wait(30);
     *flags = 0;
     Flag_Set(0x207);
-    Func_02002070();
+    Event_End();
   }
 }
 
@@ -844,7 +844,7 @@ void Func_0200138c(void) {
   s32 row;
   s32 i;
 
-  Func_02002068();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_FollowActor(10, 1);
   object = Actor_Get(10);
@@ -887,7 +887,7 @@ void Func_0200138c(void) {
     MapGrid_CopyCellAttributes(1, 3, 1, 1, 12, row);
     MapGrid_CopyCellAttributes(1, 3, 1, 1, column, row);
   }
-  Func_02002070();
+  Event_End();
 }
 
 void Func_0200155c(void) {

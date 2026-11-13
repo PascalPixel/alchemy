@@ -35,14 +35,14 @@ void Func_020008fc(void);
 s32 Func_02000978(u16 *list);
 void Func_0200099c(void);
 void Func_02000bc0(u16 *list, s32 mode, s32 count);
-void Func_020018d8(s32 scene, s32 entrance);
-void Func_02001920(s32 a, s32 b, s32 c);
+void Event_SetDestination(s32 scene, s32 entrance);
+void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02001958(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void YampiDesertCave_Call1920(s32 a, s32 b, s32 c) {
-  Func_02001920(a, b, c);
+  Actor_ReturnHome(a, b, c);
 }
 
 #endif

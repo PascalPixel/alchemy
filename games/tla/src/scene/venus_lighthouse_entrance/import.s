@@ -70,9 +70,9 @@ GameFlag_SetBit:
 	.thumb_func
 Func_0200285c:
 	overlay_veneer Actor_SetMode
-	.global Func_02002864
+	.global Actor_StartScript
 	.thumb_func
-Func_02002864:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -110,13 +110,13 @@ Func_020028a4:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_020028b4
+	.global Event_Start
 	.thumb_func
-Func_020028b4:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020028bc
+	.global Event_End
 	.thumb_func
-Func_020028bc:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -230,9 +230,9 @@ Func_02002994:
 	.thumb_func
 Func_0200299c:
 	overlay_veneer Event_SetDestinationFar
-	.global Func_020029a4
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_020029a4:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
@@ -290,9 +290,9 @@ Func_02002a0c:
 	.thumb_func
 Func_02002a14:
 	overlay_veneer Func_080c87d0
-	.global Func_02002a1c
+	.global BattleEffect_StepVector3
 	.thumb_func
-Func_02002a1c:
+BattleEffect_StepVector3:
 	overlay_veneer BattleEffect_StepVector3Far
 	.global Func_02002a24
 	.thumb_func
@@ -310,21 +310,21 @@ Func_02002a34:
 	.thumb_func
 Field_StartPaletteTransition:
 	overlay_veneer Field_StartPaletteTransitionFar
-	.global Func_02002a44
+	.global BattleEffect_StartArcEffect
 	.thumb_func
-Func_02002a44:
+BattleEffect_StartArcEffect:
 	overlay_veneer BattleEffect_StartArcEffectFar
-	.global Func_02002a4c
+	.global BattleEffect_EndArcEffect
 	.thumb_func
-Func_02002a4c:
+BattleEffect_EndArcEffect:
 	overlay_veneer BattleEffect_EndArcEffectFar
-	.global Func_02002a54
+	.global BattleEffect_WaitForArcGroups
 	.thumb_func
-Func_02002a54:
+BattleEffect_WaitForArcGroups:
 	overlay_veneer BattleEffect_WaitForArcGroupsFar
-	.global Func_02002a5c
+	.global BattleEffect_SetObjectUpdateMode
 	.thumb_func
-Func_02002a5c:
+BattleEffect_SetObjectUpdateMode:
 	overlay_veneer BattleEffect_SetObjectUpdateModeFar
 	.global Sound_Play
 	.thumb_func

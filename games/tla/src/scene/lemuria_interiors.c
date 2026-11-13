@@ -17,8 +17,8 @@
 #include "version.h"
 
 void Func_0200031c(void);
-void Func_0200282c();
-void Func_02002834();
+void Event_Start();
+void Event_End();
 
 extern s16 gSceneRegions[];
 
@@ -51,12 +51,12 @@ L_02008082:
   result1 = Event_GetFlag(0x965);
   if (result1 == 0)
     goto L_020080ba;
-  Func_0200282c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaInteriors08);
   Event_ShowMessageAndWait(arg0, 0);
   Actor_FaceDirection(arg0, FACING_SOUTHEAST + FACING_STEP, 0);
-  Func_02002834();
+  Event_End();
   goto L_020080f6;
 L_020080ba:
   Event_SetMessageId((s32)MsgLemuriaInteriors05);
@@ -139,7 +139,7 @@ void Func_020001ec(s32 arg0, s32 arg1) {
   object0 = Actor_GetById(arg1);
   value1 = object0->facing;
   GameFlag_SetBit(0x967);
-  Func_0200282c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_ShowEmote(arg1, 0x101, 30);
   Actor_SetAngleToward(arg1, 4, 20);
@@ -159,7 +159,7 @@ L_0200825a:
   Event_ShowMessageAndWait(arg1, 0);
   Actor_ArmCallback(arg1, value1, 0);
   Event_Wait(10);
-  Func_02002834();
+  Event_End();
   return;
 }
 
@@ -206,7 +206,7 @@ void Func_0200031c(void) {
 
   GameFlag_SetBit(0x965);
   Party_RemoveActiveOwner(7);
-  Func_0200282c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaInteriors07);
   Event_Wait(20);
@@ -412,7 +412,7 @@ L_020089e4:
 L_02008a36:
   Actor_WaitForMoveById(12);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
-  Func_02002834();
+  Event_End();
   return;
 }
 
@@ -443,7 +443,7 @@ L_02008a86:
     struct Actor *other = (struct Actor *)((s32)Actor_GetById(10));
     other->priorityFlags |= 1;
   }
-  Func_0200282c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaInteriors10);
   Actor_SetSpeed(10, 0xcccc, 0x6666);
@@ -664,7 +664,7 @@ L_02008a86:
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
   FieldActor_SetSpritePriority(10, 2);
-  Func_02002834();
+  Event_End();
 }
 
 #include "field_event.h"
@@ -672,7 +672,7 @@ L_02008a86:
 extern u32 gData_02002dec[];
 
 void Func_020027f4(struct Actor *object, s32 mode);
-void Func_020027fc(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 
 struct SpritePictures {
   u8 unk00[5];
@@ -702,7 +702,7 @@ void Func_0200128c(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {
   if (object != 0) {
     sprite = (struct AnimatedSprite *)object->sprite;
     Func_020027f4(object, 1);
-    Func_020027fc(object, gData_02002dec);
+    Actor_StartScript(object, gData_02002dec);
     object->motionFlags = 0;
     {
       /* FAKEMATCH(barrier): the empty asm before the timer's store; as no asm,

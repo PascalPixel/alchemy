@@ -30,9 +30,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Func_02001b2c:
 	overlay_veneer Actor_SetMode
-	.global Func_02001b34
+	.global Actor_StartScript
 	.thumb_func
-Func_02001b34:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -194,25 +194,25 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Field_DispatchTypeHandler:
 	overlay_veneer Field_DispatchTypeHandlerFar
-	.global Func_02001c7c
+	.global BattleEffect_LoadActionEffectResources
 	.thumb_func
-Func_02001c7c:
+BattleEffect_LoadActionEffectResources:
 	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
-	.global Func_02001c84
+	.global BattleEffect_SetupObjectPair
 	.thumb_func
-Func_02001c84:
+BattleEffect_SetupObjectPair:
 	overlay_veneer BattleEffect_SetupObjectPairFar
-	.global Func_02001c8c
+	.global BattleEffect_StopMainActor
 	.thumb_func
-Func_02001c8c:
+BattleEffect_StopMainActor:
 	overlay_veneer BattleEffect_StopMainActorFar
-	.global Func_02001c94
+	.global BattleEffect_CleanupSceneObjects
 	.thumb_func
-Func_02001c94:
+BattleEffect_CleanupSceneObjects:
 	overlay_veneer BattleEffect_CleanupSceneObjectsFar
-	.global Func_02001c9c
+	.global EventObject_Initialize
 	.thumb_func
-Func_02001c9c:
+EventObject_Initialize:
 	overlay_veneer EventObject_InitializeFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -226,9 +226,9 @@ Actor_CommitPositionAndActivate:
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global Func_02001cbc
+	.global Event_NoOp
 	.thumb_func
-Func_02001cbc:
+Event_NoOp:
 	overlay_veneer Event_NoOpFar
 	.global Party_GetLeaderActor
 	.thumb_func

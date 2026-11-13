@@ -59,7 +59,7 @@ s32 Func_02000070(struct Actor *self, struct Actor *other, s32 range) {
 }
 
 s32 Func_02001d54(struct Actor *object);
-void Func_02001ba4(struct Actor *object, s32 priority);
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority);
 void Func_02001b7c(struct Actor *object, s32 mode);
 
 s32 Func_020000e8(struct Actor *self) {
@@ -69,7 +69,7 @@ s32 Func_020000e8(struct Actor *self) {
   s8 *effect;
   struct Actor *other;
 
-  Func_02001ba4(self, Func_02001d54(Actor_Get(gMainRoutineWork.currentOwner)));
+  Actor_SetSpritePriorityDirect(self, Func_02001d54(Actor_Get(gMainRoutineWork.currentOwner)));
   mode = 0x3ff & *(u16 *)(event + 0x166);
   state = &self->movementState;
   if (mode == 141) {
@@ -103,9 +103,9 @@ struct WarpTarget {
 };
 
 void Animation_SetIndexAndInitializeObjects(struct Actor *object, s32 index);
-void Func_02001bcc(void);
-void Func_02001bd4(void);
-void Func_02001cf4(s32 a, s32 b, s32 c);
+void Event_Start(void);
+void Event_End(void);
+void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02001d44(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 s32 Func_02001d5c(s32 x, s32 z, s32 layer);
 void Func_02001d64(s32 x, s32 z, s32 layer, s32 value);
@@ -153,7 +153,7 @@ void Func_020001bc(void) {
 void Func_020001f0(const struct WarpTarget *warp, s32 door, s32 mode) {
   s32 id;
 
-  Func_02001bcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(158);
   MapGrid_AnimateCells(warp->scene, warp->x, warp->z);
@@ -169,7 +169,7 @@ void Func_020001f0(const struct WarpTarget *warp, s32 door, s32 mode) {
   FieldEvent_SetExitRequest(door);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02001bd4();
+  Event_End();
 }
 
 void Func_02000278(s32 door) {
@@ -221,7 +221,7 @@ void Func_02000308(void) {
   s16 angle = object->facing;
 
   object->timer = 1;
-  Func_02001bcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (*(s16 *)(work + 0x166) == 0) {
     FieldEvent_SetMessageId((s32)&MsgItHasBeen);
@@ -231,7 +231,7 @@ void Func_02000308(void) {
   }
   Actor_SetAnimation(18, 0);
   FieldEvent_ShowMessageThenWait(18, 0, 10);
-  Func_02001bd4();
+  Event_End();
   object->timer = 0;
   object->facing = angle;
   System_Wait(1);
@@ -244,7 +244,7 @@ void Func_02000398(void) {
   s16 angle = object->facing;
 
   object->timer = 1;
-  Func_02001bcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (*(s16 *)(work + 0x166) == 0) {
     FieldEvent_SetMessageId((s32)&MsgWeAreThe);
@@ -254,7 +254,7 @@ void Func_02000398(void) {
   }
   Actor_SetAnimation(19, 0);
   FieldEvent_ShowMessageThenWait(19, 0, 10);
-  Func_02001bd4();
+  Event_End();
   object->timer = 0;
   object->facing = angle;
   System_Wait(1);
@@ -286,25 +286,25 @@ void Func_020004a8(void) {
   if (Event_GetFlag(0xfbb) == 0) {
     Func_02001c2c_(69, PIXELS(808), PIXELS(1176));
     if (leader->x >> 20 == 50 && leader->z >> 20 == 73) {
-      Func_02001bcc();
+      Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
       Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = PIXELS(6);
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Func_02001bd4();
+      Event_End();
     }
   }
 }
 
 void Func_02001d74(void);
-void Func_02001ccc(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 
 void Func_02000538(void) {
   struct MainRoutineWork *party;
 
   Func_02001d74();
-  Func_02001ccc((s32)&SceneId_Ov68b, 2);
+  Event_SetDestination((s32)&SceneId_Ov68b, 2);
   party = &gMainRoutineWork;
 
   party->unk2c2 = 2;
@@ -338,7 +338,7 @@ void Func_02000560(void) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02001cf4_(s32 a, s32 b, s32 c) {
-  Func_02001cf4(a, b, c);
+  Actor_ReturnHome(a, b, c);
 }
 
 void Func_020005ac(s32 a) { Func_02001cf4_(a, 64, 0x300); }
@@ -364,7 +364,7 @@ void Func_0200061c(s32 a) { Func_02001cf4_(a, 72, 0x308); }
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_02001bbc();
+s32 Party_FindOwnerWithAction();
 void Func_02001cc4();
 void Func_02001d2c();
 void Func_02001d34();
@@ -394,7 +394,7 @@ L_02008682:
   goto L_020088d4;
 L_02008694:
   Event_SetFlag(0x968);
-  Func_02001bcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)&MsgAreYouKids);
   Actor_SetPosition(12, PIXELS(872), PIXELS(880));
@@ -416,7 +416,7 @@ L_02008694:
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(928), 1);
   Func_02001cc4();
-  t30 = Func_02001bbc(133);
+  t30 = Party_FindOwnerWithAction(133);
   v5 = t30;
   if (v5 == -1)
     goto L_02008778;
@@ -461,7 +461,7 @@ L_02008788:
   Event_SetFlag(0x96f);
 L_020088cc:
   Func_020001bc();
-  Func_02001bd4();
+  Event_End();
 L_020088d4:
 }
 
@@ -490,7 +490,7 @@ void Func_02000934(void) {
     Actor_FaceDirectionAndWait(30, FACING_NORTH + FACING_STEP);
     return;
   }
-  Func_02001bcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgDoYouWish);
   Actor_ShowEmote(30, 0x100, 30);
@@ -514,7 +514,7 @@ void Func_02000934(void) {
     Event_SetFlag(0x908);
   }
   Actor_FaceDirectionAndWait(30, FACING_NORTH + FACING_STEP);
-  Func_02001bd4();
+  Event_End();
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
@@ -737,7 +737,7 @@ void Func_02000e7c(s32 id) {
   s32 b;
   s32 c;
 
-  Func_02001bcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgOh2);
   Animation_SetIndexAndInitializeObjects((s32)Actor_Get(12), 56);
@@ -796,13 +796,13 @@ void Func_02000e7c(s32 id) {
   Actor_Get(4)->priorityFlags |= 1;
   Actor_WalkToAndWait(4, 464, 776);
   Func_020001bc();
-  Func_02001bd4();
+  Event_End();
 }
 
 void Func_0200109c(void) {
   struct Actor *leader;
 
-  Func_02001bcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgWhereAreYou);
   Animation_SetIndexAndInitializeObjects((s32)Actor_Get(12), 56);
@@ -822,7 +822,7 @@ void Func_0200109c(void) {
   FieldEvent_Wait(10);
   Actor_WalkByAndWait(4, 0, -16);
   Func_020001bc();
-  Func_02001bd4();
+  Event_End();
 }
 
 struct EventWork1c4 {
@@ -835,7 +835,7 @@ void Func_02001160(void) {
   s32 result;
 
   Event_SetFlag(0x964);
-  Func_02001bcc();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgThisPlaceIs);
   Actor_SetSpeed(24, 0x10000, 0x8000);
@@ -1104,7 +1104,7 @@ void Func_02001160(void) {
   FieldActor_WaitForMoveById(12);
   Actor_SetPosition(12, 0, 0);
   Func_020001bc();
-  Func_02001bd4();
+  Event_End();
 }
 
 void Func_02001d6c(void);

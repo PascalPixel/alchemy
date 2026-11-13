@@ -38,17 +38,17 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_02001454
+	.global Window_LoadGraphics
 	.thumb_func
-Func_02001454:
+Window_LoadGraphics:
 	overlay_veneer Window_LoadGraphicsFar
 	.global LinkLobby_RunRoundResult
 	.thumb_func
 LinkLobby_RunRoundResult:
 	overlay_veneer Actor_SetMode
-	.global Func_02001464
+	.global Actor_StartScript
 	.thumb_func
-Func_02001464:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -150,9 +150,9 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_0200152c:
 	overlay_veneer Func_080c8240
-	.global Func_02001534
+	.global Event_SetDestination
 	.thumb_func
-Func_02001534:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
@@ -190,21 +190,21 @@ Field_StartPaletteTransition:
 	overlay_veneer Field_StartPaletteTransitionFar
 	.endif
 	.endif
-	.global Func_02001574
+	.global BattleEffect_StartArcEffect
 	.thumb_func
-Func_02001574:
+BattleEffect_StartArcEffect:
 	overlay_veneer BattleEffect_StartArcEffectFar
-	.global Func_0200157c
+	.global BattleEffect_EndArcEffect
 	.thumb_func
-Func_0200157c:
+BattleEffect_EndArcEffect:
 	overlay_veneer BattleEffect_EndArcEffectFar
-	.global Func_02001584
+	.global BattleEffect_WaitForArcGroups
 	.thumb_func
-Func_02001584:
+BattleEffect_WaitForArcGroups:
 	overlay_veneer BattleEffect_WaitForArcGroupsFar
-	.global Func_0200158c
+	.global BattleEffect_SetObjectUpdateMode
 	.thumb_func
-Func_0200158c:
+BattleEffect_SetObjectUpdateMode:
 	overlay_veneer BattleEffect_SetObjectUpdateModeFar
 	.global Sound_Play
 	.thumb_func

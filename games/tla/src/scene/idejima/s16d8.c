@@ -17,7 +17,7 @@
 
 void Import_ActorPlaceAtActor();
 void DriftScene_SpawnObject();
-void Func_02003180();
+void Map_CenterOnFollowedPoint();
 
 extern u32 gData_02003330[];
 extern u32 gData_0200336c[];
@@ -36,7 +36,7 @@ void Func_020016d8(void) {
   System_Wait(1);
   FieldCamera_MoveTo(PIXELS(252), -1, PIXELS(216), 0);
   System_Wait(1);
-  Func_02003180();
+  Map_CenterOnFollowedPoint();
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
   east = 0x4000;
   Actor_SetPositionAndFacing(5, PIXELS(184), PIXELS(168), east);
@@ -249,7 +249,7 @@ void Func_02001ee0(void) {
   Actor_SetPosition(10, PIXELS(392), PIXELS(172));
   System_Wait(1);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(214), 0);
-  Func_02003180();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   Actor_SetPosition(5, PIXELS(208), PIXELS(218));
   Actor_SetAnimation(5, 19);
@@ -610,7 +610,7 @@ void Func_02002c64(void) {
   Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(384), PIXELS(728));
   Actor_SetPosition(11, PIXELS(384), PIXELS(702));
   System_Wait(1);
-  Func_02003180();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   FelixWake_EndStep();
   Event_StartScreenTransition();

@@ -40,8 +40,8 @@ void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
 void Func_02001474(s32 show);
 void Func_02002180(void);
-void Func_02003c28(void);
-void Func_02003c30(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02003dc0(const void *data);
 void Func_02003dc8(void);
 void Func_02003de8(void);
@@ -60,11 +60,11 @@ extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
 void Func_02003cf0(void);
-void Func_02003d50(s32 a, s32 b);
-void Func_02003d58(s32 a, s32 b);
-void Func_02003d60(void);
-void Func_02003d68(void);
-void Func_02003d70(void);
+void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
+void BattleEffect_SetupObjectPair(s32 a, s32 b);
+void BattleEffect_StopMainActor(void);
+void BattleEffect_CleanupSceneObjects(void);
+void EventObject_Initialize(void);
 void Func_02003cc0(s32 id);
 void Func_02003d40(struct Actor *object, s32 mode);
 void Func_02003bb8(struct Actor *object);
@@ -270,12 +270,12 @@ void Func_020015e0(void) {
 
   x = object->x >> 20;
   if (x == 56 && (object->z >> 20) == 32) {
-    Func_02003c28();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Func_020015b8(object);
     Map_CopyCellAttributeRect(54, 32, 2, 1, x, 64);
     GameFlag_SetBit(0x301);
-    Func_02003c30();
+    Event_End();
   }
 }
 
@@ -287,14 +287,14 @@ void Func_02001640(void) {
 
   Func_02003dc8();
   if (x == 52) {
-    Func_02003c28();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Map_CopyCellAttributeRect(51, 7, 1, 1, x, 7);
     wait(1);
     Func_020015b8(object);
     Map_CopyCellAttributeRect(50, 7, 1, 1, x, 7);
     GameFlag_SetBit(0x840);
-    Func_02003c30();
+    Event_End();
   }
 }
 
@@ -306,14 +306,14 @@ void Func_020016b0(void) {
 
   Func_02003dc8();
   if (x == 47) {
-    Func_02003c28();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Map_CopyCellAttributeRect(47, 12, 1, 1, x, 13);
     wait(1);
     Func_020015b8(object);
     Map_CopyCellAttributeRect(50, 16, 1, 1, x, 13);
     Actor_SetSpritePriority(19, 2);
-    Func_02003c30();
+    Event_End();
   } else if (x == 46) {
     Map_CopyAttributes(44, 13, 1, 1, 48, 13);
   }
@@ -341,7 +341,7 @@ void Func_020017a0(void) {
 
   if ((Actor_GetById(20)->x >> 20) == 38) {
     flags = &Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags;
-    Func_02003c28();
+    Event_Start();
     Event_ResolvePendingActions(0);
     *flags = 0;
     wait(1);
@@ -349,7 +349,7 @@ void Func_020017a0(void) {
     Func_0200172c();
     wait(1);
     *flags = 3;
-    Func_02003c30();
+    Event_End();
   }
 }
 
@@ -510,9 +510,9 @@ void Func_02000974(s32 mode);
 void Func_02000aa8(void);
 void Func_02000c4c(s32 level, s32 layer);
 void Func_02003ba0(struct Actor *object, s32 mode);
-void Func_02003ba8(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 s32 Func_02003c10(s32 layer, s32 x, s32 z);
-void Func_02003c78(s32 id, s32 target);
+void Actor_MoveToObject(s32 id, s32 target);
 s32 Func_02003d20(void);
 s32 Func_02003d80(void *sprite, s32 frame);
 s32 Func_02003db0(struct Actor *object);
@@ -581,7 +581,7 @@ void Func_02001a30(void) {
   } else {
     return;
   }
-  Func_02003c28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, cellX << 3,
@@ -710,7 +710,7 @@ void Func_02001a30(void) {
         gData_02005678 = leader->z >> 20;
       }
     }
-    Func_02003c30();
+    Event_End();
   }
 }
 
@@ -799,13 +799,13 @@ void Func_0200200c(struct Actor *object) {
   Func_02000e9c(object);
   x = object->x >> 20;
   if (x == 12) {
-    Func_02003c28();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Map_CopyCellAttributeRect(0, 32, 1, 1, x, 11);
     wait(1);
     Func_020015b8(object);
     Map_CopyCellAttributeRect(1, 32, 1, 1, x, 11);
-    Func_02003c30();
+    Event_End();
   } else if (x == 18) {
     cell = ((struct MapCells *)Ram_HeapSlots->mapWork)->cells;
     cell += Func_02003db0(object) * 4;
@@ -913,8 +913,8 @@ void Func_02000708(const void *data);
 void Func_02001474(s32 show);
 void Func_02002180(void);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02003c28(void);
-void Func_02003c30(void);
+void Event_Start(void);
+void Event_End(void);
 void Event_ResolvePendingActions(s32 skip);
 void Func_02003dc0(const void *data);
 void Func_02003dc8(void);
@@ -938,11 +938,11 @@ extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(u32 id, s32
 s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 void Func_02003cf0(void);
 struct Actor *Func_080d4568(void);
-void Func_02003d50(s32 a, s32 b);
-void Func_02003d58(s32 a, s32 b);
-void Func_02003d60(void);
-void Func_02003d68(void);
-void Func_02003d70(void);
+void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
+void BattleEffect_SetupObjectPair(s32 a, s32 b);
+void BattleEffect_StopMainActor(void);
+void BattleEffect_CleanupSceneObjects(void);
+void EventObject_Initialize(void);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Actor_SetAngleToward(s32 id, s32 target, s32 mode);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
@@ -971,7 +971,7 @@ static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
 }
 
 void Func_020021e8(void) {
-  Func_02003c28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Func_080d4568()->motionFlags = 0;
   Camera_MoveWithinMapBounds(658 << 16, -1, 164 << 16, 1);
@@ -993,11 +993,11 @@ void Func_020021e8(void) {
   Actor_PlaceFacing(24, 222 << 18, 168 << 16, FACING_SOUTH);
   Event_Wait(20);
   GameFlag_SetBit(0x86c);
-  Func_02003c30();
+  Event_End();
 }
 
 void Func_020022e0(void) {
-  Func_02003c28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Camera_MoveWithinMapBounds(245 << 18, -1, 168 << 16, 1);
   Func_02003cf0();
@@ -1012,11 +1012,11 @@ void Func_020022e0(void) {
   Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
   Event_Wait(20);
   GameFlag_SetBit(0x86d);
-  Func_02003c30();
+  Event_End();
 }
 
 void Func_02002390(void) {
-  Func_02003c28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Camera_MoveWithinMapBounds(144 << 16, -1, 214 << 15, 1);
   Func_02003cf0();
@@ -1033,11 +1033,11 @@ void Func_02002390(void) {
   Actor_MoveTo(25, 294, 104);
   Actor_PlaceFacing(25, 212 << 17, 208 << 15, FACING_SOUTH);
   GameFlag_SetBit(0x86e);
-  Func_02003c30();
+  Event_End();
 }
 
 void Func_02002458(void) {
-  Func_02003c28();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 25);
   Func_080d4568()->motionFlags = 0;
@@ -1061,7 +1061,7 @@ void Func_02002458(void) {
   Actor_MoveTo(25, 584, 216);
   Actor_PlaceFacing(25, 154 << 18, 140 << 17, FACING_SOUTH);
   GameFlag_SetBit(0x86f);
-  Func_02003c30();
+  Event_End();
 }
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -1085,12 +1085,12 @@ void Func_02002574(void) {
 }
 
 void Func_02002604(void) {
-  Func_02003d50(134, 1);
+  BattleEffect_LoadActionEffectResources(134, 1);
   Task_Add__events_g(Func_02002574, 0x480);
-  Func_02003d58(25, 18);
-  Func_02003d70();
+  BattleEffect_SetupObjectPair(25, 18);
+  EventObject_Initialize();
   Field_DispatchTypeHandler(1);
-  Func_02003d60();
+  BattleEffect_StopMainActor();
   Task_RemoveFar(Func_02002574);
-  Func_02003d68();
+  BattleEffect_CleanupSceneObjects();
 }

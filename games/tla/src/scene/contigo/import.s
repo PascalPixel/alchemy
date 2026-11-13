@@ -70,9 +70,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Func_02003fdc:
 	overlay_veneer Actor_SetMode
-	.global Func_02003fe4
+	.global Actor_StartScript
 	.thumb_func
-Func_02003fe4:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -82,9 +82,9 @@ Import_ActorCreate:
 	.thumb_func
 Func_02003ff4:
 	overlay_veneer Actor_Destroy
-	.global Func_02003ffc
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_02003ffc:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Map_CopyCellPictureIndicesRect
 	.thumb_func
@@ -106,25 +106,25 @@ Map_SetScreenShake:
 	.thumb_func
 Animation_ApplyChildValues:
 	overlay_veneer Animation_ApplyChildValuesFar
-	.global Func_0200402c
+	.global Actor_SetSpritePriorityDirect
 	.thumb_func
-Func_0200402c:
+Actor_SetSpritePriorityDirect:
 	overlay_veneer Actor_SetSpritePriorityDirectFar
 	.global FieldMessage_Show
 	.thumb_func
 FieldMessage_Show:
 	overlay_veneer FieldMessage_ShowFar
-	.global Func_0200403c
+	.global MessageArgument_Push
 	.thumb_func
-Func_0200403c:
+MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
 	.global Func_02004044
 	.thumb_func
 Func_02004044:
 	overlay_veneer Func_080ad240
-	.global Func_0200404c
+	.global Party_GetAverageLevel
 	.thumb_func
-Func_0200404c:
+Party_GetAverageLevel:
 	overlay_veneer Party_GetAverageLevelFar
 	.global PartyInventory_CountItem
 	.thumb_func
@@ -138,13 +138,13 @@ PartyInventory_CountFreeSlots:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_0200406c
+	.global Event_Start
 	.thumb_func
-Func_0200406c:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02004074
+	.global Event_End
 	.thumb_func
-Func_02004074:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func
@@ -198,9 +198,9 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_SetHorizontalPositionAndAngleWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionAndAngleWithTerrainFar
-	.global Func_020040e4
+	.global Actor_MoveToObject
 	.thumb_func
-Func_020040e4:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -298,9 +298,9 @@ Func_0200419c:
 	.thumb_func
 MapGrid_SetCameraBounds:
 	overlay_veneer Func_080c8260
-	.global Func_020041ac
+	.global Event_SetDestination
 	.thumb_func
-Func_020041ac:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Import_EventSetExitRequest
 	.thumb_func
@@ -346,25 +346,25 @@ Func_020041fc:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_0200420c
+	.global Party_PlaySavedMusic
 	.thumb_func
-Func_0200420c:
+Party_PlaySavedMusic:
 	overlay_veneer Party_PlaySavedMusicFar
 	.global Func_080d7788
 	.thumb_func
 Func_080d7788:
 	overlay_veneer Func_080c8580
-	.global Func_0200421c
+	.global Camera_WorldToScreen
 	.thumb_func
-Func_0200421c:
+Camera_WorldToScreen:
 	overlay_veneer Camera_WorldToScreenFar
 	.global Actor_WatchAndSetScript
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global Func_0200422c
+	.global ObjectTable_Snapshot
 	.thumb_func
-Func_0200422c:
+ObjectTable_Snapshot:
 	overlay_veneer ObjectTable_SnapshotFar
 	.global Actor_Spawn
 	.thumb_func
@@ -390,21 +390,21 @@ Func_02004254:
 	.thumb_func
 Func_0200425c:
 	overlay_veneer Func_080c87f0
-	.global Func_02004264
+	.global BattleEffect_StartArcEffect
 	.thumb_func
-Func_02004264:
+BattleEffect_StartArcEffect:
 	overlay_veneer BattleEffect_StartArcEffectFar
-	.global Func_0200426c
+	.global BattleEffect_EndArcEffect
 	.thumb_func
-Func_0200426c:
+BattleEffect_EndArcEffect:
 	overlay_veneer BattleEffect_EndArcEffectFar
-	.global Func_02004274
+	.global BattleEffect_WaitForArcGroups
 	.thumb_func
-Func_02004274:
+BattleEffect_WaitForArcGroups:
 	overlay_veneer BattleEffect_WaitForArcGroupsFar
-	.global Func_0200427c
+	.global BattleEffect_SetObjectUpdateMode
 	.thumb_func
-Func_0200427c:
+BattleEffect_SetObjectUpdateMode:
 	overlay_veneer BattleEffect_SetObjectUpdateModeFar
 	.global Func_02004284
 	.thumb_func

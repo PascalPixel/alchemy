@@ -137,7 +137,7 @@ struct DailaActor *Actor_GetById(s32 id);
 
 void Func_02000ddc(s32 slot, s32 actor);
 void Func_02000dec(s32 slot, s32 actor);
-s32 Func_02000dd4(void);
+s32 Party_GetLeaderActor(void);
 void Func_02000de4(s32 actor);
 
 void Func_02000270(s32 actor) {
@@ -193,7 +193,7 @@ void Func_02000390(s32 actor) {
       msg = (s32)MsgDailaInteriorsTravelersFreeTime;
       Import_EventSetMessageId(msg);
       FieldMessage_ShowAtActor(actor, 0);
-      if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
+      if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
         FieldEvent_Wait(10);
         Import_EventSetMessageId(msg + 1);
       } else {
@@ -212,7 +212,7 @@ void Func_02000390(s32 actor) {
     msg = (s32)MsgDailaInteriorsTravelersFreeTime;
     Import_EventSetMessageId(msg);
     FieldMessage_ShowAtActor(actor, 0);
-    if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       FieldEvent_Wait(10);
       Import_EventSetMessageId(msg + 1);
     } else {
@@ -289,7 +289,7 @@ void Func_02000614(void) {
   msg = (s32)MsgDailaInteriorsGoingToMadra;
   Import_EventSetMessageId(msg);
   FieldMessage_ShowAtActor(12, 0);
-  if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     FieldEvent_Wait(10);
     Import_EventSetMessageId(msg + 1);
   } else {
@@ -308,7 +308,7 @@ void Func_0200066c(void) {
   msg = (s32)MsgDailaInteriorsLookingForBoat;
   Import_EventSetMessageId(msg);
   FieldMessage_ShowAtActor(14, 0);
-  if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     FieldEvent_Wait(10);
     Import_EventSetMessageId(msg + 1);
   } else {
@@ -375,10 +375,10 @@ struct DailaActor__item {
 /* VIEW(item): routine Actor_GetById as struct DailaActor__item *Actor_GetById(s32 id); daila_interiors has struct DailaActor *Actor_GetById(s32 id); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:389: structure has no member named `unk48'. */
 extern struct DailaActor__item *Actor_GetById__item(s32 id) __asm__("Actor_GetById");
 s32 PartyInventory_Add(s32 item);
-s32 Func_02000d14(s32 item);
+s32 PartyInventory_FindRoom(s32 item);
 void Func_02000da4(struct DailaActor__item *object, s32 mode);
-void Func_02000dfc(s32 cue);
-void Func_02000ccc(s32 value, s32 slot);
+void Sound_Play(s32 cue);
+void MessageArgument_Push(s32 value, s32 slot);
 void Func_02000c9c(struct DailaActor__item *object);
 s32 Func_02000878(s32 item, s32 mode);
 
@@ -394,24 +394,24 @@ void Func_02000730(void) {
   savedY = Actor_GetById__item(9)->y;
   Import_EventStart();
   Import_EventResolvePendingActions(0);
-  if (Func_02000d14(item) >= 0) {
+  if (PartyInventory_FindRoom(item) >= 0) {
     Func_02000da4(Actor_GetById__item(9), 3);
-    Func_02000dfc(83);
-    Func_02000ccc(item, 2);
+    Sound_Play(83);
+    MessageArgument_Push(item, 2);
     FieldMessage_Show((s32)MsgItemReceived, 1);
     PartyInventory_Add(item);
-    Func_02000d4c(9, 0, 0);
-    Func_02000d4c(13, 232 << 16, 194 << 16);
+    Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(13, 232 << 16, 194 << 16);
     GameFlag_SetBit(0xa20);
   } else {
     Func_02000da4(Actor_GetById__item(9), 3);
-    Func_02000dfc(83);
+    Sound_Play(83);
     if (Func_02000878(item, 0) != -1) {
-      Func_02000d4c(9, 0, 0);
-      Func_02000d4c(13, 232 << 16, 196 << 16);
+      Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(13, 232 << 16, 196 << 16);
       GameFlag_SetBit(0xa20);
     } else {
-      Func_02000d4c(9, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
       FieldEvent_Wait(1);
       Actor_GetById__item(9)->unk28 = saved28;
       Actor_GetById__item(9)->y = savedY;
@@ -460,7 +460,7 @@ s32 Func_02000878(s32 item, s32 unused) {
   saved = work->message;
   owner = PartyInventory_Add(item);
   if (owner == -1) {
-    Func_02000ccc(item, 2);
+    MessageArgument_Push(item, 2);
     FieldMessage_Show((s32)MsgItemReceived, 1);
     FieldMessage_Show((s32)MsgItemCannotCarry, 1);
   retry:
@@ -468,17 +468,17 @@ s32 Func_02000878(s32 item, s32 unused) {
     result = Func_02000df4(&member, &slot);
     if (result == -1) {
       if (Func_02000ce4(item)->flags & 8) {
-        Func_02000ccc(item, 2);
+        MessageArgument_Push(item, 2);
         FieldMessage_Show((s32)MsgItemDropPrompt + 4, 1);
         goto retry;
       }
-      Func_02000ccc(item, 2);
+      MessageArgument_Push(item, 2);
       FieldMessage_Show((s32)MsgItemDropPrompt + 1, 5);
       result = Func_02000dbc(1);
       Message_CloseFinishedWindows();
       if (result != 0)
         goto retry;
-      Func_02000ccc(item, 2);
+      MessageArgument_Push(item, 2);
       FieldMessage_Show((s32)MsgItemDropPrompt + 2, 1);
       work->message = saved;
       return owner;
@@ -486,8 +486,8 @@ s32 Func_02000878(s32 item, s32 unused) {
       Unit_Get(member);
       count = Inventory_GetQuantity(member, slot);
       if (Inventory_CountItem(member, item) > 29) {
-        Func_02000ccc(member, 1);
-        Func_02000ccc(item, 2);
+        MessageArgument_Push(member, 1);
+        MessageArgument_Push(item, 2);
         FieldMessage_Show((s32)MsgItemDropPrompt + 7, 1);
         goto retry;
       }
@@ -496,25 +496,25 @@ s32 Func_02000878(s32 item, s32 unused) {
       Unit_RefreshPsynergy(member);
       Unit_Calculate(member);
       owner = PartyInventory_Add(item);
-      Func_02000dfc(83);
+      Sound_Play(83);
       if (owner == gMainRoutineWork.currentOwner) {
-        Func_02000ccc(item, 2);
+        MessageArgument_Push(item, 2);
         FieldMessage_Show((s32)MsgItemReceived, 3);
       } else {
-        Func_02000ccc(item, 2);
-        Func_02000ccc(owner, 1);
+        MessageArgument_Push(item, 2);
+        MessageArgument_Push(owner, 1);
         FieldMessage_Show((s32)MsgItemGiven, 3);
       }
       work->message = saved;
       return owner;
     }
   } else {
-    Func_02000dfc(83);
-    Func_02000ccc(item, 2);
+    Sound_Play(83);
+    MessageArgument_Push(item, 2);
     FieldMessage_Show((s32)MsgItemReceived, 3);
     if (owner != gMainRoutineWork.currentOwner) {
-      Func_02000ccc(item, 2);
-      Func_02000ccc(owner, 1);
+      MessageArgument_Push(item, 2);
+      MessageArgument_Push(owner, 1);
       FieldMessage_Show((s32)MsgItemReceived + 1, 1);
     }
     work->message = saved;
@@ -603,9 +603,9 @@ s32 DailaInteriors_Start(void) {
       Actor_SetSingleChildFlags__arrival(Actor_GetById__arrival(9), 0);
     }
     if (!GameFlag_Test(0x873)) {
-      Func_02000d4c(10, 0, 0);
-      Func_02000d4c(11, 0, 0);
-      Func_02000d4c(12, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
       map->mode17 = 1;
     } else {
       Func_02000dc4(gData_02000e04__arrival);

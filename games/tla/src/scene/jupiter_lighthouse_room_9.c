@@ -281,8 +281,8 @@ void Func_020004e4(s32 id) {
 #include "frame.h"
 #include "field_sprite.h"
 
-void Func_02001be8(void);
-void Func_02001bf0(void);
+void Event_Start(void);
+void Event_End(void);
 
 void Func_02000538(void) {
   /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
@@ -296,7 +296,7 @@ void Func_02000538(void) {
   s32 angle;
   s32 i;
 
-  Func_02001be8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkd46 = i;
@@ -355,7 +355,7 @@ void Func_02000538(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_02001bf0();
+  Event_End();
 }
 
 s32 Func_02000724(s32 *a, s32 *b) {
@@ -369,9 +369,9 @@ extern const s32 gData_020025f8[];
 
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_02001c88(s32 x, s32 z, s32 layer);
-void Func_02001c78(s32 *position);
+void Camera_WorldToScreen(s32 *position);
 s32 Math_Cosine(s32 angle);
-void Func_02001b78(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_02000750(struct Actor *self) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -398,7 +398,7 @@ void Func_02000750(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Func_02001c78(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -446,7 +446,7 @@ stop:
     s32 zero = 0;
     *((u8 *)self + 0x63) = zero;
     self->update = zero;
-    Func_02001b78(self, gData_020025f8);
+    Actor_StartScript(self, gData_020025f8);
     Event_PlaySound(228);
     gData_02002618 = zero;
   }

@@ -388,7 +388,7 @@ void Func_02000a5c(void) {
 }
 
 #include "call.h"
-s32 Func_0200101c();
+s32 Field_RequestBattleFromEncounterTable();
 extern u8 MsgIAmTheGuardian[];
 
 void Func_02000a8c(void) {
@@ -413,7 +413,7 @@ void Func_02000a8c(void) {
   FieldEvent_Wait(20);
   gMainRoutineWork.pendingDjinnEvent = 0x19bb;
   gMainRoutineWork.battleRule24b = 2;
-  Call2(Func_0200101c, 0x67, 0);
+  Call2(Field_RequestBattleFromEncounterTable, 0x67, 0);
 }
 
 /* VIEW(scene_tables): variable gData_020016e4 as extern const u8 gData_020016e4[]; the definition has struct Trigger gData_020016e4[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 1, 4, CON...; tried as the definition's extern s16 gData_020016e4[], it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:791: conflicting types for `gData_020016e4'. */

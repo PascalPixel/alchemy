@@ -36,7 +36,7 @@ void Func_020023b0(void);
 void Func_02002438(struct CellTarget *work, struct CellTargetEntry *entry);
 void Func_020024a8(struct CellTarget *work, struct CellTargetEntry *entry);
 void Func_02002640(void);
-void Func_02002a18(void);
+void Map_CenterOnFollowedPoint(void);
 void Func_02002b28(s32 id, s32 a);
 
 #endif

@@ -14,13 +14,13 @@ GameFlag_SetBit:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Func_020001b4
+	.global Event_Start
 	.thumb_func
-Func_020001b4:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020001bc
+	.global Event_End
 	.thumb_func
-Func_020001bc:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func

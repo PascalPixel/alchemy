@@ -63,7 +63,7 @@ struct GabombaStatueChamberEventWork {
 };
 
 void Func_02001da0(void);
-void Func_02001da8(void);
+void Event_End(void);
 void Func_02001e80(s32 actor);
 void Func_02001d30(struct GabombaStatueChamberObject *object);
 void Field_DispatchTypeHandler(s32 type);
@@ -72,7 +72,7 @@ void Func_02001ea8(void);
 
 #include "event_work.h"
 
-void Func_02001e20(s32 actor, s32 target);
+void Actor_MoveToObject(s32 actor, s32 target);
 
 // ---- this overlay
 

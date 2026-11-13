@@ -15,7 +15,7 @@ void Func_020015d8(void) {
     Func_02005a60(249, 72, 152);
     ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b9;
     gMainRoutineWork.battleRule24b = 2;
-    Func_02005998(106, 4);
+    Field_RequestBattleFromEncounterTable(106, 4);
   }
 }
 
@@ -71,7 +71,7 @@ void Func_020017e0(void) {
   } while (0);
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov697Room2, 4);
   Party_SetFields1f2And1f4((s32)&SceneId_Ov697Room2, 5);
-  Func_02005998(13, 4 - count);
+  Field_RequestBattleFromEncounterTable(13, 4 - count);
 }
 
 /// When the object stands in column 8, sets flag 0x9fc, stops its motion and
@@ -711,7 +711,7 @@ extern const s8 gData_02005bd6__s1fc4[] __asm__("gData_02005bd6");
 void *Unit_Get(s32 owner);
 void Func_02002c30(u32 seed);
 void Func_02005828(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_020057e8(void);
+void Map_CenterOnFollowedPoint(void);
 void Func_020055c4(s32 a, s32 b);
 void Func_02005688(s32 a);
 void Func_02000218(s32 side, s32 phase);
@@ -776,7 +776,7 @@ s32 Scene_PrepareMap(void) {
       Func_020056c4((s32)gData_02005b84[value & 7]);
       state->pattern = state->order[state->field16[0] * 2 + state->mirrored];
       n = entrance % 10;
-      Func_02005988((s32)&SceneId_Ov697Room1, n);
+      Event_SetDestination((s32)&SceneId_Ov697Room1, n);
     } else if ((u32)(entrance - 33) <= 1) {
       if (!GameFlag_Test(896)) {
         unit = Unit_Get(gMainRoutineWork.currentOwner);
@@ -809,7 +809,7 @@ s32 Scene_PrepareMap(void) {
       Func_020056c4((s32)gData_02005b84[value & 7]);
       state->pattern = state->order[state->field16[0] * 2 + state->mirrored];
       n = entrance % 10;
-      Func_02005988((s32)&SceneId_Ov697Room1, n);
+      Event_SetDestination((s32)&SceneId_Ov697Room1, n);
     } else if (entrance == 50) {
       unit = Unit_Get(gMainRoutineWork.currentOwner);
       Iwram_ClearWords(state, 32);
@@ -823,7 +823,7 @@ s32 Scene_PrepareMap(void) {
       state->field1a = 0;
       state->field1c = 0;
       state->pattern = state->order[0];
-      Func_02005988((s32)&SceneId_Ov697Room1, 55);
+      Event_SetDestination((s32)&SceneId_Ov697Room1, 55);
     } else {
       s32 *viewX = &map->viewX;
       s32 *viewZ = &map->viewZ;
@@ -865,7 +865,7 @@ s32 Scene_PrepareMap(void) {
         i++;
         if (i <= 9)
           goto hideUnused55;
-        Func_020057e8();
+        Map_CenterOnFollowedPoint();
       } else {
         s32 x1;
         s32 x2;
@@ -921,7 +921,7 @@ s32 Scene_PrepareMap(void) {
         i++;
         if (i <= 9)
           goto hideUnused;
-        Func_020057e8();
+        Map_CenterOnFollowedPoint();
         leader = Actor_GetById(gMainRoutineWork.currentOwner);
         if (!GameFlag_Test(265))
           leader->y = leader->terrainHeight =
@@ -1057,20 +1057,20 @@ void Func_02002db4(void) {
   Func_02002d78(14, 296, 280, 0x8000);
 }
 
-void Func_02005880(void);
-void Func_020058f0(s32 actor, s32 value);
+void Event_Start(void);
+void Actor_MoveToObject(s32 actor, s32 value);
 void Func_02005980(void);
 
 void Func_02002dec(void) {
   struct Actor *object;
 
-  Func_02005880();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x20000, 0x4000);
   FieldCamera_MoveTo(0x1000000, -1, 0x1080000, 1);
-  Func_020058f0(5, 4);
-  Func_020058f0(6, 4);
-  Func_020058f0(7, 4);
+  Actor_MoveToObject(5, 4);
+  Actor_MoveToObject(6, 4);
+  Actor_MoveToObject(7, 4);
   Actor_SetSpeed(4, 0x10000, 0x8000);
   Actor_SetSpeed(5, 0x10000, 0x8000);
   Actor_SetSpeed(6, 0x10000, 0x8000);
@@ -1121,8 +1121,8 @@ void Func_02002dec(void) {
   Actor_SetMoveTarget(object, Func_02002d20(37) << 16, object->y, 264 << 16);
   Script_WaitForEventTimeout(object);
   wait(6);
-  Func_020058f0(13, 8);
-  Func_020058f0(14, 8);
+  Actor_MoveToObject(13, 8);
+  Actor_MoveToObject(14, 8);
   Actor_SetSpeedParameters(8, 0x10000, 0x8000);
   Actor_SetSpeedParameters(13, 0x10000, 0x8000);
   Actor_SetSpeedParameters(14, 0x10000, 0x8000);
@@ -1169,13 +1169,13 @@ void Func_02002dec(void) {
 }
 
 void Func_0200322c(void) {
-  Func_02005880();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x20000, 0x4000);
   Camera_MoveWithinMapBounds(PIXELS(256), -1, PIXELS(264), 1);
-  Func_020058f0(5, 4);
-  Func_020058f0(6, 4);
-  Func_020058f0(7, 4);
+  Actor_MoveToObject(5, 4);
+  Actor_MoveToObject(6, 4);
+  Actor_MoveToObject(7, 4);
   Actor_SetSpeed(4, 0x10000, 0x8000);
   Actor_SetSpeed(5, 0x10000, 0x8000);
   Actor_SetSpeed(6, 0x10000, 0x8000);
@@ -1232,10 +1232,10 @@ struct ActorSolid {
   u8 solid : 8;
 };
 
-void Func_02005860(s32 cue);
+void PartyInventory_Discard(s32 cue);
 
 void Func_020034b4(void) {
-  Func_02005880();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_02002d78(4, 248, 272, 0);
@@ -1287,7 +1287,7 @@ void Func_020034b4(void) {
   Actor_SetAngleToward(6, 4, 0);
   Actor_SetAngleToward(5, 4, 0);
   Event_Wait(20);
-  Func_02005860(65);
+  PartyInventory_Discard(65);
   PartyInventory_GiveItem(215, 0);
   Actor_SetAngleToward(4, 8, 0);
   OBJECT_BYTE(Actor_GetById(8), 0x5a) &= ~1;
@@ -1323,7 +1323,7 @@ void Func_020034b4(void) {
 }
 
 void Func_020037c8(void) {
-  Func_02005880();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_02002d78(8, 264, 264, 0x8000);
@@ -1377,7 +1377,7 @@ static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 actor, s32 dx,
 void Func_02003900(void) {
   s32 i;
 
-  Func_02005880();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, PIXELS(1016));
   Actor_SetPosition(8, PIXELS(1016), PIXELS(1016));
@@ -1658,7 +1658,7 @@ struct TrialRoadMovers__s3f68 {
 /* VIEW(s3f68): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/include/graphics/vram_tab.h:26: conflicting types for `gResourceTableEntries'. */
 extern struct ResourceTableEntry gResourceTableEntries__s3f68[] __asm__("gResourceTableEntries");
 
-void Func_02005790(void *entry, s32 priority);
+void Oam_AddSpriteAtDepth(void *entry, s32 priority);
 
 /// Queues the Trial Road movers' sprites.
 void Func_02003f68(void) {
@@ -1721,7 +1721,7 @@ void Func_02003f68(void) {
       *cursor++ = 0;
       *cursor++ = sy | (x << 16) | 0x40002000;
       *cursor = (tile + frame) | 0x800;
-      Func_02005790(entry, depth);
+      Oam_AddSpriteAtDepth(entry, depth);
       entry += 3;
       count++;
     skip:
@@ -1747,7 +1747,7 @@ void Func_02003f68(void) {
     *cursor++ = 0;
     *cursor++ = sy | (x << 16) | 0x40002000;
     *cursor = (tile + frame - 32) | 0x800;
-    Func_02005790(entry, depth);
+    Oam_AddSpriteAtDepth(entry, depth);
     entry += 3;
     count++;
   }
@@ -1931,8 +1931,8 @@ done:
 }
 
 struct Actor *Func_02005a28(s32 *position, s32 mode);
-void Func_02005880(void);
-void Func_02005888(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02004a94(s32 value);
 void Func_02004d6c(s32 offset, s32 layer);
 void Func_02004bc8(void);
@@ -1963,7 +1963,7 @@ next:
   }
   {
     flag = table[1];
-    Func_02005880();
+    Event_Start();
     if (!GameFlag_Test(flag)) {
       Sound_Play(125);
       Actor_SetPartAttribute(Actor_GetById(id), 7);
@@ -2002,7 +2002,7 @@ next:
         GameFlag_SetBit(second);
       }
     }
-    Func_02005888();
+    Event_End();
     return;
   }
 test:
@@ -2029,7 +2029,7 @@ void Func_020045ac(const void *data, s32 id) {
     }
     {
       flag = entry->flag;
-      Func_02005880();
+      Event_Start();
       if (!GameFlag_Test(flag + 1)) {
         Sound_Play(185);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
@@ -2049,7 +2049,7 @@ void Func_020045ac(const void *data, s32 id) {
         GameFlag_SetBit(flag);
         GameFlag_SetBit(flag + 1);
       }
-      Func_02005888();
+      Event_End();
       break;
     }
   }
@@ -2060,7 +2060,7 @@ void Func_0200468c(s32 id) {
   Func_02005958(id);
 }
 
-void Func_020058f0(s32 id, s32 owner);
+void Actor_MoveToObject(s32 id, s32 owner);
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 /// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
@@ -2078,9 +2078,9 @@ void Func_020046a4(u16 *list) {
   s32 index;
   u8 *grid = gMapShapeGrid; // the shape grid, read once
 
-  Func_020058f0(8, gMainRoutineWork.currentOwner);
-  Func_020058f0(9, gMainRoutineWork.currentOwner);
-  Func_020058f0(10, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(8, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(10, gMainRoutineWork.currentOwner);
   wait(1);
   Func_0200468c(8);
   Func_0200468c(9);
@@ -2160,7 +2160,7 @@ void Func_02004828(const u16 *table) {
       goto test;
     }
     flag = table[1];
-    Func_02005880();
+    Event_Start();
     if (!GameFlag_Test(flag)) {
       Func_020057c8(partner, 1);
       Func_0200480c(partner, trap);
@@ -2209,7 +2209,7 @@ void Func_02004828(const u16 *table) {
         GameFlag_SetBit(second);
       }
     }
-    Func_02005888();
+    Event_End();
     return;
   test:
     if (*table != 0xffff)
@@ -2287,8 +2287,8 @@ u32 Func_020059f0(struct FieldSprite *sprite, u32 frame);
 extern void Actor_SetSingleChildFlags__s4a94(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
 /* VIEW(s4a94): routine Func_020057c8 as void Func_020057c8(struct FieldEffect *effect, s32 mode); trial_road.h has void Func_020057c8(struct Actor *object, s32 a). */
 extern void Func_020057c8__s4a94(struct FieldEffect *effect, s32 mode) __asm__("Func_020057c8");
-/* VIEW(s4a94): routine Func_020057d0 as void Func_020057d0(struct FieldEffect *effect, const s32 *script); trial_road.h has void Func_020057d0(struct Actor *object, const void *script). */
-extern void Func_020057d0__s4a94(struct FieldEffect *effect, const s32 *script) __asm__("Func_020057d0");
+/* VIEW(s4a94): routine Actor_StartScript as void Actor_StartScript(struct FieldEffect *effect, const s32 *script); trial_road.h has void Actor_StartScript(struct Actor *object, const void *script). */
+extern void Func_020057d0__s4a94(struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
 s32 Math_Cosine(s32 angle);
 void Func_02004a14(union FieldObject *object);
 
@@ -2663,7 +2663,7 @@ struct TrialRoadLinkWork__s51a0 {
   s32 originZ;
 };
 
-/// One queued sprite: the three words Func_02005790 adds to OAM.
+/// One queued sprite: the three words Oam_AddSpriteAtDepth adds to OAM.
 struct TrialRoadSprite {
   u32 words[3];
 };
@@ -2672,7 +2672,7 @@ extern const u16 Data_020062b4[];
 extern const u8 gData_020062d4[];
 
 void Func_02005770(const void *source, void *destination);
-void Func_02005790(void *entry, s32 priority);
+void Oam_AddSpriteAtDepth(void *entry, s32 priority);
 s32 Func_02002ce8(s32 side);
 
 // The picture's buffer: 576 bytes of EWRAM, the size VramCache_Load copies.
@@ -2715,7 +2715,7 @@ static inline void *TrialRoadLink_AllocPicture(void) {
     y |= markerSize;                                                           \
     *cursor++ = y;                                                             \
     *cursor++ = (tile + (tileAdd)) | 0xe400;                                   \
-    Func_02005790(entry++, 255);                                               \
+    Oam_AddSpriteAtDepth(entry++, 255);                                               \
   } while (0)
 
 /// The Trial Road link display's scheduled callback, which Func_020055c4
@@ -2777,12 +2777,12 @@ void Func_020051a0(void) {
       *cursor++ = 0;
       *cursor++ = y | (x << 16) | flip | 0x80008000;
       *cursor++ = tile | 0xe400;
-      Func_02005790(entry++, 255);
+      Oam_AddSpriteAtDepth(entry++, 255);
       word = y + 32;
       *cursor++ = 0;
       *cursor++ = word | (x << 16) | flip | 0x4000;
       *cursor++ = (tile + 8) | 0xe400;
-      Func_02005790(entry++, 255);
+      Oam_AddSpriteAtDepth(entry++, 255);
       y += 36;
     }
   }

@@ -76,7 +76,7 @@ void Func_02000038(u16 *list) {
   }
 }
 
-s32 Func_0200118c(s32 owner, s32 mode);
+s32 BattleEffect_FindNearestObject(s32 owner, s32 mode);
 struct Actor *Func_0200120c(void);
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
@@ -95,7 +95,7 @@ void Func_0200014c(u16 *list) {
   u8 *grid;
 
   if (held == NULL) {
-    s32 id = Func_0200118c(gMainRoutineWork.currentOwner, 1);
+    s32 id = BattleEffect_FindNearestObject(gMainRoutineWork.currentOwner, 1);
 
     if (id != -1)
       held = Actor_GetById(id);
@@ -303,8 +303,8 @@ extern u8 MsgFieldDoorWontBudge[];
 extern s16 gData_020013c0[];
 extern s16 gData_020013c4[];
 
-void Func_0200110c(void);
-void Func_02001114(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_020011e4(const void *data);
 void Func_020011cc(const void *data);
 void Func_020011ec(void);
@@ -312,11 +312,11 @@ void Func_020011ec(void);
 void Func_02000474(void) {
   struct EventWork15a *work = Ram_HeapSlots->eventWork;
 
-  Func_0200110c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)&MsgFieldDoorWontBudge, 1);
   work->flag = 1;
-  Func_02001114();
+  Event_End();
 }
 
 void Func_020004a4(struct Actor *object) {
@@ -338,12 +338,12 @@ void Func_020004cc(void) {
   if ((object->x >> 20) == 40) {
     z = object->z >> 20;
     if (z == 13) {
-      Func_0200110c();
+      Event_Start();
       Event_ResolvePendingActions(0);
       Func_020004a4(object);
       Map_CopyCellAttributeRect(41, 13, 2, 1, 39, z);
       GameFlag_SetBit(0x8c8);
-      Func_02001114();
+      Event_End();
     }
   }
 }
@@ -372,7 +372,7 @@ void Func_02000568(void) {
   struct Actor *right = Actor_GetById(9);
   u32 i;
 
-  Func_0200110c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(183);
   for (i = 0; i < 120; i++) {
@@ -419,7 +419,7 @@ void Func_02000568(void) {
   Func_02000958();
   PartyInventory_Remove(459);
   GameFlag_SetBit(0x8c9);
-  Func_02001114();
+  Event_End();
 }
 
 struct EventWork154 {
@@ -444,7 +444,7 @@ extern s32 gData_0200121c[];
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_0200113c(s32 id, s32 value);
+void Actor_MoveToObject(s32 id, s32 value);
 void Func_0200115c(s32 id);
 s32 Func_02001184(s32 owner);
 void Func_020011b4(void);
@@ -473,7 +473,7 @@ void Func_02000778(void) {
 
 void Func_020007a0(void) {
   if (GameFlag_Test(0x203) != 0 && Event_GetFlag(0x8cb) == 0) {
-    Func_0200110c();
+    Event_Start();
     Event_ResolvePendingActions(1);
     Sound_Play(161);
     Map_CopyCellPictureIndicesRect(72, 63, 36, 38, 1, 2);
@@ -487,12 +487,12 @@ void Func_020007a0(void) {
     MapGrid_CopyCellAttributes(33, 37, 2, 2, 33, 39);
     wait(1);
     GameFlag_SetBit(0x8cb);
-    Func_02001114();
+    Event_End();
   } else {
-    Func_0200110c();
+    Event_Start();
     Event_ResolvePendingActions(0);
     FieldMessage_Show((s32)&MsgFieldEyesOfTruth, 1);
-    Func_02001114();
+    Event_End();
   }
 }
 
@@ -504,14 +504,14 @@ void Func_02000874(void) {
     object = Actor_GetById(64);
     x = object->x;
     if (x < (186 << 16)) {
-      Func_0200110c();
+      Event_Start();
       Event_ResolvePendingActions(0);
       Sound_Play(204);
       object->motionFlags = 3;
       wait(10);
       Actor_SetHorizontalPositionWithTerrain(64, 0, 0);
       Event_SetFlag(0x8cc);
-      Func_02001114();
+      Event_End();
     }
   }
 }
@@ -574,7 +574,7 @@ void Func_02000958(void) {
   actor = 20;
   for (i = 0; i < 10; i++) {
     Actor_SetModeById(actor, 0);
-    Func_0200113c(actor, target);
+    Actor_MoveToObject(actor, target);
     target++;
     actor++;
   }
@@ -605,7 +605,7 @@ void Func_02000a88(void) {
   s32 cell;
 
   object = Actor_GetById(party->currentOwner);
-  Func_0200110c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_SetModeById(party->currentOwner, 2);
@@ -628,7 +628,7 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   struct Actor *object;
   s32 cell;
 
-  Func_0200110c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (mode == 2)
     Sound_Play(188);
@@ -662,7 +662,7 @@ void Func_02000c5c(void) { Func_02000b38(118, 1, 118, 3, 1, 2); }
 void Func_02000c78(void) { Func_02000b38(92, 29, 92, 31, 1, 2); }
 
 void Func_02000c94(void) {
-  Func_0200110c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
@@ -675,7 +675,7 @@ void Func_02000c94(void) {
 }
 
 void Func_02000cf4(void) {
-  Func_0200110c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);

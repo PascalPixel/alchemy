@@ -148,7 +148,7 @@ next:
       angle = Random16Far();
       radius = Random16Far();
       scale = (Random16Far() >> 1) + 0x4000;
-      Func_02004bd0(object, gData_02005394);
+      Actor_StartScript(object, gData_02005394);
       Actor_SetSingleChildFlags(object, 0);
       /* FAKEMATCH(dead): an empty once-only block holds the order around it; as
        * no block, 2 of 113 instructions differ in tla-en. */
@@ -210,7 +210,7 @@ step:
   x += 3;
   if (count >= 0)
     goto step;
-  Func_02004db0();
+  ObjectTable_Snapshot();
   FieldEvent_SetExitRequest(20);
 }
 
@@ -230,7 +230,7 @@ void Func_02000564(void) {
 void Func_02000590(void) {
   if (!Flag_IsSet(0xa36)) {
     Func_020046b4();
-    Func_02004ca8();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Func_02004dd0();
     WORD_AT(Actor_Get(gMainRoutineWork.currentOwner), 108) = 0;
@@ -243,7 +243,7 @@ void Func_02000590(void) {
     Func_02004718();
     BattleEffect_PrepareBufferInterpolation();
     System_Wait(10);
-    Func_02004cb0();
+    Event_End();
     Flag_Set(0xa36);
   } else {
     Func_020046b4();
@@ -298,7 +298,7 @@ void Func_02000718(void) {
   SCENE_WORK->unk166 = 0;
   Flag_Clear(0x106);
   Flag_Clear(0x104);
-  Func_02004ca8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x10000, 0x2000);
   Camera_SetBounds(PIXELS(168), 0, PIXELS(664), 1);
@@ -308,7 +308,7 @@ void Func_02000718(void) {
   Camera_SetBounds(PIXELS(472), 0, PIXELS(664), 1);
   Func_02004d20();
   FieldEvent_Wait(90);
-  Func_02004cb0();
+  Event_End();
 }
 
 void Func_02000798(void) {
@@ -422,11 +422,11 @@ void Func_020009e8(void) {
   SCENE_WORK->unk166 = 0;
   Flag_Clear(0x106);
   Flag_Clear(0x104);
-  Func_02004ca8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Func_02004d20();
   FieldEvent_Wait(120);
-  Func_02004cb0();
+  Event_End();
 }
 
 void Func_02000a24(void) {
@@ -449,7 +449,7 @@ void Func_02000a7c(void) {
   SCENE_WORK->unk166 = 0;
   Flag_Clear(0x106);
   Flag_Clear(0x104);
-  Func_02004ca8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x10000, 0x2000);
   Camera_SetBounds(PIXELS(872), -1, PIXELS(168), 1);
@@ -458,7 +458,7 @@ void Func_02000a7c(void) {
   FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(264), 1);
   Func_02004d20();
   FieldEvent_Wait(120);
-  Func_02004cb0();
+  Event_End();
 }
 
 void Func_02000af4(void) {
@@ -644,7 +644,7 @@ void Func_02000e3c(s32 arg) {
   s32 i;
 
   actor = Actor_Get(gMainRoutineWork.currentOwner);
-  Func_02004ca8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   actor->update = NULL;
@@ -718,7 +718,7 @@ void Func_020012e4(struct Actor *object);
 void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 void Func_02002c2c(void);
 void Func_02004c88(s32 scene, s32 a1);
-void Func_02004d98(void);
+void Event_ResolveAllPendingActions(void);
 
 void Func_02000fa4(void) {
   Event_PlaySound(0x248);
@@ -747,7 +747,7 @@ void Func_02000fe0(const struct MapCell *cell) {
 
   GameFlag_SetByte(0x340, i);
   GameFlag_SetByte(0x348, z >> 20);
-  Func_02004ca8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   leader->update = 0;
@@ -948,7 +948,7 @@ void Func_020012e4(struct Actor *object);
 void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 void Func_02002c2c(void);
 void Func_02004c88(s32 scene, s32 a1);
-void Func_02004d98(void);
+void Event_ResolveAllPendingActions(void);
 
 void Func_02001344(struct Actor *object) {
   if (ABS(object->x - object->watchedObject->x) > 0x200000)
@@ -1129,7 +1129,7 @@ L_020095ae:
     goto L_020095b4;
   goto L_020098be;
 L_020095b4:
-  Func_02004ca8();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   MapGrid_SetShake(0, 0x20000, 0x10000);
@@ -1327,7 +1327,7 @@ void Func_020012e4(struct Actor *object);
 extern s32 Func_02002f4c__s1930(s32 id, s32 a1, s32 a2, s32 a3, const void *script) __asm__("Func_02002f4c");
 void Func_02002c2c(void);
 void Func_02004c88(s32 scene, s32 a1);
-void Func_02004d98(void);
+void Event_ResolveAllPendingActions(void);
 
 s32 Scene_PrepareMap(void) {
   if (Flag_IsSet(0xa30))
@@ -1473,7 +1473,7 @@ void Func_02001c44(struct Actor *object, s32 unused) {
   object->motionFlags = 0;
   object->collisionFlags = 0;
   Actor_SetSingleChildFlags(object, 0);
-  Func_02004bd0(object, gData_020056a0);
+  Actor_StartScript(object, gData_020056a0);
   object->timer = 0;
   object->speedLimit = 0;
   object->acceleration = 0;
@@ -1600,7 +1600,7 @@ void Func_02001e1c(struct Actor *object, s32 part) {
   object->collisionFlags = zero;
   ((struct SpriteParts *)object->sprite)->part = part;
   Actor_SetSingleChildFlags(object, 0);
-  Func_02004bd0(object, gData_020056a0);
+  Actor_StartScript(object, gData_020056a0);
   object->timer = zero;
   object->speedLimit = zero;
   object->acceleration = zero;
@@ -1697,7 +1697,7 @@ void Func_0200202c(struct Actor *object, s32 unused) {
   object->collisionFlags = 0;
   Actor_SetSingleChildFlags(object, 0);
   Func_02004bc0(object, 2);
-  Func_02004bd0(object, gData_020056a0);
+  Actor_StartScript(object, gData_020056a0);
   Actor_SetSpriteColor(object, 10);
   object->timer = 0;
   object->speedLimit = 0;

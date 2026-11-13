@@ -88,8 +88,8 @@ void Func_0200173c(void) {
 
   if (work->actionCounter != 0) {
     Flag_Set(0x106);
-    Func_02002118();
-    Func_02002148();
+    Leader_StopMoving();
+    Event_ResolveAllPendingActions();
     Event_ClearFlag(0x106);
   }
 }
@@ -100,7 +100,7 @@ extern void Func_020016b0__s173c(void) __asm__("Func_020016b0");
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-s32 Func_02002050(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 void Func_02001770(void) {
   struct Actor *object;
@@ -182,7 +182,7 @@ walkNext:
   flags = &entry->collisionFlags;
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Func_02002050, (s32)&entry->x, radius, (s32)position,
+    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius, (s32)position,
                entry->radius - 2) >= 0)
       goto blocked;
   }

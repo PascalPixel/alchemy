@@ -78,9 +78,9 @@ Func_02004d9c:
 	.thumb_func
 Actor_SetAnimationSpeed:
 	overlay_veneer Actor_SetAnimationSpeedFar
-	.global Func_02004dac
+	.global Actor_StartScript
 	.thumb_func
-Func_02004dac:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -90,25 +90,25 @@ Import_ActorCreate:
 	.thumb_func
 Func_02004dbc:
 	overlay_veneer Actor_Destroy
-	.global Func_02004dc4
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_02004dc4:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
 Actor_SetMoveTarget:
 	overlay_veneer Actor_SetTargetPosition
-	.global Func_02004dd4
+	.global DisplayBlend_DisableRunScript
 	.thumb_func
-Func_02004dd4:
+DisplayBlend_DisableRunScript:
 	overlay_veneer DisplayBlend_DisableRunScriptFar
-	.global Func_02004ddc
+	.global DisplayBlend_EnableRunScript
 	.thumb_func
-Func_02004ddc:
+DisplayBlend_EnableRunScript:
 	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.global Func_02004de4
+	.global DisplayBlend_StartScript
 	.thumb_func
-Func_02004de4:
+DisplayBlend_StartScript:
 	overlay_veneer DisplayBlend_StartScriptFar
 	.global GetMapCellCollision
 	.thumb_func
@@ -150,9 +150,9 @@ Map_WaitForShakeToSettle:
 	.thumb_func
 Animation_ApplyChildValues:
 	overlay_veneer Animation_ApplyChildValuesFar
-	.global Func_02004e3c
+	.global Actor_SetSpritePriorityDirect
 	.thumb_func
-Func_02004e3c:
+Actor_SetSpritePriorityDirect:
 	overlay_veneer Actor_SetSpritePriorityDirectFar
 	.global FieldMessage_Show
 	.thumb_func
@@ -166,9 +166,9 @@ PartyInventory_FindOwner:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02004e5c
+	.global Event_Start
 	.thumb_func
-Func_02004e5c:
+Event_Start:
 	overlay_veneer Event_StartFar
 	.global Func_02004e64
 	.thumb_func
@@ -218,9 +218,9 @@ Actor_WaitForMoveById:
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
-	.global Func_02004ec4
+	.global Actor_MoveToObject
 	.thumb_func
-Func_02004ec4:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -238,9 +238,9 @@ Actor_Jump:
 	.thumb_func
 Actor_StartRepeatedMotion:
 	overlay_veneer Actor_StartRepeatedMotionFar
-	.global Func_02004eec
+	.global Actor_JumpDownLedge
 	.thumb_func
-Func_02004eec:
+Actor_JumpDownLedge:
 	overlay_veneer Actor_JumpDownLedgeFar
 	.global Actor_SetAngleToward
 	.thumb_func
@@ -298,17 +298,17 @@ Func_02004f54:
 	.thumb_func
 Func_02004f5c:
 	overlay_veneer Func_080c8248
-	.global Func_02004f64
+	.global Event_SetDestination
 	.thumb_func
-Func_02004f64:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02004f74
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_02004f74:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
@@ -354,13 +354,13 @@ Func_02004fc4:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02004fd4
+	.global Party_PlaySavedMusic
 	.thumb_func
-Func_02004fd4:
+Party_PlaySavedMusic:
 	overlay_veneer Party_PlaySavedMusicFar
-	.global Func_02004fdc
+	.global ObjectTable_Snapshot
 	.thumb_func
-Func_02004fdc:
+ObjectTable_Snapshot:
 	overlay_veneer ObjectTable_SnapshotFar
 	.global Party_GetLeaderActor
 	.thumb_func

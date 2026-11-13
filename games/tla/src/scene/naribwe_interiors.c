@@ -26,24 +26,24 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 #include "text/msg_ids.h"
 #include "event_inline.h"
 
-void Func_020010e0(void);
-void Func_020010e8(void);
+void Event_Start(void);
+void Event_End(void);
 
 s32 Func_02000054(void) {
-  Func_020010e0();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgTheItemsThat);
   Event_ShowMessage(10, 0);
-  Func_020010e8();
+  Event_End();
   return 0;
 }
 
 s32 Func_0200007c(void) {
-  Func_020010e0();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgItemsPlacedBefore);
   Event_ShowMessage(10, 0);
-  Func_020010e8();
+  Event_End();
   return 0;
 }
 
@@ -68,11 +68,11 @@ void Func_020000c4(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02001190(14, actor);
   } else {
-    Func_020010e0();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgIfYouAre);
     Event_ShowMessage(actor, 0);
-    Func_020010e8();
+    Event_End();
   }
 }
 
@@ -82,11 +82,11 @@ void Func_02000124(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02001190(14, actor);
   } else {
-    Func_020010e0();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgWheneverIGet);
     Event_ShowMessage(actor, 0);
-    Func_020010e8();
+    Event_End();
   }
 }
 
@@ -96,11 +96,11 @@ void Func_02000184(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02001190(15, actor);
   } else {
-    Func_020010e0();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgYouShouldVisit);
     Event_ShowMessage(actor, 0);
-    Func_020010e8();
+    Event_End();
   }
 }
 
@@ -110,11 +110,11 @@ void Func_020001e4(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02001190(15, actor);
   } else {
-    Func_020010e0();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgIfYouWish);
     Event_ShowMessage(actor, 0);
-    Func_020010e8();
+    Event_End();
   }
 }
 
@@ -124,11 +124,11 @@ void Func_02000244(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02001198(5, actor);
   } else {
-    Func_020010e0();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgOurCookingIs);
     Event_ShowMessage(actor, 0);
-    Func_020010e8();
+    Event_End();
   }
 }
 
@@ -138,11 +138,11 @@ void Func_020002a4(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02001198(5, actor);
   } else {
-    Func_020010e0();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgISeeSo);
     Event_ShowMessage(actor, 0);
-    Func_020010e8();
+    Event_End();
   }
 }
 
@@ -151,7 +151,7 @@ void Func_02000390(void);
 void Func_02000304(void) {
   u8 *message;
 
-  Func_020010e0();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   message = MsgIAmA;
   FieldEvent_SetMessageId((s32)message);
@@ -162,18 +162,18 @@ void Func_02000304(void) {
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
       if ((u32)gMainRoutineWork.coins > 19) {
         Func_02000390();
-        Func_020010e8();
+        Event_End();
       } else {
         FieldEvent_SetMessageId((s32)(message + 4));
         Event_ShowMessage(10, 0);
-        Func_020010e8();
+        Event_End();
       }
       return;
     }
   }
   FieldEvent_SetMessageId((s32)MsgThenStandBack);
   Event_ShowMessage(10, 0);
-  Func_020010e8();
+  Event_End();
 }
 
 #include "version.h"
@@ -181,7 +181,7 @@ void Func_02000304(void) {
 s32 Func_020011a0(s32 *unit, s32 *slot);
 void *Unit_Get(s32 owner);
 const u8 *Func_020010b8(s32 item);
-void Func_020010b0(s32 item, s32 a);
+void MessageArgument_Push(s32 item, s32 a);
 void Func_02000920(void);
 void Func_020007b4(void);
 void Func_02000760(void);
@@ -241,7 +241,7 @@ ask:
    * Call3; as a direct call, 70 of 376 instructions differ in tla-en. */
   Actor_SetPosition(18, 0x2a00000, 0x680000);
   FieldEvent_Wait(60);
-  Func_020010b0(unitData->items[slot], 2);
+  MessageArgument_Push(unitData->items[slot], 2);
   Message_ShowCentered(MsgPlacedOnThe, 1);
   message = MsgAreYouPrepared;
   FieldEvent_SetMessageId(message);
@@ -249,7 +249,7 @@ ask:
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) != 1)
     goto read;
   Actor_SetPosition(18, 0, 0);
-  Func_020010b0(unitData->items[slot], 2);
+  MessageArgument_Push(unitData->items[slot], 2);
   Message_ShowCentered(message + 1, 1);
   FieldEvent_SetMessageId(message + 2);
   Event_OpenMessage(10, 0);
@@ -345,7 +345,7 @@ read:
   Party_AdjustCoins(-20);
 }
 
-s32 Func_020010d0(s32 item);
+s32 Party_FindOwnerWithAction(s32 item);
 s32 Func_0200097c(void);
 s32 Func_020009a4(void);
 s32 Func_020009f8(void);
@@ -483,11 +483,11 @@ s32 Func_0200097c(void) {
 }
 
 s32 Func_020009a4(void) {
-  if (Func_020010d0(144) == -1)
+  if (Party_FindOwnerWithAction(144) == -1)
     return 3;
-  if (Func_020010d0(139) == -1)
+  if (Party_FindOwnerWithAction(139) == -1)
     return 4;
-  if (Func_020010d0(138) == -1)
+  if (Party_FindOwnerWithAction(138) == -1)
     return 5;
   if (FieldPartyInventory_FindOwner(213) == -1)
     return 6;

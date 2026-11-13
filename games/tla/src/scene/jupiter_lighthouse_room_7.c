@@ -343,8 +343,8 @@ void Func_02000778(s32 unused, s32 id) {
 // and sound calls go through the call layer, each as the native has it.
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02002b6c(void);
-void Func_02002b74(void);
+void Event_Start(void);
+void Event_End(void);
 void Func_02002bd4(void);
 void Func_02002ad4(struct Actor *object, s32 mode);
 void Func_02002c4c(s32 x, s32 z, s32 a, s32 b);
@@ -392,7 +392,7 @@ void Func_020007a4(s32 unused, s32 id) {
     object = Actor_GetById(17);
     Event_ClearFlag(2582);
     Event_Wait(10);
-    Func_02002b6c();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldCamera_MoveTo(166 << 18, -1, PIXELS(136), 1);
     Func_02002bd4();
@@ -404,7 +404,7 @@ void Func_020007a4(s32 unused, s32 id) {
     Event_Wait(30);
     FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
     Func_02002bd4();
-    Func_02002b74();
+    Event_End();
     return;
   }
   if (id != 20)
@@ -822,7 +822,7 @@ void Func_020012fc(void) {
   s32 angle;
   s32 i;
 
-  Func_02002b6c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkd46 = i;
@@ -881,7 +881,7 @@ void Func_020012fc(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_02002b74();
+  Event_End();
 }
 
 s32 Func_020014e8(s32 *a, s32 *b) {
@@ -896,9 +896,9 @@ extern s32 Data_020035b8;
 
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_02002c34(s32 x, s32 z, s32 layer);
-void Func_02002c14(s32 *position);
+void Camera_WorldToScreen(s32 *position);
 s32 Math_Cosine(s32 angle);
-void Func_02002ae4(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_02001514(struct Actor *self) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -925,7 +925,7 @@ void Func_02001514(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Func_02002c14(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -973,7 +973,7 @@ stop:
     s32 zero = 0;
     *((u8 *)self + 0x63) = zero;
     self->update = zero;
-    Func_02002ae4(self, gData_02003598);
+    Actor_StartScript(self, gData_02003598);
     Event_PlaySound(228);
     Data_020035b8 = zero;
   }

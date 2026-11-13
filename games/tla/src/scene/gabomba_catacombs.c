@@ -7,7 +7,7 @@
 
 #define LEADER_HOP()                                                           \
   do {                                                                         \
-    Func_0200119c();                                                           \
+    Event_Start();                                                           \
     Event_ResolvePendingActions(0);                                            \
     FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);                       \
   } while (0)
@@ -37,7 +37,7 @@ void Func_02000100(void) {
       Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = PIXELS(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Func_020011a4();
+      Event_End();
     }
   }
 }
@@ -64,7 +64,7 @@ void Func_020001e0(void) {
     Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
     leader->velocityY = PIXELS(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Func_020011a4();
+    Event_End();
   }
 }
 
@@ -78,7 +78,7 @@ void Func_02000260(void) {
     Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
     leader->velocityY = PIXELS(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Func_020011a4();
+    Event_End();
   }
 }
 
@@ -88,13 +88,13 @@ void Func_020002e0(void) {
   Func_02001274_(5, 13, 0, 5, 3, 56, 52);
   Actor_SetPosition(10, PIXELS(152), PIXELS(264));
   if (leader->x >> 20 == 9 && leader->z >> 20 == 16) {
-    Func_0200119c();
+    Event_Start();
     Event_ResolvePendingActions(0);
     FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
     Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, -16, 0);
     leader->velocityY = PIXELS(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Func_020011a4();
+    Event_End();
   }
 }
 
@@ -108,7 +108,7 @@ void Func_02000364(void) {
     Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
     leader->velocityY = PIXELS(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Func_020011a4();
+    Event_End();
   }
 }
 
@@ -122,7 +122,7 @@ void Func_020003e4(void) {
     Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
     leader->velocityY = PIXELS(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Func_020011a4();
+    Event_End();
   }
 }
 
@@ -136,7 +136,7 @@ void Func_02000464(void) {
     Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
     leader->velocityY = PIXELS(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Func_020011a4();
+    Event_End();
   }
 }
 
@@ -150,7 +150,7 @@ void Func_020004e4(void) {
     Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
     leader->velocityY = PIXELS(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Func_020011a4();
+    Event_End();
   }
 }
 
@@ -160,13 +160,13 @@ void Func_02000564(void) {
   Func_02001274_(16, 13, 0, 4, 8, 61, 52);
   Actor_SetPosition(8, PIXELS(280), PIXELS(296));
   if (leader->x >> 20 == 17 && leader->z >> 20 == 18) {
-    Func_0200119c();
+    Event_Start();
     Event_ResolvePendingActions(0);
     FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
     Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -16);
     leader->velocityY = PIXELS(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Func_020011a4();
+    Event_End();
   }
 }
 
@@ -178,7 +178,7 @@ void Func_02000608(void) {
     Func_0200127c_(249, 168, 424);
     ((struct GabombaCatacombsParty *)&gMainRoutineWork)->value254 = 0x19b5;
     gMainRoutineWork.battleRule24b = 2;
-    Func_02001224(106, 0);
+    Field_RequestBattleFromEncounterTable(106, 0);
   }
 }
 
@@ -304,7 +304,7 @@ void Func_0200094c(void) {
     if (steam) {
       Actor_SetSingleChildFlags(steam, 0);
       Func_0200114c(steam, 1);
-      Func_02001154(steam, gData_0200128c);
+      Actor_StartScript(steam, gData_0200128c);
     }
     Sound_Play(0x26f);
   }
@@ -325,8 +325,8 @@ s32 Func_020009bc(struct Actor *object) {
 extern const u8 MsgByReachingThis[];
 extern u32 gData_020012a4[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_020011d4(s32 actor, s32 target);
-s32 Func_02001264(void);
+void Actor_MoveToObject(s32 actor, s32 target);
+s32 Party_PlaySavedMusic(void);
 void Func_02001214(s32 actor, s32 a);
 
 union EventLine {
@@ -344,7 +344,7 @@ void Func_020009d4(void) {
   struct Actor *glow, *leader;
   s32 speed;
 
-  Func_0200119c();
+  Event_Start();
   Event_ResolvePendingActions(0);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x403108, 1);
@@ -363,7 +363,7 @@ void Func_020009d4(void) {
   statue->terrainHeight += 0x100000;
   Sound_Play(220);
   glow = ((struct Actor *)Import_ActorCreate(412, 0, 0, 0));
-  Func_02001154(glow, gData_020012a4);
+  Actor_StartScript(glow, gData_020012a4);
   Animation_ApplyChildValues(glow, 1);
   glow->motionFlags = 0;
   glow->x = statue->x;
@@ -379,7 +379,7 @@ void Func_020009d4(void) {
   TALK();
   Actor_ResetAndSetPosition(gMainRoutineWork.currentOwner, 166, 188);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Func_020011d4(9, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
   speed = 0x10000;
   follower->speedLimit = speed;
   Actor_ResetAndSetPosition(9, 184, 188);
@@ -433,12 +433,12 @@ void Func_020009d4(void) {
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Actor_WaitForMoveById(9);
   GameFlag_SetBit(0x9ce);
-  Func_02001264();
+  Party_PlaySavedMusic();
   PaletteFade_ApplyTarget(speed, 0);
   BattleEffect_StartBufferInterpolation(60);
   Func_02001214(gMainRoutineWork.currentOwner, 1);
   Event_Wait(60);
-  Func_020011a4();
+  Event_End();
 }
 
 void Func_02000d90(void) {

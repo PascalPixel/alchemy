@@ -33,12 +33,12 @@ const u8 *Scene_GetRegions(void) {
 struct Actor;
 
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
-void Func_02004eec(s32 id, s32 a, s32 b);
+void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02004eec_(s32 id, s32 a, s32 b) {
-  Func_02004eec(id, a, b);
+  Actor_JumpDownLedge(id, a, b);
 }
 
 void Func_0200036c(void) {
@@ -57,8 +57,8 @@ void Func_0200036c(void) {
 #include "../field/field_effect/advance_motion.c"
 #endif
 
-void Func_02004e5c(void);
-void Func_02004dc4(void);
+void Event_Start(void);
+void Map_CenterOnFollowedPoint(void);
 s32 Math_Cosine(s32 angle);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -72,10 +72,10 @@ s32 Func_0200042c(void) {
   struct EffectOptions options;
   s32 spawn = 1;
 
-  Func_02004e5c();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Func_02004dc4();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = 0x820000;
   actor->gravity = 0x8000;
@@ -168,7 +168,7 @@ s32 Func_020005f8(void) {
 
 extern const u8 gData_020050d0[];
 
-void Func_02004dac(struct Actor *object, const u8 *script);
+void Actor_StartScript(struct Actor *object, const u8 *script);
 
 s32 Func_02000610(void) {
   struct FieldSprite *sprite = Actor_Get(9)->sprite;
@@ -208,7 +208,7 @@ s32 Func_02000678(void) {
                                                source->y - 0x20000, source->z));
   object->motionFlags = 0;
   Actor_SetSingleChildFlags(object, 0);
-  Func_02004dac(object, gData_020050d0);
+  Actor_StartScript(object, gData_020050d0);
   object->scaleX = 0x6666;
   object->scaleY = 0x6666;
   sprite = object->sprite;
@@ -222,14 +222,14 @@ s32 Func_02000678(void) {
 extern u8 gData_02005544[];
 
 s32 Func_020006e0(void) {
-  Func_02004dac(((s32)Actor_Get(9)), (s32)gData_02005544);
+  Actor_StartScript(((s32)Actor_Get(9)), (s32)gData_02005544);
   return 0;
 }
 
 extern u8 gData_0200559c[];
 
 s32 Func_020006f8(void) {
-  Func_02004dac(((s32)Actor_Get(9)), (s32)gData_0200559c);
+  Actor_StartScript(((s32)Actor_Get(9)), (s32)gData_0200559c);
   Actor_SetAttachedEffect(0xa, 0x102);
   return 0;
 }
@@ -240,7 +240,7 @@ s32 Func_02000718(void) {
   s32 t0;
 
   t0 = ((s32)Actor_Get(9));
-  Func_02004dac(t0, (s32)gData_020055c0);
+  Actor_StartScript(t0, (s32)gData_020055c0);
   FIELD_AT(t0, s32, 8) = 0x1d80000;
   Actor_SetAnimationSpeed(t0, 0x10);
   Actor_SetAttachedEffect(0xa, 0x102);
@@ -253,7 +253,7 @@ s32 Func_02000748(void) {
   s32 t0;
 
   t0 = ((s32)Actor_Get(9));
-  Func_02004dac(t0, (s32)gData_02005610);
+  Actor_StartScript(t0, (s32)gData_02005610);
   Actor_SetAnimationSpeed(t0, 0);
   Actor_SetAttachedEffect(0xa, 0x102);
   return 0;

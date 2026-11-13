@@ -25,8 +25,8 @@ s32 Func_02000038(s32 arg0) {
   return 1;
 }
 
-void Func_02000a68();
-void Func_02000a70();
+void Event_Start();
+void Event_End();
 void Func_02000af0();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -54,7 +54,7 @@ void Func_020000a8(void) {
   if (result0 != 0)
     goto L_02008100;
   Event_SetFlag(0x200);
-  Func_02000a68();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipIceWallFirstApproach);
   object1 = Actor_Get(8);
@@ -63,7 +63,7 @@ void Func_020000a8(void) {
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(5, 0, 5);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
-  Func_02000a70();
+  Event_End();
 L_02008100:
   return;
 }
@@ -76,7 +76,7 @@ void Func_02000108(void) {
   if (result0 != 0)
     goto L_020081d2;
   Event_SetFlag(0x90c);
-  Func_02000a68();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipIceWallCrewReposition);
   object1 = Actor_Get(8);
@@ -95,7 +95,7 @@ void Func_02000108(void) {
   Actor_SetPosition(11, 0, 0);
   Actor_SetPosition(5, 0, 0);
   Actor_SetPosition(6, 0, 0);
-  Func_02000a70();
+  Event_End();
 L_020081d2:
   return;
 }
@@ -133,7 +133,7 @@ void Func_020001d8(void) {
     goto L_0200820c;
   goto L_020085f2;
 L_0200820c:
-  Func_02000a68();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipSafeFiringDistance);
   Actor_MoveToAndWait(8, 0x1d0, 216);
@@ -291,7 +291,7 @@ L_020085c6:
   Actor_SetPosition(5, 0, 0);
   Actor_SetPosition(6, 0, 0);
   Actor_SetPosition(7, 0, 0);
-  Func_02000a70();
+  Event_End();
 L_020085f2:
   return;
 }
@@ -305,7 +305,7 @@ struct SceneWork {
 
 extern char SceneId_Ov6a7Room1;
 
-void Func_02000af8(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 void Func_02000b08(void);
 
 s32 Scene_Initialize(void) {
@@ -317,7 +317,7 @@ s32 Scene_Initialize(void) {
   if (state->entrance == 90) {
     Event_SetFlag(0x90a);
     state->ownerOverride = 1;
-    Func_02000af8((s32)&SceneId_Ov6a7Room1, 4);
+    Event_SetDestination((s32)&SceneId_Ov6a7Room1, 4);
   }
   Func_02000b08();
   return 0;
@@ -387,11 +387,11 @@ struct Work6a7 {
   struct Particle6a7 particles[54];
 };
 
-s32 *Func_020009f0(void *resource, void *to);
+s32 *Resource_DecodeType01(void *resource, void *to);
 void Func_02000a10(struct Spark6a7 *spark, s32 value);
 void Func_02000b40(struct Sprite6a7 *sprite, s32 a, s32 b, s32 c, s32 tile);
 void Func_02000b48(struct Sprite6a7 *sprite, struct Particle6a7 *particle);
-void Func_02000b50(struct Particle6a7 *particle, s32 a, s32 b);
+void BattleEffect_StepVector3(struct Particle6a7 *particle, s32 a, s32 b);
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_FindFreeEntry(void);
@@ -415,7 +415,7 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
 
   work = HeapSlot_AllocFar(220, 0x1e58);
   flying = 0;
-  Func_020009f0(Resource_GetTableEntry((s32)&ResourceId_FieldEffectIceShard),
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FieldEffectIceShard),
                 work);
   entry = Resource_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x500, work);
@@ -446,7 +446,7 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
    * buffer; as Heap_Alloc(0x1000), 19 of 323 instructions differ in tbs-en. */
   sheet = (void *)0x1000;
   sheet = Heap_Alloc((s32)sheet);
-  Func_020009f0(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
                 sheet);
   sparkEntry = Resource_FindFreeEntry();
   sparkTiles = VramCache_Load(sparkEntry, 0x400, sheet);
@@ -482,7 +482,7 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
       for (i = 53; i >= 0; i--) {
         if (particle->age < 60) {
           Func_02000b48(flySprite, particle);
-          Func_02000b50(particle, 63, -0x3000);
+          BattleEffect_StepVector3(particle, 63, -0x3000);
           particle->age++;
         }
         flySprite++;

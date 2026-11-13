@@ -38,13 +38,13 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02001010
+	.global Event_Start
 	.thumb_func
-Func_02001010:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02001018
+	.global Event_End
 	.thumb_func
-Func_02001018:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -86,9 +86,9 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_SetHorizontalPositionAndAngleWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionAndAngleWithTerrainFar
-	.global Func_02001070
+	.global Actor_MoveToObject
 	.thumb_func
-Func_02001070:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func

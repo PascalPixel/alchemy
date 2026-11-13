@@ -42,17 +42,17 @@ Heap_Alloc:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_02003af0
+	.global Resource_DecodeType01
 	.thumb_func
-Func_02003af0:
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
-	.global Func_02003af8
+	.global DebugText_Clear
 	.thumb_func
-Func_02003af8:
+DebugText_Clear:
 	overlay_veneer DebugText_ClearFar
-	.global Func_02003b00
+	.global Window_LoadGraphics
 	.thumb_func
-Func_02003b00:
+Window_LoadGraphics:
 	overlay_veneer Window_LoadGraphicsFar
 	.global Resource_GetTableEntry
 	.thumb_func
@@ -78,9 +78,9 @@ Func_02003b28:
 	.thumb_func
 Actor_SetAnimationSpeed:
 	overlay_veneer Actor_SetAnimationSpeedFar
-	.global Func_02003b38
+	.global Actor_StartScript
 	.thumb_func
-Func_02003b38:
+Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -90,9 +90,9 @@ Import_ActorCreate:
 	.thumb_func
 Func_02003b48:
 	overlay_veneer Actor_Destroy
-	.global Func_02003b50
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Func_02003b50:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -150,13 +150,13 @@ Func_0803f9c0:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02003bc8
+	.global Event_Start
 	.thumb_func
-Func_02003bc8:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02003bd0
+	.global Event_End
 	.thumb_func
-Func_02003bd0:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -254,9 +254,9 @@ Event_ResolvePendingActions:
 	.thumb_func
 Func_02003c90:
 	overlay_veneer Func_080c8518
-	.global Func_02003c98
+	.global Event_NoOp
 	.thumb_func
-Func_02003c98:
+Event_NoOp:
 	overlay_veneer Event_NoOpFar
 	.global Func_02003ca0
 	.thumb_func

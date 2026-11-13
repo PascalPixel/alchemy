@@ -59,7 +59,7 @@ void Func_0200009c(void) {
   s16 *choice;
   s32 index;
 
-  Func_02000648();
+  Event_Start();
   Event_ResolvePendingActions(0);
   for (id = 8; id <= 63; id++) {
     u8 *actor = (u8 *)Actor_GetById(id);
@@ -88,7 +88,7 @@ void Func_0200009c(void) {
   Import_EventSetExitRequest(*choice);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02000650();
+  Event_End();
 }
 
 void Func_0200014c(void) { Func_080d7788(18, 2, 8); }
@@ -107,7 +107,7 @@ struct Trigger *Scene_GetEvents(void) {
 void Func_02000188(void) {
   s32 msg;
 
-  Func_02000648();
+  Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)&MsgFieldAreYouLookingForSomeone;
   Event_SetMessageId(msg);
@@ -120,7 +120,7 @@ void Func_02000188(void) {
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessageAndWait(9, 0);
-  Func_02000650();
+  Event_End();
 }
 
 void Func_020001e0(void) {
@@ -213,13 +213,13 @@ void Func_02000438(void) {
   Event_Wait(10);
   Sound_Play(123);
   Import_EventSetExitRequest(sound);
-  Func_02000650();
+  Event_End();
 }
 
 void Func_020004ec(void) {
   s32 id;
 
-  Func_02000648();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, 0, -14);
   id = 4;
@@ -230,7 +230,7 @@ void Func_020004ec(void) {
 void Func_02000514(void) {
   s32 id, x, z;
 
-  Func_02000648();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, -2, -6);
   x = 14;
@@ -247,7 +247,7 @@ void Func_02000514(void) {
 void Func_02000544(void) {
   s32 id, a;
 
-  Func_02000648();
+  Event_Start();
   Event_ResolvePendingActions(0);
   a = 192;
   id = 4;
@@ -262,7 +262,7 @@ void Func_02000544(void) {
 void Func_02000564(void) {
   s32 x = ((s16 *)&Actor_GetById(4)->x)[1];
 
-  Func_02000648();
+  Event_Start();
   Event_ResolvePendingActions(0);
   if (x % 16 <= 7) {
     Actor_WalkByAndWait(4, -4, -4);
@@ -276,7 +276,7 @@ void Func_02000564(void) {
 }
 
 void Func_020005d4(void) {
-  Func_02000648();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, 0, -4);
   Actor_WalkToAndWait(4, 424, 99);

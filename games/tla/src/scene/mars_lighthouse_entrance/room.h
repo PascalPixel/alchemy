@@ -49,13 +49,13 @@ void Event_WaitTransitionFrames(void);
 
 s32 Func_0200246c(s32 index, s32 value);
 s32 Func_0200249c(s32 index);
-void Func_02004bd0(struct Actor *object, const void *script);
-void Func_02004ca8(void);
-void Func_02004cb0(void);
+void Actor_StartScript(struct Actor *object, const void *script);
+void Event_Start(void);
+void Event_End(void);
 void Func_02004d20(void);
 void Func_02004d40(void);
-void Func_02004d48(void);
-void Func_02004db0(void);
+void Leader_StopMoving(void);
+void ObjectTable_Snapshot(void);
 void Func_02004bc0(struct Actor *object, s32 a1);
 s32 Math_Cosine(s32 angle);
 

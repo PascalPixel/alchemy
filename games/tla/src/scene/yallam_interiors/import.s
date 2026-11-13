@@ -18,9 +18,9 @@ GameFlag_ClearBit:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Func_02000980
+	.global MessageArgument_Push
 	.thumb_func
-Func_02000980:
+MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
 	.global Func_02000988
 	.thumb_func
@@ -34,21 +34,21 @@ PartyInventory_FindOwner:
 	.thumb_func
 Party_AdjustCoins:
 	overlay_veneer Party_AdjustCoinsFar
-	.global Func_020009a0
+	.global PartyInventory_FindRoom
 	.thumb_func
-Func_020009a0:
+PartyInventory_FindRoom:
 	overlay_veneer PartyInventory_FindRoomFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_020009b0
+	.global Event_Start
 	.thumb_func
-Func_020009b0:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020009b8
+	.global Event_End
 	.thumb_func
-Func_020009b8:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global PartyInventory_GiveItem
 	.thumb_func

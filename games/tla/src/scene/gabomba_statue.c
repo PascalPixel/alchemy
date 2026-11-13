@@ -12,8 +12,6 @@
 
 #include "../field/field_effect/move.c"
 
-// ---- games/tla/src/scene/gabomba_statue.c ----
-
 #include "flags.h"
 #include "field/field.h"
 #include "types.h"
@@ -336,10 +334,6 @@ const u8 *Scene_GetPlacements(void) {
 }
 #undef REG_BLDALPHA
 #undef OBJECT_BYTE
-
-// ---- games/tla/src/scene/gabomba_statue/find_near.c ----
-// Scene code of overlay 0x671, in ROM order, from find_near's offset up to the
-// next object the overlay links.
 
 /* VIEW(find_near): tag struct Orbiter as struct Orbiter__find_near;
  * gabomba_statue.c has another definition; tried with the definition the rest
@@ -1490,10 +1484,6 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
 #define Wanderer Wanderer__s2394
 #define SceneState SceneState__s2394
 // @file
-// Scene code of overlay 0x671, in ROM order.
-
-// ---- games/tla/src/scene/gabomba_statue/s2394.c ----
-
 void Func_02002394(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   u32 i;
@@ -2751,8 +2741,6 @@ nextColumn:
 }
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/gabomba_statue/puzzle_turn.c ----
-
 u8 Func_02004380(s32 x, s32 z, s32 direction) {
   s32 i;
 
@@ -3162,10 +3150,6 @@ done:
     ball->unk4c++;
   }
 }
-
-// ---- games/tla/src/scene/gabomba_statue/s4d48.c ----
-// Scene code of overlay 0x671, in ROM order, from s4d48's offset up to the next
-// object the overlay links.
 
 /* VIEW(s4d48): routine Func_02004938 as void Func_02004938(); the parts before
  * it has another declaration; tried as the definition's void

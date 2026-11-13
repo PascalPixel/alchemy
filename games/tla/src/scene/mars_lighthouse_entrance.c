@@ -192,10 +192,6 @@ DEFINE_MAP_CELL_SWAP(MapCell_Swap)
 
 #include "../field/object/set_sprite_priority.c"
 
-// ---- scene/mars_lighthouse_entrance/mars_lighthouse_entrance.c ----
-
-/// Scene code of overlay 0x6aa, in ROM order.
-
 #include "text/msg_ids.h"
 
 void MapGrid_SetCellHeight();
@@ -1532,10 +1528,6 @@ DEFINE_BEAM_DRAW_TARGETS(Func_020020ec, Func_0200206c__s20ec, Func_02001e60,
 
 #undef Oam_AddSpriteAtDepthClamped
 #undef Func_02002c2c
-// ---- scene/mars_lighthouse_entrance/s2270.c ----
-
-/// Scene code of overlay 0x6aa, in ROM order.
-
 void Func_02002270(void) {
   struct MarsLighthouseEntranceRideHead *work =
       (struct MarsLighthouseEntranceRideHead *)(gInventorySnapshot + 0x188);
@@ -1642,10 +1634,6 @@ DEFINE_ACTOR_BLINK(Func_02002614, 10, 4, 0)
 
 #undef Unit_Get
 #undef Func_0200246c
-// ---- scene/mars_lighthouse_entrance/s263c.c ----
-
-/// Scene code of overlay 0x6aa, in ROM order.
-
 void Party_TakeFallDamage();
 void Func_02004bc0(struct Actor *actor, s32 a);
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
@@ -2019,10 +2007,6 @@ void Leader_SetSlideStopped(s32 value) {
 }
 
 #undef Func_02002614
-// ---- scene/mars_lighthouse_entrance/s3884.c ----
-
-/// Scene code of overlay 0x6aa, in ROM order.
-
 DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Leader_StopIfPending,
                                  Func_02004bc0, Actor_SteerByPad, Func_02004c78)
 
@@ -2102,8 +2086,6 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Leader_StopIfPending,
 #undef Position
 #undef Position
 // @file
-// Scene code of overlay 0x6aa, in ROM order.
-
 extern s32 gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
@@ -2253,8 +2235,6 @@ void Func_02004160(struct PushEvent *event) {
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 // @file
-// Scene code of overlay 0x6aa, in ROM order.
-
 void Teleport_PlayWhirl(void);
 
 void Func_020042f8(void) {

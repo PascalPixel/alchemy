@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x64a, in ROM order.
-
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -46,8 +44,6 @@
 #include "battle/battle_unit.h"
 #include "owner_state.h"
 #include "macros.h"
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 // The two secret button codes: unlocked, held and progress of each.
 extern s16 gData_020024f6;

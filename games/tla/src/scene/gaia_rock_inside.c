@@ -55,8 +55,6 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #include "../field/field_effect/move.c"
 
 // @file
-// Scene code of overlay 0x681, in ROM order.
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -66,12 +64,6 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #include "../field/field_effect/spawn.c"
 
 #undef EFFECT_SPAWN
-
-// ---- scene/gaia_rock_inside/gaia_rock_inside.c ----
-
-// Scene code of overlay 0x681, in ROM order.
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct Actor;
 
@@ -495,12 +487,6 @@ s32 Func_02000748(void) {
 
 #undef FIELD_AT
 
-// ---- scene/gaia_rock_inside/s07f4.c ----
-
-// Scene code of overlay 0x681, in ROM order.
-
-// ---- games/tla/src/scene/gaia_rock_inside/s07f4.c ----
-
 #include "text/msg_ids.h"
 
 /* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4;
@@ -870,10 +856,6 @@ void Func_02000fac(void) {
 #undef FIELD_AT
 #undef gData_020051d8
 #undef gData_02005ee4
-// ---- games/tla/src/scene/gaia_rock_inside/s1048.c ----
-// Scene code of overlay 0x681, in ROM order, from s1048's offset up to the next
-// object the overlay links.
-
 #include "text/msg_ids.h"
 
 /* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4
@@ -960,10 +942,6 @@ void GaiaRockInside_TalkToSusa(void) {
   Event_End();
 }
 
-// ---- games/tla/src/scene/gaia_rock_inside/s12ac.c ----
-// Scene code of overlay 0x681, in ROM order, from s12ac's offset up to the next
-// object the overlay links.
-
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -1013,10 +991,6 @@ void Func_02001314(s32 a0) {
 }
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/gaia_rock_inside/s136c.c ----
-// Scene code of overlay 0x681, in ROM order, from s136c's offset up to the next
-// object the overlay links.
-
 // Steps an orbiting object around its anchor: turns it by half its speed, puts
 // it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
 // countdown runs out returns 0, else, unless its radius is down to 2 pixels,
@@ -1057,10 +1031,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 #undef BYTE_AT
-
-// ---- scene/gaia_rock_inside/s15d0.c ----
-
-// Scene code of overlay 0x681, in ROM order.
 
 #include "text/msg_ids.h"
 
@@ -1466,12 +1436,6 @@ void GaiaRockInside_ChallengeSerpent(void) {
     Field_RequestBattleFromEncounterTable(12, count);
   }
 }
-
-// ---- scene/gaia_rock_inside/s1f68.c ----
-
-// Scene code of overlay 0x681, in ROM order.
-
-// ---- games/tla/src/scene/gaia_rock_inside/s1f68.c ----
 
 #include "text/msg_ids.h"
 
@@ -1961,7 +1925,6 @@ const struct Trigger *Scene_GetEvents(void) {
 
 #undef FIELD_AT
 #undef gData_0200530c
-// ---- games/tla/src/scene/gaia_rock_inside/s2ac8.c ----
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -1992,7 +1955,6 @@ void Func_02002ac8(s32 a0, s32 a1) {
 }
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/gaia_rock_inside/s2b04.c ----
 void Func_02002b04(u32 id, s8 mode) {
   struct Actor *object = Actor_Get(id);
 
@@ -2006,7 +1968,6 @@ void Func_02002b04(u32 id, s8 mode) {
   Actor_SetAnimation(id, mode);
 }
 
-// ---- games/tla/src/scene/gaia_rock_inside/s2b58.c ----
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -2032,7 +1993,6 @@ void Func_02002b58(s32 a0, s32 a1, s32 a2) {
 }
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/gaia_rock_inside/s2b8c.c ----
 // The frame callback of the room where persons 8 to 16 sway: all of them
 // stop while flag 0x106 is set or the event work holds them; otherwise, once
 // per pending step, at frame 60 of every 240 they lean one way and at frame
@@ -2088,10 +2048,6 @@ step:
   if (--*pending != 0)
     goto step;
 }
-
-// ---- scene/gaia_rock_inside/s2cb4.c ----
-
-// Scene code of overlay 0x681, in ROM order.
 
 // Starts the room where persons 8 to 16 sway: unless flag 265 is set, clears
 // the sway state and places each person, then starts the sway's task.
@@ -4213,10 +4169,6 @@ burst:
 #undef Func_02000a60
 #undef gData_0200533c
 #undef gData_020053fc
-
-// ---- scene/gaia_rock_inside/s4d00.c ----
-
-// Scene code of overlay 0x681, in ROM order.
 
 void Func_02004d00(void) {
   Task_AddFrame((s32)Func_020049e4, TASK_PASS_VBLANK);

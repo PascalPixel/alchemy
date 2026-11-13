@@ -3,8 +3,6 @@
 
 #include "../field/field_effect/move.c"
 /// @file
-/// The scene code of overlay 0x6a8, in ROM order.
-
 #include "types.h"
 #include "system/main_routine_work.h"
 #include "field_sprite.h"
@@ -135,10 +133,6 @@ void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }
 
 #undef FIELD_AT
 
-// ---- scene/prox/prox.c ----
-
-/// Scene code of overlay 0x6a8, in ROM order.
-
 #ifndef TLA_PROX_LOCAL_H
 #define TLA_PROX_LOCAL_H
 
@@ -154,8 +148,6 @@ void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }
 #define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
 
 #endif
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 extern s16 gData_02004b2c[];
 extern u32 gProx_Room2Placements[];

@@ -123,8 +123,6 @@ static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
 #include "shared/tables.h"
 #include "module/field/field_effect.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 struct Actor;
 
 struct AirsRockInsideVector {
@@ -318,8 +316,6 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 #include "../field/field_effect/move.c"
 
 // @file
-// Scene code of overlay 0x664, in ROM order.
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -327,10 +323,6 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
-
-// ---- scene/airs_rock_inside/airs_rock_inside.c ----
-
-// Scene code of overlay 0x664, in ROM order.
 
 extern struct ActorPlacement gAirsRockInside_Room4Placements[];
 extern struct ActorPlacement gAirsRockInside_Room6Placements[];
@@ -1582,12 +1574,6 @@ void Func_020026c0(void) {
   }
 }
 
-// ---- scene/airs_rock_inside/s2770.c ----
-
-// Scene code of overlay 0x664, in ROM order.
-
-// ---- games/tla/src/scene/airs_rock_inside/s2770.c ----
-
 void Func_02002770(void) {
   s32 value = -1;
 
@@ -1779,8 +1765,6 @@ void Func_02002cc0(struct Actor *object) {
 
   Actor_SetSpriteColor(object, (u8)(bit * BYTE_AT(object, 98)));
 }
-
-// ---- games/tla/src/scene/airs_rock_inside/s2cf0.c ----
 
 void BattleEffect_ApplyColorToSourceBuffer(s32 a, s32 b);
 s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
@@ -3092,8 +3076,6 @@ void Func_02004f3c(void) {
 #undef PICK_UP
 #undef SHAKE
 // @file
-// Scene code of overlay 0x664, in ROM order.
-
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 s32 Trig_Sin(s32 angle);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

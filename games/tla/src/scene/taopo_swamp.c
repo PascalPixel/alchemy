@@ -171,8 +171,6 @@ static __inline__ void Func_020029a8_(s32 a, s32 b, s32 c) {
   FieldItem_JumpToLeader(a, b, c);
 }
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 s32 Vent_IsActive(s32 hole);
 
 void TaopoSwamp_FocusMapMiddle();

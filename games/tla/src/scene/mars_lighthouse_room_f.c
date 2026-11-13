@@ -131,8 +131,6 @@ static inline struct Actor *Func_02005498_(s32 kind, s32 x, s32 y, s32 z) {
 #include "system/task.h"
 #include "objcmd.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 struct EffectOptions;
 struct LightOam;
 
@@ -1544,10 +1542,6 @@ void Func_02002618(s16 value) {
 DEFINE_BEAM_START(Func_02002624, Func_0200242c)
 
 #undef MarsLighthouseRoomF_ContinueSlide
-// ---- scene/mars_lighthouse_room_f/ride.c ----
-
-/// Scene code of overlay 0x6ad, in ROM order.
-
 /* VIEW(ride): tag struct RideSlot as struct RideSlot__ride;
  * scene/mars_lighthouse_room_f has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
@@ -1634,10 +1628,6 @@ DEFINE_PARTY_TAKE_FALL_DAMAGE(Party_TakeFallDamage)
 #undef RideSlot
 #undef RideWork
 #undef Ride_SetEntry
-
-// ---- scene/mars_lighthouse_room_f/flash.c ----
-
-/// Scene code of overlay 0x6ad, in ROM order.
 
 /* VIEW(flash): tag struct RideSlot as struct RideSlot__flash;
  * scene/mars_lighthouse_room_f has another definition; tried with the
@@ -2060,10 +2050,6 @@ DEFINE_ACTOR_ROLL_AND_CRUMBLE(Actor_RollAndCrumble, Work020023c4__s2f80,
 
 #undef RideSlot
 #undef RideWork
-// ---- scene/mars_lighthouse_room_f/s328c.c ----
-
-/// Scene code of overlay 0x6ad, in ROM order.
-
 void Func_02002f6c(struct Actor *object);
 
 DEFINE_ACTOR_ATTACH(Actor_Attach, Func_02005480, Func_02002f6c)
@@ -2178,8 +2164,6 @@ DEFINE_ACTOR_PARK(Actor_Park, Func_02003304)
 #undef RideSlot
 #undef RideWork
 // @file
-// Scene code of overlay 0x6ad, in ROM order.
-
 #include "field/event_inline.h"
 
 void Actor_StartScript(struct Actor *object, const void *script);
@@ -2283,8 +2267,6 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 // @file
-// Scene code of overlay 0x6ad, in ROM order.
-
 #include "field/event_inline.h"
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {

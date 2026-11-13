@@ -237,8 +237,6 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #include "../field/field_effect/move.c"
 
 // @file
-// Scene code of overlay 0x67c, in ROM order.
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -246,14 +244,6 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
-
-// ---- scene/aqua_rock_inside/aqua_rock_inside.c ----
-
-// Scene code of overlay 0x67c, in ROM order.
-
-// ---- games/tla/src/scene/aqua_rock_inside.c ----
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct Actor;
 
@@ -753,10 +743,6 @@ void Func_02000ca8(void) {
 }
 
 #undef gData_02003fb8
-// ---- games/tla/src/scene/aqua_rock_inside/s0cc8.c ----
-// Scene code of overlay 0x67c, in ROM order, from s0cc8's offset up to the next
-// object the overlay links.
-
 /* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before
  * it has another declaration; tried as the definition's void
  * Func_02000ca8(void), which the object already declares, it does not compile
@@ -1085,10 +1071,6 @@ void Func_02001364(struct Actor *object) {
   Actor_StartScript(child, gData_02003fd8);
 }
 
-// ---- games/tla/src/scene/aqua_rock_inside/s13bc.c ----
-// Scene code of overlay 0x67c, in ROM order, from s13bc's offset up to the next
-// object the overlay links.
-
 // Steps an orbiting object around its anchor: turns it by half its speed, puts
 // it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
 // countdown runs out returns 0, else, unless its radius is down to 2 pixels,
@@ -1113,10 +1095,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 #undef BYTE_AT
-
-// ---- games/tla/src/scene/aqua_rock_inside/s1620.c ----
-// Scene code of overlay 0x67c, in ROM order, from s1620's offset up to the
-// next object the overlay links.
 
 union ActorView {
   struct Actor actor;
@@ -2401,10 +2379,6 @@ s32 Func_020036b8(s32 first, s32 target) {
 #undef FIELD_AT
 #undef BG1_SET_PRIORITY_1
 #undef LAYER_S32
-
-// ---- scene/aqua_rock_inside/s3844.c ----
-
-// Scene code of overlay 0x67c, in ROM order.
 
 #define VENT_TOUCHING Func_02003844
 #define VENT_BOUNCE Func_0200389c

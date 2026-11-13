@@ -692,7 +692,6 @@ void Func_020010d4(struct Actor *object) {
 
 #include "../field/field_effect/advance_motion.c"
 
-// ---- games/tla/src/scene/tundaria_tower/s11e0.c ----
 /* VIEW(events_f): routines Func_020010d4, Func_02000404, Func_020007dc,
  * Func_02000f0c and Func_02000fb8 as module/scene/tundaria_tower.h declares
  * them; the scene before defines them otherwise. */
@@ -706,8 +705,6 @@ void Func_02000fb8__events_f(void) __asm__("Func_02000fb8");
 #define Func_020007dc Func_020007dc__events_f
 #define Func_02000f0c Func_02000f0c__events_f
 #define Func_02000fb8 Func_02000fb8__events_f
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct Actor;
 struct Particle;
@@ -1002,8 +999,6 @@ DEFINE_LEADER_SLIDE_ON_ICE(TundariaTower_SlideOnIce, TundariaTower_StopLeader,
                            Actor_SelectAnimation, TundariaTower_KeepSliding,
                            Field_CheckSpheresOverlap)
 
-// ---- scene/tundaria_tower/s1b48.c ----
-
 extern s16 gTundariaTower_SlideAnglesByKey[];
 void TundariaTower_KeepSliding(struct Actor *object);
 void TundariaTower_StopLeader(void);
@@ -1029,8 +1024,6 @@ s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 #undef SLIDE_HAS_ARRIVED
 #undef SLIDE_KEEP_SLIDING
 #undef SLIDE_SPHERES_OVERLAP
-
-// ---- scene/tundaria_tower/events_f.c ----
 
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
@@ -1445,8 +1438,6 @@ void Func_02002764(const u16 *table) {
 }
 
 #include "../field/field_effect/advance_motion_priority.c"
-
-// ---- scene/tundaria_tower/s29d0.c ----
 
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 void *Sprite_ShareVramCacheEntry(void *src, void *alt);

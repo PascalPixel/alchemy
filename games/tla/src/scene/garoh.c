@@ -3,8 +3,6 @@
 
 #include "../field/field_effect/move.c"
 /// @file
-/// The scene code of overlay 0x65f, in ROM order.
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -796,10 +794,6 @@ void Func_020011c8(void) {
 #undef DEFINE_GAROH_LOAD_PALETTE
 #undef DEFINE_GAROH_TRIGGER_AT_CELL
 // @file
-// Scene code of overlay 0x65f, in ROM order.
-
-// ---- games/tla/src/scene/garoh/s12a8.c ----
-
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
@@ -868,10 +862,6 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
     sprite->rotation = value;
   }
 }
-
-// ---- games/tla/src/scene/garoh/push.c ----
-// Scene code of overlay 0x65f, in ROM order, from push's offset up to the next
-// object the overlay links, and the overlay's data.
 
 #include "text/msg_ids.h"
 

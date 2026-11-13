@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x64b, in ROM order.
-
 #include "shared/actors.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -47,8 +45,6 @@
 #include "macros.h"
 #include "shared/tables.h"
 #include "text/msg_ids.h"
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct Actor;
 
@@ -2107,15 +2103,7 @@ void Func_02003490(void) {
 DEFINE_TILE_SPRITE_RESET(Func_020035e0)
 
 #undef Actor_SetSpriteColorMode
-// ---- scene/world_map/s3600.c ----
-
-/// Scene code of overlay 0x64b, in ROM order.
-
 #include "shared/world_map_objects.c"
-
-// ---- scene/world_map/s3b38.c ----
-
-/// Scene code of overlay 0x64b, in ROM order.
 
 DEFINE_ACTOR_FLICKER(Func_02003b38, WorldMap_SpawnSparkPair)
 

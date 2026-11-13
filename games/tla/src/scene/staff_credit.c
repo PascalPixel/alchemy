@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x64c, in ROM order.
-
 #include "shared/actors.h"
 #include "shared/flight.h"
 #include "battle/battle.h"

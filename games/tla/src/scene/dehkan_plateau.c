@@ -636,8 +636,6 @@ DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
 
 #undef HELD_OBJECT
 // @file
-// Scene code of overlay 0x655, in ROM order.
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Func_02003ba0
@@ -646,12 +644,6 @@ DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
 #include "../field/field_effect/spawn.c"
 
 #undef EFFECT_SET_SCRIPT
-
-// ---- scene/dehkan_plateau/dehkan_plateau.c ----
-
-// Scene code of overlay 0x655, in ROM order.
-
-// ---- games/tla/src/scene/dehkan_plateau.c ----
 
 void Actor_DisableById(s32 id);
 
@@ -1342,10 +1334,6 @@ void DehkanPlateau_JoltCamera(void) {
 }
 #undef SCENE
 
-// ---- games/tla/src/scene/dehkan_plateau/events_g.c ----
-// Scene code of overlay 0x655, in ROM order, from events_g's offset up to the
-// next object the overlay links.
-
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 
@@ -1528,10 +1516,6 @@ void DehkanPlateau_CannonCastsPound(void) {
 #undef Func_02000d78
 #undef CrumblingPillars_StepWithStandIn
 // @file
-// Scene code of overlay 0x655, in ROM order.
-
-// ---- games/tla/src/scene/dehkan_plateau/s2698.c ----
-
 void Actor_DisableById(s32 id);
 /* VIEW(s2698): routine gDehkanPlateau_PoundCube as this part declared it; the
  * joined file has another; not tried: gDehkanPlateau_PoundCube's bound
@@ -1707,7 +1691,6 @@ void DehkanPlateau_PoundLeaderThrough(void) {
   }
 }
 
-// ---- games/tla/src/scene/dehkan_plateau/events_i.c ----
 extern s16 gData_02003f52[];
 extern s16 gData_02003f80[];
 extern s16 gData_02003f92[];
@@ -1751,10 +1734,6 @@ void DehkanPlateau_CannonCastsPoundOnLeader(void) {
   Task_Remove(DehkanPlateau_PoundLeaderThrough);
   BattleEffect_CleanupSceneObjects();
 }
-
-// ---- games/tla/src/scene/dehkan_plateau/s2c14.c ----
-// Scene code of overlay 0x655, in ROM order, from s2c14's offset up to the next
-// object the overlay links.
 
 void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
 void Actor_MoveToObject(s32 id, s32 target);
@@ -1963,8 +1942,6 @@ void DehkanPlateau_InitializeRoom1(void) {
   }
 }
 
-// ---- games/tla/src/scene/dehkan_plateau/s3164.c ----
-
 #define CrumblingPillars_PlaceWithStandIns CrumblingPillars_PlaceWithStandIns
 void DehkanPlateau_RestoreRoom2Cracks(void);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
@@ -2021,10 +1998,6 @@ void DehkanPlateau_InitializeRoom2(void) {
     Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
   DehkanPlateau_HideRoom2Actors();
 }
-
-// ---- games/tla/src/scene/dehkan_plateau/s3284.c ----
-// Scene code of overlay 0x655, in ROM order, from s3284's offset up to the next
-// object the overlay links.
 
 extern s16 gData_02003fc8[];
 extern s32 gDehkanPlateau_CrackZ;
@@ -2270,8 +2243,6 @@ loop:
   Event_End();
 }
 
-// ---- games/tla/src/scene/dehkan_plateau/s390c.c ----
-
 void DehkanPlateau_InitializeRoom5(void) {
   struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 entrance;
@@ -2311,10 +2282,6 @@ void DehkanPlateau_InitializeRoom5(void) {
   gDehkanPlateau_CrackZ = 0;
   Task_Add(DehkanPlateau_ForgetCrackOnLeaving, TASK_PASS_VBLANK);
 }
-
-// ---- games/tla/src/scene/dehkan_plateau/s3a30.c ----
-// Scene code of overlay 0x655, in ROM order, from s3a30's offset up to the next
-// object the overlay links.
 
 void Func_02003a30(void) {
   struct Actor **slot = &gDehkanPlateau_PoundCube;

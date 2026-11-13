@@ -141,14 +141,10 @@ void TrialRoad_TakeStairs(s32 direction) {
   }
 }
 
-// ---- scene/trial_road/s0218.c ----
-
 /// Trial Road's stage puzzles: the stairs, chests and doors, and the pillars,
 /// torches, logs, spouts and sand the eight rooms are built from.
 
 #include "text/msg_ids.h"
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct Actor;
 struct FieldSprite;
@@ -1281,8 +1277,6 @@ void TrialRoad_DriftWithStream(void) {
   FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity[0], velocity[1],
                     velocity[2], 0x1000001, &options);
 }
-
-// ---- scene/trial_road/s15a8.c ----
 
 // Trial Road's rooms set up, the rival Moapa's race, the peak, the
 // fountains and crumbling pillars, the race's progress display and the tables.

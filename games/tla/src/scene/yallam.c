@@ -26,8 +26,6 @@
 #include "macros.h"
 #include "shared/tables.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 void Yallam_SingMoonSong(void);
 
 void Yallam_SingSunSong(void);

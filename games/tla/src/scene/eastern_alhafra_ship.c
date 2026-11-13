@@ -6,8 +6,6 @@
 /// Bread down from a crate (EasternAlhafraShip_ShakeDownTheBread) and Move
 /// pushes a crate across the deck.
 
-// ---- games/tla/src/scene/eastern_alhafra_ship.c ----
-
 #include "shared/tables.h"
 #include "shared/effects.h"
 #include "battle/battle.h"
@@ -223,10 +221,6 @@ void EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
     sprite->rotation = value;
   }
 }
-
-// ---- games/tla/src/scene/eastern_alhafra_ship/s0438.c ----
-// Scene code of overlay 0x669, in ROM order, from s0438's offset up to the next
-// object the overlay links, and the overlay's data.
 
 /* VIEW(s0438): routine EasternAlhafraShip_SpawnNote as s32
  * EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s32 rotation, s32 timer);

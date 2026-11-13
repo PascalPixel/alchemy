@@ -50,8 +50,6 @@
 #include "macros.h"
 #include "objcmd.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 struct Actor;
 struct Vector3;
 
@@ -1377,10 +1375,6 @@ DEFINE_BEAM_DRAW_TARGETS(Func_02001f94, Func_02001f14__s1f94, Func_02001d08,
 
 #undef gData_020036c4
 #undef gData_02003704
-// ---- scene/mars_lighthouse_room_m/s2118.c ----
-
-/// Scene code of overlay 0x6ac, in ROM order.
-
 void Actor_Release(void *handle);
 s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 
@@ -1483,10 +1477,6 @@ void Func_020026f0(void) {
 }
 
 #undef Unit_Get
-// ---- scene/mars_lighthouse_room_m/s2708.c ----
-
-/// Scene code of overlay 0x6ac, in ROM order.
-
 /* VIEW(s2708): routine Party_TakeFallDamage as int Party_TakeFallDamage(),
  * called with no declaration in scope as its bytes need; the definition has
  * void Party_TakeFallDamage(void); not tried: Party_TakeFallDamage's bound

@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x6a3, in ROM order.
-
 #include "shared/whirlwind.h"
 #include "shared/jupiter_lighthouse.h"
 #include "shared/actors.h"
@@ -57,8 +55,6 @@ void Leader_CenterInCell(void);
 #include "module/field/field_effect.h"
 #include "objcmd.h"
 #include "macros.h"
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 struct CellTarget;
 struct CellTargetEntry;
@@ -1743,10 +1739,6 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
                         Position_FlatDistance, gWhirlwindEndScript,
                         gWhirlwindRiding)
 
-// ---- scene/jupiter_lighthouse_room_m/s3474.c ----
-
-/// Scene code of overlay 0x6a3, in ROM order.
-
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Whirlwind_Update(struct Actor *self);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -1806,8 +1798,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef EVENT_WORK
 #undef ACTOR_SET_MODE_AND_WAIT
 // @file
-// Scene code of overlay 0x6a3, in ROM order.
-
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
@@ -1899,10 +1889,6 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
-// ---- scene/jupiter_lighthouse_room_m/s41ac.c ----
-
-// Scene code of overlay 0x6a3, in ROM order.
-
 struct CellTargetEntry;
 
 /* VIEW(s41ac): tag struct CellTarget as struct CellTarget__s41ac; cell_target.h
@@ -1945,8 +1931,6 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s41ac,
 #undef Actor_StartScript
 #undef CrackedTile_Fall
 // @file
-// Scene code of overlay 0x6a3, in ROM order.
-
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);

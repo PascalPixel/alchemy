@@ -35,8 +35,6 @@
 #include "system/vector3.h"
 #include "system/task.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 s32 LemuriaSpring_RunSpringGame(void);
 
 extern u16 gLemuriaSpring_CoinPrizes[];

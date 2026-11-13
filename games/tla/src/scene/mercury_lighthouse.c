@@ -25,8 +25,6 @@
 #include "event_work.h"
 #include "module/scene/scene.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 void MercuryLighthouse_HearVoices(void);
 
 extern s32 gMercuryLighthouse_MoteScript[];

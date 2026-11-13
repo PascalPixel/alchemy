@@ -3,18 +3,12 @@
 
 #include "../field/field_effect/move.c"
 /// @file
-/// The scene code of overlay 0x654, in ROM order.
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect/spawn.c"
-
-// ---- scene/shrine_of_the_sea_god/shrine_of_the_sea_god.c ----
-
-/// Scene code of overlay 0x654, in ROM order.
 
 #include "types.h"
 #include "system/main_routine_work.h"
@@ -270,9 +264,6 @@ void Func_02000280(void) {
     Field_RequestDjinnBattle(14, 67);
   }
 }
-
-// The scene code of overlay 0x654 that its scene tables belong to, in ROM
-// order; the rest of the overlay is in shrine_of_the_sea_god/.
 
 struct Actor;
 #define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion
@@ -1010,8 +1001,6 @@ void Func_020012b4(void) {
 #undef gShrineOfTheSeaGod_Room8Triggers
 #undef gShrineOfTheSeaGod_Room9Triggers
 // @file
-// Scene code of overlay 0x654, in ROM order.
-
 #include "text/msg_ids.h"
 
 extern u32 gData_02004a18[];

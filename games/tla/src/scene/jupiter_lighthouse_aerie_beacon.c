@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x6a5, in ROM order.
-
 #include "types.h"
 #include "field/event_inline.h"
 #include "battle/battle.h"
@@ -111,13 +109,7 @@ void Func_020000ec(struct Actor *self) {
 
 #undef BYTE_AT
 // @file
-// Scene code of overlay 0x6a5, in ROM order.
-
-// ---- games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c ----
-
 #include "text/msg_ids.h"
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct CellTarget;
 struct CellTargetEntry;
@@ -2473,7 +2465,6 @@ s32 Scene_PrepareMap(void) {
 /* VIEW(s3f54): routine gPaletteCyclePausesInEvents as this part declared it;
  * the joined file has another; not tried: gPaletteCyclePausesInEvents's bound
  * declaration was not found. */
-// ---- games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s3f54.c ----
 extern s32
     gPaletteCyclePausesInEvents__s3f54 __asm__("gPaletteCyclePausesInEvents");
 #define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__s3f54
@@ -2641,10 +2632,6 @@ void Whirlwind_Update(struct Object6a5 *object) {
   Data_02006a28 = 0;
 }
 
-// ---- scene/jupiter_lighthouse_aerie_beacon/s44cc.c ----
-
-// Scene code of overlay 0x6a5, in ROM order.
-
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -2756,8 +2743,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef gData_020061e0
 #undef gPaletteCyclePausesInEvents
 // @file
-// Scene code of overlay 0x6a5, in ROM order.
-
 extern const s32 *gFieldEffect_DurationScripts[];
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -2857,8 +2842,6 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 // @file
-// Scene code of overlay 0x6a5, in ROM order.
-
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);

@@ -51,14 +51,10 @@ DEFINE_SCENE_CREATE_ACTOR(TreasureIsle_CreateActor)
 
 #undef EFFECT_SPAWN
 
-// ---- scene/treasure_isle/treasure_isle.c ----
-
 // Treasure Isle, the dungeon in the north-east of the world: buttons that
 // raise spiky rocks Grind breaks, pillars Move pushes onto switches, rocks
 // Lift raises, Gale the Jupiter Djinni, a Venus Djinni, and the guardian of
 // water.
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct TreasureIsleCell;
 

@@ -81,16 +81,12 @@ struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
 
 #undef EFFECT_SPAWN
 
-// ---- scene/magma_rock/s03b4.c ----
-
 extern s32 gPushLeaderSteps[];
 
 DEFINE_BLOCK_PUSH_ONTO(MagmaRock_PushBlockOnto, gPushLeaderSteps,
                        MapGrid_CheckCollision, Actor_SelectAnimation)
 
 #include "../field/map/cell_fill_byte.c"
-
-// ---- scene/magma_rock.c ----
 
 // Magma Rock's outside, the volcano north of Loho the party climbs to its
 // summit: the Moai statues Burst wakes, which fire magma rocks or lift the
@@ -527,8 +523,6 @@ void MagmaRock_PlaceVolley(u16 id, s16 first, s16 side) {
 }
 
 DEFINE_ACTOR_FLASH_COLOR(MagmaRock_FlashStatue, 10)
-
-// ---- scene/magma_rock/s0ff4.c ----
 
 // Magma Rock's statues: the magma they fire, the flame columns that lift the
 // leader, the cracked columns, slides, pillars, vines and the final blast.
@@ -2128,8 +2122,6 @@ test:
 }
 
 #include "../field/field_effect/advance_motion_priority.c"
-
-// ---- scene/magma_rock/s34ac.c ----
 
 // Magma Rock's rubble and falling rocks, and its tables.
 

@@ -32,8 +32,6 @@
 #include "macros.h"
 #include "text/msg_ids.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 extern s32 gLemuriaPalace_Doors[];
 extern s32 gLemuriaPalace_InnerDoor[];
 

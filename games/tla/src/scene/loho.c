@@ -28,8 +28,6 @@
 #include "objcmd.h"
 #include "text/msg_ids.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 extern u32 gLoho_VillagerMovesNorth[];
 extern u32 gLoho_VillagerMovesWest[];
 

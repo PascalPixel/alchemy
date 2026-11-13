@@ -27,8 +27,6 @@
 #include "graphics/resource.h"
 #include "text/msg_ids.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 struct IceShard;
 struct IceShardSpark;
 struct IceShardSprite;

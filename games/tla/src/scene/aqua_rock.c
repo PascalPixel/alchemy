@@ -171,8 +171,6 @@ struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 kind) {
 #include "../field/field_effect/move.c"
 
 // @file
-// Scene code of overlay 0x67b, in ROM order.
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -182,14 +180,6 @@ struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 kind) {
 #include "../field/field_effect/spawn.c"
 
 #undef EFFECT_SPAWN
-
-// ---- scene/aqua_rock/aqua_rock.c ----
-
-// Scene code of overlay 0x67b, in ROM order.
-
-// ---- games/tla/src/scene/aqua_rock.c ----
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 struct Actor;
 
@@ -1026,10 +1016,6 @@ settle:
 }
 #undef UNK02003450_SET
 
-// ---- games/tla/src/scene/aqua_rock/s17f4.c ----
-// Scene code of overlay 0x67b, in ROM order, from s17f4's offset up to the next
-// object the overlay links.
-
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
   struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
@@ -1201,7 +1187,6 @@ void Func_02001d30(struct Actor *object) {
   }
 }
 
-// ---- games/tla/src/scene/aqua_rock/events_g.c ----
 DEFINE_ACTOR_EMIT_WATER_DROP(Actor_EmitWaterDrop, gWaterDropScript)
 
 void Func_02001e00(void) {

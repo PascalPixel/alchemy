@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x69b, in ROM order.
-
 #include "shared/whirlwind.h"
 #include "shared/jupiter_lighthouse.h"
 #include "shared/actors.h"
@@ -47,8 +45,6 @@
 #include "shared/tables.h"
 #include "module/field/field_effect.h"
 #include "objcmd.h"
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 void Actor_Release(struct Actor *object);
 
@@ -538,10 +534,6 @@ DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-// ---- scene/jupiter_lighthouse_room_2/s0d94.c ----
-
-/// Scene code of overlay 0x69b, in ROM order.
-
 extern s32 gWhirlwindEndScript[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
@@ -616,8 +608,6 @@ void Func_020015d0(s32 a0) { gLightSpritePriority = a0; }
 
 #undef DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE
 // @file
-// Scene code of overlay 0x69b, in ROM order.
-
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SelectAnimation(struct Actor *object, s32 a);
@@ -711,10 +701,6 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
-// ---- scene/jupiter_lighthouse_room_2/s1c8c.c ----
-
-// Scene code of overlay 0x69b, in ROM order.
-
 struct CellTargetEntry;
 
 /* VIEW(s1c8c): tag struct CellTarget as struct CellTarget__s1c8c; cell_target.h
@@ -742,8 +728,6 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1c8c,
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_StartScript
 // @file
-// Scene code of overlay 0x69b, in ROM order.
-
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);

@@ -107,11 +107,6 @@ struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
-// ---- scene/ankohl_ruins.c ----
-
-// The scene code of overlay 0x686 that its scene tables belong to, in ROM
-// order; the rest of the overlay is in ankohl_ruins/.
-
 extern struct AnkohlRuinsSpriteWork gAnkohlRuins_Sand;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -1265,10 +1260,6 @@ void AnkohlRuins_RaiseDust(struct Actor *object) {
                       0x100000, &params);
   }
 }
-
-// ---- scene/ankohl_ruins/s2438.c ----
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 void Func_020006b4(void);
 void Func_020011c0(void);

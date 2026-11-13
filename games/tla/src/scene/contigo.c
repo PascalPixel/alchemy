@@ -75,8 +75,6 @@ static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
 #include "version.h"
 #include "system/vector3.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 extern s32 gFieldEffect_DurationScripts[];
 extern struct ActorPlacement gContigo_Room1Placements[];
 extern struct ActorPlacement gContigo_Room4Placements[];
@@ -265,9 +263,6 @@ void Func_02000328(void) {
  * of `struct ContigoEventWork'. */
 #define ContigoEventWork ContigoEventWork__contigo
 // @file
-// Scene code of overlay 0x694, in ROM order.
-
-// ---- games/tla/src/scene/contigo.c ----
 #undef Func_02003f54
 #include "text/msg_ids.h"
 
@@ -2372,7 +2367,6 @@ void Func_02003cd8(struct Actor *object) {
 #undef MSG_NEXT_PRIZE
 #undef MSG_COME_AGAIN
 
-// ---- games/tla/src/scene/contigo/s3e54.c ----
 // The sparkle's setup, Func_02003f54, which sets byte 0x62 of an object, and
 // the overlay's data.
 

@@ -103,14 +103,10 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 34)
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
-// ---- scene/sea_of_time.c ----
-
 // The Sea of Time, east of Lemuria: currents and swirls that carry the ship
 // round and sweep it back to the entrance, the laps and waves Yepp's songs
 // tell the way by, and rocks Grind breaks; the rest of the overlay is in
 // sea_of_time/.
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 // The Sea of Time's frame callback: rotates two runs of the background palette,
 // pulses the red of colour 15 (or steps it with the alarm), copies the palette

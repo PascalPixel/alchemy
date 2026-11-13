@@ -69,12 +69,6 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
-// ---- scene/anemos_inner_sanctum_entrance.c ----
-
-// ---- games/tla/src/scene/anemos_inner_sanctum_entrance/hide.c ----
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 extern s32 gData_02000e20[];
 extern s32 gData_02000e5c[];
 extern s32 gData_02000ea4[];
@@ -221,8 +215,6 @@ void Func_02000534(s32 a) {
       Field_TryJumpForward();
   }
 }
-
-// ---- games/tla/src/scene/anemos_inner_sanctum_entrance/s0588.c ----
 
 void Func_02000588(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);

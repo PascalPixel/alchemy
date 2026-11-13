@@ -28,8 +28,6 @@
 #include "flags.h"
 #include "module/scene/scene.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 extern struct ActorPlacement gChampaInteriors_ActorPlacements[];
 extern struct ActorPlacement gChampaInteriors_IsletHouseActorPlacements[];
 extern struct Trigger gChampaInteriors_Triggers[];

@@ -33,8 +33,6 @@
 #include "sound/sound.h"
 #include "system/system.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 struct Actor;
 
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);

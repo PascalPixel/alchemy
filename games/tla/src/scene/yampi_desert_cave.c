@@ -36,8 +36,6 @@
 #include "version.h"
 #include "shared/tables.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 struct Actor;
 
 extern u16 gYampiDesertCave_LogSprites[];

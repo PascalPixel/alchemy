@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x6a9, in ROM order.
-
 #include "shared/actors.h"
 #include "types.h"
 #include "scene_tables.h"
@@ -82,8 +80,6 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 #include "../field/field_effect/move.c"
 
 // @file
-// Scene code of overlay 0x6a9, in ROM order.
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -91,8 +87,6 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 struct Actor;
 

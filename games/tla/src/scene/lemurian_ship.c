@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x656, in ROM order.
-
 #include "shared/tables.h"
 #include "battle/battle.h"
 #include "field/field.h"

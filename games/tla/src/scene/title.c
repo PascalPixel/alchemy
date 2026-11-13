@@ -34,8 +34,6 @@
 #include "module/system/system.h"
 #include "resource_ids.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 extern s16 gTitleVramBlock;
 
 void Credits_Run(s32 value);

@@ -43,8 +43,6 @@
 #include "system/heap_release.h"
 #include "system/input.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 struct ItemDefinition;
 
 struct ShamanVillageSceneBlock {
@@ -1405,11 +1403,7 @@ void ShamanVillage_MeetMoapa(void) {
 #undef gShamanVillage_WalkToLeftStartScript
 #undef gShamanVillage_WalkToRightStartScript
 #undef gShamanVillage_Room2Placements
-// ---- scene/shared/drift_spawn.c ----
-
 #include "shared/drift_spawn.c"
-
-// ---- scene/shaman_village/s1fec.c ----
 
 /// The Shaman Village's events after Moapa's house: the rod, the trial's
 /// rules and paths, the race's lettering, and each room's set-up and tables.

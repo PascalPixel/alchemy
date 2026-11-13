@@ -188,8 +188,6 @@ void LemurianShipDeck_BobDeck(void) {
 
 #include "text/msg_ids.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 struct Actor;
 
 struct MapMode {

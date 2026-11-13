@@ -49,8 +49,6 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #include "../field/field_effect/move.c"
 
 // @file
-// Scene code of overlay 0x663, in ROM order.
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -103,10 +101,6 @@ s32 Func_02000384(u32 layer, s32 x, s32 y, s32 value) {
 #include "../field/object/wait_until_idle.c"
 
 #undef EFFECT_SET_SCRIPT
-
-// ---- scene/airs_rock/airs_rock.c ----
-
-// Scene code of overlay 0x663, in ROM order.
 
 // For each id of a list ended by 0xffff: clears the object's mark and, on a
 // cell with attribute bit 6, blocks the cells ahead of and behind it and sets

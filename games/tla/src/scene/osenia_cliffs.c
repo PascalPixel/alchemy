@@ -22,8 +22,6 @@
 #include "system/frame.h"
 #include "module/scene/scene.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 extern u32 gOseniaCliffs_PaletteCycleStep[];
 
 #ifdef MODERN

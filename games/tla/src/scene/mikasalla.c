@@ -27,8 +27,6 @@
 #include "field/event_inline.h"
 #include "objcmd.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 extern s16 gMikasalla_TunnelRegions[];
 extern struct ActorPlacement gMikasalla_VillagePlacements[];
 extern struct ActorPlacement gMikasalla_TunnelPlacements[];

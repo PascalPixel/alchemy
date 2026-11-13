@@ -93,8 +93,6 @@ extern struct Trigger gYallamInteriors_Triggers[];
 extern struct Trigger gYallamInteriors_Room1Triggers[];
 extern struct Trigger gYallamInteriors_Room2Triggers[];
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 void Forge_Run(s32 actor);
 
 void Forge_SetItem(s32 value);

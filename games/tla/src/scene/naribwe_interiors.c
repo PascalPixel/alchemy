@@ -24,8 +24,6 @@
 #include "call.h"
 #include "system/ram_buffer.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 extern struct Trigger gNaribweInteriors_Triggers[];
 extern struct Trigger gNaribweInteriors_TriggersOnReturn[];
 

@@ -1,8 +1,4 @@
 /// @file
-/// The scene code of overlay 0x685, in ROM order.
-
-// ---- games/tla/src/scene/champa_cliff_caves.c ----
-
 #include "field/event_inline.h"
 #include "types.h"
 #include "flags.h"
@@ -79,8 +75,6 @@ static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
 static __inline__ void Func_02003534_(s32 actor, s32 angle) {
   Actor_FaceDirectionById(actor, angle);
 }
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 extern struct ActorPlacement gData_0200375c[];
 extern struct ActorPlacement gData_020037a4[];
@@ -526,7 +520,6 @@ void Func_02000978(s32 actor) {
   Event_End();
 }
 
-// ---- games/tla/src/scene/champa_cliff_caves/s0a34.c ----
 #include "text/msg_ids.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -1644,8 +1637,6 @@ next:
   work->field1068.value = 0;
 }
 
-// ---- games/tla/src/scene/champa_cliff_caves/s2d34.c ----
-
 /* VIEW(s2d34): tag struct ChampaCliffCavesWork as struct
  * ChampaCliffCavesWork__s2d34; champa_cliff_caves.c has another definition;
  * tried with the definition the rest of the object has, it does not compile in
@@ -1893,8 +1884,6 @@ void Func_02003078(void) {
 }
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/champa_cliff_caves/s3164.c ----
-
 /* VIEW(s3164): tag struct ChampaCliffCavesWork as struct
  * ChampaCliffCavesWork__s3164; champa_cliff_caves.c has another definition;
  * tried with the definition the rest of the object has, it does not compile in
@@ -1955,8 +1944,6 @@ void Func_02003164(const struct Vec3 *origin) {
     wait(1);
   } while (state != 999);
 }
-
-// ---- games/tla/src/scene/champa_cliff_caves/s320c.c ----
 
 void Func_0200320c(void) {
   struct ChampaCliffCavesWork *work =

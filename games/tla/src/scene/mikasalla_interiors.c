@@ -24,8 +24,6 @@
 #include "objcmd.h"
 #include "text/msg_ids.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 extern struct ActorPlacement gMikasallaInteriors_InnPlacements[];
 extern struct ActorPlacement gMikasallaInteriors_SanctumPlacements[];
 extern struct Trigger gMikasallaInteriors_InnTriggers[];

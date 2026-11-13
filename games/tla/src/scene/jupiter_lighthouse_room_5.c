@@ -1,8 +1,4 @@
 /// @file
-/// The scene code of overlay 0x69e, in ROM order.
-
-// ---- games/tla/src/scene/jupiter_lighthouse_room_5.c ----
-
 #include "shared/whirlwind.h"
 #include "shared/jupiter_lighthouse.h"
 #include "shared/actors.h"
@@ -51,8 +47,6 @@
 #include "module/field/field_effect.h"
 #include "objcmd.h"
 #include "text/msg_ids.h"
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct Actor;
 struct CellTarget;
@@ -602,10 +596,6 @@ s32 Scene_PrepareMap(void) {
 #include "shared/scene_set_arrival_flags.c"
 #undef EVENT_WORK
 
-// ---- games/tla/src/scene/jupiter_lighthouse_room_5/s0cb8.c ----
-// Scene code of overlay 0x69e, in ROM order, from s0cb8's offset up to the
-// next object the overlay links.
-
 void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
 }
@@ -718,10 +708,6 @@ stop:
     gData_02003400 = zero;
   }
 }
-
-// ---- games/tla/src/scene/jupiter_lighthouse_room_5/s1230.c ----
-// Scene code of overlay 0x69e, in ROM order, from s1230's offset up to the next
-// object the overlay links.
 
 struct GustObject *Func_02001230(struct GustObject *source) {
   struct Vector3 position;
@@ -843,10 +829,6 @@ void Func_02001538(void) {
     }
   }
 }
-
-// ---- scene/jupiter_lighthouse_room_5/s1650.c ----
-
-/// Scene code of overlay 0x69e, in ROM order.
 
 /* VIEW(s1650): tag struct SparkWork as struct SparkWork__s1650;
  * games/tla/src/scene/jupiter_lighthouse_room_5 has another definition; tried
@@ -998,8 +980,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef gData_02003278
 #undef gPaletteCyclePausesInEvents
 // @file
-// Scene code of overlay 0x69e, in ROM order.
-
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
@@ -1093,10 +1073,6 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
-// ---- scene/jupiter_lighthouse_room_5/s22b8.c ----
-
-// Scene code of overlay 0x69e, in ROM order.
-
 /* VIEW(s22b8): tag struct CellTarget as struct CellTarget__s22b8; cell_target.h
  * has another definition; tried with the definition the rest of the object has,
  * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
@@ -1121,8 +1097,6 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s22b8,
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 // @file
-// Scene code of overlay 0x69e, in ROM order.
-
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);

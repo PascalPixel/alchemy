@@ -428,10 +428,6 @@ void DailaInteriors_TalkCaughtPracticing(void) {
 DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, FlagBlock_ApplyFlags,
                               gDailaInteriors_PillarFrozenFlags)
 
-// ---- games/tla/src/scene/daila_interiors/item.c ----
-// Scene code of overlay 0x652, in ROM order, from item's offset up to the next
-// object the overlay links.
-
 void ItemDisplay_ShowPicture(struct Actor *object, s32 mode);
 void Sound_Play(s32 cue);
 void Actor_StartIdle(struct Actor *object);
@@ -566,8 +562,6 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
   }
   return owner;
 }
-
-// ---- games/tla/src/scene/daila_interiors/arrival.c ----
 
 void Map_SetLayerEntryFlag(s32 mode);
 

@@ -33,8 +33,6 @@
 #include "shared/tables.h"
 #include "objcmd.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 void Func_02000da8(s32 value);
 void Func_02000e28(s32 value);
 

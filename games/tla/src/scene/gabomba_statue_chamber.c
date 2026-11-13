@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x672, in ROM order.
-
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -29,8 +27,6 @@
 #include "shared/tables.h"
 #include "objcmd.h"
 #include "text/msg_ids.h"
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 void Func_02001094(void);
 
@@ -554,9 +550,6 @@ void Func_02000e60(void) {
 void Func_02000ef0(struct Actor *object) { object->x = Actor_GetById(8)->x; }
 #undef EVENT_WORK
 #undef OBJECT
-
-// Scene code of overlay 0x672, in ROM order, from s0f00's offset up to the next
-// object the overlay links.
 
 #define DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM(name, n1)                      \
   void name(void) {                                                            \

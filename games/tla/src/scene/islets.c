@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x674, in ROM order.
-
 #include "flags.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
@@ -33,8 +31,6 @@
 #include "objcmd.h"
 #include "module/scene/mars_lighthouse_entrance.h"
 #include "module/scene/shrine_of_the_sea_god.h"
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct Actor;
 
@@ -2199,10 +2195,6 @@ void Islets_InitializeRoom5(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-// ---- scene/islets/s3410.c ----
-
-/// Scene code of overlay 0x674, in ROM order.
-
 void Func_02003410(void) {
   struct PaletteSnapshotWork *queue;
   struct PaletteSnapshot *entry;
@@ -2539,10 +2531,6 @@ void Actor_StopAtPushTarget(struct Actor *object);
 DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gPushFootprints, Func_02003790,
                         Actor_StopAtPushTarget, Actor_SelectAnimation,
                         gPushLeaderSteps)
-
-// ---- scene/islets/s3d0c.c ----
-
-/// Scene code of overlay 0x674, in ROM order.
 
 void Actor_StopAtPushTarget(struct Actor *object) {
   struct Vector3 position;

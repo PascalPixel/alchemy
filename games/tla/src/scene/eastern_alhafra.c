@@ -1,8 +1,4 @@
 /// @file
-/// The scene code of overlay 0x668, in ROM order.
-
-// ---- games/tla/src/scene/eastern_alhafra.c ----
-
 #include "shared/effects.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -39,8 +35,6 @@
 #include "shared/map_cells.h"
 #include "module/field/field.h"
 #include "field_event.h"
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 struct Actor;
 struct RockSprite;
@@ -326,10 +320,6 @@ void Func_0200042c(s32 mode, s32 id) {
   if (open)
     EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
 }
-
-// ---- games/tla/src/scene/eastern_alhafra/s0514.c ----
-// Scene code of overlay 0x668, in ROM order, from s0514's offset up to the next
-// object the overlay links.
 
 void Func_0200112c(void);
 /* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct
@@ -1192,10 +1182,6 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 #undef EVENT_WORK
 #undef OBJECT
 #undef FIELD_AT
-
-// ---- games/tla/src/scene/eastern_alhafra/s1bf4.c ----
-// Scene code of overlay 0x668, in ROM order, from s1bf4's offset up to the next
-// object the overlay links.
 
 /* VIEW(s1bf4): routine Func_02001b9c as s32 Func_02001b9c(s32 x, s32 y, s32 z,
  * s32 rotation, s32 timer); the definition has void Func_02001b9c(s32 x, s32 y,
@@ -2194,10 +2180,6 @@ struct RockWork {
 /// thrown up and out along it.
 DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 
-// ---- scene/eastern_alhafra/s4004.c ----
-
-/// Scene code of overlay 0x668, in ROM order.
-
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
    * instructions differ in tla-en. */
@@ -2378,10 +2360,6 @@ s32 Func_02004240(struct PushState *push) {
 
 DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds,
                               gPushDirectionSteps, gPushFootprints)
-
-// ---- scene/eastern_alhafra/s44c4.c ----
-
-/// Scene code of overlay 0x668, in ROM order.
 
 struct PushTarget {
   s32 x; ///< 16.16 fixed-point pixels

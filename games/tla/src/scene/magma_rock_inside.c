@@ -114,8 +114,6 @@ struct Actor *MagmaRockInside_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
 #include "../field/field_effect/move.c"
 
 // @file
-// Scene code of overlay 0x692, in ROM order.
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Func_02004c98
@@ -124,20 +122,12 @@ struct Actor *MagmaRockInside_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
-// ---- scene/magma_rock_inside/s033c.c ----
-
-// Scene code of overlay 0x692, in ROM order.
-
 DEFINE_POSITION_DISTANCE(Position_Distance)
 
 #include "../field/object/find_in_cell.c"
 
-// ---- scene/magma_rock_inside/magma_rock_inside.c ----
-
 // Magma Rock's inside: the lava floods and drains, its platforms, statues and
 // pillars, the Blaze tablet and the flames and torches it opens the way with.
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct Actor;
 struct FieldSprite;
@@ -397,9 +387,6 @@ hook:
   FIELD_AT(v6, s32, 108) = (s32)MagmaRockInside_PausePlatform;
 }
 #undef FIELD_AT
-
-// The scene code of overlay 0x692 that its scene tables belong to, in ROM
-// order; the rest of the overlay is in magma_rock_inside/.
 
 s32 MagmaRockInside_SetCellShape(s32 terrain, s32 x, s32 z, s32 height);
 
@@ -2285,8 +2272,6 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
 #undef DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR
 
 #undef gMagmaRockInside_BlazeWatcherReturnScript
-// ---- scene/magma_rock_inside/s3678.c ----
-
 // Magma Rock's inside: its crumbling pillars and traps.
 
 void Tightrope_Initialize(void);
@@ -2719,8 +2704,6 @@ test:
 
 #undef MagmaRockInside_StartLavaPlatform
 #undef CLOSED_BLEND
-// ---- scene/magma_rock_inside/s46e8.c ----
-
 // Magma Rock's inside: its falling rocks and rubble, and its tables.
 
 void Actor_StartScript(struct Actor *object, const void *data);

@@ -282,8 +282,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 #include "text/msg_ids.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 void Naribwe_PrepareBlaze(void);
 void Naribwe_AskAboutKibomboExpedition(void);
 

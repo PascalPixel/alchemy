@@ -31,8 +31,6 @@
 #include "shared/tables.h"
 #include "objcmd.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 void Func_02000328(void);
 
 s32 List_CountEntries(u16 *list);

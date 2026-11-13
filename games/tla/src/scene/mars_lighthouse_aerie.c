@@ -1745,10 +1745,6 @@ DEFINE_ORBS_SPAWN_RISING(Orbs_SpawnRising, 0x200, gData_02006afc, Func_02003210,
 
 #undef FIELD_AT
 
-// ---- scene/mars_lighthouse_aerie/s3370.c ----
-
-/// Scene code of overlay 0x6ae, in ROM order.
-
 #include "text/msg_ids.h"
 
 void BattleEffect_GetObjectPriority(void);

@@ -27,8 +27,6 @@
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect/spawn.c"
 
-// ---- scene/kandorean_temple/kandorean_temple.c ----
-
 /// The Kandorean Temple's rooms: their tables' getters, the steam, vents and
 /// lifts.
 
@@ -169,8 +167,6 @@ static __inline__ void Func_020053a8_(s32 a, s32 b, s32 c, s32 d) {
 #include "event_work.h"
 #include "module/field/field_effect.h"
 #include "objcmd.h"
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 struct MapWork17 {
   s32 *origin;

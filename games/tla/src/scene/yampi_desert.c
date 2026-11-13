@@ -203,8 +203,6 @@ static inline void Scene_SetPositionAndReset(s32 id, s32 x, s32 z) {
 #include "system/iwram_call.h"
 #include "macros.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 void YampiDesert_RippleFollowsScorpion(void);
 
 extern u32 gYampiDesert_SandCloudCells[];

@@ -77,8 +77,6 @@ struct GabombaCatacombsParty {
   u16 value254;
 };
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gData_02001310[];
 extern struct ActorPlacement gGabombaCatacombs_Placements[];

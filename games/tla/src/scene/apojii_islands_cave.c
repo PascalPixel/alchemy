@@ -22,8 +22,6 @@
 #include "flags.h"
 #include "field/event_inline.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 extern u32 gApojiiIslandsCave_FoliageScript[];
 
 /// The four patches of overgrowth, numbering the rows of gActorPlacements.

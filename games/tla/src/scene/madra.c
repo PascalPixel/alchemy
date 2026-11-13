@@ -34,8 +34,6 @@
 #include "module/window/window.h"
 #include "field_sprite.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 extern struct ActorPlacement gMadra_Placements[];
 extern struct ActorPlacement gMadra_PlacementsOnReturn[];
 

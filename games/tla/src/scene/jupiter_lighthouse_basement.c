@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x699, in ROM order.
-
 #include "flags.h"
 #include "shared/whirlwind.h"
 #include "shared/jupiter_lighthouse.h"
@@ -51,8 +49,6 @@
 #include "shared/tables.h"
 #include "module/field/field_effect.h"
 #include "objcmd.h"
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct EffectOptions;
 
@@ -306,10 +302,6 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
                               Position_FlatDistance, gWhirlwindEndScript,
                               Data_020023ac)
 
-// ---- scene/jupiter_lighthouse_basement/s098c.c ----
-
-/// Scene code of overlay 0x699, in ROM order.
-
 extern s16 gData_020024f6;
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
@@ -439,8 +431,6 @@ void Func_02001008(s32 value) { gData_020024f6 = value; }
 
 #undef OBJECT_BYTE
 // @file
-// Scene code of overlay 0x699, in ROM order.
-
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -552,10 +542,6 @@ void Leader_CenterInCell(void) {
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
-// ---- scene/jupiter_lighthouse_basement/s16c4.c ----
-
-// Scene code of overlay 0x699, in ROM order.
-
 struct CellTargetEntry;
 
 /* VIEW(s16c4): tag struct CellTarget as struct CellTarget__s16c4; cell_target.h
@@ -584,8 +570,6 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s16c4,
 #undef OBJECT_BYTE
 #undef Actor_StartScript
 // @file
-// Scene code of overlay 0x699, in ROM order.
-
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }

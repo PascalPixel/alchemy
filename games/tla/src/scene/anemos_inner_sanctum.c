@@ -1,6 +1,4 @@
 /// @file
-/// The scene code of overlay 0x6b0, in ROM order.
-
 #include "shared/actors.h"
 #include "shared/effects.h"
 #include "system/dma.h"
@@ -39,8 +37,6 @@
 #include "module/scene/scene.h"
 #include "shared/tables.h"
 #include "module/field/field_effect.h"
-
-/// What The Lost Age's code declares for the files that use it, written once.
 
 struct Actor;
 struct CellTarget;
@@ -264,8 +260,6 @@ void Func_02000328(void) {
 
 #undef BG_PLTT_SET_RGB
 // @file
-// Scene code of overlay 0x6b0, in ROM order.
-
 void Actor_SelectAnimation(struct Actor *, s32);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 extern s32 gData_02003840[];
@@ -418,10 +412,6 @@ s32 Func_02000794(struct Actor *object) {
 
 #include "../field/object/wait_until_idle.c"
 
-// ---- scene/anemos_inner_sanctum/scene_tables.c ----
-
-// Scene code of overlay 0x6b0, in ROM order.
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
@@ -538,10 +528,6 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
   Actor_SelectAnimation(t0, 7);
   Actor_SetSpriteFlags(t0, 0);
 }
-
-// ---- scene/anemos_inner_sanctum/s0ac8.c ----
-
-// Scene code of overlay 0x6b0, in ROM order.
 
 #include "text/msg_ids.h"
 
@@ -1129,10 +1115,6 @@ void Func_020017b4(struct Actor *self) {
 #undef Func_0200088c
 #undef Func_020009b8
 #undef Func_02000a78
-
-// ---- scene/anemos_inner_sanctum/s1938.c ----
-
-// Scene code of overlay 0x6b0, in ROM order.
 
 #include "text/msg_ids.h"
 
@@ -1732,10 +1714,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 #include "../field/object/set_sprite_priority_b.c"
 
-// ---- scene/anemos_inner_sanctum/move.c ----
-
-// Scene code of overlay 0x6b0, in ROM order.
-
 void Effect_MoveLocal(union FieldObject *object) {
   s32 x;
   s32 velocityX;
@@ -1861,10 +1839,6 @@ void Leader_CenterInCell(void) {
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
-// ---- scene/anemos_inner_sanctum/s2db0.c ----
-
-// Scene code of overlay 0x6b0, in ROM order.
-
 void CrackedTile_Fall(struct PushEvent *event) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x;
@@ -1933,8 +1907,6 @@ void CrackedTile_Fall(struct PushEvent *event) {
 #undef Func_02000038
 #undef CrackedTile_PlaceLanding
 // @file
-// Scene code of overlay 0x6b0, in ROM order.
-
 void CrackedTile_DropIn(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   u32 i;

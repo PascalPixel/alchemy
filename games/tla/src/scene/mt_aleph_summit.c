@@ -42,8 +42,6 @@
 #include "module/scene/scene.h"
 #include "module/system/system.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 extern const s32 *gFieldEffect_DurationScripts[];
 
 extern u32 gFieldEffect_ShortScript[];

@@ -36,8 +36,6 @@
 #include "objcmd.h"
 #include "text/msg_ids.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 struct Actor;
 
 extern s16 gData_02000f5c[];

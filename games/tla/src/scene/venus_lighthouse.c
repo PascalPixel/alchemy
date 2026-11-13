@@ -156,8 +156,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "../field/object/find_in_cell.c"
 
-// ---- scene/venus_lighthouse.c ----
-
 // The Venus Lighthouse, as the prologue opens on it: Felix moves a statue
 // with Psynergy and goes on alone, and Jenna and Kraden, doubting they should
 // leave, meet Alex and set off for Idejima. This file holds the scene's entry
@@ -238,13 +236,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 #undef FieldActor_SetSpriteColor
 
-// ---- scene/venus_lighthouse/floor.c ----
-
 // The Venus Lighthouse's floor events and data: Felix moving the statue and
 // leaving Jenna and Kraden, their talk of leaving, the floor switch, the
 // statue that repels the leader, the reliefs and the paths Reveal shows.
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 struct VenusActor {
   u8 unk00[6];

@@ -9,8 +9,6 @@
 /// (Kibombo_DeadEndByTheStatue). The villagers' talk changes once Akafubu is
 /// the witch doctor (Kibombo_TalkPathToPeace).
 
-// ---- games/tla/src/scene/kibombo/s0038.c ----
-
 #include "shared/actors.h"
 #include "types.h"
 struct Actor;
@@ -72,10 +70,6 @@ s32 Func_020000c4(struct Actor *object) {
   return 1;
 }
 
-// ---- games/tla/src/scene/kibombo.c ----
-// The scene code of overlay 0x670 that its scene tables belong to, in ROM
-// order; the rest of the overlay is in kibombo/.
-
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -99,10 +93,6 @@ u8 *Scene_GetRegions(void) {
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-// ---- games/tla/src/scene/kibombo/events_a.c ----
-// Scene code of overlay 0x670, in ROM order, from events_a's offset up to the
-// next object the overlay links.
 
 extern struct ActorPlacement gKibombo_Room1Placements[];
 extern struct ActorPlacement gKibombo_Room4Placements[];
@@ -713,10 +703,6 @@ void Kibombo_PiersRefusesToLeave(void) {
   Event_End();
 }
 
-// ---- games/tla/src/scene/kibombo/s1318.c ----
-// Scene code of overlay 0x670, in ROM order, from s1318's offset up to the next
-// object the overlay links.
-
 #include "system/ram_buffer.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
@@ -1321,10 +1307,6 @@ ask:
 
 #undef EVENT_WORK
 
-// ---- games/tla/src/scene/kibombo/s2ad8.c ----
-// Scene code of overlay 0x670, in ROM order, from s2ad8's offset up to the next
-// object the overlay links.
-
 void Func_02002ad8(void) {
   struct KibomboWork90 *work = Ram_HeapSlots->unk84[3];
 
@@ -1479,10 +1461,6 @@ void Func_02002eb0(void) {
 #undef Actor_SetSpritePriority
 #undef Actor_SetPositionAndResetMotion
 // @file
-// Scene code of overlay 0x670, in ROM order.
-
-// ---- games/tla/src/scene/kibombo/s2f34.c ----
-
 #include "flags.h"
 #include "shared/actors.h"
 #include "shared/tables.h"
@@ -1680,7 +1658,6 @@ void Func_020032e0(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-// ---- games/tla/src/scene/kibombo/s3308.c ----
 #include "types.h"
 #include "actor.h"
 #include "field_sprite.h"
@@ -1793,10 +1770,6 @@ void Func_02003308(struct Actor *actor) {
     break;
   }
 }
-
-// ---- games/tla/src/scene/kibombo/s3504.c ----
-// Scene code of overlay 0x670, in ROM order, from s3504's offset up to the next
-// object the overlay links.
 
 void Func_02003504(void) {
   struct Actor *center = Actor_GetById(17);
@@ -2783,7 +2756,6 @@ void Kibombo_InitializeRoom1(void) {
   Func_02003184();
 }
 
-// ---- games/tla/src/scene/kibombo/s516c.c ----
 // Kibombo's setup.
 #include "system/main_routine_work.h"
 #include "field/field.h"
@@ -2889,10 +2861,6 @@ void Kibombo_InitializeRoom4(void) {
   }
   Event_End();
 }
-
-// ---- games/tla/src/scene/kibombo/s538c.c ----
-// Scene code of overlay 0x670, in ROM order, from s538c's offset up to the next
-// object the overlay links and the overlay's data.
 
 void Func_02002de0(void);
 

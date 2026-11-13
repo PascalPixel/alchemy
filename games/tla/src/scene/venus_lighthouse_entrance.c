@@ -32,8 +32,6 @@
 #include "system/iwram_call.h"
 #include "system/heap_release.h"
 
-/// What games/tla/src/scene/ declares for the files that use it, written once.
-
 struct Actor;
 struct GlowSprite;
 struct GlowState;

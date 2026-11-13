@@ -114,8 +114,6 @@ static __inline__ void Window(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
 #include "system/input.h"
 #include "shared/tables.h"
 
-/// What The Lost Age's code declares for the files that use it, written once.
-
 extern s16 gSettlements_SlideAnglesByKey[];
 
 void Settlements_StepOntoWall(void);
@@ -1003,9 +1001,6 @@ void Settlements_SplashCrate(s32 id) {
 #undef EFFECT_SCRIPTS
 #undef SINK
 // @file
-// The settlements' events, continued; settlements.c says which places these
-// are.
-
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
@@ -1061,11 +1056,6 @@ DEFINE_LEADER_SLIDE_ON_ICE(Settlements_SlideOnIce, Settlements_StopLeader,
                            gSettlements_SlideAnglesByKey, Actor_SelectAnimation,
                            Settlements_KeepSliding, Field_CheckSpheresOverlap)
 
-// ---- scene/settlements/s1a1c.c ----
-
-// The settlements' events, continued; settlements.c says which places these
-// are.
-
 extern volatile s16 gSettlements_SlideStopped;
 
 extern s16 gSettlements_SlideAnglesByKey[];
@@ -1093,11 +1083,6 @@ s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 #undef SLIDE_HAS_ARRIVED
 #undef SLIDE_KEEP_SLIDING
 #undef SLIDE_SPHERES_OVERLAP
-
-// ---- scene/settlements/s1d30.c ----
-
-// The settlements' events, continued; settlements.c says which places these
-// are.
 
 void Settlements_SetSlideStopped(s32 value) {
   gSettlements_SlideStopped = value;

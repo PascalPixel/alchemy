@@ -1479,10 +1479,6 @@ void Func_02001d7c(void) {
 
 #undef MarsLighthouseStarRoom_SlideOnIce
 
-// ---- scene/mars_lighthouse_star_room/ride_handle.c ----
-
-/// Scene code of overlay 0x6ab, in ROM order.
-
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Actor_Release(struct Actor *object);
 #define MarsLighthouseStarRoom_SlideOnIce MarsLighthouseStarRoom_SlideOnIce
@@ -1660,10 +1656,6 @@ DEFINE_ACTOR_BLINK(Actor_Blink, 10, 4, 0)
 
 #undef Unit_Get
 #undef MarsLighthouseStarRoom_SlideOnIce
-// ---- scene/mars_lighthouse_star_room/s2148.c ----
-
-/// Scene code of overlay 0x6ab, in ROM order.
-
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 extern u8 gInventorySnapshot[];
@@ -2010,10 +2002,6 @@ s32 Actor_HasArrived(struct Actor *object);
 #undef SLIDE_KEEP_SLIDING
 #undef SLIDE_SPHERES_OVERLAP
 
-// ---- scene/mars_lighthouse_star_room/set_data.c ----
-
-/// Scene code of overlay 0x6ab, in ROM order.
-
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 #define MarsLighthouseStarRoom_SlideOnIce MarsLighthouseStarRoom_SlideOnIce
 
@@ -2058,8 +2046,6 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Func_02002d90,
 #undef Position
 #undef Position
 // @file
-// Scene code of overlay 0x6ab, in ROM order.
-
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 extern s32 gFieldEffect_DurationScripts[];
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
@@ -2161,8 +2147,6 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 // @file
-// Scene code of overlay 0x6ab, in ROM order.
-
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   FieldCamera_MoveTo(x, y, z, mode);
 }

@@ -1,8 +1,4 @@
 /// @file
-/// The scene code of overlay 0x6a4, in ROM order.
-
-// ---- games/tla/src/scene/jupiter_lighthouse_aerie.c ----
-
 #include "shared/whirlwind.h"
 #include "shared/jupiter_lighthouse.h"
 #include "shared/actors.h"
@@ -55,8 +51,6 @@ extern u16 gPaletteCycleColors[];
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-
-/// What games/tla/src/scene/ declares for the files that use it, written once.
 
 struct EffectOptions;
 struct EffectSprite;
@@ -585,8 +579,6 @@ stop:
   }
 }
 
-// ---- games/tla/src/scene/jupiter_lighthouse_aerie/s0d08.c ----
-
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Import_ActorSelectAnimation,
                        Whirlwind_Update, FieldEffect_Spawn)
 
@@ -831,10 +823,6 @@ void Func_02001080(void) {
 }
 #undef LERP
 
-// ---- scene/jupiter_lighthouse_aerie/s17a8.c ----
-
-/// Scene code of overlay 0x6a4, in ROM order.
-
 /* VIEW(s17a8): tag struct BeamWork as struct BeamWork__s17a8;
  * games/tla/src/scene/jupiter_lighthouse_aerie/s0d08 has another definition;
  * tried with the definition the rest of the object has, it does not compile in
@@ -1005,8 +993,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #undef LERP
 // @file
-// Scene code of overlay 0x6a4, in ROM order.
-
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 extern const s32 *gFieldEffect_DurationScripts[];
@@ -1114,10 +1100,6 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
-// ---- scene/jupiter_lighthouse_aerie/s24a8.c ----
-
-// Scene code of overlay 0x6a4, in ROM order.
-
 struct CellTargetEntry;
 
 /* VIEW(s24a8): tag struct CellTarget as struct CellTarget__s24a8; cell_target.h
@@ -1152,8 +1134,6 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s24a8, CellTarget__s24a8,
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_StartScript
 // @file
-// Scene code of overlay 0x6a4, in ROM order.
-
 extern s32 gPaletteCycleFrame;
 extern s32 gPaletteCyclePausesInEvents;
 extern u16 gPaletteCycleColors[];

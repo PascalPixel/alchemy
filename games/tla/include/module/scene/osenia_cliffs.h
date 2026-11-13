@@ -6,12 +6,12 @@
 
 #include "types.h"
 
-extern u32 gData_020001b0[];
+extern u32 gOseniaCliffs_PaletteCycleStep[];
 
 void Func_02000198(s32 a, s32 b, s32 c);
 
 void Func_020001a8(s32 a, s32 flag, s32 b, s32 c);
 
-void Func_020000fc(void);
+void OseniaCliffs_CyclePalette(void);
 
 #endif

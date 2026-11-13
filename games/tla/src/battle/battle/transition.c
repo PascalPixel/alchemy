@@ -263,11 +263,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
       __asm__("" : "=r"(v) : "0"(v));
       Iwram_FillWordsEntry((void *)0x06005000, 32, v);
     }
-    // The clear fill in a once-only block loads its address ahead of its size
-    // and value; as the plain call, 6 of 490 instructions differ in tla-en.
-    do {
-      Iwram_FillWordsEntry((void *)0x06005100, 32, 0);
-    } while (0);
+    IWRAM_FILL_WORDS((void *)0x06005100, 32, 0);
     REG_BG1CNT = 0xc04;
     REG_BG0CNT |= 2;
     view->mode = 2;

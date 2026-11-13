@@ -299,9 +299,7 @@ void BattleEffect_StartCanvasSprite(void) {
   s32 y;
   s32 x;
 
-  do {
-    Iwram_FillWordsEntry(work, sizeof(*work), 0);
-  } while (0);
+  IWRAM_FILL_WORDS(work, sizeof(*work), 0);
   work->tile = windowWork->glyphTiles;
   work->mode = CANVAS_SPRITE_16_COLORS;
   work->command = 0;

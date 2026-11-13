@@ -894,12 +894,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
     ((u16 *)0x05000100)[i] = (blue << 10) | (green << 5) | red;
   }
-  // The clear in a once-only block, so its entry and the canvas load before
-  // the size's shift; as the plain call, 4 of 1591 instructions differ in
-  // tla-en.
-  do {
-    Iwram_FillWords(canvas, 0x4000, 0);
-  } while (0);
+  IWRAM_FILL_WORDS(canvas, 0x4000, 0);
 
   for (i = 0; i != 256; i++) {
     s32 x = Random16() & 127;

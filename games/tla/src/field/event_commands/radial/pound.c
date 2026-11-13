@@ -176,11 +176,7 @@ void FieldPsynergy_Pound(void) {
                       Ram_HeapSlots->battleFxWork[1]);
   canvas->command = CANVAS_UPLOAD;
 
-  // A once-only block: without it the canvas mode load is scheduled one row
-  // later (6 differ).
-  do {
-    Iwram_FillWordsEntry(work, size, 0);
-  } while (0);
+  IWRAM_FILL_WORDS(work, size, 0);
   glowEntry = VramCache_FindFreeEntry();
   glowTile = VramCache_Load(glowEntry, size, work);
   glow = &work->glow;

@@ -1203,9 +1203,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         if (frame == 82) {
           work->shakeFrames = 8;
           Sound_PlayFar(208);
-          do {
-            Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
-          } while (0);
+          IWRAM_FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
         }
         if (frame == 96) {
           Sound_PlayFar(104);
@@ -1508,9 +1506,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         BattlePlayback_StartFar(134);
       }
       if (frame == 0) {
-        do {
-          Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
-        } while (0);
+        IWRAM_FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
         work->scrollStepX = -16;
         gCameraSceneParameters[3] = -968;
         gCameraSceneParameters[4] = 120;

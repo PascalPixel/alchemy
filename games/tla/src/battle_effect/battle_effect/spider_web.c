@@ -920,13 +920,9 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   {
     void *destination = Ram_HeapSlots->battleFxWork[1];
 
-    do {
-      Iwram_FillWords(destination, 0x4000, 0);
-    } while (0);
+    IWRAM_FILL_WORDS(destination, 0x4000, 0);
   }
-  do {
-    Iwram_FillWords((void *)0x06004000, 0x3c00, 0);
-  } while (0);
+  IWRAM_FILL_WORDS((void *)0x06004000, 0x3c00, 0);
   Iwram_FillWords((void *)0x06008000, 0x7800, 0);
   wait(1);
   REG_BLDALPHA = 0x100e;

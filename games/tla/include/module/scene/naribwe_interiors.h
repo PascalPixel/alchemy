@@ -7,17 +7,17 @@
 #include "types.h"
 #include "scene_tables.h"
 
-extern struct Trigger gData_02001370[];
-extern struct Trigger gData_020014c0[];
+extern struct Trigger gNaribweInteriors_Triggers[];
+extern struct Trigger gNaribweInteriors_TriggersOnReturn[];
 
-void Func_02000390(void);
+void NaribweInteriors_ReadFortune(void);
 
 s32 Func_020011a0(s32 *unit, s32 *slot);
 
-void Func_02000920(void);
+void NaribweInteriors_ReadProng(void);
 
-void Func_02000760(void);
+void NaribweInteriors_ReadWeapon(void);
 
-void Func_02000838(void);
+void NaribweInteriors_ReadArmor(void);
 
 #endif

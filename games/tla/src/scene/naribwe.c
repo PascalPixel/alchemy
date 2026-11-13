@@ -24,14 +24,14 @@ void Func_020005cc(void);
 void Func_020005d4(s32 a, s32 b, s32 c, s32 d);
 void Shop_Run(s32 a, s32 b);
 void Sanctum_Run(s32 a);
-void Func_02000464(void);
+void Naribwe_HideStone(void);
 
 extern const u8 gData_020006cc[];
 extern const u8 gData_020008c4[];
 extern const u8 gData_02000954[];
-extern const u8 gData_02000b4c[];
-extern const u8 gData_02000cfc[];
-extern const struct WarpEntry gData_0200064c[];
+extern const u8 gNaribwe_Triggers[];
+extern const u8 gNaribwe_TriggersOnReturn[];
+extern const struct WarpEntry gNaribwe_Doors[];
 
 extern u8 MsgNaribwe02;
 extern u8 MsgNaribwe03;
@@ -72,11 +72,14 @@ void Func_02000088(void) {
 
 const u8 *Scene_GetEvents(void) {
   if (Event_GetFlag(0x8ff))
-    return gData_02000cfc;
-  return gData_02000b4c;
+    return gNaribwe_TriggersOnReturn;
+  return gNaribwe_Triggers;
 }
 
-void Func_020000d8(void) {
+/// "The Kibombo went on an expedition to the east, but they've already
+/// returned." Asked once (flag 0x85d); afterwards the villager talks of
+/// Akafubu.
+void Naribwe_AskAboutKibomboExpedition(void) {
   s32 msg;
 
   if (Event_GetFlag(0x85d) == 0) {
@@ -96,7 +99,8 @@ void Func_020000d8(void) {
   }
 }
 
-void Func_02000140(void) {
+/// "Can you tell me where you have come from?" Asked once (flag 0x85e).
+void Naribwe_AskWhereFrom(void) {
   s32 msg;
 
   if (Event_GetFlag(0x85e) == 0) {
@@ -116,7 +120,8 @@ void Func_02000140(void) {
   }
 }
 
-void Func_020001a8(void) {
+/// "You don't plan on going to Kibombo, do you, mister?"
+void Naribwe_AskGoingToKibombo(void) {
   s32 msg = (s32)&MsgNaribwe09;
 
   Event_SetMessageId(msg);
@@ -131,7 +136,9 @@ void Func_020001a8(void) {
   Event_ShowMessage(19, 0);
 }
 
-void Func_020001f0(s32 actor) {
+/// "No one can see the future. Absolutely no one. Except for our
+/// fortune-teller."
+void Naribwe_PraiseFortuneTeller(s32 actor) {
   if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0x8000) {
     Shop_Run(16, actor);
@@ -144,7 +151,7 @@ void Func_020001f0(s32 actor) {
   Event_End();
 }
 
-void Func_02000250(s32 actor) {
+void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
   if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0x8000) {
     Shop_Run(16, actor);
@@ -157,7 +164,9 @@ void Func_02000250(s32 actor) {
   Event_End();
 }
 
-void Func_020002b0(s32 actor) {
+/// "I am but a humble pilgrim, serving the greater good in the heart of
+/// Gondowan."
+void Naribwe_TalkToPilgrim(s32 actor) {
   if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Sanctum_Run(actor);
@@ -170,7 +179,7 @@ void Func_020002b0(s32 actor) {
   Event_End();
 }
 
-void Func_0200030c(s32 actor) {
+void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
   if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Sanctum_Run(actor);
@@ -183,7 +192,9 @@ void Func_0200030c(s32 actor) {
   Event_End();
 }
 
-void Func_02000368(void) {
+/// The party leader walks into one of Naribwe's doors, which opens with its
+/// cell animation, and leaves by the exit of the door's number.
+void Naribwe_EnterDoor(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   s32 index;
   u32 id;
@@ -204,8 +215,8 @@ void Func_02000368(void) {
   index = *(s16 *)work;
   Event_PlaySound(158);
   index -= 4;
-  MapGrid_AnimateCells(gData_0200064c[index].script, gData_0200064c[index].x,
-                       gData_0200064c[index].z);
+  MapGrid_AnimateCells(gNaribwe_Doors[index].script, gNaribwe_Doors[index].x,
+                       gNaribwe_Doors[index].z);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
@@ -215,7 +226,9 @@ void Func_02000368(void) {
   Event_End();
 }
 
-void Func_02000400(void) {
+/// Whirlwind blows away the ivy in the back yard, uncovering the ladder (flag
+/// 0x201).
+void Naribwe_BlowAwayIvy(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetFlag(0x201);
@@ -230,12 +243,13 @@ void Func_0200041c(void) {
   work[0xd33] = 25;
 }
 
-void Func_02000448(void) {
+/// Reveal shows the stone that hides the Unicorn Ring.
+void Naribwe_RevealStone(void) {
   Actor_SetPosition(27, 0, 0);
   TreasureSpot_SetPosition(65, 0x680000, 0x680000);
 }
 
-void Func_02000464(void) {
+void Naribwe_HideStone(void) {
   ObjectEvent_PlaceOnGround(65, 0, 0);
   Actor_SetPosition(27, PIXELS(104), PIXELS(104));
 }
@@ -248,7 +262,7 @@ s32 Scene_Initialize(void) {
   Actor_GetById(23)->scaleY = 0x19999;
   Actor_GetById(27)->scaleX = 0x8000;
   Actor_GetById(27)->scaleY = 0x8000;
-  Func_02000464();
+  Naribwe_HideStone();
   if (Event_GetFlag(0x201))
     Actor_SetPosition(23, 0, 0);
   Func_020005cc();

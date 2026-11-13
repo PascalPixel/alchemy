@@ -131,7 +131,7 @@ void wait(s32 frames) {
       // CPU load: the scanline the frame's work ended on, counted from the
       // last VBlank, plus 256 for each VBlank it overran; the peak is held
       // for 30 frames
-      line = REG_VCOUNT;
+      line = *(u16 *)&REG_VCOUNT;
       if (line >= DISPLAY_HEIGHT)
         line -= DISPLAY_HEIGHT;
       else
@@ -254,7 +254,7 @@ void wait(s32 frames) {
      * frame at 8 bytes; as an output only ("=r"), 134 of 403 instructions
      * differ in tbs-en. */
     CAMELOT_ASM("read the hardware stack pointer for its restore copy")
-    __asm__ volatile("mov %0, sp" : "+r"(base));
+    __asm__ volatile("mov %0, sp" : "+r"(base) : : "memory");
     base -= gSavedStackSize;
     CAMELOT_ASM(
         "restore the hardware stack pointer after the proven stack copy")

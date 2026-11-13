@@ -82,12 +82,13 @@ s32 VramCache_GetLongestFreeRun(void) {
 /// VramCache_FreeEntry and VramCache_ReleaseVram. Returns -1 when it freed any
 /// (or `id` is out of range) and 0 when the entry owned none.
 s32 VramCache_FreeBlocks(s32 id) {
-  u8 *owner = gVramCacheBlockOwners;
   s32 freed = 0;
+  u8 *owner;
   s32 block;
 
   if ((u32)id >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
+  owner = gVramCacheBlockOwners;
   for (block = 0; block < VRAM_BLOCK_COUNT; block++, owner++) {
     if (*owner == id) {
       *owner = VRAM_BLOCK_OWNER_FREE;

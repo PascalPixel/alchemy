@@ -146,14 +146,14 @@ u32 Save_SelectWriteSector(s32 mode) {
 /// Save_WritePart and Save_InvalidateSector. Returns 0 on success
 /// and 1 on failure.
 u32 Save_WriteSector(s32 sector) {
-  struct SaveWork *work;
-  s32 value;
+  struct SaveWork *work = gSaveWork;
+  u16 index = sector;
+  s32 result;
 
-  work = gSaveWork;
-  value = (u16)sector;
-  if (gProgramFlashSector(value, (u8 *)&work->slot) != 0)
+  if (gProgramFlashSector(index, work->slot.bytes) != 0)
     return 1;
-  return Flash_VerifySector(value, (u8 *)&work->slot) != 0;
+  result = Flash_VerifySector(index, work->slot.bytes);
+  return (u32)(-result | result) >> 31; // 1 for any nonzero result
 }
 
 /// Reads flash sector `index` into the workspace's sector buffer. Called by

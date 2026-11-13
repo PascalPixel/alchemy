@@ -448,7 +448,7 @@ s32 Func_08029838(s32 arg) {
       (gInput.pressed & gMainRoutineWork.keys236))
     pressed = 1;
   if (pressed) {
-    if (Func_080c8828(arg)) {
+    if (Actor_CheckBlockedFar(arg)) {
       Sound_PlayFar(113);
     } else if (!GameFlag_Test(0x146)) {
       work->unk166 = 0x208b;

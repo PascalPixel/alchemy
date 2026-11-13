@@ -411,7 +411,9 @@ void WorldMap_Freeze(void) {
   }
 }
 
-void Func_080cb8a4(void) {
+/// On the world map (display mode 3), loads the area graphics a change left
+/// pending.
+void WorldMap_ReloadPendingAreaGraphics(void) {
   struct DisplayBlock *block = HeapSlot_AllocEwram(108, 0xd50);
 
   if (block->mode == 3 && block->pending != 0) {

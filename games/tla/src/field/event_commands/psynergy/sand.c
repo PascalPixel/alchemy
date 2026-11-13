@@ -280,7 +280,7 @@ void Func_080e4d9c(void) {
         sprite = &work->sparkSprites[i];
         sprite->x = particle->x + (canvas->x << 16);
         sprite->y = particle->y + (canvas->y << 16);
-        Func_080eb01c(sprite);
+        EffectSprite_Draw(sprite);
         BattleEffect_IntegrateVector2(&particle->x, 60, 0);
       }
       particle->timer++;
@@ -403,7 +403,7 @@ void Func_080e4d9c(void) {
         sprite = &work->sparkSprites[i];
         sprite->x = particle->x + (canvas->x << 16);
         sprite->y = particle->y + (canvas->y << 16);
-        Func_080eb01c(sprite);
+        EffectSprite_Draw(sprite);
         BattleEffect_IntegrateVector2(&particle->x, 60, 0);
       }
       particle->timer++;

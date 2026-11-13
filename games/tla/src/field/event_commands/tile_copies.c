@@ -29,7 +29,7 @@ struct MapCell__f0e2774 {
  * `count' in something not a structure or union. */
 extern struct TouchCopies gData_02001000__f0e2774 __asm__("gData_02001000");
 
-struct MapCell__f0e2774 *Func_080dbb78(s32 x, s32 z, s32 layer);
+struct MapCell__f0e2774 *MapGrid_GetCellAt(s32 x, s32 z, s32 layer);
 
 void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height, s32 toX,
                    s32 toZ) {
@@ -72,7 +72,7 @@ void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height, s32 toX,
 
       MapGrid_CopyCellPictureCellsRectFar(toX + dx, toZ + dz, 1, 1, x + dx,
                                           z + dz);
-      Func_080dbb78(cx << 20, cz << 20, 2)->unk02 = 0;
+      MapGrid_GetCellAt(cx << 20, cz << 20, 2)->unk02 = 0;
       n = gData_02001000__f0e2774.count;
       if (n < 64) {
         gData_02001000__f0e2774.copies[n].toX = toX + dx;
@@ -188,7 +188,7 @@ void Func_080e2acc(void) {
 
   for (i = 0, particle = work->particles; i < 96; i++, particle++) {
     sprite = &work->sprites[i];
-    Func_080eaf98(sprite, 4, 4, 0, vram);
+    EffectSprite_Init(sprite, 4, 4, 0, vram);
     sprite->depth = 250;
     sprite->oam.priority = 0;
     sprite->oam.palette256 = 1;

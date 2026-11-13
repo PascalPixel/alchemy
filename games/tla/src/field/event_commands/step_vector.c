@@ -254,7 +254,7 @@ void Func_080eb6a0(void) {
 
   if (scaleX != 0 && scaleY != 0) {
     if (work->mode == CANVAS_SPRITE_16_COLORS) {
-      Func_080eaf98(&work->sprite, 32, 32, OAM_SQUARE_64X64, work->tile);
+      EffectSprite_Init(&work->sprite, 32, 32, OAM_SQUARE_64X64, work->tile);
       work->sprite.oam.palette256 = 0;
       work->sprite.oam.palette = 14;
       work->sprite.oam.priority = work->priority;
@@ -264,10 +264,10 @@ void Func_080eb6a0(void) {
       work->sprite.scaleX = scaleX;
       work->sprite.scaleY = scaleY;
       work->sprite.angle = work->angle;
-      Func_080eb01c(&work->sprite);
+      EffectSprite_Draw(&work->sprite);
     }
     if (work->mode == CANVAS_SPRITE_256_COLORS) {
-      Func_080eaf98(&work->sprite, 32, 32, OAM_SQUARE_64X64, work->tile);
+      EffectSprite_Init(&work->sprite, 32, 32, OAM_SQUARE_64X64, work->tile);
       work->sprite.oam.palette256 = 1;
       work->sprite.oam.palette = 0;
       work->sprite.oam.priority = work->priority;
@@ -277,7 +277,7 @@ void Func_080eb6a0(void) {
       work->sprite.scaleX = scaleX;
       work->sprite.scaleY = scaleY;
       work->sprite.angle = work->angle;
-      Func_080eb01c(&work->sprite);
+      EffectSprite_Draw(&work->sprite);
     }
     if (work->mode == CANVAS_SPRITE_KEPT) {
       work->sprite.oam.priority = work->priority;
@@ -287,7 +287,7 @@ void Func_080eb6a0(void) {
       work->sprite.scaleX = scaleX;
       work->sprite.scaleY = scaleY;
       work->sprite.angle = work->angle;
-      Func_080eb01c(&work->sprite);
+      EffectSprite_Draw(&work->sprite);
     }
   }
   work->drawnFrames++;
@@ -414,7 +414,7 @@ void Func_080eb960(s32 objectId) {
   spark = work->sparks;
   for (; i < 64; i++, spark++) {
     sprite = &work->sprites[i];
-    Func_080eaf98(sprite, 4, 4, 0, tiles + (i & 15) * 2);
+    EffectSprite_Init(sprite, 4, 4, 0, tiles + (i & 15) * 2);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->depth = BattleEffect_GetObjectDepth(object);
@@ -475,7 +475,7 @@ void Func_080eb960(s32 objectId) {
           drawn->x = pos[0];
           drawn->y = pos[2];
           drawn->oam.index = tiles + (spark->age & 3) * 2;
-          Func_080eb01c(drawn);
+          EffectSprite_Draw(drawn);
           spark->angle += 0x800;
           spark->radius -= 0x3333;
           spark->centre[1] -= 0x4000;

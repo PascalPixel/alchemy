@@ -143,7 +143,7 @@ void FieldPsynergy_Unnamed28(void) {
     tile = VramCache_Load(entry, 0x100, work);
     for (i = 0, mote = work->sparks; i < 64; i++, mote++) {
       sprite = &work->sparkSprites[i];
-      Func_080eaf98(sprite, 4, 4, 0, tile);
+      EffectSprite_Init(sprite, 4, 4, 0, tile);
       sprite->oam.palette256 = 1;
       sprite->oam.palette = 0;
       sprite->oam.priority = 0;
@@ -244,7 +244,7 @@ void FieldPsynergy_Unnamed28(void) {
       for (i = 0, mote = work->motes; i < 32; i++) {
         heading = Random16();
         sprite = &work->sprites[i];
-        Func_080eaf98(sprite, 8, 8, 0x40000000, moteTile);
+        EffectSprite_Init(sprite, 8, 8, 0x40000000, moteTile);
         sprite->depth = 240;
         sprite->oam.priority = 0;
         sprite->oam.palette256 = 0;
@@ -379,7 +379,7 @@ void FieldPsynergy_EndUnnamed28(void) {
     mote->vz = 0;
     Vector_AddPolarOffset(Random16() * 3 + 0x20000, angle, &mote->vx);
     mote->timer = -i / 4;
-    Func_080eaf98(sprite, 4, 4, 0, tile);
+    EffectSprite_Init(sprite, 4, 4, 0, tile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;

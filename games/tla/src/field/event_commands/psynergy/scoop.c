@@ -88,7 +88,7 @@ void Func_080e6400(void) {
       ((const u8 *(*)(const u8 *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
           picture, 32, 32, vram);
       sprite = &work->pictureSprite;
-      Func_080eb01c(sprite);
+      EffectSprite_Draw(sprite);
     }
     if (*phase == 2) {
       for (i = 0, particle = work->particles; i < 18; i++, particle++) {
@@ -421,7 +421,7 @@ void FieldPsynergy_Scoop(void) {
     particle = work->particles;
     for (; i < 64; i++, particle++) {
       sprite = &work->sprites[i];
-      Func_080eaf98(sprite, 8, 8, 0x40000000, particleTile);
+      EffectSprite_Init(sprite, 8, 8, 0x40000000, particleTile);
       sprite->oam.palette256 = 1;
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(other);
@@ -450,7 +450,7 @@ void FieldPsynergy_Scoop(void) {
     particle = work->particles;
     for (; i < 64; i++, particle++) {
       sprite = &work->sprites[i];
-      Func_080eaf98(sprite, 8, 8, 0x40000000, particleTile);
+      EffectSprite_Init(sprite, 8, 8, 0x40000000, particleTile);
       sprite->oam.palette256 = 1;
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(other);
@@ -475,7 +475,7 @@ void FieldPsynergy_Scoop(void) {
     particle = work->particles;
     sprite = work->sprites;
     for (; i < 64; i++) {
-      Func_080eaf98(sprite, 4, 4, 0, particleTile + (i & 1) * 2);
+      EffectSprite_Init(sprite, 4, 4, 0, particleTile + (i & 1) * 2);
       sprite->oam.palette256 = 1;
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(object);
@@ -496,7 +496,7 @@ void FieldPsynergy_Scoop(void) {
     pictureTile = VramCache_Load(pictureEntry, 0x400, NULL);
     work->pictureTile = pictureTile;
     sprite = &work->pictureSprite;
-    Func_080eaf98(sprite, 16, 0, 0x80000000, pictureTile);
+    EffectSprite_Init(sprite, 16, 0, 0x80000000, pictureTile);
     sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject);
     sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainObject);
     sprite->oam.palette256 = 1;
@@ -700,7 +700,7 @@ void Func_080e7238(void) {
   tiles = VramCache_Load(entry, 0x400, work);
   for (i = 0, spark = work->sparks; i < WHIRL_COUNT; i++, spark++) {
     sprite = &work->sprites[i];
-    Func_080eaf98(sprite, 4, 4, 0, tiles + (i & 15) * 2);
+    EffectSprite_Init(sprite, 4, 4, 0, tiles + (i & 15) * 2);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -751,7 +751,7 @@ void Func_080e7238(void) {
           Camera_WorldToScreen(position);
           sprite->x = position[0];
           sprite->y = position[2];
-          Func_080eb01c(sprite);
+          EffectSprite_Draw(sprite);
           spark->angle += 0x800;
           spark->radius += -0x40000;
         }
@@ -851,7 +851,7 @@ void Func_080e74d8(void) {
   tiles = VramCache_Load(entry, 0x400, work);
   for (i = 0, particle = work->particles; i < SPARK_COUNT; i++, particle++) {
     sprite = &work->sprites[i];
-    Func_080eaf98(sprite, 4, 4, 0, tiles + (i & 15) * 2);
+    EffectSprite_Init(sprite, 4, 4, 0, tiles + (i & 15) * 2);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -1129,7 +1129,7 @@ loaded:
   particle = work->particles;
   for (i = 0; i < 64; i++) {
     fresh = &work->sprites[i];
-    Func_080eaf98(fresh, 8, 15, 0x40000000, tile);
+    EffectSprite_Init(fresh, 8, 15, 0x40000000, tile);
     fresh->depth = 250;
     fresh->oam.priority = 0;
     fresh->oam.palette256 = 1;
@@ -1185,7 +1185,7 @@ loaded:
         sprite->x =
             screen[0] + (Trig_Sin(particle->sway * particle->swayRate) << 3);
         sprite->y = screen[2];
-        Func_080eb01c(sprite);
+        EffectSprite_Draw(sprite);
         particle->sway++;
         particle->y += particle->rise;
         if (++particle->timer == 32)
@@ -1227,7 +1227,7 @@ loaded:
     scaleY = work->discScaleY;
     packed = vramWork->glyphTiles + 128;
     sprite = &work->disc;
-    Func_080eaf98(sprite, 31, 31, 0xc0000000, packed);
+    EffectSprite_Init(sprite, 31, 31, 0xc0000000, packed);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = Func_080db9a8(scene->mainObject, scene->facing);
@@ -1236,7 +1236,7 @@ loaded:
     sprite->y = y;
     sprite->scaleX = scaleX;
     sprite->scaleY = scaleY;
-    Func_080eb01c(sprite);
+    EffectSprite_Draw(sprite);
 
     if (result == 0) {
       switch (phase) {

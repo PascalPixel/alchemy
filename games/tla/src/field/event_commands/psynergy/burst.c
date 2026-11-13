@@ -89,7 +89,7 @@ void FieldPsynergy_Burst(void) {
   for (i = 0, particle = work->sparks, mul = Iwram_MulQ16,
       sprite = work->sparkSprites;
        i < 32;) {
-    Func_080eaf98(sprite, 4, 4, 0, sparkTile);
+    EffectSprite_Init(sprite, 4, 4, 0, sparkTile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = canvas->priority;
@@ -117,7 +117,7 @@ void FieldPsynergy_Burst(void) {
   particle = work->bursts;
   burstSprite = work->burstSprites;
   for (i = 0; i < 32; i++) {
-    Func_080eaf98(burstSprite, 8, 8, 0x40000000, tile);
+    EffectSprite_Init(burstSprite, 8, 8, 0x40000000, tile);
     burstSprite->depth = canvas->depth + 1;
     burstSprite->oam.priority = canvas->priority;
     burstSprite->oam.palette256 = 0;
@@ -248,7 +248,7 @@ void Func_080e5a64(void) {
       if (particle->timer >= 0 && particle->timer < 16) {
         sprite->x = particle->x;
         sprite->y = particle->y;
-        Func_080eb01c(sprite);
+        EffectSprite_Draw(sprite);
         BattleEffect_IntegrateVector2__f0e572c(particle, 64, 0);
       }
       particle->timer++;

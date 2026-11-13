@@ -18,7 +18,7 @@ Resource_FarCall006:
 	export PartyInventory_GiveItemFar, PartyInventory_GiveItem
 	export Inventory_TryAddAndReturnMemberFar, Inventory_TryAddAndReturnMember
 	export Event_AskYesNoWithActorAnimationFar, Event_AskYesNoWithActorAnimation
-	export Func_080c8078, Func_080d296c
+	export Func_080c8078, Event_PickUpItem
 	export Party_LearnAbilityFar, Party_LearnAbility
 	export Actor_GetByIdFar, Actor_GetById
 	export ObjectTable_DestroyByIdFar, ObjectTable_DestroyById
@@ -53,7 +53,7 @@ Resource_FarCall006:
 	export Actor_WatchAndStartScriptFar, Actor_WatchAndStartScript
 	export Event_SetMessageIdFar, Event_SetMessageId
 	export FieldMessage_ShowAtActorFar, FieldMessage_ShowAtActor
-	export Func_080c8190, Func_080d3fb0
+	export FieldMessage_ShowAtActorAndWaitFar, FieldMessage_ShowAtActorAndWait
 	export Event_ShowMessageThenWaitFar, Event_ShowMessageThenWait
 	export Event_ShowMessageAndWaitFar, Event_ShowMessageAndWait
 	export Event_AskYesNoAndShowResponseFar, Event_AskYesNoAndShowResponse
@@ -68,7 +68,7 @@ Resource_FarCall006:
 	export Event_ShowTwoMessagesAndWaitFar, Event_ShowTwoMessagesAndWait
 	export Message_SetVoiceFromActorFar, Message_SetVoiceFromActor
 	export Actor_SetSpritePriorityFar, Actor_SetSpritePriority
-	export Func_080c8208, Func_080d390c
+	export Func_080c8208, Actor_DisableById
 	export Actor_ShowEmoteByIdFar, Actor_ShowEmoteById
 	export FieldEffect_SetAttachedFar, FieldEffect_SetAttached
 	export Actor_CopyGraphicsFar, Actor_CopyGraphics
@@ -105,7 +105,7 @@ Resource_FarCall006:
 	export Weather_LastLightningFar, Weather_LastLightning
 	export Weather_ResumeLightningFar, Weather_ResumeLightning
 	export Weather_StartLightningFlashFar, Weather_StartLightningFlash
-	export Func_080c8330, Func_080d6b90
+	export Func_080c8330, RisingParticles_Start
 	export FieldEffect_InitializeSparklesFar, FieldEffect_InitializeSparkles
 	export ScreenTransition_InitializeBattleEffectStateFar, ScreenTransition_InitializeBattleEffectState
 	export ScreenTransition_InitializeStateFar, ScreenTransition_InitializeState
@@ -138,7 +138,7 @@ Resource_FarCall006:
 	export Actor_SetWideSpriteFar, Actor_SetWideSprite
 	export Actor_ReturnHomeFar, Actor_ReturnHome
 	export WorldMap_FreezeFar, WorldMap_Freeze
-	export Func_080c8438, Func_080cb8a4
+	export Func_080c8438, WorldMap_ReloadPendingAreaGraphics
 	export Func_080c8440, Func_080caa4c
 	export Event_SpawnObjectTableFar, Event_SpawnObjectTable
 	export Actor_ReleaseAtIndexFar, Actor_ReleaseAtIndex
@@ -229,15 +229,15 @@ Resource_FarCall006:
 	export Func_080c86f8, Func_080ea7c0
 	export Func_080c8700, Func_080ea8d4
 	export Func_080c8708, Func_080eaa14
-	export Func_080c8710, Func_080eab70
+	export Func_080c8710, Actor_GetCellIndex
 	export Func_080c8718, Func_080eabd0
 	export Func_080c8720, Func_080eace8
 	export Func_080c8728, Func_080eadfc
-	export Func_080c8730, Func_080eab98
-	export Func_080c8738, Func_080eaf28
+	export Func_080c8730, MapCollision_FindOrAddTag
+	export Func_080c8738, Actor_FindAtCell
 	export Func_080c8740, Func_080cdc74
 	export Func_080c8748, Func_080cdd80
-	export Func_080c8750, Func_080eaeb4
+	export Func_080c8750, Leader_FindActorAhead
 	export Actor_SpawnFar, Actor_Spawn
 	export Func_080c8760, Func_080e25e8
 	export Func_080c8768, Func_080dbcd8
@@ -249,10 +249,10 @@ Resource_FarCall006:
 	export Func_080c8798, Func_080d5d70
 	export Func_080c87a0, Func_080eb960
 	export Actor_SetSpriteRotationByIdFar, Actor_SetSpriteRotationById
-	export Func_080c87b0, Func_080d3940
+	export Func_080c87b0, Actor_FallOverById
 	export Func_080c87b8, Func_080d3a10
-	export Func_080c87c0, Func_080eaf98
-	export Func_080c87c8, Func_080eb01c
+	export Func_080c87c0, EffectSprite_Init
+	export Func_080c87c8, EffectSprite_Draw
 	export EffectSprite_DrawAtWorldPositionFar, EffectSprite_DrawAtWorldPosition
 	export BattleEffect_StepVector2Far, BattleEffect_StepVector2
 	export BattleEffect_StepVector3Far, BattleEffect_StepVector3
@@ -265,7 +265,7 @@ Resource_FarCall006:
 	export BattleEffect_WaitForArcGroupsFar, BattleEffect_WaitForArcGroups
 	export BattleEffect_SetObjectUpdateModeFar, BattleEffect_SetObjectUpdateMode
 @ Why assembly: 8-byte far-call veneers: ldr r4, the target's word, bx r4.
-	export Func_080c8828, Func_080e4244
+	export Actor_CheckBlockedFar, Actor_CheckBlocked
 	export Func_080c8830, Func_080dbdc8
 	export Func_080c8838, Func_080dbde8
 	export MapGrid_SetCellBehaviorFar, MapGrid_SetCellBehavior
@@ -275,7 +275,7 @@ Resource_FarCall006:
 	export Actor_ShowItemIconByIdFar, Actor_ShowItemIconById
 	export Func_080c8868, Tightrope_Release
 	export Func_080c8870, Tightrope_Settle
-	export Func_080c8878, Func_080d4ab4
+	export Func_080c8878, Actor_TakeLeaderLayer
 	export Func_080c8880, Func_080e3698
 	export Func_080c8888, Func_080e37e0
 	export BattleEffect_DropObjectAtAnchorFar, BattleEffect_DropObjectAtAnchor
@@ -311,7 +311,7 @@ Func_080c88e8:
 	ldr r4, [pc, #0]
 	bx r4
 	.4byte Func_080e74d8
-	export Func_080c88f0, Func_080d4aa8
+	export Func_080c88f0, Actor_WatchActor
 	export Actor_ResetTargetsAndVelocityFar, Actor_ResetTargetsAndVelocity
 	export Exit_StartStairsUpFar, Exit_StartStairsUp
 	export Exit_StartStairsDownFar, Exit_StartStairsDown

@@ -646,11 +646,12 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
   }
 }
 
-/* VIEW(visual_attributes): routine Func_080eb01c as void Func_080eb01c(void
- * *work); effect_sprite.h has void Func_080eb01c(struct EffectSprite *sprite).
+/* VIEW(visual_attributes): routine EffectSprite_Draw as void
+ * EffectSprite_Draw(void *work); effect_sprite.h has void
+ * EffectSprite_Draw(struct EffectSprite *sprite).
  */
 extern void
-Func_080eb01c__visual_attributes(void *work) __asm__("Func_080eb01c");
+Func_080eb01c__visual_attributes(void *work) __asm__("EffectSprite_Draw");
 
 s32 Func_080db9a8(struct Actor *object, s32 kind) {
   if (kind == 0xc000)
@@ -696,13 +697,13 @@ void BattleEffect_DrawSceneSprite(void) {
   Func_080eb01c__visual_attributes((u8 *)Ram_HeapSlots->effectWork + 0x7c8);
 }
 
-/* VIEW(visual_attributes): routine Func_080eaf98 as void Func_080eaf98(struct
- * DepthSprite *sprite, s32 a, s32 b, u32 c, s32 tiles); effect_sprite.h has
- * void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY, u32
- * attributes, s32 tile). */
+/* VIEW(visual_attributes): routine EffectSprite_Init as void
+ * EffectSprite_Init(struct DepthSprite *sprite, s32 a, s32 b, u32 c, s32
+ * tiles); effect_sprite.h has void EffectSprite_Init(struct EffectSprite
+ * *sprite, s32 pivotX, s32 pivotY, u32 attributes, s32 tile). */
 extern void
 Func_080eaf98__visual_attributes(struct DepthSprite *sprite, s32 a, s32 b,
-                                 u32 c, s32 tiles) __asm__("Func_080eaf98");
+                                 u32 c, s32 tiles) __asm__("EffectSprite_Init");
 /* VIEW(f0daecc): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
  * *position); ground_particles has void Camera_WorldToScreen(union
  * FieldCoordinate *position). */

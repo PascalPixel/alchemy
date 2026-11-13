@@ -5,7 +5,7 @@
 #include "../psynergy_internal.h"
 
 struct Actor *Actor_GetById(u32 objectId);
-s32 Func_080eab70(struct Actor *object);
+s32 Actor_GetCellIndex(struct Actor *object);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_080eaa14(struct ActorFlag *list);
@@ -36,7 +36,7 @@ void Func_080ea8d4(struct ActorFlag *list) {
   for (; list->actor != 0xffff; list++) {
     struct Actor *object = Actor_GetById(list->actor);
     u16 flag = list->flag;
-    s32 slot = Func_080eab70(object);
+    s32 slot = Actor_GetCellIndex(object);
     struct MapCell *cell = &map->layers[object->terrainId].cells[slot];
 
     object->motionFlags = 0;
@@ -88,7 +88,7 @@ extern u8 gMapShapeGrid[];
 
 void GameFlag_SetBit(s32 flag);
 u32 MapGrid_GetTerrainKindFar(s32 terrain, s32 x, s32 z);
-s32 Func_080eab98(s32 unused, s32 key, s32 value);
+s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 
 void Func_080eaa14(struct ActorFlag *list) {
   u8 *event = Ram_HeapSlots->eventWork;
@@ -118,7 +118,7 @@ void Func_080eaa14(struct ActorFlag *list) {
       s32 height;
 
       shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
-      slot = Func_080eab70(object);
+      slot = Actor_GetCellIndex(object);
       key = MapGrid_GetTerrainKindFar(object->terrainId, object->x, object->z);
       height = MapGrid_GetTerrainHeightFar(object->terrainId, object->x,
                                            object->z) >>
@@ -136,7 +136,7 @@ void Func_080eaa14(struct ActorFlag *list) {
 
         cells += slot;
         shapes += slot;
-        *shapes = Func_080eab98(object->terrainId, key, height);
+        *shapes = MapCollision_FindOrAddTag(object->terrainId, key, height);
         if (GameFlag_Test(flag)) {
           s32 bits;
 
@@ -153,14 +153,15 @@ void Func_080eaa14(struct ActorFlag *list) {
   }
 }
 
-s32 Func_080eab70(struct Actor *object) {
+/// Returns the index of object's cell in a 128-cell-wide map layer.
+s32 Actor_GetCellIndex(struct Actor *object) {
   return object->x / 0x100000 + (object->z / 0x100000) * 128;
 }
 
 /// Finds the tag (key, value) in the 4-byte entries at gMapCollision, or adds
 /// it at the first free entry (key 0xff), and returns its index. Func_080eabd0
 /// gives a raised cell's shape this index.
-s32 Func_080eab98(s32 unused, s32 key, s32 value) {
+s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value) {
   u8 *entry = Ram_MapCollision;
   s8 tagValue;
   s32 i = 0;

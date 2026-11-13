@@ -46,13 +46,13 @@ struct EffectParticle {
   s32 timer;
 };
 
-/* VIEW(f0e446c): routine Func_080eaf98 as void Func_080eaf98(struct
+/* VIEW(f0e446c): routine EffectSprite_Init as void EffectSprite_Init(struct
  * EffectSprite__f0e446c *sprite, s32 width, s32 height, u32 shape, s32 tiles);
- * effect_sprite.h has void Func_080eaf98(struct EffectSprite *sprite, s32
+ * effect_sprite.h has void EffectSprite_Init(struct EffectSprite *sprite, s32
  * pivotX, s32 pivotY, u32 attributes, s32 tile). */
 extern void Func_080eaf98__f0e446c(struct EffectSprite__f0e446c *sprite,
                                    s32 width, s32 height, u32 shape,
-                                   s32 tiles) __asm__("Func_080eaf98");
+                                   s32 tiles) __asm__("EffectSprite_Init");
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
@@ -113,8 +113,8 @@ void Func_080e4510(struct EffectSprite__f0e446c *sprite, s32 tiles) {
   sprite->y = position[2];
 }
 
-/// Forwards to Func_080eb01c, which draws an effect sprite.
-void Func_080e45a0(void *sprite) { Func_080eb01c(sprite); }
+/// Forwards to EffectSprite_Draw, which draws an effect sprite.
+void Func_080e45a0(void *sprite) { EffectSprite_Draw(sprite); }
 
 void Func_080e45a8(struct EffectSprite__f0e446c *sprite,
                    struct EffectParticle *particle, s32 unused, s32 tiles,

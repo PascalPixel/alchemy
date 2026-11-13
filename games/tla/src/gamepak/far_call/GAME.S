@@ -4,10 +4,7 @@
 	.global Resource_FarCall005
 Resource_FarCall005:
 	export Djinn_GetRecoveryTableFar, Djinn_GetRecoveryTable
-	.global Unit_CalculateFar
-	.thumb_func
-Unit_CalculateFar:
-	export BattleUnit_Recalculate, Unit_Calculate
+	export Unit_CalculateFar, Unit_Calculate
 	export Item_Get, Item_GetDirect
 	export Inventory_GetQuantityFar, Inventory_GetQuantity
 	export Inventory_AddItemFar, Inventory_AddItem

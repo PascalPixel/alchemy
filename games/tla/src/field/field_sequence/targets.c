@@ -231,7 +231,7 @@ s32 Func_080cdc74(void) {
   position[1] = (owner->y + (half << 11)) & 0xfff80000;
   position[2] = owner->z;
   Vector_AddPolarOffset(0x100000, angle, position);
-  target = Func_080eaf28(position, 1);
+  target = Actor_FindAtCell(position, 1);
   if (target == 0)
     return 0;
   if (BYTE_AT(target, 98) != 0)
@@ -245,13 +245,13 @@ s32 Func_080cdc74(void) {
   position[1] = target->y;
   position[2] = target->z;
   Vector_AddPolarOffset(0x100000, angle, position);
-  hit = Func_080eaf28(position, 1);
+  hit = Actor_FindAtCell(position, 1);
   if (hit != 0 && (hit->collisionFlags & 1))
     return 0;
   above[0] = target->x;
   above[1] = target->y + 0x100000;
   above[2] = target->z;
-  hit = Func_080eaf28(above, 1);
+  hit = Actor_FindAtCell(above, 1);
   if (hit != 0 && (hit->collisionFlags & 1))
     return 0;
   terrain = target->terrainId;
@@ -280,7 +280,7 @@ void Func_080cdd80(void) {
   position[1] = (owner->y + 0x40000) & 0xfff80000;
   position[2] = owner->z;
   Vector_AddPolarOffset(0x100000, angle, position);
-  target = Func_080eaf28(position, 1);
+  target = Actor_FindAtCell(position, 1);
   position[0] = target->x;
   position[1] = target->y;
   position[2] = target->z;

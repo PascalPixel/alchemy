@@ -219,7 +219,7 @@ void FieldPsynergy_Blaze(void) {
   for (j = 0; j < 16; j++) {
     sprite = &work->drops[j];
 
-    Func_080eaf98(sprite, 15, 24, 0x80000000, tile);
+    EffectSprite_Init(sprite, 15, 24, 0x80000000, tile);
     sprite->depth = BattleEffect_GetObjectDepth(caster) + 10;
     sprite->oam.priority = BattleEffect_GetObjectPriority(caster);
     sprite->oam.palette256 = 1;
@@ -235,7 +235,7 @@ void FieldPsynergy_Blaze(void) {
   for (j = 0; j < 16; j++) {
     sprite = &work->puffs[j];
 
-    Func_080eaf98(sprite, 8, 15, 0x40000000, tile);
+    EffectSprite_Init(sprite, 8, 15, 0x40000000, tile);
     sprite->scaleY = sprite->scaleX = 0xc000;
     sprite->depth = 250;
     sprite->oam.priority = 0;
@@ -295,7 +295,7 @@ s32 Field_CheckSpheresOverlapFar(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 /// Says whether object is blocked: 1 when, outside event mode 3,
 /// MapGrid_CheckCollisionAtFar reports its cell, ORed with 2 when it overlaps
 /// any other collidable script object (each radius less 2 pixels).
-s32 Func_080e4244(struct Actor *object) {
+s32 Actor_CheckBlocked(struct Actor *object) {
   s32 result;
   struct Actor *other;
   s32 i;
@@ -372,7 +372,7 @@ void Func_080e42d4(void) {
     if (Func_080dbd48(x + 0x80000, z + back, 2) == 0)
       reason = 4;
   }
-  if (reason != 0 && (Func_080e4244(object) & 2) == 0)
+  if (reason != 0 && (Actor_CheckBlocked(object) & 2) == 0)
     event->cue = 0x208b;
 }
 

@@ -30,11 +30,12 @@ struct EffectSprite__psynergy_effects_11 {
   u8 unk20[8];
 };
 
-/* VIEW(psynergy_effects_11): routine Func_080eb01c as void Func_080eb01c(struct
- * EffectSprite__psynergy_effects_11 *sprite); effect_sprite.h has void
- * Func_080eb01c(struct EffectSprite *sprite). */
-extern void Func_080eb01c__psynergy_effects_11(
-    struct EffectSprite__psynergy_effects_11 *sprite) __asm__("Func_080eb01c");
+/* VIEW(psynergy_effects_11): routine EffectSprite_Draw as void
+ * EffectSprite_Draw(struct EffectSprite__psynergy_effects_11 *sprite);
+ * effect_sprite.h has void EffectSprite_Draw(struct EffectSprite *sprite). */
+extern void
+Func_080eb01c__psynergy_effects_11(struct EffectSprite__psynergy_effects_11
+                                       *sprite) __asm__("EffectSprite_Draw");
 void Camera_WorldToScreen(s32 *position);
 /* VIEW(psynergy_effects_11): routine BattleEffect_IntegrateVector3 as void
  * BattleEffect_IntegrateVector3(struct EffectParticle *particle, s32 frames,

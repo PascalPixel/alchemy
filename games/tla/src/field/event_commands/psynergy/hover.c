@@ -77,7 +77,7 @@ void FieldPsynergy_Hover(void) {
   work->tile = tile;
   work->scale = 0;
   sprite = &work->sprite;
-  Func_080eaf98(sprite, 15, 15, 0x80000000, (s16)work->tile);
+  EffectSprite_Init(sprite, 15, 15, 0x80000000, (s16)work->tile);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
   Actor_SetPositionAndResetMotionFar(player, player->x, player->y, player->z);
@@ -347,20 +347,20 @@ void Func_080e9f68(void) {
         Motion_StepTowardTarget(mote, 0x40000);
         sprite->x = mote->x;
         sprite->y = mote->z;
-        Func_080eb01c(sprite);
+        EffectSprite_Draw(sprite);
       }
       mote->timer++;
     } else if (work->state == 2) {
       Motion_StepTowardTarget(mote, 0x60000);
       sprite->x = mote->x;
       sprite->y = mote->z;
-      Func_080eb01c(sprite);
+      EffectSprite_Draw(sprite);
     } else if (work->state == 3) {
       if (mote->x != work->targetX || mote->z != work->targetZ) {
         Motion_StepTowardTarget(mote, 0x60000);
         sprite->x = mote->x;
         sprite->y = mote->z;
-        Func_080eb01c(sprite);
+        EffectSprite_Draw(sprite);
       }
     }
   }

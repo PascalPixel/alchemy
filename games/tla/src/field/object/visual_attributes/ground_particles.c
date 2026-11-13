@@ -135,7 +135,7 @@ void Func_080d69f4(void) {
 /// sprite words and places it on the ground at a random point of the strip
 /// (x 288 to 488 pixels, z 60 to 80), staggering their timers by 2 frames, and
 /// schedules the update.
-void Func_080d6b90(void) {
+void RisingParticles_Start(void) {
   struct RisingParticleWork *work = HeapSlot_AllocEwram(116, 0x814);
   struct RisingParticle *particle = work->particles;
   volatile u32 fill;

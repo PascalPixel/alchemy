@@ -945,7 +945,7 @@ s32 Func_080cda84(s32 id, struct Actor *actor, s32 *position);
 u32 MapGrid_GetTerrainKindFar(s32 terrain, s32 x, s32 z);
 
 void WorldMap_Freeze(void);
-void Func_080cb8a4(void);
+void WorldMap_ReloadPendingAreaGraphics(void);
 
 void Event_NoOp(void);
 

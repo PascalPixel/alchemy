@@ -171,7 +171,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   particle = work->particles;
   for (i = 0; i < 64; i++) {
     sprite = &work->sprites[i];
-    Func_080eaf98(sprite, 8, 8, 0x40000000, tile);
+    EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -518,7 +518,7 @@ void Func_080e9940(void) {
   sprite->y = position[2];
   sprite->scaleX = scaleX;
   sprite->scaleY = scaleY;
-  Func_080eb01c(sprite);
+  EffectSprite_Draw(sprite);
 }
 
 void FieldPsynergy_Blaze(void);

@@ -18,7 +18,7 @@ s32 Actor_ClearChildFlags();
 s32 Actor_SetPriorityBit5();
 s32 Actor_MoveTowardTarget();
 s32 Actor_TurnTowardWatchedActor();
-s32 Func_080d4ab4();
+s32 Actor_TakeLeaderLayer();
 
 /// ScreenTransition_ShapesTail
 // clang-format off
@@ -248,7 +248,7 @@ const s32 gMovementType_FaceLeaderScript[] = {
 // The Spanish and Italian scaffolds name the function by the far-call slot
 // that reaches it in the other editions.
 const s32 gData_080f3764[] = {
-    SC_CALL(Func_080d4ab4),
+    SC_CALL(Actor_TakeLeaderLayer),
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

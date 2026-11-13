@@ -2048,12 +2048,12 @@ struct EffectSprite__f0cf050 {
   u16 depth;
 };
 
-/* VIEW(f0cf050): routine Func_080eaf98 as void Func_080eaf98(); effect_sprite.h
- * has void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
- * u32 attributes, s32 tile). */
-extern void Func_080eaf98__f0cf050() __asm__("Func_080eaf98");
+/* VIEW(f0cf050): routine EffectSprite_Init as void EffectSprite_Init();
+ * effect_sprite.h has void EffectSprite_Init(struct EffectSprite *sprite, s32
+ * pivotX, s32 pivotY, u32 attributes, s32 tile). */
+extern void Func_080eaf98__f0cf050() __asm__("EffectSprite_Init");
 
-/// Sets up sprite through Func_080eaf98 with resource 94's tiles, at
+/// Sets up sprite through EffectSprite_Init with resource 94's tiles, at
 /// priority 1 in palette 0.
 void EffectSprite_InitFromSlot94(struct EffectSprite__f0cf050 *sprite, s32 a,
                                  s32 b, s32 c) {
@@ -2070,9 +2070,10 @@ void EffectSprite_InitFromSlot94(struct EffectSprite__f0cf050 *sprite, s32 a,
  * Camera_WorldToScreen(struct EffectVector *position). */
 extern void
 Camera_WorldToScreen__f0cf050(s32 *position) __asm__("Camera_WorldToScreen");
-/* VIEW(f0cf050): routine Func_080eb01c as void Func_080eb01c(void *sprite);
- * effect_sprite.h has void Func_080eb01c(struct EffectSprite *sprite). */
-extern void Func_080eb01c__f0cf050(void *sprite) __asm__("Func_080eb01c");
+/* VIEW(f0cf050): routine EffectSprite_Draw as void EffectSprite_Draw(void
+ * *sprite); effect_sprite.h has void EffectSprite_Draw(struct EffectSprite
+ * *sprite). */
+extern void Func_080eb01c__f0cf050(void *sprite) __asm__("EffectSprite_Draw");
 
 /// Projects the world position (x, y, z) to the screen, stores it as the
 /// effect sprite's position and draws the sprite.

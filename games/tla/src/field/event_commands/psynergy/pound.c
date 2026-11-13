@@ -199,7 +199,7 @@ void FieldPsynergy_Pound(void) {
   glowEntry = VramCache_FindFreeEntry();
   glowTile = VramCache_Load(glowEntry, size, work);
   glow = &work->glow;
-  Func_080eaf98(glow, 32, 32, 0xc0000000, glowTile);
+  EffectSprite_Init(glow, 32, 32, 0xc0000000, glowTile);
   glow->oam.priority = 0;
   glow->oam.palette256 = 0;
   glow->oam.palette = 0;
@@ -230,7 +230,7 @@ void FieldPsynergy_Pound(void) {
     particle->velocityX = Iwram_MulQ16(Trig_Cos(angle), speed);
     particle->velocityY = Iwram_MulQ16(Trig_Sin(angle), speed);
     particle->timer = -j;
-    Func_080eaf98(sprite, 8, 8, 0x40000000, starTile);
+    EffectSprite_Init(sprite, 8, 8, 0x40000000, starTile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -271,7 +271,7 @@ void FieldPsynergy_Pound(void) {
       scene->frame = frame;
       if (((s8 *)event)[394] != 3 && !(*(u16 *)((u8 *)event + 0xd4c) & 1)) {
         glow = &work->glow;
-        Func_080eb01c(glow);
+        EffectSprite_Draw(glow);
       }
       Field_RunPsynergyEvent(pending, work->fading, frame++);
     }

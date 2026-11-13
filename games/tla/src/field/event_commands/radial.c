@@ -857,7 +857,7 @@ void FieldPsynergy_Lash(void) {
     particle = work->particles;
     sprite = work->sprites;
     for (i = 63; i >= 0; i--) {
-      Func_080eaf98(sprite, 4, 4, 0, tileA);
+      EffectSprite_Init(sprite, 4, 4, 0, tileA);
       sprite->depth = 250;
       sprite->oam.priority = 0;
       sprite->oam.palette256 = 1;
@@ -1251,7 +1251,7 @@ void FieldPsynergy_ShowAvoidWoreOff(void) {
     MessageArgument_PushFar(236, 2);
     FieldMessage_ShowFar((s32)&MsgItemWoreOff, 1);
   }
-  Func_080cb8a4();
+  WorldMap_ReloadPendingAreaGraphics();
 }
 
 /// Psynergy effect 16: the user spins, rains arc particles, then flashes.
@@ -1393,7 +1393,7 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
 
   for (i = 0; i < 2; i++) {
     sprite = &work->sprites[group][i];
-    Func_080eaf98(sprite, 16, 16, 0x80004000, tiles);
+    EffectSprite_Init(sprite, 16, 16, 0x80004000, tiles);
     sprite->oam.palette256 = 0;
     sprite->oam.palette = 0;
     sprite->oam.priority = BattleEffect_GetObjectPriority(target);
@@ -1475,7 +1475,7 @@ void BattleEffect_UpdateArcEffect(void) {
           sprite->y += 0xffff0000;
           sprite->scaleY = -sprite->scaleY;
         }
-        Func_080eb01c(sprite);
+        EffectSprite_Draw(sprite);
       }
       work->age[group]++;
     }
@@ -1727,7 +1727,7 @@ again:
   Camera_WorldToScreen__f0e150c(pos);
   sprite->x = pos[0];
   sprite->y = pos[2];
-  Func_080eb01c(sprite);
+  EffectSprite_Draw(sprite);
   motion = &work->arrowMotion;
   pos[0] = motion->x;
   pos[1] = motion->y;
@@ -1736,7 +1736,7 @@ again:
   sprite = &work->arrow;
   sprite->x = pos[0];
   sprite->y = pos[2];
-  Func_080eb01c(sprite);
+  EffectSprite_Draw(sprite);
   if (work->arrowMoving != 0)
     BattleEffect_IntegrateVector3(&motion->x, 64, 0);
 
@@ -1824,7 +1824,7 @@ void FieldPsynergy_Unnamed29(void) {
   tile = VramCache_Load(bowSlot, 0x1800, work->tiles);
   work->bowTile = tile;
   sprite = &work->bow;
-  Func_080eaf98(sprite, 16, 16, 0x80000000, tile);
+  EffectSprite_Init(sprite, 16, 16, 0x80000000, tile);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
   sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainObject);
@@ -1847,7 +1847,7 @@ void FieldPsynergy_Unnamed29(void) {
   arrowSlot = VramCache_FindFreeEntry();
   tile = VramCache_Load(arrowSlot, 0x100, work->tiles);
   sprite = &work->arrow;
-  Func_080eaf98(sprite, 12, 8, 0x40000000, tile);
+  EffectSprite_Init(sprite, 12, 8, 0x40000000, tile);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
   sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainObject);
@@ -2048,7 +2048,7 @@ struct MapCell__f0e150c {
 
 extern struct TouchCopies gData_02001000;
 
-struct MapCell__f0e150c *Func_080dbb78(s32 x, s32 z, s32 layer);
+struct MapCell__f0e150c *MapGrid_GetCellAt(s32 x, s32 z, s32 layer);
 
 void Func_080e25e8(s32 toX, s32 toZ, s32 width, s32 height, s32 originX,
                    s16 originZ, s32 layerIndex) {
@@ -2072,7 +2072,7 @@ void Func_080e25e8(s32 toX, s32 toZ, s32 width, s32 height, s32 originX,
 
       MapGrid_CopyCellPictureCellsRectFar(toX + x, toZ + z, 1, 1, originX + x,
                                           originZ + z);
-      Func_080dbb78(cell[i].x << 20, cell[i].z << 20, 2)->unk02 = 0;
+      MapGrid_GetCellAt(cell[i].x << 20, cell[i].z << 20, 2)->unk02 = 0;
       n = gData_02001000.count;
       if (n < 64) {
         gData_02001000.copies[n].toX = toX + x;
@@ -2095,14 +2095,14 @@ void Func_080e25e8(s32 toX, s32 toZ, s32 width, s32 height, s32 originX,
  * games/tla/src/field/event_commands/radial.c:2361: incompatible types in
  * initialization. */
 extern u8 gData_02001000__f0e2718[] __asm__("gData_02001000");
-/* VIEW(f0e2718): routine Func_080dbb78 as struct MapCell *Func_080dbb78(s32 x,
- * s32 z, s32 layer); f0e150c has struct MapCell__f0e150c *Func_080dbb78(s32 x,
- * s32 z, s32 layer); tried as the definition's struct MapCell
- * *Func_080dbb78(s32 x, s32 z, s32 layer), it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial.c:2357: conflicting types for
- * `Func_080dbb78'. */
+/* VIEW(f0e2718): routine MapGrid_GetCellAt as struct MapCell
+ * *MapGrid_GetCellAt(s32 x, s32 z, s32 layer); f0e150c has struct
+ * MapCell__f0e150c *MapGrid_GetCellAt(s32 x, s32 z, s32 layer); tried as the
+ * definition's struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer), it
+ * does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:2357:
+ * conflicting types for `MapGrid_GetCellAt'. */
 extern struct MapCell *
-Func_080dbb78__f0e2718(s32 x, s32 z, s32 layer) __asm__("Func_080dbb78");
+Func_080dbb78__f0e2718(s32 x, s32 z, s32 layer) __asm__("MapGrid_GetCellAt");
 
 /// For each entry of the event work's list at 0x174c, calls
 /// MapGrid_CopyCellPictureCellsRectFar with its bytes and clears the collision

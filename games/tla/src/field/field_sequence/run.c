@@ -233,7 +233,7 @@ s32 FieldSequence_Run(void) {
                                                      0);
 #endif
       }
-      Func_080cb8a4();
+      WorldMap_ReloadPendingAreaGraphics();
       gMainRoutineWork.tally25c = 0;
     }
   }
@@ -288,10 +288,10 @@ s32 FieldSequence_Run(void) {
               Func_080ca3f4((s16)restartScene, (s16)restartEntrance);
             }
             result = 999;
-            Func_080cb8a4();
+            WorldMap_ReloadPendingAreaGraphics();
             goto done;
           }
-          Func_080cb8a4();
+          WorldMap_ReloadPendingAreaGraphics();
         } else if (work->raisedEvent == -0x377) {
           Leader_StopMoving();
           WorldPicture_Show(1);
@@ -404,19 +404,19 @@ s32 FieldSequence_Run(void) {
           work->effectTimerRunning = 1;
           Func_080cb05c();
         }
-        Func_080cb8a4();
+        WorldMap_ReloadPendingAreaGraphics();
         GameFlag_ClearBit(262);
         GameFlag_RefreshLureCapFar();
         work->menu = 0;
       } else if (work->talk != 0) {
         WorldMap_Freeze();
         Scene_TalkToActor(work->talk & 0x3fff);
-        Func_080cb8a4();
+        WorldMap_ReloadPendingAreaGraphics();
         work->talk = 0;
       } else if (work->searchCell != 0) {
         WorldMap_Freeze();
         Field_ExamineCell(work->searchCell);
-        Func_080cb8a4();
+        WorldMap_ReloadPendingAreaGraphics();
         work->searchCell = 0;
       } else if (work->psynergy != 0) {
         packed = work->psynergy & 0x2000;
@@ -428,12 +428,12 @@ s32 FieldSequence_Run(void) {
         }
         Field_UsePsynergy(work->psynergy);
         if (packed == 0)
-          Func_080cb8a4();
+          WorldMap_ReloadPendingAreaGraphics();
         work->psynergy = 0;
       } else if (work->item != 0) {
         WorldMap_Freeze();
         Field_UseItem(work->item, work->itemArgument);
-        Func_080cb8a4();
+        WorldMap_ReloadPendingAreaGraphics();
         work->item = 0;
       } else if (work->start != 0) {
         Sound_PlayFar(111);
@@ -470,7 +470,7 @@ s32 FieldSequence_Run(void) {
             FieldMessage_ShowFar((s32)MsgFieldPauseUnavailable, 1);
           }
         }
-        Func_080cb8a4();
+        WorldMap_ReloadPendingAreaGraphics();
         GameFlag_ClearBit(262);
         work->start = 0;
       }

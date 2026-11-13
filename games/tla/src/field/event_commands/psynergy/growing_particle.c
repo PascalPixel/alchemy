@@ -34,7 +34,7 @@ void Func_080e46ac(struct EffectSprite *sprite, struct EffectParticle *particle,
     Camera_WorldToScreen(position);
     sprite->x = position[0];
     sprite->y = position[2];
-    Func_080eb01c(sprite);
+    EffectSprite_Draw(sprite);
     BattleEffect_IntegrateVector2(&particle->x, 60, 0);
   }
   particle->timer++;

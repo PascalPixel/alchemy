@@ -190,13 +190,13 @@ s32 Actor_TurnTowardWatchedActor(struct FacingObject *obj) {
 }
 
 /// Makes the object watch target and keeps it facing it.
-void Func_080d4aa8(struct Actor *object, struct Actor *target) {
+void Actor_WatchActor(struct Actor *object, struct Actor *target) {
   object->watchedObject = target;
   object->update = Actor_TurnTowardWatchedActor;
 }
 
 /// Gives the object the party leader's display layer.
-s32 Func_080d4ab4(struct Actor *object) {
+s32 Actor_TakeLeaderLayer(struct Actor *object) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
   s32 layer = ((struct ObjectLayerAnimation *)leader->sprite)->layer;
 

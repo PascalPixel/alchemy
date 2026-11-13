@@ -80,7 +80,8 @@ void Func_080ea14c(s32 targetId) {
   i = 0;
   sprite = work->moteSprites;
   for (; i < 48; i++) {
-    Func_080eaf98(sprite, 4, 4, 0, moteTile + ((Random16() << 4) >> 16) * 2);
+    EffectSprite_Init(sprite, 4, 4, 0,
+                      moteTile + ((Random16() << 4) >> 16) * 2);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 1;
@@ -100,7 +101,7 @@ void Func_080ea14c(s32 targetId) {
   mote = work->sparks;
   sprite = work->sparkSprites;
   for (i = 31; i >= 0; i--) {
-    Func_080eaf98(sprite, 8, 8, 0x40000000, sparkTile);
+    EffectSprite_Init(sprite, 8, 8, 0x40000000, sparkTile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -284,7 +285,7 @@ struct ActorFlag {
 };
 
 struct Actor *Actor_GetById(u32 objectId);
-s32 Func_080eab70(struct Actor *object);
+s32 Actor_GetCellIndex(struct Actor *object);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_080eaa14(struct ActorFlag *list);
@@ -298,7 +299,7 @@ void Func_080ea7c0(struct ActorFlag *actors) {
   for (; actors->actor != 0xffff; actors++) {
     struct Actor *object = Actor_GetById(actors->actor);
     u16 flag = actors->flag;
-    s32 slot = Func_080eab70(object);
+    s32 slot = Actor_GetCellIndex(object);
     struct MapCell *cell = &map->layers[object->terrainId].cells[slot];
 
     object->motionFlags = 0;

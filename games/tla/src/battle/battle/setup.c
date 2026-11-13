@@ -196,7 +196,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
       unit->agilityStage = 0;
       unit->challenge = 0;
 
-      BattleUnit_Recalculate(owners[i]);
+      Unit_CalculateFar(owners[i]);
       i++;
     } while (i < count);
   }

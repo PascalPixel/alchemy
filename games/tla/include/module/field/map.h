@@ -105,7 +105,7 @@ struct Vec2 {
   s32 y;
 };
 
-struct Actor *Func_080eaf28(s32 *position, s32 check_y);
+struct Actor *Actor_FindAtCell(s32 *position, s32 check_y);
 
 void Func_0200189c(void);
 

@@ -247,8 +247,8 @@ void FieldPsynergy_EndSand(void);
 
 extern char ResourceId_SparkleFade;
 
-s32 Func_080eab70(struct Actor *object);
-s32 Func_080eab98(s32 unused, s32 key, s32 value);
+s32 Actor_GetCellIndex(struct Actor *object);
+s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 
 void Func_080ec1d0(s32 *screenX, s32 *screenY);
 

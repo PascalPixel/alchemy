@@ -9,8 +9,6 @@
 #define GAME_FLAG_BYTE(flag) (((u32)(flag) << 20) >> 23)
 
 s32 GameFlag_Test();
-s32 GameFlag_Set();
-void GameFlag_Clear(s32 flag);
 u32 GameFlag_Toggle(s32 flag);
 u8 GameFlag_GetByte(s32 flag);
 u32 GameFlag_SetByte(u32 flag, u8 value);

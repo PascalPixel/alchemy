@@ -69,7 +69,7 @@ void Func_080e2c38(void) {
       Camera_WorldToScreen(position);
       sprite->x = position[0];
       sprite->y = position[2];
-      Func_080eb01c(sprite);
+      EffectSprite_Draw(sprite);
       particle->heading += particle->spin;
       particle->y += particle->speed;
       particle->spin =
@@ -293,7 +293,7 @@ void FieldPsynergy_Cyclone(void) {
   canvas->mode = CANVAS_SPRITE_KEPT;
   canvas->scaleX = 0x18000;
   canvas->scaleY = 0x18000;
-  Func_080eaf98(&canvas->sprite, 32, 32, 0xc0000000, canvas->tile);
+  EffectSprite_Init(&canvas->sprite, 32, 32, 0xc0000000, canvas->tile);
   canvas->sprite.oam.palette256 = 1;
   canvas->sprite.oam.palette = 0;
   offsets = Ram_HeapSlots->canvasMap;
@@ -732,7 +732,7 @@ void Func_080e38c8(void) {
       Camera_WorldToScreen(pos);
       sprite->x = pos[0];
       sprite->y = pos[2];
-      Func_080eb01c(sprite);
+      EffectSprite_Draw(sprite);
       particle->y += 0xcccc;
       if (++particle->timer == 32)
         particle->timer = -1;

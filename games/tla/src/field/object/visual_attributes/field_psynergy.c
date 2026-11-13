@@ -21,11 +21,9 @@ void Func_080dbb40(void) {
   }
 }
 
-// Finds a map cell by position.
-
 /// Returns the map cell at position x, z in the given layer, read from the
 /// world map's blocks or the cell buffer by the event work's mode.
-struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer) {
+struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
   u8 *event = Ram_HeapSlots->eventWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapCell *cells;
@@ -54,16 +52,16 @@ s32 Func_080dbc04(s32 x, s32 z, s32 layer) {
   if (Func_080dbcd8(x, z, layer) != 0)
     return 1;
   if (*(s8 *)(event + 0xd36) == 0)
-    return Func_080dbb78(x, z, layer)->attributeB & 1;
-  return ~Func_080dbb78(x, z, layer)->attributeB & 1;
+    return MapGrid_GetCellAt(x, z, layer)->attributeB & 1;
+  return ~MapGrid_GetCellAt(x, z, layer)->attributeB & 1;
 }
 
 s32 Func_080dbca8(s32 x, s32 z) {
-  return Func_080dbb78(x, z, 2)->collisionCode == 231;
+  return MapGrid_GetCellAt(x, z, 2)->collisionCode == 231;
 }
 
 s32 Func_080dbcc0(s32 x, s32 z) {
-  return Func_080dbb78(x, z, 2)->collisionCode == 236;
+  return MapGrid_GetCellAt(x, z, 2)->collisionCode == 236;
 }
 
 s32 Func_080dbcd8(s32 x, s32 z, s32 layer) {
@@ -75,7 +73,7 @@ s32 Func_080dbcd8(s32 x, s32 z, s32 layer) {
     SET_VECTOR(position, column, 0, z);
     column = (u32)(WorldMap_GetCollisionFar(position) - 5) <= 1;
   } else {
-    s32 code = Func_080dbb78(column, z, 2)->collisionCode;
+    s32 code = MapGrid_GetCellAt(column, z, 2)->collisionCode;
 
     code ^= 232;
     column = (u32)(-code | code) >> 31;
@@ -87,7 +85,7 @@ s32 Func_080dbcd8(s32 x, s32 z, s32 layer) {
 }
 
 u8 Func_080dbd48(s32 x, s32 z, s32 layer) {
-  return Func_080dbb78(x, z, layer)->attributeB & 0x40;
+  return MapGrid_GetCellAt(x, z, layer)->attributeB & 0x40;
 }
 
 s32 Func_080dbd5c(s32 x, s32 z, s32 layer) {
@@ -103,11 +101,11 @@ s32 Func_080dbd5c(s32 x, s32 z, s32 layer) {
     collision = WorldMap_GetCollisionFar(position);
     return (u32)(collision - 2) <= 2;
   }
-  return (u8)(Func_080dbb78(x, z, layer)->attributeB & 16);
+  return (u8)(MapGrid_GetCellAt(x, z, layer)->attributeB & 16);
 }
 
 s32 Func_080dbda8(s32 x, s32 z, s32 layer) {
-  u8 code = Func_080dbb78(x, z, 2)->collisionCode;
+  u8 code = MapGrid_GetCellAt(x, z, 2)->collisionCode;
 
   if (code == 233)
     return 1;
@@ -119,26 +117,26 @@ s32 Func_080dbda8(s32 x, s32 z, s32 layer) {
 }
 
 u8 Func_080dbdc8(s32 x, s32 z, s32 layer) {
-  return Func_080dbb78(x, z, layer)->collisionCode;
+  return MapGrid_GetCellAt(x, z, layer)->collisionCode;
 }
 
 u8 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value) {
-  Func_080dbb78(x, z, layer)->collisionCode = value;
+  MapGrid_GetCellAt(x, z, layer)->collisionCode = value;
   return value;
 }
 
 s32 Func_080dbde8(s32 x, s32 z, s32 layer) {
-  return Func_080dbb78(x, z, layer)->attributeB;
+  return MapGrid_GetCellAt(x, z, layer)->attributeB;
 }
 
 u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value) {
-  Func_080dbb78(x, z, layer)->attributeB = value;
+  MapGrid_GetCellAt(x, z, layer)->attributeB = value;
   return value;
 }
 
 u8 Func_080dbe08(s32 x, s32 z, s32 layer, s32 bits) {
   s32 flags = Func_080dbde8(x, z, layer);
-  u8 *cell = (u8 *)Func_080dbb78(x, z, layer);
+  u8 *cell = (u8 *)MapGrid_GetCellAt(x, z, layer);
 
   flags |= bits;
   cell[3] = flags;
@@ -147,7 +145,7 @@ u8 Func_080dbe08(s32 x, s32 z, s32 layer, s32 bits) {
 
 u8 Func_080dbe44(s32 x, s32 z, s32 layer, s32 bits) {
   s32 flags = Func_080dbde8(x, z, layer);
-  u8 *cell = (u8 *)Func_080dbb78(x, z, layer);
+  u8 *cell = (u8 *)MapGrid_GetCellAt(x, z, layer);
 
   flags &= ~bits;
   cell[3] = flags;

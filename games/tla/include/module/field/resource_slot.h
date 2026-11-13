@@ -43,7 +43,7 @@ s32 Func_080c8770(s32 x, s32 z, s32 kind);
 extern const u16 gMaps[][6];
 s32 Func_080c8710(struct Actor *object);
 s32 Func_080c8700(struct Actor *object);
-s32 Func_080c8828(s32 arg);
+s32 Actor_CheckBlockedFar(s32 arg);
 void SpriteAnimation_Reset(struct AnimationEntry *work);
 
 #endif

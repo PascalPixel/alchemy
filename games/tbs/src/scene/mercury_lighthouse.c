@@ -770,36 +770,42 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
   u32 step;
   s32 destinationColumn;
   s32 sourceColumn;
-  s32 copyWidth;
-  s32 copyHeight;
   s32 column;
-  s32 stripHeight;
   Sound_Play(SE_GUSH);
-  copyHeight = 6;
-  step = 0;
-  destinationColumn = 41;
-  sourceColumn = 40;
-  do {
-    MapGrid_CopyCellsTo(sourceColumn, 32, destinationColumn, 32, 3 - step,
-                        copyHeight);
-    copyWidth = 2;
-    MapGrid_CopyCellsTo(39, 51, sourceColumn, 32, 1, copyHeight);
-    column = step + 106;
-    stripHeight = 4;
-    MapGrid_CopyCellPictureIndicesRect(105, 51, column, 32, copyWidth,
-                                       stripHeight);
-    if (delayFrames != 0) {
-      MapGrid_SetShake(5, 5, 1);
-      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-      Event_Wait(delayFrames);
-    }
-    step++;
-    destinationColumn += 2;
-    sourceColumn += 2;
-  } while (step <= 2);
-  Sound_Play(SE_STOP_ACTION_SE);
-  MapGrid_CopyCellAttributes(106, 33, 4, 5, 42, 33);
-  MapGrid_WaitForShakeToSettle();
+  {
+    s32 copyHeight = 6;
+
+    step = 0;
+    destinationColumn = 41;
+    sourceColumn = 40;
+    do {
+      MapGrid_CopyCellsTo(sourceColumn, 32, destinationColumn, 32, 3 - step,
+                          copyHeight);
+      {
+        s32 copyWidth = 2;
+
+        MapGrid_CopyCellsTo(39, 51, sourceColumn, 32, 1, copyHeight);
+        column = step + 106;
+        {
+          s32 stripHeight = 4;
+
+          MapGrid_CopyCellPictureIndicesRect(105, 51, column, 32, copyWidth,
+                                             stripHeight);
+          if (delayFrames != 0) {
+            MapGrid_SetShake(5, 5, 1);
+            MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+            Event_Wait(delayFrames);
+          }
+          step++;
+          destinationColumn += 2;
+          sourceColumn += 2;
+        }
+      }
+    } while (step <= 2);
+    Sound_Play(SE_STOP_ACTION_SE);
+    MapGrid_CopyCellAttributes(106, 33, 4, 5, 42, 33);
+    MapGrid_WaitForShakeToSettle();
+  }
 }
 
 /// Task: a spray at the fountain's fixed position.
@@ -1588,8 +1594,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     column += px(16) - 1;
   column >>= 20;
   Event_Start();
-  if (column != 51) {
-  } else {
+  if (column == 51) {
     // Mia turns: "Did you do that?"
     Actor_SetSpeed(ACTOR_MIA, 0.8);
     Event_Wait(20);

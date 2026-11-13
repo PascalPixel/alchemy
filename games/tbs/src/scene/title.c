@@ -363,13 +363,12 @@ static void Title_LoadBackground(void) {
   u32 screenY;
   u16 tileIndex;
   struct ScrollPair *bgScroll;
-  s32 blankTile;
+  s32 blankTile = LOGO_BLANK_TILE;
 
   resourceId = (s32)&ResourceId_GoldenSunLogo;
   ScreenFade_ToBlack(0);
   REG_BG2CNT = LOGO_BGCNT;
   gBgScroll[2].y = 0;
-  blankTile = LOGO_BLANK_TILE;
   encodedGraphics = Resource_GetTableEntry(resourceId);
   Dma_Set(encodedGraphics, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   encodedGraphics += 224 * 2;

@@ -591,7 +591,7 @@ static void CrossboneIsleKeys_OpenSecondBlueDoor(void) {
 static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
   struct Actor *leader;
   s16 *blockedSteps;
-  s32 resetSteps;
+  s32 resetSteps = 0;
 
   CrossboneIsleKeys_UseBlueKey(2);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -599,7 +599,6 @@ static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
     blockedSteps = &gFieldWork->blockedSteps;
     if (*blockedSteps > 12) {
       Field_TryJumpForward();
-      resetSteps = 0;
       *blockedSteps = resetSteps;
     }
   }
@@ -613,7 +612,7 @@ static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
 static void CrossboneIsleKeys_OpenFourthBlueDoor(void) {
   struct Actor *leader;
   s16 *blockedSteps;
-  s32 resetSteps;
+  s32 resetSteps = 0;
 
   CrossboneIsleKeys_UseBlueKey(3);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -621,7 +620,6 @@ static void CrossboneIsleKeys_OpenFourthBlueDoor(void) {
     blockedSteps = &gFieldWork->blockedSteps;
     if (*blockedSteps > 12) {
       Field_TryJumpForward();
-      resetSteps = 0;
       *blockedSteps = resetSteps;
     }
   }
@@ -1047,13 +1045,11 @@ static void CrossboneIsleKeys_MoveFirstPillar(void) {
   s32 x = actor->x.fixed;
   s32 height = actor->y.fixed;
   s32 column = x / px(16);
-  u8 lowered;
 
   if (height == 0) {
     Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
   CrossboneIsleKeys_RestoreFirstPillarTerrain();
-  lowered = 0;
   Actor_Get(ACTOR_FIRST_PILLAR)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (column == 40) {
@@ -1063,11 +1059,11 @@ static void CrossboneIsleKeys_MoveFirstPillar(void) {
   } else if (column == 41) {
     CrossboneIsleKeys_RestoreMiddleUnderfootCell();
   } else if (column == 39) {
-    LiftPillar(column, lowered);
+    LiftPillar(column, 0);
   } else if (column == 38) {
-    LiftPillar(column, lowered);
+    LiftPillar(column, 0);
   } else if (column == 37) {
-    LiftPillar(column, lowered);
+    LiftPillar(column, 0);
   }
 }
 

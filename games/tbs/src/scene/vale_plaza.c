@@ -1106,7 +1106,7 @@ s32 ValePlaza_Initialize(void) {
 static void ValePlaza_SentToAidElders(void) {
   struct Actor *leader;
   s32 skipReply = 0;
-  s32 speechFlags;
+  s32 speechFlags = SPEAKER_WINDOW_ABOVE;
 
   if (GameFlag_Get(FLAG_VALE_STORM) != 0 &&
       GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) == 0) {
@@ -1200,7 +1200,6 @@ static void ValePlaza_SentToAidElders(void) {
       gFieldWork->message++;
     }
     // The rested strongman is all charged up; everyone turns to him.
-    speechFlags = SPEAKER_WINDOW_ABOVE;
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_CHARGED_UP_STRONGMAN,
                                    FACING_SOUTH, 30);
     Event_ShowMessage(ACTOR_STORM_CHARGED_UP_STRONGMAN, 0);
@@ -1351,9 +1350,6 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
 /// sets FLAG_KEEP_MUSIC_ONCE.
 static void ValePlaza_FightTravelers(void) {
   struct Actor *actor;
-  s32 southSouthwestFacing;
-  s32 westFacing;
-  s32 northNortheastFacing;
 
   // Garet, still out of sight, calls Isaac to wait; the travelers turn and
   // look down at Isaac.
@@ -1368,8 +1364,7 @@ static void ValePlaza_FightTravelers(void) {
                   40);
   Actor_SetPosition(ACTOR_STORM_GARET, 0, 0);
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_SOUTH_SOUTHWEST, 0);
-  southSouthwestFacing = FACING_SOUTH_SOUTHWEST;
-  ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, southSouthwestFacing,
+  ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, FACING_SOUTH_SOUTHWEST,
                                  40);
   FieldCamera_SetSpeed(1.5);
   FieldCamera_MoveTo(89, 176, 313, 1);
@@ -1387,10 +1382,10 @@ static void ValePlaza_FightTravelers(void) {
   Actor_WalkTo(ACTOR_SECOND_TRAVELER, 124, 329);
   Actor_WaitForMoveById(ACTOR_FIRST_TRAVELER);
   Actor_SetAnimation(ACTOR_FIRST_TRAVELER, ANIM_STAND);
-  Actor_FaceDirection(ACTOR_FIRST_TRAVELER, southSouthwestFacing, 0);
+  Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_SOUTH_SOUTHWEST, 0);
   Actor_WaitForMoveById(ACTOR_SECOND_TRAVELER);
   Actor_SetAnimation(ACTOR_SECOND_TRAVELER, ANIM_STAND);
-  Actor_FaceDirection(ACTOR_SECOND_TRAVELER, southSouthwestFacing, 0);
+  Actor_FaceDirection(ACTOR_SECOND_TRAVELER, FACING_SOUTH_SOUTHWEST, 0);
   // Garet runs in from the west. The first traveler asks whether Isaac was
   // eavesdropping; whatever he answers, Garet thinks they look scary.
   Actor_SetSpriteColorById(ACTOR_STORM_GARET, SPRITE_COLOR_NORMAL);
@@ -1403,33 +1398,33 @@ static void ValePlaza_FightTravelers(void) {
   Actor_SetAnimationAndWait(ACTOR_FIRST_TRAVELER, ANIM_NOD);
   Event_OpenMessage(ACTOR_FIRST_TRAVELER, 0);
   Actor_ShowEmote(ACTOR_STORM_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  northNortheastFacing = FACING_NORTH_NORTHEAST;
-  ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, northNortheastFacing, 10);
+  ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST,
+                                 10);
   Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_EAST, 0);
-  westFacing = FACING_WEST;
-  ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, westFacing, 20);
+  ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, FACING_WEST, 20);
   Actor_RunRepeatedMotion(ACTOR_STORM_GARET, 2);
   ValePlaza_SayThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_STORM_GARET, 10);
   FieldActor_WatchAndStartScript(ACTOR_PARTY_LEADER,
                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_STORM_GARET,
                                  gValePlaza_FaceTargetActions);
   Actor_WalkToAndWait(ACTOR_STORM_GARET, 93, 361);
-  ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARET, northNortheastFacing, 40);
+  ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARET, FACING_NORTH_NORTHEAST, 40);
   ValePlaza_SayThenWait(ACTOR_STORM_GARET, 20);
   Actor_Stop(ACTOR_PARTY_LEADER);
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_EAST, 0);
-  ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, westFacing, 15);
+  ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, FACING_WEST, 15);
   Actor_SetAnimation(ACTOR_FIRST_TRAVELER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_NOD);
-  Actor_FaceDirection(ACTOR_FIRST_TRAVELER, southSouthwestFacing, 0);
-  ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, southSouthwestFacing,
+  Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_SOUTH_SOUTHWEST, 0);
+  ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, FACING_SOUTH_SOUTHWEST,
                                  30);
   // The travelers: forget everything you heard; we'll help you forget.
   Actor_SetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_SHAKE_HEAD);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 0);
-  ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, northNortheastFacing, 30);
+  ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST,
+                                 30);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
   Actor_RunRepeatedMotion(ACTOR_FIRST_TRAVELER, 2);
   Actor_SetAnimationAndWait(ACTOR_FIRST_TRAVELER, ANIM_NOD);
@@ -1469,7 +1464,7 @@ static void ValePlaza_FightTravelers(void) {
 /// (scene/title.c).
 static void ValePlaza_TravelersLeaveAfterBattle(void) {
   struct Actor *actor;
-  s32 gravityQ8;
+  s32 gravityQ8 = 128;
 
   // The screen opens on Isaac and Garet lying beaten in the storm, the
   // travelers standing over them.
@@ -1515,7 +1510,6 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
   Actor_SetSpritePriority(ACTOR_STORM_GARET, 3);
   Actor_SetSpeed(ACTOR_FIRST_TRAVELER, 2.4);
-  gravityQ8 = 128;
   actor = Actor_Get(ACTOR_FIRST_TRAVELER);
   actor->bounce = Q16_ONE / 100;
   actor->gravity = gravityQ8 << 8;

@@ -221,18 +221,16 @@ enum LuckyDiceState {
 s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
   s32 remaining;
-  u32 redMask;
-  u32 greenMask;
-  u32 blueMask;
   u32 pixel;
   u32 red;
   u32 green;
   u32 blue;
 
   if (count > 0) {
-    redMask = RGB(31, 0, 0);
-    greenMask = RGB(0, 31, 0);
-    blueMask = RGB(0, 0, 31);
+    u32 redMask = RGB(31, 0, 0);
+    u32 greenMask = RGB(0, 31, 0);
+    u32 blueMask = RGB(0, 0, 31);
+
     remaining = count;
     do {
       pixel = *source;
@@ -508,11 +506,10 @@ void LuckyDice_Run(void) {
       if (resultTimer >= DICE_RESULT_FRAMES && resultKind >= 0) {
         for (index = 0; index != gLuckyDice_LabelCounts[resultKind]; index++) {
           s32 labelX;
-          s32 labelY;
+          s32 labelY = 96;
 
           labelX = DICE_KIND_X - gLuckyDice_LabelCounts[resultKind] * 16 +
                    index * 32;
-          labelY = 96;
           sprites->oam[spriteCount].attr01 =
               (((labelX & 0x1ff) << 16) | labelY) | OBJ_SIZE_32X32 |
               OBJ_256_COLORS;

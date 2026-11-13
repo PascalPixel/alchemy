@@ -8,7 +8,6 @@
 /// height, is that of the 16.16 position, or 0. self is not read.
 static void *Actor_FindAtPosition(const struct FieldPosition *position,
                                   void *self) {
-  const struct FieldPosition *pos = position;
   struct FieldWork *work = gFieldWork;
   struct Actor **slots = work->actors;
   u32 i;
@@ -22,9 +21,9 @@ static void *Actor_FindAtPosition(const struct FieldPosition *position,
     if (p == NULL)
       continue;
 #endif
-    if ((pos->x >> 20) == FIELD_CELL(p->x.fixed) &&
-        (pos->y >> 20) == FIELD_CELL(p->y.fixed) &&
-        (pos->z >> 20) == FIELD_CELL(p->z.fixed)) {
+    if ((position->x >> 20) == FIELD_CELL(p->x.fixed) &&
+        (position->y >> 20) == FIELD_CELL(p->y.fixed) &&
+        (position->z >> 20) == FIELD_CELL(p->z.fixed)) {
       return p;
     }
   }

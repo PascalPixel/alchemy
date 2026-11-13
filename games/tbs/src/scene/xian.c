@@ -498,12 +498,11 @@ static void Xian_UpdatePuddlePriority(void) {
 /// leader can stand on, and there is nothing left to jump over.
 static void Xian_FreezeSpilledWater(void) {
   struct Actor *puddle;
-  s32 stationaryMotionFlags;
+  s32 stationaryMotionFlags = 0;
   s32 puddleX;
 
   Event_Start();
   Actor_Get(ACTOR_SPILLED_WATER)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
-  stationaryMotionFlags = 0;
   Actor_Get(ACTOR_SPILLED_WATER)->motionFlags = stationaryMotionFlags;
   puddle = Actor_Get(ACTOR_SPILLED_WATER);
   puddleX = puddle->x.fixed;

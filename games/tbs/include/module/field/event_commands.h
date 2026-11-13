@@ -82,7 +82,7 @@ void Event_WaitTransitionFrames(void);
 void Event_SetDestination(s32 sceneId, s32 entrance);
 void Event_SetRestartPoint(u16 sceneId, u16 entrance);
 void Event_SetExitRequest(u16 request);
-void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo);
+void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
 /// Field_RequestDjinnBattle's flag: the Djinni does not hop first.
 #define DJINN_NO_HOP 0x800
 void Field_RequestDjinnBattle(s32 flag, s32 no);
@@ -91,9 +91,6 @@ void Event_SetDefeatDestination(s32 sceneId, s32 entrance);
 void Event_LeaveFor(u16 sceneId, u16 entrance);
 void Scene_QueueMusic(s32 soundId);
 void Scene_PlayQueuedMusic(void);
-
-struct Actor;
-struct Actor;
 
 struct Actor *Actor_GetById(s32 actorId);
 void Actor_SetSpeedParameters(u32 actorId, s32 speedLimit, s32 acceleration);
@@ -301,9 +298,6 @@ void FieldPsynergy_FadeToCastColor(void);
 void FieldPsynergy_FadeFromCastColor(void);
 void Camera_WorldToScreen(struct Vector3 *position);
 
-struct ActorDouseView;
-struct OrbitEffect;
-
 void FieldPsynergy_StartMindReadWave(s32 x, s32 y);
 void FieldPsynergy_StopMindReadWave(void);
 void FieldPsynergy_UpdateMindReadWave(void);
@@ -381,7 +375,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect);
 void FieldPsynergy_Retreat(void);
 void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor);
 void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *actor);
-void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc);
+void FieldEffect_SpawnDescendingArcParticles(struct Actor *source);
 void FieldEffect_BlinkAvoidCaster(void);
 void FieldEffect_UpdateAvoidCaster(struct Actor *actor);
 void FieldPsynergy_ShowAvoidWoreOff(void);

@@ -1112,7 +1112,6 @@ static void ColosseumEntrance_TalkToTrialAttendant(void) {
 /// at the trial, gives up and runs, and the screen goes back to the stands.
 static void ColosseumEntrance_ShowFailedTrial(void) {
   struct Actor *actor;
-  s32 facing;
 
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -1184,45 +1183,48 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR + 1, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_CLEARING_WARRIOR, FACING_SOUTH_SOUTHEAST, 0);
-  facing = FACING_SOUTH_SOUTHEAST;
-  ColosseumEntrance_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR + 4, facing);
-  Actor_Stop(ACTOR_FAILING_WARRIOR);
-  actor = Actor_Get(ACTOR_FAILING_WARRIOR);
-  actor->facing = FACING_NORTH_NORTHEAST;
-  actor->scaleX = Q16_ONE;
-  actor->scaleY = Q16_ONE;
-  Event_Wait(20);
-  Actor_SetAnimation(ACTOR_FAILING_WARRIOR, ANIM_STILL);
-  Event_Wait(40);
-  Actor_SetAnimation(ACTOR_FIRST_FLAG_BEARER, FLAG_BEARER_ANIMATION_RED_FLAG);
-  Actor_SetAnimation(ACTOR_FIRST_FLAG_BEARER + 1,
-                     FLAG_BEARER_ANIMATION_RED_FLAG);
-  Event_Wait(60);
-  Actor_FaceDirection(ACTOR_FAILING_WARRIOR, facing, 20);
-  Actor_SetAnimation(ACTOR_FAILING_WARRIOR, WARRIOR_ANIMATION_DEFEATED);
-  Event_Wait(20);
-  Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR, ANIM_SHAKE_HEAD);
-  Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 1, ANIM_SHAKE_HEAD);
-  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, ANIM_SHAKE_HEAD);
-  Actor_SetAnimationAndWait(ACTOR_FIRST_TRIAL_WARRIOR + 4, ANIM_SHAKE_HEAD);
-  Event_Wait(40);
-  Actor_SetAnimationAndWait(ACTOR_FAILING_WARRIOR, ANIM_SHAKE_HEAD);
-  Event_Wait(10);
-  Actor_SetSpeed(ACTOR_FAILING_WARRIOR, 2);
-  Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 162, 916);
-  Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 162, 890);
-  Actor_SetAnimation(ACTOR_FIRST_FLAG_BEARER, ANIM_STAND);
-  Actor_SetAnimation(ACTOR_FIRST_FLAG_BEARER + 1, ANIM_STAND);
-  Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 184, 863);
-  Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 184, 796);
-  Actor_SetPosition(ACTOR_FAILING_WARRIOR, 0, 0);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  gFieldWork->transitionFrames = 16;
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Import_EventSetExitRequest(COLOSSEUM_TRIAL_GROUNDS_TO_STANDS);
-  Event_End();
+  {
+    s32 facing = FACING_SOUTH_SOUTHEAST;
+
+    ColosseumEntrance_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR + 4, facing);
+    Actor_Stop(ACTOR_FAILING_WARRIOR);
+    actor = Actor_Get(ACTOR_FAILING_WARRIOR);
+    actor->facing = FACING_NORTH_NORTHEAST;
+    actor->scaleX = Q16_ONE;
+    actor->scaleY = Q16_ONE;
+    Event_Wait(20);
+    Actor_SetAnimation(ACTOR_FAILING_WARRIOR, ANIM_STILL);
+    Event_Wait(40);
+    Actor_SetAnimation(ACTOR_FIRST_FLAG_BEARER, FLAG_BEARER_ANIMATION_RED_FLAG);
+    Actor_SetAnimation(ACTOR_FIRST_FLAG_BEARER + 1,
+                       FLAG_BEARER_ANIMATION_RED_FLAG);
+    Event_Wait(60);
+    Actor_FaceDirection(ACTOR_FAILING_WARRIOR, facing, 20);
+    Actor_SetAnimation(ACTOR_FAILING_WARRIOR, WARRIOR_ANIMATION_DEFEATED);
+    Event_Wait(20);
+    Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR, ANIM_SHAKE_HEAD);
+    Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 1, ANIM_SHAKE_HEAD);
+    Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_FIRST_TRIAL_WARRIOR + 4, ANIM_SHAKE_HEAD);
+    Event_Wait(40);
+    Actor_SetAnimationAndWait(ACTOR_FAILING_WARRIOR, ANIM_SHAKE_HEAD);
+    Event_Wait(10);
+    Actor_SetSpeed(ACTOR_FAILING_WARRIOR, 2);
+    Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 162, 916);
+    Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 162, 890);
+    Actor_SetAnimation(ACTOR_FIRST_FLAG_BEARER, ANIM_STAND);
+    Actor_SetAnimation(ACTOR_FIRST_FLAG_BEARER + 1, ANIM_STAND);
+    Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 184, 863);
+    Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 184, 796);
+    Actor_SetPosition(ACTOR_FAILING_WARRIOR, 0, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+    gFieldWork->transitionFrames = 16;
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    Import_EventSetExitRequest(COLOSSEUM_TRIAL_GROUNDS_TO_STANDS);
+    Event_End();
+  }
 }
 
 /// Back in the Colosseum's stands from a trial, the attendant says how it

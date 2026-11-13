@@ -601,9 +601,8 @@ const u32 *WorldMap_GetExits(void) { return gWorldMapExits; }
 /// Kolima Bridge's actor script (gWorldMapKolimaBridgeScript). It turns with
 /// the map and shows the drawbridge let down once FLAG_KOLIMA_BRIDGE_LOWERED is
 /// set.
-static s32 WorldMap_SetUpKolimaBridge(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
-  WorldMap_AlignToMap(interpreter);
+static s32 WorldMap_SetUpKolimaBridge(struct Actor *actor) {
+  WorldMap_AlignToMap(actor);
   if (GameFlag_Get(FLAG_KOLIMA_BRIDGE_LOWERED) != 0) {
     Actor_SelectAnimation(actor, WORLD_MAP_BRIDGE_ANIMATION_LOWERED);
   }

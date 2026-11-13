@@ -35,7 +35,6 @@ void BattleCamera_Update(void) {
   struct FixedPointPosition eyeOffset;
   s32 *focus;
   s16 delta;
-  u32 linkId;
 
   // The link check: a missed frame counts only while the link is down, and
   // any frame with it up resets the count.
@@ -46,7 +45,7 @@ void BattleCamera_Update(void) {
         battle->linkPaused = 1;
       }
     } else {
-      linkId = SIO_MULTI_PLAYER_ID();
+      u32 linkId = SIO_MULTI_PLAYER_ID();
       if (battle->linkSide != linkId) {
         battle->linkPaused = 1;
       }
@@ -183,11 +182,12 @@ s32 Battle_ShiftVramTiles(void) {
 
 /// Nothing in the source calls it.
 void Battle_ClearBg0Vofs(void) {
-  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 4 of
-   * 4 instructions differ in tbs-en. */
-  u32 zero = 0;
+  // A literal 0 is stored from the literal pool, as REG_BLDCNT's is in
+  // BattleEffect_ConfigureEffectDisplay; the ROM builds this one in a register,
+  // as a local's value is.
+  u32 scroll = 0;
 
-  REG_BG0VOFS = zero;
+  REG_BG0VOFS = scroll;
 }
 
 /// Does nothing; Battle_Run calls it with 1 as the battle is set

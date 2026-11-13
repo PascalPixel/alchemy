@@ -269,11 +269,10 @@ s32 Scene_Initialize(void) {
 /// The door opens in two frames and the leader steps into Gate to Suhalla.
 static void SuhallaGate_EnterHouse(void) {
   s32 exitTrigger;
-  s32 cellSize;
+  s32 cellSize = 2;
 
   exitTrigger = gFieldWork->stepTrigger;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  cellSize = 2;
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(66, 36, 71, 8, cellSize, cellSize);
   wait(4);
@@ -339,7 +338,6 @@ static void SuhallaGate_GuardsBlockPassage(void) {
 static void SuhallaGate_IodemQuestionsGuards(void) {
   struct Actor *leader;
 #if !TBS_PATCH_3
-  s32 destinationColumn;
 #endif
 
   Event_Start();
@@ -460,9 +458,8 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   MapGrid_CopyCellAttributes(11, 26, 1, 1, 7, 26);
   MapGrid_CopyCellAttributes(11, 26, 1, 1, 8, 26);
 #else
-  destinationColumn = 7;
-  MapGrid_CopyCellAttributes(6, 27, 1, 1, destinationColumn, 27);
-  MapGrid_CopyCellAttributes(9, 26, 2, 1, destinationColumn, 26);
+  MapGrid_CopyCellAttributes(6, 27, 1, 1, 7, 27);
+  MapGrid_CopyCellAttributes(9, 26, 2, 1, 7, 26);
 #endif
   GameFlag_Set(FLAG_SUHALLA_GATE_ATTACK_SEEN);
   Event_End();

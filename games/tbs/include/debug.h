@@ -12,9 +12,6 @@
 #include "edition.h"
 #include "far_call.h"
 
-struct ItemDefinition;
-struct Window;
-
 /// The palette editor's swatch tiles, compressed; it decompresses them to
 /// tile 208 of character block 0, one tile a colour.
 extern const u8 gDebug_PaletteSwatchTiles[];

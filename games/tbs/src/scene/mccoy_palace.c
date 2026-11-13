@@ -612,8 +612,7 @@ s32 Scene_Initialize(void) {
     }
   } else {
     rewardTaken = GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN);
-    if (rewardTaken != 0) {
-    } else {
+    if (rewardTaken == 0) {
       if (gMainRoutineWork.entrance ==
           MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST) {
         if (GameFlag_Get(FLAG_MCCOY_PALACE_PARTY_REWARDED) == 0) {

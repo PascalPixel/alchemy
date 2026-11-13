@@ -13,7 +13,6 @@
 #include "far_call.h"
 
 struct Actor;
-struct ScreenPoint;
 
 /// An IWRAM word the scrolling camera's setup clears; nothing in the tree
 /// reads it.
@@ -31,28 +30,11 @@ extern u8 Render_DecodePictureCodeSize[];
 /// first also remapping the command icons (SpriteColor_RemapPixels).
 extern const u8 gSpriteColorRemapTables[];
 
-struct AbilityListEntry;
 struct BattleEffectParams;
-struct Unit;
-struct BurstParticle;
-struct ScreenPoint;
-struct Particle;
-struct Actor;
 struct FieldPosition;
-struct MercuryLighthouseLights;
-struct MapActor;
-struct MapGridCell;
 struct MenuSprite;
-struct ModeRecord;
-struct FieldRecord;
-struct SceneEntrance;
-struct MapEntry;
 struct Trigger;
 struct ActorPlacement;
-struct SceneExitRegion;
-struct SparklePicture;
-struct Swirl;
-struct Actor;
 
 /// The Colosso opponent's path player, at the start of gSceneLocalState: the
 /// path in ColossoRaceWork is played back or recorded by
@@ -101,11 +83,6 @@ extern struct FloodgateLog *gKolimaForestFloodgateRecords;
 extern u16 *gKolimaForestFloodgateReturned;
 /// Heap slot 5: the 64 actors, 112 bytes each.
 extern struct Actor *gActors;
-/// The world map camera's yaw the scanline parameters were built for; the
-/// vertex update rebuilds them when it changes.
-extern u32 gScanlineAngle;
-/// The world map camera's pitch the scanline parameters were built for.
-extern u32 gScanlinePitch;
 /// The lighthouse transition's pictures, packed (tagged LZ), decoded 4 KB
 /// bytes after the tiles (WorldMap_PlayLighthouseTransition).
 extern const u8 gWorldMapPackedPictures[];

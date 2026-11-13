@@ -37,7 +37,6 @@ extern const u16 gWindow_Palette[];
 
 struct SpriteAnimation;
 struct Sprite;
-struct SelectionNode;
 
 /// The 152 bytes of IWRAM-resident sound code (0x03000bd8, not the mixer at
 /// 0x03007000) that Sound_LoadReverbCode overwrites with a reverb code

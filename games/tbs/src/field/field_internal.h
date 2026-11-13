@@ -126,4 +126,13 @@ enum CellPicturePacking {
 /// A movement target coordinate that is not set.
 #define TARGET_UNSET ((s32)0x80000000)
 
+/// A row of gSpritePictureCache_Sources: the packed resource that holds an
+/// animation number's pictures, ending at number 0.
+struct SpritePictureCacheSource {
+  u16 resource;
+  s16 number;
+};
+
+extern struct SpritePictureCacheSource gSpritePictureCache_Sources[];
+
 #endif

@@ -116,9 +116,7 @@ UNUSED void TileMap_NumberPlaceholderCellPictures(void) {
 void TileMap_ConvertBuffer(void) {
   u8 *savedCells;
   TilemapConvertFn convertGrid;
-  u32 savedBytes;
-
-  savedBytes = 32768;
+  u32 savedBytes = 32768;
   savedCells = Heap_AllocEwram(savedBytes);
   Iwram_CopyWords(savedCells, Ram_MapGridCellBuffer, savedBytes);
   RamCode_Load(convertGrid, Tile_ConvertMapGrid, Tile_ConvertMapGridCodeSize);

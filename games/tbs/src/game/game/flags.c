@@ -117,15 +117,17 @@ u8 GameFlag_DecrementByte(s32 flag) {
 s32 GameFlag_GetNibble(u32 flag) {
   u32 shifted = (u32)flag << 20;
   u32 shift;
-  u32 mask;
   s32 result;
 
   shift = flag & 4;
-  mask = 15;
-  flag = shifted >> 23;
-  result = gGameFlagBytes[flag];
-  result &= mask << shift;
-  return result >> shift;
+  {
+    u32 mask = 15;
+
+    flag = shifted >> 23;
+    result = gGameFlagBytes[flag];
+    result &= mask << shift;
+    return result >> shift;
+  }
 }
 
 /// Sets the four bits `flag` is in. Only GAME.S's bare veneer reaches it;

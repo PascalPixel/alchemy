@@ -403,7 +403,7 @@ void IconMenu_AddIcon(s32 icon) {
   struct IconMenuEntry *entry;
   s16 index;
   s32 slot;
-  s32 y;
+  s32 y = 136;
 
   work = gIconMenuWork;
   index = work->count;
@@ -413,7 +413,6 @@ void IconMenu_AddIcon(s32 icon) {
     slot = VramCache_FindFreeEntry();
     CommandIcon_LoadIntoSlot(slot, icon);
     entry->x = index * 24 + 32;
-    y = 136;
     entry->y = y;
     entry->slot = slot;
     work->commandIcons[index] = icon;

@@ -453,8 +453,6 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     // From frame 28 each live spray particle falls under its gravity
     // (gNeptune_Gravity by index); one that falls below y 104 is freed.
     if (frame > 27) {
-      /* FAKEMATCH(temporary): draw holds blit[1]; as blit[1] in the draw,
-       * 643 of 1474 instructions differ in tbs-en. */
       DrawRectangle draw = blit[1];
       for (i = 0; i != 1024; i++) {
         if (PARTICLES[i].variant >= 0) {

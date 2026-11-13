@@ -32,7 +32,6 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   s32 step;
   s32 row;
   s32 result;
-  s32 zero;
   s32 index;
   s32 memberIndex;
 
@@ -202,10 +201,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
           DJINN_NUMBER(menu->pairEntries[0]) + MsgDjinnName,
       menu->helpWindow, 48, row * 8);
-  Window_SetTilemapEntryFar(menu->helpWindow,
-                            DJINN_ELEMENT(menu->pairEntries[0]) +
-                                DJINN_ELEMENT_TILE,
-                            5, row, zero = 0);
+  Window_SetTilemapEntryFar(
+      menu->helpWindow,
+      DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 5, row, 0);
   Text_SetColorFar(TEXT_COLOR_NORMAL);
 
   if (mode == DJINN_COMPARE_TRADE) {
@@ -230,9 +228,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         menu->helpWindow, 48, 16);
     Window_SetTilemapEntryFar(
         menu->helpWindow,
-        DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 5, 2, zero);
+        DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 5, 2, 0);
     Text_SetColorFar(TEXT_COLOR_NORMAL);
-    Window_SetTilemapEntryFar(menu->helpWindow, WINDOW_TILE(662), 7, 1, zero);
+    Window_SetTilemapEntryFar(menu->helpWindow, WINDOW_TILE(662), 7, 1, 0);
   }
 
   for (;;) {
@@ -274,10 +272,10 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 
           Iwram_CopyWords(saved, work, size);
           window = Message_OpenWindowFar(MsgDjinnTutorialSetChanges, 8, 0, 1);
-          // The cursor, message and step in a once-only block keeps the window
-          // copy and the step's store ahead of the cursor's stores, as the ROM
-          // does; as plain statements, 12 of 1276 instructions differ in
-          // tbs-en.
+          /* FAKEMATCH(dead): the cursor, message and step in a once-only
+           * block keep the window copy and the step's store ahead of the
+           * cursor's stores; as plain statements, 12 of 1276 instructions
+           * differ in tbs-en. */
           do {
             menu->cursor->motion = ICON_SHOWN;
             MenuCursor_Slide(2, 96);
@@ -303,9 +301,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           Iwram_CopyWords(saved, work, size);
           window =
               Message_OpenWindowFar(MsgDjinnTutorialClassPsynergy, 8, 0, 1);
-          // As in step 10, a once-only block around the cursor, message and
-          // step; as plain statements, 14 of 1276 instructions differ in
-          // tbs-en.
+          /* FAKEMATCH(dead): as in step 10, a once-only block round the
+           * cursor, message and step; as plain statements, 14 of 1276
+           * instructions differ in tbs-en. */
           do {
             menu->cursor->motion = ICON_SHOWN;
             MenuCursor_Slide(106, 56);
@@ -401,7 +399,6 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     if (page <= DJINN_COMPARE_PAGE_RECEIVER) {
       list = menu->secondWindow;
       if (pageCounts[page] > 1) {
-        s32 top;
 
         for (index = 0; index < pageCounts[page]; index++) {
           s32 tile;
@@ -416,10 +413,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           Window_SetTilemapEntryFar(
               list, tile, list->width - pageCounts[page] + index - 2, -1, 0);
         }
-        top = -1;
         Window_SetTilemapEntryFar(list, PAGE_ARROW_LEFT,
-                                  list->width - pageCounts[page] - 3, top, 0);
-        Window_SetTilemapEntryFar(list, PAGE_ARROW_RIGHT, list->width - 2, top,
+                                  list->width - pageCounts[page] - 3, -1, 0);
+        Window_SetTilemapEntryFar(list, PAGE_ARROW_RIGHT, list->width - 2, -1,
                                   0);
         Window_MarkTilemapRow(work, list->y);
       }
@@ -474,10 +470,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     // turn every 4 frames.
     if ((frame & 3) == 0) {
       void *tile;
-      u32 fill;
+      u32 fill = TEXT_CANVAS_BACKGROUND_WORD;
 
       tile = (void *)DJINN_BACKDROP_BORDER_VRAM;
-      fill = TEXT_CANVAS_BACKGROUND_WORD;
       if ((frame & 4) != 0) {
         Iwram_CopyWords(tile, gMenu_BackdropBorderTile, 32);
       } else {

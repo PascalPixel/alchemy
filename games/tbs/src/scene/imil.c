@@ -1342,16 +1342,14 @@ static void Imil_UpdateFootprints(void) {
   s32 x;
   s32 column;
   s32 isSet;
-  s32 zoneFlag;
-  s32 otherZoneFlag;
+  s32 zoneFlag = FLAG_IMIL_NO_FOOTPRINTS;
+  s32 otherZoneFlag = FLAG_IMIL_FOOTPRINTS;
   struct MapGridScrollWork *grid;
 
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   x = actor->x.fixed;
   // In units of 8 pixels.
   column = x >> 19;
-  zoneFlag = FLAG_IMIL_NO_FOOTPRINTS;
-  otherZoneFlag = FLAG_IMIL_FOOTPRINTS;
   if ((u32)(column - 24) <= 7 ||
       ((u32)((actor->z.fixed >> 19) - 36) <= 9 && (u32)(column - 22) <= 9)) {
     isSet = GameFlag_Get(zoneFlag);

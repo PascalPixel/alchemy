@@ -751,25 +751,23 @@ static void VaultCave_RunRumble(void) {
 /// FLAG_VAULT_CAVE_SWITCH_FLIPPED then keeps the change until the party comes
 /// down the ladder from Vault again.
 static void VaultCave_FlipSwitch(void) {
-  s32 destinationRow;
   s32 destinationColumn;
 
   if (Event_GetFlag(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
     FieldMessage_Show(MSGNO(MsgFieldFlippedSwitch), 1);
     GameFlag_Set(FLAG_VAULT_CAVE_SWITCH_FLIPPED);
     // Animate the switch face before the adjacent mechanism starts.
-    destinationRow = 27;
     destinationColumn = 92;
     Sound_Play(SE_SWITCH);
-    MapGrid_CopyCells(107, 27, 1, 1, destinationColumn, destinationRow);
+    MapGrid_CopyCells(107, 27, 1, 1, destinationColumn, 27);
     Event_Wait(39);
-    MapGrid_CopyCells(108, 27, 1, 1, destinationColumn, destinationRow);
+    MapGrid_CopyCells(108, 27, 1, 1, destinationColumn, 27);
     Event_Wait(50);
     destinationColumn = 25;
     Sound_Play(SE_SWITCH_MECHANISM);
-    MapGrid_CopyCells(1, 24, 1, 2, destinationColumn, destinationRow);
+    MapGrid_CopyCells(1, 24, 1, 2, destinationColumn, 27);
     Event_Wait(40);
-    MapGrid_CopyCells(2, 24, 1, 2, destinationColumn, destinationRow);
+    MapGrid_CopyCells(2, 24, 1, 2, destinationColumn, 27);
     Event_Wait(40);
     VaultCave_RunRumble();
   }

@@ -451,14 +451,13 @@ s32 DebugBrowser_Portraits(void) {
   s32 slot;
   s32 cancelKey;
   u32 slotOffset;
-  s32 palette;
+  s32 palette = 15;
 
   work = WINDOW_WORK;
   redraw = 1;
   portrait = Portrait_OpenWindow(0, 0, 10, 5);
   window = Window_Create(10, 10, 14, 3, WINDOW_FLAG_INSTANT);
   index = 0;
-  palette = 15;
   for (i = 0; gPortrait_CharacterMap[i * 2] != -1; i++) {
   }
   characterCount = i;

@@ -136,18 +136,20 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
       u8 serialError = control & SIO_MULTI_SI;
 
       if (serialError == 0 && gSerialWork.sendIndex == -1) {
-        u32 ie;
 
         Io_Write16(0, &REG_IME);
-        ie = REG_IE;
-        Io_Write16((ie & ~INTR_FLAG_SERIAL) | INTR_FLAG_TIMER3, &REG_IE);
-        Io_Write16(1, &REG_IME);
-        // SIOCNT's high byte: clear SIO_INTR_ENABLE, as timer 3 now clocks
-        // the transfers
-        *((volatile s8 *)siocnt + 1) &= ~(SIO_INTR_ENABLE >> 8);
-        REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
-        REG_TM3CNT = SERIAL_TIMER_RELOAD;
-        gSerialWork.mode = mode;
+        {
+          u32 ie = REG_IE;
+
+          Io_Write16((ie & ~INTR_FLAG_SERIAL) | INTR_FLAG_TIMER3, &REG_IE);
+          Io_Write16(1, &REG_IME);
+          // SIOCNT's high byte: clear SIO_INTR_ENABLE, as timer 3 now clocks
+          // the transfers
+          *((volatile s8 *)siocnt + 1) &= ~(SIO_INTR_ENABLE >> 8);
+          REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
+          REG_TM3CNT = SERIAL_TIMER_RELOAD;
+          gSerialWork.mode = mode;
+        }
       }
     } else if (multiplayerId == 0) {
       break;
@@ -189,18 +191,20 @@ s32 Serial_PollStatus(void) {
       u8 serialError = control & SIO_MULTI_SI;
 
       if (serialError == 0 && gSerialWork.sendIndex == -1) {
-        u32 ie;
 
         Io_Write16(0, &REG_IME);
-        ie = REG_IE;
-        Io_Write16((ie & ~INTR_FLAG_SERIAL) | INTR_FLAG_TIMER3, &REG_IE);
-        Io_Write16(1, &REG_IME);
-        // SIOCNT's high byte: clear SIO_INTR_ENABLE, as timer 3 now clocks
-        // the transfers
-        *((volatile s8 *)siocnt + 1) &= ~(SIO_INTR_ENABLE >> 8);
-        REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
-        REG_TM3CNT = SERIAL_TIMER_RELOAD;
-        gSerialWork.mode = mode;
+        {
+          u32 ie = REG_IE;
+
+          Io_Write16((ie & ~INTR_FLAG_SERIAL) | INTR_FLAG_TIMER3, &REG_IE);
+          Io_Write16(1, &REG_IME);
+          // SIOCNT's high byte: clear SIO_INTR_ENABLE, as timer 3 now clocks
+          // the transfers
+          *((volatile s8 *)siocnt + 1) &= ~(SIO_INTR_ENABLE >> 8);
+          REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
+          REG_TM3CNT = SERIAL_TIMER_RELOAD;
+          gSerialWork.mode = mode;
+        }
       }
       gSerialWork.phase = SERIAL_PHASE_CONNECTED;
     }
@@ -288,9 +292,6 @@ void Serial_PrepareSendPacket(void *payload) {
     }
   }
   {
-    /* FAKEMATCH(temporary): sendBuffers copies sr->sendBuffer; as
-     * ((struct SerialPacket *)sr->sendBuffer[0])->checksum = ~sum, 8 of 48
-     * instructions differ in tbs-en. */
     u16 **sendBuffers = sr->sendBuffer;
 
     ((struct SerialPacket *)sendBuffers[0])->checksum = ~sum;

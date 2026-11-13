@@ -68,10 +68,6 @@
 #include "game/character_ids.h"
 #include "ability_ids.h"
 
-extern u8 IwramCopyWords[];
-
-s32 _call_via_r3(void *, void *, s32, void *);
-
 /// AbilityDefinition.flags: where an ability or item can be used, as the
 /// Psynergy list says ("Usable in the field", "Usable in battle"). The same
 /// values as enum AbilityUse (battle_unit.h), which these macros shadow here.

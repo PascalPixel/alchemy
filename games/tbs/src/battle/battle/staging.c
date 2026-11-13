@@ -969,7 +969,6 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
 void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
   u16 selection[2];
   u16 *selected;
-  s32 listTerminator;
   s32 flashesRemaining;
 
   Unit_GetFar(unitId);
@@ -978,7 +977,7 @@ void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
   selected = selection;
   flashesRemaining = 1;
   do {
-    listTerminator = BATTLE_UNIT_LIST_END;
+    s32 listTerminator = BATTLE_UNIT_LIST_END;
     selected[1] = listTerminator;
     selected[0] = unitId;
     PartyStatus_HighlightMembersFar(selected);
@@ -1027,8 +1026,9 @@ void BattleObject_RemoveFromLists(s32 unitId) {
 
   // The enemies' list.
   // The scan is a label loop, the form its branches match with.
-  // The block keeps the party loop's first test from being peeled ahead of it;
-  // without the block, 12 of 53 instructions differ in tbs-en.
+  /* FAKEMATCH(dead): a once-only block round the label loop keeps the party
+   * loop's first test from being peeled ahead of it; as the plain loop, 26 of
+   * 53 instructions differ in tbs-en. */
   do {
     enemyOrActionIndex = 0;
   again:

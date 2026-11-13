@@ -86,22 +86,18 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
                                s32 variant) {
   struct WindowSprite *object;
   u32 resource;
-  s32 selectedVariant = variant;
-  struct Window *targetWindow = window;
-  s32 targetX = x;
   struct ItemMenuWork *menu = gMenuWork;
 
-  if (selectedVariant == 0)
+  if (variant == 0)
     resource = (u16)menu->resourceSlots[0];
   else
     resource = (u16)menu->resourceSlots[1];
-  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, targetWindow,
-                                  targetX, y);
+  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, window, x, y);
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms both return -1, which emits
      * nothing but keeps variant and x live across the call; as a plain
      * return -1, 16 of 36 instructions differ in tbs-en. */
-    if (variant || targetX)
+    if (variant || x)
       return -1;
     else
       return -1;
@@ -121,25 +117,21 @@ s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
                                    s32 variant) {
   struct WindowSprite *object;
   u32 resource;
-  s32 selectedVariant = variant;
-  struct Window *targetWindow = window;
-  s32 targetX = x;
   struct ItemMenuWork *menu = gMenuWork;
 
-  if (selectedVariant == 0) {
+  if (variant == 0) {
     resource = (u16)menu->resourceSlots[0];
     y -= 3;
   } else {
     resource = (u16)menu->resourceSlots[1];
     y -= 4;
   }
-  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, targetWindow,
-                                  targetX, y);
+  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, window, x, y);
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms both return -1, which emits
      * nothing but keeps variant and x live across the call; as a plain
      * return -1, 22 of 40 instructions differ in tbs-en. */
-    if (selectedVariant || x)
+    if (variant || x)
       return -1;
     else
       return -1;

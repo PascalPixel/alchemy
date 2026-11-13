@@ -327,9 +327,6 @@ s32 ElementGlow_End(s32 unused) {
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
   s32 remaining;
-  u32 redMask;
-  u32 greenMask;
-  u32 blueMask;
   u32 pixel;
   u32 red;
   u32 green;
@@ -338,9 +335,9 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
   if (scale > Q16_ONE)
     scale = Q16_ONE;
   if (count > 0) {
-    redMask = 0x1f;
-    greenMask = 0x3e0;
-    blueMask = 0x7c00;
+    u32 redMask = 0x1f;
+    u32 greenMask = 0x3e0;
+    u32 blueMask = 0x7c00;
     remaining = count;
     do {
       pixel = *source;
@@ -389,7 +386,6 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   struct SparkWork *work;
   s32 frame;
   s32 *brightness;
-  struct ScreenPoint *projectedPosition;
 
   wait(1);
   BattleBackground_SetMode(BATTLE_BACKGROUND_FIXED, battle->background, 0);
@@ -413,8 +409,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     // (its origin queued to BG2X and BG2Y with interrupts off).
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, BLEND_ALPHA(14, 16));
     ElementGlow_InitializeStarField(element);
-    for (frame = 0, projectedPosition = &starFieldPosition; frame <= 44;
-         frame++) {
+    for (frame = 0; frame <= 44; frame++) {
       brightness = &battle->brightness;
       ime = &REG_IME;
       work = gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
@@ -424,9 +419,9 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
                                         Q16_ONE - frame * BACKGROUND_LEVEL_STEP,
                                     BATTLE_BG_PALETTE_COLORS);
       BattleMotion_ProjectScaledPosition(
-          unitId, ScreenPoint_Coordinates(projectedPosition));
-      work->canvasOrigin.x = (64U - (u32)projectedPosition->x) << 8;
-      work->canvasOrigin.y = (64U - (u32)projectedPosition->y) << 8;
+          unitId, ScreenPoint_Coordinates(&starFieldPosition));
+      work->canvasOrigin.x = (64U - (u32)starFieldPosition.x) << 8;
+      work->canvasOrigin.y = (64U - (u32)starFieldPosition.y) << 8;
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, (u32)&work->canvasOrigin.x,
                               DMA_COPY_WORDS(2));
       work->canvasOrigin.queued = 1;

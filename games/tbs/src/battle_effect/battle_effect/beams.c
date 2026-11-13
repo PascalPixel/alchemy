@@ -45,10 +45,6 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   s32 kind;
   struct Unit *unit;
   BlitterPair draw;
-  /* FAKEMATCH(temporary): slots holds gHeapSlots; as
-   * (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE], 4 of 655 instructions differ
-   * in tbs-en. */
-  DrawRectangle *slots;
   struct Actor *target;
   s32 half;
   s32 frame;
@@ -101,9 +97,12 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
                           COMPOSITE_LIGHTEN);
     }
   }
-  slots = (DrawRectangle *)gHeapSlots;
-  draw[0] = slots[HEAP_SLOT_RAM_CODE];
-  draw[1] = slots[HEAP_SLOT_RAM_CODE_2];
+  {
+    DrawRectangle *slots = (DrawRectangle *)gHeapSlots;
+
+    draw[0] = slots[HEAP_SLOT_RAM_CODE];
+    draw[1] = slots[HEAP_SLOT_RAM_CODE_2];
+  }
   wait(1);
   // The picture, by BeamKind. An enemy user (unit id past PIERS) takes the
   // small Mars Djinni's palette, a party member the crescent's. The sparks and
@@ -305,10 +304,6 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   s32 acceleration;
   s32 strength;
   BlitterPair draw;
-  /* FAKEMATCH(temporary): slots holds gHeapSlots; as
-   * (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE], 4 of 672 instructions differ
-   * in tbs-en. */
-  DrawRectangle *slots;
   struct Actor *actor;
   struct Actor *target;
   struct BattleWork *battle;
@@ -350,9 +345,12 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
   }
-  slots = (DrawRectangle *)gHeapSlots;
-  draw[0] = slots[HEAP_SLOT_RAM_CODE];
-  draw[1] = slots[HEAP_SLOT_RAM_CODE_2];
+  {
+    DrawRectangle *slots = (DrawRectangle *)gHeapSlots;
+
+    draw[0] = slots[HEAP_SLOT_RAM_CODE];
+    draw[1] = slots[HEAP_SLOT_RAM_CODE_2];
+  }
   BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                         work->args->firstTarget, 130);
   wait(1);

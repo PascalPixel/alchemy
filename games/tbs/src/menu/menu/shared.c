@@ -113,13 +113,6 @@ void Window_CloseIfOpen(struct Window **handle, s32 style) {
   }
 }
 
-/// Copies one Unit through _call_via_r3 to the resident IWRAM word copy, where
-/// menu/djinn.c's Unit_Copy calls Iwram_CopyWords.
-static inline void StatusPanel_CopyUnit(struct Unit *destination,
-                                        struct Unit *source) {
-  _call_via_r3(destination, source, sizeof(struct Unit), IwramCopyWords);
-}
-
 /// Draws the status panel of the Item and Psynergy screens for the party
 /// party member `member` (window at tile 0,5, 13 by 12): the name, up to two
 /// statuses or the level, the party member's portrait, and below them what
@@ -227,14 +220,14 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
     // recalculate its stats, show them against the saved copy, then put the
     // unit back as it was.
     backup = Heap_Alloc(sizeof(struct Unit));
-    StatusPanel_CopyUnit(backup, unit);
+    Iwram_CopyWords(backup, unit, sizeof(struct Unit));
     if (menu->equipPreview)
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
     else
       Inventory_EquipFar(member, slot);
     Unit_CalculateFar(member);
     Text_DrawStatComparison(unit, backup, window);
-    StatusPanel_CopyUnit(unit, backup);
+    Iwram_CopyWords(unit, backup, sizeof(struct Unit));
     Heap_Release(backup);
     break;
   }

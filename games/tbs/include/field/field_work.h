@@ -12,7 +12,6 @@
 struct ActorPlacement;
 struct Trigger;
 struct Actor;
-struct Actor;
 struct MapGridCell;
 
 /// The actor ids FieldWork.actors maps (enum ActorId): the party's eight

@@ -34,32 +34,6 @@ void FieldEffect_StartWindowHBlankDma(void) {
           (volatile u32 *)dma0);
 }
 
-/// A run of screen lines in a transition shape: one window edge pair for every
-/// line, or, when that is 0, edges moving from left x0 and right y0 to left
-/// x1 and right y1 down the run.
-struct TransitionSpan {
-  u16 count; ///< lines; 0 for an unused run
-  /// The (left << 8 | right) pair every line of the run takes, or 0 for the
-  /// sloped edges below.
-  u16 value;
-  u8 x0; ///< screen pixels: the left edge on the run's first line
-  u8 x1; ///< screen pixels: the left edge the run moves toward
-  u8 y0; ///< screen pixels: the right edge on the run's first line
-  u8 y1; ///< screen pixels: the right edge the run moves toward
-};
-
-/// One step of WINDOW_TRANSITION_SHAPE, a row of
-/// gScreenTransition_Shapes chosen by the progress: the WININ and WINOUT
-/// values, swapped as the transition opens or closes, and three runs of lines
-/// written one after another from the top of the screen.
-struct TransitionShape {
-  u16 first;  ///< WINOUT while opening, WININ while closing
-  u16 second; ///< WININ while opening, WINOUT while closing
-  struct TransitionSpan spans[3];
-};
-
-extern struct TransitionShape gScreenTransition_Shapes[];
-
 /// Each frame of a window transition: advances its value toward its end (and
 /// at the end turns the windows off, or moves to the next mode), then builds
 /// the next page of window edges, WININ and WINOUT first and then a
@@ -897,10 +871,8 @@ enum ScreenTransitionIrqPhase {
 };
 
 void ScreenTransition_UpdateScanline(void) {
-  u32 scanline;
+  u32 scanline = REG_VCOUNT;
   struct ScreenTransitionWin *state;
-
-  scanline = REG_VCOUNT;
   state = gMapGridWork[0];
 
   // Keep the same VCount sample across phase changes.

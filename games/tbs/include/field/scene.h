@@ -11,7 +11,6 @@
 #include "scene_tables.h"
 #include "field_work.h"
 
-struct MapGridCell;
 struct Actor;
 
 /// A scene's row in gScenes: its overlay's resource, its area,

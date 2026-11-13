@@ -2149,20 +2149,22 @@ s32 Menu_CreateEightEntryActors(struct Window *window) {
   struct WindowSprite *icon;
   s32 slotIndex;
   struct ItemMenuWork *menu;
-  s32 y;
 
   menu = gMenuWork;
   slotIndex = 0;
-  y = 168;
-  slot = menu->categoryIcons;
-  do {
-    icon = WindowSprite_CreateFromResourceFar(ICON_KIND_ITEM, slotIndex, window,
-                                              248, y);
-    slotIndex += 1;
-    *slot = icon;
-    slot += 1;
-  } while (slotIndex <= 7);
-  return 1;
+  {
+    s32 y = 168;
+
+    slot = menu->categoryIcons;
+    do {
+      icon = WindowSprite_CreateFromResourceFar(ICON_KIND_ITEM, slotIndex,
+                                                window, 248, y);
+      slotIndex += 1;
+      *slot = icon;
+      slot += 1;
+    } while (slotIndex <= 7);
+    return 1;
+  }
 }
 
 /// Shows the icon of each status that flags marks

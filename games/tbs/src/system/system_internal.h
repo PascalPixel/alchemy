@@ -55,8 +55,8 @@
 #include "savedata.h"
 #include "sounds.h"
 
-/// The compiler library's call through r3, which oam.c and save.c use to
-/// run code copied to RAM with four arguments.
+/// The compiler library's call through r3, which oam.c uses to run code
+/// copied to RAM.
 s32 _call_via_r3(s32, s32, s32, s32);
 
 #endif

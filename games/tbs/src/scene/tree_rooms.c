@@ -608,7 +608,6 @@ static void TreeRooms_FightTret(void) {
 static void TreeRooms_PlayPostBattleConversation(void) {
   s32 hasMia;
   struct Actor *partyActor;
-  s32 openingColumn;
   TaskFunc sparkTask;
   const s32 *actions;
 
@@ -651,16 +650,15 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   FieldCamera_WaitForMove();
   Event_Wait(10);
   // Open the passage in Tret's room before continuing the conversation.
-  openingColumn = 10;
   Sound_Play(SE_MAP_EXIT);
-  MapGrid_CopyCellAttributes(26, 3, 1, 2, openingColumn, 8);
-  MapGrid_CopyCells(26, 38, 1, 1, openingColumn, 43);
+  MapGrid_CopyCellAttributes(26, 3, 1, 2, 10, 8);
+  MapGrid_CopyCells(26, 38, 1, 1, 10, 43);
   wait(4);
-  MapGrid_CopyCells(26, 37, 1, 2, openingColumn, 42);
+  MapGrid_CopyCells(26, 37, 1, 2, 10, 42);
   wait(4);
-  MapGrid_CopyCells(26, 36, 1, 3, openingColumn, 41);
+  MapGrid_CopyCells(26, 36, 1, 3, 10, 41);
   wait(4);
-  MapGrid_CopyCells(26, 35, 1, 4, openingColumn, 40);
+  MapGrid_CopyCells(26, 35, 1, 4, 10, 40);
   wait(80);
   // Tret comes to: "Oh... Mmmmm... What has happened to me?"
   Event_SetMessageId(MsgTretMmmmm);

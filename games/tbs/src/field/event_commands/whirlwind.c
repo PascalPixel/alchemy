@@ -90,28 +90,30 @@ void FieldEffect_WanderAroundAnchor(struct Actor *effect) {
 void FieldEffect_CircleAnchor(struct Actor *effect) {
   struct Actor *anchor;
   s32 angle;
-  s32 radius;
   s32 dx;
   s32 dz;
 
   anchor = effect->watchedActor;
-  radius = WHIRLWIND_ORBIT_RADIUS;
-  angle = effect->facing;
-  dx = Iwram_MulQ16(radius, Trig_Cos(angle));
-  dz = Iwram_MulQ16(radius, Trig_Sin(angle));
-  effect->x.fixed = anchor->x.fixed + dx;
-  effect->z.fixed = anchor->z.fixed + dz;
-  effect->facing += WHIRLWIND_ORBIT_ANGLE_STEP;
-  if (++effect->swirlFrames == WHIRLWIND_ORBIT_FRAMES) {
-    // The field integrates height after this update routine. Supply upward
-    // speed and gravity here; the wandering update routine only changes x and
-    // z.
-    effect->update = FieldEffect_WanderAroundAnchor;
-    effect->swirlFrames = 0;
-    effect->turnFrames = 0;
-    effect->gravity = px(1) / 10;
-    effect->velocityY = px(3);
-    effect->facing = Random16();
+  {
+    s32 radius = WHIRLWIND_ORBIT_RADIUS;
+
+    angle = effect->facing;
+    dx = Iwram_MulQ16(radius, Trig_Cos(angle));
+    dz = Iwram_MulQ16(radius, Trig_Sin(angle));
+    effect->x.fixed = anchor->x.fixed + dx;
+    effect->z.fixed = anchor->z.fixed + dz;
+    effect->facing += WHIRLWIND_ORBIT_ANGLE_STEP;
+    if (++effect->swirlFrames == WHIRLWIND_ORBIT_FRAMES) {
+      // The field integrates height after this update routine. Supply upward
+      // speed and gravity here; the wandering update routine only changes x and
+      // z.
+      effect->update = FieldEffect_WanderAroundAnchor;
+      effect->swirlFrames = 0;
+      effect->turnFrames = 0;
+      effect->gravity = px(1) / 10;
+      effect->velocityY = px(3);
+      effect->facing = Random16();
+    }
   }
 }
 

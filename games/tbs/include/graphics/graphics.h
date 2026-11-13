@@ -18,8 +18,6 @@
 #include "edition.h"
 #include "far_call.h"
 
-struct Window;
-
 /// Which way the screen fade goes: 0 towards black, 1 towards white.
 extern u8 gScreenFadeToWhite;
 // volatile: ScreenFade_Update, which the VBlank handler runs, counts it down to
@@ -80,22 +78,9 @@ extern u8 *gPsynergyIconsEnd[];
 
 struct Sprite;
 struct ArticleTable;
-struct Unit;
-struct EffectLaunch;
-struct GlyphPalette;
-struct NumberRow;
 struct PaletteCycleWork;
-struct GlyphRect;
-struct WindowSprite;
 struct MenuCursor;
 struct TileMask;
-struct TransitionShape;
-struct UiBobPairOutput;
-struct Message;
-struct UiScaleSprite;
-struct Window;
-struct Vec2;
-struct OptionMenuWork;
 
 // The pixel shading kernels and their sizes: each
 // PaletteFade_BackupAnd... function in system/system/decompress.c copies its

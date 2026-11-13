@@ -1564,7 +1564,6 @@ static void TolbiShipDeck_SetUpAfterKraken(void) {
 /// it.
 static void TolbiShipDeck_SetUpAtAnchor(void) {
   struct Actor *record;
-  s32 facing;
 
   ((struct MapGridScrollWork *)gMapGridWork[0])->minX = px(65);
   Event_Start();
@@ -1573,20 +1572,19 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
   wait(1);
   Actor_ReleaseById(ACTOR_SEA_KRAKEN);
   Actor_SetPosition(ACTOR_SEA_CREW_MEMBER, 238, 626);
-  facing = 192; // 192 << 6 is TRIG_TURN * 3 / 16, south-southeast
   record = Actor_Get(ACTOR_SEA_CREW_MEMBER);
-  record->facing = (facing << 6);
+  record->facing = FACING_SOUTH_SOUTHEAST;
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED) != 0) {
     Actor_SetPosition(ACTOR_SEA_SEAN, 162, 634);
     record = Actor_Get(ACTOR_SEA_SEAN);
-    record->facing = (facing << 6);
+    record->facing = FACING_SOUTH_SOUTHEAST;
     Actor_SetPosition(ACTOR_SEA_OURANOS, 162, 676);
     record = Actor_Get(ACTOR_SEA_OURANOS);
     record->facing = FACING_NORTH_NORTHEAST;
   } else {
     Actor_SetPosition(ACTOR_SEA_SEAN, 160, 652);
     record = Actor_Get(ACTOR_SEA_SEAN);
-    record->facing = (facing << 6);
+    record->facing = FACING_SOUTH_SOUTHEAST;
     Actor_SetPosition(ACTOR_SEA_OURANOS, 166, 668);
     record = Actor_Get(ACTOR_SEA_OURANOS);
     record->facing = FACING_NORTH_NORTHWEST;

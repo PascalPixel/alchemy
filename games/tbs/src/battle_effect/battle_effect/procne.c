@@ -61,7 +61,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   s32 span;
   s32 dist;
   s32 alive;
-  s32 width;
+  s32 width = 48;
   s32 heading[8];
   s32 radius[8];
   s32 spin[8];
@@ -139,8 +139,6 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     point->variant = Random16() & 63;
     index++;
   } while (index != 64);
-
-  width = 48;
   frame = 0;
   do {
     // A or B skips ahead.

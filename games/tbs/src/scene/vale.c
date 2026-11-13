@@ -1710,10 +1710,9 @@ s32 Vale_Initialize(void) {
       }
       {
         s32 priority;
-        s32 actorId;
+        s32 actorId = ACTOR_DORA;
 
         priority = ((u32)(u8)set >> 8) + 2;
-        actorId = ACTOR_DORA;
         Actor_SetSpritePriority(actorId, priority);
       }
 #endif
@@ -2414,10 +2413,7 @@ static void Vale_RoofMended(void) {
   struct Actor *leader;
   struct Actor *actor;
   u32 i;
-  s32 turnBack;
-  s32 turnSide;
   struct Actor *turned;
-  s32 flag;
   TaskFunc funcA;
   TaskFunc funcB;
   TaskFunc funcC;
@@ -2437,15 +2433,13 @@ static void Vale_RoofMended(void) {
   turned = Actor_Get(ACTOR_DORA);
 
   turned->facing = FACING_EAST;
-  turnBack = FACING_NORTH;
-  turned->facing = turnBack;
+  turned->facing = FACING_NORTH;
   Actor_SetPosition(ACTOR_GARET, 298, 736);
   turned = Actor_Get(ACTOR_GARET);
-  turnSide = FACING_SOUTH;
-  turned->facing = turnSide;
+  turned->facing = FACING_SOUTH;
   Actor_SetPosition(ACTOR_JENNA, 298, 760);
   turned = Actor_Get(ACTOR_JENNA);
-  turned->facing = turnSide;
+  turned->facing = FACING_SOUTH;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
   Actor_SetScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   actor = Actor_Get(ACTOR_FIRST_BOARD);
@@ -2473,8 +2467,8 @@ static void Vale_RoofMended(void) {
   wait(1);
   gFieldWork->transitionFrames = 32;
   Event_StartScreenTransition();
-  Actor_SetSpeedFixed(ACTOR_JENNA, px(1) / 2, turnSide);
-  Actor_SetSpeedFixed(ACTOR_GARET, px(1) / 2, turnSide);
+  Actor_SetSpeedFixed(ACTOR_JENNA, px(1) / 2, FACING_SOUTH);
+  Actor_SetSpeedFixed(ACTOR_GARET, px(1) / 2, FACING_SOUTH);
   Actor_SetScript(ACTOR_JENNA, gVale_JennaWalksToTheHouse);
   Actor_SetScript(ACTOR_GARET, gVale_GaretWalksToTheHouse);
   Event_Wait(40);
@@ -2487,7 +2481,7 @@ static void Vale_RoofMended(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.3);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 400, 840);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, turnBack, 30);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 40);
@@ -2996,10 +2990,9 @@ static void Vale_RoofMended(void) {
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_Wait(60);
   actor = Actor_Get(ACTOR_GARET);
-  flag = 1;
-  actor->steeringFlags |= flag;
+  actor->steeringFlags |= 1;
   actor = Actor_Get(ACTOR_JENNA);
-  actor->steeringFlags |= flag;
+  actor->steeringFlags |= 1;
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_JENNA, 1);
@@ -3026,7 +3019,7 @@ static void Vale_RoofMended(void) {
   {
     struct Actor *record = Actor_Get(ACTOR_DORA);
 
-    record->steeringFlags = flag | record->steeringFlags;
+    record->steeringFlags = 1 | record->steeringFlags;
   }
   Vale_ClimbDownRoofLadder(ACTOR_DORA, DORA_ANIMATION_CLIMB_OVER_TOP,
                            DORA_ANIMATION_CLIMB, 0);

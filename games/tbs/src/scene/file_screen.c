@@ -171,13 +171,12 @@ static void FileScreen_LoadBackground(void) {
   u32 y;
   u16 tile;
   struct BgScroll *scroll;
-  s32 blankTile;
+  s32 blankTile = LOGO_BLANK_TILE;
 
   resourceId = (s32)&ResourceId_GoldenSunLogo;
   ScreenFade_ToBlack(0);
   REG_BG2CNT = LOGO_BGCNT;
   gBgScroll[2].y = 0;
-  blankTile = LOGO_BLANK_TILE;
   resource = Resource_GetTableEntry(resourceId);
   Dma_Set(resource, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   resource += 224 * 2;
@@ -448,7 +447,6 @@ s32 FileScreen_Run(void) {
   s32 result;
   s32 linkMessage;
   s32 peerIndex;
-  s32 requiredLinkMask;
   s32 linkConnectionOk;
   s32 pageGlyphIndex;
   s32 passwordHeadingMessage;
@@ -741,35 +739,38 @@ menu_top:;
       // Wait for the send to finish, at most 600000 frames (about 2.8
       // hours); ten frames in a row without both consoles is an error.
       limit = 0;
-      requiredLinkMask = 3;
-      linkConnectionOk = 1;
-      for (index = 0; index <= 599999; index++) {
-        limit = (limit + 1);
-        if ((requiredLinkMask & gLinkStatus) == requiredLinkMask) {
-          limit = 0;
-        }
-        if (limit == 10) {
-          linkConnectionOk = 0;
-          break;
-        }
-        if (gSerialSendSource == 0) {
-          break;
-        }
-        wait(1);
-      }
-      if (linkConnectionOk == 0) {
-        WindowSprite_PrepareForRedraw((struct Window *)result);
-        Text_DrawMessage(MsgClearCommunicationError, (struct Window *)result, 0,
-                         4);
-        // Wait for A.
-        limit = KEY_A;
-        do {
+      {
+        s32 requiredLinkMask = 3;
+
+        linkConnectionOk = 1;
+        for (index = 0; index <= 599999; index++) {
+          limit = (limit + 1);
+          if ((requiredLinkMask & gLinkStatus) == requiredLinkMask) {
+            limit = 0;
+          }
+          if (limit == 10) {
+            linkConnectionOk = 0;
+            break;
+          }
+          if (gSerialSendSource == 0) {
+            break;
+          }
           wait(1);
-        } while ((gKeysPressed & limit) == 0);
+        }
+        if (linkConnectionOk == 0) {
+          WindowSprite_PrepareForRedraw((struct Window *)result);
+          Text_DrawMessage(MsgClearCommunicationError, (struct Window *)result,
+                           0, 4);
+          // Wait for A.
+          limit = KEY_A;
+          do {
+            wait(1);
+          } while ((gKeysPressed & limit) == 0);
+        }
+        wait(10);
+        Serial_RemoveIrqHandlers();
+        wait(10);
       }
-      wait(10);
-      Serial_RemoveIrqHandlers();
-      wait(10);
 #if TBS_PATCH_4
       Window_Close((struct Window *)result, 2);
       wait(1);

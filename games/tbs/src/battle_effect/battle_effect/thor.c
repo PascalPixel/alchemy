@@ -387,8 +387,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     s32 thorY;
     s32 thorSpeedX;
     s32 thorSpeedY;
-    s32 pillarX;
-    s32 pillarY;
+    s32 pillarX = 60;
+    s32 pillarY = 112;
 
     thorX = px(80);
     thorY = px(64);
@@ -410,8 +410,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     Sound_PlayFar(SE_CRASH);
     // The pillar is 48 pixels wide at canvas x 36 and reaches from the top
     // down to line 112; its sparks start at its foot, x 60.
-    pillarX = 60;
-    pillarY = 112;
 
     for (frame = 0; frame != 192; frame++) {
       s32 stormFrame;

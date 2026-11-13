@@ -286,30 +286,31 @@ const struct Trigger *SolSanctumEntrance_GetTriggers(void) {
 /// Takes SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS, into Sol Sanctum at
 /// SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE.
 static void SolSanctumEntrance_OpenDoorAndEnter(void) {
-  s32 width;
-  s32 height;
 
   Event_Start();
   // The door opens over three frames.
-  width = 3;
-  height = 2;
-  Sound_Play(SE_BOOM);
-  MapGrid_CopyCellsTo(16, 28, 21, 3, width, height);
-  wait(10);
-  MapGrid_CopyCellsTo(16, 30, 21, 3, width, height);
-  wait(10);
-  MapGrid_CopyCellsTo(16, 32, 21, 3, width, height);
-  wait(10);
-  Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 98);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
-  Event_Wait(10);
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS);
-  Event_End();
+  {
+    s32 width = 3;
+    s32 height = 2;
+
+    Sound_Play(SE_BOOM);
+    MapGrid_CopyCellsTo(16, 28, 21, 3, width, height);
+    wait(10);
+    MapGrid_CopyCellsTo(16, 30, 21, 3, width, height);
+    wait(10);
+    MapGrid_CopyCellsTo(16, 32, 21, 3, width, height);
+    wait(10);
+    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 98);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
+    Event_Wait(10);
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    Import_EventSetExitRequest(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS);
+    Event_End();
+  }
 }
 
 /// Sol Sanctum: searching the first minotaur relief shows one eye sparkling, or
@@ -366,35 +367,33 @@ static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
 /// the jewel.
 static void SolSanctumEntrance_SetFirstSmallJewel(void) {
   s32 message;
-  s32 oneCell;
-  s32 reliefWidth;
 
-  if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) == 0) {
-  } else {
-    if (Event_GetFlag(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) != 0) {
-    } else {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) != 0) {
+    if (Event_GetFlag(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) == 0) {
       Event_Start();
       Field_EndBusyAndReveal();
       // The eye sparkles, then the wall opens.
-      oneCell = 1;
       Sound_Play(SE_GEM_SET);
-      MapGrid_CopyCellsTo(0, 70, 30, 42, oneCell, oneCell);
+      MapGrid_CopyCellsTo(0, 70, 30, 42, 1, 1);
       MapGrid_CenterOnFollowedPoint();
       Event_Wait(40);
       message = MsgSolSanctumSetSmallGem;
       FieldMessage_Show(message, 1);
       Event_Wait(20);
-      reliefWidth = 3;
-      Sound_Play(SE_STONE_RUMBLE);
-      MapGrid_CopyCellsTo(0, 29, 3, 1, reliefWidth, 2);
-      MapGrid_CopyCellAttributes(0, 29, 3, 2, reliefWidth, oneCell);
-      MapGrid_CopyCellsTo(1, 109, 4, 81, oneCell, oneCell);
-      MapGrid_CenterOnFollowedPoint();
-      SolSanctumEntrance_ReactToOpeningPassage();
-      FieldMessage_Show(message + 1, 1);
-      GameFlag_Set(FLAG_ITEM_USED_UP);
-      GameFlag_Set(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET);
-      Event_End();
+      {
+        s32 reliefWidth = 3;
+
+        Sound_Play(SE_STONE_RUMBLE);
+        MapGrid_CopyCellsTo(0, 29, 3, 1, reliefWidth, 2);
+        MapGrid_CopyCellAttributes(0, 29, 3, 2, reliefWidth, 1);
+        MapGrid_CopyCellsTo(1, 109, 4, 81, 1, 1);
+        MapGrid_CenterOnFollowedPoint();
+        SolSanctumEntrance_ReactToOpeningPassage();
+        FieldMessage_Show(message + 1, 1);
+        GameFlag_Set(FLAG_ITEM_USED_UP);
+        GameFlag_Set(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET);
+        Event_End();
+      }
     }
   }
 }

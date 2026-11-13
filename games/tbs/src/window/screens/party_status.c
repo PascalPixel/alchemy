@@ -76,21 +76,21 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
 /// it erased until the battle draws it (Battle_Run); the field opens it with
 /// flags 1 (field/field_sequence/triggers.c).
 void PartyStatus_CreateWindow(s32 flags) {
-  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 16 of
-   * 39 instructions differ in tbs-en. */
-  s32 zero;
   struct PartyStatusWindow *layout;
   s8 *busy;
 
   layout = HeapSlot_AllocEwram(HEAP_SLOT_PARTY_STATUS, sizeof(*layout));
   busy = (s8 *)&WINDOW_WORK->holdTilemapUpload;
-  zero = 0;
-  *busy = 1;
-  PartyStatus_BuildLayoutBounds(flags);
-  layout->window =
-      Window_Create(layout->x, layout->y, layout->width, layout->height, 6);
-  PartyStatus_Draw(flags);
-  *busy = zero;
+  {
+    s32 idle = 0;
+
+    *busy = 1;
+    PartyStatus_BuildLayoutBounds(flags);
+    layout->window =
+        Window_Create(layout->x, layout->y, layout->width, layout->height, 6);
+    PartyStatus_Draw(flags);
+    *busy = idle;
+  }
 }
 
 /// Draws the vertical lines between the party members' columns of the party

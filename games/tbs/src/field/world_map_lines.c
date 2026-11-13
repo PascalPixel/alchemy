@@ -53,9 +53,6 @@ STATIC_ASSERT(offsetof(struct FarCallRuntimeTrigView, sin) == 88);
 STATIC_ASSERT(offsetof(struct FarCallRuntimeTrigView, cos) == 96);
 
 extern const struct FarCallRuntimeTrigView FarCall_RuntimeTable;
-/// The yaw, in 1/65536 turns, that the cached rotation terms in each
-/// ScanVertex were computed for.
-extern u32 gScanlineAngle;
 
 /// One scanline of the world map's ground plane. WorldMap_BuildScanlineTable
 /// fills x (the line's width scale) and z (its depth); the rest caches the

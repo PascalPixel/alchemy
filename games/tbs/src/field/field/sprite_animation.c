@@ -11,15 +11,6 @@ enum {
   ANIM_OAM_FIELD_PRIORITY = OBJ_PRIORITY(2)
 };
 
-/// A row of gSpritePictureCache_Sources: the packed resource that holds an
-/// animation number's pictures, ending at number 0.
-struct SpritePictureCacheSource {
-  u16 resource;
-  s16 number;
-};
-
-extern struct SpritePictureCacheSource gSpritePictureCache_Sources[];
-
 /// Loads the pictures of animation id number into picture cache slot's
 /// buffer: the resource listed for it in gSpritePictureCache_Sources, decoded,
 /// its picture offsets turned into pointers, and for variant 1-5 its pixel

@@ -44,27 +44,29 @@ u16 EraseAtmelFlashChip(void) {
 u16 EraseAtmelFlashSector(u16 sector) {
   struct FlashSetupInfo *info = &gFlash_ChipAtmelLayout;
   u8 *cursor;
-  u16 savedIme;
   s32 bytesRemaining;
   u16 result;
 
   cursor = (u8 *)(FLASH_BASE + (sector << info->type.sector.shift));
-  savedIme = REG_IME;
-  REG_IME = 0;
-  FLASH_SEND_COMMAND(FLASH_COMMAND_PROGRAM);
-  bytesRemaining = info->type.sector.size;
-  while (bytesRemaining != 0) {
-    *cursor = FLASH_ERASED_BYTE;
-    cursor++;
-    bytesRemaining--;
+  {
+    u16 savedIme = REG_IME;
+
+    REG_IME = 0;
+    FLASH_SEND_COMMAND(FLASH_COMMAND_PROGRAM);
+    bytesRemaining = info->type.sector.size;
+    while (bytesRemaining != 0) {
+      *cursor = FLASH_ERASED_BYTE;
+      cursor++;
+      bytesRemaining--;
+    }
+    cursor--;
+    REG_IME = savedIme;
+    result = gWaitForFlashWrite(FLASH_PHASE_PROGRAM, cursor, FLASH_ERASED_BYTE);
+    if (result != 0) {
+      result = (result & 0xFF00) | FLASH_PHASE_ERASE_SECTOR;
+    }
+    return result;
   }
-  cursor--;
-  REG_IME = savedIme;
-  result = gWaitForFlashWrite(FLASH_PHASE_PROGRAM, cursor, FLASH_ERASED_BYTE);
-  if (result != 0) {
-    result = (result & 0xFF00) | FLASH_PHASE_ERASE_SECTOR;
-  }
-  return result;
 }
 
 /// Erases thirty-two small sectors, trying each sector at most twice: the
@@ -117,7 +119,6 @@ advanceSector:
 u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
   const u8 *input;
   volatile u8 *destination;
-  u32 savedIme;
   s32 remaining;
 
   input = source;
@@ -125,22 +126,25 @@ u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
   destination =
       (volatile u8 *)(FLASH_BASE +
                       (sector << gFlash_ChipAtmelLayout.type.sector.shift));
-  savedIme = REG_IME;
-  REG_IME = 0;
-  FLASH_SEND_COMMAND(FLASH_COMMAND_PROGRAM);
+  {
+    u32 savedIme = REG_IME;
 
-  remaining = gFlash_ChipAtmelLayout.type.sector.size;
-  if (remaining != 0) {
-    do {
-      *destination++ = *input++;
-      remaining--;
-    } while (remaining != 0);
+    REG_IME = 0;
+    FLASH_SEND_COMMAND(FLASH_COMMAND_PROGRAM);
+
+    remaining = gFlash_ChipAtmelLayout.type.sector.size;
+    if (remaining != 0) {
+      do {
+        *destination++ = *input++;
+        remaining--;
+      } while (remaining != 0);
+    }
+
+    destination--;
+    input--;
+    REG_IME = savedIme;
+    return gWaitForFlashWrite(FLASH_PHASE_PROGRAM, destination, *input);
   }
-
-  destination--;
-  input--;
-  REG_IME = savedIme;
-  return gWaitForFlashWrite(FLASH_PHASE_PROGRAM, destination, *input);
 }
 
 /// Programs an Atmel block in small sectors, trying each sector at most twice.

@@ -682,8 +682,7 @@ static void LogRoomsA_TalkAboutMissingThings(void) {
 /// Reached by talking to the mayor (ACTOR_MAYOR) before the thieves are
 /// jailed. Sets FLAG_VAULT_MAYOR_THANKED_PARTY with the thanks.
 static void LogRoomsA_MayorAsksHelpForIvan(void) {
-  s32 thankedForHelpingFlag;
-  thankedForHelpingFlag = FLAG_VAULT_MAYOR_THANKED_PARTY;
+  s32 thankedForHelpingFlag = FLAG_VAULT_MAYOR_THANKED_PARTY;
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
     if (GameFlag_Get(thankedForHelpingFlag) == 0) {
@@ -2334,7 +2333,7 @@ static void LogRoomsA_FaceSuspectsTowardLeader(void) {
 /// SANCTUM_FROM_LOG_ROOMS_A).
 static void LogRoomsA_LoseToThieves(void) {
   struct Actor *actor;
-  s32 priorityFlags;
+  s32 priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 
   // The party lies on the floor (animation 19) before the three thieves.
   Event_Start();
@@ -2352,7 +2351,6 @@ static void LogRoomsA_LoseToThieves(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
   Actor_SetAnimation(ACTOR_GARET, ANIM_COLLAPSE);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_COLLAPSE);
-  priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags = priorityFlags;
   Actor_Get(ACTOR_GARET)->priorityFlags = priorityFlags;
   Actor_Get(ACTOR_IVAN)->priorityFlags = priorityFlags;
@@ -3266,9 +3264,9 @@ LogRoomsA_SnapToNearestStop(struct LogRoomsAStop *node, s16 *requestedFacing) {
     angleDifference = (s16)(connectionFacing - *requestedFacing);
     if (angleDifference < 0)
       angleDifference = -angleDifference;
-    // The used-stop test reads stopIndex through a volatile lvalue, so the
-    // stopIndex assignment loads it again; as a plain test, 1 of 49
-    // instructions differ in tbs-en.
+    /* FAKEMATCH(volatile): the used-stop test reads stopIndex through a
+     * volatile lvalue, so the assignment below loads it again; as a plain
+     * test, 9 of 49 instructions differ in tbs-en. */
     if (*(volatile u8 *)&connection->stopIndex != 0xff &&
         angleDifference < nearestDifference) {
       nearestDifference = angleDifference;

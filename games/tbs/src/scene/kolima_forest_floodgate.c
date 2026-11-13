@@ -209,11 +209,9 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
 
 /// HBlank callback: selects the captured shake scroll above the split line.
 static void KolimaForestFloodgate_ShakeLines(void) {
-  u16 line;
+  u16 line = REG_VCOUNT;
   u32 *source;
   volatile u32 *destination;
-
-  line = REG_VCOUNT;
   source = (u32 *)((u8 *)gBgScroll + 4);
   destination = (volatile u32 *)&REG_BG1HOFS;
 

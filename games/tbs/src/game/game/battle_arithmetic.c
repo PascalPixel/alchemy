@@ -16,7 +16,6 @@
 s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
   s32 minimumDifference;
   s32 maximumDifference;
-  s32 pointCount;
   s32 pointIndex;
   s32 multiplier;
   s32 differenceSpan;
@@ -24,34 +23,37 @@ s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
 
   maximumDifference = gElement_PowerResistCurve[0][0];
   minimumDifference = gElement_PowerResistCurve[4][0];
-  pointCount = 5;
-  if (input > maximumDifference)
-    input = maximumDifference;
-  else if (input < minimumDifference)
-    input = minimumDifference;
-  for (pointIndex = 0; pointIndex < pointCount; pointIndex++) {
-    if (input > gElement_PowerResistCurve[pointIndex][0])
+  {
+    s32 pointCount = 5;
+
+    if (input > maximumDifference)
+      input = maximumDifference;
+    else if (input < minimumDifference)
+      input = minimumDifference;
+    for (pointIndex = 0; pointIndex < pointCount; pointIndex++) {
+      if (input > gElement_PowerResistCurve[pointIndex][0])
+        break;
+    }
+    if (pointIndex == pointCount) {
+      multiplier = gElement_PowerResistCurve[pointIndex - 1][1];
+    } else {
+      differenceSpan = gElement_PowerResistCurve[pointIndex - 1][0] -
+                       gElement_PowerResistCurve[pointIndex][0];
+      multiplierSpan = gElement_PowerResistCurve[pointIndex - 1][1] -
+                       gElement_PowerResistCurve[pointIndex][1];
+      multiplier = (input - gElement_PowerResistCurve[pointIndex][0]) *
+                       multiplierSpan / differenceSpan +
+                   gElement_PowerResistCurve[pointIndex][1];
+    }
+    switch (halve) {
+    case 0:
       break;
+    case 1:
+      multiplier /= 2;
+      break;
+    }
+    return multiplier + BATTLE_MULTIPLIER_ONE;
   }
-  if (pointIndex == pointCount) {
-    multiplier = gElement_PowerResistCurve[pointIndex - 1][1];
-  } else {
-    differenceSpan = gElement_PowerResistCurve[pointIndex - 1][0] -
-                     gElement_PowerResistCurve[pointIndex][0];
-    multiplierSpan = gElement_PowerResistCurve[pointIndex - 1][1] -
-                     gElement_PowerResistCurve[pointIndex][1];
-    multiplier = (input - gElement_PowerResistCurve[pointIndex][0]) *
-                     multiplierSpan / differenceSpan +
-                 gElement_PowerResistCurve[pointIndex][1];
-  }
-  switch (halve) {
-  case 0:
-    break;
-  case 1:
-    multiplier /= 2;
-    break;
-  }
-  return multiplier + BATTLE_MULTIPLIER_ONE;
 }
 
 /// The battle's random number generator, the same linear congruential one as

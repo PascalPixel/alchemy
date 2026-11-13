@@ -314,7 +314,7 @@ static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 actorId) {
   s32 layerOriginX, layerOriginZ;
   struct PushedActorProbe probe;
   s32 cellX, cellZ;
-  u8 mask;
+  u8 mask = 2;
 
   if (CrossboneIsleSteppingStones_QueryFootprint(
           actorId, &width, &depth, &probe, &layerOriginX, &layerOriginZ) == 0) {
@@ -326,7 +326,6 @@ static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 actorId) {
   MapGrid_CopyCellAttributes(2, 2, width, depth, cellX, cellZ);
 
   Actor_SelectAnimation(actor, 4);
-  mask = 2;
   actor->priorityFlags |= mask;
 
   if (width > depth) {

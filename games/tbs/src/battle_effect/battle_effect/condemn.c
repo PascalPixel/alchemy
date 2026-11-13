@@ -50,6 +50,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   s32 frame;
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  /* FAKEMATCH(temporary): transferValue set here, after the slots; as declared
+   * with its 0, 14 of 580 instructions differ in tbs-en. */
   transferValue = 0;
   work->args = args;
   BattleEffect_StartTiledCanvas(0);

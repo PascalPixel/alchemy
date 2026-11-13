@@ -1399,7 +1399,6 @@ static void Kalay_PrepareTunnel(void) {
 #endif
   struct Actor *actor;
   s32 trackingValue;
-  s32 column;
   struct FadeOverlayWork *effectWork;
   // HEAP_SLOT_FADE_OVERLAY is nine heap slots after HEAP_SLOT_FIELD; index
   // the actual heap slot array, not adjacent storage reached past the scalar
@@ -1468,10 +1467,9 @@ static void Kalay_PrepareTunnel(void) {
     Actor_SetPosition(ACTOR_PUDDLE, 150, 728);
     if (GameFlag_Get(FLAG_TUNNEL_PUDDLE_FROZEN) != 0) {
       Actor_Get(ACTOR_PUDDLE);
-      column = 9;
       Actor_SetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_PILLAR);
-      MapGrid_CopyCellAttributes(0, 0, 1, 1, column, 14);
-      MapGrid_CopyCellAttributes(0, 0, 1, 1, column, 45);
+      MapGrid_CopyCellAttributes(0, 0, 1, 1, 9, 14);
+      MapGrid_CopyCellAttributes(0, 0, 1, 1, 9, 45);
       {
         u8 *p = &Actor_Get(ACTOR_PUDDLE)->priorityFlags;
         s32 v = ACTOR_PRIORITY_UNDERFOOT;
@@ -1884,7 +1882,6 @@ static void Kalay_HammetReturnsToPalace(void) {
   struct Actor *actor;
   struct FieldWork *work;
   const s32 *motionActions;
-  s32 southFacing;
   const s32 *exitActions;
 
   Event_Start();
@@ -2141,8 +2138,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Event_WaitTransitionFrames();
   Actor_SetPosition(ACTOR_WAGON, 440, 340);
   actor = Actor_Get(ACTOR_WAGON);
-  southFacing = FACING_SOUTH;
-  actor->facing = southFacing;
+  actor->facing = FACING_SOUTH;
   FieldCamera_MoveTo(380, CAMERA_KEEP, 280, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(10);
@@ -2253,9 +2249,7 @@ static void Kalay_UpdateTunnelPassages(void) {
   firstStatue = Actor_Get(ACTOR_FIRST_STATUE);
   secondStatue = Actor_Get(ACTOR_SECOND_STATUE);
   firstPassageOpen = GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN);
-  if (firstPassageOpen != 0) {
-  } else if ((firstStatue->x.fixed >> 19) > 29) {
-  } else {
+  if (firstPassageOpen == 0 && (firstStatue->x.fixed >> 19) <= 29) {
     frostEffect = Actor_Get(ACTOR_PUDDLE);
     Event_Start();
     MapGrid_CopyCellAttributes(7, 44, 1, 1, firstPassageOpen, 1);
@@ -2312,9 +2306,8 @@ static void Kalay_UpdateTunnelPassages(void) {
     MapGrid_CopyCellAttributes(0, 1, 1, 1, 7, span);
     Event_End();
   }
-  if (GameFlag_Get(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) != 0) {
-  } else if ((secondStatue->x.fixed >> 19) > 87) {
-  } else {
+  if (GameFlag_Get(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) == 0 &&
+      (secondStatue->x.fixed >> 19) <= 87) {
     Event_Start();
     i = 67;
     width = 1;

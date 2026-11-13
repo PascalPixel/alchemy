@@ -992,8 +992,7 @@ static void Altin_SprayInitialize(struct Actor *spray) {
 /// It drifts and grows with a random wobble, then curls upward and flattens as
 /// its movement timer runs down. The separate lifetime releases it after 20
 /// updates.
-static void Altin_SprayDrift(struct Actor *actor) {
-  struct Actor *spray = actor;
+static void Altin_SprayDrift(struct Actor *spray) {
   spray->x.fixed += WATER_SPRAY_LATERAL_STEP(
       spray->timer, (s16)((s32)(((u32)Import_RandomNext() * 2) >> 16) - 1));
   if (spray->timer <= 3) {
@@ -1011,7 +1010,7 @@ static void Altin_SprayDrift(struct Actor *actor) {
     spray->timer--;
   else
     spray->timer = (((u32)Import_RandomNext() * 5) >> 16) * 2 + 2;
-  if (--((struct FieldEffect *)actor)->countdown == 0) {
+  if (--((struct FieldEffect *)spray)->countdown == 0) {
     spray->update = 0;
     Actor_Release(spray);
   }

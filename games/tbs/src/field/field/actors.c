@@ -16,9 +16,6 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
   s32 tileCount;
   u32 i;
   const u8 *order;
-  u32 highMask;
-  u32 indexMask;
-  u8 offsetMask;
 
   struct Sprite *sprite = (struct Sprite *)obj;
 
@@ -29,33 +26,34 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
 
   if (i < tileCount) {
     order = gSpriteDissolve_PixelOrder;
-    highMask = 0xff00;
-    indexMask = 0x3f;
-    offsetMask = 0x3e;
+    {
+      u32 highMask = 0xff00;
+      u32 indexMask = 0x3f;
 
-    // A tile is 64 bytes (32 halfwords) at 8 bits a pixel. The unsigned
-    // test passes only steps 64 to 127, so later tiles start clearing
-    // first and the dissolve sweeps across the sprite: tile i clears at
-    // steps 64 - i to 127 - i, and even the last of a 64x64 sprite's 64
-    // tiles has all 64 of its steps by step 127.
-    for (; i < tileCount; i++, tile += 32, pos++) {
-      if ((pos - 64) <= 63) {
-        u8 pixel;
-        u16 *pixelPair;
-        u32 isOdd;
+      // A tile is 64 bytes (32 halfwords) at 8 bits a pixel. The unsigned
+      // test passes only steps 64 to 127, so later tiles start clearing
+      // first and the dissolve sweeps across the sprite: tile i clears at
+      // steps 64 - i to 127 - i, and even the last of a 64x64 sprite's 64
+      // tiles has all 64 of its steps by step 127.
+      for (; i < tileCount; i++, tile += 32, pos++) {
+        if ((pos - 64) <= 63) {
+          u8 pixel;
+          u16 *pixelPair;
+          u32 isOdd;
 
-        // Each tile reads the order 17 entries on from the tile before, so
-        // neighbouring tiles lose different pixels at the same step. VRAM
-        // takes no byte writes: rewrite the pixel pair, clearing one; the
-        // odd pixel is the pair's high byte.
-        pixel = order[(pos + i * 16) & indexMask];
-        pixelPair = (u16 *)((u8 *)tile + (pixel & offsetMask));
-        isOdd = 1;
-        isOdd &= pixel;
-        if (isOdd != 0)
-          *pixelPair = *(u8 *)pixelPair;
-        else
-          *pixelPair &= highMask;
+          // Each tile reads the order 17 entries on from the tile before, so
+          // neighbouring tiles lose different pixels at the same step. VRAM
+          // takes no byte writes: rewrite the pixel pair, clearing one; the
+          // odd pixel is the pair's high byte.
+          pixel = order[(pos + i * 16) & indexMask];
+          pixelPair = (u16 *)((u8 *)tile + (pixel & 0x3e));
+          isOdd = 1;
+          isOdd &= pixel;
+          if (isOdd != 0)
+            *pixelPair = *(u8 *)pixelPair;
+          else
+            *pixelPair &= highMask;
+        }
       }
     }
   }

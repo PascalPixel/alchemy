@@ -13,6 +13,9 @@ void Oam_ResetFrame(void) {
   gOamMatrixCount = 0;
   // IwramClearWords(destination, bytes): 1024 bytes are the 256 slot heads.
   // It zeroes r2 itself, so the third argument is never read.
+  // Called by its linked name: through Iwram_ClearWords, with the routine's
+  // fixed address as a constant, Save_InvalidateSector further on in system.c
+  // loads REG_DMA3's address once where the ROM loads it twice.
   _call_via_r3(((u32)&gOamDepthLists), 1024, ((u32)&gOamMatrixCount),
                (u32)IwramClearWords);
 }

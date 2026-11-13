@@ -12,11 +12,7 @@
 
 struct BattleAction;
 struct BattleEffectParams;
-struct BattleActionRun;
-struct Unit;
 struct Actor;
-struct FieldParticle;
-struct AreaNameRule;
 
 /// Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
 /// 32 pixels apart, and 5 to 10 a column at x -80, 20 apart (battle_tables.s).
@@ -28,37 +24,12 @@ extern u8 gPlayerActorId[];
 /// gBattleUnit_WeaponAnimations tables, and 8..0 the item id; ended by 0xffff
 /// (BattleUnit_GetWeaponKind).
 extern u16 gBattleUnit_WeaponKinds[];
-struct BattleObject;
 
 struct SpriteAnimation;
 struct Sprite;
-struct ArcObject;
-struct ArcParticle;
-struct AbilityDefinition;
-struct BattleAction;
-struct BattleEffectParams;
-struct BattlePlaybackWork;
 struct BattleSideOrder;
-struct SceneEncounterRule;
-struct BattleObject;
-struct BattleActionRun;
 struct BattleBackgroundWork;
-struct BattleSummonState;
-struct Unit;
-struct TriggerView;
-struct FieldParticle;
-struct EnemyDefinition;
-struct Actor;
-struct BattleEffectObject;
 struct SpriteScale;
-struct ItemBreakFragmentSource;
-struct LinkedCaptureObject;
-struct OrbitEffect;
-struct PolarOffsetOutput;
-struct RockWallHeights;
-struct MapMusicRule;
-struct BattleSource;
-struct TransitionActorList;
 struct MindReadWork;
 
 /// One of the star field's three rings, moving outward on the effect canvas.

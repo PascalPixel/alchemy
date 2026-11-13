@@ -789,8 +789,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
   Event_SetMessageId(MsgTolbiLikeSleep);
   // "Would you like to sleep now?"
   Event_OpenMessage(-1, 0);
-  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
-  } else {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     if (Event_GetFlag(FLAG_BABI_PALACE_FIRST_NIGHT) != 0) {
       Event_Wait(20);
       Inn_PlaySleep(0);

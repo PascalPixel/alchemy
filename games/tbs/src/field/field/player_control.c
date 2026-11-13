@@ -213,9 +213,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
   // passes), a short stall each frame. They are written with goto:
   // as while loops, the loop optimizer deletes them.
   if (gDebugMode != 0) {
-    s32 delayKeyMask;
-
-    delayKeyMask = KEY_L;
+    s32 delayKeyMask = KEY_L;
     if (gKeysHeld & delayKeyMask) {
       s32 delayIterations;
 

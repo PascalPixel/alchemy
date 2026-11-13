@@ -127,6 +127,4 @@ enum ItemMenuCommand {
   ITEM_COMMAND_DROP
 };
 
-struct Unit;
-
 #endif

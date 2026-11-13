@@ -53,9 +53,11 @@ void MapGrid_WaitForShakeToSettle(void) {
 }
 
 /// The copied ARM kernel reads the BG2 affine row from each 32-byte pair and
-/// writes 240 by 160 pixels as 256-colour tiles.
-typedef void (*TileMapRowDrawer)(const struct WorldMapAffinePair *lines,
-                                 u8 *pixels, const u8 *tiles, const u8 *map);
+/// writes 240 by 160 pixels as 256-colour tiles; it returns the address past
+/// the last pair, where its row cursor stops.
+typedef const struct WorldMapAffinePair *(*TileMapRowDrawer)(
+    const struct WorldMapAffinePair *lines, u8 *pixels, const u8 *tiles,
+    const u8 *map);
 
 /// Draws the current affine page into the world map's still-picture pixels.
 /// WorldMap_StartStillPicture supplies 160 pairs and a 240 by 160 byte output.
@@ -71,14 +73,9 @@ void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
   base = gDecodeBuffer;
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, TileMap_DrawRows,
                    TileMap_DrawRowsCodeSize);
-  /* FAKEMATCH(dead): an empty once-only loop after the call keeps
-   * gBgTileBuffer's address load ahead of lines' move into r0; without it, 2
-   * of 39 instructions differ in tbs-en. */
   ((TileMapRowDrawer)gHeapSlots[HEAP_SLOT_RAM_CODE_TEMP])(
       lines, pixels, gBgTileBuffer + TILEMAP_TILE_BANK_BYTES,
       base + TILEMAP_MAP_BANK_BYTES);
-  do {
-  } while (0);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
 }
 
@@ -102,15 +99,12 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
   s32 verticalSquared;
   s32 diagonal;
   s32 vertical;
-  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 8 of
-   * 127 instructions differ in tbs-en. */
-  s32 zero;
+  s32 groundHeight = 0;
   s32 horizontal;
 
   // The followed point on the ground (height 0), in camera space; horizon is
   // its height less its depth times the pitch slope.
-  zero = 0;
-  SET_VECTOR(groundPoint, position[0], zero, position[2]);
+  SET_VECTOR(groundPoint, position[0], groundHeight, position[2]);
   Iwram_TransformVector(groundPoint, cameraPoint);
   cameraCoordinates = cameraPoint;
   horizon =

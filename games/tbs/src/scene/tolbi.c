@@ -196,7 +196,7 @@ static void Tolbi_GrowSprout(void) {
   struct Actor *sprout;
 
   sprout = Actor_Get(ACTOR_TOLBI_SPROUT);
-  if ((s32)sprout != 0) {
+  if (sprout != 0) {
     sprout->collisionFlags = 0;
   }
   sprout = Actor_Get(ACTOR_TOLBI_SPROUT);

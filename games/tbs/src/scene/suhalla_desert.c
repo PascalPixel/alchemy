@@ -608,10 +608,10 @@ static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
 /// within 8 pixels of (event 55).
 static s32 SuhallaDesert_ChaseLeader(struct Actor *actor) {
   struct EffectOptions options;
-  struct Actor *selectedActor;
+  struct Actor *leader;
   s32 sparkFrame;
 
-  selectedActor = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   actor->acceleration = px(1) / 4;
   actor->speedLimit = px(3) / 2;
   actor->motionFlags = 0;
@@ -622,21 +622,21 @@ static s32 SuhallaDesert_ChaseLeader(struct Actor *actor) {
     actor->targetY = ACTOR_NO_TARGET;
     actor->targetZ = ACTOR_NO_TARGET;
   } else {
-    actor->targetX = selectedActor->x.fixed;
-    actor->targetY = selectedActor->groundHeight;
-    actor->targetZ = selectedActor->z.fixed;
-    if (GAP(actor->x.fixed, selectedActor->x.fixed) +
-            GAP(actor->z.fixed, selectedActor->z.fixed) <
+    actor->targetX = leader->x.fixed;
+    actor->targetY = leader->groundHeight;
+    actor->targetZ = leader->z.fixed;
+    if (GAP(actor->x.fixed, leader->x.fixed) +
+            GAP(actor->z.fixed, leader->z.fixed) <
         px(8)) {
       struct FieldWork *work = gFieldWork;
 
-      if (selectedActor->motionFlags != 0) {
+      if (leader->motionFlags != 0) {
         work->raisedTrigger = RAISED_CHASING_SANDSTORM_CATCHES;
       }
       actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-      actor->targetX = selectedActor->x.fixed;
-      actor->targetY = selectedActor->y.fixed;
-      actor->targetZ = selectedActor->z.fixed;
+      actor->targetX = leader->x.fixed;
+      actor->targetY = leader->y.fixed;
+      actor->targetZ = leader->z.fixed;
     }
   }
   // Sand every eight frames, with a random spin.
@@ -724,30 +724,30 @@ static void SuhallaDesert_DouseStorm(s32 unused, s32 stormId) {
 /// or where the second scene's fourth storm drops it.
 static void SuhallaDesert_StormCarriesPartyAway(void) {
   s32 stormId;
-  struct Actor *selectedActor;
+  struct Actor *leader;
   struct Actor *storm;
   s32 frame;
 
   stormId = FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM);
-  selectedActor = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   storm = Actor_Get(stormId);
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Sound_Play(SE_GUSH);
   // BUG: this passes an actor id where the sprite helper needs a pointer.
 #ifdef BUGFIX
-  Actor_SetSpriteFlags(selectedActor, 0);
+  Actor_SetSpriteFlags(leader, 0);
 #else
   Actor_SetSpriteFlags((struct Actor *)gMainRoutineWork.leaderActorId, 0);
 #endif
   storm->motionFlags = 0;
-  selectedActor->motionFlags = 0;
-  selectedActor->velocityY = 0;
-  selectedActor->frozen = 1;
+  leader->motionFlags = 0;
+  leader->velocityY = 0;
+  leader->frozen = 1;
   storm->frozen = 1;
   // Both rise faster and faster for a second.
   for (frame = 0; frame < 60; frame++) {
-    selectedActor->velocityY += px(1) / 5;
+    leader->velocityY += px(1) / 5;
     storm->velocityY += px(1) / 5;
     wait(1);
   }

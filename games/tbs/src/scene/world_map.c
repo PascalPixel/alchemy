@@ -2788,7 +2788,7 @@ static void WorldMap_StartDousingStorm(void) {
 /// the air. It clears FLAG_WORLD_MAP_CAUGHT_IN_STORM, sets
 /// FLAG_WORLD_MAP_STORM_GONE and empties the timer.
 static void WorldMap_DouseMapStorm(void) {
-  struct Actor *selectedActor;
+  struct Actor *leader;
 
   if (gFieldWork->raisedTrigger == RAISED_STORM_TIME_UP) {
     gFieldWork->raisedTrigger = 0;
@@ -2799,8 +2799,8 @@ static void WorldMap_DouseMapStorm(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
-  selectedActor = Actor_Get(gMainRoutineWork.leaderActorId);
-  selectedActor->motionFlags = ACTOR_FALLS;
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader->motionFlags = ACTOR_FALLS;
 }
 
 /// The storm drops the party outside Suhalla when its time in the air runs out.
@@ -2811,22 +2811,22 @@ static void WorldMap_DouseMapStorm(void) {
 /// Reached by RAISED_STORM_TIME_UP, raised as the timer runs out. It sets
 /// FLAG_ARRIVE_FALLING and sends the party to WORLD_MAP_FROM_SUHALLA.
 static void WorldMap_StormDropsParty(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *other = Actor_Get(ACTOR_STORM);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *storm = Actor_Get(ACTOR_STORM);
   s32 frames;
 
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Sound_Play(SE_GUSH);
-  Actor_SetSpriteFlags(actor, 0);
-  other->motionFlags = 0;
-  actor->motionFlags = 0;
-  actor->velocityY = 0;
-  actor->frozen = 1;
-  other->frozen = 1;
-  for (frames = 59; frames >= 0; --frames) {
-    actor->velocityY += px(1) / 5;
-    other->velocityY += px(1) / 5;
+  Actor_SetSpriteFlags(leader, 0);
+  storm->motionFlags = 0;
+  leader->motionFlags = 0;
+  leader->velocityY = 0;
+  leader->frozen = 1;
+  storm->frozen = 1;
+  for (frames = 0; frames < 60; frames++) {
+    leader->velocityY += px(1) / 5;
+    storm->velocityY += px(1) / 5;
     wait(1);
   }
   Event_FinishScreenTransition();

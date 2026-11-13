@@ -115,7 +115,7 @@ void LemuriaDock_AskSettingOff(void) {
 
   if (SCENE_WORK->unk166 != 0) {
     Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
-    Actor_ShowEmote(8, 0x100, 30);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   }
   Event_SetMessageId((s32)MsgAreWeSetting);
   Event_OpenMessage(8, 0);

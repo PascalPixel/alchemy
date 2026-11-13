@@ -420,7 +420,7 @@ s32 Scene_Initialize(void) {
     j++;
     if (j != 10)
       goto L2;
-    Actor_ShowEmote(8, 0x102, 0);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     System_Wait(30);
     FieldEvent_SetMessageId(MsgGoldenSunFormation);
     Event_ShowMessage(0x4008, 0);
@@ -541,7 +541,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
     Actor_SetAnimation(8, 15);
     FieldEvent_ShowMessageThenWait(0x2008, 0, 150);
-    Actor_ShowEmote(8, 0x101, 30);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     Actor_SetAnimation(8, 1);
     Actor_FaceDirection(8, FACING_SOUTHWEST, 0);
     FieldEvent_Wait(10);
@@ -562,14 +562,14 @@ s32 Scene_Initialize(void) {
     Call2((void (*)())Actor_SetSpriteFlags, (s32)(s32)Actor_Get(9), 0);
     Actor_WalkToAndWait(9, 216, 96);
     Actor_FaceDirection(8, FACING_SOUTHEAST, 0);
-    Actor_ShowEmote(8, 0x102, 30);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     FieldEvent_SetMessageId((MsgGoldenSunEternalLifeAndPower + 4));
     FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
     Event_PlaySound(MUS_722);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     Actor_SetAnimation(8, 1);
     Actor_FaceDirection(8, FACING_NORTHWEST, 0);
-    Actor_ShowEmote(8, 0x100, 30);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     ACTOR(8)->actionFlags &= ~1;
     Actor_WalkTo(8, 0x100, 136);
     Actor_SetSpeed(8, 0.6);
@@ -589,7 +589,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
     Actor_SetAnimation(9, 6);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
-    Actor_ShowEmote(8, 0x107, 30);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     message += 12;
     FieldEvent_SetMessageId(message);
     FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
@@ -621,7 +621,7 @@ s32 Scene_Initialize(void) {
     j++;
     if (j != 4)
       goto L8;
-    Actor_ShowEmote(8, 0x108, 30);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
     FieldEvent_Wait(10);
     BattleEffect_SetObjectUpdateMode((s32)Actor_Get(8), 0);
@@ -724,7 +724,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(60);
     Actor_SetAnimation(9, 7);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
-    Actor_ShowEmote(8, 0x101, 30);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
     Actor_SetAnimation(9, 8);
     FieldEvent_ShowMessageThenWait(9, 0, 5);

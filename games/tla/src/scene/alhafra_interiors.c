@@ -164,7 +164,7 @@ void AlhafraInteriors_TalkToHealer(s32 actor) {
 
 /// The lady of the house, worn out by her houseguests.
 void AlhafraInteriors_TalkToHostess(s32 a0) {
-  Actor_ShowEmote(a0, 0x107, 0x1e);
+  Actor_ShowEmote(a0, EMOTE_IN_FRONT | EMOTE_SCOWL, 0x1e);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors06);
   Event_ShowMessage(a0, 0);
 }
@@ -194,7 +194,7 @@ void AlhafraInteriors_GuestsAskForTea(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(13, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(0xd, 0x107, 0x1e);
+  Actor_ShowEmote(0xd, EMOTE_IN_FRONT | EMOTE_SCOWL, 0x1e);
   FieldEvent_ShowMessageThenWait(0xd, 0, 0xa);
   FieldActor_StartRepeatedMotion(14, 3);
   Actor_SetAttachedEffect(0xe, 0x102);
@@ -240,7 +240,7 @@ void AlhafraInteriors_HostTellsOfRepairs(s32 a0) {
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors55);
   Event_ShowMessage(a0, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(a0, 0x108, 0x1e);
+  Actor_ShowEmote(a0, EMOTE_IN_FRONT | EMOTE_SMILE, 0x1e);
   Event_ShowMessage(a0, 0);
 }
 
@@ -399,11 +399,11 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       Actor_RunRepeatedMotion(31, 2);
       FieldEvent_Wait(5);
       FieldEvent_ShowMessageThenWait(0x1f, 0, 5);
-      Actor_ShowEmote(0x20, 0x100, 0x1e);
+      Actor_ShowEmote(0x20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0x1e);
       FieldEvent_ShowMessageThenWait(0x20, 0, 5);
-      Actor_ShowEmote(0x1f, 0x109, 0x1e);
+      Actor_ShowEmote(0x1f, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0x1e);
       FieldEvent_ShowMessageThenWait(0x1f, 0, 5);
-      Actor_ShowEmote(0x20, 0x102, 0x1e);
+      Actor_ShowEmote(0x20, EMOTE_IN_FRONT | EMOTE_WINCE, 0x1e);
       FieldEvent_ShowMessageThenWait(0x20, 0, 5);
       Actor_SetAnimationAndWait(31, 3);
       FieldEvent_Wait(10);
@@ -414,7 +414,7 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       Actor_SetAnimationAndWait(31, 3);
       FieldEvent_Wait(10);
       FieldEvent_ShowMessageThenWait(0x1f, 0, 5);
-      Actor_ShowEmote(0x20, 0x109, 0x1e);
+      Actor_ShowEmote(0x20, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0x1e);
       FieldEvent_ShowMessageThenWait(0x20, 0, 5);
       Actor_RunRepeatedMotion(31, 2);
       FieldEvent_Wait(5);

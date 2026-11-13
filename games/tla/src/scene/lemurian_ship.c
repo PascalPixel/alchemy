@@ -1009,7 +1009,7 @@ void Func_020019e0(void) {
 void Func_02001a04(void) {
   struct Actor *object = ((struct Actor *)Actor_GetById(9));
 
-  FieldActor_ShowEmote(9, 0x100, 0);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_RunRepeatedMotion(9, 2);
   object->gravity = 0x8000;
   Actor_SetSpritePriority(9, 1);

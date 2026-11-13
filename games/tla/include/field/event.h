@@ -18,6 +18,7 @@
 /// over it. An event reads `Actor_FaceDirection(4, 0xc000, 0);
 /// FieldEvent_Wait(20);`.
 
+#include "field/emote.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "types.h"

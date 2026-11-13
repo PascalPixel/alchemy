@@ -1359,7 +1359,7 @@ void DehkanPlateau_CannonFleesOverCracks(void) {
   FieldCamera_MoveWithinMapBounds(658 << 16, -1, 164 << 16, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(24, gMainRoutineWork.currentOwner, 0);
-  Actor_ShowEmoteById(24, 0x100, 40);
+  Actor_ShowEmoteById(24, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetSpeed(24, 1.6);
   Actor_MoveTo(24, 664, 136);
   MapGrid_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
@@ -1384,7 +1384,7 @@ void DehkanPlateau_CannonFleesEast(void) {
   FieldCamera_MoveWithinMapBounds(245 << 18, -1, 168 << 16, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(24, gMainRoutineWork.currentOwner, 0);
-  Actor_ShowEmoteById(24, 0x100, 40);
+  Actor_ShowEmoteById(24, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_GetById(24)->motionFlags = 0;
   Actor_SetSpritePriority(24, 1);
   Actor_SetSpeed(24, 1.6);
@@ -1403,7 +1403,7 @@ void DehkanPlateau_CannonLeapsAway(void) {
   FieldCamera_MoveWithinMapBounds(144 << 16, -1, 214 << 15, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(25, gMainRoutineWork.currentOwner, 0);
-  Actor_ShowEmoteById(25, 0x100, 40);
+  Actor_ShowEmoteById(25, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetSpeed(25, 1.6);
   Actor_WalkToAndWaitById(25, 168, 104);
   Event_Wait(10);
@@ -1426,7 +1426,7 @@ void DehkanPlateau_CannonPoundsPillar(void) {
   Camera_SetBounds(212 << 17, -1, 208 << 15, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(25, gMainRoutineWork.currentOwner, 0);
-  Actor_ShowEmoteById(25, 0x100, 20);
+  Actor_ShowEmoteById(25, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldCamera_MoveWithinMapBounds(212 << 17, -1, 152 << 16, 1);
   Actor_SetSpeed(25, 1.6);
   Actor_MoveTo(25, 424, 152);
@@ -1559,7 +1559,7 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(25, gMainRoutineWork.currentOwner, 0);
   // A direct call: as Call3 the actor id is loaded before the 0x100's shift.
-  Actor_ShowEmoteById(25, 0x100, 40);
+  Actor_ShowEmoteById(25, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetSpritePriority(25, 1);
   Actor_SetSpeed(25, 1.6);
   Actor_WalkToAndWait(25, 632, 280);
@@ -1629,7 +1629,7 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
   Sound_Play(SE_RATTLE);
   DehkanPlateau_JoltCamera();
   Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
-  Actor_ShowEmoteById(9, 0x100, 20);
+  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   DehkanPlateau_CannonCastsPoundOnLeader();
   Event_Wait(20);
   leader->facing = FACING_SOUTH;
@@ -1746,7 +1746,7 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
     FieldActor_SetMoveTarget(gDehkanPlateau_PoundCube, 248, 0, 88);
   Actor_WaitForMove(leader);
   Event_Wait(20);
-  Actor_ShowEmoteById(9, 0x103, 0);
+  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Actor_ArmCallback(9, 0x8000, 60);
   Actor_WalkToAndWait(9, 296, 104);
@@ -1775,7 +1775,7 @@ void DehkanPlateau_CannonCrumblesLastPillar(void) {
   Actor_FaceActorById(16, gMainRoutineWork.currentOwner, 0);
   // Called for its value, which is unused: as Call3 the actor id is loaded
   // before the 0x100's shift.
-  Actor_ShowEmote(16, 0x100, 40);
+  Actor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetSpeedParameters(16, 0x20000, 0x10000);
   Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = 0x80000;
@@ -1809,7 +1809,7 @@ void DehkanPlateau_CannonCornered(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_FaceActorById(16, gMainRoutineWork.currentOwner, 0);
-  Actor_ShowEmoteById(16, 0x100, 40);
+  Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirectionById(16, FACING_EAST);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(16, 3);

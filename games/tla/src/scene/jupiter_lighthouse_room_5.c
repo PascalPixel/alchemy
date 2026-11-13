@@ -510,7 +510,7 @@ void Func_020008a4(void) {
   Actor_SetAnimationAndWait(22, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(22, 0, 5);
-  Actor_ShowEmote(22, 265, 30);
+  Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(22, 0, 5);
   Actor_SetAnimationAndWait(22, 4);
   FieldEvent_ShowMessageThenWait(22, 0, 5);

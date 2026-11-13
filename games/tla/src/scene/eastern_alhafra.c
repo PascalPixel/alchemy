@@ -400,7 +400,7 @@ void Func_02000730(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgWhatSYour);
-  Actor_ShowEmote(22, 0x101, 40);
+  Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceActor(22, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(22, 0, 10);
@@ -805,12 +805,12 @@ void Func_0200112c(void) {
   EventCamera_MoveToActor(22, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  Actor_ShowEmote(22, 0x107, 40);
+  Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   FieldCamera_MoveTo(488, 0, 416, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_ShowEmote(23, 0x102, 50);
+  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_FaceDirection(23, FACING_EAST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(23, 0, 10);
@@ -828,9 +828,9 @@ void Func_0200112c(void) {
   FieldEvent_ShowMessageThenWait(24, 0, 10);
   Actor_FaceDirection(23, FACING_WEST, 0);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(22, 0x105, 0);
-  Actor_ShowEmote(23, 0x105, 0);
-  Actor_ShowEmote(25, 0x105, 50);
+  Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(25, 2);
   FieldEvent_Wait(10);
@@ -920,7 +920,7 @@ void Func_02001574(void) {
   FieldEvent_ShowMessageThenWait(26, 0, 10);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(6, 0x102, 30);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(6, 0, 10);
   Actor_FaceDirection(5, FACING_NORTH, 0);
   FieldEvent_Wait(10);
@@ -932,7 +932,7 @@ void Func_02001574(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(26, 0x106, 30);
+  Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   FieldEvent_ShowMessageThenWait(26, 0, 10);
   result3 = Event_GetFlag(7);
   if (result3 != 0) {
@@ -1008,7 +1008,7 @@ void Func_020017ec(void) {
   result1 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result1 == 0) {
     FieldEvent_Wait(20);
-    Actor_ShowEmote(6, 0x100, 30);
+    Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     FieldEvent_ShowMessageThenWait(6, 0, 10);
     Actor_FaceDirection(4, FACING_NORTHEAST, 0);
     Actor_FaceDirection(5, FACING_NORTH, 0);
@@ -1039,7 +1039,7 @@ void Func_020017ec(void) {
     Actor_FaceDirection(5, FACING_NORTHWEST, 0);
     Actor_FaceDirection(6, FACING_WEST, 0);
     FieldEvent_Wait(30);
-    Actor_ShowEmote(26, 0x101, 30);
+    Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     Actor_SetAnimationAndWait(26, 4);
     FieldEvent_ShowMessageThenWait(26, 0, 10);
     ((s32 (*)())Actor_ShowEmoteById)(26, 0x109, 30);

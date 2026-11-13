@@ -752,7 +752,8 @@ void Func_02000d18(void) {
   FieldEvent_ResolvePendingActions(0);
   if (leader->z >> 19 > 53 && leader->x >> 19 > 83 && leader->x >> 19 <= 91) {
     leader->speedLimit = 0x20000;
-    Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
+    Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                    EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_SetScript(gMainRoutineWork.currentOwner, gData_020051b8);
   }
   Actor_SetScript(15, gData_02005118);
@@ -872,7 +873,7 @@ void GaiaRockInside_MeetSusa(void) {
   Func_02000f00();
   Actor_SetAnimation(10, 1);
   Actor_FaceActor(10, gMainRoutineWork.currentOwner, 0);
-  Actor_ShowEmote(10, 256, 0);
+  Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(30);
   Event_ShowMessage(10, 0);
   Actor_WalkTo(10, 496, 456);
@@ -880,7 +881,7 @@ void GaiaRockInside_MeetSusa(void) {
   Actor_FaceDirection(10, FACING_EAST + FACING_STEP, 0);
   FieldEvent_Wait(10);
   Event_ShowMessage(10, 0);
-  Actor_ShowEmote(10, 261, 0);
+  Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldEvent_Wait(45);
   Event_ShowMessage(10, 0);
   Actor_FaceDirection(10, FACING_NORTH + FACING_STEP, 0);
@@ -1215,7 +1216,8 @@ s32 GaiaRockInside_ReadSandTablet(void) {
   FieldEvent_ResolvePendingActions(0);
   message = (s32)MsgGaiaRockInside09;
   ((s32 (*)())FieldMessage_Show)(message, 1);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   if (leader->z >> 19 <= 39) {
     Actor_WalkTo(gMainRoutineWork.currentOwner, 0x1b8, 0x148);
     FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -2490,7 +2492,7 @@ s32 Scene_Initialize(void) {
       C2(Event_ShowMessageAndWait, 11, 0);
       C1(Sound_Play, 530);
       C2(Event_ShowMessageAndWait, 10, 0);
-      Actor_ShowEmote(*owner, 256, 0);
+      Actor_ShowEmote(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       C3(Actor_ShowEmoteById, 11, 256, 0);
       C1(Event_Wait, 15);
       C3(Actor_ArmCallback, *owner, 0x4000, 0);
@@ -3194,7 +3196,7 @@ s32 Scene_Initialize(void) {
       C2(Event_ShowMessageAndWait, 11, 0);
       C1(Sound_Play, 530);
       C2(Event_ShowMessageAndWait, 10, 0);
-      Actor_ShowEmote(*owner, 256, 0);
+      Actor_ShowEmote(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       C3(Actor_ShowEmoteById, 11, 256, 0);
       C1(Event_Wait, 15);
       C3(Actor_ArmCallback, *owner, 0x4000, 0);

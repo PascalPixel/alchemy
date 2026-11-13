@@ -847,7 +847,8 @@ loop_3:
   Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
   FieldEvent_Wait(20);
   Scene_CamBounds(PIXELS(232), -1, PIXELS(196), 1);
-  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x101, 0);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
+                      EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Scene_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 232, 164);
   FieldEvent_Wait(20);
@@ -1142,7 +1143,7 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Call3((void (*)())Actor_ArmCallback, 8, 0x8000, 0);
   Call3((void (*)())Actor_ArmCallback, 9, 0x8000, 0);
   Value3((s32 (*)())Actor_ShowEmoteById, 8, 0x102, 0);
-  Actor_ShowEmoteById(9, 0x102, 80);
+  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Call2((void (*)())Event_ShowMessageAndWait, 14, 0);
   Call3((void (*)())Actor_ArmCallback, 8, 0xd000, 0);
   Call3((void (*)())Actor_ArmCallback, 10, 0x3000, 0);

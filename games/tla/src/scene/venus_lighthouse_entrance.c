@@ -322,7 +322,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   FieldEvent_ShowMessageThenWait(12, 0, 0);
   Actor_WalkToAndWait(5, 0x178, 0x118);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(5, 0x101, 40);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(30);
   Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
@@ -337,12 +337,12 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   FieldCamera_WaitForArrival();
   FieldActor_WaitForMoveById(5);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(12, 0x102, 40);
+  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   Actor_RunRepeatedMotion(13, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(13, 0, 10);
-  Actor_ShowEmote(17, 0x107, 30);
+  Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(17, 0, 10);
   FieldActor_Jump(18, 6, 15);
   FieldActor_Jump(18, 6, 25);
@@ -416,7 +416,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(0x2005, 0, 10);
-  Actor_ShowEmote(9, 0x101, 30);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_WalkByAndWait(9, 0, 16);
   FieldEvent_Wait(10);
@@ -425,7 +425,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   FieldEvent_ShowMessageThenWait(9, 0, 10);
   Actor_FaceDirection(5, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(5, 0x102, 60);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(5, 3);
@@ -441,7 +441,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(8, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(8, 0x101, 30);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(8, 0, 10);
   Actor_FaceDirection(9, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
@@ -497,7 +497,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   Actor_FaceDirection(18, FACING_NORTHEAST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(17, 0, 10);
-  Actor_ShowEmote(18, 0x107, 30);
+  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(18, 0, 10);
   FieldCamera_MoveTo(376, CAMERA_KEEP, 424, 1);
   FieldCamera_WaitForArrival();
@@ -517,7 +517,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   Actor_SetAnimationAndWait(9, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(9, 0, 10);
-  Actor_ShowEmote(5, 0x102, 40);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   FieldEvent_ShowMessageThenWait(5, 0, 10);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
@@ -586,13 +586,13 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   FieldActor_SetSpritePriority(12, 0);
   VenusLighthouseEntrance_BlastActorSkyward(12);
-  Actor_ShowEmote(17, 0x100, 0);
-  Actor_ShowEmote(18, 0x100, 0);
-  Actor_ShowEmote(19, 0x100, 0);
-  Actor_ShowEmote(20, 0x100, 0);
-  Actor_ShowEmote(13, 0x100, 0);
-  Actor_ShowEmote(14, 0x100, 0);
-  Actor_ShowEmote(15, 0x100, 50);
+  Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(13, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(14, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   FieldActor_SetSpritePriority(13, 1);
   VenusLighthouseEntrance_BlastActorSkyward(13);
   FieldEvent_Wait(30);
@@ -604,7 +604,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimation(9, 9);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(14, 0x102, 40);
+  Actor_ShowEmote(14, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   FieldEvent_ShowMessageThenWait(14, 0, 10);
   Actor_RunRepeatedMotion(15, 2);
   FieldEvent_Wait(10);
@@ -623,7 +623,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(9, 0x108, 30);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(9, 0, 10);
   Actor_SetSpeed(9, 0.8);
   Actor_WalkByAndWait(9, -16, 16);
@@ -643,7 +643,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   FieldEvent_Wait(50);
   Actor_SetAnimationAndWait(17, 4);
   FieldEvent_ShowMessageThenWait(17, 0, 10);
-  Actor_ShowEmote(18, 0x102, 40);
+  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   FieldEvent_ShowMessageThenWait(18, 0, 10);
   Actor_SetAnimationAndWait(19, 4);
   FieldEvent_ShowMessageThenWait(19, 0, 10);
@@ -852,14 +852,14 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   FieldEvent_Wait(1);
   *(u8 *)(((u8 *)Actor_GetById(15)) + 90) |= 1;
   FieldEvent_Wait(10);
-  Actor_ShowEmote(9, 0x108, 30);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(0x1009, 0, 10);
   Actor_RunRepeatedMotion(14, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(14, 0, 10);
   Actor_WalkByAndWait(9, 16, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(9, 0x107, 30);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(0x1009, 0, 10);
   FieldActor_StartRepeatedMotion(14, 2);
   Actor_RunRepeatedMotion(15, 2);
@@ -908,7 +908,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   FieldCamera_MoveToActorById(5, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  Actor_ShowEmote(8, 0x105, 30);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   FieldEvent_ShowMessageThenWait(8, 0, 10);
   Actor_SetAnimationAndWait(5, 3);
   FieldEvent_Wait(30);
@@ -920,13 +920,13 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   Actor_FaceDirection(8, FACING_EAST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(8, 0, 10);
-  Actor_ShowEmote(5, 0x105, 50);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   Actor_FaceDirection(5, FACING_WEST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(0x2005, 0, 10);
-  Actor_ShowEmote(8, 0x101, 30);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(8, 0, 10);
-  Actor_ShowEmote(5, 0x109, 80);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 80);
   FieldEvent_Wait(10);
   {
     s32 a1 = 0x106;
@@ -982,7 +982,7 @@ void VenusLighthouseEntrance_ThiefWaitsForBackup(void) {
   FieldEvent_ShowMessageThenWait(22, 0, 0xa);
   FieldActor_SetAnimation(22, 1);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(22, 0x101, 50);
+  Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   FieldEvent_Wait(10);
   Actor_FaceDirection(22, FACING_EAST, 0);
   FieldEvent_Wait(20);
@@ -993,7 +993,7 @@ void VenusLighthouseEntrance_ThiefWaitsForBackup(void) {
   Actor_SetAnimation(22, 0xc);
   FieldEvent_ShowMessageThenWait(22, 0, 0);
   Actor_SetAnimation(22, 1);
-  Actor_ShowEmote(22, 0x100, 50);
+  Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Actor_FaceDirection(22, FACING_EAST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(22, 0, 0xa);
@@ -1061,7 +1061,7 @@ void VenusLighthouseEntrance_WakeUp(void) {
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
   FieldEvent_SetMessageId((s32)MsgAreAreYou);
-  Actor_ShowEmote(8, 0x102, 40);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   FieldEvent_ShowMessageThenWait(8, 0, 0xa);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(30);
@@ -1121,7 +1121,7 @@ void VenusLighthouseEntrance_WakeUp(void) {
   FieldActor_WaitForMoveById(9);
   Actor_SetPosition(9, 0, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(8, 0x105, 30);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   FieldEvent_ShowMessageThenWait(8, 0, 0xa);
   Actor_SetAnimationAndWait(5, 3);
   FieldEvent_Wait(30);

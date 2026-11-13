@@ -260,14 +260,15 @@ void MikasallaInteriors_MeetGalahad(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors19);
-  Actor_ShowEmote(18, 0x100, 60);
+  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceActor(18, gMainRoutineWork.currentOwner, 0);
   Event_ShowMessage(18, 0);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 60);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_SetAnimation(18, 4);
   FieldEvent_Wait(15);
   Event_ShowMessage(18, 0);
-  Actor_ShowEmote(18, 0x108, 60);
+  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
   Event_OpenMessage(18, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {

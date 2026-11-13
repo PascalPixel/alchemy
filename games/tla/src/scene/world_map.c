@@ -606,7 +606,7 @@ void WorldMap_RefuseToRunAway(void) {
       Actor_SetAnimation(5, 4);
       WorldMap_Freeze();
       Event_ShowMessage(5, 0);
-      Actor_ShowEmote(5, 265, 0);
+      Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
       Event_ShowMessage(5, 0);
       Actor_SetAnimation(5, 3);
       Event_ShowMessage(5, 0);
@@ -887,7 +887,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     WorldMap_ReloadPendingAreaGraphics();
     FieldEffect_ScheduleRatioTransition(0x18ccc, 16);
-    Actor_ShowEmote(4, 0x102, 30);
+    Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Actor_WalkByAndWait(4, 0, 32);
     Actor_FaceDirection(4, west, 0);
     Event_WaitForZoomTransition();
@@ -914,7 +914,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_FaceDirection(20, FACING_SOUTH_SOUTHEAST, 0);
     Actor_FaceDirection(21, FACING_SOUTH_SOUTHEAST, 0);
     Actor_FaceDirection(22, FACING_SOUTH_SOUTHEAST, 0);
-    Actor_ShowEmote(23, 0x100, 30);
+    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     Actor_WaitForMoveById(20);
     Actor_WaitForMoveById(21);
     Actor_WaitForMoveById(22);
@@ -939,21 +939,21 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     }
     Event_Wait(5);
     FieldEvent_ShowMessageThenWait(21, 0, 5);
-    Actor_ShowEmote(23, 0x109, 30);
+    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     FieldEvent_ShowMessageThenWait(23, 0, 5);
-    Actor_ShowEmote(22, 0x107, 30);
+    Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     FieldEvent_ShowMessageThenWait(22, 0, 5);
-    Actor_ShowEmote(23, 0x101, 30);
+    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     FieldEvent_ShowMessageThenWait(23, 0, 5);
-    Actor_ShowEmote(20, 0x107, 30);
+    Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     FieldEvent_ShowMessageThenWait(20, 0, 5);
-    Actor_ShowEmote(23, 0x102, 30);
+    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     FieldEvent_ShowMessageThenWait(21, 0, 5);
     Actor_TurnToFaceEachOther(4, 23, 0);
     Event_Wait(30);
     FieldEvent_ShowMessageThenWait(23, 0, 5);
-    Actor_ShowEmote(22, 0x107, 30);
+    Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     ARM_WEST(4);
     ARM_WEST(23);
     FieldEvent_ShowMessageThenWait(22, 0, 5);
@@ -1013,7 +1013,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_SetMessageId((s32)MsgItLooksLike);
     Actor_RunRepeatedMotion(4, 2);
     Event_Wait(5);
-    Actor_ShowEmote(20, 0x108, 30);
+    Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_FaceDirectionAndWait(21, east74);
     Event_Wait(10);
@@ -1036,7 +1036,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetAnimationAndWait(21, 3);
     Event_Wait(10);
     FieldEvent_ShowMessageThenWait(21, 0, 5);
-    Actor_ShowEmote(22, 0x108, 30);
+    Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     FieldEvent_ShowMessageThenWait(22, 0, 5);
     Actor_SetAnimationAndWait(20, 3);
     Event_Wait(10);
@@ -1062,18 +1062,18 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_SetMessageId((s32)MsgWeLostAgain);
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(5);
-    Actor_ShowEmote(20, 0x102, 30);
+    Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     FieldEvent_ShowMessageThenWait(20, 0, 5);
-    Actor_ShowEmote(21, 0x102, 30);
+    Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     FieldEvent_ShowMessageThenWait(21, 0, 5);
-    Actor_ShowEmote(22, 0x102, 30);
+    Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     FieldEvent_ShowMessageThenWait(22, 0, 5);
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(5);
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_FaceDirectionAndWait(21, FACING_EAST);
     Event_Wait(10);
-    Actor_ShowEmote(21, 0x101, 30);
+    Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     FieldEvent_ShowMessageThenWait(21, 0, 5);
     Actor_FaceDirectionAndWait(20, FACING_WEST);
     Actor_SetAnimationAndWait(20, 3);
@@ -1081,9 +1081,9 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_FaceDirectionAndWait(22, FACING_WEST);
     Event_Wait(10);
-    Actor_ShowEmote(22, 0x101, 30);
+    Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     FieldEvent_ShowMessageThenWait(22, 0, 5);
-    Actor_ShowEmote(23, 0x101, 30);
+    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     Actor_FaceDirection(20, eastB, 0);
     Actor_FaceDirection(21, eastB, 0);
     Actor_FaceDirection(22, eastB, 0);
@@ -1092,25 +1092,25 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetAnimation(21, 3);
     Actor_SetAnimationAndWait(22, 3);
     Event_Wait(10);
-    Actor_ShowEmote(23, 0x109, 30);
+    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     FieldEvent_ShowMessageThenWait(23, 0, 5);
-    Actor_ShowEmote(20, 0x100, 0);
-    Actor_ShowEmote(21, 0x100, 0);
-    Actor_ShowEmote(22, 0x100, 30);
+    Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     Event_Wait(40);
     Actor_TurnToFaceEachOther(20, 21, 0);
     Actor_FaceDirection(22, FACING_WEST, 0);
-    Actor_ShowEmote(22, 0x105, 30);
-    Actor_ShowEmote(20, 0x102, 40);
+    Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+    Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Actor_FaceDirectionAndWait(20, eastB);
     Event_Wait(20);
     Event_OpenMessage(20, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
-      Actor_ShowEmote(20, 0x109, 30);
+      Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       FieldEvent_ShowMessageThenWait(20, 0, 5);
       (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     } else {
-      Actor_ShowEmote(20, 0x109, 30);
+      Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
       FieldEvent_ShowMessageThenWait(20, 0, 5);
     }
@@ -1118,7 +1118,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_Wait(40);
     Actor_FaceDirection(4, FACING_NORTH, 0);
     Actor_FaceDirection(23, FACING_NORTH, 0);
-    Actor_ShowEmote(23, 0x109, 30);
+    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_RunRepeatedMotion(21, 2);
     Actor_FaceDirection(21, FACING_SOUTH_SOUTHEAST, 0);
@@ -1130,7 +1130,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_RunRepeatedMotion(20, 2);
     Func_02000d4c();
     Event_Wait(5);
-    Actor_ShowEmote(20, 0x109, 30);
+    Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_TurnToFaceEachOther(20, 21, 0);
     Event_Wait(40);
@@ -1302,7 +1302,7 @@ void WorldMap_MeetEcho(void) {
     WorldMap_Freeze();
     Actor_FaceActorById(owner, 9, 0);
     Event_Wait(10);
-    FieldActor_ShowEmote(owner, 0x101, 60);
+    FieldActor_ShowEmote(owner, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     {
       s32 one = 1;
       *(u16 *)&djinni->unk66 = one;
@@ -1355,15 +1355,15 @@ void WorldMap_MeetEcho(void) {
       Event_SetMessageId(TUTORIAL_MESSAGE(MsgSeeYouKnow));
       Event_ShowMessageAndWait(9, 0);
     }
-    FieldActor_ShowEmote(owner, 0x100, 30);
+    FieldActor_ShowEmote(owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     Actor_Jump(9, 2, 20);
     Actor_Jump(9, 2, 20);
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgEvenIKnow));
     i = 15;
     Event_ShowMessageAndWait(9, 0);
-    FieldActor_ShowEmote(owner, 0x102, 30);
+    FieldActor_ShowEmote(owner, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Event_ShowMessageAndWait(9, 0);
-    FieldActor_ShowEmote(owner, 0x100, 30);
+    FieldActor_ShowEmote(owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     Event_ShowMessageAndWait(9, 0);
     Motion_SetVarCbAndRefresh(owner, 2);
     Event_ShowMessageAndWait(9, 0);
@@ -1389,7 +1389,7 @@ void WorldMap_MeetEcho(void) {
     }
     Actor_SetModeById(owner, 22);
     Event_ShowMessageAndWait(9, 0);
-    Actor_ShowEmoteById(9, 0x102, 30);
+    Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Actor_FaceActorById(9, owner, 0);
     Motion_SetVarCbAndRefresh(9, 2);
     Event_ShowMessageAndWait(9, 0);
@@ -1487,7 +1487,7 @@ refused:
   Actor_Jump(9, 2, 20);
   Actor_Jump(9, 2, 20);
   Event_ShowMessageAndWait(9, 0);
-  Actor_ShowEmoteById(9, 0x100, 30);
+  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessageAndWait(9, 0);
   Event_SetFlag(FLAG_DJINN_LESSON_PART_A);
   Event_SetFlag(FLAG_DJINN_LESSON_PART_B);
@@ -1825,43 +1825,43 @@ void WorldMap_TakeTheTiller(void) {
     FieldEvent_SetMessageId((s32)MsgTakeTheTiller);
     Event_Wait(40);
     FieldEvent_ShowMessageThenWait(7, 0, 10);
-    Actor_ShowEmote(8, 256, 30);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     FieldEvent_ShowMessageThenWait(4, 0, 10);
     FieldEvent_ShowMessageThenWait(7, 0, 10);
-    Actor_ShowEmote(8, 257, 30);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     FieldEvent_ShowMessageThenWait(6, 0, 10);
     FieldEvent_ShowMessageThenWait(9, 0, 10);
-    Actor_ShowEmote(8, 264, 30);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     FieldEvent_ShowMessageThenWait(5, 0, 10);
     FieldMessage_ShowAtActor(7, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
-      Actor_ShowEmote(8, 265, 30);
+      Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       FieldEvent_ShowMessageThenWait(9, 0, 10);
       ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
     } else {
-      Actor_ShowEmote(8, 265, 30);
+      Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
       FieldEvent_ShowMessageThenWait(9, 0, 10);
     }
-    FieldActor_ShowEmote(8, 256, 30);
+    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     FieldEvent_ShowMessageThenWait(7, 0, 10);
     FieldEvent_ShowMessageThenWait(9, 0, 10);
-    FieldActor_ShowEmote(8, 257, 30);
+    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     FieldEvent_ShowMessageThenWait(6, 0, 10);
     FieldEvent_ShowMessageThenWait(9, 0, 10);
-    Actor_ShowEmote(8, 256, 30);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     FieldEvent_ShowMessageThenWait(5, 0, 10);
     FieldEvent_ShowMessageThenWait(9, 0, 10);
     FieldEvent_ShowMessageThenWait(6, 0, 10);
-    FieldActor_ShowEmote(8, 264, 30);
+    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     FieldEvent_ShowMessageThenWait(5, 0, 10);
-    Actor_ShowEmote(8, 258, 30);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     FieldEvent_ShowMessageThenWait(6, 0, 10);
     FieldEvent_ShowMessageThenWait(5, 0, 10);
     FieldEvent_ShowMessageThenWait(9, 0, 10);
-    Actor_ShowEmote(8, 257, 30);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     FieldEvent_ShowMessageThenWait(7, 0, 10);
-    Actor_ShowEmote(8, 264, 30);
+    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     FieldEvent_ShowMessageThenWait(9, 0, 10);
     FieldEvent_ShowMessageThenWait(6, 0, 10);
     FieldEvent_ShowMessageThenWait(5, 0, 10);
@@ -1926,7 +1926,7 @@ void WorldMap_TakeOff(void) {
   FieldEvent_SetMessageId((s32)MsgWeDidIt);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_ShowMessage(2, 0);
-  Actor_ShowEmote(8, 0x102, 40);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(1, 0);
   Event_ShowMessage(3, 0);
   Event_ShowMessage(0, 0);

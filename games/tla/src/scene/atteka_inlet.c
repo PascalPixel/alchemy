@@ -162,7 +162,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
     Event_Wait(10);
     Event_SetMessageId((s32)MsgWhereDoYouThink);
     Event_ShowMessage(0x4009, 0);
-    Actor_ShowEmoteById(10, 265, 0);
+    Actor_ShowEmoteById(10, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
     Event_ShowMessageAndWait(10, 0);
     Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
     Event_ShowMessage(0x4009, 0);
@@ -170,7 +170,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
     Actor_SetModeById(10, 3);
     Event_ShowMessageAndWait(10, 0);
     Actor_ArmCallback(10, FACING_EAST, 0);
-    Actor_ShowEmoteById(9, 264, 0);
+    Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
     Actor_ArmCallback(9, FACING_EAST, 20);
     Event_ShowMessageAndWait(0x4009, 0);
     Event_ShowMessageAndWait(10, 0);
@@ -194,7 +194,7 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Camera_SetSpeedParameters(0x26666, 0x4ccc);
     FieldCamera_MoveTo(520, CAMERA_KEEP, 372, 1);
     FieldCamera_WaitForArrival();
-    Actor_ShowEmote(23, 264, 0);
+    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
     Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 20);
     Event_SetMessageId((s32)MsgIVeBeenWaiting);
     Event_ShowMessageAndWait(23, 0);
@@ -215,7 +215,7 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Actor_FaceDirectionAndWait(23, FACING_SOUTH_SOUTHEAST);
     Motion_SetModeAndWaitAnimation(23, 3);
     Event_ShowMessageAndWait(23, 0);
-    Actor_ShowEmote(23, 265, 20);
+    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     Event_ShowMessageAndWait(23, 0);
     Actor_SetModeById(23, 4);
     Event_ShowMessageAndWait(23, 0);
@@ -228,10 +228,11 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Event_ShowMessageAndWait(23, 0);
     Actor_SetModeById(23, 4);
     Event_ShowMessageAndWait(23, 0);
-    Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 257, 40);
-    Actor_ShowEmoteById(23, 265, 20);
+    Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
+                        EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+    Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     Event_ShowMessageAndWait(23, 0);
-    Actor_ShowEmoteById(23, 264, 20);
+    Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
     Event_ShowMessageAndWait(23, 0);
     Motion_SetModeAndWaitAnimation(23, 3);
     Event_ShowMessageAndWait(23, 0);
@@ -371,9 +372,9 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Actor_WalkToAndWait(24, 520, 388);
   Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 0);
   Event_ShowMessageAndWait(24, 0);
-  Actor_ShowEmoteById(23, 256, 10);
+  Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmote(24, 265, 0);
+  Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Event_ShowMessageAndWait(24, 0);
   Motion_SetModeAndWaitAnimation(23, 3);
   Actor_FaceDirectionById(24, angle);
@@ -397,12 +398,12 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
   Actor_FaceDirectionById(23, angle);
   Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmoteById(23, 265, 0);
+  Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Event_ShowMessageAndWait(23, 0);
   Actor_SetModeById(23, 3);
   Event_ShowMessageAndWait(23, 0);
   Motion_SetModeAndWaitAnimation(23, 3);
-  Actor_ShowEmoteById(23, 264, 0);
+  Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Event_ShowMessageAndWait(23, 0);
   GameFlag_Set(FLAG_HAMMETS_GIFT_DELIVERED);
   Event_End();

@@ -157,11 +157,11 @@ void IzumoInteriors_AskAfterSusa(void) {
     Event_SetMessageId((s32)MsgSusaSNot);
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(30);
-    Actor_ShowEmoteById(8, 265, 0);
+    Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
     Event_Wait(60);
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(30);
-    Actor_ShowEmoteById(8, 261, 0);
+    Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Event_Wait(60);
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(30);
@@ -234,7 +234,7 @@ void IzumoInteriors_ReadUzumesMind(void) {
     Event_ShowMessageAndWait(15, 0);
     if (GameFlag_Get(0x923)) {
       LeaderAnimate(256, 30);
-      Actor_ShowEmoteById(15, 259, 30);
+      Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
       Event_ShowMessageAndWait(15, 0);
       LeaderAnimate(258, 30);
       Actor_SetModeById(15, 4);
@@ -311,13 +311,13 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_ShowMessage(0x800f, 0);
   Actor_SetAnimation(22, 3);
   Event_ShowMessage(0x8016, 0);
-  Actor_ShowEmote(15, 0x100, 30);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessage(0x800f, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimation(22, 3);
   FieldEvent_Wait(15);
   Event_ShowMessage(0x8016, 0);
-  Actor_ShowEmote(15, 0x103, 30);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   FieldActor_StartRepeatedMotion(22, 3);
   Actor_SetAttachedEffect(22, 0x102);
   FieldEvent_Wait(30);
@@ -341,7 +341,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetDestinationOffset(15, 0, 16);
   FieldActor_WaitForMoveById(15);
   FieldEvent_Wait(15);
-  Actor_ShowEmote(15, 0x100, 30);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   if (mode == 0) {
     Actor_WalkToAndWait(15, 168, 536);
   } else {
@@ -352,14 +352,14 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   owner = owner + 532;
   Actor_FaceActor(20, *(s32 *)owner, 0);
   Event_ShowMessage(0x800f, 0);
-  Actor_ShowEmote(15, 0x107, 0);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   FieldEvent_Wait(30);
   Event_ShowMessage(0x800f, 0);
   FieldActor_Jump(22, 4, 0);
   Actor_SetAttachedEffect(22, 0x101);
   FieldEvent_Wait(30);
   Actor_FaceDirection(20, FACING_SOUTH, 30);
-  Actor_ShowEmote(20, 0x101, 30);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessage(0x8014, 0);
   Actor_FaceActor(22, 20, 0);
   Actor_SetAttachedEffect(22, 0x100);
@@ -371,7 +371,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(30);
   Actor_FaceActor(20, *(s32 *)owner, 0);
   Event_ShowMessage(0x8014, 0);
-  Actor_ShowEmote(15, 0x108, 30);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessage(0x800f, 0);
   Actor_WalkTo(15, 144, 520);
   FieldActor_WaitForMoveById(15);
@@ -436,7 +436,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetAnimation(6, 3);
   FieldEvent_Wait(30);
   Event_ShowMessage(6, 0);
-  Actor_ShowEmote(15, 0x101, 30);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessage(0x800f, 0);
   Actor_FaceEachOther(15, 20, 0);
   FieldEvent_Wait(60);
@@ -456,8 +456,8 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceActor(23, 15, 0);
   FieldEvent_Wait(30);
   Event_ShowMessage(23, 0);
-  Actor_ShowEmote(15, 0x100, 0);
-  Actor_ShowEmote(20, 0x100, 0);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(30);
   Event_ShowMessage(0x800f, 0);
   Actor_FaceActor(*(s32 *)owner, 15, 0);
@@ -471,7 +471,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetAnimation(7, 3);
   Actor_SetAnimation(23, 3);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(15, 0x102, 30);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Event_ShowMessage(0x800f, 0);
   FieldEvent_Wait(60);
   Actor_FaceDirection(15, FACING_EAST, 0);
@@ -481,11 +481,11 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceDirection(15, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
   Event_ShowMessage(0x800f, 0);
-  Actor_ShowEmote(*(s32 *)owner, 0x100, 0);
-  Actor_ShowEmote(5, 0x100, 0);
-  Actor_ShowEmote(6, 0x100, 0);
-  Actor_ShowEmote(7, 0x100, 0);
-  Actor_ShowEmote(23, 0x100, 0);
+  Actor_ShowEmote(*(s32 *)owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(30);
   FieldActor_StartRepeatedMotion(5, 1);
   FieldEvent_Wait(15);
@@ -495,13 +495,13 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceActor(15, *(s32 *)owner, 0);
   FieldEvent_Wait(30);
   Event_ShowMessage(0x800f, 0);
-  Actor_ShowEmote(20, 0x101, 30);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_Wait(30);
   Event_OpenMessage(0x8014, 0);
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 1) {
     FieldEvent_SetMessageId((s32)MsgIThoughtSo);
-    Actor_ShowEmote(20, 0x100, 30);
+    Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     Event_ShowMessage(0x8014, 0);
     Actor_SetAnimation(6, 3);
     Actor_SetAnimation(5, 3);
@@ -525,7 +525,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetAnimation(15, 3);
   Actor_SetAnimation(20, 3);
   FieldEvent_Wait(60);
-  Actor_ShowEmote(20, 0x101, 30);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceActor(20, *(s32 *)owner, 0);
   FieldEvent_Wait(30);
   Event_ShowMessage(0x8014, 0);
@@ -671,7 +671,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_Wait(15);
   Event_ShowMessageAndWait(20, 0);
   Event_Wait(15);
-  Actor_ShowEmote(20, 0x108, 30);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageAndWait(20, 0);
   Actor_FaceActorById(21, 20, 0);
   Event_Wait(30);
@@ -695,14 +695,14 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetModeById(7, 3);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
-  Actor_ShowEmote(15, 0x101, 30);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageAndWait(15, 0);
   Actor_FaceActorById(21, *(s32 *)owner, 0);
   Event_ShowMessageAndWait(21, 0);
   Actor_FaceActorById(15, *(s32 *)owner, 0);
   Actor_FaceActorById(20, *(s32 *)owner, 0);
   Event_Wait(30);
-  Actor_ShowEmoteById(*(s32 *)owner, 0x102, 30);
+  Actor_ShowEmoteById(*(s32 *)owner, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
@@ -711,26 +711,26 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_Wait(30);
   Actor_SetModeById(23, 3);
   Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmote(15, 0x101, 0);
-  Actor_ShowEmote(20, 0x101, 0);
-  Actor_ShowEmote(21, 0x101, 0);
-  Actor_ShowEmote(22, 0x101, 0);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(30);
-  Actor_ShowEmote(23, 0x100, 30);
+  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmote(21, 0x101, 30);
+  Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageAndWait(21, 0);
   Actor_FaceActorById(23, 21, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmoteById(20, 0x106, 30);
+  Actor_ShowEmoteById(20, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   Event_ShowMessageAndWait(20, 0);
-  Actor_ShowEmote(23, 0x108, 30);
+  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageAndWait(23, 0);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmote(15, 0x101, 30);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageAndWait(15, 0);
   Actor_FaceActorById(7, 23, 0);
   Event_Wait(30);
@@ -738,14 +738,14 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceActorById(23, 7, 0);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
-  Actor_ShowEmoteById(15, 0x101, 30);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceActorById(23, 15, 0);
   Actor_FaceActorById(7, 15, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(15, 0);
-  Actor_ShowEmote(6, 0x108, 30);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageAndWait(6, 0);
-  Actor_ShowEmoteById(21, 0x100, 30);
+  Actor_ShowEmoteById(21, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessageAndWait(21, 0);
   Actor_SetModeById(5, 3);
   Event_Wait(30);
@@ -764,7 +764,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 0) {
     Event_SetMessageId((s32)MsgRegardlessOfYour);
-    Actor_ShowEmoteById(15, 0x108, 30);
+    Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     Event_ShowMessageAndWait(15, 0);
   } else {
     Event_SetMessageId((s32)MsgYouTookPity);
@@ -776,7 +776,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
   Actor_FaceActorById(15, 23, 0);
-  Actor_ShowEmoteById(15, 0x101, 30);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
@@ -795,15 +795,15 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetModeById(6, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(6, 0);
-  Actor_ShowEmote(5, 0x108, 30);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageAndWait(5, 0);
-  Actor_ShowEmoteById(15, 0x100, 30);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_Wait(15);
   Actor_FaceActorById(15, 21, 0);
   Event_ShowMessageAndWait(15, 0);
-  Actor_ShowEmoteById(21, 0x108, 30);
+  Actor_ShowEmoteById(21, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageAndWait(21, 0);
-  Actor_ShowEmoteById(6, 0x106, 30);
+  Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   owner = (s32)&gMainRoutineWork;
   owner = owner + 532;
   Actor_FaceActorById(6, *(s32 *)owner, 0);
@@ -831,7 +831,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   message = (s32)MsgIDisagree2;
   Event_SetMessageId(message);
   Actor_FaceActorById(23, 21, 0);
-  Actor_ShowEmoteById(23, 0x101, 30);
+  Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageAndWait(23, 0);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
@@ -885,7 +885,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceActorById(20, *(s32 *)owner, 0);
   Actor_StartRepeatedMotion(21, 1);
   Event_Wait(15);
-  Actor_ShowEmote(21, 0x105, 30);
+  Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   Actor_FaceActorById(23, *(s32 *)owner, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
@@ -904,9 +904,9 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetModeById(7, 3);
   Actor_SetModeById(*(s32 *)owner, 3);
   Event_Wait(30);
-  Actor_ShowEmote(15, 0x100, 0);
-  Actor_ShowEmote(20, 0x100, 0);
-  Actor_ShowEmoteById(21, 0x100, 0);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmoteById(21, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(20, 0);
   Actor_FaceActorById(*(s32 *)owner, 15, 0);
@@ -916,7 +916,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceActorById(23, 15, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
-  Actor_ShowEmoteById(15, 0x109, 30);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Event_ShowMessageAndWait(15, 0);
   Actor_SetModeById(5, 3);
   Event_Wait(30);
@@ -924,7 +924,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetModeById(20, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(20, 0);
-  Actor_ShowEmoteById(6, 0x105, 0);
+  Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(6, 0);
   Actor_FaceActorById(6, 5, 0);
@@ -1021,7 +1021,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 144, 536);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Event_Wait(15);
-  Actor_ShowEmote(15, 0x100, 60);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_OpenMessage(15, 0);
   if (!Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0)) {
     Event_SetMessageId(((s32)&MsgAhCouldIt + 1));
@@ -1030,11 +1030,11 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
     Event_SetMessageId(((s32)&MsgAhCouldIt + 2));
     Event_ShowMessageAndWait(15, 0);
   }
-  Actor_ShowEmoteById(15, 0x109, 60);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 60);
   Event_SetMessageId((s32)&MsgAgainYouHave);
   Event_ShowMessageAndWait(15, 0);
-  Actor_ShowEmote(15, 0x105, 120);
-  Actor_ShowEmoteById(15, 0x106, 60);
+  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 120);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
   Event_ShowMessageAndWait(15, 0);
   BattleEffect_StartArcEffect();
   t21 = ((s32)Actor_GetById(15));

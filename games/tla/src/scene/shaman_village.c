@@ -1348,7 +1348,7 @@ void ShamanVillage_MeetMoapa(void) {
   SHAMAN_VILLAGE_EMOTE(17, 259, 0)
   Event_ShowMessage(0x8011, 0);
   Actor_StartRepeatedMotion(16, 1);
-  FieldActor_ShowEmote(16, 259, 0);
+  FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Event_ShowMessage(0x8010, 0);
   Actor_SetAnimationAndWait(15, 3);
   Event_ShowMessage(0x800f, 0);
@@ -1491,7 +1491,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_FaceDirection(5, FACING_WEST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirection(7, FACING_WEST, 0);
-  FieldActor_ShowEmote(18, 256, 20);
+  FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_Jump(18, 4, 0);
   Event_ShowMessage(18, 0);
   Actor_FaceDirection(15, FACING_SOUTHEAST, 0);
@@ -1506,7 +1506,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_FaceDirectionAndWait(15, FACING_SOUTH);
   Actor_SetAnimationAndWait(15, 4);
   Event_ShowMessage(15, 0);
-  FieldActor_ShowEmote(6, 259, 0);
+  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Event_ShowMessage(6, 0);
   Actor_FaceDirection(15, FACING_SOUTHWEST, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
@@ -1521,14 +1521,14 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_FaceDirection(15, FACING_SOUTHEAST, 0);
   Actor_SetAttachedEffect(18, 258);
   Event_ShowMessage(18, 0);
-  FieldActor_ShowEmote(15, 265, 40);
+  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   Event_ShowMessage(15, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(17, 262, 20)
   Actor_FaceDirectionAndWait(17, FACING_SOUTHWEST);
   Event_ShowMessage(17, 0);
-  FieldActor_ShowEmote(15, 257, 0);
+  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirection(15, FACING_NORTHEAST, 20);
   Actor_SetAnimation(17, 3);
   Event_ShowMessage(17, 0);
@@ -1540,12 +1540,12 @@ void ShamanVillage_ShowShamansRod(void) {
     Event_Wait(10);
     DriftScene_SpawnObject(0x7c0000, y, z, 0x2000);
     Event_Wait(30);
-    FieldActor_ShowEmote(16, 262, 20);
+    FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20);
     Actor_FaceDirectionAndWait(16, FACING_EAST);
     Event_ShowMessage(16, 0);
     Actor_FaceDirectionAndWait(17, FACING_WEST);
     Actor_SetAnimationAndWait(17, 3);
-    FieldActor_ShowEmote(15, 264, 40);
+    FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
     Actor_SetAnimationAndWait(15, 3);
     Actor_FaceDirection(17, FACING_SOUTH, 0);
     Actor_FaceDirection(16, FACING_SOUTH, 0);
@@ -2132,7 +2132,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(17, 256, 0)
-  FieldActor_ShowEmote(16, 256, 0);
+  FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(16, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(17, FACING_SOUTHWEST);
   Actor_StartRepeatedMotion(17, 1);
@@ -2204,8 +2204,8 @@ void ShamanVillage_ShebaClearsSand(void) {
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(17, 257, 0)
-  FieldActor_ShowEmote(16, 257, 20);
-  FieldActor_ShowEmote(5, 264, 40);
+  FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Event_ShowMessage(5, 0);
   Actor_FaceDirection(16, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(17, FACING_WEST);
@@ -2215,12 +2215,12 @@ void ShamanVillage_ShebaClearsSand(void) {
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(15, 259, 20)
-  FieldActor_ShowEmote(6, 259, 20);
+  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Event_ShowMessage(6, 0);
   Actor_FaceDirection(15, FACING_NORTH, 20);
   Actor_SetAnimationAndWait(15, 4);
   Event_Wait(20);
-  FieldActor_ShowEmote(17, 262, 0);
+  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
   Actor_FaceDirectionAndWait(17, FACING_SOUTHWEST);
   Event_ShowMessage(17, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHEAST);
@@ -2254,7 +2254,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_SetAnimationAndWait(16, 3);
   Event_Wait(20);
   Actor_FaceDirectionAndWait(15, FACING_NORTH);
-  FieldActor_ShowEmote(15, 265, 40);
+  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   Event_ShowMessage(15, 0);
   Actor_SetAnimation(15, 4);
   Event_OpenMessage(15, 0);

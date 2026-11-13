@@ -300,10 +300,11 @@ read:
   FieldEvent_Wait(15);
   Actor_SetPosition(19, 0, 0);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 258, 0);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner, EMOTE_IN_FRONT | EMOTE_WINCE,
+                  0);
   FieldEvent_Wait(60);
   Event_PlaySound(MUS_010);
-  Actor_ShowEmote(10, 0x100, 60);
+  Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_ShowMessage(10, 0);
   unitData = Unit_Get(unit);
   info = Item_GetDirect(unitData->items[slot]);

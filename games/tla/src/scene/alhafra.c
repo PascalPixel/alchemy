@@ -195,7 +195,7 @@ void Alhafra_SailorToldToWork(void) {
   FieldEvent_ShowMessageThenWait(0x18, 0, 0xa);
   Actor_ArmCallback(19, -256, 0);
   Event_Wait(10);
-  Actor_ShowEmoteById(0x13, 0x107, 0x1e);
+  Actor_ShowEmoteById(0x13, EMOTE_IN_FRONT | EMOTE_SCOWL, 0x1e);
   FieldEvent_ShowMessageThenWait(0x13, 0, 0xa);
   FieldActor_StartRepeatedMotion(24, 3);
   FieldEffect_SetAttached(0x18, 0x102);
@@ -280,9 +280,9 @@ void Alhafra_FindGoldCoins(void) {
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(29, 3);
   Event_Wait(20);
-  Actor_ShowEmoteById(0x1e, 0x108, 0x1e);
+  Actor_ShowEmoteById(0x1e, EMOTE_IN_FRONT | EMOTE_SMILE, 0x1e);
   FieldEvent_ShowMessageThenWait(0x1e, 0, 0xa);
-  Actor_ShowEmoteById(0x1d, 0x102, 0x28);
+  Actor_ShowEmoteById(0x1d, EMOTE_IN_FRONT | EMOTE_WINCE, 0x28);
   Actor_FaceDirection(29, FACING_SOUTH, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(29, 2);
@@ -547,7 +547,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Motion_SetVarCbAndRefresh(31, 2);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(0x1f, 0, 0xa);
-  Actor_ShowEmote(33, 0x102, 30);
+  Actor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceDirection(33, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(40);
   Motion_SetVarCbAndRefresh(33, 2);
@@ -623,7 +623,7 @@ void Alhafra_MadransArrive(s32 a0) {
   FieldEvent_ShowMessageThenWait(0x1e, 0, 0xa);
   Actor_SetAnimationAndWait(29, 4);
   FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
-  Actor_ShowEmote(0x1e, 0x102, 0x1e);
+  Actor_ShowEmote(0x1e, EMOTE_IN_FRONT | EMOTE_WINCE, 0x1e);
   Actor_ArmCallback(30, 0, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(29, 2);
@@ -671,7 +671,7 @@ void Alhafra_MadransArrive(s32 a0) {
   FieldEvent_ShowMessageThenWait(0x20, 0, 0xa);
   Actor_SetModeById(29, 1);
   Event_Wait(10);
-  Actor_ShowEmoteById(0x1d, 0x107, 0x1e);
+  Actor_ShowEmoteById(0x1d, EMOTE_IN_FRONT | EMOTE_SCOWL, 0x1e);
   Actor_FaceDirection(29, FACING_WEST, 0);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
@@ -714,7 +714,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_ArmCallback(29, 0, 0);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(0x201d, 0, 0xa);
-  Actor_ShowEmoteById(0x22, 0x100, 0x28);
+  Actor_ShowEmoteById(0x22, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0x28);
   FieldEvent_ShowMessageThenWait(0x22, 0, 0xa);
   Actor_FaceDirection(29, FACING_WEST, 0);
   Event_Wait(20);
@@ -747,10 +747,10 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_WalkToAndWait(17, 448, 808);
   Actor_WalkByAndWait(30, 8, 0);
   FieldEvent_ShowMessageThenWait(0x101e, 0, 0xa);
-  Actor_ShowEmoteById(0x11, 0x101, 0x32);
+  Actor_ShowEmoteById(0x11, EMOTE_IN_FRONT | EMOTE_QUESTION, 0x32);
   Actor_FaceDirection(17, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_ShowEmoteById(0x1e, 0x108, 0x1e);
+  Actor_ShowEmoteById(0x1e, EMOTE_IN_FRONT | EMOTE_SMILE, 0x1e);
   FieldEvent_ShowMessageThenWait(0x101e, 0, 0xa);
   Motion_SetVarCbAndRefresh(17, 2);
   Event_Wait(10);
@@ -907,7 +907,7 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 736);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   }
-  Actor_ShowEmote(ACTOR_LOOKOUT, 0x102, 0x1e);
+  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_WINCE, 0x1e);
   FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
   Actor_SetAnimationAndWait(ACTOR_LOOKOUT, 3);
   FieldEvent_Wait(10);
@@ -930,7 +930,7 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
     Actor_GetById(ACTOR_LOOKOUT)->actionFlags |= 1;
     Event_Wait(10);
     Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
-    Actor_ShowEmote(ACTOR_LOOKOUT, 0x107, 30);
+    Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     Event_OpenMessage(ACTOR_LOOKOUT, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       Event_Wait(30);
@@ -955,7 +955,7 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
     Event_Wait(10);
     Actor_ArmCallback(ACTOR_LOOKOUT, 0xe000, 0);
     Event_Wait(70);
-    Actor_ShowEmote(ACTOR_LOOKOUT, 0x100, 50);
+    Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
     Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
   }
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 184, 728);

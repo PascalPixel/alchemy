@@ -285,7 +285,7 @@ void Daila_MeetAlex(void) {
   Actor_MoveToAndWait(ACTOR_ALEX, 472, 280);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST, 0);
   Event_Wait(30);
-  Actor_ShowEmoteById(ACTOR_ALEX, 256, 0);
+  Actor_ShowEmoteById(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
   FieldActor_LaunchFromLeader(ACTOR_JENNA, 8, 16, 0xa000);
@@ -294,7 +294,7 @@ void Daila_MeetAlex(void) {
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
   Event_Wait(30);
-  Actor_ShowEmote(ACTOR_JENNA, 259, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Event_Wait(30);
@@ -346,7 +346,7 @@ void Daila_MeetAlex(void) {
     Event_SetMessageId(msg + 11);
     Event_ShowMessageAndWait(ACTOR_ALEX, 0);
     Event_Wait(60);
-    Actor_ShowEmoteById(ACTOR_JENNA, 259, 0);
+    Actor_ShowEmoteById(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Event_Wait(60);
     Actor_FaceActorById(ACTOR_JENNA, ACTOR_ALEX, 0);
     Event_ShowMessageAndWait(ACTOR_JENNA, 0);
@@ -371,7 +371,7 @@ void Daila_MeetAlex(void) {
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
   Event_Wait(60);
-  Actor_ShowEmoteById(ACTOR_KRADEN, 258, 0);
+  Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Event_Wait(60);
@@ -399,7 +399,7 @@ void Daila_MeetAlex(void) {
   Actor_Jump(ACTOR_JENNA, 4, 20);
   Actor_Jump(ACTOR_JENNA, 4, 20);
   Event_Wait(30);
-  Actor_ShowEmoteById(ACTOR_JENNA, 259, 0);
+  Actor_ShowEmoteById(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Event_Wait(60);

@@ -606,13 +606,13 @@ void Func_020006f4(void) {
         FieldPsynergy_GreyMindReadPalette();
         Actor_Stop(10);
         Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
-        Actor_ShowEmoteById(10, 264, 20);
+        Actor_ShowEmoteById(10, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
         Event_SetMessageId(asked + 1);
         Event_ShowMessageAndWait(0x800a, 0);
         HAND_BACK(leader, given, 0)
       } else {
         FieldPsynergy_GreyMindReadPalette();
-        Actor_ShowEmoteById(10, 265, 20);
+        Actor_ShowEmoteById(10, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
         Event_SetMessageId(asked + 4);
         Event_ShowMessageAndWait(0x800a, 0);
       }
@@ -664,13 +664,13 @@ void Func_020006f4(void) {
                                                 0) == 0) {
         item = Actor_GetById(gMainRoutineWork.currentOwner);
         FieldPsynergy_GreyMindReadPalette();
-        Actor_ShowEmoteById(10, 264, 20);
+        Actor_ShowEmoteById(10, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
         Event_SetMessageId(noticed + 4);
         Event_ShowMessageAndWait(0x800a, 0);
         HAND_BACK(item, item, zero.v)
       } else {
         FieldPsynergy_GreyMindReadPalette();
-        Actor_ShowEmoteById(10, 265, 20);
+        Actor_ShowEmoteById(10, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
         Event_SetMessageId(noticed + 7);
         Event_ShowMessageAndWait(0x800a, 0);
         Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_NORTH);
@@ -854,7 +854,7 @@ void Func_0200129c(struct Actor *gift) {
 
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldPsynergy_GreyMindReadPalette();
-  Actor_ShowEmote(9, 264, 20);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   guide->update = Actor_EmitSmoke;
   Actor_RunScriptAndWait(9, &script);
   guide->update = 0;
@@ -976,7 +976,8 @@ void Func_020014e0(void) {
     } else {
       Event_SetMessageId(MsgIMSoVery);
       Event_ShowMessage(9, 0);
-      Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 262, 20);
+      Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
+                          EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20);
       Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
       leader->update = Actor_EmitSmoke;
       // Default: a is set for real when object 163 is made.
@@ -991,7 +992,7 @@ void Func_020014e0(void) {
       STEP(gMainRoutineWork.currentOwner, 318, 424);
       leader->update = 0;
       Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-      Actor_ShowEmoteById(9, 256, 20);
+      Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
       Actor_FaceDirectionAndWait(9, FACING_NORTH_NORTHWEST);
       other = Actor_GetById(9);
       other->update = Actor_EmitSmoke;
@@ -1006,7 +1007,7 @@ void Func_020014e0(void) {
         Func_0200129c(a);
       } else {
         FieldPsynergy_GreyMindReadPalette();
-        Actor_ShowEmoteById(9, 265, 0);
+        Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
         Event_ShowMessage(9, 0);
         Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
         Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);

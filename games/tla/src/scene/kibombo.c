@@ -450,7 +450,7 @@ void Kibombo_PiersHasForgottenParty(void) {
     ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
     Event_ShowMessageAndWait(5, 0);
   }
-  Actor_ShowEmoteById(7, 0x101, 20);
+  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Event_ShowMessageAndWait(7, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   Kibombo_ObjArm(26, FACING_NORTHWEST + FACING_STEP, 0);
@@ -461,7 +461,7 @@ void Kibombo_PiersHasForgottenParty(void) {
   Actor_ArmCallback(5, FACING_EAST, 0);
   Kibombo_ObjArm(6, FACING_NORTHEAST, 20);
   Event_ShowMessageAndWait(7, 0);
-  Actor_ShowEmoteById(26, 0x100, 0);
+  Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_ShowMessageAndWait(26, 0);
   Event_ShowMessageAndWait(7, 0);
   Event_ShowMessageAndWait(6, 0);
@@ -475,7 +475,7 @@ void Kibombo_PiersHasForgottenParty(void) {
   Event_ShowMessageAndWait(6, 0);
   Kibombo_ObjEmote(5, 0x103, 10);
   Event_ShowMessageAndWait(5, 0);
-  Actor_ShowEmoteById(7, 0x103, 10);
+  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
   Event_ShowMessageAndWait(7, 0);
 }
 
@@ -485,7 +485,7 @@ void Kibombo_PiersTakesPartyForEnemies(void) {
   Kibombo_ObjArm(5, FACING_SOUTH, 10);
   Actor_SetModeById(5, 4);
   Event_ShowMessageAndWait(5, 0);
-  Actor_ShowEmoteById(7, 0x101, 20);
+  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Event_ShowMessageAndWait(7, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   Kibombo_ObjArm(26, FACING_NORTHWEST + FACING_STEP, 0);
@@ -500,7 +500,7 @@ void Kibombo_PiersTakesPartyForEnemies(void) {
   Event_ShowMessageAndWait(7, 0);
   Event_ShowMessageThenWait(26, 0, 20);
   Event_ShowMessageAndWait(7, 0);
-  Actor_ShowEmoteById(6, 0x109, 0);
+  Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Event_ShowMessageAndWait(6, 0);
   Kibombo_ObjArm(5, FACING_SOUTHWEST, 40);
   Actor_ArmCallback(5, FACING_EAST, 0);
@@ -512,7 +512,7 @@ void Kibombo_PiersTakesPartyForEnemies(void) {
   Event_ShowMessageAndWait(6, 0);
   Kibombo_ObjEmote(5, 0x103, 10);
   Event_ShowMessageAndWait(5, 0);
-  Actor_ShowEmoteById(7, 0x103, 10);
+  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
   Event_ShowMessageAndWait(7, 0);
 }
 
@@ -655,7 +655,7 @@ void Func_02000d74(void) {
   Actor_WaitForMoveById(26);
   Actor_SetModeById(26, 1);
   Kibombo_ObjArm(26, FACING_NORTH + FACING_STEP, 40);
-  Actor_ShowEmoteById(26, 0x100, 20);
+  Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessageAndWait(26, 0);
   Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Kibombo_ObjArm(5, FACING_NORTH, 0);
@@ -757,7 +757,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_SetMovementTypeAndWaitById(6, gData_02005f9c);
   Event_Wait(20);
   Event_ShowMessage(0x2007, 0);
-  Actor_ShowEmoteById(5, 0x100, 20);
+  Actor_ShowEmoteById(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessage(0x1005, 0);
   Motion_SetModeAndWaitAnimation(7, 3);
   Event_ShowMessage(0x2007, 0);
@@ -767,25 +767,26 @@ void Kibombo_PiersJoinsParty(void) {
   Motion_SetModeAndWaitAnimation(6, 3);
   Actor_SetModeById(7, 3);
   Event_ShowMessage(0x2007, 0);
-  Actor_ShowEmote(6, 257, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_ShowMessage(0x1006, 0);
   Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
   Event_ShowMessage(0x2007, 0);
-  Actor_ShowEmote(26, 257, 0);
+  Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_ShowMessage(0x101a, 0);
   Actor_FaceDirection(26, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_FaceDirection(6, FACING_SOUTH, 40);
   Event_ShowMessage(0x101a, 0);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 257, 0);
-  Actor_ShowEmote(5, 257, 0);
-  Actor_ShowEmote(6, 257, 40);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                  EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(26, FACING_NORTH + FACING_STEP, 0);
   Event_ShowMessage(0x101a, 0);
   Actor_SetModeById(7, 3);
   Event_ShowMessage(0x2007, 0);
-  Actor_ShowEmote(5, 257, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ArmCallback(5, FACING_EAST, 20);
   Event_ShowMessage(0x1005, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
@@ -795,10 +796,11 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_SetModeById(7, 4);
   Event_ShowMessage(0x2007, 0);
   Actor_FaceDirection(26, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 257, 0);
-  Actor_ShowEmote(5, 257, 0);
-  Actor_ShowEmote(6, 257, 40);
-  Actor_ShowEmoteById(7, 261, 20);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                  EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Event_ShowMessage(0x2007, 0);
   Actor_SetModeById(6, 3);
   Event_ShowMessageAndWait(0x1006, 0);
@@ -818,14 +820,15 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_SetModeById(26, 3);
   Event_ShowMessage(0x101a, 0);
   Motion_SetModeAndWaitAnimation(7, 3);
-  Actor_ShowEmoteById(26, 264, 20);
+  Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessage(0x101a, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_FaceDirection(6, FACING_SOUTH, 0);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 257, 0);
-  Actor_ShowEmote(5, 257, 0);
-  Actor_ShowEmoteById(6, 257, 40);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                  EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(26, FACING_NORTH + FACING_STEP, 0);
   Event_OpenMessage(0x101a, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
@@ -845,7 +848,7 @@ void Kibombo_PiersJoinsParty(void) {
   Event_ShowMessage(0x2007, 0);
   Actor_FaceDirection(26, FACING_NORTHWEST + FACING_STEP, 0);
   Event_ShowMessage(0x101a, 0);
-  Actor_ShowEmote(6, 0x100, 20);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessage(0x1006, 0);
   Motion_SetModeAndWaitAnimation(26, 3);
   Event_ShowMessage(0x101a, 0);
@@ -862,17 +865,18 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_FaceDirection(6, FACING_SOUTH, 0);
   Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(26, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_ShowEmoteById(26, 261, 20);
+  Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Event_ShowMessage(0x101a, 0);
-  Actor_ShowEmoteById(7, 262, 40);
+  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   Event_ShowMessage(0x2007, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_ArmCallback(5, FACING_EAST, 0);
   Actor_ArmCallback(6, FACING_EAST, 0);
   Actor_ArmCallback(26, FACING_EAST, 0);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
-  Actor_ShowEmote(5, 0x100, 0);
-  Actor_ShowEmote(6, 0x100, 40);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(7, FACING_WEST, 20);
   Actor_SetModeById(7, 4);
   Event_ShowMessage(0x2007, 0);
@@ -885,14 +889,14 @@ void Kibombo_PiersJoinsParty(void) {
   Motion_SetModeAndWaitAnimation(5, 4);
   Event_ShowMessage(0x1005, 0);
   Actor_FaceDirection(7, FACING_WEST, 0);
-  Actor_ShowEmote(7, 257, 40);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_ArmCallback(5, FACING_EAST, 0);
   Event_ShowMessage(0x1005, 0);
   Actor_FaceDirectionAndWait(26, FACING_NORTHWEST + FACING_STEP);
   Actor_SetModeById(26, 4);
   Event_ShowMessage(0x101a, 0);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_ShowEmote(6, 257, 20);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Event_ShowMessage(0x1006, 0);
   Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
   Actor_SetModeById(7, 4);
@@ -901,7 +905,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_ArmCallback(6, FACING_EAST, 0);
   Actor_ArmCallback(26, FACING_EAST, 0);
-  Actor_ShowEmote(5, 0x100, 20);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessage(0x1005, 0);
   Actor_FaceDirection(7, FACING_WEST, 0);
   Event_ShowMessage(0x2007, 0);
@@ -924,7 +928,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_SetAttachedEffect(7, 258);
   Event_Wait(20);
   Event_ShowMessage(0x2007, 0);
-  Actor_ShowEmote(6, 257, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_ShowMessage(0x1006, 0);
   Actor_FaceDirection(26, FACING_NORTHWEST + FACING_STEP, 10);
   Actor_SetModeById(26, 4);
@@ -932,7 +936,7 @@ void Kibombo_PiersJoinsParty(void) {
   Motion_SetModeAndWaitAnimation(7, 3);
   Actor_ArmCallback(26, FACING_EAST, 0);
   Event_ShowMessage(0x2007, 0);
-  Actor_ShowEmote(7, 0x100, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_ShowMessage(0x2007, 0);
   Actor_FaceDirection(7, FACING_NORTH, 20);
   Event_ShowMessage(0x2007, 0);
@@ -954,17 +958,17 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_Stop(26);
   Actor_FaceDirection(26, FACING_NORTHWEST + FACING_STEP, 0);
   Event_ShowMessage(0x101a, 0);
-  Actor_ShowEmoteById(7, 257, 20);
+  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_FaceDirection(7, FACING_SOUTH, 40);
   Actor_FaceDirectionAndWait(26, FACING_NORTH + FACING_STEP);
   Event_ShowMessage(0x101a, 0);
-  Actor_ShowEmoteById(7, 0x100, 20);
+  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessage(0x1007, 0);
   Actor_FaceDirection(26, FACING_NORTHWEST + FACING_STEP, 0);
   Motion_SetModeAndWaitAnimation(26, 4);
   Event_ShowMessage(0x101a, 0);
   Event_ShowMessage(0x101a, 0);
-  Actor_ShowEmoteById(7, 265, 40);
+  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   Event_ShowMessage(0x1007, 0);
   Actor_SetAttachedEffect(26, 258);
   Event_Wait(20);
@@ -980,7 +984,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_FaceDirection(26, FACING_NORTH + FACING_STEP, 0);
   Event_OpenMessage(0x101a, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-    Actor_ShowEmoteById(26, 264, 20);
+    Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
     Event_ShowMessageAndWait(0x101a, 0);
     Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
     Actor_FaceDirection(6, FACING_NORTHEAST, 20);
@@ -989,7 +993,7 @@ void Kibombo_PiersJoinsParty(void) {
     *(u16 *)(EVENT_WORK + 0x1c4) += 3;
   } else {
     *(u16 *)(EVENT_WORK + 0x1c4) += 1;
-    Actor_ShowEmoteById(26, 263, 20);
+    Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
     Event_ShowMessageAndWait(0x101a, 0);
     Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
     Event_ShowMessageAndWait(0x1005, 0);
@@ -1000,7 +1004,7 @@ void Kibombo_PiersJoinsParty(void) {
     Event_Wait(40);
     Func_02005c7c();
   }
-  Actor_ShowEmoteById(7, 265, 40);
+  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   Event_ShowMessageAndWait(0x1007, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_FaceDirection(6, FACING_NORTH, 0);
@@ -1086,9 +1090,9 @@ void Kibombo_DeadEndByTheStatue(void) {
   FieldCamera_WaitForArrival();
   Actor_SetModeById(6, 4);
   Event_ShowMessageAndWait(6, 0);
-  Actor_ShowEmote(5, 257, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_ShowMessageAndWait(5, 0);
-  Actor_ShowEmoteById(26, 262, 20);
+  Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 26);
   Actor_WatchAndSetScript(5, 26);
   Actor_WatchAndSetScript(6, 26);
@@ -1131,10 +1135,11 @@ void Kibombo_DeadEndByTheStatue(void) {
   Event_Wait(20);
   Actor_SetModeById(26, 7);
   Event_Wait(20);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 257, 0);
-  Actor_ShowEmote(5, 257, 0);
-  Actor_ShowEmote(6, 257, 0);
-  Actor_ShowEmote(7, 257, 40);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                  EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(5);
   Actor_Stop(6);
@@ -1142,8 +1147,8 @@ void Kibombo_DeadEndByTheStatue(void) {
   Event_ShowMessageAndWait(26, 0);
   Actor_FaceDirection(5, FACING_NORTHEAST, 0);
   Actor_FaceDirection(6, FACING_SOUTHWEST, 0);
-  Actor_ShowEmote(5, 257, 0);
-  Actor_ShowEmote(6, 257, 20);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x6666, 0x3333);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 280, 188);
@@ -1154,7 +1159,8 @@ void Kibombo_DeadEndByTheStatue(void) {
   Event_Wait(1);
   Actor_GetById(26)->actionFlags |= 1;
   FieldMessage_ShowAtActor(26, 0);
-  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 257, 0);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
+                      EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirection(5, FACING_WEST, 0);
   Actor_FaceDirection(6, FACING_WEST, 0);
 ask:
@@ -1169,10 +1175,11 @@ ask:
   Event_SetFlag(FLAG_SCENE_TEMP_21);
   Func_0200384c();
   GameFlag_Clear(FLAG_SCENE_TEMP_21);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
-  Actor_ShowEmote(5, 0x100, 0);
-  Actor_ShowEmote(6, 0x100, 0);
-  Actor_ShowEmote(7, 0x100, 40);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetModeById(26, 3);
   Event_ShowMessageAndWait(26, 0);
   Actor_SetAttachedEffect(5, 258);
@@ -1218,7 +1225,7 @@ ask:
   Actor_Stop(7);
   Motion_SetModeAndWaitAnimation(26, 3);
   Event_ShowMessageAndWait(26, 0);
-  Actor_ShowEmote(5, 257, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_ShowMessageAndWait(5, 0);
   Actor_FaceDirection(26, FACING_NORTH + FACING_STEP, 0);
   Event_ShowMessageAndWait(26, 0);
@@ -1228,10 +1235,10 @@ ask:
   Actor_FaceDirection(7, FACING_NORTHEAST, 0);
   Actor_SetAttachedEffect(7, 258);
   Event_ShowMessageAndWait(7, 0);
-  Actor_ShowEmoteById(26, 265, 0);
+  Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Actor_FaceDirectionAndWait(26, FACING_WEST);
   Event_ShowMessage(0x201a, 0);
-  Actor_ShowEmote(7, 257, 20);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_FaceDirectionAndWait(26, FACING_NORTH + FACING_STEP);
   Event_ShowMessageThenWait(26, 0, 20);
   Actor_FaceDirection(5, FACING_NORTHEAST, 0);
@@ -1247,11 +1254,11 @@ ask:
   Actor_WalkToAndWait(5, 280, 154);
   Actor_FaceDirection(5, FACING_WEST, 40);
   Event_ShowMessageAndWait(5, 0);
-  Actor_ShowEmote(26, 257, 0);
+  Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_ShowMessageAndWait(26, 0);
   Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
   Event_ShowMessageAndWait(5, 0);
-  Actor_ShowEmote(26, 0x100, 20);
+  Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessageAndWait(26, 0);
   FieldCamera_MoveWithinMapBounds(PIXELS(268), -1, PIXELS(188), 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
@@ -1274,19 +1281,20 @@ ask:
   Event_ShowMessageAndWait(26, 0);
   Actor_ArmCallback(26, FACING_EAST, 10);
   Event_ShowMessageAndWait(26, 0);
-  Actor_ShowEmoteById(7, 263, 0);
+  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Event_ShowMessageAndWait(7, 0);
   Actor_FaceDirectionAndWait(26, FACING_WEST);
   Actor_SetModeById(26, 4);
   Event_ShowMessageAndWait(0x201a, 0);
-  Actor_ShowEmoteById(7, 257, 40);
+  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirectionById(26, FACING_EAST);
   Event_ShowMessageAndWait(26, 0);
-  Actor_ShowEmote(7, 0x100, 0);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
-  Actor_ShowEmote(5, 0x100, 0);
-  Actor_ShowEmoteById(6, 0x100, 40);
-  Actor_ShowEmoteById(26, 264, 20);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessageAndWait(26, 0);
   Actor_SetModeById(26, 3);
   Event_ShowMessageAndWait(26, 0);
@@ -2420,7 +2428,7 @@ void Func_020045d0(void) {
   Kibombo_ObjArm(23, FACING_NORTHWEST + FACING_STEP, 0);
   Kibombo_ObjArm(24, FACING_NORTHWEST + FACING_STEP, 0);
   Kibombo_ObjArm(25, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_ShowEmoteById(17, 0x107, 0);
+  Actor_ShowEmoteById(17, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Kibombo_MessagePut(0x8000 + 17, 0);
   Kibombo_MessagePut(0x8000 + 17, 0);
   Motion_SetModeAndWaitAnimation(17, 3);
@@ -2471,7 +2479,7 @@ void Kibombo_GabombaSeesOrb(void) {
   Actor_SetSpriteColor(Actor_GetById(12), 0);
   Actor_SetSpriteColor(Actor_GetById(13), 0);
   wait(8);
-  Actor_ShowEmoteById(17, 0x100, 20);
+  Actor_ShowEmoteById(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_SetMessageId((s32)MsgLookLookThe);
   Event_ShowMessageAndWait(17, 0);
   Sound_Play(SE_577);
@@ -2496,7 +2504,7 @@ void Kibombo_GabombaResponds(void) {
   wait(8);
   Actor_GetById(12)->update = (void (*)(void))Func_020000a0;
   Actor_GetById(13)->update = (void (*)(void))Func_020000a0;
-  Actor_ShowEmoteById(17, 0x100, 20);
+  Actor_ShowEmoteById(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_SetMessageId((s32)MsgLookTheGreat);
   Event_ShowMessageThenWait(17, 0, 20);
   Sound_Play(SE_576);
@@ -2525,7 +2533,7 @@ void Kibombo_GabombaRespondsToGift(void) {
   Actor_SetSpriteColor(Actor_GetById(12), 0);
   Actor_SetSpriteColor(Actor_GetById(13), 0);
   wait(8);
-  Actor_ShowEmoteById(17, 0x100, 20);
+  Actor_ShowEmoteById(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_SetMessageId((s32)MsgLookTheGreatGabomba);
   Event_ShowMessageThenWait(17, 0, 20);
   Kibombo_SePlay(0x240);
@@ -2658,9 +2666,9 @@ void Kibombo_CeremonyEnds(void) {
   Actor_Jump(8, 4, 10);
   Kibombo_MessagePut(0x2008, 0);
   Actor_FaceDirectionById(9, FACING_EAST);
-  Actor_ShowEmoteById(8, 259, 20);
+  Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Kibombo_MessagePut(0x2008, 0);
-  Actor_ShowEmoteById(9, 256, 20);
+  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessageAndWait(9, 0);
   Kibombo_ObjTurn(8, FACING_WEST);
   Actor_SetModeById(8, 4);
@@ -2673,7 +2681,7 @@ void Kibombo_CeremonyEnds(void) {
   Kibombo_ObjSpeed(8, 0x19999, 0xcccc);
   Kibombo_ObjWalk(8, 364, 576);
   Kibombo_ObjArm(8, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_ShowEmoteById(9, 261, 80);
+  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Event_ShowMessageAndWait(9, 0);
   Kibombo_ObjTurn(9, FACING_SOUTHEAST + FACING_STEP);
   Event_ShowMessageAndWait(9, 0);

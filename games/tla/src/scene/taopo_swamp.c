@@ -486,7 +486,8 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceActor(gMainRoutineWork.currentOwner, 8, 0);
-  FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 256, 30);
+  FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldCamera_MoveTo(408, CAMERA_KEEP, 312, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAttachedEffect(8, 257);

@@ -723,7 +723,8 @@ void Func_02000cf0(struct Actor *object) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(15);
   FieldActor_WatchAndSetScript(gMainRoutineWork.currentOwner, 39);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 257, 30);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                  EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   EventCamera_FollowActor(39, 1);
   FieldEvent_Wait(30);
   Actor_Get(39)->priorityFlags |= 0x20;
@@ -1648,7 +1649,8 @@ void Func_020027cc(void) {
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(10);
   System_Wait(20);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 256, 0);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Func_0200578c_ArgsFirst(5, 256, 0);
   Func_0200578c_ArgsFirst(6, 256, 0);
   Func_0200578c_ArgsFirst(7, 256, 0);
@@ -1910,7 +1912,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   Event_ShowMessage(0x4018, 0);
   Actor_SetAnimationAndWait(7, 4);
   Event_ShowMessage(0x8007, 0);
-  Actor_ShowEmote(24, 257, 40);
+  Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(0x8006, 0);
   Actor_SetAnimation(23, 4);
   Event_ShowMessage(0x9017, 0);

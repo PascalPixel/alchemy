@@ -11,6 +11,7 @@
 #include "../field/field_effect/spawn.c"
 
 #include "types.h"
+#include "field/emote.h"
 #include "flags.h"
 #include "sounds.h"
 #include "system/main_routine_work.h"
@@ -1449,7 +1450,7 @@ void Func_02002384(void) {
   FieldCamera_MoveWithinMapBounds(480 << 16, 32 << 16, 340 << 16, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
-  Actor_ShowEmoteById(15, 0x100, 40);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetSpritePriority(15, 1);
   Actor_GetById(15)->motionFlags = off;
   ShrineOfTheSeaGod_ObjSpeed(15, 0x19999, 0xcccc);
@@ -1471,7 +1472,7 @@ void Func_02002430(void) {
   FieldCamera_MoveWithinMapBounds(564 << 16, 32 << 16, 344 << 16, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
-  Actor_ShowEmoteById(15, 0x100, 40);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetSpritePriority(15, 1);
   Actor_GetById(15)->motionFlags = off;
   ShrineOfTheSeaGod_ObjSpeed(15, 0x19999, 0xcccc);
@@ -1524,7 +1525,8 @@ void Func_020025fc(void) {
   if (done == 0) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x100, 0);
+    Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldCamera_GetActor()->motionFlags = done;
     FieldCamera_MoveWithinMapBounds(328 << 16, 48 << 16, 552 << 16, 1);
     FieldCamera_WaitForArrival();

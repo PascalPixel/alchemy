@@ -381,7 +381,7 @@ blend:
   /* FAKEMATCH(wrapper): the camera moves forwarded through
    * ApojiiIslands_CamMove. */
   ApojiiIslands_CamMove(PIXELS(360), -1, PIXELS(328), 1);
-  Actor_ShowEmoteById(16, 256, 20);
+  Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldCamera_WaitForArrival();
   ApojiiIslands_CamMove(PIXELS(440), -1, PIXELS(376), 1);
   FieldCamera_WaitForArrival();
@@ -403,7 +403,7 @@ void Func_02000974(void) {
   Actor_SetAnimationAndWait(16, 3);
   Actor_ArmCallback_(16, FACING_NORTHEAST, 0);
   Actor_SetAnimationAndWait(16, 3);
-  FieldActor_ShowEmote(16, 0x102, 20);
+  FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   Event_ShowMessage(16, 0);
   FieldActor_Jump(16, 2, 25);
   Event_ShowMessage(16, 0);

@@ -278,7 +278,8 @@ void SuhallaGate_PunchAntHopsFromWest(void) {
   Actor_SetPosition(8, 472, 480);
   Event_Wait(16);
   Actor_FaceActor(gMainRoutineWork.currentOwner, 8, 0);
-  FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
+  FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldCamera_FollowActor(8, 1);
   FieldCamera_WaitForArrival();
   Actor_Jump(8, 4, 0);

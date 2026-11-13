@@ -1295,17 +1295,18 @@ void AquaRockInside_ReadParchTablet(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
-  Actor_ShowEmote(7, 0x100, 0);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Func_0200124c();
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   FieldEvent_Wait(30);
   FieldEvent_SetMessageId((s32)&MsgWhatWentWrong);
-  Actor_ShowEmote(7, 0x105, 20);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Actor_FaceEachOther(gMainRoutineWork.currentOwner, 7, 0);
   FieldEvent_Wait(10);
   Event_ShowMessage(7, 0);
-  Actor_ShowEmote(7, 0x100, 20);
+  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessage(7, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimation(7, 3);

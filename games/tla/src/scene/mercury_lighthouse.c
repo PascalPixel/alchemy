@@ -149,13 +149,13 @@ void MercuryLighthouse_HearVoices(void) {
   Event_SetMessageId(MsgImilVoicesDisbeliefReply);
   Event_ShowMessage(3, 0);
   FieldPsynergy_StopMindReadWave();
-  Actor_ShowEmote(8, 256, 0);
-  Actor_ShowEmote(8, 256, 20);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_Jump(8, 4, 10);
   Event_ShowMessage(0x8008, 0);
-  Actor_ShowEmote(11, 257, 0);
-  Actor_ShowEmote(12, 257, 40);
+  Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(11, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
@@ -207,7 +207,7 @@ void MercuryLighthouse_HearVoices(void) {
   Event_ShowMessage(1, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_Jump(9, 2, 0);
-  FieldActor_ShowEmote(9, 263, 20);
+  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
   Event_ShowMessage(0x8009, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessage(3, 0);

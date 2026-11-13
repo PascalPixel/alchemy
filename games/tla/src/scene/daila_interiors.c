@@ -9,6 +9,7 @@
 /// rescued, the drained floor opens the way on (DailaInteriors_Start).
 
 #include "shared/tables.h"
+#include "field/emote.h"
 #include "sounds.h"
 #include "shared/actors.h"
 #include "battle/battle.h"
@@ -166,7 +167,7 @@ UNUSED void DailaInteriors_PracticeShout(s32 unused, s32 actor) {
 UNUSED void DailaInteriors_StartleAtTheLeader(s32 unused, s32 actor) {
   Actor_FaceActorById(actor, 4, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmoteById(actor, 0x103, 50);
+  Actor_ShowEmoteById(actor, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);

@@ -526,18 +526,18 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   Event_ShowMessage(13, 0);
   Actor_SetAnimation(14, 6);
   FieldEvent_ShowMessageThenWait(14, 0, 20);
-  Actor_ShowEmote(13, 0x105, 40);
+  Actor_ShowEmote(13, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessage(13, 0);
-  FieldActor_ShowEmote(14, 0x105, 20);
+  FieldActor_ShowEmote(14, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Event_ShowMessage(14, 0);
-  Actor_ShowEmote(13, 0x100, 0);
+  Actor_ShowEmote(13, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_ShowMessageThenWait(13, 0, 20);
   Event_ShowMessage(13, 0);
   Actor_SetAnimation(14, 7);
   Event_ShowMessage(14, 0);
   Event_ShowMessage(13, 0);
   FieldEvent_ShowMessageThenWait(14, 0, 40);
-  Actor_ShowEmote(13, 0x100, 20);
+  Actor_ShowEmote(13, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_OpenMessage(13, 0);
   t87 = FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   if (t87 == 0) {
@@ -932,7 +932,8 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x2a8, 186);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 80);
-    Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x101, 40);
+    Actor_ShowEmote(gMainRoutineWork.currentOwner,
+                    EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     object = *slot;
     if (object != 0) {
       object->motionFlags = 3;

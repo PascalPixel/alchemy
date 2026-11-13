@@ -262,7 +262,7 @@ s32 KandoreanTemple_MeditateRestlessly(struct Actor *object) {
   if (object->timer != 0) {
     object->timer--;
   } else {
-    Actor_ShowEmoteById((s16)object->unk66, 0x105, 0);
+    Actor_ShowEmoteById((s16)object->unk66, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     object->timer = ((Random16() * 240) >> 16) + 240;
   }
   return 1;
@@ -1387,12 +1387,12 @@ void KandoreanTemple_AskWhoPassedTheTest(void) {
 }
 
 void KandoreanTemple_ReadTheGateStudent(void) {
-  Actor_ShowEmoteById(9, 0x100, 0);
+  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   KandoreanTemple_AskAboutPoi();
 }
 
 void KandoreanTemple_ReadTheGuard(void) {
-  Actor_ShowEmoteById(10, 0x100, 0);
+  Actor_ShowEmoteById(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   KandoreanTemple_TellOfTheMeditation();
 }
 
@@ -1555,7 +1555,8 @@ void KandoreanTemple_TouchTheHotFloor(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x100, 20);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
+                      EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Sound_Play(SE_WATER);
   Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 10);
   leader->velocityY = PIXELS(6);
@@ -2637,24 +2638,24 @@ fall15:
   if (i <= 63)
     goto fall15;
   Event_Wait(20);
-  Actor_ShowEmoteById(15, 0x108, 0);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Event_ShowMessageThenWait(15, 0, 20);
   Event_ShowMessageAndWait(0x100c, 0);
-  Actor_ShowEmoteById(15, 0x103, 20);
+  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Actor_SetModeById(15, 1);
   Actor_Jump(15, 4, 0);
   Actor_FaceDirection(15, FACING_NORTH_NORTHWEST, 20);
   Event_ShowMessageAndWait(0x400f, 0);
   FieldCamera_MoveWithinMapBounds(0x16c0000, 0x480000, 0x2980000, 1);
   FieldCamera_WaitForArrival();
-  Actor_ShowEmoteById(12, 0x102, 20);
+  Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   Event_ShowMessage(0x800c, 0);
   Event_ShowMessageAndWait(15, 0);
   Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 40);
   Actor_SetModeById(12, 4);
   Event_ShowMessage(0x800c, 0);
   Event_ShowMessageAndWait(15, 0);
-  Actor_ShowEmoteById(12, 0x105, 80);
+  Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Event_ShowMessage(0x800c, 0);
   Actor_FaceDirection(12, FACING_SOUTH_SOUTHEAST, 20);
   Actor_SetModeById(12, 3);
@@ -2709,7 +2710,7 @@ void KandoreanTemple_PraiseTheLevitator(void) {
   Event_SetMessageId((s32)&MsgKandoreanTemple05);
   Event_ShowMessageAndWait(12, 0);
   Actor_FaceDirection(12, FACING_WEST, 20);
-  Actor_ShowEmoteById(12, 256, 0);
+  Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_SetSpeed(12, 1.6);
   Actor_WalkToAndWait(12, 456, 408);
   Event_ShowMessageAndWait(12, 0);
@@ -2723,7 +2724,7 @@ void KandoreanTemple_PraiseTheLevitator(void) {
   Actor_ArmCallback(16, FACING_EAST, 20);
   Actor_SetAttachedEffect(12, 258);
   Event_ShowMessageAndWait(12, 0);
-  Actor_ShowEmoteById(16, 265, 0);
+  Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Actor_FaceDirection(16, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 20);
   Event_ShowMessageAndWait(16, 0);
@@ -2803,7 +2804,7 @@ void KandoreanTemple_MeetPoi(void) {
   FieldEffect_SetAttached(12, 0x102);
   Event_SetMessageId((s32)&MsgKandoreanTemple07);
   Event_ShowMessageAndWait(12, 0);
-  Actor_ShowEmoteById(12, 0x105, 40);
+  Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessageAndWait(12, 0);
   Actor_ArmCallback(12, 0, 40);
   Event_ShowMessageAndWait(12, 0);
@@ -2826,7 +2827,7 @@ void KandoreanTemple_MeetPoi(void) {
   }
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Actor_ArmCallback(16, 0, 0);
-  Actor_ShowEmote(16, 0x101, 20);
+  Actor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Event_ShowMessageAndWait(16, 0);
   Actor_SetAttachedEffect(12, 0x102);
   Event_ShowMessageAndWait(12, 0);
@@ -2841,7 +2842,7 @@ void KandoreanTemple_MeetPoi(void) {
   Event_ShowMessageAndWait(12, 0);
   Actor_ArmCallback(16, 0, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
-  Actor_ShowEmoteById(16, 0x101, 0);
+  Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_ShowMessageAndWait(16, 0);
   Actor_SetModeById(12, 3);
   Event_ShowMessageAndWait(12, 0);
@@ -2873,7 +2874,7 @@ void KandoreanTemple_MeetPoi(void) {
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
   Motion_SetModeAndWaitAnimation(16, 3);
   Event_ShowMessage(0x400c, 0);
-  Actor_ShowEmoteById(16, 0x100, 40);
+  Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(0x5010, 0);
   Actor_SetModeById(12, 3);
   Event_ShowMessage(0x400c, 0);
@@ -2884,7 +2885,7 @@ void KandoreanTemple_MeetPoi(void) {
     Actor_SetModeById(12, 3);
     Event_ShowMessageAndWait(0x400c, 0);
     Actor_ArmCallback(16, 0, 0);
-    Actor_ShowEmoteById(16, 0x107, 20);
+    Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
     Event_ShowMessageAndWait(0x5010, 0);
     WORK->messageId += 2;
   } else {
@@ -2892,7 +2893,7 @@ void KandoreanTemple_MeetPoi(void) {
     Actor_SetModeById(12, 4);
     Event_ShowMessageAndWait(0x400c, 0);
     Actor_ArmCallback(16, 0, 0);
-    Actor_ShowEmoteById(16, 0x107, 20);
+    Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
     Event_ShowMessageAndWait(0x5010, 0);
   }
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
@@ -2906,7 +2907,7 @@ void KandoreanTemple_MeetPoi(void) {
   Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 0);
   Event_ShowMessage(0x400c, 0);
   Event_ShowMessageThenWait(0x1010, 0, 80);
-  Actor_ShowEmoteById(12, 0x108, 0);
+  Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 20);
   Event_ShowMessage(0x400c, 0);
   Actor_SetModeById(12, 3);

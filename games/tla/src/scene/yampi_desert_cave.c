@@ -582,7 +582,8 @@ void Event_End();
 void YampiDesertCave_WonderAtRipple(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x101, 32);
+  FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+                       EMOTE_IN_FRONT | EMOTE_QUESTION, 32);
   Event_End();
   return;
 }

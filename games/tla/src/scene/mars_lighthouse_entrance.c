@@ -782,7 +782,8 @@ void Func_02000fe0(const struct MapCell *cell) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   leader->update = 0;
-  FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
+  FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_SelectAnimation(leader, 27);
   Actor_SetAnimationSpeed(leader, 48);
   System_Wait(30);

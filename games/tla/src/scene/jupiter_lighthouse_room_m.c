@@ -323,7 +323,8 @@ void Func_020003b8(s32 unused, s32 id) {
     FieldEvent_Wait(20);
     Func_020048b4_(gMainRoutineWork.currentOwner, 0x4000);
     FieldEvent_Wait(20);
-    FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 257, 50);
+    FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+                         EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
     Func_020048b4_(gMainRoutineWork.currentOwner, 0);
     FieldEvent_Wait(20);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
@@ -654,11 +655,11 @@ void Func_02000cac(s32 arg) {
   FieldActor_LaunchFromLeader(5, -16, 24, FACING_EAST);
   EventCamera_FollowActor(5, 1);
   FieldActor_WaitForMoveById(5);
-  (struct Actor *)Actor_ShowEmote(28, 0x102, 30);
+  (struct Actor *)Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(28, 0, 5);
   Actor_FaceDirection(5, FACING_NORTH, 0);
   Actor_FaceDirection(6, FACING_NORTHWEST + FACING_STEP, 0);
-  (struct Actor *)Actor_ShowEmote(7, 0x101, 30);
+  (struct Actor *)Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceDirection(5, FACING_NORTH + FACING_STEP, 0);
   Event_OpenMessage(7, 0);
   Actor_FaceDirection(4, FACING_EAST, 0);
@@ -678,9 +679,9 @@ void Func_02000cac(s32 arg) {
   Actor_FaceDirection(4, FACING_SOUTH, 0);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(5, 0, 5);
-  (struct Actor *)Actor_ShowEmote(6, 0x101, 30);
+  (struct Actor *)Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(6, 0, 5);
-  (struct Actor *)Actor_ShowEmote(4, 0x102, 30);
+  (struct Actor *)Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_SetSpeed(4, 1.2);
   Actor_SetScript(4, arg != 0 ? gData_02005748 : gData_0200578c);
   FieldEvent_Wait(30);
@@ -834,7 +835,7 @@ void Func_02000cac(s32 arg) {
   I_Func_020048cc(0, 0x101, 30);
   Actor_FaceEachOther(0, 2, 0);
   FieldEvent_Wait(10);
-  (struct Actor *)Actor_ShowEmote(0, 0x106, 30);
+  (struct Actor *)Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   Actor_FaceDirection(2, FACING_NORTHWEST, 0);
   Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
   /* FAKEMATCH(dead): the statement kept in a once-only block. */
@@ -845,7 +846,7 @@ void Func_02000cac(s32 arg) {
   FieldEvent_Wait(20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(27, 0, 5);
-  (struct Actor *)Actor_ShowEmote(2, 0x102, 30);
+  (struct Actor *)Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(2, 0, 5);
   Actor_FaceDirectionAndWait(26, FACING_NORTHWEST);
   FieldEvent_Wait(10);
@@ -865,7 +866,7 @@ void Func_02000cac(s32 arg) {
   FieldEvent_ShowMessageThenWait(2, 0, 5);
   I_Func_020048cc(27, 0x108, 30);
   FieldEvent_ShowMessageThenWait(27, 0, 5);
-  (struct Actor *)Actor_ShowEmote(0, 0x103, 30);
+  (struct Actor *)Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   FieldEvent_ShowMessageThenWait(0, 0, 5);
   I_Func_020048cc(26, 0x108, 30);
   /* FAKEMATCH(dead): the statement kept in a once-only block. */
@@ -889,9 +890,9 @@ void Func_02000cac(s32 arg) {
   FieldEvent_ShowMessageThenWait(2, 0, 5);
   I_Func_020048cc(26, 0x100, 30);
   FieldEvent_ShowMessageThenWait(26, 0, 5);
-  (struct Actor *)Actor_ShowEmote(27, 0x109, 30);
+  (struct Actor *)Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(27, 0, 5);
-  (struct Actor *)Actor_ShowEmote(0, 0x100, 30);
+  (struct Actor *)Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirectionAndWait(0, angle);
   Actor_SetAnimation(0, 38);
   FieldCamera_MoveTo(784, 0, 274, 1);
@@ -906,8 +907,8 @@ void Func_02000cac(s32 arg) {
   Actor_FaceEachOther(26, 27, 0);
   FieldEvent_Wait(10);
   I_Func_020048cc(26, 0x108, 0);
-  (struct Actor *)Actor_ShowEmote(26, 0x108, 30);
-  (struct Actor *)Actor_ShowEmote(2, 0x101, 30);
+  (struct Actor *)Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  (struct Actor *)Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(2, 0, 5);
   {
     /* FAKEMATCH(pin): the angle pinned to r1. */
@@ -957,7 +958,7 @@ void Func_02000cac(s32 arg) {
   FieldEvent_ShowMessageThenWait(27, 0, 5);
   Actor_FaceDirectionAndWait(27, FACING_NORTHWEST);
   FieldEvent_Wait(20);
-  (struct Actor *)Actor_ShowEmote(27, 0x101, 30);
+  (struct Actor *)Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_SetSpeed(27, 2);
   Actor_WalkByAndWait(27, -24, -24);
   FieldEvent_Wait(5);
@@ -969,7 +970,7 @@ void Func_02000cac(s32 arg) {
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(27, FACING_NORTH);
   FieldEvent_Wait(10);
-  (struct Actor *)Actor_ShowEmote(27, 0x102, 30);
+  (struct Actor *)Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(27, 0, 5);
   FieldEvent_ShowMessageThenWait(26, 0, 5);
   Actor_FaceDirectionAndWait(27, angle);
@@ -983,7 +984,7 @@ void Func_02000cac(s32 arg) {
   FieldEvent_ShowTwoMessagesAndWait(0, 20, 7, 15, 6, 2, 17, 13, 12, 12, 0);
   Actor_FaceDirection(0, FACING_NORTHWEST, 0);
   Actor_FaceDirection(2, FACING_NORTHWEST, 0);
-  (struct Actor *)Actor_ShowEmote(27, 0x103, 30);
+  (struct Actor *)Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   FieldEvent_ShowMessageThenWait(27, 0, 5);
   I_Func_020048cc(26, 0x107, 30);
   FieldEvent_ShowMessageThenWait(26, 0, 5);
@@ -991,7 +992,7 @@ void Func_02000cac(s32 arg) {
   FieldEvent_Wait(10);
   I_Func_020048cc(26, 0x108, 30);
   FieldEvent_ShowMessageThenWait(26, 0, 5);
-  (struct Actor *)Actor_ShowEmote(27, 0x108, 30);
+  (struct Actor *)Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Actor_WalkBy(27, 24, 24);
   Actor_SetScript(27, gData_020049ec);
   FieldEvent_ShowMessageThenWait(27, 0, 5);
@@ -1031,9 +1032,9 @@ void Func_02000cac(s32 arg) {
   FieldEvent_ShowMessageThenWait(28, 0, 5);
   I_Func_020048cc(6, 0x109, 30);
   FieldEvent_ShowMessageThenWait(6, 0, 5);
-  (struct Actor *)Actor_ShowEmote(7, 0x107, 30);
+  (struct Actor *)Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(7, 0, 5);
-  (struct Actor *)Actor_ShowEmote(5, 0x109, 30);
+  (struct Actor *)Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(5, 0, 5);
   Actor_FaceDirectionAndWait(28, FACING_SOUTH);
   FieldEvent_Wait(10);
@@ -1112,7 +1113,7 @@ void Func_02001c7c(void) {
   Event_WaitTransitionFrames();
   FieldEvent_SetMessageId(MsgIMSorry);
   FieldEvent_ShowMessageThenWait(2, 0, 5);
-  (struct Actor *)Actor_ShowEmote(4, 0x100, 30);
+  (struct Actor *)Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldCamera_MoveTo(705, 0, 177, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
@@ -1121,7 +1122,7 @@ void Func_02001c7c(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(0, FACING_SOUTHWEST);
   FieldEvent_ShowMessageThenWait(0, 0, 5);
-  (struct Actor *)Actor_ShowEmote(26, 0x107, 30);
+  (struct Actor *)Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(26, 0, 5);
   Actor_WalkBy(26, 24, 0);
   FieldEvent_Wait(20);
@@ -1255,7 +1256,8 @@ void Func_02001ed0(void) {
   FieldActor_LaunchFromLeader(5, -16, 0, 0x2000);
   Actor_WalkByAndWait(4, 0x10, 0x18);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
-  ((struct Actor *)Actor_ShowEmote(0x1c, 0x100, 0x1e));
+  ((struct Actor *)Actor_ShowEmote(0x1c, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                                   0x1e));
   FieldEvent_ShowMessageThenWait(0x1c, 0, 5);
   Actor_FaceDirectionAndWait(0x1c, FACING_EAST);
   FieldEvent_Wait(0xa);
@@ -1314,11 +1316,12 @@ void Func_02001ed0(void) {
   Actor_RunRepeatedMotion(0x1c, 2);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(0x1c, 0, 5);
-  ((struct Actor *)Actor_ShowEmote(0x1a, 0x103, 0x1e));
+  ((struct Actor *)Actor_ShowEmote(0x1a, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
+                                   0x1e));
   FieldEvent_ShowMessageThenWait(0x1a, 0, 5);
   ACTOR_SET_MODE_AND_WAIT(6, 4, 0x21);
   FieldEvent_ShowMessageThenWait(6, 0, 5);
-  ((struct Actor *)Actor_ShowEmote(0x1b, 0x107, 0x1e));
+  ((struct Actor *)Actor_ShowEmote(0x1b, EMOTE_IN_FRONT | EMOTE_SCOWL, 0x1e));
   Event_OpenMessage(0x1b, 0);
   Actor_FaceActor(0x1c, 4, 0);
   Actor_FaceActor(5, 4, 0);
@@ -1327,16 +1330,16 @@ void Func_02001ed0(void) {
   FieldEvent_Wait(0xa);
   answer = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (answer == 0) {
-    ((struct Actor *)Actor_ShowEmote(0x1b, 0x102, 0x1e));
+    ((struct Actor *)Actor_ShowEmote(0x1b, EMOTE_IN_FRONT | EMOTE_WINCE, 0x1e));
     FieldEvent_ShowMessageThenWait(0x1b, 0, 5);
     EVENT_WORK->messageId++;
   } else {
-    ((struct Actor *)Actor_ShowEmote(0x1b, 0x102, 0x1e));
+    ((struct Actor *)Actor_ShowEmote(0x1b, EMOTE_IN_FRONT | EMOTE_WINCE, 0x1e));
     EVENT_WORK->messageId++;
     FieldEvent_ShowMessageThenWait(0x1b, 0, 5);
   }
   Actor_FaceActor(7, 0x1a, 0);
-  ((struct Actor *)Actor_ShowEmote(7, 0x107, 0x1e));
+  ((struct Actor *)Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SCOWL, 0x1e));
   FieldEvent_ShowMessageThenWait(7, 0, 5);
   ACTOR_SET_MODE_AND_WAIT(0x1a, 4, 0x21);
   FieldEvent_ShowMessageThenWait(0x1a, 0, 5);
@@ -1349,7 +1352,8 @@ void Func_02001ed0(void) {
   FieldActor_RefreshSelectorById(0x1a);
   FieldActor_RefreshSelectorById(0x1b);
   Walk(0x1a, 0x105, 0);
-  ((struct Actor *)Actor_ShowEmote(0x1b, 0x105, 0x1e));
+  ((struct Actor *)Actor_ShowEmote(0x1b, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                                   0x1e));
   Actor_FaceActor(0x1c, 0x1b, 0);
   ACTOR_SET_MODE_AND_WAIT(0x1c, 4, 0x21);
   Actor_FaceActor(0x1a, 0x1c, 0);
@@ -1389,7 +1393,7 @@ void Func_02001ed0(void) {
   Walk(6, 0x108, 0);
   Walk(5, 0x108, 0);
   Walk(7, 0x108, 0);
-  ((struct Actor *)Actor_ShowEmote(0x1c, 0x108, 0x28));
+  ((struct Actor *)Actor_ShowEmote(0x1c, EMOTE_IN_FRONT | EMOTE_SMILE, 0x28));
   Actor_FaceActor(4, 0x1a, 0);
   Actor_FaceActor(5, 0x1a, 0);
   Actor_FaceActor(6, 0x1a, 0);
@@ -1417,7 +1421,7 @@ void Func_02001ed0(void) {
   Actor_FaceEachOther(4, 0x1c, 0);
   FieldActor_RefreshSelectorById(4);
   FieldEvent_Wait(0xa);
-  ((struct Actor *)Actor_ShowEmote(4, 0x102, 0x1e));
+  ((struct Actor *)Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_WINCE, 0x1e));
   ACTOR_SET_MODE_AND_WAIT(0x1c, 3, 0x14);
   FieldEvent_Wait(0x28);
   ACTOR_SET_MODE_AND_WAIT(4, 3, 0x14);
@@ -1437,11 +1441,13 @@ void Func_02001ed0(void) {
   Walk(4, 0x100, 0);
   Walk(2, 0x100, 0);
   Walk(5, 0x100, 0);
-  ((struct Actor *)Actor_ShowEmote(0x1c, 0x100, 0x1e));
-  ((struct Actor *)Actor_ShowEmote(0x1c, 0x109, 0x1e));
+  ((struct Actor *)Actor_ShowEmote(0x1c, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                                   0x1e));
+  ((struct Actor *)Actor_ShowEmote(0x1c, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP,
+                                   0x1e));
   Actor_FaceDirection(0x1c, FACING_EAST, 0);
   FieldEvent_ShowMessageThenWait(0x1c, 0, 5);
-  ((struct Actor *)Actor_ShowEmote(0x1a, 0x108, 0x1e));
+  ((struct Actor *)Actor_ShowEmote(0x1a, EMOTE_IN_FRONT | EMOTE_SMILE, 0x1e));
   FieldEvent_ShowMessageThenWait(0x1a, 0, 5);
   Actor_FaceEachOther(4, 7, 0);
   Actor_FaceEachOther(6, 5, 0);
@@ -1452,7 +1458,7 @@ void Func_02001ed0(void) {
   Actor_FaceActor(7, 0x1a, 0);
   Actor_FaceActor(6, 0x1a, 0);
   Actor_FaceActor(5, 0x1a, 0);
-  ((struct Actor *)Actor_ShowEmote(0x1a, 0x107, 0x1e));
+  ((struct Actor *)Actor_ShowEmote(0x1a, EMOTE_IN_FRONT | EMOTE_SCOWL, 0x1e));
   Actor_FaceDirection(0x1b, FACING_EAST, 0);
   FieldEvent_ShowMessageThenWait(0x1b, 0, 5);
   Actor_SetSpeed(7, 4);
@@ -1461,7 +1467,8 @@ void Func_02001ed0(void) {
   Actor_WalkByAndWait(0x1b, 8, 4);
   FieldActor_WaitForMoveById(7);
   FieldEvent_Wait(5);
-  ((struct Actor *)Actor_ShowEmote(0x1a, 0x103, 0x1e));
+  ((struct Actor *)Actor_ShowEmote(0x1a, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
+                                   0x1e));
   Actor_FaceActor(0x1a, 7, 0);
   Actor_FaceActor(0x1b, 7, 0);
   FieldEvent_ShowMessageThenWait(0x1a, 0, 5);
@@ -1528,11 +1535,12 @@ void Func_02001ed0(void) {
   EventCamera_FollowActor(6, 1);
   Actor_FaceDirectionAndWait(4, FACING_SOUTH);
   FieldEvent_Wait(0xa);
-  ((struct Actor *)Actor_ShowEmote(4, 0x101, 0x1e));
-  ((struct Actor *)Actor_ShowEmote(7, 0x109, 0x1e));
+  ((struct Actor *)Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 0x1e));
+  ((struct Actor *)Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0x1e));
   FieldEvent_ShowMessageThenWait(7, 0, 5);
-  ((struct Actor *)Actor_ShowEmote(4, 0x100, 0x1e));
-  ((struct Actor *)Actor_ShowEmote(6, 0x106, 0x1e));
+  ((struct Actor *)Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                                   0x1e));
+  ((struct Actor *)Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0x1e));
   FieldEvent_ShowMessageThenWait(6, 0, 5);
   Actor_FaceDirectionAndWait(4, FACING_SOUTH);
   FieldEvent_Wait(0xa);

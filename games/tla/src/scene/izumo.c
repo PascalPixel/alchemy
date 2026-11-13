@@ -11,6 +11,7 @@
 /// (Izumo_StopThePartyToThankThem).
 
 #include "shared/tables.h"
+#include "field/emote.h"
 #include "sounds.h"
 #include "event_work.h"
 #include "types.h"
@@ -126,16 +127,16 @@ void Izumo_FinishMovingStone(void) {
       Event_ResolvePendingActions(0);
       FieldCamera_FollowActor(22, 1);
       FieldCamera_WaitForArrival();
-      Actor_ShowEmoteById(22, 257, 0);
+      Actor_ShowEmoteById(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
       FieldEvent_Wait(60);
       Actor_ArmCallback(22, FACING_WEST, 0);
       FieldEvent_Wait(60);
-      Actor_ShowEmoteById(22, 256, 0);
+      Actor_ShowEmoteById(22, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       FieldEvent_Wait(60);
       Event_SetMessageId(MsgTheMisalignedStone);
       Event_ShowMessageAndWait(22, 0);
       FieldEvent_Wait(30);
-      Actor_ShowEmoteById(22, 262, 0);
+      Actor_ShowEmoteById(22, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
       FieldEvent_Wait(30);
       Event_ShowMessageAndWait(22, 0);
       Actor_ArmCallback(22, FACING_SOUTH, 0);
@@ -404,7 +405,7 @@ void Izumo_StopThePartyToThankThem(void) {
   Event_ShowMessageAndWait(32, 0);
   Value3((s32 (*)())Actor_ShowEmoteById, gMainRoutineWork.currentOwner, 261,
          60);
-  Actor_ShowEmoteById(32, 262, 30);
+  Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   Event_ShowMessageAndWait(32, 0);
   Actor_SetModeById(32, 3);
   FieldEvent_Wait(15);
@@ -417,7 +418,7 @@ void Izumo_StopThePartyToThankThem(void) {
     FieldCamera_MoveToActorById(32, 1);
     FieldEvent_Wait(60);
     Call3((void (*)())Actor_ArmCallback, 32, FACING_SOUTH, 0);
-    Actor_ShowEmoteById(32, 265, 30);
+    Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     Event_ShowMessageAndWait(32, 0);
     Actor_SetSpritePriority(32, 3);
     Actor_GetById(32)->motionFlags |= 2;
@@ -430,7 +431,7 @@ void Izumo_StopThePartyToThankThem(void) {
 
 void Izumo_TellTheCloudBrandLegend(void) {
   Event_SetMessageId(MsgThisTokenIsn);
-  Actor_ShowEmoteById(32, 264, 30);
+  Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageAndWait(32, 0);
   Actor_ArmCallback(32, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
@@ -447,7 +448,7 @@ void Izumo_TellTheCloudBrandLegend(void) {
   Event_ShowMessageAndWait(32, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
   FieldEvent_Wait(15);
-  Actor_ShowEmoteById(32, 265, 30);
+  Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Event_ShowMessageAndWait(32, 0);
   Actor_FaceActorById(32, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(15);
@@ -472,7 +473,7 @@ void Izumo_OfferATokenOfGratitude(void) {
 
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_ShowEmoteById(32, 256, 60);
+    Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     message = MsgWouldYouBe;
     Event_SetMessageId(message);
     /* FAKEMATCH(signature): FieldMessage_ShowAtActor called as returning a

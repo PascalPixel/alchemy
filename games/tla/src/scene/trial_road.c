@@ -457,7 +457,8 @@ s32 TrialRoad_OfferToGiveUp(void) {
       Event_Wait(10);
       Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
       Event_Wait(10);
-      FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x109, 0);
+      FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+                           EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
       Event_Wait(30);
       InventorySnapshot_Restore();
       Import_EventSetExitRequest(9);
@@ -2280,7 +2281,7 @@ void TrialRoad_ReachPeakFirst(void) {
   Actor_WaitForMoveById(14);
   Actor_FaceDirection(14, TrialRoad_MirrorAngle(0x8000), 0);
   Event_SetMessageId((s32)MsgTrialRoadSwiftChallenge);
-  FieldActor_ShowEmote(8, 256, 10);
+  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   Event_ShowMessage(8, 0);
   Actor_SetAnimationAndWait(8, 3);
   Event_ShowMessage(8, 0);
@@ -2338,7 +2339,7 @@ void TrialRoad_ReachPeakSecond(void) {
   Actor_FaceDirection(6, TrialRoad_MirrorAngle(0), 0);
   FieldCamera_WaitForArrival();
   Event_SetMessageId((s32)MsgTrialRoadSlowArrival);
-  FieldActor_ShowEmote(8, 256, 10);
+  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   Event_ShowMessage(8, 0);
   Actor_SetAnimationAndWait(8, 3);
   Event_ShowMessage(8, 0);
@@ -2434,7 +2435,7 @@ void TrialRoad_BeatMoapa(void) {
   /* FAKEMATCH(signature): the byte typed as a whole-byte bit-field. */
   ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
   Event_Wait(20);
-  FieldActor_ShowEmote(8, 261, 10);
+  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 10);
   Event_ShowMessage(8, 0);
   Actor_FaceDirectionAndWait(8, TrialRoad_MirrorAngle(0));
   Actor_FaceActor(13, 8, 0);

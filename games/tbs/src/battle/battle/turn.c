@@ -9,34 +9,17 @@
 /// WINDOW_PALETTE brightened by up to twelve steps, rising and falling with the
 /// frame count. Nothing in the source calls it. Writes BG palette RAM.
 void Palette_UpdatePulseBrightness(void) {
-  u16 *palette;
-  s32 remainingColors;
-  s32 channelMask = 31;
+  // 3/64 of a turn a frame, a pulse about every 21 frames; 1 - cos runs from
+  // 0 to 2.0 (16.16), and a sixth of 1.0 is one step.
+  s32 brightness =
+      (Q16_ONE - Trig_Cos((gFrameCount * 3U) << 10)) / (Q16_ONE / 6);
+  s32 i;
 
-  palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
-  remainingColors = 15;
-  do {
-    u32 color;
-    s32 brightness;
-    u32 frameCount;
-    s32 angle;
-    s32 blue;
-    s32 green;
-    s32 red;
-
-    // 3/64 of a turn a frame, a pulse about every 21 frames; 1 - cos runs
-    // from 0 to 2.0 (16.16), and a sixth of 1.0 is one step.
-    frameCount = gFrameCount;
-    angle = (frameCount * 3U) << 10;
-    color = palette[16];
-    brightness = (Q16_ONE - Trig_Cos(angle)) / (Q16_ONE / 6);
-
-    blue = (color >> 10) & channelMask;
-    green = (color >> 5) & channelMask;
-    red = color & channelMask;
-    blue += brightness;
-    green += brightness;
-    red += brightness;
+  for (i = 0; i < 16; i++) {
+    u32 color = BG_PLTT_COLOR(WINDOW_PALETTE, i);
+    s32 blue = ((color >> 10) & 31) + brightness;
+    s32 green = ((color >> 5) & 31) + brightness;
+    s32 red = (color & 31) + brightness;
 
     if (blue < 0 || blue > 31)
       blue = 31;
@@ -44,10 +27,8 @@ void Palette_UpdatePulseBrightness(void) {
       green = 31;
     if (red < 0 || red > 31)
       red = 31;
-
-    *palette++ = RGB(red, green, blue);
-    remainingColors--;
-  } while (remainingColors >= 0);
+    BG_PLTT_COLOR(HIGHLIGHT_PALETTE, i) = RGB(red, green, blue);
+  }
 }
 
 /// Sets the camera up for the fixed view the battle shows while commands are
@@ -556,51 +537,25 @@ fail:
 /// @param offset added to each of the red, green and blue values (held in 0
 /// to 31)
 void Palette_CopyWithBrightnessOffset(s32 offset) {
-  s32 bankIndex;
-  s32 sourceBank;
-  s32 colorIndex;
-  s32 paletteIndex;
+  s32 bank;
+  s32 i;
 
-  sourceBank = 15;
-  bankIndex = 0;
-  do {
-    for (colorIndex = 0; colorIndex <= 15; colorIndex++) {
-      u32 color;
-      s32 blue;
-      s32 green;
-      s32 red;
-      s32 adjustedColor;
+  for (bank = 0; bank < 2; bank++) {
+    s32 source = bank == 0 ? 15 : 5;
 
-      paletteIndex = sourceBank * 16 + colorIndex;
-      color = ((u16 *)BG_PLTT)[paletteIndex];
-      blue = (color >> 10) & 31;
-      green = (color >> 5) & 31;
-      red = color & 31;
-      blue += offset;
-      green += offset;
-      red += offset;
-      if (blue > 31)
-        blue = 31;
-      if (green > 31)
-        green = 31;
-      if (red > 31)
-        red = 31;
-      if (blue < 0)
-        blue = 0;
-      if (green < 0)
-        green = 0;
-      if (red < 0)
-        red = 0;
-      adjustedColor = blue << 10;
-      adjustedColor |= green << 5;
-      adjustedColor |= red;
-      // Into the palette before the source, 14 and 4: paletteIndex counts
-      // from one palette's 16 colours before BG_PLTT.
-      ((s16 *)BG_PLTT - 16)[paletteIndex] = adjustedColor;
+    for (i = 0; i < 16; i++) {
+      u32 color = BG_PLTT_COLOR(source, i);
+      s32 blue = ((color >> 10) & 31) + offset;
+      s32 green = ((color >> 5) & 31) + offset;
+      s32 red = (color & 31) + offset;
+
+      CLAMP(blue, 0, 31);
+      CLAMP(green, 0, 31);
+      CLAMP(red, 0, 31);
+      // Into the palette before the source: 14 and 4.
+      BG_PLTT_COLOR(source - 1, i) = RGB(red, green, blue);
     }
-    bankIndex++;
-    sourceBank = 5;
-  } while (bankIndex <= 1);
+  }
 }
 
 /// Builds the turn's actions and sorts them into action order: the party's
@@ -615,10 +570,9 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
 s32 Battle_GatherActions(struct BattleAction *actions) {
   struct Unit *unit;
   struct BattleWork *battle;
-  u8 *firstStrike;
   s32 count;
   s32 received;
-  s32 remainingActions;
+  s32 i;
 
   battle = gBattleWork;
   // Empty every action slot of the battle work.
@@ -638,19 +592,18 @@ s32 Battle_GatherActions(struct BattleAction *actions) {
   BattleUnit_ResetGuardLevels();
   Palette_CopyWithBrightnessOffset(8);
   GameFlag_SetFar(FLAG_CHOOSING_COMMANDS);
-  firstStrike = &battle->firstStrike;
   BattleCamera_SetCommandView(0);
   BattleMessage_CloseFar();
 
   // The party's commands (none when the enemies strike first).
-  if (*firstStrike != FIRST_STRIKE_ENEMIES) {
+  if (battle->firstStrike != FIRST_STRIKE_ENEMIES) {
     count = Battle_BuildPartyActions(actions);
     if (count < 0)
       goto finish;
     // A failed attempt to flee makes the turn one the enemies began.
     if (count != 0 && actions[0].command == COMMAND_FLEE &&
         BattleFlee_CheckSuccess() == 0)
-      *firstStrike = FIRST_STRIKE_ENEMIES;
+      battle->firstStrike = FIRST_STRIKE_ENEMIES;
   } else {
     count = 0;
   }
@@ -675,21 +628,16 @@ s32 Battle_GatherActions(struct BattleAction *actions) {
   // Sort by priority, and raise the guards of Defend and Total Defense at
   // once, before anyone acts.
   BattleActionOrder_Sort(actions, count);
-  if (count > 0) {
-    struct BattleAction *action = actions;
+  for (i = 0; i < count; i++) {
+    struct BattleAction *action = &actions[i];
 
-    remainingActions = count;
-    do {
-      if (action->command == COMMAND_DEFEND ||
-          action->command == COMMAND_TOTAL_DEFENSE) {
-        unit = Unit_GetFar(action->unitId);
-        // Half the damage, or a tenth.
-        unit->defendLevel =
-            action->command == COMMAND_DEFEND ? DEFEND_NORMAL : DEFEND_TOTAL;
-      }
-      action++;
-      remainingActions--;
-    } while (remainingActions != 0);
+    if (action->command == COMMAND_DEFEND ||
+        action->command == COMMAND_TOTAL_DEFENSE) {
+      unit = Unit_GetFar(action->unitId);
+      // Half the damage, or a tenth.
+      unit->defendLevel =
+          action->command == COMMAND_DEFEND ? DEFEND_NORMAL : DEFEND_TOTAL;
+    }
   }
 
 finish:

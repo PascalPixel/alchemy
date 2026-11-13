@@ -519,14 +519,13 @@ void ResetBattleObjectRecordGroups(struct Actor *actor) {
       return;
     case ACTOR_SPRITE_GROUP:
       recordGroups = (void **)actor->sprite;
-      remaining = ACTOR_SPRITE_GROUP_SIZE - 1;
-      do {
+      for (remaining = ACTOR_SPRITE_GROUP_SIZE - 1; remaining >= 0;
+           remaining--) {
         recordGroup = *recordGroups++;
         if (recordGroup != NULL) {
           ResetMotionRecordGroup(recordGroup);
         }
-        remaining -= 1;
-      } while (remaining >= 0);
+      }
       break;
     }
   }

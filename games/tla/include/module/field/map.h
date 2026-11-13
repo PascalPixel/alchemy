@@ -122,7 +122,7 @@ extern u8 gMapCollision[];
 
 void Func_0802d088(s32 region, s32 gradual);
 
-s32 Func_080c8950(void);
+s32 ScreenTransition_IsScanlineActiveFar(void);
 
 extern u8 gDecodeBuffer[];
 

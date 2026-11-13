@@ -675,7 +675,7 @@ void FieldPsynergy_Catch(void) {
 
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct ScatterParticle *p);
-void Func_080d92a4(s32 target, struct Vector3 *position);
+void Rope_GetEndNodePosition(s32 target, struct Vector3 *position);
 
 void Func_080e0618(void) {
   struct ScatterWork *work =
@@ -754,7 +754,7 @@ void Func_080e0618(void) {
   case 2:
     if (work->timer == 0)
       work->flash = 1;
-    Func_080d92a4(event->target, &position);
+    Rope_GetEndNodePosition(event->target, &position);
     object->x = position.x;
     object->y = position.y - 0x40000;
     object->z = position.z;
@@ -793,7 +793,7 @@ struct EffectSceneWork__radial {
   u8 failed;
 };
 
-/// Effect 17 on a target: asks Func_080d9a74 for two results; on failure
+/// Effect 17 on a target: asks Rope_FindById for two results; on failure
 /// marks the effect failed, else stores the target and both in the event work.
 /// Then runs FieldPsynergy_Lash.
 void FieldPsynergy_LashOnTarget(s32 value) {
@@ -802,7 +802,7 @@ void FieldPsynergy_LashOnTarget(s32 value) {
   s32 second;
   s32 first;
 
-  if (Func_080d9a74(value, &first, &second)) {
+  if (Rope_FindById(value, &first, &second)) {
     work->failed = 1;
   } else {
     state->valueD32 = value;
@@ -895,7 +895,7 @@ void FieldPsynergy_Lash(void) {
       while (work->phase != 999) {
         if (work->flash == 1) {
           Sound_PlayFar(0x200);
-          Func_080d92d4(event->target, event->targetY, event->targetZ);
+          Rope_Lash(event->target, event->targetY, event->targetZ);
           work->hit = 1;
           Sound_PlayFar(395);
         }

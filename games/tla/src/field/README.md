@@ -40,7 +40,7 @@ explains how this code works.
   banks). `work9c/` and `worka0/` are named for the
   [heap slot](../../../tbs/glossary.md#heap-slot) their code works in, by its
   offset in the slot table (`0x9c` and `0xa0`, slots 39 and 40), and their
-  files and functions by address (`Func_080d8d40`) until their meaning is
+  files and functions by address (`Rope_AllocNode`) until their meaning is
   read.
 - The ground height functions in `map/tile_animation.c` are The Broken Seal's,
   described under

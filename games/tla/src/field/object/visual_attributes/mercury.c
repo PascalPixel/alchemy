@@ -211,19 +211,24 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   FieldEffect_ReleaseSlots();
 }
 
-// XXX: what the work block in heap slot 39 holds, and what this family does;
-// its callers and the block's readers would settle it.
+// The ropes Lash ties (heap slot 156): eight slots, each a chain of nodes
+// between two posts, coiled at the first post until tied. A tied rope can be
+// walked (render mode 3) and swings when stepped on. XXX: the swing and the
+// prompts 0xfc85 and 0xfc86 are read from the code; a render of a lashed rope
+// being crossed would confirm them.
 
-void Func_080d897c(void) {
+/// Allocates the ropes' work, loads their node picture and starts Rope_Draw
+/// and Rope_Update. A scene with ropes to lash calls it first.
+void Rope_Initialize(void) {
   struct Work9c *work = HeapSlot_AllocEwram(156, sizeof(struct Work9c));
   void *buffer = Heap_Alloc(0x100);
 
   Dma_Fill32(0, work, sizeof(struct Work9c));
   work->vramEntry = VramCache_FindFreeEntry();
-  Decompress_TaggedLz(gData_080f0c04, buffer);
+  Decompress_TaggedLz(gRope_Tiles, buffer);
   VramCache_Load(work->vramEntry, 0x100, buffer);
-  Task_Add(Func_080d8a00, TASK_PASS_VBLANK);
-  Task_Add(Func_080d8c10, TASK_PASS_VBLANK + 15);
+  Task_Add(Rope_Draw, TASK_PASS_VBLANK);
+  Task_Add(Rope_Update, TASK_PASS_VBLANK + 15);
   Heap_Release(buffer);
 }
 
@@ -245,12 +250,12 @@ extern void
 Func_080140d8__f0d8740(void *entry,
                        s32 slot) __asm__("Oam_AddSpriteAtDepthClamped");
 
-/// The heap slot 0x9c work's per-frame callback (Func_080d897c schedules it).
+/// The heap slot 0x9c work's per-frame callback (Rope_Initialize schedules it).
 /// For each of the eight slots it draws a sprite at the midpoint of each pair
 /// of neighbouring nodes in the slot's chain, 4 pixels up, turned along the
 /// pair and given the slot's priority, culled to the screen and sorted into the
 /// OAM buckets by depth; the chain's first node takes the last angle.
-void Func_080d8a00(void) {
+void Rope_Draw(void) {
   struct ChainWork *work = Ram_HeapSlots->unk84[6];
   struct ChainSlot *slot = work->slots;
   s32 i;
@@ -334,7 +339,11 @@ struct SwingWork {
   struct SwingSlot slots[8];
 };
 
-void Func_080d8c10(void) {
+/// The ropes' per-frame task: unless flag 260 is set, prompts to step onto a
+/// tied rope when the leader stands at one of its ends (0xfc85), or while on
+/// one (render mode 3, 0xfc86); then swings each swinging rope, its amplitude
+/// decaying by 0.95 a frame until it settles.
+void Rope_Update(void) {
   struct SwingEvent *event = Ram_HeapSlots->eventWork;
   struct SwingWork *work = Ram_HeapSlots->unk84[6];
   struct SwingSlot *slot;
@@ -348,7 +357,8 @@ void Func_080d8c10(void) {
         for (i = 0; i < 8; i++)
           if (work->slots[i].id == target || work->slots[i].value == target)
             break;
-        if (i < 8 && Func_080d99b8(work->slots[i].id, work->slots[i].value))
+        if (i < 8 &&
+            Rope_IsLeaderAtEnd(work->slots[i].id, work->slots[i].value))
           event->prompt = 0xfc85;
       }
     } else if (gMainRoutineWork.renderMode == 3) {
@@ -366,12 +376,13 @@ void Func_080d8c10(void) {
         slot->amplitude = 0;
         slot->active = 0;
       }
-      Func_080d8fa8(i, slot->id, slot->value, swing);
+      Rope_SwingBetween(i, slot->id, slot->value, swing);
     }
   }
 }
 
-struct Work9cItem *Func_080d8d40(void) {
+/// Returns the first unused of the ropes' 128 nodes, or NULL.
+struct Work9cItem *Rope_AllocNode(void) {
   struct Work9c *work = WORK_9C;
   struct Work9cItem *item = work->items;
   s32 index;
@@ -384,7 +395,9 @@ struct Work9cItem *Func_080d8d40(void) {
   return NULL;
 }
 
-void Func_080d8d68(s32 index, s32 id, s32 other) {
+/// Lays rope index tied between posts id and other and shows both posts tied
+/// (animation 2).
+void Rope_Tie(s32 index, s32 id, s32 other) {
   struct Work9c *work = WORK_9C;
   s32 priority = 2;
   struct Actor *first = ObjectTable_Get(id);
@@ -406,14 +419,16 @@ void Func_080d8d68(s32 index, s32 id, s32 other) {
      * of 75 instructions differ in tla-en. */
     asm volatile("" : "+l"(lift));
     lift <<= 12;
-    Func_080d8e08(index, first->x, first->y + lift, first->z, second->x,
-                  second->y + lift, second->z);
+    Rope_LayTied(index, first->x, first->y + lift, first->z, second->x,
+                 second->y + lift, second->z);
   }
   Actor_SelectAnimationFar(first, 2);
   Actor_SelectAnimationFar(second, 2);
 }
 
-s32 Func_080d8e08(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
+/// Builds rope index's nodes on the line between two points, one for each 6
+/// pixels, bowed by a half sine; marks it tied and swinging and sets its flag.
+s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
   struct RopeWork *work = Ram_HeapSlots->unk84[6];
   s32 result = 0;
   s32 dx = x2 - x1;
@@ -444,7 +459,7 @@ s32 Func_080d8e08(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
   for (i = 0; i <= count; i++) {
     s32 bow;
 
-    node = Func_080d8d40();
+    node = Rope_AllocNode();
     if (node == NULL) {
       result = -1;
       break;
@@ -471,11 +486,12 @@ s32 Func_080d8e08(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
   return result;
 }
 
-void Func_080d8fa8(s32 index, s32 from, s32 to, s32 mode) {
+/// Redraws rope index between posts from and to, bowed by mode.
+void Rope_SwingBetween(s32 index, s32 from, s32 to, s32 mode) {
   struct Actor *a = ObjectTable_Get(from);
   struct Actor *b = ObjectTable_Get(to);
 
   if (a != NULL && b != NULL)
-    Func_080d8ff8(index, a->x, a->y + 0x80000, a->z, b->x, b->y + 0x80000, b->z,
+    Rope_LayBowed(index, a->x, a->y + 0x80000, a->z, b->x, b->y + 0x80000, b->z,
                   mode);
 }

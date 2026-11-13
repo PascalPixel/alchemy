@@ -1148,7 +1148,7 @@ void SpriteAnimation_ClearFar(void *record);
 
 void Djinn_ShowJoinedMessageFar(s32 owner, s32 element, s32 djinni);
 
-extern const u8 gData_080f0c04[];
+extern const u8 gRope_Tiles[];
 extern const u8 Data_080f0e00[];
 
 s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect);

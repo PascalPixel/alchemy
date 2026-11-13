@@ -9,12 +9,12 @@
 // Six words of zero. The functions that read them also write to them (wave
 // phases and two flags), but they lie in the cartridge, so the writes are
 // lost and each stays zero.
-const s32 gData_080f393c = 0;
-const s32 gData_080f3940 = 0;
-const s32 gData_080f3944 = 0;
-const s32 gData_080f3948 = 0;
-const s32 gData_080f394c = 0;
-const s32 gData_080f3950 = 0;
+const s32 gRope_LashPhase = 0;
+const s32 gRope_UntiePhase = 0;
+const s32 gRope_DebugSwinging = 0;
+const s32 gTightrope_LashPhase = 0;
+const s32 gTightrope_UntiePhase = 0;
+const s32 gTightrope_DebugSwinging = 0;
 
 /// Eight colours (BGR555).
 // As The Broken Seal's gBattleEffect_TargetColors are.

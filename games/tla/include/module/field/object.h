@@ -35,9 +35,9 @@ void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 s32 Func_080dbd5c(s32 x, s32 z, s32 layer);
 
-s32 Func_080d9a74(s32 id, s32 *value, s32 *index);
+s32 Rope_FindById(s32 id, s32 *value, s32 *index);
 
-void Func_080d92d4(s32 index, s32 fromId, s32 toId);
+void Rope_Lash(s32 index, s32 fromId, s32 toId);
 
 void Func_080db0b0(s32 id);
 
@@ -109,26 +109,27 @@ extern char ResourceId_WorldMapTilesD4;
 extern char ResourceId_WorldMapTilesD5;
 extern char ResourceId_WorldMapTilesD6;
 
-s32 Func_080d9194(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ);
+s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ);
 
-void Func_080d8fa8(s32 a0, s32 a1, s32 a2, s32 a3);
-void Func_080d8d68(s32 index, s32 a1, s32 a2);
+void Rope_SwingBetween(s32 a0, s32 a1, s32 a2, s32 a3);
+void Rope_Tie(s32 index, s32 a1, s32 a2);
 
-void Func_080d9104(s32 index, s32 a1, s32 a2);
+void Rope_Coil(s32 index, s32 a1, s32 a2);
 
-void Func_080d9b80(void);
-void Func_080d9d40(void);
+void Tightrope_Draw(void);
+void Tightrope_Update(void);
 
-s32 Func_080d99b8(s32 first, s32 second);
+s32 Rope_IsLeaderAtEnd(s32 first, s32 second);
 
-void Func_080da060(s32 index, s32 first, s32 second, s32 wobble);
-s32 Func_080d9f1c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ);
-s32 Func_080da0b0(s32 index, s32 x, s32 y, s32 z, s32 to_x, s32 to_y, s32 to_z,
-                  s32 mode);
-s32 Func_080da22c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ);
+void Tightrope_WobbleBetween(s32 index, s32 first, s32 second, s32 wobble);
+s32 Tightrope_Lay(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ);
+s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 to_x, s32 to_y,
+                       s32 to_z, s32 mode);
+s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
+                      s32 toZ);
 
-s32 Func_080da6e0(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
-                  s32 wave);
+s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
+                     s32 wave);
 void Func_080daab0(void);
 
 void Func_080dacb8(void);
@@ -151,11 +152,11 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect);
 
 void BattleEffect_AdvanceSpinAngle();
 
-void Func_080d8a00(void);
-void Func_080d8c10(void);
-s32 Func_080d8e08(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2);
+void Rope_Draw(void);
+void Rope_Update(void);
+s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2);
 
-s32 Func_080d8ff8(s32 index, s32 x, s32 y, s32 z, s32 to_x, s32 to_y, s32 to_z,
+s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 to_x, s32 to_y, s32 to_z,
                   s32 mode);
 
 void Message_SetVoiceFromActor(s32 key);

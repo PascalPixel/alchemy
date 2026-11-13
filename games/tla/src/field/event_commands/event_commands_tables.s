@@ -171,9 +171,9 @@ gFieldEffect_SparklePictures:
 gData_080f0bfc:
 	.4byte 0x10000, 0xf851
 
-@ A rope tile Func_080d897c and Func_080d9b08 unpack into VRAM
-	.global gData_080f0c04
-gData_080f0c04:
+@ A rope tile Rope_Initialize and Tightrope_Initialize unpack into VRAM
+	.global gRope_Tiles
+gRope_Tiles:
 	.incbin "games/tla/src/field/event_commands/rope.8bpp.lz"
 
 @ Func_080da9a8 unpacks four 16x16 sprites, top first, into one VRAM block:

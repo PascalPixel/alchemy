@@ -29,14 +29,14 @@ const u8 ScreenTransition_ShapesTail[12] = {
 };
 
 /// {key, value} rows ended by a key of -1; this list has only the end.
-const s32 gData_080f3228[2] = {
+const s32 gPairTable[2] = {
     -1, -1,
 };
 
 /// The cells of an 8x8 grid, one diagonal at a time from the top left
 /// corner, each diagonal ended by -1; -4 follows the longest diagonal and
 /// -9 the last.
-const s16 gData_080f3230[80] = {
+const s16 gHeading_WipeSteps[80] = {
     0, -1,
     1, 8, -1,
     2, 9, 16, -1,

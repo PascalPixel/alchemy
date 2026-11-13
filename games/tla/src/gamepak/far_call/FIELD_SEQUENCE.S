@@ -134,7 +134,7 @@ Resource_FarCall006:
 	export ObjectEvent_SetMode2Far, ObjectEvent_SetMode2
 	export ObjectEvent_PlaceOnGroundFar, ObjectEvent_PlaceOnGround
 	export ObjectEvent_RemoveFar, ObjectEvent_Remove
-	export Func_080c8418, Func_080cf050
+	export Leader_StepAwayFromNearbyActorFar, Leader_StepAwayFromNearbyActor
 	export Actor_SetWideSpriteFar, Actor_SetWideSprite
 	export Actor_ReturnHomeFar, Actor_ReturnHome
 	export WorldMap_FreezeFar, WorldMap_Freeze
@@ -147,9 +147,9 @@ Resource_FarCall006:
 	export FieldEffect_StartFadeOverlayFar, FieldEffect_StartFadeOverlay
 	export FadeOverlay_SuspendFar, FadeOverlay_Suspend
 	export FadeOverlay_ResumeFar, FadeOverlay_Resume
-	export Func_080c8480, Func_080d1cc0
-	export Func_080c8488, Func_080d1d34
-	export Func_080c8490, Func_080d1d44
+	export Func_080c8480, FieldEffect_StartBlankOverlay
+	export Func_080c8488, BlankOverlay_Suspend
+	export Func_080c8490, BlankOverlay_Resume
 	export FieldPsynergy_RunHandlerFar, FieldPsynergy_RunHandler
 	export BattleEffect_LoadActionEffectResourcesFar, BattleEffect_LoadActionEffectResources
 	export FieldPsynergy_SetupActorPairFar, FieldPsynergy_SetupActorPair
@@ -205,26 +205,26 @@ Resource_FarCall006:
 	export WorldMap_StartZoomFar, WorldMap_StartZoom
 	export Event_WaitForZoomTransitionFar, Event_WaitForZoomTransition
 	export Area_GetNameIndexFar, Area_GetNameIndex
-	export Func_080c8650, Func_080d1ee8
-	export Func_080c8658, Func_080d1f0c
-	export Func_080c8660, Func_080d1f18
-	export Func_080c8668, Func_080d1f20
+	export PairTable_FindFar, PairTable_Find
+	export PairTable_FindAndIgnoreFar, PairTable_FindAndIgnore
+	export PairTable_FindCopyFar, PairTable_FindCopy
+	export Heading_ShowFar, Heading_Show
 	export Event_WaitTwoSecondsOrPressFar, Event_WaitTwoSecondsOrPress
-	export Func_080c8678, Func_080d20fc
+	export Heading_CloseFar, Heading_Close
 	export Actor_SetActionCallbackFar, Actor_SetActionCallback
 	export Scene_QueueMusicFar, Scene_QueueMusic
 	export Event_NoOpFar, Event_NoOp
 	export Scene_PlayQueuedMusicFar, Scene_PlayQueuedMusic
 	export Func_080c86a0, Func_080ca6e4
-	export Func_080c86a8, Func_080d897c
-	export Func_080c86b0, Func_080d8d68
-	export Func_080c86b8, Func_080d9104
-	export Func_080c86c0, Func_080d92d4
-	export Func_080c86c8, Func_080d9710
-	export Func_080c86d0, Func_080d9b08
-	export Func_080c86d8, Func_080d9e98
-	export Func_080c86e0, Func_080d9ab0
-	export Func_080c86e8, Func_080d9ad0
+	export Func_080c86a8, Rope_Initialize
+	export Func_080c86b0, Rope_Tie
+	export Func_080c86b8, Rope_Coil
+	export Func_080c86c0, Rope_Lash
+	export Rope_UntieFar, Rope_Untie
+	export Func_080c86d0, Tightrope_Initialize
+	export Func_080c86d8, Tightrope_Place
+	export Func_080c86e0, Rope_GetState
+	export Func_080c86e8, Rope_Place
 	export FlagEntries_GetTableFar, FlagEntries_GetTable
 	export Func_080c86f8, Func_080ea7c0
 	export Func_080c8700, Func_080ea8d4
@@ -273,22 +273,22 @@ Resource_FarCall006:
 	export Func_080c8850, Func_080dbe08
 	export Func_080c8858, Func_080dbe44
 	export Actor_ShowItemIconByIdFar, Actor_ShowItemIconById
-	export Func_080c8868, Func_080da908
-	export Func_080c8870, Func_080da938
+	export Func_080c8868, Tightrope_Release
+	export Func_080c8870, Tightrope_Settle
 	export Func_080c8878, Func_080d4ab4
 	export Func_080c8880, Func_080e3698
 	export Func_080c8888, Func_080e37e0
 	export BattleEffect_DropObjectAtAnchorFar, BattleEffect_DropObjectAtAnchor
 	export Func_080c8898, Func_080d2cc4
 	export BattleEffect_FillOverlayTilesFar, BattleEffect_FillOverlayTiles
-	export Func_080c88a8, Func_080d1dac
+	export Func_080c88a8, EffectSprite_InitFromSlot94
 	export BattleEffect_DrawSpriteAtWorldPositionFar, BattleEffect_DrawSpriteAtWorldPosition
 	.global Func_080c88b8
 	.thumb_func
 Func_080c88b8:
 	ldr r4, [pc, #0]
 	bx r4
-	.4byte Func_080d1e18
+	.4byte EffectSprite_InitFromSlot94Blended
 	export Actor_ApplyRandomChildValuesFar, Actor_ApplyRandomChildValues
 @ Why assembly: 8-byte far-call veneers: ldr r4, the target's word, bx r4.
 	.global Func_080c88c8
@@ -323,8 +323,8 @@ Func_080c88e8:
 	export Func_080c8938, Func_080ca368
 	export Func_080c8940, Func_080ca3f4
 	export Func_080c8948, Func_080e28d4
-	export Func_080c8950, Func_080d072c
+	export ScreenTransition_IsScanlineActiveFar, ScreenTransition_IsScanlineActive
 	export Party_CheckItemLimitFar, Party_CheckItemLimit
 	export Scene_FindTriggerFar, Scene_FindTrigger
-	export Func_080c8968, Func_080d1760
+	export Func_080c8968, BattleEffect_PackTargetBuffer
 	export BattleEffect_LoadBufferPaletteFar, BattleEffect_LoadBufferPalette

@@ -60,8 +60,9 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   block = (struct Data02020000 *)Ram_MapBlocks +
           (((x / 0x200000) & 31) + (((y / 0x200000) & 31) << 5));
   Func_0802d088(block->region, 1);
-  // One local holds the region, then Func_080c8950's result: set twice, it
-  // reads the region into r3 for the divide, as the original does.
+  // One local holds the region, then ScreenTransition_IsScanlineActiveFar's
+  // result: set twice, it reads the region into r3 for the divide, as the
+  // original does.
   value = block->region;
   switch (value / 10) {
   case 3:
@@ -82,7 +83,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     window->resources = resources;
     window->reloadSteps = 12;
   }
-  value = Func_080c8950();
+  value = ScreenTransition_IsScanlineActiveFar();
   if (window->reloadSteps == 0)
     return;
   if (value != 0)

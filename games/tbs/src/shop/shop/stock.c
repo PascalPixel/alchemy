@@ -335,29 +335,12 @@ void ShopStock_AddArtifacts(s32 stockRow) {
 /// Copies the shop's ordinary stock, up to 24 items, to `output` with a 0
 /// after, and returns how many. Called by Shop_Run for Buy.
 s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
-  const s16 *src;
-  s32 copying = 1;
-  s16 *dst;
-  s32 count;
+  const s16 *items = sStockTable[stockRow];
+  s32 count = 0;
 
-  count = 0;
-  if (sStockTable[stockRow][SHOP_STOCK_ITEMS] != 0) {
-    dst = output;
-    src = sStockTable[stockRow];
-    do {
-      /* FAKEMATCH(dead): the copy under a test of copying, always 1, which
-       * emits nothing but keeps the copy's read apart from the signed sentinel
-       * read; as the copy and increments without the test, 41 of 30
-       * instructions differ in tbs-en (the plain form is 31 instructions). */
-      if (copying) {
-        *dst = *src;
-        count++;
-        src++;
-        dst++;
-      }
-      if (count > SHOP_STOCK_ITEM_COUNT - 1)
-        break;
-    } while (*src != 0);
+  while (count < SHOP_STOCK_ITEM_COUNT && items[count] != 0) {
+    output[count] = items[count];
+    count++;
   }
   output[count] = 0;
   return count;

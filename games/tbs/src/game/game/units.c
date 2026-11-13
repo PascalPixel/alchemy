@@ -74,30 +74,14 @@ u32 Party_GetAverageLevel(void) {
 /// enemies of the current battle. Anything else, or an enemy outside a battle,
 /// is NULL. Nearly every bank calls it, through GAME.S as Unit_GetFar.
 struct Unit *Unit_Get(u32 unitId) {
-  struct Unit *states;
-  struct Unit *unit;
   // DEAD: the return address, read and never used; the ROM keeps its copy of
   // lr into r3.
-  void *caller = __builtin_return_address(0);
+  UNUSED void *caller = __builtin_return_address(0);
 
-  states = gMainRoutineWork.units;
-  /* FAKEMATCH(dead): the party return repeated under a test of the return
-   * address keeps the read alive until the merged test; as one return, 7 of 28
-   * instructions differ in tbs-en. */
-  if (caller == NULL) {
-    if (unitId <= PIERS) {
-      unit = &states[unitId];
-      return unit;
-    }
-  }
-  if (unitId <= PIERS) {
-    unit = &states[unitId];
-    return unit;
-  }
-  if (unitId - FIRST_ENEMY_UNIT < 6 && gEnemyUnits != NULL) {
-    unit = &((struct Unit *)gEnemyUnits)[unitId - FIRST_ENEMY_UNIT];
-    return unit;
-  }
+  if (unitId <= PIERS)
+    return &gMainRoutineWork.units[unitId];
+  if (unitId - FIRST_ENEMY_UNIT < ENEMY_BATTLE_SIZE && gEnemyUnits != NULL)
+    return &((struct Unit *)gEnemyUnits)[unitId - FIRST_ENEMY_UNIT];
   return NULL;
 }
 
@@ -217,11 +201,6 @@ void Unit_Calculate(s32 unitId) {
       if (stats->item->flags & ITEM_CURSED)
         unit->curse |= CURSE_BOUND | CURSE_ITEM;
       stats->atk += stats->item->primaryBonus;
-      /* FAKEMATCH(dead): an empty once-only loop after the Attack bonus keeps
-       * the Defense load after the item's second bonus; as no loop, 2 of 864
-       * instructions differ in tbs-en. */
-      do {
-      } while (0);
       stats->def += stats->item->secondaryBonus;
       for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
         effectKind = stats->item->effects[effectIndex].kind;

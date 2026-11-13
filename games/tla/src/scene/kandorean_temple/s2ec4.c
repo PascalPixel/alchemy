@@ -75,7 +75,8 @@ void Func_0200306c(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *statue = Actor_GetById(9);
   struct Actor *ride = Func_080d4568();
-  s16 i; u16 next;
+  s16 i;
+  u16 next;
   s32 limit;
 
   Event_Start();
@@ -91,20 +92,20 @@ void Func_0200306c(void) {
   Sound_Play(162);
   Func_02000d64();
   i = 0;
-do {
-  leader->y += 0x48000;
-  statue->y += 0x48000;
-  ride->y += 0x1cccc;
-  limit = 0x1000;
-  Func_02000cd8(11, 0x20000, limit);
-  Func_02000cd8(13, 0x18000, limit);
-  Func_02000cd8(14, 0x10000, limit);
-  Func_02000cd8(15, 0x8000, limit);
-  Func_02000cd8(16, 0, limit);
-  next = i;
-  next++;
-  i = next;
-} while (next <= 15);
+  do {
+    leader->y += 0x48000;
+    statue->y += 0x48000;
+    ride->y += 0x1cccc;
+    limit = 0x1000;
+    Func_02000cd8(11, 0x20000, limit);
+    Func_02000cd8(13, 0x18000, limit);
+    Func_02000cd8(14, 0x10000, limit);
+    Func_02000cd8(15, 0x8000, limit);
+    Func_02000cd8(16, 0, limit);
+    next = i;
+    next++;
+    i = next;
+  } while (next <= 15);
   Map_CenterOnFollowedPoint();
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
@@ -126,7 +127,7 @@ do {
     wait(1);                                                                   \
   } while (Actor_GetById(n5)->scaleY > limit);
 
-DEFINE_KANDOREAN_TEMPLE_SINK_STEP(11, 13, 14, 15, 16)
+  DEFINE_KANDOREAN_TEMPLE_SINK_STEP(11, 13, 14, 15, 16)
   gData_02006298 = 0;
   GameFlag_ClearBit(0x20c);
   Sound_Play(390);
@@ -140,8 +141,7 @@ DEFINE_KANDOREAN_TEMPLE_SINK_STEP(11, 13, 14, 15, 16)
   statue->priorityFlags |= 2;
   Actor_SetSpritePriority(9, 3);
   Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     1);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Event_End();
@@ -153,7 +153,8 @@ void Func_020032c8(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *statue = Actor_GetById(10);
   struct Actor *ride = Func_080d4568();
-  s16 i; u16 next;
+  s16 i;
+  u16 next;
   s32 limit;
 
   Event_Start();
@@ -169,27 +170,27 @@ void Func_020032c8(void) {
   Sound_Play(162);
   Func_02000e60();
   i = 0;
-do {
-  leader->y += 0x48000;
-  statue->y += 0x48000;
-  ride->y += 0x1cccc;
-  limit = 0x1000;
-  Func_02000cd8(12, 0x20000, limit);
-  Func_02000cd8(17, 0x18000, limit);
-  Func_02000cd8(18, 0x10000, limit);
-  Func_02000cd8(19, 0x8000, limit);
-  Func_02000cd8(20, 0, limit);
-  next = i;
-  next++;
-  i = next;
-} while (next <= 15);
+  do {
+    leader->y += 0x48000;
+    statue->y += 0x48000;
+    ride->y += 0x1cccc;
+    limit = 0x1000;
+    Func_02000cd8(12, 0x20000, limit);
+    Func_02000cd8(17, 0x18000, limit);
+    Func_02000cd8(18, 0x10000, limit);
+    Func_02000cd8(19, 0x8000, limit);
+    Func_02000cd8(20, 0, limit);
+    next = i;
+    next++;
+    i = next;
+  } while (next <= 15);
   Map_CenterOnFollowedPoint();
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
-DEFINE_KANDOREAN_TEMPLE_SINK_STEP(12, 17, 18, 19, 20)
+  DEFINE_KANDOREAN_TEMPLE_SINK_STEP(12, 17, 18, 19, 20)
   gData_0200629c = 0;
   GameFlag_ClearBit(0x20d);
   Sound_Play(390);
@@ -203,8 +204,7 @@ DEFINE_KANDOREAN_TEMPLE_SINK_STEP(12, 17, 18, 19, 20)
   statue->priorityFlags |= 2;
   Actor_SetSpritePriority(10, 3);
   Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     1);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Event_End();
@@ -326,11 +326,11 @@ void Func_02003584(void) {
   }
 
 DEFINE_KANDOREAN_TEMPLE_RISE(Func_02003684, 13, 15, 440, 200, 204, 27, 12,
-    gData_020062a0)
+                             gData_020062a0)
 
 /// As Func_02003684, for actors 14 and 16 at another place.
 DEFINE_KANDOREAN_TEMPLE_RISE(Func_020037e0, 14, 16, 600, 232, 236, 37, 14,
-    gData_020062a4)
+                             gData_020062a4)
 
 /// Actor 13 rises out of view while actor 15 scales, then the scene moves on.
 void Func_0200393c(void) {
@@ -496,14 +496,12 @@ void Func_02003c8c(void) {
     if (GameFlag_Test(0x212))
       Func_02001f3c();
     if (GameFlag_Test(0x849)) {
-      /* FAKEMATCH(temporary): a local holding the angle, set just before its
-       * call, builds it ahead of the other arguments, as above; as a plain
-       * argument, 4 of 179 instructions differ in tla-en. */
-      s32 angle;
-
       Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
-      angle = 0xb000;
-      Actor_SetPositionAndFacing(15, PIXELS(408), PIXELS(664), angle);
+      {
+        s32 facing = FACING_NORTHWEST + FACING_STEP;
+
+        Actor_SetPositionAndFacing(15, PIXELS(408), PIXELS(664), facing);
+      }
     } else if (GameFlag_Test(0x848)) {
       Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
@@ -736,19 +734,17 @@ fall15:
 }
 
 void Func_020044d4(void) {
-  /* FAKEMATCH(temporary): a local holding the angle, set just before its call,
-   * builds it ahead of the other arguments; as a plain argument, 2 of 206
-   * instructions differ in tla-en. */
-  s32 angle;
-
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   wait(1);
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
                                          PIXELS(328), PIXELS(360));
-  angle = 0x5000;
-  Actor_SetPositionAndFacing(12, PIXELS(472), PIXELS(408), angle);
+  {
+    s32 facing = FACING_SOUTH + FACING_STEP;
+
+    Actor_SetPositionAndFacing(12, PIXELS(472), PIXELS(408), facing);
+  }
   Actor_GetById(16)->facing = 0xc000;
   wait(1);
   Event_StartScreenTransition();
@@ -1029,8 +1025,8 @@ void Func_0200482c(void) {
 void Func_02004fb4(void) {
   struct Actor **slot = &gData_020062ac;
   s32 zero = 0;
-  struct Actor *object =
-      ((struct Actor *)Import_ActorCreate(0x1e9, 0x1980000, 0x280000, 0x1580000));
+  struct Actor *object = ((struct Actor *)Import_ActorCreate(
+      0x1e9, 0x1980000, 0x280000, 0x1580000));
 
   *slot = object;
   if (object) {
@@ -1403,7 +1399,8 @@ struct Trigger gData_02005f40[] = {
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_02002674)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Func_0200269c)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgFieldItSeemsIMayNotHave)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFieldIsItReallyPossibleForAnyone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgFieldIsItReallyPossibleForAnyone)},
     {TRIGGERS_END},
 };
 
@@ -1417,7 +1414,8 @@ struct Trigger gData_02005fc4[] = {
     {0x4602, 4, 0x212, EVENT(Func_020022c0)},
     {0xc602, 5, 0x212, EVENT(Func_020022c0)},
     {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS, EVENT(Func_02001d20)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, EVENT(Func_02002314)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS,
+     EVENT(Func_02002314)},
     {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_020027b4)},
     {0x50008905, 31, CONDITION_ALWAYS, EVENT(Func_020027d4)},
     {0x50008905, 32, CONDITION_ALWAYS, EVENT(Func_020027f4)},
@@ -1426,21 +1424,31 @@ struct Trigger gData_02005fc4[] = {
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02001d40)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02001db4)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1033, 0x845, EVENT(Func_02001e30)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFieldIDoNotUnderstandMasterPoi)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgFieldIDoNotUnderstandMasterPoi)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1034, 0x846, EVENT(Func_02001e44)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFieldIWasHopingToHearMaster)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgFieldIWasHopingToHearMaster)},
     {TRIGGER_TALK, 11, 0x849, MSGNO(MsgFieldIHopeToEnterTheTemple)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgFieldHeyWhatsAnOutsiderDoingOn)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS,
+     MSGNO(MsgFieldHeyWhatsAnOutsiderDoingOn)},
     {TRIGGER_TALK, 12, 0x849, MSGNO(MsgFieldPleaseDontBreakMyConcentrationI)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgFieldLooksLikeNoneOfOurBrothers)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS,
+     MSGNO(MsgFieldLooksLikeNoneOfOurBrothers)},
     {TRIGGER_TALK, 13, 0x849, MSGNO(MsgFieldIAmNotJustMeditatingI)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgFieldSomedayImGoingToBeA)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x849, MSGNO(MsgFieldIStillCantBelieveThatThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFieldGahIKeptMyEyesShut)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x849, MSGNO(MsgFieldMyMindIsEmptyMyBody)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFieldIveBeenMeditatingAllDayBut)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x849, MSGNO(MsgFieldEmptyTheMindToLightenThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgFieldWheneverTheMasterGoesToTown)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x849,
+     MSGNO(MsgFieldIStillCantBelieveThatThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgFieldGahIKeptMyEyesShut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x849,
+     MSGNO(MsgFieldMyMindIsEmptyMyBody)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgFieldIveBeenMeditatingAllDayBut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x849,
+     MSGNO(MsgFieldEmptyTheMindToLightenThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgFieldWheneverTheMasterGoesToTown)},
     {TRIGGERS_END},
 };
 

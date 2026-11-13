@@ -92,7 +92,6 @@ const u8 *Scene_GetEvents(void) {
 #include "event_work.h"
 #include "text/msg_ids.h"
 
-
 void Func_02000210(void) {
   s32 result0;
   s32 result1;
@@ -309,7 +308,7 @@ void Func_02000568(void) {
                                          (leader->z + object->z) / 2);
     System_Wait(20);
     FieldActor_SetPositionAndResetMotion(object, PIXELS(120), PIXELS(128),
-                                    PIXELS(312));
+                                         PIXELS(312));
     Actor_SetAnimation(10, 5);
     System_Wait(10);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
@@ -377,7 +376,7 @@ void Func_02000568(void) {
     PartyInventory_Remove(453);                                                \
     PartyInventory_GiveItem(454, 0);                                           \
     if (given != 0) {                                                          \
-      Import_ActorDestroy(given);                                                    \
+      Import_ActorDestroy(given);                                              \
       Actor_SetModeById(gMainRoutineWork.currentOwner, 1);                     \
     }                                                                          \
     Func_02003fbc();                                                           \
@@ -527,8 +526,7 @@ void Func_020006f4(void) {
 struct Actor *Func_02000da0(struct Actor *object, s32 value) {
   struct Actor *spawned;
 
-  spawned =
-      FieldActor_Create(489, object->x, object->y + 0x180000, object->z);
+  spawned = FieldActor_Create(489, object->x, object->y + 0x180000, object->z);
   if (spawned != 0) {
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
     spawned->motionFlags = 0;
@@ -662,8 +660,8 @@ void Func_02000e38(void) {
 void Func_02001278(struct Actor *object) {
   struct Actor *source = Actor_Get(9);
 
-  FieldActor_SetPositionAndResetMotion(object, source->x, source->y + PIXELS(16),
-                                  source->z);
+  FieldActor_SetPositionAndResetMotion(object, source->x,
+                                       source->y + PIXELS(16), source->z);
   object->facing = source->facing;
 }
 
@@ -749,10 +747,8 @@ void Func_0200129c(struct Actor *gift) {
 
 #define SPAWN(a, b, answer)                                                    \
   {                                                                            \
-    a = FieldActor_Create(163, 0x1280000, \
-                               0, 0x1a80000);                                  \
-    b = FieldActor_Create(14, 0x1280000, \
-                               0, 0x1a80000);                                  \
+    a = FieldActor_Create(163, 0x1280000, 0, 0x1a80000);                       \
+    b = FieldActor_Create(14, 0x1280000, 0, 0x1a80000);                        \
     if (a != 0) {                                                              \
       a->motionFlags = answer;                                                 \
       Actor_SetSingleChildFlags(a, 0);                                         \
@@ -761,7 +757,7 @@ void Func_0200129c(struct Actor *gift) {
       b->scaleY = 0x20000;                                                     \
       Actor_SetSingleChildFlags(b, 0);                                         \
       Func_02003de4(b, 1);                                                     \
-      Actor_StartScript(b, gSmokeScript);                                        \
+      Actor_StartScript(b, gSmokeScript);                                      \
     }                                                                          \
   }
 
@@ -776,8 +772,8 @@ void Func_020014e0(void) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (GameFlag_Test(513) != 0) {
       Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-      /* FAKEMATCH(temporary): the form kept; as leader->update = Actor_EmitSmoke,
-       * 94 of 569 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the form kept; as leader->update =
+       * Actor_EmitSmoke, 94 of 569 instructions differ in tla-en. */
       a = (struct Actor *)Actor_EmitSmoke;
       leader->update = (void (*)(void))a;
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 318, 424);
@@ -918,7 +914,8 @@ void Func_02001a68(void) {
   FieldEvent_SetMessageId((s32)MsgYouAllSet);
   Event_ShowMessage(9, 0);
   Func_02003fc4();
-  result = FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
+  result =
+      FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   if (result == 0) {
     Func_02003fbc();
     Event_ShowMessage(9, 0);
@@ -993,7 +990,11 @@ void Func_02001c4c(void) {
 #include "dma.h"
 #include "io_reg.h"
 
-/* VIEW(scene_tables): variable gData_02004f04 as u8 gData_02004f04; module/scene/prox.h has s32 gData_02004f04[]; tried as the definition's extern s32 gData_02004f04[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/islets/scene_tables.c:1015: `gData_02004f04__scene_tables' undeclared (first use in this function). */
+/* VIEW(scene_tables): variable gData_02004f04 as u8 gData_02004f04;
+ * module/scene/prox.h has s32 gData_02004f04[]; tried as the definition's
+ * extern s32 gData_02004f04[], which the object already declares, it does not
+ * compile in tla-ja: games/tla/src/scene/islets/scene_tables.c:1015:
+ * `gData_02004f04__scene_tables' undeclared (first use in this function). */
 extern u8 gData_02004f04__scene_tables __asm__("gData_02004f04");
 extern s16 gData_02004f10[2][160];
 
@@ -1088,7 +1089,7 @@ void Func_02001db0(void) {
   item->motionFlags = 0;
   Actor_SetItemIcon(item, 0x1c4);
   FieldActor_SetPositionAndResetMotion(item, leader->x, leader->y + PIXELS(24),
-                                  leader->z);
+                                       leader->z);
   FieldEvent_Wait(20);
   Func_02003fc4();
   Party_GiveItem(0x1c4, 0);
@@ -1115,7 +1116,8 @@ void Func_02001f74(void) {
   System_Wait(1);
   object->motionFlags = 0;
   Actor_SetSpeed(10, 0x19999, 0xcccc);
-  FieldActor_SetPositionAndResetMotion(object, PIXELS(268), PIXELS(64), PIXELS(390));
+  FieldActor_SetPositionAndResetMotion(object, PIXELS(268), PIXELS(64),
+                                       PIXELS(390));
   System_Wait(1);
   object->terrainHeight = PIXELS(128);
   System_Wait(1);
@@ -1139,7 +1141,6 @@ void Func_02001f74(void) {
   System_Wait(1);
   Event_End();
 }
-
 
 void Func_0200208c(void) {
   Event_Start();
@@ -1392,15 +1393,18 @@ void Func_0200267c(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_SetAnimation(party->currentOwner, 2);
   Actor_SetSpeed(party->currentOwner, 0x8000, 0x4000);
-  FieldActor_SetMoveTarget(object, ((8 - (object->x >> 16) % 16) << 16) + object->x,
-                      object->y, object->z);
+  FieldActor_SetMoveTarget(object,
+                           ((8 - (object->x >> 16) % 16) << 16) + object->x,
+                           object->y, object->z);
   Actor_WaitForMove(object);
   object->facing = FACING_NORTH;
   exit = &work->exit;
   index = *exit;
   Event_PlaySound(158);
   index--;
-  MapGrid_AnimateCells(gData_020046bc[index].value, gData_020046bc[index].pair.first, gData_020046bc[index].pair.second);
+  MapGrid_AnimateCells(gData_020046bc[index].value,
+                       gData_020046bc[index].pair.first,
+                       gData_020046bc[index].pair.second);
   Actor_SetScript(party->currentOwner, gData_02004028);
   System_Wait(12);
   Event_PlaySound(123);
@@ -1432,8 +1436,9 @@ void Func_02002780(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_SetAnimation(party->currentOwner, 2);
   Actor_SetSpeed(party->currentOwner, 0x8000, 0x4000);
-  FieldActor_SetMoveTarget(object, ((8 - (object->x >> 16) % 16) << 16) + object->x,
-                      object->y, object->z);
+  FieldActor_SetMoveTarget(object,
+                           ((8 - (object->x >> 16) % 16) << 16) + object->x,
+                           object->y, object->z);
   Actor_WaitForMove(object);
   object->facing = FACING_NORTH;
   Actor_SetScript(party->currentOwner, gData_02004028);
@@ -1510,8 +1515,7 @@ void Func_020029c4(void) {
   System_Wait(1);
   guide->facing = FACING_SOUTH;
   leader->update = Func_02001278;
-  Actor_SetSpriteColor(((s32)Actor_Get(gMainRoutineWork.currentOwner)),
-                         15);
+  Actor_SetSpriteColor(((s32)Actor_Get(gMainRoutineWork.currentOwner)), 15);
   Actor_SetAnimation(9, 3);
   System_Wait(1);
 #if TLA_PATCH_1 /* The Japanese release leaves the transition word. */
@@ -1539,8 +1543,7 @@ void Func_020029c4(void) {
   Event_ShowMessage(9, 0);
   Actor_SetAnimation(9, 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
-  Actor_SetSpriteColor(((s32)Actor_Get(gMainRoutineWork.currentOwner)),
-                         0);
+  Actor_SetSpriteColor(((s32)Actor_Get(gMainRoutineWork.currentOwner)), 0);
   FieldActor_Jump(gMainRoutineWork.currentOwner, 6, 0);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 742);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
@@ -1702,7 +1705,6 @@ void Func_02002f1c(void) {
   struct Actor *other;
   u16 *state;
   u16 *next;
-  s32 angle;
   s32 i;
 
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
@@ -1740,12 +1742,11 @@ void Func_02002f1c(void) {
     other = Actor_Get(9);
     other->facing = FACING_SOUTH + FACING_STEP;
     other->collisionFlags |= 0x80;
-    /* FAKEMATCH(temporary): the angle held in a local is built before the
-     * position; as the constant argument 0x3000, 4 of 166 instructions differ
-     * in tla-en. */
-    angle = 0x3000;
-    Actor_SetPositionAndFacing(19, PIXELS(234), PIXELS(204),
-                                                   angle);
+    {
+      s32 facing = FACING_SOUTHEAST + FACING_STEP;
+
+      Actor_SetPositionAndFacing(19, PIXELS(234), PIXELS(204), facing);
+    }
     Actor_Get(19)->collisionFlags |= 0x80;
     Actor_SetSpeed(9, 0x20000, 0x10000);
     Actor_SetSpeed(19, 0x19999, 0xcccc);

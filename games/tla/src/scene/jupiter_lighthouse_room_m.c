@@ -81,7 +81,11 @@ void Func_02000080(void) {
   }
 }
 
-/* VIEW(jupiter_lighthouse_room_m): variable gBgScroll as s16 gBgScroll[]; bg_scroll.h has struct BgScroll gBgScroll[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_m.c:134: incompatible types in assignment. */
+/* VIEW(jupiter_lighthouse_room_m): variable gBgScroll as s16 gBgScroll[];
+ * bg_scroll.h has struct BgScroll gBgScroll[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:134: incompatible types in
+ * assignment. */
 extern s16 gBgScroll__jupiter_lighthouse_room_m[] __asm__("gBgScroll");
 
 void Actor_EmitRisingSparks(void);
@@ -101,12 +105,13 @@ void Func_020000c4(void) {
   Io_Write16(0x400, &REG_BG0CNT);
   buffer = Heap_Alloc(0x800);
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
-                buffer);
+                        buffer);
   Dma_Set(buffer, (void *)(0x06000000), 0x84000200, REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)0x06002000, 0x800);
   buffer = Heap_Alloc(128);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
+                        buffer);
   p = buffer;
   for (i = 0; i != 64; i++)
     *p++ &= 0xfcff;
@@ -150,7 +155,7 @@ void Func_020000c4(void) {
   Window_LoadGraphics();
   DebugText_Clear();
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+                    gMainRoutineWork.paletteGlow[1]);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
   REG_DISPCNT |= 0x100;
@@ -161,8 +166,17 @@ void Func_020000c4(void) {
   MapGrid_SetShake(0, 0, 0);
 }
 
-/* VIEW(jupiter_lighthouse_room_m): routine Func_02004774 as void Func_02004774(s32 x, s32 z, s32 a, s32 b); module/scene/eastern_alhafra.h has void Func_02004774(struct Actor *object); tried as the definition's void Func_02004774(struct Actor *object), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_m.c:183: `Func_02004774__jupiter_lighthouse_room_m' undeclared (first use in this function). */
-extern void Func_02004774__jupiter_lighthouse_room_m(s32 x, s32 z, s32 a, s32 b) __asm__("Func_02004774");
+/* VIEW(jupiter_lighthouse_room_m): routine Func_02004774 as void
+ * Func_02004774(s32 x, s32 z, s32 a, s32 b); module/scene/eastern_alhafra.h has
+ * void Func_02004774(struct Actor *object); tried as the definition's void
+ * Func_02004774(struct Actor *object), which the object already declares, it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:183:
+ * `Func_02004774__jupiter_lighthouse_room_m' undeclared (first use in this
+ * function). */
+extern void
+Func_02004774__jupiter_lighthouse_room_m(s32 x, s32 z, s32 a,
+                                         s32 b) __asm__("Func_02004774");
 
 void Func_0200039c(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
@@ -178,7 +192,8 @@ static __inline__ void Func_020048b4_(s32 id, s32 angle) {
   Actor_ArmCallbackAndRefresh(id, angle);
 }
 
-static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 mode) {
+static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
+                                                   s32 mode) {
   /* FAKEMATCH(wrapper): forwarded inline; as plain calls, 2 of 237
    * instructions of Func_020003b8 differ in tla-en. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
@@ -473,15 +488,11 @@ extern u32 gData_020055ec[];
 extern u32 gData_02005644[];
 extern u32 gData_0200569c[];
 
-#define PLACE(id, x, z, angle)                                                 \
+/// Places an actor at (x, z), in pixels, facing a direction.
+#define PLACE(id, x, z, facing)                                                \
   {                                                                            \
-    /* FAKEMATCH(temporary): the angle passes through a block local, so each   \
-     * run of equal angles is held in r5 (0x2000, then 0xc000), the second     \
-     * built while the third call is set up, as the native does; as a plain    \
-     * argument, 31 of 57 instructions of Func_02000c08 differ in tla-en, and  \
-     * 16 of 69 of Func_02000b48. */                                           \
-    s32 angle_ = (angle);                                                      \
-    Actor_SetPositionAndFacing(id, (x) << 16, (z) << 16, angle_);                                \
+    s32 facing_ = (facing);                                                    \
+    Actor_SetPositionAndFacing(id, (x) << 16, (z) << 16, facing_);             \
   }
 
 /// Sets four actors' speeds, places them and starts their action scripts.
@@ -518,8 +529,6 @@ void Func_02000c08(void) {
   Actor_SetAnimation(2, 31);
   Actor_SetAnimation(3, 9);
 }
-
-#undef PLACE
 
 extern u32 gData_02005748[];
 extern u32 gData_0200578c[];
@@ -718,8 +727,7 @@ void Func_02000cac(s32 arg) {
   FieldEvent_Wait(10);
   Actor_SetScript(3, gData_02005548);
   Actor_SetPositionAndFacing(26, PIXELS(665), PIXELS(128), angle);
-  Actor_SetPositionAndFacing(27, PIXELS(641), PIXELS(128),
-                                                 angle);
+  Actor_SetPositionAndFacing(27, PIXELS(641), PIXELS(128), angle);
   Event_PlaySound(78);
   FieldEvent_ShowMessageThenWait(26, 0, 5);
   I_Func_020048cc(0, 0x100, 0);
@@ -1009,23 +1017,19 @@ void Func_02000cac(s32 arg) {
   Actor_SetAnimation(7, 2);
   object = Actor_Get(4);
   if (object != NULL)
-    Actor_SetDestination(7, ((s16 *)&object->x)[1],
-                              ((s16 *)&object->z)[1]);
+    Actor_SetDestination(7, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   Actor_SetAnimation(6, 2);
   object = Actor_Get(4);
   if (object != NULL)
-    Actor_SetDestination(6, ((s16 *)&object->x)[1],
-                              ((s16 *)&object->z)[1]);
+    Actor_SetDestination(6, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   Actor_SetAnimation(5, 2);
   object = Actor_Get(4);
   if (object != NULL)
-    Actor_SetDestination(5, ((s16 *)&object->x)[1],
-                              ((s16 *)&object->z)[1]);
+    Actor_SetDestination(5, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   Actor_SetAnimation(28, 2);
   object = Actor_Get(4);
   if (object != NULL)
-    Actor_SetDestination(28, ((s16 *)&object->x)[1],
-                              ((s16 *)&object->z)[1]);
+    Actor_SetDestination(28, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   Actor_SetScript(7, gData_0200599c);
   Actor_SetScript(6, gData_0200599c);
   Actor_SetScript(5, gData_0200599c);
@@ -1058,15 +1062,6 @@ static __inline__ void JupiterLighthouseRoomM_AddPp(s32 owner, s32 delta) {
    * in r5. */
   Unit_AddPp(owner, delta);
 }
-
-#define PLACE(id, x, z, angle)                                                 \
-  {                                                                            \
-    /* FAKEMATCH(temporary): the angle passes through a block local, so it is  \
-     * built before x and z, as the native does; as a plain argument, 12 of    \
-     * 160 instructions of Func_02001c7c differ in tla-en. */                  \
-    s32 angle_ = (angle);                                                      \
-    Actor_SetPositionAndFacing(id, (x) << 16, (z) << 16, angle_);                                \
-  }
 
 /// Places actors 0, 2, 27 and 26 and shows an apology; then the party is left
 /// with owners 2 and 0, whose first values and PP drop by 10000. "I'm sorry"
@@ -1128,19 +1123,6 @@ void Func_02001c7c(void) {
   Field_RequestBattleFromEncounterTable(102, 4);
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-
-#define PLACE(id, x, z, angle)                                                 \
-  {                                                                            \
-    /* FAKEMATCH(temporary): the angle passes through a block local, so the    \
-     * first two angles are shared in r5 and the later ones built before z,    \
-     * as the native does; as a plain argument, 24 of 53 instructions differ   \
-     * in tla-en (as one function-wide angle local, 10 to 16). */              \
-    s32 angle_ = (angle);                                                      \
-    Actor_SetPositionAndFacing(id, (x) << 16, (z) << 16, angle_);                                \
-  }
-
 void Func_02001e38(void) {
   PLACE(0, 761, 219, FACING_NORTHWEST);
   PLACE(2, 741, 232, FACING_NORTHWEST);
@@ -1160,8 +1142,8 @@ s32 Inventory_Equip();
 
 #define ACTOR_SET_MODE_AND_WAIT(id, mode, frames)                              \
   do {                                                                         \
-    Actor_SetAnimation(id, mode);                                               \
-    FieldEvent_Wait(frames);                                                        \
+    Actor_SetAnimation(id, mode);                                              \
+    FieldEvent_Wait(frames);                                                   \
   } while (0)
 
 // The Japanese form differs and is still on its listing.
@@ -1665,13 +1647,16 @@ static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 extern u16 gData_02005a40[];
 
 DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_02005a18,
-    gData_02005a40)
+                          gData_02005a40)
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02005a18, gData_02005a40,
-    gData_02005a60, PaletteCycle_Step, gData_02005a64)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
+                                        gData_02005a18, gData_02005a40,
+                                        gData_02005a60, PaletteCycle_Step,
+                                        gData_02005a64)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02004774__jupiter_lighthouse_room_m,
-    Func_020049b4)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell,
+                             Func_02004774__jupiter_lighthouse_room_m,
+                             Func_020049b4)
 
 DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
@@ -1682,4 +1667,4 @@ extern const s32 gWhirlwindEndScript[];
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_020049a4, Position_FlatDistance,
-    gWhirlwindEndScript, gWhirlwindRiding)
+                        gWhirlwindEndScript, gWhirlwindRiding)

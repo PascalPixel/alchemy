@@ -415,8 +415,14 @@ void Func_02000d64(struct Actor *object, s32 limit) {
 #include "ram_buffer.h"
 #include "frame.h"
 
-/* VIEW(aqua_rock): routine Func_02002970 as s32 Func_02002970(struct Actor *object, struct Vector3 *position); module/scene/lemurian_ship.h has void Func_02002970(void); tried as the definition's void Func_02002970(void), which the object already declares, Func_02001e00 moves: 4 of 151 instructions in tla-ja. */
-extern s32 Func_02002970__aqua_rock(struct Actor *object, struct Vector3 *position) __asm__("Func_02002970");
+/* VIEW(aqua_rock): routine Func_02002970 as s32 Func_02002970(struct Actor
+ * *object, struct Vector3 *position); module/scene/lemurian_ship.h has void
+ * Func_02002970(void); tried as the definition's void Func_02002970(void),
+ * which the object already declares, Func_02001e00 moves: 4 of 151 instructions
+ * in tla-ja. */
+extern s32
+Func_02002970__aqua_rock(struct Actor *object,
+                         struct Vector3 *position) __asm__("Func_02002970");
 
 void Func_02000d80(void) {
   struct Actor *leader, *carried;
@@ -827,7 +833,8 @@ settle:
 #undef UNK02003450_SET
 
 // ---- games/tla/src/scene/aqua_rock/s17f4.c ----
-// Scene code of overlay 0x67b, in ROM order, from s17f4's offset up to the next object the overlay links.
+// Scene code of overlay 0x67b, in ROM order, from s17f4's offset up to the next
+// object the overlay links.
 
 #include "call.h"
 
@@ -986,8 +993,8 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_02001d30(struct Actor *object) {
-  struct Actor *child = Import_ActorCreate(
-      14, object->x, object->y + 0x40000, object->z + 0x40000);
+  struct Actor *child = Import_ActorCreate(14, object->x, object->y + 0x40000,
+                                           object->z + 0x40000);
   struct FieldSprite *parentSprite = object->sprite;
 
   if (child != 0) {
@@ -1349,8 +1356,8 @@ void Func_020025a8(s32 id) {
 DEFINE_GROUND_PARTICLES_DRAW(GroundParticles_Draw, gGroundParticleFrames)
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
-/// decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to move
-/// them; the overlay's copy of FieldEffect_InitializeSparkles.
+/// decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to
+/// move them; the overlay's copy of FieldEffect_InitializeSparkles.
 void Func_0200276c(void) {
   struct DustWork *work = HeapSlot_AllocEwram(116, sizeof(struct DustWork));
   struct DustParticle *p = work->particles;
@@ -1359,10 +1366,6 @@ void Func_0200276c(void) {
   u32 size;
   volatile u32 zero;
 
-  /* FAKEMATCH(temporary): one local is the fill word, the end word and each
-   * particle's attribute cursor, so it lives on the stack and every step of
-   * the cursor is stored there, as the native's; with a separate cursor, 55 of
-   * 81 instructions differ in tla-en. */
   size = 0;
   zero = size;
   Dma_Set((const void *)&zero, work,

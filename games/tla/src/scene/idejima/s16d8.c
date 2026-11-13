@@ -25,10 +25,10 @@ extern u32 gData_02003330[];
 /// Idejima: the scene of actors 5, 8 and 10 that opens with
 /// MsgIdejimaIsThisThePlace, ending in a screen transition and countdown 11.
 void Func_020016d8(void) {
-  /* FAKEMATCH(temporary): 0x4000 in a local, which the native keeps in r10
-   * for the later arms; as the literal, 2 of 829 instructions differ in
-   * tla-en. */
-  s32 east;
+  /* FAKEMATCH(temporary): the facing in a local set before its first use, which
+   * the native keeps in r10 for the later arms; as the constant, 2 of 829
+   * instructions differ in tla-en. */
+  s32 south;
 
   Import_EventStart();
   FieldEvent_ResolvePendingActions(0);
@@ -38,8 +38,8 @@ void Func_020016d8(void) {
   System_Wait(1);
   Map_CenterOnFollowedPoint();
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
-  east = 0x4000;
-  Actor_SetPositionAndFacing(5, PIXELS(184), PIXELS(168), east);
+  south = FACING_SOUTH;
+  Actor_SetPositionAndFacing(5, PIXELS(184), PIXELS(168), south);
   {
     struct Actor *ship = Actor_Get(8);
 
@@ -111,14 +111,14 @@ void Func_020016d8(void) {
   FieldActor_Jump(8, 6, 0);
   Actor_WalkToAndWait(8, 256, 198);
   Actor_SetPosition(8, 0, 0);
-  Actor_FaceDirection(5, east, 20);
+  Actor_FaceDirection(5, south, 20);
   Actor_ShowEmote(5, 0x105, 40);
   FieldEvent_ShowMessageThenWait(0x8005, 0, 20);
   Actor_WalkToAndWait(5, 224, 182);
   Actor_FaceDirection(5, FACING_SOUTHEAST, 40);
   Actor_ShowEmote(5, 0x105, 80);
   Actor_WalkToAndWait(5, 242, 172);
-  Actor_FaceDirection(5, east, 40);
+  Actor_FaceDirection(5, south, 40);
   Actor_ShowEmote(5, 0x105, 120);
   Actor_ShowEmote(5, 0x107, 40);
   FieldActor_Jump(5, 2, 10);
@@ -153,7 +153,7 @@ void Func_020016d8(void) {
   Actor_FaceDirection(8, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_ShowEmote(8, 0x101, 20);
   Event_ShowMessage(0xa008, 0);
-  Actor_FaceDirection(5, east, 0);
+  Actor_FaceDirection(5, south, 0);
   FieldEvent_ShowMessageThenWait(5, 0, 20);
   Actor_SetAnimationAndWait(8, 4);
   Event_ShowMessage(0xa008, 0);
@@ -919,8 +919,10 @@ struct Trigger gIdejimaEventsWake[] = {
     {TRIGGER_EXAMINE, 10, 0x863, EVENT(Func_020000f0)},
     {TRIGGER_EXAMINE, 11, 0x864, EVENT(Func_020002b4)},
     {TRIGGER_EXAMINE, 12, 0x865, EVENT(Func_0200049c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, CONDITION_ALWAYS, EVENT(Func_020000f0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x405, CONDITION_ALWAYS, EVENT(Func_020002b4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, CONDITION_ALWAYS,
+     EVENT(Func_020000f0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x405, CONDITION_ALWAYS,
+     EVENT(Func_020002b4)},
     {TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(Func_020006a8)},
     {TRIGGER_STEP, 8, 0x867, EVENT(Idejima_RunAlexDeparture)},
     {TRIGGERS_END},

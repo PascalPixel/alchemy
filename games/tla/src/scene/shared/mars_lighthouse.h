@@ -888,9 +888,6 @@
     /* FAKEMATCH(temporary): cell holds the masked x; as one expression, 2 of  \
      * 246 instructions differ in tla-en. */                                   \
     cell = actor->x & 0xfff00000;                                              \
-    /* FAKEMATCH(temporary): i holds half a cell here and the search's count   \
-     * later; as a separate PIXELS(8), 18 of 246 instructions differ in        \
-     * tla-en. */                                                              \
     i = PIXELS(8);                                                             \
     position = &probe;                                                         \
     position->x = startX = cell + i;                                           \
@@ -1266,8 +1263,6 @@
 /// mars_lighthouse_star_room.
 #define DEFINE_ACTOR_SETUP_SCRIPTED_PART(name, data1)                          \
   void name(struct Actor *object, s32 part) {                                  \
-    /* FAKEMATCH(temporary): one zero for every cleared field; as six stores   \
-     * of 0, 29 of 30 instructions differ in tla-en. */                        \
     s32 zero = 0;                                                              \
                                                                                \
     object->motionFlags = zero;                                                \

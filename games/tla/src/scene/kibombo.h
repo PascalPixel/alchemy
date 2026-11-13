@@ -66,8 +66,8 @@ struct KibomboEventWork {
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 struct KibomboObject *Actor_GetById(s32 id);
-void Actor_SetPositionAndResetMotion(struct KibomboObject *object, s32 x,
-                                      s32 y, s32 z);
+void Actor_SetPositionAndResetMotion(struct KibomboObject *object, s32 x, s32 y,
+                                     s32 z);
 void Actor_SetPartAttribute(struct KibomboObject *object, s32 value);
 void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
@@ -88,8 +88,7 @@ void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 struct KibomboObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Func_02005a24(struct KibomboObject *object, s32 mode);
 void Import_ActorDestroy(struct KibomboObject *object);
-void Actor_SetSingleChildFlags(struct KibomboObject *object,
-                                        u32 value);
+void Actor_SetSingleChildFlags(struct KibomboObject *object, u32 value);
 void Animation_SetStateFlags(struct KibomboObject *object, s32 flags);
 void Actor_SetModeById(u32 actorId, s32 animation);
 void Task_Add(void (*func)(void), s32 priority);
@@ -124,9 +123,7 @@ static inline void Kibombo_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e,
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
-static inline s32 Kibombo_FlagCheck(s32 flag) {
-  return GameFlag_Test(flag);
-}
+static inline s32 Kibombo_FlagCheck(s32 flag) { return GameFlag_Test(flag); }
 
 static inline void Kibombo_ObjArm(s32 actor, s32 angle, s32 frames) {
   Actor_ArmCallback(actor, angle, frames);
@@ -168,7 +165,8 @@ static inline void Kibombo_ObjWalk(s32 actor, s32 x, s32 z) {
   Actor_SetPositionAndReset(actor, x, z);
 }
 
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z, s32 angle);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
+                                                    s32 angle);
 
 static inline void Kibombo_ObjPlaceFacing(s32 actor, s32 x, s32 z, s32 angle) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(actor, x, z, angle);
@@ -184,9 +182,7 @@ static inline void Kibombo_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
   Map_CopyCellPictureIndicesRect(a, b, c, d, e, f);
 }
 
-static inline void Kibombo_SePlay(s32 cue) {
-  Sound_Play(cue);
-}
+static inline void Kibombo_SePlay(s32 cue) { Sound_Play(cue); }
 
 void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
 
@@ -196,9 +192,6 @@ static inline void Kibombo_FadeTo(s32 a, s32 b) {
 
 #define KIBOMBO_TASK_ADD(func, priority)                                       \
   {                                                                            \
-    /* FAKEMATCH(temporary): a local holding the priority keeps the constant   \
-     * ahead of the task function load; as a plain argument, 2 of 40           \
-     * instructions differ in tla-en (Func_02003c14). */                       \
     s32 priority_ = (priority);                                                \
     Task_Add((func), priority_);                                               \
   }

@@ -179,8 +179,7 @@ void Func_020027cc(void) {
     Actor_SetPositionAndFacing(23, PIXELS(432), PIXELS(312), slow);
   }
   Actor_SetPositionAndFacing(6, PIXELS(448), PIXELS(312), speed);
-  Actor_SetPositionAndFacing(5, PIXELS(468), PIXELS(312),
-                                                 speed);
+  Actor_SetPositionAndFacing(5, PIXELS(468), PIXELS(312), speed);
   System_Wait(1);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x202;
   Event_StartScreenTransition();
@@ -216,14 +215,10 @@ void Func_020027cc(void) {
   System_Wait(8);
   ((struct Wanderer *)Actor_Get(gMainRoutineWork.currentOwner))->timer =
       (Random16Far() * 40 >> 16) + 10;
-  ((struct Wanderer *)Actor_Get(7))->timer =
-      (Random16Far() * 40 >> 16) + 10;
-  ((struct Wanderer *)Actor_Get(5))->timer =
-      (Random16Far() * 40 >> 16) + 10;
-  ((struct Wanderer *)Actor_Get(6))->timer =
-      (Random16Far() * 40 >> 16) + 10;
-  ((struct Wanderer *)Actor_Get(23))->timer =
-      (Random16Far() * 40 >> 16) + 10;
+  ((struct Wanderer *)Actor_Get(7))->timer = (Random16Far() * 40 >> 16) + 10;
+  ((struct Wanderer *)Actor_Get(5))->timer = (Random16Far() * 40 >> 16) + 10;
+  ((struct Wanderer *)Actor_Get(6))->timer = (Random16Far() * 40 >> 16) + 10;
+  ((struct Wanderer *)Actor_Get(23))->timer = (Random16Far() * 40 >> 16) + 10;
   Actor_SetScript(gMainRoutineWork.currentOwner, gData_02005c74);
   Actor_SetScript(7, gData_02005c74);
   Actor_SetScript(5, gData_02005ca0);
@@ -244,29 +239,26 @@ extern const u8 gData_02005d7c[];
 extern u32 gData_02005d8c[];
 
 void Func_02002a64(void) {
-  s32 speed;
+  s32 north;
   s32 cue = 0x6007;
 
   Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   {
-    /* FAKEMATCH(temporary): the leader's id read into a local before the speed
-     * is set; as Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner,
-     * ...), 2 of 521 instructions differ in tla-en. */
-    s32 owner = gMainRoutineWork.currentOwner;
+    s32 leader = gMainRoutineWork.currentOwner;
 
-    speed = 0xc000;
-    Actor_SetPositionAndFacing(owner, 174 << 17, 156 << 17, speed);
+    north = FACING_NORTH;
+    Actor_SetPositionAndFacing(leader, 174 << 17, 156 << 17, north);
   }
-  Actor_SetPositionAndFacing(7, 165 << 17, 156 << 17, speed);
+  Actor_SetPositionAndFacing(7, 165 << 17, 156 << 17, north);
   {
-    s32 slow = 0xb000;
+    s32 facing = FACING_NORTHWEST + FACING_STEP;
 
-    Actor_SetPositionAndFacing(23, 216 << 17, 156 << 17, slow);
+    Actor_SetPositionAndFacing(23, 216 << 17, 156 << 17, facing);
   }
-  Actor_SetPositionAndFacing(6, 224 << 17, 156 << 17, speed);
-  Actor_SetPositionAndFacing(5, 234 << 17, 156 << 17, speed);
+  Actor_SetPositionAndFacing(6, 224 << 17, 156 << 17, north);
+  Actor_SetPositionAndFacing(5, 234 << 17, 156 << 17, north);
   System_Wait(1);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
   Event_StartScreenTransition();
@@ -286,7 +278,8 @@ void Func_02002a64(void) {
   Actor_SetAnimation(6, 3);
   Event_ShowMessage(0x4006, 0);
   ((void *)Event_OpenMessage(0x6005, 0));
-  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+      0) {
     Func_0200578c_ArgsFirst(7, 256, 20);
     Actor_SetSpeed(7, 0x20000, 0x10000);
     Actor_WalkToAndWait(7, 340, 296);
@@ -384,8 +377,8 @@ void Func_02002f70(void) {
   s32 z;
   struct Actor *spark;
   struct Actor *actor;
-  s32 fast;
-  s32 slow;
+  s32 south;
+  s32 facing;
 
   Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
@@ -406,10 +399,10 @@ void Func_02002f70(void) {
   System_Wait(1);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(182), 0);
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
-  fast = 0x4000;
-  Actor_SetPositionAndFacing(5, PIXELS(472), PIXELS(216), fast);
-  slow = 0x3000;
-  Actor_SetPositionAndFacing(24, PIXELS(472), PIXELS(200), slow);
+  south = FACING_SOUTH;
+  Actor_SetPositionAndFacing(5, PIXELS(472), PIXELS(216), south);
+  facing = FACING_SOUTHEAST + FACING_STEP;
+  Actor_SetPositionAndFacing(24, PIXELS(472), PIXELS(200), facing);
   System_Wait(1);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
@@ -454,11 +447,10 @@ void Func_02002f70(void) {
   FieldEvent_Wait(20);
   Event_ShowMessage(24, 0);
   Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, PIXELS(472),
-                             PIXELS(204), fast);
-  Actor_SetPositionAndFacing(7, PIXELS(440), PIXELS(204), fast);
-  Actor_SetPositionAndFacing(23, PIXELS(456), PIXELS(204), slow);
-  Actor_SetPositionAndFacing(6, PIXELS(488), PIXELS(204),
-                                                 fast);
+                             PIXELS(204), south);
+  Actor_SetPositionAndFacing(7, PIXELS(440), PIXELS(204), south);
+  Actor_SetPositionAndFacing(23, PIXELS(456), PIXELS(204), facing);
+  Actor_SetPositionAndFacing(6, PIXELS(488), PIXELS(204), south);
   System_Wait(1);
   Event_ShowMessage(23, 0);
   Actor_FaceDirection(24, FACING_NORTH + FACING_STEP, 0);
@@ -824,8 +816,14 @@ void Func_02003974(void) {
 
 #include "iwram_call.h"
 
-/* VIEW(s2394): routine Func_02004380 as s32 Func_02004380(s32 col, s32 row, s32 turn); the definition has u8 Func_02004380(s32 x, s32 z, s32 direction); tried as the definition's u8 Func_02004380(s32 x, s32 z, s32 direction), which the object already declares, it does not compile in tla-ja (make modern): games/tla/include/field/event_inline.h:170:48: note: expected 's32' {aka 'int'} but argument is of type 'u8 *' {aka 'unsigned char *'}. */
-extern s32 Func_02004380__s2394(s32 col, s32 row, s32 turn) __asm__("Func_02004380");
+/* VIEW(s2394): routine Func_02004380 as s32 Func_02004380(s32 col, s32 row, s32
+ * turn); the definition has u8 Func_02004380(s32 x, s32 z, s32 direction);
+ * tried as the definition's u8 Func_02004380(s32 x, s32 z, s32 direction),
+ * which the object already declares, it does not compile in tla-ja (make
+ * modern): games/tla/include/field/event_inline.h:170:48: note: expected 's32'
+ * {aka 'int'} but argument is of type 'u8 *' {aka 'unsigned char *'}. */
+extern s32 Func_02004380__s2394(s32 col, s32 row,
+                                s32 turn) __asm__("Func_02004380");
 
 s32 Func_02003a64(s32 value) {
   struct SceneState *state = &gSceneState;
@@ -1066,12 +1064,13 @@ extern u8 Data_02006fc8[], Data_02006fe8[], Data_02007008[], Data_02007028[],
     Data_02007048[], gData_02007068[];
 extern s8 gData_02005ac0[];
 extern u8 gData_02005ac8[];
-// Lays a random path of `length` cells across the Gabomba Statue grid (gSceneState,
-// 11 by 8 cells of four bytes) from (x0, z0) to (endX, endZ), backtracking through
-// per-step stacks (Data_02006fc8 to gData_02007068: direction, x, z, kind, tried
-// directions and flags) when a cell has no free neighbour; each step joins the
-// cells (Func_02004224 picks the piece, Func_02004270 writes it). Returns 0, or -1
-// when the parity of the distance rules a path out or the search gives up.
+// Lays a random path of `length` cells across the Gabomba Statue grid
+// (gSceneState, 11 by 8 cells of four bytes) from (x0, z0) to (endX, endZ),
+// backtracking through per-step stacks (Data_02006fc8 to gData_02007068:
+// direction, x, z, kind, tried directions and flags) when a cell has no free
+// neighbour; each step joins the cells (Func_02004224 picks the piece,
+// Func_02004270 writes it). Returns 0, or -1 when the parity of the distance
+// rules a path out or the search gives up.
 s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
                   s32 last, s32 bit) {
   u8 *cells, *kinds;
@@ -1111,8 +1110,8 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
     {
       u8 *joins = gData_02005ac8 + 1;
       kinds = Data_02007028;
-      Data_02007048[step] = Data_02007048[step] | joins[kinds[step]] |
-                            1 << ((direction + 2) & 3);
+      Data_02007048[step] =
+          Data_02007048[step] | joins[kinds[step]] | 1 << ((direction + 2) & 3);
     }
     tries = 0;
     while (1) {
@@ -1168,17 +1167,17 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
       if (Data_02007048[step] != 0x0f)
         continue;
     back:
-    Data_02007048[step] = 0;
-    if (step == 0)
-      return -1;
-    step--;
-    x = Data_02006fe8[step];
-    z = Data_02007008[step];
-    direction = Data_02006fc8[step];
-    Func_02004270(x, z, Data_02007028[step], gData_02007068[step]);
-    goto top;
+      Data_02007048[step] = 0;
+      if (step == 0)
+        return -1;
+      step--;
+      x = Data_02006fe8[step];
+      z = Data_02007008[step];
+      direction = Data_02006fc8[step];
+      Func_02004270(x, z, Data_02007028[step], gData_02007068[step]);
+      goto top;
     }
-    top:;
+  top:;
   }
 done:
   {
@@ -1238,48 +1237,50 @@ void Func_02004288(s32 id, s32 show) {
   row = 0;
 nextRow:
   column = 0;
-nextColumn: {
-  struct PuzzleCell *cell = &state->cells[row * 11 + column];
+nextColumn:
+  {
+    struct PuzzleCell *cell = &state->cells[row * 11 + column];
 
-  if (cell->occupied != 0) {
-    struct Actor *object = Actor_Get(id);
-    s32 mapX;
-    s32 mapZ;
-    s32 kind;
+    if (cell->occupied != 0) {
+      struct Actor *object = Actor_Get(id);
+      s32 mapX;
+      s32 mapZ;
+      s32 kind;
 
-    if (show != 0) {
-      object->x = ((state->originX + column) << 20) + 0x80000;
-      object->z = ((state->originZ + row) << 20) + 0x80000;
-      {
-        s32 x = state->originX;
-        s32 z = state->originZ;
+      if (show != 0) {
+        object->x = ((state->originX + column) << 20) + 0x80000;
+        object->z = ((state->originZ + row) << 20) + 0x80000;
+        {
+          s32 x = state->originX;
+          s32 z = state->originZ;
 
-        /* FAKEMATCH(temporary): the origins read into x and z before the column
-         * and row are added; as plain arguments, 12 of 119 instructions differ
-         * in tla-en. */
-        x += column;
-        z += row;
-        MapGrid_CopyCells(0, 11, 1, 1, x, z);
+          /* FAKEMATCH(temporary): the origins read into x and z before the
+           * column and row are added; as plain arguments, 12 of 119
+           * instructions differ in tla-en. */
+          x += column;
+          z += row;
+          MapGrid_CopyCells(0, 11, 1, 1, x, z);
+        }
+        cell->occupied = 2;
+      } else {
+        object->x = 0;
+        object->z = 0;
+        // A byte store of the cell's last byte: sched2 orders it behind the
+        // next load's constant only as a char access.
+        ((u8 *)cell)[3] = 1;
+        /* FAKEMATCH(temporary): kind and the origins read before the column and
+         * row are added; as plain arguments, 37 of 119 instructions differ in
+         * tla-en. */
+        kind = cell->kind;
+        mapX = state->originX;
+        mapZ = state->originZ;
+        mapX += column;
+        mapZ += row;
+        MapGrid_CopyCells(1, kind, 1, 1, mapX, mapZ);
       }
-      cell->occupied = 2;
-    } else {
-      object->x = 0;
-      object->z = 0;
-      // A byte store of the cell's last byte: sched2 orders it behind the next
-      // load's constant only as a char access.
-      ((u8 *)cell)[3] = 1;
-      /* FAKEMATCH(temporary): kind and the origins read before the column and row
-       * are added; as plain arguments, 37 of 119 instructions differ in tla-en. */
-      kind = cell->kind;
-      mapX = state->originX;
-      mapZ = state->originZ;
-      mapX += column;
-      mapZ += row;
-      MapGrid_CopyCells(1, kind, 1, 1, mapX, mapZ);
+      id++;
     }
-    id++;
   }
-}
   column++;
   if (column <= 10)
     goto nextColumn;
@@ -1701,9 +1702,15 @@ done:
 }
 
 // ---- games/tla/src/scene/gabomba_statue/s4d48.c ----
-// Scene code of overlay 0x671, in ROM order, from s4d48's offset up to the next object the overlay links.
+// Scene code of overlay 0x671, in ROM order, from s4d48's offset up to the next
+// object the overlay links.
 
-/* VIEW(s4d48): routine Func_02004938 as void Func_02004938(); the parts before it has another declaration; tried as the definition's void Func_02004938(struct Actor *ball, s32 step), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/gabomba_statue/s2394.c:1769: too many arguments to function `Func_02004938'. */
+/* VIEW(s4d48): routine Func_02004938 as void Func_02004938(); the parts before
+ * it has another declaration; tried as the definition's void
+ * Func_02004938(struct Actor *ball, s32 step), which the object already
+ * declares, it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue/s2394.c:1769: too many arguments to
+ * function `Func_02004938'. */
 extern void Func_02004938__s4d48() __asm__("Func_02004938");
 
 s32 Func_02004d48(s32 first, s32 check) {
@@ -1719,9 +1726,9 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk62 = 2;
   actor->unk63 = 1;
   actor->unk4c = 0;
-  /* FAKEMATCH(signature): Import_ActorResetMotion, Actor_ResetMotion's veneer, called
-   * without the actor it reads from r0; as Import_ActorResetMotion(actor), 73 of 230
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(signature): Import_ActorResetMotion, Actor_ResetMotion's veneer,
+   * called without the actor it reads from r0; as
+   * Import_ActorResetMotion(actor), 73 of 230 instructions differ in tla-en. */
   Import_ActorResetMotion();
   Func_02005624(actor, 2);
   id = second;
@@ -1977,7 +1984,8 @@ void Func_020052a4(s32 mode) {
     clock->ringing = 1;
   }
   tiles = Heap_AllocEwram(0x400);
-  Import_ResourceDecodeType01(Resource_GetTableEntry((s32)&ResourceId_ClockDigits), tiles);
+  Import_ResourceDecodeType01(
+      Resource_GetTableEntry((s32)&ResourceId_ClockDigits), tiles);
   clock->tiles = tiles;
   clock->digits = tiles + 0x2c0;
   clock->tileEntry = Resource_FindFreeEntry();

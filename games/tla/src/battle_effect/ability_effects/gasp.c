@@ -31,8 +31,8 @@ void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-                   s32 *world);
+void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
+                                    u32 packed, s32 *screen, s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -189,14 +189,16 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   if (mode == 0) {
-    Func_0815585c(effect, (effect->side ^ 1) << 4 | 35, screen, other);
+    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 35, screen,
+                                   other);
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                                FIGURE(work), 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D8, work->sheet, 0, 0);
     REG_BG2CNT = 0x785;
     frames = 84;
   } else if (mode == 1) {
-    Func_0815585c(effect, (effect->side ^ 1) << 4 | 33, screen, other);
+    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 33, screen,
+                                   other);
     Resource_LoadAndDecompress((s32)&ResourceId_LightBurstSheet, work->sheet, 1,
                                0);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
@@ -207,7 +209,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     s32 j;
     s32 k;
 
-    Func_0815585c(effect, (effect->side ^ 1) << 4 | 0x120, screen, other);
+    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 0x120,
+                                   screen, other);
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                                FIGURE(work), 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
@@ -222,7 +225,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         work->sheet[0x30c + k * 64 + j] = work->sheet[0x1000 + k * 40 + j];
     frames = 42;
   } else if (mode == 6) {
-    Func_0815585c(effect, (effect->side ^ 1) << 4 | 131, screen, other);
+    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 131,
+                                   screen, other);
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                                FIGURE(work), 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D7, work->sheet, 0, 0);
@@ -259,7 +263,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     work->fadeStep = 0;
     frames = 48;
   } else if (mode == 5) {
-    Func_0815585c(effect, effect->side << 4 | 226, screen, other);
+    BattleEffect_RunDjinniEntrance(effect, effect->side << 4 | 226, screen,
+                                   other);
     REG_BG2CNT = 0x785;
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
                                FIGURE(work), 1, 0);
@@ -314,7 +319,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     frames = 41;
   } else {
     if (mode == 2) {
-      Func_0815585c(effect, (effect->side ^ 1) << 4 | 2, screen, other);
+      BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 2,
+                                     screen, other);
       frames = 76;
     } else {
       work->fadeFrames = 24;

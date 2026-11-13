@@ -1151,7 +1151,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   particle->z = source->z - ((0x10000 - scale) * 5) + 0x100000;
 }
 
-struct ArcObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+struct ArcObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildArgumentFar(struct ArcSprite *sprite, s32 animation);
 
 void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
@@ -1164,7 +1164,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
   u8 zero;
 
   for (i = 0; i <= 1; i++) {
-    object = Func_080200c0(271, source->x, source->y + 0x400000, source->z);
+    object = Actor_CreateFar(271, source->x, source->y + 0x400000, source->z);
     objects[i] = object;
     if (object == NULL)
       continue;

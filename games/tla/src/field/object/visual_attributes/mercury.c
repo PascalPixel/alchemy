@@ -12,10 +12,17 @@
 #include "module/system/system.h"
 #include "scene_call.h"
 
-/* VIEW(f0d8740): routine FieldEffect_UpdateRandomTargetParticle as void FieldEffect_UpdateRandomTargetParticle(void); the definition has void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect). */
-extern void FieldEffect_UpdateRandomTargetParticle__f0d8740(void) __asm__("FieldEffect_UpdateRandomTargetParticle");
+/* VIEW(f0d8740): routine FieldEffect_UpdateRandomTargetParticle as void
+ * FieldEffect_UpdateRandomTargetParticle(void); the definition has void
+ * FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect). */
+extern void FieldEffect_UpdateRandomTargetParticle__f0d8740(void) __asm__(
+    "FieldEffect_UpdateRandomTargetParticle");
 
-/* VIEW(f0d8740): tag struct CaptureObject as struct CaptureObject__f0d8740; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:4832: structure has no member named `sprite'. */
+/* VIEW(f0d8740): tag struct CaptureObject as struct CaptureObject__f0d8740;
+ * visual_attributes.c has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/field/object/visual_attributes.c:4832: structure has no member
+ * named `sprite'. */
 struct CaptureObject__f0d8740 {
   u8 unk00[6];
   u16 facing;
@@ -39,21 +46,45 @@ struct CaptureObject__f0d8740 {
   void *callback;
 };
 
-/* VIEW(f0d8740): routine Actor_GetById as struct CaptureObject__f0d8740 *Actor_GetById(s32 id); mars_join has struct Actor *Actor_GetById(u32 objectId). */
-extern struct CaptureObject__f0d8740 *Actor_GetById__f0d8740(s32 id) __asm__("Actor_GetById");
+/* VIEW(f0d8740): routine Actor_GetById as struct CaptureObject__f0d8740
+ * *Actor_GetById(s32 id); mars_join has struct Actor *Actor_GetById(u32
+ * objectId). */
+extern struct CaptureObject__f0d8740 *
+Actor_GetById__f0d8740(s32 id) __asm__("Actor_GetById");
 void Actor_Jump(s32 id, s32 height, s32 frames);
-/* VIEW(f0d8740): routine Func_080200c0 as struct CaptureObject__f0d8740 *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
-extern struct CaptureObject__f0d8740 *Func_080200c0__f0d8740(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
-/* VIEW(f0d8740): routine Actor_Destroy as void Actor_Destroy(struct CaptureObject__f0d8740 *object); battle.h has void Actor_Destroy(struct Actor *object). */
-extern void Actor_Destroy__f0d8740(struct CaptureObject__f0d8740 *object) __asm__("Actor_Destroy");
-/* VIEW(f0d8740): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); mars_join has void Camera_WorldToScreen(struct EffectVector *position). */
-extern void Camera_WorldToScreen__f0d8740(s32 *position) __asm__("Camera_WorldToScreen");
-/* VIEW(f0d8740): routine FieldParticle_Initialize as void FieldParticle_Initialize(void *slot, s32 kind, s32 x, s32 y); motes has void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x, s32 z). */
-extern void FieldParticle_Initialize__f0d8740(void *slot, s32 kind, s32 x, s32 y) __asm__("FieldParticle_Initialize");
-/* VIEW(f0d8740): routine FieldParticle_SetCallback as void FieldParticle_SetCallback(void *slot, void *callback); field_particle.h has void FieldParticle_SetCallback(struct FieldParticle *, EffectCallback). */
-extern void FieldParticle_SetCallback__f0d8740(void *slot, void *callback) __asm__("FieldParticle_SetCallback");
-/* VIEW(f0d8740): routine FieldParticle_SetActorMode as void FieldParticle_SetActorMode(void *slot, s32 mode); field_particle.h has void FieldParticle_SetActorMode(struct FieldParticle *, s32). */
-extern void FieldParticle_SetActorMode__f0d8740(void *slot, s32 mode) __asm__("FieldParticle_SetActorMode");
+/* VIEW(f0d8740): routine Actor_CreateFar as struct CaptureObject__f0d8740
+ * *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct
+ * BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z). */
+extern struct CaptureObject__f0d8740 *
+Func_080200c0__f0d8740(s32 kind, s32 x, s32 y,
+                       s32 z) __asm__("Actor_CreateFar");
+/* VIEW(f0d8740): routine Actor_Destroy as void Actor_Destroy(struct
+ * CaptureObject__f0d8740 *object); battle.h has void Actor_Destroy(struct Actor
+ * *object). */
+extern void Actor_Destroy__f0d8740(
+    struct CaptureObject__f0d8740 *object) __asm__("Actor_Destroy");
+/* VIEW(f0d8740): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
+ * *position); mars_join has void Camera_WorldToScreen(struct EffectVector
+ * *position). */
+extern void
+Camera_WorldToScreen__f0d8740(s32 *position) __asm__("Camera_WorldToScreen");
+/* VIEW(f0d8740): routine FieldParticle_Initialize as void
+ * FieldParticle_Initialize(void *slot, s32 kind, s32 x, s32 y); motes has void
+ * FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x, s32 z).
+ */
+extern void
+FieldParticle_Initialize__f0d8740(void *slot, s32 kind, s32 x,
+                                  s32 y) __asm__("FieldParticle_Initialize");
+/* VIEW(f0d8740): routine FieldParticle_SetCallback as void
+ * FieldParticle_SetCallback(void *slot, void *callback); field_particle.h has
+ * void FieldParticle_SetCallback(struct FieldParticle *, EffectCallback). */
+extern void FieldParticle_SetCallback__f0d8740(
+    void *slot, void *callback) __asm__("FieldParticle_SetCallback");
+/* VIEW(f0d8740): routine FieldParticle_SetActorMode as void
+ * FieldParticle_SetActorMode(void *slot, s32 mode); field_particle.h has void
+ * FieldParticle_SetActorMode(struct FieldParticle *, s32). */
+extern void FieldParticle_SetActorMode__f0d8740(void *slot, s32 mode) __asm__(
+    "FieldParticle_SetActorMode");
 
 void Djinn_RunMercuryJoinEffect(s32 arg) {
   struct CaptureObject__f0d8740 *djinni;
@@ -149,8 +180,8 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   remaining = 23;
   do {
     FieldParticle_Initialize__f0d8740(slot, 301, position.x, position.z);
-    FieldParticle_SetCallback__f0d8740(slot,
-                              (void *)FieldEffect_UpdateRandomTargetParticle__f0d8740);
+    FieldParticle_SetCallback__f0d8740(
+        slot, (void *)FieldEffect_UpdateRandomTargetParticle__f0d8740);
     FieldParticle_SetActorMode__f0d8740(slot, 7);
     Animation_ApplyChildValuesToRecordFar(*(struct ActorSpriteView **)slot, 9);
     remaining--;
@@ -201,10 +232,16 @@ struct ChainWork {
   struct ChainSlot slots[8];
 };
 
-/* VIEW(f0d8740): routine AffineMatrix_BuildForEffect as s32 AffineMatrix_BuildForEffect(struct ChainTransform *source); affine.h has s32 AffineMatrix_BuildForEffect(struct AffineTransform *source). */
-extern s32 AffineMatrix_BuildForEffect__f0d8740(struct ChainTransform *source) __asm__("AffineMatrix_BuildForEffect");
-/* VIEW(f0d8740): routine Func_080140d8 as void Func_080140d8(void *entry, s32 slot); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
-extern void Func_080140d8__f0d8740(void *entry, s32 slot) __asm__("Func_080140d8");
+/* VIEW(f0d8740): routine AffineMatrix_BuildForEffect as s32
+ * AffineMatrix_BuildForEffect(struct ChainTransform *source); affine.h has s32
+ * AffineMatrix_BuildForEffect(struct AffineTransform *source). */
+extern s32 AffineMatrix_BuildForEffect__f0d8740(
+    struct ChainTransform *source) __asm__("AffineMatrix_BuildForEffect");
+/* VIEW(f0d8740): routine Func_080140d8 as void Func_080140d8(void *entry, s32
+ * slot); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32
+ * depth). */
+extern void Func_080140d8__f0d8740(void *entry,
+                                   s32 slot) __asm__("Func_080140d8");
 
 /// The heap slot 0x9c work's per-frame callback (Func_080d897c schedules it).
 /// For each of the eight slots it draws a sprite at the midpoint of each pair
@@ -268,7 +305,8 @@ void Func_080d8a00(void) {
             transform.scaleX = 0x100;
             transform.scaleY = 0x100;
             node->sprite.affine = 1;
-            node->sprite.affineIndex = AffineMatrix_BuildForEffect__f0d8740(&transform);
+            node->sprite.affineIndex =
+                AffineMatrix_BuildForEffect__f0d8740(&transform);
           }
           node->sprite.priority = priority;
           node->angle = angle;

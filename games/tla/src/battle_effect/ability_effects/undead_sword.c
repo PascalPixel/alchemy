@@ -808,11 +808,12 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
   funnel = gMapCellBuffer;
   BattleEffect_StartCanvasLayer(0);
   if (mode == 0) {
-    Func_0815585c(effect, effect->side << 4 | 3, (s32 *)&screen, (s32 *)&other);
+    BattleEffect_RunDjinniEntrance(effect, effect->side << 4 | 3,
+                                   (s32 *)&screen, (s32 *)&other);
     REG_BG2CNT = 0x785;
   } else {
-    Func_0815585c(effect, effect->side << 4 | 35, (s32 *)&screen,
-                  (s32 *)&other);
+    BattleEffect_RunDjinniEntrance(effect, effect->side << 4 | 35,
+                                   (s32 *)&screen, (s32 *)&other);
   }
   if (effect->side == 0) {
     BattleEffect_LoadBlitter(

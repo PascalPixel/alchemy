@@ -577,7 +577,7 @@ void Serial_StepBlockTransfer(void) {
 
 extern u8 gMapCellBuffer[];
 
-void Func_08016bd8(void) {}
+void SerialTest_Delay(void) {}
 
 /// The serial link test: sends the cartridge's first bytes or those at 0x1000
 /// while A or B is held, and receives into the map cell buffer.
@@ -617,7 +617,7 @@ restart:
       delay = 9999;
       do {
         delay--;
-        Func_08016bd8();
+        SerialTest_Delay();
       } while (delay >= 0);
     }
     if (gSerialReceiveDest == 0) {

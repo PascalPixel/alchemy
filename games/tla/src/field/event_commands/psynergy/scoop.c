@@ -606,7 +606,7 @@ struct DropEvent {
   u16 item;
 };
 
-struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void *Unit_Get(s32 owner);
 s32 PartyInventory_FindRoomFar(s32 item);
 void Actor_ShowItemIconById(s32 id, s32 item);
@@ -631,7 +631,7 @@ void Func_080e716c(void) {
 
   object = Actor_GetById(id);
   if (object == NULL) {
-    object = Func_080200c0(489, anchor->x, anchor->y, anchor->z);
+    object = Actor_CreateFar(489, anchor->x, anchor->y, anchor->z);
     if (object == NULL)
       return;
     event->objects[id] = object;

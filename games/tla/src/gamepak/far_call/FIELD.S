@@ -27,7 +27,7 @@ Resource_FarCall003:
 	export Actor_StartScriptFar, Actor_StartScript
 	export Func_080200b0, Func_08023524
 	export Actor_FindFreeObjectFar, Actor_FindFreeObject
-	export Func_080200c0, Func_08023220
+	export Actor_CreateFar, Actor_Create
 	export Actor_Destroy, Actor_Release
 	export Actor_SetSpriteRotationFar, Actor_SetSpriteRotation
 	export Actor_StartCameraFar, Actor_StartCamera
@@ -81,7 +81,7 @@ Resource_FarCall003:
 	export MapGrid_IsWallAtFar, MapGrid_IsWallAt
 	export Actor_RegisterSpriteMetadataFar, Actor_RegisterSpriteMetadata
 	export MapAnimation_StartFar, MapAnimation_Start
-	export Func_08020270, Func_0802c9c8
+	export WorldMap_LoadAreaGraphicsFar, WorldMap_LoadAreaGraphics
 	export Animation_ApplyChildValuesFar, Animation_ApplyChildValues
 	export Animation_ApplyChildValuesToRecordFar, Animation_ApplyChildValuesToRecord
 	export Animation_ApplyChildValueToFirstFar, Animation_ApplyChildValueToFirst
@@ -117,6 +117,6 @@ Resource_FarCall003:
 	export Map_LoadCellsAndShapesFar, Map_LoadCellsAndShapes
 	export VramBlock_Reset93Far, VramBlock_Reset93
 	export VramBlock_Load93Far, VramBlock_Load93
-	export Func_08020390, Func_0802a650
+	export TileMap_ConvertBufferFar, TileMap_ConvertBuffer
 	export SpriteViewer_RunFar, SpriteViewer_Run
 	export Func_080203a0, Func_08026fc8

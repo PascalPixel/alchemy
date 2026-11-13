@@ -76,7 +76,8 @@ s32 BattleDjinn_CountStandby(u32 arg0, u8 *counts) {
 
 s32 Battle_GetTaggedSlotValue(s32 tag);
 
-s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
+s32 BattleActionRun_Build(struct BattleActionRecord *request,
+                          struct BattlePlan *plan) {
   struct BattleUnit *actor = Unit_Get__f11f66c(request->unitId);
   struct ActionRunBattleWork *battle =
       (struct ActionRunBattleWork *)Ram_HeapSlots->battleWork;
@@ -479,7 +480,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
         Actor_SetMode(BattleObject_Get(request->unitId)->object, 3);
         Actor_SelectAnimationFar(
             (struct Actor *)BattleObject_Get(request->unitId)->object, 32);
-        Func_08127308(request->unitId, (request->parameter >> 8) & 15, 3, 0);
+        ElementGlow_Play(request->unitId, (request->parameter >> 8) & 15, 3, 0);
         BattlePlayback_WaitForReady();
         return -2;
       }

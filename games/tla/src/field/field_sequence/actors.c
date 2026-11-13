@@ -86,9 +86,9 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
         position[1] = (s32)object;
         position[2] = (s32)object;
         Func_080ca9cc(entry->x, position);
-        object = Func_080200c0(character, position[0], 0, position[2]);
+        object = Actor_CreateFar(character, position[0], 0, position[2]);
       } else {
-        object = Func_080200c0(character, entry->x, entry->y, entry->z);
+        object = Actor_CreateFar(character, entry->x, entry->y, entry->z);
       }
       if (entry->flags & 1) {
         struct Actor *previous = ObjectTable_Get(index - 1);
@@ -262,7 +262,7 @@ void Func_080caa4c(s32 table) {
     object = stand;
   }
 
-  camera = Func_080200c0(0x8000, object->x, object->y, object->z);
+  camera = Actor_CreateFar(0x8000, object->x, object->y, object->z);
   camera->terrainHeight = object->terrainHeight;
   Actor_StartCameraFar(camera, object);
   if (work->controlMode == 3) {

@@ -161,7 +161,7 @@ void MapAnimation_PresentPicture(void) {
           dma);
 }
 
-void Func_0802dd08(void *source, void *destination);
+void TileMap_DrawRowsFromRam(void *source, void *destination);
 
 void MapAnimation_Start(void) {
   u8 *pages = Ram_HeapSlots->unk1c[0];
@@ -183,8 +183,8 @@ void MapAnimation_Start(void) {
   Dma_Set((void *)0x06004000, gData_0201c000, DMA_COPY_WORDS(0x2000 / 4),
           REG_DMA3);
   wait(1);
-  Func_0802dd08(pages + (gFrameCount & one) * 0x1400 + 0xc80,
-                Ram_MapCellBuffer);
+  TileMap_DrawRowsFromRam(pages + (gFrameCount & one) * 0x1400 + 0xc80,
+                          Ram_MapCellBuffer);
   work->windowTop = 200;
   work->windowBottom = 255;
   gData_030011f8 = MapAnimation_PresentPicture;
@@ -209,7 +209,7 @@ void Map_ShowBg1FromBuffer(void) {
   Dma_Set(gData_02038000, (void *)0x06008000, DMA_COPY_WORDS(0x8000 / 4), dma);
 }
 
-s32 Func_0802c9c8(void) {
+s32 WorldMap_LoadAreaGraphics(void) {
   struct MapViewWork *state;
   u32 *resources;
   u8 *buffer;

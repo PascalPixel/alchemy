@@ -189,7 +189,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
     actingUnit[0] = request->unitId;
     actingUnit[1] = 255;
     BattleHighlight_SetModes(actingUnit, 1);
-    result = Func_0812381c(request, &battle->plan);
+    result = BattleActionRun_Build(request, &battle->plan);
   }
   if (result == 0) {
     switch (battle->plan.outcome) {
@@ -469,7 +469,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   }
   if (!(mode & 2)) {
     Sound_PlayFar(154);
-    Func_08127308(work.actor, plan->element, 0, 0);
+    ElementGlow_Play(work.actor, plan->element, 0, 0);
   }
   if (mode & 1)
     BattleHighlight_SetSpriteMode(actor, 1);

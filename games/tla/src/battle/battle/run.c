@@ -284,7 +284,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   PartyStatus_CreateWindowFar(9);
   Camera_InitializeDefaultTransform();
   BattleObject_Put();
-  Func_081263c4();
+  BattleBackground_Init();
   BattleBackground_Load(1, battle->background, 0);
   BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
   BattleCamera_SetView(0, 0, 0, 190);
@@ -504,7 +504,7 @@ finished:
   DjinnRecovery_CountDown();
   gMainRoutineWork.battleRule24b = 0;
   Task_Remove(Func_0811b9fc);
-  Func_081263f0();
+  BattleBackground_Free();
   return result;
 }
 

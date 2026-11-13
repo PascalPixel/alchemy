@@ -56,7 +56,8 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
 
   // The mode's canvas, sheets and palette.
   if (mode == QUADS_MERCURY) {
-    Func_0815585c(effect, (effect->side ^ 1) << 4 | 33, anchor, size);
+    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 33, anchor,
+                                   size);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D0,
                                work->sheet + SHEET_TEXTURE, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
@@ -65,7 +66,8 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
                     Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                     128);
   } else if (mode == QUADS_MARS) {
-    Func_0815585c(effect, (effect->side ^ 1) << 4 | 2, anchor, size);
+    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 2, anchor,
+                                   size);
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSheet,
                                work->sheet + SHEET_DJINN, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_FeatherSheet,

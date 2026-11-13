@@ -284,11 +284,11 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
 #define Actor_SelectAnimationFar                                               \
   ((void (*)(struct Actor *, s32))Actor_SelectAnimationFar)
 
-/* VIEW(depthend): routine Func_080200c0 as struct Actor *Func_080200c0(s32
+/* VIEW(depthend): routine Actor_CreateFar as struct Actor *Actor_CreateFar(s32
  * kind, s32 x, s32 y, s32 z); f0d8740 has struct CaptureObject
- * *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
+ * *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z). */
 extern struct Actor *Func_080200c0__depthend(s32 kind, s32 x, s32 y,
-                                             s32 z) __asm__("Func_080200c0");
+                                             s32 z) __asm__("Actor_CreateFar");
 
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   struct SpawnScene *scene = Ram_HeapSlots->effectWork;

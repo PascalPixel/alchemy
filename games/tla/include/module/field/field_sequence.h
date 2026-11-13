@@ -407,7 +407,7 @@ void Class_GetSeriesFar(s32 value);
 extern const u8 Data_080eff22[];
 
 void MapAnimation_StartFar();
-void Func_08020270(void);
+void WorldMap_LoadAreaGraphicsFar(void);
 
 void BattleBackground_SelectForEnvironment(s32 terrain);
 

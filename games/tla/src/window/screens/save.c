@@ -306,7 +306,7 @@ extern u16 gData_020036d8__screens __asm__("gData_020036d8");
  * module/window/window.h has s16 gData_02005350. */
 extern u16 gData_02005350__screens __asm__("gData_02005350");
 
-s32 Func_080432a4(void) {
+s32 Save_ScanFileSummaries(void) {
   s32 err;
   s32 cnt;
   s32 ret;

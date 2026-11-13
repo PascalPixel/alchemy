@@ -69,7 +69,7 @@ Actor_StartScript:
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
-	overlay_veneer Func_080200c0
+	overlay_veneer Actor_CreateFar
 	.global Actor_SetMoveTarget
 	.thumb_func
 Actor_SetMoveTarget:

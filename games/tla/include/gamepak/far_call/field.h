@@ -15,6 +15,6 @@ void Animation_ApplyChildArgumentFar(void *, s32);
 
 s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer);
 
-struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 
 #endif

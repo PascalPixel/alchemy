@@ -1541,8 +1541,8 @@ struct RenderModel__f17e698 {
 
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-                   s32 *world);
+void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
+                                    u32 packed, s32 *screen, s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 
 void SceneTransform_ApplyYaw(s32 angle);

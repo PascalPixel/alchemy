@@ -143,7 +143,8 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   // frame.
   BattleEffect_StartCanvasLayer(1);
   if (effect->prelude == 1)
-    Func_0815585c(effect, effect->side << 4 | 3, origin, originSize);
+    BattleEffect_RunDjinniEntrance(effect, effect->side << 4 | 3, origin,
+                                   originSize);
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);

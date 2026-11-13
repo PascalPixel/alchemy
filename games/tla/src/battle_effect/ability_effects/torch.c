@@ -16,8 +16,9 @@
 
 #define PHASE_RESULTS 134
 
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-                   s32 *world); // BattleEffect_RunDjinniEntrance
+void BattleEffect_RunDjinniEntrance(
+    struct BattleEffectArgument *effect, u32 packed, s32 *screen,
+    s32 *world); // BattleEffect_RunDjinniEntrance
 
 /// A disc of rings rises on BG2 over the target's side, its colour ramp
 /// cycling outward one ring a frame while each scanline sways on a sine wave.
@@ -57,7 +58,8 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
 
   // Open the canvas on BG2 over the target's side.
   BattleEffect_StartCanvasLayer(0x2000);
-  Func_0815585c(effect, 6 | effect->side << 4 | 2 << 5, screenX, screenY);
+  BattleEffect_RunDjinniEntrance(effect, 6 | effect->side << 4 | 2 << 5,
+                                 screenX, screenY);
   REG_BG2CNT =
       BGCNT_WRAP | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
@@ -178,6 +180,6 @@ void BattleEffect_RunKite(struct BattleEffectArgument *effect) {
   s32 a[3];
 
   BattleEffect_StartCanvasLayer(0);
-  Func_0815585c(effect, ((effect->side ^ 1) << 4) | 7, b, a);
+  BattleEffect_RunDjinniEntrance(effect, ((effect->side ^ 1) << 4) | 7, b, a);
   BattleEffect_EndCanvasLayer();
 }

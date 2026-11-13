@@ -119,7 +119,8 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   if (effect->prelude == 1)
-    Func_0815585c(effect, PREPARE(7, effect->side, 2), screen, otherPoint);
+    BattleEffect_RunDjinniEntrance(effect, PREPARE(7, effect->side, 2), screen,
+                                   otherPoint);
 
   // The pictures and the palette.
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);

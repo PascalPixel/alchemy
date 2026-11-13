@@ -367,7 +367,7 @@ s32 Func_08124cc4(s32 side) {
           DjinnRecovery_RemoveFar(id, entry->element, entry->index);
           Unit_CalculateFar(id);
           if (BattleUnit_IsListed(id))
-            Func_08127308(id, element, 3, 0);
+            ElementGlow_Play(id, element, 3, 0);
           BattlePlayback_WaitForReady();
         }
       } else {
@@ -485,7 +485,7 @@ void Battle_ProcessTurnEnd(void) {
                                     expiredEntry->index);
             Unit_CalculateFar(unitId);
             if (BattleUnit_IsListed(unitId))
-              Func_08127308(unitId, element, 3, 0);
+              ElementGlow_Play(unitId, element, 3, 0);
             BattlePlayback_WaitForReady();
           }
         } else {
@@ -809,7 +809,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
         Actor_SetMode(BattleObject_Get(unitId)->object, 3);
         Actor_SelectAnimationFar(
             (struct Actor *)BattleObject_Get(unitId)->object, 32);
-        Func_08127308(unitId, i, 2, -1);
+        ElementGlow_Play(unitId, i, 2, -1);
         BattlePlayback_WaitForReady();
       }
     }

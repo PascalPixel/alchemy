@@ -144,7 +144,7 @@ s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
   return isActive;
 }
 
-struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 /* VIEW(emitter): routine Reveal_EmitSparkles as void
  * Reveal_EmitSparkles(void); the definition has void
  * Reveal_EmitSparkles(const struct ParticleSource
@@ -198,7 +198,7 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
   }
   wait(3);
   picture =
-      Func_080200c0(489, position[0], position[1] + 0x100000, position[2]);
+      Actor_CreateFar(489, position[0], position[1] + 0x100000, position[2]);
   if (picture == NULL)
     return NULL;
   Actor_StartScriptFar(picture, gData_080effd8);
@@ -319,13 +319,13 @@ struct EffectVisual__rising {
   u8 value1a;
   u8 value1b;
 };
-struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 
 void BattleEffect_StartEffectObject22(s32 item, s32 flags) {
   struct Actor *owner = ObjectTable_Get(Party_GetLeaderActor());
   u8 *buffer = HeapSlot_Alloc(68, 0x608);
   struct Actor *object =
-      Func_080200c0(489, owner->x, owner->y + 0x240000, owner->z);
+      Actor_CreateFar(489, owner->x, owner->y + 0x240000, owner->z);
 
   if (object != 0) {
     struct EffectVisual__rising *visual = object->sprite;
@@ -414,7 +414,7 @@ extern const s32
     Data_080f01b8__rising[] __asm__("gBattleEffect_MarkerParticleScript");
 
 /// Places a marker at each waiting scene item event that is on screen.
-void Func_080cf554(void) {
+void FieldEffect_SpawnRevealMarkers(void) {
   // The row type is s16, as the rows are: with it the copied head test stays
   // apart from the bottom one.
   s16 *entry = Func_080ceba8();
@@ -477,7 +477,7 @@ void Func_080cf554(void) {
       continue;
     if (flag == -1 || GameFlag_Test(flag))
       continue;
-    object = Func_080200c0(673, x, y, z);
+    object = Actor_CreateFar(673, x, y, z);
     if (object != NULL) {
       object->motionFlags = 0;
       Actor_StartScriptFar((struct Actor *)object, Data_080f01b8__rising);

@@ -95,8 +95,8 @@ void Func_0815b434(u8 *map, s32 size, s32 scale);
 
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-                   s32 *world);
+void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
+                                    u32 packed, s32 *screen, s32 *world);
 
 void Func_0818caa8(void *, s32, s32, s32);
 
@@ -328,8 +328,8 @@ struct EffectCamera {
   s32 pos[3];
 };
 
-// Func_0815585c's packed argument: the Djinni's element, the side, and
-// whether the Djinni stands at the anchor.
+// BattleEffect_RunDjinniEntrance's packed argument: the Djinni's element, the
+// side, and whether the Djinni stands at the anchor.
 enum { DJINNI_VENUS, DJINNI_MERCURY, DJINNI_MARS, DJINNI_JUPITER };
 
 // Places in the sheet.

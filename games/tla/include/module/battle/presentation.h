@@ -16,19 +16,20 @@ u32 BattleUnit_IsListed(u32 id);
 
 s32 BattleFormation_BuildEnemyList(s32 recordId);
 
-void Func_081263c4(void);
+void BattleBackground_Init(void);
 void BattleBackground_Load(s32 mode, s32 resource, s32 level);
 
 void BattleTransition_Run(s32 arg, s32 kind);
 
 void Func_08124cc0(void);
 
-void Func_081263f0(void);
+void BattleBackground_Free(void);
 
 s32 BattleClass_GetSprite(s32 index);
 s32 BattleClass_GetPalette(s32 index);
 
-s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan);
+s32 BattleActionRun_Build(struct BattleActionRecord *request,
+                          struct BattlePlan *plan);
 
 s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode);
 

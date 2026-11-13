@@ -134,7 +134,7 @@ s32 ActorScript_ApplyOperandSet();
 s32 ActorScript_ApplyOperandAdd();
 s32 ActorScript_ApplyOperandCompare();
 s32 Actor_UpdatePlayerControl();
-s32 Func_080279b0();
+s32 Actor_MoveOnWorldMap();
 s32 Actor_MoveByKeys();
 s32 Func_080292fc();
 s32 Func_08029570();
@@ -279,7 +279,7 @@ const ScriptCommandFn gData_0802f204[54] = {
     ActorScript_ApplyOperandAdd,              // 0x17 SC_ADD
     ActorScript_ApplyOperandCompare,          // 0x18 SC_CMP
     Actor_UpdatePlayerControl,                // 0x19 SC_PLAYER
-    Func_080279b0,                            // 0x1a SC_CMD_1A
+    Actor_MoveOnWorldMap,                     // 0x1a SC_CMD_1A
     Actor_MoveByKeys,                         // 0x1b SC_KEYS
     Func_080292fc,                            // 0x1c SC_CMD_1C
     Func_08029570,                            // 0x1d SC_CMD_1D

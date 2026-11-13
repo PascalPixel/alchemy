@@ -14,8 +14,8 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-                   s32 *world);
+void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
+                                    u32 packed, s32 *screen, s32 *world);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
@@ -108,7 +108,8 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   transition = (s32 *)Ram_HeapSlots->transitionWork;
   BattleEffect_StartCanvasLayer(2);
-  Func_0815585c(effect, (effect->side << 4) | 0xc0, screenA, screenB);
+  BattleEffect_RunDjinniEntrance(effect, (effect->side << 4) | 0xc0, screenA,
+                                 screenB);
   BattleEffect_ConfigureEffectDisplay();
   REG_WININ = 0x3537;
   REG_WINOUT = 0x3f31;

@@ -159,7 +159,7 @@ Func_020022e8:
 	.global Func_020022f0
 	.thumb_func
 Func_020022f0:
-	overlay_veneer Func_080382f0
+	overlay_veneer Save_ScanFileSummariesFar
 	.global Func_020022f8
 	.thumb_func
 Func_020022f8:

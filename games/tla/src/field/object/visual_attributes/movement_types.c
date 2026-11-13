@@ -7,11 +7,12 @@
 #include "module/system/system.h"
 #include "scene_call.h"
 
-/* VIEW(f0d489c): routine Func_080200c0 as struct LinkedEffectObject
- * *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct
- * BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
+/* VIEW(f0d489c): routine Actor_CreateFar as struct LinkedEffectObject
+ * *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct
+ * BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z). */
 extern struct LinkedEffectObject *
-Func_080200c0__f0d489c(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
+Func_080200c0__f0d489c(s32 kind, s32 x, s32 y,
+                       s32 z) __asm__("Actor_CreateFar");
 /* VIEW(f0d489c): routine Actor_Destroy as void Actor_Destroy(struct
  * LinkedEffectObject *object); battle.h has void Actor_Destroy(struct Actor
  * *object). */

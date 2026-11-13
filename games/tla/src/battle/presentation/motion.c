@@ -718,9 +718,9 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   Actor_SelectAnimationFar((struct Actor *)object, 16);
   Sound_PlayFar(154);
   if (mode & 2)
-    Func_08127308(work.actor, plan->element, 1, 0);
+    ElementGlow_Play(work.actor, plan->element, 1, 0);
   else if (!isDjinni)
-    Func_08127308(work.actor, plan->element, 0, 0);
+    ElementGlow_Play(work.actor, plan->element, 0, 0);
   if (plan->targetIds[0] <= 7)
     work.side = 1;
   else

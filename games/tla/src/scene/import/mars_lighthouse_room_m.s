@@ -73,7 +73,7 @@ Actor_StartScript:
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
-	overlay_veneer Func_080200c0
+	overlay_veneer Actor_CreateFar
 	.global Func_02003130
 	.thumb_func
 Func_02003130:
@@ -147,7 +147,7 @@ Func_020031b0:
 	.global Func_020031b8
 	.thumb_func
 Func_020031b8:
-	overlay_veneer Func_08020390
+	overlay_veneer TileMap_ConvertBufferFar
 	.global FieldMessage_ShowCentered
 	.thumb_func
 FieldMessage_ShowCentered:

@@ -92,8 +92,8 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   // the motes and the mode's Djinn, each with its palette.
   BattleEffect_StartCanvasLayer(0);
   if (effect->prelude == 1)
-    Func_0815585c(effect, (effect->side ^ effect->prelude) << 4 | mode, djinn,
-                  djinnSize);
+    BattleEffect_RunDjinniEntrance(
+        effect, (effect->side ^ effect->prelude) << 4 | mode, djinn, djinnSize);
   Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_CrescentMoonSheet,
@@ -332,7 +332,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
   // smoke with their palettes, then the mode's palette.
   if (mode == 7) {
     BattleEffect_StartCanvasLayer(0);
-    Func_0815585c(effect, effect->side << 4 | 0x44, preludeOrigin, preludeSize);
+    BattleEffect_RunDjinniEntrance(effect, effect->side << 4 | 0x44,
+                                   preludeOrigin, preludeSize);
     REG_BG2CNT = 0x785;
   } else {
     BattleEffect_StartCanvasLayer(1);

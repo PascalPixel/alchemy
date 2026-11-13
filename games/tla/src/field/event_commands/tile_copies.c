@@ -91,7 +91,7 @@ void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height, s32 toX,
 void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   s32 ownerId = Party_GetLeaderActor();
   struct Actor *owner = Actor_GetById(ownerId);
-  struct Actor *object = Func_080200c0(sprite, x << 16, 0, z << 16);
+  struct Actor *object = Actor_CreateFar(sprite, x << 16, 0, z << 16);
   s32 from[3];
   s32 to[3];
   s32 i;

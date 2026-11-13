@@ -60,7 +60,7 @@ Scene_FindActorPlacement__f0dcb44(s32 id) __asm__("Scene_FindActorPlacement");
  * *Resource_GetMetadataRecordFarFar(u32 number). */
 extern struct WaveFxMetadata *Resource_GetMetadataRecordFarFar__f0dcb44(
     s32 sprite) __asm__("Resource_GetMetadataRecordFarFar");
-struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 
 // Each frame after the delay: rewrites the 160-line wave into the other
 // page, cycles the colour every other frame, and at counts 0, 8 and 16 of
@@ -129,7 +129,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
         to.x -= 0x60000;
         to.y -= 0xc0000;
       }
-      object = Func_080200c0(677, to.x, to.y, to.z);
+      object = Actor_CreateFar(677, to.x, to.y, to.z);
       if (object != NULL) {
         sprite = object->sprite;
         object->motionFlags = 0;
@@ -841,7 +841,7 @@ void FieldPsynergy_Reveal(void) {
   event->centreY = transition->centreY / Q16_ONE;
   event->frames = REVEAL_FRAMES;
   event->markers = 1;
-  Func_080cf554();
+  FieldEffect_SpawnRevealMarkers();
   frame = 0;
   do {
     wait(1);

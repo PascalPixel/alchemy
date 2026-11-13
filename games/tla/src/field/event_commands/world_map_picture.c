@@ -810,7 +810,7 @@ void FieldMessage_ShowFar(s32 message, s32 mode);
 void WindowSprite_PrepareForRedrawFar(void *window);
 void Func_080ca368(s32 scene, s32 entrance);
 void WorldPicture_Release(void);
-void Func_08020270(void);
+void WorldMap_LoadAreaGraphicsFar(void);
 
 s32 WorldPicture_Show(s32 mode) {
   s32 savedDelay;
@@ -1035,7 +1035,7 @@ done:
     event->countdown = 999;
     GameFlag_SetBit(265);
   } else {
-    Func_08020270();
+    WorldMap_LoadAreaGraphicsFar();
     IO_WRITE_QUEUE_PUSH(0x04000052, (u16)blend, 0x20000);
     layer = map->anim;
     for (i = 0; i < 16; i++) {

@@ -102,7 +102,7 @@ done:
   work[3] = 0;
 }
 
-void Func_0802dd08(s32 arg0, s32 arg1) {
+void TileMap_DrawRowsFromRam(s32 arg0, s32 arg1) {
   void (*routine)(s32, s32, u8 *, u8 *);
   u8 *tiles = gData_0201c000;
 

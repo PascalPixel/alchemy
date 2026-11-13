@@ -119,7 +119,7 @@ void BattleStaging_ConfigurePaletteFade(s32 mode, s32 value, s32 fade) {
   BattleTransition_BuildTilemap((void *)0x0600f800);
 }
 
-void Func_081263c4(void) {
+void BattleBackground_Init(void) {
   void *block = HeapSlot_AllocEwram(40, 0x2a0);
   struct BattlePresentationTransition *work = Ram_HeapSlots->transitionWork;
 
@@ -132,7 +132,7 @@ void Func_081263c4(void) {
   work->mode = 0;
 }
 
-void Func_081263f0(void) { HeapSlot_Release(40); }
+void BattleBackground_Free(void) { HeapSlot_Release(40); }
 
 /* VIEW(f11e3ac): routine Resource_GetTableEntry as u8
  * *Resource_GetTableEntry(s32 id); resource.h has void
@@ -469,7 +469,7 @@ void Shop_InitializeWork(void);
 s32 Inn_RoomPrice(s32 innId);
 void Shop_ReleaseWork(void);
 
-s32 Func_081269ec(s32 value) { return value / 16; }
+s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 
 // What Select picks: another value in the Japanese release.
 #if LANGUAGE == LANGUAGE_JAPANESE
@@ -487,7 +487,7 @@ struct DebugBattleWork {
 /// the battle work's word at 0x854 (by 1, 10 and 100) until A takes it; Select
 /// held picks DEBUG_VALUE_SELECT and R held 399; otherwise value comes back
 /// unchanged.
-s32 Func_081269f8(s32 value) {
+s32 Battle_AdjustDebugValue(s32 value) {
   if (gInput.held & 8) {
     while (1) {
       struct DebugBattleWork *work =
@@ -978,7 +978,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
 
 /// Ends a star field: clears the tiles in character block 1, releases its
 /// four heap slots, turns BG2 off and removes both its tasks. Called by
-/// Func_08127308 once mode 0's field has played. Returns Task_Remove's
+/// ElementGlow_Play once mode 0's field has played. Returns Task_Remove's
 /// result, which the caller does not read.
 s32 ElementGlow_End(s32 unused) {
   Iwram_ClearWordsEntry((void *)0x06004000, 0x4000);
@@ -1012,7 +1012,7 @@ void BattleEffect_EndElementStreaksFar(void);
 // around the unit while the backdrop darkens over 25 frames (45 frames);
 // 1, the prepared canvas scene of the kind, centred on the unit (40
 // frames); 2, the ice fleck burst; 3, the gathering burst.
-void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
+void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
   struct EffectPosition position;
   struct EffectPosition position2;
   struct BattlePresentationWork launch;

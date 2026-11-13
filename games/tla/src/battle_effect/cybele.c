@@ -1439,11 +1439,12 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
     else
       djinni = DJINNI_MERCURY;
     if (mode == 6 || mode == 0 || mode == 8 || mode == 9 || mode == 10)
-      Func_0815585c(effect, djinni | DJINNI_SIDE(effect->side), origin, target);
+      BattleEffect_RunDjinniEntrance(effect, djinni | DJINNI_SIDE(effect->side),
+                                     origin, target);
     else
-      Func_0815585c(effect,
-                    djinni | DJINNI_SIDE(effect->side) | DJINNI_ANCHORED,
-                    origin, target);
+      BattleEffect_RunDjinniEntrance(
+          effect, djinni | DJINNI_SIDE(effect->side) | DJINNI_ANCHORED, origin,
+          target);
     effect->variant = 0;
   }
 
@@ -1899,22 +1900,22 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   // The prelude: the Djinni appears on the far side; origin receives where.
   if (effect->prelude == 1) {
     if (mode == 3 || mode == 6)
-      Func_0815585c(effect,
-                    DJINNI_VENUS | DJINNI_SIDE(effect->side ^ 1) |
-                        DJINNI_ANCHORED,
-                    origin, target);
+      BattleEffect_RunDjinniEntrance(
+          effect,
+          DJINNI_VENUS | DJINNI_SIDE(effect->side ^ 1) | DJINNI_ANCHORED,
+          origin, target);
     else if (mode == 7 || mode == 8 || mode == 11)
-      Func_0815585c(effect,
-                    DJINNI_MERCURY | DJINNI_SIDE(effect->side ^ 1) |
-                        DJINNI_ANCHORED,
-                    origin, target);
+      BattleEffect_RunDjinniEntrance(
+          effect,
+          DJINNI_MERCURY | DJINNI_SIDE(effect->side ^ 1) | DJINNI_ANCHORED,
+          origin, target);
     else if (mode == 2 || mode == 4)
-      Func_0815585c(effect,
-                    DJINNI_JUPITER | DJINNI_SIDE(effect->side ^ 1) |
-                        DJINNI_ANCHORED,
-                    origin, target);
+      BattleEffect_RunDjinniEntrance(
+          effect,
+          DJINNI_JUPITER | DJINNI_SIDE(effect->side ^ 1) | DJINNI_ANCHORED,
+          origin, target);
     else if (mode != 10)
-      Func_0815585c(
+      BattleEffect_RunDjinniEntrance(
           effect, DJINNI_MARS | DJINNI_SIDE(effect->side ^ 1) | DJINNI_ANCHORED,
           origin, target);
     origin[0] = origin[0] * 4 / 5;
@@ -3714,15 +3715,15 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
   // Venus otherwise.
   if (effect->prelude == 1) {
     if (mode == 9 || mode == 22 || mode == 24) {
-      Func_0815585c(effect,
-                    DJINNI_MARS | DJINNI_SIDE(effect->side) | DJINNI_BEHIND,
-                    origin, djinniTarget);
+      BattleEffect_RunDjinniEntrance(
+          effect, DJINNI_MARS | DJINNI_SIDE(effect->side) | DJINNI_BEHIND,
+          origin, djinniTarget);
       Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
                                  work->sheet + VOLLEY_B_DJINNI, 1, 0);
     } else {
-      Func_0815585c(effect,
-                    DJINNI_VENUS | DJINNI_SIDE(effect->side) | DJINNI_BEHIND,
-                    origin, djinniTarget);
+      BattleEffect_RunDjinniEntrance(
+          effect, DJINNI_VENUS | DJINNI_SIDE(effect->side) | DJINNI_BEHIND,
+          origin, djinniTarget);
       Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                                  work->sheet + VOLLEY_B_DJINNI, 1, 0);
     }
@@ -5206,7 +5207,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
 #define CUE_VINES 143
 #define CANVAS_MIDDLE 64
 
-// Func_0815585c's flags: kind | side << 4 | anchor << 5.
+// BattleEffect_RunDjinniEntrance's flags: kind | side << 4 | anchor << 5.
 #define PREPARE_KIND 4
 #define PREPARE_ANCHOR 4
 
@@ -5233,8 +5234,9 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)heap->battleFxWork[0];
   canvas = heap->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
-  Func_0815585c(effect, PREPARE_KIND | effect->side << 4 | PREPARE_ANCHOR << 5,
-                &screen, &world);
+  BattleEffect_RunDjinniEntrance(
+      effect, PREPARE_KIND | effect->side << 4 | PREPARE_ANCHOR << 5, &screen,
+      &world);
   REG_BG2CNT = 0x785;
   REG_BG2PA = 0x100;
   REG_BLDCNT = 0;

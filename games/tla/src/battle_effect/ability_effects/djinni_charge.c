@@ -20,8 +20,8 @@ void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-                   s32 *world);
+void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
+                                    u32 packed, s32 *screen, s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -87,7 +87,8 @@ extern char ResourceId_FlashBurstSheet;
 extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
 extern u8 Data_02012000[];
-extern const u8 Data_08198c14[];   // each mode's flags for Func_0815585c
+extern const u8
+    Data_08198c14[]; // each mode's flags for BattleEffect_RunDjinniEntrance
 extern const s32 Data_08198c18[4]; // the debris's gravities
 extern u16 gBattleEffect_MoteCells[];
 
@@ -126,8 +127,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
   camera = (s16 *)Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
-  Func_0815585c(effect, (effect->side << 4) | (Data_08198c14[mode] << 5) | 2,
-                (s32 *)&screen, focus);
+  BattleEffect_RunDjinniEntrance(
+      effect, (effect->side << 4) | (Data_08198c14[mode] << 5) | 2,
+      (s32 *)&screen, focus);
   {
     s32 *target;
     s16 savedYaw;

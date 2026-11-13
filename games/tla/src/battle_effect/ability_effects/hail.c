@@ -33,7 +33,8 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
-  Func_0815585c(effect, PREPARE(1, effect->side, 2), screen, otherPoint);
+  BattleEffect_RunDjinniEntrance(effect, PREPARE(1, effect->side, 2), screen,
+                                 otherPoint);
   BattleEffect_FetchRectangleBlitters(effect->side, blit);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
@@ -207,7 +208,8 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(0);
-  Func_0815585c(effect, PREPARE(0, effect->side, 2), screen, otherPoint);
+  BattleEffect_RunDjinniEntrance(effect, PREPARE(0, effect->side, 2), screen,
+                                 otherPoint);
   REG_BLDALPHA = 0x1010;
   if (effect->side == 1)
     BattleEffect_LoadBlitter(

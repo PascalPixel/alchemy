@@ -97,7 +97,7 @@ Actor_StartScript:
 	.global Func_02003fc0
 	.thumb_func
 Func_02003fc0:
-	overlay_veneer Func_080200c0
+	overlay_veneer Actor_CreateFar
 	.global Func_02003fc8
 	.thumb_func
 Func_02003fc8:

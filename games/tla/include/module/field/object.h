@@ -19,7 +19,7 @@ u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
 extern const s32 gData_080f32e0[];
 
 void BattleEffect_StartEffectObject22(s32 item, s32 flags);
-void Func_080cf554(void);
+void FieldEffect_SpawnRevealMarkers(void);
 
 void Func_080daecc(s32 objectId, s32 grow);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,

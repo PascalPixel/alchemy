@@ -56,7 +56,7 @@ extern void ObjectList_CollectActive__f02493c(
     void *objects,
     struct MotionObject__f02493c **out) __asm__("ObjectList_CollectActive");
 
-void Func_0802493c(void) {
+void Actor_UpdateAllMotion(void) {
   struct MotionObject__f02493c *list[15];
   struct MotionObject__f02493c **next;
   struct MotionObject__f02493c *object;

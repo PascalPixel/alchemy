@@ -425,9 +425,9 @@ s32 Sound_LoadReverbCode(s32 preset) {
   return 0;
 }
 
-void Func_08013b38(void) {}
+void Sound_ReservedNoOpA(void) {}
 
-void Func_08013b3c(void) {}
+void Sound_ReservedNoOpB(void) {}
 
 void Input_HandleKeyInterrupt(void) {
   if (gSleepActive == 0) {

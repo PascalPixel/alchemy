@@ -155,7 +155,7 @@ void ObjectSystem_Initialize(s32 mode) {
   Dma_Fill32Cell(zero, 0, buffer, 0x2000);
   Dma_Fill32Cell(zero, 0, work, sizeof(*work));
   if (mode == 4) {
-    Task_Add(Func_0802493c, TASK_PASS_VBLANK + 10);
+    Task_Add(Actor_UpdateAllMotion, TASK_PASS_VBLANK + 10);
   } else {
     Task_Add(Func_08023f9c, TASK_PASS_VBLANK + 11);
     Task_Add(Func_080246b8, TASK_PASS_VBLANK + 10);
@@ -169,9 +169,9 @@ void ObjectSystem_Initialize(s32 mode) {
 }
 
 /// Two empty functions follow; nothing in the ROM refers to either.
-void Func_0802319c(void) {}
+void ActorSystem_ReservedNoOpA(void) {}
 
-void Func_080231a0(void) {}
+void ActorSystem_ReservedNoOpB(void) {}
 
 // Objects: create and release field objects, and render them each frame.
 
@@ -287,7 +287,7 @@ void Actor_Release(struct Actor *obj) {
   }
 }
 
-struct Actor *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
+struct Actor *Actor_Create(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *object;
   void *sprite;
   s32 kind;

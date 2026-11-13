@@ -337,4 +337,4 @@ void BattleSummon_UpdateAvailability(void) {
 }
 
 /// An empty function, right after BattleSummon_UpdateAvailability.
-void Func_08119050(void) {}
+void BattleSummon_ReservedNoOp(void) {}

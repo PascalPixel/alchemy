@@ -414,7 +414,7 @@ void Func_08026fc8(struct Actor *object, s32 mode) {
   struct Actor *created;
   struct Child *sprite;
 
-  created = Func_08023220(14, object->x, object->y + 0x40000, object->z);
+  created = Actor_Create(14, object->x, object->y + 0x40000, object->z);
   sprite = object->sprite;
   if (!(object->unk66 & 1))
     Sound_PlayFar(623);
@@ -822,7 +822,7 @@ counted:
   if ((map->groundEffects & 3) && object->timer == 0 && collision == 0) {
     struct Actor *effect;
 
-    effect = Func_08023220(0x10e, object->x, object->y, object->z);
+    effect = Actor_Create(0x10e, object->x, object->y, object->z);
     if (effect != NULL) {
       struct PlayerSprite *effectSprite;
 

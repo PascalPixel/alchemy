@@ -398,7 +398,7 @@ void FieldEffect_UpdateParticleLinearMotion(struct Actor *object) {
   object->acceleration = driftZ - driftZ / 16;
 }
 
-struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 
 struct ParticleSprite {
   u8 unk00[8];
@@ -417,7 +417,7 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
   s32 speed;
   s32 rate = -0x1999;
 
-  object = Func_080200c0(285, source->x, source->y, source->z);
+  object = Actor_CreateFar(285, source->x, source->y, source->z);
   if (object != NULL) {
     child = object->sprite;
     switch (Random16() & 1) {

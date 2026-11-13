@@ -34,9 +34,9 @@ void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
   const s32 *script;
 
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = Func_080200c0(options->type, x, y, z);
+    effect = Actor_CreateFar(options->type, x, y, z);
   else
-    effect = Func_080200c0(285, x, y, z);
+    effect = Actor_CreateFar(285, x, y, z);
   if (effect == 0)
     return;
 

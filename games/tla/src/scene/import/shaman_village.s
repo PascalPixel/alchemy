@@ -117,7 +117,7 @@ Import_ActorSetScript:
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
-	overlay_veneer Func_080200c0
+	overlay_veneer Actor_CreateFar
 	.global Func_0200481c
 	.thumb_func
 Func_0200481c:

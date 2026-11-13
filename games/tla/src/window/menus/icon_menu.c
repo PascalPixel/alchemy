@@ -1473,7 +1473,7 @@ s32 FileList_SelectAction(void) {
 
   group = 0;
   initial = 0;
-  type = Func_080432a4();
+  type = Save_ScanFileSummaries();
   if (type < 0)
     return -1;
   if (type == 0)

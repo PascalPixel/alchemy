@@ -63,8 +63,9 @@ void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
 void BattleEffect_CountDownBattlerTints(void);
 void BattlePlayback_StartFar(s32 phase);
 void BattleEffect_StepPaletteToResource(s32 resource);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-                   s32 *world); // BattleEffect_RunDjinniEntrance
+void BattleEffect_RunDjinniEntrance(
+    struct BattleEffectArgument *effect, u32 packed, s32 *screen,
+    s32 *world); // BattleEffect_RunDjinniEntrance
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
@@ -79,8 +80,8 @@ void Render_DrawModelList(struct Model *model);
 // fade one after another.
 //
 // Setup: canvas layer 0 placed on the far side of the targets by
-// Func_0815585c; the Djinni's picture with its palette; Rime's rune
-// picture mirrored into a 48x48 crystal, Haze's star sheet; one additive
+// BattleEffect_RunDjinniEntrance; the Djinni's picture with its palette; Rime's
+// rune picture mirrored into a 48x48 crystal, Haze's star sheet; one additive
 // blitter, flipped on the player's side.
 // Frame loop (48 frames).
 void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
@@ -103,7 +104,8 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
     s32 row;
     s32 column;
 
-    Func_0815585c(effect, (effect->side ^ 1) << 4 | 1, center, base);
+    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 1, center,
+                                   base);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                                work->sheet + DJINNI_OFFSET, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, work->sheet, 1, 0);
@@ -123,7 +125,8 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
   } else {
     s32 haze[3];
 
-    Func_0815585c(effect, (effect->side ^ 1) << 4 | 3, center, haze);
+    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 3, center,
+                                   haze);
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSheet,
                                work->sheet + DJINNI_OFFSET, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_StarCrossSheet, work->sheet, 1,

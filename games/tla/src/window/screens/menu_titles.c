@@ -366,7 +366,7 @@ s32 WindowSprite_GetPointerTiles(s32 no) {
 
 /// Copies the 4bpp decompression routine to RAM and runs it on the stream
 /// whose address the work holds at 0x604, decoding into the work.
-void Func_08045564(u8 *work) {
+void Icon_Decompress(u8 *work) {
   void (*routine)(void *, void *);
 
   RamCode_Load(routine, Tile_Decompress4bppCode, Tile_Decompress4bppCodeSize);

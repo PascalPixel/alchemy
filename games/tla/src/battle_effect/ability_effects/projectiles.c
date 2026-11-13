@@ -56,8 +56,8 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 // fall into it; a small Djinn (the kind) appears there at frame 54 and
 // bursts into motes at frame 64. The anchor's screen point goes to screen
 // and its world point to world.
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-                   s32 *world) {
+void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
+                                    u32 packed, s32 *screen, s32 *world) {
   s32 base[3];
   s32 goal[3];
   s32 step[3];
@@ -598,7 +598,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
   kind = effect->variant;
   BattleEffect_StartCanvasLayer(1);
   if (effect->prelude == 1)
-    Func_0815585c(effect, 1 | effect->side << 4 | 2 << 5, &screen, &world);
+    BattleEffect_RunDjinniEntrance(effect, 1 | effect->side << 4 | 2 << 5,
+                                   &screen, &world);
   REG_BLDALPHA = 0x1010;
 
   // A 128x128 blitter, mirrored for the other side.

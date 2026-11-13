@@ -95,7 +95,8 @@ s32 FieldEffect_CopyWatchedActorPosition(struct Actor *object) {
   return 0;
 }
 
-struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+struct BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y,
+                                                  s32 z);
 extern const u8 gData_080f3310[];
 
 /// The Broken Seal's BattleEffect_SpawnLinked with this game's object kind
@@ -112,7 +113,7 @@ struct BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags,
 
   resource = ObjectTable_Get(resourceId);
   if (resource != 0) {
-    object = Func_080200c0(488, resource->x, resource->y, resource->z);
+    object = Actor_CreateFar(488, resource->x, resource->y, resource->z);
 
     if (object != 0) {
       Actor_StartScriptFar((struct Actor *)object, (u32)gData_080f3310);

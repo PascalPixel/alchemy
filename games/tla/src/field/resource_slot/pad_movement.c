@@ -48,7 +48,7 @@ extern s32 Animation_ApplyChildArgument__f0279b0(
     struct PlayerSprite__f0279b0 *,
     s32) __asm__("Animation_ApplyChildArgument");
 
-s32 Func_080279b0(struct Actor *object) {
+s32 Actor_MoveOnWorldMap(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition leftPosition;
   struct FieldPosition rightPosition;
@@ -206,7 +206,7 @@ update_object:
       playerSprite->flags = 1;
     }
     if (terrainCollision == 6 && object->timer == 0 && collision == 0) {
-      ripple = Func_08023220(0x10d, object->x, object->y, object->z);
+      ripple = Actor_Create(0x10d, object->x, object->y, object->z);
       if (ripple != 0) {
         rippleSprite = ripple->sprite;
         Actor_StartScript(ripple, gData_0802ec94);
@@ -607,12 +607,12 @@ void Actor_StartScript(struct Actor *, const s32 *);
 extern s32 Animation_ApplyChildArgument__s28534(
     struct PlayerSprite__s28534 *, s32) __asm__("Animation_ApplyChildArgument");
 
-/// Script command 0x20, a sibling of Func_080279b0 in The Broken Seal's later
-/// Actor_MoveOnWorldMap layout (one probe ahead, then four probes 22.5 and 45
-/// degrees off it; six retry headings). Records the kind of ground under the
-/// object in the event work (byte 0xd3a), moves at a run, and lets the shortcut
-/// keys post requests 252 and, while byte 0xd39 is set, clear flag 0x147 and
-/// post 253; turns at most 0x400 a step while moving.
+/// Script command 0x20, a sibling of Actor_MoveOnWorldMap in The Broken Seal's
+/// later Actor_MoveOnWorldMap layout (one probe ahead, then four probes 22.5
+/// and 45 degrees off it; six retry headings). Records the kind of ground under
+/// the object in the event work (byte 0xd3a), moves at a run, and lets the
+/// shortcut keys post requests 252 and, while byte 0xd39 is set, clear flag
+/// 0x147 and post 253; turns at most 0x400 a step while moving.
 s32 Func_08028534(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
@@ -817,7 +817,7 @@ update_object:
   if (kind == 1) {
     WorldMap_GetCollision((struct WorldPosition *)&object->x);
     if (object->timer == 0 && collision == 0) {
-      ripple = Func_08023220(0x10d, object->x, object->y, object->z);
+      ripple = Actor_Create(0x10d, object->x, object->y, object->z);
       if (ripple != 0) {
         rippleSprite = ripple->sprite;
         Actor_StartScript(ripple, gData_0802ec94);
@@ -1091,7 +1091,7 @@ update_object:
   if (kind == 1) {
     if (object->y < 0x40000) {
       if (object->timer == 0 && collision == 0) {
-        ripple = Func_08023220(0x10d, object->x, 0, object->z);
+        ripple = Actor_Create(0x10d, object->x, 0, object->z);
         if (ripple != 0) {
           rippleSprite = ripple->sprite;
           Actor_StartScript(ripple, gData_0802ec94);

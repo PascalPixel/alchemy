@@ -416,7 +416,7 @@ void Func_080cb8a4(void) {
   if (block->mode == 3 && block->pending != 0) {
     block->pending = 0;
     block->object[91] = 0;
-    Func_08020270();
+    WorldMap_LoadAreaGraphicsFar();
   }
 }
 

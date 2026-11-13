@@ -1185,7 +1185,7 @@ extern u32 gScanlinePitch;
 
 extern const s16 Data_080f0b50[];
 
-void Func_0802493c(void);
+void Actor_UpdateAllMotion(void);
 
 void Func_08023f9c(void);
 void Func_080246b8(void);
@@ -1212,7 +1212,7 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values);
 
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
-struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_Create(s32 kind, s32 x, s32 y, s32 z);
 
 void Func_08026fc8(struct Actor *object, s32 kind);
 s32 Field_CheckConfiguredKeys(void);

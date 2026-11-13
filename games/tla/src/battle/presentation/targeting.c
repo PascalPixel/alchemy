@@ -2470,7 +2470,7 @@ done:
   return 0;
 }
 
-void Func_08122c18(void) {
+void Dma_StopAllThenRunHook(void) {
   Math_UnsignedMulHigh(5, 0);
   Dma_Set(0, 0, DMA_COPY_WORDS(0), REG_DMA3);
   Dma_Set(0, 0, DMA_COPY_WORDS(0), REG_DMA3);

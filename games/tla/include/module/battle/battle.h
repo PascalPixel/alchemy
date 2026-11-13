@@ -316,7 +316,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan);
 
 void BattleUnit_ProcessActionEnd(struct BattlePlan *plan);
 
-void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
+void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 value);
 void BattleBackground_RestorePalette(void);
 
 s32 Battle_CollectPartyCommandsFar(struct BattleActionRecord *entries,

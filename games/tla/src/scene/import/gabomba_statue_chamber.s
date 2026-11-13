@@ -33,7 +33,7 @@ GameFlag_ClearBit:
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
-	overlay_veneer Func_080200c0
+	overlay_veneer Actor_CreateFar
 	.global Func_02001d30
 	.thumb_func
 Func_02001d30:

@@ -53,7 +53,7 @@ Fade_Wait:
 	.global Func_020005d4
 	.thumb_func
 Func_020005d4:
-	overlay_veneer Func_080382f0
+	overlay_veneer Save_ScanFileSummariesFar
 	.global WindowColor_Apply
 	.thumb_func
 WindowColor_Apply:
@@ -101,7 +101,7 @@ Func_0200062c:
 	.global Func_02000634
 	.thumb_func
 Func_02000634:
-	overlay_veneer Func_081a6020
+	overlay_veneer Title_ShowCamelotLogoFar
 	.global Func_0200063c
 	.thumb_func
 Func_0200063c:

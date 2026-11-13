@@ -193,7 +193,7 @@ s32 Func_080298c0(struct Actor *actor) {
       spawn.x = actor->x - Random16() * 6 + 0x30000;
       spawn.y = actor->y;
       spawn.z = actor->z;
-      effect = Func_08023220(0x11d, spawn.x, spawn.y, spawn.z);
+      effect = Actor_Create(0x11d, spawn.x, spawn.y, spawn.z);
       if (effect != NULL) {
         effect->terrainHeight = actor->terrainHeight;
         sprite = effect->sprite;
@@ -401,7 +401,7 @@ counted:
   // The retest reads through the actor, not wakeTimer: that keeps its
   // zero path from skipping it.
   if (((u8 *)actor)[98] == 0 && collision == 0) {
-    effect = Func_08023220(0x164, actor->x, actor->y, actor->z - 0x20000);
+    effect = Actor_Create(0x164, actor->x, actor->y, actor->z - 0x20000);
     if (effect != NULL) {
       effect->terrainHeight = actor->terrainHeight;
       sprite = effect->sprite;
@@ -435,8 +435,9 @@ s32 WorldMap_IsWalkable(struct Actor *object, struct FieldPosition *position);
 
 /// Script command 0x22: moves the object on the world map by the direction pad
 /// at a fixed pace (faster while L repeats), trying six turned headings when
-/// the way is blocked, as Func_080279b0 does; records the held keys in the
-/// event work and leaves an object of kind 0x164 behind it every fifth step.
+/// the way is blocked, as Actor_MoveOnWorldMap does; records the held keys in
+/// the event work and leaves an object of kind 0x164 behind it every fifth
+/// step.
 s32 Func_0802a124(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition leftPosition;
@@ -596,7 +597,7 @@ update_object:
       playerSprite->entry[6] = 9;
   }
   if (*timer == 0 && collision == 0) {
-    ripple = Func_08023220(0x164, object->x, object->y, object->z - 0x20000);
+    ripple = Actor_Create(0x164, object->x, object->y, object->z - 0x20000);
     if (ripple != 0) {
       ripple->terrainHeight = object->terrainHeight;
       rippleSprite = ripple->sprite;
@@ -704,7 +705,7 @@ void Tilemap_ConvertBuffer(void) {
 /// Decodes the palette resource of a map's header row (its second halfword)
 /// and copies its 224 colors to destination, keeping the current backdrop
 /// color in the first entry.
-void Func_0802a650(s32 map, void *destination) {
+void TileMap_ConvertBuffer(s32 map, void *destination) {
   const u16 *entry;
   u16 *buffer;
   s16 backdrop;

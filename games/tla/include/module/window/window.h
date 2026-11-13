@@ -54,7 +54,7 @@ void WindowSprite_PrepareForRedraw(struct Window *);
 extern s16 gData_020036d8;
 extern s16 gData_02005350;
 
-s32 Func_080432a4(void);
+s32 Save_ScanFileSummaries(void);
 
 extern s32 gKeyState;
 

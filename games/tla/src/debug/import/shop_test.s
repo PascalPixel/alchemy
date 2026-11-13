@@ -25,7 +25,7 @@ GameFlag_SetBit:
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
-	overlay_veneer Func_080200c0
+	overlay_veneer Actor_CreateFar
 	.global Map_CopyCellsRect
 	.thumb_func
 Map_CopyCellsRect:

@@ -109,7 +109,7 @@ Actor_StartScript:
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
-	overlay_veneer Func_080200c0
+	overlay_veneer Actor_CreateFar
 	.global Func_020054a0
 	.thumb_func
 Func_020054a0:
@@ -197,7 +197,7 @@ Func_02005540:
 	.global Func_02005548
 	.thumb_func
 Func_02005548:
-	overlay_veneer Func_08020390
+	overlay_veneer TileMap_ConvertBufferFar
 	.global Party_CountMembers
 	.thumb_func
 Party_CountMembers:

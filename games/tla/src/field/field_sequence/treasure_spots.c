@@ -89,7 +89,7 @@ void Func_080cec34(void) {
         buried = 1;
         kind = 489;
       }
-      object = Func_080200c0(kind, position[0], position[1], position[2]);
+      object = Actor_CreateFar(kind, position[0], position[1], position[2]);
       if (object != NULL) {
         if (work->mode == 3) {
           object->motionFlags = 2;

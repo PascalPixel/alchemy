@@ -1006,7 +1006,6 @@ void BattleObject_RemoveFromLists(s32 unitId) {
   }
 
   // The enemies' list.
-  // The scan is a label loop, the form its branches match with.
   /* FAKEMATCH(dead): a once-only block round the label loop keeps the party
    * loop's first test from being peeled ahead of it; as the plain loop, 26 of
    * 53 instructions differ in tbs-en. */

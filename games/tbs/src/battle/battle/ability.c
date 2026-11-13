@@ -817,8 +817,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
 #endif
 
       // UB: a pointer walks from hp down past it to hpMax, reading each stat
-      // twice, unsigned and signed, as the ROM does; the member reads behind
-      // UBFIX share one load each.
+      // twice, unsigned and signed; the member reads behind UBFIX share one
+      // load each.
 #ifdef UBFIX
       oldHp = (u16)target->hp;
       newHp = target->hp;

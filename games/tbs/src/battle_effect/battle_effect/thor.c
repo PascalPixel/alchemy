@@ -334,13 +334,11 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         }
       }
       for (i = 0; i != beamHeight; i++) {
-        // Default: 0, until it is set to the beam's full 32 pixels.
+        /* FAKEMATCH(dead): the width set to 0 and at once to 32; as the
+         * constant 32 in the call, 209 of 1817 instructions differ in tbs-en.
+         */
         s32 fullWidth = 0;
 
-        // loop.c matches a lone 32 here with the light-fan calls' 32 and hoists
-        // it out of the frame loop, where it loses its register and later
-        // reloads rotate; set twice in a row, it moves only to this loop's
-        // preheader.
         fullWidth = 32;
         blit[0](canvas, ramp + inset, inset + 48, i + 16, fullWidth - inset * 2,
                 1);

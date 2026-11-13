@@ -71,11 +71,19 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
 
 /// A formation that may be chosen for the party's level: its row and its
 /// enemies' average level. BattleFormation_SelectLevelMatchedCandidate keeps
-/// a pool of 32 in a 128-byte EWRAM pool block, freed before it returns.
+/// a pool of FORMATION_POOL_SIZE in an EWRAM pool block, freed before it
+/// returns.
 struct FormationCandidate {
   s16 recordId; ///< the formation's row
   s16 score;    ///< its average level (BattleFormation_AverageLevel); -1 empty
 };
+
+/// The most formations a monster battle chooses among.
+#define FORMATION_POOL_SIZE 32
+/// How far above the party's level a monster battle's formation may be.
+#define FORMATION_LEVEL_MARGIN 3
+/// The entries of gBattleFormation_LevelMatchedEnemies.
+#define LEVEL_MATCHED_ENEMY_COUNT 20
 
 /// A copy of a unit's base stats, from baseHp to its element stats, kept
 /// while its level is adjusted: BattleEnemy_AdjustLevel takes it from the
@@ -109,7 +117,8 @@ struct BattleBaseStats {
 /// unless FLAG_MONSTER_BATTLE_ANY_ENEMY bypasses the defeated-enemy check.
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   s32 matchCount = 0;
-  struct FormationCandidate *pool = Heap_AllocEwram(128);
+  struct FormationCandidate *pool =
+      Heap_AllocEwram(FORMATION_POOL_SIZE * sizeof *pool);
   u16 party[8];
   s32 levelTotal = 0;
   s32 unitCount = BattleParty_PrepareMembers(party);
@@ -139,14 +148,15 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   if (targetLevel > UNIT_LEVEL_MAX)
     targetLevel = UNIT_LEVEL_MAX;
 
-  for (candidateOrUnitIndex = 0; candidateOrUnitIndex <= 31;
+  for (candidateOrUnitIndex = 0; candidateOrUnitIndex < FORMATION_POOL_SIZE;
        candidateOrUnitIndex++)
     pool[candidateOrUnitIndex].score = -1;
 
   // Forget defeated classes that the monster battles normally exclude;
   // FLAG_MONSTER_BATTLE_ANY_ENEMY would still admit them. The definition
   // read is unused.
-  for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex <= 19;
+  for (candidateOrUnitIndex = 0;
+       (u32)candidateOrUnitIndex < LEVEL_MATCHED_ENEMY_COUNT;
        candidateOrUnitIndex++) {
     Enemy_GetDefinitionFar(
         gBattleFormation_LevelMatchedEnemies[candidateOrUnitIndex]);
@@ -160,11 +170,12 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
        candidateOrUnitIndex++) {
     s32 score = BattleFormation_AverageLevel(candidateOrUnitIndex);
 
-    if (score >= 0 && score <= targetLevel + 3) {
+    if (score >= 0 && score <= targetLevel + FORMATION_LEVEL_MARGIN) {
       s32 lowestIndex = -1;
       s32 lowestLevel;
 
-      for (poolIndex = 0, lowestLevel = 999; poolIndex <= 31; poolIndex++) {
+      for (poolIndex = 0, lowestLevel = 999; poolIndex < FORMATION_POOL_SIZE;
+           poolIndex++) {
         if (pool[poolIndex].score < lowestLevel) {
           lowestLevel = pool[poolIndex].score;
           lowestIndex = poolIndex;
@@ -180,8 +191,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   }
 
   // matchCount includes formations evicted from the pool.
-  if (matchCount > 32)
-    matchCount = 32;
+  if (matchCount > FORMATION_POOL_SIZE)
+    matchCount = FORMATION_POOL_SIZE;
 
   if (matchCount != 0) {
     struct FormationCandidate *chosen = &pool[(matchCount * Random16()) >> 16];
